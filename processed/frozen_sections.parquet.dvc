@@ -1,0 +1,5 @@
+outs:
+- md5: 3cd52e7c8049e5a71ac3cb3f32009d5d
+  size: 244781
+  hash: md5
+  path: frozen_sections.parquet

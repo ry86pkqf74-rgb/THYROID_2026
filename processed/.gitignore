@@ -1,0 +1,13 @@
+/anti_thyroglobulin_labs.parquet
+/benign_pathology.parquet
+/ct_imaging.parquet
+/fna_cytology.parquet
+/frozen_sections.parquet
+/mri_imaging.parquet
+/nuclear_med.parquet
+/parathyroid.parquet
+/thyroglobulin_labs.parquet
+/thyroid_sizes.parquet
+/thyroid_weights.parquet
+/tumor_pathology.parquet
+/ultrasound_reports.parquet

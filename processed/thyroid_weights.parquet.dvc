@@ -1,0 +1,5 @@
+outs:
+- md5: 7cf52fefa717eb856a69d8ef04289198
+  size: 4530753
+  hash: md5
+  path: thyroid_weights.parquet

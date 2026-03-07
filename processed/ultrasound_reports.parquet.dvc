@@ -1,0 +1,5 @@
+outs:
+- md5: 8fc4ecbaf845ca0c7ea86ff853ad3652
+  size: 1627881
+  hash: md5
+  path: ultrasound_reports.parquet

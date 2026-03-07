@@ -1,0 +1,5 @@
+outs:
+- md5: 609c4353f64efec05f716e1980a62a95
+  size: 121647104
+  hash: md5
+  path: thyroid_master.duckdb

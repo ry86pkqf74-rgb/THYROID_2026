@@ -1,0 +1,5 @@
+outs:
+- md5: 9afc433926a2cf4cc3673dd4b9c89d8a
+  size: 245597
+  hash: md5
+  path: thyroglobulin_labs.parquet

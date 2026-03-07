@@ -1,0 +1,5 @@
+outs:
+- md5: f70ab9f2d25444f8a15e4da7746b1716
+  size: 900577
+  hash: md5
+  path: nuclear_med.parquet

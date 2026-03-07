@@ -1,0 +1,5 @@
+outs:
+- md5: adf236f374e36c45080e3531a881576b
+  size: 143929
+  hash: md5
+  path: anti_thyroglobulin_labs.parquet
