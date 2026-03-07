@@ -24,6 +24,12 @@ RESEARCH_ID_ALIASES = {
     "record_id",
 }
 
+PHI_COLUMNS = {
+    "patient_first_nm", "patient_last_nm", "patient_id",
+    "empi_nbr", "euh_mrn", "tec_mrn", "dob", "date_of_birth",
+    "surgeon", "death",
+}
+
 
 def standardize_columns(df: pl.DataFrame) -> pl.DataFrame:
     """Lowercase snake_case all columns; unify research_id variants."""
@@ -58,6 +64,15 @@ def cast_research_id(df: pl.DataFrame) -> pl.DataFrame:
         .str.replace(r"\.0$", "")
         .alias("research_id"),
     )
+
+
+def strip_phi_columns(df: pl.DataFrame) -> pl.DataFrame:
+    """Drop any column whose snake_case name matches PHI denylist."""
+    to_drop = [c for c in df.columns if c in PHI_COLUMNS]
+    if to_drop:
+        print(f"      PHI stripped: {to_drop}")
+        df = df.drop(to_drop)
+    return df
 
 
 # ── Wide-to-Long Melt Helpers ───────────────────────────────────
@@ -215,6 +230,55 @@ FILE_MAP = [
         "data",
         None,
     ),
+    # ── Phase 6: 8 New High-Value Sources ──────────────────────────
+    (
+        "Thyroid all_Complications 12_1_25.xlsx",
+        "complications",
+        "Complications",
+        None,
+    ),
+    (
+        "THYROSEQ_AFIRMA_12_5.xlsx",
+        "genetic_testing",
+        "Thyroseq and AFIRMA",
+        None,
+    ),
+    (
+        "Thyroid OP Sheet data.xlsx",
+        "operative_details",
+        "Physical OP sheet data",
+        None,
+    ),
+    (
+        "FNAs 12_5_2025.xlsx",
+        "fnas_detailed",
+        "FNA Bethesda",
+        None,
+    ),
+    (
+        "US Nodules TIRADS 12_1_25.xlsx",
+        "us_nodules_tirads",
+        "US-1_Nodules_ TIRADS",
+        None,
+    ),
+    (
+        "All Diagnoses & synoptic 12_1_2025.xlsx",
+        "synoptic_pathology",
+        "synoptics + Dx merged",
+        None,
+    ),
+    (
+        "Imaging_12_1_25.xlsx",
+        "imaging_reports",
+        "Thyroid US",
+        None,
+    ),
+    (
+        "Notes 12_1_25.xlsx",
+        "clinical_notes",
+        "Sheet1",
+        None,
+    ),
 ]
 
 
@@ -242,6 +306,7 @@ def main() -> None:
 
             df = standardize_columns(df)
             df = cast_research_id(df)
+            df = strip_phi_columns(df)
 
             if melt == "labs":
                 df = melt_wide_labs(df)

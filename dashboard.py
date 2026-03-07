@@ -125,6 +125,9 @@ def _load_overview(con: duckdb.DuckDBPyConnection) -> dict:
         "ct": q(con, "SELECT COUNT(*) FROM master_cohort WHERE has_ct_imaging"),
         "tg_labs": q(con, "SELECT COUNT(*) FROM master_cohort WHERE has_thyroglobulin_labs"),
         "anti_tg_labs": q(con, "SELECT COUNT(*) FROM master_cohort WHERE has_anti_thyroglobulin_labs"),
+        "complications": q(con, "SELECT COUNT(DISTINCT research_id) FROM complications"),
+        "rln_injury": q(con, "SELECT COUNT(*) FROM complications WHERE LOWER(CAST(rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR)) NOT IN ('nan', '', '0') AND rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy IS NOT NULL"),
+        "genetic_tested": q(con, "SELECT COUNT(DISTINCT research_id) FROM genetic_testing"),
     }
 
 
@@ -282,6 +285,12 @@ def _render_overview(con: duckdb.DuckDBPyConnection) -> None:
     r3[1].metric("CT Imaging", f"{m['ct']:,}")
     r3[2].metric("Tg Labs", f"{m['tg_labs']:,}")
     r3[3].metric("Anti-Tg Labs", f"{m['anti_tg_labs']:,}")
+
+    r4 = st.columns(4)
+    r4[0].metric("Complications Data", f"{m.get('complications', 0):,}")
+    r4[1].metric("RLN Injuries", f"{m.get('rln_injury', 0):,}")
+    r4[2].metric("Genetic Testing", f"{m.get('genetic_tested', 0):,}")
+    r4[3].metric("Phase 6 Tables", "8")
 
     st.divider()
     st.subheader("Data Completeness by Year")
@@ -542,12 +551,13 @@ def main() -> None:
 
     df_filtered = _build_sidebar(df_full)
 
-    tab_ov, tab_ex, tab_viz, tab_adv = st.tabs(
+    tab_ov, tab_ex, tab_viz, tab_adv, tab_comp = st.tabs(
         [
             "\U0001f4ca Overview",
             "\U0001f5c2 Data Explorer",
             "\U0001f4c8 Visualizations",
             "\U0001f9ec Advanced",
+            "\u2699 Complications & Genetics",
         ]
     )
 
@@ -562,6 +572,35 @@ def main() -> None:
 
     with tab_adv:
         _render_advanced(con)
+
+    with tab_comp:
+        st.subheader("Post-Operative Complications")
+        comp_df = _safe_query_df(con, """
+            SELECT
+                COUNT(DISTINCT research_id) AS total_patients,
+                SUM(CASE WHEN LOWER(CAST(rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR)) NOT IN ('nan', '', '0')
+                    AND rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy IS NOT NULL THEN 1 ELSE 0 END) AS rln_injuries,
+                SUM(CASE WHEN LOWER(CAST(seroma AS VARCHAR)) NOT IN ('nan', '', '0') AND seroma IS NOT NULL THEN 1 ELSE 0 END) AS seromas,
+                SUM(CASE WHEN LOWER(CAST(hematoma AS VARCHAR)) NOT IN ('nan', '', '0') AND hematoma IS NOT NULL THEN 1 ELSE 0 END) AS hematomas
+            FROM complications
+        """)
+        if not comp_df.empty and comp_df.iloc[0]["total_patients"] > 0:
+            row = comp_df.iloc[0]
+            c1, c2, c3, c4 = st.columns(4)
+            c1.metric("Total w/ Complication Data", f"{int(row['total_patients']):,}")
+            c2.metric("RLN Injuries", f"{int(row['rln_injuries']):,}")
+            c3.metric("Seromas", f"{int(row['seromas']):,}")
+            c4.metric("Hematomas", f"{int(row['hematomas']):,}")
+        else:
+            st.info("Complications table not yet loaded. Run ingestion pipeline first.")
+
+        st.divider()
+        st.subheader("Genetic Testing (ThyroSeq / Afirma)")
+        gen_df = _safe_query_df(con, "SELECT COUNT(DISTINCT research_id) AS n FROM genetic_testing")
+        if not gen_df.empty and gen_df.iloc[0]["n"] > 0:
+            st.metric("Patients with Genetic Testing", f"{int(gen_df.iloc[0]['n']):,}")
+        else:
+            st.info("Genetic testing table not yet loaded.")
 
     st.divider()
     st.caption(
