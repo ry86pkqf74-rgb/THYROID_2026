@@ -1,0 +1,20 @@
+object_type,object_name,column_name,data_type,description,phase
+view,ptc_cohort,age_at_surgery,BIGINT,Age at surgery,phase2
+view,ptc_cohort,histology_1_type,VARCHAR,Primary histology type (PTC),phase2
+view,ptc_cohort,largest_tumor_cm,DOUBLE,Primary largest tumor size in cm,phase2
+view,ptc_cohort,ln_examined,DOUBLE,Total lymph nodes examined,phase2
+view,ptc_cohort,ln_positive,DOUBLE,Total lymph nodes positive,phase2
+view,ptc_cohort,m_stage_ajcc8,VARCHAR,AJCC8 M stage,phase2
+view,ptc_cohort,n_stage_ajcc8,VARCHAR,AJCC8 N stage,phase2
+view,ptc_cohort,overall_stage_ajcc8,VARCHAR,AJCC8 overall stage,phase2
+view,ptc_cohort,research_id,VARCHAR,Patient identifier for classic PTC cohort,phase2
+view,ptc_cohort,sex,VARCHAR,Sex,phase2
+view,ptc_cohort,surgery_date,VARCHAR,Surgery date,phase2
+view,ptc_cohort,surgery_type_normalized,VARCHAR,Column `surgery_type_normalized` from `ptc_cohort` export,phase3
+view,ptc_cohort,t_stage_ajcc8,VARCHAR,AJCC8 T stage,phase2
+view,ptc_cohort,tumor_1_ete_microscopic_only,VARCHAR,Microscopic-only ETE flag,phase2
+view,ptc_cohort,tumor_1_extrathyroidal_ext,BOOLEAN,Extrathyroidal extension flag,phase2
+view,ptc_cohort,tumor_1_gross_ete,BIGINT,Gross ETE flag,phase2
+view,ptc_cohort,tumor_1_histology_subtype_detail,VARCHAR,Column `tumor_1_histology_subtype_detail` from `ptc_cohort` export,phase3
+view,ptc_cohort,tumor_1_histology_variant,VARCHAR,Column `tumor_1_histology_variant` from `ptc_cohort` export,phase3
+view,ptc_cohort,variant_standardized,VARCHAR,Column `variant_standardized` from `ptc_cohort` export,phase3

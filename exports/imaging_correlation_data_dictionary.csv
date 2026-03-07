@@ -1,0 +1,13 @@
+object_type,object_name,column_name,data_type,description,phase
+view,imaging_pathology_correlation,ct_count,BIGINT,Number of CT reports,phase2
+view,imaging_pathology_correlation,ct_nodule_flag,INTEGER,CT nodule present flag,phase2
+view,imaging_pathology_correlation,ct_pathologic_ln_flag,INTEGER,CT pathologic lymph node flag,phase2
+view,imaging_pathology_correlation,histology_1_type,VARCHAR,Final histology class,phase2
+view,imaging_pathology_correlation,largest_tumor_cm,DOUBLE,Largest tumor size in cm,phase2
+view,imaging_pathology_correlation,max_tirads,DOUBLE,Maximum TI-RADS across sampled nodules,phase2
+view,imaging_pathology_correlation,mri_count,BIGINT,Number of MRI reports,phase2
+view,imaging_pathology_correlation,mri_nodule_flag,INTEGER,MRI nodule present flag,phase2
+view,imaging_pathology_correlation,mri_pathologic_ln_flag,INTEGER,MRI pathologic lymph node flag,phase2
+view,imaging_pathology_correlation,n_stage_ajcc8,VARCHAR,AJCC8 N stage,phase2
+view,imaging_pathology_correlation,research_id,VARCHAR,Patient identifier,phase2
+view,imaging_pathology_correlation,us_count,BIGINT,Number of ultrasound reports,phase2

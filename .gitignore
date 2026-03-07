@@ -1,1 +1,4 @@
 /thyroid_master.duckdb
+.DS_Store
+__pycache__/
+*.pyc

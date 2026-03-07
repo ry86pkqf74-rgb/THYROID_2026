@@ -1,0 +1,200 @@
+object_type,object_name,column_name,data_type,description,phase
+view,master_cohort,research_id,VARCHAR,Canonical patient identifier,phase1
+view,master_cohort,age_at_surgery,VARCHAR,Harmonized age at surgery,phase1
+view,master_cohort,sex,VARCHAR,Harmonized sex,phase1
+view,master_cohort,surgery_date,VARCHAR,Harmonized surgery date,phase1
+view,master_cohort,has_thyroid_sizes,BOOLEAN,Data presence flag for thyroid_sizes,phase1
+view,master_cohort,has_tumor_pathology,BOOLEAN,Data presence flag for tumor_pathology,phase1
+view,master_cohort,has_benign_pathology,BOOLEAN,Data presence flag for benign_pathology,phase1
+view,master_cohort,has_thyroid_weights,BOOLEAN,Data presence flag for thyroid_weights,phase1
+view,master_cohort,has_fna_cytology,BOOLEAN,Data presence flag for fna_cytology,phase1
+view,master_cohort,has_frozen_sections,BOOLEAN,Data presence flag for frozen_sections,phase1
+view,master_cohort,has_ultrasound_reports,BOOLEAN,Data presence flag for ultrasound_reports,phase1
+view,master_cohort,has_ct_imaging,BOOLEAN,Data presence flag for ct_imaging,phase1
+view,master_cohort,has_mri_imaging,BOOLEAN,Data presence flag for mri_imaging,phase1
+view,master_cohort,has_nuclear_med,BOOLEAN,Data presence flag for nuclear_med,phase1
+view,master_cohort,has_thyroglobulin_labs,BOOLEAN,Data presence flag for thyroglobulin_labs,phase1
+view,master_cohort,has_anti_thyroglobulin_labs,BOOLEAN,Data presence flag for anti_thyroglobulin_labs,phase1
+view,master_cohort,has_parathyroid,BOOLEAN,Data presence flag for parathyroid,phase1
+table,tumor_pathology,research_id,VARCHAR,Patient identifier,phase1
+table,tumor_pathology,surgery_date,VARCHAR,Surgery date,phase1
+table,tumor_pathology,age_at_surgery,VARCHAR,Age at surgery,phase1
+table,tumor_pathology,sex,VARCHAR,Sex,phase1
+table,tumor_pathology,histology_1_type,VARCHAR,Primary histology class,phase1
+table,tumor_pathology,histology_1_largest_tumor_cm,VARCHAR,Largest tumor size in cm,phase1
+table,tumor_pathology,histology_1_t_stage_ajcc8,VARCHAR,AJCC8 T stage,phase1
+table,tumor_pathology,histology_1_n_stage_ajcc8,VARCHAR,AJCC8 N stage,phase1
+table,tumor_pathology,histology_1_m_stage_ajcc8,VARCHAR,AJCC8 M stage,phase1
+table,tumor_pathology,histology_1_overall_stage_ajcc8,VARCHAR,AJCC8 overall stage,phase1
+table,tumor_pathology,histology_1_ln_examined,VARCHAR,Total lymph nodes examined,phase1
+table,tumor_pathology,histology_1_ln_positive,VARCHAR,Total lymph nodes positive,phase1
+table,tumor_pathology,histology_1_ln_ratio,VARCHAR,Lymph node positive ratio,phase1
+table,tumor_pathology,tumor_1_extrathyroidal_ext,VARCHAR,Extrathyroidal extension indicator,phase1
+table,tumor_pathology,tumor_1_gross_ete,VARCHAR,Gross ETE indicator,phase1
+table,tumor_pathology,tumor_1_ete_microscopic_only,VARCHAR,Microscopic-only ETE indicator,phase1
+table,tumor_pathology,tumor_1_histology_variant,VARCHAR,Primary tumor histology variant,phase1
+table,tumor_pathology,tumor_1_histology_subtype_detail,VARCHAR,Primary tumor histology subtype detail,phase1
+table,tumor_pathology,ln_level_i_examined,VARCHAR,LN level I examined count,phase1
+table,tumor_pathology,ln_level_i_positive,VARCHAR,LN level I positive count,phase1
+table,tumor_pathology,ln_level_ii_examined,VARCHAR,LN level II examined count,phase1
+table,tumor_pathology,ln_level_ii_positive,VARCHAR,LN level II positive count,phase1
+table,tumor_pathology,ln_level_iii_examined,VARCHAR,LN level III examined count,phase1
+table,tumor_pathology,ln_level_iii_positive,VARCHAR,LN level III positive count,phase1
+table,tumor_pathology,ln_level_iv_examined,VARCHAR,LN level IV examined count,phase1
+table,tumor_pathology,ln_level_iv_positive,VARCHAR,LN level IV positive count,phase1
+table,tumor_pathology,ln_level_v_examined,VARCHAR,LN level V examined count,phase1
+table,tumor_pathology,ln_level_v_positive,VARCHAR,LN level V positive count,phase1
+table,tumor_pathology,ln_level_vi_examined,VARCHAR,LN level VI examined count,phase1
+table,tumor_pathology,ln_level_vi_positive,VARCHAR,LN level VI positive count,phase1
+table,tumor_pathology,ln_level_vii_examined,VARCHAR,LN level VII examined count,phase1
+table,tumor_pathology,ln_level_vii_positive,VARCHAR,LN level VII positive count,phase1
+table,benign_pathology,research_id,VARCHAR,Patient identifier,phase1
+table,benign_pathology,age_at_surgery,VARCHAR,Age at surgery,phase1
+table,benign_pathology,sex,VARCHAR,Sex,phase1
+table,benign_pathology,surgery_date,VARCHAR,Surgery date,phase1
+table,benign_pathology,multinodular_goiter,VARCHAR,Multinodular goiter flag,phase1
+table,benign_pathology,diffuse_hyperplasia,VARCHAR,Diffuse hyperplasia flag,phase1
+table,benign_pathology,colloid_nodule,VARCHAR,Colloid nodule flag,phase1
+table,benign_pathology,follicular_adenoma,VARCHAR,Follicular adenoma flag,phase1
+table,benign_pathology,hurthle_adenoma,VARCHAR,Hurthle adenoma flag,phase1
+table,benign_pathology,hashimoto_thyroiditis,VARCHAR,Hashimoto thyroiditis flag,phase1
+table,benign_pathology,graves_disease,VARCHAR,Graves disease flag,phase1
+table,benign_pathology,focal_lymphocytic_thyroiditis,VARCHAR,Focal lymphocytic thyroiditis flag,phase1
+table,fna_cytology,research_id,VARCHAR,Patient identifier,phase1
+table,fna_cytology,fna_index,VARCHAR,Sequence index of FNA for patient,phase1
+table,fna_cytology,fna_date,VARCHAR,FNA date,phase1
+table,fna_cytology,specimen_location,VARCHAR,FNA specimen location,phase1
+table,fna_cytology,bethesda_2023_num,VARCHAR,Bethesda 2023 numeric score,phase1
+table,fna_cytology,bethesda_2023_name,VARCHAR,Bethesda 2023 category label,phase1
+table,fna_cytology,bethesda_2015_num,VARCHAR,Bethesda 2015 numeric score,phase1
+table,fna_cytology,bethesda_2010_num,VARCHAR,Bethesda 2010 numeric score,phase1
+view,lab_timeline,research_id,VARCHAR,Patient identifier,phase1
+view,lab_timeline,lab_type,VARCHAR,Lab family (thyroglobulin or anti_thyroglobulin),phase1
+view,lab_timeline,lab_index,INTEGER,Lab sequence number from wide source,phase1
+view,lab_timeline,test_name,VARCHAR,Original test name,phase1
+view,lab_timeline,specimen_collect_dt,VARCHAR,Collection timestamp,phase1
+view,lab_timeline,result,VARCHAR,Raw result value,phase1
+view,lab_timeline,units,VARCHAR,Result units,phase1
+table,ultrasound_reports,research_id,VARCHAR,Patient identifier,phase1
+table,ultrasound_reports,ultrasound_date,VARCHAR,Ultrasound exam date,phase1
+table,ultrasound_reports,number_of_nodules,VARCHAR,Count of nodules in report,phase1
+table,ultrasound_reports,total_thyroid_volume_ml,VARCHAR,Total thyroid volume in mL,phase1
+table,ultrasound_reports,nodule_1_ti_rads,VARCHAR,Nodule 1 TI-RADS category,phase1
+table,ultrasound_reports,nodule_2_ti_rads,VARCHAR,Nodule 2 TI-RADS category,phase1
+table,ultrasound_reports,nodule_3_ti_rads,VARCHAR,Nodule 3 TI-RADS category,phase1
+table,ultrasound_reports,nodule_4_ti_rads,VARCHAR,Nodule 4 TI-RADS category,phase1
+table,ultrasound_reports,nodule_5_ti_rads,VARCHAR,Nodule 5 TI-RADS category,phase1
+table,ultrasound_reports,lymph_node_assessment,VARCHAR,Ultrasound lymph node assessment text,phase1
+table,ct_imaging,research_id,VARCHAR,Patient identifier,phase1
+table,ct_imaging,date_of_exam,VARCHAR,CT exam date,phase1
+table,ct_imaging,thyroid_nodule,VARCHAR,CT thyroid nodule indicator,phase1
+table,ct_imaging,pathologic_lymph_nodes,VARCHAR,CT pathologic lymph node indicator,phase1
+table,ct_imaging,largest_lymph_node_short_axis_mm,VARCHAR,Size of largest CT lymph node short axis,phase1
+table,mri_imaging,research_id,VARCHAR,Patient identifier,phase1
+table,mri_imaging,date_of_exam,VARCHAR,MRI exam date,phase1
+table,mri_imaging,thyroid_nodule,VARCHAR,MRI thyroid nodule indicator,phase1
+table,mri_imaging,pathologic_lymph_nodes,VARCHAR,MRI pathologic lymph node indicator,phase1
+table,mri_imaging,lymph_node_locations,VARCHAR,MRI lymph node locations text,phase1
+table,thyroid_sizes,research_id,VARCHAR,Patient identifier,phase1
+table,thyroid_weights,research_id,VARCHAR,Patient identifier,phase1
+table,thyroglobulin_labs,research_id,VARCHAR,Patient identifier,phase1
+table,anti_thyroglobulin_labs,research_id,VARCHAR,Patient identifier,phase1
+table,nuclear_med,research_id,VARCHAR,Patient identifier,phase1
+table,frozen_sections,research_id,VARCHAR,Patient identifier,phase1
+table,parathyroid,research_id,VARCHAR,Patient identifier,phase1
+view,ptc_cohort,research_id,VARCHAR,Patient identifier for classic PTC cohort,phase2
+view,ptc_cohort,surgery_date,VARCHAR,Surgery date,phase2
+view,ptc_cohort,age_at_surgery,VARCHAR,Age at surgery,phase2
+view,ptc_cohort,sex,VARCHAR,Sex,phase2
+view,ptc_cohort,histology_1_type,VARCHAR,Primary histology type (PTC),phase2
+view,ptc_cohort,t_stage_ajcc8,VARCHAR,AJCC8 T stage,phase2
+view,ptc_cohort,n_stage_ajcc8,VARCHAR,AJCC8 N stage,phase2
+view,ptc_cohort,m_stage_ajcc8,VARCHAR,AJCC8 M stage,phase2
+view,ptc_cohort,overall_stage_ajcc8,VARCHAR,AJCC8 overall stage,phase2
+view,ptc_cohort,largest_tumor_cm,DOUBLE,Primary largest tumor size in cm,phase2
+view,ptc_cohort,ln_examined,DOUBLE,Total lymph nodes examined,phase2
+view,ptc_cohort,ln_positive,DOUBLE,Total lymph nodes positive,phase2
+view,ptc_cohort,tumor_1_extrathyroidal_ext,VARCHAR,Extrathyroidal extension flag,phase2
+view,ptc_cohort,tumor_1_gross_ete,VARCHAR,Gross ETE flag,phase2
+view,ptc_cohort,tumor_1_ete_microscopic_only,VARCHAR,Microscopic-only ETE flag,phase2
+view,recurrence_risk_cohort,research_id,VARCHAR,Patient identifier,phase2
+view,recurrence_risk_cohort,histology_1_type,VARCHAR,Primary histology type,phase2
+view,recurrence_risk_cohort,t_stage_ajcc8,VARCHAR,AJCC8 T stage,phase2
+view,recurrence_risk_cohort,n_stage_ajcc8,VARCHAR,AJCC8 N stage,phase2
+view,recurrence_risk_cohort,overall_stage_ajcc8,VARCHAR,AJCC8 overall stage,phase2
+view,recurrence_risk_cohort,tg_first_date,TIMESTAMP,First thyroglobulin date,phase2
+view,recurrence_risk_cohort,tg_last_date,TIMESTAMP,Last thyroglobulin date,phase2
+view,recurrence_risk_cohort,tg_first_value,DOUBLE,First parsed thyroglobulin value,phase2
+view,recurrence_risk_cohort,tg_last_value,DOUBLE,Last parsed thyroglobulin value,phase2
+view,recurrence_risk_cohort,tg_max,DOUBLE,Maximum parsed thyroglobulin value,phase2
+view,recurrence_risk_cohort,tg_mean,DOUBLE,Mean parsed thyroglobulin value,phase2
+view,recurrence_risk_cohort,tg_delta_per_measurement,DOUBLE,Tg slope proxy per measurement interval,phase2
+view,recurrence_risk_cohort,recurrence_risk_band,VARCHAR,Derived low/intermediate/high recurrence risk band,phase2
+view,imaging_pathology_correlation,research_id,VARCHAR,Patient identifier,phase2
+view,imaging_pathology_correlation,histology_1_type,VARCHAR,Final histology class,phase2
+view,imaging_pathology_correlation,largest_tumor_cm,DOUBLE,Largest tumor size in cm,phase2
+view,imaging_pathology_correlation,n_stage_ajcc8,VARCHAR,AJCC8 N stage,phase2
+view,imaging_pathology_correlation,us_count,INTEGER,Number of ultrasound reports,phase2
+view,imaging_pathology_correlation,ct_count,INTEGER,Number of CT reports,phase2
+view,imaging_pathology_correlation,mri_count,INTEGER,Number of MRI reports,phase2
+view,imaging_pathology_correlation,max_tirads,DOUBLE,Maximum TI-RADS across sampled nodules,phase2
+view,imaging_pathology_correlation,ct_nodule_flag,INTEGER,CT nodule present flag,phase2
+view,imaging_pathology_correlation,ct_pathologic_ln_flag,INTEGER,CT pathologic lymph node flag,phase2
+view,imaging_pathology_correlation,mri_nodule_flag,INTEGER,MRI nodule present flag,phase2
+view,imaging_pathology_correlation,mri_pathologic_ln_flag,INTEGER,MRI pathologic lymph node flag,phase2
+view,fna_accuracy_view,research_id,VARCHAR,Patient identifier,phase2
+view,fna_accuracy_view,fna_index,VARCHAR,FNA sequence index,phase2
+view,fna_accuracy_view,fna_date,VARCHAR,FNA date,phase2
+view,fna_accuracy_view,bethesda_2023_num,VARCHAR,Bethesda 2023 numeric score,phase2
+view,fna_accuracy_view,bethesda_2023_name,VARCHAR,Bethesda 2023 category label,phase2
+view,fna_accuracy_view,fna_test_positive,INTEGER,FNA test-positive definition (Bethesda >= 5),phase2
+view,fna_accuracy_view,final_malignant,INTEGER,Gold-standard malignant indicator from final pathology,phase2
+view,fna_accuracy_view,confusion_class,VARCHAR,Per-record confusion class (TP/FP/FN/TN),phase2
+view,lymph_node_metastasis_view,research_id,VARCHAR,Patient identifier,phase2
+view,lymph_node_metastasis_view,histology_1_type,VARCHAR,Primary histology type,phase2
+view,lymph_node_metastasis_view,ln_examined_total,DOUBLE,Total lymph nodes examined,phase2
+view,lymph_node_metastasis_view,ln_positive_total,DOUBLE,Total lymph nodes positive,phase2
+view,lymph_node_metastasis_view,ln_level_i_positive,DOUBLE,Level I positive count,phase2
+view,lymph_node_metastasis_view,ln_level_ii_positive,DOUBLE,Level II positive count,phase2
+view,lymph_node_metastasis_view,ln_level_iii_positive,DOUBLE,Level III positive count,phase2
+view,lymph_node_metastasis_view,ln_level_iv_positive,DOUBLE,Level IV positive count,phase2
+view,lymph_node_metastasis_view,ln_level_v_positive,DOUBLE,Level V positive count,phase2
+view,lymph_node_metastasis_view,ln_level_vi_positive,DOUBLE,Level VI positive count,phase2
+view,lymph_node_metastasis_view,ln_level_vii_positive,DOUBLE,Level VII positive count,phase2
+view,lymph_node_metastasis_view,ln_ratio,DOUBLE,Positive-to-examined LN ratio,phase2
+view,lymph_node_metastasis_view,histology_1_ln_extranodal_extension,VARCHAR,Extranodal extension indicator,phase2
+view,benign_vs_malignant_comparison,research_id,VARCHAR,Patient identifier,phase2
+view,benign_vs_malignant_comparison,disease_group,VARCHAR,Benign vs malignant group label,phase2
+view,benign_vs_malignant_comparison,age_at_surgery,VARCHAR,Age at surgery,phase2
+view,benign_vs_malignant_comparison,sex,VARCHAR,Sex,phase2
+view,benign_vs_malignant_comparison,surgery_date,VARCHAR,Surgery date,phase2
+view,benign_vs_malignant_comparison,histology_1_type,VARCHAR,Primary malignant histology where present,phase2
+view,benign_vs_malignant_comparison,largest_tumor_cm,DOUBLE,Largest tumor size in cm (if malignant),phase2
+view,benign_vs_malignant_comparison,histology_1_overall_stage_ajcc8,VARCHAR,Overall AJCC stage (if malignant),phase2
+view,benign_vs_malignant_comparison,hashimoto_thyroiditis,VARCHAR,Hashimoto thyroiditis indicator,phase2
+view,benign_vs_malignant_comparison,graves_disease,VARCHAR,Graves disease indicator,phase2
+view,benign_vs_malignant_comparison,multinodular_goiter,VARCHAR,Multinodular goiter indicator,phase2
+view,longitudinal_lab_view,research_id,VARCHAR,Patient identifier,phase2
+view,longitudinal_lab_view,lab_type,VARCHAR,Lab family,phase2
+view,longitudinal_lab_view,lab_index,INTEGER,Lab sequence number from source,phase2
+view,longitudinal_lab_view,test_name,VARCHAR,Original test name,phase2
+view,longitudinal_lab_view,specimen_ts,TIMESTAMP,Parsed specimen timestamp,phase2
+view,longitudinal_lab_view,result,VARCHAR,Raw result value,phase2
+view,longitudinal_lab_view,units,VARCHAR,Result units,phase2
+view,longitudinal_lab_view,numeric_result,DOUBLE,Regex-parsed numeric lab value,phase2
+view,longitudinal_lab_view,days_from_first_lab,INTEGER,Days from patient-level first lab for that lab type,phase2
+view,data_completeness_by_year,surgery_year,INTEGER,Surgery year,phase2
+view,data_completeness_by_year,n_patients,BIGINT,Number of patients in surgery year,phase2
+view,data_completeness_by_year,n_tumor_pathology,BIGINT,Patients with tumor pathology in year,phase2
+view,data_completeness_by_year,n_benign_pathology,BIGINT,Patients with benign pathology in year,phase2
+view,data_completeness_by_year,n_fna_cytology,BIGINT,Patients with FNA cytology in year,phase2
+view,data_completeness_by_year,n_ultrasound_reports,BIGINT,Patients with ultrasound reports in year,phase2
+view,data_completeness_by_year,n_ct_imaging,BIGINT,Patients with CT imaging in year,phase2
+view,data_completeness_by_year,n_mri_imaging,BIGINT,Patients with MRI imaging in year,phase2
+view,data_completeness_by_year,n_nuclear_med,BIGINT,Patients with nuclear med in year,phase2
+view,data_completeness_by_year,n_thyroglobulin_labs,BIGINT,Patients with thyroglobulin labs in year,phase2
+view,data_completeness_by_year,n_anti_thyroglobulin_labs,BIGINT,Patients with anti-thyroglobulin labs in year,phase2
+view,data_completeness_by_year,pct_tumor_pathology,DOUBLE,Percent with tumor pathology in year,phase2
+view,data_completeness_by_year,pct_fna_cytology,DOUBLE,Percent with FNA in year,phase2
+view,data_completeness_by_year,pct_ultrasound_reports,DOUBLE,Percent with ultrasound in year,phase2
+view,data_completeness_by_year,pct_thyroglobulin_labs,DOUBLE,Percent with thyroglobulin labs in year,phase2
