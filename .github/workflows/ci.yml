@@ -1,0 +1,50 @@
+name: Dashboard CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "dashboard.py"
+      - "motherduck_client.py"
+      - "requirements.txt"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Syntax check
+        run: python -c "import ast; ast.parse(open('dashboard.py').read()); print('dashboard.py syntax OK')"
+
+      - name: Import check
+        run: python -c "import importlib.util; spec = importlib.util.spec_from_file_location('dashboard', 'dashboard.py'); print('Imports resolve OK')"
+
+      - name: Smoke test queries against MotherDuck
+        env:
+          MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK }}
+        if: env.MOTHERDUCK_TOKEN != ''
+        run: |
+          python -c "
+          from motherduck_client import MotherDuckClient, MotherDuckConfig
+          config = MotherDuckConfig(
+              database='thyroid_research_2026',
+              share_path='md:_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c'
+          )
+          client = MotherDuckClient(config)
+          con = client.connect_ro_share()
+          n = con.execute('SELECT COUNT(DISTINCT research_id) FROM master_cohort').fetchone()[0]
+          assert n > 10000, f'Expected 11k+ patients, got {n}'
+          print(f'Smoke test passed: {n:,} patients')
+          con.close()
+          "
