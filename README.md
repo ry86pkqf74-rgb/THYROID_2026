@@ -4,6 +4,14 @@ Thyroid cancer research lakehouse — 11,673 patients across 13 base tables,
 8+ analytic views, and a fully interactive Streamlit dashboard backed by
 [MotherDuck](https://motherduck.com) cloud DuckDB.
 
+## Live Dashboard
+
+**[thyroid2026-n2hrol9ntiffy4nmedp2zs.streamlit.app](https://thyroid2026-n2hrol9ntiffy4nmedp2zs.streamlit.app/)**
+
+> The deployed app connects to a read-only MotherDuck share. If the app
+> asks you to sign in, the owner must set **Settings > Sharing > Public**
+> in the Streamlit Cloud dashboard to allow unauthenticated access.
+
 ## Repository layout
 
 ```
@@ -11,9 +19,13 @@ Thyroid cancer research lakehouse — 11,673 patients across 13 base tables,
 ├── dashboard.py              # Streamlit dashboard (main entry point)
 ├── motherduck_client.py      # MotherDuck connection helper
 ├── requirements.txt          # Python dependencies
+├── runtime.txt               # Python 3.11 pin for Streamlit Cloud
 ├── .streamlit/
+│   ├── config.toml           # Server, theme, and browser settings
 │   ├── secrets.toml.example  # Template — copy to secrets.toml
 │   └── secrets.toml          # (gitignored) your real token
+├── .github/workflows/
+│   └── ci.yml                # CI: syntax + MotherDuck smoke test
 ├── scripts/                  # ETL and view-creation scripts
 ├── notebooks/                # Jupyter exploration notebooks
 ├── exports/                  # Publication-ready CSV exports
@@ -74,36 +86,38 @@ The share is SELECT-only — data cannot be modified through it.
 - **Advanced** — mutation flags (BRAF/RAS/RET/TERT/NTRK/ALK), RAI avidity
   breakdown, benign phenotypes, recurrence risk bands
 
-## Deploy to Streamlit Community Cloud (free)
+## CI / CD
 
-1. **Push this repo to GitHub** (already done — `origin` points to
-   `https://github.com/ry86pkqf74-rgb/THYROID_2026.git`).
+| Component | Detail |
+|-----------|--------|
+| GitHub Actions | `.github/workflows/ci.yml` — syntax check + MotherDuck smoke test |
+| GitHub Secret | `MOTHERDUCK` — used by CI for live query validation |
+| Streamlit Cloud | Auto-deploys from `main` branch on push |
+| Runtime | Python 3.11 (pinned in `runtime.txt`) |
 
-2. **Go to [share.streamlit.io](https://share.streamlit.io)** and sign in
-   with GitHub.
+## Streamlit Cloud deployment (already done)
 
-3. **Click "New app"**, then:
-   - Repository: `ry86pkqf74-rgb/THYROID_2026`
-   - Branch: `main`
-   - Main file path: `dashboard.py`
+The app is deployed at
+**[thyroid2026-n2hrol9ntiffy4nmedp2zs.streamlit.app](https://thyroid2026-n2hrol9ntiffy4nmedp2zs.streamlit.app/)**.
 
-4. **Add secrets** — in the app's **Settings > Secrets**, paste:
-   ```toml
-   MOTHERDUCK_TOKEN = "your_real_motherduck_token"
-   ```
+To redeploy or reconfigure:
 
-5. **Save & reboot.** The dashboard will be publicly accessible at
-   `https://<your-app>.streamlit.app`.
+1. Go to [share.streamlit.io](https://share.streamlit.io) and sign in with GitHub.
+2. Find the app in your dashboard.
+3. **Settings > Secrets** — update `MOTHERDUCK_TOKEN` if the token rotates.
+4. **Settings > Sharing** — set to **Public** if you want unauthenticated access.
+5. Pushes to `main` auto-redeploy the app.
 
-> **Security note:** use a read-only MotherDuck token or share URL for the
-> deployed app. The GitHub secret `MOTHERDUCK` is available for CI workflows
-> but is **not** automatically available to Streamlit Cloud — you must add it
-> through the Streamlit UI.
+## Making the app public
 
-## GitHub secret
+By default, apps from private repos require Streamlit Cloud sign-in to view.
+To allow anyone to access the dashboard without signing in:
 
-A repository secret named `MOTHERDUCK` is configured for CI/CD use. Access
-it in GitHub Actions workflows as `${{ secrets.MOTHERDUCK }}`.
+1. Open [share.streamlit.io](https://share.streamlit.io)
+2. Click the **three-dot menu** on your app
+3. Select **Settings > Sharing**
+4. Change from **Only people with access** to **Public**
+5. Save
 
 ## Data dictionary
 
