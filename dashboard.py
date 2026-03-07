@@ -330,6 +330,116 @@ def render_advanced(con):
             fig.update_layout(**PL,height=300,showlegend=False)
             st.plotly_chart(fig,use_container_width=True)
 
+    # ── Cancer co-occurrence by benign diagnosis ──────────────────
+    st.markdown(sl("Cancer Co-Occurrence by Benign Diagnosis"),unsafe_allow_html=True)
+    st.caption("Among patients with each benign diagnosis, what fraction also had a concurrent malignancy?")
+
+    cooccur_sql = """
+    WITH base AS (
+        SELECT
+            mc.research_id,
+            CASE WHEN mc.has_tumor_pathology THEN 1 ELSE 0 END AS is_malignant,
+            bp.is_mng,
+            bp.is_hashimoto,
+            bp.is_graves,
+            bp.is_follicular_adenoma,
+            bp.is_hurthle_adenoma,
+            bp.is_hyalinizing_trabecular,
+            bp.is_tgdc,
+            COALESCE(LOWER(CAST(bp.colloid_nodule AS VARCHAR)) IN ('true','1','yes'), FALSE)          AS is_colloid_nodule,
+            COALESCE(LOWER(CAST(bp.diffuse_hyperplasia AS VARCHAR)) IN ('true','1','yes'), FALSE)     AS is_diffuse_hyperplasia,
+            COALESCE(LOWER(CAST(bp.focal_lymphocytic_thyroiditis AS VARCHAR)) IN ('true','1','yes'), FALSE) AS is_focal_lt
+        FROM master_cohort mc
+        LEFT JOIN benign_pathology bp ON mc.research_id = bp.research_id
+        WHERE mc.has_benign_pathology = TRUE
+    )
+    SELECT
+        label,
+        total,
+        malignant,
+        ROUND(100.0 * malignant / NULLIF(total, 0), 1) AS pct_malignant,
+        total - malignant AS benign_only
+    FROM (
+        SELECT 'Multinodular Goiter'         AS label, SUM(CASE WHEN is_mng THEN 1 ELSE 0 END) AS total, SUM(CASE WHEN is_mng AND is_malignant=1 THEN 1 ELSE 0 END) AS malignant FROM base UNION ALL
+        SELECT 'Hashimoto Thyroiditis',       SUM(CASE WHEN is_hashimoto THEN 1 ELSE 0 END),   SUM(CASE WHEN is_hashimoto AND is_malignant=1 THEN 1 ELSE 0 END) FROM base UNION ALL
+        SELECT 'Graves Disease',              SUM(CASE WHEN is_graves THEN 1 ELSE 0 END),      SUM(CASE WHEN is_graves AND is_malignant=1 THEN 1 ELSE 0 END) FROM base UNION ALL
+        SELECT 'Follicular Adenoma',          SUM(CASE WHEN is_follicular_adenoma THEN 1 ELSE 0 END), SUM(CASE WHEN is_follicular_adenoma AND is_malignant=1 THEN 1 ELSE 0 END) FROM base UNION ALL
+        SELECT 'Hurthle Cell Adenoma',        SUM(CASE WHEN is_hurthle_adenoma THEN 1 ELSE 0 END),   SUM(CASE WHEN is_hurthle_adenoma AND is_malignant=1 THEN 1 ELSE 0 END) FROM base UNION ALL
+        SELECT 'Hyalinizing Trabecular',      SUM(CASE WHEN is_hyalinizing_trabecular THEN 1 ELSE 0 END), SUM(CASE WHEN is_hyalinizing_trabecular AND is_malignant=1 THEN 1 ELSE 0 END) FROM base UNION ALL
+        SELECT 'TGDC',                        SUM(CASE WHEN is_tgdc THEN 1 ELSE 0 END),       SUM(CASE WHEN is_tgdc AND is_malignant=1 THEN 1 ELSE 0 END) FROM base UNION ALL
+        SELECT 'Colloid Nodule',              SUM(CASE WHEN is_colloid_nodule THEN 1 ELSE 0 END), SUM(CASE WHEN is_colloid_nodule AND is_malignant=1 THEN 1 ELSE 0 END) FROM base UNION ALL
+        SELECT 'Diffuse Hyperplasia',         SUM(CASE WHEN is_diffuse_hyperplasia THEN 1 ELSE 0 END), SUM(CASE WHEN is_diffuse_hyperplasia AND is_malignant=1 THEN 1 ELSE 0 END) FROM base UNION ALL
+        SELECT 'Focal Lymphocytic Thyroiditis', SUM(CASE WHEN is_focal_lt THEN 1 ELSE 0 END), SUM(CASE WHEN is_focal_lt AND is_malignant=1 THEN 1 ELSE 0 END) FROM base
+    ) sub
+    WHERE total > 0
+    ORDER BY pct_malignant DESC
+    """
+    df_cooc = sqdf(con, cooccur_sql)
+    if not df_cooc.empty:
+        # ── Stacked bar: benign-only vs concurrent malignancy ──
+        fig = go.Figure()
+        fig.add_trace(go.Bar(
+            name="Benign Only",
+            y=df_cooc["label"],
+            x=df_cooc["benign_only"],
+            orientation="h",
+            marker=dict(color="#2dd4bf", line=dict(color="#07090f",width=1)),
+            hovertemplate="<b>%{y}</b><br>Benign only: %{x:,}<extra></extra>"
+        ))
+        fig.add_trace(go.Bar(
+            name="Concurrent Malignancy",
+            y=df_cooc["label"],
+            x=df_cooc["malignant"],
+            orientation="h",
+            marker=dict(color="#f43f5e", line=dict(color="#07090f",width=1)),
+            hovertemplate="<b>%{y}</b><br>Concurrent cancer: %{x:,} (%{customdata:.1f}%)<extra></extra>",
+            customdata=df_cooc["pct_malignant"]
+        ))
+        fig.update_layout(**PL,
+            barmode="stack",
+            height=420,
+            xaxis_title="Number of Patients",
+            yaxis=dict(autorange="reversed", gridcolor="#1e2535"),
+            legend=dict(orientation="h", y=1.05),
+        )
+        st.plotly_chart(fig, use_container_width=True)
+
+        # ── Cancer rate % bar ──────────────────────────────────
+        st.markdown("##### Concurrent Cancer Rate (%) by Benign Diagnosis")
+        df_cooc_sorted = df_cooc.sort_values("pct_malignant", ascending=True)
+        CANCER_RATE_COLORS = [
+            "#34d399" if p < 5 else "#f59e0b" if p < 20 else "#f43f5e"
+            for p in df_cooc_sorted["pct_malignant"]
+        ]
+        fig2 = go.Figure(go.Bar(
+            x=df_cooc_sorted["pct_malignant"],
+            y=df_cooc_sorted["label"],
+            orientation="h",
+            marker_color=CANCER_RATE_COLORS,
+            text=[f"{p:.1f}%" for p in df_cooc_sorted["pct_malignant"]],
+            textposition="outside",
+            hovertemplate="<b>%{y}</b><br>Cancer rate: %{x:.1f}%<br>n=%{customdata:,}<extra></extra>",
+            customdata=df_cooc_sorted["total"]
+        ))
+        fig2.add_vline(x=5,  line_dash="dot", line_color="#34d399", annotation_text="5%",  annotation_font_color="#34d399", annotation_font_size=10)
+        fig2.add_vline(x=20, line_dash="dot", line_color="#f59e0b", annotation_text="20%", annotation_font_color="#f59e0b", annotation_font_size=10)
+        fig2.update_layout(**PL,
+            height=360,
+            xaxis_title="Concurrent Cancer Rate (%)",
+            xaxis=dict(range=[0, max(df_cooc_sorted["pct_malignant"]) * 1.25], gridcolor="#1e2535"),
+            yaxis=dict(gridcolor="#1e2535"),
+        )
+        st.plotly_chart(fig2, use_container_width=True)
+
+        # ── Summary table ──────────────────────────────────────
+        with st.expander("📋 Full co-occurrence table"):
+            display_df = df_cooc[["label","total","malignant","benign_only","pct_malignant"]].rename(columns={
+                "label":"Benign Diagnosis","total":"Total Patients",
+                "malignant":"Concurrent Cancer","benign_only":"Benign Only","pct_malignant":"Cancer Rate (%)"
+            })
+            st.dataframe(display_df, use_container_width=True, hide_index=True)
+            st.download_button("⬇ Download CSV", display_df.to_csv(index=False), "cancer_cooccurrence.csv", "text/csv")
+
 # ─────────────────────────────────────────────────────────────────────────
 # TAB: GENETICS & MOLECULAR
 # ─────────────────────────────────────────────────────────────────────────
