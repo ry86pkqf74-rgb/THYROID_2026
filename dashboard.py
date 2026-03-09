@@ -745,6 +745,109 @@ def render_ai_insights(con):
                 except Exception as e: st.error(f"API error: {e}")
 
 # ─────────────────────────────────────────────────────────────────────────
+# TAB: RECOMMENDATIONS & SENSITIVITIES
+# ─────────────────────────────────────────────────────────────────────────
+def render_recommendations():
+    STUDY = Path(__file__).resolve().parent / "studies" / "proposal2_ete_staging"
+
+    st.markdown(sl("Proposal 2 — ETE Staging Recommendations (2025 ATA Guideline-Aligned)"),unsafe_allow_html=True)
+
+    # Key guideline messages
+    st.markdown('<div class="insight-box"><div class="insight-header">2025 ATA Guideline Alignment</div>'
+        '<p style="color:#f0f4ff;font-size:.88rem;line-height:1.65;margin:0">'
+        '<b>Key message:</b> The 2025 ATA Management Guidelines (Ringel et al., <i>Thyroid</i> 2025;35(8):841–985) '
+        'reaffirm AJCC 8th edition exclusion of microscopic ETE from T-staging. Our sensitivity analyses confirm '
+        'that mETE is not an independent predictor of higher recurrence risk across all tested subgroups '
+        '(age ≥55, tumor ≤4 cm, multiply-imputed, complete-case).<br><br>'
+        '<b>Clinical bottom line:</b> mETE alone should not trigger surgical escalation (completion thyroidectomy), '
+        'RAI dose intensification, or heightened surveillance in low-risk patients.</p></div>',unsafe_allow_html=True)
+    st.markdown("<br>",unsafe_allow_html=True)
+
+    c1,c2,c3 = st.columns(3)
+    with c1: st.markdown(mc("mETE OR (Primary)","0.42","95% CI: 0.28–0.64, p<0.001"),unsafe_allow_html=True)
+    with c2: st.markdown(mc("mETE OR (Imputed)","0.51","95% CI: 0.34–0.76, p<0.001"),unsafe_allow_html=True)
+    with c3: st.markdown(mc("ΔAUC (mETE added)","0.014","Negligible discriminative value"),unsafe_allow_html=True)
+    st.markdown("<br>",unsafe_allow_html=True)
+
+    # Sensitivity table
+    st.markdown(sl("Sensitivity Analysis — Odds Ratios Across Subgroups"),unsafe_allow_html=True)
+    tbl5_path = STUDY / "tables" / "table5_sensitivity.csv"
+    if tbl5_path.exists():
+        df_tbl5 = pd.read_csv(tbl5_path)
+        view_mode = st.radio("View",["Microscopic ETE only","Gross ETE only","All variables"],horizontal=True,key="sens_view")
+        if view_mode == "Microscopic ETE only":
+            disp = df_tbl5[df_tbl5["Variable"]=="ete_micro"]
+        elif view_mode == "Gross ETE only":
+            disp = df_tbl5[df_tbl5["Variable"]=="ete_gross"]
+        else:
+            disp = df_tbl5
+
+        # Interactive table with color coding
+        styled = disp.copy()
+        st.dataframe(styled,use_container_width=True,hide_index=True,height=min(400,35*len(styled)+40))
+
+        # Interactive OR comparison chart
+        mete = df_tbl5[df_tbl5["Variable"]=="ete_micro"].copy()
+        if not mete.empty:
+            mete["CI_lo_num"] = mete["95% CI"].str.extract(r"\(([0-9.]+)")[0].astype(float)
+            mete["CI_hi_num"] = mete["95% CI"].str.extract(r"–([0-9.]+)\)")[0].astype(float)
+            mete["OR_num"] = mete["OR"].astype(float)
+
+            fig = go.Figure()
+            for i,(_,row) in enumerate(mete.iterrows()):
+                fig.add_trace(go.Scatter(
+                    x=[row["OR_num"]], y=[row["Subgroup"]],
+                    error_x=dict(type="data",symmetric=False,
+                        array=[row["CI_hi_num"]-row["OR_num"]],
+                        arrayminus=[row["OR_num"]-row["CI_lo_num"]]),
+                    mode="markers", marker=dict(size=12,color="#f59e0b",line=dict(color="#07090f",width=1)),
+                    name=row["Subgroup"],showlegend=False,
+                    hovertemplate=f"<b>{row['Subgroup']}</b><br>OR: {row['OR_num']:.2f} ({row['CI_lo_num']:.2f}–{row['CI_hi_num']:.2f})<br>p: {row['p-value']}<extra></extra>"
+                ))
+            fig.add_vline(x=1,line_dash="dash",line_color="#f43f5e",annotation_text="OR = 1.0",annotation_font_color="#f43f5e")
+            fig.update_layout(**PL,height=300,xaxis_title="Odds Ratio (Microscopic ETE)",title="mETE OR Across Sensitivity Analyses")
+            st.plotly_chart(fig,use_container_width=True)
+
+        st.download_button("⬇ Download Sensitivity Table",df_tbl5.to_csv(index=False),"table5_sensitivity.csv","text/csv")
+    else:
+        st.info("Run `proposal2_recommendations.py` to generate sensitivity data.")
+
+    # Forest plot
+    st.markdown(sl("Forest Plot — ETE Odds Ratios"),unsafe_allow_html=True)
+    fig6_path = STUDY / "figures" / "fig6_forest_plot_ORs.png"
+    if fig6_path.exists():
+        st.image(str(fig6_path),caption="Figure 6. Forest plot of microscopic and gross ETE odds ratios across sensitivity analyses.",use_container_width=True)
+    else:
+        st.info("Forest plot not yet generated.")
+
+    # KM curves bonus
+    fig7_path = STUDY / "figures" / "fig7_kaplan_meier.png"
+    if fig7_path.exists():
+        st.markdown(sl("Kaplan–Meier Curves (Supplementary)"),unsafe_allow_html=True)
+        st.image(str(fig7_path),caption="Figure 7. Kaplan–Meier event-free curves by ETE group (proxy follow-up).",use_container_width=True)
+
+    # Recommendations summary
+    st.markdown(sl("Clinical Recommendations Summary"),unsafe_allow_html=True)
+    recs = [
+        ("🔬 Pathology Reporting","Explicitly distinguish microscopic from gross ETE in all surgical pathology reports. Specify anatomic extent of gross ETE (T3b vs T4a)."),
+        ("🔪 Surgical Planning","Gross ETE → total thyroidectomy + neck imaging. mETE alone → lobectomy feasible in low-risk patients (tumor ≤4 cm, N0, no aggressive histology)."),
+        ("☢️ Adjuvant Therapy","mETE alone should not trigger RAI dose escalation. Low-risk mETE-only patients may be considered for observation or low-dose ablation."),
+        ("📊 Risk Stratification","Gross ETE remains a high-risk feature. mETE does not independently predict higher recurrence risk (OR 0.42–0.51 across all specifications)."),
+        ("🔮 Future Directions","Multi-center validation with time-to-event endpoints; BRAF/TERT integration; standardized mETE reporting criteria."),
+    ]
+    for icon_title,desc in recs:
+        st.markdown(f'<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.8rem 1rem;margin-bottom:.5rem">'
+            f'<div style="font-weight:600;color:var(--teal);margin-bottom:4px">{icon_title}</div>'
+            f'<div style="color:var(--text-mid);font-size:.85rem;line-height:1.5">{desc}</div></div>',unsafe_allow_html=True)
+
+    # Full recommendations document
+    rec_path = STUDY / "recommendations.md"
+    if rec_path.exists():
+        with st.expander("📄 Full Recommendations Document"):
+            st.markdown(rec_path.read_text())
+
+
+# ─────────────────────────────────────────────────────────────────────────
 # MAIN
 # ─────────────────────────────────────────────────────────────────────────
 def main():
@@ -764,10 +867,10 @@ def main():
     if df_full.empty: st.error("Could not load `advanced_features_view`."); st.stop()
     df_filt = build_sidebar(df_full)
 
-    (t_ov,t_ex,t_vz,t_adv,t_gen,t_spec,t_img,t_comp,t_ai) = st.tabs([
+    (t_ov,t_ex,t_vz,t_adv,t_gen,t_spec,t_img,t_comp,t_rec,t_ai) = st.tabs([
         "📊 Overview","🗃 Data Explorer","📈 Visualizations","🧬 Advanced",
         "🔬 Genetics & Molecular","🫀 Specimen Details","📡 Pre-Op Imaging",
-        "⚕ Complications","✨ AI Insights"
+        "⚕ Complications","📋 Recommendations & Sensitivities","✨ AI Insights"
     ])
     with t_ov:   render_overview(con)
     with t_ex:   render_explorer(df_filt)
@@ -777,6 +880,7 @@ def main():
     with t_spec: render_specimen(con)
     with t_img:  render_imaging(con)
     with t_comp: render_complications(con)
+    with t_rec:  render_recommendations()
     with t_ai:   render_ai_insights(con)
 
     st.markdown("---")

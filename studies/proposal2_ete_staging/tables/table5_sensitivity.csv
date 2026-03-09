@@ -1,0 +1,31 @@
+Subgroup,Variable,OR,95% CI,p-value,N
+Primary (complete case),ete_micro,0.42,(0.28–0.64),<0.001,593
+Primary (complete case),ete_gross,340.72,(114.21–1016.43),<0.001,593
+Primary (complete case),age_at_surgery,1.05,(1.03–1.06),<0.001,593
+Primary (complete case),female,0.95,(0.61–1.49),0.835,593
+Primary (complete case),largest_tumor_cm,0.99,(0.91–1.07),0.760,593
+Primary (complete case),ln_ratio,2.65,(1.75–4.01),<0.001,593
+Multiple Imputation (m=20),ete_micro,0.51,(0.34–0.76),<0.001,596
+Multiple Imputation (m=20),ete_gross,401.01,(133.13–1207.92),<0.001,596
+Multiple Imputation (m=20),age_at_surgery,1.05,(1.03–1.06),<0.001,596
+Multiple Imputation (m=20),female,0.95,(0.61–1.48),0.814,596
+Multiple Imputation (m=20),largest_tumor_cm,0.98,(0.90–1.07),0.715,596
+Multiple Imputation (m=20),ln_ratio,2.84,(1.74–4.64),<0.001,596
+Age ≥ 55 years,ete_micro,0.68,(0.34–1.35),0.265,249
+Age ≥ 55 years,ete_gross,693.18,(133.55–3597.76),<0.001,249
+Age ≥ 55 years,age_at_surgery,1.02,(0.97–1.06),0.447,249
+Age ≥ 55 years,female,0.79,(0.39–1.60),0.519,249
+Age ≥ 55 years,largest_tumor_cm,1.13,(0.98–1.30),0.081,249
+Age ≥ 55 years,ln_ratio,10.66,(4.87–23.32),<0.001,249
+Tumor ≤ 4 cm,ete_micro,0.34,(0.21–0.55),<0.001,448
+Tumor ≤ 4 cm,ete_gross,329.68,(75.37–1442.10),<0.001,448
+Tumor ≤ 4 cm,age_at_surgery,1.03,(1.02–1.05),<0.001,448
+Tumor ≤ 4 cm,female,1.12,(0.65–1.93),0.675,448
+Tumor ≤ 4 cm,largest_tumor_cm,1.23,(1.00–1.51),0.049,448
+Tumor ≤ 4 cm,ln_ratio,4.29,(2.60–7.09),<0.001,448
+Age < 55 years,ete_micro,0.24,(0.13–0.46),<0.001,344
+Age < 55 years,ete_gross,164.39,(37.73–716.27),<0.001,344
+Age < 55 years,age_at_surgery,0.99,(0.96–1.02),0.419,344
+Age < 55 years,female,1.18,(0.55–2.52),0.669,344
+Age < 55 years,largest_tumor_cm,0.90,(0.77–1.05),0.190,344
+Age < 55 years,ln_ratio,1.46,(0.80–2.68),0.216,344
