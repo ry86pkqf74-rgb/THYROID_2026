@@ -27,6 +27,7 @@ import sys
 from pathlib import Path
 
 import duckdb
+import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 PROCESSED = ROOT / "processed"
@@ -849,6 +850,212 @@ def build_all(con: duckdb.DuckDBPyConnection) -> None:
             print(f"  WARN: {name} skipped — {e}")
 
 
+def enrich_from_v2_extractors(con: duckdb.DuckDBPyConnection) -> None:
+    """Run V2 extractors on clinical notes and enrich canonical tables.
+
+    Fills in fields that are NULL/hardcoded in the structured-source SQL
+    (e.g. scan_findings_raw, stimulated_tg, rln_monitoring_flag) with
+    values parsed from free-text clinical notes by the V2 extractors.
+    """
+    section("V2 Extractor Enrichment")
+
+    if not table_available(con, "clinical_notes_long"):
+        print("  SKIP: clinical_notes_long not available")
+        return
+
+    from notes_extraction.extract_rai_v2 import RAIDetailExtractor
+    from notes_extraction.extract_operative_v2 import OperativeDetailExtractor
+
+    notes_df = con.execute(
+        "SELECT note_row_id, CAST(research_id AS INTEGER) AS research_id, "
+        "note_type, note_text, note_date "
+        "FROM clinical_notes_long "
+        "WHERE note_text IS NOT NULL AND LENGTH(note_text) > 10"
+    ).fetchdf()
+    print(f"  Loaded {len(notes_df):,} clinical notes for V2 extraction")
+
+    rai_ext = RAIDetailExtractor()
+    op_ext = OperativeDetailExtractor()
+    rai_results: list[dict] = []
+    op_results: list[dict] = []
+
+    for _, row in notes_df.iterrows():
+        rid = row["research_id"]
+        nrid = str(row["note_row_id"])
+        ntype = str(row["note_type"] or "")
+        ntext = str(row["note_text"] or "")
+        ndate = str(row["note_date"]) if pd.notna(row["note_date"]) else None
+
+        for em in rai_ext.extract(nrid, rid, ntype, ntext, ndate):
+            rai_results.append(em.to_dict())
+        for em in op_ext.extract(nrid, rid, ntype, ntext, ndate):
+            op_results.append(em.to_dict())
+
+    print(f"  RAI extractor: {len(rai_results):,} entities extracted")
+    print(f"  Operative extractor: {len(op_results):,} entities extracted")
+
+    # ── RAI enrichment ──────────────────────────────────────────────
+    if rai_results:
+        rai_df = pd.DataFrame(rai_results)
+        con.register("_rai_v2_raw", rai_df)
+        con.execute("""
+            CREATE OR REPLACE TABLE _v2_rai_enrichment AS
+            SELECT
+                CAST(research_id AS INTEGER) AS research_id,
+                note_date,
+                STRING_AGG(DISTINCT CASE WHEN entity_type = 'rai_scan_finding'
+                    AND present_or_negated = 'present'
+                    THEN entity_value_norm END, '; ') AS scan_findings_raw,
+                BOOL_OR(entity_type = 'rai_avidity'
+                    AND present_or_negated = 'present'
+                    AND entity_value_norm = 'avid') AS iodine_avidity_flag,
+                MAX(CASE WHEN entity_type = 'rai_stimulated_tg'
+                    AND present_or_negated = 'present'
+                    THEN TRY_CAST(
+                        regexp_extract(entity_value_norm, '([0-9.]+)', 1)
+                        AS DOUBLE) END) AS stimulated_tg,
+                MAX(CASE WHEN entity_type = 'rai_stimulated_tsh'
+                    AND present_or_negated = 'present'
+                    THEN TRY_CAST(
+                        regexp_extract(entity_value_norm, '([0-9.]+)', 1)
+                        AS DOUBLE) END) AS stimulated_tsh,
+                BOOL_OR(entity_type = 'rai_pre_scan'
+                    AND present_or_negated = 'present') AS pre_scan_flag,
+                BOOL_OR(entity_type = 'rai_post_scan'
+                    AND present_or_negated = 'present') AS post_scan_flag
+            FROM _rai_v2_raw
+            GROUP BY CAST(research_id AS INTEGER), note_date
+        """)
+        con.unregister("_rai_v2_raw")
+
+        con.execute("""
+            UPDATE rai_treatment_episode_v2 r
+            SET scan_findings_raw = e.scan_findings_raw,
+                iodine_avidity_flag = COALESCE(e.iodine_avidity_flag, r.iodine_avidity_flag),
+                stimulated_tg = COALESCE(e.stimulated_tg, r.stimulated_tg),
+                stimulated_tsh = COALESCE(e.stimulated_tsh, r.stimulated_tsh),
+                pre_scan_flag = COALESCE(e.pre_scan_flag, r.pre_scan_flag),
+                post_therapy_scan_flag = COALESCE(e.post_scan_flag, r.post_therapy_scan_flag)
+            FROM (
+                SELECT DISTINCT ON (r2.research_id, r2.rai_episode_id)
+                    r2.research_id, r2.rai_episode_id, e2.*
+                FROM rai_treatment_episode_v2 r2
+                CROSS JOIN _v2_rai_enrichment e2
+                WHERE r2.research_id = e2.research_id
+                  AND (e2.scan_findings_raw IS NOT NULL
+                       OR e2.iodine_avidity_flag
+                       OR e2.stimulated_tg IS NOT NULL
+                       OR e2.stimulated_tsh IS NOT NULL)
+                ORDER BY r2.research_id, r2.rai_episode_id,
+                         ABS(DATEDIFF('day',
+                             COALESCE(r2.resolved_rai_date, DATE '2099-01-01'),
+                             COALESCE(TRY_CAST(e2.note_date AS DATE), DATE '2099-01-01')))
+            ) e
+            WHERE r.research_id = e.research_id
+              AND r.rai_episode_id = e.rai_episode_id
+        """)
+        rai_enriched = con.execute(
+            "SELECT COUNT(*) FROM rai_treatment_episode_v2 "
+            "WHERE scan_findings_raw IS NOT NULL "
+            "   OR iodine_avidity_flag "
+            "   OR stimulated_tg IS NOT NULL"
+        ).fetchone()[0]
+        print(f"  RAI enrichment applied: {rai_enriched:,} episodes now have extractor data")
+
+    # ── Operative enrichment ────────────────────────────────────────
+    if op_results:
+        op_df = pd.DataFrame(op_results)
+        con.register("_op_v2_raw", op_df)
+        con.execute("""
+            CREATE OR REPLACE TABLE _v2_operative_enrichment AS
+            SELECT
+                CAST(research_id AS INTEGER) AS research_id,
+                note_date,
+                BOOL_OR(entity_type = 'nerve_monitoring'
+                    AND present_or_negated = 'present') AS rln_monitoring_flag,
+                MAX(CASE WHEN entity_type = 'rln_finding'
+                    AND present_or_negated = 'present'
+                    THEN entity_value_norm END) AS rln_finding_raw,
+                BOOL_OR(entity_type = 'parathyroid_autograft'
+                    AND present_or_negated = 'present') AS parathyroid_autograft_flag,
+                BOOL_OR(entity_type = 'gross_invasion'
+                    AND present_or_negated = 'present'
+                    AND entity_value_norm IN ('gross_ete', 'ete_present')
+                ) AS gross_ete_flag,
+                BOOL_OR(entity_type = 'gross_invasion'
+                    AND present_or_negated = 'present') AS local_invasion_flag,
+                BOOL_OR(entity_type = 'tracheal_involvement'
+                    AND present_or_negated = 'present'
+                    AND entity_value_norm != 'trachea_intact'
+                ) AS tracheal_involvement_flag,
+                BOOL_OR(entity_type = 'esophageal_involvement'
+                    AND present_or_negated = 'present'
+                    AND entity_value_norm != 'esophagus_intact'
+                ) AS esophageal_involvement_flag,
+                BOOL_OR(entity_type = 'strap_muscle'
+                    AND present_or_negated = 'present'
+                    AND entity_value_norm IN ('strap_resected', 'strap_invaded')
+                ) AS strap_muscle_involvement_flag,
+                BOOL_OR(entity_type = 'reoperative_field'
+                    AND present_or_negated = 'present') AS reoperative_field_flag,
+                BOOL_OR(entity_type = 'drain_placement'
+                    AND present_or_negated = 'present'
+                    AND entity_value_norm != 'no_drain') AS drain_flag,
+                STRING_AGG(DISTINCT CASE WHEN entity_type IN (
+                        'gross_invasion', 'rln_finding', 'tracheal_involvement',
+                        'esophageal_involvement', 'strap_muscle', 'intraop_complication')
+                    AND present_or_negated = 'present'
+                    THEN entity_value_norm END, '; ') AS operative_findings_raw
+            FROM _op_v2_raw
+            GROUP BY CAST(research_id AS INTEGER), note_date
+        """)
+        con.unregister("_op_v2_raw")
+
+        con.execute("""
+            UPDATE operative_episode_detail_v2 o
+            SET rln_monitoring_flag = COALESCE(e.rln_monitoring_flag, o.rln_monitoring_flag),
+                rln_finding_raw = COALESCE(e.rln_finding_raw, o.rln_finding_raw),
+                parathyroid_autograft_flag = COALESCE(e.parathyroid_autograft_flag, o.parathyroid_autograft_flag),
+                gross_ete_flag = COALESCE(e.gross_ete_flag, o.gross_ete_flag),
+                local_invasion_flag = COALESCE(e.local_invasion_flag, o.local_invasion_flag),
+                tracheal_involvement_flag = COALESCE(e.tracheal_involvement_flag, o.tracheal_involvement_flag),
+                esophageal_involvement_flag = COALESCE(e.esophageal_involvement_flag, o.esophageal_involvement_flag),
+                strap_muscle_involvement_flag = COALESCE(e.strap_muscle_involvement_flag, o.strap_muscle_involvement_flag),
+                reoperative_field_flag = COALESCE(e.reoperative_field_flag, o.reoperative_field_flag),
+                drain_flag = COALESCE(e.drain_flag, o.drain_flag),
+                operative_findings_raw = COALESCE(e.operative_findings_raw, o.operative_findings_raw)
+            FROM (
+                SELECT DISTINCT ON (o2.research_id, o2.surgery_episode_id)
+                    o2.research_id, o2.surgery_episode_id, e2.*
+                FROM operative_episode_detail_v2 o2
+                CROSS JOIN _v2_operative_enrichment e2
+                WHERE o2.research_id = e2.research_id
+                  AND (e2.rln_monitoring_flag
+                       OR e2.rln_finding_raw IS NOT NULL
+                       OR e2.operative_findings_raw IS NOT NULL)
+                ORDER BY o2.research_id, o2.surgery_episode_id,
+                         ABS(DATEDIFF('day',
+                             COALESCE(o2.surgery_date_native, DATE '2099-01-01'),
+                             COALESCE(TRY_CAST(e2.note_date AS DATE), DATE '2099-01-01')))
+            ) e
+            WHERE o.research_id = e.research_id
+              AND o.surgery_episode_id = e.surgery_episode_id
+        """)
+        op_enriched = con.execute(
+            "SELECT COUNT(*) FROM operative_episode_detail_v2 "
+            "WHERE rln_monitoring_flag "
+            "   OR rln_finding_raw IS NOT NULL "
+            "   OR operative_findings_raw IS NOT NULL"
+        ).fetchone()[0]
+        print(f"  Operative enrichment applied: {op_enriched:,} episodes now have extractor data")
+
+    for tbl in ["_v2_rai_enrichment", "_v2_operative_enrichment"]:
+        try:
+            con.execute(f"DROP TABLE IF EXISTS {tbl}")
+        except Exception:
+            pass
+
+
 def write_sql_file() -> None:
     """Write combined SQL to disk for MotherDuck deployment."""
     parts: list[str] = []
@@ -883,6 +1090,7 @@ def main() -> None:
 
     register_parquets(con)
     build_all(con)
+    enrich_from_v2_extractors(con)
     write_sql_file()
 
     section("Summary — Row counts")

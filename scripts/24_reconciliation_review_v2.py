@@ -250,6 +250,14 @@ tumor AS (
     FROM tumor_episode_master_v2
     WHERE tumor_size_cm IS NOT NULL
 ),
+surgery_windows AS (
+    SELECT research_id, surgery_episode_id, surgery_date_native,
+           LAG(surgery_date_native) OVER (
+               PARTITION BY research_id ORDER BY surgery_date_native
+           ) AS prev_surgery_date
+    FROM operative_episode_detail_v2
+    WHERE surgery_date_native IS NOT NULL
+),
 compared AS (
     SELECT
         img.research_id,
@@ -278,6 +286,14 @@ compared AS (
         ABS(img.img_size - tumor.path_size) AS size_diff_cm
     FROM img
     JOIN tumor ON img.research_id = tumor.research_id
+    LEFT JOIN surgery_windows sw
+        ON tumor.research_id = sw.research_id
+        AND tumor.surgery_episode_id = sw.surgery_episode_id
+    WHERE img.exam_date_native IS NOT NULL
+      AND tumor.surgery_date IS NOT NULL
+      AND img.exam_date_native <= tumor.surgery_date
+      AND (sw.prev_surgery_date IS NULL
+           OR img.exam_date_native > sw.prev_surgery_date)
 )
 SELECT
     c.*,

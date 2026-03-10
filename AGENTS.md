@@ -103,4 +103,10 @@
 - Publication tag: `v2026.03.10-publication-ready` on HEAD of `main`
 - Dashboard Overview tab includes date rescue rate KPI chart from `date_rescue_rate_summary` (overall rate, rescued count, avg confidence + per-domain horizontal bar)
 - `studies/proposal2_ete_staging/README.md` documents analysis scripts, data source (`risk_enriched_mv`), and key outputs
+- Script 22 now runs RAI and Operative V2 extractors inline after canonical table build, enriching `rai_treatment_episode_v2` (scan_findings_raw, iodine_avidity_flag, stimulated_tg/tsh, pre/post scan flags) and `operative_episode_detail_v2` (rln_monitoring_flag, rln_finding_raw, parathyroid/ete/tracheal/esophageal/strap/reoperative/drain flags, operative_findings_raw)
+- Script 23 enforces FNA-before-molecular chronology (weak tier: -7 to 180 days) and preop-before-surgery chronology (weak tier: -7 to 365 days); previously used ABS() allowing reverse-order linkage
+- Script 24 imaging-pathology concordance now uses surgery-aware temporal windows: imaging must precede surgery and fall after previous surgery for multi-surgery patients
+- Script 26 materializes 47 tables (up from 20): adds 5 granular linkage tables, 6 P0 Streamlit-critical views, 10 P1 upstream/adjudication views, 5 manual review queues, and date_rescue_rate_summary
+- Script 28 now supports `--md` flag for MotherDuck reads
+- Script 29 (`29_validation_runner.py`): combined validation + review-export runner; validates 14 views, exports review queues across 6 domains, prints reconciliation gap summary; supports `--md` and `--skip-export`
 - Next phase: analytic modeling or manuscript drafting

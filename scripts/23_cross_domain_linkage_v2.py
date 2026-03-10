@@ -152,10 +152,11 @@ candidates AS (
         CASE
             WHEN fna.fna_date_native = mol.test_date_native THEN 'exact_match'
             WHEN ABS(DATEDIFF('day', fna.fna_date_native, mol.test_date_native)) <= 14
+                 AND DATEDIFF('day', fna.fna_date_native, mol.test_date_native) >= -7
                  THEN 'high_confidence'
             WHEN DATEDIFF('day', fna.fna_date_native, mol.test_date_native) BETWEEN 0 AND 90
                  THEN 'plausible'
-            WHEN ABS(DATEDIFF('day', fna.fna_date_native, mol.test_date_native)) <= 180
+            WHEN DATEDIFF('day', fna.fna_date_native, mol.test_date_native) BETWEEN -7 AND 180
                  THEN 'weak'
             ELSE 'unlinked'
         END AS linkage_confidence
@@ -219,7 +220,7 @@ candidates AS (
                  THEN 'high_confidence'
             WHEN DATEDIFF('day', preop.preop_date, surg.surgery_date_native) BETWEEN 0 AND 180
                  THEN 'plausible'
-            WHEN ABS(DATEDIFF('day', preop.preop_date, surg.surgery_date_native)) <= 365
+            WHEN DATEDIFF('day', preop.preop_date, surg.surgery_date_native) BETWEEN -7 AND 365
                  THEN 'weak'
             ELSE 'unlinked'
         END AS linkage_confidence

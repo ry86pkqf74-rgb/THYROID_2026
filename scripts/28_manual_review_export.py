@@ -59,14 +59,32 @@ def main() -> None:
         "--priority-min", type=int, default=0,
         help="Only export rows with priority_score >= this value (default: 0 = all)",
     )
+    parser.add_argument(
+        "--md", action="store_true",
+        help="Read from MotherDuck instead of local DuckDB",
+    )
     args = parser.parse_args()
 
     ts = datetime.now(tz=timezone.utc).strftime("%Y%m%d_%H%M")
     out_dir = EXPORT_DIR / f"manual_review_{ts}"
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    con = duckdb.connect(str(DB_PATH), read_only=True)
-    print(f"Source: {DB_PATH}")
+    if args.md:
+        try:
+            sys.path.insert(0, str(ROOT))
+            from motherduck_client import MotherDuckClient, MotherDuckConfig
+            cfg = MotherDuckConfig(database="thyroid_research_2026")
+            client = MotherDuckClient(cfg)
+            con = client.connect_rw()
+            print("Source: MotherDuck (RW)")
+        except Exception as e:
+            print(f"MotherDuck unavailable: {e}")
+            print("Falling back to local DuckDB")
+            con = duckdb.connect(str(DB_PATH), read_only=True)
+            print(f"Source: {DB_PATH}")
+    else:
+        con = duckdb.connect(str(DB_PATH), read_only=True)
+        print(f"Source: {DB_PATH}")
     print(f"Output: {out_dir}")
     if args.priority_min > 0:
         print(f"Filter: priority_score >= {args.priority_min}")
