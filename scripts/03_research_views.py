@@ -476,6 +476,33 @@ def main() -> None:
     )
     print(f"{'advanced_features_view (alias)':35s} ✓")
 
+    # Clean genetics view: adds normalized test_platform + result_category columns
+    # derived from the raw Excel-flattened columns ingested by script 07.
+    # genetic_testing may not exist yet on a fresh local DB, so guard gracefully.
+    try:
+        con.execute("""
+            CREATE OR REPLACE VIEW genetic_testing_clean AS
+            SELECT
+                *,
+                COALESCE(
+                    "Genetic Test Performed_1",
+                    "Thyroseq/Afirma_1",
+                    "Thyroseq/Afirma_2",
+                    "Thyroseq/Afirma_3",
+                    'Unknown'
+                ) AS test_platform,
+                COALESCE(
+                    "Detailed findings_1",
+                    "Detailed findings_3",
+                    "Genetic_test_2",
+                    'Unknown'
+                ) AS result_category
+            FROM genetic_testing;
+        """)
+        print(f"{'genetic_testing_clean (view)':35s} ✓")
+    except Exception as exc:
+        print(f"{'genetic_testing_clean':35s} skipped ({exc})")
+
     print("-" * 72)
     print("Validation snapshot (9 views)")
     for name in creation_order:

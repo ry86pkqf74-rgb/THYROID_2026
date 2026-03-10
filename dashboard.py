@@ -594,43 +594,80 @@ def render_genetics(con):
         st.dataframe(exp,use_container_width=True,hide_index=True)
         return
 
+    # Debug expander — shows real column names and qualified table ref (remove after fix confirmed)
+    with st.expander("🔍 Genetics Debug (remove after fix)"):
+        _gt_cols = [row[0] for row in con.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'genetic_testing'").fetchall()]
+        st.write("Actual columns in genetic_testing:", _gt_cols)
+        st.write("Using qual():", qual("genetic_testing"))
+
+    table = qual("genetic_testing")
+
     st.markdown(sl("Testing Platform & Result Category"),unsafe_allow_html=True)
     c1,c2 = st.columns(2)
     with c1:
-        df_plat = sqdf(con,"SELECT COALESCE(test_platform,'Unknown') AS platform,COUNT(*) AS n FROM genetic_testing GROUP BY 1 ORDER BY n DESC")
-        if not df_plat.empty:
-            fig = px.pie(df_plat,names="platform",values="n",hole=0.5,color_discrete_sequence=["#2dd4bf","#38bdf8","#a78bfa","#f59e0b","#f43f5e"])
-            fig.update_traces(textinfo="label+percent",marker=dict(line=dict(color="#07090f",width=2)))
-            fig.update_layout(**PL,showlegend=False,height=300,title="Platform")
-            st.plotly_chart(fig,use_container_width=True)
+        try:
+            # Use actual raw Excel columns; fall back to test_platform if the clean view exists
+            df_plat = sqdf(con, f"""
+                SELECT COALESCE(
+                    "Genetic Test Performed_1",
+                    "Thyroseq/Afirma_1",
+                    "Thyroseq/Afirma_2",
+                    "Thyroseq/Afirma_3",
+                    'Unknown'
+                ) AS platform, COUNT(*) AS n
+                FROM {table}
+                GROUP BY 1 ORDER BY n DESC
+            """)
+            if not df_plat.empty:
+                fig = px.pie(df_plat,names="platform",values="n",hole=0.5,color_discrete_sequence=["#2dd4bf","#38bdf8","#a78bfa","#f59e0b","#f43f5e"])
+                fig.update_traces(textinfo="label+percent",marker=dict(line=dict(color="#07090f",width=2)))
+                fig.update_layout(**PL,showlegend=False,height=300,title="Platform")
+                st.plotly_chart(fig,use_container_width=True)
+        except Exception:
+            st.warning("Genetics platform data not yet standardized")
+            st.info("Raw columns are being used as fallback.")
     with c2:
-        df_res = sqdf(con,"SELECT COALESCE(result_category,'Unknown') AS result,COUNT(*) AS n FROM genetic_testing GROUP BY 1 ORDER BY n DESC")
-        if not df_res.empty:
-            rc = {"benign":"#34d399","suspicious":"#f59e0b","positive":"#f43f5e","indeterminate":"#a78bfa","other":"#8892a4"}
-            fig = go.Figure(go.Pie(labels=df_res["result"],values=df_res["n"],hole=0.55,
-                marker=dict(colors=[rc.get(str(r).lower(),"#8892a4") for r in df_res["result"]],line=dict(color="#07090f",width=3)),textinfo="label+percent"))
-            fig.update_layout(**PL,showlegend=False,height=300,title="Result Category")
-            st.plotly_chart(fig,use_container_width=True)
+        try:
+            df_res = sqdf(con, f"""
+                SELECT COALESCE(
+                    "Detailed findings_1",
+                    "Detailed findings_3",
+                    "Genetic_test_2",
+                    'Unknown'
+                ) AS result, COUNT(*) AS n
+                FROM {table}
+                GROUP BY 1 ORDER BY n DESC
+            """)
+            if not df_res.empty:
+                rc = {"benign":"#34d399","suspicious":"#f59e0b","positive":"#f43f5e","indeterminate":"#a78bfa","other":"#8892a4"}
+                fig = go.Figure(go.Pie(labels=df_res["result"],values=df_res["n"],hole=0.55,
+                    marker=dict(colors=[rc.get(str(r).lower(),"#8892a4") for r in df_res["result"]],line=dict(color="#07090f",width=3)),textinfo="label+percent"))
+                fig.update_layout(**PL,showlegend=False,height=300,title="Result Category")
+                st.plotly_chart(fig,use_container_width=True)
+        except Exception:
+            st.warning("Genetics result data not yet standardized")
+            st.info("Raw columns are being used as fallback.")
 
+    view_table = qual("genetic_testing_summary_view")
     if has_view:
         st.markdown(sl("Per-Gene Mutation / Fusion Prevalence"),unsafe_allow_html=True)
-        gene_sql = """
+        gene_sql = f"""
         SELECT gene,SUM(pos) AS n_positive,COUNT(*) AS total,ROUND(100.0*SUM(pos)/NULLIF(COUNT(*),0),1) AS pct
         FROM (
-          SELECT 'BRAF V600E' AS gene,CASE WHEN braf_v600e THEN 1 ELSE 0 END AS pos FROM genetic_testing_summary_view UNION ALL
-          SELECT 'BRAF Other',CASE WHEN braf_other THEN 1 ELSE 0 END FROM genetic_testing_summary_view UNION ALL
-          SELECT 'NRAS',CASE WHEN nras THEN 1 ELSE 0 END FROM genetic_testing_summary_view UNION ALL
-          SELECT 'HRAS',CASE WHEN hras THEN 1 ELSE 0 END FROM genetic_testing_summary_view UNION ALL
-          SELECT 'KRAS',CASE WHEN kras THEN 1 ELSE 0 END FROM genetic_testing_summary_view UNION ALL
-          SELECT 'RET/PTC1',CASE WHEN ret_ptc1 THEN 1 ELSE 0 END FROM genetic_testing_summary_view UNION ALL
-          SELECT 'RET/PTC3',CASE WHEN ret_ptc3 THEN 1 ELSE 0 END FROM genetic_testing_summary_view UNION ALL
-          SELECT 'PAX8-PPARG',CASE WHEN pax8_pparg THEN 1 ELSE 0 END FROM genetic_testing_summary_view UNION ALL
-          SELECT 'TERT Promoter',CASE WHEN tert_promoter THEN 1 ELSE 0 END FROM genetic_testing_summary_view UNION ALL
-          SELECT 'NTRK',CASE WHEN ntrk_any THEN 1 ELSE 0 END FROM genetic_testing_summary_view UNION ALL
-          SELECT 'ALK Fusion',CASE WHEN alk_fusion THEN 1 ELSE 0 END FROM genetic_testing_summary_view UNION ALL
-          SELECT 'DICER1',CASE WHEN dicer1 THEN 1 ELSE 0 END FROM genetic_testing_summary_view UNION ALL
-          SELECT 'PTEN',CASE WHEN pten THEN 1 ELSE 0 END FROM genetic_testing_summary_view UNION ALL
-          SELECT 'TP53',CASE WHEN tp53 THEN 1 ELSE 0 END FROM genetic_testing_summary_view
+          SELECT 'BRAF V600E' AS gene,CASE WHEN braf_v600e THEN 1 ELSE 0 END AS pos FROM {view_table} UNION ALL
+          SELECT 'BRAF Other',CASE WHEN braf_other THEN 1 ELSE 0 END FROM {view_table} UNION ALL
+          SELECT 'NRAS',CASE WHEN nras THEN 1 ELSE 0 END FROM {view_table} UNION ALL
+          SELECT 'HRAS',CASE WHEN hras THEN 1 ELSE 0 END FROM {view_table} UNION ALL
+          SELECT 'KRAS',CASE WHEN kras THEN 1 ELSE 0 END FROM {view_table} UNION ALL
+          SELECT 'RET/PTC1',CASE WHEN ret_ptc1 THEN 1 ELSE 0 END FROM {view_table} UNION ALL
+          SELECT 'RET/PTC3',CASE WHEN ret_ptc3 THEN 1 ELSE 0 END FROM {view_table} UNION ALL
+          SELECT 'PAX8-PPARG',CASE WHEN pax8_pparg THEN 1 ELSE 0 END FROM {view_table} UNION ALL
+          SELECT 'TERT Promoter',CASE WHEN tert_promoter THEN 1 ELSE 0 END FROM {view_table} UNION ALL
+          SELECT 'NTRK',CASE WHEN ntrk_any THEN 1 ELSE 0 END FROM {view_table} UNION ALL
+          SELECT 'ALK Fusion',CASE WHEN alk_fusion THEN 1 ELSE 0 END FROM {view_table} UNION ALL
+          SELECT 'DICER1',CASE WHEN dicer1 THEN 1 ELSE 0 END FROM {view_table} UNION ALL
+          SELECT 'PTEN',CASE WHEN pten THEN 1 ELSE 0 END FROM {view_table} UNION ALL
+          SELECT 'TP53',CASE WHEN tp53 THEN 1 ELSE 0 END FROM {view_table}
         ) GROUP BY gene HAVING SUM(pos)>0 ORDER BY n_positive DESC"""
         df_genes = sqdf(con,gene_sql)
         if not df_genes.empty:
@@ -640,7 +677,7 @@ def render_genetics(con):
             st.plotly_chart(fig,use_container_width=True)
 
         st.markdown(sl("Molecular Concordance with Final Pathology"),unsafe_allow_html=True)
-        df_conc = sqdf(con,"SELECT molecular_concordance_class AS cls,COUNT(*) AS n FROM genetic_testing_summary_view WHERE molecular_concordance_class IS NOT NULL GROUP BY 1")
+        df_conc = sqdf(con,f"SELECT molecular_concordance_class AS cls,COUNT(*) AS n FROM {view_table} WHERE molecular_concordance_class IS NOT NULL GROUP BY 1")
         if not df_conc.empty:
             cc = {"TP":"#34d399","TN":"#2dd4bf","FP":"#f59e0b","FN":"#f43f5e"}
             c1,c2 = st.columns(2)
@@ -658,7 +695,7 @@ def render_genetics(con):
                         st.markdown("<div style='height:6px'></div>",unsafe_allow_html=True)
 
     with st.expander("🗃 Browse genetic testing records"):
-        df_raw = sqdf(con,"SELECT * FROM genetic_testing LIMIT 500")
+        df_raw = sqdf(con,f"SELECT * FROM {table} LIMIT 500")
         if not df_raw.empty:
             st.dataframe(df_raw,use_container_width=True,height=340)
             st.download_button("⬇ Download CSV",df_raw.to_csv(index=False),"genetic_testing.csv","text/csv")
