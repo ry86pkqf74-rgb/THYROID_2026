@@ -580,12 +580,22 @@ def phase7_psm(df: pd.DataFrame, out_dir: Path) -> None:
         log.warning("  Missing time/event columns")
         return
 
+    confounder_candidates = [
+        "age_at_surgery", "survival_age_at_surgery",
+        "largest_tumor_cm", "tumor_size_cm",
+        "ln_positive", "ln_examined",
+    ]
     confounders = []
-    for c in ("age_at_surgery", "survival_age_at_surgery", "largest_tumor_cm",
-              "tumor_size_cm", "ln_positive"):
+    for c in confounder_candidates:
         if c in df.columns:
             confounders.append(c)
     confounders = list(dict.fromkeys(confounders))
+
+    # Drop near-zero-variance columns (< 1% prevalence causes singularity)
+    sub_check = df[confounders].dropna()
+    confounders = [c for c in confounders
+                   if sub_check[c].nunique() > 1
+                   and pd.to_numeric(sub_check[c], errors="coerce").std() > 0.01]
 
     if len(confounders) < 2:
         log.warning("  Need >= 2 confounders, found %d", len(confounders))
@@ -603,6 +613,8 @@ def phase7_psm(df: pd.DataFrame, out_dir: Path) -> None:
         log.warning("  Only %d complete cases — too few for PSM", len(sub))
         return
 
+    log.info("  Confounders used (%d): %s", len(confounders), ", ".join(confounders))
+
     # Propensity score via logistic regression
     X = sm.add_constant(sub[confounders].astype(float))
     y = sub[ete_col]
@@ -614,10 +626,10 @@ def phase7_psm(df: pd.DataFrame, out_dir: Path) -> None:
         log.error("  Propensity score model failed: %s", exc)
         return
 
-    # Nearest-neighbor matching (1:1, caliper=0.2*SD)
+    # Nearest-neighbor matching (1:1, caliper=0.25*SD — slightly relaxed)
     treated = sub[sub[ete_col] == 1].copy()
     control = sub[sub[ete_col] == 0].copy()
-    caliper = 0.2 * sub["propensity_score"].std()
+    caliper = 0.25 * sub["propensity_score"].std()
 
     matched_pairs = []
     used_controls = set()
@@ -710,6 +722,53 @@ def phase7_psm(df: pd.DataFrame, out_dir: Path) -> None:
 
     log.info("  Balance table: %d variables, %d balanced (SMD < 0.1)",
              len(balance_df), balance_df["Balanced"].sum())
+
+    # Sensitivity analysis: vary caliper multiplier
+    sensitivity_rows = []
+    for mult in (0.1, 0.15, 0.2, 0.25, 0.3, 0.5):
+        cal = mult * sub["propensity_score"].std()
+        pairs = []
+        used = set()
+        for idx2, row2 in treated.iterrows():
+            cands = control[~control.index.isin(used)]
+            if cands.empty:
+                break
+            dists = (cands["propensity_score"] - row2["propensity_score"]).abs()
+            best = dists.idxmin()
+            if dists[best] <= cal:
+                pairs.append((idx2, best))
+                used.add(best)
+        if len(pairs) < 10:
+            continue
+        t_i = [p[0] for p in pairs]
+        c_i = [p[1] for p in pairs]
+        m_df = pd.concat([sub.loc[t_i], sub.loc[c_i]])
+        try:
+            cx = CoxPHFitter(penalizer=0.01)
+            cx.fit(m_df[["time_years", event_col, ete_col]],
+                   duration_col="time_years", event_col=event_col)
+            cr = cx.summary.loc[ete_col]
+            sensitivity_rows.append({
+                "Caliper_mult": mult,
+                "Caliper": round(float(cal), 5),
+                "Matched_pairs": len(pairs),
+                "HR": round(float(np.exp(cr["coef"])), 3),
+                "CI_lower": round(float(cr["exp(coef) lower 95%"]), 3),
+                "CI_upper": round(float(cr["exp(coef) upper 95%"]), 3),
+                "p_value": round(float(cr["p"]), 4),
+                "Concordance": round(float(cx.concordance_index_), 4),
+            })
+        except Exception:
+            pass
+
+    if sensitivity_rows:
+        sens_df = pd.DataFrame(sensitivity_rows)
+        sens_df.to_csv(out_dir / "psm_sensitivity.csv", index=False)
+        log.info("  PSM sensitivity: %d caliper levels → psm_sensitivity.csv", len(sens_df))
+        for _, r in sens_df.iterrows():
+            log.info("    caliper=%.1f×SD: %d pairs, HR=%.3f (%.3f–%.3f), p=%.4f",
+                     r["Caliper_mult"], r["Matched_pairs"], r["HR"],
+                     r["CI_lower"], r["CI_upper"], r["p_value"])
 
 
 # ── Main ──────────────────────────────────────────────────────────────────

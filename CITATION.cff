@@ -5,19 +5,25 @@ type: dataset
 authors:
   - family-names: "Glosser"
     given-names: "Logan"
+    affiliation: "Emory University"
 repository-code: "https://github.com/ry86pkqf74-rgb/THYROID_2026"
 license: "MIT"
 date-released: "2026-03-10"
 version: "2026.03.10"
+# doi: "10.5281/zenodo.XXXXXXX"  # Uncomment and fill after Zenodo upload
 abstract: >-
   A comprehensive thyroid cancer research lakehouse covering 11,673 patients
   across 13 base tables with 60+ engineered features, cross-domain entity
   extraction, temporal linkage, and interactive Streamlit dashboards backed
   by MotherDuck cloud DuckDB. Includes propensity-score matched ETE staging
-  analysis and NSQIP surgical outcomes linkage.
+  analysis (HR 1.84, 95% CI 1.08–3.12, p=0.024) and NSQIP surgical outcomes
+  linkage.
 keywords:
   - thyroid cancer
   - papillary thyroid carcinoma
+  - extrathyroidal extension
+  - propensity score matching
   - clinical research
   - DuckDB
   - data lakehouse
+  - AJCC 8th edition

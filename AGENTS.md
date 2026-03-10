@@ -118,4 +118,8 @@
 - PSM result (ETE): 1,498 matched pairs, HR=1.635 (0.950–2.814), p=0.076, all 3 confounders balanced (SMD < 0.1)
 - Interaction tests: ETE x LN_positive borderline (p=0.073); ETE x BRAF, BRAF x LN, ETE x Age non-significant
 - Zenodo archive at `exports/zenodo_archive_2026.03.10/` (169 files, 36.8 MB); PHI-scanned clean (research_id only, no note text)
-- Next phase: Zenodo upload, manuscript drafting, additional subgroup refinements
+- PSM refined: 4 confounders (age, tumor_size, ln_positive, ln_examined), 0.25×SD caliper; HR=1.839 (1.084–3.117), p=0.024; robust across 6 caliper levels (HR 1.75–1.86, all p<0.05)
+- PSM sensitivity output: `psm_sensitivity.csv` (6 caliper levels with HR, CI, concordance)
+- Manuscript draft v1 at `studies/manuscript_draft/manuscript_v1.md` with full methods, results, and discussion
+- `CITATION.cff` updated with affiliation, PSM result in abstract, DOI placeholder for Zenodo
+- Next phase: Zenodo upload (DOI), manuscript submission, additional subgroup refinements

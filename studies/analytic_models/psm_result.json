@@ -1,10 +1,10 @@
 {
-  "N_matched_pairs": 1498,
-  "N_total": 2996,
-  "Caliper": 0.0053,
-  "HR_ETE": 1.635,
-  "CI_lower": 0.95,
-  "CI_upper": 2.814,
-  "p_value": 0.0761,
-  "Concordance": 0.6457
+  "N_matched_pairs": 1497,
+  "N_total": 2994,
+  "Caliper": 0.0133,
+  "HR_ETE": 1.839,
+  "CI_lower": 1.084,
+  "CI_upper": 3.117,
+  "p_value": 0.0238,
+  "Concordance": 0.6637
 }
