@@ -10,14 +10,14 @@ SELECT
     e.entity_date,
     n.note_date,
     COALESCE(gt.DATE_1_year, gt.DATE_2_year, gt.DATE_3_year) AS genetic_year,
-    COALESCE(ps.surg_date, ps.surgery_date) AS surg_date,
-    COALESCE(f.fna_date, f.fna_date_parsed) AS fna_date,
+    ps.surg_date,
+    f.fna_date_parsed AS fna_date,
     CASE 
         WHEN e.entity_date IS NOT NULL THEN 'exact_source_date'
         WHEN n.note_date IS NOT NULL THEN 'inferred_day_level_date'
-        WHEN COALESCE(gt.DATE_1_year, gt.DATE_2_year, gt.DATE_3_year,
-                      ps.surg_date, ps.surgery_date,
-                      f.fna_date, f.fna_date_parsed) IS NOT NULL 
+        WHEN COALESCE(gt.DATE_1_year, gt.DATE_2_year, gt.DATE_3_year) IS NOT NULL
+          OR ps.surg_date IS NOT NULL
+          OR f.fna_date_parsed IS NOT NULL
              THEN 'coarse_anchor_date'
         ELSE 'unresolved_date'
     END AS date_status,
@@ -25,16 +25,16 @@ SELECT
     (n.note_date IS NOT NULL AND e.entity_date IS NULL) AS date_is_inferred_flag,
     (e.entity_date IS NULL 
      AND n.note_date IS NULL 
-     AND COALESCE(gt.DATE_1_year, gt.DATE_2_year, gt.DATE_3_year,
-                  ps.surg_date, ps.surgery_date,
-                  f.fna_date, f.fna_date_parsed) IS NULL) 
+     AND COALESCE(gt.DATE_1_year, gt.DATE_2_year, gt.DATE_3_year) IS NULL
+     AND ps.surg_date IS NULL
+     AND f.fna_date_parsed IS NULL)
      AS date_requires_manual_review_flag,
     COALESCE(
         TRY_CAST(e.entity_date AS DATE),
         TRY_CAST(n.note_date AS DATE),
         TRY_CAST(CAST(COALESCE(gt.DATE_1_year, gt.DATE_2_year, gt.DATE_3_year) AS VARCHAR) || '-01-01' AS DATE),
-        TRY_CAST(COALESCE(ps.surg_date, ps.surgery_date) AS DATE),
-        TRY_CAST(COALESCE(f.fna_date, f.fna_date_parsed) AS DATE)
+        TRY_CAST(ps.surg_date AS DATE),
+        TRY_CAST(f.fna_date_parsed AS DATE)
     ) AS inferred_event_date
 FROM thyroid_share.note_entities_genetics e
 LEFT JOIN thyroid_share.clinical_notes_long n ON e.research_id = n.research_id
