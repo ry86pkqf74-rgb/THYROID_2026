@@ -277,6 +277,29 @@ def render_overview(con):
         fig.update_layout(**PL,barmode="group",height=340,xaxis_title="Surgery Year")
         st.plotly_chart(fig,use_container_width=True)
 
+    rescue_tbl = "date_rescue_rate_summary" if tbl_exists(con, "date_rescue_rate_summary") else (
+        "md_date_rescue_rate_summary" if tbl_exists(con, "md_date_rescue_rate_summary") else None)
+    if rescue_tbl:
+        st.markdown(sl("Date Rescue Rate by Domain"),unsafe_allow_html=True)
+        df_r = sqdf(con, f"SELECT * FROM {rescue_tbl} WHERE entity_table != 'ALL_DOMAINS' ORDER BY rescue_rate_pct DESC")
+        df_all = sqdf(con, f"SELECT * FROM {rescue_tbl} WHERE entity_table = 'ALL_DOMAINS'")
+        if not df_all.empty:
+            r = df_all.iloc[0]
+            c1,c2,c3 = st.columns(3)
+            with c1: st.markdown(mc("Overall Rescue Rate",f"{r.get('rescue_rate_pct',0):.1f}%"),unsafe_allow_html=True)
+            with c2: st.markdown(mc("Rescued Entities",f"{int(r.get('rescued',0)):,}",f"of {int(r.get('total_entities',0)):,}"),unsafe_allow_html=True)
+            with c3: st.markdown(mc("Avg Confidence (rescued)",f"{r.get('avg_confidence_rescued',0):.0f}/100"),unsafe_allow_html=True)
+        if not df_r.empty:
+            fig_r = go.Figure(go.Bar(
+                y=df_r["entity_table"].str.replace("note_entities_","",regex=False),
+                x=df_r["rescue_rate_pct"], orientation="h", marker_color="#2dd4bf",
+                text=df_r["rescue_rate_pct"].apply(lambda v: f"{v:.1f}%"), textposition="auto",
+                customdata=df_r["avg_confidence_rescued"],
+                hovertemplate="<b>%{y}</b><br>Rescue rate: %{x:.1f}%<br>Avg confidence: %{customdata:.0f}<extra></extra>"))
+            fig_r.update_layout(**PL, height=240, xaxis_title="% Dates Rescued",
+                                yaxis=dict(autorange="reversed",gridcolor="#1e2535",linecolor="#1e2535",zerolinecolor="#1e2535"))
+            st.plotly_chart(fig_r,use_container_width=True)
+
 # ─────────────────────────────────────────────────────────────────────────
 # TAB: DATA EXPLORER
 # ─────────────────────────────────────────────────────────────────────────

@@ -101,4 +101,6 @@
 - `docs/` directory: `QA_report.md` (moved from root), `pipeline_architecture_v2.md`
 - Dashboard displays publication version banner via `st.info()` at top of main function
 - Publication tag: `v2026.03.10-publication-ready` on HEAD of `main`
+- Dashboard Overview tab includes date rescue rate KPI chart from `date_rescue_rate_summary` (overall rate, rescued count, avg confidence + per-domain horizontal bar)
+- `studies/proposal2_ete_staging/README.md` documents analysis scripts, data source (`risk_enriched_mv`), and key outputs
 - Next phase: analytic modeling or manuscript drafting
