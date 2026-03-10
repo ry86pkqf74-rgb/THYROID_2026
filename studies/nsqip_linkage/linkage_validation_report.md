@@ -84,46 +84,10 @@ All matches verified by at least two independent criteria:
 | `exports/nsqip/nsqip_patient_summary.parquet` | 1,261 | 95 | Patient-level (first surgery per patient) |
 | `studies/nsqip_linkage/case_details_linkage_results.csv` | 1,281 | Full linkage with match status |
 
-## 8. Manuscript-Ready Statistics (N=1,261 patients)
+## 8. Manuscript Content
 
-### Demographics
-- BMI: median 28.9, IQR [25.0–34.3]
-- ASA I: 59 (4.7%); ASA II: 578 (45.8%); ASA III: 582 (46.2%); ASA IV: 42 (3.3%)
-
-### Comorbidities
-- Diabetes: 189 (15.0%) — Non-insulin 124 (9.8%), Insulin 65 (5.2%)
-- Tobacco/Nicotine use: 145 (11.5%)
-- Hypertension: 582 (46.2%)
-
-### Operative
-- Operative duration: median 109 min, IQR [84–152]
-- Inpatient: 188 (14.9%); Outpatient: 1,073 (85.1%)
-- Central neck dissection: 248/946 (26.2%)
-- Lateral neck dissection: 39/257 (15.2%)
-- Drain usage: 284/950 (29.9%)
-- RLN monitoring: 730/944 (77.3%)
-
-### Outcomes
-- Same-day discharge (LOS=0): 319 (25.3%)
-- Hospital LOS: median 1.0 day, IQR [0–1], mean 1.29 days, max 28
-- 30-day readmission: 29 (2.3%)
-- Postop hypocalcemia: 82/939 (8.7%)
-  - Pre-discharge: 31/945 (3.3%)
-  - Post-discharge: 82/943 (8.7%)
-- Ca/VitD replacement: Both 478/945 (50.6%), Calcium only 207 (21.9%), Vitamin D only 85 (9.0%), None 175 (18.5%)
-- RLN injury/dysfunction: 88/931 (9.5%)
-- Neck hematoma/bleeding: 16/936 (1.7%)
-- 30-day mortality: 1/1,245 (0.1%)
-- Any SSI: 7 (0.6%)
-- VTE: 4 (0.3%)
-
-### CPT Distribution
-- 60240 (Total thyroidectomy): 689 (54.6%)
-- 60252 (Total for malignancy + limited neck dissection): 222 (17.6%)
-- 60271 (Including substernal, cervical approach): 168 (13.3%)
-- 60260 (Completion thyroidectomy): 141 (11.2%)
-- 60254 (Total for malignancy + radical neck dissection): 22 (1.7%)
-- 60270 (Including substernal, sternal split): 19 (1.5%)
+Manuscript-ready statistics, limitations paragraph, and methods text are in:
+**`studies/nsqip_pth_protocol_manuscript/`**
 
 ## 9. Usage (LEFT JOIN pattern)
 
