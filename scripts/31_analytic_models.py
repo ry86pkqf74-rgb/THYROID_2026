@@ -693,6 +693,37 @@ def phase7_psm(df: pd.DataFrame, out_dir: Path) -> None:
     except Exception as exc:
         log.error("  PSM Cox model failed: %s", exc)
 
+    # Doubly-robust: Cox on matched cohort adjusting for residual imbalance
+    imbalanced = [r["Variable"] for _, r in balance_df.iterrows() if not r["Balanced"]]
+    if imbalanced:
+        adj_cols = [c for c in imbalanced if c in matched.columns]
+        if adj_cols:
+            try:
+                cph_dr = CoxPHFitter(penalizer=0.01)
+                fit_cols = ["time_years", event_col, ete_col] + adj_cols
+                cph_dr.fit(matched[fit_cols],
+                           duration_col="time_years", event_col=event_col)
+                dr_row = cph_dr.summary.loc[ete_col]
+                dr_result = {
+                    "method": "doubly_robust",
+                    "adjusted_for": adj_cols,
+                    "N": len(matched),
+                    "HR_ETE": round(float(np.exp(dr_row["coef"])), 3),
+                    "CI_lower": round(float(dr_row["exp(coef) lower 95%"]), 3),
+                    "CI_upper": round(float(dr_row["exp(coef) upper 95%"]), 3),
+                    "p_value": round(float(dr_row["p"]), 4),
+                    "Concordance": round(float(cph_dr.concordance_index_), 4),
+                }
+                with open(out_dir / "psm_doubly_robust.json", "w") as f:
+                    json.dump(dr_result, f, indent=2)
+                log.info("  Doubly-robust (adj %s): HR=%.3f (%.3f–%.3f), p=%.4f",
+                         ", ".join(adj_cols), dr_result["HR_ETE"],
+                         dr_result["CI_lower"], dr_result["CI_upper"], dr_result["p_value"])
+            except Exception as exc:
+                log.warning("  Doubly-robust failed: %s", exc)
+    else:
+        log.info("  All confounders balanced — doubly-robust adjustment not needed")
+
     # KM on matched cohort
     try:
         kmf = KaplanMeierFitter()

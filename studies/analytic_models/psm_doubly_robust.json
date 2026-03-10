@@ -1,0 +1,12 @@
+{
+  "method": "doubly_robust",
+  "adjusted_for": [
+    "ln_positive"
+  ],
+  "N": 2994,
+  "HR_ETE": 1.794,
+  "CI_lower": 1.056,
+  "CI_upper": 3.048,
+  "p_value": 0.0307,
+  "Concordance": 0.7657
+}

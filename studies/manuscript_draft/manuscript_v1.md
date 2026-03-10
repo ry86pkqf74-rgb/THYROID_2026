@@ -13,7 +13,7 @@
 
 **Methods:** We conducted a propensity-score matched analysis of 6,630 thyroid cancer patients from a single-institution cohort. ETE-positive patients were matched 1:1 with ETE-negative controls using nearest-neighbor matching on age, tumor size, lymph node count, and lymph nodes examined. Cox proportional-hazards models estimated hazard ratios for recurrence. Sensitivity analyses were performed across six caliper levels.
 
-**Results:** After matching (1,497 pairs), ETE was associated with a significantly higher hazard of recurrence (HR 1.84, 95% CI 1.08–3.12, p=0.024). This finding was robust across all caliper levels tested (HR range 1.75–1.86, all p<0.05). In multivariable Cox regression of the full cohort, lymph node positivity was the only independently significant predictor (HR 1.03, 95% CI 1.00–1.06, p=0.040). The ETE × lymph node interaction was borderline significant (HR 1.04, p=0.073), suggesting potential synergy.
+**Results:** After matching (1,497 pairs), ETE was associated with a significantly higher hazard of recurrence (HR 1.84, 95% CI 1.08–3.12, p=0.024). A doubly-robust analysis adjusting for residual ln_positive imbalance confirmed the finding (HR 1.79, 95% CI 1.06–3.05, p=0.031). The result was robust across all six caliper levels tested (HR range 1.75–1.86, all p<0.05). In multivariable Cox regression of the full cohort, lymph node positivity was the only independently significant predictor (HR 1.03, 95% CI 1.00–1.06, p=0.040). The ETE × lymph node interaction was borderline significant (HR 1.04, p=0.073), suggesting potential synergy.
 
 **Conclusion:** ETE independently predicts recurrence in a large propensity-score matched thyroid cancer cohort. These findings support the prognostic value of ETE assessment in surgical decision-making and risk stratification under the AJCC 8th edition framework.
 
@@ -201,8 +201,11 @@ In this propensity-score matched analysis of 6,630 thyroid cancer patients, extr
 - Figure 3: Kaplan-Meier by AJCC Stage (`fig3_km_ajcc_stage`)
 - Figure 4: Kaplan-Meier by ETE Status (`fig4_km_ete_status`)
 - Figure 5: Molecular Marker Co-occurrence (`fig5_molecular_cooccurrence`)
-- Figure 6: PSM Balance Plot (to generate)
-- Figure 7: PSM Sensitivity Forest Plot (to generate)
+- Figure 6: PSM Balance Plot (`fig_psm_balance.png`)
+- Figure 7: PSM Sensitivity Forest Plot (`fig_psm_sensitivity.png`)
+- Figure 8: Matched Cohort KM by ETE (`fig_km_ete_matched.png`)
+- Figure 9: Subgroup Event Rates (`fig_subgroup_forest.png`)
+- Figure 10: AJCC Stage Distribution (`fig_stage_distribution.png`)
 
 All figures available in `studies/proposal2_ete_staging/figures/` and `notebooks/01_publication_figures.ipynb`.
 

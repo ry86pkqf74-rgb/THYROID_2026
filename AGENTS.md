@@ -122,4 +122,7 @@
 - PSM sensitivity output: `psm_sensitivity.csv` (6 caliper levels with HR, CI, concordance)
 - Manuscript draft v1 at `studies/manuscript_draft/manuscript_v1.md` with full methods, results, and discussion
 - `CITATION.cff` updated with affiliation, PSM result in abstract, DOI placeholder for Zenodo
-- Next phase: Zenodo upload (DOI), manuscript submission, additional subgroup refinements
+- Doubly-robust PSM: adjusted for residual ln_positive imbalance; HR=1.794 (1.056–3.048), p=0.031
+- Script 34 (`34_publication_figures.py`): generates 5 manuscript figures (PSM balance, sensitivity forest, matched KM, subgroup forest, stage distribution) to `studies/manuscript_draft/figures/`
+- Zenodo archive rebuilt with 178 files (36.9 MB) including doubly-robust results and figures
+- Next phase: Zenodo upload (DOI), manuscript submission
