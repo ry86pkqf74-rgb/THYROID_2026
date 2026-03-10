@@ -1658,18 +1658,6 @@ def main():
 
     _check_critical_tables(con)
 
-    with st.expander("MotherDuck Debug (remove after fix verified)"):
-        try:
-            st.markdown(f"**Active catalog:** `{_ACTIVE_CATALOG}`")
-            st.markdown("**Attached databases:**")
-            st.code(con.execute("SELECT database_name, type FROM duckdb_databases()").fetchdf().to_string())
-            st.markdown("**Current database:**")
-            st.code(con.execute("SELECT current_database()").fetchone()[0])
-            st.markdown("**Tables in active catalog (first 30):**")
-            st.code(con.execute("SHOW TABLES").fetchdf().head(30).to_string())
-        except Exception as e:
-            st.error(f"Debug query failed: {e}")
-
     st.info("**Publication-ready v2026.03.10** — local DuckDB backup available · "
             "[Release Notes](RELEASE_NOTES.md)", icon="📦")
     ci,ct = st.columns([1,11])
