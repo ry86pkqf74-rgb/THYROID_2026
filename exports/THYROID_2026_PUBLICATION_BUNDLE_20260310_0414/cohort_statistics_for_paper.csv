@@ -1,2 +1,2 @@
-patients,distinct_surgery_dates,mean_age,sd_age,n_female,n_male,n_recurrence,laterality_issues
-11673,4450,51.5,15.2,0.0,0.0,4417.0,1084
+patients,distinct_surgery_dates,mean_age,sd_age,n_female,n_male,n_sex_missing,n_recurrence,laterality_issues
+11673,4450,51.5,15.2,8661.0,2514.0,802.0,4417.0,1084

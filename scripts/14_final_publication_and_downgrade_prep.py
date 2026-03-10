@@ -186,9 +186,10 @@ def phase5_cohort_statistics(con: duckdb.DuckDBPyConnection) -> None:
             COUNT(DISTINCT p.surgery_date) AS distinct_surgery_dates,
             ROUND(AVG(p.age_at_surgery), 1) AS mean_age,
             ROUND(STDDEV(p.age_at_surgery), 1) AS sd_age,
-            SUM(CASE WHEN p.sex = 'F' THEN 1 ELSE 0 END) AS n_female,
-            SUM(CASE WHEN p.sex = 'M' THEN 1 ELSE 0 END) AS n_male,
-            SUM(CASE WHEN p.recurrence_flag = 1 THEN 1 ELSE 0 END) AS n_recurrence,
+            SUM(CASE WHEN LOWER(p.sex) = 'female' THEN 1 ELSE 0 END) AS n_female,
+            SUM(CASE WHEN LOWER(p.sex) = 'male' THEN 1 ELSE 0 END) AS n_male,
+            SUM(CASE WHEN p.sex IS NULL THEN 1 ELSE 0 END) AS n_sex_missing,
+            SUM(CASE WHEN p.recurrence_flag THEN 1 ELSE 0 END) AS n_recurrence,
             (SELECT COUNT(*) FROM nodule_laterality_cleaned_mv) AS laterality_issues
         FROM patient_level_summary_mv p
     """).df()
