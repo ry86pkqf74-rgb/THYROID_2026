@@ -1,23 +1,108 @@
 THYROID_2026 — MotherDuck Verification Report
-Generated: 2026-03-10T01:38:52.086653
-Results: 0 passed, 0 failed
+Generated: 2026-03-10T01:54:45.295943
+Results: 22 passed, 0 failed
 
 ========================================================================
   PHASE 4: Verification Queries
 ========================================================================
 
-[DRY RUN] Would run verification queries against MotherDuck
+[PASS] MotherDuck connection
+
+========================================================================
+  Row Count Reconciliation: Local Parquet vs MotherDuck
+========================================================================
+
+[PASS] complications
+       local=10,864  md=10,864
+[PASS] molecular_testing
+       local=10,126  md=10,126
+[PASS] operative_details
+       local=9,368  md=9,368
+[PASS] fna_history
+       local=59,620  md=59,620
+[PASS] us_nodules_tirads
+       local=8,811  md=8,811
+[PASS] serial_imaging_us
+       local=18,753  md=18,753
+[PASS] path_synoptics
+       local=11,688  md=11,688
+[PASS] clinical_notes
+       local=10,863  md=10,863
+[PASS] extracted_clinical_events
+       local=28,987  md=28,987
+
+========================================================================
+  Coverage: Distinct research_id vs master_cohort
+========================================================================
+
+master_cohort distinct patients: 11,673
+[PASS] complications coverage
+       10,864 patients (93.1% of master)
+[PASS] molecular_testing coverage
+       10,026 patients (85.9% of master)
+[PASS] operative_details coverage
+       9,368 patients (80.3% of master)
+[PASS] fna_history coverage
+       5,263 patients (45.1% of master)
+[PASS] us_nodules_tirads coverage
+       4,074 patients (34.9% of master)
+[PASS] serial_imaging_us coverage
+       7,723 patients (66.2% of master)
+[PASS] path_synoptics coverage
+       10,871 patients (93.1% of master)
+[PASS] clinical_notes coverage
+       10,863 patients (93.1% of master)
+[PASS] extracted_clinical_events coverage
+       5,184 patients (44.4% of master)
+
+========================================================================
+  Sample: extracted_clinical_events (first 20 rows)
+========================================================================
+
+         research_id          event_type       event_subtype         event_value          event_date
+  --------------------------------------------------------------------------------------------
+                 711                 lab                 TSH                 0.5                None
+                 711                 lab                 TSH                0.28                None
+                 711                 lab                 TSH               0.438                None
+                 711                 lab                 TSH               0.031                None
+                 711                 lab                 TSH                0.35                None
+                 711                 lab                 TSH               0.163                None
+                 711                 lab                 TSH               0.047                None
+                 711                 lab                 TSH                 1.8                None
+                 711                 lab                 TSH                13.0                None
+                 711                 lab                 TSH               0.122                None
+                 711                 lab                 TSH                0.22                None
+                 711                 lab                 TSH                11.0                None
+                 711                 lab                 TSH                44.0                None
+                 711                 lab       thyroglobulin                32.0                None
+                 711                 lab       thyroglobulin                13.0                None
+                 711                 lab       thyroglobulin                 0.2                None
+                 711                 lab       thyroglobulin                 0.2                None
+                 711                 lab       thyroglobulin                 0.6                None
+                 711                 lab       thyroglobulin                 0.3                None
+                 711                 lab       thyroglobulin                 0.2                None
+[PASS] Sample extraction
+       20 rows returned
+
+========================================================================
+  Stress Test: GROUP BY on raw_clinical_notes
+========================================================================
+
+[PASS] Stress test query
+       rows=10,860  patients=10,860  elapsed=0.05s
 
 ========================================================================
   PHASE 5 (Bonus): Improved Follow-Up Date Extraction
 ========================================================================
 
-[DRY RUN] Would run improved follow-up date extraction
+  v1 follow_up events: 140
+[PASS] extracted_clinical_events_v2
+       total=28,989  follow_up_events=142  new_dates_added=2
 
 ========================================================================
   SUMMARY
 ========================================================================
 
-Total checks: 0
-Passed: 0
+Total checks: 22
+Passed: 22
 Failed: 0

@@ -80,14 +80,14 @@ ADVANCED_V2_SQL = textwrap.dedent("""\
         TRY_CAST(tp.histology_1_ln_positive AS DOUBLE) AS ln_positive,
         tp.tumor_1_extrathyroidal_ext,
         tp.tumor_1_gross_ete,
-        comp.rln_injury_vocal_cord_paralysis,
+        comp.rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS rln_injury_vocal_cord_paralysis,
         comp.vocal_cord_status,
         comp.seroma,
         comp.hematoma,
         comp.hypocalcemia,
         comp.hypoparathyroidism,
         od.ebl,
-        od.skin_to_skin_time,
+        od.skin_skin_time_min AS skin_to_skin_time,
         bp.is_mng,
         bp.is_graves,
         bp.is_follicular_adenoma,
@@ -133,15 +133,20 @@ FOLLOWUP_V2_SQL = textwrap.dedent("""\
     WITH base AS (
         SELECT * FROM extracted_clinical_events
     ),
-    raw_notes AS (
+    raw_notes_flat AS (
         SELECT
-            CAST(research_id AS VARCHAR) AS research_id,
-            *  EXCLUDE (research_id)
-        FROM raw_clinical_notes
+            CAST("Research ID number" AS VARCHAR) AS research_id,
+            col_name,
+            col_text
+        FROM (
+            SELECT * FROM raw_clinical_notes
+        )
+        UNPIVOT (col_text FOR col_name IN (COLUMNS(* EXCLUDE "Research ID number")))
+        WHERE col_text IS NOT NULL
     ),
     new_dates AS (
         SELECT
-            rn.research_id,
+            research_id,
             'follow_up' AS event_type,
             'follow_up_date' AS event_subtype,
             NULL::DOUBLE AS event_value,
@@ -176,10 +181,8 @@ FOLLOWUP_V2_SQL = textwrap.dedent("""\
                 '.*?(\\d{1,2}/\\d{1,2}/\\d{2,4})', 0
             ) AS event_text,
             'raw_notes_v2_regex' AS source_column
-        FROM raw_notes
-        UNPIVOT (col_text FOR col_name IN (COLUMNS(* EXCLUDE research_id)))
-        WHERE col_text IS NOT NULL
-          AND regexp_matches(col_text,
+        FROM raw_notes_flat
+        WHERE regexp_matches(col_text,
               '(?:follow[\\s-]*up|f/u|seen\\s+on|visit\\s+on|return\\s+on|next\\s+appointment)'
               '.*?\\d{1,2}/\\d{1,2}/\\d{2,4}')
     )
@@ -569,16 +572,14 @@ def phase4_verify(dry_run: bool) -> VerifyLog:
         result = con.execute("""
             SELECT
                 COUNT(*) AS total_rows,
-                COUNT(*) FILTER (WHERE LENGTH(CAST(COLUMNS(*) AS VARCHAR)) > 1000) AS long_text_cells,
-                COUNT(DISTINCT research_id) AS unique_patients
+                COUNT(DISTINCT "Research ID number") AS unique_patients
             FROM raw_clinical_notes
         """).fetchone()
         elapsed = time.perf_counter() - t0
         vlog.record(
             "Stress test query",
             True,
-            f"rows={result[0]:,}  long_cells={result[1]:,}  "
-            f"patients={result[2]:,}  elapsed={elapsed:.2f}s",
+            f"rows={result[0]:,}  patients={result[1]:,}  elapsed={elapsed:.2f}s",
         )
     except Exception as exc:
         vlog.record("Stress test query", False, str(exc))
