@@ -438,3 +438,83 @@ SELECT *
 FROM data_completeness_by_year
 ORDER BY surgery_year;
 ```
+
+
+---
+
+## Phase 6: Integrated Source Tables (8 New Excel Sources)
+
+### `complications` (table)
+
+Source: `Thyroid all_Complications 12_1_25.xlsx`
+
+Surgical complications with NLP-parsed laryngoscopy notes. Key columns:
+`rln_injury_vocal_cord_paralysis`, `seroma`, `hematoma`, `hypocalcemia`,
+`hypoparathyroidism`, `vocal_cord_status` (normal/paresis/paralysis),
+`affected_side`, `laryngoscopy_date`, `_raw_laryngoscopy_note`.
+
+### `molecular_testing` (table, long format)
+
+Source: `THYROSEQ_AFIRMA_12_5.xlsx`
+
+One row per molecular test per patient (up to 3 tests). Key columns:
+`test_index`, `thyroseq_afirma`, `date`, `result`, `mutation`, `detailed_findings`.
+
+### `operative_details` (table)
+
+Source: `Thyroid OP Sheet data.xlsx`
+
+Operative sheet data — BMI, EBL, skin-to-skin time, nerve monitoring,
+parathyroid autograft notes, IO tumor appearance.
+
+### `fna_history` (table, long format)
+
+Source: `FNAs 12_5_2025.xlsx`
+
+One row per FNA per patient (up to 12 FNAs). Key columns:
+`fna_index`, `date`, `bethesda`, `path`, `path_extended`, `specimen_received`.
+
+### `us_nodules_tirads` (table, long format)
+
+Source: `US Nodules TIRADS 12_1_25.xlsx`
+
+One row per US exam per patient (up to 14 exams). Includes per-nodule
+TIRADS scores and nodule descriptions within each exam.
+
+### `serial_imaging_us` (table, long format)
+
+Source: `Imaging_12_1_25.xlsx`
+
+Serial imaging reports across 8 modalities (thyroid_us, ln_us, us_fna,
+ct_petct, nuclear_med, mri, cxr, other). Raw report text and impressions.
+
+### `path_synoptics` (table, wide — 275+ cols)
+
+Source: `All Diagnoses & synoptic 12_1_2025.xlsx`
+
+Full AJCC staging, margins, variants, LN details for up to 5 tumors.
+Includes synoptic diagnosis text, path diagnosis summary, and benign findings.
+Note: contains duplicate research_ids for re-operations.
+
+### `clinical_notes` (table)
+
+Source: `Notes 12_1_25.xlsx`
+
+Combined demographics/summary (Sheet1) + clinical notes (Sheet2).
+H&P notes 1-4, OP notes 1-4, discharge summaries 1-4, last endocrine/FM note,
+ED notes 1-2. Notes may be truncated at 32,767 characters (Excel limit).
+
+### `extracted_clinical_events` (table, long format)
+
+NLP-extracted events from clinical notes. Event types:
+- **lab**: TSH, thyroglobulin, anti-Tg, calcium, PTH, vitamin D (with values and units)
+- **medication**: levothyroxine (with dose), calcium supplements, calcitriol
+- **comorbidity**: hypertension, diabetes, breast/lung cancer, obesity, CAD, etc.
+- **treatment**: RAI, EBRT, recurrence, reoperation (with dates when available)
+- **follow_up**: follow-up visit dates
+
+### `advanced_features_v2` (view)
+
+Comprehensive analytic view joining `master_cohort` with all Phase 6 tables
+plus existing tumor_pathology and benign_pathology. Includes data availability
+flags for every domain.

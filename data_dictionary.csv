@@ -198,3 +198,68 @@ view,data_completeness_by_year,pct_tumor_pathology,DOUBLE,Percent with tumor pat
 view,data_completeness_by_year,pct_fna_cytology,DOUBLE,Percent with FNA in year,phase2
 view,data_completeness_by_year,pct_ultrasound_reports,DOUBLE,Percent with ultrasound in year,phase2
 view,data_completeness_by_year,pct_thyroglobulin_labs,DOUBLE,Percent with thyroglobulin labs in year,phase2
+table,complications,research_id,INT64,Patient identifier,phase6
+table,complications,rln_injury_vocal_cord_paralysis,VARCHAR,RLN injury / vocal cord paralysis indicator,phase6
+table,complications,seroma,VARCHAR,Seroma complication flag,phase6
+table,complications,hematoma,VARCHAR,Hematoma complication flag,phase6
+table,complications,hypocalcemia,VARCHAR,Hypocalcemia complication flag,phase6
+table,complications,hypoparathyroidism,VARCHAR,Hypoparathyroidism complication flag,phase6
+table,complications,vocal_cord_status,VARCHAR,Extracted vocal cord status (normal/paresis/paralysis),phase6
+table,complications,affected_side,VARCHAR,Affected side (left/right/bilateral),phase6
+table,complications,laryngoscopy_date,VARCHAR,Extracted laryngoscopy date,phase6
+table,complications,vocal_cord_palsy_detail,VARCHAR,Combined palsy detail string,phase6
+table,complications,_raw_laryngoscopy_note,VARCHAR,Raw laryngoscopy note text,phase6
+table,molecular_testing,research_id,INT64,Patient identifier,phase6
+table,molecular_testing,test_index,INT64,Test slot (1-3),phase6
+table,molecular_testing,thyroseq_afirma,VARCHAR,Test type (ThyroSeq or Afirma),phase6
+table,molecular_testing,date,VARCHAR,Test date,phase6
+table,molecular_testing,result,VARCHAR,Test result,phase6
+table,molecular_testing,mutation,VARCHAR,Detected mutation,phase6
+table,molecular_testing,detailed_findings,VARCHAR,Detailed findings text,phase6
+table,operative_details,research_id,INT64,Patient identifier,phase6
+table,operative_details,surg_date,VARCHAR,Surgery date,phase6
+table,operative_details,preop_diagnosis,VARCHAR,Preoperative diagnosis,phase6
+table,operative_details,ebl,VARCHAR,Estimated blood loss,phase6
+table,operative_details,skin_to_skin_time,VARCHAR,Skin-to-skin operative time,phase6
+table,fna_history,research_id,INT64,Patient identifier,phase6
+table,fna_history,fna_index,INT64,FNA sequence number (1-12),phase6
+table,fna_history,date,VARCHAR,FNA date (raw),phase6
+table,fna_history,fna_date_parsed,VARCHAR,FNA date (parsed YYYY-MM-DD),phase6
+table,fna_history,bethesda,VARCHAR,Bethesda score,phase6
+table,fna_history,path,VARCHAR,Pathology text,phase6
+table,fna_history,path_extended,VARCHAR,Extended pathology text,phase6
+table,us_nodules_tirads,research_id,INT64,Patient identifier,phase6
+table,us_nodules_tirads,us_exam_index,INT64,US exam timepoint (1-14),phase6
+table,us_nodules_tirads,date,VARCHAR,US exam date,phase6
+table,us_nodules_tirads,impression,VARCHAR,US impression text,phase6
+table,serial_imaging_us,research_id,INT64,Patient identifier,phase6
+table,serial_imaging_us,modality,VARCHAR,"Imaging modality (thyroid_us, ln_us, ct_petct, mri, etc.)",phase6
+table,serial_imaging_us,report_index,INT64,Report sequence number within modality,phase6
+table,path_synoptics,research_id,INT64,Patient identifier,phase6
+table,path_synoptics,path_diagnosis_summary,VARCHAR,Pathology diagnosis summary,phase6
+table,path_synoptics,synoptic_diagnosis,VARCHAR,Full synoptic diagnosis text,phase6
+table,path_synoptics,thyroid_procedure,VARCHAR,Thyroid surgical procedure,phase6
+table,path_synoptics,race,VARCHAR,Patient race,phase6
+table,path_synoptics,gender,VARCHAR,Patient gender,phase6
+table,clinical_notes,research_id,INT64,Patient identifier,phase6
+table,clinical_notes,thyroid_cx_history_summary,VARCHAR,Thyroid cancer history/summary note,phase6
+table,clinical_notes,h_p_1,VARCHAR,History & Physical note 1,phase6
+table,clinical_notes,op_note_1,VARCHAR,Operative note 1,phase6
+table,clinical_notes,dc_sum_1,VARCHAR,Discharge summary 1,phase6
+table,clinical_notes,last_endocrine_fm_note,VARCHAR,Last endocrine/family medicine note,phase6
+table,extracted_clinical_events,research_id,INT64,Patient identifier,phase6
+table,extracted_clinical_events,event_type,VARCHAR,"Event category (lab, medication, comorbidity, treatment, follow_up)",phase6
+table,extracted_clinical_events,event_subtype,VARCHAR,"Specific event (TSH, levothyroxine, hypertension, RAI, etc.)",phase6
+table,extracted_clinical_events,event_value,DOUBLE,"Numeric value if applicable (lab result, dose)",phase6
+table,extracted_clinical_events,event_unit,VARCHAR,"Value units (ng/mL, mcg, etc.)",phase6
+table,extracted_clinical_events,event_date,VARCHAR,Event date if extractable,phase6
+table,extracted_clinical_events,event_text,VARCHAR,Raw matched text snippet (max 250 chars),phase6
+table,extracted_clinical_events,source_column,VARCHAR,Source note column name,phase6
+view,advanced_features_v2,research_id,VARCHAR,Patient identifier (master anchor),phase6
+view,advanced_features_v2,has_complications,BOOLEAN,Patient has complications data,phase6
+view,advanced_features_v2,has_operative_details,BOOLEAN,Patient has operative details,phase6
+view,advanced_features_v2,has_clinical_notes,BOOLEAN,Patient has clinical notes,phase6
+view,advanced_features_v2,has_path_synoptics,BOOLEAN,Patient has synoptic pathology,phase6
+view,advanced_features_v2,has_molecular_testing,BOOLEAN,Patient has molecular test data,phase6
+view,advanced_features_v2,has_fna_history,BOOLEAN,Patient has detailed FNA history,phase6
+view,advanced_features_v2,has_us_tirads,BOOLEAN,Patient has US TIRADS data,phase6

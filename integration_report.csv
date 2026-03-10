@@ -1,0 +1,10 @@
+table,row_count,col_count,null_rate_pct,unique_patients,n_lab_events,n_medication_events,n_comorbidity_events,n_treatment_events,n_follow_up_events
+complications,10864,16,92.81,10864,,,,,
+molecular_testing,10126,13,66.47,10026,,,,,
+operative_details,9368,49,90.91,9368,,,,,
+fna_history,59620,18,57.62,5263,,,,,
+us_nodules_tirads,8811,72,86.84,4074,,,,,
+serial_imaging_us,18753,109,92.09,7723,,,,,
+path_synoptics,11688,267,89.91,10871,,,,,
+clinical_notes,10863,20,89.92,10863,,,,,
+extracted_clinical_events,28987,8,32.63,5184,7723.0,2286.0,10432.0,8406.0,140.0
