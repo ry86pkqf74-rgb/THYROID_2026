@@ -165,3 +165,7 @@ of all 13 tables and 8+ views.
 ## License
 
 Private research data — do not redistribute without permission.
+
+
+## v2026.03.10 - Publication Release
+See [RELEASE_NOTES.md](RELEASE_NOTES.md) for full details.
