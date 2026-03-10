@@ -232,25 +232,31 @@ In this propensity-score matched analysis of 6,630 thyroid cancer patients, extr
 
 ## Figures
 
-- Figure 1: AJCC 8th Stage Distribution (`fig1_ajcc_stage_distribution`)
-- Figure 2: ETE Recurrence Risk (`fig2_ete_recurrence_risk`)
+**Main Manuscript**
+- Figure 1: AJCC 8th Edition Stage Distribution (`fig1_ajcc_stage_distribution`)
+- Figure 2: ETE Recurrence Risk by Group (`fig2_ete_recurrence_risk`)
 - Figure 3: Kaplan-Meier by AJCC Stage (`fig3_km_ajcc_stage`)
 - Figure 4: Kaplan-Meier by ETE Status (`fig4_km_ete_status`)
-- Figure 5: Molecular Marker Co-occurrence (`fig5_molecular_cooccurrence`)
-- Figure 6: PSM Balance Plot (`fig_psm_balance.png`)
-- Figure 7: PSM Sensitivity Forest Plot (`fig_psm_sensitivity.png`)
-- Figure 8: Matched Cohort KM by ETE (`fig_km_ete_matched.png`)
-- Figure 9: Subgroup Event Rates (`fig_subgroup_forest.png`)
-- Figure 10: AJCC Stage Distribution (`fig_stage_distribution.png`)
+- Figure 5: PSM Covariate Balance (Love Plot) (`fig_psm_balance.png`)
+- Figure 6: PSM Sensitivity Forest Plot (`fig_psm_sensitivity.png`)
+- Figure 7: Matched Cohort KM — ETE vs No ETE (`fig_km_ete_matched.png`)
+- Figure 8: Subgroup Event Rates (`fig_subgroup_forest.png`)
 
-All figures available in `studies/proposal2_ete_staging/figures/` and `notebooks/01_publication_figures.ipynb`.
+**Supplementary Figures**
+- Figure 9: Molecular Marker Co-occurrence (`fig5_molecular_cooccurrence`)
+- Figure 10: KM — Recurrence-Free Survival by ATA Risk Band (`fig10_km_risk_band.png`) *(5,794 pts, 36 events)*
+- Figure 11: KM — Recurrence-Free Survival by ETE Status (`fig11_km_ete_status.png`) *(log-rank p<0.001 for gross vs other)*
+- Figure 12: Forest Plot — Multivariate Cox HR by ETE Subtype (`fig12_forest_cox.png`)
+
+All figures available in `studies/proposal2_ete_staging/figures/`, `studies/manuscript_draft/figures/`, and `notebooks/01_publication_figures.ipynb`.
 
 ## Supplementary Tables
 
-- eTable 1: Full logistic regression (if estimable)
-- eTable 2: Complete KM survival by all stratifiers (18 strata)
-- eTable 3: PSM sensitivity at all caliper levels
-- eTable 4: PSM balance before and after matching
+- eTable 1: Full logistic regression propensity model coefficients
+- eTable 2: Complete KM 5-year recurrence-free survival by all stratifiers (18 strata)
+- eTable 3: PSM sensitivity analysis at all six caliper levels (Table 6, main text)
+- eTable 4: PSM covariate balance before and after matching (SMD for all 4 confounders)
+- **Table 8 (Supplementary):** Univariate and multivariate Cox PH regression — ETE subtype analysis (N=5,794; `studies/proposal2_ete_staging/tables/table3_cox_regression.csv`)
 
 ## Data Availability
 
