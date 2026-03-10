@@ -37,7 +37,7 @@ class LLMExtractor(BaseExtractor):
     def available(self) -> bool:
         return self._api_key is not None
 
-    def extract(self, note_row_id, research_id, note_type, note_text):
+    def extract(self, note_row_id, research_id, note_type, note_text, note_date=None):
         if not self.available:
             return []
 

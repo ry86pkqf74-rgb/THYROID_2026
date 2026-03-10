@@ -199,6 +199,46 @@ class TestProblemListExtractor:
         assert len(htn) == 1
 
 
+class TestDatePropagation:
+    """Verify entity_date and note_date flow through extractors."""
+
+    def test_note_date_passed_through(self):
+        ext = ProblemListExtractor()
+        matches = ext.extract(
+            NOTE_ROW_ID, RESEARCH_ID, NOTE_TYPE,
+            "Patient has hypertension",
+            note_date="2024-03-21",
+        )
+        assert len(matches) >= 1
+        assert matches[0].note_date == "2024-03-21"
+
+    def test_entity_date_from_nearby(self):
+        ext = ProcedureExtractor()
+        text = "On 3/15/2022 patient underwent total thyroidectomy with CND"
+        matches = ext.extract(NOTE_ROW_ID, RESEARCH_ID, NOTE_TYPE, text, note_date="2022-03-15")
+        procs = [m for m in matches if m.entity_value_norm == "total_thyroidectomy"]
+        assert len(procs) >= 1
+        assert procs[0].entity_date == "2022-03-15"
+        assert procs[0].note_date == "2022-03-15"
+
+    def test_no_note_date_is_none(self):
+        ext = GeneticsExtractor()
+        matches = ext.extract(
+            NOTE_ROW_ID, RESEARCH_ID, NOTE_TYPE,
+            "BRAF V600E mutation detected",
+        )
+        assert len(matches) >= 1
+        assert matches[0].note_date is None
+
+    def test_medication_with_date(self):
+        ext = MedicationExtractor()
+        text = "Started levothyroxine 125 mcg on 1/5/2024 daily"
+        matches = ext.extract(NOTE_ROW_ID, RESEARCH_ID, NOTE_TYPE, text, note_date="2024-01-05")
+        levo = [m for m in matches if "levothyroxine" in m.entity_value_norm]
+        assert len(levo) >= 1
+        assert levo[0].entity_date == "2024-01-05"
+
+
 class TestIntegrated:
     """Test that an op note produces entities from multiple extractors."""
 

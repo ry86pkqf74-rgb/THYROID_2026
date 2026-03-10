@@ -2,12 +2,20 @@
 High-precision regex-based entity extractors.
 
 Each extractor subclasses BaseExtractor and produces EntityMatch objects
-with evidence_span (exact substring), character offsets, and negation status.
+with evidence_span (exact substring), character offsets, negation status,
+entity_date (date found near the match), and note_date (encounter date
+from the note header, passed through as fallback).
 """
 
 from __future__ import annotations
 
 import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from notes_extraction.base import BaseExtractor, EntityMatch
 from notes_extraction.vocab import (
@@ -16,6 +24,7 @@ from notes_extraction.vocab import (
     MEDICATION_NORM,
     PROCEDURE_NORM,
 )
+from utils.text_helpers import extract_nearby_date
 
 
 class StagingExtractor(BaseExtractor):
@@ -43,7 +52,7 @@ class StagingExtractor(BaseExtractor):
         (_OVERALL, "overall_stage"),
     ]
 
-    def extract(self, note_row_id, research_id, note_type, note_text):
+    def extract(self, note_row_id, research_id, note_type, note_text, note_date=None):
         results: list[EntityMatch] = []
         for pat, component in self._PATTERNS:
             for m in pat.finditer(note_text):
@@ -60,6 +69,8 @@ class StagingExtractor(BaseExtractor):
                     evidence_span=m.group(0),
                     evidence_start=m.start(),
                     evidence_end=m.end(),
+                    entity_date=extract_nearby_date(note_text, m.start(), m.end()),
+                    note_date=note_date,
                 ))
         return results
 
@@ -82,7 +93,7 @@ class GeneticsExtractor(BaseExtractor):
         (re.compile(r"\bALK\s*(?:fusion)?\b", re.I), "ALK", "ALK"),
     ]
 
-    def extract(self, note_row_id, research_id, note_type, note_text):
+    def extract(self, note_row_id, research_id, note_type, note_text, note_date=None):
         results: list[EntityMatch] = []
         seen: set[tuple[str, int]] = set()
         for pat, raw_label, norm_gene in self._PATTERNS:
@@ -102,6 +113,8 @@ class GeneticsExtractor(BaseExtractor):
                     evidence_span=m.group(0),
                     evidence_start=m.start(),
                     evidence_end=m.end(),
+                    entity_date=extract_nearby_date(note_text, m.start(), m.end()),
+                    note_date=note_date,
                 ))
         return results
 
@@ -159,7 +172,7 @@ class ProcedureExtractor(BaseExtractor):
             "laryngoscopy"),
     ]
 
-    def extract(self, note_row_id, research_id, note_type, note_text):
+    def extract(self, note_row_id, research_id, note_type, note_text, note_date=None):
         results: list[EntityMatch] = []
         for pat, norm_proc in self._PATTERNS:
             for m in pat.finditer(note_text):
@@ -174,6 +187,8 @@ class ProcedureExtractor(BaseExtractor):
                     evidence_span=m.group(0),
                     evidence_start=m.start(),
                     evidence_end=m.end(),
+                    entity_date=extract_nearby_date(note_text, m.start(), m.end()),
+                    note_date=note_date,
                 ))
         return results
 
@@ -216,7 +231,7 @@ class ComplicationExtractor(BaseExtractor):
             "chyle_leak"),
     ]
 
-    def extract(self, note_row_id, research_id, note_type, note_text):
+    def extract(self, note_row_id, research_id, note_type, note_text, note_date=None):
         results: list[EntityMatch] = []
         for pat, norm_comp in self._PATTERNS:
             for m in pat.finditer(note_text):
@@ -231,6 +246,8 @@ class ComplicationExtractor(BaseExtractor):
                     evidence_span=m.group(0),
                     evidence_start=m.start(),
                     evidence_end=m.end(),
+                    entity_date=extract_nearby_date(note_text, m.start(), m.end()),
+                    note_date=note_date,
                 ))
         return results
 
@@ -259,7 +276,7 @@ class MedicationExtractor(BaseExtractor):
             "rai_dose"),
     ]
 
-    def extract(self, note_row_id, research_id, note_type, note_text):
+    def extract(self, note_row_id, research_id, note_type, note_text, note_date=None):
         results: list[EntityMatch] = []
         for pat, norm_med in self._PATTERNS:
             for m in pat.finditer(note_text):
@@ -282,6 +299,8 @@ class MedicationExtractor(BaseExtractor):
                     evidence_span=m.group(0),
                     evidence_start=m.start(),
                     evidence_end=m.end(),
+                    entity_date=extract_nearby_date(note_text, m.start(), m.end()),
+                    note_date=note_date,
                 ))
         return results
 
@@ -309,7 +328,7 @@ class ProblemListExtractor(BaseExtractor):
         (re.compile(r"\b(COPD|chronic\s+obstructive)\b", re.I), "COPD"),
     ]
 
-    def extract(self, note_row_id, research_id, note_type, note_text):
+    def extract(self, note_row_id, research_id, note_type, note_text, note_date=None):
         results: list[EntityMatch] = []
         seen_norms: set[str] = set()
         for pat, norm_problem in self._PATTERNS:
@@ -327,6 +346,8 @@ class ProblemListExtractor(BaseExtractor):
                     evidence_span=m.group(0),
                     evidence_start=m.start(),
                     evidence_end=m.end(),
+                    entity_date=extract_nearby_date(note_text, m.start(), m.end()),
+                    note_date=note_date,
                 ))
         return results
 

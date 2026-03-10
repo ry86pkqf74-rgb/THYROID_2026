@@ -35,6 +35,8 @@ All six tables share these columns:
 | `evidence_span` | VARCHAR | Exact substring from `note_text` |
 | `evidence_start` | INT | Character offset of span start |
 | `evidence_end` | INT | Character offset of span end |
+| `entity_date` | VARCHAR | Date found near the entity in note text (YYYY-MM-DD), if any |
+| `note_date` | VARCHAR | Encounter/service date from the note header (YYYY-MM-DD), fallback |
 | `extraction_method` | VARCHAR | `regex` or `llm_<model>` |
 | `extracted_at` | VARCHAR | ISO-8601 timestamp |
 
@@ -111,6 +113,26 @@ note chunks to an LLM with a structured output schema.  It is gated behind
 the `OPENAI_API_KEY` environment variable and returns empty results if the
 key is not set.  The LLM must return `evidence_span` that is an exact
 substring of the input.
+
+## Date Association Strategy
+
+Every extracted entity carries two date fields:
+
+1. **`entity_date`**: A date found within +-120 characters of the entity
+   match in the note text.  This is the most specific date available.
+   Dates must fall within 1990-2030 to be accepted.
+
+2. **`note_date`**: The encounter/service date extracted from the note
+   header (first 500 characters).  This serves as a fallback when no
+   entity-specific date is found nearby.
+
+The `clinical_notes_long` table also carries `note_date` so that
+downstream consumers can join on it.
+
+Date extraction priority for `note_date`:
+1. Explicit label: "Date of Service:", "Admission Date:", etc.
+2. Leading date at the very start of the note text
+3. First plausible date (1990-2030) in the first 500 characters
 
 ## Reproducibility
 

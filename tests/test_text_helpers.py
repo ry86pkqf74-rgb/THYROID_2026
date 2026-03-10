@@ -13,6 +13,8 @@ sys.path.insert(0, str(ROOT))
 
 from utils.text_helpers import (
     clean_research_id,
+    extract_nearby_date,
+    extract_note_date,
     make_note_row_id,
     standardize_columns,
     strip_phi,
@@ -95,6 +97,56 @@ class TestStripPhi:
         assert "euh_mrn" not in result.columns
         assert "research_id" in result.columns
         assert "age" in result.columns
+
+
+class TestExtractNoteDate:
+    def test_leading_date(self):
+        assert extract_note_date("3/21/2024 Subjective ...") == "2024-03-21"
+
+    def test_date_of_service_label(self):
+        text = "REPORT\nDATE OF SERVICE: 6/27/2017\nPRIMARY SITE ..."
+        assert extract_note_date(text) == "2017-06-27"
+
+    def test_admission_date(self):
+        text = "ENT DISCHARGE SUMMARY\nAdmission Date: 1/3/2011 5:47 AM"
+        assert extract_note_date(text) == "2011-01-03"
+
+    def test_no_date(self):
+        assert extract_note_date("n/s") is None
+
+    def test_empty(self):
+        assert extract_note_date("") is None
+        assert extract_note_date("   ") is None
+
+    def test_rejects_ancient_dates(self):
+        result = extract_note_date("Some note mentioning 01/01/1800 old record")
+        assert result is None or result >= "1990"
+
+    def test_encounter_date_label(self):
+        text = "Note Header\nEncounter Date: 4/15/2020\nPatient info..."
+        assert extract_note_date(text) == "2020-04-15"
+
+
+class TestExtractNearbyDate:
+    def test_date_before_match(self):
+        text = "On 3/15/2022 patient underwent total thyroidectomy successfully"
+        result = extract_nearby_date(text, 35, 56)
+        assert result == "2022-03-15"
+
+    def test_date_after_match(self):
+        text = "levothyroxine started on 5/10/2021"
+        result = extract_nearby_date(text, 0, 14)
+        assert result == "2021-05-10"
+
+    def test_no_date_nearby(self):
+        text = "Patient has hypertension and takes medications daily"
+        result = extract_nearby_date(text, 12, 24)
+        assert result is None
+
+    def test_rejects_old_dates(self):
+        text = "Born 1/1/1950 has hypertension"
+        result = extract_nearby_date(text, 18, 30)
+        assert result is None
 
 
 class TestNoteRowId:

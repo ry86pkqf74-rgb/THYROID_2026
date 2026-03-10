@@ -27,6 +27,8 @@ ENTITY_SCHEMA_COLUMNS: list[str] = [
     "evidence_span",
     "evidence_start",
     "evidence_end",
+    "entity_date",
+    "note_date",
     "extraction_method",
     "extracted_at",
 ]

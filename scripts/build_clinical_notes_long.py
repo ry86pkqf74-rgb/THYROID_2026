@@ -26,6 +26,7 @@ from utils.text_helpers import (
     strip_phi,
     make_note_row_id,
     save_parquet,
+    extract_note_date,
 )
 
 logging.basicConfig(
@@ -101,6 +102,7 @@ def build_long(raw_path: Path, col_map: pd.DataFrame) -> pd.DataFrame:
                     "research_id": int(rid),
                     "note_type": str(note_type),
                     "note_index": int(note_index),
+                    "note_date": extract_note_date(text_str),
                     "note_text": text_str,
                     "source_sheet": sheet_name,
                     "source_column": snake_col,
@@ -111,13 +113,15 @@ def build_long(raw_path: Path, col_map: pd.DataFrame) -> pd.DataFrame:
         log.warning("  No note records produced!")
         return pd.DataFrame(columns=[
             "note_row_id", "research_id", "note_type", "note_index",
-            "note_text", "source_sheet", "source_column", "char_count",
+            "note_date", "note_text", "source_sheet", "source_column", "char_count",
         ])
 
     result = pd.DataFrame(all_records)
+    n_dated = result["note_date"].notna().sum()
     log.info(f"  Total note rows: {len(result):,}")
     log.info(f"  Unique patients: {result['research_id'].nunique():,}")
     log.info(f"  Note types: {sorted(result['note_type'].unique())}")
+    log.info(f"  Notes with date: {n_dated:,} ({100*n_dated/len(result):.1f}%)")
     return result
 
 
@@ -130,6 +134,7 @@ def write_qa_report(df: pd.DataFrame, path: Path) -> None:
             unique_patients=("research_id", "nunique"),
             avg_char_count=("char_count", "mean"),
             max_char_count=("char_count", "max"),
+            pct_with_date=("note_date", lambda s: round(100 * s.notna().mean(), 1)),
         )
         .reset_index()
     )

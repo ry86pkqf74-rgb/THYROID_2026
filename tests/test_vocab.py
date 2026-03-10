@@ -71,6 +71,7 @@ class TestVocabFormat:
             "research_id", "note_row_id", "note_type", "entity_type",
             "entity_value_raw", "entity_value_norm", "present_or_negated",
             "confidence", "evidence_span", "evidence_start", "evidence_end",
+            "entity_date", "note_date",
             "extraction_method", "extracted_at",
         }
         assert required == set(ENTITY_SCHEMA_COLUMNS)

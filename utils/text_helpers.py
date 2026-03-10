@@ -114,6 +114,94 @@ def safe_parse_date(val) -> str | None:
         return None
 
 
+_LEADING_DATE = re.compile(
+    r"^\s*(\d{1,2}/\d{1,2}/\d{2,4})\b"
+)
+_SERVICE_DATE = re.compile(
+    r"(?:date\s+of\s+service|service\s+date|admission\s+date|encounter\s+date"
+    r"|date\s+of\s+visit|visit\s+date|procedure\s+date|surgery\s+date"
+    r"|operative\s+date|date\s+of\s+procedure)\s*:?\s*"
+    r"(\d{1,2}/\d{1,2}/\d{2,4})",
+    re.IGNORECASE,
+)
+_HEADER_DATE = re.compile(
+    r"\b(\d{1,2}/\d{1,2}/\d{2,4})\b"
+)
+
+NOTE_DATE_SCAN_CHARS = 500
+
+
+def extract_note_date(note_text: str) -> str | None:
+    """Extract the most likely encounter/service date from a clinical note.
+
+    Strategy (in priority order):
+      1. Explicit "Date of Service: MM/DD/YYYY" label within the first 500 chars
+      2. A date at the very start of the note (common pattern)
+      3. First date found in the first 500 chars (heuristic fallback)
+
+    Returns ISO YYYY-MM-DD or None.
+    """
+    if not note_text or len(note_text.strip()) < 4:
+        return None
+
+    header = note_text[:NOTE_DATE_SCAN_CHARS]
+
+    m = _SERVICE_DATE.search(header)
+    if m:
+        return safe_parse_date(m.group(1))
+
+    m = _LEADING_DATE.match(note_text)
+    if m:
+        return safe_parse_date(m.group(1))
+
+    m = _HEADER_DATE.search(header)
+    if m:
+        parsed = safe_parse_date(m.group(1))
+        if parsed:
+            try:
+                dt = datetime.strptime(parsed, "%Y-%m-%d")
+                if 1990 <= dt.year <= 2030:
+                    return parsed
+            except ValueError:
+                pass
+
+    return None
+
+
+_NEARBY_DATE = re.compile(r"\b(\d{1,2}/\d{1,2}/\d{2,4})\b")
+
+
+def extract_nearby_date(text: str, match_start: int, match_end: int,
+                        window: int = 120) -> str | None:
+    """Find the closest date within +-window chars of a regex match span.
+
+    Returns ISO YYYY-MM-DD or None.
+    """
+    region_start = max(0, match_start - window)
+    region_end = min(len(text), match_end + window)
+    region = text[region_start:region_end]
+
+    best: str | None = None
+    best_dist = window + 1
+    for m in _NEARBY_DATE.finditer(region):
+        date_abs_start = region_start + m.start()
+        dist = min(
+            abs(date_abs_start - match_start),
+            abs(date_abs_start - match_end),
+        )
+        if dist < best_dist:
+            parsed = safe_parse_date(m.group(1))
+            if parsed:
+                try:
+                    dt = datetime.strptime(parsed, "%Y-%m-%d")
+                    if 1990 <= dt.year <= 2030:
+                        best = parsed
+                        best_dist = dist
+                except ValueError:
+                    pass
+    return best
+
+
 def to_snake_case(name: str) -> str:
     """Convert an arbitrary column name to snake_case."""
     clean = re.sub(r"[^\w]+", "_", str(name).strip()).lower().strip("_")

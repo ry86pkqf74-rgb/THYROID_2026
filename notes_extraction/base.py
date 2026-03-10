@@ -30,6 +30,8 @@ class EntityMatch:
     evidence_span: str = ""
     evidence_start: int = 0
     evidence_end: int = 0
+    entity_date: str | None = None
+    note_date: str | None = None
     extraction_method: str = "regex"
     extracted_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
@@ -46,6 +48,8 @@ class EntityMatch:
             "evidence_span": self.evidence_span,
             "evidence_start": self.evidence_start,
             "evidence_end": self.evidence_end,
+            "entity_date": self.entity_date,
+            "note_date": self.note_date,
             "extraction_method": self.extraction_method,
             "extracted_at": self.extracted_at,
         }
@@ -63,6 +67,7 @@ class BaseExtractor(abc.ABC):
         research_id: int,
         note_type: str,
         note_text: str,
+        note_date: str | None = None,
     ) -> list[EntityMatch]:
         ...
 

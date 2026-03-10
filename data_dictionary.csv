@@ -316,3 +316,16 @@ view,advanced_features_v2,has_complication_mentions,BOOLEAN,Patient has complica
 view,advanced_features_v2,has_genetics_mentions,BOOLEAN,Patient has genetics entities,phase7
 view,advanced_features_v2,has_staging_mentions,BOOLEAN,Patient has staging entities,phase7
 view,advanced_features_v2,has_medication_mentions,BOOLEAN,Patient has medication entities,phase7
+table,clinical_notes_long,note_date,VARCHAR,Encounter/service date extracted from note header (YYYY-MM-DD),phase7
+table,note_entities_staging,entity_date,VARCHAR,Date found near entity in note text (YYYY-MM-DD),phase7
+table,note_entities_staging,note_date,VARCHAR,Encounter/service date from note header (YYYY-MM-DD),phase7
+table,note_entities_genetics,entity_date,VARCHAR,Date found near entity in note text (YYYY-MM-DD),phase7
+table,note_entities_genetics,note_date,VARCHAR,Encounter/service date from note header (YYYY-MM-DD),phase7
+table,note_entities_procedures,entity_date,VARCHAR,Date found near entity in note text (YYYY-MM-DD),phase7
+table,note_entities_procedures,note_date,VARCHAR,Encounter/service date from note header (YYYY-MM-DD),phase7
+table,note_entities_complications,entity_date,VARCHAR,Date found near entity in note text (YYYY-MM-DD),phase7
+table,note_entities_complications,note_date,VARCHAR,Encounter/service date from note header (YYYY-MM-DD),phase7
+table,note_entities_medications,entity_date,VARCHAR,Date found near entity in note text (YYYY-MM-DD),phase7
+table,note_entities_medications,note_date,VARCHAR,Encounter/service date from note header (YYYY-MM-DD),phase7
+table,note_entities_problem_list,entity_date,VARCHAR,Date found near entity in note text (YYYY-MM-DD),phase7
+table,note_entities_problem_list,note_date,VARCHAR,Encounter/service date from note header (YYYY-MM-DD),phase7

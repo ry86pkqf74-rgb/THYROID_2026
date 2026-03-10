@@ -51,15 +51,20 @@ def run_extractors(
     """Run all extractors across every note row, grouping results by domain."""
     domain_results: dict[str, list[dict]] = {}
 
+    has_note_date = "note_date" in notes_df.columns
+
     total = len(notes_df)
     for i, (_, row) in enumerate(notes_df.iterrows()):
         note_row_id = row["note_row_id"]
         research_id = int(row["research_id"])
         note_type = row["note_type"]
         note_text = str(row["note_text"])
+        note_date = row.get("note_date") if has_note_date else None
+        if pd.isna(note_date):
+            note_date = None
 
         for ext in extractors:
-            matches = ext.extract(note_row_id, research_id, note_type, note_text)
+            matches = ext.extract(note_row_id, research_id, note_type, note_text, note_date=note_date)
             if matches:
                 domain = ext.entity_domain
                 domain_results.setdefault(domain, [])
@@ -123,11 +128,17 @@ def main() -> None:
         n_present = (df["present_or_negated"] == "present").sum()
         n_negated = (df["present_or_negated"] == "negated").sum()
         n_patients = df["research_id"].nunique()
+        n_entity_dated = df["entity_date"].notna().sum()
+        n_note_dated = df["note_date"].notna().sum()
 
         log.info(
             f"    {domain:20s}  {len(df):>6,} entities  "
             f"({n_present:,} present, {n_negated:,} negated)  "
             f"{n_patients:,} patients"
+        )
+        log.info(
+            f"      dates: {n_entity_dated:,} entity_date, "
+            f"{n_note_dated:,} note_date"
         )
 
         top = df["entity_value_norm"].value_counts().head(5)

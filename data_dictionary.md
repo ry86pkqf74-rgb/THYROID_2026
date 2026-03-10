@@ -602,6 +602,7 @@ Key columns:
 - `research_id` (INT): patient identifier
 - `note_type` (VARCHAR): h_p, op_note, dc_sum, ed_note, endocrine_note, history_summary, other_history, other_notes
 - `note_index` (INT): sequence within type (1-4)
+- `note_date` (VARCHAR): encounter/service date extracted from note header (YYYY-MM-DD)
 - `note_text` (VARCHAR): full note text
 - `source_sheet` (VARCHAR): Excel sheet name
 - `source_column` (VARCHAR): snake_case column name
@@ -644,6 +645,8 @@ All six entity tables share a common schema:
 - `evidence_span` (VARCHAR): exact substring from note_text
 - `evidence_start` (INT): character offset start
 - `evidence_end` (INT): character offset end
+- `entity_date` (VARCHAR): date found near entity in note text (YYYY-MM-DD)
+- `note_date` (VARCHAR): encounter/service date from note header (YYYY-MM-DD)
 - `extraction_method` (VARCHAR): regex or llm_model
 - `extracted_at` (VARCHAR): ISO-8601 timestamp
 
