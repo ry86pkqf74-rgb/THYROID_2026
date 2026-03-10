@@ -1,0 +1,5 @@
+check_id,severity,issue_count,affected_patients,pct_affected
+multi_surgery_recurrence_gap,warning,484,452,3.87
+date_sanity,error,267,215,1.84
+xfile_laterality,warning,952,952,8.16
+xfile_demographics,info,802,802,6.87

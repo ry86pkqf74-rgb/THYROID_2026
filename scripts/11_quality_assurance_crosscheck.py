@@ -77,11 +77,11 @@ MASTER_TIMELINE_SQL = textwrap.dedent("""\
         -- Source 3: path_synoptics — duplicate research_ids signal re-operations
         SELECT
             CAST(research_id AS INT) AS research_id,
-            TRY_CAST(surgery_date AS DATE) AS surgery_date,
+            TRY_CAST(surg_date AS DATE) AS surgery_date,
             'path_synoptics' AS source
         FROM path_synoptics
-        WHERE surgery_date IS NOT NULL
-          AND TRY_CAST(surgery_date AS DATE) IS NOT NULL
+        WHERE surg_date IS NOT NULL
+          AND TRY_CAST(surg_date AS DATE) IS NOT NULL
     ),
     deduplicated AS (
         SELECT DISTINCT
