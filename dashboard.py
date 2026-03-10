@@ -1350,6 +1350,28 @@ def render_qa_dashboard(con):
         st.info("Demographics QA not available. Run script 11.5 first.",
                 icon="🔍")
 
+    # ── V2 QA Validation Links ──
+    st.markdown(sl("V2 QA Validation (Script 25)"), unsafe_allow_html=True)
+    qa_v2_links = [
+        ("qa_date_completeness_v2", "md_date_quality_summary_v2", "Date Completeness"),
+        ("qa_summary_by_domain_v2", "md_qa_summary_v2", "QA Summary by Domain"),
+        ("qa_high_priority_review_v2", "md_qa_high_priority_v2", "High Priority Review"),
+    ]
+    for local_v, md_v, label in qa_v2_links:
+        view = local_v if tbl_exists(con, local_v) else (
+            md_v if tbl_exists(con, md_v) else None)
+        if view:
+            cnt = sqs(con, f"SELECT COUNT(*) FROM {view}")
+            with st.expander(f"{label} ({cnt:,} rows)", expanded=False):
+                qa_v2_df = sqdf(con, f"SELECT * FROM {view} LIMIT 1000")
+                st.dataframe(qa_v2_df, use_container_width=True,
+                             height=300, hide_index=True)
+                multi_export(qa_v2_df, label.lower().replace(" ", "_"),
+                             key_sfx=f"qav2_{local_v[:8]}")
+        else:
+            st.info(f"{label} not available. Run `scripts/25_qa_validation_v2.py`.",
+                    icon="🔍")
+
 # ─────────────────────────────────────────────────────────────────────────
 # TAB: RISK & SURVIVAL
 # ─────────────────────────────────────────────────────────────────────────
@@ -1467,13 +1489,46 @@ def render_afv3_explorer(con):
 # ─────────────────────────────────────────────────────────────────────────
 # MAIN
 # ─────────────────────────────────────────────────────────────────────────
+def _check_critical_tables(con) -> None:
+    """Surface warnings for missing critical v3 tables."""
+    critical = [
+        ("molecular_episode_v3", "scripts/18_adjudication_framework.py"),
+        ("rai_episode_v3", "scripts/18_adjudication_framework.py"),
+        ("validation_failures_v3", "scripts/17_semantic_cleanup_v3.py"),
+        ("tumor_episode_master_v2", "scripts/22_canonical_episodes_v2.py"),
+        ("linkage_summary_v2", "scripts/23_cross_domain_linkage_v2.py"),
+    ]
+    missing = [(name, script) for name, script in critical if not tbl_exists(con, name)]
+    if missing:
+        names = ", ".join(f"`{n}`" for n, _ in missing)
+        scripts = ", ".join(f"`{s}`" for _, s in set((n, s) for n, s in missing))
+        st.warning(
+            f"Missing critical tables: {names}. "
+            f"Run {scripts} then `scripts/26_motherduck_materialize_v2.py --md` "
+            f"to create them.",
+            icon="⚠️",
+        )
+
+
 def main():
     if not _ensure_token():
         st.title("🔬 Thyroid Cohort Explorer")
-        st.error("**MotherDuck token not found.**\n\nSet `MOTHERDUCK_TOKEN` in `.streamlit/secrets.toml` or as an environment variable.")
+        st.error(
+            "**MotherDuck token not found.**\n\n"
+            "Set `MOTHERDUCK_TOKEN` in `.streamlit/secrets.toml` or as an environment variable.\n\n"
+            "```bash\n"
+            "# Option A: environment variable\n"
+            "export MOTHERDUCK_TOKEN='your_token'\n\n"
+            "# Option B: Streamlit secrets\n"
+            "mkdir -p .streamlit\n"
+            "echo 'MOTHERDUCK_TOKEN = \"your_token\"' > .streamlit/secrets.toml\n"
+            "```"
+        )
         st.stop()
     try: con = _get_con()
     except Exception as exc: st.error(f"Failed to connect to MotherDuck: {exc}"); st.stop()
+
+    _check_critical_tables(con)
 
     st.info("**Publication-ready v2026.03.10** — local DuckDB backup available · "
             "[Release Notes](RELEASE_NOTES.md)", icon="📦")
@@ -1546,17 +1601,35 @@ def main():
             db_mode = "Read-Write" if review_mode and rw_con else "Read-Only Share"
             st.markdown(f"**Database mode:** {db_mode}")
             st.markdown(f"**Database:** `{DATABASE}`")
-            st.markdown(f"**Deploy order:** 15 → 16 → 17 → 18 → 19 → 20")
+            st.markdown(f"**Deploy order:** 15→20 (adjudication) · 22→27 (v2 canonical)")
             for vname, label in [
                 ("molecular_episode_v3", "Molecular v3"),
                 ("rai_episode_v3", "RAI v3"),
                 ("validation_failures_v3", "Validation v3"),
                 ("adjudication_decisions", "Reviewer Decisions"),
+                ("tumor_episode_master_v2", "Canonical Episodes v2"),
+                ("linkage_summary_v2", "Cross-Domain Linkage"),
+                ("qa_issues_v2", "QA Validation v2"),
+                ("date_rescue_rate_summary", "Date Provenance"),
             ]:
                 avail = tbl_exists(con, vname)
                 icon = "✅" if avail else "❌"
                 st.markdown(f"{icon} {label}")
             st.caption(f"Last refresh: {datetime.now():%Y-%m-%d %H:%M}")
+
+        # ── Connection Help ──────────────────────────────────────────
+        with st.expander("❓ Connection Help"):
+            st.markdown(
+                "Set `MOTHERDUCK_TOKEN` before running the dashboard:\n\n"
+                "**Option A** — environment variable:\n"
+                "```bash\nexport MOTHERDUCK_TOKEN='your_token'\n```\n\n"
+                "**Option B** — Streamlit secrets:\n"
+                "```bash\nmkdir -p .streamlit\n"
+                "echo 'MOTHERDUCK_TOKEN = \"your_token\"' > .streamlit/secrets.toml\n```\n\n"
+                "If critical v3 tables are missing, run:\n"
+                "```bash\npython scripts/26_motherduck_materialize_v2.py --md\n"
+                "python scripts/29_validation_engine.py --md\n```"
+            )
 
     (t_ov,t_ex,t_vz,t_adv,t_gen,t_spec,t_img,t_comp,t_rec,t_exp,t_ai,
      t_tl,t_ev,t_qa,t_surv,t_afv3,
@@ -1570,8 +1643,8 @@ def main():
         "📋 Cohort QC","🧑‍⚕️ Patient Audit","🔬 Histology Review",
         "🧬 Molecular Review","☢️ RAI Review","🕐 Timeline Review",
         "📝 Review Queue","⚙️ Diagnostics",
-        "📊 Extraction v2","🧬 Molecular v2","☢️ RAI v2",
-        "📡 Imaging/Nodule v2","🔪 Operative v2","📋 Adjudication v2",
+        "📊 Extraction Completeness","🧬 Molecular Episodes","☢️ RAI Episodes",
+        "📡 Imaging & Nodules","🔪 Operative Detail","📋 QA & Adjudication",
         "🛡 Validation Engine",
     ])
     with t_ov:   render_overview(con)

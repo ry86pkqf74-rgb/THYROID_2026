@@ -78,21 +78,39 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     # ── P1: Upstream heavy views (scripts 16-18) ───────────────────
     ("md_histology_reconciliation_v2", "histology_reconciliation_v2"),
     ("md_validation_failures_v3", "validation_failures_v3"),
+    ("md_patient_validation_rollup_v2", "patient_validation_rollup_v2_mv"),
     ("md_molecular_episode_v2", "molecular_episode_v2"),
     ("md_rai_episode_v2", "rai_episode_v2"),
     ("md_patient_master_timeline_v2", "patient_master_timeline_v2"),
     ("md_patient_manual_review_summary", "patient_manual_review_summary_v"),
-    # ── P1: Adjudication views (scripts 18-19) ─────────────────────
+    # ── P1: Adjudication / v3 views (scripts 18-19) ────────────────
     ("md_histology_analysis_cohort", "histology_analysis_cohort_v"),
+    ("md_histology_discordance_summary", "histology_discordance_summary_v"),
     ("md_molecular_episode_v3", "molecular_episode_v3"),
+    ("md_molecular_analysis_cohort", "molecular_analysis_cohort_v"),
+    ("md_molecular_linkage_failure_summary", "molecular_linkage_failure_summary_v"),
     ("md_rai_episode_v3", "rai_episode_v3"),
+    ("md_rai_analysis_cohort", "rai_analysis_cohort_v"),
+    ("md_rai_linkage_failure_summary", "rai_linkage_failure_summary_v"),
     ("md_adjudication_progress_summary", "adjudication_progress_summary_v"),
+    ("md_adjudication_domain_counts", "adjudication_domain_counts_v"),
+    ("md_top_priority_review_batches", "top_priority_review_batches_v"),
+    ("md_reviewer_resolved_patient_summary", "reviewer_resolved_patient_summary_v"),
+    # ── P1: Post-review overlay views (script 19) ──────────────────
+    ("md_histology_post_review", "histology_post_review_v"),
+    ("md_molecular_post_review", "molecular_post_review_v"),
+    ("md_rai_post_review", "rai_post_review_v"),
     # ── P1: Manual review queues (script 18) ───────────────────────
     ("md_histology_manual_review_queue", "histology_manual_review_queue_v"),
     ("md_molecular_manual_review_queue", "molecular_manual_review_queue_v"),
     ("md_rai_manual_review_queue", "rai_manual_review_queue_v"),
     ("md_timeline_manual_review_queue", "timeline_manual_review_queue_v"),
     ("md_unresolved_high_value_cases", "unresolved_high_value_cases_v"),
+    # ── Manuscript cohort views (script 20) ────────────────────────
+    ("md_manuscript_histology_cohort", "manuscript_histology_cohort_v"),
+    ("md_manuscript_molecular_cohort", "manuscript_molecular_cohort_v"),
+    ("md_manuscript_rai_cohort", "manuscript_rai_cohort_v"),
+    ("md_manuscript_patient_summary", "manuscript_patient_summary_v"),
     # ── Date rescue KPI (script 27) ────────────────────────────────
     ("md_date_rescue_rate_summary", "date_rescue_rate_summary"),
 ]

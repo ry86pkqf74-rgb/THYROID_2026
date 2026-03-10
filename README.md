@@ -92,13 +92,21 @@ The share is SELECT-only — data cannot be modified through it.
 
 ## Dashboard features
 
-- **Overview** — 12 key metrics + data completeness by surgery year
-- **Data Explorer** — full `advanced_features_view` with column selector, sidebar
+- **Overview** — 12 key metrics + data completeness by surgery year + date rescue KPI
+- **Data Explorer** — full `advanced_features_v3` with column selector, sidebar
   filters (histology, BRAF, parathyroid, sex, age), and CSV download
 - **Visualizations** — interactive Plotly charts: histology distribution,
   AJCC 8th stage, sex distribution, parathyroid findings
 - **Advanced** — mutation flags (BRAF/RAS/RET/TERT/NTRK/ALK), RAI avidity
   breakdown, benign phenotypes, recurrence risk bands
+- **Extraction Completeness** — V2 extractor field fill rates across domains
+- **Molecular Episodes** — canonical molecular test analytics with linkage quality
+- **RAI Episodes** — RAI treatment analytics with assertion status and interval classes
+- **Imaging & Nodules** — nodule-level analytics with imaging-pathology concordance
+- **Operative Detail** — operative episode enrichment from V2 extractors
+- **QA & Adjudication** — cross-domain QA summary, linkage quality, date completeness
+- **Validation Engine** — adjudication confirmations, chronology anomalies,
+  completeness scorecard, combined review queue, domain-level downloads
 
 ## CI / CD
 
@@ -180,6 +188,25 @@ of all 13 tables and 8+ views.
 
 Private research data — do not redistribute without permission.
 
+
+## V3 Dashboard Materialization
+
+After deploying the full pipeline (scripts 15–20, 22–27), materialize tables
+for the Streamlit dashboard:
+
+```bash
+# Materialize all v2/v3 tables to MotherDuck
+python scripts/26_motherduck_materialize_v2.py --md
+
+# Run validation engine (creates val_* tables)
+python scripts/29_validation_engine.py --md
+
+# Run combined validation + export
+python scripts/29_validation_runner.py --md
+
+# Check readiness (exits non-zero if critical tables missing)
+python scripts/30_readiness_check.py --md
+```
 
 ## v2026.03.10 - Publication Release
 

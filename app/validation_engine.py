@@ -413,6 +413,137 @@ def _render_review_queue(con) -> None:
     multi_export(filtered, "val_review_queue", "rq")
 
 
+DOMAIN_REVIEW_VIEWS = [
+    ("histology", "histology_manual_review_queue_v", "md_histology_manual_review_queue"),
+    ("molecular", "molecular_manual_review_queue_v", "md_molecular_manual_review_queue"),
+    ("rai", "rai_manual_review_queue_v", "md_rai_manual_review_queue"),
+    ("timeline", "timeline_manual_review_queue_v", "md_timeline_manual_review_queue"),
+    ("imaging_pathology", "imaging_pathology_concordance_review_v2", "md_imaging_path_concordance_v2"),
+    ("operative_pathology", "operative_pathology_reconciliation_review_v2", "md_op_path_recon_review_v2"),
+]
+
+
+def _render_domain_downloads(con) -> None:
+    """Sub-tab: Per-domain review queue downloads."""
+    st.markdown(sl("Domain Review Queue Downloads"), unsafe_allow_html=True)
+    st.caption(
+        "Download review queues for each domain. These are the same queues "
+        "exported by `scripts/29_validation_runner.py`."
+    )
+
+    for domain, local_view, md_view in DOMAIN_REVIEW_VIEWS:
+        view = None
+        if tbl_exists(con, local_view):
+            view = local_view
+        elif tbl_exists(con, md_view):
+            view = md_view
+
+        if not view:
+            st.markdown(f"**{domain.replace('_', ' ').title()}:** not available")
+            continue
+
+        cnt = 0
+        try:
+            cnt = sqdf(con, f"SELECT COUNT(*) AS n FROM {view}").iloc[0]["n"]
+        except Exception:
+            pass
+
+        with st.expander(f"{domain.replace('_', ' ').title()} — {cnt:,} items"):
+            df = sqdf(con, f"SELECT * FROM {view} ORDER BY research_id")
+            if df.empty:
+                st.success(f"No {domain} review items.")
+            else:
+                st.dataframe(df, use_container_width=True, height=300)
+                multi_export(df, f"{domain}_review", key_sfx=f"drq_{domain}")
+
+
+def _render_validation_summary(con) -> None:
+    """Sub-tab: Validation runner summary (from script 29 output)."""
+    st.markdown(sl("Validation Runner Summary"), unsafe_allow_html=True)
+
+    VALIDATION_VIEWS = [
+        "streamlit_patient_header_v",
+        "streamlit_patient_timeline_v",
+        "streamlit_patient_conflicts_v",
+        "streamlit_patient_manual_review_v",
+        "patient_reconciliation_summary_v",
+        "adjudication_decisions",
+        "adjudication_decision_history",
+        "histology_post_review_v",
+        "molecular_post_review_v",
+        "rai_post_review_v",
+        "manuscript_histology_cohort_v",
+        "manuscript_molecular_cohort_v",
+        "manuscript_rai_cohort_v",
+        "manuscript_patient_summary_v",
+    ]
+
+    rows = []
+    passed = 0
+    skipped = 0
+    for view in VALIDATION_VIEWS:
+        exists = tbl_exists(con, view)
+        if exists:
+            try:
+                cnt = sqdf(con, f"SELECT COUNT(*) AS n FROM {view}").iloc[0]["n"]
+            except Exception:
+                cnt = 0
+            status = "PASS" if cnt > 0 else "WARN (empty)"
+            passed += 1 if cnt > 0 else 0
+        else:
+            cnt = 0
+            status = "SKIP"
+            skipped += 1
+        rows.append({"View": view, "Status": status, "Rows": cnt})
+
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Passed", f"{passed}")
+    c2.metric("Skipped", f"{skipped}")
+    c3.metric("Total", f"{len(VALIDATION_VIEWS)}")
+
+    import pandas as pd
+    st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown(sl("Reconciliation Gap Summary"), unsafe_allow_html=True)
+
+    gap_rows = []
+    for domain, local_view, md_view in DOMAIN_REVIEW_VIEWS:
+        view = None
+        if tbl_exists(con, local_view):
+            view = local_view
+        elif tbl_exists(con, md_view):
+            view = md_view
+        if not view:
+            continue
+        try:
+            total = sqdf(con, f"SELECT COUNT(*) AS n FROM {view}").iloc[0]["n"]
+            errors = 0
+            warnings = 0
+            try:
+                errors = sqdf(con, f"SELECT COUNT(*) AS n FROM {view} WHERE review_severity = 'error'").iloc[0]["n"]
+                warnings = sqdf(con, f"SELECT COUNT(*) AS n FROM {view} WHERE review_severity = 'warning'").iloc[0]["n"]
+            except Exception:
+                pass
+            patients = sqdf(con, f"SELECT COUNT(DISTINCT research_id) AS n FROM {view}").iloc[0]["n"]
+            gap_rows.append({
+                "Domain": domain, "Total": total,
+                "Errors": errors, "Warnings": warnings, "Patients": patients,
+            })
+        except Exception:
+            pass
+
+    if gap_rows:
+        gap_df = pd.DataFrame(gap_rows)
+        st.dataframe(gap_df, use_container_width=True, hide_index=True)
+
+        total_errors = sum(r["Errors"] for r in gap_rows)
+        total_warnings = sum(r["Warnings"] for r in gap_rows)
+        st.caption(f"Total: {total_errors:,} errors, {total_warnings:,} warnings across {len(gap_rows)} domains")
+    else:
+        st.info("No reconciliation gap data available.")
+
+
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Main entry point
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -429,7 +560,6 @@ def render_validation_engine(con) -> None:
             "to create them, then refresh.",
             icon="⚠️"
         )
-        return
 
     st.markdown(
         f"Validation coverage: {badge(f'{available}/{total_tables} tables', 'teal')}",
@@ -443,6 +573,8 @@ def render_validation_engine(con) -> None:
         "Unlinked Linkable",
         "Completeness",
         "Review Queue",
+        "Domain Downloads",
+        "Runner Summary",
     ])
 
     with sub_tabs[0]:
@@ -457,3 +589,7 @@ def render_validation_engine(con) -> None:
         _render_completeness(con)
     with sub_tabs[5]:
         _render_review_queue(con)
+    with sub_tabs[6]:
+        _render_domain_downloads(con)
+    with sub_tabs[7]:
+        _render_validation_summary(con)

@@ -172,7 +172,7 @@ def render_adjudication_summary(con) -> None:
     # ------------------------------------------------------------------
     # 6. Linkage Summary
     # ------------------------------------------------------------------
-    st.markdown(sl("Linkage Summary"), unsafe_allow_html=True)
+    st.markdown(sl("Cross-Domain Linkage Summary"), unsafe_allow_html=True)
 
     if linkage_view:
         link_df = sqdf(con, f"SELECT * FROM {linkage_view}")
@@ -182,4 +182,43 @@ def render_adjudication_summary(con) -> None:
         else:
             st.info("No linkage summary data available.")
     else:
-        st.info("Linkage summary view not available.")
+        st.info("Linkage summary view not available. Run `scripts/23_cross_domain_linkage_v2.py`.")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # ------------------------------------------------------------------
+    # 7. Granular Linkage Quality (from materialized tables)
+    # ------------------------------------------------------------------
+    st.markdown(sl("Linkage Quality by Domain Pair"), unsafe_allow_html=True)
+
+    linkage_pairs = [
+        ("imaging_fna_linkage_v2", "md_imaging_fna_linkage_v2", "Imaging → FNA"),
+        ("fna_molecular_linkage_v2", "md_fna_molecular_linkage_v2", "FNA → Molecular"),
+        ("preop_surgery_linkage_v2", "md_preop_surgery_linkage_v2", "Pre-op → Surgery"),
+        ("surgery_pathology_linkage_v2", "md_surgery_pathology_linkage_v2", "Surgery → Pathology"),
+        ("pathology_rai_linkage_v2", "md_pathology_rai_linkage_v2", "Pathology → RAI"),
+    ]
+    linkage_rows = []
+    for local_name, md_name, label in linkage_pairs:
+        lv = _resolve_view(con, local_name, md_name)
+        if lv:
+            total = sqs(con, f"SELECT COUNT(*) FROM {lv}")
+            try:
+                weak = sqs(con, f"SELECT COUNT(*) FROM {lv} WHERE confidence_tier = 'weak'")
+            except Exception:
+                weak = 0
+            try:
+                exact = sqs(con, f"SELECT COUNT(*) FROM {lv} WHERE confidence_tier = 'exact_match'")
+            except Exception:
+                exact = 0
+            linkage_rows.append({
+                "Pair": label, "Total Links": total,
+                "Exact Match": exact, "Weak": weak,
+                "Weak %": f"{weak/total*100:.1f}%" if total else "—",
+            })
+    if linkage_rows:
+        import pandas as pd
+        lq_df = pd.DataFrame(linkage_rows)
+        st.dataframe(lq_df, use_container_width=True, hide_index=True)
+    else:
+        st.info("Granular linkage tables not yet materialized. Run `scripts/26_motherduck_materialize_v2.py`.")
