@@ -125,4 +125,6 @@
 - Doubly-robust PSM: adjusted for residual ln_positive imbalance; HR=1.794 (1.056–3.048), p=0.031
 - Script 34 (`34_publication_figures.py`): generates 5 manuscript figures (PSM balance, sensitivity forest, matched KM, subgroup forest, stage distribution) to `studies/manuscript_draft/figures/`
 - Zenodo archive rebuilt with 178 files (36.9 MB) including doubly-robust results and figures
-- Next phase: Zenodo upload (DOI), manuscript submission
+- Zenodo published: DOI `10.5281/zenodo.18945510`, deposit ID 18945510, 12.9 MB zip
+- `CITATION.cff` has live DOI; `README.md` links to DOI
+- Next phase: manuscript submission, additional subgroup refinements

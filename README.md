@@ -213,6 +213,8 @@ python scripts/30_readiness_check.py --md
 
 ## v2026.03.10 - Publication Release
 
+**Zenodo DOI:** [10.5281/zenodo.18945510](https://doi.org/10.5281/zenodo.18945510)
+
 See [RELEASE_NOTES.md](RELEASE_NOTES.md) for full details.
 QA reconciliation report: [docs/QA_report.md](docs/QA_report.md).
 

@@ -218,5 +218,5 @@ All figures available in `studies/proposal2_ete_staging/figures/` and `notebooks
 
 ## Data Availability
 
-Data archived at Zenodo (DOI: TBD). Code and reproducibility scripts available at
+Data archived at Zenodo (DOI: [10.5281/zenodo.18945510](https://doi.org/10.5281/zenodo.18945510)). Code and reproducibility scripts available at
 https://github.com/ry86pkqf74-rgb/THYROID_2026 (tag: `v2026.03.10-publication-ready`).

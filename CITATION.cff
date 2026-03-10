@@ -10,7 +10,7 @@ repository-code: "https://github.com/ry86pkqf74-rgb/THYROID_2026"
 license: "MIT"
 date-released: "2026-03-10"
 version: "2026.03.10"
-# doi: "10.5281/zenodo.XXXXXXX"  # Uncomment and fill after Zenodo upload
+doi: "10.5281/zenodo.18945510"
 abstract: >-
   A comprehensive thyroid cancer research lakehouse covering 11,673 patients
   across 13 base tables with 60+ engineered features, cross-domain entity
