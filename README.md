@@ -75,6 +75,9 @@ cp .streamlit/secrets.toml.example .streamlit/secrets.toml
 streamlit run dashboard.py
 ```
 
+> **After any view change**, run `python scripts/03_research_views.py` locally
+> before pushing so that MotherDuck has the updated views.
+
 Open **http://localhost:8501** in your browser.
 
 ## MotherDuck data source

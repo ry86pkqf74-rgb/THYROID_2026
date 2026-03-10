@@ -382,8 +382,8 @@ FROM yeared
 GROUP BY surgery_year
 ORDER BY surgery_year
 """,
-    "advanced_features_view": """
-CREATE OR REPLACE VIEW advanced_features_view AS
+    "advanced_features_v3": """
+CREATE OR REPLACE VIEW advanced_features_v3 AS
 SELECT
     mc.research_id,
     mc.age_at_surgery,
@@ -460,7 +460,7 @@ def main() -> None:
         "lymph_node_metastasis_view",
         "benign_vs_malignant_comparison",
         "data_completeness_by_year",
-        "advanced_features_view",
+        "advanced_features_v3",
     ]
 
     for name in creation_order:
@@ -469,8 +469,16 @@ def main() -> None:
         n = con.execute(f"SELECT COUNT(*) FROM {name}").fetchone()[0]
         print(f"✅ {name:35s} rows={n:,}")
 
+    # Backward-compat alias so legacy references to advanced_features_view
+    # continue to work alongside the canonical advanced_features_v3 name.
+    con.execute(
+        "CREATE OR REPLACE VIEW advanced_features_view AS "
+        "SELECT * FROM advanced_features_v3;"
+    )
+    print(f"{'advanced_features_view (alias)':35s} ✓")
+
     print("-" * 72)
-    print("Validation snapshot (8 views)")
+    print("Validation snapshot (9 views)")
     for name in creation_order:
         n = con.execute(f"SELECT COUNT(*) FROM {name}").fetchone()[0]
         print(f"{name:35s} {n:>12,}")

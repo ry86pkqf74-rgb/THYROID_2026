@@ -12,6 +12,9 @@ from datetime import datetime
 import pandas as pd
 import streamlit as st
 
+SHARE_CATALOG = "thyroid_share"
+DATABASE = "thyroid_research_2026"
+
 try:
     import openpyxl  # noqa: F401
     HAS_OPENPYXL = True
@@ -82,6 +85,20 @@ def tbl_exists(con, name: str) -> bool:
         return bool(sqs(con, f"SELECT COUNT(*) FROM information_schema.tables WHERE table_name='{name}'"))
     except Exception:
         return False
+
+
+def qual(table: str) -> str:
+    """Return fully-qualified table name for the active MotherDuck catalog.
+
+    After _get_con() issues USE <catalog>, most unqualified names resolve
+    automatically.  This helper is available for edge cases that need
+    explicit qualification.
+    """
+    try:
+        cat = st.session_state.get("_motherduck_catalog", DATABASE)
+    except Exception:
+        cat = DATABASE
+    return f"{cat}.{table}"
 
 
 # ── UI helpers ───────────────────────────────────────────────────────────

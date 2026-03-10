@@ -105,10 +105,16 @@ PL = dict(paper_bgcolor="rgba(0,0,0,0)",plot_bgcolor="rgba(14,18,25,0.8)",
 SEQ_TEAL = [[0,"#0a1a20"],[0.5,"#1a8a7a"],[1,"#2dd4bf"]]
 SHARE_PATH = "md:_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c"
 DATABASE   = "thyroid_research_2026"
+SHARE_CATALOG = "thyroid_share"
 
-# Read-replica note: for read-only dashboards, append ?access_mode=read_only
-# to the connection string. MotherDuck read replicas reduce load on the
-# primary instance during concurrent dashboard access.
+# Tracks which catalog _get_con() activated (used by qual())
+_ACTIVE_CATALOG: str = DATABASE
+
+
+def qual(table: str) -> str:
+    """Return fully-qualified table name for the active MotherDuck catalog."""
+    return f"{_ACTIVE_CATALOG}.{table}"
+
 
 # ─────────────────────────────────────────────────────────────────────────
 # CONNECTION
@@ -121,10 +127,34 @@ def _ensure_token():
 
 @st.cache_resource(show_spinner="Connecting to MotherDuck…")
 def _get_con():
+    """Connect to MotherDuck and set the default catalog.
+
+    MotherDuck mounts read-only shares under a separate catalog
+    (e.g. 'thyroid_share') rather than the original database name
+    ('thyroid_research_2026').  Without an explicit USE, every
+    unqualified table reference fails with a Catalog Error because
+    DuckDB sees the name in multiple attached catalogs and cannot
+    resolve the ambiguity.
+
+    The USE statement sets the default catalog so all SQL in the app
+    works with plain table names — no per-query qualification needed.
+    """
+    global _ACTIVE_CATALOG
     cfg = MotherDuckConfig(database=DATABASE, share_path=SHARE_PATH)
     cli = MotherDuckClient(cfg)
-    try: return cli.connect_ro_share()
-    except: return cli.connect_rw()
+    try:
+        con = cli.connect_ro_share()
+        con.execute(f"USE {SHARE_CATALOG};")
+        _ACTIVE_CATALOG = SHARE_CATALOG
+        return con
+    except Exception:
+        con = cli.connect_rw()
+        try:
+            con.execute(f"USE {DATABASE};")
+        except Exception:
+            pass  # local DuckDB files have no named catalog
+        _ACTIVE_CATALOG = DATABASE
+        return con
 
 @st.cache_data(ttl=300, show_spinner=False)
 def qdf(_con, sql):  return _con.execute(sql).fetchdf()
@@ -1527,8 +1557,21 @@ def main():
         st.stop()
     try: con = _get_con()
     except Exception as exc: st.error(f"Failed to connect to MotherDuck: {exc}"); st.stop()
+    st.session_state["_motherduck_catalog"] = _ACTIVE_CATALOG
 
     _check_critical_tables(con)
+
+    with st.expander("MotherDuck Debug (remove after fix verified)"):
+        try:
+            st.markdown(f"**Active catalog:** `{_ACTIVE_CATALOG}`")
+            st.markdown("**Attached databases:**")
+            st.code(con.execute("SELECT database_name, type FROM duckdb_databases()").fetchdf().to_string())
+            st.markdown("**Current database:**")
+            st.code(con.execute("SELECT current_database()").fetchone()[0])
+            st.markdown("**Tables in active catalog (first 30):**")
+            st.code(con.execute("SHOW TABLES").fetchdf().head(30).to_string())
+        except Exception as e:
+            st.error(f"Debug query failed: {e}")
 
     st.info("**Publication-ready v2026.03.10** — local DuckDB backup available · "
             "[Release Notes](RELEASE_NOTES.md)", icon="📦")
@@ -1585,6 +1628,7 @@ def main():
             try:
                 cfg = MotherDuckConfig(database=DATABASE)
                 rw_con = MotherDuckClient(cfg).connect_rw()
+                rw_con.execute(f"USE {DATABASE};")
                 st.markdown(
                     '<div style="font-family:monospace;font-size:.6rem;color:#34d399">'
                     '● REVIEW MODE ACTIVE (read-write)</div>',
