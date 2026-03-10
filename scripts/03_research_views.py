@@ -654,7 +654,7 @@ def main() -> None:
     except Exception as exc:
         print(f"{'advanced_features_view alias':35s} skipped ({exc})")
     try:
-        con.execute("DROP TABLE IF EXISTS advanced_features_v3;")
+        con.execute("DROP VIEW IF EXISTS advanced_features_v3;")
         con.execute(
             "CREATE OR REPLACE VIEW advanced_features_v3 AS "
             "SELECT * FROM advanced_features_sorted;"
