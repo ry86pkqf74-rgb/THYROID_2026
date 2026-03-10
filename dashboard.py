@@ -631,12 +631,6 @@ def render_genetics(con):
         st.dataframe(exp,use_container_width=True,hide_index=True)
         return
 
-    # Debug expander — shows real column names and qualified table ref (remove after fix confirmed)
-    with st.expander("🔍 Genetics Debug (remove after fix)"):
-        _gt_cols = [row[0] for row in con.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'genetic_testing'").fetchall()]
-        st.write("Actual columns in genetic_testing:", _gt_cols)
-        st.write("Using qual():", qual("genetic_testing"))
-
     table = qual("genetic_testing")
 
     st.markdown(sl("Testing Platform & Result Category"),unsafe_allow_html=True)

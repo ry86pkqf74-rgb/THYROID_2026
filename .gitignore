@@ -18,3 +18,6 @@ processed/clinical_notes_long.csv
 # Temporary export artifacts
 exports/*_temp/
 exports/*_draft/
+
+# Zenodo archive artifacts (already uploaded to Zenodo — DOI 10.5281/zenodo.18945510)
+exports/zenodo_archive_*/

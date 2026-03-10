@@ -192,7 +192,33 @@ In this propensity-score matched analysis of 6,630 thyroid cancer patients, extr
 
 ## References
 
-*To be added during manuscript preparation.*
+1. Amin MB, Edge SB, Greene FL, et al., eds. *AJCC Cancer Staging Manual*. 8th ed. New York: Springer; 2017.
+
+2. Haugen BR, Alexander EK, Bible KC, et al. 2015 American Thyroid Association Management Guidelines for Adult Patients with Thyroid Nodules and Differentiated Thyroid Cancer: The American Thyroid Association Guidelines Task Force on Thyroid Nodules and Differentiated Thyroid Cancer. *Thyroid*. 2016;26(1):1-133.
+
+3. Tuttle RM, Haugen B, Perrier ND. Updated American Joint Committee on Cancer/Tumor-Node-Metastasis Staging System for Differentiated and Anaplastic Thyroid Cancer (Eighth Edition): What Changed and Why? *Thyroid*. 2017;27(6):751-756.
+
+4. Nixon IJ, Ganly I, Patel SG, et al. The impact of microscopic extrathyroid extension on outcome in patients with clinical T1 and T2 well-differentiated thyroid cancer. *Surgery*. 2011;150(6):1242-1249.
+
+5. Hay ID, Johnson TR, Kaggal S, et al. Papillary thyroid carcinoma (PTC) in children and adults: comparison of initial presentation and long-term postoperative outcome in 4432 patients consecutively treated at the Mayo Clinic during eight decades (1936-2015). *World J Surg*. 2018;42(2):329-342.
+
+6. Verburg FA, Mäder U, Tanase K, et al. Life expectancy is reduced in differentiated thyroid cancer patients ≥ 45 years old with extensive local tumor invasion, lateral lymph node, or distant metastases at diagnosis and normal in all other DTC patients. *J Clin Endocrinol Metab*. 2013;98(1):172-180.
+
+7. Ito Y, Kudo T, Kobayashi K, Miya A, Ichihara K, Miyauchi A. Prognostic factors for recurrence of papillary thyroid carcinoma in the lymph nodes, lung, and bone: analysis of 5,768 patients with average 10-year follow-up. *World J Surg*. 2012;36(6):1274-1278.
+
+8. Shaha AR, Shah JP, Loree TR. Patterns of nodal and distant metastasis based on histologic types in differentiated carcinomas of the thyroid. *Am J Surg*. 1996;172(6):692-694.
+
+9. Kim TH, Kim YN, Kim HI, et al. Prognostic value of the eighth edition AJCC TNM classification for differentiated thyroid carcinoma. *Oral Oncol*. 2017;71:81-86.
+
+10. Youngwirth LM, Adam MA, Scheri RP, Roman SA, Sosa JA. Extrathyroidal extension is associated with compromised survival in patients with thyroid cancer. *Thyroid*. 2017;27(5):626-631.
+
+11. Austin PC. An introduction to propensity score methods for reducing the effects of confounding in observational studies. *Multivariate Behav Res*. 2011;46(3):399-424.
+
+12. Austin PC. Balance diagnostics for comparing the distribution of baseline covariates between treatment groups in propensity-score matched samples. *Stat Med*. 2009;28(25):3083-3107.
+
+13. Cox DR. Regression models and life-tables. *J R Stat Soc Series B Stat Methodol*. 1972;34(2):187-202.
+
+14. Thyroid Cancer Research Consortium. THYROID_2026 Research Lakehouse [Software and Dataset]. Version v2026.03.10-publication-ready. Zenodo. 2026. DOI: 10.5281/zenodo.18945510.
 
 ## Figures
 
