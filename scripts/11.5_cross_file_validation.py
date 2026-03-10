@@ -88,7 +88,11 @@ LATERALITY_SQL = textwrap.dedent("""\
             CAST(research_id AS INT) AS research_id,
             TRY_CAST(surg_date AS DATE) AS surgery_date,
             LOWER(TRIM(CAST(side_of_largest_tumor_or_goiter AS VARCHAR)))
-                AS operative_side
+                AS operative_side,
+            ROW_NUMBER() OVER (
+                PARTITION BY CAST(research_id AS INT)
+                ORDER BY TRY_CAST(surg_date AS DATE)
+            ) AS surgery_number
         FROM operative_details
         WHERE side_of_largest_tumor_or_goiter IS NOT NULL
           AND TRIM(CAST(side_of_largest_tumor_or_goiter AS VARCHAR)) != ''
@@ -128,7 +132,7 @@ LATERALITY_SQL = textwrap.dedent("""\
         ps.path_procedure,
         ps.path_side,
         o.surgery_date,
-        mt.surgery_number,
+        o.surgery_number,
         CASE
             WHEN ps.path_side IS NULL THEN 'INCOMPLETE'
             WHEN o.operative_side IN ('bilateral', 'both', 'b', 'total')
@@ -143,9 +147,6 @@ LATERALITY_SQL = textwrap.dedent("""\
         ON o.research_id = ps.research_id
         AND (o.surgery_date = ps.surgery_date
              OR ps.surgery_date IS NULL)
-    LEFT JOIN master_timeline mt
-        ON o.research_id = mt.research_id
-        AND mt.surgery_date = o.surgery_date
 """)
 
 
@@ -219,18 +220,18 @@ REPORT_MATCHING_SQL = textwrap.dedent("""\
 DEMOGRAPHICS_SQL = textwrap.dedent("""\
     CREATE OR REPLACE TABLE qa_missing_demographics AS
     SELECT
-        CAST(p.research_id AS INT) AS research_id,
-        p.age_at_surgery,
-        p.sex,
+        CAST(mc.research_id AS INT) AS research_id,
+        mc.age_at_surgery,
+        mc.sex,
         ps_race.race,
-        CASE WHEN p.age_at_surgery IS NULL
+        CASE WHEN mc.age_at_surgery IS NULL
              THEN 'MISSING_AGE' ELSE 'OK' END AS age_flag,
-        CASE WHEN p.sex IS NULL
+        CASE WHEN mc.sex IS NULL
              THEN 'MISSING_SEX' ELSE 'OK' END AS sex_flag,
         CASE WHEN ps_race.race IS NULL
              THEN 'MISSING_RACE' ELSE 'OK' END AS race_flag,
-        'patient_summary_plus_path_synoptics' AS source_priority
-    FROM patient_level_summary_mv p
+        'master_cohort_plus_path_synoptics' AS source_priority
+    FROM master_cohort mc
     LEFT JOIN (
         SELECT
             CAST(research_id AS INT) AS research_id,
@@ -239,9 +240,9 @@ DEMOGRAPHICS_SQL = textwrap.dedent("""\
         WHERE race IS NOT NULL
           AND TRIM(CAST(race AS VARCHAR)) != ''
         GROUP BY CAST(research_id AS INT)
-    ) ps_race ON CAST(p.research_id AS INT) = ps_race.research_id
-    WHERE p.age_at_surgery IS NULL
-       OR p.sex IS NULL
+    ) ps_race ON CAST(mc.research_id AS INT) = ps_race.research_id
+    WHERE mc.age_at_surgery IS NULL
+       OR mc.sex IS NULL
        OR ps_race.race IS NULL
 """)
 
