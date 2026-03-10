@@ -882,6 +882,27 @@ and `scripts/27_date_provenance_formalization.sql` (base table backfill):
 | medications | entity → note |
 | problem_list | entity → note |
 
+### Date Status Taxonomy V3 (Script 17)
+
+Applied to all enriched views via `scripts/17_semantic_cleanup_v3.sql` and `scripts/17_semantic_cleanup_v3_views.sql`:
+
+| Status | Source | Confidence |
+|--------|--------|------------|
+| `exact_source_date` | `entity_date` (native extraction) | 100 |
+| `inferred_day_level_date` | `note_date` fallback | 70 |
+| `coarse_anchor_date` | surgery / FNA / genetics year | 35–60 |
+| `unresolved_date` | no source found | 0 |
+
+**Standardized provenance columns** (present on all enriched views):
+
+| Column | Type |
+|--------|------|
+| `date_status` | VARCHAR |
+| `date_is_source_native_flag` | BOOLEAN |
+| `date_is_inferred_flag` | BOOLEAN |
+| `date_requires_manual_review_flag` | BOOLEAN |
+| `inferred_event_date` | DATE |
+
 ### Related Views
 
 | View | Source | Purpose |
@@ -889,6 +910,9 @@ and `scripts/27_date_provenance_formalization.sql` (base table backfill):
 | `enriched_note_entities_*` (6) | Script 15 | Enriched views with provenance columns computed at query time |
 | `missing_date_associations_audit` | Script 15 | Union of all enriched views for audit |
 | `date_recovery_summary` | Script 15 | Aggregate rescue stats by domain × source |
+| `timeline_rescue_v2_mv` | Script 17 | Genetics rescue view with V3 taxonomy; extend with UNION ALL for other domains |
+| `timeline_unresolved_summary_v2_mv` | Script 17 | KPI rollup: row/patient count and % by date_status |
+| `validation_failures_v3` | Script 17 | Reclassifies coarse anchor dates from error → info; only truly unresolvable dates remain errors |
 | `enriched_master_timeline` | Script 27 | Filtered audit (excludes unrecoverable) |
 | `date_rescue_rate_summary` | Script 27 | KPI: rescue rate % and avg confidence per domain |
 
