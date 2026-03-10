@@ -80,17 +80,45 @@ COL_MAP = {
     'Disseminated Cancer': 'nsqip_disseminated_cancer',
     'Functional Heath Status': 'nsqip_functional_status',
 
-    # Preop labs
+    # Preop labs (values)
     'Serum Sodium': 'nsqip_sodium',
     'BUN': 'nsqip_bun',
     'Serum Creatinine': 'nsqip_creatinine',
     'Albumin': 'nsqip_albumin',
+    'Total Bilirubin': 'nsqip_total_bilirubin',
+    'AST/SGOT': 'nsqip_ast',
+    'Alkaline Phosphatase': 'nsqip_alk_phos',
     'WBC': 'nsqip_wbc',
     'Hemoglobin': 'nsqip_hemoglobin',
     'Hematocrit': 'nsqip_hematocrit',
     'Platelet Count': 'nsqip_platelet_count',
     'Hemoglobin A1c (HbA1c)': 'nsqip_hba1c',
     'INR': 'nsqip_inr',
+    'PTT': 'nsqip_ptt',
+
+    # Preop lab dates
+    'Serum Sodium Date': 'nsqip_sodium_date',
+    'BUN Date': 'nsqip_bun_date',
+    'Serum Creatinine Date': 'nsqip_creatinine_date',
+    'Albumin Date': 'nsqip_albumin_date',
+    'Total Bilirubin Date': 'nsqip_total_bilirubin_date',
+    'AST/SGOT Date': 'nsqip_ast_date',
+    'Alkaline Phosphatase Date': 'nsqip_alk_phos_date',
+    'WBC Date': 'nsqip_wbc_date',
+    'Hemoglobin Date': 'nsqip_hemoglobin_date',
+    'Hematocrit Date': 'nsqip_hematocrit_date',
+    'Platelet Count Date': 'nsqip_platelet_count_date',
+    'INR Date': 'nsqip_inr_date',
+    'PTT Date': 'nsqip_ptt_date',
+    'Hemoglobin A1c (HbA1c) Date': 'nsqip_hba1c_date',
+
+    # Admission / discharge / surgery timestamps
+    'Hospital Admission Date': 'nsqip_admission_date',
+    'Acute Hospital Discharge Date': 'nsqip_discharge_date',
+    'Procedure/Surgery Start': 'nsqip_surgery_start_time',
+    'Procedure/Surgery Finish': 'nsqip_surgery_finish_time',
+    'Date of Death': 'nsqip_death_date',
+    'Date of Birth': 'nsqip_dob',
 
     # General surgical complications
     '# of Postop Superficial Incisional SSI': 'nsqip_superficial_ssi',
@@ -129,6 +157,44 @@ for src_col, dst_col in COL_MAP.items():
         enrichment[dst_col] = matched[src_col].values
     else:
         enrichment[dst_col] = np.nan
+
+# Parse date columns into proper datetime types
+DATE_COLS = [c for c in enrichment.columns if c.endswith('_date') and c != 'nsqip_operation_date']
+TIMESTAMP_COLS = ['nsqip_surgery_start_time', 'nsqip_surgery_finish_time']
+
+for col in DATE_COLS:
+    enrichment[col] = pd.to_datetime(enrichment[col], format='%m/%d/%Y', errors='coerce')
+
+for col in TIMESTAMP_COLS:
+    if col in enrichment.columns:
+        enrichment[col] = pd.to_datetime(enrichment[col], format='%m/%d/%Y %H:%M', errors='coerce')
+
+# Parse DOB
+if 'nsqip_dob' in enrichment.columns:
+    enrichment['nsqip_dob'] = pd.to_datetime(enrichment['nsqip_dob'], format='%m/%d/%Y', errors='coerce')
+
+# Compute days-before-surgery for each preop lab
+LAB_DATE_PAIRS = [
+    ('nsqip_sodium', 'nsqip_sodium_date'),
+    ('nsqip_bun', 'nsqip_bun_date'),
+    ('nsqip_creatinine', 'nsqip_creatinine_date'),
+    ('nsqip_albumin', 'nsqip_albumin_date'),
+    ('nsqip_total_bilirubin', 'nsqip_total_bilirubin_date'),
+    ('nsqip_ast', 'nsqip_ast_date'),
+    ('nsqip_alk_phos', 'nsqip_alk_phos_date'),
+    ('nsqip_wbc', 'nsqip_wbc_date'),
+    ('nsqip_hemoglobin', 'nsqip_hemoglobin_date'),
+    ('nsqip_hematocrit', 'nsqip_hematocrit_date'),
+    ('nsqip_platelet_count', 'nsqip_platelet_count_date'),
+    ('nsqip_inr', 'nsqip_inr_date'),
+    ('nsqip_ptt', 'nsqip_ptt_date'),
+    ('nsqip_hba1c', 'nsqip_hba1c_date'),
+]
+for val_col, date_col in LAB_DATE_PAIRS:
+    days_col = val_col + '_days_before_surgery'
+    if date_col in enrichment.columns:
+        diff = (enrichment['nsqip_operation_date'] - enrichment[date_col]).dt.days
+        enrichment[days_col] = diff.where(enrichment[date_col].notna())
 
 # Derived flags
 enrichment['nsqip_same_day_discharge_flag'] = (
