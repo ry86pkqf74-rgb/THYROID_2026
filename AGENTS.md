@@ -127,4 +127,7 @@
 - Zenodo archive rebuilt with 178 files (36.9 MB) including doubly-robust results and figures
 - Zenodo published: DOI `10.5281/zenodo.18945510`, deposit ID 18945510, 12.9 MB zip
 - `CITATION.cff` has live DOI; `README.md` links to DOI
+- Genetics tab Binder Errors fixed (2026-03-10): `test_platform`/`result_category` replaced with COALESCE over actual raw Excel columns in `dashboard.py`; `genetic_testing_clean` view added to `scripts/03_research_views.py`; all `genetic_testing*` refs now use `qual()` wrapper
+- `03_research_views.py` local execution note: local `thyroid_master.duckdb` has a slim `tumor_pathology` (15 cols); full schema (ETE, invasion, mutation, LN columns) exists only in MotherDuck `thyroid_research_2026`. Run script with RW MotherDuck token, not against local DB
+- Zenodo archive artifacts added to `.gitignore` (DOI `10.5281/zenodo.18945510` is authoritative; no need to track 13–37 MB snapshots in git)
 - Next phase: manuscript submission, additional subgroup refinements

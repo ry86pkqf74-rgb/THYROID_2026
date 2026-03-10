@@ -1,6 +1,6 @@
 # Extrathyroidal Extension and Recurrence Risk in Thyroid Cancer: A Propensity-Score Matched Analysis
 
-**Version:** Draft v1 — 2026-03-10  
+**Version:** Draft v2 — 2026-03-10  
 **Data source:** THYROID_2026 Lakehouse (v2026.03.10-publication-ready)  
 **Cohort:** 11,673 thyroid surgery patients, Emory University  
 **Analysis cohort:** 6,630 patients with complete risk data  
@@ -21,11 +21,15 @@
 
 ## 1. Introduction
 
-- Thyroid cancer incidence rising; differentiated types (PTC, FTC) account for >95%
-- AJCC 8th edition (2018) revised staging, particularly ETE classification
-- ETE impact on recurrence: prognostic significance established but magnitude debated
-- Gap: PSM-based evidence controlling for tumor size, node status, and patient age
-- Objective: determine independent effect of ETE on recurrence using propensity-score matching
+Thyroid cancer is the most common endocrine malignancy and its incidence has increased substantially over the past three decades, with differentiated histotypes—papillary (PTC) and follicular (FTC) thyroid carcinoma—accounting for more than 95% of cases.¹ Although the prognosis for most patients is excellent, a clinically relevant subset experiences disease recurrence, which carries significant morbidity and necessitates additional treatment.²
+
+Extrathyroidal extension (ETE), defined as tumor invasion beyond the thyroid capsule, is a recognized adverse pathological feature in differentiated thyroid cancer. The 8th edition of the AJCC Cancer Staging Manual (2018) substantially revised ETE classification relative to prior editions: microscopic ETE—defined as extension detectable only on histological examination—was removed as a criterion for T3 upstaging, while gross ETE (macroscopic invasion of strap muscles, trachea, esophagus, or major vessels) retained its staging relevance as T3b or T4a/b disease.³ This change resulted in T-stage downstaging for a large proportion of patients whose staging had previously been driven by microscopic ETE.
+
+Despite these revisions, the independent prognostic impact of ETE on recurrence risk remains debated. Prior studies have documented an association between ETE and recurrence,⁴⁻⁶ but these analyses have often been limited by confounding from tumor size, lymph node burden, and patient age—factors that co-segregate with ETE and independently predict outcomes. Observational studies without rigorous confounder control may overestimate the ETE effect, while those that adjust inadequately for lymph node status may underestimate it.
+
+Propensity-score matching (PSM) offers a principled approach to address confounding in observational surgical oncology data by creating matched treatment and control groups with balanced covariate distributions.⁷'⁸ To our knowledge, no large-scale PSM analysis has specifically examined the independent effect of ETE on recurrence in the AJCC 8th edition era, adjusting simultaneously for age, tumor size, and lymph node status.
+
+Here we report a propensity-score matched analysis of 6,630 thyroid cancer patients from a single institution to estimate the independent hazard of recurrence attributable to ETE, with pre-specified sensitivity analyses across six caliper levels and a doubly-robust adjustment for residual covariate imbalance.
 
 ## 2. Methods
 
@@ -157,6 +161,12 @@ Concordance index: 0.690
 - Stage I: 99.8% | Stage III: 96.5%
 - ETE absent: 100% | ETE present: 99.6%
 - Low risk: 100% | High risk: 99.3%
+
+Kaplan-Meier curves stratified by ATA risk band (Figure 10) demonstrated separation beginning at approximately 3 years, driven entirely by the high-risk subgroup. Curves by ETE status (Figure 11) showed divergence between gross ETE patients and both microscopic ETE and ETE-absent groups, with no recurrence events in the low-risk stratum over median 7.7 years of follow-up.
+
+### 3.7 ETE-Stratified Cox Regression (Table 8 / Supplementary)
+
+To characterize the contribution of ETE subtype specifically, we fit univariate and penalized multivariate Cox proportional-hazards models in the 5,794-patient risk-enriched cohort (36 events; median follow-up 7.7 years). In univariate analysis, gross ETE carried a markedly elevated hazard of recurrence (HR 11.41, 95% CI 5.35–24.32; p<0.001), while microscopic ETE alone was associated with a lower hazard than the ETE-absent reference (HR 0.20, 95% CI 0.07–0.57; p=0.003), consistent with the AJCC 8th edition decision to exclude mETE from T-staging. Age ≥55 was the only other significant univariate predictor (HR 0.48, 95% CI 0.23–1.00; p=0.049). Tumor size >4 cm, lymph node ratio, and BRAF positivity were not independently significant (all p>0.4). These ETE-subtype results are detailed in Table 8 (see Supplementary) and visualized in Figure 12.
 
 ## 4. Discussion
 
