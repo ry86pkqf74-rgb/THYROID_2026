@@ -18,7 +18,7 @@ Run locally:
 """
 from __future__ import annotations
 import io
-import os, sys, requests
+import os, sys, time, requests
 from datetime import datetime
 from pathlib import Path
 
@@ -168,6 +168,29 @@ def sqdf(con, sql):
 def sqs(con, sql):
     try: return qs(con, sql)
     except: return 0
+
+@st.cache_data(ttl=3600, show_spinner="Querying optimized lakehouse…")
+def _cached_qdf(_con, sql: str):
+    """Inner cached fetch — uses _con to avoid unhashable duckdb.DuckDBPyConnection."""
+    return _con.execute(sql).fetchdf()
+
+def cached_sqdf(con, sql: str, key: str = "query") -> pd.DataFrame:
+    """Execute *sql* with a 1-hour cache and surface timing as a caption.
+
+    Uses the pre-built materialized tables (advanced_features_sorted,
+    overview_kpis, genetics_summary, pathology_summary) for sub-100 ms reads.
+    Falls back gracefully on any error.
+    """
+    try:
+        t0 = time.perf_counter()
+        df = _cached_qdf(con, sql)
+        elapsed = time.perf_counter() - t0
+        st.caption(f"🔥 `{key}` — {elapsed*1000:.0f} ms · MotherDuck optimized")
+        return df
+    except Exception as e:
+        st.warning(f"Query failed ({key}): {e}", icon="⚠️")
+        return pd.DataFrame()
+
 def tbl_exists(con, name):
     try: return bool(sqs(con,f"SELECT COUNT(*) FROM information_schema.tables WHERE table_name='{name}'"))
     except: return False
@@ -266,13 +289,27 @@ def build_sidebar(df):
 # TAB: OVERVIEW
 # ─────────────────────────────────────────────────────────────────────────
 def render_overview(con):
+    # Pull pre-computed KPIs from the materialized table when available;
+    # fall back to individual sqs() calls (which are themselves cached).
+    _kpi_from_table = False
+    if tbl_exists(con, "overview_kpis"):
+        try:
+            kpi_df = cached_sqdf(con, "SELECT * FROM overview_kpis", key="overview_kpis")
+            if not kpi_df.empty:
+                _kpi_row = kpi_df.iloc[0]
+                _kpi_from_table = True
+        except Exception:
+            pass
+
     q = sqs
     m = dict(
-        total=q(con,"SELECT COUNT(DISTINCT research_id) FROM master_cohort"),
+        total=(int(_kpi_row.get("unique_patients", 0)) if _kpi_from_table
+               else q(con, "SELECT COUNT(DISTINCT research_id) FROM master_cohort")),
         tumor_path=q(con,"SELECT COUNT(*) FROM master_cohort WHERE has_tumor_pathology"),
         benign_path=q(con,"SELECT COUNT(*) FROM master_cohort WHERE has_benign_pathology"),
         fna=q(con,"SELECT COUNT(*) FROM master_cohort WHERE has_fna_cytology"),
-        braf=q(con,"SELECT COALESCE(SUM(CASE WHEN braf_mutation_mentioned THEN 1 ELSE 0 END),0) FROM tumor_pathology"),
+        braf=(int(_kpi_row.get("braf_positive", 0)) if _kpi_from_table
+              else q(con,"SELECT COALESCE(SUM(CASE WHEN braf_mutation_mentioned THEN 1 ELSE 0 END),0) FROM tumor_pathology")),
         rai_pos=q(con,"SELECT COUNT(*) FROM nuclear_med WHERE rai_avid_flag='positive'"),
         nuclear=q(con,"SELECT COUNT(*) FROM master_cohort WHERE has_nuclear_med"),
         us=q(con,"SELECT COUNT(*) FROM master_cohort WHERE has_ultrasound_reports"),
@@ -297,7 +334,7 @@ def render_overview(con):
         st.markdown("<br>",unsafe_allow_html=True)
 
     st.markdown(sl("Data Completeness by Surgery Year"),unsafe_allow_html=True)
-    df_c = sqdf(con,"SELECT * FROM data_completeness_by_year ORDER BY surgery_year")
+    df_c = cached_sqdf(con,"SELECT * FROM data_completeness_by_year ORDER BY surgery_year",key="completeness_by_year")
     if not df_c.empty:
         fig = go.Figure()
         for name,(col,color) in {"Tumor Path":("n_tumor_pathology","#2dd4bf"),"FNA":("n_fna_cytology","#38bdf8"),"Ultrasound":("n_ultrasound_reports","#a78bfa"),"Tg Labs":("n_thyroglobulin_labs","#f59e0b")}.items():
@@ -604,20 +641,30 @@ def render_genetics(con):
 
     st.markdown(sl("Testing Platform & Result Category"),unsafe_allow_html=True)
     c1,c2 = st.columns(2)
+
+    # Prefer the pre-grouped genetics_summary materialized table; fall back
+    # to live aggregation against the raw genetic_testing table.
+    _use_gs = tbl_exists(con, "genetics_summary")
     with c1:
         try:
-            # Use actual raw Excel columns; fall back to test_platform if the clean view exists
-            df_plat = sqdf(con, f"""
-                SELECT COALESCE(
-                    "Genetic Test Performed_1",
-                    "Thyroseq/Afirma_1",
-                    "Thyroseq/Afirma_2",
-                    "Thyroseq/Afirma_3",
-                    'Unknown'
-                ) AS platform, COUNT(*) AS n
-                FROM {table}
-                GROUP BY 1 ORDER BY n DESC
-            """)
+            if _use_gs:
+                df_plat = cached_sqdf(
+                    con,
+                    "SELECT test_platform AS platform, SUM(n) AS n FROM genetics_summary GROUP BY 1 ORDER BY n DESC",
+                    key="genetics_platform",
+                )
+            else:
+                df_plat = sqdf(con, f"""
+                    SELECT COALESCE(
+                        "Genetic Test Performed_1",
+                        "Thyroseq/Afirma_1",
+                        "Thyroseq/Afirma_2",
+                        "Thyroseq/Afirma_3",
+                        'Unknown'
+                    ) AS platform, COUNT(*) AS n
+                    FROM {table}
+                    GROUP BY 1 ORDER BY n DESC
+                """)
             if not df_plat.empty:
                 fig = px.pie(df_plat,names="platform",values="n",hole=0.5,color_discrete_sequence=["#2dd4bf","#38bdf8","#a78bfa","#f59e0b","#f43f5e"])
                 fig.update_traces(textinfo="label+percent",marker=dict(line=dict(color="#07090f",width=2)))
@@ -628,16 +675,23 @@ def render_genetics(con):
             st.info("Raw columns are being used as fallback.")
     with c2:
         try:
-            df_res = sqdf(con, f"""
-                SELECT COALESCE(
-                    "Detailed findings_1",
-                    "Detailed findings_3",
-                    "Genetic_test_2",
-                    'Unknown'
-                ) AS result, COUNT(*) AS n
-                FROM {table}
-                GROUP BY 1 ORDER BY n DESC
-            """)
+            if _use_gs:
+                df_res = cached_sqdf(
+                    con,
+                    "SELECT result_category AS result, SUM(n) AS n FROM genetics_summary GROUP BY 1 ORDER BY n DESC",
+                    key="genetics_result",
+                )
+            else:
+                df_res = sqdf(con, f"""
+                    SELECT COALESCE(
+                        "Detailed findings_1",
+                        "Detailed findings_3",
+                        "Genetic_test_2",
+                        'Unknown'
+                    ) AS result, COUNT(*) AS n
+                    FROM {table}
+                    GROUP BY 1 ORDER BY n DESC
+                """)
             if not df_res.empty:
                 rc = {"benign":"#34d399","suspicious":"#f59e0b","positive":"#f43f5e","indeterminate":"#a78bfa","other":"#8892a4"}
                 fig = go.Figure(go.Pie(labels=df_res["result"],values=df_res["n"],hole=0.55,
@@ -1616,7 +1670,12 @@ def main():
     with ct: st.markdown('<h1 style="margin:0;padding:0">THYROID_2026</h1><p style="margin:2px 0 0 2px;color:#8892a4;font-size:.78rem;font-family:\'DM Mono\',monospace;letter-spacing:.08em">THYROID CANCER RESEARCH LAKEHOUSE · 11,673 PATIENTS · 13 TABLES · MOTHERDUCK</p>',unsafe_allow_html=True)
     st.markdown("---")
 
-    df_full = sqdf(con,"SELECT * FROM advanced_features_v3") if tbl_exists(con,"advanced_features_v3") else sqdf(con,"SELECT * FROM advanced_features_view")
+    # Prefer the physically-sorted materialized table for instant reads;
+    # fall back through the view chain for older deploys.
+    _af_tbl = ("advanced_features_sorted" if tbl_exists(con,"advanced_features_sorted")
+               else "advanced_features_v3" if tbl_exists(con,"advanced_features_v3")
+               else "advanced_features_view")
+    df_full = cached_sqdf(con, f"SELECT * FROM {_af_tbl}", key="full_cohort")
     if df_full.empty: st.error("Could not load data view."); st.stop()
     df_filt = build_sidebar(df_full)
 
@@ -1696,6 +1755,7 @@ def main():
                 icon = "✅" if avail else "❌"
                 st.markdown(f"{icon} {label}")
             st.caption(f"Last refresh: {datetime.now():%Y-%m-%d %H:%M}")
+            st.caption("🚀 MotherDuck Optimized • Materialized tables + caching active")
 
         # ── Connection Help ──────────────────────────────────────────
         with st.expander("❓ Connection Help"):

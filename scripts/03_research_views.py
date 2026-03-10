@@ -503,6 +503,120 @@ def main() -> None:
     except Exception as exc:
         print(f"{'genetic_testing_clean':35s} skipped ({exc})")
 
+    # =========================================================================
+    # MOTHERDUCK OPTIMIZATION LAYER (added 2026-03-10)
+    # Materialized tables for sub-second dashboard performance.
+    # Safe to re-run: all use CREATE OR REPLACE.
+    # =========================================================================
+    print("-" * 72)
+    print("Creating MotherDuck optimization tables…")
+
+    # 1. Core wide table — physically sorted for common filters + stats.
+    #    advanced_features_v3 was just created above, so no circular ref.
+    try:
+        con.execute("""
+            CREATE OR REPLACE TABLE advanced_features_sorted AS
+            SELECT * FROM advanced_features_v3
+            ORDER BY diagnosis_year DESC, histology, ajcc_stage_8,
+                     braf_status, recurrence_risk_band, patient_id;
+        """)
+        n = con.execute("SELECT COUNT(*) FROM advanced_features_sorted").fetchone()[0]
+        print(f"{'advanced_features_sorted':35s} rows={n:,}")
+    except Exception as exc:
+        print(f"{'advanced_features_sorted':35s} skipped ({exc})")
+
+    # 2. Overview KPIs — tiny pre-computed table; one row only.
+    try:
+        con.execute("""
+            CREATE OR REPLACE TABLE overview_kpis AS
+            SELECT
+                COUNT(*)                                                    AS total_patients,
+                COUNT(CASE WHEN histology = 'PTC'  THEN 1 END)             AS ptc_count,
+                AVG(age_at_diagnosis) FILTER (WHERE age_at_diagnosis IS NOT NULL) AS avg_age,
+                COUNT(CASE WHEN braf_status = 'Positive' THEN 1 END)       AS braf_positive,
+                MAX(diagnosis_year)                                         AS max_year,
+                MIN(diagnosis_year)                                         AS min_year,
+                COUNT(DISTINCT research_id)                                 AS unique_patients
+            FROM advanced_features_sorted;
+        """)
+        print(f"{'overview_kpis':35s} ✓")
+    except Exception as exc:
+        print(f"{'overview_kpis':35s} skipped ({exc})")
+
+    # 3. Genetics summary — pre-grouped for platform + result pies.
+    try:
+        con.execute("""
+            CREATE OR REPLACE TABLE genetics_summary AS
+            SELECT
+                COALESCE(
+                    "Genetic Test Performed_1",
+                    "Thyroseq/Afirma_1",
+                    "Thyroseq/Afirma_2",
+                    "Thyroseq/Afirma_3",
+                    'Unknown'
+                ) AS test_platform,
+                COALESCE(
+                    "Detailed findings_1",
+                    "Detailed findings_3",
+                    "Genetic_test_2",
+                    'Unknown'
+                ) AS result_category,
+                COUNT(*) AS n
+            FROM genetic_testing
+            GROUP BY 1, 2;
+        """)
+        n = con.execute("SELECT COUNT(*) FROM genetics_summary").fetchone()[0]
+        print(f"{'genetics_summary':35s} rows={n:,}")
+    except Exception as exc:
+        print(f"{'genetics_summary':35s} skipped ({exc})")
+
+    # 4. Pathology summary — pre-aggregated capsular/invasion counts.
+    #    Uses a LEFT JOIN on research_id (no CROSS JOIN).
+    try:
+        con.execute("""
+            CREATE OR REPLACE TABLE pathology_summary AS
+            SELECT
+                tw.research_id,
+                COALESCE(TRY_CAST(tw."right_lobe_g"   AS DOUBLE),
+                         TRY_CAST(tw.right_lobe_weight AS DOUBLE), 0) AS right_lobe_weight,
+                COALESCE(TRY_CAST(tw."left_lobe_g"    AS DOUBLE),
+                         TRY_CAST(tw.left_lobe_weight  AS DOUBLE), 0) AS left_lobe_weight,
+                COALESCE(
+                    tp.tumor_1_capsular_invasion,
+                    tp.tumor_2_capsular_invasion,
+                    tp.tumor_3_capsular_invasion,
+                    tp.tumor_4_capsular_invasion,
+                    tp.tumor_5_capsular_invasion,
+                    'Unknown'
+                ) AS capsular_invasion,
+                COALESCE(
+                    CAST(tp.surgical_margins AS VARCHAR),
+                    'Unknown'
+                ) AS surgical_margins
+            FROM thyroid_weights tw
+            LEFT JOIN tumor_pathology tp ON tw.research_id = tp.research_id;
+        """)
+        n = con.execute("SELECT COUNT(*) FROM pathology_summary").fetchone()[0]
+        print(f"{'pathology_summary':35s} rows={n:,}")
+    except Exception as exc:
+        print(f"{'pathology_summary':35s} skipped ({exc})")
+
+    # 5. Refresh backward-compat aliases so nothing breaks.
+    #    advanced_features_sorted is now the physical table; both views
+    #    point to it so reads skip the live view scan entirely.
+    try:
+        con.execute(
+            "CREATE OR REPLACE VIEW advanced_features_view AS "
+            "SELECT * FROM advanced_features_sorted;"
+        )
+        con.execute(
+            "CREATE OR REPLACE VIEW advanced_features_v3 AS "
+            "SELECT * FROM advanced_features_sorted;"
+        )
+        print(f"{'advanced_features_view/v3 (aliases)':35s} ✓")
+    except Exception as exc:
+        print(f"{'advanced_features aliases':35s} skipped ({exc})")
+
     print("-" * 72)
     print("Validation snapshot (9 views)")
     for name in creation_order:
