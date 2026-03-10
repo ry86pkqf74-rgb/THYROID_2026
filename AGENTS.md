@@ -81,7 +81,9 @@
 - Full Cursor system prompt for date association work lives in `prompts/01_date_timeline_system_prompt.md`
 - Date provenance formalization (script 27): `ALTER TABLE` adds `inferred_event_date`, `date_source`, `date_granularity`, `date_confidence` to all 6 `note_entities_*` base tables; backfill uses same COALESCE precedence as script 15 enriched views
 - Script 27 views: `enriched_master_timeline` (audit minus unrecoverable), `date_rescue_rate_summary` (KPI: rescue % and avg confidence per domain)
-- `genetic_testing."date"` and `molecular_testing."date"` share the same Excel source (`THYROSEQ_AFIRMA_12_5.xlsx`); pipeline uses `molecular_testing` for date fallback throughout
+- `genetic_testing` has year-only date columns: `DATE_1_year`, `DATE_2_year`, `DATE_3_year` (BIGINT); `molecular_testing."date"` (VARCHAR) has day-level or year-only dates; both share `THYROSEQ_AFIRMA_12_5.xlsx`; pipeline uses `molecular_testing` for date fallback
+- After script 27 ALTER TABLE, enriched views (script 15) must use `e.* EXCLUDE (inferred_event_date, date_source, date_granularity, date_confidence)` to avoid duplicate column names
+- DuckDB requires one ALTER TABLE ADD COLUMN per statement (no multi-ADD)
 - V2 deployment order updated: 22 → 23 → 24 → 25 → 26 → 27
 - Publication tag: `v2026.03.10-publication-ready` on commit `88a2733`
 - Next phase: analytic modeling or manuscript drafting
