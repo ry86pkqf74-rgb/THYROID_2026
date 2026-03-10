@@ -215,3 +215,14 @@ python scripts/30_readiness_check.py --md
 
 See [RELEASE_NOTES.md](RELEASE_NOTES.md) for full details.
 QA reconciliation report: [docs/QA_report.md](docs/QA_report.md).
+
+**Legacy compatibility:** If the dashboard shows a message about missing legacy tables
+(`molecular_episode_v3`, `rai_episode_v3`, `validation_failures_v3`, `tumor_episode_master_v2`,
+`linkage_summary_v2`), run once:
+
+```bash
+.venv/bin/python scripts/27_fix_legacy_episode_compatibility.py
+```
+
+This creates the five tables as views on top of the modern stack (no data duplication).
+Restart the Streamlit app after running. See [data_dictionary.md](data_dictionary.md) § Legacy Compatibility Layer.

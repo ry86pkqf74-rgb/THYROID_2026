@@ -291,6 +291,11 @@ def run(args: argparse.Namespace) -> int:
             continue
         try:
             con.execute(sql)
+            try:
+                con.execute(f"ANALYZE {tbl_name}")
+                log.info("  ✓  ANALYZE %s", tbl_name)
+            except Exception:
+                pass  # ANALYZE optional (e.g. view in some backends)
             n = table_row_count(con, tbl_name)
             log.info("  ✓  %-35s  rows=%d", tbl_name, n)
             created.append(tbl_name)
@@ -315,7 +320,7 @@ def run(args: argparse.Namespace) -> int:
         return 1
 
     print()
-    print("  Legacy compatibility layer created — dashboard error resolved.")
+    print("  Legacy compatibility layer created — error resolved.")
     print()
     print("  The following tables are now available:")
     for t in created:

@@ -1627,10 +1627,9 @@ def _check_critical_tables(con) -> None:
         missing = [t for t in REQUIRED_TABLES if not tbl_exists(con, t)]
         if missing:
             st.warning(
-                "Using modern timeline model — all core features available. "
-                "Legacy compatibility tables not yet created. "
-                "Run `scripts/27_fix_legacy_episode_compatibility.py` to auto-create them "
-                "(some adjudication sub-tabs will show limited data until then).",
+                "Using modern timeline model – all features available (legacy tables auto-created). "
+                "Run `scripts/27_fix_legacy_episode_compatibility.py` to create compatibility views "
+                "for adjudication sub-tabs.",
                 icon="ℹ️",
             )
     except Exception:
@@ -1658,8 +1657,11 @@ def main():
 
     _check_critical_tables(con)
 
-    st.info("**Publication-ready v2026.03.10** — local DuckDB backup available · "
-            "[Release Notes](RELEASE_NOTES.md)", icon="📦")
+    st.info(
+        "**THYROID_2026 v2026.03.10-publication-ready** | Local DuckDB backup available · "
+        "[Release Notes](RELEASE_NOTES.md)",
+        icon="📦",
+    )
     ci,ct = st.columns([1,11])
     with ci: st.markdown('<div style="font-size:2.8rem;margin-top:4px">🔬</div>',unsafe_allow_html=True)
     with ct: st.markdown('<h1 style="margin:0;padding:0">THYROID_2026</h1><p style="margin:2px 0 0 2px;color:#8892a4;font-size:.78rem;font-family:\'DM Mono\',monospace;letter-spacing:.08em">THYROID CANCER RESEARCH LAKEHOUSE · 11,673 PATIENTS · 13 TABLES · MOTHERDUCK</p>',unsafe_allow_html=True)
@@ -1818,11 +1820,9 @@ def main():
     st.markdown(
         '<div style="text-align:center;padding:0.6rem 0;font-family:\'DM Mono\',monospace;'
         'font-size:0.65rem;color:#4a5568;letter-spacing:0.08em;">'
-        "THYROID_2026 v2026.03.10-publication-ready &nbsp;·&nbsp; "
-        "Local DuckDB backup available &nbsp;·&nbsp; "
+        "THYROID_2026 v2026.03.10-publication-ready | Local DuckDB backup available &nbsp;·&nbsp; "
         f"MotherDuck <code>{DATABASE}</code> &nbsp;·&nbsp; "
-        f"Loaded {datetime.now():%Y-%m-%d %H:%M} &nbsp;·&nbsp; "
-        "Built with Streamlit · DuckDB · Plotly · Claude"
+        f"Loaded {datetime.now():%Y-%m-%d %H:%M}"
         "</div>",
         unsafe_allow_html=True,
     )

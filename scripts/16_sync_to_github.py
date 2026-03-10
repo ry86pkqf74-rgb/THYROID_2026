@@ -53,6 +53,9 @@ COMMIT_MESSAGE = (
 
 # Paths to stage (relative to REPO_ROOT)
 STAGE_PATTERNS = [
+    "scripts/13_performance_optimizations_pack.py",
+    "scripts/14_final_publication_and_downgrade_prep.py",
+    "scripts/15_final_validation_and_release.py",
     "scripts/16_sync_to_github.py",
     "scripts/27_fix_legacy_episode_compatibility.py",
     "dashboard.py",
