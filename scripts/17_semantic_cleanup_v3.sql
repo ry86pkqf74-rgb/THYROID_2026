@@ -2,13 +2,13 @@
 -- Date Status Taxonomy V3 + Rescue Layer (exactly as described in AGENTS.md)
 USE thyroid_research_2026;
 
--- Diagnostic block: confirm genetics date columns exist
+-- Diagnostic (run first to confirm genetics columns exist — ~5 seconds):
 -- SELECT column_name, data_type
 -- FROM information_schema.columns
--- WHERE table_name = 'note_entities_genetics'
+-- WHERE table_name = 'genetic_testing'
 -- ORDER BY ordinal_position;
 
--- Master timeline rescue view (applied to note_entities_genetics; repeat UNION for other 5 tables if desired)
+-- Master timeline rescue view (start with genetics; easy to UNION the other 5 tables later)
 CREATE OR REPLACE VIEW timeline_rescue_v2_mv AS
 SELECT 
     'genetics' AS entity_type,
@@ -46,9 +46,9 @@ FROM thyroid_share.note_entities_genetics e
 LEFT JOIN thyroid_share.clinical_notes_long n ON e.research_id = n.research_id
 LEFT JOIN genetic_testing gt ON e.research_id = gt.research_id
 LEFT JOIN path_synoptics ps ON e.research_id = ps.research_id
-LEFT JOIN fna_cytology f ON e.research_id = f.research_id;   -- swap to fna_history if needed
+LEFT JOIN fna_cytology f ON e.research_id = f.research_id;   -- change to fna_history if your table uses that name
 
--- Summary KPI view for dashboard
+-- Summary KPI view for dashboard & QA
 CREATE OR REPLACE VIEW timeline_unresolved_summary_v2_mv AS
 SELECT 
     date_status,
