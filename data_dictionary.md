@@ -920,3 +920,48 @@ Applied to all enriched views via `scripts/17_semantic_cleanup_v3.sql` and `scri
 
 Script 27 depends on script 15 views (`missing_date_associations_audit`) and all
 base tables being present in `thyroid_research_2026`. Run after scripts 15–26.
+
+---
+
+## Legacy Compatibility Layer (Script 27_fix_legacy_episode_compatibility)
+
+**Created:** 2026-03-10  
+**Script:** `scripts/27_fix_legacy_episode_compatibility.py`  
+**Purpose:** Bridge legacy episode architecture references (scripts 17/18/22/23/26) to the current
+modern table stack. Run this script if the dashboard shows "Missing critical tables" errors.
+
+### Legacy → Modern Mapping
+
+| Legacy Table | Source Table(s) | Key Mapped Columns |
+|---|---|---|
+| `molecular_episode_v3` | `advanced_features_v3` | `braf/ras/ret/tert_mutation_mentioned`, `overall_linkage_confidence`, `molecular_analysis_eligible_flag` |
+| `rai_episode_v3` | `extracted_clinical_events_v4` | `rai_assertion_status`, `rai_interval_class`, `rai_treatment_certainty` |
+| `validation_failures_v3` | `qa_issues` | `severity` (v3 reclassification: coarse_anchor_date → info), `requires_manual_review_flag` |
+| `tumor_episode_master_v2` | `advanced_features_v3` + `master_timeline` | `surgery_date`, `histology_1_type`, `analysis_eligible_flag`, `adjudication_needed_flag` |
+| `linkage_summary_v2` | `patient_level_summary_mv` | `linkage_confidence_tier`, `linked_domain_count`, per-domain has_* flags |
+
+### Modern Stack (No Legacy Needed)
+
+| Modern Table | Replaces | Notes |
+|---|---|---|
+| `extracted_clinical_events_v4` | legacy episode tables | All clinical event extraction |
+| `advanced_features_v3` | `molecular_episode_v2/v3` | 60+ engineered features including molecular flags |
+| `master_timeline` | `patient_cross_domain_timeline_v2` | Surgery-level timeline, multi-surgery safe |
+| `qa_issues` | `validation_failures_v2/v3` | All QA severity levels |
+| `patient_level_summary_mv` | `linkage_summary_v2` | Patient-level coverage summary |
+| `risk_enriched_mv` | `recurrence_risk_features_mv` | Risk enrichment with PSM-ready features |
+
+### Usage
+
+```bash
+# Fix dashboard "Missing critical tables" error:
+.venv/bin/python scripts/27_fix_legacy_episode_compatibility.py
+
+# Use local DuckDB instead of MotherDuck:
+.venv/bin/python scripts/27_fix_legacy_episode_compatibility.py --local
+
+# Dry-run preview:
+.venv/bin/python scripts/27_fix_legacy_episode_compatibility.py --dry-run
+```
+
+After running, restart the Streamlit dashboard to clear the cached connection.

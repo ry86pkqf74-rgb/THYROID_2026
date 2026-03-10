@@ -1610,24 +1610,31 @@ def render_afv3_explorer(con):
 # MAIN
 # ─────────────────────────────────────────────────────────────────────────
 def _check_critical_tables(con) -> None:
-    """Surface warnings for missing critical v3 tables."""
-    critical = [
-        ("molecular_episode_v3", "scripts/18_adjudication_framework.py"),
-        ("rai_episode_v3", "scripts/18_adjudication_framework.py"),
-        ("validation_failures_v3", "scripts/17_semantic_cleanup_v3.py"),
-        ("tumor_episode_master_v2", "scripts/22_canonical_episodes_v2.py"),
-        ("linkage_summary_v2", "scripts/23_cross_domain_linkage_v2.py"),
+    """Surface graceful warnings for missing legacy v3 tables.
+
+    These tables are created by scripts/27_fix_legacy_episode_compatibility.py.
+    If absent, the dashboard continues to function using the modern table stack
+    (extracted_clinical_events_v4, advanced_features_v3, master_timeline, etc.).
+    """
+    REQUIRED_TABLES = [
+        "molecular_episode_v3",
+        "rai_episode_v3",
+        "validation_failures_v3",
+        "tumor_episode_master_v2",
+        "linkage_summary_v2",
     ]
-    missing = [(name, script) for name, script in critical if not tbl_exists(con, name)]
-    if missing:
-        names = ", ".join(f"`{n}`" for n, _ in missing)
-        scripts = ", ".join(f"`{s}`" for _, s in set((n, s) for n, s in missing))
-        st.warning(
-            f"Missing critical tables: {names}. "
-            f"Run {scripts} then `scripts/26_motherduck_materialize_v2.py --md` "
-            f"to create them.",
-            icon="⚠️",
-        )
+    try:
+        missing = [t for t in REQUIRED_TABLES if not tbl_exists(con, t)]
+        if missing:
+            st.warning(
+                "Using modern timeline model — all core features available. "
+                "Legacy compatibility tables not yet created. "
+                "Run `scripts/27_fix_legacy_episode_compatibility.py` to auto-create them "
+                "(some adjudication sub-tabs will show limited data until then).",
+                icon="ℹ️",
+            )
+    except Exception:
+        pass  # Never block dashboard startup over a table-existence check
 
 
 def main():
@@ -1820,7 +1827,17 @@ def main():
     with t_ve:   render_validation_engine(con)
 
     st.markdown("---")
-    st.caption(f"**Data source:** MotherDuck `{DATABASE}` · Share: `{SHARE_PATH[:40]}…` · Loaded: {datetime.now():%Y-%m-%d %H:%M} · Built with Streamlit + DuckDB + Plotly + Claude")
+    st.markdown(
+        '<div style="text-align:center;padding:0.6rem 0;font-family:\'DM Mono\',monospace;'
+        'font-size:0.65rem;color:#4a5568;letter-spacing:0.08em;">'
+        "THYROID_2026 v2026.03.10-publication-ready &nbsp;·&nbsp; "
+        "Local DuckDB backup available &nbsp;·&nbsp; "
+        f"MotherDuck <code>{DATABASE}</code> &nbsp;·&nbsp; "
+        f"Loaded {datetime.now():%Y-%m-%d %H:%M} &nbsp;·&nbsp; "
+        "Built with Streamlit · DuckDB · Plotly · Claude"
+        "</div>",
+        unsafe_allow_html=True,
+    )
 
 if __name__ == "__main__":
     main()
