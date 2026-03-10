@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import streamlit as st
 
-from app.helpers import sqdf, mc, sl, badge, multi_export, require_view, write_decision
+from app.helpers import sqdf, mc, sl, badge, multi_export, require_view, write_decision, tbl_exists
 
 
 def render_review_rai(con, rw_con=None) -> None:
@@ -36,18 +36,21 @@ def render_review_rai(con, rw_con=None) -> None:
 
     # RAI classification overview from v3
     with st.expander("RAI Assertion Status Overview", expanded=False):
-        overview = sqdf(con, """
-            SELECT
-                rai_assertion_status,
-                rai_interval_class,
-                COUNT(*) AS cnt,
-                SUM(CASE WHEN rai_eligible_for_analysis_flag THEN 1 ELSE 0 END) AS analyzable
-            FROM rai_episode_v3
-            GROUP BY rai_assertion_status, rai_interval_class
-            ORDER BY rai_assertion_status, cnt DESC
-        """)
-        if not overview.empty:
-            st.dataframe(overview, use_container_width=True, hide_index=True)
+        if tbl_exists(con, "rai_episode_v3"):
+            overview = sqdf(con, """
+                SELECT
+                    rai_assertion_status,
+                    rai_interval_class,
+                    COUNT(*) AS cnt,
+                    SUM(CASE WHEN rai_eligible_for_analysis_flag THEN 1 ELSE 0 END) AS analyzable
+                FROM rai_episode_v3
+                GROUP BY rai_assertion_status, rai_interval_class
+                ORDER BY rai_assertion_status, cnt DESC
+            """)
+            if not overview.empty:
+                st.dataframe(overview, use_container_width=True, hide_index=True)
+        else:
+            st.info("rai_episode_v3 view not available.")
 
     # Filters
     col_f1, col_f2 = st.columns(2)

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import streamlit as st
 
-from app.helpers import sqdf, mc, sl, badge, multi_export, require_view, write_decision
+from app.helpers import sqdf, mc, sl, badge, multi_export, require_view, write_decision, tbl_exists
 
 
 def render_review_molecular(con, rw_con=None) -> None:
@@ -69,23 +69,26 @@ def render_review_molecular(con, rw_con=None) -> None:
     # Linkage confidence detail (from the full v3 view for selected patients)
     with st.expander("Linkage Confidence Details"):
         st.caption("Showing confidence components for queued molecular episodes.")
-        conf_df = sqdf(con, """
-            SELECT
-                CAST(research_id AS BIGINT) AS research_id,
-                molecular_episode_id,
-                molecular_date_raw_class,
-                temporal_linkage_confidence,
-                platform_confidence,
-                pathology_concordance_confidence,
-                overall_linkage_confidence,
-                molecular_analysis_eligible_flag
-            FROM molecular_episode_v3
-            WHERE molecular_analysis_eligible_flag = FALSE
-            ORDER BY overall_linkage_confidence ASC
-            LIMIT 200
-        """)
-        if not conf_df.empty:
-            st.dataframe(conf_df, use_container_width=True, hide_index=True)
+        if tbl_exists(con, "molecular_episode_v3"):
+            conf_df = sqdf(con, """
+                SELECT
+                    CAST(research_id AS BIGINT) AS research_id,
+                    molecular_episode_id,
+                    molecular_date_raw_class,
+                    temporal_linkage_confidence,
+                    platform_confidence,
+                    pathology_concordance_confidence,
+                    overall_linkage_confidence,
+                    molecular_analysis_eligible_flag
+                FROM molecular_episode_v3
+                WHERE molecular_analysis_eligible_flag = FALSE
+                ORDER BY overall_linkage_confidence ASC
+                LIMIT 200
+            """)
+            if not conf_df.empty:
+                st.dataframe(conf_df, use_container_width=True, hide_index=True)
+        else:
+            st.info("molecular_episode_v3 view not available.")
 
     # Patient jump
     jump_id = st.number_input("Jump to Patient (Research ID)", min_value=0, value=0,

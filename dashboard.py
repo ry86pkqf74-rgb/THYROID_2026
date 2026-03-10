@@ -1194,13 +1194,16 @@ def render_events(con):
 # TAB: QA DASHBOARD
 # ─────────────────────────────────────────────────────────────────────────
 def render_qa_dashboard(con):
-    if not tbl_exists(con, "qa_issues"):
-        st.info("QA data not available. Run script 11 first.", icon="🔍")
+    qa_tbl = "qa_issues_v2" if tbl_exists(con, "qa_issues_v2") else (
+        "md_qa_issues_v2" if tbl_exists(con, "md_qa_issues_v2") else (
+        "qa_issues" if tbl_exists(con, "qa_issues") else None))
+    if qa_tbl is None:
+        st.info("QA data not available. Run script 11 or 25 first.", icon="🔍")
         return
-    total = sqs(con, "SELECT COUNT(*) FROM qa_issues")
-    patients_flagged = sqs(con, "SELECT COUNT(DISTINCT research_id) FROM qa_issues")
-    by_sev = sqdf(con, "SELECT severity, COUNT(*) AS n FROM qa_issues GROUP BY 1 ORDER BY n DESC")
-    by_check = sqdf(con, "SELECT check_id, severity, COUNT(*) AS n FROM qa_issues GROUP BY 1, 2 ORDER BY n DESC")
+    total = sqs(con, f"SELECT COUNT(*) FROM {qa_tbl}")
+    patients_flagged = sqs(con, f"SELECT COUNT(DISTINCT research_id) FROM {qa_tbl}")
+    by_sev = sqdf(con, f"SELECT severity, COUNT(*) AS n FROM {qa_tbl} GROUP BY 1 ORDER BY n DESC")
+    by_check = sqdf(con, f"SELECT check_id, severity, COUNT(*) AS n FROM {qa_tbl} GROUP BY 1, 2 ORDER BY n DESC")
     st.markdown(sl("QA Summary"), unsafe_allow_html=True)
     sev_map = {r["severity"]: r["n"] for _, r in by_sev.iterrows()} if not by_sev.empty else {}
     c1, c2, c3, c4 = st.columns(4)
@@ -1232,7 +1235,7 @@ def render_qa_dashboard(con):
     st.markdown(sl("Issue Details"), unsafe_allow_html=True)
     sev_f = st.selectbox("Filter by severity", ["All", "error", "warning", "info"], key="qa_sev")
     where_qa = f"WHERE severity = '{sev_f}'" if sev_f != "All" else ""
-    df_issues = sqdf(con, f"SELECT * FROM qa_issues {where_qa} ORDER BY severity, check_id, research_id LIMIT 2000")
+    df_issues = sqdf(con, f"SELECT * FROM {qa_tbl} {where_qa} ORDER BY severity, check_id, research_id LIMIT 2000")
     st.dataframe(df_issues, use_container_width=True, height=400, hide_index=True)
     multi_export(df_issues, "qa_issues", key_sfx="qa_main")
 

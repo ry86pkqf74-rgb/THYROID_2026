@@ -20,7 +20,7 @@ def render_adjudication_summary(con) -> None:
     hp_view = _resolve_view(con, "qa_high_priority_review_v2", "md_qa_high_priority_v2")
     date_view = _resolve_view(con, "qa_date_completeness_v2", "md_date_quality_summary_v2")
     linkage_view = _resolve_view(con, "linkage_summary_v2", "md_linkage_summary_v2")
-    mrq_view = _resolve_view(con, "md_manual_review_queue_summary_v2", "md_manual_review_queue_summary_v2")
+    mrq_view = _resolve_view(con, "manual_review_queue_summary_v2", "md_manual_review_queue_summary_v2")
 
     if not qa_view:
         st.warning(
