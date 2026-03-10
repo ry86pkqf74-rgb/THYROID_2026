@@ -327,7 +327,7 @@ def render_overview(con):
                 customdata=df_r["avg_confidence_rescued"],
                 hovertemplate="<b>%{y}</b><br>Rescue rate: %{x:.1f}%<br>Avg confidence: %{customdata:.0f}<extra></extra>"))
             fig_r.update_layout(**PL, height=240, xaxis_title="% Dates Rescued",
-                                yaxis=dict(autorange="reversed",gridcolor="#1e2535",linecolor="#1e2535",zerolinecolor="#1e2535"))
+                                yaxis_autorange="reversed")
             st.plotly_chart(fig_r,use_container_width=True)
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -355,7 +355,7 @@ def render_viz(con):
         df_h = sqdf(con,"SELECT COALESCE(histology_1_type,'Not specified') AS histology,COUNT(*) AS n FROM tumor_pathology WHERE histology_1_type IS NOT NULL AND TRIM(histology_1_type)!='' GROUP BY 1 ORDER BY n DESC")
         if not df_h.empty:
             fig = px.bar(df_h.head(15),x="n",y="histology",orientation="h",color="n",color_continuous_scale=SEQ_TEAL)
-            fig.update_layout(**PL,showlegend=False,coloraxis_showscale=False,yaxis=dict(autorange="reversed",gridcolor="#1e2535"),height=420)
+            fig.update_layout(**PL,showlegend=False,coloraxis_showscale=False,yaxis_autorange="reversed",height=420)
             st.plotly_chart(fig,use_container_width=True)
     with c2:
         st.markdown("#### AJCC 8th Edition Stage")
@@ -437,7 +437,7 @@ def render_advanced(con):
     ) t(label,n) WHERE n > 0 ORDER BY n DESC""")
     if not df_b.empty:
         fig = px.bar(df_b,x="n",y="label",orientation="h",color="n",color_continuous_scale=SEQ_TEAL)
-        fig.update_layout(**PL,showlegend=False,coloraxis_showscale=False,yaxis=dict(autorange="reversed",gridcolor="#1e2535"),height=380)
+        fig.update_layout(**PL,showlegend=False,coloraxis_showscale=False,yaxis_autorange="reversed",height=380)
         st.plotly_chart(fig,use_container_width=True)
 
     # Extended benign detail view
@@ -456,7 +456,7 @@ def render_advanced(con):
         ) t(label,n) WHERE n IS NOT NULL AND CAST(n AS INTEGER)>0 ORDER BY CAST(n AS INTEGER) DESC""")
         if not df_rare.empty:
             fig = px.bar(df_rare,x="n",y="label",orientation="h",color="n",color_continuous_scale=SEQ_TEAL)
-            fig.update_layout(**PL,showlegend=False,coloraxis_showscale=False,yaxis=dict(autorange="reversed",gridcolor="#1e2535"),height=300)
+            fig.update_layout(**PL,showlegend=False,coloraxis_showscale=False,yaxis_autorange="reversed",height=300)
             st.plotly_chart(fig,use_container_width=True)
 
     st.markdown("#### Recurrence Risk Bands")
@@ -540,8 +540,8 @@ def render_advanced(con):
             barmode="stack",
             height=420,
             xaxis_title="Number of Patients",
-            yaxis=dict(autorange="reversed", gridcolor="#1e2535"),
-            legend=dict(orientation="h", y=1.05),
+            yaxis_autorange="reversed",
+            legend_orientation="h", legend_y=1.05,
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -567,8 +567,7 @@ def render_advanced(con):
         fig2.update_layout(**PL,
             height=360,
             xaxis_title="Concurrent Cancer Rate (%)",
-            xaxis=dict(range=[0, max(df_cooc_sorted["pct_malignant"]) * 1.25], gridcolor="#1e2535"),
-            yaxis=dict(gridcolor="#1e2535"),
+            xaxis_range=[0, max(df_cooc_sorted["pct_malignant"]) * 1.25],
         )
         st.plotly_chart(fig2, use_container_width=True)
 
@@ -637,7 +636,7 @@ def render_genetics(con):
         if not df_genes.empty:
             GC = {"BRAF V600E":"#2dd4bf","BRAF Other":"#1a8a7a","NRAS":"#38bdf8","HRAS":"#0ea5e9","KRAS":"#0284c7","RET/PTC1":"#a78bfa","RET/PTC3":"#7c3aed","PAX8-PPARG":"#f59e0b","TERT Promoter":"#f43f5e","NTRK":"#34d399","ALK Fusion":"#10b981","DICER1":"#fb923c","PTEN":"#ef4444","TP53":"#dc2626"}
             fig = go.Figure(go.Bar(x=df_genes["pct"],y=df_genes["gene"],orientation="h",marker_color=[GC.get(g,"#2dd4bf") for g in df_genes["gene"]],text=[f"{p}%" for p in df_genes["pct"]],textposition="outside"))
-            fig.update_layout(**PL,height=420,xaxis_title="Prevalence (%)",yaxis=dict(autorange="reversed"))
+            fig.update_layout(**PL,height=420,xaxis_title="Prevalence (%)",yaxis_autorange="reversed")
             st.plotly_chart(fig,use_container_width=True)
 
         st.markdown(sl("Molecular Concordance with Final Pathology"),unsafe_allow_html=True)
@@ -719,7 +718,7 @@ def render_specimen(con):
             if not df_p.empty:
                 fig = go.Figure(go.Pie(labels=df_p.iloc[:,0],values=df_p.iloc[:,1],hole=0.5,
                     marker=dict(colors=[color_map.get(str(v).lower(),"#8892a4") for v in df_p.iloc[:,0]],line=dict(color="#07090f",width=2)),textinfo="label+percent"))
-                fig.update_layout(**PL,showlegend=False,height=230,title=title,margin=dict(l=8,r=8,t=30,b=8))
+                fig.update_layout(**PL,showlegend=False,height=230,title=title,margin_l=8,margin_r=8,margin_t=30,margin_b=8)
                 st.plotly_chart(fig,use_container_width=True)
 
     st.markdown(sl("Frozen Section Concordance with Final Pathology"),unsafe_allow_html=True)
@@ -764,7 +763,7 @@ def render_imaging(con):
         df_comp2 = sqdf(con,"SELECT COALESCE(CAST(nodule_1_composition AS VARCHAR),'Unknown') AS comp,COUNT(*) AS n FROM ultrasound_reports WHERE nodule_1_composition IS NOT NULL AND TRIM(CAST(nodule_1_composition AS VARCHAR))!='' GROUP BY 1 ORDER BY n DESC LIMIT 8")
         if not df_comp2.empty:
             fig = px.bar(df_comp2,x="n",y="comp",orientation="h",color="n",color_continuous_scale=SEQ_TEAL)
-            fig.update_layout(**PL,showlegend=False,coloraxis_showscale=False,height=320,xaxis_title="Nodules",yaxis=dict(autorange="reversed",gridcolor="#1e2535"),title="Nodule 1 Composition")
+            fig.update_layout(**PL,showlegend=False,coloraxis_showscale=False,height=320,xaxis_title="Nodules",yaxis_autorange="reversed",title="Nodule 1 Composition")
             st.plotly_chart(fig,use_container_width=True)
 
     st.markdown(sl("Nodule Features — Echogenicity & Calcifications"),unsafe_allow_html=True)
@@ -795,7 +794,7 @@ def render_imaging(con):
         ) t(label,n) WHERE n IS NOT NULL AND CAST(n AS INTEGER)>0 ORDER BY CAST(n AS INTEGER) DESC""")
         if not df_ct_findings.empty:
             fig = px.bar(df_ct_findings,x="n",y="label",orientation="h",color="n",color_continuous_scale=SEQ_TEAL)
-            fig.update_layout(**PL,showlegend=False,coloraxis_showscale=False,height=260,xaxis_title="CT Reports",yaxis=dict(autorange="reversed"),title="CT Findings")
+            fig.update_layout(**PL,showlegend=False,coloraxis_showscale=False,height=260,xaxis_title="CT Reports",yaxis_autorange="reversed",title="CT Findings")
             st.plotly_chart(fig,use_container_width=True)
     with c8:
         df_mri_findings = sqdf(con,"""
@@ -807,7 +806,7 @@ def render_imaging(con):
         ) t(label,n) WHERE n IS NOT NULL AND CAST(n AS INTEGER)>0 ORDER BY CAST(n AS INTEGER) DESC""")
         if not df_mri_findings.empty:
             fig = px.bar(df_mri_findings,x="n",y="label",orientation="h",color="n",color_continuous_scale=SEQ_TEAL)
-            fig.update_layout(**PL,showlegend=False,coloraxis_showscale=False,height=260,xaxis_title="MRI Reports",yaxis=dict(autorange="reversed"),title="MRI Findings")
+            fig.update_layout(**PL,showlegend=False,coloraxis_showscale=False,height=260,xaxis_title="MRI Reports",yaxis_autorange="reversed",title="MRI Findings")
             st.plotly_chart(fig,use_container_width=True)
 
     st.markdown(sl("CT Largest Lymph Node Size Distribution"),unsafe_allow_html=True)
@@ -1120,7 +1119,7 @@ def render_expanded_cohort():
     ))
     fig.update_layout(
         **PL, height=360, xaxis_title="Number of Patients",
-        yaxis=dict(autorange="reversed", gridcolor="#1e2535"),
+        yaxis_autorange="reversed",
         title="PTC Variant Distribution (Red = Aggressive)",
     )
     st.plotly_chart(fig, use_container_width=True)
@@ -1283,7 +1282,7 @@ def render_qa_dashboard(con):
         if not ck.empty:
             fig = px.bar(ck, x="n", y="check_id", orientation="h", color="n", color_continuous_scale=SEQ_TEAL)
             fig.update_layout(**PL, showlegend=False, coloraxis_showscale=False, height=300,
-                              xaxis_title="Issues", yaxis=dict(autorange="reversed"),
+                              xaxis_title="Issues", yaxis_autorange="reversed",
                               title="Issues by Check Type")
             st.plotly_chart(fig, use_container_width=True)
     st.markdown(sl("Issue Details"), unsafe_allow_html=True)
@@ -1463,7 +1462,7 @@ def render_survival(con):
     fig.update_layout(**PL, height=500,
                       xaxis_title="Years from Surgery",
                       yaxis_title="Event-Free Probability",
-                      yaxis=dict(range=[0, 1.05], gridcolor="#1e2535"),
+                      yaxis_range=[0, 1.05],
                       title="Kaplan-Meier: Recurrence-Free Survival")
     st.plotly_chart(fig, use_container_width=True)
     st.markdown(sl("Risk Feature Summary"), unsafe_allow_html=True)
