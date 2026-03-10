@@ -1,4 +1,4 @@
-study: Proposal 2 — AJCC 8th Edition Staging & ETE
+study: "Proposal 2 \u2014 AJCC 8th Edition Staging & ETE"
 audit_generated: '2026-03-10T00:22:34.094313'
 runtime_seconds: 56.6
 seed: 42
@@ -57,8 +57,8 @@ audit_findings:
     M-stage defaulted to M0.
 - severity: CRITICAL
   tag: AJCC7_T3b_MAP
-  message: 'T3b→T4a mapping affected 346 patients. Corrected to T3b→T3: 346 T-stage
-    and 46 overall-stage reclassifications.'
+  message: "T3b\u2192T4a mapping affected 346 patients. Corrected to T3b\u2192T3:\
+    \ 346 T-stage and 46 overall-stage reclassifications."
 - severity: IMPORTANT
   tag: PROP_ODDS
   message: 'Proportional odds assumption may be violated: largest coefficient difference
@@ -108,3 +108,63 @@ expanded_cohorts:
   mETE_OR: 0.498
   mETE_CI: (0.33-0.74)
   mETE_p: <0.001
+endpoint_extension:
+  definition:
+    structural_recurrence: imaging pathologic LN flag (CT/MRI) OR reoperation proxy
+      (>1 surgery_date in source pathology table)
+    dfs: time from surgery_date to tg_last_date (or surgery_date if missing), censored
+      by structural endpoint status at follow-up
+  counts:
+    N_total: 3278
+    structural_events: 504
+    imaging_proxy_events: 497
+    reoperation_proxy_events: 7
+  tables:
+  - table5_structural_endpoint.csv
+  - table6_propensity_matching_effect.csv
+  - table6_propensity_matching_balance.csv
+  - table7_stratified_models.csv
+  - table8_interaction_tests.csv
+  figures:
+  - fig10_matched_dfs.png
+  psm_summary:
+    Matched_pairs: 711
+    NoETE_N: 711
+    mETE_N: 711
+    NoETE_structural_pct: 10.55
+    mETE_structural_pct: 14.49
+    Risk_difference_pct: 3.94
+    OR_structural_recurrence: 1.4339
+    Fisher_p: '0.030'
+  stratified_summary:
+  - Size_group: <=1 cm
+    N: 641
+    Event_n: 78
+    mETE_OR: 1.3237
+    CI: (0.74-2.37)
+    p: '0.346'
+  - Size_group: 1-2 cm
+    N: 628
+    Event_n: 73
+    mETE_OR: 1.456
+    CI: (0.80-2.67)
+    p: '0.224'
+  - Size_group: 2-4 cm
+    N: 501
+    Event_n: 86
+    mETE_OR: 1.574
+    CI: (0.92-2.68)
+    p: '0.095'
+  interaction_summary:
+  - Interaction: mETE x largest_tumor_cm
+    OR: 1.0433
+    CI: (0.94-1.15)
+    p: '0.412'
+  - Interaction: mETE x age_at_surgery
+    OR: 0.9899
+    CI: (0.97-1.01)
+    p: '0.258'
+  - Interaction: mETE x n_positive_flag
+    OR: 0.3597
+    CI: (0.17-0.74)
+    p: '0.006'
