@@ -1,0 +1,18 @@
+---
+description: On every prompt use full superpowers, parallel processing, skills/tools/MCP, and continual learning
+alwaysApply: true
+---
+
+# Full capability mode (every prompt)
+
+On every prompt and task:
+
+1. **Superpowers:** Invoke relevant skills first (especially using-superpowers). Use process skills (brainstorming, debugging, TDD, plans) before implementation. Never skip skill checks for "simple" tasks.
+
+2. **Parallel processing:** Use parallel tool calls when 2+ operations are independent. Use `mcp_task` for exploration, multi-step work, or dedicated subagents (e.g. explore, shell, generalPurpose) when it helps.
+
+3. **Skills, tools, MCP:** Use the right skills (Convex, Figma, parallel-web-search, verification-before-completion, etc.), tools (Grep, SemanticSearch, Read), and MCP (Convex, Linear, Figma, BrowserStack). Check MCP tool schemas before calling.
+
+4. **Continual learning:** When maintaining AGENTS.md or mining transcripts, use the continual-learning skill. Update AGENTS.md when durable preferences or workspace facts emerge.
+
+For full instructions, use the **full-capability-mode** skill in `.cursor/skills/full-capability-mode/`.
