@@ -119,6 +119,24 @@ To allow anyone to access the dashboard without signing in:
 4. Change from **Only people with access** to **Public**
 5. Save
 
+## New Dashboard Features (enabled during MotherDuck trial)
+
+Five new tabs added by `scripts/12_update_streamlit_dashboard.py`:
+
+| Tab | Description |
+|-----|-------------|
+| **Patient Timeline Explorer** | Per-patient surgery timeline, Tg/TSH trend with surgery markers, all clinical events anchored by relative days |
+| **Extracted Clinical Events** | Searchable table of labs, meds, PMH, RAI, recurrence from `extracted_clinical_events_v4` with download |
+| **QA Dashboard** | Summary metrics from `qa_issues`, severity/check distribution, drill-down table |
+| **Risk & Survival** | Kaplan-Meier recurrence-free survival with stratification by stage, histology, BRAF; risk feature summary |
+| **Advanced Features v3** | Full column selector across all 60+ engineered features |
+
+**New sidebar filters:** Surgery count, QA status (clean / flagged).
+
+**Performance controls:** MotherDuck compute tier display, Jumbo instance toggle.
+
+Requires `lifelines` (Kaplan-Meier). Install: `pip install -r requirements.txt`.
+
 ## Data dictionary
 
 See [data_dictionary.md](data_dictionary.md) for full schema documentation

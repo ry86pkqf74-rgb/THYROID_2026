@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
-Thyroid Cohort Explorer — Enhanced Dashboard v2
-Powered by MotherDuck cloud DuckDB.
+Thyroid Cohort Explorer — Enhanced Dashboard v3
+Powered by MotherDuck cloud DuckDB (Business trial).
 
-New in v2:
-  • 🔬 Genetics & Molecular tab   — ThyroSeq / Afirma per-gene results
-  • 🫀 Specimen Details tab        — gross pathology, dimensions, weight,
-                                     capsule, margins, frozen sections
-  • 📡 Pre-Op Imaging tab          — ultrasound TI-RADS/nodule features,
-                                     CT/MRI structured findings
-  • Expanded benign diagnoses      — 15+ specific subtypes
-  • ✨ AI Insights                 — Claude-powered cohort analysis
+New in v3:
+  • 🕐 Patient Timeline Explorer   — master_timeline + Tg/TSH trend per patient
+  • 📋 Extracted Clinical Events   — searchable extracted_clinical_events_v4
+  • 🔍 QA Dashboard                — qa_issues summary + drill-down
+  • 📉 Risk & Survival             — Kaplan-Meier with lifelines + stratification
+  • 🧩 Advanced Features v3        — 60+ engineered features, full column selector
+  • Sidebar: surgery count + QA status filters
+  • MotherDuck compute-tier controls (Jumbo toggle)
 
 Run locally:
     export MOTHERDUCK_TOKEN='your_token'
@@ -25,6 +25,12 @@ import duckdb, pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
+
+try:
+    from lifelines import KaplanMeierFitter
+    HAS_LIFELINES = True
+except ImportError:
+    HAS_LIFELINES = False
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from motherduck_client import MotherDuckClient, MotherDuckConfig
@@ -131,6 +137,15 @@ def build_sidebar(df):
         if not ages.empty and ages.min() < ages.max():
             age_r = st.slider("Age",int(ages.min()),int(ages.max()),(int(ages.min()),int(ages.max())))
         else: age_r = (0,120)
+        st.markdown(sl("🔧 Timeline & QA"), unsafe_allow_html=True)
+        sel_surg_count = "All"
+        if "total_surgeries" in df.columns:
+            surg_vals = sorted([int(x) for x in df["total_surgeries"].dropna().unique() if x > 0])
+            if surg_vals:
+                sel_surg_count = st.selectbox("Surgery count", ["All"] + [str(s) for s in surg_vals])
+        qa_mode = "All"
+        if "qa_issue_count" in df.columns:
+            qa_mode = st.radio("QA status", ["All", "Clean only", "Flagged only"], horizontal=True)
         st.markdown("---")
         st.markdown('<div style="font-family:monospace;font-size:.6rem;color:#4a5568">DATABASE<br><span style="color:#2dd4bf">thyroid_research_2026</span></div>',unsafe_allow_html=True)
         if st.button("Clear filters"): st.rerun()
@@ -142,6 +157,12 @@ def build_sidebar(df):
     if para_only and "has_parathyroid" in f.columns: f = f[f["has_parathyroid"]==True]
     if tumor_only and "has_tumor_pathology" in f.columns: f = f[f["has_tumor_pathology"]==True]
     f = f[f["age_at_surgery"].isna()|((f["age_at_surgery"]>=age_r[0])&(f["age_at_surgery"]<=age_r[1]))]
+    if sel_surg_count != "All" and "total_surgeries" in f.columns:
+        f = f[f["total_surgeries"] == int(sel_surg_count)]
+    if qa_mode == "Clean only" and "qa_issue_count" in f.columns:
+        f = f[f["qa_issue_count"] == 0]
+    elif qa_mode == "Flagged only" and "qa_issue_count" in f.columns:
+        f = f[f["qa_issue_count"] > 0]
     return f
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -997,6 +1018,274 @@ def render_expanded_cohort():
 
 
 # ─────────────────────────────────────────────────────────────────────────
+# TAB: PATIENT TIMELINE EXPLORER
+# ─────────────────────────────────────────────────────────────────────────
+def render_timeline(con):
+    if not tbl_exists(con, "master_timeline"):
+        st.info("Timeline data not available. Run script 11 first.", icon="🕐")
+        return
+    st.markdown(sl("Select Patient"), unsafe_allow_html=True)
+    c1, c2 = st.columns([1, 3])
+    with c1:
+        pid_input = st.number_input("Research ID", min_value=1, step=1, value=1, key="tl_pid")
+    with c2:
+        multi_df = sqdf(con, "SELECT research_id, total_surgeries FROM master_timeline "
+                         "WHERE total_surgeries > 1 GROUP BY 1, 2 ORDER BY total_surgeries DESC LIMIT 20")
+        if not multi_df.empty:
+            st.caption("Patients with multiple surgeries:")
+            st.dataframe(multi_df, height=120, hide_index=True)
+    pid = int(pid_input)
+    tl = sqdf(con, f"SELECT * FROM master_timeline WHERE research_id = {pid} ORDER BY surgery_number")
+    if tl.empty:
+        st.warning(f"No timeline data for patient {pid}")
+        return
+    st.markdown(sl("Surgery Timeline"), unsafe_allow_html=True)
+    n_surg = len(tl)
+    cols = st.columns(min(n_surg, 4))
+    for i, (_, row) in enumerate(tl.iterrows()):
+        with cols[i % len(cols)]:
+            delta = f"{row['surgery_type']}"
+            if row["surgery_number"] > 1 and pd.notna(row.get("days_since_prior_surgery")):
+                delta += f" · {int(row['days_since_prior_surgery'])}d from prior"
+            st.markdown(mc(f"Surgery {int(row['surgery_number'])}", str(row["surgery_date"]), delta), unsafe_allow_html=True)
+    if tbl_exists(con, "extracted_clinical_events_v4"):
+        labs = sqdf(con, f"""
+            SELECT event_subtype, event_value, followup_date,
+                   days_since_nearest_surgery, nearest_surgery_number
+            FROM extracted_clinical_events_v4
+            WHERE research_id = {pid}
+              AND event_type = 'lab'
+              AND event_subtype IN ('thyroglobulin', 'tsh')
+              AND event_value IS NOT NULL
+            ORDER BY followup_date, days_since_nearest_surgery""")
+        if not labs.empty:
+            st.markdown(sl("Thyroglobulin / TSH Trend"), unsafe_allow_html=True)
+            fig = go.Figure()
+            for sub, color, name in [("thyroglobulin", "#2dd4bf", "Tg (ng/mL)"), ("tsh", "#f59e0b", "TSH (mIU/L)")]:
+                s = labs[labs["event_subtype"] == sub]
+                if not s.empty:
+                    x = s["followup_date"] if s["followup_date"].notna().any() else s["days_since_nearest_surgery"]
+                    fig.add_trace(go.Scatter(x=x, y=s["event_value"], mode="lines+markers",
+                                             name=name, marker_color=color, line=dict(color=color)))
+            for _, r in tl.iterrows():
+                if pd.notna(r["surgery_date"]):
+                    fig.add_vline(x=r["surgery_date"], line_dash="dash", line_color="#f43f5e",
+                                  annotation_text=f"Surg {int(r['surgery_number'])}",
+                                  annotation_font_color="#f43f5e", annotation_font_size=10)
+            fig.update_layout(**PL, height=400, xaxis_title="Date",
+                              yaxis_title="Value (log scale)", yaxis_type="log")
+            st.plotly_chart(fig, use_container_width=True)
+        events = sqdf(con, f"""
+            SELECT event_type, event_subtype, event_value, event_unit, event_text,
+                   days_since_nearest_surgery, nearest_surgery_number, confidence_score
+            FROM extracted_clinical_events_v4
+            WHERE research_id = {pid}
+            ORDER BY days_since_nearest_surgery NULLS LAST""")
+        if not events.empty:
+            st.markdown(sl("All Clinical Events"), unsafe_allow_html=True)
+            st.dataframe(events, use_container_width=True, hide_index=True, height=400)
+
+# ─────────────────────────────────────────────────────────────────────────
+# TAB: EXTRACTED CLINICAL EVENTS
+# ─────────────────────────────────────────────────────────────────────────
+def render_events(con):
+    if not tbl_exists(con, "extracted_clinical_events_v4"):
+        st.info("Extracted events not available. Run script 11 first.", icon="📋")
+        return
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        types = sqdf(con, "SELECT DISTINCT event_type FROM extracted_clinical_events_v4 "
+                          "WHERE event_type IS NOT NULL ORDER BY 1")
+        type_opts = types["event_type"].tolist() if not types.empty else []
+        sel_type = st.selectbox("Event type", ["All"] + type_opts, key="ev_type")
+    with c2:
+        if sel_type != "All":
+            subs = sqdf(con, f"SELECT DISTINCT event_subtype FROM extracted_clinical_events_v4 "
+                             f"WHERE event_type = '{sel_type}' AND event_subtype IS NOT NULL ORDER BY 1")
+            sub_opts = subs["event_subtype"].tolist() if not subs.empty else []
+        else:
+            sub_opts = []
+        sel_sub = st.selectbox("Subtype", ["All"] + sub_opts, key="ev_sub")
+    with c3:
+        srch = st.text_input("Search text", placeholder="Filter event text…", key="ev_search")
+    wheres = ["1=1"]
+    if sel_type != "All":
+        wheres.append(f"event_type = '{sel_type}'")
+    if sel_sub != "All":
+        wheres.append(f"event_subtype = '{sel_sub}'")
+    where = " AND ".join(wheres)
+    df_ev = sqdf(con, f"SELECT * FROM extracted_clinical_events_v4 WHERE {where} "
+                       "ORDER BY research_id, days_since_nearest_surgery NULLS LAST LIMIT 5000")
+    if srch:
+        mask = df_ev.apply(lambda s: s.astype(str).str.contains(srch, case=False, na=False)).any(axis=1)
+        df_ev = df_ev[mask]
+    st.markdown(f"**{len(df_ev):,} events** (max 5,000)")
+    st.dataframe(df_ev, use_container_width=True, height=500, hide_index=True)
+    st.download_button("⬇ Download filtered events", df_ev.to_csv(index=False),
+                       f"events_{datetime.now():%Y%m%d}.csv", "text/csv", key="ev_dl")
+
+# ─────────────────────────────────────────────────────────────────────────
+# TAB: QA DASHBOARD
+# ─────────────────────────────────────────────────────────────────────────
+def render_qa_dashboard(con):
+    if not tbl_exists(con, "qa_issues"):
+        st.info("QA data not available. Run script 11 first.", icon="🔍")
+        return
+    total = sqs(con, "SELECT COUNT(*) FROM qa_issues")
+    patients_flagged = sqs(con, "SELECT COUNT(DISTINCT research_id) FROM qa_issues")
+    by_sev = sqdf(con, "SELECT severity, COUNT(*) AS n FROM qa_issues GROUP BY 1 ORDER BY n DESC")
+    by_check = sqdf(con, "SELECT check_id, severity, COUNT(*) AS n FROM qa_issues GROUP BY 1, 2 ORDER BY n DESC")
+    st.markdown(sl("QA Summary"), unsafe_allow_html=True)
+    sev_map = {r["severity"]: r["n"] for _, r in by_sev.iterrows()} if not by_sev.empty else {}
+    c1, c2, c3, c4 = st.columns(4)
+    with c1: st.markdown(mc("Total Issues", f"{total:,}"), unsafe_allow_html=True)
+    with c2: st.markdown(mc("Patients Flagged", f"{patients_flagged:,}"), unsafe_allow_html=True)
+    with c3: st.markdown(mc("Errors", f'{sev_map.get("error", 0):,}'), unsafe_allow_html=True)
+    with c4: st.markdown(mc("Warnings", f'{sev_map.get("warning", 0):,}'), unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+    c1, c2 = st.columns(2)
+    with c1:
+        if not by_sev.empty:
+            sc = {"error": "#f43f5e", "warning": "#f59e0b", "info": "#38bdf8"}
+            fig = go.Figure(go.Pie(
+                labels=by_sev["severity"], values=by_sev["n"], hole=0.55,
+                marker=dict(colors=[sc.get(s, "#8892a4") for s in by_sev["severity"]],
+                            line=dict(color="#07090f", width=3)),
+                textinfo="label+percent"))
+            fig.update_layout(**PL, showlegend=False, height=300, title="Issues by Severity")
+            st.plotly_chart(fig, use_container_width=True)
+    with c2:
+        ck = (by_check.groupby("check_id")["n"].sum().reset_index().sort_values("n", ascending=True)
+              if not by_check.empty else pd.DataFrame())
+        if not ck.empty:
+            fig = px.bar(ck, x="n", y="check_id", orientation="h", color="n", color_continuous_scale=SEQ_TEAL)
+            fig.update_layout(**PL, showlegend=False, coloraxis_showscale=False, height=300,
+                              xaxis_title="Issues", yaxis=dict(autorange="reversed"),
+                              title="Issues by Check Type")
+            st.plotly_chart(fig, use_container_width=True)
+    st.markdown(sl("Issue Details"), unsafe_allow_html=True)
+    sev_f = st.selectbox("Filter by severity", ["All", "error", "warning", "info"], key="qa_sev")
+    where_qa = f"WHERE severity = '{sev_f}'" if sev_f != "All" else ""
+    df_issues = sqdf(con, f"SELECT * FROM qa_issues {where_qa} ORDER BY severity, check_id, research_id LIMIT 2000")
+    st.dataframe(df_issues, use_container_width=True, height=400, hide_index=True)
+    st.download_button("⬇ Download QA Issues", df_issues.to_csv(index=False),
+                       "qa_issues.csv", "text/csv", key="qa_dl")
+
+# ─────────────────────────────────────────────────────────────────────────
+# TAB: RISK & SURVIVAL
+# ─────────────────────────────────────────────────────────────────────────
+def render_survival(con):
+    if not tbl_exists(con, "survival_cohort_ready_mv"):
+        st.info("Survival data not available. Run script 10 first.", icon="📉")
+        return
+    if not HAS_LIFELINES:
+        st.warning("Install `lifelines` for Kaplan-Meier plots: `pip install lifelines`")
+    st.markdown(sl("Kaplan-Meier: Recurrence-Free Survival"), unsafe_allow_html=True)
+    c1, c2 = st.columns(2)
+    with c1:
+        strat = st.selectbox("Stratify by",
+                             ["None", "Overall Stage", "Histology", "Sex"],
+                             key="km_strat")
+    with c2:
+        max_yr = st.slider("Max follow-up (years)", 1, 30, 15, key="km_yr")
+    base_sql = """
+        SELECT s.time_to_event_days, s.event_occurred, s.overall_stage_ajcc8,
+               s.histology_1_type, s.sex,
+               r.braf_positive, r.tg_annual_log_slope, r.recurrence_risk_band
+        FROM survival_cohort_ready_mv s
+        LEFT JOIN recurrence_risk_features_mv r ON s.research_id = r.research_id
+        WHERE s.time_to_event_days > 0"""
+    df = sqdf(con, base_sql)
+    if df.empty:
+        st.warning("No survival data available.")
+        return
+    df["time_years"] = df["time_to_event_days"] / 365.25
+    df = df[df["time_years"] <= max_yr]
+    colors = ["#2dd4bf", "#38bdf8", "#a78bfa", "#f59e0b", "#f43f5e", "#34d399"]
+    fig = go.Figure()
+    if HAS_LIFELINES:
+        col_map = {"Overall Stage": "overall_stage_ajcc8", "Histology": "histology_1_type",
+                   "Sex": "sex", "BRAF Status": "braf_positive",
+                   "Risk Band": "recurrence_risk_band"}
+        if strat == "None":
+            kmf = KaplanMeierFitter()
+            kmf.fit(df["time_years"], event_observed=df["event_occurred"])
+            sf = kmf.survival_function_
+            fig.add_trace(go.Scatter(
+                x=sf.index, y=sf.iloc[:, 0], mode="lines",
+                name=f"Overall (n={len(df)})", line=dict(color="#2dd4bf", width=2)))
+        else:
+            col = col_map.get(strat, "overall_stage_ajcc8")
+            if col in df.columns:
+                for i, grp in enumerate(sorted(df[col].dropna().unique(), key=str)):
+                    sub = df[df[col] == grp]
+                    if len(sub) >= 5:
+                        kmf = KaplanMeierFitter()
+                        kmf.fit(sub["time_years"], event_observed=sub["event_occurred"])
+                        sf = kmf.survival_function_
+                        fig.add_trace(go.Scatter(
+                            x=sf.index, y=sf.iloc[:, 0], mode="lines",
+                            name=f"{grp} (n={len(sub)})",
+                            line=dict(color=colors[i % len(colors)], width=2)))
+    else:
+        st.caption("Install lifelines for KM curves. Showing summary instead.")
+    fig.update_layout(**PL, height=500,
+                      xaxis_title="Years from Surgery",
+                      yaxis_title="Event-Free Probability",
+                      yaxis=dict(range=[0, 1.05], gridcolor="#1e2535"),
+                      title="Kaplan-Meier: Recurrence-Free Survival")
+    st.plotly_chart(fig, use_container_width=True)
+    st.markdown(sl("Risk Feature Summary"), unsafe_allow_html=True)
+    if tbl_exists(con, "recurrence_risk_features_mv"):
+        sm = sqdf(con, """
+            SELECT COUNT(*) AS n,
+                   SUM(CASE WHEN recurrence_flag THEN 1 ELSE 0 END) AS recurrences,
+                   ROUND(100.0 * SUM(CASE WHEN recurrence_flag THEN 1 ELSE 0 END)
+                         / NULLIF(COUNT(*), 0), 1) AS recurrence_pct,
+                   ROUND(AVG(tg_annual_log_slope), 4) AS mean_tg_slope,
+                   SUM(CASE WHEN braf_positive THEN 1 ELSE 0 END) AS braf_pos,
+                   SUM(CASE WHEN tert_positive THEN 1 ELSE 0 END) AS tert_pos
+            FROM recurrence_risk_features_mv""")
+        if not sm.empty:
+            r = sm.iloc[0]
+            cs = st.columns(6)
+            for c, (l, k) in zip(cs, [("Patients", "n"), ("Recurrences", "recurrences"),
+                                       ("Recurrence %", "recurrence_pct"),
+                                       ("Mean Tg Slope", "mean_tg_slope"),
+                                       ("BRAF+", "braf_pos"), ("TERT+", "tert_pos")]):
+                with c:
+                    st.markdown(mc(l, f"{r[k]}" if pd.notna(r[k]) else "N/A"), unsafe_allow_html=True)
+
+# ─────────────────────────────────────────────────────────────────────────
+# TAB: ADVANCED FEATURES V3 EXPLORER
+# ─────────────────────────────────────────────────────────────────────────
+def render_afv3_explorer(con):
+    if not tbl_exists(con, "advanced_features_v3"):
+        st.info("Advanced features v3 not available. Run script 11 first.", icon="🧩")
+        return
+    df = sqdf(con, "SELECT * FROM advanced_features_v3 LIMIT 5000")
+    if df.empty:
+        st.warning("No data in advanced_features_v3.")
+        return
+    st.markdown(f"**{len(df):,} rows** (limit 5,000) · **{len(df.columns)} columns**")
+    pref = [c for c in ["research_id", "histology_1_type", "overall_stage_ajcc8",
+                         "total_surgeries", "qa_issue_count", "tg_last",
+                         "tg_annual_log_slope", "braf_positive", "tumor_size_cm",
+                         "ln_positive", "recurrence_flag"] if c in df.columns]
+    cols = st.multiselect("Columns", df.columns.tolist(), default=pref[:10], key="afv3_cols")
+    srch = st.text_input("Search", placeholder="Search all columns…", key="afv3_search")
+    disp = df[cols] if cols else df
+    if srch:
+        mask = disp.apply(lambda s: s.astype(str).str.contains(srch, case=False, na=False)).any(axis=1)
+        disp = disp[mask]
+        st.caption(f"{len(disp):,} matching rows")
+    st.dataframe(disp, use_container_width=True, height=520, hide_index=True)
+    dl = df[cols].to_csv(index=False) if cols else df.to_csv(index=False)
+    st.download_button("⬇ Download CSV", dl,
+                       f"advanced_features_v3_{datetime.now():%Y%m%d}.csv", "text/csv", key="afv3_dl")
+
+
+# ─────────────────────────────────────────────────────────────────────────
 # MAIN
 # ─────────────────────────────────────────────────────────────────────────
 def main():
@@ -1012,15 +1301,28 @@ def main():
     with ct: st.markdown('<h1 style="margin:0;padding:0">THYROID_2026</h1><p style="margin:2px 0 0 2px;color:#8892a4;font-size:.78rem;font-family:\'DM Mono\',monospace;letter-spacing:.08em">THYROID CANCER RESEARCH LAKEHOUSE · 11,673 PATIENTS · 13 TABLES · MOTHERDUCK</p>',unsafe_allow_html=True)
     st.markdown("---")
 
-    df_full = sqdf(con,"SELECT * FROM advanced_features_view")
-    if df_full.empty: st.error("Could not load `advanced_features_view`."); st.stop()
+    df_full = sqdf(con,"SELECT * FROM advanced_features_v3") if tbl_exists(con,"advanced_features_v3") else sqdf(con,"SELECT * FROM advanced_features_view")
+    if df_full.empty: st.error("Could not load data view."); st.stop()
     df_filt = build_sidebar(df_full)
 
-    (t_ov,t_ex,t_vz,t_adv,t_gen,t_spec,t_img,t_comp,t_rec,t_exp,t_ai) = st.tabs([
+    with st.sidebar:
+        st.markdown(sl("⚡ Compute Tier"), unsafe_allow_html=True)
+        st.markdown('<div style="font-family:monospace;font-size:.65rem;color:#2dd4bf">'
+                    'MotherDuck Business Trial</div>', unsafe_allow_html=True)
+        if st.button("Switch to Jumbo 🚀", key="jumbo_btn"):
+            try:
+                con.execute("SET motherduck_default_server_instance_type = 'jumbo'")
+                st.success("Switched to Jumbo compute!")
+            except Exception as e:
+                st.error(f"Could not switch: {e}")
+
+    (t_ov,t_ex,t_vz,t_adv,t_gen,t_spec,t_img,t_comp,t_rec,t_exp,t_ai,
+     t_tl,t_ev,t_qa,t_surv,t_afv3) = st.tabs([
         "📊 Overview","🗃 Data Explorer","📈 Visualizations","🧬 Advanced",
         "🔬 Genetics & Molecular","🫀 Specimen Details","📡 Pre-Op Imaging",
         "⚕ Complications","📋 Recommendations & Sensitivities",
-        "📐 Expanded Cohort","✨ AI Insights"
+        "📐 Expanded Cohort","✨ AI Insights",
+        "🕐 Timeline","📋 Events","🔍 QA","📉 Survival","🧩 Features v3"
     ])
     with t_ov:   render_overview(con)
     with t_ex:   render_explorer(df_filt)
@@ -1033,6 +1335,11 @@ def main():
     with t_rec:  render_recommendations()
     with t_exp:  render_expanded_cohort()
     with t_ai:   render_ai_insights(con)
+    with t_tl:   render_timeline(con)
+    with t_ev:   render_events(con)
+    with t_qa:   render_qa_dashboard(con)
+    with t_surv: render_survival(con)
+    with t_afv3: render_afv3_explorer(con)
 
     st.markdown("---")
     st.caption(f"**Data source:** MotherDuck `{DATABASE}` · Share: `{SHARE_PATH[:40]}…` · Loaded: {datetime.now():%Y-%m-%d %H:%M} · Built with Streamlit + DuckDB + Plotly + Claude")
