@@ -33,17 +33,16 @@ SELECT
     tp.tumor_1_gross_ete,
     tp.tumor_1_ete_microscopic_only,
     tp.tumor_1_histology_variant,
-    tp.tumor_1_histology_subtype_detail,
     tp.variant_standardized,
     tp.surgery_type_normalized
 FROM tumor_pathology tp
 WHERE UPPER(COALESCE(tp.histology_1_type, '')) = 'PTC'
   AND (
         LOWER(COALESCE(tp.tumor_1_histology_variant, '')) LIKE '%classic%'
-        OR LOWER(COALESCE(tp.tumor_1_histology_subtype_detail, '')) LIKE '%classic%'
+        OR LOWER(COALESCE(tp.variant_standardized, '')) LIKE '%classic%'
         OR (
             COALESCE(tp.tumor_1_histology_variant, '') = ''
-            AND COALESCE(tp.tumor_1_histology_subtype_detail, '') = ''
+            AND COALESCE(tp.variant_standardized, '') = ''
         )
       )
 """,
