@@ -585,3 +585,70 @@ Key columns:
 - `sex_flag`: 'MISSING_SEX' or 'OK'
 - `race_flag`: 'MISSING_RACE' or 'OK'
 - `source_priority`: data source used for demographics lookup
+
+---
+
+## Phase 7: Clinical Notes Long + Entity Extraction
+
+### `clinical_notes_long` (table)
+
+Source: `raw/Notes 12_1_25.xlsx`, unpivoted via `config/notes_column_map.csv`
+
+One row per note per patient (long format). 11,037 rows from 5,641 patients.
+
+Key columns:
+
+- `note_row_id` (VARCHAR): SHA-1 hash primary key
+- `research_id` (INT): patient identifier
+- `note_type` (VARCHAR): h_p, op_note, dc_sum, ed_note, endocrine_note, history_summary, other_history, other_notes
+- `note_index` (INT): sequence within type (1-4)
+- `note_text` (VARCHAR): full note text
+- `source_sheet` (VARCHAR): Excel sheet name
+- `source_column` (VARCHAR): snake_case column name
+- `char_count` (INT): length of note_text
+
+### `note_entities_staging` (table)
+
+AJCC T/N/M and overall stage mentions extracted via regex. 3,807 rows.
+
+### `note_entities_genetics` (table)
+
+Gene/mutation mentions (BRAF, RAS, RET, TERT, NTRK, ALK). 1,738 rows.
+
+### `note_entities_procedures` (table)
+
+Surgical procedure mentions (thyroidectomy variants, neck dissection, etc.). 21,942 rows.
+
+### `note_entities_complications` (table)
+
+Post-operative complication mentions (RLN injury, hypocalcemia, etc.). 9,359 rows.
+
+### `note_entities_medications` (table)
+
+Medication mentions with optional dose (levothyroxine, calcium, etc.). 7,501 rows.
+
+### `note_entities_problem_list` (table)
+
+Comorbidity/diagnosis mentions (hypertension, diabetes, etc.). 11,579 rows.
+
+All six entity tables share a common schema:
+
+- `research_id` (INT): patient identifier
+- `note_row_id` (VARCHAR): FK to clinical_notes_long
+- `note_type` (VARCHAR): source note category
+- `entity_type` (VARCHAR): domain-specific type
+- `entity_value_raw` (VARCHAR): raw matched string
+- `entity_value_norm` (VARCHAR): normalised value from controlled vocabulary
+- `present_or_negated` (VARCHAR): present or negated
+- `confidence` (FLOAT): 0.0-1.0
+- `evidence_span` (VARCHAR): exact substring from note_text
+- `evidence_start` (INT): character offset start
+- `evidence_end` (INT): character offset end
+- `extraction_method` (VARCHAR): regex or llm_model
+- `extracted_at` (VARCHAR): ISO-8601 timestamp
+
+### `notes_entity_summary` (view)
+
+Aggregated entity counts per patient across all domains.
+
+See `docs/notes_extraction_spec.md` for controlled vocabularies and extraction details.

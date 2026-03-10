@@ -6,3 +6,5 @@ lifelines
 requests
 openpyxl
 pyarrow
+python-dateutil
+pytest

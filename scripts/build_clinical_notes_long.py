@@ -1,146 +1,177 @@
 #!/usr/bin/env python3
-"""build_clinical_notes_long.py — Build long-format clinical notes from raw/Notes 12_1_25.xlsx
+"""
+build_clinical_notes_long.py — Unpivot clinical notes to long format
 
-Outputs:
-- processed/clinical_notes_long.parquet (preferred if parquet engine available)
-- processed/clinical_notes_long.csv (fallback)
-
-Schema:
-- research_id (string)
-- note_type (string)
-- note_index (Int64 nullable)
-- note_text (string)
-- source_sheet (string)
-- source_column (string)  # standardized snake_case column name
+Reads config/notes_column_map.csv and raw/Notes 12_1_25.xlsx, producing:
+  processed/clinical_notes_long.parquet
+  processed/clinical_notes_long.csv       (optional flat export)
+  processed/clinical_notes_long_qa.csv    (row counts by note_type)
 """
 
 from __future__ import annotations
 
-import re
+import csv
+import logging
+import sys
 from pathlib import Path
 
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
-RAW = ROOT / "raw"
+sys.path.insert(0, str(ROOT))
+
+from utils.text_helpers import (
+    standardize_columns,
+    clean_research_id,
+    strip_phi,
+    make_note_row_id,
+    save_parquet,
+)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s  %(levelname)-8s  %(message)s",
+    datefmt="%H:%M:%S",
+)
+log = logging.getLogger("build_notes_long")
+
+RAW_PATH = ROOT / "raw" / "Notes 12_1_25.xlsx"
+CONFIG_PATH = ROOT / "config" / "notes_column_map.csv"
 PROCESSED = ROOT / "processed"
 PROCESSED.mkdir(exist_ok=True)
 
-NOTES_XLSX = RAW / "Notes 12_1_25.xlsx"
+
+def load_column_map(path: Path) -> pd.DataFrame:
+    """Load the canonical notes column mapping."""
+    df = pd.read_csv(path)
+    required = {"sheet", "source_column_snake", "is_note_like", "proposed_note_type", "proposed_note_index"}
+    missing = required - set(df.columns)
+    if missing:
+        raise ValueError(f"Column map missing columns: {missing}")
+    return df
 
 
-def _norm_rid(x) -> str | None:
-    if pd.isna(x):
-        return None
-    s = str(x).strip()
-    s = re.sub(r"\.0$", "", s)
-    s = s.strip()
-    return s or None
+def build_long(raw_path: Path, col_map: pd.DataFrame) -> pd.DataFrame:
+    """Unpivot notes from wide Excel sheets into one long DataFrame."""
+    xl = pd.ExcelFile(raw_path, engine="openpyxl")
+    note_rows = col_map[col_map["is_note_like"] == True]
 
+    sheets_needed = note_rows["sheet"].unique()
+    all_records: list[dict] = []
 
-def _snake(col: str) -> str:
-    clean = re.sub(r"[^\w]+", "_", str(col).strip()).lower().strip("_")
-    clean = re.sub(r"_+", "_", clean)
-    return clean
-
-
-def main() -> int:
-    if not NOTES_XLSX.exists():
-        raise FileNotFoundError(f"Missing {NOTES_XLSX}")
-
-    # Read sheets
-    s1 = pd.read_excel(NOTES_XLSX, sheet_name="Sheet1")
-    s2 = pd.read_excel(NOTES_XLSX, sheet_name="Sheet2")
-
-    rows: list[dict] = []
-
-    # Sheet1
-    sheet1_note_col = "Thyroid Cx History/summary"
-    if sheet1_note_col in s1.columns:
-        for _, r in s1[["Research ID number", sheet1_note_col]].iterrows():
-            rid = _norm_rid(r["Research ID number"])
-            txt = r[sheet1_note_col]
-            if rid is None or pd.isna(txt):
-                continue
-            t = str(txt)
-            if not t.strip():
-                continue
-            rows.append({
-                "research_id": rid,
-                "note_type": "THYROID_CX_HISTORY",
-                "note_index": pd.NA,
-                "note_text": t,
-                "source_sheet": "Sheet1",
-                "source_column": _snake(sheet1_note_col),
-            })
-
-    # Sheet2
-    col_map: dict[str, tuple[str, int | None]] = {
-        "Other History": ("OTHER_HISTORY", None),
-        "Last Endocrine/FM note": ("ENDOCRINE_FM", None),
-        "Other  notes": ("OTHER_NOTES", None),
-        "DEATH": ("DEATH", None),
-        "ED note 1": ("ED_NOTE", 1),
-        "ED note 2": ("ED_NOTE", 2),
-    }
-    for i in range(1, 5):
-        col_map[f"H&P-{i}"] = ("HP", i)
-        col_map[f"OPNote-{i}"] = ("OPNOTE", i)
-        col_map[f"DC_sum_{i}"] = ("DC_SUM", i)
-
-    use_cols = ["Research ID number"] + [c for c in col_map if c in s2.columns]
-    sub = s2[use_cols]
-    for _, r in sub.iterrows():
-        rid = _norm_rid(r["Research ID number"])
-        if rid is None:
+    for sheet_name in sheets_needed:
+        if sheet_name not in xl.sheet_names:
+            log.warning(f"  Sheet '{sheet_name}' not in workbook — skipping")
             continue
-        for c, (nt, ni) in col_map.items():
-            if c not in sub.columns:
-                continue
-            txt = r[c]
-            if pd.isna(txt):
-                continue
-            t = str(txt)
-            if not t.strip():
-                continue
-            rows.append({
-                "research_id": rid,
-                "note_type": nt,
-                "note_index": ni if ni is not None else pd.NA,
-                "note_text": t,
-                "source_sheet": "Sheet2",
-                "source_column": _snake(c),
-            })
 
-    df = pd.DataFrame(rows)
+        log.info(f"  Loading sheet: {sheet_name}")
+        df = pd.read_excel(xl, sheet_name=sheet_name, engine="openpyxl")
+        df = standardize_columns(df)
+        df = clean_research_id(df)
+        df = strip_phi(df)
+
+        sheet_notes = note_rows[note_rows["sheet"] == sheet_name]
+
+        for _, mapping_row in sheet_notes.iterrows():
+            snake_col = mapping_row["source_column_snake"]
+            note_type = mapping_row["proposed_note_type"]
+            note_index = mapping_row["proposed_note_index"]
+
+            if snake_col not in df.columns:
+                log.warning(f"    Column '{snake_col}' not found in sheet '{sheet_name}' — skipping")
+                continue
+
+            if pd.isna(note_type) or str(note_type).strip() == "":
+                continue
+
+            note_index = int(note_index) if pd.notna(note_index) and str(note_index).strip() else 1
+
+            for _, row in df.iterrows():
+                rid = row.get("research_id")
+                text = row.get(snake_col)
+
+                if pd.isna(rid):
+                    continue
+                if pd.isna(text) or str(text).strip() == "":
+                    continue
+
+                text_str = str(text).strip()
+                all_records.append({
+                    "note_row_id": make_note_row_id(rid, sheet_name, snake_col),
+                    "research_id": int(rid),
+                    "note_type": str(note_type),
+                    "note_index": int(note_index),
+                    "note_text": text_str,
+                    "source_sheet": sheet_name,
+                    "source_column": snake_col,
+                    "char_count": len(text_str),
+                })
+
+    if not all_records:
+        log.warning("  No note records produced!")
+        return pd.DataFrame(columns=[
+            "note_row_id", "research_id", "note_type", "note_index",
+            "note_text", "source_sheet", "source_column", "char_count",
+        ])
+
+    result = pd.DataFrame(all_records)
+    log.info(f"  Total note rows: {len(result):,}")
+    log.info(f"  Unique patients: {result['research_id'].nunique():,}")
+    log.info(f"  Note types: {sorted(result['note_type'].unique())}")
+    return result
+
+
+def write_qa_report(df: pd.DataFrame, path: Path) -> None:
+    """Write a QA summary CSV with row counts by note_type and source."""
+    qa = (
+        df.groupby(["note_type", "source_sheet", "source_column"])
+        .agg(
+            row_count=("note_row_id", "count"),
+            unique_patients=("research_id", "nunique"),
+            avg_char_count=("char_count", "mean"),
+            max_char_count=("char_count", "max"),
+        )
+        .reset_index()
+    )
+    qa["avg_char_count"] = qa["avg_char_count"].round(0).astype(int)
+    qa.to_csv(path, index=False)
+    log.info(f"  QA report: {path}")
+
+
+def main() -> None:
+    log.info("=" * 70)
+    log.info("  BUILD CLINICAL_NOTES_LONG")
+    log.info("=" * 70)
+
+    if not RAW_PATH.exists():
+        log.error(f"Raw file not found: {RAW_PATH}")
+        sys.exit(1)
+    if not CONFIG_PATH.exists():
+        log.error(f"Column map not found: {CONFIG_PATH}")
+        sys.exit(1)
+
+    col_map = load_column_map(CONFIG_PATH)
+    log.info(f"  Column map: {len(col_map)} entries, {col_map['is_note_like'].sum()} note-like")
+
+    df = build_long(RAW_PATH, col_map)
+
     if df.empty:
-        print("No notes extracted.")
-        return 0
+        log.warning("  Empty result — nothing to write")
+        sys.exit(1)
 
-    df["note_index"] = df["note_index"].astype("Int64")
+    out_parquet = PROCESSED / "clinical_notes_long.parquet"
+    save_parquet(df, out_parquet)
 
-    # QA
-    print(f"clinical_notes_long: {len(df):,} notes across {df['research_id'].nunique():,} patients")
-    print(df["note_type"].value_counts().to_string())
+    out_csv = PROCESSED / "clinical_notes_long.csv"
+    df.to_csv(out_csv, index=False)
+    log.info(f"  CSV export: {out_csv}")
 
-    # Write parquet preferred
-    pq_path = PROCESSED / "clinical_notes_long.parquet"
-    csv_path = PROCESSED / "clinical_notes_long.csv"
+    write_qa_report(df, PROCESSED / "clinical_notes_long_qa.csv")
 
-    wrote = False
-    try:
-        df.to_parquet(pq_path, index=False)
-        wrote = True
-        print(f"Wrote {pq_path}")
-    except Exception as exc:
-        print(f"Parquet write failed ({exc}); falling back to CSV")
-
-    if not wrote:
-        df.to_csv(csv_path, index=False)
-        print(f"Wrote {csv_path}")
-
-    return 0
+    log.info("=" * 70)
+    log.info("  DONE")
+    log.info("=" * 70)
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()

@@ -270,3 +270,49 @@ view,advanced_features_v2,has_path_synoptics,BOOLEAN,Patient has synoptic pathol
 view,advanced_features_v2,has_molecular_testing,BOOLEAN,Patient has molecular test data,phase6
 view,advanced_features_v2,has_fna_history,BOOLEAN,Patient has detailed FNA history,phase6
 view,advanced_features_v2,has_us_tirads,BOOLEAN,Patient has US TIRADS data,phase6
+table,clinical_notes_long,note_row_id,VARCHAR,SHA-1 hash primary key,phase7
+table,clinical_notes_long,research_id,INT64,Patient identifier,phase7
+table,clinical_notes_long,note_type,VARCHAR,Note category (h_p op_note dc_sum ed_note endocrine_note history_summary other_history other_notes),phase7
+table,clinical_notes_long,note_index,INT64,Sequence within note type (1-4),phase7
+table,clinical_notes_long,note_text,VARCHAR,Full note text,phase7
+table,clinical_notes_long,source_sheet,VARCHAR,Excel sheet name,phase7
+table,clinical_notes_long,source_column,VARCHAR,Snake_case column name,phase7
+table,clinical_notes_long,char_count,INT64,Length of note_text,phase7
+table,note_entities_staging,research_id,INT64,Patient identifier,phase7
+table,note_entities_staging,note_row_id,VARCHAR,FK to clinical_notes_long,phase7
+table,note_entities_staging,entity_type,VARCHAR,T_stage N_stage M_stage or overall_stage,phase7
+table,note_entities_staging,entity_value_norm,VARCHAR,Normalised AJCC stage,phase7
+table,note_entities_staging,evidence_span,VARCHAR,Exact substring from note_text,phase7
+table,note_entities_genetics,research_id,INT64,Patient identifier,phase7
+table,note_entities_genetics,note_row_id,VARCHAR,FK to clinical_notes_long,phase7
+table,note_entities_genetics,entity_type,VARCHAR,gene,phase7
+table,note_entities_genetics,entity_value_norm,VARCHAR,Normalised gene name (BRAF RAS RET TERT NTRK ALK),phase7
+table,note_entities_genetics,evidence_span,VARCHAR,Exact substring from note_text,phase7
+table,note_entities_procedures,research_id,INT64,Patient identifier,phase7
+table,note_entities_procedures,note_row_id,VARCHAR,FK to clinical_notes_long,phase7
+table,note_entities_procedures,entity_type,VARCHAR,procedure,phase7
+table,note_entities_procedures,entity_value_norm,VARCHAR,Normalised procedure type,phase7
+table,note_entities_procedures,evidence_span,VARCHAR,Exact substring from note_text,phase7
+table,note_entities_complications,research_id,INT64,Patient identifier,phase7
+table,note_entities_complications,note_row_id,VARCHAR,FK to clinical_notes_long,phase7
+table,note_entities_complications,entity_type,VARCHAR,complication,phase7
+table,note_entities_complications,entity_value_norm,VARCHAR,Normalised complication type,phase7
+table,note_entities_complications,evidence_span,VARCHAR,Exact substring from note_text,phase7
+table,note_entities_medications,research_id,INT64,Patient identifier,phase7
+table,note_entities_medications,note_row_id,VARCHAR,FK to clinical_notes_long,phase7
+table,note_entities_medications,entity_type,VARCHAR,medication,phase7
+table,note_entities_medications,entity_value_norm,VARCHAR,Normalised medication with dose,phase7
+table,note_entities_medications,evidence_span,VARCHAR,Exact substring from note_text,phase7
+table,note_entities_problem_list,research_id,INT64,Patient identifier,phase7
+table,note_entities_problem_list,note_row_id,VARCHAR,FK to clinical_notes_long,phase7
+table,note_entities_problem_list,entity_type,VARCHAR,problem,phase7
+table,note_entities_problem_list,entity_value_norm,VARCHAR,Normalised comorbidity type,phase7
+table,note_entities_problem_list,evidence_span,VARCHAR,Exact substring from note_text,phase7
+view,notes_entity_summary,research_id,VARCHAR,Patient identifier,phase7
+view,notes_entity_summary,n_entities_total,INT64,Total entity count across all domains,phase7
+view,advanced_features_v2,has_problem_mentions,BOOLEAN,Patient has problem list entities,phase7
+view,advanced_features_v2,has_procedure_mentions,BOOLEAN,Patient has procedure entities,phase7
+view,advanced_features_v2,has_complication_mentions,BOOLEAN,Patient has complication entities,phase7
+view,advanced_features_v2,has_genetics_mentions,BOOLEAN,Patient has genetics entities,phase7
+view,advanced_features_v2,has_staging_mentions,BOOLEAN,Patient has staging entities,phase7
+view,advanced_features_v2,has_medication_mentions,BOOLEAN,Patient has medication entities,phase7
