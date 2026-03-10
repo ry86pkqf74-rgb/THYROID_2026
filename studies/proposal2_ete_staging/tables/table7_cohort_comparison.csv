@@ -1,0 +1,7 @@
+Cohort,N,Method,mETE_OR,mETE_95%_CI,mETE_p,delta_AUC,Conclusion_changed
+A: All PTC,3278,MI,0.60,(0.50–0.72),<0.001,0.0180,No
+B: Classic + Unspecified,2166,MI,0.52,(0.42–0.64),<0.001,0.0242,No
+C: Original Classic,589,MI,0.50,(0.33–0.74),<0.001,0.0199,No
+D: All PTC (relaxed),3278,CC,0.60,(0.50–0.71),<0.001,0.0180,No
+Safety: Aggressive variants,197,CC,0.94,(0.35–2.54),0.901,—,No
+Safety: Non-aggressive,3072,CC,0.59,(0.49–0.71),<0.001,—,No

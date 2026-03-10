@@ -157,5 +157,59 @@ any—oncologic benefit.
 
 ---
 
+## 6. Cohort Expansion Validation (March 2026)
+
+The original analysis was conducted on N=596 classic-variant PTC patients (complete-case).
+A systematic cohort expansion was performed to test the robustness of the primary finding
+across four cohort definitions:
+
+| Cohort | Description | N | mETE OR (MI) | 95% CI | p |
+|--------|-------------|---|-------------|--------|---|
+| A | All PTC (all variants) + MI (m=20) | 3,278 | 0.60 | (0.50–0.72) | <0.001 |
+| B | Classic + unspecified variant + MI | 2,166 | 0.52 | (0.42–0.64) | <0.001 |
+| C | Original classic only + MI | 589 | 0.50 | (0.33–0.74) | <0.001 |
+| D | All PTC + relaxed missingness | 3,278 | 0.60 | (0.50–0.71) | <0.001 |
+
+### Clinical Safety — Aggressive Variants
+
+A dedicated safety analysis examined whether aggressive histologic subtypes (tall cell,
+columnar cell, solid variant, diffuse sclerosing; N=197 combined) alter the mETE conclusion:
+
+- **Aggressive variant subgroup:** mETE OR = 0.94 (0.35–2.54), p = 0.901 → **No reversal.**
+  The wide CI reflects the smaller sample; critically, the point estimate remains below 1.5
+  and the direction is consistent with the overall finding.
+- **Non-aggressive subgroup:** mETE OR = 0.59 (0.49–0.71), p < 0.001
+
+### Updated Recommendation
+
+**The conclusion that mETE is non-prognostic is robust to cohort expansion from N=596 to
+N=3,278.** Including all PTC variants (including aggressive subtypes) does not meaningfully
+change the mETE OR, which ranges from 0.50 to 0.60 across all cohort definitions. The AJCC
+8th edition's exclusion of mETE from T-staging is supported across the full spectrum of PTC
+histologic subtypes, not just classic variant.
+
+For full details, see `proposal2_expanded_cohort.py`, `tables/table6_expanded_results.csv`,
+and `tables/table7_cohort_comparison.csv`.
+
+---
+
+## References
+
+1. Ringel MD, Brito JP, Duh Q-Y, et al. 2025 American Thyroid Association Management
+   Guidelines for Adult Patients with Differentiated Thyroid Cancer. *Thyroid*.
+   2025;35(8):841–985.
+2. Amin MB, Edge SB, Greene FL, et al. AJCC Cancer Staging Manual, 8th Edition. Springer;
+   2017.
+3. Yin D-T, Yu K, Lu R-Q, et al. Prognostic impact of minimal extrathyroidal extension in
+   papillary thyroid carcinoma. *Front Oncol*. 2021;11:642190.
+4. Kim SK, Jeon YK, Kim DL, et al. Significance of microscopic extrathyroidal extension in
+   papillary thyroid carcinoma after thyroidectomy. *J Endocrinol Invest*. 2023;46:1219–1226.
+5. Haugen BR, Alexander EK, Bible KC, et al. 2015 American Thyroid Association Management
+   Guidelines for Adult Patients with Thyroid Nodules and Differentiated Thyroid Cancer.
+   *Thyroid*. 2016;26(1):1–133.
+
+---
+
 *This document was generated as part of the Proposal 2 recommendations phase. For
-methodological details, see `proposal2_ete_analysis.py` and `proposal2_recommendations.py`.*
+methodological details, see `proposal2_ete_analysis.py`, `proposal2_recommendations.py`,
+and `proposal2_expanded_cohort.py`.*

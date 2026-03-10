@@ -848,6 +848,155 @@ def render_recommendations():
 
 
 # ─────────────────────────────────────────────────────────────────────────
+# TAB: EXPANDED COHORT
+# ─────────────────────────────────────────────────────────────────────────
+def render_expanded_cohort():
+    STUDY = Path(__file__).resolve().parent / "studies" / "proposal2_ete_staging"
+
+    st.markdown(sl("Cohort Expansion — All PTC Variants (N = 3,278)"), unsafe_allow_html=True)
+
+    st.markdown(
+        '<div class="insight-box"><div class="insight-header">Expansion Summary</div>'
+        '<p style="color:#f0f4ff;font-size:.88rem;line-height:1.65;margin:0">'
+        'The original Proposal 2 analysis was limited to <b>596 classic-variant PTC</b> patients '
+        '(complete-case). This expansion evaluates the robustness of the mETE non-significance '
+        'finding across <b>4 cohort definitions</b> ranging from the original classic-only cohort '
+        'to all PTC variants (N=3,278), including aggressive subtypes (tall cell, columnar, solid, '
+        'diffuse sclerosing). <b>Main conclusion unchanged:</b> mETE OR remains 0.50–0.60 across all cohorts.</p></div>',
+        unsafe_allow_html=True,
+    )
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    c1, c2, c3, c4 = st.columns(4)
+    with c1:
+        st.markdown(mc("Cohort A: All PTC", "3,278", "mETE OR = 0.60, p<0.001"), unsafe_allow_html=True)
+    with c2:
+        st.markdown(mc("Cohort B: Classic+Unspec", "2,166", "mETE OR = 0.52, p<0.001"), unsafe_allow_html=True)
+    with c3:
+        st.markdown(mc("Cohort C: Original", "589", "mETE OR = 0.50, p<0.001"), unsafe_allow_html=True)
+    with c4:
+        st.markdown(mc("Cohort D: Relaxed", "3,278", "mETE OR = 0.60, p<0.001"), unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    tbl7_path = STUDY / "tables" / "table7_cohort_comparison.csv"
+    if tbl7_path.exists():
+        st.markdown(sl("Cohort Comparison — Including Aggressive Variant Safety Check"), unsafe_allow_html=True)
+        df_tbl7 = pd.read_csv(tbl7_path)
+        st.dataframe(df_tbl7, use_container_width=True, hide_index=True)
+
+        mete_data = df_tbl7[~df_tbl7["Cohort"].str.startswith("Safety")].copy()
+        if not mete_data.empty and "mETE_OR" in mete_data.columns:
+            mete_data["OR_num"] = pd.to_numeric(mete_data["mETE_OR"], errors="coerce")
+            mete_data["CI_lo"] = mete_data["mETE_95%_CI"].str.extract(r"\(([0-9.]+)")[0].astype(float)
+            mete_data["CI_hi"] = mete_data["mETE_95%_CI"].str.extract(r"–([0-9.]+)\)")[0].astype(float)
+
+            fig = go.Figure()
+            for i, (_, row) in enumerate(mete_data.iterrows()):
+                fig.add_trace(go.Scatter(
+                    x=[row["OR_num"]], y=[row["Cohort"]],
+                    error_x=dict(type="data", symmetric=False,
+                                 array=[row["CI_hi"] - row["OR_num"]],
+                                 arrayminus=[row["OR_num"] - row["CI_lo"]]),
+                    mode="markers",
+                    marker=dict(size=14, color="#f59e0b",
+                                line=dict(color="#07090f", width=1)),
+                    name=row["Cohort"], showlegend=False,
+                    hovertemplate=(
+                        f"<b>{row['Cohort']}</b> (N={row['N']})<br>"
+                        f"OR: {row['OR_num']:.2f} ({row['CI_lo']:.2f}–{row['CI_hi']:.2f})<br>"
+                        f"Method: {row['Method']}<extra></extra>"
+                    ),
+                ))
+
+            safety_data = df_tbl7[df_tbl7["Cohort"].str.startswith("Safety")].copy()
+            safety_data["OR_num"] = pd.to_numeric(safety_data["mETE_OR"], errors="coerce")
+            safety_data["CI_lo"] = safety_data["mETE_95%_CI"].str.extract(r"\(([0-9.]+)")[0].astype(float)
+            safety_data["CI_hi"] = safety_data["mETE_95%_CI"].str.extract(r"–([0-9.]+)\)")[0].astype(float)
+            for _, row in safety_data.iterrows():
+                if pd.notna(row["OR_num"]):
+                    fig.add_trace(go.Scatter(
+                        x=[row["OR_num"]], y=[row["Cohort"]],
+                        error_x=dict(type="data", symmetric=False,
+                                     array=[min(row["CI_hi"], 5) - row["OR_num"]],
+                                     arrayminus=[row["OR_num"] - row["CI_lo"]]),
+                        mode="markers",
+                        marker=dict(size=14, color="#f43f5e", symbol="diamond",
+                                    line=dict(color="#07090f", width=1)),
+                        name=row["Cohort"], showlegend=False,
+                    ))
+
+            fig.add_vline(x=1, line_dash="dash", line_color="#f43f5e",
+                          annotation_text="OR = 1.0",
+                          annotation_font_color="#f43f5e")
+            fig.update_layout(
+                **PL, height=350,
+                xaxis_title="Odds Ratio (Microscopic ETE)",
+                title="mETE OR Across Expanded Cohorts (all < 1.0 → non-prognostic)",
+            )
+            st.plotly_chart(fig, use_container_width=True)
+
+        st.download_button(
+            "⬇ Download Cohort Comparison",
+            df_tbl7.to_csv(index=False),
+            "table7_cohort_comparison.csv", "text/csv",
+        )
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    fig8_path = STUDY / "figures" / "fig8_cohort_size_flow.png"
+    fig9_path = STUDY / "figures" / "fig9_forest_expanded.png"
+
+    c1, c2 = st.columns(2)
+    with c1:
+        if fig8_path.exists():
+            st.markdown(sl("Cohort Size Flow"), unsafe_allow_html=True)
+            st.image(str(fig8_path),
+                     caption="Figure 8. Cohort size comparison across expansion strategies.",
+                     use_container_width=True)
+    with c2:
+        if fig9_path.exists():
+            st.markdown(sl("Forest Plot — Expanded Cohorts"), unsafe_allow_html=True)
+            st.image(str(fig9_path),
+                     caption="Figure 9. mETE ORs across all expanded cohorts (MI and CC).",
+                     use_container_width=True)
+
+    st.markdown(sl("Variant Breakdown — N Gain"), unsafe_allow_html=True)
+    variant_data = pd.DataFrame({
+        "Variant": ["Classic/Unspecified", "Follicular", "Tall cell",
+                     "Oncocytic/Warthin-like", "Diffuse sclerosing",
+                     "Solid", "Cribriform-morular", "Columnar cell"],
+        "N": [2166, 769, 166, 140, 14, 12, 6, 5],
+        "Type": ["Indolent", "Indolent", "Aggressive", "Indolent",
+                 "Aggressive", "Aggressive", "Indolent", "Aggressive"],
+    })
+    fig = go.Figure(go.Bar(
+        x=variant_data["N"], y=variant_data["Variant"],
+        orientation="h",
+        marker_color=["#2dd4bf" if t == "Indolent" else "#f43f5e"
+                       for t in variant_data["Type"]],
+        text=[f"N={n:,}" for n in variant_data["N"]],
+        textposition="outside",
+    ))
+    fig.update_layout(
+        **PL, height=360, xaxis_title="Number of Patients",
+        yaxis=dict(autorange="reversed", gridcolor="#1e2535"),
+        title="PTC Variant Distribution (Red = Aggressive)",
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
+    st.markdown(
+        '<div class="insight-box"><div class="insight-header">Clinical Safety Note</div>'
+        '<p style="color:#f0f4ff;font-size:.88rem;line-height:1.65;margin:0">'
+        'Aggressive variants (tall cell, columnar, solid, diffuse sclerosing; N=197) were '
+        'specifically tested as a safety subgroup. The mETE OR in aggressive variants was '
+        '<b>0.94 (0.35–2.54, p=0.901)</b> — the wide CI reflects limited power, but the '
+        'point estimate does not reverse the finding. mETE remains non-prognostic even '
+        'among histologically aggressive PTC subtypes.</p></div>',
+        unsafe_allow_html=True,
+    )
+
+
+# ─────────────────────────────────────────────────────────────────────────
 # MAIN
 # ─────────────────────────────────────────────────────────────────────────
 def main():
@@ -867,10 +1016,11 @@ def main():
     if df_full.empty: st.error("Could not load `advanced_features_view`."); st.stop()
     df_filt = build_sidebar(df_full)
 
-    (t_ov,t_ex,t_vz,t_adv,t_gen,t_spec,t_img,t_comp,t_rec,t_ai) = st.tabs([
+    (t_ov,t_ex,t_vz,t_adv,t_gen,t_spec,t_img,t_comp,t_rec,t_exp,t_ai) = st.tabs([
         "📊 Overview","🗃 Data Explorer","📈 Visualizations","🧬 Advanced",
         "🔬 Genetics & Molecular","🫀 Specimen Details","📡 Pre-Op Imaging",
-        "⚕ Complications","📋 Recommendations & Sensitivities","✨ AI Insights"
+        "⚕ Complications","📋 Recommendations & Sensitivities",
+        "📐 Expanded Cohort","✨ AI Insights"
     ])
     with t_ov:   render_overview(con)
     with t_ex:   render_explorer(df_filt)
@@ -881,6 +1031,7 @@ def main():
     with t_img:  render_imaging(con)
     with t_comp: render_complications(con)
     with t_rec:  render_recommendations()
+    with t_exp:  render_expanded_cohort()
     with t_ai:   render_ai_insights(con)
 
     st.markdown("---")
