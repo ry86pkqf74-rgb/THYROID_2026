@@ -1,0 +1,16 @@
+{
+  "script": "31_analytic_models.py",
+  "timestamp": "2026-03-10T18:10:03.467463",
+  "random_seed": 42,
+  "source": "local",
+  "cohort_rows": 6630,
+  "elapsed_seconds": 1.1,
+  "lifelines_available": true,
+  "statsmodels_available": true,
+  "scipy_available": true,
+  "outputs": [
+    "km_summary.csv",
+    "table1_demographics.csv",
+    "cox_model.csv"
+  ]
+}

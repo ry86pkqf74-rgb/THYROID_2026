@@ -109,4 +109,9 @@
 - Script 26 materializes 47 tables (up from 20): adds 5 granular linkage tables, 6 P0 Streamlit-critical views, 10 P1 upstream/adjudication views, 5 manual review queues, and date_rescue_rate_summary
 - Script 28 now supports `--md` flag for MotherDuck reads
 - Script 29 (`29_validation_runner.py`): combined validation + review-export runner; validates 14 views, exports review queues across 6 domains, prints reconciliation gap summary; supports `--md` and `--skip-export`
-- Next phase: analytic modeling or manuscript drafting
+- Script 31 (`31_analytic_models.py`): reproducible analytic modeling starter (Table 1, logistic regression, Kaplan-Meier, Cox PH); outputs to `studies/analytic_models/`; supports `--local` and `--dry-run`
+- Script 32 (`32_zenodo_archive_prep.py`): assembles Zenodo archive bundle (code + docs + studies + data) into `exports/zenodo_archive_2026.03.10/`; produces `.zenodo.json` metadata + `MANIFEST.txt` with SHA-256 checksums
+- Analytic models output: `table1_demographics.csv`, `km_summary.csv` (18 strata, 5 stratifiers), `cox_model.csv` (concordance 0.69), `analysis_metadata.json`
+- Script 27 deployed to both local DuckDB and MotherDuck cloud; all 5 legacy compatibility tables verified (molecular_episode_v3: 11,977 rows, rai_episode_v3: 938, validation_failures_v3: 2,505, tumor_episode_master_v2: 13,202, linkage_summary_v2: 11,977)
+- MANUSCRIPT_READY_CHECKLIST.md at repo root for submission/archive readiness
+- Next phase: manuscript drafting, Zenodo upload, or additional analytic models

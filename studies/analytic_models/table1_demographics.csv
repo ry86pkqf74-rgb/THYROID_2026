@@ -1,0 +1,13 @@
+Variable,Value,N
+Total patients,"6,630",
+Histology — PTC,"5,328 (80.4%)","5,328"
+Histology — FTC,683 (10.3%),683
+Histology — MTC,464 (7.0%),464
+Histology — PDTC,63 (1.0%),63
+Histology — other,51 (0.8%),51
+Overall Stage — I,"4,496 (67.8%)","4,496"
+Overall Stage — II,"1,938 (29.2%)","1,938"
+Overall Stage — III,136 (2.1%),136
+Overall Stage — IVB,27 (0.4%),27
+BRAF positive,43 (0.6%),43
+Recurrence,"2,965 (44.7%)","2,965"

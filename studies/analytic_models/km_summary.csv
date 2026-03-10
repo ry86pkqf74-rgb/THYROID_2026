@@ -1,0 +1,19 @@
+Stratifier,Stratum,N,Events,Median_survival_years,1yr_survival,3yr_survival,5yr_survival
+Overall Stage,I,3860,26,,0.9995,0.9982,0.9982
+Overall Stage,II,1754,6,,0.9988,0.9976,0.9969
+Overall Stage,III,124,4,,0.9735,0.9646,0.9646
+Overall Stage,IVB,27,0,,1.0,1.0,1.0
+ETE,False,1963,5,,1.0,1.0,1.0
+ETE,True,3831,31,,0.9981,0.996,0.9956
+BRAF,False,5753,36,,0.9988,0.9974,0.9972
+BRAF,True,41,0,,1.0,1.0,1.0
+Risk Band,high,2215,33,,0.9968,0.9938,0.9933
+Risk Band,intermediate,1338,3,,1.0,0.9992,0.9992
+Risk Band,low,2241,0,,1.0,1.0,1.0
+Histology,ATC,27,0,,1.0,1.0,1.0
+Histology,FTC,615,1,,1.0,0.9982,0.9982
+Histology,HCC,14,0,,1.0,1.0,1.0
+Histology,MTC,361,0,,1.0,1.0,1.0
+Histology,PDTC,43,0,,1.0,1.0,1.0
+Histology,PTC,4693,35,,0.9985,0.997,0.9968
+Histology,other,41,0,,1.0,1.0,1.0
