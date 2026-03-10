@@ -168,13 +168,22 @@ def extract_note_date(note_text: str) -> str | None:
     return None
 
 
-_NEARBY_DATE = re.compile(r"\b(\d{1,2}/\d{1,2}/\d{2,4})\b")
+_NEARBY_DATE = re.compile(
+    r"\b(\d{1,2}/\d{1,2}/\d{2,4})\b"
+    r"|\b(\d{4}-\d{2}-\d{2})\b"
+    r"|\b(\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*"
+    r"\s*,?\s*\d{4})\b"
+    r"|\b((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*"
+    r"\s+\d{1,2}\s*,?\s*\d{4})\b",
+    re.IGNORECASE,
+)
 
 
 def extract_nearby_date(text: str, match_start: int, match_end: int,
                         window: int = 120) -> str | None:
     """Find the closest date within +-window chars of a regex match span.
 
+    Supports MM/DD/YYYY, YYYY-MM-DD, and month-name formats.
     Returns ISO YYYY-MM-DD or None.
     """
     region_start = max(0, match_start - window)
@@ -184,13 +193,14 @@ def extract_nearby_date(text: str, match_start: int, match_end: int,
     best: str | None = None
     best_dist = window + 1
     for m in _NEARBY_DATE.finditer(region):
+        raw = next(g for g in m.groups() if g is not None)
         date_abs_start = region_start + m.start()
         dist = min(
             abs(date_abs_start - match_start),
             abs(date_abs_start - match_end),
         )
         if dist < best_dist:
-            parsed = safe_parse_date(m.group(1))
+            parsed = safe_parse_date(raw)
             if parsed:
                 try:
                     dt = datetime.strptime(parsed, "%Y-%m-%d")
@@ -200,6 +210,14 @@ def extract_nearby_date(text: str, match_start: int, match_end: int,
                 except ValueError:
                     pass
     return best
+
+
+def safe_float(val: str) -> float | None:
+    """Parse a string to float, returning None on failure."""
+    try:
+        return float(val)
+    except (ValueError, TypeError):
+        return None
 
 
 def to_snake_case(name: str) -> str:

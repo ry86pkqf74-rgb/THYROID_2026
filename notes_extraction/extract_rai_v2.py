@@ -20,7 +20,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from notes_extraction.base import BaseExtractor, EntityMatch
-from utils.text_helpers import extract_nearby_date
+from utils.text_helpers import extract_nearby_date, safe_float
 
 GBQ_TO_MCI = 27.027
 
@@ -257,7 +257,9 @@ class RAIDetailExtractor(BaseExtractor):
 
     def _append_dose_match(self, results, m, note_row_id, research_id, note_type,
                            note_text, note_date, *, group_val, group_unit, confidence):
-        raw_val = float(m.group(group_val))
+        raw_val = safe_float(m.group(group_val))
+        if raw_val is None:
+            return
         unit = m.group(group_unit)
         if unit.lower() == "gbq":
             mci_val = round(raw_val * GBQ_TO_MCI, 1)
@@ -418,14 +420,16 @@ class RAIDetailExtractor(BaseExtractor):
 
         for m in _STIM_TG_CONTEXT.finditer(note_text):
             seen_starts.add(m.start())
-            val = m.group(1)
+            val = safe_float(m.group(1))
+            if val is None:
+                continue
             results.append(EntityMatch(
                 research_id=research_id,
                 note_row_id=note_row_id,
                 note_type=note_type,
                 entity_type="rai_stimulated_tg",
                 entity_value_raw=m.group(0),
-                entity_value_norm=f"{float(val):g} ng/mL",
+                entity_value_norm=f"{val:g} ng/mL",
                 present_or_negated=self.check_negation(note_text, m.start()),
                 confidence=0.95,
                 evidence_span=m.group(0),
@@ -441,14 +445,16 @@ class RAIDetailExtractor(BaseExtractor):
                 continue
             if not _in_rai_context(note_text, m.start()):
                 continue
-            val = m.group(1)
+            val = safe_float(m.group(1))
+            if val is None:
+                continue
             results.append(EntityMatch(
                 research_id=research_id,
                 note_row_id=note_row_id,
                 note_type=note_type,
                 entity_type="rai_stimulated_tg",
                 entity_value_raw=m.group(0),
-                entity_value_norm=f"{float(val):g} ng/mL",
+                entity_value_norm=f"{val:g} ng/mL",
                 present_or_negated=self.check_negation(note_text, m.start()),
                 confidence=0.7,
                 evidence_span=m.group(0),
@@ -466,14 +472,16 @@ class RAIDetailExtractor(BaseExtractor):
 
         for m in _STIM_TSH_CONTEXT.finditer(note_text):
             seen_starts.add(m.start())
-            val = m.group(1)
+            val = safe_float(m.group(1))
+            if val is None:
+                continue
             results.append(EntityMatch(
                 research_id=research_id,
                 note_row_id=note_row_id,
                 note_type=note_type,
                 entity_type="rai_stimulated_tsh",
                 entity_value_raw=m.group(0),
-                entity_value_norm=f"{float(val):g} mIU/L",
+                entity_value_norm=f"{val:g} mIU/L",
                 present_or_negated=self.check_negation(note_text, m.start()),
                 confidence=0.95,
                 evidence_span=m.group(0),
@@ -489,14 +497,16 @@ class RAIDetailExtractor(BaseExtractor):
                 continue
             if not _in_rai_context(note_text, m.start()):
                 continue
-            val = m.group(1)
+            val = safe_float(m.group(1))
+            if val is None:
+                continue
             results.append(EntityMatch(
                 research_id=research_id,
                 note_row_id=note_row_id,
                 note_type=note_type,
                 entity_type="rai_stimulated_tsh",
                 entity_value_raw=m.group(0),
-                entity_value_norm=f"{float(val):g} mIU/L",
+                entity_value_norm=f"{val:g} mIU/L",
                 present_or_negated=self.check_negation(note_text, m.start()),
                 confidence=0.7,
                 evidence_span=m.group(0),
@@ -512,8 +522,8 @@ class RAIDetailExtractor(BaseExtractor):
     def _extract_uptake_pct(self, results, note_row_id, research_id, note_type, note_text, note_date):
         for m in _UPTAKE_PCT.finditer(note_text):
             val = m.group(1) or m.group(2)
-            pct = float(val)
-            if pct > 100:
+            pct = safe_float(val)
+            if pct is None or pct > 100 or pct < 0:
                 continue
             results.append(EntityMatch(
                 research_id=research_id,

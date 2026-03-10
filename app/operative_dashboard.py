@@ -30,6 +30,7 @@ def render_operative_dashboard(con) -> None:
         return
 
     st.markdown(sl("Operative Detail Analytics"), unsafe_allow_html=True)
+    st.info("Showing pre-adjudication data. Adjudicated values are available in manuscript exports (script 20).", icon="ℹ️")
 
     # ------------------------------------------------------------------
     # 1. Top Metrics

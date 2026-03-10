@@ -394,7 +394,8 @@ def backfill_linked_ids(con: duckdb.DuckDBPyConnection) -> None:
                SET linked_molecular_episode_id = CAST(l.molecular_episode_id AS VARCHAR)
                FROM fna_molecular_linkage_v2 l
                WHERE f.research_id = l.research_id
-                 AND f.fna_episode_id = l.fna_episode_id""",
+                 AND f.fna_episode_id = l.fna_episode_id
+                 AND f.linked_molecular_episode_id IS NULL""",
         ),
         (
             "fna_episode_master_v2.linked_surgery_episode_id",
@@ -403,7 +404,8 @@ def backfill_linked_ids(con: duckdb.DuckDBPyConnection) -> None:
                FROM preop_surgery_linkage_v2 l
                WHERE f.research_id = l.research_id
                  AND CAST(f.fna_episode_id AS VARCHAR) = l.preop_episode_id
-                 AND l.preop_type = 'fna'""",
+                 AND l.preop_type = 'fna'
+                 AND f.linked_surgery_episode_id IS NULL""",
         ),
         (
             "molecular_test_episode_v2.linked_fna_episode_id",
@@ -411,7 +413,8 @@ def backfill_linked_ids(con: duckdb.DuckDBPyConnection) -> None:
                SET linked_fna_episode_id = CAST(l.fna_episode_id AS VARCHAR)
                FROM fna_molecular_linkage_v2 l
                WHERE m.research_id = l.research_id
-                 AND m.molecular_episode_id = l.molecular_episode_id""",
+                 AND m.molecular_episode_id = l.molecular_episode_id
+                 AND m.linked_fna_episode_id IS NULL""",
         ),
         (
             "molecular_test_episode_v2.linked_surgery_episode_id",
@@ -420,7 +423,8 @@ def backfill_linked_ids(con: duckdb.DuckDBPyConnection) -> None:
                FROM preop_surgery_linkage_v2 l
                WHERE m.research_id = l.research_id
                  AND CAST(m.molecular_episode_id AS VARCHAR) = l.preop_episode_id
-                 AND l.preop_type = 'molecular'""",
+                 AND l.preop_type = 'molecular'
+                 AND m.linked_surgery_episode_id IS NULL""",
         ),
         (
             "rai_treatment_episode_v2.linked_surgery_episode_id",
@@ -428,7 +432,8 @@ def backfill_linked_ids(con: duckdb.DuckDBPyConnection) -> None:
                SET linked_surgery_episode_id = CAST(l.surgery_episode_id AS VARCHAR)
                FROM pathology_rai_linkage_v2 l
                WHERE r.research_id = l.research_id
-                 AND r.rai_episode_id = l.rai_episode_id""",
+                 AND r.rai_episode_id = l.rai_episode_id
+                 AND r.linked_surgery_episode_id IS NULL""",
         ),
         (
             "imaging_nodule_long_v2.linked_fna_episode_id",
@@ -436,7 +441,8 @@ def backfill_linked_ids(con: duckdb.DuckDBPyConnection) -> None:
                SET linked_fna_episode_id = CAST(l.fna_episode_id AS VARCHAR)
                FROM imaging_fna_linkage_v2 l
                WHERE i.research_id = l.research_id
-                 AND i.nodule_id = l.nodule_id""",
+                 AND i.nodule_id = l.nodule_id
+                 AND i.linked_fna_episode_id IS NULL""",
         ),
     ]
 

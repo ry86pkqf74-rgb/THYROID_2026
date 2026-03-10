@@ -28,6 +28,7 @@ def render_rai_dashboard(con) -> None:
         return
 
     st.markdown(sl("RAI Treatment Analytics"), unsafe_allow_html=True)
+    st.info("Showing pre-adjudication data. Adjudicated values are available in manuscript exports (script 20).", icon="ℹ️")
 
     # ------------------------------------------------------------------
     # 1. Top Metrics
@@ -235,3 +236,24 @@ def render_rai_dashboard(con) -> None:
             multi_export(filtered, "rai_adjudication_review", key_sfx="rai_dash_review")
     else:
         st.info("RAI adjudication review view not available.")
+
+    # ------------------------------------------------------------------
+    # Linkage Quality
+    # ------------------------------------------------------------------
+    link_view = _resolve_view(con, "pathology_rai_linkage_v2", "md_pathology_rai_linkage_v2")
+    if link_view:
+        st.markdown("### Linkage Quality")
+        link_df = sqdf(con, f"""
+            SELECT linkage_confidence, COUNT(*) AS cnt
+            FROM {link_view}
+            GROUP BY linkage_confidence
+            ORDER BY CASE linkage_confidence
+                WHEN 'high_confidence' THEN 1
+                WHEN 'plausible' THEN 2 WHEN 'weak' THEN 3 ELSE 4
+            END
+        """)
+        if link_df is not None and len(link_df) > 0:
+            st.dataframe(link_df, use_container_width=True, hide_index=True)
+            weak_ct = link_df.loc[link_df["linkage_confidence"] == "weak", "cnt"].sum() if "weak" in link_df["linkage_confidence"].values else 0
+            if weak_ct > 0:
+                st.warning(f"{int(weak_ct)} weak pathology-RAI linkages require manual review.", icon="⚠️")

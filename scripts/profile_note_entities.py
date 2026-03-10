@@ -44,7 +44,7 @@ def run() -> None:
     except Exception:
         pass
     try:
-        con.execute(f"ATTACH '{SHARE_RW}' AS thyroid_share")
+        con.execute(f"ATTACH '{SHARE_RW}' AS thyroid_rw")
     except Exception:
         pass
 

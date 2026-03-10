@@ -31,6 +31,7 @@ def render_imaging_nodule_dashboard(con) -> None:
         return
 
     st.markdown(sl("Imaging / Nodule Analytics"), unsafe_allow_html=True)
+    st.info("Showing pre-adjudication data. Adjudicated values are available in manuscript exports (script 20).", icon="ℹ️")
 
     # ------------------------------------------------------------------
     # 1. Top Metrics

@@ -28,6 +28,7 @@ def render_molecular_dashboard(con) -> None:
         return
 
     st.markdown(sl("Molecular Testing Analytics"), unsafe_allow_html=True)
+    st.info("Showing pre-adjudication data. Adjudicated values are available in manuscript exports (script 20).", icon="ℹ️")
 
     # ------------------------------------------------------------------
     # 1. Top Metrics
@@ -236,3 +237,24 @@ def render_molecular_dashboard(con) -> None:
             multi_export(filtered, "molecular_linkage_review", key_sfx="mol_dash_review")
     else:
         st.info("Molecular linkage review view not available.")
+
+    # ------------------------------------------------------------------
+    # Linkage Quality
+    # ------------------------------------------------------------------
+    link_view = _resolve_view(con, "fna_molecular_linkage_v2", "md_fna_molecular_linkage_v2")
+    if link_view:
+        st.markdown("### Linkage Quality")
+        link_df = sqdf(con, f"""
+            SELECT linkage_confidence, COUNT(*) AS cnt
+            FROM {link_view}
+            GROUP BY linkage_confidence
+            ORDER BY CASE linkage_confidence
+                WHEN 'exact_match' THEN 1 WHEN 'high_confidence' THEN 2
+                WHEN 'plausible' THEN 3 WHEN 'weak' THEN 4 ELSE 5
+            END
+        """)
+        if link_df is not None and len(link_df) > 0:
+            st.dataframe(link_df, use_container_width=True, hide_index=True)
+            weak_ct = link_df.loc[link_df["linkage_confidence"] == "weak", "cnt"].sum() if "weak" in link_df["linkage_confidence"].values else 0
+            if weak_ct > 0:
+                st.warning(f"{int(weak_ct)} weak FNA-molecular linkages require manual review.", icon="⚠️")

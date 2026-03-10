@@ -19,7 +19,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from notes_extraction.base import BaseExtractor, EntityMatch
-from utils.text_helpers import extract_nearby_date
+from utils.text_helpers import extract_nearby_date, safe_float
 
 
 # ---------------------------------------------------------------------------
@@ -339,10 +339,13 @@ class ImagingNoduleExtractor(BaseExtractor):
         seen_starts: set[int] = set()
 
         for m in _SIZE_3AXIS.finditer(note_text):
+            vals = [safe_float(m.group(i)) for i in (1, 2, 3)]
+            if any(v is None for v in vals):
+                continue
             seen_starts.add(m.start())
-            a = _to_cm(float(m.group(1)), m.group(4))
-            b = _to_cm(float(m.group(2)), m.group(4))
-            c = _to_cm(float(m.group(3)), m.group(4))
+            a = _to_cm(vals[0], m.group(4))
+            b = _to_cm(vals[1], m.group(4))
+            c = _to_cm(vals[2], m.group(4))
             norm = f"{_fmt_cm(a)}x{_fmt_cm(b)}x{_fmt_cm(c)}cm"
             results.append(self._make(
                 note_row_id, research_id, note_type, note_text, note_date, m,
@@ -353,9 +356,12 @@ class ImagingNoduleExtractor(BaseExtractor):
         for m in _SIZE_2AXIS.finditer(note_text):
             if m.start() in seen_starts:
                 continue
+            va, vb = safe_float(m.group(1)), safe_float(m.group(2))
+            if va is None or vb is None:
+                continue
             seen_starts.add(m.start())
-            a = _to_cm(float(m.group(1)), m.group(3))
-            b = _to_cm(float(m.group(2)), m.group(3))
+            a = _to_cm(va, m.group(3))
+            b = _to_cm(vb, m.group(3))
             norm = f"{_fmt_cm(a)}x{_fmt_cm(b)}cm"
             results.append(self._make(
                 note_row_id, research_id, note_type, note_text, note_date, m,
@@ -366,7 +372,10 @@ class ImagingNoduleExtractor(BaseExtractor):
         for m in _SIZE_1AXIS.finditer(note_text):
             if m.start() in seen_starts:
                 continue
-            a = _to_cm(float(m.group(1)), m.group(2))
+            va = safe_float(m.group(1))
+            if va is None:
+                continue
+            a = _to_cm(va, m.group(2))
             norm = f"{_fmt_cm(a)}cm"
             results.append(self._make(
                 note_row_id, research_id, note_type, note_text, note_date, m,

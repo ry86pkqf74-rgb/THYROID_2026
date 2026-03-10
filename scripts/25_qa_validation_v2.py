@@ -249,6 +249,53 @@ LEFT JOIN tumor_episode_master_v2 t
     AND o.surgery_date_native = t.surgery_date
 WHERE t.research_id IS NULL
   AND o.surgery_date_native IS NOT NULL
+
+UNION ALL
+
+-- 11. Weak cross-domain linkages (imaging-FNA)
+SELECT
+    'weak_linkage_imaging_fna', 'warning', research_id,
+    'Weak imaging-FNA linkage (day_gap=' || CAST(day_gap AS VARCHAR) || ')',
+    'nodule ' || nodule_id || ' -> fna ep ' || CAST(fna_episode_id AS VARCHAR),
+    CURRENT_TIMESTAMP
+FROM imaging_fna_linkage_v2
+WHERE linkage_confidence = 'weak'
+
+UNION ALL
+
+-- 11b. Weak cross-domain linkages (FNA-molecular)
+SELECT
+    'weak_linkage_fna_molecular', 'warning', research_id,
+    'Weak FNA-molecular linkage (day_gap=' || CAST(day_gap AS VARCHAR) || ')',
+    'fna ep ' || CAST(fna_episode_id AS VARCHAR) || ' -> mol ep '
+        || CAST(molecular_episode_id AS VARCHAR),
+    CURRENT_TIMESTAMP
+FROM fna_molecular_linkage_v2
+WHERE linkage_confidence = 'weak'
+
+UNION ALL
+
+-- 11c. Weak cross-domain linkages (preop-surgery)
+SELECT
+    'weak_linkage_preop_surgery', 'warning', research_id,
+    'Weak preop-surgery linkage (day_gap=' || CAST(day_gap AS VARCHAR) || ')',
+    preop_type || ' ep ' || CAST(preop_episode_id AS VARCHAR)
+        || ' -> surgery ep ' || CAST(surgery_episode_id AS VARCHAR),
+    CURRENT_TIMESTAMP
+FROM preop_surgery_linkage_v2
+WHERE linkage_confidence = 'weak'
+
+UNION ALL
+
+-- 11d. Weak cross-domain linkages (pathology-RAI)
+SELECT
+    'weak_linkage_pathology_rai', 'warning', research_id,
+    'Weak pathology-RAI linkage (days=' || CAST(days_surg_to_rai AS VARCHAR) || ')',
+    'surgery ep ' || CAST(surgery_episode_id AS VARCHAR)
+        || ' -> rai ep ' || CAST(rai_episode_id AS VARCHAR),
+    CURRENT_TIMESTAMP
+FROM pathology_rai_linkage_v2
+WHERE linkage_confidence = 'weak'
 """
 
 # Date completeness by domain
