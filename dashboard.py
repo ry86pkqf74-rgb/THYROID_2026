@@ -302,23 +302,28 @@ def render_overview(con):
             pass
 
     q = sqs
+    _mc = qual("master_cohort")
+    _tp = qual("tumor_pathology")
+    _nm = qual("nuclear_med")
+    _cx = qual("complications")
+    _gt = qual("genetic_testing")
     m = dict(
         total=(int(_kpi_row.get("unique_patients", 0)) if _kpi_from_table
-               else q(con, "SELECT COUNT(DISTINCT research_id) FROM master_cohort")),
-        tumor_path=q(con,"SELECT COUNT(*) FROM master_cohort WHERE has_tumor_pathology"),
-        benign_path=q(con,"SELECT COUNT(*) FROM master_cohort WHERE has_benign_pathology"),
-        fna=q(con,"SELECT COUNT(*) FROM master_cohort WHERE has_fna_cytology"),
+               else q(con, f"SELECT COUNT(DISTINCT research_id) FROM {_mc}")),
+        tumor_path=q(con,f"SELECT COUNT(*) FROM {_mc} WHERE has_tumor_pathology"),
+        benign_path=q(con,f"SELECT COUNT(*) FROM {_mc} WHERE has_benign_pathology"),
+        fna=q(con,f"SELECT COUNT(*) FROM {_mc} WHERE has_fna_cytology"),
         braf=(int(_kpi_row["braf_positive"]) if _kpi_from_table
-              else q(con,"SELECT COALESCE(SUM(CASE WHEN braf_mutation_mentioned THEN 1 ELSE 0 END),0) FROM tumor_pathology")),
-        rai_pos=q(con,"SELECT COUNT(*) FROM nuclear_med WHERE rai_avid_flag='positive'"),
-        nuclear=q(con,"SELECT COUNT(*) FROM master_cohort WHERE has_nuclear_med"),
-        us=q(con,"SELECT COUNT(*) FROM master_cohort WHERE has_ultrasound_reports"),
-        ct=q(con,"SELECT COUNT(*) FROM master_cohort WHERE has_ct_imaging"),
-        tg=q(con,"SELECT COUNT(*) FROM master_cohort WHERE has_thyroglobulin_labs"),
-        atg=q(con,"SELECT COUNT(*) FROM master_cohort WHERE has_anti_thyroglobulin_labs"),
-        comp=q(con,"SELECT COUNT(DISTINCT research_id) FROM complications") if tbl_exists(con,"complications") else 0,
-        rln=q(con,"SELECT COUNT(*) FROM complications WHERE LOWER(CAST(rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR)) NOT IN ('nan','','0') AND rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy IS NOT NULL") if tbl_exists(con,"complications") else 0,
-        gen=q(con,"SELECT COUNT(DISTINCT research_id) FROM genetic_testing") if tbl_exists(con,"genetic_testing") else 0,
+              else q(con,f"SELECT COALESCE(SUM(CASE WHEN braf_mutation_mentioned THEN 1 ELSE 0 END),0) FROM {_tp}")),
+        rai_pos=q(con,f"SELECT COUNT(*) FROM {_nm} WHERE rai_avid_flag='positive'"),
+        nuclear=q(con,f"SELECT COUNT(*) FROM {_mc} WHERE has_nuclear_med"),
+        us=q(con,f"SELECT COUNT(*) FROM {_mc} WHERE has_ultrasound_reports"),
+        ct=q(con,f"SELECT COUNT(*) FROM {_mc} WHERE has_ct_imaging"),
+        tg=q(con,f"SELECT COUNT(*) FROM {_mc} WHERE has_thyroglobulin_labs"),
+        atg=q(con,f"SELECT COUNT(*) FROM {_mc} WHERE has_anti_thyroglobulin_labs"),
+        comp=q(con,f"SELECT COUNT(DISTINCT research_id) FROM {_cx}") if tbl_exists(con,"complications") else 0,
+        rln=q(con,f"SELECT COUNT(*) FROM {_cx} WHERE LOWER(CAST(rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR)) NOT IN ('nan','','0') AND rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy IS NOT NULL") if tbl_exists(con,"complications") else 0,
+        gen=q(con,f"SELECT COUNT(DISTINCT research_id) FROM {_gt}") if tbl_exists(con,"genetic_testing") else 0,
     )
     st.markdown(f'<div style="background:linear-gradient(135deg,#0a1a20,#0e1219);border:1px solid #1e2535;border-left:3px solid #2dd4bf;border-radius:12px;padding:.9rem 1.4rem;margin-bottom:1.2rem"><div style="font-family:\'DM Mono\',monospace;font-size:.62rem;letter-spacing:.15em;color:#2dd4bf;text-transform:uppercase">Total Cohort</div><div style="font-family:\'DM Serif Display\',serif;font-size:2.4rem;color:#f0f4ff;line-height:1">{m["total"]:,} <span style="font-size:.9rem;color:#8892a4;font-family:sans-serif">patients</span></div></div>',unsafe_allow_html=True)
 
@@ -386,17 +391,19 @@ def render_explorer(df):
 # TAB: VISUALIZATIONS
 # ─────────────────────────────────────────────────────────────────────────
 def render_viz(con):
+    _tp = qual("tumor_pathology")
+    _mc = qual("master_cohort")
     c1,c2 = st.columns(2)
     with c1:
         st.markdown("#### Histology Distribution")
-        df_h = sqdf(con,"SELECT COALESCE(histology_1_type,'Not specified') AS histology,COUNT(*) AS n FROM tumor_pathology WHERE histology_1_type IS NOT NULL AND TRIM(histology_1_type)!='' GROUP BY 1 ORDER BY n DESC")
+        df_h = sqdf(con,f"SELECT COALESCE(histology_1_type,'Not specified') AS histology,COUNT(*) AS n FROM {_tp} WHERE histology_1_type IS NOT NULL AND TRIM(histology_1_type)!='' GROUP BY 1 ORDER BY n DESC")
         if not df_h.empty:
             fig = px.bar(df_h.head(15),x="n",y="histology",orientation="h",color="n",color_continuous_scale=SEQ_TEAL)
             fig.update_layout(**PL,showlegend=False,coloraxis_showscale=False,yaxis_autorange="reversed",height=420)
             st.plotly_chart(fig,use_container_width=True)
     with c2:
         st.markdown("#### AJCC 8th Edition Stage")
-        df_s = sqdf(con,"SELECT COALESCE(histology_1_overall_stage_ajcc8,'Unknown') AS stage,COUNT(*) AS n FROM tumor_pathology WHERE histology_1_overall_stage_ajcc8 IS NOT NULL AND TRIM(histology_1_overall_stage_ajcc8)!='' GROUP BY 1 ORDER BY n DESC")
+        df_s = sqdf(con,f"SELECT COALESCE(histology_1_overall_stage_ajcc8,'Unknown') AS stage,COUNT(*) AS n FROM {_tp} WHERE histology_1_overall_stage_ajcc8 IS NOT NULL AND TRIM(histology_1_overall_stage_ajcc8)!='' GROUP BY 1 ORDER BY n DESC")
         if not df_s.empty:
             stage_c = {"I":"#2dd4bf","II":"#38bdf8","III":"#a78bfa","IVA":"#f59e0b","IVB":"#f43f5e","IVC":"#dc2626"}
             fig = px.bar(df_s,x="stage",y="n",color="stage",color_discrete_map=stage_c)
@@ -405,7 +412,7 @@ def render_viz(con):
     c3,c4 = st.columns(2)
     with c3:
         st.markdown("#### Sex Distribution")
-        df_sx = sqdf(con,"SELECT COALESCE(sex,'Unknown') AS sex,COUNT(*) AS n FROM master_cohort WHERE sex IS NOT NULL AND TRIM(sex)!='' GROUP BY 1 ORDER BY n DESC")
+        df_sx = sqdf(con,f"SELECT COALESCE(sex,'Unknown') AS sex,COUNT(*) AS n FROM {_mc} WHERE sex IS NOT NULL AND TRIM(sex)!='' GROUP BY 1 ORDER BY n DESC")
         if not df_sx.empty:
             fig = go.Figure(go.Pie(labels=df_sx["sex"],values=df_sx["n"],hole=0.55,marker=dict(colors=["#2dd4bf","#38bdf8","#a78bfa"],line=dict(color="#07090f",width=3)),textinfo="label+percent"))
             fig.update_layout(**PL,showlegend=False,height=340)
@@ -419,7 +426,7 @@ def render_viz(con):
             fig.update_layout(**PL,showlegend=False,height=340)
             st.plotly_chart(fig,use_container_width=True)
     st.markdown("#### Age at Surgery by AJCC Stage")
-    df_ab = sqdf(con,"SELECT tp.histology_1_overall_stage_ajcc8 AS stage,mc.age_at_surgery FROM master_cohort mc JOIN tumor_pathology tp ON mc.research_id=tp.research_id WHERE tp.histology_1_overall_stage_ajcc8 IS NOT NULL AND mc.age_at_surgery IS NOT NULL")
+    df_ab = sqdf(con,f"SELECT tp.histology_1_overall_stage_ajcc8 AS stage,mc.age_at_surgery FROM {_mc} mc JOIN {_tp} tp ON mc.research_id=tp.research_id WHERE tp.histology_1_overall_stage_ajcc8 IS NOT NULL AND mc.age_at_surgery IS NOT NULL")
     if not df_ab.empty:
         colors = ["#2dd4bf","#38bdf8","#a78bfa","#f59e0b","#f43f5e"]
         fig = go.Figure()
@@ -433,17 +440,19 @@ def render_viz(con):
 # TAB: ADVANCED
 # ─────────────────────────────────────────────────────────────────────────
 def render_advanced(con):
+    _tp = qual("tumor_pathology")
+    _nm = qual("nuclear_med")
     MUT_C = {"BRAF":"#2dd4bf","RAS":"#38bdf8","RET":"#a78bfa","TERT":"#f59e0b","NTRK":"#f43f5e","ALK":"#34d399"}
     c1,c2 = st.columns(2)
     with c1:
         st.markdown("#### Mutation Flags (Pathology Reports)")
         df_m = sqdf(con,
-            "SELECT 'BRAF' AS m,COALESCE(SUM(CASE WHEN braf_mutation_mentioned THEN 1 ELSE 0 END),0) AS n FROM tumor_pathology "
-            "UNION ALL SELECT 'RAS',COALESCE(SUM(CASE WHEN ras_mutation_mentioned THEN 1 ELSE 0 END),0) FROM tumor_pathology "
-            "UNION ALL SELECT 'RET',COALESCE(SUM(CASE WHEN ret_mutation_mentioned THEN 1 ELSE 0 END),0) FROM tumor_pathology "
-            "UNION ALL SELECT 'TERT',COALESCE(SUM(CASE WHEN tert_mutation_mentioned THEN 1 ELSE 0 END),0) FROM tumor_pathology "
-            "UNION ALL SELECT 'NTRK',COALESCE(SUM(CASE WHEN ntrk_mutation_mentioned THEN 1 ELSE 0 END),0) FROM tumor_pathology "
-            "UNION ALL SELECT 'ALK',COALESCE(SUM(CASE WHEN alk_mutation_mentioned THEN 1 ELSE 0 END),0) FROM tumor_pathology")
+            f"SELECT 'BRAF' AS m,COALESCE(SUM(CASE WHEN braf_mutation_mentioned THEN 1 ELSE 0 END),0) AS n FROM {_tp} "
+            f"UNION ALL SELECT 'RAS',COALESCE(SUM(CASE WHEN ras_mutation_mentioned THEN 1 ELSE 0 END),0) FROM {_tp} "
+            f"UNION ALL SELECT 'RET',COALESCE(SUM(CASE WHEN ret_mutation_mentioned THEN 1 ELSE 0 END),0) FROM {_tp} "
+            f"UNION ALL SELECT 'TERT',COALESCE(SUM(CASE WHEN tert_mutation_mentioned THEN 1 ELSE 0 END),0) FROM {_tp} "
+            f"UNION ALL SELECT 'NTRK',COALESCE(SUM(CASE WHEN ntrk_mutation_mentioned THEN 1 ELSE 0 END),0) FROM {_tp} "
+            f"UNION ALL SELECT 'ALK',COALESCE(SUM(CASE WHEN alk_mutation_mentioned THEN 1 ELSE 0 END),0) FROM {_tp}")
         if not df_m.empty:
             df_m = df_m.sort_values("n",ascending=True)
             fig = go.Figure(go.Bar(x=df_m["n"],y=df_m["m"],orientation="h",marker_color=[MUT_C.get(x,"#2dd4bf") for x in df_m["m"]],text=[f"{x:,}" for x in df_m["n"]],textposition="outside"))
@@ -451,26 +460,27 @@ def render_advanced(con):
             st.plotly_chart(fig,use_container_width=True)
     with c2:
         st.markdown("#### RAI Avidity")
-        df_r = sqdf(con,"SELECT COALESCE(rai_avid_flag,'not assessed') AS status,COUNT(*) AS n FROM nuclear_med GROUP BY 1 ORDER BY n DESC")
+        df_r = sqdf(con,f"SELECT COALESCE(rai_avid_flag,'not assessed') AS status,COUNT(*) AS n FROM {_nm} GROUP BY 1 ORDER BY n DESC")
         if not df_r.empty:
             rai_c = {"positive":"#f43f5e","negative":"#34d399","unknown":"#f59e0b","not assessed":"#4a5568"}
             fig = go.Figure(go.Pie(labels=df_r["status"],values=df_r["n"],hole=0.55,marker=dict(colors=[rai_c.get(str(s).lower(),"#8892a4") for s in df_r["status"]],line=dict(color="#07090f",width=3)),textinfo="label+percent"))
             fig.update_layout(**PL,showlegend=False,height=320)
             st.plotly_chart(fig,use_container_width=True)
 
+    _bp = qual("benign_pathology")
     st.markdown("#### Benign Pathology — Core Diagnoses")
-    df_b = sqdf(con,"""
+    df_b = sqdf(con,f"""
     SELECT label,n FROM (VALUES
-      ('Multinodular Goiter',(SELECT COALESCE(SUM(CASE WHEN is_mng THEN 1 ELSE 0 END),0) FROM benign_pathology)),
-      ('Hashimoto Thyroiditis',(SELECT COALESCE(SUM(CASE WHEN is_hashimoto THEN 1 ELSE 0 END),0) FROM benign_pathology)),
-      ('Graves Disease',(SELECT COALESCE(SUM(CASE WHEN is_graves THEN 1 ELSE 0 END),0) FROM benign_pathology)),
-      ('Follicular Adenoma',(SELECT COALESCE(SUM(CASE WHEN is_follicular_adenoma THEN 1 ELSE 0 END),0) FROM benign_pathology)),
-      ('Hurthle Cell Adenoma',(SELECT COALESCE(SUM(CASE WHEN is_hurthle_adenoma THEN 1 ELSE 0 END),0) FROM benign_pathology)),
-      ('Hyalinizing Trabecular',(SELECT COALESCE(SUM(CASE WHEN is_hyalinizing_trabecular THEN 1 ELSE 0 END),0) FROM benign_pathology)),
-      ('TGDC',(SELECT COALESCE(SUM(CASE WHEN is_tgdc THEN 1 ELSE 0 END),0) FROM benign_pathology)),
-      ('Colloid Nodule',(SELECT COALESCE(SUM(CASE WHEN LOWER(CAST(colloid_nodule AS VARCHAR)) IN ('true','1','yes') THEN 1 ELSE 0 END),0) FROM benign_pathology)),
-      ('Diffuse Hyperplasia',(SELECT COALESCE(SUM(CASE WHEN LOWER(CAST(diffuse_hyperplasia AS VARCHAR)) IN ('true','1','yes') THEN 1 ELSE 0 END),0) FROM benign_pathology)),
-      ('Focal Lymphocytic Thyroiditis',(SELECT COALESCE(SUM(CASE WHEN LOWER(CAST(focal_lymphocytic_thyroiditis AS VARCHAR)) IN ('true','1','yes') THEN 1 ELSE 0 END),0) FROM benign_pathology))
+      ('Multinodular Goiter',(SELECT COALESCE(SUM(CASE WHEN is_mng THEN 1 ELSE 0 END),0) FROM {_bp})),
+      ('Hashimoto Thyroiditis',(SELECT COALESCE(SUM(CASE WHEN is_hashimoto THEN 1 ELSE 0 END),0) FROM {_bp})),
+      ('Graves Disease',(SELECT COALESCE(SUM(CASE WHEN is_graves THEN 1 ELSE 0 END),0) FROM {_bp})),
+      ('Follicular Adenoma',(SELECT COALESCE(SUM(CASE WHEN is_follicular_adenoma THEN 1 ELSE 0 END),0) FROM {_bp})),
+      ('Hurthle Cell Adenoma',(SELECT COALESCE(SUM(CASE WHEN is_hurthle_adenoma THEN 1 ELSE 0 END),0) FROM {_bp})),
+      ('Hyalinizing Trabecular',(SELECT COALESCE(SUM(CASE WHEN is_hyalinizing_trabecular THEN 1 ELSE 0 END),0) FROM {_bp})),
+      ('TGDC',(SELECT COALESCE(SUM(CASE WHEN is_tgdc THEN 1 ELSE 0 END),0) FROM {_bp})),
+      ('Colloid Nodule',(SELECT COALESCE(SUM(CASE WHEN LOWER(CAST(colloid_nodule AS VARCHAR)) IN ('true','1','yes') THEN 1 ELSE 0 END),0) FROM {_bp})),
+      ('Diffuse Hyperplasia',(SELECT COALESCE(SUM(CASE WHEN LOWER(CAST(diffuse_hyperplasia AS VARCHAR)) IN ('true','1','yes') THEN 1 ELSE 0 END),0) FROM {_bp})),
+      ('Focal Lymphocytic Thyroiditis',(SELECT COALESCE(SUM(CASE WHEN LOWER(CAST(focal_lymphocytic_thyroiditis AS VARCHAR)) IN ('true','1','yes') THEN 1 ELSE 0 END),0) FROM {_bp}))
     ) t(label,n) WHERE n > 0 ORDER BY n DESC""")
     if not df_b.empty:
         fig = px.bar(df_b,x="n",y="label",orientation="h",color="n",color_continuous_scale=SEQ_TEAL)
@@ -512,7 +522,9 @@ def render_advanced(con):
     st.markdown(sl("Cancer Co-Occurrence by Benign Diagnosis"),unsafe_allow_html=True)
     st.caption("Among patients with each benign diagnosis, what fraction also had a concurrent malignancy?")
 
-    cooccur_sql = """
+    _mc2 = qual("master_cohort")
+    _bp2 = qual("benign_pathology")
+    cooccur_sql = f"""
     WITH base AS (
         SELECT
             mc.research_id,
@@ -527,8 +539,8 @@ def render_advanced(con):
             COALESCE(LOWER(CAST(bp.colloid_nodule AS VARCHAR)) IN ('true','1','yes'), FALSE)          AS is_colloid_nodule,
             COALESCE(LOWER(CAST(bp.diffuse_hyperplasia AS VARCHAR)) IN ('true','1','yes'), FALSE)     AS is_diffuse_hyperplasia,
             COALESCE(LOWER(CAST(bp.focal_lymphocytic_thyroiditis AS VARCHAR)) IN ('true','1','yes'), FALSE) AS is_focal_lt
-        FROM master_cohort mc
-        LEFT JOIN benign_pathology bp ON mc.research_id = bp.research_id
+        FROM {_mc2} mc
+        LEFT JOIN {_bp2} bp ON mc.research_id = bp.research_id
         WHERE mc.has_benign_pathology = TRUE
     )
     SELECT
@@ -753,11 +765,14 @@ def render_genetics(con):
 # ─────────────────────────────────────────────────────────────────────────
 def render_specimen(con):
     has_v = tbl_exists(con,"specimen_detail_view")
+    _tw = qual("thyroid_weights")
+    _tp = qual("tumor_pathology")
+    _fs = qual("frozen_sections")
     st.markdown(sl("Specimen Weight Distribution"),unsafe_allow_html=True)
     c1,c2 = st.columns(2)
     with c1:
-        wt_sql = ("SELECT specimen_weight_g FROM specimen_detail_view WHERE specimen_weight_g IS NOT NULL" if has_v
-                  else "SELECT TRY_CAST(specimen_weight_combined AS DOUBLE) AS specimen_weight_g FROM thyroid_weights WHERE specimen_weight_combined IS NOT NULL")
+        wt_sql = (f"SELECT specimen_weight_g FROM {qual('specimen_detail_view')} WHERE specimen_weight_g IS NOT NULL" if has_v
+                  else f'SELECT TRY_CAST("specimen_weight_combined" AS DOUBLE) AS specimen_weight_g FROM {_tw} WHERE "specimen_weight_combined" IS NOT NULL')
         df_wt = sqdf(con,wt_sql)
         if not df_wt.empty and "specimen_weight_g" in df_wt.columns:
             df_wt = df_wt[df_wt["specimen_weight_g"]<=df_wt["specimen_weight_g"].quantile(0.99)]
@@ -765,8 +780,8 @@ def render_specimen(con):
             fig.update_layout(**PL,height=280,xaxis_title="Weight (g)",yaxis_title="Specimens")
             st.plotly_chart(fig,use_container_width=True)
     with c2:
-        lobe_sql = ("SELECT right_lobe_weight_g AS right_lobe,left_lobe_weight_g AS left_lobe FROM specimen_detail_view WHERE right_lobe_weight_g IS NOT NULL AND left_lobe_weight_g IS NOT NULL" if has_v
-                    else "SELECT TRY_CAST(right_lobe_weight AS DOUBLE) AS right_lobe,TRY_CAST(left_lobe_weight AS DOUBLE) AS left_lobe FROM thyroid_weights WHERE right_lobe_weight IS NOT NULL AND left_lobe_weight IS NOT NULL")
+        lobe_sql = (f"SELECT right_lobe_weight_g AS right_lobe,left_lobe_weight_g AS left_lobe FROM {qual('specimen_detail_view')} WHERE right_lobe_weight_g IS NOT NULL AND left_lobe_weight_g IS NOT NULL" if has_v
+                    else f'SELECT TRY_CAST("right_lobe_g" AS DOUBLE) AS right_lobe,TRY_CAST("left_lobe_g" AS DOUBLE) AS left_lobe FROM {_tw} WHERE "right_lobe_g" IS NOT NULL OR "left_lobe_g" IS NOT NULL')
         df_lobe = sqdf(con,lobe_sql)
         if not df_lobe.empty:
             fig = go.Figure()
@@ -779,22 +794,23 @@ def render_specimen(con):
 
     st.markdown(sl("Frozen Sections · Margins · Capsule · Vascular Invasion"),unsafe_allow_html=True)
     c3,c4,c5,c6 = st.columns(4)
+    _sdv = qual("specimen_detail_view")
     pie_pairs = [
         (c3,"Frozen Section",
-         "SELECT frozen_section_obtained AS s,COUNT(*) AS n FROM specimen_detail_view WHERE frozen_section_obtained IS NOT NULL GROUP BY 1" if has_v
-         else "SELECT CAST(frozen_section_obtained AS VARCHAR) AS s,COUNT(*) AS n FROM frozen_sections WHERE frozen_section_obtained IS NOT NULL GROUP BY 1",
+         f"SELECT frozen_section_obtained AS s,COUNT(*) AS n FROM {_sdv} WHERE frozen_section_obtained IS NOT NULL GROUP BY 1" if has_v
+         else f"SELECT CAST(frozen_section_obtained AS VARCHAR) AS s,COUNT(*) AS n FROM {_fs} WHERE frozen_section_obtained IS NOT NULL GROUP BY 1",
          {"true":"#2dd4bf","false":"#f43f5e","yes":"#2dd4bf","no":"#f43f5e"}),
         (c4,"Margins",
-         "SELECT COALESCE(surgical_margin_status,'Unknown') AS s,COUNT(*) AS n FROM specimen_detail_view GROUP BY 1" if has_v
-         else "SELECT COALESCE(CAST(surgical_margins AS VARCHAR),'Unknown') AS s,COUNT(*) AS n FROM tumor_pathology GROUP BY 1",
+         f"SELECT COALESCE(surgical_margin_status,'Unknown') AS s,COUNT(*) AS n FROM {_sdv} GROUP BY 1" if has_v
+         else f"SELECT COALESCE(CAST(tumor_1_margin_status AS VARCHAR),'Unknown') AS s,COUNT(*) AS n FROM {_tp} WHERE tumor_1_margin_status IS NOT NULL GROUP BY 1",
          {"positive":"#f43f5e","negative":"#34d399"}),
         (c5,"Capsular Invasion",
-         "SELECT COALESCE(capsular_invasion,'Unknown') AS s,COUNT(*) AS n FROM specimen_detail_view GROUP BY 1" if has_v
-         else "SELECT COALESCE(CAST(capsular_invasion AS VARCHAR),'Unknown') AS s,COUNT(*) AS n FROM tumor_pathology WHERE capsular_invasion IS NOT NULL GROUP BY 1",
+         f"SELECT COALESCE(capsular_invasion,'Unknown') AS s,COUNT(*) AS n FROM {_sdv} GROUP BY 1" if has_v
+         else f"SELECT COALESCE(CAST(tumor_1_capsular_invasion AS VARCHAR),'Unknown') AS s,COUNT(*) AS n FROM {_tp} WHERE tumor_1_capsular_invasion IS NOT NULL GROUP BY 1",
          {"true":"#f43f5e","false":"#34d399","yes":"#f43f5e","no":"#34d399"}),
         (c6,"Vascular Invasion",
-         "SELECT COALESCE(vascular_invasion,'Unknown') AS s,COUNT(*) AS n FROM specimen_detail_view GROUP BY 1" if has_v
-         else "SELECT COALESCE(CAST(tumor_1_vascular_invasion AS VARCHAR),'Unknown') AS s,COUNT(*) AS n FROM tumor_pathology WHERE tumor_1_vascular_invasion IS NOT NULL GROUP BY 1",
+         f"SELECT COALESCE(vascular_invasion,'Unknown') AS s,COUNT(*) AS n FROM {_sdv} GROUP BY 1" if has_v
+         else f"SELECT COALESCE(CAST(tumor_1_vascular_invasion AS VARCHAR),'Unknown') AS s,COUNT(*) AS n FROM {_tp} WHERE tumor_1_vascular_invasion IS NOT NULL GROUP BY 1",
          {"true":"#f43f5e","false":"#34d399","yes":"#f43f5e","no":"#34d399"}),
     ]
     for col,title,sql,color_map in pie_pairs:
@@ -807,8 +823,8 @@ def render_specimen(con):
                 st.plotly_chart(fig,use_container_width=True)
 
     st.markdown(sl("Frozen Section Concordance with Final Pathology"),unsafe_allow_html=True)
-    conc_sql = ("SELECT fs_concordance_with_final AS c,COUNT(*) AS n FROM specimen_detail_view WHERE fs_concordance_with_final IS NOT NULL GROUP BY 1 ORDER BY n DESC" if has_v
-                else "SELECT CAST(concordance_with_final AS VARCHAR) AS c,COUNT(*) AS n FROM frozen_sections WHERE concordance_with_final IS NOT NULL GROUP BY 1 ORDER BY n DESC")
+    conc_sql = (f"SELECT fs_concordance_with_final AS c,COUNT(*) AS n FROM {_sdv} WHERE fs_concordance_with_final IS NOT NULL GROUP BY 1 ORDER BY n DESC" if has_v
+                else f"SELECT CAST(concordance_with_final AS VARCHAR) AS c,COUNT(*) AS n FROM {_fs} WHERE concordance_with_final IS NOT NULL GROUP BY 1 ORDER BY n DESC")
     df_fsc = sqdf(con,conc_sql)
     if not df_fsc.empty:
         fig = px.bar(df_fsc,x="c",y="n",color="n",color_continuous_scale=SEQ_TEAL)
@@ -816,7 +832,7 @@ def render_specimen(con):
         st.plotly_chart(fig,use_container_width=True)
 
     with st.expander("🗃 Browse specimen detail records"):
-        src = "specimen_detail_view" if has_v else "thyroid_weights"
+        src = _sdv if has_v else _tw
         df_spec = sqdf(con,f"SELECT * FROM {src} LIMIT 500")
         if not df_spec.empty: st.dataframe(df_spec,use_container_width=True,height=320)
 
@@ -825,8 +841,11 @@ def render_specimen(con):
 # ─────────────────────────────────────────────────────────────────────────
 def render_imaging(con):
     has_v = tbl_exists(con,"preop_imaging_detail_view")
+    _us = qual("ultrasound_reports")
+    _ct = qual("ct_imaging")
+    _mri = qual("mri_imaging")
     c1,c2,c3 = st.columns(3)
-    for col,(label,sql) in zip([c1,c2,c3],[("Ultrasound Studies","SELECT COUNT(*) FROM ultrasound_reports"),("CT Studies","SELECT COUNT(*) FROM ct_imaging"),("MRI Studies","SELECT COUNT(*) FROM mri_imaging")]):
+    for col,(label,sql) in zip([c1,c2,c3],[("Ultrasound Studies",f"SELECT COUNT(*) FROM {_us}"),("CT Studies",f"SELECT COUNT(*) FROM {_ct}"),("MRI Studies",f"SELECT COUNT(*) FROM {_mri}")]):
         with col: st.markdown(mc(label,f"{sqs(con,sql):,}"),unsafe_allow_html=True)
     st.markdown("<br>",unsafe_allow_html=True)
 
@@ -834,7 +853,7 @@ def render_imaging(con):
     if has_v:
         ti_sql = """SELECT CASE WHEN us_max_tirads IS NULL THEN 'Not Scored' WHEN us_max_tirads<2 THEN 'TR1 (Benign)' WHEN us_max_tirads<3 THEN 'TR2 (Not Suspicious)' WHEN us_max_tirads<4 THEN 'TR3 (Mildly Suspicious)' WHEN us_max_tirads<5 THEN 'TR4 (Moderately Suspicious)' ELSE 'TR5 (Highly Suspicious)' END AS cat,COUNT(*) AS n FROM preop_imaging_detail_view GROUP BY 1 ORDER BY n DESC"""
     else:
-        ti_sql = """SELECT CASE WHEN m<2 THEN 'TR1 (Benign)' WHEN m<3 THEN 'TR2 (Not Suspicious)' WHEN m<4 THEN 'TR3 (Mildly Suspicious)' WHEN m<5 THEN 'TR4 (Moderately Suspicious)' ELSE 'TR5 (Highly Suspicious)' END AS cat,COUNT(*) AS n FROM (SELECT MAX(GREATEST(COALESCE(TRY_CAST(nodule_1_ti_rads AS DOUBLE),0),COALESCE(TRY_CAST(nodule_2_ti_rads AS DOUBLE),0),COALESCE(TRY_CAST(nodule_3_ti_rads AS DOUBLE),0))) AS m FROM ultrasound_reports GROUP BY research_id) GROUP BY 1 ORDER BY n DESC"""
+        ti_sql = f"""SELECT CASE WHEN m<2 THEN 'TR1 (Benign)' WHEN m<3 THEN 'TR2 (Not Suspicious)' WHEN m<4 THEN 'TR3 (Mildly Suspicious)' WHEN m<5 THEN 'TR4 (Moderately Suspicious)' ELSE 'TR5 (Highly Suspicious)' END AS cat,COUNT(*) AS n FROM (SELECT MAX(GREATEST(COALESCE(TRY_CAST(nodule_1_ti_rads AS DOUBLE),0),COALESCE(TRY_CAST(nodule_2_ti_rads AS DOUBLE),0),COALESCE(TRY_CAST(nodule_3_ti_rads AS DOUBLE),0))) AS m FROM {_us} GROUP BY research_id) GROUP BY 1 ORDER BY n DESC"""
     c_ti,c_comp = st.columns(2)
     with c_ti:
         df_ti = sqdf(con,ti_sql)
@@ -845,7 +864,7 @@ def render_imaging(con):
             fig.update_layout(**PL,showlegend=False,height=320,title="ACR TI-RADS Categories")
             st.plotly_chart(fig,use_container_width=True)
     with c_comp:
-        df_comp2 = sqdf(con,"SELECT COALESCE(CAST(nodule_1_composition AS VARCHAR),'Unknown') AS comp,COUNT(*) AS n FROM ultrasound_reports WHERE nodule_1_composition IS NOT NULL AND TRIM(CAST(nodule_1_composition AS VARCHAR))!='' GROUP BY 1 ORDER BY n DESC LIMIT 8")
+        df_comp2 = sqdf(con,f"SELECT COALESCE(CAST(nodule_1_composition AS VARCHAR),'Unknown') AS comp,COUNT(*) AS n FROM {_us} WHERE nodule_1_composition IS NOT NULL AND TRIM(CAST(nodule_1_composition AS VARCHAR))!='' GROUP BY 1 ORDER BY n DESC LIMIT 8")
         if not df_comp2.empty:
             fig = px.bar(df_comp2,x="n",y="comp",orientation="h",color="n",color_continuous_scale=SEQ_TEAL)
             fig.update_layout(**PL,showlegend=False,coloraxis_showscale=False,height=320,xaxis_title="Nodules",yaxis_autorange="reversed",title="Nodule 1 Composition")
@@ -854,13 +873,13 @@ def render_imaging(con):
     st.markdown(sl("Nodule Features — Echogenicity & Calcifications"),unsafe_allow_html=True)
     c5,c6 = st.columns(2)
     with c5:
-        df_echo = sqdf(con,"SELECT COALESCE(CAST(nodule_1_echogenicity AS VARCHAR),'Unknown') AS echo,COUNT(*) AS n FROM ultrasound_reports WHERE nodule_1_echogenicity IS NOT NULL AND TRIM(CAST(nodule_1_echogenicity AS VARCHAR))!='' GROUP BY 1 ORDER BY n DESC LIMIT 8")
+        df_echo = sqdf(con,f"SELECT COALESCE(CAST(nodule_1_echogenicity AS VARCHAR),'Unknown') AS echo,COUNT(*) AS n FROM {_us} WHERE nodule_1_echogenicity IS NOT NULL AND TRIM(CAST(nodule_1_echogenicity AS VARCHAR))!='' GROUP BY 1 ORDER BY n DESC LIMIT 8")
         if not df_echo.empty:
             fig = px.bar(df_echo,x="echo",y="n",color="n",color_continuous_scale=SEQ_TEAL)
             fig.update_layout(**PL,coloraxis_showscale=False,height=280,xaxis_title="",yaxis_title="Nodules",title="Echogenicity")
             st.plotly_chart(fig,use_container_width=True)
     with c6:
-        df_calc = sqdf(con,"SELECT COALESCE(CAST(nodule_1_calcifications AS VARCHAR),'None/Unknown') AS calc,COUNT(*) AS n FROM ultrasound_reports WHERE nodule_1_calcifications IS NOT NULL AND TRIM(CAST(nodule_1_calcifications AS VARCHAR))!='' GROUP BY 1 ORDER BY n DESC LIMIT 8")
+        df_calc = sqdf(con,f"SELECT COALESCE(CAST(nodule_1_calcifications AS VARCHAR),'None/Unknown') AS calc,COUNT(*) AS n FROM {_us} WHERE nodule_1_calcifications IS NOT NULL AND TRIM(CAST(nodule_1_calcifications AS VARCHAR))!='' GROUP BY 1 ORDER BY n DESC LIMIT 8")
         if not df_calc.empty:
             fig = px.bar(df_calc,x="calc",y="n",color="n",color_continuous_scale=SEQ_TEAL)
             fig.update_layout(**PL,coloraxis_showscale=False,height=280,xaxis_title="",yaxis_title="Nodules",title="Calcification Type")
@@ -869,25 +888,25 @@ def render_imaging(con):
     st.markdown(sl("CT / MRI Structured Findings"),unsafe_allow_html=True)
     c7,c8 = st.columns(2)
     with c7:
-        df_ct_findings = sqdf(con,"""
+        df_ct_findings = sqdf(con,f"""
         SELECT label,n FROM (VALUES
-          ('Thyroid Nodule',(SELECT SUM(CASE WHEN LOWER(CAST(thyroid_nodule AS VARCHAR)) IN ('true','yes','1') THEN 1 ELSE 0 END) FROM ct_imaging)),
-          ('Enlarged Thyroid',(SELECT SUM(CASE WHEN LOWER(CAST(thyroid_enlarged AS VARCHAR)) IN ('true','yes','1') THEN 1 ELSE 0 END) FROM ct_imaging)),
-          ('Goiter Present',(SELECT SUM(CASE WHEN LOWER(CAST(goiter_present AS VARCHAR)) IN ('true','yes','1') THEN 1 ELSE 0 END) FROM ct_imaging)),
-          ('Pathologic LN',(SELECT SUM(CASE WHEN LOWER(CAST(pathologic_lymph_nodes AS VARCHAR)) IN ('true','yes','1') THEN 1 ELSE 0 END) FROM ct_imaging)),
-          ('Suspicious LN',(SELECT SUM(CASE WHEN LOWER(CAST(lymph_nodes_suspicious AS VARCHAR)) IN ('true','yes','1') THEN 1 ELSE 0 END) FROM ct_imaging))
+          ('Thyroid Nodule',(SELECT SUM(CASE WHEN LOWER(CAST(thyroid_nodule AS VARCHAR)) IN ('true','yes','1') THEN 1 ELSE 0 END) FROM {_ct})),
+          ('Enlarged Thyroid',(SELECT SUM(CASE WHEN LOWER(CAST(thyroid_enlarged AS VARCHAR)) IN ('true','yes','1') THEN 1 ELSE 0 END) FROM {_ct})),
+          ('Goiter Present',(SELECT SUM(CASE WHEN LOWER(CAST(goiter_present AS VARCHAR)) IN ('true','yes','1') THEN 1 ELSE 0 END) FROM {_ct})),
+          ('Pathologic LN',(SELECT SUM(CASE WHEN LOWER(CAST(pathologic_lymph_nodes AS VARCHAR)) IN ('true','yes','1') THEN 1 ELSE 0 END) FROM {_ct})),
+          ('Suspicious LN',(SELECT SUM(CASE WHEN LOWER(CAST(lymph_nodes_suspicious AS VARCHAR)) IN ('true','yes','1') THEN 1 ELSE 0 END) FROM {_ct}))
         ) t(label,n) WHERE n IS NOT NULL AND CAST(n AS INTEGER)>0 ORDER BY CAST(n AS INTEGER) DESC""")
         if not df_ct_findings.empty:
             fig = px.bar(df_ct_findings,x="n",y="label",orientation="h",color="n",color_continuous_scale=SEQ_TEAL)
             fig.update_layout(**PL,showlegend=False,coloraxis_showscale=False,height=260,xaxis_title="CT Reports",yaxis_autorange="reversed",title="CT Findings")
             st.plotly_chart(fig,use_container_width=True)
     with c8:
-        df_mri_findings = sqdf(con,"""
+        df_mri_findings = sqdf(con,f"""
         SELECT label,n FROM (VALUES
-          ('Thyroid Nodule',(SELECT SUM(CASE WHEN LOWER(CAST(thyroid_nodule AS VARCHAR)) IN ('true','yes','1') THEN 1 ELSE 0 END) FROM mri_imaging)),
-          ('Enlarged Thyroid',(SELECT SUM(CASE WHEN LOWER(CAST(thyroid_enlarged AS VARCHAR)) IN ('true','yes','1') THEN 1 ELSE 0 END) FROM mri_imaging)),
-          ('Substernal Extension',(SELECT SUM(CASE WHEN LOWER(CAST(substernal_extension AS VARCHAR)) IN ('true','yes','1') THEN 1 ELSE 0 END) FROM mri_imaging)),
-          ('Pathologic LN',(SELECT SUM(CASE WHEN LOWER(CAST(pathologic_lymph_nodes AS VARCHAR)) IN ('true','yes','1') THEN 1 ELSE 0 END) FROM mri_imaging))
+          ('Thyroid Nodule',(SELECT SUM(CASE WHEN LOWER(CAST(thyroid_nodule AS VARCHAR)) IN ('true','yes','1') THEN 1 ELSE 0 END) FROM {_mri})),
+          ('Enlarged Thyroid',(SELECT SUM(CASE WHEN LOWER(CAST(thyroid_enlarged AS VARCHAR)) IN ('true','yes','1') THEN 1 ELSE 0 END) FROM {_mri})),
+          ('Substernal Extension',(SELECT SUM(CASE WHEN LOWER(CAST(substernal_extension AS VARCHAR)) IN ('true','yes','1') THEN 1 ELSE 0 END) FROM {_mri})),
+          ('Pathologic LN',(SELECT SUM(CASE WHEN LOWER(CAST(pathologic_lymph_nodes AS VARCHAR)) IN ('true','yes','1') THEN 1 ELSE 0 END) FROM {_mri}))
         ) t(label,n) WHERE n IS NOT NULL AND CAST(n AS INTEGER)>0 ORDER BY CAST(n AS INTEGER) DESC""")
         if not df_mri_findings.empty:
             fig = px.bar(df_mri_findings,x="n",y="label",orientation="h",color="n",color_continuous_scale=SEQ_TEAL)
@@ -895,7 +914,7 @@ def render_imaging(con):
             st.plotly_chart(fig,use_container_width=True)
 
     st.markdown(sl("CT Largest Lymph Node Size Distribution"),unsafe_allow_html=True)
-    df_ln = sqdf(con,"SELECT TRY_CAST(largest_lymph_node_short_axis_mm AS DOUBLE) AS ln_mm FROM ct_imaging WHERE largest_lymph_node_short_axis_mm IS NOT NULL")
+    df_ln = sqdf(con,f"SELECT TRY_CAST(largest_lymph_node_short_axis_mm AS DOUBLE) AS ln_mm FROM {_ct} WHERE largest_lymph_node_short_axis_mm IS NOT NULL")
     if not df_ln.empty and "ln_mm" in df_ln.columns:
         df_ln = df_ln.dropna()
         if len(df_ln):
@@ -910,8 +929,9 @@ def render_imaging(con):
 # ─────────────────────────────────────────────────────────────────────────
 def render_complications(con):
     st.markdown("#### Post-Operative Complications")
+    _cx = qual("complications")
     if tbl_exists(con,"complications"):
-        df_comp = sqdf(con,"SELECT COUNT(DISTINCT research_id) AS total_patients,SUM(CASE WHEN LOWER(CAST(rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR)) NOT IN ('nan','','0') AND rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy IS NOT NULL THEN 1 ELSE 0 END) AS rln_injuries,SUM(CASE WHEN LOWER(CAST(seroma AS VARCHAR)) NOT IN ('nan','','0') AND seroma IS NOT NULL THEN 1 ELSE 0 END) AS seromas,SUM(CASE WHEN LOWER(CAST(hematoma AS VARCHAR)) NOT IN ('nan','','0') AND hematoma IS NOT NULL THEN 1 ELSE 0 END) AS hematomas FROM complications")
+        df_comp = sqdf(con,f"SELECT COUNT(DISTINCT research_id) AS total_patients,SUM(CASE WHEN LOWER(CAST(rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR)) NOT IN ('nan','','0') AND rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy IS NOT NULL THEN 1 ELSE 0 END) AS rln_injuries,SUM(CASE WHEN LOWER(CAST(seroma AS VARCHAR)) NOT IN ('nan','','0') AND seroma IS NOT NULL THEN 1 ELSE 0 END) AS seromas,SUM(CASE WHEN LOWER(CAST(hematoma AS VARCHAR)) NOT IN ('nan','','0') AND hematoma IS NOT NULL THEN 1 ELSE 0 END) AS hematomas FROM {_cx}")
         if not df_comp.empty and df_comp.iloc[0]["total_patients"]>0:
             row = df_comp.iloc[0]
             cols = st.columns(4)
@@ -927,19 +947,21 @@ def render_ai_insights(con):
     st.markdown('<div style="font-family:\'DM Mono\',monospace;font-size:.65rem;color:#2dd4bf;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.4rem">✨ Powered by Claude</div><p style="color:#8892a4;font-size:.86rem;margin-bottom:1.2rem">Ask any clinical research question. Claude receives current cohort statistics and returns evidence-grounded insights.</p>',unsafe_allow_html=True)
     def ctx():
         lines = []
-        n = sqs(con,"SELECT COUNT(DISTINCT research_id) FROM master_cohort")
+        _mc = qual("master_cohort")
+        _tp = qual("tumor_pathology")
+        n = sqs(con,f"SELECT COUNT(DISTINCT research_id) FROM {_mc}")
         lines.append(f"Cohort: {n:,} patients.")
         try:
-            r = qdf(con,"SELECT AVG(age_at_surgery),MIN(age_at_surgery),MAX(age_at_surgery) FROM master_cohort").iloc[0]
+            r = qdf(con,f"SELECT AVG(age_at_surgery),MIN(age_at_surgery),MAX(age_at_surgery) FROM {_mc}").iloc[0]
             lines.append(f"Age: mean {r.iloc[0]:.0f}, range {r.iloc[1]:.0f}–{r.iloc[2]:.0f}.")
         except: pass
-        for label,sql in [("Stage dist","SELECT histology_1_overall_stage_ajcc8,COUNT(*) FROM tumor_pathology GROUP BY 1 ORDER BY 2 DESC LIMIT 5"),("Histology","SELECT histology_1_type,COUNT(*) FROM tumor_pathology GROUP BY 1 ORDER BY 2 DESC LIMIT 5")]:
+        for label,sql in [("Stage dist",f"SELECT histology_1_overall_stage_ajcc8,COUNT(*) FROM {_tp} GROUP BY 1 ORDER BY 2 DESC LIMIT 5"),("Histology",f"SELECT histology_1_type,COUNT(*) FROM {_tp} GROUP BY 1 ORDER BY 2 DESC LIMIT 5")]:
             try:
                 df = qdf(con,sql)
                 lines.append(f"{label}: "+", ".join(f"{r.iloc[0]}={r.iloc[1]:,}" for _,r in df.iterrows())+".")
             except: pass
         if tbl_exists(con,"genetic_testing"):
-            ng = sqs(con,"SELECT COUNT(DISTINCT research_id) FROM genetic_testing")
+            ng = sqs(con,f"SELECT COUNT(DISTINCT research_id) FROM {qual('genetic_testing')}")
             lines.append(f"Genetic testing: {ng:,} patients.")
         return " ".join(lines)
 
