@@ -1,87 +1,137 @@
-# NSQIP Linkage Validation Report
+# NSQIP Case Details Linkage Validation Report
 
 **Generated:** 2026-03-10
-**Source:** Thyroid NSQIP dataset 2010-2023.xlsx (2,280 rows)
-**Scope:** Thyroid CPT codes only (60220-60271); 467 non-thyroid rows excluded
+**Source:** Case_Details_and_Custom_Fields_Report-14-Dec-2025-1204.xlsx (1,281 rows)
+**Scope:** All rows are thyroidectomy cases (CPT 60220–60271) with Custom Fields module data
 
 ## 1. Match Statistics
 
 | Metric | Value |
 |--------|-------|
-| Total NSQIP thyroid rows | 1,813 |
-| Perfect deterministic matches | 1,803 |
-| Unmatched | 10 |
-| **Match rate** | **99.4%** |
-| Unique patients linked | 1,728 |
-| Patients with 2 NSQIP surgeries | 75 |
+| Total NSQIP Case Details rows | 1,281 |
+| Perfect deterministic matches | 1,275 |
+| Unmatched | 6 |
+| **Match rate** | **99.5%** |
+| Unique patients linked | 1,261 |
+| Patients with 2 NSQIP surgeries | 14 |
 
 ## 2. Match Methods
 
 | Method | Rows | Description |
 |--------|------|-------------|
-| EUH_MRN | 1,725 | NSQIP IDN = EUH_MRN (direct hospital MRN) |
-| COMPOSITE | 54 | surgery_date + sex + age-adjusted (unique 1:1) |
-| DOB_CROSSREF | 12 | DOB matched across path_synoptics / op_sheet |
-| TEC_MRN | 12 | NSQIP IDN = TEC_MRN (second hospital MRN system) |
+| EXISTING_LINKAGE | 1,086 | Reused from verified `nsqip_thyroid_linkage_final.csv` (prior round) |
+| MRN_DATE_EXACT | 185 | NSQIP IDN = EUH_MRN + exact surgery date in master_cohort |
+| MRN_DATE_DISAMBIG | 2 | MRN mapped to multiple patients, disambiguated by exact surgery date |
+| MRN_DOB_MULTISURGERY | 2 | MRN + DOB + sex + age all confirmed; master_cohort records a different surgery date (multi-surgery patient with NSQIP capturing an earlier procedure) |
 
-## 3. Verification Protocol
+## 3. Relationship to Prior Linkage
 
-Every MRN-based match was independently verified:
-- **Sex concordance:** 99.7% (1,735/1,740 initial MRN matches)
-- **Age concordance (within 1 year):** 97.7% (1,700/1,740)
-- **Surgery date in master_timeline:** 99.2% (1,685/1,699)
+This Case Details report overlaps with but differs from the prior `Thyroid NSQIP dataset 2010-2023.xlsx`:
 
-34 initially discordant rows were resolved via:
-- 22 multi-surgery timing gaps (NSQIP captured earlier surgery)
-- 5 DOB-verified age corrections
-- 4 additional TEC_MRN/DOB cross-references
-- 3 REJECTED as MRN collisions (sex + age wildly discordant)
+| Metric | Prior linkage | This file |
+|--------|--------------|-----------|
+| Source rows | 2,280 (1,813 thyroid CPT) | 1,281 (all thyroid) |
+| Case Numbers in both | 1,089 | 1,089 |
+| Cases only in prior | 724 | — |
+| Cases only here | — | 192 |
+| Custom Fields columns | 285 (same) | 285 |
 
-## 4. Verification Samples (10 matched rows)
+The 192 new cases include 2024 operations not in the prior 2010–2023 extract.
 
-| research_id | NSQIP IDN | Op Date | Age | Sex | Hypocalcemia | LOS | Readmit | Ca/VitD |
-|-------------|-----------|---------|-----|-----|-------------|-----|---------|---------|
-| 247 | 113202 | 2014-08-04 | 36 |  | No | 0 | 0 | None |
-| 467 | 120661 | 2017-02-08 | 33 |  | No | 1 | 0 | Calcium only |
-| 626 | 116962 | 2015-10-27 | 36 |  | No | 1 | 0 | None |
-| 627 | 113335 | 2014-08-19 | 34 |  | No | 1 | 0 | None |
-| 628 | 116319 | 2015-08-04 | 23 |  | No | 1 | 0 | None |
-| 629 | 114114 | 2014-11-25 | 38 |  | No | 1 | 0 | Calcium only |
-| 630 | 116914 | 2015-10-21 | 45 |  | No | 1 | 0 | Both calcium and vit |
-| 631 | 116648 | 2015-09-16 | 34 |  | No | 1 | 0 | None |
-| 631 | 116905 | 2015-10-20 | 32 |  | No | 1 | 0 | Both calcium and vit |
-| 632 | 112249 | 2014-04-16 | 33 |  | No | 1 | 0 | Both calcium and vit |
+## 4. Verification Protocol
 
-## 5. Unmatched Rows (10)
+All matches verified by at least two independent criteria:
+
+**EXISTING_LINKAGE (1,086):** Previously verified via MRN + sex concordance + age concordance + surgery date confirmation across 4 source files.
+
+**MRN_DATE_EXACT (185):** IDN matched to EUH_MRN in ≥1 of 4 source files (synoptic, op_sheet, notes, complications), AND surgery date matched exactly to master_cohort. Sex verified where available.
+
+**MRN_DATE_DISAMBIG (2):** IDN mapped to multiple patients via MRN; disambiguated by exact surgery date yielding a unique 1:1 match. Sex verified.
+
+**MRN_DOB_MULTISURGERY (2):** MRN confirmed in 3 independent source files, DOB matched, sex matched, age concordant. Surgery date differs because master_cohort records a later procedure for the same patient.
+
+## 5. Verification Samples (first 10 matched rows)
+
+| research_id | Case# | IDN | Op Date | CPT | Age | Sex | MC Sex | MC Age | MC Date | Method |
+|------------|-------|-----|---------|-----|-----|-----|--------|--------|---------|--------|
+| 1618 | 589 | 1027369 | 01/05/2010 | 60240 | 26.0 | — | female | 25 | 2010-01-05 | EXISTING_LINKAGE |
+| 1460 | 594 | 1015180 | 01/05/2010 | 60260 | 50.0 | — | female | 49 | 2010-01-05 | EXISTING_LINKAGE |
+| 1899 | 610 | 1066664 | 01/06/2010 | 60240 | 41.0 | — | female | 40 | 2010-01-06 | EXISTING_LINKAGE |
+| 1934 | 674 | 1072224 | 01/19/2010 | 60240 | 35.0 | — | female | 34 | 2010-01-19 | EXISTING_LINKAGE |
+| 3259 | 675 | 1056469 | 01/19/2010 | 60240 | 59.0 | — | female | 58 | 2010-01-19 | EXISTING_LINKAGE |
+| 3261 | 680 | 1072857 | 01/20/2010 | 60240 | 79.0 | — | male | 78 | 2010-01-20 | EXISTING_LINKAGE |
+| 3262 | 683 | 1072080 | 01/20/2010 | 60260 | 51.0 | — | female | 50 | 2010-01-20 | EXISTING_LINKAGE |
+| 3265 | 714 | 1064341 | 01/26/2010 | 60240 | 39.1 | — | female | 38 | 2010-01-26 | EXISTING_LINKAGE |
+| 1958 | 730 | 1043348 | 01/27/2010 | 60240 | 30.1 | — | female | 29 | 2010-01-27 | EXISTING_LINKAGE |
+| 1423 | 734 | 1066984 | 01/27/2010 | 60260 | 59.1 | — | female | 58 | 2010-01-27 | EXISTING_LINKAGE |
+
+## 6. Unmatched Rows (6)
 
 | IDN | Case# | Date | Age | Sex | CPT | Reason |
 |-----|-------|------|-----|-----|-----|--------|
-| 654445 | 106441 | 08/01/2012 | 57.6 | Male | 60260 | REJECT_MRN_COLLISION |
-| 2108711 | 112133 | 03/18/2014 | 77.2 | Female | 60240 | NO_MATCH |
-| 2628518 | 138509 | 08/19/2022 | 87.6 | Male | 60240 | REJECT_MRN_COLLISION |
-| 676382 | 100754 | 09/22/2010 | 68.7 | Female | 60220 | NO_MATCH |
-| 1100800 | 101047 | 11/17/2010 | 60.9 | Female | 60220 | NO_MATCH |
-| 1162818 | 108275 | 01/29/2013 | 41.1 | Female | 60220 | NO_MATCH |
-| 1113843 | 108813 | 03/25/2013 | 29.2 | Female | 60220 | REJECT_MRN_COLLISION |
-| 1182219 | 112454 | 04/23/2014 | 50.3 | Male | 60220 | NO_MATCH |
-| 2198345 | 115472 | 04/17/2015 | 61.3 | Male | 60220 | NO_MATCH |
-| 1200783 | 115818 | 06/01/2015 | 59.4 | Male | 60220 | NO_MATCH |
+| 2108711 | 112133 | 03/18/2014 | 77.2 | — | 60240 | IDN not in any source file; DOB not found; only date-match (RID=4344) is different patient (age diff 16yr) |
+| 2628518 | 138509 | 08/19/2022 | 87.6 | Male | 60240 | MRN collision: IDN maps to RID=9738 (female, age 37) — confirmed different patient |
+| 12017569 | 142049 | 03/04/2024 | 75.8 | Male | 60260 | IDN/LMRN/LCN all absent from sources; DOB matches RID=9787 in timeline but no MRN confirmation — insufficient for deterministic match |
+| 19003467 | 142221 | 04/02/2024 | 36.1 | Female | 60252 | IDN/LMRN/LCN all absent from sources; DOB not found; no viable candidate |
+| 7828861 | 143386 | 08/28/2024 | 27.7 | Female | 60260 | IDN/LMRN/LCN all absent from sources; DOB not found; no viable candidate |
+| 1386262 | 144346 | 11/20/2024 | 38.0 | Female | 60240 | IDN/LMRN/LCN all absent from sources; no surgery on that date in cohort; DOB not found; patient likely not yet in data extract |
 
-## 6. Enrichment Outputs
+## 7. Enrichment Outputs
 
 | File | Rows | Columns | Description |
 |------|------|---------|-------------|
-| `exports/nsqip/nsqip_enrichment.parquet` | 1,803 | 80 | Surgery-level (one row per NSQIP case) |
-| `exports/nsqip/nsqip_patient_summary.parquet` | 1,728 | 80 | Patient-level (first surgery per patient) |
-| `studies/nsqip_linkage/nsqip_thyroid_linkage_final.csv` | 1,813 | Full linkage with match status |
+| `exports/nsqip/nsqip_enrichment.parquet` | 1,275 | 95 | Surgery-level (one row per matched NSQIP case) |
+| `exports/nsqip/nsqip_patient_summary.parquet` | 1,261 | 95 | Patient-level (first surgery per patient) |
+| `studies/nsqip_linkage/case_details_linkage_results.csv` | 1,281 | Full linkage with match status |
 
-## 7. Usage (LEFT JOIN pattern)
+## 8. Manuscript-Ready Statistics (N=1,261 patients)
+
+### Demographics
+- BMI: median 28.9, IQR [25.0–34.3]
+- ASA I: 59 (4.7%); ASA II: 578 (45.8%); ASA III: 582 (46.2%); ASA IV: 42 (3.3%)
+
+### Comorbidities
+- Diabetes: 189 (15.0%) — Non-insulin 124 (9.8%), Insulin 65 (5.2%)
+- Tobacco/Nicotine use: 145 (11.5%)
+- Hypertension: 582 (46.2%)
+
+### Operative
+- Operative duration: median 109 min, IQR [84–152]
+- Inpatient: 188 (14.9%); Outpatient: 1,073 (85.1%)
+- Central neck dissection: 248/946 (26.2%)
+- Lateral neck dissection: 39/257 (15.2%)
+- Drain usage: 284/950 (29.9%)
+- RLN monitoring: 730/944 (77.3%)
+
+### Outcomes
+- Same-day discharge (LOS=0): 319 (25.3%)
+- Hospital LOS: median 1.0 day, IQR [0–1], mean 1.29 days, max 28
+- 30-day readmission: 29 (2.3%)
+- Postop hypocalcemia: 82/939 (8.7%)
+  - Pre-discharge: 31/945 (3.3%)
+  - Post-discharge: 82/943 (8.7%)
+- Ca/VitD replacement: Both 478/945 (50.6%), Calcium only 207 (21.9%), Vitamin D only 85 (9.0%), None 175 (18.5%)
+- RLN injury/dysfunction: 88/931 (9.5%)
+- Neck hematoma/bleeding: 16/936 (1.7%)
+- 30-day mortality: 1/1,245 (0.1%)
+- Any SSI: 7 (0.6%)
+- VTE: 4 (0.3%)
+
+### CPT Distribution
+- 60240 (Total thyroidectomy): 689 (54.6%)
+- 60252 (Total for malignancy + limited neck dissection): 222 (17.6%)
+- 60271 (Including substernal, cervical approach): 168 (13.3%)
+- 60260 (Completion thyroidectomy): 141 (11.2%)
+- 60254 (Total for malignancy + radical neck dissection): 22 (1.7%)
+- 60270 (Including substernal, sternal split): 19 (1.5%)
+
+## 9. Usage (LEFT JOIN pattern)
 
 ```sql
 SELECT mc.*, ns.*
 FROM master_cohort mc
-LEFT JOIN nsqip_patient_summary ns
-  ON mc.research_id = ns.research_id;
+LEFT JOIN read_parquet('exports/nsqip/nsqip_patient_summary.parquet') ns
+  ON mc.research_id = CAST(ns.research_id AS VARCHAR);
 ```
 
 No existing tables were modified. All enrichment columns are prefixed with `nsqip_`.
