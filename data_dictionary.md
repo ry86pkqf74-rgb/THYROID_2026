@@ -814,3 +814,85 @@ Union of all episodes ordered chronologically per patient.
 - `qa_high_priority_review_v2`: error-severity items only
 
 See `docs/pipeline_architecture_v2.md` for full architecture documentation.
+
+---
+
+## Date Association & Provenance Policy (added 2026-03-10)
+
+### Problem
+
+Note-derived entity tables (`note_entities_*`) have high `entity_date` null rates (61–98%).
+Without a systematic fallback policy, time-dependent analyses (recurrence endpoints,
+time-to-RAI, genotype–phenotype timelines) lose 30–70% of their data.
+
+### Core Tables Involved
+
+| Table | Date Column | Type | Notes |
+|-------|-------------|------|-------|
+| `clinical_notes_long` | `note_date` | VARCHAR (YYYY-MM-DD) | Encounter-level anchor; highest-volume fallback |
+| `note_entities_*` (6 tables) | `entity_date` | VARCHAR | Native extraction; high null rate |
+| `molecular_testing` | `"date"` | VARCHAR | Quoted (reserved word); may be day-level or year-only |
+| `genetic_testing` | `"date"` | VARCHAR | Same Excel source as `molecular_testing` |
+| `path_synoptics` | `surg_date` | VARCHAR | Surgical anchor; not `surgery_date` |
+| `fna_history` | `fna_date_parsed` | VARCHAR (YYYY-MM-DD) | Parsed FNA date; `fna_date` is a computed alias in views |
+
+### Provenance Columns (added to all `note_entities_*` base tables)
+
+Added by `scripts/27_date_provenance_formalization.sql`:
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `inferred_event_date` | DATE | Best-available date via fallback precedence |
+| `date_source` | VARCHAR | Which table/column provided the date |
+| `date_granularity` | VARCHAR | `day` or `year` (year = YYYY-01-01 placeholder) |
+| `date_confidence` | INTEGER | 0–100 confidence score |
+
+### Precedence Rules
+
+Enforced identically in `scripts/15_date_association_views.sql` (enriched views)
+and `scripts/27_date_provenance_formalization.sql` (base table backfill):
+
+| Priority | Source | Confidence | Granularity |
+|----------|--------|------------|-------------|
+| 1 | `entity_date` (native extraction) | 100 | day |
+| 2 | `clinical_notes_long.note_date` | 70 | day |
+| 3 | `path_synoptics.surg_date` | 60 | day |
+| 4 | `molecular_testing."date"` (day-level) | 60 | day |
+| 4b | `molecular_testing."date"` (year-only) | 50 | year |
+| 5 | `fna_history.fna_date_parsed` | 55 | day |
+| — | No source found | 0 | NULL |
+
+### `date_source` Values
+
+- `entity_date` — extracted directly from note text near entity mention
+- `note_date` — encounter/service date from note header
+- `surg_date` — primary surgery date from synoptic pathology
+- `molecular_testing_date` — test date from ThyroSeq/Afirma records
+- `fna_date_parsed` — FNA procedure date
+- `unrecoverable` — no date source available; flagged for manual review
+
+### Fallback Chain by Entity Domain
+
+| Domain | Fallback sources |
+|--------|-----------------|
+| genetics | entity → note → surg → molecular → fna (full 5-source) |
+| staging | entity → note → surg |
+| procedures | entity → note → surg |
+| complications | entity → note → surg |
+| medications | entity → note |
+| problem_list | entity → note |
+
+### Related Views
+
+| View | Source | Purpose |
+|------|--------|---------|
+| `enriched_note_entities_*` (6) | Script 15 | Enriched views with provenance columns computed at query time |
+| `missing_date_associations_audit` | Script 15 | Union of all enriched views for audit |
+| `date_recovery_summary` | Script 15 | Aggregate rescue stats by domain × source |
+| `enriched_master_timeline` | Script 27 | Filtered audit (excludes unrecoverable) |
+| `date_rescue_rate_summary` | Script 27 | KPI: rescue rate % and avg confidence per domain |
+
+### Deployment
+
+Script 27 depends on script 15 views (`missing_date_associations_audit`) and all
+base tables being present in `thyroid_research_2026`. Run after scripts 15–26.
