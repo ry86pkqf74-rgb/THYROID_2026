@@ -1,7 +1,0 @@
-streamlit
-duckdb<=1.4.4
-pandas
-plotly
-lifelines
-requests
-openpyxl
