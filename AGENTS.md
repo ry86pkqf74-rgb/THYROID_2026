@@ -84,6 +84,10 @@
 - `genetic_testing` has year-only date columns: `DATE_1_year`, `DATE_2_year`, `DATE_3_year` (BIGINT); `molecular_testing."date"` (VARCHAR) has day-level or year-only dates; both share `THYROSEQ_AFIRMA_12_5.xlsx`; pipeline uses `molecular_testing` for date fallback
 - After script 27 ALTER TABLE, enriched views (script 15) must use `e.* EXCLUDE (inferred_event_date, date_source, date_granularity, date_confidence)` to avoid duplicate column names
 - DuckDB requires one ALTER TABLE ADD COLUMN per statement (no multi-ADD)
+- note_entities_* base tables now have 19 columns (original 15 + 4 provenance); medications/problem_list use 2-source fallback (entity_date, note_date); genetics/staging/procedures/complications use 3–5 source chains (+ surg_date, molecular, fna)
+- `.venv/bin/python` is required for DuckDB/MotherDuck scripts; system Python lacks duckdb module
+- `motherduck_client.py` supports `USE_LOCAL_DUCKDB` env var for local fallback to `thyroid_master.duckdb`
+- `data_dictionary.md` has a "Date Association & Provenance Policy" section documenting fallback chains, confidence scale, and provenance columns
 - V2 deployment order updated: 22 → 23 → 24 → 25 → 26 → 27
 - Publication tag: `v2026.03.10-publication-ready` on commit `88a2733`
 - Next phase: analytic modeling or manuscript drafting
