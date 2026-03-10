@@ -3,9 +3,14 @@
 ## Learned User Preferences
 
 - Always stage, commit, and push changes to GitHub when completing a task; explicitly confirm that all three steps completed successfully
-- Run typecheck/lint on Python before stage, commit, and push
+- Run typecheck/lint on Python before stage, commit, and push (py_compile, mypy, pyflakes)
 - Put study results in dedicated folders under `studies/` (e.g. `studies/proposal2_ete_staging/`) rather than at repo root
 - When saving outputs, ensure changes are reflected in both DuckDB online (MotherDuck) and GitHub where applicable; analysis artifacts go to GitHub; schema/data changes go to MotherDuck
+- Never invent, guess, or estimate data; use only deterministic, verifiable matches; no fuzzy matching without explicit approval
+- Require explicit confirmation before modifying MotherDuck tables; no production changes without user consent
+- Never print full clinical note text in logs; use truncated snippets (e.g. first 80 chars) for PHI safety
+- Do not silently overwrite conflicting clinical values; surface discordance for review
+- Preserve original values (e.g. `entity_date`, `note_date`) when adding inferred fields; never overwrite source data
 
 ## Learned Workspace Facts
 
@@ -36,8 +41,21 @@
 - Reconciliation V2 depends on Phase 1 views from script 15; deploy script 15 first then script 16; script 17 depends on both; script 18 depends on all three; script 19 depends on 18; script 20 depends on 19
 - Validation tests: `scripts/21_validation_tests.py` validates all views, overlay logic, manuscript cohorts, and export bundles
 - Data access: use `motherduck_client.py` or local `thyroid_master.duckdb`; fallback to CSV exports when DuckDB unavailable
+- `MOTHERDUCK_TOKEN` can be loaded from `.streamlit/secrets.toml` when not set in env
+- `thyroid_share` (RO share) is read-only; all writes (ALTER, UPDATE, CREATE VIEW) must target `thyroid_research_2026`
+- DuckDB/MotherDuck does not support `CREATE OR REPLACE MATERIALIZED VIEW`; use `CREATE OR REPLACE TABLE` instead
+- `path_synoptics` uses `surg_date`, not `surgery_date`; `operative_details` also uses `surg_date`
+- `synoptic_pathology` keeps raw Excel column names; `path_synoptics` is the cleaned snake_case version
+- `sex` column uses `'Female'`/`'Male'` (not `'F'`/`'M'`) in `patient_level_summary_mv`, `benign_pathology`, `master_cohort`; use `LOWER(sex)` for case-insensitive matching
+- note_entities_* tables (all 6) use `entity_date`, not `event_date`; share the same 15-column schema
+- `clinical_notes_long.note_date` is VARCHAR text, not a native date type
+- For multi-surgery patients, use `master_timeline` for correct surgery-date resolution rather than defaulting to `master_cohort`
+- `qa_issues` schema: `check_id`, `severity`, `research_id`, `description`, `detail`, `checked_at`
+- Upload note_entities to MotherDuck via `scripts/09b_motherduck_upload_notes_entities.py --confirm`
+- NSQIP linkage: `IDN` = `EUH_MRN`; manuscript content in `studies/nsqip_pth_protocol_manuscript/`; linkage artifacts in `studies/nsqip_linkage/`
 - ETE manuscript lives in `studies/proposal2_ete_staging/`
-- `.cursor/` and `.venv/` are in `.gitignore`
+- `.cursor/` and `.venv/` are in `.gitignore`; `processed/*.parquet` and `*.duckdb` are also gitignored
 - Use fixed random seeds (e.g. `np.random.seed(42)`, `random_state=42`) for reproducibility in analyses
 - MotherDuck requires DuckDB ≤1.4.4; v1.5.0 is incompatible
 - raw_* tables (from read_xlsx) keep original Excel column names (e.g. "Research ID number"); cleaned tables use research_id
+- Use raw strings or proper escaping for regex patterns in SQL strings to avoid Python `SyntaxWarning` (e.g. `\d`, `\s`)
