@@ -655,3 +655,162 @@ All six entity tables share a common schema:
 Aggregated entity counts per patient across all domains.
 
 See `docs/notes_extraction_spec.md` for controlled vocabularies and extraction details.
+
+---
+
+## Phase 7: v2 Canonical Episode Tables (scripts 22-26)
+
+### `tumor_episode_master_v2` (table)
+
+One row per tumor per surgery per patient. Reconciles path_synoptics, tumor_pathology, and note-derived staging with confidence-ranked precedence.
+
+- `research_id` (INT): patient identifier
+- `surgery_episode_id` (INT): sequential surgery number per patient
+- `tumor_ordinal` (INT): tumor index within surgery
+- `surgery_date` (DATE): surgery date
+- `date_status` (VARCHAR): exact_source_date or unresolved_date
+- `date_confidence` (INT): 0-100
+- `primary_histology` (VARCHAR): best-available histology (synoptic > tumor_path)
+- `histology_variant` (VARCHAR): subtype/variant
+- `histology_source` (VARCHAR): provenance of histology value
+- `t_stage`, `n_stage`, `m_stage`, `overall_stage` (VARCHAR): AJCC staging
+- `tumor_size_cm` (DOUBLE): largest dimension in cm
+- `extrathyroidal_extension`, `gross_ete` (VARCHAR): ETE findings
+- `vascular_invasion`, `lymphatic_invasion`, `perineural_invasion`, `capsular_invasion` (VARCHAR)
+- `margin_status` (VARCHAR)
+- `nodal_disease_positive_count`, `nodal_disease_total_count` (INT)
+- `extranodal_extension` (VARCHAR)
+- `laterality` (VARCHAR): right/left/bilateral/isthmus
+- `number_of_tumors` (INT), `multifocality_flag` (BOOL)
+- `consult_diagnosis` (VARCHAR), `consult_precedence_flag` (BOOL)
+- `histology_discordance_flag`, `t_stage_discordance_flag` (BOOL)
+- `confidence_rank` (INT): 1=synoptic, 2=tumor_path, 3=note
+- `source_tables` (VARCHAR), `procedure_raw` (VARCHAR)
+
+### `molecular_test_episode_v2` (table)
+
+One row per molecular testing event. Deep-parsed mutation flags and quality indicators.
+
+- `research_id` (INT), `molecular_episode_id` (INT)
+- `platform_raw`, `platform` (VARCHAR): ThyroSeq/Afirma/Other
+- `test_date_native` (DATE), `resolved_test_date` (VARCHAR)
+- `date_status` (VARCHAR), `date_confidence` (INT)
+- `overall_result_class` (VARCHAR): positive/negative/suspicious/indeterminate/non_diagnostic/cancelled
+- `detailed_findings_raw` (VARCHAR)
+- Mutation flags: `braf_flag`, `braf_variant`, `ras_flag`, `ras_subtype`, `ret_flag`, `ret_fusion_flag`, `tert_flag`, `ntrk_flag`, `eif1ax_flag`, `tp53_flag`, `pax8_pparg_flag`, `cna_flag`, `fusion_flag`, `loh_flag`, `alk_flag` (BOOL/VARCHAR)
+- `high_risk_marker_flag` (BOOL): composite of BRAF V600E, TERT, TP53, ALK/RET/NTRK fusions
+- `inadequate_flag`, `cancelled_flag` (BOOL)
+- Linkage: `linked_fna_episode_id`, `linked_surgery_episode_id` (VARCHAR)
+- `adjudication_status` (VARCHAR)
+
+### `rai_treatment_episode_v2` (table)
+
+One row per RAI treatment event with assertion status and treatment classification.
+
+- `research_id` (INT), `rai_episode_id` (INT)
+- `rai_date_native` (DATE), `resolved_rai_date` (DATE)
+- `date_status` (VARCHAR), `date_confidence` (INT)
+- `dose_mci` (DOUBLE), `dose_text_raw` (VARCHAR)
+- `rai_assertion_status` (VARCHAR): definite_received/likely_received/planned/historical/negated/ambiguous
+- `rai_intent` (VARCHAR): remnant_ablation/adjuvant/metastatic_disease/recurrence/unknown
+- `completion_status` (VARCHAR): completed/recommended/not_received/uncertain
+- `rai_confidence` (DOUBLE)
+- Linkage: `linked_surgery_episode_id` (VARCHAR)
+- Scan context: `pre_scan_flag`, `post_therapy_scan_flag`, `iodine_avidity_flag` (BOOL)
+- Labs: `stimulated_tg`, `stimulated_tsh` (DOUBLE)
+
+### `imaging_nodule_long_v2` (table)
+
+One row per nodule per imaging exam. Multi-modality (US/CT/MRI).
+
+- `research_id` (INT), `imaging_exam_id` (INT), `nodule_id` (VARCHAR)
+- `modality` (VARCHAR): US/CT/MRI
+- `exam_date_native` (DATE), `resolved_exam_date` (DATE)
+- `date_status` (VARCHAR), `date_confidence` (INT)
+- `nodule_index_within_exam` (INT)
+- `size_cm_max`, `size_cm_x`, `size_cm_y`, `size_cm_z` (DOUBLE)
+- `composition`, `echogenicity`, `shape`, `margins`, `calcifications` (VARCHAR)
+- `tirads_score` (INT), `tirads_category` (VARCHAR)
+- `laterality`, `location_detail` (VARCHAR)
+- `suspicious_node_flag`, `growth_flag`, `dominant_nodule_flag` (BOOL)
+- Linkage: `linked_fna_episode_id`, `linked_molecular_episode_id` (VARCHAR)
+
+### `imaging_exam_summary_v2` (table)
+
+One row per imaging exam. Aggregates nodule-level data.
+
+- `research_id` (INT), `modality` (VARCHAR), `imaging_exam_id` (INT)
+- `exam_date_native` (DATE), `date_status` (VARCHAR)
+- `nodule_count` (INT), `max_nodule_size_cm` (DOUBLE), `max_tirads_score` (INT)
+- `any_suspicious_node` (BOOL), `any_growth_noted` (BOOL)
+
+### `operative_episode_detail_v2` (table)
+
+One row per surgery episode with detailed operative findings.
+
+- `research_id` (INT), `surgery_episode_id` (INT)
+- `surgery_date_native` (DATE), `date_status` (VARCHAR)
+- `procedure_raw`, `procedure_normalized` (VARCHAR)
+- `laterality` (VARCHAR)
+- `central_neck_dissection_flag`, `lateral_neck_dissection_flag` (BOOL)
+- `rln_monitoring_flag` (BOOL), `rln_finding_raw` (VARCHAR)
+- `parathyroid_autograft_flag` (BOOL), `parathyroid_autograft_count` (INT), `parathyroid_autograft_site` (VARCHAR)
+- `parathyroid_resection_flag` (BOOL)
+- `gross_ete_flag`, `local_invasion_flag`, `tracheal_involvement_flag`, `esophageal_involvement_flag`, `strap_muscle_involvement_flag`, `reoperative_field_flag` (BOOL)
+- `ebl_ml` (DOUBLE), `drain_flag` (BOOL)
+- `operative_findings_raw` (VARCHAR)
+
+### `fna_episode_master_v2` (table)
+
+One row per FNA episode with Bethesda and laterality.
+
+- `research_id` (INT), `fna_episode_id` (INT)
+- `fna_date_native` (DATE), `resolved_fna_date` (DATE)
+- `date_status` (VARCHAR), `date_confidence` (INT)
+- `bethesda_raw` (VARCHAR), `bethesda_category` (INT)
+- `pathology_diagnosis`, `pathology_extended` (VARCHAR)
+- `specimen_site_raw` (VARCHAR), `laterality` (VARCHAR)
+- Linkage: `linked_molecular_episode_id`, `linked_surgery_episode_id` (VARCHAR)
+
+### `event_date_audit_v2` (table)
+
+One row per extracted fact across all domains. Used for date quality metrics.
+
+- `domain` (VARCHAR): tumor/molecular/rai/imaging/operative/fna
+- `research_id` (INT)
+- `native_date`, `resolved_date` (VARCHAR)
+- `date_status` (VARCHAR), `date_confidence` (INT)
+- `anchor_source`, `source_table` (VARCHAR)
+
+### `patient_cross_domain_timeline_v2` (table)
+
+Union of all episodes ordered chronologically per patient.
+
+- `research_id` (INT), `event_type` (VARCHAR), `domain` (VARCHAR)
+- `event_date` (DATE), `episode_id` (INT), `event_detail` (VARCHAR)
+
+### Linkage Tables
+
+- `imaging_fna_linkage_v2`: imaging nodule -> FNA with confidence tier
+- `fna_molecular_linkage_v2`: FNA -> molecular test with confidence tier
+- `preop_surgery_linkage_v2`: preop event -> surgery with confidence tier
+- `surgery_pathology_linkage_v2`: surgery -> pathology tumor
+- `pathology_rai_linkage_v2`: pathology -> RAI treatment
+- `linkage_summary_v2`: aggregate linkage counts by tier
+
+### Reconciliation Review Views
+
+- `pathology_reconciliation_review_v2`: histology/staging mismatches
+- `molecular_linkage_review_v2`: unlinked tests, chronology issues
+- `rai_adjudication_review_v2`: dose/chronology/assertion issues
+- `imaging_pathology_concordance_review_v2`: laterality/size discrepancies
+- `operative_pathology_reconciliation_review_v2`: procedure/specimen mismatches
+
+### QA Tables
+
+- `qa_issues_v2`: all detected issues with check_id, severity, description
+- `qa_date_completeness_v2`: date quality metrics per domain
+- `qa_summary_by_domain_v2`: aggregated issue counts
+- `qa_high_priority_review_v2`: error-severity items only
+
+See `docs/pipeline_architecture_v2.md` for full architecture documentation.

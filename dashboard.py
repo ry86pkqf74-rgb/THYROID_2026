@@ -50,6 +50,12 @@ from app.review_rai import render_review_rai
 from app.review_timeline import render_review_timeline
 from app.review_queue import render_review_queue
 from app.diagnostics import render_diagnostics
+from app.extraction_completeness import render_extraction_completeness
+from app.molecular_dashboard import render_molecular_dashboard
+from app.rai_dashboard import render_rai_dashboard
+from app.imaging_nodule_dashboard import render_imaging_nodule_dashboard
+from app.operative_dashboard import render_operative_dashboard
+from app.adjudication_summary import render_adjudication_summary
 
 # ── Page config ───────────────────────────────────────────────────────────
 st.set_page_config(page_title="Thyroid Cohort Explorer", page_icon="🔬",
@@ -1525,7 +1531,8 @@ def main():
 
     (t_ov,t_ex,t_vz,t_adv,t_gen,t_spec,t_img,t_comp,t_rec,t_exp,t_ai,
      t_tl,t_ev,t_qa,t_surv,t_afv3,
-     t_cqc,t_pat,t_rh,t_rm,t_rr,t_rtl,t_rq,t_diag) = st.tabs([
+     t_cqc,t_pat,t_rh,t_rm,t_rr,t_rtl,t_rq,t_diag,
+     t_ec,t_md,t_rd,t_ind,t_od,t_as) = st.tabs([
         "📊 Overview","🗃 Data Explorer","📈 Visualizations","🧬 Advanced",
         "🔬 Genetics & Molecular","🫀 Specimen Details","📡 Pre-Op Imaging",
         "⚕ Complications","📋 Recommendations & Sensitivities",
@@ -1534,6 +1541,8 @@ def main():
         "📋 Cohort QC","🧑‍⚕️ Patient Audit","🔬 Histology Review",
         "🧬 Molecular Review","☢️ RAI Review","🕐 Timeline Review",
         "📝 Review Queue","⚙️ Diagnostics",
+        "📊 Extraction v2","🧬 Molecular v2","☢️ RAI v2",
+        "📡 Imaging/Nodule v2","🔪 Operative v2","📋 Adjudication v2",
     ])
     with t_ov:   render_overview(con)
     with t_ex:   render_explorer(df_filt)
@@ -1559,6 +1568,12 @@ def main():
     with t_rtl:  render_review_timeline(con, rw_con)
     with t_rq:   render_review_queue(con)
     with t_diag: render_diagnostics(con)
+    with t_ec:   render_extraction_completeness(con)
+    with t_md:   render_molecular_dashboard(con)
+    with t_rd:   render_rai_dashboard(con)
+    with t_ind:  render_imaging_nodule_dashboard(con)
+    with t_od:   render_operative_dashboard(con)
+    with t_as:   render_adjudication_summary(con)
 
     st.markdown("---")
     st.caption(f"**Data source:** MotherDuck `{DATABASE}` · Share: `{SHARE_PATH[:40]}…` · Loaded: {datetime.now():%Y-%m-%d %H:%M} · Built with Streamlit + DuckDB + Plotly + Claude")

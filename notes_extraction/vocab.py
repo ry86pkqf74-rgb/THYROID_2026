@@ -184,3 +184,105 @@ NEGATION_CUES: list[str] = [
     "absent",
     "unlikely",
 ]
+
+# ── V2 molecular detail normalisation ─────────────────────────────
+
+MOLECULAR_PLATFORM_NORM: dict[str, str] = {
+    "thyroseq": "ThyroSeq",
+    "thyroseq v2": "ThyroSeq_v2",
+    "thyroseq v3": "ThyroSeq_v3",
+    "afirma": "Afirma",
+    "afirma gsc": "Afirma_GSC",
+    "afirma gec": "Afirma_GEC",
+    "thygennext": "ThyGenNEXT",
+    "thygenx": "ThyGenX",
+    "rosetta gx reveal": "Rosetta_GX",
+}
+
+MOLECULAR_RESULT_NORM: dict[str, str] = {
+    "positive": "positive",
+    "detected": "positive",
+    "negative": "negative",
+    "not detected": "negative",
+    "benign": "negative",
+    "suspicious": "suspicious",
+    "indeterminate": "indeterminate",
+    "inadequate": "non_diagnostic",
+    "insufficient": "non_diagnostic",
+    "cancelled": "cancelled",
+}
+
+# ── V2 RAI treatment normalisation ────────────────────────────────
+
+RAI_INTENT_NORM: dict[str, str] = {
+    "remnant ablation": "remnant_ablation",
+    "ablation": "remnant_ablation",
+    "adjuvant": "adjuvant",
+    "metastatic": "metastatic_disease",
+    "persistent disease": "persistent_disease",
+    "recurrence": "recurrence",
+}
+
+RAI_STATUS_NORM: dict[str, str] = {
+    "received": "completed",
+    "completed": "completed",
+    "administered": "completed",
+    "recommended": "recommended",
+    "planned": "recommended",
+    "declined": "declined",
+}
+
+# ── V2 imaging normalisation ──────────────────────────────────────
+
+COMPOSITION_NORM: dict[str, str] = {
+    "solid": "solid",
+    "cystic": "cystic",
+    "mixed": "mixed",
+    "mixed cystic and solid": "mixed",
+    "predominantly solid": "predominantly_solid",
+    "predominantly cystic": "predominantly_cystic",
+    "spongiform": "spongiform",
+}
+
+ECHOGENICITY_NORM: dict[str, str] = {
+    "hyperechoic": "hyperechoic",
+    "isoechoic": "isoechoic",
+    "hypoechoic": "hypoechoic",
+    "markedly hypoechoic": "markedly_hypoechoic",
+    "very hypoechoic": "markedly_hypoechoic",
+    "anechoic": "anechoic",
+}
+
+# ── V2 operative normalisation ────────────────────────────────────
+
+OPERATIVE_FINDING_NORM: dict[str, str] = {
+    "rln identified": "rln_intact",
+    "rln preserved": "rln_intact",
+    "rln intact": "rln_intact",
+    "rln injury": "rln_injured",
+    "nerve monitoring": "ionm_used",
+    "ionm": "ionm_used",
+    "nim": "ionm_used",
+    "parathyroid autotransplant": "parathyroid_autograft",
+    "parathyroid reimplant": "parathyroid_autograft",
+    "gross ete": "gross_ete",
+    "tracheal invasion": "tracheal_involvement",
+    "esophageal invasion": "esophageal_involvement",
+    "strap muscle invasion": "strap_muscle_involvement",
+}
+
+# ── V2 histology detail normalisation ─────────────────────────────
+
+HISTOLOGY_DETAIL_NORM: dict[str, str] = {
+    "capsular invasion": "capsular_invasion",
+    "perineural invasion": "perineural_invasion",
+    "extranodal extension": "extranodal_extension",
+    "positive margin": "margin_positive",
+    "negative margin": "margin_negative",
+    "close margin": "margin_close",
+    "niftp": "NIFTP",
+    "pdtc": "PDTC",
+    "minimally invasive": "minimally_invasive",
+    "widely invasive": "widely_invasive",
+    "encapsulated": "encapsulated",
+}

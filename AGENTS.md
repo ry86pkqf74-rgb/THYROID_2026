@@ -59,3 +59,15 @@
 - MotherDuck requires DuckDB ≤1.4.4; v1.5.0 is incompatible
 - raw_* tables (from read_xlsx) keep original Excel column names (e.g. "Research ID number"); cleaned tables use research_id
 - Use raw strings or proper escaping for regex patterns in SQL strings to avoid Python `SyntaxWarning` (e.g. `\d`, `\s`)
+- V2 canonical episode tables (script 22): `tumor_episode_master_v2`, `molecular_test_episode_v2`, `rai_treatment_episode_v2`, `imaging_nodule_long_v2`, `imaging_exam_summary_v2`, `operative_episode_detail_v2`, `fna_episode_master_v2`, `event_date_audit_v2`, `patient_cross_domain_timeline_v2`
+- V2 linkage tables (script 23): `imaging_fna_linkage_v2`, `fna_molecular_linkage_v2`, `preop_surgery_linkage_v2`, `surgery_pathology_linkage_v2`, `pathology_rai_linkage_v2`, `linkage_summary_v2`
+- V2 reconciliation review views (script 24): `pathology_reconciliation_review_v2`, `molecular_linkage_review_v2`, `rai_adjudication_review_v2`, `imaging_pathology_concordance_review_v2`, `operative_pathology_reconciliation_review_v2`
+- V2 QA tables (script 25): `qa_issues_v2`, `qa_date_completeness_v2`, `qa_summary_by_domain_v2`, `qa_high_priority_review_v2`
+- V2 MotherDuck materialization (script 26): all v2 tables with `md_` prefix plus `md_manual_review_queue_summary_v2`
+- V2 deployment order: 22 -> 23 -> 24 -> 25 -> 26 (after existing scripts 15-20)
+- V2 extractors: `MolecularDetailExtractor`, `RAIDetailExtractor`, `ImagingNoduleExtractor`, `OperativeDetailExtractor`, `HistologyDetailExtractor` in `notes_extraction/extract_*_v2.py`
+- V2 date utilities in `utils/date_utils.py`: `classify_date_status`, `compute_date_confidence`, `resolve_event_date`, `compute_temporal_offset`, `parse_date_safe`, `find_best_anchor`
+- V2 Streamlit tabs: Extraction v2, Molecular v2, RAI v2, Imaging/Nodule v2, Operative v2, Adjudication v2 in `app/` modules
+- V2 linkage confidence tiers: exact_match, high_confidence, plausible, weak, unlinked
+- Cross-domain linkage uses temporal windows (7/14/90/180/365 days), laterality matching, and confidence scoring
+- V2 architecture documentation in `docs/pipeline_architecture_v2.md`
