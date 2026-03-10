@@ -43,6 +43,7 @@
 - Data access: use `motherduck_client.py` or local `thyroid_master.duckdb`; fallback to CSV exports when DuckDB unavailable
 - `MOTHERDUCK_TOKEN` can be loaded from `.streamlit/secrets.toml` when not set in env
 - `thyroid_share` (RO share) is read-only; all writes (ALTER, UPDATE, CREATE VIEW) must target `thyroid_research_2026`
+- `profile_note_entities.py` attaches the RW share as `thyroid_rw` (not `thyroid_share`) to avoid confusion with the RO convention
 - DuckDB/MotherDuck does not support `CREATE OR REPLACE MATERIALIZED VIEW`; use `CREATE OR REPLACE TABLE` instead
 - `path_synoptics` uses `surg_date`, not `surgery_date`; `operative_details` also uses `surg_date`
 - `synoptic_pathology` keeps raw Excel column names; `path_synoptics` is the cleaned snake_case version
@@ -67,11 +68,18 @@
 - V2 deployment order: 22 -> 23 -> 24 -> 25 -> 26 (after existing scripts 15-20)
 - V2 extractors: `MolecularDetailExtractor`, `RAIDetailExtractor`, `ImagingNoduleExtractor`, `OperativeDetailExtractor`, `HistologyDetailExtractor` in `notes_extraction/extract_*_v2.py`
 - V2 date utilities in `utils/date_utils.py`: `classify_date_status`, `compute_date_confidence`, `resolve_event_date`, `compute_temporal_offset`, `parse_date_safe`, `find_best_anchor`
+- `extract_nearby_date` supports MM/DD/YYYY, YYYY-MM-DD (ISO), and month-name formats (e.g. "January 15, 2024", "15 Mar 2024"); year bounds 1990-2030
+- `safe_float()` in `utils/text_helpers.py` provides safe numeric parsing; all V2 extractors use it instead of bare `float()`
 - V2 Streamlit tabs: Extraction v2, Molecular v2, RAI v2, Imaging/Nodule v2, Operative v2, Adjudication v2 in `app/` modules
 - V2 linkage confidence tiers: exact_match, high_confidence, plausible, weak, unlinked
 - Cross-domain linkage uses temporal windows (7/14/90/180/365 days), laterality matching, and confidence scoring
-- V2 architecture documentation in `docs/pipeline_architecture_v2.md`
-- V2 test suite: `test_molecular_parser.py`, `test_rai_parser.py`, `test_imaging_parser.py`, `test_operative_parser.py`, `test_histology_parser.py`, `test_date_utils.py` in `tests/`
+- Weak linkages are routed to `qa_issues_v2` as warnings via 4 QA check IDs: `weak_linkage_imaging_fna`, `weak_linkage_fna_molecular`, `weak_linkage_preop_surgery`, `weak_linkage_pathology_rai`
+- Script 23 backfill UPDATEs have `IS NULL` guards to prevent overwriting previously-set linked episode IDs
+- V2 architecture documentation in `docs/pipeline_architecture_v2.md` (includes data tier conventions, date format coverage, weak linkage QA routing)
+- V2 pipeline (scripts 22-26) is independent of Phase 6 adjudication (scripts 15-20); V2 canonical tables read raw sources, not post-review views; a bridge layer is needed if V2 grain + adjudicated values are required
+- V2 dashboard tabs show pre-adjudication data banners; molecular and RAI tabs include linkage quality sections with weak-linkage warnings
+- All 5 V2 extractors guard against `None`/empty `note_text` and return `[]`; Bethesda extraction uses `check_negation()` instead of hardcoded `"present"`
+- V2 test suite: `test_molecular_parser.py`, `test_rai_parser.py`, `test_imaging_parser.py`, `test_operative_parser.py`, `test_histology_parser.py`, `test_date_utils.py`, `test_linkage_confidence.py` in `tests/`
 - V2 test fixtures in `conftest.py`: `sample_molecular_report`, `sample_rai_report`, `sample_us_report`, `sample_detailed_op_note`, `sample_path_report`, `sample_conflicting_path`
 - V2 normalization maps added to `notes_extraction/vocab.py`: `MOLECULAR_PLATFORM_NORM`, `MOLECULAR_RESULT_NORM`, `RAI_INTENT_NORM`, `RAI_STATUS_NORM`, `COMPOSITION_NORM`, `ECHOGENICITY_NORM`, `OPERATIVE_FINDING_NORM`, `HISTOLOGY_DETAIL_NORM`
 - V2 app module files: `extraction_completeness.py`, `molecular_dashboard.py`, `rai_dashboard.py`, `imaging_nodule_dashboard.py`, `operative_dashboard.py`, `adjudication_summary.py`
@@ -89,5 +97,4 @@
 - `motherduck_client.py` supports `USE_LOCAL_DUCKDB` env var for local fallback to `thyroid_master.duckdb`
 - `data_dictionary.md` has a "Date Association & Provenance Policy" section documenting fallback chains, confidence scale, and provenance columns
 - V2 deployment order updated: 22 → 23 → 24 → 25 → 26 → 27
-- Publication tag: `v2026.03.10-publication-ready` on commit `88a2733`
 - Next phase: analytic modeling or manuscript drafting
