@@ -1,0 +1,565 @@
+#!/usr/bin/env python3
+"""
+19_reviewer_persistence.py — Phase J: Reviewer Decision Persistence Layer
+
+Builds on: scripts 15, 16, 17, 18 (adjudication framework)
+
+Creates:
+  - adjudication_decisions table (persistent write target)
+  - adjudication_decision_history table (append-only audit log)
+  - reviewer_resolved_patient_summary_v (per-patient rollup)
+  - adjudication_progress_summary_v (domain-level progress)
+  - histology_post_review_v (overlay: algorithmic + reviewer-final)
+  - molecular_post_review_v
+  - rai_post_review_v
+  - top_priority_review_batches_v (Phase M)
+  - adjudication_domain_counts_v (Phase M)
+  - unresolved_high_value_cases_v (Phase M)
+
+Design:
+  - Decisions are additive; superseding uses active_flag = FALSE.
+  - Raw source tables are never mutated.
+  - Post-review views expose both algorithmic and reviewer-final values.
+  - Depends on v2 views (script 16) for patient_reconciliation_summary_v spine
+    and v3 views (script 18) for analysis cohorts. This is intentional.
+
+Run after script 18.
+"""
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+import duckdb
+
+ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
+SQL_OUT = ROOT / "scripts" / "19_reviewer_persistence_views.sql"
+
+sys.path.insert(0, str(ROOT))
+
+
+def section(title: str) -> None:
+    print(f"\n{'=' * 80}")
+    print(f"  {title}")
+    print(f"{'=' * 80}\n")
+
+
+def table_available(con: duckdb.DuckDBPyConnection, tbl: str) -> bool:
+    try:
+        con.execute(f"SELECT 1 FROM {tbl} LIMIT 1")
+        return True
+    except Exception:
+        return False
+
+
+def deploy_view(
+    con: duckdb.DuckDBPyConnection,
+    name: str,
+    sql: str,
+    view_log: list[tuple[str, str]],
+) -> bool:
+    try:
+        con.execute(sql)
+        cnt = con.execute(f"SELECT COUNT(*) FROM {name}").fetchone()[0]
+        print(f"  {name:<55} {cnt:>8,} rows")
+        view_log.append((name, sql))
+        return True
+    except Exception as e:
+        print(f"  FAILED  {name}: {e}")
+        return False
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  TABLES — Adjudication Decisions (persistent, not views)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+ADJUDICATION_DECISIONS_DDL = """
+CREATE SEQUENCE IF NOT EXISTS adj_seq START 1;
+
+CREATE TABLE IF NOT EXISTS adjudication_decisions (
+    decision_id              INTEGER DEFAULT(nextval('adj_seq')),
+    research_id              BIGINT NOT NULL,
+    review_domain            VARCHAR NOT NULL,
+    linked_episode_id        VARCHAR,
+    conflict_type            VARCHAR,
+    unresolved_reason        VARCHAR,
+    reviewer_action          VARCHAR NOT NULL,
+    reviewer_resolution_status VARCHAR NOT NULL DEFAULT 'resolved',
+    final_value_selected     VARCHAR,
+    final_value_notes        VARCHAR,
+    reviewer_name            VARCHAR NOT NULL,
+    reviewed_at              TIMESTAMP DEFAULT current_timestamp,
+    source_view              VARCHAR,
+    active_flag              BOOLEAN DEFAULT TRUE
+);
+"""
+
+ADJUDICATION_HISTORY_DDL = """
+CREATE TABLE IF NOT EXISTS adjudication_decision_history (
+    history_id               INTEGER DEFAULT(nextval('adj_hist_seq')),
+    decision_id              INTEGER NOT NULL,
+    research_id              BIGINT NOT NULL,
+    review_domain            VARCHAR NOT NULL,
+    linked_episode_id        VARCHAR,
+    conflict_type            VARCHAR,
+    unresolved_reason        VARCHAR,
+    reviewer_action          VARCHAR NOT NULL,
+    reviewer_resolution_status VARCHAR NOT NULL,
+    final_value_selected     VARCHAR,
+    final_value_notes        VARCHAR,
+    reviewer_name            VARCHAR NOT NULL,
+    reviewed_at              TIMESTAMP,
+    source_view              VARCHAR,
+    active_flag              BOOLEAN,
+    history_recorded_at      TIMESTAMP DEFAULT current_timestamp
+);
+"""
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  VIEWS — Reviewer Summary
+# ═══════════════════════════════════════════════════════════════════════════════
+
+REVIEWER_RESOLVED_PATIENT_SUMMARY_SQL = """
+CREATE OR REPLACE VIEW reviewer_resolved_patient_summary_v AS
+SELECT
+    d.research_id,
+    COUNT(*) FILTER (WHERE d.active_flag = TRUE) AS active_decisions,
+    COUNT(*) FILTER (WHERE d.active_flag = TRUE AND d.review_domain = 'histology') AS histology_resolved,
+    COUNT(*) FILTER (WHERE d.active_flag = TRUE AND d.review_domain = 'molecular') AS molecular_resolved,
+    COUNT(*) FILTER (WHERE d.active_flag = TRUE AND d.review_domain = 'rai') AS rai_resolved,
+    COUNT(*) FILTER (WHERE d.active_flag = TRUE AND d.review_domain = 'timeline') AS timeline_resolved,
+    MAX(d.reviewed_at) FILTER (WHERE d.active_flag = TRUE) AS last_reviewed_at,
+    MAX(d.reviewer_name) FILTER (WHERE d.active_flag = TRUE) AS last_reviewer
+FROM adjudication_decisions d
+GROUP BY d.research_id;
+"""
+
+ADJUDICATION_PROGRESS_SUMMARY_SQL = """
+CREATE OR REPLACE VIEW adjudication_progress_summary_v AS
+WITH queue_counts AS (
+    SELECT 'histology' AS domain, COUNT(*) AS total_queue
+    FROM histology_manual_review_queue_v
+    UNION ALL
+    SELECT 'molecular', COUNT(*) FROM molecular_manual_review_queue_v
+    UNION ALL
+    SELECT 'rai', COUNT(*) FROM rai_manual_review_queue_v
+    UNION ALL
+    SELECT 'timeline', COUNT(*) FROM timeline_manual_review_queue_v
+),
+resolved_counts AS (
+    SELECT
+        review_domain AS domain,
+        COUNT(*) AS resolved
+    FROM adjudication_decisions
+    WHERE active_flag = TRUE
+    GROUP BY review_domain
+)
+SELECT
+    q.domain,
+    q.total_queue,
+    COALESCE(r.resolved, 0) AS resolved,
+    q.total_queue - COALESCE(r.resolved, 0) AS remaining,
+    CASE
+        WHEN q.total_queue = 0 THEN 100.0
+        ELSE ROUND(100.0 * COALESCE(r.resolved, 0) / q.total_queue, 1)
+    END AS pct_complete
+FROM queue_counts q
+LEFT JOIN resolved_counts r ON q.domain = r.domain;
+"""
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  VIEWS — Post-Review Overlays
+# ═══════════════════════════════════════════════════════════════════════════════
+
+HISTOLOGY_POST_REVIEW_SQL = """
+CREATE OR REPLACE VIEW histology_post_review_v AS
+SELECT
+    h.research_id,
+    h.op_seq,
+    h.pathology_date,
+
+    -- Algorithmic values
+    h.final_histology_for_analysis AS algorithmic_histology,
+    h.final_t_stage_for_analysis AS algorithmic_t_stage,
+    h.final_n_stage_for_analysis AS algorithmic_n_stage,
+    h.final_variant_for_analysis AS algorithmic_variant,
+
+    -- Reviewer-final values (from active decisions)
+    d.final_value_selected AS reviewer_histology,
+    d.reviewer_action,
+    d.reviewer_resolution_status,
+    d.reviewer_name,
+    d.reviewed_at,
+    d.final_value_notes AS reviewer_notes,
+
+    -- Effective values: prefer reviewer when available
+    COALESCE(d.final_value_selected, h.final_histology_for_analysis) AS effective_histology,
+    h.final_t_stage_for_analysis AS effective_t_stage,
+    h.final_n_stage_for_analysis AS effective_n_stage,
+
+    -- Provenance
+    CASE WHEN d.decision_id IS NOT NULL THEN TRUE ELSE FALSE END AS adjudication_applied_flag,
+    CASE WHEN d.decision_id IS NOT NULL THEN 'reviewer' ELSE 'algorithmic' END AS value_source,
+
+    -- Original flags
+    h.discordance_type,
+    h.adjudication_needed_flag,
+    h.analysis_eligible_flag AS algorithmic_eligible,
+    CASE
+        WHEN d.reviewer_resolution_status = 'resolved' THEN TRUE
+        WHEN h.analysis_eligible_flag = TRUE THEN TRUE
+        ELSE FALSE
+    END AS effective_eligible,
+
+    -- Raw sources for audit
+    h.source_histology_raw_ps,
+    h.source_histology_raw_tp,
+    h.source_histology_raw,
+    h.t_stage_source_path,
+    h.t_stage_source_note,
+    h.reconciliation_status
+
+FROM histology_analysis_cohort_v h
+LEFT JOIN adjudication_decisions d
+    ON CAST(h.research_id AS BIGINT) = d.research_id
+    AND d.review_domain = 'histology'
+    AND d.linked_episode_id = CAST(h.op_seq AS VARCHAR)
+    AND d.active_flag = TRUE;
+"""
+
+MOLECULAR_POST_REVIEW_SQL = """
+CREATE OR REPLACE VIEW molecular_post_review_v AS
+SELECT
+    m.research_id,
+    m.molecular_episode_id,
+    m.specimen_date_raw,
+    m.platform_normalized,
+    m.test_name_raw,
+    m.result_category_normalized,
+    m.result_summary_raw,
+
+    -- Confidence components
+    m.temporal_linkage_confidence,
+    m.platform_confidence,
+    m.pathology_concordance_confidence,
+    m.overall_linkage_confidence,
+
+    -- Algorithmic eligibility
+    m.molecular_analysis_eligible_flag AS algorithmic_eligible,
+
+    -- Reviewer overlay
+    d.final_value_selected AS reviewer_resolution,
+    d.reviewer_action,
+    d.reviewer_resolution_status,
+    d.reviewer_name,
+    d.reviewed_at,
+    d.final_value_notes AS reviewer_notes,
+
+    -- Effective eligibility
+    CASE
+        WHEN d.reviewer_resolution_status = 'resolved' THEN TRUE
+        WHEN m.molecular_analysis_eligible_flag = TRUE THEN TRUE
+        ELSE FALSE
+    END AS effective_eligible,
+
+    -- Provenance
+    CASE WHEN d.decision_id IS NOT NULL THEN TRUE ELSE FALSE END AS adjudication_applied_flag,
+    CASE WHEN d.decision_id IS NOT NULL THEN 'reviewer' ELSE 'algorithmic' END AS value_source,
+
+    m.molecular_date_raw_class,
+    m.linkage_method,
+    m.high_risk_molecular_flag,
+    m.unresolved_flag
+
+FROM molecular_episode_v3 m
+LEFT JOIN adjudication_decisions d
+    ON CAST(m.research_id AS BIGINT) = d.research_id
+    AND d.review_domain = 'molecular'
+    AND d.linked_episode_id = CAST(m.molecular_episode_id AS VARCHAR)
+    AND d.active_flag = TRUE;
+"""
+
+RAI_POST_REVIEW_SQL = """
+CREATE OR REPLACE VIEW rai_post_review_v AS
+SELECT
+    r.research_id,
+    r.rai_episode_id,
+    r.rai_date,
+    r.dose_mci,
+    r.rai_term_normalized,
+
+    -- Classification
+    r.rai_assertion_status,
+    r.rai_treatment_certainty,
+    r.rai_interval_class,
+
+    -- Algorithmic eligibility
+    r.rai_eligible_for_analysis_flag AS algorithmic_eligible,
+
+    -- Reviewer overlay
+    d.final_value_selected AS reviewer_resolution,
+    d.reviewer_action,
+    d.reviewer_resolution_status,
+    d.reviewer_name,
+    d.reviewed_at,
+    d.final_value_notes AS reviewer_notes,
+
+    -- Effective eligibility
+    CASE
+        WHEN d.reviewer_resolution_status = 'resolved' THEN TRUE
+        WHEN r.rai_eligible_for_analysis_flag = TRUE THEN TRUE
+        ELSE FALSE
+    END AS effective_eligible,
+
+    -- Provenance
+    CASE WHEN d.decision_id IS NOT NULL THEN TRUE ELSE FALSE END AS adjudication_applied_flag,
+    CASE WHEN d.decision_id IS NOT NULL THEN 'reviewer' ELSE 'algorithmic' END AS value_source,
+
+    r.linked_surgery_date,
+    r.days_surgery_to_rai,
+    r.post_thyroidectomy_flag
+
+FROM rai_episode_v3 r
+LEFT JOIN adjudication_decisions d
+    ON CAST(r.research_id AS BIGINT) = d.research_id
+    AND d.review_domain = 'rai'
+    AND d.linked_episode_id = CAST(r.rai_episode_id AS VARCHAR)
+    AND d.active_flag = TRUE;
+"""
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  VIEWS — Phase M: Reviewer Batch / Productivity Tools
+# ═══════════════════════════════════════════════════════════════════════════════
+
+TOP_PRIORITY_BATCHES_SQL = """
+CREATE OR REPLACE VIEW top_priority_review_batches_v AS
+WITH ranked AS (
+    SELECT
+        research_id, queue_row_id, priority_score, review_domain,
+        unresolved_reason, conflict_summary, recommended_reviewer_action,
+        linked_episode_id,
+        ROW_NUMBER() OVER (
+            PARTITION BY review_domain ORDER BY priority_score DESC, research_id
+        ) AS domain_rank
+    FROM streamlit_patient_manual_review_v
+)
+SELECT * FROM ranked WHERE domain_rank <= 50;
+"""
+
+ADJUDICATION_DOMAIN_COUNTS_SQL = """
+CREATE OR REPLACE VIEW adjudication_domain_counts_v AS
+WITH queue AS (
+    SELECT review_domain, COUNT(*) AS total_queue
+    FROM streamlit_patient_manual_review_v
+    GROUP BY review_domain
+),
+resolved AS (
+    SELECT review_domain AS domain, COUNT(*) AS resolved
+    FROM adjudication_decisions
+    WHERE active_flag = TRUE
+    GROUP BY review_domain
+)
+SELECT
+    q.review_domain AS domain,
+    q.total_queue,
+    COALESCE(r.resolved, 0) AS resolved,
+    q.total_queue - COALESCE(r.resolved, 0) AS remaining
+FROM queue q
+LEFT JOIN resolved r ON q.review_domain = r.domain;
+"""
+
+UNRESOLVED_HIGH_VALUE_SQL = """
+CREATE OR REPLACE VIEW unresolved_high_value_cases_v AS
+
+-- Histology discordance affecting analysis eligibility
+SELECT
+    research_id, 'histology' AS domain, priority_score,
+    'Histology discordance blocks analysis eligibility' AS why_high_value,
+    unresolved_reason, conflict_summary, recommended_reviewer_action,
+    linked_episode_id AS episode_id
+FROM histology_manual_review_queue_v
+WHERE priority_score >= 80
+
+UNION ALL
+
+-- Molecular high-risk rows with insufficient linkage
+SELECT
+    CAST(research_id AS BIGINT), 'molecular', priority_score,
+    'High-risk molecular result with inadequate linkage confidence',
+    unresolved_reason, conflict_summary, recommended_reviewer_action,
+    linked_episode_id
+FROM molecular_manual_review_queue_v
+WHERE priority_score >= 70
+
+UNION ALL
+
+-- Definite/likely RAI not analyzable due timing
+SELECT
+    CAST(research_id AS BIGINT), 'rai', priority_score,
+    'Definite/likely RAI treatment not analyzable due to timing/linkage',
+    unresolved_reason, conflict_summary, recommended_reviewer_action,
+    linked_episode_id
+FROM rai_manual_review_queue_v
+WHERE priority_score >= 90
+
+UNION ALL
+
+-- Critical timeline validation errors
+SELECT
+    CAST(research_id AS BIGINT), 'timeline', priority_score,
+    'Critical date validation error (future/implausible date)',
+    unresolved_reason, conflict_summary, recommended_reviewer_action,
+    linked_episode_id
+FROM timeline_manual_review_queue_v
+WHERE priority_score >= 95;
+"""
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  SQL FILE OUTPUT
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def write_sql_file(view_log: list[tuple[str, str]]) -> None:
+    with open(SQL_OUT, "w") as f:
+        f.write("-- Reviewer Persistence & Post-Review Views\n")
+        f.write("-- Generated by 19_reviewer_persistence.py\n")
+        f.write("-- Depends on: scripts 15, 16, 17, 18\n")
+        f.write("--\n")
+        f.write("-- Tables: adjudication_decisions, adjudication_decision_history\n")
+        f.write("-- Views: reviewer summaries, post-review overlays, batch tools\n\n")
+        for name, sql in view_log:
+            f.write(f"-- === {name} ===\n")
+            f.write(sql.strip())
+            f.write("\n\n")
+    print(f"  SQL saved to: {SQL_OUT}")
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  MAIN
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Phase J: Reviewer Decision Persistence Layer"
+    )
+    parser.add_argument("--md", action="store_true",
+                        help="Use MotherDuck instead of local DuckDB")
+    args = parser.parse_args()
+
+    print("=" * 80)
+    print("  REVIEWER PERSISTENCE LAYER — Phase J + Phase M batch tools")
+    print("  Mode: " + ("MotherDuck" if args.md else "Local DuckDB"))
+    print("=" * 80)
+
+    if args.md:
+        from motherduck_client import MotherDuckClient
+        client = MotherDuckClient()
+        con = client.connect_rw()
+    else:
+        con = duckdb.connect(str(DB_PATH))
+
+    # Check prerequisites from script 18
+    section("CHECKING PREREQUISITES (script 18)")
+    prereqs = [
+        "histology_analysis_cohort_v", "molecular_episode_v3", "rai_episode_v3",
+        "histology_manual_review_queue_v", "molecular_manual_review_queue_v",
+        "rai_manual_review_queue_v", "timeline_manual_review_queue_v",
+        "patient_manual_review_summary_v", "streamlit_patient_manual_review_v",
+        "patient_reconciliation_summary_v",
+    ]
+    all_ok = True
+    for v in prereqs:
+        status = "OK" if table_available(con, v) else "MISS"
+        if status == "MISS":
+            all_ok = False
+        print(f"  {status:<6} {v}")
+
+    if not all_ok:
+        print("\n  WARNING: Some prerequisites are missing. Run script 18 first.")
+        print("  Continuing with available views...\n")
+
+    view_log: list[tuple[str, str]] = []
+
+    # Create tables
+    section("CREATING PERSISTENCE TABLES")
+    try:
+        con.execute("CREATE SEQUENCE IF NOT EXISTS adj_seq START 1;")
+        con.execute("CREATE SEQUENCE IF NOT EXISTS adj_hist_seq START 1;")
+        print("  Sequences: adj_seq, adj_hist_seq")
+    except Exception as e:
+        print(f"  Sequence creation (may already exist): {e}")
+
+    for name, ddl in [
+        ("adjudication_decisions", ADJUDICATION_DECISIONS_DDL),
+        ("adjudication_decision_history", ADJUDICATION_HISTORY_DDL),
+    ]:
+        try:
+            for stmt in ddl.strip().split(";"):
+                stmt = stmt.strip()
+                if stmt:
+                    con.execute(stmt + ";")
+            cnt = con.execute(f"SELECT COUNT(*) FROM {name}").fetchone()[0]
+            print(f"  {name:<55} {cnt:>8,} rows")
+            view_log.append((name, ddl))
+        except Exception as e:
+            print(f"  FAILED  {name}: {e}")
+
+    # Deploy reviewer summary views
+    section("REVIEWER SUMMARY VIEWS")
+    deploy_view(con, "reviewer_resolved_patient_summary_v",
+                REVIEWER_RESOLVED_PATIENT_SUMMARY_SQL, view_log)
+    deploy_view(con, "adjudication_progress_summary_v",
+                ADJUDICATION_PROGRESS_SUMMARY_SQL, view_log)
+
+    # Deploy post-review overlay views
+    section("POST-REVIEW OVERLAY VIEWS")
+    deploy_view(con, "histology_post_review_v",
+                HISTOLOGY_POST_REVIEW_SQL, view_log)
+    deploy_view(con, "molecular_post_review_v",
+                MOLECULAR_POST_REVIEW_SQL, view_log)
+    deploy_view(con, "rai_post_review_v",
+                RAI_POST_REVIEW_SQL, view_log)
+
+    # Deploy Phase M batch/productivity views
+    section("PHASE M: REVIEWER BATCH TOOLS")
+    deploy_view(con, "top_priority_review_batches_v",
+                TOP_PRIORITY_BATCHES_SQL, view_log)
+    deploy_view(con, "adjudication_domain_counts_v",
+                ADJUDICATION_DOMAIN_COUNTS_SQL, view_log)
+    deploy_view(con, "unresolved_high_value_cases_v",
+                UNRESOLVED_HIGH_VALUE_SQL, view_log)
+
+    # Write SQL file
+    section("WRITING SQL FILE")
+    write_sql_file(view_log)
+
+    # Summary
+    section("OBJECTS CREATED")
+    print("  Tables:")
+    print("    adjudication_decisions")
+    print("    adjudication_decision_history")
+    print("  Views:")
+    for name, _ in view_log:
+        if name not in ("adjudication_decisions", "adjudication_decision_history"):
+            print(f"    {name}")
+
+    section("DEPLOYMENT ORDER")
+    print("  1. scripts/15_date_association_audit.py")
+    print("  2. scripts/16_reconciliation_v2.py")
+    print("  3. scripts/17_semantic_cleanup_v3.py")
+    print("  4. scripts/18_adjudication_framework.py")
+    print("  5. scripts/19_reviewer_persistence.py  <-- this script")
+
+    con.close()
+    print(f"\n{'=' * 80}")
+    print("  DONE — Reviewer Persistence Layer complete")
+    print(f"{'=' * 80}")
+
+
+if __name__ == "__main__":
+    main()

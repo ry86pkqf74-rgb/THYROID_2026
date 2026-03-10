@@ -42,6 +42,15 @@ except ImportError:
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from motherduck_client import MotherDuckClient, MotherDuckConfig
 
+from app.cohort_qc import render_cohort_qc
+from app.patient_audit import render_patient_audit
+from app.review_histology import render_review_histology
+from app.review_molecular import render_review_molecular
+from app.review_rai import render_review_rai
+from app.review_timeline import render_review_timeline
+from app.review_queue import render_review_queue
+from app.diagnostics import render_diagnostics
+
 # ── Page config ───────────────────────────────────────────────────────────
 st.set_page_config(page_title="Thyroid Cohort Explorer", page_icon="🔬",
                    layout="wide", initial_sidebar_state="expanded")
@@ -1478,13 +1487,53 @@ def main():
                         pass
                 st.success(f"Exported {len(exported)} tables → exports/snapshot_{snap_ts}/")
 
+        # ── Review Mode ──────────────────────────────────────────────
+        st.markdown(sl("🔎 Review Mode"), unsafe_allow_html=True)
+        review_mode = st.toggle("Enable Review Mode (RW)", key="review_mode_toggle")
+        rw_con = None
+        if review_mode:
+            try:
+                cfg = MotherDuckConfig(database=DATABASE)
+                rw_con = MotherDuckClient(cfg).connect_rw()
+                st.markdown(
+                    '<div style="font-family:monospace;font-size:.6rem;color:#34d399">'
+                    '● REVIEW MODE ACTIVE (read-write)</div>',
+                    unsafe_allow_html=True,
+                )
+            except Exception as e:
+                st.error(f"Could not establish RW connection: {e}")
+                rw_con = None
+        else:
+            st.caption("Read-only mode. Toggle to enter decisions.")
+
+        # ── Data Build Info ──────────────────────────────────────────
+        with st.expander("📋 Data Build Info"):
+            db_mode = "Read-Write" if review_mode and rw_con else "Read-Only Share"
+            st.markdown(f"**Database mode:** {db_mode}")
+            st.markdown(f"**Database:** `{DATABASE}`")
+            st.markdown(f"**Deploy order:** 15 → 16 → 17 → 18 → 19 → 20")
+            for vname, label in [
+                ("molecular_episode_v3", "Molecular v3"),
+                ("rai_episode_v3", "RAI v3"),
+                ("validation_failures_v3", "Validation v3"),
+                ("adjudication_decisions", "Reviewer Decisions"),
+            ]:
+                avail = tbl_exists(con, vname)
+                icon = "✅" if avail else "❌"
+                st.markdown(f"{icon} {label}")
+            st.caption(f"Last refresh: {datetime.now():%Y-%m-%d %H:%M}")
+
     (t_ov,t_ex,t_vz,t_adv,t_gen,t_spec,t_img,t_comp,t_rec,t_exp,t_ai,
-     t_tl,t_ev,t_qa,t_surv,t_afv3) = st.tabs([
+     t_tl,t_ev,t_qa,t_surv,t_afv3,
+     t_cqc,t_pat,t_rh,t_rm,t_rr,t_rtl,t_rq,t_diag) = st.tabs([
         "📊 Overview","🗃 Data Explorer","📈 Visualizations","🧬 Advanced",
         "🔬 Genetics & Molecular","🫀 Specimen Details","📡 Pre-Op Imaging",
         "⚕ Complications","📋 Recommendations & Sensitivities",
         "📐 Expanded Cohort","✨ AI Insights",
-        "🕐 Timeline","📋 Events","🔍 QA","📉 Survival","🧩 Features v3"
+        "🕐 Timeline","📋 Events","🔍 QA","📉 Survival","🧩 Features v3",
+        "📋 Cohort QC","🧑‍⚕️ Patient Audit","🔬 Histology Review",
+        "🧬 Molecular Review","☢️ RAI Review","🕐 Timeline Review",
+        "📝 Review Queue","⚙️ Diagnostics",
     ])
     with t_ov:   render_overview(con)
     with t_ex:   render_explorer(df_filt)
@@ -1502,6 +1551,14 @@ def main():
     with t_qa:   render_qa_dashboard(con)
     with t_surv: render_survival(con)
     with t_afv3: render_afv3_explorer(con)
+    with t_cqc:  render_cohort_qc(con)
+    with t_pat:  render_patient_audit(con, rw_con)
+    with t_rh:   render_review_histology(con, rw_con)
+    with t_rm:   render_review_molecular(con, rw_con)
+    with t_rr:   render_review_rai(con, rw_con)
+    with t_rtl:  render_review_timeline(con, rw_con)
+    with t_rq:   render_review_queue(con)
+    with t_diag: render_diagnostics(con)
 
     st.markdown("---")
     st.caption(f"**Data source:** MotherDuck `{DATABASE}` · Share: `{SHARE_PATH[:40]}…` · Loaded: {datetime.now():%Y-%m-%d %H:%M} · Built with Streamlit + DuckDB + Plotly + Claude")
