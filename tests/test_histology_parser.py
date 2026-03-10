@@ -186,3 +186,14 @@ class TestEntityMetadata:
             assert m.note_row_id == NOTE_ROW_ID
             assert m.present_or_negated in ("present", "negated")
             assert 0 < m.confidence <= 1.0
+
+
+class TestEmptyAndNullInput:
+    def test_empty_string_returns_empty(self, ext):
+        assert ext.extract(NOTE_ROW_ID, RESEARCH_ID, NOTE_TYPE, "") == []
+
+    def test_none_returns_empty(self, ext):
+        assert ext.extract(NOTE_ROW_ID, RESEARCH_ID, NOTE_TYPE, None) == []
+
+    def test_whitespace_only(self, ext):
+        assert ext.extract(NOTE_ROW_ID, RESEARCH_ID, NOTE_TYPE, "   \n\t  ") == []

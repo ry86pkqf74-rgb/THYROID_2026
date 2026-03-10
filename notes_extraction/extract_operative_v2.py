@@ -409,6 +409,8 @@ class OperativeDetailExtractor(BaseExtractor):
     def extract(self, note_row_id, research_id, note_type, note_text, note_date=None):
         results: list[EntityMatch] = []
         seen: set[tuple[str, int]] = set()
+        if not note_text:
+            return results
 
         for bank in self._DOMAIN_PATTERNS:
             for pat, norm_val, etype, conf in bank:

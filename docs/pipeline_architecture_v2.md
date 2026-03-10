@@ -160,3 +160,28 @@ All v2 tables are materialized with `md_` prefix via script 26. The mapping pres
 - RAI dose extraction may miss non-standard dose formats or doses embedded in complex narrative
 - Cross-modality nodule matching (same lesion across US and CT) uses temporal + laterality heuristics only
 - Pre-1999 events may appear in timelines for patients with historical surgical context
+
+## Data Tier Conventions
+
+- **Dashboard tabs** use pre-adjudication and QA views for review workflows. Reviewers see algorithmic values and can submit adjudication decisions through Review Mode.
+- **Manuscript exports** (script 20) prefer post-review views (`histology_post_review_v`, `molecular_post_review_v`, `rai_post_review_v`) when available, falling back to algorithmic analysis cohorts.
+- **V2 canonical tables** (scripts 22-26) are independent of Phase 6 adjudication. They read from raw source tables, not from post-review views. If downstream analysis requires V2 grain + adjudicated values, a bridge layer joining V2 tables with `adjudication_decisions` is needed.
+
+## Date Format Coverage
+
+`extract_nearby_date` (in `utils/text_helpers.py`) supports:
+- `MM/DD/YYYY` and `MM/DD/YY` (slash-separated)
+- `YYYY-MM-DD` (ISO 8601)
+- Month-name formats: `January 15, 2024` and `15 January 2024` (full or abbreviated)
+
+Year bounds: 1990-2030. Dates outside this range are discarded. European `DD.MM.YYYY` is not supported.
+
+## Weak Linkage QA Routing
+
+Linkages with `weak` confidence tier are routed to `qa_issues_v2` as `warning` severity. QA check IDs:
+- `weak_linkage_imaging_fna`
+- `weak_linkage_fna_molecular`
+- `weak_linkage_preop_surgery`
+- `weak_linkage_pathology_rai`
+
+These should be reviewed by domain experts to confirm or reject the linkage.

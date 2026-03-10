@@ -16,6 +16,7 @@ from utils.text_helpers import (
     extract_nearby_date,
     extract_note_date,
     make_note_row_id,
+    safe_float,
     standardize_columns,
     strip_phi,
     to_snake_case,
@@ -164,3 +165,47 @@ class TestNoteRowId:
         h = make_note_row_id(1, "S", "c")
         assert len(h) == 40
         int(h, 16)  # valid hex
+
+
+class TestExtractNearbyDateFormats:
+    def test_iso_format(self):
+        text = "Patient had surgery 2024-03-15 with good outcome."
+        result = extract_nearby_date(text, 20, 30)
+        assert result == "2024-03-15"
+
+    def test_month_name_day_year(self):
+        text = "Thyroidectomy on January 15, 2024 was uneventful."
+        result = extract_nearby_date(text, 17, 33)
+        assert result == "2024-01-15"
+
+    def test_day_month_name_year(self):
+        text = "Procedure scheduled 15 March 2023 at the hospital."
+        result = extract_nearby_date(text, 20, 33)
+        assert result == "2023-03-15"
+
+    def test_abbreviated_month(self):
+        text = "Pathology report dated Mar 22, 2024 showed PTC."
+        result = extract_nearby_date(text, 22, 35)
+        assert result == "2024-03-22"
+
+    def test_traditional_mm_dd_yyyy_still_works(self):
+        text = "On 3/15/2022 patient underwent total thyroidectomy"
+        result = extract_nearby_date(text, 35, 56)
+        assert result == "2022-03-15"
+
+
+class TestSafeFloat:
+    def test_valid_float(self):
+        assert safe_float("3.14") == 3.14
+
+    def test_valid_int_string(self):
+        assert safe_float("42") == 42.0
+
+    def test_invalid_string(self):
+        assert safe_float("N/A") is None
+
+    def test_empty_string(self):
+        assert safe_float("") is None
+
+    def test_none_input(self):
+        assert safe_float(None) is None

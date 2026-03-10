@@ -147,6 +147,8 @@ class HistologyDetailExtractor(BaseExtractor):
     ) -> list[EntityMatch]:
         results: list[EntityMatch] = []
         seen: set[tuple[str, int]] = set()
+        if not note_text:
+            return results
 
         def _add(
             m: re.Match,

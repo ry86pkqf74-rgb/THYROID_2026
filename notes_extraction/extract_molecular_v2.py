@@ -243,6 +243,8 @@ class MolecularDetailExtractor(BaseExtractor):
     def extract(self, note_row_id, research_id, note_type, note_text, note_date=None):
         results: list[EntityMatch] = []
         seen: set[tuple[str, int]] = set()
+        if not note_text:
+            return results
 
         # ── static patterns ──────────────────────────────────────────
         for pat, etype, norm, conf in self._PATTERNS:
@@ -356,7 +358,7 @@ class MolecularDetailExtractor(BaseExtractor):
                 entity_type="bethesda_mention",
                 entity_value_raw=m.group(0),
                 entity_value_norm=norm,
-                present_or_negated="present",
+                present_or_negated=self.check_negation(note_text, m.start()),
                 confidence=0.95,
                 evidence_span=m.group(0),
                 evidence_start=m.start(),
