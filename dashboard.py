@@ -106,6 +106,7 @@ SEQ_TEAL = [[0,"#0a1a20"],[0.5,"#1a8a7a"],[1,"#2dd4bf"]]
 SHARE_PATH = "md:_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c"
 DATABASE   = "thyroid_research_2026"
 SHARE_CATALOG = "thyroid_share"
+_APP_VERSION = "v3.1.0-2026.03.10"
 
 # Tracks which catalog _get_con() activated (used by qual())
 _ACTIVE_CATALOG: str = DATABASE
@@ -1674,7 +1675,7 @@ def main():
     _check_critical_tables(con)
 
     st.info(
-        "**THYROID_2026 v2026.03.10-publication-ready** | Local DuckDB backup available · "
+        f"**THYROID_2026 {_APP_VERSION}** | Catalog: `{_ACTIVE_CATALOG}` · "
         "[Release Notes](RELEASE_NOTES.md)",
         icon="📦",
     )
@@ -1836,8 +1837,8 @@ def main():
     st.markdown(
         '<div style="text-align:center;padding:0.6rem 0;font-family:\'DM Mono\',monospace;'
         'font-size:0.65rem;color:#4a5568;letter-spacing:0.08em;">'
-        "THYROID_2026 v2026.03.10-publication-ready | Local DuckDB backup available &nbsp;·&nbsp; "
-        f"MotherDuck <code>{DATABASE}</code> &nbsp;·&nbsp; "
+        f"THYROID_2026 {_APP_VERSION} &nbsp;·&nbsp; "
+        f"Catalog <code>{_ACTIVE_CATALOG}</code> &nbsp;·&nbsp; "
         f"Loaded {datetime.now():%Y-%m-%d %H:%M}"
         "</div>",
         unsafe_allow_html=True,
