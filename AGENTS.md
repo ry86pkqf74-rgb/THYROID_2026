@@ -55,7 +55,7 @@
 - Upload note_entities to MotherDuck via `scripts/09b_motherduck_upload_notes_entities.py --confirm`
 - NSQIP linkage: `IDN` = `EUH_MRN`; manuscript content in `studies/nsqip_pth_protocol_manuscript/`; linkage artifacts in `studies/nsqip_linkage/`
 - ETE manuscript lives in `studies/proposal2_ete_staging/`
-- `.cursor/` and `.venv/` are in `.gitignore`; `processed/*.parquet` and `*.duckdb` are also gitignored
+- `.cursor/`, `.venv/`, `raw/`, `processed/*.parquet`, and `*.duckdb` are in `.gitignore`; 23 existing tracked raw files remain (no `git rm --cached` run to avoid disruption)
 - Use fixed random seeds (e.g. `np.random.seed(42)`, `random_state=42`) for reproducibility in analyses
 - MotherDuck requires DuckDB ≤1.4.4; v1.5.0 is incompatible
 - raw_* tables (from read_xlsx) keep original Excel column names (e.g. "Research ID number"); cleaned tables use research_id
@@ -84,7 +84,6 @@
 - V2 normalization maps added to `notes_extraction/vocab.py`: `MOLECULAR_PLATFORM_NORM`, `MOLECULAR_RESULT_NORM`, `RAI_INTENT_NORM`, `RAI_STATUS_NORM`, `COMPOSITION_NORM`, `ECHOGENICITY_NORM`, `OPERATIVE_FINDING_NORM`, `HISTOLOGY_DETAIL_NORM`
 - V2 app module files: `extraction_completeness.py`, `molecular_dashboard.py`, `rai_dashboard.py`, `imaging_nodule_dashboard.py`, `operative_dashboard.py`, `adjudication_summary.py`
 - Streamlit v2 tabs query with `tbl_exists` fallback: try canonical table name first (e.g. `molecular_test_episode_v2`), then `md_` prefixed version (e.g. `md_molecular_test_episode_v2`)
-- QA_report.md moved to `docs/QA_report.md`; root copy removed
 - All writes target `thyroid_research_2026` (bare names); all `note_entities_*` reads in enriched views come from `thyroid_share.note_entities_*` or bare names depending on context
 - Full Cursor system prompt for date association work lives in `prompts/01_date_timeline_system_prompt.md`
 - Date provenance formalization (script 27): `ALTER TABLE` adds `inferred_event_date`, `date_source`, `date_granularity`, `date_confidence` to all 6 `note_entities_*` base tables; backfill uses same COALESCE precedence as script 15 enriched views
@@ -94,7 +93,12 @@
 - DuckDB requires one ALTER TABLE ADD COLUMN per statement (no multi-ADD)
 - note_entities_* base tables now have 19 columns (original 15 + 4 provenance); medications/problem_list use 2-source fallback (entity_date, note_date); genetics/staging/procedures/complications use 3–5 source chains (+ surg_date, molecular, fna)
 - `.venv/bin/python` is required for DuckDB/MotherDuck scripts; system Python lacks duckdb module
-- `motherduck_client.py` supports `USE_LOCAL_DUCKDB` env var for local fallback to `thyroid_master.duckdb`
+- `motherduck_client.py` supports `USE_LOCAL_DUCKDB` env var and `MotherDuckConfig.use_local` flag; `LOCAL_DUCKDB_PATH` env var defaults to `thyroid_master_local.duckdb`
 - `data_dictionary.md` has a "Date Association & Provenance Policy" section documenting fallback chains, confidence scale, and provenance columns
 - V2 deployment order updated: 22 → 23 → 24 → 25 → 26 → 27
+- Sorted parquets (`*_sorted.parquet`) in `processed/` are DVC-tracked via `.dvc` sidecar files
+- `CITATION.cff` at repo root for academic attribution; update when submitting papers
+- `docs/` directory: `QA_report.md` (moved from root), `pipeline_architecture_v2.md`
+- Dashboard displays publication version banner via `st.info()` at top of main function
+- Publication tag: `v2026.03.10-publication-ready` on HEAD of `main`
 - Next phase: analytic modeling or manuscript drafting
