@@ -5,12 +5,15 @@
 Phase 2 research-facing analytic views for thyroid cancer studies.
 """
 
+import argparse
+import os
 from pathlib import Path
 import duckdb
 
 
 ROOT = Path(__file__).resolve().parent.parent
 DB_PATH = ROOT / "thyroid_master.duckdb"
+MD_DATABASE = "thyroid_research_2026"
 
 
 VIEWS_SQL: dict[str, str] = {
@@ -18,9 +21,9 @@ VIEWS_SQL: dict[str, str] = {
 CREATE OR REPLACE VIEW ptc_cohort AS
 SELECT
     tp.research_id,
-    tp.surgery_date,
-    tp.age_at_surgery,
-    tp.sex,
+    mc.surgery_date,
+    mc.age_at_surgery,
+    mc.sex,
     tp.histology_1_type,
     tp.histology_1_t_stage_ajcc8 AS t_stage_ajcc8,
     tp.histology_1_n_stage_ajcc8 AS n_stage_ajcc8,
@@ -29,13 +32,15 @@ SELECT
     TRY_CAST(tp.histology_1_largest_tumor_cm AS DOUBLE) AS largest_tumor_cm,
     TRY_CAST(tp.histology_1_ln_examined AS DOUBLE) AS ln_examined,
     TRY_CAST(tp.histology_1_ln_positive AS DOUBLE) AS ln_positive,
-    tp.tumor_1_extrathyroidal_ext,
-    tp.tumor_1_gross_ete,
-    tp.tumor_1_ete_microscopic_only,
+    ps.tumor_1_extrathyroidal_extension AS tumor_1_extrathyroidal_ext,
+    ps.path_extended_gross_path AS tumor_1_gross_ete,
+    ps.tumor_1_capsular_invasion AS tumor_1_ete_microscopic_only,
     tp.tumor_1_histology_variant,
     tp.variant_standardized,
     tp.surgery_type_normalized
 FROM tumor_pathology tp
+LEFT JOIN master_cohort mc ON mc.research_id = tp.research_id
+LEFT JOIN path_synoptics ps ON ps.research_id = tp.research_id
 WHERE UPPER(COALESCE(tp.histology_1_type, '')) = 'PTC'
   AND (
         LOWER(COALESCE(tp.tumor_1_histology_variant, '')) LIKE '%classic%'
@@ -388,34 +393,39 @@ SELECT
     mc.age_at_surgery,
     mc.sex,
     mc.surgery_date,
-    -- Phase 4 standardized columns
+    -- Phase 4 standardized columns (from tumor_pathology)
     tp.histology_1_type,
     tp.variant_standardized,
     tp.surgery_type_normalized AS malignant_surgery_type,
     tp.histology_1_overall_stage_ajcc8 AS overall_stage_ajcc8,
     TRY_CAST(tp.histology_1_largest_tumor_cm AS DOUBLE) AS largest_tumor_cm,
     tp.tumor_focality_overall,
-    TRY_CAST(tp.num_tumors_identified AS INTEGER) AS num_tumors,
-    -- Invasion (already structured)
-    tp.tumor_1_vascular_invasion,
-    tp.tumor_1_lymphatic_invasion,
-    tp.tumor_1_perineural_invasion,
-    tp.tumor_1_capsular_invasion,
-    -- ETE (already structured)
-    tp.tumor_1_extrathyroidal_ext,
-    tp.tumor_1_gross_ete,
-    tp.tumor_1_ete_microscopic_only,
-    -- LN summary
-    TRY_CAST(tp.histology_1_ln_examined AS DOUBLE) AS ln_examined,
-    TRY_CAST(tp.histology_1_ln_positive AS DOUBLE) AS ln_positive,
-    TRY_CAST(tp.histology_1_ln_ratio AS DOUBLE) AS ln_ratio,
-    -- Phase 5 mutation flags
+    TRY_CAST(ps.tumor_focality AS VARCHAR) AS num_tumors,
+    -- Invasion (from path_synoptics — tumor_pathology lacks these columns locally)
+    ps.tumor_1_angioinvasion        AS tumor_1_vascular_invasion,
+    ps.tumor_1_lymphatic_invasion,
+    ps.tumor_1_perineural_invasion,
+    ps.tumor_1_capsular_invasion,
+    -- ETE (from path_synoptics)
+    ps.tumor_1_extrathyroidal_extension AS tumor_1_extrathyroidal_ext,
+    ps.path_extended_gross_path         AS tumor_1_gross_ete,
+    NULL::VARCHAR                        AS tumor_1_ete_microscopic_only,
+    -- LN summary (from path_synoptics)
+    TRY_CAST(ps.tumor_1_ln_examined AS DOUBLE) AS ln_examined,
+    TRY_CAST(ps.tumor_1_ln_involved AS DOUBLE) AS ln_positive,
+    CASE
+        WHEN TRY_CAST(ps.tumor_1_ln_examined AS DOUBLE) > 0
+        THEN ROUND(TRY_CAST(ps.tumor_1_ln_involved AS DOUBLE) /
+                   TRY_CAST(ps.tumor_1_ln_examined AS DOUBLE), 4)
+        ELSE NULL
+    END AS ln_ratio,
+    -- Phase 5 mutation flags (from tumor_pathology where present)
     tp.braf_mutation_mentioned,
     tp.ras_mutation_mentioned,
     tp.ret_mutation_mentioned,
     tp.tert_mutation_mentioned,
-    tp.ntrk_mutation_mentioned,
-    tp.alk_mutation_mentioned,
+    NULL::BOOLEAN AS ntrk_mutation_mentioned,
+    NULL::BOOLEAN AS alk_mutation_mentioned,
     -- Benign flags
     bp.is_mng,
     bp.is_graves,
@@ -438,13 +448,42 @@ SELECT
     mc.has_parathyroid
 FROM master_cohort mc
 LEFT JOIN tumor_pathology tp ON mc.research_id = tp.research_id
+LEFT JOIN path_synoptics  ps ON ps.research_id = mc.research_id
 LEFT JOIN benign_pathology bp ON mc.research_id = bp.research_id
 """,
 }
 
 
+def _connect(use_md: bool) -> duckdb.DuckDBPyConnection:
+    """Return a DuckDB connection — MotherDuck RW when --md, otherwise local."""
+    if use_md:
+        token = os.environ.get("MOTHERDUCK_TOKEN") or ""
+        if not token:
+            # Try loading from .streamlit/secrets.toml
+            try:
+                import tomllib  # Python 3.11+
+            except ImportError:
+                import tomli as tomllib  # type: ignore
+            secrets_path = ROOT / ".streamlit" / "secrets.toml"
+            with open(secrets_path, "rb") as f:
+                token = tomllib.load(f).get("MOTHERDUCK_TOKEN", "")
+        if not token:
+            raise RuntimeError("MOTHERDUCK_TOKEN not set and not found in secrets.toml")
+        con = duckdb.connect(f"md:{MD_DATABASE}?motherduck_token={token}")
+        con.execute(f"USE {MD_DATABASE}")
+        print(f"Connected to MotherDuck: {MD_DATABASE}")
+    else:
+        con = duckdb.connect(str(DB_PATH))
+        print(f"Connected to local: {DB_PATH}")
+    return con
+
+
 def main() -> None:
-    con = duckdb.connect(str(DB_PATH))
+    parser = argparse.ArgumentParser(description="Build Phase 2 research views")
+    parser.add_argument("--md", action="store_true", help="Target MotherDuck instead of local DuckDB")
+    args = parser.parse_args()
+
+    con = _connect(args.md)
 
     print("=" * 72)
     print("PHASE 2: Creating thyroid cancer research views")
