@@ -13,6 +13,10 @@
 - Primary key for all tables: `research_id` (int); standardize column names like "Research ID number", "Research_ID#" to `research_id`
 - Project layout: `/processed/` (parquet), `/raw/` (source files), `/exports/` (CSV exports), `/scripts/` (ETL), `/studies/` (study outputs)
 - Key views/tables: `ptc_cohort`, `recurrence_risk_cohort`, `tumor_pathology`, `master_cohort`, `advanced_features_view`, `advanced_features_v2`, `advanced_features_v3`
+- Reconciliation V2 views (script 16): `histology_reconciliation_v2`, `molecular_episode_v2`, `molecular_unresolved_audit_mv`, `rai_episode_v2`, `rai_unresolved_audit_mv`, `timeline_rescue_mv`, `timeline_unresolved_summary_mv`, `validation_failures_v2`, `patient_validation_rollup_mv`, `patient_master_timeline_v2`, `patient_reconciliation_summary_v`, `patient_episode_audit_v`
+- Histology normalization categories: PTC_classic, PTC_follicular_variant, PTC_tall_cell, PTC_hobnail, PTC_diffuse_sclerosing, PTC_columnar, FTC, HCC_oncocytic, NIFTP, MTC, ATC, PDTC, adenoma, hyperplasia, benign
+- Validation severity levels: error (manual review required), warning (verify and resolve), info (monitor)
+- Reconciliation V2 depends on Phase 1 views from script 15; deploy script 15 first then script 16
 - Data access: use `motherduck_client.py` or local `thyroid_master.duckdb`; fallback to CSV exports when DuckDB unavailable
 - ETE manuscript lives in `studies/proposal2_ete_staging/`
 - `.cursor/` and `.venv/` are in `.gitignore`
