@@ -1,0 +1,2 @@
+patients,distinct_surgery_dates,mean_age,sd_age,n_female,n_male,n_recurrence,laterality_issues
+11673,4450,51.5,15.2,0.0,0.0,4417.0,1084

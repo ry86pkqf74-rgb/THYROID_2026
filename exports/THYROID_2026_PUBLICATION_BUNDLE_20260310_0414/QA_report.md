@@ -46,15 +46,3 @@ Generated against `thyroid_master.duckdb`
 | benign_pathology | `is_tgdc` | BOOLEAN | research_id in thyroid_sizes with thyroglossal dx |
 | benign_pathology | `surgery_type_normalized` | VARCHAR | Normalizes surgery_type casing/aliases |
 | parathyroid | `is_parathyroid_adenoma` | BOOLEAN | abnormality='adenoma' AND intent='intentional' |
-
-## Final Publication & Trial Exit Report (Script 14 - 20260310_0414)
-
-**Executed:** 2026-03-10 04:14
-
-- New MVs validated
-- Publication bundle created: `exports/THYROID_2026_PUBLICATION_BUNDLE_20260310_0414/`
-- Local DuckDB backup created (trial-downgrade safety)
-- Streamlit dashboard tabs benchmarked (sub-second)
-- Ready for MotherDuck free-tier downgrade
-
-**Publication folder:** `exports/THYROID_2026_PUBLICATION_BUNDLE_20260310_0414/`
