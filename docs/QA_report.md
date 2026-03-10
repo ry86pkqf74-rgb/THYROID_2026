@@ -141,3 +141,55 @@ Source: `raw/Notes 12_1_25.xlsx` (Sheet1 + Sheet2)
 - Ready for MotherDuck free-tier downgrade
 
 **Publication folder:** `exports/THYROID_2026_PUBLICATION_BUNDLE_20260310_0414/`
+
+## Publication Release (March 10, 2026)
+
+**Generated:** 2026-03-10 | **Tag:** `v2026.03.10-publication-ready`
+
+### Release Validation Summary
+
+| Check | Status | Detail |
+|---|---|---|
+| Git tag on HEAD | ✅ Pass | `v2026.03.10-publication-ready` |
+| Local DuckDB backup | ✅ Pass | `thyroid_master_local.duckdb` (4.7 MB) |
+| Publication bundle | ✅ Pass | `exports/THYROID_2026_PUBLICATION_BUNDLE_20260310_0414/` |
+| Final release bundle | ✅ Pass | `exports/FINAL_RELEASE_v2026.03.10_20260310_0529/` |
+| Manuscript cohort export | ✅ Pass | `exports/manuscript_cohort_20260310_0659/` |
+| DVC-tracked sorted parquets | ✅ Pass | 5 sorted `.parquet` + `.dvc` sidecar files |
+| Dashboard banner | ✅ Pass | `st.info()` at top of main — publication version visible |
+| CITATION.cff | ✅ Pass | Root-level academic citation file |
+| MANUSCRIPT_READY_CHECKLIST.md | ✅ Pass | One-click verification steps for reviewers |
+
+### V2 Pipeline Validation (Scripts 22–29)
+
+| Script | Purpose | Status |
+|---|---|---|
+| `22_canonical_episodes_v2.py` | 9 canonical episode tables, inline extractors | ✅ Deployed |
+| `23_cross_domain_linkage_v2.py` | 6 linkage tables with temporal confidence tiers | ✅ Deployed |
+| `24_reconciliation_review_v2.py` | 5 cross-domain review views | ✅ Deployed |
+| `25_qa_validation_v2.py` | `qa_issues_v2`, date completeness, high-priority review | ✅ Deployed |
+| `26_motherduck_materialize_v2.py` | 47 tables materialized in MotherDuck | ✅ Deployed |
+| `29_validation_runner.py` | 14-view validation + 6-domain review export | ✅ Deployed |
+
+### Validation Run (2026-03-10 13:31)
+
+Run artifacts in `exports/validation_run_20260310_1331/`:
+
+| Domain | File |
+|---|---|
+| Histology | `histology_review.csv` / `.parquet` |
+| Molecular | `molecular_review.csv` / `.parquet` |
+| RAI | `rai_review.csv` / `.parquet` |
+| Timeline | `timeline_review.csv` / `.parquet` |
+| Report | `validation_report.json` |
+
+### Known Outstanding Items
+
+- ATC count discrepancy (+60%) tracked in `qa_issues_v2` — requires pathologist adjudication
+- Parathyroid tissue mention over-count (+16%) — intentional broad capture, clinical filtering recommended
+- Coarse anchor dates reclassified from `error` → `info` in validation_v3 (expected)
+
+### Sign-off
+
+Repository is ready for manuscript submission, peer review, and data sharing per institutional guidelines.
+All PHI is confined to `raw/` (gitignored). Exports contain de-identified research IDs only.
