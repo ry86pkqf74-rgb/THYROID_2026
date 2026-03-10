@@ -517,8 +517,11 @@ def main() -> None:
         con.execute("""
             CREATE OR REPLACE TABLE advanced_features_sorted AS
             SELECT * FROM advanced_features_v3
-            ORDER BY diagnosis_year DESC, histology, ajcc_stage_8,
-                     braf_status, recurrence_risk_band, patient_id;
+            ORDER BY surgery_date DESC NULLS LAST,
+                     histology_1_type,
+                     overall_stage_ajcc8,
+                     braf_mutation_mentioned DESC NULLS LAST,
+                     research_id;
         """)
         n = con.execute("SELECT COUNT(*) FROM advanced_features_sorted").fetchone()[0]
         print(f"{'advanced_features_sorted':35s} rows={n:,}")
@@ -531,11 +534,11 @@ def main() -> None:
             CREATE OR REPLACE TABLE overview_kpis AS
             SELECT
                 COUNT(*)                                                    AS total_patients,
-                COUNT(CASE WHEN histology = 'PTC'  THEN 1 END)             AS ptc_count,
-                AVG(age_at_diagnosis) FILTER (WHERE age_at_diagnosis IS NOT NULL) AS avg_age,
-                COUNT(CASE WHEN braf_status = 'Positive' THEN 1 END)       AS braf_positive,
-                MAX(diagnosis_year)                                         AS max_year,
-                MIN(diagnosis_year)                                         AS min_year,
+                COUNT(CASE WHEN histology_1_type = 'PTC' THEN 1 END)       AS ptc_count,
+                AVG(age_at_surgery) FILTER (WHERE age_at_surgery IS NOT NULL) AS avg_age,
+                COUNT(CASE WHEN braf_mutation_mentioned THEN 1 END)         AS braf_positive,
+                MAX(EXTRACT(YEAR FROM TRY_CAST(surgery_date AS DATE)))      AS max_year,
+                MIN(EXTRACT(YEAR FROM TRY_CAST(surgery_date AS DATE)))      AS min_year,
                 COUNT(DISTINCT research_id)                                 AS unique_patients
             FROM advanced_features_sorted;
         """)
@@ -570,27 +573,25 @@ def main() -> None:
     except Exception as exc:
         print(f"{'genetics_summary':35s} skipped ({exc})")
 
-    # 4. Pathology summary — pre-aggregated capsular/invasion counts.
+    # 4. Pathology summary — pre-aggregated capsular/invasion + margin counts.
     #    Uses a LEFT JOIN on research_id (no CROSS JOIN).
     try:
         con.execute("""
             CREATE OR REPLACE TABLE pathology_summary AS
             SELECT
                 tw.research_id,
-                COALESCE(TRY_CAST(tw."right_lobe_g"   AS DOUBLE),
-                         TRY_CAST(tw.right_lobe_weight AS DOUBLE), 0) AS right_lobe_weight,
-                COALESCE(TRY_CAST(tw."left_lobe_g"    AS DOUBLE),
-                         TRY_CAST(tw.left_lobe_weight  AS DOUBLE), 0) AS left_lobe_weight,
+                COALESCE(TRY_CAST(tw."right_lobe_g" AS DOUBLE), 0)  AS right_lobe_weight,
+                COALESCE(TRY_CAST(tw."left_lobe_g"  AS DOUBLE), 0)  AS left_lobe_weight,
                 COALESCE(
-                    tp.tumor_1_capsular_invasion,
-                    tp.tumor_2_capsular_invasion,
-                    tp.tumor_3_capsular_invasion,
-                    tp.tumor_4_capsular_invasion,
-                    tp.tumor_5_capsular_invasion,
+                    CAST(tp.tumor_1_capsular_invasion AS VARCHAR),
+                    CAST(tp.tumor_2_capsular_invasion AS VARCHAR),
+                    CAST(tp.tumor_3_capsular_invasion AS VARCHAR),
+                    CAST(tp.tumor_4_capsular_invasion AS VARCHAR),
+                    CAST(tp.tumor_5_capsular_invasion AS VARCHAR),
                     'Unknown'
                 ) AS capsular_invasion,
                 COALESCE(
-                    CAST(tp.surgical_margins AS VARCHAR),
+                    CAST(tp.tumor_1_margin_status AS VARCHAR),
                     'Unknown'
                 ) AS surgical_margins
             FROM thyroid_weights tw
@@ -604,18 +605,24 @@ def main() -> None:
     # 5. Refresh backward-compat aliases so nothing breaks.
     #    advanced_features_sorted is now the physical table; both views
     #    point to it so reads skip the live view scan entirely.
+    #    DROP TABLE first in case the name was previously a table.
     try:
         con.execute(
             "CREATE OR REPLACE VIEW advanced_features_view AS "
             "SELECT * FROM advanced_features_sorted;"
         )
+        print(f"{'advanced_features_view (alias)':35s} ✓")
+    except Exception as exc:
+        print(f"{'advanced_features_view alias':35s} skipped ({exc})")
+    try:
+        con.execute("DROP TABLE IF EXISTS advanced_features_v3;")
         con.execute(
             "CREATE OR REPLACE VIEW advanced_features_v3 AS "
             "SELECT * FROM advanced_features_sorted;"
         )
-        print(f"{'advanced_features_view/v3 (aliases)':35s} ✓")
+        print(f"{'advanced_features_v3 (alias)':35s} ✓")
     except Exception as exc:
-        print(f"{'advanced_features aliases':35s} skipped ({exc})")
+        print(f"{'advanced_features_v3 alias':35s} skipped ({exc})")
 
     print("-" * 72)
     print("Validation snapshot (9 views)")

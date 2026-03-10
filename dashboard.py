@@ -308,7 +308,7 @@ def render_overview(con):
         tumor_path=q(con,"SELECT COUNT(*) FROM master_cohort WHERE has_tumor_pathology"),
         benign_path=q(con,"SELECT COUNT(*) FROM master_cohort WHERE has_benign_pathology"),
         fna=q(con,"SELECT COUNT(*) FROM master_cohort WHERE has_fna_cytology"),
-        braf=(int(_kpi_row.get("braf_positive", 0)) if _kpi_from_table
+        braf=(int(_kpi_row["braf_positive"]) if _kpi_from_table
               else q(con,"SELECT COALESCE(SUM(CASE WHEN braf_mutation_mentioned THEN 1 ELSE 0 END),0) FROM tumor_pathology")),
         rai_pos=q(con,"SELECT COUNT(*) FROM nuclear_med WHERE rai_avid_flag='positive'"),
         nuclear=q(con,"SELECT COUNT(*) FROM master_cohort WHERE has_nuclear_med"),
