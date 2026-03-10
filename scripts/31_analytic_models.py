@@ -392,6 +392,326 @@ def phase4_cox(df: pd.DataFrame, out_dir: Path) -> None:
         log.error("  Cox model failed: %s", exc)
 
 
+# ── Phase 5: Subgroup Analyses ────────────────────────────────────────────
+
+def phase5_subgroups(df: pd.DataFrame, out_dir: Path) -> None:
+    log.info("Phase 5: Subgroup Analyses")
+    if not HAS_LIFELINES:
+        log.warning("  lifelines not installed — skipping subgroup analyses")
+        return
+
+    time_col = "time_to_event_days" if "time_to_event_days" in df.columns else None
+    event_col = "event_occurred" if "event_occurred" in df.columns else None
+    if not time_col or not event_col:
+        log.warning("  Missing time/event columns")
+        return
+
+    age_col = None
+    for c in ("age_at_surgery", "survival_age_at_surgery"):
+        if c in df.columns:
+            age_col = c
+            break
+
+    subgroup_rows = []
+
+    def _cox_subgroup(label: str, mask):
+        sub = df.loc[mask].copy()
+        sub = sub[[time_col, event_col]].dropna()
+        sub["time_years"] = sub[time_col] / 365.25
+        sub = sub[sub["time_years"] > 0]
+        n = len(sub)
+        events = int(sub[event_col].sum())
+        subgroup_rows.append({
+            "Subgroup": label,
+            "N": n,
+            "Events": events,
+            "Event_rate_pct": round(100.0 * events / n, 2) if n else None,
+        })
+
+    _cox_subgroup("All patients", df.index >= 0)
+
+    for hist_col in ("histology_1_type",):
+        if hist_col in df.columns:
+            for hist in ("PTC", "FTC", "MTC"):
+                mask = df[hist_col] == hist
+                if mask.sum() >= 10:
+                    _cox_subgroup(f"Histology={hist}", mask)
+
+    if age_col:
+        ages = pd.to_numeric(df[age_col], errors="coerce")
+        _cox_subgroup("Age < 45", ages < 45)
+        _cox_subgroup("Age >= 45", ages >= 45)
+
+    for stage_col in ("overall_stage_ajcc8", "overall_stage"):
+        if stage_col in df.columns:
+            for s in ("I", "II", "III"):
+                mask = df[stage_col] == s
+                if mask.sum() >= 10:
+                    _cox_subgroup(f"Stage {s}", mask)
+            break
+
+    for ete_col in ("ete", "tumor_1_extrathyroidal_ext"):
+        if ete_col in df.columns:
+            _cox_subgroup("ETE present", df[ete_col] == True)
+            _cox_subgroup("ETE absent", df[ete_col] == False)
+            break
+
+    for braf_col in ("braf_positive", "braf_mutation_mentioned"):
+        if braf_col in df.columns:
+            _cox_subgroup("BRAF+", df[braf_col] == True)
+            _cox_subgroup("BRAF-", df[braf_col] == False)
+            break
+
+    if subgroup_rows:
+        sg_df = pd.DataFrame(subgroup_rows)
+        sg_df.to_csv(out_dir / "subgroup_event_rates.csv", index=False)
+        log.info("  Subgroup analyses: %d subgroups → subgroup_event_rates.csv", len(sg_df))
+
+
+# ── Phase 6: Interaction Terms ────────────────────────────────────────────
+
+def phase6_interactions(df: pd.DataFrame, out_dir: Path) -> None:
+    log.info("Phase 6: Interaction Tests")
+    if not HAS_LIFELINES:
+        log.warning("  lifelines not installed — skipping interaction tests")
+        return
+
+    time_col = "time_to_event_days" if "time_to_event_days" in df.columns else None
+    event_col = "event_occurred" if "event_occurred" in df.columns else None
+    if not time_col or not event_col:
+        return
+
+    ete_col = braf_col = None
+    for c in ("ete", "tumor_1_extrathyroidal_ext"):
+        if c in df.columns:
+            ete_col = c
+            break
+    for c in ("braf_positive", "braf_mutation_mentioned"):
+        if c in df.columns:
+            braf_col = c
+            break
+
+    interactions = []
+
+    def _test_interaction(name, col_a, col_b):
+        if col_a is None or col_b is None:
+            return
+        sub = df[[time_col, event_col, col_a, col_b]].dropna().copy()
+        for c in (col_a, col_b):
+            sub[c] = pd.to_numeric(sub[c], errors="coerce")
+        sub = sub.dropna()
+        sub["time_years"] = sub[time_col] / 365.25
+        sub = sub[sub["time_years"] > 0]
+        if len(sub) < 30:
+            return
+
+        interaction_col = f"{col_a}_x_{col_b}"
+        sub[interaction_col] = sub[col_a] * sub[col_b]
+
+        try:
+            cph_base = CoxPHFitter(penalizer=0.01)
+            cph_base.fit(sub[["time_years", event_col, col_a, col_b]],
+                         duration_col="time_years", event_col=event_col)
+
+            cph_int = CoxPHFitter(penalizer=0.01)
+            cph_int.fit(sub[["time_years", event_col, col_a, col_b, interaction_col]],
+                        duration_col="time_years", event_col=event_col)
+
+            int_row = cph_int.summary.loc[interaction_col]
+            interactions.append({
+                "Interaction": name,
+                "Term": interaction_col,
+                "HR": round(float(np.exp(int_row["coef"])), 3),
+                "CI_lower": round(float(int_row["exp(coef) lower 95%"]), 3),
+                "CI_upper": round(float(int_row["exp(coef) upper 95%"]), 3),
+                "p_value": round(float(int_row["p"]), 4),
+                "N": len(sub),
+                "AIC_base": round(float(cph_base.AIC_partial_), 2),
+                "AIC_interaction": round(float(cph_int.AIC_partial_), 2),
+                "AIC_improved": cph_int.AIC_partial_ < cph_base.AIC_partial_,
+            })
+        except Exception as exc:
+            log.warning("  Interaction %s failed: %s", name, exc)
+
+    ln_col = "ln_positive" if "ln_positive" in df.columns else None
+
+    _test_interaction("ETE x BRAF", ete_col, braf_col)
+    _test_interaction("ETE x LN_positive", ete_col, ln_col)
+    _test_interaction("BRAF x LN_positive", braf_col, ln_col)
+
+    age_col = None
+    for c in ("age_at_surgery", "survival_age_at_surgery"):
+        if c in df.columns:
+            age_col = c
+            break
+    _test_interaction("ETE x Age", ete_col, age_col)
+
+    if interactions:
+        int_df = pd.DataFrame(interactions)
+        int_df.to_csv(out_dir / "interaction_tests.csv", index=False)
+        log.info("  Interaction tests: %d tested → interaction_tests.csv", len(int_df))
+        for _, row in int_df.iterrows():
+            sig = "*" if row["p_value"] < 0.05 else ""
+            log.info("    %s: HR=%.3f (%.3f–%.3f), p=%.4f %s",
+                     row["Interaction"], row["HR"], row["CI_lower"], row["CI_upper"],
+                     row["p_value"], sig)
+
+
+# ── Phase 7: Propensity-Score Matching (ETE) ──────────────────────────────
+
+def phase7_psm(df: pd.DataFrame, out_dir: Path) -> None:
+    log.info("Phase 7: Propensity-Score Matching — ETE")
+    if not HAS_STATSMODELS or not HAS_LIFELINES:
+        log.warning("  statsmodels + lifelines required — skipping PSM")
+        return
+
+    ete_col = None
+    for c in ("ete", "tumor_1_extrathyroidal_ext"):
+        if c in df.columns:
+            ete_col = c
+            break
+    if ete_col is None:
+        log.warning("  No ETE column found")
+        return
+
+    time_col = "time_to_event_days" if "time_to_event_days" in df.columns else None
+    event_col = "event_occurred" if "event_occurred" in df.columns else None
+    if not time_col or not event_col:
+        log.warning("  Missing time/event columns")
+        return
+
+    confounders = []
+    for c in ("age_at_surgery", "survival_age_at_surgery", "largest_tumor_cm",
+              "tumor_size_cm", "ln_positive"):
+        if c in df.columns:
+            confounders.append(c)
+    confounders = list(dict.fromkeys(confounders))
+
+    if len(confounders) < 2:
+        log.warning("  Need >= 2 confounders, found %d", len(confounders))
+        return
+
+    sub = df[[ete_col, time_col, event_col] + confounders].dropna().copy()
+    sub[ete_col] = pd.to_numeric(sub[ete_col], errors="coerce").astype(int)
+    for c in confounders:
+        sub[c] = pd.to_numeric(sub[c], errors="coerce")
+    sub = sub.dropna()
+    sub["time_years"] = sub[time_col] / 365.25
+    sub = sub[sub["time_years"] > 0]
+
+    if len(sub) < 50:
+        log.warning("  Only %d complete cases — too few for PSM", len(sub))
+        return
+
+    # Propensity score via logistic regression
+    X = sm.add_constant(sub[confounders].astype(float))
+    y = sub[ete_col]
+
+    try:
+        ps_model = sm.Logit(y, X).fit(disp=0, maxiter=100)
+        sub["propensity_score"] = ps_model.predict(X)
+    except Exception as exc:
+        log.error("  Propensity score model failed: %s", exc)
+        return
+
+    # Nearest-neighbor matching (1:1, caliper=0.2*SD)
+    treated = sub[sub[ete_col] == 1].copy()
+    control = sub[sub[ete_col] == 0].copy()
+    caliper = 0.2 * sub["propensity_score"].std()
+
+    matched_pairs = []
+    used_controls = set()
+    for idx, row in treated.iterrows():
+        ps = row["propensity_score"]
+        candidates = control[~control.index.isin(used_controls)]
+        if candidates.empty:
+            break
+        diffs = (candidates["propensity_score"] - ps).abs()
+        best_idx = diffs.idxmin()
+        if diffs[best_idx] <= caliper:
+            matched_pairs.append((idx, best_idx))
+            used_controls.add(best_idx)
+
+    if len(matched_pairs) < 10:
+        log.warning("  Only %d matched pairs — too few", len(matched_pairs))
+        return
+
+    t_idx = [p[0] for p in matched_pairs]
+    c_idx = [p[1] for p in matched_pairs]
+    matched = pd.concat([sub.loc[t_idx], sub.loc[c_idx]])
+
+    # Balance check
+    balance_rows = []
+    for conf in confounders:
+        m_treated = matched.loc[t_idx, conf].mean()
+        m_control = matched.loc[c_idx, conf].mean()
+        pooled_sd = matched[conf].std()
+        smd = abs(m_treated - m_control) / pooled_sd if pooled_sd > 0 else 0
+        balance_rows.append({
+            "Variable": conf,
+            "Mean_ETE": round(float(m_treated), 3),
+            "Mean_NoETE": round(float(m_control), 3),
+            "SMD": round(float(smd), 4),
+            "Balanced": smd < 0.1,
+        })
+    balance_df = pd.DataFrame(balance_rows)
+    balance_df.to_csv(out_dir / "psm_balance.csv", index=False)
+
+    # Cox on matched cohort
+    try:
+        cph = CoxPHFitter(penalizer=0.01)
+        cph.fit(matched[["time_years", event_col, ete_col]],
+                duration_col="time_years", event_col=event_col)
+        cox_row = cph.summary.loc[ete_col]
+        psm_result = {
+            "N_matched_pairs": len(matched_pairs),
+            "N_total": len(matched),
+            "Caliper": round(float(caliper), 4),
+            "HR_ETE": round(float(np.exp(cox_row["coef"])), 3),
+            "CI_lower": round(float(cox_row["exp(coef) lower 95%"]), 3),
+            "CI_upper": round(float(cox_row["exp(coef) upper 95%"]), 3),
+            "p_value": round(float(cox_row["p"]), 4),
+            "Concordance": round(float(cph.concordance_index_), 4),
+        }
+        with open(out_dir / "psm_result.json", "w") as f:
+            json.dump(psm_result, f, indent=2)
+        log.info("  PSM: %d matched pairs, HR=%.3f (%.3f–%.3f), p=%.4f",
+                 psm_result["N_matched_pairs"], psm_result["HR_ETE"],
+                 psm_result["CI_lower"], psm_result["CI_upper"], psm_result["p_value"])
+    except Exception as exc:
+        log.error("  PSM Cox model failed: %s", exc)
+
+    # KM on matched cohort
+    try:
+        kmf = KaplanMeierFitter()
+        fig_rows = []
+        for label, mask_val in [("ETE+", 1), ("ETE-", 0)]:
+            mask = matched[ete_col] == mask_val
+            n = mask.sum()
+            kmf.fit(matched.loc[mask, "time_years"],
+                    event_observed=matched.loc[mask, event_col], label=label)
+            def _ps(t):
+                try:
+                    return round(float(kmf.predict(t)), 4)
+                except Exception:
+                    return None
+            fig_rows.append({
+                "Group": label,
+                "N": n,
+                "Events": int(matched.loc[mask, event_col].sum()),
+                "1yr": _ps(1.0),
+                "3yr": _ps(3.0),
+                "5yr": _ps(5.0),
+            })
+        pd.DataFrame(fig_rows).to_csv(out_dir / "psm_km_summary.csv", index=False)
+        log.info("  PSM KM summary saved → psm_km_summary.csv")
+    except Exception as exc:
+        log.error("  PSM KM failed: %s", exc)
+
+    log.info("  Balance table: %d variables, %d balanced (SMD < 0.1)",
+             len(balance_df), balance_df["Balanced"].sum())
+
+
 # ── Main ──────────────────────────────────────────────────────────────────
 
 def run(args: argparse.Namespace) -> int:
@@ -401,7 +721,7 @@ def run(args: argparse.Namespace) -> int:
     con = _get_connection(args)
 
     if args.dry_run:
-        log.info("[DRY RUN] Would run 4 analytic phases against %s",
+        log.info("[DRY RUN] Would run 7 analytic phases against %s",
                  "local DB" if args.local else "MotherDuck")
         return 0
 
@@ -413,6 +733,9 @@ def run(args: argparse.Namespace) -> int:
     phase2_logistic(df, OUT_DIR)
     phase3_kaplan_meier(df, OUT_DIR)
     phase4_cox(df, OUT_DIR)
+    phase5_subgroups(df, OUT_DIR)
+    phase6_interactions(df, OUT_DIR)
+    phase7_psm(df, OUT_DIR)
 
     elapsed = time.perf_counter() - t_start
     metadata = {

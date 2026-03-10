@@ -1,0 +1,4 @@
+Variable,Mean_ETE,Mean_NoETE,SMD,Balanced
+survival_age_at_surgery,49.983,49.095,0.0553,True
+tumor_size_cm,3.001,3.068,0.0277,True
+ln_positive,3.109,2.64,0.09,True

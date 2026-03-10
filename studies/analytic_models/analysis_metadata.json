@@ -1,16 +1,22 @@
 {
   "script": "31_analytic_models.py",
-  "timestamp": "2026-03-10T18:10:03.467463",
+  "timestamp": "2026-03-10T18:19:25.838591",
   "random_seed": 42,
   "source": "local",
   "cohort_rows": 6630,
-  "elapsed_seconds": 1.1,
+  "elapsed_seconds": 8.95,
   "lifelines_available": true,
   "statsmodels_available": true,
   "scipy_available": true,
   "outputs": [
+    "psm_km_summary.csv",
+    "subgroup_event_rates.csv",
+    "interaction_tests.csv",
+    "psm_result.json",
+    "analysis_metadata.json",
     "km_summary.csv",
     "table1_demographics.csv",
+    "psm_balance.csv",
     "cox_model.csv"
   ]
 }

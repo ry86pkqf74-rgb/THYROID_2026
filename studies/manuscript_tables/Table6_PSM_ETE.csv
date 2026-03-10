@@ -1,0 +1,10 @@
+Measure,Value
+Matched pairs,1498
+HR ETE (95% CI),1.64 (0.95–2.81)
+p-value,0.08
+Concordance,0.6457
+Balance: survival_age_at_surgery,SMD=0.055 (balanced)
+Balance: tumor_size_cm,SMD=0.028 (balanced)
+Balance: ln_positive,SMD=0.090 (balanced)
+KM ETE+: 5-yr survival,0.9916
+KM ETE-: 5-yr survival,1.0

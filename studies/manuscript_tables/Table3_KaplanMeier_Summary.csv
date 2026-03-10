@@ -1,0 +1,19 @@
+Stratifier,Group,N,Events,1-yr (%),3-yr (%),5-yr (%)
+Overall Stage,I,3860,26,100.0,99.8,99.8
+Overall Stage,II,1754,6,99.9,99.8,99.7
+Overall Stage,III,124,4,97.4,96.5,96.5
+Overall Stage,IVB,27,0,100.0,100.0,100.0
+ETE,False,1963,5,100.0,100.0,100.0
+ETE,True,3831,31,99.8,99.6,99.6
+BRAF,False,5753,36,99.9,99.7,99.7
+BRAF,True,41,0,100.0,100.0,100.0
+Risk Band,high,2215,33,99.7,99.4,99.3
+Risk Band,intermediate,1338,3,100.0,99.9,99.9
+Risk Band,low,2241,0,100.0,100.0,100.0
+Histology,ATC,27,0,100.0,100.0,100.0
+Histology,FTC,615,1,100.0,99.8,99.8
+Histology,HCC,14,0,100.0,100.0,100.0
+Histology,MTC,361,0,100.0,100.0,100.0
+Histology,PDTC,43,0,100.0,100.0,100.0
+Histology,PTC,4693,35,99.9,99.7,99.7
+Histology,other,41,0,100.0,100.0,100.0

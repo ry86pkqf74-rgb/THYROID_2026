@@ -1,0 +1,5 @@
+Interaction,Term,HR,CI_lower,CI_upper,p_value,N,AIC_base,AIC_interaction,AIC_improved
+ETE x BRAF,ete_x_braf_positive,0.808,0.046,14.224,0.8844,5794,596.83,598.81,False
+ETE x LN_positive,ete_x_ln_positive,1.038,0.997,1.08,0.0733,5246,521.59,520.44,True
+BRAF x LN_positive,braf_positive_x_ln_positive,0.936,0.199,4.413,0.9335,5246,523.95,525.94,False
+ETE x Age,ete_x_survival_age_at_surgery,1.002,0.994,1.011,0.5467,5794,592.65,594.29,False

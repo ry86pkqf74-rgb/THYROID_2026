@@ -1,0 +1,132 @@
+% Auto-generated manuscript tables
+% Generated: 2026-03-10 18:19
+% Script: 33_manuscript_tables.py
+
+\begin{table}[htbp]
+\centering
+\caption{Table1\_Demographics}
+\begin{tabular}{lrr}
+\toprule
+Characteristic & Result & n \\
+\midrule
+Total patients & 6,630 & nan \\
+Histology — PTC & 5,328 (80.4%) & 5,328 \\
+Histology — FTC & 683 (10.3%) & 683 \\
+Histology — MTC & 464 (7.0%) & 464 \\
+Histology — PDTC & 63 (1.0%) & 63 \\
+Histology — other & 51 (0.8%) & 51 \\
+Overall Stage — I & 4,496 (67.8%) & 4,496 \\
+Overall Stage — II & 1,938 (29.2%) & 1,938 \\
+Overall Stage — III & 136 (2.1%) & 136 \\
+Overall Stage — IVB & 27 (0.4%) & 27 \\
+BRAF positive & 43 (0.6%) & 43 \\
+Recurrence & 2,965 (44.7%) & 2,965 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Table2\_Cox\_Multivariable}
+\begin{tabular}{lrr}
+\toprule
+Variable & HR (95% CI) & p-value \\
+\midrule
+survival_age_at_surgery & 0.99 (0.98–1.00) & 0.19 \\
+tumor_size_cm & 1.03 (0.96–1.11) & 0.40 \\
+ln_positive & 1.03 (1.00–1.06) & 0.04 \\
+ln_ratio & 0.91 (0.55–1.48) & 0.70 \\
+braf_positive & 0.79 (0.05–12.55) & 0.87 \\
+ete & 1.46 (0.91–2.34) & 0.12 \\
+tert_positive & 0.86 (0.00–71708044.49) & 0.99 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Table3\_KaplanMeier\_Summary}
+\begin{tabular}{lrrrrrr}
+\toprule
+Stratifier & Group & N & Events & 1-yr (%) & 3-yr (%) & 5-yr (%) \\
+\midrule
+Overall Stage & I & 3860 & 26 & 100.0 & 99.8 & 99.8 \\
+Overall Stage & II & 1754 & 6 & 99.9 & 99.8 & 99.7 \\
+Overall Stage & III & 124 & 4 & 97.4 & 96.5 & 96.5 \\
+Overall Stage & IVB & 27 & 0 & 100.0 & 100.0 & 100.0 \\
+ETE & False & 1963 & 5 & 100.0 & 100.0 & 100.0 \\
+ETE & True & 3831 & 31 & 99.8 & 99.6 & 99.6 \\
+BRAF & False & 5753 & 36 & 99.9 & 99.7 & 99.7 \\
+BRAF & True & 41 & 0 & 100.0 & 100.0 & 100.0 \\
+Risk Band & high & 2215 & 33 & 99.7 & 99.4 & 99.3 \\
+Risk Band & intermediate & 1338 & 3 & 100.0 & 99.9 & 99.9 \\
+Risk Band & low & 2241 & 0 & 100.0 & 100.0 & 100.0 \\
+Histology & ATC & 27 & 0 & 100.0 & 100.0 & 100.0 \\
+Histology & FTC & 615 & 1 & 100.0 & 99.8 & 99.8 \\
+Histology & HCC & 14 & 0 & 100.0 & 100.0 & 100.0 \\
+Histology & MTC & 361 & 0 & 100.0 & 100.0 & 100.0 \\
+Histology & PDTC & 43 & 0 & 100.0 & 100.0 & 100.0 \\
+Histology & PTC & 4693 & 35 & 99.9 & 99.7 & 99.7 \\
+Histology & other & 41 & 0 & 100.0 & 100.0 & 100.0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Table4\_Subgroup\_Event\_Rates}
+\begin{tabular}{lrrr}
+\toprule
+Subgroup & N & Events & Event Rate (%) \\
+\midrule
+All patients & 5794 & 36 & 0.62 \\
+Histology=PTC & 4693 & 35 & 0.75 \\
+Histology=FTC & 615 & 1 & 0.16 \\
+Histology=MTC & 361 & 0 & 0.0 \\
+Age < 45 & 2153 & 26 & 1.21 \\
+Age >= 45 & 3641 & 10 & 0.27 \\
+Stage I & 3860 & 26 & 0.67 \\
+Stage II & 1754 & 6 & 0.34 \\
+Stage III & 124 & 4 & 3.23 \\
+ETE present & 3831 & 31 & 0.81 \\
+ETE absent & 1963 & 5 & 0.25 \\
+BRAF+ & 41 & 0 & 0.0 \\
+BRAF- & 5753 & 36 & 0.63 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Table5\_Interaction\_Tests}
+\begin{tabular}{lrrr}
+\toprule
+Interaction & HR (95% CI) & p-value & AIC improved \\
+\midrule
+ETE x BRAF & 0.81 (0.05–14.22) & 0.88 & False \\
+ETE x LN_positive & 1.04 (1.00–1.08) & 0.07 & True \\
+BRAF x LN_positive & 0.94 (0.20–4.41) & 0.93 & False \\
+ETE x Age & 1.00 (0.99–1.01) & 0.55 & False \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Table6\_PSM\_ETE}
+\begin{tabular}{lr}
+\toprule
+Measure & Value \\
+\midrule
+Matched pairs & 1498 \\
+HR ETE (95% CI) & 1.64 (0.95–2.81) \\
+p-value & 0.08 \\
+Concordance & 0.6457 \\
+Balance: survival_age_at_surgery & SMD=0.055 (balanced) \\
+Balance: tumor_size_cm & SMD=0.028 (balanced) \\
+Balance: ln_positive & SMD=0.090 (balanced) \\
+KM ETE+: 5-yr survival & 0.9916 \\
+KM ETE-: 5-yr survival & 1.0 \\
+\bottomrule
+\end{tabular}
+\end{table}

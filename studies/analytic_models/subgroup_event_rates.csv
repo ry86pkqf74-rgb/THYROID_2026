@@ -1,0 +1,14 @@
+Subgroup,N,Events,Event_rate_pct
+All patients,5794,36,0.62
+Histology=PTC,4693,35,0.75
+Histology=FTC,615,1,0.16
+Histology=MTC,361,0,0.0
+Age < 45,2153,26,1.21
+Age >= 45,3641,10,0.27
+Stage I,3860,26,0.67
+Stage II,1754,6,0.34
+Stage III,124,4,3.23
+ETE present,3831,31,0.81
+ETE absent,1963,5,0.25
+BRAF+,41,0,0.0
+BRAF-,5753,36,0.63

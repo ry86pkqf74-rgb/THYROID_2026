@@ -114,4 +114,8 @@
 - Analytic models output: `table1_demographics.csv`, `km_summary.csv` (18 strata, 5 stratifiers), `cox_model.csv` (concordance 0.69), `analysis_metadata.json`
 - Script 27 deployed to both local DuckDB and MotherDuck cloud; all 5 legacy compatibility tables verified (molecular_episode_v3: 11,977 rows, rai_episode_v3: 938, validation_failures_v3: 2,505, tumor_episode_master_v2: 13,202, linkage_summary_v2: 11,977)
 - MANUSCRIPT_READY_CHECKLIST.md at repo root for submission/archive readiness
-- Next phase: manuscript drafting, Zenodo upload, or additional analytic models
+- Script 33 (`33_manuscript_tables.py`): formats analytic model outputs into publication-ready CSVs + LaTeX; outputs to `studies/manuscript_tables/`
+- PSM result (ETE): 1,498 matched pairs, HR=1.635 (0.950–2.814), p=0.076, all 3 confounders balanced (SMD < 0.1)
+- Interaction tests: ETE x LN_positive borderline (p=0.073); ETE x BRAF, BRAF x LN, ETE x Age non-significant
+- Zenodo archive at `exports/zenodo_archive_2026.03.10/` (169 files, 36.8 MB); PHI-scanned clean (research_id only, no note text)
+- Next phase: Zenodo upload, manuscript drafting, additional subgroup refinements

@@ -1,0 +1,5 @@
+Interaction,HR (95% CI),p-value,AIC improved
+ETE x BRAF,0.81 (0.05–14.22),0.88,False
+ETE x LN_positive,1.04 (1.00–1.08),0.07,True
+BRAF x LN_positive,0.94 (0.20–4.41),0.93,False
+ETE x Age,1.00 (0.99–1.01),0.55,False

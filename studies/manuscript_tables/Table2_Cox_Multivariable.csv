@@ -1,0 +1,8 @@
+Variable,HR (95% CI),p-value
+survival_age_at_surgery,0.99 (0.98–1.00),0.19
+tumor_size_cm,1.03 (0.96–1.11),0.40
+ln_positive,1.03 (1.00–1.06),0.04
+ln_ratio,0.91 (0.55–1.48),0.70
+braf_positive,0.79 (0.05–12.55),0.87
+ete,1.46 (0.91–2.34),0.12
+tert_positive,0.86 (0.00–71708044.49),0.99
