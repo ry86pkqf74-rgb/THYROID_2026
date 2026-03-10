@@ -76,3 +76,6 @@
 - V2 normalization maps added to `notes_extraction/vocab.py`: `MOLECULAR_PLATFORM_NORM`, `MOLECULAR_RESULT_NORM`, `RAI_INTENT_NORM`, `RAI_STATUS_NORM`, `COMPOSITION_NORM`, `ECHOGENICITY_NORM`, `OPERATIVE_FINDING_NORM`, `HISTOLOGY_DETAIL_NORM`
 - V2 app module files: `extraction_completeness.py`, `molecular_dashboard.py`, `rai_dashboard.py`, `imaging_nodule_dashboard.py`, `operative_dashboard.py`, `adjudication_summary.py`
 - Streamlit v2 tabs query with `tbl_exists` fallback: try canonical table name first (e.g. `molecular_test_episode_v2`), then `md_` prefixed version (e.g. `md_molecular_test_episode_v2`)
+- QA_report.md moved to `docs/QA_report.md`; root copy removed
+- Publication tag: `v2026.03.10-publication-ready` on commit `88a2733`
+- Next phase: analytic modeling or manuscript drafting

@@ -16,13 +16,17 @@ from typing import Any
 import duckdb
 
 
+LOCAL_DUCKDB_PATH = os.getenv(
+    "LOCAL_DUCKDB_PATH", "thyroid_master_local.duckdb"
+)
+
+
 @dataclass(frozen=True)
 class MotherDuckConfig:
     database: str = "thyroid_research_2026"
     token_env_var: str = "MOTHERDUCK_TOKEN"
-    # Set this for collaborator read-only usage, e.g.:
-    # md:_share/thyroid_research_ro/<share-uuid>
     share_path: str | None = None
+    use_local: bool = False
 
 
 class MotherDuckClient:
@@ -39,6 +43,8 @@ class MotherDuckClient:
         return token
 
     def connect_rw(self) -> duckdb.DuckDBPyConnection:
+        if self.config.use_local or os.getenv("USE_LOCAL_DUCKDB", "").lower() in ("1", "true", "yes"):
+            return duckdb.connect(LOCAL_DUCKDB_PATH)
         token = self._require_token()
         return duckdb.connect(f"md:{self.config.database}?motherduck_token={token}")
 

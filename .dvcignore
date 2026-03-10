@@ -1,3 +1,10 @@
 # Add patterns of files dvc should ignore, which could improve
 # the performance. Learn more at
 # https://dvc.org/doc/user-guide/dvcignore
+
+exports/*_temp/
+exports/*_draft/
+processed/clinical_notes_long.csv
+__pycache__/
+.venv/
+.cursor/

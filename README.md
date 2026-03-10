@@ -1,5 +1,17 @@
 # THYROID_2026
 
+## Publication-Ready Release (v2026.03.10)
+
+- **Scripts 13-15 executed:** optimized MVs, sub-second dashboard tabs, full publication bundles
+- **Local DuckDB backup:** `thyroid_master_local.duckdb` (use if downgrading MotherDuck)
+- **Manuscript tables ready:** `Table1_Cohort_Demographics.csv`, `Table2_Risk_Stratification.csv`, `Table3_Complications.csv`, `Table4_Timeline_Summary.csv`
+- **Studies folder:** `studies/proposal2_ete_staging/` (AJCC 8th + ETE + recurrence PSM)
+- **Publication bundle:** `exports/THYROID_2026_PUBLICATION_BUNDLE_20260310_0414/`
+- **Final release:** `exports/FINAL_RELEASE_v2026.03.10_20260310_0529/`
+- **Tag:** [`v2026.03.10-publication-ready`](../../releases/tag/v2026.03.10-publication-ready)
+
+---
+
 Thyroid cancer research lakehouse — 11,673 patients across 13 base tables,
 8+ analytic views, and a fully interactive Streamlit dashboard backed by
 [MotherDuck](https://motherduck.com) cloud DuckDB.
@@ -30,8 +42,10 @@ Thyroid cancer research lakehouse — 11,673 patients across 13 base tables,
 ├── notebooks/                # Jupyter exploration notebooks
 ├── exports/                  # Publication-ready CSV exports
 ├── processed/                # DVC-tracked parquet files
+├── studies/                  # Per-proposal analysis folders
+├── docs/                     # Documentation (QA report, architecture)
 ├── data_dictionary.md        # Full schema documentation
-└── QA_report.md              # Quality assurance report
+└── RELEASE_NOTES.md          # Publication release notes
 ```
 
 ## Quick start (local)
@@ -168,4 +182,6 @@ Private research data — do not redistribute without permission.
 
 
 ## v2026.03.10 - Publication Release
+
 See [RELEASE_NOTES.md](RELEASE_NOTES.md) for full details.
+QA reconciliation report: [docs/QA_report.md](docs/QA_report.md).

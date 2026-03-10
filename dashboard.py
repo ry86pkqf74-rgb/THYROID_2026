@@ -1448,6 +1448,8 @@ def main():
     try: con = _get_con()
     except Exception as exc: st.error(f"Failed to connect to MotherDuck: {exc}"); st.stop()
 
+    st.info("**Publication-ready v2026.03.10** — local DuckDB backup available · "
+            "[Release Notes](RELEASE_NOTES.md)", icon="📦")
     ci,ct = st.columns([1,11])
     with ci: st.markdown('<div style="font-size:2.8rem;margin-top:4px">🔬</div>',unsafe_allow_html=True)
     with ct: st.markdown('<h1 style="margin:0;padding:0">THYROID_2026</h1><p style="margin:2px 0 0 2px;color:#8892a4;font-size:.78rem;font-family:\'DM Mono\',monospace;letter-spacing:.08em">THYROID CANCER RESEARCH LAKEHOUSE · 11,673 PATIENTS · 13 TABLES · MOTHERDUCK</p>',unsafe_allow_html=True)

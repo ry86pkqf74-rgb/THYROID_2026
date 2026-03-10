@@ -1,0 +1,5 @@
+outs:
+- md5: 3fa84734cd16cb9c0440107dccb949e7
+  size: 79389
+  hash: md5
+  path: patient_level_summary_mv_sorted.parquet

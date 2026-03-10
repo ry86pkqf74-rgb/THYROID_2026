@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this dataset or software, please cite it as below."
+title: "THYROID_2026: Thyroid Cancer Research Lakehouse"
+type: dataset
+authors:
+  - family-names: "Glosser"
+    given-names: "Logan"
+repository-code: "https://github.com/ry86pkqf74-rgb/THYROID_2026"
+license: "MIT"
+date-released: "2026-03-10"
+version: "2026.03.10"
+abstract: >-
+  A comprehensive thyroid cancer research lakehouse covering 11,673 patients
+  across 13 base tables with 60+ engineered features, cross-domain entity
+  extraction, temporal linkage, and interactive Streamlit dashboards backed
+  by MotherDuck cloud DuckDB. Includes propensity-score matched ETE staging
+  analysis and NSQIP surgical outcomes linkage.
+keywords:
+  - thyroid cancer
+  - papillary thyroid carcinoma
+  - clinical research
+  - DuckDB
+  - data lakehouse

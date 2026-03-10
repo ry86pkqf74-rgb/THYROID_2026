@@ -1,0 +1,4 @@
+# Temporary or intermediate export bundles
+*_temp/
+*_draft/
+*.tmp
