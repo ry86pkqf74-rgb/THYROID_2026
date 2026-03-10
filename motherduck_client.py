@@ -52,7 +52,7 @@ class MotherDuckClient:
         return duckdb.connect(f"{self.config.share_path}?motherduck_token={token}")
 
     @staticmethod
-    def query_one(con: duckdb.DuckDBPyConnection, sql: str) -> tuple[Any, ...]:
+    def query_one(con: duckdb.DuckDBPyConnection, sql: str) -> tuple[Any, ...] | None:
         return con.execute(sql).fetchone()
 
     @staticmethod
@@ -63,7 +63,9 @@ class MotherDuckClient:
 if __name__ == "__main__":
     client = MotherDuckClient()
     with client.connect_rw() as con:
-        n_patients = client.query_one(
+        row = client.query_one(
             con, "SELECT COUNT(DISTINCT research_id) FROM master_cohort"
-        )[0]
-        print(f"master_cohort patients: {n_patients}")
+        )
+        if row is None:
+            raise RuntimeError("Expected a result from master_cohort count query")
+        print(f"master_cohort patients: {row[0]}")
