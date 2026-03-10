@@ -17,6 +17,7 @@ Run locally:
     streamlit run dashboard.py
 """
 from __future__ import annotations
+import io
 import os, sys, requests
 from datetime import datetime
 from pathlib import Path
@@ -31,6 +32,12 @@ try:
     HAS_LIFELINES = True
 except ImportError:
     HAS_LIFELINES = False
+
+try:
+    import openpyxl  # noqa: F401
+    HAS_OPENPYXL = True
+except ImportError:
+    HAS_OPENPYXL = False
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from motherduck_client import MotherDuckClient, MotherDuckConfig
@@ -83,6 +90,10 @@ SEQ_TEAL = [[0,"#0a1a20"],[0.5,"#1a8a7a"],[1,"#2dd4bf"]]
 SHARE_PATH = "md:_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c"
 DATABASE   = "thyroid_research_2026"
 
+# Read-replica note: for read-only dashboards, append ?access_mode=read_only
+# to the connection string. MotherDuck read replicas reduce load on the
+# primary instance during concurrent dashboard access.
+
 # ─────────────────────────────────────────────────────────────────────────
 # CONNECTION
 # ─────────────────────────────────────────────────────────────────────────
@@ -120,6 +131,32 @@ def mc(label, value, delta=None):
     return f'<div class="metric-card"><div class="metric-label">{label}</div><div class="metric-value">{value}</div>{d}</div>'
 def sl(t): return f'<span class="section-label">{t}</span>'
 
+def multi_export(df, prefix, key_sfx=""):
+    """Render CSV + Excel + Parquet download buttons in a 3-column row."""
+    ts = datetime.now().strftime("%Y%m%d")
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.download_button("⬇ CSV", df.to_csv(index=False),
+                           f"{prefix}_{ts}.csv", "text/csv",
+                           key=f"csv_{key_sfx}")
+    with c2:
+        if HAS_OPENPYXL:
+            buf = io.BytesIO()
+            df.to_excel(buf, index=False, engine="openpyxl")
+            st.download_button(
+                "⬇ Excel", buf.getvalue(), f"{prefix}_{ts}.xlsx",
+                "application/vnd.openxmlformats-officedocument"
+                ".spreadsheetml.sheet", key=f"xlsx_{key_sfx}")
+        else:
+            st.caption("Install openpyxl for Excel export")
+    with c3:
+        buf = io.BytesIO()
+        df.to_parquet(buf, index=False)
+        st.download_button("⬇ Parquet", buf.getvalue(),
+                           f"{prefix}_{ts}.parquet",
+                           "application/octet-stream",
+                           key=f"pq_{key_sfx}")
+
 # ─────────────────────────────────────────────────────────────────────────
 # SIDEBAR
 # ─────────────────────────────────────────────────────────────────────────
@@ -146,6 +183,10 @@ def build_sidebar(df):
         qa_mode = "All"
         if "qa_issue_count" in df.columns:
             qa_mode = st.radio("QA status", ["All", "Clean only", "Flagged only"], horizontal=True)
+        st.markdown(sl("📅 Days Since Surgery"), unsafe_allow_html=True)
+        days_opts = ["All", "<30d", "30-90d", "90-365d", ">1y"]
+        sel_days = st.radio("Days range", days_opts, horizontal=True,
+                            key="days_filt")
         st.markdown("---")
         st.markdown('<div style="font-family:monospace;font-size:.6rem;color:#4a5568">DATABASE<br><span style="color:#2dd4bf">thyroid_research_2026</span></div>',unsafe_allow_html=True)
         if st.button("Clear filters"): st.rerun()
@@ -163,6 +204,16 @@ def build_sidebar(df):
         f = f[f["qa_issue_count"] == 0]
     elif qa_mode == "Flagged only" and "qa_issue_count" in f.columns:
         f = f[f["qa_issue_count"] > 0]
+    if sel_days != "All" and "latest_tg_days_from_surgery" in f.columns:
+        days_col = f["latest_tg_days_from_surgery"].abs()
+        if sel_days == "<30d":
+            f = f[days_col.notna() & (days_col < 30)]
+        elif sel_days == "30-90d":
+            f = f[days_col.notna() & (days_col >= 30) & (days_col < 90)]
+        elif sel_days == "90-365d":
+            f = f[days_col.notna() & (days_col >= 90) & (days_col < 365)]
+        elif sel_days == ">1y":
+            f = f[days_col.notna() & (days_col >= 365)]
     return f
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -1168,8 +1219,94 @@ def render_qa_dashboard(con):
     where_qa = f"WHERE severity = '{sev_f}'" if sev_f != "All" else ""
     df_issues = sqdf(con, f"SELECT * FROM qa_issues {where_qa} ORDER BY severity, check_id, research_id LIMIT 2000")
     st.dataframe(df_issues, use_container_width=True, height=400, hide_index=True)
-    st.download_button("⬇ Download QA Issues", df_issues.to_csv(index=False),
-                       "qa_issues.csv", "text/csv", key="qa_dl")
+    multi_export(df_issues, "qa_issues", key_sfx="qa_main")
+
+    # ── Cross-File Validation Tables (from script 11.5) ──
+    st.markdown(sl("Cross-File Validation (Script 11.5)"), unsafe_allow_html=True)
+
+    if tbl_exists(con, "qa_laterality_mismatches"):
+        with st.expander("Check A — Laterality Consistency (Op vs Path)", expanded=False):
+            lat_df = sqdf(con,
+                "SELECT laterality_flag, COUNT(*) AS n "
+                "FROM qa_laterality_mismatches GROUP BY 1 ORDER BY 2 DESC")
+            if not lat_df.empty:
+                cs = st.columns(len(lat_df))
+                flag_colors = {"MATCH": "green", "LATERALITY_MISMATCH": "red",
+                               "INCOMPLETE": "orange"}
+                for i, (_, row) in enumerate(lat_df.iterrows()):
+                    with cs[i]:
+                        st.metric(row["laterality_flag"], f"{int(row['n']):,}")
+            lat_detail = sqdf(con,
+                "SELECT * FROM qa_laterality_mismatches "
+                "WHERE laterality_flag = 'LATERALITY_MISMATCH' "
+                "ORDER BY research_id LIMIT 500")
+            if not lat_detail.empty:
+                st.caption(f"{len(lat_detail):,} mismatches shown (max 500)")
+                st.dataframe(lat_detail, use_container_width=True,
+                             height=300, hide_index=True)
+                multi_export(lat_detail, "laterality_mismatches",
+                             key_sfx="lat")
+    else:
+        st.info("Laterality data not available. Run script 11.5 first.",
+                icon="🔍")
+
+    if tbl_exists(con, "qa_report_matching"):
+        with st.expander("Check B — Report Matching (FNA↔Path + US↔Op)", expanded=False):
+            rm_df = sqdf(con, "SELECT * FROM qa_report_matching")
+            if not rm_df.empty:
+                for _, row in rm_df.iterrows():
+                    ct = row.get("check_type", "")
+                    tp = int(row.get("total_pairs", 0))
+                    m = int(row.get("matched", 0))
+                    pct = row.get("match_pct", 0)
+                    label = "FNA → Pathology" if ct == "fna_path" else "US → Operative"
+                    st.markdown(
+                        mc(label, f"{pct}%",
+                           f"{m:,} / {tp:,} pairs matched"),
+                        unsafe_allow_html=True)
+                st.markdown("<br>", unsafe_allow_html=True)
+                st.dataframe(rm_df, use_container_width=True, hide_index=True)
+    else:
+        st.info("Report matching data not available. Run script 11.5 first.",
+                icon="🔍")
+
+    if tbl_exists(con, "qa_missing_demographics"):
+        with st.expander("Check C — Missing Demographics", expanded=False):
+            demo_summary = sqdf(con, """
+                SELECT
+                    SUM(CASE WHEN age_flag = 'MISSING_AGE' THEN 1 ELSE 0 END)
+                        AS missing_age,
+                    SUM(CASE WHEN sex_flag = 'MISSING_SEX' THEN 1 ELSE 0 END)
+                        AS missing_sex,
+                    SUM(CASE WHEN race_flag = 'MISSING_RACE' THEN 1 ELSE 0 END)
+                        AS missing_race,
+                    COUNT(*) AS total_flagged
+                FROM qa_missing_demographics""")
+            if not demo_summary.empty:
+                r = demo_summary.iloc[0]
+                cs = st.columns(4)
+                for c, (lbl, k) in zip(cs, [
+                    ("Total Flagged", "total_flagged"),
+                    ("Missing Age", "missing_age"),
+                    ("Missing Sex", "missing_sex"),
+                    ("Missing Race", "missing_race"),
+                ]):
+                    with c:
+                        st.markdown(mc(lbl, f"{int(r[k]):,}"),
+                                    unsafe_allow_html=True)
+            demo_df = sqdf(con,
+                "SELECT * FROM qa_missing_demographics "
+                "WHERE age_flag != 'OK' OR sex_flag != 'OK' "
+                "ORDER BY research_id LIMIT 1000")
+            if not demo_df.empty:
+                st.markdown("<br>", unsafe_allow_html=True)
+                st.dataframe(demo_df, use_container_width=True,
+                             height=300, hide_index=True)
+                multi_export(demo_df, "missing_demographics",
+                             key_sfx="demo")
+    else:
+        st.info("Demographics QA not available. Run script 11.5 first.",
+                icon="🔍")
 
 # ─────────────────────────────────────────────────────────────────────────
 # TAB: RISK & SURVIVAL
@@ -1315,6 +1452,31 @@ def main():
                 st.success("Switched to Jumbo compute!")
             except Exception as e:
                 st.error(f"Could not switch: {e}")
+
+        st.markdown(sl("📸 Publication"), unsafe_allow_html=True)
+        if st.button("Publication Snapshot", key="pub_snap"):
+            with st.spinner("Exporting all MVs…"):
+                snap_ts = datetime.now().strftime("%Y%m%d")
+                snap_dir = Path(__file__).resolve().parent / "exports" / f"snapshot_{snap_ts}"
+                snap_dir.mkdir(parents=True, exist_ok=True)
+                snap_mvs = [
+                    "patient_level_summary_mv", "tg_trend_long_mv",
+                    "recurrence_risk_features_mv", "serial_nodule_tracking_mv",
+                    "survival_cohort_ready_mv", "molecular_path_risk_mv",
+                    "complication_severity_mv", "advanced_features_v3",
+                ]
+                exported = []
+                for mv in snap_mvs:
+                    if not tbl_exists(con, mv):
+                        continue
+                    try:
+                        snap_df = qdf(con, f"SELECT * FROM {mv}")
+                        snap_df.to_csv(snap_dir / f"{mv}.csv", index=False)
+                        snap_df.to_parquet(snap_dir / f"{mv}.parquet", index=False)
+                        exported.append(mv)
+                    except Exception:
+                        pass
+                st.success(f"Exported {len(exported)} tables → exports/snapshot_{snap_ts}/")
 
     (t_ov,t_ex,t_vz,t_adv,t_gen,t_spec,t_img,t_comp,t_rec,t_exp,t_ai,
      t_tl,t_ev,t_qa,t_surv,t_afv3) = st.tabs([

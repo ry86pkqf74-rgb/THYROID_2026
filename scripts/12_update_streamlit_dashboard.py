@@ -12,8 +12,17 @@ survival_cohort_ready_mv, recurrence_risk_features_mv):
   4. Risk & Survival             — Kaplan-Meier with stratification
   5. Advanced Features v3 Exp.   — full column selector
 
-Also adds sidebar filters (surgery count, QA flag), MotherDuck
-compute-tier controls, updates requirements.txt & README.
+Also adds sidebar filters (surgery count, QA flag, days-since-surgery),
+MotherDuck compute-tier controls, publication snapshot button, and
+multi-format export (CSV/Excel/Parquet). Updates requirements.txt & README.
+
+v3.1 enhancements (script 11.5 integration):
+  - Cross-file validation tables in QA dashboard (laterality, report
+    matching, missing demographics)
+  - Days-since-nearest-surgery sidebar filter
+  - Publication Snapshot button (exports all MVs to dated folder)
+  - Multi-format export buttons (CSV + Excel + Parquet)
+  - Read-replica awareness comments
 
 Usage:
   python scripts/12_update_streamlit_dashboard.py
@@ -52,6 +61,9 @@ REQUIRED_TABLES = [
     "advanced_features_v3",
     "survival_cohort_ready_mv",
     "recurrence_risk_features_mv",
+    "qa_laterality_mismatches",
+    "qa_report_matching",
+    "qa_missing_demographics",
 ]
 
 SQL_PREVIEW = {

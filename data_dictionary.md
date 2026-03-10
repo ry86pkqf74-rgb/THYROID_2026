@@ -518,3 +518,56 @@ NLP-extracted events from clinical notes. Event types:
 Comprehensive analytic view joining `master_cohort` with all Phase 6 tables
 plus existing tumor_pathology and benign_pathology. Includes data availability
 flags for every domain.
+
+---
+
+## Cross-File Validation Tables (Script 11.5)
+
+Created by `scripts/11.5_cross_file_validation.py`. These tables validate
+consistency across multiple source files and flag discrepancies.
+
+### `qa_laterality_mismatches` (table)
+
+Cross-checks operative laterality (`operative_details.side_of_largest_tumor_or_goiter`)
+against pathology procedure laterality (inferred from `path_synoptics.thyroid_procedure`).
+Joined via `master_timeline` for surgery number.
+
+Key columns:
+
+- `research_id`: patient identifier (INT)
+- `operative_side`: side from operative sheet (lowercase)
+- `path_procedure`: full procedure name from synoptic report
+- `path_side`: inferred laterality (right / left / bilateral / isthmus / NULL)
+- `surgery_date`: date of surgery (DATE)
+- `surgery_number`: from master_timeline
+- `laterality_flag`: MATCH, LATERALITY_MISMATCH, or INCOMPLETE
+
+### `qa_report_matching` (table)
+
+Aggregate match rates for two cross-file linkage checks:
+
+1. **fna_path**: FNA bethesda result ↔ pathology diagnosis (365-day window)
+2. **us_operative**: US nodule size ↔ operative sheet size (180-day window)
+
+Key columns:
+
+- `total_pairs`: number of patient-level joins within date window
+- `matched`: pairs where both fields are non-NULL
+- `match_pct`: percentage of matched pairs
+- `check_type`: 'fna_path' or 'us_operative'
+
+### `qa_missing_demographics` (table)
+
+Patients with missing demographic fields. Age and sex sourced from
+`patient_level_summary_mv`; race sourced from `path_synoptics` via LEFT JOIN.
+
+Key columns:
+
+- `research_id`: patient identifier (INT)
+- `age_at_surgery`: age (NULL if missing)
+- `sex`: sex (NULL if missing)
+- `race`: race from path_synoptics (NULL if missing or no synoptic record)
+- `age_flag`: 'MISSING_AGE' or 'OK'
+- `sex_flag`: 'MISSING_SEX' or 'OK'
+- `race_flag`: 'MISSING_RACE' or 'OK'
+- `source_priority`: data source used for demographics lookup

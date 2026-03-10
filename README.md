@@ -131,11 +131,31 @@ Five new tabs added by `scripts/12_update_streamlit_dashboard.py`:
 | **Risk & Survival** | Kaplan-Meier recurrence-free survival with stratification by stage, histology, BRAF; risk feature summary |
 | **Advanced Features v3** | Full column selector across all 60+ engineered features |
 
-**New sidebar filters:** Surgery count, QA status (clean / flagged).
+**New sidebar filters:** Surgery count, QA status (clean / flagged),
+days-since-nearest-surgery range (<30d / 30-90d / 90-365d / >1y).
 
 **Performance controls:** MotherDuck compute tier display, Jumbo instance toggle.
 
-Requires `lifelines` (Kaplan-Meier). Install: `pip install -r requirements.txt`.
+**Publication tools:** "Publication Snapshot" button exports all materialized
+views to a dated `exports/snapshot_YYYYMMDD/` folder as CSV + Parquet.
+Multi-format download buttons (CSV / Excel / Parquet) on all QA tables.
+
+### Script 11.5 — Cross-File Validation
+
+Run `python scripts/11.5_cross_file_validation.py` after script 11 to create
+three cross-file consistency tables:
+
+| Table | Check |
+|-------|-------|
+| `qa_laterality_mismatches` | Operative vs pathology laterality consistency |
+| `qa_report_matching` | FNA↔Pathology and US↔Operative linkage rates |
+| `qa_missing_demographics` | Patients missing age, sex, or race |
+
+These tables are displayed in the QA Dashboard tab and their issues are
+inserted into `qa_issues` with `check_id` prefix `xfile_`.
+
+Requires `lifelines` (Kaplan-Meier) and `openpyxl` (Excel export).
+Install: `pip install -r requirements.txt`.
 
 ## Data dictionary
 
