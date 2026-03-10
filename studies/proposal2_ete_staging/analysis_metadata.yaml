@@ -1,0 +1,110 @@
+study: Proposal 2 — AJCC 8th Edition Staging & ETE
+audit_generated: '2026-03-10T00:22:34.094313'
+runtime_seconds: 56.6
+seed: 42
+python_version: 3.14.2 (main, Dec  5 2025, 16:49:16) [Clang 17.0.0 (clang-1700.4.4.1)]
+packages:
+  numpy: 2.4.3
+  pandas: 2.3.3
+  scipy: 1.17.1
+  statsmodels: 0.14.6
+  sklearn: 1.8.0
+  matplotlib: 3.10.8
+  lifelines: 0.30.3
+data:
+  source_hashes:
+    ptc_full.csv: d4892ff454df9b0d
+    recurrence_full.csv: 3c8ffd687a8a6761
+    imaging_correlation.csv: 6b595ffd0643ea7b
+  expanded_cohort_N: 3278
+  original_classic_N: 596
+  unique_patients_recurrence_PTC: 3278
+cohort:
+  N_total: 3278
+  N_no_ete: 724
+  N_micro_ete: 1736
+  N_gross_ete: 818
+stage_migration:
+  mete_t_downstaged_n: 1241
+  mete_t_downstaged_pct: 71.5
+  overall_downstaged_n: 1872
+  overall_downstaged_pct: 57.3
+auc:
+  AUC_Base_apparent: 0.8611
+  AUC_Base_CV_mean: 0.851
+  AUC_Base_CV_std: 0.0196
+  AUC_Base_optimism: 0.0101
+  AUC_Full_apparent: 0.8791
+  AUC_Full_CV_mean: 0.8762
+  AUC_Full_CV_std: 0.0096
+  AUC_Full_optimism: 0.0029
+  delta_AUC_CV: 0.0252
+  delta_AUC_apparent: 0.018
+audit_findings:
+- severity: CRITICAL
+  tag: LN_RATIO_QUALITY
+  message: ln_examined is effectively binary for 83% of available values (583/3278).
+    LN ratio acts as a binary variable, not continuous. Verify whether this column
+    represents total nodes examined or a binary indicator.
+- severity: IMPORTANT
+  tag: OUTCOME_CIRCULARITY
+  message: 100.0% of gross ETE patients are classified as high risk. The recurrence_risk_band
+    includes gross ETE in its derivation, inflating the gross ETE OR. The mETE OR
+    is the clinically meaningful coefficient.
+- severity: MINOR
+  tag: M_STAGE_MISSING
+  message: m_stage_ajcc8 available for only 18.0% of the expanded cohort. Missing
+    M-stage defaulted to M0.
+- severity: CRITICAL
+  tag: AJCC7_T3b_MAP
+  message: 'T3b→T4a mapping affected 346 patients. Corrected to T3b→T3: 346 T-stage
+    and 46 overall-stage reclassifications.'
+- severity: IMPORTANT
+  tag: PROP_ODDS
+  message: 'Proportional odds assumption may be violated: largest coefficient difference
+    across cut-points is 8.12 for ''ete_gross''. Consider partial proportional odds
+    model.'
+outputs:
+  tables:
+  - analytic_cohort_expanded.csv
+  - table1_demographics.csv
+  - table2_migration.csv
+  - table3_ordinal_regression.csv
+  - table4_sensitivity.csv
+  figures:
+  - fig1_ete_distribution.png
+  - fig2_stage_migration.png
+  - fig3_risk_by_ete.png
+  - fig4_roc_curves.png
+  - fig5_tg_trajectory.png
+  - fig6_forest_plot.png
+  - fig7_kaplan_meier.png
+  - fig8_cohort_flow.png
+  - fig9_forest_expanded.png
+  report: audit_report.md
+  metadata: analysis_metadata.yaml
+primary_result:
+  variable: ete_micro
+  OR: 0.6033
+  CI_lo: 0.5054
+  CI_hi: 0.7202
+  p_value: 0.0
+expanded_cohorts:
+- label: 'A: All PTC'
+  N: 3278
+  cc_n: 3269
+  mETE_OR: 0.6022
+  mETE_CI: (0.50-0.72)
+  mETE_p: <0.001
+- label: 'B: Classic/Unspecified'
+  N: 2166
+  cc_n: 2157
+  mETE_OR: 0.5217
+  mETE_CI: (0.42-0.64)
+  mETE_p: <0.001
+- label: 'C: Original Classic'
+  N: 589
+  cc_n: 588
+  mETE_OR: 0.498
+  mETE_CI: (0.33-0.74)
+  mETE_p: <0.001
