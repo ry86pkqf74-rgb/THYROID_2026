@@ -131,7 +131,7 @@ def _load_cohort(con, is_md: bool, dry_run: bool) -> pd.DataFrame:
 def _build_design_matrix(df: pd.DataFrame) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Return (X, t, event) arrays for the PTCM MLE."""
     age_mean = df["age_at_diagnosis"].mean()
-    age_std  = df["age_at_diagnosis"].std().clip(lower=1.0)
+    age_std  = max(float(df["age_at_diagnosis"].std()), 1.0)
 
     def _ajcc(row, stage: int) -> int:
         try:
