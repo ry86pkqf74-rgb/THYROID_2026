@@ -202,17 +202,41 @@ def mc(label, value, delta=None):
 def sl(t): return f'<span class="section-label">{t}</span>'
 
 def multi_export(df, prefix, key_sfx=""):
-    """Render CSV + Excel + Parquet download buttons in a 3-column row."""
+    """Render CSV + Excel + Parquet download buttons with full sanitization for openpyxl."""
+    if df is None or df.empty:
+        st.info("No data to export")
+        return
+
     ts = datetime.now().strftime("%Y%m%d")
+    df_export = df.copy()
+
+    for col in df_export.columns:
+        dtype = str(df_export[col].dtype)
+        if "datetime" in dtype:
+            if hasattr(df_export[col].dt, "tz") and df_export[col].dt.tz is not None:
+                df_export[col] = df_export[col].dt.tz_localize(None)
+            df_export[col] = (
+                pd.to_datetime(df_export[col], errors="coerce")
+                .dt.strftime("%Y-%m-%d %H:%M:%S")
+                .replace({"NaT": ""})
+            )
+        elif dtype == "object":
+            df_export[col] = df_export[col].astype(str).replace(
+                {"nan": "", "None": "", "<NA>": "", "NaT": ""}
+            )
+        else:
+            df_export[col] = df_export[col].fillna("")
+
     c1, c2, c3 = st.columns(3)
     with c1:
-        st.download_button("⬇ CSV", df.to_csv(index=False),
+        st.download_button("⬇ CSV", df_export.to_csv(index=False),
                            f"{prefix}_{ts}.csv", "text/csv",
                            key=f"csv_{key_sfx}")
     with c2:
         if HAS_OPENPYXL:
             buf = io.BytesIO()
-            df.to_excel(buf, index=False, engine="openpyxl")
+            df_export.to_excel(buf, index=False, engine="openpyxl")
+            buf.seek(0)
             st.download_button(
                 "⬇ Excel", buf.getvalue(), f"{prefix}_{ts}.xlsx",
                 "application/vnd.openxmlformats-officedocument"
@@ -221,7 +245,7 @@ def multi_export(df, prefix, key_sfx=""):
             st.caption("Install openpyxl for Excel export")
     with c3:
         buf = io.BytesIO()
-        df.to_parquet(buf, index=False)
+        df_export.to_parquet(buf, index=False)
         st.download_button("⬇ Parquet", buf.getvalue(),
                            f"{prefix}_{ts}.parquet",
                            "application/octet-stream",
