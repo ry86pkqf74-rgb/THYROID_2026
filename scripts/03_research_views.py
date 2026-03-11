@@ -689,10 +689,10 @@ def main() -> None:
                     ELSE 'low'
                 END AS review_priority_tier,
                 s.total_issues AS total_review_items,
-                CASE WHEN s.histology_status IS NOT NULL
-                     THEN TRUE ELSE FALSE END AS histology_analysis_eligible,
-                s.has_high_risk_molecular AS has_eligible_molecular,
-                s.has_definite_rai AS has_eligible_rai,
+                COALESCE(CASE WHEN s.histology_status IS NOT NULL
+                     THEN TRUE ELSE FALSE END, FALSE) AS histology_analysis_eligible,
+                COALESCE(s.has_high_risk_molecular, FALSE) AS has_eligible_molecular,
+                COALESCE(s.has_definite_rai, FALSE) AS has_eligible_rai,
                 s.molecular_test_count,
                 s.rai_episode_count,
                 s.total_issues AS total_validation_issues

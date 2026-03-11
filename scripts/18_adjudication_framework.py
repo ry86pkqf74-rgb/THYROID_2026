@@ -787,9 +787,9 @@ SELECT
     s.highest_severity AS overall_severity,
     s.review_priority_tier,
     s.total_review_items,
-    s.histology_analysis_eligible,
-    s.has_eligible_molecular,
-    s.has_eligible_rai,
+    COALESCE(s.histology_analysis_eligible, FALSE) AS histology_analysis_eligible,
+    COALESCE(s.has_eligible_molecular, FALSE) AS has_eligible_molecular,
+    COALESCE(s.has_eligible_rai, FALSE) AS has_eligible_rai,
     s.molecular_test_count,
     s.rai_episode_count,
     s.total_validation_issues
