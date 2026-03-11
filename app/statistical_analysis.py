@@ -51,8 +51,9 @@ _LONGITUDINAL_SOURCES = [
     "longitudinal_lab_view",
 ]
 
-# SQL to build an inline NSQIP complication cohort joining complications + master_cohort
-_NSQIP_COHORT_SQL = """
+_COMP_NEG_VALUES = "('','no','none','n/a','na','nan','0','false','neg','negative','absent','normal')"
+
+_NSQIP_COHORT_SQL = f"""
 SELECT
     mc.research_id,
     mc.age_at_surgery,
@@ -65,43 +66,48 @@ SELECT
     tp.braf_mutation_mentioned,
     ps.tumor_1_extrathyroidal_extension AS tumor_1_extrathyroidal_ext,
     ps.thyroid_procedure AS malignant_surgery_type,
-    CASE
-        WHEN LOWER(CAST(comp.rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR))
-             NOT IN ('', 'no', 'none', 'n/a', 'na', 'nan', '0', 'false')
-             AND comp.rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy IS NOT NULL
-        THEN 1 ELSE 0
-    END AS rln_injury,
-    CASE
-        WHEN LOWER(CAST(comp.hypocalcemia AS VARCHAR))
-             NOT IN ('', 'no', 'none', 'n/a', 'na', 'nan', '0', 'false')
-             AND comp.hypocalcemia IS NOT NULL
-        THEN 1 ELSE 0
-    END AS hypocalcemia,
-    CASE
-        WHEN LOWER(CAST(comp.hypoparathyroidism AS VARCHAR))
-             NOT IN ('', 'no', 'none', 'n/a', 'na', 'nan', '0', 'false')
-             AND comp.hypoparathyroidism IS NOT NULL
-        THEN 1 ELSE 0
-    END AS hypoparathyroidism,
-    CASE
-        WHEN LOWER(CAST(comp.seroma AS VARCHAR))
-             NOT IN ('', 'no', 'none', 'n/a', 'na', 'nan', '0', 'false')
-             AND comp.seroma IS NOT NULL
-        THEN 1 ELSE 0
-    END AS seroma,
-    CASE
-        WHEN LOWER(CAST(comp.hematoma AS VARCHAR))
-             NOT IN ('', 'no', 'none', 'n/a', 'na', 'nan', '0', 'false')
-             AND comp.hematoma IS NOT NULL
-        THEN 1 ELSE 0
-    END AS hematoma
+    cp.rln_injury,
+    cp.hypocalcemia,
+    cp.hypoparathyroidism,
+    cp.seroma,
+    cp.hematoma
 FROM master_cohort mc
-INNER JOIN complications comp ON mc.research_id = CAST(comp.research_id AS INT)
+INNER JOIN (
+    SELECT
+        CAST(research_id AS INT) AS research_id,
+        MAX(CASE
+            WHEN LOWER(CAST(rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR))
+                 NOT IN {_COMP_NEG_VALUES}
+                 AND rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy IS NOT NULL
+            THEN 1 ELSE 0
+        END) AS rln_injury,
+        MAX(CASE
+            WHEN LOWER(CAST(hypocalcemia AS VARCHAR)) NOT IN {_COMP_NEG_VALUES}
+                 AND hypocalcemia IS NOT NULL
+            THEN 1 ELSE 0
+        END) AS hypocalcemia,
+        MAX(CASE
+            WHEN LOWER(CAST(hypoparathyroidism AS VARCHAR)) NOT IN {_COMP_NEG_VALUES}
+                 AND hypoparathyroidism IS NOT NULL
+            THEN 1 ELSE 0
+        END) AS hypoparathyroidism,
+        MAX(CASE
+            WHEN LOWER(CAST(seroma AS VARCHAR)) NOT IN {_COMP_NEG_VALUES}
+                 AND seroma IS NOT NULL
+            THEN 1 ELSE 0
+        END) AS seroma,
+        MAX(CASE
+            WHEN LOWER(CAST(hematoma AS VARCHAR)) NOT IN {_COMP_NEG_VALUES}
+                 AND hematoma IS NOT NULL
+            THEN 1 ELSE 0
+        END) AS hematoma
+    FROM complications
+    GROUP BY CAST(research_id AS INT)
+) cp ON mc.research_id = cp.research_id
 LEFT JOIN tumor_pathology tp ON mc.research_id = tp.research_id
 LEFT JOIN path_synoptics ps ON mc.research_id = ps.research_id
 """
 
-# Adds any_nsqip_complication derived from individual flags above
 _NSQIP_COHORT_WRAPPER = f"""
 WITH _base AS ({_NSQIP_COHORT_SQL})
 SELECT *,

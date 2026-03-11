@@ -348,7 +348,7 @@ def render_overview(con):
         tg=q(con,f"SELECT COUNT(*) FROM {_mc} WHERE has_thyroglobulin_labs"),
         atg=q(con,f"SELECT COUNT(*) FROM {_mc} WHERE has_anti_thyroglobulin_labs"),
         comp=q(con,f"SELECT COUNT(DISTINCT research_id) FROM {_cx}") if tbl_exists(con,"complications") else 0,
-        rln=q(con,f"SELECT COUNT(*) FROM {_cx} WHERE LOWER(CAST(rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR)) NOT IN ('nan','','0') AND rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy IS NOT NULL") if tbl_exists(con,"complications") else 0,
+        rln=q(con,f"SELECT COUNT(DISTINCT research_id) FROM {_cx} WHERE LOWER(CAST(rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR)) NOT IN ('','no','none','n/a','na','nan','0','false','neg','negative','absent','normal') AND rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy IS NOT NULL") if tbl_exists(con,"complications") else 0,
         gen=q(con,f"SELECT COUNT(DISTINCT research_id) FROM {_gt}") if tbl_exists(con,"genetic_testing") else 0,
     )
     st.markdown(f'<div style="background:linear-gradient(135deg,#0a1a20,#0e1219);border:1px solid #1e2535;border-left:3px solid #2dd4bf;border-radius:12px;padding:.9rem 1.4rem;margin-bottom:1.2rem"><div style="font-family:\'DM Mono\',monospace;font-size:.62rem;letter-spacing:.15em;color:#2dd4bf;text-transform:uppercase">Total Cohort</div><div style="font-family:\'DM Serif Display\',serif;font-size:2.4rem;color:#f0f4ff;line-height:1">{m["total"]:,} <span style="font-size:.9rem;color:#8892a4;font-family:sans-serif">patients</span></div></div>',unsafe_allow_html=True)
@@ -976,15 +976,81 @@ def render_imaging(con):
 def render_complications(con):
     st.markdown("#### Post-Operative Complications")
     _cx = qual("complications")
-    if tbl_exists(con,"complications"):
-        df_comp = sqdf(con,f"SELECT COUNT(DISTINCT research_id) AS total_patients,SUM(CASE WHEN LOWER(CAST(rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR)) NOT IN ('nan','','0') AND rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy IS NOT NULL THEN 1 ELSE 0 END) AS rln_injuries,SUM(CASE WHEN LOWER(CAST(seroma AS VARCHAR)) NOT IN ('nan','','0') AND seroma IS NOT NULL THEN 1 ELSE 0 END) AS seromas,SUM(CASE WHEN LOWER(CAST(hematoma AS VARCHAR)) NOT IN ('nan','','0') AND hematoma IS NOT NULL THEN 1 ELSE 0 END) AS hematomas FROM {_cx}")
-        if not df_comp.empty and df_comp.iloc[0]["total_patients"]>0:
-            row = df_comp.iloc[0]
-            cols = st.columns(4)
-            for col,(l,k) in zip(cols,[("Total w/ Complication Data","total_patients"),("RLN Injuries","rln_injuries"),("Seromas","seromas"),("Hematomas","hematomas")]):
-                with col: st.markdown(mc(l,f"{int(row[k]):,}"),unsafe_allow_html=True)
-        else: st.info("No complication records found.")
-    else: st.info("Complications table not yet loaded. Run ingestion pipeline first.")
+    if not tbl_exists(con, "complications"):
+        st.info("Complications table not yet loaded. Run ingestion pipeline first.")
+        return
+
+    _NEG = "('','no','none','n/a','na','nan','0','false','neg','negative','absent','normal')"
+    _CONFIRMED_FILTER = (
+        f"LOWER(CAST(rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR)) "
+        f"NOT IN {_NEG} "
+        f"AND rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy IS NOT NULL"
+    )
+    comp_sql = f"""
+    SELECT
+        COUNT(DISTINCT research_id) AS total_patients,
+        COUNT(DISTINCT CASE WHEN {_CONFIRMED_FILTER} THEN research_id END) AS rln_patients,
+        COUNT(DISTINCT CASE
+            WHEN LOWER(CAST(seroma AS VARCHAR)) NOT IN {_NEG} AND seroma IS NOT NULL
+            THEN research_id END) AS seroma_patients,
+        COUNT(DISTINCT CASE
+            WHEN LOWER(CAST(hematoma AS VARCHAR)) NOT IN {_NEG} AND hematoma IS NOT NULL
+            THEN research_id END) AS hematoma_patients,
+        COUNT(DISTINCT CASE
+            WHEN LOWER(CAST(hypocalcemia AS VARCHAR)) NOT IN {_NEG} AND hypocalcemia IS NOT NULL
+            THEN research_id END) AS hypocalcemia_patients,
+        COUNT(DISTINCT CASE
+            WHEN LOWER(CAST(hypoparathyroidism AS VARCHAR)) NOT IN {_NEG}
+                AND hypoparathyroidism IS NOT NULL
+            THEN research_id END) AS hypoparath_patients
+    FROM {_cx}
+    """
+    df_comp = sqdf(con, comp_sql)
+    if df_comp.empty or df_comp.iloc[0]["total_patients"] == 0:
+        st.info("No complication records found.")
+        return
+
+    row = df_comp.iloc[0]
+    total = int(row["total_patients"])
+    rln_n = int(row["rln_patients"])
+    ser_n = int(row["seroma_patients"])
+    hem_n = int(row["hematoma_patients"])
+    hypo_n = int(row["hypocalcemia_patients"])
+    hpt_n = int(row["hypoparath_patients"])
+
+    def _pct(n):
+        return f"{100.0 * n / total:.1f}%" if total else "—"
+
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.markdown(mc("Patients w/ Complication Data", f"{total:,}"), unsafe_allow_html=True)
+    with c2:
+        st.markdown(
+            mc("Confirmed RLN Injury / VCP", f"{rln_n:,}", f"{_pct(rln_n)} of cohort"),
+            unsafe_allow_html=True,
+        )
+    with c3:
+        st.markdown(mc("Hypocalcemia", f"{hypo_n:,}", f"{_pct(hypo_n)} of cohort"), unsafe_allow_html=True)
+
+    c4, c5, c6 = st.columns(3)
+    with c4:
+        st.markdown(mc("Seromas", f"{ser_n:,}", f"{_pct(ser_n)} of cohort"), unsafe_allow_html=True)
+    with c5:
+        st.markdown(mc("Hematomas", f"{hem_n:,}", f"{_pct(hem_n)} of cohort"), unsafe_allow_html=True)
+    with c6:
+        st.markdown(mc("Hypoparathyroidism", f"{hpt_n:,}", f"{_pct(hpt_n)} of cohort"), unsafe_allow_html=True)
+
+    with st.expander("Definition: Confirmed RLN Injury / Vocal Cord Paralysis"):
+        st.markdown(
+            "**Patient-level** count of unique `research_id` values where "
+            "`rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy` contains a "
+            "**confirmed positive** finding (not 'no', 'none', 'n/a', 'absent', "
+            "'normal', 'negative', '0', 'false', or blank). "
+            "Negated mentions are excluded. "
+            "Expected range for a thyroidectomy cohort of this size: **5\u20138%** "
+            f"(~{int(total * 0.05):,}\u2013{int(total * 0.08):,} patients). "
+            "NSQIP benchmark: 5\u20138% for total thyroidectomy."
+        )
 
 # ─────────────────────────────────────────────────────────────────────────
 # TAB: AI INSIGHTS
