@@ -11,6 +11,9 @@
 - Never print full clinical note text in logs; use truncated snippets (e.g. first 80 chars) for PHI safety
 - Do not silently overwrite conflicting clinical values; surface discordance for review
 - Preserve original values (e.g. `entity_date`, `note_date`) when adding inferred fields; never overwrite source data
+- When user says "leave X alone," do not stage/commit/push those files — respect work-in-progress boundaries
+- Commit only files directly related to the current task scope; leave unrelated modified files uncommitted unless explicitly asked
+- Always verify actual file/git state before assuming code is missing (user may provide prompts from stale context)
 
 ## Learned Workspace Facts
 
@@ -198,3 +201,18 @@
 - Nomogram presets: `NOMOGRAM_PRESETS["recurrence"]` and `NOMOGRAM_PRESETS["nsqip_complication"]` with thyroid-specific predictors
 - ML nomogram stores trained model + features in `st.session_state["_adv_ml_model"]` for risk calculator reuse
 - Fine-Gray subdistribution HR not available in lifelines; use Aalen-Johansen CIF; Fine-Gray needs R `cmprsk` or custom impl
+- Script 22 manuscript package (`22_manuscript_package.py` + `22_manuscript_package_v3.sql`): one-click generator producing LaTeX tables (booktabs), 300 DPI PNG/SVG figures (Wong color-blind palette), ZIP as `THYROID_2026_MANUSCRIPT_PACKAGE_YYYYMMDD.zip`; output dir `studies/manuscript_package_YYYYMMDD_HHMM/`
+- Manuscript SQL views: `manuscript_table1_demographics_v` (10 rows), `manuscript_table2_survival_v` (per-stage RAI/RFS), `manuscript_table3_genotype_v` (BRAF/RAS+ vs wild-type)
+- `manuscript_tables_v3_mv` consolidated view: UNION ALL of Tables 1-3 normalized to (table_id, table_name, row_order, row_label, display_value); materialized as TABLE (15 rows) for RO share visibility
+- `deploy_sql()` in `22_manuscript_package.py` naively splits SQL on `;` — semicolons inside SQL string literals break statement parsing; use `|` or other non-semicolon delimiters in display_value strings
+- DuckDB cannot `CREATE OR REPLACE TABLE x` when `x` is an existing VIEW; must DROP VIEW first or stage data via temp table then replace
+- `patient_level_summary_mv` is the correct patient spine for views needing `histology_1_type` and `overall_stage_ajcc8`; `master_cohort` lacks these columns on MotherDuck
+- `rai_treatment_episode_v2` column names: `resolved_rai_date` and `dose_mci` (not `inferred_event_date`/`rai_dose_mci`)
+- `ajcc_stage_grouped` mapping: I/IA/IB/II/IIA/IIB → 'I/II'; III/IVA/IVB/IVC/IV → 'III/IV'; else 'Unknown'
+- `braf_ras_status` derivation: 'BRAF/RAS+' if `braf_positive` OR `ras_positive` (from `recurrence_risk_features_mv` or `tumor_pathology`); else 'wild-type'
+- PTCM bootstrap: warm-start initialization fails on low-event-rate datasets (all resamples collapse to local minimum); cold-start required per resample; `--boot 300` for publication, `--boot 100` default (~12 min)
+- `python -u` (unbuffered) required for real-time stdout when redirecting long-running script output to log files
+- `thyroseq_fill_actions` table: 8th ThyroSeq staging table for field-level fill audit logging
+- `duckdb` CLI binary not installed locally; deploy SQL files via `.venv/bin/python -c "import duckdb; con = duckdb.connect('md:...'); con.execute(open('file.sql').read())"` pattern
+- `numpy` scalar `.clip(lower=...)` keyword not supported (pandas API only); use `max(float(val), threshold)` instead
+- Dashboard Risk & Survival tab (`render_survival`) has 🚀 Generate Full Manuscript Package button (key `surv_manuscript_pkg`); Survival & Outcomes tab (`render_survival_outcomes`) has identical button (key `surv3_manuscript_pkg`)
