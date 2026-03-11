@@ -1,6 +1,39 @@
 # THYROID_2026 Release Notes
 
-## v2026.03.10-statistical-workbench (Latest)
+## v2026.03.10-statistical-workbench-v2 (Latest)
+**Date:** 2026-03-10
+**Patients:** 11,673 | **Enhancement:** Statistical Analysis Workbench — Phase 2 additions
+
+### Statistical Analysis Enhancements
+
+#### `utils/statistical_analysis.py`
+- `generate_table_one()` — now passes `smd=True` to `TableOne` when stratifying; SMD (standardized mean difference) displayed for balance assessment
+- `longitudinal_summary(marker)` — new method: linear mixed-effects model (`MixedLM`, random intercept by patient) for repeated Tg/TSH measurements; falls back to OLS if convergence fails; returns per-patient slope, cohort CI, and rising% with clinical interpretation string
+- `power_two_proportions()` — Fleiss (1981) formula for two-proportion z-test (e.g., BRAF+ vs BRAF− recurrence comparison)
+- `power_logistic()` — Hsieh, Block & Larsen (1998) formula for logistic regression sample size
+- `sample_size_km()` — Schoenfeld (1981) formula for log-rank events + total n
+- `format_clinical_snippet()` — generates plain-English manuscript-ready text for significant regression findings; includes thyroid-specific context for 18 key variables (BRAF, TERT, ETE, LN ratio, AJCC stage, etc.)
+- New constants: `THYROID_NSQIP_OUTCOMES`, `THYROID_NSQIP_PREDICTORS`, `NSQIP_COMPLICATION_COLUMNS`, `ETE_SUBTYPES`, `LONGITUDINAL_MARKERS`, `_CLINICAL_CONTEXT`
+- `THYROID_OUTCOMES` expanded to include `structural_recurrence`, `rai_need`, `any_nsqip_complication`
+
+#### `app/statistical_analysis.py`
+- **7 sub-tabs** (was 5): Table 1 · Hypothesis Testing · Regression Modeling · **Longitudinal Analysis** (new) · Visualizations · Diagnostics · **Publication Export** (new)
+- **Longitudinal Analysis tab**: marker selector (Tg/TSH/Anti-Tg), MixedLM summary, per-patient slope histogram, rising/falling % split, per-patient CSV export
+- **Publication Export tab**: Table 1 export with LaTeX column notes, clinical snippet template textarea, interpretation guide for key predictors, export checklist
+- After every Logistic/Cox result: `format_clinical_snippet()` auto-displayed via `st.info()`
+- `nsqip_complication_cohort` virtual source: inline SQL joins `complications + master_cohort + tumor_pathology + path_synoptics`; computes `rln_injury`, `hypocalcemia`, `hypoparathyroidism`, `seroma`, `hematoma`, `any_nsqip_complication` flags
+- Data sources expanded: `extracted_clinical_events_v4`, `longitudinal_lab_view`, `nsqip_complication_cohort`
+
+#### `scripts/36_statistical_analysis_examples.py`
+- Phase 7: `phase7_longitudinal()` — runs MixedLM for Tg and TSH; exports per-patient CSV and model summary
+- Phase 8: `phase8_power_analysis()` — four thyroid-specific hypotheses (BRAF recurrence, ETE logistic, Cox HR=1.8, hypocalcemia NSQIP); exports `power_analysis.csv`
+
+#### `notebooks/36_statistical_analysis_examples.ipynb`
+- New notebook (35 cells) covering: connection, Table 1 with SMD, FDR hypothesis tests, logistic OR + forest plot + snippet, Cox HR + forest plot + snippet, longitudinal Tg/TSH mixed-effects, power analysis (3 hypotheses + sensitivity curve), Spearman heatmap, NSQIP complications, missing data summary
+
+---
+
+## v2026.03.10-statistical-workbench (Previous)
 **Date:** 2026-03-10
 **Patients:** 11,673 | **New capability:** Publication-ready Statistical Analysis Workbench
 

@@ -110,10 +110,46 @@ The share is SELECT-only — data cannot be modified through it.
 - **QA & Adjudication** — cross-domain QA summary, linkage quality, date completeness
 - **Validation Engine** — adjudication confirmations, chronology anomalies,
   completeness scorecard, combined review queue, domain-level downloads
-- **Statistical Analysis** — interactive Table 1 (tableone), hypothesis testing
-  with FDR/Bonferroni correction, logistic regression (OR, VIF, AUC),
-  Cox proportional hazards (HR, Schoenfeld diagnostics), forest plots,
-  correlation heatmaps, missing data visualization, and export
+- **Statistical Analysis** — comprehensive interactive stats workbench (7 sub-tabs):
+  - *Table 1* — auto-type-detected cohort description with SMD (standardized mean difference) when stratifying; Shapiro-Wilk normality auto-detection; CSV/Excel/Parquet export
+  - *Hypothesis Testing* — FDR/Bonferroni/Holm multi-comparison correction; auto test selection (t/Mann-Whitney/ANOVA/Kruskal/chi²/Fisher)
+  - *Regression Modeling* — logistic regression (OR table, VIF, AUC) + Cox PH (HR, concordance, Schoenfeld); publication forest plots; plain-English clinical snippets auto-displayed after results
+  - *Longitudinal Analysis* — linear mixed-effects model (random intercept by patient) for Tg/TSH/Anti-Tg trajectories; per-patient slope histogram; rising/falling percentage
+  - *Visualizations* — Spearman/Pearson/Kendall correlation heatmaps, missing data bar, distribution comparison
+  - *Diagnostics* — library status, data source row counts, package versions
+  - *Publication Export* — LaTeX-annotated Table 1, clinical snippet templates, export checklist
+
+## Interactive Stats & Modeling
+
+The `ThyroidStatisticalAnalyzer` class (`utils/statistical_analysis.py`) provides a publication-ready statistical engine:
+
+```python
+from utils.statistical_analysis import ThyroidStatisticalAnalyzer
+analyzer = ThyroidStatisticalAnalyzer(con)
+
+# Table 1 with SMD
+t1_df, meta = analyzer.generate_table_one(data=df, groupby_col="braf_positive")
+
+# FDR-corrected hypothesis tests
+results = analyzer.run_hypothesis_tests(df, "event_occurred", features, correction="fdr_bh")
+
+# Logistic regression with clinical snippet
+result = analyzer.fit_logistic_regression("event_occurred", predictors, data=df)
+snippet = ThyroidStatisticalAnalyzer.format_clinical_snippet(result, model_type="OR")
+
+# Longitudinal Tg mixed-effects
+long = analyzer.longitudinal_summary(marker="tg")
+
+# Power analysis
+n = ThyroidStatisticalAnalyzer.power_two_proportions(p1=0.15, p2=0.05)
+```
+
+**CLI demo** (outputs to `studies/statistical_analysis_examples/`):
+```bash
+.venv/bin/python scripts/36_statistical_analysis_examples.py --md
+```
+
+**Notebook**: `notebooks/36_statistical_analysis_examples.ipynb` (10 sections, 35 cells)
 
 ## CI / CD
 
