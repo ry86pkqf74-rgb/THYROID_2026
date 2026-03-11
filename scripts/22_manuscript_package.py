@@ -145,9 +145,15 @@ def materialize_consolidated(con, dry_run: bool) -> None:
     section("Materializing manuscript_tables_v3_mv")
     try:
         con.execute(
-            "CREATE OR REPLACE TABLE manuscript_tables_v3_mv "
+            "CREATE OR REPLACE TEMP TABLE _mv_staging "
             "AS SELECT * FROM manuscript_tables_v3_mv"
         )
+        con.execute("DROP VIEW IF EXISTS manuscript_tables_v3_mv")
+        con.execute(
+            "CREATE OR REPLACE TABLE manuscript_tables_v3_mv "
+            "AS SELECT * FROM _mv_staging"
+        )
+        con.execute("DROP TABLE IF EXISTS _mv_staging")
         cnt = con.execute("SELECT COUNT(*) FROM manuscript_tables_v3_mv").fetchone()[0]
         print(f"  manuscript_tables_v3_mv materialized: {cnt:,} rows")
     except Exception as e:
