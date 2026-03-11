@@ -1029,3 +1029,56 @@ After running, restart the Streamlit dashboard to clear the cached connection.
 - `time_to_rai_v3_mv` — per-patient `time_to_rai_days`, `ajcc_stage_grouped`, and `date_rescue_confidence`; uses inferred timeline anchors from `inferred_event_date`
 - `recurrence_free_survival_v3_mv` — per-patient `time_to_recurrence_days` with `censoring_flag` and surgery-aligned censor dates for recurrence endpoint analysis
 - `genotype_stratified_outcomes_v3_mv` — genotype-stratified (`braf_ras_status`) survival surface combining RAI timing, recurrence-free timing, stage grouping, and rescue-confidence tier
+
+---
+
+## ThyroSeq Workbook Integration (script 41)
+
+**Source:** `Thyroseq Data Complete.xlsx` — 83 rows, 34 columns of ThyroSeq molecular testing results, pathology, demographics, serial Tg/TgAb/TSH follow-up, surgery, RAI, and imaging.
+
+### Staging Tables
+
+| Table | Description |
+|-------|-------------|
+| `stg_thyroseq_excel_raw` | Raw workbook rows with source metadata, normalized identifiers (`mrn_norm`, `dob_norm`, `name_norm`), and deterministic `row_hash` |
+| `stg_thyroseq_match_results` | Patient matching results: `matched_research_id`, `match_method`, `match_confidence`, `review_required`, `conflict_flags` |
+| `stg_thyroseq_parsed` | Parsed/normalized fields: mutations, fusions, margins, ETE, lymph nodes, angioinvasion, demographics, surgery, RAI |
+
+### Enrichment Tables (long format)
+
+| Table | Description |
+|-------|-------------|
+| `thyroseq_molecular_enrichment` | One row per molecular test record: mutation/fusion flags, allele fractions, GEP, CNA |
+| `thyroseq_followup_labs` | One row per serial Tg/TgAb/TSH measurement: value, operator, date, stimulated flag |
+| `thyroseq_followup_events` | One row per surgery/RAI/imaging event with dates and parsed attributes |
+
+### Audit Tables
+
+| Table | Description |
+|-------|-------------|
+| `thyroseq_fill_actions` | Field-level audit log of null-fill operations with old/proposed values |
+| `thyroseq_review_queue` | Items requiring manual review: match ambiguity, parse failures, structured conflicts |
+
+### Match Methods
+
+| Method | Confidence | Auto-merge |
+|--------|-----------|------------|
+| `exact_mrn_dob_name` | 1.0 | Yes |
+| `exact_mrn_name` | 0.9 | Yes |
+| `exact_mrn_only` | 0.7 | Yes |
+| `exact_name_dob` | 0.6 | No (review) |
+| `mrn_with_discordance` | 0.3 | No (review) |
+| `mrn_ambiguous_multi` | 0.2 | No (review) |
+| `manual_review_required` | 0.0 | No (review) |
+
+### Fill Policy
+
+Only auto-fill when: target field is NULL, source match confidence >= 0.7, source value is parseable. Conflicts are routed to `thyroseq_review_queue`.
+
+### Run Command
+
+```bash
+.venv/bin/python scripts/41_ingest_thyroseq_excel.py \
+    --input '/path/to/Thyroseq Data Complete.xlsx' \
+    [--md] [--local] [--dry-run]
+```
