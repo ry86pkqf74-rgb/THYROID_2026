@@ -249,12 +249,20 @@ nb_dates AS (
 )
 SELECT
     e.*,
-    COALESCE(
-        TRY_CAST(e.entity_date AS DATE),
-        TRY_CAST(e.note_date AS DATE),
-        nb.resolved_note_body_date,
-        {surg_coalesce}
-    ) AS inferred_event_date,
+    CASE
+        WHEN COALESCE(
+            TRY_CAST(e.entity_date AS DATE),
+            TRY_CAST(e.note_date AS DATE),
+            nb.resolved_note_body_date,
+            {surg_coalesce}
+        ) > CURRENT_DATE THEN CURRENT_DATE
+        ELSE COALESCE(
+            TRY_CAST(e.entity_date AS DATE),
+            TRY_CAST(e.note_date AS DATE),
+            nb.resolved_note_body_date,
+            {surg_coalesce}
+        )
+    END AS inferred_event_date,
     CASE
         WHEN e.entity_date IS NOT NULL AND TRY_CAST(e.entity_date AS DATE) IS NOT NULL
             THEN 'entity_date'

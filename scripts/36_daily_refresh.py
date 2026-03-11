@@ -3,11 +3,11 @@
 36_daily_refresh.py — Full Pipeline Refresh Orchestrator
 
 Runs the complete THYROID_2026 deployment chain in order:
-  Phase 6 adjudication:  15 → 16 → 17 → 18 → 19
+  Phase 6 adjudication:  15 → 16 → 17 → 18 → 19 → 39
   V2 canonical:          22 → 23 → 24 → 25 → 26 → 27
   Research views:        03
   Validation:            29 → 30
-  Analytics:             31 → 37
+  Analytics:             31 → 37 → 38
 
 Designed for cron / GitHub Actions nightly refresh.
 
@@ -35,6 +35,7 @@ PHASE6_CHAIN = [
     "17_semantic_cleanup_v3.py",
     "18_adjudication_framework.py",
     "19_reviewer_persistence.py",
+    "39_gap_remediation.py",
 ]
 
 V2_CHAIN = [
@@ -55,6 +56,7 @@ REFRESH_CHAIN = [
 ANALYTICS_CHAIN = [
     "31_analytic_models.py",
     "37_publication_export.py",
+    "38_mixture_cure_models.py",
 ]
 
 

@@ -143,7 +143,7 @@
 - `MOTHERDUCK_TOKEN` in `.streamlit/secrets.toml` can be loaded via `toml.load('.streamlit/secrets.toml')['MOTHERDUCK_TOKEN']` for scripts
 - lifelines does not include Fine-Gray; use `AalenJohansenFitter` for CIF; Fine-Gray subdistribution HR needs R `cmprsk` or custom implementation
 - `fna_cytology` has no `fna_date_parsed` column; use `fna_date` only
-- Script 36 (`36_daily_refresh.py`) orchestrates the full pipeline chain (15→19, 22→27, 03, 29, 30, 31, 37)
+- Script 36 (`36_daily_refresh.py`) orchestrates the full pipeline chain (15→19→39, 22→27, 03, 29, 30, 31, 37, 38)
 - Script 39 (`39_gap_remediation.py`): note-body date recovery + molecular/RAI/histology gap fixes
 - Note-body date recovery: `note_body_date_recovery_v` extracts dates from `clinical_notes_long.note_text` body by skipping demographic headers (DOB) and parsing after clinical content markers (HPI, Chief Complaint, Subjective, etc.); handles 2-digit year normalization (≤30→20xx, >30→19xx); uses `TRY_STRPTIME` for MM/DD/YYYY parsing
 - New date_status tier: `note_text_inferred_date` (confidence 50) sits between `inferred_day_level_date` (70) and `coarse_anchor_date` (35-40); 16,644 entity rows promoted from coarse_anchor to note_text_inferred; coarse_anchor dropped 24,572→7,928
@@ -154,5 +154,8 @@
 - AJCC8 T-staging rules: microscopic ETE does NOT upstage (T1-T2 preserved); only gross ETE → T3b; size ≤1→T1a, ≤2→T1b, ≤4→T2, >4→T3a
 - 7,240 histology records with no histology type are benign/completion procedures (6,492 primary with None histology, 748 reoperation with None histology, 415 also have cancer record in another path_synoptics row)
 - 8,799 molecular rows are placeholder stubs (date='x', platform='x', result=missing) — not real tests; only 1,327 non-placeholder molecular rows exist
+- Script 39 enriched views include a future-date plausibility guard: if inferred date > CURRENT_DATE, inferred_event_date is capped at CURRENT_DATE
+- Script 40 (`40_benign_classification.py`) creates `benign_procedure_classification_v` for no-histology path_synoptics rows; current local breakdown: 5,163 multinodular/hyperplasia, 538 adenoma, 338 thyroiditis, 304 graves, 421 completion/reoperation-after-cancer, 475 unclassified
+- Mixture cure modeling is integrated via script 38 (`38_mixture_cure_models.py`), `cure_cohort`/`cure_kpis` materialization in script 26, and Cure Probability dashboard tab (`app/cure_probability.py`)
 - Deployment order updated: script 15 → 16 → 17 → 18 → 19 → 20 → ... → 39
 - Next phase: manuscript submission, additional subgroup refinements
