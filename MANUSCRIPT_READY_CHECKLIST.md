@@ -40,3 +40,10 @@ Use this checklist before submission or Zenodo archive.
 - **Analytic modeling:** Use `risk_enriched_mv`, `advanced_features_v3`, manuscript export views
 - **Zenodo archive:** Create snapshot from tag, upload bundle + code
 - **Manuscript figures:** Use `notebooks/01_publication_figures.ipynb` for Kaplan-Meier, ETE staging, timeline explorer
+
+## Manuscript Package V3 — Script 22
+
+- [ ] Deploy views: `duckdb "md:thyroid_research_2026" < scripts/22_manuscript_package_v3.sql`
+- [ ] Run one-click package: `python scripts/22_manuscript_package.py --md`
+- [ ] Verify ZIP created: `THYROID_2026_MANUSCRIPT_PACKAGE_YYYYMMDD.zip`
+- [ ] Confirm `studies/manuscript_package_*/` contains tables/, figures/, manifest.json
