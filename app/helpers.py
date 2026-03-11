@@ -127,27 +127,57 @@ def badge(text: str, color_key: str = "teal") -> str:
 
 
 def multi_export(df: pd.DataFrame, prefix: str, key_sfx: str = "") -> None:
-    """Render CSV + Excel + Parquet download buttons in a 3-column row."""
-    ts = datetime.now().strftime("%Y%m%d")
+    """Robust multi-format export — handles nullable Int64/boolean, tz-aware dates, object columns, and empty dataframes."""
+    if df is None or df.empty:
+        st.info("No data to export")
+        return
+
+    ts = datetime.now().strftime("%Y%m%d_%H%M")
+    df_export = df.copy()
+
+    # 1. Datetime columns (MotherDuck often returns tz-aware)
+    datetime_cols = [col for col in df_export.columns if pd.api.types.is_datetime64_any_dtype(df_export[col])]
+    for col in datetime_cols:
+        if hasattr(df_export[col].dt, "tz") and df_export[col].dt.tz is not None:
+            df_export[col] = df_export[col].dt.tz_localize(None)
+        df_export[col] = pd.to_datetime(df_export[col], errors="coerce").dt.strftime("%Y-%m-%d %H:%M:%S").replace("NaT", "")
+
+    # 2. Safe handling for nullable types (Int64, boolean)
+    for col in df_export.columns:
+        if col in datetime_cols:
+            continue
+        dtype_str = str(df_export[col].dtype)
+        if "boolean" in dtype_str or pd.api.types.is_bool_dtype(df_export[col]):
+            df_export[col] = df_export[col].map({True: "Yes", False: "No", pd.NA: "", None: ""})
+        elif pd.api.types.is_numeric_dtype(df_export[col]) and "Int" in dtype_str:
+            df_export[col] = df_export[col].fillna(0) if any(k in col.lower() for k in ["count", "age", "year"]) else df_export[col]
+        else:
+            df_export[col] = df_export[col].astype(str).replace(["nan", "None", "<NA>", "NaT"], "")
+
+    # Final safety net — ensure all remaining object columns are plain strings
+    df_export = df_export.astype(str).replace("nan", "")
+
     c1, c2, c3 = st.columns(3)
     with c1:
-        st.download_button("⬇ CSV", df.to_csv(index=False),
+        st.download_button("⬇️ CSV", df_export.to_csv(index=False),
                            f"{prefix}_{ts}.csv", "text/csv",
                            key=f"csv_{key_sfx}")
     with c2:
         if HAS_OPENPYXL:
             buf = io.BytesIO()
-            df.to_excel(buf, index=False, engine="openpyxl")
+            df_export.to_excel(buf, index=False, engine="openpyxl")
+            buf.seek(0)
             st.download_button(
-                "⬇ Excel", buf.getvalue(), f"{prefix}_{ts}.xlsx",
+                "⬇️ Excel", buf.getvalue(), f"{prefix}_{ts}.xlsx",
                 "application/vnd.openxmlformats-officedocument"
                 ".spreadsheetml.sheet", key=f"xlsx_{key_sfx}")
         else:
             st.caption("Install openpyxl for Excel export")
     with c3:
         buf = io.BytesIO()
-        df.to_parquet(buf, index=False)
-        st.download_button("⬇ Parquet", buf.getvalue(),
+        df_export.to_parquet(buf, index=False)
+        buf.seek(0)
+        st.download_button("⬇️ Parquet", buf.getvalue(),
                            f"{prefix}_{ts}.parquet",
                            "application/octet-stream",
                            key=f"pq_{key_sfx}")
