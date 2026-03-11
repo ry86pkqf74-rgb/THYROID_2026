@@ -239,37 +239,95 @@ def main() -> None:
 
     section("26 -- MotherDuck Materialization v2")
 
-    local_con = duckdb.connect(str(DB_PATH))
-    print(f"  Source: {DB_PATH}")
+    # Defer local DB connection — only open if actually needed
+    try:
+        local_con = duckdb.connect(str(DB_PATH))
+        print(f"  Source: {DB_PATH}")
+    except Exception as local_err:
+        local_con = None
+        print(f"  Local DB unavailable ({local_err}); will attempt MD-only mode.")
+        if not args.md:
+            print("  ERROR: Local DB locked and --md not specified. Exiting.")
+            sys.exit(1)
 
     required = [
         "tumor_episode_master_v2", "molecular_test_episode_v2",
         "rai_treatment_episode_v2", "imaging_nodule_long_v2",
         "operative_episode_detail_v2",
     ]
-    missing = [t for t in required if not table_available(local_con, t)]
-    if missing:
-        print(f"\n  ERROR: Missing required tables: {missing}")
-        print("  Run scripts 22-25 first.")
-        local_con.close()
-        sys.exit(1)
 
     if args.md:
+        # MotherDuck-first path: check MD for required tables, skip local if all present
         try:
             from motherduck_client import MotherDuckClient, MotherDuckConfig
             cfg = MotherDuckConfig(database="thyroid_research_2026")
             client = MotherDuckClient(cfg)
             md_con = client.connect_rw()
-            print("  Target: MotherDuck (RW)")
-            materialize_all(local_con, md_con, same_connection=False)
-            md_con.close()
         except Exception as e:
             print(f"  MotherDuck unavailable: {e}")
-            print("  Materializing locally instead")
-            materialize_all(local_con, local_con, same_connection=True)
-    else:
-        print("  Target: local DuckDB (use --md for MotherDuck)")
-        materialize_all(local_con, local_con, same_connection=True)
+            local_con.close()
+            sys.exit(1)
+
+        missing_md = [t for t in required if not table_available(md_con, t)]
+        missing_local = (
+            [t for t in required if not table_available(local_con, t)]
+            if local_con is not None else required
+        )
+
+        if not missing_md:
+            print("  Source: MotherDuck (all required tables present)")
+            print("  Target: MotherDuck (RW, md-only mode)")
+            materialize_all(md_con, md_con, same_connection=True)
+            section("Materialization Summary")
+            for md_name, _ in MATERIALIZATION_MAP:
+                try:
+                    cnt = md_con.execute(f"SELECT COUNT(*) FROM {md_name}").fetchone()[0]
+                    print(f"  {md_name:<50} {cnt:>8,} rows")
+                except Exception:
+                    pass
+            md_con.close()
+            if local_con is not None:
+                local_con.close()
+            print("\n  Done.\n")
+            return
+        elif not missing_local:
+            print("  Source: local DuckDB")
+            print("  Target: MotherDuck (RW)")
+            materialize_all(local_con, md_con, same_connection=False)
+        else:
+            print(f"\n  ERROR: Tables missing from both local and MotherDuck: {missing_md}")
+            print("  Run scripts 22-25 first or use _fix_missing_v2_tables.py.")
+            md_con.close()
+            if local_con is not None:
+                local_con.close()
+            sys.exit(1)
+
+        section("Materialization Summary")
+        for md_name, _ in MATERIALIZATION_MAP:
+            try:
+                cnt = md_con.execute(f"SELECT COUNT(*) FROM {md_name}").fetchone()[0]
+                print(f"  {md_name:<50} {cnt:>8,} rows")
+            except Exception:
+                pass
+        md_con.close()
+        if local_con is not None:
+            local_con.close()
+        print("\n  Done.\n")
+        return
+
+    missing_local = (
+        [t for t in required if not table_available(local_con, t)]
+        if local_con is not None else required
+    )
+    if missing_local:
+        print(f"\n  ERROR: Missing required tables: {missing_local}")
+        print("  Run scripts 22-25 first.")
+        if local_con is not None:
+            local_con.close()
+        sys.exit(1)
+
+    print("  Target: local DuckDB (use --md for MotherDuck)")
+    materialize_all(local_con, local_con, same_connection=True)
 
     section("Materialization Summary")
     for md_name, _ in MATERIALIZATION_MAP:
@@ -281,7 +339,8 @@ def main() -> None:
         except Exception:
             pass
 
-    local_con.close()
+    if local_con is not None:
+        local_con.close()
     print("\n  Done.\n")
 
 

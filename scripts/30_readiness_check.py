@@ -135,10 +135,14 @@ def main() -> None:
     section("Critical Tables")
     crit_ok = 0
     crit_miss = 0
+    # Tables that are OK when they exist even with 0 rows (empty by design at start)
+    schema_only_ok = {"adjudication_decisions", "adjudication_decision_history"}
+
     for tbl, category in CRITICAL_TABLES:
         exists = tbl_exists(con, tbl)
         cnt = row_count(con, tbl) if exists else 0
-        status = "OK" if exists and cnt > 0 else ("EMPTY" if exists else "MISSING")
+        ok_condition = exists and (cnt > 0 or tbl in schema_only_ok)
+        status = "OK" if ok_condition else ("EMPTY" if exists else "MISSING")
         report["critical"][tbl] = {"status": status, "rows": cnt, "category": category}
         icon = "OK  " if status == "OK" else "MISS"
         print(f"  {icon} {tbl:<50} {cnt:>8,} rows  [{category}]")
@@ -169,15 +173,15 @@ def main() -> None:
     print(f"  Critical: {crit_ok}/{len(CRITICAL_TABLES)} present")
     print(f"  Optional: {opt_ok}/{len(OPTIONAL_TABLES)} present")
     if report["critical_missing"]:
-        print(f"\n  MISSING CRITICAL TABLES:")
+        print("\n  MISSING CRITICAL TABLES:")
         for t in report["critical_missing"]:
             print(f"    - {t}")
-        print(f"\n  Run the following to fix:")
-        print(f"    python scripts/22_canonical_episodes_v2.py [--md]")
-        print(f"    python scripts/23_cross_domain_linkage_v2.py [--md]")
-        print(f"    python scripts/26_motherduck_materialize_v2.py [--md]")
+        print("\n  Run the following to fix:")
+        print("    python scripts/22_canonical_episodes_v2.py [--md]")
+        print("    python scripts/23_cross_domain_linkage_v2.py [--md]")
+        print("    python scripts/26_motherduck_materialize_v2.py [--md]")
     else:
-        print(f"\n  ALL CRITICAL TABLES PRESENT — system is ready.")
+        print("\n  ALL CRITICAL TABLES PRESENT — system is ready.")
 
     if args.json:
         print(json.dumps(report, indent=2, default=str))
