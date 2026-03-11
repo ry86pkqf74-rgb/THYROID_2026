@@ -691,6 +691,241 @@ VW_CONFIRMED_POSTOP_RLN_SQL = textwrap.dedent("""\
       AND TRY_CAST(c.laryngoscopy_date AS DATE) > sp.first_surgery_date
 """)
 
+# ---------------------------------------------------------------------------
+# Publication-grade RLN injury views (multi-source, tiered)
+#   Tier 1: Laryngoscopy-confirmed (complications.vocal_cord_status)
+#   Tier 2: Chart-documented (rln_injury='yes', excl. 'x' placeholders)
+#   Tier 3: NLP-extracted (note_entities_complications, conf>=0.65, present)
+# ---------------------------------------------------------------------------
+
+VW_RLN_SUMMARY_SQL = textwrap.dedent("""\
+    CREATE OR REPLACE TABLE vw_confirmed_postop_rln_injury_summary AS
+    WITH surgical_patients AS (
+        SELECT
+            CAST(research_id AS INT) AS research_id,
+            MIN(TRY_CAST(surg_date AS DATE)) AS first_surgery_date
+        FROM path_synoptics
+        WHERE TRY_CAST(surg_date AS DATE) IS NOT NULL
+        GROUP BY 1
+    ),
+    tier1_laryngoscopy AS (
+        SELECT DISTINCT
+            CAST(c.research_id AS INT) AS research_id,
+            c.affected_side
+        FROM complications c
+        JOIN surgical_patients sp
+            ON CAST(c.research_id AS INT) = sp.research_id
+        WHERE LOWER(TRIM(CAST(c.vocal_cord_status AS VARCHAR)))
+              IN ('paresis', 'paralysis')
+          AND TRY_CAST(c.laryngoscopy_date AS DATE) > sp.first_surgery_date
+    ),
+    tier2_chart AS (
+        SELECT DISTINCT
+            CAST(c.research_id AS INT) AS research_id,
+            c.affected_side
+        FROM complications c
+        JOIN surgical_patients sp
+            ON CAST(c.research_id AS INT) = sp.research_id
+        WHERE LOWER(TRIM(CAST(
+            c.rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR
+        ))) = 'yes'
+          AND CAST(c.research_id AS INT)
+              NOT IN (SELECT research_id FROM tier1_laryngoscopy)
+    ),
+    tier3_nlp AS (
+        SELECT DISTINCT
+            CAST(ne.research_id AS INT) AS research_id,
+            CAST(NULL AS VARCHAR) AS affected_side
+        FROM note_entities_complications ne
+        JOIN surgical_patients sp
+            ON CAST(ne.research_id AS INT) = sp.research_id
+        WHERE LOWER(ne.entity_value_norm) IN (
+            'rln_injury', 'vocal_cord_paralysis', 'vocal_cord_paresis'
+        )
+        AND LOWER(COALESCE(ne.present_or_negated, '')) = 'present'
+        AND (ne.confidence IS NULL
+             OR TRY_CAST(ne.confidence AS DOUBLE) >= 0.65)
+        AND COALESCE(
+            ne.inferred_event_date,
+            TRY_CAST(ne.entity_date AS DATE),
+            TRY_CAST(ne.note_date AS DATE)
+        ) >= sp.first_surgery_date
+        AND CAST(ne.research_id AS INT) NOT IN (
+            SELECT research_id FROM tier1_laryngoscopy
+            UNION
+            SELECT research_id FROM tier2_chart
+        )
+    ),
+    all_confirmed AS (
+        SELECT research_id, affected_side FROM tier1_laryngoscopy
+        UNION ALL
+        SELECT research_id, affected_side FROM tier2_chart
+        UNION ALL
+        SELECT research_id, affected_side FROM tier3_nlp
+    )
+    SELECT
+        COUNT(DISTINCT ac.research_id)
+            AS confirmed_rln_injury_patients,
+        ROUND(100.0 * COUNT(DISTINCT ac.research_id) / NULLIF(
+            (SELECT COUNT(DISTINCT CAST(research_id AS INT))
+             FROM path_synoptics
+             WHERE TRY_CAST(surg_date AS DATE) IS NOT NULL), 0
+        ), 2)
+            AS rln_injury_percent,
+        COUNT(DISTINCT CASE
+            WHEN LOWER(TRIM(CAST(ac.affected_side AS VARCHAR)))
+                 IN ('left', 'right', 'unilateral')
+            THEN ac.research_id END)
+            AS unilateral_patients,
+        COUNT(DISTINCT CASE
+            WHEN LOWER(TRIM(CAST(ac.affected_side AS VARCHAR))) = 'bilateral'
+            THEN ac.research_id END)
+            AS bilateral_patients,
+        COUNT(DISTINCT ac.research_id)
+            + COUNT(DISTINCT CASE
+                WHEN LOWER(TRIM(CAST(ac.affected_side AS VARCHAR))) = 'bilateral'
+                THEN ac.research_id END)
+            AS estimated_injured_nerves,
+        (SELECT COUNT(*) FROM tier1_laryngoscopy)
+            AS tier1_laryngoscopy_count,
+        (SELECT COUNT(*) FROM tier2_chart)
+            AS tier2_chart_count,
+        (SELECT COUNT(*) FROM tier3_nlp)
+            AS tier3_nlp_count
+    FROM all_confirmed ac
+""")
+
+VW_RLN_DETAIL_SQL = textwrap.dedent("""\
+    CREATE OR REPLACE TABLE vw_patient_postop_rln_injury_detail AS
+    WITH surgical_patients AS (
+        SELECT
+            CAST(research_id AS INT) AS research_id,
+            MIN(TRY_CAST(surg_date AS DATE)) AS first_surgery_date
+        FROM path_synoptics
+        WHERE TRY_CAST(surg_date AS DATE) IS NOT NULL
+        GROUP BY 1
+    ),
+    tier1 AS (
+        SELECT DISTINCT
+            CAST(c.research_id AS INT) AS research_id,
+            LOWER(TRIM(CAST(c.vocal_cord_status AS VARCHAR))) AS worst_status,
+            c.affected_side AS sides_affected,
+            TRY_CAST(c.laryngoscopy_date AS DATE) AS first_rln_detection_date,
+            sp.first_surgery_date,
+            'laryngoscopy_confirmed' AS source_tier
+        FROM complications c
+        JOIN surgical_patients sp
+            ON CAST(c.research_id AS INT) = sp.research_id
+        WHERE LOWER(TRIM(CAST(c.vocal_cord_status AS VARCHAR)))
+              IN ('paresis', 'paralysis')
+          AND TRY_CAST(c.laryngoscopy_date AS DATE) > sp.first_surgery_date
+    ),
+    tier2 AS (
+        SELECT DISTINCT
+            CAST(c.research_id AS INT) AS research_id,
+            COALESCE(
+                NULLIF(LOWER(TRIM(CAST(c.vocal_cord_status AS VARCHAR))), ''),
+                'chart_documented'
+            ) AS worst_status,
+            c.affected_side AS sides_affected,
+            COALESCE(
+                TRY_CAST(c.laryngoscopy_date AS DATE),
+                sp.first_surgery_date
+            ) AS first_rln_detection_date,
+            sp.first_surgery_date,
+            'chart_documented' AS source_tier
+        FROM complications c
+        JOIN surgical_patients sp
+            ON CAST(c.research_id AS INT) = sp.research_id
+        WHERE LOWER(TRIM(CAST(
+            c.rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR
+        ))) = 'yes'
+          AND CAST(c.research_id AS INT)
+              NOT IN (SELECT research_id FROM tier1)
+    ),
+    tier3 AS (
+        SELECT
+            CAST(ne.research_id AS INT) AS research_id,
+            CASE
+                WHEN SUM(CASE WHEN LOWER(ne.entity_value_norm)
+                     = 'vocal_cord_paralysis' THEN 1 ELSE 0 END) > 0
+                    THEN 'paralysis'
+                WHEN SUM(CASE WHEN LOWER(ne.entity_value_norm)
+                     = 'vocal_cord_paresis' THEN 1 ELSE 0 END) > 0
+                    THEN 'paresis'
+                ELSE 'rln_injury'
+            END AS worst_status,
+            CAST(NULL AS VARCHAR) AS sides_affected,
+            MIN(COALESCE(
+                ne.inferred_event_date,
+                TRY_CAST(ne.entity_date AS DATE),
+                TRY_CAST(ne.note_date AS DATE)
+            )) AS first_rln_detection_date,
+            sp.first_surgery_date,
+            'nlp_extraction' AS source_tier
+        FROM note_entities_complications ne
+        JOIN surgical_patients sp
+            ON CAST(ne.research_id AS INT) = sp.research_id
+        WHERE LOWER(ne.entity_value_norm) IN (
+            'rln_injury', 'vocal_cord_paralysis', 'vocal_cord_paresis'
+        )
+        AND LOWER(COALESCE(ne.present_or_negated, '')) = 'present'
+        AND (ne.confidence IS NULL
+             OR TRY_CAST(ne.confidence AS DOUBLE) >= 0.65)
+        AND COALESCE(
+            ne.inferred_event_date,
+            TRY_CAST(ne.entity_date AS DATE),
+            TRY_CAST(ne.note_date AS DATE)
+        ) >= sp.first_surgery_date
+        AND CAST(ne.research_id AS INT) NOT IN (
+            SELECT research_id FROM tier1
+            UNION
+            SELECT research_id FROM tier2
+        )
+        GROUP BY CAST(ne.research_id AS INT), sp.first_surgery_date
+    ),
+    combined AS (
+        SELECT * FROM tier1
+        UNION ALL SELECT * FROM tier2
+        UNION ALL SELECT * FROM tier3
+    )
+    SELECT
+        c.research_id,
+        c.first_rln_detection_date,
+        c.worst_status,
+        c.sides_affected,
+        c.source_tier,
+        CASE
+            WHEN c.first_rln_detection_date IS NOT NULL
+                 AND c.first_rln_detection_date
+                     <= c.first_surgery_date + INTERVAL '30 days'
+                THEN 'transient'
+            WHEN c.first_rln_detection_date IS NOT NULL
+                THEN 'permanent'
+            ELSE 'unknown'
+        END AS likely_outcome,
+        DATEDIFF('day', c.first_surgery_date, c.first_rln_detection_date)
+            AS days_post_surgery,
+        CASE
+            WHEN c.first_rln_detection_date IS NOT NULL
+                 AND c.first_rln_detection_date
+                     <= c.first_surgery_date + INTERVAL '30 days'
+                THEN '0-30d'
+            WHEN c.first_rln_detection_date IS NOT NULL
+                 AND c.first_rln_detection_date
+                     <= c.first_surgery_date + INTERVAL '180 days'
+                THEN '31-180d'
+            WHEN c.first_rln_detection_date IS NOT NULL
+                 AND c.first_rln_detection_date
+                     <= c.first_surgery_date + INTERVAL '365 days'
+                THEN '181-365d'
+            WHEN c.first_rln_detection_date IS NOT NULL
+                THEN '>365d'
+            ELSE 'unknown'
+        END AS temporal_window
+    FROM combined c
+""")
+
 MATERIALIZED_TABLES = [
     ("patient_level_summary_mv", PATIENT_SUMMARY_MV_SQL,
      "One row per patient: latest labs, comorbidities, recurrence, follow-up"),
@@ -708,6 +943,10 @@ MATERIALIZED_TABLES = [
      "Surgical complications with severity scoring"),
     ("vw_confirmed_postop_rln_injury", VW_CONFIRMED_POSTOP_RLN_SQL,
      "Confirmed postop RLN injury: laryngoscopy-verified vocal cord paresis/paralysis"),
+    ("vw_confirmed_postop_rln_injury_summary", VW_RLN_SUMMARY_SQL,
+     "RLN injury summary KPI: 3-tier (laryngoscopy + chart + NLP), publication-grade"),
+    ("vw_patient_postop_rln_injury_detail", VW_RLN_DETAIL_SQL,
+     "Patient-level RLN detail: source tier, laterality, temporal window, worst status"),
 ]
 
 EXPORT_TABLES = [

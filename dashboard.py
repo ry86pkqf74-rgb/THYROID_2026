@@ -348,7 +348,7 @@ def render_overview(con):
         tg=q(con,f"SELECT COUNT(*) FROM {_mc} WHERE has_thyroglobulin_labs"),
         atg=q(con,f"SELECT COUNT(*) FROM {_mc} WHERE has_anti_thyroglobulin_labs"),
         comp=q(con,f"SELECT COUNT(DISTINCT research_id) FROM {_cx}") if tbl_exists(con,"complications") else 0,
-        rln=q(con,f"SELECT COUNT(DISTINCT research_id) FROM {qual('vw_confirmed_postop_rln_injury')}") if tbl_exists(con,"vw_confirmed_postop_rln_injury") else (q(con,f"SELECT COUNT(DISTINCT research_id) FROM {_cx} WHERE LOWER(CAST(rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR)) NOT IN ('','no','none','n/a','na','nan','0','false','neg','negative','absent','normal') AND rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy IS NOT NULL") if tbl_exists(con,"complications") else 0),
+        rln=(q(con,f"SELECT confirmed_rln_injury_patients FROM {qual('vw_confirmed_postop_rln_injury_summary')}") if tbl_exists(con,"vw_confirmed_postop_rln_injury_summary") else (q(con,f"SELECT COUNT(DISTINCT research_id) FROM {qual('vw_confirmed_postop_rln_injury')}") if tbl_exists(con,"vw_confirmed_postop_rln_injury") else (q(con,f"SELECT COUNT(DISTINCT research_id) FROM {_cx} WHERE LOWER(CAST(rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR)) NOT IN ('','no','none','n/a','na','nan','0','false','neg','negative','absent','normal') AND rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy IS NOT NULL") if tbl_exists(con,"complications") else 0))),
         gen=q(con,f"SELECT COUNT(DISTINCT research_id) FROM {_gt}") if tbl_exists(con,"genetic_testing") else 0,
     )
     st.markdown(f'<div style="background:linear-gradient(135deg,#0a1a20,#0e1219);border:1px solid #1e2535;border-left:3px solid #2dd4bf;border-radius:12px;padding:.9rem 1.4rem;margin-bottom:1.2rem"><div style="font-family:\'DM Mono\',monospace;font-size:.62rem;letter-spacing:.15em;color:#2dd4bf;text-transform:uppercase">Total Cohort</div><div style="font-family:\'DM Serif Display\',serif;font-size:2.4rem;color:#f0f4ff;line-height:1">{m["total"]:,} <span style="font-size:.9rem;color:#8892a4;font-family:sans-serif">patients</span></div></div>',unsafe_allow_html=True)
@@ -982,10 +982,30 @@ def render_complications(con):
 
     _NEG = "('','no','none','n/a','na','nan','0','false','neg','negative','absent','normal')"
 
-    _rln_view = "vw_confirmed_postop_rln_injury"
-    _rln_view_exists = tbl_exists(con, _rln_view)
-    if _rln_view_exists:
-        _rln_q = qual(_rln_view)
+    _rln_summary_view = "vw_confirmed_postop_rln_injury_summary"
+    _rln_detail_view = "vw_patient_postop_rln_injury_detail"
+    _rln_legacy_view = "vw_confirmed_postop_rln_injury"
+    _has_summary = tbl_exists(con, _rln_summary_view)
+    _has_detail = tbl_exists(con, _rln_detail_view)
+    _has_legacy = tbl_exists(con, _rln_legacy_view)
+
+    if _has_summary:
+        _summ_q = qual(_rln_summary_view)
+        rln_summ = sqdf(con, f"SELECT * FROM {_summ_q}")
+        if not rln_summ.empty:
+            _s = rln_summ.iloc[0]
+            rln_n = int(_s["confirmed_rln_injury_patients"])
+            rln_pct = float(_s["rln_injury_percent"]) if _s["rln_injury_percent"] is not None else 0.0
+            rln_t1 = int(_s.get("tier1_laryngoscopy_count", 0))
+            rln_t2 = int(_s.get("tier2_chart_count", 0))
+            rln_t3 = int(_s.get("tier3_nlp_count", 0))
+            rln_unilateral = int(_s.get("unilateral_patients", 0))
+            rln_bilateral = int(_s.get("bilateral_patients", 0))
+        else:
+            rln_n, rln_pct, rln_t1, rln_t2, rln_t3 = 0, 0.0, 0, 0, 0
+            rln_unilateral, rln_bilateral = 0, 0
+    elif _has_legacy:
+        _rln_q = qual(_rln_legacy_view)
         _ps_q = qual("path_synoptics")
         rln_df = sqdf(con, f"""
             SELECT
@@ -998,6 +1018,7 @@ def render_complications(con):
         """)
         rln_n = int(rln_df.iloc[0]["rln_injury_patients"]) if not rln_df.empty else 0
         rln_pct = float(rln_df.iloc[0]["pct"]) if (not rln_df.empty and rln_df.iloc[0]["pct"] is not None) else 0.0
+        rln_t1, rln_t2, rln_t3, rln_unilateral, rln_bilateral = 0, 0, 0, 0, 0
     else:
         _CONFIRMED_FILTER = (
             f"LOWER(CAST(rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR)) "
@@ -1006,6 +1027,7 @@ def render_complications(con):
         )
         rln_n = sqs(con, f"SELECT COUNT(DISTINCT research_id) FROM {_cx} WHERE {_CONFIRMED_FILTER}")
         rln_pct = 0.0
+        rln_t1, rln_t2, rln_t3, rln_unilateral, rln_bilateral = 0, 0, 0, 0, 0
 
     comp_sql = f"""
     SELECT
@@ -1044,9 +1066,16 @@ def render_complications(con):
     with c1:
         st.markdown(mc("Patients w/ Complication Data", f"{total:,}"), unsafe_allow_html=True)
     with c2:
-        if _rln_view_exists:
+        if _has_summary:
             st.markdown(
-                mc("Confirmed Postop RLN Injury", f"{rln_n:,}", f"{rln_pct}% of surgical cohort"),
+                mc("Confirmed Postop RLN Injury", f"{rln_n:,}",
+                   f"{rln_pct}% of surgical cohort"),
+                unsafe_allow_html=True,
+            )
+        elif _has_legacy:
+            st.markdown(
+                mc("Confirmed Postop RLN Injury", f"{rln_n:,}",
+                   f"{rln_pct}% of surgical cohort"),
                 unsafe_allow_html=True,
             )
         else:
@@ -1065,27 +1094,80 @@ def render_complications(con):
     with c6:
         st.markdown(mc("Hypoparathyroidism", f"{hpt_n:,}", f"{_pct(hpt_n)} of cohort"), unsafe_allow_html=True)
 
+    if _has_summary:
+        tc1, tc2, tc3 = st.columns(3)
+        with tc1:
+            st.markdown(mc("Tier 1: Laryngoscopy", f"{rln_t1:,}", "VCP confirmed by scope"), unsafe_allow_html=True)
+        with tc2:
+            st.markdown(mc("Tier 2: Chart-Documented", f"{rln_t2:,}", "rln_injury = 'yes'"), unsafe_allow_html=True)
+        with tc3:
+            st.markdown(mc("Tier 3: NLP-Extracted", f"{rln_t3:,}", "conf >= 0.65, present"), unsafe_allow_html=True)
+        if rln_unilateral or rln_bilateral:
+            lc1, lc2 = st.columns(2)
+            with lc1:
+                st.markdown(mc("Unilateral", f"{rln_unilateral:,}"), unsafe_allow_html=True)
+            with lc2:
+                st.markdown(mc("Bilateral", f"{rln_bilateral:,}"), unsafe_allow_html=True)
+
+    if _has_detail:
+        with st.expander("Patient-Level RLN Detail"):
+            _det_q = qual(_rln_detail_view)
+            det_df = sqdf(con, f"SELECT * FROM {_det_q} ORDER BY source_tier, days_post_surgery")
+            if not det_df.empty:
+                oc1, oc2 = st.columns(2)
+                with oc1:
+                    outcome_counts = det_df["likely_outcome"].value_counts()
+                    st.markdown("**Temporal Classification**")
+                    for outcome, cnt in outcome_counts.items():
+                        st.write(f"- {outcome}: **{cnt:,}** patients")
+                with oc2:
+                    tier_counts = det_df["source_tier"].value_counts()
+                    st.markdown("**Source Tier Breakdown**")
+                    for tier, cnt in tier_counts.items():
+                        st.write(f"- {tier}: **{cnt:,}** patients")
+                st.dataframe(det_df, use_container_width=True, hide_index=True)
+            else:
+                st.info("No detail records found.")
+
     with st.expander("Definition: Confirmed Postoperative RLN Injury"):
-        if _rln_view_exists:
+        if _has_summary:
             st.markdown(
-                "**Publication-quality definition.** Patient-level count of unique "
-                "`research_id` values from `vw_confirmed_postop_rln_injury`: vocal cord "
-                "**paresis** or **paralysis** documented on postoperative laryngoscopy "
-                "(laryngoscopy date strictly **after** first surgery date).\n\n"
-                "**Source:** `complications.vocal_cord_status` \u2208 {'paresis', 'paralysis'} "
-                "joined to `path_synoptics.surg_date` (earliest per patient) to enforce "
-                "temporal postoperative sequence.\n\n"
-                "**Denominator:** All patients with a recorded surgery date in `path_synoptics`.\n\n"
+                "**Publication-quality, multi-source definition.** Patient-level "
+                "DISTINCT `research_id` count from `vw_confirmed_postop_rln_injury_summary`, "
+                "combining three evidence tiers:\n\n"
+                "1. **Tier 1 (Laryngoscopy-confirmed):** "
+                "`complications.vocal_cord_status` IN ('paresis', 'paralysis') with "
+                "`laryngoscopy_date` strictly **after** first surgery date.\n"
+                "2. **Tier 2 (Chart-documented):** "
+                "`rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy` = 'yes' "
+                "(excluding 'x' placeholders), not already in Tier 1.\n"
+                "3. **Tier 3 (NLP-extracted):** "
+                "`note_entities_complications` with `entity_value_norm` IN "
+                "('rln_injury', 'vocal_cord_paralysis', 'vocal_cord_paresis'), "
+                "`present_or_negated` = 'present', confidence >= 0.65, "
+                "and detection date >= first surgery date. Not already in Tier 1 or 2.\n\n"
+                "**Denominator:** All patients with a recorded surgery date in "
+                "`path_synoptics`.\n\n"
+                "**Temporal windows:** 0-30d (transient), 31-180d, 181-365d, >365d "
+                "(permanent) in the detail view.\n\n"
                 "**NSQIP benchmark:** 5\u20138% for total thyroidectomy."
+            )
+        elif _has_legacy:
+            st.markdown(
+                "**Publication-quality definition (legacy).** Patient-level count from "
+                "`vw_confirmed_postop_rln_injury`: vocal cord **paresis** or **paralysis** "
+                "on postoperative laryngoscopy (date strictly after first surgery date).\n\n"
+                "Upgrade to the multi-source summary view by re-running "
+                "`python scripts/10_maximize_motherduck_trial.py`."
             )
         else:
             st.markdown(
-                "**Fallback definition** (materialized view not available). "
+                "**Fallback definition** (materialized views not available). "
                 "Patient-level count where "
                 "`rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy` is not empty, "
                 "'no', 'none', or other negation values. No temporal constraint applied.\n\n"
                 "Run `python scripts/10_maximize_motherduck_trial.py` to create the "
-                "publication-quality `vw_confirmed_postop_rln_injury` view."
+                "publication-quality views."
             )
 
 # ─────────────────────────────────────────────────────────────────────────
