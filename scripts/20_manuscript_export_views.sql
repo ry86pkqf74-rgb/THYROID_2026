@@ -32,47 +32,55 @@ WHERE effective_eligible = TRUE;
 -- === manuscript_molecular_cohort_v ===
 CREATE OR REPLACE VIEW manuscript_molecular_cohort_v AS
 SELECT
-    NULL::BIGINT AS research_id,
-    NULL::VARCHAR AS molecular_episode_id,
-    NULL::DATE AS specimen_date_raw,
-    NULL::VARCHAR AS platform_normalized,
-    NULL::VARCHAR AS test_name_raw,
-    NULL::VARCHAR AS result_category_normalized,
-    NULL::VARCHAR AS result_summary_raw,
-    NULL::DOUBLE AS temporal_linkage_confidence,
-    NULL::DOUBLE AS platform_confidence,
-    NULL::DOUBLE AS pathology_concordance_confidence,
-    NULL::DOUBLE AS overall_linkage_confidence,
-    FALSE AS analysis_inclusion_flag,
-    'source_unavailable'::VARCHAR AS exclusion_reason,
-    'placeholder'::VARCHAR AS algorithmic_vs_reviewer_source,
-    FALSE AS adjudication_applied_flag,
+    CAST(research_id AS BIGINT) AS research_id,
+    molecular_episode_id,
+    specimen_date_raw,
+    platform_normalized,
+    test_name_raw,
+    result_category_normalized,
+    result_summary_raw,
+    temporal_linkage_confidence,
+    platform_confidence,
+    pathology_concordance_confidence,
+    overall_linkage_confidence,
+    effective_eligible AS analysis_inclusion_flag,
+    CASE
+        WHEN NOT effective_eligible THEN 'ineligible_after_review'
+        ELSE NULL
+    END AS exclusion_reason,
+    value_source AS algorithmic_vs_reviewer_source,
+    adjudication_applied_flag,
     CURRENT_DATE AS analysis_ready_date,
-    NULL::VARCHAR AS molecular_date_raw_class,
-    NULL::VARCHAR AS linkage_method,
-    NULL::BOOLEAN AS high_risk_molecular_flag
-WHERE FALSE;
+    molecular_date_raw_class,
+    linkage_method,
+    high_risk_molecular_flag
+FROM molecular_post_review_v
+WHERE effective_eligible = TRUE;
 
 -- === manuscript_rai_cohort_v ===
 CREATE OR REPLACE VIEW manuscript_rai_cohort_v AS
 SELECT
-    NULL::BIGINT AS research_id,
-    NULL::VARCHAR AS rai_episode_id,
-    NULL::DATE AS rai_date,
-    NULL::DOUBLE AS dose_mci,
-    NULL::VARCHAR AS rai_term_normalized,
-    NULL::VARCHAR AS rai_assertion_status,
-    NULL::VARCHAR AS rai_treatment_certainty,
-    NULL::VARCHAR AS rai_interval_class,
-    FALSE AS analysis_inclusion_flag,
-    'source_unavailable'::VARCHAR AS exclusion_reason,
-    'placeholder'::VARCHAR AS algorithmic_vs_reviewer_source,
-    FALSE AS adjudication_applied_flag,
+    CAST(research_id AS BIGINT) AS research_id,
+    rai_episode_id,
+    rai_date,
+    dose_mci,
+    rai_term_normalized,
+    rai_assertion_status,
+    rai_treatment_certainty,
+    rai_interval_class,
+    effective_eligible AS analysis_inclusion_flag,
+    CASE
+        WHEN NOT effective_eligible THEN 'ineligible_after_review'
+        ELSE NULL
+    END AS exclusion_reason,
+    value_source AS algorithmic_vs_reviewer_source,
+    adjudication_applied_flag,
     CURRENT_DATE AS analysis_ready_date,
-    NULL::DATE AS linked_surgery_date,
-    NULL::INT AS days_surgery_to_rai,
-    NULL::BOOLEAN AS post_thyroidectomy_flag
-WHERE FALSE;
+    linked_surgery_date,
+    days_surgery_to_rai,
+    post_thyroidectomy_flag
+FROM rai_post_review_v
+WHERE effective_eligible = TRUE;
 
 -- === manuscript_patient_summary_v ===
 CREATE OR REPLACE VIEW manuscript_patient_summary_v AS
