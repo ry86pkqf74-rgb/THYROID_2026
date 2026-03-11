@@ -1,6 +1,36 @@
 # THYROID_2026 Release Notes
 
-## v2026.03.10-v2-pipeline (Latest)
+## v2026.03.10-statistical-workbench (Latest)
+**Date:** 2026-03-10
+**Patients:** 11,673 | **New capability:** Publication-ready Statistical Analysis Workbench
+
+### Statistical Analysis & Modeling (New Dashboard Tab)
+- `utils/statistical_analysis.py` — `ThyroidStatisticalAnalyzer` class (1,042 lines):
+  - `generate_table_one()` — auto-detects variable types; uses `tableone` when available with fallback; Shapiro-Wilk normality detection selects Mann-Whitney / t-test / Kruskal / ANOVA automatically; missing % reported
+  - `run_hypothesis_tests()` — Fisher exact (sparse cells) vs Chi-square for categoricals; Welch t-test vs Mann-Whitney / ANOVA vs Kruskal-Wallis for continuous; FDR/Bonferroni/Holm correction; Cohen's d / Cramér's V effect sizes
+  - `fit_logistic_regression()` — statsmodels Logit with OR table, 95% CI, VIF multicollinearity diagnostics, AUC (sklearn), pseudo-R², AIC/BIC, perfect-separation warnings
+  - `fit_cox_ph()` — lifelines CoxPHFitter with HR table, concordance index, Schoenfeld proportionality check, sparse-events warning
+  - `create_forest_plot()` — publication-ready Plotly horizontal forest plot with log scale, color-coded significance, annotated CI/p text
+  - `correlation_matrix_with_pvalues()` — pingouin pairwise or scipy fallback; significance stars (*/**/***)
+  - `create_correlation_heatmap()` — diverging colorscale Plotly heatmap with annotation
+  - `missing_data_summary()` — per-column missing %, dtype, sorted by severity
+- `app/statistical_analysis.py` — 5 sub-tabs in "📊 Statistical Analysis" dashboard tab:
+  - **Table 1** — source selector, group-by, variable multiselects, styled p-value highlighting, CSV/Excel/Parquet export
+  - **Hypothesis Testing** — target selector, feature multiselects, correction method, results table with interpretation
+  - **Regression Modeling** — Logistic + Cox sub-forms, predictor multiselects, forest plot auto-display, VIF table
+  - **Visualizations** — Correlation heatmap, Missing data bar, Distribution comparison with overlay
+  - **Diagnostics & Export** — library badge status, available sources with row counts, package versions
+- Thyroid-specific presets: `THYROID_TABLE1_PRESET`, `THYROID_OUTCOMES`, `THYROID_PREDICTORS`, `THYROID_SURVIVAL`
+- `requirements.txt` — added `scikit-learn` (for AUC computation via `roc_auc_score`)
+- `notebooks/05_statistical_workbench_examples.ipynb` — worked examples for Table 1, logistic regression, Cox PH, forest plot
+
+### Clinical Interpretation
+All regression results include plain-English interpretation strings, e.g.:
+> "BRAF mutation: OR=1.87 indicates 87% increased odds" / "HR=2.12 indicates 112% increased hazard"
+
+---
+
+## v2026.03.10-v2-pipeline
 **Date:** 2026-03-10
 **Patients:** 11,673 | **Views:** 60+ | **Materialized tables:** 47
 
