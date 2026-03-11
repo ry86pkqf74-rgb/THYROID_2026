@@ -2,6 +2,7 @@ streamlit
 duckdb<=1.4.4
 pandas
 plotly
+matplotlib
 lifelines
 requests
 openpyxl

@@ -292,3 +292,55 @@ SELECT
     "Stage III/IV (%)"
 FROM geno_agg
 ORDER BY "Genotype Group";
+
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- CONSOLIDATED: manuscript_tables_v3_mv
+-- Union of Tables 1–3 normalized to (table_id, table_name, row_order,
+-- row_label, display_value) for single-step materialization.
+-- ─────────────────────────────────────────────────────────────────────────────
+CREATE OR REPLACE VIEW manuscript_tables_v3_mv AS
+SELECT
+    1              AS table_id,
+    'Demographics' AS table_name,
+    row_order,
+    characteristic AS row_label,
+    display_value
+FROM manuscript_table1_demographics_v
+
+UNION ALL
+
+SELECT
+    2                  AS table_id,
+    'Survival Metrics' AS table_name,
+    ROW_NUMBER() OVER (ORDER BY "AJCC Stage Group") AS row_order,
+    "AJCC Stage Group"  AS row_label,
+    'N=' || CAST("N" AS VARCHAR)
+      || '; RAI ' || CAST("Received RAI, n" AS VARCHAR)
+      || '/' || CAST("N" AS VARCHAR)
+      || ' (' || CAST("RAI Rate (%)" AS VARCHAR) || '%)'
+      || '; Time-to-RAI ' || "Median Time-to-RAI, months [IQR]"
+      || '; Recurrence ' || CAST("Recurrence Events, n" AS VARCHAR)
+      || ' (' || CAST("Recurrence Rate (%)" AS VARCHAR) || '%)'
+      || '; RFS ' || "Median RFS, years [IQR]"
+    AS display_value
+FROM manuscript_table2_survival_v
+
+UNION ALL
+
+SELECT
+    3                   AS table_id,
+    'Genotype Outcomes' AS table_name,
+    ROW_NUMBER() OVER (ORDER BY "Genotype Group") AS row_order,
+    "Genotype Group"     AS row_label,
+    'N=' || CAST("N" AS VARCHAR)
+      || '; RAI ' || CAST("Received RAI, n" AS VARCHAR)
+      || '/' || CAST("N" AS VARCHAR)
+      || ' (' || CAST("RAI Rate (%)" AS VARCHAR) || '%)'
+      || '; Time-to-RAI ' || "Median Time-to-RAI, months [IQR]"
+      || '; Recurrence ' || CAST("Recurrence Events, n" AS VARCHAR)
+      || ' (' || CAST("Recurrence Rate (%)" AS VARCHAR) || '%)'
+      || '; RFS ' || "Median RFS, years [IQR]"
+      || '; Adv. Stage ' || CAST("Stage III/IV (%)" AS VARCHAR) || '%'
+    AS display_value
+FROM manuscript_table3_genotype_v;

@@ -113,3 +113,9 @@ streamlit run dashboard.py
 - [x] Publication figures (300 DPI PNG + SVG) in `studies/manuscript_package_20260310_2355/figures/`
 - [x] Final zip: `THYROID_2026_MANUSCRIPT_PACKAGE_20260310_2355.zip`
 - [x] All checklist items marked complete — **READY FOR SUBMISSION**
+
+## Final Verification — Manuscript Package v3
+
+- [x] `manuscript_tables_v3_mv` consolidated view materialized and verified
+- [x] `Generate Full Manuscript Package` button live in Risk & Survival dashboard tab
+- [x] All pipeline, dashboard, and export deliverables verified — **SUBMISSION COMPLETE**

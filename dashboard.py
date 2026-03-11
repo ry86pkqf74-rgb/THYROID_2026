@@ -1759,6 +1759,63 @@ def render_survival(con):
             icon="🔬",
         )
 
+    # ── Full Manuscript Package ───────────────────────────────────────────
+    st.markdown("---")
+    st.markdown(
+        "<div style='background:#052e16;border:2px solid #16a34a;border-radius:8px;"
+        "padding:14px 18px;margin:12px 0'>"
+        "<b style='color:#4ade80;font-size:1.05rem'>📦 Full Manuscript Package</b>"
+        "<br><span style='color:#bbf7d0;font-size:0.9rem'>"
+        "Generates LaTeX tables (booktabs), 300 DPI KM figures, time-to-RAI chart, "
+        "updates checklist, and creates final ZIP.</span></div>",
+        unsafe_allow_html=True,
+    )
+    if st.button("🚀 Generate Full Manuscript Package", key="surv_manuscript_pkg",
+                 type="primary", use_container_width=True):
+        _mp_script = Path(__file__).resolve().parent / "scripts" / "22_manuscript_package.py"
+        if not _mp_script.exists():
+            st.error("scripts/22_manuscript_package.py not found.")
+        else:
+            with st.spinner("Generating manuscript package… (may take 30–90 s)"):
+                try:
+                    _mp_proc = subprocess.run(
+                        [sys.executable, str(_mp_script), "--md"],
+                        capture_output=True, text=True,
+                        cwd=str(Path(__file__).resolve().parent),
+                        check=False, timeout=300,
+                    )
+                    _mp_logs = (_mp_proc.stdout or "") + (_mp_proc.stderr or "")
+                    if _mp_proc.returncode == 0:
+                        import glob as _glob
+                        _mp_zips = sorted(
+                            _glob.glob(str(
+                                Path(__file__).resolve().parent
+                                / "THYROID_2026_MANUSCRIPT_PACKAGE_*.zip"
+                            )),
+                            reverse=True,
+                        )
+                        _mp_zn = Path(_mp_zips[0]).name if _mp_zips else "see studies/manuscript_package_*/"
+                        st.success(
+                            f"Manuscript package ready!  ZIP: `{_mp_zn}`  "
+                            f"— tables, figures, and checklist updated."
+                        )
+                        with st.expander("Script output"):
+                            st.code(_mp_logs[-3000:], language="text")
+                    else:
+                        st.error(
+                            f"Package generation failed (exit {_mp_proc.returncode}).\n\n"
+                            + _mp_logs[-1000:]
+                        )
+                        with st.expander("Full output"):
+                            st.code(_mp_logs, language="text")
+                except subprocess.TimeoutExpired:
+                    st.error(
+                        "Script timed out after 5 minutes. Run manually: "
+                        "`python scripts/22_manuscript_package.py --md`"
+                    )
+                except Exception as _mp_exc:
+                    st.error(f"Could not run manuscript package script: {_mp_exc}")
+
 
 def render_survival_outcomes(con):
     st.markdown(sl("Survival & Outcomes"), unsafe_allow_html=True)

@@ -137,6 +137,23 @@ def deploy_sql(con, dry_run: bool) -> None:
             print(f"  WARN: {e}")
 
 
+def materialize_consolidated(con, dry_run: bool) -> None:
+    """Materialize manuscript_tables_v3_mv as a TABLE for RO share visibility."""
+    if dry_run:
+        print("  [dry-run] Skipping materialization of manuscript_tables_v3_mv.")
+        return
+    section("Materializing manuscript_tables_v3_mv")
+    try:
+        con.execute(
+            "CREATE OR REPLACE TABLE manuscript_tables_v3_mv "
+            "AS SELECT * FROM manuscript_tables_v3_mv"
+        )
+        cnt = con.execute("SELECT COUNT(*) FROM manuscript_tables_v3_mv").fetchone()[0]
+        print(f"  manuscript_tables_v3_mv materialized: {cnt:,} rows")
+    except Exception as e:
+        print(f"  WARN: could not materialize manuscript_tables_v3_mv: {e}")
+
+
 def fetch(con, view: str) -> pd.DataFrame:
     try:
         return con.execute(f"SELECT * FROM {view}").df()
@@ -432,6 +449,9 @@ def main() -> None:
     # ── Deploy SQL views ─────────────────────────────────────────────────────
     deploy_sql(con, dry_run)
 
+    # ── Materialize consolidated view ─────────────────────────────────────
+    materialize_consolidated(con, dry_run)
+
     # ── Fetch tables ─────────────────────────────────────────────────────────
     section("Fetching manuscript tables")
     t1 = fetch(con, "manuscript_table1_demographics_v")
@@ -530,6 +550,7 @@ def main() -> None:
             "manuscript_table1_demographics_v",
             "manuscript_table2_survival_v",
             "manuscript_table3_genotype_v",
+            "manuscript_tables_v3_mv",
         ],
     }
     manifest_path = pkg_dir / "manifest.json"
@@ -538,7 +559,7 @@ def main() -> None:
 
     # ── Zip ───────────────────────────────────────────────────────────────────
     section("Creating ZIP archive")
-    zip_path = make_zip(pkg_dir, stamp)
+    zip_path = make_zip(pkg_dir, datetime.now().strftime("%Y%m%d"))
 
     # ── Checklist ─────────────────────────────────────────────────────────────
     section("Updating MANUSCRIPT_READY_CHECKLIST.md")
