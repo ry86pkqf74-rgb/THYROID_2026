@@ -14,7 +14,7 @@
 
 ## Learned Workspace Facts
 
-- Tech stack: Python, pandas, scipy, statsmodels, lifelines, scikit-learn, DuckDB, MotherDuck, Streamlit, Parquet (DVC-tracked), openpyxl for Excel
+- Tech stack: Python, pandas, scipy, statsmodels, lifelines, scikit-learn, matplotlib, DuckDB, MotherDuck, Streamlit, Parquet (DVC-tracked), openpyxl for Excel
 - Primary key for all tables: `research_id` (int); standardize column names like "Research ID number", "Research_ID#" to `research_id`
 - Project layout: `/processed/` (parquet), `/raw/` (source files), `/exports/` (CSV exports), `/scripts/` (ETL), `/studies/` (study outputs)
 - Key views/tables: `ptc_cohort`, `recurrence_risk_cohort`, `tumor_pathology`, `master_cohort`, `advanced_features_view`, `advanced_features_v2`, `advanced_features_v3`
@@ -174,7 +174,7 @@
 - MotherDuck audit report at `studies/motherduck_audit/AUDIT_REPORT.md`
 - Script 24 imaging_pathology_concordance_review_v2 already has temporal constraints + surgery_windows for multi-surgery patients
 - Script 23 linkage weak tiers use `BETWEEN -7 AND N` (not ABS); -7 day tolerance is intentional for recording delays
-- Next phase: manuscript submission, additional subgroup refinements
+- Manuscript package complete and marked SUBMISSION COMPLETE in MANUSCRIPT_READY_CHECKLIST.md
 - `timeline_rescue_v3_mv` SQL file: `scripts/17_timeline_rescue_unified_v3.sql`; covers all 6 note_entities_* tables with date_status V3 taxonomy, inferred_event_date, and three boolean flags
 - `enriched_patient_timeline_v3_mv` view defined in `scripts/20_enriched_patient_timeline_v3.sql`; joins timeline_rescue_v3_mv + patient_spine + first_rai + per-patient rescue_rate; columns: entity_type, inferred_event_date, date_status, provenance flags, sex, age_at_surgery, histology_1_type, overall_stage_ajcc8, first_surgery_date, first_rai_date, time_to_rai_days, max_rai_dose, date_rescue_rate_pct
 - `app/patient_timeline_explorer.py`: new module with `render_patient_timeline_explorer(con)` — prominent rescue KPI card + progress bar (from timeline_unresolved_summary_v2_mv), per-entity-type rescue bar chart, patient lookup by research_id (shows header metrics + timeline dataframe + episode expanders), Publication Snapshot export button

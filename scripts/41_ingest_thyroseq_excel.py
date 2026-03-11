@@ -90,6 +90,7 @@ CROSSWALK_FILES = [
     "All Diagnoses & synoptic 12_1_2025.xlsx",
     "Notes 12_1_25.xlsx",
     "Thyroid OP Sheet data.xlsx",
+    "Thyroid all_Complications 12_1_25.xlsx",
 ]
 
 
@@ -250,9 +251,29 @@ def build_crosswalk(con: duckdb.DuckDBPyConnection) -> pd.DataFrame:
 # Phase 3: Match patients
 # ═══════════════════════════════════════════════════════════════════════════
 
-def match_patients(raw: pd.DataFrame, xw: pd.DataFrame) -> pd.DataFrame:
+def _build_demographic_index(con: duckdb.DuckDBPyConnection) -> pd.DataFrame | None:
+    """Load patient demographics from DB for secondary matching."""
+    for tbl in ("patient_level_summary_mv", "master_cohort"):
+        try:
+            df = con.execute(
+                f"SELECT DISTINCT research_id, age_at_surgery, sex, "
+                f"  CAST(surgery_date AS VARCHAR) AS surgery_date "
+                f"FROM {tbl} WHERE research_id IS NOT NULL"
+            ).fetchdf()
+            if len(df):
+                log.info(f"  Demographic index from {tbl}: {len(df)} rows")
+                return df
+        except Exception:
+            continue
+    return None
+
+
+def match_patients(raw: pd.DataFrame, xw: pd.DataFrame,
+                   con: duckdb.DuckDBPyConnection | None = None) -> pd.DataFrame:
     log.info("Phase 3: Matching patients to existing research_id")
     results = []
+
+    demo_df = _build_demographic_index(con) if con else None
 
     mrn_to_rids: dict[str, set[int]] = {}
     dob_name_index: dict[tuple, set[int]] = {}
@@ -342,8 +363,33 @@ def match_patients(raw: pd.DataFrame, xw: pd.DataFrame) -> pd.DataFrame:
                 else:
                     match.update(review_reason=f"DOB+name maps to {len(rids)} RIDs: {sorted(rids)}")
 
+        if match["matched_research_id"] is None and demo_df is not None:
+            surg = parse_surgery_text(row.get("Surgery")) if pd.notna(row.get("Surgery")) else {}
+            surg_dates = surg.get("surgery_dates", []) if isinstance(surg, dict) else []
+            age = row.get("Age at diagnosis")
+            sex_norm = normalize_sex(row.get("Gender"))
+
+            if surg_dates and pd.notna(age) and sex_norm:
+                for sd in surg_dates:
+                    candidates = demo_df[
+                        (demo_df["surgery_date"].str[:10] == sd)
+                        & (demo_df["sex"] == sex_norm)
+                        & ((demo_df["age_at_surgery"] - float(age)).abs() <= 2)
+                    ]
+                    if len(candidates) == 1:
+                        match.update(
+                            matched_research_id=int(candidates["research_id"].values[0]),
+                            match_method="demographic_surgery_date_age_sex",
+                            match_confidence=0.5, review_required=True,
+                            review_reason="Matched by surgery_date+age+sex (no MRN/DOB)")
+                        break
+                    elif len(candidates) > 1:
+                        match.update(
+                            review_reason=f"Demographics match {len(candidates)} RIDs on {sd}")
+                        break
+
         if match["matched_research_id"] is None:
-            match["review_reason"] = "No crosswalk match found"
+            match["review_reason"] = match.get("review_reason") or "No crosswalk match found"
 
         results.append(match)
 
@@ -1022,7 +1068,7 @@ def main():
     xw = build_crosswalk(con)
 
     # Phase 3: Match
-    matches = match_patients(raw, xw)
+    matches = match_patients(raw, xw, con=con)
 
     # Phase 4: Parse
     parsed = parse_all_fields(raw, matches)

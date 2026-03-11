@@ -1,8 +1,8 @@
 # ThyroSeq Integration Report
 
-**Generated:** 2026-03-11 00:10  
-**Batch ID:** `e735568a-889`  
-**Git SHA:** `4883925`  
+**Generated:** 2026-03-11 00:20  
+**Batch ID:** `1dd8e0e2-d8f`  
+**Git SHA:** `ed16dc0`  
 
 ## Summary Metrics
 
@@ -49,4 +49,4 @@
 
 ## Export Directory
 
-`exports/thyroseq_integration_20260311_0009/`
+`exports/thyroseq_integration_20260311_0020/`
