@@ -23,6 +23,11 @@ from utils.statistical_analysis import (
     THYROID_OUTCOMES,
     THYROID_PREDICTORS,
     THYROID_SURVIVAL,
+    THYROID_NSQIP_OUTCOMES,
+    THYROID_NSQIP_PREDICTORS,
+    NSQIP_COMPLICATION_COLUMNS,
+    LONGITUDINAL_MARKERS,
+    ETE_SUBTYPES,
     HAS_STATSMODELS,
     HAS_SCIPY,
     HAS_LIFELINES,
@@ -37,7 +42,73 @@ _DATA_SOURCES = [
     "survival_cohort_enriched",
     "ptc_cohort",
     "recurrence_risk_cohort",
+    "extracted_clinical_events_v4",
+    "longitudinal_lab_view",
 ]
+
+_LONGITUDINAL_SOURCES = [
+    "extracted_clinical_events_v4",
+    "longitudinal_lab_view",
+]
+
+# SQL to build an inline NSQIP complication cohort joining complications + master_cohort
+_NSQIP_COHORT_SQL = """
+SELECT
+    mc.research_id,
+    mc.age_at_surgery,
+    mc.sex,
+    mc.has_tumor_pathology,
+    tp.histology_1_type,
+    tp.histology_1_overall_stage_ajcc8 AS overall_stage_ajcc8,
+    TRY_CAST(tp.histology_1_largest_tumor_cm AS DOUBLE) AS largest_tumor_cm,
+    TRY_CAST(tp.histology_1_ln_positive AS DOUBLE) AS ln_positive,
+    tp.braf_mutation_mentioned,
+    ps.tumor_1_extrathyroidal_extension AS tumor_1_extrathyroidal_ext,
+    ps.thyroid_procedure AS malignant_surgery_type,
+    CASE
+        WHEN LOWER(CAST(comp.rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR))
+             NOT IN ('', 'no', 'none', 'n/a', 'na', 'nan', '0', 'false')
+             AND comp.rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy IS NOT NULL
+        THEN 1 ELSE 0
+    END AS rln_injury,
+    CASE
+        WHEN LOWER(CAST(comp.hypocalcemia AS VARCHAR))
+             NOT IN ('', 'no', 'none', 'n/a', 'na', 'nan', '0', 'false')
+             AND comp.hypocalcemia IS NOT NULL
+        THEN 1 ELSE 0
+    END AS hypocalcemia,
+    CASE
+        WHEN LOWER(CAST(comp.hypoparathyroidism AS VARCHAR))
+             NOT IN ('', 'no', 'none', 'n/a', 'na', 'nan', '0', 'false')
+             AND comp.hypoparathyroidism IS NOT NULL
+        THEN 1 ELSE 0
+    END AS hypoparathyroidism,
+    CASE
+        WHEN LOWER(CAST(comp.seroma AS VARCHAR))
+             NOT IN ('', 'no', 'none', 'n/a', 'na', 'nan', '0', 'false')
+             AND comp.seroma IS NOT NULL
+        THEN 1 ELSE 0
+    END AS seroma,
+    CASE
+        WHEN LOWER(CAST(comp.hematoma AS VARCHAR))
+             NOT IN ('', 'no', 'none', 'n/a', 'na', 'nan', '0', 'false')
+             AND comp.hematoma IS NOT NULL
+        THEN 1 ELSE 0
+    END AS hematoma
+FROM master_cohort mc
+INNER JOIN complications comp ON mc.research_id = CAST(comp.research_id AS INT)
+LEFT JOIN tumor_pathology tp ON mc.research_id = tp.research_id
+LEFT JOIN path_synoptics ps ON mc.research_id = ps.research_id
+"""
+
+# Adds any_nsqip_complication derived from individual flags above
+_NSQIP_COHORT_WRAPPER = f"""
+WITH _base AS ({_NSQIP_COHORT_SQL})
+SELECT *,
+    GREATEST(rln_injury, hypocalcemia, hypoparathyroidism, seroma, hematoma)
+    AS any_nsqip_complication
+FROM _base
+"""
 
 _GROUPBY_OPTIONS = [
     "(None)",
@@ -48,6 +119,9 @@ _GROUPBY_OPTIONS = [
     "histology_1_type",
     "recurrence_risk_band",
     "event_occurred",
+    "any_nsqip_complication",
+    "rln_injury",
+    "hypocalcemia",
 ]
 
 _CORRECTION_METHODS = {
@@ -75,16 +149,39 @@ def _lib_badges() -> str:
     return " ".join(parts)
 
 
+def _available_sources(con) -> list[str]:
+    standard = [s for s in _DATA_SOURCES if tbl_exists(con, s)]
+    # Add NSQIP cohort if complications table is available
+    if tbl_exists(con, "complications") and "nsqip_complication_cohort" not in standard:
+        standard.append("nsqip_complication_cohort")
+    return standard
+
+
 @st.cache_data(ttl=300, show_spinner=False)
-def _load_source(_con, view: str) -> pd.DataFrame:
+def _load_nsqip_cohort(_con) -> pd.DataFrame:
+    """Build and return the NSQIP complication cohort inline."""
     try:
-        return _con.execute(f"SELECT * FROM {view}").fetchdf()
+        return _con.execute(_NSQIP_COHORT_WRAPPER).fetchdf()
     except Exception:
         return pd.DataFrame()
 
 
-def _available_sources(con) -> list[str]:
-    return [s for s in _DATA_SOURCES if tbl_exists(con, s)]
+def _load_source(con, view: str) -> pd.DataFrame:
+    """Load a data source — handles the virtual nsqip_complication_cohort."""
+    if view == "nsqip_complication_cohort":
+        return _load_nsqip_cohort(con)
+    try:
+        return _load_source_cached(con, view)
+    except Exception:
+        return pd.DataFrame()
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def _load_source_cached(_con, view: str) -> pd.DataFrame:
+    try:
+        return _con.execute(f"SELECT * FROM {view}").fetchdf()
+    except Exception:
+        return pd.DataFrame()
 
 
 def _numeric_cols(df: pd.DataFrame) -> list[str]:
@@ -321,6 +418,7 @@ def _render_logistic(df: pd.DataFrame, analyzer: ThyroidStatisticalAnalyzer) -> 
             st.error(result["error"])
             return
 
+        result["outcome_label"] = outcome.replace("_", " ")
         _display_logistic_results(result)
 
 
@@ -355,6 +453,12 @@ def _display_logistic_results(result: dict) -> None:
     if not result.get("vif", pd.DataFrame()).empty:
         st.subheader("Variance Inflation Factors")
         st.dataframe(result["vif"], use_container_width=True)
+
+    snippet = ThyroidStatisticalAnalyzer.format_clinical_snippet(
+        result, model_type="OR", outcome_label=result.get("outcome_label", "the outcome")
+    )
+    if snippet and "No significant" not in snippet:
+        st.info(snippet)
 
     with st.expander("Interpretation notes"):
         for _, row in display.iterrows():
@@ -410,6 +514,7 @@ def _render_cox(df: pd.DataFrame, analyzer: ThyroidStatisticalAnalyzer) -> None:
             st.error(result["error"])
             return
 
+        result["outcome_label"] = event_col.replace("_", " ")
         _display_cox_results(result)
 
 
@@ -439,6 +544,12 @@ def _display_cox_results(result: dict) -> None:
             forest_df, title="Hazard Ratios (95% CI)", reference_value=1.0,
         )
         st.plotly_chart(fig, use_container_width=True)
+
+    snippet = ThyroidStatisticalAnalyzer.format_clinical_snippet(
+        result, model_type="HR", outcome_label=result.get("outcome_label", "the outcome")
+    )
+    if snippet and "No significant" not in snippet:
+        st.info(snippet)
 
     with st.expander("Interpretation notes"):
         for _, row in hr_table.iterrows():
@@ -559,6 +670,109 @@ def _render_distributions(df: pd.DataFrame) -> None:
         st.plotly_chart(fig, use_container_width=True)
 
 
+def _render_longitudinal(con, analyzer: ThyroidStatisticalAnalyzer) -> None:
+    """Sub-tab: Longitudinal Tg/TSH mixed-effects analysis."""
+    st.markdown(sl("Longitudinal Biomarker Trajectory Analysis"), unsafe_allow_html=True)
+    st.caption(
+        "Linear mixed-effects model (random intercept by patient) for repeated "
+        "Tg/TSH measurements. Requires `extracted_clinical_events_v4` or "
+        "`longitudinal_lab_view`."
+    )
+
+    if not HAS_STATSMODELS:
+        st.error("statsmodels is required for mixed-effects models. Install with: `pip install statsmodels`")
+        return
+
+    c1, c2 = st.columns(2)
+    with c1:
+        marker_opts = list(LONGITUDINAL_MARKERS.keys())
+        marker_labels = {k: v["label"] for k, v in LONGITUDINAL_MARKERS.items()}
+        marker = st.selectbox(
+            "Biomarker",
+            marker_opts,
+            format_func=lambda k: marker_labels[k],
+            key="long_marker",
+        )
+    with c2:
+        avail_sources = [s for s in _LONGITUDINAL_SOURCES if tbl_exists(con, s)]
+        if not avail_sources:
+            st.warning(
+                "No longitudinal data source available. "
+                "Ensure `extracted_clinical_events_v4` or `longitudinal_lab_view` is materialized."
+            )
+            return
+        src = st.selectbox("Data source", avail_sources, key="long_src")
+
+    if st.button("Run Longitudinal Analysis", type="primary", key="long_run"):
+        with st.spinner(f"Fitting mixed-effects model for {marker_labels[marker]}…"):
+            res = analyzer.longitudinal_summary(marker=marker, view=src)
+
+        if "error" in res:
+            st.error(res["error"])
+            return
+
+        for w in res.get("warnings", []):
+            st.warning(w, icon="⚠️")
+
+        # KPI row
+        k1, k2, k3, k4 = st.columns(4)
+        k1.metric("Patients (≥2 obs)", f"{res['n_patients']:,}")
+        k2.metric("Total observations", f"{res['n_obs']:,}")
+        slope_disp = f"{res['slope']:+.4f}/yr"
+        k3.metric(
+            f"{'log' if res['log_transform'] else ''} slope (β/yr)",
+            slope_disp,
+        )
+        p_disp = f"{res['p_value']:.3f}" if res.get("p_value") else "N/A"
+        k4.metric("p-value (slope)", p_disp)
+
+        # Clinical note
+        st.info(res["clinical_note"])
+
+        st.markdown(sl("Model Summary"), unsafe_allow_html=True)
+        st.code(res["model_summary"], language="text")
+
+        # Per-patient slope distribution
+        pp = res.get("per_patient_summary", pd.DataFrame())
+        if not pp.empty and HAS_PLOTLY:
+            import plotly.graph_objects as go
+            from app.helpers import PL as _PL  # local import to avoid circular
+
+            fig_hist = go.Figure()
+            fig_hist.add_trace(go.Histogram(
+                x=pp["slope_per_day"].dropna() * 365.25,
+                nbinsx=40,
+                marker_color="#2dd4bf",
+                opacity=0.8,
+                name="Annual slope per patient",
+            ))
+            fig_hist.update_layout(
+                **_PL,
+                title=f"Per-Patient {marker_labels[marker]} Slope Distribution (per year)",
+                xaxis_title="Slope (per year, log scale if applicable)",
+                yaxis_title="Patients",
+                height=340,
+            )
+            st.plotly_chart(fig_hist, use_container_width=True)
+
+            pct_rising = float(pp["rising"].mean() * 100)
+            c_rising, c_falling = st.columns(2)
+            c_rising.metric("Rising trajectory", f"{pct_rising:.1f}%")
+            c_falling.metric("Stable/falling trajectory", f"{100 - pct_rising:.1f}%")
+
+        st.markdown(sl("Per-Patient Summary"), unsafe_allow_html=True)
+        if not pp.empty:
+            pp_display = pp.copy()
+            pp_display["slope_annual"] = (pp_display["slope_per_day"] * 365.25).round(4)
+            st.dataframe(
+                pp_display[["research_id", "n_obs", "slope_annual",
+                             "first_value", "last_value", "rising"]],
+                use_container_width=True,
+                height=400,
+            )
+            multi_export(pp_display, f"longitudinal_{marker}", key_sfx=f"long_{marker}")
+
+
 def _render_diagnostics(con, analyzer: ThyroidStatisticalAnalyzer) -> None:
     st.markdown(sl("Library Status"), unsafe_allow_html=True)
     st.markdown(_lib_badges(), unsafe_allow_html=True)
@@ -594,6 +808,146 @@ def _render_diagnostics(con, analyzer: ThyroidStatisticalAnalyzer) -> None:
     st.caption("Random seed: 42 | All p-values are two-sided unless noted")
 
 
+def _render_publication_export(con, analyzer: ThyroidStatisticalAnalyzer) -> None:
+    """Sub-tab: Publication-ready export bundle with LaTeX snippets."""
+    st.markdown(sl("Publication Export"), unsafe_allow_html=True)
+    st.caption(
+        "Export Table 1, model results, and LaTeX-ready snippets for manuscript submission."
+    )
+
+    sources = _available_sources(con)
+    if not sources:
+        st.info("No analytic views available. Run materialization scripts first.")
+        return
+
+    c1, c2 = st.columns(2)
+    with c1:
+        source = st.selectbox("Primary data source", sources, key="pub_src")
+    with c2:
+        groupby_opts = ["(None)"] + [g for g in _GROUPBY_OPTIONS[1:]]
+        groupby = st.selectbox("Table 1 group by", groupby_opts, key="pub_grp")
+
+    df = _load_source(con, source)
+
+    col_meta = []
+    try:
+        n_row = con.execute(f"SELECT COUNT(*) FROM {source}").fetchone()
+        col_meta.append(f"Rows: {n_row[0]:,}")
+    except Exception:
+        pass
+
+    if col_meta:
+        st.caption(" | ".join(col_meta))
+
+    run_col1, run_col2 = st.columns(2)
+    run_t1 = run_col1.button("Generate Table 1 for export", key="pub_t1_run")
+    run_snippet = run_col2.button("Generate clinical snippet text", key="pub_snip_run")
+
+    if run_t1 and not df.empty:
+        groupby_col = None if groupby == "(None)" else groupby
+        if groupby_col and groupby_col not in df.columns:
+            groupby_col = None
+
+        with st.spinner("Building Table 1…"):
+            t1_df, meta = analyzer.generate_table_one(
+                data=df, groupby_col=groupby_col
+            )
+
+        if "error" in meta:
+            st.error(meta["error"])
+        else:
+            st.markdown(sl("Table 1 — Cohort Characteristics"), unsafe_allow_html=True)
+
+            smd_note = " SMD included." if meta.get("smd_computed") else ""
+            st.caption(
+                f"N={meta['n_total']:,} | {len(meta.get('continuous_vars',[]))} continuous, "
+                f"{len(meta.get('categorical_vars',[]))} categorical.{smd_note}"
+            )
+
+            st.dataframe(t1_df, use_container_width=True, height=500)
+
+            export_df = t1_df.reset_index() if hasattr(t1_df.index, "names") and len(t1_df.index.names) > 1 else t1_df
+            multi_export(export_df, "pub_table1", key_sfx="pub_t1")
+
+            st.markdown("**LaTeX-ready column notes:**")
+            st.code(
+                "% Values are median [IQR] for non-normal continuous variables and n (%) for categorical.\n"
+                "% p-values from Mann-Whitney U / chi-squared / Fisher exact as appropriate.\n"
+                f"% N={meta['n_total']:,} patients; missing data excluded per variable.\n"
+                + (f"% Standardized mean differences (SMD) included for balance assessment.\n"
+                   if meta.get("smd_computed") else ""),
+                language="latex",
+            )
+
+    if run_snippet and not df.empty:
+        st.markdown(sl("Clinical Snippet — Significant Associations"), unsafe_allow_html=True)
+        st.caption(
+            "Run regression models first, then use this panel to format their "
+            "results for copy-paste into manuscript methods/results sections."
+        )
+
+        snippet_type = st.radio(
+            "Model type", ["Cox (HR)", "Logistic (OR)"],
+            key="pub_snip_type", horizontal=True
+        )
+
+        st.markdown("**Draft snippet (paste into manuscript):**")
+
+        if snippet_type == "Cox (HR)":
+            template = (
+                "In multivariable Cox proportional hazards analysis, "
+                "[PREDICTOR] was independently associated with "
+                "[OUTCOME] (HR=[X.XX], 95% CI [X.XX–X.XX], p=[X.XXX]). "
+                "The model demonstrated good discrimination (concordance=[X.XXX]). "
+                "Results were robust across sensitivity analyses."
+            )
+        else:
+            template = (
+                "In multivariable logistic regression, [PREDICTOR] was "
+                "independently associated with [OUTCOME] "
+                "(OR=[X.XX], 95% CI [X.XX–X.XX], p=[X.XXX]). "
+                "The model fit was adequate (pseudo-R²=[X.XXX], AUC=[X.XXX])."
+            )
+
+        st.text_area(
+            "Manuscript snippet template (edit values from your model):",
+            value=template,
+            height=160,
+            key="pub_snip_text",
+        )
+
+        st.markdown(sl("Model Interpretation Guide"), unsafe_allow_html=True)
+        interp_rows = []
+        for var, ctx in {
+            "BRAF V600E": "associated with RAI refractoriness and aggressive PTC",
+            "TERT promoter mutation": "marks dedifferentiation; highest risk when co-occurring with BRAF",
+            "Gross ETE": "upstages disease (AJCC T3b/T4); consider RAI and EBRT",
+            "LN ratio >0.3": "predicts structural recurrence; intensify surveillance",
+            "Age ≥55": "AJCC 8th Ed staging threshold; carries distinct prognosis",
+            "AJCC Stage III/IV": "guides RAI dosing and systemic therapy decisions",
+        }.items():
+            interp_rows.append({"Predictor": var, "Clinical context": ctx})
+        st.dataframe(
+            pd.DataFrame(interp_rows),
+            use_container_width=True,
+            hide_index=True,
+            height=260,
+        )
+
+    st.markdown("---")
+    st.markdown(sl("Export Checklist"), unsafe_allow_html=True)
+    checks = [
+        ("Table 1 (demographics + SMD)", "Generate above and download CSV"),
+        ("Hypothesis test battery (FDR-corrected)", "Run from Hypothesis Testing tab"),
+        ("Logistic regression OR table", "Run from Regression Modeling tab"),
+        ("Cox PH HR table + forest plot", "Run from Regression Modeling tab"),
+        ("Longitudinal Tg trajectory", "Run from Longitudinal Analysis tab"),
+        ("Missing data summary", "Run from Visualizations tab → Missing Data"),
+    ]
+    for item, how in checks:
+        st.markdown(f"- **{item}** — *{how}*")
+
+
 # ── Main render function ─────────────────────────────────────────────────
 
 def render_statistical_analysis(con) -> None:
@@ -607,8 +961,10 @@ def render_statistical_analysis(con) -> None:
         "Table 1",
         "Hypothesis Testing",
         "Regression Modeling",
+        "Longitudinal Analysis",
         "Visualizations",
-        "Diagnostics & Export",
+        "Diagnostics",
+        "Publication Export",
     ])
 
     with tabs[0]:
@@ -618,6 +974,10 @@ def render_statistical_analysis(con) -> None:
     with tabs[2]:
         _render_regression(con, analyzer)
     with tabs[3]:
-        _render_visualizations(con, analyzer)
+        _render_longitudinal(con, analyzer)
     with tabs[4]:
+        _render_visualizations(con, analyzer)
+    with tabs[5]:
         _render_diagnostics(con, analyzer)
+    with tabs[6]:
+        _render_publication_export(con, analyzer)

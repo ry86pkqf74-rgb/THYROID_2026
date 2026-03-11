@@ -83,6 +83,7 @@ THYROID_TABLE1_PRESET: dict[str, list[str]] = {
 
 THYROID_OUTCOMES: list[str] = [
     "event_occurred", "recurrence_flag", "braf_positive",
+    "structural_recurrence", "rai_need", "any_nsqip_complication",
 ]
 
 THYROID_PREDICTORS: list[str] = [
@@ -95,6 +96,96 @@ THYROID_PREDICTORS: list[str] = [
 THYROID_SURVIVAL: dict[str, str] = {
     "time_col": "time_to_event_days",
     "event_col": "event_occurred",
+}
+
+# ── NSQIP / Complications presets ─────────────────────────────────────────
+
+THYROID_NSQIP_OUTCOMES: list[str] = [
+    "any_nsqip_complication",
+    "rln_injury",
+    "hypocalcemia",
+    "hypoparathyroidism",
+    "seroma",
+    "hematoma",
+]
+
+THYROID_NSQIP_PREDICTORS: list[str] = [
+    "age_at_surgery",
+    "sex",
+    "braf_mutation_mentioned",
+    "largest_tumor_cm",
+    "ln_positive",
+    "tumor_1_extrathyroidal_ext",
+    "overall_stage_ajcc8",
+    "malignant_surgery_type",
+    "has_parathyroid",
+]
+
+# Raw complication column names from the `complications` table
+NSQIP_COMPLICATION_COLUMNS: list[str] = [
+    "rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy",
+    "seroma",
+    "hematoma",
+    "hypocalcemia",
+    "hypoparathyroidism",
+]
+
+# ── ETE subtype vocabulary ────────────────────────────────────────────────
+
+ETE_SUBTYPES: dict[str, str] = {
+    "none": "none",
+    "microscopic": "yes, minimal",
+    "gross": "yes, extensive",
+    "present": "present",
+}
+
+# ── Longitudinal marker configuration ────────────────────────────────────
+
+LONGITUDINAL_MARKERS: dict[str, dict] = {
+    "tg": {
+        "label": "Thyroglobulin (Tg)",
+        "lab_type_filter": "thyroglobulin",
+        "event_subtype_filter": "thyroglobulin",
+        "units": "ng/mL",
+        "log_transform": True,
+    },
+    "tsh": {
+        "label": "TSH",
+        "lab_type_filter": "tsh",
+        "event_subtype_filter": "tsh",
+        "units": "mIU/L",
+        "log_transform": True,
+    },
+    "anti_tg": {
+        "label": "Anti-Thyroglobulin (Anti-Tg)",
+        "lab_type_filter": "anti_thyroglobulin",
+        "event_subtype_filter": "anti-thyroglobulin",
+        "units": "IU/mL",
+        "log_transform": False,
+    },
+}
+
+# ── Variable-specific clinical context for snippet generation ─────────────
+
+_CLINICAL_CONTEXT: dict[str, str] = {
+    "braf_positive": "BRAF V600E is common in aggressive PTC subtypes and associated with RAI refractoriness",
+    "braf_mutation_mentioned": "BRAF V600E is associated with higher recurrence risk and RAI refractoriness",
+    "tert_positive": "TERT promoter mutation marks dedifferentiation risk and aggressive clinical behavior",
+    "tert_mutation_mentioned": "TERT promoter mutations co-occurring with BRAF markedly increase recurrence risk",
+    "tumor_1_gross_ete": "Gross ETE upstages disease to AJCC T3b/T4 and confers worse prognosis",
+    "tumor_1_ete_microscopic_only": "Microscopic ETE does not upstage per AJCC 8th Ed but warrants surveillance",
+    "ln_positive": "LN involvement is a key driver of structural recurrence risk",
+    "ln_ratio": "LN ratio >0.3 predicts regional recurrence independent of absolute count",
+    "overall_stage_ajcc8": "AJCC 8th Ed stage dictates surveillance intensity and RAI eligibility",
+    "age_at_surgery": "Age ≥55 is a staging threshold in AJCC 8th Ed with prognostic implications",
+    "largest_tumor_cm": "Tumor size determines AJCC T stage cutoffs at 1, 2, and 4 cm",
+    "ln_examined": "Higher LN examination count improves staging accuracy",
+    "variant_standardized": "Histologic variant influences recurrence risk beyond classic PTC",
+    "any_nsqip_complication": "Surgical complications directly impact post-operative quality of life",
+    "hypocalcemia": "Hypocalcemia reflects parathyroid injury and requires vitamin D/calcium supplementation",
+    "rln_injury": "RLN injury risk increases with central neck dissection and reoperation",
+    "sex": "Female sex is the demographic norm in DTC but males may carry higher risk",
+    "recurrence_risk_band": "ATA recurrence risk stratification guides RAI and surveillance decisions",
 }
 
 # Data source priority for view resolution
@@ -354,12 +445,14 @@ class ThyroidStatisticalAnalyzer:
                 groupby=groupby_col,
                 nonnormal=nonnormal,
                 pval=groupby_col is not None,
+                smd=groupby_col is not None,  # SMD when stratifying (balance assessment)
                 htest_name=True,
                 missing=True,
             )
             t1_df = t1.tableone.copy()
             metadata["tableone_object"] = t1
             metadata["nonnormal"] = nonnormal
+            metadata["smd_computed"] = groupby_col is not None
             return t1_df, metadata
 
         return self._manual_table_one(data, continuous_vars, categorical_vars, groupby_col, metadata)
@@ -1039,3 +1132,498 @@ class ThyroidStatisticalAnalyzer:
         ))
         fig.update_layout(**PL, title=title, height=max(400, 30 * len(corr) + 100))
         return fig
+
+    # ── Longitudinal analysis (mixed-effects) ─────────────────────────────
+
+    def longitudinal_summary(
+        self,
+        marker: str = "tg",
+        view: str | None = None,
+        stratify_by: str | None = None,
+    ) -> dict[str, Any]:
+        """Fit a linear mixed-effects model for longitudinal Tg/TSH trajectories.
+
+        Loads from ``extracted_clinical_events_v4`` (primary, has days_from_surgery)
+        or falls back to ``longitudinal_lab_view``.  Fits a random-intercept model:
+
+            log(value + 0.01) ~ days_from_surgery + (1 | research_id)
+
+        when log_transform is enabled (Tg, TSH), otherwise uses raw values.
+
+        Parameters
+        ----------
+        marker : str
+            One of ``"tg"``, ``"tsh"``, ``"anti_tg"``.
+        view : str, optional
+            Override source view/table.
+        stratify_by : str, optional
+            Optional column to stratify model (e.g. ``"braf_positive"``).
+
+        Returns
+        -------
+        dict with keys:
+            data, slope, slope_se, slope_ci, p_value, n_patients, n_obs,
+            model_summary, per_patient_summary, warnings, model_type
+        """
+        if not HAS_STATSMODELS:
+            return {"error": "statsmodels required for mixed-effects models"}
+
+        marker_cfg = LONGITUDINAL_MARKERS.get(marker, LONGITUDINAL_MARKERS["tg"])
+        log_transform = marker_cfg["log_transform"]
+        label = marker_cfg["label"]
+        result_warnings: list[str] = []
+
+        # ── Load data ────────────────────────────────────────────────────
+        data: pd.DataFrame | None = None
+        time_col = "days_from_surgery"
+        value_col = "event_value"
+        id_col = "research_id"
+
+        if view is None:
+            view = "extracted_clinical_events_v4"
+
+        primary_candidates = [view, "extracted_clinical_events_v4", "longitudinal_lab_view"]
+        for candidate in primary_candidates:
+            try:
+                row = self._con.execute(
+                    f"SELECT COUNT(*) FROM information_schema.tables WHERE table_name='{candidate}'"
+                ).fetchone()
+                if not (row and row[0] > 0):
+                    continue
+            except Exception:
+                continue
+
+            try:
+                if "extracted_clinical_events" in candidate:
+                    subtype = marker_cfg["event_subtype_filter"]
+                    sql = (
+                        f"SELECT research_id, "
+                        f"TRY_CAST(event_value AS DOUBLE) AS event_value, "
+                        f"TRY_CAST(days_from_surgery AS DOUBLE) AS days_from_surgery "
+                        f"FROM {candidate} "
+                        f"WHERE event_type = 'lab' "
+                        f"AND LOWER(event_subtype) LIKE '%{subtype}%' "
+                        f"AND event_value IS NOT NULL "
+                        f"AND TRY_CAST(event_value AS DOUBLE) > 0 "
+                        f"AND days_from_surgery IS NOT NULL"
+                    )
+                    time_col = "days_from_surgery"
+                    value_col = "event_value"
+                else:
+                    lab_filter = marker_cfg["lab_type_filter"]
+                    sql = (
+                        f"SELECT research_id, "
+                        f"TRY_CAST(numeric_result AS DOUBLE) AS event_value, "
+                        f"TRY_CAST(days_from_first_lab AS DOUBLE) AS days_from_surgery "
+                        f"FROM {candidate} "
+                        f"WHERE LOWER(lab_type) LIKE '%{lab_filter}%' "
+                        f"AND numeric_result IS NOT NULL "
+                        f"AND TRY_CAST(numeric_result AS DOUBLE) > 0 "
+                        f"AND days_from_first_lab IS NOT NULL"
+                    )
+                    time_col = "days_from_surgery"
+                    value_col = "event_value"
+
+                df_raw = self._con.execute(sql).fetchdf()
+                if len(df_raw) >= 20:
+                    data = df_raw
+                    break
+            except Exception as exc:
+                log.warning("Longitudinal query on %s failed: %s", candidate, exc)
+                continue
+
+        if data is None or data.empty:
+            return {
+                "error": (
+                    f"No longitudinal {label} data found. "
+                    "Ensure extracted_clinical_events_v4 is materialized and "
+                    "contains lab events."
+                )
+            }
+
+        data = data.dropna(subset=[id_col, time_col, value_col]).copy()
+        data[value_col] = pd.to_numeric(data[value_col], errors="coerce")
+        data[time_col] = pd.to_numeric(data[time_col], errors="coerce")
+        data = data.dropna()
+
+        if log_transform:
+            data["outcome"] = np.log(data[value_col] + 0.01)
+        else:
+            data["outcome"] = data[value_col]
+
+        # Need ≥2 obs per patient for random effects
+        obs_per_patient = data.groupby(id_col)["outcome"].count()
+        multi_obs_ids = obs_per_patient[obs_per_patient >= 2].index
+        data = data[data[id_col].isin(multi_obs_ids)]
+
+        n_patients = int(data[id_col].nunique())
+        n_obs = len(data)
+
+        if n_patients < 10:
+            return {
+                "error": (
+                    f"Only {n_patients} patients with ≥2 {label} measurements. "
+                    "Need ≥10 patients for mixed-effects model."
+                )
+            }
+
+        if n_patients < 50:
+            result_warnings.append(
+                f"Only {n_patients} patients with repeated measures — "
+                "mixed-effects estimates may be unstable."
+            )
+
+        # ── Per-patient slope summary (OLS per patient) ───────────────────
+        per_patient_rows = []
+        for pid, grp in data.groupby(id_col):
+            if len(grp) < 2:
+                continue
+            x = grp[time_col].values
+            y = grp["outcome"].values
+            try:
+                coeffs = np.polyfit(x, y, 1)
+                slope = float(coeffs[0])
+                intercept = float(coeffs[1])
+                first_val = float(y[0]) if not log_transform else float(np.exp(y[0]))
+                last_val = float(y[-1]) if not log_transform else float(np.exp(y[-1]))
+            except Exception:
+                continue
+            per_patient_rows.append({
+                "research_id": pid,
+                "n_obs": len(grp),
+                "slope_per_day": round(slope, 6),
+                "first_value": round(first_val, 3),
+                "last_value": round(last_val, 3),
+                "rising": slope > 0,
+            })
+
+        per_patient_df = pd.DataFrame(per_patient_rows)
+
+        # ── Mixed-effects model (random intercept) ────────────────────────
+        try:
+            import statsmodels.formula.api as smf  # type: ignore
+
+            data["days_scaled"] = data[time_col] / 365.25
+            data[id_col] = data[id_col].astype(str)
+
+            with warnings.catch_warnings(record=True) as caught:
+                warnings.simplefilter("always")
+                md = smf.mixedlm("outcome ~ days_scaled", data, groups=data[id_col])
+                mdf = md.fit(reml=True, method="lbfgs")
+                for w in caught:
+                    if "ConvergenceWarning" in str(type(w.category)):
+                        result_warnings.append("Mixed-effects model convergence warning — interpret carefully.")
+
+            fe = mdf.params
+            ci = mdf.conf_int()
+            slope_raw = float(fe.get("days_scaled", np.nan))
+            slope_ci_lo = float(ci.loc["days_scaled", 0]) if "days_scaled" in ci.index else np.nan
+            slope_ci_hi = float(ci.loc["days_scaled", 1]) if "days_scaled" in ci.index else np.nan
+            p_slope = float(mdf.pvalues.get("days_scaled", np.nan))
+
+            unit_note = f"log({label})" if log_transform else label
+            model_summary = (
+                f"LME: {unit_note} ~ days_from_surgery/365 + (1|patient)\n"
+                f"Slope β={slope_raw:.4f} [{slope_ci_lo:.4f}, {slope_ci_hi:.4f}] "
+                f"p={p_slope:.4f}\n"
+                f"N={n_patients} patients, {n_obs} obs"
+            )
+            model_type = "mixedlm"
+
+        except Exception as exc:
+            # Fallback to population OLS
+            result_warnings.append(
+                f"Mixed-effects model failed ({exc}); falling back to OLS."
+            )
+            x_scaled = data[time_col].values / 365.25
+            y_out = data["outcome"].values
+            coeffs = np.polyfit(x_scaled, y_out, 1)
+            slope_raw = float(coeffs[0])
+            slope_ci_lo = slope_ci_hi = slope_raw
+            p_slope = np.nan
+            model_summary = f"OLS fallback: slope={slope_raw:.4f} (MixedLM unavailable)"
+            model_type = "ols_fallback"
+            mdf = None
+
+        # ── Slope direction label ─────────────────────────────────────────
+        rising_pct = float(per_patient_df["rising"].mean() * 100) if not per_patient_df.empty else np.nan
+        direction = "rising" if slope_raw > 0 else "falling"
+        clinical_note = (
+            f"{label} trajectory is {direction} (β={slope_raw:.4f}/year). "
+            f"{rising_pct:.0f}% of patients show a rising slope. "
+        )
+        if marker == "tg" and slope_raw > 0:
+            clinical_note += "Rising Tg post-thyroidectomy may indicate structural recurrence — "
+            clinical_note += "correlate with imaging surveillance."
+        elif marker == "tg":
+            clinical_note += "Stable or falling Tg is consistent with successful treatment."
+
+        return {
+            "data": data,
+            "marker": marker,
+            "marker_label": label,
+            "marker_units": marker_cfg["units"],
+            "log_transform": log_transform,
+            "slope": round(slope_raw, 6),
+            "slope_se": round(float(mdf.bse.get("days_scaled", np.nan)) if model_type == "mixedlm" and mdf is not None else np.nan, 6),
+            "slope_ci": (round(slope_ci_lo, 6), round(slope_ci_hi, 6)),
+            "p_value": round(p_slope, 6) if not np.isnan(p_slope) else None,
+            "n_patients": n_patients,
+            "n_obs": n_obs,
+            "model_summary": model_summary,
+            "model_type": model_type,
+            "per_patient_summary": per_patient_df,
+            "rising_pct": round(rising_pct, 1),
+            "clinical_note": clinical_note,
+            "warnings": result_warnings,
+        }
+
+    # ── Power & sample-size helpers ───────────────────────────────────────
+
+    @staticmethod
+    def power_two_proportions(
+        p1: float,
+        p2: float,
+        alpha: float = 0.05,
+        power: float = 0.80,
+        two_sided: bool = True,
+    ) -> dict[str, Any]:
+        """Required sample size per group for a two-proportion z-test.
+
+        Implements the Fleiss (1981) formula, suitable for comparing
+        event rates (e.g., recurrence) between BRAF+ and BRAF– groups.
+
+        Parameters
+        ----------
+        p1, p2 : float
+            Expected proportions in each group (0-1).
+        alpha : float
+            Type I error rate (default 0.05 two-sided).
+        power : float
+            Desired statistical power (default 0.80).
+        two_sided : bool
+            Use two-sided test (default True).
+
+        Returns
+        -------
+        dict with n_per_group, n_total, effect_size (Cohen h), inputs
+        """
+        from scipy.stats import norm  # type: ignore
+
+        alpha_adj = alpha / 2 if two_sided else alpha
+        z_alpha = norm.ppf(1 - alpha_adj)
+        z_beta = norm.ppf(power)
+
+        # Fleiss formula
+        p_bar = (p1 + p2) / 2
+        n = (z_alpha * np.sqrt(2 * p_bar * (1 - p_bar))
+             + z_beta * np.sqrt(p1 * (1 - p1) + p2 * (1 - p2))) ** 2 / (p1 - p2) ** 2
+        n = int(np.ceil(n))
+
+        # Cohen's h
+        h = 2 * np.arcsin(np.sqrt(p1)) - 2 * np.arcsin(np.sqrt(p2))
+
+        return {
+            "n_per_group": n,
+            "n_total": 2 * n,
+            "effect_size_h": round(abs(float(h)), 4),
+            "effect_label": (
+                "small" if abs(h) < 0.3 else "medium" if abs(h) < 0.5 else "large"
+            ),
+            "p1": p1, "p2": p2, "alpha": alpha, "power": power,
+            "two_sided": two_sided,
+            "formula": "Fleiss (1981) two-proportion z-test",
+        }
+
+    @staticmethod
+    def power_logistic(
+        p_event: float,
+        or_detect: float,
+        alpha: float = 0.05,
+        power: float = 0.80,
+        p_exposure: float = 0.5,
+    ) -> dict[str, Any]:
+        """Required sample size for detecting an OR in logistic regression.
+
+        Implements the Hsieh, Block & Larsen (1998) formula for a single
+        binary predictor.
+
+        Parameters
+        ----------
+        p_event : float
+            Baseline event rate (0-1).
+        or_detect : float
+            Minimum OR to detect (>1).
+        alpha : float
+            Type I error rate (default 0.05, two-sided).
+        power : float
+            Desired statistical power (default 0.80).
+        p_exposure : float
+            Prevalence of binary predictor (default 0.5).
+        """
+        from scipy.stats import norm  # type: ignore
+
+        z_alpha = norm.ppf(1 - alpha / 2)
+        z_beta = norm.ppf(power)
+
+        # Hsieh et al. 1998 formula
+        p1 = (p_event * or_detect) / (1 - p_event + p_event * or_detect)
+        p_avg = p_exposure * p1 + (1 - p_exposure) * p_event
+        numerator = (z_alpha + z_beta) ** 2
+        denominator = p_avg * (1 - p_avg) * (np.log(or_detect)) ** 2
+        n = int(np.ceil(numerator / denominator)) if denominator > 0 else None
+
+        return {
+            "n_total": n,
+            "p_event_baseline": p_event,
+            "p_event_exposed": round(float(p1), 4) if n else None,
+            "or_detect": or_detect,
+            "alpha": alpha,
+            "power": power,
+            "p_exposure": p_exposure,
+            "formula": "Hsieh, Block & Larsen (1998)",
+        }
+
+    @staticmethod
+    def sample_size_km(
+        hr: float,
+        alpha: float = 0.05,
+        power: float = 0.80,
+        event_rate: float = 0.10,
+        allocation_ratio: float = 1.0,
+    ) -> dict[str, Any]:
+        """Required events (and total n) for a log-rank test (Cox/KM).
+
+        Implements Schoenfeld (1981): d = (z_α + z_β)² / [log(HR)]².
+        Total n derived from expected event rate.
+
+        Parameters
+        ----------
+        hr : float
+            Hazard ratio to detect (>1).
+        alpha : float
+            Type I error (default 0.05, two-sided).
+        power : float
+            Desired power (default 0.80).
+        event_rate : float
+            Overall event rate in cohort (default 0.10 = 10%).
+        allocation_ratio : float
+            n_group2 / n_group1 (default 1.0 = equal groups).
+        """
+        from scipy.stats import norm  # type: ignore
+
+        z_alpha = norm.ppf(1 - alpha / 2)
+        z_beta = norm.ppf(power)
+
+        # Schoenfeld (1981)
+        d = int(np.ceil((z_alpha + z_beta) ** 2 / (np.log(hr)) ** 2))
+        n_total = int(np.ceil(d / event_rate)) if event_rate > 0 else None
+        n_g1 = int(np.ceil(n_total / (1 + allocation_ratio))) if n_total else None
+        n_g2 = int(n_total - n_g1) if (n_total and n_g1) else None
+
+        return {
+            "events_required": d,
+            "n_total": n_total,
+            "n_group1": n_g1,
+            "n_group2": n_g2,
+            "hr": hr,
+            "alpha": alpha,
+            "power": power,
+            "event_rate": event_rate,
+            "allocation_ratio": allocation_ratio,
+            "formula": "Schoenfeld (1981) log-rank test",
+        }
+
+    # ── Clinical interpretation snippets ──────────────────────────────────
+
+    @staticmethod
+    def format_clinical_snippet(
+        model_results: dict[str, Any],
+        model_type: Literal["HR", "OR"] = "HR",
+        outcome_label: str = "the outcome",
+        significance_threshold: float = 0.05,
+    ) -> str:
+        """Generate plain-English clinical interpretation for significant findings.
+
+        Parameters
+        ----------
+        model_results : dict
+            Output of ``fit_cox_ph()`` or ``fit_logistic_regression()``.
+        model_type : str
+            ``"HR"`` for Cox, ``"OR"`` for logistic.
+        outcome_label : str
+            Human-readable outcome name (e.g., ``"disease recurrence"``).
+        significance_threshold : float
+            P-value threshold for highlighting (default 0.05).
+
+        Returns
+        -------
+        str — formatted Markdown text suitable for ``st.info()`` or manuscript draft.
+        """
+        estimate_col = "HR" if model_type == "HR" else "OR"
+        label_col = "covariate" if model_type == "HR" else "predictor"
+
+        if estimate_col not in model_results.get(
+            "hr_table" if model_type == "HR" else "or_table",
+            pd.DataFrame(),
+        ).columns:
+            return "No significant associations detected."
+
+        table_key = "hr_table" if model_type == "HR" else "or_table"
+        df = model_results.get(table_key, pd.DataFrame())
+        if df.empty:
+            return "Model results unavailable."
+
+        sig = df[
+            (df["p_value"] < significance_threshold)
+            & (df.get("predictor", df.get("covariate", pd.Series())) != "const")
+        ].copy()
+
+        if "predictor" not in sig.columns and "covariate" in sig.columns:
+            sig = sig.rename(columns={"covariate": "predictor"})
+        elif "covariate" not in sig.columns and "predictor" in sig.columns:
+            pass  # predictor already correct
+
+        if sig.empty:
+            return (
+                f"No individual predictors reached p<{significance_threshold} "
+                f"for {outcome_label}. Consider relaxing significance threshold "
+                f"or increasing sample size."
+            )
+
+        lines = [
+            f"**Significant predictors of {outcome_label} "
+            f"({'multivariable Cox PH' if model_type == 'HR' else 'multivariable logistic regression'}):**\n"
+        ]
+
+        for _, row in sig.sort_values("p_value").iterrows():
+            var = str(row.get("predictor", ""))
+            est = float(row[estimate_col])
+            ci_lo = float(row["CI_lower"])
+            ci_hi = float(row["CI_upper"])
+            p = float(row["p_value"])
+            p_str = f"p={p:.3f}" if p >= 0.001 else "p<0.001"
+            dir_word = "associated with increased" if est > 1 else "associated with reduced"
+            pct = abs(est - 1) * 100
+
+            context = _CLINICAL_CONTEXT.get(var, "")
+            context_str = f" ({context})" if context else ""
+            var_display = var.replace("_", " ").title()
+
+            lines.append(
+                f"- **{var_display}**: {estimate_col}={est:.2f} "
+                f"(95% CI {ci_lo:.2f}–{ci_hi:.2f}), {p_str} — "
+                f"{dir_word} risk by {pct:.0f}%{context_str}"
+            )
+
+        meta_parts = []
+        if "n_obs" in model_results:
+            meta_parts.append(f"N={model_results['n_obs']:,}")
+        if model_type == "HR" and "concordance" in model_results:
+            meta_parts.append(f"concordance={model_results['concordance']:.3f}")
+        elif "pseudo_r2" in model_results:
+            meta_parts.append(f"pseudo-R²={model_results['pseudo_r2']:.3f}")
+        if meta_parts:
+            lines.append(f"\n*Model: {'; '.join(meta_parts)}*")
+
+        return "\n".join(lines)

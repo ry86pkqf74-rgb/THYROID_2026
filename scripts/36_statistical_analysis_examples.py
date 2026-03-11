@@ -29,6 +29,7 @@ import sys
 import time
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -43,6 +44,9 @@ from utils.statistical_analysis import (
     ThyroidStatisticalAnalyzer,
     THYROID_PREDICTORS,
     THYROID_SURVIVAL,
+    THYROID_NSQIP_OUTCOMES,
+    THYROID_NSQIP_PREDICTORS,
+    LONGITUDINAL_MARKERS,
 )
 
 logging.basicConfig(
@@ -245,6 +249,124 @@ def phase6_correlation(analyzer: ThyroidStatisticalAnalyzer, df: pd.DataFrame, o
         log.warning("  Heatmap export failed: %s", exc)
 
 
+def phase7_longitudinal(
+    analyzer: ThyroidStatisticalAnalyzer,
+    con: Any,
+    out_dir: Path,
+) -> None:
+    """Phase 7: Longitudinal Tg/TSH mixed-effects trajectory analysis."""
+    log.info("Phase 7: Longitudinal Biomarker Analysis (Mixed-Effects)")
+
+    for marker in ["tg", "tsh"]:
+        label = LONGITUDINAL_MARKERS[marker]["label"]
+        log.info("  Fitting mixed-effects model for %s...", label)
+        result = analyzer.longitudinal_summary(marker=marker)
+
+        if "error" in result:
+            log.warning("  %s: %s", label, result["error"])
+            continue
+
+        for w in result.get("warnings", []):
+            log.warning("  %s", w)
+
+        log.info(
+            "  %s: n=%d patients, %d obs, slope=%.4f/yr, p=%s",
+            label,
+            result["n_patients"],
+            result["n_obs"],
+            result["slope"],
+            f"{result['p_value']:.4f}" if result.get("p_value") else "N/A",
+        )
+        log.info("  → %s", result["clinical_note"])
+
+        pp = result.get("per_patient_summary", pd.DataFrame())
+        if not pp.empty:
+            out_file = out_dir / f"longitudinal_{marker}_per_patient.csv"
+            pp.to_csv(out_file, index=False)
+            log.info("  Per-patient summary -> %s", out_file.name)
+
+        summary_path = out_dir / f"longitudinal_{marker}_summary.txt"
+        summary_path.write_text(result["model_summary"])
+        log.info("  Model summary -> %s", summary_path.name)
+
+
+def phase8_power_analysis(out_dir: Path) -> None:
+    """Phase 8: Power and sample-size calculations for thyroid-specific hypotheses."""
+    log.info("Phase 8: Power & Sample-Size Analysis")
+
+    rows = []
+
+    # H1: BRAF+ vs BRAF- recurrence rate difference
+    r1 = ThyroidStatisticalAnalyzer.power_two_proportions(
+        p1=0.15, p2=0.05, alpha=0.05, power=0.80
+    )
+    rows.append({
+        "hypothesis": "BRAF+ vs BRAF− recurrence (15% vs 5%)",
+        "formula": r1["formula"],
+        "n_per_group": r1["n_per_group"],
+        "n_total": r1["n_total"],
+        "effect_size": r1["effect_size_h"],
+        "alpha": r1["alpha"],
+        "power": r1["power"],
+    })
+    log.info(
+        "  H1 BRAF recurrence: n_per_group=%d, n_total=%d (h=%.3f)",
+        r1["n_per_group"], r1["n_total"], r1["effect_size_h"],
+    )
+
+    # H2: OR=2.0 for ETE in logistic regression (event rate 10%)
+    r2 = ThyroidStatisticalAnalyzer.power_logistic(
+        p_event=0.10, or_detect=2.0, alpha=0.05, power=0.80
+    )
+    rows.append({
+        "hypothesis": "ETE vs recurrence (OR=2.0, baseline 10%)",
+        "formula": r2["formula"],
+        "n_per_group": None,
+        "n_total": r2["n_total"],
+        "effect_size": None,
+        "alpha": r2["alpha"],
+        "power": r2["power"],
+    })
+    log.info("  H2 ETE logistic: n_total=%s", r2["n_total"])
+
+    # H3: Log-rank for HR=1.8, event rate 10%
+    r3 = ThyroidStatisticalAnalyzer.sample_size_km(
+        hr=1.8, alpha=0.05, power=0.80, event_rate=0.10
+    )
+    rows.append({
+        "hypothesis": "Cox log-rank: HR=1.8, 10% event rate",
+        "formula": r3["formula"],
+        "n_per_group": r3.get("n_group1"),
+        "n_total": r3["n_total"],
+        "effect_size": None,
+        "alpha": r3["alpha"],
+        "power": r3["power"],
+    })
+    log.info(
+        "  H3 KM log-rank: events_required=%d, n_total=%s",
+        r3["events_required"], r3["n_total"],
+    )
+
+    # H4: Hypocalcemia complication rate (NSQIP — 20% vs 10%)
+    r4 = ThyroidStatisticalAnalyzer.power_two_proportions(
+        p1=0.20, p2=0.10, alpha=0.05, power=0.80
+    )
+    rows.append({
+        "hypothesis": "Hypocalcemia rate total vs completion thyroid (20% vs 10%)",
+        "formula": r4["formula"],
+        "n_per_group": r4["n_per_group"],
+        "n_total": r4["n_total"],
+        "effect_size": r4["effect_size_h"],
+        "alpha": r4["alpha"],
+        "power": r4["power"],
+    })
+    log.info("  H4 Hypocalcemia: n_per_group=%d", r4["n_per_group"])
+
+    out_file = out_dir / "power_analysis.csv"
+    pd.DataFrame(rows).to_csv(out_file, index=False)
+    log.info("  Power analysis -> %s", out_file.name)
+
+
 def run(args: argparse.Namespace) -> int:
     t_start = time.perf_counter()
     OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -271,6 +393,8 @@ def run(args: argparse.Namespace) -> int:
     phase4_cox(analyzer, df, OUT_DIR)
     phase5_forest_plot(analyzer, OUT_DIR)
     phase6_correlation(analyzer, df, OUT_DIR)
+    phase7_longitudinal(analyzer, con, OUT_DIR)
+    phase8_power_analysis(OUT_DIR)
 
     elapsed = time.perf_counter() - t_start
     metadata = {
