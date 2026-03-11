@@ -1,6 +1,41 @@
 # THYROID_2026 Release Notes
 
-## v2026.03.11-predictive-workbench (Latest)
+## v2026.03.11-predictive-workbench-v2 (Latest)
+**Date:** 2026-03-11
+**Patients:** 11,673 | **Enhancement:** Phase 4.5 — Predictive Analytics Workbench Polish
+
+### Polished Features (4 high-impact feedback items)
+
+#### Competing Risks Enhancement
+- **Gray's landmark CIF tests** — Pepe-Mori z-test approximation comparing AJ CIF at 1/3/5/10-year landmarks between strata pairs; significance stars (\*/\*\*/\*\*\*)
+- **Cause-specific log-rank** — lifelines pairwise log-rank on cause-specific hazards (etiology complement to CIF comparison)
+- **KM overlay** on CIF plot — dashed gray `1 − KM` curve showing standard overestimate when ignoring competing risks
+- **CI bands** — shaded confidence intervals from AJ variance on primary CIF curve
+- **Enhanced clinical note** — structured as two complementary questions (etiology via Cox HR vs. patient counseling via CIF); references Pepe-Mori 1993 and Gray 1988
+
+#### Cure Calculator Expansion
+- **12 features** (8 core + 4 advanced): added `any_nsqip_complication`, `rln_injury`, `hypocalcemia`, `rai_received` in an **Advanced** expander
+- **Sensitivity analysis** — `sensitivity_analysis()` varies each feature independently, returns cure-probability swing sorted by absolute impact
+- **Advanced clinical context** — `_advanced_feature_interpretation()` generates NSQIP/RAI surveillance notes (doesn't modify PTCM theta)
+- **Smart defaults note** — cohort-derived defaults with explicit reference to most common profile
+- **Sensitivity note** — hybrid theta adjustment disclosure (Tuttle 2017, Adam 2015, ATA 2016)
+
+#### Model Comparison Dashboard
+- **Two-panel Plotly figure** — concordance bars + AIC bars side-by-side with per-model color coding
+- **Clinical recommendation engine** — `_model_comparison_recommendation()` picks best discriminative model, best AIC fit, and available cure models
+- All 6 models confirmed: KM, Cox PH, Weibull PTCM, Mixture Cure, Penalized Cox Ridge, Random Survival Forest
+
+#### Dashboard Tab Polish
+- **Sidebar Quick Launch card** — reads PTCM `analysis_metadata.json` and displays π̄, N, events, AIC in a compact card; points to Cure Calculator tab
+- Tab positioning confirmed: 🔮 Predictive Analytics immediately after 📊 Statistical Analysis
+
+### Updated Deliverables
+- `notebooks/40_predictive_analytics_examples.ipynb` — added sensitivity analysis, NSQIP advanced features, Gray's test display, model recommendation cells
+- `scripts/40_predictive_analytics_batch.py` — expanded to 5 phases: model comparison, competing risks + Gray's tests, batch scoring, sensitivity archetypes (3 patient profiles), manuscript report
+
+---
+
+## v2026.03.11-predictive-workbench
 **Date:** 2026-03-11
 **Patients:** 11,673 | **Enhancement:** Integrated Predictive Analytics & Comparative Survival Workbench
 

@@ -233,3 +233,8 @@
 - `requirements.txt` additions: `scikit-survival`
 - xgboost import on macOS requires `libomp` (`brew install libomp`); import guard uses `except Exception` (not just `ImportError`) since XGBoostError is not an ImportError subclass
 - Dashboard now 39 tabs (was 38); "🔮 Predictive Analytics" inserted after "📊 Statistical Analysis"
+- Phase 4.5 competing risks: `_gray_landmark_tests()` (Pepe-Mori z-test at 1/3/5/10y), `_cause_specific_logrank()` (lifelines logrank per stratum), KM overlay on CIF plot, CI bands from AJ variance
+- Phase 4.5 cure calculator: 12 features (8 core + 4 advanced NSQIP/treatment); `sensitivity_analysis()` method; `_advanced_feature_interpretation()` for NSQIP clinical context; core/advanced split in dashboard UI
+- Phase 4.5 model comparison: `_build_comparison_figure()` now 2-panel (concordance + AIC); `_model_comparison_recommendation()` generates best-model picks for discrimination/AIC/cure
+- Phase 4.5 sidebar: Quick Launch card reads PTCM `analysis_metadata.json` and shows π̄, N, events, AIC
+- `scripts/40_predictive_analytics_batch.py` now 5 phases: comparison, competing risks + Gray's tests, batch scoring, sensitivity archetypes, manuscript report

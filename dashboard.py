@@ -2437,6 +2437,32 @@ def main():
         else:
             st.caption("Read-only mode. Toggle to enter decisions.")
 
+        # ── Quick Launch: Predictive Analytics ─────────────────────
+        st.markdown(sl("🔮 Cure Calculator"), unsafe_allow_html=True)
+        _ptcm_meta = Path(__file__).resolve().parent / "exports" / "promotion_cure_results" / "analysis_metadata.json"
+        if _ptcm_meta.exists():
+            try:
+                import json as _json
+                _pm = _json.loads(_ptcm_meta.read_text(encoding="utf-8"))
+                st.markdown(
+                    f'<div style="background:#0e1219;border:1px solid #1e2535;'
+                    f'border-radius:8px;padding:0.6rem 0.8rem;margin-bottom:0.5rem">'
+                    f'<div style="font-size:.65rem;color:#8892a4;letter-spacing:.08em;'
+                    f'text-transform:uppercase">PTCM Status</div>'
+                    f'<div style="color:#2dd4bf;font-size:1.1rem;font-weight:700">'
+                    f'π\u0304 = {_pm.get("overall_cure_fraction", 0):.1%}</div>'
+                    f'<div style="font-size:.65rem;color:#8892a4">'
+                    f'N={_pm.get("n_total", 0):,} · '
+                    f'{_pm.get("n_events", 0)} events · '
+                    f'AIC={_pm.get("aic", 0):.0f}</div></div>',
+                    unsafe_allow_html=True,
+                )
+            except Exception:
+                pass
+            st.caption("Navigate to **🔮 Predictive Analytics** → **Cure Calculator** tab")
+        else:
+            st.caption("PTCM not fitted. Run script 39 first.")
+
         # ── Data Build Info ──────────────────────────────────────────
         with st.expander("📋 Data Build Info"):
             db_mode = "Read-Write" if review_mode and rw_con else "Read-Only Share"

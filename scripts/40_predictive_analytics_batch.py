@@ -2,11 +2,12 @@
 """
 40_predictive_analytics_batch.py -- Batch runner for predictive analytics.
 
-Runs the full predictive analytics pipeline:
-  1. Multi-model comparison (KM, Cox PH, PTCM, Mixture Cure, Penalized Cox, RSF)
-  2. Competing risks (Aalen-Johansen CIF + cause-specific Cox)
+Runs the full predictive analytics pipeline (Phase 4.5):
+  1. Multi-model comparison (6 models) + clinical recommendation
+  2. Competing risks (AJ CIF + Gray's landmark tests + cause-specific Cox)
   3. Batch PTCM cure scoring for all patients
-  4. Manuscript report generation
+  4. Sensitivity analysis for high-risk patient archetypes
+  5. Manuscript report generation
 
 Outputs to exports/predictive_analytics/.
 
@@ -78,7 +79,7 @@ def main() -> None:
     ts = datetime.now().strftime("%Y%m%d_%H%M")
 
     # ── 1. Model comparison ──────────────────────────────────────────────
-    print("  [1/4] Multi-model comparison…")
+    print("  [1/5] Multi-model comparison…")
     t0 = time.time()
     comp = pa.compare_survival_models()
     if "error" not in comp:
@@ -88,12 +89,15 @@ def main() -> None:
         print(f"        {len(df)} models compared → {out.name} ({time.time() - t0:.1f}s)")
         for _, row in df.iterrows():
             print(f"        {row['Model']:<28} C={row['Concordance']!s:<8} AIC={row['AIC']!s:<10} {row['Notes']}")
+        rec = comp.get("recommendation", "")
+        if rec:
+            print(f"\n        Recommendation: {rec}")
     else:
         print(f"        FAILED: {comp['error']}")
     print()
 
-    # ── 2. Competing risks ───────────────────────────────────────────────
-    print("  [2/4] Competing risks (recurrence vs death)…")
+    # ── 2. Competing risks + Gray's tests ──────────────────────────────
+    print("  [2/5] Competing risks (AJ CIF + Gray's landmark tests)…")
     t0 = time.time()
     preset = PREDICTIVE_PRESETS["recurrence"]
     cr = pa.fit_competing_risks(
@@ -101,12 +105,21 @@ def main() -> None:
         event_col=preset["event_col"],
         competing_event_col=preset["competing_event_col"],
         predictors=preset["predictors"],
+        strata_col="overall_stage_ajcc8",
     )
     if "error" not in cr:
         out = EXPORT_DIR / f"competing_risks_summary_{ts}.csv"
         cr["summary_table"].to_csv(out, index=False)
         print(f"        N={cr['n_obs']:,} | Primary={cr['n_events']} | Competing={cr['n_competing']}")
         print(f"        → {out.name} ({time.time() - t0:.1f}s)")
+
+        gray = cr.get("gray_tests")
+        if gray is not None and not gray.empty:
+            gray_out = EXPORT_DIR / f"gray_landmark_tests_{ts}.csv"
+            gray.to_csv(gray_out, index=False)
+            sig_count = (gray["sig"] != "").sum()
+            print(f"        Gray's tests: {len(gray)} comparisons, {sig_count} significant → {gray_out.name}")
+
         for label, hr in cr.get("cause_specific_hrs", {}).items():
             print(f"        Cause-specific Cox ({label}): C-index={hr['concordance']}")
     else:
@@ -115,7 +128,7 @@ def main() -> None:
 
     # ── 3. Batch PTCM cure scoring ───────────────────────────────────────
     if pa.ptcm_available and not args.dry_run:
-        print("  [3/4] Batch PTCM cure scoring…")
+        print("  [3/5] Batch PTCM cure scoring…")
         t0 = time.time()
         try:
             cohort = con.execute("SELECT * FROM promotion_cure_cohort").fetchdf()
@@ -130,12 +143,46 @@ def main() -> None:
         except Exception as exc:
             print(f"        FAILED: {exc}")
     else:
-        print("  [3/4] Batch scoring skipped (PTCM not available or --dry-run)")
+        print("  [3/5] Batch scoring skipped (PTCM not available or --dry-run)")
     print()
 
-    # ── 4. Manuscript report ─────────────────────────────────────────────
+    # ── 4. Sensitivity analysis for archetypes ───────────────────────────
+    if pa.ptcm_available:
+        print("  [4/5] Sensitivity analysis (3 patient archetypes)…")
+        archetypes = [
+            {"name": "Low-risk PTC", "age_at_diagnosis": 35, "ajcc_stage_8": "I",
+             "ete_type": "none", "braf_status": False, "tert_status": False,
+             "recurrence_risk_band": "low", "tumor_size_cm": 1.2, "ln_status": "N0"},
+            {"name": "BRAF+ ETE+ intermediate", "age_at_diagnosis": 52, "ajcc_stage_8": "II",
+             "ete_type": "microscopic", "braf_status": True, "tert_status": False,
+             "recurrence_risk_band": "intermediate", "tumor_size_cm": 2.5, "ln_status": "N1a"},
+            {"name": "High-risk TERT+ N1b", "age_at_diagnosis": 65, "ajcc_stage_8": "III",
+             "ete_type": "gross", "braf_status": True, "tert_status": True,
+             "recurrence_risk_band": "high", "tumor_size_cm": 4.5, "ln_status": "N1b"},
+        ]
+        sens_rows = []
+        for arch in archetypes:
+            name = arch.pop("name")
+            pred = pa.predict_individual_cure_probability(arch)
+            if "error" not in pred:
+                print(f"        {name:<30} cure={pred['cure_probability_pct']}% ({pred['cure_tier']})")
+                sens = pa.sensitivity_analysis(arch)
+                if not sens.empty:
+                    top = sens.head(3)
+                    for _, r in top.iterrows():
+                        sens_rows.append({"archetype": name, **r.to_dict()})
+        if sens_rows:
+            import pandas as pd
+            sens_out = EXPORT_DIR / f"sensitivity_archetypes_{ts}.csv"
+            pd.DataFrame(sens_rows).to_csv(sens_out, index=False)
+            print(f"        → {sens_out.name}")
+    else:
+        print("  [4/5] Sensitivity skipped (PTCM not available)")
+    print()
+
+    # ── 5. Manuscript report ─────────────────────────────────────────────
     if not args.dry_run:
-        print("  [4/4] Manuscript report…")
+        print("  [5/5] Manuscript report…")
         t0 = time.time()
         report = pa.generate_manuscript_report(
             sections=["PTCM", "CompetingRisks", "Comparison"],
@@ -145,7 +192,7 @@ def main() -> None:
         else:
             print(f"        FAILED: {report['error']}")
     else:
-        print("  [4/4] Report skipped (--dry-run)")
+        print("  [5/5] Report skipped (--dry-run)")
 
     # ── Summary ──────────────────────────────────────────────────────────
     con.close()

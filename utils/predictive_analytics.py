@@ -50,6 +50,7 @@ try:
         CoxPHFitter,
         KaplanMeierFitter,
     )
+    from lifelines.statistics import logrank_test as ll_logrank_test
     HAS_LIFELINES = True
 except ImportError:
     HAS_LIFELINES = False
@@ -102,6 +103,8 @@ try:
     HAS_DOCX = True
 except ImportError:
     HAS_DOCX = False
+
+from itertools import combinations as _combinations
 
 from utils.statistical_analysis import (
     ThyroidStatisticalAnalyzer,
@@ -176,6 +179,10 @@ CURE_CALCULATOR_FEATURES: dict[str, dict[str, Any]] = {
     "recurrence_risk_band": {"label": "ATA Risk Band", "options": ["low", "intermediate", "high"], "default": "low", "type": "select", "group": "core"},
     "tumor_size_cm": {"label": "Tumor size (cm)", "min": 0.1, "max": 10.0, "default": 1.5, "step": 0.1, "type": "slider", "group": "core"},
     "ln_status": {"label": "Lymph node status", "options": ["N0", "N1a", "N1b", "Nx"], "default": "N0", "type": "select", "group": "core"},
+    "any_nsqip_complication": {"label": "Any NSQIP complication", "options": [False, True], "default": False, "type": "toggle", "group": "advanced"},
+    "rln_injury": {"label": "RLN injury", "options": [False, True], "default": False, "type": "toggle", "group": "advanced"},
+    "hypocalcemia": {"label": "Hypocalcemia", "options": [False, True], "default": False, "type": "toggle", "group": "advanced"},
+    "rai_received": {"label": "RAI received", "options": [False, True], "default": False, "type": "toggle", "group": "advanced"},
 }
 
 # Hybrid theta adjustment factors for features not in the 10-covariate PTCM.
@@ -214,6 +221,26 @@ CLINICAL_INTERPRETATIONS: dict[str, str] = {
         "aggressive multimodal surveillance and treatment optimization warranted."
     ),
 }
+
+
+def _cif_at_time_with_var(
+    cif_df: pd.DataFrame, var_df: pd.DataFrame, t: float,
+) -> dict[str, float]:
+    """Extract CIF estimate and its variance at time *t* from AJ output.
+
+    Performs last-observation-carried-forward interpolation on the
+    step-function CIF and its variance estimate.
+    """
+    mask = cif_df.index <= t
+    if not mask.any():
+        return {"cif": 0.0, "var": 0.0}
+    cif_val = float(cif_df[mask].iloc[-1].values[0])
+    var_val = 0.0
+    if not var_df.empty:
+        v_mask = var_df.index <= t
+        if v_mask.any():
+            var_val = float(var_df[v_mask].iloc[-1].values[0])
+    return {"cif": cif_val, "var": max(var_val, 0.0)}
 
 
 def _fig_layout(fig: "go.Figure", title: str, height: int = 500, **kw) -> "go.Figure":
@@ -500,11 +527,14 @@ class ThyroidPredictiveAnalyzer:
                 "event_rate_pct": self._ptcm_summary.get("event_rate_pct", 0),
             }
 
+        advanced_note = self._advanced_feature_interpretation(patient_features)
+
         return {
             "cure_probability": round(cure_prob, 4),
             "cure_probability_pct": round(cure_prob * 100, 1),
             "cure_tier": tier,
             "cure_interpretation": CLINICAL_INTERPRETATIONS.get(tier, ""),
+            "advanced_clinical_note": advanced_note,
             "theta": round(theta, 4),
             "conditional_survival": cond_surv_df,
             "feature_contributions": contributions,
@@ -535,6 +565,103 @@ class ThyroidPredictiveAnalyzer:
                 right=False,
             )
         return result
+
+    def sensitivity_analysis(
+        self,
+        patient_features: dict[str, Any],
+        vary_features: list[str] | None = None,
+    ) -> pd.DataFrame:
+        """One-at-a-time sensitivity analysis on cure probability.
+
+        Varies each feature across its range while holding others constant,
+        computing the resulting change in cure probability. Useful for
+        identifying which clinical features have the greatest leverage on
+        this particular patient's prognosis.
+
+        Returns a DataFrame sorted by absolute cure-probability swing.
+        """
+        if not self.ptcm_available:
+            return pd.DataFrame()
+
+        if vary_features is None:
+            vary_features = [
+                "age_at_diagnosis", "ajcc_stage_8", "ete_type",
+                "braf_status", "tert_status", "recurrence_risk_band",
+                "tumor_size_cm", "ln_status",
+            ]
+
+        base = self.predict_individual_cure_probability(patient_features)
+        if "error" in base:
+            return pd.DataFrame()
+        base_cure = base["cure_probability"]
+
+        rows: list[dict[str, Any]] = []
+        spec = CURE_CALCULATOR_FEATURES
+
+        for feat in vary_features:
+            if feat not in spec:
+                continue
+            s = spec[feat]
+            if s["type"] == "slider":
+                test_vals = [s["min"], s["default"], s["max"]]
+            elif s["type"] == "select":
+                test_vals = s["options"]
+            elif s["type"] == "toggle":
+                test_vals = [False, True]
+            else:
+                continue
+
+            for val in test_vals:
+                alt = {**patient_features, feat: val}
+                alt_result = self.predict_individual_cure_probability(alt)
+                if "error" in alt_result:
+                    continue
+                rows.append({
+                    "Feature": feat.replace("_", " ").title(),
+                    "Value": val,
+                    "Cure (%)": round(alt_result["cure_probability"] * 100, 1),
+                    "Delta (pp)": round(
+                        (alt_result["cure_probability"] - base_cure) * 100, 2
+                    ),
+                })
+
+        df = pd.DataFrame(rows)
+        if not df.empty:
+            df["abs_delta"] = df["Delta (pp)"].abs()
+            df = df.sort_values("abs_delta", ascending=False).drop(columns="abs_delta")
+        return df
+
+    @staticmethod
+    def _advanced_feature_interpretation(
+        patient_features: dict[str, Any],
+    ) -> str:
+        """Generate clinical context notes from advanced (NSQIP) inputs.
+
+        These features don't modify the PTCM theta but provide important
+        clinical context for surveillance planning.
+        """
+        notes: list[str] = []
+        if patient_features.get("any_nsqip_complication"):
+            notes.append(
+                "Post-surgical complication history may affect tolerance for "
+                "aggressive re-intervention; consider modified surveillance intensity."
+            )
+        if patient_features.get("rln_injury"):
+            notes.append(
+                "RLN injury increases re-operative risk; voice assessment recommended "
+                "before any revision surgery."
+            )
+        if patient_features.get("hypocalcemia"):
+            notes.append(
+                "Hypocalcemia may indicate hypoparathyroidism; monitor calcium/PTH "
+                "alongside oncologic surveillance."
+            )
+        if patient_features.get("rai_received"):
+            notes.append(
+                "Prior RAI receipt is protective for recurrence in ATA intermediate/high-risk "
+                "patients; surveillance de-escalation may be considered if stimulated Tg is undetectable."
+            )
+        return " ".join(notes) if notes else ""
 
     # ── 2. Enhanced competing risks ──────────────────────────────────────
 
@@ -681,19 +808,74 @@ class ThyroidPredictiveAnalyzer:
             except Exception as exc:
                 result_warnings.append(f"sksurv CIF failed (non-critical): {exc}")
 
-        # Build Plotly figure
-        cif_plot = self._build_cif_plot(cif_primary, cif_competing, stratified, strata_col)
+        # KM curve (1 − KM) for reference overlay on CIF plot
+        km_data = pd.DataFrame()
+        ci_primary_bands = None
+        try:
+            kmf = KaplanMeierFitter()
+            kmf.fit(sub[duration], sub[event_col])
+            km_df = kmf.survival_function_.reset_index()
+            km_df.columns = ["time", "KM"]
+            km_df["one_minus_KM"] = 1.0 - km_df["KM"]
+            km_data = km_df[["time", "one_minus_KM"]]
+        except Exception:
+            result_warnings.append("KM overlay computation failed (non-critical).")
+
+        # CI bands for primary CIF from AJ variance
+        try:
+            ci_bands = aj_primary.confidence_interval_cumulative_density_
+            if ci_bands is not None and not ci_bands.empty:
+                ci_primary_bands = ci_bands.reset_index()
+                ci_primary_bands.columns = ["time"] + [
+                    c.replace("CIF_", "").replace("_0.95", "")
+                    for c in ci_bands.columns
+                ]
+                # Normalize column names to 'lower' and 'upper'
+                cols = list(ci_primary_bands.columns)
+                rename_map = {}
+                for c in cols:
+                    if "lower" in c.lower() or c.endswith("_lower"):
+                        rename_map[c] = "ci_lower"
+                    elif "upper" in c.lower() or c.endswith("_upper"):
+                        rename_map[c] = "ci_upper"
+                if rename_map:
+                    ci_primary_bands = ci_primary_bands.rename(columns=rename_map)
+        except Exception:
+            pass
+
+        # Gray's landmark tests (if stratified)
+        gray_tests = pd.DataFrame()
+        cs_logrank = {}
+        if strata_col and strata_col in sub.columns:
+            gray_tests = self._gray_landmark_tests(
+                sub[duration], sub[event_indicator], sub[strata_col],
+                event_of_interest=1,
+            )
+            cs_logrank = self._cause_specific_logrank(
+                sub, duration, event_indicator, strata_col, result_warnings,
+            )
+
+        # Build Plotly figure with KM overlay and CI bands
+        cif_plot = self._build_cif_plot(
+            cif_primary, cif_competing, stratified, strata_col,
+            km_data=km_data, show_ci=True, ci_primary=ci_primary_bands,
+        )
 
         # Clinical methodology note
         clinical_note = (
-            "**Interpretation guide:** Cause-specific hazard ratios estimate the "
-            "instantaneous rate of each event type among patients still event-free "
-            "(etiological insight: 'Does BRAF truly accelerate recurrence?'). "
-            "Cumulative incidence functions (CIF) account for competing risks and "
-            "directly estimate real-world probability of each event by a given timepoint "
-            "('What is my patient's actual probability of recurrence by year 10, "
-            "accounting for other-cause death?'). "
-            "Full subdistribution (Fine-Gray) modeling is planned for a future version."
+            "**Interpretation guide — two complementary questions:**\n\n"
+            "**1. Etiology (cause-specific hazards):** 'Does BRAF truly "
+            "accelerate recurrence?' — answered by cause-specific Cox HRs, "
+            "which estimate the instantaneous rate of each event among "
+            "patients still event-free.\n\n"
+            "**2. Patient counseling (CIF):** 'What is my patient's actual "
+            "probability of recurrence by year 10, accounting for death as "
+            "a competing risk?' — answered by cumulative incidence functions. "
+            "The dashed gray KM complement curve shows the standard "
+            "(overestimated) probability that ignores competing risks.\n\n"
+            "**Gray's landmark test** compares CIF between strata at fixed "
+            "timepoints using Aalen-Johansen variance (Pepe-Mori, 1993). "
+            "Full subdistribution (Fine-Gray) HR modeling is planned for v2."
         )
 
         return {
@@ -704,6 +886,8 @@ class ThyroidPredictiveAnalyzer:
             "cause_specific_hrs": cs_hrs,
             "stratified_cifs": stratified,
             "sksurv_cif": sksurv_cif_data,
+            "gray_tests": gray_tests,
+            "cause_specific_logrank": cs_logrank,
             "clinical_note": clinical_note,
             "n_obs": len(sub),
             "n_events": n_events,
@@ -778,47 +962,220 @@ class ThyroidPredictiveAnalyzer:
                 warn_list.append(f"CIF fitting failed for stratum '{level}'.")
         return strata_cifs
 
+    # ── Gray's landmark CIF equality test ──────────────────────────────
+
+    @staticmethod
+    def _gray_landmark_tests(
+        duration: pd.Series,
+        event_indicator: pd.Series,
+        group: pd.Series,
+        event_of_interest: int = 1,
+        landmarks: list[float] | None = None,
+    ) -> pd.DataFrame:
+        """Landmark CIF equality tests between strata (Pepe-Mori z-test).
+
+        Approximates Gray's k-sample test by comparing Aalen-Johansen CIF
+        estimates at fixed timepoints using z-tests on the CIF difference,
+        with variance from the AJ estimator.
+
+        **Clinical note**: This tests whether the *real-world probability*
+        of the event differs between groups by a given timepoint — the
+        prognostic question ('Will my patient with BRAF mutation have a
+        higher 5-year recurrence probability than wild-type?').
+
+        References
+        ----------
+        - Gray RJ (1988). Annals of Statistics, 16(3):1141-1154.
+        - Pepe MS, Mori M (1993). JASA, 88(422):487-492.
+        """
+        if not HAS_LIFELINES or not HAS_SCIPY:
+            return pd.DataFrame()
+
+        if landmarks is None:
+            landmarks = [1.0, 3.0, 5.0, 10.0]
+
+        groups = sorted(group.dropna().unique())
+        if len(groups) < 2:
+            return pd.DataFrame()
+
+        group_cifs: dict[str, pd.DataFrame] = {}
+        group_vars: dict[str, pd.DataFrame] = {}
+        for g in groups:
+            mask = group == g
+            sub_dur = duration[mask]
+            sub_ev = event_indicator[mask]
+            if len(sub_dur) < 10 or (sub_ev == event_of_interest).sum() < 3:
+                continue
+            try:
+                aj = AalenJohansenFitter(calculate_variance=True, seed=42)
+                aj.fit(sub_dur, sub_ev, event_of_interest=event_of_interest)
+                group_cifs[g] = aj.cumulative_density_
+                group_vars[g] = aj.variance_
+            except Exception:
+                continue
+
+        if len(group_cifs) < 2:
+            return pd.DataFrame()
+
+        rows: list[dict[str, Any]] = []
+        for t_lm in landmarks:
+            for g1, g2 in _combinations(group_cifs.keys(), 2):
+                cv1 = _cif_at_time_with_var(group_cifs[g1], group_vars[g1], t_lm)
+                cv2 = _cif_at_time_with_var(group_cifs[g2], group_vars[g2], t_lm)
+                diff = cv1["cif"] - cv2["cif"]
+                se_diff = np.sqrt(cv1["var"] + cv2["var"])
+                z = diff / max(se_diff, 1e-10)
+                p = float(2 * (1 - scipy_norm.cdf(abs(z))))
+                rows.append({
+                    "Landmark (y)": t_lm,
+                    "Group A": str(g1),
+                    "Group B": str(g2),
+                    "CIF_A (%)": round(cv1["cif"] * 100, 2),
+                    "CIF_B (%)": round(cv2["cif"] * 100, 2),
+                    "Diff (pp)": round(diff * 100, 2),
+                    "z": round(z, 3),
+                    "p": round(p, 4),
+                    "sig": "***" if p < 0.001 else "**" if p < 0.01 else "*" if p < 0.05 else "",
+                })
+        return pd.DataFrame(rows)
+
+    def _cause_specific_logrank(
+        self,
+        data: pd.DataFrame,
+        duration: str,
+        event_indicator: str,
+        strata_col: str,
+        warn_list: list[str],
+    ) -> dict[str, Any]:
+        """Log-rank test on the cause-specific hazard between strata.
+
+        Treats competing events as censoring — tests whether the
+        *instantaneous rate* (etiology) differs between groups, NOT
+        whether the cumulative probability (prognosis) differs.
+
+        Use alongside Gray's landmark test for a complete picture.
+        """
+        if not HAS_LIFELINES:
+            return {}
+
+        results: dict[str, Any] = {}
+        groups = sorted(data[strata_col].dropna().unique())
+        if len(groups) < 2:
+            return results
+
+        for event_val, label in [(1, "primary"), (2, "competing")]:
+            sub = data.copy()
+            sub["cs_event"] = (sub[event_indicator] == event_val).astype(int)
+            n_ev = int(sub["cs_event"].sum())
+            if n_ev < 5:
+                warn_list.append(f"Too few {label} events ({n_ev}) for log-rank.")
+                continue
+
+            try:
+                pair_rows: list[dict[str, Any]] = []
+                for g1, g2 in _combinations(groups, 2):
+                    d1 = sub[sub[strata_col] == g1]
+                    d2 = sub[sub[strata_col] == g2]
+                    if len(d1) < 5 or len(d2) < 5:
+                        continue
+                    lr = ll_logrank_test(
+                        d1[duration], d2[duration],
+                        d1["cs_event"], d2["cs_event"],
+                    )
+                    pair_rows.append({
+                        "Group A": str(g1),
+                        "Group B": str(g2),
+                        "chi2": round(lr.test_statistic, 3),
+                        "p": round(lr.p_value, 4),
+                        "sig": "*" if lr.p_value < 0.05 else "",
+                    })
+                if pair_rows:
+                    results[label] = pd.DataFrame(pair_rows)
+            except Exception as exc:
+                warn_list.append(f"Log-rank ({label}) failed: {exc}")
+        return results
+
+    # ── CIF plot builder ──────────────────────────────────────────────
+
     def _build_cif_plot(
         self,
         cif_primary: pd.DataFrame,
         cif_competing: pd.DataFrame,
         stratified: dict[str, pd.DataFrame],
         strata_col: str | None,
+        km_data: pd.DataFrame | None = None,
+        show_ci: bool = True,
+        ci_primary: pd.DataFrame | None = None,
     ) -> "go.Figure | None":
         if not HAS_PLOTLY:
             return None
         fig = go.Figure()
 
+        # ── KM overlay (reference: standard survival ignoring competing risks)
+        if km_data is not None and not km_data.empty:
+            km_col = [c for c in km_data.columns if c != "time"][0]
+            fig.add_trace(go.Scatter(
+                x=km_data["time"], y=km_data[km_col],
+                mode="lines", name="1 − KM (standard, no CR adjustment)",
+                line=dict(color=_GRAY, width=1.5, dash="dot"),
+                opacity=0.6,
+                hovertemplate="KM complement: %{y:.3f} at %{x:.1f}y<extra></extra>",
+            ))
+
         if not stratified:
+            # ── Primary event CIF with confidence band
             fig.add_trace(go.Scatter(
                 x=cif_primary["time"], y=cif_primary["CIF_primary"],
-                mode="lines", name="Recurrence (primary)",
+                mode="lines", name="Recurrence (CIF)",
                 line=dict(color=_TEAL, width=2.5),
-                fill="tozeroy", fillcolor="rgba(45,212,191,0.1)",
+                hovertemplate="CIF recurrence: %{y:.3f} at %{x:.1f}y<extra></extra>",
             ))
+            if show_ci and ci_primary is not None and not ci_primary.empty:
+                lo_col = [c for c in ci_primary.columns if "lower" in c.lower()]
+                hi_col = [c for c in ci_primary.columns if "upper" in c.lower()]
+                if lo_col and hi_col:
+                    fig.add_trace(go.Scatter(
+                        x=pd.concat([ci_primary["time"], ci_primary["time"][::-1]]),
+                        y=pd.concat([ci_primary[hi_col[0]], ci_primary[lo_col[0]][::-1]]),
+                        fill="toself", fillcolor="rgba(45,212,191,0.12)",
+                        line=dict(color="rgba(0,0,0,0)"),
+                        showlegend=False, hoverinfo="skip",
+                    ))
+
             if not cif_competing.empty:
                 fig.add_trace(go.Scatter(
                     x=cif_competing["time"], y=cif_competing["CIF_competing"],
-                    mode="lines", name="Death (competing)",
+                    mode="lines", name="Death (competing CIF)",
                     line=dict(color=_ROSE, width=2, dash="dash"),
-                    fill="tozeroy", fillcolor="rgba(244,63,94,0.08)",
+                    hovertemplate="CIF death: %{y:.3f} at %{x:.1f}y<extra></extra>",
                 ))
         else:
             for i, (level, cdf) in enumerate(stratified.items()):
                 col = [c for c in cdf.columns if c != "time"][0]
+                color = _COLORWAY[i % len(_COLORWAY)]
                 fig.add_trace(go.Scatter(
                     x=cdf["time"], y=cdf[col],
                     mode="lines", name=f"{strata_col}={level}",
-                    line=dict(color=_COLORWAY[i % len(_COLORWAY)], width=2),
+                    line=dict(color=color, width=2),
+                    hovertemplate=f"{level}: %{{y:.3f}} at %{{x:.1f}}y<extra></extra>",
                 ))
 
+        # Landmark dashed verticals at 5y and 10y
+        for lm in [5, 10]:
+            fig.add_vline(
+                x=lm, line_dash="dot", line_color="rgba(136,146,164,0.3)",
+                annotation_text=f"{lm}y", annotation_font_color="#8892a4",
+                annotation_font_size=10,
+            )
+
+        ymax = max(0.15, float(cif_primary["CIF_primary"].max()) * 1.3)
         return _fig_layout(
             fig,
             "Cumulative Incidence Functions (Competing Risks)",
-            height=480,
+            height=520,
             xaxis_title="Years from surgery",
             yaxis_title="Cumulative incidence",
-            yaxis_range=[0, max(0.15, float(cif_primary["CIF_primary"].max()) * 1.3)],
+            yaxis_range=[0, ymax],
         )
 
     # ── 3. Explainable ML Nomograms ──────────────────────────────────────
@@ -1298,37 +1655,117 @@ class ThyroidPredictiveAnalyzer:
 
         comparison_df = pd.DataFrame(rows)
 
-        # Build comparison figure
         comp_fig = self._build_comparison_figure(comparison_df) if HAS_PLOTLY else None
+        recommendation = self._model_comparison_recommendation(comparison_df)
 
         return {
             "comparison_table": comparison_df,
             "comparison_plot": comp_fig,
+            "recommendation": recommendation,
             "n_models": len(rows),
             "warnings": result_warnings,
         }
 
     @staticmethod
     def _build_comparison_figure(df: pd.DataFrame) -> "go.Figure | None":
+        """Build a two-panel model comparison dashboard (concordance + AIC)."""
         if not HAS_PLOTLY or df.empty:
             return None
-        concordance_rows = df[df["Concordance"] != "—"].copy()
-        if concordance_rows.empty:
+
+        has_conc = df[df["Concordance"] != "—"].copy()
+        has_aic = df[df["AIC"] != "—"].copy()
+
+        n_panels = int(not has_conc.empty) + int(not has_aic.empty)
+        if n_panels == 0:
             return None
-        concordance_rows["Concordance"] = pd.to_numeric(concordance_rows["Concordance"])
-        fig = go.Figure(go.Bar(
-            x=concordance_rows["Model"],
-            y=concordance_rows["Concordance"],
-            marker_color=[_TEAL, _SKY, _VIOLET, _AMBER][:len(concordance_rows)],
-            text=concordance_rows["Concordance"].round(3),
-            textposition="outside",
-        ))
-        return _fig_layout(
-            fig, "Model Concordance Comparison",
-            height=400,
-            yaxis_title="Concordance Index",
-            yaxis_range=[0, 1],
+
+        fig = make_subplots(
+            rows=1, cols=max(n_panels, 1),
+            subplot_titles=(
+                ["Concordance Index", "AIC (lower is better)"][:n_panels]
+                if n_panels == 2 else
+                ["Concordance Index"] if not has_conc.empty else ["AIC"]
+            ),
+            horizontal_spacing=0.15,
         )
+        col_idx = 1
+
+        _MODEL_COLORS = {
+            "Kaplan-Meier": _GRAY,
+            "Cox PH": _SKY,
+            "Weibull PTCM": _TEAL,
+            "Mixture Cure (Weibull)": _VIOLET,
+            "Penalized Cox (Ridge)": _AMBER,
+            "Random Survival Forest": _GREEN,
+        }
+
+        if not has_conc.empty:
+            has_conc["Concordance"] = pd.to_numeric(has_conc["Concordance"])
+            colors = [_MODEL_COLORS.get(m, _GRAY) for m in has_conc["Model"]]
+            fig.add_trace(go.Bar(
+                x=has_conc["Model"], y=has_conc["Concordance"],
+                marker_color=colors,
+                text=has_conc["Concordance"].round(3),
+                textposition="outside",
+                name="Concordance",
+                showlegend=False,
+            ), row=1, col=col_idx)
+            fig.update_yaxes(range=[0, 1], title_text="C-index", row=1, col=col_idx)
+            col_idx += 1
+
+        if not has_aic.empty:
+            has_aic["AIC"] = pd.to_numeric(has_aic["AIC"])
+            colors = [_MODEL_COLORS.get(m, _GRAY) for m in has_aic["Model"]]
+            fig.add_trace(go.Bar(
+                x=has_aic["Model"], y=has_aic["AIC"],
+                marker_color=colors,
+                text=has_aic["AIC"].round(0).astype(int),
+                textposition="outside",
+                name="AIC",
+                showlegend=False,
+            ), row=1, col=col_idx)
+            fig.update_yaxes(title_text="AIC", row=1, col=col_idx)
+
+        return _fig_layout(fig, "Multi-Model Comparison Dashboard", height=420)
+
+    @staticmethod
+    def _model_comparison_recommendation(df: pd.DataFrame) -> str:
+        """Generate a clinical recommendation from model comparison results.
+
+        Suggests the best model for different use cases: prognosis
+        (highest concordance), cure estimation (PTCM/mixture), and
+        variable selection (Cox PH/Penalized Cox).
+        """
+        if df.empty:
+            return ""
+        parts: list[str] = []
+
+        conc = df[df["Concordance"] != "—"].copy()
+        if not conc.empty:
+            conc["Concordance"] = pd.to_numeric(conc["Concordance"])
+            best = conc.loc[conc["Concordance"].idxmax()]
+            parts.append(
+                f"**Best discriminative model:** {best['Model']} "
+                f"(C-index {best['Concordance']:.3f})"
+            )
+
+        aic = df[df["AIC"] != "—"].copy()
+        if not aic.empty:
+            aic["AIC"] = pd.to_numeric(aic["AIC"])
+            best_aic = aic.loc[aic["AIC"].idxmin()]
+            parts.append(
+                f"**Best parametric fit (AIC):** {best_aic['Model']} "
+                f"(AIC {best_aic['AIC']:.0f})"
+            )
+
+        cure_models = df[df["Type"].str.contains("cure", case=False, na=False)]
+        if not cure_models.empty:
+            parts.append(
+                f"**Cure models available:** {', '.join(cure_models['Model'])} — "
+                f"use for long-term cure fraction estimation and patient counseling"
+            )
+
+        return " | ".join(parts)
 
     # ── Mixture cure model (MLE) ───────────────────────────────────────
 

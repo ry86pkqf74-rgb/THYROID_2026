@@ -110,6 +110,17 @@ def _render_model_comparison(con: Any, analyzer: "ThyroidPredictiveAnalyzer") ->
     comp_df = result.get("comparison_table", pd.DataFrame())
     if not comp_df.empty:
         st.markdown(sl("Results"), unsafe_allow_html=True)
+
+        rec = result.get("recommendation", "")
+        if rec:
+            st.markdown(
+                f'<div style="background:#0e1219;border:1px solid #1e2535;'
+                f'border-left:3px solid {COLORS["teal"]};border-radius:10px;'
+                f'padding:1rem 1.2rem;margin:0.5rem 0 1rem;font-size:.85rem;'
+                f'color:#d4dae8">{rec}</div>',
+                unsafe_allow_html=True,
+            )
+
         st.dataframe(
             comp_df.style.format(precision=4, na_rep="—"),
             use_container_width=True,
@@ -210,14 +221,48 @@ def _render_competing_risks(con: Any, analyzer: "ThyroidPredictiveAnalyzer") -> 
         st.markdown(sl("Landmark CIF Estimates"), unsafe_allow_html=True)
         st.dataframe(summary, use_container_width=True, hide_index=True)
 
-    # Cause-specific HRs
+    # Gray's landmark CIF tests (when stratified)
+    gray_tests = result.get("gray_tests", pd.DataFrame())
+    if not gray_tests.empty:
+        st.markdown(sl("Gray's Landmark CIF Tests"), unsafe_allow_html=True)
+        st.caption(
+            "Pepe-Mori z-tests comparing CIF between strata at landmark "
+            "timepoints. Tests whether the *real-world probability* of recurrence "
+            "differs between groups (prognostic question)."
+        )
+        st.dataframe(
+            gray_tests.style.format(precision=4, na_rep="—").applymap(
+                lambda v: "color:#2dd4bf;font-weight:700" if v in ("*", "**", "***") else "",
+                subset=["sig"],
+            ),
+            use_container_width=True,
+            hide_index=True,
+        )
+
+    # Cause-specific log-rank + Cox HRs
+    cs_logrank = result.get("cause_specific_logrank", {})
     cs_hrs = result.get("cause_specific_hrs", {})
-    if cs_hrs:
-        st.markdown(sl("Cause-Specific Hazard Ratios"), unsafe_allow_html=True)
-        for event_type, hr_result in cs_hrs.items():
-            with st.expander(f"{event_type.title()} event (C-index: {hr_result.get('concordance', 'N/A')})"):
+    if cs_logrank or cs_hrs:
+        st.markdown(sl("Cause-Specific Hazard Analysis"), unsafe_allow_html=True)
+        st.caption(
+            "Tests whether the *instantaneous rate* (etiology) differs between groups. "
+            "Complementary to CIF comparison above."
+        )
+        for event_type in ["primary", "competing"]:
+            lr_df = cs_logrank.get(event_type, pd.DataFrame())
+            hr_result = cs_hrs.get(event_type, {})
+            if lr_df.empty and not hr_result:
+                continue
+            with st.expander(
+                f"{event_type.title()} event — "
+                f"C-index: {hr_result.get('concordance', 'N/A')}"
+            ):
+                if not lr_df.empty:
+                    st.markdown("**Log-rank tests (cause-specific):**")
+                    st.dataframe(lr_df, use_container_width=True, hide_index=True)
                 hr_table = hr_result.get("hr_table", pd.DataFrame())
                 if not hr_table.empty:
+                    st.markdown("**Cox PH hazard ratios (cause-specific):**")
                     st.dataframe(
                         hr_table.style.format(precision=4, na_rep="—"),
                         use_container_width=True,
@@ -225,12 +270,14 @@ def _render_competing_risks(con: Any, analyzer: "ThyroidPredictiveAnalyzer") -> 
                     )
 
     # Clinical methodology note
-    clinical_note = result.get("clinical_note")
+    clinical_note = result.get("clinical_note", "")
     if clinical_note:
         st.markdown(
-            f'<div style="background:#0a1a20;border:1px solid #1e2535;'
+            f'<div style="background:linear-gradient(135deg,#0a1a20,#0e1219);'
+            f'border:1px solid #1e2535;'
             f'border-left:3px solid {COLORS["sky"]};border-radius:10px;'
-            f'padding:1rem 1.2rem;margin:1rem 0;font-size:.82rem;color:#d4dae8">'
+            f'padding:1.2rem 1.4rem;margin:1rem 0;font-size:.82rem;color:#d4dae8;'
+            f'line-height:1.6">'
             f'{clinical_note}</div>',
             unsafe_allow_html=True,
         )
@@ -376,48 +423,61 @@ def _render_cure_calculator(con: Any, analyzer: "ThyroidPredictiveAnalyzer") -> 
     ref = calc_spec.get("reference_population", {})
 
     # Reference population context
-    with st.expander("Reference Population", expanded=False):
+    with st.expander("Reference Population & Smart Defaults", expanded=False):
         ref_cols = st.columns(3)
         ref_cols[0].metric("Training cohort", f"{ref.get('n_total', 0):,}")
         ref_cols[1].metric("Mean age", f"{ref.get('age_mean', 0):.1f} ± {ref.get('age_std', 0):.1f}")
         ref_cols[2].metric("Population cure rate", f"{ref.get('overall_cure', 0):.1%}")
+        st.caption(
+            "Defaults reflect the most common profile in our cohort "
+            "(Stage I, no ETE, BRAF−, TERT−, low risk, 1.5 cm, N0). "
+            "Adjust to match your patient for personalized prediction."
+        )
 
     st.markdown("---")
-    st.markdown("### Enter Patient Characteristics")
+    st.markdown("### Core Clinical Features")
 
-    # Input widgets — 3-column grid with proper type handling
-    patient = {}
+    # ── Core inputs (always visible, 3-column grid) ──
+    core_features = {
+        k: v for k, v in CURE_CALCULATOR_FEATURES.items() if v.get("group") == "core"
+    }
+    patient: dict[str, Any] = {}
     input_cols = st.columns(3)
-    for i, (key, spec) in enumerate(CURE_CALCULATOR_FEATURES.items()):
+    for i, (key, spec) in enumerate(core_features.items()):
         with input_cols[i % 3]:
-            if spec["type"] == "slider":
-                kwargs = {
-                    "label": spec["label"],
-                    "min_value": spec["min"],
-                    "max_value": spec["max"],
-                    "value": spec["default"],
-                    "key": f"pa_calc_{key}",
-                }
-                if "step" in spec:
-                    kwargs["step"] = spec["step"]
-                patient[key] = st.slider(**kwargs)
-            elif spec["type"] == "select":
-                patient[key] = st.selectbox(
-                    spec["label"],
-                    spec["options"],
-                    index=spec["options"].index(spec["default"]),
-                    key=f"pa_calc_{key}",
-                )
-            elif spec["type"] == "toggle":
-                patient[key] = st.toggle(
-                    spec["label"],
-                    value=spec["default"],
-                    key=f"pa_calc_{key}",
-                )
+            patient[key] = _render_input_widget(key, spec)
+
+    # ── Advanced inputs (NSQIP complications, in expander) ──
+    advanced_features = {
+        k: v for k, v in CURE_CALCULATOR_FEATURES.items() if v.get("group") == "advanced"
+    }
+    if advanced_features:
+        with st.expander("Advanced — Surgical Complications & Treatment Context", expanded=False):
+            st.caption(
+                "These factors do not modify the PTCM cure probability directly "
+                "(which is driven by stage, ETE, molecular markers). They provide "
+                "clinical context for surveillance planning and re-intervention risk."
+            )
+            adv_cols = st.columns(min(4, len(advanced_features)))
+            for i, (key, spec) in enumerate(advanced_features.items()):
+                with adv_cols[i % len(adv_cols)]:
+                    patient[key] = _render_input_widget(key, spec)
 
     st.markdown("---")
 
-    if st.button("🎯 Calculate Cure Probability", key="pa_calc_cure", type="primary"):
+    # Sensitivity analysis note
+    st.markdown(
+        '<div style="background:#0e1219;border:1px solid #1e2535;border-radius:8px;'
+        'padding:0.8rem 1rem;margin-bottom:1rem;font-size:.78rem;color:#8892a4">'
+        '<b style="color:#f59e0b">Sensitivity note:</b> Tumor size and LN status '
+        'use hybrid theta adjustments (published Cox HR estimates from Tuttle 2017, '
+        'Adam 2015, ATA 2016). A full PTCM refit with expanded covariates would '
+        'improve calibration. Core covariates (stage, ETE, BRAF, TERT, risk band) '
+        'are fitted directly to this cohort via MLE.</div>',
+        unsafe_allow_html=True,
+    )
+
+    if st.button("Calculate Cure Probability", key="pa_calc_cure", type="primary"):
         with st.spinner("Computing PTCM cure probability..."):
             result = analyzer.predict_individual_cure_probability(patient)
 
@@ -426,6 +486,7 @@ def _render_cure_calculator(con: Any, analyzer: "ThyroidPredictiveAnalyzer") -> 
             return
 
         st.session_state["pa_cure_result"] = result
+        st.session_state["pa_cure_patient"] = patient
 
     result = st.session_state.get("pa_cure_result")
     if result is None:
@@ -452,7 +513,8 @@ def _render_cure_calculator(con: Any, analyzer: "ThyroidPredictiveAnalyzer") -> 
         f'<div style="font-family:var(--font-d,serif);font-size:4rem;'
         f'color:{tier_color};line-height:1;margin:0.5rem 0">{cure_pct}%</div>'
         f'<div style="color:#8892a4;font-size:.85rem">'
-        f'Tier: {tier.replace("_", " ").title()} | θ = {result["theta"]:.3f}</div>'
+        f'Tier: {tier.replace("_", " ").title()} | '
+        f'\u03b8 = {result["theta"]:.3f}</div>'
         f'</div>',
         unsafe_allow_html=True,
     )
@@ -468,6 +530,18 @@ def _render_cure_calculator(con: Any, analyzer: "ThyroidPredictiveAnalyzer") -> 
             f'letter-spacing:.15em;text-transform:uppercase;color:{tier_color};'
             f'margin-bottom:8px">Clinical Interpretation</div>'
             f'<div style="color:#d4dae8;font-size:.9rem">{interp}</div></div>',
+            unsafe_allow_html=True,
+        )
+
+    # Advanced clinical context (NSQIP / treatment)
+    adv_note = result.get("advanced_clinical_note", "")
+    if adv_note:
+        st.markdown(
+            f'<div style="background:#0e1219;border:1px solid #1e2535;'
+            f'border-left:3px solid {COLORS["amber"]};border-radius:10px;'
+            f'padding:1rem 1.2rem;margin:0.5rem 0;font-size:.82rem;color:#d4dae8">'
+            f'<span style="color:{COLORS["amber"]};font-weight:600">'
+            f'Surgical/Treatment Context:</span> {adv_note}</div>',
             unsafe_allow_html=True,
         )
 
@@ -489,12 +563,12 @@ def _render_cure_calculator(con: Any, analyzer: "ThyroidPredictiveAnalyzer") -> 
             {
                 "Feature": k.replace("_", " ").title(),
                 "Value": v["feature_value"],
-                "Δθ": v["delta_theta"],
+                "\u0394\u03b8": v["delta_theta"],
                 "Direction": v["direction"].replace("_", " "),
-                "β": v["beta"],
+                "\u03b2": v["beta"],
             }
             for k, v in contribs.items()
-        ]).sort_values("Δθ", key=abs, ascending=False)
+        ]).sort_values("\u0394\u03b8", key=abs, ascending=False)
         st.dataframe(contrib_df, use_container_width=True, hide_index=True)
 
     # Survival trajectory plot
@@ -502,6 +576,63 @@ def _render_cure_calculator(con: Any, analyzer: "ThyroidPredictiveAnalyzer") -> 
     if traj_fig and HAS_PLOTLY:
         st.markdown(sl("Personalized Survival Trajectory"), unsafe_allow_html=True)
         st.plotly_chart(traj_fig, use_container_width=True)
+
+    # Sensitivity analysis
+    saved_patient = st.session_state.get("pa_cure_patient", patient)
+    with st.expander("Sensitivity Analysis — What-If Scenarios", expanded=False):
+        st.caption(
+            "Shows how cure probability changes when each feature is varied "
+            "independently. Largest swings indicate highest-leverage clinical factors."
+        )
+        if st.button("Run Sensitivity Analysis", key="pa_sens"):
+            with st.spinner("Computing sensitivity..."):
+                sens_df = analyzer.sensitivity_analysis(saved_patient)
+            if not sens_df.empty:
+                st.session_state["pa_sens_df"] = sens_df
+            else:
+                st.warning("Sensitivity analysis returned no results.")
+
+        sens_df = st.session_state.get("pa_sens_df", pd.DataFrame())
+        if not sens_df.empty:
+            st.dataframe(
+                sens_df.style.applymap(
+                    lambda v: "color:#f43f5e" if isinstance(v, (int, float)) and v < -2 else (
+                        "color:#2dd4bf" if isinstance(v, (int, float)) and v > 2 else ""
+                    ),
+                    subset=["Delta (pp)"],
+                ),
+                use_container_width=True,
+                hide_index=True,
+            )
+
+
+def _render_input_widget(key: str, spec: dict[str, Any]) -> Any:
+    """Render a single Streamlit input widget from a feature specification."""
+    if spec["type"] == "slider":
+        kwargs = {
+            "label": spec["label"],
+            "min_value": spec["min"],
+            "max_value": spec["max"],
+            "value": spec["default"],
+            "key": f"pa_calc_{key}",
+        }
+        if "step" in spec:
+            kwargs["step"] = spec["step"]
+        return st.slider(**kwargs)
+    elif spec["type"] == "select":
+        return st.selectbox(
+            spec["label"],
+            spec["options"],
+            index=spec["options"].index(spec["default"]),
+            key=f"pa_calc_{key}",
+        )
+    elif spec["type"] == "toggle":
+        return st.toggle(
+            spec["label"],
+            value=spec["default"],
+            key=f"pa_calc_{key}",
+        )
+    return spec.get("default")
 
 
 # ── Sub-tab 5: Manuscript Export ─────────────────────────────────────────

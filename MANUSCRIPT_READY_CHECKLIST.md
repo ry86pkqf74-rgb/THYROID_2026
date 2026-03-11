@@ -102,6 +102,22 @@ streamlit run dashboard.py
 # Navigate to "🔮 Predictive Analytics"
 ```
 
+## Predictive Analytics Workbench — Phase 4.5 Polish
+
+- [x] Gray's landmark CIF tests (Pepe-Mori z-test) at 1/3/5/10-year landmarks
+- [x] Cause-specific log-rank tests between strata (lifelines)
+- [x] KM overlay on CIF plot (1 − KM reference curve)
+- [x] CIF confidence bands from Aalen-Johansen variance
+- [x] Cure calculator: 12 features (8 core + 4 advanced NSQIP/treatment)
+- [x] Sensitivity analysis (what-if scenarios) for cure calculator
+- [x] Advanced clinical context (NSQIP complications, RAI treatment history)
+- [x] Model comparison: 2-panel Plotly dashboard (concordance + AIC)
+- [x] Clinical recommendation engine (best discriminative, best AIC, cure models)
+- [x] Sidebar Quick Launch card for PTCM cure calculator
+- [x] Batch runner expanded to 5 phases with sensitivity archetypes
+- [x] Notebook updated with Gray's test, sensitivity analysis, NSQIP examples
+- [x] AGENTS.md, RELEASE_NOTES.md, README.md, MANUSCRIPT_READY_CHECKLIST.md updated
+
 ## Next Steps
 
 - **External validation:** Use held-out temporal split for nomogram calibration

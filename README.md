@@ -110,6 +110,12 @@ The share is SELECT-only — data cannot be modified through it.
 - **QA & Adjudication** — cross-domain QA summary, linkage quality, date completeness
 - **Validation Engine** — adjudication confirmations, chronology anomalies,
   completeness scorecard, combined review queue, domain-level downloads
+- **Predictive Analytics & Nomograms** — integrated workbench (5 sub-tabs):
+  - *Model Comparison Hub* — 6-model comparison (KM, Cox PH, PTCM, Mixture Cure, Penalized Cox, RSF) with concordance + AIC dashboard and clinical recommendation
+  - *Competing Risks* — Aalen-Johansen CIF with Gray's landmark tests, KM overlay, CI bands, cause-specific Cox HRs + log-rank, stratified by stage/BRAF/risk/sex
+  - *ML Nomograms & SHAP* — XGBoost/RF/survival forest with SHAP beeswarm + bar, calibration, individual risk prediction
+  - *Personalized Cure Calculator* — 12-feature PTCM-powered scoring (8 core + 4 NSQIP advanced), sensitivity analysis, clinical interpretation + trajectory plot
+  - *Manuscript Export* — one-click Word report with selectable PTCM/CR/Nomogram/Comparison sections
 - **Statistical Analysis** — comprehensive interactive stats workbench (7 sub-tabs):
   - *Table 1* — auto-type-detected cohort description with SMD (standardized mean difference) when stratifying; Shapiro-Wilk normality auto-detection; CSV/Excel/Parquet export
   - *Hypothesis Testing* — FDR/Bonferroni/Holm multi-comparison correction; auto test selection (t/Mann-Whitney/ANOVA/Kruskal/chi²/Fisher)
