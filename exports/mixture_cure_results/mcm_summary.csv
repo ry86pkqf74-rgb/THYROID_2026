@@ -1,0 +1,2 @@
+generated_at,n_total,n_events,event_rate_pct,univariate_cure_weibull,overall_cure_fraction,weibull_shape,weibull_scale_days,weibull_scale_years,em_log_likelihood,em_converged,em_iterations,best_aic,em_aic,n_params_em,n_boot,dry_run,git_sha
+2026-03-11T01:46:46.649551,48304,161,0.33,0.994,0.7304,1.484,51089.79,139.8762,-2218.2432,False,120,4634.29,4460.49,12,20,False,b2ba4d549c0c4a7590f6934bdcbea57460366edd

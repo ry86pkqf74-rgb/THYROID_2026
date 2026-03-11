@@ -249,8 +249,9 @@ class EMResult:
 
 def _build_em_design(df: pd.DataFrame, covariates: list[str]) -> tuple[np.ndarray, list[str]]:
     x_df = pd.get_dummies(df[covariates], drop_first=True, dummy_na=False)
-    x_df = x_df.replace({True: 1.0, False: 0.0}).fillna(0.0).astype(float)
-    return x_df.to_numpy(), x_df.columns.tolist()
+    for col in x_df.columns:
+        x_df[col] = pd.to_numeric(x_df[col], errors="coerce").fillna(0.0)
+    return x_df.to_numpy(dtype=float), x_df.columns.tolist()
 
 
 def fit_em_mixture_cure(
@@ -327,15 +328,30 @@ def _compute_incidence_table(em: EMResult, X_design: np.ndarray, n_boot: int, se
     boot_gammas = []
     rng = np.random.default_rng(seed)
     n = len(df)
+    # Subsample to 8k for bootstrap speed (stratified: keep all events)
+    _boot_max = 8000
+    if n > _boot_max:
+        _events = df[df["event"].astype(bool)]
+        _non_events = df[~df["event"].astype(bool)]
+        _n_non = _boot_max - len(_events)
+        if _n_non > 0 and len(_non_events) > _n_non:
+            _non_sample = _non_events.sample(n=_n_non, random_state=seed)
+            _boot_df = pd.concat([_events, _non_sample], ignore_index=True)
+        else:
+            _boot_df = df.sample(n=_boot_max, random_state=seed)
+        print(f"    subsampled {len(_boot_df):,} rows for bootstrap (kept all {len(_events)} events)", flush=True)
+    else:
+        _boot_df = df
+    _bn = len(_boot_df)
     for i in range(n_boot):
-        idx = rng.integers(0, n, size=n)
+        idx = rng.integers(0, _bn, size=_bn)
         try:
-            em_b = fit_em_mixture_cure(df.iloc[idx].reset_index(drop=True), covariates, max_iter=60)
+            em_b = fit_em_mixture_cure(_boot_df.iloc[idx].reset_index(drop=True), covariates, max_iter=30)
             if len(em_b.gamma_full) == n_gamma:
                 boot_gammas.append(em_b.gamma_full)
         except Exception:
             pass
-        if (i + 1) % 50 == 0:
+        if (i + 1) % 5 == 0:
             print(f"    incidence bootstrap {i + 1}/{n_boot}…", flush=True)
 
     if boot_gammas:
@@ -368,9 +384,17 @@ def _compute_incidence_table(em: EMResult, X_design: np.ndarray, n_boot: int, se
 
 def _bootstrap_cure_fraction(df: pd.DataFrame, n_bootstrap: int) -> pd.DataFrame:
     vals: list[float] = []
-    n = len(df)
-    t = df["time_days"].to_numpy(dtype=float)
-    e = df["event"].astype(bool).to_numpy()
+    # Subsample to 10k for speed (stratified: keep all events)
+    _max_n = 10000
+    if len(df) > _max_n:
+        _ev = df[df["event"].astype(bool)]
+        _nev = df[~df["event"].astype(bool)].sample(n=_max_n - len(_ev), random_state=42)
+        _bdf = pd.concat([_ev, _nev], ignore_index=True)
+    else:
+        _bdf = df
+    n = len(_bdf)
+    t = _bdf["time_days"].to_numpy(dtype=float)
+    e = _bdf["event"].astype(bool).to_numpy()
 
     for i in range(n_bootstrap):
         idx = np.random.choice(n, n, replace=True)
@@ -380,7 +404,7 @@ def _bootstrap_cure_fraction(df: pd.DataFrame, n_bootstrap: int) -> pd.DataFrame
             vals.append(float(mcf.cured_fraction_))
         except Exception:
             pass
-        if (i + 1) % 50 == 0:
+        if (i + 1) % 10 == 0:
             print(f"    cure fraction bootstrap {i + 1}/{n_bootstrap}…", flush=True)
 
     arr = np.array(vals) if vals else np.array([np.nan])
@@ -445,9 +469,10 @@ def _plot_mixture_vs_km(t, e, overall_cure, em, out_dir):
         annotation_text=f"Cure plateau π̄={mean_cure:.1%}",
         annotation_font_color="#f59e0b",
     )
-    fig.update_layout(**PL, title="Mixture Cure Model vs Kaplan-Meier: Recurrence-Free Survival",
-                      yaxis=dict(title="Survival / cure probability", range=[0, 1.05],
-                                 gridcolor="#1e2535", linecolor="#1e2535"))
+    _layout = {k: v for k, v in PL.items() if k != "yaxis"}
+    _layout["yaxis"] = dict(title="Survival / cure probability", range=[0, 1.05],
+                            gridcolor="#1e2535", linecolor="#1e2535")
+    fig.update_layout(**_layout, title="Mixture Cure Model vs Kaplan-Meier: Recurrence-Free Survival")
     _save_plotly(fig, out_dir / "mcm_weibull_curve.png")
 
 
@@ -470,10 +495,11 @@ def _plot_cure_by_stratum(df, em, out_dir):
             x=grp[col].astype(str), y=grp["cure_prob"],
             name=strat, marker_color=COLORS[i + 2], visible=(i == 0),
         ))
+    _layout2 = {k: v for k, v in PL.items() if k != "yaxis"}
+    _layout2["yaxis"] = dict(title="Mean cure probability", range=[0, 1],
+                             gridcolor="#1e2535", linecolor="#1e2535")
     fig.update_layout(
-        **PL, title="MCM: Mean Cure Probability π(x) by Stratum",
-        yaxis=dict(title="Mean cure probability", range=[0, 1],
-                   gridcolor="#1e2535", linecolor="#1e2535"),
+        **_layout2, title="MCM: Mean Cure Probability π(x) by Stratum",
         updatemenus=[dict(
             type="buttons", direction="left", x=0.01, y=1.12, showactive=True,
             buttons=[

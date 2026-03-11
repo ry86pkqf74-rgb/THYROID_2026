@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-10T23:50:16.596535",
+  "generated_at": "2026-03-11T00:58:27.376399",
   "n_total": 48304,
   "n_events": 161,
   "event_rate_pct": 0.33,
@@ -10,6 +10,6 @@
   "aic": 4047.23,
   "neg_loglik": 2011.6152,
   "n_params": 12,
-  "n_boot": 50,
+  "n_boot": 100,
   "dry_run": false
 }

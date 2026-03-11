@@ -1,0 +1,10 @@
+metric,MCM,PTCM,delta
+Cure fraction π̄,0.7304,0.9926,-0.2622
+AIC,4460.5,4047.2,+413.3
+Cohort N,48304,48304,—
+Events,161,161,—
+Weibull shape,1.4840,2.8813,—
+Weibull scale (y),139.88,7.07,—
+Bootstrap 95% CI (MCM),"[0.0000, 0.9758]",—,—
+Top 3 predictors,ete_type_microscopic(+2.906); ajcc_stage_8_IVB(-2.845); ajcc_stage_8_II(-1.647),ete_gross(-30.316); braf_pos(-4.697); high_risk_band(+2.829),—
+10-year RMST (y) [MCM],9.98,9.98,—

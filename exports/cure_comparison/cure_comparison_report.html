@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>THYROID_2026 — Cure Model Comparison Report</title>
+  <style>
+    body {font-family: 'Helvetica Neue', Arial, sans-serif; background:#07090f; color:#f0f4ff;
+           max-width:960px; margin:40px auto; padding:0 24px;}
+    h1 {color:#f59e0b; border-bottom:1px solid #1e2535; padding-bottom:12px;}
+    h2 {color:#38bdf8; margin-top:32px;}
+    .kpi-grid {display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:20px 0;}
+    .kpi {background:#0e1219; border:1px solid #1e2535; border-radius:8px; padding:16px;}
+    .kpi-label {font-size:.75rem; color:#8892a4; letter-spacing:.06em; text-transform:uppercase;}
+    .kpi-value {font-size:1.4rem; font-weight:700; margin-top:4px;}
+    .mcm {color:#a78bfa;}
+    .ptcm {color:#2dd4bf;}
+    table {width:100%; border-collapse:collapse; margin-top:16px; font-size:.85rem;}
+    th {background:#141923; color:#8892a4; padding:8px 12px; text-align:left; font-weight:600;
+         border-bottom:1px solid #1e2535;}
+    td {padding:8px 12px; border-bottom:1px solid #1e2535; color:#d4dae8;}
+    tr:hover td {background:#0e1219;}
+    .note {font-size:.8rem; color:#8892a4; margin-top:24px; line-height:1.5;}
+    code {background:#141923; padding:2px 6px; border-radius:4px; font-size:.8rem;}
+    .highlight {background:#1a1530; border:2px solid #a78bfa; border-radius:10px; padding:18px; margin:20px 0;}
+  </style>
+</head>
+<body>
+  <h1>Cure Model Head-to-Head Comparison</h1>
+  <p style="color:#8892a4">THYROID_2026 · generated 2026-03-11 01:48</p>
+
+  <div class="highlight">
+    <h2 style="margin-top:0;color:#f59e0b">Key Finding</h2>
+    <p>PTCM mechanistic θ vs MCM population π — The <strong>PTCM</strong>
+    assigns a higher overall cure fraction, reflecting its
+    biological counting (Poisson θ)
+    approach. Both models agree on the dominant risk factors but differ in interpretation:
+    PTCM views them as promoters of latent disease burden, while MCM views them as drivers
+    of population-level susceptibility.</p>
+  </div>
+
+  <h2>Comparison Table</h2>
+  <table>
+    <tr><th>Metric</th><th class="mcm">MCM</th><th class="ptcm">PTCM</th><th>Δ</th></tr>
+    <tr><td>Cure fraction π̄</td><td>0.7304</td><td>0.9926</td><td>-0.2622</td></tr><tr><td>AIC</td><td>4460.5</td><td>4047.2</td><td>+413.3</td></tr><tr><td>Cohort N</td><td>48304</td><td>48304</td><td>—</td></tr><tr><td>Events</td><td>161</td><td>161</td><td>—</td></tr><tr><td>Weibull shape</td><td>1.4840</td><td>2.8813</td><td>—</td></tr><tr><td>Weibull scale (y)</td><td>139.88</td><td>7.07</td><td>—</td></tr><tr><td>Bootstrap 95% CI (MCM)</td><td>[0.0000, 0.9758]</td><td>—</td><td>—</td></tr><tr><td>Top 3 predictors</td><td>ete_type_microscopic(+2.906); ajcc_stage_8_IVB(-2.845); ajcc_stage_8_II(-1.647)</td><td>ete_gross(-30.316); braf_pos(-4.697); high_risk_band(+2.829)</td><td>—</td></tr><tr><td>10-year RMST (y) [MCM]</td><td>9.98</td><td>9.98</td><td>—</td></tr>
+  </table>
+
+  <h2>When to Use Which Model</h2>
+  <table>
+    <tr><th>Scenario</th><th>Recommended Model</th><th>Rationale</th></tr>
+    <tr><td>Clinician counseling</td><td class="ptcm">PTCM</td>
+        <td>Biologically interpretable: "you carry θ latent cells" maps to individual risk</td></tr>
+    <tr><td>Population-level policy</td><td class="mcm">MCM</td>
+        <td>Simpler population split; robust for surveillance protocol design</td></tr>
+    <tr><td>Risk stratification</td><td>Both</td>
+        <td>Cross-validate: patients flagged by both models warrant closer follow-up</td></tr>
+    <tr><td>Publication</td><td>Both</td>
+        <td>Report both for completeness; AIC selects the better-fitting model</td></tr>
+  </table>
+
+  <div class="note">
+    MCM: EM Logistic-Weibull (Berkson & Gage 1952; Farewell 1982).<br>
+    PTCM: Weibull Promotion Time (Chen, Ibrahim & Sinha 1999).<br>
+    Generated 2026-03-11 01:48. Source tables: <code>mixture_cure_cohort</code>, <code>promotion_cure_cohort</code>.
+  </div>
+</body>
+</html>

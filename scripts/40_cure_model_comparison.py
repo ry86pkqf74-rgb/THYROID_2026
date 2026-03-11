@@ -71,7 +71,8 @@ def _compute_rmst(t: np.ndarray, e: np.ndarray, tau: float) -> float:
     times = np.concatenate([[0], t_s])
     surv = np.concatenate([[1.0], km])
     mask = times <= tau
-    return float(np.trapz(surv[mask], times[mask]))
+    _trapz = getattr(np, "trapezoid", getattr(np, "trapz", None))
+    return float(_trapz(surv[mask], times[mask]))
 
 
 def _save_plotly(fig: go.Figure, path: Path):
