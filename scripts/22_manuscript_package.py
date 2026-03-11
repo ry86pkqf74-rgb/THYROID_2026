@@ -108,8 +108,20 @@ def deploy_sql(con, dry_run: bool) -> None:
         print("  [dry-run] Skipping SQL view deployment.")
         return
     section("Deploying manuscript SQL views")
-    sql = sql_path.read_text()
-    statements = [s.strip() for s in sql.split(";") if s.strip() and not s.strip().startswith("--")]
+    raw = sql_path.read_text()
+    # Strip single-line SQL comments before splitting on ";" to avoid
+    # comments that contain semicolons being parsed as statements.
+    clean_lines = []
+    for ln in raw.splitlines():
+        stripped = ln.strip()
+        if stripped.startswith("--"):
+            continue
+        # Inline comment: remove from "--" onwards (outside string literals)
+        if "--" in ln:
+            ln = ln[:ln.index("--")]
+        clean_lines.append(ln)
+    sql = "\n".join(clean_lines)
+    statements = [s.strip() for s in sql.split(";") if s.strip()]
     for stmt in statements:
         try:
             con.execute(stmt)

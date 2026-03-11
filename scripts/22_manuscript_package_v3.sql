@@ -11,7 +11,7 @@ USE thyroid_research_2026;
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- TABLE 1: Patient Demographics
--- One row per characteristic; col2 = n (%), col3 = value (range/SD)
+-- One row per characteristic: display_value = n (%) or mean (SD)
 -- ─────────────────────────────────────────────────────────────────────────────
 CREATE OR REPLACE VIEW manuscript_table1_demographics_v AS
 WITH patient_spine AS (
