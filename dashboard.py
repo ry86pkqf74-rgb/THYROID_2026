@@ -18,12 +18,13 @@ Run locally:
 """
 from __future__ import annotations
 import io
+import importlib.util
 import os, sys, time, requests
 import subprocess
 from datetime import datetime
 from pathlib import Path
 
-import duckdb, pandas as pd
+import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
@@ -34,11 +35,7 @@ try:
 except ImportError:
     HAS_LIFELINES = False
 
-try:
-    import openpyxl  # noqa: F401
-    HAS_OPENPYXL = True
-except ImportError:
-    HAS_OPENPYXL = False
+HAS_OPENPYXL = importlib.util.find_spec("openpyxl") is not None
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from motherduck_client import MotherDuckClient, MotherDuckConfig
@@ -1455,8 +1452,6 @@ def render_qa_dashboard(con):
                 "FROM qa_laterality_mismatches GROUP BY 1 ORDER BY 2 DESC")
             if not lat_df.empty:
                 cs = st.columns(len(lat_df))
-                flag_colors = {"MATCH": "green", "LATERALITY_MISMATCH": "red",
-                               "INCOMPLETE": "orange"}
                 for i, (_, row) in enumerate(lat_df.iterrows()):
                     with cs[i]:
                         st.metric(row["laterality_flag"], f"{int(row['n']):,}")
@@ -1677,7 +1672,6 @@ def render_survival(con):
                 st.caption(f"Could not load PTCM KPIs: {_e}")
         elif _ptcm_cohort_tbl:
             try:
-                _kpi_df = sqdf(con, f"SELECT * FROM {_ptcm_cohort_tbl} LIMIT 1")
                 _ptcm_kpi_cols[0].metric("Cohort available", "✓ Run script 39")
             except Exception:
                 pass
@@ -2112,7 +2106,7 @@ def main():
             db_mode = "Read-Write" if review_mode and rw_con else "Read-Only Share"
             st.markdown(f"**Database mode:** {db_mode}")
             st.markdown(f"**Database:** `{DATABASE}`")
-            st.markdown(f"**Deploy order:** 15→20 (adjudication) · 22→27 (v2 canonical)")
+            st.markdown("**Deploy order:** 15→20 (adjudication) · 22→27 (v2 canonical)")
             for vname, label in [
                 ("molecular_episode_v3", "Molecular v3"),
                 ("rai_episode_v3", "RAI v3"),

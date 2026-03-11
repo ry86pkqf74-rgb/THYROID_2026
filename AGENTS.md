@@ -33,6 +33,7 @@
 - Reviewer persistence (script 19): `adjudication_decisions` table, `adjudication_decision_history` table, `reviewer_resolved_patient_summary_v`, `adjudication_progress_summary_v`, `histology_post_review_v`, `molecular_post_review_v`, `rai_post_review_v`, `top_priority_review_batches_v`, `adjudication_domain_counts_v`, `unresolved_high_value_cases_v`
 - Post-review overlay views expose both `algorithmic_value` and `reviewer_final_value` with `COALESCE(reviewer, algorithmic)` as `effective_value`; decisions are additive via `active_flag`
 - Manuscript export views (script 20): `manuscript_histology_cohort_v`, `manuscript_molecular_cohort_v`, `manuscript_rai_cohort_v`, `manuscript_patient_summary_v`; prefer post-review views when available, fall back to algorithmic cohorts
+- Script 20 export hardening: if molecular/RAI source cohorts are missing or schema-incompatible, create zero-row placeholder manuscript views so `manuscript_patient_summary_v` and bundle export still succeed
 - Manuscript export bundle: `exports/manuscript_cohort_YYYYMMDD_HHMM/` with CSV, Parquet, and manifest.json (provenance, row counts, unresolved burdens, git SHA)
 - Streamlit adjudication UI: 8 new tabs in `dashboard.py` (Cohort QC, Patient Audit, Histology Review, Molecular Review, RAI Review, Timeline Review, Review Queue, Diagnostics)
 - App modules live in `app/` directory: `helpers.py`, `cohort_qc.py`, `patient_audit.py`, `review_histology.py`, `review_molecular.py`, `review_rai.py`, `review_timeline.py`, `review_queue.py`, `diagnostics.py`
