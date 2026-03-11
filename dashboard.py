@@ -59,6 +59,7 @@ from app.advanced_survival import render_advanced_survival
 from app.statistical_analysis import render_statistical_analysis
 from app.cure_probability import render_cure_probability
 from app.patient_timeline_explorer import render_patient_timeline_explorer
+from app.advanced_analytics import render_advanced_analytics
 
 # ── Page config ───────────────────────────────────────────────────────────
 st.set_page_config(page_title="Thyroid Cohort Explorer", page_icon="🔬",
@@ -2291,7 +2292,7 @@ def main():
      t_tl,t_ev,t_qa,t_surv,t_afv3,
      t_cqc,t_pat,t_rh,t_rm,t_rr,t_rtl,t_rq,t_diag,
      t_ec,t_md,t_rd,t_ind,t_od,t_as,t_ve,
-     t_advsurv,t_stat,t_cure,t_pte,t_surv_out) = st.tabs([
+     t_advsurv,t_stat,t_advai,t_cure,t_pte,t_surv_out) = st.tabs([
         "📊 Overview","🗃 Data Explorer","📈 Visualizations","🧬 Advanced",
         "🔬 Genetics & Molecular","🫀 Specimen Details","📡 Pre-Op Imaging",
         "⚕ Complications","📋 Recommendations & Sensitivities",
@@ -2305,6 +2306,7 @@ def main():
         "🛡 Validation Engine",
         "🔬 Advanced Survival",
         "📊 Statistical Analysis",
+        "🔬 Advanced Analytics & AI",
         "🎯 Cure Probability",
         "🗓 Patient Timeline",
         "Survival & Outcomes",
@@ -2342,6 +2344,7 @@ def main():
     with t_ve:   render_validation_engine(con)
     with t_advsurv: render_advanced_survival(con)
     with t_stat: render_statistical_analysis(con)
+    with t_advai: render_advanced_analytics(con)
     with t_cure: render_cure_probability(con)
     with t_pte:  render_patient_timeline_explorer(con)
     with t_surv_out: render_survival_outcomes(con)

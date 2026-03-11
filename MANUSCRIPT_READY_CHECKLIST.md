@@ -62,9 +62,30 @@ streamlit run dashboard.py
 # Navigate to "📊 Statistical Analysis & Modeling"
 ```
 
+## Advanced Analytics & AI (Phase 3)
+
+- [x] `utils/advanced_analytics.py` — `ThyroidAdvancedAnalyzer` with competing risks, ML nomograms, SHAP, manuscript report
+- [x] `app/advanced_analytics.py` — 6-tab "🔬 Advanced Analytics & AI" dashboard tab
+- [x] Competing risks (Aalen-Johansen CIF) — recurrence vs death, landmark summaries
+- [x] Stratified longitudinal trajectories — BRAF/stage/risk subgroup slopes with CI
+- [x] XGBoost/Random Forest nomograms with stratified CV (AUC, Brier, calibration)
+- [x] SHAP feature importance + beeswarm + per-patient contribution waterfall
+- [x] Interactive risk calculator — slider-driven individual predictions
+- [x] One-click Word manuscript report (.docx) — Table 1 + Cox + longitudinal + ML sections
+- [x] LaTeX longtable export for model results
+- [x] `requirements.txt` — added shap, xgboost, python-docx, jinja2
+- [x] Dashboard now 37 tabs (was 36)
+
+### To access the Advanced Analytics tab:
+```bash
+streamlit run dashboard.py
+# Navigate to "🔬 Advanced Analytics & AI"
+```
+
 ## Next Steps
 
-- **Analytic modeling:** Use `risk_enriched_mv`, `advanced_features_v3`, manuscript export views
+- **External validation:** Use held-out temporal split for nomogram calibration
+- **Fine-Gray subdistribution HR:** Requires R `cmprsk` bridge or custom implementation
 - **Zenodo archive:** Create snapshot from tag, upload bundle + code
 - **Manuscript figures:** Use `notebooks/01_publication_figures.ipynb` for Kaplan-Meier, ETE staging, timeline explorer
 

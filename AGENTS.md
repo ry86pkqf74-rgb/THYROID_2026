@@ -188,3 +188,13 @@
 - ThyroSeq DOB stored as Excel serial dates (int64); Tg/TgAb/TSH panels in composite "value/value/value (date) notes" format across 7 repeated columns
 - ThyroSeq exports to `exports/thyroseq_integration_YYYYMMDD_HHMM/` with CSVs + manifest.json; integration report at `docs/THYROSEQ_INTEGRATION_REPORT.md`
 - 100 tests in `tests/test_thyroseq_parsing.py` covering all ThyroSeq parsers and normalizers
+- `utils/advanced_analytics.py`: `ThyroidAdvancedAnalyzer` class — competing risks (Aalen-Johansen CIF), stratified longitudinal mixed-effects, XGBoost/RF ML nomograms with SHAP, interactive risk prediction, Word manuscript report generation, LaTeX export
+- `app/advanced_analytics.py`: "🔬 Advanced Analytics & AI" dashboard tab (6 sub-tabs: Competing Risks, Longitudinal Trajectories, ML Nomograms & SHAP, Interactive Risk Calculator, Manuscript Report, Diagnostics)
+- Dashboard now 37 tabs; `t_advai` = "🔬 Advanced Analytics & AI" → `render_advanced_analytics(con)`
+- `requirements.txt` additions: `shap`, `xgboost`, `python-docx`, `jinja2`
+- SHAP on Python 3.14: install with `--no-deps` (numba incompatible); core SHAP works without numba acceleration
+- `ThyroidAdvancedAnalyzer` composes `ThyroidStatisticalAnalyzer`; shared PL theme, preset constants, view resolution
+- Competing risks presets: `COMPETING_RISK_PRESETS["recurrence_vs_death"]` uses `time_to_event_days`, `event_occurred`, `death_occurred`
+- Nomogram presets: `NOMOGRAM_PRESETS["recurrence"]` and `NOMOGRAM_PRESETS["nsqip_complication"]` with thyroid-specific predictors
+- ML nomogram stores trained model + features in `st.session_state["_adv_ml_model"]` for risk calculator reuse
+- Fine-Gray subdistribution HR not available in lifelines; use Aalen-Johansen CIF; Fine-Gray needs R `cmprsk` or custom impl

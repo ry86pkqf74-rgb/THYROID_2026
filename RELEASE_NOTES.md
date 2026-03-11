@@ -1,6 +1,38 @@
 # THYROID_2026 Release Notes
 
-## v2026.03.10-statistical-workbench-v2 (Latest)
+## v2026.03.11-advanced-analytics (Latest)
+**Date:** 2026-03-11
+**Patients:** 11,673 | **Enhancement:** Advanced Analytics & AI — Phase 3
+
+### Advanced Analytics & AI (New Dashboard Tab)
+
+#### `utils/advanced_analytics.py` — `ThyroidAdvancedAnalyzer` class
+- `fit_competing_risks()` — Aalen-Johansen cumulative incidence functions for competing risks (recurrence vs death); landmark CIF summary at 1/3/5/10 years; handles combined event indicators; interactive Plotly CIF curves
+- `fit_stratified_longitudinal()` — stratified mixed-effects models for Tg/TSH trajectories by clinical subgroups (BRAF, stage, risk band, RAI); per-stratum slope comparison table with CI and p-values; multi-stratum spaghetti/trend plots
+- `train_ml_nomogram()` — XGBoost or Random Forest for binary outcomes; stratified k-fold CV (AUC, Brier); class-imbalance handling (scale_pos_weight); native + SHAP feature importance; SHAP beeswarm plot (Plotly); calibration curves
+- `predict_individual_risk()` — individualized risk prediction with SHAP-based feature contributions; risk classification (Low/Intermediate/High)
+- `compute_feature_ranges()` — min/max/median/percentile ranges for risk calculator slider defaults
+- `generate_manuscript_report()` — automated Word document generation (python-docx) with Table 1, Cox HR, longitudinal summary, competing risks, ML nomogram sections; clinical interpretation text auto-included
+- `generate_latex_table()` — DataFrame to LaTeX longtable conversion with proper escaping
+- Thyroid-specific presets: `COMPETING_RISK_PRESETS`, `NOMOGRAM_PRESETS`, `LONGITUDINAL_STRATIFIERS`
+
+#### `app/advanced_analytics.py` — 6 sub-tabs in "🔬 Advanced Analytics & AI" dashboard tab
+- **Competing Risks** — source/time/event/competing selectors; Aalen-Johansen CIF plot; landmark summary table; clinical interpretation
+- **Longitudinal Trajectories** — marker selector (Tg/TSH/Anti-Tg); stratification by BRAF/stage/risk/RAI; per-stratum slope comparison; trajectory spaghetti plots
+- **ML Nomograms & SHAP** — model type toggle (XGBoost/RF); outcome + predictor selectors; CV folds slider; SHAP importance bar + beeswarm; calibration plot; feature importance table
+- **Interactive Risk Calculator** — slider-driven individualized predictions from trained ML model; color-coded risk display (Low/Intermediate/High); SHAP contribution waterfall
+- **Manuscript Report** — section picker; Word document (.docx) generation + download; LaTeX table export for stored models
+- **Diagnostics** — library badge status (lifelines/statsmodels/xgboost/sklearn/SHAP/python-docx); source availability + row counts; package versions
+
+#### Dependencies
+- `requirements.txt` — added `shap`, `xgboost`, `python-docx`, `jinja2`
+
+#### Dashboard
+- 37 tabs (was 36); `t_advai` = "🔬 Advanced Analytics & AI" → `render_advanced_analytics(con)`
+
+---
+
+## v2026.03.10-statistical-workbench-v2 (Previous)
 **Date:** 2026-03-10
 **Patients:** 11,673 | **Enhancement:** Statistical Analysis Workbench — Phase 2 additions
 

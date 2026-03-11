@@ -13,3 +13,7 @@ scipy
 tableone
 pingouin
 scikit-learn
+shap
+xgboost
+python-docx
+jinja2
