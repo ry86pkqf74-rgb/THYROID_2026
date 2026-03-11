@@ -14,6 +14,8 @@
 - When user says "leave X alone," do not stage/commit/push those files — respect work-in-progress boundaries
 - Commit only files directly related to the current task scope; leave unrelated modified files uncommitted unless explicitly asked
 - Always verify actual file/git state before assuming code is missing (user may provide prompts from stale context)
+- When integrating external data sources, never auto-merge uncertain patient matches; route all ambiguous linkages to review queues with full context for manual resolution
+- Prefer append-only long-format event/lab tables over stuffing serial data into wide patient rows
 
 ## Learned Workspace Facts
 
@@ -164,7 +166,7 @@
 - Promotion Time Cure Model (PTCM) added (script 39: `39_promotion_time_cure_models.py`): Weibull PTCM via scipy L-BFGS-B MLE; S(t|x)=exp(-θ(x)·F₀(t)); cure probability π(x)=exp(-θ(x)); bootstrap n=300 for 95% CI; exports to `exports/promotion_cure_results/` (CSVs, Plotly HTML/PNG, `ptcm_report.html`)
 - PTCM cohort tables: `promotion_cure_cohort` and `promotion_cure_kpis` materialized by script 26; reads from `survival_cohort_enriched`; columns: research_id, time_days, event, age_at_diagnosis, sex, ajcc_stage_8, ete_type, braf_status, tert_status, ntrk_status (ras_status proxy), recurrence_risk_band, rai_avidity_category (NULL), diagnosis_year, histology, ps_weight (1.0)
 - PTCM dashboard: "Latent Disease Burden (PTCM)" sub-section inside `render_survival()` (not a new tab); sidebar "🔬 Promotion Cure KPIs (PTCM)" expander reads from CSV export or promotion_cure_kpis table; covariate effects table, cure probability histogram, Weibull vs KM iframe, HTML report iframe
-- Deployment order updated: script 15 → 16 → 17 → 18 → 19 → 20 → ... → 39
+- Deployment order updated: script 15 → 16 → 17 → 18 → 19 → 20 → ... → 41
 - Script 22 tumor_episode_master_v2 now normalizes: `extrathyroidal_extension` (none/microscopic/gross/present), `vascular_invasion` (absent/focal/extensive/present), `lymphatic_invasion`/`perineural_invasion`/`capsular_invasion`/`extranodal_extension` (boolean), `margin_status` (positive/negative/close); raw values preserved in `*_raw` columns
 - Script 22 molecular_test_episode_v2 now handles year-only dates (`regexp_matches '^\d{4}$'` → coarse_anchor_date, confidence 50); mirrors script 27 logic
 - Script 25 QA rules expanded: `molecular_before_fna` (molecular test dated before linked FNA), `preop_after_surgery` (preop FNA/molecular dated after linked surgery); total 18 QA check_ids
@@ -177,23 +179,27 @@
 - MotherDuck audit report at `studies/motherduck_audit/AUDIT_REPORT.md`
 - Script 24 imaging_pathology_concordance_review_v2 already has temporal constraints + surgery_windows for multi-surgery patients
 - Script 23 linkage weak tiers use `BETWEEN -7 AND N` (not ABS); -7 day tolerance is intentional for recording delays
-- Manuscript package complete and marked SUBMISSION COMPLETE in MANUSCRIPT_READY_CHECKLIST.md
+- Manuscript package complete and marked SUBMISSION COMPLETE in MANUSCRIPT_READY_CHECKLIST.md; post-submission phase is data enrichment (ThyroSeq integration) and dashboard refinement
 - `timeline_rescue_v3_mv` SQL file: `scripts/17_timeline_rescue_unified_v3.sql`; covers all 6 note_entities_* tables with date_status V3 taxonomy, inferred_event_date, and three boolean flags
 - `enriched_patient_timeline_v3_mv` view defined in `scripts/20_enriched_patient_timeline_v3.sql`; joins timeline_rescue_v3_mv + patient_spine + first_rai + per-patient rescue_rate; columns: entity_type, inferred_event_date, date_status, provenance flags, sex, age_at_surgery, histology_1_type, overall_stage_ajcc8, first_surgery_date, first_rai_date, time_to_rai_days, max_rai_dose, date_rescue_rate_pct
 - `app/patient_timeline_explorer.py`: new module with `render_patient_timeline_explorer(con)` — prominent rescue KPI card + progress bar (from timeline_unresolved_summary_v2_mv), per-entity-type rescue bar chart, patient lookup by research_id (shows header metrics + timeline dataframe + episode expanders), Publication Snapshot export button
-- Dashboard now has 35 tabs; `t_pte` tab = "🗓 Patient Timeline" → `render_patient_timeline_explorer(con)`
+- Dashboard now has 38 tabs; `t_pte` tab = "🗓 Patient Timeline", `t_tsq` tab = "🧪 ThyroSeq Integration"
 - `app/helpers.py` multi_export tz fix: use `hasattr(dt, 'tz_localize')` (always True) instead of `dt.tz is not None` guard, so tz_localize(None) always runs on datetime columns (no-op on naive, strips tz on aware)
 - Overview tab date rescue KPI now includes `st.progress()` bar alongside big-number card
 - Publication Snapshot button exports `enriched_patient_timeline_v3_mv` + `qa_summary_by_domain_v2` to `exports/pub_snapshot_YYYYMMDD_HHMM/` with `manifest.json`
 - Script 41 (`41_ingest_thyroseq_excel.py`): ThyroSeq workbook integration pipeline; ingests `Thyroseq Data Complete.xlsx` (83 rows, 34 cols), deduplicates to 81, matches 48 patients via MRN+DOB+name crosswalk from raw files, creates 7 DuckDB tables: `stg_thyroseq_excel_raw`, `stg_thyroseq_match_results`, `stg_thyroseq_parsed`, `thyroseq_molecular_enrichment` (49 rows), `thyroseq_followup_labs` (125 rows), `thyroseq_followup_events` (79 rows), `thyroseq_review_queue` (36 items); supports `--md`, `--local`, `--dry-run`
 - `utils/thyroseq_helpers.py`: parsing/normalization functions for ThyroSeq integration — `normalize_mrn`, `normalize_name`, `normalize_dob`, `compute_row_hash`, `parse_tg_panel`, `parse_surgery_text`, `parse_rai_text`, `parse_imaging_text`, `parse_mutation_text`, `parse_fusion_text`, categorical normalizers (sex, race, margins, ETE, lymph nodes, angioinvasion, multifocal, tobacco, Hashimoto/Graves)
-- ThyroSeq MRN column (`Pt. MRN`) maps to `EUH_MRN` in crosswalk (50/83 overlap); 33 unmatched patients likely newer or from a different system; crosswalk built from `All Diagnoses & synoptic`, `Notes`, `Thyroid OP Sheet` raw files
+- ThyroSeq MRN column (`Pt. MRN`) maps to `EUH_MRN` in crosswalk (50/83 overlap); 33 unmatched patients are post-data-freeze additions (2025-2026 surgeries) not in the research database; crosswalk built from 4 raw files: `All Diagnoses & synoptic`, `Notes`, `Thyroid OP Sheet`, `Thyroid all_Complications`
 - ThyroSeq DOB stored as Excel serial dates (int64); Tg/TgAb/TSH panels in composite "value/value/value (date) notes" format across 7 repeated columns
 - ThyroSeq exports to `exports/thyroseq_integration_YYYYMMDD_HHMM/` with CSVs + manifest.json; integration report at `docs/THYROSEQ_INTEGRATION_REPORT.md`
 - 100 tests in `tests/test_thyroseq_parsing.py` covering all ThyroSeq parsers and normalizers
+- ThyroSeq tables deployed to both local DuckDB and MotherDuck cloud; 8 tables total: `stg_thyroseq_excel_raw`, `stg_thyroseq_match_results`, `stg_thyroseq_parsed`, `thyroseq_molecular_enrichment`, `thyroseq_followup_labs`, `thyroseq_followup_events`, `thyroseq_fill_actions`, `thyroseq_review_queue`
+- ThyroSeq matching hierarchy: `exact_mrn_dob_name` (1.0) → `exact_mrn_name` (0.9) → `exact_mrn_only` (0.7) → `exact_name_dob` (0.6) → `demographic_surgery_date_age_sex` (0.5) → `manual_review_required` (0.0); demographic fallback queries `patient_level_summary_mv` for surgery_date+age+sex
+- ThyroSeq race conflicts: MotherDuck `path_synoptics.race` uses "Black or African American" vs ThyroSeq "African American"; all 46 discordances routed to review, not auto-overwritten
+- `app/thyroseq_integration.py`: "🧪 ThyroSeq Integration" dashboard tab — KPI cards, match breakdown chart, molecular gene flag frequency, per-patient Tg/TSH dual-axis trend, event type distribution, review queue browser with fill audit
 - `utils/advanced_analytics.py`: `ThyroidAdvancedAnalyzer` class — competing risks (Aalen-Johansen CIF), stratified longitudinal mixed-effects, XGBoost/RF ML nomograms with SHAP, interactive risk prediction, Word manuscript report generation, LaTeX export
 - `app/advanced_analytics.py`: "🔬 Advanced Analytics & AI" dashboard tab (6 sub-tabs: Competing Risks, Longitudinal Trajectories, ML Nomograms & SHAP, Interactive Risk Calculator, Manuscript Report, Diagnostics)
-- Dashboard now 37 tabs; `t_advai` = "🔬 Advanced Analytics & AI" → `render_advanced_analytics(con)`
+- `t_advai` = "🔬 Advanced Analytics & AI" → `render_advanced_analytics(con)`
 - `requirements.txt` additions: `shap`, `xgboost`, `python-docx`, `jinja2`
 - SHAP on Python 3.14: install with `--no-deps` (numba incompatible); core SHAP works without numba acceleration
 - `ThyroidAdvancedAnalyzer` composes `ThyroidStatisticalAnalyzer`; shared PL theme, preset constants, view resolution
