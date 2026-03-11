@@ -1761,46 +1761,38 @@ def render_survival(con):
         )
 
     # ── Full Manuscript Package ───────────────────────────────────────────
-    st.markdown("---")
+    st.divider()
+    st.markdown("### 🚀 Manuscript Submission Package")
     st.markdown(
         "<div style='background:#052e16;border:2px solid #16a34a;border-radius:8px;"
         "padding:14px 18px;margin:12px 0'>"
         "<b style='color:#4ade80;font-size:1.05rem'>📦 Full Manuscript Package</b>"
         "<br><span style='color:#bbf7d0;font-size:0.9rem'>"
-        "Generates LaTeX tables (booktabs), 300 DPI KM figures, time-to-RAI chart, "
-        "updates checklist, and creates final ZIP.</span></div>",
+        "Runs 33 + 34 + 20 → Overleaf-ready LaTeX tables → 300 DPI figures → final ZIP."
+        "</span></div>",
         unsafe_allow_html=True,
     )
     if st.button("🚀 Generate Full Manuscript Package", key="surv_manuscript_pkg",
                  type="primary", use_container_width=True):
-        _mp_script = Path(__file__).resolve().parent / "scripts" / "22_manuscript_package.py"
+        _mp_script = Path(__file__).resolve().parent / "scripts" / "36_final_manuscript_package.py"
         if not _mp_script.exists():
-            st.error("scripts/22_manuscript_package.py not found.")
+            st.error("scripts/36_final_manuscript_package.py not found.")
         else:
-            with st.spinner("Generating manuscript package… (may take 30–90 s)"):
+            with st.spinner("Running 33 + 34 + 20 → LaTeX tables → 300 DPI figures → final ZIP… (30–90 s)"):
                 try:
                     _mp_proc = subprocess.run(
-                        [sys.executable, str(_mp_script), "--md"],
+                        [sys.executable, str(_mp_script)],
                         capture_output=True, text=True,
                         cwd=str(Path(__file__).resolve().parent),
                         check=False, timeout=300,
                     )
                     _mp_logs = (_mp_proc.stdout or "") + (_mp_proc.stderr or "")
                     if _mp_proc.returncode == 0:
-                        import glob as _glob
-                        _mp_zips = sorted(
-                            _glob.glob(str(
-                                Path(__file__).resolve().parent
-                                / "THYROID_2026_MANUSCRIPT_PACKAGE_*.zip"
-                            )),
-                            reverse=True,
-                        )
-                        _mp_zn = Path(_mp_zips[0]).name if _mp_zips else "see studies/manuscript_package_*/"
-                        st.success(
-                            f"Manuscript package ready!  ZIP: `{_mp_zn}`  "
-                            f"— tables, figures, and checklist updated."
-                        )
-                        with st.expander("Script output"):
+                        st.success("✅ Full manuscript package generated successfully!")
+                        st.balloons()
+                        _today = datetime.now().strftime("%Y%m%d")
+                        st.info(f"📦 Saved to `exports/THYROID_2026_MANUSCRIPT_PACKAGE_{_today}.zip`")
+                        with st.expander("Generation Log"):
                             st.code(_mp_logs[-3000:], language="text")
                     else:
                         st.error(
@@ -1812,7 +1804,7 @@ def render_survival(con):
                 except subprocess.TimeoutExpired:
                     st.error(
                         "Script timed out after 5 minutes. Run manually: "
-                        "`python scripts/22_manuscript_package.py --md`"
+                        "`.venv/bin/python scripts/36_final_manuscript_package.py`"
                     )
                 except Exception as _mp_exc:
                     st.error(f"Could not run manuscript package script: {_mp_exc}")
@@ -2005,47 +1997,38 @@ def render_survival_outcomes(con):
         except Exception as e:
             st.error(f"Could not run manuscript export script: {e}")
 
-    st.markdown("---")
+    st.divider()
+    st.markdown("### 🚀 Manuscript Submission Package")
     st.markdown(
         "<div style='background:#052e16;border:2px solid #16a34a;border-radius:8px;"
         "padding:14px 18px;margin:12px 0'>"
         "<b style='color:#4ade80;font-size:1.05rem'>📦 Full Manuscript Package</b>"
         "<br><span style='color:#bbf7d0;font-size:0.9rem'>"
-        "Generates LaTeX tables (booktabs), 300 DPI KM figures, time-to-RAI chart, "
-        "updates checklist, and creates final ZIP.</span></div>",
+        "Runs 33 + 34 + 20 → Overleaf-ready LaTeX tables → 300 DPI figures → final ZIP."
+        "</span></div>",
         unsafe_allow_html=True,
     )
     if st.button("🟢 Generate Full Manuscript Package", key="surv3_manuscript_pkg",
                  type="primary", use_container_width=True):
-        pkg_script = Path(__file__).resolve().parent / "scripts" / "22_manuscript_package.py"
+        pkg_script = Path(__file__).resolve().parent / "scripts" / "36_final_manuscript_package.py"
         if not pkg_script.exists():
-            st.error("scripts/22_manuscript_package.py not found.")
+            st.error("scripts/36_final_manuscript_package.py not found.")
         else:
-            with st.spinner("Generating manuscript package… (may take 30–90 s)"):
+            with st.spinner("Running 33 + 34 + 20 → LaTeX tables → 300 DPI figures → final ZIP… (30–90 s)"):
                 try:
                     proc = subprocess.run(
-                        [sys.executable, str(pkg_script), "--md"],
-                        capture_output=True,
-                        text=True,
+                        [sys.executable, str(pkg_script)],
+                        capture_output=True, text=True,
                         cwd=str(Path(__file__).resolve().parent),
-                        check=False,
-                        timeout=300,
+                        check=False, timeout=300,
                     )
                     logs = (proc.stdout or "") + (proc.stderr or "")
                     if proc.returncode == 0:
-                        import glob as _glob
-                        zips = sorted(
-                            _glob.glob(
-                                str(Path(__file__).resolve().parent / "THYROID_2026_MANUSCRIPT_PACKAGE_*.zip")
-                            ),
-                            reverse=True,
-                        )
-                        zip_name = Path(zips[0]).name if zips else "see studies/manuscript_package_*/"
-                        st.success(
-                            f"Manuscript package ready!  ZIP: `{zip_name}`  "
-                            f"— tables, figures, and checklist updated."
-                        )
-                        with st.expander("Script output"):
+                        st.success("✅ Full manuscript package generated successfully!")
+                        st.balloons()
+                        _today = datetime.now().strftime("%Y%m%d")
+                        st.info(f"📦 Saved to `exports/THYROID_2026_MANUSCRIPT_PACKAGE_{_today}.zip`")
+                        with st.expander("Generation Log"):
                             st.code(logs[-3000:], language="text")
                     else:
                         st.error(
@@ -2056,7 +2039,7 @@ def render_survival_outcomes(con):
                             st.code(logs, language="text")
                 except subprocess.TimeoutExpired:
                     st.error("Script timed out after 5 minutes. Run manually: "
-                             "`python scripts/22_manuscript_package.py --md`")
+                             "`.venv/bin/python scripts/36_final_manuscript_package.py`")
                 except Exception as exc:
                     st.error(f"Could not run manuscript package script: {exc}")
 
