@@ -452,9 +452,6 @@ def _plot_cure_by_stratum(
             visible=(i == 0),
         ))
 
-    # Toggle buttons
-    n_stage = df["ajcc_stage_8"].nunique()
-    n_ete   = 3
     fig.update_layout(
         **PL,
         title="PTCM: Mean Cure Probability π(x) by Stratum",
@@ -604,7 +601,6 @@ def main() -> None:
     }
 
     # ── 8. Save CSVs ─────────────────────────────────────────────────────
-    ts = datetime.now().strftime("%Y%m%d_%H%M")
     summary_path = EXPORT_DIR / "ptcm_summary.csv"
     pd.DataFrame([summary]).to_csv(summary_path, index=False)
     print(f"  Saved {summary_path.name}")

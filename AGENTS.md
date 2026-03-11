@@ -163,7 +163,9 @@
 - Script 25 QA rules expanded: `molecular_before_fna` (molecular test dated before linked FNA), `preop_after_surgery` (preop FNA/molecular dated after linked surgery); total 18 QA check_ids
 - vocab.py now has 16 normalization maps (8 original + 8 new: MARGIN_NORM, ETE_DETAIL_NORM, AGGRESSIVE_VARIANT_NORM, VASCULAR_INVASION_NORM, MOLECULAR_VARIANT_NORM, GENE_FUSION_NORM, SHAPE_NORM, CALCIFICATION_NORM, VASCULARITY_NORM)
 - Script 26 MATERIALIZATION_MAP expanded to 61 entries: P0 streamlit views, P1 upstream/adjudication/post-review/manual-review views, manuscript cohorts, date rescue KPI
-- Script 22 `enrich_from_v2_extractors()` wires RAIDetailExtractor (scan_findings, stimulated_tg/tsh, avidity) and OperativeDetailExtractor (rln_monitoring, rln_finding, gross_ete, parathyroid, drain, etc.) into canonical episode tables
+- Script 22 `enrich_from_v2_extractors()` wires all 4 V2 extractors: RAIDetailExtractor (scan_findings, stimulated_tg/tsh, avidity), OperativeDetailExtractor (rln_monitoring, rln_finding, gross_ete, parathyroid, drain), MolecularDetailExtractor (platform_version, bethesda_category, risk_language_raw, molecular_confidence), ImagingNoduleExtractor (composition, echogenicity, shape, margins, calcifications, tirads_score, suspicious_node_flag, growth_flag)
+- HistologyDetailExtractor not wired into script 22 — structured pathology tables (path_synoptics, tumor_pathology) already provide invasion/margin/ETE fields which script 22 now normalizes; note-derived histology would be supplemental/validation only
+- Multi-surgery anchor in script 27: always uses earliest surgery; "nearest" is infeasible for truly unrecoverable rows (no reference date); acceptable trade-off
 - Script 28 (`28_manual_review_export.py`) exports all review queues to CSV/Parquet with manifest; supports --priority-min filter
 - MotherDuck audit report at `studies/motherduck_audit/AUDIT_REPORT.md`
 - Script 24 imaging_pathology_concordance_review_v2 already has temporal constraints + surgery_windows for multi-surgery patients

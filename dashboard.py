@@ -2003,6 +2003,38 @@ def main():
             else:
                 st.caption("Run `python scripts/26_motherduck_materialize_v2.py --md` to build cure_kpis.")
 
+        with st.expander("🔬 Promotion Cure KPIs (PTCM)"):
+            _ptcm_kpi_tbl = "promotion_cure_kpis"
+            _ptcm_sum_path = Path(__file__).resolve().parent / "exports" / "promotion_cure_results" / "ptcm_summary.csv"
+            if _ptcm_sum_path.exists():
+                try:
+                    _ptcm_kpi_row = pd.read_csv(_ptcm_sum_path).iloc[0]
+                    st.markdown(f"**N:** {int(_ptcm_kpi_row.get('n_total', 0)):,}")
+                    st.markdown(f"**Cure fraction π̄:** {float(_ptcm_kpi_row.get('overall_cure_fraction', 0)):.1%}")
+                    st.markdown(f"**10y plateau:** {float(_ptcm_kpi_row.get('plateau_10y_rate', 0)):.1%}")
+                    st.markdown(f"**AIC:** {float(_ptcm_kpi_row.get('aic', 0)):.1f}")
+                    st.markdown(f"**Weibull κ:** {float(_ptcm_kpi_row.get('weibull_kappa', 0)):.4f}")
+                except Exception as _e:
+                    st.warning(f"Could not read PTCM summary: {_e}")
+            elif tbl_exists(con, _ptcm_kpi_tbl):
+                try:
+                    _pkpi = cached_sqdf(con, f"SELECT * FROM {qual(_ptcm_kpi_tbl)} LIMIT 1",
+                                        key="sidebar_ptcm_kpis")
+                    if not _pkpi.empty:
+                        _pr = _pkpi.iloc[0]
+                        st.markdown(f"**N:** {int(_pr.get('n_total', 0)):,}")
+                        st.markdown(f"**Event rate:** {float(_pr.get('event_rate', 0)):.1%}")
+                        st.markdown(f"**10y plateau:** {float(_pr.get('plateau_10y_rate', 0)):.1%}")
+                    else:
+                        st.info("promotion_cure_kpis is empty.")
+                except Exception as _e:
+                    st.warning(f"Could not read PTCM KPIs: {_e}")
+            else:
+                st.caption(
+                    "Run `python scripts/26_motherduck_materialize_v2.py --md` then "
+                    "`python scripts/39_promotion_time_cure_models.py --md`."
+                )
+
         # ── Connection Help ──────────────────────────────────────────
         with st.expander("❓ Connection Help"):
             st.markdown(

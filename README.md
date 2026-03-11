@@ -157,8 +157,22 @@ Five new tabs added by `scripts/12_update_streamlit_dashboard.py`:
 | **Patient Timeline Explorer** | Per-patient surgery timeline, Tg/TSH trend with surgery markers, all clinical events anchored by relative days |
 | **Extracted Clinical Events** | Searchable table of labs, meds, PMH, RAI, recurrence from `extracted_clinical_events_v4` with download |
 | **QA Dashboard** | Summary metrics from `qa_issues`, severity/check distribution, drill-down table |
-| **Risk & Survival** | Kaplan-Meier recurrence-free survival with stratification by stage, histology, BRAF; risk feature summary |
+| **Risk & Survival** | Kaplan-Meier recurrence-free survival with stratification by stage, histology, BRAF; risk feature summary; **Latent Disease Burden (PTCM)** sub-section |
 | **Advanced Features v3** | Full column selector across all 60+ engineered features |
+
+### Risk & Survival — Promotion Time Cure Model (PTCM)
+
+The **Risk & Survival** tab includes a "Latent Disease Burden (Promotion Time Cure Model)" sub-section. Unlike the mixture cure model (which treats cure as a binary latent variable), the PTCM (Chen, Ibrahim & Sinha 1999) provides a biologically mechanistic interpretation: the number of cancer cells capable of promoting recurrence follows Poisson(θ(x)), where θ(x) = exp(xᵀβ) is the covariate-driven promotion intensity. If the Poisson count is zero, the patient is operationally cured, giving cure probability π(x) = exp(−θ(x)). The Weibull baseline captures the shape of the promotion-time hazard. The sub-section shows model KPIs (cure fraction π̄, 10-year plateau rate, AIC, Weibull shape κ), a covariate effects table with bootstrap 95% CIs, patient-level cure probability distribution, Weibull vs Kaplan-Meier overlay, and a self-contained biological interpretation HTML report.
+
+Run the mechanistic cure analysis:
+
+```bash
+python scripts/26_motherduck_materialize_v2.py --md
+python scripts/39_promotion_time_cure_models.py --md
+streamlit run dashboard.py
+```
+
+Outputs land in `exports/promotion_cure_results/`.
 
 **New sidebar filters:** Surgery count, QA status (clean / flagged),
 days-since-nearest-surgery range (<30d / 30-90d / 90-365d / >1y).

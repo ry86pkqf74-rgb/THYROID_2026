@@ -852,6 +852,8 @@ def enrich_from_v2_extractors(con: duckdb.DuckDBPyConnection) -> None:
 
     from notes_extraction.extract_rai_v2 import RAIDetailExtractor
     from notes_extraction.extract_operative_v2 import OperativeDetailExtractor
+    from notes_extraction.extract_molecular_v2 import MolecularDetailExtractor
+    from notes_extraction.extract_imaging_v2 import ImagingNoduleExtractor
 
     notes_df = con.execute(
         "SELECT note_row_id, CAST(research_id AS INTEGER) AS research_id, "
@@ -863,8 +865,12 @@ def enrich_from_v2_extractors(con: duckdb.DuckDBPyConnection) -> None:
 
     rai_ext = RAIDetailExtractor()
     op_ext = OperativeDetailExtractor()
+    mol_ext = MolecularDetailExtractor()
+    img_ext = ImagingNoduleExtractor()
     rai_results: list[dict] = []
     op_results: list[dict] = []
+    mol_results: list[dict] = []
+    img_results: list[dict] = []
 
     for _, row in notes_df.iterrows():
         rid = row["research_id"]
@@ -877,9 +883,15 @@ def enrich_from_v2_extractors(con: duckdb.DuckDBPyConnection) -> None:
             rai_results.append(em.to_dict())
         for em in op_ext.extract(nrid, rid, ntype, ntext, ndate):
             op_results.append(em.to_dict())
+        for em in mol_ext.extract(nrid, rid, ntype, ntext, ndate):
+            mol_results.append(em.to_dict())
+        for em in img_ext.extract(nrid, rid, ntype, ntext, ndate):
+            img_results.append(em.to_dict())
 
     print(f"  RAI extractor: {len(rai_results):,} entities extracted")
     print(f"  Operative extractor: {len(op_results):,} entities extracted")
+    print(f"  Molecular extractor: {len(mol_results):,} entities extracted")
+    print(f"  Imaging extractor: {len(img_results):,} entities extracted")
 
     # ── RAI enrichment ──────────────────────────────────────────────
     if rai_results:
@@ -1044,7 +1056,160 @@ def enrich_from_v2_extractors(con: duckdb.DuckDBPyConnection) -> None:
         ).fetchone()[0]
         print(f"  Operative enrichment applied: {op_enriched:,} episodes now have extractor data")
 
-    for tbl in ["_v2_rai_enrichment", "_v2_operative_enrichment"]:
+    # ── Molecular enrichment ────────────────────────────────────────
+    if mol_results and table_available(con, "molecular_test_episode_v2"):
+        mol_df = pd.DataFrame(mol_results)
+        con.register("_mol_v2_raw", mol_df)
+        con.execute("""
+            CREATE OR REPLACE TABLE _v2_molecular_enrichment AS
+            SELECT
+                CAST(research_id AS INTEGER) AS research_id,
+                note_date,
+                MAX(CASE WHEN entity_type = 'molecular_platform'
+                    AND present_or_negated = 'present'
+                    THEN entity_value_norm END) AS platform_version,
+                MAX(CASE WHEN entity_type = 'bethesda_mention'
+                    AND present_or_negated = 'present'
+                    THEN TRY_CAST(
+                        regexp_extract(entity_value_norm, '(\\d)', 1)
+                        AS INTEGER) END) AS bethesda_category,
+                MAX(CASE WHEN entity_type = 'risk_probability'
+                    AND present_or_negated = 'present'
+                    THEN entity_value_norm END) AS risk_language_raw,
+                STRING_AGG(DISTINCT CASE WHEN entity_type = 'gene_fusion'
+                    AND present_or_negated = 'present'
+                    THEN entity_value_norm END, '; ') AS gene_fusions_raw,
+                STRING_AGG(DISTINCT CASE WHEN entity_type = 'classifier_result'
+                    AND present_or_negated = 'present'
+                    THEN entity_value_norm END, '; ') AS classifier_results_raw,
+                MAX(CASE WHEN entity_type = 'specimen_adequacy'
+                    AND present_or_negated = 'present'
+                    THEN entity_value_norm END) AS specimen_adequacy,
+                MAX(CASE WHEN entity_type = 'result_classification'
+                    AND present_or_negated = 'present'
+                    THEN entity_value_norm END) AS note_result_class
+            FROM _mol_v2_raw
+            GROUP BY CAST(research_id AS INTEGER), note_date
+        """)
+        con.unregister("_mol_v2_raw")
+
+        con.execute("""
+            UPDATE molecular_test_episode_v2 m
+            SET platform_version = COALESCE(e.platform_version, m.platform_version),
+                bethesda_category = COALESCE(e.bethesda_category, m.bethesda_category),
+                risk_language_raw = COALESCE(e.risk_language_raw, m.risk_language_raw),
+                molecular_confidence = CASE
+                    WHEN e.platform_version IS NOT NULL THEN 0.9
+                    WHEN m.molecular_confidence IS NOT NULL THEN m.molecular_confidence
+                    ELSE NULL
+                END
+            FROM (
+                SELECT DISTINCT ON (m2.research_id, m2.molecular_episode_id)
+                    m2.research_id, m2.molecular_episode_id, e2.*
+                FROM molecular_test_episode_v2 m2
+                CROSS JOIN _v2_molecular_enrichment e2
+                WHERE m2.research_id = e2.research_id
+                  AND (e2.platform_version IS NOT NULL
+                       OR e2.bethesda_category IS NOT NULL
+                       OR e2.risk_language_raw IS NOT NULL)
+                ORDER BY m2.research_id, m2.molecular_episode_id,
+                         ABS(DATEDIFF('day',
+                             COALESCE(m2.test_date_native, DATE '2099-01-01'),
+                             COALESCE(TRY_CAST(e2.note_date AS DATE), DATE '2099-01-01')))
+            ) e
+            WHERE m.research_id = e.research_id
+              AND m.molecular_episode_id = e.molecular_episode_id
+        """)
+        mol_enriched = con.execute(
+            "SELECT COUNT(*) FROM molecular_test_episode_v2 "
+            "WHERE platform_version IS NOT NULL "
+            "   OR bethesda_category IS NOT NULL "
+            "   OR risk_language_raw IS NOT NULL"
+        ).fetchone()[0]
+        print(f"  Molecular enrichment applied: {mol_enriched:,} episodes now have extractor data")
+
+    # ── Imaging enrichment ───────────────────────────────────────────
+    if img_results and table_available(con, "imaging_nodule_long_v2"):
+        img_df = pd.DataFrame(img_results)
+        con.register("_img_v2_raw", img_df)
+        con.execute("""
+            CREATE OR REPLACE TABLE _v2_imaging_enrichment AS
+            SELECT
+                CAST(research_id AS INTEGER) AS research_id,
+                note_date,
+                MAX(CASE WHEN entity_type = 'composition'
+                    AND present_or_negated = 'present'
+                    THEN entity_value_norm END) AS composition,
+                MAX(CASE WHEN entity_type = 'echogenicity'
+                    AND present_or_negated = 'present'
+                    THEN entity_value_norm END) AS echogenicity,
+                MAX(CASE WHEN entity_type = 'nodule_shape'
+                    AND present_or_negated = 'present'
+                    THEN entity_value_norm END) AS shape,
+                MAX(CASE WHEN entity_type = 'nodule_margins'
+                    AND present_or_negated = 'present'
+                    THEN entity_value_norm END) AS margins,
+                MAX(CASE WHEN entity_type = 'calcifications'
+                    AND present_or_negated = 'present'
+                    THEN entity_value_norm END) AS calcifications,
+                MAX(CASE WHEN entity_type = 'vascularity'
+                    AND present_or_negated = 'present'
+                    THEN entity_value_norm END) AS vascularity,
+                MAX(CASE WHEN entity_type = 'tirads_score'
+                    AND present_or_negated = 'present'
+                    THEN TRY_CAST(
+                        regexp_extract(entity_value_norm, '(\\d+)', 1)
+                        AS INTEGER) END) AS tirads_score,
+                BOOL_OR(entity_type = 'suspicious_lymph_node'
+                    AND present_or_negated = 'present') AS suspicious_node_flag,
+                BOOL_OR(entity_type = 'interval_change'
+                    AND present_or_negated = 'present'
+                    AND entity_value_norm IN ('growth', 'increased', 'enlarging')
+                ) AS growth_flag
+            FROM _img_v2_raw
+            GROUP BY CAST(research_id AS INTEGER), note_date
+        """)
+        con.unregister("_img_v2_raw")
+
+        con.execute("""
+            UPDATE imaging_nodule_long_v2 i
+            SET composition = COALESCE(e.composition, i.composition),
+                echogenicity = COALESCE(e.echogenicity, i.echogenicity),
+                shape = COALESCE(e.shape, i.shape),
+                margins = COALESCE(e.margins, i.margins),
+                calcifications = COALESCE(e.calcifications, i.calcifications),
+                tirads_score = COALESCE(e.tirads_score, i.tirads_score),
+                suspicious_node_flag = COALESCE(e.suspicious_node_flag, i.suspicious_node_flag),
+                growth_flag = COALESCE(e.growth_flag, i.growth_flag)
+            FROM (
+                SELECT DISTINCT ON (i2.research_id, i2.nodule_id)
+                    i2.research_id, i2.nodule_id, e2.*
+                FROM imaging_nodule_long_v2 i2
+                CROSS JOIN _v2_imaging_enrichment e2
+                WHERE i2.research_id = e2.research_id
+                  AND (e2.composition IS NOT NULL
+                       OR e2.echogenicity IS NOT NULL
+                       OR e2.tirads_score IS NOT NULL)
+                ORDER BY i2.research_id, i2.nodule_id,
+                         ABS(DATEDIFF('day',
+                             COALESCE(i2.exam_date_native, DATE '2099-01-01'),
+                             COALESCE(TRY_CAST(e2.note_date AS DATE), DATE '2099-01-01')))
+            ) e
+            WHERE i.research_id = e.research_id
+              AND i.nodule_id = e.nodule_id
+        """)
+        img_enriched = con.execute(
+            "SELECT COUNT(*) FROM imaging_nodule_long_v2 "
+            "WHERE composition IS NOT NULL "
+            "   OR echogenicity IS NOT NULL "
+            "   OR tirads_score IS NOT NULL"
+        ).fetchone()[0]
+        print(f"  Imaging enrichment applied: {img_enriched:,} nodules now have extractor data")
+
+    for tbl in [
+        "_v2_rai_enrichment", "_v2_operative_enrichment",
+        "_v2_molecular_enrichment", "_v2_imaging_enrichment",
+    ]:
         try:
             con.execute(f"DROP TABLE IF EXISTS {tbl}")
         except Exception:
