@@ -13,8 +13,7 @@ view,ptc_cohort,surgery_date,VARCHAR,Surgery date,phase2
 view,ptc_cohort,surgery_type_normalized,VARCHAR,Column `surgery_type_normalized` from `ptc_cohort` export,phase3
 view,ptc_cohort,t_stage_ajcc8,VARCHAR,AJCC8 T stage,phase2
 view,ptc_cohort,tumor_1_ete_microscopic_only,VARCHAR,Microscopic-only ETE flag,phase2
-view,ptc_cohort,tumor_1_extrathyroidal_ext,BOOLEAN,Extrathyroidal extension flag,phase2
-view,ptc_cohort,tumor_1_gross_ete,BIGINT,Gross ETE flag,phase2
-view,ptc_cohort,tumor_1_histology_subtype_detail,VARCHAR,Column `tumor_1_histology_subtype_detail` from `ptc_cohort` export,phase3
+view,ptc_cohort,tumor_1_extrathyroidal_ext,VARCHAR,Extrathyroidal extension flag,phase2
+view,ptc_cohort,tumor_1_gross_ete,VARCHAR,Gross ETE flag,phase2
 view,ptc_cohort,tumor_1_histology_variant,VARCHAR,Column `tumor_1_histology_variant` from `ptc_cohort` export,phase3
 view,ptc_cohort,variant_standardized,VARCHAR,Column `variant_standardized` from `ptc_cohort` export,phase3

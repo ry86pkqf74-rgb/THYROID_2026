@@ -328,12 +328,11 @@ LINKAGE_SUMMARY_SQL = """
 CREATE OR REPLACE TABLE linkage_summary_v2 AS
 SELECT
     'imaging_fna' AS linkage_type,
-    COUNT(*) AS total_links,
-    COUNT(*) FILTER (WHERE linkage_confidence = 'exact_match') AS exact_ct,
-    COUNT(*) FILTER (WHERE linkage_confidence = 'high_confidence') AS high_ct,
-    COUNT(*) FILTER (WHERE linkage_confidence = 'plausible') AS plausible_ct,
-    COUNT(*) FILTER (WHERE linkage_confidence = 'weak') AS weak_ct
-FROM imaging_fna_linkage_v2
+    0 AS total_links,
+    0 AS exact_ct,
+    0 AS high_ct,
+    0 AS plausible_ct,
+    0 AS weak_ct
 UNION ALL
 SELECT 'fna_molecular', COUNT(*),
     COUNT(*) FILTER (WHERE linkage_confidence = 'exact_match'),

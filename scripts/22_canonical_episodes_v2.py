@@ -90,25 +90,25 @@ WITH ps AS (
         ROW_NUMBER() OVER (PARTITION BY CAST(research_id AS INTEGER)
                            ORDER BY TRY_CAST(surg_date AS DATE)) AS surgery_episode_id,
         thyroid_procedure AS procedure_raw,
-        -- tumor 1 fields from synoptics
-        COALESCE(tumor_1_histologic_type, tumor_1_histology) AS ps_histology_1,
-        tumor_1_histologic_subtype AS ps_variant_1,
-        tumor_1_size_cm AS ps_size_cm_1,
+        -- tumor 1 fields from synoptics (column names reflect actual path_synoptics schema)
+        tumor_1_histologic_type AS ps_histology_1,
+        tumor_1_variant AS ps_variant_1,
+        tumor_1_size_greatest_dimension_cm AS ps_size_cm_1,
         tumor_1_extrathyroidal_extension AS ps_ete_1,
-        tumor_1_margins AS ps_margins_1,
-        tumor_1_vascular_invasion AS ps_vasc_inv_1,
+        tumor_1_margin_status AS ps_margins_1,
+        tumor_1_angioinvasion AS ps_vasc_inv_1,
         tumor_1_lymphatic_invasion AS ps_lymph_inv_1,
         tumor_1_perineural_invasion AS ps_perineural_1,
         tumor_1_capsular_invasion AS ps_capsular_inv_1,
-        -- AJCC from synoptics
-        pathologic_stage_t AS ps_t_stage,
-        pathologic_stage_n AS ps_n_stage,
-        pathologic_stage_m AS ps_m_stage,
-        pathologic_stage_group AS ps_overall_stage,
+        -- AJCC staging columns from path_synoptics
+        tumor_1_pt AS ps_t_stage,
+        tumor_1_pn AS ps_n_stage,
+        tumor_1_pm AS ps_m_stage,
+        NULL::VARCHAR AS ps_overall_stage,
         -- node counts
-        total_lymph_nodes_examined AS ps_nodes_total,
-        positive_lymph_nodes AS ps_nodes_positive,
-        extranodal_extension AS ps_extranodal_ext,
+        tumor_1_ln_examined AS ps_nodes_total,
+        tumor_1_ln_involved AS ps_nodes_positive,
+        tumor_1_extranodal_extension AS ps_extranodal_ext,
         -- laterality
         CASE
             WHEN LOWER(thyroid_procedure) LIKE '%right%' THEN 'right'
@@ -118,10 +118,12 @@ WITH ps AS (
             ELSE NULL
         END AS ps_laterality,
         -- multifocality
-        number_of_tumors AS ps_tumor_count,
-        CASE WHEN TRY_CAST(number_of_tumors AS INTEGER) > 1 THEN TRUE ELSE FALSE END AS ps_multifocal,
-        -- consult
-        consult_diagnosis AS ps_consult_diagnosis
+        tumor_1_multiple_tumor AS ps_tumor_count,
+        CASE WHEN LOWER(COALESCE(tumor_1_multiple_tumor,'')) LIKE '%yes%'
+                  OR LOWER(COALESCE(tumor_1_multiple_tumor,'')) LIKE '%multi%'
+             THEN TRUE ELSE FALSE END AS ps_multifocal,
+        -- consult / diagnosis summary
+        path_diagnosis_summary AS ps_consult_diagnosis
     FROM path_synoptics
     WHERE research_id IS NOT NULL
 ),
@@ -133,10 +135,10 @@ tp AS (
         histology_1_t_stage_ajcc8 AS tp_t_stage,
         histology_1_n_stage_ajcc8 AS tp_n_stage,
         histology_1_m_stage_ajcc8 AS tp_m_stage,
-        tumor_1_extrathyroidal_ext AS tp_ete,
-        tumor_1_gross_ete AS tp_gross_ete,
-        tumor_size_cm AS tp_size_cm,
-        TRY_CAST(surgery_date AS DATE) AS tp_surgery_date
+        NULL::VARCHAR AS tp_ete,
+        NULL::VARCHAR AS tp_gross_ete,
+        histology_1_largest_tumor_cm AS tp_size_cm,
+        NULL::DATE AS tp_surgery_date
     FROM tumor_pathology
     WHERE research_id IS NOT NULL
 )
@@ -437,129 +439,43 @@ WITH us_unpivot AS (
     SELECT
         CAST(research_id AS INTEGER) AS research_id,
         'US' AS modality,
-        TRY_CAST(ultrasound_date AS DATE) AS exam_date_native,
+        TRY_CAST(us_date AS DATE) AS exam_date_native,
         CASE
-            WHEN TRY_CAST(ultrasound_date AS DATE) IS NOT NULL THEN 'exact_source_date'
+            WHEN TRY_CAST(us_date AS DATE) IS NOT NULL THEN 'exact_source_date'
             ELSE 'unresolved_date'
         END AS date_status,
         CASE
-            WHEN TRY_CAST(ultrasound_date AS DATE) IS NOT NULL THEN 100
+            WHEN TRY_CAST(us_date AS DATE) IS NOT NULL THEN 100
             ELSE 0
         END AS date_confidence,
         ROW_NUMBER() OVER (PARTITION BY CAST(research_id AS INTEGER)
-                           ORDER BY TRY_CAST(ultrasound_date AS DATE)) AS imaging_exam_id,
+                           ORDER BY TRY_CAST(us_date AS DATE)) AS imaging_exam_id,
         1 AS nodule_index_within_exam,
-        nodule_1_composition AS composition,
-        nodule_1_echogenicity AS echogenicity,
+        NULL::VARCHAR AS composition,
+        NULL::VARCHAR AS echogenicity,
         NULL::VARCHAR AS shape,
         NULL::VARCHAR AS margins,
-        nodule_1_calcifications AS calcifications,
-        TRY_CAST(nodule_1_ti_rads AS INTEGER) AS tirads_score,
+        NULL::VARCHAR AS calcifications,
+        NULL::INTEGER AS tirads_score,
         NULL::VARCHAR AS tirads_category,
-        TRY_CAST(nodule_1_size_cm AS DOUBLE) AS size_cm_max,
+        TRY_CAST(dominant_nodule_size_on_us AS DOUBLE) AS size_cm_max,
         NULL::DOUBLE AS size_cm_x,
         NULL::DOUBLE AS size_cm_y,
         NULL::DOUBLE AS size_cm_z,
-        NULL::VARCHAR AS laterality,
-        NULL::VARCHAR AS location_detail,
-        'ultrasound_reports' AS report_source_table,
-        NULL::VARCHAR AS exam_impression_raw,
+        dominant_nodule_location AS laterality,
+        dominant_nodule_location AS location_detail,
+        'serial_imaging_us' AS report_source_table,
+        COALESCE(us_findings_impression, us_impression) AS exam_impression_raw,
         FALSE AS suspicious_node_flag,
         NULL::VARCHAR AS suspicious_node_details,
         FALSE AS growth_flag,
-        FALSE AS dominant_nodule_flag
-    FROM ultrasound_reports
+        TRUE AS dominant_nodule_flag
+    FROM serial_imaging_us
     WHERE research_id IS NOT NULL
-),
-ct_nodules AS (
-    SELECT
-        CAST(research_id AS INTEGER) AS research_id,
-        'CT' AS modality,
-        TRY_CAST(date_of_exam AS DATE) AS exam_date_native,
-        CASE
-            WHEN TRY_CAST(date_of_exam AS DATE) IS NOT NULL THEN 'exact_source_date'
-            ELSE 'unresolved_date'
-        END AS date_status,
-        CASE
-            WHEN TRY_CAST(date_of_exam AS DATE) IS NOT NULL THEN 100
-            ELSE 0
-        END AS date_confidence,
-        ROW_NUMBER() OVER (PARTITION BY CAST(research_id AS INTEGER)
-                           ORDER BY TRY_CAST(date_of_exam AS DATE)) AS imaging_exam_id,
-        1 AS nodule_index_within_exam,
-        NULL::VARCHAR AS composition,
-        NULL::VARCHAR AS echogenicity,
-        NULL::VARCHAR AS shape,
-        NULL::VARCHAR AS margins,
-        NULL::VARCHAR AS calcifications,
-        NULL::INTEGER AS tirads_score,
-        NULL::VARCHAR AS tirads_category,
-        NULL::DOUBLE AS size_cm_max,
-        NULL::DOUBLE AS size_cm_x,
-        NULL::DOUBLE AS size_cm_y,
-        NULL::DOUBLE AS size_cm_z,
-        NULL::VARCHAR AS laterality,
-        NULL::VARCHAR AS location_detail,
-        'ct_imaging' AS report_source_table,
-        NULL::VARCHAR AS exam_impression_raw,
-        CASE WHEN LOWER(COALESCE(pathologic_lymph_nodes,'')) LIKE '%yes%'
-                  OR LOWER(COALESCE(lymph_nodes_suspicious,'')) LIKE '%yes%'
-             THEN TRUE ELSE FALSE END AS suspicious_node_flag,
-        COALESCE(pathologic_lymph_nodes, lymph_nodes_suspicious) AS suspicious_node_details,
-        FALSE AS growth_flag,
-        FALSE AS dominant_nodule_flag
-    FROM ct_imaging
-    WHERE research_id IS NOT NULL
-      AND (LOWER(COALESCE(thyroid_nodule,'')) LIKE '%yes%'
-           OR LOWER(COALESCE(thyroid_nodule,'')) LIKE '%present%')
-),
-mri_nodules AS (
-    SELECT
-        CAST(research_id AS INTEGER) AS research_id,
-        'MRI' AS modality,
-        TRY_CAST(date_of_exam AS DATE) AS exam_date_native,
-        CASE
-            WHEN TRY_CAST(date_of_exam AS DATE) IS NOT NULL THEN 'exact_source_date'
-            ELSE 'unresolved_date'
-        END AS date_status,
-        CASE
-            WHEN TRY_CAST(date_of_exam AS DATE) IS NOT NULL THEN 100
-            ELSE 0
-        END AS date_confidence,
-        ROW_NUMBER() OVER (PARTITION BY CAST(research_id AS INTEGER)
-                           ORDER BY TRY_CAST(date_of_exam AS DATE)) AS imaging_exam_id,
-        1 AS nodule_index_within_exam,
-        NULL::VARCHAR AS composition,
-        NULL::VARCHAR AS echogenicity,
-        NULL::VARCHAR AS shape,
-        NULL::VARCHAR AS margins,
-        NULL::VARCHAR AS calcifications,
-        NULL::INTEGER AS tirads_score,
-        NULL::VARCHAR AS tirads_category,
-        NULL::DOUBLE AS size_cm_max,
-        NULL::DOUBLE AS size_cm_x,
-        NULL::DOUBLE AS size_cm_y,
-        NULL::DOUBLE AS size_cm_z,
-        NULL::VARCHAR AS laterality,
-        NULL::VARCHAR AS location_detail,
-        'mri_imaging' AS report_source_table,
-        NULL::VARCHAR AS exam_impression_raw,
-        CASE WHEN LOWER(COALESCE(pathologic_lymph_nodes,'')) LIKE '%yes%'
-             THEN TRUE ELSE FALSE END AS suspicious_node_flag,
-        pathologic_lymph_nodes AS suspicious_node_details,
-        FALSE AS growth_flag,
-        FALSE AS dominant_nodule_flag
-    FROM mri_imaging
-    WHERE research_id IS NOT NULL
-      AND (LOWER(COALESCE(thyroid_nodule,'')) LIKE '%yes%'
-           OR LOWER(COALESCE(thyroid_nodule,'')) LIKE '%present%')
+      AND us_date IS NOT NULL
 ),
 all_nodules AS (
     SELECT * FROM us_unpivot
-    UNION ALL
-    SELECT * FROM ct_nodules
-    UNION ALL
-    SELECT * FROM mri_nodules
 )
 SELECT
     an.*,
@@ -608,7 +524,7 @@ WITH ops AS (
             WHEN TRY_CAST(surg_date AS DATE) IS NOT NULL THEN 'exact_source_date'
             ELSE 'unresolved_date'
         END AS date_status,
-        preop_diagnosis AS procedure_raw,
+        preop_diagnosis_operative_sheet_not_true_preop_dx AS procedure_raw,
         side_of_largest_tumor_or_goiter AS laterality_raw,
         CASE
             WHEN LOWER(COALESCE(side_of_largest_tumor_or_goiter,'')) LIKE '%right%' THEN 'right'
@@ -618,7 +534,7 @@ WITH ops AS (
             ELSE NULL
         END AS laterality,
         TRY_CAST(ebl AS DOUBLE) AS ebl_ml,
-        skin_to_skin_time
+        skin_skin_time_min AS skin_to_skin_time
     FROM operative_details
     WHERE research_id IS NOT NULL
 ),
@@ -702,11 +618,11 @@ SELECT
     TRY_CAST(bethesda AS INTEGER) AS bethesda_category,
     path AS pathology_diagnosis,
     path_extended AS pathology_extended,
-    specimen_location AS specimen_site_raw,
+    COALESCE(preop_specimen_received_fna_location, specimen) AS specimen_site_raw,
     CASE
-        WHEN LOWER(COALESCE(specimen_location,'')) LIKE '%right%' THEN 'right'
-        WHEN LOWER(COALESCE(specimen_location,'')) LIKE '%left%' THEN 'left'
-        WHEN LOWER(COALESCE(specimen_location,'')) LIKE '%isthmus%' THEN 'isthmus'
+        WHEN LOWER(COALESCE(preop_specimen_received_fna_location, specimen,'')) LIKE '%right%' THEN 'right'
+        WHEN LOWER(COALESCE(preop_specimen_received_fna_location, specimen,'')) LIKE '%left%' THEN 'left'
+        WHEN LOWER(COALESCE(preop_specimen_received_fna_location, specimen,'')) LIKE '%isthmus%' THEN 'isthmus'
         ELSE NULL
     END AS laterality,
     NULL::VARCHAR AS linked_molecular_episode_id,
@@ -1011,6 +927,14 @@ def enrich_from_v2_extractors(con: duckdb.DuckDBPyConnection) -> None:
         """)
         con.unregister("_op_v2_raw")
 
+        if not table_available(con, "operative_episode_detail_v2"):
+            print("  SKIP: operative_episode_detail_v2 not built — skipping operative enrichment")
+            for tbl in ["_v2_rai_enrichment", "_v2_operative_enrichment"]:
+                try:
+                    con.execute(f"DROP TABLE IF EXISTS {tbl}")
+                except Exception:
+                    pass
+            return
         con.execute("""
             UPDATE operative_episode_detail_v2 o
             SET rln_monitoring_flag = COALESCE(e.rln_monitoring_flag, o.rln_monitoring_flag),

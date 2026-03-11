@@ -10,6 +10,8 @@ Phase 3 publication exports:
 
 from __future__ import annotations
 
+import argparse
+import os
 from pathlib import Path
 import duckdb
 import pandas as pd
@@ -17,6 +19,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 DB_PATH = ROOT / "thyroid_master.duckdb"
+MD_DATABASE = "thyroid_research_2026"
 EXPORT_DIR = ROOT / "exports"
 GLOBAL_DICTIONARY_CSV = ROOT / "data_dictionary.csv"
 
@@ -112,12 +115,36 @@ def export_study_cohort(
     return csv_path, dict_path, row_count
 
 
+def _connect(use_md: bool) -> duckdb.DuckDBPyConnection:
+    if use_md:
+        token = os.environ.get("MOTHERDUCK_TOKEN") or ""
+        if not token:
+            try:
+                import tomllib
+            except ImportError:
+                import tomli as tomllib  # type: ignore
+            secrets_path = ROOT / ".streamlit" / "secrets.toml"
+            with open(secrets_path, "rb") as f:
+                token = tomllib.load(f).get("MOTHERDUCK_TOKEN", "")
+        con = duckdb.connect(f"md:{MD_DATABASE}?motherduck_token={token}")
+        con.execute(f"USE {MD_DATABASE}")
+        print(f"Connected to MotherDuck: {MD_DATABASE}")
+        return con
+    con = duckdb.connect(str(DB_PATH), read_only=True)
+    print(f"Connected to local: {DB_PATH}")
+    return con
+
+
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--md", action="store_true", help="Read from MotherDuck instead of local DuckDB")
+    args = parser.parse_args()
+
     print("=" * 72)
     print("PHASE 3: Publication exports")
     print("=" * 72)
 
-    con = duckdb.connect(str(DB_PATH), read_only=True)
+    con = _connect(args.md)
     dictionary_df = load_global_dictionary()
 
     for view_name, filename in EXPORTS:

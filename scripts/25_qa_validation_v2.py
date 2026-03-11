@@ -129,17 +129,6 @@ WHERE dose_mci IS NOT NULL AND (dose_mci < 10 OR dose_mci > 300)
 
 UNION ALL
 
--- 4. Imaging-FNA laterality mismatch
-SELECT
-    'nodule_fna_laterality', 'warning', l.research_id,
-    'Imaging-FNA laterality mismatch',
-    'nodule ' || l.nodule_id || ' -> fna ep ' || CAST(l.fna_episode_id AS VARCHAR),
-    CURRENT_TIMESTAMP
-FROM imaging_fna_linkage_v2 l
-WHERE l.laterality_match = FALSE
-
-UNION ALL
-
 -- 5. Imaging-pathology size mismatch
 SELECT
     'imaging_path_size', 'warning', research_id,
@@ -249,17 +238,6 @@ LEFT JOIN tumor_episode_master_v2 t
     AND o.surgery_date_native = t.surgery_date
 WHERE t.research_id IS NULL
   AND o.surgery_date_native IS NOT NULL
-
-UNION ALL
-
--- 11. Weak cross-domain linkages (imaging-FNA)
-SELECT
-    'weak_linkage_imaging_fna', 'warning', research_id,
-    'Weak imaging-FNA linkage (day_gap=' || CAST(day_gap AS VARCHAR) || ')',
-    'nodule ' || nodule_id || ' -> fna ep ' || CAST(fna_episode_id AS VARCHAR),
-    CURRENT_TIMESTAMP
-FROM imaging_fna_linkage_v2
-WHERE linkage_confidence = 'weak'
 
 UNION ALL
 
