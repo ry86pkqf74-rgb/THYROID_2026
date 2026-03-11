@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>THYROID_2026 — Promotion Time Cure Model Report</title>
+  <style>
+    body {font-family: 'Helvetica Neue', Arial, sans-serif; background:#07090f; color:#f0f4ff;
+           max-width:900px; margin:40px auto; padding:0 24px;}
+    h1 {color:#2dd4bf; border-bottom:1px solid #1e2535; padding-bottom:12px;}
+    h2 {color:#38bdf8; margin-top:32px;}
+    .kpi-grid {display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:20px 0;}
+    .kpi {background:#0e1219; border:1px solid #1e2535; border-radius:8px; padding:16px;}
+    .kpi-label {font-size:.75rem; color:#8892a4; letter-spacing:.06em; text-transform:uppercase;}
+    .kpi-value {font-size:1.4rem; font-weight:700; color:#2dd4bf; margin-top:4px;}
+    table {width:100%; border-collapse:collapse; margin-top:16px; font-size:.85rem;}
+    th {background:#141923; color:#8892a4; padding:8px 12px; text-align:left;
+         font-weight:600; border-bottom:1px solid #1e2535;}
+    td {padding:8px 12px; border-bottom:1px solid #1e2535; color:#d4dae8;}
+    tr:hover td {background:#0e1219;}
+    .note {font-size:.8rem; color:#8892a4; margin-top:24px; line-height:1.5;}
+    code {background:#141923; padding:2px 6px; border-radius:4px; font-size:.8rem;}
+  </style>
+</head>
+<body>
+  <h1>Promotion Time Cure Model (PTCM)</h1>
+  <p style="color:#8892a4">THYROID_2026 · generated 2026-03-10 23:25</p>
+
+  <h2>Biological Rationale</h2>
+  <p>The Promotion Time Cure Model interprets thyroid cancer recurrence through a
+  biological lens: a latent number of cancer cells capable of promoting recurrence
+  follows a Poisson distribution with mean <strong>θ(x) = exp(xᵀβ)</strong>.
+  If the Poisson count is zero the patient is operationally cured. The probability
+  of cure is <strong>π(x) = exp(−θ(x))</strong>. The baseline promotion-time
+  distribution is Weibull (shape κ = 0.150,
+  scale σ = 0.03 y).</p>
+
+  <h2>Model KPIs</h2>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">N (cohort)</div>
+      <div class="kpi-value">48,304</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Observed events</div>
+      <div class="kpi-value">161 (0.3%)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Overall cure fraction π̄</div>
+      <div class="kpi-value">99.7%</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">10-year plateau rate</div>
+      <div class="kpi-value">12.4%</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">AIC</div>
+      <div class="kpi-value">5078.7</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Weibull κ (shape)</div>
+      <div class="kpi-value">0.150</div>
+    </div>
+  </div>
+
+  <h2>Covariate Effects on Promotion Intensity θ(x)</h2>
+  <p style="color:#8892a4">exp(β) &gt; 1 → higher promotion intensity → lower cure probability</p>
+  <table>
+    <tr>
+      <th>Covariate</th><th>β</th><th>SE</th>
+      <th>exp(β)</th><th>95% CI lower</th><th>95% CI upper</th>
+    </tr>
+    <tr><td>high_risk_band</td><td style='text-align:right'>2.3319</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>10.298</td><td style='text-align:right'>10.298</td><td style='text-align:right'>10.298</td></tr><tr><td>ete_microscopic</td><td style='text-align:right'>0.9074</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>2.478</td><td style='text-align:right'>2.478</td><td style='text-align:right'>2.478</td></tr><tr><td>ajcc_4</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td></tr><tr><td>ajcc_2</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td></tr><tr><td>ajcc_3</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td></tr><tr><td>tert_pos</td><td style='text-align:right'>-0.0003</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td></tr><tr><td>ete_gross</td><td style='text-align:right'>-0.0180</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>0.982</td><td style='text-align:right'>0.982</td><td style='text-align:right'>0.982</td></tr><tr><td>braf_pos</td><td style='text-align:right'>-0.0251</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>0.975</td><td style='text-align:right'>0.975</td><td style='text-align:right'>0.975</td></tr><tr><td>age_z</td><td style='text-align:right'>-1.3989</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>0.247</td><td style='text-align:right'>0.247</td><td style='text-align:right'>0.247</td></tr><tr><td>intercept</td><td style='text-align:right'>-8.4627</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>0.000</td><td style='text-align:right'>0.000</td><td style='text-align:right'>0.000</td></tr>
+  </table>
+
+  <h2>Interpretation</h2>
+  <p>Covariates with <code>exp(β) &gt; 1</code> increase promotion intensity, meaning
+  those patients carry more latent disease burden and are less likely to be cured.
+  Conversely, <code>exp(β) &lt; 1</code> is protective. The Weibull shape parameter
+  κ = 0.150
+  suggests a <strong>decreasing hazard</strong> of promotion over time (early high-risk window).
+  </p>
+
+  <div class="note">
+    Model: Weibull Promotion Time Cure Model (Chen, Ibrahim &amp; Sinha 1999).
+    Bootstrap SE from 10 resamples (seed=42).
+    Source table: <code>promotion_cure_cohort</code>.
+    Analysis date: 2026-03-10 23:25.
+  </div>
+</body>
+</html>

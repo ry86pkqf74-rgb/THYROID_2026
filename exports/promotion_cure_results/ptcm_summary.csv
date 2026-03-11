@@ -1,0 +1,2 @@
+generated_at,n_total,n_events,event_rate_pct,weibull_kappa,weibull_sigma_years,overall_cure_fraction,plateau_10y_rate,aic,neg_loglik,n_params,n_boot,dry_run
+2026-03-10T23:25:15.806955,48304,161,0.33,0.1496,0.0262,0.9965,0.1238,5078.72,2527.3613,12,10,False
