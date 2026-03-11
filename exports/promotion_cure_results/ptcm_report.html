@@ -23,7 +23,7 @@
 </head>
 <body>
   <h1>Promotion Time Cure Model (PTCM)</h1>
-  <p style="color:#8892a4">THYROID_2026 · generated 2026-03-10 23:25</p>
+  <p style="color:#8892a4">THYROID_2026 · generated 2026-03-10 23:50</p>
 
   <h2>Biological Rationale</h2>
   <p>The Promotion Time Cure Model interprets thyroid cancer recurrence through a
@@ -31,8 +31,8 @@
   follows a Poisson distribution with mean <strong>θ(x) = exp(xᵀβ)</strong>.
   If the Poisson count is zero the patient is operationally cured. The probability
   of cure is <strong>π(x) = exp(−θ(x))</strong>. The baseline promotion-time
-  distribution is Weibull (shape κ = 0.150,
-  scale σ = 0.03 y).</p>
+  distribution is Weibull (shape κ = 2.881,
+  scale σ = 7.07 y).</p>
 
   <h2>Model KPIs</h2>
   <div class="kpi-grid">
@@ -46,7 +46,7 @@
     </div>
     <div class="kpi">
       <div class="kpi-label">Overall cure fraction π̄</div>
-      <div class="kpi-value">99.7%</div>
+      <div class="kpi-value">99.3%</div>
     </div>
     <div class="kpi">
       <div class="kpi-label">10-year plateau rate</div>
@@ -54,11 +54,11 @@
     </div>
     <div class="kpi">
       <div class="kpi-label">AIC</div>
-      <div class="kpi-value">5078.7</div>
+      <div class="kpi-value">4047.2</div>
     </div>
     <div class="kpi">
       <div class="kpi-label">Weibull κ (shape)</div>
-      <div class="kpi-value">0.150</div>
+      <div class="kpi-value">2.881</div>
     </div>
   </div>
 
@@ -69,22 +69,22 @@
       <th>Covariate</th><th>β</th><th>SE</th>
       <th>exp(β)</th><th>95% CI lower</th><th>95% CI upper</th>
     </tr>
-    <tr><td>high_risk_band</td><td style='text-align:right'>2.3319</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>10.298</td><td style='text-align:right'>10.298</td><td style='text-align:right'>10.298</td></tr><tr><td>ete_microscopic</td><td style='text-align:right'>0.9074</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>2.478</td><td style='text-align:right'>2.478</td><td style='text-align:right'>2.478</td></tr><tr><td>ajcc_4</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td></tr><tr><td>ajcc_2</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td></tr><tr><td>ajcc_3</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td></tr><tr><td>tert_pos</td><td style='text-align:right'>-0.0003</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td></tr><tr><td>ete_gross</td><td style='text-align:right'>-0.0180</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>0.982</td><td style='text-align:right'>0.982</td><td style='text-align:right'>0.982</td></tr><tr><td>braf_pos</td><td style='text-align:right'>-0.0251</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>0.975</td><td style='text-align:right'>0.975</td><td style='text-align:right'>0.975</td></tr><tr><td>age_z</td><td style='text-align:right'>-1.3989</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>0.247</td><td style='text-align:right'>0.247</td><td style='text-align:right'>0.247</td></tr><tr><td>intercept</td><td style='text-align:right'>-8.4627</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>0.000</td><td style='text-align:right'>0.000</td><td style='text-align:right'>0.000</td></tr>
+    <tr><td>high_risk_band</td><td style='text-align:right'>2.8293</td><td style='text-align:right'>0.2807</td><td style='text-align:right'>16.934</td><td style='text-align:right'>9.769</td><td style='text-align:right'>29.356</td></tr><tr><td>ete_microscopic</td><td style='text-align:right'>0.6478</td><td style='text-align:right'>0.2144</td><td style='text-align:right'>1.911</td><td style='text-align:right'>1.256</td><td style='text-align:right'>2.909</td></tr><tr><td>ajcc_4</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td></tr><tr><td>ajcc_2</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td></tr><tr><td>ajcc_3</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td><td style='text-align:right'>1.000</td></tr><tr><td>tert_pos</td><td style='text-align:right'>-0.0048</td><td style='text-align:right'>0.0179</td><td style='text-align:right'>0.995</td><td style='text-align:right'>0.961</td><td style='text-align:right'>1.031</td></tr><tr><td>age_z</td><td style='text-align:right'>-1.7149</td><td style='text-align:right'>0.1015</td><td style='text-align:right'>0.180</td><td style='text-align:right'>0.148</td><td style='text-align:right'>0.220</td></tr><tr><td>braf_pos</td><td style='text-align:right'>-4.6973</td><td style='text-align:right'>5.1911</td><td style='text-align:right'>0.009</td><td style='text-align:right'>0.000</td><td style='text-align:right'>239.195</td></tr><tr><td>intercept</td><td style='text-align:right'>-8.3578</td><td style='text-align:right'>2.0935</td><td style='text-align:right'>0.000</td><td style='text-align:right'>0.000</td><td style='text-align:right'>0.014</td></tr><tr><td>ete_gross</td><td style='text-align:right'>-30.3161</td><td style='text-align:right'>33.5559</td><td style='text-align:right'>0.000</td><td style='text-align:right'>0.000</td><td style='text-align:right'>2496191987619863.500</td></tr>
   </table>
 
   <h2>Interpretation</h2>
   <p>Covariates with <code>exp(β) &gt; 1</code> increase promotion intensity, meaning
   those patients carry more latent disease burden and are less likely to be cured.
   Conversely, <code>exp(β) &lt; 1</code> is protective. The Weibull shape parameter
-  κ = 0.150
-  suggests a <strong>decreasing hazard</strong> of promotion over time (early high-risk window).
+  κ = 2.881
+  suggests an <strong>increasing hazard</strong> of promotion over time.
   </p>
 
   <div class="note">
     Model: Weibull Promotion Time Cure Model (Chen, Ibrahim &amp; Sinha 1999).
-    Bootstrap SE from 10 resamples (seed=42).
+    Bootstrap SE from 50 resamples (seed=42).
     Source table: <code>promotion_cure_cohort</code>.
-    Analysis date: 2026-03-10 23:25.
+    Analysis date: 2026-03-10 23:50.
   </div>
 </body>
 </html>

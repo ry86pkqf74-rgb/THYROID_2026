@@ -1,15 +1,15 @@
 {
-  "generated_at": "2026-03-10T23:25:15.806955",
+  "generated_at": "2026-03-10T23:50:16.596535",
   "n_total": 48304,
   "n_events": 161,
   "event_rate_pct": 0.33,
-  "weibull_kappa": 0.1496,
-  "weibull_sigma_years": 0.0262,
-  "overall_cure_fraction": 0.9965,
+  "weibull_kappa": 2.8813,
+  "weibull_sigma_years": 7.0692,
+  "overall_cure_fraction": 0.9926,
   "plateau_10y_rate": 0.1238,
-  "aic": 5078.72,
-  "neg_loglik": 2527.3613,
+  "aic": 4047.23,
+  "neg_loglik": 2011.6152,
   "n_params": 12,
-  "n_boot": 10,
+  "n_boot": 50,
   "dry_run": false
 }

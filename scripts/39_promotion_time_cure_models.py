@@ -35,7 +35,7 @@ Outputs (all to exports/promotion_cure_results/)
 
 Usage
 -----
-  python scripts/39_promotion_time_cure_models.py [--md] [--local] [--dry-run] [--boot 300]
+  python scripts/39_promotion_time_cure_models.py [--md] [--local] [--dry-run] [--boot 100]
 
 Requires: numpy, scipy, pandas, plotly (all in requirements.txt)
 Optional: kaleido (for PNG export — pip install kaleido)
@@ -78,7 +78,7 @@ COVARIATES = [
     "high_risk_band",  # recurrence_risk_band == 'high'
 ]
 
-N_BOOT   = 300
+N_BOOT   = 100   # cold-start bootstrap; ~7s/boot × 100 = ~12 min; use --boot 300 for publication
 SEED     = 42
 MAX_TIME = 365 * 15   # 15-year administrative censor cap
 
@@ -188,49 +188,21 @@ def _neg_loglik(params: np.ndarray, X: np.ndarray, t: np.ndarray, e: np.ndarray)
     return -np.sum(ll)
 
 
-def _neg_loglik_grad(params: np.ndarray, X: np.ndarray,
-                     t: np.ndarray, e: np.ndarray) -> np.ndarray:
-    """Analytical gradient of the negative log-likelihood."""
-    log_kappa, log_sigma = params[0], params[1]
-    beta  = params[2:]
-    kappa = np.exp(log_kappa)
-    sigma = np.exp(log_sigma)
-    u     = (t / sigma) ** kappa
-    theta = np.clip(np.exp(X @ beta), 1e-300, 1e6)
-    F0    = np.clip(1.0 - np.exp(-u), 0.0, 1.0 - 1e-12)
+def _fit_ptcm(X: np.ndarray, t: np.ndarray, e: np.ndarray) -> tuple[np.ndarray, float]:
+    """MLE fit via cold start. Returns (params, neg_loglik_at_minimum).
 
-    # d(NLL)/d(log_kappa) = -sum_events[1 + kappa*log(t/sigma)] + sum[theta*u*kappa*log(t/sigma)]
-    log_ts  = np.log(np.clip(t / sigma, 1e-300, None))
-    d_lk_ev = -(1.0 + kappa * log_ts)
-    d_lk_ce = theta * u * kappa * log_ts
-    d_lk    = np.where(e == 1, d_lk_ev + theta * u * kappa * log_ts, d_lk_ce)
-
-    # d(NLL)/d(log_sigma) = sum_events[kappa] - sum[theta*u*kappa]
-    d_ls    = np.where(e == 1, kappa - theta * u * kappa, theta * u * kappa)
-
-    # d(NLL)/d(beta_j) = -sum_events[x_j] + sum[theta*F0*x_j]
-    d_beta  = np.where(e[:, None] == 1,
-                       -X + (theta * F0)[:, None] * X,
-                       (theta * F0)[:, None] * X).sum(axis=0)
-
-    return np.concatenate([[d_lk.sum(), d_ls.sum()], d_beta])
-
-
-def _fit_ptcm(
-    X: np.ndarray, t: np.ndarray, e: np.ndarray,
-    x0: np.ndarray | None = None,
-) -> tuple[np.ndarray, float]:
-    """MLE fit with optional warm start. Returns (params, neg_loglik_at_minimum)."""
-    if x0 is None:
-        n_cov = X.shape[1]
-        x0 = np.zeros(2 + n_cov)
-        x0[0] = np.log(1.2)
-        x0[1] = np.log(np.median(t[e == 1]) if e.sum() > 0 else np.median(t))
+    Always cold-starts to avoid local-minima traps on the near-flat
+    likelihood surface produced by low event rates (~0.3%).
+    """
+    n_cov = X.shape[1]
+    p0 = np.zeros(2 + n_cov)
+    p0[0] = np.log(1.2)   # log_kappa — slightly right-skewed baseline
+    p0[1] = np.log(np.median(t[e == 1]) if e.sum() > 0 else np.median(t))
 
     res = minimize(
-        _neg_loglik, x0, jac=_neg_loglik_grad, args=(X, t, e),
+        _neg_loglik, p0, args=(X, t, e),
         method="L-BFGS-B",
-        options={"maxiter": 2000, "ftol": 1e-9, "gtol": 1e-6},
+        options={"maxiter": 2000, "ftol": 1e-10, "gtol": 1e-7},
     )
     return res.x, res.fun
 
@@ -241,8 +213,8 @@ def _bootstrap_ci(
 ) -> np.ndarray:
     """Return bootstrap SE for each parameter (shape: n_params).
 
-    Uses warm-start from MLE solution so each boot iteration converges
-    in far fewer L-BFGS-B steps (~3-5× faster than cold start).
+    Cold-start is required; warm-start collapses all bootstrap samples
+    to the same local minimum on low-event-rate data (SE → 0, invalid CIs).
     """
     rng   = np.random.default_rng(seed)
     n     = len(t)
@@ -250,12 +222,11 @@ def _bootstrap_ci(
     for i in range(n_boot):
         idx = rng.integers(0, n, size=n)
         try:
-            # warm start: begin from MLE params (small perturbation for diversity)
-            p_b, _ = _fit_ptcm(X[idx], t[idx], e[idx], x0=params_mle.copy())
+            p_b, _ = _fit_ptcm(X[idx], t[idx], e[idx])
             boots.append(p_b)
         except Exception:
             pass
-        if (i + 1) % 50 == 0:
+        if (i + 1) % 10 == 0:
             print(f"    bootstrap {i + 1}/{n_boot}…", flush=True)
     if not boots:
         return np.full(len(params_mle), np.nan)
