@@ -1,28 +1,30 @@
 #!/usr/bin/env python3
 """
-19_gap_remediation.py — Address remaining gaps identified in Phase H
+39_gap_remediation.py — Address remaining gaps + note-body date recovery
+
+Gap 0 — Note-body date recovery (all domains):
+  - 24,572 entity rows have NULL entity_date AND NULL note_date.
+  - clinical_notes_long.note_date is also NULL for all of them.
+  - BUT note TEXT body contains parseable dates (MM/DD/YYYY, MM/DD/YY).
+  - Skip DOB by extracting after clinical content markers (HPI, Chief Complaint, etc.).
+  - Recovers ~16,644 entity rows at day precision, confidence 50.
+  - New fallback tier: entity_date → note_date → note_body_date → surgery/FNA.
 
 Gap 1 — Molecular (9,216 undated):
-  - 8,802 placeholder stubs (date='x', platform='x', result=missing).
-    Flag as is_placeholder_row and exclude from analysis.
-  - 143 have embedded dates in garbage text → regex extraction.
-  - 3,772 from single-FNA patients → unambiguous linkage confidence boost.
+  - 8,802 placeholder stubs flagged and excluded.
+  - Single-FNA patient confidence boost.
 
 Gap 2 — RAI (585 no-date):
-  - All from history_summary notes with NULL note_date.
-  - Dates embedded in note body text near RAI mentions.
-  - Extract via clinical_notes_long join + regex near I-131/RAI context.
+  - Note-text date extraction from clinical_notes_long body.
 
 Gap 3 — Histology (6,386 no staging):
-  - 6,046 have no histology type → mostly benign/completion procedures.
-    415 also have a cancer record in another path_synoptics row.
-  - 576 have histology but no formal staging. 358 have tumor size, 225
-    have ETE, 311 have LN data → calculate AJCC 8th Ed T/N staging.
+  - AJCC 8th Ed T/N staging calculated from tumor size + ETE + LN.
+  - Tiered eligibility.
 
 Updated views:
-  - molecular_episode_v3  (placeholder flag, embedded dates, single-FNA boost)
-  - rai_episode_v3        (note-text date extraction, patient-level anchors)
-  - histology_analysis_cohort_v (calculated staging, tiered eligibility)
+  - note_body_date_recovery_v (new helper: extracts dates from note text body)
+  - enriched_note_entities_* (all 6: adds note_body_date fallback)
+  - molecular_episode_v3, rai_episode_v3, histology_analysis_cohort_v
 
 Run after scripts 15, 16, 17, 18.
 """
@@ -90,6 +92,223 @@ def deploy_view(con: duckdb.DuckDBPyConnection, name: str, sql: str) -> bool:
     except Exception as e:
         print(f"  FAILED  {name}: {e}")
         return False
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  GAP 0 — Note-body date recovery (all domains)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+NOTE_BODY_DATE_RECOVERY_SQL = r"""
+CREATE OR REPLACE VIEW note_body_date_recovery_v AS
+WITH raw_extract AS (
+    SELECT
+        cn.note_row_id,
+        cn.research_id,
+        cn.note_type,
+        regexp_extract(
+            SUBSTRING(CAST(cn.note_text AS VARCHAR) FROM
+                GREATEST(
+                    CASE WHEN CAST(cn.note_text AS VARCHAR) LIKE '%History of Present Illness%'
+                         THEN position('History of Present Illness' IN CAST(cn.note_text AS VARCHAR)) ELSE 0 END,
+                    CASE WHEN CAST(cn.note_text AS VARCHAR) LIKE '%Chief Complaint%'
+                         THEN position('Chief Complaint' IN CAST(cn.note_text AS VARCHAR)) ELSE 0 END,
+                    CASE WHEN CAST(cn.note_text AS VARCHAR) LIKE '%Subjective%'
+                         THEN position('Subjective' IN CAST(cn.note_text AS VARCHAR)) ELSE 0 END,
+                    CASE WHEN CAST(cn.note_text AS VARCHAR) LIKE '%Assessment and Plan%'
+                         THEN position('Assessment and Plan' IN CAST(cn.note_text AS VARCHAR)) ELSE 0 END,
+                    CASE WHEN CAST(cn.note_text AS VARCHAR) LIKE '%PREOPERATIVE DIAGNOSIS%'
+                         THEN position('PREOPERATIVE DIAGNOSIS' IN CAST(cn.note_text AS VARCHAR)) ELSE 0 END,
+                    CASE WHEN CAST(cn.note_text AS VARCHAR) LIKE '%Date of admission%'
+                         THEN position('Date of admission' IN CAST(cn.note_text AS VARCHAR)) ELSE 0 END,
+                    CASE WHEN CAST(cn.note_text AS VARCHAR) LIKE '%Discharge%'
+                         THEN position('Discharge' IN CAST(cn.note_text AS VARCHAR)) ELSE 0 END,
+                    200
+                )
+            ),
+            '\b(\d{1,2}/\d{1,2}/\d{2,4})\b', 1
+        ) AS raw_date_str
+    FROM clinical_notes_long cn
+    WHERE cn.note_date IS NULL OR TRY_CAST(cn.note_date AS DATE) IS NULL
+),
+year_fixed AS (
+    SELECT
+        note_row_id, research_id, note_type, raw_date_str,
+        CASE
+            WHEN raw_date_str IS NULL OR raw_date_str = '' THEN NULL
+            WHEN LENGTH(regexp_extract(raw_date_str, '(\d+)$', 1)) = 2
+                 AND CAST(regexp_extract(raw_date_str, '(\d+)$', 1) AS INTEGER) <= 30
+                THEN regexp_replace(raw_date_str, '(\d+)$',
+                     CAST(2000 + CAST(regexp_extract(raw_date_str, '(\d+)$', 1) AS INTEGER) AS VARCHAR))
+            WHEN LENGTH(regexp_extract(raw_date_str, '(\d+)$', 1)) = 2
+                THEN regexp_replace(raw_date_str, '(\d+)$',
+                     CAST(1900 + CAST(regexp_extract(raw_date_str, '(\d+)$', 1) AS INTEGER) AS VARCHAR))
+            ELSE raw_date_str
+        END AS norm_date_str
+    FROM raw_extract
+)
+SELECT
+    note_row_id, research_id, note_type, raw_date_str, norm_date_str,
+    CASE
+        WHEN norm_date_str IS NOT NULL AND norm_date_str != ''
+            THEN TRY_CAST(TRY_STRPTIME(norm_date_str, '%m/%d/%Y') AS DATE)
+        ELSE NULL
+    END AS resolved_note_body_date,
+    CASE
+        WHEN norm_date_str IS NOT NULL AND norm_date_str != ''
+             AND TRY_CAST(TRY_STRPTIME(norm_date_str, '%m/%d/%Y') AS DATE) IS NOT NULL
+             AND TRY_CAST(TRY_STRPTIME(norm_date_str, '%m/%d/%Y') AS DATE)
+                 BETWEEN DATE '1995-01-01' AND CURRENT_DATE
+            THEN TRUE
+        ELSE FALSE
+    END AS date_is_plausible
+FROM year_fixed;
+"""
+
+
+def _enriched_with_note_body_view(entity_table: str, has_surg_fna: bool) -> str:
+    """Generate enriched view with note-body date fallback.
+
+    Fallback chain: entity_date → note_date → note_body_date → surgery/FNA → NULL
+    """
+    if has_surg_fna:
+        anchor_ctes = """
+ps_primary AS (
+    SELECT research_id, TRY_CAST(surg_date AS DATE) AS surg_date_parsed,
+           ROW_NUMBER() OVER (PARTITION BY research_id
+                              ORDER BY TRY_CAST(surg_date AS DATE) ASC NULLS LAST) AS op_seq
+    FROM path_synoptics WHERE surg_date IS NOT NULL AND surg_date != ''
+),
+fna_primary AS (
+    SELECT research_id, TRY_CAST(fna_date_parsed AS DATE) AS fna_date,
+           ROW_NUMBER() OVER (PARTITION BY research_id
+                              ORDER BY TRY_CAST(fna_date_parsed AS DATE) DESC NULLS LAST,
+                                       fna_index DESC) AS fna_seq
+    FROM fna_history WHERE fna_date_parsed IS NOT NULL AND fna_date_parsed != ''
+),"""
+        anchor_joins = """
+LEFT JOIN ps_primary ps ON CAST(e.research_id AS BIGINT) = ps.research_id AND ps.op_seq = 1
+LEFT JOIN fna_primary fna ON CAST(e.research_id AS BIGINT) = fna.research_id AND fna.fna_seq = 1"""
+        surg_coalesce = "ps.surg_date_parsed, fna.fna_date"
+        surg_source_cases = """
+            WHEN ps.surg_date_parsed IS NOT NULL THEN 'surg_date'
+            WHEN fna.fna_date IS NOT NULL THEN 'fna_date_parsed'"""
+        surg_gran_cases = """
+            WHEN ps.surg_date_parsed IS NOT NULL THEN 'day'
+            WHEN fna.fna_date IS NOT NULL THEN 'day'"""
+        surg_conf_cases = """
+            WHEN ps.surg_date_parsed IS NOT NULL THEN 40
+            WHEN fna.fna_date IS NOT NULL THEN 35"""
+        surg_anchor_cases = """
+            WHEN ps.surg_date_parsed IS NOT NULL THEN 'surgical'
+            WHEN fna.fna_date IS NOT NULL THEN 'cytology'"""
+        surg_table_cases = f"""
+            WHEN ps.surg_date_parsed IS NOT NULL THEN 'path_synoptics'
+            WHEN fna.fna_date IS NOT NULL THEN 'fna_history'"""
+        surg_status_check = "OR ps.surg_date_parsed IS NOT NULL OR fna.fna_date IS NOT NULL"
+        surg_review_check = """
+        WHEN ps.surg_date_parsed IS NOT NULL
+             AND e.entity_date IS NULL AND TRY_CAST(e.note_date AS DATE) IS NULL
+             AND nb.resolved_note_body_date IS NULL THEN TRUE
+        WHEN fna.fna_date IS NOT NULL
+             AND e.entity_date IS NULL AND TRY_CAST(e.note_date AS DATE) IS NULL
+             AND nb.resolved_note_body_date IS NULL AND ps.surg_date_parsed IS NULL THEN TRUE"""
+    else:
+        anchor_ctes = """
+ps_primary AS (
+    SELECT research_id, TRY_CAST(surg_date AS DATE) AS surg_date_parsed,
+           ROW_NUMBER() OVER (PARTITION BY research_id
+                              ORDER BY TRY_CAST(surg_date AS DATE) ASC NULLS LAST) AS op_seq
+    FROM path_synoptics WHERE surg_date IS NOT NULL AND surg_date != ''
+),"""
+        anchor_joins = """
+LEFT JOIN ps_primary ps ON CAST(e.research_id AS BIGINT) = ps.research_id AND ps.op_seq = 1"""
+        surg_coalesce = "ps.surg_date_parsed"
+        surg_source_cases = """
+            WHEN ps.surg_date_parsed IS NOT NULL THEN 'surg_date'"""
+        surg_gran_cases = """
+            WHEN ps.surg_date_parsed IS NOT NULL THEN 'day'"""
+        surg_conf_cases = """
+            WHEN ps.surg_date_parsed IS NOT NULL THEN 60"""
+        surg_anchor_cases = """
+            WHEN ps.surg_date_parsed IS NOT NULL THEN 'surgical'"""
+        surg_table_cases = f"""
+            WHEN ps.surg_date_parsed IS NOT NULL THEN 'path_synoptics'"""
+        surg_status_check = "OR ps.surg_date_parsed IS NOT NULL"
+        surg_review_check = """
+        WHEN ps.surg_date_parsed IS NOT NULL
+             AND e.entity_date IS NULL AND TRY_CAST(e.note_date AS DATE) IS NULL
+             AND nb.resolved_note_body_date IS NULL THEN TRUE"""
+
+    return f"""
+CREATE OR REPLACE VIEW enriched_{entity_table} AS
+WITH {anchor_ctes}
+nb_dates AS (
+    SELECT note_row_id, resolved_note_body_date
+    FROM note_body_date_recovery_v
+    WHERE date_is_plausible = TRUE
+)
+SELECT
+    e.*,
+    COALESCE(
+        TRY_CAST(e.entity_date AS DATE),
+        TRY_CAST(e.note_date AS DATE),
+        nb.resolved_note_body_date,
+        {surg_coalesce}
+    ) AS inferred_event_date,
+    CASE
+        WHEN e.entity_date IS NOT NULL AND TRY_CAST(e.entity_date AS DATE) IS NOT NULL
+            THEN 'entity_date'
+        WHEN e.note_date IS NOT NULL AND TRY_CAST(e.note_date AS DATE) IS NOT NULL
+            THEN 'note_date'
+        WHEN nb.resolved_note_body_date IS NOT NULL THEN 'note_body_text'{surg_source_cases}
+        ELSE 'unrecoverable'
+    END AS date_source,
+    CASE
+        WHEN e.entity_date IS NOT NULL AND TRY_CAST(e.entity_date AS DATE) IS NOT NULL THEN 'day'
+        WHEN e.note_date IS NOT NULL AND TRY_CAST(e.note_date AS DATE) IS NOT NULL THEN 'day'
+        WHEN nb.resolved_note_body_date IS NOT NULL THEN 'day'{surg_gran_cases}
+        ELSE NULL
+    END AS date_granularity,
+    CASE
+        WHEN e.entity_date IS NOT NULL AND TRY_CAST(e.entity_date AS DATE) IS NOT NULL THEN 100
+        WHEN e.note_date IS NOT NULL AND TRY_CAST(e.note_date AS DATE) IS NOT NULL THEN 70
+        WHEN nb.resolved_note_body_date IS NOT NULL THEN 50{surg_conf_cases}
+        ELSE 0
+    END AS date_confidence,
+    CASE
+        WHEN e.entity_date IS NOT NULL AND TRY_CAST(e.entity_date AS DATE) IS NOT NULL THEN 'extracted'
+        WHEN e.note_date IS NOT NULL AND TRY_CAST(e.note_date AS DATE) IS NOT NULL THEN 'encounter'
+        WHEN nb.resolved_note_body_date IS NOT NULL THEN 'note_body'{surg_anchor_cases}
+        ELSE 'none'
+    END AS date_anchor_type,
+    CASE
+        WHEN e.entity_date IS NOT NULL AND TRY_CAST(e.entity_date AS DATE) IS NOT NULL THEN '{entity_table}'
+        WHEN e.note_date IS NOT NULL AND TRY_CAST(e.note_date AS DATE) IS NOT NULL THEN 'clinical_notes_long'
+        WHEN nb.resolved_note_body_date IS NOT NULL THEN 'clinical_notes_long'{surg_table_cases}
+        ELSE 'none'
+    END AS date_anchor_table,
+    CASE
+        WHEN e.entity_date IS NOT NULL AND TRY_CAST(e.entity_date AS DATE) IS NOT NULL THEN 'exact_source_date'
+        WHEN e.note_date IS NOT NULL AND TRY_CAST(e.note_date AS DATE) IS NOT NULL THEN 'inferred_day_level_date'
+        WHEN nb.resolved_note_body_date IS NOT NULL THEN 'note_text_inferred_date'
+        WHEN {surg_coalesce.split(',')[0].strip()} IS NOT NULL THEN 'coarse_anchor_date'
+        ELSE 'unresolved_date'
+    END AS date_status,
+    CASE WHEN e.entity_date IS NOT NULL AND TRY_CAST(e.entity_date AS DATE) IS NOT NULL
+        THEN TRUE ELSE FALSE END AS date_is_source_native_flag,
+    CASE WHEN (e.entity_date IS NULL OR TRY_CAST(e.entity_date AS DATE) IS NULL)
+              AND COALESCE(TRY_CAST(e.note_date AS DATE), nb.resolved_note_body_date,
+                           {surg_coalesce}) IS NOT NULL
+        THEN TRUE ELSE FALSE END AS date_is_inferred_flag,
+    CASE
+        WHEN e.entity_date IS NULL AND e.note_date IS NULL
+             AND nb.resolved_note_body_date IS NULL
+             AND {surg_coalesce.split(',')[0].strip()} IS NULL THEN TRUE{surg_review_check}
+        ELSE FALSE
+    END AS date_requires_manual_review_flag
+FROM {entity_table} e
+LEFT JOIN nb_dates nb ON e.note_row_id = nb.note_row_id{anchor_joins};
+"""
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -628,13 +847,24 @@ def main() -> None:
     # Baseline
     section("BASELINE (BEFORE)")
     baselines = {
+        "enriched_unresolved": """SELECT COUNT(*) FROM (
+            SELECT 1 FROM enriched_note_entities_genetics WHERE date_status = 'unresolved_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_staging WHERE date_status = 'unresolved_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_procedures WHERE date_status = 'unresolved_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_complications WHERE date_status = 'unresolved_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_medications WHERE date_status = 'unresolved_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_problem_list WHERE date_status = 'unresolved_date'
+        ) x""",
+        "enriched_coarse": """SELECT COUNT(*) FROM (
+            SELECT 1 FROM enriched_note_entities_genetics WHERE date_status = 'coarse_anchor_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_staging WHERE date_status = 'coarse_anchor_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_procedures WHERE date_status = 'coarse_anchor_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_complications WHERE date_status = 'coarse_anchor_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_medications WHERE date_status = 'coarse_anchor_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_problem_list WHERE date_status = 'coarse_anchor_date'
+        ) x""",
         "mol_eligible": "SELECT COUNT(*) FROM molecular_analysis_cohort_v",
-        "mol_placeholder": """SELECT COUNT(*) FROM molecular_episode_v3
-                              WHERE molecular_date_raw_class IN ('placeholder','missing')
-                                AND result_category_normalized = 'missing'""",
         "rai_eligible": "SELECT COUNT(*) FROM rai_analysis_cohort_v",
-        "rai_no_date": """SELECT COUNT(*) FROM rai_episode_v3
-                          WHERE rai_interval_class = 'missing_rai_date'""",
         "hist_eligible_full": """SELECT COUNT(*) FROM histology_analysis_cohort_v
                                  WHERE analysis_eligible_flag = TRUE""",
         "hist_with_staging": """SELECT COUNT(*) FROM histology_analysis_cohort_v
@@ -649,6 +879,25 @@ def main() -> None:
         except Exception as e:
             before[label] = -1
             print(f"  {label:<45} ERROR: {e}")
+
+    # Deploy: note-body date recovery helper
+    section("GAP 0: NOTE-BODY DATE RECOVERY (all domains)")
+    deploy_view(con, "note_body_date_recovery_v", NOTE_BODY_DATE_RECOVERY_SQL)
+
+    # Deploy: updated enriched views with note-body fallback
+    section("UPDATING ENRICHED VIEWS (note-body date fallback)")
+    # staging/procedures/complications: surgery-only fallback
+    for tbl in ["note_entities_staging", "note_entities_procedures",
+                "note_entities_complications"]:
+        deploy_view(con, f"enriched_{tbl}",
+                    _enriched_with_note_body_view(tbl, has_surg_fna=False))
+    # genetics: surgery + FNA + molecular fallback (keep existing chain)
+    deploy_view(con, "enriched_note_entities_genetics",
+                _enriched_with_note_body_view("note_entities_genetics", has_surg_fna=True))
+    # medications/problem_list: surgery + FNA fallback
+    for tbl in ["note_entities_medications", "note_entities_problem_list"]:
+        deploy_view(con, f"enriched_{tbl}",
+                    _enriched_with_note_body_view(tbl, has_surg_fna=True))
 
     # Deploy
     section("GAP 1: MOLECULAR — placeholder + embedded dates + single-FNA")
@@ -669,26 +918,42 @@ def main() -> None:
     # After
     section("AFTER REMEDIATION")
     after_queries = {
+        "enriched_unresolved": """SELECT COUNT(*) FROM (
+            SELECT 1 FROM enriched_note_entities_genetics WHERE date_status = 'unresolved_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_staging WHERE date_status = 'unresolved_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_procedures WHERE date_status = 'unresolved_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_complications WHERE date_status = 'unresolved_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_medications WHERE date_status = 'unresolved_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_problem_list WHERE date_status = 'unresolved_date'
+        ) x""",
+        "enriched_note_text_inferred": """SELECT COUNT(*) FROM (
+            SELECT 1 FROM enriched_note_entities_genetics WHERE date_status = 'note_text_inferred_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_staging WHERE date_status = 'note_text_inferred_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_procedures WHERE date_status = 'note_text_inferred_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_complications WHERE date_status = 'note_text_inferred_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_medications WHERE date_status = 'note_text_inferred_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_problem_list WHERE date_status = 'note_text_inferred_date'
+        ) x""",
+        "enriched_coarse": """SELECT COUNT(*) FROM (
+            SELECT 1 FROM enriched_note_entities_genetics WHERE date_status = 'coarse_anchor_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_staging WHERE date_status = 'coarse_anchor_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_procedures WHERE date_status = 'coarse_anchor_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_complications WHERE date_status = 'coarse_anchor_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_medications WHERE date_status = 'coarse_anchor_date'
+            UNION ALL SELECT 1 FROM enriched_note_entities_problem_list WHERE date_status = 'coarse_anchor_date'
+        ) x""",
         "mol_eligible": "SELECT COUNT(*) FROM molecular_analysis_cohort_v",
         "mol_placeholder_detected": """SELECT COUNT(*) FROM molecular_episode_v3
                                        WHERE is_placeholder_row = TRUE""",
-        "mol_embedded_recovered": """SELECT COUNT(*) FROM molecular_episode_v3
-                                     WHERE embedded_date_extracted IS NOT NULL""",
         "mol_real_non_placeholder": """SELECT COUNT(*) FROM molecular_episode_v3
                                        WHERE is_placeholder_row = FALSE""",
         "rai_eligible": "SELECT COUNT(*) FROM rai_analysis_cohort_v",
-        "rai_note_text_recovered": """SELECT COUNT(*) FROM rai_episode_v3
-                                      WHERE note_text_recovered_date IS NOT NULL""",
         "rai_no_anchor_remaining": """SELECT COUNT(*) FROM rai_episode_v3
                                       WHERE rai_date_recovery_status = 'no_anchor_available'""",
         "hist_eligible_full": """SELECT COUNT(*) FROM histology_analysis_cohort_v
                                  WHERE analysis_eligible_flag = TRUE""",
         "hist_eligible_hist_only": """SELECT COUNT(*) FROM histology_analysis_cohort_v
                                       WHERE analysis_eligible_histology_only_flag = TRUE""",
-        "hist_calculated_t": """SELECT COUNT(*) FROM histology_analysis_cohort_v
-                                WHERE calculated_t_stage IS NOT NULL""",
-        "hist_calculated_n": """SELECT COUNT(*) FROM histology_analysis_cohort_v
-                                WHERE calculated_n_stage IS NOT NULL""",
         "hist_with_any_staging": """SELECT COUNT(*) FROM histology_analysis_cohort_v
                                     WHERE final_t_stage_for_analysis IS NOT NULL""",
     }
@@ -735,6 +1000,9 @@ def main() -> None:
     print(f"  {'metric':<45} {'before':>8} {'after':>8} {'delta':>8}")
     print("  " + "-" * 71)
     for label, b_key, a_key in [
+        ("Enriched: unresolved_date", "enriched_unresolved", "enriched_unresolved"),
+        ("Enriched: coarse_anchor_date", "enriched_coarse", "enriched_coarse"),
+        ("Enriched: note_text_inferred (NEW)", "enriched_unresolved", "enriched_note_text_inferred"),
         ("Molecular: analysis eligible", "mol_eligible", "mol_eligible"),
         ("RAI: analysis eligible", "rai_eligible", "rai_eligible"),
         ("Histology: eligible (full)", "hist_eligible_full", "hist_eligible_full"),

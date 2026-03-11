@@ -144,10 +144,13 @@
 - lifelines does not include Fine-Gray; use `AalenJohansenFitter` for CIF; Fine-Gray subdistribution HR needs R `cmprsk` or custom implementation
 - `fna_cytology` has no `fna_date_parsed` column; use `fna_date` only
 - Script 36 (`36_daily_refresh.py`) orchestrates the full pipeline chain (15→19, 22→27, 03, 29, 30, 31, 37)
-- Script 39 (`39_gap_remediation.py`): addresses remaining Phase H gaps by replacing `molecular_episode_v3`, `rai_episode_v3`, `histology_analysis_cohort_v` with enhanced versions
-- Molecular v3 enhanced: `is_placeholder_row` flag (8,799 stubs excluded), `embedded_date_extracted`, `patient_fna_count`, single-FNA confidence boost (55 vs 20); eligible 762→1,117 (+355)
-- RAI v3 enhanced: note-text date extraction via `clinical_notes_long` body regex (238 dates recovered at day/month precision), `effective_rai_date`, `note_text_recovered_date`, `note_text_date_precision`, `rai_date_recovery_status`; 0 mentions left with no anchor
-- Histology cohort enhanced: calculated AJCC 8th Ed staging from tumor size + ETE + LN fields; `calculated_t_stage` (T1a/T1b/T2/T3a/T3b), `calculated_n_stage` (N0/N1), `tumor_size_cm_numeric`, `ete_normalized`, `eligibility_tier` (eligible_full/eligible_calculated_staging/eligible_histology_only/ineligible_no_histology); eligible 3,871→4,213 (+342)
+- Script 39 (`39_gap_remediation.py`): note-body date recovery + molecular/RAI/histology gap fixes
+- Note-body date recovery: `note_body_date_recovery_v` extracts dates from `clinical_notes_long.note_text` body by skipping demographic headers (DOB) and parsing after clinical content markers (HPI, Chief Complaint, Subjective, etc.); handles 2-digit year normalization (≤30→20xx, >30→19xx); uses `TRY_STRPTIME` for MM/DD/YYYY parsing
+- New date_status tier: `note_text_inferred_date` (confidence 50) sits between `inferred_day_level_date` (70) and `coarse_anchor_date` (35-40); 16,644 entity rows promoted from coarse_anchor to note_text_inferred; coarse_anchor dropped 24,572→7,928
+- All 6 enriched views updated with note-body fallback chain: entity_date → note_date → note_body_date → surgery/FNA → NULL
+- Molecular v3 enhanced: `is_placeholder_row` flag (8,799 stubs excluded), single-FNA confidence boost; eligible 762→1,117
+- RAI v3 enhanced: note-text date extraction (238 dates recovered at day/month precision); 0 mentions left with no anchor
+- Histology cohort enhanced: calculated AJCC 8th Ed T/N staging; eligible 3,871→4,213; `eligibility_tier` (eligible_full/eligible_calculated_staging/eligible_histology_only/ineligible_no_histology)
 - AJCC8 T-staging rules: microscopic ETE does NOT upstage (T1-T2 preserved); only gross ETE → T3b; size ≤1→T1a, ≤2→T1b, ≤4→T2, >4→T3a
 - 7,240 histology records with no histology type are benign/completion procedures (6,492 primary with None histology, 748 reoperation with None histology, 415 also have cancer record in another path_synoptics row)
 - 8,799 molecular rows are placeholder stubs (date='x', platform='x', result=missing) — not real tests; only 1,327 non-placeholder molecular rows exist
