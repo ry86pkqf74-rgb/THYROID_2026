@@ -170,18 +170,79 @@ SELECT
     ps.ps_overall_stage AS overall_stage,
     -- size
     COALESCE(TRY_CAST(ps.ps_size_cm_1 AS DOUBLE), TRY_CAST(tp.tp_size_cm AS DOUBLE)) AS tumor_size_cm,
-    -- invasion/margin details
-    COALESCE(ps.ps_ete_1, tp.tp_ete) AS extrathyroidal_extension,
+    -- invasion/margin details (raw)
+    COALESCE(ps.ps_ete_1, tp.tp_ete) AS extrathyroidal_extension_raw,
+    -- normalized ETE
+    CASE
+        WHEN LOWER(COALESCE(ps.ps_ete_1, tp.tp_ete, ''))
+             IN ('', 'no', 'none', 'absent', 'not identified', 'not present', 'negative')
+             THEN 'none'
+        WHEN LOWER(COALESCE(ps.ps_ete_1, tp.tp_ete, '')) ~ '(gross|extensive|pT4)'
+             THEN 'gross'
+        WHEN LOWER(COALESCE(ps.ps_ete_1, tp.tp_ete, '')) ~ '(minimal|microscop|minor|focal)'
+             THEN 'microscopic'
+        WHEN COALESCE(ps.ps_ete_1, tp.tp_ete) IS NOT NULL THEN 'present'
+        ELSE NULL
+    END AS extrathyroidal_extension,
     tp.tp_gross_ete AS gross_ete,
-    ps.ps_vasc_inv_1 AS vascular_invasion,
-    ps.ps_lymph_inv_1 AS lymphatic_invasion,
-    ps.ps_perineural_1 AS perineural_invasion,
-    ps.ps_capsular_inv_1 AS capsular_invasion,
-    ps.ps_margins_1 AS margin_status,
+    ps.ps_vasc_inv_1 AS vascular_invasion_raw,
+    -- normalized vascular invasion
+    CASE
+        WHEN LOWER(COALESCE(ps.ps_vasc_inv_1, ''))
+             IN ('', 'no', 'none', 'absent', 'not identified', 'not present', 'negative')
+             THEN 'absent'
+        WHEN LOWER(COALESCE(ps.ps_vasc_inv_1, '')) ~ '(extensive|multifocal|widespread)'
+             THEN 'extensive'
+        WHEN LOWER(COALESCE(ps.ps_vasc_inv_1, '')) ~ '(focal|rare|few|isolated)'
+             THEN 'focal'
+        WHEN LOWER(COALESCE(ps.ps_vasc_inv_1, '')) ~ '(yes|present|identified|positive)'
+             THEN 'present'
+        ELSE NULL
+    END AS vascular_invasion,
+    -- normalized binary invasion flags
+    CASE
+        WHEN LOWER(COALESCE(ps.ps_lymph_inv_1, ''))
+             ~ '(yes|present|identified|positive)' THEN TRUE
+        WHEN LOWER(COALESCE(ps.ps_lymph_inv_1, ''))
+             IN ('no', 'none', 'absent', 'not identified', 'not present', 'negative') THEN FALSE
+        ELSE NULL
+    END AS lymphatic_invasion,
+    CASE
+        WHEN LOWER(COALESCE(ps.ps_perineural_1, ''))
+             ~ '(yes|present|identified|positive)' THEN TRUE
+        WHEN LOWER(COALESCE(ps.ps_perineural_1, ''))
+             IN ('no', 'none', 'absent', 'not identified', 'not present', 'negative') THEN FALSE
+        ELSE NULL
+    END AS perineural_invasion,
+    CASE
+        WHEN LOWER(COALESCE(ps.ps_capsular_inv_1, ''))
+             ~ '(yes|present|identified|positive|invaded|involved)' THEN TRUE
+        WHEN LOWER(COALESCE(ps.ps_capsular_inv_1, ''))
+             IN ('no', 'none', 'absent', 'not identified', 'not present', 'negative', 'intact') THEN FALSE
+        ELSE NULL
+    END AS capsular_invasion,
+    ps.ps_margins_1 AS margin_status_raw,
+    -- normalized margin status
+    CASE
+        WHEN LOWER(COALESCE(ps.ps_margins_1, ''))
+             ~ '(positive|involved|present at margin)' THEN 'positive'
+        WHEN LOWER(COALESCE(ps.ps_margins_1, ''))
+             ~ '(close|near|<1|< 1)' THEN 'close'
+        WHEN LOWER(COALESCE(ps.ps_margins_1, ''))
+             ~ '(negative|free|uninvolved|clear)' THEN 'negative'
+        ELSE NULL
+    END AS margin_status,
     -- nodal disease
     TRY_CAST(ps.ps_nodes_positive AS INTEGER) AS nodal_disease_positive_count,
     TRY_CAST(ps.ps_nodes_total AS INTEGER) AS nodal_disease_total_count,
-    ps.ps_extranodal_ext AS extranodal_extension,
+    ps.ps_extranodal_ext AS extranodal_extension_raw,
+    CASE
+        WHEN LOWER(COALESCE(ps.ps_extranodal_ext, ''))
+             ~ '(yes|present|identified|positive)' THEN TRUE
+        WHEN LOWER(COALESCE(ps.ps_extranodal_ext, ''))
+             IN ('no', 'none', 'absent', 'not identified', 'not present', 'negative') THEN FALSE
+        ELSE NULL
+    END AS extranodal_extension,
     -- laterality / multifocality
     ps.ps_laterality AS laterality,
     TRY_CAST(ps.ps_tumor_count AS INTEGER) AS number_of_tumors,
@@ -221,6 +282,9 @@ WITH mt AS (
         ROW_NUMBER() OVER (PARTITION BY CAST(research_id AS INTEGER)
                            ORDER BY COALESCE(
                                TRY_CAST(date AS DATE),
+                               CASE WHEN regexp_matches(CAST(date AS VARCHAR), '^\\d{4}$')
+                                    THEN TRY_CAST(CAST(date AS VARCHAR) || '-01-01' AS DATE)
+                                    ELSE NULL END,
                                DATE '2099-01-01')) AS molecular_episode_id,
         thyroseq_afirma AS platform_raw,
         CASE
@@ -231,13 +295,20 @@ WITH mt AS (
         result,
         mutation,
         COALESCE(detailed_findings, '') AS detailed_findings_raw,
-        TRY_CAST(date AS DATE) AS test_date_native,
+        CASE
+            WHEN TRY_CAST(date AS DATE) IS NOT NULL THEN TRY_CAST(date AS DATE)
+            WHEN regexp_matches(CAST(date AS VARCHAR), '^\\d{4}$')
+                 THEN TRY_CAST(CAST(date AS VARCHAR) || '-01-01' AS DATE)
+            ELSE NULL
+        END AS test_date_native,
         CASE
             WHEN TRY_CAST(date AS DATE) IS NOT NULL THEN 'exact_source_date'
+            WHEN regexp_matches(CAST(date AS VARCHAR), '^\\d{4}$') THEN 'coarse_anchor_date'
             ELSE 'unresolved_date'
         END AS date_status,
         CASE
             WHEN TRY_CAST(date AS DATE) IS NOT NULL THEN 100
+            WHEN regexp_matches(CAST(date AS VARCHAR), '^\\d{4}$') THEN 50
             ELSE 0
         END AS date_confidence,
         -- result classification

@@ -25,17 +25,19 @@
 | Normalization maps in vocab.py | 0 | 8 maps | PARTIAL |
 | V2 extractors built | 0 | 5 extractors | BUILT (not wired) |
 
-### Remaining Gaps
+### Remaining Gaps (updated 2026-03-11)
 
-| Gap | Severity |
-|-----|----------|
-| 6 Streamlit-critical views NOT materialized | HIGH |
-| V2 extractors not wired into pipeline | HIGH |
-| 6 V2 linkage tables not materialized | MEDIUM |
-| ~18 raw-text fields across 5 domains | MEDIUM |
-| 6 missing chronology rules | MEDIUM |
-| dashboard.py QA tab uses old qa_issues | LOW |
-| 2 missing tbl_exists fallbacks | LOW |
+| Gap | Severity | Status |
+|-----|----------|--------|
+| 6 Streamlit-critical views NOT materialized | HIGH | RESOLVED — added to script 26 MATERIALIZATION_MAP |
+| V2 extractors not wired into pipeline | HIGH | RESOLVED — RAI + operative extractors wired in script 22 `enrich_from_v2_extractors()` |
+| 6 V2 linkage tables not materialized | MEDIUM | RESOLVED — added to script 26 MATERIALIZATION_MAP |
+| ~18 raw-text fields across 5 domains | MEDIUM | PARTIALLY RESOLVED — margin/invasion/ETE normalized in script 22; 8 new vocab maps added |
+| 6 missing chronology rules | MEDIUM | PARTIALLY RESOLVED — 2 new QA rules added (molecular_before_fna, preop_after_surgery); linkage -7d tolerance acceptable |
+| dashboard.py QA tab uses old qa_issues | LOW | RESOLVED |
+| 2 missing tbl_exists fallbacks | LOW | RESOLVED |
+| Molecular year-only dates unrescued in script 22 | MEDIUM | RESOLVED — year-only regexp_matches fallback added |
+| 8 missing vocab.py normalization maps | MEDIUM | RESOLVED — all 8 maps added |
 
 ---
 

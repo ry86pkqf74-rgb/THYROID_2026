@@ -158,4 +158,14 @@
 - Script 40 (`40_benign_classification.py`) creates `benign_procedure_classification_v` for no-histology path_synoptics rows; current local breakdown: 5,163 multinodular/hyperplasia, 538 adenoma, 338 thyroiditis, 304 graves, 421 completion/reoperation-after-cancer, 475 unclassified
 - Mixture cure modeling is integrated via script 38 (`38_mixture_cure_models.py`), `cure_cohort`/`cure_kpis` materialization in script 26, and Cure Probability dashboard tab (`app/cure_probability.py`)
 - Deployment order updated: script 15 → 16 → 17 → 18 → 19 → 20 → ... → 39
+- Script 22 tumor_episode_master_v2 now normalizes: `extrathyroidal_extension` (none/microscopic/gross/present), `vascular_invasion` (absent/focal/extensive/present), `lymphatic_invasion`/`perineural_invasion`/`capsular_invasion`/`extranodal_extension` (boolean), `margin_status` (positive/negative/close); raw values preserved in `*_raw` columns
+- Script 22 molecular_test_episode_v2 now handles year-only dates (`regexp_matches '^\d{4}$'` → coarse_anchor_date, confidence 50); mirrors script 27 logic
+- Script 25 QA rules expanded: `molecular_before_fna` (molecular test dated before linked FNA), `preop_after_surgery` (preop FNA/molecular dated after linked surgery); total 18 QA check_ids
+- vocab.py now has 16 normalization maps (8 original + 8 new: MARGIN_NORM, ETE_DETAIL_NORM, AGGRESSIVE_VARIANT_NORM, VASCULAR_INVASION_NORM, MOLECULAR_VARIANT_NORM, GENE_FUSION_NORM, SHAPE_NORM, CALCIFICATION_NORM, VASCULARITY_NORM)
+- Script 26 MATERIALIZATION_MAP expanded to 61 entries: P0 streamlit views, P1 upstream/adjudication/post-review/manual-review views, manuscript cohorts, date rescue KPI
+- Script 22 `enrich_from_v2_extractors()` wires RAIDetailExtractor (scan_findings, stimulated_tg/tsh, avidity) and OperativeDetailExtractor (rln_monitoring, rln_finding, gross_ete, parathyroid, drain, etc.) into canonical episode tables
+- Script 28 (`28_manual_review_export.py`) exports all review queues to CSV/Parquet with manifest; supports --priority-min filter
+- MotherDuck audit report at `studies/motherduck_audit/AUDIT_REPORT.md`
+- Script 24 imaging_pathology_concordance_review_v2 already has temporal constraints + surgery_windows for multi-surgery patients
+- Script 23 linkage weak tiers use `BETWEEN -7 AND N` (not ABS); -7 day tolerance is intentional for recording delays
 - Next phase: manuscript submission, additional subgroup refinements

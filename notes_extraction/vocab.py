@@ -286,3 +286,145 @@ HISTOLOGY_DETAIL_NORM: dict[str, str] = {
     "widely invasive": "widely_invasive",
     "encapsulated": "encapsulated",
 }
+
+# ── Additional normalization maps (v2 audit) ───────────────────────────
+
+MARGIN_NORM: dict[str, str] = {
+    "positive": "positive",
+    "involved": "positive",
+    "present at margin": "positive",
+    "negative": "negative",
+    "free": "negative",
+    "uninvolved": "negative",
+    "clear": "negative",
+    "close": "close",
+    "near": "close",
+}
+
+ETE_DETAIL_NORM: dict[str, str] = {
+    "no": "none",
+    "none": "none",
+    "absent": "none",
+    "not identified": "none",
+    "not present": "none",
+    "negative": "none",
+    "minimal": "microscopic",
+    "microscopic": "microscopic",
+    "minor": "microscopic",
+    "focal": "microscopic",
+    "gross": "gross",
+    "extensive": "gross",
+}
+
+AGGRESSIVE_VARIANT_NORM: dict[str, str] = {
+    "tall cell": "tall_cell",
+    "tall cell variant": "tall_cell",
+    "hobnail": "hobnail",
+    "hobnail variant": "hobnail",
+    "columnar": "columnar_cell",
+    "columnar cell": "columnar_cell",
+    "columnar cell variant": "columnar_cell",
+    "diffuse sclerosing": "diffuse_sclerosing",
+    "insular": "insular",
+    "solid": "solid_variant",
+    "cribriform": "cribriform_morular",
+    "cribriform-morular": "cribriform_morular",
+    "warthin-like": "warthin_like",
+    "oncocytic": "oncocytic",
+}
+
+VASCULAR_INVASION_NORM: dict[str, str] = {
+    "present": "present",
+    "yes": "present",
+    "identified": "present",
+    "positive": "present",
+    "focal": "focal",
+    "rare": "focal",
+    "few": "focal",
+    "isolated": "focal",
+    "extensive": "extensive",
+    "multifocal": "extensive",
+    "widespread": "extensive",
+    "absent": "absent",
+    "no": "absent",
+    "none": "absent",
+    "not identified": "absent",
+    "negative": "absent",
+}
+
+MOLECULAR_VARIANT_NORM: dict[str, str] = {
+    "braf v600e": "BRAF_V600E",
+    "braf v600": "BRAF_V600",
+    "brafv600e": "BRAF_V600E",
+    "nras q61r": "NRAS_Q61R",
+    "nras q61k": "NRAS_Q61K",
+    "nras": "NRAS",
+    "hras q61r": "HRAS_Q61R",
+    "hras": "HRAS",
+    "kras g12": "KRAS_G12",
+    "kras": "KRAS",
+    "tert c228t": "TERT_C228T",
+    "tert c250t": "TERT_C250T",
+    "tert promoter": "TERT_promoter",
+    "tp53": "TP53",
+    "eif1ax": "EIF1AX",
+    "pten": "PTEN",
+    "alk": "ALK",
+    "ntrk1": "NTRK1",
+    "ntrk2": "NTRK2",
+    "ntrk3": "NTRK3",
+}
+
+GENE_FUSION_NORM: dict[str, str] = {
+    "ret/ptc1": "RET_PTC1",
+    "ret-ptc1": "RET_PTC1",
+    "ret/ptc3": "RET_PTC3",
+    "ret-ptc3": "RET_PTC3",
+    "ret/ptc": "RET_PTC",
+    "ret-ptc": "RET_PTC",
+    "ret fusion": "RET_fusion",
+    "pax8-pparg": "PAX8_PPARG",
+    "pax8/pparg": "PAX8_PPARG",
+    "ntrk fusion": "NTRK_fusion",
+    "ntrk1 fusion": "NTRK1_fusion",
+    "ntrk3 fusion": "NTRK3_fusion",
+    "alk fusion": "ALK_fusion",
+    "braf fusion": "BRAF_fusion",
+}
+
+SHAPE_NORM: dict[str, str] = {
+    "wider than tall": "wider_than_tall",
+    "taller than wide": "taller_than_wide",
+    "round": "round",
+    "oval": "oval",
+    "irregular": "irregular",
+    "lobulated": "lobulated",
+}
+
+CALCIFICATION_NORM: dict[str, str] = {
+    "microcalcifications": "micro",
+    "microcalcification": "micro",
+    "micro": "micro",
+    "macrocalcifications": "macro",
+    "macrocalcification": "macro",
+    "macro": "macro",
+    "peripheral": "peripheral",
+    "rim": "peripheral",
+    "eggshell": "peripheral",
+    "coarse": "coarse",
+    "none": "none",
+    "no calcification": "none",
+    "no calcifications": "none",
+}
+
+VASCULARITY_NORM: dict[str, str] = {
+    "avascular": "avascular",
+    "hypovascular": "hypovascular",
+    "mildly vascular": "mildly_vascular",
+    "moderately vascular": "moderately_vascular",
+    "hypervascular": "hypervascular",
+    "markedly vascular": "hypervascular",
+    "peripheral vascularity": "peripheral",
+    "intranodular vascularity": "intranodular",
+    "mixed vascularity": "mixed",
+}

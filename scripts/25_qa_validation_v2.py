@@ -274,6 +274,31 @@ SELECT
     CURRENT_TIMESTAMP
 FROM pathology_rai_linkage_v2
 WHERE linkage_confidence = 'weak'
+
+UNION ALL
+
+-- 12. Chronology: molecular test dated before linked FNA specimen
+SELECT
+    'molecular_before_fna', 'warning', research_id,
+    'Molecular test dated before linked FNA (day_gap=' || CAST(day_gap AS VARCHAR) || ')',
+    'fna ep ' || CAST(fna_episode_id AS VARCHAR) || ' -> mol ep '
+        || CAST(molecular_episode_id AS VARCHAR),
+    CURRENT_TIMESTAMP
+FROM fna_molecular_linkage_v2
+WHERE day_gap < 0
+
+UNION ALL
+
+-- 13. Chronology: FNA or molecular preop dated after surgery
+SELECT
+    'preop_after_surgery', 'warning', research_id,
+    'Preop ' || preop_type || ' dated after linked surgery (day_gap='
+        || CAST(day_gap AS VARCHAR) || ')',
+    preop_type || ' ep ' || CAST(preop_episode_id AS VARCHAR)
+        || ' -> surgery ep ' || CAST(surgery_episode_id AS VARCHAR),
+    CURRENT_TIMESTAMP
+FROM preop_surgery_linkage_v2
+WHERE day_gap < 0
 """
 
 # Date completeness by domain
