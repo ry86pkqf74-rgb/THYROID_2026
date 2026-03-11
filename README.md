@@ -264,6 +264,21 @@ streamlit run dashboard.py
 
 Requires: `pip install lifelines scikit-survival shap torch plotly kaleido`
 
+### Mixture Cure Analysis
+
+Run the cure-model workflow (MixtureCureFitter + EM regression):
+
+```bash
+# 1. Build cure_cohort + cure_kpis tables
+.venv/bin/python scripts/26_motherduck_materialize_v2.py --md
+
+# 2. Run cure analysis — outputs to exports/cure_results/
+.venv/bin/python scripts/38_mixture_cure_models.py
+
+# 3. View in dashboard (Cure Probability tab)
+streamlit run dashboard.py
+```
+
 <!-- GitHub Actions nightly refresh (add to .github/workflows/nightly-refresh.yml):
 
 name: Nightly Pipeline Refresh

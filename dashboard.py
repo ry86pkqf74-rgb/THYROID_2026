@@ -59,6 +59,7 @@ from app.adjudication_summary import render_adjudication_summary
 from app.validation_engine import render_validation_engine
 from app.advanced_survival import render_advanced_survival
 from app.statistical_analysis import render_statistical_analysis
+from app.cure_probability import render_cure_probability
 
 # ── Page config ───────────────────────────────────────────────────────────
 st.set_page_config(page_title="Thyroid Cohort Explorer", page_icon="🔬",
@@ -1836,6 +1837,26 @@ def main():
                     icon="⚠️",
                 )
 
+        with st.expander("🎯 Cure KPIs"):
+            if tbl_exists(con, "cure_kpis"):
+                try:
+                    _cure_df = cached_sqdf(
+                        con,
+                        f"SELECT * FROM {qual('cure_kpis')} LIMIT 1",
+                        key="sidebar_cure_kpis",
+                    )
+                    if not _cure_df.empty:
+                        _row = _cure_df.iloc[0]
+                        st.markdown(f"**N Total:** {int(_row.get('n_total', 0)):,}")
+                        st.markdown(f"**Observed Event Rate:** {float(_row.get('observed_event_rate', 0.0)):.1%}")
+                        st.markdown(f"**Crude Cure Rate:** {float(_row.get('crude_cure_rate', 0.0)):.1%}")
+                    else:
+                        st.info("cure_kpis is available but empty.")
+                except Exception as _cure_err:
+                    st.warning(f"Could not read cure KPIs: {_cure_err}")
+            else:
+                st.caption("Run `python scripts/26_motherduck_materialize_v2.py --md` to build cure_kpis.")
+
         # ── Connection Help ──────────────────────────────────────────
         with st.expander("❓ Connection Help"):
             st.markdown(
@@ -1854,7 +1875,7 @@ def main():
      t_tl,t_ev,t_qa,t_surv,t_afv3,
      t_cqc,t_pat,t_rh,t_rm,t_rr,t_rtl,t_rq,t_diag,
      t_ec,t_md,t_rd,t_ind,t_od,t_as,t_ve,
-     t_advsurv,t_stat) = st.tabs([
+     t_advsurv,t_stat,t_cure) = st.tabs([
         "📊 Overview","🗃 Data Explorer","📈 Visualizations","🧬 Advanced",
         "🔬 Genetics & Molecular","🫀 Specimen Details","📡 Pre-Op Imaging",
         "⚕ Complications","📋 Recommendations & Sensitivities",
@@ -1868,6 +1889,7 @@ def main():
         "🛡 Validation Engine",
         "🔬 Advanced Survival",
         "📊 Statistical Analysis",
+        "🎯 Cure Probability",
     ])
     with t_ov:   render_overview(con)
     with t_ex:   render_explorer(df_filt)
@@ -1902,6 +1924,7 @@ def main():
     with t_ve:   render_validation_engine(con)
     with t_advsurv: render_advanced_survival(con)
     with t_stat: render_statistical_analysis(con)
+    with t_cure: render_cure_probability(con)
 
     st.markdown("---")
     st.markdown(

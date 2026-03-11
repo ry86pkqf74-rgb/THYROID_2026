@@ -182,6 +182,42 @@ SELECT
 FROM survival_cohort_enriched
 """
 
+CURE_COHORT_SQL = """
+-- MIXTURE CURE LAYER — added for high-cure-fraction modeling
+CREATE OR REPLACE TABLE cure_cohort AS
+SELECT
+    research_id,
+    COALESCE(time_days, 365 * 15)                                AS time_days,   -- 15-year administrative censor
+    event::BOOLEAN                                               AS event,
+    age_at_diagnosis,
+    sex,
+    ajcc_stage_8,
+    ete_type,
+    braf_status,
+    tert_status,
+    ras_status,
+    ret_status,
+    recurrence_risk_band,
+    diagnosis_year,
+    histology,
+    ln_positive,
+    ln_examined,
+    tumor_size_cm
+FROM survival_cohort_enriched
+WHERE age_at_diagnosis BETWEEN 18 AND 90
+  AND diagnosis_year >= 2010
+  AND (event IS NOT NULL OR time_days IS NOT NULL)
+"""
+
+CURE_KPIS_SQL = """
+CREATE OR REPLACE TABLE cure_kpis AS
+SELECT
+    COUNT(*)                           AS n_total,
+    AVG(event::INT)                    AS observed_event_rate,
+    1 - AVG(event::INT)                AS crude_cure_rate
+FROM cure_cohort
+"""
+
 MANUAL_REVIEW_QUEUE_SUMMARY_SQL = """
 CREATE OR REPLACE TABLE md_manual_review_queue_summary_v2 AS
 SELECT 'pathology' AS domain,
@@ -257,6 +293,8 @@ def materialize_all(
         for sql, tbl in [
             (SURVIVAL_COHORT_ENRICHED_SQL, "survival_cohort_enriched"),
             (SURVIVAL_KPIS_SQL, "survival_kpis"),
+            (CURE_COHORT_SQL, "cure_cohort"),
+            (CURE_KPIS_SQL, "cure_kpis"),
         ]:
             try:
                 source_con.execute(sql)
@@ -322,6 +360,8 @@ def materialize_all(
         for sql, tbl in [
             (_surv_sql, "survival_cohort_enriched"),
             (SURVIVAL_KPIS_SQL, "survival_kpis"),
+            (CURE_COHORT_SQL, "cure_cohort"),
+            (CURE_KPIS_SQL, "cure_kpis"),
         ]:
             try:
                 target_con.execute(sql)
