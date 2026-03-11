@@ -1761,6 +1761,244 @@ def render_survival(con):
             icon="🔬",
         )
 
+    # ── Unified Cure Modeling Dashboard ──────────────────────────────────
+    st.markdown("---")
+    st.markdown(sl("Unified Cure Modeling Dashboard"), unsafe_allow_html=True)
+    st.caption(
+        "Head-to-head comparison of the Mixture Cure Model (MCM, population split π) "
+        "and the Promotion Time Cure Model (PTCM, mechanistic θ). "
+        "Run `python scripts/38_mixture_cure_models.py --md` and "
+        "`python scripts/40_cure_model_comparison.py --md` for full results."
+    )
+
+    _mcm_summary_path = Path(__file__).resolve().parent / "exports" / "mixture_cure_results" / "mcm_summary.csv"
+    _mcm_coeff_path = Path(__file__).resolve().parent / "exports" / "mixture_cure_results" / "mcm_incidence_coefficients.csv"
+    _mcm_cure_path = Path(__file__).resolve().parent / "exports" / "mixture_cure_results" / "mcm_patient_cure_probs.csv"
+    _mcm_html_path = Path(__file__).resolve().parent / "exports" / "mixture_cure_results" / "mcm_report.html"
+    _comp_csv_path = Path(__file__).resolve().parent / "exports" / "cure_comparison" / "cure_model_comparison.csv"
+    _comp_html_path = Path(__file__).resolve().parent / "exports" / "cure_comparison" / "cure_comparison_report.html"
+    _comp_surv_html = Path(__file__).resolve().parent / "exports" / "cure_comparison" / "cure_comparison_survival.html"
+    _comp_forest_html = Path(__file__).resolve().parent / "exports" / "cure_comparison" / "cure_comparison_forest.html"
+
+    _mcm_has = _mcm_summary_path.exists()
+    _comp_has = _comp_csv_path.exists()
+    _mcm_tbl = "mixture_cure_cohort" if tbl_exists(con, "mixture_cure_cohort") else None
+    _mcm_kpi_tbl = "mixture_cure_kpis" if tbl_exists(con, "mixture_cure_kpis") else None
+
+    _ucm_tab_mix, _ucm_tab_ptcm, _ucm_tab_h2h = st.tabs([
+        "🔮 Mixture Cure", "🧬 Promotion Time Cure", "⚔️ Head-to-Head Comparison",
+    ])
+
+    with _ucm_tab_mix:
+        if _mcm_has:
+            try:
+                _mcm_sum = pd.read_csv(_mcm_summary_path).iloc[0]
+                _mkc = st.columns(4)
+                for _c, (_lbl, _key, _fmt) in zip(_mkc, [
+                    ("Cohort N", "n_total", lambda v: f"{int(v):,}"),
+                    ("EM Cure π̄", "overall_cure_fraction", lambda v: f"{float(v):.1%}"),
+                    ("EM AIC", "em_aic", lambda v: f"{float(v):.1f}"),
+                    ("Weibull shape", "weibull_shape", lambda v: f"{float(v):.4f}"),
+                ]):
+                    with _c:
+                        _v = _mcm_sum.get(_key, "N/A")
+                        st.markdown(mc(_lbl, _fmt(_v) if _v != "N/A" else "N/A"), unsafe_allow_html=True)
+            except Exception as _e:
+                st.caption(f"Could not load MCM KPIs: {_e}")
+
+            if _mcm_coeff_path.exists():
+                with st.expander("📊 MCM Incidence Odds Ratios", expanded=False):
+                    try:
+                        _mcm_cdf = pd.read_csv(_mcm_coeff_path)
+                        _mcm_disp = _mcm_cdf[["term", "gamma", "se", "OR", "OR_ci_lower", "OR_ci_upper", "p_value"]].copy()
+                        _mcm_disp.columns = ["Term", "γ", "SE", "OR", "CI Lower", "CI Upper", "p-value"]
+                        _mcm_disp = _mcm_disp.sort_values("OR", ascending=False)
+                        st.dataframe(_mcm_disp.style.format({
+                            "γ": "{:.3f}", "SE": "{:.3f}", "OR": "{:.3f}",
+                            "CI Lower": "{:.3f}", "CI Upper": "{:.3f}", "p-value": "{:.3f}",
+                        }), use_container_width=True, hide_index=True, height=320)
+                        multi_export(_mcm_disp, "mcm_incidence_coefficients", key_sfx="mcm_coeff")
+                    except Exception as _e:
+                        st.warning(f"Could not load MCM coefficients: {_e}")
+
+            if _mcm_cure_path.exists():
+                with st.expander("🎯 MCM Patient Cure Distribution", expanded=False):
+                    try:
+                        _mcm_cdf2 = pd.read_csv(_mcm_cure_path)
+                        _fig_mcm = go.Figure()
+                        _fig_mcm.add_trace(go.Histogram(
+                            x=_mcm_cdf2["predicted_cure_probability"].dropna(),
+                            nbinsx=40, marker_color="#a78bfa", opacity=0.8,
+                            name="Cure probability π(x)",
+                        ))
+                        _fig_mcm.update_layout(**PL, height=380,
+                                               title="MCM: Patient Cure Probability Distribution",
+                                               xaxis_title="Cure probability π(x)",
+                                               yaxis_title="Patients")
+                        st.plotly_chart(_fig_mcm, use_container_width=True)
+                        if "cure_tier" in _mcm_cdf2.columns:
+                            _mt = _mcm_cdf2["cure_tier"].value_counts().reset_index()
+                            _mt.columns = ["Cure Tier", "N"]
+                            _mt["Fraction"] = (_mt["N"] / len(_mcm_cdf2)).map("{:.1%}".format)
+                            st.dataframe(_mt, use_container_width=True, hide_index=True, height=180)
+                    except Exception as _e:
+                        st.warning(f"Could not render MCM distribution: {_e}")
+
+            _mcm_km_html = Path(__file__).resolve().parent / "exports" / "mixture_cure_results" / "mcm_weibull_curve.html"
+            if _mcm_km_html.exists():
+                with st.expander("📈 MCM Weibull vs Kaplan-Meier", expanded=False):
+                    try:
+                        st.components.v1.html(_mcm_km_html.read_text(encoding="utf-8"), height=520, scrolling=False)
+                    except Exception as _e:
+                        st.caption(f"Could not render MCM KM chart: {_e}")
+
+            if _mcm_html_path.exists():
+                with st.expander("📋 MCM Population Report", expanded=False):
+                    try:
+                        st.components.v1.html(_mcm_html_path.read_text(encoding="utf-8"), height=700, scrolling=True)
+                    except Exception as _e:
+                        st.caption(f"Could not render MCM report: {_e}")
+        elif _mcm_tbl:
+            st.info(
+                "Mixture cure cohort available. Run analysis:\n"
+                "```bash\npython scripts/38_mixture_cure_models.py --md\n```",
+                icon="🔮",
+            )
+        else:
+            st.info(
+                "Mixture cure cohort not yet materialized. Run:\n"
+                "```bash\npython scripts/26_motherduck_materialize_v2.py --md\n"
+                "python scripts/38_mixture_cure_models.py --md\n```",
+                icon="🔮",
+            )
+
+    with _ucm_tab_ptcm:
+        if _ptcm_has_results:
+            st.caption("PTCM results loaded from `exports/promotion_cure_results/`. "
+                       "See the 'Latent Disease Burden' section above for full PTCM details.")
+            try:
+                _ptcm_s2 = pd.read_csv(_ptcm_summary_path).iloc[0]
+                _pk2 = st.columns(4)
+                for _c, (_lbl, _key, _fmt) in zip(_pk2, [
+                    ("Cohort N", "n_total", lambda v: f"{int(v):,}"),
+                    ("Cure fraction π̄", "overall_cure_fraction", lambda v: f"{float(v):.1%}"),
+                    ("AIC", "aic", lambda v: f"{float(v):.1f}"),
+                    ("Weibull κ", "weibull_kappa", lambda v: f"{float(v):.4f}"),
+                ]):
+                    with _c:
+                        _v = _ptcm_s2.get(_key, "N/A")
+                        st.markdown(mc(_lbl, _fmt(_v) if _v != "N/A" else "N/A"), unsafe_allow_html=True)
+            except Exception:
+                pass
+        else:
+            st.info(
+                "PTCM results not computed. Run:\n"
+                "```bash\npython scripts/39_promotion_time_cure_models.py --md\n```",
+                icon="🧬",
+            )
+
+    with _ucm_tab_h2h:
+        if _comp_has:
+            try:
+                _comp_df = pd.read_csv(_comp_csv_path)
+                st.dataframe(_comp_df, use_container_width=True, hide_index=True, height=300)
+                multi_export(_comp_df, "cure_model_comparison", key_sfx="cure_comp")
+            except Exception as _e:
+                st.warning(f"Could not load comparison table: {_e}")
+
+            if _comp_surv_html.exists():
+                with st.expander("📊 Side-by-Side Cure Distributions", expanded=True):
+                    try:
+                        st.components.v1.html(_comp_surv_html.read_text(encoding="utf-8"), height=500, scrolling=False)
+                    except Exception as _e:
+                        st.caption(f"Could not render: {_e}")
+
+            if _comp_forest_html.exists():
+                with st.expander("🌲 Covariate Forest Plot (MCM OR vs PTCM exp β)", expanded=False):
+                    try:
+                        st.components.v1.html(_comp_forest_html.read_text(encoding="utf-8"), height=540, scrolling=False)
+                    except Exception as _e:
+                        st.caption(f"Could not render: {_e}")
+
+            if _comp_html_path.exists():
+                with st.expander("📋 Full Comparison Report", expanded=False):
+                    try:
+                        st.components.v1.html(_comp_html_path.read_text(encoding="utf-8"), height=700, scrolling=True)
+                    except Exception as _e:
+                        st.caption(f"Could not render: {_e}")
+        else:
+            st.info(
+                "Head-to-head comparison not yet computed. Run:\n"
+                "```bash\npython scripts/38_mixture_cure_models.py --md\n"
+                "python scripts/39_promotion_time_cure_models.py --md\n"
+                "python scripts/40_cure_model_comparison.py\n```",
+                icon="⚔️",
+            )
+
+        # Interactive patient calculator (both models)
+        st.markdown(sl("Interactive Patient Cure Calculator"), unsafe_allow_html=True)
+        st.caption("Select covariates to see cure probability from both models.")
+        _calc_c1, _calc_c2, _calc_c3 = st.columns(3)
+        with _calc_c1:
+            _calc_age = st.slider("Age at diagnosis", 18, 90, 50, key="ucm_calc_age")
+            _calc_stage = st.selectbox("AJCC 8 stage", ["I", "II", "III", "IV"], key="ucm_calc_stage")
+        with _calc_c2:
+            _calc_ete = st.selectbox("ETE type", ["none", "microscopic", "gross"], key="ucm_calc_ete")
+            _calc_braf = st.selectbox("BRAF+", ["False", "True"], key="ucm_calc_braf")
+        with _calc_c3:
+            _calc_tert = st.selectbox("TERT+", ["False", "True"], key="ucm_calc_tert")
+            _calc_risk = st.selectbox("Recurrence risk band", ["low", "intermediate", "high"], key="ucm_calc_risk")
+
+        _patient_features = {
+            "age_at_diagnosis": _calc_age,
+            "ajcc_stage_8": _calc_stage,
+            "ete_type": _calc_ete,
+            "braf_status": _calc_braf.lower() == "true",
+            "tert_status": _calc_tert.lower() == "true",
+            "recurrence_risk_band": _calc_risk,
+        }
+
+        _res_cols = st.columns(2)
+        with _res_cols[0]:
+            st.markdown("**MCM (Population Split)**")
+            try:
+                from scripts.s38_mixture_cure_models import predict_mixture_cure as _mcm_predict
+                _mcm_res = _mcm_predict(_patient_features)
+            except Exception:
+                try:
+                    sys.path.insert(0, str(Path(__file__).resolve().parent / "scripts"))
+                    from importlib import import_module
+                    _m38 = import_module("38_mixture_cure_models")
+                    _mcm_res = _m38.predict_mixture_cure(_patient_features)
+                except Exception:
+                    _mcm_res = {"error": "MCM predict unavailable — run script 38 first"}
+            if "error" in _mcm_res:
+                st.caption(_mcm_res["error"])
+            else:
+                st.success(f"MCM cure π = **{_mcm_res['cure_probability']:.1%}** ({_mcm_res['cure_tier']})")
+                if "conditional_survival" in _mcm_res:
+                    _cs = pd.DataFrame(_mcm_res["conditional_survival"])
+                    st.dataframe(_cs, use_container_width=True, hide_index=True, height=160)
+
+        with _res_cols[1]:
+            st.markdown("**PTCM (Mechanistic θ)**")
+            try:
+                from scripts.s39_promotion_time_cure_models import predict_cure_probability as _ptcm_predict
+                _ptcm_res = _ptcm_predict(_patient_features)
+            except Exception:
+                try:
+                    _m39 = import_module("39_promotion_time_cure_models")
+                    _ptcm_res = _m39.predict_cure_probability(_patient_features)
+                except Exception:
+                    _ptcm_res = {"error": "PTCM predict unavailable — run script 39 first"}
+            if "error" in _ptcm_res:
+                st.caption(_ptcm_res["error"])
+            else:
+                st.success(f"PTCM cure π = **{_ptcm_res['cure_probability']:.1%}** ({_ptcm_res['cure_tier']})")
+                if "conditional_survival" in _ptcm_res:
+                    _cs2 = pd.DataFrame(_ptcm_res["conditional_survival"])
+                    st.dataframe(_cs2, use_container_width=True, hide_index=True, height=160)
+
     # ── Full Manuscript Package ───────────────────────────────────────────
     st.divider()
     st.markdown("### 🚀 Manuscript Submission Package")
@@ -2314,6 +2552,42 @@ def main():
                 st.caption(
                     "Run `python scripts/26_motherduck_materialize_v2.py --md` then "
                     "`python scripts/39_promotion_time_cure_models.py --md`."
+                )
+
+        with st.expander("⚔️ Cure Model Comparison KPIs"):
+            _comp_csv = Path(__file__).resolve().parent / "exports" / "cure_comparison" / "cure_model_comparison.csv"
+            _mcm_sum_side = Path(__file__).resolve().parent / "exports" / "mixture_cure_results" / "mcm_summary.csv"
+            if _comp_csv.exists():
+                try:
+                    _comp_side = pd.read_csv(_comp_csv)
+                    for _, _r in _comp_side.iterrows():
+                        _m = _r.get("metric", "")
+                        st.markdown(f"**{_m}:** MCM={_r.get('MCM', 'N/A')} | PTCM={_r.get('PTCM', 'N/A')}")
+                except Exception as _e:
+                    st.warning(f"Could not read comparison KPIs: {_e}")
+            elif _mcm_sum_side.exists():
+                try:
+                    _ms = pd.read_csv(_mcm_sum_side).iloc[0]
+                    st.markdown(f"**MCM N:** {int(_ms.get('n_total', 0)):,}")
+                    st.markdown(f"**MCM Cure π̄:** {float(_ms.get('overall_cure_fraction', 0)):.1%}")
+                    st.markdown(f"**MCM AIC:** {float(_ms.get('em_aic', _ms.get('best_aic', 0))):.1f}")
+                except Exception as _e:
+                    st.warning(f"Could not read MCM summary: {_e}")
+            elif tbl_exists(con, "mixture_cure_kpis"):
+                try:
+                    _mkpi = cached_sqdf(con, f"SELECT * FROM {qual('mixture_cure_kpis')} LIMIT 1",
+                                        key="sidebar_mixture_cure_kpis")
+                    if not _mkpi.empty:
+                        _mr = _mkpi.iloc[0]
+                        st.markdown(f"**N:** {int(_mr.get('n_total', 0)):,}")
+                        st.markdown(f"**Event rate:** {float(_mr.get('event_rate', 0)):.1%}")
+                        st.markdown(f"**Crude cure:** {float(_mr.get('crude_cure_rate', 0)):.1%}")
+                except Exception as _e:
+                    st.warning(f"Could not read mixture cure KPIs: {_e}")
+            else:
+                st.caption(
+                    "Run `python scripts/38_mixture_cure_models.py --md` then "
+                    "`python scripts/40_cure_model_comparison.py`."
                 )
 
         # ── Connection Help ──────────────────────────────────────────

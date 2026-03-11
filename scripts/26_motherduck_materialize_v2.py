@@ -256,6 +256,22 @@ SELECT
 FROM promotion_cure_cohort
 """
 
+# ── MIXTURE CURE LAYER — population split model (added 2026-03-11) ─────
+# Same base cohort as PTCM for direct head-to-head comparison.
+MIXTURE_CURE_COHORT_SQL = """
+CREATE OR REPLACE TABLE mixture_cure_cohort AS
+SELECT * FROM promotion_cure_cohort
+"""
+
+MIXTURE_CURE_KPIS_SQL = """
+CREATE OR REPLACE TABLE mixture_cure_kpis AS
+SELECT
+    COUNT(*)                           AS n_total,
+    AVG(event::INT)                    AS event_rate,
+    1 - AVG(event::INT)               AS crude_cure_rate
+FROM mixture_cure_cohort
+"""
+
 MANUAL_REVIEW_QUEUE_SUMMARY_SQL = """
 CREATE OR REPLACE TABLE md_manual_review_queue_summary_v2 AS
 SELECT 'pathology' AS domain,
@@ -335,6 +351,8 @@ def materialize_all(
             (CURE_KPIS_SQL, "cure_kpis"),
             (PROMOTION_CURE_COHORT_SQL, "promotion_cure_cohort"),
             (PROMOTION_CURE_KPIS_SQL, "promotion_cure_kpis"),
+            (MIXTURE_CURE_COHORT_SQL, "mixture_cure_cohort"),
+            (MIXTURE_CURE_KPIS_SQL, "mixture_cure_kpis"),
         ]:
             try:
                 source_con.execute(sql)
@@ -405,6 +423,8 @@ def materialize_all(
             (CURE_KPIS_SQL, "cure_kpis"),
             (PROMOTION_CURE_COHORT_SQL, "promotion_cure_cohort"),
             (PROMOTION_CURE_KPIS_SQL, "promotion_cure_kpis"),
+            (MIXTURE_CURE_COHORT_SQL, "mixture_cure_cohort"),
+            (MIXTURE_CURE_KPIS_SQL, "mixture_cure_kpis"),
         ]:
             try:
                 target_con.execute(sql)

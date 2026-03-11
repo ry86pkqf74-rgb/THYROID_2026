@@ -193,7 +193,7 @@ Five new tabs added by `scripts/12_update_streamlit_dashboard.py`:
 | **Patient Timeline Explorer** | Per-patient surgery timeline, Tg/TSH trend with surgery markers, all clinical events anchored by relative days |
 | **Extracted Clinical Events** | Searchable table of labs, meds, PMH, RAI, recurrence from `extracted_clinical_events_v4` with download |
 | **QA Dashboard** | Summary metrics from `qa_issues`, severity/check distribution, drill-down table |
-| **Risk & Survival** | Kaplan-Meier recurrence-free survival with stratification by stage, histology, BRAF; risk feature summary; **Latent Disease Burden (PTCM)** sub-section |
+| **Risk & Survival** | Kaplan-Meier recurrence-free survival with stratification by stage, histology, BRAF; risk feature summary; **Latent Disease Burden (PTCM)** + **Unified Cure Modeling Dashboard** (MCM vs PTCM head-to-head) sub-sections |
 | **Advanced Features v3** | Full column selector across all 60+ engineered features |
 
 ### Risk & Survival — Promotion Time Cure Model (PTCM)
@@ -314,20 +314,36 @@ streamlit run dashboard.py
 
 Requires: `pip install lifelines scikit-survival shap torch plotly kaleido`
 
-### Mixture Cure Analysis
+### Unified Cure Modeling Platform
 
-Run the cure-model workflow (MixtureCureFitter + EM regression):
+The project provides two complementary cure models and a head-to-head comparison framework:
+
+| Model | Script | Interpretation | Key Output |
+|-------|--------|----------------|------------|
+| **Mixture Cure Model (MCM)** | `38_mixture_cure_models.py` | Population split: π(x) = logistic(xᵀγ) partitions patients into cured/susceptible | Incidence ORs, Weibull latency, patient π(x) |
+| **Promotion Time Cure Model (PTCM)** | `39_promotion_time_cure_models.py` | Mechanistic: θ(x) = exp(xᵀβ) Poisson promotion intensity, π(x) = exp(−θ(x)) | Promotion β, Weibull baseline, patient θ(x) |
+| **Head-to-Head Comparison** | `40_cure_model_comparison.py` | Unified table: cure fraction, AIC, top predictors, 10y RMST, forest plots | HTML report, CSV, side-by-side figures |
+
+Run the full cure analysis pipeline:
 
 ```bash
-# 1. Build cure_cohort + cure_kpis tables
-.venv/bin/python scripts/26_motherduck_materialize_v2.py --md
+# 1. Materialize cohorts (builds mixture_cure_cohort + promotion_cure_cohort)
+python scripts/26_motherduck_materialize_v2.py --md
 
-# 2. Run cure analysis — outputs to exports/cure_results/
-.venv/bin/python scripts/38_mixture_cure_models.py
+# 2. Run Mixture Cure Model (MCM) — exports to exports/mixture_cure_results/
+python scripts/38_mixture_cure_models.py --md
 
-# 3. View in dashboard (Cure Probability tab)
+# 3. Run Promotion Time Cure Model (PTCM) — exports to exports/promotion_cure_results/
+python scripts/39_promotion_time_cure_models.py --md
+
+# 4. Head-to-head comparison — exports to exports/cure_comparison/
+python scripts/40_cure_model_comparison.py --md
+
+# 5. View in dashboard (Risk & Survival → Unified Cure Modeling Dashboard)
 streamlit run dashboard.py
 ```
+
+The **Risk & Survival** tab includes a "Unified Cure Modeling Dashboard" sub-section with three tabs (Mixture Cure | Promotion Time Cure | Head-to-Head Comparison), KPI cards from both models, an interactive patient calculator showing π from both models, side-by-side Weibull curves, and covariate forest plots. The sidebar includes a "Cure Model Comparison KPIs" expander.
 
 <!-- GitHub Actions nightly refresh (add to .github/workflows/nightly-refresh.yml):
 
