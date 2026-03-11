@@ -1026,3 +1026,6 @@ After running, restart the Streamlit dashboard to clear the cached connection.
 - `enriched_patient_timeline_v3_mv` — timeline_rescue_v3_mv joined with patient header, first RAI, and per-patient rescue rate; `genetic_year` is coarsened to YYYY-01-01 when used as a date anchor
 - `date_rescue_rate_summary` — single-row-per-domain KPI table; overall rescue rate, rescued row count, and average confidence across all 6 note_entities_* domains
 - `timeline_rescue_v3_mv` — V3 taxonomy enrichment of all 6 note_entities_* tables; adds date_status, date_is_source_native_flag, date_is_inferred_flag, date_requires_manual_review_flag, inferred_event_date
+- `time_to_rai_v3_mv` — per-patient `time_to_rai_days`, `ajcc_stage_grouped`, and `date_rescue_confidence`; uses inferred timeline anchors from `inferred_event_date`
+- `recurrence_free_survival_v3_mv` — per-patient `time_to_recurrence_days` with `censoring_flag` and surgery-aligned censor dates for recurrence endpoint analysis
+- `genotype_stratified_outcomes_v3_mv` — genotype-stratified (`braf_ras_status`) survival surface combining RAI timing, recurrence-free timing, stage grouping, and rescue-confidence tier

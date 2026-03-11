@@ -6,6 +6,7 @@ Use this checklist before submission or Zenodo archive.
 
 - [ ] Scripts 1–9 executed (ingest, DuckDB build, views, MotherDuck upload)
 - [ ] Scripts 13–15 executed (performance MVs, publication prep, final validation)
+- [ ] Script 21 executed: `duckdb "md:thyroid_research_2026" < scripts/21_survival_analysis_v3.sql` (builds survival v3 views)
 - [ ] Script 27 executed: `python scripts/27_fix_legacy_episode_compatibility.py` (legacy compatibility layer)
 - [ ] Local DuckDB backup present: `thyroid_master_local.duckdb` (optional, for downgrade/reproducibility)
 - [ ] MotherDuck database `thyroid_research_2026` has all required views/tables
@@ -22,6 +23,7 @@ Use this checklist before submission or Zenodo archive.
 ## Exports & Studies
 
 - [ ] Publication bundle under `exports/` (e.g. `THYROID_2026_PUBLICATION_BUNDLE_*` or `FINAL_RELEASE_*`)
+- [ ] Publication bundle includes `time_to_rai_v3_mv`, `recurrence_free_survival_v3_mv`, and `genotype_stratified_outcomes_v3_mv`
 - [ ] Table 1–4 CSVs generated (demographics, risk stratification, complications, timeline)
 - [ ] ETE staging outputs in `studies/proposal2_ete_staging/` (if applicable)
 - [ ] `RELEASE_NOTES.md` and `docs/QA_report.md` up to date

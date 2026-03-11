@@ -19,6 +19,7 @@ Run locally:
 from __future__ import annotations
 import io
 import os, sys, time, requests
+import subprocess
 from datetime import datetime
 from pathlib import Path
 
@@ -1763,6 +1764,194 @@ def render_survival(con):
             icon="🔬",
         )
 
+
+def render_survival_outcomes(con):
+    st.markdown(sl("Survival & Outcomes"), unsafe_allow_html=True)
+
+    if not tbl_exists(con, "genotype_stratified_outcomes_v3_mv"):
+        st.info(
+            "Survival v3 views not available. Run:\n"
+            "```bash\nduckdb \"md:thyroid_research_2026\" < scripts/21_survival_analysis_v3.sql\n```",
+            icon="📉",
+        )
+        return
+
+    base = sqdf(con, """
+        SELECT
+            research_id,
+            time_to_rai_days,
+            time_to_recurrence_days,
+            censoring_flag,
+            ajcc_stage_grouped,
+            braf_ras_status,
+            date_rescue_confidence,
+            histology_1_type
+        FROM genotype_stratified_outcomes_v3_mv
+    """)
+    if base.empty:
+        st.warning("No data available in genotype_stratified_outcomes_v3_mv.")
+        return
+
+    # Optional confidence fallback name requested in plan/user prompt.
+    if "date_rescue_level" not in base.columns and "date_rescue_confidence" in base.columns:
+        base["date_rescue_level"] = base["date_rescue_confidence"]
+
+    f1, f2, f3 = st.columns(3)
+    with f1:
+        stage_opts = ["All"] + sorted([x for x in base["ajcc_stage_grouped"].dropna().unique()], key=str)
+        stage_sel = st.selectbox("AJCC stage", stage_opts, key="surv3_stage")
+    with f2:
+        hist_opts = ["All"] + sorted([x for x in base["histology_1_type"].dropna().unique()], key=str)
+        hist_sel = st.selectbox("Histology", hist_opts, key="surv3_hist")
+    with f3:
+        rescue_col = "date_rescue_level" if "date_rescue_level" in base.columns else "date_rescue_confidence"
+        rescue_opts = ["All"] + sorted([x for x in base[rescue_col].dropna().unique()], key=str)
+        rescue_sel = st.selectbox("date_rescue_level", rescue_opts, key="surv3_rescue")
+
+    df = base.copy()
+    if stage_sel != "All":
+        df = df[df["ajcc_stage_grouped"] == stage_sel]
+    if hist_sel != "All":
+        df = df[df["histology_1_type"] == hist_sel]
+    if rescue_sel != "All":
+        df = df[df[rescue_col] == rescue_sel]
+
+    if df.empty:
+        st.warning("No data for selected filters.")
+        return
+
+    def km_points(local_df: pd.DataFrame, time_col: str, event_col: str):
+        sub = local_df[[time_col, event_col]].copy()
+        sub[time_col] = pd.to_numeric(sub[time_col], errors="coerce")
+        sub = sub.dropna(subset=[time_col])
+        sub = sub[sub[time_col] > 0].sort_values(time_col)
+        if sub.empty:
+            return pd.DataFrame(columns=["time_years", "survival"])
+        sub[event_col] = sub[event_col].fillna(0).astype(int)
+
+        rows = []
+        surv = 1.0
+        n_at_risk = len(sub)
+        for t, grp in sub.groupby(time_col, sort=True):
+            d_i = int(grp[event_col].sum())
+            n_i = int(len(grp))
+            if n_at_risk > 0:
+                surv *= (1.0 - (d_i / n_at_risk))
+            rows.append({"time_years": float(t) / 365.25, "survival": surv})
+            n_at_risk -= n_i
+            if n_at_risk <= 0:
+                break
+        return pd.DataFrame(rows)
+
+    # Event indicators
+    df["rai_event"] = df["time_to_rai_days"].notna().astype(int)
+    df["recurrence_event"] = (1 - pd.to_numeric(df["censoring_flag"], errors="coerce").fillna(1)).clip(lower=0, upper=1).astype(int)
+    df["genotype"] = df["braf_ras_status"].fillna("wild-type")
+
+    st.markdown(sl("Kaplan-Meier Style Curves"), unsafe_allow_html=True)
+    c_rai, c_rfs = st.columns(2)
+
+    with c_rai:
+        fig_rai = go.Figure()
+        for i, grp in enumerate(sorted(df["genotype"].dropna().unique(), key=str)):
+            sub = df[df["genotype"] == grp]
+            km = km_points(sub, "time_to_rai_days", "rai_event")
+            if km.empty:
+                continue
+            fig_rai.add_trace(go.Scatter(
+                x=km["time_years"], y=km["survival"], mode="lines",
+                name=f"{grp} (n={len(sub)})",
+                line=dict(color=PL["colorway"][i % len(PL["colorway"])], width=2),
+            ))
+        fig_rai.update_layout(
+            **PL, height=420,
+            title="Time-to-RAI by Genotype",
+            xaxis_title="Years from Surgery",
+            yaxis_title="RAI-free Probability",
+            yaxis_range=[0, 1.05],
+        )
+        st.plotly_chart(fig_rai, use_container_width=True)
+
+    with c_rfs:
+        fig_rfs = go.Figure()
+        for i, grp in enumerate(sorted(df["genotype"].dropna().unique(), key=str)):
+            sub = df[df["genotype"] == grp]
+            km = km_points(sub, "time_to_recurrence_days", "recurrence_event")
+            if km.empty:
+                continue
+            fig_rfs.add_trace(go.Scatter(
+                x=km["time_years"], y=km["survival"], mode="lines",
+                name=f"{grp} (n={len(sub)})",
+                line=dict(color=PL["colorway"][i % len(PL["colorway"])], width=2),
+            ))
+        fig_rfs.update_layout(
+            **PL, height=420,
+            title="Recurrence-Free Survival by Genotype",
+            xaxis_title="Years from Surgery",
+            yaxis_title="Recurrence-Free Probability",
+            yaxis_range=[0, 1.05],
+        )
+        st.plotly_chart(fig_rfs, use_container_width=True)
+
+    # Median time and HR summary
+    rows = []
+    grp_cols = ["genotype", "ajcc_stage_grouped"]
+    for (geno, stage), sub in df.groupby(grp_cols, dropna=False):
+        rows.append({
+            "genotype": geno,
+            "ajcc_stage_grouped": stage,
+            "n": int(len(sub)),
+            "median_time_to_rai_days": float(pd.to_numeric(sub["time_to_rai_days"], errors="coerce").median()) if sub["time_to_rai_days"].notna().any() else None,
+            "median_time_to_recurrence_days": float(pd.to_numeric(sub["time_to_recurrence_days"], errors="coerce").median()) if sub["time_to_recurrence_days"].notna().any() else None,
+            "event_rate_pct": float(100.0 * sub["recurrence_event"].mean()) if len(sub) > 0 else None,
+        })
+    summary = pd.DataFrame(rows)
+    if summary.empty:
+        st.info("No summary rows for current filters.")
+    else:
+        summary["hr_recurrence_vs_wild_type"] = None
+        try:
+            from lifelines import CoxPHFitter
+            cdf = df[["time_to_recurrence_days", "recurrence_event", "genotype", "ajcc_stage_grouped"]].copy()
+            cdf = cdf.dropna(subset=["time_to_recurrence_days", "recurrence_event"])
+            cdf = cdf[cdf["time_to_recurrence_days"] > 0]
+            if not cdf.empty and cdf["genotype"].nunique() > 1:
+                cdf["geno_bin"] = (cdf["genotype"] != "wild-type").astype(int)
+                cdf["stage_hi"] = (cdf["ajcc_stage_grouped"] == "III/IV").astype(int)
+                fit = cdf[["time_to_recurrence_days", "recurrence_event", "geno_bin", "stage_hi"]]
+                cph = CoxPHFitter()
+                cph.fit(fit, duration_col="time_to_recurrence_days", event_col="recurrence_event")
+                hr = float(cph.hazard_ratios_.get("geno_bin"))
+                summary["hr_recurrence_vs_wild_type"] = hr
+        except Exception:
+            pass
+
+        st.markdown(sl("Median Survival + HR Table"), unsafe_allow_html=True)
+        st.dataframe(summary, use_container_width=True, hide_index=True, height=260)
+        multi_export(summary, "survival_outcomes_summary", key_sfx="surv3_summary")
+
+    st.markdown(sl("Filtered Cohort"), unsafe_allow_html=True)
+    st.dataframe(df, use_container_width=True, hide_index=True, height=280)
+    multi_export(df, "survival_outcomes_filtered", key_sfx="surv3_filtered")
+
+    if st.button("Add to Publication Bundle", key="surv3_pub_bundle"):
+        script = Path(__file__).resolve().parent / "scripts" / "20_manuscript_exports.py"
+        try:
+            proc = subprocess.run(
+                [sys.executable, str(script), "--md", "--export"],
+                capture_output=True,
+                text=True,
+                cwd=str(Path(__file__).resolve().parent),
+                check=False,
+            )
+            if proc.returncode == 0:
+                st.success("Publication bundle generated with survival views included.")
+            else:
+                tail = (proc.stderr or proc.stdout or "").strip()
+                st.error(f"Bundle generation failed (exit {proc.returncode}). {tail[-300:]}")
+        except Exception as e:
+            st.error(f"Could not run manuscript export script: {e}")
+
 # ─────────────────────────────────────────────────────────────────────────
 # TAB: ADVANCED FEATURES V3 EXPLORER
 # ─────────────────────────────────────────────────────────────────────────
@@ -2053,7 +2242,7 @@ def main():
      t_tl,t_ev,t_qa,t_surv,t_afv3,
      t_cqc,t_pat,t_rh,t_rm,t_rr,t_rtl,t_rq,t_diag,
      t_ec,t_md,t_rd,t_ind,t_od,t_as,t_ve,
-     t_advsurv,t_stat,t_cure,t_pte) = st.tabs([
+     t_advsurv,t_stat,t_cure,t_pte,t_surv_out) = st.tabs([
         "📊 Overview","🗃 Data Explorer","📈 Visualizations","🧬 Advanced",
         "🔬 Genetics & Molecular","🫀 Specimen Details","📡 Pre-Op Imaging",
         "⚕ Complications","📋 Recommendations & Sensitivities",
@@ -2069,6 +2258,7 @@ def main():
         "📊 Statistical Analysis",
         "🎯 Cure Probability",
         "🗓 Patient Timeline",
+        "Survival & Outcomes",
     ])
     with t_ov:   render_overview(con)
     with t_ex:   render_explorer(df_filt)
@@ -2105,6 +2295,7 @@ def main():
     with t_stat: render_statistical_analysis(con)
     with t_cure: render_cure_probability(con)
     with t_pte:  render_patient_timeline_explorer(con)
+    with t_surv_out: render_survival_outcomes(con)
 
     st.markdown("---")
     st.markdown(

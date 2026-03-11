@@ -68,6 +68,21 @@ def deploy_view(
         return False
 
 
+def create_placeholder_view(
+    con: duckdb.DuckDBPyConnection,
+    name: str,
+    sql: str,
+    view_log: list[tuple[str, str]],
+) -> None:
+    """Create an empty placeholder view so downstream exports can continue."""
+    try:
+        con.execute(sql)
+        view_log.append((name, sql))
+        print(f"  PLACEHOLDER {name:<45} 0 rows")
+    except Exception as e:
+        print(f"  FAILED PLACEHOLDER {name}: {e}")
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 #  MANUSCRIPT VIEWS
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -290,6 +305,53 @@ LEFT JOIN mol m ON a.research_id = m.research_id
 LEFT JOIN rai r ON a.research_id = r.research_id;
 """
 
+MOLECULAR_PLACEHOLDER_SQL = """
+CREATE OR REPLACE VIEW manuscript_molecular_cohort_v AS
+SELECT
+    NULL::BIGINT AS research_id,
+    NULL::VARCHAR AS molecular_episode_id,
+    NULL::DATE AS specimen_date_raw,
+    NULL::VARCHAR AS platform_normalized,
+    NULL::VARCHAR AS test_name_raw,
+    NULL::VARCHAR AS result_category_normalized,
+    NULL::VARCHAR AS result_summary_raw,
+    NULL::DOUBLE AS temporal_linkage_confidence,
+    NULL::DOUBLE AS platform_confidence,
+    NULL::DOUBLE AS pathology_concordance_confidence,
+    NULL::DOUBLE AS overall_linkage_confidence,
+    FALSE AS analysis_inclusion_flag,
+    'source_unavailable'::VARCHAR AS exclusion_reason,
+    'placeholder'::VARCHAR AS algorithmic_vs_reviewer_source,
+    FALSE AS adjudication_applied_flag,
+    CURRENT_DATE AS analysis_ready_date,
+    NULL::VARCHAR AS molecular_date_raw_class,
+    NULL::VARCHAR AS linkage_method,
+    NULL::BOOLEAN AS high_risk_molecular_flag
+WHERE FALSE;
+"""
+
+RAI_PLACEHOLDER_SQL = """
+CREATE OR REPLACE VIEW manuscript_rai_cohort_v AS
+SELECT
+    NULL::BIGINT AS research_id,
+    NULL::VARCHAR AS rai_episode_id,
+    NULL::DATE AS rai_date,
+    NULL::DOUBLE AS dose_mci,
+    NULL::VARCHAR AS rai_term_normalized,
+    NULL::VARCHAR AS rai_assertion_status,
+    NULL::VARCHAR AS rai_treatment_certainty,
+    NULL::VARCHAR AS rai_interval_class,
+    FALSE AS analysis_inclusion_flag,
+    'source_unavailable'::VARCHAR AS exclusion_reason,
+    'placeholder'::VARCHAR AS algorithmic_vs_reviewer_source,
+    FALSE AS adjudication_applied_flag,
+    CURRENT_DATE AS analysis_ready_date,
+    NULL::DATE AS linked_surgery_date,
+    NULL::INT AS days_surgery_to_rai,
+    NULL::BOOLEAN AS post_thyroidectomy_flag
+WHERE FALSE;
+"""
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 #  EXPORT BUNDLE
@@ -307,6 +369,9 @@ def export_bundle(con: duckdb.DuckDBPyConnection) -> None:
         "manuscript_molecular_cohort": "manuscript_molecular_cohort_v",
         "manuscript_rai_cohort": "manuscript_rai_cohort_v",
         "manuscript_patient_summary": "manuscript_patient_summary_v",
+        "time_to_rai_v3": "time_to_rai_v3_mv",
+        "recurrence_free_survival_v3": "recurrence_free_survival_v3_mv",
+        "genotype_stratified_outcomes_v3": "genotype_stratified_outcomes_v3_mv",
     }
 
     manifest = {
@@ -412,18 +477,25 @@ def main() -> None:
 
     # Check prerequisites
     section("CHECKING PREREQUISITES")
-    has_post_review = True
-    for v in ["histology_post_review_v", "molecular_post_review_v", "rai_post_review_v"]:
+    post_review_available = {
+        "histology": False,
+        "molecular": False,
+        "rai": False,
+    }
+    for domain, v in [
+        ("histology", "histology_post_review_v"),
+        ("molecular", "molecular_post_review_v"),
+        ("rai", "rai_post_review_v"),
+    ]:
         avail = table_available(con, v)
         status = "OK" if avail else "MISS"
-        if not avail:
-            has_post_review = False
+        post_review_available[domain] = avail
         print(f"  {status:<6} {v}")
 
-    if has_post_review:
-        print("\n  Using POST-REVIEW views (reviewer decisions will be preferred)")
-    else:
-        print("\n  Post-review views missing; falling back to algorithmic cohorts")
+    print("\n  Per-domain source preference:")
+    for domain in ("histology", "molecular", "rai"):
+        pref = "post-review" if post_review_available[domain] else "algorithmic fallback"
+        print(f"  - {domain:<10} {pref}")
 
     for v in ["histology_analysis_cohort_v", "molecular_analysis_cohort_v",
               "rai_analysis_cohort_v"]:
@@ -434,12 +506,41 @@ def main() -> None:
 
     # Create manuscript views
     section("CREATING MANUSCRIPT VIEWS")
-    deploy_view(con, "manuscript_histology_cohort_v",
-                _histology_sql(has_post_review), view_log)
-    deploy_view(con, "manuscript_molecular_cohort_v",
-                _molecular_sql(has_post_review), view_log)
-    deploy_view(con, "manuscript_rai_cohort_v",
-                _rai_sql(has_post_review), view_log)
+    hist_ok = deploy_view(
+        con,
+        "manuscript_histology_cohort_v",
+        _histology_sql(post_review_available["histology"]),
+        view_log,
+    )
+    mol_ok = deploy_view(
+        con,
+        "manuscript_molecular_cohort_v",
+        _molecular_sql(post_review_available["molecular"]),
+        view_log,
+    )
+    if not mol_ok:
+        create_placeholder_view(con, "manuscript_molecular_cohort_v",
+                                MOLECULAR_PLACEHOLDER_SQL, view_log)
+    rai_ok = deploy_view(
+        con,
+        "manuscript_rai_cohort_v",
+        _rai_sql(post_review_available["rai"]),
+        view_log,
+    )
+    if not rai_ok:
+        create_placeholder_view(con, "manuscript_rai_cohort_v",
+                                RAI_PLACEHOLDER_SQL, view_log)
+    if not hist_ok and not table_available(con, "manuscript_histology_cohort_v"):
+        # Histology is usually present, but keep patient summary resilient.
+        create_placeholder_view(
+            con,
+            "manuscript_histology_cohort_v",
+            """
+CREATE OR REPLACE VIEW manuscript_histology_cohort_v AS
+SELECT NULL::BIGINT AS research_id, FALSE AS adjudication_applied_flag WHERE FALSE;
+""",
+            view_log,
+        )
     deploy_view(con, "manuscript_patient_summary_v",
                 PATIENT_SUMMARY_SQL, view_log)
 
