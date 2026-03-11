@@ -218,6 +218,44 @@ SELECT
 FROM cure_cohort
 """
 
+# ── PROMOTION TIME CURE LAYER (added 2026-03-10) ──────────────────────────
+# Reads from survival_cohort_enriched (built immediately above) so that
+# braf_status, tert_status, ete_type, etc. are already normalised.
+# ps_weight defaults to 1.0 (unweighted); override post-PSM if desired.
+# ntrk_status uses ras_status as the closest available proxy.
+PROMOTION_CURE_COHORT_SQL = """
+CREATE OR REPLACE TABLE promotion_cure_cohort AS
+SELECT
+    research_id,
+    COALESCE(time_days, 365 * 15)            AS time_days,
+    event::BOOLEAN                            AS event,
+    age_at_diagnosis,
+    sex,
+    ajcc_stage_8,
+    ete_type,
+    braf_status,
+    tert_status,
+    ras_status                                AS ntrk_status,
+    recurrence_risk_band,
+    NULL::VARCHAR                             AS rai_avidity_category,
+    diagnosis_year,
+    histology,
+    1.0::DOUBLE                               AS ps_weight
+FROM survival_cohort_enriched
+WHERE age_at_diagnosis BETWEEN 18 AND 90
+  AND diagnosis_year >= 2010
+"""
+
+PROMOTION_CURE_KPIS_SQL = """
+CREATE OR REPLACE TABLE promotion_cure_kpis AS
+SELECT
+    COUNT(*)                                                                  AS n_total,
+    AVG(event::INT)                                                           AS event_rate,
+    COUNT(CASE WHEN event = FALSE AND time_days > 365 * 10 THEN 1 END)::FLOAT
+        / NULLIF(COUNT(*), 0)                                                 AS plateau_10y_rate
+FROM promotion_cure_cohort
+"""
+
 MANUAL_REVIEW_QUEUE_SUMMARY_SQL = """
 CREATE OR REPLACE TABLE md_manual_review_queue_summary_v2 AS
 SELECT 'pathology' AS domain,
@@ -289,12 +327,14 @@ def materialize_all(
         except Exception as e:
             print(f"  WARN md_manual_review_queue_summary_v2: {e}")
 
-        # Survival cohort enriched + KPIs
+        # Survival cohort enriched + KPIs + PTCM cohort
         for sql, tbl in [
             (SURVIVAL_COHORT_ENRICHED_SQL, "survival_cohort_enriched"),
             (SURVIVAL_KPIS_SQL, "survival_kpis"),
             (CURE_COHORT_SQL, "cure_cohort"),
             (CURE_KPIS_SQL, "cure_kpis"),
+            (PROMOTION_CURE_COHORT_SQL, "promotion_cure_cohort"),
+            (PROMOTION_CURE_KPIS_SQL, "promotion_cure_kpis"),
         ]:
             try:
                 source_con.execute(sql)
@@ -349,7 +389,7 @@ def materialize_all(
         except Exception as e:
             print(f"  WARN md_manual_review_queue_summary_v2: {e}")
 
-        # Survival cohort enriched + KPIs (cross-DB: use md_ source tables)
+        # Survival cohort enriched + KPIs + PTCM cohort (cross-DB: use md_ source tables)
         _surv_sql = SURVIVAL_COHORT_ENRICHED_SQL.replace(
             "survival_cohort_ready_mv", "md_survival_cohort_ready_mv"
         ).replace(
@@ -357,11 +397,14 @@ def materialize_all(
         ).replace(
             "recurrence_risk_features_mv", "md_recurrence_risk_features_mv"
         ) if not table_available(target_con, "survival_cohort_ready_mv") else SURVIVAL_COHORT_ENRICHED_SQL
+        # PTCM cohort always reads from survival_cohort_enriched (built above)
         for sql, tbl in [
             (_surv_sql, "survival_cohort_enriched"),
             (SURVIVAL_KPIS_SQL, "survival_kpis"),
             (CURE_COHORT_SQL, "cure_cohort"),
             (CURE_KPIS_SQL, "cure_kpis"),
+            (PROMOTION_CURE_COHORT_SQL, "promotion_cure_cohort"),
+            (PROMOTION_CURE_KPIS_SQL, "promotion_cure_kpis"),
         ]:
             try:
                 target_con.execute(sql)

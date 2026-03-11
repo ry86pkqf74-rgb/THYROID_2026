@@ -60,6 +60,7 @@ from app.validation_engine import render_validation_engine
 from app.advanced_survival import render_advanced_survival
 from app.statistical_analysis import render_statistical_analysis
 from app.cure_probability import render_cure_probability
+from app.patient_timeline_explorer import render_patient_timeline_explorer
 
 # ── Page config ───────────────────────────────────────────────────────────
 st.set_page_config(page_title="Thyroid Cohort Explorer", page_icon="🔬",
@@ -381,10 +382,30 @@ def render_overview(con):
         df_all = sqdf(con, f"SELECT * FROM {rescue_tbl} WHERE entity_table = 'ALL_DOMAINS'")
         if not df_all.empty:
             r = df_all.iloc[0]
-            c1,c2,c3 = st.columns(3)
-            with c1: st.markdown(mc("Overall Rescue Rate",f"{r.get('rescue_rate_pct',0):.1f}%"),unsafe_allow_html=True)
-            with c2: st.markdown(mc("Rescued Entities",f"{int(r.get('rescued',0)):,}",f"of {int(r.get('total_entities',0)):,}"),unsafe_allow_html=True)
-            with c3: st.markdown(mc("Avg Confidence (rescued)",f"{r.get('avg_confidence_rescued',0):.0f}/100"),unsafe_allow_html=True)
+            _rate = float(r.get("rescue_rate_pct", 0) or 0)
+            _rescued = int(r.get("rescued", 0) or 0)
+            _total = int(r.get("total_entities", 0) or 0)
+            _conf = float(r.get("avg_confidence_rescued", 0) or 0)
+            # Prominent progress-bar KPI card
+            st.markdown(
+                f'<div style="background:linear-gradient(135deg,#0a1a20,#0e1219);'
+                f'border:1px solid #1e2535;border-left:3px solid #2dd4bf;'
+                f'border-radius:12px;padding:1rem 1.4rem;margin-bottom:.6rem">'
+                f'<div style="font-family:\'DM Mono\',monospace;font-size:.6rem;'
+                f'letter-spacing:.15em;color:#2dd4bf;text-transform:uppercase;'
+                f'margin-bottom:4px">Overall Date Rescue Rate</div>'
+                f'<div style="font-family:\'DM Serif Display\',serif;font-size:2.2rem;'
+                f'color:#f0f4ff;line-height:1">{_rate:.1f}%'
+                f'<span style="font-size:.85rem;color:#8892a4;margin-left:10px;'
+                f'font-family:sans-serif">{_rescued:,} of {_total:,} entities '
+                f'· avg confidence {_conf:.0f}/100</span></div></div>',
+                unsafe_allow_html=True,
+            )
+            st.progress(min(_rate / 100.0, 1.0))
+            c2, c3 = st.columns(2)
+            with c2: st.markdown(mc("Rescued Entities", f"{_rescued:,}", f"of {_total:,} total"), unsafe_allow_html=True)
+            with c3: st.markdown(mc("Avg Confidence", f"{_conf:.0f}/100"), unsafe_allow_html=True)
+            st.markdown("<br>", unsafe_allow_html=True)
         if not df_r.empty:
             fig_r = go.Figure(go.Bar(
                 y=df_r["entity_table"].str.replace("note_entities_","",regex=False),
@@ -1617,6 +1638,131 @@ def render_survival(con):
                 with c:
                     st.markdown(mc(l, f"{r[k]}" if pd.notna(r[k]) else "N/A"), unsafe_allow_html=True)
 
+    # ── Latent Disease Burden — Promotion Time Cure Model (PTCM) ──────────
+    st.markdown("---")
+    st.markdown(sl("Latent Disease Burden (Promotion Time Cure Model)"), unsafe_allow_html=True)
+    st.caption(
+        "PTCM models recurrence as: each patient carries θ(x) latent cells. "
+        "Cure probability π(x) = exp(−θ(x)). "
+        "Run `python scripts/39_promotion_time_cure_models.py --md` to compute."
+    )
+
+    _ptcm_cohort_tbl = ("promotion_cure_cohort" if tbl_exists(con, "promotion_cure_cohort")
+                        else None)
+    _ptcm_summary_path = Path(__file__).resolve().parent / "exports" / "promotion_cure_results" / "ptcm_summary.csv"
+    _ptcm_coeff_path   = Path(__file__).resolve().parent / "exports" / "promotion_cure_results" / "ptcm_covariate_effects.csv"
+    _ptcm_cure_path    = Path(__file__).resolve().parent / "exports" / "promotion_cure_results" / "ptcm_patient_cure_probs.csv"
+    _ptcm_html_path    = Path(__file__).resolve().parent / "exports" / "promotion_cure_results" / "ptcm_report.html"
+
+    _ptcm_has_results = _ptcm_summary_path.exists()
+
+    if _ptcm_cohort_tbl or _ptcm_has_results:
+        # KPI metrics
+        _ptcm_kpi_cols = st.columns(4)
+        if _ptcm_has_results:
+            try:
+                _ptcm_sum = pd.read_csv(_ptcm_summary_path).iloc[0]
+                for _c, (_lbl, _key, _fmt) in zip(_ptcm_kpi_cols, [
+                    ("Cohort N",       "n_total",               lambda v: f"{int(v):,}"),
+                    ("Cure fraction π̄", "overall_cure_fraction", lambda v: f"{float(v):.1%}"),
+                    ("AIC",            "aic",                    lambda v: f"{float(v):.1f}"),
+                    ("10y plateau",    "plateau_10y_rate",       lambda v: f"{float(v):.1%}"),
+                ]):
+                    with _c:
+                        _val = _ptcm_sum.get(_key, "N/A")
+                        st.markdown(mc(_lbl, _fmt(_val) if _val != "N/A" else "N/A"),
+                                    unsafe_allow_html=True)
+            except Exception as _e:
+                st.caption(f"Could not load PTCM KPIs: {_e}")
+        elif _ptcm_cohort_tbl:
+            try:
+                _kpi_df = sqdf(con, f"SELECT * FROM {_ptcm_cohort_tbl} LIMIT 1")
+                _ptcm_kpi_cols[0].metric("Cohort available", "✓ Run script 39")
+            except Exception:
+                pass
+
+        # Coefficient table (if available)
+        if _ptcm_has_results and _ptcm_coeff_path.exists():
+            with st.expander("📊 PTCM Covariate Effects (exp β)", expanded=False):
+                try:
+                    _coeff_df = pd.read_csv(_ptcm_coeff_path)
+                    _disp = _coeff_df[["covariate", "beta", "se", "exp_beta",
+                                        "ci_lower", "ci_upper", "p_value"]].copy()
+                    _disp.columns = ["Covariate", "β", "SE", "exp(β)",
+                                     "CI Lower", "CI Upper", "p-value"]
+                    _disp = _disp.sort_values("exp(β)", ascending=False)
+                    st.dataframe(_disp.style.format({
+                        "β": "{:.3f}", "SE": "{:.3f}", "exp(β)": "{:.3f}",
+                        "CI Lower": "{:.3f}", "CI Upper": "{:.3f}", "p-value": "{:.3f}",
+                    }), use_container_width=True, hide_index=True, height=320)
+                    multi_export(_disp, "ptcm_covariate_effects", key_sfx="ptcm_coeff")
+                except Exception as _e:
+                    st.warning(f"Could not load PTCM coefficients: {_e}")
+
+        # Patient cure probability distribution chart
+        if _ptcm_has_results and _ptcm_cure_path.exists():
+            with st.expander("🎯 Patient Cure Probability Distribution", expanded=False):
+                try:
+                    _cure_df = pd.read_csv(_ptcm_cure_path)
+                    _fig_cure = go.Figure()
+                    _fig_cure.add_trace(go.Histogram(
+                        x=_cure_df["cure_prob"].dropna(),
+                        nbinsx=40,
+                        marker_color="#2dd4bf",
+                        opacity=0.8,
+                        name="Cure probability π(x)",
+                    ))
+                    _fig_cure.update_layout(
+                        **PL, height=380,
+                        title="Distribution of Patient-Level Cure Probabilities π(x)",
+                        xaxis_title="Cure probability π(x) = exp(−θ(x))",
+                        yaxis_title="Patients",
+                    )
+                    st.plotly_chart(_fig_cure, use_container_width=True)
+
+                    # Cure tier breakdown
+                    if "cure_tier" in _cure_df.columns:
+                        _tier_counts = _cure_df["cure_tier"].value_counts().reset_index()
+                        _tier_counts.columns = ["Cure Tier", "N"]
+                        _tier_counts["Fraction"] = (_tier_counts["N"] / len(_cure_df)).map("{:.1%}".format)
+                        st.dataframe(_tier_counts, use_container_width=True,
+                                     hide_index=True, height=180)
+                except Exception as _e:
+                    st.warning(f"Could not render cure distribution: {_e}")
+
+        # Link to Weibull vs KM HTML chart (if exported)
+        _ptcm_km_html = Path(__file__).resolve().parent / "exports" / "promotion_cure_results" / "ptcm_weibull_curve.html"
+        if _ptcm_km_html.exists():
+            with st.expander("📈 Weibull PTCM vs Kaplan-Meier (interactive chart)", expanded=False):
+                try:
+                    _html_content = _ptcm_km_html.read_text(encoding="utf-8")
+                    st.components.v1.html(_html_content, height=520, scrolling=False)
+                except Exception as _e:
+                    st.caption(f"Could not render KM chart: {_e}")
+
+        # Biological interpretation report link
+        if _ptcm_html_path.exists():
+            with st.expander("📋 PTCM Biological Interpretation Report", expanded=False):
+                try:
+                    _report_html = _ptcm_html_path.read_text(encoding="utf-8")
+                    st.components.v1.html(_report_html, height=700, scrolling=True)
+                except Exception as _e:
+                    st.caption(f"Could not render report: {_e}")
+
+        if not _ptcm_has_results:
+            st.info(
+                "PTCM results not yet computed. Run:\n"
+                "```bash\npython scripts/39_promotion_time_cure_models.py --md\n```",
+                icon="🔬",
+            )
+    else:
+        st.info(
+            "Promotion cure cohort not yet materialized. Run:\n"
+            "```bash\npython scripts/26_motherduck_materialize_v2.py --md\n"
+            "python scripts/39_promotion_time_cure_models.py --md\n```",
+            icon="🔬",
+        )
+
 # ─────────────────────────────────────────────────────────────────────────
 # TAB: ADVANCED FEATURES V3 EXPLORER
 # ─────────────────────────────────────────────────────────────────────────
@@ -1875,7 +2021,7 @@ def main():
      t_tl,t_ev,t_qa,t_surv,t_afv3,
      t_cqc,t_pat,t_rh,t_rm,t_rr,t_rtl,t_rq,t_diag,
      t_ec,t_md,t_rd,t_ind,t_od,t_as,t_ve,
-     t_advsurv,t_stat,t_cure) = st.tabs([
+     t_advsurv,t_stat,t_cure,t_pte) = st.tabs([
         "📊 Overview","🗃 Data Explorer","📈 Visualizations","🧬 Advanced",
         "🔬 Genetics & Molecular","🫀 Specimen Details","📡 Pre-Op Imaging",
         "⚕ Complications","📋 Recommendations & Sensitivities",
@@ -1890,6 +2036,7 @@ def main():
         "🔬 Advanced Survival",
         "📊 Statistical Analysis",
         "🎯 Cure Probability",
+        "🗓 Patient Timeline",
     ])
     with t_ov:   render_overview(con)
     with t_ex:   render_explorer(df_filt)
@@ -1925,6 +2072,7 @@ def main():
     with t_advsurv: render_advanced_survival(con)
     with t_stat: render_statistical_analysis(con)
     with t_cure: render_cure_probability(con)
+    with t_pte:  render_patient_timeline_explorer(con)
 
     st.markdown("---")
     st.markdown(

@@ -169,3 +169,10 @@
 - Script 24 imaging_pathology_concordance_review_v2 already has temporal constraints + surgery_windows for multi-surgery patients
 - Script 23 linkage weak tiers use `BETWEEN -7 AND N` (not ABS); -7 day tolerance is intentional for recording delays
 - Next phase: manuscript submission, additional subgroup refinements
+- `timeline_rescue_v3_mv` SQL file: `scripts/17_timeline_rescue_unified_v3.sql`; covers all 6 note_entities_* tables with date_status V3 taxonomy, inferred_event_date, and three boolean flags
+- `enriched_patient_timeline_v3_mv` view defined in `scripts/20_enriched_patient_timeline_v3.sql`; joins timeline_rescue_v3_mv + patient_spine + first_rai + per-patient rescue_rate; columns: entity_type, inferred_event_date, date_status, provenance flags, sex, age_at_surgery, histology_1_type, overall_stage_ajcc8, first_surgery_date, first_rai_date, time_to_rai_days, max_rai_dose, date_rescue_rate_pct
+- `app/patient_timeline_explorer.py`: new module with `render_patient_timeline_explorer(con)` — prominent rescue KPI card + progress bar (from timeline_unresolved_summary_v2_mv), per-entity-type rescue bar chart, patient lookup by research_id (shows header metrics + timeline dataframe + episode expanders), Publication Snapshot export button
+- Dashboard now has 35 tabs; `t_pte` tab = "🗓 Patient Timeline" → `render_patient_timeline_explorer(con)`
+- `app/helpers.py` multi_export tz fix: use `hasattr(dt, 'tz_localize')` (always True) instead of `dt.tz is not None` guard, so tz_localize(None) always runs on datetime columns (no-op on naive, strips tz on aware)
+- Overview tab date rescue KPI now includes `st.progress()` bar alongside big-number card
+- Publication Snapshot button exports `enriched_patient_timeline_v3_mv` + `qa_summary_by_domain_v2` to `exports/pub_snapshot_YYYYMMDD_HHMM/` with `manifest.json`

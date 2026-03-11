@@ -135,10 +135,10 @@ def multi_export(df: pd.DataFrame, prefix: str, key_sfx: str = "") -> None:
     ts = datetime.now().strftime("%Y%m%d_%H%M")
     df_export = df.copy()
 
-    # 1. Datetime columns (MotherDuck often returns tz-aware)
+    # 1. Datetime columns (tz-aware from MotherDuck)
     datetime_cols = [col for col in df_export.columns if pd.api.types.is_datetime64_any_dtype(df_export[col])]
     for col in datetime_cols:
-        if hasattr(df_export[col].dt, "tz") and df_export[col].dt.tz is not None:
+        if hasattr(df_export[col].dt, "tz_localize"):
             df_export[col] = df_export[col].dt.tz_localize(None)
         df_export[col] = pd.to_datetime(df_export[col], errors="coerce").dt.strftime("%Y-%m-%d %H:%M:%S").replace("NaT", "")
 
