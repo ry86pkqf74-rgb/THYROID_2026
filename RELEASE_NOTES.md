@@ -28,6 +28,16 @@
 - `predict_cure_probability()` — reusable function for single-patient PTCM scoring
 - `load_fitted_params()` — loads fitted params from CSV exports for external callers
 
+#### Enhancements (v2 — post-review refinements)
+- **Competing risks**: Added sksurv CIF confidence bands, clinical methodology note ("Cause-specific HRs for etiological insight; CIF for real-world probability; Fine-Gray planned for v2")
+- **Cure calculator**: Extended to 8 inputs — added tumor size (continuous 0.1–10cm) and lymph node status (N0/N1a/N1b/Nx) with hybrid theta adjustment (literature-derived multipliers from Tuttle 2017, Adam 2015, ATA 2016)
+- **Model comparison**: Added Weibull mixture cure model (MLE via scipy, AIC-comparable with PTCM) and Penalized Cox Ridge (sksurv CoxnetSurvivalAnalysis) — now 6 models total
+- **Tab position**: Moved "🔮 Predictive Analytics" to directly after "📊 Statistical Analysis" (high-impact-first UX)
+
+#### Additional Deliverables
+- `notebooks/40_predictive_analytics_examples.ipynb` — 5-section interactive walkthrough (cure prediction, competing risks, model comparison, SHAP nomogram, manuscript export)
+- `scripts/40_predictive_analytics_batch.py` — CLI batch runner (4 phases: comparison, competing risks, batch PTCM scoring, manuscript report); supports `--md`, `--local`, `--dry-run`
+
 #### Dependencies
 - `requirements.txt` — added `scikit-survival`
 

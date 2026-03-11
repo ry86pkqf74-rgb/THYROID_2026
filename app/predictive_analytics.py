@@ -224,6 +224,17 @@ def _render_competing_risks(con: Any, analyzer: "ThyroidPredictiveAnalyzer") -> 
                         hide_index=True,
                     )
 
+    # Clinical methodology note
+    clinical_note = result.get("clinical_note")
+    if clinical_note:
+        st.markdown(
+            f'<div style="background:#0a1a20;border:1px solid #1e2535;'
+            f'border-left:3px solid {COLORS["sky"]};border-radius:10px;'
+            f'padding:1rem 1.2rem;margin:1rem 0;font-size:.82rem;color:#d4dae8">'
+            f'{clinical_note}</div>',
+            unsafe_allow_html=True,
+        )
+
     if result.get("warnings"):
         with st.expander("⚠️ Warnings"):
             for w in result["warnings"]:
@@ -374,18 +385,22 @@ def _render_cure_calculator(con: Any, analyzer: "ThyroidPredictiveAnalyzer") -> 
     st.markdown("---")
     st.markdown("### Enter Patient Characteristics")
 
-    # Input widgets
+    # Input widgets — 3-column grid with proper type handling
     patient = {}
     input_cols = st.columns(3)
     for i, (key, spec) in enumerate(CURE_CALCULATOR_FEATURES.items()):
         with input_cols[i % 3]:
             if spec["type"] == "slider":
-                patient[key] = st.slider(
-                    spec["label"],
-                    min_value=spec["min"], max_value=spec["max"],
-                    value=spec["default"],
-                    key=f"pa_calc_{key}",
-                )
+                kwargs = {
+                    "label": spec["label"],
+                    "min_value": spec["min"],
+                    "max_value": spec["max"],
+                    "value": spec["default"],
+                    "key": f"pa_calc_{key}",
+                }
+                if "step" in spec:
+                    kwargs["step"] = spec["step"]
+                patient[key] = st.slider(**kwargs)
             elif spec["type"] == "select":
                 patient[key] = st.selectbox(
                     spec["label"],

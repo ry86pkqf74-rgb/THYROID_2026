@@ -222,3 +222,14 @@
 - `duckdb` CLI binary not installed locally; deploy SQL files via `.venv/bin/python -c "import duckdb; con = duckdb.connect('md:...'); con.execute(open('file.sql').read())"` pattern
 - `numpy` scalar `.clip(lower=...)` keyword not supported (pandas API only); use `max(float(val), threshold)` instead
 - Dashboard Risk & Survival tab (`render_survival`) has 🚀 Generate Full Manuscript Package button (key `surv_manuscript_pkg`); Survival & Outcomes tab (`render_survival_outcomes`) has identical button (key `surv3_manuscript_pkg`)
+- `utils/predictive_analytics.py`: `ThyroidPredictiveAnalyzer` class — PTCM cure prediction, enhanced competing risks (cause-specific Cox + sksurv CIF), explainable ML nomograms (XGBoost/RF/sksurv RSF + SHAP), Weibull mixture cure model (MLE), Penalized Cox Ridge (sksurv CoxnetSurvivalAnalysis), multi-model comparison (6 models: KM, Cox PH, PTCM, Mixture Cure, Penalized Cox, RSF), personalized cure calculator, Word manuscript export
+- `app/predictive_analytics.py`: "🔮 Predictive Analytics" dashboard tab (5 sub-tabs: Model Comparison, Competing Risks, ML Nomograms & SHAP, Personalized Cure Calculator, Manuscript Export)
+- `t_pred` = "🔮 Predictive Analytics" → `render_predictive_analytics(con)` — positioned after Statistical Analysis tab
+- Cure calculator features: 8 inputs (age, AJCC stage, ETE type, BRAF, TERT, ATA risk band, tumor_size_cm, ln_status)
+- Hybrid theta adjustment for tumor size and LN status: multiplicative factors applied to PTCM theta (N0=1.0, N1a=1.15, N1b=1.35, Nx=1.05; size ≤1cm=0.92, 1-2cm=1.0, 2-4cm=1.12, >4cm=1.28); derived from published Cox estimates
+- Mixture cure model (compare_survival_models): S(t)=π+(1-π)·exp(-(t/σ)^κ); 3 params [logit_pi, log_kappa, log_sigma]; MLE via L-BFGS-B; AIC-comparable with PTCM
+- `scripts/40_predictive_analytics_batch.py`: CLI batch runner (model comparison, competing risks, batch PTCM scoring, manuscript report); supports `--md`, `--local`, `--dry-run`; outputs to `exports/predictive_analytics/`
+- `scripts/39_promotion_time_cure_models.py` now exports `predict_cure_probability()` and `load_fitted_params()` as reusable prediction API
+- `requirements.txt` additions: `scikit-survival`
+- xgboost import on macOS requires `libomp` (`brew install libomp`); import guard uses `except Exception` (not just `ImportError`) since XGBoostError is not an ImportError subclass
+- Dashboard now 39 tabs (was 38); "🔮 Predictive Analytics" inserted after "📊 Statistical Analysis"

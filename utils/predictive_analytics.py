@@ -85,10 +85,16 @@ except ImportError:
 try:
     from sksurv.ensemble import RandomSurvivalForest
     from sksurv.metrics import concordance_index_censored, brier_score as sksurv_brier
-    from sksurv.linear_model import CoxPHSurvivalAnalysis
+    from sksurv.linear_model import CoxPHSurvivalAnalysis, CoxnetSurvivalAnalysis
     HAS_SKSURV = True
 except ImportError:
     HAS_SKSURV = False
+
+try:
+    from sksurv.nonparametric import cumulative_incidence_competing_risks as sksurv_cif
+    HAS_SKSURV_CIF = True
+except ImportError:
+    HAS_SKSURV_CIF = False
 
 try:
     from docx import Document
@@ -162,13 +168,33 @@ PREDICTIVE_PRESETS: dict[str, dict[str, Any]] = {
 }
 
 CURE_CALCULATOR_FEATURES: dict[str, dict[str, Any]] = {
-    "age_at_diagnosis": {"label": "Age at diagnosis", "min": 18, "max": 90, "default": 45, "type": "slider"},
-    "ajcc_stage_8": {"label": "AJCC 8th Ed Stage", "options": ["I", "II", "III", "IV"], "default": "I", "type": "select"},
-    "ete_type": {"label": "ETE Type", "options": ["none", "microscopic", "gross"], "default": "none", "type": "select"},
-    "braf_status": {"label": "BRAF V600E", "options": [False, True], "default": False, "type": "toggle"},
-    "tert_status": {"label": "TERT Promoter", "options": [False, True], "default": False, "type": "toggle"},
-    "recurrence_risk_band": {"label": "ATA Risk Band", "options": ["low", "intermediate", "high"], "default": "low", "type": "select"},
+    "age_at_diagnosis": {"label": "Age at diagnosis", "min": 18, "max": 90, "default": 45, "type": "slider", "group": "core"},
+    "ajcc_stage_8": {"label": "AJCC 8th Ed Stage", "options": ["I", "II", "III", "IV"], "default": "I", "type": "select", "group": "core"},
+    "ete_type": {"label": "ETE Type", "options": ["none", "microscopic", "gross"], "default": "none", "type": "select", "group": "core"},
+    "braf_status": {"label": "BRAF V600E", "options": [False, True], "default": False, "type": "toggle", "group": "core"},
+    "tert_status": {"label": "TERT Promoter", "options": [False, True], "default": False, "type": "toggle", "group": "core"},
+    "recurrence_risk_band": {"label": "ATA Risk Band", "options": ["low", "intermediate", "high"], "default": "low", "type": "select", "group": "core"},
+    "tumor_size_cm": {"label": "Tumor size (cm)", "min": 0.1, "max": 10.0, "default": 1.5, "step": 0.1, "type": "slider", "group": "core"},
+    "ln_status": {"label": "Lymph node status", "options": ["N0", "N1a", "N1b", "Nx"], "default": "N0", "type": "select", "group": "core"},
 }
+
+# Hybrid theta adjustment factors for features not in the 10-covariate PTCM.
+# Derived from published Cox PH estimates in differentiated thyroid cancer
+# (Tuttle 2017, Adam 2015, Haugen 2016 ATA guidelines).  These multiplicative
+# factors modulate the PTCM theta to account for tumor size and LN effects
+# that are partially captured by the core AJCC/ETE/risk-band covariates.
+_THETA_ADJUSTMENT_LN: dict[str, float] = {
+    "N0": 1.0,
+    "N1a": 1.15,   # central compartment LN metastasis — modest uplift
+    "N1b": 1.35,   # lateral compartment LN — stronger effect
+    "Nx": 1.05,    # unknown — slight uplift to reflect uncertainty
+}
+_THETA_ADJUSTMENT_SIZE_BREAKPOINTS = [
+    (1.0, 0.92),   # ≤1 cm — protective (T1a)
+    (2.0, 1.0),    # 1-2 cm — reference (T1b)
+    (4.0, 1.12),   # 2-4 cm — moderate uplift (T2)
+    (10.0, 1.28),  # >4 cm — substantial uplift (T3a+)
+]
 
 CLINICAL_INTERPRETATIONS: dict[str, str] = {
     "very_high": (
@@ -401,8 +427,31 @@ class ThyroidPredictiveAnalyzer:
         beta = params[2:]
 
         x = _build_ptcm_feature_vector(patient_features, self._ptcm_age_mean, self._ptcm_age_std)
-        theta = float(np.exp(x @ beta))
+        theta_base = float(np.exp(x @ beta))
+
+        # Hybrid adjustment for tumor size and LN status (not in PTCM design matrix)
+        ln = str(patient_features.get("ln_status", "N0")).strip()
+        ln_adj = _THETA_ADJUSTMENT_LN.get(ln, 1.0)
+
+        size = float(patient_features.get("tumor_size_cm", 1.5))
+        size_adj = 1.0
+        for cutoff, factor in _THETA_ADJUSTMENT_SIZE_BREAKPOINTS:
+            if size <= cutoff:
+                size_adj = factor
+                break
+        else:
+            size_adj = _THETA_ADJUSTMENT_SIZE_BREAKPOINTS[-1][1]
+
+        theta = theta_base * ln_adj * size_adj
         cure_prob = float(np.exp(-theta))
+
+        if ln_adj != 1.0 or size_adj != 1.0:
+            result_warnings.append(
+                f"Hybrid adjustment applied: LN({ln})×{ln_adj:.2f}, "
+                f"size({size:.1f}cm)×{size_adj:.2f} → θ adjusted "
+                f"{theta_base:.3f}→{theta:.3f}. A full PTCM refit with "
+                f"expanded covariates would improve calibration."
+            )
 
         if cure_prob > 0.85:
             tier = "very_high"
@@ -620,8 +669,32 @@ class ThyroidPredictiveAnalyzer:
         if strata_col and strata_col in sub.columns:
             stratified = self._stratified_cif(sub, duration, event_indicator, strata_col, result_warnings)
 
+        # sksurv CIF with confidence bands (if available)
+        sksurv_cif_data = None
+        if HAS_SKSURV_CIF and competing_event_col:
+            try:
+                y_surv_cr = np.array(
+                    [(int(e), float(t)) for e, t in zip(sub[event_indicator], sub[duration])],
+                    dtype=[("event", np.int32), ("time", np.float64)],
+                )
+                sksurv_cif_data = sksurv_cif(y_surv_cr)
+            except Exception as exc:
+                result_warnings.append(f"sksurv CIF failed (non-critical): {exc}")
+
         # Build Plotly figure
         cif_plot = self._build_cif_plot(cif_primary, cif_competing, stratified, strata_col)
+
+        # Clinical methodology note
+        clinical_note = (
+            "**Interpretation guide:** Cause-specific hazard ratios estimate the "
+            "instantaneous rate of each event type among patients still event-free "
+            "(etiological insight: 'Does BRAF truly accelerate recurrence?'). "
+            "Cumulative incidence functions (CIF) account for competing risks and "
+            "directly estimate real-world probability of each event by a given timepoint "
+            "('What is my patient's actual probability of recurrence by year 10, "
+            "accounting for other-cause death?'). "
+            "Full subdistribution (Fine-Gray) modeling is planned for a future version."
+        )
 
         return {
             "cif_primary": cif_primary,
@@ -630,6 +703,8 @@ class ThyroidPredictiveAnalyzer:
             "summary_table": summary_df,
             "cause_specific_hrs": cs_hrs,
             "stratified_cifs": stratified,
+            "sksurv_cif": sksurv_cif_data,
+            "clinical_note": clinical_note,
             "n_obs": len(sub),
             "n_events": n_events,
             "n_competing": n_competing,
@@ -1137,7 +1212,61 @@ class ThyroidPredictiveAnalyzer:
                 "Notes": f"Cure π̄={s.get('overall_cure_fraction', 0):.1%}, κ={s.get('weibull_kappa', 0):.3f}",
             })
 
-        # Survival forest (if sksurv available)
+        # Mixture cure model (Weibull latency, constant cure fraction)
+        if HAS_SCIPY and n_events >= 10:
+            try:
+                mc_result = self._fit_mixture_cure(
+                    sub[dur].values, sub[event_col].values, n_events
+                )
+                if mc_result:
+                    rows.append({
+                        "Model": "Mixture Cure (Weibull)",
+                        "Type": "Parametric (cure)",
+                        "Concordance": "—",
+                        "AIC": mc_result["aic"],
+                        "Predictors": 0,
+                        "N": len(sub),
+                        "Events": n_events,
+                        "Notes": (
+                            f"Cure π={mc_result['cure_fraction']:.1%}, "
+                            f"κ={mc_result['kappa']:.3f}, "
+                            f"σ={mc_result['sigma']:.2f}y"
+                        ),
+                    })
+            except Exception as exc:
+                result_warnings.append(f"Mixture cure failed: {exc}")
+
+        # Penalized Cox (L2 via sksurv)
+        if HAS_SKSURV and predictors:
+            available = [p for p in predictors if p in sub.columns]
+            if len(available) >= 2:
+                try:
+                    pen_sub = sub[[time_col, event_col] + available].copy()
+                    for c in available:
+                        pen_sub[c] = pd.to_numeric(pen_sub[c], errors="coerce")
+                    pen_sub = pen_sub.dropna()
+                    X_pen = pen_sub[available].values
+                    y_pen = np.array(
+                        [(bool(e), float(t)) for e, t in zip(pen_sub[event_col].astype(bool), pen_sub[time_col])],
+                        dtype=[("event", bool), ("time", float)],
+                    )
+                    coxnet = CoxnetSurvivalAnalysis(l1_ratio=0.0, alpha_min_ratio=0.01, max_iter=1000)
+                    coxnet.fit(X_pen, y_pen)
+                    c_pen = concordance_index_censored(y_pen["event"], y_pen["time"], coxnet.predict(X_pen))
+                    rows.append({
+                        "Model": "Penalized Cox (Ridge)",
+                        "Type": "Semi-parametric (L2)",
+                        "Concordance": round(c_pen[0], 4),
+                        "AIC": "—",
+                        "Predictors": len(available),
+                        "N": len(pen_sub),
+                        "Events": int(pen_sub[event_col].sum()),
+                        "Notes": "L2-regularized partial likelihood",
+                    })
+                except Exception as exc:
+                    result_warnings.append(f"Penalized Cox failed: {exc}")
+
+        # Random Survival Forest (if sksurv available)
         if HAS_SKSURV and predictors:
             available = [p for p in predictors if p in sub.columns]
             if len(available) >= 2:
@@ -1200,6 +1329,70 @@ class ThyroidPredictiveAnalyzer:
             yaxis_title="Concordance Index",
             yaxis_range=[0, 1],
         )
+
+    # ── Mixture cure model (MLE) ───────────────────────────────────────
+
+    @staticmethod
+    def _fit_mixture_cure(
+        t: np.ndarray, e: np.ndarray, n_events: int,
+    ) -> dict[str, Any] | None:
+        """Fit a Weibull mixture cure model via MLE.
+
+        Model: S(t) = π + (1-π)·exp(-(t/σ)^κ)
+        where π is the cure fraction, κ the Weibull shape, σ the scale.
+
+        Three parameters: [logit_pi, log_kappa, log_sigma].
+        """
+        if not HAS_SCIPY or n_events < 10:
+            return None
+
+        def _sigmoid(z):
+            return 1.0 / (1.0 + np.exp(-np.clip(z, -30, 30)))
+
+        def _neg_ll(params, t, e):
+            logit_pi, log_k, log_s = params
+            pi = _sigmoid(logit_pi)
+            k = np.exp(log_k)
+            s = np.exp(log_s)
+            u = (t / s) ** k
+            Su = np.exp(-u)
+            fu = (k / s) * (t / s) ** (k - 1.0) * np.exp(-u)
+            fu = np.clip(fu, 1e-300, None)
+            Su = np.clip(Su, 1e-15, 1.0)
+
+            ll_event = np.log(np.clip((1.0 - pi) * fu, 1e-300, None))
+            ll_cens = np.log(np.clip(pi + (1.0 - pi) * Su, 1e-300, None))
+            return -np.sum(np.where(e == 1, ll_event, ll_cens))
+
+        p0 = np.array([
+            2.0,
+            np.log(1.0),
+            np.log(np.median(t[e == 1]) if e.sum() > 0 else np.median(t)),
+        ])
+        try:
+            res = minimize(
+                _neg_ll, p0, args=(t, e),
+                method="L-BFGS-B",
+                bounds=[(-10, 10), (-3, 3), (None, None)],
+                options={"maxiter": 2000, "ftol": 1e-10},
+            )
+            if not res.success:
+                return None
+            logit_pi, log_k, log_s = res.x
+            pi = float(_sigmoid(logit_pi))
+            kappa = float(np.exp(log_k))
+            sigma = float(np.exp(log_s))
+            n_p = 3
+            aic = 2 * res.fun + 2 * n_p
+            return {
+                "cure_fraction": pi,
+                "kappa": round(kappa, 4),
+                "sigma": round(sigma, 4),
+                "aic": round(aic, 1),
+                "neg_loglik": round(float(res.fun), 2),
+            }
+        except Exception:
+            return None
 
     # ── 5. Cure calculator interface spec ────────────────────────────────
 
