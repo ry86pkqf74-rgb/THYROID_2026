@@ -1,6 +1,39 @@
 # THYROID_2026 Release Notes
 
-## v2026.03.11-advanced-analytics (Latest)
+## v2026.03.11-predictive-workbench (Latest)
+**Date:** 2026-03-11
+**Patients:** 11,673 | **Enhancement:** Integrated Predictive Analytics & Comparative Survival Workbench
+
+### Predictive Analytics & Nomograms (New Dashboard Tab: "🔮 Predictive Analytics")
+
+#### `utils/predictive_analytics.py` — `ThyroidPredictiveAnalyzer` class
+- `predict_individual_cure_probability()` — PTCM-powered personalized cure estimation with cure tier (very_high/high/moderate/low), conditional survival at 1/3/5/10/15 years, feature contribution analysis (Δθ per covariate), and clinical interpretation text
+- `predict_cure_batch()` — score a DataFrame of patients with PTCM cure_prob and cure_tier columns
+- `fit_competing_risks()` — enhanced Aalen-Johansen CIF with stratified curves, cause-specific Cox HRs per event type, landmark summaries at 1/3/5/10 years
+- `train_explainable_nomogram()` — XGBoost, Random Forest, or scikit-survival Random Survival Forest with SHAP beeswarm/bar plots, calibration assessment, cross-validated AUC/Brier
+- `compare_survival_models()` — unified comparison of KM, Cox PH, PTCM, and RSF: concordance, AIC, event counts, model-specific notes
+- `create_interactive_cure_calculator()` — returns feature specs + prediction function for Streamlit widget wiring
+- `generate_manuscript_report()` — Word doc (.docx) with PTCM, competing risks, nomogram, and comparison sections
+- `plot_individual_cure_trajectory()` — personalized PTCM survival curve vs population average
+- Thyroid-specific presets: `PREDICTIVE_PRESETS` (recurrence, death), `CURE_CALCULATOR_FEATURES` (6 clinical inputs), `CLINICAL_INTERPRETATIONS` (per-tier clinical guidance)
+
+#### `app/predictive_analytics.py` — 5 sub-tabs in "🔮 Predictive Analytics" dashboard tab
+- **Model Comparison Hub** — one-click comparison of KM/Cox/PTCM/RSF with concordance bar chart
+- **Competing Risks Analysis** — preset selector, optional stratification, CIF curves, cause-specific HRs
+- **ML Nomograms & SHAP** — model type toggle, SHAP importance + beeswarm, calibration, individual risk prediction
+- **Personalized Cure Calculator** — slider/toggle inputs for 6 clinical features → live PTCM cure probability with trajectory plot, clinical interpretation, and feature contribution table
+- **Manuscript Export** — section picker, title/author inputs, Word document generation + download
+
+#### `scripts/39_promotion_time_cure_models.py` — new prediction API
+- `predict_cure_probability()` — reusable function for single-patient PTCM scoring
+- `load_fitted_params()` — loads fitted params from CSV exports for external callers
+
+#### Dependencies
+- `requirements.txt` — added `scikit-survival`
+
+---
+
+## v2026.03.11-advanced-analytics
 **Date:** 2026-03-11
 **Patients:** 11,673 | **Enhancement:** Advanced Analytics & AI — Phase 3
 

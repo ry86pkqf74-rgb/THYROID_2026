@@ -60,6 +60,7 @@ from app.statistical_analysis import render_statistical_analysis
 from app.cure_probability import render_cure_probability
 from app.patient_timeline_explorer import render_patient_timeline_explorer
 from app.advanced_analytics import render_advanced_analytics
+from app.predictive_analytics import render_predictive_analytics
 from app.thyroseq_integration import render_thyroseq_integration
 
 # ── Page config ───────────────────────────────────────────────────────────
@@ -2333,7 +2334,7 @@ def main():
      t_tl,t_ev,t_qa,t_surv,t_afv3,
      t_cqc,t_pat,t_rh,t_rm,t_rr,t_rtl,t_rq,t_diag,
      t_ec,t_md,t_rd,t_ind,t_od,t_as,t_ve,
-     t_advsurv,t_stat,t_advai,t_cure,t_pte,t_surv_out,t_tsq) = st.tabs([
+     t_advsurv,t_stat,t_advai,t_cure,t_pte,t_surv_out,t_pred,t_tsq) = st.tabs([
         "📊 Overview","🗃 Data Explorer","📈 Visualizations","🧬 Advanced",
         "🔬 Genetics & Molecular","🫀 Specimen Details","📡 Pre-Op Imaging",
         "⚕ Complications","📋 Recommendations & Sensitivities",
@@ -2351,6 +2352,7 @@ def main():
         "🎯 Cure Probability",
         "🗓 Patient Timeline",
         "Survival & Outcomes",
+        "🔮 Predictive Analytics",
         "🧪 ThyroSeq Integration",
     ])
     with t_ov:   render_overview(con)
@@ -2390,6 +2392,7 @@ def main():
     with t_cure: render_cure_probability(con)
     with t_pte:  render_patient_timeline_explorer(con)
     with t_surv_out: render_survival_outcomes(con)
+    with t_pred: render_predictive_analytics(con)
     with t_tsq:  render_thyroseq_integration(con)
 
     st.markdown("---")

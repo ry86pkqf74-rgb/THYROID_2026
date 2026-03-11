@@ -18,3 +18,4 @@ shap
 xgboost
 python-docx
 jinja2
+scikit-survival

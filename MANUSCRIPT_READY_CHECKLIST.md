@@ -19,6 +19,7 @@ Use this checklist before submission or Zenodo archive.
 - [x] Survival tab: Kaplan-Meier from `risk_enriched_mv` (if lifelines installed)
 - [x] Statistical Analysis tab: Table 1 generation, hypothesis testing, regression modeling, forest plots, diagnostics
 - [x] Publication footer visible: `THYROID_2026 v2026.03.10-publication-ready | Local DuckDB backup available`
+- [x] Predictive Analytics tab: model comparison, competing risks, ML nomograms, personalized cure calculator, manuscript export
 
 ## Exports & Studies
 
@@ -80,6 +81,25 @@ streamlit run dashboard.py
 ```bash
 streamlit run dashboard.py
 # Navigate to "🔬 Advanced Analytics & AI"
+```
+
+## Predictive Analytics Workbench (Phase 4)
+
+- [x] `utils/predictive_analytics.py` — `ThyroidPredictiveAnalyzer` with PTCM cure prediction, competing risks, ML nomograms, model comparison, manuscript export
+- [x] `app/predictive_analytics.py` — 5-tab "🔮 Predictive Analytics" dashboard tab
+- [x] PTCM-powered personalized cure calculator with clinical interpretation and trajectory plots
+- [x] Enhanced competing risks with cause-specific Cox HRs and stratified CIF curves
+- [x] Multi-model comparison hub (KM, Cox PH, PTCM, Random Survival Forest)
+- [x] Explainable ML nomograms (XGBoost/RF/sksurv RSF) with SHAP beeswarm + calibration
+- [x] One-click Word manuscript report with selectable sections (PTCM, CompetingRisks, Nomogram, Comparison)
+- [x] `scripts/39_promotion_time_cure_models.py` — added `predict_cure_probability()` and `load_fitted_params()` API
+- [x] `requirements.txt` — added scikit-survival
+- [x] Dashboard now 39 tabs
+
+### To access the Predictive Analytics tab:
+```bash
+streamlit run dashboard.py
+# Navigate to "🔮 Predictive Analytics"
 ```
 
 ## Next Steps

@@ -483,6 +483,108 @@ def _plot_cure_by_stratum(
     fig.write_html(str(export_dir / "ptcm_cure_by_stratum.html"))
 
 
+# ── Prediction API (reusable from other modules) ────────────────────────────
+
+def predict_cure_probability(
+    patient_features: dict,
+    params: np.ndarray | None = None,
+    age_mean: float = 50.0,
+    age_std: float = 15.0,
+) -> dict:
+    """Predict cure probability for a single patient.
+
+    Parameters
+    ----------
+    patient_features : dict
+        Keys: age_at_diagnosis, ajcc_stage_8, ete_type, braf_status,
+        tert_status, recurrence_risk_band.
+    params : ndarray, optional
+        Fitted PTCM params [log_kappa, log_sigma, beta_0, ..., beta_p].
+        If None, loads from CSV exports.
+    age_mean, age_std : float
+        Z-scoring parameters from training cohort.
+
+    Returns
+    -------
+    dict with cure_probability, theta, cure_tier, conditional_survival
+    """
+    if params is None:
+        params = load_fitted_params()
+        if params is None:
+            return {"error": "No fitted PTCM params available"}
+
+    log_kappa, log_sigma = params[0], params[1]
+    beta = params[2:]
+
+    age = float(patient_features.get("age_at_diagnosis", 45))
+    stage = str(patient_features.get("ajcc_stage_8", "I")).strip().upper()
+    ete = str(patient_features.get("ete_type", "none")).strip().lower()
+    braf = bool(patient_features.get("braf_status", False))
+    tert = bool(patient_features.get("tert_status", False))
+    risk = str(patient_features.get("recurrence_risk_band", "low")).strip().lower()
+
+    x = np.array([
+        1.0,
+        (age - age_mean) / max(age_std, 1.0),
+        float(stage in ("II", "2")),
+        float(stage in ("III", "3")),
+        float(stage in ("IV", "IVA", "IVB", "IVC", "4")),
+        float(ete == "microscopic"),
+        float(ete == "gross"),
+        float(braf),
+        float(tert),
+        float(risk == "high"),
+    ])
+    theta = float(np.exp(x @ beta))
+    cure = float(np.exp(-theta))
+
+    if cure > 0.85:
+        tier = "very_high"
+    elif cure > 0.70:
+        tier = "high"
+    elif cure > 0.50:
+        tier = "moderate"
+    else:
+        tier = "low"
+
+    cond = []
+    for yr in [1, 3, 5, 10, 15]:
+        t_d = np.array([yr * 365.25])
+        _, F0 = _weibull_f0_F0(t_d, log_kappa, log_sigma)
+        s = float(np.exp(-theta * F0)[0])
+        cond.append({"year": yr, "survival": round(s, 4), "risk_pct": round((1 - s) * 100, 2)})
+
+    return {
+        "cure_probability": round(cure, 4),
+        "theta": round(theta, 4),
+        "cure_tier": tier,
+        "conditional_survival": cond,
+    }
+
+
+def load_fitted_params() -> np.ndarray | None:
+    """Load fitted PTCM parameters from CSV exports."""
+    meta_path = EXPORT_DIR / "analysis_metadata.json"
+    coeff_path = EXPORT_DIR / "ptcm_covariate_effects.csv"
+    if not meta_path.exists() or not coeff_path.exists():
+        return None
+    try:
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
+        cdf = pd.read_csv(coeff_path)
+        cov_order = {c: i for i, c in enumerate(COVARIATES)}
+        cdf["_order"] = cdf["covariate"].map(cov_order)
+        cdf = cdf.sort_values("_order").dropna(subset=["_order"])
+        betas = cdf["beta"].values
+        kappa = meta.get("weibull_kappa", 1.0)
+        sigma_years = meta.get("weibull_sigma_years", 5.0)
+        return np.concatenate([
+            [np.log(max(kappa, 1e-6)), np.log(max(sigma_years * 365.25, 1.0))],
+            betas,
+        ])
+    except Exception:
+        return None
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
