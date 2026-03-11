@@ -4,19 +4,30 @@ from __future__ import annotations
 import plotly.graph_objects as go
 import streamlit as st
 
-from app.helpers import sqdf, sqs, mc, sl, badge, PL, require_view, tbl_exists
+from app.helpers import sqdf, sqs, mc, sl, badge, PL, require_view, tbl_exists, qual
 
 
 def render_patient_audit(con, rw_con=None) -> None:
-    views_needed = [
-        "streamlit_patient_header_v",
+    if not tbl_exists(con, "streamlit_patient_header_v"):
+        st.warning(
+            "Patient header table is not yet available. "
+            "Run `python scripts/03_research_views.py --md` to create it.",
+            icon="⚠️",
+        )
+        return
+
+    optional_views = [
         "streamlit_patient_timeline_v",
         "streamlit_patient_conflicts_v",
         "streamlit_patient_manual_review_v",
     ]
-    for v in views_needed:
-        if not require_view(con, v):
-            return
+    _missing_optional = [v for v in optional_views if not tbl_exists(con, v)]
+    if _missing_optional:
+        st.info(
+            f"Optional views not yet deployed: {', '.join(_missing_optional)}. "
+            "Some panels will be hidden.",
+            icon="ℹ️",
+        )
 
     st.markdown(sl("Patient Audit Mode"), unsafe_allow_html=True)
 
@@ -33,7 +44,7 @@ def render_patient_audit(con, rw_con=None) -> None:
         st.session_state.pop("jump_to_patient", None)
 
     # ── Header ───────────────────────────────────────────────────────────
-    hdr = sqdf(con, f"SELECT * FROM streamlit_patient_header_v WHERE research_id = {pid}")
+    hdr = sqdf(con, f"SELECT * FROM {qual('streamlit_patient_header_v')} WHERE research_id = {pid}")
     if hdr.empty:
         with col_info:
             st.info(f"No data found for research_id = {pid}")
@@ -94,7 +105,11 @@ def render_patient_audit(con, rw_con=None) -> None:
 
     # ── Timeline ─────────────────────────────────────────────────────────
     st.markdown(sl("Longitudinal Event Timeline"), unsafe_allow_html=True)
-    tl = sqdf(con, f"SELECT * FROM streamlit_patient_timeline_v WHERE research_id = {pid} ORDER BY event_date NULLS LAST")
+    if not tbl_exists(con, "streamlit_patient_timeline_v"):
+        st.caption("Timeline view not deployed. Run scripts 15→18.")
+        tl = sqdf(con, "SELECT 1 WHERE FALSE")
+    else:
+        tl = sqdf(con, f"SELECT * FROM {qual('streamlit_patient_timeline_v')} WHERE research_id = {pid} ORDER BY event_date NULLS LAST")
     if tl.empty:
         st.caption("No timeline events found.")
     else:
@@ -128,7 +143,11 @@ def render_patient_audit(con, rw_con=None) -> None:
 
     # ── Conflicts ────────────────────────────────────────────────────────
     st.markdown(sl("Conflicts by Domain"), unsafe_allow_html=True)
-    conflicts = sqdf(con, f"SELECT * FROM streamlit_patient_conflicts_v WHERE research_id = {pid}")
+    if not tbl_exists(con, "streamlit_patient_conflicts_v"):
+        st.caption("Conflicts view not deployed. Run scripts 15→18.")
+        conflicts = sqdf(con, "SELECT 1 WHERE FALSE")
+    else:
+        conflicts = sqdf(con, f"SELECT * FROM {qual('streamlit_patient_conflicts_v')} WHERE research_id = {pid}")
     if conflicts.empty:
         st.success("No conflicts detected for this patient.")
     else:
@@ -149,7 +168,11 @@ def render_patient_audit(con, rw_con=None) -> None:
 
     # ── Manual Review Items ──────────────────────────────────────────────
     st.markdown(sl("Manual Review Queue Items"), unsafe_allow_html=True)
-    reviews = sqdf(con, f"SELECT * FROM streamlit_patient_manual_review_v WHERE research_id = {pid} ORDER BY priority_score DESC")
+    if not tbl_exists(con, "streamlit_patient_manual_review_v"):
+        st.caption("Manual review view not deployed. Run scripts 15→18.")
+        reviews = sqdf(con, "SELECT 1 WHERE FALSE")
+    else:
+        reviews = sqdf(con, f"SELECT * FROM {qual('streamlit_patient_manual_review_v')} WHERE research_id = {pid} ORDER BY priority_score DESC")
     if reviews.empty:
         st.success("No items in the review queue for this patient.")
     else:

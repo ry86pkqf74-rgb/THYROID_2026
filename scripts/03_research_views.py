@@ -663,6 +663,131 @@ def main() -> None:
     except Exception as exc:
         print(f"{'advanced_features_v3 alias':35s} skipped ({exc})")
 
+    # ── STREAMLIT-SPECIFIC TABLES (safe fallback for deployment errors) ──
+    #
+    # These materialized tables resolve the "Required view not available"
+    # error on Streamlit Cloud.  Script 18 creates the full adjudication
+    # versions; these safe versions use only columns present in the base
+    # episode tables so they succeed even without the full 15→19 chain.
+    print("-" * 72)
+    print("STREAMLIT SUPPORT TABLES")
+
+    try:
+        con.execute("""
+            CREATE OR REPLACE TABLE streamlit_patient_header_v AS
+            SELECT
+                s.research_id,
+                s.histology_normalized AS primary_histology,
+                s.variant_normalized AS primary_variant,
+                s.t_stage_reconciled AS primary_t_stage,
+                s.histology_status,
+                s.highest_severity AS overall_severity,
+                CASE
+                    WHEN s.total_issues >= 5 THEN 'critical'
+                    WHEN s.total_issues >= 3 THEN 'high'
+                    WHEN s.total_issues >= 1 THEN 'medium'
+                    ELSE 'low'
+                END AS review_priority_tier,
+                s.total_issues AS total_review_items,
+                CASE WHEN s.histology_status IS NOT NULL
+                     THEN TRUE ELSE FALSE END AS histology_analysis_eligible,
+                s.has_high_risk_molecular AS has_eligible_molecular,
+                s.has_definite_rai AS has_eligible_rai,
+                s.molecular_test_count,
+                s.rai_episode_count,
+                s.total_issues AS total_validation_issues
+            FROM patient_reconciliation_summary_v s;
+        """)
+        n = con.execute(
+            "SELECT COUNT(*) FROM streamlit_patient_header_v"
+        ).fetchone()[0]
+        print(f"{'streamlit_patient_header_v':35s} rows={n:,}")
+    except Exception as exc:
+        print(f"{'streamlit_patient_header_v':35s} skipped ({exc})")
+
+    try:
+        con.execute("""
+            CREATE OR REPLACE TABLE streamlit_cohort_qc_summary_v AS
+            WITH total_patients AS (
+                SELECT COUNT(DISTINCT research_id) AS n
+                FROM patient_reconciliation_summary_v
+            )
+            SELECT
+                (SELECT COUNT(*) FROM histology_analysis_cohort_v
+                 WHERE discordance_type IS NOT NULL) AS histology_discordant,
+                (SELECT COUNT(*) FROM histology_analysis_cohort_v
+                 WHERE analysis_eligible_flag = TRUE) AS histology_analysis_eligible,
+                (SELECT COUNT(*) FROM histology_analysis_cohort_v
+                 WHERE adjudication_needed_flag = TRUE) AS histology_review_needed,
+                (SELECT COUNT(*) FROM molecular_episode_v3) AS molecular_total_rows,
+                (SELECT COUNT(*) FROM molecular_episode_v3
+                 WHERE molecular_analysis_eligible_flag = TRUE) AS molecular_analysis_eligible,
+                (SELECT COUNT(*) FROM molecular_episode_v3
+                 WHERE molecular_analysis_eligible_flag = FALSE) AS molecular_unresolved,
+                (SELECT COUNT(*) FROM molecular_episode_v3
+                 WHERE TRY_CAST(overall_linkage_confidence AS INTEGER) < 50
+                   AND molecular_analysis_eligible_flag = TRUE) AS molecular_low_confidence,
+                (SELECT COUNT(*) FROM rai_episode_v3) AS rai_total_captured,
+                (SELECT COUNT(*) FROM rai_episode_v3
+                 WHERE rai_assertion_status IN (
+                     'definite_received', 'likely_received'
+                 )) AS rai_definite_likely,
+                (SELECT COUNT(*) FROM rai_episode_v3
+                 WHERE rai_assertion_status IN (
+                     'definite_received', 'likely_received'
+                 )) AS rai_analyzable,
+                (SELECT COUNT(*) FROM rai_episode_v3
+                 WHERE rai_assertion_status NOT IN (
+                     'negated', 'definite_received', 'likely_received'
+                 )) AS rai_unresolved,
+                (SELECT COUNT(*) FROM validation_failures_v3
+                 WHERE severity = 'error') AS validation_errors,
+                (SELECT COUNT(*) FROM validation_failures_v3
+                 WHERE severity = 'warning') AS validation_warnings,
+                (SELECT COUNT(*) FROM validation_failures_v3
+                 WHERE severity = 'info') AS validation_info,
+                (SELECT COUNT(DISTINCT research_id)
+                 FROM validation_failures_v3) AS validation_patients_affected,
+                (SELECT COUNT(*) FROM patient_reconciliation_summary_v
+                 WHERE total_issues > 0) AS review_queue_patients,
+                (SELECT COUNT(*) FROM patient_reconciliation_summary_v
+                 WHERE total_issues >= 5) AS review_critical_patients,
+                (SELECT COUNT(*) FROM patient_reconciliation_summary_v
+                 WHERE total_issues >= 3
+                   AND total_issues < 5) AS review_high_patients,
+                (SELECT n FROM total_patients) AS total_patients,
+                CURRENT_DATE AS last_refresh_date,
+                '2026-03-10' AS build_version;
+        """)
+        n = con.execute(
+            "SELECT COUNT(*) FROM streamlit_cohort_qc_summary_v"
+        ).fetchone()[0]
+        print(f"{'streamlit_cohort_qc_summary_v':35s} rows={n:,}")
+    except Exception as exc:
+        print(f"{'streamlit_cohort_qc_summary_v':35s} skipped ({exc})")
+
+    # ── FINAL OPTIMIZATION LAYER ─────────────────────────────────────────
+    try:
+        con.execute("""
+            CREATE OR REPLACE TABLE survival_cohort AS
+            SELECT * FROM advanced_features_sorted
+            WHERE has_thyroglobulin_labs = TRUE
+              OR has_nuclear_med = TRUE;
+        """)
+        n = con.execute("SELECT COUNT(*) FROM survival_cohort").fetchone()[0]
+        print(f"{'survival_cohort':35s} rows={n:,}")
+    except Exception as exc:
+        print(f"{'survival_cohort':35s} skipped ({exc})")
+
+    try:
+        con.execute("""
+            CREATE OR REPLACE TABLE publication_kpis AS
+            SELECT * FROM overview_kpis;
+        """)
+        print(f"{'publication_kpis':35s} ✓")
+    except Exception as exc:
+        print(f"{'publication_kpis':35s} skipped ({exc})")
+
     print("-" * 72)
     print("Validation snapshot (9 views)")
     for name in creation_order:

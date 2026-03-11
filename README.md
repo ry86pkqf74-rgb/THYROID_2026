@@ -228,3 +228,42 @@ QA reconciliation report: [docs/QA_report.md](docs/QA_report.md).
 
 This creates the five tables as views on top of the modern stack (no data duplication).
 Restart the Streamlit app after running. See [data_dictionary.md](data_dictionary.md) § Legacy Compatibility Layer.
+
+## Daily Refresh / Nightly Automation
+
+Run the full pipeline chain locally:
+
+```bash
+.venv/bin/python scripts/36_daily_refresh.py --md
+```
+
+Or use the Publication Export pipeline for manuscript-ready outputs:
+
+```bash
+.venv/bin/python scripts/37_publication_export.py --md
+```
+
+<!-- GitHub Actions nightly refresh (add to .github/workflows/nightly-refresh.yml):
+
+name: Nightly Pipeline Refresh
+on:
+  schedule:
+    - cron: '0 6 * * *'    # 6 AM UTC daily
+  workflow_dispatch:        # manual trigger
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt
+      - run: python scripts/36_daily_refresh.py --md
+        env:
+          MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
+      - run: python scripts/37_publication_export.py --md
+        env:
+          MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
+-->

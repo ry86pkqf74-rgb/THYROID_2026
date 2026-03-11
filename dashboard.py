@@ -1791,6 +1791,49 @@ def main():
             st.caption(f"Last refresh: {datetime.now():%Y-%m-%d %H:%M}")
             st.caption("🚀 MotherDuck Optimized • Materialized tables + caching active")
 
+        # ── Data Freshness & QC ──────────────────────────────────────
+        with st.expander("📊 Data Freshness & QC"):
+            _qc_tbl = qual("streamlit_cohort_qc_summary_v")
+            if tbl_exists(con, "streamlit_cohort_qc_summary_v"):
+                try:
+                    _qc_df = cached_sqdf(
+                        con,
+                        f"SELECT * FROM {_qc_tbl}",
+                        key="data_freshness_qc",
+                    )
+                    if not _qc_df.empty:
+                        _qc = _qc_df.iloc[0]
+                        _refresh = _qc.get("last_refresh_date", "unknown")
+                        _build = _qc.get("build_version", "unknown")
+                        _total = int(_qc.get("total_patients", 0))
+                        st.markdown(f"**Last Refresh:** {_refresh}")
+                        st.markdown(f"**Build Version:** {_build}")
+                        st.markdown(f"**Total Patients:** {_total:,}")
+                        st.markdown("---")
+                        st.markdown("**View Status:**")
+                        for _vn in [
+                            "streamlit_cohort_qc_summary_v",
+                            "streamlit_patient_header_v",
+                            "advanced_features_sorted",
+                            "overview_kpis",
+                            "survival_cohort",
+                            "publication_kpis",
+                        ]:
+                            _avail = tbl_exists(con, _vn)
+                            st.markdown(
+                                f"{'✅' if _avail else '❌'} `{_vn}`"
+                            )
+                    else:
+                        st.info("QC summary table is empty.")
+                except Exception as _qc_err:
+                    st.warning(f"Could not read QC summary: {_qc_err}")
+            else:
+                st.warning(
+                    "QC summary table not yet materialized. "
+                    "Run `python scripts/03_research_views.py --md`.",
+                    icon="⚠️",
+                )
+
         # ── Connection Help ──────────────────────────────────────────
         with st.expander("❓ Connection Help"):
             st.markdown(

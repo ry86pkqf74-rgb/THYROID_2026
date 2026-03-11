@@ -4,14 +4,19 @@ from __future__ import annotations
 import plotly.graph_objects as go
 import streamlit as st
 
-from app.helpers import sqdf, mc, sl, badge, PL, require_view
+from app.helpers import sqdf, mc, sl, badge, PL, require_view, tbl_exists, qual
 
 
 def render_cohort_qc(con) -> None:
-    if not require_view(con, "streamlit_cohort_qc_summary_v"):
+    if not tbl_exists(con, "streamlit_cohort_qc_summary_v"):
+        st.warning(
+            "Cohort QC summary table is not yet available. "
+            "Run `python scripts/03_research_views.py --md` to create it.",
+            icon="⚠️",
+        )
         return
 
-    df = sqdf(con, "SELECT * FROM streamlit_cohort_qc_summary_v")
+    df = sqdf(con, f"SELECT * FROM {qual('streamlit_cohort_qc_summary_v')}")
     if df.empty:
         st.info("QC summary view returned no data.")
         return
