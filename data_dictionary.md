@@ -1023,3 +1023,6 @@ After running, restart the Streamlit dashboard to clear the cached connection.
 - `timeline_rescue_v2_mv`
 - `timeline_unresolved_summary_v2_mv`
 - `validation_failures_v3`
+- `enriched_patient_timeline_v3_mv` — timeline_rescue_v3_mv joined with patient header, first RAI, and per-patient rescue rate; `genetic_year` is coarsened to YYYY-01-01 when used as a date anchor
+- `date_rescue_rate_summary` — single-row-per-domain KPI table; overall rescue rate, rescued row count, and average confidence across all 6 note_entities_* domains
+- `timeline_rescue_v3_mv` — V3 taxonomy enrichment of all 6 note_entities_* tables; adds date_status, date_is_source_native_flag, date_is_inferred_flag, date_requires_manual_review_flag, inferred_event_date

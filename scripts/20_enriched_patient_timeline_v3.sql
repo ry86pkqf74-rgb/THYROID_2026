@@ -24,29 +24,30 @@ CREATE OR REPLACE VIEW enriched_patient_timeline_v3_mv AS
 WITH
 
 -- ── Patient spine ──────────────────────────────────────────────────────────
+-- genetic_year is coarsened to YYYY-01-01 when used
 patient_spine AS (
     SELECT
-        mc.research_id,
-        mc.sex,
-        mc.age_at_surgery,
-        mc.histology_1_type,
-        mc.overall_stage_ajcc8,
+        pl.research_id,
+        pl.sex,
+        pl.age_at_surgery,
+        pl.histology_1_type,
+        pl.overall_stage_ajcc8,
         MIN(TRY_CAST(ps.surg_date AS DATE)) AS first_surgery_date
-    FROM master_cohort mc
-    LEFT JOIN path_synoptics ps ON mc.research_id = ps.research_id
+    FROM patient_level_summary_mv pl
+    LEFT JOIN path_synoptics ps ON pl.research_id = ps.research_id
     GROUP BY
-        mc.research_id, mc.sex, mc.age_at_surgery,
-        mc.histology_1_type, mc.overall_stage_ajcc8
+        pl.research_id, pl.sex, pl.age_at_surgery,
+        pl.histology_1_type, pl.overall_stage_ajcc8
 ),
 
 -- ── First RAI per patient (for time-to-RAI) ───────────────────────────────
 first_rai AS (
     SELECT
         research_id,
-        MIN(TRY_CAST(inferred_event_date AS DATE)) AS first_rai_date,
-        MAX(rai_dose_mci)                           AS max_rai_dose
+        MIN(TRY_CAST(resolved_rai_date AS DATE)) AS first_rai_date,
+        MAX(dose_mci)                             AS max_rai_dose
     FROM rai_treatment_episode_v2
-    WHERE inferred_event_date IS NOT NULL
+    WHERE resolved_rai_date IS NOT NULL
     GROUP BY research_id
 ),
 
