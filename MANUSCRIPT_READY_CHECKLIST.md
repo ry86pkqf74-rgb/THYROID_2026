@@ -16,6 +16,7 @@ Use this checklist before submission or Zenodo archive.
 - [ ] Overview tab: cohort KPIs, date rescue rate, completeness by year
 - [ ] Advanced Features v3 tab: full column set, filters, export
 - [ ] Survival tab: Kaplan-Meier from `risk_enriched_mv` (if lifelines installed)
+- [ ] Statistical Analysis tab: Table 1 generation, hypothesis testing, regression modeling, forest plots, diagnostics
 - [ ] Publication footer visible: `THYROID_2026 v2026.03.10-publication-ready | Local DuckDB backup available`
 
 ## Exports & Studies

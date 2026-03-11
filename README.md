@@ -110,6 +110,10 @@ The share is SELECT-only — data cannot be modified through it.
 - **QA & Adjudication** — cross-domain QA summary, linkage quality, date completeness
 - **Validation Engine** — adjudication confirmations, chronology anomalies,
   completeness scorecard, combined review queue, domain-level downloads
+- **Statistical Analysis** — interactive Table 1 (tableone), hypothesis testing
+  with FDR/Bonferroni correction, logistic regression (OR, VIF, AUC),
+  Cox proportional hazards (HR, Schoenfeld diagnostics), forest plots,
+  correlation heatmaps, missing data visualization, and export
 
 ## CI / CD
 

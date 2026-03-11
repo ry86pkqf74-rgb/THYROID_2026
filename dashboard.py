@@ -58,6 +58,7 @@ from app.operative_dashboard import render_operative_dashboard
 from app.adjudication_summary import render_adjudication_summary
 from app.validation_engine import render_validation_engine
 from app.advanced_survival import render_advanced_survival
+from app.statistical_analysis import render_statistical_analysis
 
 # ── Page config ───────────────────────────────────────────────────────────
 st.set_page_config(page_title="Thyroid Cohort Explorer", page_icon="🔬",
@@ -1853,7 +1854,7 @@ def main():
      t_tl,t_ev,t_qa,t_surv,t_afv3,
      t_cqc,t_pat,t_rh,t_rm,t_rr,t_rtl,t_rq,t_diag,
      t_ec,t_md,t_rd,t_ind,t_od,t_as,t_ve,
-     t_advsurv) = st.tabs([
+     t_advsurv,t_stat) = st.tabs([
         "📊 Overview","🗃 Data Explorer","📈 Visualizations","🧬 Advanced",
         "🔬 Genetics & Molecular","🫀 Specimen Details","📡 Pre-Op Imaging",
         "⚕ Complications","📋 Recommendations & Sensitivities",
@@ -1866,6 +1867,7 @@ def main():
         "📡 Imaging & Nodules","🔪 Operative Detail","📋 QA & Adjudication",
         "🛡 Validation Engine",
         "🔬 Advanced Survival",
+        "📊 Statistical Analysis",
     ])
     with t_ov:   render_overview(con)
     with t_ex:   render_explorer(df_filt)
@@ -1899,6 +1901,7 @@ def main():
     with t_as:   render_adjudication_summary(con)
     with t_ve:   render_validation_engine(con)
     with t_advsurv: render_advanced_survival(con)
+    with t_stat: render_statistical_analysis(con)
 
     st.markdown("---")
     st.markdown(

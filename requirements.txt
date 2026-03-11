@@ -8,3 +8,7 @@ openpyxl
 pyarrow
 python-dateutil
 pytest
+statsmodels
+scipy
+tableone
+pingouin
