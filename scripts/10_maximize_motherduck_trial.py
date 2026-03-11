@@ -666,6 +666,31 @@ COMPLICATION_SEVERITY_MV_SQL = textwrap.dedent("""\
         ON mc.research_id = tp.research_id
 """)
 
+VW_CONFIRMED_POSTOP_RLN_SQL = textwrap.dedent("""\
+    CREATE OR REPLACE TABLE vw_confirmed_postop_rln_injury AS
+    WITH surgical_patients AS (
+        SELECT
+            CAST(research_id AS INT) AS research_id,
+            MIN(TRY_CAST(surg_date AS DATE)) AS first_surgery_date
+        FROM path_synoptics
+        WHERE TRY_CAST(surg_date AS DATE) IS NOT NULL
+        GROUP BY 1
+    )
+    SELECT
+        CAST(c.research_id AS INT) AS research_id,
+        c.vocal_cord_status,
+        c.affected_side,
+        TRY_CAST(c.laryngoscopy_date AS DATE) AS laryngoscopy_date,
+        sp.first_surgery_date AS surgery_date,
+        DATEDIFF('day', sp.first_surgery_date,
+                 TRY_CAST(c.laryngoscopy_date AS DATE)) AS days_post_surgery
+    FROM complications c
+    JOIN surgical_patients sp
+        ON CAST(c.research_id AS INT) = sp.research_id
+    WHERE LOWER(CAST(c.vocal_cord_status AS VARCHAR)) IN ('paresis', 'paralysis')
+      AND TRY_CAST(c.laryngoscopy_date AS DATE) > sp.first_surgery_date
+""")
+
 MATERIALIZED_TABLES = [
     ("patient_level_summary_mv", PATIENT_SUMMARY_MV_SQL,
      "One row per patient: latest labs, comorbidities, recurrence, follow-up"),
@@ -681,6 +706,8 @@ MATERIALIZED_TABLES = [
      "Molecular testing + pathology + Bethesda + recurrence"),
     ("complication_severity_mv", COMPLICATION_SEVERITY_MV_SQL,
      "Surgical complications with severity scoring"),
+    ("vw_confirmed_postop_rln_injury", VW_CONFIRMED_POSTOP_RLN_SQL,
+     "Confirmed postop RLN injury: laryngoscopy-verified vocal cord paresis/paralysis"),
 ]
 
 EXPORT_TABLES = [

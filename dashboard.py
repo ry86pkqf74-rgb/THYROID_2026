@@ -348,7 +348,7 @@ def render_overview(con):
         tg=q(con,f"SELECT COUNT(*) FROM {_mc} WHERE has_thyroglobulin_labs"),
         atg=q(con,f"SELECT COUNT(*) FROM {_mc} WHERE has_anti_thyroglobulin_labs"),
         comp=q(con,f"SELECT COUNT(DISTINCT research_id) FROM {_cx}") if tbl_exists(con,"complications") else 0,
-        rln=q(con,f"SELECT COUNT(DISTINCT research_id) FROM {_cx} WHERE LOWER(CAST(rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR)) NOT IN ('','no','none','n/a','na','nan','0','false','neg','negative','absent','normal') AND rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy IS NOT NULL") if tbl_exists(con,"complications") else 0,
+        rln=q(con,f"SELECT COUNT(DISTINCT research_id) FROM {qual('vw_confirmed_postop_rln_injury')}") if tbl_exists(con,"vw_confirmed_postop_rln_injury") else (q(con,f"SELECT COUNT(DISTINCT research_id) FROM {_cx} WHERE LOWER(CAST(rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR)) NOT IN ('','no','none','n/a','na','nan','0','false','neg','negative','absent','normal') AND rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy IS NOT NULL") if tbl_exists(con,"complications") else 0),
         gen=q(con,f"SELECT COUNT(DISTINCT research_id) FROM {_gt}") if tbl_exists(con,"genetic_testing") else 0,
     )
     st.markdown(f'<div style="background:linear-gradient(135deg,#0a1a20,#0e1219);border:1px solid #1e2535;border-left:3px solid #2dd4bf;border-radius:12px;padding:.9rem 1.4rem;margin-bottom:1.2rem"><div style="font-family:\'DM Mono\',monospace;font-size:.62rem;letter-spacing:.15em;color:#2dd4bf;text-transform:uppercase">Total Cohort</div><div style="font-family:\'DM Serif Display\',serif;font-size:2.4rem;color:#f0f4ff;line-height:1">{m["total"]:,} <span style="font-size:.9rem;color:#8892a4;font-family:sans-serif">patients</span></div></div>',unsafe_allow_html=True)
@@ -356,7 +356,7 @@ def render_overview(con):
     grid = [
         [("Tumor Pathology",f"{m['tumor_path']:,}",None),("Benign Pathology",f"{m['benign_path']:,}",None),("FNA Cytology",f"{m['fna']:,}",None),("BRAF Mentioned",f"{m['braf']:,}",None)],
         [("RAI Positive",f"{m['rai_pos']:,}",None),("Nuclear Med",f"{m['nuclear']:,}",None),("Ultrasound",f"{m['us']:,}",None),("CT Imaging",f"{m['ct']:,}",None)],
-        [("Tg Labs",f"{m['tg']:,}",None),("Anti-Tg Labs",f"{m['atg']:,}",None),("Complications Data",f"{m['comp']:,}",None),("Genetic Testing",f"{m['gen']:,}","ThyroSeq / Afirma")],
+        [("Tg Labs",f"{m['tg']:,}",None),("Anti-Tg Labs",f"{m['atg']:,}",None),("Complications Data",f"{m['comp']:,}",f"{m['rln']:,} confirmed postop RLN"),("Genetic Testing",f"{m['gen']:,}","ThyroSeq / Afirma")],
     ]
     for row in grid:
         cols = st.columns(4)
@@ -981,15 +981,35 @@ def render_complications(con):
         return
 
     _NEG = "('','no','none','n/a','na','nan','0','false','neg','negative','absent','normal')"
-    _CONFIRMED_FILTER = (
-        f"LOWER(CAST(rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR)) "
-        f"NOT IN {_NEG} "
-        f"AND rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy IS NOT NULL"
-    )
+
+    _rln_view = "vw_confirmed_postop_rln_injury"
+    _rln_view_exists = tbl_exists(con, _rln_view)
+    if _rln_view_exists:
+        _rln_q = qual(_rln_view)
+        _ps_q = qual("path_synoptics")
+        rln_df = sqdf(con, f"""
+            SELECT
+                COUNT(DISTINCT research_id) AS rln_injury_patients,
+                ROUND(100.0 * COUNT(DISTINCT research_id) /
+                    NULLIF((SELECT COUNT(DISTINCT CAST(research_id AS INT))
+                            FROM {_ps_q}
+                            WHERE TRY_CAST(surg_date AS DATE) IS NOT NULL), 0), 2) AS pct
+            FROM {_rln_q}
+        """)
+        rln_n = int(rln_df.iloc[0]["rln_injury_patients"]) if not rln_df.empty else 0
+        rln_pct = float(rln_df.iloc[0]["pct"]) if (not rln_df.empty and rln_df.iloc[0]["pct"] is not None) else 0.0
+    else:
+        _CONFIRMED_FILTER = (
+            f"LOWER(CAST(rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy AS VARCHAR)) "
+            f"NOT IN {_NEG} "
+            f"AND rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy IS NOT NULL"
+        )
+        rln_n = sqs(con, f"SELECT COUNT(DISTINCT research_id) FROM {_cx} WHERE {_CONFIRMED_FILTER}")
+        rln_pct = 0.0
+
     comp_sql = f"""
     SELECT
         COUNT(DISTINCT research_id) AS total_patients,
-        COUNT(DISTINCT CASE WHEN {_CONFIRMED_FILTER} THEN research_id END) AS rln_patients,
         COUNT(DISTINCT CASE
             WHEN LOWER(CAST(seroma AS VARCHAR)) NOT IN {_NEG} AND seroma IS NOT NULL
             THEN research_id END) AS seroma_patients,
@@ -1012,23 +1032,28 @@ def render_complications(con):
 
     row = df_comp.iloc[0]
     total = int(row["total_patients"])
-    rln_n = int(row["rln_patients"])
     ser_n = int(row["seroma_patients"])
     hem_n = int(row["hematoma_patients"])
     hypo_n = int(row["hypocalcemia_patients"])
     hpt_n = int(row["hypoparath_patients"])
 
     def _pct(n):
-        return f"{100.0 * n / total:.1f}%" if total else "—"
+        return f"{100.0 * n / total:.1f}%" if total else "\u2014"
 
     c1, c2, c3 = st.columns(3)
     with c1:
         st.markdown(mc("Patients w/ Complication Data", f"{total:,}"), unsafe_allow_html=True)
     with c2:
-        st.markdown(
-            mc("Confirmed RLN Injury / VCP", f"{rln_n:,}", f"{_pct(rln_n)} of cohort"),
-            unsafe_allow_html=True,
-        )
+        if _rln_view_exists:
+            st.markdown(
+                mc("Confirmed Postop RLN Injury", f"{rln_n:,}", f"{rln_pct}% of surgical cohort"),
+                unsafe_allow_html=True,
+            )
+        else:
+            st.markdown(
+                mc("RLN Injury / VCP (crude)", f"{rln_n:,}", f"{_pct(rln_n)} of cohort"),
+                unsafe_allow_html=True,
+            )
     with c3:
         st.markdown(mc("Hypocalcemia", f"{hypo_n:,}", f"{_pct(hypo_n)} of cohort"), unsafe_allow_html=True)
 
@@ -1040,17 +1065,28 @@ def render_complications(con):
     with c6:
         st.markdown(mc("Hypoparathyroidism", f"{hpt_n:,}", f"{_pct(hpt_n)} of cohort"), unsafe_allow_html=True)
 
-    with st.expander("Definition: Confirmed RLN Injury / Vocal Cord Paralysis"):
-        st.markdown(
-            "**Patient-level** count of unique `research_id` values where "
-            "`rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy` contains a "
-            "**confirmed positive** finding (not 'no', 'none', 'n/a', 'absent', "
-            "'normal', 'negative', '0', 'false', or blank). "
-            "Negated mentions are excluded. "
-            "Expected range for a thyroidectomy cohort of this size: **5\u20138%** "
-            f"(~{int(total * 0.05):,}\u2013{int(total * 0.08):,} patients). "
-            "NSQIP benchmark: 5\u20138% for total thyroidectomy."
-        )
+    with st.expander("Definition: Confirmed Postoperative RLN Injury"):
+        if _rln_view_exists:
+            st.markdown(
+                "**Publication-quality definition.** Patient-level count of unique "
+                "`research_id` values from `vw_confirmed_postop_rln_injury`: vocal cord "
+                "**paresis** or **paralysis** documented on postoperative laryngoscopy "
+                "(laryngoscopy date strictly **after** first surgery date).\n\n"
+                "**Source:** `complications.vocal_cord_status` \u2208 {'paresis', 'paralysis'} "
+                "joined to `path_synoptics.surg_date` (earliest per patient) to enforce "
+                "temporal postoperative sequence.\n\n"
+                "**Denominator:** All patients with a recorded surgery date in `path_synoptics`.\n\n"
+                "**NSQIP benchmark:** 5\u20138% for total thyroidectomy."
+            )
+        else:
+            st.markdown(
+                "**Fallback definition** (materialized view not available). "
+                "Patient-level count where "
+                "`rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy` is not empty, "
+                "'no', 'none', or other negation values. No temporal constraint applied.\n\n"
+                "Run `python scripts/10_maximize_motherduck_trial.py` to create the "
+                "publication-quality `vw_confirmed_postop_rln_injury` view."
+            )
 
 # ─────────────────────────────────────────────────────────────────────────
 # TAB: AI INSIGHTS
