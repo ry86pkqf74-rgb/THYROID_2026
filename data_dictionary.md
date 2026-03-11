@@ -1001,25 +1001,25 @@ After running, restart the Streamlit dashboard to clear the cached connection.
 
 **Core Tables & Date Sources**
 - `clinical_notes_long.note_date` (VARCHAR) — canonical note-level anchor
-- `note_entities_*` family (6 tables) — high `entity_date` null rate; now enriched via V3 taxonomy
-- `genetic_testing` — `DATE_1_year`, `DATE_2_year`, `DATE_3_year` (BIGINT, year-level only)
+- `note_entities_*` family (6 tables) — high `entity_date` null rate; enriched via V3 taxonomy
+- `genetic_testing` — `DATE_1_year`, `DATE_2_year`, `DATE_3_year` (BIGINT)
 - `path_synoptics` / `tumor_pathology` — `surg_date` / `surgery_date`
 - `fna_cytology` (or `fna_history`) — `fna_date` / `fna_date_parsed`
 
-**Date Status Taxonomy V3** (applied to all enriched views — created in script 17)
-- `exact_source_date` (entity_date, confidence 100)
-- `inferred_day_level_date` (note_date fallback, confidence 70)
-- `coarse_anchor_date` (surgery/FNA/genetics year, confidence 35-60)
+**Date Status Taxonomy V3** (scripts 17 + 27)
+- `exact_source_date` (confidence 100)
+- `inferred_day_level_date` (confidence 70)
+- `coarse_anchor_date` (confidence 35-60)
 - `unresolved_date` (confidence 0)
 
-**Standardized Provenance Columns** (added to all enriched views)
+**Standardized Provenance Columns**
 - `date_status` VARCHAR
 - `date_is_source_native_flag` BOOLEAN
 - `date_is_inferred_flag` BOOLEAN
 - `date_requires_manual_review_flag` BOOLEAN
 - `inferred_event_date` DATE
 
-**Views** (created by script 17_semantic_cleanup_v3.sql)
+**Views** (created by 26/25/29)
 - `timeline_rescue_v2_mv`
 - `timeline_unresolved_summary_v2_mv`
-- `validation_failures_v3` (and `patient_validation_rollup_v2_mv`)
+- `validation_failures_v3`
