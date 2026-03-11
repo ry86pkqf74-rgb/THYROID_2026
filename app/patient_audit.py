@@ -52,14 +52,15 @@ def render_patient_audit(con, rw_con=None) -> None:
 
     h = hdr.iloc[0]
     with col_info:
+        # Use `is True` because these columns are nullable boolean (pd.NA from DuckDB view)
         badges = []
-        if h.get("histology_analysis_eligible"):
+        if h.get("histology_analysis_eligible") is True:
             badges.append(badge("Histology Eligible", "green"))
         else:
             badges.append(badge("Histology Needs Review", "rose"))
-        if h.get("has_eligible_molecular"):
+        if h.get("has_eligible_molecular") is True:
             badges.append(badge("Molecular Eligible", "green"))
-        if h.get("has_eligible_rai"):
+        if h.get("has_eligible_rai") is True:
             badges.append(badge("RAI Eligible", "green"))
         sev = str(h.get("overall_severity", "none"))
         if sev == "error":
@@ -98,7 +99,7 @@ def render_patient_audit(con, rw_con=None) -> None:
         ("RAI", "has_eligible_rai", "Has Eligible Episodes", "No Eligible Episodes"),
     ]):
         with elig_cols[i]:
-            val = h.get(key, False)
+            val = h.get(key) is True
             color = "green" if val else "rose"
             text = ok_text if val else no_text
             st.markdown(f"**{label}:** {badge(text, color)}", unsafe_allow_html=True)
