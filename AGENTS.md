@@ -130,4 +130,18 @@
 - Genetics tab Binder Errors fixed (2026-03-10): `test_platform`/`result_category` replaced with COALESCE over actual raw Excel columns in `dashboard.py`; `genetic_testing_clean` view added to `scripts/03_research_views.py`; all `genetic_testing*` refs now use `qual()` wrapper
 - `03_research_views.py` local execution note: local `thyroid_master.duckdb` has a slim `tumor_pathology` (15 cols); full schema (ETE, invasion, mutation, LN columns) exists only in MotherDuck `thyroid_research_2026`. Run script with RW MotherDuck token, not against local DB
 - Zenodo archive artifacts added to `.gitignore` (DOI `10.5281/zenodo.18945510` is authoritative; no need to track 13–37 MB snapshots in git)
+- Script 38 (`38_advanced_survival_analysis.py`): advanced survival models (KM stratified, CoxPH + Schoenfeld, RMST, CIF, PSM, RSF+SHAP, DeepSurv); outputs to `exports/survival_results/`; supports `--md`, `--local`, `--dry-run`
+- `survival_cohort_enriched` table (script 26): 61,134 patients (age 18-90, positive follow-up), 161 events (0.3%), median 9.8y follow-up; joins `survival_cohort_ready_mv` + `advanced_features_sorted` + `recurrence_risk_features_mv`
+- `survival_kpis` table (script 26): single-row summary (n, events, mean/median follow-up, event rate)
+- `tumor_1_gross_ete` contains full pathology narrative text, NOT a boolean; derive `ete_type` from `tumor_1_extrathyroidal_ext` text values ("yes, extensive" → gross; "yes, minimal"/"microscopic"/"present" → microscopic; NULL/no/none → none)
+- MotherDuck stores boolean columns (`braf_positive`, `braf_mutation_mentioned`, etc.) as text `'true'`/`'false'`; use `LOWER(CAST(col AS VARCHAR)) = 'true'` for safe comparison
+- `kaleido` package required for Plotly `write_image()` PNG export; install via `pip install kaleido`
+- Advanced Survival tab in dashboard (33rd tab); module in `app/advanced_survival.py`; reads `survival_cohort_enriched` + `survival_kpis` + export files from `exports/survival_results/`
+- Local `thyroid_master.duckdb` has empty `master_cohort`/`tumor_pathology` (0 rows); survival analysis must run with `--md` flag against MotherDuck
+- Cox PH result on 61k cohort: concordance 0.87; ETE microscopic HR=1.43 (p<0.005), stage III HR=2.88 (p=0.04), ln_positive HR=1.02 (p<0.005); Schoenfeld flags ln_positive + stage_III for non-proportionality
+- Materialize as tables (not views) for RO share visibility; new views on RW (`thyroid_research_2026`) may not appear in the RO share
+- `MOTHERDUCK_TOKEN` in `.streamlit/secrets.toml` can be loaded via `toml.load('.streamlit/secrets.toml')['MOTHERDUCK_TOKEN']` for scripts
+- lifelines does not include Fine-Gray; use `AalenJohansenFitter` for CIF; Fine-Gray subdistribution HR needs R `cmprsk` or custom implementation
+- `fna_cytology` has no `fna_date_parsed` column; use `fna_date` only
+- Script 36 (`36_daily_refresh.py`) orchestrates the full pipeline chain (15→19, 22→27, 03, 29, 30, 31, 37)
 - Next phase: manuscript submission, additional subgroup refinements
