@@ -1,0 +1,5 @@
+confounder,smd,mean_treated,mean_control
+age_at_diagnosis,0.0441,62.28,61.712
+ln_positive,0.0407,3.085,3.263
+braf_status,0.0,0.0,0.0
+tert_status,0.0,0.0,0.0

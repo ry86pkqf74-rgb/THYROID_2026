@@ -119,29 +119,49 @@ SURVIVAL_COHORT_ENRICHED_SQL = """
 CREATE OR REPLACE TABLE survival_cohort_enriched AS
 SELECT
     s.research_id,
-    GREATEST(s.time_to_event_days, 1)                           AS time_days,
-    LEAST(GREATEST(s.time_to_event_days, 1), 365 * 15)         AS time_days_capped,
-    s.event_occurred::BOOLEAN                                    AS event,
+    GREATEST(s.time_to_event_days, 1)                            AS time_days,
+    LEAST(GREATEST(s.time_to_event_days, 1), 365 * 15)          AS time_days_capped,
+    CASE WHEN s.event_occurred::VARCHAR IN ('1','true','True')
+         THEN TRUE ELSE FALSE END                                AS event,
     s.age_at_surgery                                             AS age_at_diagnosis,
     s.sex,
     s.histology_1_type                                           AS histology,
     s.overall_stage_ajcc8                                        AS ajcc_stage_8,
     CASE
-        WHEN af.tumor_1_gross_ete IS TRUE        THEN 'gross'
-        WHEN af.tumor_1_extrathyroidal_ext IS TRUE THEN 'microscopic'
+        WHEN LOWER(CAST(af.tumor_1_extrathyroidal_ext AS VARCHAR))
+             LIKE '%extensive%'
+          OR LOWER(CAST(af.tumor_1_extrathyroidal_ext AS VARCHAR))
+             LIKE '%gross%'                                  THEN 'gross'
+        WHEN af.tumor_1_extrathyroidal_ext IS NOT NULL
+         AND LOWER(CAST(af.tumor_1_extrathyroidal_ext AS VARCHAR))
+             NOT IN ('','no','none','absent','not identified',
+                     'not present','negative')               THEN 'microscopic'
         ELSE 'none'
     END                                                          AS ete_type,
-    COALESCE(r.braf_positive,  af.braf_mutation_mentioned, FALSE) AS braf_status,
-    COALESCE(r.tert_positive,  af.tert_mutation_mentioned, FALSE) AS tert_status,
-    COALESCE(r.ras_positive,   af.ras_mutation_mentioned,  FALSE) AS ras_status,
-    COALESCE(r.ret_positive,   af.ret_mutation_mentioned,  FALSE) AS ret_status,
+    COALESCE(
+        LOWER(CAST(r.braf_positive AS VARCHAR)) = 'true',
+        LOWER(CAST(af.braf_mutation_mentioned AS VARCHAR)) = 'true',
+        FALSE)                                                   AS braf_status,
+    COALESCE(
+        LOWER(CAST(r.tert_positive AS VARCHAR)) = 'true',
+        LOWER(CAST(af.tert_mutation_mentioned AS VARCHAR)) = 'true',
+        FALSE)                                                   AS tert_status,
+    COALESCE(
+        LOWER(CAST(r.ras_positive AS VARCHAR)) = 'true',
+        LOWER(CAST(af.ras_mutation_mentioned AS VARCHAR)) = 'true',
+        FALSE)                                                   AS ras_status,
+    COALESCE(
+        LOWER(CAST(r.ret_positive AS VARCHAR)) = 'true',
+        LOWER(CAST(af.ret_mutation_mentioned AS VARCHAR)) = 'true',
+        FALSE)                                                   AS ret_status,
     r.recurrence_risk_band,
     EXTRACT(YEAR FROM TRY_CAST(s.surgery_date AS DATE))          AS diagnosis_year,
-    r.tumor_size_cm,
+    TRY_CAST(r.tumor_size_cm AS DOUBLE)                          AS tumor_size_cm,
     COALESCE(TRY_CAST(r.ln_positive AS INT), 0)                  AS ln_positive,
     COALESCE(TRY_CAST(r.ln_examined AS INT), 0)                  AS ln_examined,
-    r.tg_annual_log_slope,
-    CASE WHEN s.event_occurred THEN 1 ELSE 0 END                 AS event_type
+    TRY_CAST(r.tg_annual_log_slope AS DOUBLE)                    AS tg_annual_log_slope,
+    CASE WHEN s.event_occurred::VARCHAR IN ('1','true','True')
+         THEN 1 ELSE 0 END                                      AS event_type
 FROM survival_cohort_ready_mv s
 LEFT JOIN advanced_features_sorted af
     ON CAST(s.research_id AS VARCHAR) = CAST(af.research_id AS VARCHAR)

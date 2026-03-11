@@ -1,0 +1,7 @@
+group,tau_years,n,rmst_years,rmst_diff_vs_none
+gross,5,119,5.0,0.001
+microscopic,5,18632,4.997,-0.002
+none,5,42383,4.999,
+gross,10,119,10.0,0.005
+microscopic,10,18632,9.953,-0.042
+none,10,42383,9.995,

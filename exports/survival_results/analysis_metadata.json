@@ -1,0 +1,31 @@
+{
+  "run_date": "2026-03-10T22:26:34.050763",
+  "cohort_n": 61134,
+  "events": 161,
+  "event_rate_pct": 0.3,
+  "median_followup_years": 9.8,
+  "output_dir": "/Users/loganglosser/THYROID_2026/exports/survival_results",
+  "columns": [
+    "research_id",
+    "time_days",
+    "time_days_capped",
+    "event",
+    "age_at_diagnosis",
+    "sex",
+    "histology",
+    "ajcc_stage_8",
+    "ete_type",
+    "braf_status",
+    "tert_status",
+    "ras_status",
+    "ret_status",
+    "recurrence_risk_band",
+    "diagnosis_year",
+    "tumor_size_cm",
+    "ln_positive",
+    "ln_examined",
+    "tg_annual_log_slope",
+    "event_type"
+  ],
+  "script": "38_advanced_survival_analysis.py"
+}
