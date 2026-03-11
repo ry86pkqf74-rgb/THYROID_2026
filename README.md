@@ -243,6 +243,23 @@ Or use the Publication Export pipeline for manuscript-ready outputs:
 .venv/bin/python scripts/37_publication_export.py --md
 ```
 
+### Advanced Survival Analysis
+
+Run publication-grade survival models (KM, Cox PH, RMST, CIF, PSM, RSF + SHAP, DeepSurv):
+
+```bash
+# 1. Build survival_cohort_enriched + survival_kpis tables
+.venv/bin/python scripts/26_motherduck_materialize_v2.py --md
+
+# 2. Run full analysis — outputs to exports/survival_results/
+.venv/bin/python scripts/38_advanced_survival_analysis.py --md
+
+# 3. View in dashboard (Advanced Survival tab)
+streamlit run dashboard.py
+```
+
+Requires: `pip install lifelines scikit-survival shap torch plotly kaleido`
+
 <!-- GitHub Actions nightly refresh (add to .github/workflows/nightly-refresh.yml):
 
 name: Nightly Pipeline Refresh

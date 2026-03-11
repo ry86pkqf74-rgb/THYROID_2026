@@ -115,6 +115,53 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_date_rescue_rate_summary", "date_rescue_rate_summary"),
 ]
 
+SURVIVAL_COHORT_ENRICHED_SQL = """
+CREATE OR REPLACE TABLE survival_cohort_enriched AS
+SELECT
+    s.research_id,
+    GREATEST(s.time_to_event_days, 1)                           AS time_days,
+    LEAST(GREATEST(s.time_to_event_days, 1), 365 * 15)         AS time_days_capped,
+    s.event_occurred::BOOLEAN                                    AS event,
+    s.age_at_surgery                                             AS age_at_diagnosis,
+    s.sex,
+    s.histology_1_type                                           AS histology,
+    s.overall_stage_ajcc8                                        AS ajcc_stage_8,
+    CASE
+        WHEN af.tumor_1_gross_ete IS TRUE        THEN 'gross'
+        WHEN af.tumor_1_extrathyroidal_ext IS TRUE THEN 'microscopic'
+        ELSE 'none'
+    END                                                          AS ete_type,
+    COALESCE(r.braf_positive,  af.braf_mutation_mentioned, FALSE) AS braf_status,
+    COALESCE(r.tert_positive,  af.tert_mutation_mentioned, FALSE) AS tert_status,
+    COALESCE(r.ras_positive,   af.ras_mutation_mentioned,  FALSE) AS ras_status,
+    COALESCE(r.ret_positive,   af.ret_mutation_mentioned,  FALSE) AS ret_status,
+    r.recurrence_risk_band,
+    EXTRACT(YEAR FROM TRY_CAST(s.surgery_date AS DATE))          AS diagnosis_year,
+    r.tumor_size_cm,
+    COALESCE(TRY_CAST(r.ln_positive AS INT), 0)                  AS ln_positive,
+    COALESCE(TRY_CAST(r.ln_examined AS INT), 0)                  AS ln_examined,
+    r.tg_annual_log_slope,
+    CASE WHEN s.event_occurred THEN 1 ELSE 0 END                 AS event_type
+FROM survival_cohort_ready_mv s
+LEFT JOIN advanced_features_sorted af
+    ON CAST(s.research_id AS VARCHAR) = CAST(af.research_id AS VARCHAR)
+LEFT JOIN recurrence_risk_features_mv r
+    ON CAST(s.research_id AS VARCHAR) = CAST(r.research_id AS VARCHAR)
+WHERE s.age_at_surgery BETWEEN 18 AND 90
+  AND s.time_to_event_days > 0
+"""
+
+SURVIVAL_KPIS_SQL = """
+CREATE OR REPLACE TABLE survival_kpis AS
+SELECT
+    COUNT(*)                         AS n,
+    SUM(event::INT)                  AS events,
+    ROUND(AVG(time_days) / 365.25, 2) AS mean_followup_years,
+    ROUND(MEDIAN(time_days) / 365.25, 2) AS median_followup_years,
+    ROUND(100.0 * SUM(event::INT) / NULLIF(COUNT(*), 0), 1) AS event_rate_pct
+FROM survival_cohort_enriched
+"""
+
 MANUAL_REVIEW_QUEUE_SUMMARY_SQL = """
 CREATE OR REPLACE TABLE md_manual_review_queue_summary_v2 AS
 SELECT 'pathology' AS domain,
@@ -186,6 +233,20 @@ def materialize_all(
         except Exception as e:
             print(f"  WARN md_manual_review_queue_summary_v2: {e}")
 
+        # Survival cohort enriched + KPIs
+        for sql, tbl in [
+            (SURVIVAL_COHORT_ENRICHED_SQL, "survival_cohort_enriched"),
+            (SURVIVAL_KPIS_SQL, "survival_kpis"),
+        ]:
+            try:
+                source_con.execute(sql)
+                cnt = source_con.execute(
+                    f"SELECT COUNT(*) FROM {tbl}"
+                ).fetchone()[0]
+                print(f"  OK   {tbl:<50} {cnt:>8,} rows")
+            except Exception as e:
+                print(f"  WARN {tbl:<50} {e}")
+
     else:
         for md_name, src_name in MATERIALIZATION_MAP:
             if not table_available(source_con, src_name):
@@ -229,6 +290,27 @@ def materialize_all(
             print(f"  OK   {'md_manual_review_queue_summary_v2':<50} {cnt:>8,} rows")
         except Exception as e:
             print(f"  WARN md_manual_review_queue_summary_v2: {e}")
+
+        # Survival cohort enriched + KPIs (cross-DB: use md_ source tables)
+        _surv_sql = SURVIVAL_COHORT_ENRICHED_SQL.replace(
+            "survival_cohort_ready_mv", "md_survival_cohort_ready_mv"
+        ).replace(
+            "advanced_features_sorted", "md_advanced_features_sorted"
+        ).replace(
+            "recurrence_risk_features_mv", "md_recurrence_risk_features_mv"
+        ) if not table_available(target_con, "survival_cohort_ready_mv") else SURVIVAL_COHORT_ENRICHED_SQL
+        for sql, tbl in [
+            (_surv_sql, "survival_cohort_enriched"),
+            (SURVIVAL_KPIS_SQL, "survival_kpis"),
+        ]:
+            try:
+                target_con.execute(sql)
+                cnt = target_con.execute(
+                    f"SELECT COUNT(*) FROM {tbl}"
+                ).fetchone()[0]
+                print(f"  OK   {tbl:<50} {cnt:>8,} rows")
+            except Exception as e:
+                print(f"  WARN {tbl:<50} {e}")
 
 
 def main() -> None:

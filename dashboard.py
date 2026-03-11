@@ -57,6 +57,7 @@ from app.imaging_nodule_dashboard import render_imaging_nodule_dashboard
 from app.operative_dashboard import render_operative_dashboard
 from app.adjudication_summary import render_adjudication_summary
 from app.validation_engine import render_validation_engine
+from app.advanced_survival import render_advanced_survival
 
 # ── Page config ───────────────────────────────────────────────────────────
 st.set_page_config(page_title="Thyroid Cohort Explorer", page_icon="🔬",
@@ -1851,7 +1852,8 @@ def main():
     (t_ov,t_ex,t_vz,t_adv,t_gen,t_spec,t_img,t_comp,t_rec,t_exp,t_ai,
      t_tl,t_ev,t_qa,t_surv,t_afv3,
      t_cqc,t_pat,t_rh,t_rm,t_rr,t_rtl,t_rq,t_diag,
-     t_ec,t_md,t_rd,t_ind,t_od,t_as,t_ve) = st.tabs([
+     t_ec,t_md,t_rd,t_ind,t_od,t_as,t_ve,
+     t_advsurv) = st.tabs([
         "📊 Overview","🗃 Data Explorer","📈 Visualizations","🧬 Advanced",
         "🔬 Genetics & Molecular","🫀 Specimen Details","📡 Pre-Op Imaging",
         "⚕ Complications","📋 Recommendations & Sensitivities",
@@ -1863,6 +1865,7 @@ def main():
         "📊 Extraction Completeness","🧬 Molecular Episodes","☢️ RAI Episodes",
         "📡 Imaging & Nodules","🔪 Operative Detail","📋 QA & Adjudication",
         "🛡 Validation Engine",
+        "🔬 Advanced Survival",
     ])
     with t_ov:   render_overview(con)
     with t_ex:   render_explorer(df_filt)
@@ -1895,6 +1898,7 @@ def main():
     with t_od:   render_operative_dashboard(con)
     with t_as:   render_adjudication_summary(con)
     with t_ve:   render_validation_engine(con)
+    with t_advsurv: render_advanced_survival(con)
 
     st.markdown("---")
     st.markdown(
