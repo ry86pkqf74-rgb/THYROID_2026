@@ -1,0 +1,5 @@
+Cohort,N,Age_mean_SD,Female_pct
+H1_Lobectomy_CLN,1247,49.7 (15.1),76.9%
+H1_Lobectomy_NoCLN,4030,53.6 (15.0),78.2%
+H2_Goiter_Cervical,5933,54.8 (14.2),81.6%
+H2_Goiter_Substernal,285,58.1 (13.8),70.2%

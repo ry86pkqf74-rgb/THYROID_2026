@@ -1,0 +1,17 @@
+test,p_raw,p_fdr,significant_fdr
+H1_crude_recurrence,0.0,0.0,True
+H1_lr_central_lnd_flag,0.002976,0.007936,True
+H1_lr_age,0.376622,0.463535,False
+H1_lr_tumor_size_cm,0.015679,0.031358,True
+H1_lr_ln_positive,0.012668,0.028955,True
+H1_lr_braf_positive,0.4392,0.501943,False
+H1_crude_rln,0.0,0.0,True
+H2_kruskal_weight_race,0.0,0.0,True
+H2_mannwhitney_weight_sex,0.0,0.0,True
+H2_lr_age,0.179316,0.260823,False
+H2_lr_female,0.064141,0.102626,False
+H2_lr_black,0.31847,0.424627,False
+H2_lr_asian,0.001604,0.005133,True
+H2_lr_specimen_weight_g,0.017879,0.031785,True
+H2_lr_substernal,0.931005,0.931005,False
+H2_lr_total_thyroidectomy,0.704834,0.751823,False

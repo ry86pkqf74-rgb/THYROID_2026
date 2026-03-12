@@ -1,0 +1,5 @@
+covariate,SMD,balanced
+age,0.0027,True
+braf_positive,0.0464,True
+multifocal,0.0,True
+recurrence,0.0052,True

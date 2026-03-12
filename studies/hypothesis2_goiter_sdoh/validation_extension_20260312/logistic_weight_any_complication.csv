@@ -1,0 +1,4 @@
+Variable,Coefficient,SE,OR,OR_95CI_low,OR_95CI_high,p_value
+age,0.0555,0.0518,1.057,0.955,1.17,0.283371
+female,-0.0485,0.051,0.953,0.862,1.053,0.341626
+specimen_weight_g,0.0384,0.0502,1.039,0.942,1.147,0.443897

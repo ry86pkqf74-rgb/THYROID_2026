@@ -1,0 +1,2 @@
+covariate,HR,CI_low,CI_high,p_value,concordance
+central_lnd_flag,1.214,0.661,2.228,0.5316,0.592

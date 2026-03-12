@@ -1,0 +1,6 @@
+covariate,SMD,balanced
+age,0.2239,False
+tumor_size_cm,0.2287,False
+ln_positive,0.1253,False
+braf_positive,0.0947,True
+multifocal,0.0,True
