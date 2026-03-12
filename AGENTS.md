@@ -25,8 +25,12 @@
 - PSM analyses: always run a primary match using low-missingness covariates (maximum matched pairs) AND a separate extended match with full covariates; report both side-by-side with their respective N and limitations
 - Validation/cross-check scripts must explicitly compare live MotherDuck extraction vs. saved CSVs row-by-row and flag any discrepancy >0.1% in a dedicated report section
 - For single-view MotherDuck fixes, prefer targeted SQL execution via `.venv/bin/python -c "import duckdb; ..."` pattern rather than re-running entire script chains (e.g. rebuild just `streamlit_patient_header_v` instead of full script 03 or 18→26)
-- When the agent lists follow-up recommendations at end of a task, user expects to say "execute follow up recommendations" and have them all executed in sequence
+- When the agent lists follow-up recommendations or test steps at end of a task, user expects to say "execute follow up recommendations" or "execute tests/next steps" and have them all executed in sequence
 - When presenting query results, show actual execution output/evidence rather than summarizing prior runs
+- Brief affirmative responses ("yes expand", "yes", "do it") mean proceed immediately with the proposed approach; no further confirmation needed
+- When a refactored metric changes dramatically (e.g. 1,340 → 6), proactively investigate and explain the root cause (data placeholders, temporal filtering, sparsity) before accepting the new value
+- Check for existing but undeployed code/views/tables in the codebase before writing new implementations; prior sessions may have written SQL that was never materialized
+- Publication-quality clinical definitions require structured data sources, temporal constraints, and explicit denominator specifications; crude text-matching filters are unacceptable for manuscript metrics
 
 ## Learned Workspace Facts
 
@@ -249,6 +253,8 @@
 - Phase 4.5 model comparison: `_build_comparison_figure()` now 2-panel (concordance + AIC); `_model_comparison_recommendation()` generates best-model picks for discrimination/AIC/cure
 - Phase 4.5 sidebar: Quick Launch card reads PTCM `analysis_metadata.json` and shows π̄, N, events, AIC
 - `scripts/40_predictive_analytics_batch.py` now 5 phases: comparison, competing risks + Gray's tests, batch scoring, sensitivity archetypes, manuscript report
+- `complications` table has structured clinical fields (`vocal_cord_status`, `laryngoscopy_date`, `affected_side`, `rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy`); `note_entities_complications` uses the generic 15+4 NLP schema without these columns — they are complementary data sources for the same clinical domain
+- 2 of 8 vocal cord paresis/paralysis patients (research_id 807, 809) had laryngoscopy before surgery (pre-existing VCP); postoperative RLN views exclude these via temporal constraint
 - `vw_confirmed_postop_rln_injury` table (materialized by script 10): 6 rows; laryngoscopy-verified vocal cord paresis/paralysis strictly after first surgery date; joins `complications.vocal_cord_status` ∈ {'paresis','paralysis'} with `path_synoptics.surg_date`; columns: research_id, vocal_cord_status, affected_side, laryngoscopy_date, surgery_date, days_post_surgery
 - `vw_confirmed_postop_rln_injury_summary` table (materialized by script 10): 1-row KPI aggregate combining 3 tiers — Tier 1 laryngoscopy-confirmed (6), Tier 2 chart-documented rln_injury='yes' (19), Tier 3 NLP-extracted from note_entities_complications with present polarity + conf>=0.65 + date>=surgery (654); total 679 patients (6.25% of 10,871 surgical cohort); columns: confirmed_rln_injury_patients, rln_injury_percent, unilateral_patients, bilateral_patients, estimated_injured_nerves, tier1_laryngoscopy_count, tier2_chart_count, tier3_nlp_count
 - `vw_patient_postop_rln_injury_detail` table (materialized by script 10): 679 rows, one per patient; columns: research_id, first_rln_detection_date, worst_status (paralysis/paresis/rln_injury/chart_documented/unknown), sides_affected, source_tier (laryngoscopy_confirmed/chart_documented/nlp_extraction), likely_outcome (transient/permanent), days_post_surgery, temporal_window (0-30d/31-180d/181-365d/>365d)
