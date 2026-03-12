@@ -28,23 +28,23 @@ def render_cohort_qc(con) -> None:
     # Top-level metrics
     c1, c2, c3, c4, c5 = st.columns(5)
     with c1:
-        st.markdown(mc("Total Patients", f"{int(row.get('total_patients', 0)):,}"),
+        st.markdown(mc("Total Patients", f"{int(row.get('total_patients') or 0):,}"),
                      unsafe_allow_html=True)
     with c2:
-        st.markdown(mc("Histology Eligible", f"{int(row.get('histology_analysis_eligible', 0)):,}",
-                        f"{int(row.get('histology_review_needed', 0)):,} need review"),
+        st.markdown(mc("Histology Eligible", f"{int(row.get('histology_analysis_eligible') or 0):,}",
+                        f"{int(row.get('histology_review_needed') or 0):,} need review"),
                      unsafe_allow_html=True)
     with c3:
-        st.markdown(mc("Molecular Eligible", f"{int(row.get('molecular_analysis_eligible', 0)):,}",
-                        f"of {int(row.get('molecular_total_rows', 0)):,} total"),
+        st.markdown(mc("Molecular Eligible", f"{int(row.get('molecular_analysis_eligible') or 0):,}",
+                        f"of {int(row.get('molecular_total_rows') or 0):,} total"),
                      unsafe_allow_html=True)
     with c4:
-        st.markdown(mc("RAI Analyzable", f"{int(row.get('rai_analyzable', 0)):,}",
-                        f"{int(row.get('rai_definite_likely', 0)):,} definite/likely"),
+        st.markdown(mc("RAI Analyzable", f"{int(row.get('rai_analyzable') or 0):,}",
+                        f"{int(row.get('rai_definite_likely') or 0):,} definite/likely"),
                      unsafe_allow_html=True)
     with c5:
-        st.markdown(mc("Validation Errors", f"{int(row.get('validation_errors', 0)):,}",
-                        f"{int(row.get('validation_patients_affected', 0)):,} patients"),
+        st.markdown(mc("Validation Errors", f"{int(row.get('validation_errors') or 0):,}",
+                        f"{int(row.get('validation_patients_affected') or 0):,} patients"),
                      unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -53,13 +53,13 @@ def render_cohort_qc(con) -> None:
     st.markdown(sl("Manual Review Queue"), unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
     with c1:
-        st.markdown(mc("Patients in Queue", f"{int(row.get('review_queue_patients', 0)):,}"),
+        st.markdown(mc("Patients in Queue", f"{int(row.get('review_queue_patients') or 0):,}"),
                      unsafe_allow_html=True)
     with c2:
-        st.markdown(mc("Critical Priority", f"{int(row.get('review_critical_patients', 0)):,}"),
+        st.markdown(mc("Critical Priority", f"{int(row.get('review_critical_patients') or 0):,}"),
                      unsafe_allow_html=True)
     with c3:
-        st.markdown(mc("High Priority", f"{int(row.get('review_high_patients', 0)):,}"),
+        st.markdown(mc("High Priority", f"{int(row.get('review_high_patients') or 0):,}"),
                      unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -69,16 +69,16 @@ def render_cohort_qc(con) -> None:
     domain_data = {
         "Domain": ["Histology", "Molecular", "RAI", "Timeline", "Validation"],
         "Unresolved": [
-            int(row.get("histology_review_needed", 0)),
-            int(row.get("molecular_unresolved", 0)),
-            int(row.get("rai_unresolved", 0)),
-            int(row.get("timeline_unresolved", 0)),
-            int(row.get("validation_errors", 0)),
+            int(row.get("histology_review_needed") or 0),
+            int(row.get("molecular_unresolved") or 0),
+            int(row.get("rai_unresolved") or 0),
+            int(row.get("timeline_unresolved") or 0),
+            int(row.get("validation_errors") or 0),
         ],
         "Eligible": [
-            int(row.get("histology_analysis_eligible", 0)),
-            int(row.get("molecular_analysis_eligible", 0)),
-            int(row.get("rai_analyzable", 0)),
+            int(row.get("histology_analysis_eligible") or 0),
+            int(row.get("molecular_analysis_eligible") or 0),
+            int(row.get("rai_analyzable") or 0),
             0, 0,
         ],
     }
@@ -101,10 +101,10 @@ def render_cohort_qc(con) -> None:
     date_data = {
         "Status": ["Exact Source", "Inferred Day-Level", "Coarse Anchor", "Unresolved"],
         "Count": [
-            int(row.get("timeline_exact_date", 0)),
-            int(row.get("timeline_inferred_day", 0)),
-            int(row.get("timeline_coarse_anchor", 0)),
-            int(row.get("timeline_unresolved", 0)),
+            int(row.get("timeline_exact_date") or 0),
+            int(row.get("timeline_inferred_day") or 0),
+            int(row.get("timeline_coarse_anchor") or 0),
+            int(row.get("timeline_unresolved") or 0),
         ],
     }
     fig2 = go.Figure(go.Bar(
@@ -122,9 +122,9 @@ def render_cohort_qc(con) -> None:
             st.markdown(sl("Adjudication Progress"), unsafe_allow_html=True)
             for _, p in prog.iterrows():
                 domain = p["domain"]
-                pct = float(p.get("pct_complete", 0))
-                resolved = int(p.get("resolved", 0))
-                total = int(p.get("total_queue", 0))
+                pct = float(p.get("pct_complete") or 0)
+                resolved = int(p.get("resolved") or 0)
+                total = int(p.get("total_queue") or 0)
                 st.progress(pct / 100.0,
                             text=f"{domain.title()}: {resolved}/{total} resolved ({pct}%)")
     except Exception:

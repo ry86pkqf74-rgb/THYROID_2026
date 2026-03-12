@@ -93,11 +93,11 @@ def render_advanced_survival(con) -> None:
         r = kpi_df.iloc[0]
         cols = st.columns(5)
         items = [
-            ("Cohort N", f"{int(r.get('n', 0)):,}"),
-            ("Events", f"{int(r.get('events', 0)):,}"),
-            ("Event Rate", f"{r.get('event_rate_pct', 0):.1f}%"),
-            ("Mean F/U (yr)", f"{r.get('mean_followup_years', 0):.1f}"),
-            ("Median F/U (yr)", f"{r.get('median_followup_years', 0):.1f}"),
+            ("Cohort N", f"{int(r.get('n') or 0):,}"),
+            ("Events", f"{int(r.get('events') or 0):,}"),
+            ("Event Rate", f"{float(r.get('event_rate_pct') or 0):.1f}%"),
+            ("Mean F/U (yr)", f"{float(r.get('mean_followup_years') or 0):.1f}"),
+            ("Median F/U (yr)", f"{float(r.get('median_followup_years') or 0):.1f}"),
         ]
         for c, (label, val) in zip(cols, items):
             with c:

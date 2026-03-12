@@ -78,13 +78,13 @@ def render_patient_audit(con, rw_con=None) -> None:
         st.markdown(mc("T Stage", str(h.get("primary_t_stage", "—"))),
                      unsafe_allow_html=True)
     with c3:
-        st.markdown(mc("Molecular Tests", str(int(h.get("molecular_test_count", 0)))),
+        st.markdown(mc("Molecular Tests", str(int(h.get("molecular_test_count") or 0))),
                      unsafe_allow_html=True)
     with c4:
-        st.markdown(mc("RAI Episodes", str(int(h.get("rai_episode_count", 0)))),
+        st.markdown(mc("RAI Episodes", str(int(h.get("rai_episode_count") or 0))),
                      unsafe_allow_html=True)
     with c5:
-        st.markdown(mc("Review Items", str(int(h.get("total_review_items", 0))),
+        st.markdown(mc("Review Items", str(int(h.get("total_review_items") or 0)),
                         h.get("review_priority_tier", "")),
                      unsafe_allow_html=True)
 
