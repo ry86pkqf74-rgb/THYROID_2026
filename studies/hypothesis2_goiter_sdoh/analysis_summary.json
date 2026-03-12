@@ -41,10 +41,11 @@
     "race_chi2": 609.8,
     "race_p": 0.0
   },
+  "complication_source": "patient_refined_complication_flags_v2 (Phase 3 refined, not raw NLP)",
   "logistic_regression_rln": {
     "n_obs": 2112,
-    "n_events": 84,
-    "pseudo_r2": 0.0276
+    "n_events": 10,
+    "pseudo_r2": 0.0174
   },
   "sdoh_data_limitations": [
     "No insurance/payer data available",
@@ -54,6 +55,6 @@
     "Race serves as only available SDOH proxy variable"
   ],
   "data_source": "MotherDuck",
-  "generated_at": "2026-03-12T11:43:24.193941",
+  "generated_at": "2026-03-12T18:52:00.125187",
   "random_seed": 42
 }

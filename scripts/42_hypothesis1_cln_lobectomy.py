@@ -97,13 +97,20 @@ SELECT
     r.first_recurrence_date,
     CASE WHEN LOWER(CAST(r.braf_positive AS VARCHAR)) = 'true' THEN 1 ELSE 0 END AS braf_positive,
     CASE WHEN LOWER(CAST(r.ras_positive AS VARCHAR)) = 'true' THEN 1 ELSE 0 END AS ras_positive,
-    CASE WHEN rln.research_id IS NOT NULL THEN 1 ELSE 0 END AS rln_injury,
-    rln.worst_status AS rln_worst_status,
-    rln.source_tier AS rln_source_tier,
-    rln.likely_outcome AS rln_likely_outcome
+    -- Phase 3: refined complication flags (patient_refined_complication_flags_v2)
+    COALESCE(pcf.confirmed_rln_injury, 0) AS rln_injury,
+    COALESCE(pcf.refined_rln_injury, 0) AS rln_injury_refined,
+    COALESCE(pcf.refined_hypocalcemia, 0) AS refined_hypocalcemia,
+    COALESCE(pcf.confirmed_hypocalcemia, 0) AS confirmed_hypocalcemia,
+    COALESCE(pcf.refined_hypoparathyroidism, 0) AS refined_hypoparathyroidism,
+    COALESCE(pcf.refined_hematoma, 0) AS refined_hematoma,
+    COALESCE(pcf.refined_seroma, 0) AS refined_seroma,
+    COALESCE(pcf.refined_chyle_leak, 0) AS refined_chyle_leak,
+    COALESCE(pcf.refined_wound_infection, 0) AS refined_wound_infection,
+    COALESCE(pcf.has_confirmed_complication, 0) AS has_any_confirmed_complication
 FROM lobectomy_eligible e
 LEFT JOIN recurrence_risk_features_mv r ON e.research_id = r.research_id
-LEFT JOIN vw_patient_postop_rln_injury_detail rln ON e.research_id = rln.research_id
+LEFT JOIN patient_refined_complication_flags_v2 pcf ON e.research_id = pcf.research_id
 """
 
 
@@ -122,22 +129,9 @@ def load_cohort(con: duckdb.DuckDBPyConnection) -> pd.DataFrame:
 
 
 def add_nlp_complications(con: duckdb.DuckDBPyConnection, df: pd.DataFrame) -> pd.DataFrame:
-    nlp_sql = """
-    SELECT
-        research_id,
-        MAX(CASE WHEN entity_value_norm = 'hypocalcemia' AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_hypocalcemia,
-        MAX(CASE WHEN entity_value_norm = 'hypoparathyroidism' AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_hypoparathyroidism,
-        MAX(CASE WHEN entity_value_norm = 'hematoma' AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_hematoma,
-        MAX(CASE WHEN entity_value_norm = 'seroma' AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_seroma,
-        MAX(CASE WHEN entity_value_norm = 'chyle_leak' AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_chyle_leak,
-        MAX(CASE WHEN entity_value_norm = 'wound_infection' AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_wound_infection
-    FROM note_entities_complications
-    GROUP BY research_id
-    """
-    nlp_df = con.execute(nlp_sql).fetchdf()
-    return df.merge(nlp_df, on="research_id", how="left").fillna(
-        {c: 0 for c in nlp_df.columns if c != "research_id"}
-    )
+    """Phase 3: Complications now sourced from patient_refined_complication_flags_v2
+    via the main cohort SQL JOIN. No separate NLP query needed."""
+    return df
 
 
 def table1_demographics(df: pd.DataFrame) -> pd.DataFrame:
@@ -328,9 +322,9 @@ def analyze_rln_injury(df: pd.DataFrame) -> dict:
 
 
 def analyze_all_complications(df: pd.DataFrame) -> pd.DataFrame:
-    """All complications by central LND status."""
-    comps = ["rln_injury", "nlp_hypocalcemia", "nlp_hypoparathyroidism",
-             "nlp_hematoma", "nlp_seroma", "nlp_chyle_leak"]
+    """All complications by central LND status (Phase 3: refined flags)."""
+    comps = ["rln_injury", "refined_hypocalcemia", "refined_hypoparathyroidism",
+             "refined_hematoma", "refined_seroma", "refined_chyle_leak"]
     rows = []
     cln = df[df["central_lnd_flag"] == 1]
     no_cln = df[df["central_lnd_flag"] == 0]
@@ -353,7 +347,7 @@ def analyze_all_complications(df: pd.DataFrame) -> pd.DataFrame:
             p, or_val = np.nan, np.nan
 
         rows.append({
-            "Complication": comp.replace("nlp_", ""),
+            "Complication": comp.replace("refined_", ""),
             "CentralLND_n": n_c, "CentralLND_pct": pct_c,
             "No_CentralLND_n": n_n, "No_CentralLND_pct": pct_n,
             "OR": round(or_val, 3) if not np.isnan(or_val) else "—",
@@ -408,9 +402,9 @@ def plot_recurrence_by_cln(df: pd.DataFrame) -> None:
 
 
 def plot_complications_by_cln(df: pd.DataFrame) -> None:
-    """Grouped bar chart: complication rates by central LND status."""
-    comps = ["rln_injury", "nlp_hypocalcemia", "nlp_hypoparathyroidism",
-             "nlp_hematoma", "nlp_seroma", "nlp_chyle_leak"]
+    """Grouped bar chart: complication rates by central LND status (Phase 3: refined)."""
+    comps = ["rln_injury", "refined_hypocalcemia", "refined_hypoparathyroidism",
+             "refined_hematoma", "refined_seroma", "refined_chyle_leak"]
     labels = ["RLN Injury", "Hypocalcemia", "Hypoparathyroidism",
               "Hematoma", "Seroma", "Chyle Leak"]
 
@@ -536,8 +530,13 @@ def main():
     print(f"  → {len(df)} lobectomy patients (completion thyroidectomies excluded)")
     print(f"  → Central LND: {(df['central_lnd_flag']==1).sum()}, No Central LND: {(df['central_lnd_flag']==0).sum()}")
 
-    print("\n[2/7] Adding NLP-derived complications...")
+    print("\n[2/7] Complication flags (Phase 3: patient_refined_complication_flags_v2)...")
     df = add_nlp_complications(con, df)
+    rln_n = int(df["rln_injury"].sum())
+    print(f"  → RLN confirmed: {rln_n}, refined: {int(df['rln_injury_refined'].sum())}")
+    for c in ["refined_hypocalcemia", "refined_hematoma", "refined_seroma", "refined_chyle_leak"]:
+        if c in df.columns:
+            print(f"  → {c}: {int(df[c].sum())}")
 
     print("\n[3/7] Table 1: Demographics...")
     t1 = table1_demographics(df)
@@ -585,6 +584,7 @@ def main():
 
     summary = {
         "hypothesis": "Central LND predictive for recurrence in lobectomy; CLN-complication/RLN association",
+        "complication_source": "patient_refined_complication_flags_v2 (Phase 3 refined, not raw NLP)",
         "cohort": {
             "total_lobectomy": len(df),
             "central_lnd": int((df["central_lnd_flag"] == 1).sum()),

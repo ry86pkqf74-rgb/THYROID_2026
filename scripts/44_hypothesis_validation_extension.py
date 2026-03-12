@@ -124,10 +124,16 @@ SELECT
     r.first_recurrence_date,
     CASE WHEN LOWER(CAST(r.braf_positive AS VARCHAR)) = 'true' THEN 1 ELSE 0 END AS braf_positive,
     CASE WHEN LOWER(CAST(r.ras_positive AS VARCHAR)) = 'true' THEN 1 ELSE 0 END AS ras_positive,
-    CASE WHEN rln.research_id IS NOT NULL THEN 1 ELSE 0 END AS rln_injury,
-    rln.worst_status AS rln_worst_status,
-    rln.source_tier AS rln_source_tier,
-    rln.likely_outcome AS rln_likely_outcome,
+    -- Phase 3: refined complication flags (patient_refined_complication_flags_v2)
+    COALESCE(pcf.confirmed_rln_injury, 0) AS rln_injury,
+    COALESCE(pcf.refined_rln_injury, 0) AS rln_injury_refined,
+    COALESCE(pcf.refined_hypocalcemia, 0) AS refined_hypocalcemia,
+    COALESCE(pcf.refined_hypoparathyroidism, 0) AS refined_hypoparathyroidism,
+    COALESCE(pcf.refined_hematoma, 0) AS refined_hematoma,
+    COALESCE(pcf.refined_seroma, 0) AS refined_seroma,
+    COALESCE(pcf.refined_chyle_leak, 0) AS refined_chyle_leak,
+    COALESCE(pcf.refined_wound_infection, 0) AS refined_wound_infection,
+    COALESCE(pcf.has_confirmed_complication, 0) AS has_any_confirmed_complication,
     CASE
         WHEN LOWER(COALESCE(e.ete_raw, '')) IN ('yes, extensive') THEN 'gross'
         WHEN LOWER(COALESCE(e.ete_raw, '')) IN ('yes, minimal', 'microscopic', 'present') THEN 'microscopic'
@@ -135,7 +141,7 @@ SELECT
     END AS ete_type
 FROM lobectomy_eligible e
 LEFT JOIN recurrence_risk_features_mv r ON e.research_id = r.research_id
-LEFT JOIN vw_patient_postop_rln_injury_detail rln ON e.research_id = rln.research_id
+LEFT JOIN patient_refined_complication_flags_v2 pcf ON e.research_id = pcf.research_id
 """
 
 RACE_NORM = """
@@ -186,19 +192,19 @@ WHERE LOWER(COALESCE(p.multinodular_goiter, '')) = 'x'
    OR LOWER(COALESCE(p.substernal_multinodular_goiter, '')) = 'x'
 """
 
-NLP_COMPLICATIONS_SQL = """
+REFINED_COMPLICATIONS_SQL = """
 SELECT
     research_id,
-    MAX(CASE WHEN entity_value_norm = 'rln_injury' AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_rln_injury,
-    MAX(CASE WHEN entity_value_norm IN ('vocal_cord_paralysis','vocal_cord_paresis') AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_vocal_cord,
-    MAX(CASE WHEN entity_value_norm = 'hypocalcemia' AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_hypocalcemia,
-    MAX(CASE WHEN entity_value_norm = 'hypoparathyroidism' AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_hypoparathyroidism,
-    MAX(CASE WHEN entity_value_norm = 'hematoma' AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_hematoma,
-    MAX(CASE WHEN entity_value_norm = 'seroma' AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_seroma,
-    MAX(CASE WHEN entity_value_norm = 'chyle_leak' AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_chyle_leak,
-    MAX(CASE WHEN entity_value_norm = 'wound_infection' AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_wound_infection
-FROM note_entities_complications
-GROUP BY research_id
+    COALESCE(confirmed_rln_injury, 0) AS rln_injury,
+    COALESCE(refined_rln_injury, 0) AS rln_injury_refined,
+    COALESCE(refined_hypocalcemia, 0) AS refined_hypocalcemia,
+    COALESCE(refined_hypoparathyroidism, 0) AS refined_hypoparathyroidism,
+    COALESCE(refined_hematoma, 0) AS refined_hematoma,
+    COALESCE(refined_seroma, 0) AS refined_seroma,
+    COALESCE(refined_chyle_leak, 0) AS refined_chyle_leak,
+    COALESCE(refined_wound_infection, 0) AS refined_wound_infection,
+    COALESCE(has_confirmed_complication, 0) AS has_any_confirmed_complication
+FROM patient_refined_complication_flags_v2
 """
 
 
@@ -340,10 +346,12 @@ def step1_data_validation(con):
                 if i > 0:
                     h1_live.columns = h1_live.columns[:idx].tolist() + [f"{col}__dup{i}"] + h1_live.columns[idx + 1:].tolist()
 
-    nlp = con.execute(NLP_COMPLICATIONS_SQL).fetchdf()
-    h1_live = h1_live.merge(nlp, on="research_id", how="left")
-    for c in nlp.columns:
-        if c != "research_id" and c in h1_live.columns:
+    pcf = con.execute(REFINED_COMPLICATIONS_SQL).fetchdf()
+    new_cols = [c for c in pcf.columns if c != "research_id" and c not in h1_live.columns]
+    if new_cols:
+        h1_live = h1_live.merge(pcf[["research_id"] + new_cols], on="research_id", how="left")
+    for c in h1_live.columns:
+        if c.startswith("refined_") or c.startswith("confirmed_") or c in ("rln_injury", "rln_injury_refined", "has_any_confirmed_complication"):
             h1_live[c] = h1_live[c].fillna(0)
 
     n_total = len(h1_live)
@@ -381,11 +389,9 @@ def step1_data_validation(con):
     rpt("\n## Hypothesis 2: Goiter / SDOH cohort re-extraction")
     h2_live = con.execute(GOITER_SQL).fetchdf()
 
-    rln_sql = "SELECT research_id, 1 AS rln_injury_tiered, worst_status AS rln_worst_status, source_tier AS rln_source_tier, likely_outcome AS rln_likely_outcome FROM vw_patient_postop_rln_injury_detail"
-    rln_df = con.execute(rln_sql).fetchdf()
-    h2_live = h2_live.merge(nlp, on="research_id", how="left")
-    h2_live = h2_live.merge(rln_df, on="research_id", how="left")
-    fill_cols = [c for c in h2_live.columns if c.startswith("nlp_") or c == "rln_injury_tiered"]
+    h2_pcf = con.execute(REFINED_COMPLICATIONS_SQL).fetchdf()
+    h2_live = h2_live.merge(h2_pcf, on="research_id", how="left")
+    fill_cols = [c for c in h2_live.columns if c.startswith("refined_") or c in ("rln_injury", "rln_injury_refined", "has_any_confirmed_complication")]
     h2_live[fill_cols] = h2_live[fill_cols].fillna(0)
 
     n_goiter = len(h2_live)
@@ -524,11 +530,11 @@ def step2_statistical_confirmation(h1, h2, con):
     h2_model["substernal"] = (h2_model["goiter_type"] == "Substernal").astype(int)
     h2_model["total_thyroidectomy"] = (h2_model["surgery_extent"] == "Total Thyroidectomy").astype(int)
 
-    h2_lr = logistic_model(h2_model, "rln_injury_tiered",
+    h2_lr = logistic_model(h2_model, "rln_injury",
                            ["age", "female", "black", "asian", "specimen_weight_g", "substernal", "total_thyroidectomy"],
                            label="H2_rln_adjusted")
     if "error" not in h2_lr:
-        rpt(f"  N={h2_lr['n_obs']}, events={int(h2_model['rln_injury_tiered'].sum())}, pseudo-R2={h2_lr['pseudo_r2']}")
+        rpt(f"  N={h2_lr['n_obs']}, events={int(h2_model['rln_injury'].sum())}, pseudo-R2={h2_lr['pseudo_r2']}")
         rpt(h2_lr["table"].to_string(index=False))
         h2_lr["table"].to_csv(H2_EXT / "logistic_regression_rln_rerun.csv", index=False)
 
@@ -693,7 +699,7 @@ def step3_sensitivity(h1, h2):
     h2_int["black_x_weight"] = h2_int["black"] * h2_int["specimen_weight_g"].fillna(0)
     h2_int["female_x_substernal"] = h2_int["female"] * h2_int["substernal"]
 
-    int_lr = logistic_model(h2_int, "rln_injury_tiered",
+    int_lr = logistic_model(h2_int, "rln_injury",
                             ["age", "female", "black", "specimen_weight_g", "substernal",
                              "black_x_weight", "female_x_substernal"],
                             label="H2_interactions")
@@ -720,9 +726,9 @@ def step3_sensitivity(h1, h2):
             preds.append("female")
         if label != "Black vs White only" and sub_m["black"].nunique() > 1:
             preds.append("black")
-        sub_lr = logistic_model(sub_m, "rln_injury_tiered", preds, label=f"H2_subgroup_{label}")
+        sub_lr = logistic_model(sub_m, "rln_injury", preds, label=f"H2_subgroup_{label}")
         if "error" not in sub_lr:
-            rpt(f"  {label}: N={sub_lr['n_obs']}, events={int(sub_m['rln_injury_tiered'].sum())}")
+            rpt(f"  {label}: N={sub_lr['n_obs']}, events={int(sub_m['rln_injury'].sum())}")
             for _, row in sub_lr["table"].iterrows():
                 sig = "*" if row["p_value"] < 0.05 else ""
                 rpt(f"    {row['Variable']}: OR={row['OR']} ({row['OR_95CI_low']}–{row['OR_95CI_high']}) p={row['p_value']:.4f}{sig}")
@@ -757,7 +763,7 @@ def step3_sensitivity(h1, h2):
             rpt(f"  {col}: {n_miss} missing ({100*n_miss/len(h1):.1f}%)")
 
     rpt("\n## Missing data summary (H2)")
-    for col in ["age", "specimen_weight_g", "rln_injury_tiered", "race_group"]:
+    for col in ["age", "specimen_weight_g", "rln_injury", "race_group"]:
         if col in h2.columns:
             n_miss = int(h2[col].isna().sum())
             rpt(f"  {col}: {n_miss} missing ({100*n_miss/len(h2):.1f}%)")
@@ -850,9 +856,9 @@ def step4_deeper_explorations(h1, h2, con, sens_results):
 
     # ── H2: Substernal complication forest plot ────────────────────────
     rpt("\n## H2: Substernal complication forest plot")
-    comp_cols = {"rln_injury_tiered": "RLN Injury", "nlp_hypocalcemia": "Hypocalcemia",
-                 "nlp_hypoparathyroidism": "Hypoparathyroidism",
-                 "nlp_hematoma": "Hematoma", "nlp_seroma": "Seroma"}
+    comp_cols = {"rln_injury": "RLN Injury", "refined_hypocalcemia": "Hypocalcemia",
+                 "refined_hypoparathyroidism": "Hypoparathyroidism",
+                 "refined_hematoma": "Hematoma", "refined_seroma": "Seroma"}
     forest_rows = []
     for col, label in comp_cols.items():
         if col not in h2.columns:
@@ -897,7 +903,7 @@ def step4_deeper_explorations(h1, h2, con, sens_results):
     # ── H2: Specimen weight as continuous predictor of any complication ─
     rpt("\n## H2: Specimen weight as continuous predictor of complications")
     h2_wt = h2.copy()
-    comp_any = ["rln_injury_tiered", "nlp_hypocalcemia", "nlp_hypoparathyroidism", "nlp_hematoma", "nlp_seroma"]
+    comp_any = ["rln_injury", "refined_hypocalcemia", "refined_hypoparathyroidism", "refined_hematoma", "refined_seroma"]
     avail_comps = [c for c in comp_any if c in h2_wt.columns]
     h2_wt["any_complication"] = h2_wt[avail_comps].max(axis=1)
     h2_wt["female"] = (h2_wt["sex"] == "Female").astype(int)
@@ -1040,7 +1046,7 @@ def main():
     con = get_connection(use_md)
 
     for v, expected_label in [("path_synoptics", "base"), ("recurrence_risk_features_mv", "recurrence"),
-                               ("vw_patient_postop_rln_injury_detail", "RLN"), ("survival_cohort_enriched", "survival")]:
+                               ("patient_refined_complication_flags_v2", "refined_complications"), ("survival_cohort_enriched", "survival")]:
         row = con.execute(f"SELECT COUNT(*) FROM {v}").fetchone()
         rpt(f"  {v}: {row[0]:,} rows")
 

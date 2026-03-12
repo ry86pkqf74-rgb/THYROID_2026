@@ -97,34 +97,24 @@ def load_goiter_cohort(con: duckdb.DuckDBPyConnection) -> pd.DataFrame:
 
 
 def add_complications(con: duckdb.DuckDBPyConnection, df: pd.DataFrame) -> pd.DataFrame:
-    """Join structured + NLP complications."""
-    comp_sql = """
-    SELECT research_id,
-        MAX(CASE WHEN entity_value_norm = 'rln_injury' AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_rln_injury,
-        MAX(CASE WHEN entity_value_norm IN ('vocal_cord_paralysis','vocal_cord_paresis') AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_vocal_cord,
-        MAX(CASE WHEN entity_value_norm = 'hypocalcemia' AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_hypocalcemia,
-        MAX(CASE WHEN entity_value_norm = 'hypoparathyroidism' AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_hypoparathyroidism,
-        MAX(CASE WHEN entity_value_norm = 'hematoma' AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_hematoma,
-        MAX(CASE WHEN entity_value_norm = 'seroma' AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_seroma,
-        MAX(CASE WHEN entity_value_norm = 'chyle_leak' AND present_or_negated = 'present' THEN 1 ELSE 0 END) AS nlp_chyle_leak
-    FROM note_entities_complications
-    GROUP BY research_id
+    """Phase 3: Join refined complication flags from patient_refined_complication_flags_v2."""
+    pcf_sql = """
+    SELECT
+        research_id,
+        COALESCE(confirmed_rln_injury, 0) AS rln_injury,
+        COALESCE(refined_rln_injury, 0) AS rln_injury_refined,
+        COALESCE(refined_hypocalcemia, 0) AS refined_hypocalcemia,
+        COALESCE(refined_hypoparathyroidism, 0) AS refined_hypoparathyroidism,
+        COALESCE(refined_hematoma, 0) AS refined_hematoma,
+        COALESCE(refined_seroma, 0) AS refined_seroma,
+        COALESCE(refined_chyle_leak, 0) AS refined_chyle_leak,
+        COALESCE(refined_wound_infection, 0) AS refined_wound_infection,
+        COALESCE(has_confirmed_complication, 0) AS has_any_confirmed_complication
+    FROM patient_refined_complication_flags_v2
     """
-    nlp_df = con.execute(comp_sql).fetchdf()
-
-    rln_sql = """
-    SELECT research_id,
-        1 AS rln_injury_tiered,
-        worst_status AS rln_worst_status,
-        source_tier AS rln_source_tier,
-        likely_outcome AS rln_likely_outcome
-    FROM vw_patient_postop_rln_injury_detail
-    """
-    rln_df = con.execute(rln_sql).fetchdf()
-
-    df = df.merge(nlp_df, on="research_id", how="left")
-    df = df.merge(rln_df, on="research_id", how="left")
-    fill_cols = [c for c in df.columns if c.startswith("nlp_") or c == "rln_injury_tiered"]
+    pcf_df = con.execute(pcf_sql).fetchdf()
+    df = df.merge(pcf_df, on="research_id", how="left")
+    fill_cols = [c for c in pcf_df.columns if c != "research_id"]
     df[fill_cols] = df[fill_cols].fillna(0)
     return df
 
@@ -226,9 +216,9 @@ def analyze_size_by_demographics(df: pd.DataFrame) -> dict:
 
 
 def analyze_complications_by_demographics(df: pd.DataFrame) -> pd.DataFrame:
-    """Complication rates by race and sex."""
-    comps = ["rln_injury_tiered", "nlp_hypocalcemia", "nlp_hypoparathyroidism",
-             "nlp_hematoma", "nlp_seroma", "nlp_chyle_leak"]
+    """Complication rates by race and sex (Phase 3: refined flags)."""
+    comps = ["rln_injury", "refined_hypocalcemia", "refined_hypoparathyroidism",
+             "refined_hematoma", "refined_seroma", "refined_chyle_leak"]
     comp_labels = ["RLN Injury", "Hypocalcemia", "Hypoparathyroidism",
                    "Hematoma", "Seroma", "Chyle Leak"]
 
@@ -267,9 +257,9 @@ def analyze_complications_by_demographics(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def statistical_tests_complications(df: pd.DataFrame) -> pd.DataFrame:
-    """Chi-square / Fisher tests for complication differences."""
-    comps = ["rln_injury_tiered", "nlp_hypocalcemia", "nlp_hypoparathyroidism",
-             "nlp_hematoma", "nlp_seroma"]
+    """Chi-square / Fisher tests for complication differences (Phase 3: refined)."""
+    comps = ["rln_injury", "refined_hypocalcemia", "refined_hypoparathyroidism",
+             "refined_hematoma", "refined_seroma"]
     comp_labels = ["RLN Injury", "Hypocalcemia", "Hypoparathyroidism", "Hematoma", "Seroma"]
 
     rows = []
@@ -311,7 +301,7 @@ def logistic_regression_complications(df: pd.DataFrame) -> pd.DataFrame:
     """Multivariable logistic regression for RLN injury in goiter patients."""
     import statsmodels.api as sm
 
-    model_df = df[["rln_injury_tiered", "age", "sex", "race_group",
+    model_df = df[["rln_injury", "age", "sex", "race_group",
                     "specimen_weight_g", "goiter_type", "surgery_extent"]].dropna(subset=["age", "specimen_weight_g"]).copy()
     model_df["female"] = (model_df["sex"] == "Female").astype(int)
     model_df["black"] = (model_df["race_group"] == "Black").astype(int)
@@ -321,7 +311,7 @@ def logistic_regression_complications(df: pd.DataFrame) -> pd.DataFrame:
 
     X_cols = ["age", "female", "black", "asian", "specimen_weight_g", "substernal", "total_thyroidectomy"]
     X = model_df[X_cols].astype(float)
-    y = model_df["rln_injury_tiered"].astype(float)
+    y = model_df["rln_injury"].astype(float)
 
     if y.sum() < 10:
         return pd.DataFrame({"note": ["Insufficient events for logistic regression"]})
@@ -410,8 +400,8 @@ def plot_demographics_by_race(df: pd.DataFrame) -> None:
 
 
 def plot_complications_by_race_sex(df: pd.DataFrame) -> None:
-    """Complication rates by race and sex."""
-    comps = ["rln_injury_tiered", "nlp_hypocalcemia", "nlp_hypoparathyroidism"]
+    """Complication rates by race and sex (Phase 3: refined flags)."""
+    comps = ["rln_injury", "refined_hypocalcemia", "refined_hypoparathyroidism"]
     labels = ["RLN Injury", "Hypocalcemia", "Hypoparathyroidism"]
     race_order = ["Black", "White", "Asian"]
 
@@ -506,7 +496,7 @@ def plot_substernal_comparison(df: pd.DataFrame) -> None:
     axes[1].set_ylabel("Weight (g)")
     axes[1].set_title("Specimen Weight", fontweight="bold")
 
-    comps = ["rln_injury_tiered", "nlp_hypocalcemia"]
+    comps = ["rln_injury", "refined_hypocalcemia"]
     labels_c = ["RLN Injury", "Hypocalcemia"]
     for ci, (comp, lab) in enumerate(zip(comps, labels_c)):
         if comp in df.columns:
@@ -581,8 +571,10 @@ def main():
     print(f"  → {len(df)} goiter patients")
     print(f"  → Cervical: {(df['goiter_type']=='Cervical').sum()}, Substernal: {(df['goiter_type']=='Substernal').sum()}")
 
-    print("\n[2/8] Adding complications data...")
+    print("\n[2/8] Adding refined complication data (Phase 3: patient_refined_complication_flags_v2)...")
     df = add_complications(con, df)
+    rln_n = int(df["rln_injury"].sum())
+    print(f"  → RLN confirmed: {rln_n}, refined: {int(df['rln_injury_refined'].sum())}")
 
     print("\n[3/8] Loading non-goiter comparison cohort...")
     nongoiter = load_comparison_cohort(con)
@@ -661,6 +653,7 @@ def main():
             "race_chi2": round(chi2_race, 1),
             "race_p": round(p_race, 6),
         },
+        "complication_source": "patient_refined_complication_flags_v2 (Phase 3 refined, not raw NLP)",
         "logistic_regression_rln": {
             "n_obs": lr_df.attrs.get("n_obs", "—") if hasattr(lr_df, 'attrs') else "—",
             "n_events": lr_df.attrs.get("n_events", "—") if hasattr(lr_df, 'attrs') else "—",

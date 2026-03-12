@@ -1,11 +1,11 @@
 ======================================================================
 HYPOTHESIS 1 & 2 — FULL VALIDATION, SENSITIVITY & EXTENSION
-Date: 2026-03-12T11:59:48.491893
+Date: 2026-03-12T18:52:55.836240
 Data source: MotherDuck
 ======================================================================
   path_synoptics: 11,688 rows
   recurrence_risk_features_mv: 4,976 rows
-  vw_patient_postop_rln_injury_detail: 679 rows
+  patient_refined_complication_flags_v2: 287 rows
   survival_cohort_enriched: 61,134 rows
 
 # STEP 1: DATA EXTRACTION VALIDATION
@@ -46,14 +46,14 @@ central_lnd_flag       0.2357 0.0794 1.266        1.083         1.479 0.002976
   CLN adjusted OR: live=1.266 vs saved=1.266  Delta=0.000  ✓
 
 ## H1: Crude RLN injury by CLN status
-  CLN RLN: 142/1247 (11.39%)
-  No-CLN RLN: 254/4030 (6.30%)
-  OR = 1.91 (1.539–2.371)
-  Saved OR = 1.91  |  Delta = 0.000  ✓
+  CLN RLN: 12/1247 (0.96%)
+  No-CLN RLN: 28/4030 (0.69%)
+  OR = 1.389 (0.704–2.739)
+  Saved OR = 1.389  |  Delta = 0.000  ✓
 
 ## H1: Prophylactic vs Therapeutic CLN
-  prophylactic: N=1010, recurrence=22.4%, RLN=8.4%
-  therapeutic: N=231, recurrence=64.1%, RLN=23.8%
+  prophylactic: N=1010, recurrence=22.4%, RLN=0.7%
+  therapeutic: N=231, recurrence=64.1%, RLN=2.2%
 
 ## H2: Size analysis by demographics
   Kruskal-Wallis H=413.882, p=2.18e-89
@@ -62,37 +62,37 @@ central_lnd_flag       0.2357 0.0794 1.266        1.083         1.479 0.002976
   Saved medians: Male=77.0, Female=48.0  ✓
 
 ## H2: Multivariable logistic regression (RLN in goiter)
-  N=2112, events=409, pseudo-R2=0.0276
-           Variable  Coefficient     SE    OR  OR_95CI_low  OR_95CI_high  p_value
-                age       0.1560 0.1161 1.169        0.931         1.468 0.179316
-             female      -0.1951 0.1054 0.823        0.669         1.012 0.064141
-              black       0.1270 0.1273 1.135        0.885         1.457 0.318470
-              asian       0.2428 0.0769 1.275        1.096         1.482 0.001604
-  specimen_weight_g      -0.4397 0.1857 0.644        0.448         0.927 0.017879
-         substernal      -0.0110 0.1270 0.989        0.771         1.269 0.931005
-total_thyroidectomy       0.0503 0.1327 1.052        0.811         1.364 0.704834
+  N=2112, events=26, pseudo-R2=0.0174
+           Variable  Coefficient           SE      OR  OR_95CI_low  OR_95CI_high  p_value
+                age       0.0774 3.230000e-01   1.081        0.574         2.035 0.810576
+             female      -0.0284 3.201000e-01   0.972        0.519         1.820 0.929419
+              black       0.1654 3.442000e-01   1.180        0.601         2.317 0.630918
+              asian      -7.5224 3.792866e+07   0.001        0.000           inf 1.000000
+  specimen_weight_g       0.0200 3.132000e-01   1.020        0.552         1.885 0.949032
+         substernal      -8.5245          NaN   0.000          NaN           NaN      NaN
+total_thyroidectomy       5.0684 1.033761e+08 158.913        0.000           inf 1.000000
   Saved N=2112  |  Delta N = 0
-  asian: live OR=1.275 vs saved=1.275  Delta=0.000  ✓
-  specimen_weight_g: live OR=0.644 vs saved=0.644  Delta=0.000  ✓
+  asian: live OR=0.001 vs saved=0.001  Delta=0.000  ✓
+  specimen_weight_g: live OR=1.02 vs saved=1.02  Delta=0.000  ✓
 
 ## FDR correction across all tests
-                     test    p_raw    p_fdr  significant_fdr
-      H1_crude_recurrence 0.000000 0.000000             True
-   H1_lr_central_lnd_flag 0.002976 0.007936             True
-                H1_lr_age 0.376622 0.463535            False
-      H1_lr_tumor_size_cm 0.015679 0.031358             True
-        H1_lr_ln_positive 0.012668 0.028955             True
-      H1_lr_braf_positive 0.439200 0.501943            False
-             H1_crude_rln 0.000000 0.000000             True
-   H2_kruskal_weight_race 0.000000 0.000000             True
-H2_mannwhitney_weight_sex 0.000000 0.000000             True
-                H2_lr_age 0.179316 0.260823            False
-             H2_lr_female 0.064141 0.102626            False
-              H2_lr_black 0.318470 0.424627            False
-              H2_lr_asian 0.001604 0.005133             True
-  H2_lr_specimen_weight_g 0.017879 0.031785             True
-         H2_lr_substernal 0.931005 0.931005            False
-H2_lr_total_thyroidectomy 0.704834 0.751823            False
+                     test    p_raw  p_fdr  significant_fdr
+      H1_crude_recurrence 0.000000    NaN            False
+   H1_lr_central_lnd_flag 0.002976    NaN            False
+                H1_lr_age 0.376622    NaN            False
+      H1_lr_tumor_size_cm 0.015679    NaN            False
+        H1_lr_ln_positive 0.012668    NaN            False
+      H1_lr_braf_positive 0.439200    NaN            False
+             H1_crude_rln 0.444251    NaN            False
+   H2_kruskal_weight_race 0.000000    NaN            False
+H2_mannwhitney_weight_sex 0.000000    NaN            False
+                H2_lr_age 0.810576    NaN            False
+             H2_lr_female 0.929419    NaN            False
+              H2_lr_black 0.630918    NaN            False
+              H2_lr_asian 1.000000    NaN            False
+  H2_lr_specimen_weight_g 0.949032    NaN            False
+         H2_lr_substernal      NaN    NaN            False
+H2_lr_total_thyroidectomy 1.000000    NaN            False
 
 
 # STEP 3: SENSITIVITY & ROBUSTNESS ANALYSES
@@ -103,18 +103,18 @@ H2_lr_total_thyroidectomy 0.704834 0.751823            False
   Matched pairs: 1246
   Balance assessment:
     covariate    SMD  balanced
-          age 0.0027      True
+          age 0.0025      True
 braf_positive 0.0464      True
    multifocal 0.0000      True
    recurrence 0.0052      True
   PSM recurrence: CLN=376/1246, No-CLN=379/1246
   PSM OR = 0.989 (0.833–1.173)
-  PSM RLN: CLN=142/1246, No-CLN=78/1246
-  PSM RLN OR = 1.926 (1.444–2.569)
+  PSM RLN: CLN=12/1246, No-CLN=6/1246
+  PSM RLN OR = 2.01 (0.752–5.372)
 
   Extended PSM covariates (more confounders, fewer pairs): ['age', 'tumor_size_cm', 'ln_positive', 'braf_positive', 'multifocal']
   Extended matched pairs: 75
-  Extended PSM recurrence OR = 1.055 (0.554–2.009)
+  Extended PSM recurrence OR = 0.716 (0.372–1.379)
   → Love plot saved
 
 ## H1: E-value for unmeasured confounding
@@ -126,30 +126,30 @@ braf_positive 0.0464      True
   away the lower confidence bound of the observed association.
 
 ## H2: Interaction terms (race×weight, sex×substernal)
-  N=2112, pseudo-R2=0.0198
-           Variable  Coefficient     SE    OR  OR_95CI_low  OR_95CI_high  p_value
-                age       0.1450 0.1146 1.156        0.923         1.447 0.205780
-             female      -0.1855 0.1066 0.831        0.674         1.024 0.081719
-              black      -0.1427 0.1675 0.867        0.624         1.204 0.394341
-  specimen_weight_g      -1.0458 0.4739 0.351        0.139         0.890 0.027318
-         substernal       0.0698 0.1847 1.072        0.747         1.540 0.705449
-     black_x_weight       0.7707 0.5164 2.161        0.786         5.946 0.135574
-female_x_substernal      -0.1155 0.2150 0.891        0.585         1.358 0.591245
+  N=2112, pseudo-R2=0.0274
+           Variable  Coefficient          SE     OR  OR_95CI_low  OR_95CI_high  p_value
+                age       0.0793      0.3257  1.083        0.572         2.050 0.807704
+             female      -0.0681      0.3179  0.934        0.501         1.742 0.830401
+              black      -0.3738      0.5334  0.688        0.242         1.958 0.483453
+  specimen_weight_g      -3.2500      3.2300  0.039        0.000        21.776 0.314325
+         substernal      -3.7862  31377.4260  0.023        0.000           inf 0.999904
+     black_x_weight       3.4521      3.3067 31.567        0.048     20602.784 0.296495
+female_x_substernal      -0.5615 128653.0669  0.570        0.000           inf 0.999997
 
 ## H2: Subgroup analyses
-  Black vs White only: N=1892, events=360
-    age: OR=1.207 (0.943–1.544) p=0.1352
-    specimen_weight_g: OR=0.722 (0.514–1.013) p=0.0597
-    female: OR=0.859 (0.686–1.076) p=0.1865
-  Males only: N=402, events=79
-    age: OR=1.16 (0.742–1.814) p=0.5146
-    specimen_weight_g: OR=0.341 (0.115–1.01) p=0.0522
-    black: OR=0.616 (0.321–1.183) p=0.1455
-  Age >= 65: N=544, events=124
-    age: OR=0.901 (0.574–1.416) p=0.6520
-    specimen_weight_g: OR=0.752 (0.426–1.328) p=0.3258
-    female: OR=0.827 (0.549–1.248) p=0.3663
-    black: OR=1.373 (0.878–2.147) p=0.1648
+  Black vs White only: N=1892, events=26
+    age: OR=1.039 (0.554–1.949) p=0.9045
+    specimen_weight_g: OR=1.05 (0.586–1.88) p=0.8697
+    female: OR=0.99 (0.53–1.849) p=0.9757
+  Males only: N=402, events=6
+    age: OR=1.934 (0.361–10.361) p=0.4409
+    specimen_weight_g: OR=0.007 (0.0–1233.238) p=0.4188
+    black: OR=0.0 (0.0–inf) p=1.0000
+  Age >= 65: N=544, events=4
+    age: OR=0.831 (0.176–3.933) p=0.8155
+    specimen_weight_g: OR=1.178 (0.372–3.731) p=0.7812
+    female: OR=0.642 (0.185–2.232) p=0.4858
+    black: OR=1.056 (0.238–4.686) p=0.9424
 
 ## H1: Leave-one-out sensitivity (drop one race group)
   Drop Black: N=3348, OR=2.229 (1.883–2.637)
@@ -167,7 +167,7 @@ female_x_substernal      -0.1155 0.2150 0.891        0.585         1.358 0.59124
 ## Missing data summary (H2)
   age: 0 missing (0.0%)
   specimen_weight_g: 4106 missing (66.0%)
-  rln_injury_tiered: 0 missing (0.0%)
+  rln_injury: 0 missing (0.0%)
   race_group: 0 missing (0.0%)
 
 
@@ -184,25 +184,25 @@ female_x_substernal      -0.1155 0.2150 0.891        0.585         1.358 0.59124
 ## H2: Substernal complication forest plot
   → Substernal forest plot saved
              label    OR  CI_low  CI_high  p_value
-        RLN Injury 1.325   0.861    2.038   0.2449
-      Hypocalcemia 1.910   1.469    2.482   0.0000
-Hypoparathyroidism 0.916   0.495    1.697   0.8995
-          Hematoma 0.991   0.361    2.722   1.0000
-            Seroma 2.358   1.714    3.244   0.0000
+        RLN Injury 1.740   0.409    7.399   0.7720
+      Hypocalcemia 0.991   0.239    4.116   1.0000
+Hypoparathyroidism 1.303   0.311    5.465   1.0000
+          Hematoma 1.846   0.563    6.046   0.5261
+            Seroma 1.225   0.162    9.240   1.0000
 
 ## H2: Specimen weight as continuous predictor of complications
-  N=2112, pseudo-R2=0.0014
+  N=2112, pseudo-R2=0.0026
          Variable  Coefficient     SE    OR  OR_95CI_low  OR_95CI_high  p_value
-              age       0.0555 0.0518 1.057        0.955         1.170 0.283371
-           female      -0.0485 0.0510 0.953        0.862         1.053 0.341626
-specimen_weight_g       0.0384 0.0502 1.039        0.942         1.147 0.443897
+              age       0.1266 0.1435 1.135        0.857         1.503 0.377708
+           female      -0.0083 0.1427 0.992        0.750         1.312 0.953802
+specimen_weight_g      -0.1137 0.1646 0.893        0.646         1.232 0.489649
 
 ## Pooled analysis: goiter patients with central LND (additive risk)
   N=5277
         Variable  Coefficient     SE    OR  OR_95CI_low  OR_95CI_high  p_value
-central_lnd_flag       0.2201 0.0774 1.246        1.071         1.450 0.004439
-       is_goiter       0.1484 0.0674 1.160        1.016         1.324 0.027735
-    cln_x_goiter       0.0841 0.0748 1.088        0.939         1.260 0.260995
+central_lnd_flag      -0.2833 0.2326 0.753        0.477         1.188 0.223311
+       is_goiter      -0.7315 0.2165 0.481        0.315         0.735 0.000726
+    cln_x_goiter       0.6938 0.2464 2.001        1.235         3.244 0.004872
 
 ## Consolidated Table 1 (both hypotheses)
               Cohort    N Age_mean_SD Female_pct
@@ -240,8 +240,8 @@ significant.
 For Hypothesis 1, propensity score matching yielded 1246 matched pairs.
 In the matched cohort, the recurrence OR was 0.989
 (95% CI 0.833–1.173),
-and the RLN injury OR was 1.926
-(95% CI 1.444–2.569).
+and the RLN injury OR was 2.01
+(95% CI 0.752–5.372).
 The E-value for the adjusted recurrence OR was 1.846 (CI bound: 1.383),
 indicating moderate robustness to unmeasured confounding.
 

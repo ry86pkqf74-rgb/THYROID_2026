@@ -25,8 +25,8 @@ significant.
 For Hypothesis 1, propensity score matching yielded 1246 matched pairs.
 In the matched cohort, the recurrence OR was 0.989
 (95% CI 0.833–1.173),
-and the RLN injury OR was 1.926
-(95% CI 1.444–2.569).
+and the RLN injury OR was 2.01
+(95% CI 0.752–5.372).
 The E-value for the adjusted recurrence OR was 1.846 (CI bound: 1.383),
 indicating moderate robustness to unmeasured confounding.
 

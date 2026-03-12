@@ -1,6 +1,6 @@
 Complication,p_by_race,p_by_sex,p_cervical_vs_substernal
-RLN Injury,0.4737,0.8741,0.2449
-Hypocalcemia,0.0002,0.9766,0.0
-Hypoparathyroidism,0.8075,0.9525,0.8995
-Hematoma,0.5139,0.0595,1.0
-Seroma,0.178,0.7943,0.0
+RLN Injury,0.2952,0.7683,0.772
+Hypocalcemia,0.1848,1.0,1.0
+Hypoparathyroidism,0.7497,0.3978,1.0
+Hematoma,0.4988,1.0,0.5261
+Seroma,0.0723,0.2516,1.0
