@@ -1,0 +1,366 @@
+[
+  {
+    "variable": "ete_overall",
+    "label": "Extrathyroidal Extension (ETE)",
+    "clinical_impact": 10,
+    "phase4_priority": 1,
+    "structured_sources": [
+      "path_synoptics.tumor_1_extrathyroidal_extension",
+      "tumor_episode_master_v2.extrathyroidal_extension",
+      "recurrence_risk_features_mv.ete",
+      "operative_episode_detail_v2.gross_ete_flag"
+    ],
+    "nlp_sources": [
+      "note_entities_staging (extrathyroidal_extension_detail)",
+      "extract_histology_v2 -> gross/microscopic ETE from path notes",
+      "extract_operative_v2 -> gross_ete/ete_present from op notes",
+      "extract_imaging_v2 -> imaging_ete from CT/US"
+    ],
+    "source_diversity": 4,
+    "notes": "MUST source-split: path (gold) vs op note vs imaging vs consent. Gross vs microscopic distinction is AJCC T-stage critical. 35.7% fill rate in path_synoptics. Raw values include 'x','present','minimal','microscopic','extensive'.",
+    "requires_source_split": true,
+    "recommended_columns": [
+      "ete_path_confirmed",
+      "ete_op_note_observed",
+      "ete_imaging_suspected",
+      "ete_overall_confirmed",
+      "ete_grade"
+    ],
+    "fill_rate_pct": 35.7,
+    "n_patients_with_data": 3879,
+    "current_precision_estimate": 0.85,
+    "precision_note": "Structured but raw text normalization needed"
+  },
+  {
+    "variable": "tumor_size",
+    "label": "Tumor Size / T Stage",
+    "clinical_impact": 9,
+    "phase4_priority": 2,
+    "structured_sources": [
+      "path_synoptics.tumor_1_size_greatest_dimension_cm",
+      "tumor_episode_master_v2.tumor_size_cm",
+      "imaging_nodule_long_v2.size_cm_max"
+    ],
+    "nlp_sources": [
+      "extract_histology_v2 (implicit in histology notes)",
+      "extract_imaging_v2 (size_cm_max from US/CT)"
+    ],
+    "source_diversity": 3,
+    "notes": "Path size is canonical; imaging pre-op size may differ. 37.1% fill rate in path_synoptics. Path > imaging hierarchy for AJCC T-staging.",
+    "requires_source_split": true,
+    "recommended_columns": [
+      "tumor_size_path_cm",
+      "tumor_size_imaging_cm",
+      "tumor_size_source"
+    ],
+    "fill_rate_pct": 37.1,
+    "current_precision_estimate": 0.85,
+    "precision_note": "Structured but raw text normalization needed"
+  },
+  {
+    "variable": "margin_status",
+    "label": "Surgical Margin Status (R0/R1/R2)",
+    "clinical_impact": 9,
+    "phase4_priority": 3,
+    "structured_sources": [
+      "path_synoptics.tumor_1_margin_status",
+      "path_synoptics.tumor_1_distance_to_closest_margin_mm",
+      "tumor_episode_master_v2.margin_status"
+    ],
+    "nlp_sources": [
+      "extract_histology_v2 (margin_status from path reports)"
+    ],
+    "source_diversity": 1,
+    "notes": "Path report only; 36.4% fill rate in path_synoptics. Raw values: 'involved', 'c/a', 'present', 'indeterminate', 'Involved'. Closest margin distance: 14.2% fill rate. Current normalization in tumor_episode_master_v2 is not clean.",
+    "requires_source_split": false,
+    "recommended_columns": [
+      "margin_status_refined",
+      "closest_margin_mm",
+      "margin_site"
+    ],
+    "fill_rate_pct": 36.4,
+    "current_precision_estimate": 0.85,
+    "precision_note": "Structured but raw text normalization needed"
+  },
+  {
+    "variable": "vascular_invasion",
+    "label": "Vascular / Angioinvasion",
+    "clinical_impact": 8,
+    "phase4_priority": 4,
+    "structured_sources": [
+      "path_synoptics.tumor_1_angioinvasion",
+      "path_synoptics.tumor_1_angioinvasion_quantify",
+      "tumor_episode_master_v2.vascular_invasion"
+    ],
+    "nlp_sources": [
+      "extract_histology_v2 (vascular_invasion_detail)"
+    ],
+    "source_diversity": 1,
+    "notes": "Path report only; 34.5% fill rate. Raw values in tumor_episode_master_v2: 'x','present','focal','extensive'. focal vs extensive distinction matters for AJCC 8th Ed.",
+    "requires_source_split": false,
+    "recommended_columns": [
+      "vascular_invasion_refined",
+      "vascular_invasion_grade"
+    ],
+    "fill_rate_pct": 34.5,
+    "current_precision_estimate": 0.85,
+    "precision_note": "Structured but raw text normalization needed"
+  },
+  {
+    "variable": "perineural_invasion",
+    "label": "Perineural Invasion (PNI)",
+    "clinical_impact": 7,
+    "phase4_priority": 5,
+    "structured_sources": [
+      "path_synoptics.tumor_1_perineural_invasion",
+      "tumor_episode_master_v2.perineural_invasion"
+    ],
+    "nlp_sources": [
+      "extract_histology_v2 (perineural_invasion)"
+    ],
+    "source_diversity": 1,
+    "notes": "Path report only; 13.7% fill rate (sparse). Binary: present vs absent.",
+    "requires_source_split": false,
+    "recommended_columns": [
+      "perineural_invasion_refined"
+    ],
+    "fill_rate_pct": 13.7,
+    "current_precision_estimate": 0.85,
+    "precision_note": "Structured but raw text normalization needed"
+  },
+  {
+    "variable": "lymphovascular_invasion",
+    "label": "Lymphovascular Invasion (LVI)",
+    "clinical_impact": 7,
+    "phase4_priority": 6,
+    "structured_sources": [
+      "path_synoptics.tumor_1_lymphatic_invasion",
+      "tumor_episode_master_v2.lymphatic_invasion"
+    ],
+    "nlp_sources": [
+      "extract_histology_v2 (lymphatic_invasion_detail)"
+    ],
+    "source_diversity": 1,
+    "notes": "Path report only; 31.6% fill rate. Key intermediate-risk factor in ATA guidelines.",
+    "requires_source_split": false,
+    "recommended_columns": [
+      "lvi_refined"
+    ],
+    "fill_rate_pct": 31.6,
+    "current_precision_estimate": 0.85,
+    "precision_note": "Structured but raw text normalization needed"
+  },
+  {
+    "variable": "braf_molecular",
+    "label": "BRAF / Molecular Markers",
+    "clinical_impact": 9,
+    "phase4_priority": 7,
+    "structured_sources": [
+      "molecular_test_episode_v2 (platform, result)",
+      "thyroseq_molecular_enrichment (BRAF, RAS, TERT)",
+      "recurrence_risk_features_mv (braf_positive, ras_positive)"
+    ],
+    "nlp_sources": [
+      "note_entities_genetics (BRAF=344 h_p + 83 op_note + 39 other_history)",
+      "extract_molecular_v2"
+    ],
+    "source_diversity": 3,
+    "notes": "BRAF NLP in h_p/op_note is heavily consent/risk-list contaminated. Structured molecular_test_episode_v2 is the gold standard. Need: tested_flag vs positive_flag, platform, date.",
+    "requires_source_split": true,
+    "recommended_columns": [
+      "braf_tested",
+      "braf_positive_refined",
+      "molecular_platform",
+      "molecular_test_date"
+    ],
+    "fill_rate_pct": null,
+    "current_precision_estimate": 0.45,
+    "precision_note": "NLP heavily consent-contaminated; structured sources needed"
+  },
+  {
+    "variable": "capsular_invasion",
+    "label": "Capsular Invasion",
+    "clinical_impact": 6,
+    "phase4_priority": 8,
+    "structured_sources": [
+      "path_synoptics.tumor_1_capsular_invasion",
+      "tumor_episode_master_v2.capsular_invasion"
+    ],
+    "nlp_sources": [
+      "extract_histology_v2 (capsular_invasion)"
+    ],
+    "source_diversity": 1,
+    "notes": "Path report only. Key for FTC vs follicular adenoma distinction. Binary: present vs absent.",
+    "requires_source_split": false,
+    "recommended_columns": [
+      "capsular_invasion_refined"
+    ],
+    "fill_rate_pct": 11.3,
+    "current_precision_estimate": 0.85,
+    "precision_note": "Structured but raw text normalization needed"
+  },
+  {
+    "variable": "recurrence_site",
+    "label": "Recurrence Site and Detection Method",
+    "clinical_impact": 8,
+    "phase4_priority": 9,
+    "structured_sources": [
+      "recurrence_risk_features_mv (recurrence_flag, first_recurrence_date)"
+    ],
+    "nlp_sources": [
+      "extracted_clinical_events_v4 (recurrence NLP - heavily contaminated)",
+      "note_entities_problem_list"
+    ],
+    "source_diversity": 2,
+    "notes": "recurrence_flag in recurrence_risk_features_mv is structured (reliable). NLP clinical events are contaminated (6,405 false positives from single words). Need: recurrence_site (local/regional/distant), detection_method (imaging/Tg/biopsy).",
+    "requires_source_split": true,
+    "recommended_columns": [
+      "recurrence_site_refined",
+      "recurrence_detection_method",
+      "recurrence_confirmed"
+    ],
+    "fill_rate_pct": null,
+    "current_precision_estimate": 0.3,
+    "precision_note": "NLP events contaminated; structured recurrence_flag reliable"
+  },
+  {
+    "variable": "calcium_pth_nadir",
+    "label": "Post-op Calcium / PTH Nadir",
+    "clinical_impact": 6,
+    "phase4_priority": 10,
+    "structured_sources": [
+      "thyroglobulin_labs (tg only)",
+      "thyroseq_followup_labs"
+    ],
+    "nlp_sources": [
+      "note_entities_medications (calcitriol, calcium_supplement)",
+      "note_entities_problem_list (hypocalcemia, hypoparathyroidism)"
+    ],
+    "source_diversity": 3,
+    "notes": "No dedicated calcium/PTH lab table found. Note_entities hypocalcemia/hypoparathyroidism refined in Phase 3. Need: post-op PTH nadir value + timing, calcium nadir + timing.",
+    "requires_source_split": true,
+    "recommended_columns": [
+      "pth_nadir_pg_ml",
+      "pth_nadir_days_post_op",
+      "calcium_nadir_mg_dl",
+      "hypoparathyroidism_confirmed"
+    ],
+    "fill_rate_pct": null,
+    "current_precision_estimate": 0.65,
+    "precision_note": "No dedicated lab table; NLP post Phase 3 refinement"
+  },
+  {
+    "variable": "completion_reason",
+    "label": "Completion Thyroidectomy Indication",
+    "clinical_impact": 5,
+    "phase4_priority": 11,
+    "structured_sources": [
+      "path_synoptics.completion (yes/no flag only)"
+    ],
+    "nlp_sources": [
+      "note_entities_procedures (completion_thyroidectomy: 465 h_p + 344 op_note)",
+      "note_entities_problem_list"
+    ],
+    "source_diversity": 2,
+    "notes": "Completion flag exists but reason (cancer found, patient preference, etc.) is NLP-only. Op note is most reliable source for surgical indication.",
+    "requires_source_split": true,
+    "recommended_columns": [
+      "completion_reason_refined",
+      "completion_indication_source"
+    ],
+    "fill_rate_pct": null,
+    "current_precision_estimate": 0.7,
+    "precision_note": "Moderate; source split would improve"
+  },
+  {
+    "variable": "voice_laryngoscopy",
+    "label": "Voice / Laryngoscopy Findings",
+    "clinical_impact": 7,
+    "phase4_priority": 12,
+    "structured_sources": [
+      "complications.vocal_cord_status",
+      "complications.laryngoscopy_date",
+      "extracted_rln_injury_refined_v2 (already refined)"
+    ],
+    "nlp_sources": [
+      "note_entities_complications (vocal_cord_paralysis, vocal_cord_paresis)"
+    ],
+    "source_diversity": 3,
+    "notes": "Already refined in Phase 2/3 (extracted_rln_injury_refined_v2). Need: bilateral vs unilateral extension, laryngoscopy scope findings, hoarseness severity. Build on existing refined tables.",
+    "requires_source_split": false,
+    "recommended_columns": [
+      "rln_injury_grade",
+      "laryngoscopy_finding",
+      "voice_outcome"
+    ],
+    "fill_rate_pct": null,
+    "current_precision_estimate": 0.85,
+    "precision_note": "Already refined in Phase 2/3"
+  },
+  {
+    "variable": "extranodal_extension",
+    "label": "Extranodal Extension (ENE)",
+    "clinical_impact": 6,
+    "phase4_priority": 13,
+    "structured_sources": [
+      "path_synoptics.tumor_1_extranodal_extension",
+      "tumor_episode_master_v2.extranodal_extension"
+    ],
+    "nlp_sources": [
+      "extract_histology_v2 (extranodal_extension_detail)"
+    ],
+    "source_diversity": 1,
+    "notes": "Path report only. N2b staging determinant.",
+    "requires_source_split": false,
+    "recommended_columns": [
+      "ene_refined"
+    ],
+    "fill_rate_pct": null,
+    "current_precision_estimate": 0.7,
+    "precision_note": "Moderate; source split would improve"
+  },
+  {
+    "variable": "histology_variant",
+    "label": "Aggressive Histologic Variant",
+    "clinical_impact": 7,
+    "phase4_priority": 14,
+    "structured_sources": [
+      "tumor_episode_master_v2.histology_variant",
+      "path_synoptics.tumor_1_variant"
+    ],
+    "nlp_sources": [
+      "extract_histology_v2 (aggressive_features, histology_subtype)"
+    ],
+    "source_diversity": 1,
+    "notes": "Tall cell, hobnail, diffuse sclerosing - high-risk variants. Path report only. Relatively well captured.",
+    "requires_source_split": false,
+    "recommended_columns": [
+      "aggressive_variant_confirmed"
+    ],
+    "fill_rate_pct": null,
+    "current_precision_estimate": 0.7,
+    "precision_note": "Moderate; source split would improve"
+  },
+  {
+    "variable": "tert_status",
+    "label": "TERT Promoter Mutation",
+    "clinical_impact": 8,
+    "phase4_priority": 15,
+    "structured_sources": [
+      "recurrence_risk_features_mv (tert_positive)"
+    ],
+    "nlp_sources": [
+      "note_entities_genetics (TERT: 72 h_p + 39 op_note)"
+    ],
+    "source_diversity": 2,
+    "notes": "High-risk molecular marker. Structured source reliable. NLP likely consent/risk contaminated.",
+    "requires_source_split": true,
+    "recommended_columns": [
+      "tert_tested",
+      "tert_positive_refined"
+    ],
+    "fill_rate_pct": null,
+    "current_precision_estimate": 0.45,
+    "precision_note": "NLP heavily consent-contaminated; structured sources needed"
+  }
+]

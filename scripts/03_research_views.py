@@ -567,6 +567,61 @@ def main() -> None:
     except Exception as exc:
         print(f"{'advanced_features_sorted':35s} skipped ({exc})")
 
+    # 1b. advanced_features_v4 — extends v3 with source-aware Phase 4 staging flags.
+    try:
+        con.execute("""
+            CREATE OR REPLACE VIEW advanced_features_v4 AS
+            SELECT
+                v3.*,
+                -- ETE source-split (Phase 4)
+                COALESCE(p4.ete_path_confirmed, FALSE)    AS ete_path_confirmed,
+                COALESCE(p4.ete_op_note_observed, FALSE)  AS ete_op_note_observed,
+                COALESCE(p4.ete_overall_confirmed, FALSE) AS ete_overall_confirmed,
+                p4.ete_grade                              AS ete_grade_refined,
+                p4.ete_source_of_truth,
+                -- Invasion refined
+                p4.margin_status_refined,
+                p4.closest_margin_mm,
+                p4.vascular_invasion_refined,
+                p4.lvi_refined,
+                p4.perineural_invasion_refined,
+                p4.capsular_invasion_refined,
+                -- Tumor size source-split
+                p4.tumor_size_path_cm,
+                p4.tumor_size_imaging_cm,
+                p4.tumor_size_source,
+                -- Molecular refined
+                COALESCE(p4.braf_positive_refined, FALSE) AS braf_positive_refined,
+                COALESCE(p4.ras_positive_refined, FALSE)  AS ras_positive_refined,
+                COALESCE(p4.tert_positive_refined, FALSE) AS tert_positive_refined,
+                p4.molecular_platform,
+                -- Recurrence refined
+                COALESCE(p4.recurrence_confirmed, FALSE)  AS recurrence_confirmed,
+                p4.recurrence_risk_band                   AS recurrence_risk_band_refined
+            FROM advanced_features_v3 v3
+            LEFT JOIN patient_refined_staging_flags_v3 p4
+                ON v3.research_id = p4.research_id;
+        """)
+        n4 = con.execute("SELECT COUNT(*) FROM advanced_features_v4").fetchone()[0]
+        print(f"{'advanced_features_v4 (view)':35s} rows={n4:,}")
+    except Exception as exc:
+        print(f"{'advanced_features_v4':35s} skipped ({exc})")
+
+    # 1c. advanced_features_v4_sorted — materialized for fast queries.
+    try:
+        con.execute("""
+            CREATE OR REPLACE TABLE advanced_features_v4_sorted AS
+            SELECT * FROM advanced_features_v4
+            ORDER BY surgery_date DESC NULLS LAST,
+                     histology_1_type,
+                     overall_stage_ajcc8,
+                     research_id;
+        """)
+        n4s = con.execute("SELECT COUNT(*) FROM advanced_features_v4_sorted").fetchone()[0]
+        print(f"{'advanced_features_v4_sorted':35s} rows={n4s:,}")
+    except Exception as exc:
+        print(f"{'advanced_features_v4_sorted':35s} skipped ({exc})")
+
     # 2. Overview KPIs — tiny pre-computed table; one row only.
     try:
         con.execute("""

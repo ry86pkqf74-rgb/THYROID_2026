@@ -107,10 +107,19 @@ SELECT
     COALESCE(pcf.refined_seroma, 0) AS refined_seroma,
     COALESCE(pcf.refined_chyle_leak, 0) AS refined_chyle_leak,
     COALESCE(pcf.refined_wound_infection, 0) AS refined_wound_infection,
-    COALESCE(pcf.has_confirmed_complication, 0) AS has_any_confirmed_complication
+    COALESCE(pcf.has_confirmed_complication, 0) AS has_any_confirmed_complication,
+    -- Phase 4: source-aware staging flags (patient_refined_staging_flags_v3)
+    COALESCE(p4.ete_path_confirmed, FALSE) AS ete_path_confirmed,
+    COALESCE(p4.ete_overall_confirmed, FALSE) AS ete_overall_confirmed,
+    p4.ete_grade AS ete_grade_refined,
+    p4.margin_status_refined,
+    p4.vascular_invasion_refined,
+    p4.lvi_refined,
+    p4.perineural_invasion_refined
 FROM lobectomy_eligible e
-LEFT JOIN recurrence_risk_features_mv r ON e.research_id = r.research_id
+LEFT JOIN recurrence_risk_features_mv r ON e.research_id = CAST(r.research_id AS INTEGER)
 LEFT JOIN patient_refined_complication_flags_v2 pcf ON e.research_id = pcf.research_id
+LEFT JOIN patient_refined_staging_flags_v3 p4 ON e.research_id = p4.research_id
 """
 
 
@@ -243,17 +252,36 @@ def analyze_recurrence(df: pd.DataFrame) -> dict:
     return results
 
 
-def logistic_regression_recurrence(df: pd.DataFrame) -> pd.DataFrame:
-    """Multivariable logistic regression for recurrence."""
+def logistic_regression_recurrence(df: pd.DataFrame,
+                                    include_ete: bool = False) -> pd.DataFrame:
+    """Multivariable logistic regression for recurrence.
+
+    When include_ete=True, adds ete_path_confirmed as a source-aware covariate
+    (Phase 4 sensitivity analysis).
+    """
     from sklearn.linear_model import LogisticRegression
     from sklearn.preprocessing import StandardScaler
 
-    model_df = df[["recurrence", "central_lnd_flag", "age", "tumor_size_cm",
-                    "ln_positive", "braf_positive"]].dropna().copy()
+    base_cols = ["recurrence", "central_lnd_flag", "age", "tumor_size_cm",
+                 "ln_positive", "braf_positive"]
+
+    # Phase 4: add ETE source-aware flag if available and requested
+    ete_col = None
+    if include_ete and "ete_path_confirmed" in df.columns:
+        df = df.copy()
+        df["ete_path_confirmed_int"] = df["ete_path_confirmed"].apply(
+            lambda x: 1 if x is True else 0
+        )
+        base_cols = base_cols + ["ete_path_confirmed_int"]
+        ete_col = "ete_path_confirmed_int"
+
+    model_df = df[base_cols].dropna().copy()
     if len(model_df) < 50:
         return pd.DataFrame({"note": ["Insufficient complete cases for multivariable model"]})
 
     X_cols = ["central_lnd_flag", "age", "tumor_size_cm", "ln_positive", "braf_positive"]
+    if ete_col:
+        X_cols.append(ete_col)
     X = model_df[X_cols].values.astype(float)
     y = model_df["recurrence"].values.astype(float)
 
@@ -556,6 +584,23 @@ def main():
     print(lr_df.to_string(index=False))
     if hasattr(lr_df, 'attrs') and 'n_obs' in lr_df.attrs:
         print(f"  N={lr_df.attrs['n_obs']}, pseudo-R²={lr_df.attrs.get('pseudo_r2','—')}, AIC={lr_df.attrs.get('aic','—')}")
+
+    # Phase 4 sensitivity: add source-aware ETE flag as covariate
+    print("\n  Phase 4 sensitivity: logistic regression + path-confirmed ETE covariate...")
+    if "ete_path_confirmed" in df.columns:
+        lr_ete_df = logistic_regression_recurrence(df, include_ete=True)
+        lr_ete_df.to_csv(STUDY_DIR / "logistic_regression_recurrence_ete_sensitivity.csv", index=False)
+        if "Variable" in lr_ete_df.columns:
+            ete_row = lr_ete_df[lr_ete_df["Variable"].str.contains("ete", case=False)]
+            cln_row_new = lr_ete_df[lr_ete_df["Variable"] == "central_lnd_flag"]
+            if not cln_row_new.empty:
+                print(f"  CLN OR (w/ ETE adjusted) = {float(cln_row_new['OR'].iloc[0]):.3f}")
+            if not ete_row.empty:
+                print(f"  ETE OR = {float(ete_row['OR'].iloc[0]):.3f} (p={float(ete_row['p_value'].iloc[0]):.4f})")
+            n_ete = int(df["ete_path_confirmed"].apply(lambda x: x is True).sum()) if "ete_path_confirmed" in df.columns else 0
+            print(f"  ETE path-confirmed in lobectomy cohort: {n_ete}/{len(df)} ({100*n_ete/max(len(df),1):.1f}%)")
+    else:
+        print("  (ete_path_confirmed not in cohort — patient_refined_staging_flags_v3 join may have failed)")
 
     print("\n[5/7] RLN Injury by central LND...")
     rln_results = analyze_rln_injury(df)

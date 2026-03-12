@@ -989,6 +989,7 @@ ALL_VALIDATION_SQL: list[tuple[str, str, str]] = [
     ("val_review_queue_combined",   VAL_REVIEW_QUEUE_COMBINED_SQL,   "Combined review queue"),
     ("val_rln_intrinsic_eval",      VAL_RLN_INTRINSIC_SQL,           "RLN intrinsic evaluation"),
     ("val_complication_refinement", VAL_COMPLICATION_REFINEMENT_SQL, "Phase 2 complication refinement audit"),
+    ("val_source_specific_refinement", VAL_SOURCE_SPECIFIC_REFINEMENT_SQL, "Phase 4 source-specific variable refinement audit"),
 ]
 
 # Phase 2 QA: complication refinement validation
@@ -1033,6 +1034,78 @@ SELECT
 FROM raw_counts r
 LEFT JOIN refined_counts f ON r.entity_name = f.entity_name
 ORDER BY r.raw_patients DESC
+"""
+
+# Phase 4 QA: source-specific staging refinement validation
+VAL_SOURCE_SPECIFIC_REFINEMENT_SQL = """
+CREATE OR REPLACE TABLE val_source_specific_refinement AS
+WITH
+
+-- ETE concordance across sources
+ete_stats AS (
+    SELECT
+        'ete' AS entity_name,
+        COUNT(*) AS patients_with_data,
+        SUM(CASE WHEN ete_path_confirmed THEN 1 ELSE 0 END) AS path_confirmed,
+        SUM(CASE WHEN ete_op_note_observed THEN 1 ELSE 0 END) AS op_note_observed,
+        SUM(CASE WHEN ete_overall_confirmed THEN 1 ELSE 0 END) AS overall_confirmed,
+        SUM(CASE WHEN ete_grade = 'gross' THEN 1 ELSE 0 END) AS grade_gross,
+        SUM(CASE WHEN ete_grade = 'microscopic' THEN 1 ELSE 0 END) AS grade_microscopic,
+        SUM(CASE WHEN ete_grade = 'present_ungraded' THEN 1 ELSE 0 END) AS grade_ungraded,
+        SUM(CASE WHEN ete_concordance_status = 'concordant' THEN 1 ELSE 0 END) AS concordant,
+        SUM(CASE WHEN ete_concordance_status = 'discordant' THEN 1 ELSE 0 END) AS discordant,
+        'path_report' AS primary_source,
+        ROUND(100.0 * SUM(CASE WHEN ete_path_confirmed THEN 1 ELSE 0 END) /
+              NULLIF(COUNT(*), 0), 1) AS source_fill_pct
+    FROM patient_refined_staging_flags_v3
+    WHERE ete_path_confirmed OR ete_op_note_observed
+),
+
+-- Invasion stats
+invasion_stats AS (
+    SELECT 'vascular_invasion' AS entity_name,
+           COUNT(*) AS patients_with_data,
+           SUM(CASE WHEN vascular_invasion_refined = 'extensive' THEN 1 ELSE 0 END) AS grade_extensive,
+           SUM(CASE WHEN vascular_invasion_refined = 'focal' THEN 1 ELSE 0 END) AS grade_focal,
+           SUM(CASE WHEN vascular_invasion_refined = 'present_ungraded' THEN 1 ELSE 0 END) AS grade_ungraded,
+           0 AS concordant, 0 AS discordant,
+           'path_report' AS primary_source,
+           ROUND(100.0 * COUNT(*) / 10871.0, 1) AS source_fill_pct
+    FROM patient_refined_staging_flags_v3
+    WHERE vascular_invasion_refined IS NOT NULL AND vascular_invasion_refined != 'indeterminate'
+    UNION ALL
+    SELECT 'lvi', COUNT(*), 0, 0,
+           SUM(CASE WHEN lvi_refined = 'extensive' THEN 1 ELSE 0 END),
+           0, 0, 'path_report',
+           ROUND(100.0 * COUNT(*) / 10871.0, 1)
+    FROM patient_refined_staging_flags_v3
+    WHERE lvi_refined IN ('present','extensive','focal')
+    UNION ALL
+    SELECT 'perineural_invasion', COUNT(*), 0, 0, 0, 0, 0, 'path_report',
+           ROUND(100.0 * COUNT(*) / 10871.0, 1)
+    FROM patient_refined_staging_flags_v3
+    WHERE perineural_invasion_refined = 'present'
+    UNION ALL
+    SELECT 'margin_status_positive', COUNT(*), 0, 0, 0, 0, 0, 'path_report',
+           ROUND(100.0 * COUNT(*) / 10871.0, 1)
+    FROM patient_refined_staging_flags_v3
+    WHERE margin_status_refined = 'positive'
+),
+
+combined AS (
+    SELECT entity_name, patients_with_data, path_confirmed, op_note_observed,
+           overall_confirmed, grade_gross, grade_microscopic, grade_ungraded,
+           concordant, discordant, primary_source, source_fill_pct
+    FROM ete_stats
+    UNION ALL
+    SELECT entity_name, patients_with_data, 0, 0,
+           patients_with_data, grade_extensive, grade_focal, grade_ungraded,
+           concordant, discordant, primary_source, source_fill_pct
+    FROM invasion_stats
+)
+
+SELECT *, CURRENT_TIMESTAMP AS validated_at FROM combined
+ORDER BY patients_with_data DESC
 """
 
 
