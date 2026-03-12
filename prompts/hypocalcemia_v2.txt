@@ -1,0 +1,66 @@
+HYPOCALCEMIA CLINICAL EVENT CLASSIFICATION PROMPT v2
+====================================================
+
+You are a clinical NLP judge. Classify the following text snippet from a
+clinical note as a TRUE HYPOCALCEMIA EVENT or a FALSE POSITIVE.
+
+Context window (150 chars before + after the matched "hypocalcemia" text):
+<CONTEXT>
+{context_window}
+</CONTEXT>
+
+Note metadata:
+- Note type: {note_type}
+- Note date relative to surgery: {days_from_surgery} days
+- Evidence span matched: "{evidence_span}"
+
+CLASSIFICATION RULES:
+
+1. FALSE POSITIVE — Consent/Risk Boilerplate:
+   Return FALSE_POSITIVE if context contains any of:
+   - "risk of hypocalcemia", "hypocalcemia - temporary or permanent"
+   - The standard consent list: "Bleeding, Pain, Infection, Hypocalcemia, Hypothyroidism"
+   - "informed consent", "material risks", "counseled", "apprised" + hypocalcemia
+   - Note type is H&P (pre-op/consent note) without documented clinical event
+
+2. FALSE POSITIVE — Education/Monitoring:
+   Return FALSE_POSITIVE if context contains any of:
+   - "signs and symptoms of hypocalcemia were reviewed"
+   - "given instructions on what to do should they develop"
+   - "monitor/watch for signs of hypocalcemia"
+   - "routine calcium supplementation started" (prophylactic, not symptomatic)
+   - "calcium was X.X" without clinical symptoms
+
+3. TRUE POSITIVE — Documented Hypocalcemia Event:
+   Return TRUE_POSITIVE if context contains any of:
+   - "developed hypocalcemia", "post-operative hypocalcemia", "symptomatic hypocalcemia"
+   - "IV calcium given/required/administered", "calcium gluconate"
+   - "tetany", "Chvostek sign", "Trousseau sign", "carpopedal spasm"
+   - "perioral numbness/tingling" in post-operative context
+   - "calcium dropped to X.X", "Ca fell to X.X"
+   - "mild/moderate/severe post-op hypocalcemia"
+   - "required IV calcium replacement"
+
+4. TEMPORAL RULES:
+   - Same-day (day 0): Almost certainly risk discussion or consent note → FALSE_POSITIVE
+   - POD 1-7: High suspicion if symptomatic → classify based on context
+   - POD >7: More likely true documented event → liberal TRUE_POSITIVE classification
+   - Endocrine follow-up note (any timing): Treat as probable TRUE_POSITIVE if no risk language
+
+5. NOTE TYPE HEURISTICS:
+   - H&P (pre-op): → FALSE_POSITIVE (always risk/consent)
+   - Op_note: → FALSE_POSITIVE unless TP signal present
+   - Discharge summary: → context-based (50% prior)
+   - Endocrine note: → probable TRUE_POSITIVE (follow-up management context)
+   - ED note: → context-based
+
+Return JSON:
+{
+  "is_true_event": true | false,
+  "evidence_strength": "strong" | "medium" | "weak",
+  "classification": "true_positive_confirmed" | "true_positive_probable" |
+                    "false_positive_consent" | "false_positive_monitoring" |
+                    "uncertain",
+  "tier_recommendation": 1 | 2 | 3,
+  "reason": "one-sentence explanation"
+}

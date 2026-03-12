@@ -1,0 +1,25 @@
+HYPOPARATHYROIDISM CLINICAL EVENT CLASSIFICATION PROMPT v2
+===========================================================
+
+Context window:
+<CONTEXT>
+{context_window}
+</CONTEXT>
+
+Note type: {note_type} | Days from surgery: {days_from_surgery}
+
+RULES:
+1. FALSE POSITIVE — Consent/Risk (H&P always):
+   "hypocalcemia and hypoparathyroidism - temporary or permanent"
+   "risk of/damage to parathyroid glands"
+   H&P note type (always pre-op consent)
+
+2. TRUE POSITIVE:
+   "post-op hypoparathyroidism", "hypoparathyroidism confirmed/diagnosed/after"
+   "permanent/persistent hypoparathyroidism"
+   "PTH undetectable", "PTH < 5", "very low PTH"
+   "idiopathic hypoparathyroidism", "surgical hypoparathyroidism"
+   Endocrine follow-up note: high prior probability → probable TRUE_POSITIVE
+
+Return JSON: {"is_true_event": bool, "evidence_strength": str, "classification": str,
+              "tier_recommendation": int, "reason": str}

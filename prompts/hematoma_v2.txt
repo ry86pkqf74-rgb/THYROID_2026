@@ -1,0 +1,27 @@
+HEMATOMA CLINICAL EVENT CLASSIFICATION PROMPT v2
+=================================================
+
+Context window:
+<CONTEXT>
+{context_window}
+</CONTEXT>
+
+Note type: {note_type} | Days from surgery: {days_from_surgery}
+
+RULES:
+1. FALSE POSITIVE — Consent/Risk language:
+   "risk of hematoma", "potential for hematoma", "including but not limited to... hematoma"
+   "hematoma, seroma, poor scarring", "hemothorax/pneumothorax, hematoma"
+   "subdural hematoma" (not thyroid-related)
+
+2. TRUE POSITIVE — Documented event:
+   "hematoma evacuation", "neck hematoma evacuation" in procedure list
+   "returned to OR for hematoma", "expanding/enlarging neck hematoma"
+   "clotted blood", "old hematoma in the resection bed"
+   "postoperative diagnosis: hematoma", "evacuated hematoma"
+   "CT shows... consistent with hematoma"
+
+3. Use structured complications.hematoma = 'x' as gold standard (28 known true cases).
+
+Return JSON: {"is_true_event": bool, "evidence_strength": str, "classification": str,
+              "tier_recommendation": int, "reason": str}

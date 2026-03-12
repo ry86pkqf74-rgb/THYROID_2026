@@ -117,6 +117,16 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_extracted_rln_injury_refined", "extracted_rln_injury_refined_v2"),
     ("md_extracted_rln_injury_refined_summary", "extracted_rln_injury_refined_summary_v2"),
     ("md_extracted_rln_exclusion_audit", "extracted_rln_exclusion_audit_v2"),
+    # ── Phase 2 QA: Complication refinement (complications_refined_pipeline) ──
+    ("md_extracted_chyle_leak_refined_v2", "extracted_chyle_leak_refined_v2"),
+    ("md_extracted_hypocalcemia_refined_v2", "extracted_hypocalcemia_refined_v2"),
+    ("md_extracted_seroma_refined_v2", "extracted_seroma_refined_v2"),
+    ("md_extracted_hematoma_refined_v2", "extracted_hematoma_refined_v2"),
+    ("md_extracted_hypoparathyroidism_refined_v2", "extracted_hypoparathyroidism_refined_v2"),
+    ("md_extracted_wound_infection_refined_v2", "extracted_wound_infection_refined_v2"),
+    ("md_extracted_complications_refined_v5", "extracted_complications_refined_v5"),
+    ("md_extracted_complications_exclusion_audit_v2", "extracted_complications_exclusion_audit_v2"),
+    ("md_patient_refined_complication_flags_v2", "patient_refined_complication_flags_v2"),
 ]
 
 SURVIVAL_COHORT_ENRICHED_SQL = """

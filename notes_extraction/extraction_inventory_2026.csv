@@ -1,0 +1,10 @@
+entity,total_mentions,distinct_patients,present_mentions,negated_mentions,avg_confidence,same_day_pct,hp_pct,opnote_pct,dcsumendocrine_pct,estimated_precision_pct,risk_level,model_impact,action_required,refinement_priority
+chyle_leak,3023,1588,2988,35,0.9,27.0,21.6,77.5,0.9,2,CRITICAL,"H1,H2","URGENT: Add lack_of/prevent/confirm_no negation; filter h_p consent template",1
+hypocalcemia,2806,1877,2740,66,0.9,13.6,65.8,23.8,10.3,17,CRITICAL,"H1,H2,advanced_features","URGENT: Filter h_p consent boilerplate and dc_sum education notes",2
+seroma,1353,846,1351,2,0.9,5.0,50.8,47.3,2.0,5,CRITICAL,"H1,H2","URGENT: All h_p and most op_note are consent template; use structured 28 cases + dc_sum",3
+rln_injury,975,655,973,2,0.9,3.2,97.6,2.1,0.0,100,DONE,DONE,DONE,0
+hypoparathyroidism,550,430,540,10,0.9,3.6,76.1,2.4,21.5,40,HIGH,"H1,H2","MEDIUM: Filter h_p; retain endocrine_note and other_history",4
+hematoma,403,225,274,129,0.9,12.2,44.9,30.7,24.5,25,HIGH,"H1,H2","MEDIUM: Filter consent/risk language; retain procedure-listing and intraop contexts",5
+vocal_cord_paralysis,134,88,119,15,0.9,14.9,65.5,21.8,12.7,100,DONE,DONE,DONE,0
+vocal_cord_paresis,96,71,61,35,0.9,12.5,49.2,32.8,18.0,100,DONE,DONE,DONE,0
+wound_infection,19,16,18,1,0.9,5.3,61.1,5.6,33.3,20,MEDIUM,H1,"LOW: Remove SSI abbreviation (sliding scale insulin collision); filter consent",6

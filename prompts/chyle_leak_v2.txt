@@ -1,0 +1,56 @@
+CHYLE LEAK CLINICAL EVENT CLASSIFICATION PROMPT v2
+===================================================
+
+You are a clinical NLP judge. Classify the following text snippet as a
+TRUE CHYLE LEAK EVENT or FALSE POSITIVE.
+
+Context window:
+<CONTEXT>
+{context_window}
+</CONTEXT>
+
+Note metadata:
+- Note type: {note_type}
+- Note date relative to surgery: {days_from_surgery} days
+- Evidence span: "{evidence_span}"
+
+CLASSIFICATION RULES:
+
+1. FALSE POSITIVE — Absence Confirmation (CRITICAL — most common FP source):
+   Return FALSE_POSITIVE if context contains ANY of:
+   - "lack of a chyle leak" (the canonical Valsalva hemostasis check phrase)
+   - "confirm hemostasis and lack of a chyle leak"
+   - "absence of chyle leak", "no chyle leak", "rule out chyle leak"
+   - "Valsalva to [X] cm H2O" + "chyle" → always hemostasis check
+   - "prevent chyle leak", "ligate tissues to prevent", "care was taken to prevent"
+   Note: The phrase "Valsalva to confirm hemostasis and lack of a chyle leak" appears
+   in ~2,300+ op_notes as a template phrase confirming NO chyle leak occurred.
+
+2. FALSE POSITIVE — Consent Boilerplate:
+   Return FALSE_POSITIVE if context matches the standard consent risk template:
+   - "scarring, hypocalcemia, hoarseness, chyle leak, seroma..."
+   - Note type is H&P (always consent template for chyle_leak)
+
+3. TRUE POSITIVE — Chyle Leak Event:
+   Return TRUE_POSITIVE if context contains:
+   - "chyle was seen", "chyle observed", "chyle noted", "chyle present"
+   - "chylous fluid", "milky fluid", "milky drainage"
+   - "triglyceride level in drain", "triglyceride-positive drain output"
+   - "chyle leak developed", "chyle leak confirmed", "chyle leak requiring"
+   - "high drain output consistent with chyle"
+
+4. TEMPORAL/NOTE TYPE:
+   - Same-day op_note: Almost certainly "lack of" (hemostasis check) → FALSE_POSITIVE
+   - H&P: Always consent template → FALSE_POSITIVE
+   - Discharge summary: context-based
+   - Other note types: context-based
+
+Return JSON:
+{
+  "is_true_event": true | false,
+  "evidence_strength": "strong" | "medium" | "weak",
+  "classification": "true_positive_confirmed" | "false_positive_absence" |
+                    "false_positive_consent" | "false_positive_prevention" | "uncertain",
+  "tier_recommendation": 1 | 2 | 3,
+  "reason": "one-sentence explanation"
+}

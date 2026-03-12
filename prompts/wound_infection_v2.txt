@@ -1,0 +1,32 @@
+WOUND INFECTION CLASSIFICATION PROMPT v2
+=========================================
+
+Context window:
+<CONTEXT>
+{context_window}
+</CONTEXT>
+
+Note type: {note_type} | Days from surgery: {days_from_surgery}
+Evidence span: "{evidence_span}"
+
+CRITICAL NOTE: The abbreviation "SSI" in this dataset predominantly means
+"Sliding Scale Insulin" (diabetes management), NOT "Surgical Site Infection".
+
+RULES:
+1. FALSE POSITIVE — SSI = Sliding Scale Insulin:
+   If evidence_span = "SSI" AND context contains:
+   "per protocol", "before meals", "for glucose", "insulin", "units", "BG",
+   "blood sugar", "novolog", "humalog", "basal", "BG-100/40"
+   → FALSE_POSITIVE
+
+2. FALSE POSITIVE — Consent:
+   "risk of wound infection" in consent list → FALSE_POSITIVE
+
+3. TRUE POSITIVE — Thyroid surgical site infection:
+   "wound infection requiring incision and drainage"
+   "wound vac", "negative pressure wound therapy"
+   "complicated by wound infection" (in context of thyroid surgery)
+   Chief Complaint: "Wound Infection" in ED note
+
+Return JSON: {"is_true_event": bool, "evidence_strength": str, "classification": str,
+              "tier_recommendation": int, "reason": str}

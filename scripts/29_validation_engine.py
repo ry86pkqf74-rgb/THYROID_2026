@@ -988,7 +988,52 @@ ALL_VALIDATION_SQL: list[tuple[str, str, str]] = [
     ("val_completeness_scorecard",  VAL_COMPLETENESS_SCORECARD_SQL,  "Completeness scorecard"),
     ("val_review_queue_combined",   VAL_REVIEW_QUEUE_COMBINED_SQL,   "Combined review queue"),
     ("val_rln_intrinsic_eval",      VAL_RLN_INTRINSIC_SQL,           "RLN intrinsic evaluation"),
+    ("val_complication_refinement", VAL_COMPLICATION_REFINEMENT_SQL, "Phase 2 complication refinement audit"),
 ]
+
+# Phase 2 QA: complication refinement validation
+VAL_COMPLICATION_REFINEMENT_SQL = """
+CREATE OR REPLACE TABLE val_complication_refinement AS
+WITH raw_counts AS (
+    SELECT entity_value_norm AS entity_name,
+        COUNT(DISTINCT CAST(research_id AS INT)) AS raw_patients,
+        SUM(CASE WHEN present_or_negated = 'present' THEN 1 ELSE 0 END) AS raw_present_mentions
+    FROM note_entities_complications
+    GROUP BY entity_value_norm
+),
+refined_counts AS (
+    SELECT entity_name,
+        COUNT(DISTINCT research_id) AS refined_patients,
+        SUM(CASE WHEN entity_is_confirmed THEN 1 ELSE 0 END) AS confirmed_patients,
+        SUM(CASE WHEN entity_tier = 1 THEN 1 ELSE 0 END) AS tier1_patients,
+        SUM(CASE WHEN entity_tier = 2 THEN 1 ELSE 0 END) AS tier2_patients,
+        SUM(CASE WHEN entity_tier = 3 THEN 1 ELSE 0 END) AS tier3_patients
+    FROM extracted_complications_refined_v5
+    GROUP BY entity_name
+)
+SELECT
+    r.entity_name,
+    r.raw_patients,
+    r.raw_present_mentions,
+    COALESCE(f.refined_patients, 0) AS refined_patients,
+    COALESCE(f.confirmed_patients, 0) AS confirmed_patients,
+    r.raw_patients - COALESCE(f.refined_patients, 0) AS excluded_patients,
+    ROUND(100.0 * (r.raw_patients - COALESCE(f.refined_patients, 0)) / NULLIF(r.raw_patients, 0), 1) AS pct_excluded,
+    ROUND(100.0 * COALESCE(f.confirmed_patients, 0) / NULLIF(r.raw_patients, 0), 1) AS pct_confirmed_of_raw,
+    COALESCE(f.tier1_patients, 0) AS tier1_confirmed,
+    COALESCE(f.tier2_patients, 0) AS tier2_probable,
+    COALESCE(f.tier3_patients, 0) AS tier3_uncertain,
+    CASE
+        WHEN r.raw_patients > 0 AND COALESCE(f.refined_patients, 0) = 0 THEN 'no_refined_data'
+        WHEN r.raw_patients > 0 AND ROUND(100.0 * COALESCE(f.confirmed_patients, 0) / r.raw_patients, 1) < 5.0 THEN 'high_fp_rate'
+        WHEN COALESCE(f.confirmed_patients, 0) BETWEEN 1 AND 10 THEN 'low_volume_review'
+        ELSE 'acceptable'
+    END AS validation_status,
+    CURRENT_TIMESTAMP AS validated_at
+FROM raw_counts r
+LEFT JOIN refined_counts f ON r.entity_name = f.entity_name
+ORDER BY r.raw_patients DESC
+"""
 
 
 def build_all(con: duckdb.DuckDBPyConnection) -> dict[str, int]:

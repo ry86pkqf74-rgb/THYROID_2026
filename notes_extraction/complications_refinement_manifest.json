@@ -1,0 +1,60 @@
+{
+  "run_time": "2026-03-12T18:34:19.551328",
+  "mode": "motherduck",
+  "steps": {
+    "chyle_leak refined": {
+      "status": "ok",
+      "rows": 20,
+      "elapsed": 2.418399,
+      "table": "extracted_chyle_leak_refined_v2"
+    },
+    "hypocalcemia refined": {
+      "status": "ok",
+      "rows": 82,
+      "elapsed": 0.864512,
+      "table": "extracted_hypocalcemia_refined_v2"
+    },
+    "seroma refined": {
+      "status": "ok",
+      "rows": 32,
+      "elapsed": 0.616492,
+      "table": "extracted_seroma_refined_v2"
+    },
+    "hematoma refined": {
+      "status": "ok",
+      "rows": 53,
+      "elapsed": 0.861647,
+      "table": "extracted_hematoma_refined_v2"
+    },
+    "hypoparathyroidism refined": {
+      "status": "ok",
+      "rows": 65,
+      "elapsed": 0.780305,
+      "table": "extracted_hypoparathyroidism_refined_v2"
+    },
+    "wound_infection refined": {
+      "status": "ok",
+      "rows": 14,
+      "elapsed": 0.628378,
+      "table": "extracted_wound_infection_refined_v2"
+    },
+    "consolidated v5": {
+      "status": "ok",
+      "rows": 358,
+      "elapsed": 0.472126,
+      "table": "extracted_complications_refined_v5"
+    },
+    "exclusion audit": {
+      "status": "ok",
+      "rows": 9,
+      "elapsed": 0.627945,
+      "table": "extracted_complications_exclusion_audit_v2"
+    },
+    "patient flags": {
+      "status": "ok",
+      "rows": 287,
+      "elapsed": 0.461984,
+      "table": "patient_refined_complication_flags_v2"
+    }
+  }
+}

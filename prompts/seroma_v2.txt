@@ -1,0 +1,23 @@
+SEROMA CLINICAL EVENT CLASSIFICATION PROMPT v2
+===============================================
+
+Context window:
+<CONTEXT>
+{context_window}
+</CONTEXT>
+
+Note type: {note_type} | Days from surgery: {days_from_surgery}
+
+RULES:
+1. FALSE POSITIVE — Consent Boilerplate (ALL H&P and most op_notes):
+   The standard consent template includes "chyle leak, seroma, numbness, orodental trauma"
+   → Return FALSE_POSITIVE if this list is present or note_type is h_p.
+
+2. TRUE POSITIVE:
+   "post-op seroma", "seroma noted/found/drained/aspirated", "persistent/enlarging seroma"
+   → Return TRUE_POSITIVE
+
+3. Use structured complications.seroma = 'x' as gold standard (28 known true cases).
+
+Return JSON: {"is_true_event": bool, "evidence_strength": str, "classification": str,
+              "tier_recommendation": int, "reason": str}
