@@ -24,6 +24,9 @@
 - When asked to write manuscript text snippets, produce a full standalone manuscript (Abstract through References), not inline additions to an existing document
 - PSM analyses: always run a primary match using low-missingness covariates (maximum matched pairs) AND a separate extended match with full covariates; report both side-by-side with their respective N and limitations
 - Validation/cross-check scripts must explicitly compare live MotherDuck extraction vs. saved CSVs row-by-row and flag any discrepancy >0.1% in a dedicated report section
+- For single-view MotherDuck fixes, prefer targeted SQL execution via `.venv/bin/python -c "import duckdb; ..."` pattern rather than re-running entire script chains (e.g. rebuild just `streamlit_patient_header_v` instead of full script 03 or 18→26)
+- When the agent lists follow-up recommendations at end of a task, user expects to say "execute follow up recommendations" and have them all executed in sequence
+- When presenting query results, show actual execution output/evidence rather than summarizing prior runs
 
 ## Learned Workspace Facts
 
@@ -298,3 +301,12 @@
 - `molecular_test_episode_v2` platform distribution: ThyroSeq 406 patients, Afirma 398, 5 with both; total 799 unique molecular-tested patients; `platform` column values: `'ThyroSeq'`, `'Afirma'`, `'Other'`
 - `path_synoptics` has broader surgery coverage (11,688 rows) than `operative_episode_detail_v2` (9,371 rows); for maximum patient capture in surgery-type queries, UNION both sources and deduplicate by research_id
 - `path_synoptics.thyroid_procedure` has mixed-case values ("Total Thyroidectomy", "total thyroidectomy"); always use `LOWER()` or `ILIKE` for matching; near-total thyroidectomy maps to `total_thyroidectomy` in normalization; subtotal thyroidectomy (73 patients) is a distinct category excluded from total/completion analyses
+- Streamlit Cloud surfaces `pd.NA` / `NAType.__bool__` crashes that local development hides — Cloud uses exact deployed pandas + MotherDuck driver versions; always test dashboard code with NULL-heavy patient records before deploying
+- MotherDuck persisted tables are PHI-stripped (no MRN/DOB/name columns); patient matching to external data sources can only be done via raw Excel files in `raw/` that retain both PHI identifiers and `research_id`; `patient_level_summary_mv` has no MRN/DOB/name — demographic fallback (age+sex+surgery_date) is the only MotherDuck-native matching path
+- `Nuclear_Med_final.xlsx` `Patient_MRN` column is entirely NaN (0 usable rows); not viable as a crosswalk source despite having a `ResearchID` column
+- Scripts 38 (MCM) and 39 (PTCM) are independent and can run in parallel after script 26 materializes cohort tables; script 40 (cure comparison) depends on outputs from both 38 and 39
+- MCM results: cure fraction 0.7304, AIC 4460.5; PTCM: cure fraction 0.9926, AIC 4047.2; ETE microscopic is top MCM predictor (OR=18.3); PTCM fits better (lower AIC); 10y RMST identical (9.98y)
+- `mixture_cure_cohort` (48,304 rows) and `mixture_cure_kpis` materialized by script 26; direct copy of `promotion_cure_cohort` for head-to-head comparability
+- Script 40 `40_cure_model_comparison.py` exports to `exports/cure_comparison/` (comparison CSV, forest/survival Plotly HTML+PNG, HTML report); prints verdict on MCM vs PTCM
+- Plotly `Figure.update_layout(**PL, yaxis=...)` conflicts when PL theme dict already contains `yaxis`; strip duplicate keys before spreading: `{k:v for k,v in PL.items() if k != 'yaxis'}`
+- Unified Cure Modeling Dashboard: subsection in Risk & Survival tab with 3 sub-tabs (Mixture Cure, Promotion Time Cure, Head-to-Head Comparison), KPI cards from both `mixture_cure_kpis` and `promotion_cure_kpis`, interactive patient calculator, sidebar "Cure Model Comparison KPIs" expander
