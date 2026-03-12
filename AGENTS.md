@@ -16,6 +16,10 @@
 - Always verify actual file/git state before assuming code is missing (user may provide prompts from stale context)
 - When integrating external data sources, never auto-merge uncertain patient matches; route all ambiguous linkages to review queues with full context for manual resolution
 - Prefer append-only long-format event/lab tables over stuffing serial data into wide patient rows
+- When fixing a bug pattern, find and fix all instances across the entire codebase, not just the single file from the traceback
+- When user provides a pre-diagnosed bug report with exact fix code, apply it directly rather than re-investigating from scratch
+- Apply defense-in-depth fix strategy: fix both the Python consumer (e.g. `is True`, `or 0`) AND the SQL source (e.g. `COALESCE(..., FALSE)`) in a single task; deploy SQL fix to MotherDuck immediately after code changes
+- "Update continual learning ledger" is a standard end-of-session step after completing major work
 - Each research hypothesis gets its own separate manuscript file — never combine separate hypotheses into a single paper; manuscript per hypothesis is the expected structure
 - When asked to write manuscript text snippets, produce a full standalone manuscript (Abstract through References), not inline additions to an existing document
 - PSM analyses: always run a primary match using low-missingness covariates (maximum matched pairs) AND a separate extended match with full covariates; report both side-by-side with their respective N and limitations
@@ -288,3 +292,9 @@
 - Sensitivity bounds: worst-case (tumor=6cm, LN+=5) CLN OR=1.56, best-case (tumor=0.5cm, LN=0) CLN OR=1.38; direction preserved
 - Missingness patterns: 50.8% have all three key vars missing; 12.8% have tumor+LN observed; 8 distinct patterns total
 - `sklearn.impute.IterativeImputer` requires `pd.to_numpy(dtype=float, na_value=np.nan)` to handle pandas `NAType` from DuckDB; bare `.values` raises `TypeError: float() argument must be a string or a real number, not 'NAType'`
+- `thyroglobulin_labs` table exists only on MotherDuck (30,245 rows, 2,569 distinct patients); NOT in local `thyroid_master.duckdb`; columns: research_id, specimen_collect_dt (VARCHAR timestamp), result (includes `<0.2`-style thresholds as valid), units, lab_index; use `result IS NOT NULL AND TRIM(result) <> ''` for validity filter
+- `operative_episode_detail_v2.procedure_normalized` distribution: `total_thyroidectomy` (4,561), `hemithyroidectomy` (3,810), `unknown` (644), `other` (356); zero `completion_thyroidectomy` rows exist in the dataset
+- `operative_episode_detail_v2.resolved_surgery_date` is VARCHAR; `surgery_date_native` is DATE; use `COALESCE(TRY_CAST(resolved_surgery_date AS DATE), surgery_date_native)` for date joins
+- `molecular_test_episode_v2` platform distribution: ThyroSeq 406 patients, Afirma 398, 5 with both; total 799 unique molecular-tested patients; `platform` column values: `'ThyroSeq'`, `'Afirma'`, `'Other'`
+- `path_synoptics` has broader surgery coverage (11,688 rows) than `operative_episode_detail_v2` (9,371 rows); for maximum patient capture in surgery-type queries, UNION both sources and deduplicate by research_id
+- `path_synoptics.thyroid_procedure` has mixed-case values ("Total Thyroidectomy", "total thyroidectomy"); always use `LOWER()` or `ILIKE` for matching; near-total thyroidectomy maps to `total_thyroidectomy` in normalization; subtotal thyroidectomy (73 patients) is a distinct category excluded from total/completion analyses
