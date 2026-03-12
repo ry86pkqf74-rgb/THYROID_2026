@@ -1,0 +1,7 @@
+Complication,CentralLND_n,CentralLND_pct,No_CentralLND_n,No_CentralLND_pct,OR,p_value
+rln_injury,142,11.39,254,6.3,1.91,0.0
+hypocalcemia,260,20.85,750,18.61,1.152,0.0862
+hypoparathyroidism,65,5.21,174,4.32,1.219,0.2112
+hematoma,21,1.68,54,1.34,1.261,0.4471
+seroma,109,8.74,318,7.89,1.118,0.3667
+chyle_leak,216,17.32,623,15.46,1.146,0.1266

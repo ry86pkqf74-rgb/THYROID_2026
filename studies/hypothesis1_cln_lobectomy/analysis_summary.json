@@ -1,0 +1,42 @@
+{
+  "hypothesis": "Central LND predictive for recurrence in lobectomy; CLN-complication/RLN association",
+  "cohort": {
+    "total_lobectomy": 5277,
+    "central_lnd": 1247,
+    "no_central_lnd": 4030,
+    "completion_excluded": "yes"
+  },
+  "recurrence_analysis": {
+    "cln_n": 1247,
+    "cln_recurrence": 377,
+    "cln_recurrence_rate": 30.23,
+    "no_cln_n": 4030,
+    "no_cln_recurrence": 642,
+    "no_cln_recurrence_rate": 15.93,
+    "chi2": 124.102,
+    "p_value": 0.0,
+    "odds_ratio": 2.287,
+    "or_95ci_low": 1.973,
+    "or_95ci_high": 2.65
+  },
+  "rln_injury_analysis": {
+    "cln_n": 1247,
+    "cln_rln": 142,
+    "cln_rln_rate": 11.39,
+    "no_cln_n": 4030,
+    "no_cln_rln": 254,
+    "no_cln_rln_rate": 6.3,
+    "chi2": 34.742,
+    "p_value": 0.0,
+    "odds_ratio": 1.91,
+    "or_95ci_low": 1.539,
+    "or_95ci_high": 2.371
+  },
+  "logistic_regression": {
+    "n_obs": 693,
+    "pseudo_r2": 0.0187
+  },
+  "data_source": "MotherDuck",
+  "generated_at": "2026-03-12T11:42:11.539227",
+  "random_seed": 42
+}

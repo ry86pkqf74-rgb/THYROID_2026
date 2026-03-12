@@ -1,0 +1,59 @@
+{
+  "hypothesis": "Goiter presentation by age/race/gender/size/complications \u2014 SDOH evaluation",
+  "cohort": {
+    "total_goiter": 6218,
+    "cervical": 5933,
+    "substernal": 285,
+    "nongoiter_comparison": 5470
+  },
+  "race_distribution": {
+    "Black": 2991,
+    "White": 2555,
+    "Unknown/Other": 442,
+    "Asian": 214,
+    "NHPI": 10,
+    "Hispanic": 6
+  },
+  "sex_distribution": {
+    "Female": 5043,
+    "Male": 1175
+  },
+  "size_analysis": {
+    "weight_by_race_kruskal": {
+      "H": 413.882,
+      "p": 0.0,
+      "n_groups": 4
+    },
+    "weight_by_sex": {
+      "male_median": 77.0,
+      "female_median": 48.0,
+      "U": 424227.5,
+      "p": 0.0
+    },
+    "age_weight_correlation": {
+      "spearman_r": 0.0212,
+      "p": 0.329924
+    }
+  },
+  "goiter_vs_nongoiter": {
+    "age_p": 0.0,
+    "weight_p": 0.0,
+    "race_chi2": 609.8,
+    "race_p": 0.0
+  },
+  "logistic_regression_rln": {
+    "n_obs": 2112,
+    "n_events": 84,
+    "pseudo_r2": 0.0276
+  },
+  "sdoh_data_limitations": [
+    "No insurance/payer data available",
+    "No zip code or area deprivation index",
+    "No income/education/employment data",
+    "No ethnicity/Hispanic identifier (separate from race)",
+    "Race serves as only available SDOH proxy variable"
+  ],
+  "data_source": "MotherDuck",
+  "generated_at": "2026-03-12T11:43:24.193941",
+  "random_seed": 42
+}
