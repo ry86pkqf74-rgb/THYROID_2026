@@ -16,6 +16,10 @@
 - Always verify actual file/git state before assuming code is missing (user may provide prompts from stale context)
 - When integrating external data sources, never auto-merge uncertain patient matches; route all ambiguous linkages to review queues with full context for manual resolution
 - Prefer append-only long-format event/lab tables over stuffing serial data into wide patient rows
+- Each research hypothesis gets its own separate manuscript file — never combine separate hypotheses into a single paper; manuscript per hypothesis is the expected structure
+- When asked to write manuscript text snippets, produce a full standalone manuscript (Abstract through References), not inline additions to an existing document
+- PSM analyses: always run a primary match using low-missingness covariates (maximum matched pairs) AND a separate extended match with full covariates; report both side-by-side with their respective N and limitations
+- Validation/cross-check scripts must explicitly compare live MotherDuck extraction vs. saved CSVs row-by-row and flag any discrepancy >0.1% in a dedicated report section
 
 ## Learned Workspace Facts
 
@@ -244,3 +248,13 @@
 - RLN injury data landscape: 10,864 complication rows total; `rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy` field: 1,314 = 'x' (placeholder), 24 = 'yes' (chart-documented), 1 = '?'; `vocal_cord_status`: 8 paresis/paralysis (all have laryngoscopy dates), 41 unknown, rest NULL; only 48 patients have any laryngoscopy_date; old crude filter counted 1,340 (including 'x' placeholders); NLP note_entities_complications has 1,153 positive RLN mentions (750 distinct patients), 636 same-day (surgery date operative notes), all confidence >= 0.80
 - NLP RLN entity values: `rln_injury` (973 present, 2 negated), `vocal_cord_paralysis` (119 present, 15 negated), `vocal_cord_paresis` (61 present, 35 negated); Tier 3 uses `>=` surgery date to capture same-day operative notes
 - Dashboard Complications tab: prefers `vw_confirmed_postop_rln_injury_summary` → falls back to legacy `vw_confirmed_postop_rln_injury` → falls back to crude text-matching; summary view shows 3-tier breakdown KPI cards + laterality; detail view shows patient-level expander with temporal classification and source tier
+- `survival_cohort_enriched` column names: `time_days` (not `time_to_event_days`) and `event` (not `event_occurred`); this differs from `THYROID_SURVIVAL` preset in `statistical_analysis.py`
+- `survival_cohort_enriched` has duplicate `research_id` rows (multiple event types per patient); always `GROUP BY research_id` with `MAX(time_days)` / `MAX(event)` before joining to patient-level analyses
+- `path_synoptics` uses `tumor_1_multiple_tumor` (not `tumor_1_multifocal`) for the multifocality flag
+- Hypothesis study folders: `studies/hypothesis1_cln_lobectomy/` (script 42) and `studies/hypothesis2_goiter_sdoh/` (script 43); validation/extension in `studies/hypothesis*/validation_extension_20260312/`; shared validation reports in `studies/validation_reports/`
+- Script 44 (`44_hypothesis_validation_extension.py`): full four-step validation pipeline — data concordance check, statistical replication with FDR, PSM + E-value + interactions + LOO sensitivity, and KM/Cox/forest extensions for both hypotheses
+- H1 (CLN/lobectomy) cohort: 5,277 lobectomies (completion excluded n=654); CLN=1,247 (23.6%), no-CLN=4,030; crude recurrence OR=2.29 entirely explained by indication bias (PSM OR=0.99); RLN injury OR=1.93 persists after PSM; E-value CI bound=1.38; KM log-rank p=0.108
+- H2 (goiter/SDOH) cohort: 6,218 goiter (5,933 cervical, 285 substernal); 48.1% Black (median specimen 83g) vs 41.1% White (30g) — 2.8× disparity; Asian race OR=1.28 for RLN; substernal hypocalcemia OR=1.91, seroma OR=2.36
+- `tumor_size_cm` and `ln_positive` have 65-73% missingness in lobectomy cohort — complete-case logistic regression is restricted to N=693/5,277 (13.1%); `specimen_weight_g` has 66% missingness in goiter cohort; MICE imputation is required before publication on both
+- Manuscript files: H1 = `studies/manuscript_draft/manuscript_h1_cln_lobectomy_v1.md`; H2 = `studies/manuscript_draft/manuscript_h2_goiter_sdoh_v1.md`; ETE primary manuscript = `studies/manuscript_draft/manuscript_v1.md`
+- FDR correction (Benjamini-Hochberg) should be applied jointly across all hypothesis tests from both studies in companion analyses, not separately per study; output saved to `studies/validation_reports/fdr_correction_all_tests.csv`
