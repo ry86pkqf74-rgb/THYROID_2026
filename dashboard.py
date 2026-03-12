@@ -1109,8 +1109,50 @@ def render_complications(con):
             with lc2:
                 st.markdown(mc("Bilateral", f"{rln_bilateral:,}"), unsafe_allow_html=True)
 
+    _refined_view = "extracted_rln_injury_refined_v2"
+    _refined_summary_view = "extracted_rln_injury_refined_summary_v2"
+    _has_refined = tbl_exists(con, _refined_view)
+    if _has_refined:
+        st.markdown("---")
+        st.markdown("##### Refined RLN Injury (Context-Filtered)")
+        ref_summ = sqdf(con, f"SELECT * FROM {qual(_refined_summary_view)}")
+        if not ref_summ.empty:
+            rs = ref_summ.iloc[0]
+            rc1, rc2, rc3, rc4 = st.columns(4)
+            with rc1:
+                st.markdown(
+                    mc("Refined Total", f"{int(rs.get('total_rln_injury_patients') or 0):,}",
+                       f"{rs.get('rln_injury_rate_pct') or 0}% rate"),
+                    unsafe_allow_html=True)
+            with rc2:
+                st.markdown(
+                    mc("Confirmed", f"{int(rs.get('confirmed_patients') or 0):,}",
+                       f"{rs.get('confirmed_rate_pct') or 0}% rate"),
+                    unsafe_allow_html=True)
+            with rc3:
+                st.markdown(
+                    mc("NLP Confirmed (T3)", f"{int(rs.get('tier3_nlp_confirmed') or 0):,}",
+                       "Context-verified"),
+                    unsafe_allow_html=True)
+            with rc4:
+                st.markdown(
+                    mc("NLP Suspected (T3)", f"{int(rs.get('tier3_nlp_suspected') or 0):,}",
+                       "Weak evidence"),
+                    unsafe_allow_html=True)
+        ref_df = sqdf(con, f"""
+            SELECT research_id, detection_date, injury_type, laterality,
+                   rln_injury_tier, rln_injury_evidence_strength,
+                   rln_injury_is_confirmed, classification,
+                   temporality, days_post_surgery, temporal_window
+            FROM {qual(_refined_view)}
+            ORDER BY rln_injury_tier, days_post_surgery
+        """)
+        if not ref_df.empty:
+            with st.expander("Refined Patient-Level Detail"):
+                st.dataframe(ref_df, use_container_width=True, hide_index=True)
+
     if _has_detail:
-        with st.expander("Patient-Level RLN Detail"):
+        with st.expander("Patient-Level RLN Detail (Original 3-Tier)"):
             _det_q = qual(_rln_detail_view)
             det_df = sqdf(con, f"SELECT * FROM {_det_q} ORDER BY source_tier, days_post_surgery")
             if not det_df.empty:

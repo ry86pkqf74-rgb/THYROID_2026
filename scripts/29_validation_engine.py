@@ -948,6 +948,36 @@ ORDER BY review_priority, severity, research_id
 # Orchestration
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+VAL_RLN_INTRINSIC_SQL = """
+CREATE OR REPLACE TABLE val_rln_intrinsic_eval AS
+WITH refined AS (
+    SELECT
+        research_id,
+        rln_injury_tier,
+        rln_injury_is_confirmed,
+        classification,
+        rln_injury_evidence_strength
+    FROM extracted_rln_injury_refined_v2
+),
+original AS (
+    SELECT research_id, source_tier, worst_status
+    FROM vw_patient_postop_rln_injury_detail
+)
+SELECT
+    'rln_intrinsic_eval'       AS check_id,
+    'info'                     AS severity,
+    o.research_id,
+    'RLN tier comparison: original=' || o.source_tier
+        || ' refined=' || COALESCE(r.classification, 'excluded')
+        || ' confirmed=' || COALESCE(CAST(r.rln_injury_is_confirmed AS VARCHAR), 'false')
+                                AS description,
+    o.worst_status || ' | evidence=' || COALESCE(r.rln_injury_evidence_strength, 'none')
+                                AS detail
+FROM original o
+LEFT JOIN refined r ON o.research_id = r.research_id
+"""
+
+
 ALL_VALIDATION_SQL: list[tuple[str, str, str]] = [
     ("val_histology_confirmation",  VAL_HISTOLOGY_CONFIRMATION_SQL,  "Adjudication: histology"),
     ("val_molecular_confirmation",  VAL_MOLECULAR_CONFIRMATION_SQL,  "Adjudication: molecular"),
@@ -957,6 +987,7 @@ ALL_VALIDATION_SQL: list[tuple[str, str, str]] = [
     ("val_unlinked_linkable",       VAL_UNLINKED_LINKABLE_SQL,       "Unlinked-but-linkable"),
     ("val_completeness_scorecard",  VAL_COMPLETENESS_SCORECARD_SQL,  "Completeness scorecard"),
     ("val_review_queue_combined",   VAL_REVIEW_QUEUE_COMBINED_SQL,   "Combined review queue"),
+    ("val_rln_intrinsic_eval",      VAL_RLN_INTRINSIC_SQL,           "RLN intrinsic evaluation"),
 ]
 
 

@@ -1,0 +1,6 @@
+definition,n_rln,rate_pct,OR,p
+original,679,6.25,1.485,0.0
+tier1,6,0.06,0.475,0.677
+tier12,25,0.23,1.585,0.2748
+refined_all,92,0.85,1.679,0.016
+refined_confirmed,59,0.54,1.878,0.0212

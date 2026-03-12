@@ -113,6 +113,10 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_manuscript_patient_summary", "manuscript_patient_summary_v"),
     # ── Date rescue KPI (script 27) ────────────────────────────────
     ("md_date_rescue_rate_summary", "date_rescue_rate_summary"),
+    # ── RLN injury refined (rln_refined_pipeline) ────────────────
+    ("md_extracted_rln_injury_refined", "extracted_rln_injury_refined_v2"),
+    ("md_extracted_rln_injury_refined_summary", "extracted_rln_injury_refined_summary_v2"),
+    ("md_extracted_rln_exclusion_audit", "extracted_rln_exclusion_audit_v2"),
 ]
 
 SURVIVAL_COHORT_ENRICHED_SQL = """
