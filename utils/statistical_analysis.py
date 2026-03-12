@@ -1627,3 +1627,211 @@ class ThyroidStatisticalAnalyzer:
             lines.append(f"\n*Model: {'; '.join(meta_parts)}*")
 
         return "\n".join(lines)
+
+    # ── Multiple Imputation (MICE) + Rubin's Rules ──────────────────────
+
+    @staticmethod
+    def mice_impute(
+        data: pd.DataFrame,
+        vars_to_impute: list[str],
+        predictor_vars: list[str],
+        m: int = 20,
+        max_iter: int = 10,
+        seed: int = 42,
+    ) -> list[pd.DataFrame]:
+        """MICE imputation via sklearn IterativeImputer.
+
+        Parameters
+        ----------
+        data : DataFrame
+            Full cohort (rows with and without missing values).
+        vars_to_impute : list[str]
+            Columns to impute (e.g. tumor_size_cm, ln_positive).
+        predictor_vars : list[str]
+            Auxiliary predictors used in chained equations.
+        m : int
+            Number of imputed datasets (default 20).
+        max_iter : int
+            MICE iteration rounds per dataset.
+        seed : int
+            Base random seed (each imputation uses seed + i).
+
+        Returns
+        -------
+        list of m completed DataFrames (same shape as *data*).
+        """
+        from sklearn.experimental import enable_iterative_imputer  # noqa: F401
+        from sklearn.impute import IterativeImputer
+
+        all_vars = list(dict.fromkeys(vars_to_impute + predictor_vars))
+        present = [v for v in all_vars if v in data.columns]
+        sub = data[present].copy()
+
+        cat_maps: dict[str, pd.Index] = {}
+        for col in present:
+            if not pd.api.types.is_numeric_dtype(sub[col]):
+                codes, uniques = pd.factorize(sub[col])
+                cat_maps[col] = uniques
+                sub[col] = codes.astype(float)
+                sub.loc[sub[col] < 0, col] = np.nan
+            else:
+                sub[col] = pd.to_numeric(sub[col], errors="coerce")
+
+        numeric_arr = sub.to_numpy(dtype=float, na_value=np.nan)
+
+        imputed_datasets: list[pd.DataFrame] = []
+        for i in range(m):
+            imp = IterativeImputer(
+                max_iter=max_iter,
+                random_state=seed + i,
+                sample_posterior=True,
+            )
+            arr = imp.fit_transform(numeric_arr)
+            df_imp = pd.DataFrame(arr, columns=present, index=sub.index)
+
+            for col, uniques in cat_maps.items():
+                idx_vals = df_imp[col].round().clip(0, len(uniques) - 1).astype(int)
+                df_imp[col] = pd.Categorical.from_codes(idx_vals, categories=uniques)
+
+            for col in vars_to_impute:
+                if col not in df_imp.columns:
+                    continue
+                orig = data[col].dropna()
+                if orig.empty:
+                    continue
+                if pd.api.types.is_numeric_dtype(orig) and orig.nunique() <= 2:
+                    df_imp[col] = df_imp[col].round().clip(
+                        float(orig.min()), float(orig.max())
+                    )
+
+            result = data.copy()
+            for col in vars_to_impute:
+                if col in df_imp.columns:
+                    result[col] = df_imp[col].values
+            imputed_datasets.append(result)
+
+        return imputed_datasets
+
+    @staticmethod
+    def rubins_rules(
+        estimates: np.ndarray,
+        std_errors: np.ndarray,
+    ) -> dict[str, float]:
+        """Pool *m* estimates and SEs using Rubin's combining rules.
+
+        Parameters
+        ----------
+        estimates : array (m,)
+            Point estimates from each imputed dataset.
+        std_errors : array (m,)
+            Standard errors from each imputed dataset.
+
+        Returns
+        -------
+        dict with pooled_estimate, pooled_se, ci_lower, ci_upper,
+        p_value, df, fmi (fraction of missing information).
+        """
+        from scipy.stats import t as t_dist
+
+        m = len(estimates)
+        Q_bar = float(np.mean(estimates))
+        U_bar = float(np.mean(std_errors ** 2))
+        B = float(np.var(estimates, ddof=1))
+        T = U_bar + (1 + 1 / m) * B
+        pooled_se = np.sqrt(T)
+
+        r = (1 + 1 / m) * B / U_bar if U_bar > 0 else float("inf")
+        if 0 < r < float("inf"):
+            df_old = (m - 1) * (1 + 1 / r) ** 2
+        else:
+            df_old = float(m - 1)
+        df = max(df_old, 3.0)
+
+        fmi = (r + 2 / (df + 3)) / (r + 1) if 0 < r < float("inf") else 1.0
+
+        t_crit = float(t_dist.ppf(0.975, df))
+        ci_lower = Q_bar - t_crit * pooled_se
+        ci_upper = Q_bar + t_crit * pooled_se
+        t_stat = Q_bar / pooled_se if pooled_se > 0 else 0.0
+        p_value = float(2 * (1 - t_dist.cdf(abs(t_stat), df)))
+
+        return {
+            "pooled_estimate": round(Q_bar, 6),
+            "pooled_se": round(float(pooled_se), 6),
+            "ci_lower": round(ci_lower, 6),
+            "ci_upper": round(ci_upper, 6),
+            "p_value": round(p_value, 6),
+            "df": round(df, 1),
+            "fmi": round(fmi, 4),
+            "m": m,
+        }
+
+    def pool_logistic_rubins(
+        self,
+        outcome: str,
+        predictors: list[str],
+        imputed_datasets: list[pd.DataFrame],
+    ) -> dict[str, Any]:
+        """Logistic regression across *m* imputed datasets, pooled via Rubin's rules.
+
+        Returns dict with *or_table* (pooled ORs), *n_obs_mean*, *n_imputations*.
+        """
+        if not HAS_STATSMODELS:
+            return {"error": "statsmodels required"}
+
+        all_vars = [outcome] + predictors
+        coef_arrays: dict[str, list[float]] = {p: [] for p in predictors}
+        se_arrays: dict[str, list[float]] = {p: [] for p in predictors}
+        n_obs_list: list[int] = []
+
+        for df in imputed_datasets:
+            present = [v for v in all_vars if v in df.columns]
+            sub = df[present].dropna().copy()
+            for c in present:
+                sub[c] = pd.to_numeric(sub[c], errors="coerce")
+            sub = sub.dropna()
+            if len(sub) < 30:
+                continue
+
+            model_preds = [p for p in predictors if p in sub.columns]
+            X = sm.add_constant(sub[model_preds].astype(float))
+            y = sub[outcome].astype(int)
+            try:
+                model = sm.Logit(y, X).fit(disp=0, maxiter=200)
+                n_obs_list.append(int(model.nobs))
+                for j, p in enumerate(model_preds):
+                    coef_arrays[p].append(float(model.params.iloc[j + 1]))
+                    se_arrays[p].append(float(model.bse.iloc[j + 1]))
+            except Exception:
+                continue
+
+        if not n_obs_list:
+            return {"error": "All imputations failed"}
+
+        pooled_rows: list[dict[str, Any]] = []
+        for p in predictors:
+            if not coef_arrays[p]:
+                continue
+            est = np.array(coef_arrays[p])
+            ses = np.array(se_arrays[p])
+            pooled = self.rubins_rules(est, ses)
+            or_val = np.exp(pooled["pooled_estimate"])
+            or_lo = np.exp(pooled["ci_lower"])
+            or_hi = np.exp(pooled["ci_upper"])
+            pooled_rows.append({
+                "Variable": p,
+                "Coefficient": pooled["pooled_estimate"],
+                "SE": pooled["pooled_se"],
+                "OR": round(float(or_val), 4),
+                "OR_95CI_low": round(float(or_lo), 4),
+                "OR_95CI_high": round(float(or_hi), 4),
+                "p_value": pooled["p_value"],
+                "FMI": pooled["fmi"],
+            })
+
+        return {
+            "or_table": pd.DataFrame(pooled_rows),
+            "n_obs_mean": int(round(np.mean(n_obs_list))),
+            "n_imputations": len(n_obs_list),
+            "m": len(imputed_datasets),
+        }

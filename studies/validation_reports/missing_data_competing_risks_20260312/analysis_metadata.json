@@ -1,0 +1,31 @@
+{
+  "date": "2026-03-12T12:20:19.248949",
+  "source": "MotherDuck",
+  "h1_n": 5277,
+  "h2_n": 6218,
+  "mice_m": 20,
+  "output_dir": "/Users/loganglosser/THYROID_2026/studies/validation_reports/missing_data_competing_risks_20260312",
+  "files": [
+    "competing_risks_models.csv",
+    "sensitivity_analyses.csv",
+    "mice_h2_rln_pooled.csv",
+    "missingness_patterns_h1.csv",
+    "complete_case_vs_imputed_comparison.csv",
+    "missingness_summary.csv",
+    "mice_h1_rln_pooled.csv",
+    "mice_h1_recurrence_pooled.csv",
+    "executive_summary.md",
+    "manuscript_methods_results.md",
+    "psm_imputed_balance.csv",
+    "fig_forest_H2_rln_injury_imputed_vs_cc.png",
+    "fig_missingness_pattern.svg",
+    "fig_forest_H1_rln_injury_imputed_vs_cc.png",
+    "fig_cif_competing_risks.png",
+    "fig_cif_competing_risks.svg",
+    "fig_forest_H1_rln_injury_imputed_vs_cc.svg",
+    "fig_missingness_pattern.png",
+    "fig_forest_H2_rln_injury_imputed_vs_cc.svg",
+    "fig_forest_H1_recurrence_imputed_vs_cc.png",
+    "fig_forest_H1_recurrence_imputed_vs_cc.svg"
+  ]
+}

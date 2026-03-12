@@ -1,0 +1,16 @@
+cohort,variable,n_total,n_missing,pct_missing
+H1_lobectomy,age,5277,0,0.0
+H1_lobectomy,tumor_size_cm,5277,3442,65.23
+H1_lobectomy,ln_positive,5277,3846,72.88
+H1_lobectomy,ln_examined,5277,1304,24.71
+H1_lobectomy,braf_positive,5277,0,0.0
+H1_lobectomy,specimen_weight_g,5277,5221,98.94
+H1_lobectomy,multifocal,5277,0,0.0
+H1_lobectomy,recurrence,5277,0,0.0
+H1_lobectomy,rln_injury,5277,0,0.0
+H1_lobectomy,year_of_surgery,5277,1,0.02
+H2_goiter,age,6218,0,0.0
+H2_goiter,specimen_weight_g,6218,4106,66.03
+H2_goiter,dominant_nodule_cm,6218,4705,75.67
+H2_goiter,race_group,6218,0,0.0
+H2_goiter,year_of_surgery,6218,1,0.02

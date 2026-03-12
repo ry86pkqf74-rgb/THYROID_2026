@@ -274,4 +274,15 @@
 - NumPy 2.0+ removed `np.trapz`; use `np.trapezoid` with fallback `getattr(np, 'trapezoid', np.trapz)` for compatibility across NumPy versions
 - MCM (Mixture Cure Model) EM bootstrap on 48k rows with 120 max EM iterations is prohibitively slow (~3 min/resample); fix: stratified subsample to 8k rows (preserve all events + random non-events) + cap bootstrap EM to 30 iterations + vectorize design matrix with `pd.to_numeric()` instead of `pd.get_dummies().replace()`
 - Script 40 has multiple files: `40_benign_classification.py` (benign procedure view), `40_cure_model_comparison.py` (MCM vs PTCM head-to-head), `40_predictive_analytics_batch.py` (batch runner for predictive analytics)
-- Deployment order updated: script 15 → 16 → 17 → 18 → 19 → 20 → ... → 41 → 42 → 43 → 44
+- Deployment order updated: script 15 → 16 → 17 → 18 → 19 → 20 → ... → 41 → 42 → 43 → 44 → 45
+- Script 45 (`45_missing_data_competing_risks.py`): MICE imputation (m=20) + Rubin's rules + competing-risks (AJ CIF + cause-specific Cox + Fine-Gray IPCW) + sensitivity; outputs to `studies/validation_reports/missing_data_competing_risks_20260312/`; supports `--md`, `--local`, `--dry-run`
+- `ThyroidStatisticalAnalyzer` now has `mice_impute()` (MICE via sklearn IterativeImputer), `rubins_rules()` (Rubin's combining rules), `pool_logistic_rubins()` (logistic regression across m imputed datasets with pooling)
+- H1 lobectomy missingness: tumor_size_cm 65.2%, ln_positive 72.9%, specimen_weight_g 98.9%; complete-case N=693 from 5,277; MICE recovers to N=5,277
+- H1 MICE-pooled CLN recurrence OR=2.23 (1.92–2.59), p<0.001; complete-case CLN OR=1.27 (1.08–1.48), p=0.003; direction consistent; MICE stronger effect due to larger N and less confounding-variable attenuation
+- H1 MICE-pooled CLN RLN OR=2.03 (1.63–2.52); consistent with complete-case
+- H2 MICE-pooled specimen_weight_g OR=1.00 (0.9997–1.0002); effect attenuated on full sample (FMI=0.69 indicates high fraction of missing information)
+- PSM on MICE-imputed data: 1,247 matched pairs (full CLN arm), recurrence OR=1.96 (1.62–2.36), RLN OR=1.78 (1.34–2.36); all covariates balanced (SMD<0.02)
+- Competing-risks: 0 actual death events in clinical_events_v4; augmented with age-based expected-mortality proxy (7,059 synthetic deaths); cause-specific recurrence HR=1.00 (0.92–1.08), p=0.95; Fine-Gray IPCW subdist HR=1.00 (0.92–1.08), p=0.95
+- Sensitivity bounds: worst-case (tumor=6cm, LN+=5) CLN OR=1.56, best-case (tumor=0.5cm, LN=0) CLN OR=1.38; direction preserved
+- Missingness patterns: 50.8% have all three key vars missing; 12.8% have tumor+LN observed; 8 distinct patterns total
+- `sklearn.impute.IterativeImputer` requires `pd.to_numpy(dtype=float, na_value=np.nan)` to handle pandas `NAType` from DuckDB; bare `.values` raises `TypeError: float() argument must be a string or a real number, not 'NAType'`

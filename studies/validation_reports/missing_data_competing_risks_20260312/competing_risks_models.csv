@@ -1,0 +1,5 @@
+model,covariate,HR,CI_low,CI_high,p_value,concordance
+cause_specific_recurrence,central_lnd_flag,0.9971,0.9175,1.0836,0.94555,0.5036
+cause_specific_death,central_lnd_flag,0.6984,0.6531,0.7469,0.0,0.517
+standard_cox,central_lnd_flag,0.7002,0.6551,0.7484,0.0,0.5165
+fine_gray_ipcw,central_lnd_flag,0.9971,0.9175,1.0836,0.945242,0.5032

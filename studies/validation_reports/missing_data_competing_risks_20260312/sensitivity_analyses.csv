@@ -1,0 +1,7 @@
+analysis,outcome,variable,OR,CI_low,CI_high,p_value,N
+worst_case,recurrence,central_lnd_flag,1.5569,1.3873,1.7473,0.0,5277
+best_case,recurrence,central_lnd_flag,1.3795,1.2876,1.478,0.0,5277
+sample_size_comparison,recurrence,N_complete_case,,,,,693
+sample_size_comparison,recurrence,N_mice_imputed,,,,,5277
+missingness_pattern_tumor_obs_ln_obs,recurrence,central_lnd_flag,1.848,1.1495,2.9711,,693
+missingness_pattern_tumor_miss_ln_obs,recurrence,central_lnd_flag,0.9098,0.3409,2.4283,,738
