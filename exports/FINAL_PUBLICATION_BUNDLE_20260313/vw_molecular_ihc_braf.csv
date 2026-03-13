@@ -1,0 +1,3 @@
+result,note_type,n_patients,avg_confidence
+positive,h_p,1,0.8
+negative,op_note,1,0.8

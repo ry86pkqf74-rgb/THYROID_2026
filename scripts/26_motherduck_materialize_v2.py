@@ -193,6 +193,15 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_val_phase12_tirads_validation", "val_phase12_tirads_validation"),
     ("md_patient_refined_master_clinical_v11", "patient_refined_master_clinical_v11"),
     ("md_advanced_features_v5", "advanced_features_v5"),
+    # ── Phase 13 FINAL Gaps Closure (extraction_audit_engine_v11) ──
+    ("md_extracted_vascular_grading_v13", "extracted_vascular_grading_v13"),
+    ("md_vw_vascular_invasion_grade", "vw_vascular_invasion_grade"),
+    ("md_extracted_ihc_braf_v13", "extracted_ihc_braf_v13"),
+    ("md_vw_molecular_ihc_braf", "vw_molecular_ihc_braf"),
+    ("md_extracted_ras_resolved_v13", "extracted_ras_resolved_v13"),
+    ("md_vw_ras_subtypes", "vw_ras_subtypes"),
+    ("md_val_phase13_final_gaps", "val_phase13_final_gaps"),
+    ("md_patient_refined_master_clinical_v12", "patient_refined_master_clinical_v12"),
 ]
 
 SURVIVAL_COHORT_ENRICHED_SQL = """

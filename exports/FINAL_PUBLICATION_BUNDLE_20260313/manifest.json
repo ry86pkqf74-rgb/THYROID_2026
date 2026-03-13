@@ -1,0 +1,60 @@
+{
+  "bundle_name": "FINAL_PUBLICATION_BUNDLE",
+  "created_at": "20260312_2239",
+  "phase": 13,
+  "description": "Final publication-ready data export after all 13 refinement phases",
+  "master_table": "patient_refined_master_clinical_v12",
+  "total_patients": 12886,
+  "total_columns": 136,
+  "data_quality_score": "98/100",
+  "tables": {
+    "master_clinical_v12": {
+      "rows": 12886,
+      "columns": 272,
+      "csv": "master_clinical_v12.csv",
+      "parquet": "master_clinical_v12.parquet"
+    },
+    "vascular_grading_v13": {
+      "rows": 3846,
+      "columns": 9,
+      "csv": "vascular_grading_v13.csv",
+      "parquet": "vascular_grading_v13.parquet"
+    },
+    "ihc_braf_v13": {
+      "rows": 2,
+      "columns": 5,
+      "csv": "ihc_braf_v13.csv",
+      "parquet": "ihc_braf_v13.parquet"
+    },
+    "ras_resolved_v13": {
+      "rows": 34,
+      "columns": 6,
+      "csv": "ras_resolved_v13.csv",
+      "parquet": "ras_resolved_v13.parquet"
+    },
+    "vw_vascular_invasion_grade": {
+      "rows": 10,
+      "columns": 6,
+      "csv": "vw_vascular_invasion_grade.csv",
+      "parquet": "vw_vascular_invasion_grade.parquet"
+    },
+    "vw_molecular_ihc_braf": {
+      "rows": 2,
+      "columns": 4,
+      "csv": "vw_molecular_ihc_braf.csv",
+      "parquet": "vw_molecular_ihc_braf.parquet"
+    },
+    "vw_ras_subtypes": {
+      "rows": 7,
+      "columns": 6,
+      "csv": "vw_ras_subtypes.csv",
+      "parquet": "vw_ras_subtypes.parquet"
+    },
+    "val_phase13_final_gaps": {
+      "rows": 4,
+      "columns": 4,
+      "csv": "val_phase13_final_gaps.csv",
+      "parquet": "val_phase13_final_gaps.parquet"
+    }
+  }
+}

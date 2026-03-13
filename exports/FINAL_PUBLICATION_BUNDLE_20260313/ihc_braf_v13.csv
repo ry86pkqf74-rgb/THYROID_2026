@@ -1,0 +1,3 @@
+research_id,ihc_braf_result,ihc_note_type,ihc_source,ihc_confidence
+10478,positive,h_p,ihc_pathology,0.8
+9093,negative,op_note,ihc_pathology,0.8

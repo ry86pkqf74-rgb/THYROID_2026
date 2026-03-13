@@ -1,0 +1,82 @@
+{
+  "timestamp": "20260312_2234",
+  "phase": 13,
+  "tables_deployed": [
+    [
+      "extracted_vascular_grading_v13",
+      3846
+    ],
+    [
+      "vw_vascular_invasion_grade",
+      10
+    ],
+    [
+      "extracted_ihc_braf_v13",
+      2
+    ],
+    [
+      "vw_molecular_ihc_braf",
+      2
+    ],
+    [
+      "extracted_ras_resolved_v13",
+      34
+    ],
+    [
+      "vw_ras_subtypes",
+      7
+    ],
+    [
+      "patient_refined_master_clinical_v12",
+      12886
+    ],
+    [
+      "val_phase13_final_gaps",
+      4
+    ]
+  ],
+  "vasc_synoptic_rows": 3846,
+  "vasc_grade_dist_tier1": {
+    "present_ungraded": "3385",
+    "focal": "230",
+    "extensive": "171",
+    "indeterminate": "60"
+  },
+  "vasc_multi_tumor_patients": 511,
+  "vasc_nlp_patients": 3,
+  "vasc_grade_dist_final": {
+    "present_ungraded": "3367",
+    "focal": "244",
+    "extensive": "175",
+    "indeterminate": "60"
+  },
+  "vasc_graded_count": 419,
+  "vasc_still_ungraded": 3367,
+  "ihc_braf_results": {
+    "positive": "1",
+    "negative": "1"
+  },
+  "ihc_braf_patients": 2,
+  "ras_resolved_dist": {
+    "NRAS": "19",
+    "HRAS": "9",
+    "KRAS": "6"
+  },
+  "ras_source_dist": {
+    "molecular_testing_text": "21",
+    "nlp_entity_genetics": "12",
+    "thyroseq_enrichment": "1"
+  },
+  "ras_resolved_count": 34,
+  "ras_remaining_unspec": 31,
+  "final_fill_rates": {
+    "total_patients": 12886,
+    "vasc_graded_pct_of_positive": 14.7,
+    "vasc_graded": 819,
+    "vasc_still_ungraded": 4652,
+    "braf_positive_final": 659,
+    "ihc_braf_results": 2,
+    "ras_positive_final": 364,
+    "ras_newly_resolved": 41
+  }
+}

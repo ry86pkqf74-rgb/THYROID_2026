@@ -1448,6 +1448,38 @@ SELECT *, CURRENT_TIMESTAMP AS validated_at FROM combined
 ORDER BY patients_with_data DESC
 """
 
+# Phase 13 QA: final gaps closure validation
+VAL_PHASE13_FINAL_GAPS_SQL = """
+CREATE OR REPLACE TABLE val_phase13_final_gaps AS
+SELECT 'vascular_graded' AS variable,
+       (SELECT COUNT(*) FROM extracted_vascular_grading_v13
+        WHERE vasc_grade_v13 IN ('focal','extensive')) AS refined_count,
+       (SELECT COUNT(*) FROM extracted_vascular_grading_v13
+        WHERE vasc_grade_v13 = 'present_ungraded') AS still_ungraded,
+       (SELECT COUNT(*) FROM extracted_vascular_grading_v13) AS total_input,
+       CURRENT_TIMESTAMP AS validated_at
+UNION ALL
+SELECT 'ihc_braf',
+       (SELECT COUNT(*) FROM extracted_ihc_braf_v13
+        WHERE ihc_braf_result = 'positive'),
+       (SELECT COUNT(*) FROM extracted_ihc_braf_v13
+        WHERE ihc_braf_result = 'negative'),
+       (SELECT COUNT(*) FROM extracted_ihc_braf_v13),
+       CURRENT_TIMESTAMP
+UNION ALL
+SELECT 'ras_resolved',
+       (SELECT COUNT(*) FROM extracted_ras_resolved_v13),
+       65 - (SELECT COUNT(*) FROM extracted_ras_resolved_v13),
+       65,
+       CURRENT_TIMESTAMP
+UNION ALL
+SELECT 'master_v12_total',
+       (SELECT COUNT(*) FROM patient_refined_master_clinical_v12),
+       0,
+       (SELECT COUNT(*) FROM patient_refined_master_clinical_v12),
+       CURRENT_TIMESTAMP
+"""
+
 # All SQL variables are now defined above; assemble the registry.
 ALL_VALIDATION_SQL: list[tuple[str, str, str]] = [
     ("val_histology_confirmation",  VAL_HISTOLOGY_CONFIRMATION_SQL,  "Adjudication: histology"),
@@ -1466,6 +1498,7 @@ ALL_VALIDATION_SQL: list[tuple[str, str, str]] = [
     ("val_phase9_targeted_refinement", VAL_PHASE9_TARGETED_REFINEMENT_SQL, "Phase 9 targeted refinement audit"),
     ("val_phase10_staging_recovery",   VAL_PHASE10_STAGING_RECOVERY_SQL,  "Phase 10 source-linked recovery audit"),
     ("val_provenance_traceability",    VAL_PROVENANCE_TRACEABILITY_SQL,   "Phase 11 provenance + date-accuracy traceability"),
+    ("val_phase13_final_gaps",         VAL_PHASE13_FINAL_GAPS_SQL,        "Phase 13 final gaps closure audit"),
 ]
 
 

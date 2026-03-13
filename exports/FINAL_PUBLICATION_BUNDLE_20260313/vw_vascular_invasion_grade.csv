@@ -1,0 +1,11 @@
+grade,n_patients,pct,avg_confidence,with_vessel_count,primary_source
+present_ungraded,3367,87.5,0.75,0,path_synoptic_text
+focal,190,4.9,0.9499999999999981,0,path_synoptic_text
+extensive,166,4.3,0.9499999999999994,0,path_synoptic_text
+indeterminate,60,1.6,0.5,0,path_synoptic_text
+focal,40,1.0,1.0,40,path_synoptic_quantify
+focal,13,0.3,0.9000000000000002,1,multi_tumor_aggregate
+extensive,5,0.1,1.0,5,path_synoptic_quantify
+extensive,3,0.1,0.9,0,multi_tumor_aggregate
+focal,1,0.0,0.85,0,op_note_nlp
+extensive,1,0.0,0.85,0,op_note_nlp
