@@ -241,242 +241,10 @@ REPORT_MATCHING_SQL = textwrap.dedent("""\
 # > operative_details.surg_date > path_synoptics.surg_date
 
 DEMOGRAPHICS_HARMONIZED_SQL = textwrap.dedent("""\
-    CREATE OR REPLACE TABLE demographics_harmonized_v2 AS
-    WITH patient_spine AS (
-        SELECT DISTINCT CAST(research_id AS INT) AS research_id
-        FROM master_cohort
-        WHERE research_id IS NOT NULL
-    ),
-
-    -- P1: benign_pathology (10,871 patients)
-    bp AS (
-        SELECT CAST(research_id AS INT) AS rid,
-               FIRST(age_at_surgery ORDER BY surgery_date DESC NULLS LAST) AS age_at_surgery,
-               FIRST(sex ORDER BY surgery_date DESC NULLS LAST) AS sex,
-               FIRST(TRY_CAST(surgery_date AS DATE) ORDER BY surgery_date DESC NULLS LAST) AS surgery_date
-        FROM benign_pathology
-        WHERE age_at_surgery IS NOT NULL
-        GROUP BY CAST(research_id AS INT)
-    ),
-
-    -- P2: tumor_pathology (3,986 patients)
-    tp AS (
-        SELECT CAST(research_id AS INT) AS rid,
-               FIRST(age_at_surgery ORDER BY surgery_date DESC NULLS LAST) AS age_at_surgery,
-               FIRST(sex ORDER BY surgery_date DESC NULLS LAST) AS sex
-        FROM tumor_pathology
-        WHERE age_at_surgery IS NOT NULL
-        GROUP BY CAST(research_id AS INT)
-    ),
-
-    -- P3: path_synoptics (10,871 patients with age/gender; 10,862 with race)
-    ps AS (
-        SELECT CAST(research_id AS INT) AS rid,
-               FIRST(TRY_CAST(CAST(age AS VARCHAR) AS INT)) AS age_ps,
-               FIRST(CASE
-                   WHEN LOWER(CAST(gender AS VARCHAR)) IN ('male', 'm') THEN 'Male'
-                   WHEN LOWER(CAST(gender AS VARCHAR)) IN ('female', 'f') THEN 'Female'
-                   ELSE NULL
-               END) AS sex_ps,
-               FIRST(CAST(race AS VARCHAR)) FILTER (
-                   WHERE race IS NOT NULL AND TRIM(CAST(race AS VARCHAR)) != ''
-               ) AS race_ps,
-               FIRST(TRY_CAST(surg_date AS DATE)) AS surg_date_ps
-        FROM path_synoptics
-        GROUP BY CAST(research_id AS INT)
-    ),
-
-    -- P4: thyroid_weights DOB + date_of_surgery (9,952 with DOB)
-    tw AS (
-        SELECT CAST(research_id AS INT) AS rid,
-               FIRST(dob) AS dob_tw,
-               FIRST(TRY_CAST(date_of_surgery AS DATE)) AS surg_date_tw
-        FROM thyroid_weights
-        WHERE dob IS NOT NULL
-        GROUP BY CAST(research_id AS INT)
-    ),
-
-    -- P5: operative_details surgery date (9,368 patients)
-    -- Handles annotated dates like "8/11/2014 (MANNUALLY ADDED...)" via regex
-    od AS (
-        SELECT CAST(research_id AS INT) AS rid,
-               FIRST(
-                   COALESCE(
-                       TRY_CAST(surg_date AS DATE),
-                       TRY_STRPTIME(
-                           REGEXP_EXTRACT(CAST(surg_date AS VARCHAR), '(\\d{1,2}/\\d{1,2}/\\d{4})', 1),
-                           '%m/%d/%Y'
-                       )::DATE
-                   )
-                   ORDER BY COALESCE(
-                       TRY_CAST(surg_date AS DATE),
-                       TRY_STRPTIME(
-                           REGEXP_EXTRACT(CAST(surg_date AS VARCHAR), '(\\d{1,2}/\\d{1,2}/\\d{4})', 1),
-                           '%m/%d/%Y'
-                       )::DATE
-                   )
-               ) AS surg_date_od
-        FROM operative_details
-        GROUP BY CAST(research_id AS INT)
-    ),
-
-    -- P6: thyroglobulin_labs (2,569 patients with DOB/gender/race)
-    tg AS (
-        SELECT CAST(research_id AS INT) AS rid,
-               FIRST(TRY_CAST(dob AS DATE)) AS dob_tg,
-               FIRST(CASE
-                   WHEN LOWER(TRIM(CAST(gender AS VARCHAR))) IN ('male', 'm') THEN 'Male'
-                   WHEN LOWER(TRIM(CAST(gender AS VARCHAR))) IN ('female', 'f') THEN 'Female'
-                   ELSE NULL
-               END) AS sex_tg,
-               FIRST(CAST(race AS VARCHAR)) FILTER (
-                   WHERE race IS NOT NULL AND TRIM(CAST(race AS VARCHAR)) != ''
-               ) AS race_tg
-        FROM thyroglobulin_labs
-        GROUP BY CAST(research_id AS INT)
-    ),
-
-    -- P7: anti_thyroglobulin_labs (2,127 patients with DOB/gender/race)
-    atg AS (
-        SELECT CAST(research_id AS INT) AS rid,
-               FIRST(TRY_CAST(dob AS DATE)) AS dob_atg,
-               FIRST(CASE
-                   WHEN LOWER(TRIM(CAST(gender AS VARCHAR))) IN ('male', 'm') THEN 'Male'
-                   WHEN LOWER(TRIM(CAST(gender AS VARCHAR))) IN ('female', 'f') THEN 'Female'
-                   ELSE NULL
-               END) AS sex_atg,
-               FIRST(CAST(race AS VARCHAR)) FILTER (
-                   WHERE race IS NOT NULL AND TRIM(CAST(race AS VARCHAR)) != ''
-               ) AS race_atg
-        FROM anti_thyroglobulin_labs
-        GROUP BY CAST(research_id AS INT)
-    ),
-
-    -- P8: Cross-file Excel DOB recovery (stg_dob_excel_recovery)
-    excel_dob AS (
-        SELECT research_id AS rid,
-               dob_resolved AS dob_excel,
-               age_at_surgery AS age_excel,
-               gender_excel AS sex_excel,
-               race_excel,
-               dob_resolution
-        FROM stg_dob_excel_recovery
-    ),
-
-    -- P9: MRN crosswalk (OP Sheet → All Diagnoses via EUH_MRN)
-    -- Recovers sex/race/age for patients whose OP Sheet research_id
-    -- differs from their All Diagnoses research_id (same MRN)
-    xwalk AS (
-        SELECT research_id AS rid,
-               sex AS sex_xwalk,
-               race AS race_xwalk,
-               age_at_surgery AS age_xwalk,
-               dob AS dob_xwalk
-        FROM stg_mrn_crosswalk_demographics
-    ),
-
-    harmonized AS (
-        SELECT
-            sp.research_id,
-
-            -- Best surgery date (for DOB-based age calculation)
-            COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od)
-                AS best_surgery_date,
-
-            -- Best DOB: resolved Excel > crosswalk > thyroid_weights > labs
-            COALESCE(ex.dob_excel, xw.dob_xwalk, tw.dob_tw, tg.dob_tg, atg.dob_atg) AS best_dob,
-
-            -- AGE: structured > Excel DOB-derived > MRN crosswalk > DB DOB-derived
-            COALESCE(
-                TRY_CAST(bp.age_at_surgery AS INT),
-                TRY_CAST(tp.age_at_surgery AS INT),
-                ps.age_ps,
-                ex.age_excel,
-                xw.age_xwalk,
-                CASE WHEN COALESCE(xw.dob_xwalk, ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg) IS NOT NULL
-                      AND COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od) IS NOT NULL
-                     THEN DATE_DIFF('year',
-                              COALESCE(xw.dob_xwalk, ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg),
-                              COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od))
-                          - CASE WHEN
-                              MONTH(COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od))
-                                < MONTH(COALESCE(xw.dob_xwalk, ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg))
-                              OR (MONTH(COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od))
-                                  = MONTH(COALESCE(xw.dob_xwalk, ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg))
-                                  AND DAY(COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od))
-                                    < DAY(COALESCE(xw.dob_xwalk, ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg)))
-                            THEN 1 ELSE 0 END
-                     ELSE NULL
-                END
-            ) AS age_at_surgery,
-
-            CASE
-                WHEN bp.age_at_surgery IS NOT NULL THEN 'benign_pathology'
-                WHEN tp.age_at_surgery IS NOT NULL THEN 'tumor_pathology'
-                WHEN ps.age_ps IS NOT NULL          THEN 'path_synoptics'
-                WHEN ex.age_excel IS NOT NULL        THEN 'excel_dob_' || COALESCE(ex.dob_resolution, 'resolved')
-                WHEN xw.age_xwalk IS NOT NULL       THEN 'mrn_crosswalk'
-                WHEN COALESCE(xw.dob_xwalk, ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg) IS NOT NULL
-                     AND COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od) IS NOT NULL
-                     THEN CASE
-                         WHEN ex.dob_excel IS NOT NULL AND bp.age_at_surgery IS NULL
-                              AND tp.age_at_surgery IS NULL AND ps.age_ps IS NULL
-                              AND ex.age_excel IS NULL THEN 'excel_dob_derived'
-                         WHEN tw.dob_tw IS NOT NULL THEN 'thyroid_weights_dob'
-                         WHEN tg.dob_tg IS NOT NULL THEN 'thyroglobulin_labs_dob'
-                         ELSE 'anti_tg_labs_dob'
-                     END
-                ELSE NULL
-            END AS age_source,
-
-            -- SEX: structured > Excel > MRN crosswalk > labs
-            COALESCE(bp.sex, tp.sex, ps.sex_ps, ex.sex_excel, xw.sex_xwalk, tg.sex_tg, atg.sex_atg) AS sex,
-
-            CASE
-                WHEN bp.sex IS NOT NULL      THEN 'benign_pathology'
-                WHEN tp.sex IS NOT NULL      THEN 'tumor_pathology'
-                WHEN ps.sex_ps IS NOT NULL   THEN 'path_synoptics'
-                WHEN ex.sex_excel IS NOT NULL THEN 'excel_all_diagnoses'
-                WHEN xw.sex_xwalk IS NOT NULL THEN 'mrn_crosswalk'
-                WHEN tg.sex_tg IS NOT NULL   THEN 'thyroglobulin_labs'
-                WHEN atg.sex_atg IS NOT NULL THEN 'anti_tg_labs'
-                ELSE NULL
-            END AS sex_source,
-
-            -- RACE: path_synoptics > Excel > MRN crosswalk > labs
-            COALESCE(ps.race_ps, ex.race_excel, xw.race_xwalk, tg.race_tg, atg.race_atg) AS race,
-
-            CASE
-                WHEN ps.race_ps IS NOT NULL    THEN 'path_synoptics'
-                WHEN ex.race_excel IS NOT NULL THEN 'excel_all_diagnoses'
-                WHEN xw.race_xwalk IS NOT NULL THEN 'mrn_crosswalk'
-                WHEN tg.race_tg IS NOT NULL    THEN 'thyroglobulin_labs'
-                WHEN atg.race_atg IS NOT NULL  THEN 'anti_tg_labs'
-                ELSE NULL
-            END AS race_source
-
-        FROM patient_spine sp
-        LEFT JOIN bp  ON sp.research_id = bp.rid
-        LEFT JOIN tp  ON sp.research_id = tp.rid
-        LEFT JOIN ps  ON sp.research_id = ps.rid
-        LEFT JOIN tw  ON sp.research_id = tw.rid
-        LEFT JOIN od  ON sp.research_id = od.rid
-        LEFT JOIN tg  ON sp.research_id = tg.rid
-        LEFT JOIN atg ON sp.research_id = atg.rid
-        LEFT JOIN excel_dob ex ON sp.research_id = ex.rid
-        LEFT JOIN xwalk xw ON sp.research_id = xw.rid
-    )
-    SELECT
-        research_id,
-        age_at_surgery,
-        age_source,
-        sex,
-        sex_source,
-        race,
-        race_source,
-        best_surgery_date,
-        best_dob
-    FROM harmonized
+    SELECT 1
+    -- demographics_harmonized_v3 is now built by scripts/47_mrn_crosswalk_demographics_v3.py
+    -- This placeholder ensures the CHECKS list entry succeeds.
+    -- Run `python scripts/47_mrn_crosswalk_demographics_v3.py --md` to rebuild.
 """)
 
 
@@ -488,8 +256,12 @@ DEMOGRAPHICS_SQL = textwrap.dedent("""\
     CREATE OR REPLACE TABLE qa_missing_demographics AS
     SELECT
         research_id,
+        canonical_research_id,
+        linkage_method,
+        is_orphan_flag,
         age_at_surgery,
         age_source,
+        age_derivation_method,
         sex,
         sex_source,
         race,
@@ -503,7 +275,7 @@ DEMOGRAPHICS_SQL = textwrap.dedent("""\
         COALESCE(age_source, 'none') || '+' ||
         COALESCE(sex_source, 'none') || '+' ||
         COALESCE(race_source, 'none') AS source_priority
-    FROM demographics_harmonized_v2
+    FROM demographics_harmonized_v3
     WHERE age_at_surgery IS NULL
        OR sex IS NULL
        OR race IS NULL
@@ -655,11 +427,11 @@ CHECKS: list[tuple[str, str, str]] = [
     ("qa_report_matching",
      "Check B: Report Matching (FNA-Path + US-Op)",
      REPORT_MATCHING_SQL),
-    ("demographics_harmonized_v2",
-     "Check C-1: Demographics Harmonization (cross-source backfill)",
+    ("demographics_harmonized_v3",
+     "Check C-1: Demographics Harmonization v3 (cross-source + MRN crosswalk)",
      DEMOGRAPHICS_HARMONIZED_SQL),
     ("qa_missing_demographics",
-     "Check C-2: Missing Demographics (post-backfill residual)",
+     "Check C-2: Missing Demographics (post-v3 residual)",
      DEMOGRAPHICS_SQL),
 ]
 
@@ -982,25 +754,26 @@ def phase4_report(con, results: list[dict]) -> list[str]:
         except Exception:
             pass
 
-    if _table_exists(con, "demographics_harmonized_v2"):
+    demo_tbl = "demographics_harmonized_v3" if _table_exists(con, "demographics_harmonized_v3") else "demographics_harmonized_v2"
+    if _table_exists(con, demo_tbl):
         try:
             section_lines.append(
-                "**Check C-1 — Demographics Harmonization "
-                "(cross-source backfill):**"
+                f"**Check C-1 — Demographics Harmonization "
+                f"({demo_tbl}):**"
             )
             total_h = con.execute(
-                "SELECT COUNT(*) FROM demographics_harmonized_v2"
+                f"SELECT COUNT(*) FROM {demo_tbl}"
             ).fetchone()[0]
             filled_age = con.execute(
-                "SELECT COUNT(*) FROM demographics_harmonized_v2 "
+                f"SELECT COUNT(*) FROM {demo_tbl} "
                 "WHERE age_at_surgery IS NOT NULL"
             ).fetchone()[0]
             filled_sex = con.execute(
-                "SELECT COUNT(*) FROM demographics_harmonized_v2 "
+                f"SELECT COUNT(*) FROM {demo_tbl} "
                 "WHERE sex IS NOT NULL"
             ).fetchone()[0]
             filled_race = con.execute(
-                "SELECT COUNT(*) FROM demographics_harmonized_v2 "
+                f"SELECT COUNT(*) FROM {demo_tbl} "
                 "WHERE race IS NOT NULL"
             ).fetchone()[0]
             section_lines.append(
@@ -1020,9 +793,9 @@ def phase4_report(con, results: list[dict]) -> list[str]:
             )
             # Source breakdown for age
             src_rows = con.execute(
-                "SELECT COALESCE(age_source, 'MISSING') AS src, "
-                "COUNT(*) AS n "
-                "FROM demographics_harmonized_v2 GROUP BY 1 ORDER BY n DESC"
+                f"SELECT COALESCE(age_source, 'MISSING') AS src, "
+                f"COUNT(*) AS n "
+                f"FROM {demo_tbl} GROUP BY 1 ORDER BY n DESC"
             ).fetchall()
             section_lines.append("")
             section_lines.append("Age source breakdown:")

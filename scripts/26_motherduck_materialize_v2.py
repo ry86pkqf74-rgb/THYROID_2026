@@ -208,6 +208,11 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_stg_dob_excel_recovery", "stg_dob_excel_recovery"),
     ("md_stg_mrn_crosswalk_demographics", "stg_mrn_crosswalk_demographics"),
     ("md_us_dominant_nodule_size_v1", "us_dominant_nodule_size_v1"),
+    # ── MRN Crosswalk + Demographics v3 (script 47) ──
+    ("md_mrn_crosswalk_v1", "mrn_crosswalk_v1"),
+    ("md_linkage_master_v1", "linkage_master_v1"),
+    ("md_demographics_harmonized_v3", "demographics_harmonized_v3"),
+    ("md_qa_missing_demographics_v3", "qa_missing_demographics_v3"),
 ]
 
 SURVIVAL_COHORT_ENRICHED_SQL = """

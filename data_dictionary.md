@@ -646,17 +646,67 @@ Coverage: 3,440 patients (was 0).
 ### `qa_missing_demographics` (table)
 
 Residual patients with missing demographics **after** cross-source backfill.
-Replaces the pre-backfill version that reported 802+ false missing.
+Now reads from `demographics_harmonized_v3`. Includes orphan flagging and linkage method.
 
 Key columns:
 
 - `research_id`: patient identifier (INT)
-- `age_at_surgery`, `sex`, `race`: best values from `demographics_harmonized_v2`
+- `canonical_research_id`: MRN-linked canonical RID from `linkage_master_v1`
+- `linkage_method`: 'direct' | 'mrn_crosswalk' | 'identity'
+- `is_orphan_flag`: TRUE if patient has no data in any of 21 source tables
+- `age_at_surgery`, `sex`, `race`: best values from `demographics_harmonized_v3`
 - `age_source`, `sex_source`, `race_source`: provenance labels
+- `age_derivation_method`: 'surgery_date' | 'note_date_fallback' | 'lab_specimen_date_fallback' | 'canonical_rid_inheritance'
 - `age_flag`: 'MISSING_AGE' or 'OK'
 - `sex_flag`: 'MISSING_SEX' or 'OK'
 - `race_flag`: 'MISSING_RACE' or 'OK'
 - `source_priority`: combined provenance string
+
+### `mrn_crosswalk_v1` (table, added 2026-03-13)
+
+Permanent MRN ↔ research_id crosswalk from 4 raw Excel sources. 33,433 rows
+covering 10,078 patients and 9,513 distinct EUH_MRNs. Scans `raw_path_synoptics`,
+`raw_clinical_notes`, `raw_complications`, `raw_operative_details`.
+
+Key columns:
+
+- `research_id`, `euh_mrn`, `tec_mrn`: linkage keys
+- `canonical_research_id`: the research_id with highest data volume for this MRN
+- `dob`, `first_name`, `last_name`: PHI-bearing (raw tables only)
+- `gender_raw`, `race_raw`: raw demographics from source
+- `source_tables`: list of source tables where this (RID, MRN) pair appears
+- `linkage_method`: 'direct' (RID = canonical) or 'mrn_crosswalk' (RID differs)
+- `confidence`: 1.0 for direct, 0.95 for crosswalk
+
+### `linkage_master_v1` (table, added 2026-03-13)
+
+Single source of truth mapping every `master_cohort` research_id to its canonical.
+11,673 rows (one per patient). Merges `mrn_crosswalk_v1` with legacy
+`stg_mrn_crosswalk_demographics`.
+
+Key columns:
+
+- `research_id`: patient identifier (same as `master_cohort`)
+- `canonical_research_id`: best-linked RID for this patient
+- `euh_mrn`: MRN if available
+- `linkage_method`: 'direct' | 'mrn_crosswalk' | 'identity'
+- `confidence`: linkage confidence score (1.0 for direct/identity, 0.95 for crosswalk)
+- `has_mrn`: TRUE if this patient has any MRN in any raw source
+
+### `demographics_harmonized_v3` (table, added 2026-03-13)
+
+Supersedes `demographics_harmonized_v2`. Joins 13 source CTEs through the MRN
+crosswalk with orphan flagging. 11,673 rows.
+
+Enhancements over v2:
+- Cross-MRN demographics recovery (P10): sex/race from MRN-linked records
+- Lab specimen date fallback (P12): age from DOB + earliest thyroglobulin lab date
+- Canonical-RID inheritance (P13): demographics from canonical_research_id for split-RID patients
+- Orphan detection: `is_orphan_flag` = TRUE for patients with no data in any source
+- Age derivation method tracking: 'surgery_date' | 'note_date_fallback' | 'lab_specimen_date_fallback' | 'canonical_rid_inheritance'
+
+Coverage (final): age 99.28% (84 missing, all orphans), sex 98.01%, race 97.94%.
+Non-orphan coverage: age 100%, sex 98.72%, race 98.65%.
 
 ---
 
