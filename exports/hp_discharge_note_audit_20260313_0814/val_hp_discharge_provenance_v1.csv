@@ -1,0 +1,13 @@
+entity_domain,note_type,total_entities,note_row_id_pct,note_type_pct,evidence_span_pct,entity_date_pct,note_date_pct,confidence_pct
+staging,h_p,2375,100.0,100.0,100.0,31.8,32.1,100.0
+staging,dc_sum,23,100.0,100.0,100.0,17.4,17.4,100.0
+genetics,h_p,1196,100.0,100.0,100.0,15.5,50.8,100.0
+genetics,dc_sum,4,100.0,100.0,100.0,0.0,25.0,100.0
+procedures,h_p,9937,100.0,100.0,100.0,18.0,35.2,100.0
+procedures,dc_sum,401,100.0,100.0,100.0,28.4,27.2,100.0
+complications,h_p,4846,100.0,100.0,100.0,1.0,26.3,100.0
+complications,dc_sum,379,100.0,100.0,100.0,9.8,37.2,100.0
+medications,h_p,3345,100.0,100.0,100.0,14.2,37.3,100.0
+medications,dc_sum,415,100.0,100.0,100.0,13.3,34.5,100.0
+problem_list,h_p,8786,100.0,100.0,100.0,12.4,28.9,100.0
+problem_list,dc_sum,158,100.0,100.0,100.0,25.9,29.7,100.0

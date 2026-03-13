@@ -1,0 +1,2 @@
+note_type,total_notes,unique_patients,has_note_date,has_meaningful_text,primary_notes,secondary_notes,avg_chars,median_chars
+dc_sum,185,169,50,185,166,19,5290.0,4538.0

@@ -1,0 +1,21 @@
+variable_name,note_type,notes_with_content,eligible_notes,coverage_pct,clinical_value,extraction_difficulty,priority_class,rationale,currently_extracted
+smoking_status,h_p,2818,3999,70.5,HIGH,EASY,HIGH VALUE / EASY,"Comorbidity enrichment, outcomes analyses",False
+bmi_value,h_p,743,3999,18.6,HIGH,EASY,HIGH VALUE / EASY,Outcomes/complication risk models; structured numeric extraction,False
+symptomatic_hypocalcemia,dc_sum,74,169,43.8,HIGH,EASY,HIGH VALUE / EASY,Hypocalcemia manuscript: symptomatic vs biochemical distinction,False
+calcium_at_discharge,dc_sum,12,169,7.1,HIGH,EASY,HIGH VALUE / EASY,Hypocalcemia manuscript: treatment at discharge,False
+drain_status_discharge,dc_sum,82,169,48.5,HIGH,EASY,HIGH VALUE / EASY,"Surgical outcomes, drain management studies",False
+prior_radiation_exposure,h_p,1848,3999,46.2,HIGH,HARD,HIGH VALUE / HARD,Risk factor analyses; high FP from RAI therapy mentions,False
+compressive_symptoms,h_p,132,3999,3.3,HIGH,MODERATE,HIGH VALUE / MODERATE,"Symptom/outcomes studies, compressive symptom analyses",False
+family_history_thyroid_cancer,h_p,776,3999,19.4,HIGH,MODERATE,HIGH VALUE / MODERATE,"Risk factor analyses, hereditary cancer pathway",False
+thyroiditis_diagnosis,h_p,286,3999,7.2,HIGH,MODERATE,HIGH VALUE / MODERATE,"Thyroiditis-cancer pathway, autoimmunity studies",False
+surgical_indication,h_p,112,3999,2.8,HIGH,MODERATE,HIGH VALUE / MODERATE,Treatment decision pathway analysis,False
+prior_thyroid_surgery,h_p,1220,3999,30.5,HIGH,MODERATE,HIGH VALUE / MODERATE,"Completion thyroidectomy indication, reoperation studies",False
+length_of_stay,dc_sum,9,169,5.3,HIGH,MODERATE,HIGH VALUE / MODERATE,"Outcomes studies, cost/quality analyses",False
+readmission_mention,dc_sum,7,169,4.1,HIGH,MODERATE,HIGH VALUE / MODERATE,"Quality/outcomes studies, readmission risk modeling",False
+voice_assessment_discharge,dc_sum,126,169,74.6,HIGH,MODERATE,HIGH VALUE / MODERATE,"Voice outcomes manuscript, RLN injury validation",False
+wound_care_instructions,dc_sum,116,169,68.6,LOW,EASY,LOW VALUE / EASY,Marginal clinical research value,False
+diet_at_discharge,dc_sum,116,169,68.6,LOW,EASY,LOW VALUE / EASY,Minimal research value for thyroid cancer studies,False
+follow_up_plan,dc_sum,136,169,80.5,MODERATE,EASY,MODERATE VALUE / EASY,"Follow-up compliance, care pathway analysis",False
+presenting_nodule_size_clinical,h_p,45,3999,1.1,MODERATE,HARD,MODERATE VALUE / HARD,Clinical-pathologic size concordance,False
+discharge_medications_full,dc_sum,73,169,43.2,MODERATE,HARD,MODERATE VALUE / HARD,"Polypharmacy, medication reconciliation studies",False
+anticoagulation_status,h_p,48,3999,1.2,MODERATE,MODERATE,MODERATE VALUE / MODERATE,"Bleeding risk, complication subanalyses",False

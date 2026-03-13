@@ -1,0 +1,21 @@
+{
+  "audit_timestamp": "20260313_0814",
+  "surgical_cohort_size": 10871,
+  "hp_patients": 3999,
+  "dc_patients": 169,
+  "hp_cohort_coverage_pct": 36.8,
+  "dc_cohort_coverage_pct": 1.6,
+  "hp_surgery_linked": 3998,
+  "dc_surgery_linked": 169,
+  "extraction_candidate_count": 20,
+  "high_value_easy_candidates": 5,
+  "files": [
+    "val_hp_discharge_variable_summary.csv",
+    "val_discharge_note_coverage_v1.csv",
+    "val_hp_note_coverage_v1.csv",
+    "val_hp_discharge_provenance_v1.csv",
+    "note_type_inventory.csv",
+    "val_hp_discharge_variable_detail.csv",
+    "review_hp_discharge_extraction_candidates_v1.csv"
+  ]
+}

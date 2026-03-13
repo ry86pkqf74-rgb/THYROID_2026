@@ -1,0 +1,2 @@
+note_type,total_notes,unique_patients,has_note_date,has_meaningful_text,primary_notes,secondary_notes,avg_chars,median_chars
+h_p,4221,3999,1252,4218,3973,248,6638.0,5902.0
