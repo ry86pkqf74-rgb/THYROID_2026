@@ -1,0 +1,16 @@
+opportunity_id,opportunity,clinical_value,manuscript_value,effort,source_available,do_now,category,detail
+1,Operative note NLP enrichment,HIGH,HIGH,MEDIUM,Yes,YES_MUST_DO,backfill,OperativeDetailExtractor exists but was never run on MotherDuck; 14 NLP columns at 0%
+2,RAI dose backfill,HIGH,HIGH,LOW,Yes,YES_MUST_DO,backfill,extracted_rai_dose_refined_v1 has 307 doses; rai_treatment_episode_v2 has only 55
+3,RAS flag propagation,HIGH,HIGH,LOW,Yes,YES_MUST_DO,backfill,extracted_ras_subtypes_v1 has 316+ patients; molecular_test_episode_v2.ras_flag is 0
+4,Linkage ID backfill,MEDIUM,MEDIUM,LOW,Yes,YES_SHOULD_DO,backfill,V3 linkage tables exist but IDs not propagated to canonical episodes
+5,Imaging nodule master materialization,MEDIUM,MEDIUM,LOW,Yes,YES_SHOULD_DO,backfill,imaging_nodule_master_v1 has 0 rows; raw_us_tirads_excel_v1 has 19891 rows
+6,Symptomatic hypocalcemia from discharge,MEDIUM,LOW,MEDIUM,Yes,LATER,extraction,379 dc_sum complication entities exist but not phenotyped
+7,Compressive symptoms from H&P,LOW,LOW,HIGH,Partial,LATER,extraction,New extractor needed; 4846 h_p complication entities available
+8,Family history / radiation history,LOW,LOW,HIGH,Partial,LATER,extraction,New extractor needed for H&P notes
+9,Reoperation context classification,MEDIUM,LOW,MEDIUM,Yes,LATER,extraction,654 completion patients identified but reasons not fully classified
+10,Readmission language from dc_sum,LOW,LOW,HIGH,Sparse,NOT_WORTH,extraction,Only 126 dc_sum procedure patients
+11,ETE sub-grading remaining 49,LOW,LOW,MEDIUM,No,NOT_WORTH,extraction,Was 3558 now 49; synoptic x is irreducible
+12,BRAF IHC VE1 recovery,MEDIUM,MEDIUM,IMPOSSIBLE,No,CANNOT_DO,data_gap,Pathology addendums not in clinical_notes_long corpus
+13,Structured PTH/Ca/TSH lab table,HIGH,MEDIUM,HIGH,No,CANNOT_DO,data_gap,Requires new institutional data extract
+14,Nuclear medicine report text,MEDIUM,MEDIUM,HIGH,No,CANNOT_DO,data_gap,Zero nuclear medicine notes in clinical_notes_long
+15,Voice outcome expansion,LOW,LOW,HIGH,Sparse,NOT_WORTH,extraction,Only 25 patients have documented voice assessment

@@ -1,0 +1,41 @@
+{
+  "title": "THYROID_2026 Final Technical Verification",
+  "generated_at": "2026-03-13T12:00:00Z",
+  "scope": "Full repository + MotherDuck database (531 tables)",
+  "motherduck_tables_audited": 531,
+  "validation_tables_audited": 34,
+  "prior_audit_reports_reviewed": 18,
+  "deliverables": {
+    "docs/final_repo_verification_20260313.md": "Full verification report (Phases 1-6)",
+    "exports/final_repo_verification_20260313/repo_verification_matrix_v1.csv": "13-domain verification matrix",
+    "exports/final_repo_verification_20260313/repo_extraction_opportunities_v1.csv": "15 extraction opportunities rated",
+    "exports/final_repo_verification_20260313/manifest.json": "This file"
+  },
+  "motherduck_tables_created": [
+    "repo_verification_matrix_v1",
+    "repo_extraction_opportunities_v1",
+    "val_repo_wide_temporal_lineage_v1",
+    "final_verification_verdict_v1",
+    "repo_improvement_plan_v1"
+  ],
+  "verdict_summary": {
+    "A_manuscript_readiness": "VERIFIED",
+    "B_source_date_traceability": "MOSTLY_VERIFIED",
+    "C_operative_note_completeness": "NOT_VERIFIED",
+    "D_hp_discharge_completeness": "PARTIALLY_VERIFIED",
+    "E_full_extraction_completeness": "MOSTLY_VERIFIED",
+    "F_repo_maturity": "MOSTLY_VERIFIED"
+  },
+  "critical_findings": [
+    "operative_episode_detail_v2: 0% NLP enrichment (9,371 episodes, ALL flags FALSE)",
+    "imaging_nodule_master_v1: 0 rows on MotherDuck",
+    "rai_treatment_episode_v2: 3.0% dose coverage (55/1,857)",
+    "molecular_test_episode_v2: 0 RAS-positive (flag not backfilled)",
+    "extracted_recurrence_refined_v1: 0.5% first_recurrence_date coverage",
+    "survival_cohort_enriched: no source/date provenance columns"
+  ],
+  "must_do_now_count": 7,
+  "before_next_manuscript_count": 6,
+  "future_enhancement_count": 5,
+  "not_worth_doing_count": 2
+}
