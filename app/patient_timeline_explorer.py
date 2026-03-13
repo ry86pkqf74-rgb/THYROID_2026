@@ -169,6 +169,15 @@ def _render_rescue_by_type(con, tl_tbl: str):
 def _render_patient_timeline(con, tl_tbl: str, enr_tbl: str | None):
     st.markdown(sl("Patient Timeline Explorer"), unsafe_allow_html=True)
 
+    # Date status legend
+    _legend_html = " ".join(
+        f'<span style="background:{color}20;color:{color};padding:2px 8px;'
+        f'border-radius:4px;font-size:.72rem;margin-right:6px">{label}</span>'
+        for status, label in _DATE_STATUS_LABELS.items()
+        if (color := _DATE_STATUS_COLORS.get(status, "#8892a4"))
+    )
+    st.markdown(f'<div style="margin-bottom:10px">{_legend_html}</div>', unsafe_allow_html=True)
+
     rid_input = st.text_input(
         "Research ID",
         placeholder="Enter research_id (integer)…",
@@ -210,6 +219,25 @@ def _render_patient_timeline(con, tl_tbl: str, enr_tbl: str | None):
             with c4:
                 stage = h.get("overall_stage_ajcc8", h.get("stage", "—"))
                 st.markdown(mc("AJCC8 Stage", str(stage)), unsafe_allow_html=True)
+
+            # Eligibility badges
+            badges = []
+            if h.get("histology_analysis_eligible") is True:
+                badges.append("Histology")
+            if h.get("has_eligible_molecular") is True:
+                badges.append("Molecular")
+            if h.get("has_eligible_rai") is True:
+                badges.append("RAI")
+            if badges:
+                badge_html = " ".join(
+                    f'<span style="background:#2dd4bf20;color:#2dd4bf;padding:2px 6px;'
+                    f'border-radius:3px;font-size:.68rem;margin-right:4px">{b}</span>'
+                    for b in badges
+                )
+                st.markdown(f"Eligible: {badge_html}", unsafe_allow_html=True)
+
+            # Source table info
+            st.caption(f"Source: `{header_tbl}` | research_id = {rid}")
             st.markdown("<br>", unsafe_allow_html=True)
 
     # ── Timeline rows ──────────────────────────────────────────────────────

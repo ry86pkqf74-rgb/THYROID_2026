@@ -62,6 +62,8 @@ from app.patient_timeline_explorer import render_patient_timeline_explorer
 from app.advanced_analytics import render_advanced_analytics
 from app.predictive_analytics import render_predictive_analytics
 from app.thyroseq_integration import render_thyroseq_integration
+from app.qa_workbench import render_qa_workbench
+from app.manual_review_workbench import render_manual_review_workbench
 
 # ── Page config ───────────────────────────────────────────────────────────
 st.set_page_config(page_title="Thyroid Cohort Explorer", page_icon="🔬",
@@ -417,6 +419,53 @@ def render_overview(con):
             fig_r.update_layout(**PL, height=240, xaxis_title="% Dates Rescued",
                                 yaxis_autorange="reversed")
             st.plotly_chart(fig_r,use_container_width=True)
+
+    # ── Health Monitoring Section ──────────────────────────────────────
+    st.markdown(sl("Dataset Health"), unsafe_allow_html=True)
+    _hm_cols = st.columns(3)
+
+    # Manuscript / Cancer cohort sizes
+    with _hm_cols[0]:
+        _ms_n = sqs(con, "SELECT COUNT(*) FROM manuscript_cohort_v1") if tbl_exists(con, "manuscript_cohort_v1") else 0
+        st.markdown(mc("Manuscript Cohort", f"{_ms_n:,}"), unsafe_allow_html=True)
+    with _hm_cols[1]:
+        _ca_n = sqs(con, "SELECT COUNT(*) FROM analysis_cancer_cohort_v1") if tbl_exists(con, "analysis_cancer_cohort_v1") else 0
+        st.markdown(mc("Cancer Cohort", f"{_ca_n:,}"), unsafe_allow_html=True)
+    with _hm_cols[2]:
+        _ep_n = sqs(con, "SELECT COUNT(*) FROM episode_analysis_resolved_v1_dedup") if tbl_exists(con, "episode_analysis_resolved_v1_dedup") else 0
+        st.markdown(mc("Dedup Episodes", f"{_ep_n:,}"), unsafe_allow_html=True)
+
+    # Linkage completeness
+    if tbl_exists(con, "val_episode_linkage_completeness_v1"):
+        with st.expander("Linkage Completeness", expanded=False):
+            _lc = sqdf(con, "SELECT * FROM val_episode_linkage_completeness_v1")
+            if not _lc.empty:
+                st.dataframe(_lc, use_container_width=True)
+
+    # Provenance completeness
+    if tbl_exists(con, "val_provenance_completeness_v2"):
+        with st.expander("Provenance Completeness", expanded=False):
+            _pc = sqdf(con, "SELECT * FROM val_provenance_completeness_v2 ORDER BY table_name")
+            if not _pc.empty:
+                st.dataframe(_pc, use_container_width=True)
+
+    # Chronology anomaly summary
+    if tbl_exists(con, "val_temporal_anomaly_resolution_v1"):
+        with st.expander("Chronology Anomaly Summary", expanded=False):
+            _ca = sqdf(con, """
+                SELECT resolution_bucket, auto_resolved_flag, COUNT(*) as n
+                FROM val_temporal_anomaly_resolution_v1
+                GROUP BY 1, 2 ORDER BY 3 DESC
+            """)
+            if not _ca.empty:
+                st.dataframe(_ca, use_container_width=True)
+
+    # Lab coverage
+    if tbl_exists(con, "val_lab_completeness_v1"):
+        with st.expander("Lab Coverage by Analyte", expanded=False):
+            _la = sqdf(con, "SELECT * FROM val_lab_completeness_v1 ORDER BY analyte_group")
+            if not _la.empty:
+                st.dataframe(_la, use_container_width=True)
 
 # ─────────────────────────────────────────────────────────────────────────
 # TAB: DATA EXPLORER
@@ -2904,70 +2953,95 @@ def main():
                 "python scripts/29_validation_engine.py --md\n```"
             )
 
-    (t_ov,t_ex,t_vz,t_adv,t_gen,t_spec,t_img,t_comp,t_rec,t_exp,t_ai,
-     t_tl,t_ev,t_qa,t_surv,t_afv3,
-     t_cqc,t_pat,t_rh,t_rm,t_rr,t_rtl,t_rq,t_diag,
-     t_ec,t_md,t_rd,t_ind,t_od,t_as,t_ve,
-     t_advsurv,t_stat,t_pred,t_advai,t_cure,t_pte,t_surv_out,t_tsq) = st.tabs([
-        "📊 Overview","🗃 Data Explorer","📈 Visualizations","🧬 Advanced",
-        "🔬 Genetics & Molecular","🫀 Specimen Details","📡 Pre-Op Imaging",
-        "⚕ Complications","📋 Recommendations & Sensitivities",
-        "📐 Expanded Cohort","✨ AI Insights",
-        "🕐 Timeline","📋 Events","🔍 QA","📉 Survival","🧩 Features v3",
-        "📋 Cohort QC","🧑‍⚕️ Patient Audit","🔬 Histology Review",
-        "🧬 Molecular Review","☢️ RAI Review","🕐 Timeline Review",
-        "📝 Review Queue","⚙️ Diagnostics",
-        "📊 Extraction Completeness","🧬 Molecular Episodes","☢️ RAI Episodes",
-        "📡 Imaging & Nodules","🔪 Operative Detail","📋 QA & Adjudication",
-        "🛡 Validation Engine",
-        "🔬 Advanced Survival",
-        "📊 Statistical Analysis",
-        "🔮 Predictive Analytics",
-        "🔬 Advanced Analytics & AI",
-        "🎯 Cure Probability",
-        "🗓 Patient Timeline",
-        "Survival & Outcomes",
-        "🧪 ThyroSeq Integration",
+    # ── 6 Workflow Sections ──────────────────────────────────────────────
+    sec_overview, sec_patient, sec_quality, sec_linkage, sec_outcomes, sec_manuscript = st.tabs([
+        "Overview",
+        "Patient Explorer",
+        "Data Quality",
+        "Linkage & Episodes",
+        "Outcomes & Analytics",
+        "Manuscript & Export",
     ])
-    with t_ov:   render_overview(con)
-    with t_ex:   render_explorer(df_filt)
-    with t_vz:   render_viz(con)
-    with t_adv:  render_advanced(con)
-    with t_gen:  render_genetics(con)
-    with t_spec: render_specimen(con)
-    with t_img:  render_imaging(con)
-    with t_comp: render_complications(con)
-    with t_rec:  render_recommendations()
-    with t_exp:  render_expanded_cohort()
-    with t_ai:   render_ai_insights(con)
-    with t_tl:   render_timeline(con)
-    with t_ev:   render_events(con)
-    with t_qa:   render_qa_dashboard(con)
-    with t_surv: render_survival(con)
-    with t_afv3: render_afv3_explorer(con)
-    with t_cqc:  render_cohort_qc(con)
-    with t_pat:  render_patient_audit(con, rw_con)
-    with t_rh:   render_review_histology(con, rw_con)
-    with t_rm:   render_review_molecular(con, rw_con)
-    with t_rr:   render_review_rai(con, rw_con)
-    with t_rtl:  render_review_timeline(con, rw_con)
-    with t_rq:   render_review_queue(con)
-    with t_diag: render_diagnostics(con)
-    with t_ec:   render_extraction_completeness(con)
-    with t_md:   render_molecular_dashboard(con)
-    with t_rd:   render_rai_dashboard(con)
-    with t_ind:  render_imaging_nodule_dashboard(con)
-    with t_od:   render_operative_dashboard(con)
-    with t_as:   render_adjudication_summary(con)
-    with t_ve:   render_validation_engine(con)
-    with t_advsurv: render_advanced_survival(con)
-    with t_stat: render_statistical_analysis(con)
-    with t_pred: render_predictive_analytics(con)
-    with t_advai: render_advanced_analytics(con)
-    with t_cure: render_cure_probability(con)
-    with t_pte:  render_patient_timeline_explorer(con)
-    with t_surv_out: render_survival_outcomes(con)
-    with t_tsq:  render_thyroseq_integration(con)
+
+    # ── Section 1: Cohort Overview ─────────────────────────────────────
+    with sec_overview:
+        render_overview(con)
+
+    # ── Section 2: Patient Explorer ────────────────────────────────────
+    with sec_patient:
+        _p1, _p2, _p3, _p4 = st.tabs([
+            "Patient Timeline", "Patient Audit", "Data Explorer", "Visualizations",
+        ])
+        with _p1: render_patient_timeline_explorer(con)
+        with _p2: render_patient_audit(con, rw_con)
+        with _p3: render_explorer(df_filt)
+        with _p4: render_viz(con)
+
+    # ── Section 3: Data Quality & Provenance ───────────────────────────
+    with sec_quality:
+        _q1, _q2, _q3, _q4, _q5, _q6 = st.tabs([
+            "QA Workbench", "Manual Review", "Validation Engine",
+            "QA Dashboard", "Diagnostics", "Cohort QC",
+        ])
+        with _q1: render_qa_workbench(con)
+        with _q2: render_manual_review_workbench(con)
+        with _q3: render_validation_engine(con)
+        with _q4: render_qa_dashboard(con)
+        with _q5: render_diagnostics(con)
+        with _q6: render_cohort_qc(con)
+
+    # ── Section 4: Cross-Domain Linkage & Episodes ─────────────────────
+    with sec_linkage:
+        _l1, _l2, _l3, _l4, _l5, _l6, _l7, _l8 = st.tabs([
+            "Extraction Completeness", "Molecular Episodes", "RAI Episodes",
+            "Imaging & Nodules", "Operative Detail", "QA & Adjudication",
+            "Features v3", "Timeline & Events",
+        ])
+        with _l1: render_extraction_completeness(con)
+        with _l2: render_molecular_dashboard(con)
+        with _l3: render_rai_dashboard(con)
+        with _l4: render_imaging_nodule_dashboard(con)
+        with _l5: render_operative_dashboard(con)
+        with _l6: render_adjudication_summary(con)
+        with _l7: render_afv3_explorer(con)
+        with _l8:
+            _le1, _le2 = st.tabs(["Timeline", "Events"])
+            with _le1: render_timeline(con)
+            with _le2: render_events(con)
+
+    # ── Section 5: Outcomes & Analytics ────────────────────────────────
+    with sec_outcomes:
+        _o1, _o2, _o3, _o4, _o5, _o6, _o7 = st.tabs([
+            "Survival", "Advanced Survival", "Statistical Analysis",
+            "Predictive Analytics", "Advanced Analytics & AI",
+            "Cure Probability", "Survival & Outcomes",
+        ])
+        with _o1: render_survival(con)
+        with _o2: render_advanced_survival(con)
+        with _o3: render_statistical_analysis(con)
+        with _o4: render_predictive_analytics(con)
+        with _o5: render_advanced_analytics(con)
+        with _o6: render_cure_probability(con)
+        with _o7: render_survival_outcomes(con)
+
+    # ── Section 6: Manuscript & Export ─────────────────────────────────
+    with sec_manuscript:
+        _m1, _m2, _m3, _m4, _m5, _m6, _m7, _m8, _m9, _m10 = st.tabs([
+            "Genetics & Molecular", "Specimen Details", "Complications",
+            "Pre-Op Imaging", "ThyroSeq Integration", "Advanced",
+            "Review Histology", "Review Molecular", "Review RAI",
+            "Review Queue",
+        ])
+        with _m1: render_genetics(con)
+        with _m2: render_specimen(con)
+        with _m3: render_complications(con)
+        with _m4: render_imaging(con)
+        with _m5: render_thyroseq_integration(con)
+        with _m6: render_advanced(con)
+        with _m7: render_review_histology(con, rw_con)
+        with _m8: render_review_molecular(con, rw_con)
+        with _m9: render_review_rai(con, rw_con)
+        with _m10: render_review_queue(con)
 
     st.markdown("---")
     st.markdown(
