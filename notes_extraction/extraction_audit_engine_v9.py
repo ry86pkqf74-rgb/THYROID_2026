@@ -311,18 +311,29 @@ class BRAFIHCNLPRecovery:
                 }
         return None
 
-    def parse_entity(self, entity_value_norm: str, present_or_negated: str) -> dict | None:
+    def parse_entity(self, entity_value_norm: str, present_or_negated: str,
+                      note_text: str | None = None) -> dict | None:
+        """NLP entity 'present' only means non-negated mention.
+        Require explicit positive qualifier in surrounding note text."""
         if present_or_negated != "present":
             return None
-        if "BRAF" in str(entity_value_norm).upper():
-            return {
-                "braf_status": "positive",
-                "braf_variant": None,
-                "detection_method": "NLP_entity",
-                "source": "nlp_entities_genetics",
-                "confidence": 0.78,
-            }
-        return None
+        if "BRAF" not in str(entity_value_norm).upper():
+            return None
+        if note_text:
+            t = str(note_text).lower()
+            has_positive = bool(re.search(
+                r'braf.{0,30}(positive|pos\b|detected|mutation\s+(identified|detected|present)|v600e)', t))
+            has_negative = bool(re.search(
+                r'braf.{0,15}(negative|neg\b|not\s+detected|wild.?type)', t))
+            if not has_positive or has_negative:
+                return None
+        return {
+            "braf_status": "positive",
+            "braf_variant": None,
+            "detection_method": "NLP_entity_confirmed",
+            "source": "nlp_entities_genetics",
+            "confidence": 0.82,
+        }
 
 
 # ---------------------------------------------------------------------------
@@ -554,21 +565,35 @@ src_mutation_kras AS (
        OR regexp_matches(LOWER(CAST(detailed_findings AS VARCHAR)), 'kras')
 ),
 src_entities AS (
+    -- NLP entity 'present' only means non-negated mention, NOT a positive test result.
+    -- Require explicit positive qualifier in the clinical note text.
     SELECT DISTINCT
-        CAST(research_id AS INTEGER) AS research_id,
-        CASE
-            WHEN UPPER(entity_value_norm) IN ('NRAS','HRAS','KRAS') THEN UPPER(entity_value_norm)
-            WHEN UPPER(entity_value_norm) = 'RAS' THEN 'RAS_unspecified'
-            ELSE UPPER(entity_value_norm)
-        END AS ras_gene,
+        e.research_id,
+        e.ras_gene,
         NULL AS ras_protein_change,
         NULL AS ras_cdna_change,
         NULL AS allele_frequency_pct,
-        'nlp_entities_genetics' AS source,
-        0.80 AS confidence
-    FROM note_entities_genetics
-    WHERE present_or_negated = 'present'
-      AND UPPER(entity_value_norm) IN ('NRAS','HRAS','KRAS','RAS')
+        'nlp_entities_confirmed' AS source,
+        0.82 AS confidence
+    FROM (
+        SELECT DISTINCT CAST(research_id AS INTEGER) as research_id,
+               CASE
+                   WHEN UPPER(entity_value_norm) IN ('NRAS','HRAS','KRAS') THEN UPPER(entity_value_norm)
+                   WHEN UPPER(entity_value_norm) = 'RAS' THEN 'RAS_unspecified'
+                   ELSE UPPER(entity_value_norm)
+               END AS ras_gene,
+               UPPER(entity_value_norm) as raw_gene
+        FROM note_entities_genetics
+        WHERE present_or_negated = 'present'
+          AND UPPER(entity_value_norm) IN ('NRAS','HRAS','KRAS','RAS')
+    ) e
+    WHERE EXISTS (
+        SELECT 1 FROM clinical_notes_long n
+        WHERE n.research_id = e.research_id
+          AND (regexp_matches(LOWER(n.note_text), LOWER(e.raw_gene) || '.{0,30}(positive|pos\b|detected|mutation)')
+               OR regexp_matches(LOWER(n.note_text), '(positive|detected|mutation).{0,15}' || LOWER(e.raw_gene)))
+          AND NOT regexp_matches(LOWER(n.note_text), LOWER(e.raw_gene) || '.{0,15}(negative|neg\\b|not\\s+detected|wild.?type)')
+    )
 ),
 all_ras AS (
     SELECT * FROM src_episode
@@ -673,16 +698,30 @@ src_mutation_text AS (
       AND NOT regexp_matches(LOWER(CAST(detailed_findings AS VARCHAR)), 'braf.{0,20}(negative|not detected|wild)')
 ),
 src_nlp_entities AS (
+    -- NLP entity 'present' only means non-negated mention, NOT a positive test result.
+    -- Require explicit positive qualifier (positive/detected/V600E) in the note text
+    -- to avoid counting mentions like "tested for BRAF" or "BRAF panel" as positive.
     SELECT DISTINCT
-        CAST(research_id AS INTEGER) AS research_id,
+        e.research_id,
         'positive' AS braf_status,
         NULL AS braf_variant,
-        'NLP_entity' AS detection_method,
+        'NLP_entity_confirmed' AS detection_method,
         'nlp_entities_genetics' AS source,
-        0.78 AS confidence
-    FROM note_entities_genetics
-    WHERE UPPER(entity_value_norm) = 'BRAF'
-      AND present_or_negated = 'present'
+        0.82 AS confidence
+    FROM (
+        SELECT DISTINCT CAST(research_id AS INTEGER) as research_id
+        FROM note_entities_genetics
+        WHERE UPPER(entity_value_norm) = 'BRAF'
+          AND present_or_negated = 'present'
+    ) e
+    WHERE EXISTS (
+        SELECT 1 FROM clinical_notes_long n
+        WHERE n.research_id = e.research_id
+          AND LOWER(n.note_text) LIKE '%braf%'
+          AND (regexp_matches(LOWER(n.note_text), 'braf.{0,30}(positive|pos\\b|detected|mutation\\s+(identified|detected|present)|v600e)')
+               OR regexp_matches(LOWER(n.note_text), '(positive|detected).{0,15}braf'))
+          AND NOT regexp_matches(LOWER(n.note_text), 'braf.{0,15}(negative|neg\\b|not\\s+detected|wild.?type)')
+    )
 ),
 src_clinical_notes AS (
     SELECT DISTINCT

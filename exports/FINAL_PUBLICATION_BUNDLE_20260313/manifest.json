@@ -56,5 +56,14 @@
       "csv": "val_phase13_final_gaps.csv",
       "parquet": "val_phase13_final_gaps.parquet"
     }
+  },
+  "mutation_fix_applied": true,
+  "mutation_fix_date": "2026-03-12T22:48:04.315975",
+  "corrected_counts": {
+    "braf_positive": 546,
+    "ras_positive": 337,
+    "tert_positive": 108,
+    "braf_false_positives_removed": 113,
+    "ras_false_positives_removed": 27
   }
 }
