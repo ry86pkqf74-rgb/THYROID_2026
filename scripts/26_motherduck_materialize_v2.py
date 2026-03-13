@@ -240,6 +240,9 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_patient_analysis_resolved_v1", "patient_analysis_resolved_v1"),
     ("md_episode_analysis_resolved_v1", "episode_analysis_resolved_v1"),
     ("md_lesion_analysis_resolved_v1", "lesion_analysis_resolved_v1"),
+    ("md_episode_analysis_resolved_v1_dedup", "episode_analysis_resolved_v1_dedup"),
+    # ── Manuscript cohort freeze (script 57) ───────────────────────────
+    ("md_manuscript_cohort_v1", "manuscript_cohort_v1"),
     # ── Database Hardening (script 67) ────────────────────────────
     ("md_val_hardening_summary", "val_hardening_summary"),
     ("md_val_hardening_details", "val_hardening_details"),
