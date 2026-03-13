@@ -195,6 +195,90 @@ def require_view(con, view_name: str) -> bool:
     return False
 
 
+# ── Runtime status helpers ─────────────────────────────────────────────
+
+def get_runtime_info() -> dict:
+    """Collect runtime status from session state for display."""
+    return {
+        "version": st.session_state.get("_app_version", "unknown"),
+        "catalog": st.session_state.get("_motherduck_catalog", DATABASE),
+        "connection_mode": st.session_state.get("_connection_mode", "unknown"),
+        "connection_detail": st.session_state.get("_connection_detail", ""),
+        "is_ro_share": st.session_state.get("_connection_mode") == "ro_share",
+        "is_fallback": st.session_state.get("_connection_mode") == "rw_fallback",
+        "loaded_at": st.session_state.get("_loaded_at", ""),
+    }
+
+
+def render_runtime_status_panel() -> None:
+    """Compact runtime status panel for diagnostics / sidebar."""
+    info = get_runtime_info()
+    mode = info["connection_mode"]
+    mode_labels = {
+        "ro_share": ("Read-Only Share", "green"),
+        "rw_fallback": ("Read-Write (fallback)", "amber"),
+        "rw_review": ("Read-Write (review)", "sky"),
+        "local": ("Local DuckDB", "violet"),
+        "unknown": ("Unknown", "text_mid"),
+    }
+    label, color = mode_labels.get(mode, mode_labels["unknown"])
+
+    st.markdown(
+        f'<div style="background:{COLORS["surface"]};border:1px solid {COLORS["border"]};'
+        f'border-radius:10px;padding:0.7rem 1rem;margin-bottom:0.6rem">'
+        f'<div style="font-family:var(--font-m,monospace);font-size:.58rem;'
+        f'letter-spacing:.12em;text-transform:uppercase;color:{COLORS["text_mid"]};'
+        f'margin-bottom:6px">RUNTIME STATUS</div>'
+        f'<div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center">'
+        f'<span style="font-size:.75rem;color:{COLORS["text_hi"]}">'
+        f'{info["version"]}</span>'
+        f'<span>{badge(label, color)}</span>'
+        f'<span style="font-size:.7rem;color:{COLORS["text_mid"]}">'
+        f'Catalog: <code style="color:{COLORS["teal"]}">{info["catalog"]}</code></span>'
+        f'</div>'
+        f'{"<div style=" + chr(34) + "font-size:.65rem;color:" + COLORS["text_lo"] + ";margin-top:4px" + chr(34) + ">" + info["loaded_at"] + "</div>" if info["loaded_at"] else ""}'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+
+def render_fallback_warning() -> None:
+    """Show a prominent warning if the app fell back from RO share to RW."""
+    if st.session_state.get("_connection_mode") == "rw_fallback":
+        st.warning(
+            "**Read-only share unavailable** — connected via read-write fallback. "
+            "Data is live but writes are possible. This may occur if the RO share "
+            "URL has changed or the share is temporarily inaccessible. "
+            "Check the Connection Help expander in the sidebar for details.",
+            icon="⚡",
+        )
+
+
+def render_health_kpis(con) -> None:
+    """Compact health KPI row for the Overview or sidebar."""
+    checks = [
+        ("val_dataset_integrity_summary_v1", "Integrity"),
+        ("val_provenance_completeness_v2", "Provenance"),
+        ("val_episode_linkage_completeness_v1", "Linkage"),
+        ("val_lab_completeness_v1", "Lab Coverage"),
+    ]
+    cols = st.columns(len(checks))
+    for i, (tbl, label) in enumerate(checks):
+        exists = tbl_exists(con, tbl)
+        with cols[i]:
+            if exists:
+                try:
+                    n = sqs(con, f"SELECT COUNT(*) FROM {tbl}")
+                    st.markdown(
+                        mc(label, f"{n}", "available"),
+                        unsafe_allow_html=True,
+                    )
+                except Exception:
+                    st.markdown(mc(label, "err", "query failed"), unsafe_allow_html=True)
+            else:
+                st.markdown(mc(label, "—", "not deployed"), unsafe_allow_html=True)
+
+
 def write_decision(rw_con, research_id: int, domain: str,
                    linked_episode_id: str | None, conflict_type: str | None,
                    unresolved_reason: str | None, reviewer_action: str,

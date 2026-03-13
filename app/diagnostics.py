@@ -1,9 +1,12 @@
-"""Diagnostics tab — view existence, row counts, deployment info, and naming audit."""
+"""Diagnostics tab — view existence, row counts, deployment info, health monitoring, and naming audit."""
 from __future__ import annotations
 
 import streamlit as st
 
-from app.helpers import sqdf, sqs, mc, sl, badge, tbl_exists
+from app.helpers import (
+    sqdf, sqs, mc, sl, badge, tbl_exists,
+    render_runtime_status_panel, render_health_kpis,
+)
 
 
 # All views the adjudication/review layer depends on, in deployment order.
@@ -82,8 +85,87 @@ EXPECTED_VIEWS = [
 ]
 
 
+HEALTH_TABLES = [
+    ("val_dataset_integrity_summary_v1", "Dataset Integrity", "75"),
+    ("val_provenance_completeness_v2", "Provenance Completeness", "75"),
+    ("val_episode_linkage_completeness_v1", "Episode Linkage", "75"),
+    ("val_temporal_anomaly_resolution_v1", "Chronology Anomalies", "75"),
+    ("val_lab_completeness_v1", "Lab Coverage", "77"),
+    ("val_rai_structural_coverage_v1", "RAI Structural Coverage", "80"),
+    ("val_recurrence_readiness_v1", "Recurrence Readiness", "80"),
+    ("val_lab_temporal_truth_v1", "Lab Temporal Truth", "80"),
+    ("val_operative_field_semantics_v1", "Operative Semantics", "80"),
+    ("val_phase13_final_gaps", "Phase 13 Final Gaps", "29"),
+    ("val_analysis_resolved_v1", "Analysis Resolved", "55"),
+    ("val_scoring_systems", "Scoring Systems", "51"),
+    ("val_lab_canonical_v1", "Lab Canonical", "78"),
+    ("val_hardening_summary", "Hardening Summary", "67"),
+]
+
+
 def render_diagnostics(con) -> None:
     st.markdown(sl("System Diagnostics"), unsafe_allow_html=True)
+
+    # Runtime status panel
+    st.markdown("### Runtime Status")
+    render_runtime_status_panel()
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # Health monitoring KPIs
+    st.markdown("### System Health")
+    render_health_kpis(con)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # Health / validation table inventory
+    st.markdown("### Health & Validation Tables")
+    import pandas as pd
+    health_rows = []
+    h_ok = 0
+    h_miss = 0
+    for tbl, label, script in HEALTH_TABLES:
+        exists = tbl_exists(con, tbl)
+        if exists:
+            try:
+                cnt = sqs(con, f"SELECT COUNT(*) FROM {tbl}")
+            except Exception:
+                cnt = "err"
+            h_ok += 1
+        else:
+            cnt = "—"
+            h_miss += 1
+        health_rows.append({
+            "Health Table": tbl,
+            "Label": label,
+            "Script": script,
+            "Status": "OK" if exists else "MISSING",
+            "Rows": cnt,
+        })
+    health_df = pd.DataFrame(health_rows)
+    st.dataframe(health_df, use_container_width=True, hide_index=True, height=350)
+
+    c1, c2 = st.columns(2)
+    with c1:
+        st.markdown(mc("Health Tables OK", f"{h_ok}/{len(HEALTH_TABLES)}"), unsafe_allow_html=True)
+    with c2:
+        st.markdown(
+            mc("Missing", f"{h_miss}",
+               "All health tables deployed" if h_miss == 0 else "Run scripts 75/77/78/80"),
+            unsafe_allow_html=True,
+        )
+
+    # Quick provenance summary if available
+    if tbl_exists(con, "val_provenance_completeness_v2"):
+        try:
+            prov_df = sqdf(con, "SELECT table_name, fill_pct FROM val_provenance_completeness_v2 ORDER BY fill_pct ASC LIMIT 5")
+            if not prov_df.empty:
+                st.markdown("**Lowest Provenance Fill (bottom 5):**")
+                st.dataframe(prov_df, use_container_width=True, hide_index=True)
+        except Exception:
+            pass
+
+    st.markdown("<br>", unsafe_allow_html=True)
 
     # View existence & row counts
     st.markdown("### View / Table Inventory")
@@ -116,7 +198,6 @@ def render_diagnostics(con) -> None:
     with c1:
         st.markdown(mc("Available", f"{ok_count}"), unsafe_allow_html=True)
     with c2:
-        color = "green" if miss_count == 0 else "rose"
         st.markdown(mc("Missing", f"{miss_count}",
                         "All prerequisites met" if miss_count == 0 else "Run missing scripts"),
                      unsafe_allow_html=True)

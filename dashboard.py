@@ -18,6 +18,7 @@ import subprocess
 from datetime import datetime
 from pathlib import Path
 
+import duckdb
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -111,6 +112,7 @@ _APP_VERSION = "v3.3.0-2026.03.13"
 
 # Tracks which catalog _get_con() activated (used by qual())
 _ACTIVE_CATALOG: str = DATABASE
+_CONNECTION_META: dict = {"mode": "unknown", "detail": "", "connected_at": ""}
 
 
 def qual(table: str) -> str:
@@ -140,23 +142,45 @@ def _get_con():
 
     The USE statement sets the default catalog so all SQL in the app
     works with plain table names — no per-query qualification needed.
+
+    Connection mode is stored in _CONNECTION_META for UI display.
     """
-    global _ACTIVE_CATALOG
+    global _ACTIVE_CATALOG, _CONNECTION_META
     cfg = MotherDuckConfig(database=DATABASE, share_path=SHARE_PATH)
     cli = MotherDuckClient(cfg)
     try:
         con = cli.connect_ro_share()
         con.execute(f"USE {SHARE_CATALOG};")
         _ACTIVE_CATALOG = SHARE_CATALOG
+        _CONNECTION_META = {
+            "mode": "ro_share",
+            "detail": f"RO share: {SHARE_CATALOG}",
+            "connected_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        }
         return con
-    except Exception:
-        con = cli.connect_rw()
+    except Exception as ro_err:
         try:
-            con.execute(f"USE {DATABASE};")
+            con = cli.connect_rw()
+            try:
+                con.execute(f"USE {DATABASE};")
+            except Exception:
+                pass
+            _ACTIVE_CATALOG = DATABASE
+            _CONNECTION_META = {
+                "mode": "rw_fallback",
+                "detail": f"RO share failed ({ro_err!r:.80s}…), using RW: {DATABASE}",
+                "connected_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            }
+            return con
         except Exception:
-            pass  # local DuckDB files have no named catalog
-        _ACTIVE_CATALOG = DATABASE
-        return con
+            _ACTIVE_CATALOG = DATABASE
+            _CONNECTION_META = {
+                "mode": "local",
+                "detail": "Both MotherDuck paths failed; using local DuckDB",
+                "connected_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            }
+            con = duckdb.connect(os.getenv("LOCAL_DUCKDB_PATH", "thyroid_master_local.duckdb"))
+            return con
 
 @st.cache_data(ttl=300, show_spinner=False)
 def qdf(_con, sql):  return _con.execute(sql).fetchdf()
@@ -2706,13 +2730,47 @@ def main():
     try: con = _get_con()
     except Exception as exc: st.error(f"Failed to connect to MotherDuck: {exc}"); st.stop()
     st.session_state["_motherduck_catalog"] = _ACTIVE_CATALOG
+    st.session_state["_app_version"] = _APP_VERSION
+    st.session_state["_connection_mode"] = _CONNECTION_META["mode"]
+    st.session_state["_connection_detail"] = _CONNECTION_META["detail"]
+    st.session_state["_loaded_at"] = f"Connected {_CONNECTION_META['connected_at']}"
 
     _check_critical_tables(con)
 
-    st.info(
-        f"**THYROID_2026 {_APP_VERSION}** | Catalog: `{_ACTIVE_CATALOG}` · "
-        "[Release Notes](RELEASE_NOTES.md)",
-        icon="📦",
+    # --- Fallback warning banner (prominent, above everything) ---
+    if _CONNECTION_META["mode"] == "rw_fallback":
+        st.warning(
+            "**Read-only share unavailable** — connected via read-write fallback. "
+            "Data is live but writes are possible. Review sidebar Connection Help for details.",
+            icon="⚡",
+        )
+    elif _CONNECTION_META["mode"] == "local":
+        st.error(
+            "**MotherDuck unreachable** — using local DuckDB file. "
+            "Data may be stale. Check your token and network connection.",
+            icon="🔌",
+        )
+
+    # --- Compact status banner ---
+    _mode_badge = {
+        "ro_share": ("RO SHARE", "#34d399"),
+        "rw_fallback": ("RW FALLBACK", "#f59e0b"),
+        "local": ("LOCAL", "#a78bfa"),
+    }.get(_CONNECTION_META["mode"], ("UNKNOWN", "#8892a4"))
+    st.markdown(
+        f'<div style="display:flex;align-items:center;gap:0.7rem;padding:0.4rem 0;'
+        f'border-bottom:1px solid #1e2535;margin-bottom:0.3rem">'
+        f'<span style="font-weight:700;color:#f0f4ff;font-size:0.85rem">'
+        f'THYROID_2026 {_APP_VERSION}</span>'
+        f'<span style="background:{_mode_badge[1]}20;color:{_mode_badge[1]};'
+        f'padding:2px 8px;border-radius:4px;font-size:.68rem;font-weight:600;'
+        f'font-family:monospace">{_mode_badge[0]}</span>'
+        f'<span style="font-size:.7rem;color:#8892a4">'
+        f'Catalog: <code style="color:#2dd4bf">{_ACTIVE_CATALOG}</code></span>'
+        f'<span style="font-size:.65rem;color:#4a5568;margin-left:auto">'
+        f'{_CONNECTION_META["connected_at"]}</span>'
+        f'</div>',
+        unsafe_allow_html=True,
     )
     ci,ct = st.columns([1,11])
     with ci: st.markdown('<div style="font-size:2.8rem;margin-top:4px">🔬</div>',unsafe_allow_html=True)
@@ -2810,11 +2868,24 @@ def main():
         else:
             st.caption("PTCM not fitted. Run script 39 first.")
 
+        # ── Runtime Status ─────────────────────────────────────────
+        with st.expander("🖥️ Runtime Status", expanded=True):
+            _mode_map = {
+                "ro_share": ("Read-Only Share", "✅"),
+                "rw_fallback": ("Read-Write Fallback", "⚠️"),
+                "local": ("Local DuckDB", "📁"),
+            }
+            _ml, _mi = _mode_map.get(_CONNECTION_META["mode"], ("Unknown", "❓"))
+            st.markdown(f"**Mode:** {_mi} {_ml}")
+            st.markdown(f"**Catalog:** `{_ACTIVE_CATALOG}`")
+            st.markdown(f"**Version:** `{_APP_VERSION}`")
+            st.markdown(f"**Connected:** {_CONNECTION_META['connected_at']}")
+            if _CONNECTION_META["mode"] != "ro_share":
+                st.markdown(f"**Detail:** {_CONNECTION_META['detail']}")
+            st.markdown(f"**Review Mode:** {'🟢 Active (RW)' if review_mode and rw_con else '⚪ Off (RO)'}")
+
         # ── Data Build Info ──────────────────────────────────────────
         with st.expander("📋 Data Build Info"):
-            db_mode = "Read-Write" if review_mode and rw_con else "Read-Only Share"
-            st.markdown(f"**Database mode:** {db_mode}")
-            st.markdown(f"**Database:** `{DATABASE}`")
             st.markdown("**Deploy order:** 15→20 (adjudication) · 22→27 (v2 canonical)")
             for vname, label in [
                 ("molecular_episode_v3", "Molecular v3"),
@@ -2825,11 +2896,12 @@ def main():
                 ("linkage_summary_v2", "Cross-Domain Linkage"),
                 ("qa_issues_v2", "QA Validation v2"),
                 ("date_rescue_rate_summary", "Date Provenance"),
+                ("manuscript_cohort_v1", "Manuscript Cohort"),
+                ("val_dataset_integrity_summary_v1", "Integrity Health"),
             ]:
                 avail = tbl_exists(con, vname)
                 icon = "✅" if avail else "❌"
                 st.markdown(f"{icon} {label}")
-            st.caption(f"Last refresh: {datetime.now():%Y-%m-%d %H:%M}")
             st.caption("🚀 MotherDuck Optimized • Materialized tables + caching active")
 
         # ── Data Freshness & QC ──────────────────────────────────────
@@ -2966,6 +3038,9 @@ def main():
         # ── Connection Help ──────────────────────────────────────────
         with st.expander("❓ Connection Help"):
             st.markdown(
+                "**Current status:** "
+                f"`{_CONNECTION_META['mode']}` — {_CONNECTION_META['detail']}\n\n"
+                "---\n\n"
                 "Set `MOTHERDUCK_TOKEN` before running the dashboard:\n\n"
                 "**Option A** — environment variable:\n"
                 "```bash\nexport MOTHERDUCK_TOKEN='your_token'\n```\n\n"
@@ -2974,7 +3049,17 @@ def main():
                 "echo 'MOTHERDUCK_TOKEN = \"your_token\"' > .streamlit/secrets.toml\n```\n\n"
                 "If critical v3 tables are missing, run:\n"
                 "```bash\npython scripts/26_motherduck_materialize_v2.py --md\n"
-                "python scripts/29_validation_engine.py --md\n```"
+                "python scripts/29_validation_engine.py --md\n```\n\n"
+                "---\n\n"
+                "**Troubleshooting fallback modes:**\n\n"
+                "| Symptom | Cause | Fix |\n"
+                "|---------|-------|-----|\n"
+                "| RW FALLBACK badge | RO share URL changed or inaccessible | "
+                "Verify `SHARE_PATH` in `dashboard.py` matches your MotherDuck share |\n"
+                "| LOCAL badge | Token missing or MotherDuck unreachable | "
+                "Check `MOTHERDUCK_TOKEN` and network |\n"
+                "| Sign-in required on Streamlit Cloud | App not configured for public access | "
+                "Set sharing to Public in Streamlit Cloud settings |\n"
             )
 
     # ── 6 Workflow Sections ──────────────────────────────────────────────
@@ -3068,12 +3153,18 @@ def main():
         with _m10: render_review_queue(con)
 
     st.markdown("---")
+    _ft_mode = {
+        "ro_share": "RO Share",
+        "rw_fallback": "RW Fallback ⚠",
+        "local": "Local DB",
+    }.get(_CONNECTION_META["mode"], "Unknown")
     st.markdown(
         '<div style="text-align:center;padding:0.6rem 0;font-family:\'DM Mono\',monospace;'
         'font-size:0.65rem;color:#4a5568;letter-spacing:0.08em;">'
         f"THYROID_2026 {_APP_VERSION} &nbsp;·&nbsp; "
+        f"{_ft_mode} &nbsp;·&nbsp; "
         f"Catalog <code>{_ACTIVE_CATALOG}</code> &nbsp;·&nbsp; "
-        f"Loaded {datetime.now():%Y-%m-%d %H:%M}"
+        f"Connected {_CONNECTION_META['connected_at']}"
         "</div>",
         unsafe_allow_html=True,
     )
