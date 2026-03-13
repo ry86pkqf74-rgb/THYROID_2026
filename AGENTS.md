@@ -439,3 +439,22 @@
 - `patient_refined_master_clinical_v7` = FINAL master table; extends v6 with 44 Phase 8 columns (15 recurrence, 8 RAI response, 10 long-term outcomes, 7 completion reason, 5 follow-up audit); 172 total columns
 - Deployment order updated: script 15 → ... → 45 → Phase 8 engine v6
 - All 8 extraction audit engine phases complete (v1→v6); entire pipeline from raw NLP → source-classified → refined → master clinical table is source-linked and verified
+- Phase 9 engine: `notes_extraction/extraction_audit_engine_v7.py` with LabExpansionPipeline, RAIDoseParser, GradingRuleEngine, plus `audit_and_refine_phase9()` orchestrator
+- Phase 9 new tables: `extracted_postop_labs_expanded_v1` (1,395 rows), `vw_postop_lab_expanded` (1,026 rows), `extracted_rai_dose_refined_v1` (307 rows), `vw_rai_dose_by_source` (13 rows), `extracted_ete_ene_tert_refined_v1` (3,985 rows), `vw_ete_microscopic_rule` (5 rows), `patient_refined_master_clinical_v8` (12,886 rows, +23 Phase 9 columns)
+- Lab expansion results: PTH 131→673 patients (5.1x), calcium 69→559 patients (8.1x), total values 350→1,395 (4.0x); sources: `extracted_clinical_events_v4` (DOUBLE event_value), enhanced NLP, existing v1; hypoparathyroidism (PTH<15): 11 patients, hypocalcemia (Ca<8.0): 5 patients
+- `extracted_clinical_events_v4.event_value` is DOUBLE type (not VARCHAR); use directly without CAST/TRIM; `source_column` (not `event_source`) for source attribution
+- RAI dose results: 55→307 doses, ~30→276 patients (9.2x); avg 141.8 mCi; structured=49, NLP-linked=145, NLP-standalone=113; zero nuclear medicine notes in `clinical_notes_long`
+- ETE microscopic rule: 3,558 present_ungraded→49 (98.6% resolved); 3,289 'x'→microscopic, 259 'present'→microscopic, ~161 reclassified gross via op-note; AJCC 8th Ed compliant (microscopic ETE does NOT upstage T1-T2)
+- ETE grading v9 distribution: microscopic=3,642 (was 265), gross=188 (was 27), present_ungraded=49 (was 3,558)
+- TERT HGVS patterns added: `c.-124C>T` / `c.1-124C>T` = C228T, `c.-146C>T` / `c.1-146C>T` = C250T; recovered +1 C228T via HGVS; 23 remain promoter_unspecified (ThyroSeq Excel lacks variant position)
+- ENE grading v9: 1,250 present_ungraded, 7 indeterminate, 5 focal, 4 extensive; path_synoptics ENE column uses 'x'/'present' without extent qualifiers — further resolution requires deep free-text parsing
+- `patient_refined_master_clinical_v8`: extends v7 with 23 Phase 9 columns (12 lab, 6 RAI dose, 2 ETE, 4 TERT, 3 ENE)
+- `extracted_ete_subgraded_v1` column name: `refined_ete_grade` (not `ete_subgraded`); `op_note_grade` is also available
+- Script 26 MATERIALIZATION_MAP expanded to 96 entries (was 89): adds 7 Phase 9 tables
+- Script 29 validation expanded with `val_phase9_targeted_refinement` (14th val_* table): per-variable counts for labs, RAI dose, ETE, TERT, ENE
+- H1 Phase 9 sensitivity: lobectomy cohort 5,376 patients (247 CLN+); 1,793 with ETE v9 (1,706 microscopic, 72 gross); CLN+ recurrence 73.7% vs CLN- 13.2%; crude OR=18.4 (indication bias persists)
+- H2 Phase 9: goiter+hypocalcemia=3, non-goiter+hypocalcemia=2; avg PTH nadir 103.4 pg/mL, avg Ca nadir 9.1 mg/dL; lab coverage still low for goiter-specific complication analysis
+- Overall data quality score Phase 9: 96 → 97/100; post-op labs: 35→55; RAI dose: 75→82; ETE grading: 40→95 (+55, biggest single-domain improvement); TERT: 92→93; ENE: 25→26
+- Phase 9 report: `notes_extraction/master_refinement_report_phase9.md`; figure: `exports/fig_lab_rai_ete_grading.png`
+- Deployment order updated: script 15 → ... → 45 → Phase 8 engine v6 → Phase 9 engine v7
+- All 9 extraction audit engine phases complete (v1→v7); 96 tables in MATERIALIZATION_MAP; 14 val_* validation tables
