@@ -401,3 +401,21 @@
 - Phase 6 report: `notes_extraction/master_refinement_report_phase6.md`; figure: `exports/fig_margins_invasions_by_source.png`
 - Phase 6 auto-generated report: `notes_extraction/phase6_staging_refinement_YYYYMMDD_HHMM.md`
 - path_synoptics `age` column is named `age` (not `age_at_surgery`); use `ps.age` when querying path_synoptics directly
+- Phase 7 engine: `notes_extraction/extraction_audit_engine_v5.py` with FNABethesdaParser, MolecularPanelCleaner, PreopImagingReconciler, plus `audit_and_refine_phase7()` orchestrator
+- Phase 7 new tables: `extracted_fna_bethesda_v1` (5,249 rows), `extracted_molecular_panel_v1` (10,025 rows), `extracted_preop_imaging_concordance_v1` (4,030 rows), `extracted_fna_path_concordance_v1` (5,443 rows), `patient_refined_master_clinical_v6` (12,885 rows, 128 columns)
+- Phase 7 summary views: `vw_fna_by_source` (12 rows: Bethesda by source), `vw_preop_molecular_panel` (7 rows: per-gene positivity)
+- FNA Bethesda sources: fna_cytology (gold, 1.0), fna_episode_master_v2 (0.92), molecular_testing (0.85); 5,249 patients with Bethesda; worst Bethesda preferred; cross-source concordance tracked
+- FNA Bethesda distribution: VI Malignant=1,362, V Suspicious=276, IV FN/SFN=649, III AUS/FLUS=692, II Benign=2,077, I Nondiag=193; 854 discordant patients
+- Molecular positivity rates (10,025 tested): BRAF 2.7% (266), TERT 0.8% (76), NTRK 0.2% (16), ALK 0.1% (11), TP53 0.2% (20), RAS 0% (structured flags only — raw mutation text not yet parsed for RAS subtypes)
+- BRAF variant detail: V600E confirmed; TERT promoter types: C228T, C250T, promoter_unspecified
+- MolecularPanelCleaner distinguishes ordered_not_resulted vs tested_indeterminate vs positive vs negative; method detection: NGS (ThyroSeq), Afirma_GSC, IHC, PCR, FISH
+- `molecular_testing.fna_bethesda` is DOUBLE type (not VARCHAR); must CAST to VARCHAR before TRIM/LOWER
+- `imaging_nodule_long_v2` on MotherDuck has 10,866 rows but ALL size/TIRADS columns are NULL (schema exists, data not populated); preop imaging concordance is path_only for all 4,030 patients
+- `patient_level_summary_mv.histology_1_type` uses normalized codes: PTC, FTC, MTC, PDTC, ATC, HCC, other (not free-text descriptions); use `IN ('PTC','FTC',...)` not `LIKE '%papillary%'` for matching
+- FNA-path concordance: TP=1,285, FN=426, Indet→malig=636; FNA sensitivity for Bethesda VI = 75.1%; 0% TN/specificity because surgical cohort is cancer-enriched (no tracked benign outcomes)
+- H1 Phase 7 sensitivity: CLN crude OR=2.126; base model (N=2,279) CLN OR=1.283 (1.072–1.535) p=0.006; Phase 7 model (N=1,571, +bethesda+BRAF+molecular_risk) CLN OR=1.487 (1.184–1.866) p=0.0006; CLN effect INCREASED +15.9% after molecular adjustment — BRAF/Bethesda are not confounders of CLN-recurrence
+- H2 Phase 7: imaging data insufficient (0 patients with both TIRADS+imaging size in goiter cohort) due to empty imaging_nodule_long_v2 size columns
+- `patient_refined_master_clinical_v6`: extends v5 with 47 new Phase 7 columns (bethesda_final, molecular panel per-gene, FNA-path concordance, preop imaging); 128 total columns
+- Phase 7 report: `notes_extraction/phase7_preop_molecular_refinement_YYYYMMDD_HHMM.md`
+- Overall data quality score Phase 7: 93 → 94/100; FNA domain: 0 → 90/100 (new structured Bethesda); molecular panel: 85 → 92/100 (full gene panel + method detection + variant typing); preop imaging: 0 → 10/100 (schema only, no size data)
+- Phase 8 priorities: (1) populate imaging_nodule_long_v2 size/TIRADS from NLP extraction on US reports, (2) parse RAS subtypes from mutation text in molecular_testing, (3) Excel pre-op text block mining for remaining unstructured FNA data, (4) IHC-specific BRAF validation from pathology notes, (5) cross-validate BRAF positivity rates against published 40-45% PTC prevalence (current 2.7% suggests under-detection in structured flags)
