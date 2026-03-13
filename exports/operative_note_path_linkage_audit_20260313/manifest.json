@@ -1,0 +1,152 @@
+{
+  "generated_at": "2026-03-13T08:03:33.946011",
+  "database": "Local DuckDB",
+  "script": "scripts/70_operative_note_path_linkage_audit.py",
+  "verdict": "MAJOR OPERATIVE EXTRACTION GAP REMAINS",
+  "summary": {
+    "total_patients_path_synoptics": 10871,
+    "total_surgeries_path_synoptics": 11688,
+    "total_operative_episodes": 9371,
+    "total_operative_patients": 9368,
+    "total_op_notes": 4680,
+    "total_patients_with_op_notes": 4439,
+    "patients_with_surgery_and_opnote": 2310,
+    "patients_with_surgery_no_opnote": 6423,
+    "cancer_patients": 4137,
+    "cancer_with_operative_episode": 3221,
+    "cancer_with_opnote": 1826,
+    "cancer_with_both": 915,
+    "cancer_no_operative_episode": 916,
+    "path_only_patients": 2138,
+    "episodes_with_nlp_parse": 1900,
+    "episodes_no_nlp_parse": 7471
+  },
+  "opnote_linkage": {
+    "MISSING": 7060,
+    "AMBIGUOUS": 1343,
+    "LINKED_CONFIDENT": 942,
+    "LINKED_DATE_PROXIMAL": 25
+  },
+  "surgery_path_linkage": {
+    "ALIGNED": 8638,
+    "NO_PATHOLOGY": 635,
+    "LATERALITY_DISCORDANT": 84,
+    "DATE_DISCORDANT": 9,
+    "DATE_MISSING": 2
+  },
+  "variable_coverage": {
+    "central_neck_dissection": {
+      "total": 9371,
+      "extracted": 0,
+      "unknown": 0,
+      "missing": 9371,
+      "pct_extracted": 0.0
+    },
+    "drain": {
+      "total": 9371,
+      "extracted": 169,
+      "unknown": 0,
+      "missing": 9202,
+      "pct_extracted": 1.8
+    },
+    "ebl_ml": {
+      "total": 9371,
+      "extracted": 124,
+      "unknown": 0,
+      "missing": 9247,
+      "pct_extracted": 1.3
+    },
+    "esophageal_involvement": {
+      "total": 9371,
+      "extracted": 0,
+      "unknown": 0,
+      "missing": 9371,
+      "pct_extracted": 0.0
+    },
+    "gross_ete": {
+      "total": 9371,
+      "extracted": 22,
+      "unknown": 0,
+      "missing": 9349,
+      "pct_extracted": 0.2
+    },
+    "lateral_neck_dissection": {
+      "total": 9371,
+      "extracted": 0,
+      "unknown": 0,
+      "missing": 9371,
+      "pct_extracted": 0.0
+    },
+    "laterality": {
+      "total": 9371,
+      "extracted": 542,
+      "unknown": 0,
+      "missing": 8829,
+      "pct_extracted": 5.8
+    },
+    "local_invasion": {
+      "total": 9371,
+      "extracted": 25,
+      "unknown": 0,
+      "missing": 9346,
+      "pct_extracted": 0.3
+    },
+    "operative_findings_raw": {
+      "total": 9371,
+      "extracted": 588,
+      "unknown": 0,
+      "missing": 8783,
+      "pct_extracted": 6.3
+    },
+    "parathyroid_autograft": {
+      "total": 9371,
+      "extracted": 40,
+      "unknown": 0,
+      "missing": 9331,
+      "pct_extracted": 0.4
+    },
+    "procedure_normalized": {
+      "total": 9371,
+      "extracted": 8727,
+      "unknown": 644,
+      "missing": 0,
+      "pct_extracted": 93.1
+    },
+    "reoperative_field": {
+      "total": 9371,
+      "extracted": 46,
+      "unknown": 0,
+      "missing": 9325,
+      "pct_extracted": 0.5
+    },
+    "rln_finding": {
+      "total": 9371,
+      "extracted": 371,
+      "unknown": 0,
+      "missing": 9000,
+      "pct_extracted": 4.0
+    },
+    "rln_monitoring": {
+      "total": 9371,
+      "extracted": 1702,
+      "unknown": 0,
+      "missing": 7669,
+      "pct_extracted": 18.2
+    },
+    "strap_muscle": {
+      "total": 9371,
+      "extracted": 186,
+      "unknown": 0,
+      "missing": 9185,
+      "pct_extracted": 2.0
+    },
+    "tracheal_involvement": {
+      "total": 9371,
+      "extracted": 9,
+      "unknown": 0,
+      "missing": 9362,
+      "pct_extracted": 0.1
+    }
+  },
+  "v3_tiers": {}
+}

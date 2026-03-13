@@ -1,0 +1,17 @@
+variable,total_episodes,extracted,unknown_val,missing
+procedure_normalized,9371,8727,644,0
+laterality,9371,542,0,8829
+central_neck_dissection,9371,0,0,9371
+lateral_neck_dissection,9371,0,0,9371
+rln_monitoring,9371,1702,0,7669
+rln_finding,9371,371,0,9000
+parathyroid_autograft,9371,40,0,9331
+gross_ete,9371,22,0,9349
+local_invasion,9371,25,0,9346
+tracheal_involvement,9371,9,0,9362
+esophageal_involvement,9371,0,0,9371
+strap_muscle,9371,186,0,9185
+reoperative_field,9371,46,0,9325
+drain,9371,169,0,9202
+ebl_ml,9371,124,0,9247
+operative_findings_raw,9371,588,0,8783
