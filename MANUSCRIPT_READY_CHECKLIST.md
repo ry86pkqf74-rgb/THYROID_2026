@@ -36,6 +36,40 @@ Use this checklist before submission or Zenodo archive.
 - [x] Tag `v2026.03.10-publication-ready` on commit to be archived
 - [x] DVC tracked for large parquet exports (if used)
 
+## Traceability & Date Accuracy KPIs (v2026-03-12)
+
+- [ ] `provenance_enriched_events_v1` materialized and validated (`scripts/46_provenance_audit.py --md`)
+- [ ] `lineage_audit_v1` materialized (raw → note → extracted → final cohort)
+- [ ] `val_provenance_traceability` deployed with zero error-severity issues
+- [ ] `direct_source_link` coverage = 100% across `provenance_enriched_events_v1`
+- [ ] Zero `NOTE_DATE_FALLBACK` events for any lab type (Tg, TSH, TgAb)
+- [ ] `docs/provenance_coverage_report.md` generated and reviewed
+- [ ] `docs/date_accuracy_verification_report_YYYYMMDD.md` generated and reviewed
+- [ ] `qa_issues` table free of `provenance_lab_note_date_fallback` errors
+
+### Commands to verify:
+```bash
+# Deploy provenance tables and generate reports
+.venv/bin/python scripts/46_provenance_audit.py --md
+
+# Run full validation engine (adds val_provenance_traceability)
+.venv/bin/python scripts/29_validation_engine.py --md
+
+# Check results
+.venv/bin/python -c "
+import duckdb, toml
+token = toml.load('.streamlit/secrets.toml')['MOTHERDUCK_TOKEN']
+con = duckdb.connect(f'md:thyroid_research_2026?motherduck_token={token}')
+r = con.execute(\"\"\"
+    SELECT check_id, severity, COUNT(*) AS n
+    FROM val_provenance_traceability
+    GROUP BY check_id, severity
+    ORDER BY severity, n DESC
+\"\"\").fetchall()
+for row in r: print(row)
+"
+```
+
 ## Interactive Stats & Modeling
 
 - [x] `utils/statistical_analysis.py` — `ThyroidStatisticalAnalyzer` with all core methods

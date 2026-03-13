@@ -178,10 +178,36 @@ _NEARBY_DATE = re.compile(
     re.IGNORECASE,
 )
 
+# Lab-specific keywords that precede a specimen/collection date.
+# When a match is found, the immediately following date is assigned
+# confidence 1.0 (explicit lab date) vs. 0.7 for generic nearby dates.
+_LAB_DATE_KEYWORDS = re.compile(
+    r"(?:collected?\s+(?:on\s+)?|drawn\s+(?:on\s+)?"
+    r"|specimen\s+date[:\s]+"
+    r"|result(?:s)?\s+date[:\s]+"
+    r"|report(?:ed)?\s+(?:on\s+)?"
+    r"|received[:\s]+"
+    r"|accession(?:ed)?\s+(?:on\s+)?)"
+    r"(\d{1,2}/\d{1,2}/\d{2,4}|\d{4}-\d{2}-\d{2}"
+    r"|\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s*,?\s*\d{4}"
+    r"|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}\s*,?\s*\d{4})",
+    re.IGNORECASE,
+)
 
-def extract_nearby_date(text: str, match_start: int, match_end: int,
-                        window: int = 120) -> str | None:
+
+def extract_nearby_date(
+    text: str,
+    match_start: int,
+    match_end: int,
+    window: int = 120,
+) -> str | None:
     """Find the closest date within +-window chars of a regex match span.
+
+    Two-tier search:
+      1. Lab-specific keywords (collected on, drawn on, specimen date, etc.)
+         are scanned first; if found, that date is returned immediately with
+         implicit confidence 1.0 (caller should record date_confidence=1.0).
+      2. Generic nearby date (closest date in the window) -- confidence 0.7.
 
     Supports MM/DD/YYYY, YYYY-MM-DD, and month-name formats.
     Returns ISO YYYY-MM-DD or None.
@@ -190,6 +216,19 @@ def extract_nearby_date(text: str, match_start: int, match_end: int,
     region_end = min(len(text), match_end + window)
     region = text[region_start:region_end]
 
+    # Tier 1: explicit lab-collection date keyword
+    for lm in _LAB_DATE_KEYWORDS.finditer(region):
+        raw = lm.group(1)
+        parsed = safe_parse_date(raw)
+        if parsed:
+            try:
+                dt = datetime.strptime(parsed, "%Y-%m-%d")
+                if 1990 <= dt.year <= 2030:
+                    return parsed
+            except ValueError:
+                pass
+
+    # Tier 2: generic nearest date
     best: str | None = None
     best_dist = window + 1
     for m in _NEARBY_DATE.finditer(region):
@@ -210,6 +249,61 @@ def extract_nearby_date(text: str, match_start: int, match_end: int,
                 except ValueError:
                     pass
     return best
+
+
+def extract_nearby_date_with_confidence(
+    text: str,
+    match_start: int,
+    match_end: int,
+    window: int = 120,
+) -> tuple[str | None, float]:
+    """Like extract_nearby_date but also returns a date_confidence value.
+
+    Returns (iso_date_or_None, confidence) where:
+      - confidence 1.0 = explicit lab-collection keyword found
+      - confidence 0.7 = generic nearby date
+      - confidence 0.0 = no date found
+    """
+    region_start = max(0, match_start - window)
+    region_end = min(len(text), match_end + window)
+    region = text[region_start:region_end]
+
+    # Tier 1
+    for lm in _LAB_DATE_KEYWORDS.finditer(region):
+        raw = lm.group(1)
+        parsed = safe_parse_date(raw)
+        if parsed:
+            try:
+                dt = datetime.strptime(parsed, "%Y-%m-%d")
+                if 1990 <= dt.year <= 2030:
+                    return parsed, 1.0
+            except ValueError:
+                pass
+
+    # Tier 2
+    best: str | None = None
+    best_dist = window + 1
+    for m in _NEARBY_DATE.finditer(region):
+        raw = next(g for g in m.groups() if g is not None)
+        date_abs_start = region_start + m.start()
+        dist = min(
+            abs(date_abs_start - match_start),
+            abs(date_abs_start - match_end),
+        )
+        if dist < best_dist:
+            parsed = safe_parse_date(raw)
+            if parsed:
+                try:
+                    dt = datetime.strptime(parsed, "%Y-%m-%d")
+                    if 1990 <= dt.year <= 2030:
+                        best = parsed
+                        best_dist = dist
+                except ValueError:
+                    pass
+
+    if best:
+        return best, 0.7
+    return None, 0.0
 
 
 def safe_float(val: str) -> float | None:

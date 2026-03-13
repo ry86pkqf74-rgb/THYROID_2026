@@ -181,6 +181,10 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_vw_molecular_subtypes", "vw_molecular_subtypes"),
     ("md_extracted_imaging_molecular_final_v1", "extracted_imaging_molecular_final_v1"),
     ("md_patient_refined_master_clinical_v10", "patient_refined_master_clinical_v10"),
+    # ── Phase 11 Provenance Traceability (extraction_audit + date accuracy) ──
+    ("md_provenance_enriched_events_v1", "provenance_enriched_events_v1"),
+    ("md_lineage_audit_v1", "lineage_audit_v1"),
+    ("md_val_provenance_traceability", "val_provenance_traceability"),
 ]
 
 SURVIVAL_COHORT_ENRICHED_SQL = """

@@ -923,6 +923,79 @@ base tables being present in `thyroid_research_2026`. Run after scripts 15–26.
 
 ---
 
+## Traceability & Date Accuracy Guarantee (added 2026-03-12)
+
+### Strict Lab Date Precedence Rule
+
+Lab collection dates **always** take precedence over note encounter dates.
+This rule is enforced in `provenance_enriched_events_v1`:
+
+```sql
+-- Canonical date resolution for all clinical events
+COALESCE(
+    TRY_CAST(specimen_collect_dt AS DATE),  -- 1. Lab collection date   (confidence 1.0)
+    TRY_CAST(event_date AS DATE),           -- 2. Entity-extracted date (confidence 0.7)
+    followup_date                           -- 3. Note encounter date   (last resort)
+) AS event_date_correct
+```
+
+### New Provenance Columns (provenance_enriched_events_v1)
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `specimen_collect_dt` | VARCHAR | Specimen collection date from `thyroglobulin_labs` (NULL for non-lab events) |
+| `event_date_correct` | DATE | Best-available date per strict lab-date precedence rule |
+| `date_status_final` | VARCHAR | `LAB_DATE_USED` / `ENTITY_DATE_USED` / `ENTITY_DATE_EQUALS_NOTE_DATE` / `NOTE_DATE_FALLBACK` / `NO_DATE` |
+| `direct_source_link` | VARCHAR | Pipe-delimited `source_column|research_id|event_subtype|evidence_snippet` |
+| `provenance_created_at` | TIMESTAMP | Audit timestamp |
+
+### date_status_final Values
+
+| Value | Meaning | Confidence |
+|-------|---------|-----------|
+| `LAB_DATE_USED` | `specimen_collect_dt` from structured lab table | 1.0 |
+| `ENTITY_DATE_USED` | `entity_date` differs from encounter date | 0.7 |
+| `ENTITY_DATE_EQUALS_NOTE_DATE` | Entity date present but equals note encounter date | 0.5 |
+| `NOTE_DATE_FALLBACK` | Only note encounter date available (error for labs) | 0.0 |
+| `NO_DATE` | No date source found | 0.0 |
+
+### New Tables / Views
+
+| Table | Script | Purpose |
+|-------|--------|---------|
+| `provenance_enriched_events_v1` | `46_provenance_audit.py` | Clinical events with strict lab-date precedence + `direct_source_link` |
+| `lineage_audit_v1` | `46_provenance_audit.py` | Raw → note → extracted → final cohort traceability (one row per patient) |
+| `val_provenance_traceability` | `29_validation_engine.py` | 4-check validation: `direct_source_link` completeness + zero-tolerance `NOTE_DATE_FALLBACK` for labs |
+
+### Extraction Pipeline Enhancements (v2026-03-12)
+
+**`utils/text_helpers.py` — `extract_nearby_date()` and `extract_nearby_date_with_confidence()`:**
+- Added `_LAB_DATE_KEYWORDS` regex that scans for explicit collection date phrases before any generic date
+- Keywords: "collected on", "drawn on", "specimen date:", "result date:", "received:", "reported on", "accession date:"
+- Returns `(date, 1.0)` when keyword found, `(date, 0.7)` for generic nearby date
+
+**`notes_extraction/extract_llm.py` — Functional LLM extractor:**
+- `_build_prompt()` loads `prompts/lab_date_extraction_v1.txt` system prompt
+- Output JSON schema: `{entity_type, entity_value, entity_date, date_confidence, present_or_negated, evidence_text, source_line}`
+- Explicit instruction: lab dates > note encounter date; `date_confidence=1.0` for keyword-found dates
+
+**`notes_extraction/run_extraction.py` — Selective re-extraction:**
+- `--target DOMAIN` re-extracts only one entity domain (merges with existing parquet)
+- `--research-ids FILE` re-extracts only flagged patients (one research_id per line)
+
+### QA Guarantee
+
+Zero tolerance is enforced: any `date_status_final = 'NOTE_DATE_FALLBACK'` for a lab event
+is classified as **error severity** in `val_provenance_traceability` and inserted into `qa_issues`.
+
+Run the full audit and validation:
+```bash
+.venv/bin/python scripts/46_provenance_audit.py --md
+.venv/bin/python scripts/29_validation_engine.py --md
+```
+
+---
+
 ## Legacy Compatibility Layer (Script 27_fix_legacy_episode_compatibility)
 
 **Created:** 2026-03-10  

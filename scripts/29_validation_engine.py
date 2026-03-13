@@ -1074,23 +1074,78 @@ FROM (
 ORDER BY total_patients DESC;
 """
 
-ALL_VALIDATION_SQL: list[tuple[str, str, str]] = [
-    ("val_histology_confirmation",  VAL_HISTOLOGY_CONFIRMATION_SQL,  "Adjudication: histology"),
-    ("val_molecular_confirmation",  VAL_MOLECULAR_CONFIRMATION_SQL,  "Adjudication: molecular"),
-    ("val_rai_confirmation",        VAL_RAI_CONFIRMATION_SQL,        "Adjudication: RAI"),
-    ("val_chronology_anomalies",    VAL_CHRONOLOGY_ANOMALIES_SQL,    "Chronology anomalies"),
-    ("val_missing_derivable",       VAL_MISSING_DERIVABLE_SQL,       "Missing-but-derivable"),
-    ("val_unlinked_linkable",       VAL_UNLINKED_LINKABLE_SQL,       "Unlinked-but-linkable"),
-    ("val_completeness_scorecard",  VAL_COMPLETENESS_SCORECARD_SQL,  "Completeness scorecard"),
-    ("val_review_queue_combined",   VAL_REVIEW_QUEUE_COMBINED_SQL,   "Combined review queue"),
-    ("val_rln_intrinsic_eval",      VAL_RLN_INTRINSIC_SQL,           "RLN intrinsic evaluation"),
-    ("val_complication_refinement", VAL_COMPLICATION_REFINEMENT_SQL, "Phase 2 complication refinement audit"),
-    ("val_source_specific_refinement", VAL_SOURCE_SPECIFIC_REFINEMENT_SQL, "Phase 4 source-specific variable refinement audit"),
-    ("val_phase5_refinement", VAL_PHASE5_REFINEMENT_SQL, "Phase 5 top-5 variable refinement audit"),
-    ("val_phase6_staging_refinement", VAL_PHASE6_STAGING_REFINEMENT_SQL, "Phase 6 source-linked staging refinement audit"),
-    ("val_phase9_targeted_refinement", VAL_PHASE9_TARGETED_REFINEMENT_SQL, "Phase 9 targeted refinement audit"),
-    ("val_phase10_staging_recovery", VAL_PHASE10_STAGING_RECOVERY_SQL, "Phase 10 source-linked recovery audit"),
-]
+VAL_PROVENANCE_TRACEABILITY_SQL = """
+CREATE OR REPLACE TABLE val_provenance_traceability AS
+-- Check 1: direct_source_link completeness (provenance_enriched_events_v1)
+SELECT
+    'direct_source_link_missing' AS check_id,
+    'error'                      AS severity,
+    CAST(research_id AS INT)     AS research_id,
+    event_subtype                AS description,
+    'provenance_enriched_events_v1' AS source_table,
+    CONCAT(
+        'event_type=', COALESCE(event_type, 'NULL'),
+        ' date_status=', COALESCE(date_status_final, 'NULL')
+    )                            AS detail,
+    CURRENT_TIMESTAMP            AS validated_at
+FROM provenance_enriched_events_v1
+WHERE (direct_source_link IS NULL OR TRIM(direct_source_link) = '')
+
+UNION ALL
+
+-- Check 2: zero-tolerance for NOTE_DATE_FALLBACK on lab events
+SELECT
+    'lab_note_date_fallback'     AS check_id,
+    'error'                      AS severity,
+    CAST(research_id AS INT)     AS research_id,
+    event_subtype                AS description,
+    'provenance_enriched_events_v1' AS source_table,
+    CONCAT(
+        'event_date=', COALESCE(CAST(event_date AS VARCHAR), 'NULL'),
+        ' source=', COALESCE(source_column, 'NULL')
+    )                            AS detail,
+    CURRENT_TIMESTAMP            AS validated_at
+FROM provenance_enriched_events_v1
+WHERE event_type = 'lab'
+  AND date_status_final = 'NOTE_DATE_FALLBACK'
+
+UNION ALL
+
+-- Check 3: lab events with no date at all
+SELECT
+    'lab_no_date'                AS check_id,
+    'warning'                    AS severity,
+    CAST(research_id AS INT)     AS research_id,
+    event_subtype                AS description,
+    'provenance_enriched_events_v1' AS source_table,
+    CONCAT('source=', COALESCE(source_column, 'NULL')) AS detail,
+    CURRENT_TIMESTAMP            AS validated_at
+FROM provenance_enriched_events_v1
+WHERE event_type = 'lab'
+  AND date_status_final = 'NO_DATE'
+
+UNION ALL
+
+-- Check 4: date traceability gaps in lineage audit
+SELECT
+    'lineage_date_untraced'      AS check_id,
+    'warning'                    AS severity,
+    CAST(research_id AS INT)     AS research_id,
+    'lineage gap'                AS description,
+    'lineage_audit_v1'           AS source_table,
+    CONCAT(
+        'traceability=', COALESCE(date_traceability_status, 'NULL'),
+        ' surgery_date=', COALESCE(raw_surgery_date, 'NULL')
+    )                            AS detail,
+    CURRENT_TIMESTAMP            AS validated_at
+FROM lineage_audit_v1
+WHERE date_traceability_status = 'untraced'
+"""
+
+
+# NOTE: ALL_VALIDATION_SQL is assembled after all SQL variable definitions below.
+# See the end of this module for the list definition.
+
 
 VAL_PHASE10_STAGING_RECOVERY_SQL = """
 CREATE OR REPLACE TABLE val_phase10_staging_recovery AS
@@ -1393,6 +1448,26 @@ SELECT *, CURRENT_TIMESTAMP AS validated_at FROM combined
 ORDER BY patients_with_data DESC
 """
 
+# All SQL variables are now defined above; assemble the registry.
+ALL_VALIDATION_SQL: list[tuple[str, str, str]] = [
+    ("val_histology_confirmation",  VAL_HISTOLOGY_CONFIRMATION_SQL,  "Adjudication: histology"),
+    ("val_molecular_confirmation",  VAL_MOLECULAR_CONFIRMATION_SQL,  "Adjudication: molecular"),
+    ("val_rai_confirmation",        VAL_RAI_CONFIRMATION_SQL,        "Adjudication: RAI"),
+    ("val_chronology_anomalies",    VAL_CHRONOLOGY_ANOMALIES_SQL,    "Chronology anomalies"),
+    ("val_missing_derivable",       VAL_MISSING_DERIVABLE_SQL,       "Missing-but-derivable"),
+    ("val_unlinked_linkable",       VAL_UNLINKED_LINKABLE_SQL,       "Unlinked-but-linkable"),
+    ("val_completeness_scorecard",  VAL_COMPLETENESS_SCORECARD_SQL,  "Completeness scorecard"),
+    ("val_review_queue_combined",   VAL_REVIEW_QUEUE_COMBINED_SQL,   "Combined review queue"),
+    ("val_rln_intrinsic_eval",      VAL_RLN_INTRINSIC_SQL,           "RLN intrinsic evaluation"),
+    ("val_complication_refinement", VAL_COMPLICATION_REFINEMENT_SQL, "Phase 2 complication refinement audit"),
+    ("val_source_specific_refinement", VAL_SOURCE_SPECIFIC_REFINEMENT_SQL, "Phase 4 source-specific variable refinement audit"),
+    ("val_phase5_refinement",       VAL_PHASE5_REFINEMENT_SQL,       "Phase 5 top-5 variable refinement audit"),
+    ("val_phase6_staging_refinement", VAL_PHASE6_STAGING_REFINEMENT_SQL, "Phase 6 source-linked staging refinement audit"),
+    ("val_phase9_targeted_refinement", VAL_PHASE9_TARGETED_REFINEMENT_SQL, "Phase 9 targeted refinement audit"),
+    ("val_phase10_staging_recovery",   VAL_PHASE10_STAGING_RECOVERY_SQL,  "Phase 10 source-linked recovery audit"),
+    ("val_provenance_traceability",    VAL_PROVENANCE_TRACEABILITY_SQL,   "Phase 11 provenance + date-accuracy traceability"),
+]
+
 
 def build_all(con: duckdb.DuckDBPyConnection) -> dict[str, int]:
     """Execute all validation table creation SQL. Returns {name: row_count}."""
@@ -1491,6 +1566,32 @@ def print_summary(con: duckdb.DuckDBPyConnection) -> None:
         print(f"  Total review items: {cnt:,}")
         for s in sev:
             print(f"    {s[0]:<10} {s[1]:>8,}")
+
+    print("\n  === Provenance Traceability (val_provenance_traceability) ===\n")
+    if table_available(con, "val_provenance_traceability"):
+        rows = con.execute(
+            "SELECT check_id, severity, COUNT(*) AS n "
+            "FROM val_provenance_traceability "
+            "GROUP BY check_id, severity "
+            "ORDER BY CASE severity WHEN 'error' THEN 0 WHEN 'warning' THEN 1 ELSE 2 END, n DESC"
+        ).fetchall()
+        if rows:
+            print(f"  {'Check ID':<40} {'Severity':<10} {'Count':>8}")
+            print(f"  {'-'*40} {'-'*10} {'-'*8}")
+            for r in rows:
+                print(f"  {r[0]:<40} {r[1]:<10} {r[2]:>8,}")
+            total_errors = sum(r[2] for r in rows if r[1] == "error")
+            total_warn = sum(r[2] for r in rows if r[1] == "warning")
+            print(f"\n  Summary: {total_errors:,} errors, {total_warn:,} warnings")
+            if total_errors == 0:
+                print("  STATUS: PASS -- all provenance checks green")
+            else:
+                print("  STATUS: FAIL -- provenance errors require remediation")
+        else:
+            print("  STATUS: PASS -- no provenance issues found")
+    else:
+        print("  INFO: val_provenance_traceability not yet built"
+              " (run script 46 + script 29 --md)")
 
 
 def main() -> None:

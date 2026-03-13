@@ -80,6 +80,59 @@ streamlit run dashboard.py
 
 Open **http://localhost:8501** in your browser.
 
+## Traceability & Date Accuracy Guarantee (v2026.03.12)
+
+Every data point in THYROID_2026 is traceable to its **direct source** (raw file,
+sheet, row_id, text span, extraction method) and uses the **accurate associated date**.
+
+### Strict Lab Date Precedence
+
+Lab collection dates always take precedence over note encounter dates:
+
+```
+specimen_collect_dt (explicit lab date, confidence 1.0)
+  └─▶ entity_date (NLP-extracted near-entity date, confidence 0.7)
+       └─▶ note_date (encounter date, fallback only — error for labs)
+```
+
+This is enforced in `provenance_enriched_events_v1` and validated by `val_provenance_traceability`.
+
+### Direct Source Linking
+
+Every event in `provenance_enriched_events_v1` has:
+- `direct_source_link` = `source_column|research_id|event_subtype|evidence_snippet`
+- `date_status_final` = `LAB_DATE_USED` / `ENTITY_DATE_USED` / `NOTE_DATE_FALLBACK`
+
+### Lineage Audit
+
+`lineage_audit_v1` traces the complete 4-tier data lineage per patient:
+
+```
+Tier 1: Raw structured source (path_synoptics, thyroglobulin_labs)
+Tier 2: Note-level anchor (clinical_notes_long)
+Tier 3: Extracted entities (note_entities_*)
+Tier 4: Final analytic cohort (patient_refined_master_clinical_v9)
+```
+
+### Validation
+
+`val_provenance_traceability` (16th `val_*` table) enforces:
+- Zero tolerance for `direct_source_link IS NULL`
+- Zero tolerance for `NOTE_DATE_FALLBACK` on lab events
+- Warning for any lab with no date at all
+- Warning for untraced patients in `lineage_audit_v1`
+
+```bash
+# Run full provenance audit
+.venv/bin/python scripts/46_provenance_audit.py --md
+
+# Reports generated:
+# docs/provenance_coverage_report.md
+# docs/date_accuracy_verification_report_YYYYMMDD.md
+```
+
+---
+
 ## MotherDuck data source
 
 | Property           | Value |
