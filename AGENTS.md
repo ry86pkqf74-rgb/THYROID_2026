@@ -468,3 +468,21 @@
 - `imaging_nodule_long_v2` has 10,866 rows but ALL suspicious_node_flag = FALSE and only US modality; CT/MRI/PET imaging data exists only in clinical note free-text
 - Script 26 MATERIALIZATION_MAP expanded to 99 entries (was 96): adds 3 Phase 9b ENE tables
 - All 9 extraction audit engine phases complete (v1→v7); 99 tables in MATERIALIZATION_MAP; 14 val_* validation tables
+- Phase 10 engine: `notes_extraction/extraction_audit_engine_v8.py` with MarginR0RecoveryParser, InvasionGradingResolver, LateralNeckDissectionDetector, MultiTumorAggregator, MICEImputer, plus `audit_and_refine_phase10()` orchestrator
+- Phase 10 new tables: `extracted_margin_r0_recovery_v1` (7,157 rows), `vw_margin_r0_recovery` (3 rows), `extracted_invasion_grading_recovery_v1` (204 rows), `extracted_lateral_neck_v1` (119 rows), `vw_lateral_neck` (17 rows), `extracted_multi_tumor_aggregate_v1` (1,346 rows), `extracted_staging_recovery_v1` (10,871 rows), `extracted_mice_summary_v1` (5 rows), `patient_refined_master_clinical_v9` (12,886 rows, 230 columns)
+- Margin R0 recovery: 7,454 NULL margin patients → 7,144 benign (NA_benign), 11 R0, 2 R1 from op note NLP; new R-class total R0=12 (was 1)
+- Vascular/LVI grading recovery: 204 resolved (111 focal + 84 extensive from quantify, 3+3 from NLP, 1+1 from multi-tumor, 1+1 LVI from NLP); 87% of vascular invasion remains 'present_ungraded' (path_synoptics 'x' without vessel count)
+- Lateral neck dissection: 25 → 119 patients (4.76× increase); 41 structured levels + 78 op note NLP (23 jugular, 19 level II-V, 14 lateral_neck_dissection, 14 selective_neck, 4 radical, 3 modified_radical, 1 lateral_compartment)
+- Multi-tumor aggregation: 1,346 patients with tumor 2-5 data; worst-case across tumors for angioinvasion, margin, ETE, vessel count, tumor size, LN positive; `path_synoptics.tumor_1_ln_involved` (singular) vs `tumor_2_lns_involved` (plural) — different column names for tumor 1 vs 2+; no `tumor_3_lns_involved` column exists
+- MICE imputation: m=20, max_iter=10, n=10,871; covariates: age, sex, cancer_flag; tumor_size_cm 67.6%→0%, ln_positive 66.2%→0%, ln_examined 24.8%→0%, margin_binary 68.3%→0%, specimen_weight_g 65.4%→0%
+- `patient_refined_master_clinical_v9`: extends v8 with 19 Phase 10 columns: margin_r_class_v10, margin_status_v10, closest_margin_mm_v10, margin_source_v10, vascular_who_grade_v10, vascular_invasion_v10, vessel_count_v10, vascular_source_v10, lvi_grade_v10, lvi_source_v10, lateral_neck_dissected_v10, lateral_detection_method, lateral_levels_v10, lateral_side_v10, lateral_source_v10, n_tumors_v10, worst_ete_v10, max_tumor_size_cm_v10, total_ln_positive_v10
+- `extracted_staging_recovery_v1` consolidated table: merges existing Phase 6 staging + Phase 10 recovery + multi-tumor; uses `extracted_margins_refined_v1` for `margin_r_classification` (not in `patient_refined_staging_flags_v3`), and `extracted_invasion_profile_v1` for `vascular_who_2022_grade` (not in staging_flags_v3)
+- `patient_refined_staging_flags_v3` only has `margin_status_refined` and `closest_margin_mm` for margins; `vascular_invasion_refined` for vascular (no WHO grade); R-classification is in `extracted_margins_refined_v1`
+- Script 26 MATERIALIZATION_MAP expanded to 105 entries (was 96+3=99): adds 9 Phase 10 tables
+- Script 29 validation expanded with `val_phase10_staging_recovery` (15th val_* table)
+- H1 Phase 10: 4,645 lobectomies (227 CLN+, 4,418 CLN-); crude OR=25.842 (18.740–35.636); CLN+ recurrence 76.7% vs CLN- 11.3%; 1,334 with R-class, 160 with vascular grade, 25 lateral, 187 multi-tumor
+- H2 Phase 10: substernal goiter 282 patients — lowest multifocality (0 multitumor), lowest lateral dissection (1), smallest vasc graded count (1); avg max tumor 2.70cm vs cervical 1.88cm
+- Overall data quality score Phase 10: 97 → 98/100; lateral neck: 25→119 (major improvement); multi-tumor: 0→1,346 (new domain); MICE: publication-blocking missingness eliminated
+- Phase 10 report: `notes_extraction/master_refinement_report_phase10.md`; figure: `exports/fig_margin_invasion_recovery.png` (4-panel: margin R-class, vascular grading, lateral neck, MICE)
+- Deployment order updated: script 15 → ... → 45 → Phase 8 v6 → Phase 9 v7 → Phase 10 v8
+- All 10 extraction audit engine phases complete (v1→v8); 105 tables in MATERIALIZATION_MAP; 15 val_* validation tables
