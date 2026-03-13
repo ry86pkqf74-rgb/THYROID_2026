@@ -978,6 +978,102 @@ LEFT JOIN refined r ON o.research_id = r.research_id
 """
 
 
+VAL_PHASE6_STAGING_REFINEMENT_SQL = """
+CREATE OR REPLACE TABLE val_phase6_staging_refinement AS
+WITH
+margin_stats AS (
+    SELECT
+        'margin_status' AS variable,
+        COUNT(*) AS total_patients,
+        COUNT(CASE WHEN margin_r_classification = 'R0' THEN 1 END) AS r0,
+        COUNT(CASE WHEN margin_r_classification = 'R0_close' THEN 1 END) AS r0_close,
+        COUNT(CASE WHEN margin_r_classification = 'R1' THEN 1 END) AS r1,
+        COUNT(CASE WHEN margin_r_classification = 'R2' THEN 1 END) AS r2,
+        COUNT(CASE WHEN margin_r_classification = 'Rx' THEN 1 END) AS rx,
+        COUNT(closest_margin_mm) AS n_with_distance,
+        AVG(confidence) AS avg_confidence,
+        'path_synoptic' AS primary_source
+    FROM extracted_margins_refined_v1
+),
+vasc_stats AS (
+    SELECT
+        'vascular_invasion_who2022' AS variable,
+        COUNT(*) AS total_patients,
+        COUNT(CASE WHEN vascular_positive THEN 1 END) AS positive,
+        COUNT(CASE WHEN vascular_who_2022_grade = 'focal (<4 vessels)' THEN 1 END) AS who_focal,
+        COUNT(CASE WHEN vascular_who_2022_grade = 'extensive (>=4 vessels)' THEN 1 END) AS who_extensive,
+        0 AS extra1, 0 AS extra2,
+        COUNT(vessel_count) AS n_with_quantify,
+        AVG(confidence) AS avg_confidence,
+        'path_synoptic' AS primary_source
+    FROM extracted_invasion_profile_v1
+),
+lvi_stats AS (
+    SELECT
+        'lvi' AS variable,
+        COUNT(*) AS total_patients,
+        COUNT(CASE WHEN lvi_positive THEN 1 END) AS positive,
+        COUNT(CASE WHEN lvi_refined = 'focal' THEN 1 END) AS focal,
+        COUNT(CASE WHEN lvi_refined = 'extensive' THEN 1 END) AS extensive,
+        0 AS extra1, 0 AS extra2, 0 AS n_extra,
+        AVG(confidence) AS avg_confidence,
+        'path_synoptic' AS primary_source
+    FROM extracted_invasion_profile_v1
+),
+pni_stats AS (
+    SELECT
+        'pni' AS variable,
+        COUNT(*) AS total_patients,
+        COUNT(CASE WHEN pni_positive THEN 1 END) AS positive,
+        COUNT(CASE WHEN pni_refined = 'focal' THEN 1 END) AS focal,
+        0 AS extra1, 0 AS extra2, 0 AS extra3, 0 AS n_extra,
+        AVG(confidence) AS avg_confidence,
+        'path_synoptic' AS primary_source
+    FROM extracted_invasion_profile_v1
+),
+ln_stats AS (
+    SELECT
+        'ln_yield' AS variable,
+        COUNT(*) AS total_patients,
+        COUNT(CASE WHEN ln_positive_flag THEN 1 END) AS ln_positive,
+        COUNT(CASE WHEN central_dissected THEN 1 END) AS central,
+        COUNT(CASE WHEN lateral_dissected THEN 1 END) AS lateral,
+        0 AS extra1, 0 AS extra2,
+        COUNT(ln_ratio) AS n_with_ratio,
+        AVG(confidence) AS avg_confidence,
+        'path_synoptic' AS primary_source
+    FROM extracted_ln_yield_v1
+),
+ene_stats AS (
+    SELECT
+        'ene_deepened' AS variable,
+        COUNT(*) AS total_patients,
+        COUNT(CASE WHEN ene_positive THEN 1 END) AS ene_positive,
+        COUNT(CASE WHEN concordance_status = 'concordant_positive' THEN 1 END) AS concordant,
+        COUNT(CASE WHEN concordance_status LIKE 'discordant%%' THEN 1 END) AS discordant,
+        COUNT(CASE WHEN source_chain = 'path_synoptic+op_note' THEN 1 END) AS dual_source,
+        0 AS extra1, 0 AS n_extra,
+        AVG(confidence) AS avg_confidence,
+        'path_synoptic+op_note' AS primary_source
+    FROM extracted_ene_refined_v2
+)
+SELECT variable, total_patients, positive, focal, extensive, extra1, extra2,
+       n_extra, avg_confidence, primary_source,
+       CURRENT_TIMESTAMP AS validated_at
+FROM (
+    SELECT variable, total_patients, r1 AS positive, r0_close AS focal,
+           r2 AS extensive, rx AS extra1, 0 AS extra2,
+           n_with_distance AS n_extra, avg_confidence, primary_source
+    FROM margin_stats
+    UNION ALL SELECT * FROM vasc_stats
+    UNION ALL SELECT * FROM lvi_stats
+    UNION ALL SELECT * FROM pni_stats
+    UNION ALL SELECT * FROM ln_stats
+    UNION ALL SELECT * FROM ene_stats
+)
+ORDER BY total_patients DESC;
+"""
+
 ALL_VALIDATION_SQL: list[tuple[str, str, str]] = [
     ("val_histology_confirmation",  VAL_HISTOLOGY_CONFIRMATION_SQL,  "Adjudication: histology"),
     ("val_molecular_confirmation",  VAL_MOLECULAR_CONFIRMATION_SQL,  "Adjudication: molecular"),
@@ -991,6 +1087,7 @@ ALL_VALIDATION_SQL: list[tuple[str, str, str]] = [
     ("val_complication_refinement", VAL_COMPLICATION_REFINEMENT_SQL, "Phase 2 complication refinement audit"),
     ("val_source_specific_refinement", VAL_SOURCE_SPECIFIC_REFINEMENT_SQL, "Phase 4 source-specific variable refinement audit"),
     ("val_phase5_refinement", VAL_PHASE5_REFINEMENT_SQL, "Phase 5 top-5 variable refinement audit"),
+    ("val_phase6_staging_refinement", VAL_PHASE6_STAGING_REFINEMENT_SQL, "Phase 6 source-linked staging refinement audit"),
 ]
 
 VAL_PHASE5_REFINEMENT_SQL = """

@@ -138,6 +138,16 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_extracted_rai_validated_v1", "extracted_rai_validated_v1"),
     ("md_extracted_ene_refined_v1", "extracted_ene_refined_v1"),
     ("md_patient_refined_master_clinical_v4", "patient_refined_master_clinical_v4"),
+    # ── Phase 6 Source-Linked Staging Refinement ─────────────────
+    ("md_extracted_margins_refined_v1", "extracted_margins_refined_v1"),
+    ("md_extracted_invasion_profile_v1", "extracted_invasion_profile_v1"),
+    ("md_extracted_ln_yield_v1", "extracted_ln_yield_v1"),
+    ("md_extracted_ene_refined_v2", "extracted_ene_refined_v2"),
+    ("md_extracted_staging_details_refined_v1", "extracted_staging_details_refined_v1"),
+    ("md_patient_refined_master_clinical_v5", "patient_refined_master_clinical_v5"),
+    ("md_vw_margins_by_source", "vw_margins_by_source"),
+    ("md_vw_invasion_profile", "vw_invasion_profile"),
+    ("md_vw_ln_yield_summary", "vw_ln_yield_summary"),
 ]
 
 SURVIVAL_COHORT_ENRICHED_SQL = """

@@ -385,3 +385,19 @@
 - Phase 5 report: `notes_extraction/master_top5_refinement_report_phase5.md`
 - Phase 5 figure: `exports/fig_ete_subgrading_distribution.png` (300 DPI, before/after ETE distribution)
 - Phase 5 suggested Phase 6 priorities: (1) calcium/PTH lab expansion from Excel, (2) RAI dose NLP from nuclear medicine notes, (3) ETE x→microscopic reclassification rule, (4) TERT C228T/C250T sub-typing, (5) ENE extent grading from path reports
+- Phase 6 engine: `notes_extraction/extraction_audit_engine_v4.py` with MarginDistanceParser, InvasionGrader (WHO 2022 vascular grading), LNYieldCalculator, ENEDeepener, plus `audit_and_refine_phase6()` orchestrator
+- Phase 6 new tables: `extracted_margins_refined_v1` (3,957 rows), `extracted_invasion_profile_v1` (3,780 rows), `extracted_ln_yield_v1` (8,339 rows), `extracted_ene_refined_v2` (1,267 rows), `extracted_staging_details_refined_v1` (8,399 rows consolidated), `patient_refined_master_clinical_v5` (11,861 rows, 81 columns)
+- Phase 6 summary views: `vw_margins_by_source` (4 rows: R-class breakdown), `vw_invasion_profile` (12 rows: entity x grade), `vw_ln_yield_summary` (1 row: aggregate stats)
+- Margin R-classification: R0=1, R1=3896, R2=25, Rx=35; 'x' in path_synoptics margin_status = involved; 1,525/3,957 (38.5%) have distance measurement; R2 requires both margin_involved + gross ETE
+- WHO 2022 vascular invasion grading: 231 focal (<4 vessels), 169 extensive (>=4 vessels), 3,295 present_ungraded ('x' placeholder); uses `tumor_1_angioinvasion_quantify` vessel count field
+- LN yield: median 2.0 examined, mean 8.9; 32.6% LN positive rate; 3,240 central dissections identified; 25 lateral dissections; location parsed from "positive/examined location" format
+- ENE v2: 1,267 patients, 6 dual-source (path+op_note), 83.3% concordance among dual-source; grade hierarchy: extensive(5)>present(4)>focal(3)>present_ungraded(2)>indeterminate(1)>absent(0)
+- H1 Phase 6 sensitivity: CLN-Recurrence crude OR=2.193; R1 subgroup OR=1.258 (attenuated but significant); LN>=3 subgroup OR=0.845 (NS, CLN benefit vanishes with adequate sampling); Vascular+ subgroup OR=1.257 (CLN effect persists)
+- H2 Phase 6 finding: substernal goiter has LOWER invasion rates (vasc 13.9%, LVI 13.9%, PNI 5.1%) vs cervical (29.2%, 28.1%, 11.8%) despite larger specimen size — predominantly benign multinodular disease
+- `patient_refined_master_clinical_v5`: extends v4 with 15 new Phase 6 columns (margin_r_classification, vascular_who_2022_grade, vascular_vessel_count, vascular_positive, lvi_positive, pni_refined_v6, pni_positive, capsular_invasion_v6, ln_total_examined, ln_total_positive, ln_ratio, ln_positive_v6, ln_central_dissected, ln_lateral_dissected, ene_grade_v6, ene_source_v6, ene_concordance_v6, ene_confidence_v6, ln_levels_raw, ln_source, ln_confidence)
+- Script 26 MATERIALIZATION_MAP expanded to 89 entries (was 80): adds 9 Phase 6 tables
+- Script 29 validation expanded with `val_phase6_staging_refinement` (13th val_* table): per-variable counts with source attribution
+- Overall data quality score Phase 6: 93/100 (up from 91 in Phase 5); 87% of vascular/LVI remain 'present_ungraded' — primary gap
+- Phase 6 report: `notes_extraction/master_refinement_report_phase6.md`; figure: `exports/fig_margins_invasions_by_source.png`
+- Phase 6 auto-generated report: `notes_extraction/phase6_staging_refinement_YYYYMMDD_HHMM.md`
+- path_synoptics `age` column is named `age` (not `age_at_surgery`); use `ps.age` when querying path_synoptics directly
