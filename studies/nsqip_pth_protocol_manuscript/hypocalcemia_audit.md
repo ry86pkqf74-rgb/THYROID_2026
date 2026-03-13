@@ -1,7 +1,7 @@
 # Hypocalcemia Rate Audit — NSQIP/PTH Protocol Manuscript
 
 **Auditor:** Automated pipeline audit  
-**Date:** 2026-03-12  
+**Date:** 2026-03-13 (revised)  
 **Target manuscript:** Institutional NSQIP/PTH protocol for *The American Surgeon*  
 **Manuscript claim under audit:** "clinically significant hypocalcemia occurred in 7.5% (57/763) among institutional total/completion thyroidectomies"
 
@@ -11,15 +11,23 @@
 
 | Question | Answer |
 |----------|--------|
-| Is 57/763 = 7.5% reproducible? | **YES** — at the surgery-level analysis |
-| Is the denominator correct? | **NO** — 763 is surgery-level; patient-level is 755 |
-| Is the numerator correct? | **YES** — 57 unique patients, no double-counting |
-| Is the parent cohort 1,086? | **Partially** — 1,086 = surgery-level cases; 1,075 = unique patients |
-| Is "clinically significant" the right label? | **NO** — the NSQIP field captures *any* postoperative hypocalcemia, not just clinically significant |
-| Is the rate overestimated? | **DEPENDS ON DEFINITION** — see §7 below |
-| Is the metric manuscript-safe? | **NO as stated** — requires correction of denominator unit, clinical label, and parent cohort count |
+| Is 57/763 = 7.5% reproducible? | **YES** — at the surgery-level analysis of Case Details |
+| Is 57 the correct numerator? | **NO** — 57 is *any postoperative hypocalcemia* (NSQIP module Yes/No). The institutional SAR shows **19 hypocalcemia-related readmissions** across all thyroidectomies. These are different metrics. |
+| Is the denominator correct? | **NO** — 763 is surgery-level; patient-level is 755. Additionally, if using SAR readmission definition, denominator should be 1,393 total thyroidectomies. |
+| Is "clinically significant" the right label? | **NO** — the NSQIP module field captures *any* postoperative hypocalcemia (mild/biochemical/outpatient), not clinically significant events |
+| Is the rate overestimated? | **YES** — 7.5% conflates mild biochemical hypocalcemia with clinically significant events. The SAR-verified readmission rate is **19/1,393 = 1.4%** |
+| Is the metric manuscript-safe? | **NO as stated** — the numerator, denominator, clinical label, and parent cohort all require correction |
 
-**Recommended replacement rate:** 57/755 = 7.5% (patient-level, any NSQIP-captured postoperative hypocalcemia)
+### Critical Discrepancy: Two Data Products, Two Definitions
+
+| Data source | What it counts | Count | Denominator | Rate |
+|-------------|---------------|-------|-------------|------|
+| NSQIP SAR (institutional QI dashboard) | **Readmissions for hypocalcemia** | **19** | 1,393 total Tx | **1.4%** |
+| NSQIP Case Details module field | Any postop hypocalcemia (Yes/No) | 57 | 755 TC patients with module | 7.5% |
+
+The SAR "Hypocalcemia" column = Readmissions × ReadmFromHypocalcemia (verified: all 14 years match exactly). The Case Details module field captures any biochemical or symptomatic hypocalcemia within 30 days, regardless of severity or need for readmission.
+
+**Recommended replacement:** Use SAR-verified 19/1,393 = 1.4% for readmission-requiring hypocalcemia, or report both metrics with clear definitions.
 
 ---
 
@@ -269,41 +277,96 @@ The institutional lakehouse has NO direct source for the NSQIP hypocalcemia metr
 
 ---
 
-## 11. Manuscript-Safe Recommendations
+## 11. SAR vs Case Details Reconciliation
 
-### A. If 57/755 is accepted (correct patient-level rate, any NSQIP hypocalcemia)
+### 11.1 Verified arithmetic
 
-> "Postoperative hypocalcemia, as captured by the NSQIP thyroidectomy module, occurred in 57 of 755 patients (7.5%; 95% CI, 5.9%–9.7%) with module data available among 1,075 total and completion thyroidectomy patients."
+The SAR "Hypocalcemia" column = Readmissions × Readmission-from-Hypocalcemia proportion. All 14 years verify exactly:
 
-### B. If the intent is truly "clinically significant" (requiring intervention)
+| Year | Readmissions | ReadmFromHypo | SAR Hypo | Computed | Match |
+|------|-------------|---------------|----------|----------|-------|
+| 2010 | 5 | 0.80 | 4 | 4 | Yes |
+| 2011 | 4 | 0.75 | 3 | 3 | Yes |
+| 2012 | 4 | 1.00 | 4 | 4 | Yes |
+| 2013 | 2 | 1.00 | 2 | 2 | Yes |
+| 2014 | 2 | 1.00 | 2 | 2 | Yes |
+| 2015 | 1 | 0.00 | 0 | 0 | Yes |
+| 2016 | 1 | 0.00 | 0 | 0 | Yes |
+| 2017 | 4 | 0.25 | 1 | 1 | Yes |
+| 2018 | 0 | 0.00 | 0 | 0 | Yes |
+| 2019 | 1 | 1.00 | 1 | 1 | Yes |
+| 2020 | 0 | 0.00 | 0 | 0 | Yes |
+| 2021 | 0 | 0.00 | 0 | 0 | Yes |
+| 2022 | 0 | 0.00 | 0 | 0 | Yes |
+| 2023 | 4 | 0.50 | 2 | 2 | Yes |
+| **Total** | **28** | | **19** | **19** | **All** |
 
-> "Clinically significant hypocalcemia, defined as a hypocalcemia-related event requiring emergency evaluation, intravenous calcium, or readmission, occurred in 31 of 755 patients (4.1%; 95% CI, 2.9%–5.8%) with module data available."
+19 of 28 total readmissions (67.9%) were attributable to hypocalcemia.
 
-### C. Recommended limitations language
+### 11.2 Why the Case Details cannot reproduce 19
 
-> "The NSQIP thyroidectomy module fields, including postoperative hypocalcemia and calcium/vitamin D replacement, were available for 755 of 1,075 total and completion thyroidectomy patients (70.2%). Module data were absent for all patients operated before 2013 (pre-module era, n=259) and partially available during the 2013 rollout year. Consequently, hypocalcemia rates represent an available-case analysis restricted to the 2013–2023 subset with non-missing module data and may not reflect the experience of the full cohort."
+| Reason | Detail |
+|--------|--------|
+| Pre-module gap | SAR includes 11 events from 2010–2012; Case Details module fields are ALL NULL for those years |
+| Different data product | SAR is an institutional aggregate; Case Details is patient-level |
+| Definition mismatch | SAR tracks readmissions; Case Details tracks any postop hypocalcemia |
+| Case Details closest match | Hypo=Yes AND readmitted = 10 patients; "Readmitted for low calcium" event = 6 patients |
+
+### 11.3 What 57 actually represents
+
+Of the 57 Case Details hypo=Yes patients (total/completion, 2013–2023):
+- **10** were readmitted (17.5%) — closest to SAR concept
+- **31** had a hypocalcemia-related event (54.4%) — ER, IV calcium, or readmission
+- **26** had hypo=Yes but NO event and NO readmission (45.6%) — mild/outpatient/biochemical-only
 
 ---
 
-## 12. Specific Errors in the Current Manuscript Statement
+## 12. Manuscript-Safe Recommendations
+
+### A. RECOMMENDED: Report both metrics with clear definitions
+
+> "Among 1,393 total and completion thyroidectomies in the NSQIP institutional cohort (2010–2023), hypocalcemia requiring 30-day readmission occurred in 19 patients (1.4%). In the subset of 755 patients with NSQIP thyroidectomy module data available (2013–2023), any postoperative hypocalcemia was documented in 57 (7.5%; 95% CI, 5.9%–9.7%), of whom 31 (4.1%) experienced a clinically significant event requiring emergency evaluation, intravenous calcium supplementation, or hospital readmission."
+
+### B. If only one metric (simplest fix, SAR-aligned)
+
+> "Hypocalcemia requiring 30-day readmission occurred in 19 of 1,393 total and completion thyroidectomy patients (1.4%)."
+
+### C. If only one metric (Case Details, corrected labels)
+
+> "Postoperative hypocalcemia, as captured by the NSQIP thyroidectomy module, was documented in 57 of 755 patients (7.5%; 95% CI, 5.9%–9.7%) with module data available among 1,075 total and completion thyroidectomy patients."
+
+### D. Recommended limitations language
+
+> "Hypocalcemia ascertainment varied by data source. The NSQIP thyroidectomy module field, which captures any postoperative hypocalcemia (biochemical or symptomatic) within 30 days, was available for 755 of 1,075 total and completion thyroidectomy patients (70.2%); module data were absent for all patients before 2013. The institutional NSQIP Semiannual Report, which tracks only readmissions attributable to hypocalcemia, identified 19 events among 1,393 total thyroidectomies (1.4%). The discrepancy between the module-based rate (7.5%) and the readmission-based rate (1.4%) reflects the inclusion of mild, outpatient-managed hypocalcemia in the module field."
+
+---
+
+## 13. Specific Errors in the Current Manuscript Statement
 
 | Element | Manuscript | Correct | Issue |
 |---------|-----------|---------|-------|
-| Parent cohort | 1,086 | 1,075 patients | 1,086 = surgery cases (includes 11 double-counted patients) |
-| Denominator | 763 | 755 | 763 = surgery-level; 755 = patient-level |
-| Numerator | 57 | 57 | Correct (same either way) |
-| Rate | 7.5% | 7.5% | Numerically identical after rounding |
-| Label | "clinically significant" | "postoperative" | NSQIP field is any hypocalcemia, not severity-gated |
-| Unit | not stated | patient-level | Must specify patient-level vs surgery-level |
+| Numerator | 57 | **19** (if readmission-requiring) or 57 (if any postop) | 57 is any postop hypocalcemia, NOT "clinically significant"; SAR-verified readmission count is 19 |
+| Denominator | 763 | **1,393** (SAR total Tx) or 755 (patient-level module) | 763 = surgery-level Case Details; must match the numerator's definition |
+| Parent cohort | 1,086 | 1,075 patients (Case Details) or 1,393 total Tx (SAR) | 1,086 = surgery-level Case Details count |
+| Rate | 7.5% | **1.4%** (readmission) or 7.5% (any postop) | 7.5% is NOT clinically significant; 1.4% is the readmission rate |
+| Label | "clinically significant" | Must match definition used | NSQIP module = any hypocalcemia; SAR = readmission-requiring |
+| Unit | not stated | patient-level required | Must specify |
 
 ---
 
-## 13. Verdict
+## 14. Verdict
 
-The rate 57/763 = 7.5% is **reproducible** but **not manuscript-safe as stated** due to:
+The manuscript statement "clinically significant hypocalcemia occurred in 7.5% (57/763)" is **NOT manuscript-safe** due to:
 
-1. **Surgery-level denominator** (763 cases vs 755 patients)
-2. **Mislabeled clinical severity** ("clinically significant" vs "any postoperative")
-3. **Parent cohort miscounted** (1,086 cases vs 1,075 patients)
+1. **Inflated numerator for the stated definition.** "Clinically significant" conventionally means requiring intervention or readmission. The institutional SAR confirms only **19 readmissions for hypocalcemia** across 1,393 total thyroidectomies = **1.4%**. The 57 includes mild/outpatient/biochemical cases that did not require readmission.
 
-The numerator (57) and the practical rate (7.5%) are both correct at the patient level. The fix is primarily **labeling and denominator reporting**, not a change in the actual hypocalcemia count.
+2. **Surgery-level denominator.** 763 = surgery-level; 755 = patient-level. Multi-surgery patients inflate the denominator by 8.
+
+3. **Data source mismatch.** The 57 comes from Case Details module data (2013–2023 only, 70% coverage). The SAR's 19 spans the full 2010–2023 period including 11 pre-module-era events the Case Details cannot capture.
+
+4. **The rate is 5× higher than institutional reality.** Surgeons at this institution know 19 readmissions for hypocalcemia in 14 years. Reporting 7.5% as "clinically significant" would be misleading and would not survive peer review scrutiny.
+
+**Bottom line:** Replace 57/763 = 7.5% with either:
+- **19/1,393 = 1.4%** (readmission for hypocalcemia, SAR-verified, full cohort)
+- **31/755 = 4.1%** (hypocalcemia-related event requiring intervention, Case Details)
+- Or report both with explicit definitions per §12A above.
