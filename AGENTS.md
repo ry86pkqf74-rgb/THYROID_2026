@@ -688,4 +688,10 @@
 - `docs/post_maturation_gap_audit_20260313.md`: complete audit of canonical table fill rates, linkage propagation status, lab coverage, and gap classification (fixable vs source-limited)
 - `docs/lab_layer_scaffold_plan_20260313.md`: future institutional lab extract contract (required fields, matching keys, unit normalization, validation gates, integration steps)
 - MATERIALIZATION_MAP expanded to include `md_longitudinal_lab_canonical_v1` and `md_val_lab_completeness_v1` (script 77 outputs)
-- Deployment order updated: ... → 75 → 76 → 77 → 26 --md
+- Deployment order updated: ... → 75 → 76 → 77 → 78 → 26 --md
+- Lab canonical dedup (2026-03-13): 5,993 exact-duplicate rows removed from `longitudinal_lab_canonical_v1` (45,954 → 39,961); root cause: script 77 ingested threshold values as both censored and uncensored rows; dedup rule: prefer `is_censored=TRUE`, tiebreak by `ingestion_wave DESC`; backup preserved as `longitudinal_lab_canonical_v1_pre_dedup`; `val_lab_canonical_v1` rebuilt with 0 duplicate groups (all PASS except calcium_total WARN for pre-existing plausibility)
+- Operative V2 NLP fields at 0%: `berry_ligament_flag`, `frozen_section_flag`, `ebl_ml_nlp`, `parathyroid_identified_count`, `parathyroid_autograft_count`, `parathyroid_autograft_site`, `op_confidence`, `op_enrichment_source` — all Category C (raw text only, extractor exists at `notes_extraction/extract_operative_v2.py` but outputs never materialized to MotherDuck); no safe landing without running full V2 extraction pipeline
+- QA workbench now surfaces: lab canonical status (dedup count, validation), operative NLP enrichment caveat (source-limited, not data quality), and all prior sections (integrity, provenance, linkage, chronology, imaging-FNA, molecular chain, RAI missingness, recurrence dates)
+- Dashboard version updated: `_APP_VERSION = "v3.2.0-2026.03.13"`; docstring reflects current workflow-first architecture
+- README simplified: removed stale "sign in" guidance, old flat-tab references, duplicated gap section; consolidated deploy instructions; added operative V2 gap to source-limited list
+- `docs/final_small_cleanup_audit_20260313.md`: pre-implementation audit covering operative V2 field status, lab duplicate profile, and stale documentation inventory
