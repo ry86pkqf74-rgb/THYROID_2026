@@ -1088,7 +1088,80 @@ ALL_VALIDATION_SQL: list[tuple[str, str, str]] = [
     ("val_source_specific_refinement", VAL_SOURCE_SPECIFIC_REFINEMENT_SQL, "Phase 4 source-specific variable refinement audit"),
     ("val_phase5_refinement", VAL_PHASE5_REFINEMENT_SQL, "Phase 5 top-5 variable refinement audit"),
     ("val_phase6_staging_refinement", VAL_PHASE6_STAGING_REFINEMENT_SQL, "Phase 6 source-linked staging refinement audit"),
+    ("val_phase9_targeted_refinement", VAL_PHASE9_TARGETED_REFINEMENT_SQL, "Phase 9 targeted refinement audit"),
 ]
+
+VAL_PHASE9_TARGETED_REFINEMENT_SQL = """
+CREATE OR REPLACE TABLE val_phase9_targeted_refinement AS
+WITH lab_stats AS (
+    SELECT
+        'postop_labs' AS variable,
+        COUNT(*) AS total_values,
+        COUNT(DISTINCT research_id) AS unique_patients,
+        COUNT(CASE WHEN lab_type = 'pth' THEN 1 END) AS pth_count,
+        COUNT(CASE WHEN lab_type = 'total_calcium' THEN 1 END) AS calcium_count,
+        STRING_AGG(DISTINCT extraction_method, ', ') AS methods
+    FROM extracted_postop_labs_expanded_v1
+),
+rai_stats AS (
+    SELECT
+        'rai_dose' AS variable,
+        COUNT(*) AS total_values,
+        COUNT(DISTINCT research_id) AS unique_patients,
+        COUNT(CASE WHEN linkage_status = 'structured' THEN 1 END) AS structured_count,
+        COUNT(CASE WHEN linkage_status LIKE 'nlp%' THEN 1 END) AS nlp_count,
+        STRING_AGG(DISTINCT source_table, ', ') AS methods
+    FROM extracted_rai_dose_refined_v1
+),
+ete_stats AS (
+    SELECT
+        'ete_grading' AS variable,
+        COUNT(*) AS total_values,
+        COUNT(DISTINCT research_id) AS unique_patients,
+        COUNT(CASE WHEN ete_grade_v9 = 'microscopic' THEN 1 END) AS microscopic_count,
+        COUNT(CASE WHEN ete_grade_v9 = 'gross' THEN 1 END) AS gross_count,
+        STRING_AGG(DISTINCT ete_rule_applied, ', ') FILTER (WHERE ete_rule_applied IS NOT NULL) AS methods
+    FROM extracted_ete_ene_tert_refined_v1
+    WHERE ete_grade_v9 IS NOT NULL
+),
+tert_stats AS (
+    SELECT
+        'tert_subtyping' AS variable,
+        COUNT(*) AS total_values,
+        COUNT(DISTINCT research_id) AS unique_patients,
+        COUNT(CASE WHEN tert_variant_v9 = 'C228T' THEN 1 END) AS c228t_count,
+        COUNT(CASE WHEN tert_variant_v9 = 'C250T' THEN 1 END) AS c250t_count,
+        STRING_AGG(DISTINCT tert_variant_v9, ', ') FILTER (WHERE tert_variant_v9 IS NOT NULL) AS methods
+    FROM extracted_ete_ene_tert_refined_v1
+    WHERE tert_positive_v9 IS TRUE
+),
+ene_stats AS (
+    SELECT
+        'ene_grading' AS variable,
+        COUNT(*) AS total_values,
+        COUNT(DISTINCT research_id) AS unique_patients,
+        COUNT(CASE WHEN ene_grade_v9 IN ('focal','extensive') THEN 1 END) AS graded_count,
+        COUNT(CASE WHEN ene_grade_v9 = 'present_ungraded' THEN 1 END) AS ungraded_count,
+        STRING_AGG(DISTINCT ene_grade_v9, ', ') FILTER (WHERE ene_grade_v9 IS NOT NULL) AS methods
+    FROM extracted_ete_ene_tert_refined_v1
+    WHERE ene_grade_v9 IS NOT NULL
+)
+SELECT variable, total_values, unique_patients, pth_count AS metric_a, calcium_count AS metric_b, methods
+FROM lab_stats
+UNION ALL
+SELECT variable, total_values, unique_patients, structured_count, nlp_count, methods
+FROM rai_stats
+UNION ALL
+SELECT variable, total_values, unique_patients, microscopic_count, gross_count, methods
+FROM ete_stats
+UNION ALL
+SELECT variable, total_values, unique_patients, c228t_count, c250t_count, methods
+FROM tert_stats
+UNION ALL
+SELECT variable, total_values, unique_patients, graded_count, ungraded_count, methods
+FROM ene_stats
+ORDER BY variable;
+"""
 
 VAL_PHASE5_REFINEMENT_SQL = """
 CREATE OR REPLACE TABLE val_phase5_refinement AS

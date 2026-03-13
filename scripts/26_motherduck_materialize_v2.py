@@ -148,6 +148,14 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_vw_margins_by_source", "vw_margins_by_source"),
     ("md_vw_invasion_profile", "vw_invasion_profile"),
     ("md_vw_ln_yield_summary", "vw_ln_yield_summary"),
+    # ── Phase 9 Targeted Refinement (extraction_audit_engine_v7) ────
+    ("md_extracted_postop_labs_expanded_v1", "extracted_postop_labs_expanded_v1"),
+    ("md_vw_postop_lab_expanded", "vw_postop_lab_expanded"),
+    ("md_extracted_rai_dose_refined_v1", "extracted_rai_dose_refined_v1"),
+    ("md_vw_rai_dose_by_source", "vw_rai_dose_by_source"),
+    ("md_extracted_ete_ene_tert_refined_v1", "extracted_ete_ene_tert_refined_v1"),
+    ("md_vw_ete_microscopic_rule", "vw_ete_microscopic_rule"),
+    ("md_patient_refined_master_clinical_v8", "patient_refined_master_clinical_v8"),
 ]
 
 SURVIVAL_COHORT_ENRICHED_SQL = """
