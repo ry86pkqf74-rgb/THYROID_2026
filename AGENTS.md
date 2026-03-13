@@ -457,4 +457,14 @@
 - Overall data quality score Phase 9: 96 → 97/100; post-op labs: 35→55; RAI dose: 75→82; ETE grading: 40→95 (+55, biggest single-domain improvement); TERT: 92→93; ENE: 25→26
 - Phase 9 report: `notes_extraction/master_refinement_report_phase9.md`; figure: `exports/fig_lab_rai_ete_grading.png`
 - Deployment order updated: script 15 → ... → 45 → Phase 8 engine v6 → Phase 9 engine v7
-- All 9 extraction audit engine phases complete (v1→v7); 96 tables in MATERIALIZATION_MAP; 14 val_* validation tables
+- Phase 9b: Multi-source ENE extraction with 7 modalities — `extracted_ene_multisource_v1` (2,396 rows, 1,596 patients), `vw_ene_concordance` (1,596 rows wide-format), `vw_ene_source_summary` (7 rows)
+- ENE source modalities: `path_synoptic` (1,266 pts, structured 'x'/'present'), `path_report_nlp` (21 pts, free-text with extent grading: 2 microscopic, 1 focal, 9 present, 9 absent), `op_note_intraop` (12 pts: 6 absent, 4 gross, 2 present), `CT` (369 pts: 281 suspicious, 19 negative), `US` (465 pts: 351 suspicious, 27 negative), `PET` (63 pts: 60 avid), `RAI_scan` (200 pts: 161 uptake-positive)
+- ENE concordance: path vs CT 99% concordant (182/184 evaluable), path vs US 96% (209/217), op vs path 50% (6/12); 473 multi-source patients; 225 with 3+ sources
+- ENE deposit size: 144 patients with measurement; avg 2.85cm, median 1.60cm, range 0.1-30.0cm
+- `patient_refined_master_clinical_v8` now has 35 Phase 9 columns (was 23): +12 multi-source ENE (best_ene_grade, ene_path_synoptic, ene_path_nlp, ene_deposit_cm, ene_path_levels, ene_op_intraop, ene_ct, ene_us, ene_pet, ene_rai_scan, ene_n_sources, ene_path_ct_concordance)
+- `clinical_notes_long` note types with ENE mentions: h_p 3,931, op_note 3,853, endocrine_note 333, other_history 232, dc_sum 152; h_p excluded from path_report_nlp extraction (consent boilerplate contamination)
+- Path report NLP ENE patterns: "microscopic extranodal" (6 pts), "focal extranodal" (4 pts), "extensive extranodal" (1 pt), "no extranodal extension" (29 pts), "not identified" (169 pts context); most pathology ENE detail is in synoptic format not captured by free-text regex
+- CT suspicious node patterns: necrotic_node → suspicious_high; metastatic_adenopathy/pathologic_node → suspicious_moderate; enlarged_node → indeterminate; no_suspicious → negative
+- `imaging_nodule_long_v2` has 10,866 rows but ALL suspicious_node_flag = FALSE and only US modality; CT/MRI/PET imaging data exists only in clinical note free-text
+- Script 26 MATERIALIZATION_MAP expanded to 99 entries (was 96): adds 3 Phase 9b ENE tables
+- All 9 extraction audit engine phases complete (v1→v7); 99 tables in MATERIALIZATION_MAP; 14 val_* validation tables
