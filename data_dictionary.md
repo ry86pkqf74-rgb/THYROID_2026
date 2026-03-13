@@ -570,21 +570,46 @@ Key columns:
 - `match_pct`: percentage of matched pairs
 - `check_type`: 'fna_path' or 'us_operative'
 
-### `qa_missing_demographics` (table)
+### `demographics_harmonized_v2` (table, added 2026-03-13)
 
-Patients with missing demographic fields. Age and sex sourced from
-`patient_level_summary_mv`; race sourced from `path_synoptics` via LEFT JOIN.
+One row per patient. Cross-source harmonized demographics with full provenance.
+Eliminates 585 false-missing age records by backfilling DOB from `thyroid_weights`,
+`thyroglobulin_labs`, and `anti_thyroglobulin_labs`, then computing age via
+`DATE_DIFF('year', dob, surgery_date)` with birthday correction.
+
+Source priority (highest first):
+- **Age**: benign_pathology > tumor_pathology > path_synoptics.age > thyroid_weights DOB > lab DOB
+- **Sex**: benign_pathology > tumor_pathology > path_synoptics.gender > lab.gender
+- **Race**: path_synoptics.race > thyroglobulin_labs.race > anti_tg_labs.race
 
 Key columns:
 
 - `research_id`: patient identifier (INT)
-- `age_at_surgery`: age (NULL if missing)
-- `sex`: sex (NULL if missing)
-- `race`: race from path_synoptics (NULL if missing or no synoptic record)
+- `age_at_surgery`: harmonized age (INT, NULL if no source)
+- `age_source`: provenance label (benign_pathology|tumor_pathology|path_synoptics|thyroid_weights_dob|thyroglobulin_labs_dob|anti_tg_labs_dob)
+- `sex`: harmonized sex ('Male'|'Female', NULL if no source)
+- `sex_source`: provenance label
+- `race`: harmonized race (raw value from best source, NULL if no source)
+- `race_source`: provenance label
+- `best_surgery_date`: DATE used for DOB-based age calculation
+- `best_dob`: DATE from DOB backfill chain (NULL if no DOB in any source)
+
+Coverage (as of 2026-03-13): 11,673 patients; age 98.1%, sex 93.2%, race 93.1%.
+
+### `qa_missing_demographics` (table)
+
+Residual patients with missing demographics **after** cross-source backfill.
+Replaces the pre-backfill version that reported 802+ false missing.
+
+Key columns:
+
+- `research_id`: patient identifier (INT)
+- `age_at_surgery`, `sex`, `race`: best values from `demographics_harmonized_v2`
+- `age_source`, `sex_source`, `race_source`: provenance labels
 - `age_flag`: 'MISSING_AGE' or 'OK'
 - `sex_flag`: 'MISSING_SEX' or 'OK'
 - `race_flag`: 'MISSING_RACE' or 'OK'
-- `source_priority`: data source used for demographics lookup
+- `source_priority`: combined provenance string
 
 ---
 

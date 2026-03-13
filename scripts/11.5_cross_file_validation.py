@@ -88,7 +88,25 @@ LATERALITY_SQL = textwrap.dedent("""\
             CAST(research_id AS INT) AS research_id,
             TRY_CAST(surg_date AS DATE) AS surgery_date,
             LOWER(TRIM(CAST(side_of_largest_tumor_or_goiter AS VARCHAR)))
-                AS operative_side,
+                AS operative_side_raw,
+            -- Normalize abbreviations: ll/lll/left lobe → left; rl/rll/rul/right lobe → right
+            CASE
+                WHEN LOWER(TRIM(CAST(side_of_largest_tumor_or_goiter AS VARCHAR)))
+                     IN ('ll', 'lll', 'left lobe', 'left lower pole',
+                         'll, substernal', 'll/substernal', 'left middle lobe')
+                THEN 'left'
+                WHEN LOWER(TRIM(CAST(side_of_largest_tumor_or_goiter AS VARCHAR)))
+                     IN ('rl', 'rll', 'rul', 'right lobe', 'right lower pole',
+                         'right middle lobe', 'rl, substernal', 'rl/substernal')
+                THEN 'right'
+                WHEN LOWER(TRIM(CAST(side_of_largest_tumor_or_goiter AS VARCHAR)))
+                     IN ('bilateral', 'both', 'b', 'total')
+                THEN 'bilateral'
+                WHEN LOWER(TRIM(CAST(side_of_largest_tumor_or_goiter AS VARCHAR)))
+                     IN ('isthmus', 'isthmus/central')
+                THEN 'isthmus'
+                ELSE LOWER(TRIM(CAST(side_of_largest_tumor_or_goiter AS VARCHAR)))
+            END AS operative_side,
             ROW_NUMBER() OVER (
                 PARTITION BY CAST(research_id AS INT)
                 ORDER BY TRY_CAST(surg_date AS DATE)
@@ -128,6 +146,7 @@ LATERALITY_SQL = textwrap.dedent("""\
     )
     SELECT
         o.research_id,
+        o.operative_side_raw,
         o.operative_side,
         ps.path_procedure,
         ps.path_side,
@@ -135,7 +154,7 @@ LATERALITY_SQL = textwrap.dedent("""\
         o.surgery_number,
         CASE
             WHEN ps.path_side IS NULL THEN 'INCOMPLETE'
-            WHEN o.operative_side IN ('bilateral', 'both', 'b', 'total')
+            WHEN o.operative_side = 'bilateral'
                  OR ps.path_side = 'bilateral'
             THEN 'MATCH'
             WHEN o.operative_side = ps.path_side
@@ -210,40 +229,239 @@ REPORT_MATCHING_SQL = textwrap.dedent("""\
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-#  SQL: Check C — Missing Demographics Imputation Candidates
+#  SQL: demographics_harmonized_v2 — Full cross-source backfill
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #
-# patient_level_summary_mv has age_at_surgery and sex but not race.
-# Race is sourced from path_synoptics (which stores it from synoptic
-# reports). Gender mapped to sex for consistency.
+# Source priority (highest first):
+#   Age:  benign_pathology > tumor_pathology > path_synoptics.age
+#         > thyroid_weights DOB+surg_date > lab DOB+surg_date
+#   Sex:  benign_pathology > tumor_pathology > path_synoptics.gender
+#         > thyroglobulin_labs.gender > anti_thyroglobulin_labs.gender
+#   Race: path_synoptics.race > thyroglobulin_labs.race
+#         > anti_thyroglobulin_labs.race
+#
+# For DOB-derived age, we use DATE_DIFF('year', dob, surgery_date)
+# with surgery_date sourced from: thyroid_weights.date_of_surgery
+# > operative_details.surg_date > path_synoptics.surg_date
+
+DEMOGRAPHICS_HARMONIZED_SQL = textwrap.dedent("""\
+    CREATE OR REPLACE TABLE demographics_harmonized_v2 AS
+    WITH patient_spine AS (
+        SELECT DISTINCT CAST(research_id AS INT) AS research_id
+        FROM master_cohort
+        WHERE research_id IS NOT NULL
+    ),
+
+    -- P1: benign_pathology (10,871 patients)
+    bp AS (
+        SELECT CAST(research_id AS INT) AS rid,
+               FIRST(age_at_surgery ORDER BY surgery_date DESC NULLS LAST) AS age_at_surgery,
+               FIRST(sex ORDER BY surgery_date DESC NULLS LAST) AS sex,
+               FIRST(TRY_CAST(surgery_date AS DATE) ORDER BY surgery_date DESC NULLS LAST) AS surgery_date
+        FROM benign_pathology
+        WHERE age_at_surgery IS NOT NULL
+        GROUP BY CAST(research_id AS INT)
+    ),
+
+    -- P2: tumor_pathology (3,986 patients)
+    tp AS (
+        SELECT CAST(research_id AS INT) AS rid,
+               FIRST(age_at_surgery ORDER BY surgery_date DESC NULLS LAST) AS age_at_surgery,
+               FIRST(sex ORDER BY surgery_date DESC NULLS LAST) AS sex
+        FROM tumor_pathology
+        WHERE age_at_surgery IS NOT NULL
+        GROUP BY CAST(research_id AS INT)
+    ),
+
+    -- P3: path_synoptics (10,871 patients with age/gender; 10,862 with race)
+    ps AS (
+        SELECT CAST(research_id AS INT) AS rid,
+               FIRST(TRY_CAST(CAST(age AS VARCHAR) AS INT)) AS age_ps,
+               FIRST(CASE
+                   WHEN LOWER(CAST(gender AS VARCHAR)) IN ('male', 'm') THEN 'Male'
+                   WHEN LOWER(CAST(gender AS VARCHAR)) IN ('female', 'f') THEN 'Female'
+                   ELSE NULL
+               END) AS sex_ps,
+               FIRST(CAST(race AS VARCHAR)) FILTER (
+                   WHERE race IS NOT NULL AND TRIM(CAST(race AS VARCHAR)) != ''
+               ) AS race_ps,
+               FIRST(TRY_CAST(surg_date AS DATE)) AS surg_date_ps
+        FROM path_synoptics
+        GROUP BY CAST(research_id AS INT)
+    ),
+
+    -- P4: thyroid_weights DOB + date_of_surgery (9,952 with DOB)
+    tw AS (
+        SELECT CAST(research_id AS INT) AS rid,
+               FIRST(dob) AS dob_tw,
+               FIRST(TRY_CAST(date_of_surgery AS DATE)) AS surg_date_tw
+        FROM thyroid_weights
+        WHERE dob IS NOT NULL
+        GROUP BY CAST(research_id AS INT)
+    ),
+
+    -- P5: operative_details surgery date (9,368 patients)
+    od AS (
+        SELECT CAST(research_id AS INT) AS rid,
+               FIRST(TRY_CAST(surg_date AS DATE) ORDER BY TRY_CAST(surg_date AS DATE)) AS surg_date_od
+        FROM operative_details
+        GROUP BY CAST(research_id AS INT)
+    ),
+
+    -- P6: thyroglobulin_labs (2,569 patients with DOB/gender/race)
+    tg AS (
+        SELECT CAST(research_id AS INT) AS rid,
+               FIRST(TRY_CAST(dob AS DATE)) AS dob_tg,
+               FIRST(CASE
+                   WHEN LOWER(TRIM(CAST(gender AS VARCHAR))) IN ('male', 'm') THEN 'Male'
+                   WHEN LOWER(TRIM(CAST(gender AS VARCHAR))) IN ('female', 'f') THEN 'Female'
+                   ELSE NULL
+               END) AS sex_tg,
+               FIRST(CAST(race AS VARCHAR)) FILTER (
+                   WHERE race IS NOT NULL AND TRIM(CAST(race AS VARCHAR)) != ''
+               ) AS race_tg
+        FROM thyroglobulin_labs
+        GROUP BY CAST(research_id AS INT)
+    ),
+
+    -- P7: anti_thyroglobulin_labs (2,127 patients with DOB/gender/race)
+    atg AS (
+        SELECT CAST(research_id AS INT) AS rid,
+               FIRST(TRY_CAST(dob AS DATE)) AS dob_atg,
+               FIRST(CASE
+                   WHEN LOWER(TRIM(CAST(gender AS VARCHAR))) IN ('male', 'm') THEN 'Male'
+                   WHEN LOWER(TRIM(CAST(gender AS VARCHAR))) IN ('female', 'f') THEN 'Female'
+                   ELSE NULL
+               END) AS sex_atg,
+               FIRST(CAST(race AS VARCHAR)) FILTER (
+                   WHERE race IS NOT NULL AND TRIM(CAST(race AS VARCHAR)) != ''
+               ) AS race_atg
+        FROM anti_thyroglobulin_labs
+        GROUP BY CAST(research_id AS INT)
+    ),
+
+    harmonized AS (
+        SELECT
+            sp.research_id,
+
+            -- Best surgery date (for DOB-based age calculation)
+            COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od)
+                AS best_surgery_date,
+
+            -- Best DOB (for age calculation fallback)
+            COALESCE(tw.dob_tw, tg.dob_tg, atg.dob_atg) AS best_dob,
+
+            -- AGE: direct sources first, then DOB-derived
+            COALESCE(
+                TRY_CAST(bp.age_at_surgery AS INT),
+                TRY_CAST(tp.age_at_surgery AS INT),
+                ps.age_ps,
+                -- DOB-derived age: date_diff year, corrected for birthday
+                CASE WHEN COALESCE(tw.dob_tw, tg.dob_tg, atg.dob_atg) IS NOT NULL
+                      AND COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od) IS NOT NULL
+                     THEN DATE_DIFF('year',
+                              COALESCE(tw.dob_tw, tg.dob_tg, atg.dob_atg),
+                              COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od)
+                          )
+                          - CASE WHEN
+                              MONTH(COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od))
+                                < MONTH(COALESCE(tw.dob_tw, tg.dob_tg, atg.dob_atg))
+                              OR (MONTH(COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od))
+                                  = MONTH(COALESCE(tw.dob_tw, tg.dob_tg, atg.dob_atg))
+                                  AND DAY(COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od))
+                                    < DAY(COALESCE(tw.dob_tw, tg.dob_tg, atg.dob_atg)))
+                            THEN 1 ELSE 0 END
+                     ELSE NULL
+                END
+            ) AS age_at_surgery,
+
+            -- AGE source provenance
+            CASE
+                WHEN bp.age_at_surgery IS NOT NULL THEN 'benign_pathology'
+                WHEN tp.age_at_surgery IS NOT NULL THEN 'tumor_pathology'
+                WHEN ps.age_ps IS NOT NULL          THEN 'path_synoptics'
+                WHEN COALESCE(tw.dob_tw, tg.dob_tg, atg.dob_atg) IS NOT NULL
+                     AND COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od) IS NOT NULL
+                     THEN CASE
+                         WHEN tw.dob_tw IS NOT NULL THEN 'thyroid_weights_dob'
+                         WHEN tg.dob_tg IS NOT NULL THEN 'thyroglobulin_labs_dob'
+                         ELSE 'anti_tg_labs_dob'
+                     END
+                ELSE NULL
+            END AS age_source,
+
+            -- SEX: direct sources first, then lab fallback
+            COALESCE(bp.sex, tp.sex, ps.sex_ps, tg.sex_tg, atg.sex_atg) AS sex,
+
+            CASE
+                WHEN bp.sex IS NOT NULL  THEN 'benign_pathology'
+                WHEN tp.sex IS NOT NULL  THEN 'tumor_pathology'
+                WHEN ps.sex_ps IS NOT NULL THEN 'path_synoptics'
+                WHEN tg.sex_tg IS NOT NULL THEN 'thyroglobulin_labs'
+                WHEN atg.sex_atg IS NOT NULL THEN 'anti_tg_labs'
+                ELSE NULL
+            END AS sex_source,
+
+            -- RACE: path_synoptics first, then labs
+            COALESCE(ps.race_ps, tg.race_tg, atg.race_atg) AS race,
+
+            CASE
+                WHEN ps.race_ps IS NOT NULL  THEN 'path_synoptics'
+                WHEN tg.race_tg IS NOT NULL  THEN 'thyroglobulin_labs'
+                WHEN atg.race_atg IS NOT NULL THEN 'anti_tg_labs'
+                ELSE NULL
+            END AS race_source
+
+        FROM patient_spine sp
+        LEFT JOIN bp  ON sp.research_id = bp.rid
+        LEFT JOIN tp  ON sp.research_id = tp.rid
+        LEFT JOIN ps  ON sp.research_id = ps.rid
+        LEFT JOIN tw  ON sp.research_id = tw.rid
+        LEFT JOIN od  ON sp.research_id = od.rid
+        LEFT JOIN tg  ON sp.research_id = tg.rid
+        LEFT JOIN atg ON sp.research_id = atg.rid
+    )
+    SELECT
+        research_id,
+        age_at_surgery,
+        age_source,
+        sex,
+        sex_source,
+        race,
+        race_source,
+        best_surgery_date,
+        best_dob
+    FROM harmonized
+""")
+
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#  SQL: Check C — Missing Demographics (now powered by harmonized table)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 DEMOGRAPHICS_SQL = textwrap.dedent("""\
     CREATE OR REPLACE TABLE qa_missing_demographics AS
     SELECT
-        CAST(mc.research_id AS INT) AS research_id,
-        mc.age_at_surgery,
-        mc.sex,
-        ps_race.race,
-        CASE WHEN mc.age_at_surgery IS NULL
+        research_id,
+        age_at_surgery,
+        age_source,
+        sex,
+        sex_source,
+        race,
+        race_source,
+        CASE WHEN age_at_surgery IS NULL
              THEN 'MISSING_AGE' ELSE 'OK' END AS age_flag,
-        CASE WHEN mc.sex IS NULL
+        CASE WHEN sex IS NULL
              THEN 'MISSING_SEX' ELSE 'OK' END AS sex_flag,
-        CASE WHEN ps_race.race IS NULL
+        CASE WHEN race IS NULL
              THEN 'MISSING_RACE' ELSE 'OK' END AS race_flag,
-        'master_cohort_plus_path_synoptics' AS source_priority
-    FROM master_cohort mc
-    LEFT JOIN (
-        SELECT
-            CAST(research_id AS INT) AS research_id,
-            MAX(CAST(race AS VARCHAR)) AS race
-        FROM path_synoptics
-        WHERE race IS NOT NULL
-          AND TRIM(CAST(race AS VARCHAR)) != ''
-        GROUP BY CAST(research_id AS INT)
-    ) ps_race ON CAST(mc.research_id AS INT) = ps_race.research_id
-    WHERE mc.age_at_surgery IS NULL
-       OR mc.sex IS NULL
-       OR ps_race.race IS NULL
+        COALESCE(age_source, 'none') || '+' ||
+        COALESCE(sex_source, 'none') || '+' ||
+        COALESCE(race_source, 'none') AS source_priority
+    FROM demographics_harmonized_v2
+    WHERE age_at_surgery IS NULL
+       OR sex IS NULL
+       OR race IS NULL
 """)
 
 
@@ -392,8 +610,11 @@ CHECKS: list[tuple[str, str, str]] = [
     ("qa_report_matching",
      "Check B: Report Matching (FNA-Path + US-Op)",
      REPORT_MATCHING_SQL),
+    ("demographics_harmonized_v2",
+     "Check C-1: Demographics Harmonization (cross-source backfill)",
+     DEMOGRAPHICS_HARMONIZED_SQL),
     ("qa_missing_demographics",
-     "Check C: Missing Demographics",
+     "Check C-2: Missing Demographics (post-backfill residual)",
      DEMOGRAPHICS_SQL),
 ]
 
@@ -462,6 +683,32 @@ def phase2_cross_file_checks(
                         log.info(f"    {ct}: {m}/{tp} matched ({pct}%)")
                     info["detail"] = "; ".join(
                         f"{ct}={m}/{tp} ({pct}%)" for ct, tp, m, pct in rows
+                    )
+                except Exception:
+                    pass
+
+            elif table_name == "demographics_harmonized_v2":
+                try:
+                    src_dist = con.execute(
+                        "SELECT age_source, COUNT(*) AS n "
+                        "FROM demographics_harmonized_v2 "
+                        "WHERE age_at_surgery IS NOT NULL "
+                        "GROUP BY age_source ORDER BY n DESC"
+                    ).fetchall()
+                    for src, n in src_dist:
+                        log.info(f"    age source {src}: {n:,}")
+                    total_h = con.execute(
+                        "SELECT COUNT(*) FROM demographics_harmonized_v2"
+                    ).fetchone()[0]
+                    filled = con.execute(
+                        "SELECT COUNT(*) FROM demographics_harmonized_v2 "
+                        "WHERE age_at_surgery IS NOT NULL"
+                    ).fetchone()[0]
+                    log.info(f"    Coverage: {filled:,}/{total_h:,} "
+                             f"({100*filled/max(total_h,1):.1f}%)")
+                    info["detail"] = (
+                        f"age_filled={filled}/{total_h} "
+                        f"({100*filled/max(total_h,1):.1f}%)"
                     )
                 except Exception:
                     pass
@@ -690,9 +937,62 @@ def phase4_report(con, results: list[dict]) -> list[str]:
         except Exception:
             pass
 
+    if _table_exists(con, "demographics_harmonized_v2"):
+        try:
+            section_lines.append(
+                "**Check C-1 — Demographics Harmonization "
+                "(cross-source backfill):**"
+            )
+            total_h = con.execute(
+                "SELECT COUNT(*) FROM demographics_harmonized_v2"
+            ).fetchone()[0]
+            filled_age = con.execute(
+                "SELECT COUNT(*) FROM demographics_harmonized_v2 "
+                "WHERE age_at_surgery IS NOT NULL"
+            ).fetchone()[0]
+            filled_sex = con.execute(
+                "SELECT COUNT(*) FROM demographics_harmonized_v2 "
+                "WHERE sex IS NOT NULL"
+            ).fetchone()[0]
+            filled_race = con.execute(
+                "SELECT COUNT(*) FROM demographics_harmonized_v2 "
+                "WHERE race IS NOT NULL"
+            ).fetchone()[0]
+            section_lines.append(
+                f"- Total patients: {total_h:,}"
+            )
+            section_lines.append(
+                f"- Age filled: {filled_age:,}/{total_h:,} "
+                f"({100*filled_age/max(total_h,1):.1f}%)"
+            )
+            section_lines.append(
+                f"- Sex filled: {filled_sex:,}/{total_h:,} "
+                f"({100*filled_sex/max(total_h,1):.1f}%)"
+            )
+            section_lines.append(
+                f"- Race filled: {filled_race:,}/{total_h:,} "
+                f"({100*filled_race/max(total_h,1):.1f}%)"
+            )
+            # Source breakdown for age
+            src_rows = con.execute(
+                "SELECT COALESCE(age_source, 'MISSING') AS src, "
+                "COUNT(*) AS n "
+                "FROM demographics_harmonized_v2 GROUP BY 1 ORDER BY n DESC"
+            ).fetchall()
+            section_lines.append("")
+            section_lines.append("Age source breakdown:")
+            for src, n in src_rows:
+                section_lines.append(f"  - {src}: {n:,}")
+            section_lines.append("")
+        except Exception:
+            pass
+
     if _table_exists(con, "qa_missing_demographics"):
         try:
-            section_lines.append("**Check C — Missing Demographics:**")
+            section_lines.append(
+                "**Check C-2 — Residual Missing Demographics "
+                "(post-backfill):**"
+            )
             for flag_col, label in [
                 ("age_flag", "Missing Age"),
                 ("sex_flag", "Missing Sex"),
@@ -744,6 +1044,7 @@ def phase4_report(con, results: list[dict]) -> list[str]:
     for tbl in [
         "qa_laterality_mismatches",
         "qa_report_matching",
+        "demographics_harmonized_v2",
         "qa_missing_demographics",
     ]:
         if not _table_exists(con, tbl):
@@ -810,6 +1111,7 @@ def phase5_summary(con, results: list[dict]) -> None:
     for tbl in [
         "qa_laterality_mismatches",
         "qa_report_matching",
+        "demographics_harmonized_v2",
         "qa_missing_demographics",
     ]:
         rows = _safe_count(con, tbl)

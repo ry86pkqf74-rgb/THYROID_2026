@@ -1718,9 +1718,57 @@ def render_qa_dashboard(con):
         st.info("Report matching data not available. Run script 11.5 first.",
                 icon="🔍")
 
-    if tbl_exists(con, "qa_missing_demographics"):
-        with st.expander("Check C — Missing Demographics", expanded=False):
-            demo_summary = sqdf(con, """
+    # ── Demographics Harmonization KPIs ──
+    demo_view = "demographics_harmonized_v2" if tbl_exists(
+        con, "demographics_harmonized_v2") else (
+        "md_demographics_harmonized_v2" if tbl_exists(
+            con, "md_demographics_harmonized_v2") else None)
+    if demo_view:
+        with st.expander("Demographics Harmonization (cross-source backfill)",
+                         expanded=True):
+            h_summary = sqdf(con, f"""
+                SELECT
+                    COUNT(*) AS total,
+                    SUM(CASE WHEN age_at_surgery IS NOT NULL THEN 1 ELSE 0 END)
+                        AS age_filled,
+                    SUM(CASE WHEN sex IS NOT NULL THEN 1 ELSE 0 END)
+                        AS sex_filled,
+                    SUM(CASE WHEN race IS NOT NULL THEN 1 ELSE 0 END)
+                        AS race_filled
+                FROM {demo_view}""")
+            if not h_summary.empty:
+                hr = h_summary.iloc[0]
+                tot = int(hr["total"]) or 1
+                cs = st.columns(4)
+                for c, (lbl, k, color) in zip(cs, [
+                    ("Total Patients", "total", "#2196F3"),
+                    ("Age Filled", "age_filled", "#4CAF50"),
+                    ("Sex Filled", "sex_filled", "#4CAF50"),
+                    ("Race Filled", "race_filled", "#FF9800"),
+                ]):
+                    val = int(hr[k])
+                    pct = f" ({100*val/tot:.1f}%)" if k != "total" else ""
+                    with c:
+                        st.markdown(mc(lbl, f"{val:,}{pct}"),
+                                    unsafe_allow_html=True)
+            age_src = sqdf(con, f"""
+                SELECT COALESCE(age_source, 'MISSING') AS source,
+                       COUNT(*) AS patients
+                FROM {demo_view}
+                GROUP BY 1 ORDER BY patients DESC""")
+            if not age_src.empty:
+                st.markdown("**Age source breakdown:**")
+                st.dataframe(age_src, use_container_width=True,
+                             height=200, hide_index=True)
+
+    qa_demo_view = "qa_missing_demographics" if tbl_exists(
+        con, "qa_missing_demographics") else (
+        "md_qa_missing_demographics" if tbl_exists(
+            con, "md_qa_missing_demographics") else None)
+    if qa_demo_view:
+        with st.expander("Check C — Residual Missing Demographics "
+                         "(post-backfill)", expanded=False):
+            demo_summary = sqdf(con, f"""
                 SELECT
                     SUM(CASE WHEN age_flag = 'MISSING_AGE' THEN 1 ELSE 0 END)
                         AS missing_age,
@@ -1729,7 +1777,7 @@ def render_qa_dashboard(con):
                     SUM(CASE WHEN race_flag = 'MISSING_RACE' THEN 1 ELSE 0 END)
                         AS missing_race,
                     COUNT(*) AS total_flagged
-                FROM qa_missing_demographics""")
+                FROM {qa_demo_view}""")
             if not demo_summary.empty:
                 r = demo_summary.iloc[0]
                 cs = st.columns(4)
@@ -1740,10 +1788,10 @@ def render_qa_dashboard(con):
                     ("Missing Race", "missing_race"),
                 ]):
                     with c:
-                        st.markdown(mc(lbl, f"{int(r[k]):,}"),
+                        st.markdown(mc(lbl, f"{int(r.get(k) or 0):,}"),
                                     unsafe_allow_html=True)
             demo_df = sqdf(con,
-                "SELECT * FROM qa_missing_demographics "
+                f"SELECT * FROM {qa_demo_view} "
                 "WHERE age_flag != 'OK' OR sex_flag != 'OK' "
                 "ORDER BY research_id LIMIT 1000")
             if not demo_df.empty:
@@ -1752,7 +1800,7 @@ def render_qa_dashboard(con):
                              height=300, hide_index=True)
                 multi_export(demo_df, "missing_demographics",
                              key_sfx="demo")
-    else:
+    elif not demo_view:
         st.info("Demographics QA not available. Run script 11.5 first.",
                 icon="🔍")
 
