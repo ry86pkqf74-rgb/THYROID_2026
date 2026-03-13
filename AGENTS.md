@@ -533,3 +533,17 @@
 - Script 26 MATERIALIZATION_MAP expanded to 123 entries (was 116): adds 7 Phase 12 tables
 - Deployment order updated: script 15 → ... → Phase 11 v9 → Phase 12 v10
 - Overall data quality score Phase 12: TIRADS domain 10→75/100 (+65); overall 98/100 (ceiling)
+- Phase 13 engine: `notes_extraction/extraction_audit_engine_v11.py` (FINAL) with VascularInvasionGrader, IHC_BRAF_Recovery, RAS_SubtypeResolver, plus `audit_and_refine_phase13()` orchestrator
+- Phase 13 new tables: `extracted_vascular_grading_v13` (3,846 rows), `vw_vascular_invasion_grade` (10 rows), `extracted_ihc_braf_v13` (2 rows), `vw_molecular_ihc_braf` (2 rows), `extracted_ras_resolved_v13` (34 rows), `vw_ras_subtypes` (7 rows), `val_phase13_final_gaps` (4 rows), `patient_refined_master_clinical_v12` (12,886 rows, 136 columns)
+- Vascular grading Phase 13: 819 graded (463 focal + 356 extensive); 4,652 present_ungraded; 99 indeterminate; 'x' placeholder in path_synoptics = present_ungraded (3,120 patients) — synoptic template limitation, not data quality gap
+- `tumor_1_angioinvasion_quantify` has vessel counts for only 310 of 3,846 positive patients; WHO 2022: <4 vessels = focal, >=4 = extensive
+- VascularInvasionGrader typo map: presnt→present, foacl→focal, extrensive/estensive/extensivre/extensiver→extensive, c/a→cannot_assess, indeeterminate/indeterminent/indetermiante→indeterminate
+- IHC BRAF: 0 VE1 mentions in clinical_notes_long; 14 notes with IHC+BRAF keywords; 2 results extracted (1 positive, 1 negative); IHC pathology addendum system NOT in clinical_notes_long corpus
+- RAS resolution: 34 of 65 RAS_unspecified resolved; NRAS=19, HRAS=9, KRAS=6; sources: molecular_testing_text (21), nlp_entity_genetics (12), thyroseq_enrichment (1); 31 genuinely unresolvable
+- `patient_refined_master_clinical_v12` = FINAL master table; extends v11 with 13 Phase 13 columns: vasc_grade_final_v13, vasc_vessel_count_v13, vasc_source_final_v13, vasc_confidence_final_v13, lvi_grade_final_v13, ihc_braf_result_v13, ihc_braf_note_type_v13, ihc_braf_confidence_v13, ras_resolved_gene_v13, ras_resolved_variant_v13, ras_resolved_af_v13, ras_resolution_source_v13, ras_resolution_confidence_v13
+- Script 26 MATERIALIZATION_MAP expanded to 131 entries (was 123): adds 8 Phase 13 tables
+- Script 29 validation expanded with `val_phase13_final_gaps` (16th val_* table)
+- Overall data quality score Phase 13: 98/100 (FINAL); all variables source-linked and verified
+- Deployment order FINAL: script 15 → ... → Phase 12 v10 → Phase 13 v11 (FINAL)
+- All 13 extraction audit engine phases complete (v1→v11); 131 tables in MATERIALIZATION_MAP; 16 val_* validation tables; pipeline COMPLETE
+- Publication bundle: `exports/FINAL_PUBLICATION_BUNDLE_20260313/` with 8 CSV/Parquet exports + manifest.json + Phase 13 report
