@@ -1,0 +1,58 @@
+{
+  "timestamp": "20260312_2222",
+  "tables_deployed": [
+    [
+      "raw_us_tirads_excel_v1",
+      19891
+    ],
+    [
+      "raw_us_tirads_scored_v1",
+      19549
+    ],
+    [
+      "extracted_tirads_validated_v1",
+      3474
+    ],
+    [
+      "vw_us_nodule_tirads_validated",
+      5
+    ],
+    [
+      "patient_refined_master_clinical_v11",
+      12886
+    ],
+    [
+      "advanced_features_v5",
+      16062
+    ]
+  ],
+  "complete_nodules": 19891,
+  "complete_patients": 3439,
+  "concordance_distribution": {
+    "match": "15671",
+    "mismatch": "3901",
+    "recalc_only": "319"
+  },
+  "scored_nodules": 19549,
+  "scored_patients": 3434,
+  "nlp_patients": 417,
+  "reconciled_patients": 3474,
+  "source_distribution": {
+    "excel_complete_structured": "3439",
+    "nlp_clinical_note": "35"
+  },
+  "category_distribution": {
+    "TR4_Moderately_Suspicious": "1530",
+    "TR5_Highly_Suspicious": "838",
+    "TR1_Benign": "578",
+    "TR2_Not_Suspicious": "363",
+    "TR3_Mildly_Suspicious": "165"
+  },
+  "concordance_pct": 80.1,
+  "n_concordant": 15671,
+  "n_discordant": 3901,
+  "n_recalc_only": 319,
+  "mismatch_mean_diff": -1.0,
+  "new_fill_rate": 32.46,
+  "new_tirads_count": 4183
+}

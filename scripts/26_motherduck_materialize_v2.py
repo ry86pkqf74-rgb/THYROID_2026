@@ -185,6 +185,14 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_provenance_enriched_events_v1", "provenance_enriched_events_v1"),
     ("md_lineage_audit_v1", "lineage_audit_v1"),
     ("md_val_provenance_traceability", "val_provenance_traceability"),
+    # ── Phase 12 TIRADS Excel Ingestion & ACR Validation (extraction_audit_engine_v10) ──
+    ("md_raw_us_tirads_excel_v1", "raw_us_tirads_excel_v1"),
+    ("md_raw_us_tirads_scored_v1", "raw_us_tirads_scored_v1"),
+    ("md_extracted_tirads_validated_v1", "extracted_tirads_validated_v1"),
+    ("md_vw_us_nodule_tirads_validated", "vw_us_nodule_tirads_validated"),
+    ("md_val_phase12_tirads_validation", "val_phase12_tirads_validation"),
+    ("md_patient_refined_master_clinical_v11", "patient_refined_master_clinical_v11"),
+    ("md_advanced_features_v5", "advanced_features_v5"),
 ]
 
 SURVIVAL_COHORT_ENRICHED_SQL = """
