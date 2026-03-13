@@ -580,9 +580,9 @@ surgery dates (e.g. "8/11/2014 (MANNUALLY ADDED...)") parsed via `TRY_STRPTIME` 
 regex extraction.
 
 Source priority (highest first):
-- **Age**: benign_pathology > tumor_pathology > path_synoptics.age > stg_dob_excel_recovery.age > Excel DOB-derived > thyroid_weights DOB > lab DOB
-- **Sex**: benign_pathology > tumor_pathology > path_synoptics.gender > stg_dob_excel_recovery.gender > thyroglobulin_labs.gender > anti_tg_labs.gender
-- **Race**: path_synoptics.race > stg_dob_excel_recovery.race > thyroglobulin_labs.race > anti_tg_labs.race
+- **Age**: benign_pathology > tumor_pathology > path_synoptics.age > stg_dob_excel_recovery.age > MRN crosswalk > Excel DOB-derived > thyroid_weights DOB > lab DOB
+- **Sex**: benign_pathology > tumor_pathology > path_synoptics.gender > stg_dob_excel_recovery.gender > MRN crosswalk > thyroglobulin_labs.gender > anti_tg_labs.gender
+- **Race**: path_synoptics.race > stg_dob_excel_recovery.race > MRN crosswalk > thyroglobulin_labs.race > anti_tg_labs.race
 
 Key columns:
 
@@ -596,9 +596,11 @@ Key columns:
 - `best_surgery_date`: DATE used for DOB-based age calculation
 - `best_dob`: DATE from DOB backfill chain (NULL if no DOB in any source)
 
-Coverage (as of 2026-03-13): 11,673 patients; age 99.25% (11,586/11,673), sex 93.16%, race 93.08%.
-87 truly missing age (orphan research_ids absent from all raw Excel files, concentrated in IDs > 9800).
-799 missing sex, 808 missing race (patients in master_cohort from operative_details only, without synoptic pathology reports).
+Coverage (as of 2026-03-13): 11,673 patients; age 99.26% (11,587), sex 98.00% (11,440), race 97.93% (11,431).
+86 truly missing age (orphan research_ids absent from all raw Excel files, concentrated in IDs > 9800).
+233 missing sex, 242 missing race (patients not in any source file with demographics).
+MRN crosswalk recovered 569 sex and 566 race values from patients whose OP Sheet research_id
+differed from their All Diagnoses research_id (same EUH_MRN, different research_id assignment).
 33 DOB conflicts across sources (majority-vote resolved).
 
 ### `stg_dob_excel_recovery` (table, added 2026-03-13)
@@ -613,6 +615,20 @@ thyroid_weights > notes > thyroglobulin_labs > anti_tg_labs.
 - `dob_n_sources`: number of sources with DOB for this patient
 - `dob_concordant`: TRUE if all sources agree
 - `dob_resolution`: unanimous | majority_N_of_M | priority_tiebreak_SOURCE
+
+### `stg_mrn_crosswalk_demographics` (table, added 2026-03-13)
+
+MRN-based crosswalk recovering demographics for patients whose OP Sheet `research_id`
+differs from their All Diagnoses `research_id` (same `EUH_MRN`). These 570 patients
+were invisible to the standard join-by-research_id pipeline. Gender, Race, Age, and
+DOB are pulled from All Diagnoses via the matched MRN.
+
+- `research_id`: OP Sheet research_id (INT, used in master_cohort)
+- `ad_research_id`: matching All Diagnoses research_id
+- `mrn`: shared EUH_MRN that links the two records
+- `sex`, `race`, `age_at_surgery`, `dob`: demographics from All Diagnoses
+
+Coverage: 570 patients (569 recoverable sex, 566 recoverable race).
 
 ### `us_dominant_nodule_size_v1` (table, added 2026-03-13)
 

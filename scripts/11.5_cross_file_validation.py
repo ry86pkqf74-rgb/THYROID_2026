@@ -363,6 +363,18 @@ DEMOGRAPHICS_HARMONIZED_SQL = textwrap.dedent("""\
         FROM stg_dob_excel_recovery
     ),
 
+    -- P9: MRN crosswalk (OP Sheet → All Diagnoses via EUH_MRN)
+    -- Recovers sex/race/age for patients whose OP Sheet research_id
+    -- differs from their All Diagnoses research_id (same MRN)
+    xwalk AS (
+        SELECT research_id AS rid,
+               sex AS sex_xwalk,
+               race AS race_xwalk,
+               age_at_surgery AS age_xwalk,
+               dob AS dob_xwalk
+        FROM stg_mrn_crosswalk_demographics
+    ),
+
     harmonized AS (
         SELECT
             sp.research_id,
@@ -371,27 +383,28 @@ DEMOGRAPHICS_HARMONIZED_SQL = textwrap.dedent("""\
             COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od)
                 AS best_surgery_date,
 
-            -- Best DOB: resolved Excel (cross-file majority) > thyroid_weights > labs
-            COALESCE(ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg) AS best_dob,
+            -- Best DOB: resolved Excel > crosswalk > thyroid_weights > labs
+            COALESCE(ex.dob_excel, xw.dob_xwalk, tw.dob_tw, tg.dob_tg, atg.dob_atg) AS best_dob,
 
-            -- AGE: structured > Excel DOB-derived > DB DOB-derived
+            -- AGE: structured > Excel DOB-derived > MRN crosswalk > DB DOB-derived
             COALESCE(
                 TRY_CAST(bp.age_at_surgery AS INT),
                 TRY_CAST(tp.age_at_surgery AS INT),
                 ps.age_ps,
                 ex.age_excel,
-                CASE WHEN COALESCE(ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg) IS NOT NULL
+                xw.age_xwalk,
+                CASE WHEN COALESCE(xw.dob_xwalk, ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg) IS NOT NULL
                       AND COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od) IS NOT NULL
                      THEN DATE_DIFF('year',
-                              COALESCE(ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg),
+                              COALESCE(xw.dob_xwalk, ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg),
                               COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od))
                           - CASE WHEN
                               MONTH(COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od))
-                                < MONTH(COALESCE(ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg))
+                                < MONTH(COALESCE(xw.dob_xwalk, ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg))
                               OR (MONTH(COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od))
-                                  = MONTH(COALESCE(ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg))
+                                  = MONTH(COALESCE(xw.dob_xwalk, ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg))
                                   AND DAY(COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od))
-                                    < DAY(COALESCE(ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg)))
+                                    < DAY(COALESCE(xw.dob_xwalk, ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg)))
                             THEN 1 ELSE 0 END
                      ELSE NULL
                 END
@@ -402,7 +415,8 @@ DEMOGRAPHICS_HARMONIZED_SQL = textwrap.dedent("""\
                 WHEN tp.age_at_surgery IS NOT NULL THEN 'tumor_pathology'
                 WHEN ps.age_ps IS NOT NULL          THEN 'path_synoptics'
                 WHEN ex.age_excel IS NOT NULL        THEN 'excel_dob_' || COALESCE(ex.dob_resolution, 'resolved')
-                WHEN COALESCE(ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg) IS NOT NULL
+                WHEN xw.age_xwalk IS NOT NULL       THEN 'mrn_crosswalk'
+                WHEN COALESCE(xw.dob_xwalk, ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg) IS NOT NULL
                      AND COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od) IS NOT NULL
                      THEN CASE
                          WHEN ex.dob_excel IS NOT NULL AND bp.age_at_surgery IS NULL
@@ -415,25 +429,27 @@ DEMOGRAPHICS_HARMONIZED_SQL = textwrap.dedent("""\
                 ELSE NULL
             END AS age_source,
 
-            -- SEX: structured > Excel > labs
-            COALESCE(bp.sex, tp.sex, ps.sex_ps, ex.sex_excel, tg.sex_tg, atg.sex_atg) AS sex,
+            -- SEX: structured > Excel > MRN crosswalk > labs
+            COALESCE(bp.sex, tp.sex, ps.sex_ps, ex.sex_excel, xw.sex_xwalk, tg.sex_tg, atg.sex_atg) AS sex,
 
             CASE
-                WHEN bp.sex IS NOT NULL    THEN 'benign_pathology'
-                WHEN tp.sex IS NOT NULL    THEN 'tumor_pathology'
-                WHEN ps.sex_ps IS NOT NULL THEN 'path_synoptics'
+                WHEN bp.sex IS NOT NULL      THEN 'benign_pathology'
+                WHEN tp.sex IS NOT NULL      THEN 'tumor_pathology'
+                WHEN ps.sex_ps IS NOT NULL   THEN 'path_synoptics'
                 WHEN ex.sex_excel IS NOT NULL THEN 'excel_all_diagnoses'
-                WHEN tg.sex_tg IS NOT NULL THEN 'thyroglobulin_labs'
+                WHEN xw.sex_xwalk IS NOT NULL THEN 'mrn_crosswalk'
+                WHEN tg.sex_tg IS NOT NULL   THEN 'thyroglobulin_labs'
                 WHEN atg.sex_atg IS NOT NULL THEN 'anti_tg_labs'
                 ELSE NULL
             END AS sex_source,
 
-            -- RACE: path_synoptics > Excel > labs
-            COALESCE(ps.race_ps, ex.race_excel, tg.race_tg, atg.race_atg) AS race,
+            -- RACE: path_synoptics > Excel > MRN crosswalk > labs
+            COALESCE(ps.race_ps, ex.race_excel, xw.race_xwalk, tg.race_tg, atg.race_atg) AS race,
 
             CASE
                 WHEN ps.race_ps IS NOT NULL    THEN 'path_synoptics'
                 WHEN ex.race_excel IS NOT NULL THEN 'excel_all_diagnoses'
+                WHEN xw.race_xwalk IS NOT NULL THEN 'mrn_crosswalk'
                 WHEN tg.race_tg IS NOT NULL    THEN 'thyroglobulin_labs'
                 WHEN atg.race_atg IS NOT NULL  THEN 'anti_tg_labs'
                 ELSE NULL
@@ -448,6 +464,7 @@ DEMOGRAPHICS_HARMONIZED_SQL = textwrap.dedent("""\
         LEFT JOIN tg  ON sp.research_id = tg.rid
         LEFT JOIN atg ON sp.research_id = atg.rid
         LEFT JOIN excel_dob ex ON sp.research_id = ex.rid
+        LEFT JOIN xwalk xw ON sp.research_id = xw.rid
     )
     SELECT
         research_id,

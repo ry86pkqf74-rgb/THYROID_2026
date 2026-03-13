@@ -206,6 +206,7 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_demographics_harmonized_v2", "demographics_harmonized_v2"),
     ("md_qa_missing_demographics", "qa_missing_demographics"),
     ("md_stg_dob_excel_recovery", "stg_dob_excel_recovery"),
+    ("md_stg_mrn_crosswalk_demographics", "stg_mrn_crosswalk_demographics"),
     ("md_us_dominant_nodule_size_v1", "us_dominant_nodule_size_v1"),
 ]
 
