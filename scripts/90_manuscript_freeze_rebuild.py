@@ -173,7 +173,7 @@ def regenerate_tables_and_figures(use_md):
             log(f"  Non-fatal: {script} had issues", "WARN")
 
     log("=== Phase 3: Format Tables ===")
-    if not run_script("65_generate_manuscript_tables.py", md_flag):
+    if not run_script("65_generate_manuscript_tables.py"):
         ok = False
 
     log("=== Phase 4: Regenerate Figures ===")
