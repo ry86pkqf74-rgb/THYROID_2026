@@ -1,16 +1,15 @@
 # THYROID_2026
 
-## Post-Audit Data Layer (v2026.03.13)
+## Dataset Maturation Layer (v2026.03.13)
 
-**Status:** Manuscript-ready | Not dataset-mature | Extraction pipeline complete
+**Status:** Manuscript-ready | Approaching dataset-mature | Extraction pipeline complete
 
 A full engineering-grade verification pass on 2026-03-13 audited 531 MotherDuck
 tables, 34 `val_*` validation tables, and 18 prior audit documents. The
 **analysis-resolved layer** is populated and all 7 readiness gates pass. The
 extraction pipeline is complete (13 phases, 11 engine versions, data quality
-98/100), but 6 canonical-table backfill operations remain unexecuted — refined
-data sits in sidecar `extracted_*` tables, not yet propagated to canonical
-`*_episode_*` tables on MotherDuck.
+98/100). A subsequent **dataset maturation pass** (`scripts/75_dataset_maturation.py`)
+resolved the remaining canonical-table propagation gaps.
 
 ### Key references
 
@@ -33,22 +32,26 @@ analysis-eligible cancer subcohort (N=4,136), episode-level dedup table, scoring
 systems (AJCC8/ATA/MACIS/AGES/AMES), Tables 1–3, and Figures 1–5 are generated
 and verified. 11 canonical metrics pass cross-source consistency checks.
 
-### What "not dataset-mature" means
+### Dataset Verification Status (March 13 2026)
 
-Six data propagation gaps exist where extraction engines produced refined data
-that was never backfilled to canonical episode tables on MotherDuck:
+The dataset maturation pass resolved the following:
 
-1. **Operative note NLP enrichment** — 0% on 9,371 episodes (extractor exists, needs run)
-2. **RAI dose** — 3.0% in canonical (307 refined doses in sidecar table)
-3. **Molecular RAS flag** — 0% in canonical (316+ patients in sidecar)
-4. **Linkage IDs** — not propagated from V3 linkage tables to episode tables
-5. **Imaging nodule master** — 0 rows (source data exists, table not populated)
-6. **Recurrence dates** — 0.5% (1,986 flagged, 54 with specific date)
+1. **Operative CND/LND flags** — wired from structured `path_synoptics` fields;
+   CND: 0 -> 2,497 TRUE (26.6%); LND: 0 -> 241 TRUE (2.6%)
+2. **Operative note dates** — 9,366 of 9,371 episodes now have resolved dates
+3. **Imaging layer** — `imaging_nodule_master_v1` (19,891 rows) is now canonical;
+   `imaging_nodule_long_v2` deprecated (schema stub)
+4. **Provenance columns** — unified `source_table`, `source_script`, `provenance_note`,
+   `resolved_layer_version` added to all 4 analysis tables
+5. **Chronology anomalies** — 626 classified (102 benign, 14 extraction errors, 510 true conflicts)
+6. **MotherDuck optimization** — ANALYZE TABLE run on 10 canonical tables
+7. **Health monitoring** — 3 dashboard tables deployed (`val_dataset_integrity_summary_v1`,
+   `val_provenance_completeness_v2`, `val_episode_linkage_completeness_v1`)
 
-These do not block the manuscript — the resolved layer queries sidecar tables
-directly. They block downstream consumers who query canonical episode tables.
-See the [verification report](docs/final_repo_verification_20260313.md) for
-the full domain-by-domain scoring matrix.
+Remaining source-limited gaps (not fixable without new institutional data):
+- Non-Tg lab dates (TSH/PTH/Ca/vitD) at 0%
+- Nuclear medicine report text absent from corpus
+- Vascular invasion 87% present_ungraded (synoptic template limitation)
 
 ### Current repo status
 

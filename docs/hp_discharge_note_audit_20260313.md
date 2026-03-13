@@ -1,6 +1,6 @@
 # H&P + Discharge Note Extraction Coverage Audit
 
-**Audit Date**: 2026-03-13 08:15
+**Audit Date**: 2026-03-13 10:29
 **Surgical Cohort**: 10,871 patients
 
 ---
@@ -236,7 +236,7 @@ symptomatic_hypocalcemia, drain_status, length_of_stay.
 7. `val_hp_discharge_provenance_v1` — Source/date linkage audit
 
 ### Export Bundle
-`exports/hp_discharge_note_audit_20260313_0814/` with CSV files and manifest.json
+`exports/hp_discharge_note_audit_20260313_1029/` with CSV files and manifest.json
 
 ---
 

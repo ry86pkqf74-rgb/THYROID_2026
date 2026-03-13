@@ -1,0 +1,6 @@
+linkage_type,total_rows,linked,unlinked,linked_pct
+fna_molecular,708,708,0,100.0
+preop_surgery,3591,3591,0,100.0
+surgery_pathology,9409,9409,0,100.0
+pathology_rai,23,23,0,100.0
+imaging_fna,0,0,0,

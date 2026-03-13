@@ -63,7 +63,7 @@ EXPECTED_VIEWS = [
     ("tumor_episode_master_v2", "22"),
     ("molecular_test_episode_v2", "22"),
     ("rai_treatment_episode_v2", "22"),
-    ("imaging_nodule_long_v2", "22"),
+    ("imaging_nodule_master_v1", "50"),
     ("operative_episode_detail_v2", "22"),
     ("fna_episode_master_v2", "22"),
     ("patient_cross_domain_timeline_v2", "22"),

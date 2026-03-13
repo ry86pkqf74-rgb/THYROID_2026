@@ -204,17 +204,25 @@ streamlit run dashboard.py
 - [x] Analysis views: `analysis_patient_v1`, `analysis_episode_v1`, `analysis_lesion_v1`
 - [x] Pre-computed subsets: cancer (4,136), TIRADS (3,474), molecular (10,025), recurrence (1,946)
 
+### Dataset maturation pass (v2026.03.13-dataset-maturation)
+
+- [x] CND/LND flags wired from structured path_synoptics fields (CND: 0->2,497; LND: 0->241)
+- [x] Operative note dates resolved (0->9,366 of 9,371 episodes)
+- [x] Imaging layer canonicalized (`imaging_nodule_master_v1` = 19,891 rows; `imaging_nodule_long_v2` deprecated)
+- [x] Provenance columns hardened (4 columns x 4 analysis tables = 100% fill)
+- [x] Chronology anomalies classified (626 -> 4 buckets)
+- [x] Health monitoring tables deployed (3 new `val_*` tables)
+- [x] MotherDuck optimization (ANALYZE TABLE on 10 canonical tables)
+- [x] MATERIALIZATION_MAP updated with 4 new entries
+
 ### Known gaps (verified open — not blocking manuscript)
 
-- [ ] Operative note NLP enrichment at 0% on canonical table (extractor exists; needs MotherDuck run)
-- [ ] RAI dose in canonical table at 3.0% (307 refined doses in `extracted_rai_dose_refined_v1`)
-- [ ] Molecular RAS flag at 0% in canonical table (316+ patients in `extracted_ras_subtypes_v1`)
-- [ ] Linkage IDs not propagated from V3 linkage tables to canonical episode tables
-- [ ] Imaging nodule master at 0 rows (19,891 source rows available from TIRADS Excel)
+- [ ] RAI dose in canonical table at 20.0% (371/1,857 — source-limited, not propagation-limited)
 - [ ] Recurrence dates at 0.5% (structural sparsity — historical recurrences lack specific detection dates)
 - [ ] Non-Tg lab dates (TSH/PTH/Ca/vitD) at 0% — requires new institutional data extract
 - [ ] Structured PTH/calcium/TSH lab table — not in current corpus
 - [ ] Nuclear medicine report text — zero nuclear med notes in corpus
+- [ ] Vascular invasion 87% present_ungraded — synoptic template limitation, not data quality gap
 
 ## Next Steps
 

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-13T09:04:28.422722",
+  "generated_at": "2026-03-13T10:29:25.959622",
   "database": "MotherDuck",
   "script": "scripts/70_operative_note_path_linkage_audit.py",
   "verdict": "MAJOR OPERATIVE EXTRACTION GAP REMAINS",
@@ -37,10 +37,10 @@
   "variable_coverage": {
     "central_neck_dissection": {
       "total": 9371,
-      "extracted": 0,
+      "extracted": 2497,
       "unknown": 0,
-      "missing": 9371,
-      "pct_extracted": 0.0
+      "missing": 6874,
+      "pct_extracted": 26.6
     },
     "drain": {
       "total": 9371,
@@ -72,10 +72,10 @@
     },
     "lateral_neck_dissection": {
       "total": 9371,
-      "extracted": 0,
+      "extracted": 241,
       "unknown": 0,
-      "missing": 9371,
-      "pct_extracted": 0.0
+      "missing": 9130,
+      "pct_extracted": 2.6
     },
     "laterality": {
       "total": 9371,

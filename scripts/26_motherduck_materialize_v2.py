@@ -272,6 +272,11 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_val_recon_status_v1", "val_recon_status_v1"),
     ("md_val_denominator_checks", "val_denominator_checks"),
     ("md_val_metric_definition_conflicts", "val_metric_definition_conflicts"),
+    # ── Dataset Maturation Monitoring (script 75) ────────────────────
+    ("md_val_dataset_integrity_summary_v1", "val_dataset_integrity_summary_v1"),
+    ("md_val_provenance_completeness_v2", "val_provenance_completeness_v2"),
+    ("md_val_episode_linkage_completeness_v1", "val_episode_linkage_completeness_v1"),
+    ("md_val_temporal_anomaly_resolution_v1", "val_temporal_anomaly_resolution_v1"),
 ]
 
 SURVIVAL_COHORT_ENRICHED_SQL = """

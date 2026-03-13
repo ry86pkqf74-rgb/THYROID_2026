@@ -302,7 +302,8 @@ def _render_patient_timeline(con, tl_tbl: str, enr_tbl: str | None):
             st.caption("operative_episode_detail_v2 not available.")
 
     with st.expander("Imaging / Nodule Episodes", expanded=False):
-        for tbl in ("imaging_nodule_long_v2", "md_imaging_nodule_long_v2"):
+        for tbl in ("imaging_nodule_master_v1", "md_imaging_nodule_master_v1",
+                     "imaging_nodule_long_v2", "md_imaging_nodule_long_v2"):
             if tbl_exists(con, tbl):
                 idf = sqdf(con, f"SELECT * FROM {tbl} WHERE research_id = {rid}")
                 if not idf.empty:
@@ -312,7 +313,7 @@ def _render_patient_timeline(con, tl_tbl: str, enr_tbl: str | None):
                     st.caption("No imaging episodes.")
                 break
         else:
-            st.caption("imaging_nodule_long_v2 not available.")
+            st.caption("imaging_nodule_master_v1 not available.")
 
 
 # ── Publication Snapshot ──────────────────────────────────────────────────

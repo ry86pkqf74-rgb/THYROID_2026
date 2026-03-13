@@ -16,7 +16,9 @@ def _resolve_view(con, local: str, md: str) -> str | None:
 
 
 def render_imaging_nodule_dashboard(con) -> None:
-    nodule_view = _resolve_view(con, "imaging_nodule_long_v2", "md_imaging_nodule_long_v2")
+    nodule_view = _resolve_view(con, "imaging_nodule_master_v1", "md_imaging_nodule_master_v1")
+    if not nodule_view:
+        nodule_view = _resolve_view(con, "imaging_nodule_long_v2", "md_imaging_nodule_long_v2")
     exam_view = _resolve_view(con, "imaging_exam_summary_v2", "md_imaging_exam_summary_v2")
     concordance_view = _resolve_view(
         con, "imaging_pathology_concordance_review_v2", "md_imaging_path_concordance_v2",
@@ -24,7 +26,7 @@ def render_imaging_nodule_dashboard(con) -> None:
 
     if not nodule_view:
         st.warning(
-            "Required view `imaging_nodule_long_v2` is not available. "
+            "Required view `imaging_nodule_master_v1` is not available. "
             "Run the prerequisite deployment scripts first.",
             icon="⚠️",
         )

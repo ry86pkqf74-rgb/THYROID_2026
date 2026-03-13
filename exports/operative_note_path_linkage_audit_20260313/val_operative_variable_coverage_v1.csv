@@ -1,8 +1,8 @@
 variable,total_episodes,extracted,unknown_val,missing
 procedure_normalized,9371,8727,644,0
 laterality,9371,542,0,8829
-central_neck_dissection,9371,0,0,9371
-lateral_neck_dissection,9371,0,0,9371
+central_neck_dissection,9371,2497,0,6874
+lateral_neck_dissection,9371,241,0,9130
 rln_monitoring,9371,1702,0,7669
 rln_finding,9371,371,0,9000
 parathyroid_autograft,9371,40,0,9331

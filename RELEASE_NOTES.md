@@ -1,6 +1,56 @@
 # THYROID_2026 Release Notes
 
-## v2026.03.13-audit-verification (Latest)
+## v2026.03.13-dataset-maturation (Latest)
+**Date:** 2026-03-13
+**Patients:** 10,871 (manuscript cohort) | 4,136 (analysis-eligible cancer subcohort)
+
+### Dataset Maturation Pass
+
+Executed `scripts/75_dataset_maturation.py` — 10-phase post-audit maturation
+bringing the repository from manuscript-ready to approaching dataset-mature.
+
+#### Fixes applied
+
+| Fix | Before | After | Delta |
+|-----|--------|-------|-------|
+| CND flag (operative_episode_detail_v2) | 0 TRUE | 2,497 TRUE | +2,497 (26.6%) |
+| LND flag (operative_episode_detail_v2) | 0 TRUE | 241 TRUE | +241 (2.6%) |
+| Operative note dates | 0 resolved | 9,366 resolved | +9,366 (99.9%) |
+| Provenance columns (4 tables) | partial | 100% filled | 4 columns x 4 tables |
+| Chronology anomalies | unclassified | 626 classified | 4 resolution buckets |
+| Health monitoring tables | 0 | 3 tables | new deployment |
+| ANALYZE TABLE | never run | 10 tables analyzed | MotherDuck optimization |
+
+#### Imaging layer standardization
+
+- `imaging_nodule_master_v1` (19,891 rows) designated canonical
+- `imaging_nodule_long_v2` deprecated (schema stub, all data NULL)
+- Dashboard modules updated to prefer master_v1
+- Design doc: [`docs/imaging_layer_v3_design.md`](docs/imaging_layer_v3_design.md)
+
+#### Chronology anomaly classification
+
+626 temporal anomalies classified into 4 buckets:
+- `benign_temporal_offset`: 102 (molecular/FNA post-surgery, late RAI within 2y)
+- `source_extraction_error`: 14 (future dates, pre-1990 dates)
+- `true_conflict`: 510 (RAI before surgery, very late RAI)
+
+#### New tables
+
+- `val_dataset_integrity_summary_v1` — per-table row counts and coverage
+- `val_provenance_completeness_v2` — provenance field fill rates
+- `val_episode_linkage_completeness_v1` — linkage type completeness
+- `val_temporal_anomaly_resolution_v1` — classified chronology anomalies
+
+#### Documentation
+
+- [`docs/canonical_layer_integrity_report_20260313_addendum.md`](docs/canonical_layer_integrity_report_20260313_addendum.md)
+- [`docs/dataset_maturation_report_20260313.md`](docs/dataset_maturation_report_20260313.md)
+- [`docs/imaging_layer_v3_design.md`](docs/imaging_layer_v3_design.md)
+
+---
+
+## v2026.03.13-audit-verification
 **Date:** 2026-03-13
 **Patients:** 10,871 (manuscript cohort) | 4,136 (analysis-eligible cancer subcohort)
 **MotherDuck tables:** 531 | **Validation tables:** 34 `val_*`

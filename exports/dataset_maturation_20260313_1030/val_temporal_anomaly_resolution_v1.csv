@@ -1,0 +1,627 @@
+research_id,anomaly_type,severity,event_a_domain,event_a_date,event_b_domain,event_b_date,day_gap,detail,resolution_bucket,resolution_rationale,auto_resolved_flag
+3180,rai_before_surgery,error,rai,2009-01-12,surgery,2009-07-31,-200,RAI (ambiguous) precedes surgery by 200 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7070,rai_before_surgery,error,rai,2018-12-28,surgery,2019-01-16,-19,RAI (ambiguous) precedes surgery by 19 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8128,rai_before_surgery,error,rai,2001-10-21,surgery,2020-05-28,-6794,RAI (ambiguous) precedes surgery by 6794 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8203,rai_before_surgery,error,rai,1995-06-01,surgery,2020-07-06,-9167,RAI (ambiguous) precedes surgery by 9167 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8806,rai_before_surgery,error,rai,1998-04-04,surgery,2021-04-20,-8417,RAI (ambiguous) precedes surgery by 8417 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9030,rai_before_surgery,error,rai,2021-03-22,surgery,2021-08-09,-140,RAI (ambiguous) precedes surgery by 140 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9428,rai_before_surgery,error,rai,2021-04-22,surgery,2022-03-22,-334,RAI (ambiguous) precedes surgery by 334 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7471,rai_before_surgery,error,rai,2019-07-12,surgery,2019-07-17,-5,RAI (ambiguous) precedes surgery by 5 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7532,rai_before_surgery,error,rai,2019-07-19,surgery,2019-08-07,-19,RAI (ambiguous) precedes surgery by 19 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7328,rai_before_surgery,error,rai,2019-05-03,surgery,2019-05-15,-12,RAI (ambiguous) precedes surgery by 12 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7394,rai_before_surgery,error,rai,2019-05-24,surgery,2019-06-13,-20,RAI (ambiguous) precedes surgery by 20 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8128,rai_before_surgery,error,rai,2001-10-21,surgery,2020-05-28,-6794,RAI (ambiguous) precedes surgery by 6794 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9030,rai_before_surgery,error,rai,2021-03-16,surgery,2021-08-09,-146,RAI (ambiguous) precedes surgery by 146 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9519,rai_before_surgery,error,rai,1995-11-13,surgery,2022-05-10,-9675,RAI (ambiguous) precedes surgery by 9675 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+3180,rai_before_surgery,error,rai,2008-12-10,surgery,2009-07-31,-233,RAI (ambiguous) precedes surgery by 233 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7034,rai_before_surgery,error,rai,2018-12-10,surgery,2019-01-02,-23,RAI (ambiguous) precedes surgery by 23 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7036,rai_before_surgery,error,rai,2018-12-28,surgery,2019-01-02,-5,RAI (ambiguous) precedes surgery by 5 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7449,rai_before_surgery,error,rai,2019-07-08,surgery,2019-07-10,-2,RAI (ambiguous) precedes surgery by 2 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7801,rai_before_surgery,error,rai,1999-10-27,surgery,2019-11-26,-7335,RAI (ambiguous) precedes surgery by 7335 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8600,rai_before_surgery,error,rai,1990-01-18,surgery,2021-01-12,-11317,RAI (ambiguous) precedes surgery by 11317 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8692,rai_before_surgery,error,rai,1993-05-27,surgery,2021-03-02,-10141,RAI (ambiguous) precedes surgery by 10141 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9428,rai_before_surgery,error,rai,2021-04-22,surgery,2022-03-22,-334,RAI (ambiguous) precedes surgery by 334 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+1963,rai_before_surgery,error,rai,2015-12-21,surgery,2017-12-18,-728,RAI (ambiguous) precedes surgery by 728 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+3801,rai_before_surgery,error,rai,2012-07-20,surgery,2012-08-24,-35,RAI (ambiguous) precedes surgery by 35 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+4245,rai_before_surgery,error,rai,2013-09-17,surgery,2013-12-17,-91,RAI (ambiguous) precedes surgery by 91 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7407,rai_before_surgery,error,rai,2017-05-18,surgery,2019-06-21,-764,RAI (ambiguous) precedes surgery by 764 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7466,rai_before_surgery,error,rai,2019-07-08,surgery,2019-07-16,-8,RAI (ambiguous) precedes surgery by 8 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7819,rai_before_surgery,error,rai,1993-01-04,surgery,2019-12-04,-9830,RAI (ambiguous) precedes surgery by 9830 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7936,rai_before_surgery,error,rai,1998-01-06,surgery,2020-01-22,-8051,RAI (ambiguous) precedes surgery by 8051 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8406,rai_before_surgery,error,rai,2019-10-08,surgery,2020-10-13,-371,RAI (ambiguous) precedes surgery by 371 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9077,rai_before_surgery,error,rai,1996-08-16,surgery,2021-08-31,-9146,RAI (ambiguous) precedes surgery by 9146 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9236,rai_before_surgery,error,rai,2021-12-07,surgery,2021-12-08,-1,RAI (ambiguous) precedes surgery by 1 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9798,rai_before_surgery,error,rai,2022-01-18,surgery,2022-09-22,-247,RAI (ambiguous) precedes surgery by 247 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+4435,rai_before_surgery,error,rai,2014-05-20,surgery,2014-05-29,-9,RAI (ambiguous) precedes surgery by 9 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7028,rai_before_surgery,error,rai,2018-12-04,surgery,2018-12-28,-24,RAI (ambiguous) precedes surgery by 24 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7456,rai_before_surgery,error,rai,2019-06-14,surgery,2019-07-11,-27,RAI (ambiguous) precedes surgery by 27 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7801,rai_before_surgery,error,rai,1999-10-27,surgery,2019-11-26,-7335,RAI (ambiguous) precedes surgery by 7335 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8841,rai_before_surgery,error,rai,1991-02-04,surgery,2021-05-11,-11054,RAI (ambiguous) precedes surgery by 11054 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9052,rai_before_surgery,error,rai,1996-08-02,surgery,2021-08-19,-9148,RAI (ambiguous) precedes surgery by 9148 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9452,rai_before_surgery,error,rai,1999-01-28,surgery,2022-03-31,-8463,RAI (ambiguous) precedes surgery by 8463 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9511,rai_before_surgery,error,rai,1993-06-11,surgery,2022-05-05,-10555,RAI (ambiguous) precedes surgery by 10555 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7084,rai_before_surgery,error,rai,2018-08-31,surgery,2019-01-23,-145,RAI (ambiguous) precedes surgery by 145 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7551,rai_before_surgery,error,rai,2019-08-06,surgery,2019-08-19,-13,RAI (ambiguous) precedes surgery by 13 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7718,rai_before_surgery,error,rai,2019-06-20,surgery,2019-10-23,-125,RAI (ambiguous) precedes surgery by 125 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8364,rai_before_surgery,error,rai,2020-07-13,surgery,2020-09-24,-73,RAI (ambiguous) precedes surgery by 73 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8720,rai_before_surgery,error,rai,2020-12-24,surgery,2021-03-16,-82,RAI (ambiguous) precedes surgery by 82 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9797,rai_before_surgery,error,rai,2022-08-15,surgery,2022-09-21,-37,RAI (ambiguous) precedes surgery by 37 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9822,rai_before_surgery,error,rai,2006-01-12,surgery,2022-09-29,-6104,RAI (ambiguous) precedes surgery by 6104 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+3801,rai_before_surgery,error,rai,2012-07-20,surgery,2012-08-24,-35,RAI (ambiguous) precedes surgery by 35 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+3849,rai_before_surgery,error,rai,2012-10-11,surgery,2012-12-05,-55,RAI (ambiguous) precedes surgery by 55 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+4245,rai_before_surgery,error,rai,2013-09-17,surgery,2013-12-17,-91,RAI (ambiguous) precedes surgery by 91 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9428,rai_before_surgery,error,rai,1991-11-28,surgery,2022-03-22,-11072,RAI (ambiguous) precedes surgery by 11072 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+3180,rai_before_surgery,error,rai,2008-12-10,surgery,2009-07-31,-233,RAI (ambiguous) precedes surgery by 233 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+4556,rai_before_surgery,error,rai,2001-10-25,surgery,2014-08-28,-4690,RAI (ambiguous) precedes surgery by 4690 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7211,rai_before_surgery,error,rai,2019-03-14,surgery,2019-03-20,-6,RAI (ambiguous) precedes surgery by 6 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8549,rai_before_surgery,error,rai,2020-05-13,surgery,2020-12-17,-218,RAI (ambiguous) precedes surgery by 218 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8796,rai_before_surgery,error,rai,2001-09-25,surgery,2021-04-16,-7143,RAI (ambiguous) precedes surgery by 7143 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9741,rai_before_surgery,error,rai,2022-05-23,surgery,2022-08-25,-94,RAI (ambiguous) precedes surgery by 94 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7068,rai_before_surgery,error,rai,2019-01-08,surgery,2019-01-16,-8,RAI (ambiguous) precedes surgery by 8 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7132,rai_before_surgery,error,rai,2018-10-23,surgery,2019-02-12,-112,RAI (ambiguous) precedes surgery by 112 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7161,rai_before_surgery,error,rai,2019-01-02,surgery,2019-02-26,-55,RAI (ambiguous) precedes surgery by 55 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7297,rai_before_surgery,error,rai,2019-02-11,surgery,2019-04-26,-74,RAI (ambiguous) precedes surgery by 74 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7646,rai_before_surgery,error,rai,2019-09-09,surgery,2019-09-26,-17,RAI (ambiguous) precedes surgery by 17 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7729,rai_before_surgery,error,rai,2000-02-17,surgery,2019-10-29,-7194,RAI (ambiguous) precedes surgery by 7194 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7778,rai_before_surgery,error,rai,2019-08-26,surgery,2019-11-15,-81,RAI (ambiguous) precedes surgery by 81 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8054,rai_before_surgery,error,rai,1999-09-25,surgery,2020-03-06,-7468,RAI (ambiguous) precedes surgery by 7468 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8486,rai_before_surgery,error,rai,2000-01-19,surgery,2020-11-19,-7610,RAI (ambiguous) precedes surgery by 7610 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8522,rai_before_surgery,error,rai,1990-09-04,surgery,2020-12-08,-11053,RAI (ambiguous) precedes surgery by 11053 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9395,rai_before_surgery,error,rai,2022-01-07,surgery,2022-03-07,-59,RAI (ambiguous) precedes surgery by 59 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9428,rai_before_surgery,error,rai,1991-11-28,surgery,2022-03-22,-11072,RAI (ambiguous) precedes surgery by 11072 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8203,rai_before_surgery,error,rai,1995-06-01,surgery,2020-07-06,-9167,RAI (ambiguous) precedes surgery by 9167 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8968,rai_before_surgery,error,rai,1994-01-23,surgery,2021-07-07,-10027,RAI (ambiguous) precedes surgery by 10027 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9442,rai_before_surgery,error,rai,2021-12-17,surgery,2022-03-29,-102,RAI (ambiguous) precedes surgery by 102 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9677,rai_before_surgery,error,rai,2022-06-07,surgery,2022-07-22,-45,RAI (ambiguous) precedes surgery by 45 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+5832,rai_before_surgery,error,rai,2016-11-23,surgery,2017-02-24,-93,RAI (ambiguous) precedes surgery by 93 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7241,rai_before_surgery,error,rai,2019-03-29,surgery,2019-04-03,-5,RAI (ambiguous) precedes surgery by 5 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7417,rai_before_surgery,error,rai,2019-05-31,surgery,2019-06-26,-26,RAI (ambiguous) precedes surgery by 26 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7811,rai_before_surgery,error,rai,1993-01-04,surgery,2019-12-03,-9829,RAI (ambiguous) precedes surgery by 9829 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7870,rai_before_surgery,error,rai,2000-12-27,surgery,2019-12-18,-6930,RAI (ambiguous) precedes surgery by 6930 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8108,rai_before_surgery,error,rai,1993-11-09,surgery,2020-05-12,-9681,RAI (ambiguous) precedes surgery by 9681 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8109,rai_before_surgery,error,rai,2020-05-11,surgery,2020-05-12,-1,RAI (ambiguous) precedes surgery by 1 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8128,rai_before_surgery,error,rai,2001-10-21,surgery,2020-05-28,-6794,RAI (ambiguous) precedes surgery by 6794 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8165,rai_before_surgery,error,rai,1994-10-19,surgery,2020-06-18,-9374,RAI (ambiguous) precedes surgery by 9374 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8203,rai_before_surgery,error,rai,1995-06-01,surgery,2020-07-06,-9167,RAI (ambiguous) precedes surgery by 9167 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8913,rai_before_surgery,error,rai,2021-05-07,surgery,2021-06-10,-34,RAI (ambiguous) precedes surgery by 34 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8968,rai_before_surgery,error,rai,1994-01-23,surgery,2021-07-07,-10027,RAI (ambiguous) precedes surgery by 10027 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7558,rai_before_surgery,error,rai,2019-08-16,surgery,2019-08-21,-5,RAI (ambiguous) precedes surgery by 5 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7967,rai_before_surgery,error,rai,2019-12-19,surgery,2020-02-04,-47,RAI (ambiguous) precedes surgery by 47 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8107,rai_before_surgery,error,rai,2020-02-07,surgery,2020-05-12,-95,RAI (ambiguous) precedes surgery by 95 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8841,rai_before_surgery,error,rai,1991-02-04,surgery,2021-05-11,-11054,RAI (ambiguous) precedes surgery by 11054 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8843,rai_before_surgery,error,rai,1999-09-22,surgery,2021-05-12,-7903,RAI (ambiguous) precedes surgery by 7903 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9822,rai_before_surgery,error,rai,2006-01-12,surgery,2022-09-29,-6104,RAI (ambiguous) precedes surgery by 6104 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+3180,rai_before_surgery,error,rai,2008-12-10,surgery,2009-07-31,-233,RAI (ambiguous) precedes surgery by 233 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+4556,rai_before_surgery,error,rai,2001-10-25,surgery,2014-08-28,-4690,RAI (ambiguous) precedes surgery by 4690 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7550,rai_before_surgery,error,rai,2018-06-13,surgery,2019-08-16,-429,RAI (ambiguous) precedes surgery by 429 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9225,rai_before_surgery,error,rai,2021-08-17,surgery,2021-12-02,-107,RAI (ambiguous) precedes surgery by 107 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9741,rai_before_surgery,error,rai,2022-05-23,surgery,2022-08-25,-94,RAI (ambiguous) precedes surgery by 94 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9822,rai_before_surgery,error,rai,2006-01-12,surgery,2022-09-29,-6104,RAI (ambiguous) precedes surgery by 6104 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+3180,rai_before_surgery,error,rai,2008-12-10,surgery,2009-07-31,-233,RAI (ambiguous) precedes surgery by 233 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+3180,rai_before_surgery,error,rai,2009-01-12,surgery,2009-07-31,-200,RAI (ambiguous) precedes surgery by 200 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7556,rai_before_surgery,error,rai,2019-08-15,surgery,2019-08-21,-6,RAI (ambiguous) precedes surgery by 6 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7718,rai_before_surgery,error,rai,2019-06-20,surgery,2019-10-23,-125,RAI (ambiguous) precedes surgery by 125 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7801,rai_before_surgery,error,rai,2018-12-12,surgery,2019-11-26,-349,RAI (ambiguous) precedes surgery by 349 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9102,rai_before_surgery,error,rai,1996-05-09,surgery,2021-06-30,-9183,RAI (ambiguous) precedes surgery by 9183 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9319,rai_before_surgery,error,rai,2021-09-24,surgery,2022-01-27,-125,RAI (ambiguous) precedes surgery by 125 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9797,rai_before_surgery,error,rai,2021-11-05,surgery,2022-09-21,-320,RAI (ambiguous) precedes surgery by 320 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9822,rai_before_surgery,error,rai,2006-01-12,surgery,2022-09-29,-6104,RAI (ambiguous) precedes surgery by 6104 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7068,rai_before_surgery,error,rai,2019-01-08,surgery,2019-01-16,-8,RAI (ambiguous) precedes surgery by 8 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7132,rai_before_surgery,error,rai,2018-10-23,surgery,2019-02-12,-112,RAI (ambiguous) precedes surgery by 112 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7177,rai_before_surgery,error,rai,2019-02-20,surgery,2019-03-05,-13,RAI (ambiguous) precedes surgery by 13 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7252,rai_before_surgery,error,rai,2019-03-29,surgery,2019-04-09,-11,RAI (ambiguous) precedes surgery by 11 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+7297,rai_before_surgery,error,rai,2019-02-11,surgery,2019-04-26,-74,RAI (ambiguous) precedes surgery by 74 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8640,rai_before_surgery,error,rai,1998-07-10,surgery,2021-02-05,-8246,RAI (ambiguous) precedes surgery by 8246 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+8721,rai_before_surgery,error,rai,2018-10-22,surgery,2021-03-16,-876,RAI (ambiguous) precedes surgery by 876 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9027,rai_before_surgery,error,rai,1998-09-27,surgery,2021-08-05,-8348,RAI (ambiguous) precedes surgery by 8348 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9428,rai_before_surgery,error,rai,1991-11-28,surgery,2022-03-22,-11072,RAI (ambiguous) precedes surgery by 11072 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+9459,rai_before_surgery,error,rai,2020-05-05,surgery,2022-04-07,-702,RAI (ambiguous) precedes surgery by 702 days,true_conflict,RAI preceding surgery is clinically implausible; date extraction error likely,False
+3695,late_rai,warning,rai,2022-07-05,surgery,2012-02-24,3784,RAI 3784 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4950,late_rai,warning,rai,2017-03-02,surgery,2015-07-28,583,RAI 583 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+5092,late_rai,warning,rai,2023-08-22,surgery,2015-10-30,2853,RAI 2853 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5107,late_rai,warning,rai,2024-07-29,surgery,2015-11-09,3185,RAI 3185 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5107,late_rai,warning,rai,2024-07-29,surgery,2015-11-09,3185,RAI 3185 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5191,late_rai,warning,rai,2024-05-03,surgery,2016-01-07,3039,RAI 3039 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5197,late_rai,warning,rai,2017-05-10,surgery,2016-01-11,485,RAI 485 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+5306,late_rai,warning,rai,2024-02-27,surgery,2016-03-16,2904,RAI 2904 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5666,late_rai,warning,rai,2024-11-15,surgery,2016-11-30,2907,RAI 2907 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5817,late_rai,warning,rai,2024-06-10,surgery,2017-02-22,2665,RAI 2665 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5975,late_rai,warning,rai,2024-09-13,surgery,2017-05-10,2683,RAI 2683 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5986,late_rai,warning,rai,2024-01-08,surgery,2017-05-12,2432,RAI 2432 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6007,late_rai,warning,rai,2024-03-19,surgery,2017-05-23,2492,RAI 2492 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6103,late_rai,warning,rai,2021-02-19,surgery,2017-06-30,1330,RAI 1330 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6167,late_rai,warning,rai,2024-10-23,surgery,2017-08-16,2625,RAI 2625 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6181,late_rai,warning,rai,2023-01-12,surgery,2017-08-23,1968,RAI 1968 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6300,late_rai,warning,rai,2023-12-14,surgery,2017-11-14,2221,RAI 2221 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6747,late_rai,warning,rai,2024-09-12,surgery,2018-08-01,2234,RAI 2234 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7094,late_rai,warning,rai,2025-10-20,surgery,2019-01-29,2456,RAI 2456 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7126,late_rai,warning,rai,2025-08-01,surgery,2019-02-11,2363,RAI 2363 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7149,late_rai,warning,rai,2020-09-02,surgery,2019-02-19,561,RAI 561 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7230,late_rai,warning,rai,2020-10-06,surgery,2019-04-01,554,RAI 554 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7230,late_rai,warning,rai,2021-02-26,surgery,2019-04-01,697,RAI 697 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7230,late_rai,warning,rai,2021-07-23,surgery,2019-04-01,844,RAI 844 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7230,late_rai,warning,rai,2021-11-22,surgery,2019-04-01,966,RAI 966 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7280,late_rai,warning,rai,2023-06-13,surgery,2019-04-19,1516,RAI 1516 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7337,late_rai,warning,rai,2025-10-13,surgery,2019-05-20,2338,RAI 2338 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7384,late_rai,warning,rai,2024-09-16,surgery,2019-06-11,1924,RAI 1924 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+8894,late_rai,warning,rai,2022-09-09,surgery,2021-06-04,462,RAI 462 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+9798,late_rai,warning,rai,2023-11-20,surgery,2022-09-22,424,RAI 424 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+711,late_rai,warning,rai,2024-08-23,surgery,2015-09-02,3278,RAI 3278 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+1886,late_rai,warning,rai,2020-10-16,surgery,2010-04-30,3822,RAI 3822 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4563,late_rai,warning,rai,2024-06-03,surgery,2014-09-08,3556,RAI 3556 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4642,late_rai,warning,rai,2023-12-15,surgery,2014-11-05,3327,RAI 3327 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4736,late_rai,warning,rai,2023-09-05,surgery,2015-01-28,3142,RAI 3142 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4865,late_rai,warning,rai,2023-05-31,surgery,2015-05-27,2926,RAI 2926 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5118,late_rai,warning,rai,2024-07-19,surgery,2015-11-16,3168,RAI 3168 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5177,late_rai,warning,rai,2022-03-11,surgery,2015-12-29,2264,RAI 2264 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5191,late_rai,warning,rai,2024-05-03,surgery,2016-01-07,3039,RAI 3039 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5390,late_rai,warning,rai,2024-06-27,surgery,2016-05-19,2961,RAI 2961 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5612,late_rai,warning,rai,2024-04-08,surgery,2016-10-27,2720,RAI 2720 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6014,late_rai,warning,rai,2020-06-10,surgery,2009-02-23,4125,RAI 4125 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6046,late_rai,warning,rai,2024-11-21,surgery,2017-06-08,2723,RAI 2723 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6103,late_rai,warning,rai,2024-07-18,surgery,2017-06-30,2575,RAI 2575 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6177,late_rai,warning,rai,2021-11-10,surgery,2017-08-21,1542,RAI 1542 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6393,late_rai,warning,rai,2020-06-09,surgery,2017-12-29,893,RAI 893 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6543,late_rai,warning,rai,2021-07-15,surgery,2018-04-10,1192,RAI 1192 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6872,late_rai,warning,rai,2024-05-20,surgery,2018-10-24,2035,RAI 2035 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7066,late_rai,warning,rai,2020-10-15,surgery,2019-01-15,639,RAI 639 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7087,late_rai,warning,rai,2024-10-10,surgery,2019-01-24,2086,RAI 2086 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7087,late_rai,warning,rai,2025-11-14,surgery,2019-01-24,2486,RAI 2486 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7094,late_rai,warning,rai,2025-10-20,surgery,2019-01-29,2456,RAI 2456 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7126,late_rai,warning,rai,2025-10-10,surgery,2019-02-11,2433,RAI 2433 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7230,late_rai,warning,rai,2020-11-20,surgery,2019-04-01,599,RAI 599 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7249,late_rai,warning,rai,2020-09-24,surgery,2019-04-09,534,RAI 534 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7337,late_rai,warning,rai,2025-10-13,surgery,2019-05-20,2338,RAI 2338 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7359,late_rai,warning,rai,2025-06-30,surgery,2019-05-28,2225,RAI 2225 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7385,late_rai,warning,rai,2022-10-27,surgery,2019-06-11,1234,RAI 1234 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7471,late_rai,warning,rai,2020-10-09,surgery,2019-07-17,450,RAI 450 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7471,late_rai,warning,rai,2020-10-09,surgery,2019-07-17,450,RAI 450 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7537,late_rai,warning,rai,2024-06-13,surgery,2019-08-09,1770,RAI 1770 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+1636,late_rai,warning,rai,2024-07-02,surgery,2013-04-02,4109,RAI 4109 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+1886,late_rai,warning,rai,2012-03-26,surgery,2010-04-30,696,RAI 696 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+1886,late_rai,warning,rai,2020-10-16,surgery,2010-04-30,3822,RAI 3822 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+2051,late_rai,warning,rai,2024-01-18,surgery,2010-06-22,4958,RAI 4958 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4889,late_rai,warning,rai,2021-07-19,surgery,2015-06-08,2233,RAI 2233 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5107,late_rai,warning,rai,2024-07-29,surgery,2015-11-09,3185,RAI 3185 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5107,late_rai,warning,rai,2024-07-29,surgery,2015-11-09,3185,RAI 3185 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5221,late_rai,warning,rai,2024-08-14,surgery,2016-01-20,3129,RAI 3129 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5512,late_rai,warning,rai,2024-04-23,surgery,2016-08-25,2798,RAI 2798 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5822,late_rai,warning,rai,2022-02-11,surgery,2017-02-22,1815,RAI 1815 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6202,late_rai,warning,rai,2021-03-30,surgery,2017-09-06,1301,RAI 1301 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6479,late_rai,warning,rai,2023-07-12,surgery,2018-02-22,1966,RAI 1966 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6814,late_rai,warning,rai,2024-09-16,surgery,2018-09-17,2191,RAI 2191 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6844,late_rai,warning,rai,2024-08-06,surgery,2018-09-28,2139,RAI 2139 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6907,late_rai,warning,rai,2023-07-18,surgery,2018-11-09,1712,RAI 1712 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7201,late_rai,warning,rai,2025-10-08,surgery,2019-03-18,2396,RAI 2396 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7213,late_rai,warning,rai,2025-08-19,surgery,2019-03-22,2342,RAI 2342 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7230,late_rai,warning,rai,2020-10-06,surgery,2019-04-01,554,RAI 554 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7305,late_rai,warning,rai,2023-03-03,surgery,2019-05-06,1397,RAI 1397 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7458,late_rai,warning,rai,2025-07-23,surgery,2019-07-12,2203,RAI 2203 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7471,late_rai,warning,rai,2020-10-09,surgery,2019-07-17,450,RAI 450 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7477,late_rai,warning,rai,2020-07-22,surgery,2019-07-19,369,RAI 369 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7511,late_rai,warning,rai,2021-02-09,surgery,2019-07-29,561,RAI 561 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+2377,late_rai,warning,rai,2022-04-17,surgery,2000-09-13,7886,RAI 7886 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+3341,late_rai,warning,rai,2024-05-30,surgery,2010-06-18,5095,RAI 5095 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4950,late_rai,warning,rai,2023-11-29,surgery,2015-07-28,3046,RAI 3046 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5107,late_rai,warning,rai,2017-11-09,surgery,2015-11-09,731,RAI 731 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5132,late_rai,warning,rai,2024-01-16,surgery,2015-11-25,2974,RAI 2974 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5243,late_rai,warning,rai,2024-03-25,surgery,2016-02-03,2973,RAI 2973 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5399,late_rai,warning,rai,2024-08-29,surgery,2010-09-17,5095,RAI 5095 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5501,late_rai,warning,rai,2024-03-13,surgery,2016-08-18,2764,RAI 2764 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5666,late_rai,warning,rai,2024-11-15,surgery,2016-11-30,2907,RAI 2907 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5740,late_rai,warning,rai,2021-12-07,surgery,2017-01-11,1791,RAI 1791 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5930,late_rai,warning,rai,2020-04-15,surgery,2017-04-12,1099,RAI 1099 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6103,late_rai,warning,rai,2024-07-18,surgery,2017-06-30,2575,RAI 2575 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6103,late_rai,warning,rai,2024-07-18,surgery,2017-06-30,2575,RAI 2575 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6145,late_rai,warning,rai,2023-12-20,surgery,2017-08-04,2329,RAI 2329 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6167,late_rai,warning,rai,2024-10-23,surgery,2017-08-16,2625,RAI 2625 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6181,late_rai,warning,rai,2023-01-12,surgery,2017-08-23,1968,RAI 1968 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6601,late_rai,warning,rai,2022-02-01,surgery,2018-05-17,1356,RAI 1356 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6681,late_rai,warning,rai,2024-06-13,surgery,2018-06-26,2179,RAI 2179 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6747,late_rai,warning,rai,2024-09-12,surgery,2018-08-01,2234,RAI 2234 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7034,late_rai,warning,rai,2024-07-24,surgery,2019-01-02,2030,RAI 2030 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7087,late_rai,warning,rai,2025-11-14,surgery,2019-01-24,2486,RAI 2486 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7087,late_rai,warning,rai,2025-11-14,surgery,2019-01-24,2486,RAI 2486 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7126,late_rai,warning,rai,2025-10-10,surgery,2019-02-11,2433,RAI 2433 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7126,late_rai,warning,rai,2025-10-10,surgery,2019-02-11,2433,RAI 2433 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7130,late_rai,warning,rai,2025-08-01,surgery,2019-02-12,2362,RAI 2362 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7144,late_rai,warning,rai,2025-05-13,surgery,2019-02-19,2275,RAI 2275 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7149,late_rai,warning,rai,2025-09-03,surgery,2019-02-19,2388,RAI 2388 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7186,late_rai,warning,rai,2025-10-15,surgery,2019-03-12,2409,RAI 2409 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7269,late_rai,warning,rai,2025-11-03,surgery,2019-03-01,2439,RAI 2439 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7384,late_rai,warning,rai,2024-09-16,surgery,2019-06-11,1924,RAI 1924 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7385,late_rai,warning,rai,2022-10-27,surgery,2019-06-11,1234,RAI 1234 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7477,late_rai,warning,rai,2025-11-04,surgery,2019-07-19,2300,RAI 2300 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7537,late_rai,warning,rai,2024-06-13,surgery,2019-08-09,1770,RAI 1770 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7574,late_rai,warning,rai,2023-04-12,surgery,2019-08-27,1324,RAI 1324 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+8894,late_rai,warning,rai,2022-09-09,surgery,2021-06-04,462,RAI 462 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+3430,late_rai,warning,rai,2023-11-29,surgery,2011-01-03,4713,RAI 4713 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4435,late_rai,warning,rai,2023-12-07,surgery,2014-05-29,3479,RAI 3479 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4736,late_rai,warning,rai,2023-09-05,surgery,2015-01-28,3142,RAI 3142 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5107,late_rai,warning,rai,2024-07-29,surgery,2015-11-09,3185,RAI 3185 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5118,late_rai,warning,rai,2024-07-19,surgery,2015-11-16,3168,RAI 3168 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5131,late_rai,warning,rai,2024-10-08,surgery,2015-11-23,3242,RAI 3242 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5177,late_rai,warning,rai,2022-03-11,surgery,2015-12-29,2264,RAI 2264 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5191,late_rai,warning,rai,2024-05-03,surgery,2016-01-07,3039,RAI 3039 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5197,late_rai,warning,rai,2023-10-31,surgery,2016-01-11,2850,RAI 2850 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5204,late_rai,warning,rai,2023-01-13,surgery,2016-01-12,2558,RAI 2558 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5222,late_rai,warning,rai,2020-11-20,surgery,2016-01-20,1766,RAI 1766 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5395,late_rai,warning,rai,2024-02-08,surgery,2016-05-25,2815,RAI 2815 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5601,late_rai,warning,rai,2020-05-22,surgery,2016-10-19,1311,RAI 1311 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5636,late_rai,warning,rai,2024-10-31,surgery,2016-11-10,2912,RAI 2912 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5842,late_rai,warning,rai,2024-07-26,surgery,2017-03-02,2703,RAI 2703 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6178,late_rai,warning,rai,2024-06-05,surgery,2017-08-22,2479,RAI 2479 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6393,late_rai,warning,rai,2020-06-09,surgery,2017-12-29,893,RAI 893 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6775,late_rai,warning,rai,2023-11-30,surgery,2018-08-22,1926,RAI 1926 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6872,late_rai,warning,rai,2024-05-20,surgery,2018-10-24,2035,RAI 2035 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7066,late_rai,warning,rai,2024-12-17,surgery,2019-01-15,2163,RAI 2163 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7087,late_rai,warning,rai,2025-11-14,surgery,2019-01-24,2486,RAI 2486 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7120,late_rai,warning,rai,2020-09-04,surgery,2019-01-17,596,RAI 596 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7139,late_rai,warning,rai,2020-10-28,surgery,2019-02-15,621,RAI 621 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7347,late_rai,warning,rai,2025-08-21,surgery,2019-05-21,2284,RAI 2284 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7445,late_rai,warning,rai,2025-08-19,surgery,2019-07-09,2233,RAI 2233 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7742,late_rai,warning,rai,2022-06-15,surgery,2019-11-05,953,RAI 953 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+3430,late_rai,warning,rai,2023-11-29,surgery,2011-01-03,4713,RAI 4713 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4430,late_rai,warning,rai,2016-09-01,surgery,2014-05-24,831,RAI 831 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4728,late_rai,warning,rai,2017-02-06,surgery,2015-01-26,742,RAI 742 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4736,late_rai,warning,rai,2023-09-05,surgery,2015-01-28,3142,RAI 3142 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5132,late_rai,warning,rai,2024-01-16,surgery,2015-11-25,2974,RAI 2974 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5177,late_rai,warning,rai,2022-03-11,surgery,2015-12-29,2264,RAI 2264 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5204,late_rai,warning,rai,2023-01-13,surgery,2016-01-12,2558,RAI 2558 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5226,late_rai,warning,rai,2024-09-09,surgery,2016-01-21,3154,RAI 3154 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5390,late_rai,warning,rai,2024-06-27,surgery,2016-05-19,2961,RAI 2961 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5577,late_rai,warning,rai,2023-11-09,surgery,2016-10-05,2591,RAI 2591 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5588,late_rai,warning,rai,2024-09-26,surgery,2016-10-12,2906,RAI 2906 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5601,late_rai,warning,rai,2020-05-22,surgery,2016-10-19,1311,RAI 1311 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5612,late_rai,warning,rai,2024-04-08,surgery,2016-10-27,2720,RAI 2720 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5874,late_rai,warning,rai,2024-01-16,surgery,2017-03-20,2493,RAI 2493 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6470,late_rai,warning,rai,2024-02-08,surgery,2018-02-20,2179,RAI 2179 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6543,late_rai,warning,rai,2021-07-15,surgery,2018-04-10,1192,RAI 1192 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6546,late_rai,warning,rai,2024-09-17,surgery,2018-04-11,2351,RAI 2351 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6659,late_rai,warning,rai,2021-10-14,surgery,2018-06-13,1219,RAI 1219 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6895,late_rai,warning,rai,2024-07-24,surgery,2018-11-06,2087,RAI 2087 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7066,late_rai,warning,rai,2024-12-17,surgery,2019-01-15,2163,RAI 2163 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7144,late_rai,warning,rai,2025-05-13,surgery,2019-02-19,2275,RAI 2275 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7209,late_rai,warning,rai,2025-08-08,surgery,2019-03-20,2333,RAI 2333 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7210,late_rai,warning,rai,2021-11-13,surgery,2019-03-20,969,RAI 969 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7249,late_rai,warning,rai,2020-09-24,surgery,2019-04-09,534,RAI 534 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7347,late_rai,warning,rai,2025-08-21,surgery,2019-05-21,2284,RAI 2284 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7382,late_rai,warning,rai,2025-06-02,surgery,2019-06-11,2183,RAI 2183 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7409,late_rai,warning,rai,2020-12-03,surgery,2019-06-25,527,RAI 527 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7471,late_rai,warning,rai,2020-10-09,surgery,2019-07-17,450,RAI 450 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7560,late_rai,warning,rai,2022-02-07,surgery,2019-08-22,900,RAI 900 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7580,late_rai,warning,rai,2021-08-29,surgery,2019-08-28,732,RAI 732 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+9710,late_rai,warning,rai,2024-07-12,surgery,2022-08-05,707,RAI 707 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+9710,late_rai,warning,rai,2024-07-12,surgery,2022-08-05,707,RAI 707 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+9791,late_rai,warning,rai,2024-06-24,surgery,2022-09-20,643,RAI 643 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+9798,late_rai,warning,rai,2023-11-19,surgery,2022-09-22,423,RAI 423 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+1670,late_rai,warning,rai,2019-12-10,surgery,2013-07-24,2330,RAI 2330 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+1886,late_rai,warning,rai,2012-03-26,surgery,2010-04-30,696,RAI 696 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+4768,late_rai,warning,rai,2024-04-22,surgery,2015-02-27,3342,RAI 3342 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4897,late_rai,warning,rai,2022-07-14,surgery,2015-06-11,2590,RAI 2590 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4995,late_rai,warning,rai,2024-03-07,surgery,2015-09-03,3108,RAI 3108 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5062,late_rai,warning,rai,2023-02-10,surgery,2015-10-13,2677,RAI 2677 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5149,late_rai,warning,rai,2024-06-04,surgery,2015-12-07,3102,RAI 3102 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5512,late_rai,warning,rai,2024-04-23,surgery,2016-08-25,2798,RAI 2798 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5671,late_rai,warning,rai,2023-12-21,surgery,2016-12-01,2576,RAI 2576 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5678,late_rai,warning,rai,2024-04-02,surgery,2016-12-06,2674,RAI 2674 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5878,late_rai,warning,rai,2024-06-07,surgery,2017-03-22,2634,RAI 2634 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5917,late_rai,warning,rai,2023-08-22,surgery,2017-04-07,2328,RAI 2328 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6275,late_rai,warning,rai,2020-12-14,surgery,2017-06-16,1277,RAI 1277 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6744,late_rai,warning,rai,2024-06-18,surgery,2018-07-27,2153,RAI 2153 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7043,late_rai,warning,rai,2025-01-14,surgery,2019-01-08,2198,RAI 2198 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7230,late_rai,warning,rai,2020-10-06,surgery,2019-04-01,554,RAI 554 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7566,late_rai,warning,rai,2019-11-07,surgery,2013-10-28,2201,RAI 2201 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+3695,late_rai,warning,rai,2023-03-30,surgery,2012-02-24,4052,RAI 4052 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4185,late_rai,warning,rai,2015-05-14,surgery,2013-11-04,556,RAI 556 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+4658,late_rai,warning,rai,2023-11-14,surgery,2014-11-24,3277,RAI 3277 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4736,late_rai,warning,rai,2023-09-05,surgery,2015-01-28,3142,RAI 3142 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5092,late_rai,warning,rai,2023-08-22,surgery,2015-10-30,2853,RAI 2853 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5131,late_rai,warning,rai,2024-10-08,surgery,2015-11-23,3242,RAI 3242 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5132,late_rai,warning,rai,2024-01-16,surgery,2015-11-25,2974,RAI 2974 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5197,late_rai,warning,rai,2023-10-31,surgery,2016-01-11,2850,RAI 2850 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5306,late_rai,warning,rai,2024-02-27,surgery,2016-03-16,2904,RAI 2904 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5544,late_rai,warning,rai,2023-12-14,surgery,2016-09-13,2648,RAI 2648 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5666,late_rai,warning,rai,2024-11-15,surgery,2016-11-30,2907,RAI 2907 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5817,late_rai,warning,rai,2024-06-10,surgery,2017-02-22,2665,RAI 2665 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5930,late_rai,warning,rai,2018-10-11,surgery,2017-04-12,547,RAI 547 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+5986,late_rai,warning,rai,2024-01-08,surgery,2017-05-12,2432,RAI 2432 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6601,late_rai,warning,rai,2022-02-01,surgery,2018-05-17,1356,RAI 1356 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6747,late_rai,warning,rai,2024-09-12,surgery,2018-08-01,2234,RAI 2234 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7066,late_rai,warning,rai,2024-12-17,surgery,2019-01-15,2163,RAI 2163 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7209,late_rai,warning,rai,2025-08-08,surgery,2019-03-20,2333,RAI 2333 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7230,late_rai,warning,rai,2021-07-23,surgery,2019-04-01,844,RAI 844 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7445,late_rai,warning,rai,2025-08-19,surgery,2019-07-09,2233,RAI 2233 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7471,late_rai,warning,rai,2020-09-21,surgery,2019-07-17,432,RAI 432 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7471,late_rai,warning,rai,2020-10-09,surgery,2019-07-17,450,RAI 450 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7497,late_rai,warning,rai,2023-09-05,surgery,2019-07-25,1503,RAI 1503 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7540,late_rai,warning,rai,2021-01-08,surgery,2019-08-13,514,RAI 514 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+9710,late_rai,warning,rai,2024-07-12,surgery,2022-08-05,707,RAI 707 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+2377,late_rai,warning,rai,2022-04-17,surgery,2000-09-13,7886,RAI 7886 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+3430,late_rai,warning,rai,2023-11-29,surgery,2011-01-03,4713,RAI 4713 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+3507,late_rai,warning,rai,2013-04-15,surgery,2011-05-18,698,RAI 698 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+4435,late_rai,warning,rai,2020-12-10,surgery,2014-05-29,2387,RAI 2387 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4885,late_rai,warning,rai,2022-04-21,surgery,2015-06-05,2512,RAI 2512 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4917,late_rai,warning,rai,2021-01-26,surgery,2015-06-25,2042,RAI 2042 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5107,late_rai,warning,rai,2017-11-09,surgery,2015-11-09,731,RAI 731 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5131,late_rai,warning,rai,2024-10-08,surgery,2015-11-23,3242,RAI 3242 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5176,late_rai,warning,rai,2024-08-09,surgery,2015-12-29,3146,RAI 3146 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5197,late_rai,warning,rai,2023-10-31,surgery,2016-01-11,2850,RAI 2850 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5529,late_rai,warning,rai,2023-01-10,surgery,2016-09-07,2316,RAI 2316 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5649,late_rai,warning,rai,2022-10-12,surgery,2016-11-16,2156,RAI 2156 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5842,late_rai,warning,rai,2024-07-26,surgery,2017-03-02,2703,RAI 2703 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6145,late_rai,warning,rai,2023-12-20,surgery,2017-08-04,2329,RAI 2329 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6167,late_rai,warning,rai,2024-10-23,surgery,2017-08-16,2625,RAI 2625 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6601,late_rai,warning,rai,2022-02-01,surgery,2018-05-17,1356,RAI 1356 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6690,late_rai,warning,rai,2024-10-22,surgery,2018-06-28,2308,RAI 2308 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7139,late_rai,warning,rai,2022-07-12,surgery,2019-02-15,1243,RAI 1243 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7186,late_rai,warning,rai,2025-10-15,surgery,2019-03-12,2409,RAI 2409 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7209,late_rai,warning,rai,2025-08-08,surgery,2019-03-20,2333,RAI 2333 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7295,late_rai,warning,rai,2025-10-13,surgery,2019-04-26,2362,RAI 2362 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7471,late_rai,warning,rai,2020-09-21,surgery,2019-07-17,432,RAI 432 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+9791,late_rai,warning,rai,2024-06-24,surgery,2022-09-20,643,RAI 643 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+9813,late_rai,warning,rai,2024-10-01,surgery,2022-09-27,735,RAI 735 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+3694,late_rai,warning,rai,2022-07-05,surgery,2012-02-22,3786,RAI 3786 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4703,late_rai,warning,rai,2024-03-12,surgery,2015-01-07,3352,RAI 3352 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4759,late_rai,warning,rai,2024-11-12,surgery,2015-02-18,3555,RAI 3555 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5020,late_rai,warning,rai,2024-02-22,surgery,2015-09-21,3076,RAI 3076 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5062,late_rai,warning,rai,2023-02-10,surgery,2015-10-13,2677,RAI 2677 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5107,late_rai,warning,rai,2024-07-29,surgery,2015-11-09,3185,RAI 3185 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5110,late_rai,warning,rai,2023-12-15,surgery,2015-11-10,2957,RAI 2957 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5251,late_rai,warning,rai,2024-08-22,surgery,2016-02-10,3116,RAI 3116 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5575,late_rai,warning,rai,2024-02-05,surgery,2016-10-05,2679,RAI 2679 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5822,late_rai,warning,rai,2022-02-11,surgery,2017-02-22,1815,RAI 1815 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5867,late_rai,warning,rai,2024-08-28,surgery,2017-03-15,2723,RAI 2723 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5895,late_rai,warning,rai,2024-02-26,surgery,2017-03-28,2526,RAI 2526 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5991,late_rai,warning,rai,2024-09-06,surgery,2017-05-16,2670,RAI 2670 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6191,late_rai,warning,rai,2024-03-29,surgery,2017-08-31,2402,RAI 2402 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6275,late_rai,warning,rai,2021-08-02,surgery,2017-06-16,1508,RAI 1508 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6310,late_rai,warning,rai,2024-05-01,surgery,2017-11-15,2359,RAI 2359 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6458,late_rai,warning,rai,2023-08-02,surgery,2018-02-09,2000,RAI 2000 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6644,late_rai,warning,rai,2024-03-25,surgery,2018-06-05,2120,RAI 2120 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6732,late_rai,warning,rai,2022-09-26,surgery,2018-07-20,1529,RAI 1529 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6744,late_rai,warning,rai,2024-06-18,surgery,2018-07-27,2153,RAI 2153 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6771,late_rai,warning,rai,2024-08-14,surgery,2018-08-20,2186,RAI 2186 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6811,late_rai,warning,rai,2024-06-25,surgery,2018-09-14,2111,RAI 2111 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6814,late_rai,warning,rai,2024-09-16,surgery,2018-09-17,2191,RAI 2191 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6878,late_rai,warning,rai,2023-12-14,surgery,2018-10-26,1875,RAI 1875 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7079,late_rai,warning,rai,2022-04-06,surgery,2019-01-22,1170,RAI 1170 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7087,late_rai,warning,rai,2024-10-10,surgery,2019-01-24,2086,RAI 2086 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7305,late_rai,warning,rai,2023-03-12,surgery,2019-05-06,1406,RAI 1406 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7384,late_rai,warning,rai,2024-09-16,surgery,2019-06-11,1924,RAI 1924 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7385,late_rai,warning,rai,2022-10-27,surgery,2019-06-11,1234,RAI 1234 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7477,late_rai,warning,rai,2025-11-04,surgery,2019-07-19,2300,RAI 2300 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7537,late_rai,warning,rai,2024-06-13,surgery,2019-08-09,1770,RAI 1770 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7561,late_rai,warning,rai,2025-01-28,surgery,2019-08-22,1986,RAI 1986 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7574,late_rai,warning,rai,2023-04-12,surgery,2019-08-27,1324,RAI 1324 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+9798,late_rai,warning,rai,2024-03-18,surgery,2022-09-22,543,RAI 543 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+1886,late_rai,warning,rai,2020-10-16,surgery,2010-04-30,3822,RAI 3822 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+3651,late_rai,warning,rai,2013-05-31,surgery,2011-12-27,521,RAI 521 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+3694,late_rai,warning,rai,2023-03-30,surgery,2012-02-22,4054,RAI 4054 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4703,late_rai,warning,rai,2024-03-12,surgery,2015-01-07,3352,RAI 3352 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4759,late_rai,warning,rai,2024-11-12,surgery,2015-02-18,3555,RAI 3555 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4813,late_rai,warning,rai,2023-01-26,surgery,2015-04-10,2848,RAI 2848 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4897,late_rai,warning,rai,2022-07-14,surgery,2015-06-11,2590,RAI 2590 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5020,late_rai,warning,rai,2024-02-22,surgery,2015-09-21,3076,RAI 3076 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5110,late_rai,warning,rai,2023-12-15,surgery,2015-11-10,2957,RAI 2957 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5149,late_rai,warning,rai,2024-06-04,surgery,2015-12-07,3102,RAI 3102 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5599,late_rai,warning,rai,2024-07-31,surgery,2016-10-19,2842,RAI 2842 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5722,late_rai,warning,rai,2021-01-04,surgery,2016-12-29,1467,RAI 1467 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5822,late_rai,warning,rai,2021-08-27,surgery,2017-02-22,1647,RAI 1647 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5867,late_rai,warning,rai,2024-08-28,surgery,2017-03-15,2723,RAI 2723 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5895,late_rai,warning,rai,2024-02-26,surgery,2017-03-28,2526,RAI 2526 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5991,late_rai,warning,rai,2024-09-06,surgery,2017-05-16,2670,RAI 2670 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6191,late_rai,warning,rai,2024-03-29,surgery,2017-08-31,2402,RAI 2402 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6312,late_rai,warning,rai,2023-03-23,surgery,2017-11-16,1953,RAI 1953 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6458,late_rai,warning,rai,2023-08-02,surgery,2018-02-09,2000,RAI 2000 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6644,late_rai,warning,rai,2024-03-25,surgery,2018-06-05,2120,RAI 2120 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6744,late_rai,warning,rai,2024-06-18,surgery,2018-07-27,2153,RAI 2153 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6749,late_rai,warning,rai,2024-10-15,surgery,2018-08-01,2267,RAI 2267 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6811,late_rai,warning,rai,2024-06-25,surgery,2018-09-14,2111,RAI 2111 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7094,late_rai,warning,rai,2025-10-20,surgery,2019-01-29,2456,RAI 2456 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7230,late_rai,warning,rai,2020-11-20,surgery,2019-04-01,599,RAI 599 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7230,late_rai,warning,rai,2021-07-23,surgery,2019-04-01,844,RAI 844 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7230,late_rai,warning,rai,2025-07-28,surgery,2019-04-01,2310,RAI 2310 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7445,late_rai,warning,rai,2025-08-19,surgery,2019-07-09,2233,RAI 2233 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7445,late_rai,warning,rai,2025-08-19,surgery,2019-07-09,2233,RAI 2233 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7471,late_rai,warning,rai,2020-10-09,surgery,2019-07-17,450,RAI 450 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7561,late_rai,warning,rai,2025-01-28,surgery,2019-08-22,1986,RAI 1986 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+9791,late_rai,warning,rai,2024-06-24,surgery,2022-09-20,643,RAI 643 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+1648,late_rai,warning,rai,2024-09-13,surgery,2013-09-20,4011,RAI 4011 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+2277,late_rai,warning,rai,2024-09-05,surgery,1999-03-30,9291,RAI 9291 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+3545,late_rai,warning,rai,2015-05-21,surgery,2011-07-19,1402,RAI 1402 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4435,late_rai,warning,rai,2023-12-07,surgery,2014-05-29,3479,RAI 3479 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4460,late_rai,warning,rai,2024-05-20,surgery,2014-06-12,3630,RAI 3630 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4903,late_rai,warning,rai,2024-08-21,surgery,2015-06-12,3358,RAI 3358 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4979,late_rai,warning,rai,2019-12-17,surgery,2015-08-20,1580,RAI 1580 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5107,late_rai,warning,rai,2024-07-29,surgery,2015-11-09,3185,RAI 3185 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5197,late_rai,warning,rai,2023-10-31,surgery,2016-01-11,2850,RAI 2850 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5339,late_rai,warning,rai,2024-11-06,surgery,2016-04-13,3129,RAI 3129 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5508,late_rai,warning,rai,2022-10-25,surgery,2016-08-24,2253,RAI 2253 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5701,late_rai,warning,rai,2021-04-29,surgery,2016-12-15,1596,RAI 1596 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5722,late_rai,warning,rai,2021-01-04,surgery,2016-12-29,1467,RAI 1467 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5949,late_rai,warning,rai,2024-05-23,surgery,2017-04-20,2590,RAI 2590 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6018,late_rai,warning,rai,2023-11-13,surgery,2017-05-26,2362,RAI 2362 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6106,late_rai,warning,rai,2023-11-17,surgery,2017-07-10,2321,RAI 2321 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6312,late_rai,warning,rai,2023-03-23,surgery,2017-11-16,1953,RAI 1953 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6552,late_rai,warning,rai,2024-08-19,surgery,2018-04-12,2321,RAI 2321 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6844,late_rai,warning,rai,2024-08-06,surgery,2018-09-28,2139,RAI 2139 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7087,late_rai,warning,rai,2025-11-14,surgery,2019-01-24,2486,RAI 2486 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7139,late_rai,warning,rai,2020-10-28,surgery,2019-02-15,621,RAI 621 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7144,late_rai,warning,rai,2025-05-13,surgery,2019-02-19,2275,RAI 2275 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7201,late_rai,warning,rai,2020-05-13,surgery,2019-03-18,422,RAI 422 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7202,late_rai,warning,rai,2025-09-18,surgery,2019-03-19,2375,RAI 2375 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7297,late_rai,warning,rai,2024-09-09,surgery,2019-04-26,1963,RAI 1963 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7360,late_rai,warning,rai,2023-10-24,surgery,2019-05-28,1610,RAI 1610 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7445,late_rai,warning,rai,2025-08-19,surgery,2019-07-09,2233,RAI 2233 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7525,late_rai,warning,rai,2025-06-17,surgery,2019-08-02,2146,RAI 2146 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7574,late_rai,warning,rai,2022-09-30,surgery,2019-08-27,1130,RAI 1130 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+2490,late_rai,warning,rai,2024-08-07,surgery,2002-04-23,8142,RAI 8142 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+2892,late_rai,warning,rai,2022-06-16,surgery,2007-07-17,5448,RAI 5448 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+3110,late_rai,warning,rai,2010-04-09,surgery,2009-02-25,408,RAI 408 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+3651,late_rai,warning,rai,2013-05-31,surgery,2011-12-27,521,RAI 521 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+4185,late_rai,warning,rai,2015-05-14,surgery,2013-11-04,556,RAI 556 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+4897,late_rai,warning,rai,2022-07-14,surgery,2015-06-11,2590,RAI 2590 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4995,late_rai,warning,rai,2024-03-07,surgery,2015-09-03,3108,RAI 3108 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5062,late_rai,warning,rai,2023-02-10,surgery,2015-10-13,2677,RAI 2677 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5076,late_rai,warning,rai,2024-09-12,surgery,2015-10-22,3248,RAI 3248 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5110,late_rai,warning,rai,2023-12-15,surgery,2015-11-10,2957,RAI 2957 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5118,late_rai,warning,rai,2024-07-19,surgery,2015-11-16,3168,RAI 3168 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5149,late_rai,warning,rai,2024-06-04,surgery,2015-12-07,3102,RAI 3102 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5656,late_rai,warning,rai,2024-07-30,surgery,2016-11-17,2812,RAI 2812 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5671,late_rai,warning,rai,2023-12-21,surgery,2016-12-01,2576,RAI 2576 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5678,late_rai,warning,rai,2024-04-02,surgery,2016-12-06,2674,RAI 2674 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5722,late_rai,warning,rai,2021-01-04,surgery,2016-12-29,1467,RAI 1467 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5832,late_rai,warning,rai,2018-12-06,surgery,2017-02-24,650,RAI 650 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+5868,late_rai,warning,rai,2024-10-07,surgery,2017-03-16,2762,RAI 2762 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5878,late_rai,warning,rai,2024-06-07,surgery,2017-03-22,2634,RAI 2634 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6275,late_rai,warning,rai,2020-12-14,surgery,2017-06-16,1277,RAI 1277 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6308,late_rai,warning,rai,2023-06-20,surgery,2017-11-15,2043,RAI 2043 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6555,late_rai,warning,rai,2020-10-12,surgery,2018-04-12,914,RAI 914 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6745,late_rai,warning,rai,2024-02-19,surgery,2018-07-31,2029,RAI 2029 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7043,late_rai,warning,rai,2025-01-14,surgery,2019-01-08,2198,RAI 2198 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7139,late_rai,warning,rai,2025-09-24,surgery,2019-02-15,2413,RAI 2413 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7144,late_rai,warning,rai,2025-05-13,surgery,2019-02-19,2275,RAI 2275 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7230,late_rai,warning,rai,2021-11-22,surgery,2019-04-01,966,RAI 966 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7360,late_rai,warning,rai,2023-10-24,surgery,2019-05-28,1610,RAI 1610 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7384,late_rai,warning,rai,2024-09-16,surgery,2019-06-11,1924,RAI 1924 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7384,late_rai,warning,rai,2024-09-16,surgery,2019-06-11,1924,RAI 1924 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7471,late_rai,warning,rai,2020-10-09,surgery,2019-07-17,450,RAI 450 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7471,late_rai,warning,rai,2020-10-09,surgery,2019-07-17,450,RAI 450 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7508,late_rai,warning,rai,2022-10-12,surgery,2019-07-29,1171,RAI 1171 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7540,late_rai,warning,rai,2021-01-04,surgery,2019-08-13,510,RAI 510 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7561,late_rai,warning,rai,2025-01-28,surgery,2019-08-22,1986,RAI 1986 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7574,late_rai,warning,rai,2022-09-30,surgery,2019-08-27,1130,RAI 1130 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7574,late_rai,warning,rai,2023-04-12,surgery,2019-08-27,1324,RAI 1324 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+9710,late_rai,warning,rai,2024-07-12,surgery,2022-08-05,707,RAI 707 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+3430,late_rai,warning,rai,2023-11-29,surgery,2011-01-03,4713,RAI 4713 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4959,late_rai,warning,rai,2024-05-30,surgery,2015-08-06,3220,RAI 3220 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5107,late_rai,warning,rai,2024-07-29,surgery,2015-11-09,3185,RAI 3185 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5191,late_rai,warning,rai,2024-05-03,surgery,2016-01-07,3039,RAI 3039 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5204,late_rai,warning,rai,2023-01-13,surgery,2016-01-12,2558,RAI 2558 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5390,late_rai,warning,rai,2024-06-27,surgery,2016-05-19,2961,RAI 2961 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5473,late_rai,warning,rai,2020-11-24,surgery,2016-07-29,1579,RAI 1579 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5577,late_rai,warning,rai,2023-11-09,surgery,2016-10-05,2591,RAI 2591 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5588,late_rai,warning,rai,2024-09-26,surgery,2016-10-12,2906,RAI 2906 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5612,late_rai,warning,rai,2024-04-08,surgery,2016-10-27,2720,RAI 2720 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5975,late_rai,warning,rai,2024-09-13,surgery,2017-05-10,2683,RAI 2683 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6167,late_rai,warning,rai,2024-10-23,surgery,2017-08-16,2625,RAI 2625 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6177,late_rai,warning,rai,2021-11-10,surgery,2017-08-21,1542,RAI 1542 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6470,late_rai,warning,rai,2024-02-08,surgery,2018-02-20,2179,RAI 2179 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6517,late_rai,warning,rai,2021-12-08,surgery,2017-12-06,1463,RAI 1463 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6543,late_rai,warning,rai,2021-07-15,surgery,2018-04-10,1192,RAI 1192 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6659,late_rai,warning,rai,2021-10-14,surgery,2018-06-13,1219,RAI 1219 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7141,late_rai,warning,rai,2025-10-02,surgery,2019-02-15,2421,RAI 2421 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7210,late_rai,warning,rai,2021-11-13,surgery,2019-03-20,969,RAI 969 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7230,late_rai,warning,rai,2021-07-23,surgery,2019-04-01,844,RAI 844 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7230,late_rai,warning,rai,2021-11-22,surgery,2019-04-01,966,RAI 966 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7471,late_rai,warning,rai,2020-10-09,surgery,2019-07-17,450,RAI 450 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+3222,late_rai,warning,rai,2011-05-11,surgery,2009-11-11,546,RAI 546 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+3545,late_rai,warning,rai,2015-05-14,surgery,2011-07-19,1395,RAI 1395 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4644,late_rai,warning,rai,2020-01-30,surgery,2014-11-07,1910,RAI 1910 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4889,late_rai,warning,rai,2021-07-19,surgery,2015-06-08,2233,RAI 2233 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5187,late_rai,warning,rai,2024-03-13,surgery,2016-01-06,2989,RAI 2989 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5221,late_rai,warning,rai,2024-08-14,surgery,2016-01-20,3129,RAI 3129 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5490,late_rai,warning,rai,2024-04-10,surgery,2016-08-10,2800,RAI 2800 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6596,late_rai,warning,rai,2023-04-11,surgery,2018-05-16,1791,RAI 1791 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6745,late_rai,warning,rai,2024-02-19,surgery,2018-07-31,2029,RAI 2029 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6814,late_rai,warning,rai,2024-09-16,surgery,2018-09-17,2191,RAI 2191 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6844,late_rai,warning,rai,2024-08-06,surgery,2018-09-28,2139,RAI 2139 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6908,late_rai,warning,rai,2024-07-31,surgery,2018-11-09,2091,RAI 2091 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6911,late_rai,warning,rai,2021-11-16,surgery,2018-11-09,1103,RAI 1103 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6922,late_rai,warning,rai,2024-08-14,surgery,2018-11-13,2101,RAI 2101 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7087,late_rai,warning,rai,2025-11-14,surgery,2019-01-24,2486,RAI 2486 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7126,late_rai,warning,rai,2025-10-10,surgery,2019-02-11,2433,RAI 2433 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7337,late_rai,warning,rai,2025-10-13,surgery,2019-05-20,2338,RAI 2338 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7382,late_rai,warning,rai,2025-06-02,surgery,2019-06-11,2183,RAI 2183 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7384,late_rai,warning,rai,2024-09-16,surgery,2019-06-11,1924,RAI 1924 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7471,late_rai,warning,rai,2020-10-09,surgery,2019-07-17,450,RAI 450 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7471,late_rai,warning,rai,2020-10-09,surgery,2019-07-17,450,RAI 450 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7471,late_rai,warning,rai,2020-10-09,surgery,2019-07-17,450,RAI 450 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7471,late_rai,warning,rai,2020-10-09,surgery,2019-07-17,450,RAI 450 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7511,late_rai,warning,rai,2021-02-09,surgery,2019-07-29,561,RAI 561 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7515,late_rai,warning,rai,2025-10-06,surgery,2019-04-08,2373,RAI 2373 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7525,late_rai,warning,rai,2025-06-17,surgery,2019-08-02,2146,RAI 2146 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7540,late_rai,warning,rai,2021-01-04,surgery,2019-08-13,510,RAI 510 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7540,late_rai,warning,rai,2022-02-14,surgery,2019-08-13,916,RAI 916 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+9762,late_rai,warning,rai,2023-12-16,surgery,2022-09-02,470,RAI 470 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+1886,late_rai,warning,rai,2012-03-15,surgery,2010-04-30,685,RAI 685 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+2051,late_rai,warning,rai,2024-01-18,surgery,2010-06-22,4958,RAI 4958 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+2662,late_rai,warning,rai,2021-12-17,surgery,2004-09-28,6289,RAI 6289 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+4903,late_rai,warning,rai,2024-08-21,surgery,2015-06-12,3358,RAI 3358 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5062,late_rai,warning,rai,2023-02-10,surgery,2015-10-13,2677,RAI 2677 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5078,late_rai,warning,rai,2023-06-28,surgery,2015-10-22,2806,RAI 2806 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5221,late_rai,warning,rai,2024-08-14,surgery,2016-01-20,3129,RAI 3129 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5243,late_rai,warning,rai,2017-08-22,surgery,2016-02-03,566,RAI 566 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+5243,late_rai,warning,rai,2024-03-25,surgery,2016-02-03,2973,RAI 2973 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+5339,late_rai,warning,rai,2024-11-06,surgery,2016-04-13,3129,RAI 3129 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6018,late_rai,warning,rai,2023-11-13,surgery,2017-05-26,2362,RAI 2362 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6103,late_rai,warning,rai,2024-07-18,surgery,2017-06-30,2575,RAI 2575 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6202,late_rai,warning,rai,2021-03-30,surgery,2017-09-06,1301,RAI 1301 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6479,late_rai,warning,rai,2023-07-12,surgery,2018-02-22,1966,RAI 1966 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6552,late_rai,warning,rai,2024-08-19,surgery,2018-04-12,2321,RAI 2321 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6814,late_rai,warning,rai,2024-09-16,surgery,2018-09-17,2191,RAI 2191 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+6886,late_rai,warning,rai,2023-10-29,surgery,2018-10-31,1824,RAI 1824 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7126,late_rai,warning,rai,2025-10-10,surgery,2019-02-11,2433,RAI 2433 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7126,late_rai,warning,rai,2025-10-10,surgery,2019-02-11,2433,RAI 2433 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7201,late_rai,warning,rai,2020-05-13,surgery,2019-03-18,422,RAI 422 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7305,late_rai,warning,rai,2023-03-03,surgery,2019-05-06,1397,RAI 1397 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7359,late_rai,warning,rai,2025-06-30,surgery,2019-05-28,2225,RAI 2225 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7360,late_rai,warning,rai,2023-10-24,surgery,2019-05-28,1610,RAI 1610 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7471,late_rai,warning,rai,2020-10-09,surgery,2019-07-17,450,RAI 450 days after surgery,benign_temporal_offset,RAI within 2 years of surgery is standard adjuvant therapy window,True
+7525,late_rai,warning,rai,2025-06-17,surgery,2019-08-02,2146,RAI 2146 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+7539,late_rai,warning,rai,2025-07-21,surgery,2019-08-13,2169,RAI 2169 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+8705,late_rai,warning,rai,2024-04-01,surgery,2021-03-09,1119,RAI 1119 days after surgery,true_conflict,RAI >2y post-surgery is atypical; may indicate recurrence treatment or data error,False
+1664,molecular_post_surgery,info,molecular,2022-06-20,surgery,2013-11-26,3128,ThyroSeq test 3128 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+947,molecular_post_surgery,info,molecular,2022-08-30,surgery,2007-09-07,5471,ThyroSeq test 5471 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+6089,molecular_post_surgery,info,molecular,2019-10-28,surgery,2017-06-27,853,ThyroSeq test 853 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+3399,molecular_post_surgery,info,molecular,2025-02-25,surgery,2010-10-14,5248,Other test 5248 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+5805,molecular_post_surgery,info,molecular,2018-01-03,surgery,2017-02-15,322,Other test 322 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+6512,molecular_post_surgery,info,molecular,2023-04-24,surgery,2018-03-22,1859,Other test 1859 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+8222,molecular_post_surgery,info,molecular,2023-12-05,surgery,2020-07-13,1240,ThyroSeq test 1240 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+8855,molecular_post_surgery,info,molecular,2022-07-29,surgery,2021-05-18,437,ThyroSeq test 437 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+6771,molecular_post_surgery,info,molecular,2024-09-10,surgery,2018-08-20,2213,Other test 2213 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+7779,molecular_post_surgery,info,molecular,2022-06-02,surgery,2019-11-15,930,Other test 930 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+651,molecular_post_surgery,info,molecular,2023-05-31,surgery,2014-01-08,3430,ThyroSeq test 3430 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+3813,molecular_post_surgery,info,molecular,2021-02-02,surgery,2012-09-21,3056,ThyroSeq test 3056 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+4810,molecular_post_surgery,info,molecular,2016-03-08,surgery,2015-04-08,335,Afirma test 335 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+5805,molecular_post_surgery,info,molecular,2017-12-13,surgery,2017-02-15,301,ThyroSeq test 301 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+8145,molecular_post_surgery,info,molecular,2023-06-19,surgery,2020-06-05,1109,ThyroSeq test 1109 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+6802,molecular_post_surgery,info,molecular,2025-06-06,surgery,2018-09-11,2460,Other test 2460 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+4908,molecular_post_surgery,info,molecular,2023-03-17,surgery,2015-06-22,2825,ThyroSeq test 2825 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+7742,molecular_post_surgery,info,molecular,2022-03-09,surgery,2019-11-05,855,ThyroSeq test 855 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+3189,molecular_post_surgery,info,molecular,2020-10-14,surgery,2009-08-25,4068,ThyroSeq test 4068 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+4014,molecular_post_surgery,info,molecular,2023-06-25,surgery,2013-06-21,3656,Afirma test 3656 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+8855,molecular_post_surgery,info,molecular,2022-07-29,surgery,2021-05-18,437,ThyroSeq test 437 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+2214,molecular_post_surgery,info,molecular,2025-06-18,surgery,2019-10-14,2074,ThyroSeq test 2074 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+4897,molecular_post_surgery,info,molecular,2022-02-16,surgery,2015-06-11,2442,ThyroSeq test 2442 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+9443,molecular_post_surgery,info,molecular,2021-12-29,surgery,2016-01-27,2163,Afirma test 2163 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+1517,molecular_post_surgery,info,molecular,2022-09-11,surgery,2009-06-10,4841,ThyroSeq test 4841 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+9203,molecular_post_surgery,info,molecular,2022-06-30,surgery,2021-11-12,230,ThyroSeq test 230 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+4940,molecular_post_surgery,info,molecular,2024-05-03,surgery,2015-07-14,3216,ThyroSeq test 3216 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+6846,molecular_post_surgery,info,molecular,2025-07-29,surgery,2018-10-01,2493,Afirma test 2493 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+8183,molecular_post_surgery,info,molecular,2020-07-28,surgery,2020-06-26,32,ThyroSeq test 32 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+5917,molecular_post_surgery,info,molecular,2022-06-20,surgery,2017-04-07,1900,Other test 1900 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+7566,molecular_post_surgery,info,molecular,2019-07-18,surgery,2013-10-28,2089,ThyroSeq test 2089 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+7841,molecular_post_surgery,info,molecular,2023-11-01,surgery,2019-12-10,1422,Afirma test 1422 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+6802,molecular_post_surgery,info,molecular,2025-06-06,surgery,2018-09-11,2460,ThyroSeq test 2460 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+1184,molecular_post_surgery,info,molecular,2018-10-16,surgery,2006-06-09,4512,Afirma test 4512 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+7626,molecular_post_surgery,info,molecular,2020-05-22,surgery,2019-09-19,246,Afirma test 246 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+8233,molecular_post_surgery,info,molecular,2025-01-23,surgery,2020-07-21,1647,Afirma test 1647 days post-surgery,benign_temporal_offset,Post-op molecular testing is expected surveillance; not a chronology error,True
+1965,fna_after_surgery_same_side,warning,fna,2022-02-14,surgery,2013-05-03,3209,FNA on right side 3209 days post-surgery,true_conflict,Unclassified anomaly; requires manual review,False
+1978,fna_after_surgery_same_side,warning,fna,2018-08-28,surgery,2013-02-25,2010,FNA on right side 2010 days post-surgery,true_conflict,Unclassified anomaly; requires manual review,False
+1978,fna_after_surgery_same_side,warning,fna,2022-07-19,surgery,2013-02-25,3431,FNA on right side 3431 days post-surgery,true_conflict,Unclassified anomaly; requires manual review,False
+10503,future_date,error,molecular,3023-07-01,,,,molecular event has future date: 3023-07-01,source_extraction_error,Unclassified anomaly; requires manual review,False
+4936,future_date,error,imaging,2028-07-24,,,,imaging event has future date: 2028-07-24,source_extraction_error,Unclassified anomaly; requires manual review,False
+10511,future_date,error,imaging,3022-03-03,,,,imaging event has future date: 3022-03-03,source_extraction_error,Unclassified anomaly; requires manual review,False
+11915,future_date,error,fna,2029-11-17,,,,fna event has future date: 2029-11-17,source_extraction_error,Unclassified anomaly; requires manual review,False
+9188,implausible_old_date,error,molecular,0006-04-21,,,,molecular event date before 1990: 0006-04-21,source_extraction_error,Unclassified anomaly; requires manual review,False
+6511,implausible_old_date,error,molecular,0012-01-17,,,,molecular event date before 1990: 0012-01-17,source_extraction_error,Unclassified anomaly; requires manual review,False
+7249,implausible_old_date,error,molecular,0002-05-19,,,,molecular event date before 1990: 0002-05-19,source_extraction_error,Unclassified anomaly; requires manual review,False
+10237,implausible_old_date,error,molecular,1905-07-09,,,,molecular event date before 1990: 1905-07-09,source_extraction_error,Unclassified anomaly; requires manual review,False
+9705,implausible_old_date,error,molecular,0008-12-21,,,,molecular event date before 1990: 0008-12-21,source_extraction_error,Unclassified anomaly; requires manual review,False
+5687,implausible_old_date,error,imaging,0002-03-17,,,,imaging event date before 1990: 0002-03-17,source_extraction_error,Unclassified anomaly; requires manual review,False
+610,implausible_old_date,error,operative,1945-07-13,,,,operative event date before 1990: 1945-07-13,source_extraction_error,Unclassified anomaly; requires manual review,False
+5014,implausible_old_date,error,operative,0006-02-17,,,,operative event date before 1990: 0006-02-17,source_extraction_error,Unclassified anomaly; requires manual review,False
+9506,implausible_old_date,error,fna,0202-04-18,,,,fna event date before 1990: 0202-04-18,source_extraction_error,Unclassified anomaly; requires manual review,False
+5866,implausible_old_date,error,fna,0106-12-22,,,,fna event date before 1990: 0106-12-22,source_extraction_error,Unclassified anomaly; requires manual review,False

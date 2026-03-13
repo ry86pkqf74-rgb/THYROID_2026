@@ -11,7 +11,7 @@ DOMAIN_TABLES: list[tuple[str, str, str]] = [
     ("tumor",      "tumor_episode_master_v2",    "md_tumor_episode_master_v2"),
     ("molecular",  "molecular_test_episode_v2",  "md_molecular_test_episode_v2"),
     ("rai",        "rai_treatment_episode_v2",   "md_rai_treatment_episode_v2"),
-    ("imaging",    "imaging_nodule_long_v2",     "md_imaging_nodule_long_v2"),
+    ("imaging",    "imaging_nodule_master_v1",   "md_imaging_nodule_master_v1"),
     ("operative",  "operative_episode_detail_v2", "md_oper_episode_detail_v2"),
     ("fna",        "fna_episode_master_v2",      "md_fna_episode_master_v2"),
 ]
