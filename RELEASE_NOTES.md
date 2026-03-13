@@ -1,6 +1,90 @@
 # THYROID_2026 Release Notes
 
-## v2026.03.13-dataset-maturation (Latest)
+## v2026.03.13-final-hardening (Latest)
+**Date:** 2026-03-13
+
+### Final Hardening Pass
+
+Targeted pass after dataset maturation, canonical gap closure, lab scaffold,
+and Streamlit refactor. Focuses on closing actionable gaps, root-cause analysis,
+and documentation synchronization.
+
+#### Script 78 (`78_final_hardening.py`)
+
+| Phase | Deliverable | Impact |
+|-------|-------------|--------|
+| A | `recurrence_manual_review_queue_v1` | Prioritized review of 1,764 unresolved recurrence dates |
+| A | `val_recurrence_date_resolution_v1` | Tier summary with manuscript-cohort breakdown |
+| B | `imaging_fna_linkage_v3` re-run | Relaxed UNION preferring v1 (real features) over v2 (NULL placeholder) |
+| C | `dose_missingness_reason` column | RAI dose missingness classified into 4 categories |
+| C | `vw_rai_dose_missingness_summary` | Aggregate missingness breakdown |
+| D | `val_lab_canonical_v1` | Executable contract validation (plausibility, tiers, dates, dedup) |
+
+#### Root-Cause Conclusions
+
+- **Imaging-FNA linkage 0 rows**: `imaging_nodule_master_v1` was empty when
+  script 49 ran. Fixed by relaxed UNION in script 78 Phase B.
+- **Molecular-surgery linkage absent**: By design. Molecular tests link through
+  `preop_surgery_linkage_v3` with `preop_type='molecular'`. Documented.
+- **RAI dose missingness**: ~900 episodes have no nuclear medicine notes in
+  corpus (source limitation). Classification field added.
+- **Lab contract**: 18 validation rules existed but were never consumed.
+  Now wired via `val_lab_canonical_v1` and `tests/test_lab_canonical.py`.
+
+#### Dashboard Polish
+
+- Overview: quick navigation, dataset caveats expander
+- QA Workbench: imaging-FNA status, chained molecular metrics, RAI missingness,
+  recurrence date resolution
+- Manual Review: prioritized recurrence queue with priority scoring
+- Source table captions and caveat badges throughout
+
+#### Documentation
+
+- [`docs/final_hardening_audit_20260313.md`](docs/final_hardening_audit_20260313.md)
+- Updated [`docs/analysis_resolved_layer.md`](docs/analysis_resolved_layer.md) with linkage semantics
+- Updated [`docs/lab_layer_scaffold_plan_20260313.md`](docs/lab_layer_scaffold_plan_20260313.md) with contract validation
+
+---
+
+## v2026.03.13-canonical-gap-closure
+**Date:** 2026-03-13
+
+### Canonical Gap Closure + Lab Scaffold + Dashboard Refactor
+
+#### Script 76 (`76_canonical_gap_closure.py`)
+
+5-phase canonical table gap closure:
+
+| Phase | Target | Impact |
+|-------|--------|--------|
+| A | Operative NLP enrichment | 6 new columns (parathyroid, frozen, berry, EBL) |
+| B | RAI dose provenance | 20% -> 41% dose coverage; 3 provenance columns |
+| C | Molecular RAS subtype | 325 episodes with ras_subtype filled |
+| D | Linkage ID propagation | Surgery/path/FNA linkage IDs across 6 tables |
+| E | Recurrence date hardening | 4-tier date classification (exact/biochemical/unresolved/NA) |
+
+#### Script 77 (`77_lab_canonical_layer.py`)
+
+- `longitudinal_lab_canonical_v1`: 45,954 rows, 5 analytes, 3,349 patients
+- `val_lab_completeness_v1`: per-analyte coverage with future placeholders
+- Forward-compatible schema for institutional lab extract
+
+#### Workflow Dashboard Refactor
+
+39 flat tabs reorganized into 6 workflow-first sections:
+1. Overview
+2. Patient Explorer
+3. Data Quality (new QA Workbench + Manual Review Workbench)
+4. Linkage & Episodes
+5. Outcomes & Analytics
+6. Manuscript & Export
+
+New modules: `app/qa_workbench.py`, `app/manual_review_workbench.py`
+
+---
+
+## v2026.03.13-dataset-maturation
 **Date:** 2026-03-13
 **Patients:** 10,871 (manuscript cohort) | 4,136 (analysis-eligible cancer subcohort)
 

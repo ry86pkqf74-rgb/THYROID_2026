@@ -102,11 +102,47 @@ Before promotion to canonical:
 5. Rebuild `val_lab_completeness_v1` to reflect updated coverage
 6. Update downstream views/tables that depend on lab data
 
+## Related Tables (Disambiguation)
+
+| Table | Script | Purpose |
+|-------|--------|---------|
+| `longitudinal_lab_canonical_v1` | 77 | **Canonical** unified lab table (use this for analyses) |
+| `longitudinal_lab_clean_v1` | 53 | Older pre-canonical lab table (superseded by canonical) |
+| `val_lab_completeness_v1` | 77 | Per-analyte coverage summary |
+| `val_lab_canonical_v1` | 78 | Contract validation results (plausibility, tiers, dates, dedup) |
+| `lab_staging_schema_v1` | 68 | Empty staging template for future institutional ingest |
+| `lab_normalization_dict_v1` | 68 | Lab name/unit normalization dictionary (38 entries, 14 lab types) |
+| `lab_validation_rules_v1` | 68 | 18 codified validation rules (plausibility, temporal, completeness, dedup, censoring) |
+
+`longitudinal_lab_clean_v1` (script 53) is a predecessor to the canonical table.
+The canonical table (`longitudinal_lab_canonical_v1`) should be preferred for
+all downstream analyses. It adds ingestion-wave metadata, completeness tiers,
+and is structured for future institutional lab extract appending.
+
+## Executable Contract Validation
+
+`val_lab_canonical_v1` (created by script 78) runs the `lab_validation_rules_v1`
+checks against the canonical table:
+
+- **Plausibility bounds** per analyte (8 analytes with defined ranges)
+- **No future dates** (`lab_date > CURRENT_DATE`)
+- **No exact duplicates** (same patient + date + analyte + value)
+- **Tier validity** (only 3 allowed values)
+- **Date status validity** (only 3 allowed values + NULL)
+
+Run `tests/test_lab_canonical.py` for Python-level contract assertions.
+
 ## Deployment
 
 ```bash
-# Build on MotherDuck
+# Build canonical lab table on MotherDuck
 .venv/bin/python scripts/77_lab_canonical_layer.py --md
+
+# Run contract validation
+.venv/bin/python scripts/78_final_hardening.py --md --phase D
+
+# Run Python contract tests
+.venv/bin/python -m pytest tests/test_lab_canonical.py -v
 
 # Build locally
 .venv/bin/python scripts/77_lab_canonical_layer.py --local

@@ -420,6 +420,36 @@ def render_overview(con):
                                 yaxis_autorange="reversed")
             st.plotly_chart(fig_r,use_container_width=True)
 
+    # ── Quick Navigation ──────────────────────────────────────────────
+    st.markdown(sl("Quick Navigation"), unsafe_allow_html=True)
+    _nav_cols = st.columns(4)
+    with _nav_cols[0]:
+        st.markdown("**Data Quality**  \nQA Workbench tab: integrity, provenance, linkage, labs")
+    with _nav_cols[1]:
+        st.markdown("**Manual Review**  \nReview Workbench tab: conflicts, errors, recurrence triage")
+    with _nav_cols[2]:
+        st.markdown("**Patient Explorer**  \nTimeline tab: per-patient lookup, date rescue, eligibility badges")
+    with _nav_cols[3]:
+        st.markdown("**Manuscript & Export**  \nExport tab: genetics, specimen, complications, review queues")
+
+    # ── Dataset Caveats ──────────────────────────────────────────────
+    _caveats = []
+    _recur_n = sqs(con, "SELECT COUNT(*) FROM extracted_recurrence_refined_v1 WHERE recurrence_date_status = 'unresolved_date'") if tbl_exists(con, "extracted_recurrence_refined_v1") else 0
+    if _recur_n and _recur_n > 0:
+        _caveats.append(f"**Recurrence dates**: {_recur_n:,} unresolved (see Manual Review workbench)")
+    _img_fna_n = sqs(con, "SELECT COUNT(*) FROM imaging_fna_linkage_v3") if tbl_exists(con, "imaging_fna_linkage_v3") else 0
+    if _img_fna_n == 0:
+        _caveats.append("**Imaging-FNA linkage**: 0 rows (run script 78 phase B)")
+    _lab_analytes = sqs(con, "SELECT COUNT(DISTINCT lab_name_standardized) FROM val_lab_completeness_v1 WHERE n_measurements > 0") if tbl_exists(con, "val_lab_completeness_v1") else 0
+    _lab_total = sqs(con, "SELECT COUNT(*) FROM val_lab_completeness_v1") if tbl_exists(con, "val_lab_completeness_v1") else 0
+    if _lab_analytes and _lab_total and _lab_analytes < _lab_total:
+        _caveats.append(f"**Lab coverage**: {_lab_analytes}/{_lab_total} analytes available (future institutional extract needed)")
+
+    if _caveats:
+        with st.expander("Dataset Caveats", expanded=False):
+            for c in _caveats:
+                st.markdown(f"- {c}")
+
     # ── Health Monitoring Section ──────────────────────────────────────
     st.markdown(sl("Dataset Health"), unsafe_allow_html=True)
     _hm_cols = st.columns(3)

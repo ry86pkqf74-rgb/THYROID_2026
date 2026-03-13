@@ -73,20 +73,39 @@ def render_manual_review_workbench(con) -> None:
 
     with tab_recur:
         st.subheader("Unresolved Recurrence Dates")
-        recur = _safe_query(con, """
-            SELECT research_id, detection_category, recurrence_site_inferred,
-                   recurrence_date_status, recurrence_date_confidence,
-                   n_recurrence_sources, recurrence_data_confidence
-            FROM extracted_recurrence_refined_v1
-            WHERE recurrence_date_status = 'unresolved_date'
-            ORDER BY recurrence_data_confidence DESC, research_id
+        st.caption("Prioritized by manuscript relevance, evidence strength, and cancer histology.")
+        queue = _safe_query(con, """
+            SELECT research_id, detection_category, evidence_source,
+                   cancer_histology, ajcc_stage, surgery_date_anchor,
+                   in_manuscript_cohort, priority_score,
+                   date_status, missingness_reason
+            FROM recurrence_manual_review_queue_v1
+            ORDER BY priority_score DESC, research_id
             LIMIT 500
         """)
-        if recur is not None and len(recur) > 0:
-            st.metric("Unresolved Recurrence Dates", len(recur))
-            st.dataframe(recur, use_container_width=True, height=400)
+        if queue is not None and len(queue) > 0:
+            n_total = len(queue)
+            n_mc = int(queue["in_manuscript_cohort"].sum()) if "in_manuscript_cohort" in queue.columns else 0
+            cols = st.columns(3)
+            cols[0].metric("Unresolved Dates", n_total)
+            cols[1].metric("In Manuscript Cohort", n_mc)
+            cols[2].metric("Avg Priority Score", f"{queue['priority_score'].mean():.1f}" if "priority_score" in queue.columns else "N/A")
+            st.dataframe(queue, use_container_width=True, height=400)
         else:
-            st.info("No unresolved recurrence dates.")
+            recur = _safe_query(con, """
+                SELECT research_id, detection_category, recurrence_site_inferred,
+                       recurrence_date_status, recurrence_date_confidence
+                FROM extracted_recurrence_refined_v1
+                WHERE recurrence_date_status = 'unresolved_date'
+                ORDER BY research_id
+                LIMIT 500
+            """)
+            if recur is not None and len(recur) > 0:
+                st.metric("Unresolved Recurrence Dates", len(recur))
+                st.info("Run `scripts/78_final_hardening.py --md --phase A` for prioritized review queue.")
+                st.dataframe(recur, use_container_width=True, height=400)
+            else:
+                st.info("No unresolved recurrence dates.")
 
     with tab_queue:
         st.subheader("High-Value Review Queue")

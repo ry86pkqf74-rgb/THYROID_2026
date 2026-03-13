@@ -47,6 +47,25 @@ The dataset maturation pass resolved the following:
 6. **MotherDuck optimization** — ANALYZE TABLE run on 10 canonical tables
 7. **Health monitoring** — 3 dashboard tables deployed (`val_dataset_integrity_summary_v1`,
    `val_provenance_completeness_v2`, `val_episode_linkage_completeness_v1`)
+8. **Canonical gap closure** (`scripts/76_canonical_gap_closure.py`) — RAI dose
+   provenance (20% -> 41%), RAS subtype propagation (325 rows), linkage ID
+   propagation (6 tables), recurrence date hardening (4 tiers)
+9. **Lab canonical layer** (`scripts/77_lab_canonical_layer.py`) —
+   `longitudinal_lab_canonical_v1` (45,954 rows, 5 analytes, 3,349 patients)
+   with forward-compatible schema for future institutional lab extract
+10. **Workflow dashboard refactor** — 39 flat tabs reorganized into 6
+    workflow-first sections; new QA workbench and manual review workbench modules
+11. **Final hardening** (`scripts/78_final_hardening.py`) — recurrence review
+    queue, imaging-FNA linkage fix, RAI missingness classification, lab
+    contract validation
+
+### Remaining Source-Limited Gaps
+
+- Non-Tg lab dates (TSH/PTH/Ca/vitD) at 0% — requires institutional lab extract
+- Zero nuclear medicine notes in corpus — RAI dose recovery capped at ~41%
+- 87% vascular invasion remains `present_ungraded` — synoptic template limitation
+- Pre-2019 operative notes absent — institutional data limitation
+- 1,764 recurrence dates unresolved — requires manual chart review
 
 Remaining source-limited gaps (not fixable without new institutional data):
 - Non-Tg lab dates (TSH/PTH/Ca/vitD) at 0%
@@ -194,37 +213,26 @@ Tier 4: Final analytic cohort (patient_refined_master_clinical_v9)
 Anyone with a valid MotherDuck token can connect to the read-only share.
 The share is SELECT-only — data cannot be modified through it.
 
-## Dashboard features
+## Dashboard (6 Workflow Sections)
 
-- **Overview** — 12 key metrics + data completeness by surgery year + date rescue KPI
-- **Data Explorer** — full `advanced_features_v3` with column selector, sidebar
-  filters (histology, BRAF, parathyroid, sex, age), and CSV download
-- **Visualizations** — interactive Plotly charts: histology distribution,
-  AJCC 8th stage, sex distribution, parathyroid findings
-- **Advanced** — mutation flags (BRAF/RAS/RET/TERT/NTRK/ALK), RAI avidity
-  breakdown, benign phenotypes, recurrence risk bands
-- **Extraction Completeness** — V2 extractor field fill rates across domains
-- **Molecular Episodes** — canonical molecular test analytics with linkage quality
-- **RAI Episodes** — RAI treatment analytics with assertion status and interval classes
-- **Imaging & Nodules** — nodule-level analytics with imaging-pathology concordance
-- **Operative Detail** — operative episode enrichment from V2 extractors
-- **QA & Adjudication** — cross-domain QA summary, linkage quality, date completeness
-- **Validation Engine** — adjudication confirmations, chronology anomalies,
-  completeness scorecard, combined review queue, domain-level downloads
-- **Predictive Analytics & Nomograms** — integrated workbench (5 sub-tabs):
-  - *Model Comparison Hub* — 6-model comparison (KM, Cox PH, PTCM, Mixture Cure, Penalized Cox, RSF) with concordance + AIC dashboard and clinical recommendation
-  - *Competing Risks* — Aalen-Johansen CIF with Gray's landmark tests, KM overlay, CI bands, cause-specific Cox HRs + log-rank, stratified by stage/BRAF/risk/sex
-  - *ML Nomograms & SHAP* — XGBoost/RF/survival forest with SHAP beeswarm + bar, calibration, individual risk prediction
-  - *Personalized Cure Calculator* — 12-feature PTCM-powered scoring (8 core + 4 NSQIP advanced), sensitivity analysis, clinical interpretation + trajectory plot
-  - *Manuscript Export* — one-click Word report with selectable PTCM/CR/Nomogram/Comparison sections
-- **Statistical Analysis** — comprehensive interactive stats workbench (7 sub-tabs):
-  - *Table 1* — auto-type-detected cohort description with SMD (standardized mean difference) when stratifying; Shapiro-Wilk normality auto-detection; CSV/Excel/Parquet export
-  - *Hypothesis Testing* — FDR/Bonferroni/Holm multi-comparison correction; auto test selection (t/Mann-Whitney/ANOVA/Kruskal/chi²/Fisher)
-  - *Regression Modeling* — logistic regression (OR table, VIF, AUC) + Cox PH (HR, concordance, Schoenfeld); publication forest plots; plain-English clinical snippets auto-displayed after results
-  - *Longitudinal Analysis* — linear mixed-effects model (random intercept by patient) for Tg/TSH/Anti-Tg trajectories; per-patient slope histogram; rising/falling percentage
-  - *Visualizations* — Spearman/Pearson/Kendall correlation heatmaps, missing data bar, distribution comparison
-  - *Diagnostics* — library status, data source row counts, package versions
-  - *Publication Export* — LaTeX-annotated Table 1, clinical snippet templates, export checklist
+The Streamlit dashboard is organized into 6 workflow-first sections:
+
+1. **Overview** — cohort KPIs, data completeness by surgery year, date rescue
+   rate, dataset health monitoring, linkage/provenance completeness, caveats
+2. **Patient Explorer** — per-patient timeline with date-status legend and
+   eligibility badges, patient audit, data explorer, visualizations
+3. **Data Quality** — QA workbench (integrity, provenance, imaging-FNA linkage
+   status, chained molecular metrics, RAI missingness, recurrence date
+   resolution, lab coverage), manual review workbench (chronology conflicts,
+   extraction errors, linkage ambiguities, unresolved recurrence prioritized
+   queue), validation engine, diagnostics, cohort QC
+4. **Linkage & Episodes** — extraction completeness, molecular/RAI/imaging/
+   operative episode analytics, QA & adjudication, features explorer, timeline
+5. **Outcomes & Analytics** — survival, advanced survival, statistical analysis,
+   predictive analytics (model comparison, competing risks, ML nomograms,
+   cure calculator), advanced analytics, cure probability
+6. **Manuscript & Export** — genetics, specimen, complications, imaging,
+   ThyroSeq integration, review queues (histology, molecular, RAI)
 
 ## Interactive Stats & Modeling
 

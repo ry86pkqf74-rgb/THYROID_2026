@@ -181,8 +181,35 @@ Profiled against live MotherDuck `thyroid_research_2026` database.
 6. Lab canonical layer: unify existing sources into forward-compatible schema
 
 ### Source-limited (future institutional extract required)
-1. RAI dose: 80% of episodes have no dose in any source (no nuclear med notes)
+1. RAI dose: ~59% of episodes have no dose in any source (no nuclear med notes)
 2. TSH/calcium/vitamin D/albumin labs: zero structured lab data
 3. Recurrence dates: 1,764 structural_date_unknown cases have no date source
-4. Imaging-FNA linkage: 0 rows (imaging nodule data not linked to FNA)
-5. Molecular surgery linkage: 0% filled, `preop_surgery_linkage_v3` maps FNA->surgery not molecular->surgery directly
+4. Pre-2019 operative notes: ~6,500 episodes have no electronic op notes
+
+---
+
+## Addendum: Post-Scripts 76/77/78 Status Update
+
+The following "fixable now" gaps were closed by scripts 76, 77, and 78:
+
+| Gap | Script | Result |
+|-----|--------|--------|
+| Operative NLP enrichment | 76 Phase A | 6 columns added (parathyroid, frozen, berry, EBL) |
+| Molecular RAS subtype | 76 Phase C | 325 episodes filled |
+| Linkage ID propagation | 76 Phase D | 6 canonical tables updated |
+| Recurrence date tiers | 76 Phase E | 4 tiers deployed (exact/biochemical/unresolved/NA) |
+| RAI dose provenance | 76 Phase B | 20% -> 41% dose fill; provenance columns added |
+| Lab canonical layer | 77 | `longitudinal_lab_canonical_v1` (45,954 rows, 5 analytes) |
+| Recurrence review queue | 78 Phase A | Prioritized queue for manual review |
+| Imaging-FNA linkage | 78 Phase B | Re-run with relaxed UNION (v1 preferred over v2) |
+| RAI missingness classification | 78 Phase C | 4-category `dose_missingness_reason` |
+| Lab contract validation | 78 Phase D | `val_lab_canonical_v1` + test suite |
+
+Reclassified gaps:
+- **Imaging-FNA linkage**: was "source-limited", now **fixable** (root cause = empty
+  `imaging_nodule_master_v1` at materialization time, not missing source data)
+- **Molecular-surgery linkage**: was "0% filled", now documented as **by design**
+  (chained via `preop_surgery_linkage_v3` with `preop_type='molecular'`)
+
+Health monitoring tables are now consumed by the QA Workbench dashboard module
+(`app/qa_workbench.py`).

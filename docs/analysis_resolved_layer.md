@@ -154,6 +154,70 @@ linkage_score = 0.50 × temporal_score
 
 ---
 
+## Linkage Semantics: Chained vs Direct
+
+### Five v3 Linkage Tables
+
+The resolved layer uses 5 sequential linkage tables representing the clinical
+workflow chain:
+
+```
+imaging_nodule → FNA → molecular_test → surgery → pathology → RAI
+```
+
+| Table | From | To | Notes |
+|-------|------|----|-------|
+| `imaging_fna_linkage_v3` | imaging nodule | FNA episode | Temporal + laterality + size |
+| `fna_molecular_linkage_v3` | FNA episode | molecular test | Temporal + laterality |
+| `preop_surgery_linkage_v3` | FNA or molecular | surgery | Temporal + laterality |
+| `surgery_pathology_linkage_v3` | surgery | pathology | Temporal (very tight) |
+| `pathology_rai_linkage_v3` | pathology | RAI treatment | Temporal |
+
+### Molecular-to-Surgery: Chained by Design
+
+There is **no direct `molecular_surgery_linkage` table**. This is intentional.
+Molecular tests link to surgery through the `preop_surgery_linkage_v3` table,
+which UNIONs both FNA and molecular episodes in its source CTE:
+
+- `preop_type = 'fna'` — FNA episode linked to surgery
+- `preop_type = 'molecular'` — molecular test linked directly to surgery
+
+For full provenance chain molecular → FNA → surgery, join through both
+`fna_molecular_linkage_v3` and `preop_surgery_linkage_v3`.
+
+### Chained Linkage Availability Metrics
+
+To assess completeness of the full molecular chain:
+
+```sql
+-- Molecular linked to FNA
+SELECT COUNT(DISTINCT research_id) FROM fna_molecular_linkage_v3
+WHERE score_rank = 1 AND analysis_eligible_link_flag;
+
+-- Molecular linked to surgery (direct via preop)
+SELECT COUNT(DISTINCT research_id) FROM preop_surgery_linkage_v3
+WHERE preop_type = 'molecular' AND score_rank = 1 AND analysis_eligible_link_flag;
+
+-- Full chain: molecular → FNA → surgery
+SELECT COUNT(DISTINCT fm.research_id)
+FROM fna_molecular_linkage_v3 fm
+JOIN preop_surgery_linkage_v3 ps
+  ON fm.research_id = ps.research_id
+  AND fm.fna_episode_id = ps.preop_episode_id
+WHERE fm.score_rank = 1 AND ps.score_rank = 1
+  AND fm.analysis_eligible_link_flag AND ps.analysis_eligible_link_flag;
+```
+
+### Imaging-FNA Linkage Note
+
+`imaging_fna_linkage_v3` was initially empty (0 rows) because
+`imaging_nodule_master_v1` was not yet materialized when the linkage ran.
+After the final hardening pass (script 78), the linkage uses a relaxed UNION
+that prefers `imaging_nodule_master_v1` rows (which have real TIRADS/size data)
+over `imaging_nodule_long_v2` rows (placeholder schema with all-NULL features).
+
+---
+
 ## Thyroid Scoring System Formulas
 
 ### AJCC 8th Edition (DTC)

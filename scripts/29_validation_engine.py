@@ -1480,6 +1480,53 @@ SELECT 'master_v12_total',
        CURRENT_TIMESTAMP
 """
 
+VAL_LAB_CANONICAL_SQL = """
+CREATE OR REPLACE TABLE val_lab_canonical_v1 AS
+WITH plausibility AS (
+    SELECT
+        lab_name_standardized,
+        analyte_group,
+        COUNT(*) AS n_total,
+        COUNT(*) FILTER (WHERE value_numeric IS NOT NULL) AS n_numeric,
+        COUNT(*) FILTER (WHERE is_censored IS TRUE) AS n_censored,
+        COUNT(*) FILTER (WHERE lab_date > CURRENT_DATE) AS n_future_dates,
+        MIN(value_numeric) AS val_min,
+        MAX(value_numeric) AS val_max,
+        COUNT(*) FILTER (WHERE lab_name_standardized = 'thyroglobulin'
+            AND value_numeric IS NOT NULL AND (value_numeric < 0 OR value_numeric > 100000)) AS n_tg_oob,
+        COUNT(*) FILTER (WHERE lab_name_standardized = 'pth'
+            AND value_numeric IS NOT NULL AND (value_numeric < 0.5 OR value_numeric > 500)) AS n_pth_oob,
+        COUNT(*) FILTER (WHERE lab_name_standardized = 'calcium_total'
+            AND value_numeric IS NOT NULL AND (value_numeric < 4 OR value_numeric > 15)) AS n_ca_oob
+    FROM longitudinal_lab_canonical_v1
+    GROUP BY lab_name_standardized, analyte_group
+),
+tier_check AS (
+    SELECT COUNT(*) AS n_invalid_tiers
+    FROM longitudinal_lab_canonical_v1
+    WHERE data_completeness_tier NOT IN (
+        'current_structured', 'current_nlp_partial', 'future_institutional_required')
+)
+SELECT
+    p.lab_name_standardized,
+    p.n_total,
+    p.n_numeric,
+    p.n_censored,
+    p.n_future_dates,
+    (p.n_tg_oob + p.n_pth_oob + p.n_ca_oob) AS n_plausibility_violations,
+    t.n_invalid_tiers,
+    CASE
+        WHEN p.n_future_dates > 0 THEN 'FAIL'
+        WHEN (p.n_tg_oob + p.n_pth_oob + p.n_ca_oob) > 0 THEN 'WARN'
+        WHEN t.n_invalid_tiers > 0 THEN 'FAIL'
+        ELSE 'PASS'
+    END AS validation_status,
+    CURRENT_TIMESTAMP AS audited_at
+FROM plausibility p
+CROSS JOIN tier_check t
+ORDER BY p.n_total DESC
+"""
+
 # All SQL variables are now defined above; assemble the registry.
 ALL_VALIDATION_SQL: list[tuple[str, str, str]] = [
     ("val_histology_confirmation",  VAL_HISTOLOGY_CONFIRMATION_SQL,  "Adjudication: histology"),
@@ -1499,6 +1546,7 @@ ALL_VALIDATION_SQL: list[tuple[str, str, str]] = [
     ("val_phase10_staging_recovery",   VAL_PHASE10_STAGING_RECOVERY_SQL,  "Phase 10 source-linked recovery audit"),
     ("val_provenance_traceability",    VAL_PROVENANCE_TRACEABILITY_SQL,   "Phase 11 provenance + date-accuracy traceability"),
     ("val_phase13_final_gaps",         VAL_PHASE13_FINAL_GAPS_SQL,        "Phase 13 final gaps closure audit"),
+    ("val_lab_canonical_v1",             VAL_LAB_CANONICAL_SQL,             "Canonical lab contract validation"),
 ]
 
 

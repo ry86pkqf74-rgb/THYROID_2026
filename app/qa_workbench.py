@@ -103,6 +103,106 @@ def render_qa_workbench(con) -> None:
 
     st.divider()
 
+    # --- Imaging-FNA Linkage Status ---
+    st.subheader("Imaging-FNA Linkage")
+    img_linkage = _safe_query(con, """
+        SELECT COUNT(*) AS n_links,
+               COUNT(DISTINCT research_id) AS n_patients,
+               COUNT(*) FILTER (WHERE analysis_eligible_link_flag) AS n_eligible
+        FROM imaging_fna_linkage_v3
+    """)
+    if img_linkage is not None and len(img_linkage) > 0:
+        row = img_linkage.iloc[0]
+        n_links = int(row.get("n_links") or 0)
+        n_pts = int(row.get("n_patients") or 0)
+        n_elig = int(row.get("n_eligible") or 0)
+        cols = st.columns(3)
+        cols[0].metric("Total Links", f"{n_links:,}")
+        cols[1].metric("Patients Linked", f"{n_pts:,}")
+        cols[2].metric("Analysis-Eligible", f"{n_elig:,}")
+        if n_links == 0:
+            st.warning("Imaging-FNA linkage is empty. Run `scripts/78_final_hardening.py --md --phase B`.")
+    else:
+        st.info("Imaging-FNA linkage table not found. Run script 78 phase B.")
+    st.caption("Source: `imaging_fna_linkage_v3` | Linkage uses imaging_nodule_master_v1 (TIRADS Excel) preferred over imaging_nodule_long_v2 (placeholder).")
+
+    st.divider()
+
+    # --- Chained Molecular Linkage Metrics ---
+    st.subheader("Molecular Linkage Chain")
+    st.caption("Molecular tests link to surgery via chained linkage: molecular -> FNA -> surgery. "
+               "No direct molecular-surgery linkage table exists by design.")
+    mol_fna = _safe_query(con, """
+        SELECT COUNT(DISTINCT research_id) AS n
+        FROM fna_molecular_linkage_v3
+        WHERE score_rank = 1 AND analysis_eligible_link_flag
+    """)
+    mol_surg = _safe_query(con, """
+        SELECT COUNT(DISTINCT research_id) AS n
+        FROM preop_surgery_linkage_v3
+        WHERE preop_type = 'molecular' AND score_rank = 1 AND analysis_eligible_link_flag
+    """)
+    if mol_fna is not None and mol_surg is not None:
+        n_mol_fna = int((mol_fna.iloc[0, 0]) or 0) if len(mol_fna) > 0 else 0
+        n_mol_surg = int((mol_surg.iloc[0, 0]) or 0) if len(mol_surg) > 0 else 0
+        cols = st.columns(2)
+        cols[0].metric("Molecular -> FNA", f"{n_mol_fna:,} patients")
+        cols[1].metric("Molecular -> Surgery (direct preop)", f"{n_mol_surg:,} patients")
+    else:
+        st.info("Molecular linkage tables not found.")
+
+    st.divider()
+
+    # --- RAI Dose Missingness ---
+    st.subheader("RAI Dose Missingness")
+    rai_miss = _safe_query(con, "SELECT * FROM vw_rai_dose_missingness_summary ORDER BY n_episodes DESC")
+    if rai_miss is not None and len(rai_miss) > 0:
+        for _, row in rai_miss.iterrows():
+            reason = str(row.get("reason", "unknown"))
+            n = int(row.get("n_episodes") or 0)
+            pct = float(row.get("pct") or 0)
+            icon = {"dose_available": "OK", "no_source_report_available": "source-limited",
+                    "linkage_failed": "fixable", "source_present_no_dose_stated": "parse-gap"}.get(reason, "")
+            st.markdown(f"- **{reason}**: {n:,} episodes ({pct}%) {f'-- {icon}' if icon else ''}")
+        st.caption("Source: `vw_rai_dose_missingness_summary` | `no_source_report_available` = zero nuclear med notes in corpus.")
+    else:
+        rai_fill = _safe_query(con, """
+            SELECT ROUND(100.0 * SUM(CASE WHEN dose_mci IS NOT NULL THEN 1 ELSE 0 END) / COUNT(*), 1) as pct
+            FROM rai_treatment_episode_v2
+        """)
+        if rai_fill is not None and len(rai_fill) > 0:
+            pct = float(rai_fill.iloc[0, 0] or 0)
+            st.info(f"RAI dose fill at {pct}%. Run `scripts/78_final_hardening.py --md --phase C` for missingness classification.")
+        else:
+            st.info("RAI treatment data not available.")
+
+    st.divider()
+
+    # --- Recurrence Date Status ---
+    st.subheader("Recurrence Date Resolution")
+    recur_tiers = _safe_query(con, "SELECT * FROM val_recurrence_date_resolution_v1 ORDER BY date_tier")
+    if recur_tiers is not None and len(recur_tiers) > 0:
+        st.dataframe(recur_tiers, use_container_width=True)
+        unresolved = recur_tiers[recur_tiers.get("date_tier", pd.Series(dtype=str)) == "unresolved_date"]
+        if len(unresolved) > 0:
+            n_unres = int(unresolved.iloc[0].get("n_rows") or 0)
+            n_mc = int(unresolved.iloc[0].get("n_in_manuscript_cohort") or 0)
+            st.warning(f"{n_unres} unresolved recurrence dates ({n_mc} in manuscript cohort). "
+                       "Review prioritized queue in Manual Review workbench.")
+    else:
+        recur = _safe_query(con, """
+            SELECT COUNT(*) as n FROM extracted_recurrence_refined_v1
+            WHERE recurrence_date_status = 'unresolved_date'
+        """)
+        if recur is not None and len(recur) > 0:
+            n = int(recur.iloc[0, 0] or 0)
+            if n > 0:
+                st.warning(f"{n} unresolved recurrence dates. "
+                           "Run `scripts/78_final_hardening.py --md --phase A` for review queue.")
+    st.caption("Source: `val_recurrence_date_resolution_v1` / `extracted_recurrence_refined_v1`")
+
+    st.divider()
+
     # --- Actionable Guidance ---
     st.subheader("What To Run Next")
     guidance = []
@@ -111,23 +211,14 @@ def render_qa_workbench(con) -> None:
     if labs is not None and len(labs) > 0 and len(future) > 0:
         guidance.append("Obtain institutional lab extract for TSH, vitamin D, albumin, etc.")
 
-    rai_fill = _safe_query(con, """
+    rai_fill_check = _safe_query(con, """
         SELECT ROUND(100.0 * SUM(CASE WHEN dose_mci IS NOT NULL THEN 1 ELSE 0 END) / COUNT(*), 1) as pct
         FROM rai_treatment_episode_v2
     """)
-    if rai_fill is not None and len(rai_fill) > 0:
-        pct = float(rai_fill.iloc[0, 0] or 0)
+    if rai_fill_check is not None and len(rai_fill_check) > 0:
+        pct = float(rai_fill_check.iloc[0, 0] or 0)
         if pct < 50:
             guidance.append(f"RAI dose fill at {pct}% -- source-limited (no nuclear med notes in corpus)")
-
-    recur = _safe_query(con, """
-        SELECT COUNT(*) as n FROM extracted_recurrence_refined_v1
-        WHERE recurrence_date_status = 'unresolved_date'
-    """)
-    if recur is not None and len(recur) > 0:
-        n = int(recur.iloc[0, 0] or 0)
-        if n > 0:
-            guidance.append(f"{n} recurrence events with unresolved dates -- requires manual chart review")
 
     if guidance:
         for g in guidance:

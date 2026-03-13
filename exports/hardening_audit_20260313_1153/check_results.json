@@ -1,0 +1,126 @@
+{
+  "phase_b": {
+    "v1_imaging_rows": 19891,
+    "v2_imaging_rows": 10866,
+    "linkage_before": 0,
+    "linkage_after": 9024,
+    "eligible_links": 3048,
+    "patients_linked": 2072
+  },
+  "phase_c": {
+    "rai_total": 1857,
+    "rai_with_dose": 761,
+    "rai_missingness": [
+      {
+        "reason": "linkage_failed",
+        "n_episodes": 1096,
+        "n_patients": 613,
+        "pct": 59.0,
+        "audited_at": "2026-03-13 11:53:59.683738-04:00"
+      },
+      {
+        "reason": "dose_available",
+        "n_episodes": 761,
+        "n_patients": 249,
+        "pct": 41.0,
+        "audited_at": "2026-03-13 11:53:59.683738-04:00"
+      }
+    ]
+  },
+  "phase_d": {
+    "lab_total": 45954,
+    "lab_patients": 3349,
+    "lab_validation": [
+      {
+        "lab_name_standardized": "thyroglobulin",
+        "analyte_group": "thyroid_tumor_markers",
+        "n_total": 30245,
+        "n_numeric": 29853,
+        "n_parse_failures": 392,
+        "n_censored": 13630,
+        "val_min": 0.0,
+        "val_max": 8917.9,
+        "val_mean": 13.87,
+        "n_plausibility_violations": 0,
+        "n_exact_dupes": 5951,
+        "n_future_dates": 0,
+        "n_invalid_tiers": 0,
+        "n_invalid_statuses": 0,
+        "validation_status": "WARN",
+        "audited_at": "2026-03-13 11:54:00.445226-04:00"
+      },
+      {
+        "lab_name_standardized": "anti_thyroglobulin",
+        "analyte_group": "thyroid_tumor_markers",
+        "n_total": 14314,
+        "n_numeric": 14087,
+        "n_parse_failures": 227,
+        "n_censored": 8171,
+        "val_min": 0.4,
+        "val_max": 8917.9,
+        "val_mean": 37.15,
+        "n_plausibility_violations": 0,
+        "n_exact_dupes": 5951,
+        "n_future_dates": 0,
+        "n_invalid_tiers": 0,
+        "n_invalid_statuses": 0,
+        "validation_status": "WARN",
+        "audited_at": "2026-03-13 11:54:00.445226-04:00"
+      },
+      {
+        "lab_name_standardized": "parathyroid_hormone",
+        "analyte_group": "parathyroid",
+        "n_total": 797,
+        "n_numeric": 797,
+        "n_parse_failures": 0,
+        "n_censored": 0,
+        "val_min": 1.0,
+        "val_max": 780.0,
+        "val_mean": 73.54,
+        "n_plausibility_violations": 0,
+        "n_exact_dupes": 5951,
+        "n_future_dates": 0,
+        "n_invalid_tiers": 0,
+        "n_invalid_statuses": 0,
+        "validation_status": "WARN",
+        "audited_at": "2026-03-13 11:54:00.445226-04:00"
+      },
+      {
+        "lab_name_standardized": "calcium_total",
+        "analyte_group": "calcium_metabolism",
+        "n_total": 595,
+        "n_numeric": 595,
+        "n_parse_failures": 0,
+        "n_censored": 0,
+        "val_min": 1.0,
+        "val_max": 2500.0,
+        "val_mean": 35.8,
+        "n_plausibility_violations": 27,
+        "n_exact_dupes": 5951,
+        "n_future_dates": 0,
+        "n_invalid_tiers": 0,
+        "n_invalid_statuses": 0,
+        "validation_status": "WARN",
+        "audited_at": "2026-03-13 11:54:00.445226-04:00"
+      },
+      {
+        "lab_name_standardized": "calcium_ionized",
+        "analyte_group": "calcium_metabolism",
+        "n_total": 3,
+        "n_numeric": 3,
+        "n_parse_failures": 0,
+        "n_censored": 0,
+        "val_min": 1.03,
+        "val_max": 1.18,
+        "val_mean": 1.12,
+        "n_plausibility_violations": 0,
+        "n_exact_dupes": 5951,
+        "n_future_dates": 0,
+        "n_invalid_tiers": 0,
+        "n_invalid_statuses": 0,
+        "validation_status": "WARN",
+        "audited_at": "2026-03-13 11:54:00.445226-04:00"
+      }
+    ]
+  }
+}
