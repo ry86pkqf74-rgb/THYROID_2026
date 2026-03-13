@@ -515,3 +515,21 @@
 - Clinical notes BRAF positive patterns: 142 patients via regex `braf.{0,20}(positive|detected|present|v600e|mutation identified)`; note_type breakdown: h_p 115, op_note 34, other_history 19
 - TIRADS NLP patterns: `TI-?RADS\s*[1-5]` captures both "TI-RADS 4" and "TIRADS 3" formats; ~485 patients in clinical notes with extractable scores; h_p (2,260 notes), op_note (1,911), history_summary (61)
 - Nodule size NLP: regex `(?:nodule|thyroid|lobe).{0,80}?\d+(?:\.\d+)?\s*cm` captures majority; mm→cm conversion needed; plausibility guard: 0.1–15.0 cm range
+- Phase 12 engine: `notes_extraction/extraction_audit_engine_v10.py` with ACRTIRADSCalculator, ingest_complete_us_excel(), ingest_tirads_scored_excel(), reconcile_tirads(), plus `audit_and_refine_phase12()` orchestrator
+- Phase 12 Excel sources: `COMPLETE_MULTI_SHEET_ULTRASOUND_REPORTS.xlsx` (6,793 reports, 4,074 pts, 219 cols with per-nodule ACR criteria), `US Nodules TIRADS 12_1_25.xlsx` (14 sheets, ~10,862 pts each, scores only)
+- Phase 12 new tables: `raw_us_tirads_excel_v1` (19,891 rows), `raw_us_tirads_scored_v1` (19,549 rows), `extracted_tirads_validated_v1` (3,474 rows), `vw_us_nodule_tirads_validated` (5 rows), `val_phase12_tirads_validation` (4 rows), `patient_refined_master_clinical_v11` (12,886 rows), `advanced_features_v5` (16,062 rows)
+- TIRADS fill rate: 4.19% → 32.46% (7.7x, +3,643 patients); ACR concordance 80.1% (15,671/19,572); systematic -1.0 mean mismatch (radiologists tend to score 1 tier lower than ACR recalculation)
+- ACR TI-RADS point calculator: Composition (0-2) + Echogenicity (0-3) + Shape (0/3) + Margin (0-3) + Echogenic foci (0-3); total 0=TR1, 1-2=TR2, 3=TR3, 4-6=TR4, ≥7=TR5 (Tessler et al. 2017 JACR)
+- `COMPLETE_MULTI_SHEET_ULTRASOUND_REPORTS.xlsx` per-nodule columns: TI_RADS, Composition (Solid/Anechoic/Spongiform/Mixed), Echogenicity (Isoechoic/Hypoechoic/Hyperechoic/Anechoic), Shape (Wider than tall/Taller than wide), Margins (Smooth/Ill-defined/Irregular/Microlobulated), Calcifications (Macrocalcifications/Peripheral/Punctate/Microcalcifications), Length/Width/Height mm, Volume, Location
+- `US Nodules TIRADS 12_1_25.xlsx` structure: 14 sheets named `US-{1..14}_Nodules_ TIRADS`; columns: `Research ID number`, US date, impression text, `Nodule {1..14}` description, `N{1..14} TR` score (numeric 1-6)
+- `extracted_tirads_validated_v1` columns: research_id, tirads_best_score, tirads_worst_score, tirads_best_category, tirads_worst_category, tirads_source, tirads_reliability, has_acr_recalculation, has_scored_excel, has_nlp, n_sources, n_nodule_records, concordant_count, mismatch_count, nodule_size_max_mm
+- `patient_refined_master_clinical_v11`: extends v10 with 12 Phase 12 columns (tirads_best_score_v12 through tirads_nodule_size_max_mm_v12)
+- `advanced_features_v5`: extends v4 with 7 Phase 12 TIRADS columns
+- TR4 Moderately Suspicious is the dominant category (1,530/3,474 = 44.0%); TR5 Highly Suspicious = 838 (24.1%); combined TR4+TR5 = 68.1% — consistent with surgical cohort enrichment
+- Concordance discordance pattern: TR4 and TR5 have highest discordance rates (2,688 and 1,154 mismatches respectively); radiologist judgment-based downgrading of borderline nodules
+- `rw/` directory does not exist in workspace; all raw Excel files are in `raw/` directory
+- H1 Phase 12 TIRADS sensitivity: 4,719 lobectomies, 1,757 (37.2%) with TIRADS; TR4/5+CLN recurrence 52.3% vs TR1-3 w/o CLN 16.3%; TIRADS is strong independent predictor
+- H2 Phase 12: cervical goiter avg TIRADS 3.4, substernal 3.2; ~36% coverage both groups; TR4/5 cervical=1,435, substernal=61
+- Script 26 MATERIALIZATION_MAP expanded to 123 entries (was 116): adds 7 Phase 12 tables
+- Deployment order updated: script 15 → ... → Phase 11 v9 → Phase 12 v10
+- Overall data quality score Phase 12: TIRADS domain 10→75/100 (+65); overall 98/100 (ceiling)
