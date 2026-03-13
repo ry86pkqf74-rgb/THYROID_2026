@@ -419,14 +419,14 @@ SELECT
     research_id,
     1                               AS n_exams,
     1                               AS n_total_nodules,
-    best_tirads_score               AS max_tirads_ever,
+    tirads_best_score               AS max_tirads_ever,
     FALSE                           AS bilateral_disease_flag,
     NULL::DOUBLE                    AS dominant_nodule_size_cm,
     FALSE                           AS multifocal_flag,
-    (best_tirads_score >= 4)        AS has_suspicious_candidate,
+    (tirads_best_score >= 4)        AS has_suspicious_candidate,
     NULL::DATE                      AS first_exam_date,
     NULL::DATE                      AS last_exam_date,
-    CASE best_tirads_score
+    CASE tirads_best_score
         WHEN 1 THEN 'TR1' WHEN 2 THEN 'TR2' WHEN 3 THEN 'TR3'
         WHEN 4 THEN 'TR4' WHEN 5 THEN 'TR5' WHEN 6 THEN 'TR5'
         ELSE NULL
@@ -484,7 +484,7 @@ def build_multinodule_tables(con: duckdb.DuckDBPyConnection,
             ).fetchone()
             print(f"    imaging_patient_summary_v1: {r[0]:,} patients, "
                   f"{int(r[1]) if r[1] else 0:,} total nodules, "
-                  f"{r[2]:.1f if r[2] else 0:.1f} avg nodules/patient")
+                  f"{(float(r[2]) if r[2] is not None else 0.0):.1f} avg nodules/patient")
 
             # Supplement with scored workbook patients if available
             if has_scored:

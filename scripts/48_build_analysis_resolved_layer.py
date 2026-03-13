@@ -371,9 +371,9 @@ recurrence AS (
         BOOL_OR(biochemical_recurrence_flag) AS biochemical_recurrence_flag,
         BOOL_OR(structural_recurrence_flag OR biochemical_recurrence_flag)
                                             AS any_recurrence_flag,
-        FIRST(recurrence_type_primary ORDER BY source_priority DESC NULLS LAST)
+        FIRST(recurrence_type ORDER BY source_priority DESC NULLS LAST)
                                             AS recurrence_type_primary,
-        FIRST(recurrence_site_primary ORDER BY source_priority DESC NULLS LAST)
+        FIRST(recurrence_site ORDER BY source_priority DESC NULLS LAST)
                                             AS recurrence_site_primary,
         FIRST(source_table ORDER BY source_priority DESC NULLS LAST)
                                             AS recurrence_source
@@ -745,13 +745,16 @@ SELECT
     'v1'                                    AS resolved_layer_version,
     CURRENT_TIMESTAMP                       AS resolved_at
 FROM tumor_episode_master_v2 t
--- Best FNA for this tumor (laterality + 365-day temporal window)
-LEFT JOIN fna_episode_master_v2 f
-    ON f.research_id = t.research_id
-    AND f.laterality = t.laterality
-    AND ABS(DATEDIFF('day', COALESCE(f.fna_date_native,'1900-01-01'),
-                            COALESCE(TRY_CAST(t.surgery_date AS DATE),'1900-01-01')
-                    )) <= 365
+-- Best FNA for this surgery (via v3 linkage — avoids cartesian product)
+LEFT JOIN (
+    SELECT research_id, surgery_episode_id,
+           preop_episode_id AS fna_episode_id,
+           linkage_score AS fna_preop_link_score
+    FROM preop_surgery_linkage_v3
+    WHERE preop_type = 'fna' AND score_rank = 1
+) ps3 ON ps3.research_id = t.research_id
+     AND ps3.surgery_episode_id = t.surgery_episode_id
+LEFT JOIN fna_episode_master_v2 f ON f.fna_episode_id = ps3.fna_episode_id
 -- Best imaging nodule for this patient (v3 scoring)
 LEFT JOIN (
     SELECT research_id, nodule_id, fna_episode_id,
@@ -760,19 +763,19 @@ LEFT JOIN (
     FROM imaging_fna_linkage_v3
     WHERE score_rank = 1
 ) img ON img.research_id = t.research_id
--- FNA -> imaging linkage quality for the specific matched FNA
+-- FNA -> imaging linkage (uses linked fna_episode_id from ps3)
 LEFT JOIN (
     SELECT fna_episode_id, day_gap, linkage_score,
            linkage_confidence_tier, analysis_eligible_link_flag
     FROM imaging_fna_linkage_v3
     WHERE score_rank = 1
-) fi3 ON fi3.fna_episode_id = f.fna_episode_id
+) fi3 ON fi3.fna_episode_id = ps3.fna_episode_id
 -- FNA -> molecular chain (v3 scored)
 LEFT JOIN (
     SELECT fna_episode_id, molecular_episode_id, linkage_score
     FROM fna_molecular_linkage_v3
     WHERE score_rank = 1
-) fm3 ON fm3.fna_episode_id = f.fna_episode_id
+) fm3 ON fm3.fna_episode_id = ps3.fna_episode_id
 LEFT JOIN molecular_test_episode_v2 m
     ON m.molecular_episode_id = fm3.molecular_episode_id
 """
@@ -798,6 +801,31 @@ def _ensure_optional_stubs(con: duckdb.DuckDBPyConnection) -> None:
     ]
     for tbl in md_resolve:
         _resolve_md_prefix(con, tbl)
+
+    # Special fallback: if thyroid_scoring_systems_v1 is locked but thyroid_scoring_py_v1 exists,
+    # create a temp view with the correct column names so script 48 proceeds
+    if not table_available(con, "thyroid_scoring_systems_v1") and table_available(con, "thyroid_scoring_py_v1"):
+        print("  [INFO] thyroid_scoring_systems_v1 not found; aliasing from thyroid_scoring_py_v1")
+        try:
+            con.execute("""
+CREATE OR REPLACE TEMP TABLE thyroid_scoring_systems_v1 AS
+SELECT research_id,
+    ajcc8_t_stage, ajcc8_n_stage, ajcc8_m_stage, ajcc8_stage_group,
+    ajcc8_stage_calculable_flag AS ajcc8_calculable_flag,
+    macis_missing_components AS ajcc8_missing_components,
+    ata_initial_risk AS ata_risk_category,
+    ata_risk_calculable_flag AS ata_calculable_flag,
+    ata_response_provisional AS ata_response_category,
+    ata_response_is_provisional AS ata_response_calculable_flag,
+    macis_score, macis_risk_group, macis_calculable_flag,
+    ages_score, ages_calculable_flag,
+    ames_risk AS ames_risk_group, ames_calculable_flag,
+    ln_ratio, ln_burden_band,
+    molecular_risk_tier
+FROM thyroid_scoring_py_v1
+""")
+        except Exception as e2:
+            print(f"  [WARN] Could not alias thyroid_scoring_py_v1: {e2}")
 
     stubs = {
         "demographics_harmonized_v3": """

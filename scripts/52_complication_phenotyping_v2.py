@@ -153,11 +153,11 @@ refined AS (
 rln_refined AS (
     SELECT
         research_id,
-        'rln_injury'            AS entity_name,
-        (tier IN (1,2))         AS entity_is_confirmed,
-        tier                    AS entity_tier,
-        confidence_level        AS entity_evidence_strength,
-        source_label            AS source_tier_label,
+        'rln_injury'                        AS entity_name,
+        rln_injury_is_confirmed             AS entity_is_confirmed,
+        rln_injury_tier                     AS entity_tier,
+        rln_injury_evidence_strength        AS entity_evidence_strength,
+        classification                      AS source_tier_label,
         detection_date
     FROM extracted_rln_injury_refined_v2
 ),
@@ -167,18 +167,18 @@ postop_labs AS (
     SELECT
         research_id,
         lab_type,
-        result_numeric,
-        collection_date,
+        value,
+        lab_date,
         -- Classify abnormal values
         CASE
-            WHEN lab_type = 'pth' AND result_numeric < 15   THEN 'low_pth'
-            WHEN lab_type = 'calcium' AND result_numeric < 8.0 THEN 'low_calcium'
+            WHEN lab_type = 'pth' AND value < 15   THEN 'low_pth'
+            WHEN lab_type = 'calcium' AND value < 8.0 THEN 'low_calcium'
             ELSE NULL
         END AS lab_abnormality_class,
         -- Days post-surgery (requires join to surgery_dates; done below)
-        collection_date         AS lab_date
+        lab_date         AS lab_date
     FROM extracted_postop_labs_expanded_v1
-    WHERE result_numeric IS NOT NULL
+    WHERE value IS NOT NULL
 ),
 
 -- ── Medication evidence (calcium, calcitriol supplements) ─────────────────
@@ -278,8 +278,8 @@ patient_entity_spine AS (
 -- ── Post-op lab nadir per patient ─────────────────────────────────────────
 pth_nadir AS (
     SELECT l.research_id,
-           MIN(l.result_numeric) AS pth_nadir,
-           MIN(CASE WHEN l.result_numeric < 15 THEN
+           MIN(l.value) AS pth_nadir,
+           MIN(CASE WHEN l.value < 15 THEN
                DATEDIFF('day', s.first_surgery_date, l.lab_date) END)
                AS days_to_low_pth
     FROM postop_labs l
@@ -290,8 +290,8 @@ pth_nadir AS (
 ),
 ca_nadir AS (
     SELECT l.research_id,
-           MIN(l.result_numeric) AS ca_nadir,
-           MIN(CASE WHEN l.result_numeric < 8.0 THEN
+           MIN(l.value) AS ca_nadir,
+           MIN(CASE WHEN l.value < 8.0 THEN
                DATEDIFF('day', s.first_surgery_date, l.lab_date) END)
                AS days_to_low_ca
     FROM postop_labs l
@@ -601,7 +601,7 @@ WHERE 1=0
         con.execute("""
 CREATE OR REPLACE TEMP TABLE extracted_postop_labs_expanded_v1 AS
 SELECT NULL::INTEGER AS research_id, NULL::VARCHAR AS lab_type,
-       NULL::DOUBLE AS result_numeric, NULL::DATE AS collection_date
+       NULL::DOUBLE AS value, NULL::DATE AS lab_date
 WHERE 1=0
 """)
 

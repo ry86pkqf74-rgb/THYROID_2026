@@ -455,7 +455,7 @@ SELECT
 FROM scored
 """.format(
     temporal=temporal_score_sql("abs_gap"),
-    laterality=laterality_score_sql("p.laterality", "s.surg_lat"),
+    laterality=laterality_score_sql("preop_lat", "surg_lat"),
     penalty=ambiguity_penalty_sql("COUNT(*) OVER (PARTITION BY research_id, preop_episode_id)"),
     tier=confidence_tier_from_score_sql("linkage_score"),
 )
@@ -541,7 +541,7 @@ SELECT
 FROM scored
 """.format(
     temporal=temporal_score_sql("day_gap"),
-    laterality=laterality_score_sql("s.surg_lat", "p.path_lat"),
+    laterality=laterality_score_sql("surg_lat", "path_lat"),
     penalty=ambiguity_penalty_sql("COUNT(*) OVER (PARTITION BY research_id, surgery_episode_id)"),
     tier=confidence_tier_from_score_sql("linkage_score"),
 )

@@ -161,17 +161,12 @@ recurrence_src AS (
     SELECT
         research_id,
         BOOL_OR(
-            LOWER(CAST(recurrence_confirmed AS VARCHAR)) = 'true'
-            OR LOWER(CAST(recurrence_confirmed AS VARCHAR)) = '1'
+            COALESCE(recurrence_flag_structured, FALSE)
+            OR COALESCE(recurrence_any, FALSE)
         ) AS recurrence_flag,
         MIN(first_recurrence_date)  AS first_recurrence_date
-    FROM (
-        SELECT research_id,
-               recurrence_confirmed,
-               first_recurrence_date
-        FROM extracted_recurrence_refined_v1
-        WHERE research_id IS NOT NULL
-    ) sub
+    FROM extracted_recurrence_refined_v1
+    WHERE research_id IS NOT NULL
     GROUP BY research_id
 ),
 
@@ -255,7 +250,7 @@ staging AS (
             AS margin_status,
 
         -- LN data
-        COALESCE(mcv.ln_total_positive_v10, ln.ln_positive_raw,
+        COALESCE(mcv.ln_total_positive, ln.ln_positive_raw,
                  pt.nodal_disease_positive_count)
             AS ln_positive,
         COALESCE(mcv.ln_total_examined, ln.ln_examined_raw,
@@ -273,17 +268,24 @@ staging AS (
         -- Multifocality
         COALESCE(pt.multifocality_flag, FALSE)      AS multifocal_flag,
 
-        -- Histology
-        LOWER(CAST(COALESCE(mcv.histology_normalized,
-                            pt.primary_histology) AS VARCHAR))
+        -- Histology (mcv does not have histology_normalized; use tumor spine directly)
+        LOWER(CAST(COALESCE(pt.primary_histology, 'unknown') AS VARCHAR))
             AS histology,
 
-        -- Aggressive variant flag
-        CASE WHEN LOWER(CAST(COALESCE(mcv.histology_normalized,
-                             pt.primary_histology,
-                             pt.histology_variant) AS VARCHAR))
-                  LIKE ANY ('%tall_cell%','%hobnail%','%columnar%',
-                            '%diffuse_sclerosing%','%solid%','%pdtc%')
+        -- Aggressive variant flag (expanded OR to avoid DuckDB version issues)
+        CASE WHEN
+            LOWER(CAST(COALESCE(pt.primary_histology, pt.histology_variant, '') AS VARCHAR))
+                LIKE '%tall_cell%'
+            OR LOWER(CAST(COALESCE(pt.primary_histology, pt.histology_variant, '') AS VARCHAR))
+                LIKE '%hobnail%'
+            OR LOWER(CAST(COALESCE(pt.primary_histology, pt.histology_variant, '') AS VARCHAR))
+                LIKE '%columnar%'
+            OR LOWER(CAST(COALESCE(pt.primary_histology, pt.histology_variant, '') AS VARCHAR))
+                LIKE '%diffuse_sclerosing%'
+            OR LOWER(CAST(COALESCE(pt.primary_histology, pt.histology_variant, '') AS VARCHAR))
+                LIKE '%solid%'
+            OR LOWER(CAST(COALESCE(pt.primary_histology, pt.histology_variant, '') AS VARCHAR))
+                LIKE '%pdtc%'
              THEN TRUE ELSE FALSE END
             AS aggressive_variant_flag,
 
@@ -317,7 +319,7 @@ staging AS (
     FROM primary_tumor pt
     LEFT JOIN demo d USING (research_id)
     LEFT JOIN path_synoptics ps ON ps.research_id = pt.research_id
-        AND ps.surg_date = pt.surgery_date
+        AND TRY_CAST(TRIM(ps.surg_date) AS DATE) = pt.surgery_date
     LEFT JOIN patient_refined_master_clinical_v12 mcv USING (research_id)
     LEFT JOIN ln_raw ln USING (research_id)
     LEFT JOIN recurrence_src rec USING (research_id)
@@ -758,15 +760,15 @@ bethesda AS (
     SELECT
         research_id,
         bethesda_final,
-        bethesda_source,
-        bethesda_confidence
+        source_tables AS bethesda_source,
+        best_source_reliability AS bethesda_confidence
     FROM extracted_fna_bethesda_v1
     QUALIFY ROW_NUMBER() OVER (
         PARTITION BY research_id
-        ORDER BY bethesda_confidence DESC NULLS LAST,
+        ORDER BY best_source_reliability DESC NULLS LAST,
                  CASE bethesda_final
-                     WHEN 'VI' THEN 1 WHEN 'V' THEN 2 WHEN 'IV' THEN 3
-                     WHEN 'III' THEN 4 WHEN 'II' THEN 5 ELSE 6 END
+                     WHEN 6 THEN 1 WHEN 5 THEN 2 WHEN 4 THEN 3
+                     WHEN 3 THEN 4 WHEN 2 THEN 5 ELSE 6 END
     ) = 1
 )
 
@@ -951,7 +953,9 @@ def build_scoring_table(con: duckdb.DuckDBPyConnection,
     if not has_recurrence:
         preamble_sqls.append("""
 CREATE OR REPLACE TEMP TABLE extracted_recurrence_refined_v1 AS
-SELECT DISTINCT research_id, FALSE AS recurrence_confirmed,
+SELECT DISTINCT research_id,
+       FALSE AS recurrence_flag_structured,
+       FALSE AS recurrence_any,
        NULL::DATE AS first_recurrence_date
 FROM tumor_episode_master_v2
 WHERE 1=0
@@ -961,7 +965,7 @@ WHERE 1=0
         preamble_sqls.append("""
 CREATE OR REPLACE TEMP TABLE extracted_fna_bethesda_v1 AS
 SELECT NULL::INTEGER AS research_id, NULL::VARCHAR AS bethesda_final,
-       NULL::VARCHAR AS bethesda_source, NULL::INTEGER AS bethesda_confidence
+       NULL::VARCHAR AS source_tables, NULL::DOUBLE AS best_source_reliability
 WHERE 1=0
 """)
 
@@ -988,11 +992,11 @@ SELECT DISTINCT research_id,
        NULL::VARCHAR AS ete_grade_v9,
        NULL::VARCHAR AS vasc_grade_final_v13,
        NULL::VARCHAR AS margin_r_class_v10,
-       NULL::INTEGER AS ln_total_positive_v10,
+       NULL::INTEGER AS ln_total_positive,
        NULL::INTEGER AS ln_total_examined,
        NULL::BOOLEAN AS ln_central_dissected,
        NULL::BOOLEAN AS lateral_neck_dissected_v10,
-       NULL::VARCHAR AS histology_normalized,
+       NULL::VARCHAR AS braf_positive_v3,  -- placeholder, not used
        NULL::VARCHAR AS braf_positive_final,
        NULL::VARCHAR AS tert_positive_v9,
        NULL::VARCHAR AS ras_positive_final

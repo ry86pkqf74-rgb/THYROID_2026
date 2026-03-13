@@ -105,7 +105,7 @@ tg_structured AS (
     SELECT
         research_id,
         'thyroglobulin'                              AS lab_type,
-        CAST(specimen_collect_dt AS DATE)            AS collection_date,
+        CAST(specimen_collect_dt AS DATE)            AS lab_date,
         -- Handle "<0.2" threshold-reported values
         CASE WHEN TRIM(CAST(result AS VARCHAR)) LIKE '<%' THEN TRUE ELSE FALSE END
                                                      AS is_below_threshold,
@@ -113,10 +113,10 @@ tg_structured AS (
              THEN TRY_CAST(
                  REGEXP_REPLACE(TRIM(CAST(result AS VARCHAR)), '[^0-9.]', '')
                  AS DOUBLE)
-             ELSE TRY_CAST(result AS DOUBLE) END     AS result_numeric,
+             ELSE TRY_CAST(result AS DOUBLE) END     AS value,
         CAST(result AS VARCHAR)                      AS result_raw,
         units,
-        'specimen_collect_dt'                        AS date_source,
+        'specimen_collect_dt'                        AS lab_date_provenance,
         1.0                                          AS source_priority,
         'thyroglobulin_labs'                         AS source_table
     FROM thyroglobulin_labs
@@ -130,12 +130,12 @@ anti_tg_structured AS (
     SELECT
         research_id,
         'anti_tg'                                    AS lab_type,
-        CAST(specimen_collect_dt AS DATE)            AS collection_date,
+        CAST(specimen_collect_dt AS DATE)            AS lab_date,
         FALSE                                        AS is_below_threshold,
-        TRY_CAST(result AS DOUBLE)                   AS result_numeric,
+        TRY_CAST(result AS DOUBLE)                   AS value,
         CAST(result AS VARCHAR)                      AS result_raw,
         units,
-        'specimen_collect_dt'                        AS date_source,
+        'specimen_collect_dt'                        AS lab_date_provenance,
         1.0                                          AS source_priority,
         'anti_thyroglobulin_labs'                    AS source_table
     FROM anti_thyroglobulin_labs
@@ -156,17 +156,17 @@ postop_labs AS (
             WHEN 'thyroglobulin' THEN 'thyroglobulin'
             ELSE LOWER(lab_type)
         END                                          AS lab_type,
-        collection_date,
+        lab_date,
         FALSE                                        AS is_below_threshold,
-        result_numeric,
-        CAST(result_numeric AS VARCHAR)              AS result_raw,
+        value,
+        CAST(value AS VARCHAR)              AS result_raw,
         NULL::VARCHAR                                AS units,
-        COALESCE(date_source, 'unknown')             AS date_source,
+        'extracted_lab'                              AS lab_date_provenance,
         0.7                                          AS source_priority,
         'extracted_postop_labs_expanded_v1'          AS source_table
     FROM extracted_postop_labs_expanded_v1
-    WHERE result_numeric IS NOT NULL
-      AND collection_date IS NOT NULL
+    WHERE value IS NOT NULL
+      AND lab_date IS NOT NULL
 ),
 
 -- ── Union all sources ─────────────────────────────────────────────────────
@@ -182,13 +182,13 @@ all_labs AS (
 plausibility_checked AS (
     SELECT *,
         CASE
-            WHEN lab_type = 'thyroglobulin' AND result_numeric BETWEEN 0 AND 100000 THEN TRUE
-            WHEN lab_type = 'anti_tg'       AND result_numeric BETWEEN 0 AND 10000  THEN TRUE
-            WHEN lab_type = 'tsh'           AND result_numeric BETWEEN 0 AND 500    THEN TRUE
-            WHEN lab_type = 'pth'           AND result_numeric BETWEEN 0.5 AND 500  THEN TRUE
-            WHEN lab_type = 'calcium'       AND result_numeric BETWEEN 4 AND 15     THEN TRUE
-            WHEN lab_type = 'ionized_calcium' AND result_numeric BETWEEN 0.5 AND 2.5 THEN TRUE
-            WHEN result_numeric IS NULL      THEN NULL
+            WHEN lab_type = 'thyroglobulin' AND value BETWEEN 0 AND 100000 THEN TRUE
+            WHEN lab_type = 'anti_tg'       AND value BETWEEN 0 AND 10000  THEN TRUE
+            WHEN lab_type = 'tsh'           AND value BETWEEN 0 AND 500    THEN TRUE
+            WHEN lab_type = 'pth'           AND value BETWEEN 0.5 AND 500  THEN TRUE
+            WHEN lab_type = 'calcium'       AND value BETWEEN 4 AND 15     THEN TRUE
+            WHEN lab_type = 'ionized_calcium' AND value BETWEEN 0.5 AND 2.5 THEN TRUE
+            WHEN value IS NULL      THEN NULL
             ELSE FALSE
         END AS plausibility_flag
     FROM all_labs
@@ -207,9 +207,9 @@ deduped AS (
     SELECT *
     FROM plausible_labs
     QUALIFY ROW_NUMBER() OVER (
-        PARTITION BY research_id, lab_type, collection_date,
-                     ROUND(COALESCE(result_numeric, 0), 2)
-        ORDER BY source_priority DESC, date_source ASC
+        PARTITION BY research_id, lab_type, lab_date,
+                     ROUND(COALESCE(value, 0), 2)
+        ORDER BY source_priority DESC, lab_date_provenance ASC
     ) = 1
 ),
 
@@ -227,17 +227,17 @@ with_context AS (
         d.*,
         s.first_surgery_date,
         CASE WHEN s.first_surgery_date IS NOT NULL
-             THEN DATEDIFF('day', s.first_surgery_date, d.collection_date)
+             THEN DATEDIFF('day', s.first_surgery_date, d.lab_date)
              ELSE NULL
         END AS days_post_surgery,
         CASE
             WHEN s.first_surgery_date IS NULL THEN 'unknown'
-            WHEN d.collection_date < s.first_surgery_date THEN 'pre_op'
-            WHEN DATEDIFF('day', s.first_surgery_date, d.collection_date) <= 30
+            WHEN d.lab_date < s.first_surgery_date THEN 'pre_op'
+            WHEN DATEDIFF('day', s.first_surgery_date, d.lab_date) <= 30
                  THEN 'immediate_post_op'
-            WHEN DATEDIFF('day', s.first_surgery_date, d.collection_date) <= 180
+            WHEN DATEDIFF('day', s.first_surgery_date, d.lab_date) <= 180
                  THEN 'short_term_follow_up'
-            WHEN DATEDIFF('day', s.first_surgery_date, d.collection_date) <= 730
+            WHEN DATEDIFF('day', s.first_surgery_date, d.lab_date) <= 730
                  THEN 'intermediate_follow_up'
             ELSE 'long_term_follow_up'
         END AS follow_up_phase
@@ -249,7 +249,7 @@ with_context AS (
 with_duplicate_flag AS (
     SELECT *,
         COUNT(*) OVER (
-            PARTITION BY research_id, lab_type, collection_date
+            PARTITION BY research_id, lab_type, lab_date
         ) > 1 AS same_day_duplicate_flag
     FROM with_context
 )
@@ -257,12 +257,12 @@ with_duplicate_flag AS (
 SELECT
     research_id,
     lab_type,
-    collection_date,
-    result_numeric,
+    lab_date,
+    value,
     result_raw,
     is_below_threshold,
     COALESCE(units, '') AS units,
-    date_source,
+    lab_date_provenance AS date_source,
     source_priority,
     source_table,
     plausibility_flag,
@@ -285,32 +285,32 @@ WITH tg_summary AS (
     SELECT
         research_id,
         MIN(CASE WHEN NOT is_below_threshold AND follow_up_phase != 'pre_op'
-                 THEN result_numeric END)
+                 THEN value END)
                                         AS tg_first_postop,
-        MIN(result_numeric)             AS tg_nadir,
-        MAX(result_numeric)             AS tg_peak,
-        LAST(result_numeric ORDER BY collection_date ASC)
+        MIN(value)             AS tg_nadir,
+        MAX(value)             AS tg_peak,
+        LAST(value ORDER BY lab_date ASC)
                                         AS tg_last_value,
         COUNT(*)                        AS tg_n_measurements,
-        MIN(collection_date)            AS tg_first_date,
-        MAX(collection_date)            AS tg_last_date,
+        MIN(lab_date)            AS tg_first_date,
+        MAX(lab_date)            AS tg_last_date,
         BOOL_OR(is_below_threshold)     AS tg_below_threshold_ever,
         -- Rising Tg flag: last value > 2x nadir AND last value > 1.0
         CASE
-            WHEN MAX(result_numeric) IS NULL OR MIN(result_numeric) IS NULL THEN NULL
-            WHEN LAST(result_numeric ORDER BY collection_date ASC)
-                 > GREATEST(2 * MIN(result_numeric), 1.0) THEN TRUE
+            WHEN MAX(value) IS NULL OR MIN(value) IS NULL THEN NULL
+            WHEN LAST(value ORDER BY lab_date ASC)
+                 > GREATEST(2 * MIN(value), 1.0) THEN TRUE
             ELSE FALSE
         END AS tg_rising_flag,
         -- Doubling time estimate (days per 2x increase) -- simplified
         CASE
             WHEN COUNT(*) >= 2
-                 AND MAX(result_numeric) > 0
-                 AND MIN(result_numeric) > 0
-                 AND LN(MAX(result_numeric) / MIN(result_numeric)) > 0
+                 AND MAX(value) > 0
+                 AND MIN(value) > 0
+                 AND LN(MAX(value) / MIN(value)) > 0
             THEN ROUND(
-                DATEDIFF('day', MIN(collection_date), MAX(collection_date)) *
-                LN(2) / LN(MAX(result_numeric) / MIN(result_numeric))
+                DATEDIFF('day', MIN(lab_date), MAX(lab_date)) *
+                LN(2) / LN(MAX(value) / MIN(value))
                 , 0)
             ELSE NULL
         END AS tg_doubling_time_days
@@ -322,15 +322,15 @@ WITH tg_summary AS (
 anti_tg_summary AS (
     SELECT
         research_id,
-        MIN(result_numeric) AS anti_tg_nadir,
-        MAX(result_numeric) AS anti_tg_peak,
+        MIN(value) AS anti_tg_nadir,
+        MAX(value) AS anti_tg_peak,
         COUNT(*)            AS anti_tg_n_measurements,
-        LAST(result_numeric ORDER BY collection_date ASC) AS anti_tg_last,
+        LAST(value ORDER BY lab_date ASC) AS anti_tg_last,
         -- Rising anti-Tg: last > 2x nadir
         CASE
-            WHEN MAX(result_numeric) IS NULL OR MIN(result_numeric) IS NULL THEN NULL
-            WHEN LAST(result_numeric ORDER BY collection_date ASC)
-                 > GREATEST(2 * MIN(result_numeric), 10) THEN TRUE
+            WHEN MAX(value) IS NULL OR MIN(value) IS NULL THEN NULL
+            WHEN LAST(value ORDER BY lab_date ASC)
+                 > GREATEST(2 * MIN(value), 10) THEN TRUE
             ELSE FALSE
         END AS anti_tg_rising_flag
     FROM longitudinal_lab_clean_v1
@@ -341,11 +341,11 @@ anti_tg_summary AS (
 tsh_summary AS (
     SELECT
         research_id,
-        MIN(result_numeric) AS tsh_min,
-        MAX(result_numeric) AS tsh_max,
+        MIN(value) AS tsh_min,
+        MAX(value) AS tsh_max,
         COUNT(*)            AS tsh_n_measurements,
         -- Suppressed TSH evidence (<0.1 = suppression therapy marker)
-        BOOL_OR(result_numeric < 0.1) AS tsh_suppressed_ever
+        BOOL_OR(value < 0.1) AS tsh_suppressed_ever
     FROM longitudinal_lab_clean_v1
     WHERE lab_type = 'tsh'
     GROUP BY research_id
@@ -354,16 +354,16 @@ tsh_summary AS (
 pth_ca_summary AS (
     SELECT
         research_id,
-        MIN(CASE WHEN lab_type = 'pth' THEN result_numeric END) AS pth_nadir,
-        MIN(CASE WHEN lab_type = 'calcium' THEN result_numeric END) AS calcium_nadir,
-        MIN(CASE WHEN lab_type = 'ionized_calcium' THEN result_numeric END) AS ionized_ca_nadir,
+        MIN(CASE WHEN lab_type = 'pth' THEN value END) AS pth_nadir,
+        MIN(CASE WHEN lab_type = 'calcium' THEN value END) AS calcium_nadir,
+        MIN(CASE WHEN lab_type = 'ionized_calcium' THEN value END) AS ionized_ca_nadir,
         COUNT(CASE WHEN lab_type = 'pth' THEN 1 END) AS pth_n_measurements,
         COUNT(CASE WHEN lab_type = 'calcium' THEN 1 END) AS calcium_n_measurements,
         -- Post-op hypoparathyroidism: PTH < 15 pg/mL
-        BOOL_OR(lab_type = 'pth' AND result_numeric < 15 AND days_post_surgery BETWEEN 0 AND 30)
+        BOOL_OR(lab_type = 'pth' AND value < 15 AND days_post_surgery BETWEEN 0 AND 30)
             AS postop_low_pth_flag,
         -- Post-op hypocalcemia: Ca < 8.0 mg/dL
-        BOOL_OR(lab_type = 'calcium' AND result_numeric < 8.0 AND days_post_surgery BETWEEN 0 AND 30)
+        BOOL_OR(lab_type = 'calcium' AND value < 8.0 AND days_post_surgery BETWEEN 0 AND 30)
             AS postop_low_calcium_flag
     FROM longitudinal_lab_clean_v1
     WHERE lab_type IN ('pth','calcium','ionized_calcium')
@@ -373,7 +373,7 @@ pth_ca_summary AS (
 follow_up_completeness AS (
     SELECT
         research_id,
-        MAX(collection_date) - MIN(collection_date)
+        MAX(lab_date) - MIN(lab_date)
             AS follow_up_lab_duration_days,
         COUNT(DISTINCT lab_type)                    AS n_lab_types_measured,
         -- Lab completeness score (0-100):
@@ -450,15 +450,13 @@ structural AS (
         research_id,
         'structural'                            AS recurrence_type,
         first_recurrence_date                   AS recurrence_date,
-        recurrence_site                         AS recurrence_site,
-        COALESCE(recurrence_detection_method,
+        recurrence_site_inferred                AS recurrence_site,
+        COALESCE(detection_category,
                  'imaging_or_biopsy')           AS recurrence_definition,
         1.0                                     AS source_priority,
         'extracted_recurrence_refined_v1'       AS source_table
     FROM extracted_recurrence_refined_v1
-    WHERE LOWER(CAST(recurrence_confirmed AS VARCHAR)) IN ('true','1')
-      AND LOWER(CAST(recurrence_confirmed AS VARCHAR))
-          NOT IN ('false','0','','null')
+    WHERE COALESCE(recurrence_flag_structured, recurrence_any, FALSE) = TRUE
 ),
 
 -- ── Biochemical recurrence from Tg trajectory ─────────────────────────────
@@ -476,7 +474,7 @@ biochemical_tg AS (
     WHERE ls.tg_rising_flag
       AND ls.tg_last_value > 1.0
       -- Only if not already captured as structural
-      AND ls.research_id NOT IN (SELECT DISTINCT research_id FROM structural)
+      AND CAST(ls.research_id AS VARCHAR) NOT IN (SELECT DISTINCT CAST(research_id AS VARCHAR) FROM structural)
 ),
 
 -- ── Anti-Tg rising (secondary biochemical marker) ─────────────────────────
@@ -492,8 +490,8 @@ biochemical_anti_tg AS (
     FROM longitudinal_lab_patient_summary_v1 ls
     WHERE ls.anti_tg_rising_flag
       AND ls.anti_tg_last > 40
-      AND ls.research_id NOT IN (SELECT DISTINCT research_id FROM structural)
-      AND ls.research_id NOT IN (SELECT DISTINCT research_id FROM biochemical_tg)
+      AND CAST(ls.research_id AS VARCHAR) NOT IN (SELECT DISTINCT CAST(research_id AS VARCHAR) FROM structural)
+      AND CAST(ls.research_id AS VARCHAR) NOT IN (SELECT DISTINCT CAST(research_id AS VARCHAR) FROM biochemical_tg)
 ),
 
 all_recurrence AS (
@@ -544,15 +542,16 @@ WHERE 1=0
         con.execute("""
 CREATE OR REPLACE TEMP TABLE extracted_postop_labs_expanded_v1 AS
 SELECT NULL::INTEGER AS research_id, NULL::VARCHAR AS lab_type,
-       NULL::DOUBLE AS result_numeric, NULL::DATE AS collection_date,
-       NULL::VARCHAR AS date_source
+       NULL::DOUBLE AS value, NULL::DATE AS lab_date,
+       NULL::VARCHAR AS lab_date_provenance
 WHERE 1=0
 """)
     if not table_available(con, "extracted_recurrence_refined_v1"):
         con.execute("""
 CREATE OR REPLACE TEMP TABLE extracted_recurrence_refined_v1 AS
 SELECT NULL::INTEGER AS research_id,
-       NULL::VARCHAR AS recurrence_confirmed,
+       NULL::BOOLEAN AS recurrence_flag_structured,
+       NULL::BOOLEAN AS recurrence_any,
        NULL::DATE AS first_recurrence_date,
        NULL::VARCHAR AS recurrence_site,
        NULL::VARCHAR AS recurrence_detection_method

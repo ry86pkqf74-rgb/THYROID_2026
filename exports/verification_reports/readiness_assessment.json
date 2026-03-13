@@ -1,0 +1,43 @@
+{
+  "G1": {
+    "desc": "0 duplicate research_ids",
+    "value": 0,
+    "pass": true
+  },
+  "G2": {
+    "desc": "<10 episode duplicate pairs",
+    "value": 146,
+    "pass": false
+  },
+  "G3": {
+    "desc": "AJCC8>20% ATA>20%",
+    "ajcc8": 98.6,
+    "ata": 76.0,
+    "pass": true
+  },
+  "G4": {
+    "desc": ">=3 confirmed complication entities",
+    "value": 7,
+    "pass": true
+  },
+  "G5": {
+    "desc": "All supporting tables non-empty",
+    "tables": {
+      "thyroid_scoring_py_v1": 10871,
+      "longitudinal_lab_clean_v1": 38699,
+      "recurrence_event_clean_v1": 1946,
+      "complication_phenotype_v1": 5928,
+      "imaging_patient_summary_v1": 3474
+    },
+    "pass": true
+  },
+  "G6": {
+    "desc": "Data quality audit complete",
+    "pass": true
+  },
+  "G7": {
+    "desc": "SAP document exists",
+    "pass": true
+  },
+  "recommendation": "CONDITIONALLY READY"
+}

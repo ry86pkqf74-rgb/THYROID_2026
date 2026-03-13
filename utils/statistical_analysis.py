@@ -200,6 +200,12 @@ MANUSCRIPT_PREFERRED_TABLES = [
     "complication_patient_summary_v1",
 ]
 
+# Fallback map: if canonical name is locked/missing, try these alternatives
+_TABLE_FALLBACK = {
+    "thyroid_scoring_systems_v1": "thyroid_scoring_py_v1",
+    "lesion_analysis_resolved_v1": "lesion_resolved_py_v1",
+}
+
 # Data source priority for view resolution — resolved layer first, legacy fallback
 _VIEW_PRIORITY = [
     "patient_analysis_resolved_v1",
@@ -304,21 +310,30 @@ class ThyroidStatisticalAnalyzer:
             return pd.DataFrame()
 
     def resolve_view(self, preferred: str | None = None) -> str | None:
-        """Return the first available view from the priority list."""
+        """Return the first available view from the priority list.
+
+        Also checks _TABLE_FALLBACK for alternative names (e.g. when a
+        MotherDuck transaction lock blocks the canonical name).
+        """
         candidates = [preferred] if preferred else []
         candidates.extend(_VIEW_PRIORITY)
         for v in candidates:
             if v is None:
                 continue
-            try:
-                row = self._con.execute(
-                    f"SELECT COUNT(*) FROM information_schema.tables "
-                    f"WHERE table_name='{v}'"
-                ).fetchone()
-                if row and row[0] > 0:
-                    return v
-            except Exception:
-                continue
+            # Try canonical name first, then fallback name
+            names_to_try = [v]
+            if v in _TABLE_FALLBACK:
+                names_to_try.append(_TABLE_FALLBACK[v])
+            for name in names_to_try:
+                try:
+                    row = self._con.execute(
+                        f"SELECT COUNT(*) FROM information_schema.tables "
+                        f"WHERE table_name='{name}'"
+                    ).fetchone()
+                    if row and row[0] > 0:
+                        return name
+                except Exception:
+                    continue
         return None
 
     # ── Type detection ────────────────────────────────────────────────────
