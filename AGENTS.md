@@ -486,3 +486,32 @@
 - Phase 10 report: `notes_extraction/master_refinement_report_phase10.md`; figure: `exports/fig_margin_invasion_recovery.png` (4-panel: margin R-class, vascular grading, lateral neck, MICE)
 - Deployment order updated: script 15 → ... → 45 → Phase 8 v6 → Phase 9 v7 → Phase 10 v8
 - All 10 extraction audit engine phases complete (v1→v8); 105 tables in MATERIALIZATION_MAP; 15 val_* validation tables
+- Phase 11 engine: `notes_extraction/extraction_audit_engine_v9.py` (FINAL engine) with USImagingTIRADSParser, NoduleSizeExtractor (via SQL NLP), RASMolecularSubtyper, BRAFIHCNLPRecovery, PreOpExcelFinalSweep, plus `audit_and_refine_phase11()` orchestrator
+- Phase 11 new tables: `extracted_us_tirads_v1` (417 rows), `extracted_nodule_sizes_v1` (3,051 rows), `extracted_ras_subtypes_v1` (434 rows), `extracted_ras_patient_summary_v1` (348 rows), `extracted_braf_recovery_v1` (441 rows), `vw_braf_audit` (441 rows), `extracted_preop_sweep_v1` (340 rows), `vw_us_tirads` (5 rows), `vw_molecular_subtypes` (7 rows), `extracted_imaging_molecular_final_v1` (3,327 rows), `patient_refined_master_clinical_v10` (12,886 rows)
+- TIRADS extraction: 0 → 417 patients (3.2%); TR4 Moderately Suspicious largest group (153); limited by absence of structured US radiology reports in clinical_notes_long
+- Nodule size extraction: 0 → 3,051 patients (23.7%); avg 3.7cm, median 3.2cm; NLP from h_p (2,147) and op_note (539)
+- RAS recovery: 0 → 316 positive (2.5%); NRAS 196, HRAS 114, KRAS 59; RAS_unspecified 65; key bug: `ras_flag` in `molecular_test_episode_v2` was FALSE despite `ras_subtype` being populated for 184 patients — Phase 11 recovered via subtype propagation + mutation text parsing + NLP entities
+- RAS variant detail: Q61R dominant across all RAS subtypes; allele frequencies 4-33%; protein-level detail for 121/369 RAS-positive patients
+- BRAF recovery: 266 → 441 positive (65.8% increase, 175 newly recovered); sources: NGS 266 (existing), NLP_entity 170 (new), NGS_or_unknown 5 (new); cross-source concordance: 266 concordant, 175 recovered_new
+- BRAF prevalence context: 441/~800 molecular-tested = 55.1% (above published 40-45% PTC range due to surgical cohort enrichment for suspicious nodules); 2.7% → 3.4% of total cohort
+- Pre-op Excel sweep: 142 patients with positive mutations; top genes: NRAS (41), BRAF (39), HRAS (20), TERT (9), KRAS (9), RET (7); fusions: PAX8-PPARG, CREB3L2-PPARG, PAX8-GLIS3
+- `patient_refined_master_clinical_v10`: extends v9 with 18 Phase 11 columns: tirads_score_v11, tirads_category_v11, tirads_confidence_v11, imaging_nodule_size_cm_v11, ras_positive_v11, nras_positive_v11, hras_positive_v11, kras_positive_v11, ras_primary_subtype_v11, ras_protein_change_v11, ras_allele_freq_v11, braf_recovered_status_v11, braf_recovered_variant_v11, braf_detection_method_v11, preop_sweep_genes_found_v11, ras_positive_final, braf_positive_final
+- `extracted_imaging_molecular_final_v1`: consolidated per-patient table joining TIRADS + nodule sizes + RAS summary + BRAF recovery (3,327 rows)
+- `vw_braf_audit`: cross-source BRAF validation (concordant_positive vs recovered_new); detection_method breakdown
+- Script 26 MATERIALIZATION_MAP expanded to 116 entries (was 105): adds 11 Phase 11 tables
+- H1 Phase 11 sensitivity: 5,744 lobectomies (438 CLN+); BRAF+ 294, RAS+ 240, TIRADS 297; crude CLN OR=15.90; adjusted model: CLN OR=17.62 (p<0.0001), BRAF OR=8.52 (p<0.0001), RAS OR=5.48 (p<0.0001); molecular markers are independent recurrence predictors, CLN effect persists after adjustment
+- H2 Phase 11: 6,668 goiter (292 substernal); cervical BRAF 4.5% / RAS 3.2%; substernal BRAF 1.0% / RAS 0.3%; substernal goiter has negligible molecular positivity (predominantly benign)
+- H2 race weight disparity: Black 106.3g vs White 29.9g (3.6x) — persists across all phases
+- Overall data quality score Phase 11: 97 → 98/100; TIRADS: 0→10; RAS subtypes: 0→85; BRAF: 85→92; imaging nodule size: 0→55; pre-op molecular: 85→90
+- Phase 11 report: `notes_extraction/master_refinement_report_phase11.md`; figure: `exports/fig_braf_ras_tirads.png`
+- Deployment order updated: script 15 → ... → 45 → Phase 8 v6 → Phase 9 v7 → Phase 10 v8 → Phase 11 v9 (FINAL)
+- All 11 extraction audit engine phases complete (v1→v9); 116 tables in MATERIALIZATION_MAP; pipeline FINAL
+- `regexp_extract` in DuckDB returns empty string '' (not NULL) when no match; always wrap with `NULLIF(..., '')` before `TRY_CAST` to avoid conversion errors
+- `molecular_test_episode_v2` column names: `mutation` (not `mutation_detected`), `ras_subtype` (not `ras_variant`), `braf_variant`, `braf_flag`, `ras_flag`, `tert_flag`; ras_flag can be FALSE despite ras_subtype being populated — always check both
+- `molecular_testing` table uses raw column names: `mutation`, `detailed_findings`, `result`, `genetic_test`, `thyroseq_afirma`, `fna_bethesda` (DOUBLE type), `nodule_info`, `test_index`
+- `genetic_testing` raw Excel columns: `MUTATION_1`, `MUTATION-2` (hyphen), `MUTATION_3`, `RESULT_1/2/3`, `Detailed findings_1/2/3`, `any_braf_positive` (boolean); first 25 rows mostly NULL/nan; useful data is sparse
+- `note_entities_genetics` columns: `entity_value_raw`, `entity_value_norm` (not `entity_value`); `present_or_negated` for assertion
+- BRAF NLP entity data: 515 present mentions (249 patients), 44 negated (41 patients); NRAS: 329 present (149 pts), HRAS: 210 present (85 pts), KRAS: 108 present (41 pts)
+- Clinical notes BRAF positive patterns: 142 patients via regex `braf.{0,20}(positive|detected|present|v600e|mutation identified)`; note_type breakdown: h_p 115, op_note 34, other_history 19
+- TIRADS NLP patterns: `TI-?RADS\s*[1-5]` captures both "TI-RADS 4" and "TIRADS 3" formats; ~485 patients in clinical notes with extractable scores; h_p (2,260 notes), op_note (1,911), history_summary (61)
+- Nodule size NLP: regex `(?:nodule|thyroid|lobe).{0,80}?\d+(?:\.\d+)?\s*cm` captures majority; mm→cm conversion needed; plausibility guard: 0.1–15.0 cm range
