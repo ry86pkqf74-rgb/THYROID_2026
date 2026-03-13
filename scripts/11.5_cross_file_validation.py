@@ -297,9 +297,25 @@ DEMOGRAPHICS_HARMONIZED_SQL = textwrap.dedent("""\
     ),
 
     -- P5: operative_details surgery date (9,368 patients)
+    -- Handles annotated dates like "8/11/2014 (MANNUALLY ADDED...)" via regex
     od AS (
         SELECT CAST(research_id AS INT) AS rid,
-               FIRST(TRY_CAST(surg_date AS DATE) ORDER BY TRY_CAST(surg_date AS DATE)) AS surg_date_od
+               FIRST(
+                   COALESCE(
+                       TRY_CAST(surg_date AS DATE),
+                       TRY_STRPTIME(
+                           REGEXP_EXTRACT(CAST(surg_date AS VARCHAR), '(\\d{1,2}/\\d{1,2}/\\d{4})', 1),
+                           '%m/%d/%Y'
+                       )::DATE
+                   )
+                   ORDER BY COALESCE(
+                       TRY_CAST(surg_date AS DATE),
+                       TRY_STRPTIME(
+                           REGEXP_EXTRACT(CAST(surg_date AS VARCHAR), '(\\d{1,2}/\\d{1,2}/\\d{4})', 1),
+                           '%m/%d/%Y'
+                       )::DATE
+                   )
+               ) AS surg_date_od
         FROM operative_details
         GROUP BY CAST(research_id AS INT)
     ),
@@ -364,18 +380,18 @@ DEMOGRAPHICS_HARMONIZED_SQL = textwrap.dedent("""\
                 TRY_CAST(tp.age_at_surgery AS INT),
                 ps.age_ps,
                 ex.age_excel,
-                CASE WHEN COALESCE(tw.dob_tw, tg.dob_tg, atg.dob_atg) IS NOT NULL
+                CASE WHEN COALESCE(ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg) IS NOT NULL
                       AND COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od) IS NOT NULL
                      THEN DATE_DIFF('year',
-                              COALESCE(tw.dob_tw, tg.dob_tg, atg.dob_atg),
+                              COALESCE(ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg),
                               COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od))
                           - CASE WHEN
                               MONTH(COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od))
-                                < MONTH(COALESCE(tw.dob_tw, tg.dob_tg, atg.dob_atg))
+                                < MONTH(COALESCE(ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg))
                               OR (MONTH(COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od))
-                                  = MONTH(COALESCE(tw.dob_tw, tg.dob_tg, atg.dob_atg))
+                                  = MONTH(COALESCE(ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg))
                                   AND DAY(COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od))
-                                    < DAY(COALESCE(tw.dob_tw, tg.dob_tg, atg.dob_atg)))
+                                    < DAY(COALESCE(ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg)))
                             THEN 1 ELSE 0 END
                      ELSE NULL
                 END
@@ -386,9 +402,12 @@ DEMOGRAPHICS_HARMONIZED_SQL = textwrap.dedent("""\
                 WHEN tp.age_at_surgery IS NOT NULL THEN 'tumor_pathology'
                 WHEN ps.age_ps IS NOT NULL          THEN 'path_synoptics'
                 WHEN ex.age_excel IS NOT NULL        THEN 'excel_dob_' || COALESCE(ex.dob_resolution, 'resolved')
-                WHEN COALESCE(tw.dob_tw, tg.dob_tg, atg.dob_atg) IS NOT NULL
+                WHEN COALESCE(ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg) IS NOT NULL
                      AND COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od) IS NOT NULL
                      THEN CASE
+                         WHEN ex.dob_excel IS NOT NULL AND bp.age_at_surgery IS NULL
+                              AND tp.age_at_surgery IS NULL AND ps.age_ps IS NULL
+                              AND ex.age_excel IS NULL THEN 'excel_dob_derived'
                          WHEN tw.dob_tw IS NOT NULL THEN 'thyroid_weights_dob'
                          WHEN tg.dob_tg IS NOT NULL THEN 'thyroglobulin_labs_dob'
                          ELSE 'anti_tg_labs_dob'

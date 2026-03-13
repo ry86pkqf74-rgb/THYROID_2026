@@ -573,20 +573,22 @@ Key columns:
 ### `demographics_harmonized_v2` (table, added 2026-03-13)
 
 One row per patient. Cross-source harmonized demographics with full provenance.
-Eliminates 585 false-missing age records by backfilling DOB from `thyroid_weights`,
-`thyroglobulin_labs`, and `anti_thyroglobulin_labs`, then computing age via
-`DATE_DIFF('year', dob, surgery_date)` with birthday correction.
+Eliminates 715 false-missing age records by backfilling DOB from `stg_dob_excel_recovery`,
+`thyroid_weights`, `thyroglobulin_labs`, and `anti_thyroglobulin_labs`, then computing
+age via `DATE_DIFF('year', dob, surgery_date)` with birthday correction. Annotated
+surgery dates (e.g. "8/11/2014 (MANNUALLY ADDED...)") parsed via `TRY_STRPTIME` +
+regex extraction.
 
 Source priority (highest first):
-- **Age**: benign_pathology > tumor_pathology > path_synoptics.age > thyroid_weights DOB > lab DOB
-- **Sex**: benign_pathology > tumor_pathology > path_synoptics.gender > lab.gender
-- **Race**: path_synoptics.race > thyroglobulin_labs.race > anti_tg_labs.race
+- **Age**: benign_pathology > tumor_pathology > path_synoptics.age > stg_dob_excel_recovery.age > Excel DOB-derived > thyroid_weights DOB > lab DOB
+- **Sex**: benign_pathology > tumor_pathology > path_synoptics.gender > stg_dob_excel_recovery.gender > thyroglobulin_labs.gender > anti_tg_labs.gender
+- **Race**: path_synoptics.race > stg_dob_excel_recovery.race > thyroglobulin_labs.race > anti_tg_labs.race
 
 Key columns:
 
 - `research_id`: patient identifier (INT)
 - `age_at_surgery`: harmonized age (INT, NULL if no source)
-- `age_source`: provenance label (benign_pathology|tumor_pathology|path_synoptics|thyroid_weights_dob|thyroglobulin_labs_dob|anti_tg_labs_dob)
+- `age_source`: provenance label (benign_pathology|tumor_pathology|path_synoptics|excel_dob_unanimous|excel_dob_derived|thyroid_weights_dob|thyroglobulin_labs_dob|anti_tg_labs_dob)
 - `sex`: harmonized sex ('Male'|'Female', NULL if no source)
 - `sex_source`: provenance label
 - `race`: harmonized race (raw value from best source, NULL if no source)
@@ -594,7 +596,10 @@ Key columns:
 - `best_surgery_date`: DATE used for DOB-based age calculation
 - `best_dob`: DATE from DOB backfill chain (NULL if no DOB in any source)
 
-Coverage (as of 2026-03-13): 11,673 patients; age 99.2%, sex 93.2%, race 93.1%.
+Coverage (as of 2026-03-13): 11,673 patients; age 99.25% (11,586/11,673), sex 93.16%, race 93.08%.
+87 truly missing age (orphan research_ids absent from all raw Excel files, concentrated in IDs > 9800).
+799 missing sex, 808 missing race (patients in master_cohort from operative_details only, without synoptic pathology reports).
+33 DOB conflicts across sources (majority-vote resolved).
 
 ### `stg_dob_excel_recovery` (table, added 2026-03-13)
 
