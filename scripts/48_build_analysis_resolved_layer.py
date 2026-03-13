@@ -117,22 +117,21 @@ patient_spine AS (
 demo AS (
     SELECT
         research_id,
-        COALESCE(age, NULL)             AS age_at_surgery,
+        age_at_surgery,
         LOWER(COALESCE(sex,''))         AS sex,
         race,
-        -- Source provenance
         CASE
-            WHEN age IS NOT NULL AND sex IS NOT NULL AND race IS NOT NULL
+            WHEN age_at_surgery IS NOT NULL AND sex IS NOT NULL AND race IS NOT NULL
                  THEN 'demographics_harmonized_v3'
             ELSE 'demographics_harmonized_v3_partial'
         END AS demo_source,
         CASE
-            WHEN age IS NOT NULL AND sex IS NOT NULL THEN 90
-            WHEN age IS NOT NULL THEN 70
+            WHEN age_at_surgery IS NOT NULL AND sex IS NOT NULL THEN 90
+            WHEN age_at_surgery IS NOT NULL THEN 70
             ELSE 30
         END AS demo_confidence
     FROM demographics_harmonized_v3
-    QUALIFY ROW_NUMBER() OVER (PARTITION BY research_id ORDER BY age DESC NULLS LAST) = 1
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY research_id ORDER BY age_at_surgery DESC NULLS LAST) = 1
 ),
 
 -- ── Primary pathology (tumor 1 / largest tumor) ───────────────────────────
@@ -178,27 +177,20 @@ primary_path AS (
 staging_refined AS (
     SELECT
         research_id,
-        -- Phase 4 source-specific ETE
         ete_path_confirmed                      AS path_ete_confirmed,
-        ete_grade                               AS ete_grade_refined,
-        -- Phase 6 margins
+        COALESCE(ete_grade_v9, ete_grade_v5, ete_grade_v3) AS ete_grade_refined,
         margin_r_classification                 AS margin_r_class,
         closest_margin_mm,
-        -- Phase 13 vascular grading
         vasc_grade_final_v13                    AS vascular_who_grade,
         vasc_vessel_count_v13                   AS vascular_vessel_count,
-        -- LN burden
-        ln_total_positive_v10                   AS ln_positive_refined,
-        -- Phase 10 lateral neck
+        total_ln_positive_v10                   AS ln_positive_refined,
         lateral_neck_dissected_v10              AS lateral_neck_dissected,
-        -- Phase 11 BRAF/RAS refined
         braf_positive_final                     AS braf_positive_refined,
         ras_positive_final                      AS ras_positive_refined,
-        -- Phase 9 TERT
         tert_positive_v9                        AS tert_positive_refined,
-        -- Phase 9 ETE grade
         ete_grade_v9                            AS ete_grade_v9
     FROM patient_refined_master_clinical_v12
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY research_id ORDER BY research_id) = 1
 ),
 
 -- ── Molecular testing ─────────────────────────────────────────────────────
@@ -237,15 +229,19 @@ fna AS (
     SELECT
         research_id,
         bethesda_final                          AS fna_bethesda_final,
-        bethesda_source                         AS fna_bethesda_source,
-        bethesda_confidence                     AS fna_bethesda_confidence
+        source_tables                           AS fna_bethesda_source,
+        confidence                              AS fna_bethesda_confidence
     FROM extracted_fna_bethesda_v1
     QUALIFY ROW_NUMBER() OVER (
         PARTITION BY research_id
-        ORDER BY bethesda_confidence DESC NULLS LAST,
-                 CASE bethesda_final
-                     WHEN 'VI' THEN 1 WHEN 'V' THEN 2 WHEN 'IV' THEN 3
-                     WHEN 'III' THEN 4 WHEN 'II' THEN 5 ELSE 6 END
+        ORDER BY confidence DESC NULLS LAST,
+                 CASE CAST(bethesda_final AS VARCHAR)
+                     WHEN 'VI' THEN 1 WHEN '6' THEN 1
+                     WHEN 'V' THEN 2  WHEN '5' THEN 2
+                     WHEN 'IV' THEN 3 WHEN '4' THEN 3
+                     WHEN 'III' THEN 4 WHEN '3' THEN 4
+                     WHEN 'II' THEN 5  WHEN '2' THEN 5
+                     ELSE 6 END
     ) = 1
 ),
 
@@ -375,34 +371,14 @@ recurrence AS (
         BOOL_OR(biochemical_recurrence_flag) AS biochemical_recurrence_flag,
         BOOL_OR(structural_recurrence_flag OR biochemical_recurrence_flag)
                                             AS any_recurrence_flag,
-        FIRST(recurrence_type ORDER BY source_priority DESC NULLS LAST)
+        FIRST(recurrence_type_primary ORDER BY source_priority DESC NULLS LAST)
                                             AS recurrence_type_primary,
-        FIRST(recurrence_site ORDER BY source_priority DESC NULLS LAST)
+        FIRST(recurrence_site_primary ORDER BY source_priority DESC NULLS LAST)
                                             AS recurrence_site_primary,
         FIRST(source_table ORDER BY source_priority DESC NULLS LAST)
                                             AS recurrence_source
     FROM recurrence_event_clean_v1
     GROUP BY research_id
-),
-
--- ── Linkage quality ───────────────────────────────────────────────────────
-linkage AS (
-    SELECT
-        research_id,
-        linked_imaging_fna + linked_fna_molecular + linked_preop_surgery
-        + linked_surgery_pathology + linked_pathology_rai
-                                            AS linkage_domains_count,
-        -- Weakest tier across all linkages
-        CASE
-            WHEN linked_surgery_pathology = 0 THEN 'no_pathology_link'
-            WHEN linked_preop_surgery = 0 THEN 'no_preop_link'
-            WHEN linked_fna_molecular = 0 THEN 'no_molecular_link'
-            WHEN linked_imaging_fna = 0 THEN 'no_imaging_link'
-            ELSE 'all_domains_linked'
-        END AS linkage_completeness_label
-    FROM linkage_summary_v2
-    WHERE 1=0  -- linkage_summary_v2 is a summary table not per-patient; skip
-    LIMIT 0
 ),
 
 -- ── Provenance traceability ───────────────────────────────────────────────
@@ -614,7 +590,10 @@ FROM patient_spine ps
 LEFT JOIN demo d USING (research_id)
 LEFT JOIN primary_path pp USING (research_id)
 LEFT JOIN staging_refined sr USING (research_id)
-LEFT JOIN patient_refined_master_clinical_v12 mcv USING (research_id)
+LEFT JOIN (
+    SELECT * FROM patient_refined_master_clinical_v12
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY research_id ORDER BY research_id) = 1
+) mcv USING (research_id)
 LEFT JOIN molecular m USING (research_id)
 LEFT JOIN fna f USING (research_id)
 LEFT JOIN imaging i USING (research_id)
@@ -642,8 +621,8 @@ SELECT
     o.rln_monitoring_flag,
     o.rln_finding_raw,
     o.gross_ete_flag                        AS intraop_gross_ete,
-    o.parathyroid_identified_flag,
-    o.drain_placed_flag,
+    o.parathyroid_resection_flag,
+    o.drain_flag,
     -- Linked pathology (via v2 surgery_pathology_linkage)
     sp.tumor_ordinal                        AS linked_path_tumor_ordinal,
     sp.linkage_confidence                   AS path_link_confidence_v2,
@@ -690,7 +669,7 @@ LEFT JOIN surgery_pathology_linkage_v3 sp3
     AND sp3.research_id = o.research_id
     AND sp3.score_rank = 1
 LEFT JOIN tumor_episode_master_v2 t
-    ON t.surgery_episode_id = COALESCE(sp.path_surgery_id, o.surgery_episode_id)
+    ON t.surgery_episode_id = COALESCE(sp3.path_surgery_id, sp.tumor_episode_id, o.surgery_episode_id)
     AND t.research_id = o.research_id
     AND t.tumor_ordinal = 1
 -- Link to preop
@@ -701,12 +680,12 @@ LEFT JOIN preop_surgery_linkage_v3 ps3
     ON ps3.surgery_episode_id = o.surgery_episode_id
     AND ps3.research_id = o.research_id
     AND ps3.score_rank = 1
--- Link to RAI
+-- Link to RAI (prefer v3 path_surgery_id, fall back to v2 tumor_episode_id)
 LEFT JOIN pathology_rai_linkage_v2 pr
-    ON pr.surgery_episode_id = COALESCE(sp.path_surgery_id, o.surgery_episode_id)
+    ON pr.surgery_episode_id = COALESCE(sp3.path_surgery_id, sp.tumor_episode_id, o.surgery_episode_id)
     AND pr.research_id = o.research_id
 LEFT JOIN pathology_rai_linkage_v3 pr3
-    ON pr3.surgery_episode_id = COALESCE(sp.path_surgery_id, o.surgery_episode_id)
+    ON pr3.surgery_episode_id = COALESCE(sp3.path_surgery_id, sp.tumor_episode_id, o.surgery_episode_id)
     AND pr3.research_id = o.research_id
     AND pr3.score_rank = 1
 LEFT JOIN rai_treatment_episode_v2 r
@@ -766,45 +745,67 @@ SELECT
     'v1'                                    AS resolved_layer_version,
     CURRENT_TIMESTAMP                       AS resolved_at
 FROM tumor_episode_master_v2 t
--- Imaging -> FNA (best v3 link to FNA, then FNA -> this lesion)
+-- Best FNA for this tumor (laterality + 365-day temporal window)
 LEFT JOIN fna_episode_master_v2 f
     ON f.research_id = t.research_id
     AND f.laterality = t.laterality
     AND ABS(DATEDIFF('day', COALESCE(f.fna_date_native,'1900-01-01'),
                             COALESCE(TRY_CAST(t.surgery_date AS DATE),'1900-01-01')
                     )) <= 365
--- Enhanced FNA linkage (best scoring FNA for this patient/laterality)
+-- Best imaging nodule for this patient (v3 scoring)
 LEFT JOIN (
-    SELECT research_id, fna_episode_id,
-           img_date, fna_date, day_gap, linkage_score,
-           linkage_confidence_tier, img_size_cm, analysis_eligible_link_flag
+    SELECT research_id, nodule_id, fna_episode_id,
+           day_gap, linkage_score, img_size_cm,
+           linkage_confidence_tier, analysis_eligible_link_flag
     FROM imaging_fna_linkage_v3
     WHERE score_rank = 1
 ) img ON img.research_id = t.research_id
+-- FNA -> imaging linkage quality for the specific matched FNA
+LEFT JOIN (
+    SELECT fna_episode_id, day_gap, linkage_score,
+           linkage_confidence_tier, analysis_eligible_link_flag
+    FROM imaging_fna_linkage_v3
+    WHERE score_rank = 1
+) fi3 ON fi3.fna_episode_id = f.fna_episode_id
+-- FNA -> molecular chain (v3 scored)
 LEFT JOIN (
     SELECT fna_episode_id, molecular_episode_id, linkage_score
     FROM fna_molecular_linkage_v3
     WHERE score_rank = 1
 ) fm3 ON fm3.fna_episode_id = f.fna_episode_id
-LEFT JOIN (
-    SELECT fna_episode_id, molecular_episode_id, linkage_score
-    FROM imaging_fna_linkage_v3
-    WHERE score_rank = 1
-) fi3 ON fi3.fna_episode_id = f.fna_episode_id
 LEFT JOIN molecular_test_episode_v2 m
     ON m.molecular_episode_id = fm3.molecular_episode_id
 """
 
 
+def _resolve_md_prefix(con: duckdb.DuckDBPyConnection, tbl: str) -> None:
+    """If *tbl* doesn't exist but md_*tbl* does, alias it via temp table."""
+    if table_available(con, tbl):
+        return
+    md_name = f"md_{tbl}"
+    if table_available(con, md_name):
+        print(f"  [INFO] {tbl} not found; aliasing from {md_name}")
+        con.execute(f"CREATE OR REPLACE TEMP TABLE {tbl} AS SELECT * FROM {md_name}")
+
+
 def _ensure_optional_stubs(con: duckdb.DuckDBPyConnection) -> None:
     """Create empty stubs for tables that may not be deployed yet."""
+    # Resolve md_* prefixed tables first (MotherDuck materialized copies)
+    md_resolve = [
+        "surgery_pathology_linkage_v2",
+        "pathology_rai_linkage_v2",
+        "preop_surgery_linkage_v2",
+    ]
+    for tbl in md_resolve:
+        _resolve_md_prefix(con, tbl)
+
     stubs = {
         "demographics_harmonized_v3": """
-SELECT NULL::INTEGER AS research_id, NULL::DOUBLE AS age, NULL::VARCHAR AS sex,
-       NULL::VARCHAR AS race WHERE 1=0""",
+SELECT NULL::INTEGER AS research_id, NULL::DOUBLE AS age_at_surgery,
+       NULL::VARCHAR AS sex, NULL::VARCHAR AS race WHERE 1=0""",
         "extracted_fna_bethesda_v1": """
 SELECT NULL::INTEGER AS research_id, NULL::VARCHAR AS bethesda_final,
-       NULL::VARCHAR AS bethesda_source, NULL::INTEGER AS bethesda_confidence WHERE 1=0""",
+       NULL::VARCHAR AS source_tables, NULL::INTEGER AS confidence WHERE 1=0""",
         "extracted_tirads_validated_v1": """
 SELECT NULL::INTEGER AS research_id, NULL::INTEGER AS tirads_best_score,
        NULL::INTEGER AS tirads_worst_score, NULL::VARCHAR AS tirads_best_category,
@@ -864,9 +865,23 @@ SELECT NULL::INTEGER AS research_id, NULL::VARCHAR AS nodule_id,
         "fna_molecular_linkage_v3": """
 SELECT NULL::VARCHAR AS fna_episode_id, NULL::VARCHAR AS molecular_episode_id,
        NULL::DOUBLE AS linkage_score, NULL::INTEGER AS score_rank WHERE 1=0""",
+        "surgery_pathology_linkage_v2": """
+SELECT NULL::INTEGER AS research_id, NULL::INTEGER AS surgery_episode_id,
+       NULL::INTEGER AS tumor_episode_id, NULL::INTEGER AS tumor_ordinal,
+       NULL::DATE AS surgery_date_native, NULL::DATE AS tumor_surgery_date,
+       NULL::VARCHAR AS linkage_confidence, NULL::BOOLEAN AS laterality_match WHERE 1=0""",
+        "preop_surgery_linkage_v2": """
+SELECT NULL::INTEGER AS research_id, NULL::VARCHAR AS preop_type,
+       NULL::VARCHAR AS preop_episode_id, NULL::INTEGER AS surgery_episode_id,
+       NULL::VARCHAR AS linkage_confidence, NULL::INTEGER AS day_gap WHERE 1=0""",
+        "pathology_rai_linkage_v2": """
+SELECT NULL::INTEGER AS research_id, NULL::INTEGER AS surgery_episode_id,
+       NULL::VARCHAR AS rai_episode_id, NULL::VARCHAR AS linkage_confidence,
+       NULL::INTEGER AS days_surg_to_rai WHERE 1=0""",
         "surgery_pathology_linkage_v3": """
 SELECT NULL::INTEGER AS research_id, NULL::INTEGER AS surgery_episode_id,
-       NULL::INTEGER AS path_surgery_id, NULL::DOUBLE AS linkage_score,
+       NULL::INTEGER AS path_surgery_id, NULL::INTEGER AS tumor_ordinal,
+       NULL::DOUBLE AS linkage_score,
        NULL::VARCHAR AS linkage_confidence_tier, NULL::VARCHAR AS linkage_reason_summary,
        NULL::BOOLEAN AS analysis_eligible_link_flag, NULL::INTEGER AS score_rank WHERE 1=0""",
         "preop_surgery_linkage_v3": """
@@ -903,6 +918,18 @@ def _ensure_mcv12(con: duckdb.DuckDBPyConnection) -> bool:
     return False
 
 
+def _patch_histology_sql(con: duckdb.DuckDBPyConnection, sql: str) -> str:
+    """Replace histology_normalized reference if column doesn't exist in mcv12."""
+    if col_available(con, "patient_refined_master_clinical_v12",
+                     "histology_normalized"):
+        return sql
+    print("  [INFO] histology_normalized not in mcv12 — using path_histology_raw")
+    return sql.replace(
+        "LOWER(CAST(mcv.histology_normalized AS VARCHAR))",
+        "NULL",
+    )
+
+
 def build_resolved_tables(con: duckdb.DuckDBPyConnection,
                           dry_run: bool = False) -> None:
     section("Building analysis-grade resolved layer")
@@ -927,7 +954,8 @@ def build_resolved_tables(con: duckdb.DuckDBPyConnection,
     # ── Patient resolved ──────────────────────────────────────────────────
     print("  Building patient_analysis_resolved_v1...")
     try:
-        con.execute(PATIENT_RESOLVED_SQL)
+        patient_sql = _patch_histology_sql(con, PATIENT_RESOLVED_SQL)
+        con.execute(patient_sql)
         r = con.execute(
             "SELECT COUNT(*) AS n_patients, "
             "SUM(CASE WHEN analysis_eligible_flag THEN 1 ELSE 0 END) AS n_eligible "

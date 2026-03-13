@@ -356,6 +356,31 @@ The following components are **provisional** and require expert clinical review 
 
 2. **recurrence_risk_features_mv has multiple rows per patient** — Always aggregate with `BOOL_OR(recurrence_flag)` and `GROUP BY research_id` before joining to patient-level analyses.
 
-3. **molecular_test_episode_v2 ras_flag bug** — `ras_flag` can be FALSE even when `ras_subtype` is populated. Phase 11 corrected this via subtype propagation. Use `ras_positive_final` from `patient_refined_master_clinical_v12` or `patient_analysis_resolved_v1`.
+3. **molecular_test_episode_v2 ras_flag bug** — `ras_flag` can be FALSE even when `ras_subtype` is populated (184 patients). Phase 11 corrected this via subtype propagation. Use `ras_positive_final` from `patient_analysis_resolved_v1`.
 
 4. **Local DuckDB vs MotherDuck** — Many tables (thyroglobulin_labs, patient_refined_master_clinical_v12, recurrence_risk_features_mv) exist only on MotherDuck. Run analysis scripts with `--md` flag.
+
+5. **patient_refined_master_clinical_v12 has duplicate research_ids** — 12,886 rows for 10,871 unique patients. All joins in script 48 include `QUALIFY ROW_NUMBER() OVER (PARTITION BY research_id) = 1` deduplication. Always do the same in ad-hoc queries.
+
+6. **Column name mismatches across master clinical versions** — `ete_grade` does not exist; use `ete_grade_v9` or `ete_grade_v5`. `histology_normalized` does not exist in v12; the resolved layer falls back to `primary_histology`. `bethesda_confidence` is named `confidence` in `extracted_fna_bethesda_v1`.
+
+7. **v2 linkage tables exist as `md_*` prefixed on MotherDuck** — `surgery_pathology_linkage_v2` is stored as `md_surgery_pathology_linkage_v2`. Script 48 auto-resolves this via `_resolve_md_prefix()`. Column `tumor_episode_id` (not `path_surgery_id`) is the correct join key in v2.
+
+8. **Supporting tables require script deployment** — Scoring (script 51), complication (52), lab (53), and linkage v3 (49) tables must be deployed to MotherDuck via `scripts/26_motherduck_materialize_v2.py --md` before the resolved layer produces non-NULL values for those domains.
+
+---
+
+## Pre-Manuscript Hardening (2026-03-13)
+
+Schema bugs fixed in script 48:
+- `sp.path_surgery_id` → `sp.tumor_episode_id` for surgery_pathology_linkage_v2 joins
+- `age` → `age_at_surgery` for demographics_harmonized_v3
+- `parathyroid_identified_flag` → `parathyroid_resection_flag` for operative_episode_detail_v2
+- `drain_placed_flag` → `drain_flag` for operative_episode_detail_v2
+- `ln_total_positive_v10` → `total_ln_positive_v10` for master clinical
+- `bethesda_confidence`/`bethesda_source` → `confidence`/`source_tables` for FNA table
+- Added QUALIFY dedup on staging_refined and mcv12 joins to prevent row explosion
+- Added `_resolve_md_prefix()` for MotherDuck `md_*` table name resolution
+- Dead `linkage` CTE removed (was `WHERE 1=0`)
+
+See `docs/pre_manuscript_analysis_checklist.md` for the full verification workflow.

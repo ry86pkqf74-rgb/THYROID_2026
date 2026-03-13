@@ -188,11 +188,33 @@ _CLINICAL_CONTEXT: dict[str, str] = {
     "recurrence_risk_band": "ATA recurrence risk stratification guides RAI and surveillance decisions",
 }
 
-# Data source priority for view resolution
+# ── Manuscript-grade preferred tables ──────────────────────────────────
+# Scripts 48-55 create the analysis-grade resolved layer. Use these first.
+MANUSCRIPT_PREFERRED_TABLES = [
+    "patient_analysis_resolved_v1",
+    "episode_analysis_resolved_v1",
+    "lesion_analysis_resolved_v1",
+    "longitudinal_lab_clean_v1",
+    "recurrence_event_clean_v1",
+    "thyroid_scoring_systems_v1",
+    "complication_patient_summary_v1",
+]
+
+# Data source priority for view resolution — resolved layer first, legacy fallback
 _VIEW_PRIORITY = [
+    "patient_analysis_resolved_v1",
+    "advanced_features_v5",
+    "advanced_features_v4",
     "risk_enriched_mv",
     "advanced_features_v3",
     "ptc_cohort",
+]
+
+# Longitudinal lab source priority — hardened table first, legacy fallback
+_LONGITUDINAL_LAB_PRIORITY = [
+    "longitudinal_lab_clean_v1",
+    "extracted_clinical_events_v4",
+    "longitudinal_lab_view",
 ]
 
 # ── Plot layout (matches dashboard theme) ─────────────────────────────────
@@ -1143,8 +1165,11 @@ class ThyroidStatisticalAnalyzer:
     ) -> dict[str, Any]:
         """Fit a linear mixed-effects model for longitudinal Tg/TSH trajectories.
 
-        Loads from ``extracted_clinical_events_v4`` (primary, has days_from_surgery)
-        or falls back to ``longitudinal_lab_view``.  Fits a random-intercept model:
+        Prefers ``longitudinal_lab_clean_v1`` (manuscript-grade, script 53) which
+        has enforced date precedence and deduplication. Falls back to
+        ``extracted_clinical_events_v4`` then ``longitudinal_lab_view``.
+
+        Fits a random-intercept model:
 
             log(value + 0.01) ~ days_from_surgery + (1 | research_id)
 
@@ -1180,10 +1205,10 @@ class ThyroidStatisticalAnalyzer:
         id_col = "research_id"
 
         if view is None:
-            view = "extracted_clinical_events_v4"
+            view = "longitudinal_lab_clean_v1"
 
-        primary_candidates = [view, "extracted_clinical_events_v4", "longitudinal_lab_view"]
-        for candidate in primary_candidates:
+        primary_candidates = ([view] if view else []) + list(_LONGITUDINAL_LAB_PRIORITY)
+        for candidate in dict.fromkeys(primary_candidates):
             try:
                 row = self._con.execute(
                     f"SELECT COUNT(*) FROM information_schema.tables WHERE table_name='{candidate}'"
@@ -1194,7 +1219,21 @@ class ThyroidStatisticalAnalyzer:
                 continue
 
             try:
-                if "extracted_clinical_events" in candidate:
+                if "longitudinal_lab_clean" in candidate:
+                    lab_filter = marker_cfg["lab_type_filter"]
+                    sql = (
+                        f"SELECT research_id, "
+                        f"TRY_CAST(result_numeric AS DOUBLE) AS event_value, "
+                        f"TRY_CAST(days_from_surgery AS DOUBLE) AS days_from_surgery "
+                        f"FROM {candidate} "
+                        f"WHERE LOWER(lab_type) LIKE '%{lab_filter}%' "
+                        f"AND result_numeric IS NOT NULL "
+                        f"AND TRY_CAST(result_numeric AS DOUBLE) > 0 "
+                        f"AND days_from_surgery IS NOT NULL"
+                    )
+                    time_col = "days_from_surgery"
+                    value_col = "event_value"
+                elif "extracted_clinical_events" in candidate:
                     subtype = marker_cfg["event_subtype_filter"]
                     sql = (
                         f"SELECT research_id, "
