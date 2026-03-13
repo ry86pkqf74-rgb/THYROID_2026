@@ -1,0 +1,18 @@
+{
+  "timestamp": "20260313_0951",
+  "smoking_mentions": 3435,
+  "smoking_patients": 2775,
+  "bmi_mentions": 2575,
+  "bmi_patients": 2195,
+  "smoking_review_queue": 622,
+  "bmi_review_queue": 3,
+  "files": [
+    "extracted_smoking_status_v1.csv",
+    "patient_bmi_summary_v1.csv",
+    "extracted_bmi_v1.csv",
+    "review_smoking_ambiguous_v1.csv",
+    "patient_smoking_status_summary_v1.csv",
+    "val_hp_targeted_extraction_v1.csv",
+    "review_bmi_outlier_v1.csv"
+  ]
+}
