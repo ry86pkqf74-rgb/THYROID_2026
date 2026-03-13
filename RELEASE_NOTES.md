@@ -1,6 +1,49 @@
 # THYROID_2026 Release Notes
 
-## v2026.03.13-final-hardening (Latest)
+## v2026.03.13-post-hardening-cleanup (Latest)
+**Date:** 2026-03-13
+
+### Post-Hardening Cleanup
+
+Bounded cleanup pass after final hardening. No broad rewrites, no new
+extraction campaigns. Preserves all validated manuscript-ready outputs.
+
+#### Lab Canonical Dedup
+
+| Metric | Before | After |
+|--------|--------|-------|
+| `longitudinal_lab_canonical_v1` rows | 45,954 | 39,961 |
+| Exact duplicate groups | 5,976 | 0 |
+| Excess rows removed | — | 5,993 |
+| Patient count | 3,349 | 3,349 (preserved) |
+
+Root cause: script 77 ingested threshold values (e.g., "<0.9") as both
+censored and uncensored rows. Dedup rule: prefer `is_censored=TRUE`
+(conservative threshold interpretation), tiebreak by latest wave.
+
+#### Operative V2 Assessment
+
+8 operative NLP enrichment fields confirmed at 0% fill (Category C — raw
+text only, extractor exists but outputs not materialized). No safe landing
+without running full extraction campaign. Documented in audit note.
+
+#### Documentation Synchronization
+
+- README: removed stale "sign in" guidance, old flat-tab architecture
+  references, duplicated gap section, outdated deploy instructions
+- RELEASE_NOTES: added post-hardening cleanup entry
+- dashboard.py: updated docstring and version to v3.2.0-2026.03.13
+- Audit note: `docs/final_small_cleanup_audit_20260313.md`
+
+#### Validation
+
+- `val_lab_canonical_v1` rebuilt: all 5 analytes PASS (was WARN due to dupes)
+- `md_longitudinal_lab_canonical_v1` materialized copy synced
+- ANALYZE TABLE run on deduped lab tables
+
+---
+
+## v2026.03.13-final-hardening
 **Date:** 2026-03-13
 
 ### Final Hardening Pass
@@ -435,7 +478,7 @@ All regression results include plain-English interpretation strings, e.g.:
 
 ---
 
-## v2026.03.10-v3-dashboard (Current)
+## v2026.03.10-v3-dashboard
 **Date:** 2026-03-10
 **Patients:** 11,673 | **Surgeries:** Multiple per patient handled
 

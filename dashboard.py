@@ -1,16 +1,10 @@
 #!/usr/bin/env python3
 """
-Thyroid Cohort Explorer — Enhanced Dashboard v3
-Powered by MotherDuck cloud DuckDB (Business trial).
+Thyroid Cohort Explorer — Workflow Dashboard
+Powered by MotherDuck cloud DuckDB.
 
-New in v3:
-  • 🕐 Patient Timeline Explorer   — master_timeline + Tg/TSH trend per patient
-  • 📋 Extracted Clinical Events   — searchable extracted_clinical_events_v4
-  • 🔍 QA Dashboard                — qa_issues summary + drill-down
-  • 📉 Risk & Survival             — Kaplan-Meier with lifelines + stratification
-  • 🧩 Advanced Features v3        — 60+ engineered features, full column selector
-  • Sidebar: surgery count + QA status filters
-  • MotherDuck compute-tier controls (Jumbo toggle)
+6 workflow sections: Overview, Patient Explorer, Data Quality,
+Linkage & Episodes, Outcomes & Analytics, Manuscript & Export.
 
 Run locally:
     export MOTHERDUCK_TOKEN='your_token'
@@ -113,7 +107,7 @@ SEQ_TEAL = [[0,"#0a1a20"],[0.5,"#1a8a7a"],[1,"#2dd4bf"]]
 SHARE_PATH = "md:_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c"
 DATABASE   = "thyroid_research_2026"
 SHARE_CATALOG = "thyroid_share"
-_APP_VERSION = "v3.1.0-2026.03.10"
+_APP_VERSION = "v3.2.0-2026.03.13"
 
 # Tracks which catalog _get_con() activated (used by qual())
 _ACTIVE_CATALOG: str = DATABASE

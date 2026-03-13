@@ -203,6 +203,51 @@ def render_qa_workbench(con) -> None:
 
     st.divider()
 
+    # --- Lab Canonical Status ---
+    st.subheader("Lab Canonical Layer")
+    lab_val = _safe_query(con, "SELECT lab_name_standardized, n_total, n_exact_dupes, validation_status FROM val_lab_canonical_v1")
+    if lab_val is not None and len(lab_val) > 0:
+        all_pass = all(lab_val["validation_status"].isin(["PASS", "WARN"]))
+        n_dupes = int(lab_val["n_exact_dupes"].sum()) if "n_exact_dupes" in lab_val.columns else -1
+        lab_total = int(lab_val["n_total"].sum()) if "n_total" in lab_val.columns else 0
+        if n_dupes == 0:
+            st.success(f"Lab canonical layer: {lab_total:,} rows, 0 duplicate groups.")
+        else:
+            st.warning(f"Lab canonical layer: {lab_total:,} rows, {n_dupes} duplicate groups remain. Run dedup.")
+        with st.expander("Lab Validation Detail"):
+            st.dataframe(lab_val, use_container_width=True)
+    else:
+        st.info("Run `scripts/78_final_hardening.py --md --phase D` to build lab validation.")
+
+    st.divider()
+
+    # --- Operative V2 NLP Status ---
+    st.subheader("Operative NLP Enrichment")
+    op_fill = _safe_query(con, """
+        SELECT
+            COUNT(*) FILTER (WHERE berry_ligament_flag IS NOT NULL) AS berry,
+            COUNT(*) FILTER (WHERE frozen_section_flag IS NOT NULL) AS frozen,
+            COUNT(*) FILTER (WHERE ebl_ml_nlp IS NOT NULL) AS ebl_nlp,
+            COUNT(*) FILTER (WHERE parathyroid_identified_count IS NOT NULL) AS parathyroid_count,
+            COUNT(*) AS total
+        FROM operative_episode_detail_v2
+    """)
+    if op_fill is not None and len(op_fill) > 0:
+        row = op_fill.iloc[0]
+        total = int(row.get("total") or 0)
+        filled = max(int(row.get("berry") or 0), int(row.get("frozen") or 0),
+                     int(row.get("ebl_nlp") or 0), int(row.get("parathyroid_count") or 0))
+        if filled == 0:
+            st.info(f"8 operative NLP fields at 0/{total:,} — extractor exists "
+                    "(`extract_operative_v2.py`) but outputs not yet materialized. "
+                    "This is a **source-limited gap**, not a data quality issue.")
+        else:
+            st.success(f"Operative NLP enrichment partially populated ({filled}/{total:,} rows).")
+    else:
+        st.info("Operative episode table not available.")
+
+    st.divider()
+
     # --- Actionable Guidance ---
     st.subheader("What To Run Next")
     guidance = []

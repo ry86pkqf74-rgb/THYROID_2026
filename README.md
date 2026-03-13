@@ -65,12 +65,8 @@ The dataset maturation pass resolved the following:
 - Zero nuclear medicine notes in corpus — RAI dose recovery capped at ~41%
 - 87% vascular invasion remains `present_ungraded` — synoptic template limitation
 - Pre-2019 operative notes absent — institutional data limitation
-- 1,764 recurrence dates unresolved — requires manual chart review
-
-Remaining source-limited gaps (not fixable without new institutional data):
-- Non-Tg lab dates (TSH/PTH/Ca/vitD) at 0%
-- Nuclear medicine report text absent from corpus
-- Vascular invasion 87% present_ungraded (synoptic template limitation)
+- 1,764 recurrence dates unresolved — requires manual chart review (prioritized queue deployed)
+- 8 operative V2 NLP enrichment fields at 0% — extractor exists but outputs not materialized
 
 ### Current repo status
 
@@ -87,9 +83,7 @@ Thyroid cancer research lakehouse — 11,673 patients across 13 base tables,
 
 **[thyroid2026-n2hrol9ntiffy4nmedp2zs.streamlit.app](https://thyroid2026-n2hrol9ntiffy4nmedp2zs.streamlit.app/)**
 
-> The deployed app connects to a read-only MotherDuck share. If the app
-> asks you to sign in, the owner must set **Settings > Sharing > Public**
-> in the Streamlit Cloud dashboard to allow unauthenticated access.
+> The deployed app connects to a read-only MotherDuck share.
 
 ## Repository layout
 
@@ -275,81 +269,24 @@ n = ThyroidStatisticalAnalyzer.power_two_proportions(p1=0.15, p2=0.05)
 | Streamlit Cloud | Auto-deploys from `main` branch on push |
 | Runtime | Python 3.11 (pinned in `runtime.txt`) |
 
-## Streamlit Cloud deployment (already done)
+## Streamlit Cloud deployment
 
-The app is deployed at
+The app auto-deploys from `main` at
 **[thyroid2026-n2hrol9ntiffy4nmedp2zs.streamlit.app](https://thyroid2026-n2hrol9ntiffy4nmedp2zs.streamlit.app/)**.
 
-To redeploy or reconfigure:
+To reconfigure secrets or sharing, visit [share.streamlit.io](https://share.streamlit.io).
 
-1. Go to [share.streamlit.io](https://share.streamlit.io) and sign in with GitHub.
-2. Find the app in your dashboard.
-3. **Settings > Secrets** — update `MOTHERDUCK_TOKEN` if the token rotates.
-4. **Settings > Sharing** — set to **Public** if you want unauthenticated access.
-5. Pushes to `main` auto-redeploy the app.
+### Cure Modeling (PTCM + MCM)
 
-## Making the app public
-
-By default, apps from private repos require Streamlit Cloud sign-in to view.
-To allow anyone to access the dashboard without signing in:
-
-1. Open [share.streamlit.io](https://share.streamlit.io)
-2. Click the **three-dot menu** on your app
-3. Select **Settings > Sharing**
-4. Change from **Only people with access** to **Public**
-5. Save
-
-## New Dashboard Features (enabled during MotherDuck trial)
-
-Five new tabs added by `scripts/12_update_streamlit_dashboard.py`:
-
-| Tab | Description |
-|-----|-------------|
-| **Patient Timeline Explorer** | Per-patient surgery timeline, Tg/TSH trend with surgery markers, all clinical events anchored by relative days |
-| **Extracted Clinical Events** | Searchable table of labs, meds, PMH, RAI, recurrence from `extracted_clinical_events_v4` with download |
-| **QA Dashboard** | Summary metrics from `qa_issues`, severity/check distribution, drill-down table |
-| **Risk & Survival** | Kaplan-Meier recurrence-free survival with stratification by stage, histology, BRAF; risk feature summary; **Latent Disease Burden (PTCM)** + **Unified Cure Modeling Dashboard** (MCM vs PTCM head-to-head) sub-sections |
-| **Advanced Features v3** | Full column selector across all 60+ engineered features |
-
-### Risk & Survival — Promotion Time Cure Model (PTCM)
-
-The **Risk & Survival** tab includes a "Latent Disease Burden (Promotion Time Cure Model)" sub-section. Unlike the mixture cure model (which treats cure as a binary latent variable), the PTCM (Chen, Ibrahim & Sinha 1999) provides a biologically mechanistic interpretation: the number of cancer cells capable of promoting recurrence follows Poisson(θ(x)), where θ(x) = exp(xᵀβ) is the covariate-driven promotion intensity. If the Poisson count is zero, the patient is operationally cured, giving cure probability π(x) = exp(−θ(x)). The Weibull baseline captures the shape of the promotion-time hazard. The sub-section shows model KPIs (cure fraction π̄, 10-year plateau rate, AIC, Weibull shape κ), a covariate effects table with bootstrap 95% CIs, patient-level cure probability distribution, Weibull vs Kaplan-Meier overlay, and a self-contained biological interpretation HTML report.
-
-Run the mechanistic cure analysis:
+The **Outcomes & Analytics** section includes Promotion Time Cure Model (PTCM)
+and Mixture Cure Model (MCM) sub-sections with head-to-head comparison.
 
 ```bash
 python scripts/26_motherduck_materialize_v2.py --md
 python scripts/39_promotion_time_cure_models.py --md
+python scripts/38_mixture_cure_models.py --md
 streamlit run dashboard.py
 ```
-
-Outputs land in `exports/promotion_cure_results/`.
-
-**New sidebar filters:** Surgery count, QA status (clean / flagged),
-days-since-nearest-surgery range (<30d / 30-90d / 90-365d / >1y).
-
-**Performance controls:** MotherDuck compute tier display, Jumbo instance toggle.
-
-**Publication tools:** "Publication Snapshot" button exports all materialized
-views to a dated `exports/snapshot_YYYYMMDD/` folder as CSV + Parquet.
-Multi-format download buttons (CSV / Excel / Parquet) on all QA tables.
-
-### Script 11.5 — Cross-File Validation
-
-Run `python scripts/11.5_cross_file_validation.py` after script 11 to create
-three cross-file consistency tables:
-
-| Table | Check |
-|-------|-------|
-| `qa_laterality_mismatches` | Operative vs pathology laterality consistency |
-| `qa_report_matching` | FNA↔Pathology and US↔Operative linkage rates |
-| `qa_missing_demographics` | Patients missing age, sex, or race |
-
-These tables are displayed in the QA Dashboard tab and their issues are
-inserted into `qa_issues` with `check_id` prefix `xfile_`.
-
-Requires `lifelines` (Kaplan-Meier) and `openpyxl` (Excel export).
-Install: `pip install -r requirements.txt`.
 
 ## Data dictionary
 
@@ -361,125 +298,26 @@ of all 13 tables and 8+ views.
 Private research data — do not redistribute without permission.
 
 
-## V3 Dashboard Materialization
+## Pipeline & Deployment
 
-After deploying the full pipeline (scripts 15–20, 22–27), materialize tables
-for the Streamlit dashboard:
-
-```bash
-# Materialize all v2/v3 tables to MotherDuck
-python scripts/26_motherduck_materialize_v2.py --md
-
-# Run validation engine (creates val_* tables)
-python scripts/29_validation_engine.py --md
-
-# Run combined validation + export
-python scripts/29_validation_runner.py --md
-
-# Check readiness (exits non-zero if critical tables missing)
-python scripts/30_readiness_check.py --md
-```
-
-## Release history
-
-**Current:** v2026.03.13 audit/verification wave — see [RELEASE_NOTES.md](RELEASE_NOTES.md)
-**Zenodo DOI:** [10.5281/zenodo.18945510](https://doi.org/10.5281/zenodo.18945510)
-**QA reconciliation:** [docs/QA_report.md](docs/QA_report.md)
-
-**Legacy compatibility:** If the dashboard shows a message about missing legacy tables
-(`molecular_episode_v3`, `rai_episode_v3`, `validation_failures_v3`, `tumor_episode_master_v2`,
-`linkage_summary_v2`), run once:
+### Materialize to MotherDuck
 
 ```bash
-.venv/bin/python scripts/27_fix_legacy_episode_compatibility.py
+python scripts/26_motherduck_materialize_v2.py --md   # 131+ tables
+python scripts/29_validation_engine.py --md            # val_* tables
+python scripts/78_final_hardening.py --md              # hardening pass
+python scripts/30_readiness_check.py --md              # readiness audit
 ```
 
-This creates the five tables as views on top of the modern stack (no data duplication).
-Restart the Streamlit app after running. See [data_dictionary.md](data_dictionary.md) § Legacy Compatibility Layer.
-
-## Daily Refresh / Nightly Automation
-
-Run the full pipeline chain locally:
+### Daily refresh
 
 ```bash
 .venv/bin/python scripts/36_daily_refresh.py --md
 ```
 
-Or use the Publication Export pipeline for manuscript-ready outputs:
+## Release history
 
-```bash
-.venv/bin/python scripts/37_publication_export.py --md
-```
+**Current:** v2026.03.13 post-hardening — see [RELEASE_NOTES.md](RELEASE_NOTES.md)
+**Zenodo DOI:** [10.5281/zenodo.18945510](https://doi.org/10.5281/zenodo.18945510)
 
-### Advanced Survival Analysis
-
-Run publication-grade survival models (KM, Cox PH, RMST, CIF, PSM, RSF + SHAP, DeepSurv):
-
-```bash
-# 1. Build survival_cohort_enriched + survival_kpis tables
-.venv/bin/python scripts/26_motherduck_materialize_v2.py --md
-
-# 2. Run full analysis — outputs to exports/survival_results/
-.venv/bin/python scripts/38_advanced_survival_analysis.py --md
-
-# 3. View in dashboard (Advanced Survival tab)
-streamlit run dashboard.py
-```
-
-Requires: `pip install lifelines scikit-survival shap torch plotly kaleido`
-
-### Unified Cure Modeling Platform
-
-The project provides two complementary cure models and a head-to-head comparison framework:
-
-| Model | Script | Interpretation | Key Output |
-|-------|--------|----------------|------------|
-| **Mixture Cure Model (MCM)** | `38_mixture_cure_models.py` | Population split: π(x) = logistic(xᵀγ) partitions patients into cured/susceptible | Incidence ORs, Weibull latency, patient π(x) |
-| **Promotion Time Cure Model (PTCM)** | `39_promotion_time_cure_models.py` | Mechanistic: θ(x) = exp(xᵀβ) Poisson promotion intensity, π(x) = exp(−θ(x)) | Promotion β, Weibull baseline, patient θ(x) |
-| **Head-to-Head Comparison** | `40_cure_model_comparison.py` | Unified table: cure fraction, AIC, top predictors, 10y RMST, forest plots | HTML report, CSV, side-by-side figures |
-
-Run the full cure analysis pipeline:
-
-```bash
-# 1. Materialize cohorts (builds mixture_cure_cohort + promotion_cure_cohort)
-python scripts/26_motherduck_materialize_v2.py --md
-
-# 2. Run Mixture Cure Model (MCM) — exports to exports/mixture_cure_results/
-python scripts/38_mixture_cure_models.py --md
-
-# 3. Run Promotion Time Cure Model (PTCM) — exports to exports/promotion_cure_results/
-python scripts/39_promotion_time_cure_models.py --md
-
-# 4. Head-to-head comparison — exports to exports/cure_comparison/
-python scripts/40_cure_model_comparison.py --md
-
-# 5. View in dashboard (Risk & Survival → Unified Cure Modeling Dashboard)
-streamlit run dashboard.py
-```
-
-The **Risk & Survival** tab includes a "Unified Cure Modeling Dashboard" sub-section with three tabs (Mixture Cure | Promotion Time Cure | Head-to-Head Comparison), KPI cards from both models, an interactive patient calculator showing π from both models, side-by-side Weibull curves, and covariate forest plots. The sidebar includes a "Cure Model Comparison KPIs" expander.
-
-<!-- GitHub Actions nightly refresh (add to .github/workflows/nightly-refresh.yml):
-
-name: Nightly Pipeline Refresh
-on:
-  schedule:
-    - cron: '0 6 * * *'    # 6 AM UTC daily
-  workflow_dispatch:        # manual trigger
-
-jobs:
-  refresh:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - run: pip install -r requirements.txt
-      - run: python scripts/36_daily_refresh.py --md
-        env:
-          MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
-      - run: python scripts/37_publication_export.py --md
-        env:
-          MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
--->
+Requires: `pip install -r requirements.txt` (includes lifelines, scikit-survival, shap, etc.)
