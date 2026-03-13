@@ -277,6 +277,10 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_val_provenance_completeness_v2", "val_provenance_completeness_v2"),
     ("md_val_episode_linkage_completeness_v1", "val_episode_linkage_completeness_v1"),
     ("md_val_temporal_anomaly_resolution_v1", "val_temporal_anomaly_resolution_v1"),
+
+    # ── Lab Canonical Layer (script 77) ────────────────────────────
+    ("md_longitudinal_lab_canonical_v1", "longitudinal_lab_canonical_v1"),
+    ("md_val_lab_completeness_v1", "val_lab_completeness_v1"),
 ]
 
 SURVIVAL_COHORT_ENRICHED_SQL = """
