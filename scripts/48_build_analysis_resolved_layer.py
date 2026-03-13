@@ -202,10 +202,19 @@ molecular AS (
             CASE platform WHEN 'ThyroSeq' THEN 1 WHEN 'Afirma' THEN 2 ELSE 3 END,
             test_date_native ASC NULLS LAST)
                                                 AS mol_platform,
-        FIRST(test_date_native ORDER BY
+        FIRST(COALESCE(test_date_native, TRY_CAST(resolved_test_date AS DATE))
+            ORDER BY
             CASE platform WHEN 'ThyroSeq' THEN 1 WHEN 'Afirma' THEN 2 ELSE 3 END,
-            test_date_native ASC NULLS LAST)
+            COALESCE(test_date_native, TRY_CAST(resolved_test_date AS DATE)) ASC NULLS LAST)
                                                 AS mol_test_date,
+        FIRST(CASE
+            WHEN test_date_native IS NOT NULL THEN 'test_date_native'
+            WHEN resolved_test_date IS NOT NULL THEN 'resolved_test_date'
+            ELSE NULL
+        END ORDER BY
+            CASE platform WHEN 'ThyroSeq' THEN 1 WHEN 'Afirma' THEN 2 ELSE 3 END,
+            COALESCE(test_date_native, TRY_CAST(resolved_test_date AS DATE)) ASC NULLS LAST)
+                                                AS mol_test_date_source,
         -- BRAF (from molecular_test_episode_v2)
         BOOL_OR(LOWER(CAST(braf_flag AS VARCHAR)) = 'true') AS mol_braf_flag,
         -- RAS
@@ -292,6 +301,29 @@ rai AS (
     FROM rai_treatment_episode_v2
     WHERE rai_assertion_status IN ('definite_received','likely_received')
     GROUP BY research_id
+),
+
+-- ── RAI validated dates (broader reach than assertion-filtered episodes) ──
+rai_dates AS (
+    SELECT
+        research_id,
+        first_rai_date                          AS rai_validated_date,
+        max_dose_mci                            AS rai_validated_dose,
+        rai_validation_tier,
+        best_source_reliability                 AS rai_date_confidence
+    FROM extracted_rai_validated_v1
+    WHERE first_rai_date IS NOT NULL
+),
+
+-- ── BRAF detection method provenance ─────────────────────────────────────
+braf_recovery AS (
+    SELECT
+        research_id,
+        detection_method                        AS braf_detection_method
+    FROM extracted_braf_recovery_v1
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY research_id ORDER BY detection_method
+    ) = 1
 ),
 
 -- ── Scoring (AJCC8, ATA, MACIS, AGES, AMES) ──────────────────────────────
@@ -455,6 +487,7 @@ SELECT
     -- ── Molecular (raw + final + source) ─────────────────────────────────
     m.mol_platform,
     m.mol_test_date,
+    m.mol_test_date_source,
     m.mol_n_tests,
     -- BRAF final (Phase 11 recovered > Phase 9 structured > mol_test_episode)
     COALESCE(
@@ -464,8 +497,10 @@ SELECT
         WHEN LOWER(CAST(sr.braf_positive_refined AS VARCHAR))='true'
              THEN 'patient_refined_master_clinical_v12'
         WHEN m.mol_braf_flag THEN 'molecular_test_episode_v2'
+        WHEN m.mol_n_tests > 0 THEN 'molecular_test_episode_v2'
         ELSE NULL
     END                                         AS braf_source,
+    br.braf_detection_method,
     m.mol_braf_variant                          AS braf_variant_raw,
     -- RAS final
     COALESCE(
@@ -498,10 +533,23 @@ SELECT
     s.surg_hemithyroidectomy,
 
     -- ── RAI ───────────────────────────────────────────────────────────────
-    COALESCE(r.rai_received_flag, FALSE)        AS rai_received_flag,
-    r.rai_first_date,
-    r.rai_max_dose_mci,
+    COALESCE(r.rai_received_flag, rd.rai_validated_date IS NOT NULL, FALSE)
+                                                AS rai_received_flag,
+    COALESCE(r.rai_first_date, rd.rai_validated_date)
+                                                AS rai_first_date,
+    GREATEST(COALESCE(r.rai_max_dose_mci, 0),
+             COALESCE(rd.rai_validated_dose, 0))
+                                                AS rai_max_dose_mci,
     r.rai_assertion_statuses,
+    CASE
+        WHEN r.rai_first_date IS NOT NULL
+             THEN 'rai_treatment_episode_v2'
+        WHEN rd.rai_validated_date IS NOT NULL
+             THEN 'extracted_rai_validated_v1'
+        ELSE NULL
+    END                                         AS rai_date_source,
+    rd.rai_date_confidence,
+    rd.rai_validation_tier,
 
     -- ── Scoring ───────────────────────────────────────────────────────────
     sc.ajcc8_t_stage,
@@ -556,6 +604,10 @@ SELECT
     -- ── Recurrence ────────────────────────────────────────────────────────
     COALESCE(rec.any_recurrence_flag, FALSE)    AS any_recurrence_flag,
     rec.recurrence_date,
+    CASE
+        WHEN rec.recurrence_date IS NOT NULL THEN rec.recurrence_source
+        ELSE NULL
+    END                                         AS recurrence_date_source,
     rec.structural_recurrence_flag,
     rec.biochemical_recurrence_flag,
     rec.recurrence_type_primary,
@@ -572,8 +624,9 @@ SELECT
      AND pp.path_surgery_date IS NOT NULL)      AS analysis_eligible_flag,
     -- Molecular eligibility: tested with non-stub result
     (m.mol_n_tests > 0)                         AS molecular_eligible_flag,
-    -- RAI eligibility: definite or likely RAI
-    (COALESCE(r.rai_received_flag, FALSE))       AS rai_eligible_flag,
+    -- RAI eligibility: validated RAI or definite/likely assertion
+    (COALESCE(r.rai_received_flag, rd.rai_validated_date IS NOT NULL, FALSE))
+                                                  AS rai_eligible_flag,
     -- Survival eligibility: need surgery date and follow-up
     (pp.path_surgery_date IS NOT NULL)           AS survival_eligible_flag,
     -- Scoring eligibility flags
@@ -599,6 +652,8 @@ LEFT JOIN fna f USING (research_id)
 LEFT JOIN imaging i USING (research_id)
 LEFT JOIN surgery s USING (research_id)
 LEFT JOIN rai r USING (research_id)
+LEFT JOIN rai_dates rd USING (research_id)
+LEFT JOIN braf_recovery br USING (research_id)
 LEFT JOIN scoring sc USING (research_id)
 LEFT JOIN complications c USING (research_id)
 LEFT JOIN labs l USING (research_id)

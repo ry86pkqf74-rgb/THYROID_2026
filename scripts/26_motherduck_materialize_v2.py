@@ -320,12 +320,31 @@ SELECT
     COALESCE(TRY_CAST(r.ln_examined AS INT), 0)                  AS ln_examined,
     TRY_CAST(r.tg_annual_log_slope AS DOUBLE)                    AS tg_annual_log_slope,
     CASE WHEN s.event_occurred::VARCHAR IN ('1','true','True')
-         THEN 1 ELSE 0 END                                      AS event_type
+         THEN 1 ELSE 0 END                                      AS event_type,
+    -- ── Provenance columns ────────────────────────────────────────────────
+    'survival_cohort_ready_mv + advanced_features_sorted + recurrence_risk_features_mv'
+                                                                 AS source_table,
+    '26'                                                         AS source_script,
+    CASE
+        WHEN s.surgery_date IS NOT NULL THEN 'surgery_date'
+        ELSE 'unknown'
+    END                                                          AS date_source,
+    CASE la.date_traceability_status
+        WHEN 'entity_date_traced'  THEN 100
+        WHEN 'inferred_date_traced' THEN 70
+        WHEN 'note_date_only'       THEN 50
+        WHEN 'surgery_anchor_only'  THEN 35
+        ELSE 0
+    END                                                          AS date_confidence,
+    la.date_traceability_status                                  AS provenance_note,
+    'v1'                                                         AS lineage_version
 FROM survival_cohort_ready_mv s
 LEFT JOIN advanced_features_sorted af
     ON CAST(s.research_id AS VARCHAR) = CAST(af.research_id AS VARCHAR)
 LEFT JOIN recurrence_risk_features_mv r
     ON CAST(s.research_id AS VARCHAR) = CAST(r.research_id AS VARCHAR)
+LEFT JOIN lineage_audit_v1 la
+    ON CAST(s.research_id AS VARCHAR) = CAST(la.research_id AS VARCHAR)
 WHERE s.age_at_surgery BETWEEN 18 AND 90
   AND s.time_to_event_days > 0
 """
@@ -573,6 +592,8 @@ def materialize_all(
             "advanced_features_sorted", "md_advanced_features_sorted"
         ).replace(
             "recurrence_risk_features_mv", "md_recurrence_risk_features_mv"
+        ).replace(
+            "lineage_audit_v1", "md_lineage_audit_v1"
         ) if not table_available(target_con, "survival_cohort_ready_mv") else SURVIVAL_COHORT_ENRICHED_SQL
         # PTCM cohort always reads from survival_cohort_enriched (built above)
         for sql, tbl in [
