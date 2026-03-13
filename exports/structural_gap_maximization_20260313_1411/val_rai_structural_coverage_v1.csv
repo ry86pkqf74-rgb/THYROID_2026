@@ -1,0 +1,28 @@
+metric_name,metric_value,metric_description,metric_category,source_limitation_category,audited_at
+total_rai_episodes,1857.0,Total RAI mention episodes in rai_treatment_episode_v2,event_level,,2026-03-13 14:11:37.347427-04:00
+total_rai_patients,862.0,Distinct patients with any RAI episode,patient_level,,2026-03-13 14:11:37.347427-04:00
+confirmed_episodes,49.0,Episodes with definite_received or likely_received assertion,event_level,,2026-03-13 14:11:37.347427-04:00
+confirmed_patients,35.0,Patients with confirmed RAI receipt,patient_level,,2026-03-13 14:11:37.347427-04:00
+episodes_with_dose,761.0,Episodes where dose_mci is non-NULL,event_level,,2026-03-13 14:11:37.347427-04:00
+patients_with_dose,249.0,Patients with any recorded dose,patient_level,,2026-03-13 14:11:37.347427-04:00
+episodes_with_date,1272.0,Episodes with a resolved date,event_level,,2026-03-13 14:11:37.347427-04:00
+exact_date_episodes,434.0,Episodes with exact_source_date quality,event_level,,2026-03-13 14:11:37.347427-04:00
+inferred_date_episodes,838.0,Episodes with inferred_day_level_date quality,event_level,,2026-03-13 14:11:37.347427-04:00
+unresolved_date_episodes,585.0,Episodes with unresolved or NULL date,event_level,,2026-03-13 14:11:37.347427-04:00
+dose_available,761.0,Episodes where dose is available (dose_missingness_reason),dose_missingness,,2026-03-13 14:11:37.347427-04:00
+dose_source_no_value,0.0,Source note present but no dose value stated,dose_missingness,source_present_dose_not_stated,2026-03-13 14:11:37.347427-04:00
+dose_linkage_failed,1096.0,Dose linkage to episode failed,dose_missingness,linkage_failed,2026-03-13 14:11:37.347427-04:00
+dose_no_source_report,0.0,No source report available for dose extraction,dose_missingness,nuclear_medicine_reports_absent,2026-03-13 14:11:37.347427-04:00
+avg_dose_mci,152.1,Average dose among episodes with dose (mCi),dose_summary,,2026-03-13 14:11:37.347427-04:00
+median_dose_mci,153.0,Median dose among episodes with dose (mCi),dose_summary,,2026-03-13 14:11:37.347427-04:00
+validated_patients_total,862.0,Patients in extracted_rai_validated_v1,validation_tier,,2026-03-13 14:11:37.347427-04:00
+tier_confirmed_with_dose,35.0,Validated tier: confirmed_with_dose,validation_tier,,2026-03-13 14:11:37.347427-04:00
+tier_confirmed_no_dose,0.0,Validated tier: confirmed_no_dose,validation_tier,,2026-03-13 14:11:37.347427-04:00
+tier_unconfirmed_with_dose,6.0,Validated tier: unconfirmed_with_dose,validation_tier,,2026-03-13 14:11:37.347427-04:00
+tier_unconfirmed_no_dose,821.0,Validated tier: unconfirmed_no_dose,validation_tier,,2026-03-13 14:11:37.347427-04:00
+tier_no_rai,0.0,Validated tier: no_rai,validation_tier,,2026-03-13 14:11:37.347427-04:00
+pts_with_endocrine_notes,519.0,Patients with endocrine notes (primary RAI dose source),note_coverage,,2026-03-13 14:11:37.347427-04:00
+pts_with_nuclear_med_notes,0.0,Patients with nuclear medicine notes (0 = SOURCE_ABSENT),note_coverage,nuclear_medicine_reports_absent,2026-03-13 14:11:37.347427-04:00
+pts_with_dc_sum_notes,169.0,Patients with discharge summary notes,note_coverage,,2026-03-13 14:11:37.347427-04:00
+pts_with_op_notes,4439.0,Patients with operative notes,note_coverage,,2026-03-13 14:11:37.347427-04:00
+total_surgical_cohort,10871.0,Total surgical patients (denominator),denominator,,2026-03-13 14:11:37.347427-04:00

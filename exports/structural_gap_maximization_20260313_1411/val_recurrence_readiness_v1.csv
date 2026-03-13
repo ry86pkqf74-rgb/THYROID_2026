@@ -1,0 +1,11 @@
+category,n_patients,pct_of_cohort,date_quality_tier,analytically_usable,notes,audited_at
+total_patients,10871,100.0,,,Full cohort in extracted_recurrence_refined_v1,2026-03-13 14:11:39.119853-04:00
+recurrence_any_flagged,1986,18.3,,,Any recurrence: structural OR biochemical (Tg rising > 2x nadir AND > 1.0),2026-03-13 14:11:39.119853-04:00
+recurrence_structural_only,1818,16.7,,,Structural recurrence from recurrence_risk_features_mv,2026-03-13 14:11:39.119853-04:00
+recurrence_biochemical_only,168,1.5,,,Biochemical-only recurrence (Tg trajectory without structural confirmation),2026-03-13 14:11:39.119853-04:00
+date_exact_source,54,2.7,exact_source_date,YES -- suitable for time-to-event analysis,Day-level recurrence date from structured source,2026-03-13 14:11:39.119853-04:00
+date_biochem_inferred,168,8.5,biochemical_inflection_inferred,CONDITIONAL -- usable for coarse survival analysis with caveat,Tg inflection point date as recurrence proxy,2026-03-13 14:11:39.119853-04:00
+date_unresolved,1764,88.8,unresolved_date,NO -- flag-only; cannot be used in time-to-event models,Recurrence flagged but no day-level date recoverable. Source limitation.,2026-03-13 14:11:39.119853-04:00
+source_linked_multi,1072,54.0,,HIGH CONFIDENCE -- multi-source corroboration,Recurrence corroborated by 2+ independent data sources,2026-03-13 14:11:39.119853-04:00
+site_identified,0,0.0,,,Recurrence with anatomic site inferred from scan findings,2026-03-13 14:11:39.119853-04:00
+tg_trajectory_available,848,42.7,,,Recurrence patients with >= 3 Tg measurements for trajectory analysis,2026-03-13 14:11:39.119853-04:00

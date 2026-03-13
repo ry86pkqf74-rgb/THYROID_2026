@@ -287,6 +287,12 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_imaging_fna_linkage_v3", "imaging_fna_linkage_v3"),
     ("md_vw_rai_dose_missingness_summary", "vw_rai_dose_missingness_summary"),
     ("md_val_lab_canonical_v1", "val_lab_canonical_v1"),
+    # ── Structural Gap Maximization (script 80) ──────────────────────
+    ("md_val_rai_structural_coverage_v1", "val_rai_structural_coverage_v1"),
+    ("md_val_rai_source_limitation_v1", "val_rai_source_limitation_v1"),
+    ("md_val_recurrence_readiness_v1", "val_recurrence_readiness_v1"),
+    ("md_val_lab_temporal_truth_v1", "val_lab_temporal_truth_v1"),
+    ("md_val_operative_field_semantics_v1", "val_operative_field_semantics_v1"),
 ]
 
 SURVIVAL_COHORT_ENRICHED_SQL = """

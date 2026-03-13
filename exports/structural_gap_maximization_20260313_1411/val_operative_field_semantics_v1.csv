@@ -1,0 +1,18 @@
+field_name,n_true_or_present,n_false,n_null,total_episodes,episodes_with_op_note,data_source_status,semantic_truth_label,parse_status,audited_at
+rln_monitoring_flag,1702,7669,0,9371,2311,V2_EXTRACTOR_NOT_MATERIALIZED,NOT_PARSED -- all FALSE values are hardcoded defaults from script 22; V2 OperativeDetailExtractor exists but output not materialized to note_entities_procedures,NOT_PARSED,2026-03-13 14:11:40.716244-04:00
+parathyroid_autograft_flag,40,9331,0,9371,2311,V2_EXTRACTOR_NOT_MATERIALIZED,NOT_PARSED -- same as rln_monitoring_flag,NOT_PARSED,2026-03-13 14:11:40.716244-04:00
+parathyroid_resection_flag,0,9371,0,9371,2311,V2_EXTRACTOR_NOT_MATERIALIZED,NOT_PARSED -- same; script 76 ALTER TABLE column also NULL (no NLP entity source),NOT_PARSED,2026-03-13 14:11:40.716244-04:00
+gross_ete_flag,22,9349,0,9371,2311,V2_EXTRACTOR_NOT_MATERIALIZED,NOT_PARSED -- same as rln_monitoring_flag,NOT_PARSED,2026-03-13 14:11:40.716244-04:00
+local_invasion_flag,25,9346,0,9371,2311,V2_EXTRACTOR_NOT_MATERIALIZED,NOT_PARSED -- same as rln_monitoring_flag,NOT_PARSED,2026-03-13 14:11:40.716244-04:00
+tracheal_involvement_flag,9,9362,0,9371,2311,V2_EXTRACTOR_NOT_MATERIALIZED,NOT_PARSED -- same as rln_monitoring_flag,NOT_PARSED,2026-03-13 14:11:40.716244-04:00
+esophageal_involvement_flag,0,9371,0,9371,2311,V2_EXTRACTOR_NOT_MATERIALIZED,NOT_PARSED -- same as rln_monitoring_flag,NOT_PARSED,2026-03-13 14:11:40.716244-04:00
+strap_muscle_involvement_flag,186,9185,0,9371,2311,V2_EXTRACTOR_NOT_MATERIALIZED,NOT_PARSED -- same as rln_monitoring_flag,NOT_PARSED,2026-03-13 14:11:40.716244-04:00
+reoperative_field_flag,46,9325,0,9371,2311,V2_EXTRACTOR_NOT_MATERIALIZED,NOT_PARSED -- same as rln_monitoring_flag,NOT_PARSED,2026-03-13 14:11:40.716244-04:00
+drain_flag,169,9202,0,9371,2311,V2_EXTRACTOR_NOT_MATERIALIZED,NOT_PARSED -- same as rln_monitoring_flag,NOT_PARSED,2026-03-13 14:11:40.716244-04:00
+central_neck_dissection_flag,2497,6874,0,9371,2311,STRUCTURED_DATA_SOURCE,RELIABLE -- derived from path_synoptics structured fields,RELIABLE,2026-03-13 14:11:40.716244-04:00
+lateral_neck_dissection_flag,241,9130,0,9371,2311,STRUCTURED_DATA_SOURCE,RELIABLE -- derived from path_synoptics + extracted_lateral_neck_v1,RELIABLE,2026-03-13 14:11:40.716244-04:00
+berry_ligament_flag,0,0,9371,9371,2311,NLP_ENTITY_TYPE_NOT_IN_VOCABULARY,SOURCE_ABSENT -- berry_ligament entity type not in NLP vocabulary; V2 extractor has pattern bank but output not materialized,SOURCE_ABSENT,2026-03-13 14:11:40.716244-04:00
+frozen_section_flag,0,0,9371,9371,2311,NLP_ENTITY_TYPE_NOT_IN_VOCABULARY,SOURCE_ABSENT -- frozen_section entity type not in NLP vocabulary; same gap,SOURCE_ABSENT,2026-03-13 14:11:40.716244-04:00
+ebl_ml (structured),124,0,9247,9371,2311,STRUCTURED_DATA_PARTIAL,PARTIAL -- ebl_ml from operative_details.ebl structured field; non-NULL values are reliable,PARTIAL,2026-03-13 14:11:40.716244-04:00
+ebl_ml_nlp,0,0,9371,9371,2311,NLP_ENTITY_TYPE_NOT_IN_VOCABULARY,SOURCE_ABSENT -- ebl entity type not in NLP vocabulary; same gap as berry_ligament,SOURCE_ABSENT,2026-03-13 14:11:40.716244-04:00
+parathyroid_identified_count,0,0,9371,9371,2311,NLP_ENTITY_TYPE_NOT_IN_VOCABULARY,SOURCE_ABSENT -- parathyroid_count_identified not in NLP vocabulary,SOURCE_ABSENT,2026-03-13 14:11:40.716244-04:00
