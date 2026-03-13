@@ -990,7 +990,57 @@ ALL_VALIDATION_SQL: list[tuple[str, str, str]] = [
     ("val_rln_intrinsic_eval",      VAL_RLN_INTRINSIC_SQL,           "RLN intrinsic evaluation"),
     ("val_complication_refinement", VAL_COMPLICATION_REFINEMENT_SQL, "Phase 2 complication refinement audit"),
     ("val_source_specific_refinement", VAL_SOURCE_SPECIFIC_REFINEMENT_SQL, "Phase 4 source-specific variable refinement audit"),
+    ("val_phase5_refinement", VAL_PHASE5_REFINEMENT_SQL, "Phase 5 top-5 variable refinement audit"),
 ]
+
+VAL_PHASE5_REFINEMENT_SQL = """
+CREATE OR REPLACE TABLE val_phase5_refinement AS
+WITH ete_stats AS (
+    SELECT
+        'ete_subgrade' AS variable,
+        COUNT(*) AS total_input,
+        COUNT(CASE WHEN refined_ete_grade <> 'present_ungraded' THEN 1 END) AS refined,
+        COUNT(CASE WHEN refined_ete_grade = 'present_ungraded' THEN 1 END) AS still_ungraded
+    FROM extracted_ete_subgraded_v1
+),
+tert_stats AS (
+    SELECT
+        'tert' AS variable,
+        COUNT(*) AS total_input,
+        COUNT(CASE WHEN tert_positive_refined THEN 1 END) AS refined,
+        COUNT(CASE WHEN tert_tested AND NOT tert_positive_refined THEN 1 END) AS still_ungraded
+    FROM extracted_molecular_refined_v1
+),
+lab_stats AS (
+    SELECT
+        'postop_labs' AS variable,
+        COUNT(*) AS total_input,
+        COUNT(CASE WHEN lab_type = 'pth' THEN 1 END) AS refined,
+        COUNT(CASE WHEN lab_type LIKE '%calcium%' THEN 1 END) AS still_ungraded
+    FROM extracted_postop_labs_v1
+),
+rai_stats AS (
+    SELECT
+        'rai_validation' AS variable,
+        COUNT(*) AS total_input,
+        COUNT(CASE WHEN rai_validation_tier LIKE 'confirmed%' THEN 1 END) AS refined,
+        COUNT(CASE WHEN rai_validation_tier LIKE 'unconfirmed%' THEN 1 END) AS still_ungraded
+    FROM extracted_rai_validated_v1
+),
+ene_stats AS (
+    SELECT
+        'ene' AS variable,
+        COUNT(*) AS total_input,
+        COUNT(CASE WHEN ene_positive THEN 1 END) AS refined,
+        COUNT(CASE WHEN ene_status_refined = 'present_ungraded' THEN 1 END) AS still_ungraded
+    FROM extracted_ene_refined_v1
+)
+SELECT * FROM ete_stats
+UNION ALL SELECT * FROM tert_stats
+UNION ALL SELECT * FROM lab_stats
+UNION ALL SELECT * FROM rai_stats
+UNION ALL SELECT * FROM ene_stats;
+"""
 
 # Phase 2 QA: complication refinement validation
 VAL_COMPLICATION_REFINEMENT_SQL = """

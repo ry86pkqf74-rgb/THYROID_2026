@@ -369,3 +369,19 @@
 - Python dataclass inheritance with required fields: when a parent dataclass has required positional fields (no defaults), a child dataclass cannot add new fields (even with defaults) without providing all parent required fields at construction time; workaround is to define a standalone flat dataclass that mirrors parent fields rather than inheriting
 - When building per-patient wide tables from path_synoptics, join to recurrence_risk_features_mv and molecular_test_episode_v2 using `CAST(research_id AS VARCHAR)` = `CAST(other.research_id AS VARCHAR)` for safe cross-type key matching, or ensure both sides have the same integer type
 - `logistic_regression_recurrence(df, include_ete=True)` in script 42 is the Phase 4 ETE sensitivity entry point; it adds `ete_path_confirmed_int` as an additional covariate when `patient_refined_staging_flags_v3` is joined via the main cohort SQL
+- Phase 5 engine: `notes_extraction/extraction_audit_engine_v3.py` with GradingParser, MolecularMarkerCleaner, NumericValueParser, LabIngestionPipeline, CrossSourceReconciler_v2, ExtranodaParser, plus `audit_and_refine_top5()` orchestrator
+- Phase 5 new tables: `extracted_ete_subgraded_v1` (3,558 rows), `extracted_molecular_refined_v1` (11,296 rows), `extracted_postop_labs_v1` (350 rows), `extracted_rai_validated_v1` (862 rows), `extracted_ene_refined_v1` (1,266 rows), `patient_refined_master_clinical_v4` (11,861 rows)
+- ETE sub-grading results: 183 of 3,558 ungraded sub-graded (21 gross, 1 microscopic, 161 op-note-none-but-path-positive); combined: 48 gross (up from 27), 266 microscopic (up from 265), 3,375 still ungraded
+- TERT recovery: 1 → 96 TERT-positive patients; 5,075 tested; sourced from `molecular_test_episode_v2.tert_flag`; `recurrence_risk_features_mv` only had 1 TERT+ (severe undercounting)
+- TERT+ lobectomy recurrence rate: 79.7% vs TERT- 47.4%; massive prognostic signal previously invisible
+- Post-op lab table `extracted_postop_labs_v1`: 350 values (244 PTH, 99 calcium, 7 ionized Ca) from 162 patients; `vw_postop_lab_nadir` for per-patient nadirs within 30 days post-surgery
+- NumericValueParser range guards: PTH 0.5-500 pg/mL, total calcium 4-15 mg/dL, ionized calcium 0.5-2.0 mmol/L, RAI dose 10-1000 mCi
+- RAI validation tiers: confirmed_with_dose (35), unconfirmed_with_dose (6), unconfirmed_no_dose (821); avg dose 143.9 mCi; source reliability scoring: endocrine_note=0.8, dc_sum=0.7, op_note=0.6
+- ENE refined: 1,266 patients total, 1,252 positive (838 ungraded, 406 present, 4 extensive, 4 focal), 44 with LN level detail; sourced from `path_synoptics.tumor_1_extranodal_extension`
+- `patient_refined_master_clinical_v4`: unified one-row-per-patient table combining Phase 4 staging_flags_v3 + Phase 5 (ETE subgrade, TERT/BRAF/RAS/TP53, PTH/calcium nadir, RAI validation, ENE) + Phase 2 complications
+- Script 26 MATERIALIZATION_MAP expanded to 80 entries (was 74): adds 6 Phase 5 tables (`md_extracted_ete_subgraded_v1`, `md_extracted_molecular_refined_v1`, `md_extracted_postop_labs_v1`, `md_extracted_rai_validated_v1`, `md_extracted_ene_refined_v1`, `md_patient_refined_master_clinical_v4`)
+- Script 29 validation expanded with `val_phase5_refinement` (12th val_* table): tracks per-variable input/refined/still-ungraded counts
+- Overall data quality score Phase 5: 91 → 93/100; molecular markers domain: 45 → 85/100 (TERT fix); post-op labs: 0 → 35/100 (new table)
+- Phase 5 report: `notes_extraction/master_top5_refinement_report_phase5.md`
+- Phase 5 figure: `exports/fig_ete_subgrading_distribution.png` (300 DPI, before/after ETE distribution)
+- Phase 5 suggested Phase 6 priorities: (1) calcium/PTH lab expansion from Excel, (2) RAI dose NLP from nuclear medicine notes, (3) ETE x→microscopic reclassification rule, (4) TERT C228T/C250T sub-typing, (5) ENE extent grading from path reports
