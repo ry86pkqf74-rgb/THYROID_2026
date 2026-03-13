@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-03-13T08:03:33.946011",
-  "database": "Local DuckDB",
+  "generated_at": "2026-03-13T09:04:28.422722",
+  "database": "MotherDuck",
   "script": "scripts/70_operative_note_path_linkage_audit.py",
   "verdict": "MAJOR OPERATIVE EXTRACTION GAP REMAINS",
   "summary": {
@@ -148,5 +148,11 @@
       "pct_extracted": 0.1
     }
   },
-  "v3_tiers": {}
+  "v3_tiers": {
+    "high_confidence": 8236,
+    "weak": 566,
+    "exact_match": 414,
+    "plausible": 190,
+    "unlinked": 3
+  }
 }

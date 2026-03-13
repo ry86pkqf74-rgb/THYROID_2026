@@ -637,15 +637,15 @@ research_id,surgery_episode_id,surgery_date_native,procedure_normalized,op_later
 280,1,2002-07-10,unknown,,1,2002-07-24,PTC,1,left,14,unknown,discordant,DATE_DISCORDANT
 522,1,2005-01-05,unknown,,2,2004-10-29,follicular carcinoma,2,left,68,unknown,discordant,DATE_DISCORDANT
 593,1,2005-01-04,unknown,isthmus,1,2004-08-10,PTC,3,bilateral,147,mismatch,discordant,DATE_DISCORDANT
-610,1,1945-07-13,unknown,,1,2004-07-13,metastatic PTC,,,21550,unknown,discordant,DATE_DISCORDANT
-1034,1,2006-05-11,unknown,,1,2007-08-24,metastatic PTC,,,470,unknown,discordant,DATE_DISCORDANT
+610,1,1945-07-13,unknown,,1,2004-07-13,metastatic PTC,T2,,21550,unknown,discordant,DATE_DISCORDANT
+1034,1,2006-05-11,unknown,,1,2007-08-24,metastatic PTC,T3a,,470,unknown,discordant,DATE_DISCORDANT
 1605,1,1993-04-01,unknown,,1,2012-03-07,MTC,1,bilateral,6915,unknown,discordant,DATE_DISCORDANT
 2202,1,2003-02-11,unknown,,1,2021-02-16,,,bilateral,6580,unknown,discordant,DATE_DISCORDANT
-2517,1,2002-07-24,unknown,,1,2002-07-10,PTC,,right,14,unknown,discordant,DATE_DISCORDANT
+2517,1,2002-07-24,unknown,,1,2002-07-10,PTC,T3a,right,14,unknown,discordant,DATE_DISCORDANT
 7120,1,2019-01-17,unknown,,2,2019-02-07,,,right,21,unknown,discordant,DATE_DISCORDANT
 26,1,2000-08-08,hemithyroidectomy,isthmus,1,2000-08-08,,,right,0,mismatch,exact,LATERALITY_DISCORDANT
 41,1,2000-10-25,total_thyroidectomy,isthmus,1,2000-10-25,follicular carcinoma,2,bilateral,0,mismatch,exact,LATERALITY_DISCORDANT
-45,1,2000-08-03,total_thyroidectomy,isthmus,1,2000-08-03,PTC,,bilateral,0,mismatch,exact,LATERALITY_DISCORDANT
+45,1,2000-08-03,total_thyroidectomy,isthmus,1,2000-08-03,PTC,T1a,bilateral,0,mismatch,exact,LATERALITY_DISCORDANT
 60,1,2000-04-18,total_thyroidectomy,isthmus,1,2000-04-18,PTC,2,bilateral,0,mismatch,exact,LATERALITY_DISCORDANT
 114,1,1999-07-23,hemithyroidectomy,bilateral,1,1999-07-23,,,right,0,mismatch,exact,LATERALITY_DISCORDANT
 135,1,1999-08-02,total_thyroidectomy,isthmus,1,1999-08-02,,,bilateral,0,mismatch,exact,LATERALITY_DISCORDANT
@@ -713,10 +713,10 @@ research_id,surgery_episode_id,surgery_date_native,procedure_normalized,op_later
 1978,1,2013-02-25,total_thyroidectomy,right,1,2013-02-25,PTC,2,bilateral,0,mismatch,exact,LATERALITY_DISCORDANT
 1979,1,2013-02-25,total_thyroidectomy,right,1,2013-02-25,,,bilateral,0,mismatch,exact,LATERALITY_DISCORDANT
 1985,1,2013-02-01,total_thyroidectomy,left,1,2013-02-01,,,bilateral,0,mismatch,exact,LATERALITY_DISCORDANT
-1987,1,2013-01-07,total_thyroidectomy,right,1,2013-01-07,PTC,,bilateral,0,mismatch,exact,LATERALITY_DISCORDANT
+1987,1,2013-01-07,total_thyroidectomy,right,1,2013-01-07,PTC,T1a,bilateral,0,mismatch,exact,LATERALITY_DISCORDANT
 1988,1,2013-01-07,total_thyroidectomy,isthmus,1,2013-01-07,PTC,1b,bilateral,0,mismatch,exact,LATERALITY_DISCORDANT
 1989,1,2012-12-17,total_thyroidectomy,right,1,2012-12-17,,,bilateral,0,mismatch,exact,LATERALITY_DISCORDANT
-1992,1,2012-11-20,total_thyroidectomy,right,1,2012-11-20,PTC,,bilateral,0,mismatch,exact,LATERALITY_DISCORDANT
+1992,1,2012-11-20,total_thyroidectomy,right,1,2012-11-20,PTC,T3a,bilateral,0,mismatch,exact,LATERALITY_DISCORDANT
 1995,1,2012-11-13,total_thyroidectomy,right,1,2012-11-13,PTC,3,bilateral,0,mismatch,exact,LATERALITY_DISCORDANT
 1996,1,2013-01-22,hemithyroidectomy,right,2,2013-01-22,,,left,0,mismatch,exact,LATERALITY_DISCORDANT
 1998,1,2012-11-05,total_thyroidectomy,left,1,2012-11-05,PTC,3,bilateral,0,mismatch,exact,LATERALITY_DISCORDANT
