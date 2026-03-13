@@ -155,6 +155,9 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_vw_rai_dose_by_source", "vw_rai_dose_by_source"),
     ("md_extracted_ete_ene_tert_refined_v1", "extracted_ete_ene_tert_refined_v1"),
     ("md_vw_ete_microscopic_rule", "vw_ete_microscopic_rule"),
+    ("md_extracted_ene_multisource_v1", "extracted_ene_multisource_v1"),
+    ("md_vw_ene_concordance", "vw_ene_concordance"),
+    ("md_vw_ene_source_summary", "vw_ene_source_summary"),
     ("md_patient_refined_master_clinical_v8", "patient_refined_master_clinical_v8"),
 ]
 

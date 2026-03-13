@@ -858,6 +858,463 @@ ORDER BY COALESCE(e.research_id, t.research_id, en.research_id);
 """
 
 
+def build_ene_multisource_sql() -> str:
+    """extracted_ene_multisource_v1 — ENE from path reports, op notes, CT, US, PET, RAI by source."""
+    return """
+CREATE OR REPLACE TABLE extracted_ene_multisource_v1 AS
+WITH
+-- ─── SOURCE 1: Structured path_synoptics (gold standard) ──────────────────
+path_structured AS (
+    SELECT
+        research_id,
+        'path_synoptic' AS source_modality,
+        1.0 AS source_reliability,
+        tumor_1_extranodal_extension AS raw_text,
+        CASE
+            WHEN LOWER(TRIM(COALESCE(tumor_1_extranodal_extension,'')))
+                 IN ('absent','no','none','negative','not identified','') THEN 'absent'
+            WHEN LOWER(TRIM(COALESCE(tumor_1_extranodal_extension,'')))
+                 LIKE '%extensive%' OR LOWER(TRIM(COALESCE(tumor_1_extranodal_extension,'')))
+                 LIKE '%gross%' OR LOWER(TRIM(COALESCE(tumor_1_extranodal_extension,'')))
+                 LIKE '%macroscopic%' THEN 'extensive'
+            WHEN LOWER(TRIM(COALESCE(tumor_1_extranodal_extension,'')))
+                 LIKE '%focal%' OR LOWER(TRIM(COALESCE(tumor_1_extranodal_extension,'')))
+                 LIKE '%minimal%' OR LOWER(TRIM(COALESCE(tumor_1_extranodal_extension,'')))
+                 LIKE '%microscopic%' THEN 'focal'
+            WHEN LOWER(TRIM(COALESCE(tumor_1_extranodal_extension,'')))
+                 IN ('x','present','identified','yes')
+                 OR LOWER(TRIM(COALESCE(tumor_1_extranodal_extension,'')))
+                 LIKE 'present%' THEN 'present_ungraded'
+            WHEN LOWER(TRIM(COALESCE(tumor_1_extranodal_extension,'')))
+                 = 'indeterminate' THEN 'indeterminate'
+            ELSE 'present_ungraded'
+        END AS ene_grade,
+        regexp_extract(tumor_1_extranodal_extension,
+            '(?i)(?:level\\s+[IViv1-6]+[abAB]?|central|lateral|supraclavicular|paratracheal|pretracheal)',
+            0) AS ene_levels,
+        NULL AS deposit_size_cm,
+        NULL AS ln_ratio_text,
+        surg_date AS event_date
+    FROM path_synoptics
+    WHERE tumor_1_extranodal_extension IS NOT NULL
+      AND TRIM(tumor_1_extranodal_extension) <> ''
+),
+
+-- ─── SOURCE 2: Pathology report text within op_notes ──────────────────────
+path_nlp AS (
+    SELECT
+        CAST(c.research_id AS INTEGER) AS research_id,
+        'path_report_nlp' AS source_modality,
+        0.95 AS source_reliability,
+        SUBSTRING(c.note_text FROM
+            GREATEST(1, POSITION('extranodal' IN LOWER(c.note_text)) - 80)
+            FOR 400) AS raw_text,
+        CASE
+            WHEN c.note_text ILIKE '%microscopic extranodal%'
+                 OR c.note_text ILIKE '%microscopic ENE%' THEN 'microscopic'
+            WHEN c.note_text ILIKE '%focal extranodal%'
+                 OR c.note_text ILIKE '%focal ENE%' THEN 'focal'
+            WHEN c.note_text ILIKE '%extensive extranodal%'
+                 OR c.note_text ILIKE '%extensive ENE%'
+                 OR c.note_text ILIKE '%gross extranodal%' THEN 'extensive'
+            WHEN c.note_text ILIKE '%no extranodal extension%'
+                 OR c.note_text ILIKE '%extranodal extension not identified%'
+                 OR c.note_text ILIKE '%extranodal extension: not%'
+                 OR c.note_text ILIKE '%negative for extranodal%'
+                 OR c.note_text ILIKE '%without extranodal extension%'
+                 OR c.note_text ILIKE '%No extranodal extension%'
+                 OR c.note_text ILIKE '%ENE: not identified%'
+                 OR c.note_text ILIKE '%ENE):          Not identified%' THEN 'absent'
+            WHEN c.note_text ILIKE '%extranodal extension is present%'
+                 OR c.note_text ILIKE '%extranodal extension is identified%'
+                 OR c.note_text ILIKE '%extranodal extension present%'
+                 OR c.note_text ILIKE '%extranodal extension)%'
+                 OR c.note_text ILIKE '%with extranodal extension%'
+                 OR c.note_text ILIKE '%, extranodal extension%'
+                 OR c.note_text ILIKE '%Extranodal extension is present%'
+                 OR c.note_text ILIKE '%ENE: present%'
+                 OR c.note_text ILIKE '%ENE is present%' THEN 'present_ungraded'
+            ELSE 'mentioned_unclassified'
+        END AS ene_grade,
+        -- Extract level info near ENE mention
+        regexp_extract(c.note_text,
+            '(?i)(?:level\\s+[IViv1-6]+[abAB]?(?:\\s*[-,]\\s*[IViv1-6]+)?)',
+            0) AS ene_levels,
+        -- Extract deposit size near ENE mention
+        TRY_CAST(regexp_extract(
+            SUBSTRING(c.note_text FROM
+                GREATEST(1, POSITION('extranodal' IN LOWER(c.note_text)) - 200)
+                FOR 500),
+            '(?:largest|deposit|focus|measures?)\\s+(\\d+\\.?\\d*)\\s*cm', 1
+        ) AS DOUBLE) AS deposit_size_cm,
+        regexp_extract(
+            SUBSTRING(c.note_text FROM
+                GREATEST(1, POSITION('extranodal' IN LOWER(c.note_text)) - 200)
+                FOR 500),
+            '(\\d+/\\d+)\\s*(?:lymph|nodes?|LN)', 0
+        ) AS ln_ratio_text,
+        TRY_CAST(c.note_date AS DATE) AS event_date
+    FROM clinical_notes_long c
+    WHERE c.note_type IN ('op_note', 'endocrine_note', 'dc_sum')
+      AND (c.note_text ILIKE '%extranodal extension%'
+           OR c.note_text ILIKE '%extracapsular extension%'
+           OR c.note_text ILIKE '%ENE%:%')
+),
+
+-- ─── SOURCE 3: Operative note (intraoperative assessment) ─────────────────
+op_note_ene AS (
+    SELECT
+        CAST(c.research_id AS INTEGER) AS research_id,
+        'op_note_intraop' AS source_modality,
+        0.85 AS source_reliability,
+        SUBSTRING(c.note_text FROM
+            GREATEST(1, POSITION('extranodal' IN LOWER(c.note_text)) - 80)
+            FOR 300) AS raw_text,
+        CASE
+            WHEN c.note_text ILIKE '%no gross%extranodal%'
+                 OR c.note_text ILIKE '%no%evidence%extranodal%'
+                 OR c.note_text ILIKE '%without%gross%extranodal%'
+                 OR c.note_text ILIKE '%no%extranodal extension%adherence%' THEN 'absent_intraop'
+            WHEN c.note_text ILIKE '%gross%extranodal%'
+                 OR c.note_text ILIKE '%significant%lymphadenopathy%extranodal%'
+                 OR c.note_text ILIKE '%extranodal extension%adherence%'
+                 OR c.note_text ILIKE '%extranodal extension%invasion%' THEN 'gross_intraop'
+            WHEN c.note_text ILIKE '%extranodal extension%' THEN 'present_intraop'
+            ELSE 'mentioned_unclassified'
+        END AS ene_grade,
+        NULL AS ene_levels,
+        NULL AS deposit_size_cm,
+        NULL AS ln_ratio_text,
+        TRY_CAST(c.note_date AS DATE) AS event_date
+    FROM clinical_notes_long c
+    WHERE c.note_type = 'op_note'
+      AND c.note_text ILIKE '%extranodal%'
+      AND (c.note_text ILIKE '%gross%' OR c.note_text ILIKE '%no%evidence%'
+           OR c.note_text ILIKE '%intraop%' OR c.note_text ILIKE '%adherence%'
+           OR c.note_text ILIKE '%without%')
+),
+
+-- ─── SOURCE 4: CT imaging — suspicious nodal disease ──────────────────────
+ct_nodes AS (
+    SELECT
+        CAST(c.research_id AS INTEGER) AS research_id,
+        'CT' AS source_modality,
+        0.75 AS source_reliability,
+        SUBSTRING(c.note_text FROM
+            GREATEST(1, POSITION('lymph node' IN LOWER(c.note_text)) - 40)
+            FOR 300) AS raw_text,
+        CASE
+            WHEN c.note_text ILIKE '%necrotic%node%'
+                 OR c.note_text ILIKE '%cystic%node%metasta%'
+                 OR c.note_text ILIKE '%extranodal%' THEN 'suspicious_high'
+            WHEN c.note_text ILIKE '%metastat%adenopathy%'
+                 OR c.note_text ILIKE '%pathologic%node%'
+                 OR c.note_text ILIKE '%suspicious%lymph%' THEN 'suspicious_moderate'
+            WHEN c.note_text ILIKE '%enlarged%node%'
+                 OR c.note_text ILIKE '%borderline%node%' THEN 'indeterminate'
+            WHEN c.note_text ILIKE '%no suspicious%'
+                 OR c.note_text ILIKE '%no pathologic%'
+                 OR c.note_text ILIKE '%unremarkable%lymph%' THEN 'negative'
+            ELSE 'mentioned_unclassified'
+        END AS ene_grade,
+        regexp_extract(c.note_text,
+            '(?i)(?:level\\s+[IViv1-6]+[abAB]?)', 0) AS ene_levels,
+        TRY_CAST(regexp_extract(c.note_text,
+            '(?i)(?:node|lymph).*?(\\d+\\.?\\d*)\\s*(?:cm|mm)', 1) AS DOUBLE) AS deposit_size_cm,
+        NULL AS ln_ratio_text,
+        TRY_CAST(c.note_date AS DATE) AS event_date
+    FROM clinical_notes_long c
+    WHERE (c.note_text ILIKE '%CT %neck%' OR c.note_text ILIKE '%CT scan%neck%'
+           OR c.note_text ILIKE '%computed tomograph%neck%'
+           OR c.note_text ILIKE '%CT%with contrast%')
+      AND c.note_text ILIKE '%lymph node%'
+      AND c.note_type NOT IN ('h_p')
+),
+
+-- ─── SOURCE 5: Ultrasound — suspicious nodal disease ──────────────────────
+us_nodes AS (
+    SELECT
+        CAST(c.research_id AS INTEGER) AS research_id,
+        'US' AS source_modality,
+        0.70 AS source_reliability,
+        SUBSTRING(c.note_text FROM
+            GREATEST(1, POSITION('lymph node' IN LOWER(c.note_text)) - 40)
+            FOR 300) AS raw_text,
+        CASE
+            WHEN c.note_text ILIKE '%suspicious%lymph%'
+                 OR c.note_text ILIKE '%suspicious%node%'
+                 OR c.note_text ILIKE '%metastat%node%'
+                 OR c.note_text ILIKE '%abnormal%node%microcalcif%' THEN 'suspicious'
+            WHEN c.note_text ILIKE '%abnormal%node%'
+                 OR c.note_text ILIKE '%enlarged%node%'
+                 OR c.note_text ILIKE '%borderline%node%' THEN 'indeterminate'
+            WHEN c.note_text ILIKE '%no suspicious%node%'
+                 OR c.note_text ILIKE '%benign%appearing%node%'
+                 OR c.note_text ILIKE '%normal%appearing%node%' THEN 'negative'
+            ELSE 'mentioned_unclassified'
+        END AS ene_grade,
+        regexp_extract(c.note_text,
+            '(?i)(?:level\\s+[IViv1-6]+[abAB]?)', 0) AS ene_levels,
+        TRY_CAST(regexp_extract(c.note_text,
+            '(?i)(?:node|lymph).*?(\\d+\\.?\\d*)\\s*(?:cm|mm)', 1) AS DOUBLE) AS deposit_size_cm,
+        NULL AS ln_ratio_text,
+        TRY_CAST(c.note_date AS DATE) AS event_date
+    FROM clinical_notes_long c
+    WHERE (c.note_text ILIKE '%ultrasound%' OR c.note_text ILIKE '%sonograph%'
+           OR c.note_text ILIKE '%thyroid US%' OR c.note_text ILIKE '%neck US%')
+      AND c.note_text ILIKE '%lymph node%'
+      AND c.note_type NOT IN ('h_p')
+),
+
+-- ─── SOURCE 6: PET/CT — avid nodal disease ────────────────────────────────
+pet_nodes AS (
+    SELECT
+        CAST(c.research_id AS INTEGER) AS research_id,
+        'PET' AS source_modality,
+        0.80 AS source_reliability,
+        SUBSTRING(c.note_text FROM
+            GREATEST(1, POSITION('lymph' IN LOWER(c.note_text)) - 40)
+            FOR 300) AS raw_text,
+        CASE
+            WHEN c.note_text ILIKE '%avid%lymph%'
+                 OR c.note_text ILIKE '%FDG%avid%node%'
+                 OR c.note_text ILIKE '%hypermetabolic%node%' THEN 'avid_suspicious'
+            WHEN c.note_text ILIKE '%no avid%' OR c.note_text ILIKE '%no FDG%' THEN 'negative'
+            ELSE 'mentioned_unclassified'
+        END AS ene_grade,
+        regexp_extract(c.note_text,
+            '(?i)(?:level\\s+[IViv1-6]+[abAB]?)', 0) AS ene_levels,
+        NULL AS deposit_size_cm,
+        NULL AS ln_ratio_text,
+        TRY_CAST(c.note_date AS DATE) AS event_date
+    FROM clinical_notes_long c
+    WHERE (c.note_text ILIKE '%PET%' OR c.note_text ILIKE '%FDG%')
+      AND (c.note_text ILIKE '%lymph%' OR c.note_text ILIKE '%adenopathy%')
+      AND c.note_type NOT IN ('h_p')
+),
+
+-- ─── SOURCE 7: RAI scan — nodal uptake ────────────────────────────────────
+rai_scan_nodes AS (
+    SELECT
+        CAST(c.research_id AS INTEGER) AS research_id,
+        'RAI_scan' AS source_modality,
+        0.80 AS source_reliability,
+        SUBSTRING(c.note_text FROM
+            GREATEST(1, POSITION('uptake' IN LOWER(c.note_text)) - 60)
+            FOR 300) AS raw_text,
+        CASE
+            WHEN c.note_text ILIKE '%uptake%neck%'
+                 OR c.note_text ILIKE '%cervical%uptake%'
+                 OR c.note_text ILIKE '%nodal%uptake%' THEN 'uptake_positive'
+            WHEN c.note_text ILIKE '%no%uptake%'
+                 OR c.note_text ILIKE '%negative%scan%' THEN 'negative'
+            ELSE 'mentioned_unclassified'
+        END AS ene_grade,
+        NULL AS ene_levels,
+        NULL AS deposit_size_cm,
+        NULL AS ln_ratio_text,
+        TRY_CAST(c.note_date AS DATE) AS event_date
+    FROM clinical_notes_long c
+    WHERE (c.note_text ILIKE '%whole body scan%' OR c.note_text ILIKE '%WBS%'
+           OR c.note_text ILIKE '%I-131%scan%' OR c.note_text ILIKE '%post%therapy%scan%')
+      AND (c.note_text ILIKE '%uptake%' OR c.note_text ILIKE '%nodal%')
+      AND c.note_type NOT IN ('h_p')
+),
+
+-- ─── UNION ALL + deduplicate per patient-source ───────────────────────────
+all_sources AS (
+    SELECT * FROM path_structured
+    UNION ALL SELECT * FROM path_nlp
+    UNION ALL SELECT * FROM op_note_ene
+    UNION ALL SELECT * FROM ct_nodes
+    UNION ALL SELECT * FROM us_nodes
+    UNION ALL SELECT * FROM pet_nodes
+    UNION ALL SELECT * FROM rai_scan_nodes
+),
+
+-- Deduplicate: per patient + source_modality, keep most informative row
+deduped AS (
+    SELECT *,
+        ROW_NUMBER() OVER (
+            PARTITION BY research_id, source_modality
+            ORDER BY
+                source_reliability DESC,
+                CASE ene_grade
+                    WHEN 'extensive' THEN 10 WHEN 'gross_intraop' THEN 9
+                    WHEN 'microscopic' THEN 8 WHEN 'focal' THEN 7
+                    WHEN 'present_ungraded' THEN 6 WHEN 'present_intraop' THEN 5
+                    WHEN 'suspicious_high' THEN 4 WHEN 'suspicious_moderate' THEN 3
+                    WHEN 'suspicious' THEN 3 WHEN 'avid_suspicious' THEN 3
+                    WHEN 'uptake_positive' THEN 3
+                    WHEN 'indeterminate' THEN 2
+                    WHEN 'absent' THEN 1 WHEN 'absent_intraop' THEN 1
+                    WHEN 'negative' THEN 1
+                    ELSE 0
+                END DESC,
+                event_date DESC NULLS LAST
+        ) AS rn
+    FROM all_sources
+    WHERE ene_grade <> 'mentioned_unclassified'
+)
+
+SELECT
+    research_id,
+    source_modality,
+    source_reliability,
+    ene_grade,
+    ene_levels,
+    deposit_size_cm,
+    ln_ratio_text,
+    SUBSTRING(raw_text, 1, 250) AS raw_snippet,
+    event_date,
+    -- Normalize to binary for concordance
+    CASE
+        WHEN ene_grade IN ('extensive','gross_intraop','microscopic','focal',
+                           'present_ungraded','present_intraop',
+                           'suspicious_high','suspicious_moderate','suspicious',
+                           'avid_suspicious','uptake_positive') THEN TRUE
+        WHEN ene_grade IN ('absent','absent_intraop','negative') THEN FALSE
+        ELSE NULL
+    END AS ene_positive,
+    -- Confidence by source + grade
+    CASE
+        WHEN source_modality = 'path_synoptic' AND ene_grade NOT IN ('present_ungraded') THEN 0.95
+        WHEN source_modality = 'path_report_nlp' AND ene_grade IN ('microscopic','focal','extensive') THEN 0.92
+        WHEN source_modality = 'path_report_nlp' AND ene_grade = 'absent' THEN 0.90
+        WHEN source_modality = 'op_note_intraop' THEN 0.85
+        WHEN source_modality IN ('CT','PET') THEN 0.75
+        WHEN source_modality = 'US' THEN 0.70
+        WHEN source_modality = 'RAI_scan' THEN 0.70
+        ELSE 0.60
+    END AS confidence,
+    CURRENT_TIMESTAMP AS refined_at
+FROM deduped
+WHERE rn = 1
+ORDER BY research_id, source_reliability DESC;
+"""
+
+
+def build_vw_ene_concordance_sql() -> str:
+    """vw_ene_concordance — cross-source ENE comparison (path vs imaging modalities)."""
+    return """
+CREATE OR REPLACE TABLE vw_ene_concordance AS
+WITH
+per_patient_source AS (
+    SELECT
+        research_id,
+        source_modality,
+        ene_grade,
+        ene_positive,
+        deposit_size_cm,
+        ene_levels,
+        confidence
+    FROM extracted_ene_multisource_v1
+),
+
+-- Pivot to wide format
+wide AS (
+    SELECT
+        research_id,
+        -- Pathology (structured synoptic)
+        MAX(CASE WHEN source_modality = 'path_synoptic' THEN ene_grade END) AS path_synoptic_grade,
+        MAX(CASE WHEN source_modality = 'path_synoptic' THEN ene_positive END) AS path_synoptic_positive,
+        -- Pathology (NLP from reports)
+        MAX(CASE WHEN source_modality = 'path_report_nlp' THEN ene_grade END) AS path_nlp_grade,
+        MAX(CASE WHEN source_modality = 'path_report_nlp' THEN ene_positive END) AS path_nlp_positive,
+        MAX(CASE WHEN source_modality = 'path_report_nlp' THEN deposit_size_cm END) AS path_nlp_deposit_cm,
+        MAX(CASE WHEN source_modality = 'path_report_nlp' THEN ene_levels END) AS path_nlp_levels,
+        -- Operative (intraop assessment)
+        MAX(CASE WHEN source_modality = 'op_note_intraop' THEN ene_grade END) AS op_intraop_grade,
+        MAX(CASE WHEN source_modality = 'op_note_intraop' THEN ene_positive END) AS op_intraop_positive,
+        -- CT
+        MAX(CASE WHEN source_modality = 'CT' THEN ene_grade END) AS ct_grade,
+        MAX(CASE WHEN source_modality = 'CT' THEN ene_positive END) AS ct_positive,
+        MAX(CASE WHEN source_modality = 'CT' THEN deposit_size_cm END) AS ct_node_size_cm,
+        -- US
+        MAX(CASE WHEN source_modality = 'US' THEN ene_grade END) AS us_grade,
+        MAX(CASE WHEN source_modality = 'US' THEN ene_positive END) AS us_positive,
+        MAX(CASE WHEN source_modality = 'US' THEN deposit_size_cm END) AS us_node_size_cm,
+        -- PET
+        MAX(CASE WHEN source_modality = 'PET' THEN ene_grade END) AS pet_grade,
+        MAX(CASE WHEN source_modality = 'PET' THEN ene_positive END) AS pet_positive,
+        -- RAI scan
+        MAX(CASE WHEN source_modality = 'RAI_scan' THEN ene_grade END) AS rai_scan_grade,
+        MAX(CASE WHEN source_modality = 'RAI_scan' THEN ene_positive END) AS rai_scan_positive,
+        -- Aggregates
+        COUNT(DISTINCT source_modality) AS n_sources,
+        STRING_AGG(DISTINCT source_modality, ', ') AS sources_available,
+        MAX(confidence) AS best_confidence
+    FROM per_patient_source
+    GROUP BY research_id
+)
+
+SELECT
+    w.*,
+    -- Best available grade (path > op > imaging hierarchy)
+    COALESCE(
+        CASE WHEN w.path_nlp_grade IN ('microscopic','focal','extensive','absent') THEN w.path_nlp_grade END,
+        CASE WHEN w.path_synoptic_grade NOT IN ('present_ungraded','indeterminate') THEN w.path_synoptic_grade END,
+        w.path_nlp_grade,
+        w.path_synoptic_grade,
+        w.op_intraop_grade,
+        w.ct_grade,
+        w.us_grade,
+        w.pet_grade,
+        w.rai_scan_grade
+    ) AS best_ene_grade,
+    -- Concordance: path vs imaging
+    CASE
+        WHEN w.path_synoptic_positive IS NOT NULL AND w.ct_positive IS NOT NULL THEN
+            CASE WHEN w.path_synoptic_positive = w.ct_positive THEN 'concordant' ELSE 'discordant' END
+        ELSE 'insufficient_data'
+    END AS path_vs_ct_concordance,
+    CASE
+        WHEN w.path_synoptic_positive IS NOT NULL AND w.us_positive IS NOT NULL THEN
+            CASE WHEN w.path_synoptic_positive = w.us_positive THEN 'concordant' ELSE 'discordant' END
+        ELSE 'insufficient_data'
+    END AS path_vs_us_concordance,
+    CASE
+        WHEN w.op_intraop_positive IS NOT NULL AND w.path_synoptic_positive IS NOT NULL THEN
+            CASE WHEN w.op_intraop_positive = w.path_synoptic_positive THEN 'concordant' ELSE 'discordant' END
+        ELSE 'insufficient_data'
+    END AS op_vs_path_concordance,
+    -- ENE positive from ANY source
+    COALESCE(w.path_synoptic_positive, FALSE)
+        OR COALESCE(w.path_nlp_positive, FALSE)
+        OR COALESCE(w.op_intraop_positive, FALSE) AS ene_any_path_source,
+    COALESCE(w.ct_positive, FALSE)
+        OR COALESCE(w.us_positive, FALSE)
+        OR COALESCE(w.pet_positive, FALSE)
+        OR COALESCE(w.rai_scan_positive, FALSE) AS ene_any_imaging_source
+FROM wide w
+ORDER BY w.research_id;
+"""
+
+
+def build_vw_ene_source_summary_sql() -> str:
+    """vw_ene_source_summary — aggregate ENE findings by source modality."""
+    return """
+CREATE OR REPLACE TABLE vw_ene_source_summary AS
+SELECT
+    source_modality,
+    COUNT(*) AS n_records,
+    COUNT(DISTINCT research_id) AS n_patients,
+    COUNT(CASE WHEN ene_positive IS TRUE THEN 1 END) AS n_positive,
+    COUNT(CASE WHEN ene_positive IS FALSE THEN 1 END) AS n_negative,
+    COUNT(CASE WHEN ene_positive IS NULL THEN 1 END) AS n_indeterminate,
+    ROUND(100.0 * COUNT(CASE WHEN ene_positive IS TRUE THEN 1 END) /
+        NULLIF(COUNT(CASE WHEN ene_positive IS NOT NULL THEN 1 END), 0), 1) AS positivity_rate_pct,
+    COUNT(deposit_size_cm) AS n_with_size,
+    AVG(deposit_size_cm) FILTER (WHERE deposit_size_cm IS NOT NULL) AS avg_deposit_cm,
+    COUNT(ene_levels) FILTER (WHERE ene_levels IS NOT NULL AND ene_levels <> '') AS n_with_levels,
+    AVG(confidence) AS avg_confidence,
+    STRING_AGG(DISTINCT ene_grade, ', ') AS grade_values_seen
+FROM extracted_ene_multisource_v1
+GROUP BY source_modality
+ORDER BY avg_confidence DESC;
+"""
+
+
 def build_vw_ete_microscopic_rule_sql() -> str:
     """vw_ete_microscopic_rule — ETE grading distribution before/after rule."""
     return """
@@ -927,7 +1384,21 @@ SELECT
     -- Phase 9: ENE grading (3 columns)
     etg.ene_grade_v9,
     etg.ene_levels_v9,
-    etg.ene_record_count AS ene_record_count_v9
+    etg.ene_record_count AS ene_record_count_v9,
+
+    -- Phase 9: Multi-source ENE concordance (12 columns)
+    ec.best_ene_grade,
+    ec.path_synoptic_grade AS ene_path_synoptic,
+    ec.path_nlp_grade AS ene_path_nlp,
+    ec.path_nlp_deposit_cm AS ene_deposit_cm,
+    ec.path_nlp_levels AS ene_path_levels,
+    ec.op_intraop_grade AS ene_op_intraop,
+    ec.ct_grade AS ene_ct,
+    ec.us_grade AS ene_us,
+    ec.pet_grade AS ene_pet,
+    ec.rai_scan_grade AS ene_rai_scan,
+    ec.n_sources AS ene_n_sources,
+    ec.path_vs_ct_concordance AS ene_path_ct_concordance
 
 FROM patient_refined_master_clinical_v7 v7
 LEFT JOIN vw_postop_lab_expanded lab ON v7.research_id = lab.research_id
@@ -943,6 +1414,7 @@ LEFT JOIN (
     GROUP BY research_id
 ) rd ON v7.research_id = rd.research_id
 LEFT JOIN extracted_ete_ene_tert_refined_v1 etg ON v7.research_id = etg.research_id
+LEFT JOIN vw_ene_concordance ec ON v7.research_id = ec.research_id
 ORDER BY v7.research_id;
 """
 
@@ -957,6 +1429,9 @@ _PHASE9_STEPS = [
     ("vw_rai_dose_by_source", build_vw_rai_dose_by_source_sql),
     ("ete_ene_tert_refined", build_ete_ene_tert_refined_sql),
     ("vw_ete_microscopic_rule", build_vw_ete_microscopic_rule_sql),
+    ("ene_multisource", build_ene_multisource_sql),
+    ("vw_ene_concordance", build_vw_ene_concordance_sql),
+    ("vw_ene_source_summary", build_vw_ene_source_summary_sql),
     ("master_v8", build_master_clinical_v8_sql),
 ]
 
@@ -1042,6 +1517,31 @@ def _ete_ene_tert_stats(con) -> dict:
     }
 
 
+def _ene_multisource_stats(con) -> dict:
+    by_source = con.execute("""
+        SELECT source_modality, COUNT(*) AS n, COUNT(DISTINCT research_id) AS pts,
+            COUNT(CASE WHEN ene_positive IS TRUE THEN 1 END) AS pos,
+            COUNT(CASE WHEN ene_positive IS FALSE THEN 1 END) AS neg
+        FROM extracted_ene_multisource_v1
+        GROUP BY source_modality ORDER BY n DESC
+    """).fetchall()
+    total = con.execute("""
+        SELECT COUNT(*), COUNT(DISTINCT research_id),
+            COUNT(CASE WHEN ene_positive THEN 1 END),
+            COUNT(deposit_size_cm) FILTER (WHERE deposit_size_cm IS NOT NULL),
+            COUNT(ene_levels) FILTER (WHERE ene_levels IS NOT NULL AND ene_levels <> '')
+        FROM extracted_ene_multisource_v1
+    """).fetchone()
+    return {
+        "total_records": total[0],
+        "unique_patients": total[1],
+        "ene_positive_total": total[2],
+        "with_deposit_size": total[3],
+        "with_level_info": total[4],
+        "by_source": {r[0]: {"n": r[1], "patients": r[2], "positive": r[3], "negative": r[4]} for r in by_source},
+    }
+
+
 # ---------------------------------------------------------------------------
 # Main orchestration
 # ---------------------------------------------------------------------------
@@ -1059,6 +1559,7 @@ def audit_and_refine_phase9(
         "postop_labs_expanded": _lab_expanded_stats,
         "rai_dose_refined": _rai_dose_stats,
         "ete_ene_tert_refined": _ete_ene_tert_stats,
+        "ene_multisource": _ene_multisource_stats,
     }
 
     for step_name, sql_builder in steps:
@@ -1094,8 +1595,9 @@ def audit_and_refine_phase9(
 def main():
     parser = argparse.ArgumentParser(
         description="Phase 9 Targeted Refinement: Labs, RAI Dose, Deep Grading")
+    step_names = [s[0] for s in _PHASE9_STEPS]
     parser.add_argument("--variable", default="all",
-                        choices=["all"] + [s[0] for s in _PHASE9_STEPS])
+                        choices=["all"] + step_names)
     parser.add_argument("--md", action="store_true", default=True)
     parser.add_argument("--local", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
