@@ -1,0 +1,532 @@
+{
+  "provenance_coverage": [
+    {
+      "domain": "demographics",
+      "check_type": "confidence",
+      "field": "demo_confidence",
+      "filled": 10871,
+      "total": 10871,
+      "pct_filled": 100.0,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "demographics",
+      "check_type": "source",
+      "field": "demo_source",
+      "filled": 10871,
+      "total": 10871,
+      "pct_filled": 100.0,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "fna_bethesda",
+      "check_type": "confidence",
+      "field": "fna_bethesda_confidence",
+      "filled": 5249,
+      "total": 10871,
+      "pct_filled": 48.3,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "fna_bethesda",
+      "check_type": "source",
+      "field": "fna_bethesda_source",
+      "filled": 5249,
+      "total": 10871,
+      "pct_filled": 48.3,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "imaging_tirads",
+      "check_type": "source",
+      "field": "imaging_tirads_source",
+      "filled": 3474,
+      "total": 10871,
+      "pct_filled": 32.0,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "molecular_braf",
+      "check_type": "date",
+      "field": "mol_test_date",
+      "filled": 809,
+      "total": 10871,
+      "pct_filled": 7.4,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "molecular_braf",
+      "check_type": "raw_evidence",
+      "field": "braf_variant_raw",
+      "filled": 173,
+      "total": 10871,
+      "pct_filled": 1.6,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "molecular_braf",
+      "check_type": "source",
+      "field": "braf_source",
+      "filled": 376,
+      "total": 10871,
+      "pct_filled": 3.5,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "molecular_ras",
+      "check_type": "raw_evidence",
+      "field": "ras_subtype_raw",
+      "filled": 174,
+      "total": 10871,
+      "pct_filled": 1.6,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "pathology_ete",
+      "check_type": "raw_evidence",
+      "field": "path_ete_raw",
+      "filled": 4075,
+      "total": 10871,
+      "pct_filled": 37.5,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "pathology_ete",
+      "check_type": "source",
+      "field": "ete_grade_source",
+      "filled": 10871,
+      "total": 10871,
+      "pct_filled": 100.0,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "pathology_histology",
+      "check_type": "raw_evidence",
+      "field": "path_histology_raw",
+      "filled": 4137,
+      "total": 10871,
+      "pct_filled": 38.1,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "pathology_histology",
+      "check_type": "source",
+      "field": "histology_source",
+      "filled": 10871,
+      "total": 10871,
+      "pct_filled": 100.0,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "pathology_ln",
+      "check_type": "raw_evidence",
+      "field": "path_ln_examined_raw",
+      "filled": 7730,
+      "total": 10871,
+      "pct_filled": 71.1,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "pathology_ln",
+      "check_type": "raw_evidence",
+      "field": "path_ln_positive_raw",
+      "filled": 3603,
+      "total": 10871,
+      "pct_filled": 33.1,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "pathology_lvi",
+      "check_type": "raw_evidence",
+      "field": "path_lvi_raw",
+      "filled": 3366,
+      "total": 10871,
+      "pct_filled": 31.0,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "pathology_margin",
+      "check_type": "raw_evidence",
+      "field": "path_margin_raw",
+      "filled": 3884,
+      "total": 10871,
+      "pct_filled": 35.7,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "pathology_nstage",
+      "check_type": "raw_evidence",
+      "field": "path_n_stage_raw",
+      "filled": 4015,
+      "total": 10871,
+      "pct_filled": 36.9,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "pathology_pni",
+      "check_type": "raw_evidence",
+      "field": "path_pni_raw",
+      "filled": 1438,
+      "total": 10871,
+      "pct_filled": 13.2,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "pathology_tstage",
+      "check_type": "raw_evidence",
+      "field": "path_t_stage_raw",
+      "filled": 4009,
+      "total": 10871,
+      "pct_filled": 36.9,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "pathology_vascular",
+      "check_type": "raw_evidence",
+      "field": "path_vascular_invasion_raw",
+      "filled": 3682,
+      "total": 10871,
+      "pct_filled": 33.9,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "provenance_meta",
+      "check_type": "confidence",
+      "field": "provenance_confidence",
+      "filled": 10871,
+      "total": 10871,
+      "pct_filled": 100.0,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "provenance_meta",
+      "check_type": "date_trace",
+      "field": "date_traceability_status",
+      "filled": 10871,
+      "total": 10871,
+      "pct_filled": 100.0,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "provenance_meta",
+      "check_type": "version",
+      "field": "resolved_layer_version",
+      "filled": 10871,
+      "total": 10871,
+      "pct_filled": 100.0,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "rai",
+      "check_type": "date",
+      "field": "rai_first_date",
+      "filled": 33,
+      "total": 10871,
+      "pct_filled": 0.3,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "recurrence",
+      "check_type": "date",
+      "field": "recurrence_date",
+      "filled": 182,
+      "total": 10871,
+      "pct_filled": 1.7,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "recurrence",
+      "check_type": "source",
+      "field": "recurrence_source",
+      "filled": 1946,
+      "total": 10871,
+      "pct_filled": 17.9,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "surgery",
+      "check_type": "date",
+      "field": "first_surgery_date",
+      "filled": 10870,
+      "total": 10871,
+      "pct_filled": 100.0,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "surgery",
+      "check_type": "raw_evidence",
+      "field": "surg_procedure_type",
+      "filled": 8733,
+      "total": 10871,
+      "pct_filled": 80.3,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    },
+    {
+      "domain": "surgery",
+      "check_type": "source",
+      "field": "source_script",
+      "filled": 10871,
+      "total": 10871,
+      "pct_filled": 100.0,
+      "audited_at": "2026-03-13 07:50:29.473381-04:00"
+    }
+  ],
+  "date_provenance": [
+    {
+      "table_name": "fna_episode_master_v2",
+      "total": 59620,
+      "has_date": 6155,
+      "pct_date": 10.3,
+      "has_date_status": 59620,
+      "pct_date_status": 100.0,
+      "has_date_conf": 59620,
+      "pct_date_conf": 100.0,
+      "has_source": 59620,
+      "pct_source": 100.0,
+      "audited_at": "2026-03-13 07:50:30.284301-04:00"
+    },
+    {
+      "table_name": "molecular_test_episode_v2",
+      "total": 10126,
+      "has_date": 846,
+      "pct_date": 8.4,
+      "has_date_status": 10126,
+      "pct_date_status": 100.0,
+      "has_date_conf": 10126,
+      "pct_date_conf": 100.0,
+      "has_source": 10126,
+      "pct_source": 100.0,
+      "audited_at": "2026-03-13 07:50:30.284301-04:00"
+    },
+    {
+      "table_name": "operative_episode_detail_v2",
+      "total": 9371,
+      "has_date": 9366,
+      "pct_date": 99.9,
+      "has_date_status": 9371,
+      "pct_date_status": 100.0,
+      "has_date_conf": 0,
+      "pct_date_conf": 0.0,
+      "has_source": 9371,
+      "pct_source": 100.0,
+      "audited_at": "2026-03-13 07:50:30.284301-04:00"
+    },
+    {
+      "table_name": "rai_treatment_episode_v2",
+      "total": 1857,
+      "has_date": 1272,
+      "pct_date": 68.5,
+      "has_date_status": 1857,
+      "pct_date_status": 100.0,
+      "has_date_conf": 1857,
+      "pct_date_conf": 100.0,
+      "has_source": 1857,
+      "pct_source": 100.0,
+      "audited_at": "2026-03-13 07:50:30.284301-04:00"
+    },
+    {
+      "table_name": "tumor_episode_master_v2",
+      "total": 11691,
+      "has_date": 11688,
+      "pct_date": 100.0,
+      "has_date_status": 11691,
+      "pct_date_status": 100.0,
+      "has_date_conf": 11691,
+      "pct_date_conf": 100.0,
+      "has_source": 11691,
+      "pct_source": 100.0,
+      "audited_at": "2026-03-13 07:50:30.284301-04:00"
+    }
+  ],
+  "provenance_gaps": [
+    {
+      "table_name": "extracted_recurrence_refined_v1",
+      "gap_type": "date_sparsity",
+      "severity": "CRITICAL",
+      "description": "first_recurrence_date only 0.5% filled; structural recurrence dates sparse",
+      "audited_at": "2026-03-13 07:50:30.884666-04:00"
+    },
+    {
+      "table_name": "patient_analysis_resolved_v1",
+      "gap_type": "rai_date_sparsity",
+      "severity": "CRITICAL",
+      "description": "rai_first_date only 0.3% filled (33/10871); RAI dates mostly in episode table not propagated",
+      "audited_at": "2026-03-13 07:50:30.884666-04:00"
+    },
+    {
+      "table_name": "survival_cohort_enriched",
+      "gap_type": "source_linkage",
+      "severity": "CRITICAL",
+      "description": "No source_table/source_script columns; derived from upstream joins but no explicit lineage",
+      "audited_at": "2026-03-13 07:50:30.884666-04:00"
+    },
+    {
+      "table_name": "survival_cohort_enriched",
+      "gap_type": "date_provenance",
+      "severity": "CRITICAL",
+      "description": "No date_source/date_confidence/date_status columns despite time_days being critical",
+      "audited_at": "2026-03-13 07:50:30.884666-04:00"
+    },
+    {
+      "table_name": "complication_patient_summary_v1",
+      "gap_type": "date_linkage",
+      "severity": "MODERATE",
+      "description": "No date columns in wide-format complication summary",
+      "audited_at": "2026-03-13 07:50:30.884666-04:00"
+    },
+    {
+      "table_name": "complication_patient_summary_v1",
+      "gap_type": "source_linkage",
+      "severity": "MODERATE",
+      "description": "No source/confidence columns in wide-format summary table",
+      "audited_at": "2026-03-13 07:50:30.884666-04:00"
+    },
+    {
+      "table_name": "extracted_braf_recovery_v1",
+      "gap_type": "date_linkage",
+      "severity": "MODERATE",
+      "description": "No date column; BRAF status is pathology-anchored but no explicit event date",
+      "audited_at": "2026-03-13 07:50:30.884666-04:00"
+    },
+    {
+      "table_name": "extracted_molecular_panel_v1",
+      "gap_type": "source_sparsity",
+      "severity": "MODERATE",
+      "description": "methods_used only 8% filled; 92% of molecular panel entries lack extraction method",
+      "audited_at": "2026-03-13 07:50:30.884666-04:00"
+    },
+    {
+      "table_name": "extracted_postop_labs_expanded_v1",
+      "gap_type": "date_sparsity",
+      "severity": "MODERATE",
+      "description": "lab_date only 14.9% filled; 85% of postop lab values lack specific collection date",
+      "audited_at": "2026-03-13 07:50:30.884666-04:00"
+    },
+    {
+      "table_name": "extracted_ras_subtypes_v1",
+      "gap_type": "date_linkage",
+      "severity": "MODERATE",
+      "description": "No date column; RAS status pathology-anchored but no explicit event date",
+      "audited_at": "2026-03-13 07:50:30.884666-04:00"
+    },
+    {
+      "table_name": "extracted_tirads_validated_v1",
+      "gap_type": "date_linkage",
+      "severity": "MODERATE",
+      "description": "No exam_date column; TIRADS scores from Excel but no imaging date preserved",
+      "audited_at": "2026-03-13 07:50:30.884666-04:00"
+    },
+    {
+      "table_name": "extracted_vascular_grading_v13",
+      "gap_type": "date_linkage",
+      "severity": "MODERATE",
+      "description": "No date column; vascular grading from path_synoptics, date implicit via surgery",
+      "audited_at": "2026-03-13 07:50:30.884666-04:00"
+    },
+    {
+      "table_name": "patient_analysis_resolved_v1",
+      "gap_type": "molecular_date_sparsity",
+      "severity": "MODERATE",
+      "description": "mol_test_date only 7.4% filled; molecular dates in episode table not fully propagated",
+      "audited_at": "2026-03-13 07:50:30.884666-04:00"
+    },
+    {
+      "table_name": "patient_analysis_resolved_v1",
+      "gap_type": "braf_source_sparsity",
+      "severity": "MODERATE",
+      "description": "braf_source only 3.5% filled; most BRAF data from structured path_synoptics not tagged",
+      "audited_at": "2026-03-13 07:50:30.884666-04:00"
+    },
+    {
+      "table_name": "provenance_enriched_events_v1",
+      "gap_type": "date_gap",
+      "severity": "MODERATE",
+      "description": "54.7% of events have NO_DATE status (non-Tg labs: TSH/PTH/Ca/vitamin_D from NLP)",
+      "audited_at": "2026-03-13 07:50:30.884666-04:00"
+    },
+    {
+      "table_name": "patient_analysis_resolved_v1",
+      "gap_type": "path_stage_raw",
+      "severity": "LOW",
+      "description": "path_stage_raw 0% filled; overall stage not preserved in raw evidence column",
+      "audited_at": "2026-03-13 07:50:30.884666-04:00"
+    },
+    {
+      "table_name": "patient_refined_master_clinical_v12",
+      "gap_type": "preop_imaging_date",
+      "severity": "LOW",
+      "description": "preop_imaging_date 0% filled; imaging dates not propagated from Excel source",
+      "audited_at": "2026-03-13 07:50:30.884666-04:00"
+    }
+  ],
+  "lineage_status": [
+    {
+      "date_traceability_status": "surgery_anchor_only",
+      "n": 6387
+    },
+    {
+      "date_traceability_status": "note_date_only",
+      "n": 2845
+    },
+    {
+      "date_traceability_status": "inferred_date_traced",
+      "n": 1147
+    },
+    {
+      "date_traceability_status": "entity_date_traced",
+      "n": 492
+    }
+  ],
+  "event_date_status": [
+    {
+      "date_status_final": "NO_DATE",
+      "n": 27522
+    },
+    {
+      "date_status_final": "LAB_DATE_USED",
+      "n": 21900
+    },
+    {
+      "date_status_final": "ENTITY_DATE_EQUALS_NOTE_DATE",
+      "n": 875
+    }
+  ],
+  "validation_tables": {
+    "val_analysis_resolved_v1": 29,
+    "val_chronology_anomalies": 626,
+    "val_completeness_scorecard": 25,
+    "val_cross_domain_consistency": 1155,
+    "val_date_provenance_coverage_v1": 5,
+    "val_denominator_checks": 6,
+    "val_hardening_details": 1157,
+    "val_hardening_summary": 1,
+    "val_identity_integrity": 1,
+    "val_impossible_values": 1,
+    "val_manuscript_metrics": 10,
+    "val_metric_definition_conflicts": 1,
+    "val_molecular_confirmation": 10126,
+    "val_null_rate_regression": 10,
+    "val_phase12_tirads_validation": 4,
+    "val_phase13_final_gaps": 4,
+    "val_provenance_coverage_v1": 30,
+    "val_provenance_missing_fields_v1": 17,
+    "val_provenance_traceability": 6801,
+    "val_rai_confirmation": 1857,
+    "val_recon_metric_consistency_v1": 4,
+    "val_recon_status_v1": 1,
+    "val_row_multiplication": 3,
+    "val_scoring_systems": 1
+  },
+  "summary": {
+    "audit_timestamp": "20260313_0751",
+    "total_provenance_checks": 30,
+    "checks_pass": 9,
+    "checks_partial": 13,
+    "checks_sparse": 8,
+    "critical_gaps": 4,
+    "moderate_gaps": 11,
+    "low_gaps": 2,
+    "verdict": "MOSTLY_SOURCE_DATE_LINKED",
+    "verdict_rationale": "Manuscript-critical tables (patient_analysis_resolved_v1, manuscript_cohort_v1) have 100% source_script, provenance_confidence, date_traceability_status, and resolved_layer_version. Surgery dates, demographics, and pathology histology/ETE are fully source-linked. However: (1) survival_cohort_enriched lacks any provenance columns, (2) RAI first_date only 0.3% propagated to patient table, (3) recurrence dates only 1.7% filled, (4) several extraction tables lack event dates (BRAF, RAS, vascular, TIRADS). Episode-level tables have 100% date_status and source_table. The system is MOSTLY source-and-date-linked with specific gaps documented."
+  }
+}

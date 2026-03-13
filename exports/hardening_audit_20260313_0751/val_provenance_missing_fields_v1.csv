@@ -1,0 +1,18 @@
+table_name,gap_type,severity,description,audited_at
+extracted_recurrence_refined_v1,date_sparsity,CRITICAL,first_recurrence_date only 0.5% filled; structural recurrence dates sparse,2026-03-13 07:50:30.884666-04:00
+patient_analysis_resolved_v1,rai_date_sparsity,CRITICAL,rai_first_date only 0.3% filled (33/10871); RAI dates mostly in episode table not propagated,2026-03-13 07:50:30.884666-04:00
+survival_cohort_enriched,source_linkage,CRITICAL,No source_table/source_script columns; derived from upstream joins but no explicit lineage,2026-03-13 07:50:30.884666-04:00
+survival_cohort_enriched,date_provenance,CRITICAL,No date_source/date_confidence/date_status columns despite time_days being critical,2026-03-13 07:50:30.884666-04:00
+complication_patient_summary_v1,date_linkage,MODERATE,No date columns in wide-format complication summary,2026-03-13 07:50:30.884666-04:00
+complication_patient_summary_v1,source_linkage,MODERATE,No source/confidence columns in wide-format summary table,2026-03-13 07:50:30.884666-04:00
+extracted_braf_recovery_v1,date_linkage,MODERATE,No date column; BRAF status is pathology-anchored but no explicit event date,2026-03-13 07:50:30.884666-04:00
+extracted_molecular_panel_v1,source_sparsity,MODERATE,methods_used only 8% filled; 92% of molecular panel entries lack extraction method,2026-03-13 07:50:30.884666-04:00
+extracted_postop_labs_expanded_v1,date_sparsity,MODERATE,lab_date only 14.9% filled; 85% of postop lab values lack specific collection date,2026-03-13 07:50:30.884666-04:00
+extracted_ras_subtypes_v1,date_linkage,MODERATE,No date column; RAS status pathology-anchored but no explicit event date,2026-03-13 07:50:30.884666-04:00
+extracted_tirads_validated_v1,date_linkage,MODERATE,No exam_date column; TIRADS scores from Excel but no imaging date preserved,2026-03-13 07:50:30.884666-04:00
+extracted_vascular_grading_v13,date_linkage,MODERATE,"No date column; vascular grading from path_synoptics, date implicit via surgery",2026-03-13 07:50:30.884666-04:00
+patient_analysis_resolved_v1,molecular_date_sparsity,MODERATE,mol_test_date only 7.4% filled; molecular dates in episode table not fully propagated,2026-03-13 07:50:30.884666-04:00
+patient_analysis_resolved_v1,braf_source_sparsity,MODERATE,braf_source only 3.5% filled; most BRAF data from structured path_synoptics not tagged,2026-03-13 07:50:30.884666-04:00
+provenance_enriched_events_v1,date_gap,MODERATE,54.7% of events have NO_DATE status (non-Tg labs: TSH/PTH/Ca/vitamin_D from NLP),2026-03-13 07:50:30.884666-04:00
+patient_analysis_resolved_v1,path_stage_raw,LOW,path_stage_raw 0% filled; overall stage not preserved in raw evidence column,2026-03-13 07:50:30.884666-04:00
+patient_refined_master_clinical_v12,preop_imaging_date,LOW,preop_imaging_date 0% filled; imaging dates not propagated from Excel source,2026-03-13 07:50:30.884666-04:00

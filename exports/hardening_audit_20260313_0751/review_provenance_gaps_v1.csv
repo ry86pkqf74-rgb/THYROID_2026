@@ -1,0 +1,10 @@
+severity,n_gaps,affected_tables,gap_types
+CRITICAL,4,"['extracted_recurrence_refined_v1' 'survival_cohort_enriched'
+ 'patient_analysis_resolved_v1']",['date_provenance' 'rai_date_sparsity' 'date_sparsity' 'source_linkage']
+MODERATE,11,"['complication_patient_summary_v1' 'extracted_ras_subtypes_v1'
+ 'patient_analysis_resolved_v1' 'extracted_braf_recovery_v1'
+ 'extracted_tirads_validated_v1' 'extracted_postop_labs_expanded_v1'
+ 'provenance_enriched_events_v1' 'extracted_molecular_panel_v1'
+ 'extracted_vascular_grading_v13']","['source_linkage' 'date_sparsity' 'molecular_date_sparsity' 'date_linkage'
+ 'braf_source_sparsity' 'date_gap' 'source_sparsity']"
+LOW,2,['patient_refined_master_clinical_v12' 'patient_analysis_resolved_v1'],['preop_imaging_date' 'path_stage_raw']
