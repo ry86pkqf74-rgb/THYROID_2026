@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-03-13T07:34:49.803568",
+  "source_database": "md:thyroid_research_2026",
+  "metric_source_table": "manuscript_metrics_v2",
+  "sql_registry_table": "manuscript_metric_sql_registry_v1",
+  "cohort_table": "manuscript_patient_cohort_v2",
+  "files": {
+    "metrics.csv": "11 canonical metric definitions",
+    "metrics_with_definitions.csv": "11 metrics with full definitions and manuscript-safe labels",
+    "metric_sql_registry.csv": "11 SQL queries for metric computation",
+    "cohort_summary.csv": "3 cohort-level aggregate summary",
+    "consistency_checks.csv": "4 cross-source consistency checks (all CONSISTENT)",
+    "denominator_checks.csv": "6 denominator validation checks (all PASS)"
+  },
+  "validation_status": {
+    "metrics_verified": 11,
+    "consistency_checks": "4/4 CONSISTENT",
+    "denominator_checks": "6/6 PASS",
+    "overall": "READY_FOR_MANUSCRIPT_FREEZE"
+  },
+  "reconciliation_report": "docs/manuscript_metric_reconciliation_20260313.md",
+  "alignment_report": "docs/manuscript_freeze_alignment_20260313.md"
+}

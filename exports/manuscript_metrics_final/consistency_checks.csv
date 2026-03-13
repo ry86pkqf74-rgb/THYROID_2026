@@ -1,0 +1,5 @@
+check_id,source_a_value,source_a_table,source_b_value,source_b_table,status,description
+braf_recovery_vs_mcv12,376,extracted_braf_recovery_v1,376,patient_refined_master_clinical_v12,CONSISTENT,BRAF positive count should match between recovery table and master clinical
+recurrence_structural_vs_risk_mv,1818,extracted_recurrence_refined_v1,1818,recurrence_risk_features_mv,CONSISTENT,Structural recurrence count should be close between refined and risk_mv
+surgical_count_consistency,10871,path_synoptics,10871,manuscript_patient_cohort_v2,CONSISTENT,Total surgical patients should match between spine and cohort table
+rai_confirmed_consistency,35,extracted_rai_validated_v1,35,rai_treatment_episode_v2,CONSISTENT,Confirmed RAI with dose should match likely_received with dose

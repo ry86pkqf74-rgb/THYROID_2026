@@ -1,14 +1,25 @@
 # THYROID_2026
 
-## Publication-Ready Release (v2026.03.10)
+## Manuscript-Ready Data Layer (v2026.03.13)
 
-- **Scripts 13-15 executed:** optimized MVs, sub-second dashboard tabs, full publication bundles
+**Status:** Manuscript-ready data layer with reconciled canonical metrics.
+The database is conditionally ready for manuscript freeze following denominator
+language alignment in manuscript files.
+
+- **Canonical metrics:** 11 metrics defined in `manuscript_metrics_v2` with explicit
+  numerators, denominators, and population labels
+- **Reconciliation audit:** [`docs/manuscript_metric_reconciliation_20260313.md`](docs/manuscript_metric_reconciliation_20260313.md)
+- **Freeze alignment report:** [`docs/manuscript_freeze_alignment_20260313.md`](docs/manuscript_freeze_alignment_20260313.md)
+- **Manuscript metric exports:** `exports/manuscript_metrics_final/`
 - **Local DuckDB backup:** `thyroid_master_local.duckdb` (use if downgrading MotherDuck)
-- **Manuscript tables ready:** `Table1_Cohort_Demographics.csv`, `Table2_Risk_Stratification.csv`, `Table3_Complications.csv`, `Table4_Timeline_Summary.csv`
 - **Studies folder:** `studies/proposal2_ete_staging/` (AJCC 8th + ETE + recurrence PSM)
-- **Publication bundle:** `exports/THYROID_2026_PUBLICATION_BUNDLE_20260310_0414/`
-- **Final release:** `exports/FINAL_RELEASE_v2026.03.10_20260310_0529/`
+- **Publication bundle:** `exports/FINAL_PUBLICATION_BUNDLE_20260313/`
 - **Tag:** [`v2026.03.10-publication-ready`](../../releases/tag/v2026.03.10-publication-ready)
+
+> The manuscript reconciliation pass establishes canonical metric definitions
+> and ensures all reported statistics reference explicit numerators, denominators,
+> and population definitions. All 11 canonical metrics pass cross-source
+> consistency checks. See the reconciliation report for details.
 
 ---
 

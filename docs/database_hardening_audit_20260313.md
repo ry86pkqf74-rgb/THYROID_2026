@@ -114,7 +114,7 @@ MotherDuck provides automatic point-in-time recovery for all databases. The reco
 
 **Pathology (100% for cancer subcohort):** The 62-66% null rates reflect ~7,000 benign surgeries (goiter, adenoma, thyroiditis) that don't generate cancer-specific pathology fields. For the cancer subcohort (N=4,136), coverage is >95% for histology, T-stage, and most staging fields. **No further extraction needed.**
 
-**FNA/Cytology/Molecular (90%+ for tested patients):** 5,249 patients with Bethesda classification; 10,025 with molecular panel data; BRAF 546 positive after FP correction; RAS 337 positive. Platform-specific coverage (ThyroSeq 406, Afirma 398). **No further extraction needed.**
+**FNA/Cytology/Molecular (90%+ for tested patients):** 5,249 patients with Bethesda classification; 10,025 with molecular panel data; BRAF 376 positive (canonical, per `manuscript_metrics_v2`); RAS 292 positive (canonical). Platform-specific coverage (ThyroSeq 406, Afirma 398). **No further extraction needed.**
 
 **Imaging/TIRADS (32.5% coverage):** Phase 12 TIRADS Excel ingestion raised coverage from 4.2% to 32.5% (3,474 patients). ACR recalculation concordance 80.1%. **Data ceiling reached** — remaining 67.5% either don't have pre-op US in the system or had US at external facilities.
 
@@ -299,7 +299,7 @@ No orphaned views detected. Script number collisions (documented above) are cosm
 | BRAF positive (confirmed) | 376 | extracted_braf_recovery_v1 |
 | RAS positive (confirmed) | 292 | extracted_ras_patient_summary_v1 |
 | TIRADS coverage | 3,474 | extracted_tirads_validated_v1 |
-| RAI treated (definite/likely) | 35 | rai_treatment_episode_v2 |
+| RAI treated (dose-verified, likely\_received) | 35 | extracted\_rai\_validated\_v1 |
 | Recurrence (any) | 1,986 | extracted_recurrence_refined_v1 |
 | RLN injury confirmed | 59 | extracted_rln_injury_refined_v2 |
 | Any confirmed complication | 287 | patient_refined_complication_flags_v2 |
@@ -310,7 +310,7 @@ No orphaned views detected. Script number collisions (documented above) are cosm
 |------|-------|-------|
 | Recurrence rate | 18.3% (1,986/10,871) | Includes structural + biochemical |
 | RLN injury rate | 0.54% (59/10,871) | Laryngoscopy-confirmed + chart-documented + NLP-confirmed (3-tier refined) |
-| BRAF prevalence (tested) | 3.5% (376/10,871) | Higher among molecular-tested subset: ~47% |
+| BRAF prevalence (mol-tested) | 3.8% (376/10,025) | Among 10,025 molecularly tested patients. NOT full surgical cohort. |
 | TIRADS coverage | 32.0% (3,474/10,871) | Phase 12 Excel integration ceiling |
 | Complication rate | 2.6% (287/10,871) | All entities combined after refinement |
 
@@ -327,7 +327,7 @@ No orphaned views detected. Script number collisions (documented above) are cosm
 1. **982 cancer patients without operative detail** — tumor_episode_master_v2 has broader coverage than operative_episode_detail_v2; NLP extraction gap for ~2,300 operative notes
 2. **173 Bethesda VI patients not analysis-eligible** — requires case-by-case review (FNA false positives, non-thyroid cancer, missing surgery date)
 3. **High null rates in pathology fields (62-66%)** — reflects ~7,000 benign surgeries in the full cohort; cancer subcohort coverage is >95%
-4. **RAI treated count (35)** — `rai_assertion_status = 'definite_received'` is strict; 862 total RAI episodes exist with varying assertion status
+4. **RAI treated count (35)** — `rai_validation_tier = 'confirmed_with_dose'` (all 35 are `likely_received` with dose verification; 0 `definite_received` in data); 862 total RAI episodes with varying assertion status
 5. **Lab follow-up completeness averages 34.7/100** — sparse post-op lab documentation in clinical notes; future lab file integration is the primary path to improvement
 
 ---

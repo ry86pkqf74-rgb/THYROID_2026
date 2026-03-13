@@ -35,9 +35,11 @@
 
 | Metric | Before | After | Change |
 |--------|--------|-------|--------|
-| BRAF positive (final) | 659 | 660 | +1 |
+| BRAF positive (final, reconciled) | 376 | 376 | canonical per `manuscript_metrics_v2` |
 | IHC BRAF results | 0 | 2 | +2 (1 positive, 1 negative) |
 | IHC notes scanned | 0 | 14 | full scan |
+
+> **Reconciliation note (2026-03-13):** The original Phase 13 count of 659/660 included NLP entity mentions without explicit positive qualifiers. After FP correction and manuscript reconciliation, the canonical BRAF-positive count is **376** (per `manuscript_metrics_v2`). See `docs/manuscript_metric_reconciliation_20260313.md` for details.
 
 **Resolution approach:**
 - Searched all clinical_notes_long for VE1, immunohistochemistry+BRAF, BRAF protein, BRAF IHC mentions
@@ -50,11 +52,13 @@
 
 | Metric | Before (Phase 11) | After (Phase 13) | Change |
 |--------|-------------------|-------------------|--------|
-| RAS positive total | 364 | 364 | unchanged |
-| NRAS | 196 | 220 | +24 (19 from text + 5 propagated) |
-| HRAS | 114 | 111 | stable |
-| KRAS | 59 | 33 | revised down after dedup |
+| RAS positive total (reconciled) | 292 | 292 | canonical per `manuscript_metrics_v2` |
+| NRAS | 196 | 196 | canonical |
+| HRAS | 114 | 114 | canonical |
+| KRAS | 59 | 59 | canonical |
 | RAS_unspecified | 65 | 31 | -34 resolved |
+
+> **Reconciliation note (2026-03-13):** The original Phase 13 count of 364 included NLP entity mentions without explicit positive qualifiers. After FP correction, the canonical RAS-positive count is **292** (per `manuscript_metrics_v2`). See `docs/manuscript_metric_reconciliation_20260313.md`.
 
 **Resolution sources:**
 - `molecular_testing` mutation + detailed_findings text mining: 21 resolved
@@ -73,10 +77,10 @@
 | Vascular grade (focal/extensive) | 819 | 15.0% of positive | synoptic + multi-tumor + NLP |
 | Vascular grade (any) | 5,570 | 43.2% | path_synoptics |
 | LVI grade | 5,570 | 43.2% | co-extracted with vascular |
-| BRAF positive | 659 | 5.1% | NGS + NLP + IHC |
+| BRAF positive | 376 | 3.8% of 10,025 mol-tested | NGS + NLP-confirmed (reconciled) |
 | IHC BRAF | 2 | 0.02% | clinical notes |
 | TERT positive | 108 | 0.8% | molecular_test_episode_v2 |
-| RAS positive | 364 | 2.8% | multi-source |
+| RAS positive | 292 | 2.9% of 10,025 mol-tested | multi-source (reconciled) |
 | RAS subtyped | 333 | 91.5% of positive | resolved via Phase 13 |
 | TIRADS score | 4,183 | 32.5% | Excel + NLP (Phase 12) |
 | ETE graded | 5,737 | 44.5% | synoptic + sub-grading |
@@ -113,7 +117,7 @@
 |--------|-------|--------|-------|
 | ETE grading | 95/100 | 1.5x | 98.6% of 'x' resolved to microscopic (Phase 9) |
 | Staging (T/N/M) | 95/100 | 1.2x | AJCC 8th Ed calculated |
-| BRAF detection | 92/100 | 1.2x | 659 from 3 sources, concordant |
+| BRAF detection | 92/100 | 1.2x | 376 canonical (reconciled from 3 sources) |
 | Molecular panel | 92/100 | 1.0x | Full gene panel, method detection |
 | RAS subtypes | 90/100 | 1.0x | 91.5% of positive subtyped |
 | Bethesda FNA | 90/100 | 1.0x | 5,249 patients, cross-validated |

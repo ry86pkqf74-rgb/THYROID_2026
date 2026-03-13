@@ -243,6 +243,12 @@ def main():
         "# THYROID 2026 Manuscript Tables",
         f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}",
         "",
+        "> **Denominator standards:** All rates reference explicit denominators per "
+        "`manuscript_metrics_v2`. Molecular prevalences (BRAF, RAS) use the molecular-tested "
+        "denominator (N = 10,025). All other rates use the full surgical cohort (N = 10,871) "
+        "unless otherwise noted. Cancer-specific outcomes use the analysis-eligible denominator "
+        "(N = 4,136). See `docs/manuscript_metric_reconciliation_20260313.md` for definitions.",
+        "",
     ]
     all_tex = [
         r"% THYROID 2026 Manuscript Tables",

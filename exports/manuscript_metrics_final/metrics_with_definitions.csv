@@ -1,0 +1,12 @@
+metric_name,canonical_value,numerator,denominator,denominator_population_label,source_table,manuscript_safe_label,alternate_definition_exists
+analysis_eligible_cancer_patients,4136,4136,10871,all_resolved_patients,patient_analysis_resolved_v1,"4,136 patients met analysis eligibility criteria (confirmed thyroid malignancy with complete staging)",N
+braf_positive_count,376,376,10025,molecular_tested_patients,extracted_braf_recovery_v1,"BRAF mutations were identified in 376 of 10,025 molecularly tested patients (3.8%)",Y
+complication_any_confirmed,287,287,10871,full_surgical_cohort,patient_refined_complication_flags_v2,Post-operative complications were confirmed in 287 patients (2.6%),N
+molecular_tested_denominator,10025,10025,10871,full_surgical_cohort,extracted_molecular_panel_v1,"Molecular testing was performed in 10,025 patients (92.2% of surgical cohort)",Y
+rai_treated_strict,35,35,10871,full_surgical_cohort,extracted_rai_validated_v1,35 patients received confirmed RAI therapy (dose-verified),Y
+ras_positive_count,292,292,10025,molecular_tested_patients,extracted_ras_patient_summary_v1,"RAS mutations were identified in 292 of 10,025 molecularly tested patients (2.9%)",N
+recurrence_count_any,1986,1986,10871,full_surgical_cohort,extracted_recurrence_refined_v1,"1,986 patients (18.3%) experienced recurrence (structural or biochemical) among 10,871 surgical patients",Y
+recurrence_count_structural,1818,1818,10871,full_surgical_cohort,extracted_recurrence_refined_v1,"1,818 patients experienced structural recurrence",N
+rln_injury_confirmed,59,59,10871,full_surgical_cohort,extracted_rln_injury_refined_v2,Confirmed RLN injury occurred in 59 patients (0.54%),Y
+tirads_coverage,3474,3474,10871,full_surgical_cohort,extracted_tirads_validated_v1,"Pre-operative TIRADS data was available for 3,474 patients (32.0%)",N
+total_surgical_patients,10871,10871,10871,full_surgical_cohort,path_synoptics,"10,871 patients underwent thyroid surgery",N

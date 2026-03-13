@@ -81,6 +81,8 @@ Anaplastic carcinoma | 1 | 0.0% |  |  |  |  |  |  |
 | LN positive |  | 2293 |  | 3.0 | 6.0 | 0.0 | [0.0–3.0] | 1843.0 | 44.6% |
 | LN examined |  | 3950 |  | 6.7 | 13.9 | 1.0 | [0.0–5.0] | 186.0 | 4.5% |
 | MACIS score |  | 4078 |  | 34.2 | 15.7 | 37.5 | [14.3–45.9] | 58.0 | 1.4% |
-| RAI received | Yes | 35 | 0.8% |  |  |  |  |  |  |
+| RAI received (dose-verified) | Yes | 35 | 0.8% of 4,136 eligible |  |  |  |  |  |  |
 
-*MACIS score calculable only for patients with age, tumor size, resection completeness, and metastasis data.*  
+*MACIS score calculable only for patients with age, tumor size, resection completeness, and metastasis data.*
+*RAI rate of 0.8% uses the analysis-eligible cancer denominator (N = 4,136). Among the full surgical cohort (N = 10,871), the RAI rate is 0.3%. Source: `extracted_rai_validated_v1` where `rai_validation_tier = 'confirmed_with_dose'`.*
+*All denominators follow `manuscript_metrics_v2` canonical definitions.*

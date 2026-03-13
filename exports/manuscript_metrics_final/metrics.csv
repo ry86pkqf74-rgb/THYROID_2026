@@ -1,0 +1,12 @@
+metric_name,canonical_value,numerator,denominator,denominator_population_label
+analysis_eligible_cancer_patients,4136,4136,10871,all_resolved_patients
+braf_positive_count,376,376,10025,molecular_tested_patients
+complication_any_confirmed,287,287,10871,full_surgical_cohort
+molecular_tested_denominator,10025,10025,10871,full_surgical_cohort
+rai_treated_strict,35,35,10871,full_surgical_cohort
+ras_positive_count,292,292,10025,molecular_tested_patients
+recurrence_count_any,1986,1986,10871,full_surgical_cohort
+recurrence_count_structural,1818,1818,10871,full_surgical_cohort
+rln_injury_confirmed,59,59,10871,full_surgical_cohort
+tirads_coverage,3474,3474,10871,full_surgical_cohort
+total_surgical_patients,10871,10871,10871,full_surgical_cohort

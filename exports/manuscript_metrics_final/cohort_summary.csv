@@ -1,0 +1,4 @@
+cohort_label,n_patients,n_eligible,n_molecular,n_recurrence_any,n_recurrence_structural,n_rai_strict,n_tirads,n_rln_confirmed,n_complication
+benign_or_other,6734,0.0,6170.0,27.0,0.0,0.0,1897.0,25.0,129.0
+cancer_eligible,4136,4136.0,3853.0,1959.0,54.0,35.0,1577.0,34.0,158.0
+cancer_not_eligible,1,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0
