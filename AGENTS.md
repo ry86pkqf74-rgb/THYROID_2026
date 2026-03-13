@@ -587,3 +587,12 @@
 - Script 26 MATERIALIZATION_MAP is now at 123+ entries (Phase 12) + Phase 13 tables; val_* tables = 16
 - `information_schema.columns` on MotherDuck: always filter with `WHERE table_schema = 'main'` AND `DISTINCT column_name` — table returns duplicate rows per column otherwise
 - Deployment order updated: script 15 → ... → Phase 12 v10 → Phase 13 v11 (FINAL) → script 46 (provenance)
+- NLP molecular FP audit methodology: (1) identify NLP-only patients (source = nlp_entities_genetics) with zero structured confirmation, (2) join to clinical_notes_long and check surrounding note text for explicit positive qualifier, (3) quantify confirmed_positive vs confirmed_negative vs ambiguous_mention_only — expect all three categories
+- BRAF positive qualifier regexp (DuckDB): `regexp_matches(LOWER(note_text), 'braf.{0,30}(positive|pos\\b|detected|mutation\\s+(identified|detected|present)|v600e)')` AND NOT `regexp_matches(LOWER(note_text), 'braf.{0,15}(negative|neg\\b|not\\s+detected|wild.?type)')`
+- RAS positive qualifier: same pattern with gene-specific prefix (e.g., `nras.{0,30}(positive|detected|mutation)`); use `LOWER(e.raw_gene)` as the gene prefix in DuckDB SQL
+- NLP entity source label renamed: `nlp_entities_genetics` → `nlp_entities_confirmed` in rebuilt tables to signal that confirmation step was applied; old label in backup tables
+- Safe table migration pattern: `CREATE TABLE x_backup AS SELECT * FROM x` before `DROP TABLE IF EXISTS x; CREATE TABLE x AS ...` — always backup before rebuilding in production
+- BRAF/RAS false-positive breakdown confirmed: NLP-only BRAF: 34 confirmed negatives + 68 ambiguous + 11 conflicting = 113 FP; NLP-only RAS: 9 confirmed negatives + 129 ambiguous = 138 potential FP (27 net after filtering)
+- Detection method label updated to `NLP_entity_confirmed` (was `NLP_entity`) in `extraction_audit_engine_v9.py` `parse_entity()` method and SQL CTEs; requires `note_text` argument to trigger positivity check
+- Script 26 `--md` mode requires `MOTHERDUCK_TOKEN` env var; export via `MOTHERDUCK_TOKEN=$(.venv/bin/python -c "import toml; print(toml.load('.streamlit/secrets.toml')['MOTHERDUCK_TOKEN'])")` prefix
+- Zenodo/Streamlit sync: Zenodo archive rebuild = `scripts/32_zenodo_archive_prep.py`; MotherDuck sync = `scripts/26_motherduck_materialize_v2.py --md` with token; Streamlit auto-reads MotherDuck — no additional deployment step needed after materialization
