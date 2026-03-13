@@ -1,0 +1,14 @@
+{
+  "timestamp": "20260313_1114",
+  "target": "md",
+  "E": {
+    "before": {
+      "row_count": 10871
+    },
+    "after": {
+      "recurrence_date_best": 0.5,
+      "recurrence_date_status": 100.0,
+      "recurrence_date_confidence": 18.27
+    }
+  }
+}

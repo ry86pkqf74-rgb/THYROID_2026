@@ -1,0 +1,7 @@
+{
+  "timestamp": "20260313_1113",
+  "target": "md",
+  "D": {
+    "error": "Binder Error: Referenced column \"tumor_episode_id\" not found in FROM clause!\nCandidate bindings: \"tumor_ordinal\", \"surgery_episode_id\", \"path_surgery_id\", \"path_size_cm\", \"path_surgery_id_1\"\n\nLINE 6:     SELECT research_id, surgery_episode_id, tumor_episode_id, linkage_score,\n                                                    ^"
+  }
+}

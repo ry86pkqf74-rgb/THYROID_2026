@@ -1,0 +1,24 @@
+{
+  "timestamp": "20260313_1111",
+  "target": "md",
+  "A": {
+    "before": {
+      "row_count": 9371,
+      "parathyroid_identified_count": 0.0,
+      "parathyroid_resection_flag": 100.0,
+      "frozen_section_flag": 0.0,
+      "berry_ligament_flag": 0.0,
+      "ebl_ml_nlp": 0.0,
+      "op_enrichment_source": 0.0
+    },
+    "after": {
+      "parathyroid_identified_count": 0.0,
+      "parathyroid_resection_flag": 100.0,
+      "frozen_section_flag": 0.0,
+      "berry_ligament_flag": 0.0,
+      "ebl_ml_nlp": 0.0,
+      "op_enrichment_source": 0.0,
+      "row_count": 9371
+    }
+  }
+}

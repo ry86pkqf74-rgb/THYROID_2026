@@ -1,0 +1,7 @@
+{
+  "timestamp": "20260313_1112",
+  "target": "md",
+  "B": {
+    "error": "Binder Error: Table \"d\" does not have a column named \"extraction_method\"\n\nCandidate bindings: : \"rai_date\"\n\nLINE 10:         d.extraction_method,\n                 ^"
+  }
+}
