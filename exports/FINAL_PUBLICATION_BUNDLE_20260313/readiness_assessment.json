@@ -1,0 +1,121 @@
+{
+  "timestamp": "2026-03-13T03:21:55.075786",
+  "pipeline_phase": "final_pre_analysis",
+  "gates": {
+    "G1_patient_duplicates": {
+      "value": 0,
+      "threshold": 0,
+      "status": "PASS"
+    },
+    "G2_episode_duplicates": {
+      "value": 0,
+      "threshold": 10,
+      "status": "PASS",
+      "original_value": 146,
+      "dedup_table": "episode_analysis_resolved_v1_dedup"
+    },
+    "G3_scoring_calculability": {
+      "ajcc8_pct": 37.6,
+      "macis_pct": 37.5,
+      "ames_pct": 100.0,
+      "ages_pct": 100.0,
+      "threshold": 20.0,
+      "status": "PASS"
+    },
+    "G4_complication_entities": {
+      "value": 7,
+      "threshold": 3,
+      "status": "PASS"
+    },
+    "G5_supporting_tables": {
+      "tables": {
+        "patient_analysis_resolved_v1": 10871,
+        "episode_analysis_resolved_v1_dedup": 9368,
+        "lesion_analysis_resolved_v1": 11851,
+        "longitudinal_lab_clean_v1": 38699,
+        "recurrence_event_clean_v1": 1946,
+        "manuscript_cohort_v1": 10871,
+        "manuscript_cohort_flow_v1": 8,
+        "episode_duplicate_profile_v1": 146,
+        "episode_duplicate_review_v1": 207,
+        "analysis_cancer_cohort_v1": 4136,
+        "analysis_tirads_subset_v1": 3474,
+        "analysis_molecular_subset_v1": 10025,
+        "analysis_recurrence_subset_v1": 1946,
+        "complication_patient_summary_v1": 2892,
+        "thyroid_scoring_py_v1": 10871
+      },
+      "status": "PASS"
+    },
+    "G6_data_quality": {
+      "null_research_ids": 0,
+      "status": "PASS"
+    },
+    "G7_sap_exists": {
+      "status": "PASS"
+    }
+  },
+  "tables_created": [
+    "episode_duplicate_profile_v1",
+    "episode_analysis_resolved_v1_dedup",
+    "episode_duplicate_review_v1",
+    "manuscript_cohort_v1",
+    "manuscript_cohort_flow_v1",
+    "analysis_cancer_cohort_v1",
+    "analysis_tirads_subset_v1",
+    "analysis_molecular_subset_v1",
+    "analysis_recurrence_subset_v1",
+    "md_episode_analysis_resolved_v1_dedup",
+    "md_episode_duplicate_profile_v1",
+    "md_episode_duplicate_review_v1",
+    "md_analysis_cancer_cohort_v1",
+    "md_analysis_recurrence_subset_v1",
+    "md_analysis_tirads_subset_v1",
+    "md_analysis_molecular_subset_v1"
+  ],
+  "analysis_outputs": [
+    "all_tables.md",
+    "all_tables.tex",
+    "cohort_flow.csv",
+    "cohort_flow.md",
+    "cohort_flow.tex",
+    "cox_ph.md",
+    "cox_ph.tex",
+    "cox_ph_results.csv",
+    "fig1_cohort_flow.png",
+    "fig1_cohort_flow.svg",
+    "fig2_km_ajcc8.png",
+    "fig2_km_ajcc8.svg",
+    "fig3_stage_risk_distribution.png",
+    "fig3_stage_risk_distribution.svg",
+    "fig4_mutation_spectrum.png",
+    "fig4_mutation_spectrum.svg",
+    "fig5_complication_rates.png",
+    "fig5_complication_rates.svg",
+    "km_curve_data.csv",
+    "km_summary.csv",
+    "logistic_models.md",
+    "logistic_models.tex",
+    "primary_logistic_models.csv",
+    "supplementary_missingness.csv",
+    "supplementary_missingness.md",
+    "supplementary_missingness.tex",
+    "table1_demographics.csv",
+    "table1_demographics.md",
+    "table1_demographics.tex",
+    "table2_tumor_treatment.csv",
+    "table2_tumor_treatment.md",
+    "table2_tumor_treatment.tex",
+    "table3_outcomes.csv",
+    "table3_outcomes.md",
+    "table3_outcomes.tex"
+  ],
+  "overall_status": "READY",
+  "episode_dupes_before": 146,
+  "episode_dupes_after": 0,
+  "views_created": [
+    "analysis_patient_v1",
+    "analysis_episode_v1",
+    "analysis_lesion_v1"
+  ]
+}

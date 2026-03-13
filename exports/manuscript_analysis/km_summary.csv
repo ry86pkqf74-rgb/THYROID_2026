@@ -1,0 +1,12 @@
+Stratifier,Group,N,Events,Median_followup_years
+AJCC8 Stage,I/II,2771,586,8.4
+AJCC8 Stage,III/IV,381,373,3.6
+ATA Risk,high,1257,761,4.8
+ATA Risk,intermediate,1178,0,11.3
+ATA Risk,low,91,0,8.0
+Procedure,hemithyroidectomy,990,309,6.6
+Procedure,other,117,14,14.1
+Procedure,total_thyroidectomy,2086,642,7.5
+Procedure,unknown,8,0,20.6
+BRAF,BRAF+,166,93,5.0
+BRAF,BRAF-,3035,872,7.6

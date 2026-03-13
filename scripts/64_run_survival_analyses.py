@@ -228,7 +228,7 @@ def build_km_summary(surv: pd.DataFrame) -> pd.DataFrame:
             mask = sub[col] == g
             n = int(mask.sum())
             events = int(sub.loc[mask, "event"].sum())
-            med_fu = surv.loc[mask, "time_years"].median()
+            med_fu = sub.loc[mask, "time_years"].median()
             rows.append({
                 "Stratifier": name, "Group": str(g),
                 "N": n, "Events": events,

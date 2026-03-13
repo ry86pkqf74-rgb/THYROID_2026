@@ -1,0 +1,26 @@
+## Supplementary Table: Variable Missingness
+
+| Variable | Present_n | Missing_n | Missing_pct | Note |
+| --- | --- | --- | --- | --- |
+| path_histology_raw | 4137 | 6734 | 61.9% |  |
+| path_tumor_size_cm | 4130 | 6741 | 62.0% |  |
+| ajcc8_t_stage | 4083 | 6788 | 62.4% |  |
+| ajcc8_stage_group | 4083 | 6788 | 62.4% |  |
+| ata_risk_category | 3144 | 7727 | 71.1% |  |
+| macis_score | 4082 | 6789 | 62.5% |  |
+| imaging_tirads_best | 3474 | 7397 | 68.0% |  |
+| any_recurrence_flag | 10871 | 0 | 0.0% |  |
+| structural_recurrence_flag | 1946 | 8925 | 82.1% |  |
+| biochemical_recurrence_flag | 1946 | 8925 | 82.1% |  |
+| recurrence_date | 182 | 10689 | 98.3% |  |
+| surg_procedure_type | 8733 | 2138 | 19.7% |  |
+| rai_received_flag | 10871 | 0 | 0.0% |  |
+| hypocalcemia_status | 10871 | 0 | 0.0% |  |
+| rln_status | 10871 | 0 | 0.0% |  |
+| tg_nadir | 2559 | 8312 | 76.5% |  |
+| tg_last_value | 2535 | 8336 | 76.7% |  |
+| path_ln_positive_raw | 3603 | 7268 | 66.9% |  |
+| path_ln_examined_raw | 7730 | 3141 | 28.9% |  |
+| molecular_eligible_flag | 10025 | 846 | 7.8% |  |
+| surgery_date | 8731 | 2140 | 19.7% |  |
+| ata_response_category | 35 | 10836 | 99.7% |  |

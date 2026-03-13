@@ -1,69 +1,62 @@
 {
-  "bundle_name": "FINAL_PUBLICATION_BUNDLE",
-  "created_at": "20260312_2239",
-  "phase": 13,
-  "description": "Final publication-ready data export after all 13 refinement phases",
-  "master_table": "patient_refined_master_clinical_v12",
-  "total_patients": 12886,
-  "total_columns": 136,
-  "data_quality_score": "98/100",
-  "tables": {
-    "master_clinical_v12": {
-      "rows": 12886,
-      "columns": 272,
-      "csv": "master_clinical_v12.csv",
-      "parquet": "master_clinical_v12.parquet"
+  "script": "final_pre_analysis_pipeline",
+  "timestamp": "20260313_0318",
+  "git_sha": "e1e8897",
+  "resolved_layer_version": "v1",
+  "total_patients": 10871,
+  "flow_steps": [
+    {
+      "step": "total",
+      "n": 10871,
+      "excluded": 0,
+      "reason": ""
     },
-    "vascular_grading_v13": {
-      "rows": 3846,
-      "columns": 9,
-      "csv": "vascular_grading_v13.csv",
-      "parquet": "vascular_grading_v13.parquet"
+    {
+      "step": "analysis_eligible",
+      "n": 4136,
+      "excluded": 6735,
+      "reason": "Not analysis-eligible"
     },
-    "ihc_braf_v13": {
-      "rows": 2,
-      "columns": 5,
-      "csv": "ihc_braf_v13.csv",
-      "parquet": "ihc_braf_v13.parquet"
+    {
+      "step": "cancer_histology",
+      "n": 4137,
+      "excluded": -1,
+      "reason": ""
     },
-    "ras_resolved_v13": {
-      "rows": 34,
-      "columns": 6,
-      "csv": "ras_resolved_v13.csv",
-      "parquet": "ras_resolved_v13.parquet"
+    {
+      "step": "molecular_tested",
+      "n": 10025,
+      "excluded": -5888,
+      "reason": ""
     },
-    "vw_vascular_invasion_grade": {
-      "rows": 10,
-      "columns": 6,
-      "csv": "vw_vascular_invasion_grade.csv",
-      "parquet": "vw_vascular_invasion_grade.parquet"
+    {
+      "step": "rai_treated",
+      "n": 35,
+      "excluded": 9990,
+      "reason": "No RAI"
     },
-    "vw_molecular_ihc_braf": {
-      "rows": 2,
-      "columns": 4,
-      "csv": "vw_molecular_ihc_braf.csv",
-      "parquet": "vw_molecular_ihc_braf.parquet"
+    {
+      "step": "tg_available",
+      "n": 2559,
+      "excluded": -2524,
+      "reason": ""
     },
-    "vw_ras_subtypes": {
-      "rows": 7,
-      "columns": 6,
-      "csv": "vw_ras_subtypes.csv",
-      "parquet": "vw_ras_subtypes.parquet"
+    {
+      "step": "tirads_available",
+      "n": 3474,
+      "excluded": -915,
+      "reason": ""
     },
-    "val_phase13_final_gaps": {
-      "rows": 4,
-      "columns": 4,
-      "csv": "val_phase13_final_gaps.csv",
-      "parquet": "val_phase13_final_gaps.parquet"
+    {
+      "step": "survival_eligible",
+      "n": 10870,
+      "excluded": -7396,
+      "reason": ""
     }
-  },
-  "mutation_fix_applied": true,
-  "mutation_fix_date": "2026-03-12T22:48:04.315975",
-  "corrected_counts": {
-    "braf_positive": 546,
-    "ras_positive": 337,
-    "tert_positive": 108,
-    "braf_false_positives_removed": 113,
-    "ras_false_positives_removed": 27
-  }
+  ],
+  "columns": 139,
+  "target": "MotherDuck",
+  "dedup_episode_table": "episode_analysis_resolved_v1_dedup",
+  "episode_dupes_resolved": 146,
+  "bundle_dir": "exports/FINAL_PUBLICATION_BUNDLE_20260313"
 }

@@ -250,8 +250,12 @@ def figure_stage_distribution(df: pd.DataFrame | None):
     if "ajcc8_stage_group" in (df.columns if not isinstance(df, pd.DataFrame) else []):
         pass
 
-    stage_data = df[df.get("Variable", pd.Series(dtype=str)).astype(str).str.contains("AJCC", case=False, na=False)]
-    ata_data = df[df.get("Variable", pd.Series(dtype=str)).astype(str).str.contains("ATA", case=False, na=False)]
+    if "Variable" in df.columns:
+        stage_data = df[df["Variable"].astype(str).str.contains("AJCC", case=False, na=False)]
+        ata_data = df[df["Variable"].astype(str).str.contains("ATA", case=False, na=False)]
+    else:
+        stage_data = pd.DataFrame()
+        ata_data = pd.DataFrame()
 
     if len(stage_data) > 0 and "Category" in stage_data.columns:
         cats = stage_data["Category"].values

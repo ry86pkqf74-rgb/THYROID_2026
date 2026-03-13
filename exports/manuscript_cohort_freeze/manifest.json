@@ -1,0 +1,62 @@
+{
+  "script": "final_pre_analysis_pipeline",
+  "timestamp": "20260313_0318",
+  "git_sha": "e1e8897",
+  "resolved_layer_version": "v1",
+  "total_patients": 10871,
+  "flow_steps": [
+    {
+      "step": "total",
+      "n": 10871,
+      "excluded": 0,
+      "reason": ""
+    },
+    {
+      "step": "analysis_eligible",
+      "n": 4136,
+      "excluded": 6735,
+      "reason": "Not analysis-eligible"
+    },
+    {
+      "step": "cancer_histology",
+      "n": 4137,
+      "excluded": -1,
+      "reason": ""
+    },
+    {
+      "step": "molecular_tested",
+      "n": 10025,
+      "excluded": -5888,
+      "reason": ""
+    },
+    {
+      "step": "rai_treated",
+      "n": 35,
+      "excluded": 9990,
+      "reason": "No RAI"
+    },
+    {
+      "step": "tg_available",
+      "n": 2559,
+      "excluded": -2524,
+      "reason": ""
+    },
+    {
+      "step": "tirads_available",
+      "n": 3474,
+      "excluded": -915,
+      "reason": ""
+    },
+    {
+      "step": "survival_eligible",
+      "n": 10870,
+      "excluded": -7396,
+      "reason": ""
+    }
+  ],
+  "columns": 139,
+  "target": "MotherDuck",
+  "dedup_episode_table": "episode_analysis_resolved_v1_dedup",
+  "episode_dupes_resolved": 146,
+  "bundle_dir": "exports/FINAL_PUBLICATION_BUNDLE_20260313"
+}
