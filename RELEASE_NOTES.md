@@ -1,6 +1,44 @@
 # THYROID_2026 Release Notes
 
-## v2026.03.13-post-hardening-cleanup (Latest)
+## v2026.03.13-final-manuscript-readiness (Latest)
+**Date:** 2026-03-13
+
+### Final Manuscript-Readiness Hardening Pass
+
+10-workstream audit and fix pass converting the repo to the strongest truthfully
+supportable state for manuscript writing.
+
+#### Fixes Applied
+- Ran script 71 operative NLP enrichment (13,186 entities extracted; zero delta due to COALESCE guards — documented as pipeline architecture gap)
+- Created 3 missing Streamlit tables: `streamlit_patient_conflicts_v` (1,015 rows), `streamlit_patient_manual_review_v` (7,552 rows), `adjudication_progress_summary_v` (0 rows)
+- Ran ANALYZE on 17 manuscript-critical MotherDuck tables
+- Updated CITATION.cff version to 2026.03.13 with license clarification
+- Updated README with honest assessment of limitations
+
+#### Documentation Produced
+- `docs/FINAL_MANUSCRIPT_READINESS_VERDICT_20260313.md` — go/no-go verdict (B: Ready with scoped caveats)
+- `docs/final_manuscript_readiness_dependency_map_20260313.md` — full pipeline dependency map
+- `docs/final_provenance_date_hardening_audit_20260313.md` — provenance coverage matrix
+- `docs/operative_v2_materialization_repair_20260313.md` — operative NLP root cause
+- `docs/imaging_nodule_master_repair_20260313.md` — imaging status (fully populated)
+- `docs/rai_recurrence_propagation_repair_20260313.md` — RAI/recurrence propagation
+- `docs/final_notes_coverage_truth_audit_20260313.md` — honest note coverage assessment
+- `docs/streamlit_wiring_and_deployment_verification_20260313.md` — dashboard verification
+- `docs/final_repo_truth_sync_20260313.md` — version/claim synchronization
+- `docs/final_validation_and_optimization_20260313.md` — validation results
+
+#### Key Metrics Verified
+- 578 MotherDuck tables (578 distinct in main schema)
+- 0 patient-level duplicates in manuscript_cohort_v1 and patient_analysis_resolved_v1
+- AJCC8 37.6%, ATA 28.9%, MACIS 37.5%, AGES 100%, AMES 100% calculability
+- All Streamlit tabs verified against live MotherDuck tables
+- 17 tables ANALYZE'd for query optimization
+
+#### Verdict: READY FOR MANUSCRIPT WRITING WITH DOCUMENTED CAVEATS
+
+---
+
+## v2026.03.13-post-hardening-cleanup
 **Date:** 2026-03-13
 
 ### Post-Hardening Cleanup

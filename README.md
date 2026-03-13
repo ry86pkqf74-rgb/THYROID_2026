@@ -2,14 +2,19 @@
 
 ## Dataset Maturation Layer (v2026.03.13)
 
-**Status:** Manuscript-ready | Approaching dataset-mature | Extraction pipeline complete
+**Status:** Manuscript-ready (with scoped caveats) | Extraction pipeline complete | 578 MotherDuck tables
 
-A full engineering-grade verification pass on 2026-03-13 audited 531 MotherDuck
-tables, 34 `val_*` validation tables, and 18 prior audit documents. The
+A final manuscript-readiness hardening pass on 2026-03-13 audited 578 MotherDuck
+tables, 16 `val_*` validation tables, and all prior audit documents. The
 **analysis-resolved layer** is populated and all 7 readiness gates pass. The
-extraction pipeline is complete (13 phases, 11 engine versions, data quality
-98/100). A subsequent **dataset maturation pass** (`scripts/75_dataset_maturation.py`)
-resolved the remaining canonical-table propagation gaps.
+extraction pipeline is complete (13 phases, 11 engine versions). A subsequent
+**hardening pass** fixed 3 missing Streamlit tables, ran ANALYZE on 17 key tables,
+and verified all dashboard data dependencies against live MotherDuck state.
+
+**Honest assessment:** ~50% of patients have clinical notes; operative NLP enrichment
+fields (berry ligament, frozen section, EBL) remain at 0% due to pipeline architecture;
+88.8% of recurrence dates are unresolved; RAI dose coverage is 41%. These are
+documented source limitations, not data quality failures.
 
 ### Key references
 

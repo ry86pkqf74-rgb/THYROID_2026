@@ -8,8 +8,9 @@ authors:
     affiliation: "Emory University"
 repository-code: "https://github.com/ry86pkqf74-rgb/THYROID_2026"
 license: "MIT"
-date-released: "2026-03-10"
-version: "2026.03.10"
+license-note: "Code is MIT-licensed; underlying research data are proprietary and not redistributable."
+date-released: "2026-03-13"
+version: "2026.03.13"
 doi: "10.5281/zenodo.18945510"
 abstract: >-
   A comprehensive thyroid cancer research lakehouse covering 11,673 patients
