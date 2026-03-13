@@ -202,6 +202,9 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_vw_ras_subtypes", "vw_ras_subtypes"),
     ("md_val_phase13_final_gaps", "val_phase13_final_gaps"),
     ("md_patient_refined_master_clinical_v12", "patient_refined_master_clinical_v12"),
+    # ── Demographics Harmonization (cross-file validation 11.5) ──
+    ("md_demographics_harmonized_v2", "demographics_harmonized_v2"),
+    ("md_qa_missing_demographics", "qa_missing_demographics"),
 ]
 
 SURVIVAL_COHORT_ENRICHED_SQL = """
