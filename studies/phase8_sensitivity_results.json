@@ -1,0 +1,54 @@
+{
+  "h1_recurrence": {
+    "cln_recur": 226,
+    "cln_total": 967,
+    "no_cln_recur": 477,
+    "no_cln_total": 3655,
+    "OR": 2.032,
+    "CI_low": 1.702,
+    "CI_high": 2.426,
+    "p_value": 0.0,
+    "chi2": 62.36
+  },
+  "h2_goiter": {
+    "total": 6075,
+    "substernal_n": 275,
+    "cervical_n": 5800,
+    "substernal_recurrence_rate": 4.7,
+    "cervical_recurrence_rate": 14.4,
+    "race_distribution": {
+      "Other": "2702",
+      "White": "2500",
+      "Black": "680",
+      "Asian": "193"
+    },
+    "followup_by_race": {
+      "Asian": 40.0,
+      "Black": 38.8,
+      "Other": 28.9,
+      "White": 31.9
+    }
+  },
+  "survival_sensitivity": {
+    "no_recurrence": {
+      "n": 8885,
+      "events": 0,
+      "rate_pct": 0.0
+    },
+    "structural_date_unknown": {
+      "n": 1764,
+      "events": 1764,
+      "rate_pct": 100.0
+    },
+    "biochemical_only": {
+      "n": 168,
+      "events": 168,
+      "rate_pct": 100.0
+    },
+    "structural_confirmed": {
+      "n": 54,
+      "events": 54,
+      "rate_pct": 100.0
+    }
+  }
+}

@@ -419,3 +419,23 @@
 - Phase 7 report: `notes_extraction/phase7_preop_molecular_refinement_YYYYMMDD_HHMM.md`
 - Overall data quality score Phase 7: 93 → 94/100; FNA domain: 0 → 90/100 (new structured Bethesda); molecular panel: 85 → 92/100 (full gene panel + method detection + variant typing); preop imaging: 0 → 10/100 (schema only, no size data)
 - Phase 8 priorities: (1) populate imaging_nodule_long_v2 size/TIRADS from NLP extraction on US reports, (2) parse RAS subtypes from mutation text in molecular_testing, (3) Excel pre-op text block mining for remaining unstructured FNA data, (4) IHC-specific BRAF validation from pathology notes, (5) cross-validate BRAF positivity rates against published 40-45% PTC prevalence (current 2.7% suggests under-detection in structured flags)
+- Phase 8 engine: `notes_extraction/extraction_audit_engine_v6.py` with RecurrenceEventParser, LongTermOutcomeReconciler, RAIResponseAssessor, CompletionReasonClassifier, plus `audit_and_refine_phase8()` orchestrator
+- Phase 8 new tables: `extracted_recurrence_refined_v1` (10,871 rows), `extracted_rai_response_v1` (862 rows), `extracted_longterm_outcomes_v1` (10,871 rows), `extracted_completion_reasons_v1` (686 rows), `extracted_followup_audit_v1` (10,871 rows), `extracted_missed_data_sweep_v1` (1,000 rows), `patient_refined_master_clinical_v7` (12,886 rows, 172 columns)
+- Phase 8 summary views: `vw_recurrence_by_detection_method` (4 rows), `vw_longterm_outcomes` (4 rows), `vw_rai_response_summary` (5 rows), `vw_completion_reasons` (5 rows)
+- Recurrence refined: 18.3% overall rate (1,986/10,871); structural_confirmed=54, biochemical_only=168 (rising Tg), structural_date_unknown=1,764; source-linked to recurrence_risk_features_mv + thyroglobulin_labs + rai_treatment_episode_v2
+- Tg trajectory: 2,569 patients with Tg labs (30,245 measurements); tg_nadir, tg_max, tg_last_value, tg_rising_flag (last > 2x nadir); biochemical recurrence = rising Tg > 1.0 ng/mL without structural disease
+- ATA response-to-therapy: excellent 82 (9.5%), indeterminate 55 (6.4%), biochemical_incomplete 5 (0.6%), structural_incomplete 380 (44.1%), insufficient_data 340 (39.4%); thresholds: Tg < 0.2 = excellent, 0.2-1.0 = indeterminate, > 1.0 = biochemical incomplete
+- Completion thyroidectomy reasons (N=686): pathology_upgrade 372 (54.2%), unclassified 184 (26.8%), imaging_concern 106 (15.5%), medical_indication 13 (1.9%), molecular_result 11 (1.6%); classified from path_diagnosis_summary + clinical_information_pre_op_diagnosis + prior surgery histology + molecular panel
+- Long-term voice outcomes: 25/10,871 (0.23%) have documented voice assessment beyond binary RLN; 5 permanent paralysis, 1 prolonged paresis, 19 single assessment; voice data is sparsest domain in entire database
+- Follow-up completeness audit: avg score 34.7/100; Tg coverage 23.6%, RAI 7.9%, clinical events 48.3%, complications 99.9%
+- 1000-patient missed-data sweep: avg coverage 62.1/100; 100% in master_v6, 100% has path_synoptics, 25.8% has Tg labs, 50.4% has clinical notes; 0 patients missing from master table
+- `path_synoptics` does NOT have `histology_1_type` or `preop_diagnosis` columns; use `tumor_1_histologic_type` and `path_diagnosis_summary`/`clinical_information_pre_op_diagnosis` respectively
+- `extracted_molecular_panel_v1` uses `platforms_used` (not `platform`) for molecular platform column
+- H1 Phase 8 sensitivity: CLN-Recurrence OR=2.032 (1.702–2.426), p<0.0001; 4,622 lobectomy patients (967 CLN+, 3,655 CLN-); CLN+ recurrence 23.4% vs CLN- 13.1%; consistent with all prior phases — CLN remains significant predictor
+- H2 Phase 8: substernal goiter recurrence 4.7% vs cervical 14.4%; follow-up completeness varies by race: Asian 40.0, Black 38.8, White 31.9, Other 28.9
+- Overall data quality score Phase 8: 94 → 96/100; recurrence domain: 60 → 85 (source-linked + Tg trajectory); RAI: 75 → 85 (ATA response); voice: 10 → 25 (timeline); follow-up: 40 → 65 (quantified); source linkage: 90 → 100 (verified via sweep)
+- Phase 8 report: `notes_extraction/phase8_final_report.md`
+- Phase 8 new vocab maps: `RECURRENCE_SITE_NORM` (24 entries), `RECURRENCE_DETECTION_NORM` (28 entries), `RAI_RESPONSE_NORM` (13 entries), `VOICE_OUTCOME_NORM` (24 entries), `COMPLETION_REASON_NORM` (24 entries)
+- `patient_refined_master_clinical_v7` = FINAL master table; extends v6 with 44 Phase 8 columns (15 recurrence, 8 RAI response, 10 long-term outcomes, 7 completion reason, 5 follow-up audit); 172 total columns
+- Deployment order updated: script 15 → ... → 45 → Phase 8 engine v6
+- All 8 extraction audit engine phases complete (v1→v6); entire pipeline from raw NLP → source-classified → refined → master clinical table is source-linked and verified

@@ -1,0 +1,93 @@
+{
+  "recurrence_refined": {
+    "table": "extracted_recurrence_refined_v1",
+    "rows": 10871,
+    "status": "ok",
+    "total_patients": 10871,
+    "with_recurrence": 1986,
+    "recurrence_rate_pct": 18.27,
+    "structural_confirmed": 54,
+    "biochemical_only": 168,
+    "tg_rising": 1514,
+    "avg_tg_measurements": 11.8,
+    "avg_confidence": 0.569,
+    "with_site_inferred": 0,
+    "total_source_links": 5246
+  },
+  "rai_response": {
+    "table": "extracted_rai_response_v1",
+    "rows": 862,
+    "status": "ok",
+    "total_rai_patients": 862,
+    "excellent": 82,
+    "indeterminate": 55,
+    "biochemical_incomplete": 5,
+    "structural_incomplete": 380,
+    "insufficient_data": 340,
+    "avg_confidence": 0.56
+  },
+  "longterm_outcomes": {
+    "table": "extracted_longterm_outcomes_v1",
+    "rows": 10871,
+    "status": "ok",
+    "total_patients": 10871,
+    "with_voice_data": 25,
+    "voice_data_rate_pct": 0.23,
+    "permanent_paralysis": 5,
+    "prolonged_paresis": 1,
+    "complete_followup": 0,
+    "avg_confidence": 0.501
+  },
+  "completion_reasons": {
+    "error": "Binder Error: Table \"ps\" does not have a column named \"preop_diagnosis\"\n\nCandidate bindings: : \"path_diagnosis_summary\"\n\nLINE 8:         ps.preop_diagnosis,\n                ^",
+    "status": "failed"
+  },
+  "followup_audit": {
+    "table": "extracted_followup_audit_v1",
+    "rows": 10871,
+    "status": "ok",
+    "total_patients": 10871,
+    "avg_completeness_score": 34.7,
+    "with_tg_labs": 2566,
+    "tg_coverage_pct": 23.6,
+    "with_rai": 862,
+    "with_events": 5248,
+    "with_complications": 10862
+  },
+  "missed_data_sweep": {
+    "table": "extracted_missed_data_sweep_v1",
+    "rows": 1000,
+    "status": "ok",
+    "sample_size": 1000,
+    "avg_coverage_score": 62.1,
+    "in_master_v6_pct": 100.0,
+    "has_path_synoptics_pct": 100.0,
+    "has_tg_labs_pct": 25.8,
+    "has_notes_pct": 50.4,
+    "missing_from_master": 0,
+    "missing_notes": 496
+  },
+  "vw_recurrence_by_detection": {
+    "table": "vw_recurrence_by_detection_method",
+    "rows": 4,
+    "status": "ok"
+  },
+  "vw_longterm_outcomes": {
+    "table": "vw_longterm_outcomes",
+    "rows": 4,
+    "status": "ok"
+  },
+  "vw_rai_response": {
+    "table": "vw_rai_response_summary",
+    "rows": 5,
+    "status": "ok"
+  },
+  "vw_completion_reasons": {
+    "error": "Catalog Error: Table with name extracted_completion_reasons_v1 does not exist!\nDid you mean \"extracted_complications_refined_v5\"?\n\nLINE 10: FROM extracted_completion_reasons_v1\n              ^",
+    "status": "failed"
+  },
+  "master_v7": {
+    "error": "Catalog Error: Table with name extracted_completion_reasons_v1 does not exist!\nDid you mean \"extracted_complications_refined_v5\"?\n\nLINE 62: LEFT JOIN extracted_completion_reasons_v1 cr ON v6.research_id = cr...\n                   ^",
+    "status": "failed"
+  }
+}
