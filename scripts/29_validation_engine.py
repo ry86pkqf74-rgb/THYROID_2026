@@ -76,11 +76,11 @@ WITH ps AS (
     SELECT
         CAST(research_id AS INTEGER) AS research_id,
         TRY_CAST(surg_date AS DATE) AS surg_date,
-        COALESCE(tumor_1_histologic_type, tumor_1_histology) AS ps_histology,
-        tumor_1_histologic_subtype AS ps_variant,
-        pathologic_stage_t AS ps_t_stage,
-        pathologic_stage_n AS ps_n_stage,
-        TRY_CAST(tumor_1_size_cm AS DOUBLE) AS ps_size_cm
+        tumor_1_histologic_type AS ps_histology,
+        tumor_1_variant AS ps_variant,
+        NULL AS ps_t_stage,
+        NULL AS ps_n_stage,
+        TRY_CAST(REPLACE(CAST(tumor_1_size_greatest_dimension_cm AS VARCHAR), ';', '') AS DOUBLE) AS ps_size_cm
     FROM path_synoptics
     WHERE research_id IS NOT NULL
 ),
@@ -91,7 +91,7 @@ tp AS (
         tumor_1_histology_variant AS tp_variant,
         histology_1_t_stage_ajcc8 AS tp_t_stage,
         histology_1_n_stage_ajcc8 AS tp_n_stage,
-        TRY_CAST(tumor_size_cm AS DOUBLE) AS tp_size_cm
+        TRY_CAST(tumor_1_size_cm AS DOUBLE) AS tp_size_cm
     FROM tumor_pathology
     WHERE research_id IS NOT NULL
 ),
@@ -568,16 +568,16 @@ WHERE o.procedure_normalized = 'unknown' AND ps.proc_norm IS NOT NULL
 
 UNION ALL
 
--- G. Imaging: TI-RADS missing but available in us_nodules_tirads
+-- G. Imaging: TI-RADS missing but available in extracted_tirads_validated_v1
 SELECT 'imaging', i.research_id, i.nodule_id,
-       'tirads_score', CAST(ut.tirads_total AS VARCHAR),
-       'us_nodules_tirads', 90
+       'tirads_score', CAST(tv.tirads_best_score AS VARCHAR),
+       'extracted_tirads_validated_v1', 90
 FROM imaging_nodule_long_v2 i
 LEFT JOIN (SELECT CAST(research_id AS INTEGER) AS research_id,
-                  TRY_CAST(tirads_total AS INTEGER) AS tirads_total
-           FROM us_nodules_tirads WHERE research_id IS NOT NULL) ut
-    ON i.research_id = ut.research_id
-WHERE i.tirads_score IS NULL AND ut.tirads_total IS NOT NULL AND i.modality = 'US'
+                  tirads_best_score
+           FROM extracted_tirads_validated_v1 WHERE research_id IS NOT NULL) tv
+    ON i.research_id = tv.research_id
+WHERE i.tirads_score IS NULL AND tv.tirads_best_score IS NOT NULL AND i.modality = 'US'
 
 UNION ALL
 
@@ -662,19 +662,19 @@ SELECT
     i.exam_date_native, f.fna_date_native,
     ABS(DATEDIFF('day', i.exam_date_native, f.fna_date_native)),
     CASE
-        WHEN i.laterality = f.laterality THEN TRUE
+        WHEN CAST(i.laterality AS VARCHAR) = CAST(f.laterality AS VARCHAR) THEN TRUE
         WHEN i.laterality IS NULL OR f.laterality IS NULL THEN NULL
         ELSE FALSE
     END,
     CASE
         WHEN ABS(DATEDIFF('day', i.exam_date_native, f.fna_date_native)) <= 7
-             AND COALESCE(i.laterality = f.laterality, TRUE) THEN 'high_confidence'
+             AND COALESCE(CAST(i.laterality AS VARCHAR) = CAST(f.laterality AS VARCHAR), TRUE) THEN 'high_confidence'
         WHEN ABS(DATEDIFF('day', i.exam_date_native, f.fna_date_native)) <= 30
              THEN 'plausible'
         ELSE 'weak'
     END,
-    i.modality || ' nodule near FNA (' || COALESCE(i.laterality, '?') || ' vs '
-        || COALESCE(f.laterality, '?') || ')'
+    i.modality || ' nodule near FNA (' || COALESCE(CAST(i.laterality AS VARCHAR), '?') || ' vs '
+        || COALESCE(CAST(f.laterality AS VARCHAR), '?') || ')'
 FROM imaging_nodule_long_v2 i
 JOIN fna_episode_master_v2 f ON i.research_id = f.research_id
 WHERE i.linked_fna_episode_id IS NULL

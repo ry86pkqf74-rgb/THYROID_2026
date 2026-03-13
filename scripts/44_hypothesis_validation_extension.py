@@ -568,10 +568,22 @@ def step2_statistical_confirmation(h1, h2, con):
         for _, row in h2_lr["table"].iterrows():
             all_p.append(row["p_value"]); all_labels.append(f"H2_lr_{row['Variable']}")
 
-    _, p_adj, _, _ = multipletests(all_p, method="fdr_bh")
-    fdr_df = pd.DataFrame({"test": all_labels, "p_raw": [round(p, 6) for p in all_p],
-                            "p_fdr": [round(p, 6) for p in p_adj],
-                            "significant_fdr": p_adj < 0.05})
+    p_arr = np.array(all_p, dtype=float)
+    valid_mask = np.isfinite(p_arr) & (p_arr >= 0)
+    p_clamped = np.clip(p_arr, 1e-300, 1.0)
+    p_adj_full = np.full_like(p_arr, np.nan)
+    if valid_mask.sum() >= 2:
+        _, p_adj_valid, _, _ = multipletests(p_clamped[valid_mask], method="fdr_bh")
+        p_adj_full[valid_mask] = p_adj_valid
+    elif valid_mask.sum() == 1:
+        p_adj_full[valid_mask] = p_clamped[valid_mask]
+
+    fdr_df = pd.DataFrame({
+        "test": all_labels,
+        "p_raw": [round(float(p), 6) if np.isfinite(p) else None for p in p_arr],
+        "p_fdr": [round(float(p), 6) if np.isfinite(p) else None for p in p_adj_full],
+        "significant_fdr": [bool(p < 0.05) if np.isfinite(p) else False for p in p_adj_full],
+    })
     rpt(fdr_df.to_string(index=False))
     fdr_df.to_csv(VAL_DIR / "fdr_correction_all_tests.csv", index=False)
 
