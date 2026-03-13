@@ -213,6 +213,33 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_linkage_master_v1", "linkage_master_v1"),
     ("md_demographics_harmonized_v3", "demographics_harmonized_v3"),
     ("md_qa_missing_demographics_v3", "qa_missing_demographics_v3"),
+    # ── Multi-nodule imaging (script 50) ──────────────────────────────────
+    ("md_imaging_nodule_master_v1", "imaging_nodule_master_v1"),
+    ("md_imaging_exam_master_v1", "imaging_exam_master_v1"),
+    ("md_imaging_patient_summary_v1", "imaging_patient_summary_v1"),
+    # ── Enhanced linkage v3 (script 49) ──────────────────────────────────
+    ("md_imaging_fna_linkage_v3", "imaging_fna_linkage_v3"),
+    ("md_fna_molecular_linkage_v3", "fna_molecular_linkage_v3"),
+    ("md_preop_surgery_linkage_v3", "preop_surgery_linkage_v3"),
+    ("md_surgery_pathology_linkage_v3", "surgery_pathology_linkage_v3"),
+    ("md_pathology_rai_linkage_v3", "pathology_rai_linkage_v3"),
+    ("md_linkage_summary_v3", "linkage_summary_v3"),
+    ("md_linkage_ambiguity_review_v1", "linkage_ambiguity_review_v1"),
+    # ── Thyroid scoring systems (script 51) ──────────────────────────────
+    ("md_thyroid_scoring_systems_v1", "thyroid_scoring_systems_v1"),
+    ("md_val_scoring_systems", "val_scoring_systems"),
+    # ── Complication phenotyping v2 (script 52) ───────────────────────────
+    ("md_complication_phenotype_v1", "complication_phenotype_v1"),
+    ("md_complication_patient_summary_v1", "complication_patient_summary_v1"),
+    ("md_complication_discrepancy_report_v1", "complication_discrepancy_report_v1"),
+    # ── Longitudinal lab hardening (script 53) ────────────────────────────
+    ("md_longitudinal_lab_clean_v1", "longitudinal_lab_clean_v1"),
+    ("md_longitudinal_lab_patient_summary_v1", "longitudinal_lab_patient_summary_v1"),
+    ("md_recurrence_event_clean_v1", "recurrence_event_clean_v1"),
+    # ── Analysis-grade resolved layer (script 48) ────────────────────────
+    ("md_patient_analysis_resolved_v1", "patient_analysis_resolved_v1"),
+    ("md_episode_analysis_resolved_v1", "episode_analysis_resolved_v1"),
+    ("md_lesion_analysis_resolved_v1", "lesion_analysis_resolved_v1"),
 ]
 
 SURVIVAL_COHORT_ENRICHED_SQL = """
