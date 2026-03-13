@@ -240,6 +240,20 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_patient_analysis_resolved_v1", "patient_analysis_resolved_v1"),
     ("md_episode_analysis_resolved_v1", "episode_analysis_resolved_v1"),
     ("md_lesion_analysis_resolved_v1", "lesion_analysis_resolved_v1"),
+    # ── Database Hardening (script 67) ────────────────────────────
+    ("md_val_hardening_summary", "val_hardening_summary"),
+    ("md_val_hardening_details", "val_hardening_details"),
+    ("md_val_null_rate_regression", "val_null_rate_regression"),
+    ("md_val_row_multiplication", "val_row_multiplication"),
+    ("md_val_manuscript_metrics", "val_manuscript_metrics"),
+    ("md_val_identity_integrity", "val_identity_integrity"),
+    ("md_val_impossible_values", "val_impossible_values"),
+    ("md_val_cross_domain_consistency", "val_cross_domain_consistency"),
+    ("md_hardening_review_queue", "hardening_review_queue"),
+    # ── Lab Ingestion Scaffold (script 68) ────────────────────────
+    ("md_lab_staging_schema_v1", "lab_staging_schema_v1"),
+    ("md_lab_normalization_dict_v1", "lab_normalization_dict_v1"),
+    ("md_lab_validation_rules_v1", "lab_validation_rules_v1"),
 ]
 
 SURVIVAL_COHORT_ENRICHED_SQL = """
