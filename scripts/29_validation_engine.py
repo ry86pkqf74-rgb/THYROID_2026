@@ -1089,7 +1089,72 @@ ALL_VALIDATION_SQL: list[tuple[str, str, str]] = [
     ("val_phase5_refinement", VAL_PHASE5_REFINEMENT_SQL, "Phase 5 top-5 variable refinement audit"),
     ("val_phase6_staging_refinement", VAL_PHASE6_STAGING_REFINEMENT_SQL, "Phase 6 source-linked staging refinement audit"),
     ("val_phase9_targeted_refinement", VAL_PHASE9_TARGETED_REFINEMENT_SQL, "Phase 9 targeted refinement audit"),
+    ("val_phase10_staging_recovery", VAL_PHASE10_STAGING_RECOVERY_SQL, "Phase 10 source-linked recovery audit"),
 ]
+
+VAL_PHASE10_STAGING_RECOVERY_SQL = """
+CREATE OR REPLACE TABLE val_phase10_staging_recovery AS
+WITH margin_stats AS (
+    SELECT
+        'margin_r0_recovery' AS variable,
+        COUNT(*) AS total_rows,
+        COUNT(DISTINCT research_id) AS unique_patients,
+        COUNT(CASE WHEN margin_status_recovered = 'negative' THEN 1 END) AS r0_recovered,
+        COUNT(CASE WHEN margin_status_recovered = 'positive' THEN 1 END) AS r1_recovered,
+        COUNT(CASE WHEN margin_status_recovered = 'not_applicable' THEN 1 END) AS benign_classified,
+        STRING_AGG(DISTINCT source_type, ', ') AS sources_used
+    FROM extracted_margin_r0_recovery_v1
+),
+invasion_stats AS (
+    SELECT
+        'invasion_grading' AS variable,
+        COUNT(*) AS total_rows,
+        COUNT(DISTINCT research_id) AS unique_patients,
+        COUNT(CASE WHEN grade_recovered = 'focal' THEN 1 END) AS focal_graded,
+        COUNT(CASE WHEN grade_recovered = 'extensive' THEN 1 END) AS extensive_graded,
+        0 AS benign_classified,
+        STRING_AGG(DISTINCT source_type, ', ') AS sources_used
+    FROM extracted_invasion_grading_recovery_v1
+),
+lateral_stats AS (
+    SELECT
+        'lateral_neck' AS variable,
+        COUNT(*) AS total_rows,
+        COUNT(DISTINCT research_id) AS unique_patients,
+        0 AS r0_or_focal,
+        0 AS r1_or_extensive,
+        0 AS benign_classified,
+        STRING_AGG(DISTINCT source_type, ', ') AS sources_used
+    FROM extracted_lateral_neck_v1
+),
+multi_tumor_stats AS (
+    SELECT
+        'multi_tumor_agg' AS variable,
+        COUNT(*) AS total_rows,
+        COUNT(DISTINCT research_id) AS unique_patients,
+        COUNT(CASE WHEN worst_angioinvasion IS NOT NULL THEN 1 END) AS has_angio,
+        COUNT(CASE WHEN worst_margin IS NOT NULL THEN 1 END) AS has_margin,
+        COUNT(CASE WHEN worst_ete IS NOT NULL THEN 1 END) AS has_ete,
+        'path_synoptics_multi_tumor' AS sources_used
+    FROM extracted_multi_tumor_aggregate_v1
+),
+mice_stats AS (
+    SELECT
+        'mice_imputation' AS variable,
+        COALESCE(SUM(n_patients), 0) AS total_rows,
+        COALESCE(MAX(n_patients), 0) AS unique_patients,
+        COALESCE(MAX(m_imputations), 0) AS m_imputations,
+        0 AS placeholder_1,
+        0 AS placeholder_2,
+        COALESCE(MAX(imputation_method), 'not_run') AS sources_used
+    FROM extracted_mice_summary_v1
+)
+SELECT 'margin' AS domain, variable, total_rows, unique_patients, r0_recovered AS metric_1, r1_recovered AS metric_2, benign_classified AS metric_3, sources_used FROM margin_stats
+UNION ALL SELECT 'invasion', variable, total_rows, unique_patients, focal_graded, extensive_graded, benign_classified, sources_used FROM invasion_stats
+UNION ALL SELECT 'lateral_neck', variable, total_rows, unique_patients, r0_or_focal, r1_or_extensive, benign_classified, sources_used FROM lateral_stats
+UNION ALL SELECT 'multi_tumor', variable, total_rows, unique_patients, has_angio, has_margin, has_ete, sources_used FROM multi_tumor_stats
+UNION ALL SELECT 'mice', variable, total_rows, unique_patients, m_imputations, placeholder_1, placeholder_2, sources_used FROM mice_stats;
+"""
 
 VAL_PHASE9_TARGETED_REFINEMENT_SQL = """
 CREATE OR REPLACE TABLE val_phase9_targeted_refinement AS

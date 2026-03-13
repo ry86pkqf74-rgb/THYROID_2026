@@ -159,6 +159,16 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_vw_ene_concordance", "vw_ene_concordance"),
     ("md_vw_ene_source_summary", "vw_ene_source_summary"),
     ("md_patient_refined_master_clinical_v8", "patient_refined_master_clinical_v8"),
+    # ── Phase 10 Source-Linked Recovery (extraction_audit_engine_v8) ────
+    ("md_extracted_margin_r0_recovery_v1", "extracted_margin_r0_recovery_v1"),
+    ("md_vw_margin_r0_recovery", "vw_margin_r0_recovery"),
+    ("md_extracted_invasion_grading_recovery_v1", "extracted_invasion_grading_recovery_v1"),
+    ("md_extracted_lateral_neck_v1", "extracted_lateral_neck_v1"),
+    ("md_vw_lateral_neck", "vw_lateral_neck"),
+    ("md_extracted_multi_tumor_aggregate_v1", "extracted_multi_tumor_aggregate_v1"),
+    ("md_extracted_staging_recovery_v1", "extracted_staging_recovery_v1"),
+    ("md_extracted_mice_summary_v1", "extracted_mice_summary_v1"),
+    ("md_patient_refined_master_clinical_v9", "patient_refined_master_clinical_v9"),
 ]
 
 SURVIVAL_COHORT_ENRICHED_SQL = """

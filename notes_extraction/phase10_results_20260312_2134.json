@@ -1,0 +1,74 @@
+{
+  "margin_r0_recovery": {
+    "table": "extracted_margin_r0_recovery_v1",
+    "rows": 7157,
+    "status": "ok",
+    "total_rows": 7157,
+    "unique_patients": 7157,
+    "by_class_source": {
+      "NA_benign_benign_inferred": 7144,
+      "R0_op_note": 11,
+      "R1_op_note": 2
+    }
+  },
+  "vw_margin_r0_recovery": {
+    "table": "vw_margin_r0_recovery",
+    "rows": 3,
+    "status": "ok"
+  },
+  "invasion_grading_recovery": {
+    "table": "extracted_invasion_grading_recovery_v1",
+    "rows": 204,
+    "status": "ok",
+    "total_rows": 204,
+    "unique_patients": 202,
+    "by_entity_grade_source": {
+      "lvi_focal_nlp_op_note": 1,
+      "lvi_extensive_nlp_op_note": 1,
+      "vascular_focal_quantify_field": 111,
+      "vascular_extensive_quantify_field": 84,
+      "vascular_extensive_multi_tumor": 3,
+      "vascular_focal_nlp_op_note": 3,
+      "vascular_focal_multi_tumor": 1
+    }
+  },
+  "lateral_neck_detection": {
+    "table": "extracted_lateral_neck_v1",
+    "rows": 119,
+    "status": "ok",
+    "total_rows": 119,
+    "unique_patients": 119,
+    "by_source_method": {
+      "structured_levels_level_or_text_match": 41,
+      "nlp_op_note_jugular": 23,
+      "nlp_op_note_level_mention": 19,
+      "nlp_op_note_selective_neck": 14,
+      "nlp_op_note_lateral_neck_dissection": 14,
+      "nlp_op_note_radical_neck": 4,
+      "nlp_op_note_modified_radical": 3,
+      "nlp_op_note_lateral_compartment": 1
+    }
+  },
+  "vw_lateral_neck": {
+    "table": "vw_lateral_neck",
+    "rows": 17,
+    "status": "ok"
+  },
+  "multi_tumor_aggregate": {
+    "error": "Binder Error: Table \"ps\" does not have a column named \"tumor_3_lns_involved\"\n\nCandidate bindings: : \"tumor_2_lns_involved\", \"tumor_1_ln_involved\"\n\nLINE 85:         + COALESCE(TRY_CAST(REPLACE(CAST(ps.tumor_3_lns_involved AS VARCHAR), ';', '') AS INTEGER...\n                                                  ^",
+    "status": "failed"
+  },
+  "staging_recovery": {
+    "error": "Binder Error: Referenced column \"vascular_who_2022_grade\" not found in FROM clause!\nCandidate bindings: \"vascular_invasion_refined\", \"capsular_invasion_refined\", \"molecular_test_date\", \"tumor_size_source\", \"molecular_platform\"\n\nLINE 11:     SELECT research_id, vascular_invasion_refined, vascular_who_2022_grade,\n                                                            ^",
+    "status": "failed"
+  },
+  "mice_summary": {
+    "table": "extracted_mice_summary_v1",
+    "rows": 0,
+    "status": "ok"
+  },
+  "master_v9": {
+    "error": "Catalog Error: Table with name extracted_staging_recovery_v1 does not exist!\nDid you mean \"extracted_rai_response_v1\"?\n\nLINE 36: LEFT JOIN extracted_staging_recovery_v1 sr ON v8.research_id = sr...\n                   ^",
+    "status": "failed"
+  }
+}
