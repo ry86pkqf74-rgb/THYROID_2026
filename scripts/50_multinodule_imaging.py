@@ -157,23 +157,123 @@ def _get_raw_tirads_cols(con: duckdb.DuckDBPyConnection) -> list[str]:
         return []
 
 
+def _is_normalized_long_format(col_lower: dict[str, str]) -> bool:
+    """Detect Phase 12 normalized schema (already one-row-per-nodule)."""
+    required = {"nodule_number", "composition_norm", "tirads_reported",
+                "nodule_length_mm"}
+    return required.issubset(col_lower.keys())
+
+
+def _build_from_normalized_long(col_lower: dict[str, str]) -> str:
+    """Build imaging_nodule_master_v1 from the Phase 12 normalized schema."""
+
+    def qcol(name: str) -> str:
+        return f'"{col_lower[name]}"' if name in col_lower else "NULL"
+
+    id_col = qcol("research_id")
+    date_col = qcol("us_date")
+    nnum = qcol("nodule_number")
+    ti_rep = qcol("tirads_reported")
+    ti_rec = qcol("tirads_recalculated")
+    comp = qcol("composition_norm")
+    echo = qcol("echogenicity_norm")
+    shape = qcol("shape_norm")
+    marg = qcol("margin_norm")
+    calc = qcol("calcification_norm")
+    l_mm = qcol("nodule_length_mm")
+    w_mm = qcol("nodule_width_mm")
+    h_mm = qcol("nodule_height_mm")
+    vol_str = qcol("nodule_volume_str")
+    loc = qcol("nodule_location")
+
+    return f"""
+CREATE OR REPLACE TABLE imaging_nodule_master_v1 AS
+WITH src AS (
+    SELECT
+        CAST({id_col} AS INTEGER)       AS research_id,
+        TRY_CAST({date_col} AS DATE)    AS exam_date,
+        CAST({nnum} AS INTEGER)         AS nodule_number,
+        MD5(CONCAT(
+            CAST(COALESCE({id_col}, 0) AS VARCHAR), '_',
+            CAST(COALESCE({date_col}, '1900-01-01') AS VARCHAR)
+        ))                              AS exam_id,
+        MD5(CONCAT(
+            CAST(COALESCE({id_col}, 0) AS VARCHAR), '_',
+            CAST(COALESCE({date_col}, '1900-01-01') AS VARCHAR), '_',
+            CAST({nnum} AS VARCHAR)
+        ))                              AS nodule_id,
+        TRY_CAST({ti_rep} AS INTEGER)   AS tirads_reported,
+        TRY_CAST({ti_rec} AS INTEGER)   AS tirads_acr_recalculated,
+        CAST({comp} AS VARCHAR)         AS composition,
+        CAST({echo} AS VARCHAR)         AS echogenicity,
+        CAST({shape} AS VARCHAR)        AS shape,
+        CAST({marg} AS VARCHAR)         AS margins,
+        CAST({calc} AS VARCHAR)         AS calcifications,
+        TRY_CAST({l_mm} AS DOUBLE)      AS length_mm,
+        TRY_CAST({w_mm} AS DOUBLE)      AS width_mm,
+        TRY_CAST({h_mm} AS DOUBLE)      AS height_mm,
+        TRY_CAST(REGEXP_EXTRACT(CAST({vol_str} AS VARCHAR),
+                 '([0-9]+\\.?[0-9]*)', 1) AS DOUBLE) AS volume_ml,
+        CAST({loc} AS VARCHAR)          AS location_raw,
+        CASE
+            WHEN LOWER(CAST({loc} AS VARCHAR)) LIKE '%left%'    THEN 'left'
+            WHEN LOWER(CAST({loc} AS VARCHAR)) LIKE '%right%'   THEN 'right'
+            WHEN LOWER(CAST({loc} AS VARCHAR)) LIKE '%isthmus%' THEN 'isthmus'
+            ELSE NULL
+        END                             AS laterality,
+        'raw_us_tirads_excel_v1'        AS source_table
+    FROM raw_us_tirads_excel_v1
+    WHERE {id_col} IS NOT NULL
+)
+SELECT
+    s.*,
+    CASE
+        WHEN tirads_reported IS NULL
+             OR tirads_acr_recalculated IS NULL THEN NULL
+        WHEN ABS(tirads_reported - tirads_acr_recalculated) <= 1 THEN TRUE
+        ELSE FALSE
+    END AS tirads_concordant_flag,
+    CASE
+        WHEN length_mm IS NOT NULL AND width_mm IS NOT NULL
+             AND height_mm IS NOT NULL
+             THEN GREATEST(length_mm, width_mm, height_mm) / 10.0
+        WHEN length_mm IS NOT NULL
+             THEN length_mm / 10.0
+        ELSE NULL
+    END AS max_dimension_cm,
+    CASE COALESCE(tirads_reported, tirads_acr_recalculated)
+        WHEN 1 THEN 'TR1' WHEN 2 THEN 'TR2' WHEN 3 THEN 'TR3'
+        WHEN 4 THEN 'TR4' WHEN 5 THEN 'TR5' WHEN 6 THEN 'TR5'
+        ELSE NULL
+    END AS tirads_category,
+    COALESCE(tirads_reported, tirads_acr_recalculated) >= 4
+        AS suspicious_flag
+FROM src s
+"""
+
+
 def build_nodule_long_sql(con: duckdb.DuckDBPyConnection) -> str:
     """
     Dynamically detect Nodule N column groups in raw_us_tirads_excel_v1
     and build an unpivot UNION ALL SQL.
 
-    Expected column naming from COMPLETE_MULTI_SHEET_ULTRASOUND_REPORTS.xlsx:
-      TI_RADS, Composition, Echogenicity, Shape, Margins, Calcifications,
-      Length, Width, Height, Volume, Location  (for nodule 1, often un-prefixed)
-      Nodule 2 TI_RADS, Nodule 2 Composition, ...  (for nodules 2-14)
+    Supports two schemas:
+      1. Phase 12 normalized long-format (MotherDuck): composition_norm,
+         tirads_reported, nodule_length_mm, nodule_number, etc.
+      2. Raw wide-format from COMPLETE_MULTI_SHEET_ULTRASOUND_REPORTS.xlsx:
+         TI_RADS, Composition, Nodule 2 TI_RADS, etc.
     """
     all_cols = _get_raw_tirads_cols(con)
     if not all_cols:
         return ""
 
-    # Normalise to lowercase for matching
     col_lower = {c.lower(): c for c in all_cols}
 
+    # Phase 12 normalized schema — already one-row-per-nodule
+    if _is_normalized_long_format(col_lower):
+        return _build_from_normalized_long(col_lower)
+
+    # Legacy wide-format unpivot path
     def col(name: str, default: str = "NULL") -> str:
         """Return original col name if it exists, else NULL."""
         lname = name.lower()
@@ -181,7 +281,6 @@ def build_nodule_long_sql(con: duckdb.DuckDBPyConnection) -> str:
 
     def nodule_col(n: int, field: str, default: str = "NULL") -> str:
         """Return column reference for nodule N feature."""
-        # First nodule uses bare column names; subsequent use 'Nodule N ' prefix
         if n == 1:
             return col(field, default)
         candidates = [
@@ -195,7 +294,6 @@ def build_nodule_long_sql(con: duckdb.DuckDBPyConnection) -> str:
                 return f'"{col_lower[lc]}"'
         return default
 
-    # Identify how many nodule groups exist
     max_nodule = 1
     for n in range(2, 15):
         for field in ["ti_rads", "composition", "length"]:
@@ -204,7 +302,6 @@ def build_nodule_long_sql(con: duckdb.DuckDBPyConnection) -> str:
                 max_nodule = n
                 break
 
-    # Build the id columns
     id_cols = col("research_id", "NULL::INTEGER")
     date_col = col("exam_date", col("us_date", col("date", "NULL::DATE")))
 
@@ -222,7 +319,6 @@ def build_nodule_long_sql(con: duckdb.DuckDBPyConnection) -> str:
         vol_ = nodule_col(n, "volume")
         loc_ = nodule_col(n, "location")
 
-        # Skip this nodule if none of the core fields exist
         has_any = any(x != "NULL" for x in [ti, comp, echo, shape, marg, calc])
         if not has_any and n > 1:
             continue
@@ -241,9 +337,7 @@ def build_nodule_long_sql(con: duckdb.DuckDBPyConnection) -> str:
             CAST(COALESCE({date_col}, '1900-01-01') AS VARCHAR), '_',
             '{n}'
         ))                           AS nodule_id,
-        -- TI-RADS reported
         TRY_CAST({ti} AS INTEGER)    AS tirads_reported,
-        -- ACR TI-RADS recalculated from features
         (
             COALESCE(CASE LOWER(TRIM(CAST({comp} AS VARCHAR)))
                 WHEN 'anechoic' THEN 0 WHEN 'spongiform' THEN 0
@@ -269,19 +363,16 @@ def build_nodule_long_sql(con: duckdb.DuckDBPyConnection) -> str:
                 WHEN 'peripheral' THEN 2 WHEN 'microcalcifications' THEN 3
                 WHEN 'punctate' THEN 3 ELSE 0 END, 0)
         )                            AS tirads_acr_recalculated,
-        -- Raw feature fields
         CAST({comp} AS VARCHAR)      AS composition,
         CAST({echo} AS VARCHAR)      AS echogenicity,
         CAST({shape} AS VARCHAR)     AS shape,
         CAST({marg} AS VARCHAR)      AS margins,
         CAST({calc} AS VARCHAR)      AS calcifications,
-        -- Dimensions (mm -> cm conversion handled downstream)
         TRY_CAST({length_} AS DOUBLE) AS length_mm,
         TRY_CAST({width_} AS DOUBLE)  AS width_mm,
         TRY_CAST({height_} AS DOUBLE) AS height_mm,
         TRY_CAST({vol_} AS DOUBLE)    AS volume_ml,
         CAST({loc_} AS VARCHAR)       AS location_raw,
-        -- Laterality derived from location
         CASE
             WHEN LOWER(CAST({loc_} AS VARCHAR)) LIKE '%left%'  THEN 'left'
             WHEN LOWER(CAST({loc_} AS VARCHAR)) LIKE '%right%' THEN 'right'
@@ -308,14 +399,12 @@ WITH raw_unpivoted AS (
 ),
 with_concordance AS (
     SELECT *,
-        -- Concordance: reported vs ACR-recalculated within 1 tier
         CASE
             WHEN tirads_reported IS NULL
                  OR tirads_acr_recalculated IS NULL THEN NULL
             WHEN ABS(tirads_reported - tirads_acr_recalculated) <= 1 THEN TRUE
             ELSE FALSE
         END AS tirads_concordant_flag,
-        -- Max dimension in cm (convert mm to cm)
         CASE
             WHEN length_mm IS NOT NULL AND width_mm IS NOT NULL
                  AND height_mm IS NOT NULL
@@ -324,13 +413,11 @@ with_concordance AS (
                  THEN length_mm / 10.0
             ELSE NULL
         END AS max_dimension_cm,
-        -- TI-RADS category from reported score (use ACR if no reported)
         CASE COALESCE(tirads_reported, tirads_acr_recalculated)
             WHEN 1 THEN 'TR1' WHEN 2 THEN 'TR2' WHEN 3 THEN 'TR3'
             WHEN 4 THEN 'TR4' WHEN 5 THEN 'TR5' WHEN 6 THEN 'TR5'
             ELSE NULL
         END AS tirads_category,
-        -- Suspicious flag: TR4 or TR5
         COALESCE(tirads_reported, tirads_acr_recalculated) >= 4
             AS suspicious_flag
     FROM raw_unpivoted
