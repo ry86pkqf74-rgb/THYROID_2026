@@ -594,7 +594,33 @@ Key columns:
 - `best_surgery_date`: DATE used for DOB-based age calculation
 - `best_dob`: DATE from DOB backfill chain (NULL if no DOB in any source)
 
-Coverage (as of 2026-03-13): 11,673 patients; age 98.1%, sex 93.2%, race 93.1%.
+Coverage (as of 2026-03-13): 11,673 patients; age 99.2%, sex 93.2%, race 93.1%.
+
+### `stg_dob_excel_recovery` (table, added 2026-03-13)
+
+Cross-file DOB resolution from 6 sources (3 Excel + 3 DB). Majority vote resolves
+DOB conflicts; priority tiebreak when no majority: all_diagnoses > op_sheet >
+thyroid_weights > notes > thyroglobulin_labs > anti_tg_labs.
+
+- `dob_resolved`: winning DOB after majority vote
+- `age_at_surgery`: calculated from DOB + surgery date
+- `gender_excel`, `race_excel`: from All Diagnoses Excel
+- `dob_n_sources`: number of sources with DOB for this patient
+- `dob_concordant`: TRUE if all sources agree
+- `dob_resolution`: unanimous | majority_N_of_M | priority_tiebreak_SOURCE
+
+### `us_dominant_nodule_size_v1` (table, added 2026-03-13)
+
+Per-patient dominant (largest) thyroid nodule size from ultrasound, extracted from
+TIRADS structured data (`raw_us_tirads_excel_v1`) and NLP from free-text nodule
+descriptions in `serial_imaging_us`. Fills the gap where
+`serial_imaging_us.dominant_nodule_size_on_us` was entirely NULL.
+
+- `dominant_nodule_size_cm`: largest nodule in cm
+- `size_source`: tirads_structured | nlp_detail_text | imaging_excel
+- `imaging_excel_cm`, `tirads_structured_cm`, `nlp_extracted_cm`: per-source values
+
+Coverage: 3,440 patients (was 0).
 
 ### `qa_missing_demographics` (table)
 

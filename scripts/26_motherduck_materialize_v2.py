@@ -205,6 +205,8 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     # ── Demographics Harmonization (cross-file validation 11.5) ──
     ("md_demographics_harmonized_v2", "demographics_harmonized_v2"),
     ("md_qa_missing_demographics", "qa_missing_demographics"),
+    ("md_stg_dob_excel_recovery", "stg_dob_excel_recovery"),
+    ("md_us_dominant_nodule_size_v1", "us_dominant_nodule_size_v1"),
 ]
 
 SURVIVAL_COHORT_ENRICHED_SQL = """

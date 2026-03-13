@@ -206,25 +206,21 @@ REPORT_MATCHING_SQL = textwrap.dedent("""\
     SELECT
         COUNT(*) AS total_pairs,
         SUM(CASE
-            WHEN TRY_CAST(u.dominant_nodule_size_on_us AS DOUBLE) IS NOT NULL
+            WHEN un.dominant_nodule_size_cm IS NOT NULL
                  AND TRY_CAST(
                      o.maximum_diameter_of_largest_tumor_or_goiter_from_operative_sheet
                      AS DOUBLE) IS NOT NULL
             THEN 1 ELSE 0 END) AS matched,
         ROUND(100.0 * SUM(CASE
-            WHEN TRY_CAST(u.dominant_nodule_size_on_us AS DOUBLE) IS NOT NULL
+            WHEN un.dominant_nodule_size_cm IS NOT NULL
                  AND TRY_CAST(
                      o.maximum_diameter_of_largest_tumor_or_goiter_from_operative_sheet
                      AS DOUBLE) IS NOT NULL
             THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0), 2) AS match_pct,
         'us_operative' AS check_type
-    FROM serial_imaging_us u
+    FROM us_dominant_nodule_size_v1 un
     JOIN operative_details o
-        ON CAST(u.research_id AS INT) = CAST(o.research_id AS INT)
-        AND ABS(DATEDIFF('day',
-            TRY_CAST(u.us_date AS DATE),
-            TRY_CAST(o.surg_date AS DATE)
-        )) <= 180
+        ON CAST(un.research_id AS INT) = CAST(o.research_id AS INT)
 """)
 
 
@@ -340,6 +336,17 @@ DEMOGRAPHICS_HARMONIZED_SQL = textwrap.dedent("""\
         GROUP BY CAST(research_id AS INT)
     ),
 
+    -- P8: Cross-file Excel DOB recovery (stg_dob_excel_recovery)
+    excel_dob AS (
+        SELECT research_id AS rid,
+               dob_resolved AS dob_excel,
+               age_at_surgery AS age_excel,
+               gender_excel AS sex_excel,
+               race_excel,
+               dob_resolution
+        FROM stg_dob_excel_recovery
+    ),
+
     harmonized AS (
         SELECT
             sp.research_id,
@@ -348,21 +355,20 @@ DEMOGRAPHICS_HARMONIZED_SQL = textwrap.dedent("""\
             COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od)
                 AS best_surgery_date,
 
-            -- Best DOB (for age calculation fallback)
-            COALESCE(tw.dob_tw, tg.dob_tg, atg.dob_atg) AS best_dob,
+            -- Best DOB: resolved Excel (cross-file majority) > thyroid_weights > labs
+            COALESCE(ex.dob_excel, tw.dob_tw, tg.dob_tg, atg.dob_atg) AS best_dob,
 
-            -- AGE: direct sources first, then DOB-derived
+            -- AGE: structured > Excel DOB-derived > DB DOB-derived
             COALESCE(
                 TRY_CAST(bp.age_at_surgery AS INT),
                 TRY_CAST(tp.age_at_surgery AS INT),
                 ps.age_ps,
-                -- DOB-derived age: date_diff year, corrected for birthday
+                ex.age_excel,
                 CASE WHEN COALESCE(tw.dob_tw, tg.dob_tg, atg.dob_atg) IS NOT NULL
                       AND COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od) IS NOT NULL
                      THEN DATE_DIFF('year',
                               COALESCE(tw.dob_tw, tg.dob_tg, atg.dob_atg),
-                              COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od)
-                          )
+                              COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od))
                           - CASE WHEN
                               MONTH(COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od))
                                 < MONTH(COALESCE(tw.dob_tw, tg.dob_tg, atg.dob_atg))
@@ -375,11 +381,11 @@ DEMOGRAPHICS_HARMONIZED_SQL = textwrap.dedent("""\
                 END
             ) AS age_at_surgery,
 
-            -- AGE source provenance
             CASE
                 WHEN bp.age_at_surgery IS NOT NULL THEN 'benign_pathology'
                 WHEN tp.age_at_surgery IS NOT NULL THEN 'tumor_pathology'
                 WHEN ps.age_ps IS NOT NULL          THEN 'path_synoptics'
+                WHEN ex.age_excel IS NOT NULL        THEN 'excel_dob_' || COALESCE(ex.dob_resolution, 'resolved')
                 WHEN COALESCE(tw.dob_tw, tg.dob_tg, atg.dob_atg) IS NOT NULL
                      AND COALESCE(bp.surgery_date, ps.surg_date_ps, tw.surg_date_tw, od.surg_date_od) IS NOT NULL
                      THEN CASE
@@ -390,25 +396,27 @@ DEMOGRAPHICS_HARMONIZED_SQL = textwrap.dedent("""\
                 ELSE NULL
             END AS age_source,
 
-            -- SEX: direct sources first, then lab fallback
-            COALESCE(bp.sex, tp.sex, ps.sex_ps, tg.sex_tg, atg.sex_atg) AS sex,
+            -- SEX: structured > Excel > labs
+            COALESCE(bp.sex, tp.sex, ps.sex_ps, ex.sex_excel, tg.sex_tg, atg.sex_atg) AS sex,
 
             CASE
-                WHEN bp.sex IS NOT NULL  THEN 'benign_pathology'
-                WHEN tp.sex IS NOT NULL  THEN 'tumor_pathology'
+                WHEN bp.sex IS NOT NULL    THEN 'benign_pathology'
+                WHEN tp.sex IS NOT NULL    THEN 'tumor_pathology'
                 WHEN ps.sex_ps IS NOT NULL THEN 'path_synoptics'
+                WHEN ex.sex_excel IS NOT NULL THEN 'excel_all_diagnoses'
                 WHEN tg.sex_tg IS NOT NULL THEN 'thyroglobulin_labs'
                 WHEN atg.sex_atg IS NOT NULL THEN 'anti_tg_labs'
                 ELSE NULL
             END AS sex_source,
 
-            -- RACE: path_synoptics first, then labs
-            COALESCE(ps.race_ps, tg.race_tg, atg.race_atg) AS race,
+            -- RACE: path_synoptics > Excel > labs
+            COALESCE(ps.race_ps, ex.race_excel, tg.race_tg, atg.race_atg) AS race,
 
             CASE
-                WHEN ps.race_ps IS NOT NULL  THEN 'path_synoptics'
-                WHEN tg.race_tg IS NOT NULL  THEN 'thyroglobulin_labs'
-                WHEN atg.race_atg IS NOT NULL THEN 'anti_tg_labs'
+                WHEN ps.race_ps IS NOT NULL    THEN 'path_synoptics'
+                WHEN ex.race_excel IS NOT NULL THEN 'excel_all_diagnoses'
+                WHEN tg.race_tg IS NOT NULL    THEN 'thyroglobulin_labs'
+                WHEN atg.race_atg IS NOT NULL  THEN 'anti_tg_labs'
                 ELSE NULL
             END AS race_source
 
@@ -420,6 +428,7 @@ DEMOGRAPHICS_HARMONIZED_SQL = textwrap.dedent("""\
         LEFT JOIN od  ON sp.research_id = od.rid
         LEFT JOIN tg  ON sp.research_id = tg.rid
         LEFT JOIN atg ON sp.research_id = atg.rid
+        LEFT JOIN excel_dob ex ON sp.research_id = ex.rid
     )
     SELECT
         research_id,
