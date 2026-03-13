@@ -63,7 +63,7 @@ def _get_token() -> str:
     secrets = ROOT / ".streamlit" / "secrets.toml"
     if secrets.exists():
         try:
-            import toml
+            import toml  # type: ignore[import-untyped]
             return toml.load(str(secrets))["MOTHERDUCK_TOKEN"]
         except Exception:
             pass
@@ -1044,6 +1044,7 @@ def build_resolved_tables(con: duckdb.DuckDBPyConnection,
             "SUM(CASE WHEN analysis_eligible_flag THEN 1 ELSE 0 END) AS n_eligible "
             "FROM patient_analysis_resolved_v1"
         ).fetchone()
+        assert r is not None
         print(f"    patient_analysis_resolved_v1: {r[0]:,} rows, "
               f"{r[1]:,} analysis-eligible")
     except Exception as exc:
@@ -1057,6 +1058,7 @@ def build_resolved_tables(con: duckdb.DuckDBPyConnection,
             "SELECT COUNT(*), COUNT(DISTINCT research_id) "
             "FROM episode_analysis_resolved_v1"
         ).fetchone()
+        assert r is not None
         print(f"    episode_analysis_resolved_v1: {r[0]:,} episodes, "
               f"{r[1]:,} patients")
     except Exception as exc:
@@ -1070,6 +1072,7 @@ def build_resolved_tables(con: duckdb.DuckDBPyConnection,
             "SELECT COUNT(*), COUNT(DISTINCT research_id) "
             "FROM lesion_analysis_resolved_v1"
         ).fetchone()
+        assert r is not None
         print(f"    lesion_analysis_resolved_v1: {r[0]:,} lesions, "
               f"{r[1]:,} patients")
     except Exception as exc:
@@ -1078,10 +1081,11 @@ def build_resolved_tables(con: duckdb.DuckDBPyConnection,
     # ── Quick validation ──────────────────────────────────────────────────
     print("\n  Quick validation...")
     try:
-        dupes = con.execute(
+        _row = con.execute(
             "SELECT COUNT(*) FROM (SELECT research_id FROM patient_analysis_resolved_v1 "
             "GROUP BY research_id HAVING COUNT(*) > 1)"
-        ).fetchone()[0]
+        ).fetchone()
+        dupes = _row[0] if _row else 0
         print(f"    Duplicate research_id check: {dupes} duplicates "
               f"({'PASS' if dupes == 0 else 'FAIL'})")
     except Exception:

@@ -504,9 +504,10 @@ def materialize_all(
                     f"CREATE OR REPLACE TABLE {md_name} AS "
                     f"SELECT * FROM {src_name}"
                 )
-                cnt = source_con.execute(
+                _row = source_con.execute(
                     f"SELECT COUNT(*) FROM {md_name}"
-                ).fetchone()[0]
+                ).fetchone()
+                cnt = _row[0] if _row else 0
                 print(f"  OK   {md_name:<50} {cnt:>8,} rows")
             except Exception as e:
                 print(f"  WARN {md_name:<50} {e}")
@@ -514,9 +515,10 @@ def materialize_all(
         # Manual review queue summary
         try:
             source_con.execute(MANUAL_REVIEW_QUEUE_SUMMARY_SQL)
-            cnt = source_con.execute(
+            _row = source_con.execute(
                 "SELECT COUNT(*) FROM md_manual_review_queue_summary_v2"
-            ).fetchone()[0]
+            ).fetchone()
+            cnt = _row[0] if _row else 0
             print(f"  OK   {'md_manual_review_queue_summary_v2':<50} {cnt:>8,} rows")
         except Exception as e:
             print(f"  WARN md_manual_review_queue_summary_v2: {e}")
@@ -534,9 +536,10 @@ def materialize_all(
         ]:
             try:
                 source_con.execute(sql)
-                cnt = source_con.execute(
+                _row = source_con.execute(
                     f"SELECT COUNT(*) FROM {tbl}"
-                ).fetchone()[0]
+                ).fetchone()
+                cnt = _row[0] if _row else 0
                 print(f"  OK   {tbl:<50} {cnt:>8,} rows")
             except Exception as e:
                 print(f"  WARN {tbl:<50} {e}")
@@ -578,9 +581,10 @@ def materialize_all(
                     "md_op_path_recon_review_v2",
                 )
             )
-            cnt = target_con.execute(
+            _row = target_con.execute(
                 "SELECT COUNT(*) FROM md_manual_review_queue_summary_v2"
-            ).fetchone()[0]
+            ).fetchone()
+            cnt = _row[0] if _row else 0
             print(f"  OK   {'md_manual_review_queue_summary_v2':<50} {cnt:>8,} rows")
         except Exception as e:
             print(f"  WARN md_manual_review_queue_summary_v2: {e}")
@@ -608,9 +612,10 @@ def materialize_all(
         ]:
             try:
                 target_con.execute(sql)
-                cnt = target_con.execute(
+                _row = target_con.execute(
                     f"SELECT COUNT(*) FROM {tbl}"
-                ).fetchone()[0]
+                ).fetchone()
+                cnt = _row[0] if _row else 0
                 print(f"  OK   {tbl:<50} {cnt:>8,} rows")
             except Exception as e:
                 print(f"  WARN {tbl:<50} {e}")
@@ -650,7 +655,8 @@ def main() -> None:
             md_con = client.connect_rw()
         except Exception as e:
             print(f"  MotherDuck unavailable: {e}")
-            local_con.close()
+            if local_con is not None:
+                local_con.close()
             sys.exit(1)
 
         missing_md = [t for t in required if not table_available(md_con, t)]
@@ -666,7 +672,8 @@ def main() -> None:
             section("Materialization Summary")
             for md_name, _ in MATERIALIZATION_MAP:
                 try:
-                    cnt = md_con.execute(f"SELECT COUNT(*) FROM {md_name}").fetchone()[0]
+                    _row = md_con.execute(f"SELECT COUNT(*) FROM {md_name}").fetchone()
+                    cnt = _row[0] if _row else 0
                     print(f"  {md_name:<50} {cnt:>8,} rows")
                 except Exception:
                     pass
@@ -675,7 +682,7 @@ def main() -> None:
                 local_con.close()
             print("\n  Done.\n")
             return
-        elif not missing_local:
+        elif not missing_local and local_con is not None:
             print("  Source: local DuckDB")
             print("  Target: MotherDuck (RW)")
             materialize_all(local_con, md_con, same_connection=False)
@@ -690,7 +697,8 @@ def main() -> None:
         section("Materialization Summary")
         for md_name, _ in MATERIALIZATION_MAP:
             try:
-                cnt = md_con.execute(f"SELECT COUNT(*) FROM {md_name}").fetchone()[0]
+                _row = md_con.execute(f"SELECT COUNT(*) FROM {md_name}").fetchone()
+                cnt = _row[0] if _row else 0
                 print(f"  {md_name:<50} {cnt:>8,} rows")
             except Exception:
                 pass
@@ -711,21 +719,22 @@ def main() -> None:
             local_con.close()
         sys.exit(1)
 
+    assert local_con is not None, "local DuckDB connection required for local mode"
     print("  Target: local DuckDB (use --md for MotherDuck)")
     materialize_all(local_con, local_con, same_connection=True)
 
     section("Materialization Summary")
     for md_name, _ in MATERIALIZATION_MAP:
         try:
-            cnt = local_con.execute(
+            _row = local_con.execute(
                 f"SELECT COUNT(*) FROM {md_name}"
-            ).fetchone()[0]
+            ).fetchone()
+            cnt = _row[0] if _row else 0
             print(f"  {md_name:<50} {cnt:>8,} rows")
         except Exception:
             pass
 
-    if local_con is not None:
-        local_con.close()
+    local_con.close()
     print("\n  Done.\n")
 
 
