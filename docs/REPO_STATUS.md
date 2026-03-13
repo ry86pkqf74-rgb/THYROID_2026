@@ -1,7 +1,7 @@
 # THYROID_2026 — Current Repo Status
 
-**As of:** 2026-03-13
-**Overall verdict:** Manuscript-ready | Not dataset-mature | Extraction pipeline complete
+**As of:** 2026-03-13 (truth-sync pass)
+**Overall verdict:** Manuscript-ready (with scoped caveats) | Approaching dataset-mature | Extraction pipeline complete
 
 ---
 
@@ -19,17 +19,17 @@
 
 ## What remains to backfill
 
-These are propagation gaps, not extraction gaps. Refined data exists in sidecar
-tables but was never written to canonical episode tables on MotherDuck.
+These are propagation gaps, not extraction gaps. Some were resolved during
+the maturation/hardening pass; others remain as documented limitations.
 
-| Gap | Sidecar source | Canonical target | Effort |
-|-----|---------------|-----------------|--------|
-| Operative NLP enrichment | Extractor exists (not run) | `operative_episode_detail_v2` | MEDIUM |
-| RAI dose (307 values) | `extracted_rai_dose_refined_v1` | `rai_treatment_episode_v2` | LOW |
-| RAS flag (316+ patients) | `extracted_ras_subtypes_v1` | `molecular_test_episode_v2` | LOW |
-| Linkage IDs | V3 linkage tables | `*_episode_*` tables | LOW |
-| Imaging nodule master | `raw_us_tirads_excel_v1` (19,891 rows) | `imaging_nodule_master_v1` | LOW |
-| Recurrence dates | Structural sparsity | `extracted_recurrence_refined_v1` | N/A (data gap) |
+| Gap | Status | Detail |
+|-----|--------|--------|
+| Operative NLP enrichment | **OPEN** — pipeline architecture gap | Extractor exists; COALESCE guards prevent UPDATE; 8 fields at 0% |
+| RAI dose | **PARTIALLY CLOSED** — 41% coverage | 371/1,857 episodes via `scripts/76_canonical_gap_closure.py` |
+| RAS flag | **CLOSED** — 325 episodes backfilled | Via `extracted_ras_patient_summary_v1` |
+| Linkage IDs | **CLOSED** — 6 tables propagated | Via `scripts/76_canonical_gap_closure.py` Phase D |
+| Imaging nodule master | **CLOSED** — 19,891 rows | `imaging_nodule_master_v1` populated via `scripts/75_dataset_maturation.py` |
+| Recurrence dates | **OPEN** — structural sparsity | 1,764 unresolved; prioritized review queue deployed |
 
 Items that **cannot** be resolved without new institutional data:
 - Structured PTH/calcium/TSH lab table

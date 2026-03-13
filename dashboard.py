@@ -107,7 +107,7 @@ SEQ_TEAL = [[0,"#0a1a20"],[0.5,"#1a8a7a"],[1,"#2dd4bf"]]
 SHARE_PATH = "md:_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c"
 DATABASE   = "thyroid_research_2026"
 SHARE_CATALOG = "thyroid_share"
-_APP_VERSION = "v3.2.0-2026.03.13"
+_APP_VERSION = "v3.3.0-2026.03.13"
 
 # Tracks which catalog _get_con() activated (used by qual())
 _ACTIVE_CATALOG: str = DATABASE

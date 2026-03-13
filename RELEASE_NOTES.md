@@ -1,6 +1,42 @@
 # THYROID_2026 Release Notes
 
-## v2026.03.13-final-manuscript-readiness (Latest)
+## v2026.03.13-truth-sync (Latest)
+**Date:** 2026-03-13
+
+### Repo-Wide Truth Synchronization
+
+Audit and fix pass ensuring all docs, version strings, and status claims tell
+one coherent story. No data or code logic changes.
+
+#### Version Reconciliation
+
+| Location | Before | After |
+|----------|--------|-------|
+| `dashboard.py _APP_VERSION` | v3.2.0-2026.03.13 | **v3.3.0-2026.03.13** |
+| README release history | v2026.03.13 post-hardening | **v2026.03.13 (truth-sync)** |
+| RELEASE_NOTES latest tag | v2026.03.13-final-manuscript-readiness | **v2026.03.13-truth-sync** |
+| CITATION.cff | 2026.03.13 | unchanged |
+| docs/REPO_STATUS.md verdict | "Not dataset-mature" | **"Approaching dataset-mature"** |
+
+#### Overclaim Corrections
+
+| Claim | Location | Action |
+|-------|----------|--------|
+| "Every data point ... traceable to its direct source" | README.md | **Rewritten** — scoped to manuscript cohort and structured domains |
+| "Traceability & Date Accuracy Guarantee (v2026.03.12)" | README.md | **Updated** — v2026.03.13, removed "guarantee" framing |
+| Imaging "NOT VERIFIED" | RELEASE_NOTES audit-verification | **Annotated** — later maturation pass populated 19,891 rows |
+| Operative "NOT VERIFIED" | RELEASE_NOTES audit-verification | **Annotated** — CND/LND flags wired (0→2,497/241); NLP enrichment remains open |
+| Imaging nodule master listed as pending | REPO_STATUS.md | **Updated** — marked CLOSED (19,891 rows) |
+
+#### New/Updated Documents
+
+- `docs/FINAL_REPO_STATUS_20260313.md` — single source of truth: readiness, maturity, safe/unsafe claims
+- `scripts/check_truth_sync.py` — guardrail checking version string consistency and banned overclaims
+- README deployment truth table (local + token / cloud private / cloud public / cloud sign-in)
+
+---
+
+## v2026.03.13-final-manuscript-readiness
 **Date:** 2026-03-13
 
 ### Final Manuscript-Readiness Hardening Pass
@@ -228,20 +264,24 @@ and 18 prior audit documents. Definitive report:
 
 **Verdict:** Manuscript-ready | Not dataset-mature | Extraction pipeline complete
 
-#### Verification matrix (domain-by-domain)
+#### Verification matrix (domain-by-domain, at time of initial audit)
 
-| Domain | Verdict | Key evidence |
-|--------|---------|-------------|
-| Demographics | VERIFIED | 99% age, 93% sex/race |
-| Surgery | VERIFIED | 100% date coverage |
-| Pathology | MOSTLY VERIFIED | 90% extraction completeness |
-| Molecular | PARTIALLY VERIFIED | 546 BRAF, 337 RAS, 108 TERT extracted; RAS flag not backfilled |
-| Imaging | NOT VERIFIED | TIRADS 32.5% from Excel; canonical nodule table empty |
-| RAI | PARTIALLY VERIFIED | 307 doses refined; 3% in canonical table |
-| Recurrence | PARTIALLY VERIFIED | 1,986 flagged; 54 with specific date |
-| Complications | MOSTLY VERIFIED | 7 entities refined (3.3% raw → confirmed/probable tiers) |
-| Operative Notes | NOT VERIFIED | 0% NLP enrichment on 9,371 episodes |
-| Manuscript Metrics | VERIFIED | 11 metrics pass cross-source consistency |
+> **Note:** Several domains below were subsequently improved by the
+> maturation/hardening passes documented in later release entries.
+> See `docs/FINAL_REPO_STATUS_20260313.md` for the current status.
+
+| Domain | Verdict (initial) | Updated status | Key evidence |
+|--------|---------|----------------|-------------|
+| Demographics | VERIFIED | — | 99% age, 93% sex/race |
+| Surgery | VERIFIED | — | 100% date coverage |
+| Pathology | MOSTLY VERIFIED | — | 90% extraction completeness |
+| Molecular | PARTIALLY VERIFIED | RAS flag backfilled (325 rows) | 546 BRAF, 337 RAS, 108 TERT extracted |
+| Imaging | NOT VERIFIED | **Resolved:** `imaging_nodule_master_v1` populated (19,891 rows) | Maturation pass fixed schema mismatch |
+| RAI | PARTIALLY VERIFIED | Dose coverage 3% → 41% | `scripts/76_canonical_gap_closure.py` Phase B |
+| Recurrence | PARTIALLY VERIFIED | Review queue deployed | 1,986 flagged; 1,764 dates unresolved (structural) |
+| Complications | MOSTLY VERIFIED | — | 7 entities refined |
+| Operative Notes | NOT VERIFIED | CND/LND flags wired (2,497/241); NLP enrichment still 0% | Pipeline architecture gap |
+| Manuscript Metrics | VERIFIED | — | 11 metrics pass cross-source consistency |
 
 #### Database hardening audit
 [`docs/database_hardening_audit_20260313.md`](docs/database_hardening_audit_20260313.md)

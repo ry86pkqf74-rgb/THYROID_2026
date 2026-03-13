@@ -75,8 +75,10 @@ The dataset maturation pass resolved the following:
 
 ### Current repo status
 
-See [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md) for a navigable index of all
-March 13 audit documents, export bundles, and open backfill items.
+See [`docs/FINAL_REPO_STATUS_20260313.md`](docs/FINAL_REPO_STATUS_20260313.md) for the
+definitive single source of truth (readiness, maturity, safe/unsafe claims).
+See [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md) for the navigable index of all
+audit documents, export bundles, and open backfill items.
 
 ---
 
@@ -146,10 +148,20 @@ streamlit run dashboard.py
 
 Open **http://localhost:8501** in your browser.
 
-## Traceability & Date Accuracy Guarantee (v2026.03.12)
+## Traceability & Date Accuracy (v2026.03.13)
 
-Every data point in THYROID_2026 is traceable to its **direct source** (raw file,
-sheet, row_id, text span, extraction method) and uses the **accurate associated date**.
+The manuscript cohort and analysis-resolved layer have source/date provenance
+for all manuscript-critical workflows. Structured data domains (demographics,
+surgery, pathology, thyroglobulin labs) have direct source links with high
+date accuracy. NLP-derived domains (complications, staging entities) have
+source links but variable date precision.
+
+**Known provenance limits:**
+- Non-thyroglobulin lab dates (TSH, PTH, calcium, vitamin D) have 0% structured
+  collection dates — NLP-extracted mentions lack specimen timestamps
+- ~50% of patients have clinical notes; the remainder are represented by
+  structured data only (path_synoptics, tumor_pathology)
+- 88.8% of recurrence dates are unresolved (flagged, not fabricated)
 
 ### Strict Lab Date Precedence
 
@@ -165,36 +177,31 @@ This is enforced in `provenance_enriched_events_v1` and validated by `val_proven
 
 ### Direct Source Linking
 
-Every event in `provenance_enriched_events_v1` has:
+Events in `provenance_enriched_events_v1` (50,297 rows) carry:
 - `direct_source_link` = `source_column|research_id|event_subtype|evidence_snippet`
 - `date_status_final` = `LAB_DATE_USED` / `ENTITY_DATE_USED` / `NOTE_DATE_FALLBACK`
 
 ### Lineage Audit
 
-`lineage_audit_v1` traces the complete 4-tier data lineage per patient:
+`lineage_audit_v1` traces the 4-tier data lineage per patient:
 
 ```
 Tier 1: Raw structured source (path_synoptics, thyroglobulin_labs)
 Tier 2: Note-level anchor (clinical_notes_long)
 Tier 3: Extracted entities (note_entities_*)
-Tier 4: Final analytic cohort (patient_refined_master_clinical_v9)
+Tier 4: Final analytic cohort (patient_refined_master_clinical_v12)
 ```
 
 ### Validation
 
-`val_provenance_traceability` (16th `val_*` table) enforces:
+`val_provenance_traceability` enforces:
 - Zero tolerance for `direct_source_link IS NULL`
 - Zero tolerance for `NOTE_DATE_FALLBACK` on lab events
-- Warning for any lab with no date at all
-- Warning for untraced patients in `lineage_audit_v1`
+- Warning (not error) for non-Tg lab events with no date (6,801 — institutional data limitation)
 
 ```bash
 # Run full provenance audit
 .venv/bin/python scripts/46_provenance_audit.py --md
-
-# Reports generated:
-# docs/provenance_coverage_report.md
-# docs/date_accuracy_verification_report_YYYYMMDD.md
 ```
 
 ---
@@ -279,7 +286,18 @@ n = ThyroidStatisticalAnalyzer.power_two_proportions(p1=0.15, p2=0.05)
 The app auto-deploys from `main` at
 **[thyroid2026-n2hrol9ntiffy4nmedp2zs.streamlit.app](https://thyroid2026-n2hrol9ntiffy4nmedp2zs.streamlit.app/)**.
 
-To reconfigure secrets or sharing, visit [share.streamlit.io](https://share.streamlit.io).
+### Deployment access modes
+
+| Mode | Data access | Auth required | How to enable |
+|------|------------|---------------|---------------|
+| **Local + token** | MotherDuck RW or RO share | `MOTHERDUCK_TOKEN` env var or `.streamlit/secrets.toml` | Default local setup |
+| **Cloud — private** | MotherDuck RO share via Streamlit secret | Streamlit Cloud login | Default cloud deploy |
+| **Cloud — public (share enabled)** | MotherDuck RO share via Streamlit secret | None (unauthenticated) | Enable sharing at [share.streamlit.io](https://share.streamlit.io) |
+| **Cloud — sign-in required** | MotherDuck RO share via Streamlit secret | Viewer authentication | Configure viewer auth in Streamlit Cloud settings |
+
+The deployed app reads from the **read-only MotherDuck share** (`thyroid_share`).
+Data cannot be modified through the share. Write operations (Review Mode) require
+a local connection with the RW token.
 
 ### Cure Modeling (PTCM + MCM)
 
@@ -322,7 +340,8 @@ python scripts/30_readiness_check.py --md              # readiness audit
 
 ## Release history
 
-**Current:** v2026.03.13 post-hardening — see [RELEASE_NOTES.md](RELEASE_NOTES.md)
+**Current:** v2026.03.13 (truth-sync) — see [RELEASE_NOTES.md](RELEASE_NOTES.md)
+**Dashboard:** v3.3.0-2026.03.13
 **Zenodo DOI:** [10.5281/zenodo.18945510](https://doi.org/10.5281/zenodo.18945510)
 
 Requires: `pip install -r requirements.txt` (includes lifelines, scikit-survival, shap, etc.)
