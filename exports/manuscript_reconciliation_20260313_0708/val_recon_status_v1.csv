@@ -1,0 +1,2 @@
+reconciliation_timestamp,metric_mismatches,unresolved_errors,unresolved_warnings,metrics_defined,overall_status,explanation
+2026-03-13 07:08:32.717454-04:00,0,1,2,11,CONDITIONALLY_READY,All metrics consistent. 1 data error (LN impossible value for non-eligible patient). Does not affect cancer cohort analysis.

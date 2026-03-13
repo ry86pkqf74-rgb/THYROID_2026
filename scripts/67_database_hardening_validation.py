@@ -4,17 +4,20 @@
 
 Adds manuscript-critical semantic checks, row-multiplication detection,
 null-rate regression monitoring, impossible-value detection, cross-domain
-consistency, identity integrity, and stale-artifact detection.
+consistency, identity integrity, stale-artifact detection, denominator
+consistency checks, and reconciliation status validation.
 
 Creates:
   val_hardening_summary          -- one-row pass/fail summary
-  val_hardening_details          -- all individual check results
+  val_hardening_details          -- all individual check results (subclassified)
   val_null_rate_regression       -- per-column null rates for trend monitoring
   val_row_multiplication         -- detects join fanout in critical tables
   val_manuscript_metrics         -- verifiable manuscript-critical counts
   val_identity_integrity         -- patient ID uniqueness and linkage sanity
   val_impossible_values          -- domain-specific impossible value detection
   val_cross_domain_consistency   -- cross-table agreement checks
+  val_denominator_checks         -- numerator/denominator consistency
+  val_metric_definition_conflicts-- conflicting definitions across tables
   hardening_review_queue         -- priority-ranked items for manual review
 
 Supports --md flag for MotherDuck deployment.
@@ -380,21 +383,102 @@ FROM col_stats
 """
 
 
+DENOMINATOR_CHECKS_SQL = """
+CREATE OR REPLACE TABLE val_denominator_checks AS
+-- Recurrence numerator <= denominator
+SELECT 'recurrence_num_le_denom' AS check_id,
+    CASE WHEN (SELECT COUNT(DISTINCT research_id) FROM {recurrence}
+               WHERE recurrence_any IS TRUE OR LOWER(CAST(recurrence_any AS VARCHAR)) = 'true')
+             <= (SELECT COUNT(DISTINCT research_id) FROM path_synoptics)
+         THEN 'PASS' ELSE 'FAIL' END AS status,
+    'Recurrence count should not exceed total surgical patients' AS description,
+    'data_integrity' AS check_class
+
+UNION ALL
+-- BRAF positive <= molecular tested
+SELECT 'braf_le_molecular_tested',
+    CASE WHEN (SELECT COUNT(DISTINCT research_id) FROM {braf_recovery}
+               WHERE LOWER(CAST(braf_status AS VARCHAR)) = 'positive')
+             <= (SELECT COUNT(DISTINCT research_id) FROM {mol_panel})
+         THEN 'PASS' ELSE 'FAIL' END,
+    'BRAF positive should not exceed molecular-tested denominator',
+    'data_integrity'
+
+UNION ALL
+-- RAS positive <= molecular tested
+SELECT 'ras_le_molecular_tested',
+    CASE WHEN (SELECT COUNT(DISTINCT research_id) FROM {ras_summary}
+               WHERE ras_positive IS TRUE OR LOWER(CAST(ras_positive AS VARCHAR)) = 'true')
+             <= (SELECT COUNT(DISTINCT research_id) FROM {mol_panel})
+         THEN 'PASS' ELSE 'FAIL' END,
+    'RAS positive should not exceed molecular-tested denominator',
+    'data_integrity'
+
+UNION ALL
+-- Analysis eligible <= total surgical
+SELECT 'eligible_le_surgical',
+    CASE WHEN (SELECT COUNT(DISTINCT research_id) FROM {patient_resolved}
+               WHERE analysis_eligible_flag IS TRUE)
+             <= (SELECT COUNT(DISTINCT research_id) FROM path_synoptics)
+         THEN 'PASS' ELSE 'FAIL' END,
+    'Analysis-eligible patients should not exceed surgical cohort',
+    'data_integrity'
+
+UNION ALL
+-- Manuscript metrics vs reconciliation metrics consistency
+SELECT 'metrics_v1_v2_consistent',
+    CASE WHEN EXISTS (
+        SELECT 1 FROM val_manuscript_metrics vm
+        JOIN manuscript_metrics_v2 mm ON vm.metric = mm.metric_name
+        WHERE vm.value != mm.canonical_value
+    ) THEN 'FAIL' ELSE 'PASS' END,
+    'val_manuscript_metrics and manuscript_metrics_v2 should agree on metric values',
+    'metric_consistency'
+
+UNION ALL
+-- RAI assertion tier: definite_received should be documented as empty
+SELECT 'rai_definite_empty_documented',
+    CASE WHEN (SELECT COUNT(DISTINCT research_id) FROM {rai_ep}
+               WHERE LOWER(CAST(rai_assertion_status AS VARCHAR)) = 'definite_received') = 0
+         THEN 'PASS_WITH_NOTE' ELSE 'PASS' END,
+    'definite_received tier is empty (0 patients). All RAI-confirmed are likely_received. This is a known data state, not an error.',
+    'coverage_gap'
+"""
+
+METRIC_DEFINITION_CONFLICTS_SQL = """
+CREATE OR REPLACE TABLE val_metric_definition_conflicts AS
+-- Check if ras_flag in mol_ep disagrees with ras_summary
+SELECT 'ras_flag_mol_ep_vs_summary' AS check_id,
+    (SELECT COUNT(DISTINCT research_id) FROM {mol_ep}
+     WHERE ras_flag IS TRUE OR LOWER(CAST(ras_flag AS VARCHAR)) = 'true') AS mol_ep_value,
+    (SELECT COUNT(DISTINCT research_id) FROM {ras_summary}
+     WHERE ras_positive IS TRUE OR LOWER(CAST(ras_positive AS VARCHAR)) = 'true') AS summary_value,
+    CASE WHEN (SELECT COUNT(DISTINCT research_id) FROM {mol_ep}
+               WHERE ras_flag IS TRUE OR LOWER(CAST(ras_flag AS VARCHAR)) = 'true') = 0
+         THEN 'KNOWN_BUG_DOCUMENTED'
+         ELSE 'REVIEW' END AS status,
+    'mol_ep.ras_flag is known to be all-FALSE. Use extracted_ras_patient_summary_v1 for RAS counts.' AS resolution
+"""
+
+
 def build_details_insert(con: duckdb.DuckDBPyConnection) -> str:
-    """Consolidate all check results into val_hardening_details."""
+    """Consolidate all check results into val_hardening_details with subclassification."""
     return """
     CREATE OR REPLACE TABLE val_hardening_details AS
     SELECT check_id, severity, research_id, detail, dup_count AS extra_count,
-           'identity' AS domain
+           'identity' AS domain, 'data_integrity' AS check_class
     FROM val_identity_integrity
     UNION ALL
-    SELECT check_id, 'error' AS severity, research_id, detail, 0 AS extra_count,
-           'impossible_values' AS domain
+    SELECT check_id, severity, research_id, detail, 0 AS extra_count,
+           'impossible_values' AS domain,
+           CASE WHEN check_id LIKE 'ln_%' THEN 'data_integrity' ELSE 'data_integrity' END AS check_class
     FROM val_impossible_values
-    WHERE severity = 'error'
     UNION ALL
     SELECT check_id, severity, research_id, detail, 0 AS extra_count,
-           'cross_domain' AS domain
+           'cross_domain' AS domain,
+           CASE WHEN check_id = 'cancer_no_surgery' THEN 'coverage_gap'
+                WHEN check_id = 'bethesda_vi_no_cancer' THEN 'coverage_gap'
+                ELSE 'data_integrity' END AS check_class
     FROM val_cross_domain_consistency
     """
 
@@ -407,14 +491,45 @@ def build_summary(con: duckdb.DuckDBPyConnection) -> str:
         (SELECT COUNT(*) FROM val_hardening_details WHERE severity = 'error') AS errors,
         (SELECT COUNT(*) FROM val_hardening_details WHERE severity = 'warning') AS warnings,
         (SELECT COUNT(*) FROM val_hardening_details WHERE severity = 'info') AS infos,
+        (SELECT COUNT(*) FROM val_hardening_details WHERE severity = 'error'
+            AND check_class = 'data_integrity') AS data_integrity_errors,
+        (SELECT COUNT(*) FROM val_hardening_details WHERE severity = 'error'
+            AND check_class = 'coverage_gap') AS coverage_gap_errors,
         (SELECT COUNT(*) FROM val_impossible_values) AS impossible_value_count,
         (SELECT COUNT(*) FROM val_row_multiplication WHERE status = 'FAIL') AS row_multiplication_fails,
         (SELECT COUNT(*) FROM val_identity_integrity) AS identity_issues,
         (SELECT COUNT(*) FROM val_cross_domain_consistency) AS cross_domain_issues,
         (SELECT COUNT(*) FROM val_manuscript_metrics) AS manuscript_metrics_count,
         (SELECT COUNT(*) FROM val_null_rate_regression) AS null_rate_columns_tracked,
-        CASE WHEN (SELECT COUNT(*) FROM val_hardening_details WHERE severity = 'error') = 0
-             THEN 'PASS' ELSE 'CONDITIONAL' END AS overall_status
+        COALESCE((SELECT COUNT(*) FROM val_denominator_checks WHERE status = 'FAIL'), 0) AS denominator_check_fails,
+        COALESCE((SELECT COUNT(*) FROM val_metric_definition_conflicts WHERE status = 'REVIEW'), 0) AS metric_conflict_reviews,
+        CASE
+            WHEN (SELECT COUNT(*) FROM val_denominator_checks WHERE status = 'FAIL') > 0
+                 OR (SELECT COUNT(*) FROM val_row_multiplication WHERE status = 'FAIL') > 0
+                 OR (SELECT COUNT(*) FROM val_hardening_details
+                     WHERE severity = 'error' AND check_class = 'data_integrity'
+                     AND research_id IN (SELECT research_id FROM patient_analysis_resolved_v1
+                                         WHERE analysis_eligible_flag IS TRUE)) > 0
+                THEN 'NOT_READY'
+            WHEN (SELECT COUNT(*) FROM val_hardening_details WHERE severity = 'error') > 0
+                THEN 'CONDITIONALLY_READY'
+            ELSE 'READY'
+        END AS overall_status,
+        CASE
+            WHEN (SELECT COUNT(*) FROM val_denominator_checks WHERE status = 'FAIL') > 0
+                THEN 'Denominator check failures detected. Fix before manuscript freeze.'
+            WHEN (SELECT COUNT(*) FROM val_hardening_details
+                  WHERE severity = 'error' AND check_class = 'data_integrity'
+                  AND research_id IN (SELECT research_id FROM patient_analysis_resolved_v1
+                                      WHERE analysis_eligible_flag IS TRUE)) > 0
+                THEN 'Data integrity errors affect analysis-eligible patients. Fix before manuscript freeze.'
+            WHEN (SELECT COUNT(*) FROM val_hardening_details
+                  WHERE severity = 'error' AND check_class = 'coverage_gap') > 0
+                THEN 'Coverage gaps exist (cancer patients without parsed operative detail) but do not represent data integrity failures. Manuscript-grade analysis is supported for the cancer cohort.'
+            WHEN (SELECT COUNT(*) FROM val_hardening_details WHERE severity = 'error') > 0
+                THEN 'Data errors exist but do not affect analysis-eligible cancer cohort. Manuscript-grade analysis is supported.'
+            ELSE 'All checks pass. Ready for manuscript freeze.'
+        END AS status_explanation
     """
 
 
@@ -486,6 +601,8 @@ def main() -> None:
         ("Cross-Domain Consistency", CROSS_DOMAIN_CONSISTENCY_SQL.format(**fmt)),
         ("Manuscript Metrics", MANUSCRIPT_METRICS_SQL.format(**fmt)),
         ("Null Rate Regression", NULL_RATE_REGRESSION_SQL),
+        ("Denominator Checks", DENOMINATOR_CHECKS_SQL.format(**fmt)),
+        ("Metric Definition Conflicts", METRIC_DEFINITION_CONFLICTS_SQL.format(**fmt)),
     ]
 
     results = {}

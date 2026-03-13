@@ -1,0 +1,2 @@
+research_id,raw_ln_involved,raw_ln_examined,parsed_involved,parsed_examined,eligibility_status,recommendation,source_table,reviewed_at,action_status
+68,1,0,1,0,not_analysis_eligible,"Data entry error: ln_examined=0 but ln_involved=1. Likely should be ln_examined=1. Raw data preserved; recommend derived correction to ln_examined=MAX(ln_involved, ln_examined) in manuscript layer.",path_synoptics,2026-03-13 07:08:27.271543-04:00,safe_to_correct_in_derived_layer

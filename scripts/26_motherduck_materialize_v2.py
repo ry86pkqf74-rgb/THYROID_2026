@@ -254,6 +254,21 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_lab_staging_schema_v1", "lab_staging_schema_v1"),
     ("md_lab_normalization_dict_v1", "lab_normalization_dict_v1"),
     ("md_lab_validation_rules_v1", "lab_validation_rules_v1"),
+    # ── Manuscript Reconciliation (script 69) ──────────────────────
+    ("md_manuscript_recon_metric_definitions_v1", "manuscript_recon_metric_definitions_v1"),
+    ("md_manuscript_recon_ln_review_v1", "manuscript_recon_ln_review_v1"),
+    ("md_manuscript_recon_bethesda_vi_review_v1", "manuscript_recon_bethesda_vi_review_v1"),
+    ("md_manuscript_recon_cancer_no_op_v1", "manuscript_recon_cancer_no_op_v1"),
+    ("md_manuscript_recon_rai_definitions_v1", "manuscript_recon_rai_definitions_v1"),
+    ("md_manuscript_recon_recurrence_recon_v1", "manuscript_recon_recurrence_recon_v1"),
+    ("md_manuscript_patient_cohort_v2", "manuscript_patient_cohort_v2"),
+    ("md_manuscript_metrics_v2", "manuscript_metrics_v2"),
+    ("md_manuscript_review_queue_v2", "manuscript_review_queue_v2"),
+    ("md_manuscript_metric_sql_registry_v1", "manuscript_metric_sql_registry_v1"),
+    ("md_val_recon_metric_consistency_v1", "val_recon_metric_consistency_v1"),
+    ("md_val_recon_status_v1", "val_recon_status_v1"),
+    ("md_val_denominator_checks", "val_denominator_checks"),
+    ("md_val_metric_definition_conflicts", "val_metric_definition_conflicts"),
 ]
 
 SURVIVAL_COHORT_ENRICHED_SQL = """
