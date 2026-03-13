@@ -1,0 +1,255 @@
+{
+  "us_tirads": {
+    "table": "extracted_us_tirads_v1",
+    "rows": 417,
+    "status": "ok",
+    "stats": {
+      "distribution": [
+        {
+          "tirads_category": "TR1_Benign",
+          "n": 21
+        },
+        {
+          "tirads_category": "TR2_Not_Suspicious",
+          "n": 34
+        },
+        {
+          "tirads_category": "TR3_Mildly_Suspicious",
+          "n": 138
+        },
+        {
+          "tirads_category": "TR4_Moderately_Suspicious",
+          "n": 153
+        },
+        {
+          "tirads_category": "TR5_Highly_Suspicious",
+          "n": 71
+        }
+      ],
+      "total_patients": 417
+    }
+  },
+  "nodule_sizes": {
+    "table": "extracted_nodule_sizes_v1",
+    "rows": 3051,
+    "status": "ok",
+    "stats": {
+      "n": 3051,
+      "avg_cm": 3.736666666666671,
+      "median_cm": 3.2,
+      "min_cm": 0.1,
+      "max_cm": 15.0
+    }
+  },
+  "ras_subtypes": {
+    "table": "extracted_ras_subtypes_v1",
+    "rows": 434,
+    "status": "ok",
+    "stats": {
+      "subtypes": [
+        {
+          "ras_gene": "NRAS",
+          "n": 196
+        },
+        {
+          "ras_gene": "HRAS",
+          "n": 114
+        },
+        {
+          "ras_gene": "RAS_unspecified",
+          "n": 65
+        },
+        {
+          "ras_gene": "KRAS",
+          "n": 59
+        }
+      ],
+      "summary": {
+        "total": 348,
+        "positive": 316.0
+      }
+    }
+  },
+  "ras_patient_summary": {
+    "table": "extracted_ras_patient_summary_v1",
+    "rows": 348,
+    "status": "ok"
+  },
+  "braf_recovery": {
+    "table": "extracted_braf_recovery_v1",
+    "rows": 441,
+    "status": "ok",
+    "stats": {
+      "audit": [
+        {
+          "audit_status": "concordant_positive",
+          "n": 266
+        },
+        {
+          "audit_status": "recovered_new",
+          "n": 175
+        }
+      ],
+      "total_braf_positive": 441,
+      "by_method": [
+        {
+          "detection_method": "NGS",
+          "n": 266
+        },
+        {
+          "detection_method": "NLP_entity",
+          "n": 170
+        },
+        {
+          "detection_method": "NGS_or_unknown",
+          "n": 5
+        }
+      ]
+    }
+  },
+  "braf_audit": {
+    "table": "vw_braf_audit",
+    "rows": 441,
+    "status": "ok"
+  },
+  "preop_sweep": {
+    "table": "extracted_preop_sweep_v1",
+    "rows": 340,
+    "status": "ok",
+    "stats": {
+      "top_genes": [
+        {
+          "gene": "NRAS",
+          "assertion": "mentioned",
+          "n": 50
+        },
+        {
+          "gene": "BRAF",
+          "assertion": "mentioned",
+          "n": 48
+        },
+        {
+          "gene": "NRAS",
+          "assertion": "positive",
+          "n": 41
+        },
+        {
+          "gene": "BRAF",
+          "assertion": "positive",
+          "n": 39
+        },
+        {
+          "gene": "HRAS",
+          "assertion": "mentioned",
+          "n": 35
+        },
+        {
+          "gene": "HRAS",
+          "assertion": "positive",
+          "n": 20
+        },
+        {
+          "gene": "TERT",
+          "assertion": "mentioned",
+          "n": 16
+        },
+        {
+          "gene": "KRAS",
+          "assertion": "mentioned",
+          "n": 10
+        },
+        {
+          "gene": "TERT",
+          "assertion": "positive",
+          "n": 9
+        },
+        {
+          "gene": "KRAS",
+          "assertion": "positive",
+          "n": 9
+        },
+        {
+          "gene": "RET",
+          "assertion": "mentioned",
+          "n": 8
+        },
+        {
+          "gene": "RET",
+          "assertion": "positive",
+          "n": 7
+        },
+        {
+          "gene": "TSHR",
+          "assertion": "mentioned",
+          "n": 6
+        },
+        {
+          "gene": "DICER1",
+          "assertion": "mentioned",
+          "n": 6
+        },
+        {
+          "gene": "TP53",
+          "assertion": "positive",
+          "n": 5
+        },
+        {
+          "gene": "EIF1AX",
+          "assertion": "positive",
+          "n": 5
+        },
+        {
+          "gene": "NTRK",
+          "assertion": "mentioned",
+          "n": 5
+        },
+        {
+          "gene": "EIF1AX",
+          "assertion": "mentioned",
+          "n": 5
+        },
+        {
+          "gene": "TSHR",
+          "assertion": "positive",
+          "n": 3
+        },
+        {
+          "gene": "DICER1",
+          "assertion": "positive",
+          "n": 3
+        }
+      ],
+      "patients_with_positive": 142
+    }
+  },
+  "vw_us_tirads": {
+    "table": "vw_us_tirads",
+    "rows": 5,
+    "status": "ok"
+  },
+  "vw_molecular_subtypes": {
+    "table": "vw_molecular_subtypes",
+    "rows": 7,
+    "status": "ok"
+  },
+  "imaging_molecular_final": {
+    "table": "extracted_imaging_molecular_final_v1",
+    "rows": 3327,
+    "status": "ok"
+  },
+  "master_clinical_v10": {
+    "table": "patient_refined_master_clinical_v10",
+    "rows": 12886,
+    "status": "ok",
+    "stats": {
+      "total": 12886,
+      "has_tirads": 540,
+      "has_nodule_size": 3921,
+      "ras_positive_final": 364,
+      "braf_positive_final": 659,
+      "nras_positive": 220,
+      "hras_positive": 145,
+      "kras_positive": 73
+    }
+  }
+}

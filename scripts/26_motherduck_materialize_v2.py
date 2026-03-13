@@ -169,6 +169,18 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_extracted_staging_recovery_v1", "extracted_staging_recovery_v1"),
     ("md_extracted_mice_summary_v1", "extracted_mice_summary_v1"),
     ("md_patient_refined_master_clinical_v9", "patient_refined_master_clinical_v9"),
+    # ── Phase 11 Final Sweep: Imaging, RAS, BRAF, Pre-op Excel (extraction_audit_engine_v9) ──
+    ("md_extracted_us_tirads_v1", "extracted_us_tirads_v1"),
+    ("md_extracted_nodule_sizes_v1", "extracted_nodule_sizes_v1"),
+    ("md_extracted_ras_subtypes_v1", "extracted_ras_subtypes_v1"),
+    ("md_extracted_ras_patient_summary_v1", "extracted_ras_patient_summary_v1"),
+    ("md_extracted_braf_recovery_v1", "extracted_braf_recovery_v1"),
+    ("md_vw_braf_audit", "vw_braf_audit"),
+    ("md_extracted_preop_sweep_v1", "extracted_preop_sweep_v1"),
+    ("md_vw_us_tirads", "vw_us_tirads"),
+    ("md_vw_molecular_subtypes", "vw_molecular_subtypes"),
+    ("md_extracted_imaging_molecular_final_v1", "extracted_imaging_molecular_final_v1"),
+    ("md_patient_refined_master_clinical_v10", "patient_refined_master_clinical_v10"),
 ]
 
 SURVIVAL_COHORT_ENRICHED_SQL = """
