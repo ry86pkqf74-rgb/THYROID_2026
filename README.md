@@ -1,25 +1,59 @@
 # THYROID_2026
 
-## Manuscript-Ready Data Layer (v2026.03.13)
+## Post-Audit Data Layer (v2026.03.13)
 
-**Status:** Manuscript-ready data layer with reconciled canonical metrics.
-The database is conditionally ready for manuscript freeze following denominator
-language alignment in manuscript files.
+**Status:** Manuscript-ready | Not dataset-mature | Extraction pipeline complete
 
-- **Canonical metrics:** 11 metrics defined in `manuscript_metrics_v2` with explicit
-  numerators, denominators, and population labels
-- **Reconciliation audit:** [`docs/manuscript_metric_reconciliation_20260313.md`](docs/manuscript_metric_reconciliation_20260313.md)
-- **Freeze alignment report:** [`docs/manuscript_freeze_alignment_20260313.md`](docs/manuscript_freeze_alignment_20260313.md)
-- **Manuscript metric exports:** `exports/manuscript_metrics_final/`
-- **Local DuckDB backup:** `thyroid_master_local.duckdb` (use if downgrading MotherDuck)
-- **Studies folder:** `studies/proposal2_ete_staging/` (AJCC 8th + ETE + recurrence PSM)
-- **Publication bundle:** `exports/FINAL_PUBLICATION_BUNDLE_20260313/`
-- **Tag:** [`v2026.03.10-publication-ready`](../../releases/tag/v2026.03.10-publication-ready)
+A full engineering-grade verification pass on 2026-03-13 audited 531 MotherDuck
+tables, 34 `val_*` validation tables, and 18 prior audit documents. The
+**analysis-resolved layer** is populated and all 7 readiness gates pass. The
+extraction pipeline is complete (13 phases, 11 engine versions, data quality
+98/100), but 6 canonical-table backfill operations remain unexecuted — refined
+data sits in sidecar `extracted_*` tables, not yet propagated to canonical
+`*_episode_*` tables on MotherDuck.
 
-> The manuscript reconciliation pass establishes canonical metric definitions
-> and ensures all reported statistics reference explicit numerators, denominators,
-> and population definitions. All 11 canonical metrics pass cross-source
-> consistency checks. See the reconciliation report for details.
+### Key references
+
+| Artifact | Location |
+|----------|----------|
+| Definitive verification report | [`docs/final_repo_verification_20260313.md`](docs/final_repo_verification_20260313.md) |
+| Database hardening audit | [`docs/database_hardening_audit_20260313.md`](docs/database_hardening_audit_20260313.md) |
+| Manuscript metric reconciliation | [`docs/manuscript_metric_reconciliation_20260313.md`](docs/manuscript_metric_reconciliation_20260313.md) |
+| Freeze alignment report | [`docs/manuscript_freeze_alignment_20260313.md`](docs/manuscript_freeze_alignment_20260313.md) |
+| Canonical backfill report | [`docs/canonical_backfill_report_20260313.md`](docs/canonical_backfill_report_20260313.md) |
+| Publication bundle (62 files) | `exports/FINAL_PUBLICATION_BUNDLE_20260313/` |
+| Readiness assessment (7/7 PASS) | `exports/FINAL_PUBLICATION_BUNDLE_20260313/readiness_assessment.json` |
+| Zenodo DOI | [10.5281/zenodo.18945510](https://doi.org/10.5281/zenodo.18945510) |
+| Git tag | [`v2026.03.10-publication-ready`](../../releases/tag/v2026.03.10-publication-ready) |
+
+### What "manuscript-ready" means
+
+The manuscript cohort (`manuscript_cohort_v1`, 10,871 patients, 139 columns), the
+analysis-eligible cancer subcohort (N=4,136), episode-level dedup table, scoring
+systems (AJCC8/ATA/MACIS/AGES/AMES), Tables 1–3, and Figures 1–5 are generated
+and verified. 11 canonical metrics pass cross-source consistency checks.
+
+### What "not dataset-mature" means
+
+Six data propagation gaps exist where extraction engines produced refined data
+that was never backfilled to canonical episode tables on MotherDuck:
+
+1. **Operative note NLP enrichment** — 0% on 9,371 episodes (extractor exists, needs run)
+2. **RAI dose** — 3.0% in canonical (307 refined doses in sidecar table)
+3. **Molecular RAS flag** — 0% in canonical (316+ patients in sidecar)
+4. **Linkage IDs** — not propagated from V3 linkage tables to episode tables
+5. **Imaging nodule master** — 0 rows (source data exists, table not populated)
+6. **Recurrence dates** — 0.5% (1,986 flagged, 54 with specific date)
+
+These do not block the manuscript — the resolved layer queries sidecar tables
+directly. They block downstream consumers who query canonical episode tables.
+See the [verification report](docs/final_repo_verification_20260313.md) for
+the full domain-by-domain scoring matrix.
+
+### Current repo status
+
+See [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md) for a navigable index of all
+March 13 audit documents, export bundles, and open backfill items.
 
 ---
 
@@ -335,12 +369,11 @@ python scripts/29_validation_runner.py --md
 python scripts/30_readiness_check.py --md
 ```
 
-## v2026.03.10 - Publication Release
+## Release history
 
+**Current:** v2026.03.13 audit/verification wave — see [RELEASE_NOTES.md](RELEASE_NOTES.md)
 **Zenodo DOI:** [10.5281/zenodo.18945510](https://doi.org/10.5281/zenodo.18945510)
-
-See [RELEASE_NOTES.md](RELEASE_NOTES.md) for full details.
-QA reconciliation report: [docs/QA_report.md](docs/QA_report.md).
+**QA reconciliation:** [docs/QA_report.md](docs/QA_report.md)
 
 **Legacy compatibility:** If the dashboard shows a message about missing legacy tables
 (`molecular_episode_v3`, `rai_episode_v3`, `validation_failures_v3`, `tumor_episode_master_v2`,

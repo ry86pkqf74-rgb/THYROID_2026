@@ -1,6 +1,99 @@
 # THYROID_2026 Release Notes
 
-## v2026.03.11-predictive-workbench-v2 (Latest)
+## v2026.03.13-audit-verification (Latest)
+**Date:** 2026-03-13
+**Patients:** 10,871 (manuscript cohort) | 4,136 (analysis-eligible cancer subcohort)
+**MotherDuck tables:** 531 | **Validation tables:** 34 `val_*`
+
+### Full Engineering Verification Pass
+
+An end-to-end verification audited 531 MotherDuck tables, 34 validation tables,
+and 18 prior audit documents. Definitive report:
+[`docs/final_repo_verification_20260313.md`](docs/final_repo_verification_20260313.md)
+
+**Verdict:** Manuscript-ready | Not dataset-mature | Extraction pipeline complete
+
+#### Verification matrix (domain-by-domain)
+
+| Domain | Verdict | Key evidence |
+|--------|---------|-------------|
+| Demographics | VERIFIED | 99% age, 93% sex/race |
+| Surgery | VERIFIED | 100% date coverage |
+| Pathology | MOSTLY VERIFIED | 90% extraction completeness |
+| Molecular | PARTIALLY VERIFIED | 546 BRAF, 337 RAS, 108 TERT extracted; RAS flag not backfilled |
+| Imaging | NOT VERIFIED | TIRADS 32.5% from Excel; canonical nodule table empty |
+| RAI | PARTIALLY VERIFIED | 307 doses refined; 3% in canonical table |
+| Recurrence | PARTIALLY VERIFIED | 1,986 flagged; 54 with specific date |
+| Complications | MOSTLY VERIFIED | 7 entities refined (3.3% raw → confirmed/probable tiers) |
+| Operative Notes | NOT VERIFIED | 0% NLP enrichment on 9,371 episodes |
+| Manuscript Metrics | VERIFIED | 11 metrics pass cross-source consistency |
+
+#### Database hardening audit
+[`docs/database_hardening_audit_20260313.md`](docs/database_hardening_audit_20260313.md)
+- 0 critical blocking issues for manuscript use
+- 0 row multiplication problems
+- 0 identity integrity failures
+- 1,155 cross-domain consistency flags (benign-procedure patients lacking operative records)
+
+#### Readiness gates — all 7 PASS
+- G1: 0 patient duplicates
+- G2: 0 episode duplicates (146 resolved via dedup)
+- G3: AJCC8 37.6%, MACIS 37.5%, AMES 100%, AGES 100%
+- G4: 7 refined complication entity types
+- G5: All 15 supporting tables populated
+- G6: 0 null research_ids
+- G7: SAP exists
+
+#### Analysis-resolved layer (scripts 48–55)
+- `patient_analysis_resolved_v1` — 10,871 rows, one per patient
+- `episode_analysis_resolved_v1_dedup` — 9,368 rows (146 duplicates resolved)
+- `lesion_analysis_resolved_v1` — 11,851 rows
+- `manuscript_cohort_v1` — 10,871 rows, 139 columns, frozen
+- `thyroid_scoring_py_v1` — AJCC8, ATA, MACIS, AGES, AMES per patient
+- `complication_phenotype_v1` — 5,928 phenotyped events
+- `longitudinal_lab_clean_v1` — 38,699 clean lab values
+- `recurrence_event_clean_v1` — 1,946 clean recurrence events
+
+#### Publication bundle
+`exports/FINAL_PUBLICATION_BUNDLE_20260313/` — 62 files:
+- Tables 1–3 (CSV + Markdown + LaTeX)
+- Figures 1–5 (300 DPI PNG + SVG)
+- Cox PH results, KM summary, logistic models
+- `master_clinical_v12` (12,886 patients, 136 columns)
+- `manuscript_cohort_v1` (10,871 patients, 139 columns)
+- `readiness_assessment.json`, `manifest.json`
+- Phase 13 final report
+
+#### Manuscript reconciliation
+[`docs/manuscript_metric_reconciliation_20260313.md`](docs/manuscript_metric_reconciliation_20260313.md)
+- 11 canonical metrics with explicit numerators, denominators, population labels
+- 0 metric mismatches across sources
+- Metric SQL registry exported to `exports/manuscript_reconciliation_20260313_0708/`
+
+#### Additional March 13 audit documents
+
+| Document | Scope |
+|----------|-------|
+| [`docs/canonical_backfill_report_20260313.md`](docs/canonical_backfill_report_20260313.md) | 1,988 cells backfilled (RAI dose, RAS flag, linkage IDs) |
+| [`docs/provenance_date_audit_20260313.md`](docs/provenance_date_audit_20260313.md) | Provenance + date accuracy audit |
+| [`docs/operative_nlp_motherduck_propagation_20260313.md`](docs/operative_nlp_motherduck_propagation_20260313.md) | Operative NLP gap analysis |
+| [`docs/operative_note_path_linkage_audit_20260313.md`](docs/operative_note_path_linkage_audit_20260313.md) | Op-note ↔ pathology linkage |
+| [`docs/hp_discharge_note_audit_20260313.md`](docs/hp_discharge_note_audit_20260313.md) | H&P / discharge note coverage |
+| [`docs/imaging_nodule_materialization_20260313.md`](docs/imaging_nodule_materialization_20260313.md) | Imaging nodule master gap |
+| [`docs/manuscript_freeze_alignment_20260313.md`](docs/manuscript_freeze_alignment_20260313.md) | Denominator language alignment |
+
+#### Open backfill items (not blocking manuscript)
+
+1. Operative note NLP enrichment → canonical table (extractor exists)
+2. RAI dose propagation from `extracted_rai_dose_refined_v1` (307 doses)
+3. RAS flag propagation from `extracted_ras_subtypes_v1` (316+ patients)
+4. Linkage ID backfill from V3 linkage tables
+5. Imaging nodule master materialization (19,891 TIRADS rows available)
+6. Recurrence date enrichment (structural sparsity)
+
+---
+
+## v2026.03.11-predictive-workbench-v2 (Previous)
 **Date:** 2026-03-11
 **Patients:** 11,673 | **Enhancement:** Phase 4.5 — Predictive Analytics Workbench Polish
 
