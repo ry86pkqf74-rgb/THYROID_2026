@@ -1,0 +1,10 @@
+analysis,numerator,denominator,rate_pct,ci_lo,ci_hi,level,definition,manuscript_safe,note
+Manuscript claim (surgery-level),57,763,7.5,5.8,9.6,surgery,NSQIP hypo=Yes,False,Surgery-level denominator includes 8 double-counted records from 11 multi-surgery patients
+Corrected patient-level,57,755,7.5,5.9,9.7,patient,NSQIP hypo=Yes,True,"Patient-level, first surgery per patient. RECOMMENDED."
+Hypocalcemia-related event (any),33,689,4.8,3.4,6.6,patient,NSQIP event=Yes,True,"Includes ER visits, IV calcium, readmissions"
+Clinically significant (hypo AND event/IV),31,755,4.1,2.9,5.8,patient,Hypo=Yes AND (event=Yes OR IV=Yes),True,"Best definition if ""clinically significant"" label is desired"
+IV calcium supplementation,17,755,2.3,1.4,3.6,patient,Event type contains IV calcium,True,Strictest intervention-requiring definition
+Total thyroidectomy only,52,679,7.7,5.9,9.9,patient,"NSQIP hypo=Yes, total Tx CPTs",True,Excludes completion thyroidectomy
+Completion thyroidectomy only,5,76,6.6,2.8,14.5,patient,"NSQIP hypo=Yes, CPT 60260",True,Completion thyroidectomy subgroup
+Module-era only (2015-2023),32,607,5.3,3.8,7.3,patient,"NSQIP hypo=Yes, 2015+ cases only",True,Excludes rollout-era cases with potential ascertainment bias
+MISSINGNESS: total cohort,320,1075,29.8,,,patient,Patients lacking hypo status,,100% missing pre-2013; 0-7% missing post-2014
