@@ -146,36 +146,66 @@ def profile_table(con, tbl: str, join_col: str, size_tier: str) -> dict:
 
 
 def check_map_duplicates() -> list[str]:
-    """Find duplicate destination names in MATERIALIZATION_MAP (script 26).
+    """Find duplicate md_* or source names inside MATERIALIZATION_MAP (script 26).
 
-    Scans ONLY the lines within the list literal — from the line containing
-    'MATERIALIZATION_MAP' up to the closing `]` — so that legitimate
-    references to md_* names elsewhere in the file (SQL substitution strings,
-    print statements, etc.) are NOT falsely reported as duplicates.
+    Uses bracket-depth counting on the raw file text to locate the exact
+    boundaries of the MAP list literal.  This is robust against:
+      - indented ']' characters elsewhere in the file (the previous
+        line-by-line approach could stop prematurely or — worse — never stop,
+        making it scan SQL `.replace()` bodies and report false positives)
+      - trailing text / comments on the closing bracket line
+      - nested list / tuple brackets inside individual map entries
+
+    Returns a list of strings identifying every duplicate:
+      - "md_name"        → md_* target name that appears more than once
+      - "src:name"       → source table name that maps to two different md_* names
+    An empty list means the MAP is clean.
     """
     try:
         import re
         script26 = ROOT / "scripts" / "26_motherduck_materialize_v2.py"
-        src_lines = script26.read_text().splitlines()
+        src = script26.read_text()
 
-        in_map = False
-        entries: list[str] = []
-        for line in src_lines:
-            # Start collecting when we enter the MAP definition
-            if "MATERIALIZATION_MAP" in line and "=" in line and "[" in line:
-                in_map = True
-            if in_map:
-                m = re.search(r'"(md_[^"]+)"', line)
-                if m:
-                    entries.append(m.group(1))
-            # Stop collecting at the closing bracket of the list
-            if in_map and line.strip() == "]":
-                break
+        # ── Locate the opening '[' of the MAP list ──────────────────────────
+        marker = "MATERIALIZATION_MAP: list[tuple[str, str]] = ["
+        if marker not in src:
+            # Fallback: accept any MATERIALIZATION_MAP = [ pattern
+            m = re.search(r"MATERIALIZATION_MAP\s*[:\w\[\],\s]*=\s*\[", src)
+            if not m:
+                return []
+            bracket_start = src.index("[", m.start())
+        else:
+            bracket_start = src.index(marker) + len(marker) - 1  # the '[' char
 
-        seen: dict[str, int] = {}
-        for e in entries:
-            seen[e] = seen.get(e, 0) + 1
-        return [k for k, v in seen.items() if v > 1]
+        # ── Walk characters with depth counting to find the matching ']' ────
+        depth = 0
+        bracket_end = bracket_start
+        for i, ch in enumerate(src[bracket_start:], bracket_start):
+            if ch == "[":
+                depth += 1
+            elif ch == "]":
+                depth -= 1
+                if depth == 0:
+                    bracket_end = i
+                    break
+
+        # ── Extract only the MAP list content ───────────────────────────────
+        map_content = src[bracket_start : bracket_end + 1]
+
+        # Each MAP entry is a 2-tuple ("md_name", "src_name").
+        # Capture both sides so we can detect source duplicates as well.
+        pairs = re.findall(r'\("(md_[^"]+)",\s*"([^"]+)"\)', map_content)
+
+        md_seen:  dict[str, int] = {}
+        src_seen: dict[str, int] = {}
+        for md_name, src_name in pairs:
+            md_seen[md_name]   = md_seen.get(md_name,   0) + 1
+            src_seen[src_name] = src_seen.get(src_name, 0) + 1
+
+        dupes: list[str] = []
+        dupes += [k              for k, v in md_seen.items()  if v > 1]
+        dupes += [f"src:{k}"     for k, v in src_seen.items() if v > 1]
+        return dupes
     except Exception:
         return []
 

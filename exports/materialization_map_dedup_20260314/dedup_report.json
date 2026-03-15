@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-03-15T01:50:47.042976",
+  "script26_path": "/Users/ros/THyroid 2026/THYROID_2026/scripts/26_motherduck_materialize_v2.py",
+  "total_entries": 220,
+  "unique_md_targets": 220,
+  "unique_source_names": 220,
+  "duplicate_md_targets": [],
+  "duplicate_source_names": [],
+  "all_duplicates_resolved": true,
+  "prior_false_positives": {
+    "count": 6,
+    "names": [
+      "md_pathology_recon_review_v2",
+      "md_molecular_linkage_review_v2",
+      "md_rai_adjudication_review_v2",
+      "md_imaging_path_concordance_v2",
+      "md_op_path_recon_review_v2",
+      "md_lineage_audit_v1"
+    ],
+    "root_cause": "check_map_duplicates() in script 85 used line.strip()==']' to terminate its scan, which was unreliable.  It continued past the MAP's closing bracket into SQL .replace() calls at lines 598-629 where these md_* names appear as string literals \u2014 not as MAP entries.",
+    "fix": "Rewritten using bracket-depth character counting; now scans only the exact MAP list slice."
+  },
+  "guard_added_to_script26": true,
+  "test_file": "tests/test_materialization_map.py",
+  "baseline_count": 220
+}

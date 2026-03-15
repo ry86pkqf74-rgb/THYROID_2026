@@ -303,6 +303,27 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_val_materialization_perf_v1",          "val_materialization_perf_v1"),
 ]
 
+# ── MATERIALIZATION_MAP uniqueness guard ──────────────────────────────────────
+# Fails at module-load time if any md_* target name or any source name appears
+# more than once.  Prevents silent double-materializations and the false-positive
+# duplicate reports that plagued val_materialization_perf_v1 CSV runs.
+_mm_md_names  = [t[0] for t in MATERIALIZATION_MAP]
+_mm_src_names = [t[1] for t in MATERIALIZATION_MAP]
+if len(_mm_md_names) != len(set(_mm_md_names)):
+    _dup_md = [k for k in set(_mm_md_names) if _mm_md_names.count(k) > 1]
+    raise ValueError(
+        f"MATERIALIZATION_MAP: duplicate md_* target names detected — "
+        f"fix before running: {_dup_md}"
+    )
+if len(_mm_src_names) != len(set(_mm_src_names)):
+    _dup_src = [k for k in set(_mm_src_names) if _mm_src_names.count(k) > 1]
+    raise ValueError(
+        f"MATERIALIZATION_MAP: duplicate source names detected — "
+        f"same table would be materialized twice: {_dup_src}"
+    )
+del _mm_md_names, _mm_src_names
+# ─────────────────────────────────────────────────────────────────────────────
+
 SURVIVAL_COHORT_ENRICHED_SQL = """
 CREATE OR REPLACE TABLE survival_cohort_enriched AS
 SELECT
