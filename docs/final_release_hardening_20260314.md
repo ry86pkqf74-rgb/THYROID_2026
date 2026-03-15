@@ -58,7 +58,11 @@ Implements a deterministic, gate-checked DEV → QA → PROD promotion workflow.
 4. Core columns non-null
 5. Hardening tables present
 6. MAP dedup (runs script 94)
-7. RO share accessible (prod promotions only)
+7. `prod_db_accessible` — prod DB (`thyroid_research_2026`) directly reachable (prod only)
+8. `prod_ro_share_accessible` — publication RO share (`thyroid_share` catalog alias) reachable (prod only)
+
+> **micro-hardening 2026-03-14**: former single `ro_share` gate split into gates 7 + 8
+> so prod-DB vs share failures surface separately in the promotion manifest.
 
 **Outputs:**
 - Promotion manifest JSON in `exports/release_manifests/<promotion_id>.json`
@@ -101,8 +105,21 @@ Output files:
 
 **Usage:**
 ```bash
-MOTHERDUCK_TOKEN=... .venv/bin/python scripts/96_release_manifest.py --md
+# Read from prod and write manifest  (default --env prod; no --md flag)
+MOTHERDUCK_TOKEN=... .venv/bin/python scripts/96_release_manifest.py
+
+# Target a specific environment
+MOTHERDUCK_TOKEN=... .venv/bin/python scripts/96_release_manifest.py --env qa
+
+# Dry-run (print; do not write file)
+.venv/bin/python scripts/96_release_manifest.py --dry-run
+
+# Use service-account token
+MD_SA_TOKEN=... .venv/bin/python scripts/96_release_manifest.py --sa
 ```
+
+> **Note:** Script 96 uses `--env {dev|qa|prod}` (default: `prod`).
+> It does **not** accept a `--md` flag.
 
 ---
 

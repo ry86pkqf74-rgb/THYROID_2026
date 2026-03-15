@@ -265,24 +265,57 @@ def gate_hardening_tables(con, level: str) -> list[GateResult]:
     return results
 
 
-def gate_ro_share(sa: bool, level: str) -> GateResult:
+def gate_prod_db_accessible(sa: bool, level: str) -> GateResult:
+    """Gate: the production DB (thyroid_research_2026) is directly reachable."""
     if "share" not in level:
-        return GateResult("ro_share", "SKIP", "Only checked on prod promotion")
+        return GateResult("prod_db_accessible", "SKIP", "Only checked on prod promotion")
     try:
-        import duckdb
-        token = os.environ.get("MD_SA_TOKEN") or os.environ.get("MOTHERDUCK_TOKEN")
-        con = duckdb.connect(
-            f"md:thyroid_research_2026?motherduck_token={token}"
-        )
-        n = con.execute(
+        from motherduck_client import MotherDuckClient  # noqa: F811
+        client = MotherDuckClient.for_env("prod", use_service_account=sa)
+        con = client.connect()
+        n = int(con.execute(
             "SELECT COUNT(DISTINCT research_id) FROM master_cohort"
-        ).fetchone()[0]
+        ).fetchone()[0])
         con.close()
         if n < 10000:
-            return GateResult("ro_share", "FAIL", f"Only {n} patients in share")
-        return GateResult("ro_share", "PASS", f"{n:,} patients readable via share", n)
+            return GateResult("prod_db_accessible", "FAIL",
+                               f"Only {n:,} patients in prod DB (expected ≥10000)")
+        return GateResult("prod_db_accessible", "PASS",
+                           f"{n:,} patients in thyroid_research_2026", n)
     except Exception as e:
-        return GateResult("ro_share", "FAIL", f"Share not accessible: {e}")
+        return GateResult("prod_db_accessible", "FAIL",
+                           f"Prod DB not accessible: {e}")
+
+
+def gate_prod_ro_share_accessible(sa: bool, level: str) -> GateResult:
+    """Gate: the publication RO share (thyroid_share catalog alias) is reachable.
+
+    Uses MotherDuckClient.connect_ro_share() which targets:
+        md:_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c
+    This is distinct from the prod DB — the share is consumed by the Streamlit
+    dashboard and external collaborators.
+    """
+    if "share" not in level:
+        return GateResult("prod_ro_share_accessible", "SKIP",
+                           "Only checked on prod promotion")
+    try:
+        from motherduck_client import MotherDuckClient  # noqa: F811
+        client = MotherDuckClient.for_env("prod", use_service_account=sa)
+        share_con = client.connect_ro_share()
+        # Use thyroid_share catalog alias (consistent with dashboard connect path)
+        share_con.execute("USE thyroid_share;")
+        n = int(share_con.execute(
+            "SELECT COUNT(DISTINCT research_id) FROM master_cohort"
+        ).fetchone()[0])
+        share_con.close()
+        if n < 10000:
+            return GateResult("prod_ro_share_accessible", "FAIL",
+                               f"Only {n:,} patients visible via RO share")
+        return GateResult("prod_ro_share_accessible", "PASS",
+                           f"{n:,} patients readable via thyroid_share RO path", n)
+    except Exception as e:
+        return GateResult("prod_ro_share_accessible", "FAIL",
+                           f"RO share not accessible: {e}")
 
 
 # ── MAP dedup gate ─────────────────────────────────────────────────────────
@@ -447,7 +480,9 @@ def main() -> None:
     all_gates += gate_null_core_columns(src_con, level)
     all_gates += gate_hardening_tables(src_con, level)
     all_gates.append(gate_map_dedup())
-    all_gates.append(gate_ro_share(args.sa, level))
+    # Two independent prod-path checks (both run for full+share level)
+    all_gates.append(gate_prod_db_accessible(args.sa, level))
+    all_gates.append(gate_prod_ro_share_accessible(args.sa, level))
 
     for g in all_gates:
         icon = {"PASS": "✓", "FAIL": "✗", "WARN": "⚠", "SKIP": "–"}.get(g.status, "?")

@@ -67,7 +67,10 @@ def parse_materialization_map(script_path: Path) -> list[tuple[str, str]]:
             m = re.search(r'"(md_[^"]+)"\s*,\s*"([^"]+)"', line)
             if m:
                 entries.append((m.group(1), m.group(2)))
-        if in_map and line.strip() == "]":
+        # Terminate when we hit a bare closing bracket (the end of the list
+        # literal). Accept trailing whitespace and inline comments so the
+        # parser is not broken by minor formatting changes.
+        if in_map and re.match(r'^\s*\]\s*(#.*)?$', line):
             break
 
     return entries

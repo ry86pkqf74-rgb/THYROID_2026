@@ -1,0 +1,42 @@
+{
+  "pass": "final_micro_hardening",
+  "date": "2026-03-14",
+  "base_commit": "c87179a",
+  "description": "Post-release release-engineering clean-up — 4 targeted fixes",
+  "changes": [
+    {
+      "file": "scripts/95_environment_promotion.py",
+      "change": "Split gate_ro_share() into gate_prod_db_accessible() + gate_prod_ro_share_accessible()",
+      "rationale": "Old gate connected to prod DB directly; never exercised the actual RO share path",
+      "reversible": true
+    },
+    {
+      "file": "scripts/94_map_dedup_validator.py",
+      "change": "Harden MAP termination: line.strip()==']' -> re.match(r'^\\s*\\]\\s*(#.*)?$', line)",
+      "rationale": "Trailing whitespace or inline comments after ] would prevent parser from terminating correctly",
+      "reversible": true
+    },
+    {
+      "file": "scripts/90_manuscript_freeze_rebuild.py",
+      "change": "Add _get_git_sha_full(); enrich _verify_prod_source() audit dict with git_sha, source_connection_type, ro_share_path, tables_validated",
+      "rationale": "Provenance artifact lacked reproducibility metadata needed for peer review",
+      "reversible": true
+    },
+    {
+      "file": "docs/final_release_hardening_20260314.md",
+      "change": "Fix script 96 usage (remove --md); update gate list to reflect split gate names",
+      "rationale": "Script 96 uses --env not --md; incorrect docs would cause operator errors",
+      "reversible": true
+    },
+    {
+      "file": "docs/motherduck_promotion_runbook_20260314.md",
+      "change": "Fix Step 1.1 (remove --db unsupported flag); fix Step 2.5 (remove --md from script 96)",
+      "rationale": "Neither flag exists in the referenced scripts",
+      "reversible": true
+    }
+  ],
+  "release_candidate_status": "RELEASE_CANDIDATE_CLEAN",
+  "manual_steps_remaining": "None — RO share gate requires same token as old ro_share gate",
+  "metrics_changed": false,
+  "ci_behaviour_changed": "additive — prod promotion now checks 2 gates instead of 1 for share validation"
+}

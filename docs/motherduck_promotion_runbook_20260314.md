@@ -40,17 +40,20 @@ git status
 
 ### Step 1.1 — Materialize into QA
 
-Re-run full materialization using QA as the target database:
+Re-run full materialization targeting the QA database.
+
+> **Note:** Script 26 does **not** accept a `--db` flag. It targets whichever
+> database the `MOTHERDUCK_TOKEN` connects to (default: `thyroid_research_2026`,
+> the prod DB).  To materialize into a QA/dev database, either:
+> (a) use a token scoped to `thyroid_research_2026_qa`, or
+> (b) temporarily override the db by editing `ENV_DATABASES["prod"]` locally.
+> Always verify the active target with `SELECT current_database()` in a
+> one-off Python snippet before running the full pipeline.
 
 ```bash
-MOTHERDUCK_TOKEN=... .venv/bin/python scripts/26_motherduck_materialize_v2.py \
-    --md --db thyroid_research_2026_qa
+# Standard prod materialization (run this from qa after the token targets prod)
+MOTHERDUCK_TOKEN=... .venv/bin/python scripts/26_motherduck_materialize_v2.py --md
 ```
-
-> **Note:** Script 26 currently materializes into whichever DB the token
-> connects to. If the script hard-codes `thyroid_research_2026`, you may need
-> to temporarily set the env override or run with `--db` if supported.
-> Verify target DB with `SELECT current_database()` before proceeding.
 
 ### Step 1.2 — Run Promotion Gate (dry-run first)
 
@@ -122,7 +125,8 @@ Expected:
 ### Step 2.5 — Generate Release Manifest
 
 ```bash
-MOTHERDUCK_TOKEN=... .venv/bin/python scripts/96_release_manifest.py --md
+# Script 96 uses --env (default: prod); there is no --md flag
+MOTHERDUCK_TOKEN=... .venv/bin/python scripts/96_release_manifest.py
 ```
 
 Verify `overall_status = RELEASE_READY` in the output manifest.

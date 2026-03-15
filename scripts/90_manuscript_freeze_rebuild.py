@@ -40,6 +40,16 @@ PROD_DB_NAME = "thyroid_research_2026"
 NON_PROD_DB_NAMES = {"thyroid_research_2026_dev", "thyroid_research_2026_qa"}
 
 
+def _get_git_sha_full() -> str:
+    try:
+        return subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True, text=True, cwd=str(REPO_ROOT)
+        ).stdout.strip()
+    except Exception:
+        return "unknown"
+
+
 def _verify_prod_source(con, allow_nonprod: bool) -> dict:
     """Return a source-audit dict; raise SystemExit if non-prod without override."""
     audit: dict = {
@@ -47,6 +57,10 @@ def _verify_prod_source(con, allow_nonprod: bool) -> dict:
         "expected_env": MANUSCRIPT_SOURCE_ENV,
         "expected_db": PROD_DB_NAME,
         "actual_db": "local",
+        "source_connection_type": "local_duckdb",
+        "ro_share_path": "not_applicable",
+        "git_sha": _get_git_sha_full(),
+        "tables_validated": CRITICAL_TABLES,
         "is_prod": False,
         "override_used": False,
         "status": "unknown",
@@ -57,6 +71,8 @@ def _verify_prod_source(con, allow_nonprod: bool) -> dict:
         audit["actual_db"] = actual_db
         if actual_db == PROD_DB_NAME:
             audit["is_prod"] = True
+            audit["source_connection_type"] = "motherduck_prod"
+            audit["ro_share_path"] = "md:_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c"
             audit["status"] = "VERIFIED_PROD"
         elif actual_db in NON_PROD_DB_NAMES:
             audit["is_prod"] = False
@@ -74,6 +90,8 @@ def _verify_prod_source(con, allow_nonprod: bool) -> dict:
         else:
             # Local DuckDB — allowed but flagged
             audit["is_prod"] = False
+            audit["source_connection_type"] = "local_duckdb"
+            audit["ro_share_path"] = "not_applicable"
             audit["status"] = "LOCAL_DUCKDB"
             log("  NOTE: Running against local DuckDB (not MotherDuck prod).", "WARN")
             log("  For publication-quality outputs use --md (MotherDuck prod).", "WARN")
