@@ -43,7 +43,7 @@ research_id,recurrence_any,recurrence_flag_structured,recurrence_date_status,rec
 8616,True,True,unresolved_date,,,structural_date_unknown,2020-11-23 00:00:00,PTC,2,x,2,3.8,0.1,26,False,False,1,1
 8648,True,True,unresolved_date,,,structural_date_unknown,2021-02-10 00:00:00,PTC,4.4,x,2,-1.0,-1.0,0,False,False,,1
 8689,True,True,unresolved_date,,,structural_date_unknown,2021-03-02 00:00:00,PTC,1.5,x,2,3.0,0.1,6,False,False,,1
-8739,True,True,unresolved_date,,,structural_date_unknown,2021-03-01 00:00:00,PTC,4.2,x,2,-1.0,-1.0,0,False,False,0,1
+8739,True,True,unresolved_date,,,structural_date_unknown,2021-03-01 00:00:00,PTC,4.2,x,2,-1.0,-1.0,0,False,False,0,2
 8778,True,True,unresolved_date,,,structural_date_unknown,2021-04-13 00:00:00,PTC,2.5,x,2,0.2,0.2,5,False,False,,1
 8783,True,True,unresolved_date,,,structural_date_unknown,2021-04-13 00:00:00,metastatic PTC,1.7,x,2,0.2,0.2,2,True,False,,1
 8783,True,True,unresolved_date,,,structural_date_unknown,2021-04-13 00:00:00,metastatic PTC,1.7,x,2,0.2,0.2,2,True,False,,1

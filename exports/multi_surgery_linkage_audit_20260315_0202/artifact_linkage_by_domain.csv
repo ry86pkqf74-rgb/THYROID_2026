@@ -1,0 +1,10 @@
+domain,table,total_ms_artifacts,uniquely_linked,ambiguous,distant,unlinked,no_date
+pathology,path_synoptics,1576,1449,126,0,0,1
+operative,operative_episode_detail_v2,624,561,59,1,0,2
+fna,fna_episode_master_v2,5353,92,43,325,95,4781
+molecular,molecular_test_episode_v2,715,6,9,71,8,621
+rai,rai_treatment_episode_v2,436,65,12,64,64,119
+imaging_us,raw_us_tirads_excel_v1,1348,0,0,0,0,0
+lab_tg,thyroglobulin_labs,7973,221,506,1444,3939,0
+lab_canonical,longitudinal_lab_canonical_v1,10304,227,506,1447,3946,93
+notes,clinical_notes_long,1185,420,28,34,119,485
