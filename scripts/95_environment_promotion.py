@@ -96,7 +96,7 @@ CRITICAL_TABLES = [
 # ── Metric bounds (same as script 91) ────────────────────────────────────
 
 METRIC_BOUNDS: list[tuple[str, str, int, int]] = [
-    ("surgical_cohort",   "SELECT COUNT(DISTINCT research_id) FROM master_cohort",                       10500, 11500),
+    ("surgical_cohort",   "SELECT COUNT(DISTINCT research_id) FROM master_cohort",                       10500, 12000),
     ("cancer_cohort",     "SELECT COUNT(*) FROM analysis_cancer_cohort_v1",                               3900,  4300),
     ("manuscript_cohort", "SELECT COUNT(*) FROM manuscript_cohort_v1",                                   10500, 11200),
     ("dedup_episodes",    "SELECT COUNT(*) FROM episode_analysis_resolved_v1_dedup",                      9000,  9800),

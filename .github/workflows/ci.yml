@@ -315,16 +315,21 @@ jobs:
       - name: Release manifest freshness
         run: |
           python -c "
-          import json, sys
+          import json, subprocess, sys
           from pathlib import Path
           latest = Path('exports/release_manifests/LATEST_MANIFEST.json')
           if not latest.exists():
-              print('WARN: No release manifest found (run scripts/96_release_manifest.py --md to generate)')
+              print('WARN: No release manifest found (run scripts/96_release_manifest.py to generate)')
               sys.exit(0)
           m = json.loads(latest.read_text())
           print(f'Latest manifest: {m[\"manifest_id\"]}  status={m[\"overall_status\"]}  sha={m[\"git_sha\"]}')
           if m['overall_status'] == 'BLOCKED':
               print('WARN: Latest manifest is BLOCKED — check metrics before tagging a release')
+          head = subprocess.check_output(['git','rev-parse','--short=7','HEAD'], text=True).strip()
+          if m.get('git_sha','')[:7] != head:
+              print(f'WARN: Manifest SHA {m[\"git_sha\"]} != HEAD {head} — re-run scripts/96_release_manifest.py')
+          else:
+              print('Manifest SHA matches HEAD — fresh')
           sys.exit(0)
           "
         continue-on-error: true

@@ -233,7 +233,7 @@ tables).
 - [ ] `scripts/94_map_dedup_validator.py` exits 0
 - [ ] `scripts/29_validation_runner.py --md` passes (0 FAIL rows in val_* tables)
 - [ ] `scripts/90_manuscript_freeze_rebuild.py --md --dry-run` passes
-- [ ] `scripts/96_release_manifest.py --md` shows `RELEASE_READY`
+- [ ] `scripts/96_release_manifest.py` shows `RELEASE_READY`
 - [ ] git working tree is clean (or changes are intentional)
 - [ ] Branch is `main` (or a tagged release branch)
 - [ ] `scripts/95_environment_promotion.py --from qa --to prod --sa --dry-run` passes
