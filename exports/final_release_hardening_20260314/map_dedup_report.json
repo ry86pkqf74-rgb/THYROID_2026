@@ -1,0 +1,12 @@
+{
+  "total_entries": 220,
+  "duplicate_md_names": {},
+  "duplicate_src_names": {},
+  "non_conventional_aliases": [
+    "md_oper_episode_detail_v2 \u2192 operative_episode_detail_v2",
+    "md_date_quality_summary_v2 \u2192 qa_date_completeness_v2",
+    "md_op_path_recon_review_v2 \u2192 operative_pathology_reconciliation_review_v2"
+  ],
+  "checked_at": "2026-03-15T01:31:28.100269",
+  "script_checked": "/Users/ros/THyroid 2026/THYROID_2026/scripts/26_motherduck_materialize_v2.py"
+}

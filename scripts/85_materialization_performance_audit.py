@@ -146,18 +146,36 @@ def profile_table(con, tbl: str, join_col: str, size_tier: str) -> dict:
 
 
 def check_map_duplicates() -> list[str]:
-    """Find duplicate destination names in MATERIALIZATION_MAP (script 26)."""
+    """Find duplicate destination names in MATERIALIZATION_MAP (script 26).
+
+    Scans ONLY the lines within the list literal — from the line containing
+    'MATERIALIZATION_MAP' up to the closing `]` — so that legitimate
+    references to md_* names elsewhere in the file (SQL substitution strings,
+    print statements, etc.) are NOT falsely reported as duplicates.
+    """
     try:
-        script26 = ROOT / "scripts" / "26_motherduck_materialize_v2.py"
-        src = script26.read_text()
         import re
-        entries = re.findall(r'"(md_[^"]+)"', src)
-        seen: dict = {}
-        dupes = []
+        script26 = ROOT / "scripts" / "26_motherduck_materialize_v2.py"
+        src_lines = script26.read_text().splitlines()
+
+        in_map = False
+        entries: list[str] = []
+        for line in src_lines:
+            # Start collecting when we enter the MAP definition
+            if "MATERIALIZATION_MAP" in line and "=" in line and "[" in line:
+                in_map = True
+            if in_map:
+                m = re.search(r'"(md_[^"]+)"', line)
+                if m:
+                    entries.append(m.group(1))
+            # Stop collecting at the closing bracket of the list
+            if in_map and line.strip() == "]":
+                break
+
+        seen: dict[str, int] = {}
         for e in entries:
             seen[e] = seen.get(e, 0) + 1
-        dupes = [k for k, v in seen.items() if v > 1]
-        return dupes
+        return [k for k, v in seen.items() if v > 1]
     except Exception:
         return []
 

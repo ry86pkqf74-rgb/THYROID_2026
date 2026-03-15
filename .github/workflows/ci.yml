@@ -76,6 +76,12 @@ jobs:
           pip install pyflakes -q
           python -m pyflakes dashboard.py motherduck_client.py || true
 
+      # ── NEW: MATERIALIZATION_MAP duplicate check (no MD token required) ──
+      - name: MAP dedup validation (no token needed)
+        run: |
+          python scripts/94_map_dedup_validator.py
+          echo "MAP dedup check: exit $?"
+
   # ── Job 2: Unit tests ──────────────────────────────────────────────────────
   unit-tests:
     name: Unit Tests
@@ -289,6 +295,38 @@ jobs:
               exit(1)
           print('Dashboard smoke tests: PASS')
           "
+
+      # ── NEW: Manuscript source-env check ─────────────────────────────────
+      - name: Manuscript source-env verification
+        run: |
+          python -c "
+          import os, duckdb
+          token = os.environ['MOTHERDUCK_TOKEN']
+          con = duckdb.connect(f'md:thyroid_research_2026?motherduck_token={token}')
+          db = con.execute('SELECT current_database()').fetchone()[0]
+          expected = 'thyroid_research_2026'
+          assert db == expected, f'manuscript source => {db!r}, expected {expected!r}'
+          print(f'Manuscript source DB: {db!r} — PASS')
+          con.close()
+          "
+
+      # ── NEW: Release manifest freshness check (warn, non-blocking) ────────
+      - name: Release manifest freshness
+        run: |
+          python -c "
+          import json, sys
+          from pathlib import Path
+          latest = Path('exports/release_manifests/LATEST_MANIFEST.json')
+          if not latest.exists():
+              print('WARN: No release manifest found (run scripts/96_release_manifest.py --md to generate)')
+              sys.exit(0)
+          m = json.loads(latest.read_text())
+          print(f'Latest manifest: {m[\"manifest_id\"]}  status={m[\"overall_status\"]}  sha={m[\"git_sha\"]}')
+          if m['overall_status'] == 'BLOCKED':
+              print('WARN: Latest manifest is BLOCKED — check metrics before tagging a release')
+          sys.exit(0)
+          "
+        continue-on-error: true
 
   # ── Job 4: Query Benchmark Regression (every push, non-blocking on missing baseline)
   benchmark-regression:

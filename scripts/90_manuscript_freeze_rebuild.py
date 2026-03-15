@@ -30,6 +30,68 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PYTHON = str(REPO_ROOT / ".venv" / "bin" / "python")
 
+# ── Prod-sourcing enforcement ─────────────────────────────────────────────
+# Manuscript outputs must ONLY be generated from the production MotherDuck DB
+# or a validated local snapshot.  Non-prod execution is blocked unless the
+# operator explicitly passes --allow-nonprod (which produces a WARN artifact).
+
+MANUSCRIPT_SOURCE_ENV = "prod"
+PROD_DB_NAME = "thyroid_research_2026"
+NON_PROD_DB_NAMES = {"thyroid_research_2026_dev", "thyroid_research_2026_qa"}
+
+
+def _verify_prod_source(con, allow_nonprod: bool) -> dict:
+    """Return a source-audit dict; raise SystemExit if non-prod without override."""
+    audit: dict = {
+        "verified_at": datetime.utcnow().isoformat(),
+        "expected_env": MANUSCRIPT_SOURCE_ENV,
+        "expected_db": PROD_DB_NAME,
+        "actual_db": "local",
+        "is_prod": False,
+        "override_used": False,
+        "status": "unknown",
+    }
+    try:
+        row = con.execute("SELECT current_database()").fetchone()
+        actual_db = str(row[0]) if row else "unknown"
+        audit["actual_db"] = actual_db
+        if actual_db == PROD_DB_NAME:
+            audit["is_prod"] = True
+            audit["status"] = "VERIFIED_PROD"
+        elif actual_db in NON_PROD_DB_NAMES:
+            audit["is_prod"] = False
+            if allow_nonprod:
+                audit["override_used"] = True
+                audit["status"] = "NON_PROD_OVERRIDE"
+                log(f"  WARN: Connected to non-prod DB '{actual_db}' (--allow-nonprod override active)", "WARN")
+            else:
+                audit["status"] = "BLOCKED_NON_PROD"
+                log(f"  ERROR: Connected to non-prod DB '{actual_db}'", "ERROR")
+                log(f"  Manuscript outputs require the production database '{PROD_DB_NAME}'.", "ERROR")
+                log("  Use --allow-nonprod to bypass (generates a warning artifact).", "ERROR")
+                _write_source_audit(audit)
+                sys.exit(1)
+        else:
+            # Local DuckDB — allowed but flagged
+            audit["is_prod"] = False
+            audit["status"] = "LOCAL_DUCKDB"
+            log("  NOTE: Running against local DuckDB (not MotherDuck prod).", "WARN")
+            log("  For publication-quality outputs use --md (MotherDuck prod).", "WARN")
+    except Exception as e:
+        audit["status"] = f"AUDIT_ERROR: {e}"
+        log(f"  WARN: Could not verify source database: {e}", "WARN")
+    return audit
+
+
+def _write_source_audit(audit: dict) -> Path:
+    ts = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    out_dir = REPO_ROOT / "exports" / "manuscript_cohort_freeze"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"source_audit_{ts}.json"
+    out_path.write_text(json.dumps(audit, indent=2))
+    log(f"  Source audit: {out_path.relative_to(REPO_ROOT)}")
+    return out_path
+
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M")
 DATE_TAG = datetime.now().strftime("%Y%m%d")
 BUNDLE_DIR = REPO_ROOT / "exports" / f"MANUSCRIPT_FREEZE_BUNDLE_{DATE_TAG}"
@@ -321,6 +383,8 @@ def main():
     parser = argparse.ArgumentParser(description="Rebuild manuscript publication bundle")
     parser.add_argument("--md", action="store_true", help="Use MotherDuck")
     parser.add_argument("--dry-run", action="store_true", help="Validate only")
+    parser.add_argument("--allow-nonprod", action="store_true",
+                        help="Allow non-prod source (generates WARN audit artifact; not for final submission)")
     args = parser.parse_args()
 
     log(f"Manuscript Freeze Rebuild — {TIMESTAMP}")
@@ -328,6 +392,12 @@ def main():
     log(f"  Mode: {'DRY RUN' if args.dry_run else 'FULL REBUILD'}")
 
     con = get_connection(args.md)
+
+    # ── Prod-sourcing check ─────────────────────────────────────────────────
+    log("=== Prod-Sourcing Verification ===")
+    source_audit = _verify_prod_source(con, allow_nonprod=args.allow_nonprod)
+    log(f"  Source status: {source_audit['status']}")
+
     failures, warnings = validate_source_tables(con)
     con.close()
 
@@ -362,6 +432,9 @@ def main():
     copy_analysis_outputs()
     write_manifest()
     passed = write_readiness_assessment(failures, warnings)
+    # Write source audit artifact
+    audit_path = _write_source_audit(source_audit)
+    shutil.copy2(audit_path, BUNDLE_DIR / audit_path.name)
     create_bundle_zip()
 
     log(f"\n{'='*60}")
