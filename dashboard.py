@@ -59,6 +59,7 @@ from app.predictive_analytics import render_predictive_analytics
 from app.thyroseq_integration import render_thyroseq_integration
 from app.qa_workbench import render_qa_workbench
 from app.manual_review_workbench import render_manual_review_workbench
+from app.episode_linkage_qa import render_episode_linkage_qa
 
 # ── Page config ───────────────────────────────────────────────────────────
 st.set_page_config(page_title="Thyroid Cohort Explorer", page_icon="🔬",
@@ -3101,10 +3102,10 @@ def main():
 
     # ── Section 4: Cross-Domain Linkage & Episodes ─────────────────────
     with sec_linkage:
-        _l1, _l2, _l3, _l4, _l5, _l6, _l7, _l8 = st.tabs([
+        _l1, _l2, _l3, _l4, _l5, _l6, _l7, _l8, _l9 = st.tabs([
             "Extraction Completeness", "Molecular Episodes", "RAI Episodes",
             "Imaging & Nodules", "Operative Detail", "QA & Adjudication",
-            "Features v3", "Timeline & Events",
+            "Features v3", "Timeline & Events", "Episode Linkage QA",
         ])
         with _l1: render_extraction_completeness(con)
         with _l2: render_molecular_dashboard(con)
@@ -3117,6 +3118,7 @@ def main():
             _le1, _le2 = st.tabs(["Timeline", "Events"])
             with _le1: render_timeline(con)
             with _le2: render_events(con)
+        with _l9: render_episode_linkage_qa(con)
 
     # ── Section 5: Outcomes & Analytics ────────────────────────────────
     with sec_outcomes:

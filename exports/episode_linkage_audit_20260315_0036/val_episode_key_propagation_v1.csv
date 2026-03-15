@@ -1,0 +1,4 @@
+table_name,patients_present,patients_expected,total_rows,distinct_episode_ids,null_episode_id_rows,all_ones_multi_surg,audit_ts
+episode_analysis_resolved_v1_dedup,622,761,622.0,1,0.0,622.0,2026-03-15 00:36:28.775223-04:00
+operative_episode_detail_v2,622,761,624.0,1,0.0,624.0,2026-03-15 00:36:28.775223-04:00
+tumor_episode_master_v2,761,761,1577.0,6,0.0,761.0,2026-03-15 00:36:28.775223-04:00

@@ -1,0 +1,14 @@
+metric,value
+multi_surgery_patients,761
+total_surgery_episodes,1576
+total_artifacts_assigned,8498
+pct_exact_or_high_confidence,8.3
+pct_in_window,100.0
+mislink_candidates,1464
+ambiguous_artifacts,3992
+patients_green,53
+patients_yellow,75
+patients_red,14
+patients_review_required,616
+patients_no_artifacts,3
+audit_timestamp,2026-03-15 00:36:29.028241-04

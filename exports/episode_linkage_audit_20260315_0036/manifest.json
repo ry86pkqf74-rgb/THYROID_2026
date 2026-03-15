@@ -1,0 +1,21 @@
+{
+  "generated": "2026-03-15T00:36:29.731217",
+  "tables": [
+    "multi_surgery_episode_cohort_v1",
+    "val_episode_artifact_assignment_v1",
+    "val_episode_mislink_candidates_v1",
+    "val_episode_linkage_integrity_v1",
+    "val_episode_key_propagation_v1",
+    "val_episode_ambiguity_review_v1",
+    "val_episode_linkage_summary_v1"
+  ],
+  "files": [
+    "/Users/ros/THyroid 2026/THYROID_2026/exports/episode_linkage_audit_20260315_0036/multi_surgery_episode_cohort_v1.csv",
+    "/Users/ros/THyroid 2026/THYROID_2026/exports/episode_linkage_audit_20260315_0036/val_episode_artifact_assignment_v1.csv",
+    "/Users/ros/THyroid 2026/THYROID_2026/exports/episode_linkage_audit_20260315_0036/val_episode_mislink_candidates_v1.csv",
+    "/Users/ros/THyroid 2026/THYROID_2026/exports/episode_linkage_audit_20260315_0036/val_episode_linkage_integrity_v1.csv",
+    "/Users/ros/THyroid 2026/THYROID_2026/exports/episode_linkage_audit_20260315_0036/val_episode_key_propagation_v1.csv",
+    "/Users/ros/THyroid 2026/THYROID_2026/exports/episode_linkage_audit_20260315_0036/val_episode_ambiguity_review_v1.csv",
+    "/Users/ros/THyroid 2026/THYROID_2026/exports/episode_linkage_audit_20260315_0036/val_episode_linkage_summary_v1.csv"
+  ]
+}
