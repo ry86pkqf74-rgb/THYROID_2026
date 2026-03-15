@@ -1,0 +1,13 @@
+{
+  "script": "97_repo_truth_sync.py",
+  "run_at": "20260314_2213",
+  "database": "md:thyroid_research_2026",
+  "output_dir": "/Users/ros/THyroid 2026/THYROID_2026/exports/repo_truth_sync_20260314_2213",
+  "files": [
+    "truth_sync_metrics.json",
+    "discrepancy_table.csv",
+    "lab_canonical_status.csv",
+    "operative_nlp_field_status.csv",
+    "val_table_inventory.csv"
+  ]
+}

@@ -46,9 +46,12 @@ Only the top-ranked candidate (score_rank=1) was propagated.
 
 ## Notes
 
-- **Imaging -> FNA linkage**: `imaging_fna_linkage_v3` has 0 rows on
-  MotherDuck because the imaging nodule size data is absent. No backfill
-  possible; documented as a known data gap.
+- **Imaging -> FNA linkage**: `imaging_fna_linkage_v3` had 0 rows at time
+  of this report. ~~_[UPDATED 2026-03-15]_~~ **imaging_fna_linkage_v3 was
+  subsequently rebuilt to 9,024 rows** (2,072 patients; 652 high-confidence;
+  3,048 analysis-eligible) once `imaging_nodule_master_v1` was populated from
+  the TIRADS Excel. Canonical value: **9,024 rows**. See
+  `docs/imaging_nodule_master_repair_20260313.md` for rebuild details.
 
 - **RAI dose join**: Used deterministic `(research_id, resolved_rai_date)`
   match with ROW_NUMBER dedup on `source_reliability DESC` for the single

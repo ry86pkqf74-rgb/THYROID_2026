@@ -1,0 +1,248 @@
+{
+  "total_patients_manuscript_cohort": 10871,
+  "manuscript_cohort_columns": 150,
+  "surgical_cohort_path_synoptics": 10871,
+  "patient_analysis_resolved_total": 10871,
+  "analysis_eligible_flag_count": 4136,
+  "analysis_cancer_cohort_n": 4136,
+  "episode_dedup_rows": 9368,
+  "episode_resolved_raw_rows": 9575,
+  "episode_dedup_removed": 207,
+  "recurrence_any_flagged": 1986,
+  "recurrence_date_exact_source": 54,
+  "recurrence_date_biochem_inferred": 168,
+  "recurrence_date_unresolved": 1764,
+  "recurrence_date_any_usable": 222,
+  "recurrence_date_unresolved_pct": 88.8,
+  "rai_episodes_total": 1857,
+  "rai_dose_available": 761,
+  "rai_dose_pct": 41.0,
+  "nuclear_med_notes_count": 0,
+  "val_rai_structural_coverage": {
+    "avg_dose_mci": 152.1,
+    "confirmed_episodes": 49.0,
+    "confirmed_patients": 35.0,
+    "dose_available": 761.0,
+    "dose_linkage_failed": 1096.0,
+    "dose_no_source_report": 0.0,
+    "dose_source_no_value": 0.0,
+    "episodes_with_date": 1272.0,
+    "episodes_with_dose": 761.0,
+    "exact_date_episodes": 434.0,
+    "inferred_date_episodes": 838.0,
+    "median_dose_mci": 153.0,
+    "patients_with_dose": 249.0,
+    "pts_with_dc_sum_notes": 169.0,
+    "pts_with_endocrine_notes": 519.0,
+    "pts_with_nuclear_med_notes": 0.0,
+    "pts_with_op_notes": 4439.0,
+    "tier_confirmed_no_dose": 0.0,
+    "tier_confirmed_with_dose": 35.0,
+    "tier_no_rai": 0.0,
+    "tier_unconfirmed_no_dose": 821.0,
+    "tier_unconfirmed_with_dose": 6.0,
+    "total_rai_episodes": 1857.0,
+    "total_rai_patients": 862.0,
+    "total_surgical_cohort": 10871.0,
+    "unresolved_date_episodes": 585.0,
+    "validated_patients_total": 862.0
+  },
+  "lab_temporal_truth": [],
+  "lab_canonical_total_rows": 39961,
+  "lab_canonical_by_analyte": [
+    {
+      "analyte": "thyroid_tumor_markers",
+      "count": 38566
+    },
+    {
+      "analyte": "parathyroid",
+      "count": 797
+    },
+    {
+      "analyte": "calcium_metabolism",
+      "count": 598
+    }
+  ],
+  "vascular_invasion_by_grade": [],
+  "vascular_total": 0,
+  "vascular_present_ungraded": 0,
+  "vascular_graded": 0,
+  "vascular_present_ungraded_pct": null,
+  "vascular_graded_pct": null,
+  "operative_episodes_total": 9371,
+  "operative_nlp_fields": {
+    "rln_monitoring_flag": {
+      "true_count": 1702,
+      "pct": 18.2,
+      "is_zero": false
+    },
+    "parathyroid_autograft_flag": {
+      "true_count": 40,
+      "pct": 0.4,
+      "is_zero": false
+    },
+    "gross_ete_flag": {
+      "true_count": 22,
+      "pct": 0.2,
+      "is_zero": false
+    },
+    "local_invasion_flag": {
+      "true_count": 25,
+      "pct": 0.3,
+      "is_zero": false
+    },
+    "tracheal_involvement_flag": {
+      "true_count": 9,
+      "pct": 0.1,
+      "is_zero": false
+    },
+    "esophageal_involvement_flag": {
+      "true_count": 0,
+      "pct": 0.0,
+      "is_zero": true
+    },
+    "strap_muscle_involvement_flag": {
+      "true_count": 186,
+      "pct": 2.0,
+      "is_zero": false
+    },
+    "reoperative_field_flag": {
+      "true_count": 46,
+      "pct": 0.5,
+      "is_zero": false
+    },
+    "drain_flag": {
+      "true_count": 169,
+      "pct": 1.8,
+      "is_zero": false
+    },
+    "parathyroid_resection_flag": {
+      "true_count": 0,
+      "pct": 0.0,
+      "is_zero": true
+    }
+  },
+  "operative_zero_fields_count": 2,
+  "operative_zero_fields_list": [
+    "esophageal_involvement_flag",
+    "parathyroid_resection_flag"
+  ],
+  "tirads_patients": 3474,
+  "tirads_fill_pct": 31.96,
+  "imaging_fna_linkage_v3_rows": 9024,
+  "imaging_fna_linkage_v2_rows": null,
+  "adjudication_decisions_total": 0,
+  "materialization_map_total": null,
+  "materialization_map_md_dupes": {},
+  "materialization_map_src_dupes": {},
+  "materialization_map_dupe_count": null,
+  "op_notes_pre2019_count": 136,
+  "op_notes_post2019_count": 3138,
+  "val_tables_present": 15,
+  "val_tables_missing": [
+    "val_phase7_preop_molecular",
+    "val_phase8_final_outcomes",
+    "val_phase11_imaging_molecular"
+  ],
+  "val_table_inventory": {
+    "val_scoring_systems": {
+      "exists": true,
+      "rows": 1
+    },
+    "val_analysis_resolved_v1": {
+      "exists": true,
+      "rows": 29
+    },
+    "val_rai_structural_coverage_v1": {
+      "exists": true,
+      "rows": 27
+    },
+    "val_rai_source_limitation_v1": {
+      "exists": true,
+      "rows": 5
+    },
+    "val_recurrence_readiness_v1": {
+      "exists": true,
+      "rows": 10
+    },
+    "val_lab_temporal_truth_v1": {
+      "exists": true,
+      "rows": 14
+    },
+    "val_operative_field_semantics_v1": {
+      "exists": true,
+      "rows": 17
+    },
+    "val_provenance_traceability": {
+      "exists": true,
+      "rows": 6801
+    },
+    "val_complication_refinement": {
+      "exists": true,
+      "rows": 9
+    },
+    "val_phase5_refinement": {
+      "exists": true,
+      "rows": 5
+    },
+    "val_phase6_staging_refinement": {
+      "exists": true,
+      "rows": 6
+    },
+    "val_phase7_preop_molecular": {
+      "exists": false,
+      "rows": null
+    },
+    "val_phase8_final_outcomes": {
+      "exists": false,
+      "rows": null
+    },
+    "val_phase9_targeted_refinement": {
+      "exists": true,
+      "rows": 5
+    },
+    "val_phase10_staging_recovery": {
+      "exists": true,
+      "rows": 5
+    },
+    "val_phase11_imaging_molecular": {
+      "exists": false,
+      "rows": null
+    },
+    "val_phase12_tirads_validation": {
+      "exists": true,
+      "rows": 4
+    },
+    "val_phase13_final_gaps": {
+      "exists": true,
+      "rows": 4
+    }
+  },
+  "discrepancies": [
+    {
+      "id": "OP_NLP_ZERO_FIELDS",
+      "claim_source": "docs/FINAL_REPO_STATUS_20260313.md + SUPPLEMENT_DATA_QUALITY_APPENDIX",
+      "old_value": "8 fields at 0%",
+      "new_canonical_value": "2 fields at 0%",
+      "zero_field_list": "esophageal_involvement_flag, parathyroid_resection_flag",
+      "reason": "Script 86 propagated some fields; count changed post-March-13 hardening",
+      "action": "Update docs to use actual count from live MotherDuck"
+    },
+    {
+      "id": "IMAGING_FNA_LINKAGE",
+      "claim_source": "docs/post_maturation_gap_audit + AGENTS.md",
+      "old_value": "imaging_fna_linkage_v2/v3 = 0 rows (imaging nodule size not populated)",
+      "new_canonical_value": "imaging_fna_linkage_v2=None, imaging_fna_linkage_v3=9024",
+      "reason": "Live query result \u2014 imaging data from TIRADS Excel was ingested but not linked to FNA via episode IDs",
+      "action": "Doc claims '0' are confirmed if both are 0; update if non-zero"
+    },
+    {
+      "id": "RECURRENCE_DATES",
+      "claim_source": "docs/FINAL_REPO_STATUS_20260313.md",
+      "old_value": "exact=54, biochem=168, unresolved=1764",
+      "new_canonical_value": "exact=54, biochem=168, unresolved=1764",
+      "reason": "Recurrence refinement script 76E updated date tiers",
+      "action": "Update if counts differ; both are valid depending on date_status column presence"
+    }
+  ]
+}

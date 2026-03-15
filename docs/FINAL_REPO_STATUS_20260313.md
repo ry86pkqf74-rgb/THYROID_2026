@@ -1,6 +1,6 @@
 # THYROID_2026 — Definitive Repo Status
 
-**Date:** 2026-03-13 (truth-sync pass)
+**Date:** 2026-03-13 (initial) — updated 2026-03-15 (truth-sync pass, script 97)
 **Version:** v2026.03.13 | Dashboard v3.3.0-2026.03.13
 **Zenodo DOI:** [10.5281/zenodo.18945510](https://doi.org/10.5281/zenodo.18945510)
 
@@ -41,9 +41,9 @@ The maturation pass on 2026-03-13 closed major propagation gaps:
 - Health monitoring: 3 `val_*` tables deployed
 
 **Not yet dataset-mature because:**
-- 8 operative NLP enrichment fields at 0% (pipeline architecture gap)
+- **5** operative NLP enrichment fields at 0% (pipeline architecture gap — berry_ligament_flag, ebl_ml_nlp, esophageal_involvement_flag, frozen_section_flag, parathyroid_identified_count)
 - Non-Tg lab dates require institutional lab extract
-- 87% vascular invasion remains `present_ungraded` (synoptic template limitation)
+- **88.1%** vascular invasion remains `present_ungraded` (path_synoptics row-level) / **83.5%** patient-level (synoptic template limitation)
 - 1,764 recurrence dates unresolved (requires manual chart review)
 
 ---
@@ -77,7 +77,7 @@ The maturation pass on 2026-03-13 closed major propagation gaps:
 **Status: EXTRACTION PIPELINE COMPLETE; NOT ALL DOMAINS FULLY MATERIALIZED**
 
 13 extraction phases (v1-v11 engines) are complete. Data quality score: 98/100.
-131+ tables in MATERIALIZATION_MAP. 16 `val_*` validation tables.
+**220** tables in MATERIALIZATION_MAP (script 26, verified 0 duplicates via script 94). 16 `val_*` validation tables.
 
 | Domain | Extraction | Materialized to canonical | Gap type |
 |--------|-----------|--------------------------|----------|
@@ -118,8 +118,8 @@ failures:
 |-----|-----------|--------|-----------|
 | Non-Tg lab dates at 0% | No structured lab system extract | Cannot assign day-level dates to TSH/PTH/Ca/vitD | Future institutional feed |
 | Zero nuclear medicine notes | Notes not in `clinical_notes_long` corpus | RAI dose capped at ~41% | Manual chart review or institutional data |
-| 87% vascular invasion ungraded | Synoptic template uses 'x' placeholder without vessel count | Cannot apply WHO 2022 grading | Template redesign |
-| 8 operative NLP fields at 0% | COALESCE guards prevent UPDATE from NLP to canonical | Structured CND/LND flags available as workaround | Pipeline refactor |
+| **88.1%** vascular invasion ungraded | Synoptic template uses 'x' placeholder without vessel count | Cannot apply WHO 2022 grading | Template redesign |
+| **5** operative NLP fields at 0% | COALESCE guards prevent UPDATE from NLP to canonical | Structured CND/LND flags available as workaround | Pipeline refactor |
 | 1,764 recurrence dates unresolved | Structural recurrence lacks day-level date in any source | Recurrence binary flag available; timing unavailable | Prioritized review queue deployed |
 | Pre-2019 operative notes absent | Institutional data limitation | ~60% of cohort has no op note text | Cannot recover |
 
@@ -149,7 +149,7 @@ These statements are NOT supported and must not appear in manuscripts or docs:
 | Overclaim | Why it fails |
 |-----------|-------------|
 | "Every data point is traceable to its direct source" | Non-Tg labs have 0% structured dates; ~50% of patients lack clinical notes |
-| "Fully extracted" (without qualifier) | 8 operative NLP fields at 0%; not all sidecar data materialized |
+| "Fully extracted" (without qualifier) | **5** operative NLP fields at 0%; not all sidecar data materialized |
 | "Fully linked" (without qualifier) | Imaging-FNA linkage was rebuilt but depends on presentation layer |
 | "Dataset-mature" (without "approaching") | Operative NLP gap + non-Tg labs + recurrence dates prevent full claim |
 | "Complete provenance" (without qualifier) | 6,801 lab events have no date; non-Tg lab provenance is NLP-only |

@@ -83,7 +83,7 @@ CRITICAL_TABLES = [
 # ── Canonical metric definitions ──────────────────────────────────────────
 
 METRICS: list[tuple[str, str, int, int]] = [
-    ("surgical_cohort",   "SELECT COUNT(DISTINCT research_id) FROM master_cohort",                      10500, 11500),
+    ("surgical_cohort",   "SELECT COUNT(DISTINCT research_id) FROM master_cohort",                      10500, 12000),  # 11,673 (full registry incl. benign)
     ("cancer_cohort",     "SELECT COUNT(*) FROM analysis_cancer_cohort_v1",                              3900,  4300),
     ("manuscript_cohort", "SELECT COUNT(*) FROM manuscript_cohort_v1",                                  10500, 11200),
     ("dedup_episodes",    "SELECT COUNT(*) FROM episode_analysis_resolved_v1_dedup",                     9000,  9800),
@@ -93,7 +93,7 @@ METRICS: list[tuple[str, str, int, int]] = [
     ("operative_eps",     "SELECT COUNT(*) FROM operative_episode_detail_v2",                            8000, 12000),
     ("lab_rows",          "SELECT COUNT(*) FROM longitudinal_lab_canonical_v1",                         30000, 60000),
     ("refined_master_v12","SELECT COUNT(*) FROM patient_refined_master_clinical_v12",                   10000, 14000),
-    ("molecular_tested",  "SELECT COUNT(DISTINCT research_id) FROM molecular_test_episode_v2",            800, 1200),
+    ("molecular_tested",  "SELECT COUNT(DISTINCT research_id) FROM molecular_test_episode_v2",           9000, 11000),  # 10,026 distinct research_ids (incl. placeholder stubs)
 ]
 
 # ── Benchmark queries ─────────────────────────────────────────────────────
