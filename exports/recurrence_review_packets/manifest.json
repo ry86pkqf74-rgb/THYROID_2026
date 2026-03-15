@@ -1,0 +1,22 @@
+{
+  "generated": "20260314_2357",
+  "total_cases": 1986,
+  "batches": 20,
+  "batch_size": 100,
+  "columns": [
+    "research_id",
+    "recurrence_any",
+    "recurrence_flag_structured",
+    "recurrence_date_status",
+    "recurrence_date_best",
+    "recurrence_site_inferred",
+    "detection_category",
+    "first_surgery_date",
+    "histology",
+    "tumor_size",
+    "ete",
+    "tg_last_value",
+    "tg_measurements"
+  ],
+  "priority_order": "unresolved_date > biochemical_inflection > exact_source > other"
+}

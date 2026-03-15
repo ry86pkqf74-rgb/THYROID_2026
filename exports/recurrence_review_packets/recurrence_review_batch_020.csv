@@ -1,0 +1,88 @@
+research_id,recurrence_any,recurrence_flag_structured,recurrence_date_status,recurrence_date_best,recurrence_site_inferred,detection_category,first_surgery_date,histology,tumor_size,ete,tg_last_value,tg_measurements
+6030,True,False,biochemical_inflection_inferred,,,biochemical_only,2017-06-01 00:00:00,PTC,1,x,81.9,6
+6045,True,False,biochemical_inflection_inferred,,,biochemical_only,2017-06-07 00:00:00,PTC,1.3,minimal,2.9,2
+6122,True,False,biochemical_inflection_inferred,,,biochemical_only,2017-07-14 00:00:00,PTC,1.8,x,8.4,4
+6147,True,False,biochemical_inflection_inferred,,,biochemical_only,2017-08-07 00:00:00,,,,57.0,6
+6264,True,False,biochemical_inflection_inferred,,,biochemical_only,2017-10-25 00:00:00,PTC,0.3,x,219.2,14
+6292,True,False,biochemical_inflection_inferred,,,biochemical_only,2017-11-09 00:00:00,NIFTP,3.2,x,9.6,4
+6429,True,False,biochemical_inflection_inferred,,,biochemical_only,2018-01-24 00:00:00,PTC,0.02,x,19.9,2
+6457,True,False,biochemical_inflection_inferred,,,biochemical_only,2018-02-08 00:00:00,anaplastic carcinoma,8.7,present,334.1,6
+6461,True,False,biochemical_inflection_inferred,,,biochemical_only,2018-02-15 00:00:00,,,,38.8,2
+6487,True,False,biochemical_inflection_inferred,,,biochemical_only,2018-03-01 00:00:00,PTC,5.4,present,330.3,25
+6510,True,False,biochemical_inflection_inferred,,,biochemical_only,2018-03-21 00:00:00,PTC,2.1,x,39.1,2
+6529,True,False,biochemical_inflection_inferred,,,biochemical_only,2018-04-03 00:00:00,,,,146.0,2
+6647,True,False,biochemical_inflection_inferred,,,biochemical_only,2018-06-05 00:00:00,,,,92.7,2
+6687,True,False,biochemical_inflection_inferred,,,biochemical_only,2018-06-27 00:00:00,PTC,3.5,present,-1.0,2
+6751,True,False,biochemical_inflection_inferred,,,biochemical_only,2018-08-01 00:00:00,PTC,0.15,x,58.2,2
+6858,True,False,biochemical_inflection_inferred,,,biochemical_only,2018-10-10 00:00:00,PTC,0.8,x,42.1,15
+7053,True,False,biochemical_inflection_inferred,,,biochemical_only,2019-01-10 00:00:00,PTC,1.1,x,62.4,4
+7056,True,False,biochemical_inflection_inferred,,,biochemical_only,2019-01-10 00:00:00,,,,21.3,2
+7062,True,False,biochemical_inflection_inferred,,,biochemical_only,2019-01-15 00:00:00,,,,41.9,2
+7063,True,False,biochemical_inflection_inferred,,,biochemical_only,2019-01-15 00:00:00,,,,85.7,2
+7072,True,False,biochemical_inflection_inferred,,,biochemical_only,2019-01-17 00:00:00,,,,25.9,2
+7089,True,False,biochemical_inflection_inferred,,,biochemical_only,2019-01-24 00:00:00,,,,-1.0,2
+7102,True,False,biochemical_inflection_inferred,,,biochemical_only,2019-01-31 00:00:00,PTC,1.8,x,138.6,2
+7120,True,False,biochemical_inflection_inferred,,,biochemical_only,2018-12-12 00:00:00,PTC,1.4,x,9.4,2
+7161,True,False,biochemical_inflection_inferred,,,biochemical_only,2019-02-26 00:00:00,PTC,2.6,x,2354.2,29
+7312,True,False,biochemical_inflection_inferred,,,biochemical_only,2019-05-08 00:00:00,PTC,7,x,-1.0,2
+7342,True,False,biochemical_inflection_inferred,,,biochemical_only,2019-05-21 00:00:00,,,,18.4,2
+7497,True,False,biochemical_inflection_inferred,,,biochemical_only,2019-07-25 00:00:00,PTC,0.07,x,8.4,4
+7801,True,False,biochemical_inflection_inferred,,,biochemical_only,2019-11-26 00:00:00,,,,-1.0,2
+7808,True,False,biochemical_inflection_inferred,,,biochemical_only,2019-12-02 00:00:00,,,,10.7,2
+8531,True,False,biochemical_inflection_inferred,,,biochemical_only,2020-12-10 00:00:00,,,,15.0,4
+9618,True,False,biochemical_inflection_inferred,,,biochemical_only,2022-06-27 00:00:00,,,,1228.0,2
+2210,True,True,exact_source_date,2020-10-12,,structural_confirmed,2020-10-12 00:00:00,MTC,2.7,present,-1.0,2
+4287,True,True,exact_source_date,2021-05-18,,structural_confirmed,2014-02-05 00:00:00,metastatic PTC,9,minimal,96.2,57
+4649,True,True,exact_source_date,2022-11-01,,structural_confirmed,2014-11-12 00:00:00,PTC,1.6,x,-1.0,5
+4668,True,True,exact_source_date,2023-07-07,,structural_confirmed,2014-12-05 00:00:00,PTC,3.1,minimal,175.9,22
+4788,True,True,exact_source_date,2015-04-08,,structural_confirmed,2015-03-19 00:00:00,PTC,1.2,x,41.8,40
+4914,True,True,exact_source_date,2019-07-30,,structural_confirmed,2015-06-24 00:00:00,metastatic PTC,2.8,minimal,16.2,7
+5131,True,True,exact_source_date,2018-07-25,,structural_confirmed,2015-11-23 00:00:00,PTC,0.9,x,12.4,9
+5490,True,True,exact_source_date,2016-08-10,,structural_confirmed,2016-08-10 00:00:00,follicular carcinoma,3.5,x,12.8,12
+5624,True,True,exact_source_date,2018-12-17,,structural_confirmed,2016-11-03 00:00:00,PTC,2.5,x,30.7,25
+5656,True,True,exact_source_date,2018-10-12,,structural_confirmed,2016-11-17 00:00:00,PTC ,4.1,x,0.2,32
+5822,True,True,exact_source_date,2019-10-10,,structural_confirmed,2017-02-22 00:00:00,PTC,1.8,minimal,1.0,48
+5832,True,True,exact_source_date,2018-12-06,,structural_confirmed,2017-02-24 00:00:00,PTC,0.6,x,0.1,38
+5859,True,True,exact_source_date,2020-11-25,,structural_confirmed,2017-03-10 00:00:00,PTC,9.3,x,0.2,26
+5868,True,True,exact_source_date,2017-10-12,,structural_confirmed,2017-03-16 00:00:00,PTC,4.5,x,0.6,38
+6007,True,True,exact_source_date,2018-05-17,,structural_confirmed,2017-05-23 00:00:00,PTC,2.2,present,0.2,21
+6167,True,True,exact_source_date,2024-10-18,,structural_confirmed,2017-08-16 00:00:00,PTC,1.6,minimal,0.8,34
+6251,True,True,exact_source_date,2016-05-31,,structural_confirmed,2017-10-12 00:00:00,PTC,0.1,x,0.7,13
+6273,True,True,exact_source_date,2018-02-22,,structural_confirmed,2017-11-02 00:00:00,PTC,7,x,0.3,20
+6314,True,True,exact_source_date,2019-05-03,,structural_confirmed,2017-11-16 00:00:00,follicular carcinoma,7.1,x,5.9,27
+6343,True,True,exact_source_date,2017-08-18,,structural_confirmed,2017-12-04 00:00:00,PTC,0.15,x,0.5,16
+6418,True,True,exact_source_date,2018-07-23,,structural_confirmed,2018-01-18 00:00:00,PTC,3.2,present,0.4,28
+6436,True,True,exact_source_date,2018-01-31,,structural_confirmed,2018-01-31 00:00:00,follicular carcinoma,4.2,x,0.2,16
+6512,True,True,exact_source_date,2019-07-03,,structural_confirmed,2018-03-22 00:00:00,PTC,0.8,minimal,3.2,18
+6674,True,True,exact_source_date,2018-07-25,,structural_confirmed,2018-06-21 00:00:00,PTC,1.4,x,0.3,18
+6771,True,True,exact_source_date,2000-01-01,,structural_confirmed,2018-08-20 00:00:00,PTC,0.025,x,695.0,4
+6814,True,True,exact_source_date,2024-09-16,,structural_confirmed,2018-09-17 00:00:00,PTC,1.5,x,62.9,46
+6907,True,True,exact_source_date,2019-06-29,,structural_confirmed,2018-11-09 00:00:00,PTC,0.8,present,1.0,6
+7083,True,True,exact_source_date,2019-04-29,,structural_confirmed,2019-01-23 00:00:00,PTC,2.7,x,-1.0,0
+7087,True,True,exact_source_date,2022-02-18,,structural_confirmed,2019-01-24 00:00:00,metastatic PTC tall cell variant,4.6,microscopic,42.0,29
+7126,True,True,exact_source_date,2025-08-01,,structural_confirmed,2019-02-11 00:00:00,PTC,1,x,-1.0,2
+7144,True,True,exact_source_date,2019-10-10,,structural_confirmed,2019-02-19 00:00:00,PTC,2.3,x,1.4,13
+7145,True,True,exact_source_date,2018-09-17,,structural_confirmed,2019-02-19 00:00:00,PTC,5.6,x,60.6,28
+7297,True,True,exact_source_date,2024-06-21,,structural_confirmed,2019-04-26 00:00:00,metastatic PTC,,,5.6,2
+7512,True,True,exact_source_date,2018-11-26,,structural_confirmed,2019-07-29 00:00:00,PTC,0.2,x,-1.0,0
+7539,True,True,exact_source_date,2019-08-13,,structural_confirmed,2019-08-13 00:00:00,PTC,2.5,x,6.0,25
+8097,True,True,exact_source_date,2020-01-23,,structural_confirmed,2020-05-05 00:00:00,PTC,0.1,x,-1.0,0
+8183,True,True,exact_source_date,2020-08-10,,structural_confirmed,2020-06-26 00:00:00,poorly differentiated thyroid carcinoma,5.4,x,47.0,19
+8252,True,True,exact_source_date,2020-07-31,,structural_confirmed,2020-07-31 00:00:00,follicular carcinoma,3.7,x,-1.0,0
+8894,True,True,exact_source_date,2021-06-04,,structural_confirmed,2021-06-04 00:00:00,metastatic PTC tall cell variant,4.4,microscopic,43.0,21
+8916,True,True,exact_source_date,2018-03-26,,structural_confirmed,2021-06-15 00:00:00,MTC,1.2,x,-1.0,0
+9889,True,True,exact_source_date,2018-10-31,,structural_confirmed,2023-10-26 00:00:00,metastatic PTC,,,-1.0,8
+10141,True,True,exact_source_date,1960-09-18,,structural_confirmed,2020-02-05 00:00:00,"metastatic PTC
+classic subtype with tall cell component ~25%",2.8,x,-1.0,0
+10153,True,True,exact_source_date,2022-05-09,,structural_confirmed,2022-10-24 00:00:00,PTC,3.7,present,0.2,6
+10154,True,True,exact_source_date,2016-12-13,,structural_confirmed,2017-03-15 00:00:00,metastatic PTC,,,-1.0,2
+10165,True,True,exact_source_date,2023-12-13,,structural_confirmed,2022-10-10 00:00:00,metastatic PTC,,,13.0,16
+10237,True,True,exact_source_date,2022-11-07,,structural_confirmed,2022-11-07 00:00:00,metastatic PTC tall cell variant,,,0.6,2
+10286,True,True,exact_source_date,2023-09-13,,structural_confirmed,2023-02-02 00:00:00,metastatic PTC classical,3.3,present,-1.0,2
+10541,True,True,exact_source_date,2023-04-14,,structural_confirmed,2023-05-08 00:00:00,metastatic PTC,,,0.6,5
+10622,True,True,exact_source_date,1950-06-10,,structural_confirmed,2023-12-05 00:00:00,metastatic PTC tall cell variant,,,-1.0,9
+10932,True,True,exact_source_date,2023-12-19,,structural_confirmed,2024-02-09 00:00:00,metastatic PTC/anaplastic carcinoma,,,-1.0,1
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,15.5,8
+11075,True,True,exact_source_date,2024-04-12,,structural_confirmed,2024-04-12 00:00:00,metastatic PTC tall cell variant,6.8,x,13.5,6
+12057,True,True,exact_source_date,0202-12-30,,structural_confirmed,2024-07-16 00:00:00,PTC,<0.1,x,0.5,2
+12172,True,True,exact_source_date,2021-12-09,,structural_confirmed,2023-01-17 00:00:00,follicular carcinoma,3,x,-1.0,0

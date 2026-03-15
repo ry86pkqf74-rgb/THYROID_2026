@@ -173,10 +173,10 @@
 
 ### What is true
 
-- BRAF positive: **376 / 10,025 molecular-tested (3.8%)**.
-- Corrected from 659 after NLP false-positive removal (113 FP: 34 confirmed negatives, 68 ambiguous mentions, 11 conflicting context).
+- BRAF positive: **546 / 10,025 molecular-tested (5.4%)** (canonical from `patient_refined_master_clinical_v12.braf_positive_final`).
+- Corrected from 659 after NLP false-positive removal (113 FP: 34 confirmed negatives, 68 ambiguous mentions, 11 conflicting context); then augmented by confirmed NLP recovery (+175 patients beyond structured 266).
 - Published PTC BRAF V600E prevalence is **40–45%**.
-- Our 3.8% rate reflects three factors:
+- Our 5.4% rate reflects three factors:
   1. Denominator includes **all surgical patients**, not just PTC.
   2. Molecular testing was **selective**, not universal.
   3. Detection methods varied (NGS, NLP entity confirmation, IHC).
@@ -192,7 +192,7 @@
 > BRAF mutation status was determined from structured molecular testing results and confirmed NLP-extracted entities requiring explicit positive qualifiers in clinical note text. Ambiguous mentions (e.g., "tested for BRAF") without positive result language were excluded.
 
 **Discussion:**
-> The relatively low BRAF positivity rate (3.8%) compared with published PTC prevalence (40–45%) reflects our inclusive surgical cohort denominator encompassing benign and non-PTC histologies, selective rather than universal molecular testing, and the stringent NLP confirmation criteria applied to exclude false-positive mentions.
+> The relatively low BRAF positivity rate (5.4%) compared with published PTC prevalence (40–45%) reflects our inclusive surgical cohort denominator encompassing benign and non-PTC histologies, selective rather than universal molecular testing, and the stringent NLP confirmation criteria applied to exclude false-positive mentions.
 
 ---
 

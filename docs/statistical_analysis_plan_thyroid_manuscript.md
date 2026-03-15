@@ -148,7 +148,7 @@ cross-domain linkage to FNA/molecular/imaging at the nodule level.
 | **Key columns** | `braf_positive_final`, `ras_positive_final`, `tert_positive_final`, `mol_platform`, `mol_braf_variant`, `mol_ras_subtype`, `molecular_risk_tier` |
 | **Provisional fields** | None -- molecular flags are source-linked and positivity-confirmed (Phase 11/13 NLP audit with explicit positive-qualifier gate) |
 
-**BRAF prevalence context.** 376 BRAF-positive patients (canonical per `manuscript_metrics_v2`, after full FP correction and reconciliation). Among 10,025 molecularly tested patients, BRAF prevalence is 3.8%. Among molecular-tested cancer patients, the rate is higher and consistent with published 40--45% PTC literature (surgical cohort enrichment for
+**BRAF prevalence context.** 546 BRAF-positive patients (canonical per `patient_refined_master_clinical_v12.braf_positive_final`, after full FP correction and confirmed NLP recovery). Among 10,025 molecularly tested patients, BRAF prevalence is 5.4%. Among molecular-tested cancer patients, the rate is higher and consistent with published 40--45% PTC literature (surgical cohort enrichment for
 suspicious nodules).
 
 ### A.9 RAI-Treated Subset

@@ -23,7 +23,7 @@ and without caveat in the manuscript body.
 
 **Key CANONICAL fields:**
 - `braf_positive_final`, `ras_positive_final`, `tert_positive_final` — confirmed with
-  positive-qualifier NLP gate; BRAF 441 confirmed positive (55.1% of molecular-tested)
+  positive-qualifier NLP gate; BRAF 546 confirmed positive (canonical from `patient_refined_master_clinical_v12`)
 - `ete_grade_v9` — 98.6% of ungraded ETE resolved via Phase 9 microscopic rule
 - `ajcc8_stage_group`, `t_stage_final`, `n_stage_final` — structured from path_synoptics/tumor_pathology
 - `ata_risk_initial`, `macis_score`, `ages_score`, `ames_risk` — computed from CANONICAL inputs
@@ -147,10 +147,10 @@ Column reference:
 
 ## BRAF Prevalence Context
 
-The overall BRAF positivity rate in this cohort (441 of 10,871 surgical patients,
-4.1%) is lower than the published 40–45% prevalence in PTC because:
+The overall BRAF positivity rate in this cohort (546 of 10,871 surgical patients,
+5.0%) is lower than the published 40–45% prevalence in PTC because:
 1. The denominator includes all thyroid surgeries (including benign/completion)
-2. Among molecularly-tested patients only (N=~800), BRAF positivity is ~55%
+2. Among molecularly-tested patients only (N=~800), BRAF positivity is ~68%
 
 Always specify the denominator when reporting molecular positivity rates.
 
