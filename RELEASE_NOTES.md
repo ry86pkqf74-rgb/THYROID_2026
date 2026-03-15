@@ -1,6 +1,52 @@
 # THYROID_2026 Release Notes
 
-## v2026.03.13-truth-sync (Latest)
+## v2026.03.14-final-engineering-pass (Latest)
+**Date:** 2026-03-14
+
+### Final Engineering Pass — Operative NLP, Provenance Hardening, MD Business Optimization
+
+Focused engineering pass closing remaining repo wiring gaps before manuscript
+submission and long-term analytics use. Additive-only changes; no canonical
+metrics modified.
+
+#### New Scripts
+| Script | Purpose |
+|--------|---------|
+| `scripts/81_operative_nlp_propagation_validate.py` | Validates operative NLP field coverage (Cat A/B/C) |
+| `scripts/82_provenance_date_hardening.py` | Creates recurrence/RAI/molecular provenance val_* tables |
+| `scripts/83_motherduck_env_strategy.py` | Dev/QA/Prod promotion workflow + 8-gate row-count checks |
+| `scripts/84_query_observability.py` | Benchmarks 24 key queries; flags latency regressions |
+| `scripts/85_materialization_performance_audit.py` | Hot-path table audits + MATERIALIZATION_MAP duplicate detection |
+
+#### New Validation Tables
+`val_operative_nlp_propagation_v1`, `val_recurrence_provenance_v2`,
+`val_rai_provenance_v2`, `val_molecular_provenance_v2`,
+`val_provenance_hardening_summary_v1`, `val_query_benchmark_v1`,
+`val_materialization_perf_v1`
+
+#### CI Hardening
+CI workflow now runs 3 jobs: lint-and-syntax (full script corpus), unit-tests,
+and motherduck-ci (12 table checks + 11 metric ranges + row multiplication
+guard + null-threshold guard + dashboard smoke tests). Trigger paths expanded
+to `scripts/**`, `app/**`, `utils/**`, `notes_extraction/**`.
+
+#### Config
+`config/motherduck_environments.yml` — documents dev/qa/prod, Duckling sizing,
+service-account auth pattern, RO share path, promotion commands.
+
+#### MATERIALIZATION_MAP
+- Removed duplicate `md_imaging_fna_linkage_v3` entry
+- Added 7 new `md_val_*` entries for scripts 81–85 outputs
+
+#### Docs
+- `docs/final_operativenlp_propagation_20260314.md`
+- `docs/final_provenance_date_hardening_20260314.md`
+- `docs/final_motherduck_business_optimization_20260314.md`
+- `exports/final_md_optimization_20260314/README.md`
+
+---
+
+## v2026.03.13-truth-sync
 **Date:** 2026-03-13
 
 ### Repo-Wide Truth Synchronization

@@ -1,0 +1,107 @@
+# MotherDuck Business — Environment Configuration
+# THYROID_2026 project | Updated 2026-03-14
+#
+# Reference: docs/final_motherduck_business_optimization_20260314.md
+#
+# Environments
+# ─────────────────────────────────────────────────────────────────────────────
+environments:
+  dev:
+    database: thyroid_research_2026_dev
+    description: >
+      Development environment. Full read/write. Used for iterative script
+      development, experimental ETL runs, new table creation.
+      Should NOT be accessible by Streamlit production app.
+    duckling_recommendation: Standard
+    duckling_reason: >
+      Standard tier handles sub-daily ETL and interactive SQL development
+      efficiently. Jumbo is needed only for full pipeline rebuild.
+    write_allowed: true
+    share_exposed: false
+    promotion_target: qa
+
+  qa:
+    database: thyroid_research_2026_qa
+    description: >
+      QA/validation environment. Promotion from dev requires passing all
+      gates in scripts/83_motherduck_env_strategy.py --mode gate-only.
+      Used to validate row counts, canonical metrics, and provenance
+      before updating production.
+    duckling_recommendation: Standard
+    duckling_reason: >
+      Standard tier is sufficient for gate-check queries. Avoid Jumbo
+      in QA to keep cost proportional to read workload.
+    write_allowed: true
+    share_exposed: false
+    promotion_target: prod
+
+  prod:
+    database: thyroid_research_2026
+    description: >
+      Production environment. Serves the Streamlit dashboard via read-only
+      share (thyroid_share). All writes require passing QA gates. Direct
+      writes should be minimized after each validated release.
+    duckling_recommendation: Pulse
+    duckling_reason: >
+      Streamlit dashboard is a read-heavy workload (SELECT-only). Pulse tier
+      is cost-effective and sufficient for dashboard queries once tables are
+      fully materialized. Upgrade to Standard for any maintenance writes.
+    write_allowed: true                # service account writes only
+    share_exposed: true
+    share_path: md:_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c
+    promotion_target: null
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Duckling Size Reference (MotherDuck Business)
+# ─────────────────────────────────────────────────────────────────────────────
+duckling_sizes:
+  Pulse:
+    use_case: Dashboard/read-only, Streamlit, ad-hoc queries
+    notes: Default for Streamlit Cloud; minimal cost for SELECT workloads
+  Standard:
+    use_case: ETL, script 26 materialization, validation runs (scripts 81-85)
+    notes: Recommended for scripts 26, 29, 75-85 and daily refresh
+  Jumbo:
+    use_case: Full pipeline rebuild (scripts 22-27), hardening passes (78, 80)
+    notes: Needed for re-materializing 130+ table map; downgrade when done
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Promotion Workflow
+# ─────────────────────────────────────────────────────────────────────────────
+promotion_workflow:
+  dev_to_qa:
+    command: .venv/bin/python scripts/83_motherduck_env_strategy.py --mode promote --from-env thyroid_research_2026_dev --to-env thyroid_research_2026_qa
+    gates_required: true
+    gate_script: scripts/83_motherduck_env_strategy.py
+
+  qa_to_prod:
+    command: .venv/bin/python scripts/83_motherduck_env_strategy.py --mode promote --from-env thyroid_research_2026_qa --to-env thyroid_research_2026
+    gates_required: true
+    additional_checks:
+      - scripts/84_query_observability.py --md
+      - scripts/81_operative_nlp_propagation_validate.py --md
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Service Account Auth Pattern
+# ─────────────────────────────────────────────────────────────────────────────
+auth:
+  local_development: .streamlit/secrets.toml (MOTHERDUCK_TOKEN key)
+  ci_github_actions: secrets.MOTHERDUCK (GitHub Actions secret)
+  streamlit_cloud:   secrets.toml deployed to Streamlit Cloud
+  notes: >
+    Never hardcode tokens in script files. The pattern
+    os.environ.get("MOTHERDUCK_TOKEN") or toml.load(secrets.toml)
+    is the approved fallback chain for all scripts.
+    MotherDuck service accounts (team tokens) should replace personal
+    tokens for CI and Streamlit Cloud as soon as available.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Production RO Share
+# ─────────────────────────────────────────────────────────────────────────────
+ro_share:
+  path: md:_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c
+  used_by: Streamlit dashboard (dashboard.py), smoke tests in ci.yml
+  semantics: >
+    Read-only. Streamlit Cloud connects via this share.
+    DO NOT grant write access to the share token.
+    If share is regenerated, update motherduck_client.py and ci.yml.

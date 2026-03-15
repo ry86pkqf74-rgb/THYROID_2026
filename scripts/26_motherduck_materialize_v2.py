@@ -284,7 +284,7 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     # ── Final Hardening (script 78) ─────────────────────────────
     ("md_recurrence_manual_review_queue_v1", "recurrence_manual_review_queue_v1"),
     ("md_val_recurrence_date_resolution_v1", "val_recurrence_date_resolution_v1"),
-    ("md_imaging_fna_linkage_v3", "imaging_fna_linkage_v3"),
+    # NOTE: md_imaging_fna_linkage_v3 already appears at script 49 block above (duplicate removed)
     ("md_vw_rai_dose_missingness_summary", "vw_rai_dose_missingness_summary"),
     ("md_val_lab_canonical_v1", "val_lab_canonical_v1"),
     # ── Structural Gap Maximization (script 80) ──────────────────────
@@ -293,6 +293,14 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_val_recurrence_readiness_v1", "val_recurrence_readiness_v1"),
     ("md_val_lab_temporal_truth_v1", "val_lab_temporal_truth_v1"),
     ("md_val_operative_field_semantics_v1", "val_operative_field_semantics_v1"),
+    # ── Final Engineering Pass 2026-03-14 (scripts 81-85) ───────────────────
+    ("md_val_operative_nlp_propagation_v1",    "val_operative_nlp_propagation_v1"),
+    ("md_val_recurrence_provenance_v2",         "val_recurrence_provenance_v2"),
+    ("md_val_rai_provenance_v2",                "val_rai_provenance_v2"),
+    ("md_val_molecular_provenance_v2",          "val_molecular_provenance_v2"),
+    ("md_val_provenance_hardening_summary_v1",  "val_provenance_hardening_summary_v1"),
+    ("md_val_query_benchmark_v1",               "val_query_benchmark_v1"),
+    ("md_val_materialization_perf_v1",          "val_materialization_perf_v1"),
 ]
 
 SURVIVAL_COHORT_ENRICHED_SQL = """
