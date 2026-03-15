@@ -1,0 +1,26 @@
+metric_id,metric_name,canonical_value,numerator,denominator,denominator_label,source_table,safe_for_manuscript,caveats
+total_surgical_patients,Total surgical patients,10871,10871,10871,full_surgical_cohort,path_synoptics,YES,
+analysis_eligible_cancer,Analysis-eligible cancer patients,4136,4136,10871,all_resolved_patients,patient_analysis_resolved_v1,YES,Confirmed malignancy + complete staging required
+recurrence_any,Any recurrence (structural or biochemical),1986,1986,10871,full_surgical_cohort,extracted_recurrence_refined_v1,YES (rate only),"88.8% lack day-level dates; do NOT report time-to-recurrence at population level"
+recurrence_structural,Structural recurrence,1818,1818,10871,full_surgical_cohort,extracted_recurrence_refined_v1,YES (rate only),
+recurrence_biochemical,Biochemical recurrence (Tg trajectory),115,115,10871,full_surgical_cohort,extracted_recurrence_refined_v1,YES (rate only),Rising Tg >1.0 and >2x nadir without structural disease
+braf_positive,BRAF mutation positive,376,376,10025,molecular_tested_patients,extracted_braf_recovery_v1,YES,Use 376 (curated) NOT 546 (master clinical)
+ras_positive,RAS mutation positive (NRAS+HRAS+KRAS),292,292,10025,molecular_tested_patients,extracted_ras_patient_summary_v1,YES,Use extracted table only; ras_flag in canonical table is bugged
+tert_positive,TERT promoter mutation positive,108,108,10025,molecular_tested_patients,patient_refined_master_clinical_v12,YES,Structured molecular sources only
+molecular_tested,Patients with any molecular panel,10025,10025,10871,full_surgical_cohort,extracted_molecular_panel_v1,YES,"Includes ThyroSeq, Afirma, IHC, PCR, FISH"
+rai_treated_strict,RAI confirmed with dose,35,35,10871,full_surgical_cohort,extracted_rai_validated_v1,YES,Lower bound only; 0 nuclear med reports available
+rai_episodes_total,Total RAI episodes (all certainty),1857,1857,10871,full_surgical_cohort,rai_treatment_episode_v2,YES,Dose for 761 (41%); caveat nuclear med absence
+rln_injury_confirmed,Confirmed RLN injury (3-tier),59,59,10871,full_surgical_cohort,extracted_rln_injury_refined_v2,YES,Tier1=6 laryngoscopy; Tier2=19 chart; Tier3_confirmed=34
+complication_any,Any confirmed complication,287,287,10871,full_surgical_cohort,patient_refined_complication_flags_v2,YES,"Includes RLN(59), hematoma(38), hypoparathyroidism(34), seroma(28), chyle(20), hypocalcemia(18), wound(2)"
+tirads_coverage,Pre-operative TIRADS available,3474,3474,10871,full_surgical_cohort,extracted_tirads_validated_v1,YES,ACR concordance 80.1%
+survival_cohort,Survival analysis cohort,3201,3201,4136,analysis_eligible_cancer,manuscript_cohort_v1,YES,"965 events, median 7.4y follow-up"
+tg_available,Patients with Tg labs,2559,2559,10871,full_surgical_cohort,longitudinal_lab_canonical_v1,YES,99.5% date accuracy via specimen_collect_dt
+dedup_episodes,Deduplicated surgery episodes,9368,9368,10871,full_surgical_cohort,episode_analysis_resolved_v1_dedup,YES,146 multi-pathology duplicates removed
+scoring_ajcc8,AJCC 8th Ed calculable,4083,4083,10871,full_surgical_cohort,thyroid_scoring_py_v1,YES,"37.6% of full (includes benign); ~98.7% of cancer"
+scoring_ata,ATA 2015 risk calculable,3144,3144,10871,full_surgical_cohort,thyroid_scoring_py_v1,YES,28.9% of full cohort
+vascular_invasion_graded,WHO 2022 vascular invasion graded,819,819,3846,vascular_positive_patients,extracted_vascular_grading_v13,YES (subset),4652 present_ungraded; report graded subset only
+hypocalcemia_confirmed,Confirmed hypocalcemia,18,18,10871,full_surgical_cohort,patient_refined_complication_flags_v2,YES,
+hematoma_confirmed,Confirmed hematoma,38,38,10871,full_surgical_cohort,patient_refined_complication_flags_v2,YES,
+cox_concordance,Cox PH concordance index,0.853,NA,NA,survival_cohort,manuscript_analysis/cox_ph_results.csv,YES,"Schoenfeld flags age, stage, ata, ln_positive"
+km_5y_stage_i_ii,5-year survival Stage I/II,0.823,NA,NA,survival_cohort,manuscript_analysis/km_summary.csv,YES,
+km_5y_stage_iii_iv,5-year survival Stage III/IV,0.161,NA,NA,survival_cohort,manuscript_analysis/km_summary.csv,YES,

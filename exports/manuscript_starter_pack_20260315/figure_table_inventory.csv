@@ -1,0 +1,15 @@
+id,type,title,formats,primary_path,alt_path,notes
+fig1,figure,Cohort Derivation Flow,PNG;SVG,exports/manuscript_figures/fig1_cohort_flow.png,exports/manuscript_figures/fig1_cohort_flow.svg,CONSORT-style flow: 10871 surgical → 4136 cancer → 3201 survival
+fig2,figure,Kaplan-Meier Survival by AJCC 8th Edition Stage,PNG;SVG,exports/manuscript_figures/fig2_km_ajcc8.png,exports/manuscript_figures/fig2_km_ajcc8.svg,"5-yr I/II=0.823, III/IV=0.161, log-rank p<0.0001"
+fig3,figure,Stage and Risk Distribution,PNG;SVG,exports/manuscript_figures/fig3_stage_risk_distribution.png,exports/manuscript_figures/fig3_stage_risk_distribution.svg,AJCC 8 + ATA 2015 risk breakdown
+fig4,figure,Mutation Spectrum,PNG;SVG,exports/manuscript_figures/fig4_mutation_spectrum.png,exports/manuscript_figures/fig4_mutation_spectrum.svg,"BRAF=376, RAS=292, TERT=108"
+fig5,figure,Complication Rates,PNG;SVG,exports/manuscript_figures/fig5_complication_rates.png,exports/manuscript_figures/fig5_complication_rates.svg,7 entity types; 287 unique patients (2.6%)
+table1,table,Demographics and Baseline Characteristics,CSV;MD;TEX,exports/manuscript_tables/table1_demographics.csv,exports/manuscript_tables/table1_demographics.md,148 rows; age/sex/race/BMI/histology
+table2,table,Tumor and Treatment Characteristics,CSV;MD;TEX,exports/manuscript_tables/table2_tumor_treatment.csv,exports/manuscript_tables/table2_tumor_treatment.md,Staging/ETE/vascular/molecular/RAI
+table3,table,Outcome Summary,CSV;MD;TEX,exports/manuscript_tables/table3_outcomes.csv,exports/manuscript_tables/table3_outcomes.md,"Recurrence, complications, Tg for 4136 cancer"
+table_flow,table,Cohort Flow,CSV;MD;TEX,exports/manuscript_tables/cohort_flow.csv,exports/manuscript_tables/cohort_flow.md,7-step flow from total to survival cohort
+table_cox,table,Cox Proportional Hazards Model,CSV;MD;TEX,exports/manuscript_tables/cox_ph.csv,exports/manuscript_tables/cox_ph.md,Concordance 0.853; Schoenfeld tested
+table_logistic,table,Logistic Regression Models,CSV;MD;TEX,exports/manuscript_tables/logistic_models.csv,exports/manuscript_tables/logistic_models.md,4 models: RAI/recurrence/complication/molecular
+table_missing,table,Supplementary Missingness Summary,CSV;MD;TEX,exports/manuscript_tables/supplementary_missingness.csv,exports/manuscript_tables/supplementary_missingness.md,Per-variable fill rates
+table_all,table,Combined All Tables,CSV;MD;TEX,exports/manuscript_tables/all_tables.csv,exports/manuscript_tables/all_tables.md,Concatenated formatted output
+bundle,bundle,Final Publication Bundle,CSV;Parquet;PNG;SVG,exports/FINAL_PUBLICATION_BUNDLE_20260313/,,"52 files: frozen cohort + tables + figures + manifest"
