@@ -1,0 +1,43 @@
+{
+  "profiled_at": "2026-03-15T00:22:25.137966",
+  "total_profiled": 20,
+  "missing": [],
+  "views_in_hotpath": [
+    "master_cohort"
+  ],
+  "slow_scans": [],
+  "map_duplicates": [
+    "md_pathology_recon_review_v2",
+    "md_molecular_linkage_review_v2",
+    "md_rai_adjudication_review_v2",
+    "md_imaging_path_concordance_v2",
+    "md_op_path_recon_review_v2",
+    "md_lineage_audit_v1"
+  ],
+  "recommendations": [
+    {
+      "table": "master_cohort",
+      "rec": "\u26a0 VIEW in hot-path \u2013 materialize as TABLE for performance: CREATE OR REPLACE TABLE master_cohort_mat AS SELECT * FROM master_cohort;"
+    },
+    {
+      "table": "survival_cohort_enriched",
+      "rec": "CREATE OR REPLACE TABLE survival_cohort_enriched_sorted AS SELECT * FROM survival_cohort_enriched ORDER BY research_id;"
+    },
+    {
+      "table": "clinical_notes_long",
+      "rec": "CREATE OR REPLACE TABLE clinical_notes_long_sorted AS SELECT * FROM clinical_notes_long ORDER BY research_id;"
+    },
+    {
+      "table": "note_entities_complications",
+      "rec": "CREATE OR REPLACE TABLE note_entities_complications_sorted AS SELECT * FROM note_entities_complications ORDER BY research_id;"
+    },
+    {
+      "table": "note_entities_staging",
+      "rec": "CREATE OR REPLACE TABLE note_entities_staging_sorted AS SELECT * FROM note_entities_staging ORDER BY research_id;"
+    },
+    {
+      "table": "fna_episode_master_v2",
+      "rec": "CREATE OR REPLACE TABLE fna_episode_master_v2_sorted AS SELECT * FROM fna_episode_master_v2 ORDER BY research_id;"
+    }
+  ]
+}

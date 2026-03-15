@@ -1,0 +1,16 @@
+{
+  "validated_at": "2026-03-15T00:17:53.854786",
+  "script": "81",
+  "table": "operative_episode_detail_v2",
+  "total_fields": 17,
+  "cat_b_populated": 10,
+  "cat_b_total": 11,
+  "unpropagated_count": 1,
+  "unpropagated_fields": [
+    "esophageal_involvement_flag"
+  ],
+  "sync_status": {
+    "error": "IO Error: Cannot open database \"/Users/ros/THyroid 2026/THYROID_2026/thyroid_master.duckdb\" in read-only mode: database does not exist"
+  },
+  "propagation_status": "PARTIAL (10/11)"
+}

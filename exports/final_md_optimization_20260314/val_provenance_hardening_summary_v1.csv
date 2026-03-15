@@ -1,0 +1,4 @@
+domain,val_table,total_patients,patients_with_data,coverage_pct,validated_at,validator_script
+recurrence,val_recurrence_provenance_v2,11673,10871,93.1,2026-03-15T00:20:41.038817,82
+rai,val_rai_provenance_v2,11673,862,7.4,2026-03-15T00:20:41.038817,82
+molecular,val_molecular_provenance_v2,13688,11925,87.1,2026-03-15T00:20:41.038817,82

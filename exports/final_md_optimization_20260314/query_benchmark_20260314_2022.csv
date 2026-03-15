@@ -1,0 +1,24 @@
+label,category,latency_ms,row_count,min_rows,latency_warn_ms,status,pass,sql,run_at
+dash_patient_count,dashboard_overview,344,11673,10000,3000,PASS,True,SELECT COUNT(DISTINCT research_id) FROM master_cohort,2026-03-15T00:22:10.433778
+dash_cancer_cohort,dashboard_overview,30,4136,4000,3000,PASS,True,SELECT COUNT(*) FROM analysis_cancer_cohort_v1,2026-03-15T00:22:10.463828
+dash_date_rescue_rate,dashboard_overview,252,85,1,3000,PASS,True,SELECT AVG(rescue_rate_pct) AS overall_rescue_rate_pct FROM date_rescue_rate_summary,2026-03-15T00:22:10.716587
+dash_manuscript_cohort,dashboard_overview,26,10871,10000,5000,PASS,True,SELECT COUNT(*) FROM manuscript_cohort_v1,2026-03-15T00:22:10.743354
+dash_streamlit_patient_header,dashboard_patient,25,11977,10000,8000,PASS,True,SELECT COUNT(*) FROM streamlit_patient_header_v,2026-03-15T00:22:10.768735
+dash_scoring_systems,dashboard_scoring,27,10871,10000,5000,PASS,True,SELECT COUNT(*) FROM thyroid_scoring_py_v1,2026-03-15T00:22:10.796351
+dash_operative_detail,dashboard_operative,33,9371,8000,5000,PASS,True,SELECT COUNT(*) FROM operative_episode_detail_v2,2026-03-15T00:22:10.830269
+mat_episode_resolved_dedup,materialization,25,9368,9000,5000,PASS,True,SELECT COUNT(*) FROM episode_analysis_resolved_v1_dedup,2026-03-15T00:22:10.856132
+mat_linkage_summary_v3,materialization,26,5,1,5000,PASS,True,SELECT COUNT(*) FROM linkage_summary_v3,2026-03-15T00:22:10.882789
+mat_survival_cohort_enriched,materialization,27,61134,40000,10000,PASS,True,SELECT COUNT(*) FROM survival_cohort_enriched,2026-03-15T00:22:10.910028
+metric_01_surgical_cohort,manuscript_metric,159,11673,10000,3000,PASS,True,SELECT COUNT(DISTINCT research_id) FROM master_cohort,2026-03-15T00:22:11.069806
+metric_02_cancer_eligible,manuscript_metric,25,4136,3500,5000,PASS,True,SELECT COUNT(*) FROM analysis_cancer_cohort_v1 WHERE analysis_eligible_flag IS TRUE,2026-03-15T00:22:11.095749
+metric_03_molecular_tested,manuscript_metric,30,10025,700,5000,PASS,True,SELECT COUNT(DISTINCT research_id) FROM molecular_test_episode_v2 WHERE cancelled_flag IS NOT TRUE,2026-03-15T00:22:11.126114
+metric_04_rai_received,manuscript_metric,27,862,800,5000,PASS,True,SELECT COUNT(DISTINCT research_id) FROM rai_treatment_episode_v2,2026-03-15T00:22:11.153429
+metric_05_tirads_patients,manuscript_metric,37,3474,3000,5000,PASS,True,SELECT COUNT(*) FROM extracted_tirads_validated_v1,2026-03-15T00:22:11.190929
+metric_06_braf_positive,manuscript_metric,27,376,300,8000,PASS,True,SELECT COUNT(DISTINCT research_id) FROM extracted_braf_recovery_v1 WHERE braf_status='positive',2026-03-15T00:22:11.218783
+metric_07_ete_graded,manuscript_metric,28,3879,3500,8000,PASS,True,SELECT COUNT(*) FROM extracted_ete_ene_tert_refined_v1 WHERE ete_grade_v9 IS NOT NULL,2026-03-15T00:22:11.247001
+metric_08_recurrence_any,manuscript_metric,29,1986,1000,8000,PASS,True,SELECT COUNT(DISTINCT research_id) FROM extracted_recurrence_refined_v1 WHERE recurrence_any IS TRUE,2026-03-15T00:22:11.276617
+metric_09_ln_yield,manuscript_metric,26,8339,5000,8000,PASS,True,SELECT COUNT(DISTINCT research_id) FROM extracted_ln_yield_v1,2026-03-15T00:22:11.303009
+metric_10_survival_cohort,manuscript_metric,26,61134,50000,10000,PASS,True,SELECT COUNT(*) FROM survival_cohort_enriched,2026-03-15T00:22:11.329448
+metric_11_manuscript_patients,manuscript_metric,25,10871,10000,5000,PASS,True,SELECT COUNT(*) FROM manuscript_cohort_v1,2026-03-15T00:22:11.354601
+val_provenance_completeness,validation,30,23,1,5000,PASS,True,SELECT COUNT(*) FROM val_provenance_completeness_v2,2026-03-15T00:22:11.385535
+val_operative_nlp,validation,35,17,1,5000,PASS,True,SELECT COUNT(*) FROM val_operative_nlp_propagation_v1,2026-03-15T00:22:11.421455

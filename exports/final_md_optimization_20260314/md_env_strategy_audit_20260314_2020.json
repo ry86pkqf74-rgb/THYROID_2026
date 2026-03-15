@@ -1,0 +1,66 @@
+{
+  "mode": "check",
+  "timestamp": "2026-03-15T00:20:54.472842",
+  "from_env": "thyroid_research_2026",
+  "to_env": "thyroid_research_2026_qa",
+  "env_status": {
+    "thyroid_research_2026": true,
+    "thyroid_research_2026_dev": false,
+    "thyroid_research_2026_qa": false
+  },
+  "gate_passed": [
+    "manuscript_cohort_v1",
+    "patient_analysis_resolved_v1",
+    "episode_analysis_resolved_v1_dedup",
+    "thyroid_scoring_py_v1",
+    "analysis_cancer_cohort_v1",
+    "operative_episode_detail_v2",
+    "rai_treatment_episode_v2",
+    "molecular_test_episode_v2"
+  ],
+  "gate_failed": [],
+  "metrics_passed": [
+    {
+      "metric": "surgical_cohort_size",
+      "value": 11673,
+      "expected_range": [
+        10000,
+        12000
+      ],
+      "pass": true
+    },
+    {
+      "metric": "cancer_cohort_size",
+      "value": 4136,
+      "expected_range": [
+        3900,
+        4300
+      ],
+      "pass": true
+    },
+    {
+      "metric": "manuscript_cohort_size",
+      "value": 10871,
+      "expected_range": [
+        10500,
+        11200
+      ],
+      "pass": true
+    },
+    {
+      "metric": "dedup_episodes",
+      "value": 9368,
+      "expected_range": [
+        9000,
+        9800
+      ],
+      "pass": true
+    }
+  ],
+  "metrics_failed": [],
+  "gates_all_pass": true,
+  "ro_share": {
+    "accessible": true,
+    "patient_count": 11673
+  }
+}

@@ -183,7 +183,7 @@ WITH rai_ep AS (
         ANY_VALUE(
             COALESCE(
                 TRY_CAST(resolved_rai_date AS DATE),
-                TRY_CAST(rai_date AS DATE)
+                TRY_CAST(rai_date_native AS DATE)
             )
         ) AS best_rai_date,
         SUM(CASE WHEN dose_mci IS NOT NULL THEN 1 ELSE 0 END) AS episodes_with_dose,
@@ -191,19 +191,19 @@ WITH rai_ep AS (
         ANY_VALUE(dose_source) AS dose_source,
         ANY_VALUE(dose_confidence) AS dose_confidence,
         ANY_VALUE(rai_assertion_status) AS rai_assertion_status,
-        ANY_VALUE(rai_treatment_certainty) AS rai_treatment_certainty,
-        ANY_VALUE(rai_date_class) AS rai_date_class
+        ANY_VALUE(rai_confidence) AS rai_treatment_certainty,
+        ANY_VALUE(date_status) AS rai_date_class
     FROM rai_treatment_episode_v2
     GROUP BY 1
 ),
 rai_refined AS (
     SELECT
         CAST(research_id AS INTEGER) AS research_id,
-        tier AS refined_tier,
-        source_reliability,
-        dose_confirmed_flag,
-        dose_mci_refined,
-        dose_date
+        rai_validation_tier AS refined_tier,
+        best_source_reliability AS source_reliability,
+        (confirmed_rai_episodes > 0) AS dose_confirmed_flag,
+        max_dose_mci AS dose_mci_refined,
+        first_rai_date AS dose_date
     FROM extracted_rai_validated_v1
     WHERE research_id IS NOT NULL
 ),
@@ -226,11 +226,11 @@ SELECT
         ELSE 0
     END AS rai_date_confidence,
     -- Dose provenance
-    COALESCE(r.dose_source, rfn.source_reliability, 'unavailable') AS dose_source_final,
+    COALESCE(r.dose_source, CAST(rfn.source_reliability AS VARCHAR), 'unavailable') AS dose_source_final,
     COALESCE(r.dose_confidence, 0.0) AS dose_confidence_final,
     -- Assertion confidence
     COALESCE(r.rai_assertion_status, 'no_rai') AS rai_assertion_status,
-    COALESCE(r.rai_treatment_certainty, 'no_rai') AS rai_treatment_certainty,
+    COALESCE(CAST(r.rai_treatment_certainty AS VARCHAR), 'no_rai') AS rai_treatment_certainty,
     -- Structural limitation flags
     CASE
         WHEN r.episode_count IS NULL OR r.episode_count = 0 THEN 'no_rai_episodes'
@@ -261,19 +261,19 @@ WITH mol AS (
         COUNT(*) AS episode_count,
         COUNT(DISTINCT platform) AS platform_count,
         STRING_AGG(DISTINCT platform, '; ') AS platforms_used,
-        SUM(CASE WHEN molecular_date_raw_class IS NOT NULL THEN 1 ELSE 0 END)
+        SUM(CASE WHEN date_status IS NOT NULL THEN 1 ELSE 0 END)
             AS episodes_with_date_class,
-        SUM(CASE WHEN molecular_date_raw_class IN ('exact_source_date','inferred_day_level_date')
+        SUM(CASE WHEN date_status IN ('exact_source_date','inferred_day_level_date')
                  THEN 1 ELSE 0 END) AS episodes_with_day_date,
-        SUM(CASE WHEN is_placeholder_row IS TRUE THEN 1 ELSE 0 END)
+        SUM(CASE WHEN cancelled_flag IS TRUE THEN 1 ELSE 0 END)
             AS placeholder_rows,
-        SUM(CASE WHEN is_placeholder_row IS NOT TRUE THEN 1 ELSE 0 END)
+        SUM(CASE WHEN cancelled_flag IS NOT TRUE THEN 1 ELSE 0 END)
             AS real_test_rows,
         BOOL_OR(braf_flag IS TRUE) AS has_braf,
         BOOL_OR(tert_flag IS TRUE) AS has_tert,
         BOOL_OR(ras_flag IS TRUE OR ras_subtype IS NOT NULL) AS has_ras,
-        ANY_VALUE(molecular_date_raw_class) AS dominant_date_class,
-        ANY_VALUE(molecular_analysis_eligible_flag) AS analysis_eligible_flag
+        ANY_VALUE(date_status) AS dominant_date_class,
+        BOOL_OR(cancelled_flag IS NOT TRUE AND overall_result_class IS NOT NULL) AS analysis_eligible_flag
     FROM molecular_test_episode_v2
     GROUP BY 1
 ),
