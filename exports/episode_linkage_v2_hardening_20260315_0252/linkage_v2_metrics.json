@@ -1,0 +1,376 @@
+{
+  "baseline": {
+    "multi_surgery_dist": {
+      "1": {
+        "patients": 10109,
+        "episodes": 10109
+      },
+      "2": {
+        "patients": 721,
+        "episodes": 1444
+      },
+      "3": {
+        "patients": 32,
+        "episodes": 96
+      },
+      "4": {
+        "patients": 7,
+        "episodes": 28
+      },
+      "5": {
+        "patients": 1,
+        "episodes": 5
+      },
+      "6": {
+        "patients": 1,
+        "episodes": 6
+      }
+    },
+    "existing_tables": {
+      "episode_note_linkage_repair_v1": 8323,
+      "episode_lab_linkage_repair_v1": 12057,
+      "episode_chain_linkage_repair_v1": 5088,
+      "episode_pathrai_linkage_repair_v1": 2465,
+      "episode_ambiguity_registry_v1": 2339,
+      "episode_linkage_repair_summary_v1": 5,
+      "val_episode_key_propagation_v1": 3,
+      "val_episode_artifact_assignment_v1": 8498,
+      "val_episode_mislink_candidates_v1": 1530,
+      "val_episode_health_scorecard_v1": null,
+      "val_episode_summary_kpi_v1": null,
+      "episode_downstream_repair_audit_v1": 13,
+      "multi_surgery_episode_cohort_v1": 1576,
+      "val_multi_surgery_cohort_v3": 1576,
+      "val_multi_surgery_review_queue_v3": 334
+    },
+    "downstream_epid": {
+      "operative_episode_detail_v2": {
+        "total": 9371,
+        "ep_not_1": 96,
+        "dist": {
+          "1": 9275,
+          "2": 94,
+          "3": 2
+        }
+      },
+      "episode_analysis_resolved_v1_dedup": {
+        "total": 9368,
+        "ep_not_1": 96,
+        "dist": {
+          "1": 9272,
+          "2": 94,
+          "3": 2
+        }
+      },
+      "surgery_pathology_linkage_v3": {
+        "total": 9409,
+        "ep_not_1": 200,
+        "dist": {
+          "1": 9209,
+          "2": 190,
+          "3": 10
+        }
+      },
+      "pathology_rai_linkage_v3": {
+        "total": 23,
+        "ep_not_1": 5,
+        "dist": {
+          "1": 18,
+          "2": 4,
+          "3": 1
+        }
+      },
+      "preop_surgery_linkage_v3": {
+        "total": 3591,
+        "ep_not_1": 38,
+        "dist": {
+          "1": 3553,
+          "2": 36,
+          "3": 2
+        }
+      }
+    },
+    "review_queue_total": 334,
+    "v3_cols": {
+      "surgery_pathology_linkage_v3": {
+        "n_cols": 18,
+        "has_epid": true,
+        "columns": [
+          "analysis_eligible_link_flag",
+          "day_gap",
+          "linkage_confidence_tier",
+          "linkage_reason_summary",
+          "linkage_score",
+          "n_candidates",
+          "path_date",
+          "path_lat",
+          "path_size_cm",
+          "path_surgery_id",
+          "path_surgery_id_1",
+          "research_id",
+          "score_rank",
+          "score_rank_1",
+          "surg_date",
+          "surg_lat",
+          "surgery_episode_id",
+          "tumor_ordinal"
+        ]
+      },
+      "pathology_rai_linkage_v3": {
+        "n_cols": 16,
+        "has_epid": true,
+        "columns": [
+          "abs_days",
+          "analysis_eligible_link_flag",
+          "days_post_surgery",
+          "dose_mci",
+          "linkage_confidence_tier",
+          "linkage_reason_summary",
+          "linkage_score",
+          "n_candidates",
+          "rai_assertion_status",
+          "rai_date",
+          "rai_episode_id",
+          "research_id",
+          "score_rank",
+          "score_rank_1",
+          "surgery_date",
+          "surgery_episode_id"
+        ]
+      },
+      "preop_surgery_linkage_v3": {
+        "n_cols": 17,
+        "has_epid": true,
+        "columns": [
+          "abs_gap",
+          "analysis_eligible_link_flag",
+          "day_gap",
+          "linkage_confidence_tier",
+          "linkage_reason_summary",
+          "linkage_score",
+          "n_candidates",
+          "preop_date",
+          "preop_episode_id",
+          "preop_lat",
+          "preop_type",
+          "research_id",
+          "score_rank",
+          "score_rank_1",
+          "surg_lat",
+          "surgery_date",
+          "surgery_episode_id"
+        ]
+      },
+      "fna_molecular_linkage_v3": {
+        "n_cols": 16,
+        "has_epid": false,
+        "columns": [
+          "abs_gap",
+          "analysis_eligible_link_flag",
+          "day_gap",
+          "fna_date_native",
+          "fna_episode_id",
+          "laterality",
+          "linkage_confidence_tier",
+          "linkage_reason_summary",
+          "linkage_score",
+          "molecular_episode_id",
+          "n_candidates",
+          "platform",
+          "research_id",
+          "score_rank",
+          "score_rank_1",
+          "test_date_native"
+        ]
+      },
+      "imaging_fna_linkage_v3": {
+        "n_cols": 20,
+        "has_epid": false,
+        "columns": [
+          "analysis_eligible_link_flag",
+          "day_gap",
+          "fna_date",
+          "fna_episode_id",
+          "fna_laterality",
+          "fna_size_cm",
+          "imaging_exam_id",
+          "img_date",
+          "img_laterality",
+          "img_size_cm",
+          "laterality_score",
+          "linkage_confidence_tier",
+          "linkage_reason_summary",
+          "linkage_score",
+          "n_candidates",
+          "nodule_id",
+          "research_id",
+          "score_rank",
+          "size_score",
+          "temporal_score"
+        ]
+      }
+    },
+    "epid_gap": {
+      "operative_episode_detail_v2": {
+        "patients": 623,
+        "ep1": 529,
+        "ep_gt1": 96
+      },
+      "episode_analysis_resolved_v1_dedup": {
+        "patients": 623,
+        "ep1": 527,
+        "ep_gt1": 96
+      },
+      "surgery_pathology_linkage_v3": {
+        "patients": 623,
+        "ep1": 1096,
+        "ep_gt1": 200
+      }
+    },
+    "linkage_tiers": {
+      "surgery_pathology_linkage_v3": {
+        "high_confidence": 8236,
+        "weak": 566,
+        "exact_match": 414,
+        "plausible": 190,
+        "unlinked": 3
+      },
+      "pathology_rai_linkage_v3": {
+        "plausible": 11,
+        "high_confidence": 7,
+        "exact_match": 5
+      },
+      "preop_surgery_linkage_v3": {
+        "weak": 2045,
+        "plausible": 1458,
+        "high_confidence": 88
+      }
+    }
+  },
+  "phase_a": {
+    "total_rows": 9354,
+    "multi_surgery_rows": 1241,
+    "ep_id_changed": 3,
+    "ambiguity_flagged": 1237,
+    "multi_tier_dist": {
+      "exact_day": 1237,
+      "weak_temporal": 2,
+      "plausible_extended": 2
+    },
+    "high_confidence_eligible": 0,
+    "high_confidence_applied": 0
+  },
+  "phase_b": {
+    "total_rows": 3549,
+    "multi_surgery_rows": 286,
+    "ep_id_changed": 0,
+    "high_confidence_eligible": 0
+  },
+  "phase_c": {
+    "total_rows": 22,
+    "ep_id_changed": 0,
+    "high_confidence_eligible": 0
+  },
+  "phase_d": {
+    "oed_changes": 0,
+    "eard_changes": 0,
+    "oed_no_match": 647
+  },
+  "phase_e": {
+    "scorecard": [
+      {
+        "metric_name": "ambiguity_rate_multi",
+        "metric_value": "99.7%%",
+        "status": "WARN",
+        "computed_at": "2026-03-15 02:52:51.074815-04:00"
+      },
+      {
+        "metric_name": "multi_surgery_patients",
+        "metric_value": "10871",
+        "status": "INFO",
+        "computed_at": "2026-03-15 02:52:51.074815-04:00"
+      },
+      {
+        "metric_name": "oed_epid_correctness",
+        "metric_value": "100.0%%",
+        "status": "PASS",
+        "computed_at": "2026-03-15 02:52:51.074815-04:00"
+      },
+      {
+        "metric_name": "sp_high_conf_rate_multi",
+        "metric_value": "99.7%%",
+        "status": "PASS",
+        "computed_at": "2026-03-15 02:52:51.074815-04:00"
+      },
+      {
+        "metric_name": "sp_linkage_ep_gt1_coverage",
+        "metric_value": "12.6%%",
+        "status": "WARN",
+        "computed_at": "2026-03-15 02:52:51.074815-04:00"
+      }
+    ],
+    "review_queue_count": 1324
+  },
+  "phase_f": {
+    "all_pass": true,
+    "details": [
+      {
+        "target_table": "episode_analysis_resolved_v1_dedup",
+        "total": 8110,
+        "ep1": 8110,
+        "non_ep1": 0,
+        "status": "PASS"
+      },
+      {
+        "target_table": "operative_episode_detail_v2",
+        "total": 8111,
+        "ep1": 8111,
+        "non_ep1": 0,
+        "status": "PASS"
+      },
+      {
+        "target_table": "preop_surgery_linkage_v3",
+        "total": 3263,
+        "ep1": 3263,
+        "non_ep1": 0,
+        "status": "PASS"
+      },
+      {
+        "target_table": "surgery_pathology_linkage_v3",
+        "total": 8113,
+        "ep1": 8113,
+        "non_ep1": 0,
+        "status": "PASS"
+      }
+    ]
+  },
+  "phase_g": [
+    {
+      "domain": "pathology_rai",
+      "total_rows": 22,
+      "multi_rows": 4,
+      "ep_changed": 0,
+      "ambiguous": 0,
+      "pct_changed": 0.0,
+      "computed_at": "2026-03-15 02:52:51.896553-04:00"
+    },
+    {
+      "domain": "preop_surgery",
+      "total_rows": 3549,
+      "multi_rows": 286,
+      "ep_changed": 0,
+      "ambiguous": 87,
+      "pct_changed": 0.0,
+      "computed_at": "2026-03-15 02:52:51.896553-04:00"
+    },
+    {
+      "domain": "surgery_pathology",
+      "total_rows": 9354,
+      "multi_rows": 1241,
+      "ep_changed": 3,
+      "ambiguous": 1237,
+      "pct_changed": 0.2,
+      "computed_at": "2026-03-15 02:52:51.896553-04:00"
+    }
+  ]
+}
