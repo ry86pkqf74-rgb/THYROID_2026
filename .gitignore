@@ -26,3 +26,4 @@ exports/zenodo_archive_*.zip
 
 # Zenodo archive artifacts (already uploaded to Zenodo — DOI 10.5281/zenodo.18945510)
 exports/zenodo_archive_*/
+.vscode/
