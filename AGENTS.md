@@ -754,3 +754,11 @@
 - Script 100 baseline metrics: 762 multi-surgery patients (721×2, 32×3, 7×4, 1×5, 1×6); SP linkage: 1,241 multi-surgery rows (1,237 exact_day, 2 weak_temporal, 2 plausible_extended); preop: 286 multi-surgery rows; RAI: 22 total rows; OED ep-id correctness: 100.0% PASS; review queue: 1,324 items
 - Script 100 non-regression: ALL 4 target tables PASS for single-surgery patients (all ep=1 preserved); Phase G delta: surgery_pathology 0.2% change rate (3 rows), preop 0%, RAI 0%
 - Script 100 deliverables: `docs/episode_linkage_v2_hardening_20260315.md`, `docs/episode_linkage_before_after_20260315.md`, `docs/episode_linkage_nonregression_v2_20260315.md`; exports in `exports/episode_linkage_v2_hardening_20260315_0252/`
+- Pre-manuscript GO/NO-GO assessment (2026-03-15): verdict **GO WITH CAVEATS**; live MotherDuck verification: 20/20 table row counts PASS, 0 duplicate patients, 7/7 readiness gates PASS, 5 source-limited caveats (all with pre-written language); report at `docs/pre_manuscript_go_no_go_20260315.md`, artifacts at `exports/pre_manuscript_go_no_go_20260315/`
+- MotherDuck total tables: 668 (as of 2026-03-15 live query)
+- `.streamlit/secrets.toml` does NOT exist at workspace path; all MotherDuck scripts must use `os.environ['MOTHERDUCK_TOKEN']` for token access — do NOT attempt `toml.load('.streamlit/secrets.toml')`
+- Manuscript citation molecular counts (curated): BRAF=376 (`extracted_braf_recovery_v1`), RAS=292 (`extracted_ras_patient_summary_v1`), TERT=108 (`patient_refined_master_clinical_v12.tert_positive_v9`); master clinical v12 flags (BRAF=546, RAS=337) are broader aggregations NOT for manuscript citation
+- `thyroid_scoring_py_v1` column name: `ata_initial_risk` (NOT `ata_risk_initial`)
+- `longitudinal_lab_canonical_v1` analyte groups: `thyroid_tumor_markers` (38,566 rows, 2,578 pts), `parathyroid` (797 rows, 673 pts), `calcium_metabolism` (598 rows, 562 pts); total 39,961 rows, 3,349 patients
+- `manuscript_cohort_v1.surg_first_date` has 2,140 nulls (19.7%) — expected for benign/non-surgical/imaging-only patients; all analytic subsets properly filtered
+- ETE grading live (v12): microscopic=5,393, gross=278, present_ungraded=66; vascular invasion: positive=5,570, graded=819, ungraded=4,652
