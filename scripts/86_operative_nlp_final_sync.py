@@ -146,24 +146,26 @@ EPISODE_MISSING_FIELDS: list[tuple[str, str]] = [
 #   and manuscript_cohort_v1
 PATIENT_OP_FIELDS: list[tuple[str, str, str]] = [
     # (column_name, dtype, source_expr)
+    # FIX (script 104): bare BOOL_OR — NULL propagates as UNKNOWN,
+    #   not collapsed to FALSE.  BOOL_OR(NULL)→NULL; BOOL_OR(TRUE)→TRUE.
     ("op_rln_monitoring_any",     "BOOLEAN",
-     "BOOL_OR(COALESCE(rln_monitoring_flag, FALSE))"),
+     "BOOL_OR(rln_monitoring_flag)"),
     ("op_drain_placed_any",       "BOOLEAN",
-     "BOOL_OR(COALESCE(drain_flag, FALSE))"),
+     "BOOL_OR(drain_flag)"),
     ("op_strap_muscle_any",       "BOOLEAN",
-     "BOOL_OR(COALESCE(strap_muscle_involvement_flag, FALSE))"),
+     "BOOL_OR(strap_muscle_involvement_flag)"),
     ("op_reoperative_any",        "BOOLEAN",
-     "BOOL_OR(COALESCE(reoperative_field_flag, FALSE))"),
+     "BOOL_OR(reoperative_field_flag)"),
     ("op_parathyroid_autograft_any", "BOOLEAN",
-     "BOOL_OR(COALESCE(parathyroid_autograft_flag, FALSE))"),
+     "BOOL_OR(parathyroid_autograft_flag)"),
     ("op_local_invasion_any",     "BOOLEAN",
-     "BOOL_OR(COALESCE(local_invasion_flag, FALSE))"),
+     "BOOL_OR(local_invasion_flag)"),
     ("op_tracheal_inv_any",       "BOOLEAN",
-     "BOOL_OR(COALESCE(tracheal_involvement_flag, FALSE))"),
+     "BOOL_OR(tracheal_involvement_flag)"),
     ("op_esophageal_inv_any",     "BOOLEAN",
-     "BOOL_OR(COALESCE(esophageal_involvement_flag, FALSE))"),
+     "BOOL_OR(esophageal_involvement_flag)"),
     ("op_intraop_gross_ete_any",  "BOOLEAN",
-     "BOOL_OR(COALESCE(gross_ete_flag, FALSE))"),
+     "BOOL_OR(gross_ete_flag)"),
     ("op_n_surgeries_with_findings", "INTEGER",
      "COUNT(DISTINCT CASE WHEN COALESCE(operative_findings_raw,'') != '' "
      "THEN surgery_episode_id END)"),
@@ -244,12 +246,13 @@ def add_episode_columns(con: duckdb.DuckDBPyConnection, dry_run: bool) -> list[s
 UPDATE_EPISODE_SQL = """
 UPDATE episode_analysis_resolved_v1
 SET
-    parathyroid_autograft_flag    = COALESCE(o.parathyroid_autograft_flag,    FALSE),
-    local_invasion_flag           = COALESCE(o.local_invasion_flag,           FALSE),
-    tracheal_involvement_flag     = COALESCE(o.tracheal_involvement_flag,     FALSE),
-    esophageal_involvement_flag   = COALESCE(o.esophageal_involvement_flag,   FALSE),
-    strap_muscle_involvement_flag = COALESCE(o.strap_muscle_involvement_flag, FALSE),
-    reoperative_field_flag        = COALESCE(o.reoperative_field_flag,        FALSE),
+    -- FIX (script 104): bare field refs — NULL = UNKNOWN, not FALSE
+    parathyroid_autograft_flag    = o.parathyroid_autograft_flag,
+    local_invasion_flag           = o.local_invasion_flag,
+    tracheal_involvement_flag     = o.tracheal_involvement_flag,
+    esophageal_involvement_flag   = o.esophageal_involvement_flag,
+    strap_muscle_involvement_flag = o.strap_muscle_involvement_flag,
+    reoperative_field_flag        = o.reoperative_field_flag,
     operative_findings_raw        = o.operative_findings_raw
 FROM (
     SELECT

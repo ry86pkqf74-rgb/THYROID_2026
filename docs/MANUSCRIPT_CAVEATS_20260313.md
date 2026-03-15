@@ -167,6 +167,10 @@
 **Limitations:**
 > Several operative technique variables were documented inconsistently in the institutional operative records, precluding analysis of their relationship to outcomes.
 
+### RESOLVED (2026-03-15)
+
+Script 104 (`104_operative_truth_state_hardening.py`) recoded all non-TRUE values to NULL across all 10 fields in `operative_episode_detail_v2` and cascaded the fix through `episode_analysis_resolved_v1`, `patient_analysis_resolved_v1`, and `manuscript_cohort_v1`. Script 86 inline COALESCE defects were also permanently fixed. The fields now use **tri-state semantics**: TRUE = NLP-confirmed positive, NULL = unknown, FALSE = reserved for future explicit negation. The caveat wording above remains valid because NLP coverage is still partial — but the data no longer misrepresents unknowns as confirmed negatives. See `docs/operative_nlp_truth_state_hardening_20260315.md` for full details.
+
 ---
 
 ## Caveat 7: BRAF Prevalence Context
