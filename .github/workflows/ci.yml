@@ -1,5 +1,23 @@
 name: Dashboard CI — Hardened
 
+# ─────────────────────────────────────────────────────────────────────────────
+# THYROID_2026  CI  |  Updated 2026-03-14
+#
+# Job graph (simplified):
+#   lint-and-syntax
+#       └─ unit-tests
+#       └─ motherduck-ci (gated on MD secret)
+#               ├─ canonical tables / metric bounds / null checks / smoke (existing)
+#               ├─ benchmark-regression  (new)
+#               └─ share-publication-check  (new, on tagged releases)
+#
+# Service-account token
+# ─────────────────────
+# Store the service-account MotherDuck token as the GitHub Actions secret
+# MD_SA_TOKEN (separate from the personal MOTHERDUCK_TOKEN secret).
+# Scripts that need automation-safe auth call client.for_env(..., sa=True),
+# which prefers MD_SA_TOKEN over MOTHERDUCK_TOKEN.
+# ─────────────────────────────────────────────────────────────────────────────
 on:
   push:
     branches: [main]
@@ -14,6 +32,15 @@ on:
       - ".github/workflows/ci.yml"
   pull_request:
     branches: [main]
+  # Allow manual triggering for release promotion checks
+  workflow_dispatch:
+    inputs:
+      run_share_check:
+        description: "Run share publication check"
+        required: false
+        default: "false"
+        type: choice
+        options: ["true", "false"]
 
 jobs:
   # ── Job 1: Static Analysis ─────────────────────────────────────────────────
@@ -262,3 +289,99 @@ jobs:
               exit(1)
           print('Dashboard smoke tests: PASS')
           "
+
+  # ── Job 4: Query Benchmark Regression (every push, non-blocking on missing baseline)
+  benchmark-regression:
+    name: Query Benchmark Regression
+    runs-on: ubuntu-latest
+    needs: motherduck-ci
+    if: ${{ secrets.MOTHERDUCK != '' }}
+    env:
+      MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run benchmark suite
+        run: |
+          python scripts/92_query_benchmark.py \
+            --md \
+            --baseline exports/md_benchmark_20260314/benchmark_baseline.csv \
+            --runs 3
+        # Non-fatal: regressions print a summary but do not block the push.
+        # To promote a regression to a hard failure, change the exit code in
+        # 92_query_benchmark.py (REGRESSION_EXIT_CODE = 1).
+        continue-on-error: true
+
+      - name: Upload benchmark results artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: benchmark-results-${{ github.sha }}
+          path: exports/md_benchmark_*/benchmark_results_*.csv
+          retention-days: 30
+
+  # ── Job 5: RO Share Publication Check (tagged releases + manual dispatch) ─
+  share-publication-check:
+    name: RO Share Publication Check
+    runs-on: ubuntu-latest
+    needs: motherduck-ci
+    if: >
+      (startsWith(github.ref, 'refs/tags/v') ||
+       github.event.inputs.run_share_check == 'true') &&
+      secrets.MD_SA_TOKEN != ''
+    env:
+      MD_SA_TOKEN: ${{ secrets.MD_SA_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run share publication check
+        # Skip the RW cross-count step in CI (requires both SA and personal
+        # token); use --no-count-check to only verify table existence, PHI
+        # columns absent, and catalog alias.
+        run: |
+          python scripts/94_share_publication_check.py \
+            --sa \
+            --no-count-check
+
+  # ── Job 6: Promotion Gate  (tagged releases only; dev→qa→prod guard) ──────
+  promotion-gate:
+    name: Promotion Gate (qa → prod)
+    runs-on: ubuntu-latest
+    needs: [motherduck-ci, share-publication-check]
+    if: >
+      startsWith(github.ref, 'refs/tags/v') &&
+      secrets.MD_SA_TOKEN != ''
+    env:
+      MD_SA_TOKEN: ${{ secrets.MD_SA_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run promotion gate (qa → prod)
+        # Exit codes: 0 = PASS (all gates), 1 = GATE FAIL (blocks release),
+        # 2 = connectivity error.
+        run: |
+          python scripts/91_promotion_gate.py \
+            --from qa \
+            --to prod \
+            --sa

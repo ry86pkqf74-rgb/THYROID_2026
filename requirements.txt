@@ -8,6 +8,7 @@ requests
 openpyxl
 pyarrow
 python-dateutil
+PyYAML
 pytest
 statsmodels
 scipy

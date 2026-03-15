@@ -1,0 +1,7 @@
+label,tier,median_ms
+# ─────────────────────────────────────────────────────────────────────────────
+# STUB — run the following command to populate with live timings:
+#   .venv/bin/python scripts/92_query_benchmark.py --md --update-baseline
+# ─────────────────────────────────────────────────────────────────────────────
+# Until the baseline is populated, 92_query_benchmark.py will skip regression
+# checks and report all timings as informational only.
