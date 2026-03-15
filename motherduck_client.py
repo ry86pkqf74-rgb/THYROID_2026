@@ -76,30 +76,76 @@ def resolve_database_for_env(env: str | None = None) -> str:
 def get_token(prefer_service_account: bool = False) -> str | None:
     """Resolve a MotherDuck token.
 
-    Priority:
-      1. MD_SA_TOKEN          – service-account token for CI/automation
-      2. MOTHERDUCK_TOKEN     – personal developer token
-      3. .streamlit/secrets.toml (MOTHERDUCK_TOKEN key)
+    Priority (when *prefer_service_account* is True):
+      1. MD_SA_TOKEN              – service-account / team token
+      2. MOTHERDUCK_TOKEN         – personal developer token
+      3. .streamlit/secrets.toml  – MD_SA_TOKEN key, then MOTHERDUCK_TOKEN key
 
-    Set prefer_service_account=True in automated scripts; leave False
-    (default) for interactive sessions that should use the personal token.
+    Priority (when *prefer_service_account* is False — the default):
+      1. MOTHERDUCK_TOKEN         – personal developer token
+      2. MD_SA_TOKEN              – service-account fallback
+      3. .streamlit/secrets.toml  – MOTHERDUCK_TOKEN key, then MD_SA_TOKEN key
+
+    Set prefer_service_account=True in CI / automated scripts; leave False
+    for interactive development that should use the personal token.
     """
     if prefer_service_account:
         sa = os.getenv("MD_SA_TOKEN")
         if sa:
             return sa
-    token = os.getenv("MOTHERDUCK_TOKEN")
-    if token:
-        return token
+        personal = os.getenv("MOTHERDUCK_TOKEN")
+        if personal:
+            return personal
+    else:
+        personal = os.getenv("MOTHERDUCK_TOKEN")
+        if personal:
+            return personal
+        sa = os.getenv("MD_SA_TOKEN")
+        if sa:
+            return sa
+
     # Streamlit secrets fallback (dashboard / Streamlit Cloud)
     secrets_path = Path(".streamlit") / "secrets.toml"
     if secrets_path.exists():
         try:
             import toml  # type: ignore
-            return toml.load(str(secrets_path)).get("MOTHERDUCK_TOKEN")
+            data = toml.load(str(secrets_path))
+            if prefer_service_account:
+                return data.get("MD_SA_TOKEN") or data.get("MOTHERDUCK_TOKEN")
+            return data.get("MOTHERDUCK_TOKEN") or data.get("MD_SA_TOKEN")
         except Exception:
             pass
     return None
+
+
+def token_mode() -> str:
+    """Return a human-readable label describing the active token source.
+
+    Returns one of:
+      'env:MD_SA_TOKEN'                – service-account env var
+      'env:MOTHERDUCK_TOKEN'           – personal env var
+      'secrets.toml:MD_SA_TOKEN'       – service-account in Streamlit secrets
+      'secrets.toml:MOTHERDUCK_TOKEN'  – personal in Streamlit secrets
+      'none'                           – no token found
+
+    Never exposes the token value itself.
+    """
+    if os.getenv("MD_SA_TOKEN"):
+        return "env:MD_SA_TOKEN"
+    if os.getenv("MOTHERDUCK_TOKEN"):
+        return "env:MOTHERDUCK_TOKEN"
+    secrets_path = Path(".streamlit") / "secrets.toml"
+    if secrets_path.exists():
+        try:
+            import toml  # type: ignore
+            data = toml.load(str(secrets_path))
+            if data.get("MD_SA_TOKEN"):
+                return "secrets.toml:MD_SA_TOKEN"
+            if data.get("MOTHERDUCK_TOKEN"):
+                return "secrets.toml:MOTHERDUCK_TOKEN"
+        except Exception:
+            pass
+    return "none"
 
 
 @dataclass(frozen=True)

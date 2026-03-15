@@ -109,7 +109,9 @@ jobs:
     needs: lint-and-syntax
     # NOTE: secrets context is not available in job-level if: for workflow_dispatch;
     # the MOTHERDUCK_TOKEN env var handles cases where the secret is absent gracefully.
+    # Token precedence: MD_SA_TOKEN (preferred for CI) > MOTHERDUCK_TOKEN (legacy fallback).
     env:
+      MD_SA_TOKEN: ${{ secrets.MD_SA_TOKEN }}
       MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK }}
     steps:
       - uses: actions/checkout@v4
@@ -142,8 +144,9 @@ jobs:
       - name: Check canonical tables exist
         run: |
           python -c "
-          import os, duckdb
-          token = os.environ['MOTHERDUCK_TOKEN']
+          from motherduck_client import get_token; import duckdb
+          token = get_token(prefer_service_account=True)
+          assert token, 'No MD token found (set MD_SA_TOKEN or MOTHERDUCK_TOKEN)'
           con = duckdb.connect(f'md:thyroid_research_2026?motherduck_token={token}')
 
           REQUIRED_TABLES = [
@@ -177,8 +180,9 @@ jobs:
       - name: Canonical metric reproducibility
         run: |
           python -c "
-          import os, duckdb
-          token = os.environ['MOTHERDUCK_TOKEN']
+          from motherduck_client import get_token; import duckdb
+          token = get_token(prefer_service_account=True)
+          assert token, 'No MD token found (set MD_SA_TOKEN or MOTHERDUCK_TOKEN)'
           con = duckdb.connect(f'md:thyroid_research_2026?motherduck_token={token}')
 
           METRICS = [
@@ -216,8 +220,9 @@ jobs:
       - name: No row multiplication in patient/episode tables
         run: |
           python -c "
-          import os, duckdb
-          token = os.environ['MOTHERDUCK_TOKEN']
+          from motherduck_client import get_token; import duckdb
+          token = get_token(prefer_service_account=True)
+          assert token, 'No MD token found (set MD_SA_TOKEN or MOTHERDUCK_TOKEN)'
           con = duckdb.connect(f'md:thyroid_research_2026?motherduck_token={token}')
 
           dupl = con.execute('SELECT COUNT(*) - COUNT(DISTINCT research_id) FROM patient_analysis_resolved_v1').fetchone()[0]
@@ -240,8 +245,9 @@ jobs:
       - name: Core columns non-null check
         run: |
           python -c "
-          import os, duckdb
-          token = os.environ['MOTHERDUCK_TOKEN']
+          from motherduck_client import get_token; import duckdb
+          token = get_token(prefer_service_account=True)
+          assert token, 'No MD token found (set MD_SA_TOKEN or MOTHERDUCK_TOKEN)'
           con = duckdb.connect(f'md:thyroid_research_2026?motherduck_token={token}')
 
           checks = [
@@ -270,8 +276,9 @@ jobs:
       - name: Dashboard critical path queries
         run: |
           python -c "
-          import os, duckdb, time
-          token = os.environ['MOTHERDUCK_TOKEN']
+          from motherduck_client import get_token; import duckdb, time
+          token = get_token(prefer_service_account=True)
+          assert token, 'No MD token found (set MD_SA_TOKEN or MOTHERDUCK_TOKEN)'
           con = duckdb.connect(f'md:thyroid_research_2026?motherduck_token={token}')
 
           QUERIES = [
@@ -301,8 +308,9 @@ jobs:
       - name: Manuscript source-env verification
         run: |
           python -c "
-          import os, duckdb
-          token = os.environ['MOTHERDUCK_TOKEN']
+          from motherduck_client import get_token; import duckdb
+          token = get_token(prefer_service_account=True)
+          assert token, 'No MD token found (set MD_SA_TOKEN or MOTHERDUCK_TOKEN)'
           con = duckdb.connect(f'md:thyroid_research_2026?motherduck_token={token}')
           db = con.execute('SELECT current_database()').fetchone()[0]
           expected = 'thyroid_research_2026'

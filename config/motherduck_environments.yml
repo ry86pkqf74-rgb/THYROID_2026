@@ -85,15 +85,55 @@ promotion_workflow:
 # Service Account Auth Pattern
 # ─────────────────────────────────────────────────────────────────────────────
 auth:
-  local_development: .streamlit/secrets.toml (MOTHERDUCK_TOKEN key)
-  ci_github_actions: secrets.MOTHERDUCK (GitHub Actions secret)
-  streamlit_cloud:   secrets.toml deployed to Streamlit Cloud
-  notes: >
-    Never hardcode tokens in script files. The pattern
-    os.environ.get("MOTHERDUCK_TOKEN") or toml.load(secrets.toml)
-    is the approved fallback chain for all scripts.
-    MotherDuck service accounts (team tokens) should replace personal
-    tokens for CI and Streamlit Cloud as soon as available.
+  token_resolution:
+    # Priority order inside motherduck_client.get_token().
+    # prefer_service_account=True  (CI, promotions, automated scripts):
+    #   1. env:MD_SA_TOKEN → 2. env:MOTHERDUCK_TOKEN → 3. secrets.toml
+    # prefer_service_account=False (interactive dev, Streamlit dashboard):
+    #   1. env:MOTHERDUCK_TOKEN → 2. env:MD_SA_TOKEN → 3. secrets.toml
+    service_account_env_var: MD_SA_TOKEN
+    personal_env_var: MOTHERDUCK_TOKEN
+    secrets_file: .streamlit/secrets.toml
+
+  contexts:
+    local_development:
+      primary: env:MOTHERDUCK_TOKEN
+      fallback: .streamlit/secrets.toml (MOTHERDUCK_TOKEN key)
+      notes: Personal token for interactive queries and Streamlit local.
+
+    ci_github_actions:
+      primary: secrets.MD_SA_TOKEN (GitHub Actions secret, injected as MD_SA_TOKEN)
+      fallback: secrets.MOTHERDUCK (personal, legacy — will be removed)
+      notes: >
+        All CI jobs should set MD_SA_TOKEN. MOTHERDUCK (personal) is kept
+        as a transitional fallback until the service-account secret is
+        provisioned in all repo environments.
+
+    streamlit_cloud:
+      primary: Streamlit secrets management (MOTHERDUCK_TOKEN key)
+      notes: >
+        Streamlit Cloud connects via RO share; the token only authenticates
+        share access. If a service-account token with share-read permission
+        is available, store it as MOTHERDUCK_TOKEN in Streamlit Cloud secrets
+        so the dashboard never depends on a personal token.
+
+    promotion_scripts:
+      primary: env:MD_SA_TOKEN
+      notes: >
+        scripts/91_promotion_gate.py and scripts/95_environment_promotion.py
+        pass --sa flag → use_service_account=True.
+
+  ro_share_permissions: >
+    The RO share (thyroid_share) requires a valid MotherDuck token with at
+    least read access to the organization.  Any token type (personal or SA)
+    is accepted — the share itself is read-only regardless of token scope.
+
+  security:
+    - Never hardcode tokens in script files.
+    - Service-account tokens must be stored in GitHub Actions secrets
+      (or your secret manager) and injected via env vars.
+    - Run `python scripts/99_motherduck_auth_diagnostic.py` to verify
+      which token mode is active and reachability without printing secrets.
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Production RO Share

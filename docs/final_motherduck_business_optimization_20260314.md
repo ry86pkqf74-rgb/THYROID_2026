@@ -71,23 +71,36 @@ downgrade immediately to avoid burning budget on idle capacity.
 
 ## 3. Service Account Auth
 
-All scripts use the following token resolution chain:
+All scripts resolve tokens via `motherduck_client.get_token()`:
 
 ```python
-token = os.environ.get("MOTHERDUCK_TOKEN")
-if not token:
-    import toml
-    token = toml.load(".streamlit/secrets.toml")["MOTHERDUCK_TOKEN"]
+from motherduck_client import get_token, token_mode
+
+token = get_token(prefer_service_account=True)   # CI / automation
+token = get_token()                               # interactive dev
+
+print(token_mode())  # e.g. 'env:MD_SA_TOKEN' — never prints the secret
 ```
 
-| Context | Token source |
-|---------|-------------|
-| Local development | `.streamlit/secrets.toml` |
-| GitHub Actions CI | `secrets.MOTHERDUCK` (registered as repo secret) |
-| Streamlit Cloud | Streamlit secrets management |
+**Token precedence** (when `prefer_service_account=True`):
 
-**Never hardcode tokens in script files.**  Plan to migrate from personal tokens to
-MotherDuck team/service-account tokens when available in MotherDuck Business.
+| Priority | Source | Env var / key |
+|----------|--------|---------------|
+| 1 | Environment variable | `MD_SA_TOKEN` |
+| 2 | Environment variable | `MOTHERDUCK_TOKEN` |
+| 3 | `.streamlit/secrets.toml` | `MD_SA_TOKEN` key, then `MOTHERDUCK_TOKEN` key |
+
+When `prefer_service_account=False` (default), priority is reversed (personal first).
+
+| Context | Recommended token | Notes |
+|---------|-------------------|-------|
+| Local development | `MOTHERDUCK_TOKEN` (personal) | Via env or `.streamlit/secrets.toml` |
+| GitHub Actions CI | `MD_SA_TOKEN` (service-account) | Stored as `secrets.MD_SA_TOKEN` repo secret |
+| Streamlit Cloud | `MOTHERDUCK_TOKEN` (SA or personal) | Stored in Streamlit secrets; SA preferred |
+| Promotion scripts | `MD_SA_TOKEN` | Pass `--sa` flag |
+
+**Never hardcode tokens in script files.**  Run `python scripts/99_motherduck_auth_diagnostic.py`
+to verify which token mode is active and confirm reachability.
 
 ---
 
