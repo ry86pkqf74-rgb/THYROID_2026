@@ -1,0 +1,9 @@
+domain,table,description,total_ms_artifacts,uniquely_linked,ambiguous,distant_linked,unlinked
+pathology,path_synoptics,1:1 surgery-pathology,1576,1449,126,0,0
+operative,operative_episode_detail_v2,1:1 surgery-operative,624,561,59,1,0
+fna,fna_episode_master_v2,many:1 FNA→surgery,5353,92,43,325,95
+molecular,molecular_test_episode_v2,many:1 molecular→surgery,715,6,9,71,8
+rai,rai_treatment_episode_v2,many:1 RAI→surgery,436,65,12,64,64
+imaging,imaging_nodule_master_v1,imaging-level,1348,0,0,0,0
+lab_tg,thyroglobulin_labs,many:1 labs→surgery,7973,221,506,1444,3939
+lab_canonical,longitudinal_lab_canonical_v1,many:1 labs→surgery,10304,227,506,1447,3946

@@ -2,11 +2,12 @@
 
 ## Dataset Maturation Layer (v2026.03.13)
 
-**Status:** Manuscript-ready (with scoped caveats) | Extraction pipeline complete | 605 MotherDuck tables
+**Status:** Manuscript-ready (with scoped caveats) | Extraction pipeline complete | 626 MotherDuck tables
 
 A final manuscript-readiness hardening pass on 2026-03-13 audited 578 MotherDuck
 tables, 16 `val_*` validation tables, and all prior audit documents. Subsequent
-validation/benchmark scripts (81–93) added 27 tables, bringing the total to 605. The
+validation/benchmark scripts (81–93) added 27 tables. Further episode-linkage repair
+(scripts 94–97) and final verification (script 98) brought the total to 624. The
 **analysis-resolved layer** is populated and all 7 readiness gates pass. The
 extraction pipeline is complete (13 phases, 11 engine versions). A subsequent
 **hardening pass** fixed 3 missing Streamlit tables, ran ANALYZE on 17 key tables,

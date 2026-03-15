@@ -1,101 +1,101 @@
-research_id,recurrence_any,recurrence_flag_structured,recurrence_date_status,recurrence_date_best,recurrence_site_inferred,detection_category,first_surgery_date,histology,tumor_size,ete,tg_last_value,tg_measurements
-711,True,True,unresolved_date,,,structural_date_unknown,2015-09-02 00:00:00,PTC,2.7,x,-1.0,0
-1636,True,True,unresolved_date,,,structural_date_unknown,2013-04-02 00:00:00,PTC,1.9,x,1.3,22
-1648,True,True,unresolved_date,,,structural_date_unknown,2013-09-20 00:00:00,PTC,2.4,x,1.3,35
-2662,True,True,unresolved_date,,,structural_date_unknown,2004-09-28 00:00:00,PTC,1.8,x,0.3,11
-2966,True,True,unresolved_date,,,structural_date_unknown,2008-02-01 00:00:00,PTC,2.8,x,145.8,40
-3114,True,True,unresolved_date,,,structural_date_unknown,2009-03-04 00:00:00,PTC,1.1,x,12.0,25
-3156,True,True,unresolved_date,,,structural_date_unknown,2009-05-29 00:00:00,recurrent/metastatic PTC,3,yes,12.8,49
-3285,True,True,unresolved_date,,,structural_date_unknown,2010-02-26 00:00:00,PTC,5,x,0.3,25
-3430,True,True,unresolved_date,,,structural_date_unknown,2011-01-03 00:00:00,PTC,3,,4.8,1
-3502,True,True,unresolved_date,,,structural_date_unknown,2011-05-17 00:00:00,PTC,0.9,x,179.8,83
-3506,True,True,unresolved_date,,,structural_date_unknown,2011-05-18 00:00:00,PTC,1.8,x,1.3,18
-3587,True,True,unresolved_date,,,structural_date_unknown,2011-09-07 00:00:00,PTC,6,minimal,128.8,41
-3593,True,True,unresolved_date,,,structural_date_unknown,2011-09-21 00:00:00,PTC,2.5,x,773.5,15
-3676,True,True,unresolved_date,,,structural_date_unknown,2012-01-31 00:00:00,PTC,2.5,minimal,-1.0,0
-3723,True,True,unresolved_date,,,structural_date_unknown,2012-04-10 00:00:00,PTC,3.3,x,1354.1,24
-3791,True,True,unresolved_date,,,structural_date_unknown,2012-06-18 00:00:00,PTC ,3.6,present,36.9,80
-3853,True,True,unresolved_date,,,structural_date_unknown,2012-12-10 00:00:00,PTC,1,x,1.6,22
-3888,True,True,unresolved_date,,,structural_date_unknown,2013-01-24 00:00:00,PTC,0.8,x,-1.0,21
-3891,True,True,unresolved_date,,,structural_date_unknown,2013-01-28 00:00:00,metastatic PTC,6.8,minimal,7.9,38
-4006,True,True,unresolved_date,,,structural_date_unknown,2013-06-13 00:00:00,PTC,2.5,minimal,2.0,23
-4031,True,True,unresolved_date,,,structural_date_unknown,2013-07-03 00:00:00,PTC,4.5,x,0.7,27
-4051,True,True,unresolved_date,,,structural_date_unknown,2013-04-19 00:00:00,follicular carcinoma,5.5,,12.6,30
-4219,True,True,unresolved_date,,,structural_date_unknown,2013-12-03 00:00:00,PTC,4,x,0.1,22
-4430,True,True,unresolved_date,,,structural_date_unknown,2014-05-24 00:00:00,PTC,4,x,26.5,24
-4437,True,True,unresolved_date,,,structural_date_unknown,2014-05-29 00:00:00,PTC,1.5,minimal,12.0,30
-4453,True,True,unresolved_date,,,structural_date_unknown,2014-06-10 00:00:00,PTC,1.2,x,1.8,25
-4460,True,True,unresolved_date,,,structural_date_unknown,2014-06-12 00:00:00,metastatic PTC,3.4,x,51.1,41
-4703,True,True,unresolved_date,,,structural_date_unknown,2015-01-07 00:00:00,PTC,0.7,x,0.7,25
-4759,True,True,unresolved_date,,,structural_date_unknown,2015-02-18 00:00:00,PTC,0.9,minimal,-1.0,2
-4782,True,True,unresolved_date,,,structural_date_unknown,2015-03-16 00:00:00,PTC,0.9,x,0.1,18
-4818,True,True,unresolved_date,,,structural_date_unknown,2015-04-16 00:00:00,PTC,1.6,x,7.8,17
-4893,True,True,unresolved_date,,,structural_date_unknown,2015-06-10 00:00:00,PTC,4.2,x,1.2,35
-4897,True,True,unresolved_date,,,structural_date_unknown,2015-06-11 00:00:00,PTC,0.9,x,7.7,17
-4903,True,True,unresolved_date,,,structural_date_unknown,2015-06-12 00:00:00,PTC,1.5,minimal,108.1,42
-4958,True,True,unresolved_date,,,structural_date_unknown,2015-08-06 00:00:00,PTC,0.03,x,0.1,4
-4986,True,True,unresolved_date,,,structural_date_unknown,2015-08-26 00:00:00,MTC,4.5,x,35.6,15
-4987,True,True,unresolved_date,,,structural_date_unknown,2015-08-27 00:00:00,PTC,0.9,minimal,20.8,11
-4995,True,True,unresolved_date,,,structural_date_unknown,2015-09-03 00:00:00,PTC,4.2,x,0.6,17
-5052,True,True,unresolved_date,,,structural_date_unknown,2015-10-09 00:00:00,MTC,0.7,x,-1.0,0
-5078,True,True,unresolved_date,,,structural_date_unknown,2015-10-22 00:00:00,PTC,2,x,46.5,26
-5107,True,True,unresolved_date,,,structural_date_unknown,2015-11-09 00:00:00,metastatic PTC,1.9,x,20.8,42
-5110,True,True,unresolved_date,,,structural_date_unknown,2015-11-10 00:00:00,PTC,2.3,x,0.6,24
-5118,True,True,unresolved_date,,,structural_date_unknown,2015-11-16 00:00:00,metastatic PTC,4,minimal,27.0,45
-5176,True,True,unresolved_date,,,structural_date_unknown,2015-12-29 00:00:00,PTC,3.5,x,0.4,19
-5177,True,True,unresolved_date,,,structural_date_unknown,2015-12-29 00:00:00,PTC,0.9,minimal into fat,21.0,44
-5180,True,True,unresolved_date,,,structural_date_unknown,2015-12-30 00:00:00,PTC,2,present,0.1,18
-5191,True,True,unresolved_date,,,structural_date_unknown,2016-01-07 00:00:00,metastatic PTC,,,8.8,32
-5197,True,True,unresolved_date,,,structural_date_unknown,2016-01-11 00:00:00,PTC,0.7,minimal,7.2,30
-5203,True,True,unresolved_date,,,structural_date_unknown,2016-01-12 00:00:00,PTC,1.2,x,0.1,31
-5222,True,True,unresolved_date,,,structural_date_unknown,2016-01-20 00:00:00,PTC,1,minimal,1.0,28
-5243,True,True,unresolved_date,,,structural_date_unknown,2016-02-03 00:00:00,PTC,2.5,minimal,1571.1,61
-5251,True,True,unresolved_date,,,structural_date_unknown,2016-02-10 00:00:00,PTC,1,x,5.0,26
-5339,True,True,unresolved_date,,,structural_date_unknown,2016-04-13 00:00:00,PTC,1.3,present,61.4,33
-5366,True,True,unresolved_date,,,structural_date_unknown,2016-05-03 00:00:00,PTC,5.5,x,2.1,22
-5390,True,True,unresolved_date,,,structural_date_unknown,2016-05-19 00:00:00,metastatic PTC classic,2.1,x,427.8,46
-5501,True,True,unresolved_date,,,structural_date_unknown,2016-08-18 00:00:00,follicular carcinoma,1.7,x,15.5,46
-5512,True,True,unresolved_date,,,structural_date_unknown,2016-08-25 00:00:00,PTC ,1.6,x,2.5,35
-5560,True,True,unresolved_date,,,structural_date_unknown,2016-09-26 00:00:00,PTC,1.7,x,1.9,12
-5576,True,True,unresolved_date,,,structural_date_unknown,2016-10-05 00:00:00,PTC,0.8,x,0.2,26
-5601,True,True,unresolved_date,,,structural_date_unknown,2016-10-19 00:00:00,follicular carcinoma,4.3,x,25.1,30
-5610,True,True,unresolved_date,,,structural_date_unknown,2016-10-26 00:00:00,PTC ,1.2,minimal,0.6,15
-5655,True,True,unresolved_date,,,structural_date_unknown,2016-11-17 00:00:00,MTC,0.1,x,0.6,10
-5657,True,True,unresolved_date,,,structural_date_unknown,2016-11-17 00:00:00,PTC,0.05,x,1.4,13
-5666,True,True,unresolved_date,,,structural_date_unknown,2016-11-30 00:00:00,PTC,1.1,present,0.1,4
-5671,True,True,unresolved_date,,,structural_date_unknown,2016-12-01 00:00:00,PTC,1.5,x,0.3,23
-5717,True,True,unresolved_date,,,structural_date_unknown,2016-12-28 00:00:00,PTC,1.2,x,0.8,16
-5722,True,True,unresolved_date,,,structural_date_unknown,2016-12-29 00:00:00,PTC,1.4,minimal,2.6,18
-5726,True,True,unresolved_date,,,structural_date_unknown,2017-01-05 00:00:00,metastatic PTC,0.03,x,3.6,23
-5728,True,True,unresolved_date,,,structural_date_unknown,2017-01-05 00:00:00,PTC,1.5,x,0.4,9
-5772,True,True,unresolved_date,,,structural_date_unknown,2017-01-26 00:00:00,metastatic PTC,1.6,present,6.2,42
-5785,True,True,unresolved_date,,,structural_date_unknown,2017-02-02 00:00:00,PTC,3.7,x,48.4,21
-5842,True,True,unresolved_date,,,structural_date_unknown,2017-03-02 00:00:00,PTC,0.5,minimal,0.9,37
-5848,True,True,unresolved_date,,,structural_date_unknown,2016-11-30 00:00:00,PTC,4,x,0.1,33
-5858,True,True,unresolved_date,,,structural_date_unknown,2017-03-09 00:00:00,PTC,1.3,x,-1.0,3
-5878,True,True,unresolved_date,,,structural_date_unknown,2017-03-22 00:00:00,PTC,1.8,x,13.9,64
-5894,True,True,unresolved_date,,,structural_date_unknown,2017-03-27 00:00:00,PTC,2,x,0.3,27
-5910,True,True,unresolved_date,,,structural_date_unknown,2017-04-05 00:00:00,PTC,0.1,x,7.0,18
-5930,True,True,unresolved_date,,,structural_date_unknown,2017-04-12 00:00:00,poorly differentiated thyroid carcinoma,7.5,extensive,701.9,51
-5975,True,True,unresolved_date,,,structural_date_unknown,2017-05-10 00:00:00,follicular carcinoma,5.2,x,1.6,41
-5991,True,True,unresolved_date,,,structural_date_unknown,2017-05-16 00:00:00,PTC,1.3,x,2.2,28
-6013,True,True,unresolved_date,,,structural_date_unknown,2017-05-25 00:00:00,PTC,0.1,x,2.3,16
-6103,True,True,unresolved_date,,,structural_date_unknown,2017-06-30 00:00:00,PTC,5.4,present,60.7,45
-6157,True,True,unresolved_date,,,structural_date_unknown,2017-08-09 00:00:00,PTC,1.2,x,6.2,8
-6177,True,True,unresolved_date,,,structural_date_unknown,2017-08-21 00:00:00,PTC,1,c/a,1.0,14
-6178,True,True,unresolved_date,,,structural_date_unknown,2017-08-22 00:00:00,PTC,1.3,x,0.7,10
-6181,True,True,unresolved_date,,,structural_date_unknown,2017-08-23 00:00:00,PTC,3,x,1.3,15
-6191,True,True,unresolved_date,,,structural_date_unknown,2017-08-31 00:00:00,PTC,0.4,minimal,2.2,47
-6192,True,True,unresolved_date,,,structural_date_unknown,2017-08-31 00:00:00,PTC,1.1,x,-1.0,1
-6202,True,True,unresolved_date,,,structural_date_unknown,2017-09-06 00:00:00,PTC,4.6,extensive,3.6,30
-6266,True,True,unresolved_date,,,structural_date_unknown,2017-10-26 00:00:00,PTC,4.7,x,0.4,24
-6366,True,True,unresolved_date,,,structural_date_unknown,2017-12-14 00:00:00,PTC,1.6,minimal,8.5,42
-6380,True,True,unresolved_date,,,structural_date_unknown,2017-12-21 00:00:00,PTC,2.8,x,0.4,20
-6479,True,True,unresolved_date,,,structural_date_unknown,2018-02-22 00:00:00,follicular carcinoma,3.5,x,0.1,23
-6517,True,True,unresolved_date,,,structural_date_unknown,2017-12-06 00:00:00,PTC,0.8,x,1.5,12
-6534,True,True,unresolved_date,,,structural_date_unknown,2018-04-04 00:00:00,PTC,2.2,x,0.4,9
-6543,True,True,unresolved_date,,,structural_date_unknown,2018-04-10 00:00:00,PTC,1,c/a,0.1,8
-6551,True,True,unresolved_date,,,structural_date_unknown,2018-04-11 00:00:00,PTC,0.15,x,-1.0,8
-6601,True,True,unresolved_date,,,structural_date_unknown,2018-05-17 00:00:00,PTC,1.9,x,384.7,20
-6659,True,True,unresolved_date,,,structural_date_unknown,2018-06-13 00:00:00,PTC,2.6,x,6.3,10
-6669,True,True,unresolved_date,,,structural_date_unknown,2018-06-18 00:00:00,PTC,2.1,microscopic,18.2,21
+research_id,recurrence_any,recurrence_flag_structured,recurrence_date_status,recurrence_date_best,recurrence_site_inferred,detection_category,first_surgery_date,histology,tumor_size,ete,n_surgeries,tg_last_value,tg_measurements
+9798,True,True,unresolved_date,,,structural_date_unknown,2022-09-22 00:00:00,metastatic PTC,0.9,x,4,0.1,17
+9921,True,True,unresolved_date,,,structural_date_unknown,2020-03-06 00:00:00,metastatic thyroid carcinoma,1.4,present,4,5.8,11
+4430,True,True,unresolved_date,,,structural_date_unknown,2014-05-24 00:00:00,PTC,4,x,3,26.5,24
+5197,True,True,unresolved_date,,,structural_date_unknown,2016-01-11 00:00:00,PTC,0.7,minimal,3,7.2,30
+7742,True,True,unresolved_date,,,structural_date_unknown,2019-11-05 00:00:00,metastatic follicular carcinoma,,,3,0.6,15
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,4
+8482,True,True,unresolved_date,,,structural_date_unknown,2020-11-17 00:00:00,metastatic PTC,1.1,x,3,-1.0,0
+8661,True,True,unresolved_date,,,structural_date_unknown,2021-02-16 00:00:00,metastatic PTC,1,x,3,2.4,11
+10088,True,True,unresolved_date,,,structural_date_unknown,2023-10-23 00:00:00,metastatic PTC,4.3,x,3,-1.0,0
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,8
+10329,True,True,unresolved_date,,,structural_date_unknown,2022-10-19 00:00:00,metastatic PTC,0.7,,3,0.2,6
+10388,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,metastatic PTC,3.8,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),3,-1.0,1
+10483,True,True,unresolved_date,,,structural_date_unknown,2023-10-09 00:00:00,PTC,1.1,x,3,-1.0,2
+10691,True,True,unresolved_date,,,structural_date_unknown,2022-09-08 00:00:00,metastatic PTC with focal tall cell features,2.9,x,3,0.9,12
+10949,True,True,unresolved_date,,,structural_date_unknown,2023-08-23 00:00:00,metastatic PTC with focal tall cell features,10,present,3,-1.0,0
+11011,True,True,unresolved_date,,,structural_date_unknown,2023-12-05 00:00:00,metastatic PTC,7,present,3,-1.0,4
+11084,True,True,unresolved_date,,,structural_date_unknown,2021-07-20 00:00:00,metastatic PTC calssical with focal tall cell features (<5%),2.4,x,3,-1.0,1
+711,True,True,unresolved_date,,,structural_date_unknown,2015-09-02 00:00:00,PTC,2.7,x,2,-1.0,0
+1636,True,True,unresolved_date,,,structural_date_unknown,2013-04-02 00:00:00,PTC,1.9,x,2,1.3,22
+2966,True,True,unresolved_date,,,structural_date_unknown,2008-02-01 00:00:00,PTC,2.8,x,2,145.8,40
+3114,True,True,unresolved_date,,,structural_date_unknown,2009-03-04 00:00:00,PTC,1.1,x,2,12.0,25
+3156,True,True,unresolved_date,,,structural_date_unknown,2009-05-29 00:00:00,recurrent/metastatic PTC,3,yes,2,12.8,49
+3676,True,True,unresolved_date,,,structural_date_unknown,2012-01-31 00:00:00,PTC,2.5,minimal,2,-1.0,0
+3791,True,True,unresolved_date,,,structural_date_unknown,2012-06-18 00:00:00,PTC ,3.6,present,2,36.9,80
+3891,True,True,unresolved_date,,,structural_date_unknown,2013-01-28 00:00:00,metastatic PTC,6.8,minimal,2,7.9,38
+4006,True,True,unresolved_date,,,structural_date_unknown,2013-06-13 00:00:00,PTC,2.5,minimal,2,2.0,23
+4031,True,True,unresolved_date,,,structural_date_unknown,2013-07-03 00:00:00,PTC,4.5,x,2,0.7,27
+4051,True,True,unresolved_date,,,structural_date_unknown,2013-04-19 00:00:00,follicular carcinoma,5.5,,2,12.6,30
+4460,True,True,unresolved_date,,,structural_date_unknown,2014-06-12 00:00:00,metastatic PTC,3.4,x,2,51.1,41
+4903,True,True,unresolved_date,,,structural_date_unknown,2015-06-12 00:00:00,PTC,1.5,minimal,2,108.1,42
+4995,True,True,unresolved_date,,,structural_date_unknown,2015-09-03 00:00:00,PTC,4.2,x,2,0.6,17
+5107,True,True,unresolved_date,,,structural_date_unknown,2015-11-09 00:00:00,metastatic PTC,1.9,x,2,20.8,42
+5118,True,True,unresolved_date,,,structural_date_unknown,2015-11-16 00:00:00,metastatic PTC,4,minimal,2,27.0,45
+5390,True,True,unresolved_date,,,structural_date_unknown,2016-05-19 00:00:00,metastatic PTC classic,2.1,x,2,427.8,46
+5501,True,True,unresolved_date,,,structural_date_unknown,2016-08-18 00:00:00,follicular carcinoma,1.7,x,2,15.5,46
+5726,True,True,unresolved_date,,,structural_date_unknown,2017-01-05 00:00:00,metastatic PTC,0.03,x,2,3.6,23
+5772,True,True,unresolved_date,,,structural_date_unknown,2017-01-26 00:00:00,metastatic PTC,1.6,present,2,6.2,42
+5785,True,True,unresolved_date,,,structural_date_unknown,2017-02-02 00:00:00,PTC,3.7,x,2,48.4,21
+5848,True,True,unresolved_date,,,structural_date_unknown,2016-11-30 00:00:00,PTC,4,x,2,0.1,33
+5975,True,True,unresolved_date,,,structural_date_unknown,2017-05-10 00:00:00,follicular carcinoma,5.2,x,2,1.6,41
+6192,True,True,unresolved_date,,,structural_date_unknown,2017-08-31 00:00:00,PTC,1.1,x,2,-1.0,1
+6479,True,True,unresolved_date,,,structural_date_unknown,2018-02-22 00:00:00,follicular carcinoma,3.5,x,2,0.1,23
+6517,True,True,unresolved_date,,,structural_date_unknown,2017-12-06 00:00:00,PTC,0.8,x,2,1.5,12
+6715,True,True,unresolved_date,,,structural_date_unknown,2018-07-11 00:00:00,PTC,0.8,x,2,424.0,12
+6772,True,True,unresolved_date,,,structural_date_unknown,2018-08-21 00:00:00,PTC,0.2,,2,11.0,6
+6928,True,True,unresolved_date,,,structural_date_unknown,2018-11-15 00:00:00,follicular carcinoma,1.6,x,2,-1.0,0
+7110,True,True,unresolved_date,,,structural_date_unknown,2019-02-04 00:00:00,metastatic PTC,1.5,x,2,-1.0,0
+7139,True,True,unresolved_date,,,structural_date_unknown,2019-02-15 00:00:00,metastatic PTC,2.2,present,2,67.3,14
+7168,True,True,unresolved_date,,,structural_date_unknown,2019-02-28 00:00:00,metastatic PTC,5.6,present,2,1.5,32
+7269,True,True,unresolved_date,,,structural_date_unknown,2019-03-01 00:00:00,PTC,4.2,x,2,58.5,24
+7335,True,True,unresolved_date,,,structural_date_unknown,2019-05-20 00:00:00,PTC,1.2,x,2,4.6,4
+7337,True,True,unresolved_date,,,structural_date_unknown,2019-05-20 00:00:00,metastatic PTC,2.8,microscopic,2,0.8,28
+7363,True,True,unresolved_date,,,structural_date_unknown,2019-05-29 00:00:00,PTC,0.6,x,2,-1.0,0
+7382,True,True,unresolved_date,,,structural_date_unknown,2019-06-11 00:00:00,follicular carcinoma,7.4,x,2,4.6,6
+7428,True,True,unresolved_date,,,structural_date_unknown,2019-05-16 00:00:00,PTC,7,present,2,38.0,34
+7515,True,True,unresolved_date,,,structural_date_unknown,2019-04-08 00:00:00,PTC,1.3,present,2,-1.0,0
+7564,True,True,unresolved_date,,,structural_date_unknown,2019-08-23 00:00:00,PTC,2.7,x,2,3.4,14
+7566,True,True,unresolved_date,,,structural_date_unknown,2013-10-28 00:00:00,PTC,0.5,x,2,2.0,33
+7574,True,True,unresolved_date,,,structural_date_unknown,2016-07-13 00:00:00,PTC,8,x,2,6660.0,22
+7577,True,True,unresolved_date,,,structural_date_unknown,2019-08-28 00:00:00,PTC,3.1,present,2,-1.0,7
+7615,True,True,unresolved_date,,,structural_date_unknown,2019-09-17 00:00:00,PTC,0.2,x,2,-1.0,0
+7626,True,True,unresolved_date,,,structural_date_unknown,2019-09-19 00:00:00,PTC,0.2,x,2,-1.0,0
+7641,True,True,unresolved_date,,,structural_date_unknown,2019-09-26 00:00:00,metastatic PTC,2.4,present,2,5.2,6
+7643,True,True,unresolved_date,,,structural_date_unknown,2019-10-10 00:00:00,metastatic PTC,2.5,x,2,-1.0,2
+7719,True,True,unresolved_date,,,structural_date_unknown,2019-10-23 00:00:00,PTC,0.7,x,2,-1.0,0
+7726,True,True,unresolved_date,,,structural_date_unknown,2019-10-28 00:00:00,PTC,1.3,x,2,-1.0,0
+7731,True,True,unresolved_date,,,structural_date_unknown,2019-10-30 00:00:00,MTC,0.9,x,2,0.5,3
+7745,True,True,unresolved_date,,,structural_date_unknown,2019-11-05 00:00:00,PTC,3.4,x,2,-1.0,16
+7773,True,True,unresolved_date,,,structural_date_unknown,2019-09-10 00:00:00,PTC,5.6,x,2,-1.0,0
+7799,True,True,unresolved_date,,,structural_date_unknown,2019-11-26 00:00:00,follicular carcinoma,3,x,2,-1.0,0
+7847,True,True,unresolved_date,,,structural_date_unknown,2019-12-11 00:00:00,PTC,2.4,,2,15.9,11
+7861,True,True,unresolved_date,,,structural_date_unknown,2019-12-17 00:00:00,PTC,3.8,x,2,0.4,11
+7888,True,True,unresolved_date,,,structural_date_unknown,2019-12-31 00:00:00,PTC,3.6,x,2,196.0,13
+7918,True,True,unresolved_date,,,structural_date_unknown,2020-01-15 00:00:00,PTC,2.7,x,2,-1.0,0
+7944,True,True,unresolved_date,,,structural_date_unknown,2020-01-28 00:00:00,metastatic PTC,2.3,x,2,8.4,27
+7978,True,True,unresolved_date,,,structural_date_unknown,2020-02-07 00:00:00,PTC,1.6,x,2,-1.0,0
+7988,True,True,unresolved_date,,,structural_date_unknown,2020-01-24 00:00:00,metastatic PTC,1.4,x,2,0.7,1
+8039,True,True,unresolved_date,,,structural_date_unknown,2020-03-03 00:00:00,PTC,1.5,x,2,0.1,15
+8105,True,True,unresolved_date,,,structural_date_unknown,2020-05-11 00:00:00,metastatic PTC,2.6,x,2,44.1,30
+8112,True,True,unresolved_date,,,structural_date_unknown,2020-05-13 00:00:00,PTC,6,x,2,-1.0,3
+8117,True,True,unresolved_date,,,structural_date_unknown,2020-05-20 00:00:00,follicular carcinoma,3.8,x,2,-1.0,0
+8119,True,True,unresolved_date,,,structural_date_unknown,2020-05-20 00:00:00,follicular carcinoma,4.3,x,2,-1.0,0
+8189,True,True,unresolved_date,,,structural_date_unknown,2020-06-30 00:00:00,PTC,4.6,x,2,0.3,8
+8191,True,True,unresolved_date,,,structural_date_unknown,2020-04-22 00:00:00,PTC,2.1,x,2,117.4,24
+8195,True,True,unresolved_date,,,structural_date_unknown,2020-07-01 00:00:00,PTC,4.5,x,2,1.1,2
+8204,True,True,unresolved_date,,,structural_date_unknown,2020-07-07 00:00:00,follicular carcinoma,5.1,x,2,-1.0,0
+8218,True,True,unresolved_date,,,structural_date_unknown,2020-07-09 00:00:00,PTC,1.4,x,2,-1.0,0
+8223,True,True,unresolved_date,,,structural_date_unknown,2020-07-14 00:00:00,PTC,2.6,x,2,-1.0,0
+8255,True,True,unresolved_date,,,structural_date_unknown,2020-08-04 00:00:00,PTC,1.2,microscopic,2,-1.0,0
+8282,True,True,unresolved_date,,,structural_date_unknown,2020-08-18 00:00:00,follicular carcinoma,6.6,x,2,-1.0,0
+8293,True,True,unresolved_date,,,structural_date_unknown,2020-08-20 00:00:00,PTC,5,x,2,-1.0,0
+8323,True,True,unresolved_date,,,structural_date_unknown,2020-09-11 00:00:00,follicular carcinoma,8.5,x,2,-1.0,0
+8340,True,True,unresolved_date,,,structural_date_unknown,2020-09-16 00:00:00,PTC,5,x,2,-1.0,0
+8372,True,True,unresolved_date,,,structural_date_unknown,2020-09-29 00:00:00,follicular carcinoma,4.2,x,2,1.4,16
+8388,True,True,unresolved_date,,,structural_date_unknown,2020-10-02 00:00:00,recurrent differentiated high grade thyroid carcinoma metastatic,2.9,present,2,678.2,21
+8410,True,True,unresolved_date,,,structural_date_unknown,2020-10-15 00:00:00,metastatic PTC,0.9,microscopic,2,-1.0,0
+8452,True,True,unresolved_date,,,structural_date_unknown,2020-11-03 00:00:00,PTC,4,present,2,-1.0,1
+8489,True,True,unresolved_date,,,structural_date_unknown,2020-11-20 00:00:00,PTC,<.1,x,2,1.5,10
+8513,True,True,unresolved_date,,,structural_date_unknown,2020-12-04 00:00:00,PTC,3.2,present,2,13.1,17
+8527,True,True,unresolved_date,,,structural_date_unknown,2020-12-10 00:00:00,follicular carcinoma,9,x,2,-1.0,0

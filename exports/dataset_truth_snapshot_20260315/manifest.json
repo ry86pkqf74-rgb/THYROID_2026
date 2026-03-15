@@ -1,0 +1,24 @@
+{
+  "generated": "20260315_0109",
+  "source": "MotherDuck thyroid_research_2026 (prod)",
+  "script": "scripts/98_final_verification_pass.py",
+  "workstreams": [
+    "A_truth_snapshot",
+    "B_multi_surgery_linkage",
+    "C_operative_nlp",
+    "D_recurrence_packets",
+    "E_doc_reconciliation"
+  ],
+  "metrics_count": 35,
+  "operative_fields_audited": 26,
+  "recurrence_cases": 1986,
+  "doc_mismatches": 0,
+  "linkage_domains": 8,
+  "files": [
+    "dataset_metrics.csv",
+    "operative_nlp_audit.csv",
+    "linkage_by_domain.csv",
+    "doc_mismatches.csv",
+    "manifest.json"
+  ]
+}
