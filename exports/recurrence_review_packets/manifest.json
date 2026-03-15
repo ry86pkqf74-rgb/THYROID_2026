@@ -1,12 +1,33 @@
 {
-  "generated": "20260315_0109",
-  "total_cases": 1986,
-  "batches": 20,
+  "generated": "20260315_0122",
+  "total_cases": 3032,
+  "batches": 31,
   "tier_counts": {
-    "unresolved_date": 1764,
-    "biochemical_inflection_inferred": 168,
-    "exact_source_date": 54
+    "unresolved_date": 2557,
+    "biochemical_inflection_inferred": 303,
+    "exact_source_date": 172
   },
-  "multi_surgery_recurrence_patients": 316,
-  "priority_order": "unresolved > biochemical > exact > other; multi-surgery first"
+  "multi_surgery_recurrence_patients": 1362,
+  "priority_order": "unresolved > biochemical > exact > other; multi-surgery first within tier",
+  "columns_included": [
+    "research_id",
+    "recurrence_any",
+    "recurrence_flag_structured",
+    "recurrence_date_status",
+    "recurrence_date_best",
+    "recurrence_site_inferred",
+    "detection_category",
+    "first_surgery_date",
+    "histology",
+    "tumor_size",
+    "ete",
+    "n_surgeries",
+    "tg_max_value",
+    "tg_last_value",
+    "tg_measurements",
+    "braf_positive",
+    "tert_positive",
+    "rln_injury_flag",
+    "linked_episode_id"
+  ]
 }

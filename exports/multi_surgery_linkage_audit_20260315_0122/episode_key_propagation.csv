@@ -1,0 +1,8 @@
+table,column,ms_rows,distinct_episode_ids,status
+operative_episode_detail_v2,surgery_episode_id,624,1,ALL_EPISODE_1
+episode_analysis_resolved_v1_dedup,surgery_episode_id,622,1,ALL_EPISODE_1
+tumor_episode_master_v2,surgery_episode_id,1577,6,CORRECT
+episode_note_linkage_repair_v1,surgery_episode_id,,,COLUMN_MISSING
+episode_lab_linkage_repair_v1,surgery_episode_id,,,COLUMN_MISSING
+episode_chain_linkage_repair_v1,surgery_episode_id,,,COLUMN_MISSING
+episode_pathrai_linkage_repair_v1,surgery_episode_id,,,COLUMN_MISSING

@@ -1,0 +1,101 @@
+research_id,recurrence_any,recurrence_flag_structured,recurrence_date_status,recurrence_date_best,recurrence_site_inferred,detection_category,first_surgery_date,histology,tumor_size,ete,n_surgeries,tg_max_value,tg_last_value,tg_measurements,braf_positive,tert_positive,rln_injury_flag,linked_episode_id
+3726,True,False,biochemical_inflection_inferred,,,biochemical_only,2012-04-13 00:00:00,metastatic carcinoma,1.5,minimal,2,16.1,1.7,21,False,False,,1
+3726,True,False,biochemical_inflection_inferred,,,biochemical_only,2012-04-13 00:00:00,metastatic carcinoma,1.5,minimal,2,16.1,1.7,21,False,False,,1
+3855,True,False,biochemical_inflection_inferred,,,biochemical_only,2012-12-12 00:00:00,PTC,2.6,x,2,2.8,2.8,2,False,False,,1
+3855,True,False,biochemical_inflection_inferred,,,biochemical_only,2012-12-12 00:00:00,PTC,2.6,x,2,2.8,2.8,2,False,False,,1
+3855,True,False,biochemical_inflection_inferred,,,biochemical_only,2012-12-12 00:00:00,PTC,2.6,x,2,2.8,2.8,2,False,False,,1
+3855,True,False,biochemical_inflection_inferred,,,biochemical_only,2012-12-12 00:00:00,PTC,2.6,x,2,2.8,2.8,2,False,False,,1
+3855,True,False,biochemical_inflection_inferred,,,biochemical_only,2012-12-12 00:00:00,PTC,2.6,x,2,2.8,2.8,2,False,False,,1
+3855,True,False,biochemical_inflection_inferred,,,biochemical_only,2012-12-12 00:00:00,PTC,2.6,x,2,2.8,2.8,2,False,False,,1
+3855,True,False,biochemical_inflection_inferred,,,biochemical_only,2012-12-12 00:00:00,PTC,2.6,x,2,2.8,2.8,2,False,False,,1
+3855,True,False,biochemical_inflection_inferred,,,biochemical_only,2012-12-12 00:00:00,PTC,2.6,x,2,2.8,2.8,2,False,False,,1
+4613,True,False,biochemical_inflection_inferred,,,biochemical_only,2010-10-19 00:00:00,Follicular carcinoma,1.2,x,2,349.2,-1.0,3,False,False,,1
+4741,True,False,biochemical_inflection_inferred,,,biochemical_only,2015-02-04 00:00:00,PTC,2.1,minimal,2,610.4,101.3,8,False,False,,1
+5213,True,False,biochemical_inflection_inferred,,,biochemical_only,2016-01-14 00:00:00,metastatic PTC,4,present,2,193.2,16.7,8,False,False,,1
+5213,True,False,biochemical_inflection_inferred,,,biochemical_only,2016-01-14 00:00:00,metastatic PTC,4,present,2,193.2,16.7,8,False,False,,1
+5213,True,False,biochemical_inflection_inferred,,,biochemical_only,2016-01-14 00:00:00,metastatic PTC,4,present,2,193.2,16.7,8,False,False,,1
+5213,True,False,biochemical_inflection_inferred,,,biochemical_only,2016-01-14 00:00:00,metastatic PTC,4,present,2,193.2,16.7,8,False,False,,1
+5213,True,False,biochemical_inflection_inferred,,,biochemical_only,2016-01-14 00:00:00,metastatic PTC,4,present,2,193.2,16.7,8,False,False,,1
+5213,True,False,biochemical_inflection_inferred,,,biochemical_only,2016-01-14 00:00:00,metastatic PTC,4,present,2,193.2,16.7,8,False,False,,1
+5213,True,False,biochemical_inflection_inferred,,,biochemical_only,2016-01-14 00:00:00,metastatic PTC,4,present,2,193.2,16.7,8,False,False,,1
+5213,True,False,biochemical_inflection_inferred,,,biochemical_only,2016-01-14 00:00:00,metastatic PTC,4,present,2,193.2,16.7,8,False,False,,1
+5374,True,False,biochemical_inflection_inferred,,,biochemical_only,2016-05-05 00:00:00,follicular carcinoma,1.7,x,2,10.1,10.1,2,False,False,,1
+5432,True,False,biochemical_inflection_inferred,,,biochemical_only,2016-02-02 00:00:00,follicular carcinoma,5.2,minimal,2,1572.5,1572.5,2,False,False,,1
+5455,True,False,biochemical_inflection_inferred,,,biochemical_only,2016-07-14 00:00:00,follicular carcinoma,2.5,present,2,829.3,829.3,2,False,False,,1
+5569,True,False,biochemical_inflection_inferred,,,biochemical_only,2012-10-22 00:00:00,PTC,n/s,x,2,436.0,-1.0,40,False,False,,1
+5710,True,False,biochemical_inflection_inferred,,,biochemical_only,2016-12-21 00:00:00,PTC,1.8,x,2,20.7,1.9,4,False,False,,1
+7120,True,False,biochemical_inflection_inferred,,,biochemical_only,2018-12-12 00:00:00,PTC,1.4,x,2,9.4,9.4,2,False,False,,1
+234,True,False,biochemical_inflection_inferred,,,biochemical_only,2001-01-12 00:00:00,PTC,3,present,1,55.4,13.6,20,False,False,,1
+259,True,False,biochemical_inflection_inferred,,,biochemical_only,1999-07-14 00:00:00,metastatic PTC,,,1,58.5,58.5,5,False,False,,1
+449,True,False,biochemical_inflection_inferred,,,biochemical_only,2003-08-19 00:00:00,,,,1,2100.5,-1.0,15,False,False,,1
+489,True,False,biochemical_inflection_inferred,,,biochemical_only,2003-09-12 00:00:00,PTC,2.2,present,1,52.5,3.3,4,False,False,0,1
+565,True,False,biochemical_inflection_inferred,,,biochemical_only,2004-05-11 00:00:00,,,,1,28.7,1.1,23,False,False,,1
+839,True,False,biochemical_inflection_inferred,,,biochemical_only,2005-07-05 00:00:00,PTC,3.5,x,1,7.3,1.1,2,False,False,,1
+887,True,False,biochemical_inflection_inferred,,,biochemical_only,2005-08-19 00:00:00,metastatic PTC,4.2,,1,19.2,11.3,22,False,False,,1
+931,True,False,biochemical_inflection_inferred,,,biochemical_only,2005-03-15 00:00:00,follicular carcinoma,2.3,x,1,2909.0,20.0,14,False,False,,1
+967,True,False,biochemical_inflection_inferred,,,biochemical_only,2007-05-29 00:00:00,metastatic follicular carcinoma,2.5,present,1,518.0,101.0,4,False,False,,1
+968,True,False,biochemical_inflection_inferred,,,biochemical_only,2007-10-17 00:00:00,PTC,0.1,x,1,8.5,2.5,2,False,False,,1
+970,True,False,biochemical_inflection_inferred,,,biochemical_only,2007-06-26 00:00:00,PTC,3.1,x,1,14.0,2.2,19,False,False,,1
+978,True,False,biochemical_inflection_inferred,,,biochemical_only,2007-05-23 00:00:00,PTC,0.2,x,1,10.6,10.6,4,False,False,,1
+1014,True,False,biochemical_inflection_inferred,,,biochemical_only,2007-04-24 00:00:00,PTC,1.9,x,1,4.5,4.5,2,False,False,,1
+1045,True,False,biochemical_inflection_inferred,,,biochemical_only,2007-04-10 00:00:00,PTC,4.5,yes,1,9.2,9.2,4,False,False,,1
+1248,True,False,biochemical_inflection_inferred,,,biochemical_only,2008-05-27 00:00:00,,,,1,102.9,25.4,4,False,False,,1
+1295,True,False,biochemical_inflection_inferred,,,biochemical_only,2008-12-16 00:00:00,PTC,1.5,x,1,6.2,2.6,4,False,False,,1
+1349,True,False,biochemical_inflection_inferred,,,biochemical_only,2008-04-01 00:00:00,PTC,2.4,x,1,4544.0,3.2,5,False,False,,1
+1630,True,False,biochemical_inflection_inferred,,,biochemical_only,2013-10-08 00:00:00,PTC,0.35,x,1,4.5,2.7,7,False,False,,1
+1724,True,False,biochemical_inflection_inferred,,,biochemical_only,2013-08-13 00:00:00,,,,1,35.2,14.2,2,False,False,,1
+1793,True,False,biochemical_inflection_inferred,,,biochemical_only,2011-01-19 00:00:00,follicular carcinoma,4.7,x,1,49.2,5.6,4,False,False,,1
+1841,True,False,biochemical_inflection_inferred,,,biochemical_only,2010-11-03 00:00:00,,,,1,-1.0,-1.0,6,False,False,,1
+1854,True,False,biochemical_inflection_inferred,,,biochemical_only,2010-08-25 00:00:00,PTC,7.5,minimal,1,61.2,25.6,12,False,False,,1
+1907,True,False,biochemical_inflection_inferred,,,biochemical_only,2010-01-20 00:00:00,PTC,11,present,1,200.3,135.7,25,False,False,,1
+1935,True,False,biochemical_inflection_inferred,,,biochemical_only,2010-08-20 00:00:00,follicular carcinoma,6.4,minimal,1,69.0,69.0,52,False,False,,1
+1969,True,False,biochemical_inflection_inferred,,,biochemical_only,2013-04-19 00:00:00,PTC,4.8,minimal,1,336.2,12.4,20,False,False,,1
+2032,True,False,biochemical_inflection_inferred,,,biochemical_only,2012-04-25 00:00:00,Poorly differentiated thyroid carcinoma,9.1,x,1,22.0,16.4,11,False,False,,1
+2037,True,False,biochemical_inflection_inferred,,,biochemical_only,2012-04-11 00:00:00,PTC,3.2,"yes, extensive",1,2400.5,2400.5,8,False,False,,1
+2092,True,False,biochemical_inflection_inferred,,,biochemical_only,2008-11-19 00:00:00,,,,1,243.0,39.0,2,False,False,,1
+2164,True,False,biochemical_inflection_inferred,,,biochemical_only,2021-08-30 00:00:00,PTC,2.8,x,1,1.2,1.1,11,False,False,,1
+2228,True,False,biochemical_inflection_inferred,,,biochemical_only,2021-09-21 00:00:00,metastatic PTC,,,1,25.7,25.7,3,False,False,,1
+2233,True,False,biochemical_inflection_inferred,,,biochemical_only,2019-11-11 00:00:00,PTC,3.8,x,1,25.5,25.5,2,False,False,,1
+2297,True,False,biochemical_inflection_inferred,,,biochemical_only,1999-07-27 00:00:00,PTC,0.1,x,1,1.2,1.2,2,False,False,,1
+2359,True,False,biochemical_inflection_inferred,,,biochemical_only,2000-06-08 00:00:00,PTC,1.2,x,1,20.8,1.6,7,False,False,,1
+2373,True,False,biochemical_inflection_inferred,,,biochemical_only,2000-08-01 00:00:00,PTC,1.8,present,1,60.4,7.0,55,False,False,,1
+2432,True,False,biochemical_inflection_inferred,,,biochemical_only,2001-08-09 00:00:00,follicular carcinoma,1.5,x,1,7.4,5.1,3,False,False,,1
+2552,True,False,biochemical_inflection_inferred,,,biochemical_only,2002-12-03 00:00:00,PTC,2.5,minimal,1,49.1,18.4,5,False,False,,1
+2625,True,False,biochemical_inflection_inferred,,,biochemical_only,2004-04-15 00:00:00,Follicular carcinoma,15,x,1,99.2,9.5,29,False,False,,1
+2626,True,False,biochemical_inflection_inferred,,,biochemical_only,2004-04-15 00:00:00,follicular carcinoma,2.5,x,1,118.1,1.1,3,False,False,,1
+2650,True,False,biochemical_inflection_inferred,,,biochemical_only,2004-07-15 00:00:00,,,,1,51.6,51.6,2,False,False,,1
+2775,True,False,biochemical_inflection_inferred,,,biochemical_only,2006-05-10 00:00:00,PTC,1.2,x,1,20.3,7.8,2,False,False,,1
+2810,True,False,biochemical_inflection_inferred,,,biochemical_only,2006-10-03 00:00:00,metastatic PTC,,,1,194.4,194.4,8,False,False,,1
+2904,True,False,biochemical_inflection_inferred,,,biochemical_only,2007-08-22 00:00:00,follicular carcinoma,9,x,1,51.0,2.7,2,False,False,,1
+2916,True,False,biochemical_inflection_inferred,,,biochemical_only,2007-09-18 00:00:00,PTC,2.6,present,1,8.8,1.1,9,False,False,,1
+3045,True,False,biochemical_inflection_inferred,,,biochemical_only,2008-09-22 00:00:00,follicular carcinoma,10.7,,1,243.0,39.0,2,False,False,,1
+3167,True,False,biochemical_inflection_inferred,,,biochemical_only,2009-07-08 00:00:00,follicular carcinoma,3.3,x,1,66.1,66.1,3,False,False,,1
+3213,True,False,biochemical_inflection_inferred,,,biochemical_only,2009-10-14 00:00:00,PTC,3.2,x,1,3.5,3.5,25,False,False,,1
+3268,True,False,biochemical_inflection_inferred,,,biochemical_only,2010-02-03 00:00:00,PTC,5.5,present,1,231.8,231.8,7,False,False,,1
+3269,True,False,biochemical_inflection_inferred,,,biochemical_only,2010-02-05 00:00:00,PTC,9,x,1,296.5,167.0,3,False,False,,1
+3347,True,False,biochemical_inflection_inferred,,,biochemical_only,2010-07-07 00:00:00,PTC,2.3,present,1,1422.0,444.2,37,False,False,,1
+3375,True,False,biochemical_inflection_inferred,,,biochemical_only,2010-08-31 00:00:00,PTC,1.4,minimal,1,20.4,12.4,16,False,False,,1
+3404,True,False,biochemical_inflection_inferred,,,biochemical_only,2010-11-03 00:00:00,PTC,1.5,x,1,33.4,2.4,6,False,False,,1
+3412,True,False,biochemical_inflection_inferred,,,biochemical_only,2010-11-17 00:00:00,follicular carcinoma,13.2,x,1,34.8,17.5,43,False,False,,1
+3443,True,False,biochemical_inflection_inferred,,,biochemical_only,2011-01-21 00:00:00,metastatic PTC,0.9,,1,61.2,25.6,12,False,False,,1
+3496,True,False,biochemical_inflection_inferred,,,biochemical_only,2011-05-11 00:00:00,PTC,2.5,x,1,266.1,9.0,3,False,False,,1
+3550,True,False,biochemical_inflection_inferred,,,biochemical_only,2011-07-27 00:00:00,PTC,5.1,x,1,973.7,7.6,2,False,False,,1
+3566,True,False,biochemical_inflection_inferred,,,biochemical_only,2011-08-10 00:00:00,metastatic PTC with tall cell features,,,1,2428.4,2428.4,2,False,False,,1
+3573,True,False,biochemical_inflection_inferred,,,biochemical_only,2011-08-19 00:00:00,,,,1,12.8,2.7,2,False,False,,1
+3595,True,False,biochemical_inflection_inferred,,,biochemical_only,2011-09-27 00:00:00,PTC,0.6,x,1,21.0,1.5,15,False,False,0,1
+3610,True,False,biochemical_inflection_inferred,,,biochemical_only,2011-10-28 00:00:00,PTC,1.2,minimal,1,67.5,5.0,14,False,False,,1
+3732,True,False,biochemical_inflection_inferred,,,biochemical_only,2012-04-24 00:00:00,PTC,1,x,1,1696.8,2.4,47,False,False,,1
+3815,True,False,biochemical_inflection_inferred,,,biochemical_only,2012-09-27 00:00:00,PTC,2.4,present,1,2211.8,-1.0,30,False,False,,1
+3968,True,False,biochemical_inflection_inferred,,,biochemical_only,2013-05-22 00:00:00,Follicular carcinoma,8,Extensive,1,2100.5,-1.0,15,False,False,,1
+3977,True,False,biochemical_inflection_inferred,,,biochemical_only,2013-05-28 00:00:00,PTC,2.1,x,1,1308.1,-1.0,33,False,False,,1
+3998,True,False,biochemical_inflection_inferred,,,biochemical_only,2013-06-06 00:00:00,PTC,0.6,x,1,17.5,3.2,3,False,False,,1
+4096,True,False,biochemical_inflection_inferred,,,biochemical_only,2013-08-22 00:00:00,PTC,4,minimal,1,167.0,3.0,5,False,False,,1
+4128,True,False,biochemical_inflection_inferred,,,biochemical_only,2013-09-18 00:00:00,PTC,8.5,present,1,3.3,2.8,3,False,False,,1
+4275,True,False,biochemical_inflection_inferred,,,biochemical_only,2014-01-22 00:00:00,PTC,2.4,minimal,1,334.1,-1.0,70,False,False,,1
+4279,True,False,biochemical_inflection_inferred,,,biochemical_only,2014-01-24 00:00:00,PTC,7.9,minimal,1,20.8,20.8,3,False,False,,1
+4379,True,False,biochemical_inflection_inferred,,,biochemical_only,2014-04-09 00:00:00, Poorly differentiated thyroid carcinoma,10,extensive,1,766.2,108.8,13,False,False,,1
+4526,True,False,biochemical_inflection_inferred,,,biochemical_only,2014-08-07 00:00:00,PTC,0.2,x,1,12.9,-1.0,2,False,False,,1
+4554,True,False,biochemical_inflection_inferred,,,biochemical_only,2014-08-27 00:00:00,PTC,4.5,minimal,1,35.3,2.7,30,False,False,,1
+4677,True,False,biochemical_inflection_inferred,,,biochemical_only,2014-12-11 00:00:00,Follicular carcinoma,4.5,minimal,1,1119.7,-1.0,30,False,False,,1
+4724,True,False,biochemical_inflection_inferred,,,biochemical_only,2015-01-23 00:00:00,PTC,2,x,1,15.9,1.6,2,False,False,,1
+4810,True,False,biochemical_inflection_inferred,,,biochemical_only,2015-04-08 00:00:00,PTC,0.6,x,1,687.2,2.2,3,True,False,,1

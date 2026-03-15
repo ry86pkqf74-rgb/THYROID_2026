@@ -1,101 +1,101 @@
-research_id,recurrence_any,recurrence_flag_structured,recurrence_date_status,recurrence_date_best,recurrence_site_inferred,detection_category,first_surgery_date,histology,tumor_size,ete,n_surgeries,tg_last_value,tg_measurements
-8272,True,True,unresolved_date,,,structural_date_unknown,2020-08-11 00:00:00,PTC,1.7,x,1,0.1,13
-8276,True,True,unresolved_date,,,structural_date_unknown,2020-08-13 00:00:00,PTC,0.5,x,1,-1.0,0
-8278,True,True,unresolved_date,,,structural_date_unknown,2020-08-14 00:00:00,PTC,0.5,x,1,-1.0,0
-8287,True,True,unresolved_date,,,structural_date_unknown,2020-08-18 00:00:00,PTC,0.3,x,1,0.9,4
-8290,True,True,unresolved_date,,,structural_date_unknown,2020-08-20 00:00:00,PTC,0.3,x,1,-1.0,0
-8297,True,True,unresolved_date,,,structural_date_unknown,2020-08-25 00:00:00,PTC,2.7,x,1,-1.0,0
-8300,True,True,unresolved_date,,,structural_date_unknown,2020-08-26 00:00:00,follicular carcinoma,1.9,x,1,-1.0,0
-8306,True,True,unresolved_date,,,structural_date_unknown,2020-08-27 00:00:00,PTC,0.3,x,1,-1.0,0
-8307,True,True,unresolved_date,,,structural_date_unknown,2020-08-28 00:00:00,PTC,0.3,x,1,-1.0,0
-8310,True,True,unresolved_date,,,structural_date_unknown,2020-08-28 00:00:00,PTC,0.08,x,1,-1.0,0
-8311,True,True,unresolved_date,,,structural_date_unknown,2020-09-01 00:00:00,poorly differentiated thyroid carcinoma,6,present,1,0.2,15
-8312,True,True,unresolved_date,,,structural_date_unknown,2020-09-01 00:00:00,PTC,1.1,x,1,-1.0,0
-8314,True,True,unresolved_date,,,structural_date_unknown,2020-09-01 00:00:00,PTC,1.4,x,1,-1.0,0
-8316,True,True,unresolved_date,,,structural_date_unknown,2020-09-02 00:00:00,PTC,0.8,x,1,-1.0,0
-8320,True,True,unresolved_date,,,structural_date_unknown,2020-09-08 00:00:00,PTC,0.9,x,1,0.4,18
-8321,True,True,unresolved_date,,,structural_date_unknown,2020-09-08 00:00:00,PTC,0.9,x,1,-1.0,0
-8333,True,True,unresolved_date,,,structural_date_unknown,2020-09-14 00:00:00,MTC,5.3,x,1,99.3,2
-8337,True,True,unresolved_date,,,structural_date_unknown,2020-09-15 00:00:00,PTC,2.9,microscopic,1,-1.0,0
-8338,True,True,unresolved_date,,,structural_date_unknown,2022-06-14 00:00:00,PTC,0.6,x,1,-1.0,0
-8343,True,True,unresolved_date,,,structural_date_unknown,2020-09-17 00:00:00,PTC ,2.5,x,1,0.6,5
-8345,True,True,unresolved_date,,,structural_date_unknown,2020-09-17 00:00:00,PTC,1.4,x,1,13.0,10
-8347,True,True,unresolved_date,,,structural_date_unknown,2020-09-17 00:00:00,follicular carcinoma,4.2,x,1,-1.0,0
-8350,True,True,unresolved_date,,,structural_date_unknown,2020-09-18 00:00:00,MTC,1.2,x,1,-1.0,0
-8352,True,True,unresolved_date,,,structural_date_unknown,2020-09-18 00:00:00,PTC,1.9,x,1,-1.0,0
-8353,True,True,unresolved_date,,,structural_date_unknown,2020-09-21 00:00:00,PTC,2.7,x,1,-1.0,0
-8356,True,True,unresolved_date,,,structural_date_unknown,2020-09-21 00:00:00,PTC,4.5,x,1,2.4,6
-8369,True,True,unresolved_date,,,structural_date_unknown,2020-09-28 00:00:00,PTC,5.7,present,1,-1.0,0
-8370,True,True,unresolved_date,,,structural_date_unknown,2020-09-28 00:00:00,PTC,0.35,x,1,-1.0,6
-8374,True,True,unresolved_date,,,structural_date_unknown,2020-09-29 00:00:00,PTC,0.1,x,1,-1.0,0
-8376,True,True,unresolved_date,,,structural_date_unknown,2020-09-29 00:00:00,PTC,4,present,1,20.9,14
-8379,True,True,unresolved_date,,,structural_date_unknown,2020-09-29 00:00:00,MTC,1.6,x,1,-1.0,0
-8381,True,True,unresolved_date,,,structural_date_unknown,2020-09-30 00:00:00,PTC,0.7,x,1,-1.0,0
-8384,True,True,unresolved_date,,,structural_date_unknown,2020-10-01 00:00:00,PTC,1.7,x,1,0.9,6
-8386,True,True,unresolved_date,,,structural_date_unknown,2020-10-01 00:00:00,PTC,3.1,x,1,-1.0,0
-8387,True,True,unresolved_date,,,structural_date_unknown,2020-10-01 00:00:00,PTC,1.8,x,1,-1.0,0
-8392,True,True,unresolved_date,,,structural_date_unknown,2020-10-06 00:00:00,PTC,5.7,x,1,1.1,4
-8398,True,True,unresolved_date,,,structural_date_unknown,2020-10-08 00:00:00,PTC,3.1,x,1,-1.0,0
-8400,True,True,unresolved_date,,,structural_date_unknown,2020-10-09 00:00:00,PTC,5,x,1,1.2,14
-8404,True,True,unresolved_date,,,structural_date_unknown,2020-10-13 00:00:00,PTC,0.25,x,1,-1.0,0
-8409,True,True,unresolved_date,,,structural_date_unknown,2020-10-15 00:00:00,PTC,3.5,present,1,-1.0,0
-8416,True,True,unresolved_date,,,structural_date_unknown,2020-10-20 00:00:00,PTC,1.8,x,1,-1.0,0
-8419,True,True,unresolved_date,,,structural_date_unknown,2020-10-20 00:00:00,PTC,3.2,x,1,-1.0,0
-8422,True,True,unresolved_date,,,structural_date_unknown,2020-10-21 00:00:00,follicular carcinoma,8.5,,1,-1.0,0
-8428,True,True,unresolved_date,,,structural_date_unknown,2020-10-26 00:00:00,PTC,0.5,x,1,-1.0,0
-8429,True,True,unresolved_date,,,structural_date_unknown,2020-10-26 00:00:00,PTC,0.3,x,1,0.2,4
-8431,True,True,unresolved_date,,,structural_date_unknown,2020-10-27 00:00:00,PTC,1.6,indeterminate,1,0.2,12
-8443,True,True,unresolved_date,,,structural_date_unknown,2020-10-29 00:00:00,PTC,2.1,x,1,5.3,27
-8449,True,True,unresolved_date,,,structural_date_unknown,2020-11-03 00:00:00,PTC,4.5,present,1,129.8,32
-8454,True,True,unresolved_date,,,structural_date_unknown,2020-11-03 00:00:00,PTC,0.5,x,1,-1.0,0
-8456,True,True,unresolved_date,,,structural_date_unknown,2020-11-04 00:00:00,PTC,1.5,x,1,0.3,21
-8462,True,True,unresolved_date,,,structural_date_unknown,2020-11-05 00:00:00,PTC,2.1,x,1,-1.0,0
-8463,True,True,unresolved_date,,,structural_date_unknown,2020-11-06 00:00:00,PTC,3.5,present,1,4.8,4
-8465,True,True,unresolved_date,,,structural_date_unknown,2020-11-09 00:00:00,MTC,3.4,x,1,-1.0,0
-8466,True,True,unresolved_date,,,structural_date_unknown,2020-11-09 00:00:00,follicular adenoma,4.5,,1,-1.0,0
-8468,True,True,unresolved_date,,,structural_date_unknown,2020-11-10 00:00:00,PTC,1.9,x,1,-1.0,0
-8469,True,True,unresolved_date,,,structural_date_unknown,2020-11-10 00:00:00,PTC ,1.8,x,1,-1.0,0
-8473,True,True,unresolved_date,,,structural_date_unknown,2020-11-12 00:00:00,follicular adenoma,4.8,,1,-1.0,0
-8475,True,True,unresolved_date,,,structural_date_unknown,2020-11-12 00:00:00,PTC,0.7,x,1,-1.0,0
-8476,True,True,unresolved_date,,,structural_date_unknown,2020-11-12 00:00:00,PTC,3.4,x,1,-1.0,0
-8480,True,True,unresolved_date,,,structural_date_unknown,2020-11-17 00:00:00,PTC,3.5,x,1,2.1,13
-8481,True,True,unresolved_date,,,structural_date_unknown,2020-11-17 00:00:00,PTC,10.5,x,1,666.2,4
-8486,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,PTC,2.5,x,1,6.6,2
-8492,True,True,unresolved_date,,,structural_date_unknown,2020-11-20 00:00:00,PTC,1.2,x,1,1.4,7
-8494,True,True,unresolved_date,,,structural_date_unknown,2020-11-23 00:00:00,PTC,0.225,x,1,-1.0,2
-8496,True,True,unresolved_date,,,structural_date_unknown,2020-11-24 00:00:00,PTC,1.3,x,1,-1.0,0
-8498,True,True,unresolved_date,,,structural_date_unknown,2020-11-24 00:00:00,PTC,0.1,x,1,-1.0,0
-8499,True,True,unresolved_date,,,structural_date_unknown,2020-11-30 00:00:00,PTC,0.3,x,1,-1.0,0
-8501,True,True,unresolved_date,,,structural_date_unknown,2020-12-01 00:00:00,PTC,2.4,x,1,2.9,16
-8506,True,True,unresolved_date,,,structural_date_unknown,2020-12-02 00:00:00,PTC,3.4,x,1,-1.0,0
-8515,True,True,unresolved_date,,,structural_date_unknown,2020-12-04 00:00:00,PTC,0.6,x,1,-1.0,0
-8518,True,True,unresolved_date,,,structural_date_unknown,2020-12-07 00:00:00,PTC,1,x,1,-1.0,18
-8522,True,True,unresolved_date,,,structural_date_unknown,2020-12-08 00:00:00,PTC,1,x,1,-1.0,0
-8523,True,True,unresolved_date,,,structural_date_unknown,2020-12-08 00:00:00,PTC,1.2,x,1,0.1,17
-8525,True,True,unresolved_date,,,structural_date_unknown,2020-12-09 00:00:00,PTC,1.8,x,1,-1.0,0
-8529,True,True,unresolved_date,,,structural_date_unknown,2020-12-10 00:00:00,PTC,2.1,x,1,-1.0,0
-8541,True,True,unresolved_date,,,structural_date_unknown,2020-12-15 00:00:00,PTC,2.7,x,1,1.2,15
-8542,True,True,unresolved_date,,,structural_date_unknown,2020-12-15 00:00:00,PTC,0.08,x,1,-1.0,0
-8549,True,True,unresolved_date,,,structural_date_unknown,2020-12-17 00:00:00,PTC,1.5,x,1,-1.0,0
-8556,True,True,unresolved_date,,,structural_date_unknown,2020-12-18 00:00:00,PTC,0.4,microscopic,1,-1.0,0
-8560,True,True,unresolved_date,,,structural_date_unknown,2020-12-21 00:00:00,PTC,3,x,1,-1.0,8
-8561,True,True,unresolved_date,,,structural_date_unknown,2020-12-21 00:00:00,PTC,4.6,x,1,178.8,24
-8570,True,True,unresolved_date,,,structural_date_unknown,2020-12-23 00:00:00,follicular carcinoma,6.7,x,1,1.0,7
-8579,True,True,unresolved_date,,,structural_date_unknown,2020-12-29 00:00:00,PTC,0.3,x,1,-1.0,0
-8582,True,True,unresolved_date,,,structural_date_unknown,2020-12-31 00:00:00,Follicular carcinoma,4.4,microscopic,1,-1.0,0
-8586,True,True,unresolved_date,,,structural_date_unknown,2021-01-04 00:00:00,PTC,6.8,x,1,0.2,13
-8587,True,True,unresolved_date,,,structural_date_unknown,2021-01-05 00:00:00,PTC,3.5,present,1,25.7,3
-8589,True,True,unresolved_date,,,structural_date_unknown,2021-01-05 00:00:00,PTC,0.8,x,1,1.4,4
-8594,True,True,unresolved_date,,,structural_date_unknown,2021-01-07 00:00:00,PTC,3.7,x,1,1.6,14
-8595,True,True,unresolved_date,,,structural_date_unknown,2021-01-07 00:00:00,PTC,0.6,x,1,-1.0,0
-8597,True,True,unresolved_date,,,structural_date_unknown,2021-01-08 00:00:00,PTC,0.8,x,1,0.4,2
-8598,True,True,unresolved_date,,,structural_date_unknown,2021-01-08 00:00:00,PTC,3.5,present,1,12.2,13
-8609,True,True,unresolved_date,,,structural_date_unknown,2021-01-19 00:00:00,MTC,2.1,x,1,-1.0,0
-8611,True,True,unresolved_date,,,structural_date_unknown,2021-01-21 00:00:00,PTC,1.3,x,1,-1.0,0
-8614,True,True,unresolved_date,,,structural_date_unknown,2021-01-22 00:00:00,MTC,6.1,present,1,-1.0,0
-8622,True,True,unresolved_date,,,structural_date_unknown,2021-01-28 00:00:00,PTC,2,x,1,-1.0,0
-8626,True,True,unresolved_date,,,structural_date_unknown,2021-01-29 00:00:00,PTC ,1.8,x,1,-1.0,0
-8627,True,True,unresolved_date,,,structural_date_unknown,2021-02-01 00:00:00,PTC,1.1,x,1,0.4,10
-8628,True,True,unresolved_date,,,structural_date_unknown,2021-02-01 00:00:00,follicular carcinoma,3.3,x,1,7.9,5
-8629,True,True,unresolved_date,,,structural_date_unknown,2021-02-02 00:00:00,PTC,1.8,x,1,-1.0,0
-8630,True,True,unresolved_date,,,structural_date_unknown,2021-02-02 00:00:00,PTC,0.8,x,1,-1.0,0
+research_id,recurrence_any,recurrence_flag_structured,recurrence_date_status,recurrence_date_best,recurrence_site_inferred,detection_category,first_surgery_date,histology,tumor_size,ete,n_surgeries,tg_max_value,tg_last_value,tg_measurements,braf_positive,tert_positive,rln_injury_flag,linked_episode_id
+9119,True,True,unresolved_date,,,structural_date_unknown,2020-07-15 00:00:00,PTC,2.4,x,2,1.2,-1.0,14,False,False,,1
+9119,True,True,unresolved_date,,,structural_date_unknown,2020-07-15 00:00:00,PTC,2.4,x,2,1.2,-1.0,14,False,False,,1
+9119,True,True,unresolved_date,,,structural_date_unknown,2020-07-15 00:00:00,PTC,2.4,x,2,1.2,-1.0,14,False,False,,1
+9119,True,True,unresolved_date,,,structural_date_unknown,2020-07-15 00:00:00,PTC,2.4,x,2,1.2,-1.0,14,False,False,,1
+9119,True,True,unresolved_date,,,structural_date_unknown,2020-07-15 00:00:00,PTC,2.4,x,2,1.2,-1.0,14,False,False,,1
+9119,True,True,unresolved_date,,,structural_date_unknown,2020-07-15 00:00:00,PTC,2.4,x,2,1.2,-1.0,14,False,False,,1
+9119,True,True,unresolved_date,,,structural_date_unknown,2020-07-15 00:00:00,PTC,2.4,x,2,1.2,-1.0,14,False,False,,1
+9119,True,True,unresolved_date,,,structural_date_unknown,2020-07-15 00:00:00,PTC,2.4,x,2,1.2,-1.0,14,False,False,,1
+9154,True,True,unresolved_date,,,structural_date_unknown,2021-08-25 00:00:00,PTC,1.2,x,2,0.4,0.1,4,False,False,,1
+9154,True,True,unresolved_date,,,structural_date_unknown,2021-08-25 00:00:00,PTC,1.2,x,2,0.4,0.1,4,False,False,,1
+9154,True,True,unresolved_date,,,structural_date_unknown,2021-08-25 00:00:00,PTC,1.2,x,2,0.4,0.1,4,False,False,,1
+9154,True,True,unresolved_date,,,structural_date_unknown,2021-08-25 00:00:00,PTC,1.2,x,2,0.4,0.1,4,False,False,,1
+9177,True,True,unresolved_date,,,structural_date_unknown,2021-11-02 00:00:00,follicular carcinoma,4.2,x,2,0.2,-1.0,12,False,False,,1
+9199,True,True,unresolved_date,,,structural_date_unknown,2021-11-11 00:00:00,metastatic PTC,0.9,x,2,-1.0,-1.0,0,False,False,,1
+9199,True,True,unresolved_date,,,structural_date_unknown,2021-11-11 00:00:00,metastatic PTC,0.9,x,2,-1.0,-1.0,0,False,False,,1
+9199,True,True,unresolved_date,,,structural_date_unknown,2021-11-11 00:00:00,metastatic PTC,0.9,x,2,-1.0,-1.0,0,False,False,,1
+9199,True,True,unresolved_date,,,structural_date_unknown,2021-11-11 00:00:00,metastatic PTC,0.9,x,2,-1.0,-1.0,0,False,False,,1
+9203,True,True,unresolved_date,,,structural_date_unknown,2021-11-12 00:00:00,metastatic PTC,6.6,present,2,132.0,-1.0,10,False,False,,1
+9203,True,True,unresolved_date,,,structural_date_unknown,2021-11-12 00:00:00,metastatic PTC,6.6,present,2,132.0,-1.0,10,False,False,,1
+9203,True,True,unresolved_date,,,structural_date_unknown,2021-11-12 00:00:00,metastatic PTC,6.6,present,2,132.0,-1.0,10,False,False,,1
+9203,True,True,unresolved_date,,,structural_date_unknown,2021-11-12 00:00:00,metastatic PTC,6.6,present,2,132.0,-1.0,10,False,False,,1
+9203,True,True,unresolved_date,,,structural_date_unknown,2021-11-12 00:00:00,metastatic PTC,6.6,present,2,132.0,-1.0,10,False,False,,1
+9203,True,True,unresolved_date,,,structural_date_unknown,2021-11-12 00:00:00,metastatic PTC,6.6,present,2,132.0,-1.0,10,False,False,,1
+9203,True,True,unresolved_date,,,structural_date_unknown,2021-11-12 00:00:00,metastatic PTC,6.6,present,2,132.0,-1.0,10,False,False,,1
+9203,True,True,unresolved_date,,,structural_date_unknown,2021-11-12 00:00:00,metastatic PTC,6.6,present,2,132.0,-1.0,10,False,False,,1
+9240,True,True,unresolved_date,,,structural_date_unknown,2021-12-09 00:00:00,PTC,1.2,x,2,-1.0,-1.0,0,False,False,,1
+9255,True,True,unresolved_date,,,structural_date_unknown,2021-12-16 00:00:00,follicular carcinoma,3.5,x,2,-1.0,-1.0,0,False,False,,1
+9274,True,True,unresolved_date,,,structural_date_unknown,2021-12-28 00:00:00,follicular carcinoma,5,x,2,0.3,-1.0,9,False,False,,1
+9300,True,True,unresolved_date,,,structural_date_unknown,2022-01-18 00:00:00,metastatic PTC classical,7,x,2,120.1,0.4,10,True,False,,1
+9300,True,True,unresolved_date,,,structural_date_unknown,2022-01-18 00:00:00,metastatic PTC classical,7,x,2,120.1,0.4,10,True,False,,1
+9300,True,True,unresolved_date,,,structural_date_unknown,2022-01-18 00:00:00,metastatic PTC classical,7,x,2,120.1,0.4,10,True,False,,1
+9300,True,True,unresolved_date,,,structural_date_unknown,2022-01-18 00:00:00,metastatic PTC classical,7,x,2,120.1,0.4,10,True,False,,1
+9300,True,True,unresolved_date,,,structural_date_unknown,2022-01-18 00:00:00,metastatic PTC classical,7,x,2,120.1,0.4,10,True,False,,1
+9300,True,True,unresolved_date,,,structural_date_unknown,2022-01-18 00:00:00,metastatic PTC classical,7,x,2,120.1,0.4,10,True,False,,1
+9300,True,True,unresolved_date,,,structural_date_unknown,2022-01-18 00:00:00,metastatic PTC classical,7,x,2,120.1,0.4,10,True,False,,1
+9300,True,True,unresolved_date,,,structural_date_unknown,2022-01-18 00:00:00,metastatic PTC classical,7,x,2,120.1,0.4,10,True,False,,1
+9366,True,True,unresolved_date,,,structural_date_unknown,2022-02-22 00:00:00,follicular carcinoma,8.8,x,2,-1.0,-1.0,0,True,False,,1
+9366,True,True,unresolved_date,,,structural_date_unknown,2022-02-22 00:00:00,follicular carcinoma,8.8,x,2,-1.0,-1.0,0,True,False,,1
+9366,True,True,unresolved_date,,,structural_date_unknown,2022-02-22 00:00:00,follicular carcinoma,8.8,x,2,-1.0,-1.0,0,True,False,,1
+9366,True,True,unresolved_date,,,structural_date_unknown,2022-02-22 00:00:00,follicular carcinoma,8.8,x,2,-1.0,-1.0,0,True,False,,1
+9366,True,True,unresolved_date,,,structural_date_unknown,2022-02-22 00:00:00,follicular carcinoma,8.8,x,2,-1.0,-1.0,0,True,False,,1
+9366,True,True,unresolved_date,,,structural_date_unknown,2022-02-22 00:00:00,follicular carcinoma,8.8,x,2,-1.0,-1.0,0,True,False,,1
+9366,True,True,unresolved_date,,,structural_date_unknown,2022-02-22 00:00:00,follicular carcinoma,8.8,x,2,-1.0,-1.0,0,True,False,,1
+9366,True,True,unresolved_date,,,structural_date_unknown,2022-02-22 00:00:00,follicular carcinoma,8.8,x,2,-1.0,-1.0,0,True,False,,1
+9371,True,True,unresolved_date,,,structural_date_unknown,2022-02-23 00:00:00,follicular carcinoma,3.8,x,2,0.3,0.2,5,False,False,,1
+9389,True,True,unresolved_date,,,structural_date_unknown,2022-03-04 00:00:00,metastatic PTC,1.3,present,2,-1.0,-1.0,5,False,False,0,1
+9389,True,True,unresolved_date,,,structural_date_unknown,2022-03-04 00:00:00,metastatic PTC,1.3,present,2,-1.0,-1.0,5,False,False,0,1
+9389,True,True,unresolved_date,,,structural_date_unknown,2022-03-04 00:00:00,metastatic PTC,1.3,present,2,-1.0,-1.0,5,False,False,0,1
+9389,True,True,unresolved_date,,,structural_date_unknown,2022-03-04 00:00:00,metastatic PTC,1.3,present,2,-1.0,-1.0,5,False,False,0,1
+9389,True,True,unresolved_date,,,structural_date_unknown,2022-03-04 00:00:00,metastatic PTC,1.3,present,2,-1.0,-1.0,5,False,False,0,1
+9389,True,True,unresolved_date,,,structural_date_unknown,2022-03-04 00:00:00,metastatic PTC,1.3,present,2,-1.0,-1.0,5,False,False,0,1
+9389,True,True,unresolved_date,,,structural_date_unknown,2022-03-04 00:00:00,metastatic PTC,1.3,present,2,-1.0,-1.0,5,False,False,0,1
+9389,True,True,unresolved_date,,,structural_date_unknown,2022-03-04 00:00:00,metastatic PTC,1.3,present,2,-1.0,-1.0,5,False,False,0,1
+9398,True,True,unresolved_date,,,structural_date_unknown,2022-03-08 00:00:00,MTC,10.5,x,2,-1.0,-1.0,0,False,False,1,1
+9398,True,True,unresolved_date,,,structural_date_unknown,2022-03-08 00:00:00,MTC,10.5,x,2,-1.0,-1.0,0,False,False,1,1
+9398,True,True,unresolved_date,,,structural_date_unknown,2022-03-08 00:00:00,MTC,10.5,x,2,-1.0,-1.0,0,False,False,1,1
+9398,True,True,unresolved_date,,,structural_date_unknown,2022-03-08 00:00:00,MTC,10.5,x,2,-1.0,-1.0,0,False,False,1,1
+9398,True,True,unresolved_date,,,structural_date_unknown,2022-03-08 00:00:00,MTC,10.5,x,2,-1.0,-1.0,0,False,False,1,1
+9398,True,True,unresolved_date,,,structural_date_unknown,2022-03-08 00:00:00,MTC,10.5,x,2,-1.0,-1.0,0,False,False,1,1
+9398,True,True,unresolved_date,,,structural_date_unknown,2022-03-08 00:00:00,MTC,10.5,x,2,-1.0,-1.0,0,False,False,1,1
+9398,True,True,unresolved_date,,,structural_date_unknown,2022-03-08 00:00:00,MTC,10.5,x,2,-1.0,-1.0,0,False,False,1,1
+9402,True,True,unresolved_date,,,structural_date_unknown,2022-03-08 00:00:00,PTC,0.4,x,2,-1.0,-1.0,0,False,False,,1
+9402,True,True,unresolved_date,,,structural_date_unknown,2022-03-08 00:00:00,PTC,0.4,x,2,-1.0,-1.0,0,False,False,,1
+9402,True,True,unresolved_date,,,structural_date_unknown,2022-03-08 00:00:00,PTC,0.4,x,2,-1.0,-1.0,0,False,False,,1
+9402,True,True,unresolved_date,,,structural_date_unknown,2022-03-08 00:00:00,PTC,0.4,x,2,-1.0,-1.0,0,False,False,,1
+9411,True,True,unresolved_date,,,structural_date_unknown,2022-03-15 00:00:00,PTC,1.6,x,2,-1.0,-1.0,0,True,False,,1
+9438,True,True,unresolved_date,,,structural_date_unknown,2022-03-24 00:00:00,metastatic PTC,2.8,present,2,-1.0,-1.0,0,False,False,,1
+9438,True,True,unresolved_date,,,structural_date_unknown,2022-03-24 00:00:00,metastatic PTC,2.8,present,2,-1.0,-1.0,0,False,False,,1
+9438,True,True,unresolved_date,,,structural_date_unknown,2022-03-24 00:00:00,metastatic PTC,2.8,present,2,-1.0,-1.0,0,False,False,,1
+9438,True,True,unresolved_date,,,structural_date_unknown,2022-03-24 00:00:00,metastatic PTC,2.8,present,2,-1.0,-1.0,0,False,False,,1
+9466,True,True,unresolved_date,,,structural_date_unknown,2022-04-12 00:00:00,PTC,1.9,x,2,0.1,0.1,1,False,False,,1
+9481,True,True,unresolved_date,,,structural_date_unknown,2022-04-19 00:00:00,PTC,3.3,x,2,-1.0,-1.0,0,False,False,,1
+9509,True,True,unresolved_date,,,structural_date_unknown,2022-05-05 00:00:00,follicular carcinoma,5.6,x,2,0.3,-1.0,8,True,True,,1
+9528,True,True,unresolved_date,,,structural_date_unknown,2022-05-17 00:00:00,PTC,1.2,x,2,-1.0,-1.0,1,False,False,,1
+9528,True,True,unresolved_date,,,structural_date_unknown,2022-05-17 00:00:00,PTC,1.2,x,2,-1.0,-1.0,1,False,False,,1
+9528,True,True,unresolved_date,,,structural_date_unknown,2022-05-17 00:00:00,PTC,1.2,x,2,-1.0,-1.0,1,False,False,,1
+9528,True,True,unresolved_date,,,structural_date_unknown,2022-05-17 00:00:00,PTC,1.2,x,2,-1.0,-1.0,1,False,False,,1
+9539,True,True,unresolved_date,,,structural_date_unknown,2022-05-19 00:00:00,follicular carcinoma,3.6,x,2,-1.0,-1.0,0,False,False,,1
+9554,True,True,unresolved_date,,,structural_date_unknown,2022-05-26 00:00:00,PTC,0.8,x,2,-1.0,-1.0,0,False,False,,1
+9600,True,True,unresolved_date,,,structural_date_unknown,2014-05-16 00:00:00,MTC,2,x,2,-1.0,-1.0,0,False,False,,1
+9602,True,True,unresolved_date,,,structural_date_unknown,2022-06-21 00:00:00,follicular carcinoma,3.9,x,2,1.3,0.1,13,False,False,,1
+9632,True,True,unresolved_date,,,structural_date_unknown,2022-07-05 00:00:00,follicular carcinoma,2.9,x,2,0.3,-1.0,10,False,False,,1
+9648,True,True,unresolved_date,,,structural_date_unknown,2022-07-12 00:00:00,PTC,2.3,x,2,-1.0,-1.0,0,False,False,,1
+9666,True,True,unresolved_date,,,structural_date_unknown,2022-07-19 00:00:00,follicular carcinoma,4.8,x,2,0.1,-1.0,7,False,False,,1
+9701,True,True,unresolved_date,,,structural_date_unknown,2022-08-01 00:00:00,follicular carcinoma,4,x,2,-1.0,-1.0,0,False,False,,1
+9708,True,True,unresolved_date,,,structural_date_unknown,2022-08-02 00:00:00,follicular carcinoma,11,,2,-1.0,-1.0,0,False,False,,1
+9710,True,True,unresolved_date,,,structural_date_unknown,2022-08-05 00:00:00,PTC,0.9,present,2,0.2,0.2,6,False,False,,1
+9762,True,True,unresolved_date,,,structural_date_unknown,2022-09-02 00:00:00,PTC,3,c/a,2,-1.0,-1.0,0,False,False,,1
+9772,True,True,unresolved_date,,,structural_date_unknown,2022-09-08 00:00:00,follicular carcinoma,5.8,x,2,0.1,-1.0,9,True,False,0,1
+9772,True,True,unresolved_date,,,structural_date_unknown,2022-09-08 00:00:00,follicular carcinoma,5.8,x,2,0.1,-1.0,9,True,False,0,1
+9772,True,True,unresolved_date,,,structural_date_unknown,2022-09-08 00:00:00,follicular carcinoma,5.8,x,2,0.1,-1.0,9,True,False,0,1
+9772,True,True,unresolved_date,,,structural_date_unknown,2022-09-08 00:00:00,follicular carcinoma,5.8,x,2,0.1,-1.0,9,True,False,0,1
+9772,True,True,unresolved_date,,,structural_date_unknown,2022-09-08 00:00:00,follicular carcinoma,5.8,x,2,0.1,-1.0,9,True,False,0,1
+9772,True,True,unresolved_date,,,structural_date_unknown,2022-09-08 00:00:00,follicular carcinoma,5.8,x,2,0.1,-1.0,9,True,False,0,1
+9772,True,True,unresolved_date,,,structural_date_unknown,2022-09-08 00:00:00,follicular carcinoma,5.8,x,2,0.1,-1.0,9,True,False,0,1
+9772,True,True,unresolved_date,,,structural_date_unknown,2022-09-08 00:00:00,follicular carcinoma,5.8,x,2,0.1,-1.0,9,True,False,0,1
+9786,True,True,unresolved_date,,,structural_date_unknown,2022-09-19 00:00:00,follicular carcinoma,8.5,x,2,99.5,0.3,7,False,False,0,1
+9795,True,True,unresolved_date,,,structural_date_unknown,2022-09-21 00:00:00,follicular carcinoma,4,x,2,-1.0,-1.0,0,False,False,0,1
+9807,True,True,unresolved_date,,,structural_date_unknown,2019-08-02 00:00:00,PTC,1.7,x,2,-1.0,-1.0,0,False,False,,1
+9807,True,True,unresolved_date,,,structural_date_unknown,2019-08-02 00:00:00,PTC,1.7,x,2,-1.0,-1.0,0,False,False,,1

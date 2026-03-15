@@ -1,0 +1,33 @@
+research_id,recurrence_any,recurrence_flag_structured,recurrence_date_status,recurrence_date_best,recurrence_site_inferred,detection_category,first_surgery_date,histology,tumor_size,ete,n_surgeries,tg_max_value,tg_last_value,tg_measurements,braf_positive,tert_positive,rln_injury_flag,linked_episode_id
+5822,True,True,exact_source_date,2019-10-10,,structural_confirmed,2017-02-22 00:00:00,PTC,1.8,minimal,1,1.0,-1.0,48,False,False,,1
+5832,True,True,exact_source_date,2018-12-06,,structural_confirmed,2017-02-24 00:00:00,PTC,0.6,x,1,0.1,-1.0,38,False,False,,1
+5868,True,True,exact_source_date,2017-10-12,,structural_confirmed,2017-03-16 00:00:00,PTC,4.5,x,1,0.6,-1.0,38,False,False,,1
+6007,True,True,exact_source_date,2018-05-17,,structural_confirmed,2017-05-23 00:00:00,PTC,2.2,present,1,0.2,-1.0,21,False,False,,1
+6167,True,True,exact_source_date,2024-10-18,,structural_confirmed,2017-08-16 00:00:00,PTC,1.6,minimal,1,0.8,-1.0,34,False,False,,1
+6251,True,True,exact_source_date,2016-05-31,,structural_confirmed,2017-10-12 00:00:00,PTC,0.1,x,1,0.7,0.2,13,False,False,,1
+6273,True,True,exact_source_date,2018-02-22,,structural_confirmed,2017-11-02 00:00:00,PTC,7,x,1,0.3,-1.0,20,False,False,,1
+6314,True,True,exact_source_date,2019-05-03,,structural_confirmed,2017-11-16 00:00:00,follicular carcinoma,7.1,x,1,5.9,-1.0,27,False,False,,1
+6343,True,True,exact_source_date,2017-08-18,,structural_confirmed,2017-12-04 00:00:00,PTC,0.15,x,1,0.5,0.3,16,False,False,,1
+6418,True,True,exact_source_date,2018-07-23,,structural_confirmed,2018-01-18 00:00:00,PTC,3.2,present,1,0.4,0.1,28,False,False,0,1
+6436,True,True,exact_source_date,2018-01-31,,structural_confirmed,2018-01-31 00:00:00,follicular carcinoma,4.2,x,1,0.2,-1.0,16,False,False,,1
+6512,True,True,exact_source_date,2019-07-03,,structural_confirmed,2018-03-22 00:00:00,PTC,0.8,minimal,1,3.2,-1.0,18,False,False,,1
+6771,True,True,exact_source_date,2000-01-01,,structural_confirmed,2018-08-20 00:00:00,PTC,0.025,x,1,695.0,695.0,4,False,False,,1
+6907,True,True,exact_source_date,2019-06-29,,structural_confirmed,2018-11-09 00:00:00,PTC,0.8,present,1,1.0,0.3,6,False,False,,1
+7083,True,True,exact_source_date,2019-04-29,,structural_confirmed,2019-01-23 00:00:00,PTC,2.7,x,1,-1.0,-1.0,0,False,False,,1
+7126,True,True,exact_source_date,2025-08-01,,structural_confirmed,2019-02-11 00:00:00,PTC,1,x,1,-1.0,-1.0,2,False,False,0,1
+7144,True,True,exact_source_date,2019-10-10,,structural_confirmed,2019-02-19 00:00:00,PTC,2.3,x,1,1.4,-1.0,13,True,True,0,1
+7145,True,True,exact_source_date,2018-09-17,,structural_confirmed,2019-02-19 00:00:00,PTC,5.6,x,1,60.6,0.1,28,False,False,,1
+7297,True,True,exact_source_date,2024-06-21,,structural_confirmed,2019-04-26 00:00:00,metastatic PTC,,,1,5.6,5.6,2,False,False,,1
+7512,True,True,exact_source_date,2018-11-26,,structural_confirmed,2019-07-29 00:00:00,PTC,0.2,x,1,-1.0,-1.0,0,False,False,,1
+7539,True,True,exact_source_date,2019-08-13,,structural_confirmed,2019-08-13 00:00:00,PTC,2.5,x,1,6.0,0.1,25,False,False,0,1
+8097,True,True,exact_source_date,2020-01-23,,structural_confirmed,2020-05-05 00:00:00,PTC,0.1,x,1,-1.0,-1.0,0,False,False,,1
+8252,True,True,exact_source_date,2020-07-31,,structural_confirmed,2020-07-31 00:00:00,follicular carcinoma,3.7,x,1,-1.0,-1.0,0,False,False,1,1
+8916,True,True,exact_source_date,2018-03-26,,structural_confirmed,2021-06-15 00:00:00,MTC,1.2,x,1,-1.0,-1.0,0,False,False,,1
+9889,True,True,exact_source_date,2018-10-31,,structural_confirmed,2023-10-26 00:00:00,metastatic PTC,,,1,-1.0,-1.0,8,False,False,,
+10153,True,True,exact_source_date,2022-05-09,,structural_confirmed,2022-10-24 00:00:00,PTC,3.7,present,1,0.2,-1.0,6,True,False,,
+10237,True,True,exact_source_date,2022-11-07,,structural_confirmed,2022-11-07 00:00:00,metastatic PTC tall cell variant,,,1,0.6,0.6,2,True,False,1,
+10541,True,True,exact_source_date,2023-04-14,,structural_confirmed,2023-05-08 00:00:00,metastatic PTC,,,1,0.6,0.1,5,False,False,,
+10622,True,True,exact_source_date,1950-06-10,,structural_confirmed,2023-12-05 00:00:00,metastatic PTC tall cell variant,,,1,-1.0,-1.0,9,False,False,1,
+10932,True,True,exact_source_date,2023-12-19,,structural_confirmed,2024-02-09 00:00:00,metastatic PTC/anaplastic carcinoma,,,1,-1.0,-1.0,1,False,False,1,
+12057,True,True,exact_source_date,0202-12-30,,structural_confirmed,2024-07-16 00:00:00,PTC,<0.1,x,1,0.5,0.5,2,False,False,,
+12172,True,True,exact_source_date,2021-12-09,,structural_confirmed,2023-01-17 00:00:00,follicular carcinoma,3,x,1,-1.0,-1.0,0,False,False,,

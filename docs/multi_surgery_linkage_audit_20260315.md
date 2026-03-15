@@ -1,48 +1,88 @@
 # Multi-Surgery Episode Linkage Audit — 20260315
 
-Generated: 2026-03-15T01:09:09.819450
+Generated: 2026-03-15T01:22:15.731934
 Source: MotherDuck `thyroid_research_2026` (prod)
+Script: `scripts/99_comprehensive_final_verification.py`
 
 ## Summary
 
 - Multi-surgery patients: **761**
 - Total surgery episodes: **1576**
-- High-risk review queue: **42**
+- Review queue: **334** (HIGH=0, MEDIUM=334)
+
+## Surgery Count Distribution
+
+| Surgeries | Patients |
+|-----------|----------|
+| 2 | 719 |
+| 3 | 33 |
+| 4 | 7 |
+| 5 | 1 |
+| 6 | 1 |
 
 ## Artifact Assignment by Domain
 
-| Domain | Table | MS Artifacts | Uniquely Linked | Ambiguous | Distant | Unlinked |
-|--------|-------|-------------|----------------|-----------|---------|----------|
-| pathology | path_synoptics | 1576 | 1449 | 126 | 0 | 0 |
-| operative | operative_episode_detail_v2 | 624 | 561 | 59 | 1 | 0 |
-| fna | fna_episode_master_v2 | 5353 | 92 | 43 | 325 | 95 |
-| molecular | molecular_test_episode_v2 | 715 | 6 | 9 | 71 | 8 |
-| rai | rai_treatment_episode_v2 | 436 | 65 | 12 | 64 | 64 |
-| imaging | imaging_nodule_master_v1 | 1348 | 0 | 0 | 0 | 0 |
-| lab_tg | thyroglobulin_labs | 7973 | 221 | 506 | 1444 | 3939 |
-| lab_canonical | longitudinal_lab_canonical_v1 | 10304 | 227 | 506 | 1447 | 3946 |
+For each domain, artifacts belonging to multi-surgery patients are scored 
+against all surgery dates. Assignment quality categories:
+
+- **Uniquely linked**: ≤30 days from one surgery with >14-day gap to next-nearest
+- **Ambiguous**: equidistant (≤14-day diff) between two surgeries
+- **Distant**: 30-365 days from nearest surgery (follow-up period)
+- **Unlinked**: >365 days from any surgery
+- **No date**: artifact has no parseable date
+
+| Domain | Table | MS Artifacts | Unique | Ambiguous | Distant | Unlinked | No Date |
+|--------|-------|-------------|--------|-----------|---------|----------|---------|
+| pathology | `path_synoptics` | 1576 | 1449 | 126 | 0 | 0 | 1 |
+| operative | `operative_episode_detail_v2` | 624 | 561 | 59 | 1 | 0 | 2 |
+| fna | `fna_episode_master_v2` | 5353 | 92 | 43 | 325 | 95 | 4781 |
+| molecular | `molecular_test_episode_v2` | 715 | 6 | 9 | 71 | 8 | 621 |
+| rai | `rai_treatment_episode_v2` | 436 | 65 | 12 | 64 | 64 | 119 |
+| imaging_us | `raw_us_tirads_excel_v1` | 1348 | 0 | 0 | 0 | 0 | 0 |
+| lab_tg | `thyroglobulin_labs` | 7973 | 221 | 506 | 1444 | 3939 | 0 |
+| lab_canonical | `longitudinal_lab_canonical_v1` | 10304 | 227 | 506 | 1447 | 3946 | 93 |
+| notes | `clinical_notes_long` | 1185 | 420 | 28 | 34 | 119 | 485 |
 
 ## Episode Key Propagation
 
 | Table | Column | MS Rows | Distinct Episodes | Status |
 |-------|--------|---------|------------------|--------|
-| operative_episode_detail_v2 | surgery_episode_id | 624 | 1 | ALL_EPISODE_1 |
-| episode_analysis_resolved_v1_dedup | surgery_episode_id | 622 | 1 | ALL_EPISODE_1 |
-| tumor_episode_master_v2 | surgery_episode_id | 1577 | 6 | CORRECT |
+| `operative_episode_detail_v2` | surgery_episode_id | 624 | 1 | ALL_EPISODE_1 |
+| `episode_analysis_resolved_v1_dedup` | surgery_episode_id | 622 | 1 | ALL_EPISODE_1 |
+| `tumor_episode_master_v2` | surgery_episode_id | 1577 | 6 | CORRECT |
+| `episode_note_linkage_repair_v1` | surgery_episode_id | N/A | N/A | COLUMN_MISSING |
+| `episode_lab_linkage_repair_v1` | surgery_episode_id | N/A | N/A | COLUMN_MISSING |
+| `episode_chain_linkage_repair_v1` | surgery_episode_id | N/A | N/A | COLUMN_MISSING |
+| `episode_pathrai_linkage_repair_v1` | surgery_episode_id | N/A | N/A | COLUMN_MISSING |
 
-## MotherDuck Objects Created
+## V3 Linkage Table Health
 
-| Table | Purpose |
-|-------|---------|
-| `val_multi_surgery_cohort_v2` | Per-episode cohort (all multi-surgery patients) |
-| `val_multi_surgery_review_queue_v2` | High-risk cases for manual review |
+| Table | Total | Weak | Has Score |
+|-------|-------|------|-----------|
+| `surgery_pathology_linkage_v3` | 9409 | 566 | True |
+| `pathology_rai_linkage_v3` | 23 | 0 | True |
+| `fna_molecular_linkage_v3` | 708 | 29 | True |
+| `preop_surgery_linkage_v3` | 3591 | 2045 | True |
 
 ## Interpretation
 
-- *Uniquely linked*: artifact date falls within 30 days of exactly one surgery, with >14-day gap to next-nearest
-- *Ambiguous*: equidistant (≤14-day difference) between two surgeries
-- *Distant linked*: 30-365 days from nearest surgery — follow-up or temporal gap
-- *Unlinked*: >365 days from any surgery — long-term surveillance, not a linkage failure
+### Primary Success Criterion
+For multi-surgery patients, the right notes/labs/imaging/tests/pathology/RAI
+artifacts should be linked to the right surgery episode whenever deterministically possible.
+
+### Findings
+- **Pathology**: 1:1 surgery-pathology linkage via same surg_date — high determinism
+- **Operative**: matched via surgery_date_native — high determinism
+- **FNA/Molecular**: temporal proximity + laterality — moderate determinism
+- **RAI**: post-surgery temporal window — moderate determinism
+- **Labs**: midpoint bisection between surgeries — moderate determinism
+- **Notes**: note_date proximity — moderate determinism
+- **Imaging**: no structured date linkage — patient-level only
+
+### Source-Limited Domains
+- **Imaging→FNA** linkage: imaging_nodule_long_v2 size data not populated
+- **Nuclear medicine notes**: absent from clinical_notes_long corpus
+- **RAI dose**: 59% missing, capped by structured source availability
 
 ---
-*Audit generated by `scripts/98_final_verification_pass.py` on 2026-03-15T01:09:09.819450*
+*Audit generated by `scripts/99_comprehensive_final_verification.py` on 2026-03-15T01:22:15.731934*
