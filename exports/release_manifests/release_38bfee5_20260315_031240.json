@@ -1,0 +1,214 @@
+{
+  "manifest_id": "release_38bfee5_20260315_031240",
+  "env": "prod",
+  "database": "thyroid_research_2026",
+  "git_sha": "38bfee51248af9e08af0e289a52d35b5bd30d18d",
+  "git_sha_short": "38bfee5",
+  "git_branch": "main",
+  "tagged_version": "",
+  "generated_at": "2026-03-15T03:12:40.728489",
+  "overall_status": "RELEASE_READY",
+  "gates": [
+    {
+      "name": "map_dedup",
+      "status": "PASS",
+      "detail": "  94 \u2014 MATERIALIZATION_MAP duplicate validator"
+    },
+    {
+      "name": "working_tree_clean",
+      "status": "WARN",
+      "detail": "Uncommitted changes in working tree"
+    },
+    {
+      "name": "table_existence",
+      "status": "PASS",
+      "detail": "14/14 tables accessible"
+    },
+    {
+      "name": "metric_bounds",
+      "status": "PASS",
+      "detail": "0 metric(s) out of range"
+    },
+    {
+      "name": "benchmark_regression",
+      "status": "PASS",
+      "detail": "0 regression(s) detected vs baseline"
+    }
+  ],
+  "row_counts": {
+    "master_cohort": {
+      "rows": 11673,
+      "status": "OK"
+    },
+    "manuscript_cohort_v1": {
+      "rows": 10871,
+      "status": "OK"
+    },
+    "patient_analysis_resolved_v1": {
+      "rows": 10871,
+      "status": "OK"
+    },
+    "episode_analysis_resolved_v1_dedup": {
+      "rows": 9368,
+      "status": "OK"
+    },
+    "thyroid_scoring_py_v1": {
+      "rows": 10871,
+      "status": "OK"
+    },
+    "analysis_cancer_cohort_v1": {
+      "rows": 4136,
+      "status": "OK"
+    },
+    "operative_episode_detail_v2": {
+      "rows": 9371,
+      "status": "OK"
+    },
+    "rai_treatment_episode_v2": {
+      "rows": 1857,
+      "status": "OK"
+    },
+    "molecular_test_episode_v2": {
+      "rows": 10126,
+      "status": "OK"
+    },
+    "survival_cohort_enriched": {
+      "rows": 61134,
+      "status": "OK"
+    },
+    "streamlit_patient_header_v": {
+      "rows": 11977,
+      "status": "OK"
+    },
+    "longitudinal_lab_canonical_v1": {
+      "rows": 39961,
+      "status": "OK"
+    },
+    "extracted_tirads_validated_v1": {
+      "rows": 3474,
+      "status": "OK"
+    },
+    "patient_refined_master_clinical_v12": {
+      "rows": 12886,
+      "status": "OK"
+    }
+  },
+  "metrics": {
+    "surgical_cohort": {
+      "value": 11673,
+      "lo": 10500,
+      "hi": 12000,
+      "in_range": true,
+      "status": "PASS"
+    },
+    "cancer_cohort": {
+      "value": 4136,
+      "lo": 3900,
+      "hi": 4300,
+      "in_range": true,
+      "status": "PASS"
+    },
+    "manuscript_cohort": {
+      "value": 10871,
+      "lo": 10500,
+      "hi": 11200,
+      "in_range": true,
+      "status": "PASS"
+    },
+    "dedup_episodes": {
+      "value": 9368,
+      "lo": 9000,
+      "hi": 9800,
+      "in_range": true,
+      "status": "PASS"
+    },
+    "scoring_patients": {
+      "value": 10871,
+      "lo": 10500,
+      "hi": 11500,
+      "in_range": true,
+      "status": "PASS"
+    },
+    "survival_cohort": {
+      "value": 61134,
+      "lo": 40000,
+      "hi": 70000,
+      "in_range": true,
+      "status": "PASS"
+    },
+    "tirads_patients": {
+      "value": 3474,
+      "lo": 3000,
+      "hi": 4000,
+      "in_range": true,
+      "status": "PASS"
+    },
+    "operative_eps": {
+      "value": 9371,
+      "lo": 8000,
+      "hi": 12000,
+      "in_range": true,
+      "status": "PASS"
+    },
+    "lab_rows": {
+      "value": 39961,
+      "lo": 30000,
+      "hi": 60000,
+      "in_range": true,
+      "status": "PASS"
+    },
+    "refined_master_v12": {
+      "value": 12886,
+      "lo": 10000,
+      "hi": 14000,
+      "in_range": true,
+      "status": "PASS"
+    },
+    "molecular_tested": {
+      "value": 10026,
+      "lo": 9000,
+      "hi": 11000,
+      "in_range": true,
+      "status": "PASS"
+    }
+  },
+  "benchmarks": {
+    "count_manuscript": {
+      "median_ms": 24.7,
+      "baseline_ms": null,
+      "delta_pct": null,
+      "regression": false
+    },
+    "surgical_cohort_distinct": {
+      "median_ms": 143.4,
+      "baseline_ms": null,
+      "delta_pct": null,
+      "regression": false
+    },
+    "cancer_cohort_count": {
+      "median_ms": 25.7,
+      "baseline_ms": null,
+      "delta_pct": null,
+      "regression": false
+    },
+    "dedup_episodes_count": {
+      "median_ms": 24.8,
+      "baseline_ms": null,
+      "delta_pct": null,
+      "regression": false
+    },
+    "lab_analyte_breakdown": {
+      "median_ms": 28.7,
+      "baseline_ms": null,
+      "delta_pct": null,
+      "regression": false
+    },
+    "tirads_category_dist": {
+      "median_ms": 29.1,
+      "baseline_ms": null,
+      "delta_pct": null,
+      "regression": false
+    }
+  },
+  "notes": ""
+}
