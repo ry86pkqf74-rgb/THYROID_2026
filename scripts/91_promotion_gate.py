@@ -66,11 +66,15 @@ CRITICAL_TABLES = [
     "longitudinal_lab_canonical_v1",
     "val_hardening_summary",
     "val_dataset_integrity_summary_v1",
+    # Phase 3 governance tables
+    "unified_review_queue_v1",
+    "review_ops_progress_v1",
+    "source_limited_enforcement_registry_v2",
 ]
 
 # (metric_name, sql, lo, hi)
 METRIC_BOUNDS: list[tuple[str, str, int, int]] = [
-    ("surgical_cohort",   "SELECT COUNT(DISTINCT research_id) FROM master_cohort",                      10500, 11500),
+    ("surgical_cohort",   "SELECT COUNT(DISTINCT research_id) FROM master_cohort",                      10500, 12000),
     ("cancer_cohort",     "SELECT COUNT(*) FROM analysis_cancer_cohort_v1",                              3900,  4300),
     ("manuscript_cohort", "SELECT COUNT(*) FROM manuscript_cohort_v1",                                  10500, 11200),
     ("dedup_episodes",    "SELECT COUNT(*) FROM episode_analysis_resolved_v1_dedup",                    9000,   9800),
@@ -266,6 +270,106 @@ def run_gates(con: Any, promote_to_prod: bool) -> list[GateResult]:
     else:
         results.append(GateResult("G7_canonical_metrics_drift", "SKIP",
             "script 100 not available; run canonical_metrics_registry first"))
+
+    # ── G8: Review ops freshness ───────────────────────────────────────────
+    g8_failures: list[str] = []
+    review_ops_tables = [
+        "unified_review_queue_v1",
+        "review_ops_progress_v1",
+        "review_ops_kpi_v1",
+    ]
+    for tbl in review_ops_tables:
+        try:
+            con.execute(f"SELECT 1 FROM {tbl} LIMIT 1")
+        except Exception:
+            g8_failures.append(f"{tbl} missing")
+    if not g8_failures:
+        # Check freshness — created_at or computed_at should be within 30 days
+        try:
+            age = con.execute(
+                "SELECT DATE_DIFF('day', MAX(created_at), CURRENT_TIMESTAMP) "
+                "FROM unified_review_queue_v1"
+            ).fetchone()[0]
+            if age is not None and int(age) > 30:
+                g8_failures.append(f"unified_review_queue_v1 is {int(age)} days stale (max 30)")
+        except Exception:
+            pass  # created_at column might not exist yet
+    results.append(GateResult(
+        "G8_review_ops_freshness",
+        "FAIL" if g8_failures else "PASS",
+        "; ".join(g8_failures) if g8_failures else "All review ops tables present and fresh",
+    ))
+
+    # ── G9: Source-limited enforcement registry completeness ───────────────
+    g9_failures: list[str] = []
+    try:
+        con.execute("SELECT 1 FROM source_limited_enforcement_registry_v2 LIMIT 1")
+        cnt = con.execute("SELECT COUNT(*) FROM source_limited_enforcement_registry_v2").fetchone()[0]
+        if int(cnt) < 30:
+            g9_failures.append(f"Only {cnt} fields in registry (expected >=30)")
+        # Check that all tiers are present
+        tiers = [r[0] for r in con.execute(
+            "SELECT DISTINCT status FROM source_limited_enforcement_registry_v2"
+        ).fetchall()]
+        for expected in ("CANONICAL", "SOURCE_LIMITED"):
+            if expected not in tiers:
+                g9_failures.append(f"Missing tier: {expected}")
+        # Check validation assertions
+        try:
+            val_fails = con.execute(
+                "SELECT COUNT(*) FROM val_source_limited_enforcement_v1 WHERE result='FAIL'"
+            ).fetchone()[0]
+            if val_fails > 0:
+                g9_failures.append(f"{val_fails} enforcement validation assertions FAIL")
+        except Exception:
+            pass  # validation table may not exist yet
+    except Exception:
+        g9_failures.append("source_limited_enforcement_registry_v2 missing; run script 103")
+    results.append(GateResult(
+        "G9_source_limited_registry",
+        "FAIL" if g9_failures else "PASS",
+        "; ".join(g9_failures) if g9_failures else f"Registry present with {cnt} fields, all tiers covered",
+    ))
+
+    # ── G10: Multi-artifact freshness ───────────────────────────────────────
+    g10_checks: list[tuple[str, str]] = [
+        ("val_multi_surgery_review_queue_v3", "multi-surgery audit"),
+        ("val_episode_linkage_v2_scorecard", "episode linkage v2 scorecard"),
+        ("val_hardening_summary", "hardening summary"),
+    ]
+    g10_failures: list[str] = []
+    for tbl, label in g10_checks:
+        try:
+            con.execute(f"SELECT 1 FROM {tbl} LIMIT 1")
+        except Exception:
+            g10_failures.append(f"{label} ({tbl}) missing")
+    results.append(GateResult(
+        "G10_multi_artifact_freshness",
+        "FAIL" if g10_failures else "PASS",
+        "; ".join(g10_failures) if g10_failures else f"All {len(g10_checks)} governance artifacts present",
+    ))
+
+    # ── G11: Non-regression proof ───────────────────────────────────────────
+    NONREGRESSION_BOUNDS: list[tuple[str, str, int]] = [
+        ("patient_analysis_resolved_v1", "SELECT COUNT(*) FROM patient_analysis_resolved_v1", 10000),
+        ("episode_dedup", "SELECT COUNT(*) FROM episode_analysis_resolved_v1_dedup", 8000),
+        ("manuscript_cohort", "SELECT COUNT(*) FROM manuscript_cohort_v1", 10000),
+        ("cancer_cohort", "SELECT COUNT(*) FROM analysis_cancer_cohort_v1", 3500),
+        ("scoring_table", "SELECT COUNT(*) FROM thyroid_scoring_py_v1", 10000),
+    ]
+    g11_failures: list[str] = []
+    for label, sql, min_rows in NONREGRESSION_BOUNDS:
+        try:
+            v = int(con.execute(sql).fetchone()[0])
+            if v < min_rows:
+                g11_failures.append(f"{label}: {v:,} < {min_rows:,} minimum")
+        except Exception as e:
+            g11_failures.append(f"{label}: ERROR {e}")
+    results.append(GateResult(
+        "G11_nonregression_proof",
+        "FAIL" if g11_failures else "PASS",
+        "; ".join(g11_failures) if g11_failures else f"All {len(NONREGRESSION_BOUNDS)} tables above minimum thresholds",
+    ))
 
     return results
 

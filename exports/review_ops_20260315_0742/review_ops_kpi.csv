@@ -1,0 +1,2 @@
+total_items,n_domains,n_source_tables,unique_patients,queued,resolved,deferred,permanently_source_limited,overall_resolution_rate_pct,total_source_feed_limited,total_pipeline_limited,total_review_actionable,critical_items,high_priority_items,medium_priority_items,low_priority_items,computed_at
+18866,8,15,9726,18866,0,0,0,0.0,1764,5699,11403,1767,15368,1731,0,2026-03-15 03:42:43.027669-04:00

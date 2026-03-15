@@ -1,0 +1,10 @@
+{
+  "generated_at": "2026-03-15T07:46:19.311157+00:00",
+  "script": "103_source_limited_enforcement.py",
+  "tables_created": [
+    "source_limited_enforcement_registry_v2",
+    "source_limited_enforcement_summary_v1",
+    "val_source_limited_enforcement_v1"
+  ],
+  "registry_csv_source": "exports/final_release_hardening_20260314/source_limited_field_registry.csv"
+}
