@@ -1,0 +1,58 @@
+{
+  "script": "94_pipeline_gap_closure.py",
+  "run_date": "20260314",
+  "timestamp": "20260314_2325",
+  "target": "MotherDuck",
+  "dry_run": false,
+  "phases": [
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "workstream_results": {
+    "A": {
+      "before": "{'para_autograft': 40, 'strap': 186, 'reoperative': 46, 'gross_ete': 22, 'drain': 169, 'rln_monitoring': 1702, 'op_findings': 588}",
+      "after": "{'para_autograft': 40, 'strap': 186, 'reoperative': 46, 'gross_ete': 22, 'drain': 169, 'rln_monitoring': 1702, 'op_findings': 588}",
+      "nlp_pts": "48",
+      "newly_recoverable": "32"
+    },
+    "B": {
+      "before_img_fna_link": "0",
+      "after_img_fna_link": "1454",
+      "improvement": "1454",
+      "imaging_fna_linkage_v3_rows": "9024",
+      "high_conf_links": "646",
+      "candidate_links": "4529"
+    },
+    "C": {
+      "before_tiers": "{'not_applicable': 8885, 'unresolved_date': 1764, 'biochemical_inflection_inferred': 168, 'exact_source_date': 54}",
+      "queue_rows": "1986",
+      "unresolved_count": "1764"
+    },
+    "D": {
+      "decisions_before": "0",
+      "histology_queue": "7552",
+      "conflicts_queue": "7552",
+      "kpi_created": "True"
+    }
+  },
+  "final_metrics": {
+    "op_para": "40",
+    "op_rln": "1701",
+    "op_strap": "186",
+    "op_gross_ete": "22",
+    "op_with_findings": "587",
+    "patient_total": "10871",
+    "fna_with_img_link": "1454",
+    "imaging_fna_linkage_v3_rows": "9024",
+    "recur_exact_source_date": "54",
+    "recur_unresolved_date": "1764",
+    "recur_biochemical_inflection_inferred": "168",
+    "recur_not_applicable": "8885",
+    "recurrence_review_queue_v1_rows": "1986",
+    "adjudication_decisions": "0",
+    "adjudication_kpi_rows": "-1",
+    "histology_queue_rows": "7552"
+  }
+}
