@@ -336,6 +336,19 @@ def build_sidebar(df):
 # TAB: OVERVIEW
 # ─────────────────────────────────────────────────────────────────────────
 def render_overview(con):
+    # ── Canonical Metrics Registry (preferred source) ─────────────────
+    # If the governed registry table exists, use it for primary metrics.
+    _registry_map = {}
+    if tbl_exists(con, "canonical_metrics_registry_v1"):
+        try:
+            _reg_df = cached_sqdf(con,
+                "SELECT metric_id, canonical_value FROM canonical_metrics_registry_v1",
+                key="canonical_registry_overview")
+            if not _reg_df.empty:
+                _registry_map = dict(zip(_reg_df["metric_id"], _reg_df["canonical_value"]))
+        except Exception:
+            pass
+
     # Pull pre-computed KPIs from the materialized table when available;
     # fall back to individual sqs() calls (which are themselves cached).
     _kpi_from_table = False
@@ -355,13 +368,15 @@ def render_overview(con):
     _cx = qual("complications")
     _gt = qual("genetic_testing")
     m = dict(
-        total=(int(_kpi_row.get("unique_patients", 0)) if _kpi_from_table
-               else q(con, f"SELECT COUNT(DISTINCT research_id) FROM {_mc}")),
+        total=(int(_registry_map.get("total_surgical_patients", 0)) if _registry_map.get("total_surgical_patients")
+               else (int(_kpi_row.get("unique_patients", 0)) if _kpi_from_table
+               else q(con, f"SELECT COUNT(DISTINCT research_id) FROM {_mc}"))),
         tumor_path=q(con,f"SELECT COUNT(*) FROM {_mc} WHERE has_tumor_pathology"),
         benign_path=q(con,f"SELECT COUNT(*) FROM {_mc} WHERE has_benign_pathology"),
         fna=q(con,f"SELECT COUNT(*) FROM {_mc} WHERE has_fna_cytology"),
-        braf=(int(_kpi_row["braf_positive"]) if _kpi_from_table
-              else q(con,f"SELECT COALESCE(SUM(CASE WHEN braf_mutation_mentioned THEN 1 ELSE 0 END),0) FROM {_tp}")),
+        braf=(int(_registry_map.get("braf_positive", 0)) if _registry_map.get("braf_positive")
+              else (int(_kpi_row["braf_positive"]) if _kpi_from_table
+              else q(con,f"SELECT COALESCE(SUM(CASE WHEN braf_mutation_mentioned THEN 1 ELSE 0 END),0) FROM {_tp}"))),
         rai_pos=q(con,f"SELECT COUNT(*) FROM {_nm} WHERE rai_avid_flag='positive'"),
         nuclear=q(con,f"SELECT COUNT(*) FROM {_mc} WHERE has_nuclear_med"),
         us=q(con,f"SELECT COUNT(*) FROM {_mc} WHERE has_ultrasound_reports"),
@@ -450,6 +465,22 @@ def render_overview(con):
         st.markdown("**Patient Explorer**  \nTimeline tab: per-patient lookup, date rescue, eligibility badges")
     with _nav_cols[3]:
         st.markdown("**Manuscript & Export**  \nExport tab: genetics, specimen, complications, review queues")
+
+    # ── Canonical Metrics Governance ──────────────────────────────────
+    if _registry_map:
+        _reg_ts = ""
+        try:
+            _reg_ts_row = cached_sqdf(con,
+                "SELECT MIN(last_verified_at) AS oldest FROM canonical_metrics_registry_v1",
+                key="canonical_reg_ts")
+            if not _reg_ts_row.empty:
+                _reg_ts = str(_reg_ts_row.iloc[0].get("oldest", ""))[:10]
+        except Exception:
+            pass
+        st.caption(f"📊 Metrics governed by `canonical_metrics_registry_v1` · "
+                   f"{len(_registry_map)} metrics · verified: {_reg_ts or 'unknown'}")
+    else:
+        st.caption("⚠️ Canonical metrics registry not found — run `scripts/100_canonical_metrics_registry.py --env prod --write`")
 
     # ── Dataset Caveats ──────────────────────────────────────────────
     _caveats = []

@@ -37,7 +37,9 @@ documented source limitations, not data quality failures.
 The manuscript cohort (`manuscript_cohort_v1`, 10,871 patients, 139 columns), the
 analysis-eligible cancer subcohort (N=4,136), episode-level dedup table, scoring
 systems (AJCC8/ATA/MACIS/AGES/AMES), Tables 1–3, and Figures 1–5 are generated
-and verified. 11 canonical metrics pass cross-source consistency checks.
+and verified. **All manuscript-facing metrics are governed by the canonical metrics registry**
+(`canonical_metrics_registry_v1`; see `docs/canonical_metrics_governance_20260315.md`).
+Drift detection and staleness enforcement are integrated into the release promotion gate (G7).
 
 ### Dataset Verification Status (March 13 2026)
 

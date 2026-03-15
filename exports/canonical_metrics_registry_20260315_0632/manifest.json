@@ -1,0 +1,12 @@
+{
+  "artifact": "canonical_metrics_registry",
+  "version": "v1",
+  "generated_at": "2026-03-15T06:32:57.688065+00:00",
+  "git_sha": "e68c7f1",
+  "metric_count": 36,
+  "environment": "prod",
+  "files": [
+    "exports/canonical_metrics_registry_20260315_0632/canonical_metrics_registry_v1.csv",
+    "exports/canonical_metrics_registry_20260315_0632/canonical_metrics_registry_v1.json"
+  ]
+}

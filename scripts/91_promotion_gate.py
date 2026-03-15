@@ -214,6 +214,59 @@ def run_gates(con: Any, promote_to_prod: bool) -> list[GateResult]:
     else:
         results.append(GateResult("G6_ro_share_accessible", "SKIP", "Only required for prod promotion"))
 
+    # ── G7: Canonical metrics registry — drift & staleness ────────────────
+    try:
+        from scripts import _canonical_metrics_registry_mod  # noqa — resolved at runtime
+    except Exception:
+        pass
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+        from scripts._100_canonical_metrics_registry_api import check_metric_drift, check_staleness_days  # noqa
+    except ImportError:
+        pass
+
+    _has_registry_api = False
+    try:
+        # Import drift check from script 100
+        _script100 = Path(__file__).resolve().parent / "100_canonical_metrics_registry.py"
+        if _script100.exists():
+            import importlib.util
+            _spec = importlib.util.spec_from_file_location("script100", str(_script100))
+            _mod = importlib.util.module_from_spec(_spec)
+            _spec.loader.exec_module(_mod)
+            _drift_fn = _mod.check_metric_drift
+            _stale_fn = _mod.check_staleness_days
+            _has_registry_api = True
+    except Exception:
+        pass
+
+    if _has_registry_api:
+        # Staleness check
+        stale = _stale_fn(con, max_days=7)
+        if stale["status"] == "STALE":
+            results.append(GateResult("G7_canonical_metrics_drift", "WARN",
+                f"Registry stale: {stale['detail']}"))
+        elif stale["status"] == "FAIL":
+            results.append(GateResult("G7_canonical_metrics_drift", "WARN",
+                f"Registry not found: {stale['detail']}"))
+        else:
+            # Drift check (primary metrics only)
+            primary_ids = ["total_surgical_patients", "manuscript_cohort_size",
+                          "cancer_cohort_size", "dedup_episodes", "braf_positive",
+                          "ras_positive", "tert_positive"]
+            drift_results = _drift_fn(con, metric_ids=primary_ids, tolerance_pct=1.0)
+            drifted = [d for d in drift_results if d["status"] in ("DRIFT", "ERROR")]
+            if drifted:
+                detail = "; ".join(f"{d['metric_id']}:{d['status']}" for d in drifted)
+                results.append(GateResult("G7_canonical_metrics_drift", "WARN",
+                    f"{len(drifted)} metrics drifted: {detail}"))
+            else:
+                results.append(GateResult("G7_canonical_metrics_drift", "PASS",
+                    f"All {len(primary_ids)} primary metrics within 1% tolerance"))
+    else:
+        results.append(GateResult("G7_canonical_metrics_drift", "SKIP",
+            "script 100 not available; run canonical_metrics_registry first"))
+
     return results
 
 
