@@ -85,7 +85,7 @@ NULL_RATE_CHECKS: list[tuple[str, str, float]] = [
     ("patient_analysis_resolved_v1",       "research_id",      0.0),
     ("episode_analysis_resolved_v1_dedup", "research_id",      0.0),
     ("thyroid_scoring_py_v1",              "research_id",      0.0),
-    ("thyroid_scoring_py_v1",              "ajcc_t_stage",     65.0),  # known missingness
+    ("thyroid_scoring_py_v1",              "ajcc8_t_stage",    65.0),  # known missingness
     ("manuscript_cohort_v1",               "demo_sex_final",   10.0),
 ]
 

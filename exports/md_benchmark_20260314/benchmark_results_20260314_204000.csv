@@ -1,0 +1,25 @@
+label,tier,elapsed_ms,rows,status,baseline_ms,error
+overview_patient_count,hot,144.06,1,OK,,
+streamlit_header_count,hot,27.56,1,OK,,
+scoring_ajcc_dist,hot,,0,ERROR,,"Binder Error: Referenced column ""ajcc_stage_group"" not found in FROM clause!
+Can"
+manuscript_cohort_sample,hot,,0,ERROR,,"Binder Error: Referenced column ""ajcc_t_stage"" not found in FROM clause!
+Candida"
+cancer_cohort_full,hot,26.57,1,OK,,
+dedup_episode_count,hot,25.54,1,OK,,
+survival_cohort_count,hot,26.61,1,OK,,
+lab_canonical_count,hot,25.53,1,OK,,
+tirads_validated_dist,hot,32.63,5,OK,,
+operative_episode_count,hot,26.35,1,OK,,
+braf_ras_positivity,warm,28.47,1,OK,,
+date_rescue_kpi,warm,118.34,7,OK,,
+val_integrity_summary,warm,,0,ERROR,,"Binder Error: Referenced column ""gate_name"" not found in FROM clause!
+Candidate "
+linkage_summary_v3,warm,24.48,1,OK,,
+rai_episode_dist,warm,27.57,3,OK,,
+molecular_platform_dist,warm,28.00,3,OK,,
+survival_by_stage,warm,28.64,5,OK,,
+ete_grade_cross_stage,warm,,0,ERROR,,"Binder Error: Table ""s"" does not have a column named ""ajcc_t_stage""
+
+Candidate b"
+complication_summary,warm,27.12,7,OK,,

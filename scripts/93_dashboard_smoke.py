@@ -62,7 +62,7 @@ SMOKE_CHECKS: list[tuple[str, str, str, int, int]] = [
     ("Overview", "date_rescue_kpi",
      "SELECT COUNT(*) FROM date_rescue_rate_summary", 1, 2000),
     ("Overview", "scoring_stage_dist",
-     "SELECT COUNT(*) FROM thyroid_scoring_py_v1 WHERE ajcc_stage_group IS NOT NULL", 1000, 2000),
+     "SELECT COUNT(*) FROM thyroid_scoring_py_v1 WHERE ajcc8_stage_group IS NOT NULL", 1000, 2000),
 
     # ── Section 2: Patient Explorer ──────────────────────────────────────
     ("Patient Explorer", "patient_header_accessible",
@@ -122,9 +122,9 @@ SMOKE_CHECKS: list[tuple[str, str, str, int, int]] = [
 # Column-presence spot checks: (table, [required_cols])
 COLUMN_CHECKS: list[tuple[str, list[str]]] = [
     ("manuscript_cohort_v1", ["research_id", "demo_sex_final", "demo_race_final",
-                               "ajcc_t_stage", "braf_positive_final"]),
-    ("thyroid_scoring_py_v1", ["research_id", "ajcc_t_stage", "ajcc_n_stage",
-                                "ajcc_stage_group", "ata_initial_risk"]),
+                               "ajcc8_t_stage", "braf_positive_final"]),
+    ("thyroid_scoring_py_v1", ["research_id", "ajcc8_t_stage", "ajcc8_n_stage",
+                                "ajcc8_stage_group", "ata_initial_risk"]),
     ("survival_cohort_enriched", ["research_id", "time_days", "event",
                                    "ajcc_stage_8", "ete_type"]),
     ("patient_analysis_resolved_v1", ["research_id", "analysis_eligible_flag",

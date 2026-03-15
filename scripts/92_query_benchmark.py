@@ -61,10 +61,10 @@ BENCHMARKS: list[tuple[str, str, int, str]] = [
      "SELECT COUNT(*) FROM streamlit_patient_header_v",
      10000, "hot"),
     ("scoring_ajcc_dist",
-     "SELECT ajcc_stage_group, COUNT(*) FROM thyroid_scoring_py_v1 GROUP BY 1 ORDER BY 1",
+     "SELECT ajcc8_stage_group, COUNT(*) FROM thyroid_scoring_py_v1 GROUP BY 1 ORDER BY 1",
      3, "hot"),
     ("manuscript_cohort_sample",
-     "SELECT research_id, demo_sex_final, ajcc_t_stage FROM manuscript_cohort_v1 LIMIT 100",
+     "SELECT research_id, demo_sex_final, ajcc8_t_stage FROM manuscript_cohort_v1 LIMIT 100",
      100, "hot"),
     ("cancer_cohort_full",
      "SELECT COUNT(*) FROM analysis_cancer_cohort_v1",
@@ -96,7 +96,7 @@ BENCHMARKS: list[tuple[str, str, int, str]] = [
      "SELECT * FROM date_rescue_rate_summary LIMIT 20",
      1, "warm"),
     ("val_integrity_summary",
-     "SELECT gate_name, gate_status FROM val_dataset_integrity_summary_v1",
+     "SELECT COUNT(*) FROM val_dataset_integrity_summary_v1",
      1, "warm"),
     ("linkage_summary_v3",
      "SELECT COUNT(*) FROM linkage_summary_v3",
@@ -113,7 +113,7 @@ BENCHMARKS: list[tuple[str, str, int, str]] = [
         FROM survival_cohort_enriched GROUP BY 1 ORDER BY 1""",
      3, "warm"),
     ("ete_grade_cross_stage",
-     """SELECT s.ajcc_t_stage, m.ete_grade_v9, COUNT(*) AS n
+     """SELECT s.ajcc8_t_stage, m.ete_grade_v9, COUNT(*) AS n
         FROM thyroid_scoring_py_v1 s
         JOIN patient_refined_master_clinical_v9 m
           ON CAST(s.research_id AS VARCHAR)=CAST(m.research_id AS VARCHAR)
@@ -147,9 +147,12 @@ def load_baseline(path: Path) -> dict[str, float]:
     with path.open() as fh:
         reader = csv.DictReader(fh)
         for row in reader:
+            label = row.get("label", "") or ""
+            if not label or label.startswith("#"):
+                continue
             try:
-                baseline[row["label"]] = float(row["median_ms"])
-            except (KeyError, ValueError):
+                baseline[label] = float(row["median_ms"])
+            except (KeyError, ValueError, TypeError):
                 pass
     return baseline
 

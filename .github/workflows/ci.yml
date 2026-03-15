@@ -270,7 +270,7 @@ jobs:
           QUERIES = [
               ('streamlit_header',  'SELECT COUNT(*) FROM streamlit_patient_header_v',   10000),
               ('date_rescue',       'SELECT COUNT(*) FROM date_rescue_rate_summary',          1),
-              ('scoring_t_stage',   'SELECT COUNT(*) FROM thyroid_scoring_py_v1 WHERE ajcc_t_stage IS NOT NULL', 3000),
+              ('scoring_t_stage',   'SELECT COUNT(*) FROM thyroid_scoring_py_v1 WHERE ajcc8_t_stage IS NOT NULL', 3000),
           ]
 
           failures = []
