@@ -1,0 +1,116 @@
+{
+  "before": {
+    "oed_dist": {
+      "1": 9371
+    },
+    "oed_total": 9371,
+    "oed_non1": 0,
+    "oed_ms_pts_ep_gt1": 0,
+    "eard_dist": {
+      "1": 9368
+    },
+    "eard_total": 9368,
+    "eard_non1": 0,
+    "eard_ms_pts_ep_gt1": 0,
+    "surgery_pathology_linkage_dist": {
+      "1": 9409
+    },
+    "surgery_pathology_linkage_non1": 0,
+    "pathology_rai_linkage_dist": {
+      "1": 23
+    },
+    "pathology_rai_linkage_non1": 0,
+    "preop_surgery_linkage_dist": {
+      "1": 3591
+    },
+    "preop_surgery_linkage_non1": 0
+  },
+  "after": {
+    "oed_dist": {
+      "1": 9275,
+      "2": 94,
+      "3": 2
+    },
+    "oed_total": 9371,
+    "oed_non1": 96,
+    "oed_ms_pts_ep_gt1": 96,
+    "eard_dist": {
+      "1": 9272,
+      "2": 94,
+      "3": 2
+    },
+    "eard_total": 9368,
+    "eard_non1": 96,
+    "eard_ms_pts_ep_gt1": 96,
+    "surgery_pathology_linkage_dist": {
+      "1": 9209,
+      "2": 190,
+      "3": 10
+    },
+    "surgery_pathology_linkage_non1": 200,
+    "pathology_rai_linkage_dist": {
+      "1": 18,
+      "2": 4,
+      "3": 1
+    },
+    "pathology_rai_linkage_non1": 5,
+    "preop_surgery_linkage_dist": {
+      "1": 3553,
+      "2": 36,
+      "3": 2
+    },
+    "preop_surgery_linkage_non1": 38
+  },
+  "fix_stats": {
+    "operative_episode_detail_v2": {
+      "fix_map": {
+        "already_correct": 8628,
+        "no_date_match": 647,
+        "repaired": 96
+      },
+      "rows_with_ep_gt1": 96,
+      "no_date_match": 647
+    },
+    "episode_analysis_resolved_v1_dedup": {
+      "fix_map": {
+        "already_correct": 8626,
+        "no_date_match": 646,
+        "repaired": 96
+      },
+      "rows_with_ep_gt1": 96,
+      "no_date_match": 646
+    },
+    "surgery_pathology_linkage_v3": {
+      "fix_map": {
+        "already_correct": 9190,
+        "no_date_match": 19,
+        "repaired": 200
+      },
+      "rows_with_ep_gt1": 200
+    },
+    "pathology_rai_linkage_v3": {
+      "fix_map": {
+        "already_correct": 16,
+        "repaired": 4
+      },
+      "rows_with_ep_gt1": 5
+    },
+    "preop_surgery_linkage_v3": {
+      "fix_map": {
+        "already_correct": 3553,
+        "repaired": 38
+      },
+      "rows_with_ep_gt1": 38
+    }
+  },
+  "nonreg": {
+    "single_surg_ep1_oed": "PASS",
+    "single_surg_ep1_eard": "PASS",
+    "multi_surg_distinct_ep_oed": 3,
+    "multi_surg_distinct_ep_eard": 3,
+    "v3_surgery_pathology_distinct_ep": 3,
+    "v3_pathology_rai_distinct_ep": 3,
+    "v3_preop_surgery_distinct_ep": 3
+  },
+  "timestamp": "20260315_0151"
+}
