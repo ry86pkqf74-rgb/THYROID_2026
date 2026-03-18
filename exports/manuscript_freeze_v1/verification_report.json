@@ -1,0 +1,399 @@
+{
+  "status": "PASS",
+  "checks_passed": 65,
+  "checks_failed": 0,
+  "checks_skipped": 0,
+  "details": [
+    {
+      "table": "manuscript_cohort_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "98326e2216d5742e\u2026",
+      "actual": "98326e2216d5742e\u2026"
+    },
+    {
+      "table": "manuscript_cohort_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "patient_analysis_resolved_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "5ee72f30b15e0bcd\u2026",
+      "actual": "5ee72f30b15e0bcd\u2026"
+    },
+    {
+      "table": "patient_analysis_resolved_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "episode_analysis_resolved_v1_dedup",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "d46efdedea392cfb\u2026",
+      "actual": "d46efdedea392cfb\u2026"
+    },
+    {
+      "table": "episode_analysis_resolved_v1_dedup",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "lesion_analysis_resolved_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "e37408426d3757d5\u2026",
+      "actual": "e37408426d3757d5\u2026"
+    },
+    {
+      "table": "lesion_analysis_resolved_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "thyroid_scoring_py_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "281dc0ab5d2290db\u2026",
+      "actual": "281dc0ab5d2290db\u2026"
+    },
+    {
+      "table": "thyroid_scoring_py_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "analysis_cancer_cohort_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "a91a0882f19b2197\u2026",
+      "actual": "a91a0882f19b2197\u2026"
+    },
+    {
+      "table": "analysis_cancer_cohort_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "complication_phenotype_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "1911ce3137b0ccbb\u2026",
+      "actual": "1911ce3137b0ccbb\u2026"
+    },
+    {
+      "table": "complication_phenotype_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "complication_patient_summary_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "5324abdc4b58bc9e\u2026",
+      "actual": "5324abdc4b58bc9e\u2026"
+    },
+    {
+      "table": "complication_patient_summary_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "recurrence_event_clean_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "b101233506c89ff7\u2026",
+      "actual": "b101233506c89ff7\u2026"
+    },
+    {
+      "table": "recurrence_event_clean_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "longitudinal_lab_canonical_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "f3eb325fd15f30dc\u2026",
+      "actual": "f3eb325fd15f30dc\u2026"
+    },
+    {
+      "table": "longitudinal_lab_canonical_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "survival_cohort_enriched",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "e69e3c4645579353\u2026",
+      "actual": "e69e3c4645579353\u2026"
+    },
+    {
+      "table": "analysis_molecular_subset_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "7a117909fab73aa9\u2026",
+      "actual": "7a117909fab73aa9\u2026"
+    },
+    {
+      "table": "analysis_molecular_subset_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "analysis_tirads_subset_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "63095aa815e60eca\u2026",
+      "actual": "63095aa815e60eca\u2026"
+    },
+    {
+      "table": "analysis_tirads_subset_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "analysis_recurrence_subset_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "746ab0d6fe49ce9f\u2026",
+      "actual": "746ab0d6fe49ce9f\u2026"
+    },
+    {
+      "table": "analysis_recurrence_subset_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "patient_refined_master_clinical_v12",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "0019899f4b5cf700\u2026",
+      "actual": "0019899f4b5cf700\u2026"
+    },
+    {
+      "table": "patient_refined_master_clinical_v12",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "extracted_tirads_validated_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "9ecb7352c602bd0b\u2026",
+      "actual": "9ecb7352c602bd0b\u2026"
+    },
+    {
+      "table": "extracted_tirads_validated_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "extracted_braf_recovery_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "2743879684c6ab31\u2026",
+      "actual": "2743879684c6ab31\u2026"
+    },
+    {
+      "table": "extracted_braf_recovery_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "extracted_ras_patient_summary_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "db3cbde7408ff12e\u2026",
+      "actual": "db3cbde7408ff12e\u2026"
+    },
+    {
+      "table": "extracted_ras_patient_summary_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "extracted_rln_injury_refined_v2",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "ebbec64f556670f4\u2026",
+      "actual": "ebbec64f556670f4\u2026"
+    },
+    {
+      "table": "extracted_rln_injury_refined_v2",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "extracted_complications_refined_v5",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "2e456291f488803c\u2026",
+      "actual": "2e456291f488803c\u2026"
+    },
+    {
+      "table": "extracted_complications_refined_v5",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "operative_episode_detail_v2",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "8ea88459fc24586b\u2026",
+      "actual": "8ea88459fc24586b\u2026"
+    },
+    {
+      "table": "operative_episode_detail_v2",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "rai_treatment_episode_v2",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "2272839a0486ad47\u2026",
+      "actual": "2272839a0486ad47\u2026"
+    },
+    {
+      "table": "rai_treatment_episode_v2",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "molecular_test_episode_v2",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "e9d6795ca593d01e\u2026",
+      "actual": "e9d6795ca593d01e\u2026"
+    },
+    {
+      "table": "molecular_test_episode_v2",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "tumor_episode_master_v2",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "6779dff73a0c4984\u2026",
+      "actual": "6779dff73a0c4984\u2026"
+    },
+    {
+      "table": "tumor_episode_master_v2",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "imaging_nodule_master_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "4f5999c8e9e9ea43\u2026",
+      "actual": "4f5999c8e9e9ea43\u2026"
+    },
+    {
+      "table": "imaging_nodule_master_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "extracted_ete_subgraded_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "96b6bbbbe125450d\u2026",
+      "actual": "96b6bbbbe125450d\u2026"
+    },
+    {
+      "table": "extracted_ete_subgraded_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "extracted_postop_labs_expanded_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "7adfccdc98766739\u2026",
+      "actual": "7adfccdc98766739\u2026"
+    },
+    {
+      "table": "extracted_postop_labs_expanded_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "val_dataset_integrity_summary_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "408ac8e371d27311\u2026",
+      "actual": "408ac8e371d27311\u2026"
+    },
+    {
+      "table": "val_dataset_integrity_summary_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "val_episode_linkage_v2_scorecard",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "08fb7702fb7cbcb2\u2026",
+      "actual": "08fb7702fb7cbcb2\u2026"
+    },
+    {
+      "table": "val_episode_linkage_v2_scorecard",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "val_operative_truth_state_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "ed0e41c641c010e8\u2026",
+      "actual": "ed0e41c641c010e8\u2026"
+    },
+    {
+      "table": "val_operative_truth_state_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "val_phase12_tirads_validation",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "08916a629fecd93f\u2026",
+      "actual": "08916a629fecd93f\u2026"
+    },
+    {
+      "table": "val_phase12_tirads_validation",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "val_complication_refinement",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "8e246183133043c0\u2026",
+      "actual": "8e246183133043c0\u2026"
+    },
+    {
+      "table": "val_complication_refinement",
+      "check": "csv_checksum",
+      "status": "PASS"
+    },
+    {
+      "table": "val_provenance_hardening_summary_v1",
+      "check": "parquet_checksum",
+      "status": "PASS",
+      "expected": "370841ea50675b9a\u2026",
+      "actual": "370841ea50675b9a\u2026"
+    },
+    {
+      "table": "val_provenance_hardening_summary_v1",
+      "check": "csv_checksum",
+      "status": "PASS"
+    }
+  ]
+}

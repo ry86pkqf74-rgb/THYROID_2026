@@ -1,0 +1,13 @@
+{
+  "freeze_version": "v1",
+  "git_sha_full": "975cfa2bb0a29262bb457953d4c5af23ce51d242",
+  "git_sha_short": "975cfa2",
+  "git_dirty": true,
+  "timestamp_utc": "2026-03-15T20:29:17.480575+00:00",
+  "python_version": "3.14.0",
+  "duckdb_version": "1.4.4",
+  "source_database": "thyroid_research_2026",
+  "source_is_prod": true,
+  "total_tables_frozen": 33,
+  "total_rows_frozen": 261114
+}
