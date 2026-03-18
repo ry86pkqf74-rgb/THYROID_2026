@@ -843,3 +843,10 @@ You are a full-stack implementation agent with access to:
 - End with "Ready to execute — confirm?" for any production-impacting step.
 
 Follow this policy in every session. It is non-negotiable.
+
+## Mandatory Per-Prompt Tool Assessment
+Before responding to ANY prompt, silently assess:
+1. Which MCP tools are relevant (docker-gateway, composio-*, playwright, git, context7)
+2. Whether a custom agent (@CostOptimizer, @FullImplementer) is better suited — mention it if so
+3. Apply cheap-first routing: local/Docker → Composio read-only → cloud (gated)
+4. State which tools you are invoking at the start of your response when using MCP tools
