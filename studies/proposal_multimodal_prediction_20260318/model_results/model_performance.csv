@@ -1,0 +1,7 @@
+feature_set,model,auc_cv_mean,auc_cv_std,auc_pooled,brier_score,avg_precision,n_features,n_samples,n_events
+A_structured,logistic,0.9752,0.0045,0.975,0.0413,0.9809,18,4136,1933
+A_structured,xgboost,0.9802,0.0027,0.9801,0.0301,0.9856,18,4136,1933
+B_struct_imaging,logistic,0.975,0.0048,0.9748,0.0417,0.9808,24,4136,1933
+B_struct_imaging,xgboost,0.9806,0.0042,0.9805,0.0299,0.9857,24,4136,1933
+C_struct_img_notes,logistic,0.9955,0.0008,0.9955,0.0173,0.9956,39,4136,1933
+C_struct_img_notes,xgboost,0.9988,0.0006,0.9988,0.0071,0.9989,39,4136,1933

@@ -1,0 +1,7 @@
+feature_set,model,brier_score,expected_calibration_error
+A_structured,logistic,0.0413,0.1663
+A_structured,xgboost,0.0301,0.243
+B_struct_imaging,logistic,0.0417,0.1657
+B_struct_imaging,xgboost,0.0299,0.2461
+C_struct_img_notes,logistic,0.0173,0.1439
+C_struct_img_notes,xgboost,0.0071,0.1622
