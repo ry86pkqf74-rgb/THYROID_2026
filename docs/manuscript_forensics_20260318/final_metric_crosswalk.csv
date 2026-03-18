@@ -1,0 +1,23 @@
+metric_id,manuscript_location,metric_description,reported_value,source_script,source_function,source_output_file,source_dataset,recomputed_from_export,matched_to_manuscript,notes
+MET01,Abstract / Results,"Primary cohort N (classic PTC)",596,proposal2_ete_analysis.py,load_data(),analytic_cohort.csv,analytic_cohort.csv,YES (589 with dedup),PARTIAL (7 fewer after dedup),7 research_id collisions from merge; original 596 includes potential multi-surgery duplicates
+MET02,Abstract / Results,"Expanded cohort N (all PTC)",3278,proposal2_expanded_cohort.py,load_all_ptc(),analytic_cohort_expanded.csv,analytic_cohort_expanded.csv,YES (3278),YES,Exact match
+MET03,Table 2 / Results,"No ETE count",724,proposal2_expanded_cohort.py,classify_ete(),analytic_cohort_expanded.csv,analytic_cohort_expanded.csv,YES (724),YES,
+MET04,Table 2 / Results,"Microscopic ETE count",1736,proposal2_expanded_cohort.py,classify_ete(),analytic_cohort_expanded.csv,analytic_cohort_expanded.csv,YES (1736),YES,
+MET05,Table 2 / Results,"Gross ETE count",818,proposal2_expanded_cohort.py,classify_ete(),analytic_cohort_expanded.csv,analytic_cohort_expanded.csv,YES (818),YES,
+MET06,Table 4 / Results,"mETE ordinal OR (primary CC)",0.42 (0.28-0.64),proposal2_ete_analysis.py,adverse_features_analysis(),table4_ordinal_regression.csv,analytic_cohort.csv,NO (requires re-run),YES (from output file),
+MET07,Table 5 / Results,"mETE ordinal OR (MI pooled)",0.60 (0.51-0.72),proposal2_recommendations.py,run_multiple_imputation(),table5_sensitivity.csv,analytic_cohort.csv,NO (requires re-run),YES (from output file),MI m=20 PMM seed=42
+MET08,Table 6 / Results,"PSM matched pairs",711,proposal2_endpoint_psm_strata.py,propensity_match(),table6_propensity_matching_effect.csv,analytic_cohort_expanded.csv,PARTIAL (503 pairs),NO (reproduced 503 not 711),Difference due to intermediate data processing in PSM pool construction
+MET09,Table 6 / Results,"PSM structural OR",1.434,proposal2_endpoint_psm_strata.py,propensity_match(),table6_propensity_matching_effect.csv,analytic_cohort_expanded.csv,NO,YES (from output file),Fisher exact p=0.030
+MET10,Table 6 / Results,"PSM Fisher p-value",0.030,proposal2_endpoint_psm_strata.py,propensity_match(),table6_propensity_matching_effect.csv,analytic_cohort_expanded.csv,NO,YES (from output file),
+MET11,Table 8 / Results,"mETE × nodal interaction OR",0.360 (0.17-0.74),proposal2_endpoint_psm_strata.py,interaction_tests(),table8_interaction_tests.csv,analytic_cohort_expanded.csv,NO,YES (from output file),p=0.006
+MET12,Results text,"mETE T-stage downstaged %",71.5% (1241/1736),proposal2_expanded_cohort.py,stage_migration_analysis(),analysis_metadata.yaml,analytic_cohort_expanded.csv,YES (from export),YES,
+MET13,Results text,"Overall stage downstaged %",57.3% (1872/3269),proposal2_expanded_cohort.py,stage_migration_analysis(),analysis_metadata.yaml,analytic_cohort_expanded.csv,YES (from export),YES,
+MET14,Results text / Table,"AUC Base model (5-fold CV)",0.851 (SD 0.020),proposal2_ete_analysis.py,prognostic_performance(),analysis_metadata.yaml,analytic_cohort.csv,NO (requires re-run),YES (from metadata),
+MET15,Results text / Table,"AUC Full model (5-fold CV)",0.876 (SD 0.010),proposal2_ete_analysis.py,prognostic_performance(),analysis_metadata.yaml,analytic_cohort.csv,NO (requires re-run),YES (from metadata),delta = 0.025
+MET16,Table 3 / Cox,"Cox PH concordance",0.853,proposal2_cox_regression.py,run_cox(),table3_cox_regression.csv,risk_enriched_mv (MotherDuck),NO (requires MotherDuck),YES (from output file),penalizer=0.1
+MET17,Table 7 / Results,"Stratified ≤1cm mETE OR",1.324 (0.74-2.37),proposal2_endpoint_psm_strata.py,stratified_models(),table7_stratified_models.csv,analytic_cohort_expanded.csv,NO,YES (from output file),p=0.346
+MET18,Table 7 / Results,"Stratified 1-2cm mETE OR",1.456 (0.80-2.67),proposal2_endpoint_psm_strata.py,stratified_models(),table7_stratified_models.csv,analytic_cohort_expanded.csv,NO,YES (from output file),p=0.224
+MET19,Table 7 / Results,"Stratified 2-4cm mETE OR",1.574 (0.92-2.68),proposal2_endpoint_psm_strata.py,stratified_models(),table7_stratified_models.csv,analytic_cohort_expanded.csv,NO,YES (from output file),p=0.095
+MET20,Methods,"M-stage available %",18.0%,proposal2_expanded_cohort.py,derive variables,analysis_metadata.yaml,analytic_cohort_expanded.csv,YES (from export),YES,590/3278 non-null
+MET21,Audit appendix,"AJCC7 T3b→T4a reclassification count",346,audit_reproduce.py,corrected staging,analysis_metadata.yaml,analytic_cohort_expanded.csv,YES (from audit),YES,T3b should map to T3 not T4a
+MET22,Methods / Seed,"Random seed",42,all scripts,all functions,analysis_metadata.yaml,N/A,YES,YES,Consistent across all scripts

@@ -1,0 +1,121 @@
+{
+  "manifest_version": "1.0",
+  "generated": "2026-03-18",
+  "repository": "ry86pkqf74-rgb/THYROID_2026",
+  "branch": "main",
+  "commit_sha": "b5cbe06",
+  "purpose": "Manuscript forensics reproducibility run manifest",
+  "extraction_script": "scripts/manuscript_forensics_extract.py",
+  "seed": 42,
+
+  "environment": {
+    "python_version": "3.14.2",
+    "numpy": "2.4.3",
+    "pandas": "2.3.3",
+    "scipy": "1.17.1",
+    "statsmodels": "0.14.6",
+    "scikit-learn": "1.8.0",
+    "lifelines": "0.30.3",
+    "duckdb": "1.4.4",
+    "pyarrow": "available"
+  },
+
+  "authoritative_source_files": [
+    {
+      "file": "studies/proposal2_ete_staging/tables/analytic_cohort.csv",
+      "role": "Primary classic PTC cohort (N=596)",
+      "sha256_prefix": "27b54f5045cc995c"
+    },
+    {
+      "file": "studies/proposal2_ete_staging/audit_tables/analytic_cohort_expanded.csv",
+      "role": "Expanded all-PTC cohort (N=3,278)",
+      "sha256_prefix": "see provenance.json"
+    },
+    {
+      "file": "studies/proposal2_ete_staging/analysis_metadata.yaml",
+      "role": "Run provenance and key results",
+      "sha256_prefix": "see provenance.json"
+    }
+  ],
+
+  "analysis_scripts": {
+    "primary_ordinal": "studies/proposal2_ete_staging/proposal2_ete_analysis.py",
+    "psm_interactions": "studies/proposal2_ete_staging/proposal2_endpoint_psm_strata.py",
+    "cox_km": "studies/proposal2_ete_staging/proposal2_cox_regression.py",
+    "expanded_mi": "studies/proposal2_ete_staging/proposal2_expanded_cohort.py",
+    "sensitivity": "studies/proposal2_ete_staging/proposal2_recommendations.py",
+    "audit": "studies/proposal2_ete_staging/audit_reproduce.py"
+  },
+
+  "deliverables_produced": {
+    "dataset_csv": "outputs/manuscript_forensics_20260318/final_manuscript_analytic_dataset_research_id.csv",
+    "dataset_parquet": "outputs/manuscript_forensics_20260318/final_manuscript_analytic_dataset_research_id.parquet",
+    "dataset_dictionary": "outputs/manuscript_forensics_20260318/final_manuscript_dataset_dictionary.csv",
+    "provenance_json": "outputs/manuscript_forensics_20260318/final_manuscript_dataset_provenance.json",
+    "matched_pairs": "outputs/manuscript_forensics_20260318/final_manuscript_matched_pairs.csv",
+    "bundle_zip": "outputs/manuscript_forensics_20260318/final_manuscript_analysis_bundle.zip",
+    "methods_report": "docs/manuscript_forensics_20260318/statistical_methods_execution_report.md",
+    "model_inventory": "docs/manuscript_forensics_20260318/model_inventory.csv",
+    "analysis_lineage": "docs/manuscript_forensics_20260318/analysis_lineage.md",
+    "sql_queries": "docs/manuscript_forensics_20260318/sql_queries_used.sql",
+    "metric_crosswalk": "docs/manuscript_forensics_20260318/final_metric_crosswalk.csv",
+    "repro_manifest": "docs/manuscript_forensics_20260318/repro_run_manifest.json"
+  },
+
+  "quality_checks": {
+    "master_cohort_rows": 3278,
+    "distinct_research_id": 3278,
+    "duplicate_research_id": 0,
+    "null_research_id": 0,
+    "all_linked": true,
+    "ete_distribution": {
+      "no_ete": 724,
+      "microscopic_ete": 1736,
+      "gross_ete": 818
+    },
+    "analysis_flags_exported": [
+      "patient_in_master_manuscript_cohort",
+      "patient_in_complete_case_ordinal_model",
+      "patient_in_psm_pool",
+      "patient_in_psm_matched_set",
+      "patient_in_km_analysis",
+      "patient_in_ct_timing_analysis",
+      "patient_in_stage_migration_analysis",
+      "patient_in_classic_variant_subgroup",
+      "patient_in_aggressive_variant_safety_group"
+    ]
+  },
+
+  "known_discrepancies": [
+    {
+      "item": "PSM matched pairs",
+      "manuscript_value": 711,
+      "reproduced_value": 503,
+      "explanation": "PSM pool in original script uses intermediate data with additional imaging columns not in exported CSV; caliper and algorithm are identical"
+    },
+    {
+      "item": "Primary classic cohort flag",
+      "manuscript_value": 596,
+      "reproduced_value": 589,
+      "explanation": "7 research_ids lost during merge-based deduplication; original 596 may include multi-surgery records counted separately"
+    },
+    {
+      "item": "Structural endpoint events",
+      "manuscript_value": 504,
+      "reproduced_value": "2189 (broader definition from export)",
+      "explanation": "Original uses imaging-specific CT pathologic LN flag; exported structural flag includes recurrence_flag and reoperation which are broader"
+    },
+    {
+      "item": "CT timing intervals",
+      "manuscript_value": "reported in manuscript",
+      "reproduced_value": "NULL (not derivable)",
+      "explanation": "Source data has patient-level binary structural flag without temporal decomposition of imaging events"
+    }
+  ],
+
+  "unresolved_items": [
+    "CT timing interval breakdown (≤30d, 31-365d, >365d) not present in frozen cohort data",
+    "Exact imaging correlation data used for structural endpoint may require MotherDuck live query",
+    "Cox PH analysis uses risk_enriched_mv directly (N≈5,794) — not subset of frozen CSVs"
+  ]
+}

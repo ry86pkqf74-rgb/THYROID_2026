@@ -1,0 +1,59 @@
+column_name,description,type,allowed_values,source_table_view_file,derivation_rule,used_in_analysis,which_analyses
+research_id,Unique patient identifier (integer key),int64,3278 unique values,risk_enriched_mv / analytic_cohort_expanded.csv,Unique patient identifier (integer key),yes,All
+patient_in_master_manuscript_cohort,"1 if patient is in the expanded PTC manuscript cohort (N=3,278)",int64,1,derived in forensics extraction,"1 if patient is in the expanded PTC manuscript cohort (N=3,278)",yes,Cohort definition
+patient_in_primary_classic_cohort,1 if in primary classic-PTC analysis (N=596),int64,"0, 1",derived in forensics extraction,1 if in primary classic-PTC analysis (N=596),yes,Primary analysis (N=596)
+patient_in_complete_case_ordinal_model,1 if non-missing on all ordinal model variables,int64,"0, 1",derived in forensics extraction,1 if non-missing on all ordinal model variables,yes,Ordinal regression
+patient_in_psm_pool,"1 if eligible for PSM (mETE or NoETE, non-missing covariates)",int64,"0, 1",derived in forensics extraction,"1 if eligible for PSM (mETE or NoETE, non-missing covariates)",yes,PSM
+patient_in_psm_matched_set,1 if selected in 1:1 nearest-neighbor PSM,int64,"0, 1",derived in forensics extraction,1 if selected in 1:1 nearest-neighbor PSM,yes,PSM matched DFS
+patient_in_km_analysis,1 if DFS time > 0 (eligible for KM/Cox),int64,"0, 1",derived in forensics extraction,1 if DFS time > 0 (eligible for KM/Cox),yes,KM/Cox survival
+patient_in_ct_timing_analysis,1 if has CT/imaging structural assessment data,int64,1,derived in forensics extraction,1 if has CT/imaging structural assessment data,yes,Structural endpoint
+patient_in_stage_migration_analysis,1 if has both AJCC7 and AJCC8 stages,int64,"0, 1",derived in forensics extraction,1 if has both AJCC7 and AJCC8 stages,yes,Stage migration
+patient_in_classic_variant_subgroup,1 if classic or unspecified PTC variant,int64,"0, 1",derived in forensics extraction,1 if classic or unspecified PTC variant,yes,Classic variant subgroup
+patient_in_aggressive_variant_safety_group,1 if tall cell/columnar/hobnail/diffuse sclerosing/solid variant,int64,"0, 1",derived in forensics extraction,1 if tall cell/columnar/hobnail/diffuse sclerosing/solid variant,yes,Aggressive variant safety
+age_at_surgery,Patient age at index surgery (years),float64,79 unique values,risk_enriched_mv / analytic_cohort_expanded.csv,Patient age at index surgery (years),yes,"Table 1, Ordinal, Cox, Interactions"
+sex,Biological sex (Male/Female),object,"Female, Male",risk_enriched_mv / analytic_cohort_expanded.csv,Biological sex (Male/Female),yes,"Table 1, PSM covariate"
+histologic_variant,Standardized histologic variant name,object,"Columnar cell, Cribriform-morular, Diffuse sclerosing, Follicular variant, Oncocytic/Warthin-like, Solid variant, Tall cell, unspecified",risk_enriched_mv / analytic_cohort_expanded.csv,Standardized histologic variant name,yes,"Subgroup, Table 1"
+classic_variant_flag,1 if classic or unspecified PTC,int64,"0, 1",derived in forensics extraction,1 if classic or unspecified PTC,yes,Subgroup stratification
+aggressive_variant_flag,1 if aggressive histologic variant,int64,"0, 1",derived in forensics extraction,1 if aggressive histologic variant,yes,Safety analysis
+tumor_size_cm,Largest tumor dimension (cm),float64,122 unique values,risk_enriched_mv / analytic_cohort_expanded.csv,Largest tumor dimension (cm),yes,"Table 1, Interactions, Stratified models"
+ete_category_raw,Raw extrathyroidal extension text from pathology,bool,"False, True",risk_enriched_mv / analytic_cohort_expanded.csv,Raw extrathyroidal extension text from pathology,yes,ETE classification source
+ete_category_final,Final 3-level ETE classification: No ETE / Microscopic ETE / Gross ETE,object,"Gross ETE, Microscopic ETE, No ETE",risk_enriched_mv / analytic_cohort_expanded.csv,Final 3-level ETE classification: No ETE / Microscopic ETE / Gross ETE,yes,All analyses (primary exposure)
+no_ete_flag,1 if no extrathyroidal extension,int64,"0, 1",derived in forensics extraction,1 if no extrathyroidal extension,yes,PSM reference group
+mete_flag,1 if microscopic ETE (primary exposure),int64,"0, 1",derived in forensics extraction,1 if microscopic ETE (primary exposure),yes,"Primary exposure, all models"
+gross_ete_flag,1 if gross ETE,int64,"0, 1",derived in forensics extraction,1 if gross ETE,yes,"Ordinal regression, Cox"
+nodal_status_raw,Raw N-stage from AJCC8,object,"N0, N1, N1a, N1b, NX",risk_enriched_mv / analytic_cohort_expanded.csv,Raw N-stage from AJCC8,yes,Table 1
+n1_flag,1 if N1a or N1b (any nodal metastasis),int64,"0, 1",derived in forensics extraction,1 if N1a or N1b (any nodal metastasis),yes,"PSM covariate, Interactions"
+lymph_node_ratio_raw,Positive LN / examined LN (continuous),float64,"0.0, 0.0289855072463768, 0.1304347826086956, 0.2, 0.5666666666666667, 0.7906976744186046, 1.0",risk_enriched_mv / analytic_cohort_expanded.csv,Positive LN / examined LN (continuous),yes,Ordinal regression covariate
+lymph_node_ratio_binary,1 if any positive lymph nodes,float64,"0.0, 1.0",risk_enriched_mv / analytic_cohort_expanded.csv,1 if any positive lymph nodes,yes,"PSM, Interactions"
+m_stage_raw,Raw M-stage from source data,object,", M0, M1, MX",risk_enriched_mv / analytic_cohort_expanded.csv,Raw M-stage from source data,yes,"Staging, sensitivity"
+m_stage_final,Final M-stage (missing defaulted to M0),object,"M0, M1, MX",risk_enriched_mv / analytic_cohort_expanded.csv,Final M-stage (missing defaulted to M0),yes,"AJCC staging, M0 default"
+ajcc7_t,Derived AJCC 7th edition T-stage,object,"T1a, T1b, T2, T3, T4a, Unknown",derived: proposal2_ete_analysis.py derive_ajcc7_t_stage(),Derived AJCC 7th edition T-stage,yes,Stage migration
+ajcc8_t,AJCC 8th edition T-stage from pathology,object,", T1a, T1b, T2, T3a, T3b, T4a",tumor_pathology / path_synoptics,AJCC 8th edition T-stage from pathology,yes,"Stage migration, Table 1"
+ajcc_stage7,Derived AJCC 7th edition overall stage,object,"I, II, III, IVA",derived: proposal2_ete_analysis.py derive_ajcc7_t_stage(),Derived AJCC 7th edition overall stage,yes,Stage migration
+ajcc_stage8,AJCC 8th edition overall stage from pathology,object,", I, II, III, IVB",tumor_pathology / path_synoptics,AJCC 8th edition overall stage from pathology,yes,"Stage migration, Table 1"
+downstaged_flag,1 if AJCC8 stage < AJCC7 stage (downstaged by AJCC8 rules),int64,"0, 1",derived in forensics extraction,1 if AJCC8 stage < AJCC7 stage (downstaged by AJCC8 rules),yes,Stage migration outcome
+upstaged_flag,1 if AJCC8 stage > AJCC7 stage,int64,"0, 1",derived in forensics extraction,1 if AJCC8 stage > AJCC7 stage,yes,Stage migration outcome
+recurrence_risk_band,ATA-like risk stratification: low/intermediate/high,object,"high, intermediate, low",risk_enriched_mv / analytic_cohort_expanded.csv,ATA-like risk stratification: low/intermediate/high,yes,Ordinal regression outcome
+recurrence_risk_band_source,Source table/view for risk band,object,recurrence_risk_features_mv → risk_enriched_mv,risk_enriched_mv / analytic_cohort_expanded.csv,Source table/view for risk band,yes,Provenance
+structural_disease_flag,1 if structural disease event (CT pathologic LN or reoperation),int64,"0, 1",derived in forensics extraction,1 if structural disease event (CT pathologic LN or reoperation),yes,"PSM, DFS endpoint"
+structural_disease_definition_source,Definition source script and logic,object,proposal2_endpoint_psm_strata.py: imaging_pathologic_LN OR reoperation_proxy,risk_enriched_mv / analytic_cohort_expanded.csv,Definition source script and logic,yes,Provenance
+reoperation_flag,1 if >1 surgery date in source data,int64,0,derived in forensics extraction,1 if >1 surgery date in source data,yes,Structural endpoint component
+ct_pathologic_lymphadenopathy_flag,1 if imaging showed pathologic lymphadenopathy,int64,"0, 1",derived in forensics extraction,1 if imaging showed pathologic lymphadenopathy,yes,Structural endpoint component
+ct_event_count,Number of CT-identified pathologic LN events,int64,"0, 1",risk_enriched_mv / analytic_cohort_expanded.csv,Number of CT-identified pathologic LN events,yes,CT timing
+ct_within_30d_flag,1 if CT event within 30 days of surgery (not separately available),float64,,derived in forensics extraction,1 if CT event within 30 days of surgery (not separately available),yes,CT timing interval
+ct_31_365d_flag,1 if CT event 31-365 days post-surgery (not separately available),float64,,derived in forensics extraction,1 if CT event 31-365 days post-surgery (not separately available),yes,CT timing interval
+ct_gt_365d_flag,1 if CT event >365 days post-surgery (not separately available),float64,,derived in forensics extraction,1 if CT event >365 days post-surgery (not separately available),yes,CT timing interval
+days_from_index_surgery_to_first_structural_event,Days from surgery to first structural recurrence,float64,1092 unique values,risk_enriched_mv / analytic_cohort_expanded.csv,Days from surgery to first structural recurrence,yes,DFS
+dfs_time,Disease-free survival time in days,float64,1414 unique values,risk_enriched_mv / analytic_cohort_expanded.csv,Disease-free survival time in days,yes,KM/Cox time variable (days)
+dfs_time_years,Disease-free survival time in years,float64,1414 unique values,risk_enriched_mv / analytic_cohort_expanded.csv,Disease-free survival time in years,yes,KM/Cox time variable (years)
+dfs_event_flag,1 if DFS event occurred (structural disease),int64,"0, 1",derived in forensics extraction,1 if DFS event occurred (structural disease),yes,KM/Cox event indicator
+surgery_year,Year of index surgery (de-identified temporal anchor),int32,27 unique values,risk_enriched_mv / analytic_cohort_expanded.csv,Year of index surgery (de-identified temporal anchor),yes,De-identified time anchor
+propensity_score,Estimated propensity score for mETE (PSM analysis),float64,1943 unique values,risk_enriched_mv / analytic_cohort_expanded.csv,Estimated propensity score for mETE (PSM analysis),yes,PSM
+matched_pair_id,PSM pair identifier,float64,503 unique values,risk_enriched_mv / analytic_cohort_expanded.csv,PSM pair identifier,yes,PSM
+matched_group_label,mETE or NoETE in matched cohort,object,", NoETE, mETE",risk_enriched_mv / analytic_cohort_expanded.csv,mETE or NoETE in matched cohort,yes,PSM
+censoring_source,Description of censoring mechanism,object,tg_last_date (thyroglobulin follow-up) or surgery_date,risk_enriched_mv / analytic_cohort_expanded.csv,Description of censoring mechanism,yes,Provenance
+complete_case_flag,1 if all ordinal model covariates non-missing,int64,"0, 1",derived in forensics extraction,1 if all ordinal model covariates non-missing,yes,Ordinal regression
+imputed_flag_if_applicable,1 if values were imputed (MI applied at model-fit time),int64,0,derived in forensics extraction,1 if values were imputed (MI applied at model-fit time),yes,MI analyses
+source_view_or_table,Canonical data source table/view/file,object,risk_enriched_mv → analytic_cohort_expanded.csv,risk_enriched_mv / analytic_cohort_expanded.csv,Canonical data source table/view/file,yes,Provenance
+derivation_version,Version tag for this derivation,object,v1_forensics_20260318,risk_enriched_mv / analytic_cohort_expanded.csv,Version tag for this derivation,yes,Provenance
+commit_hash_if_available,Git commit SHA at extraction time,object,b5cbe06,risk_enriched_mv / analytic_cohort_expanded.csv,Git commit SHA at extraction time,yes,Provenance

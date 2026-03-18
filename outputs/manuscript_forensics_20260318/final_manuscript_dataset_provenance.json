@@ -1,0 +1,134 @@
+{
+  "extraction_timestamp": "2026-03-18T19:11:19.693161Z",
+  "git_commit": "b5cbe06",
+  "seed": 42,
+  "primary_data_source": {
+    "name": "analytic_cohort_expanded.csv",
+    "path": "studies/proposal2_ete_staging/audit_tables/analytic_cohort_expanded.csv",
+    "sha256": "280e9032250dea650ac1ef178dccf1e33c74fb2df07b03b2f450a5e2028aae33",
+    "rows": 3278,
+    "columns": [
+      "research_id",
+      "age_at_surgery",
+      "sex",
+      "surgery_date",
+      "histology_1_type",
+      "t_stage_ajcc8",
+      "n_stage_ajcc8",
+      "overall_stage_ajcc8",
+      "tumor_1_extrathyroidal_ext",
+      "tumor_1_gross_ete",
+      "variant_standardized",
+      "surgery_type_normalized",
+      "n_tg_measurements",
+      "tg_first_date",
+      "tg_last_date",
+      "tg_first_value",
+      "tg_last_value",
+      "tg_first_original_result",
+      "tg_last_original_result",
+      "tg_min",
+      "tg_max",
+      "tg_mean",
+      "tg_delta_per_measurement",
+      "recurrence_risk_band",
+      "largest_tumor_cm",
+      "ln_examined",
+      "ln_positive",
+      "m_stage_ajcc8",
+      "tumor_1_ete_microscopic_only",
+      "is_in_original_cohort",
+      "variant_label",
+      "is_aggressive",
+      "ete_group",
+      "ete_micro",
+      "ete_gross",
+      "female",
+      "ln_ratio",
+      "risk_ord",
+      "t_stage_ajcc7",
+      "overall_stage_ajcc7",
+      "t_stage_ajcc7_orig",
+      "overall_stage_ajcc7_orig",
+      "size_cat",
+      "n_positive_flag"
+    ],
+    "upstream_view": "risk_enriched_mv (MotherDuck thyroid_research_2026)",
+    "upstream_script": "studies/proposal2_ete_staging/proposal2_expanded_cohort.py"
+  },
+  "primary_classic_subset": {
+    "name": "analytic_cohort.csv",
+    "path": "studies/proposal2_ete_staging/tables/analytic_cohort.csv",
+    "sha256": "27b54f5045cc995c0f7c200b9f620ef1c828807c3f666a91ed9be6744db28862",
+    "rows": 596,
+    "upstream_script": "studies/proposal2_ete_staging/proposal2_ete_analysis.py"
+  },
+  "manuscript_scripts": [
+    "studies/proposal2_ete_staging/proposal2_ete_analysis.py",
+    "studies/proposal2_ete_staging/proposal2_endpoint_psm_strata.py",
+    "studies/proposal2_ete_staging/proposal2_cox_regression.py",
+    "studies/proposal2_ete_staging/proposal2_expanded_cohort.py",
+    "studies/proposal2_ete_staging/proposal2_recommendations.py",
+    "studies/proposal2_ete_staging/audit_reproduce.py"
+  ],
+  "cohort_sizes": {
+    "master_expanded_ptc": 3278,
+    "primary_classic_ptc": 589,
+    "complete_case_ordinal": 523,
+    "psm_pool": 2451,
+    "psm_matched": 1006,
+    "km_analysis": 1782,
+    "stage_migration": 3269
+  },
+  "linkage": {
+    "key": "research_id (integer)",
+    "source": "path_synoptics \u2192 tumor_pathology \u2192 recurrence_risk_features_mv \u2192 risk_enriched_mv",
+    "relationship": "one-to-one (deduplicated by research_id)",
+    "duplicates_found": 0,
+    "nulls_found": "0",
+    "unmatched_count": 0
+  },
+  "null_audit": {
+    "tumor_size_cm": {
+      "null_count": 9,
+      "null_pct": 0.3
+    },
+    "lymph_node_ratio_raw": {
+      "null_count": 2755,
+      "null_pct": 84.0
+    },
+    "lymph_node_ratio_binary": {
+      "null_count": 2755,
+      "null_pct": 84.0
+    },
+    "ct_within_30d_flag": {
+      "null_count": 3278,
+      "null_pct": 100.0
+    },
+    "ct_31_365d_flag": {
+      "null_count": 3278,
+      "null_pct": 100.0
+    },
+    "ct_gt_365d_flag": {
+      "null_count": 3278,
+      "null_pct": 100.0
+    },
+    "days_from_index_surgery_to_first_structural_event": {
+      "null_count": 1967,
+      "null_pct": 60.0
+    },
+    "propensity_score": {
+      "null_count": 827,
+      "null_pct": 25.2
+    },
+    "matched_pair_id": {
+      "null_count": 2272,
+      "null_pct": 69.3
+    }
+  },
+  "ete_distribution": {
+    "No ETE": 724,
+    "Microscopic ETE": 1736,
+    "Gross ETE": 818
+  }
+}
