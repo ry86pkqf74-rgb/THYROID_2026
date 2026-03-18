@@ -1,0 +1,17 @@
+metric,count
+master_cohort_patients,11673
+manuscript_cohort_v1_patients,10871
+analysis_cancer_cohort_v1_patients,4136
+patient_analysis_resolved_v1_patients,10871
+episode_dedup_episodes,9368
+imaging_nodule_master_v1_rows,19891
+imaging_patient_summary_v1_patients,3474
+extracted_tirads_validated_v1_patients,3474
+molecular_tested_patients,10026
+rai_episodes,1857
+lab_canonical_rows,39961
+lab_canonical_patients,3349
+recurrence_risk_features_patients,3986
+provenance_events_rows,50297
+complication_phenotype_v1_rows,5928
+scoring_patients,10871

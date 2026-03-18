@@ -1,0 +1,16 @@
+-- Recurrence features aggregation
+-- ERROR: Binder Error: Cannot compare values of type VARCHAR and BIGINT in IN/ANY/ALL clause - an explicit cast is required
+
+LINE 9: WHERE r.research_id IN (SELECT research_id FROM analysis_cancer_cohort_v1)
+                            ^
+
+
+SELECT
+    r.research_id,
+    BOOL_OR(r.recurrence_flag) AS recurrence_any,
+    MIN(r.first_recurrence_date) AS first_recurrence_date,
+    MAX(r.tg_max) AS tg_max,
+    MAX(r.tg_rising_flag) AS tg_rising
+FROM recurrence_risk_features_mv r
+WHERE r.research_id IN (SELECT research_id FROM analysis_cancer_cohort_v1)
+GROUP BY r.research_id

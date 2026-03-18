@@ -1,0 +1,13 @@
+modality,n_patients,pct
+tirads validated,1577,38.1
+nodule master,1577,38.1
+molecular,3854,93.2
+rai,483,11.7
+lab,2522,61.0
+fna,2521,61.0
+complication record,42,1.0
+group:all_three,1040,25.1
+group:imaging_and_molecular,522,12.6
+group:imaging_only,15,0.4
+group:molecular_only,2292,55.4
+group:structured_only,267,6.5

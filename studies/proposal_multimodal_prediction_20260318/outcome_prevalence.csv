@@ -1,0 +1,12 @@
+endpoint,n_events,n_total,pct,has_date,manuscript_safe
+recurrence_any,1933,4136,46.7,partial,YES – boolean; date sparse (see analysis_summary)
+braf_positive,287,4136,6.9,N/A,YES
+ras_positive,198,4136,4.8,N/A,YES
+tert_positive,62,4136,1.5,N/A,YES
+ete_microscopic,3639,4136,88.0,N/A,YES
+ete_gross,188,4136,4.5,N/A,YES
+vascular_invasion_any,3748,4136,90.6,N/A,YES (87% are present_ungraded — synoptic limitation)
+margin_involved_R1_R2,3916,4136,94.7,N/A,CAVEAT – R1 includes synoptic 'x' placeholder; true positive margin rate requires subanalysis
+any_complication_confirmed,42,4136,1.0,partial,YES – boolean; timing windows vary
+structural_recurrence,1818,4136,44.0,sparse,YES – binary; date NOT manuscript-safe
+biochemical_recurrence,115,4136,2.8,sparse,YES – binary; date NOT manuscript-safe
