@@ -20,5 +20,29 @@
     "table1_demographics.csv",
     "psm_balance.csv",
     "cox_model.csv"
+  ],
+  "cox_n_covariates": 7,
+  "cox_variables": [],
+  "cox_complete_cases": 6025,
+  "cox_concordance_note": "concordance=0.69 (script 31 run); see cox_model.csv",
+  "logistic_n_obs": 6022,
+  "logistic_predictors": [
+    "ete",
+    "tumor_size_cm",
+    "ln_positive",
+    "ln_ratio",
+    "braf_positive",
+    "ras_positive",
+    "tert_positive"
+  ],
+  "phase4_fix_timestamp": "2026-03-18T13:10:02.815586",
+  "phase4_fixes_applied": [
+    "fig3_negative_xaxis_fixed",
+    "fig4_negative_xaxis_fixed",
+    "fig1_png_generated",
+    "fig2_png_generated",
+    "fig5_png_generated",
+    "logistic_regression_csv_generated",
+    "cox_complete_cases_added"
   ]
 }
