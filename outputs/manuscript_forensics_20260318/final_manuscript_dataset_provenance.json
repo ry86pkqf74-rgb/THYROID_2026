@@ -130,5 +130,48 @@
     "No ETE": 724,
     "Microscopic ETE": 1736,
     "Gross ETE": 818
+  },
+  "ct_timing_export": {
+    "source_table": "ptc_ct_imaging_events",
+    "source_database": "thyroid_research_2026 (MotherDuck)",
+    "source_script": "scripts/106_ct_imaging_date_recovery.py",
+    "export_timestamp": "2026-03-20T08:54:34.256216",
+    "event_level_rows": 3018,
+    "event_level_patients": 650,
+    "postop_events": 1621,
+    "postop_patients": 261,
+    "timing_distribution": {
+      "preoperative": 1397,
+      "postop_gt_1yr": 1016,
+      "postop_30d_1yr": 455,
+      "perioperative_0_30d": 150
+    }
+  },
+  "psm_freeze": {
+    "source_commit": "ef45dd58be535e94a4ff13fc2ab853e3e3a204d1",
+    "commit_message": "feat: add structural recurrence endpoint with PSM and interaction analyses",
+    "commit_date": "2026-03-10",
+    "files_frozen": {
+      "table5_structural_endpoint.csv": "0f5fd4e888b851db6303cc1c0a408b8ac271f043027443f27f94366537ca4efe",
+      "table6_propensity_matching_balance.csv": "af4ab38ae6987b716b4b3698cf87bb6d758894f5675ced58581ee193e88df434",
+      "table6_propensity_matching_effect.csv": "20146220320206fa3ecfdffc6d024e47d24b62a03addf778134bf0c1750f7469",
+      "table7_stratified_models.csv": "8db7790b0a4eb7d5df239096c54e532fd2345b476e1869650d85ee7361f1cb38",
+      "table8_interaction_tests.csv": "730924259085714f564c90adc2d7511d434427a01dd3f59d65d6c295f28d9ed9"
+    },
+    "freeze_timestamp": "2026-03-20T08:54:34.257136"
+  },
+  "master_dataset_update": {
+    "ct_timing_backfill_timestamp": "2026-03-20T08:54:34.257139",
+    "ct_columns_added": [
+      "ct_event_count",
+      "ct_within_30d_flag",
+      "ct_31_365d_flag",
+      "ct_gt_365d_flag",
+      "ct_pathologic_lymphadenopathy_flag",
+      "patient_in_ct_timing_analysis",
+      "days_first_postop_ct"
+    ],
+    "final_row_count": 3278,
+    "final_col_count": 59
   }
 }

@@ -1,0 +1,4 @@
+Interaction,OR,CI,p
+mETE x largest_tumor_cm,1.0433,(0.94-1.15),0.412
+mETE x age_at_surgery,0.9899,(0.97-1.01),0.258
+mETE x n_positive_flag,0.3597,(0.17-0.74),0.006
