@@ -1,0 +1,20 @@
+variable,lobectomy,total_thyroidectomy
+N,238,320
+"Age, mean (SD)",56.6 (15.2),52.9 (14.6)
+"Age, median [IQR]",56.0 [45.2–69.0],54.0 [43.0–64.0]
+"Female, n (%)",191 (80.3%),257 (80.3%)
+"Nodule size (cm), mean (SD)",2.46 (0.35),2.47 (0.40)
+"Nodule size (cm), median [IQR]",2.38 [2.18–2.65],2.37 [2.16–2.67]
+"Bethesda 1, n (%)",19 (8.0%),4 (1.2%)
+"Bethesda 2, n (%)",65 (27.3%),72 (22.5%)
+"Bethesda 3, n (%)",60 (25.2%),30 (9.4%)
+"Bethesda 4, n (%)",24 (10.1%),17 (5.3%)
+"Bethesda 5, n (%)",9 (3.8%),20 (6.2%)
+"Bethesda 6, n (%)",8 (3.4%),81 (25.3%)
+"Bethesda missing, n (%)",53 (22.3%),96 (30.0%)
+"Bilateral nodules, n (%)",180 (75.6%),265 (82.8%)
+"Molecular tested, n (%)",10 (4.2%),10 (3.1%)
+"TI-RADS score, mean (SD)",4.2 (0.9),4.2 (0.9)
+"TI-RADS missing, n (%)",0 (0.0%),0 (0.0%)
+"Final malignant, n (%)",238 (100.0%),320 (100.0%)
+"Aggressive pathology, n (%)",238 (100.0%),320 (100.0%)

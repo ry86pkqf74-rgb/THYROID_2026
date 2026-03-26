@@ -1,0 +1,9 @@
+analysis,predictor,primary_OR,primary_ci,primary_p,primary_N,broad_nodal_OR,broad_nodal_ci,broad_nodal_p,broad_nodal_N,direction_consistent,significance_consistent
+nodal_exclusion_robustness,age_at_surgery,0.986,0.97–1.00,0.025689,558,0.984,0.97–1.00,0.00525,635,True,True
+nodal_exclusion_robustness,sex_f,0.974,0.63–1.51,0.905059,558,0.939,0.63–1.40,0.757664,635,True,True
+nodal_exclusion_robustness,bethesda_ge4,2.743,1.81–4.15,2e-06,558,2.765,1.88–4.07,0.0,635,True,True
+nodal_exclusion_robustness,has_mol,0.606,0.24–1.55,0.294579,558,0.657,0.26–1.64,0.366191,635,True,True
+bethesda_complete_case,age_at_surgery,0.986,see model_summary_final,see model_summary_final,558,0.993,0.98–1.01,0.305741,409,True,True
+bethesda_complete_case,sex_f,0.974,see model_summary_final,see model_summary_final,558,1.44,0.85–2.45,0.179856,409,True,True
+bethesda_complete_case,bethesda_ge4,2.743,see model_summary_final,see model_summary_final,558,3.957,2.53–6.19,0.0,409,True,True
+bethesda_complete_case,has_mol,0.606,see model_summary_final,see model_summary_final,558,0.672,0.24–1.86,0.443944,409,True,True
