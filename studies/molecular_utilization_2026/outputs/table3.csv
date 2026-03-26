@@ -1,0 +1,7 @@
+platform,result_bucket,n,n_malignant,pct_rom
+Afirma,Benign,5,5.0,100.0
+Afirma,Inconclusive,5,5.0,100.0
+Afirma,Suspicious,40,38.0,95.0
+Never-tested,Never-tested,572,535.0,93.53
+ThyroSeq,Inconclusive,18,16.0,88.89
+ThyroSeq,Suspicious,1,1.0,100.0

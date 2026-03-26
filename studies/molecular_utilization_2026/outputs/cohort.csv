@@ -1,0 +1,642 @@
+research_id,bethesda_category,surg_first_date,histology_final,path_tumor_size_cm,imaging_nodule_size_cm,size_cm_any,size_stratum,surgery_era,histology_malignant_flag,molecular_episode_id,platform,overall_result_class,test_date,result_bucket,tested_preop_flag,test_era
+4857,4,2015-05-20,PTC,2.5,,2.5,2–4 cm,pre_2021,True,1,Afirma,negative,2015-01-06,Benign,True,pre_2021
+5587,4,2016-10-12,MTC,1.7,,1.7,<2 cm,pre_2021,False,1,Afirma,suspicious,2016-08-30,Suspicious,True,pre_2021
+9329,5,2022-02-03,PTC,0.7,0.3,0.7,<2 cm,2021_plus,True,1,Afirma,other,2021-11-12,Inconclusive,True,2021_plus
+5972,4,2017-05-09,follicular carcinoma,3.6,,3.6,2–4 cm,pre_2021,True,1,Afirma,suspicious,2017-02-21,Suspicious,True,pre_2021
+6476,5,2018-02-22,PTC,2.5,1.64,2.5,2–4 cm,pre_2021,True,1,Afirma,suspicious,2017-12-21,Suspicious,True,pre_2021
+9000,4,2021-07-28,follicular carcinoma,4.8,1.48,4.8,>4 cm,2021_plus,True,1,Afirma,suspicious,2021-05-06,Suspicious,True,2021_plus
+7918,3,2020-01-15,PTC,2.7,,2.7,2–4 cm,pre_2021,True,1,ThyroSeq,other,2019-10-09,Inconclusive,True,pre_2021
+9648,3,2022-07-12,PTC,2.3,2.1399999999999997,2.3,2–4 cm,2021_plus,True,1,Afirma,suspicious,2022-03-16,Suspicious,True,2021_plus
+9170,4,2021-10-28,PTC,2.1,,2.1,2–4 cm,2021_plus,True,1,Afirma,suspicious,2021-07-23,Suspicious,True,2021_plus
+2217,3,2020-06-15,PTC,3.2,,3.2,2–4 cm,pre_2021,True,1,ThyroSeq,non_diagnostic,2019-10-30,Inconclusive,True,pre_2021
+5377,4,2016-05-10,PTC,0.1,,0.1,<2 cm,pre_2021,True,1,Afirma,suspicious,2016-02-17,Suspicious,True,pre_2021
+5539,4,2016-09-09,PTC,0.1,,0.1,<2 cm,pre_2021,True,1,ThyroSeq,other,2016-06-15,Inconclusive,True,pre_2021
+5491,3,2016-08-10,PTC,0.8,1.64,0.8,<2 cm,pre_2021,True,1,Afirma,suspicious,2016-05-10,Suspicious,True,pre_2021
+5835,5,2017-02-28,PTC,1.0,1.09,1.0,<2 cm,pre_2021,True,1,Afirma,non_diagnostic,2017-01-16,Inconclusive,True,pre_2021
+8372,4,2020-09-29,follicular carcinoma,4.2,0.7,4.2,>4 cm,pre_2021,True,1,ThyroSeq,other,2020-07-30,Inconclusive,True,pre_2021
+7560,3,2019-08-22,PTC,0.8,1.09,0.8,<2 cm,pre_2021,True,1,ThyroSeq,other,2019-04-17,Inconclusive,True,pre_2021
+6778,3,2018-08-23,PTC,2.1,0.5599999999999999,2.1,2–4 cm,pre_2021,True,1,ThyroSeq,suspicious,2018-02-22,Suspicious,True,pre_2021
+9419,4,2022-03-17,follicular carcinoma,7.3,1.47,7.3,>4 cm,2021_plus,True,1,Afirma,suspicious,2022-01-19,Suspicious,True,2021_plus
+5902,4,2017-03-30,follicular carcinoma,5.7,1.33,5.7,>4 cm,pre_2021,True,1,Afirma,negative,2015-04-13,Benign,True,pre_2021
+5974,3,2017-05-09,NIFTP,0.1,0.3,0.1,<2 cm,pre_2021,False,1,ThyroSeq,other,2017-04-19,Inconclusive,True,pre_2021
+6295,4,2017-11-09,PTC,1.2,,1.2,<2 cm,pre_2021,True,2,Afirma,negative,2017-07-25,Benign,True,pre_2021
+9503,3,2022-05-03,follicular carcinoma,2.3,1.98,2.3,2–4 cm,2021_plus,True,1,Afirma,suspicious,2022-01-11,Suspicious,True,2021_plus
+7817,4,2019-12-03,follicular carcinoma,1.8,1.54,1.8,<2 cm,pre_2021,True,1,Afirma,suspicious,2019-07-08,Suspicious,True,pre_2021
+5725,3,2017-01-04,PTC,1.6,0.8300000000000001,1.6,<2 cm,pre_2021,True,1,Afirma,suspicious,2016-06-27,Suspicious,True,pre_2021
+5469,4,2016-07-26,PTC,0.3,2.88,0.3,<2 cm,pre_2021,True,1,ThyroSeq,other,2016-04-29,Inconclusive,True,pre_2021
+5696,4,2016-12-14,PTC,1.1,,1.1,<2 cm,pre_2021,True,1,Afirma,suspicious,2016-08-05,Suspicious,True,pre_2021
+6187,5,2017-08-29,PTC,0.9,,0.9,<2 cm,pre_2021,True,1,Afirma,other,2017-07-11,Inconclusive,True,pre_2021
+5337,4,2016-04-12,Follicular carcinoma,1.8,0.54,1.8,<2 cm,pre_2021,True,1,Afirma,suspicious,2016-01-14,Suspicious,True,pre_2021
+5950,4,2017-04-20,PTC,0.5,,0.5,<2 cm,pre_2021,True,1,Afirma,suspicious,2017-03-15,Suspicious,True,pre_2021
+6247,4,2017-10-10,PTC,0.5,,0.5,<2 cm,pre_2021,True,1,ThyroSeq,other,2016-11-09,Inconclusive,True,pre_2021
+5726,3,2017-01-05,metastatic PTC,7.6,1.78,7.6,>4 cm,pre_2021,True,1,Afirma,suspicious,2016-12-01,Suspicious,True,pre_2021
+4869,3,2015-05-28,PTC,0.12,,0.12,<2 cm,pre_2021,True,1,Afirma,suspicious,2015-02-25,Suspicious,True,pre_2021
+5374,4,2016-07-21,follicular carcinoma,1.7,1.48,1.7,<2 cm,pre_2021,True,1,Afirma,suspicious,2016-04-11,Suspicious,True,pre_2021
+6260,3,2017-10-17,PTC,0.8,2.58,0.8,<2 cm,pre_2021,True,1,ThyroSeq,other,2017-09-06,Inconclusive,True,pre_2021
+7813,3,2019-12-03,PTC,2.9,,2.9,2–4 cm,pre_2021,True,1,Afirma,suspicious,2019-08-07,Suspicious,True,pre_2021
+6057,4,2017-06-14,PTC,0.8,,0.8,<2 cm,pre_2021,True,1,ThyroSeq,other,2017-04-19,Inconclusive,True,pre_2021
+5588,4,2016-10-12,PTC,2.6,1.7,2.6,2–4 cm,pre_2021,True,1,Afirma,suspicious,2016-05-13,Suspicious,True,pre_2021
+5678,3,2016-12-06,PTC,1.1,0.8400000000000001,1.1,<2 cm,pre_2021,True,1,Afirma,suspicious,2016-03-15,Suspicious,True,pre_2021
+5508,3,2016-08-24,PTC,2.8,,2.8,2–4 cm,pre_2021,True,1,Afirma,suspicious,2016-06-27,Suspicious,True,pre_2021
+4768,5,2015-02-27,PTC,3.2,,3.2,2–4 cm,pre_2021,True,1,Afirma,suspicious,2015-02-03,Suspicious,True,pre_2021
+7540,5,2019-08-13,PTC,2.5,1.17,2.5,2–4 cm,pre_2021,True,1,Afirma,suspicious,2019-05-08,Suspicious,True,pre_2021
+1961,3,2018-11-05,PTC,2.4,1.8800000000000001,2.4,2–4 cm,pre_2021,True,1,Afirma,suspicious,2018-07-26,Suspicious,True,pre_2021
+9659,4,2022-07-14,follicular carcinoma,3.5,,3.5,2–4 cm,2021_plus,True,1,Afirma,suspicious,2022-04-14,Suspicious,True,2021_plus
+9666,3,2022-07-19,follicular carcinoma,4.8,1.6600000000000001,4.8,>4 cm,2021_plus,True,1,ThyroSeq,other,2021-01-11,Inconclusive,True,2021_plus
+7795,3,2019-11-22,PTC,0.6,,0.6,<2 cm,pre_2021,True,1,Afirma,suspicious,2019-09-18,Suspicious,True,pre_2021
+8855,4,2021-05-18,follicular carcinoma,2.8,,2.8,2–4 cm,2021_plus,True,1,Afirma,other,2021-01-21,Inconclusive,True,2021_plus
+7382,4,2019-06-11,follicular carcinoma,7.4,0.54,7.4,>4 cm,pre_2021,True,1,ThyroSeq,other,2019-05-23,Inconclusive,True,pre_2021
+8871,5,2021-05-25,PTC,0.3,,0.3,<2 cm,2021_plus,True,1,Afirma,suspicious,2021-03-03,Suspicious,True,2021_plus
+5230,3,2016-01-26,PTC,0.8,,0.8,<2 cm,pre_2021,True,1,Afirma,suspicious,2015-11-02,Suspicious,True,pre_2021
+9539,3,2022-05-19,follicular carcinoma,3.6,1.31,3.6,2–4 cm,2021_plus,True,1,Afirma,other,2021-02-11,Inconclusive,True,2021_plus
+6074,5,2017-06-21,PTC,0.4,,0.4,<2 cm,pre_2021,True,1,Afirma,suspicious,2016-10-18,Suspicious,True,pre_2021
+7374,3,2019-06-04,PTC,2.6,,2.6,2–4 cm,pre_2021,True,1,Afirma,suspicious,2019-05-27,Suspicious,True,pre_2021
+7748,4,2019-11-05,PTC,1.9,,1.9,<2 cm,pre_2021,True,1,Afirma,suspicious,2019-08-09,Suspicious,True,pre_2021
+5095,4,2015-11-02,PTC,0.1,,0.1,<2 cm,pre_2021,True,1,Afirma,suspicious,2015-09-11,Suspicious,True,pre_2021
+5500,5,2016-08-17,NIFTP,1.9,,1.9,<2 cm,pre_2021,False,1,Afirma,suspicious,2016-03-03,Suspicious,True,pre_2021
+9338,4,2022-02-08,follicular carcinoma,4.6,0.52,4.6,>4 cm,2021_plus,True,1,Afirma,suspicious,2021-11-09,Suspicious,True,2021_plus
+5842,3,2017-03-02,PTC,0.5,0.8099999999999999,0.5,<2 cm,pre_2021,True,1,ThyroSeq,other,2017-01-18,Inconclusive,True,pre_2021
+9813,4,2022-09-27,differentiated high grade thyroid carcinoma,3.9,,3.9,2–4 cm,2021_plus,True,1,ThyroSeq,other,2022-07-01,Inconclusive,True,2021_plus
+7464,4,2019-07-16,NIFTP,0.1,1.25,0.1,<2 cm,pre_2021,False,1,ThyroSeq,other,2018-05-11,Inconclusive,True,pre_2021
+6763,4,2018-08-14,PTC,0.8,1.28,0.8,<2 cm,pre_2021,True,1,Afirma,suspicious,2017-02-17,Suspicious,True,pre_2021
+5086,3,2015-10-28,follicular carcinoma,6.8,,6.8,>4 cm,pre_2021,True,1,Afirma,suspicious,2015-09-22,Suspicious,True,pre_2021
+6567,3,2018-04-24,PTC,0.5,,0.5,<2 cm,pre_2021,True,1,Afirma,negative,2015-08-12,Benign,True,pre_2021
+6252,4,2017-10-12,PTC,2.6,2.0300000000000002,2.6,2–4 cm,pre_2021,True,1,Afirma,suspicious,2017-07-31,Suspicious,True,pre_2021
+9786,3,2022-09-19,follicular carcinoma,8.5,2.2199999999999998,8.5,>4 cm,2021_plus,True,1,ThyroSeq,other,2022-08-18,Inconclusive,True,2021_plus
+4819,4,2015-04-20,PTC,0.8,,0.8,<2 cm,pre_2021,True,1,Afirma,negative,2015-01-12,Benign,True,pre_2021
+7977,4,2020-02-07,PTC,2.0,,2.0,2–4 cm,pre_2021,True,1,Afirma,suspicious,2019-12-23,Suspicious,True,pre_2021
+7058,3,2019-01-11,PTC,0.4,,0.4,<2 cm,pre_2021,True,1,ThyroSeq,other,2018-10-11,Inconclusive,True,pre_2021
+7694,4,2019-10-15,PTC,0.2,,0.2,<2 cm,pre_2021,True,1,Afirma,suspicious,2019-07-19,Suspicious,True,pre_2021
+7726,3,2019-10-28,PTC,1.3,,1.3,<2 cm,pre_2021,True,1,ThyroSeq,other,2019-09-24,Inconclusive,True,pre_2021
+111,5,1999-08-31,differentiated thyroid carcinoma,1.7,,1.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1408,4,2009-08-04,PTC,0.12,,0.12,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3146,5,2009-04-29,PTC,1.0,,1.0,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4250,5,2013-12-19,PTC,1.1,,1.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5361,3,2016-04-27,PTC,0.1,,0.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5532,3,2016-09-08,NIFTP,3.8,,3.8,2–4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+290,5,2002-01-25,PTC,1.7,,1.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3359,5,2010-08-03,PTC,0.7,,0.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3446,5,2011-01-25,PTC,2.6,,2.6,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3934,5,2013-04-18,PTC,1.0,,1.0,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4968,5,2015-08-13,PTC,1.4,,1.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6457,3,2018-02-08,anaplastic carcinoma,8.7,,8.7,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6097,5,2017-06-28,PTC,0.7,0.9,0.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6858,5,2018-10-10,PTC,0.8,0.73,0.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5807,5,2017-02-16,PTC,1.6,2.9899999999999998,1.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6017,5,2017-05-25,PTC,4.1,1.7100000000000002,4.1,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1063,4,2007-05-16,PTC,1.5,,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8246,5,2020-07-27,PTC,1.1,1.9600000000000002,1.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8700,3,2021-03-05,PTC,1.8,,1.8,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+7511,5,2019-07-29,PTC,6.2,,6.2,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9119,3,2021-09-24,PTC,2.4,2.16,2.4,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+6479,4,2018-02-22,follicular carcinoma,3.5,1.8699999999999999,3.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9428,3,2022-03-22,PTC ,0.12,1.7100000000000002,0.12,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8486,4,2020-11-19,PTC,2.5,,2.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5627,3,2016-11-07,PTC,3.5,,3.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6535,5,2018-04-05,PTC,4.6,,4.6,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5381,4,2016-05-12,PTC,0.1,1.08,0.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6730,5,2018-07-18,PTC,1.1,3.84,1.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9489,5,2022-04-19,PTC,3.5,,3.5,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+1636,3,2013-04-02,PTC,1.9,,1.9,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4160,5,2013-10-11,Poorly differentiated thyroid carcinoma,4.9,,4.9,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9353,4,2022-02-15,follicular carcinoma,3.9,1.7100000000000002,3.9,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8183,3,2020-06-26,poorly differentiated thyroid carcinoma,5.4,0.67,5.4,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5566,3,2016-09-29,PTC,5.8,0.9,5.8,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5975,3,2017-05-10,follicular carcinoma,5.2,0.6599999999999999,5.2,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7041,3,2019-01-04,PTC,1.6,1.3,1.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+717,5,2014-03-04,PTC,0.4,,0.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1096,3,2007-06-12,PTC,2.1,,2.1,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1589,4,2012-07-27,PTC,0.7,,0.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1634,5,2013-02-12,PTC,1.0,,1.0,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2051,3,2010-06-22,PTC,0.9,,0.9,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1869,4,2011-04-13,PTC,1.0,,1.0,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1995,3,2012-11-13,PTC,1.6,,1.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2144,4,2018-02-19,PTC,0.4,,0.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3087,3,2008-12-17,PTC,1.8,,1.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4810,3,2015-04-08,PTC,0.6,,0.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4166,3,2013-10-17,PTC,0.9,,0.9,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4847,5,2015-05-14,PTC,0.5,,0.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1819,5,2011-07-27,PTC,1.5,,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1845,5,2010-08-31,PTC,1.4,,1.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7440,4,2019-07-09,follicular carcinoma,2.0,2.18,2.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6179,3,2017-08-23,PTC,3.2,2.02,3.2,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6760,4,2018-08-13,follicular carcinoma,5.2,0.86,5.2,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6939,4,2018-11-20,PTC,0.2,0.47000000000000003,0.2,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8297,5,2020-08-25,PTC,2.7,,2.7,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8051,5,2020-03-05,PTC,0.7,,0.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7752,4,2019-11-05,PTC,2.0,1.53,2.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7865,3,2019-12-17,PTC,1.5,1.42,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8675,3,2021-02-23,PTC,0.05,,0.05,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+1337,4,2008-02-20,PTC,,,,Unknown,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3417,4,2010-11-23,PTC,3.5,,3.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4038,4,2013-07-09,follicular carcinoma,3.2,,3.2,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5830,5,2017-02-23,PTC,5.1,,5.1,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6014,4,2009-02-23,NIFTP,4.0,,4.0,2–4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+6423,5,2018-01-22,PTC,5.2,,5.2,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7279,3,2019-04-18,follicular carcinoma,6.0,,6.0,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6586,5,2018-05-09,PTC,0.97,1.33,0.97,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9609,3,2022-06-22,follicular carcinoma,5.0,1.3,5.0,>4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+7906,3,2020-01-10,follicular carcinoma,2.6,1.21,2.6,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8718,5,2021-03-15,PTC,3.3,1.78,3.3,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+4903,3,2015-06-12,Metastatic PTC,2.0,0.8,2.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9177,4,2021-11-02,follicular carcinoma,4.2,1.42,4.2,>4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8523,4,2020-12-08,PTC,1.2,2.4,1.2,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9728,5,2022-08-12,PTC ,1.1,3.8899999999999997,1.1,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+178,4,2001-10-09,follicular carcinoma,2.3,,2.3,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+757,3,2015-03-17,PTC,1.0,,1.0,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+975,4,2007-09-11,follicular carcinoma,2.8,,2.8,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1584,5,2012-06-26,PTC,3.5,,3.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3507,4,2011-05-18,Follicular carcinoma,3.5,,3.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3037,3,2008-09-02,metastatic PTC,1.4,,1.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3479,3,2011-04-13,PTC,1.9,,1.9,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3918,4,2013-03-13,PTC,6.3,,6.3,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6180,5,2017-08-23,PTC,0.4,,0.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4269,5,2014-01-16,PTC,1.0,1.28,1.0,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6787,3,2018-08-29,NIFTP,3.5,1.1,3.5,2–4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+7141,3,2019-02-15,PTC,2.5,1.67,2.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6087,3,2017-06-27,PTC,0.7,0.5,0.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6425,5,2018-01-23,PTC,0.8,1.77,0.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4644,5,2014-11-07,PTC,4.1,,4.1,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8669,3,2021-02-19,PTC,0.05,1.8,0.05,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+1752,4,2011-06-01,follicular carcinoma,2.1,,2.1,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3987,3,2013-05-31,PTC,0.8,,0.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4919,3,2015-06-26,PTC,0.06,,0.06,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5325,3,2016-03-30,PTC,2.5,,2.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5883,3,2017-03-22,PTC,0.15,,0.15,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6581,3,2018-05-03,NIFTP,4.5,,4.5,>4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+6060,5,2017-06-15,PTC,0.4,0.77,0.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7539,5,2019-08-13,PTC,2.5,1.95,2.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8443,4,2020-10-29,PTC,2.1,2.88,2.1,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7834,4,2019-12-06,PTC,2.3,1.0,2.3,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7144,3,2019-02-19,PTC,2.3,1.48,2.3,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9712,4,2022-08-05,follicular carcinoma,5.2,1.4,5.2,>4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8541,3,2020-12-15,PTC,2.7,0.78,2.7,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8924,4,2021-06-18,PTC,4.6,,4.6,>4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+546,4,2005-07-05,PTC,0.9,,0.9,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1402,5,2009-09-22,PTC,1.5,,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1975,3,2013-03-04,PTC,0.6,,0.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4123,5,2013-09-16,PTC,3.0,,3.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2683,4,2005-01-14,PTC,1.4,,1.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1888,3,2010-11-03,PTC,0.1,,0.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6759,5,2018-08-10,PTC,6.5,1.19,6.5,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5327,3,2016-03-31,NIFTP,6.8,0.43,6.8,>4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+6470,4,2018-02-20,PTC,1.5,1.29,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5978,4,2017-05-10,PTC,1.1,1.05,1.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6188,4,2017-08-30,PTC,0.2,1.1800000000000002,0.2,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6871,3,2018-10-23,follicular carcinoma,4.0,0.75,4.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8360,3,2020-09-22,NIFTP,1.0,0.55,1.0,<2 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+7099,5,2019-01-31,PTC,0.6,2.0100000000000002,0.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6635,3,2018-05-31,NIFTP,1.8,0.6599999999999999,1.8,<2 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+7266,5,2019-04-16,PTC,0.5,0.47000000000000003,0.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6651,4,2018-06-07,NIFTP,7.8,1.1800000000000002,7.8,>4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+7719,4,2019-10-23,PTC,0.7,,0.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8867,3,2021-05-24,PTC ,0.35,1.21,0.35,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9709,3,2022-08-04,follicular carcinoma,3.4,0.6799999999999999,3.4,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+7923,4,2020-01-16,PTC,4.0,1.69,4.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+459,4,2003-07-18,MTC,2.2,,2.2,2–4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+4487,5,2014-07-02,PTC,1.5,,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5493,5,2016-08-12,PTC,1.4,,1.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6205,5,2017-09-06,metastatitic PTC,3.0,,3.0,2–4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+8312,5,2020-09-01,PTC,1.1,1.27,1.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9069,3,2021-08-27,follicular carcinoma,1.6,2.1,1.6,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+1045,4,2007-04-10,PTC,4.5,,4.5,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3167,4,2009-07-08,follicular carcinoma,3.3,,3.3,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4219,5,2013-12-03,PTC,4.0,,4.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5768,4,2017-01-25,NIFTP,3.5,,3.5,2–4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+8015,3,2020-02-21,PTC,0.75,0.3,0.75,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8950,5,2021-06-29,PTC,0.9,2.42,0.9,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9460,5,2022-04-07,PTC,3.5,2.35,3.5,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+5774,5,2017-01-26,PTC,1.0,1.15,1.0,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5863,4,2017-03-14,PTC,0.9,0.8099999999999999,0.9,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6374,3,2017-12-19,PTC,0.4,0.5700000000000001,0.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7240,3,2019-04-03,PTC,0.2,1.55,0.2,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7074,4,2019-01-17,follicular carcinoma,2.7,1.8699999999999999,2.7,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6698,3,2018-06-29,PTC,0.3,2.25,0.3,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7620,3,2019-09-17,follicular carcinoma,1.3,2.2199999999999998,1.3,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6981,3,2018-12-11,PTC,6.0,1.6800000000000002,6.0,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5804,3,2017-02-14,PTC,0.1,2.16,0.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6288,5,2006-05-01,metastatic MTC,3.9,0.9099999999999999,3.9,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6460,5,2018-02-14,PTC,1.4,0.75,1.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7129,3,2019-02-12,PTC,0.15,0.7,0.15,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7412,3,2019-06-25,PTC,0.27,0.32,0.27,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2035,3,2012-04-17,PTC,1.6,,1.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2779,4,2006-05-23,follicular carcinoma,7.0,,7.0,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3178,5,2009-07-29,PTC,1.0,,1.0,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4900,4,2015-06-12,follicular carcinoma,12.5,,12.5,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4950,5,2015-07-28,PTC,1.5,,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6744,5,2018-07-27,PTC,1.0,,1.0,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7312,4,2019-05-08,PTC,7.0,,7.0,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1196,4,2006-12-05,follicular carcinoma,3.5,,3.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1734,3,2011-01-28,PTC,1.7,,1.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1773,3,2011-08-10,follicular carcinoma,4.5,,4.5,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2733,4,2005-10-07,follicular carcinoma,3.3,,3.3,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8398,4,2020-10-08,PTC,3.1,1.7100000000000002,3.1,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9015,3,2021-08-02,follicular carcinoma,2.3,,2.3,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+170,4,1999-11-16,follicular carcinoma,1.2,,1.2,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+413,4,2003-03-20,anaplastic carcinoma,7.2,,7.2,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3744,4,2012-05-15,PTC,0.25,,0.25,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3988,5,2013-06-03,PTC,1.5,,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6110,5,2017-07-11,MTC,2.4,,2.4,2–4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+6349,3,2017-12-06,PTC,1.0,,1.0,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9783,4,2022-09-14,PTC,0.1,0.76,0.1,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+5576,5,2016-10-05,PTC,0.8,1.16,0.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7203,3,2019-03-19,PTC,0.1,1.98,0.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7445,5,2019-07-09,PTC,3.0,2.71,3.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5937,4,2017-04-14,PTC,0.2,1.3199999999999998,0.2,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8235,5,2020-07-21,PTC,1.5,0.8800000000000001,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8760,5,2021-04-01,PTC,1.5,2.38,1.5,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9468,3,2022-04-12,PTC,0.7,3.18,0.7,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9471,4,2022-04-14,PTC,0.4,1.9100000000000001,0.4,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+7799,4,2019-11-26,follicular carcinoma,3.0,0.55,3.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7840,5,2019-12-10,PTC,3.2,0.97,3.2,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9098,3,2021-09-14,Follicular carcinoma,3.2,2.77,3.2,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8108,3,2020-05-12,PTC,2.5,0.9,2.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9589,3,2022-06-14,follicular carcinoma,4.0,2.57,4.0,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9414,4,2022-03-15,PTC,0.8,,0.8,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9068,4,2021-08-27,follicular carcinoma,2.9,,2.9,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+5548,5,2016-09-14,PTC,2.3,1.28,2.3,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5713,5,2016-12-27,PTC,1.8,2.05,1.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5817,4,2017-02-22,follicular carcinoma,4.0,1.16,4.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6053,3,2017-06-14,follicular carcinoma,5.6,0.6799999999999999,5.6,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6644,3,2018-06-05,PTC,3.3,1.3599999999999999,3.3,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6837,5,2018-09-26,PTC,4.3,0.99,4.3,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+647,4,2015-12-02,Follicular carcinoma,2.6,0.9,2.6,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5444,5,2016-07-06,PTC ,1.8,1.3900000000000001,1.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7402,3,2019-06-18,NIFTP,0.5,0.9400000000000001,0.5,<2 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+8975,3,2021-07-13,PTC,1.0,1.6199999999999999,1.0,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+108,3,2000-03-21,follicular carcinoma,2.5,,2.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+798,3,2015-03-04,PTC,2.1,,2.1,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+552,4,2005-11-02,follicular carcinoma,2.0,,2.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+597,4,2005-01-26,PTC,0.4,,0.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3110,4,2009-02-25,PTC,1.0,,1.0,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3694,4,2012-02-22,follicular carcinoma,6.0,,6.0,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2007,3,2012-10-15,PTC,0.8,,0.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2138,4,2020-06-08,PTC,6.7,,6.7,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3409,4,2010-11-10,PTC,1.0,,1.0,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4736,5,2015-01-28,PTC,1.1,,1.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4704,4,2015-01-08,PTC,0.5,,0.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1760,4,2011-02-09,PTC,1.6,,1.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1802,5,2011-12-20,PTC,2.0,,2.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2803,3,2006-08-16,PTC,3.7,,3.7,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7690,3,2019-10-11,PTC,3.9,,3.9,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6690,4,2018-06-28,Follicular carcinoma,4.6,,4.6,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8293,5,2020-08-20,PTC,5.0,0.76,5.0,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7878,3,2019-12-20,PTC,2.6,2.25,2.6,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9816,5,2022-09-27,NIFTP,0.05,2.7600000000000002,0.05,<2 cm,2021_plus,False,,,,,Inconclusive,False,2021_plus
+5754,5,2017-01-18,PTC,0.1,0.95,0.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6106,5,2017-07-10,PTC,1.3,1.45,1.3,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6596,3,2018-05-16,follicular carcinoma,7.1,1.58,7.1,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6637,3,2018-05-31,NIFTP,3.4,1.59,3.4,2–4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+5675,4,2016-12-05,PTC,0.1,2.79,0.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6711,3,2018-07-10,PTC,0.05,0.3,0.05,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3395,3,2010-10-06,PTC,7.2,,7.2,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3836,4,2012-11-01,PTC,1.5,,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3625,3,2011-11-15,PTC,4.0,,4.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4406,5,2014-05-12,follicular carcinoma,2.0,,2.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5146,4,2015-12-03,PTC,2.2,,2.2,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4388,3,2014-04-22,PTC,0.1,,0.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1770,3,2011-09-09,PTC,2.0,,2.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1951,5,2010-09-07,PTC,1.2,,1.2,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2680,4,2004-12-14,PTC,0.2,,0.2,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8492,5,2020-11-20,PTC,1.2,,1.2,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6314,4,2017-11-16,follicular carcinoma,7.1,1.31,7.1,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+479,4,2003-01-14,follicular carcinoma,1.5,,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7948,3,2020-01-28,PTC,5.2,2.29,5.2,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7912,3,2020-01-13,PTC,0.4,,0.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8818,4,2021-04-27,follicular carcinoma,2.6,,2.6,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8837,5,2021-05-07,PTC,1.5,,1.5,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9701,3,2022-08-01,follicular carcinoma,4.0,,4.0,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+7814,4,2019-12-03,PTC ,0.05,,0.05,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1935,4,2010-08-20,follicular carcinoma,6.4,,6.4,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2227,5,2021-01-15,PTC,2.4,,2.4,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+5896,5,2017-03-28,PTC,1.6,,1.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6433,4,2018-01-30,NIFTP,1.8,,1.8,<2 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+8958,4,2021-07-01,follicular carcinoma,6.8,1.15,6.8,>4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+6872,3,2018-10-24,PTC,1.4,1.89,1.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3114,4,2009-03-04,PTC,1.1,,1.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6732,5,2018-07-20,PTC,1.6,1.3900000000000001,1.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8984,3,2021-07-20,follicular carcinoma,2.8,1.52,2.8,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+7819,4,2019-12-04,PTC,2.4,0.5599999999999999,2.4,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8494,4,2020-11-23,PTC,0.225,1.01,0.225,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8917,5,2021-06-15,PTC,2.3,,2.3,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+6018,5,2017-05-26,PTC,2.9,1.95,2.9,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6264,3,2017-10-25,PTC,0.3,0.96,0.3,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6443,5,2018-02-02,PTC,0.1,1.9899999999999998,0.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6493,4,2018-03-07,follicular carcinoma,7.7,1.3800000000000001,7.7,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7372,3,2019-06-04,PTC,1.0,2.06,1.0,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5791,4,2017-02-08,PTC,0.8,2.1,0.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+104,4,2000-11-14,follicular carcinoma,2.8,,2.8,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1031,4,2007-11-13,follicular carcinoma,4.5,,4.5,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1303,4,2008-03-19,PTC,0.8,,0.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1372,4,2008-06-03,follicular carcinoma,3.5,,3.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3512,4,2011-05-31,PTC,5.0,,5.0,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3633,5,2011-11-29,PTC,1.1,,1.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4743,3,2015-02-04,PTC,0.02,,0.02,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3924,4,2013-03-21,PTC,2.5,,2.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4096,5,2013-08-22,PTC,4.0,,4.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5323,5,2016-03-30,PTC,0.6,,0.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1793,4,2011-01-19,follicular carcinoma,4.7,,4.7,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1919,3,2010-07-06,PTC,0.9,,0.9,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2137,3,2022-02-01,follicular carcinoma,2.2,,2.2,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9560,5,2022-05-26,PTC,0.6,,0.6,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+7626,4,2019-09-19,PTC,0.2,1.29,0.2,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9674,3,2022-07-21,PTC,5.1,,5.1,>4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+7802,3,2019-11-26,PTC,1.9,,1.9,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5410,4,2016-06-03,PTC,0.36,,0.36,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6592,4,2018-05-10,PTC,1.1,,1.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6061,4,2017-06-15,follicular carcinoma,2.5,,2.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6377,3,2017-12-20,PTC,0.3,,0.3,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6168,3,2017-08-16,PTC,1.6,,1.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5802,4,2017-02-13,PTC,0.3,0.33999999999999997,0.3,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5913,3,2017-04-06,PTC,0.1,1.6,0.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6025,4,2017-05-30,PTC,0.1,3.06,0.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6037,5,2017-06-02,PTC ,1.7,0.9,1.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7582,4,2019-09-03,PTC,3.4,1.46,3.4,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7299,5,2019-04-29,PTC,3.0,,3.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6273,3,2017-11-02,PTC,7.0,,7.0,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8384,5,2020-10-01,PTC,1.7,1.4300000000000002,1.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8961,3,2021-07-02,PTC,1.0,1.0,1.0,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+6266,5,2017-10-26,PTC,4.7,2.13,4.7,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6722,5,2018-07-16,PTC,0.1,1.6,0.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8345,5,2020-09-17,PTC,1.4,1.72,1.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9637,3,2022-07-05,PTC,2.7,2.7600000000000002,2.7,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+5551,4,2016-09-14,follicular carcinoma,8.5,,8.5,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9794,5,2022-09-20,PTC,5.1,,5.1,>4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+323,5,2002-03-15,PTC,0.6,,0.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+713,5,2014-01-22,PTC,4.5,,4.5,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1132,3,2006-05-30,PTC,1.7,,1.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1245,5,2008-02-13,PTC,2.1,,2.1,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1257,4,2008-03-26,PTC,2.9,,2.9,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1659,3,2013-03-08,PTC,0.7,,0.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3545,3,2011-07-19,PTC,2.8,,2.8,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1983,4,2013-02-18,PTC,6.2,,6.2,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3198,4,2009-09-02,PTC,1.4,,1.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3341,3,2010-06-18,PTC,1.7,,1.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3345,4,2010-06-30,follicular carcinoma,3.4,,3.4,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3644,4,2011-12-15,follicular carcinoma,3.5,,3.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4508,5,2014-07-18,PTC,6.0,,6.0,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5486,4,2016-09-26,follicular carcinoma,5.5,,5.5,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5599,5,2016-10-19,PTC,2.3,,2.3,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1954,5,2010-03-30,PTC,2.3,,2.3,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7812,4,2019-12-03,NIFTP,4.8,1.15,4.8,>4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+5591,5,2016-10-13,PTC ,2.1,1.53,2.1,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5865,3,2017-03-14,PTC,0.3,0.39,0.3,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6536,5,2018-04-05,PTC,1.6,1.1099999999999999,1.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7706,5,2019-10-17,PTC,2.3,,2.3,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8008,3,2020-02-19,PTC,1.0,1.54,1.0,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7667,3,2019-10-03,PTC,4.9,0.79,4.9,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+657,5,2015-04-22,PTC,2.4,,2.4,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1531,5,2012-10-30,PTC,0.4,,0.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3427,4,2010-12-14,PTC,1.5,,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4311,5,2014-02-25,PTC,0.7,,0.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5397,3,2016-05-25,PTC,0.1,,0.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7205,4,2019-03-19,PTC,2.1,,2.1,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6428,3,2018-01-24,PTC,2.5,,2.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1829,4,2011-09-06,PTC,0.9,,0.9,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6985,5,2018-12-11,PTC,1.0,2.6100000000000003,1.0,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7573,4,2019-08-27,PTC,2.6,1.56,2.6,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9290,3,2022-01-13,follicular carcinoma,2.3,1.73,2.3,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9683,5,2022-07-26,PTC,1.0,3.12,1.0,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+7660,5,2019-10-01,PTC,2.4,2.71,2.4,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4051,4,2013-04-19,follicular carcinoma,5.5,,5.5,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4083,3,2013-08-08,Poorly differentiated thyroid carcinoma,8.0,,8.0,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8222,3,2020-07-13,PTC,4.0,0.5,4.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9710,5,2022-08-05,PTC,0.9,2.27,0.9,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9451,3,2022-03-31,PTC,2.3,1.1,2.3,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8842,3,2021-05-12,PTC,1.2,0.93,1.2,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8074,4,2020-03-19,PTC,2.2,0.9,2.2,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9285,4,2022-01-11,PTC,2.4,,2.4,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8611,5,2021-01-21,PTC,1.3,0.4,1.3,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+7939,4,2020-01-23,PTC,1.7,,1.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8915,3,2021-06-15,PTC,1.1,,1.1,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9116,4,2021-09-23,follicular carcinoma,1.2,,1.2,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9122,3,2021-09-28,PTC ,1.8,,1.8,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9664,5,2022-07-18,PTC,2.2,,2.2,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+6386,3,2017-12-27,PTC,0.9,1.56,0.9,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6931,3,2018-11-15,PTC,1.4,0.75,1.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5405,3,2016-06-02,follicular carcinoma,5.5,1.33,5.5,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6170,5,2017-08-17,PTC,1.1,1.65,1.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6212,4,2017-09-13,NIFTP,2.1,1.3199999999999998,2.1,2–4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+7243,5,2019-04-04,PTC,1.1,2.7600000000000002,1.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7439,5,2019-07-09,PTC,0.9,0.3,0.9,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9309,3,2022-01-20,follicular carcinoma,4.2,0.86,4.2,>4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+438,4,2003-07-22,PTC,0.7,,0.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+583,5,2004-07-06,PTC,2.0,,2.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+816,3,2014-05-28,PTC,2.1,,2.1,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1456,3,2009-07-14,PTC,1.2,,1.2,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1420,4,2009-01-06,PTC,4.5,,4.5,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4064,5,2013-07-25,MTC,3.8,,3.8,2–4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+4334,5,2014-03-07,PTC,1.5,,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6510,5,2018-03-21,PTC,2.1,,2.1,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2738,3,2005-11-02,PTC,3.4,,3.4,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2277,5,1999-03-30,PTC,1.1,,1.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6996,3,2018-12-18,PTC,2.5,0.39,2.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4328,4,2014-03-05,MTC,3.0,,3.0,2–4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+6350,5,2017-12-06,PTC,0.6,,0.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5736,5,2017-01-10,NIFTP,2.5,2.21,2.5,2–4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+6833,3,2018-09-25,PTC,0.04,1.02,0.04,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+635,3,2015-07-29,PTC,3.0,,3.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+924,4,2005-09-16,MTC,0.7,,0.7,<2 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+3007,4,2008-05-13,PTC,0.5,,0.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4416,4,2014-05-15,follicular carcinoma,2.0,,2.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4359,3,2014-03-26,PTC,4.5,,4.5,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5765,3,2017-01-25,PTC,1.8,,1.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6312,4,2017-11-16,follicular carcinoma,4.3,,4.3,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9209,5,2021-11-16,PTC ,2.0,,2.0,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+7861,3,2019-12-17,PTC,3.8,1.9899999999999998,3.8,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9541,5,2022-05-19,PTC,1.1,2.2600000000000002,1.1,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8039,3,2020-03-03,MTC,1.5,1.46,1.5,<2 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+8392,4,2020-10-06,PTC,5.7,0.99,5.7,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8307,4,2020-08-28,PTC,0.3,0.99,0.3,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7646,5,2019-09-26,PTC,2.0,,2.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8731,3,2021-03-18,PTC,1.2,,1.2,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8794,5,2021-04-15,PTC,2.9,,2.9,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9322,4,2022-01-28,PTC,0.4,,0.4,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+5878,5,2017-03-22,PTC,1.8,2.04,1.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5894,5,2017-03-27,PTC,2.0,1.6,2.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7497,3,2019-07-25,PTC,0.07,1.89,0.07,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8036,3,2020-02-28,PTC,0.6,1.8,0.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9082,3,2021-09-02,PTC,1.1,2.02,1.1,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8799,3,2021-04-20,PTC,0.8,0.93,0.8,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+3998,5,2013-06-06,PTC,0.6,,0.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7444,3,2019-07-09,PTC,2.0,,2.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8725,4,2021-03-17,PTC,2.7,2.13,2.7,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9727,4,2022-08-12,PTC,1.0,1.7899999999999998,1.0,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8501,3,2020-12-01,PTC,2.4,0.62,2.4,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6189,4,2017-08-30,NIFTP,1.6,0.8699999999999999,1.6,<2 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+6551,4,2018-04-11,PTC,0.15,1.61,0.15,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8135,5,2020-06-02,PTC,1.7,1.64,1.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7561,3,2019-08-22,PTC,5.9,,5.9,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8429,5,2020-10-26,PTC,0.3,,0.3,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6794,4,2018-09-04,PTC,0.4,1.97,0.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8918,4,2021-06-15,NIFTP,0.15,1.08,0.15,<2 cm,2021_plus,False,,,,,Inconclusive,False,2021_plus
+6727,3,2018-07-18,PTC,0.2,,0.2,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1551,3,2012-05-30,PTC,2.5,,2.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6429,3,2018-01-24,PTC,0.02,,0.02,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5100,3,2015-11-04,PTC,0.5,,0.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3124,5,2009-03-19,PTC,0.7,,0.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5714,5,2016-12-27,PTC,1.8,,1.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6650,3,2018-06-06,PTC,1.4,,1.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6870,5,2018-10-19,PTC ,0.7,,0.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7575,5,2019-08-27,PTC,3.7,,3.7,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7595,4,2019-09-10,PTC,2.8,,2.8,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1765,5,2011-05-04,PTC,3.0,,3.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7926,3,2020-01-17,NIFTP,2.4,1.67,2.4,2–4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+5741,5,2017-01-11,PTC,1.5,2.42,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6216,4,2017-09-15,NIFTP,2.2,0.3,2.2,2–4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+7148,4,2019-02-19,PTC,1.5,0.8699999999999999,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7695,3,2019-10-15,PTC,0.2,2.46,0.2,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8989,4,2021-07-22,PTC,4.5,1.6300000000000001,4.5,>4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+4379,4,2014-04-09, Poorly differentiated thyroid carcinoma,10.0,,10.0,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4893,5,2015-06-10,PTC,4.2,,4.2,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1453,4,2009-11-18,MTC,3.0,,3.0,2–4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+4010,4,2013-06-19,follicular carcinoma,5.4,,5.4,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4389,3,2014-04-22,PTC,1.5,,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5351,3,2016-04-21,PTC,0.3,,0.3,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4778,4,2015-03-09,MTC,0.15,0.64,0.15,<2 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+6531,5,2018-04-04,PTC,1.4,0.53,1.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+608,5,2004-02-24,PTC,1.5,,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+884,5,2005-12-21,FTUMP,2.2,,2.2,2–4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+1117,5,2006-02-07,PTC,1.3,,1.3,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1379,4,2008-05-06,PTC,1.9,,1.9,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3742,4,2012-05-08,follicular carcinoma,3.8,,3.8,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2076,3,2009-04-06,PTC,4.6,,4.6,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3151,4,2009-05-20,follicular carcinoma,3.5,,3.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3528,4,2011-06-21,follicular carcinoma,4.5,,4.5,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3562,4,2011-08-09,PTC,0.2,,0.2,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3589,4,2011-09-19,follicular carcinoma,2.3,,2.3,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4130,5,2013-09-19,PTC,1.6,,1.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4724,5,2015-01-23,PTC,2.0,,2.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4941,4,2015-07-14,Follicular carcinoma,4.3,,4.3,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5416,3,2016-06-08,PTC,1.5,,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6483,4,2018-02-22,PTC,0.8,,0.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1941,4,2010-10-19,PTC,1.1,,1.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2799,4,2006-08-09,follicular carcinoma,7.3,,7.3,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8000,4,2020-02-18,PTC,1.5,0.8400000000000001,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9636,3,2022-07-05,PTC,0.15,0.99,0.15,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8697,4,2021-03-04,PTC,0.9,1.3800000000000001,0.9,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8765,4,2021-04-06,follicular carcinoma,2.5,0.3,2.5,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9772,4,2022-09-08,follicular carcinoma,5.8,,5.8,>4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+5656,5,2016-11-17,PTC ,4.1,1.1,4.1,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5158,5,2015-12-15,PTC,2.5,0.82,2.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6058,3,2017-06-15,PTC,4.7,0.49000000000000005,4.7,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7186,3,2019-03-12,PTC,1.8,1.1099999999999999,1.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+963,5,2008-07-02,PTC,1.6,,1.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7596,3,2019-09-10,NIFTP,2.0,,2.0,2–4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+7688,3,2019-10-10,PTC,4.0,1.25,4.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9038,3,2021-08-13,Follicular carcinoma,5.1,2.71,5.1,>4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9788,5,2022-09-19,PTC,3.0,,3.0,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+3347,5,2010-07-07,PTC,2.3,,2.3,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1278,3,2009-07-29,follicular carcinoma,2.8,,2.8,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2181,4,2021-04-19,PTC,6.0,,6.0,>4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+4109,4,2013-09-06,PTC,0.5,,0.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5926,5,2017-04-11,PTC,2.8,,2.8,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6478,5,2018-03-22,PTC,0.6,,0.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7387,3,2019-01-17,PTC,7.0,,7.0,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7932,5,2020-01-21,PTC,3.0,1.33,3.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8147,3,2020-06-09,PTC,0.2,2.46,0.2,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8938,3,2021-06-24,follicular carcinoma,4.3,1.7,4.3,>4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8001,4,2020-02-18,follicular carcinoma,3.5,0.9800000000000001,3.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6157,4,2017-08-09,PTC,1.2,2.56,1.2,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7264,4,2019-04-15,PTC,2.0,1.33,2.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8783,5,2021-04-13,metastatic PTC,1.8,,1.8,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9455,5,2022-04-05,PTC,0.12,,0.12,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9577,3,2022-06-07,follicular carcinoma,3.3,,3.3,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9726,3,2022-08-12,NIFTP,1.5,0.6,1.5,<2 cm,2021_plus,False,,,,,Inconclusive,False,2021_plus
+7584,3,2019-09-04,NIFTP,4.7,0.78,4.7,>4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+269,3,2001-06-01,PTC,1.8,,1.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1457,5,2009-01-14,PTC,2.0,,2.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1498,4,2008-12-23,PTC,0.9,,0.9,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2819,5,2006-10-25,PTC,3.0,,3.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3181,4,2009-08-04,follicular carcinoma,4.1,,4.1,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4532,5,2014-08-11,PTC,3.0,,3.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5811,3,2017-02-17,PTC,3.5,,3.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2912,4,2007-09-05,follicular carcinoma,2.3,,2.3,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7593,3,2019-09-10,FTUMP,4.5,0.63,4.5,>4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+5007,3,2015-09-11,PTC,1.9,2.23,1.9,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5687,4,2016-12-13,PTC,1.3,0.89,1.3,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7508,4,2019-07-29,PTC,5.8,1.03,5.8,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9100,3,2021-09-16,follicular carcinoma,4.5,2.25,4.5,>4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8428,5,2020-10-26,PTC,0.5,,0.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8252,4,2020-07-31,follicular carcinoma,3.7,,3.7,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7783,3,2019-11-19,PTC,1.6,,1.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2221,3,2019-12-10,follicular carcinoma,3.2,,3.2,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4516,4,2014-07-29,PTC,0.6,,0.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4624,3,2014-10-23,PTC,0.5,,0.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5389,3,2016-05-18,PTC,0.4,,0.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7097,4,2019-01-30,follicular carcinoma,3.7,,3.7,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6557,5,2018-04-13,PTC,0.2,,0.2,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2809,3,2006-09-13,PTC,1.1,,1.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5983,5,2017-05-11,PTC,0.4,1.45,0.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6944,5,2018-11-21,PTC,1.3,1.92,1.3,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+260,5,2001-11-09,PTC,0.8,,0.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+730,5,2015-04-01,PTC ,3.0,,3.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2164,3,2021-08-30,PTC,2.8,,2.8,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+4316,5,2014-02-27,PTC,0.3,,0.3,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6122,5,2017-07-14,PTC,1.8,,1.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1777,5,2011-06-29,PTC,1.5,,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2854,4,2007-02-28,PTC,0.6,,0.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9652,4,2022-07-12,PTC,3.5,,3.5,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+5560,4,2016-09-26,PTC,1.7,0.82,1.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6674,4,2018-06-21,PTC,1.4,0.5900000000000001,1.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6880,5,2018-10-30,PTC,2.2,1.3199999999999998,2.2,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7100,5,2019-01-31,PTC,0.7,2.1100000000000003,0.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9676,5,2022-07-22,PTC,1.2,,1.2,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9822,3,2022-09-29,metastatic/recurrent follicular carcinoma,2.5,,2.5,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+5522,4,2016-08-31,follicular carcinoma,1.5,1.15,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5753,5,2017-01-18,PTC,3.2,2.23,3.2,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5895,5,2017-03-28,PTC,1.4,1.47,1.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7262,5,2019-04-12,PTC,8.4,1.04,8.4,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9062,3,2021-08-26,follicular carcinoma,6.4,1.98,6.4,>4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9240,3,2021-12-09,PTC,1.2,1.6600000000000001,1.2,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8651,4,2021-02-11,PTC,7.5,,7.5,>4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+4649,3,2014-11-12,PTC,1.6,,1.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5455,4,2016-07-14,follicular carcinoma,2.5,,2.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6654,4,2018-06-08,follicular carcinoma,2.8,,2.8,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+390,4,2002-07-05,PTC,0.2,,0.2,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+2095,4,2008-11-05,PTC,4.1,,4.1,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3576,4,2011-08-23,PTC,0.1,,0.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7184,5,2019-03-11,PTC,3.2,,3.2,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7368,3,2019-05-31,NIFTP,4.4,,4.4,>4 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+6672,3,2018-06-20,PTC,0.4,1.3199999999999998,0.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7025,3,2018-12-27,PTC,1.7,0.85,1.7,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7173,3,2019-03-05,PTC,1.4,2.45,1.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6865,3,2018-10-16,PTC,1.4,1.06,1.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9357,3,2022-02-15,PTC,4.4,0.95,4.4,>4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8713,3,2021-03-11,PTC,1.5,2.02,1.5,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9602,4,2022-06-21,follicular carcinoma,3.9,,3.9,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+7277,5,2019-04-18,PTC,0.9,1.6,0.9,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7833,3,2019-12-06,PTC,3.7,0.31,3.7,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7094,5,2019-01-29,PTC,1.4,1.72,1.4,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9509,4,2022-05-05,follicular carcinoma,5.6,0.75,5.6,>4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9576,3,2022-06-07,PTC,2.5,0.3,2.5,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8870,3,2021-05-25,PTC,1.7,1.58,1.7,<2 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+9668,3,2022-07-19,follicular carcinoma,3.6,1.1199999999999999,3.6,2–4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+8481,5,2020-11-17,PTC,10.5,,10.5,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7145,5,2019-02-19,PTC,5.6,1.29,5.6,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8111,3,2020-05-13,PTC,1.3,1.69,1.3,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+9366,4,2022-02-22,follicular carcinoma,8.8,,8.8,>4 cm,2021_plus,True,,,,,Inconclusive,False,2021_plus
+5530,5,2016-09-07,PTC,6.0,2.07,6.0,>4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5616,5,2016-10-31,PTC,1.5,0.8699999999999999,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6238,5,2017-10-04,MTC,1.7,0.45999999999999996,1.7,<2 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+7234,3,2019-04-02,follicular carcinoma,2.0,2.09,2.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6155,4,2017-08-09,follicular carcinoma,3.4,0.49000000000000005,3.4,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6220,4,2017-09-19,PTC,1.0,1.08,1.0,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6235,5,2017-09-28,PTC,1.8,0.86,1.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+7311,3,2019-05-07,NIFTP,0.4,3.6799999999999997,0.4,<2 cm,pre_2021,False,,,,,Inconclusive,False,2021_plus
+7552,4,2019-08-20,follicular carcinoma,2.7,1.03,2.7,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5845,5,2017-03-02,PTC,3.8,1.94,3.8,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6227,3,2017-09-21,PTC,1.2,1.8699999999999999,1.2,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6369,4,2017-12-15,PTC,0.04,0.6900000000000001,0.04,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+6806,3,2018-09-12,PTC,0.1,1.08,0.1,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+57,5,2000-03-07,PTC,3.0,,3.0,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+256,4,2001-02-20,follicular carcinoma,1.5,,1.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1533,3,2012-10-24,PTC,1.8,,1.8,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1547,3,2012-12-17,PTC,0.5,,0.5,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3535,4,2011-06-28,PTC,2.2,,2.2,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+3084,3,2008-12-15,PTC,0.9,,0.9,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4979,4,2015-08-20,PTC,1.6,,1.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+4192,5,2013-11-06,PTC,0.12,,0.12,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+5120,5,2015-11-16,PTC,1.3,,1.3,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+1776,4,2011-11-18,PTC,0.6,,0.6,<2 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
+8101,5,2020-05-06,PTC,2.5,,2.5,2–4 cm,pre_2021,True,,,,,Inconclusive,False,2021_plus
