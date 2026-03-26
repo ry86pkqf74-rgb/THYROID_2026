@@ -1,0 +1,6 @@
+variable,test,statistic,p_value
+age_at_surgery,Mann-Whitney U,43146.0,0.0071464176650426195
+sex_f,Chi-square,,1.0
+bethesda_ge4,Chi-square,,6.022852955034101e-07
+has_mol,Chi-square,,0.6552930584752044
+bilateral_nodule_indicator,Chi-square,,0.04753964756292261

@@ -6,4 +6,5 @@
 - **preop_imaging_nodule_size_2_to_4_cm**: n = 635
 - **after_strict_preop_ln_exclusion_path_cohort**: n = 0
 - **after_strict_preop_ln_exclusion_preop_cohort**: n = 558
+- **after_broad_suspicious_node_exclusion_preop_cohort**: n = 635
 - **primary_preop_cohort_final_N**: n = 558

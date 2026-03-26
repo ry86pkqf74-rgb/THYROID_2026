@@ -5,4 +5,5 @@ pathology_defined_size_2_to_4_cm,0
 preop_imaging_nodule_size_2_to_4_cm,635
 after_strict_preop_ln_exclusion_path_cohort,0
 after_strict_preop_ln_exclusion_preop_cohort,558
+after_broad_suspicious_node_exclusion_preop_cohort,635
 primary_preop_cohort_final_N,558

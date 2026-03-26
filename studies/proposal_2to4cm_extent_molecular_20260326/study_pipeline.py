@@ -265,7 +265,7 @@ def fit_lr_sklearn(df: pd.DataFrame, outcome: str, predictors: list[str], label:
 
 
 def concordance_tables(patient_df: pd.DataFrame) -> pd.DataFrame:
-    """2x2 summaries: molecular high-risk vs final malignant; by platform."""
+    """2x2 summaries: molecular high-risk vs final malignant; by platform; neoplasm; mutations."""
 
     def _counts(ss: pd.DataFrame, label: str) -> dict:
         tp = int((ss["mol_pos"] & (ss["path_mal"] == 1.0)).sum())
@@ -282,6 +282,31 @@ def concordance_tables(patient_df: pd.DataFrame) -> pd.DataFrame:
     ss = dsub[dsub["path_mal"].isin([0.0, 1.0])]
     if len(ss) >= 5:
         rows.append(_counts(ss, "malignant_concordance_2x2"))
+    # Neoplasm-or-malignancy vs molecular high-risk
+    h = dsub["final_primary_histology"].fillna("").astype(str).str.lower()
+    path_pos = (dsub["path_mal"] == 1.0) | h.str.contains(
+        r"niftp|nifgp|follicular adenoma|hurthle cell adenoma|adenoma|follicular neoplasm|neoplasm",
+        regex=True,
+    )
+    path_neg = (dsub["path_mal"] == 0.0) & ~path_pos
+    ss_neo = dsub[path_pos | path_neg]
+    if len(ss_neo) >= 5:
+        mol = ss_neo["mol_pos"]
+        pos = path_pos.loc[ss_neo.index]
+        tp = int((mol & pos).sum())
+        fn = int((~mol & pos).sum())
+        fp = int((mol & ~pos).sum())
+        tn = int((~mol & ~pos).sum())
+        rows.append(
+            {
+                "framework": "neoplasm_or_malignancy_vs_mol_high",
+                "tp": tp,
+                "fn": fn,
+                "fp": fp,
+                "tn": tn,
+                "n": len(ss_neo),
+            }
+        )
     d_ag = d[d["preop_molecular_tested"]].copy()
     if len(d_ag) >= 5 and "aggressive_pathology" in d_ag.columns:
         mol_hr = d_ag["high_risk_marker_flag"].fillna(False).astype(bool) | d_ag["mol_pos"]
@@ -302,7 +327,235 @@ def concordance_tables(patient_df: pd.DataFrame) -> pd.DataFrame:
         ss3 = dsub[(dsub["preop_mol_platform"] == plat) & dsub["path_mal"].isin([0.0, 1.0])]
         if len(ss3) >= 5:
             rows.append(_counts(ss3, f"platform_{plat}"))
+    for mut_col, label in (
+        ("braf_flag", "mutation_braf"),
+        ("ras_flag", "mutation_ras"),
+        ("ret_fusion_flag", "mutation_ret_fusion"),
+        ("tert_flag", "mutation_tert"),
+        ("ntrk_flag", "mutation_ntrk"),
+    ):
+        if mut_col not in dsub.columns:
+            continue
+        mc = dsub[mut_col].fillna(False).astype(bool)
+        ss_m = dsub[mc & dsub["path_mal"].isin([0.0, 1.0])]
+        if len(ss_m) >= 3:
+            rows.append(_counts(ss_m, label))
     return pd.DataFrame(rows)
+
+
+def univariable_screen(pdata: pd.DataFrame, outcome: str = "initial_total") -> pd.DataFrame:
+    """Chi-square / Fisher for categorical; Wilcoxon for age (preop-only vars)."""
+    try:
+        from scipy import stats as sp_stats
+    except ImportError:
+        return pd.DataFrame([{"variable": "error", "test": "scipy missing", "p": np.nan}])
+
+    out_rows: list[dict] = []
+    y = pdata[outcome].astype(int)
+    # age
+    ag = pdata[["age_at_surgery", outcome]].dropna()
+    if len(ag) >= 10:
+        g0 = ag.loc[ag[outcome] == 0, "age_at_surgery"]
+        g1 = ag.loc[ag[outcome] == 1, "age_at_surgery"]
+        stat, p = sp_stats.mannwhitneyu(g0, g1, alternative="two-sided")
+        out_rows.append(
+            {
+                "variable": "age_at_surgery",
+                "test": "Mann-Whitney U",
+                "statistic": float(stat),
+                "p_value": float(p),
+            }
+        )
+    for feat, kind in [
+        ("sex_f", "cat"),
+        ("bethesda_ge4", "cat"),
+        ("has_mol", "cat"),
+        ("bilateral_nodule_indicator", "cat"),
+    ]:
+        if feat not in pdata.columns:
+            continue
+        ct = pd.crosstab(pdata[feat].fillna(-1), y)
+        if ct.shape[0] < 2 or ct.shape[1] < 2:
+            continue
+        exp = sp_stats.contingency.expected_freq(ct.values)
+        use_fisher = ct.shape == (2, 2) and (exp < 5).any()
+        if use_fisher:
+            _, p = sp_stats.fisher_exact(ct.values)
+            name = "Fisher exact"
+        else:
+            _, p, _, _ = sp_stats.chi2_contingency(ct.values)
+            name = "Chi-square"
+        out_rows.append({"variable": feat, "test": name, "statistic": np.nan, "p_value": float(p)})
+    return pd.DataFrame(out_rows)
+
+
+def assemble_patient_dataframe(
+    preop_slice: pd.DataFrame,
+    pls_dedup: pd.DataFrame,
+    first_clean: pd.DataFrame,
+    comp_df: pd.DataFrame,
+    ult: pd.DataFrame,
+    pre_mol: pd.DataFrame,
+    pre_fna: pd.DataFrame,
+    te_idx: pd.DataFrame,
+    img_master: pd.DataFrame,
+) -> pd.DataFrame:
+    """Build patient-level analytic frame from a preop lesion-level cohort slice."""
+    x = preop_slice.copy()
+    x["research_id"] = pd.to_numeric(x["research_id"], errors="coerce").astype("Int64")
+    patient_df = x.merge(pls_dedup, on="research_id", how="left")
+
+    patient_df["initial_total"] = (
+        patient_df["procedure_normalized"] == "total_thyroidectomy"
+    ).astype(int)
+    patient_df["initial_lobectomy"] = (
+        patient_df["procedure_normalized"] == "hemithyroidectomy"
+    ).astype(int)
+    patient_df["surgery_year"] = pd.to_datetime(
+        patient_df["index_surgery_date"], errors="coerce"
+    ).dt.year
+
+    patient_df = patient_df.merge(comp_df, on="research_id", how="left")
+    patient_df = patient_df.merge(
+        ult[["research_id", "ultimate_total"]], on="research_id", how="left"
+    )
+
+    patient_df = patient_df.merge(
+        pre_fna[
+            ["research_id", "fna_episode_id", "bethesda_category"]
+        ].rename(columns={"fna_episode_id": "preop_fna_episode_id"}),
+        on="research_id",
+        how="left",
+    )
+    pm = pre_mol.rename(
+        columns={
+            "molecular_episode_id": "preop_molecular_episode_id",
+            "platform": "preop_mol_platform",
+            "overall_result_class": "preop_mol_result_class",
+        }
+    )
+    patient_df = patient_df.merge(
+        pm[
+            [
+                "research_id",
+                "preop_molecular_episode_id",
+                "preop_mol_platform",
+                "preop_mol_result_class",
+                "high_risk_marker_flag",
+                "braf_flag",
+                "ras_flag",
+                "ret_fusion_flag",
+                "tert_flag",
+                "ntrk_flag",
+            ]
+        ],
+        on="research_id",
+        how="left",
+    )
+
+    rc = patient_df["preop_mol_result_class"].fillna("").astype(str).str.lower()
+    hr = patient_df["high_risk_marker_flag"].fillna(False).astype(bool)
+    patient_df["preop_molecular_tested"] = patient_df["preop_molecular_episode_id"].notna()
+    patient_df["preop_mol_positive"] = rc.isin(
+        ("suspicious", "positive", "high_risk")
+    ) | hr.astype(bool)
+
+    patient_df = patient_df.merge(
+        te_idx[
+            [
+                "surgery_episode_id",
+                "final_primary_histology",
+                "gross_ete",
+                "nodal_disease_positive_count",
+                "extranodal_extension",
+                "multifocality_flag",
+                "margin_status",
+                "histology_variant",
+            ]
+        ],
+        on="surgery_episode_id",
+        how="left",
+    )
+    patient_df["final_malignant"] = histology_malignant_flag(
+        patient_df["final_primary_histology"]
+    )
+    patient_df["aggressive_pathology"] = patient_df.apply(aggressive_pathology, axis=1)
+
+    if "tirads_acr_recalculated" in patient_df.columns:
+        patient_df["tirads_score"] = pd.to_numeric(
+            patient_df["tirads_acr_recalculated"], errors="coerce"
+        )
+
+    sx_dates = patient_df[["research_id", "index_surgery_date"]].copy()
+    sx_dates["index_surgery_date"] = pd.to_datetime(
+        sx_dates["index_surgery_date"], errors="coerce"
+    )
+    img_m = img_master.merge(sx_dates, on="research_id")
+    img2 = img_m.rename(columns={"exam_date": "_ex"})
+    img2["resolved_exam_date"] = pd.to_datetime(img2["_ex"], errors="coerce")
+    img2 = img2[
+        (img2["resolved_exam_date"] <= img2["index_surgery_date"])
+        & img2["resolved_exam_date"].notna()
+    ]
+    side_ct = (
+        img2.groupby("research_id")["laterality"]
+        .nunique()
+        .reset_index(name="preop_distinct_lateralities")
+    )
+    patient_df = patient_df.merge(side_ct, on="research_id", how="left")
+    patient_df["bilateral_nodule_indicator"] = (
+        patient_df["preop_distinct_lateralities"].fillna(0) >= 2
+    ).astype(int)
+
+    return patient_df
+
+
+def write_validation_report(
+    con,
+    patient_df: pd.DataFrame,
+    study_dir: Path,
+) -> None:
+    """Check CSV vs DataFrame; MotherDuck id registration overlap; flag >0.1% mismatch."""
+    path_csv = study_dir / "patient_level_dataset.csv"
+    file_df = pd.read_csv(path_csv, low_memory=False)
+    n_file = len(file_df)
+    n_mem = len(patient_df)
+    id_file = set(pd.to_numeric(file_df["research_id"], errors="coerce").dropna().astype(int))
+    id_mem = set(patient_df["research_id"].dropna().astype(int))
+    sym_diff = id_file.symmetric_difference(id_mem)
+    pct = 100.0 * len(sym_diff) / max(len(id_mem), 1)
+
+    lines = [
+        "# Validation report",
+        "",
+        f"- patient_level_dataset.csv rows: {n_file}",
+        f"- in-memory patient_df rows: {n_mem}",
+        f"- distinct research_id (file): {len(id_file)}",
+        f"- distinct research_id (memory): {len(id_mem)}",
+        f"- symmetric ID difference count: {len(sym_diff)}",
+        f"- mismatch pct vs cohort (memory): {pct:.4f}%",
+    ]
+    if pct > 0.1:
+        lines.append("- **⚠ FLAG**: row count or ID mismatch exceeds 0.1%")
+
+    if id_mem:
+        reg = pd.DataFrame({"research_id": sorted(id_mem)})
+        con.register("_val_cohort", reg)
+        n_mv = con.execute(
+            """
+            SELECT COUNT(*) FROM _val_cohort v
+            INNER JOIN operative_episode_detail_v2 o ON o.research_id = v.research_id
+            WHERE o.procedure_normalized IN ('hemithyroidectomy','total_thyroidectomy')
+            """
+        ).fetchone()[0]
+        con.unregister("_val_cohort")
+        lines.append(
+            f"- MotherDuck operative rows matching cohort IDs (any hemi/total row): {n_mv}"
+        )
+        lines.append(
+            f"- ratio operative_rows_over_cohort_ids: {n_mv / max(len(id_mem), 1):.4f}"
+        )
+    (study_dir / "validation_report.md").write_text("\n".join(lines) + "\n")
 
 
 def export_flow(flow_rows: list[dict], path_md: Path, path_csv: Path) -> None:
@@ -412,6 +665,7 @@ def run() -> None:
 
     path_primary = apply_excl(path_cohort, broad=False)
     preop_primary = apply_excl(preop_cohort, broad=False)
+    preop_broad = apply_excl(preop_cohort, broad=True)
     flow.append(
         {
             "step": "after_strict_preop_ln_exclusion_path_cohort",
@@ -424,84 +678,22 @@ def run() -> None:
             "n": int(len(preop_primary)),
         }
     )
+    flow.append(
+        {
+            "step": "after_broad_suspicious_node_exclusion_preop_cohort",
+            "n": int(len(preop_broad)),
+        }
+    )
 
-    # Primary analytic set = preop-defined (decision cohort)
-    primary_ids = set(preop_primary["research_id"].astype(int))
     _pls = data["pls"].copy()
     _pls["research_id"] = pd.to_numeric(_pls["research_id"], errors="coerce").astype("Int64")
     _pls = _pls.drop_duplicates(subset=["research_id"], keep="first")
-    preop_primary["research_id"] = pd.to_numeric(
-        preop_primary["research_id"], errors="coerce"
-    ).astype("Int64")
-    patient_df = preop_primary.merge(_pls, on="research_id", how="left")
-
-    # Initial / ultimate extent
-    patient_df["initial_total"] = (
-        patient_df["procedure_normalized"] == "total_thyroidectomy"
-    ).astype(int)
-    patient_df["initial_lobectomy"] = (
-        patient_df["procedure_normalized"] == "hemithyroidectomy"
-    ).astype(int)
-    patient_df["surgery_year"] = pd.to_datetime(
-        patient_df["index_surgery_date"], errors="coerce"
-    ).dt.year
 
     comp_df = cl.completion_after_lobectomy(ops, first_clean)
     ult = cl.ultimate_extent_total(first_clean, comp_df)
-    patient_df = patient_df.merge(comp_df, on="research_id", how="left")
-    patient_df = patient_df.merge(
-        ult[["research_id", "ultimate_total"]], on="research_id", how="left"
-    )
-
     me = cl.molecular_meaningful_mask(data["mol"])
     pre_mol = cl.attach_preop_molecular(first_clean, data["mol"], me)
     pre_fna = cl.attach_preop_fna(first_clean, data["fna"])
-
-    patient_df = patient_df.merge(
-        pre_fna[
-            [
-                "research_id",
-                "fna_episode_id",
-                "bethesda_category",
-            ]
-        ].rename(columns={"fna_episode_id": "preop_fna_episode_id"}),
-        on="research_id",
-        how="left",
-    )
-    pm = pre_mol.rename(
-        columns={
-            "molecular_episode_id": "preop_molecular_episode_id",
-            "platform": "preop_mol_platform",
-            "overall_result_class": "preop_mol_result_class",
-        }
-    )
-    patient_df = patient_df.merge(
-        pm[
-            [
-                "research_id",
-                "preop_molecular_episode_id",
-                "preop_mol_platform",
-                "preop_mol_result_class",
-                "high_risk_marker_flag",
-                "braf_flag",
-                "ras_flag",
-                "ret_fusion_flag",
-                "tert_flag",
-                "ntrk_flag",
-            ]
-        ],
-        on="research_id",
-        how="left",
-    )
-
-    rc = patient_df["preop_mol_result_class"].fillna("").astype(str).str.lower()
-    hr = patient_df["high_risk_marker_flag"].fillna(False).astype(bool)
-    patient_df["preop_molecular_tested"] = patient_df["preop_molecular_episode_id"].notna()
-    patient_df["preop_mol_positive"] = rc.isin(
-        ("suspicious", "positive", "high_risk")
-    ) | hr.astype(bool)
-
-    # Final pathology from tumor episode on index surgery (dedupe episode grain)
     te_idx = (
         data["tumor_ep_1"]
         .sort_values(["surgery_episode_id", "tumor_size_cm"], ascending=[True, False])
@@ -509,53 +701,37 @@ def run() -> None:
         .first()
         .rename(columns={"primary_histology": "final_primary_histology"})
     )
-    patient_df = patient_df.merge(
-        te_idx[
-            [
-                "surgery_episode_id",
-                "final_primary_histology",
-                "gross_ete",
-                "nodal_disease_positive_count",
-                "extranodal_extension",
-                "multifocality_flag",
-                "margin_status",
-                "histology_variant",
-            ]
-        ],
-        on="surgery_episode_id",
-        how="left",
-    )
-    patient_df["final_malignant"] = histology_malignant_flag(
-        patient_df["final_primary_histology"]
-    )
-    patient_df["aggressive_pathology"] = patient_df.apply(aggressive_pathology, axis=1)
 
-    if "tirads_acr_recalculated" in patient_df.columns:
-        patient_df["tirads_score"] = pd.to_numeric(
-            patient_df["tirads_acr_recalculated"], errors="coerce"
-        )
+    preop_primary["research_id"] = pd.to_numeric(
+        preop_primary["research_id"], errors="coerce"
+    ).astype("Int64")
+    preop_broad["research_id"] = pd.to_numeric(
+        preop_broad["research_id"], errors="coerce"
+    ).astype("Int64")
 
-    # Bilateral preop nodules (count distinct sides) — use master imaging
-    sx_dates = patient_df[["research_id", "index_surgery_date"]].copy()
-    sx_dates["index_surgery_date"] = pd.to_datetime(
-        sx_dates["index_surgery_date"], errors="coerce"
+    # Primary analytic set = preop-defined (strict nodal exclusion)
+    patient_df = assemble_patient_dataframe(
+        preop_primary,
+        _pls,
+        first_clean,
+        comp_df,
+        ult,
+        pre_mol,
+        pre_fna,
+        te_idx,
+        data["img_master"],
     )
-    img_m = data["img_master"].merge(sx_dates, on="research_id")
-    img2 = img_m.rename(columns={"exam_date": "_ex"})
-    img2["resolved_exam_date"] = pd.to_datetime(img2["_ex"], errors="coerce")
-    img2 = img2[
-        (img2["resolved_exam_date"] <= img2["index_surgery_date"])
-        & img2["resolved_exam_date"].notna()
-    ]
-    side_ct = (
-        img2.groupby("research_id")["laterality"]
-        .nunique()
-        .reset_index(name="preop_distinct_lateralities")
+    patient_df_broad = assemble_patient_dataframe(
+        preop_broad,
+        _pls,
+        first_clean,
+        comp_df,
+        ult,
+        pre_mol,
+        pre_fna,
+        te_idx,
+        data["img_master"],
     )
-    patient_df = patient_df.merge(side_ct, on="research_id", how="left")
-    patient_df["bilateral_nodule_indicator"] = (
-        patient_df["preop_distinct_lateralities"].fillna(0) >= 2
-    ).astype(int)
 
     # Sensitivity: path cohort strict
     path_sens = apply_excl(path_cohort, broad=False)
@@ -592,7 +768,13 @@ def run() -> None:
     # Save
     STUDY.mkdir(parents=True, exist_ok=True)
     patient_df.to_csv(STUDY / "patient_level_dataset.csv", index=False)
+    patient_df_broad.to_csv(
+        STUDY / "patient_level_dataset_broad_nodal_exclusion.csv", index=False
+    )
     lesion_df.to_csv(STUDY / "lesion_level_dataset.csv", index=False)
+    note_snip.to_csv(
+        STUDY / "exploratory_note_rationale_snippets.csv", index=False
+    )
     amb_audit.to_csv(STUDY / "ambiguity_audit.csv", index=False)
     extent_audit.to_csv(STUDY / "surgery_extent_audit.csv", index=False)
     comp_df.to_csv(STUDY / "completion_cases.csv", index=False)
@@ -615,7 +797,9 @@ def run() -> None:
                 "**Sensitivity cohort:** Pathology-defined size 2.0–4.0 cm from "
                 "`surgery_pathology_linkage_v3.path_size_cm` with fallbacks documented in `cohort_logic.py`.",
                 "",
-                f"**Primary analytic N:** {len(patient_df)}",
+                f"**Primary analytic N (strict nodal):** {len(patient_df)}",
+                f"**Broad nodal exclusion preop cohort N:** {len(patient_df_broad)} "
+                "(see `patient_level_dataset_broad_nodal_exclusion.csv`).",
                 f"**Pathology-defined sensitivity N (strict LN exclusion):** {len(path_sens)}",
                 "",
             ]
@@ -660,6 +844,8 @@ def run() -> None:
     pdata["bethesda_ge4"] = pdata["bethesda_ge4"].fillna(0).astype(int)
     pdata["has_mol"] = pdata["preop_molecular_tested"].astype(int)
 
+    univariable_screen(pdata).to_csv(STUDY / "univariable_tests.csv", index=False)
+
     parsimonious = ["age_at_surgery", "sex_f", "bethesda_ge4", "has_mol"]
     if "tirads_score" not in pdata.columns:
         pdata["tirads_score"] = np.nan
@@ -669,6 +855,22 @@ def run() -> None:
     r_main = fit_lr(pdata, "initial_total", parsimonious, "primary_parsimonious")
     r_ext = fit_lr(pdata, "initial_total", extended, "primary_extended")
     tables = [r_main, r_ext]
+
+    pdata_br = patient_df_broad.copy()
+    pdata_br["sex_f"] = (pdata_br["sex"] == "Female").astype(int)
+    pdata_br["bethesda_ge4"] = (
+        pd.to_numeric(pdata_br["bethesda_category"], errors="coerce") >= 4
+    ).astype(float)
+    pdata_br["bethesda_ge4"] = pdata_br["bethesda_ge4"].fillna(0).astype(int)
+    pdata_br["has_mol"] = pdata_br["preop_molecular_tested"].astype(int)
+    if "tirads_score" not in pdata_br.columns:
+        pdata_br["tirads_score"] = np.nan
+    pdata_br["tirads_score"] = pd.to_numeric(pdata_br["tirads_score"], errors="coerce")
+    r_broad = fit_lr(
+        pdata_br, "initial_total", parsimonious, "broad_nodal_parsimonious"
+    )
+    if len(pdata_br) >= 30:
+        tables.append(r_broad)
     if r_main.get("error") == "separation":
         tables.append(fit_lr_sklearn(pdata, "initial_total", parsimonious, "primary_sklearn"))
 
@@ -838,6 +1040,34 @@ def run() -> None:
     fig6.savefig(STUDY / "fig_cohort_flow.png", dpi=150, bbox_inches="tight")
     plt.close(fig6)
 
+    # Initial vs ultimate extent (lobectomy completion flow)
+    init_lab = np.where(
+        patient_df["initial_total"] == 1, "Initial total", "Initial lobectomy"
+    )
+    ult_lab = np.where(
+        patient_df["ultimate_total"].fillna(False).astype(bool),
+        "Ultimate total-class",
+        "Not ultimate total",
+    )
+    ct_tr = (
+        pd.crosstab(
+            pd.Series(init_lab, name="initial"),
+            pd.Series(ult_lab, name="ultimate"),
+        )
+        .sort_index()
+    )
+    ct_tr.to_csv(STUDY / "initial_ultimate_extent_transition_counts.csv")
+    if ct_tr.size > 0:
+        fig7, ax7 = plt.subplots(figsize=(7, 4))
+        ct_tr.plot(kind="bar", ax=ax7, rot=0)
+        ax7.set_title("Initial surgical extent vs ultimate total classification")
+        ax7.legend(title="Ultimate", bbox_to_anchor=(1.02, 1), loc="upper left")
+        fig7.tight_layout()
+        fig7.savefig(
+            STUDY / "fig_initial_to_ultimate_extent.png", dpi=150, bbox_inches="tight"
+        )
+        plt.close(fig7)
+
     # Manifest refresh
     manifest = {
         "run_utc": datetime.now(timezone.utc).isoformat(),
@@ -845,6 +1075,7 @@ def run() -> None:
             ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
         ).strip(),
         "primary_cohort_n": len(patient_df),
+        "broad_nodal_cohort_n": len(patient_df_broad),
         "path_sensitivity_n": len(path_sens),
         "duckdb": con.execute("SELECT version()").fetchone()[0],
     }
@@ -912,23 +1143,18 @@ Multivariable associations with initial total thyroidectomy used preoperative va
                 "denominator": n_tot,
                 "manuscript_ref": "Results",
             },
+            {
+                "claim": "broad_nodal_exclusion_cohort_N",
+                "source": "study_pipeline.py:preop_broad",
+                "output_file": "patient_level_dataset_broad_nodal_exclusion.csv",
+                "denominator": len(patient_df_broad),
+                "manuscript_ref": "Methods/Sensitivity",
+            },
         ]
     )
     claims.to_csv(STUDY / "claims_ledger.csv", index=False)
 
-    # Validation: row counts vs MotherDuck
-    vlines = []
-    vlines.append(f"patient_level rows: file={len(pd.read_csv(STUDY / 'patient_level_dataset.csv'))}")
-    vlines.append(f"distinct research_id in file: {patient_df['research_id'].nunique()}")
-    chk = qdf(
-        con,
-        f"""
-        SELECT COUNT(*) FROM operative_episode_detail_v2
-        WHERE procedure_normalized IN ('hemithyroidectomy','total_thyroidectomy')
-        """,
-    )
-    vlines.append(f"operative qualifying episodes (all): {chk.iloc[0,0]}")
-    (STUDY / "validation_report.md").write_text("\n".join(vlines) + "\n")
+    write_validation_report(con, patient_df, STUDY)
 
     print("Done. N primary:", len(patient_df))
 

@@ -1,7 +1,8 @@
 {
-  "run_utc": "2026-03-26T04:32:07.895272+00:00",
-  "git_sha": "0ba9972cd2e8e408b34999a8581643e5a037b370",
+  "run_utc": "2026-03-26T04:38:39.019631+00:00",
+  "git_sha": "2e9a787b904cc2b8cab9f94789c07f2e8cf46772",
   "primary_cohort_n": 558,
+  "broad_nodal_cohort_n": 635,
   "path_sensitivity_n": 0,
   "duckdb": "v1.4.4"
 }
