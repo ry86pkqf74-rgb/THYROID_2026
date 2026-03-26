@@ -1,4 +1,4 @@
-# Reviewer attack sheet — submission v1
+# Reviewer attack sheet — submission v1 (2026-03-26)
 
 Anticipated critiques and **documented** responses (evidence in this folder). **Do not** overclaim causality in rebuttals.
 
@@ -12,37 +12,37 @@ Anticipated critiques and **documented** responses (evidence in this folder). **
 
 ## 2. “You cannot infer that molecular testing drives extent choice.”
 
-**Response:** **Agree.** Testing was **sparse (20/558)**; `has_mol` was **not** significant in primary adjusted models; we **do not** claim a causal effect of testing. Molecular subgroup tables are **exploratory** only.
+**Response:** **Agree.** Testing was **sparse (20/558)**; `has_mol` was **not** significant in primary adjusted models (**aOR 0.606**); we **do not** claim a causal effect of testing. Molecular **2×2** counts are **descriptive** only—**not** sensitivity/specificity.
 
 ---
 
 ## 3. “Bethesda and FNA linkage missingness biases results.”
 
-**Response:** **Partially agree** as limitation. **149/558** missing Bethesda (`missingness_summary.csv`); pipeline coerces missing to “not ≥4” for the binary classifier — **documented** in code; may **attenuate or distort** association with extent. Sensitivity analyses for missing Bethesda (e.g. complete-case only on FNA-linked rows) are **not** in frozen outputs — **gap** flagged in `MANUSCRIPT_GAP_LIST.md`.
+**Response:** **Partially agree** as limitation. **149/558** missing Bethesda (`missingness_summary.csv`); pipeline coerces missing to “not ≥4” for the binary classifier — **documented** in code; may **attenuate or distort** association with extent. Formal missing-data sensitivity analyses are **not** in frozen outputs — **gap** flagged in `MANUSCRIPT_GAP_LIST.md`.
 
 ---
 
 ## 4. “Pathology-sized 2–4 cm cohort is the right gold standard; you have N=0.”
 
-**Response:** **Acknowledge.** Current freeze: **path_sensitivity_n = 0** after strict exclusions (`analysis_manifest.json`, `cohort_build_log.md`). Manuscript **does not** claim pathology corroboration. Imaging-based size reflects **pre-surgical** information set; **limitation** explicit.
+**Response:** **Acknowledge.** Current freeze: **path_sensitivity_n = 0** after strict exclusions (`analysis_manifest.json`, `cohort_build_log.md`). Manuscript **does not** claim pathology corroboration. Imaging-based size reflects the **pre-surgical** information set; **limitation** explicit.
 
 ---
 
 ## 5. “Completion thyroidectomy is probably underestimated; you report 0.”
 
-**Response:** **Acknowledge** measurement dependence. Completion flags have **heavy missingness** on broad/primary frames for completion columns in `missingness_summary.csv`; **zero** observed events among **238** lobectomy patients in `table7_completion_thyroidectomy.csv` under current operationalization. Framed as **pipeline-defined**, not definitive long-term surgical history absent chart audit.
+**Response:** **Acknowledge** measurement dependence. Completion flags have **heavy missingness** (`missingness_summary.csv`); **zero** observed events among **238** lobectomy patients in `table7_completion_thyroidectomy.csv` under current operationalization. Discussion cites **external** completion literature **only** with a **NEEDS AUTHOR CHECK** citation (ref 12). Framed as **pipeline-defined**, not definitive surgical history.
 
 ---
 
 ## 6. “Logistic model on molecular subset is garbage (n=20, separation).”
 
-**Response:** **Agree for inference.** We **deprecate** multivariable molecular ORs for primary claims; `model_summary_final.csv` flags **separation** for completion model; molecular subset file shows **unstable** statistics. Primary story is **primary + broad** models with **Table 6** descriptive concordance only.
+**Response:** **Agree for inference.** Multivariable molecular ORs are **not** primary claims; `model_summary_final.csv` flags **separation** for completion model. Primary story is **primary + broad** models with **Table 6** descriptive counts only.
 
 ---
 
 ## 7. “Why no multiplicity adjustment across many tests?”
 
-**Response:** **Fair.** Univariable battery is **screening**; primary inference emphasized on **pre-specified** multivariable models. **Formal** FDR/Bonferroni across all contrasts **not** in current outputs — either add in revision or soften language to “hypothesis-generating screen.”
+**Response:** **Fair.** Univariable battery is **screening**; primary inference emphasized on **pre-specified** multivariable models. **Formal** FDR/Bonferroni across all contrasts **not** in current outputs — add in revision or soften language to “hypothesis-generating screen.”
 
 ---
 
@@ -54,10 +54,10 @@ Anticipated critiques and **documented** responses (evidence in this folder). **
 
 ## 9. “STROBE flow figure missing.”
 
-**Response:** **Accurate gap.** Provide a cleaned flow diagram in revision; until then cite `cohort_flow.csv` cautiously (`MANUSCRIPT_STATE_AUDIT.md` notes ambiguous zeros).
+**Response:** **Addressed in package.** **Figure 1** (`fig_cohort_flow.png`) visualizes pipeline counts; legend documents **truncated** labels and pathology-arm zeros (`figure_legends_v1.md`). Editors may still request a **reformatted** CONSORT-style diagram—see `AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`.
 
 ---
 
 ## 10. “Ethics / IRB?”
 
-**Response:** **Author must supply** — not present in artifact folder.
+**Response:** **Author must supply** — not present in artifact folder (`AUTHOR_INPUTS_REQUIRED_20260326.md`).

@@ -1,8 +1,9 @@
 # Initial thyroidectomy extent among adults with preoperative 2.0–4.0 cm thyroid nodules: a retrospective cohort study
 
-**Version:** submission v1 (markdown)  
+**Version:** submission v1 (markdown); **figures revision** 2026-03-26  
 **Frozen outputs:** See `analysis_manifest.json` (git SHA and run timestamp).  
-**Quantitative traceability:** `CLAIM_SOURCE_LEDGER.md`
+**Quantitative traceability:** `CLAIM_SOURCE_LEDGER.md`  
+**Working bibliography:** `references_working_20260326.md`
 
 ---
 
@@ -14,7 +15,9 @@ See `abstract_structured_v1.md` (structured abstract aligned to this manuscript)
 
 ## Introduction
 
-For cytologically indeterminate or suspicious thyroid nodules in the 2–4 cm size range, both lobectomy and total thyroidectomy remain in contemporary use [REF:NEEDS_GUIDELINE]. Practice varies across centers and over time [REF:NEEDS_EPIDEMIOLOGY]. We examined **cross-sectional associations** between preoperative patient, cytology, and limited molecular testing factors and **initial total thyroidectomy** versus **initial lobectomy** among patients with a **preoperative imaging-derived** index nodule between 2.0 and 4.0 cm who underwent a first qualifying hemithyroidectomy or total thyroidectomy within an integrated thyroid research database. The analysis is **observational** and does **not** support causal interpretation of surgical choice.
+Contemporary management of differentiated thyroid cancer in the **>2 to ≤4 cm** intrathyroidal setting allows either lobectomy or total thyroidectomy for many patients, with choices influenced by cytologic risk, multifocality, and patient factors.[1] Prior work documents substantial **practice variation** in initial extent after modern guideline eras.[2,3] Within the **2–4 cm** range specifically, clinical reviews emphasize that both approaches remain in common use and that decisions remain heterogeneous.[4]
+
+We examined **cross-sectional associations** between preoperative patient and cytology characteristics (and limited preoperative molecular testing) and **initial total thyroidectomy** versus **initial lobectomy** among adults with an ultrasound-defined **2.0–4.0 cm** index nodule on or before the first qualifying hemithyroidectomy or total thyroidectomy in an integrated thyroid research database. This analysis describes **surgical decision-associated factors** measured preoperatively; it **does not** estimate recurrence, survival, or causal effects of extent on oncology outcomes. Reporting follows STROBE guidance for observational studies.[5]
 
 ---
 
@@ -22,7 +25,7 @@ For cytologically indeterminate or suspicious thyroid nodules in the 2–4 cm si
 
 ### Study design and data source
 
-We performed a **retrospective cohort study** using MotherDuck-queried analytic tables executed in the study pipeline [`study_pipeline.py`](study_pipeline.py). MotherDuck objects were **not** modified during manuscript preparation; all numbers in this version are derived from **frozen** CSV exports in this folder unless otherwise noted (`MANUSCRIPT_STATE_AUDIT.md`).
+We performed a **retrospective cohort study** using analytic tables queried in the study pipeline [`study_pipeline.py`](study_pipeline.py). MotherDuck objects were **not** modified during manuscript preparation; all numbers in this version are derived from **frozen** CSV exports in this folder unless otherwise noted (`MANUSCRIPT_STATE_AUDIT.md`).
 
 ### Eligibility and cohorts
 
@@ -50,17 +53,17 @@ We performed a **retrospective cohort study** using MotherDuck-queried analytic 
 
 **Cohort sizes and descriptive statistics** were computed in Python/pandas. **Table 1** contrasts lobectomy vs initial total using means for age and Bethesda category and proportions for female sex and preoperative molecular testing (`table1_by_initial_extent.csv`).
 
-**Univariable comparisons** used **Mann–Whitney U** for age and **chi-square** or **Fisher exact** (2×2 with expected &lt; 5 in any cell) for binary indicators (`univariable_tests.csv`, `univariable_screen` in `study_pipeline.py`).
+**Univariable comparisons** used **Mann–Whitney U** for age and **chi-square** or **Fisher exact** as implemented for 2×2 screens (`univariable_tests.csv`, `univariable_screen` in `study_pipeline.py`).
 
 **Multivariable logistic regression** used **statsmodels** `Logit` with **complete-case** rows for outcome and included predictors (`fit_lr`). We report **adjusted odds ratios (aOR)** with **95% confidence intervals** and **Wald p-values**. We prespecified a **parsimonious** and **extended** model on the primary strict cohort (N=558) and a **parsimonious** model on the broad-exclusion cohort (N=635). Outputs are in `logistic_primary_parsimonious.csv`, `logistic_primary_extended.csv`, `logistic_broad_nodal_parsimonious.csv`, and combined in `table2_multivariable_total_vs_lobectomy.csv`.
 
-**Molecular subset.** Only **20 / 558** patients had preoperative molecular testing in the primary cohort. We present **descriptive** concordance summaries (`table6_molecular_pathology_concordance.csv`, `molecular_concordance_cases.csv`). Fitted logistic models on this subset are **exploratory** and are **not** interpreted as stable effects (`logistic_molecular_subset.csv`; small sample and numerical separation issues).
+**Molecular subset.** Only **20 / 558** patients had preoperative molecular testing in the primary cohort. We present **descriptive** concordance summaries (`table6_molecular_pathology_concordance.csv`, `molecular_concordance_cases.csv`) **without** claiming validated diagnostic performance. Fitted logistic models on this subset are **exploratory** and are **not** interpreted as stable effects (`logistic_molecular_subset.csv`; small sample and numerical separation issues).
 
 **Software.** Analysis code `study_pipeline.py` documents use of **Python**, **pandas**, **numpy**, **scipy.stats**, and **statsmodels**; see `analysis_manifest.json` for DuckDB version.
 
 ### Missing data
 
-Key column missingness is summarized in `missingness_summary.csv` (exported long-form lists for `primary_N558` and `broad_nodal_N635` blocks). In particular, **Bethesda category** was missing for **149 / 558** primary-cohort rows (26.7%); FNA linkage and molecular fields have additional missingness. Multivariable models use **listwise deletion** over the variables included in each fit (primary models retain n=558 per OR tables for the specified covariate set).
+Key column missingness is summarized in `missingness_summary.csv` (exported long-form lists for `primary_N558` and `broad_nodal_N635` blocks). In particular, **Bethesda category** was missing for **149 / 558** primary-cohort rows (26.7%); FNA linkage, completion flags, and molecular fields have additional missingness. Multivariable models use **listwise deletion** over the variables included in each fit (primary models retain n=558 per OR tables for the specified covariate set).
 
 ---
 
@@ -69,6 +72,12 @@ Key column missingness is summarized in `missingness_summary.csv` (exported long
 ### Cohort
 
 The **primary analytic cohort** comprised **558** patients (**238** initial lobectomy, **320** initial total thyroidectomy; **320/558 = 57.3%** initial total). The **broad** suspicious-node exclusion cohort comprised **635** patients (**375** initial total; **375/635 = 59.1%**). The **pathology-defined 2–4 cm** cohort after strict nodal exclusion contained **0** patients in this frozen run; we do **not** report pathology-size parallels beyond that result (`cohort_build_log.md`).
+
+**Figure 1** shows pipeline cohort selection counts (`fig_cohort_flow.png`), including the imaging-defined 2.0–4.0 cm step and final primary **N = 558**; steps with **zero** eligible patients (pathology-defined size under the current implementation; an intermediate strict preoperative LN exclusion row) are visible as empty bars and align with `cohort_build_log.md`. Y-axis labels in this export are **abbreviated**; authors may supply a relabeled flow for final production (`AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`).
+
+### Figure 2 (primary parsimonious model)
+
+**Figure 2** is a forest plot of adjusted odds ratios from the **primary parsimonious** logistic model (`fig_forest_total_vs_lobectomy.png`; `logistic_primary_parsimonious.csv`).
 
 ### Practice pattern evidence (Table 1)
 
@@ -87,7 +96,7 @@ Among **238** initial lobectomy patients, **zero** had completion thyroidectomy 
 
 Source: **`univariable_tests.csv`**.
 
-- Age differed between groups (**Mann–Whitney p = 0.007**).
+- Age differed between groups (**Mann–Whitney p ≈ 0.007**).
 - Sex distribution did not differ (**p = 1.0**).
 - Bethesda ≥4 was associated with initial total (**p ≈ 6.0 × 10⁻⁷**).
 - Preoperative molecular testing indicator was **not** associated with initial total in univariable testing (**p = 0.66**).
@@ -97,23 +106,23 @@ Source: **`univariable_tests.csv`**.
 
 Source: **`logistic_primary_parsimonious.csv`**, **`logistic_primary_extended.csv`**.
 
-**Parsimonious model.** Higher Bethesda category (≥4 vs not) was **associated** with higher odds of initial total thyroidectomy (**aOR 2.74**, 95% **CI 1.81–4.15**, **p ≈ 1.74 × 10⁻⁶**). Older age was **associated** with lower odds (**aOR 0.986** per year, **CI 0.975–0.998**, **p = 0.026**). Female sex and preoperative molecular testing were **not** statistically associated with initial total in this model (**aOR 0.97**, **p = 0.91**; **aOR 0.61**, **p = 0.29**, respectively).
+**Parsimonious model.** Higher Bethesda category (≥4 vs not) was **associated** with higher odds of initial total thyroidectomy (**aOR 2.743**, 95% **CI 1.814–4.147**, **p ≈ 1.74 × 10⁻⁶**). Older age was **associated** with lower odds (**aOR 0.986** per year, **CI 0.975–0.998**, **p = 0.026**). Female sex (**aOR 0.974**, **CI 0.627–1.513**, **p = 0.91**) and preoperative molecular testing (**aOR 0.606**, **CI 0.237–1.546**, **p = 0.29**) were **not** statistically associated with initial total at α = 0.05.
 
-**Extended model.** Findings were **directionally similar** for age, sex, Bethesda ≥4, and preoperative molecular testing. **Bilateral nodule indicator** was **associated** with higher odds of initial total (**aOR 2.01**, **CI 1.28–3.13**, **p = 0.0023**). **TIRADS score** was **not** statistically associated (**aOR 0.958** per point, **p = 0.68**).
+**Extended model.** Findings were **directionally similar** for age, sex, Bethesda ≥4, and preoperative molecular testing. **Bilateral nodule indicator** was **associated** with higher odds of initial total (**aOR 2.005**, **CI 1.282–3.134**, **p = 0.0023**). **TIRADS score** was **not** statistically associated (**aOR 0.958** per point, **p = 0.68**).
 
 ### Broad nodal exclusion sensitivity (N = 635)
 
 Source: **`logistic_broad_nodal_parsimonious.csv`**.
 
-Patterns were **similar** to the primary parsimonious model: **Bethesda ≥4 aOR 2.77** (**CI 1.88–4.07**, **p ≈ 2.6 × 10⁻⁷**); **age aOR 0.984** per year (**CI 0.973–0.995**, **p = 0.0053**); sex and preoperative molecular testing **not** significant at α = 0.05.
+Patterns were **similar** to the primary parsimonious model: **Bethesda ≥4 aOR 2.765** (**CI 1.878–4.071**, **p ≈ 2.6 × 10⁻⁷**); **age aOR 0.984** per year (**CI 0.973–0.995**, **p = 0.0053**); sex and preoperative molecular testing **not** significant at α = 0.05.
 
 ### Molecular pathology concordance (exploratory, n = 20 tested)
 
 Source: **`table6_molecular_pathology_concordance.csv`**.
 
-Among preoperatively tested patients with binary malignant pathology coding available for the primary concordance frame, the table reports **tp = 9**, **fn = 11**, **fp = 0**, **tn = 0**, **n = 20** for `malignant_concordance_2x2` (descriptive only; **no** claim of diagnostic accuracy without a prespecified rule and CI).
+Among preoperatively tested patients with binary malignant pathology coding available for the primary concordance frame, the table reports **tp = 9**, **fn = 11**, **fp = 0**, **tn = 0**, **n = 20** for `malignant_concordance_2x2` (descriptive classification counts only; **not** sensitivity, specificity, or predictive values).
 
-Platform-specific strata (e.g. ThyroSeq **n = 8**, Afirma **n = 12** in the same file) are **too small** for stable inference.
+Platform-specific strata (ThyroSeq **n = 8**, Afirma **n = 12** in the same file) are **too small** for stable inference or performance claims.
 
 ---
 
@@ -121,22 +130,30 @@ Platform-specific strata (e.g. ThyroSeq **n = 8**, Afirma **n = 12** in the same
 
 ### What the data support
 
-In this **single-database retrospective cohort** restricted to **preoperative imaging** nodule size **2.0–4.0 cm** and a **strict** rule excluding definite preoperative nodal involvement, **57.3%** underwent **initial total thyroidectomy** (**320/558**). **Bethesda category ≥4** showed a **strong adjusted association** with initial total thyroidectomy in both parsimonious and extended models. **Older age** was **associated** with **lower** odds of initial total in adjusted models, compatible with within-cohort case-mix differences. **Female sex** was **not** associated with initial extent after adjustment. **Preoperative molecular testing** was **infrequent (20/558)** and was **not** statistically associated with initial extent in primary adjusted models.
+In this **single-database** retrospective cohort restricted to **preoperative imaging** nodule size **2.0–4.0 cm** and strict exclusion of definite preoperative nodal involvement, **57.3%** underwent **initial total thyroidectomy** (**320/558**). In adjusted models, **Bethesda category ≥4** and **bilateral nodule indicator** (extended model) showed **stronger** odds of **initial total** among preoperative variables examined, whereas **older age** was associated with **lower** odds. **Female sex** and **preoperative molecular testing** were **not** significantly associated with initial total in primary adjusted models—consistent with **sparse** testing (**20/558**) and **non-causal** interpretation of testing as measured here.
 
-**Completion thyroidectomy** after initial lobectomy was **0** in the operationalized flags (**238** lobectomy patients), a finding that should be interpreted in light of **missingness** on completion-related fields for many rows (`missingness_summary.csv`) and the **institutional definition** of completion in the pipeline.
+Prior literature similarly identifies **cytologic risk** and **multifocal/bilateral disease** themes as associated with selection of total thyroidectomy in observational settings.[7,8] National and cohort-level reports describe **age-related** patterns in extent choice after guideline updates.[9] Bethesda-tier context for surgical decision-making is well described even when cytopathology categories differ from our ≥4 indicator.[10] These external papers **do not** validate our effect sizes; they provide a **qualitative** backdrop only.
+
+**Completion thyroidectomy** after initial lobectomy was **0 / 238** under pipeline completion flags. External systematic reviews report **non-zero** pooled completion rates in other populations and time windows.[12] Our **zero** tally should be read as **operationalized, database-limited ascertainment** with **substantial missingness** on completion-related fields for many patients (`missingness_summary.csv`), not as proof that no patient ever underwent completion outside capture.
 
 ### Plausible but not proven here
 
-Clinical reasoning often ties extent choice to **risk perception, patient preference, surgeon philosophy, and undocumented indications**; these factors are **largely unmeasured** in the extracted tables and could **confound** or **explain** associations observed here. **Molecular panel results** could influence extent, but testing was **sparse** and **selected**; we **cannot** infer the causal impact of testing from these data.
+Clinical reasoning often ties extent choice to **risk perception, patient preference, surgeon philosophy, and undocumented indications**; these factors are **largely unmeasured** in the extracted tables and could **confound** or **explain** associations observed here. **Molecular panel results** could influence extent in principle, but testing was **sparse** and **selected**; we **cannot** infer the causal impact of testing from these data.
 
-### Limitations
+### Limitations of preoperative prediction (context)
 
-- **Observational design** — associations only; **no causal** claims about lobectomy vs total thyroidectomy.
+Structured guidelines summarize preoperative information used for extent decisions, yet real-world **concordance** between preoperative classification and final requisite extent can be incomplete.[6] That limitation motivates transparent, **imaging-based** cohort definitions, while underscoring that our models quantify **associations** with **observed** initial surgery only.
+
+### Limitations (this study)
+
+- **Observational design** — associations only; **no causal** interpretation of cytology, molecular testing, or imaging features on surgeon choice.
 - **Single integrated database** — generalizability **unknown**.
-- **Missingness** on Bethesda, FNA linkage, imaging linkage, and molecular fields (**see `missingness_summary.csv`**); listwise deletion may **bias** estimates if missingness is informative.
-- **Pathology-sized sensitivity cohort is empty (N = 0)** in this run — imaging-based selection is the **only** sized cohort reported.
-- **Completion and molecular** analyses face **structural zeroes** or **tiny samples**; multivariable models on subsets are **not reliable**.
-- **Temporal effects** (policy change, ATA guideline cycles) **not modeled** in primary outputs (surgery year 2013–2023 available in data but not central to frozen tables).
+- **Missing data** on Bethesda, completion, imaging, and molecular fields; listwise deletion may bias estimates if missingness is informative (**149/558** missing Bethesda).
+- **Pathology-sized sensitivity** analytic set **empty (N = 0)** — imaging-defined inclusion is the operational preoperative size frame reported here.
+- **Molecular** concordance and subset models are **exploratory** only (**n = 20** tested).
+- **Temporal** trends (e.g., 2013–2023 surgery years in data) are **not** the focus of frozen tabular outputs.
+
+**Guideline context** is evolving and explicitly allows lobectomy in many low-risk larger intrathyroidal presentations.[1] We do not argue for policy change; we describe **measured preoperative correlates** of **initial** extent in one imaging-defined cohort.[11]
 
 ---
 
@@ -146,10 +163,12 @@ Tabular analytic exports referenced in this manuscript are in **`studies/proposa
 
 ---
 
-## Table mapping (no figure files in folder)
+## Tables and figures
 
-| Label | Source CSV |
-|-------|------------|
+| Label | Source |
+|-------|--------|
+| **Figure 1** | `fig_cohort_flow.png` (see `figure_legends_v1.md`) |
+| **Figure 2** | `fig_forest_total_vs_lobectomy.png` |
 | Table 1 | `table1_by_initial_extent.csv` |
 | Table 2a–b | `logistic_primary_parsimonious.csv`, `logistic_primary_extended.csv` |
 | Table 3 | `logistic_broad_nodal_parsimonious.csv` |
@@ -157,13 +176,32 @@ Tabular analytic exports referenced in this manuscript are in **`studies/proposa
 | Table 5 | `univariable_tests.csv` |
 | Table 6 | `table6_molecular_pathology_concordance.csv` |
 
+**Not submitted:** `fig_completion_rates.png` (blank). Exploratory bar charts `fig_molecular_result_by_extent.png`, `fig_platform_specific_extent.png` are **not** used as main figures (see `AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`).
+
 ---
 
 ## References
 
-Placeholders used where a citation is needed but **no** folder bibliography exists. Replace after literature pass:
+1. Ringel MD, Sosa JA, Baloch ZW, et al. 2025 American Thyroid Association Management Guidelines for Adult Patients with Differentiated Thyroid Cancer. *Thyroid*. 2025;35(8):841-985. doi:10.1177/10507256251363120.
 
-1. [REF:NEEDS_GUIDELINE] — current ATA / management guidelines for intermediate-sized nodules.
-2. [REF:NEEDS_EPIDEMIOLOGY] — epidemiology or patterns of extent in comparable populations.
+2. Montgomery KB, et al. Evolving variation in extent of surgery for low-risk papillary thyroid cancer in the United States. *Surgery*. 2023;174(4):828-835. doi:10.1016/j.surg.2023.07.001.
 
-Full reference list to be finalized in `revision_packet_v1.md` under **NEEDS REFERENCE CHECK**.
+3. Worrall BJ, et al. Lobectomy and completion thyroidectomy rates increase after publication of the 2015 American Thyroid Association guidelines. *Thyroid*. 2023. PMCID: PMC10305631. **NEEDS AUTHOR CHECK:** complete bibliographic details.
+
+4. Kim MH, et al. Management of 2–4 cm Papillary Thyroid Carcinoma. *J Endocr Surg*. 2020. **NEEDS AUTHOR CHECK:** volume, pages, DOI.
+
+5. von Elm E, Altman DG, Egger M, et al. The STROBE Statement: guidelines for reporting observational studies. *Ann Intern Med*. 2007;147(8):573-577. doi:10.7326/0003-4819-147-8-200710160-00010.
+
+6. Dhir M, et al. Correct extent of thyroidectomy is poorly predicted preoperatively by the guidelines of the American Thyroid Association for low and intermediate risk thyroid cancers. *Surgery*. 2018. **NEEDS AUTHOR CHECK:** volume, pages, DOI.
+
+7. Wang X, et al. Risk factors that influence surgical decision-making for low-risk differentiated thyroid cancer patients with tumor diameter 1–4 cm: a retrospective study. *World J Surg Oncol*. 2020. PMCID: PMC7719324. **NEEDS AUTHOR CHECK:** full pagination/DOI.
+
+8. Kiss A, et al. Comparison of surgical strategies in the treatment of low-risk papillary thyroid carcinoma: a retrospective study. *BMC Endocr Disord*. 2023. **NEEDS AUTHOR CHECK:** article identifier, DOI.
+
+9. Sutton W, et al. Impact of the 2015 American Thyroid Association guidelines on treatment of low-risk papillary thyroid cancer in older adults. *Am J Surg*. 2022. **NEEDS AUTHOR CHECK:** volume, pages, DOI.
+
+10. Loderer T, et al. Malignancy risk in Bethesda class IV thyroid nodules: impact of 2015 ATA guidelines on surgical approach. *Ann Ital Chir*. 2023. PMCID: PMC10506119. **NEEDS AUTHOR CHECK:** full pagination.
+
+11. Hao Q, et al. Hemithyroidectomy versus total thyroidectomy for patients with differentiated thyroid cancer: a systematic review and meta-analysis. *Gland Surg*. 2025. **NEEDS AUTHOR CHECK:** volume, pages, DOI.
+
+12. [Systematic review on completion thyroidectomy rates after lobectomy—Grok working title *From Lobectomy to Completion Thyroidectomy: A Cohort Study and Systematic Review*, *Clin Endocrinol (Oxf)*, ~2025–2026]. **NEEDS AUTHOR CHECK:** full citation before quoting pooled completion proportions.

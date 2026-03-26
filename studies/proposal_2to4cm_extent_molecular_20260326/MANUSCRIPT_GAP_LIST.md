@@ -1,4 +1,4 @@
-# Manuscript gap list — submission readiness
+# Manuscript gap list — submission readiness (2026-03-26)
 
 Gaps are relative to a typical observational surgery manuscript and to **what this folder actually contains**.
 
@@ -7,11 +7,11 @@ Gaps are relative to a typical observational surgery manuscript and to **what th
 ## Essential content gaps
 
 | Gap | Severity | Notes |
-|-----|----------|--------|
-| **Full IMRAD draft** | **Was** high — addressed by `manuscript_submission_v1.md` | Prior `manuscript_full_draft.md` was abstract-only. |
-| **References / bibliography** | High | No `.bib` or `.ris` in folder. Placeholder tags + `revision_packet_v1.md` NEEDS REFERENCE CHECK. |
-| **Figure assets** | High | No `.png`/`.svg`/`.pdf` in folder — no figure submission package without new exports or external journal upload policy. |
-| **Institution, IRB, funding, COI** | High | Not present in artifacts; must be supplied by authors. |
+|-----|----------|-------|
+| **Full IMRAD draft** | Lower | Addressed by `manuscript_submission_v1.md` + **Figures 1–2** callouts. |
+| **References / bibliography** | **Medium** | `references_working_20260326.md` + manuscript reference list; **NEEDS AUTHOR CHECK** on items **3, 4, 6–12** (pagination/DOI). |
+| **Figure assets** | **Lower** | **Main:** `fig_cohort_flow.png`, `fig_forest_total_vs_lobectomy.png`. **Figure 1** labels truncated—production relabel recommended (`AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`). |
+| **Institution, IRB, funding, COI** | **High** | `AUTHOR_INPUTS_REQUIRED_20260326.md` + `AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`. |
 | **Exact calendar study period** | Medium | `surgery_year` exists in data but **year range not asserted** in prose without explicit summary table in folder. |
 | **STARD/TRIPOD** | Low–N/A | Observational cohort, not diagnostic/prognostic model paper; STROBE is primary. |
 
@@ -20,7 +20,7 @@ Gaps are relative to a typical observational surgery manuscript and to **what th
 ## Methods / reproducibility gaps
 
 | Gap | Notes |
-|-----|--------|
+|-----|-------|
 | **Pseudo R²** | `study_pipeline.py` computes `pseudo_r2` in `fit_lr` return dict but **not** written to standard CSV outputs — optional addition in future pipeline run. |
 | **Missing data in regression** | Models use `dropna()` on outcome + predictors (`fit_lr`); effective N may be **&lt;558** if unmeasured covariates added; current parsimonious set aligns with **558** in OR table `n` column. |
 | **Multiple testing** | Univariable battery **without** formal multiplicity adjustment in outputs; gap for Methods transparency. |
@@ -42,7 +42,7 @@ Gaps are relative to a typical observational surgery manuscript and to **what th
 ## Reporting / ethics gaps
 
 | Gap | Notes |
-|-----|--------|
+|-----|-------|
 | **PHI in exploratory CSV** | `exploratory_note_rationale_snippets.csv` contains truncated notes — manuscript must **not** paste raw snippets without IRB-compliant clearance. |
 | **Single-center / database** | Generalizability limitation must stay prominent. |
 
@@ -52,17 +52,16 @@ Gaps are relative to a typical observational surgery manuscript and to **what th
 
 | Topic | Gap |
 |-------|-----|
-| Flow diagram | No CONSORT-style figure file; `cohort_flow.csv` requires careful labeling (pathology arm zeros). |
+| Flow diagram | **Figure 1** present; may need **relabel** for publication (truncated axis text in export). |
 | Non-participants | Not quantified separately from exclusions in one table **in manuscript** (exclusion logic in CSV + code). |
-| **Address missingness** | `missingness_summary.csv` available; prose must cite key columns (FNA link, molecular, completion flags). |
+| **Address missingness** | `missingness_summary.csv` available; prose cites key columns (Bethesda, completion, molecular). |
 
 ---
 
-## Resolved by this submission package
+## Resolved or improved by 2026-03-26 package pass
 
-- `MANUSCRIPT_STATE_AUDIT.md` — inventory + hierarchy.
-- `CLAIM_SOURCE_LEDGER.md` — numeric traceability.
-- `manuscript_submission_v1.md` — IMRAD backbone.
-- `supplement_methods_v1.md` — method alignment to code.
-- `strobe_checklist_v1.md` — structured checklist with honest NAs.
-- `revision_packet_v1.md` — reference TODOs and reproducibility notes.
+- **`figure_legends_v1.md`** — main vs non-submitted figures documented.  
+- **`manuscript_submission_v1.md`** — numbered references; **no** `[REF:NEEDS_*]` tags; STROBE citation; figure callouts.  
+- **`references_working_20260326.md`** — Grok-transcribed working bibliography.  
+- **`AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`** — submission blockers consolidated.  
+- **`journal_fit_matrix_v1.md`** — three concrete targets (*Thyroid*, *Head & Neck*, *Ann Surg Onc*).  

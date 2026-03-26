@@ -130,3 +130,9 @@ Outputs: `logistic_*.csv`, combined `table2_multivariable_total_vs_lobectomy.csv
 ## 7. Random seed
 
 `study_pipeline.py` sets `RNG = 42` / `np.random.seed(42)` for sklearn penalized logistic fallback path (if invoked).
+
+---
+
+## 8. Figure exports (submission note)
+
+Raster figures `fig_*.png` are written by plotting helpers in `study_pipeline.py` when the pipeline is run. The 2026-03-26 manuscript package cites **`fig_cohort_flow.png`** and **`fig_forest_total_vs_lobectomy.png`** as **Figures 1–2**; see **`figure_legends_v1.md`** for exports **excluded** from main submission.

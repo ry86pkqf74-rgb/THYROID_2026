@@ -73,7 +73,7 @@ When sources disagree, rank as follows:
 | `abstract_only.md` | Abstract variant |
 | `journal_style_results.md` | Minimal results line |
 | `supplement.md` | Supplement draft |
-| `figure_legends.md` | Placeholder (no binary figures in folder) |
+| `figure_legends.md` | Superseded by `figure_legends_v1.md` |
 | `analysis_plan.md` | Short study classification |
 | `cohort_build_log.md` | **Canonical cohort narrative** |
 | `cohort_flow.md` / `cohort_flow.csv` | Flow counts (see ambiguity above) |
@@ -114,11 +114,19 @@ When sources disagree, rank as follows:
 
 **Spreadsheet:** No `.xlsx` in folder.
 
-### Figures
+### Figures (`fig_*.png`)
 
-| Status |
-|--------|
-| **No** `.png`, `.svg`, or `.pdf` figure files are present under this directory. |
+| File | Role | Main text? |
+|------|------|------------|
+| `fig_cohort_flow.png` | Pipeline cohort counts (zeros for pathology arm / intermediate steps per `cohort_build_log.md`) | **Yes — Figure 1** |
+| `fig_forest_total_vs_lobectomy.png` | Forest plot, **primary_parsimonious** model | **Yes — Figure 2** |
+| `fig_completion_rates.png` | Completion bars (empty at export) | **No** — do not submit |
+| `fig_bethesda_by_extent.png` | Extent counts by group | Optional / redundant with Table 1 |
+| `fig_initial_to_ultimate_extent.png` | Initial vs ultimate extent | Optional supplement only |
+| `fig_molecular_result_by_extent.png` | Rates by molecular class (tiny N per cell) | **No** — exploratory, misleading if overread |
+| `fig_platform_specific_extent.png` | Platform N bar chart | **No** — overlapping labels |
+
+**No** separate `.svg` / publication `.pdf` exports are in-folder; journals may require vector replot.
 
 ### Code
 
@@ -138,9 +146,10 @@ When sources disagree, rank as follows:
 
 ### Bibliography
 
-| Status |
-|--------|
-| **No** `.bib` / `.ris` in folder. |
+| File / note |
+|-------------|
+| `references_working_20260326.md` — Vancouver-style working list (Grok-sourced; **NEEDS AUTHOR CHECK** on incomplete entries). |
+| **No** `.bib` / `.ris` machine-readable export in folder. |
 
 ---
 

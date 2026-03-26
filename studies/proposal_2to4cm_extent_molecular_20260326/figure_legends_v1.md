@@ -1,24 +1,46 @@
-# Figure legends — submission v1
+# Figure legends — submission v1 (2026-03-26)
 
-## Status of figure files
+## Submission disposition (main text)
 
-There are **no** figure binary files (`.png`, `.svg`, `.pdf`) in `studies/proposal_2to4cm_extent_molecular_20260326/` at the time of this submission package. The manuscript (`manuscript_submission_v1.md`) therefore contains **no figure callouts**.
+| File | Role |
+|------|------|
+| `fig_cohort_flow.png` | **Figure 1** (main)—cohort selection counts from the frozen pipeline export. |
+| `fig_forest_total_vs_lobectomy.png` | **Figure 2** (main)—forest plot, **primary parsimonious** logistic model. |
 
-## Optional future figures (legends only — assets not included)
+## Not for main submission (retained in folder)
 
-If authors later export graphics from the study pipeline or an external drawing tool, the following would be **one** coherent figure set aligned to existing **tables**:
-
-**Figure 1 (conceptual — not rendered here). Cohort flow.**  
-Legend: Schematic of patients with first qualifying hemithyroidectomy or total thyroidectomy, application of preoperative imaging 2.0–4.0 cm inclusion, strict vs broad nodal exclusions, and final analytic N (**558** primary; **635** broad). **Note:** `cohort_flow.csv` contains intermediate zeros for pathology-defined arms; authors should reconcile labels with `cohort_build_log.md` before publishing a flow figure.
-
-**Figure 2 (conceptual — not rendered here). Forest plot of primary multivariable model.**  
-Legend: Adjusted odds ratios (95% CI) from **`logistic_primary_parsimonious.csv`** for age (per year), sex (female ref male), Bethesda ≥4, and preoperative molecular testing; vertical reference line at OR = 1.
-
-**Supplemental Figure S1 (conceptual). Extended-model forest plot.**  
-Legend: Same as Figure 2 using **`logistic_primary_extended.csv`**, including bilateral nodule indicator and TIRADS score.
+| File | Reason |
+|------|--------|
+| `fig_completion_rates.png` | **Blank / zero-height** bars at pipeline export; completion summarized in **Table 4** / text (**0/238**). **Do not** submit this raster. |
+| `fig_molecular_result_by_extent.png` | Exploratory; **tiny** denominators by molecular class; risks misreading as performance—**not** a main figure. |
+| `fig_platform_specific_extent.png` | **Overlapping** x-axis labels; descriptive **n=20** context only—**not** a main figure. |
+| `fig_bethesda_by_extent.png` | Largely **redundant** with Table 1; optional only if a journal requests a simple bar summary. |
+| `fig_initial_to_ultimate_extent.png` | Descriptive transition counts; **redundant** with text (**0** completion in lobectomy arm under flags); optional supplement only. |
 
 ---
 
-## Tables as manuscript displays
+## Figure 1. Cohort selection (primary and sensitivity frames)
 
-Primary numeric displays are **tabular** and are cited in the manuscript as source CSV files (see manuscript Table mapping section).
+**File:** `fig_cohort_flow.png`.
+
+**Legend:** Horizontal bar chart of **patient counts** at successive cohort-definition steps in `study_pipeline.py`, beginning from the thyroid surgical spine and applying imaging-defined **2.0–4.0 cm** preoperative index nodule selection, **strict** preoperative nodal exclusion (final primary cohort **N = 558**), and **broad** suspicious-node exclusion (**N = 635**). Bars with **zero** patients (e.g., pathology-defined 2.0–4.0 cm analytic arm in this freeze) appear empty and correspond to **`path_sensitivity_n = 0`** in `analysis_manifest.json`. Y-axis labels in this export are **truncated** pipeline step names; authors should replace with **full-text** labels for publication if required (`AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`).
+
+---
+
+## Figure 2. Adjusted odds ratios—primary parsimonious model
+
+**File:** `fig_forest_total_vs_lobectomy.png`.
+
+**Legend:** Forest plot of **adjusted odds ratios (95% CI)** for **initial total thyroidectomy** versus not associated with **age at surgery** (per year), **female sex** (reference male), **Bethesda category ≥4** (reference &lt;4 after pipeline coercion of missing Bethesda to not ≥4), and **any preoperative molecular test**, from **`logistic_primary_parsimonious.csv`** (**N = 558** complete cases). Vertical reference line at **OR = 1**. Title on export: “Forest: primary_parsimonious.”
+
+---
+
+## Tables
+
+Primary numeric displays remain **tabular** as listed in `manuscript_submission_v1.md` (Tables 1–6).
+
+---
+
+## Supplemental figure (optional—not exported here)
+
+**Extended-model forest plot** (predictors in **`logistic_primary_extended.csv`**, including bilateral nodule indicator and TIRADS score) is **not** present as a dedicated `.png` in this folder; authors may generate from the same plotting utility if a future pipeline run is approved, or build externally for an supplement.

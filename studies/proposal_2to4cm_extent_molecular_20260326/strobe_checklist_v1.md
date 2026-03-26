@@ -29,7 +29,7 @@ STROBE = Strengthening the Reporting of Observational Studies in Epidemiology. I
 
 ## Flow diagram
 
-**Partial.** `cohort_flow.csv` exists but requires expert labeling; **no** published figure file in folder (`figure_legends_v1.md`).
+**Yes (with caveats).** **Figure 1** (`fig_cohort_flow.png`) visualizes pipeline step counts; abbreviated y-axis labels in the raster export may require relabeling for final production (`figure_legends_v1.md`, `AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`). `cohort_flow.csv` remains the numeric cross-check.
 
 ## Data sharing
 
