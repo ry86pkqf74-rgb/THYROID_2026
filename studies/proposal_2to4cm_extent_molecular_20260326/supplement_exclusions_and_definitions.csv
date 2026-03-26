@@ -1,0 +1,5 @@
+rule,definition
+strict_ln_exclusion,CT/MRI pathologic_lymph_nodes preop; or Bethesda-6 node-specimen FNA
+broad_sensitivity,any_suspicious_node exam or nodule suspicious_node_flag preop
+initial_total,procedure_normalized total_thyroidectomy first qualifying episode
+initial_lobectomy,procedure_normalized hemithyroidectomy

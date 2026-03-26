@@ -1,0 +1,11 @@
+join_reason,join_rule,source_audit,source_fallback,source_note,source_primary,variable
+,surgery_episode_id + score_rank=1 / tumor_ordinal=1 / research_id,,tumor_episode_master_v2.tumor_size_cm; tumor_pathology.histology_1_largest_tumor_cm,,surgery_pathology_linkage_v3.path_size_cm,index_path_size_cm
+,resolved_exam_date <= index_surgery_date; prefer imaging_fna_linkage_v3 score_rank=1,,imaging_fna_linkage_v3.img_size_cm; imaging_nodule_master_v1.max_dimension_cm,,imaging_nodule_long_v2.size_cm_max,index_preop_nodule_size_cm
+long_v2 has FNA/molecular link IDs + tirads + laterality; v1 higher row count,,,imaging_nodule_master_v1,,imaging_nodule_long_v2,canonical_preop_imaging_nodule_table
+,first qualifying episode by resolved_surgery_date per research_id,path_synoptics.thyroid_procedure (if present),,,operative_episode_detail_v2.procedure_normalized,initial_surgery_extent
+,linked_fna_episode_id or temporal preop,,fna_history.merged columns if needed,,fna_episode_master_v2.bethesda_category,bethesda_category
+,linked_fna_episode_id; exclude inadequate/cancelled/stub Other/other class,,molecular_testing / genetic_testing,,molecular_test_episode_v2,molecular_platform_result
+,analysis_eligible_link_flag; score_rank,,,imaging_fna_linkage_v2 absent in live DB,imaging_fna_linkage_v3,linkage_imaging_fna
+,preop_episode_id -> surgery_episode_id,,,preop_surgery_linkage_v2 empty (0 rows) in live,preop_surgery_linkage_v3,linkage_preop_surgery
+,exam_date <= surgery_anchor,,fna malignant cervical node (Bethesda/VI + site); see cohort SQL,,ct_imaging.pathologic_lymph_nodes; mri_imaging.pathologic_lymph_nodes,strict_preop_ln_positive
+,preop exam,,imaging_nodule_long_v2.suspicious_node_flag,,imaging_exam_summary_v2.any_suspicious_node,broad_suspicious_node

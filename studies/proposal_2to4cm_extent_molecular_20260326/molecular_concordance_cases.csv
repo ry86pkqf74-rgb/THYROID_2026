@@ -1,0 +1,21 @@
+research_id,preop_mol_platform,preop_mol_result_class,preop_mol_positive,final_primary_histology,final_malignant
+5469,ThyroSeq,other,False,metastatic PTC,1.0
+5588,Afirma,suspicious,True,metastatic PTC,1.0
+5757,Afirma,other,False,metastatic PTC,1.0
+5835,Afirma,non_diagnostic,False,metastatic PTC,1.0
+5902,Afirma,negative,False,metastatic PTC,1.0
+5933,Afirma,negative,False,metastatic PTC,1.0
+6032,Afirma,suspicious,True,metastatic PTC,1.0
+6252,Afirma,suspicious,True,metastatic PTC,1.0
+6260,ThyroSeq,other,False,metastatic PTC,1.0
+6778,ThyroSeq,suspicious,True,metastatic PTC,1.0
+7051,ThyroSeq,other,False,metastatic PTC,1.0
+7540,Afirma,suspicious,True,metastatic PTC,1.0
+7712,ThyroSeq,other,False,metastatic PTC,1.0
+8534,ThyroSeq,other,False,metastatic PTC,1.0
+8880,Afirma,suspicious,True,metastatic PTC,1.0
+9235,Afirma,suspicious,True,metastatic PTC,1.0
+9453,ThyroSeq,other,False,metastatic PTC,1.0
+9504,Afirma,suspicious,True,metastatic PTC,1.0
+9648,Afirma,suspicious,True,metastatic PTC,1.0
+9786,ThyroSeq,other,False,metastatic PTC,1.0

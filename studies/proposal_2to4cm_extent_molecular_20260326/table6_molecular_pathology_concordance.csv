@@ -1,0 +1,5 @@
+framework,tp,fn,fp,tn,n
+malignant_concordance_2x2,9,11,0,0,20
+aggressive_or_malignant_vs_highrisk_mol,9,11,0,0,20
+platform_ThyroSeq,1,7,0,0,8
+platform_Afirma,8,4,0,0,12

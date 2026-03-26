@@ -1,0 +1,9 @@
+# Cohort flow
+
+- **all_patients_first_thyroid_procedure_lobe_or_total_or_unknown**: n = 9368
+- **hemithyroidectomy_or_total_only**: n = 8370
+- **pathology_defined_size_2_to_4_cm**: n = 0
+- **preop_imaging_nodule_size_2_to_4_cm**: n = 635
+- **after_strict_preop_ln_exclusion_path_cohort**: n = 0
+- **after_strict_preop_ln_exclusion_preop_cohort**: n = 558
+- **primary_preop_cohort_final_N**: n = 558

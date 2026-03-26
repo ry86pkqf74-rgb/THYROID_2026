@@ -1,0 +1,3 @@
+claim,source,output_file,denominator,manuscript_ref
+primary_cohort_N,study_pipeline.py:preop_primary,patient_level_dataset.csv,558,Abstract/Results
+initial_total_count,sum(initial_total),patient_level_dataset.csv,320,Results
