@@ -13,7 +13,7 @@
 
 1. **Pull / verify `main` on GitHub** — includes `studies/proposal2_ete_staging/MANUSCRIPT_REVISION_PACKET_20260326.md` and `revision_rerun_20260326/` (no `.venv`).
 
-2. **Optional new tag** — e.g. `git tag -a v2026.03.26-ete-revision -m "ETE manuscript revision packet + CITATION sync"` and `git push origin v2026.03.26-ete-revision`.
+2. **Git tag (done for this drop)** — `v2026.03.26-ete-manuscript-revision` is on GitHub; use it as the **GitHub Release** title/tag if Zenodo is wired to releases.
 
 3. **Rebuild Zenodo bundle (local)** — from repo root:
    ```bash
