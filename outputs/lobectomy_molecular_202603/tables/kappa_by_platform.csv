@@ -1,0 +1,4 @@
+platform,n_pairs,kappa,agreement_pct
+Afirma,10,-0.17647058823529393,0.6
+ThyroSeq,6,0.0,0.16666666666666666
+all_preop_molecular,16,-0.125,0.4375

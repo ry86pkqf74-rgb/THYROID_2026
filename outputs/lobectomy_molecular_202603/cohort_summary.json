@@ -1,0 +1,15 @@
+{
+  "n_analytic": 574,
+  "n_total_thyroidectomy": 322,
+  "n_lobectomy_group": 252,
+  "n_path_malignant_true": 280,
+  "n_preop_molecular": 21,
+  "n_genetics_guided_true": 9,
+  "n_completion_true": 0,
+  "cohort_flow_hints": {
+    "n_first_hemi_or_tt_with_date": 8370,
+    "n_with_size_2_4_cm": 656,
+    "n_m1_in_that_spine": 26
+  },
+  "outputs": "/Users/ros/THyroid 2026/THYROID_2026/outputs/lobectomy_molecular_202603"
+}

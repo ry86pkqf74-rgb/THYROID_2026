@@ -1,0 +1,8 @@
+{
+  "n_total": "574",
+  "continuous_vars": "['age_at_surgery', 'exact_size_cm_primary']",
+  "categorical_vars": "['sex', 'bethesda_III_vs_IV_V', 'has_preop_molecular', 'genetics_guided', 'platform_preop', 'path_malignant_flag', 'ata_risk_category']",
+  "groupby": "total_thyroidectomy",
+  "nonnormal": "['age_at_surgery', 'exact_size_cm_primary']",
+  "smd_computed": "True"
+}

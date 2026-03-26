@@ -1,0 +1,7 @@
+variable,test_used,statistic,p_value,p_adjusted,significant,effect_size,effect_label,interpretation,correction
+bethesda_III_vs_IV_V,Chi-square,30.8873,0.0,0.0,True,0.232,small,Chi-square; p=0.0000; small effect (V=0.232),fdr_bh
+age_at_surgery,Mann-Whitney U,45596.5,0.01082,0.03246,True,0.2378,small,Mann-Whitney U; p=0.0108; small effect (d=0.238),fdr_bh
+exact_size_cm_primary,Mann-Whitney U,41915.0,0.495939,0.8493120000000001,False,0.0051,negligible,Mann-Whitney U; p=0.4959; negligible effect (d=0.005),fdr_bh
+has_preop_molecular,Chi-square,0.3291,0.566208,0.8493120000000001,False,0.0239,negligible,Chi-square; p=0.5662; negligible effect (V=0.024),fdr_bh
+sex,Chi-square,0.0,1.0,1.0,False,0.0,negligible,Chi-square; p=1.0000; negligible effect (V=0.000),fdr_bh
+genetics_guided,Fisher exact,0.9779,1.0,1.0,False,0.0,negligible,Fisher exact; p=1.0000; negligible effect (V=0.000),fdr_bh

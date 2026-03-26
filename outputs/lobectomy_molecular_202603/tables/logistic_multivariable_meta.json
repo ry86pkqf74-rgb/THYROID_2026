@@ -1,0 +1,5 @@
+{
+  "n": 574,
+  "auc": 0.6454882677708765,
+  "formula": "total_thyroidectomy ~ age_at_surgery + C(sex) + exact_size_cm_primary + C(bethesda_III_vs_IV_V) + has_preop_molecular + genetics_guided"
+}
