@@ -21,6 +21,8 @@ in papillary thyroid carcinoma (PTC).
 
 ## Key Outputs
 
+- **`MANUSCRIPT_REVISION_PACKET_20260326.md`** — Audit-first manuscript revision support (freeze, CT/node reconciliation, Methods prose, numeric checklist). **GitHub is source of truth** for this packet; refresh the Zenodo archive (new version) to mirror it—see `docs/ZENODO_GITHUB_SYNC_NOTES_20260326.md`.
+- **`revision_rerun_20260326/`** — PSM sensitivity rerun on current exports (does not overwrite `audit_tables/`); local `.venv/` is gitignored.
 - **Tables 1-7:** Demographics, stage migration, regression, sensitivity, expanded results, comparison
 - **Figures 1-10:** ETE distribution, stage migration, risk by ETE, ROC, Tg trajectory, forest plots, KM survival, cohort flow, matched DFS
 - `analysis_report.md` — Full narrative report

@@ -16,9 +16,12 @@ abstract: >-
   A comprehensive thyroid cancer research lakehouse covering 11,673 patients
   across 13 base tables with 60+ engineered features, cross-domain entity
   extraction, temporal linkage, and interactive Streamlit dashboards backed
-  by MotherDuck cloud DuckDB. Includes propensity-score matched ETE staging
-  analysis (HR 1.84, 95% CI 1.08–3.12, p=0.024) and NSQIP surgical outcomes
-  linkage.
+  by MotherDuck cloud DuckDB. Includes reproducible ETE / AJCC 8th-edition
+  staging analyses (ordinal recurrence-risk models; structural endpoint with
+  propensity matching) under studies/proposal2_ete_staging, with manuscript
+  alignment notes in MANUSCRIPT_REVISION_PACKET_20260326.md. NSQIP surgical
+  outcomes linkage where applicable. The GitHub repository may be ahead of
+  this Zenodo snapshot; create a new Zenodo version to archive later commits.
 keywords:
   - thyroid cancer
   - papillary thyroid carcinoma

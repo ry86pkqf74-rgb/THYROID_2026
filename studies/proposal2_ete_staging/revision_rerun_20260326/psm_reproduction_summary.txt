@@ -1,0 +1,7 @@
+exports_ROOT: /Users/ros/THyroid 2026/THYROID_2026
+n_expanded_ptc: 3278
+psm_eligible_pool_nonmissing: 2452
+treated_micro_ete_in_pool: 1736
+control_no_ete_in_pool: 716
+matched_pairs: 712
+frozen_audit_pairs_expected: 711

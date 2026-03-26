@@ -1,0 +1,5 @@
+Variable,SMD_before,SMD_after
+age_at_surgery,0.1419,-0.205
+female,0.0519,-0.1436
+largest_tumor_cm,-0.013,0.0133
+n_positive_flag,0.2166,-0.5714
