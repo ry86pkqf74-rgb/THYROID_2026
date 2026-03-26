@@ -7,6 +7,7 @@ This folder contains a **retrospective cohort analysis** of **initial total thyr
 - **Main manuscript (IMRAD):** [`manuscript_submission_v1.md`](manuscript_submission_v1.md)
 - **Structured abstract:** [`abstract_structured_v1.md`](abstract_structured_v1.md)
 - **Audit / traceability:** [`MANUSCRIPT_STATE_AUDIT.md`](MANUSCRIPT_STATE_AUDIT.md), [`CLAIM_SOURCE_LEDGER.md`](CLAIM_SOURCE_LEDGER.md), [`MANUSCRIPT_GAP_LIST.md`](MANUSCRIPT_GAP_LIST.md)
+- **External context & author checklist (2026-03-26):** [`external_context_grok_live_literature_20260326.md`](external_context_grok_live_literature_20260326.md), [`external_context_elicit_molecular_background_20260326.md`](external_context_elicit_molecular_background_20260326.md), [`AUTHOR_INPUTS_REQUIRED_20260326.md`](AUTHOR_INPUTS_REQUIRED_20260326.md)
 - **Supporting submission docs:** [`supplement_methods_v1.md`](supplement_methods_v1.md), [`figure_legends_v1.md`](figure_legends_v1.md), [`strobe_checklist_v1.md`](strobe_checklist_v1.md), [`cover_letter_v1.md`](cover_letter_v1.md), [`journal_fit_matrix_v1.md`](journal_fit_matrix_v1.md), [`reviewer_attack_sheet_v1.md`](reviewer_attack_sheet_v1.md), [`revision_packet_v1.md`](revision_packet_v1.md)
 
 ## Regenerating analytic CSVs (optional)
