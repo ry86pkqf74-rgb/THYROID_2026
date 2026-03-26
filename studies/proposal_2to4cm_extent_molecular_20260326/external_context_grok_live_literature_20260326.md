@@ -1,67 +1,155 @@
-# External context — Grok memo normalized (live literature pass)
+# External context — Grok literature & insertion memos (live-web pass + folder truth)
 
-**Source file:** `/Users/ros/Downloads/GROK_2_4_cm_manuscript_feedback.txt`  
-**Normalized:** 2026-03-26  
-**Authority rule:** This study folder (`proposal_2to4cm_extent_molecular_20260326/`) is the **only** quantitative source of truth for **this** paper. Grok content must **not** override `analysis_manifest.json`, `CLAIM_SOURCE_LEDGER.md`, or CSV-backed numbers in this folder.
+**Sources:** (1) prior normalized memo: `/Users/ros/Downloads/GROK_2_4_cm_manuscript_feedback.txt`; (2) **latest Grok feedback** pasted in authoring task, 2026-03-26.  
+**Updated:** 2026-03-26 (revision 2).
 
----
-
-## A. Safe to use for this paper (after author verification of citations)
-
-Use as **secondary literature and framing**, not as numeric results for this manuscript.
-
-1. **Reporting framework** — STROBE-oriented transparency for retrospective cohorts; align with `strobe_checklist_v1.md` and formal STROBE citation once authors add a bibliography.
-
-2. **Topic-level literature themes** (verify primary sources before citing):
-   - Evolution of ATA / management guidance on extent (lobectomy vs total) for differentiated thyroid cancer, including contemporary updates framed in guideline text.
-   - Mixed observational evidence on whether extent differs by oncologic outcomes after multivariable adjustment, with **size-stratified** nuance in some cohorts.
-   - Role of **molecular and cytologic risk tools** as adjuncts to anatomy/size for decision-making (as **background**, not as this study’s findings).
-
-3. **Writing discipline (qualitative)** — Grok’s advice to avoid causal language, to qualify “equivalence/superiority” claims, and to acknowledge incomplete outcome ascertainment **matches** the caution in `MANUSCRIPT_STATE_AUDIT.md` / `manuscript_submission_v1.md` for **this** design (cross-sectional association with surgical extent choice).
-
-4. **Journal-fit brainstorming** — Shortlist themes (e.g., specialty endocrine/surgery journals vs broader surgical oncology) are useful **only** as a starting point; word limits and policies must be confirmed from each journal’s current author instructions.
-
-5. **Reviewer-facing themes** — Generic categories (confounding, missing data, single-database limits, multiplicity) are useful in `reviewer_attack_sheet_v1.md` **if** responses are tied to **this** folder’s methods and Ns.
+**Authority:** `studies/proposal_2to4cm_extent_molecular_20260326/` is the **only** quantitative source of truth for **this** paper. Grok text must **not** override `analysis_manifest.json`, `CLAIM_SOURCE_LEDGER.md`, or CSVs. **Do not** re-use older repo-wide Grok framing (e.g., N=10,871 / N=4,136, recurrence rates, lakehouse “readiness gate” KPIs) as if they described **this** manuscript.
 
 ---
 
-## B. Background only (do not present as this study’s results)
+## 0. This manuscript — verified figures (copy-paste truth)
 
-1. **Listed references and narrative reviews** — Ringel et al. 2025 ATA update, large NCDB-style analyses, meta-analyses (e.g., pooled recurrence/OS/DSS summaries), and size-subgroup papers cited in the memo are **context for Introduction/Discussion** once verified; they are **not** outputs of the 2–4 cm **preoperative imaging cohort** analysis in this folder.
+Values below match **`CLAIM_SOURCE_LEDGER.md`**, **`analysis_manifest.json`**, and **`manuscript_submission_v1.md`** (frozen v1). Use these when reconciling any external memo.
 
-2. **Practice context** — Discussion of lobectomy adoption, completion thyroidectomy rates reported in **other** studies/reviews, and debates about 2–4 cm thresholds belong in **Discussion** as literature comparison only.
+| Topic | Value |
+|-------|--------|
+| **Primary analytic N** | **558** |
+| **Broad nodal exclusion N** | **635** |
+| **Initial lobectomy / initial total (primary)** | **238** / **320** |
+| **Initial total as % of primary N** | **320/558 = 57.3%** |
+| **Broad cohort: initial total count / %** | **375** / **375/635 = 59.1%** |
+| **Pathology-defined 2–4 cm cohort (strict LN exclusion)** | **N = 0** (`path_sensitivity_n`) |
+| **Preoperative molecular tested (primary)** | **20 / 558 (3.6%)** |
+| **Completion thyroidectomy after lobectomy (pipeline flags)** | **0 / 238** (ever; 30/90/365 d all **0**) |
+| **Bethesda category missing (primary)** | **149 / 558 (26.7%)** — preserve in Methods/limitations |
+| **Primary outcome (regression)** | Binary **`initial_total`** (not recurrence/DSS) |
 
-3. **Molecular panel performance literature** — Papers on ThyroSeq/BRAF/RAS prognostication belong in **background** or comparison to the **exploratory** n=20 concordance tables here; they do **not** substitute for this cohort’s sparse testing.
+**Parsimonious model (N = 558):** `age_at_surgery` **aOR 0.986** (95% **CI 0.975–0.998**, **p ≈ 0.026**); `sex_f` **aOR 0.97** (ns); `bethesda_ge4` **aOR 2.74** (95% **CI 1.81–4.15**, **p ≈ 1.74 × 10⁻⁶**); `has_mol` **aOR 0.61** (ns).
 
-4. **Database-hardening / lakehouse narrative** — Any language about “7/7 readiness gates,” broad recurrence-date resolution fractions, NSQIP linkage at **population** scale, or cure-model (PTCM/MCM) infrastructure refers to **other** repo documentation and **must not** be pasted as if it were the methods/results of **this** extent-choice manuscript without rewriting to match `study_pipeline.py` / frozen CSVs.
+**Extended model (N = 558):** **`bilateral_nodule_indicator` aOR 2.01** (95% **CI 1.28–3.13**, **p ≈ 0.0023**); **`tirads_score`** not significant (per ledger).
 
----
+**Broad parsimonious (N = 635):** e.g. **`bethesda_ge4` aOR 2.77** (95% **CI 1.88–4.07**); **`age_at_surgery` aOR 0.984**/year (95% **CI 0.973–0.995**).
 
-## C. Do NOT use as quantitative source of truth
+**Univariable (primary):** age **p ≈ 0.007**; sex **p = 1.0**; **Bethesda ≥4 p ≈ 6.0 × 10⁻⁷**; preop molecular **p = 0.66**; bilateral nodule **p = 0.048**.
 
-**Flag: Grok infers “the paper” from repo-wide materials.** The following numbers and endpoints **conflict** with this folder’s actual study (see `MANUSCRIPT_STATE_AUDIT.md`, `analysis_manifest.json`, `manuscript_submission_v1.md`).
+**Exploratory molecular-pathology table:** **`malignant_concordance_2x2`** tp/fn/fp/tn **9 / 11 / 0 / 0**, **n = 20** (descriptive only).
 
-| Grok / repo-wide framing | This folder’s truth (do not replace) |
-|--------------------------|-------------------------------------|
-| Total surgical patients **N = 10,871**; cancer subcohort **N = 4,136** | **Primary analytic N = 558**; broad nodal sensitivity **N = 635** |
-| Recurrence **18.3%** (1,986/10,871); structural recurrence counts | **Primary outcome** for regression is **`initial_total`** vs lobectomy cohort; recurrence is **not** the primary endpoint in the submission v1 backbone |
-| Complications **2.6%**; RLN injury **0.54%** (repo/NSQIP narrative) | Not established as v1 manuscript primary results from this folder’s cited tables |
-| Molecular tested **10,025**; BRAF+ counts | **Preoperative molecular testing: 20 / 558 (3.6%)** in primary cohort |
-| Cure modeling (PTCM/MCM), “high-cure DTC” emphasis | **Not** the v1 manuscript’s stated primary analytic goal |
-| “88.8% recurrence dates unresolved,” RAI dose recovery caps, etc. | May appear in **other** audit docs; **do not** silently merge into this paper’s limitations without checking **this** folder’s `missingness_summary.csv` / discussion text |
-
-**Additional rule:** Any Grok sentence that says “our cohort,” “we found,” or implies **oncologic outcome rates** from the **10,871 / 4,136** frame must be **deleted or rewritten** to match the **558 / 635** imaging-defined extent-choice analysis.
-
----
-
-## D. Conflicts to resolve explicitly in prose (Grok vs this manuscript)
-
-1. **Completion thyroidectomy** — Grok suggests discussing ~19–45% completion in the literature; **this** frozen run reports **0 / 238** by pipeline completion flags (`table7_completion_thyroidectomy.csv`). Discussion must **not** blur population review statistics with **this** cohort’s operational definition without clear wording.
-
-2. **“Large audited cancer-eligible N=4,136”** — **Incorrect** as the claim for **this** paper; the submission package centers on **N = 558** (strict) / **635** (broad).
-
-3. **Molecular integration as a main quantitative pillar** — Literature supports molecular prognostication in general; **here**, molecular testing is **rare** and models are **exploratory / unstable** per `MANUSCRIPT_GAP_LIST.md`.
+**Frozen run:** `analysis_manifest.json` — `run_utc` **2026-03-26T04:38:39+00:00**, `git_sha` **2e9a787b904cc2b8cab9f94789c07f2e8cf46772**, DuckDB **v1.4.4**.
 
 ---
 
-*End of normalized Grok memo. Authors should verify every external citation (DOI/PMID, year, journal) independently.*
+## A. Fourteen references (Grok list — extent choice / practice variation / STROBE)
+
+**Editorial note:** Grok’s heading requested “strictly **2025–2026**” sources, but the list below includes **2007, 2018, 2020, 2021, 2022, 2023, 2024** items (e.g., STROBE, Dhir, Wang). Treat the set as a **starter bibliography**; **verify** each citation (journal name, year, DOI/PMID, PMC ID) in PubMed/publisher sites before insertion. Some entries use “or equivalent” wording — **resolve** to a single verified reference.
+
+1. **Ringel MD, Sosa JA, Baloch Z, et al.** 2025 American Thyroid Association Management Guidelines for Adult Patients with Differentiated Thyroid Cancer. *Thyroid*. 2025 Aug;35(8):841-985. DOI: 10.1177/10507256251363120. PMID: 40844370. Guideline — initial surgical extent (lobectomy appropriate/option for many unilateral **>2 and ≤4 cm** cT2N0M0 cases; contralateral nodules; patient preference).
+
+2. **von Elm E, Altman DG, Egger M, et al.** The Strengthening the Reporting of Observational Studies in Epidemiology (STROBE) statement. *Ann Intern Med*. 2007 Oct 16;147(8):573-577. DOI: 10.7326/0003-4819-147-8-200710160-00010. PMID: 17938396. Reporting guideline.
+
+3. **Montgomery KB, et al.** Evolving variation in extent of surgery for low-risk papillary thyroid cancer in the United States. *Surgery*. 2023;174(4):828-835. DOI: 10.1016/j.surg.2023.07.001. PMID: 37550165. National practice variation, 1–4 cm context.
+
+4. **Wang X, et al.** Risk Factors That Influence Surgical Decision-Making for Low-Risk Differentiated Thyroid Cancer Patients with Tumor Diameter 1–4 cm: A Retrospective Study. *World J Surg Oncol* (or equivalent **PMC7719324**). 2020. Predictors including size (**≥2.15 cm**) and multifocality/bilateral disease — **parallel** to bilateral **aOR 2.01** and age effects in **this** cohort (**verify** final cite).
+
+5. **Worrall BJ, et al.** Lobectomy and completion thyroidectomy rates increase after publication of the 2015 ATA guidelines. *Thyroid*. 2023 (**PMC10305631**). Lobectomy adoption + variation in upfront total.
+
+6. **Dhir M, et al.** Correct extent of thyroidectomy is poorly predicted preoperatively by the ATA guidelines for low and intermediate risk thyroid cancers. *Surgery*. 2018. Limits of preoperative prediction in **1–4 cm** context.
+
+7. **Hao Q, et al.** Hemithyroidectomy versus total thyroidectomy for patients with differentiated thyroid cancer: systematic review and meta-analysis. *Gland Surg*. 2025. Pooled context for extent trade-offs.
+
+8. **From Lobectomy to Completion Thyroidectomy: A Cohort Study and Systematic Review.** *Clin Endocrinol (Oxf)*. **2025/2026** (Grok: recent SR; **N = 23,899** pooled; completion **~19.2%**, up to **~45%** in 1–4 cm–focused studies). **Verify** exact volume/issue/DOI — relevant **only** as **literature contrast** to **this** cohort’s **0/238** flagged completions under pipeline rules.
+
+9. **Barbaro D, et al.** Total thyroidectomy vs. lobectomy in differentiated thyroid cancer: narrative review. *J Clin Med* (or equivalent). 2021. **Verify** journal/volume.
+
+10. **Kim MH, et al.** Management of 2–4 cm Papillary Thyroid Carcinoma. *J Endocr Surg*. 2020. Size-specific framing.
+
+11. **Sutton W, et al.** Impact of the 2015 ATA guidelines on treatment of low-risk papillary thyroid cancer in older adults. *Am J Surg*. 2022. Age-stratified extent variation — **parallel** to age **aOR 0.986**/year.
+
+12. **Kiss A, et al.** Comparison of surgical strategies in low-risk papillary thyroid carcinoma. *BMC Endocr Disord*. 2023. Size and age effects on extent.
+
+13. **Loderer T, et al.** Malignancy risk in Bethesda class IV thyroid nodules… impact of 2015 ATA guidelines on surgical approach. *Ann Ital Chir*. 2023 (**PMC10506119**). Bethesda influence on total vs lobectomy — **parallel** to **Bethesda ≥4 aOR 2.74**.
+
+14. **Xu J, et al.** Lobectomy sufficiency for 1–4 cm differentiated thyroid cancer. *Sci Rep*. 2024. DOI: 10.1038/s41598-024-83893-4. Size-specific context (**Grok prior pass cited oncologic endpoints** — if cited here, use **only** as background; **this** paper does **not** report recurrence/DSS as primary).
+
+**Scope filter (user request):** No **recurrence-outcome** or **molecular-diagnostic-performance** papers beyond incidental mention in **Xu** — authors should keep **Xu** and **Hao** citations tightly scoped to **extent choice / practice context** if they wish to honor that filter.
+
+---
+
+## B. Draft placeholder replacements (Grok — verify guideline text against primary source)
+
+**Introduction — guideline:**  
+“According to the 2025 American Thyroid Association guidelines, for patients with unilateral intrathyroidal differentiated thyroid cancer measuring **>2 and ≤4 cm** without extrathyroidal extension or clinical nodal disease, either lobectomy or total thyroidectomy may be performed depending on disease features, presence of contralateral nodules, and patient preference (**Ringel MD et al., Thyroid 2025**).”
+
+**Introduction — practice variation:**  
+“Despite guideline support for de-escalation, significant practice variation persists in the choice of initial surgical extent for **imaging-defined 2–4 cm** nodules, with upfront total thyroidectomy rates often **exceeding 50%** in real-world cohorts (**Montgomery KB et al., Surgery 2023**; **Worrall BJ et al., 2023**).”  
+*Truth check:* **this** cohort reports **57.3%** initial total (**320/558**) and **59.1%** broad (**375/635**) — compatible with “often exceeding 50%” but **do not** attribute Montgomery/Worrall denominators to **this** database.
+
+**Discussion — suggested sentences (adapt; keep associational language):**
+
+- “These preoperative predictors align with recent analyses showing **Bethesda category** and **bilateral/multifocal disease** as key drivers of total thyroidectomy selection (**Wang X et al., 2020**; **Kiss A et al., 2023**).”
+
+- “**Age** remains an independent factor, consistent with national trends demonstrating lower odds of total thyroidectomy with increasing patient age (**Sutton W et al., 2022**).” *Pair with **aOR 0.986**/year **(CI 0.975–0.998)** from **this** cohort.*
+
+- “The **low rate of molecular testing (3.6%)** and **zero flagged completions** under pipeline criteria reflect **selective** contemporary practice and imaging-based selection (**Loderer T et al., 2023**; completion systematic review, **Clin Endocrinol 2025/2026**).”  
+  *Truth + caveat:* **20/558** tested; **0/238** completions per **`table7_completion_thyroidectomy.csv`**; **contrast** external pooled completion rates **without** implying **this** database captured all completions (**missingness** on completion fields — see manuscript limitations).
+
+- “Limitations of preoperative prediction are well documented (**Dhir M et al., 2018**), underscoring the value of this **imaging-defined** cohort approach.”
+
+- “Findings are placed in context of the **2025 ATA update**, which continues to endorse lobectomy as an appropriate option for many low-risk **2–4 cm** cases (**Ringel MD et al., Thyroid 2025**).”
+
+- “Persistent variation in initial extent choice highlights the ongoing need for individualized decision-making tools (**Hao Q et al., 2025** meta-analysis).”
+
+---
+
+## C. Journal-fit memo — three targets only (Grok: publisher sites ~March 2026)
+
+**Verify** all limits on each journal’s **current** author instructions before submission.
+
+### Thyroid (Liebert / ATA)
+
+- **Fit:** Strong — ATA-aligned retrospective surgical **decision** cohorts.  
+- **Word limit:** ~**3,000** (excl. abstract, refs, tables/figures/legends).  
+- **Abstract:** Structured, **≤350** words.  
+- **Figures/tables:** up to **10** combined.  
+- **Notes:** IRB/ethics in Methods; line numbering may be requested; Vancouver style; hybrid OA.
+
+### Head & Neck (Wiley)
+
+- **Fit:** Strong — surgical decision / observational cohorts.  
+- **Word limit:** No strict ceiling (concise; often **<4,000**).  
+- **Abstract:** Structured **~150–250** words — may require **condensing** the current structured abstract.  
+- **Figures/tables:** flexible (**~8** sufficient per Grok).  
+- **Notes:** High-res figures; hybrid OA.
+
+### Annals of Surgical Oncology (Springer)
+
+- **Fit:** Strong — surgical oncology cohorts, extent-of-surgery decisions.  
+- **Word limit:** **~3,000–5,000** (excl. abstract) per Grok.  
+- **Abstract:** Structured **~250** words.  
+- **Figures/tables:** **6–8** main (+ supplements).  
+- **Notes:** Clear clinical implications; supplement for detailed methods/audit; hybrid OA.
+
+---
+
+## D. “Do not overclaim” memo (Grok, tailored to **this** folder)
+
+1. Frame strictly as **preoperative predictors of initial extent choice** in an **imaging-defined 2.0–4.0 cm** index nodule cohort (**N = 558** primary); **do not** imply primary **postoperative oncologic** or **recurrence** findings from this analysis.  
+2. Report **associations** only (e.g., “**Bethesda ≥4** associated with higher odds of initial total thyroidectomy [**aOR 2.74**, **95% CI 1.81–4.15**]”); avoid causal “necessity/superiority” language.  
+3. **Molecular testing (3.6%)** and **completion flags (0/238)** are **descriptive / exploratory**; **do not** claim diagnostic performance, causal guidance value, or broad generalizability from **n = 20** concordance.  
+4. State **pathology-defined sensitivity N = 0** clearly; **do not** extrapolate imaging–pathology discordance to populations beyond this run’s linkage.  
+5. Emphasize **observational** design and **unmeasured confounding** (surgeon preference, counseling, indications not in tables); cite **STROBE** and preoperative-prediction limits (**Dhir 2018**).  
+6. Conclusions: **practice patterns** and **alignment with 2025 ATA options** — not prescriptive “should” policy.
+
+---
+
+## E. Legacy pitfall table (older Grok / repo-wide memo — still forbidden)
+
+| Wrong frame (do **not** import) | **This** paper’s truth |
+|----------------------------------|-------------------------|
+| N = 10,871 / 4,136 “cancer cohort” | **N = 558** (primary) / **635** (broad) |
+| Recurrence %, cure models (PTCM/MCM), complication/RLN KPIs as **this** results | Outcome ** **`initial_total`** **; primary claims from logistic + Table 1 |
+| Molecular tested **10,025** etc. | **20 / 558 (3.6%)** preop molecular |
+| Implied oncologic superiority/equivalence | **Association** + guideline **context** only |
+
+---
+
+*Authors must verify every bibliographic field and quoted guideline clause against primary sources. Grok output is not a substitute for reading Ringel et al. 2025.*
