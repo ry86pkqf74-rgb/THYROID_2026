@@ -167,7 +167,7 @@
 │  studies/proposal2_ete_staging/figures/                          │
 │    fig1-fig11 (stage distribution, waterfall, ROC, forest, KM)  │
 │                                                                  │
-│  studies/manuscript_draft/manuscript_v1.md                       │
+│  manuscripts/pool_malignancy_202603/manuscript_v1.md             │
 │    → Final manuscript text (Abstract–References)                 │
 └──────────────────────────────────────────────────────────────────┘
 ```
@@ -206,7 +206,7 @@ path_synoptics.research_id (INTEGER, primary key across all tables)
 | proposal2_recommendations.py | studies/proposal2_ete_staging/ | Sensitivity + recommendations | **YES** |
 | audit_reproduce.py | studies/proposal2_ete_staging/ | Independent audit | **YES** |
 | risk_enriched_mv | MotherDuck: thyroid_research_2026 | Upstream source table | **YES** |
-| manuscript_v1.md | studies/manuscript_draft/ | Manuscript text | **YES** |
+| manuscript_v1.md | manuscripts/pool_malignancy_202603/ | Manuscript text | **YES** |
 | ptc_full.csv | studies/proposal2_ete_staging/tables/ | Intermediate (PTC demographics) | intermediate |
 | recurrence_full.csv | studies/proposal2_ete_staging/tables/ | Intermediate (risk features) | intermediate |
 | imaging_correlation.csv | studies/proposal2_ete_staging/tables/ | Intermediate (imaging data) | intermediate |

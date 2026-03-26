@@ -248,7 +248,7 @@ In this propensity-score matched analysis of 6,630 thyroid cancer patients, extr
 - Figure 11: KM — Recurrence-Free Survival by ETE Status (`fig11_km_ete_status.png`) *(log-rank p<0.001 for gross vs other)*
 - Figure 12: Forest Plot — Multivariate Cox HR by ETE Subtype (`fig12_forest_cox.png`)
 
-All figures available in `studies/proposal2_ete_staging/figures/`, `studies/manuscript_draft/figures/`, and `notebooks/01_publication_figures.ipynb`.
+All figures available in `studies/proposal2_ete_staging/figures/`, `manuscripts/pool_malignancy_202603/figures/`, and `notebooks/01_publication_figures.ipynb`.
 
 ## Supplementary Tables
 

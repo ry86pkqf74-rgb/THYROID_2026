@@ -31,7 +31,7 @@ documented source limitations, not data quality failures.
 | Readiness assessment (7/7 PASS) | `exports/FINAL_PUBLICATION_BUNDLE_20260313/readiness_assessment.json` |
 | Zenodo DOI | [10.5281/zenodo.18945510](https://doi.org/10.5281/zenodo.18945510) (point-in-time archive; **GitHub `main` may be newer**) |
 | Zenodo ↔ GitHub | [`docs/ZENODO_GITHUB_SYNC_NOTES_20260326.md`](docs/ZENODO_GITHUB_SYNC_NOTES_20260326.md) — how to publish a new Zenodo version after pushes |
-| ETE manuscript revision packet | [`studies/proposal2_ete_staging/MANUSCRIPT_REVISION_PACKET_20260326.md`](studies/proposal2_ete_staging/MANUSCRIPT_REVISION_PACKET_20260326.md) |
+| ETE manuscript revision packet | [`manuscripts/ete_ajcc8_202603/MANUSCRIPT_REVISION_PACKET_20260326.md`](manuscripts/ete_ajcc8_202603/MANUSCRIPT_REVISION_PACKET_20260326.md) |
 | Git tag | [`v2026.03.10-publication-ready`](../../releases/tag/v2026.03.10-publication-ready) |
 
 ### What "manuscript-ready" means

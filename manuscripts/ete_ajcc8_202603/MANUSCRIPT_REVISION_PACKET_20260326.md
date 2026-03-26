@@ -9,23 +9,23 @@
 
 ## 1. Canonical freeze recommendation (source of truth)
 
-**Primary anchor:** [`studies/proposal2_ete_staging/`](.) as of the staged analysis bundle keyed by [`analysis_metadata.yaml`](analysis_metadata.yaml) (**audit_generated 2026-03-10**; **random seed 42**).
+**Primary anchor:** [`studies/proposal2_ete_staging/`](../../studies/proposal2_ete_staging/) as of the staged analysis bundle keyed by [`analysis_metadata.yaml`](../../studies/proposal2_ete_staging/analysis_metadata.yaml) (**audit_generated 2026-03-10**; **random seed 42**).
 
 | Role | Path |
 |------|------|
-| Manifest + AUC + interaction summaries | [`analysis_metadata.yaml`](analysis_metadata.yaml) |
-| Classic PTC narrative (N=596) | [`analysis_report.md`](analysis_report.md) |
-| Expanded PTC audit (N=3,278) | [`audit_report.md`](audit_report.md) |
-| Expanded analytic cohort | [`audit_tables/analytic_cohort_expanded.csv`](audit_tables/analytic_cohort_expanded.csv) |
-| Classic analytic cohort | [`tables/analytic_cohort.csv`](tables/analytic_cohort.csv) |
-| Ordinal regression (expanded CC) | [`audit_tables/table3_ordinal_regression.csv`](audit_tables/table3_ordinal_regression.csv) |
-| PSM effect / balance | [`audit_tables/table6_propensity_matching_effect.csv`](audit_tables/table6_propensity_matching_effect.csv), [`audit_tables/table6_propensity_matching_balance.csv`](audit_tables/table6_propensity_matching_balance.csv) |
-| Interactions (structural logistic) | [`audit_tables/table8_interaction_tests.csv`](audit_tables/table8_interaction_tests.csv) |
+| Manifest + AUC + interaction summaries | [`analysis_metadata.yaml`](../../studies/proposal2_ete_staging/analysis_metadata.yaml) |
+| Classic PTC narrative (N=596) | [`analysis_report.md`](../../studies/proposal2_ete_staging/analysis_report.md) |
+| Expanded PTC audit (N=3,278) | [`audit_report.md`](../../studies/proposal2_ete_staging/audit_report.md) |
+| Expanded analytic cohort | [`audit_tables/analytic_cohort_expanded.csv`](../../studies/proposal2_ete_staging/audit_tables/analytic_cohort_expanded.csv) |
+| Classic analytic cohort | [`tables/analytic_cohort.csv`](../../studies/proposal2_ete_staging/tables/analytic_cohort.csv) |
+| Ordinal regression (expanded CC) | [`audit_tables/table3_ordinal_regression.csv`](../../studies/proposal2_ete_staging/audit_tables/table3_ordinal_regression.csv) |
+| PSM effect / balance | [`audit_tables/table6_propensity_matching_effect.csv`](../../studies/proposal2_ete_staging/audit_tables/table6_propensity_matching_effect.csv), [`audit_tables/table6_propensity_matching_balance.csv`](../../studies/proposal2_ete_staging/audit_tables/table6_propensity_matching_balance.csv) |
+| Interactions (structural logistic) | [`audit_tables/table8_interaction_tests.csv`](../../studies/proposal2_ete_staging/audit_tables/table8_interaction_tests.csv) |
 | PSM / table hashes (sub-freeze note) | [`outputs/manuscript_forensics_20260318/final_manuscript_dataset_provenance.json`](../../outputs/manuscript_forensics_20260318/final_manuscript_dataset_provenance.json) → `psm_freeze` |
 
 **Post-freeze supplementary (CT timing only):** [`outputs/manuscript_forensics_20260318/ptc_ct_imaging_events.csv`](../../outputs/manuscript_forensics_20260318/ptc_ct_imaging_events.csv), [`ct_imaging_surgery_timing.csv`](../../outputs/manuscript_forensics_20260318/ct_imaging_surgery_timing.csv), and SQL logic in [`scripts/106_ct_imaging_date_recovery.py`](../../scripts/106_ct_imaging_date_recovery.py).
 
-**Not the ETE quantitative source:** [`studies/manuscript_draft/manuscript_v1.md`](../manuscript_draft/manuscript_v1.md) — Abstract opens with a **different** design (**6,630** patients, **1,497** matched pairs, Cox HR **~1.84**), inconsistent with this ETE package (**3,278** expanded PTC; **711** mETE vs no-ETE pairs on structural endpoint). **Action:** replace that Abstract/Methods block with ETE-specific text **or** use a separate draft file for the ETE paper.
+**Not the ETE quantitative source:** [`manuscripts/pool_malignancy_202603/manuscript_v1.md`](../pool_malignancy_202603/manuscript_v1.md) — Abstract opens with a **different** design (**6,630** patients, **1,497** matched pairs, Cox HR **~1.84**), inconsistent with this ETE package (**3,278** expanded PTC; **711** mETE vs no-ETE pairs on structural endpoint). **Action:** replace that Abstract/Methods block with ETE-specific text **or** use a separate draft file for the ETE paper.
 
 **Blinded draft:** No separate blinded file was present in-repo beyond `manuscript_v1.md`. Treat **`analysis_report.md` / `audit_report.md` + table CSVs** as the numerical source of truth until a blinded DOCX path is supplied.
 
@@ -52,19 +52,19 @@
 
 ## 3. Memo — reviewer science questions (exact numbers)
 
-**Age as effect modifier (structural endpoint):** **No.** `mETE × age_at_surgery` OR **0.99** (95% CI **0.97–1.01**), **p = 0.258** — [`audit_tables/table8_interaction_tests.csv`](audit_tables/table8_interaction_tests.csv).
+**Age as effect modifier (structural endpoint):** **No.** `mETE × age_at_surgery` OR **0.99** (95% CI **0.97–1.01**), **p = 0.258** — [`audit_tables/table8_interaction_tests.csv`](../../studies/proposal2_ete_staging/audit_tables/table8_interaction_tests.csv).
 
 **Nodal status as effect modifier (structural endpoint):** **Yes.** `mETE × n_positive_flag` OR **0.36** (95% CI **0.17–0.74**), **p = 0.006** — same file. Interpretation: association of mETE with structural outcome **depends on N1** in this logistic parameterization.
 
-**Baseline nodal burden (mETE vs no ETE):** Expanded cohort — N1 any **56.9%** (no) vs **67.2%** (micro) vs **74.7%** (gross), **p < 0.001** — [`audit_report.md`](audit_report.md) Table 1. Classic cohort — **44.3%** / **68.3%** / **64.8%**, **p < 0.001** — [`analysis_report.md`](analysis_report.md) Table 1.
+**Baseline nodal burden (mETE vs no ETE):** Expanded cohort — N1 any **56.9%** (no) vs **67.2%** (micro) vs **74.7%** (gross), **p < 0.001** — [`audit_report.md`](../../studies/proposal2_ete_staging/audit_report.md) Table 1. Classic cohort — **44.3%** / **68.3%** / **64.8%**, **p < 0.001** — [`analysis_report.md`](../../studies/proposal2_ete_staging/analysis_report.md) Table 1.
 
-**Age interaction vs subgroup attenuation:** Interaction term **not** significant on structural models (**p = 0.258**). Expanded ordinal sensitivity: age ≥55 **mETE** OR **0.87** (0.64–1.17), **p = 0.352** vs age <55 **0.44** (0.35–0.56), **p < 0.001** — [`audit_report.md`](audit_report.md) §Sensitivity: describe as **attenuation / heterogeneity**, not formal effect modification.
+**Age interaction vs subgroup attenuation:** Interaction term **not** significant on structural models (**p = 0.258**). Expanded ordinal sensitivity: age ≥55 **mETE** OR **0.87** (0.64–1.17), **p = 0.352** vs age <55 **0.44** (0.35–0.56), **p < 0.001** — [`audit_report.md`](../../studies/proposal2_ete_staging/audit_report.md) §Sensitivity: describe as **attenuation / heterogeneity**, not formal effect modification.
 
-**Framing recurrence vs structural:** **Ordinal outcome** uses ATA-like **`recurrence_risk_band`** (composite: stage, gross ETE, Tg); **`ete_gross` OR is inflated** (circularity) — emphasize **`ete_micro`** for clinical interpretation ([`analysis_metadata.yaml`](analysis_metadata.yaml) `OUTCOME_CIRCULARITY`). **Structural endpoint** = **`ct_pathologic_ln_flag` OR `mri_pathologic_ln_flag` OR `reoperation_proxy`** — separate from composite risk band ([`proposal2_endpoint_psm_strata.py`](proposal2_endpoint_psm_strata.py) L97–117).
+**Framing recurrence vs structural:** **Ordinal outcome** uses ATA-like **`recurrence_risk_band`** (composite: stage, gross ETE, Tg); **`ete_gross` OR is inflated** (circularity) — emphasize **`ete_micro`** for clinical interpretation ([`analysis_metadata.yaml`](../../studies/proposal2_ete_staging/analysis_metadata.yaml) `OUTCOME_CIRCULARITY`). **Structural endpoint** = **`ct_pathologic_ln_flag` OR `mri_pathologic_ln_flag` OR `reoperation_proxy`** — separate from composite risk band ([`proposal2_endpoint_psm_strata.py`](../../studies/proposal2_ete_staging/proposal2_endpoint_psm_strata.py) L97–117).
 
-**PSM balance:** After matching, **`n_positive_flag` SMD = −0.58** (worse than pre-match **0.22**) — [`audit_tables/table6_propensity_matching_balance.csv`](audit_tables/table6_propensity_matching_balance.csv). State **residual nodal imbalance**; structural comparison is **supportive**, not definitive.
+**PSM balance:** After matching, **`n_positive_flag` SMD = −0.58** (worse than pre-match **0.22**) — [`audit_tables/table6_propensity_matching_balance.csv`](../../studies/proposal2_ete_staging/audit_tables/table6_propensity_matching_balance.csv). State **residual nodal imbalance**; structural comparison is **supportive**, not definitive.
 
-**Micro-ETE nodal burden (manuscript strength):** In classic Table 1, **N1 (any) 68.3%** with mETE vs **44.3%** without — cite with **LN examined/positive** medians as in table. Note **`ln_ratio`** is **quasi-binary** in ~83% of non-missing expanded cohort per [`analysis_metadata.yaml`](analysis_metadata.yaml) audit `LN_RATIO_QUALITY`; **84%+** missing in forensics patient layer for ratio fields — pair ordinal findings with **N1** description.
+**Micro-ETE nodal burden (manuscript strength):** In classic Table 1, **N1 (any) 68.3%** with mETE vs **44.3%** without — cite with **LN examined/positive** medians as in table. Note **`ln_ratio`** is **quasi-binary** in ~83% of non-missing expanded cohort per [`analysis_metadata.yaml`](../../studies/proposal2_ete_staging/analysis_metadata.yaml) audit `LN_RATIO_QUALITY`; **84%+** missing in forensics patient layer for ratio fields — pair ordinal findings with **N1** description.
 
 ---
 
@@ -106,7 +106,7 @@ Use after cohort sentence; **do not** use 6,630 / 1,497 / HR 1.84 for this ETE m
 
 ### 4.7 Table footnotes (suggested)
 
-**Table 2 (staging / migration).** AJCC 7th T-stages were derived for comparison; **T3b mapped to T3** under AJCC 7th (not T4a)—**346** patient-level T-stage revisions on audit ([`analysis_metadata.yaml`](analysis_metadata.yaml) `AJCC7_T3b_MAP`).
+**Table 2 (staging / migration).** AJCC 7th T-stages were derived for comparison; **T3b mapped to T3** under AJCC 7th (not T4a)—**346** patient-level T-stage revisions on audit ([`analysis_metadata.yaml`](../../studies/proposal2_ete_staging/analysis_metadata.yaml) `AJCC7_T3b_MAP`).
 
 **Table 3 (Cox / survival, if present).** Survival models query `risk_enriched_mv` and may include a broader row count than the **3,278** PTC CSV; denominators must match the reported filter.
 
@@ -120,7 +120,7 @@ Use after cohort sentence; **do not** use 6,630 / 1,497 / HR 1.84 for this ETE m
 
 **Design.** Retrospective cohort study of patients with PTC in an institutional thyroid database with pathologist-documented ETE and AJCC 8th staging.
 
-**Cohort construction.** The expanded analytic file merged deduplicated PTC rows from `recurrence_full.csv`, `ptc_full.csv`, and patient-level imaging flags from `imaging_correlation.csv` ([`proposal2_endpoint_psm_strata.py`](proposal2_endpoint_psm_strata.py) `load_expanded`). Classic-variant restrictions for the **596-patient** primary descriptive and ordinal sensitivity cohort followed [`proposal2_ete_analysis.py`](proposal2_ete_analysis.py).
+**Cohort construction.** The expanded analytic file merged deduplicated PTC rows from `recurrence_full.csv`, `ptc_full.csv`, and patient-level imaging flags from `imaging_correlation.csv` ([`proposal2_endpoint_psm_strata.py`](../../studies/proposal2_ete_staging/proposal2_endpoint_psm_strata.py) `load_expanded`). Classic-variant restrictions for the **596-patient** primary descriptive and ordinal sensitivity cohort followed [`proposal2_ete_analysis.py`](../../studies/proposal2_ete_staging/proposal2_ete_analysis.py).
 
 **Primary and secondary endpoints.** The **primary oncology stratification outcome** for ordinal regression was **three-level recurrence risk** (`recurrence_risk_band`, ordinalized as `risk_ord`). The **secondary structural endpoint** (`structural_recurrence`) combined CT/MRI **pathologic lymphadenopathy** flags and a **reoperation** proxy (more than one surgery date per patient in the pathology-linked surgery listing).
 
@@ -128,21 +128,21 @@ Use after cohort sentence; **do not** use 6,630 / 1,497 / HR 1.84 for this ETE m
 
 **Covariates.** Ordinal models adjusted for **age at surgery**, **sex**, **largest tumor diameter**, and **`ln_ratio`**. Structural / matching models used **age**, **sex**, **tumor size**, and **N1 indicator** (`n_positive_flag` from `n_stage_ajcc8`).
 
-**Missing data.** **`ln_ratio`** had extensive missingness in broad extracts; expanded complete-case ordinal analyses used **3,269** patients; **multiple imputation** (**m = 20**, predictive mean matching with jitter, **seed 42**, Rubin pooling) was performed in sensitivity scripts ([`proposal2_recommendations.py`](proposal2_recommendations.py), [`proposal2_expanded_cohort.py`](proposal2_expanded_cohort.py)).
+**Missing data.** **`ln_ratio`** had extensive missingness in broad extracts; expanded complete-case ordinal analyses used **3,269** patients; **multiple imputation** (**m = 20**, predictive mean matching with jitter, **seed 42**, Rubin pooling) was performed in sensitivity scripts ([`proposal2_recommendations.py`](../../studies/proposal2_ete_staging/proposal2_recommendations.py), [`proposal2_expanded_cohort.py`](../../studies/proposal2_ete_staging/proposal2_expanded_cohort.py)).
 
-**Ordinal logistic regression.** Cumulative logit (proportional odds) models were fit via `statsmodels`; **proportionality** was assessed in audit output — large coefficient differences across cut-points for **gross ETE** were flagged ([`audit_report.md`](audit_report.md) PROP_ODDS); consider as limitation.
+**Ordinal logistic regression.** Cumulative logit (proportional odds) models were fit via `statsmodels`; **proportionality** was assessed in audit output — large coefficient differences across cut-points for **gross ETE** were flagged ([`audit_report.md`](../../studies/proposal2_ete_staging/audit_report.md) PROP_ODDS); consider as limitation.
 
-**Discrimination.** High-versus-not-high risk discrimination was summarized with **ROC AUC** and **5-fold cross-validated AUC** (base vs full model with mETE) per [`analysis_metadata.yaml`](analysis_metadata.yaml).
+**Discrimination.** High-versus-not-high risk discrimination was summarized with **ROC AUC** and **5-fold cross-validated AUC** (base vs full model with mETE) per [`analysis_metadata.yaml`](../../studies/proposal2_ete_staging/analysis_metadata.yaml).
 
 **Propensity score matching.** Among patients without gross ETE, **microscopic ETE** was compared to **no ETE** using **logistic regression propensity scores** with covariates **age**, **sex**, **tumor size**, and **N1**; **1:1 greedy nearest-neighbor matching** without replacement was applied within **caliper 0.05** on the propensity scale (**seed 42**). Balance was assessed with **standardized mean differences** before and after matching. Effects on binary structural burden used **Fisher’s exact test** and **Haldane–Anscombe–adjusted** odds ratios as implemented.
 
-**Kaplan–Meier and log-rank.** Matched **DFS proxy** curves used time from surgery to last thyroglobulin date with **structural event** indicator ([`proposal2_endpoint_psm_strata.py`](proposal2_endpoint_psm_strata.py) `plot_matched_dfs`).
+**Kaplan–Meier and log-rank.** Matched **DFS proxy** curves used time from surgery to last thyroglobulin date with **structural event** indicator ([`proposal2_endpoint_psm_strata.py`](../../studies/proposal2_ete_staging/proposal2_endpoint_psm_strata.py) `plot_matched_dfs`).
 
 **Interactions and stratification.** Logistic models tested multiplicative **mETE×tumor size**, **mETE×age**, and **mETE×N1** terms. Pre-specified tumor-size strata used **≤1**, **1–2**, and **2–4 cm** bins.
 
-**Sensitivity.** Aggressive-histology subsets, multiple imputation, age thresholds, and expanded cohorts A–D were run as documented in [`analysis_report.md`](analysis_report.md) / [`audit_report.md`](audit_report.md).
+**Sensitivity.** Aggressive-histology subsets, multiple imputation, age thresholds, and expanded cohorts A–D were run as documented in [`analysis_report.md`](../../studies/proposal2_ete_staging/analysis_report.md) / [`audit_report.md`](../../studies/proposal2_ete_staging/audit_report.md).
 
-**Software.** **Python 3.14.2**; **pandas 2.3.3**, **numpy 2.4.3**, **scipy 1.17.1**, **statsmodels 0.14.6**, **scikit-learn 1.8.0**, **lifelines 0.30.3** per [`analysis_metadata.yaml`](analysis_metadata.yaml). **Two-sided α = 0.05**. **Random seed 42** for stochastic steps.
+**Software.** **Python 3.14.2**; **pandas 2.3.3**, **numpy 2.4.3**, **scipy 1.17.1**, **statsmodels 0.14.6**, **scikit-learn 1.8.0**, **lifelines 0.30.3** per [`analysis_metadata.yaml`](../../studies/proposal2_ete_staging/analysis_metadata.yaml). **Two-sided α = 0.05**. **Random seed 42** for stochastic steps.
 
 ---
 
@@ -185,15 +185,15 @@ Use after cohort sentence; **do not** use 6,630 / 1,497 / HR 1.84 for this ETE m
 
 | Claim | Evidence |
 |------|----------|
-| N = 3278, ETE distribution | [`analysis_metadata.yaml`](analysis_metadata.yaml) `cohort`; [`audit_tables/analytic_cohort_expanded.csv`](audit_tables/analytic_cohort_expanded.csv) |
-| Ordinal ORs | [`audit_tables/table3_ordinal_regression.csv`](audit_tables/table3_ordinal_regression.csv) |
-| AUC | [`analysis_metadata.yaml`](analysis_metadata.yaml) `auc` |
-| PSM effect | [`audit_tables/table6_propensity_matching_effect.csv`](audit_tables/table6_propensity_matching_effect.csv) |
-| PSM balance | [`audit_tables/table6_propensity_matching_balance.csv`](audit_tables/table6_propensity_matching_balance.csv) |
-| Interactions | [`audit_tables/table8_interaction_tests.csv`](audit_tables/table8_interaction_tests.csv) |
+| N = 3278, ETE distribution | [`analysis_metadata.yaml`](../../studies/proposal2_ete_staging/analysis_metadata.yaml) `cohort`; [`audit_tables/analytic_cohort_expanded.csv`](../../studies/proposal2_ete_staging/audit_tables/analytic_cohort_expanded.csv) |
+| Ordinal ORs | [`audit_tables/table3_ordinal_regression.csv`](../../studies/proposal2_ete_staging/audit_tables/table3_ordinal_regression.csv) |
+| AUC | [`analysis_metadata.yaml`](../../studies/proposal2_ete_staging/analysis_metadata.yaml) `auc` |
+| PSM effect | [`audit_tables/table6_propensity_matching_effect.csv`](../../studies/proposal2_ete_staging/audit_tables/table6_propensity_matching_effect.csv) |
+| PSM balance | [`audit_tables/table6_propensity_matching_balance.csv`](../../studies/proposal2_ete_staging/audit_tables/table6_propensity_matching_balance.csv) |
+| Interactions | [`audit_tables/table8_interaction_tests.csv`](../../studies/proposal2_ete_staging/audit_tables/table8_interaction_tests.csv) |
 | CT timing SQL | [`scripts/106_ct_imaging_date_recovery.py`](../../scripts/106_ct_imaging_date_recovery.py) L100–133 |
 | CT CSV counts | `THYROID_2026/outputs/manuscript_forensics_20260318/ptc_ct_imaging_events.csv`, `ct_imaging_surgery_timing.csv` (summarized 2026-03-26) |
-| Structural / PSM code | [`proposal2_endpoint_psm_strata.py`](proposal2_endpoint_psm_strata.py) L83–117, L150–232 |
+| Structural / PSM code | [`proposal2_endpoint_psm_strata.py`](../../studies/proposal2_ete_staging/proposal2_endpoint_psm_strata.py) L83–117, L150–232 |
 | PSM rerun | [`revision_rerun_20260326/run_psm_reproduction.py`](revision_rerun_20260326/run_psm_reproduction.py), outputs `*_rerun.csv` |
 
 ---
@@ -209,7 +209,7 @@ Use after cohort sentence; **do not** use 6,630 / 1,497 / HR 1.84 for this ETE m
 
 ## Appendix A — `manuscript_v1.md` vs ETE freeze (numeric QC)
 
-[manuscript_v1.md](../manuscript_draft/manuscript_v1.md) mixes Introduction text appropriate to AJCC 8 / mETE with **body tables and Abstract** that describe a **different** analysis (full malignant cohort, Cox-primary, **1,497** pairs).
+[manuscript_v1.md](../pool_malignancy_202603/manuscript_v1.md) mixes Introduction text appropriate to AJCC 8 / mETE with **body tables and Abstract** that describe a **different** analysis (full malignant cohort, Cox-primary, **1,497** pairs).
 
 | manuscript_v1 claim | ETE package / repo reality |
 |---------------------|----------------------------|

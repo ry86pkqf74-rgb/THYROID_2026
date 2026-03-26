@@ -119,7 +119,7 @@ figures_dir = EXPORTS / "publication_figures_300dpi"
 figures_dir.mkdir(exist_ok=True, parents=True)
 
 figure_sources = [
-    STUDIES / "manuscript_draft" / "figures",
+    ROOT / "manuscripts" / "pool_malignancy_202603" / "figures",
     STUDIES / "manuscript_tables",
     EXPORTS,
 ]

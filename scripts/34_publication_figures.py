@@ -2,7 +2,7 @@
 """
 34_publication_figures.py — Generate publication-ready figures from analytic model outputs.
 
-Outputs to studies/manuscript_draft/figures/:
+Outputs to manuscripts/pool_malignancy_202603/figures/:
   - fig_psm_balance.png       — Love plot (SMD before/after matching)
   - fig_psm_sensitivity.png   — Forest plot of HR across caliper levels
   - fig_km_ete_matched.png    — KM curves for ETE+/ETE- in matched cohort
@@ -28,7 +28,7 @@ np.random.seed(42)
 
 ROOT = Path(__file__).resolve().parent.parent
 INPUT_DIR = ROOT / "studies" / "analytic_models"
-FIG_DIR = ROOT / "studies" / "manuscript_draft" / "figures"
+FIG_DIR = ROOT / "manuscripts" / "pool_malignancy_202603" / "figures"
 
 
 plt.rcParams.update({

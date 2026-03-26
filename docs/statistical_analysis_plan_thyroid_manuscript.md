@@ -799,7 +799,7 @@ All tables exported in CSV and LaTeX (booktabs) format. LaTeX files stored in
 | Fig S5 | Model diagnostics panel (Schoenfeld, calibration, residuals) | PNG 300 DPI |
 
 All figures stored in `exports/publication_figures_300dpi/` and
-`studies/manuscript_draft/figures/`.
+`manuscripts/pool_malignancy_202603/figures/`.
 
 ### H.3 Data Exports
 

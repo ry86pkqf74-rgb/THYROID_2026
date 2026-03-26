@@ -14,6 +14,7 @@ Output: exports/zenodo_archive_v2026.03.10/
   ├── data/           (CSV + Parquet from latest publication bundle)
   ├── docs/           (README, RELEASE_NOTES, data_dictionary, QA_report, CITATION.cff)
   ├── studies/        (proposal2_ete_staging/, analytic_models/)
+  ├── manuscripts/    (per-paper drafts, revision packets, reference PDFs)
   ├── .zenodo.json    (Zenodo metadata)
   └── MANIFEST.txt    (file listing with sizes)
 
@@ -67,6 +68,10 @@ DOC_DIRS = [
 STUDY_DIRS = [
     "studies/proposal2_ete_staging",
     "studies/analytic_models",
+]
+
+MANUSCRIPT_DIRS = [
+    "manuscripts",
 ]
 
 BUNDLE_CANDIDATES = [
@@ -174,6 +179,12 @@ def run(args: argparse.Namespace) -> int:
     # Studies
     print("\n── Studies ─────────────────────────────────────────────────────")
     for d in STUDY_DIRS:
+        n = _copy_tree(ROOT / d, ARCHIVE_DIR, manifest, args.dry_run)
+        print(f"  {d}/: {n} files")
+        total_files += n
+
+    print("\n── Manuscripts ─────────────────────────────────────────────────")
+    for d in MANUSCRIPT_DIRS:
         n = _copy_tree(ROOT / d, ARCHIVE_DIR, manifest, args.dry_run)
         print(f"  {d}/: {n} files")
         total_files += n

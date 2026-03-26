@@ -27,7 +27,7 @@ np.random.seed(42)
 
 REPO = Path(__file__).resolve().parent.parent
 PROPOSAL_FIG_DIR = REPO / "studies" / "proposal2_ete_staging" / "figures"
-MANUSCRIPT_FIG_DIR = REPO / "studies" / "manuscript_draft" / "figures"
+MANUSCRIPT_FIG_DIR = REPO / "manuscripts" / "pool_malignancy_202603" / "figures"
 ANALYTIC_DIR = REPO / "studies" / "analytic_models"
 PROPOSAL_FIG_DIR.mkdir(parents=True, exist_ok=True)
 MANUSCRIPT_FIG_DIR.mkdir(parents=True, exist_ok=True)
@@ -411,13 +411,13 @@ def patch_metadata() -> None:
 
 
 # ══════════════════════════════════════════════════════════════════════════
-# Copy key figures to manuscript_draft/figures/
+# Copy key figures to manuscripts/pool_malignancy_202603/figures/
 # ══════════════════════════════════════════════════════════════════════════
 def consolidate_figures() -> None:
     import shutil
 
     mapping = {
-        # source in proposal2 → destination in manuscript_draft
+        # source in proposal2 → destination in pool_malignancy manuscript figures
         "fig1_ajcc_stage_distribution.png": "fig1_ajcc_stage_distribution.png",
         "fig2_ete_recurrence_risk.png": "fig2_ete_recurrence_risk.png",
         "fig3_km_ajcc_stage.png": "fig3_km_ajcc_stage.png",
@@ -475,7 +475,7 @@ def main() -> None:
     print("\n📝 Patching analysis_metadata.json ...")
     patch_metadata()
 
-    print("\n📂 Consolidating figures to manuscript_draft/figures/ ...")
+    print("\n📂 Consolidating figures to manuscripts/pool_malignancy_202603/figures/ ...")
     consolidate_figures()
 
     print("\n" + "=" * 70)

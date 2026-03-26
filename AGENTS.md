@@ -142,10 +142,10 @@
 - Zenodo archive at `exports/zenodo_archive_2026.03.10/` (169 files, 36.8 MB); PHI-scanned clean (research_id only, no note text)
 - PSM refined: 4 confounders (age, tumor_size, ln_positive, ln_examined), 0.25×SD caliper; HR=1.839 (1.084–3.117), p=0.024; robust across 6 caliper levels (HR 1.75–1.86, all p<0.05)
 - PSM sensitivity output: `psm_sensitivity.csv` (6 caliper levels with HR, CI, concordance)
-- Manuscript draft v1 at `studies/manuscript_draft/manuscript_v1.md` with full methods, results, and discussion
+- Manuscript draft v1 at `manuscripts/pool_malignancy_202603/manuscript_v1.md` with full methods, results, and discussion
 - `CITATION.cff` updated with affiliation, PSM result in abstract, DOI placeholder for Zenodo
 - Doubly-robust PSM: adjusted for residual ln_positive imbalance; HR=1.794 (1.056–3.048), p=0.031
-- Script 34 (`34_publication_figures.py`): generates 5 manuscript figures (PSM balance, sensitivity forest, matched KM, subgroup forest, stage distribution) to `studies/manuscript_draft/figures/`
+- Script 34 (`34_publication_figures.py`): generates 5 manuscript figures (PSM balance, sensitivity forest, matched KM, subgroup forest, stage distribution) to `manuscripts/pool_malignancy_202603/figures/`
 - Zenodo archive rebuilt with 178 files (36.9 MB) including doubly-robust results and figures
 - Zenodo published: DOI `10.5281/zenodo.18945510`, deposit ID 18945510, 12.9 MB zip
 - `CITATION.cff` has live DOI; `README.md` links to DOI
@@ -270,7 +270,7 @@
 - H1 (CLN/lobectomy) cohort: 5,277 lobectomies (completion excluded n=654); CLN=1,247 (23.6%), no-CLN=4,030; crude recurrence OR=2.29 entirely explained by indication bias (PSM OR=0.99); RLN injury OR=1.93 persists after PSM; E-value CI bound=1.38; KM log-rank p=0.108
 - H2 (goiter/SDOH) cohort: 6,218 goiter (5,933 cervical, 285 substernal); 48.1% Black (median specimen 83g) vs 41.1% White (30g) — 2.8× disparity; Asian race OR=1.28 for RLN; substernal hypocalcemia OR=1.91, seroma OR=2.36
 - `tumor_size_cm` and `ln_positive` have 65-73% missingness in lobectomy cohort — complete-case logistic regression is restricted to N=693/5,277 (13.1%); `specimen_weight_g` has 66% missingness in goiter cohort; MICE imputation is required before publication on both
-- Manuscript files: H1 = `studies/manuscript_draft/manuscript_h1_cln_lobectomy_v1.md`; H2 = `studies/manuscript_draft/manuscript_h2_goiter_sdoh_v1.md`; ETE primary manuscript = `studies/manuscript_draft/manuscript_v1.md`
+- Manuscript files: H1 = `manuscripts/pool_malignancy_202603/manuscript_h1_cln_lobectomy_v1.md`; H2 = `manuscripts/pool_malignancy_202603/manuscript_h2_goiter_sdoh_v1.md`; ETE revision packet = `manuscripts/ete_ajcc8_202603/MANUSCRIPT_REVISION_PACKET_20260326.md`; pooled draft = `manuscripts/pool_malignancy_202603/manuscript_v1.md`
 - FDR correction (Benjamini-Hochberg) should be applied jointly across all hypothesis tests from both studies in companion analyses, not separately per study; output saved to `studies/validation_reports/fdr_correction_all_tests.csv`
 - `note_entities_complications` assertion column is `present_or_negated` (values: 'present', 'negated'); NOT `polarity`, `assertion_status`, or any other name
 - NLP complication entity frequencies (present_or_negated='present'): chyle_leak 2,988; hypocalcemia 2,740; seroma 1,351; rln_injury 973; hypoparathyroidism 540; hematoma 274; vocal_cord_paralysis 119; vocal_cord_paresis 61; wound_infection 18

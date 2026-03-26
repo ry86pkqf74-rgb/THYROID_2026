@@ -11,7 +11,7 @@
 
 ## After merging ETE manuscript-revision artifacts
 
-1. **Pull / verify `main` on GitHub** — includes `studies/proposal2_ete_staging/MANUSCRIPT_REVISION_PACKET_20260326.md` and `revision_rerun_20260326/` (no `.venv`).
+1. **Pull / verify `main` on GitHub** — includes `manuscripts/ete_ajcc8_202603/MANUSCRIPT_REVISION_PACKET_20260326.md` and `manuscripts/ete_ajcc8_202603/revision_rerun_20260326/` (no `.venv`).
 
 2. **Git tag (done for this drop)** — `v2026.03.26-ete-manuscript-revision` is on GitHub; use it as the **GitHub Release** title/tag if Zenodo is wired to releases.
 
@@ -19,7 +19,7 @@
    ```bash
    .venv/bin/python scripts/32_zenodo_archive_prep.py
    ```
-   Confirm `studies/proposal2_ete_staging` in the copy list includes the new files. Output goes under `exports/zenodo_archive_*` (gitignored).
+   Confirm `studies/proposal2_ete_staging` and `manuscripts/` are copied into the bundle (see `scripts/32_zenodo_archive_prep.py`). Output goes under `exports/zenodo_archive_*` (gitignored).
 
 4. **Publish new Zenodo version** — Zenodo → upload new zip from the rebuilt `exports/zenodo_archive_...` folder **or** trigger via linked GitHub release. Update manuscript “Data availability” if the DOI version number changes.
 
@@ -27,4 +27,4 @@
 
 ## CITATION.cff
 
-`CITATION.cff` at repo root should **not** claim results that contradict frozen study outputs. It now describes ETE work generically and points readers to `MANUSCRIPT_REVISION_PACKET_20260326.md` for exact manuscript numbers. When you cut a **new** Zenodo release, update `date-released`, `version`, and `doi` in `CITATION.cff` to match that release.
+`CITATION.cff` at repo root should **not** claim results that contradict frozen study outputs. It now describes ETE work generically and points readers to `manuscripts/ete_ajcc8_202603/MANUSCRIPT_REVISION_PACKET_20260326.md` for exact manuscript numbers. When you cut a **new** Zenodo release, update `date-released`, `version`, and `doi` in `CITATION.cff` to match that release.
