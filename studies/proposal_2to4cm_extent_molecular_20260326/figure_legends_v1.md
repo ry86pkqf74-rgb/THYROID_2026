@@ -31,7 +31,7 @@
 
 **File:** `fig_forest_total_vs_lobectomy.png`.
 
-**Legend:** Forest plot of **adjusted odds ratios (95% CI)** for **initial total thyroidectomy** versus not associated with **age at surgery** (per year), **female sex** (reference male), **Bethesda category ≥4** (reference &lt;4 after pipeline coercion of missing Bethesda to not ≥4), and **any preoperative molecular test**, from **`logistic_primary_parsimonious.csv`** (**N = 558** complete cases). Vertical reference line at **OR = 1**. Title on export: “Forest: primary_parsimonious.”
+**Legend:** Forest plot of **adjusted odds ratios (95% CI)** for **initial total thyroidectomy** (binary outcome) associated with **age at surgery** (per year), **female sex** (reference male), **Bethesda category ≥4** (reference &lt;4 after pipeline coercion of missing Bethesda to not ≥4), and **any preoperative molecular test**, from **`logistic_primary_parsimonious.csv`** (**N = 558** complete cases). Vertical reference line at **OR = 1**. Title on export: “Forest: primary_parsimonious.”
 
 ---
 

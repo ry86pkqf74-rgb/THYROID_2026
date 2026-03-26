@@ -8,8 +8,8 @@ Companion to **`AUTHOR_INPUTS_REQUIRED_20260326.md`** (institution, IRB, COI, fu
 
 | Item | Action |
 |------|--------|
-| References **3, 4, 6–13** in `references_working_20260326.md` | Complete **NEEDS AUTHOR CHECK** fields from PubMed / publisher. |
-| Completion thyroidectomy SR (ref **13**) | Insert verified cite **before** quoting pooled completion percentages in Discussion. |
+| References **3, 4, 6–12** in `references_working_20260326.md` | Complete **NEEDS AUTHOR CHECK** fields from PubMed / publisher. |
+| Completion thyroidectomy systematic review (**manuscript ref 12**) | Insert verified bibliographic record **before** treating pooled completion rates as citable facts in Discussion. |
 | Software | Add statsmodels / SciPy / NumPy if required. |
 
 ---
