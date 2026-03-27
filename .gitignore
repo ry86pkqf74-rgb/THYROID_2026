@@ -5,6 +5,7 @@ __pycache__/
 .streamlit/secrets.toml
 .cursor/
 .venv/
+.vscode/
 
 # Raw source data — PHI-sensitive, must not be committed
 raw/
@@ -14,16 +15,47 @@ processed/*.parquet
 
 # Large generated CSV exports (not committed)
 processed/clinical_notes_long.csv
+processed/clinical_notes_long_qa.csv
+
+# ── Exports (all generated/reproducible) ──────────────────────
+# Timestamped export bundles — reproducible from scripts
+exports/FINAL_PUBLICATION_BUNDLE_*/
+exports/MANUSCRIPT_FREEZE_BUNDLE_*/
+exports/manuscript_cohort_*/
+exports/manuscript_cohort_freeze/
+exports/manuscript_analysis/
+exports/manuscript_reconciliation_*/
+exports/hardening_audit_*/
+exports/operative_notes_full_history_*/
+exports/thyroseq_integration_*/
+exports/ata_primary_source_scan_*/
+exports/publication_figures_300dpi/
+exports/latex_tables/
+exports/dataset_maturation_*/
+
+# Zenodo archive snapshots — published at DOI 10.5281/zenodo.18945510
+exports/zenodo_archive_*/
+exports/zenodo_archive_*.zip
 
 # Temporary export artifacts
 exports/*_temp/
 exports/*_draft/
 exports/validation_run_*/
 
-# Zenodo archive snapshots — published at DOI 10.5281/zenodo.18945510
-exports/zenodo_archive_*/
-exports/zenodo_archive_*.zip
+# ── Root-level manuscript/freeze ZIPs (reproducible) ──────────
+THYROID_2026_MANUSCRIPT_PACKAGE_*.zip
+THYROID_2026_MANUSCRIPT_FREEZE_*.zip
+exports/THYROID_2026_MANUSCRIPT_FREEZE_*.zip
 
-# Zenodo archive artifacts (already uploaded to Zenodo — DOI 10.5281/zenodo.18945510)
-exports/zenodo_archive_*/
-.vscode/
+# ── Logs (ephemeral) ─────────────────────────────────────────
+logs/
+
+# ── Notes extraction intermediate artifacts ───────────────────
+notes_extraction/audit_*.parquet
+notes_extraction/rln_*.parquet
+notes_extraction/missed_data_sweep_*.parquet
+notes_extraction/phase*_results_*.json
+notes_extraction/phase*_preop_molecular_refinement_*.md
+
+# ── Study outputs with timestamped duplicates ─────────────────
+studies/manuscript_package_*/

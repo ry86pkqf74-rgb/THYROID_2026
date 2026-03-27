@@ -32,6 +32,7 @@ documented source limitations, not data quality failures.
 | Zenodo DOI | [10.5281/zenodo.18945510](https://doi.org/10.5281/zenodo.18945510) (point-in-time archive; **GitHub `main` may be newer**) |
 | Zenodo ↔ GitHub | [`docs/ZENODO_GITHUB_SYNC_NOTES_20260326.md`](docs/ZENODO_GITHUB_SYNC_NOTES_20260326.md) — how to publish a new Zenodo version after pushes |
 | ETE manuscript revision packet | [`manuscripts/ete_ajcc8_202603/MANUSCRIPT_REVISION_PACKET_20260326.md`](manuscripts/ete_ajcc8_202603/MANUSCRIPT_REVISION_PACKET_20260326.md) |
+| LLM extraction handoff | [`docs/llm_extraction_handoff_20260327.md`](docs/llm_extraction_handoff_20260327.md) |
 | Git tag | [`v2026.03.10-publication-ready`](../../releases/tag/v2026.03.10-publication-ready) |
 
 ### What "manuscript-ready" means
@@ -78,6 +79,32 @@ The dataset maturation pass resolved the following:
 - Pre-2019 operative notes absent — institutional data limitation
 - 1,764 recurrence dates unresolved — requires manual chart review (prioritized queue deployed)
 - 8 operative V2 NLP enrichment fields at 0% — extractor exists but outputs not materialized
+
+### LLM-Assisted Entity Extraction (v2026.03.27)
+
+The extraction pipeline uses **GitHub Models gpt-4o-mini** (free tier) for
+structured JSON entity extraction from clinical notes.
+
+| Component | Location |
+|-----------|----------|
+| LLM extractor | `notes_extraction/extract_llm.py` |
+| Pipeline runner | `notes_extraction/run_extraction.py` |
+| System prompt | `prompts/lab_date_extraction_v1.txt` |
+| Handoff doc | [`docs/llm_extraction_handoff_20260327.md`](docs/llm_extraction_handoff_20260327.md) |
+
+**Run:**
+```bash
+export GITHUB_TOKEN='ghp_...'
+.venv/bin/python notes_extraction/run_extraction.py \
+  --workers 3 --input processed/clinical_notes_long.parquet
+```
+
+- 11,037 notes, 5,641 patients, 6 entity domains
+- Output: `processed/note_entities_{domain}_sorted.parquet` (15-column schema)
+- Post-extraction: upload to MotherDuck via `scripts/09b_motherduck_upload_notes_entities.py --confirm`
+
+**API priority:** GitHub Models (`GITHUB_TOKEN`) → OpenAI fallback (`OPENAI_API_KEY`).
+Thread-local clients with 5-retry exponential backoff and `--workers` concurrency.
 
 ### Current repo status
 
