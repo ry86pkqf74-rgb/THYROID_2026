@@ -52,7 +52,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from motherduck_client import MotherDuckClient, MotherDuckConfig  # noqa: E402
+from motherduck_client import MotherDuckClient  # noqa: E402
 from utils.text_helpers import (  # noqa: E402
     clean_research_id,
     extract_note_date,
@@ -144,11 +144,20 @@ def load_surgery_lookup_from_synoptic(path: Path) -> pd.DataFrame:
 
 
 def load_surgery_lookup_motherduck(con) -> pd.DataFrame:
+    # surg_date is often VARCHAR with mixed formats; native DATE also occurs.
     q = """
     SELECT CAST(research_id AS BIGINT) AS research_id,
-           CAST(TRY_STRPTIME(TRIM(CAST(surg_date AS VARCHAR)), '%Y-%m-%d') AS DATE) AS sd
+           MIN(
+               COALESCE(
+                   TRY_CAST(surg_date AS DATE),
+                   TRY_STRPTIME(TRIM(REGEXP_REPLACE(CAST(surg_date AS VARCHAR), ';', '')), '%Y-%m-%d'),
+                   TRY_STRPTIME(TRIM(REGEXP_REPLACE(CAST(surg_date AS VARCHAR), ';', '')), '%m/%d/%Y'),
+                   TRY_STRPTIME(TRIM(REGEXP_REPLACE(CAST(surg_date AS VARCHAR), ';', '')), '%m/%d/%y')
+               )
+           ) AS sd
     FROM path_synoptics
-    WHERE research_id IS NOT NULL
+    WHERE research_id IS NOT NULL AND TRIM(COALESCE(CAST(surg_date AS VARCHAR), '')) <> ''
+    GROUP BY 1
     """
     try:
         df = con.execute(q).df()
@@ -422,10 +431,7 @@ def main() -> None:
     baseline_pre2019 = None
     md_con = None
     if args.md and (args.diagnose_md or args.publish_md or args.use_md_surgery_dates):
-        cfg = MotherDuckConfig()
-        cfg.use_motherduck = True
-        client = MotherDuckClient(config=cfg)
-        md_con = client.connect_rw()
+        md_con = MotherDuckClient().connect_rw()
 
     if args.diagnose_md and md_con:
         diagnose_motherduck(md_con)
