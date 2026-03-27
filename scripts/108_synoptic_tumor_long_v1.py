@@ -19,6 +19,7 @@ import argparse
 import copy
 import os
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -27,6 +28,8 @@ import duckdb
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 PROCESSED = ROOT / "processed"
 DB_PATH = ROOT / "thyroid_master.duckdb"
 SOURCE_FILE = "All Diagnoses & synoptic 12_1_2025.xlsx -> path_synoptics.parquet"

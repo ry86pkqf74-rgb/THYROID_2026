@@ -1,8 +1,8 @@
 # MotherDuck multi-tumor pathology audit
 
-**Generated:** 2026-03-27T05:55:47.633549+00:00
-**Connection:** local:memory+path_synoptics.parquet(synthetic tumor_episode + aggregate)
-**Token mode:** n/a (local)
+**Generated:** 2026-03-27T05:56:54.355335+00:00
+**Connection:** motherduck:thyroid_research_2026
+**Token mode:** env:MOTHERDUCK_TOKEN
 
 ## Lineage (canonical)
 
@@ -20,8 +20,8 @@
 - `synoptic_tumor_long_v1`: **synoptic_tumor_long_v1**
 - `tumor_episode_master_v2`: **tumor_episode_master_v2**
 - `extracted_multi_tumor_aggregate_v1`: **extracted_multi_tumor_aggregate_v1**
-- `tumor_pathology`: **MISSING**
-- `lesion_analysis_resolved_v1`: **MISSING**
+- `tumor_pathology`: **tumor_pathology**
+- `lesion_analysis_resolved_v1`: **lesion_analysis_resolved_v1**
 
 ## Key counts
 
@@ -58,15 +58,15 @@
 - Rows with canonical-episode design limit (≥2 slots but TE max ordinal ≤1): **1,379** (expected — not a drop)
 - Long undercount vs slots: **0**
 - Max size across slots > tumor_1 slot size: **107**
-- Max slot size > `tumor_pathology.histology_1_largest_tumor_cm`: **0**
+- Max slot size > `tumor_pathology.histology_1_largest_tumor_cm`: **472**
 
-Exported **109** high-signal discrepancy rows to `motherduck_multi_tumor_discrepant_cases.csv`.
+Exported **543** high-signal discrepancy rows to `motherduck_multi_tumor_discrepant_cases.csv`.
 
 ## Completeness verdict
 
-Multi-tumor completeness is **proven** only if: (1) `synoptic_tumor_long_v1` exists on MotherDuck, (2) `n_long_rows` equals `n_slots_any` for every pathology row key `(research_id, surg_d)`, and (3) the table was built from the same `path_synoptics` snapshot as production. Canonical `tumor_episode_master_v2` remains **single-ordinal-by-design** (tumor 1 spine); absence of additional ordinals is not a load bug. **`ptc_cohort` / `exports/ptc_full.csv` / proposal2** use **tumor_1** ETE and pathology-linked largest size; secondary-foci ETE or larger focus in slots 2–5 can differ from `tumor_1_*` — see `max_size_exceeds_tumor1_slot` and discrepancy export.
+This run was executed **live on MotherDuck** (`thyroid_research_2026`) after `scripts/108_synoptic_tumor_long_v1.py --md` refreshed `synoptic_tumor_long_v1` and `md_synoptic_tumor_long_v1`.
 
-**This run used `--local`** (parquet + synthetic tumor_episode/aggregate). Re-run without `--local` against MotherDuck for production lineage.
+Multi-tumor completeness is **proven** only if: (1) `synoptic_tumor_long_v1` exists on MotherDuck, (2) `n_long_rows` equals `n_slots_any` for every pathology row key `(research_id, surg_d)`, and (3) the table was built from the same `path_synoptics` snapshot as production. Canonical `tumor_episode_master_v2` remains **single-ordinal-by-design** (tumor 1 spine); absence of additional ordinals is not a load bug. **`ptc_cohort` / `exports/ptc_full.csv` / proposal2** use **tumor_1** ETE and pathology-linked largest size; secondary-foci ETE or larger focus in slots 2–5 can differ from `tumor_1_*` — see `max_size_exceeds_tumor1_slot` and discrepancy export.
 
 ## Proposal2 (ETE staging) impact
 

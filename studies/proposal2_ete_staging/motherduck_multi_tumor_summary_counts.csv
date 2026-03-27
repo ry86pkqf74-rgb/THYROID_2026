@@ -1,6 +1,6 @@
 metric,value
-connection_source,local:memory+path_synoptics.parquet(synthetic tumor_episode + aggregate)
-token_mode,local
+connection_source,motherduck:thyroid_research_2026
+token_mode,env:MOTHERDUCK_TOKEN
 path_synoptics_rows,11688
 specimens_n_slots_ge_2_any_field,1379
 specimens_n_histology_slots_ge_2,1366
@@ -9,9 +9,9 @@ synoptic_tumor_long_table,synoptic_tumor_long_v1
 synoptic_tumor_long_rowcount,11103
 tumor_episode_table,tumor_episode_master_v2
 multi_tumor_aggregate_table,extracted_multi_tumor_aggregate_v1
-tumor_pathology_table,(absent)
-lesion_resolved_table,(absent)
-lesion_kpis_json,
+tumor_pathology_table,tumor_pathology
+lesion_resolved_table,lesion_analysis_resolved_v1
+lesion_kpis_json,"[{""n_lesion_rows"": 11851, ""n_episode_keys"": 11688}]"
 dist_n_slots_any_0,2630
 dist_n_slots_any_1,7679
 dist_n_slots_any_2,921

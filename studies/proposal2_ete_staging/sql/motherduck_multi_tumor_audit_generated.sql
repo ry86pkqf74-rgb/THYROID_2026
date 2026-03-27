@@ -77,7 +77,15 @@ FROM _mt_ps p
          AND (te.surg_d IS NOT DISTINCT FROM p.surg_d)
         
 
-        LEFT JOIN (SELECT NULL::BIGINT AS research_id, NULL::DOUBLE AS tp_largest_cm WHERE FALSE) tp ON FALSE
+        LEFT JOIN (
+          SELECT CAST(research_id AS BIGINT) AS research_id,
+                 TRY_CAST(histology_1_largest_tumor_cm AS DOUBLE) AS tp_largest_cm
+          FROM tumor_pathology
+          QUALIFY ROW_NUMBER() OVER (
+            PARTITION BY research_id
+            ORDER BY histology_1_largest_tumor_cm DESC NULLS LAST
+          ) = 1
+        ) tp ON tp.research_id = p.research_id
         
 
         LEFT JOIN extracted_multi_tumor_aggregate_v1 mta ON mta.research_id = p.research_id
