@@ -24,6 +24,14 @@ cd ../..   # repo root THYROID_2026
 
 Use **`analysis_manifest.json`** for the frozen **git SHA** and run timestamp associated with the CSVs.
 
+## Completion thyroidectomy audit (MotherDuck; path + operative)
+
+Re-runnable, stable outputs under **`completion_audit_outputs/`** (summary, candidates, procedure inventory, `final_verdict.md`). Does **not** overwrite frozen `patient_level_dataset.csv`.
+
+```bash
+.venv/bin/python studies/proposal_2to4cm_extent_molecular_20260326/run_completion_audit_motherduck.py
+```
+
 ## Prior short draft
 
 - [`manuscript_full_draft.md`](manuscript_full_draft.md) — abstract-only seed (superseded for submission by `manuscript_submission_v1.md`).

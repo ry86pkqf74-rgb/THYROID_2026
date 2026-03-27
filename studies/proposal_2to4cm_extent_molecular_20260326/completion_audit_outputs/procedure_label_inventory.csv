@@ -1,0 +1,11 @@
+source_table,normalized_label,raw_label,n_instances,inventory_kind,completion_col_lower,inventory_scope
+operative_episode_detail_v2,total_thyroidectomy,,320,oed_grouped,,operative_episode_all_rows_primary_558
+operative_episode_detail_v2,hemithyroidectomy,,239,oed_grouped,,operative_episode_all_rows_primary_558
+path_synoptics,(see raw_label),Left Lobectomy (LL),122,path_syn_grouped,,path_synoptics_all_rows_lobectomy_238
+path_synoptics,(see raw_label),Right Lobectomy (RL),109,path_syn_grouped,,path_synoptics_all_rows_lobectomy_238
+path_synoptics,(see raw_label),Left Lobectomy (LL),20,path_syn_grouped,yes,path_synoptics_all_rows_lobectomy_238
+path_synoptics,(see raw_label),Right Lobectomy (RL),13,path_syn_grouped,yes,path_synoptics_all_rows_lobectomy_238
+path_synoptics,(see raw_label),Lobectomy (side not specified),1,path_syn_grouped,,path_synoptics_all_rows_lobectomy_238
+path_synoptics,TEXT_CONTAINS_lobectomy,Right Lobectomy (RL),,path_pattern_distinct,,path_synoptics_all_rows_lobectomy_238
+path_synoptics,TEXT_CONTAINS_lobectomy,Left Lobectomy (LL),,path_pattern_distinct,,path_synoptics_all_rows_lobectomy_238
+path_synoptics,TEXT_CONTAINS_lobectomy,Lobectomy (side not specified),,path_pattern_distinct,,path_synoptics_all_rows_lobectomy_238

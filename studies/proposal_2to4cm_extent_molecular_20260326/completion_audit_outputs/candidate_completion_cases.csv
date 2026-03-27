@@ -1,0 +1,27 @@
+research_id,source,event_date,normalized_label,raw_text,path_completion_column,later_than_index,row_classification,audit_tier
+5358,path_synoptics,2016-06-29T00:00:00,,Right Lobectomy (RL),yes,True,definite_completion,definite
+5405,path_synoptics,2017-07-13T00:00:00,,Left Lobectomy (LL),yes,True,definite_completion,definite
+5501,path_synoptics,2016-10-26T00:00:00,,Right Lobectomy (RL),yes,True,definite_completion,definite
+5581,path_synoptics,2023-02-22T00:00:00,,Left Lobectomy (LL),yes,True,definite_completion,definite
+5710,path_synoptics,2017-02-15T00:00:00,,Right Lobectomy (RL),yes,True,definite_completion,definite
+5757,path_synoptics,2017-02-02T00:00:00,,Left Lobectomy (LL),yes,True,definite_completion,definite
+6133,path_synoptics,2020-09-28T00:00:00,,Left Lobectomy (LL),yes,True,definite_completion,definite
+6252,path_synoptics,2017-12-21T00:00:00,,Left Lobectomy (LL),yes,True,definite_completion,definite
+6356,path_synoptics,2018-02-16T00:00:00,,Left Lobectomy (LL),yes,True,definite_completion,definite
+6538,path_synoptics,2018-07-03T00:00:00,,Left Lobectomy (LL),yes,True,definite_completion,definite
+7506,path_synoptics,2020-02-07T00:00:00,,Lobectomy (side not specified),,True,ambiguous_likely_staged,ambiguous
+7564,path_synoptics,2020-01-24T00:00:00,,Right Lobectomy (RL),yes,True,definite_completion,definite
+7577,path_synoptics,2020-02-19T00:00:00,,Right Lobectomy (RL),yes,True,definite_completion,definite
+8255,path_synoptics,2020-08-28T00:00:00,,Left Lobectomy (LL),yes,True,definite_completion,definite
+8689,path_synoptics,2021-04-29T00:00:00,,Left Lobectomy (LL),yes,True,definite_completion,definite
+8938,path_synoptics,2021-08-10T00:00:00,,Left Lobectomy (LL),yes,True,definite_completion,definite
+8950,path_synoptics,2022-03-31T00:00:00,,Left Lobectomy (LL),yes,True,definite_completion,definite
+9038,path_synoptics,2021-10-13T00:00:00,,Right Lobectomy (RL),yes,True,definite_completion,definite
+9078,path_synoptics,2021-11-19T00:00:00,,Left Lobectomy (LL),yes,True,definite_completion,definite
+9371,path_synoptics,2022-05-31T00:00:00,,Left Lobectomy (LL),yes,True,definite_completion,definite
+9528,path_synoptics,2022-09-06T00:00:00,,Left Lobectomy (LL),yes,True,definite_completion,definite
+9632,path_synoptics,2022-08-09T00:00:00,,Right Lobectomy (RL),yes,True,definite_completion,definite
+9648,path_synoptics,2023-10-10T00:00:00,,Left Lobectomy (LL),yes,True,definite_completion,definite
+9710,path_synoptics,2023-03-31T00:00:00,,Right Lobectomy (RL),yes,True,definite_completion,definite
+9762,path_synoptics,2022-12-16T00:00:00,,Right Lobectomy (RL),yes,True,definite_completion,definite
+9786,path_synoptics,2024-03-04T00:00:00,,Right Lobectomy (RL),yes,True,definite_completion,definite

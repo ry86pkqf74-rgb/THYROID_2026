@@ -1,0 +1,14 @@
+metric,value
+cohort_definition,"patient_level_dataset.csv rows (preop imaging 2–4 cm index nodule, strict LN exclusion)"
+primary_cohort_n_patients,558
+initial_lobectomy_n,238
+initial_total_n,320
+definite_completion_patients_independent_audit,25
+patients_any_later_but_no_definite_completion_ambiguous_bucket,1
+any_later_thyroid_related_row_oed_or_path_patients,26
+study_pipeline_completion_total_flag_true_among_lobectomy,0
+csv_vs_completion_after_lobectomy_replay_mismatch,0
+manuscript_zero_claim_oed_only,TRUE if phrase means operative_episode_detail_v2 + total_thyroidectomy after index only
+manuscript_zero_claim_unqualified_clinical,FALSE if synoptic/path evidence counts — definite_completion_patients=25
+token_mode,secrets.toml:MOTHERDUCK_TOKEN
+audit_utc,2026-03-27T02:39:26Z
