@@ -11,7 +11,7 @@
 
 | File | Reason |
 |------|--------|
-| `fig_completion_rates.png` | **Blank / zero-height** bars at pipeline export; completion summarized in **Table 4** / text (**0/238**). **Do not** submit this raster. |
+| `fig_completion_rates.png` | Horizontal bars: **OED pipeline** completion rates (ever, 30/90/365 d; **0** in this cohort) vs **path-synoptic definite** completion (`table7_completion_thyroidectomy.csv`). **Supplemental** use; relabel for journal style. |
 | `fig_molecular_result_by_extent.png` | Exploratory; **tiny** denominators by molecular class; risks misreading as performance—**not** a main figure. |
 | `fig_platform_specific_extent.png` | **Overlapping** x-axis labels; descriptive **n=20** context only—**not** a main figure. |
 | `fig_bethesda_by_extent.png` | Largely **redundant** with Table 1; optional only if a journal requests a simple bar summary. |

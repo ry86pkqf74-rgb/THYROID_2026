@@ -157,7 +157,7 @@ def load_core(
     out["path_syn"] = qdf(
         con,
         """
-        SELECT research_id, thyroid_procedure, surg_date
+        SELECT research_id, thyroid_procedure, surg_date, completion
         FROM path_synoptics
         """,
     )
@@ -399,6 +399,8 @@ def assemble_patient_dataframe(
     pre_fna: pd.DataFrame,
     te_idx: pd.DataFrame,
     img_master: pd.DataFrame,
+    path_comp_df: pd.DataFrame | None = None,
+    oed_later_df: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     """Build patient-level analytic frame from a preop lesion-level cohort slice."""
     x = preop_slice.copy()
@@ -419,6 +421,53 @@ def assemble_patient_dataframe(
     patient_df = patient_df.merge(
         ult[["research_id", "ultimate_total"]], on="research_id", how="left"
     )
+    if path_comp_df is not None and not path_comp_df.empty:
+        patient_df = patient_df.merge(path_comp_df, on="research_id", how="left")
+    if oed_later_df is not None and not oed_later_df.empty:
+        patient_df = patient_df.merge(oed_later_df, on="research_id", how="left")
+
+    _path_cols = [
+        "path_completion_definite_flag",
+        "path_completion_days",
+        "path_completion_within_30",
+        "path_completion_within_90",
+        "path_completion_within_365",
+        "path_synoptic_any_later_row_flag",
+        "path_completion_ambiguous_later_only_flag",
+    ]
+    for c in _path_cols:
+        if c in patient_df.columns:
+            if c == "path_completion_days":
+                continue
+            patient_df[c] = patient_df[c].fillna(False)
+    if "path_completion_days" in patient_df.columns:
+        patient_df["path_completion_days"] = patient_df["path_completion_days"].astype(float)
+    if "oed_any_later_episode_flag" in patient_df.columns:
+        patient_df["oed_any_later_episode_flag"] = patient_df[
+            "oed_any_later_episode_flag"
+        ].fillna(False)
+
+    patient_df["chart_any_later_thyroid_surgery_flag"] = (
+        patient_df.get("oed_any_later_episode_flag", pd.Series(False, index=patient_df.index))
+        .fillna(False)
+        .astype(bool)
+        | patient_df.get(
+            "path_synoptic_any_later_row_flag",
+            pd.Series(False, index=patient_df.index),
+        )
+        .fillna(False)
+        .astype(bool)
+    )
+    _pc_def = patient_df.get(
+        "path_completion_definite_flag",
+        pd.Series(False, index=patient_df.index),
+    ).fillna(False).astype(bool)
+    patient_df["chart_completion_ambiguous_only_flag"] = (
+        patient_df["chart_any_later_thyroid_surgery_flag"]
+        & ~(patient_df["completion_total_flag"].fillna(False).astype(bool))
+        & ~_pc_def
+    )
+    patient_df["completion_path_synoptic_definite_flag"] = _pc_def
 
     patient_df = patient_df.merge(
         pre_fna[
@@ -690,7 +739,9 @@ def run() -> None:
     _pls = _pls.drop_duplicates(subset=["research_id"], keep="first")
 
     comp_df = cl.completion_after_lobectomy(ops, first_clean)
-    ult = cl.ultimate_extent_total(first_clean, comp_df)
+    path_comp = cl.path_synoptic_completion_after_lobectomy(data["path_syn"], first_clean)
+    oed_later = cl.oed_any_later_episode_after_index(ops, first_clean)
+    ult = cl.ultimate_extent_total(first_clean, comp_df, path_comp)
     me = cl.molecular_meaningful_mask(data["mol"])
     pre_mol = cl.attach_preop_molecular(first_clean, data["mol"], me)
     pre_fna = cl.attach_preop_fna(first_clean, data["fna"])
@@ -720,6 +771,8 @@ def run() -> None:
         pre_fna,
         te_idx,
         data["img_master"],
+        path_comp,
+        oed_later,
     )
     patient_df_broad = assemble_patient_dataframe(
         preop_broad,
@@ -731,6 +784,8 @@ def run() -> None:
         pre_fna,
         te_idx,
         data["img_master"],
+        path_comp,
+        oed_later,
     )
 
     # Sensitivity: path cohort strict
@@ -947,19 +1002,59 @@ def run() -> None:
     ]
     dsub.to_csv(STUDY / "molecular_concordance_cases.csv", index=False)
 
-    # completion table
+    # completion table — OED pipeline vs path-synoptic integrated (see completion_audit_outputs/)
     lob = patient_df[patient_df["initial_lobectomy"] == 1]
+    n_lob = int(len(lob))
     comp_rows = [
         {
             "group": "all_lobectomy",
-            "n": len(lob),
-            "completion_ever": lob["completion_total_flag"].fillna(False).mean(),
-            "completion_30": lob["completion_within_30"].fillna(False).mean(),
-            "completion_90": lob["completion_within_90"].fillna(False).mean(),
-            "completion_365": lob["completion_within_365"].fillna(False).mean(),
+            "n": n_lob,
+            "completion_ever_oed_pipeline": lob["completion_total_flag"]
+            .fillna(False)
+            .mean(),
+            "completion_30_oed_pipeline": lob["completion_within_30"]
+            .fillna(False)
+            .mean(),
+            "completion_90_oed_pipeline": lob["completion_within_90"]
+            .fillna(False)
+            .mean(),
+            "completion_365_oed_pipeline": lob["completion_within_365"]
+            .fillna(False)
+            .mean(),
+            "completion_ever_path_synoptic_definite": lob[
+                "path_completion_definite_flag"
+            ]
+            .fillna(False)
+            .mean(),
+            "completion_30_path_synoptic_definite": lob[
+                "path_completion_within_30"
+            ]
+            .fillna(False)
+            .mean(),
+            "completion_90_path_synoptic_definite": lob[
+                "path_completion_within_90"
+            ]
+            .fillna(False)
+            .mean(),
+            "completion_365_path_synoptic_definite": lob[
+                "path_completion_within_365"
+            ]
+            .fillna(False)
+            .mean(),
+            "n_patients_any_later_thyroid_surgery_oed_or_path": int(
+                lob["chart_any_later_thyroid_surgery_flag"].fillna(False).sum()
+            ),
+            "n_patients_definite_path_synoptic_completion": int(
+                lob["path_completion_definite_flag"].fillna(False).sum()
+            ),
+            "n_patients_ambiguous_later_only_not_oed_or_path_definite": int(
+                lob["chart_completion_ambiguous_only_flag"].fillna(False).sum()
+            ),
         }
     ]
-    pd.DataFrame(comp_rows).to_csv(STUDY / "table7_completion_thyroidectomy.csv", index=False)
+    pd.DataFrame(comp_rows).to_csv(
+        STUDY / "table7_completion_thyroidectomy.csv", index=False
+    )
 
     supp = pd.DataFrame(
         [
@@ -1006,12 +1101,26 @@ def run() -> None:
         fig3.savefig(STUDY / "fig_platform_specific_extent.png", dpi=150, bbox_inches="tight")
         plt.close(fig3)
 
-    fig4, ax4 = plt.subplots()
+    fig4, ax4 = plt.subplots(figsize=(8, 4))
     cr = pd.DataFrame(comp_rows)
-    cr.set_index("group")[
-        ["completion_30", "completion_90", "completion_365", "completion_ever"]
-    ].plot(kind="barh", ax=ax4)
-    ax4.set_title("Completion thyroidectomy rates (lobectomy cohort)")
+    plot_mat = cr.set_index("group")[
+        [
+            "completion_ever_oed_pipeline",
+            "completion_ever_path_synoptic_definite",
+            "completion_30_oed_pipeline",
+            "completion_30_path_synoptic_definite",
+            "completion_90_oed_pipeline",
+            "completion_90_path_synoptic_definite",
+            "completion_365_oed_pipeline",
+            "completion_365_path_synoptic_definite",
+        ]
+    ]
+    plot_mat.T.plot(kind="barh", ax=ax4)
+    ax4.set_title(
+        "Completion thyroidectomy: OED pipeline vs path-synoptic definite (lobectomy N)"
+    )
+    ax4.legend(loc="lower right", fontsize=8)
+    fig4.tight_layout()
     fig4.savefig(STUDY / "fig_completion_rates.png", dpi=150, bbox_inches="tight")
     plt.close(fig4)
 

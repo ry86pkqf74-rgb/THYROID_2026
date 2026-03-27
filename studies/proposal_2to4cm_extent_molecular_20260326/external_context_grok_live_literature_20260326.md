@@ -1,7 +1,7 @@
 # External context — Grok literature & insertion memos (live-web pass + folder truth)
 
 **Sources:** (1) prior normalized memo: `/Users/ros/Downloads/GROK_2_4_cm_manuscript_feedback.txt`; (2) **latest Grok feedback** pasted in authoring task, 2026-03-26.  
-**Updated:** 2026-03-26 (revision 2).
+**Updated:** 2026-03-27 (revision 3 — dual-definition completion truth table).
 
 **Authority:** `studies/proposal_2to4cm_extent_molecular_20260326/` is the **only** quantitative source of truth for **this** paper. Grok text must **not** override `analysis_manifest.json`, `CLAIM_SOURCE_LEDGER.md`, or CSVs. **Do not** re-use older repo-wide Grok framing (e.g., N=10,871 / N=4,136, recurrence rates, lakehouse “readiness gate” KPIs) as if they described **this** manuscript.
 
@@ -20,7 +20,8 @@ Values below match **`CLAIM_SOURCE_LEDGER.md`**, **`analysis_manifest.json`**, a
 | **Broad cohort: initial total count / %** | **375** / **375/635 = 59.1%** |
 | **Pathology-defined 2–4 cm cohort (strict LN exclusion)** | **N = 0** (`path_sensitivity_n`) |
 | **Preoperative molecular tested (primary)** | **20 / 558 (3.6%)** |
-| **Completion thyroidectomy after lobectomy (pipeline flags)** | **0 / 238** (ever; 30/90/365 d all **0**) |
+| **Completion after lobectomy — OED pipeline** | **0 / 238** (ever; 30/90/365 d all **0**) |
+| **Completion after lobectomy — path-synoptic definite** | **25 / 238** ever (windowed counts in **`table7`**) |
 | **Bethesda category missing (primary)** | **149 / 558 (26.7%)** — preserve in Methods/limitations |
 | **Primary outcome (regression)** | Binary **`initial_total`** (not recurrence/DSS) |
 
@@ -56,7 +57,7 @@ Values below match **`CLAIM_SOURCE_LEDGER.md`**, **`analysis_manifest.json`**, a
 
 7. **Hao Q, et al.** Hemithyroidectomy versus total thyroidectomy for patients with differentiated thyroid cancer: systematic review and meta-analysis. *Gland Surg*. 2025. Pooled context for extent trade-offs.
 
-8. **From Lobectomy to Completion Thyroidectomy: A Cohort Study and Systematic Review.** *Clin Endocrinol (Oxf)*. **2025/2026** (Grok: recent SR; **N = 23,899** pooled; completion **~19.2%**, up to **~45%** in 1–4 cm–focused studies). **Verify** exact volume/issue/DOI — relevant **only** as **literature contrast** to **this** cohort’s **0/238** flagged completions under pipeline rules.
+8. **From Lobectomy to Completion Thyroidectomy: A Cohort Study and Systematic Review.** *Clin Endocrinol (Oxf)*. **2025/2026** (Grok: recent SR; **N = 23,899** pooled; completion **~19.2%**, up to **~45%** in 1–4 cm–focused studies). **Verify** exact volume/issue/DOI — **not** in formal `references_working` list; if used, contrast **only** with **named** ascertainment (**OED 0/238** vs **path-synoptic definite 25/238**, **`table7`**).
 
 9. **Barbaro D, et al.** Total thyroidectomy vs. lobectomy in differentiated thyroid cancer: narrative review. *J Clin Med* (or equivalent). 2021. **Verify** journal/volume.
 
@@ -89,8 +90,8 @@ Values below match **`CLAIM_SOURCE_LEDGER.md`**, **`analysis_manifest.json`**, a
 
 - “**Age** remains an independent factor, consistent with national trends demonstrating lower odds of total thyroidectomy with increasing patient age (**Sutton W et al., 2022**).” *Pair with **aOR 0.986**/year **(CI 0.975–0.998)** from **this** cohort.*
 
-- “The **low rate of molecular testing (3.6%)** and **zero flagged completions** under pipeline criteria reflect **selective** contemporary practice and imaging-based selection (**Loderer T et al., 2023**; completion systematic review, **Clin Endocrinol 2025/2026**).”  
-  *Truth + caveat:* **20/558** tested; **0/238** completions per **`table7_completion_thyroidectomy.csv`**; **contrast** external pooled completion rates **without** implying **this** database captured all completions (**missingness** on completion fields — see manuscript limitations).
+- “The **low rate of molecular testing (3.6%)** and **ascertainment-dependent completion counts** reflect **selective** contemporary practice and imaging-based selection (**Loderer T et al., 2023**; external completion reviews if verified).”  
+  *Truth + caveat:* **20/558** tested; **OED pipeline 0/238** vs **path-synoptic definite 25/238** per **`table7_completion_thyroidectomy.csv`**; **contrast** external pooled completion rates **without** implying **this** database captured all completions (**dual definitions** — see manuscript limitations).
 
 - “Limitations of preoperative prediction are well documented (**Dhir M et al., 2018**), underscoring the value of this **imaging-defined** cohort approach.”
 
@@ -134,7 +135,7 @@ Values below match **`CLAIM_SOURCE_LEDGER.md`**, **`analysis_manifest.json`**, a
 
 1. Frame strictly as **preoperative predictors of initial extent choice** in an **imaging-defined 2.0–4.0 cm** index nodule cohort (**N = 558** primary); **do not** imply primary **postoperative oncologic** or **recurrence** findings from this analysis.  
 2. Report **associations** only (e.g., “**Bethesda ≥4** associated with higher odds of initial total thyroidectomy [**aOR 2.74**, **95% CI 1.81–4.15**]”); avoid causal “necessity/superiority” language.  
-3. **Molecular testing (3.6%)** and **completion flags (0/238)** are **descriptive / exploratory**; **do not** claim diagnostic performance, causal guidance value, or broad generalizability from **n = 20** concordance.  
+3. **Molecular testing (3.6%)** and **completion (OED 0/238; path-synoptic definite 25/238)** are **descriptive / exploratory**; **do not** claim diagnostic performance, causal guidance value, or broad generalizability from **n = 20** concordance.  
 4. State **pathology-defined sensitivity N = 0** clearly; **do not** extrapolate imaging–pathology discordance to populations beyond this run’s linkage.  
 5. Emphasize **observational** design and **unmeasured confounding** (surgeon preference, counseling, indications not in tables); cite **STROBE** and preoperative-prediction limits (**Dhir 2018**).  
 6. Conclusions: **practice patterns** and **alignment with 2025 ATA options** — not prescriptive “should” policy.

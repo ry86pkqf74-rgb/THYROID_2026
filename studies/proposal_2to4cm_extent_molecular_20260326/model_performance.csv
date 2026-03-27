@@ -1,5 +1,5 @@
 model,N,events,AUC,AUC_ci_low,AUC_ci_high,brier,cal_intercept,cal_slope,optimism,optimism_corrected_AUC,note
-primary_parsimonious,558,320,0.6256,0.5662,0.6703,0.2307,,,0.0117,0.6139,
+primary_parsimonious,558,320,0.6256,0.5661,0.6703,0.2307,,,0.0117,0.6139,
 primary_extended,558,320,0.6464,0.592,0.6894,0.227,,,0.0173,0.6291,
-broad_nodal_parsimonious,635,375,0.6333,0.5904,0.6712,0.227,,,0.0103,0.6229,
+broad_nodal_parsimonious,635,375,0.6333,0.5905,0.6712,0.227,,,0.0103,0.623,
 completion_after_lobe,238,0,,,,,,,,,0 events — complete separation; model performance undefined

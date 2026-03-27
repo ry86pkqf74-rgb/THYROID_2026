@@ -17,16 +17,16 @@
 1. **Primary N:** **558** (`patient_level_dataset.csv`, `validation_report.md`, `analysis_manifest.json`) — **overrides** any informal prose elsewhere.
 2. **Broad N:** **635** (`patient_level_dataset_broad_nodal_exclusion.csv`, manifest).
 3. **Pathology sensitivity N:** **0** (`cohort_build_log.md`, manifest) — **overrides** any mention of a completed pathology-parallel results section.
-4. **Completion:** **0/238** (`table7_completion_thyroidectomy.csv`) — **overrides** casual language implying common completion without defining flags.
+4. **Completion:** **0/238** on **OED pipeline**; **25/238 path-synoptic definite** (`table7_completion_thyroidectomy.csv`, `completion_audit_outputs/`) — always **name the definition** when comparing to literature.
 5. **`cohort_flow.csv` oddities (zeros):** Interpret per **`MANUSCRIPT_STATE_AUDIT.md`**; **Figure 1** visualizes the same pipeline steps with zeros explicit.
 
 ---
 
 ## References — `references_working_20260326.md`
 
-- In-text Vancouver citations **1–10** appear at the end of `manuscript_submission_v1.md` (post–ScholarGPT reconciliation, 2026-03-26).
-- Entries **1–6** are **verified** (Ringel *Thyroid* 2025 **without** the incorrect DOI; Worrall *Endocr Oncol.*; full STROBE author line; Dhir *Surgery* 2018; Wang *World J Surg Oncol*; Montgomery unchanged).
-- Entries **7–10** (Kiss, Sutton, Loderer, Hao) are **NEEDS AUTHOR CHECK / UNVERIFIED** minimal stubs only.
+- In-text Vancouver citations **1–10** appear at the end of `manuscript_submission_v1.md`.
+- Entries **1–6** are **verified** (Ringel *Thyroid* 2025 **without** the incorrect DOI; Worrall *Endocr Oncol.*; full STROBE author line; Dhir *Surgery* 2018; Wang *World J Surg Oncol*; Montgomery *Surgery* 2023).
+- Entries **7–10** are **verified 2026-03-27** (Kiss *BMC Endocr Disord*; Conroy *Surgery* 2022; Loderer *Gland Surg* 2023; Hao *Gland Surg* 2025) — apply journal reference style at submit time.
 - **Removed from active manuscript list:** Kim MH (former ref 4); placeholder completion systematic review (former ref 12). See `SCHOLAR_GPT_REFERENCE_RECONCILIATION_20260326.md`.
 - Optional background list items (e.g., Barbaro narrative review, Xu *Sci Rep*) remain under **Not used** unless authors expand Discussion.
 
@@ -72,7 +72,7 @@ Using `MotherDuckClient.connect_ro_share()` (prod) with qualified table `thyroid
 
 ## Suggested revision-order (if desk-rejected or R&R)
 
-1. Resolve **NEEDS AUTHOR CHECK** references; obtain journal reference style.  
+1. Apply target journal reference style to **`references_working_20260326.md` items 1–10** (sources verified; formatting may differ by journal).  
 2. Production **Figure 1** relabeling if editors require CONSORT-style layout.  
 3. Add **ethics / IRB** and **funding / COI** (see `AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`).  
 4. Optional **extended-model** supplemental forest figure from `logistic_primary_extended.csv`.  

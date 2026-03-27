@@ -13,10 +13,10 @@ broad_nodal_parsimonious,age_at_surgery,0.984,0.973,0.995,0.00525,635,375,260,Fa
 broad_nodal_parsimonious,sex_f,0.939,0.629,1.401,0.757664,635,375,260,False
 broad_nodal_parsimonious,bethesda_ge4,2.765,1.878,4.071,0.0,635,375,260,False
 broad_nodal_parsimonious,has_mol,0.657,0.264,1.635,0.366191,635,375,260,False
-completion_after_lobe,age_at_surgery,0.614,0.0,,1.0,238,0,238,True
-completion_after_lobe,sex_f,0.129,0.0,,1.0,238,0,238,True
-completion_after_lobe,bethesda_ge4,4.546,0.0,,1.0,238,0,238,True
-completion_after_lobe,has_mol,0.868,0.0,,1.0,238,0,238,True
+completion_after_lobe,age_at_surgery,0.706,0.0,,0.999998,238,0,238,True
+completion_after_lobe,sex_f,0.126,0.0,,0.999999,238,0,238,True
+completion_after_lobe,bethesda_ge4,4.458,0.0,,0.999999,238,0,238,True
+completion_after_lobe,has_mol,0.869,0.0,,1.0,238,0,238,True
 molecular_subset,age_at_surgery,0.983,0.982,0.983,0.0,20,10,10,True
 molecular_subset,sex_f,0.126,0.123,0.129,0.0,20,10,10,True
 molecular_subset,bethesda_ge4,1.599,1.569,1.63,0.0,20,10,10,True

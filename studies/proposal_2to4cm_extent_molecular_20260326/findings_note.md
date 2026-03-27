@@ -1,7 +1,7 @@
 # Findings Note — Manuscript Readiness Bundle
 
 **Study:** Preoperative predictors of initial total thyroidectomy among 2.0–4.0 cm thyroid nodules
-**Date:** 2026-03-26
+**Date:** 2026-03-27
 
 ## Key results
 
@@ -19,7 +19,7 @@
 
 ## Critical caveats
 
-1. **Zero completion thyroidectomies** in this cohort → completion model has complete separation (unreliable).
+1. **OED-pipeline completion:** zero flagged events → `completion_after_lobe` model has complete separation (unreliable). **Path-synoptic definite:** 25/238 lobectomy patients (`table7`).
 2. **Pathology-defined size cohort is empty** (N=0) → no path sensitivity analysis possible.
 3. **Molecular subset models** show extreme coefficients and separation — treat as hypothesis-generating only.
 4. **Missing bethesda** ~27% — coded as "not ≥4"; complete-case sensitivity in `sensitivity_summary.csv`.

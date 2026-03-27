@@ -14,7 +14,7 @@
 | Broad N; total; % | 635; 375; 59.1% | same | **PASS** |
 | Pathology sensitivity N | 0 | 0 | **PASS** |
 | Preop molecular | 20/558 (3.6%) | same | **PASS** |
-| Completion | 0/238 (ever, 30/90/365) | table7 | **PASS** |
+| Completion | OED 0/238; path definite 25/238; any later 26; ambiguous 1 | table7 + audit outputs | **PASS** |
 | Bethesda missing | 149/558 (26.7%) | noted in ledger | **PASS** |
 | Mean age lob / tot | 56.6 / 52.9 yr | 56.59 / 52.93 | **PASS** (display rounding) |
 | Female % | 191/238, 257/320, 80.3% | same | **PASS** |
@@ -34,9 +34,9 @@
 
 ## 2. Citations vs `references_working_20260326.md`
 
-| In-text IDs | Present in `references_working` numbered list 1–12? | Result |
+| In-text IDs | Present in `references_working` numbered list **1–10**? | Result |
 |-------------|------------------------------------------------------|--------|
-| [1]–[10] | Yes (items **1.**–**10.**; former **11–12** retired) | **PASS** |
+| [1]–[10] | Yes (items **1.**–**10.**; former **11–12** not used in manuscript) | **PASS** |
 
 ---
 

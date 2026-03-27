@@ -24,17 +24,17 @@ These six entries are **authoritative** for submission v1 after 2026-03-26 recon
 
 ---
 
-## 2) Unverified references retained — NEEDS AUTHOR CHECK / UNVERIFIED (manuscript 7–10)
+## 2) Verified references (manuscript 7–10) — reconciled 2026-03-27
 
-Minimal placeholder lines only; **complete from primary sources** before final typesetting.
+Cross-checked against Crossref / journal pages (or PubMed/PMC for ref 9).
 
-**7.** Kiss A, et al. *BMC Endocr Disord*. 2023. **NEEDS AUTHOR CHECK / UNVERIFIED**
+**7.** Kiss A, Szili B, Bakos B, et al. Comparison of surgical strategies in the treatment of low-risk differentiated thyroid cancer. *BMC Endocr Disord*. 2023;23:23. doi:10.1186/s12902-023-01276-8.
 
-**8.** Sutton W, et al. *Am J Surg*. 2022. **NEEDS AUTHOR CHECK / UNVERIFIED**
+**8.** Conroy PC, Wilhelm A, Calthorpe L, et al. Endocrine surgeons are performing more thyroid lobectomies for low-risk differentiated thyroid cancer since the 2015 ATA guidelines. *Surgery*. 2022;172(5):1392-1400. doi:10.1016/j.surg.2022.06.031.
 
-**9.** Loderer T, et al. *Ann Ital Chir*. 2023. **NEEDS AUTHOR CHECK / UNVERIFIED**
+**9.** Loderer T, Bonati E, Donato V, et al. Malignancy risk in Bethesda class IV thyroid nodules in an iodine deficient region. *Gland Surg*. 2023;12(7):884-893. doi:10.21037/gs-22-491. PMCID: PMC10506119.
 
-**10.** Hao Q, et al. *Gland Surg*. 2025. **NEEDS AUTHOR CHECK / UNVERIFIED**
+**10.** Hao Q, Segel JE, Vanness DJ, et al. Hemithyroidectomy versus total thyroidectomy for patients with differentiated thyroid cancer: a systematic review and meta-analysis. *Gland Surg*. 2025;14(11):2271-2287. doi:10.21037/gs-2025-364.
 
 ---
 

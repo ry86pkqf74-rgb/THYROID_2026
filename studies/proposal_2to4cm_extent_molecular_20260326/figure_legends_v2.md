@@ -15,7 +15,7 @@
 |------|--------|
 | `fig_cohort_flow.png` | Legacy bar-chart export (150 DPI, horizontal bars, truncated labels). Replaced by `fig1_cohort_flow_publication.*`. |
 | `fig_forest_total_vs_lobectomy.png` | Legacy forest plot (150 DPI, 902×327 px, raw axis title "Forest: primary_parsimonious"). Replaced by `fig2_forest_primary_publication.*`. |
-| `fig_completion_rates.png` | Blank zero-height bars; completion summarized in Table 4 / text (0/238). Do not submit. |
+| `fig_completion_rates.png` | OED pipeline (**0/238** ever) vs path-synoptic definite (**25/238** ever; windowed counts) from `table7_completion_thyroidectomy.csv`. Optional supplemental figure. |
 | `fig_molecular_result_by_extent.png` | Exploratory; tiny denominators by molecular class. Do not submit. |
 | `fig_platform_specific_extent.png` | Overlapping x-axis labels; descriptive n=20 context only. Do not submit. |
 | `fig_bethesda_by_extent.png` | Redundant with Table 1. Do not submit. |

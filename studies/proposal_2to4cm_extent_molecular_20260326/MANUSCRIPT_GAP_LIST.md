@@ -9,7 +9,7 @@ Gaps are relative to a typical observational surgery manuscript and to **what th
 | Gap | Severity | Notes |
 |-----|----------|-------|
 | **Full IMRAD draft** | Lower | Addressed by `manuscript_submission_v1.md` + **Figures 1–2** callouts. |
-| **References / bibliography** | **Medium** | `references_working_20260326.md` + manuscript reference list; **verified** for items **1–6** (ATA without incorrect DOI, Worrall *Endocr Oncol.*, full STROBE/Dhir/Wang lines). **NEEDS AUTHOR CHECK / UNVERIFIED** for items **7–10** (Kiss, Sutton, Loderer, Hao). **Kim MH** (ex-ref 4) and **placeholder completion SR** (ex-ref 12) **removed** from active manuscript list (`SCHOLAR_GPT_REFERENCE_RECONCILIATION_20260326.md`). |
+| **References / bibliography** | **Low–Medium** | `references_working_20260326.md` — items **1–10** reconciled 2026-03-27 (Crossref / PMC). **Kim MH** (ex-ref 4) and **placeholder completion SR** (ex-ref 12) remain **removed** (`SCHOLAR_GPT_REFERENCE_RECONCILIATION_20260326.md`). |
 | **Figure assets** | **Lower** | **Main:** `fig_cohort_flow.png`, `fig_forest_total_vs_lobectomy.png`. **Figure 1** labels truncated—production relabel recommended (`AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`). |
 | **Institution, IRB, funding, COI** | **High** | `AUTHOR_INPUTS_REQUIRED_20260326.md` + `AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`. |
 | **Exact calendar study period** | Medium | `surgery_year` exists in data but **year range not asserted** in prose without explicit summary table in folder. |

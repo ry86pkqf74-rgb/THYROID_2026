@@ -15,7 +15,7 @@ Dear Editors,
 We submit for your consideration a **retrospective cohort study** examining **cross-sectional associations** between **preoperative** characteristics—including ultrasound-defined **2.0–4.0 cm** index nodule size, **Bethesda category**, limited **preoperative molecular testing**, and imaging covariates in extended models—and the odds of **initial total thyroidectomy** versus **initial lobectomy** among patients meeting prespecified eligibility in an integrated thyroid research database. **The outcome is surgical extent choice at the index procedure, not recurrence or survival.**
 
 **Contribution (associational):**  
-On a **strict** preoperative nodal-exclusion cohort (**N = 558**), we report multivariable **adjusted odds ratios** from pre-specified **parsimonious** and **extended** logistic models, plus a **broader** suspicious-node exclusion sensitivity cohort (**N = 635**). We transparently document that a **pathology-size–defined** parallel analytic set contained **zero** patients after the same strict nodal rule in this freeze, and that **completion thyroidectomy** after lobectomy was **zero** under pipeline completion flags (**0/238**), with **missingness** explicitly acknowledged—all numbers traceable to CSV outputs and `CLAIM_SOURCE_LEDGER.md`.
+On a **strict** preoperative nodal-exclusion cohort (**N = 558**), we report multivariable **adjusted odds ratios** from pre-specified **parsimonious** and **extended** logistic models, plus a **broader** suspicious-node exclusion sensitivity cohort (**N = 635**). We transparently document that a **pathology-size–defined** parallel analytic set contained **zero** patients after the same strict nodal rule in this freeze, and that **completion thyroidectomy** after lobectomy was **zero** on the **operative-episode pipeline** (**0/238**) but **25/238** had **path-synoptic definite** later-stage documentation—a **dual definition** now in **`table7_completion_thyroidectomy.csv`** and **`completion_audit_outputs/`**—with **missingness** explicitly acknowledged; all numbers traceable to CSV outputs and `CLAIM_SOURCE_LEDGER.md`.
 
 **Figures:**  
 **Figure 1** is a cohort-selection diagram (`fig_cohort_flow.png`). **Figure 2** is a forest plot of the **primary parsimonious** model (`fig_forest_total_vs_lobectomy.png`). Legends and submission exclusions are in **`figure_legends_v1.md`**.
@@ -27,7 +27,7 @@ The work is **observational**; we **do not** claim causal effects of molecular t
 Quantitative claims are mapped in **`CLAIM_SOURCE_LEDGER.md`**. MotherDuck production objects were **not** modified during manuscript assembly; analysis artifacts are file-based in **`studies/proposal_2to4cm_extent_molecular_20260326/`**.
 
 **References:**  
-Working list: **`references_working_20260326.md`**; several entries require final pagination/DOI verification (**NEEDS AUTHOR CHECK**).
+Working list: **`references_working_20260326.md`** — manuscript citations **[1]–[10]** reconciled to primary sources **2026-03-27**; apply final journal formatting at submit time.
 
 **Suggested reviewers:** [Author to supply — no fabricated names]
 

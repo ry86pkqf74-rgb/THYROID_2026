@@ -5,11 +5,10 @@ Reads CSVs/JSON already produced by study_pipeline.py.
 Writes 8 additive deliverables + a findings note.
 Does NOT re-run MotherDuck queries or alter cohort definitions.
 """
-import json, csv, pathlib, datetime, hashlib
+import json, pathlib, datetime, hashlib
 import numpy as np
 import pandas as pd
 from sklearn.metrics import roc_auc_score, brier_score_loss
-from sklearn.calibration import calibration_curve
 import statsmodels.api as sm
 
 STUDY = pathlib.Path(__file__).resolve().parent
@@ -178,9 +177,27 @@ qa_lines += [
     "## 9. Completion thyroidectomy audit",
     "",
     f"- Lobectomy patients: **{n_lob}**",
-    f"- Completion events: **{int(table7['completion_ever'].iloc[0] * n_lob)}** "
-    f"(rate {table7['completion_ever'].iloc[0]:.3f})",
-    "- ⚠️ Zero completion events → completion model has complete separation.",
+]
+if "completion_ever_oed_pipeline" in table7.columns:
+    r0 = table7.iloc[0]
+    oed_n = int(float(r0["completion_ever_oed_pipeline"]) * n_lob)
+    path_n = int(float(r0["completion_ever_path_synoptic_definite"]) * n_lob)
+    qa_lines += [
+        f"- OED pipeline (`operative_episode_detail_v2`) completion ever: **{oed_n}** / {n_lob} "
+        f"(rate {float(r0['completion_ever_oed_pipeline']):.3f})",
+        f"- Path-synoptic definite completion ever: **{path_n}** / {n_lob} "
+        f"(rate {float(r0['completion_ever_path_synoptic_definite']):.3f})",
+        f"- Any later thyroid surgery (OED or path row after index): **{int(r0.get('n_patients_any_later_thyroid_surgery_oed_or_path', 0))}** patients",
+        f"- Ambiguous later surgery only (not OED/path definite): **{int(r0.get('n_patients_ambiguous_later_only_not_oed_or_path_definite', 0))}**",
+        "- ⚠️ Completion logistic (OED-flag outcome) still has **zero events** → complete separation.",
+    ]
+else:
+    qa_lines += [
+        f"- Completion events: **{int(table7['completion_ever'].iloc[0] * n_lob)}** "
+        f"(rate {table7['completion_ever'].iloc[0]:.3f})",
+        "- ⚠️ OED-pipeline completion: zero events → completion logistic still complete separation; path definite n=25.",
+    ]
+qa_lines += [
     "",
     "## 10. Molecular testing coverage",
     "",
@@ -562,7 +579,7 @@ freeze_text = f"""# Analysis Freeze Classification
 
 | Analysis | Model/Table | N | Outcome | Classification | Note |
 |----------|-------------|---|---------|----------------|------|
-| Completion thyroidectomy model | completion_after_lobe | {n_lob} | completion_event | **EXPLORATORY** | Complete separation — 0 completion events; model unreliable |
+| Completion thyroidectomy model | completion_after_lobe | {n_lob} | completion_event (OED `completion_total_flag`) | **EXPLORATORY** | Complete separation — 0 OED-flag events; path-synoptic definite 25/238 descriptive (`table7`) |
 | Molecular subset model | molecular_subset | {mol_tested} | initial_total | **EXPLORATORY** | N={mol_tested}; extreme coefficients; underpowered |
 | ThyroSeq subgroup | thyroseq_only | — | initial_total | **EXPLORATORY** | Platform-specific; tiny N; separation likely |
 | Afirma subgroup | afirma_only | — | initial_total | **EXPLORATORY** | Platform-specific; tiny N; separation confirmed |
@@ -689,7 +706,7 @@ findings = f"""# Findings Note — Manuscript Readiness Bundle
 
 ## Critical caveats
 
-1. **Zero completion thyroidectomies** in this cohort → completion model has complete separation (unreliable).
+1. **OED-pipeline completion:** zero flagged events → `completion_after_lobe` model has complete separation (unreliable). **Path-synoptic definite:** 25/238 lobectomy patients (`table7`).
 2. **Pathology-defined size cohort is empty** (N=0) → no path sensitivity analysis possible.
 3. **Molecular subset models** show extreme coefficients and separation — treat as hypothesis-generating only.
 4. **Missing bethesda** ~{100*patient['bethesda_category'].isna().mean():.0f}% — coded as "not ≥4"; complete-case sensitivity in `sensitivity_summary.csv`.

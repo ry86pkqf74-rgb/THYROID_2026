@@ -1,8 +1,43 @@
 """Cohort construction helpers: first surgery, size cohorts, exclusions, completion."""
 from __future__ import annotations
 
+import re
+
 import numpy as np
 import pandas as pd
+
+# Path-synoptic completion cues (aligned with run_completion_audit_motherduck.py)
+_TP_COMPLETION_RE = re.compile(
+    r"(completion\s+thyroidectomy|compl\.?\s*thyroidectomy|complete\s+thyroidectomy|"
+    r"completion\s+of\s+(the\s+)?thyroid|second\s*[- ]stage\s+thyroidectomy|"
+    r"re-?operative\s+thyroidectomy|total\s+thyroidectomy\s*\(?\s*completion|"
+    r"thyroidectomy\s*,\s*completion)",
+    re.I,
+)
+
+
+def _classify_path_synoptic_completion_row(
+    thyroid_procedure: object, completion_col: object
+) -> str:
+    """definite_completion | ambiguous_likely_staged | not_completion_indicator | unknown"""
+    tp = str(thyroid_procedure or "").strip()
+    comp = (
+        str(completion_col).strip().lower()
+        if completion_col is not None and str(completion_col).strip() != ""
+        else ""
+    )
+    if comp in ("yes", "y"):
+        return "definite_completion"
+    if _TP_COMPLETION_RE.search(tp):
+        return "definite_completion"
+    tl = tp.lower()
+    if "lobectomy" in tl or "hemithyroidectomy" in tl or "thyroidectomy" in tl:
+        if comp in ("no", "n", "false", "0"):
+            return "not_completion_indicator"
+        if comp == "" or pd.isna(completion_col):
+            return "ambiguous_likely_staged"
+        return "ambiguous_likely_staged"
+    return "unknown"
 
 RANDOM_STATE = 42
 np.random.seed(RANDOM_STATE)
@@ -283,7 +318,11 @@ def completion_after_lobectomy(
         if anchor is None or pd.isna(anchor):
             continue
         later = grp[grp["resolved_surgery_date"] > anchor].sort_values("resolved_surgery_date")
-        tot = later[later["procedure_normalized"] == "total_thyroidectomy"]
+        tot = later[
+            later["procedure_normalized"].isin(
+                ("total_thyroidectomy", "completion_thyroidectomy")
+            )
+        ]
         if tot.empty:
             rows.append(
                 {
@@ -311,11 +350,144 @@ def completion_after_lobectomy(
     return pd.DataFrame(rows)
 
 
+def oed_any_later_episode_after_index(ops: pd.DataFrame, first: pd.DataFrame) -> pd.DataFrame:
+    """Any operative_episode_detail_v2 row strictly after index surgery (lobectomy cohort)."""
+    sx_map = first.set_index("research_id")["index_surgery_date"].to_dict()
+    init_type = first.set_index("research_id")["procedure_normalized"].to_dict()
+    all_ops = ops.copy()
+    all_ops["resolved_surgery_date"] = pd.to_datetime(
+        all_ops["resolved_surgery_date"], errors="coerce"
+    )
+    rows: list[dict] = []
+    for rid, grp in all_ops.groupby("research_id"):
+        if init_type.get(rid) != "hemithyroidectomy":
+            continue
+        anchor = sx_map.get(rid)
+        if anchor is None or pd.isna(anchor):
+            rows.append({"research_id": rid, "oed_any_later_episode_flag": False})
+            continue
+        later = grp[grp["resolved_surgery_date"] > anchor]
+        rows.append(
+            {"research_id": rid, "oed_any_later_episode_flag": bool(len(later) > 0)}
+        )
+    return pd.DataFrame(rows)
+
+
+def path_synoptic_completion_after_lobectomy(
+    path_syn: pd.DataFrame,
+    first: pd.DataFrame,
+) -> pd.DataFrame:
+    """Later path_synoptics dated after index lobectomy; definite completion from synoptic cues.
+
+    One row per patient with first qualifying hemithyroidectomy in *first*.
+    Definite completion: synoptic ``completion`` in {yes, y} and/or procedure text matching
+    completion-thyroidectomy patterns on a later-dated synoptic row.
+    """
+    sx_map = first.set_index("research_id")["index_surgery_date"].to_dict()
+    init_type = first.set_index("research_id")["procedure_normalized"].to_dict()
+    ps = path_syn.copy()
+    if "research_id" not in ps.columns:
+        return pd.DataFrame(
+            columns=[
+                "research_id",
+                "path_completion_definite_flag",
+                "path_completion_days",
+                "path_completion_within_30",
+                "path_completion_within_90",
+                "path_completion_within_365",
+                "path_synoptic_any_later_row_flag",
+                "path_completion_ambiguous_later_only_flag",
+            ]
+        )
+    ps["research_id"] = pd.to_numeric(ps["research_id"], errors="coerce").astype("Int64")
+    if "completion" not in ps.columns:
+        ps["completion"] = np.nan
+    ps["surg_date"] = pd.to_datetime(ps["surg_date"], errors="coerce")
+    rows: list[dict] = []
+    for rid, grp in ps.groupby("research_id"):
+        if init_type.get(rid) != "hemithyroidectomy":
+            continue
+        anchor = sx_map.get(rid)
+        if anchor is None or pd.isna(anchor):
+            rows.append(
+                {
+                    "research_id": rid,
+                    "path_completion_definite_flag": False,
+                    "path_completion_days": np.nan,
+                    "path_completion_within_30": False,
+                    "path_completion_within_90": False,
+                    "path_completion_within_365": False,
+                    "path_synoptic_any_later_row_flag": False,
+                    "path_completion_ambiguous_later_only_flag": False,
+                }
+            )
+            continue
+        anchor_ts = pd.Timestamp(anchor)
+        later = grp[grp["surg_date"] > anchor_ts].sort_values("surg_date")
+        if later.empty:
+            rows.append(
+                {
+                    "research_id": rid,
+                    "path_completion_definite_flag": False,
+                    "path_completion_days": np.nan,
+                    "path_completion_within_30": False,
+                    "path_completion_within_90": False,
+                    "path_completion_within_365": False,
+                    "path_synoptic_any_later_row_flag": False,
+                    "path_completion_ambiguous_later_only_flag": False,
+                }
+            )
+            continue
+        classes = [
+            _classify_path_synoptic_completion_row(r["thyroid_procedure"], r["completion"])
+            for _, r in later.iterrows()
+        ]
+        definite_mask = [c == "definite_completion" for c in classes]
+        ambiguous_mask = [c == "ambiguous_likely_staged" for c in classes]
+        definite_any = any(definite_mask)
+        ambiguous_any = any(ambiguous_mask) or any(
+            c == "unknown" for c in classes
+        )
+        if definite_any:
+            idx = int(np.argmax(definite_mask))
+            t0 = later.iloc[idx]["surg_date"]
+            delta = (pd.Timestamp(t0) - anchor_ts).days
+            rows.append(
+                {
+                    "research_id": rid,
+                    "path_completion_definite_flag": True,
+                    "path_completion_days": float(delta),
+                    "path_completion_within_30": delta <= 30,
+                    "path_completion_within_90": delta <= 90,
+                    "path_completion_within_365": delta <= 365,
+                    "path_synoptic_any_later_row_flag": True,
+                    "path_completion_ambiguous_later_only_flag": False,
+                }
+            )
+        else:
+            rows.append(
+                {
+                    "research_id": rid,
+                    "path_completion_definite_flag": False,
+                    "path_completion_days": np.nan,
+                    "path_completion_within_30": False,
+                    "path_completion_within_90": False,
+                    "path_completion_within_365": False,
+                    "path_synoptic_any_later_row_flag": True,
+                    "path_completion_ambiguous_later_only_flag": bool(
+                        ambiguous_any and not definite_any
+                    ),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
 def ultimate_extent_total(
     first: pd.DataFrame,
     completion_df: pd.DataFrame,
+    path_completion: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
-    """Initial vs ultimate total (after completion)."""
+    """Initial vs ultimate total (after OED- and/or path-synoptic–detected completion)."""
     out = first[
         ["research_id", "procedure_normalized", "index_surgery_date"]
     ].copy()
@@ -324,7 +496,21 @@ def ultimate_extent_total(
     out["completion_total_flag"] = (
         out["research_id"].map(comp["completion_total_flag"]).fillna(False).astype(bool)
     )
-    out["ultimate_total"] = out["initial_total"] | out["completion_total_flag"]
+    if path_completion is not None and not path_completion.empty:
+        pc = path_completion.set_index("research_id")
+        out["completion_path_synoptic_definite_flag"] = (
+            out["research_id"]
+            .map(pc["path_completion_definite_flag"])
+            .fillna(False)
+            .astype(bool)
+        )
+    else:
+        out["completion_path_synoptic_definite_flag"] = False
+    out["ultimate_total"] = (
+        out["initial_total"]
+        | out["completion_total_flag"]
+        | out["completion_path_synoptic_definite_flag"]
+    )
     return out
 
 

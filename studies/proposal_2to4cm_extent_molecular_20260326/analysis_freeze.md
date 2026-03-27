@@ -1,7 +1,7 @@
 # Analysis Freeze Classification
 
-**Date:** 2026-03-26
-**Git SHA:** 2e9a787b904cc2b8cab9f94789c07f2e8cf46772
+**Date:** 2026-03-27
+**Git SHA:** 0d6b58a42e446e259212d49f177deb4e14a89366
 
 ## Primary analyses
 
@@ -21,7 +21,7 @@
 
 | Analysis | Model/Table | N | Outcome | Classification | Note |
 |----------|-------------|---|---------|----------------|------|
-| Completion thyroidectomy model | completion_after_lobe | 238 | completion_event | **EXPLORATORY** | Complete separation — 0 completion events; model unreliable |
+| Completion thyroidectomy model | completion_after_lobe | 238 | completion_event (OED `completion_total_flag`) | **EXPLORATORY** | Complete separation — 0 OED-flag events; path-synoptic definite 25/238 descriptive (`table7`) |
 | Molecular subset model | molecular_subset | 20 | initial_total | **EXPLORATORY** | N=20; extreme coefficients; underpowered |
 | ThyroSeq subgroup | thyroseq_only | — | initial_total | **EXPLORATORY** | Platform-specific; tiny N; separation likely |
 | Afirma subgroup | afirma_only | — | initial_total | **EXPLORATORY** | Platform-specific; tiny N; separation confirmed |

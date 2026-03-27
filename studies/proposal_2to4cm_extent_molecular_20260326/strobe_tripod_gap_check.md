@@ -1,6 +1,6 @@
 # STROBE / TRIPOD Gap Check for Manuscript Submission
 
-**Date:** 2026-03-26
+**Date:** 2026-03-27
 
 ## STROBE Checklist (Observational — cross-sectional/cohort)
 

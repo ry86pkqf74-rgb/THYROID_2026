@@ -13,7 +13,7 @@ Among adults undergoing **first qualifying hemithyroidectomy or total thyroidect
 Secondary / exploratory layers in the same folder:
 
 - **Broad vs strict nodal exclusion:** sensitivity cohort with broader suspicious-node exclusion (N=635 vs N=558).
-- **Completion thyroidectomy** after initial lobectomy (descriptive rates in [`table7_completion_thyroidectomy.csv`](table7_completion_thyroidectomy.csv); multivariable model **not interpretable** — zero events, separation).
+- **Completion thyroidectomy** after initial lobectomy — **dual reporting** in [`table7_completion_thyroidectomy.csv`](table7_completion_thyroidectomy.csv) (OED pipeline vs path-synoptic definite); multivariable **completion_after_lobe** model remains **not interpretable** (zero events on **OED** outcome, separation).
 - **Molecular-tested subset** (n=20): descriptive concordance ([`table6_molecular_pathology_concordance.csv`](table6_molecular_pathology_concordance.csv)); multivariable logistic outputs have **severely limited sample size and separation** — not primary inference.
 
 ---
@@ -58,7 +58,7 @@ When sources disagree, rank as follows:
 - **Causal language** (e.g. “effect of X on choice of total thyroidectomy”) — **avoid**; use **associated with**, **adjusted odds ratios** in a **cross-sectional** surgical cohort.
 - **Pathology-defined sensitivity analysis** — do **not** imply a second completed N&gt;0 cohort; current **N=0**.
 - **Molecular inference** — full cohort has **20/558** preoperative molecular tests; subgroup models are **exploratory only**.
-- **Completionafter lobectomy** — **zero** documented completion events in [`table7_completion_thyroidectomy.csv`](table7_completion_thyroidectomy.csv); do **not** cite completion logistic ORs as meaningful.
+- **Completion after lobectomy** — **0/238** on **OED pipeline** columns; **25/238 path-synoptic definite** + **1** ambiguous (`table7`, `completion_audit_outputs/`); do **not** cite completion logistic ORs as meaningful (OED outcome separation).
 - **Generalizability** — single integrated database; residual confounding and selection into surgery/FNA/molecular testing **not** fully observable from artifacts.
 
 ---
@@ -120,7 +120,7 @@ When sources disagree, rank as follows:
 |------|------|------------|
 | `fig_cohort_flow.png` | Pipeline cohort counts (zeros for pathology arm / intermediate steps per `cohort_build_log.md`) | **Yes — Figure 1** |
 | `fig_forest_total_vs_lobectomy.png` | Forest plot, **primary_parsimonious** model | **Yes — Figure 2** |
-| `fig_completion_rates.png` | Completion bars (empty at export) | **No** — do not submit |
+| `fig_completion_rates.png` | OED vs path-synoptic completion bars | **Optional** supplemental (authors’ choice) |
 | `fig_bethesda_by_extent.png` | Extent counts by group | Optional / redundant with Table 1 |
 | `fig_initial_to_ultimate_extent.png` | Initial vs ultimate extent | Optional supplement only |
 | `fig_molecular_result_by_extent.png` | Rates by molecular class (tiny N per cell) | **No** — exploratory, misleading if overread |
@@ -148,7 +148,7 @@ When sources disagree, rank as follows:
 
 | File / note |
 |-------------|
-| `references_working_20260326.md` — Vancouver-style working list (Grok-sourced; **NEEDS AUTHOR CHECK** on incomplete entries). |
+| `references_working_20260326.md` — **1–10** reconciled **2026-03-27** (Crossref/journal); apply final journal style at submission. Optional Grok-only rows remain in `external_context_grok_*` — verify before citing. |
 | **No** `.bib` / `.ris` machine-readable export in folder. |
 
 ---

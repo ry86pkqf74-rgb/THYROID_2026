@@ -1,6 +1,6 @@
 # QA Reconciliation Report
 
-**Generated:** 2026-03-26T05:30:10.586629+00:00
+**Generated:** 2026-03-27T02:48:00.089067+00:00
 
 ## 1. Cohort flow step counts (`cohort_flow.csv`)
 
@@ -31,7 +31,7 @@
 
 ## 4. Transition counts cross-check
 
-- {'initial': 'Initial lobectomy', 'Not ultimate total': 238, 'Ultimate total-class': 0}
+- {'initial': 'Initial lobectomy', 'Not ultimate total': 213, 'Ultimate total-class': 25}
 - {'initial': 'Initial total', 'Not ultimate total': 0, 'Ultimate total-class': 320}
 - Sum of all cells: **558** vs primary N **558**: **PASS**
 
@@ -79,8 +79,11 @@ From `validation_report.md`:
 ## 9. Completion thyroidectomy audit
 
 - Lobectomy patients: **238**
-- Completion events: **0** (rate 0.000)
-- ⚠️ Zero completion events → completion model has complete separation.
+- OED pipeline (`operative_episode_detail_v2`) completion ever: **0** / 238 (rate 0.000)
+- Path-synoptic definite completion ever: **25** / 238 (rate 0.105)
+- Any later thyroid surgery (OED or path row after index): **26** patients
+- Ambiguous later surgery only (not OED/path definite): **1**
+- ⚠️ Completion logistic (OED-flag outcome) still has **zero events** → complete separation.
 
 ## 10. Molecular testing coverage
 
@@ -89,21 +92,8 @@ From `validation_report.md`:
 
 ## 11. Integrity checksums
 
-- `patient_level_dataset.csv`: SHA-256 prefix `1dbf98a52690e32c`
-- `patient_level_dataset_broad_nodal_exclusion.csv`: SHA-256 prefix `8512ed7d35783f60`
-
-## 12. Outcome homogeneity notice
-
-- `final_malignant` = 1.0 for **all 558** primary patients (100% malignant cohort).
-- `aggressive_pathology` = True for **all 558** primary patients.
-- These columns provide no discrimination between lobectomy and total thyroidectomy groups.
-- Baseline table rows for these variables are retained for completeness but are non-informative.
-- Verify with PI whether this reflects inclusion criteria (cancer-only) or a data-processing artefact.
-
-## 13. Model calibration note
-
-- Calibration intercept and slope could not be computed for primary models (logit transform of predicted probabilities produced extreme values near probability boundaries).
-- AUC, Brier score, and bootstrap optimism-corrected AUC are valid.
+- `patient_level_dataset.csv`: SHA-256 prefix `d6b1d7ae22fa8d36`
+- `patient_level_dataset_broad_nodal_exclusion.csv`: SHA-256 prefix `de014a7f4d15ee9e`
 
 ---
-**QA verdict:** All primary reconciliation checks PASS. Completion model and molecular subgroup analyses flagged as unreliable (separation / small N). 100% malignancy rate noted — confirm with PI.
+**QA verdict:** All primary reconciliation checks PASS. Completion model and molecular subgroup analyses flagged as unreliable (separation / small N).

@@ -47,7 +47,7 @@ We performed a **retrospective cohort study** using analytic tables queried in t
 
 **Extended model covariates.** `bilateral_nodule_indicator` and `tirads_score` (numeric), when present after merge, as in `study_pipeline.py` extended predictor list.
 
-**Completion thyroidectomy.** Among patients with initial lobectomy, we summarized indicator completion flags (`completion_total_flag`, `completion_within_*`) from assembled patient data (`table7_completion_thyroidectomy.csv`).
+**Completion thyroidectomy.** Among patients with initial lobectomy, we summarized completion in **two layers**: (i) **OED pipeline flags**—a later `operative_episode_detail_v2` row with `procedure_normalized` in {`total_thyroidectomy`, `completion_thyroidectomy`} strictly after index surgery (`completion_total_flag`, `completion_within_*`; `cohort_logic.completion_after_lobectomy`); (ii) **path-synoptic definite completion**—a later-dated `path_synoptics` row with synoptic `completion` ∈ {yes, y} and/or completion-thyroidectomy language in `thyroid_procedure` (`cohort_logic.path_synoptic_completion_after_lobectomy`). **Integrated ultimate extent** (`ultimate_total`) treats either layer as evidence of progression to total-class management (`cohort_logic.ultimate_extent_total`). Exports: **`table7_completion_thyroidectomy.csv`**, **`completion_audit_outputs/`** (independent MotherDuck audit bundle).
 
 ### Statistical analysis
 
@@ -90,7 +90,7 @@ Source file: **`table1_by_initial_extent.csv`**.
 
 ### Completion after lobectomy
 
-Among **238** initial lobectomy patients, **zero** had completion thyroidectomy by the pipeline-defined flags over available follow-up windows summarized in **`table7_completion_thyroidectomy.csv`** (completion ever and within 30, 90, and 365 days all **0 / 238**).
+Among **238** initial lobectomy patients (**Table 4** / **`table7_completion_thyroidectomy.csv`**), **zero** had a **later operative episode** meeting OED pipeline criteria for completion (**0 / 238** for ever and within 30, 90, and 365 days). Separately, **25 / 238 (10.5%)** had **path-synoptic definite** completion on a later synoptic row after index surgery (**2**, **13**, and **20** within **30**, **90**, and **365** days, respectively). **26** patients had **any** later thyroid-related operative or synoptic row after index lobectomy; **1** had later surgery without meeting **definite** OED or path-synoptic rules (**ambiguous** bucket). **`fig_completion_rates.png`** contrasts OED-pipeline versus path-synoptic proportions (ever and windowed).
 
 ### Univariable associations
 
@@ -132,9 +132,9 @@ Platform-specific strata (ThyroSeq **n = 8**, Afirma **n = 12** in the same file
 
 In this **single-database** retrospective cohort restricted to **preoperative imaging** nodule size **2.0–4.0 cm** and strict exclusion of definite preoperative nodal involvement, **57.3%** underwent **initial total thyroidectomy** (**320/558**). In adjusted models, **Bethesda category ≥4** and **bilateral nodule indicator** (extended model) **were associated with higher** odds of **initial total** among preoperative variables examined, whereas **older age** was associated with **lower** odds. **Female sex** was **not** significantly associated with initial total in primary adjusted models. For **preoperative molecular testing**, **no statistically significant association was observed; however, interpretation is limited by sparse testing (20/558) and potential selection bias.** A **non-causal** interpretation of testing as measured here remains appropriate.
 
-Prior observational literature supports an association between higher-risk preoperative features, including cytologic risk, and selection of more extensive initial surgery.[5,6] Additional observational series describe variation in surgical strategy among patients treated for low-risk papillary thyroid carcinoma.[7] Prior cohort studies have reported age-related differences in surgical extent following guideline changes.[8] Bethesda-tier context for surgical decision-making is well described even when cytopathology categories differ from our ≥4 indicator.[9] These external papers **do not** replicate our adjusted odds ratios; they provide a **qualitative** backdrop only.
+Prior observational literature supports an association between higher-risk preoperative features, including cytologic risk, and selection of more extensive initial surgery.[5,6] Additional observational series describe variation in surgical strategy among patients treated for low-risk papillary thyroid carcinoma.[7] Population-level surgical series report increasing lobectomy use and other extent shifts after ATA guideline updates.[8] Bethesda-tier context for surgical decision-making is well described even when cytopathology categories differ from our ≥4 indicator.[9] These external papers **do not** replicate our adjusted odds ratios; they provide a **qualitative** backdrop only.
 
-**Completion thyroidectomy** after initial lobectomy was **0 / 238** under pipeline completion flags. External cohort studies report non-zero and sometimes substantial completion thyroidectomy rates after initial lobectomy, particularly when final pathology reveals higher-risk features, although estimates vary widely depending on cohort selection and follow-up completeness.[3,5] The discrepancy between these reports and the **0/238** observed in this dataset likely reflects incomplete longitudinal capture and differences in cohort definitions rather than a true absence of completion procedures. Our **zero** tally should be read as **operationalized, database-limited ascertainment** with **substantial missingness** on completion-related fields for many patients (`missingness_summary.csv`), not as proof that no patient ever underwent completion outside capture.
+**Completion thyroidectomy** after initial lobectomy showed **no capture** on the **OED-only pipeline** (**0 / 238** later `operative_episode_detail_v2` totals) but **25 / 238** with **path-synoptic definite** second-stage documentation—consistent with **fragmentation** between operative-detail linkage and synoptic pathology rows in this database (**`completion_audit_outputs/final_verdict.md`**). External cohort studies still report non-zero pooled completion rates that are not directly comparable without aligning definitions.[3,5] Authors should distinguish **operative-table ascertainment** from **synoptic-pathology ascertainment** when contrasting with literature.
 
 ### Plausible but not proven here
 
@@ -149,7 +149,7 @@ Structured guidelines summarize the preoperative factors used to guide extent de
 - **Observational design** — associations only; **no causal** interpretation of cytology, molecular testing, or imaging features on surgeon choice.
 - **Single integrated database** — generalizability **unknown**.
 - **Missing data** on **Bethesda category**, **FNA/imaging linkage**, **completion** fields, and **molecular** variables; listwise deletion may bias estimates if missingness is informative (**149/558** missing Bethesda among primary-cohort rows).
-- **Completion thyroidectomy** is summarized using **pipeline-defined indicator flags** with **imperfect longitudinal capture**; the **0/238** tally must not be interpreted as a population completion rate absent chart-level validation **and likely underestimates true rates due to incomplete longitudinal capture and potential care outside the database**.
+- **Completion thyroidectomy** is summarized using **dual definitions** (OED pipeline vs path-synoptic definite); the **0/238 OED-only** tally reflects **sparse second-row operative linkage**, while **25/238** definite completions were recovered from **later synoptic rows**. Neither definition replaces full **individual chart** review; care outside the linked database may still be missed.
 - **Pathology-sized sensitivity** analytic set **empty (N = 0)** — imaging-defined inclusion is the operational preoperative size frame reported here.
 - **Molecular** concordance and subset models are **exploratory** only (**n = 20** with preoperative molecular testing in the primary cohort).
 - **Temporal** trends (e.g., 2013–2023 surgery years in data) are **not** the focus of frozen tabular outputs.
@@ -170,6 +170,7 @@ Tabular analytic exports referenced in this manuscript are in **`studies/proposa
 |-------|--------|
 | **Figure 1** | `fig_cohort_flow.png` (see `figure_legends_v1.md`) |
 | **Figure 2** | `fig_forest_total_vs_lobectomy.png` |
+| **Figure 3 (completion)** | `fig_completion_rates.png` — OED pipeline vs path-synoptic definite (`figure_legends_v1.md`) |
 | Table 1 | `table1_by_initial_extent.csv` |
 | Table 2a–b | `logistic_primary_parsimonious.csv`, `logistic_primary_extended.csv` |
 | Table 3 | `logistic_broad_nodal_parsimonious.csv` |
@@ -177,7 +178,7 @@ Tabular analytic exports referenced in this manuscript are in **`studies/proposa
 | Table 5 | `univariable_tests.csv` |
 | Table 6 | `table6_molecular_pathology_concordance.csv` |
 
-**Not submitted:** `fig_completion_rates.png` (blank). Exploratory bar charts `fig_molecular_result_by_extent.png`, `fig_platform_specific_extent.png` are **not** used as main figures (see `AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`).
+**Completion figure:** `fig_completion_rates.png` is now **non-blank** (OED vs path-synoptic bars); authors may include as **supplemental** or relabel for journal. Exploratory bar charts `fig_molecular_result_by_extent.png`, `fig_platform_specific_extent.png` remain **not** main figures (`AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`; update that note locally).
 
 ---
 
@@ -195,10 +196,10 @@ Tabular analytic exports referenced in this manuscript are in **`studies/proposa
 
 6. Wang X, Cheng W, Liu C, Li J, He A, Zeng W. Risk factors that influence surgical decision-making for low-risk differentiated thyroid cancer patients with tumor diameter 1-4 cm: a retrospective study. *World J Surg Oncol*. 2020;18(1):310. doi:10.1186/s12957-020-02064-7. PMCID: PMC7719324.
 
-7. Kiss A, et al. *BMC Endocr Disord*. 2023. **NEEDS AUTHOR CHECK / UNVERIFIED** — complete citation from primary source (no DOI, volume, or pages fabricate).
+7. Kiss A, Szili B, Bakos B, et al. Comparison of surgical strategies in the treatment of low-risk differentiated thyroid cancer. *BMC Endocr Disord*. 2023;23:23. doi:10.1186/s12902-023-01276-8.
 
-8. Sutton W, et al. *Am J Surg*. 2022. **NEEDS AUTHOR CHECK / UNVERIFIED** — complete citation from primary source (no DOI, volume, or pages fabricate).
+8. Conroy PC, Wilhelm A, Calthorpe L, et al. Endocrine surgeons are performing more thyroid lobectomies for low-risk differentiated thyroid cancer since the 2015 ATA guidelines. *Surgery*. 2022;172(5):1392-1400. doi:10.1016/j.surg.2022.06.031.
 
-9. Loderer T, et al. *Ann Ital Chir*. 2023. **NEEDS AUTHOR CHECK / UNVERIFIED** — complete citation from primary source (no DOI, volume, or pages fabricate).
+9. Loderer T, Bonati E, Donato V, et al. Malignancy risk in Bethesda class IV thyroid nodules in an iodine deficient region. *Gland Surg*. 2023;12(7):884-893. doi:10.21037/gs-22-491. PMCID: PMC10506119.
 
-10. Hao Q, et al. *Gland Surg*. 2025. **NEEDS AUTHOR CHECK / UNVERIFIED** — complete citation from primary source (no DOI, volume, or pages fabricate).
+10. Hao Q, Segel JE, Vanness DJ, et al. Hemithyroidectomy versus total thyroidectomy for patients with differentiated thyroid cancer: a systematic review and meta-analysis. *Gland Surg*. 2025;14(11):2271-2287. doi:10.21037/gs-2025-364.

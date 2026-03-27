@@ -33,7 +33,7 @@ Strings or patterns that **were** risky or **remain** sensitive. Use during fina
 | Item | Risk | Mitigation |
 |------|------|------------|
 | Ref **12** stub | Citing systematic review without full record | Complete PubMed/journal entry before submission |
-| Pooled completion rates in literature | Must not over-interpret vs **0/238** flags | Keep contrast language; cite completed ref 12 |
+| Pooled completion rates in literature | Must not over-interpret vs **0/238 OED** without noting **25/238 path definite** | Contrast using **named ascertainment** (`table7`) |
 | Figure 1 truncated y-labels | Peer review / production | Relabel or redraw per `AUTHOR_FILL_INS` |
 
 ---

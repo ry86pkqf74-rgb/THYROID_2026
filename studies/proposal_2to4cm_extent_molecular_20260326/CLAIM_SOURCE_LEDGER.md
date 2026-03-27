@@ -46,7 +46,11 @@ Maps numeric claims in **`manuscript_submission_v1.md`** and **`abstract_structu
 | Claim | Value | Source | Location | Status |
 |-------|-------|--------|----------|--------|
 | Lobectomy subgroup n | 238 | `table7_completion_thyroidectomy.csv` | row `all_lobectomy`, `n` | VERIFIED |
-| Completion ever / 30 / 90 / 365 d | 0 / 0 / 0 / 0 (proportion) | `table7_completion_thyroidectomy.csv` | `completion_*` columns | VERIFIED |
+| OED pipeline completion ever / 30 / 90 / 365 d (proportion) | 0 / 0 / 0 / 0 | same | `completion_*_oed_pipeline` | VERIFIED |
+| Path-synoptic definite completion ever / 30 / 90 / 365 d | ≈0.105 / 0.0084 / 0.055 / 0.084 | same | `completion_*_path_synoptic_definite` | VERIFIED |
+| N any later thyroid surgery (OED or path) | 26 | same | `n_patients_any_later_thyroid_surgery_oed_or_path` | VERIFIED |
+| N definite path synoptic completion | 25 | same | `n_patients_definite_path_synoptic_completion` | VERIFIED |
+| N ambiguous later only | 1 | same | `n_patients_ambiguous_later_only_not_oed_or_path_definite` | VERIFIED |
 
 ---
 
@@ -54,7 +58,7 @@ Maps numeric claims in **`manuscript_submission_v1.md`** and **`abstract_structu
 
 | Claim | Value | Source | Location | Status |
 |-------|-------|--------|----------|--------|
-| Initial lobectomy → ultimate total-class | 238 / 0 (Not ultimate / Ultimate columns) | `initial_ultimate_extent_transition_counts.csv` | row Initial lobectomy | VERIFIED |
+| Initial lobectomy → not ultimate / ultimate total-class | 213 / 25 | `initial_ultimate_extent_transition_counts.csv` | row Initial lobectomy | VERIFIED |
 | Initial total row | 0 / 320 | same file | row Initial total | VERIFIED |
 
 ---
@@ -121,8 +125,9 @@ Source: `logistic_broad_nodal_parsimonious.csv` / `table2_multivariable_total_vs
 
 | Claim | Source | Status |
 |-------|--------|--------|
-| Zero completion events | `table7`; `model_summary_final` events=0 for completion_after_lobe | VERIFIED |
-| Logistic ORs with infinite/undefined CIs | `logistic_completion_after_lobe.csv` | **STALE / UNINTERPRETABLE** — complete separation; **do not** cite as effect estimates |
+| Zero **OED-pipeline** completion events (outcome `completion_total_flag`) | `table7` `completion_*_oed_pipeline`; `model_summary_final` events=0 for completion_after_lobe | VERIFIED |
+| Path-synoptic definite completions (descriptive) | `table7`, `patient_level_dataset.csv` `completion_path_synoptic_definite_flag` | VERIFIED (not used as logistic outcome in primary bundle) |
+| Logistic ORs with infinite/undefined CIs | `logistic_completion_after_lobe.csv` | **STALE / UNINTERPRETABLE** — complete separation on OED outcome; **do not** cite as effect estimates |
 
 ---
 

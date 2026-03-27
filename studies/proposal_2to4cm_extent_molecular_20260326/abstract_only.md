@@ -9,7 +9,7 @@ Primary cohort used preoperative ultrasound nodule size 2.0–4.0 cm; sensitivit
 Patients with definite preoperative lymph-node involvement (imaging or malignant node FNA) were excluded (strict rule).
 
 **Results:** Primary analytic cohort N=558 (lobectomy n=238, initial total n=320). "
-Completion thyroidectomy after lobectomy: n=0. "
+Completion after lobectomy: 0/238 (OED pipeline); 25/238 path-synoptic definite (Table 4). "
 Multivariable associations with initial total thyroidectomy used preoperative variables only.
 
 **Conclusions:** Findings describe practice patterns; residual confounding and single-center bias apply.

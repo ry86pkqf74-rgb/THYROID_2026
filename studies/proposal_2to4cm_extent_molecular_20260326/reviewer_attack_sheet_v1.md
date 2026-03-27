@@ -30,7 +30,7 @@ Anticipated critiques and **documented** responses (evidence in this folder). **
 
 ## 5. “Completion thyroidectomy is probably underestimated; you report 0.”
 
-**Response:** **Acknowledge** measurement dependence. Completion flags have **heavy missingness** (`missingness_summary.csv`); **zero** observed events among **238** lobectomy patients in `table7_completion_thyroidectomy.csv` under current operationalization. Discussion cites **external** completion literature **only** with a **NEEDS AUTHOR CHECK** citation (ref 12). Framed as **pipeline-defined**, not definitive surgical history.
+**Response:** **Acknowledge** ascertainment layers. **OED pipeline** (`operative_episode_detail_v2`) shows **0/238** later totals/completions; **path_synoptics** identifies **25/238** with **definite** later staged completion + **1** ambiguous (`table7`, `completion_audit_outputs/`). Framed as **data-source–specific**, not exhaustive surgical history; external literature cited with **verified** references.
 
 ---
 
