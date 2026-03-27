@@ -2,7 +2,7 @@
 
 **Generated**: 20260315_0151
 **Script**: `scripts/96_episode_downstream_repair.py`
-**Target**: MotherDuck `thyroid_research_2026` (prod)
+**Target**: local DuckDB `thyroid_master.duckdb` (prod)
 
 ## Problem
 
@@ -165,7 +165,7 @@ additional surgery rows (upstream enrichment, not episode-id routing).
 ## Post-Repair Audit (script 97)
 
 Re-ran `97_episode_linkage_audit.py --env prod` after the repair.
-7 audit tables refreshed in `thyroid_research_2026`.
+7 audit tables refreshed in `thyroid_master.duckdb`.
 
 | KPI | Pre-Repair | Post-Repair | Delta |
 |-----|-----------|-------------|-------|
@@ -185,7 +185,7 @@ propagated, the audit now detects more granular cross-episode
 mislinks that were previously hidden behind universal ep_id=1.
 This is improved sensitivity, not regression.
 
-## MotherDuck Objects Modified
+## local DuckDB Objects Modified
 
 | Table | Action |
 |-------|--------|

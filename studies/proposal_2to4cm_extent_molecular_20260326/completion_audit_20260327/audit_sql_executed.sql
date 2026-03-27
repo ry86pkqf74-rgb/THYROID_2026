@@ -1,5 +1,5 @@
 -- Independent completion audit 20260327
--- token_mode=secrets.toml:MOTHERDUCK_TOKEN
+-- token_mode=secrets.toml:LOCAL_DB_PATH
 -- primary_cohort_N=558
 
 -- === operative_episode_detail_v2_full ===

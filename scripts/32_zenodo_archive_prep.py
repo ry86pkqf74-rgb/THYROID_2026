@@ -10,7 +10,7 @@ Does NOT upload — the researcher reviews the bundle, then uploads
 manually via the Zenodo web form or API.
 
 Output: exports/zenodo_archive_v2026.03.10/
-  ├── code/           (scripts/, notebooks/, app/, motherduck_client.py, dashboard.py)
+  ├── code/           (scripts/, notebooks/, app/, local DuckDB_client.py, dashboard.py)
   ├── data/           (CSV + Parquet from latest publication bundle)
   ├── docs/           (README, RELEASE_NOTES, data_dictionary, QA_report, CITATION.cff)
   ├── studies/        (proposal2_ete_staging/, analytic_models/)
@@ -41,7 +41,7 @@ ARCHIVE_DIR = ROOT / "exports" / f"zenodo_archive_{TAG.lstrip('v').replace('-pub
 # ── Files to include ──────────────────────────────────────────────────────
 
 CODE_FILES = [
-    "motherduck_client.py",
+    "local DuckDB_client.py",
     "dashboard.py",
     "requirements.txt",
     "runtime.txt",
@@ -245,7 +245,7 @@ def run(args: argparse.Namespace) -> int:
             "A comprehensive thyroid cancer research lakehouse covering 11,673 patients "
             "across 13 base tables with 60+ engineered features, cross-domain entity "
             "extraction, temporal linkage, and interactive Streamlit dashboards backed "
-            "by MotherDuck cloud DuckDB. Includes propensity-score matched ETE staging "
+            "by local DuckDB cloud DuckDB. Includes propensity-score matched ETE staging "
             "analysis and NSQIP surgical outcomes linkage."
         ),
         "upload_type": "dataset",

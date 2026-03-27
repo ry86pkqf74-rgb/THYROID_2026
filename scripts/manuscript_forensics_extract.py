@@ -587,7 +587,7 @@ provenance = {
         "sha256": sha256(expanded_path),
         "rows": len(df_expanded),
         "columns": list(df_expanded.columns),
-        "upstream_view": "risk_enriched_mv (MotherDuck thyroid_research_2026)",
+        "upstream_view": "risk_enriched_mv (local DuckDB thyroid_master.duckdb)",
         "upstream_script": "studies/proposal2_ete_staging/proposal2_expanded_cohort.py",
     },
     "primary_classic_subset": {

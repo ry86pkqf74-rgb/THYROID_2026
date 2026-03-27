@@ -1,8 +1,8 @@
-# Association of clinicopathologic features and preoperative molecular testing with extent of initial thyroidectomy among patients with 2–4 cm thyroid nodules and radiologically negative cervical lymph nodes: a retrospective cohort study using integrated MotherDuck analytics
+# Association of clinicopathologic features and preoperative molecular testing with extent of initial thyroidectomy among patients with 2–4 cm thyroid nodules and radiologically negative cervical lymph nodes: a retrospective cohort study using integrated local DuckDB analytics
 
 **Running title:** Lobectomy vs total thyroidectomy in 2–4 cm N0-equivalent nodules
 
-**Data and code:** THYROID_2026 research database (MotherDuck `thyroid_research_2026`); archived release Zenodo [10.5281/zenodo.18945510](https://doi.org/10.5281/zenodo.18945510); Git tag `v2026.03.10-publication-ready`.
+**Data and code:** THYROID_2026 research database (local DuckDB `thyroid_master.duckdb`); archived release Zenodo [10.5281/zenodo.18945510](https://doi.org/10.5281/zenodo.18945510); Git tag `v2026.03.10-publication-ready`.
 
 ---
 
@@ -12,7 +12,7 @@
 
 **Objective.** Among adults undergoing initial thyroidectomy for dominant nodules measuring 2.0–4.0 cm with structured preoperative imaging evidence against pathologic cervical lymphadenopathy on cross-sectional imaging, we evaluated (1) correlates of initial total thyroidectomy versus lobectomy; (2) concordance between preoperative molecular risk and final histology / American Thyroid Association (ATA) risk category; and (3) feasibility of quantifying completion thyroidectomy after initial lobectomy from structured operative episodes.
 
-**Methods.** We queried a de-identified institutional research lakehouse (DuckDB on MotherDuck). Eligible patients had a first recorded procedure of hemithyroidectomy or total thyroidectomy, preoperative maximum nodule dimension between 2 and 4 cm (dominant ultrasound-based nodule master measurements prior to surgery, with fallback to resolved-layer imaging size), no preoperative CT or MRI flagged for pathologic cervical lymph nodes prior to surgery, and no distant metastasis flags on structured pathology staging or metastatic histology descriptors. We classified preoperative molecular tests (ThyroSeq or Afirma) occurring before surgery and defined **genetics-guided** elevation as suspicious/positive overall classifier calls or documented high-risk marker flags. We used the repository `ThyroidStatisticalAnalyzer` for Table 1 and automated univariable tests (Benjamini–Hochberg false discovery rate for the feature bundle) and fit multivariable logistic regression via formula interfaces (`statsmodels`) to accommodate categorical factors. Concordance used Cohen’s κ stratified by platform.
+**Methods.** We queried a de-identified institutional research lakehouse (DuckDB on local DuckDB). Eligible patients had a first recorded procedure of hemithyroidectomy or total thyroidectomy, preoperative maximum nodule dimension between 2 and 4 cm (dominant ultrasound-based nodule master measurements prior to surgery, with fallback to resolved-layer imaging size), no preoperative CT or MRI flagged for pathologic cervical lymph nodes prior to surgery, and no distant metastasis flags on structured pathology staging or metastatic histology descriptors. We classified preoperative molecular tests (ThyroSeq or Afirma) occurring before surgery and defined **genetics-guided** elevation as suspicious/positive overall classifier calls or documented high-risk marker flags. We used the repository `ThyroidStatisticalAnalyzer` for Table 1 and automated univariable tests (Benjamini–Hochberg false discovery rate for the feature bundle) and fit multivariable logistic regression via formula interfaces (`statsmodels`) to accommodate categorical factors. Concordance used Cohen’s κ stratified by platform.
 
 **Results.** The analytic cohort comprised **574** patients (**322** total thyroidectomy; **252** lobectomy). Median age was 56 years (interquartile range 43–67). Bethesda III versus IV/V category distributions differed markedly by surgical extent (Table 1). Only **21** patients (3.7%) had a preoperative ThyroSeq or Afirma result; **9** (1.6%) met genetics-guided high-risk criteria. In multivariable analysis (n=574; area under the receiver operating characteristic curve **0.645**), higher Bethesda category (IV/V versus reference) associated with increased odds of total thyroidectomy (adjusted odds ratio **4.01**, 95% CI 2.30–7.02; P<0.001), whereas older age associated with lower odds (adjusted OR 0.987 per year, 95% CI 0.975–0.998; P=0.027). Preoperative molecular availability and genetics-guided flags were not independently associated with surgical extent in this sparse testing subset. Overall Cohen’s κ for molecular high-risk versus pathology/ATA-defined high-risk outcomes was **−0.13** among the 16 patients with paired classifications (exploratory; severely underpowered). **No** completion thyroidectomies were identifiable within this subgroup using sequential structured pathology procedure text; operative episode tables contained essentially single episodes per patient.
 
@@ -28,7 +28,7 @@ Differentiated thyroid cancer management increasingly emphasises risk-adapted ex
 
 Prior single-institution series report wide variation in lobectomy rates among molecularly “benign” or “suspicious” subsets, often confounded by nodule size, patient comorbidity, surgeon era, and incomplete capture of preoperative testing(8,9). Moreover, concordance between molecular “rule-out/rule-in” constructs and final surgical pathology is well studied for **diagnostic** accuracy but less so for **surgical behaviour** conditional on integrated imaging and cytology(10,11). Finally, completion thyroidectomy after unexpected index findings is a key safety net outcome; its incidence is systematically undercounted when administrative datasets collapse multistage thyroid operations into single encounters(12).
 
-The THYROID_2026 corpus couples de-identified pathology, structured imaging nodule metrics, operative episode extracts, and molecular episode tables in a versioned DuckDB instance on MotherDuck, with reproducible querying and statistical helpers in the public code archive(13). Here we exploit that stack to operationalise a **2–4 cm, cross-sectional imaging N0-equivalent** window and describe associations with initial surgical extent, exploratory molecular–pathology concordance when sample size permits, and the **feasibility** (not the epidemiology) of completion surgery detection from currently structured operative feeds.
+The THYROID_2026 corpus couples de-identified pathology, structured imaging nodule metrics, operative episode extracts, and molecular episode tables in a versioned DuckDB instance on local DuckDB, with reproducible querying and statistical helpers in the public code archive(13). Here we exploit that stack to operationalise a **2–4 cm, cross-sectional imaging N0-equivalent** window and describe associations with initial surgical extent, exploratory molecular–pathology concordance when sample size permits, and the **feasibility** (not the epidemiology) of completion surgery detection from currently structured operative feeds.
 
 ---
 
@@ -36,7 +36,7 @@ The THYROID_2026 corpus couples de-identified pathology, structured imaging nodu
 
 ### Design and data source
 
-This is a retrospective cohort study of consecutively documented patients appearing in the research database underlying the THYROID_2026 analytic freeze. MotherDuck houses `thyroid_research_2026`, a PHI-stripped lakehouse linked by integer `research_id`. The present analysis executed read-only SQL and Python (pandas, statsmodels, scikit-learn) on 2026-03-25 from a workstation with authorised MotherDuck credentials. **No production tables were modified.** Analyses follow STROBE reporting guidance for observational studies(14); a mapping to STROBE items appears in Appendix B.
+This is a retrospective cohort study of consecutively documented patients appearing in the research database underlying the THYROID_2026 analytic freeze. local DuckDB houses `thyroid_master.duckdb`, a PHI-stripped lakehouse linked by integer `research_id`. The present analysis executed read-only SQL and Python (pandas, statsmodels, scikit-learn) on 2026-03-25 from a workstation with authorised local DuckDB credentials. **No production tables were modified.** Analyses follow STROBE reporting guidance for observational studies(14); a mapping to STROBE items appears in Appendix B.
 
 ### Study cohort
 
@@ -80,7 +80,7 @@ The analytic database stores de-identified research IDs only; protected health i
 
 ### Software
 
-Python 3.11+; DuckDB via MotherDuck; pandas; statsmodels; scikit-learn; plotly/kaleido for figure export; repository utilities under `utils/statistical_analysis.py` and `motherduck_client.py`.
+Python 3.11+; DuckDB via local DuckDB; pandas; statsmodels; scikit-learn; plotly/kaleido for figure export; repository utilities under `utils/statistical_analysis.py` and `local DuckDB_client.py`.
 
 ---
 
@@ -132,7 +132,7 @@ Concordance metrics must be interpreted cautiously: surgical **behaviour** alter
 
 ### Strengths
 
-- **Prospective-style governance**: versioned SQL (`sql/01_cohort_base.sql`), reproducible runner, Zenodo DOI, documented token-based MotherDuck access.  
+- **Prospective-style governance**: versioned SQL (`sql/01_cohort_base.sql`), reproducible runner, Zenodo DOI, documented token-based local DuckDB access.  
 - **Granular imaging size**: nodule-master preoperative dimensions rather than relying solely on pathology-only sizes for eligibility.  
 - **Statistical tooling transparency**: Table 1 and automated test routing through shared analyser code; categorical regression via formula API avoids silent miscalibration from inappropriate numeric coercion.
 
@@ -201,7 +201,7 @@ The authoritative query is version-controlled at:
 |-------------|-------------------------|
 | Title | Indicates retrospective observational design and data platform |
 | Abstract | Structured summary with counts and caveat on completion |
-| Equipment | MotherDuck `thyroid_research_2026`; read-only analytics |
+| Equipment | local DuckDB `thyroid_master.duckdb`; read-only analytics |
 | Eligibility | Methods: cohort_spine + imaging + metastasis exclusions |
 | Variables | Methods + engineered fields in `analytic_ready_v1.csv` |
 | Bias | Discussion: indication, collider, missing molecular documentation |

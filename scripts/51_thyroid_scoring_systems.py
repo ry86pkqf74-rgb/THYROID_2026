@@ -22,7 +22,7 @@ Every score includes:
 
 Output table: thyroid_scoring_systems_v1 (one row per patient)
 
-Run after scripts 15-47 (reads from MotherDuck or local DuckDB).
+Run after scripts 15-47 (reads from local DuckDB or local DuckDB).
 Supports --md, --local, --dry-run flags.
 """
 from __future__ import annotations
@@ -51,24 +51,24 @@ def section(title: str) -> None:
 
 
 def _get_token() -> str:
-    token = os.getenv("MOTHERDUCK_TOKEN")
+    token = os.getenv("LOCAL_DB_PATH")
     if token:
         return token
     secrets = ROOT / ".streamlit" / "secrets.toml"
     if secrets.exists():
         try:
             import toml
-            return toml.load(str(secrets))["MOTHERDUCK_TOKEN"]
+            return toml.load(str(secrets))["LOCAL_DB_PATH"]
         except Exception:
             pass
     raise RuntimeError(
-        "MOTHERDUCK_TOKEN not set. Export it or add to .streamlit/secrets.toml."
+        "LOCAL_DB_PATH not set. Export it or add to .streamlit/secrets.toml."
     )
 
 
 def connect_md() -> duckdb.DuckDBPyConnection:
     token = _get_token()
-    return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+    return duckdb.connect(f"thyroid_master.duckdb")
 
 
 def connect_local() -> duckdb.DuckDBPyConnection:
@@ -1034,13 +1034,13 @@ WHERE 1=0
 def main() -> None:
     p = argparse.ArgumentParser(description="51_thyroid_scoring_systems.py")
     g = p.add_mutually_exclusive_group()
-    g.add_argument("--md", action="store_true", help="Connect to MotherDuck")
+    g.add_argument("--md", action="store_true", help="Connect to local DuckDB")
     g.add_argument("--local", action="store_true", help="Use local DuckDB (default)")
     p.add_argument("--dry-run", action="store_true", help="Audit only, no writes")
     args = p.parse_args()
 
     if args.md:
-        section("Connecting to MotherDuck")
+        section("Connecting to local DuckDB")
         con = connect_md()
     else:
         section("Connecting to local DuckDB")

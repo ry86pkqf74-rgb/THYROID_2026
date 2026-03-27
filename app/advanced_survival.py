@@ -81,7 +81,7 @@ def render_advanced_survival(con) -> None:
     if not _tbl_exists(con, tbl):
         st.info(
             "Advanced survival data not available. "
-            "Run `python scripts/26_motherduck_materialize_v2.py` to build "
+            "Run `python scripts/26_local DuckDB_materialize_v2.py` to build "
             "`survival_cohort_enriched`.",
             icon="📉",
         )

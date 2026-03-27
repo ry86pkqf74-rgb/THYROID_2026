@@ -39,9 +39,9 @@ print("=" * 80)
 
 import duckdb
 
-token = os.getenv("MOTHERDUCK_TOKEN")
+token = os.getenv("LOCAL_DB_PATH")
 if not token:
-    print("  WARNING: MOTHERDUCK_TOKEN not set — falling back to local DuckDB")
+    print("  WARNING: LOCAL_DB_PATH not set — falling back to local DuckDB")
     db_path = REPO / "thyroid_master.duckdb"
     if not db_path.exists():
         print("  ERROR: Local DuckDB not found. Cannot proceed.")
@@ -49,8 +49,8 @@ if not token:
     con = duckdb.connect(str(db_path), read_only=True)
     print(f"  Connected to local DuckDB: {db_path}")
 else:
-    con = duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
-    print("  Connected to MotherDuck: thyroid_research_2026")
+    con = duckdb.connect(f"thyroid_master.duckdb")
+    print("  Connected to local DuckDB: thyroid_master.duckdb")
 
 print("\n  ALL TABLES:")
 tables = con.execute("SHOW TABLES").fetchall()
@@ -112,7 +112,7 @@ if nsqip_tables:
         cols = con.execute(f"DESCRIBE {nt}").fetchall()
         print(f"    {nt}: {cnt} rows, {len(cols)} columns")
 else:
-    print("    None found in MotherDuck/DuckDB")
+    print("    None found in local DuckDB/DuckDB")
 
 print("\n  Checking for local nsqip export files:")
 nsqip_exports = list((REPO / "exports" / "nsqip").glob("*")) if (REPO / "exports" / "nsqip").exists() else []

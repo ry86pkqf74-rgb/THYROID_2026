@@ -1,7 +1,7 @@
 """
 Phase 4 Variable Inventory Scanner
 ===================================
-Scans MotherDuck + local repo to produce a prioritized variable inventory
+Scans local DuckDB + local repo to produce a prioritized variable inventory
 for Phase 4 source-specific refinement.
 
 Usage:
@@ -304,16 +304,16 @@ def _get_connection(use_md: bool = True, local_path: str = "thyroid_master.duckd
         try:
             import toml
             secrets = toml.load(PROJECT_ROOT / ".streamlit/secrets.toml")
-            token = secrets["MOTHERDUCK_TOKEN"]
+            token = secrets["LOCAL_DB_PATH"]
         except Exception:
             import os
-            token = os.environ.get("MOTHERDUCK_TOKEN", "")
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+            token = os.environ.get("LOCAL_DB_PATH", "")
+        return duckdb.connect(f"thyroid_master.duckdb")
     return duckdb.connect(str(PROJECT_ROOT / local_path))
 
 
 def compute_inventory(con) -> list[dict]:
-    """Augment VARIABLE_CATALOG with live fill rates from MotherDuck."""
+    """Augment VARIABLE_CATALOG with live fill rates from local DuckDB."""
     results = []
 
     # --- ETE ---
@@ -566,18 +566,18 @@ def write_markdown_report(results: list[dict], output_path: Path) -> None:
 
 def main():
     parser = argparse.ArgumentParser(description="Phase 4 variable inventory scanner")
-    parser.add_argument("--md", action="store_true", default=True, help="Use MotherDuck")
+    parser.add_argument("--md", action="store_true", default=True, help="Use local DuckDB")
     parser.add_argument("--local", action="store_true", help="Use local DuckDB")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
     use_md = not args.local
     if args.dry_run:
-        print("[dry-run] Would scan MotherDuck and write variable_inventory_phase4.md")
+        print("[dry-run] Would scan local DuckDB and write variable_inventory_phase4.md")
         return
 
     con = _get_connection(use_md)
-    print(f"[inventory] Connected to {'MotherDuck' if use_md else 'local DuckDB'}")
+    print(f"[inventory] Connected to {'local DuckDB' if use_md else 'local DuckDB'}")
 
     results = compute_inventory(con)
     print(f"[inventory] Scored {len(results)} variables")

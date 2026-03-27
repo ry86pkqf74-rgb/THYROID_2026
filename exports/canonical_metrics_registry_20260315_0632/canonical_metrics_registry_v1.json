@@ -500,8 +500,8 @@
       "git_sha": "e68c7f1"
     },
     {
-      "metric_id": "motherduck_table_count",
-      "metric_name": "MotherDuck Table Count",
+      "metric_id": "local DuckDB_table_count",
+      "metric_name": "local DuckDB Table Count",
       "metric_group": "infrastructure",
       "canonical_sql": "SELECT COUNT(DISTINCT table_name) FROM information_schema.tables WHERE table_schema='main'",
       "canonical_table": "information_schema.tables",

@@ -57,24 +57,24 @@ def section(title: str) -> None:
 
 
 def _get_token() -> str:
-    token = os.getenv("MOTHERDUCK_TOKEN")
+    token = os.getenv("LOCAL_DB_PATH")
     if token:
         return token
     secrets = ROOT / ".streamlit" / "secrets.toml"
     if secrets.exists():
         try:
             import toml  # type: ignore[import-untyped]
-            return toml.load(str(secrets))["MOTHERDUCK_TOKEN"]
+            return toml.load(str(secrets))["LOCAL_DB_PATH"]
         except Exception:
             pass
     raise RuntimeError(
-        "MOTHERDUCK_TOKEN not set. Export it or add to .streamlit/secrets.toml."
+        "LOCAL_DB_PATH not set. Export it or add to .streamlit/secrets.toml."
     )
 
 
 def connect_md() -> duckdb.DuckDBPyConnection:
     token = _get_token()
-    return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+    return duckdb.connect(f"thyroid_master.duckdb")
 
 
 def connect_local() -> duckdb.DuckDBPyConnection:
@@ -848,7 +848,7 @@ def _resolve_md_prefix(con: duckdb.DuckDBPyConnection, tbl: str) -> None:
 
 def _ensure_optional_stubs(con: duckdb.DuckDBPyConnection) -> None:
     """Create empty stubs for tables that may not be deployed yet."""
-    # Resolve md_* prefixed tables first (MotherDuck materialized copies)
+    # Resolve md_* prefixed tables first (local DuckDB materialized copies)
     md_resolve = [
         "surgery_pathology_linkage_v2",
         "pathology_rai_linkage_v2",
@@ -1099,13 +1099,13 @@ def main() -> None:
         description="48_build_analysis_resolved_layer.py"
     )
     g = p.add_mutually_exclusive_group()
-    g.add_argument("--md", action="store_true", help="Connect to MotherDuck")
+    g.add_argument("--md", action="store_true", help="Connect to local DuckDB")
     g.add_argument("--local", action="store_true", help="Use local DuckDB (default)")
     p.add_argument("--dry-run", action="store_true", help="Audit only, no writes")
     args = p.parse_args()
 
     if args.md:
-        section("Connecting to MotherDuck")
+        section("Connecting to local DuckDB")
         con = connect_md()
     else:
         section("Connecting to local DuckDB")

@@ -3,7 +3,7 @@
 **Version:** v1  
 **Created:** 2026-03-13  
 **Scripts:** 48–55  
-**MotherDuck prefix:** `md_*`
+**local DuckDB prefix:** `md_*`
 
 ---
 
@@ -358,17 +358,17 @@ TSH, PTH, calcium, and vitamin D have no structured collection date and fall bac
 
 ---
 
-## MotherDuck Verification
+## local DuckDB Verification
 
 Run verification after deploying all new tables:
 
 ```bash
-# Deploy new tables to MotherDuck
-MOTHERDUCK_TOKEN=$(cat .streamlit/secrets.toml | grep MOTHERDUCK_TOKEN | cut -d'"' -f2) \
-  .venv/bin/python scripts/26_motherduck_materialize_v2.py --md
+# Deploy new tables to local DuckDB
+LOCAL_DB_PATH=$(cat .streamlit/secrets.toml | grep LOCAL_DB_PATH | cut -d'"' -f2) \
+  .venv/bin/python scripts/26_local DuckDB_materialize_v2.py --md
 
 # Run verification reports
-.venv/bin/python scripts/54_motherduck_verification_reports.py --md
+.venv/bin/python scripts/54_local DuckDB_verification_reports.py --md
 
 # Run validation suite
 .venv/bin/python scripts/55_analysis_validation_suite.py --md
@@ -391,8 +391,8 @@ scripts/49_enhanced_linkage_v3.py        # Phase 2 (reads canonical v2 + multino
 scripts/52_complication_phenotyping_v2.py # Phase 5 (reads refined pipelines)
 scripts/53_longitudinal_lab_hardening.py # Phase 6 (reads thyroglobulin_labs)
 scripts/48_build_analysis_resolved_layer.py # Phase 1 (reads all upstream)
-scripts/26_motherduck_materialize_v2.py --md # materialize ~28 new md_ tables
-scripts/54_motherduck_verification_reports.py --md # generate QA reports
+scripts/26_local DuckDB_materialize_v2.py --md # materialize ~28 new md_ tables
+scripts/54_local DuckDB_verification_reports.py --md # generate QA reports
 scripts/55_analysis_validation_suite.py --md # run assertion tests
 ```
 
@@ -416,21 +416,21 @@ The following components are **provisional** and require expert clinical review 
 
 ## Known Limitations
 
-1. **imaging_nodule_long_v2 size data is empty on MotherDuck** — The NLP-extracted imaging nodule tables have schema but zero populated size/TIRADS columns. The Excel-based Phase 12 data (`raw_us_tirads_excel_v1`) is the actual data source for TIRADS and nodule sizes.
+1. **imaging_nodule_long_v2 size data is empty on local DuckDB** — The NLP-extracted imaging nodule tables have schema but zero populated size/TIRADS columns. The Excel-based Phase 12 data (`raw_us_tirads_excel_v1`) is the actual data source for TIRADS and nodule sizes.
 
 2. **recurrence_risk_features_mv has multiple rows per patient** — Always aggregate with `BOOL_OR(recurrence_flag)` and `GROUP BY research_id` before joining to patient-level analyses.
 
 3. **molecular_test_episode_v2 ras_flag bug** — `ras_flag` can be FALSE even when `ras_subtype` is populated (184 patients). Phase 11 corrected this via subtype propagation. Use `ras_positive_final` from `patient_analysis_resolved_v1`.
 
-4. **Local DuckDB vs MotherDuck** — Many tables (thyroglobulin_labs, patient_refined_master_clinical_v12, recurrence_risk_features_mv) exist only on MotherDuck. Run analysis scripts with `--md` flag.
+4. **Local DuckDB vs local DuckDB** — Many tables (thyroglobulin_labs, patient_refined_master_clinical_v12, recurrence_risk_features_mv) exist only on local DuckDB. Run analysis scripts with `--md` flag.
 
 5. **patient_refined_master_clinical_v12 has duplicate research_ids** — 12,886 rows for 10,871 unique patients. All joins in script 48 include `QUALIFY ROW_NUMBER() OVER (PARTITION BY research_id) = 1` deduplication. Always do the same in ad-hoc queries.
 
 6. **Column name mismatches across master clinical versions** — `ete_grade` does not exist; use `ete_grade_v9` or `ete_grade_v5`. `histology_normalized` does not exist in v12; the resolved layer falls back to `primary_histology`. `bethesda_confidence` is named `confidence` in `extracted_fna_bethesda_v1`.
 
-7. **v2 linkage tables exist as `md_*` prefixed on MotherDuck** — `surgery_pathology_linkage_v2` is stored as `md_surgery_pathology_linkage_v2`. Script 48 auto-resolves this via `_resolve_md_prefix()`. Column `tumor_episode_id` (not `path_surgery_id`) is the correct join key in v2.
+7. **v2 linkage tables exist as `md_*` prefixed on local DuckDB** — `surgery_pathology_linkage_v2` is stored as `md_surgery_pathology_linkage_v2`. Script 48 auto-resolves this via `_resolve_md_prefix()`. Column `tumor_episode_id` (not `path_surgery_id`) is the correct join key in v2.
 
-8. **Supporting tables require script deployment** — Scoring (script 51), complication (52), lab (53), and linkage v3 (49) tables must be deployed to MotherDuck via `scripts/26_motherduck_materialize_v2.py --md` before the resolved layer produces non-NULL values for those domains.
+8. **Supporting tables require script deployment** — Scoring (script 51), complication (52), lab (53), and linkage v3 (49) tables must be deployed to local DuckDB via `scripts/26_local DuckDB_materialize_v2.py --md` before the resolved layer produces non-NULL values for those domains.
 
 ---
 
@@ -444,7 +444,7 @@ Schema bugs fixed in script 48:
 - `ln_total_positive_v10` → `total_ln_positive_v10` for master clinical
 - `bethesda_confidence`/`bethesda_source` → `confidence`/`source_tables` for FNA table
 - Added QUALIFY dedup on staging_refined and mcv12 joins to prevent row explosion
-- Added `_resolve_md_prefix()` for MotherDuck `md_*` table name resolution
+- Added `_resolve_md_prefix()` for local DuckDB `md_*` table name resolution
 - Dead `linkage` CTE removed (was `WHERE 1=0`)
 
 See `docs/pre_manuscript_analysis_checklist.md` for the full verification workflow.

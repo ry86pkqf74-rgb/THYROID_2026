@@ -2,7 +2,7 @@
 
 Run: `.venv/bin/python studies/proposal_2to4cm_extent_molecular_20260326/study_pipeline.py`
 
-Requires `MOTHERDUCK_TOKEN`.
+Requires `LOCAL_DB_PATH`.
 
 **Main manuscript (IMRAD):** `manuscript_submission_v1.md` + `abstract_structured_v1.md` + `cover_letter_v1.md`.
 
@@ -12,6 +12,6 @@ Requires `MOTHERDUCK_TOKEN`.
 
 - **Tabular:** `table7_completion_thyroidectomy.csv`
 - **Pipeline export:** also writes `fig_completion_rates.png`, `initial_ultimate_extent_transition_counts.csv`, and `completion_cases.csv` (see note below).
-- **Independent audit:** `.venv/bin/python studies/proposal_2to4cm_extent_molecular_20260326/run_completion_audit_motherduck.py` → `completion_audit_outputs/` (`final_verdict.md`, `candidate_completion_cases.csv`, …).
+- **Independent audit:** `.venv/bin/python studies/proposal_2to4cm_extent_molecular_20260326/run_completion_audit_local DuckDB.py` → `completion_audit_outputs/` (`final_verdict.md`, `candidate_completion_cases.csv`, …).
 
 **`completion_cases.csv`:** OED completion flags for **all** patients whose **first** qualifying procedure was **hemithyroidectomy** in the surgical spine (`cohort_logic.completion_after_lobectomy` over `first_clean`), **not** restricted to primary **N = 558**. The manuscript lobectomy denominator is **238**; use `patient_level_dataset.csv`, `table7_completion_thyroidectomy.csv`, and `completion_audit_outputs/candidate_completion_cases.csv` for case-level review of that arm.

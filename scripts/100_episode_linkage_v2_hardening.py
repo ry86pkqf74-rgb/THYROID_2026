@@ -73,9 +73,9 @@ DOCS_DIR = ROOT / "docs"
 EXPORT_DIR = ROOT / f"exports/episode_linkage_v2_hardening_{TIMESTAMP}"
 
 ENV_MAP = {
-    "dev": "thyroid_research_2026_dev",
-    "qa": "thyroid_research_2026_qa",
-    "prod": "thyroid_research_2026",
+    "dev": "thyroid_master.duckdb",
+    "qa": "thyroid_master.duckdb",
+    "prod": "thyroid_master.duckdb",
 }
 
 PHASES = list("ABCDEFGH")
@@ -87,7 +87,7 @@ def section(msg: str):
 
 
 def get_token() -> str:
-    tok = os.environ.get("MOTHERDUCK_TOKEN", "")
+    tok = os.environ.get("LOCAL_DB_PATH", "")
     if tok:
         return tok
     try:
@@ -98,7 +98,7 @@ def get_token() -> str:
             pathlib.Path.home() / ".streamlit" / "secrets.toml",
         ]:
             if p.exists():
-                tok = toml.load(str(p)).get("MOTHERDUCK_TOKEN", "")
+                tok = toml.load(str(p)).get("LOCAL_DB_PATH", "")
                 if tok:
                     return tok
     except ImportError:
@@ -107,21 +107,21 @@ def get_token() -> str:
 
 
 def get_connection(args) -> duckdb.DuckDBPyConnection:
-    """Connect to MotherDuck target env or local DuckDB."""
+    """Connect to local DuckDB target env or local DuckDB."""
     if args.local:
         path = os.getenv("LOCAL_DUCKDB_PATH", "thyroid_master_local.duckdb")
         print(f"  [local] {path}")
         return duckdb.connect(path)
     tok = get_token()
     if not tok:
-        sys.exit("MOTHERDUCK_TOKEN not found")
-    os.environ["MOTHERDUCK_TOKEN"] = tok
-    db = ENV_MAP.get(args.env, "thyroid_research_2026")
-    con = duckdb.connect(f"md:{db}?motherduck_token={tok}")
-    print(f"  [MotherDuck] connected to {db}")
+        sys.exit("LOCAL_DB_PATH not found")
+    os.environ["LOCAL_DB_PATH"] = tok
+    db = ENV_MAP.get(args.env, "thyroid_master.duckdb")
+    con = duckdb.connect(f"thyroid_master.duckdb")
+    print(f"  [local DuckDB] connected to {db}")
     # In workspace mode, all databases accessible by qualified name
     if args.env != "prod":
-        print(f"  Source tables read from thyroid_research_2026.main.* (workspace mode)")
+        print(f"  Source tables read from thyroid_master.duckdb.main.* (workspace mode)")
         print(f"  UPDATEs to production tables SKIPPED in {args.env} env")
     return con
 
@@ -160,7 +160,7 @@ def tbl_prefix(args) -> str:
     """In non-prod envs, source tables are qualified via workspace mode."""
     if args.local or args.env == "prod":
         return ""
-    return "thyroid_research_2026.main."
+    return "thyroid_master.duckdb.main."
 
 
 # ── PHASE A: Re-score surgery_pathology linkage for multi-surgery ─────
@@ -1309,17 +1309,17 @@ def generate_docs(all_metrics, args):
 
 def main():
     parser = argparse.ArgumentParser(description="Episode Linkage v2 Hardening")
-    parser.add_argument("--md", action="store_true", help="Use MotherDuck (default: local)")
+    parser.add_argument("--md", action="store_true", help="Use local DuckDB (default: local)")
     parser.add_argument("--local", action="store_true", help="Use local DuckDB")
     parser.add_argument("--env", default="prod", choices=["dev", "qa", "prod"],
-                        help="MotherDuck environment (default: prod)")
+                        help="local DuckDB environment (default: prod)")
     parser.add_argument("--phase", type=str, default=None,
                         help="Run single phase (A-H)")
     parser.add_argument("--dry-run", action="store_true", help="Print SQL, don't execute")
     args = parser.parse_args()
 
     if not args.md and not args.local:
-        args.md = True  # default to MotherDuck
+        args.md = True  # default to local DuckDB
 
     if args.local:
         args.env = "local"

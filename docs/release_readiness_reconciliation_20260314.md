@@ -2,7 +2,7 @@
 
 **Generated:** 2026-03-15 (post truth-sync pass)  
 **Scope:** Scripts 94, 95, 96, 97 — release verification + repo-wide truth sync  
-**Source of truth:** `md:thyroid_research_2026` (live MotherDuck)
+**Source of truth:** `thyroid_master.duckdb` (live local DuckDB)
 
 ---
 
@@ -13,7 +13,7 @@
 | MAP dedup validation | `94_map_dedup_validator.py` | ✅ PASS | 220 entries, 0 duplicates |
 | Metric bounds (original) | `96_release_manifest.py` | ❌ BLOCKED | 2 stale bounds (see below) |
 | Metric bounds (fixed) | `96_release_manifest.py` (updated) | ✅ PASS (pending re-run) | Bounds calibrated to live values |
-| Environment promotion dry-run | `95_environment_promotion.py` | ⏳ PENDING | Requires active MotherDuck session |
+| Environment promotion dry-run | `95_environment_promotion.py` | ⏳ PENDING | Requires active local DuckDB session |
 | Working tree clean | git status | ⚠️ WARN | Uncommitted changes present (expected during this pass) |
 | Table existence | 14/14 | ✅ PASS | All critical tables accessible |
 | Benchmark regression | 0 regressions | ✅ PASS | vs baseline established in script 95 |
@@ -81,7 +81,7 @@ Both failures are **calibration mismatches** (stale expected-ranges), not data i
 ### Re-run Instructions
 
 ```bash
-MOTHERDUCK_TOKEN=<token> .venv/bin/python scripts/96_release_manifest.py --env prod
+LOCAL_DB_PATH=<token> .venv/bin/python scripts/96_release_manifest.py --env prod
 ```
 
 Expected result after fix: `Overall status: PASS` (only remaining WARN is `working_tree_clean`
@@ -91,17 +91,17 @@ which will resolve after commit).
 
 ## Script 95 — Environment Promotion (Dry-Run)
 
-**Status: PENDING — requires active MotherDuck token**
+**Status: PENDING — requires active local DuckDB token**
 
 Script 95 performs dev→qa and qa→prod schema/row-count validation. Because this session
-does not have a cached MotherDuck token and `.streamlit/secrets.toml` is absent (gitignored),
+does not have a cached local DuckDB token and `.streamlit/secrets.toml` is absent (gitignored),
 the dry-run could not be executed.
 
 **Run when token is available:**
 
 ```bash
-MOTHERDUCK_TOKEN=<token> .venv/bin/python scripts/95_environment_promotion.py --dry-run --from dev --to qa
-MOTHERDUCK_TOKEN=<token> .venv/bin/python scripts/95_environment_promotion.py --dry-run --from qa --to prod
+LOCAL_DB_PATH=<token> .venv/bin/python scripts/95_environment_promotion.py --dry-run --from dev --to qa
+LOCAL_DB_PATH=<token> .venv/bin/python scripts/95_environment_promotion.py --dry-run --from qa --to prod
 ```
 
 The prior script 96 run confirmed all 14 critical tables are accessible in prod with expected
@@ -143,7 +143,7 @@ row counts. No structural impediment to promotion is anticipated.
 
 | Blocker | Priority | Action Required |
 |---------|----------|----------------|
-| Re-run script 96 after commit | HIGH | `MOTHERDUCK_TOKEN=<token> .venv/bin/python scripts/96_release_manifest.py --env prod` |
+| Re-run script 96 after commit | HIGH | `LOCAL_DB_PATH=<token> .venv/bin/python scripts/96_release_manifest.py --env prod` |
 | Run script 95 dry-runs | MEDIUM | As above with `95_environment_promotion.py --dry-run` |
 | Commit + push working tree | HIGH | See next section |
 

@@ -15,7 +15,7 @@ Fixes:
   3. Creates ptc_ct_imaging_events table (3,018 rows, 650 PTC patients)
      - PTC cohort subset with CT imaging + pathologic LN flags + timing
 
-Supports: --md (MotherDuck), --local, --dry-run
+Supports: --md (local DuckDB), --local, --dry-run
 """
 import argparse
 import sys
@@ -26,13 +26,13 @@ def get_connection(args):
     if args.md:
         try:
             import toml
-            token = toml.load('.streamlit/secrets.toml')['MOTHERDUCK_TOKEN']
+            token = toml.load('.streamlit/secrets.toml')['LOCAL_DB_PATH']
         except Exception:
-            token = os.environ.get('MOTHERDUCK_TOKEN', '')
+            token = os.environ.get('LOCAL_DB_PATH', '')
         if not token:
-            print("ERROR: No MOTHERDUCK_TOKEN found", file=sys.stderr)
+            print("ERROR: No LOCAL_DB_PATH found", file=sys.stderr)
             sys.exit(1)
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+        return duckdb.connect(f"thyroid_master.duckdb")
     else:
         return duckdb.connect(args.local_db)
 
@@ -193,7 +193,7 @@ def run(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--md", action="store_true", help="Use MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Use local DuckDB")
     parser.add_argument("--local-db", default="thyroid_master.duckdb")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()

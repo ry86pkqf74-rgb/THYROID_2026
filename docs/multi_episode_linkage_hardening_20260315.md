@@ -2,7 +2,7 @@
 
 **Generated**: 20260315_1546
 **Script**: `scripts/101_multi_episode_linkage_hardening.py`
-**Target**: MotherDuck `thyroid_research_2026`
+**Target**: local DuckDB `thyroid_master.duckdb`
 
 ## Executive Summary
 

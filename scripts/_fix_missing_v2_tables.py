@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Temporary helper: create tumor_episode_master_v2 and imaging_nodule_long_v2
-directly in MotherDuck using source tables already there.
+directly in local DuckDB using source tables already there.
 Run: .venv/bin/python scripts/_fix_missing_v2_tables.py
 """
 from __future__ import annotations
@@ -10,7 +10,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from motherduck_client import MotherDuckClient, MotherDuckConfig
+from local DuckDB_client import local DuckDBClient, local DuckDBConfig
 
 TUMOR_SQL = """
 CREATE OR REPLACE TABLE tumor_episode_master_v2 AS
@@ -789,10 +789,10 @@ ORDER BY research_id, event_date NULLS LAST, event_type
 
 
 def main() -> None:
-    cfg = MotherDuckConfig(database="thyroid_research_2026")
-    client = MotherDuckClient(cfg)
+    cfg = local DuckDBConfig(database="thyroid_master.duckdb")
+    client = local DuckDBClient(cfg)
     con = client.connect_rw()
-    print("Connected to MotherDuck RW")
+    print("Connected to local DuckDB RW")
 
     for name, sql in [
         ("tumor_episode_master_v2", TUMOR_SQL),

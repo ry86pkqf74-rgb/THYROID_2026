@@ -1,7 +1,7 @@
 # Repo Truth-Sync Report — 20260314
 
 **Generated:** 20260314_2213 UTC  
-**Source DB:** `md:thyroid_research_2026` (live MotherDuck)  
+**Source DB:** `thyroid_master.duckdb` (live local DuckDB)  
 **Script:** `scripts/97_repo_truth_sync.py`  
 **Purpose:** Deterministic reconciliation of all repo documentation claims against live data.
 
@@ -95,7 +95,7 @@ Total operative episodes: **9371**
 
 > Fields marked **ZERO** remain NOT_PARSED (not confirmed-negative). The V2 extractor
 > codebase exists at `notes_extraction/extract_operative_v2.py` but outputs were never
-> materialized to MotherDuck. `FALSE` = UNKNOWN, not confirmed-absent.
+> materialized to local DuckDB. `FALSE` = UNKNOWN, not confirmed-absent.
 
 **Zero-materialized count: 5** (per `val_operative_nlp_propagation_v1`)  
 **Fields:** esophageal_involvement_flag, berry_ligament_flag, ebl_ml_nlp,
@@ -211,6 +211,6 @@ Missing: val_phase7_preop_molecular, val_phase8_final_outcomes, val_phase11_imag
 
 ## Summary
 
-This report is generated deterministically from live MotherDuck data.
+This report is generated deterministically from live local DuckDB data.
 All metrics above supersede any earlier documentation for the same date.
 See `exports/repo_truth_sync_20260314_2213/` for raw CSV and JSON outputs.

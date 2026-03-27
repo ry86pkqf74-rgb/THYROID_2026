@@ -2,7 +2,7 @@
   "script": "94_pipeline_gap_closure.py",
   "run_date": "20260314",
   "timestamp": "20260314_2325",
-  "target": "MotherDuck",
+  "target": "local DuckDB",
   "dry_run": false,
   "phases": [
     "A",

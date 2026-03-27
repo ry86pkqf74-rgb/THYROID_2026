@@ -1,8 +1,8 @@
 # FINAL MANUSCRIPT READINESS VERDICT
 
 **Date:** 2026-03-13
-**Auditor:** Automated hardening pass (script 71 + validation suite + MotherDuck audit)
-**MotherDuck database:** `thyroid_research_2026` (578 distinct tables, `main` schema)
+**Auditor:** Automated hardening pass (script 71 + validation suite + local DuckDB audit)
+**local DuckDB database:** `thyroid_master.duckdb` (578 distinct tables, `main` schema)
 
 ---
 
@@ -116,8 +116,8 @@ populated `imaging_nodule_master_v1`. This is a presentation gap, not a data gap
 
 | Component | Status | Detail |
 |-----------|--------|--------|
-| MotherDuck RO share connection | VERIFIED | `thyroid_share` path functional |
-| MotherDuck RW fallback | VERIFIED | `thyroid_research_2026` accessible |
+| local DuckDB RO share connection | VERIFIED | `thyroid_share` path functional |
+| local DuckDB RW fallback | VERIFIED | `thyroid_master.duckdb` accessible |
 | Key tables for Overview tab | 25/26 OK | `overview_kpis` exists |
 | Patient Explorer tables | ALL OK | `streamlit_patient_header_v` (11,977 rows) |
 | Data Quality tables | ALL OK | All 5 `val_*` health monitoring tables present |
@@ -175,7 +175,7 @@ populated `imaging_nodule_master_v1`. This is a presentation gap, not a data gap
 6. **31 RAS_unspecified**: Genuinely unresolvable — no further text source available.
 
 7. **Pre-op imaging nodule sizes**: `imaging_nodule_long_v2` size columns all NULL on
-   MotherDuck (schema exists, data not populated). The separately built
+   local DuckDB (schema exists, data not populated). The separately built
    `imaging_nodule_master_v1` has full dimension data (19,891 rows).
 
 ### Pipeline Gaps (Fixable But Not Manuscript-Blocking)

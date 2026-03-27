@@ -25,7 +25,7 @@ We examined **cross-sectional associations** between preoperative patient and cy
 
 ### Study design and data source
 
-We performed a **retrospective cohort study** using analytic tables queried in the study pipeline [`study_pipeline.py`](study_pipeline.py). MotherDuck objects were **not** modified during manuscript preparation; all numbers in this version are derived from **frozen** CSV exports in this folder unless otherwise noted (`MANUSCRIPT_STATE_AUDIT.md`).
+We performed a **retrospective cohort study** using analytic tables queried in the study pipeline [`study_pipeline.py`](study_pipeline.py). local DuckDB objects were **not** modified during manuscript preparation; all numbers in this version are derived from **frozen** CSV exports in this folder unless otherwise noted (`MANUSCRIPT_STATE_AUDIT.md`).
 
 ### Eligibility and cohorts
 
@@ -47,7 +47,7 @@ We performed a **retrospective cohort study** using analytic tables queried in t
 
 **Extended model covariates.** `bilateral_nodule_indicator` and `tirads_score` (numeric), when present after merge, as in `study_pipeline.py` extended predictor list.
 
-**Completion thyroidectomy.** Among patients with initial lobectomy, we summarized completion in **two layers**: (i) **OED pipeline flags**—a later `operative_episode_detail_v2` row with `procedure_normalized` in {`total_thyroidectomy`, `completion_thyroidectomy`} strictly after index surgery (`completion_total_flag`, `completion_within_*`; `cohort_logic.completion_after_lobectomy`); (ii) **path-synoptic definite completion**—a later-dated `path_synoptics` row with synoptic `completion` ∈ {yes, y} and/or completion-thyroidectomy language in `thyroid_procedure` (`cohort_logic.path_synoptic_completion_after_lobectomy`). **Integrated ultimate extent** (`ultimate_total`) treats either layer as evidence of progression to total-class management (`cohort_logic.ultimate_extent_total`). Exports: **`table7_completion_thyroidectomy.csv`**, **`completion_audit_outputs/`** (independent MotherDuck audit bundle).
+**Completion thyroidectomy.** Among patients with initial lobectomy, we summarized completion in **two layers**: (i) **OED pipeline flags**—a later `operative_episode_detail_v2` row with `procedure_normalized` in {`total_thyroidectomy`, `completion_thyroidectomy`} strictly after index surgery (`completion_total_flag`, `completion_within_*`; `cohort_logic.completion_after_lobectomy`); (ii) **path-synoptic definite completion**—a later-dated `path_synoptics` row with synoptic `completion` ∈ {yes, y} and/or completion-thyroidectomy language in `thyroid_procedure` (`cohort_logic.path_synoptic_completion_after_lobectomy`). **Integrated ultimate extent** (`ultimate_total`) treats either layer as evidence of progression to total-class management (`cohort_logic.ultimate_extent_total`). Exports: **`table7_completion_thyroidectomy.csv`**, **`completion_audit_outputs/`** (independent local DuckDB audit bundle).
 
 ### Statistical analysis
 

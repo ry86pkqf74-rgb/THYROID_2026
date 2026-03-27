@@ -1168,7 +1168,7 @@ def generate_report(results: dict, output_path: Path) -> str:
 def main():
     parser = argparse.ArgumentParser(description="Phase 11 Final Sweep")
     parser.add_argument("--variable", default="all", help="Step name or 'all'")
-    parser.add_argument("--md", action="store_true", default=True, help="Use MotherDuck")
+    parser.add_argument("--md", action="store_true", default=True, help="Use local DuckDB")
     parser.add_argument("--local", action="store_true", help="Use local DuckDB")
     parser.add_argument("--dry-run", action="store_true", help="Print SQL only")
     parser.add_argument("--output-dir", default="notes_extraction", help="Report output dir")
@@ -1190,7 +1190,7 @@ def main():
         con.close()
         return
 
-    print(f"Phase 11 — Final Sweep ({'MotherDuck' if args.md else 'local'})")
+    print(f"Phase 11 — Final Sweep ({'local DuckDB' if args.md else 'local'})")
     print("=" * 60)
     results = audit_and_refine_phase11(con, variables=variables)
 

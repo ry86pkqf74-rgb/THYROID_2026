@@ -5,7 +5,7 @@
 
 ## Purpose
 
-Lock a **versioned analysis state** in both MotherDuck prod and the local
+Lock a **versioned analysis state** in both local DuckDB prod and the local
 export directory so that:
 
 1. Every manuscript number can be traced to a specific table snapshot.
@@ -16,13 +16,13 @@ export directory so that:
 ## Quick-Start
 
 ```bash
-# Full freeze from MotherDuck prod
+# Full freeze from local DuckDB prod
 .venv/bin/python scripts/105_manuscript_freeze_v1.py --md
 
 # Dry run (inventory only, no data export)
 .venv/bin/python scripts/105_manuscript_freeze_v1.py --md --dry-run
 
-# Freeze + create versioned TABLE copies in MotherDuck
+# Freeze + create versioned TABLE copies in local DuckDB
 .venv/bin/python scripts/105_manuscript_freeze_v1.py --md --stamp
 
 # Create a second freeze after external data arrives
@@ -33,9 +33,9 @@ export directory so that:
 
 | Flag | Description |
 |------|-------------|
-| `--md` | Read from MotherDuck prod (recommended) |
+| `--md` | Read from local DuckDB prod (recommended) |
 | `--dry-run` | Inventory + validation only; no data exported |
-| `--stamp` | Create `_freeze_v1` suffixed TABLE copies in MotherDuck |
+| `--stamp` | Create `_freeze_v1` suffixed TABLE copies in local DuckDB |
 | `--version TAG` | Freeze version tag (default: `v1`) |
 | `--skip-data` | Skip Parquet/CSV export; manifest + inventory only |
 
@@ -48,7 +48,7 @@ exports/manuscript_freeze_v1/
 ├── rowcount_summary.json      # Compact {table: row_count} map
 ├── metadata.json              # Git SHA, timestamp, python/duckdb versions
 ├── verification_report.json   # Post-export integrity check results
-├── stamp_results.json         # (if --stamp) MotherDuck stamp log
+├── stamp_results.json         # (if --stamp) local DuckDB stamp log
 └── data/
     ├── manuscript_cohort_v1.parquet
     ├── manuscript_cohort_v1.csv
@@ -76,9 +76,9 @@ The `--version` flag defaults to `v1`.  When external data arrives:
    per table.
 4. All v1 exports remain untouched — nothing is overwritten.
 
-## Stamped Copies in MotherDuck
+## Stamped Copies in local DuckDB
 
-With `--stamp`, the script creates versioned TABLE copies in MotherDuck prod:
+With `--stamp`, the script creates versioned TABLE copies in local DuckDB prod:
 
 ```sql
 -- e.g. for manuscript_cohort_v1 with --version v1
@@ -86,7 +86,7 @@ CREATE TABLE manuscript_cohort_v1_freeze_v1 AS
   SELECT * FROM manuscript_cohort_v1;
 ```
 
-These frozen copies persist in MotherDuck and are immune to upstream VIEW
+These frozen copies persist in local DuckDB and are immune to upstream VIEW
 rebuilds.  Use them for point-in-time audits:
 
 ```sql
@@ -101,8 +101,8 @@ SELECT COUNT(*) FROM manuscript_cohort_v1_freeze_v1;
   "freeze_type": "manuscript_publication_freeze",
   "created_at": "2026-03-15T12:34:56+00:00",
   "source": {
-    "type": "motherduck_prod",
-    "database": "thyroid_research_2026",
+    "type": "local DuckDB_prod",
+    "database": "thyroid_master.duckdb",
     "is_prod": true
   },
   "git": {
@@ -128,7 +128,7 @@ SELECT COUNT(*) FROM manuscript_cohort_v1_freeze_v1;
 | Script | Relationship |
 |--------|-------------|
 | `scripts/90_manuscript_freeze_rebuild.py` | Regenerates tables from upstream scripts; run **before** 105 |
-| `scripts/26_motherduck_materialize_v2.py` | Materializes md_* mirrors; run **before** 105 |
+| `scripts/26_local DuckDB_materialize_v2.py` | Materializes md_* mirrors; run **before** 105 |
 | `scripts/91_promotion_gate.py` | Gate validation; can run **after** 105 as a cross-check |
 | `scripts/95_environment_promotion.py` | Environment promotion; **independent** of 105 |
 
@@ -138,8 +138,8 @@ SELECT COUNT(*) FROM manuscript_cohort_v1_freeze_v1;
 # 1. Rebuild analysis tables
 .venv/bin/python scripts/90_manuscript_freeze_rebuild.py --md
 
-# 2. Materialize to MotherDuck
-.venv/bin/python scripts/26_motherduck_materialize_v2.py --md
+# 2. Materialize to local DuckDB
+.venv/bin/python scripts/26_local DuckDB_materialize_v2.py --md
 
 # 3. Freeze
 .venv/bin/python scripts/105_manuscript_freeze_v1.py --md --stamp
@@ -174,7 +174,7 @@ for e1 in v1["inventory"]:
 
 - **Git dirty** flag: The manifest records whether the working tree had
   uncommitted changes at freeze time.  Prefer freezing from a clean commit.
-- **Network dependency**: `--md` requires `MOTHERDUCK_TOKEN` in the
+- **Network dependency**: `--md` requires `LOCAL_DB_PATH` in the
   environment or `.streamlit/secrets.toml`.
 - **Local fallback**: Running without `--md` reads `thyroid_master.duckdb`,
   which may have stale or incomplete data.

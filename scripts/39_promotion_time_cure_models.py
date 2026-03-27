@@ -92,20 +92,20 @@ def _get_con(use_md: bool, use_local: bool):
     if use_md:
         # Load token from env or secrets.toml
         import os
-        token = os.environ.get("MOTHERDUCK_TOKEN", "")
+        token = os.environ.get("LOCAL_DB_PATH", "")
         if not token:
             try:
                 import toml
                 token = toml.load(str(ROOT / ".streamlit" / "secrets.toml")).get(
-                    "MOTHERDUCK_TOKEN", ""
+                    "LOCAL_DB_PATH", ""
                 )
             except Exception:
                 pass
         if not token:
-            print("  ERROR: MOTHERDUCK_TOKEN not set.  Use --local for local DuckDB.")
+            print("  ERROR: LOCAL_DB_PATH not set.  Use --local for local DuckDB.")
             sys.exit(1)
-        con = duckdb.connect(f"md:?motherduck_token={token}")
-        con.execute("USE thyroid_research_2026;")
+        con = duckdb.connect(f"thyroid_master.duckdb")
+        con.execute("USE thyroid_master.duckdb;")
         return con, True
     # Default: local DuckDB
     db_path = ROOT / "thyroid_master.duckdb"
@@ -589,7 +589,7 @@ def load_fitted_params() -> np.ndarray | None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--md",       action="store_true", help="Read from MotherDuck")
+    parser.add_argument("--md",       action="store_true", help="Read from local DuckDB")
     parser.add_argument("--local",    action="store_true", help="Force local DuckDB")
     parser.add_argument("--dry-run",  action="store_true", help="Use 500-row sample only")
     parser.add_argument("--boot",     type=int, default=N_BOOT,
@@ -609,7 +609,7 @@ def main() -> None:
     con.close()
 
     if df.empty:
-        print("  ERROR: No data. Run `python scripts/26_motherduck_materialize_v2.py --md` first.")
+        print("  ERROR: No data. Run `python scripts/26_local DuckDB_materialize_v2.py --md` first.")
         sys.exit(1)
 
     n_total  = len(df)

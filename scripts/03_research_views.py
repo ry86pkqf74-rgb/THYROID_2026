@@ -13,7 +13,7 @@ import duckdb
 
 ROOT = Path(__file__).resolve().parent.parent
 DB_PATH = ROOT / "thyroid_master.duckdb"
-MD_DATABASE = "thyroid_research_2026"
+MD_DATABASE = "thyroid_master.duckdb"
 
 
 VIEWS_SQL: dict[str, str] = {
@@ -455,9 +455,9 @@ LEFT JOIN benign_pathology bp ON mc.research_id = bp.research_id
 
 
 def _connect(use_md: bool) -> duckdb.DuckDBPyConnection:
-    """Return a DuckDB connection — MotherDuck RW when --md, otherwise local."""
+    """Return a DuckDB connection — local DuckDB RW when --md, otherwise local."""
     if use_md:
-        token = os.environ.get("MOTHERDUCK_TOKEN") or ""
+        token = os.environ.get("LOCAL_DB_PATH") or ""
         if not token:
             # Try loading from .streamlit/secrets.toml
             try:
@@ -466,12 +466,12 @@ def _connect(use_md: bool) -> duckdb.DuckDBPyConnection:
                 import tomli as tomllib  # type: ignore
             secrets_path = ROOT / ".streamlit" / "secrets.toml"
             with open(secrets_path, "rb") as f:
-                token = tomllib.load(f).get("MOTHERDUCK_TOKEN", "")
+                token = tomllib.load(f).get("LOCAL_DB_PATH", "")
         if not token:
-            raise RuntimeError("MOTHERDUCK_TOKEN not set and not found in secrets.toml")
-        con = duckdb.connect(f"md:{MD_DATABASE}?motherduck_token={token}")
+            raise RuntimeError("LOCAL_DB_PATH not set and not found in secrets.toml")
+        con = duckdb.connect(f"thyroid_master.duckdb")
         con.execute(f"USE {MD_DATABASE}")
-        print(f"Connected to MotherDuck: {MD_DATABASE}")
+        print(f"Connected to local DuckDB: {MD_DATABASE}")
     else:
         con = duckdb.connect(str(DB_PATH))
         print(f"Connected to local: {DB_PATH}")
@@ -480,7 +480,7 @@ def _connect(use_md: bool) -> duckdb.DuckDBPyConnection:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Build Phase 2 research views")
-    parser.add_argument("--md", action="store_true", help="Target MotherDuck instead of local DuckDB")
+    parser.add_argument("--md", action="store_true", help="Target local DuckDB instead of local DuckDB")
     args = parser.parse_args()
 
     con = _connect(args.md)
@@ -543,12 +543,12 @@ def main() -> None:
         print(f"{'genetic_testing_clean':35s} skipped ({exc})")
 
     # =========================================================================
-    # MOTHERDUCK OPTIMIZATION LAYER (added 2026-03-10)
+    # LOCAL_DB OPTIMIZATION LAYER (added 2026-03-10)
     # Materialized tables for sub-second dashboard performance.
     # Safe to re-run: all use CREATE OR REPLACE.
     # =========================================================================
     print("-" * 72)
-    print("Creating MotherDuck optimization tables…")
+    print("Creating local DuckDB optimization tables…")
 
     # 1. Core wide table — physically sorted for common filters + stats.
     #    advanced_features_v3 was just created above, so no circular ref.

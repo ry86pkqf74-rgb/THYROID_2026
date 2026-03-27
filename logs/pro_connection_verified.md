@@ -1,7 +1,7 @@
-# MotherDuck Business Pro Connection Verification
+# local DuckDB Business Pro Connection Verification
 
 **Date:** 2026-03-12  
-**Database:** thyroid_research_2026  
+**Database:** thyroid_master.duckdb  
 **Schema:** main  
 **Token:** Loaded from `.streamlit/secrets.toml` (467 chars)
 

@@ -135,7 +135,7 @@ Run `tests/test_lab_canonical.py` for Python-level contract assertions.
 ## Deployment
 
 ```bash
-# Build canonical lab table on MotherDuck
+# Build canonical lab table on local DuckDB
 .venv/bin/python scripts/77_lab_canonical_layer.py --md
 
 # Run contract validation

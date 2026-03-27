@@ -14,7 +14,7 @@ metrics modified.
 |--------|---------|
 | `scripts/81_operative_nlp_propagation_validate.py` | Validates operative NLP field coverage (Cat A/B/C) |
 | `scripts/82_provenance_date_hardening.py` | Creates recurrence/RAI/molecular provenance val_* tables |
-| `scripts/83_motherduck_env_strategy.py` | Dev/QA/Prod promotion workflow + 8-gate row-count checks |
+| `scripts/83_local DuckDB_env_strategy.py` | Dev/QA/Prod promotion workflow + 8-gate row-count checks |
 | `scripts/84_query_observability.py` | Benchmarks 24 key queries; flags latency regressions |
 | `scripts/85_materialization_performance_audit.py` | Hot-path table audits + MATERIALIZATION_MAP duplicate detection |
 
@@ -26,12 +26,12 @@ metrics modified.
 
 #### CI Hardening
 CI workflow now runs 3 jobs: lint-and-syntax (full script corpus), unit-tests,
-and motherduck-ci (12 table checks + 11 metric ranges + row multiplication
+and local DuckDB-ci (12 table checks + 11 metric ranges + row multiplication
 guard + null-threshold guard + dashboard smoke tests). Trigger paths expanded
 to `scripts/**`, `app/**`, `utils/**`, `notes_extraction/**`.
 
 #### Config
-`config/motherduck_environments.yml` — documents dev/qa/prod, Duckling sizing,
+`config/local DuckDB_environments.yml` — documents dev/qa/prod, Duckling sizing,
 service-account auth pattern, RO share path, promotion commands.
 
 #### MATERIALIZATION_MAP
@@ -41,7 +41,7 @@ service-account auth pattern, RO share path, promotion commands.
 #### Docs
 - `docs/final_operativenlp_propagation_20260314.md`
 - `docs/final_provenance_date_hardening_20260314.md`
-- `docs/final_motherduck_business_optimization_20260314.md`
+- `docs/final_local DuckDB_business_optimization_20260314.md`
 - `exports/final_md_optimization_20260314/README.md`
 
 ---
@@ -93,7 +93,7 @@ supportable state for manuscript writing.
 #### Fixes Applied
 - Ran script 71 operative NLP enrichment (13,186 entities extracted; zero delta due to COALESCE guards — documented as pipeline architecture gap)
 - Created 3 missing Streamlit tables: `streamlit_patient_conflicts_v` (1,015 rows), `streamlit_patient_manual_review_v` (7,552 rows), `adjudication_progress_summary_v` (0 rows)
-- Ran ANALYZE on 17 manuscript-critical MotherDuck tables
+- Ran ANALYZE on 17 manuscript-critical local DuckDB tables
 - Updated CITATION.cff version to 2026.03.13 with license clarification
 - Updated README with honest assessment of limitations
 
@@ -110,10 +110,10 @@ supportable state for manuscript writing.
 - `docs/final_validation_and_optimization_20260313.md` — validation results
 
 #### Key Metrics Verified
-- 578 MotherDuck tables (578 distinct in main schema)
+- 578 local DuckDB tables (578 distinct in main schema)
 - 0 patient-level duplicates in manuscript_cohort_v1 and patient_analysis_resolved_v1
 - AJCC8 37.6%, ATA 28.9%, MACIS 37.5%, AGES 100%, AMES 100% calculability
-- All Streamlit tabs verified against live MotherDuck tables
+- All Streamlit tabs verified against live local DuckDB tables
 - 17 tables ANALYZE'd for query optimization
 
 #### Verdict: READY FOR MANUSCRIPT WRITING WITH DOCUMENTED CAVEATS
@@ -266,7 +266,7 @@ bringing the repository from manuscript-ready to approaching dataset-mature.
 | Provenance columns (4 tables) | partial | 100% filled | 4 columns x 4 tables |
 | Chronology anomalies | unclassified | 626 classified | 4 resolution buckets |
 | Health monitoring tables | 0 | 3 tables | new deployment |
-| ANALYZE TABLE | never run | 10 tables analyzed | MotherDuck optimization |
+| ANALYZE TABLE | never run | 10 tables analyzed | local DuckDB optimization |
 
 #### Imaging layer standardization
 
@@ -300,11 +300,11 @@ bringing the repository from manuscript-ready to approaching dataset-mature.
 ## v2026.03.13-audit-verification
 **Date:** 2026-03-13
 **Patients:** 10,871 (manuscript cohort) | 4,136 (analysis-eligible cancer subcohort)
-**MotherDuck tables:** 531 | **Validation tables:** 34 `val_*`
+**local DuckDB tables:** 531 | **Validation tables:** 34 `val_*`
 
 ### Full Engineering Verification Pass
 
-An end-to-end verification audited 531 MotherDuck tables, 34 validation tables,
+An end-to-end verification audited 531 local DuckDB tables, 34 validation tables,
 and 18 prior audit documents. Definitive report:
 [`docs/final_repo_verification_20260313.md`](docs/final_repo_verification_20260313.md)
 
@@ -377,7 +377,7 @@ and 18 prior audit documents. Definitive report:
 |----------|-------|
 | [`docs/canonical_backfill_report_20260313.md`](docs/canonical_backfill_report_20260313.md) | 1,988 cells backfilled (RAI dose, RAS flag, linkage IDs) |
 | [`docs/provenance_date_audit_20260313.md`](docs/provenance_date_audit_20260313.md) | Provenance + date accuracy audit |
-| [`docs/operative_nlp_motherduck_propagation_20260313.md`](docs/operative_nlp_motherduck_propagation_20260313.md) | Operative NLP gap analysis |
+| [`docs/operative_nlp_local DuckDB_propagation_20260313.md`](docs/operative_nlp_local DuckDB_propagation_20260313.md) | Operative NLP gap analysis |
 | [`docs/operative_note_path_linkage_audit_20260313.md`](docs/operative_note_path_linkage_audit_20260313.md) | Op-note ↔ pathology linkage |
 | [`docs/hp_discharge_note_audit_20260313.md`](docs/hp_discharge_note_audit_20260313.md) | H&P / discharge note coverage |
 | [`docs/imaging_nodule_materialization_20260313.md`](docs/imaging_nodule_materialization_20260313.md) | Imaging nodule master gap |
@@ -576,7 +576,7 @@ All regression results include plain-English interpretation strings, e.g.:
 - `23_cross_domain_linkage_v2.py` — 6 cross-domain linkage tables with 5-tier confidence (exact_match → unlinked); enforces FNA-before-molecular and preop-before-surgery chronology
 - `24_reconciliation_review_v2.py` — 5 cross-domain review views (imaging-pathology concordance uses surgery-aware temporal windows)
 - `25_qa_validation_v2.py` — `qa_issues_v2`, `qa_date_completeness_v2`, `qa_high_priority_review_v2`; weak linkages routed as QA warnings
-- `26_motherduck_materialize_v2.py` — 47 tables materialized in MotherDuck (up from 20): granular linkage, Streamlit-critical views, manual review queues, date_rescue_rate_summary
+- `26_local DuckDB_materialize_v2.py` — 47 tables materialized in local DuckDB (up from 20): granular linkage, Streamlit-critical views, manual review queues, date_rescue_rate_summary
 - `27_date_provenance_formalization.py` — ALTER TABLE adds 4 provenance columns to all 6 `note_entities_*` tables; `enriched_master_timeline` + `date_rescue_rate_summary` KPI views
 
 ### V2 Extraction Layer
@@ -587,7 +587,7 @@ All regression results include plain-English interpretation strings, e.g.:
 ### Validation & Readiness (Scripts 28–30)
 - `28_manual_review_export.py` — manual review queue export with `--md` flag
 - `29_validation_runner.py` — combined 14-view validation + 6-domain review export + reconciliation gap summary
-- `30_readiness_check.py` — MotherDuck/local readiness report with critical/optional table audit
+- `30_readiness_check.py` — local DuckDB/local readiness report with critical/optional table audit
 
 ### V2 Dashboard Tabs
 - Extraction Completeness, Molecular Episodes, RAI Episodes, Imaging/Nodule, Operative, Adjudication v2
@@ -610,8 +610,8 @@ All regression results include plain-English interpretation strings, e.g.:
 - V3 dashboard optimizations: updated table references, expanded materializations
 - Validation Engine tab expanded with domain-level downloads, runner summary, and reconciliation gap view
 - Script 26 now materializes 63 tables (up from 47): adds post-review overlays, manuscript cohorts, adjudication detail views
-- Script 30 (`30_readiness_check.py`): MotherDuck/local readiness report with critical/optional table audit
-- Dashboard sidebar: expanded Data Build Info (8 health checks), Connection Help tooltip, MOTHERDUCK_TOKEN instructions
+- Script 30 (`30_readiness_check.py`): local DuckDB/local readiness report with critical/optional table audit
+- Dashboard sidebar: expanded Data Build Info (8 health checks), Connection Help tooltip, LOCAL_DB_PATH instructions
 - Tab naming cleaned up: "v2" tabs renamed to descriptive labels (Extraction Completeness, Molecular Episodes, etc.)
 - QA tab: added V2 QA Validation links (date completeness, domain summary, high priority)
 - Adjudication tab: added granular linkage quality section showing per-pair confidence tiers
@@ -622,7 +622,7 @@ All regression results include plain-English interpretation strings, e.g.:
 
 ### Materialization Instructions
 ```bash
-python scripts/26_motherduck_materialize_v2.py --md
+python scripts/26_local DuckDB_materialize_v2.py --md
 python scripts/29_validation_engine.py --md
 python scripts/30_readiness_check.py --md
 ```

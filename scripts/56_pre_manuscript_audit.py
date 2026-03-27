@@ -51,22 +51,22 @@ def section(title: str) -> None:
 
 
 def _get_token() -> str:
-    token = os.getenv("MOTHERDUCK_TOKEN")
+    token = os.getenv("LOCAL_DB_PATH")
     if token:
         return token
     secrets = ROOT / ".streamlit" / "secrets.toml"
     if secrets.exists():
         try:
             import toml
-            return toml.load(str(secrets))["MOTHERDUCK_TOKEN"]
+            return toml.load(str(secrets))["LOCAL_DB_PATH"]
         except Exception:
             pass
-    raise RuntimeError("MOTHERDUCK_TOKEN not set.")
+    raise RuntimeError("LOCAL_DB_PATH not set.")
 
 
 def connect_md() -> duckdb.DuckDBPyConnection:
     return duckdb.connect(
-        f"md:thyroid_research_2026?motherduck_token={_get_token()}"
+        f"thyroid_master.duckdb"
     )
 
 
@@ -386,7 +386,7 @@ def check_ambiguous_linkage(con) -> str:
             GROUP BY 1 ORDER BY n_links DESC
         """, "ambiguity")
         return fmt(df)
-    return ("_linkage_ambiguity_review_v1 not found on MotherDuck_ — "
+    return ("_linkage_ambiguity_review_v1 not found on local DuckDB_ — "
             "run scripts/49_enhanced_linkage_v3.py --md first")
 
 
@@ -430,7 +430,7 @@ def run_audit(con, dry_run=False):
             f.write(f"## {heading}\n\n{body}\n\n---\n\n")
         f.write("## Audit Conclusion\n\n")
         f.write("Review each section above. Sections returning `_not found_` indicate "
-                "tables that have not yet been materialized on MotherDuck. "
+                "tables that have not yet been materialized on local DuckDB. "
                 "Run the full pipeline (scripts 49-53, then 26 --md) before final "
                 "manuscript analysis.\n")
     print(f"\n  Report: {report_path}")
@@ -445,7 +445,7 @@ def main():
     args = p.parse_args()
 
     if args.md:
-        section("Connecting to MotherDuck")
+        section("Connecting to local DuckDB")
         con = connect_md()
     else:
         section("Connecting to local DuckDB")

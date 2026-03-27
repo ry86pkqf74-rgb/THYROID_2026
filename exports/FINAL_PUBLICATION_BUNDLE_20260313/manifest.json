@@ -55,7 +55,7 @@
     }
   ],
   "columns": 139,
-  "target": "MotherDuck",
+  "target": "local DuckDB",
   "dedup_episode_table": "episode_analysis_resolved_v1_dedup",
   "episode_dupes_resolved": 146,
   "bundle_dir": "exports/FINAL_PUBLICATION_BUNDLE_20260313"

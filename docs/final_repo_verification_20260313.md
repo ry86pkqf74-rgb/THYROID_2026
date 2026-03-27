@@ -2,8 +2,8 @@
 
 **Date:** 2026-03-13  
 **Auditor:** Automated verification pass (full superpowers)  
-**Scope:** Entire repository + MotherDuck cloud database  
-**MotherDuck tables audited:** 531  
+**Scope:** Entire repository + local DuckDB cloud database  
+**local DuckDB tables audited:** 531  
 **Validation tables audited:** 34 `val_*` tables  
 **Prior audit reports reviewed:** 18 documents across 8 audit families  
 
@@ -13,7 +13,7 @@
 
 This report is the definitive engineering-grade truth pass for the THYROID_2026 research database. It distinguishes three levels of maturity — **manuscript-ready**, **dataset-mature**, and **fully extraction-complete** — and provides evidence-based verdicts for each.
 
-**The database is MANUSCRIPT-READY but NOT dataset-mature and NOT fully extraction-complete.** Six critical data propagation failures exist where extraction engines produced refined data that was never backfilled to canonical episode tables on MotherDuck. The extraction pipeline itself is complete (13 phases, 11 engine versions), but the results sit in sidecar tables rather than being unified in the canonical layer.
+**The database is MANUSCRIPT-READY but NOT dataset-mature and NOT fully extraction-complete.** Six critical data propagation failures exist where extraction engines produced refined data that was never backfilled to canonical episode tables on local DuckDB. The extraction pipeline itself is complete (13 phases, 11 engine versions), but the results sit in sidecar tables rather than being unified in the canonical layer.
 
 ---
 
@@ -29,7 +29,7 @@ This report is the definitive engineering-grade truth pass for the THYROID_2026 
 | Date accuracy verification | 2026-03-12 | 76.3% correct date coverage; TSH/PTH/Ca/VitD at 0% |
 | Extraction refinement (Phases 5-13) | 2026-03-12 | Data quality score 98/100 FINAL |
 | Hypothesis validation | 2026-03-12 | Perfect replication; MICE + competing risks robust |
-| MotherDuck audit | 2026-03-11 | 14/15 items DONE, 1 PARTIAL |
+| local DuckDB audit | 2026-03-11 | 14/15 items DONE, 1 PARTIAL |
 | Manuscript checklist | 2026-03-10 | 8 traceability checkboxes unchecked |
 
 ### Unresolved Issues Summary
@@ -68,7 +68,7 @@ This report is the definitive engineering-grade truth pass for the THYROID_2026 
 
 #### 1. Operative Note Enrichment = 0% (CRITICAL)
 
-`operative_episode_detail_v2` on MotherDuck has 9,371 rows but **ALL NLP enrichment flags are FALSE/NULL**:
+`operative_episode_detail_v2` on local DuckDB has 9,371 rows but **ALL NLP enrichment flags are FALSE/NULL**:
 
 - rln_monitoring_flag: 0
 - gross_ete_flag: 0
@@ -78,13 +78,13 @@ This report is the definitive engineering-grade truth pass for the THYROID_2026 
 - operative_findings_raw: 0
 - parathyroid_autograft_flag: 0
 
-The `OperativeDetailExtractor` (V2 engine, wired in script 22) was designed to enrich these columns. The `has_nlp_parse` flag is FALSE for all 9,371 episodes. **The extractor was never run against MotherDuck data, or results were never materialized.**
+The `OperativeDetailExtractor` (V2 engine, wired in script 22) was designed to enrich these columns. The `has_nlp_parse` flag is FALSE for all 9,371 episodes. **The extractor was never run against local DuckDB data, or results were never materialized.**
 
 Only 2 columns have data: `procedure_normalized` (93.1%) and `ebl_ml` (1.3%).
 
 #### 2. Imaging Nodule Master = 0 Rows (CRITICAL)
 
-`imaging_nodule_master_v1` (script 50) has **0 rows** on MotherDuck. This table should contain per-nodule per-exam data unpivoted from the TIRADS Excel ingestion. The Phase 12 TIRADS Excel ingestion created `raw_us_tirads_excel_v1` (19,891 rows) and `extracted_tirads_validated_v1` (3,474 rows), but the master nodule table was never populated.
+`imaging_nodule_master_v1` (script 50) has **0 rows** on local DuckDB. This table should contain per-nodule per-exam data unpivoted from the TIRADS Excel ingestion. The Phase 12 TIRADS Excel ingestion created `raw_us_tirads_excel_v1` (19,891 rows) and `extracted_tirads_validated_v1` (3,474 rows), but the master nodule table was never populated.
 
 Meanwhile, `imaging_nodule_long_v2` has 10,866 rows but **ALL size/composition/TIRADS columns are NULL**.
 
@@ -118,11 +118,11 @@ V2/V3 linkage tables exist as separate join tables, but episode IDs were never b
 
 | Opportunity | Clinical Value | Manuscript Value | Effort | Source Available | Do Now? |
 |---|---|---|---|---|---|
-| **Operative note NLP enrichment** — RLN monitoring, gross ETE, drain, CND/LND, parathyroid autograft, operative findings | HIGH | HIGH | MEDIUM (extractor exists, needs MotherDuck run) | Yes (11,037 clinical notes) | **YES — MUST DO** |
+| **Operative note NLP enrichment** — RLN monitoring, gross ETE, drain, CND/LND, parathyroid autograft, operative findings | HIGH | HIGH | MEDIUM (extractor exists, needs local DuckDB run) | Yes (11,037 clinical notes) | **YES — MUST DO** |
 | **RAI dose backfill** from `extracted_rai_dose_refined_v1` → `rai_treatment_episode_v2` | HIGH | HIGH | LOW (SQL UPDATE) | Yes (307 refined doses) | **YES — MUST DO** |
 | **RAS flag propagation** from `extracted_ras_subtypes_v1` → `molecular_test_episode_v2` | HIGH | HIGH | LOW (SQL UPDATE) | Yes (316+ patients) | **YES — MUST DO** |
 | **Linkage ID backfill** from V3 linkage tables → canonical episode tables | MEDIUM | MEDIUM | LOW (SQL UPDATE per domain) | Yes (5 linkage tables) | **YES — SHOULD DO** |
-| **Imaging nodule master materialization** | MEDIUM | MEDIUM | LOW (script 50 needs MotherDuck run) | Yes (19,891 TIRADS rows) | **YES — SHOULD DO** |
+| **Imaging nodule master materialization** | MEDIUM | MEDIUM | LOW (script 50 needs local DuckDB run) | Yes (19,891 TIRADS rows) | **YES — SHOULD DO** |
 | Symptomatic hypocalcemia from discharge notes | MEDIUM | LOW | MEDIUM | 379 dc_sum complication entities exist | Later |
 | Compressive symptoms from H&P | LOW | LOW | HIGH (new extractor needed) | 4,846 h_p complication entities | Later |
 | Family history / radiation history | LOW | LOW | HIGH (new extractor needed) | H&P notes available | Later |
@@ -143,7 +143,7 @@ The extraction pipeline itself is **functionally complete**:
 - Master clinical table at v12 (12,886 patients, 136 columns)
 - Data quality score: 98/100
 
-**The gap is NOT in extraction — it is in propagation.** Refined results sit in sidecar `extracted_*` tables but were never backfilled to canonical `*_episode_*` tables or materialized to MotherDuck.
+**The gap is NOT in extraction — it is in propagation.** Refined results sit in sidecar `extracted_*` tables but were never backfilled to canonical `*_episode_*` tables or materialized to local DuckDB.
 
 ---
 
@@ -205,10 +205,10 @@ All 6 `note_entities_*` tables have `inferred_event_date` at 47-100% fill. Stagi
 
 | # | Improvement | Effort | Impact |
 |---|---|---|---|
-| 1 | **Run operative detail enrichment on MotherDuck** — execute OperativeDetailExtractor and backfill `operative_episode_detail_v2` with NLP flags | 2-4 hours | Fills 14 NLP columns for 9,371 episodes |
+| 1 | **Run operative detail enrichment on local DuckDB** — execute OperativeDetailExtractor and backfill `operative_episode_detail_v2` with NLP flags | 2-4 hours | Fills 14 NLP columns for 9,371 episodes |
 | 2 | **Backfill RAI dose** from `extracted_rai_dose_refined_v1` → `rai_treatment_episode_v2.dose_mci` | 30 min | Lifts dose coverage from 3% to ~16% |
 | 3 | **Backfill RAS flag** from `extracted_ras_subtypes_v1` → `molecular_test_episode_v2.ras_flag` | 30 min | Recovers 316+ RAS-positive patients |
-| 4 | **Materialize `imaging_nodule_master_v1`** on MotherDuck | 1 hour | Fills 0-row table with per-nodule TIRADS data |
+| 4 | **Materialize `imaging_nodule_master_v1`** on local DuckDB | 1 hour | Fills 0-row table with per-nodule TIRADS data |
 | 5 | **Propagate linkage IDs** from V3 linkage tables → canonical episode tables | 1-2 hours | Fills 4 currently-0% linkage columns |
 | 6 | **Add `episode_analysis_resolved_v1_dedup`** and **`manuscript_cohort_v1`** to MATERIALIZATION_MAP | 30 min | Ensures canonical deduped episode + frozen cohort are part of standard refresh |
 | 7 | **Tick the 8 manuscript checklist traceability boxes** — the reports exist but were never signed off | 15 min | Closes documentation gap |
@@ -221,8 +221,8 @@ All 6 `note_entities_*` tables have `inferred_event_date` at 47-100% fill. Stagi
 | 9 | Propagate `first_recurrence_date` to patient-level resolved table where available | 1 hour | Currently 0.5% → ~5% (structural dates are genuinely sparse) |
 | 10 | Fix FDR correction NaN in hypothesis validation | 1 hour | Currently all `p_fdr = NaN` due to scipy edge case |
 | 11 | Adjudicate 626 chronology anomalies — classify each as acceptable vs requiring remediation | 4-8 hours | Currently unadjudicated |
-| 12 | Deploy all 17 script 29 `val_*` tables to MotherDuck | 1 hour | Currently only 2 of 17 are materialized |
-| 13 | Rebuild `thyroid_scoring_systems_v1` with canonical column names on MotherDuck | 1 hour | Currently only `thyroid_scoring_py_v1` exists with different schema |
+| 12 | Deploy all 17 script 29 `val_*` tables to local DuckDB | 1 hour | Currently only 2 of 17 are materialized |
+| 13 | Rebuild `thyroid_scoring_systems_v1` with canonical column names on local DuckDB | 1 hour | Currently only `thyroid_scoring_py_v1` exists with different schema |
 
 ### Category 3: GOOD FUTURE ENHANCEMENT
 
@@ -256,7 +256,7 @@ Evidence:
 - Manuscript cohort frozen (`manuscript_cohort_v1`: 10,871 patients, 139 columns)
 - All 7 readiness gates PASS (including G2 after deduplication)
 - Metric consistency confirmed (BRAF=376, recurrence=1,818, surgical=10,871, RAI=35 cross-table consistent)
-- Hypothesis results replicate to 3 decimal places against live MotherDuck
+- Hypothesis results replicate to 3 decimal places against live local DuckDB
 - MICE imputation + competing risks + E-value + sensitivity bounds confirm robustness
 - Publication bundle exported (`FINAL_PUBLICATION_BUNDLE_20260313/`, 62 files)
 - KM, Cox PH, logistic models all produced with correct results
@@ -280,7 +280,7 @@ Evidence:
 - `operative_episode_detail_v2` has 9,371 rows but **ALL 14 NLP enrichment columns are 0%**
 - `has_nlp_parse` = FALSE for all episodes
 - `procedure_normalized` (93.1%) and `laterality` (5.8%) are the only filled columns
-- `OperativeDetailExtractor` exists in code but was never executed against MotherDuck data
+- `OperativeDetailExtractor` exists in code but was never executed against local DuckDB data
 
 **This is the single largest data gap in the repository.** The extractor code exists. The clinical notes exist (11,037 notes in `clinical_notes_long`). The enrichment was simply never run.
 
@@ -318,7 +318,7 @@ Evidence:
 ### F. Repo Maturity: **MOSTLY VERIFIED**
 
 Evidence:
-- 531 tables on MotherDuck (196 in MATERIALIZATION_MAP + 9 inline + extras)
+- 531 tables on local DuckDB (196 in MATERIALIZATION_MAP + 9 inline + extras)
 - 34 validation tables covering all domains
 - Scripts 15-69 deployed in correct dependency order
 - Documentation: data dictionary, pipeline architecture v2, analysis resolved layer, SAP, QA report
@@ -341,7 +341,7 @@ Evidence:
 
 ---
 
-## Appendix: Live MotherDuck Counts (2026-03-13)
+## Appendix: Live local DuckDB Counts (2026-03-13)
 
 | Table | Rows | Key Finding |
 |---|---|---|

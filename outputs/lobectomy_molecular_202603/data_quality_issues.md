@@ -1,6 +1,6 @@
 # Data quality and edge cases — lobectomy vs total (2–4 cm, N0)
 
-Generated with cohort build 2026-03-25 against MotherDuck `thyroid_research_2026`.
+Generated with cohort build 2026-03-25 against local DuckDB `thyroid_master.duckdb`.
 
 ## Critical limitations
 
@@ -20,7 +20,7 @@ Generated with cohort build 2026-03-25 against MotherDuck `thyroid_research_2026
    ~51% of patients fall in `bethesda_III_vs_IV_V = other_NA` (missing or non-classifiable FNA tier in the resolved layer). **48%** have indeterminate `path_malignant_flag` (missing histology text). Concordance (κ) used a **binary** “genetics high-risk” (preop suspicious/positive/high-risk marker) vs “pathology high-risk” (malignant histology keyword logic **or** ATA intermediate/high).
 
 6. **Boolean / text typing**  
-   MotherDuck may return boolean-like molecular fields inconsistently; the pipeline normalises `high_risk_marker_flag` via string comparison where needed.
+   local DuckDB may return boolean-like molecular fields inconsistently; the pipeline normalises `high_risk_marker_flag` via string comparison where needed.
 
 7. **Multiple comparisons**  
    Univariable screening used **Benjamini–Hochberg FDR** on the prespecified feature list. The **primary** inferential focus is the multivariable logistic model for surgery type (pre-specified); ancillary κ estimates are exploratory.
@@ -32,4 +32,4 @@ Generated with cohort build 2026-03-25 against MotherDuck `thyroid_research_2026
 
 - **Cohort SQL:** [`sql/01_cohort_base.sql`](../../studies/lobectomy_molecular_202603/sql/01_cohort_base.sql)  
 - **Code & frozen release:** Git tag `v2026.03.10-publication-ready`; Zenodo DOI [10.5281/zenodo.18945510](https://doi.org/10.5281/zenodo.18945510)  
-- **Database:** MotherDuck share / token per `motherduck_client.py`
+- **Database:** local DuckDB share / token per `local DuckDB_client.py`

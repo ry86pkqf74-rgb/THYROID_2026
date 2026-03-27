@@ -132,7 +132,7 @@ This policy is enforced in `longitudinal_lab_canonical_v1` and documented in
 .venv/bin/python scripts/82_provenance_date_hardening.py --md
 
 # Re-materialize new val_* tables
-.venv/bin/python scripts/26_motherduck_materialize_v2.py --md
+.venv/bin/python scripts/26_local DuckDB_materialize_v2.py --md
 ```
 
 Exports written to `exports/final_md_optimization_20260314/provenance_*.csv`.

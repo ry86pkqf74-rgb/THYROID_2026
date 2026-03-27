@@ -33,12 +33,12 @@ PUBLISH_DIR = ROOT / "exports" / f"THYROID_2026_PUBLICATION_BUNDLE_{EXPORT_DATE}
 
 
 def _get_connection() -> duckdb.DuckDBPyConnection:
-    token = os.getenv("MOTHERDUCK_TOKEN")
+    token = os.getenv("LOCAL_DB_PATH")
     if not token:
         raise RuntimeError(
-            "Missing MOTHERDUCK_TOKEN. Export your MotherDuck token before connecting."
+            "Missing LOCAL_DB_PATH. Export your local DuckDB token before connecting."
         )
-    return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+    return duckdb.connect(f"thyroid_master.duckdb")
 
 
 def _safe_count(con: duckdb.DuckDBPyConnection, table: str) -> int:
@@ -214,7 +214,7 @@ def phase6_documentation() -> None:
 - Publication bundle created: `exports/THYROID_2026_PUBLICATION_BUNDLE_{EXPORT_DATE}/`
 - Local DuckDB backup created (trial-downgrade safety)
 - Streamlit dashboard tabs benchmarked (sub-second)
-- Ready for MotherDuck free-tier downgrade
+- Ready for local DuckDB free-tier downgrade
 
 **Publication folder:** `exports/THYROID_2026_PUBLICATION_BUNDLE_{EXPORT_DATE}/`
 """
@@ -245,7 +245,7 @@ def phase7_checklist() -> None:
     print("\nNext steps:")
     print("   1. git add / commit / push")
     print("   2. Restart Streamlit -> test Timeline Explorer & QA Dashboard")
-    print("   3. When ready, downgrade MotherDuck tier (all derived objects safe locally)")
+    print("   3. When ready, downgrade local DuckDB tier (all derived objects safe locally)")
     print("=" * 90)
 
 
@@ -257,7 +257,7 @@ def main() -> None:
     con = _get_connection()
     db = con.execute("SELECT current_database()").fetchone()[0]
     ver = con.execute("SELECT version()").fetchone()[0]
-    print(f"  Connected to MotherDuck: {db} (DuckDB {ver})")
+    print(f"  Connected to local DuckDB: {db} (DuckDB {ver})")
 
     try:
         phase1_validation(con)

@@ -9,4 +9,4 @@ oed_patients_with_any_row_strictly_after_index,0
 path_syn_patients_later_row_with_completion_col_yes,25
 path_syn_rows_after_index_total_lob_cohort,26
 csv_vs_python_replay_mismatch_count,0
-token_mode,secrets.toml:MOTHERDUCK_TOKEN
+token_mode,secrets.toml:LOCAL_DB_PATH

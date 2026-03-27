@@ -15,7 +15,7 @@ Phase 4 extends the audit/refine framework to handle **source-attributed extract
 |--------|-------|
 | Variables inventoried | 15 (full prioritization matrix) |
 | Variables with refined patient flags | 8 (ETE, margin, VI, LVI, PNI, capsular, BRAF, recurrence) |
-| New MotherDuck tables deployed | 6 |
+| New local DuckDB tables deployed | 6 |
 | New patients with clean staging flags | 10,871 |
 | Data quality uplift score | 87 → **91/100** |
 
@@ -121,7 +121,7 @@ Remaining gap (9 points): TERT/RAS molecular platform attribution, `x` placehold
 
 ---
 
-## New MotherDuck Tables Deployed
+## New local DuckDB Tables Deployed
 
 | Table | Description | Rows |
 |-------|-------------|------|

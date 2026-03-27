@@ -3,7 +3,7 @@
 22_canonical_episodes_v2.py -- Canonical episode-level tables/views (v2)
 
 Creates 9 canonical tables that serve as the manuscript-grade, audit-ready
-data layer for downstream analytics, Streamlit dashboards, and MotherDuck
+data layer for downstream analytics, Streamlit dashboards, and local DuckDB
 materialization.
 
 Tables created:
@@ -18,7 +18,7 @@ Tables created:
   9. patient_cross_domain_timeline_v2 -- union timeline per patient
 
 Run after scripts 15-20.
-Supports --md flag for MotherDuck deployment.
+Supports --md flag for local DuckDB deployment.
 """
 from __future__ import annotations
 
@@ -1217,7 +1217,7 @@ def enrich_from_v2_extractors(con: duckdb.DuckDBPyConnection) -> None:
 
 
 def write_sql_file() -> None:
-    """Write combined SQL to disk for MotherDuck deployment."""
+    """Write combined SQL to disk for local DuckDB deployment."""
     parts: list[str] = []
     for name, sql in ALL_CANONICAL_SQL:
         parts.append(f"-- {name}\n{sql.strip()};")
@@ -1228,20 +1228,20 @@ def write_sql_file() -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--md", action="store_true",
-                        help="Deploy to MotherDuck instead of local DuckDB")
+                        help="Deploy to local DuckDB instead of local DuckDB")
     args = parser.parse_args()
 
     section("22 — Canonical Episode Tables v2")
 
     if args.md:
         try:
-            from motherduck_client import MotherDuckClient, MotherDuckConfig
-            cfg = MotherDuckConfig(database="thyroid_research_2026")
-            client = MotherDuckClient(cfg)
+            from local DuckDB_client import local DuckDBClient, local DuckDBConfig
+            cfg = local DuckDBConfig(database="thyroid_master.duckdb")
+            client = local DuckDBClient(cfg)
             con = client.connect_rw()
-            print("  Connected to MotherDuck (RW)")
+            print("  Connected to local DuckDB (RW)")
         except Exception as e:
-            print(f"  MotherDuck unavailable: {e}")
+            print(f"  local DuckDB unavailable: {e}")
             print("  Falling back to local DuckDB")
             con = duckdb.connect(str(DB_PATH))
     else:

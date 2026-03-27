@@ -154,7 +154,7 @@
 
 ---
 
-## Tables Deployed to MotherDuck
+## Tables Deployed to local DuckDB
 
 | Table | Rows | Description |
 |-------|------|-------------|

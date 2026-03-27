@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-27  
 **Scope:** THYROID_2026 repository — pathology lymph node (LN) information from extraction through analytic/manuscript layers.  
-**Method:** Code-path trace, pipeline review, and quantified checks on frozen export `exports/FINAL_PUBLICATION_BUNDLE_20260313/manuscript_cohort_v1.csv` (N=10,871). MotherDuck was not connected in the verification environment; claims below are backed by repository artifacts and source files.
+**Method:** Code-path trace, pipeline review, and quantified checks on frozen export `exports/FINAL_PUBLICATION_BUNDLE_20260313/manuscript_cohort_v1.csv` (N=10,871). local DuckDB was not connected in the verification environment; claims below are backed by repository artifacts and source files.
 
 ---
 
@@ -87,9 +87,9 @@ File: `scripts/03_research_views.py` — `advanced_features_v3` uses `path_synop
                    TRY_CAST(ps.tumor_1_ln_examined AS DOUBLE), 4)
 ```
 
-File: `scripts/10_maximize_motherduck_trial.py` — `recurrence_risk_features_mv` pulls LN counts from **`tumor_pathology`**:
+File: `scripts/10_maximize_local DuckDB_trial.py` — `recurrence_risk_features_mv` pulls LN counts from **`tumor_pathology`**:
 
-```457:459:scripts/10_maximize_motherduck_trial.py
+```457:459:scripts/10_maximize_local DuckDB_trial.py
         TRY_CAST(tp.histology_1_ln_positive AS INT) AS ln_positive,
         TRY_CAST(tp.histology_1_ln_examined AS INT) AS ln_examined,
 ```
@@ -195,7 +195,7 @@ File: `utils/thyroseq_helpers.py` — `normalize_lymph_nodes` parses ThyroSeq-st
 
 ## 7. Remediation (summary pointer)
 
-Implemented in-repo utilities and audit runner; full MotherDuck materialization of narrative-augmented columns is **out of scope** for the offline verification run. See:
+Implemented in-repo utilities and audit runner; full local DuckDB materialization of narrative-augmented columns is **out of scope** for the offline verification run. See:
 
 - `studies/proposal2_ete_staging/LYMPH_NODE_EXTRACTION_REMEDIATION_SUMMARY.md`
 - `utils/pathology_ln_narrative_extract.py`
@@ -210,9 +210,9 @@ Implemented in-repo utilities and audit runner; full MotherDuck materialization 
 .venv/bin/python studies/proposal2_ete_staging/run_pathology_ln_audit.py
 ```
 
-Optional narrative sample (requires `MOTHERDUCK_TOKEN`):
+Optional narrative sample (requires `LOCAL_DB_PATH`):
 
 ```bash
-export MOTHERDUCK_TOKEN="…"
+export LOCAL_DB_PATH="…"
 .venv/bin/python studies/proposal2_ete_staging/run_pathology_ln_audit.py --md
 ```

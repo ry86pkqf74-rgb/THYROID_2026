@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Profile MotherDuck note_entities tables: schemas, null rates, date-in-evidence gaps,
+Profile local DuckDB note_entities tables: schemas, null rates, date-in-evidence gaps,
 and histology/RAI/genetics table inventory.
 """
 
@@ -12,10 +12,10 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import duckdb
-from motherduck_client import MotherDuckClient, MotherDuckConfig
+from local DuckDB_client import local DuckDBClient, local DuckDBConfig
 
-SHARE_RO = "md:_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c"
-SHARE_RW = "md:_share/thyroid_research_2026/4839c7d2-67ce-48cb-952d-98b25f85d989"
+SHARE_RO = ""
+SHARE_RW = "thyroid_master.duckdb"
 
 NOTE_TABLES = [
     "note_entities_genetics",
@@ -26,7 +26,7 @@ NOTE_TABLES = [
     "note_entities_problem_list",
 ]
 
-DB_PREFIX = "thyroid_research_2026"
+DB_PREFIX = "thyroid_master.duckdb"
 
 
 def section(title: str) -> None:
@@ -36,7 +36,7 @@ def section(title: str) -> None:
 
 
 def run() -> None:
-    client = MotherDuckClient()
+    client = local DuckDBClient()
     con = client.connect_rw()
 
     try:

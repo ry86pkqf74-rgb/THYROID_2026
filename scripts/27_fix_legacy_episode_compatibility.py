@@ -11,7 +11,7 @@ Creates 5 compatibility tables that bridge the legacy episode architecture
   tumor_episode_master_v2 ← advanced_features_v3 + master_timeline
   linkage_summary_v2      ← patient_level_summary_mv (domain summary)
 
-All views are created as CREATE OR REPLACE TABLE (MotherDuck does not support
+All views are created as CREATE OR REPLACE TABLE (local DuckDB does not support
 CREATE OR REPLACE MATERIALIZED VIEW). Tables are idempotent — safe to re-run.
 
 Usage:
@@ -33,7 +33,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from motherduck_client import MotherDuckClient, MotherDuckConfig
+from local DuckDB_client import local DuckDBClient, local DuckDBConfig
 
 logging.basicConfig(
     level=logging.INFO,
@@ -45,7 +45,7 @@ log = logging.getLogger("legacy_compat")
 # ── SQL Definitions ───────────────────────────────────────────────────────────
 #
 # Each entry: (table_name, sql, description)
-# SQL uses CREATE OR REPLACE TABLE for MotherDuck compatibility.
+# SQL uses CREATE OR REPLACE TABLE for local DuckDB compatibility.
 #
 COMPAT_TABLES: list[tuple[str, str, str]] = [
     # ── 1. molecular_episode_v3 ──────────────────────────────────────────────
@@ -275,9 +275,9 @@ def run(args: argparse.Namespace) -> int:
         log.info("Connecting to local DuckDB: %s", local_path)
         con = duckdb.connect(local_path)
     else:
-        log.info("Connecting to MotherDuck (thyroid_research_2026)…")
-        cfg = MotherDuckConfig(database="thyroid_research_2026")
-        cli = MotherDuckClient(cfg)
+        log.info("Connecting to local DuckDB (thyroid_master.duckdb)…")
+        cfg = local DuckDBConfig(database="thyroid_master.duckdb")
+        cli = local DuckDBClient(cfg)
         con = cli.connect_rw()
 
     created: list[str] = []
@@ -334,9 +334,9 @@ def run(args: argparse.Namespace) -> int:
 
 def main() -> None:
     ap = argparse.ArgumentParser(
-        description="Create legacy episode compatibility tables in DuckDB/MotherDuck."
+        description="Create legacy episode compatibility tables in DuckDB/local DuckDB."
     )
-    ap.add_argument("--local",   action="store_true", help="Use local DuckDB instead of MotherDuck")
+    ap.add_argument("--local",   action="store_true", help="Use local DuckDB instead of local DuckDB")
     ap.add_argument("--dry-run", action="store_true", help="Print SQL without executing")
     args = ap.parse_args()
     sys.exit(run(args))

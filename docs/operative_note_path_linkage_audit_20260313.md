@@ -1,7 +1,7 @@
 # Operative Note–Pathology Linkage Audit
 
 **Date:** 2026-03-13 10:29
-**Database:** MotherDuck
+**Database:** local DuckDB
 **Script:** `scripts/70_operative_note_path_linkage_audit.py`
 
 ---
@@ -127,7 +127,7 @@ Total discordance/review items: 730
 
 ### A. Are operative notes fully parsed?
 
-**No.** NLP enrichment covers 20.3% of operative episodes. On MotherDuck, NLP
+**No.** NLP enrichment covers 20.3% of operative episodes. On local DuckDB, NLP
 enrichment is **zero** — the materialized table was created before or without the
 NLP enrichment step from script 22's `enrich_from_v2_extractors()`. Local DuckDB has
 partial enrichment for episodes with matching clinical notes.
@@ -155,8 +155,8 @@ RLN monitoring status and intraoperative findings depend on parsed op notes.
 
 ### D. Is targeted additional extraction worthwhile?
 
-**Yes, targeted MotherDuck sync is the priority.** The NLP enrichment already exists
-in local DuckDB but was never propagated to MotherDuck. Re-running script 22 with
+**Yes, targeted local DuckDB sync is the priority.** The NLP enrichment already exists
+in local DuckDB but was never propagated to local DuckDB. Re-running script 22 with
 NLP enrichment then re-materializing via script 26 would immediately recover
 1,900 enriched episodes.
 
@@ -166,7 +166,7 @@ NLP enrichment then re-materializing via script 26 would immediately recover
 
 **Recommended actions:**
 1. Re-run script 22 `enrich_from_v2_extractors()` to ensure local NLP enrichment is current
-2. Re-materialize `operative_episode_detail_v2` to MotherDuck via script 26
+2. Re-materialize `operative_episode_detail_v2` to local DuckDB via script 26
 3. Populate CND/LND flags from `path_synoptics.central_compartment_dissection` (665 patients)
 4. For pre-2019 surgeries without op notes, accept path_synoptics as sole surgery evidence
 
@@ -174,7 +174,7 @@ NLP enrichment then re-materializing via script 26 would immediately recover
 
 ## Deliverables Created
 
-### MotherDuck Tables
+### local DuckDB Tables
 - `val_operative_note_coverage_v1` — per-patient operative note coverage flags
 - `val_operative_note_parse_coverage_v1` — per-episode NLP parse detail
 - `review_operative_note_linkage_v1` — surgery↔op note linkage with categories

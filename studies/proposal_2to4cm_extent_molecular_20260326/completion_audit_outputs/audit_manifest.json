@@ -1,6 +1,6 @@
 {
   "audit_utc": "2026-03-27T02:39:26Z",
-  "token_mode": "secrets.toml:MOTHERDUCK_TOKEN",
+  "token_mode": "secrets.toml:LOCAL_DB_PATH",
   "cohort_csv": "studies/proposal_2to4cm_extent_molecular_20260326/patient_level_dataset.csv",
   "counts": {
     "primary_n": 558,

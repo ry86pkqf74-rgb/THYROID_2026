@@ -6,7 +6,7 @@ Creates a single governed canonical metrics layer that all manuscript-facing doc
 release artifacts, and dashboard summary surfaces can trust.
 
 Capabilities:
-  1. Live-query MotherDuck prod (or dev/qa) for every metric.
+  1. Live-query local DuckDB prod (or dev/qa) for every metric.
   2. Materialize `canonical_metrics_registry_v1` TABLE in the target env.
   3. Export CSV / JSON / Markdown to exports/canonical_metrics_registry_YYYYMMDD_HHMM/.
   4. Generate docs/canonical_metrics_registry_YYYYMMDD.md.
@@ -14,16 +14,16 @@ Capabilities:
 
 Usage:
   # Run against dev (default for safety)
-  MOTHERDUCK_TOKEN=... .venv/bin/python scripts/100_canonical_metrics_registry.py --env dev
+  LOCAL_DB_PATH=... .venv/bin/python scripts/100_canonical_metrics_registry.py --env dev
 
   # Validate live prod metrics
-  MOTHERDUCK_TOKEN=... .venv/bin/python scripts/100_canonical_metrics_registry.py --env prod
+  LOCAL_DB_PATH=... .venv/bin/python scripts/100_canonical_metrics_registry.py --env prod
 
   # Dry-run (no table writes, exports only)
-  MOTHERDUCK_TOKEN=... .venv/bin/python scripts/100_canonical_metrics_registry.py --env prod --dry-run
+  LOCAL_DB_PATH=... .venv/bin/python scripts/100_canonical_metrics_registry.py --env prod --dry-run
 
   # Write table + exports in prod
-  MOTHERDUCK_TOKEN=... .venv/bin/python scripts/100_canonical_metrics_registry.py --env prod --write
+  LOCAL_DB_PATH=... .venv/bin/python scripts/100_canonical_metrics_registry.py --env prod --write
 """
 from __future__ import annotations
 
@@ -42,7 +42,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from motherduck_client import MotherDuckClient  # noqa: E402
+from local DuckDB_client import local DuckDBClient  # noqa: E402
 
 NOW = datetime.now(timezone.utc)
 DATESTAMP = NOW.strftime("%Y%m%d")
@@ -58,7 +58,7 @@ class MetricDef:
     metric_id: str                 # Stable identifier (snake_case)
     metric_name: str               # Human-readable name
     metric_group: str              # Grouping (cohort, molecular, rai, ...)
-    canonical_sql: str             # Exact SQL to compute value on MotherDuck
+    canonical_sql: str             # Exact SQL to compute value on local DuckDB
     canonical_table: str           # Primary source table
     numerator_def: str             # What the numerator counts
     denominator_def: str           # What the denominator counts (or 'N/A')
@@ -319,7 +319,7 @@ METRIC_DEFS: list[MetricDef] = [
 
     # ── Source-limited registry ───────────────────────────────────────────
     MetricDef(
-        "motherduck_table_count", "MotherDuck Table Count", "infrastructure",
+        "local DuckDB_table_count", "local DuckDB Table Count", "infrastructure",
         "SELECT COUNT(DISTINCT table_name) FROM information_schema.tables WHERE table_schema='main'",
         "information_schema.tables",
         "Distinct tables in prod main schema", "N/A", "descriptive", "",
@@ -556,7 +556,7 @@ def generate_markdown(metrics: list[MetricDef], out_path: Path) -> None:
 # ═══════════════════════════════════════════════════════════════════════════
 
 def load_registry_from_table(con: Any) -> list[dict[str, Any]]:
-    """Load canonical_metrics_registry_v1 from MotherDuck."""
+    """Load canonical_metrics_registry_v1 from local DuckDB."""
     try:
         rows = con.execute(
             "SELECT * FROM canonical_metrics_registry_v1"
@@ -647,13 +647,13 @@ def main() -> None:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument("--env", default="dev", choices=["dev", "qa", "prod"],
-                        help="Target MotherDuck environment (default: dev)")
+                        help="Target local DuckDB environment (default: dev)")
     parser.add_argument("--write", action="store_true",
                         help="Write canonical_metrics_registry_v1 TABLE in target env")
     parser.add_argument("--dry-run", action="store_true",
                         help="Query metrics but don't write table or exports")
     parser.add_argument("--sa", action="store_true",
-                        help="Use service-account token (MD_SA_TOKEN)")
+                        help="Use service-account token (LOCAL_DB_PATH)")
     args = parser.parse_args()
 
     print(f"\n{'='*70}")
@@ -665,7 +665,7 @@ def main() -> None:
 
     # ── Connect ───────────────────────────────────────────────────────────
     try:
-        client = MotherDuckClient.for_env(args.env, use_service_account=args.sa)
+        client = local DuckDBClient.for_env(args.env, use_service_account=args.sa)
         con = client.connect_rw()
         print(f"  Connected to: {client.config.database}")
     except Exception as e:
@@ -695,7 +695,7 @@ def main() -> None:
     if args.write:
         materialize_table(con, METRIC_DEFS, dry_run=args.dry_run)
     elif not args.dry_run:
-        print("  (use --write to materialize table in MotherDuck)")
+        print("  (use --write to materialize table in local DuckDB)")
 
     # ── Run drift check against itself (sanity) ──────────────────────────
     if args.write and not args.dry_run:

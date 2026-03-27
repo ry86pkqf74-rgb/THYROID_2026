@@ -24,7 +24,7 @@ On a **strict** preoperative nodal-exclusion cohort (**N = 558**), we report mul
 The work is **observational**; we **do not** claim causal effects of molecular testing or cytology on surgical choice. Preoperative molecular testing was **infrequent (20/558)**; molecular-pathology tables are **descriptive** only.
 
 **Integrity / reproducibility:**  
-Quantitative claims are mapped in **`CLAIM_SOURCE_LEDGER.md`**. MotherDuck production objects were **not** modified during manuscript assembly; analysis artifacts are file-based in **`studies/proposal_2to4cm_extent_molecular_20260326/`**.
+Quantitative claims are mapped in **`CLAIM_SOURCE_LEDGER.md`**. local DuckDB production objects were **not** modified during manuscript assembly; analysis artifacts are file-based in **`studies/proposal_2to4cm_extent_molecular_20260326/`**.
 
 **References:**  
 Working list: **`references_working_20260326.md`** — manuscript citations **[1]–[10]** reconciled to primary sources **2026-03-27**; apply final journal formatting at submit time.

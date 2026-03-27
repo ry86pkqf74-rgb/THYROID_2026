@@ -27,7 +27,7 @@ Also creates:
   review_ops_kpi_v1        — single-row overall KPI summary
 
 Usage:
-  MOTHERDUCK_TOKEN=... .venv/bin/python scripts/101_review_ops.py --md
+  LOCAL_DB_PATH=... .venv/bin/python scripts/101_review_ops.py --md
   .venv/bin/python scripts/101_review_ops.py --local
   .venv/bin/python scripts/101_review_ops.py --dry-run
 
@@ -560,15 +560,15 @@ def export_artifacts(con, dry_run: bool = False) -> Path:
 
 
 def connect(args) -> "duckdb.DuckDBPyConnection":
-    """Connect to MotherDuck or local DuckDB."""
+    """Connect to local DuckDB or local DuckDB."""
     import duckdb
 
     if args.md:
-        token = os.environ.get("MOTHERDUCK_TOKEN", "")
+        token = os.environ.get("LOCAL_DB_PATH", "")
         if not token:
-            print("ERROR: MOTHERDUCK_TOKEN not set")
+            print("ERROR: LOCAL_DB_PATH not set")
             sys.exit(2)
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+        return duckdb.connect(f"thyroid_master.duckdb")
     else:
         local_path = ROOT / "thyroid_master.duckdb"
         if not local_path.exists():
@@ -578,7 +578,7 @@ def connect(args) -> "duckdb.DuckDBPyConnection":
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--md", action="store_true", help="Target MotherDuck (requires MOTHERDUCK_TOKEN)")
+    ap.add_argument("--md", action="store_true", help="Target local DuckDB (requires LOCAL_DB_PATH)")
     ap.add_argument("--local", action="store_true", help="Target local DuckDB")
     ap.add_argument("--dry-run", action="store_true", help="Print SQL but do not execute")
     args = ap.parse_args()
@@ -588,7 +588,7 @@ def main() -> None:
 
     print("\n" + "=" * 72)
     print("  101_review_ops.py  —  Unified Review Queue Governance")
-    print(f"  Target: {'MotherDuck' if args.md else 'Local DuckDB'}")
+    print(f"  Target: {'local DuckDB' if args.md else 'Local DuckDB'}")
     print(f"  Mode:   {'DRY-RUN' if args.dry_run else 'LIVE'}")
     print("=" * 72)
 

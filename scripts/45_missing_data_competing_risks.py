@@ -187,10 +187,10 @@ def get_connection(use_md: bool):
     if use_md:
         try:
             import toml
-            token = toml.load(".streamlit/secrets.toml")["MOTHERDUCK_TOKEN"]
+            token = toml.load(".streamlit/secrets.toml")["LOCAL_DB_PATH"]
         except Exception:
-            token = os.getenv("MOTHERDUCK_TOKEN", "")
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+            token = os.getenv("LOCAL_DB_PATH", "")
+        return duckdb.connect(f"thyroid_master.duckdb")
     return duckdb.connect("thyroid_master_local.duckdb")
 
 
@@ -1103,7 +1103,7 @@ def main():
     rpt("=" * 70)
     rpt("MISSING-DATA SENSITIVITY (MICE) + COMPETING-RISKS EXTENSION")
     rpt(f"Date: {datetime.now().isoformat()}")
-    rpt(f"Source: {'MotherDuck' if use_md else 'local DuckDB'}")
+    rpt(f"Source: {'local DuckDB' if use_md else 'local DuckDB'}")
     rpt(f"Output: {OUT_DIR}")
     rpt("=" * 70)
 
@@ -1172,7 +1172,7 @@ def main():
     # Save metadata
     metadata = {
         "date": datetime.now().isoformat(),
-        "source": "MotherDuck" if use_md else "local",
+        "source": "local DuckDB" if use_md else "local",
         "h1_n": len(h1),
         "h2_n": len(h2),
         "mice_m": 20,

@@ -116,18 +116,18 @@ WHERE is_missing_histology = TRUE;
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Benign no-histology classification")
-    parser.add_argument("--md", action="store_true", help="Use MotherDuck RW database")
+    parser.add_argument("--md", action="store_true", help="Use local DuckDB RW database")
     args = parser.parse_args()
 
     print("=" * 80)
     print("  BENIGN CLASSIFICATION — No-Histology path_synoptics")
-    print("  Mode: " + ("MotherDuck" if args.md else "Local DuckDB"))
+    print("  Mode: " + ("local DuckDB" if args.md else "Local DuckDB"))
     print("=" * 80)
 
     if args.md:
-        from motherduck_client import MotherDuckClient
+        from local DuckDB_client import local DuckDBClient
 
-        con = MotherDuckClient().connect_rw()
+        con = local DuckDBClient().connect_rw()
     else:
         con = duckdb.connect(str(DB_PATH))
         pq = PROCESSED / "path_synoptics.parquet"

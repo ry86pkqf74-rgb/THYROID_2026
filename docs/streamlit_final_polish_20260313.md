@@ -17,7 +17,7 @@
 - `_get_con()` now stores connection metadata in `_CONNECTION_META` dict (mode, detail message, timestamp)
 - All three connection paths tracked: `ro_share`, `rw_fallback`, `local`
 - **Prominent warning banner** shown above all content when RO share fails and app falls back to RW — includes link to Connection Help
-- **Error banner** for local-only mode (MotherDuck unreachable)
+- **Error banner** for local-only mode (local DuckDB unreachable)
 - Session state populated for all connection metadata so child modules can inspect runtime mode
 - **Connection Help expander** enhanced with:
   - Current connection status display
@@ -43,7 +43,7 @@
 | Tab-level queries | `cached_sqdf()` with 1h TTL | Already optimized |
 | `tbl_exists()` checks | `information_schema.tables` + 5min cache | Lightweight |
 | Health table reads | Small tables (5-50 rows), no optimization needed | OK |
-| `streamlit_patient_timeline_v` | Materialized table on MotherDuck | Already optimized |
+| `streamlit_patient_timeline_v` | Materialized table on local DuckDB | Already optimized |
 
 **No remaining slow views for the app-critical path.** All large scans go through materialized tables. The only potentially slow operation is the initial `advanced_features_sorted` load (~16k rows), which is cached for 1 hour after first load.
 
@@ -69,7 +69,7 @@ New file: `scripts/smoke_test_dashboard.py`
 
 **Usage:**
 ```bash
-# Full smoke test against MotherDuck:
+# Full smoke test against local DuckDB:
 .venv/bin/python scripts/smoke_test_dashboard.py
 
 # Quiet mode (exit code only, for CI):

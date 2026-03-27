@@ -226,7 +226,7 @@
       "new_canonical_value": "2 fields at 0%",
       "zero_field_list": "esophageal_involvement_flag, parathyroid_resection_flag",
       "reason": "Script 86 propagated some fields; count changed post-March-13 hardening",
-      "action": "Update docs to use actual count from live MotherDuck"
+      "action": "Update docs to use actual count from live local DuckDB"
     },
     {
       "id": "IMAGING_FNA_LINKAGE",

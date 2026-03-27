@@ -1,7 +1,7 @@
 
 ### Methods Update (Validation & Sensitivity)
 
-All analyses were reproduced against live MotherDuck server-side data to verify
+All analyses were reproduced against live local DuckDB server-side data to verify
 concordance with the initial cohort extraction. FDR correction (Benjamini-Hochberg)
 was applied across all hypothesis tests jointly. For Hypothesis 1, propensity score
 matching (1:1 nearest-neighbor, caliper = 0.2 × SD) was performed on age, tumor size,
@@ -17,7 +17,7 @@ demographic strata.
 
 ### Results Paragraph (Validation & Sensitivity)
 
-Data extraction was fully concordant between the saved cohort CSVs and live MotherDuck
+Data extraction was fully concordant between the saved cohort CSVs and live local DuckDB
 queries. All primary statistical results reproduced within tolerance (p-value delta < 0.01
 for all tests). After FDR correction, all originally significant associations remained
 significant.

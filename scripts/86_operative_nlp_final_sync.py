@@ -70,20 +70,20 @@ DOCS_DIR = ROOT / "docs"
 # ─── Connection ───────────────────────────────────────────────────────────────
 
 def get_token() -> str:
-    token = os.environ.get("MOTHERDUCK_TOKEN")
+    token = os.environ.get("LOCAL_DB_PATH")
     if token:
         return token
     secrets = ROOT / ".streamlit" / "secrets.toml"
     if secrets.exists():
         import toml
-        return toml.load(str(secrets))["MOTHERDUCK_TOKEN"]
-    raise RuntimeError("MOTHERDUCK_TOKEN not found in env or .streamlit/secrets.toml")
+        return toml.load(str(secrets))["LOCAL_DB_PATH"]
+    raise RuntimeError("LOCAL_DB_PATH not found in env or .streamlit/secrets.toml")
 
 
 def connect(use_md: bool) -> duckdb.DuckDBPyConnection:
     if use_md:
         token = get_token()
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+        return duckdb.connect(f"thyroid_master.duckdb")
     return duckdb.connect(str(ROOT / "thyroid_master.duckdb"))
 
 
@@ -118,7 +118,7 @@ def col_exists(con: duckdb.DuckDBPyConnection, table: str, col: str) -> bool:
 
 def write_parquet_table(con: duckdb.DuckDBPyConnection, df: pd.DataFrame,
                         table: str, mode: str = "replace") -> None:
-    """Write DataFrame to MotherDuck via parquet intermediary."""
+    """Write DataFrame to local DuckDB via parquet intermediary."""
     with tempfile.NamedTemporaryFile(suffix=".parquet", delete=False) as f:
         tmp = f.name
     df.to_parquet(tmp, index=False)
@@ -479,7 +479,7 @@ DOC_TEMPLATE = """\
 ## Summary
 
 This document records the root-cause analysis and repair of the operative NLP
-propagation gap identified in the THYROID_2026 MotherDuck layer.
+propagation gap identified in the THYROID_2026 local DuckDB layer.
 
 Script: `scripts/86_operative_nlp_final_sync.py`
 Executed: {timestamp}
@@ -627,7 +627,7 @@ to existing rows. Row counts are stable:
 
 ## Validation Gate
 
-val_operative_nlp_final_sync_v1 table created on MotherDuck.
+val_operative_nlp_final_sync_v1 table created on local DuckDB.
 All BOOLEAN operative NLP fields verified with before/after counts.
 """
 
@@ -699,7 +699,7 @@ def safe_count_from_snap(snap: dict, key: str) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--md", action="store_true",
-                        help="Target MotherDuck (required for production)")
+                        help="Target local DuckDB (required for production)")
     parser.add_argument("--local", action="store_true",
                         help="Use local DuckDB only")
     parser.add_argument("--dry-run", action="store_true",
@@ -725,7 +725,7 @@ def main() -> None:
     print("=" * 72)
     if dry_run:
         print("  MODE: DRY-RUN (no changes will be made)")
-    print(f"  Target: {'MotherDuck' if use_md else 'local DuckDB'}")
+    print(f"  Target: {'local DuckDB' if use_md else 'local DuckDB'}")
     print(f"  Phases: {phases}")
     print()
 

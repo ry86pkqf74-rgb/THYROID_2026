@@ -9,8 +9,8 @@
 
 | Mode | Target | Usage |
 |------|--------|-------|
-| RO Share | `md:_share/thyroid_research_ro/7962a053-...` | Default for all read tabs |
-| RW Direct | `md:thyroid_research_2026` | Fallback + Review Mode writes |
+| RO Share | `/thyroid_research_ro/7962a053-...` | Default for all read tabs |
+| RW Direct | `thyroid_master.duckdb` | Fallback + Review Mode writes |
 | Local DuckDB | `thyroid_master_local.duckdb` | Development only |
 
 Connection flow: `_get_con()` → `_ensure_token()` → try RO share → fallback RW →
@@ -105,7 +105,7 @@ Connection flow: `_get_con()` → `_ensure_token()` → try RO share → fallbac
 ## Deployment Configuration
 
 - `.streamlit/config.toml`: headless=true, enableCORS=false, dark theme
-- `.streamlit/secrets.toml`: MOTHERDUCK_TOKEN present (gitignored)
+- `.streamlit/secrets.toml`: LOCAL_DB_PATH present (gitignored)
 - `.streamlit/secrets.toml.example`: Template in repo
 
 ## Smoke Test Checklist

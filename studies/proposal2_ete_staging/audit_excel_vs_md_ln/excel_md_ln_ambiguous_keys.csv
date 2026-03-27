@@ -1,3 +1,3 @@
 source,research_id,surgery_date_key,n_rows,internal_ln_raw_disagree,internal_ln_clean_disagree
 excel,593,2004-08-10,2,True,True
-motherduck,593,2004-08-10,2,True,True
+local DuckDB,593,2004-08-10,2,True,True

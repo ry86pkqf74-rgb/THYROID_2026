@@ -3,11 +3,11 @@ Full extraction audit and refinement runner.
 
 Orchestrates the complete Phase 2 QA pipeline:
   1. Run intrinsic audit on all complication entities
-  2. Deploy refined SQL tables to MotherDuck
+  2. Deploy refined SQL tables to local DuckDB
   3. Write master audit report
 
 Usage:
-    # Audit + refine all entities (MotherDuck)
+    # Audit + refine all entities (local DuckDB)
     python -m notes_extraction.run_full_audit_and_refine --all --md
 
     # Single entity audit
@@ -38,8 +38,8 @@ def _get_connection(use_md: bool, local_path: str = "thyroid_master.duckdb"):
     import duckdb
     import toml
     if use_md:
-        token = toml.load(".streamlit/secrets.toml")["MOTHERDUCK_TOKEN"]
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+        token = toml.load(".streamlit/secrets.toml")["LOCAL_DB_PATH"]
+        return duckdb.connect(f"thyroid_master.duckdb")
     return duckdb.connect(local_path)
 
 
@@ -85,7 +85,7 @@ def run_audit_entity(con, entity: str, sample_size: int = 200, verbose: bool = T
 
 
 def run_refinement(con, dry_run: bool = False, verbose: bool = True) -> dict:
-    """Deploy refined extraction tables to MotherDuck."""
+    """Deploy refined extraction tables to local DuckDB."""
     from notes_extraction.complications_refined_pipeline import run_pipeline
     results = run_pipeline(con, dry_run=dry_run, verbose=verbose)
     return results
@@ -116,7 +116,7 @@ def print_final_summary(audit_results: dict, refine_results: dict) -> None:
             print(f"Refinement steps FAILED:            {len(err_steps)} — {err_steps}")
 
     print("\n" + "-" * 70)
-    print("New MotherDuck tables available:")
+    print("New local DuckDB tables available:")
     new_tables = [
         ("extracted_complications_refined_v5", "All 7 entities UNION ALL"),
         ("patient_refined_complication_flags_v2", "Per-patient wide flags (use in H1/H2)"),
@@ -160,7 +160,7 @@ def main() -> None:
     parser.add_argument("--inventory-only", action="store_true", help="Print inventory and exit")
     parser.add_argument("--refine-only", action="store_true", help="Deploy refinement only (no audit)")
     parser.add_argument("--audit-only", action="store_true", help="Run audit only (no refinement)")
-    parser.add_argument("--md", action="store_true", help="Use MotherDuck (default)")
+    parser.add_argument("--md", action="store_true", help="Use local DuckDB (default)")
     parser.add_argument("--local", action="store_true", help="Use local DuckDB")
     parser.add_argument("--dry-run", action="store_true", help="Print actions, don't execute")
     parser.add_argument("--sample", type=int, default=200, help="Audit sample size per entity")
@@ -179,12 +179,12 @@ def main() -> None:
     if verbose:
         print(f"{'='*70}")
         print(f"THYROID_2026 Phase 2 Extraction QA Runner — {ts}")
-        print(f"Mode: {'MotherDuck' if use_md else 'local DuckDB'}")
+        print(f"Mode: {'local DuckDB' if use_md else 'local DuckDB'}")
         print(f"{'='*70}")
 
     if args.dry_run:
         print("[DRY RUN] No database changes will be made.")
-        print(f"  Would connect to: {'MotherDuck thyroid_research_2026' if use_md else 'local DuckDB'}")
+        print(f"  Would connect to: {'local DuckDB thyroid_master.duckdb' if use_md else 'local DuckDB'}")
         print(f"  Would audit:      {'all entities' if args.all else args.entity or 'all entities'}")
         print(f"  Would refine:     {'yes' if not args.audit_only else 'no'}")
         run_refinement(None, dry_run=True, verbose=True)

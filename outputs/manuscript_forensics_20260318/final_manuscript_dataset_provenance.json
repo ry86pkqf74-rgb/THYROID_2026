@@ -53,7 +53,7 @@
       "size_cat",
       "n_positive_flag"
     ],
-    "upstream_view": "risk_enriched_mv (MotherDuck thyroid_research_2026)",
+    "upstream_view": "risk_enriched_mv (local DuckDB thyroid_master.duckdb)",
     "upstream_script": "studies/proposal2_ete_staging/proposal2_expanded_cohort.py"
   },
   "primary_classic_subset": {
@@ -133,7 +133,7 @@
   },
   "ct_timing_export": {
     "source_table": "ptc_ct_imaging_events",
-    "source_database": "thyroid_research_2026 (MotherDuck)",
+    "source_database": "thyroid_master.duckdb (local DuckDB)",
     "source_script": "scripts/106_ct_imaging_date_recovery.py",
     "export_timestamp": "2026-03-20T08:54:34.256216",
     "event_level_rows": 3018,

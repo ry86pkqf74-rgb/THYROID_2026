@@ -759,7 +759,7 @@ def run_pipeline(
     verbose: bool = True,
 ) -> dict:
     """
-    Deploy all refinement tables to MotherDuck (or local DuckDB).
+    Deploy all refinement tables to local DuckDB (or local DuckDB).
 
     Returns dict with row counts and timing.
     """
@@ -810,14 +810,14 @@ def _get_connection(use_md: bool, local_path: str = "thyroid_master.duckdb"):
     import duckdb
     import toml
     if use_md:
-        token = toml.load(".streamlit/secrets.toml")["MOTHERDUCK_TOKEN"]
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+        token = toml.load(".streamlit/secrets.toml")["LOCAL_DB_PATH"]
+        return duckdb.connect(f"thyroid_master.duckdb")
     return duckdb.connect(local_path)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Complication refinement pipeline")
-    parser.add_argument("--md", action="store_true", help="Use MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Use local DuckDB")
     parser.add_argument("--local", action="store_true", help="Use local DuckDB")
     parser.add_argument("--dry-run", action="store_true", help="Print SQL lengths, don't execute")
     parser.add_argument("--db-prefix", type=str, default="", help="Optional table name prefix")
@@ -831,7 +831,7 @@ def main() -> None:
     # Save manifest
     manifest = {
         "run_time": datetime.now().isoformat(),
-        "mode": "motherduck" if use_md else "local",
+        "mode": "local DuckDB" if use_md else "local",
         "steps": results,
     }
     manifest_path = Path(__file__).parent / "complications_refinement_manifest.json"

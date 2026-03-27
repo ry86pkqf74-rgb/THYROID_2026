@@ -13,7 +13,7 @@ Phases:
      distinguishing FALSE from NOT_PARSED / SOURCE_ABSENT / UNKNOWN
   E: Documentation + exports
 
-Supports --md (MotherDuck), --local, --dry-run, --phase A/B/C/D/E/all.
+Supports --md (local DuckDB), --local, --dry-run, --phase A/B/C/D/E/all.
 """
 from __future__ import annotations
 
@@ -71,8 +71,8 @@ def table_exists(con: duckdb.DuckDBPyConnection, tbl: str) -> bool:
 def connect(args) -> duckdb.DuckDBPyConnection:
     if args.md:
         import toml
-        token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["MOTHERDUCK_TOKEN"]
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+        token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
+        return duckdb.connect(f"thyroid_master.duckdb")
     return duckdb.connect(str(DB_PATH))
 
 
@@ -1169,7 +1169,7 @@ def phase_e(con: duckdb.DuckDBPyConnection, dry: bool,
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Structural gap maximization pass")
-    parser.add_argument("--md", action="store_true", help="Use MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Use local DuckDB")
     parser.add_argument("--local", action="store_true", help="Use local DuckDB")
     parser.add_argument("--dry-run", action="store_true", help="Dry run")
     parser.add_argument("--phase", default="all",
@@ -1178,7 +1178,7 @@ def main() -> None:
 
     print(f"\n{'#' * 72}")
     print("  Script 80: Structural Gap Maximization Pass")
-    print(f"  Target: {'MotherDuck' if args.md else 'Local DuckDB'}")
+    print(f"  Target: {'local DuckDB' if args.md else 'Local DuckDB'}")
     print(f"  Dry run: {args.dry_run}")
     print(f"  Phase: {args.phase}")
     print(f"  Timestamp: {TIMESTAMP}")

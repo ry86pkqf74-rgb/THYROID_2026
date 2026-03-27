@@ -1,6 +1,6 @@
 -- completion audit SQL log
 -- run_utc=2026-03-27T02:39:26Z
--- token_mode=secrets.toml:MOTHERDUCK_TOKEN
+-- token_mode=secrets.toml:LOCAL_DB_PATH
 -- cohort_file=patient_level_dataset.csv primary_N=558 lobectomy_N=238
 
 -- === operative_episode_detail_v2 ===

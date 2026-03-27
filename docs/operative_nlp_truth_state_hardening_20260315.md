@@ -27,7 +27,7 @@ Script 22 (`22_canonical_episodes_v2.py`) creates `operative_episode_detail_v2` 
 
 ---
 
-## 3. BEFORE State (Live MotherDuck, 2026-03-15)
+## 3. BEFORE State (Live local DuckDB, 2026-03-15)
 
 ### operative_episode_detail_v2 (9,371 rows)
 

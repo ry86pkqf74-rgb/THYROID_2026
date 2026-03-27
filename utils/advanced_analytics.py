@@ -154,7 +154,7 @@ class ThyroidAdvancedAnalyzer:
     Parameters
     ----------
     con : duckdb.DuckDBPyConnection
-        Active DuckDB / MotherDuck connection (read-only sufficient).
+        Active DuckDB / local DuckDB connection (read-only sufficient).
     """
 
     def __init__(self, con: Any) -> None:

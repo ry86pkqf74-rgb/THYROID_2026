@@ -26,7 +26,7 @@ The `ThyroidStatisticalAnalyzer` class in `utils/statistical_analysis.py` now de
 
 ## Scripts to Run Before Statistics
 
-Execute in this order against MotherDuck (`--md`):
+Execute in this order against local DuckDB (`--md`):
 
 ```bash
 # 1. Upstream canonical tables (if not already deployed)
@@ -42,11 +42,11 @@ Execute in this order against MotherDuck (`--md`):
 # 3. Build resolved layer
 .venv/bin/python scripts/48_build_analysis_resolved_layer.py --md
 
-# 4. Materialize to MotherDuck
-MOTHERDUCK_TOKEN=... .venv/bin/python scripts/26_motherduck_materialize_v2.py --md
+# 4. Materialize to local DuckDB
+LOCAL_DB_PATH=... .venv/bin/python scripts/26_local DuckDB_materialize_v2.py --md
 
 # 5. Verify
-.venv/bin/python scripts/54_motherduck_verification_reports.py --md
+.venv/bin/python scripts/54_local DuckDB_verification_reports.py --md
 .venv/bin/python scripts/55_analysis_validation_suite.py --md --strict
 .venv/bin/python scripts/56_pre_manuscript_audit.py --md
 ```
@@ -85,7 +85,7 @@ These fields have definitions that need clinician verification before publicatio
 
 ## Known Data Limitations
 
-1. **imaging_nodule_long_v2** size/TIRADS columns are empty on MotherDuck. Use `raw_us_tirads_excel_v1` and `extracted_tirads_validated_v1` as the actual imaging data source.
+1. **imaging_nodule_long_v2** size/TIRADS columns are empty on local DuckDB. Use `raw_us_tirads_excel_v1` and `extracted_tirads_validated_v1` as the actual imaging data source.
 
 2. **molecular_test_episode_v2 ras_flag bug**: `ras_flag` can be FALSE despite `ras_subtype` being populated (184 patients). Always use `ras_positive_final` from the resolved layer.
 
@@ -93,7 +93,7 @@ These fields have definitions that need clinician verification before publicatio
 
 4. **Histology_final is NULL for ~62% of patients** — these are non-cancer (benign) surgical procedures. Filter on `analysis_eligible_flag = TRUE` for cancer-specific analyses.
 
-5. **Scoring tables (AJCC8, ATA, MACIS) require script 51** to be materialized on MotherDuck before they produce non-NULL values in the resolved layer.
+5. **Scoring tables (AJCC8, ATA, MACIS) require script 51** to be materialized on local DuckDB before they produce non-NULL values in the resolved layer.
 
 ---
 

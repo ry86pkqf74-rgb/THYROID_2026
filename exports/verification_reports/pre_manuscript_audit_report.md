@@ -208,7 +208,7 @@ Generated: 2026-03-13T01:26:45.806192
 
 ## 10. Ambiguous Linkage Burden
 
-_linkage_ambiguity_review_v1 not found on MotherDuck_ — run scripts/49_enhanced_linkage_v3.py --md first
+_linkage_ambiguity_review_v1 not found on local DuckDB_ — run scripts/49_enhanced_linkage_v3.py --md first
 
 ---
 
@@ -247,4 +247,4 @@ _Query returned no data._
 
 ## Audit Conclusion
 
-Review each section above. Sections returning `_not found_` indicate tables that have not yet been materialized on MotherDuck. Run the full pipeline (scripts 49-53, then 26 --md) before final manuscript analysis.
+Review each section above. Sections returning `_not found_` indicate tables that have not yet been materialized on local DuckDB. Run the full pipeline (scripts 49-53, then 26 --md) before final manuscript analysis.

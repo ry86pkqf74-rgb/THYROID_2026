@@ -1,6 +1,6 @@
-# MotherDuck schema profile — lobectomy vs total (2026-03-25)
+# local DuckDB schema profile — lobectomy vs total (2026-03-25)
 
-Live queries against `thyroid_research_2026` (prod).
+Live queries against `thyroid_master.duckdb` (prod).
 
 ## Key tables
 

@@ -4,11 +4,11 @@
 |------|--------|
 | Repository release tag | `v2026.03.13` |
 | Zenodo DOI | [10.5281/zenodo.18945510](https://doi.org/10.5281/zenodo.18945510) |
-| Database | DuckDB / MotherDuck `thyroid_research_2026` |
+| Database | DuckDB / local DuckDB `thyroid_master.duckdb` |
 | Study SQL (V1 operated-histology shell) | [`sql/01_views_and_cohort.sql`](sql/01_views_and_cohort.sql) |
 | Study SQL (V2 manuscript refresh: III/IV denom + episode QA) | [`sql/01_views_and_cohort_v2.sql`](sql/01_views_and_cohort_v2.sql) |
-| Verification SQL (Console-ready) | [`sql/02_motherduck_verification.sql`](sql/02_motherduck_verification.sql) |
-| Verification SQL V2 | [`sql/02_motherduck_verification_v2.sql`](sql/02_motherduck_verification_v2.sql) |
+| Verification SQL (Console-ready) | [`sql/02_local DuckDB_verification.sql`](sql/02_local DuckDB_verification.sql) |
+| Verification SQL V2 | [`sql/02_local DuckDB_verification_v2.sql`](sql/02_local DuckDB_verification_v2.sql) |
 | V2 exports | `outputs/v2/` (CSV, `table_v2_*.md`, `fig_v2_*.csv`, `freeze_manifest_v2.json`, `qa_report_v2.md`) |
 | Schema / linkage audit | [`SCHEMA_LINKAGE_AUDIT.md`](SCHEMA_LINKAGE_AUDIT.md) |
 | Executable analysis | [`python/run_analysis.py`](python/run_analysis.py) |
@@ -34,6 +34,6 @@
 ## Transparency recommendations
 
 1. **Archive** the `outputs/` CSV bundle plus `01_views_and_cohort.sql` alongside the Zenodo dataset on the next archive bump.
-2. **MotherDuck Pro:** materialize `indeterminate_molecular_cohort_v1` as a TABLE (CTAS) for scheduled refresh dashboards; use read-only sharing for collaborators.
+2. **local DuckDB Pro:** materialize `indeterminate_molecular_cohort_v1` as a TABLE (CTAS) for scheduled refresh dashboards; use read-only sharing for collaborators.
 3. **Supplement:** include `outputs/cohort.csv` dictionary (column definitions mirror SQL view) and the `mol_result_class_map_v1` mapping.
 4. **Anonymized Parquet:** `COPY (SELECT … FROM indeterminate_molecular_cohort_v1) TO 'cohort.parquet' (FORMAT PARQUET);` after stripping direct identifiers if any are ever added to the view.

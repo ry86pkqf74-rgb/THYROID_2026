@@ -100,12 +100,12 @@ The maturation pass on 2026-03-13 closed major propagation gaps:
 
 | Mode | URL / method | Data source | Auth |
 |------|-------------|-------------|------|
-| Local + token | `streamlit run dashboard.py` | MotherDuck RW or RO share | MOTHERDUCK_TOKEN |
-| Cloud private | [thyroid2026-...streamlit.app](https://thyroid2026-n2hrol9ntiffy4nmedp2zs.streamlit.app/) | MotherDuck RO share | Streamlit Cloud login |
-| Cloud public | Same URL | MotherDuck RO share | None (if sharing enabled) |
+| Local + token | `streamlit run dashboard.py` | local DuckDB RW or RO share | LOCAL_DB_PATH |
+| Cloud private | [thyroid2026-...streamlit.app](https://thyroid2026-n2hrol9ntiffy4nmedp2zs.streamlit.app/) | local DuckDB RO share | Streamlit Cloud login |
+| Cloud public | Same URL | local DuckDB RO share | None (if sharing enabled) |
 
 Dashboard version: v3.3.0-2026.03.13 | 6 workflow sections | All tabs verified
-against live MotherDuck tables.
+against live local DuckDB tables.
 
 ---
 

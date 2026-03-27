@@ -1,7 +1,7 @@
 # Central Lymph Node Dissection in Thyroid Lobectomy: Recurrence Outcomes and Recurrent Laryngeal Nerve Injury Risk — A Propensity-Score Matched Analysis
 
 **Version:** Draft v1 — 2026-03-12  
-**Data source:** THYROID_2026 Lakehouse (MotherDuck `thyroid_research_2026`)  
+**Data source:** THYROID_2026 Lakehouse (local DuckDB `thyroid_master.duckdb`)  
 **Cohort:** 5,277 lobectomy patients (completion thyroidectomies excluded)  
 **Analysis script:** `scripts/42_hypothesis1_cln_lobectomy.py`, `scripts/44_hypothesis_validation_extension.py`  
 **Outputs:** `studies/hypothesis1_cln_lobectomy/`, `studies/hypothesis1_cln_lobectomy/validation_extension_20260312/`
@@ -47,7 +47,7 @@ Central LND was defined by a composite flag from structured pathology data (`pat
 - "Central" or "Level 6" in `other_ln_dissection`
 - Central-site anatomy (perithyroidal, pretracheal, paratracheal, delphian, prelaryngeal) in `tumor_1_ln_location`
 
-This definition was validated by re-extraction against live MotherDuck queries (concordance 100%, zero discrepancies vs. saved cohort CSV).
+This definition was validated by re-extraction against live local DuckDB queries (concordance 100%, zero discrepancies vs. saved cohort CSV).
 
 ### 2.3 Outcomes
 
@@ -266,7 +266,7 @@ The therapeutic vs. prophylactic subgroup comparison is instructive. Therapeutic
 
 ### 4.3 Strengths
 
-- Re-validated cohort with 100% concordance to saved data (live MotherDuck extraction)
+- Re-validated cohort with 100% concordance to saved data (live local DuckDB extraction)
 - PSM with all SMD <0.1 in primary matched cohort (1,246 pairs)
 - Multi-tier RLN injury ascertainment (NLP + chart + laryngoscopy), capturing morbidity beyond administrative coding
 - E-value analysis quantifying confounding robustness

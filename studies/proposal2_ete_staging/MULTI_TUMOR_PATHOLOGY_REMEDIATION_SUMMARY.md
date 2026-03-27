@@ -19,15 +19,15 @@
    - One row per **non-empty** tumor slot per synoptic row (vectorized).
    - Provenance: `source_column_prefix`, `source_path_file`, `synoptic_row_ix`, `build_git_sha`.
    - Writes `processed/synoptic_tumor_long_v1.parquet` and refreshes local `thyroid_master.duckdb` table `synoptic_tumor_long_v1`.
-   - Optional `--md` pushes to MotherDuck (token required).
+   - Optional `--md` pushes to local DuckDB (token required).
 
-3. **`scripts/26_motherduck_materialize_v2.py`** — added `md_synoptic_tumor_long_v1` → `synoptic_tumor_long_v1` to **MATERIALIZATION_MAP** for RO share mirroring after cloud deploy.
+3. **`scripts/26_local DuckDB_materialize_v2.py`** — added `md_synoptic_tumor_long_v1` → `synoptic_tumor_long_v1` to **MATERIALIZATION_MAP** for RO share mirroring after cloud deploy.
 
-## Deploy / rerun checklist (MotherDuck)
+## Deploy / rerun checklist (local DuckDB)
 
 1. Re-run Phase 10 extraction deploy that executes `build_multi_tumor_aggregate_sql()` (e.g. `notes_extraction` Phase 10 / `audit_and_refine_phase10` per your pipeline).
 2. Run `scripts/108_synoptic_tumor_long_v1.py --md` (or load Parquet via your standard promote path).
-3. Run `scripts/26_motherduck_materialize_v2.py --md` to refresh `md_*` mirrors.
+3. Run `scripts/26_local DuckDB_materialize_v2.py --md` to refresh `md_*` mirrors.
 
 ## Proposal2 / manuscript follow-up (not auto-run)
 

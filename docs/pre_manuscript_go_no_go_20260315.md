@@ -1,9 +1,9 @@
 # Pre-Manuscript GO / NO-GO Assessment
 
 **Date:** 2026-03-15  
-**Assessor:** Automated audit — live MotherDuck verification against documented metrics  
+**Assessor:** Automated audit — live local DuckDB verification against documented metrics  
 **Repository:** THYROID_2026, branch `main`  
-**MotherDuck database:** `thyroid_research_2026` (production)  
+**local DuckDB database:** `thyroid_master.duckdb` (production)  
 **Latest release:** `v2026.03.14-final-engineering-pass`  
 **Zenodo DOI:** 10.5281/zenodo.18945510
 
@@ -13,7 +13,7 @@
 
 ### RECOMMENDATION: **GO WITH CAVEATS**
 
-The THYROID_2026 research database is ready for manuscript writing. All critical data integrity checks pass: zero duplicate patients, zero null primary keys, and all 20 critical table row counts match documented values within tolerance. Scoring systems, complication phenotyping, linkage layers, and survival cohorts are materialized and verified on MotherDuck production.
+The THYROID_2026 research database is ready for manuscript writing. All critical data integrity checks pass: zero duplicate patients, zero null primary keys, and all 20 critical table row counts match documented values within tolerance. Scoring systems, complication phenotyping, linkage layers, and survival cohorts are materialized and verified on local DuckDB production.
 
 **Caveats** fall into two categories:
 
@@ -25,11 +25,11 @@ No blocking findings were identified.
 
 ---
 
-## 1. Data Integrity Verification (Live MotherDuck — 2026-03-15)
+## 1. Data Integrity Verification (Live local DuckDB — 2026-03-15)
 
 ### 1.1 Critical Table Row Counts
 
-All counts verified live against `thyroid_research_2026` production database. Total tables in database: **668**.
+All counts verified live against `thyroid_master.duckdb` production database. Total tables in database: **668**.
 
 | Table | Live Count | Expected | Status |
 |-------|----------:|----------:|--------|
@@ -227,18 +227,18 @@ The master clinical table (`patient_refined_master_clinical_v12`) reports BRAF=5
 
 ---
 
-## 6. MotherDuck Business / Pro Tier Assessment
+## 6. local DuckDB Business / Pro Tier Assessment
 
-Per `docs/final_motherduck_business_optimization_20260314.md`:
+Per `docs/final_local DuckDB_business_optimization_20260314.md`:
 
 | Feature | Status |
 |---------|--------|
-| 3-environment strategy (dev/qa/prod) | Configured — `thyroid_research_2026_{dev,qa}` exist |
+| 3-environment strategy (dev/qa/prod) | Configured — `thyroid_master.duckdb_{dev,qa}` exist |
 | 8-gate promotion workflow | Documented; row-count + metric-range gates |
 | Duckling sizing | Pulse (Streamlit), Standard (materialization), Jumbo (full rebuild, downgrade after) |
 | Query observability | Script 84 materialization audit in place |
 | CI pipeline | 3-job GitHub Actions (lint+typecheck, DuckDB tests, manifest sanity) |
-| Token precedence | `MD_SA_TOKEN` → `MOTHERDUCK_TOKEN` → env only (no .streamlit/secrets.toml at workspace) |
+| Token precedence | `LOCAL_DB_PATH` → `LOCAL_DB_PATH` → env only (no .streamlit/secrets.toml at workspace) |
 
 **Recommendation:** Current Standard Duckling is sufficient for manuscript-phase workloads. Upgrade to Pro only if team-shared query logging or SOC 2 compliance is required for IRB/publication.
 

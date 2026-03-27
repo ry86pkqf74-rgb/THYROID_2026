@@ -46,7 +46,7 @@ Items that **cannot** be resolved without new institutional data:
 | Freeze alignment report | [`docs/manuscript_freeze_alignment_20260313.md`](manuscript_freeze_alignment_20260313.md) |
 | Canonical backfill report | [`docs/canonical_backfill_report_20260313.md`](canonical_backfill_report_20260313.md) |
 | Provenance date audit | [`docs/provenance_date_audit_20260313.md`](provenance_date_audit_20260313.md) |
-| Operative NLP propagation | [`docs/operative_nlp_motherduck_propagation_20260313.md`](operative_nlp_motherduck_propagation_20260313.md) |
+| Operative NLP propagation | [`docs/operative_nlp_local DuckDB_propagation_20260313.md`](operative_nlp_local DuckDB_propagation_20260313.md) |
 | Operative-path linkage audit | [`docs/operative_note_path_linkage_audit_20260313.md`](operative_note_path_linkage_audit_20260313.md) |
 | H&P / discharge note audit | [`docs/hp_discharge_note_audit_20260313.md`](hp_discharge_note_audit_20260313.md) |
 | Imaging nodule materialization | [`docs/imaging_nodule_materialization_20260313.md`](imaging_nodule_materialization_20260313.md) |
@@ -59,7 +59,7 @@ Items that **cannot** be resolved without new institutional data:
 | Hardening audit results | `exports/hardening_audit_20260313_0751/` | `check_results.json`, provenance coverage/gaps CSVs |
 | Manuscript reconciliation | `exports/manuscript_reconciliation_20260313_0708/` | Metric definitions, SQL registry, review queues, patient cohort |
 
-## Key tables on MotherDuck
+## Key tables on local DuckDB
 
 | Table | Rows | Role |
 |-------|------|------|

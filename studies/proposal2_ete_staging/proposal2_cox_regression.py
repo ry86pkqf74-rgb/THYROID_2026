@@ -61,11 +61,11 @@ def load_data(use_local: bool) -> pd.DataFrame:
         import duckdb, os, sys
         sys.path.insert(0, str(ROOT))
 
-        if use_local or not os.getenv("MOTHERDUCK_TOKEN"):
+        if use_local or not os.getenv("LOCAL_DB_PATH"):
             con = duckdb.connect(str(ROOT / "thyroid_master_local.duckdb"), read_only=True)
         else:
-            token = os.getenv("MOTHERDUCK_TOKEN")
-            con = duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+            token = os.getenv("LOCAL_DB_PATH")
+            con = duckdb.connect(f"thyroid_master.duckdb")
 
         df = con.execute("""
             SELECT

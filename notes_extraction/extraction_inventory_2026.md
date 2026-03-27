@@ -1,7 +1,7 @@
 # Extraction Inventory 2026 — Full Ranked Entity Audit
 
 **Generated**: 2026-03-12  
-**Source**: `note_entities_complications` on MotherDuck `thyroid_research_2026`  
+**Source**: `note_entities_complications` on local DuckDB `thyroid_master.duckdb`  
 **Purpose**: Phase 2 QA audit — establish baseline precision/recall estimates before refinement
 
 ---

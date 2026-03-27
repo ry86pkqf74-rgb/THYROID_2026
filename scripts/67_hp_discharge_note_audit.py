@@ -3,7 +3,7 @@
 Script 67: H&P + Discharge Note Extraction Coverage Audit
 
 Creates audit tables, validation views, gap analysis, and export bundle.
-Outputs: MotherDuck tables + exports/hp_discharge_note_audit_YYYYMMDD/
+Outputs: local DuckDB tables + exports/hp_discharge_note_audit_YYYYMMDD/
 """
 
 import argparse
@@ -23,12 +23,12 @@ SURGICAL_COHORT_SIZE = 10_871
 
 def get_connection(use_md: bool):
     if use_md:
-        token = os.environ.get("MOTHERDUCK_TOKEN")
+        token = os.environ.get("LOCAL_DB_PATH")
         if not token:
             import toml
-            token = toml.load(".streamlit/secrets.toml")["MOTHERDUCK_TOKEN"]
-            os.environ["MOTHERDUCK_TOKEN"] = token
-        return duckdb.connect("md:thyroid_research_2026")
+            token = toml.load(".streamlit/secrets.toml")["LOCAL_DB_PATH"]
+            os.environ["LOCAL_DB_PATH"] = token
+        return duckdb.connect("thyroid_master.duckdb")
     return duckdb.connect("thyroid_master.duckdb")
 
 
@@ -392,9 +392,9 @@ def phase5_provenance(con) -> pd.DataFrame:
     return df
 
 
-def create_motherduck_tables(con, inv, cov, var_audit, gaps, prov):
-    """Create audit tables in MotherDuck."""
-    print("\n=== CREATING MOTHERDUCK TABLES ===")
+def create_local DuckDB_tables(con, inv, cov, var_audit, gaps, prov):
+    """Create audit tables in local DuckDB."""
+    print("\n=== CREATING LOCAL_DB TABLES ===")
 
     hp_c = cov["hp_coverage"]
     dc_c = cov["dc_coverage"]
@@ -714,7 +714,7 @@ symptomatic_hypocalcemia, drain_status, length_of_stay.
 
 ## Deliverables
 
-### MotherDuck Tables Created
+### local DuckDB Tables Created
 1. `val_hp_note_coverage_v1` — H&P note coverage summary
 2. `val_discharge_note_coverage_v1` — Discharge note coverage summary
 3. `val_hp_discharge_parse_coverage_v1` — Combined parse coverage
@@ -739,7 +739,7 @@ Build a targeted H&P extractor for the top 3 HIGH VALUE / EASY variables:
 Use the existing extraction pipeline architecture (BaseExtractor pattern
 in notes_extraction/base.py). Apply consent-boilerplate filtering from
 the start (skip h_p_consent source tier for complications).
-Deploy results to MotherDuck and update patient_refined_master_clinical.
+Deploy results to local DuckDB and update patient_refined_master_clinical.
 ```
 """
     return report
@@ -747,14 +747,14 @@ Deploy results to MotherDuck and update patient_refined_master_clinical.
 
 def main():
     parser = argparse.ArgumentParser(description="H&P + Discharge Note Extraction Coverage Audit")
-    parser.add_argument("--md", action="store_true", help="Use MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Use local DuckDB")
     parser.add_argument("--local", action="store_true", help="Use local DuckDB")
     parser.add_argument("--dry-run", action="store_true", help="Print only, no table creation")
     args = parser.parse_args()
 
     use_md = args.md or not args.local
     con = get_connection(use_md)
-    print(f"Connected to {'MotherDuck' if use_md else 'local DuckDB'}")
+    print(f"Connected to {'local DuckDB' if use_md else 'local DuckDB'}")
 
     inv = phase1_inventory(con)
     cov = phase2_coverage(con, inv)
@@ -765,7 +765,7 @@ def main():
     report = build_report(inv, cov, var_audit, gaps, prov)
 
     if not args.dry_run:
-        create_motherduck_tables(con, inv, cov, var_audit, gaps, prov)
+        create_local DuckDB_tables(con, inv, cov, var_audit, gaps, prov)
         export_csvs(inv, cov, var_audit, gaps, prov, report)
 
         report_path = f"docs/hp_discharge_note_audit_{datetime.now().strftime('%Y%m%d')}.md"

@@ -42,7 +42,7 @@ PHASES:
   C — Re-propagate to episode_analysis_resolved_v1 (stripped COALESCE)
   D — Re-propagate to patient_analysis_resolved_v1 (BOOL_OR without COALESCE)
   E — Re-propagate to manuscript_cohort_v1 (same as D)
-  F — Rebuild md_ mirrors on MotherDuck
+  F — Rebuild md_ mirrors on local DuckDB
   G — Create val_operative_truth_state_v1 + val_operative_truth_state_delta_v1
   H — Export artifacts + AFTER snapshot
 
@@ -113,20 +113,20 @@ PATIENT_OP_BOOL_FIELDS: list[tuple[str, str]] = [
 # ─── Connection ───────────────────────────────────────────────────────────────
 
 def get_token() -> str:
-    token = os.environ.get("MOTHERDUCK_TOKEN")
+    token = os.environ.get("LOCAL_DB_PATH")
     if token:
         return token
     secrets = ROOT / ".streamlit" / "secrets.toml"
     if secrets.exists():
         import toml
-        return toml.load(str(secrets))["MOTHERDUCK_TOKEN"]
-    raise RuntimeError("MOTHERDUCK_TOKEN not found in env or .streamlit/secrets.toml")
+        return toml.load(str(secrets))["LOCAL_DB_PATH"]
+    raise RuntimeError("LOCAL_DB_PATH not found in env or .streamlit/secrets.toml")
 
 
 def connect(use_md: bool) -> duckdb.DuckDBPyConnection:
     if use_md:
         token = get_token()
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+        return duckdb.connect(f"thyroid_master.duckdb")
     return duckdb.connect(str(ROOT / "thyroid_master.duckdb"))
 
 
@@ -499,10 +499,10 @@ WHERE manuscript_cohort_v1.research_id = p.research_id
     return rc if rc >= 0 else 0
 
 
-# ─── Phase F: Rebuild md_ mirrors on MotherDuck ─────────────────────────────
+# ─── Phase F: Rebuild md_ mirrors on local DuckDB ─────────────────────────────
 
 def phase_f(con: duckdb.DuckDBPyConnection, dry_run: bool) -> list[str]:
-    """Rebuild MotherDuck md_ mirror tables for affected tables."""
+    """Rebuild local DuckDB md_ mirror tables for affected tables."""
     print("\n═══ Phase F: Rebuild md_ mirrors ═══")
     mirrors = [
         ("episode_analysis_resolved_v1_dedup", "md_episode_analysis_resolved_v1_dedup"),
@@ -721,7 +721,7 @@ def main() -> None:
         description="Operative NLP Truth-State Hardening"
     )
     parser.add_argument("--md", action="store_true",
-                        help="Use MotherDuck (default: local DuckDB)")
+                        help="Use local DuckDB (default: local DuckDB)")
     parser.add_argument("--dry-run", action="store_true",
                         help="Print SQL without executing")
     parser.add_argument("--phase", type=str, default="all",
@@ -734,7 +734,7 @@ def main() -> None:
 
     print(f"╔══════════════════════════════════════════════════════════════╗")
     print(f"║  104 — Operative NLP Truth-State Hardening                  ║")
-    print(f"║  Target: {'MotherDuck' if args.md else 'local DuckDB':50s} ║")
+    print(f"║  Target: {'local DuckDB' if args.md else 'local DuckDB':50s} ║")
     print(f"║  Mode:   {'DRY-RUN' if dry else 'LIVE':50s} ║")
     print(f"║  Phase:  {phase:50s} ║")
     print(f"╚══════════════════════════════════════════════════════════════╝")

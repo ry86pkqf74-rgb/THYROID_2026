@@ -6,7 +6,7 @@
   "timestamp_utc": "2026-03-15T20:29:17.480575+00:00",
   "python_version": "3.14.0",
   "duckdb_version": "1.4.4",
-  "source_database": "thyroid_research_2026",
+  "source_database": "thyroid_master.duckdb",
   "source_is_prod": true,
   "total_tables_frozen": 33,
   "total_rows_frozen": 261114

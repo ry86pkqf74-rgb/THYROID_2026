@@ -55,17 +55,17 @@ def test_fail(name: str, detail: str = "") -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Phase N: Validation Tests")
     parser.add_argument("--md", action="store_true",
-                        help="Use MotherDuck instead of local DuckDB")
+                        help="Use local DuckDB instead of local DuckDB")
     args = parser.parse_args()
 
     print("=" * 80)
     print("  VALIDATION TESTS — Phase N")
-    print("  Mode: " + ("MotherDuck" if args.md else "Local DuckDB"))
+    print("  Mode: " + ("local DuckDB" if args.md else "Local DuckDB"))
     print("=" * 80)
 
     if args.md:
-        from motherduck_client import MotherDuckClient
-        client = MotherDuckClient()
+        from local DuckDB_client import local DuckDBClient
+        client = local DuckDBClient()
         con = client.connect_rw()
     else:
         con = duckdb.connect(str(DB_PATH))

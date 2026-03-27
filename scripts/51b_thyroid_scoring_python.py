@@ -21,16 +21,16 @@ import numpy as np
 def get_connection(md: bool):
     import duckdb
     if md:
-        token = os.environ.get("MOTHERDUCK_TOKEN") or ""
+        token = os.environ.get("LOCAL_DB_PATH") or ""
         if not token:
             try:
                 import toml
-                token = toml.load(".streamlit/secrets.toml").get("MOTHERDUCK_TOKEN", "")
+                token = toml.load(".streamlit/secrets.toml").get("LOCAL_DB_PATH", "")
             except Exception:
                 pass
         if not token:
-            sys.exit("MOTHERDUCK_TOKEN not found")
-        con = duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+            sys.exit("LOCAL_DB_PATH not found")
+        con = duckdb.connect(f"thyroid_master.duckdb")
     else:
         db = os.environ.get("LOCAL_DUCKDB_PATH", "thyroid_master.duckdb")
         con = duckdb.connect(db)
@@ -633,7 +633,7 @@ def build_scoring_table(con, dry_run: bool = False) -> None:
 
     # Write to DuckDB via parquet — use a versioned staging name to avoid lock conflicts
     import tempfile, pathlib, time as _time
-    print("  Writing scoring data to MotherDuck...")
+    print("  Writing scoring data to local DuckDB...")
     tmp = pathlib.Path(tempfile.mktemp(suffix=".parquet"))
     out.to_parquet(tmp, index=False)
     # Try canonical name; fall back to staging name if locked
@@ -653,7 +653,7 @@ def build_scoring_table(con, dry_run: bool = False) -> None:
         raise RuntimeError("Could not write scoring table under any name")
     if written_table != target_table:
         print(f"  [NOTE] Wrote to {written_table} (canonical name {target_table} is locked; "
-              f"re-run after MotherDuck clears the transaction)")
+              f"re-run after local DuckDB clears the transaction)")
         # Create a VIEW alias so downstream scripts find the data
         try:
             con.execute(f"CREATE OR REPLACE VIEW {target_table} AS SELECT * FROM {written_table}")
@@ -700,7 +700,7 @@ def build_scoring_table(con, dry_run: bool = False) -> None:
 def main():
     p = argparse.ArgumentParser()
     g = p.add_mutually_exclusive_group()
-    g.add_argument("--md", action="store_true", help="Use MotherDuck")
+    g.add_argument("--md", action="store_true", help="Use local DuckDB")
     g.add_argument("--local", action="store_true", help="Use local DuckDB")
     p.add_argument("--dry-run", action="store_true")
     args = p.parse_args()

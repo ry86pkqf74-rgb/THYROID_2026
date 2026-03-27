@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Live MotherDuck schema audit for proposal_2to4cm study. Writes inventory + variable map."""
+"""Live local DuckDB schema audit for proposal_2to4cm study. Writes inventory + variable map."""
 from __future__ import annotations
 
 import csv
@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from motherduck_client import MotherDuckClient, MotherDuckConfig  # noqa: E402
+from local DuckDB_client import local DuckDBClient, local DuckDBConfig  # noqa: E402
 
 STUDY_DIR = Path(__file__).resolve().parent
 
@@ -55,7 +55,7 @@ CANDIDATES = [
 
 
 def connect():
-    return MotherDuckClient(MotherDuckConfig()).connect_rw()
+    return local DuckDBClient(local DuckDBConfig()).connect_rw()
 
 
 def main() -> None:
@@ -164,13 +164,13 @@ def main() -> None:
         wr.writerows(var_rows)
 
     # schema_notes.md
-    notes = f"""# Schema notes (live MotherDuck audit)
+    notes = f"""# Schema notes (live local DuckDB audit)
 
 Generated: {datetime.now(timezone.utc).isoformat()}
 
 ## Catalog
 
-- Database: `thyroid_research_2026` (read-write connection used for SELECT only in this study).
+- Database: `thyroid_master.duckdb` (read-write connection used for SELECT only in this study).
 
 ## Discrepancy vs repo docs (AGENTS / pipeline_architecture)
 

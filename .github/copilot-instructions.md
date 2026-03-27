@@ -35,6 +35,6 @@
 
 ## Project Context
 - Repo: THYROID_2026 — clinical thyroid cancer research pipeline
-- Stack: Python, DuckDB, MotherDuck, Streamlit, Parquet
+- Stack: Python, DuckDB, local DuckDB, Streamlit, Parquet
 - Primary key: `research_id` (int) across all tables
 - MCP tools, custom agents, and AGENTS.md policy apply to ALL tasks in this repo

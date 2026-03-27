@@ -19,7 +19,7 @@ and formally retire `imaging_nodule_long_v2` as a feature source in favor of
 Prior documentation (including AGENTS.md, `docs/post_maturation_gap_audit_20260313.md`)
 incorrectly stated `imaging_fna_linkage_v3` had **0 rows**.
 
-**Actual state** (verified 2026-03-14 against live MotherDuck):
+**Actual state** (verified 2026-03-14 against live local DuckDB):
 - `imaging_fna_linkage_v3`: **9,024 rows** (not 0)
 
 The confusion originated from `imaging_fna_linkage_v2` (a different table) and/or
@@ -86,7 +86,7 @@ Columns available: `tirads_reported`, `tirads_acr_recalculated`, `composition`,
 - `suspicious_node_flag`: FALSE for all
 
 Root cause: V2 ImagingNoduleExtractor was defined and tested but its outputs were
-**never materialized to MotherDuck**. The schema exists but data was never populated.
+**never materialized to local DuckDB**. The schema exists but data was never populated.
 
 **Action**: Any analytics code that queries `imaging_nodule_long_v2` for feature data
 should switch to `imaging_nodule_master_v1` or `extracted_tirads_validated_v1`.

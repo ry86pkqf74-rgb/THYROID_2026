@@ -48,8 +48,8 @@ All 146 groups were classified in `episode_duplicate_profile_v1`: 144 as `other_
 ## Key References
 
 - **Dedup logic**: `scripts/56_readiness_gate.py` — readiness gate assertions G1 and G2
-- **Episode dedup table**: `episode_analysis_resolved_v1_dedup` (MotherDuck, 9,368 rows)
-- **Duplicate profile**: `episode_duplicate_profile_v1` (MotherDuck, 146 rows)
-- **Excluded rows audit**: `episode_duplicate_review_v1` (MotherDuck, 207 rows)
+- **Episode dedup table**: `episode_analysis_resolved_v1_dedup` (local DuckDB, 9,368 rows)
+- **Duplicate profile**: `episode_duplicate_profile_v1` (local DuckDB, 146 rows)
+- **Excluded rows audit**: `episode_duplicate_review_v1` (local DuckDB, 207 rows)
 - **Readiness report**: `exports/FINAL_PUBLICATION_BUNDLE_20260313/readiness_assessment.json`
-- **Manuscript cohort**: `manuscript_cohort_v1` (MotherDuck, 10,871 rows, 0 duplicates)
+- **Manuscript cohort**: `manuscript_cohort_v1` (local DuckDB, 10,871 rows, 0 duplicates)

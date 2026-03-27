@@ -3,7 +3,7 @@
 **Document version:** 1.0  
 **Date:** 2026-03-13  
 **Study database:** THYROID_2026 (Emory University, DTC surgical cohort)  
-**Primary data source:** MotherDuck `thyroid_research_2026` (DuckDB)  
+**Primary data source:** local DuckDB `thyroid_master.duckdb` (DuckDB)  
 **Analysis-grade layer:** scripts 48--55 (`patient_analysis_resolved_v1` and supporting tables)
 
 ---
@@ -756,7 +756,7 @@ For longitudinal lab model (D.3.1):
 
 - All random seeds set to 42.
 - Exact software versions recorded in `requirements.txt`.
-- Analyses executed via DuckDB on MotherDuck (`thyroid_research_2026`) with
+- Analyses executed via DuckDB on local DuckDB (`thyroid_master.duckdb`) with
   script version `resolved_layer_version = 'v1'`.
 - Data frozen at `resolved_at` timestamp recorded in each analysis-grade table.
 
@@ -817,7 +817,7 @@ All figures stored in `exports/publication_figures_300dpi/` and
 | Component | Version |
 |-----------|---------|
 | Python | >= 3.10 |
-| DuckDB | <= 1.4.4 (MotherDuck compatibility) |
+| DuckDB | <= 1.4.4 (local DuckDB compatibility) |
 | pandas | >= 2.0 |
 | lifelines | >= 0.27 |
 | statsmodels | >= 0.14 |

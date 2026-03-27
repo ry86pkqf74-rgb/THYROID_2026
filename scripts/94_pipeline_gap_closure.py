@@ -47,14 +47,14 @@ EXPORT_DIR.mkdir(parents=True, exist_ok=True)
 # ── connection ────────────────────────────────────────────────────────────────
 def get_connection(use_md: bool) -> duckdb.DuckDBPyConnection:
     if use_md:
-        token = os.environ.get("MOTHERDUCK_TOKEN", "")
+        token = os.environ.get("LOCAL_DB_PATH", "")
         if not token:
             secrets = ROOT / ".streamlit" / "secrets.toml"
             if secrets.exists():
                 import toml
-                token = toml.load(secrets).get("MOTHERDUCK_TOKEN", "")
-        os.environ["MOTHERDUCK_TOKEN"] = token
-        return duckdb.connect("md:thyroid_research_2026")
+                token = toml.load(secrets).get("LOCAL_DB_PATH", "")
+        os.environ["LOCAL_DB_PATH"] = token
+        return duckdb.connect("thyroid_master.duckdb")
     return duckdb.connect(str(ROOT / "thyroid_master_local.duckdb"))
 
 
@@ -915,7 +915,7 @@ def collect_validation_metrics(con) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(description="Script 94: Pipeline Gap Closure")
-    parser.add_argument("--md", action="store_true", help="Use MotherDuck (production)")
+    parser.add_argument("--md", action="store_true", help="Use local DuckDB (production)")
     parser.add_argument("--local", action="store_true", help="Use local DuckDB")
     parser.add_argument("--dry-run", action="store_true", help="Validate only, no writes")
     parser.add_argument("--phase", default="all",
@@ -927,7 +927,7 @@ def main():
     phases = args.phase.upper().split(",") if args.phase.lower() != "all" else ["A","B","C","D"]
 
     print(f"Script 94: Pipeline Gap Closure Sprint")
-    print(f"  Target: {'MotherDuck' if use_md else 'local DuckDB'}")
+    print(f"  Target: {'local DuckDB' if use_md else 'local DuckDB'}")
     print(f"  Dry-run: {dry_run}")
     print(f"  Phases: {phases}")
     print(f"  Export dir: {EXPORT_DIR}")
@@ -962,7 +962,7 @@ def main():
         "script": "94_pipeline_gap_closure.py",
         "run_date": DATE_SLUG,
         "timestamp": TS,
-        "target": "MotherDuck" if use_md else "local",
+        "target": "local DuckDB" if use_md else "local",
         "dry_run": dry_run,
         "phases": phases,
         "workstream_results": {k: {str(k2): str(v2) for k2, v2 in v.items()} for k, v in results.items()},

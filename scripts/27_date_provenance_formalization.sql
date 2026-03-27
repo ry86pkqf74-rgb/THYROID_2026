@@ -3,8 +3,8 @@
 -- Complements the enriched views in 15_date_association_views.sql by
 -- materializing provenance columns directly on the 6 base tables.
 --
--- Prerequisites: scripts 15-26 deployed; tables exist in thyroid_research_2026.
--- Deploy: USE thyroid_research_2026;
+-- Prerequisites: scripts 15-26 deployed; tables exist in thyroid_master.duckdb.
+-- Deploy: USE thyroid_master.duckdb;
 --
 -- IMPORTANT: After ALTER TABLE adds columns to the base tables, the enriched
 -- views in script 15 MUST use EXCLUDE to avoid duplicate column names:
@@ -25,7 +25,7 @@
 --   molecular_testing: "date" (VARCHAR, day-level or year-only)
 --   Pipeline uses molecular_testing for date fallback (same Excel source as genetic_testing)
 
-USE thyroid_research_2026;
+USE thyroid_master.duckdb;
 
 -- ============================================================================
 -- 1. ALTER TABLE — add provenance columns to all 6 note_entities_* tables

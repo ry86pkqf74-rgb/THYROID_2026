@@ -1,8 +1,8 @@
 {
   "title": "THYROID_2026 Final Technical Verification",
   "generated_at": "2026-03-13T12:00:00Z",
-  "scope": "Full repository + MotherDuck database (531 tables)",
-  "motherduck_tables_audited": 531,
+  "scope": "Full repository + local DuckDB database (531 tables)",
+  "local DuckDB_tables_audited": 531,
   "validation_tables_audited": 34,
   "prior_audit_reports_reviewed": 18,
   "deliverables": {
@@ -11,7 +11,7 @@
     "exports/final_repo_verification_20260313/repo_extraction_opportunities_v1.csv": "15 extraction opportunities rated",
     "exports/final_repo_verification_20260313/manifest.json": "This file"
   },
-  "motherduck_tables_created": [
+  "local DuckDB_tables_created": [
     "repo_verification_matrix_v1",
     "repo_extraction_opportunities_v1",
     "val_repo_wide_temporal_lineage_v1",
@@ -28,7 +28,7 @@
   },
   "critical_findings": [
     "operative_episode_detail_v2: 0% NLP enrichment (9,371 episodes, ALL flags FALSE)",
-    "imaging_nodule_master_v1: 0 rows on MotherDuck",
+    "imaging_nodule_master_v1: 0 rows on local DuckDB",
     "rai_treatment_episode_v2: 3.0% dose coverage (55/1,857)",
     "molecular_test_episode_v2: 0 RAS-positive (flag not backfilled)",
     "extracted_recurrence_refined_v1: 0.5% first_recurrence_date coverage",

@@ -4,7 +4,7 @@ _Generated: 2026-03-12_
 
 ## Executive Summary
 
-Phase 9 addresses the 5 highest-priority data gaps identified in the Phase 8 final report. Three new pipeline components — **LabExpansionPipeline**, **RAIDoseParser**, and **GradingRuleEngine** — were implemented in `extraction_audit_engine_v7.py` and deployed to MotherDuck Business Pro.
+Phase 9 addresses the 5 highest-priority data gaps identified in the Phase 8 final report. Three new pipeline components — **LabExpansionPipeline**, **RAIDoseParser**, and **GradingRuleEngine** — were implemented in `extraction_audit_engine_v7.py` and deployed to local DuckDB Business Pro.
 
 ## Impact Summary
 

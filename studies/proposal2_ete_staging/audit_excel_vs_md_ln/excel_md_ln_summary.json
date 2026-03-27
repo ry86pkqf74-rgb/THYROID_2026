@@ -2,7 +2,7 @@
   "generated_at_utc": "2026-03-27T06:22:39.061935+00:00",
   "excel_path": "raw/All Diagnoses & synoptic 12_1_2025.xlsx",
   "sheet": "synoptics + Dx merged",
-  "connection": "md:thyroid_research_2026",
+  "connection": "thyroid_master.duckdb",
   "excel_rows": 11688,
   "excel_unique_keys": 11687,
   "md_rows_raw": 11688,

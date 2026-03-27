@@ -1,7 +1,7 @@
 -- scripts/17_timeline_rescue_unified_v3.sql
 -- Unified timeline rescue view covering all 6 note_entities_* tables
 -- with full date provenance taxonomy.
-USE thyroid_research_2026;
+USE thyroid_master.duckdb;
 
 CREATE OR REPLACE VIEW timeline_rescue_v3_mv AS
 WITH all_entities AS (

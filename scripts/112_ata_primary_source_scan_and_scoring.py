@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
 Scan primary Excel workbooks under raw/ for ATA / American Thyroid Association text,
-then optionally rebuild thyroid scoring (including ATA 2015 initial risk) on MotherDuck via 51b.
+then optionally rebuild thyroid scoring (including ATA 2015 initial risk) on local DuckDB via 51b.
 
 Usage:
   .venv/bin/python scripts/112_ata_primary_source_scan_and_scoring.py
   .venv/bin/python scripts/112_ata_primary_source_scan_and_scoring.py --md
 
-Requires MOTHERDUCK_TOKEN or MD_SA_TOKEN in the environment when using --md.
+Requires LOCAL_DB_PATH or LOCAL_DB_PATH in the environment when using --md.
 """
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ if str(ROOT) not in sys.path:
 
 # Primary raw/*.xlsx used by the lakehouse: union of
 #   scripts/01_ingest_all_files.py FILE_MAP (each filename once),
-#   scripts/09_motherduck_upload_verify_extract.py RAW_XLSX_SOURCES,
+#   scripts/09_local DuckDB_upload_verify_extract.py RAW_XLSX_SOURCES,
 #   scripts/07_phase3_genetics_specimen.py (THYROSEQ_AFIRMA_12_5.xlsx),
 #   scripts/41_ingest_thyroseq_excel.py default workbook + Thyroseq crosswalk inputs,
 #   studies/nsqip_linkage (NSQIP + case-details spreadsheets when kept under raw/).
@@ -55,7 +55,7 @@ PRIMARY_EXCEL = sorted(
         "All Diagnoses & synoptic 12_1_2025.xlsx",
         "Imaging_12_1_25.xlsx",
         "Notes 12_1_25.xlsx",
-        # 09_motherduck_upload_verify_extract.RAW_XLSX_SOURCES, 07 genetics, 41 Thyroseq
+        # 09_local DuckDB_upload_verify_extract.RAW_XLSX_SOURCES, 07 genetics, 41 Thyroseq
         "Thyroid all_Complications 12_1_25.xlsx",
         "THYROSEQ_AFIRMA_12_5.xlsx",
         "Thyroid OP Sheet data.xlsx",
@@ -193,12 +193,12 @@ def run_excel_scan(raw_dir: Path) -> Path:
     return out_dir
 
 
-def run_motherduck_scoring() -> int:
-    from motherduck_client import get_token
+def run_local DuckDB_scoring() -> int:
+    from local DuckDB_client import get_token
 
     if not get_token():
         print(
-            "No MotherDuck token. Export MOTHERDUCK_TOKEN or MD_SA_TOKEN, then re-run with --md.",
+            "No local DuckDB token. Export LOCAL_DB_PATH or LOCAL_DB_PATH, then re-run with --md.",
             file=sys.stderr,
         )
         return 2
@@ -212,7 +212,7 @@ def run_motherduck_scoring() -> int:
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="ATA Excel scan + optional MotherDuck scoring (51b).")
+    ap = argparse.ArgumentParser(description="ATA Excel scan + optional local DuckDB scoring (51b).")
     ap.add_argument(
         "--raw-dir",
         type=Path,
@@ -222,7 +222,7 @@ def main() -> None:
     ap.add_argument(
         "--skip-excel",
         action="store_true",
-        help="Only run MotherDuck scoring (51b), skip Excel scan.",
+        help="Only run local DuckDB scoring (51b), skip Excel scan.",
     )
     ap.add_argument(
         "--md",
@@ -235,7 +235,7 @@ def main() -> None:
         run_excel_scan(args.raw_dir.resolve())
 
     if args.md:
-        code = run_motherduck_scoring()
+        code = run_local DuckDB_scoring()
         raise SystemExit(code)
 
 

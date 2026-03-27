@@ -52,10 +52,10 @@ def get_connection(use_md: bool) -> duckdb.DuckDBPyConnection:
     if use_md:
         try:
             import toml
-            token = toml.load(".streamlit/secrets.toml")["MOTHERDUCK_TOKEN"]
+            token = toml.load(".streamlit/secrets.toml")["LOCAL_DB_PATH"]
         except Exception:
-            token = os.getenv("MOTHERDUCK_TOKEN", "")
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+            token = os.getenv("LOCAL_DB_PATH", "")
+        return duckdb.connect(f"thyroid_master.duckdb")
     return duckdb.connect("thyroid_master_local.duckdb")
 
 
@@ -426,13 +426,13 @@ def print_summary(h1: dict, h2: dict) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Phase 7 H1/H2 sensitivity analyses")
     parser.add_argument("--md", action="store_true", default=True,
-                        help="Use MotherDuck (default)")
+                        help="Use local DuckDB (default)")
     parser.add_argument("--local", action="store_true",
-                        help="Use local DuckDB instead of MotherDuck")
+                        help="Use local DuckDB instead of local DuckDB")
     args = parser.parse_args()
     use_md = not args.local
 
-    print(f"[Phase 7 Sensitivity] connecting to {'MotherDuck' if use_md else 'local DuckDB'}...")
+    print(f"[Phase 7 Sensitivity] connecting to {'local DuckDB' if use_md else 'local DuckDB'}...")
     con = get_connection(use_md)
 
     # ---- H1 ----
@@ -465,7 +465,7 @@ def main() -> None:
     summary = {
         "h1": h1_results,
         "h2": h2_results,
-        "data_source": "MotherDuck" if use_md else "local DuckDB",
+        "data_source": "local DuckDB" if use_md else "local DuckDB",
         "generated_at": datetime.now().isoformat(),
         "random_seed": 42,
     }

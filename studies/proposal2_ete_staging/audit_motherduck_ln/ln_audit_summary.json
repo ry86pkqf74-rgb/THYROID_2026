@@ -1,8 +1,8 @@
 {
   "generated_at_utc": "2026-03-27T06:06Z",
-  "motherduck_auth": "connected",
-  "motherduck_database": "thyroid_research_2026",
-  "motherduck_connection_proof": {
+  "local DuckDB_auth": "connected",
+  "local DuckDB_database": "thyroid_master.duckdb",
+  "local DuckDB_connection_proof": {
     "duckdb_version": "v1.4.4",
     "pragma_database_list": [
       {
@@ -18,7 +18,7 @@
       {
         "seq": 1092,
         "name": "thyroid_share",
-        "file": "_share/thyroid_research_2026/4839c7d2-67ce-48cb-952d-98b25f85d989"
+        "file": "_share/thyroid_master.duckdb/4839c7d2-67ce-48cb-952d-98b25f85d989"
       },
       {
         "seq": 1094,
@@ -37,18 +37,18 @@
       },
       {
         "seq": 1100,
-        "name": "thyroid_research_2026_dev",
-        "file": "thyroid_research_2026_dev"
+        "name": "thyroid_master.duckdb",
+        "file": "thyroid_master.duckdb"
       },
       {
         "seq": 1102,
-        "name": "thyroid_research_2026_qa",
-        "file": "thyroid_research_2026_qa"
+        "name": "thyroid_master.duckdb",
+        "file": "thyroid_master.duckdb"
       },
       {
         "seq": 1104,
-        "name": "thyroid_research_2026",
-        "file": "thyroid_research_2026"
+        "name": "thyroid_master.duckdb",
+        "file": "thyroid_master.duckdb"
       },
       {
         "seq": 1106,
@@ -82,15 +82,15 @@
         "database_oid": 2557
       },
       {
-        "database_name": "thyroid_research_2026",
+        "database_name": "thyroid_master.duckdb",
         "database_oid": 1104
       },
       {
-        "database_name": "thyroid_research_2026_dev",
+        "database_name": "thyroid_master.duckdb",
         "database_oid": 1100
       },
       {
-        "database_name": "thyroid_research_2026_qa",
+        "database_name": "thyroid_master.duckdb",
         "database_oid": 1102
       },
       {

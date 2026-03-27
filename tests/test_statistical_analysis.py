@@ -2,7 +2,7 @@
 Tests for utils/statistical_analysis.py
 
 Uses synthetic DataFrames that mimic the thyroid cohort schema.
-No MotherDuck or DuckDB connection required.
+No local DuckDB or DuckDB connection required.
 """
 from __future__ import annotations
 

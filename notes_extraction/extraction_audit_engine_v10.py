@@ -791,7 +791,7 @@ def deploy_validation_view(con):
 # ---------------------------------------------------------------------------
 def main():
     parser = argparse.ArgumentParser(description="Phase 12: TIRADS Excel Ingestion & ACR Validation")
-    parser.add_argument("--md", action="store_true", help="Deploy to MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Deploy to local DuckDB")
     parser.add_argument("--local", action="store_true", help="Use local DuckDB")
     parser.add_argument("--dry-run", action="store_true", help="Dry run — no table deployment")
     args = parser.parse_args()

@@ -1,6 +1,6 @@
 -- scripts/17_semantic_cleanup_v3.sql
 -- Date Status Taxonomy V3 + Rescue Layer (exactly as described in AGENTS.md)
-USE thyroid_research_2026;
+USE thyroid_master.duckdb;
 
 -- Master timeline rescue view (genetics example — easy to UNION the other 5 tables)
 CREATE OR REPLACE VIEW timeline_rescue_v2_mv AS

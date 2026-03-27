@@ -4,7 +4,7 @@
 
 ---
 
-## MotherDuck ANALYZE Results
+## local DuckDB ANALYZE Results
 
 17 key tables analyzed for query optimization:
 

@@ -4,7 +4,7 @@ _Generated: 2026-03-12 | Engine: extraction_audit_engine_v3.py_
 
 ## Overview
 
-Phase 5 targeted the exact top-5 variables identified in the Phase 4 audit report, in priority order. All refinements deployed to MotherDuck Business Pro and merged into `patient_refined_master_clinical_v4` (11,861 rows).
+Phase 5 targeted the exact top-5 variables identified in the Phase 4 audit report, in priority order. All refinements deployed to local DuckDB Business Pro and merged into `patient_refined_master_clinical_v4` (11,861 rows).
 
 ---
 
@@ -205,7 +205,7 @@ Phase 5 targeted the exact top-5 variables identified in the Phase 4 audit repor
 
 ---
 
-## New MotherDuck Tables
+## New local DuckDB Tables
 
 | Table | Rows | Description |
 |-------|------|-------------|

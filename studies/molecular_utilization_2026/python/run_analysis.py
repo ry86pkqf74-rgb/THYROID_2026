@@ -34,19 +34,19 @@ def connect_md() -> "duckdb.DuckDBPyConnection":
     import duckdb
     import toml
 
-    tok = os.environ.get("MOTHERDUCK_TOKEN", "")
+    tok = os.environ.get("LOCAL_DB_PATH", "")
     if not tok:
         for candidate in (
             ROOT / ".streamlit" / "secrets.toml",
             Path.home() / ".streamlit" / "secrets.toml",
         ):
             if candidate.exists():
-                tok = toml.load(str(candidate)).get("MOTHERDUCK_TOKEN", "")
+                tok = toml.load(str(candidate)).get("LOCAL_DB_PATH", "")
                 if tok:
                     break
     if not tok:
-        raise SystemExit("MOTHERDUCK_TOKEN not set and not found in secrets.toml")
-    return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={tok}")
+        raise SystemExit("LOCAL_DB_PATH not set and not found in secrets.toml")
+    return duckdb.connect(f"thyroid_master.duckdb")
 
 
 def connect_local(path: str) -> "duckdb.DuckDBPyConnection":
@@ -72,7 +72,7 @@ def main() -> None:
     import pandas as pd
 
     ap = argparse.ArgumentParser()
-    ap.add_argument("--local", metavar="PATH", help="Local DuckDB file instead of MotherDuck")
+    ap.add_argument("--local", metavar="PATH", help="Local DuckDB file instead of local DuckDB")
     ap.add_argument("--v2", action="store_true", help="Run V2 manuscript refresh pipeline only")
     ap.add_argument("--all", action="store_true", help="Run V1 then V2")
     args = ap.parse_args()
@@ -278,10 +278,10 @@ def _run_v2(local_path: str | None) -> None:
         "freeze_label": "molecular_utilization_manuscript_v2",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "git_sha_short": _git_sha_short(),
-        "database": "md:thyroid_research_2026" if not local_path else local_path,
+        "database": "thyroid_master.duckdb" if not local_path else local_path,
         "sql_scripts": [
             str(SQL_DIR / "01_views_and_cohort_v2.sql"),
-            str(SQL_DIR / "02_motherduck_verification_v2.sql"),
+            str(SQL_DIR / "02_local DuckDB_verification_v2.sql"),
         ],
         "source_tables": [
             "manuscript_cohort_v1",

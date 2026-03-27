@@ -10,9 +10,9 @@ reversible.
 
 ### Problem
 The single `ro_share` gate in `gate_ro_share()` opened a direct connection to
-`md:thyroid_research_2026` (the prod DB) and queried `master_cohort`.
+`thyroid_master.duckdb` (the prod DB) and queried `master_cohort`.
 This validated prod-DB reachability but **not** the actual publication RO share
-path (`md:_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c`)
+path (``)
 that the Streamlit dashboard and external collaborators use.
 A prod-DB-accessible / share-inaccessible failure would silently PASS the gate.
 
@@ -22,8 +22,8 @@ the `full+share` level (i.e., QA → PROD promotions):
 
 | Gate name | What it checks | Connection used |
 |-----------|---------------|-----------------|
-| `prod_db_accessible` | `thyroid_research_2026` via direct token | `MotherDuckClient.for_env("prod").connect()` |
-| `prod_ro_share_accessible` | `thyroid_share` catalog alias via share URL | `MotherDuckClient.for_env("prod").connect_ro_share()` |
+| `prod_db_accessible` | `thyroid_master.duckdb` via direct token | `local DuckDBClient.for_env("prod").connect()` |
+| `prod_ro_share_accessible` | `thyroid_share` catalog alias via share URL | `local DuckDBClient.for_env("prod").connect_ro_share()` |
 
 Both gates count `DISTINCT research_id FROM master_cohort` and require ≥10,000
 patients.  The share gate issues `USE thyroid_share;` before querying, matching
@@ -47,11 +47,11 @@ the exact connection path used by the dashboard.
 | Gates run list (script 95) | "7. RO share accessible (prod only)" | Two gates listed: `prod_db_accessible` + `prod_ro_share_accessible` |
 | Script 96 usage | `scripts/96_release_manifest.py --md` | `scripts/96_release_manifest.py` (no `--md`; default env=prod) |
 
-### 2b. `docs/motherduck_promotion_runbook_20260314.md`
+### 2b. `docs/local DuckDB_promotion_runbook_20260314.md`
 
 | Step | Before (incorrect) | After (correct) |
 |------|--------------------|-----------------|
-| Step 1.1 | `--db thyroid_research_2026_qa` (unsupported flag) | Explanatory note: script 26 targets the DB the token connects to; `--db` is not implemented; verify with `SELECT current_database()` |
+| Step 1.1 | `--db thyroid_master.duckdb` (unsupported flag) | Explanatory note: script 26 targets the DB the token connects to; `--db` is not implemented; verify with `SELECT current_database()` |
 | Step 2.5 | `scripts/96_release_manifest.py --md` | `scripts/96_release_manifest.py` (uses `--env`, default=prod) |
 
 ### Root cause
@@ -66,7 +66,7 @@ multi-environment materialisation requires a token scoped to the target DB.
 ### Problem
 The `source_audit_<ts>.json` artifact written into the bundle lacked:
 - Full git SHA at freeze time
-- Indication of which connection type was used (MotherDuck vs local DuckDB)
+- Indication of which connection type was used (local DuckDB vs local DuckDB)
 - The canonical RO share path (for external reproducibility)
 - The list of critical tables validated in this freeze
 
@@ -77,7 +77,7 @@ Enriched the audit dict in `_verify_prod_source()` with four new fields:
 | Field | Content |
 |-------|---------|
 | `git_sha` | Full 40-char HEAD SHA (`unknown` if git unavailable) |
-| `source_connection_type` | `motherduck_prod` \| `local_duckdb` |
+| `source_connection_type` | `local DuckDB_prod` \| `local_duckdb` |
 | `ro_share_path` | Full share URL when prod; `not_applicable` for local |
 | `tables_validated` | The `CRITICAL_TABLES` constant from script 90 |
 
@@ -131,7 +131,7 @@ This accepts any combination of leading/trailing whitespace and an optional
 ### Remaining manual steps
 
 None required before tagging.  The RO share gate will require
-`MD_SA_TOKEN` (or a token with share-read permission) to pass in CI; this
+`LOCAL_DB_PATH` (or a token with share-read permission) to pass in CI; this
 was true of the old `ro_share` gate too.
 
 ### Release candidate status
@@ -140,7 +140,7 @@ was true of the old `ro_share` gate too.
 
 All four release-engineering mismatches identified post-c87179a are closed.
 The CI pipeline, promotion gate, release manifest, and manuscript bundle are
-now internally consistent with the actual script interfaces and MotherDuck
+now internally consistent with the actual script interfaces and local DuckDB
 share topology.
 
 | Area | Status |

@@ -328,9 +328,9 @@ def main() -> None:
             "scripts/110_operative_notes_full_history_scan.py with "
             "--extra-root pointing at your Active Master Files folder; "
             "then scripts/build_clinical_notes_long.py, "
-            "scripts/09b_motherduck_upload_notes_entities.py --confirm, "
+            "scripts/09b_local DuckDB_upload_notes_entities.py --confirm, "
             "and SQL from scripts/sql/110_operative_notes_merge_clinical_notes_long.sql "
-            "if merging into an existing MotherDuck table."
+            "if merging into an existing local DuckDB table."
         )
 
     results = {}

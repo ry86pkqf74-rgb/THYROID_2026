@@ -5,7 +5,7 @@ in papillary thyroid carcinoma (PTC).
 
 ## Data Source
 
-- **Analytic cohort:** `risk_enriched_mv` (MotherDuck `thyroid_research_2026`)
+- **Analytic cohort:** `risk_enriched_mv` (local DuckDB `thyroid_master.duckdb`)
 - **Fallback:** `tables/analytic_cohort.csv` (exported snapshot)
 - **Cohort size:** PTC patients with complete staging, ETE, and follow-up data
 
@@ -45,7 +45,7 @@ To run interactively:
 .venv/bin/jupyter notebook notebooks/01_publication_figures.ipynb
 ```
 
-## MotherDuck Views Used
+## local DuckDB Views Used
 
 | View | Purpose |
 |---|---|
@@ -54,5 +54,5 @@ To run interactively:
 | `survival_cohort_ready_mv` | Time-to-event data for KM / Cox models |
 | `advanced_features_v3` | 60+ engineered features including laterality and multifocality |
 
-All views are available in MotherDuck (`thyroid_research_2026`) and as Parquet exports in
+All views are available in local DuckDB (`thyroid_master.duckdb`) and as Parquet exports in
 `exports/THYROID_2026_PUBLICATION_BUNDLE_20260310_0414/`.

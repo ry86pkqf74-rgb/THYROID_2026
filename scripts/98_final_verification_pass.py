@@ -9,7 +9,7 @@ Combines:
   D) Recurrence review packet export
   E) Documentation reconciliation
 
-Connects to live MotherDuck prod, generates all deliverables, and identifies
+Connects to live local DuckDB prod, generates all deliverables, and identifies
 discrepancies between documentation and live data.
 
 Usage:
@@ -53,7 +53,7 @@ DOCS                 = pathlib.Path("docs")
 # ─── Helpers ──────────────────────────────────────────────────────────────────
 
 def get_md_token() -> str:
-    for key in ("MD_SA_TOKEN", "MOTHERDUCK_TOKEN"):
+    for key in ("LOCAL_DB_PATH", "LOCAL_DB_PATH"):
         tok = os.environ.get(key, "")
         if tok:
             return tok
@@ -62,18 +62,18 @@ def get_md_token() -> str:
                    pathlib.Path.home() / ".streamlit" / "secrets.toml"):
             if p.exists():
                 try:
-                    return toml.load(str(p)).get("MOTHERDUCK_TOKEN", "")
+                    return toml.load(str(p)).get("LOCAL_DB_PATH", "")
                 except Exception:
                     pass
     return ""
 
 
-def connect_md(db: str = "thyroid_research_2026") -> duckdb.DuckDBPyConnection:
+def connect_md(db: str = "thyroid_master.duckdb") -> duckdb.DuckDBPyConnection:
     tok = get_md_token()
     if not tok:
-        sys.exit("MOTHERDUCK_TOKEN not found")
-    os.environ["MOTHERDUCK_TOKEN"] = tok
-    con = duckdb.connect(f"md:{db}?motherduck_token={tok}")
+        sys.exit("LOCAL_DB_PATH not found")
+    os.environ["LOCAL_DB_PATH"] = tok
+    con = duckdb.connect(f"thyroid_master.duckdb")
     print(f"✓ Connected to md:{db}")
     return con
 
@@ -686,19 +686,19 @@ def workstream_e(con, metrics: dict) -> list[dict]:
                 status = "NOT_FOUND"
             print(f"  {doc_path} | {label}: doc='{doc_val}', live='{live_val}' → {status}")
 
-    # Check README MotherDuck table count
+    # Check README local DuckDB table count
     readme_path = ROOT / "README.md"
     if readme_path.exists():
         text = readme_path.read_text()
-        md_match = re.search(r'(\d+)\s*(?:MotherDuck|motherduck)\s*(?:tables|views)', text, re.IGNORECASE)
+        md_match = re.search(r'(\d+)\s*(?:local DuckDB|local DuckDB)\s*(?:tables|views)', text, re.IGNORECASE)
         if md_match:
             doc_n = int(md_match.group(1))
             if doc_n != live["md_tables"]:
-                mismatches.append({"doc": "README.md", "metric": "MotherDuck tables",
+                mismatches.append({"doc": "README.md", "metric": "local DuckDB tables",
                                    "documented": str(doc_n), "live": str(live["md_tables"])})
-                print(f"  README.md | MotherDuck tables: doc='{doc_n}', live='{live['md_tables']}' → MISMATCH")
+                print(f"  README.md | local DuckDB tables: doc='{doc_n}', live='{live['md_tables']}' → MISMATCH")
             else:
-                print(f"  README.md | MotherDuck tables: doc='{doc_n}', live='{live['md_tables']}' → MATCH")
+                print(f"  README.md | local DuckDB tables: doc='{doc_n}', live='{live['md_tables']}' → MATCH")
 
     return mismatches
 
@@ -715,7 +715,7 @@ def write_truth_snapshot(metrics, op_audit, rec_info, linkage, mismatches):
         f"# Dataset Truth Snapshot — {DATESTAMP}",
         "",
         f"Generated: {NOW.isoformat()}",
-        f"Source: MotherDuck `thyroid_research_2026` (prod)",
+        f"Source: local DuckDB `thyroid_master.duckdb` (prod)",
         f"Script: `scripts/98_final_verification_pass.py`",
         "",
         "## 1. Core Dataset Metrics",
@@ -839,7 +839,7 @@ def write_truth_snapshot(metrics, op_audit, rec_info, linkage, mismatches):
         for m in mismatches:
             lines.append(f"| {m['doc']} | {m['metric']} | {m['documented']} | {m['live']} |")
     else:
-        lines.append("All documentation numbers match live MotherDuck. No updates needed.")
+        lines.append("All documentation numbers match live local DuckDB. No updates needed.")
 
     # Source-limited
     lines += [
@@ -871,7 +871,7 @@ def write_linkage_audit(linkage):
         f"# Multi-Surgery Episode Linkage Audit — {DATESTAMP}",
         "",
         f"Generated: {NOW.isoformat()}",
-        f"Source: MotherDuck `thyroid_research_2026` (prod)",
+        f"Source: local DuckDB `thyroid_master.duckdb` (prod)",
         "",
         "## Summary",
         "",
@@ -903,7 +903,7 @@ def write_linkage_audit(linkage):
 
     lines += [
         "",
-        "## MotherDuck Objects Created",
+        "## local DuckDB Objects Created",
         "",
         "| Table | Purpose |",
         "|-------|---------|",
@@ -1131,7 +1131,7 @@ def write_exports(metrics, op_audit, linkage, rec_info, mismatches):
     # Manifest
     manifest = {
         "generated": TIMESTAMP,
-        "source": "MotherDuck thyroid_research_2026 (prod)",
+        "source": "local DuckDB thyroid_master.duckdb (prod)",
         "script": "scripts/98_final_verification_pass.py",
         "workstreams": ["A_truth_snapshot", "B_multi_surgery_linkage",
                         "C_operative_nlp", "D_recurrence_packets", "E_doc_reconciliation"],
@@ -1166,7 +1166,7 @@ def write_exports(metrics, op_audit, linkage, rec_info, mismatches):
             w.writerows(props)
     link_manifest = {
         "generated": TIMESTAMP,
-        "source": "MotherDuck thyroid_research_2026 (prod)",
+        "source": "local DuckDB thyroid_master.duckdb (prod)",
         "ms_patients": linkage.get("cohort_patients", 0),
         "ms_episodes": linkage.get("cohort_episodes", 0),
         "review_queue": linkage.get("review_queue_rows", 0),
@@ -1184,7 +1184,7 @@ def write_exports(metrics, op_audit, linkage, rec_info, mismatches):
 
 def main():
     parser = argparse.ArgumentParser(description="Final comprehensive verification pass")
-    parser.add_argument("--md", action="store_true", default=True, help="Use MotherDuck (default)")
+    parser.add_argument("--md", action="store_true", default=True, help="Use local DuckDB (default)")
     parser.add_argument("--local", action="store_true", help="Use local DuckDB")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
@@ -1195,7 +1195,7 @@ def main():
     print("=" * 78)
 
     if args.local:
-        print("ERROR: This script requires MotherDuck for production verification.")
+        print("ERROR: This script requires local DuckDB for production verification.")
         sys.exit(1)
 
     con = connect_md()
@@ -1237,7 +1237,7 @@ def main():
     print(f"  Operative fields:       {len(op_audit)}")
     print(f"  Recurrence cases:       {rec_info.get('total', 'N/A')}")
     print(f"  Doc mismatches:         {len(mismatches)}")
-    print(f"  MotherDuck tables created: val_multi_surgery_cohort_v2, val_multi_surgery_review_queue_v2")
+    print(f"  local DuckDB tables created: val_multi_surgery_cohort_v2, val_multi_surgery_review_queue_v2")
 
     con.close()
     return 0 if len(mismatches) == 0 else 1

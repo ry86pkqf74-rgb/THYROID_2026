@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-15  
 **Script:** `scripts/101_review_ops.py`  
-**Target:** MotherDuck `thyroid_research_2026` (prod)
+**Target:** local DuckDB `thyroid_master.duckdb` (prod)
 
 ## Purpose
 
@@ -27,7 +27,7 @@ tracking, and a single-row KPI summary.
 | `review_priority` | INTEGER | 1 (critical) – 100 (informational) |
 | `research_id` | BIGINT | Patient identifier (NULL for aggregate-level items) |
 | `surgery_episode_id` | BIGINT | Episode key (NULL if not episode-specific) |
-| `source_table` | VARCHAR | Originating MotherDuck table name |
+| `source_table` | VARCHAR | Originating local DuckDB table name |
 | `source_artifact_ids` | VARCHAR | Serialised artifact IDs from source table |
 | `review_reason` | VARCHAR | Human-readable reason for review |
 | `confidence_tier` | VARCHAR | exact_match / high_confidence / plausible / weak / unlinked |

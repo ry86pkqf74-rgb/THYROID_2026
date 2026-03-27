@@ -1,7 +1,7 @@
 # Final Manuscript Readiness Dependency Map
 
 **Date:** 2026-03-13
-**MotherDuck:** 578 distinct tables in `thyroid_research_2026.main`
+**local DuckDB:** 578 distinct tables in `thyroid_master.duckdb.main`
 
 ---
 
@@ -17,9 +17,9 @@
 ### Phase 2: Research Views (Scripts 03-14)
 ```
 03_research_views.py --md → ptc_cohort, recurrence_risk_cohort, genetic_testing_clean, advanced_features_v*
-09_motherduck_upload_verify_extract.py → MotherDuck base tables
-09b_motherduck_upload_notes_entities.py --confirm → MotherDuck note_entities_*
-10_maximize_motherduck_trial.py → patient_level_summary_mv, survival_cohort_ready_mv, master_cohort
+09_local DuckDB_upload_verify_extract.py → local DuckDB base tables
+09b_local DuckDB_upload_notes_entities.py --confirm → local DuckDB note_entities_*
+10_maximize_local DuckDB_trial.py → patient_level_summary_mv, survival_cohort_ready_mv, master_cohort
 11_quality_assurance_crosscheck.py → master_timeline, extracted_clinical_events_v4, qa_issues
 11.5_cross_file_validation.py → demographics_harmonized_v2
 ```
@@ -45,7 +45,7 @@
 
 ### Phase 5: Materialization Hub
 ```
-26_motherduck_materialize_v2.py --md → 209+ md_* materialized tables
+26_local DuckDB_materialize_v2.py --md → 209+ md_* materialized tables
 ```
 
 ### Phase 6: Analysis-Grade Resolved Layer (Scripts 48-57)
@@ -62,7 +62,7 @@
 ### Phase 7: Gap Closure & Hardening (Scripts 70-78)
 ```
 70_canonical_backfill.py --md → RAI dose, RAS, linkage ID backfill
-71_operative_nlp_to_motherduck.py --md → operative_episode_detail_v2 NLP enrichment
+71_operative_nlp_to_local DuckDB.py --md → operative_episode_detail_v2 NLP enrichment
 75_dataset_maturation.py --md --all → val_dataset_integrity_summary_v1, val_provenance_completeness_v2
 76_canonical_gap_closure.py --md --phase all → RAI dose provenance, RAS subtypes, linkage IDs, recurrence dates
 77_lab_canonical_layer.py --md → longitudinal_lab_canonical_v1

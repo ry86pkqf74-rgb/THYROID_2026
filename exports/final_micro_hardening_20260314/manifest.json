@@ -29,7 +29,7 @@
       "reversible": true
     },
     {
-      "file": "docs/motherduck_promotion_runbook_20260314.md",
+      "file": "docs/local DuckDB_promotion_runbook_20260314.md",
       "change": "Fix Step 1.1 (remove --db unsupported flag); fix Step 2.5 (remove --md from script 96)",
       "rationale": "Neither flag exists in the referenced scripts",
       "reversible": true

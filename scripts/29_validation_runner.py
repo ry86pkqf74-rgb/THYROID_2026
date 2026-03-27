@@ -3,7 +3,7 @@
 29_validation_runner.py -- Combined validation + review-export runner
 
 Runs the validation suite (script 21) and manual review export (script 28)
-in a single invocation, optionally against MotherDuck.
+in a single invocation, optionally against local DuckDB.
 
 Steps:
   1. Run all 6 validation tests
@@ -11,7 +11,7 @@ Steps:
   3. Export manuscript cohort bundle
   4. Print reconciliation gap summary across domains
 
-Supports --md flag for MotherDuck.
+Supports --md flag for local DuckDB.
 """
 from __future__ import annotations
 
@@ -84,14 +84,14 @@ def git_sha() -> str:
 def get_connection(use_md: bool) -> duckdb.DuckDBPyConnection:
     if use_md:
         try:
-            from motherduck_client import MotherDuckClient, MotherDuckConfig
-            cfg = MotherDuckConfig(database="thyroid_research_2026")
-            client = MotherDuckClient(cfg)
+            from local DuckDB_client import local DuckDBClient, local DuckDBConfig
+            cfg = local DuckDBConfig(database="thyroid_master.duckdb")
+            client = local DuckDBClient(cfg)
             con = client.connect_rw()
-            print("  Connected to MotherDuck (RW)")
+            print("  Connected to local DuckDB (RW)")
             return con
         except Exception as e:
-            print(f"  MotherDuck unavailable: {e}")
+            print(f"  local DuckDB unavailable: {e}")
             print("  Falling back to local DuckDB")
     con = duckdb.connect(str(DB_PATH), read_only=True)
     print(f"  Using local DuckDB: {DB_PATH}")
@@ -129,7 +129,7 @@ def run_review_export(
     manifest: dict = {
         "generated_at": datetime.now(tz=timezone.utc).isoformat(),
         "repo_commit_sha": git_sha(),
-        "source": "motherduck" if use_md else str(DB_PATH),
+        "source": "local DuckDB" if use_md else str(DB_PATH),
         "queues": {},
     }
 
@@ -206,7 +206,7 @@ def run_gap_summary(con: duckdb.DuckDBPyConnection, use_md: bool) -> dict:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--md", action="store_true",
-                        help="Run against MotherDuck")
+                        help="Run against local DuckDB")
     parser.add_argument("--skip-export", action="store_true",
                         help="Skip the file export step")
     args = parser.parse_args()
@@ -230,7 +230,7 @@ def main() -> None:
 
     report = {
         "run_at": datetime.now(tz=timezone.utc).isoformat(),
-        "source": "motherduck" if args.md else str(DB_PATH),
+        "source": "local DuckDB" if args.md else str(DB_PATH),
         "repo_commit_sha": git_sha(),
         "validation": validation_results,
         "gap_summary": gaps if (gaps := gap_summary) else {},

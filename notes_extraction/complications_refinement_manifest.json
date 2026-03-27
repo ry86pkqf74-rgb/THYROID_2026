@@ -1,6 +1,6 @@
 {
   "run_time": "2026-03-12T18:34:19.551328",
-  "mode": "motherduck",
+  "mode": "local DuckDB",
   "steps": {
     "chyle_leak refined": {
       "status": "ok",

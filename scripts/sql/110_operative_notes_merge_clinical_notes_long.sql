@@ -4,7 +4,7 @@
 -- Prereqs:
 --   1. Run: .venv/bin/python scripts/110_operative_notes_full_history_scan.py --md --publish-md ...
 --   2. Rebuild local parquet: scripts/build_clinical_notes_long.py (uses extended op_note date scan)
---   3. scripts/09b_motherduck_upload_notes_entities.py --confirm
+--   3. scripts/09b_local DuckDB_upload_notes_entities.py --confirm
 --
 -- Root issue: note_date was often NULL for op_note because extract_note_date() scanned only
 -- 500 chars; Lakehouse diagnostics using TRY_CAST(note_date AS DATE) < 2019 undercounted.
@@ -14,7 +14,7 @@
 -- when v2 has a newer resolved_layer_version (not shown — INSERT-only is safest).
 
 -- ---------------------------------------------------------------------------
--- A) Schema + validation (run manually on MotherDuck)
+-- A) Schema + validation (run manually on local DuckDB)
 -- ---------------------------------------------------------------------------
 -- CREATE SCHEMA IF NOT EXISTS raw;
 -- SELECT COUNT(*) AS v2_rows FROM raw.operative_notes_full_history_v2;

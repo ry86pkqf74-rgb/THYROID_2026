@@ -4,7 +4,7 @@ Script 68: Targeted H&P Extraction — Smoking Status + BMI
 
 Runs SmokingStatusExtractor and BMIExtractor against clinical_notes_long
 (h_p and endocrine_note types), creates sidecar extraction tables on
-MotherDuck, validates precision, and exports review CSVs.
+local DuckDB, validates precision, and exports review CSVs.
 
 Tables created:
   - extracted_smoking_status_v1       (long-format, per-mention)
@@ -51,12 +51,12 @@ random.seed(42)
 
 def get_connection(use_md: bool) -> duckdb.DuckDBPyConnection:
     if use_md:
-        token = os.environ.get("MOTHERDUCK_TOKEN")
+        token = os.environ.get("LOCAL_DB_PATH")
         if not token:
             import toml
-            token = toml.load(".streamlit/secrets.toml")["MOTHERDUCK_TOKEN"]
-            os.environ["MOTHERDUCK_TOKEN"] = token
-        return duckdb.connect("md:thyroid_research_2026")
+            token = toml.load(".streamlit/secrets.toml")["LOCAL_DB_PATH"]
+            os.environ["LOCAL_DB_PATH"] = token
+        return duckdb.connect("thyroid_master.duckdb")
     return duckdb.connect("thyroid_master.duckdb")
 
 
@@ -450,7 +450,7 @@ Evidence spans are truncated to {PHI_SNIPPET_LEN} chars for PHI safety.
 
 ## Deliverables
 
-### MotherDuck Tables
+### local DuckDB Tables
 1. `extracted_smoking_status_v1` — per-mention smoking extraction
 2. `extracted_bmi_v1` — per-mention BMI extraction
 3. `patient_smoking_status_summary_v1` — one row per patient
@@ -475,8 +475,8 @@ def create_tables(
     bmi_review: pd.DataFrame,
     val_df: pd.DataFrame,
 ) -> None:
-    """Create sidecar tables on MotherDuck."""
-    print("\n=== CREATING MOTHERDUCK TABLES ===")
+    """Create sidecar tables on local DuckDB."""
+    print("\n=== CREATING LOCAL_DB TABLES ===")
 
     table_map = {
         "extracted_smoking_status_v1": smoking_df,
@@ -553,14 +553,14 @@ def export_csvs(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Targeted H&P extraction: smoking + BMI")
-    parser.add_argument("--md", action="store_true", help="Use MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Use local DuckDB")
     parser.add_argument("--local", action="store_true", help="Use local DuckDB")
     parser.add_argument("--dry-run", action="store_true", help="Extract only, skip table creation")
     args = parser.parse_args()
 
     use_md = args.md or not args.local
     con = get_connection(use_md)
-    print(f"Connected to {'MotherDuck' if use_md else 'local DuckDB'}")
+    print(f"Connected to {'local DuckDB' if use_md else 'local DuckDB'}")
 
     notes_df = load_notes(con)
     smoking_df, bmi_df = run_extractors(notes_df)

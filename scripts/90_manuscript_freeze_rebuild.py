@@ -15,7 +15,7 @@ Usage:
     .venv/bin/python scripts/90_manuscript_freeze_rebuild.py [--md] [--dry-run]
 
 Flags:
-    --md        Read from MotherDuck (default: local DuckDB)
+    --md        Read from local DuckDB (default: local DuckDB)
     --dry-run   Validate only, do not regenerate outputs
 """
 import argparse
@@ -31,13 +31,13 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 PYTHON = str(REPO_ROOT / ".venv" / "bin" / "python")
 
 # ── Prod-sourcing enforcement ─────────────────────────────────────────────
-# Manuscript outputs must ONLY be generated from the production MotherDuck DB
+# Manuscript outputs must ONLY be generated from the production local DuckDB DB
 # or a validated local snapshot.  Non-prod execution is blocked unless the
 # operator explicitly passes --allow-nonprod (which produces a WARN artifact).
 
 MANUSCRIPT_SOURCE_ENV = "prod"
-PROD_DB_NAME = "thyroid_research_2026"
-NON_PROD_DB_NAMES = {"thyroid_research_2026_dev", "thyroid_research_2026_qa"}
+PROD_DB_NAME = "thyroid_master.duckdb"
+NON_PROD_DB_NAMES = {"thyroid_master.duckdb", "thyroid_master.duckdb"}
 
 
 def _get_git_sha_full() -> str:
@@ -71,8 +71,8 @@ def _verify_prod_source(con, allow_nonprod: bool) -> dict:
         audit["actual_db"] = actual_db
         if actual_db == PROD_DB_NAME:
             audit["is_prod"] = True
-            audit["source_connection_type"] = "motherduck_prod"
-            audit["ro_share_path"] = "md:_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c"
+            audit["source_connection_type"] = "local DuckDB_prod"
+            audit["ro_share_path"] = ""
             audit["status"] = "VERIFIED_PROD"
         elif actual_db in NON_PROD_DB_NAMES:
             audit["is_prod"] = False
@@ -93,8 +93,8 @@ def _verify_prod_source(con, allow_nonprod: bool) -> dict:
             audit["source_connection_type"] = "local_duckdb"
             audit["ro_share_path"] = "not_applicable"
             audit["status"] = "LOCAL_DUCKDB"
-            log("  NOTE: Running against local DuckDB (not MotherDuck prod).", "WARN")
-            log("  For publication-quality outputs use --md (MotherDuck prod).", "WARN")
+            log("  NOTE: Running against local DuckDB (not local DuckDB prod).", "WARN")
+            log("  For publication-quality outputs use --md (local DuckDB prod).", "WARN")
     except Exception as e:
         audit["status"] = f"AUDIT_ERROR: {e}"
         log(f"  WARN: Could not verify source database: {e}", "WARN")
@@ -152,18 +152,18 @@ def log(msg, level="INFO"):
 def get_connection(use_md):
     import duckdb
     if use_md:
-        token = os.environ.get("MOTHERDUCK_TOKEN")
+        token = os.environ.get("LOCAL_DB_PATH")
         if not token:
             try:
                 import toml
-                token = toml.load(str(REPO_ROOT / ".streamlit" / "secrets.toml"))["MOTHERDUCK_TOKEN"]
-                os.environ["MOTHERDUCK_TOKEN"] = token
+                token = toml.load(str(REPO_ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
+                os.environ["LOCAL_DB_PATH"] = token
             except Exception:
                 pass
         if not token:
-            log("MOTHERDUCK_TOKEN not found; falling back to local", "WARN")
+            log("LOCAL_DB_PATH not found; falling back to local", "WARN")
             return duckdb.connect(str(REPO_ROOT / "thyroid_master.duckdb"), read_only=True)
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}", read_only=True)
+        return duckdb.connect(f"thyroid_master.duckdb", read_only=True)
     return duckdb.connect(str(REPO_ROOT / "thyroid_master.duckdb"), read_only=True)
 
 
@@ -399,14 +399,14 @@ def _get_git_sha():
 
 def main():
     parser = argparse.ArgumentParser(description="Rebuild manuscript publication bundle")
-    parser.add_argument("--md", action="store_true", help="Use MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Use local DuckDB")
     parser.add_argument("--dry-run", action="store_true", help="Validate only")
     parser.add_argument("--allow-nonprod", action="store_true",
                         help="Allow non-prod source (generates WARN audit artifact; not for final submission)")
     args = parser.parse_args()
 
     log(f"Manuscript Freeze Rebuild — {TIMESTAMP}")
-    log(f"  Target: {'MotherDuck' if args.md else 'local DuckDB'}")
+    log(f"  Target: {'local DuckDB' if args.md else 'local DuckDB'}")
     log(f"  Mode: {'DRY RUN' if args.dry_run else 'FULL REBUILD'}")
 
     con = get_connection(args.md)

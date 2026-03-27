@@ -19,7 +19,7 @@ Dependencies (pip install):
 
 Usage:
   .venv/bin/python scripts/38_advanced_survival_analysis.py          # local DB
-  .venv/bin/python scripts/38_advanced_survival_analysis.py --md     # MotherDuck
+  .venv/bin/python scripts/38_advanced_survival_analysis.py --md     # local DuckDB
   .venv/bin/python scripts/38_advanced_survival_analysis.py --dry-run
 """
 from __future__ import annotations
@@ -53,10 +53,10 @@ def _get_connection(args):
         local_path = os.getenv("LOCAL_DUCKDB_PATH", str(ROOT / "thyroid_master_local.duckdb"))
         print(f"  Connecting to local DuckDB: {local_path}")
         return duckdb.connect(local_path)
-    from motherduck_client import MotherDuckClient, MotherDuckConfig
-    cfg = MotherDuckConfig(database="thyroid_research_2026")
-    print("  Connecting to MotherDuck …")
-    return MotherDuckClient(cfg).connect_rw()
+    from local DuckDB_client import local DuckDBClient, local DuckDBConfig
+    cfg = local DuckDBConfig(database="thyroid_master.duckdb")
+    print("  Connecting to local DuckDB …")
+    return local DuckDBClient(cfg).connect_rw()
 
 
 def _load_cohort(con) -> pd.DataFrame:
@@ -641,7 +641,7 @@ def main():
         description="Advanced survival analysis — publication outputs"
     )
     parser.add_argument("--md", action="store_true",
-                        help="Read from MotherDuck instead of local DuckDB")
+                        help="Read from local DuckDB instead of local DuckDB")
     parser.add_argument("--local", action="store_true",
                         help="Force local DuckDB")
     parser.add_argument("--dry-run", action="store_true",

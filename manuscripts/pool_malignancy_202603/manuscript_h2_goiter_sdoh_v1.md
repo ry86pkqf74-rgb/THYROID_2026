@@ -1,7 +1,7 @@
 # Racial and Sex Disparities in Goiter Presentation, Specimen Weight, and Surgical Complications: A Social Determinants of Health Analysis
 
 **Version:** Draft v1 — 2026-03-12  
-**Data source:** THYROID_2026 Lakehouse (MotherDuck `thyroid_research_2026`)  
+**Data source:** THYROID_2026 Lakehouse (local DuckDB `thyroid_master.duckdb`)  
 **Cohort:** 6,218 goiter patients; 5,470 non-goiter comparison  
 **Analysis script:** `scripts/43_hypothesis2_goiter_sdoh.py`, `scripts/44_hypothesis_validation_extension.py`  
 **Outputs:** `studies/hypothesis2_goiter_sdoh/`, `studies/hypothesis2_goiter_sdoh/validation_extension_20260312/`
@@ -34,7 +34,7 @@ In this study, we leverage a large single-institution cohort of 6,218 goiter pat
 
 ### 2.1 Study Population
 
-All patients who underwent thyroidectomy for multinodular goiter (`multinodular_goiter = 'x'`) or substernal multinodular goiter (`substernal_multinodular_goiter = 'x'`) at Emory University were identified from `path_synoptics`. Patients with neither flag set constituted the non-goiter comparison cohort (N=5,470). This cohort definition was re-validated against live MotherDuck data with 100% concordance to saved cohort CSV (N=6,218, zero discrepancies).
+All patients who underwent thyroidectomy for multinodular goiter (`multinodular_goiter = 'x'`) or substernal multinodular goiter (`substernal_multinodular_goiter = 'x'`) at Emory University were identified from `path_synoptics`. Patients with neither flag set constituted the non-goiter comparison cohort (N=5,470). This cohort definition was re-validated against live local DuckDB data with 100% concordance to saved cohort CSV (N=6,218, zero discrepancies).
 
 ### 2.2 Race Normalization
 
@@ -226,7 +226,7 @@ Without these data, race functions only as a coarse proxy for the underlying soc
 
 ### 4.3 Strengths
 
-- Re-validated cohort with 100% concordance to saved data (live MotherDuck extraction)
+- Re-validated cohort with 100% concordance to saved data (live local DuckDB extraction)
 - Three-tier RLN ascertainment combining NLP, chart documentation, and laryngoscopy
 - Interaction testing and pre-specified subgroup analyses
 - Leave-one-out sensitivity (from Hypothesis 1 joint analysis) confirming demographic generalizability of main findings

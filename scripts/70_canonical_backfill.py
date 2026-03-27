@@ -12,7 +12,7 @@ tables into the canonical episode layer:
 All updates are idempotent (IS NULL guard) and use only deterministic joins.
 Ambiguous cases (multiple V3 candidates at rank=1) route to a review table.
 
-Supports --md flag (required for MotherDuck deployment).
+Supports --md flag (required for local DuckDB deployment).
 """
 from __future__ import annotations
 
@@ -288,7 +288,7 @@ def export_audit(con: duckdb.DuckDBPyConnection, audit: dict) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--md", action="store_true",
-                        help="Execute against MotherDuck (required for production)")
+                        help="Execute against local DuckDB (required for production)")
     args = parser.parse_args()
 
     section("70 -- Canonical Episode Backfill")
@@ -296,15 +296,15 @@ def main() -> None:
     if args.md:
         try:
             import toml  # type: ignore[import-untyped]
-            token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["MOTHERDUCK_TOKEN"]
+            token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
         except Exception:
             import os
-            token = os.environ.get("MOTHERDUCK_TOKEN")
+            token = os.environ.get("LOCAL_DB_PATH")
         if not token:
-            print("ERROR: MOTHERDUCK_TOKEN not found")
+            print("ERROR: LOCAL_DB_PATH not found")
             sys.exit(1)
-        con = duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
-        print("  Connected to MotherDuck (thyroid_research_2026)")
+        con = duckdb.connect(f"thyroid_master.duckdb")
+        print("  Connected to local DuckDB (thyroid_master.duckdb)")
     else:
         con = duckdb.connect(str(DB_PATH))
         print(f"  Connected to local DB: {DB_PATH}")

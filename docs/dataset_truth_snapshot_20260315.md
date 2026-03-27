@@ -1,7 +1,7 @@
 # Dataset Truth Snapshot — 20260315
 
 Generated: 2026-03-15T02:02:08.682542
-Source: MotherDuck `thyroid_research_2026` (prod)
+Source: local DuckDB `thyroid_master.duckdb` (prod)
 Script: `scripts/99_comprehensive_final_verification.py`
 
 ## 1. Core Dataset Metrics

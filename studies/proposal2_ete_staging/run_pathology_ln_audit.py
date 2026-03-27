@@ -2,9 +2,9 @@
 """
 Offline lymph-node data audit for proposal2_ete_staging.
 
-Quantifies coverage and logical checks using frozen repo exports (no MotherDuck required).
-Optional: set MOTHERDUCK_TOKEN and pass --md to append clinical_notes_long narrative sample
-(imports duckdb + uses motherduck_client if available).
+Quantifies coverage and logical checks using frozen repo exports (no local DuckDB required).
+Optional: set LOCAL_DB_PATH and pass --md to append clinical_notes_long narrative sample
+(imports duckdb + uses local DuckDB_client if available).
 
 Outputs:
   studies/proposal2_ete_staging/outputs/pathology_ln_audit_summary.json
@@ -74,10 +74,10 @@ def audit_manuscript_cohort(path: Path) -> dict:
     return summary
 
 
-def sample_narrative_from_motherduck(limit: int) -> dict:
-    token = os.environ.get("MOTHERDUCK_TOKEN", "")
+def sample_narrative_from_local DuckDB(limit: int) -> dict:
+    token = os.environ.get("LOCAL_DB_PATH", "")
     if not token:
-        return {"status": "skipped", "reason": "MOTHERDUCK_TOKEN unset"}
+        return {"status": "skipped", "reason": "LOCAL_DB_PATH unset"}
 
     try:
         import duckdb
@@ -85,8 +85,8 @@ def sample_narrative_from_motherduck(limit: int) -> dict:
         return {"status": "skipped", "reason": "duckdb not installed"}
 
     try:
-        con = duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
-        con.execute("USE thyroid_research_2026")
+        con = duckdb.connect(f"thyroid_master.duckdb")
+        con.execute("USE thyroid_master.duckdb")
     except Exception as e:
         return {"status": "error", "reason": str(e)}
 
@@ -130,7 +130,7 @@ def main() -> None:
         default=DEFAULT_MANUSCRIPT,
         help="manuscript_cohort_v1.csv path",
     )
-    ap.add_argument("--md", action="store_true", help="Optional MotherDuck narrative sample")
+    ap.add_argument("--md", action="store_true", help="Optional local DuckDB narrative sample")
     ap.add_argument("--md-limit", type=int, default=500)
     args = ap.parse_args()
 
@@ -139,7 +139,7 @@ def main() -> None:
         "manuscript_cohort_audit": audit_manuscript_cohort(args.cohort),
     }
     if args.md:
-        out["motherduck_narrative_sample"] = sample_narrative_from_motherduck(args.md_limit)
+        out["local DuckDB_narrative_sample"] = sample_narrative_from_local DuckDB(args.md_limit)
 
     outp = OUTPUT_DIR / "pathology_ln_audit_summary.json"
     outp.write_text(json.dumps(out, indent=2), encoding="utf-8")

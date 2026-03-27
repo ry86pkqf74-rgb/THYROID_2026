@@ -3,17 +3,17 @@
 105_manuscript_freeze_v1.py — Manuscript Publication Freeze Workflow
 
 Creates an immutable, reproducible snapshot of all manuscript-critical
-MotherDuck tables and exports a versioned freeze artifact bundle.
+local DuckDB tables and exports a versioned freeze artifact bundle.
 
 Workflow
 ────────
-  Phase A  Connect to MotherDuck prod; verify source environment
+  Phase A  Connect to local DuckDB prod; verify source environment
   Phase B  Inventory all manuscript-critical tables; collect row counts
   Phase C  Export each critical table to Parquet + CSV (small tables)
   Phase D  Compute SHA-256 checksums on every export artifact
   Phase E  Write freeze manifest (JSON) with git SHA, timestamps, row
-           counts, checksums, MotherDuck DB name, and freeze version
-  Phase F  Create frozen-suffix copies on MotherDuck (optional --stamp)
+           counts, checksums, local DuckDB DB name, and freeze version
+  Phase F  Create frozen-suffix copies on local DuckDB (optional --stamp)
   Phase G  Verify freeze integrity (re-read manifest, compare checksums)
 
 Outputs
@@ -28,13 +28,13 @@ Outputs
 
 Usage
 ─────
-  # Standard freeze (reads MotherDuck prod)
+  # Standard freeze (reads local DuckDB prod)
   .venv/bin/python scripts/105_manuscript_freeze_v1.py --md
 
   # Dry-run (inventory only, no data export)
   .venv/bin/python scripts/105_manuscript_freeze_v1.py --md --dry-run
 
-  # Stamp frozen copies in MotherDuck (e.g. table_freeze_v1)
+  # Stamp frozen copies in local DuckDB (e.g. table_freeze_v1)
   .venv/bin/python scripts/105_manuscript_freeze_v1.py --md --stamp
 
   # Custom version tag
@@ -45,9 +45,9 @@ Usage
 
 Flags
 ─────
-  --md          Read from MotherDuck prod (recommended for publication)
+  --md          Read from local DuckDB prod (recommended for publication)
   --dry-run     Inventory + validation only; no Parquet/CSV export
-  --stamp       Create versioned TABLE copies in MotherDuck (e.g. _freeze_v1)
+  --stamp       Create versioned TABLE copies in local DuckDB (e.g. _freeze_v1)
   --version TAG Freeze version tag (default: v1)
   --skip-data   Skip Parquet export; manifest + inventory only
 """
@@ -69,7 +69,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-PROD_DB = "thyroid_research_2026"
+PROD_DB = "thyroid_master.duckdb"
 TIMESTAMP_FMT = "%Y%m%d_%H%M"
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -176,19 +176,19 @@ def get_connection(use_md: bool):
     import duckdb
 
     if use_md:
-        token = os.environ.get("MOTHERDUCK_TOKEN")
+        token = os.environ.get("LOCAL_DB_PATH")
         if not token:
             try:
                 import toml
-                token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["MOTHERDUCK_TOKEN"]
-                os.environ["MOTHERDUCK_TOKEN"] = token
+                token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
+                os.environ["LOCAL_DB_PATH"] = token
             except Exception:
                 pass
         if not token:
-            log("MOTHERDUCK_TOKEN not found — falling back to local", "WARN")
+            log("LOCAL_DB_PATH not found — falling back to local", "WARN")
             return duckdb.connect(str(ROOT / "thyroid_master.duckdb"), read_only=True)
         return duckdb.connect(
-            f"md:{PROD_DB}?motherduck_token={token}", read_only=True
+            f"thyroid_master.duckdb", read_only=True
         )
     return duckdb.connect(str(ROOT / "thyroid_master.duckdb"), read_only=True)
 
@@ -197,17 +197,17 @@ def get_rw_connection():
     """Read-write connection for --stamp mode."""
     import duckdb
 
-    token = os.environ.get("MOTHERDUCK_TOKEN")
+    token = os.environ.get("LOCAL_DB_PATH")
     if not token:
         try:
             import toml
-            token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["MOTHERDUCK_TOKEN"]
-            os.environ["MOTHERDUCK_TOKEN"] = token
+            token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
+            os.environ["LOCAL_DB_PATH"] = token
         except Exception:
             pass
     if not token:
-        raise RuntimeError("MOTHERDUCK_TOKEN required for --stamp mode")
-    return duckdb.connect(f"md:{PROD_DB}?motherduck_token={token}")
+        raise RuntimeError("LOCAL_DB_PATH required for --stamp mode")
+    return duckdb.connect(f"thyroid_master.duckdb")
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -217,7 +217,7 @@ def get_rw_connection():
 def verify_environment(con, use_md: bool) -> dict:
     log("Phase A: Verify source environment")
     env_info: dict[str, Any] = {
-        "source_type": "motherduck_prod" if use_md else "local_duckdb",
+        "source_type": "local DuckDB_prod" if use_md else "local_duckdb",
         "expected_db": PROD_DB,
         "actual_db": "unknown",
         "is_prod": False,
@@ -477,13 +477,13 @@ def _duckdb_version() -> str:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Phase F: Stamp frozen copies in MotherDuck (optional)
+# Phase F: Stamp frozen copies in local DuckDB (optional)
 # ═══════════════════════════════════════════════════════════════════════════
 
 def stamp_frozen_copies(
     inventory: list[dict], version: str
 ) -> list[dict]:
-    log(f"Phase F: Stamp frozen copies in MotherDuck (suffix=_freeze_{version})")
+    log(f"Phase F: Stamp frozen copies in local DuckDB (suffix=_freeze_{version})")
     con = get_rw_connection()
     stamp_results: list[dict] = []
 
@@ -618,10 +618,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Manuscript publication freeze — snapshot critical tables"
     )
-    parser.add_argument("--md", action="store_true", help="Read from MotherDuck prod")
+    parser.add_argument("--md", action="store_true", help="Read from local DuckDB prod")
     parser.add_argument("--dry-run", action="store_true", help="Inventory only, no export")
     parser.add_argument("--stamp", action="store_true",
-                        help="Create frozen TABLE copies in MotherDuck with version suffix")
+                        help="Create frozen TABLE copies in local DuckDB with version suffix")
     parser.add_argument("--version", default="v1",
                         help="Freeze version tag (default: v1)")
     parser.add_argument("--skip-data", action="store_true",
@@ -633,7 +633,7 @@ def main() -> None:
     out_dir = ROOT / "exports" / f"manuscript_freeze_{version}"
 
     log(f"═══ Manuscript Publication Freeze — {version} ═══")
-    log(f"  Source: {'MotherDuck prod' if args.md else 'local DuckDB'}")
+    log(f"  Source: {'local DuckDB prod' if args.md else 'local DuckDB'}")
     log(f"  Mode: {'DRY RUN' if args.dry_run else 'FULL FREEZE'}")
     log(f"  Output: {out_dir.relative_to(ROOT)}")
     log(f"  Git SHA: {git_sha(short=True)} (dirty={git_dirty()})")

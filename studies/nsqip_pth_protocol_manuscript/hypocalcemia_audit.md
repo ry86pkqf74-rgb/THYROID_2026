@@ -94,7 +94,7 @@ LINKED FILE
            (filters to TC CPTs, surgery-level analysis)
            → Manuscript claim: 57/763 = 7.5%
 
-MotherDuck Tables (NOT used for this metric):
+local DuckDB Tables (NOT used for this metric):
   complications.hypocalcemia → ALL NULL (10,864 rows)
   extracted_hypocalcemia_refined_v2 → 82 patients (NLP-derived, different source)
   extracted_postop_labs_expanded_v1 → 559 patients with calcium, 5 < 7.5 mg/dL
@@ -263,7 +263,7 @@ IV calcium data are available for only 6.7% of the cohort — far too sparse for
 
 ---
 
-## 10. Institutional Data Cross-Check (MotherDuck)
+## 10. Institutional Data Cross-Check (local DuckDB)
 
 | Source | Hypocalcemia patients | Notes |
 |--------|----------------------|-------|

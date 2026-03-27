@@ -1,7 +1,7 @@
 # Provenance & Date-Linkage Audit Report
 
 **Generated:** 2026-03-13 07:51 UTC (updated 2026-03-13 post-hardening)  
-**Scope:** Full THYROID_2026 database (MotherDuck `thyroid_research_2026`)  
+**Scope:** Full THYROID_2026 database (local DuckDB `thyroid_master.duckdb`)  
 **Tables audited:** 514 distinct tables  
 **Verdict:** **SOURCE_DATE_LINKED** (upgraded from MOSTLY_SOURCE_DATE_LINKED)
 
@@ -203,7 +203,7 @@ correctly have NULL raw pathology fields. Effective fill rate among cancer patie
 | Script | Change |
 |--------|--------|
 | `scripts/48_build_analysis_resolved_layer.py` | Added `rai_dates` CTE (from `extracted_rai_validated_v1`), `braf_recovery` CTE, `mol_test_date_source`, `braf_detection_method`, `recurrence_date_source` columns; COALESCE RAI dates; expanded `braf_source` to tested-negative patients |
-| `scripts/26_motherduck_materialize_v2.py` | Added 6 provenance columns to `SURVIVAL_COHORT_ENRICHED_SQL`; joined `lineage_audit_v1`; updated cross-DB replacement for `lineage_audit_v1` → `md_lineage_audit_v1` |
+| `scripts/26_local DuckDB_materialize_v2.py` | Added 6 provenance columns to `SURVIVAL_COHORT_ENRICHED_SQL`; joined `lineage_audit_v1`; updated cross-DB replacement for `lineage_audit_v1` → `md_lineage_audit_v1` |
 
 ---
 

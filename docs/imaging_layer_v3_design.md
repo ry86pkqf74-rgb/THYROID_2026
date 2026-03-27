@@ -7,7 +7,7 @@ Generated: 2026-03-13
 ### `imaging_nodule_long_v2` (DEPRECATED)
 
 - Created by `scripts/22_canonical_episodes_v2.py`
-- 10,866 rows on MotherDuck
+- 10,866 rows on local DuckDB
 - **All data columns NULL** — tirads, composition, echogenicity, shape, margins,
   calcifications, size, location are entirely unpopulated
 - Functions as a schema stub only; no analytic value
@@ -17,7 +17,7 @@ Generated: 2026-03-13
 ### `imaging_nodule_master_v1` (CANONICAL)
 
 - Created by `scripts/50_multinodule_imaging.py`
-- 19,891 rows on MotherDuck
+- 19,891 rows on local DuckDB
 - Source: `raw_us_tirads_excel_v1` (from `COMPLETE_MULTI_SHEET_ULTRASOUND_REPORTS.xlsx`)
 - Unpivots up to 14 nodule groups per exam into long-format rows
 - Columns populated: `tirads_reported` (98.4%), `max_dimension_cm` (100%),
@@ -45,7 +45,7 @@ Dashboard modules updated (2026-03-13):
 `imaging_nodule_long_v2` retained in:
 - `scripts/22_canonical_episodes_v2.py` (creation)
 - `scripts/23_cross_domain_linkage_v2.py` (linkage UPDATE target)
-- `scripts/26_motherduck_materialize_v2.py` (materialization)
+- `scripts/26_local DuckDB_materialize_v2.py` (materialization)
 - `scripts/29_validation_engine.py` (validation checks)
 - `scripts/49_enhanced_linkage_v3.py` (fallback UNION)
 

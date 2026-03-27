@@ -13,7 +13,7 @@ Views created:
   5. operative_pathology_reconciliation_review_v2 -- op vs path mismatches
 
 Run after scripts 22 and 23.
-Supports --md flag for MotherDuck deployment.
+Supports --md flag for local DuckDB deployment.
 """
 from __future__ import annotations
 
@@ -403,20 +403,20 @@ ALL_RECON_SQL = [
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--md", action="store_true",
-                        help="Deploy to MotherDuck")
+                        help="Deploy to local DuckDB")
     args = parser.parse_args()
 
     section("24 -- Reconciliation Review v2")
 
     if args.md:
         try:
-            from motherduck_client import MotherDuckClient, MotherDuckConfig
-            cfg = MotherDuckConfig(database="thyroid_research_2026")
-            client = MotherDuckClient(cfg)
+            from local DuckDB_client import local DuckDBClient, local DuckDBConfig
+            cfg = local DuckDBConfig(database="thyroid_master.duckdb")
+            client = local DuckDBClient(cfg)
             con = client.connect_rw()
-            print("  Connected to MotherDuck (RW)")
+            print("  Connected to local DuckDB (RW)")
         except Exception as e:
-            print(f"  MotherDuck unavailable: {e}")
+            print(f"  local DuckDB unavailable: {e}")
             con = duckdb.connect(str(DB_PATH))
     else:
         con = duckdb.connect(str(DB_PATH))

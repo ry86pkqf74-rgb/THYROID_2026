@@ -61,7 +61,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--md", action="store_true",
-        help="Read from MotherDuck instead of local DuckDB",
+        help="Read from local DuckDB instead of local DuckDB",
     )
     args = parser.parse_args()
 
@@ -72,13 +72,13 @@ def main() -> None:
     if args.md:
         try:
             sys.path.insert(0, str(ROOT))
-            from motherduck_client import MotherDuckClient, MotherDuckConfig
-            cfg = MotherDuckConfig(database="thyroid_research_2026")
-            client = MotherDuckClient(cfg)
+            from local DuckDB_client import local DuckDBClient, local DuckDBConfig
+            cfg = local DuckDBConfig(database="thyroid_master.duckdb")
+            client = local DuckDBClient(cfg)
             con = client.connect_rw()
-            print("Source: MotherDuck (RW)")
+            print("Source: local DuckDB (RW)")
         except Exception as e:
-            print(f"MotherDuck unavailable: {e}")
+            print(f"local DuckDB unavailable: {e}")
             print("Falling back to local DuckDB")
             con = duckdb.connect(str(DB_PATH), read_only=True)
             print(f"Source: {DB_PATH}")

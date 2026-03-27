@@ -27,14 +27,14 @@ OUT_DIR = os.path.join("exports", "manuscript_analysis")
 def get_connection(md: bool):
     import duckdb
     if md:
-        token = os.environ.get("MOTHERDUCK_TOKEN") or ""
+        token = os.environ.get("LOCAL_DB_PATH") or ""
         if not token:
             try:
                 import toml
-                token = toml.load(".streamlit/secrets.toml").get("MOTHERDUCK_TOKEN", "")
+                token = toml.load(".streamlit/secrets.toml").get("LOCAL_DB_PATH", "")
             except Exception:
                 pass
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+        return duckdb.connect(f"thyroid_master.duckdb")
     return duckdb.connect(os.environ.get("LOCAL_DUCKDB_PATH", "thyroid_master.duckdb"))
 
 
@@ -67,7 +67,7 @@ def _safe_crosstab(df: pd.DataFrame, row_col: str, col_col: str) -> dict:
 def main():
     ap = argparse.ArgumentParser(description="Dataset summary for manuscript cohort")
     grp = ap.add_mutually_exclusive_group()
-    grp.add_argument("--md", action="store_true", help="Use MotherDuck")
+    grp.add_argument("--md", action="store_true", help="Use local DuckDB")
     grp.add_argument("--local", action="store_true", help="Use local DuckDB")
     ap.add_argument("--dry-run", action="store_true", help="Print plan only")
     args = ap.parse_args()
@@ -76,7 +76,7 @@ def main():
     con = get_connection(args.md)
 
     print(f"[59] Dataset summary  ts={TIMESTAMP}")
-    print(f"     target={'MotherDuck' if args.md else 'local DuckDB'}")
+    print(f"     target={'local DuckDB' if args.md else 'local DuckDB'}")
 
     src = _resolve_table(con, "manuscript_cohort_v1", [
         "md_manuscript_cohort_v1",

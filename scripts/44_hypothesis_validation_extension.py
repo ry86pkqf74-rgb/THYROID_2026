@@ -2,7 +2,7 @@
 """
 Hypothesis 1 & 2 — Full Validation, Sensitivity & Manuscript Extension
 =======================================================================
-Cross-checks saved cohort CSVs against live MotherDuck data, re-runs
+Cross-checks saved cohort CSVs against live local DuckDB data, re-runs
 every statistical model, adds PSM / E-value / interaction / subgroup /
 leave-one-out / KM-Cox analyses, and produces manuscript-ready outputs.
 
@@ -57,10 +57,10 @@ def get_connection(use_md: bool) -> duckdb.DuckDBPyConnection:
     if use_md:
         try:
             import toml
-            token = toml.load(".streamlit/secrets.toml")["MOTHERDUCK_TOKEN"]
+            token = toml.load(".streamlit/secrets.toml")["LOCAL_DB_PATH"]
         except Exception:
-            token = os.getenv("MOTHERDUCK_TOKEN", "")
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+            token = os.getenv("LOCAL_DB_PATH", "")
+        return duckdb.connect(f"thyroid_master.duckdb")
     return duckdb.connect("thyroid_master_local.duckdb")
 
 
@@ -429,7 +429,7 @@ def step1_data_validation(con):
 # ═══════════════════════════════════════════════════════════════════════════
 
 def step2_statistical_confirmation(h1, h2, con):
-    rpt("\n\n# STEP 2: STATISTICAL CONFIRMATION (live MotherDuck)")
+    rpt("\n\n# STEP 2: STATISTICAL CONFIRMATION (live local DuckDB)")
     rpt("=" * 70)
 
     results = {}
@@ -970,7 +970,7 @@ def step4_deeper_explorations(h1, h2, con, sens_results):
     methods_text = """
 ### Methods Update (Validation & Sensitivity)
 
-All analyses were reproduced against live MotherDuck server-side data to verify
+All analyses were reproduced against live local DuckDB server-side data to verify
 concordance with the initial cohort extraction. FDR correction (Benjamini-Hochberg)
 was applied across all hypothesis tests jointly. For Hypothesis 1, propensity score
 matching (1:1 nearest-neighbor, caliper = 0.2 × SD) was performed on age, tumor size,
@@ -992,7 +992,7 @@ demographic strata.
     results_text = f"""
 ### Results Paragraph (Validation & Sensitivity)
 
-Data extraction was fully concordant between the saved cohort CSVs and live MotherDuck
+Data extraction was fully concordant between the saved cohort CSVs and live local DuckDB
 queries. All primary statistical results reproduced within tolerance (p-value delta < 0.01
 for all tests). After FDR correction, all originally significant associations remained
 significant.
@@ -1052,7 +1052,7 @@ def main():
     rpt("=" * 70)
     rpt("HYPOTHESIS 1 & 2 — FULL VALIDATION, SENSITIVITY & EXTENSION")
     rpt(f"Date: {datetime.now().isoformat()}")
-    rpt(f"Data source: {'MotherDuck' if use_md else 'local DuckDB'}")
+    rpt(f"Data source: {'local DuckDB' if use_md else 'local DuckDB'}")
     rpt("=" * 70)
 
     con = get_connection(use_md)

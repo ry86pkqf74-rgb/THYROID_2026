@@ -1,7 +1,7 @@
 # Operative NLP Propagation Audit — 20260315
 
 Generated: 2026-03-15T02:02:08.682542
-Source: MotherDuck `thyroid_research_2026` (prod)
+Source: local DuckDB `thyroid_master.duckdb` (prod)
 
 ## Summary
 

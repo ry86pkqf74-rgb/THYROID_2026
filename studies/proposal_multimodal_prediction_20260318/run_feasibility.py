@@ -2,7 +2,7 @@
 """
 Multimodal Thyroid Cancer Prediction – Feasibility & Statistics Pack
 ====================================================================
-Reads canonical tables from MotherDuck (read-only) and produces all
+Reads canonical tables from local DuckDB (read-only) and produces all
 deliverables for the next-paper proposal.
 
 Usage:
@@ -22,7 +22,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
 
-from motherduck_client import MotherDuckClient  # noqa: E402
+from local DuckDB_client import local DuckDBClient  # noqa: E402
 
 OUT = Path(__file__).resolve().parent
 QUERY_LOG: list[str] = []
@@ -653,7 +653,7 @@ def build_data_dict() -> str:
         lines.append(f"| {var} | {desc} | {vtype} |")
     lines.append("\n## Caveats\n")
     lines.append("- `first_recurrence_date`: Only 2.7% exact-source dates; 88.8% unresolved. Not suitable for precise time-to-event analysis without further adjudication.")
-    lines.append("- Boolean flags from MotherDuck may arrive as text 'true'/'false'; coerced to Python bool in dataset.")
+    lines.append("- Boolean flags from local DuckDB may arrive as text 'true'/'false'; coerced to Python bool in dataset.")
     lines.append("- `imaging_nodule_long_v2` is deprecated; `imaging_nodule_master_v1` and `imaging_patient_summary_v1` used instead.")
     lines.append("- No PHI or full note text is included in any deliverable.")
     return "\n".join(lines)
@@ -786,10 +786,10 @@ def main():
     print("Multimodal Thyroid Cancer Prediction — Feasibility Pack")
     print("=" * 70)
 
-    # Connect read-only to MotherDuck production
-    client = MotherDuckClient.for_env("prod")
+    # Connect read-only to local DuckDB production
+    client = local DuckDBClient.for_env("prod")
     con = client.connect_rw()
-    print(f"Connected to MotherDuck (token mode: {__import__('motherduck_client').token_mode()})")
+    print(f"Connected to local DuckDB (token mode: {__import__('local DuckDB_client').token_mode()})")
 
     # 1. Schema Inventory
     print("\n[1/9] Schema inventory...")

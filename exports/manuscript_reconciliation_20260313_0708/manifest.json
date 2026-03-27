@@ -15,5 +15,5 @@
     "val_recon_metric_consistency_v1",
     "val_recon_status_v1"
   ],
-  "connection": "motherduck"
+  "connection": "local DuckDB"
 }

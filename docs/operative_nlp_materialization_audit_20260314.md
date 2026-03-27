@@ -100,7 +100,7 @@ lower bounds, not prevalences.
 
 ## Validation Table
 
-`val_operative_coverage_v2` created (MotherDuck) with 2 rows:
+`val_operative_coverage_v2` created (local DuckDB) with 2 rows:
 1. `operative_episode_detail_v2`: episode-level field counts  
 2. `note_entities_procedures`: NLP supplement counts
 

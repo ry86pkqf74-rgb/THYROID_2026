@@ -8,13 +8,13 @@
 
 ## 1. Purpose
 
-This document establishes the governance rules for the THYROID_2026 canonical metrics registry. It ensures that every number cited in manuscripts, dashboards, release notes, and supplement tables originates from a **single, version-controlled, MotherDuck-verified** source of truth.
+This document establishes the governance rules for the THYROID_2026 canonical metrics registry. It ensures that every number cited in manuscripts, dashboards, release notes, and supplement tables originates from a **single, version-controlled, local DuckDB-verified** source of truth.
 
 ## 2. Architecture
 
 ```
 ┌────────────────────────────┐
-│  MotherDuck (prod)         │
+│  local DuckDB (prod)         │
 │  canonical_metrics_        │
 │  registry_v1               │ ← Single table, ~40 metrics
 └───────────┬────────────────┘
@@ -88,7 +88,7 @@ When a metric's `use_tier` is changed to `prohibited`, all consumers must be aud
 
 ### 5.1 Continuous Checks
 
-`check_metric_drift()` in `100_canonical_metrics_registry.py` compares live MotherDuck values against the materialized registry:
+`check_metric_drift()` in `100_canonical_metrics_registry.py` compares live local DuckDB values against the materialized registry:
 
 - **tolerance:** 1% for row-count metrics, 0% for molecular flags
 - **PASS:** within tolerance

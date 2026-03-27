@@ -2,7 +2,7 @@
 
 ## Problem
 
-`imaging_nodule_master_v1` had **0 rows** on MotherDuck despite
+`imaging_nodule_master_v1` had **0 rows** on local DuckDB despite
 `raw_us_tirads_excel_v1` containing 19,891 source rows (Phase 12 TIRADS
 Excel ingestion). The final verification report flagged the imaging domain as
 **NOT VERIFIED** with a CRITICAL risk rating.
@@ -13,7 +13,7 @@ Script 50 (`50_multinodule_imaging.py`) expected the raw TIRADS source to be
 in **wide format** (one row per patient with columns like `TI_RADS`,
 `Nodule 2 Composition`, etc.), matching the original Excel layout. However,
 the Phase 12 engine (`extraction_audit_engine_v10.py`) had already unpivoted
-and normalized the data before uploading to MotherDuck, producing a
+and normalized the data before uploading to local DuckDB, producing a
 **long-format** schema with columns like `composition_norm`,
 `tirads_reported`, `nodule_length_mm`, and `nodule_number`.
 
@@ -28,7 +28,7 @@ Added a schema detection path (`_is_normalized_long_format` +
 `_build_from_normalized_long`) that recognizes the Phase 12 normalized
 schema and maps directly:
 
-| MotherDuck column      | imaging_nodule_master_v1 column |
+| local DuckDB column      | imaging_nodule_master_v1 column |
 |------------------------|---------------------------------|
 | `tirads_reported`      | `tirads_reported`               |
 | `tirads_recalculated`  | `tirads_acr_recalculated`       |

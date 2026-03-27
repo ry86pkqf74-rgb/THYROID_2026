@@ -1,7 +1,7 @@
 # completion_logic_trace — independent audit
 
 **Audit UTC tag:** 20260327
-**Token mode:** secrets.toml:MOTHERDUCK_TOKEN
+**Token mode:** secrets.toml:LOCAL_DB_PATH
 **Patient cohort:** `studies/proposal_2to4cm_extent_molecular_20260326/patient_level_dataset.csv` (primary preop 2–4 cm, strict LN exclusion)
 
 ## 1. Repository logic (verified in code)

@@ -274,7 +274,7 @@ def render_diagnostics(con) -> None:
         "8. `scripts/23_cross_domain_linkage_v2.py [--md]`",
         "9. `scripts/24_reconciliation_review_v2.py [--md]`",
         "10. `scripts/25_qa_validation_v2.py [--md]`",
-        "11. `scripts/26_motherduck_materialize_v2.py [--md]`",
+        "11. `scripts/26_local DuckDB_materialize_v2.py [--md]`",
         "12. `scripts/27_date_provenance_formalization.sql`",
         "",
         "**Validation & Export:**",

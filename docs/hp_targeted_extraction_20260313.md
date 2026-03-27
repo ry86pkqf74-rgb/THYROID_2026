@@ -120,7 +120,7 @@ Evidence spans are truncated to 80 chars for PHI safety.
 
 ## Deliverables
 
-### MotherDuck Tables
+### local DuckDB Tables
 1. `extracted_smoking_status_v1` — per-mention smoking extraction
 2. `extracted_bmi_v1` — per-mention BMI extraction
 3. `patient_smoking_status_summary_v1` — one row per patient

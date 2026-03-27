@@ -838,12 +838,12 @@ def main() -> None:
 
     print("=" * 80)
     print("  GAP REMEDIATION — Molecular / RAI / Histology")
-    print("  Mode: " + ("MotherDuck" if args.md else "Local DuckDB"))
+    print("  Mode: " + ("local DuckDB" if args.md else "Local DuckDB"))
     print("=" * 80)
 
     if args.md:
-        from motherduck_client import MotherDuckClient
-        client = MotherDuckClient()
+        from local DuckDB_client import local DuckDBClient
+        client = local DuckDBClient()
         con = client.connect_rw()
     else:
         con = duckdb.connect(str(DB_PATH))

@@ -6,9 +6,9 @@ This supplement aligns narrative **only** with code and exports in `studies/prop
 
 ## 1. Data extraction
 
-### 1.1 MotherDuck access pattern
+### 1.1 local DuckDB access pattern
 
-`study_pipeline.py` defines `connect()` as `MotherDuckClient(MotherDuckConfig()).connect_rw()` and issues **SELECT** queries for cohort construction. For this manuscript preparation pass, **no** `CREATE`, `ALTER`, `INSERT`, or `DELETE` were required or executed by the authors of these markdown files; numerical results were read from **exported** CSV/JSON in this folder. Optional read-only verification may use `MotherDuckClient.connect_ro_share()` elsewhere in the repo.
+`study_pipeline.py` defines `connect()` as `local DuckDBClient(local DuckDBConfig()).connect_rw()` and issues **SELECT** queries for cohort construction. For this manuscript preparation pass, **no** `CREATE`, `ALTER`, `INSERT`, or `DELETE` were required or executed by the authors of these markdown files; numerical results were read from **exported** CSV/JSON in this folder. Optional read-only verification may use `local DuckDBClient.connect_ro_share()` elsewhere in the repo.
 
 ### 1.2 Core tables queried
 

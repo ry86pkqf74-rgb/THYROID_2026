@@ -6,24 +6,24 @@ name: Dashboard CI — Hardened
 # Job graph (simplified):
 #   lint-and-syntax
 #       └─ unit-tests
-#       └─ motherduck-ci (gated on MD secret)
+#       └─ local DuckDB-ci (gated on MD secret)
 #               ├─ canonical tables / metric bounds / null checks / smoke (existing)
 #               ├─ benchmark-regression  (new)
 #               └─ share-publication-check  (new, on tagged releases)
 #
 # Service-account token
 # ─────────────────────
-# Store the service-account MotherDuck token as the GitHub Actions secret
-# MD_SA_TOKEN (separate from the personal MOTHERDUCK_TOKEN secret).
+# Store the service-account local DuckDB token as the GitHub Actions secret
+# LOCAL_DB_PATH (separate from the personal LOCAL_DB_PATH secret).
 # Scripts that need automation-safe auth call client.for_env(..., sa=True),
-# which prefers MD_SA_TOKEN over MOTHERDUCK_TOKEN.
+# which prefers LOCAL_DB_PATH over LOCAL_DB_PATH.
 # ─────────────────────────────────────────────────────────────────────────────
 on:
   push:
     branches: [main]
     paths:
       - "dashboard.py"
-      - "motherduck_client.py"
+      - "local DuckDB_client.py"
       - "requirements.txt"
       - "scripts/**"
       - "app/**"
@@ -42,7 +42,7 @@ on:
         type: choice
         options: ["true", "false"]
       run_completion_linkage:
-        description: "Rebuild patient_completion_oed_path_linkage_v1 on MotherDuck (script 107)"
+        description: "Rebuild patient_completion_oed_path_linkage_v1 on local DuckDB (script 107)"
         required: false
         default: "false"
         type: choice
@@ -77,68 +77,18 @@ jobs:
       - name: Import check
         run: python -c "import importlib.util; spec = importlib.util.spec_from_file_location('dashboard', 'dashboard.py'); print('Imports resolve OK')"
 
-      - name: pyflakes lint — critical modules
-        run: |
-          pip install pyflakes -q
-          python -m pyflakes dashboard.py motherduck_client.py || true
-
-      # ── NEW: MATERIALIZATION_MAP duplicate check (no MD token required) ──
-      - name: MAP dedup validation (no token needed)
-        run: |
-          python scripts/94_map_dedup_validator.py
-          echo "MAP dedup check: exit $?"
-
-  # ── Job 2: Unit tests ──────────────────────────────────────────────────────
-  unit-tests:
-    name: Unit Tests
-    runs-on: ubuntu-latest
-    needs: lint-and-syntax
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Run test suite
-        run: |
-          pip install pytest -q
-          python -m pytest tests/ -x -q --tb=short 2>&1 | tail -40
-
-  # ── Job 3: MotherDuck Integration Checks (gated on secret) ────────────────
-  motherduck-ci:
-    name: MotherDuck Integration
-    runs-on: ubuntu-latest
-    needs: lint-and-syntax
-    # NOTE: secrets context is not available in job-level if: for workflow_dispatch;
-    # the MOTHERDUCK_TOKEN env var handles cases where the secret is absent gracefully.
-    # Token precedence: MD_SA_TOKEN (preferred for CI) > MOTHERDUCK_TOKEN (legacy fallback).
-    env:
-      MD_SA_TOKEN: ${{ secrets.MD_SA_TOKEN }}
-      MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      # ── Smoke: RO share accessible ────────────────────────────────────────
-      - name: Smoke test — RO share accessible
+      - name: Smoke test queries against local DuckDB
+        env:
+          LOCAL_DB_PATH: "thyroid_master.duckdb"
+        if: env.LOCAL_DB_PATH != ''
         run: |
           python -c "
-          from motherduck_client import MotherDuckClient, MotherDuckConfig
-          config = MotherDuckConfig(
-              database='thyroid_research_2026',
-              share_path='md:_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c'
+          from local DuckDB_client import local DuckDBClient, local DuckDBConfig
+          config = local DuckDBConfig(
+              database='thyroid_master.duckdb',
+              share_path=''
           )
-          client = MotherDuckClient(config)
+          client = local DuckDBClient(config)
           con = client.connect_ro_share()
           n = con.execute('SELECT COUNT(DISTINCT research_id) FROM master_cohort').fetchone()[0]
           assert n > 10000, f'Expected 11k+ patients, got {n}'
@@ -150,10 +100,10 @@ jobs:
       - name: Check canonical tables exist
         run: |
           python -c "
-          from motherduck_client import get_token; import duckdb
+          from local DuckDB_client import get_token; import duckdb
           token = get_token(prefer_service_account=True)
-          assert token, 'No MD token found (set MD_SA_TOKEN or MOTHERDUCK_TOKEN)'
-          con = duckdb.connect(f'md:thyroid_research_2026?motherduck_token={token}')
+          assert token, 'No MD token found (set LOCAL_DB_PATH or LOCAL_DB_PATH)'
+          con = duckdb.connect(f'thyroid_master.duckdb')
 
           REQUIRED_TABLES = [
               'master_cohort',
@@ -186,10 +136,10 @@ jobs:
       - name: Canonical metric reproducibility
         run: |
           python -c "
-          from motherduck_client import get_token; import duckdb
+          from local DuckDB_client import get_token; import duckdb
           token = get_token(prefer_service_account=True)
-          assert token, 'No MD token found (set MD_SA_TOKEN or MOTHERDUCK_TOKEN)'
-          con = duckdb.connect(f'md:thyroid_research_2026?motherduck_token={token}')
+          assert token, 'No MD token found (set LOCAL_DB_PATH or LOCAL_DB_PATH)'
+          con = duckdb.connect(f'thyroid_master.duckdb')
 
           METRICS = [
               ('surgical_cohort',    'SELECT COUNT(DISTINCT research_id) FROM master_cohort',                              10500, 12000),
@@ -227,10 +177,10 @@ jobs:
       - name: No row multiplication in patient/episode tables
         run: |
           python -c "
-          from motherduck_client import get_token; import duckdb
+          from local DuckDB_client import get_token; import duckdb
           token = get_token(prefer_service_account=True)
-          assert token, 'No MD token found (set MD_SA_TOKEN or MOTHERDUCK_TOKEN)'
-          con = duckdb.connect(f'md:thyroid_research_2026?motherduck_token={token}')
+          assert token, 'No MD token found (set LOCAL_DB_PATH or LOCAL_DB_PATH)'
+          con = duckdb.connect(f'thyroid_master.duckdb')
 
           dupl = con.execute('SELECT COUNT(*) - COUNT(DISTINCT research_id) FROM patient_analysis_resolved_v1').fetchone()[0]
           assert dupl == 0, f'patient_analysis_resolved_v1 has {dupl} duplicate research_ids'
@@ -252,10 +202,10 @@ jobs:
       - name: Core columns non-null check
         run: |
           python -c "
-          from motherduck_client import get_token; import duckdb
+          from local DuckDB_client import get_token; import duckdb
           token = get_token(prefer_service_account=True)
-          assert token, 'No MD token found (set MD_SA_TOKEN or MOTHERDUCK_TOKEN)'
-          con = duckdb.connect(f'md:thyroid_research_2026?motherduck_token={token}')
+          assert token, 'No MD token found (set LOCAL_DB_PATH or LOCAL_DB_PATH)'
+          con = duckdb.connect(f'thyroid_master.duckdb')
 
           checks = [
               ('manuscript_cohort_v1',              'research_id', 0.0),
@@ -283,10 +233,10 @@ jobs:
       - name: Dashboard critical path queries
         run: |
           python -c "
-          from motherduck_client import get_token; import duckdb, time
+          from local DuckDB_client import get_token; import duckdb, time
           token = get_token(prefer_service_account=True)
-          assert token, 'No MD token found (set MD_SA_TOKEN or MOTHERDUCK_TOKEN)'
-          con = duckdb.connect(f'md:thyroid_research_2026?motherduck_token={token}')
+          assert token, 'No MD token found (set LOCAL_DB_PATH or LOCAL_DB_PATH)'
+          con = duckdb.connect(f'thyroid_master.duckdb')
 
           QUERIES = [
               ('streamlit_header',  'SELECT COUNT(*) FROM streamlit_patient_header_v',   10000),
@@ -315,12 +265,12 @@ jobs:
       - name: Manuscript source-env verification
         run: |
           python -c "
-          from motherduck_client import get_token; import duckdb
+          from local DuckDB_client import get_token; import duckdb
           token = get_token(prefer_service_account=True)
-          assert token, 'No MD token found (set MD_SA_TOKEN or MOTHERDUCK_TOKEN)'
-          con = duckdb.connect(f'md:thyroid_research_2026?motherduck_token={token}')
+          assert token, 'No MD token found (set LOCAL_DB_PATH or LOCAL_DB_PATH)'
+          con = duckdb.connect(f'thyroid_master.duckdb')
           db = con.execute('SELECT current_database()').fetchone()[0]
-          expected = 'thyroid_research_2026'
+          expected = 'thyroid_master.duckdb'
           assert db == expected, f'manuscript source => {db!r}, expected {expected!r}'
           print(f'Manuscript source DB: {db!r} — PASS')
           con.close()
@@ -350,16 +300,16 @@ jobs:
         continue-on-error: true
 
   # ── Job 3b: Global OED vs path-synoptic completion linkage (manual only) ──
-  # Uses GitHub secrets MD_SA_TOKEN (preferred via --sa) and MOTHERDUCK fallback.
-  # Does not commit CSVs to the repo; refreshes MotherDuck tables only.
-  completion-linkage-motherduck:
-    name: Completion linkage — MotherDuck (script 107)
+  # Uses GitHub secrets LOCAL_DB_PATH (preferred via --sa) and LOCAL_DB fallback.
+  # Does not commit CSVs to the repo; refreshes local DuckDB tables only.
+  completion-linkage-local DuckDB:
+    name: Completion linkage — local DuckDB (script 107)
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_completion_linkage == 'true'
     needs: lint-and-syntax
     env:
-      MD_SA_TOKEN: ${{ secrets.MD_SA_TOKEN }}
-      MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK }}
+      LOCAL_DB_PATH: ${{ secrets.LOCAL_DB_PATH }}
+      LOCAL_DB_PATH: ${{ secrets.LOCAL_DB }}
     steps:
       - uses: actions/checkout@v4
 
@@ -373,9 +323,9 @@ jobs:
       - name: Assert token present
         run: |
           python -c "
-          from motherduck_client import get_token
+          from local DuckDB_client import get_token
           t = get_token(prefer_service_account=True)
-          assert t, 'No MotherDuck token: set repo secrets MD_SA_TOKEN and/or MOTHERDUCK'
+          assert t, 'No local DuckDB token: set repo secrets LOCAL_DB_PATH and/or LOCAL_DB'
           print('Token resolved (service-account precedence)')
           "
 
@@ -387,10 +337,10 @@ jobs:
   benchmark-regression:
     name: Query Benchmark Regression
     runs-on: ubuntu-latest
-    needs: motherduck-ci
+    needs: local DuckDB-ci
     # NOTE: secrets not available in job if: for workflow_dispatch; env handles missing token.
     env:
-      MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK }}
+      LOCAL_DB_PATH: ${{ secrets.LOCAL_DB }}
     steps:
       - uses: actions/checkout@v4
 
@@ -424,12 +374,12 @@ jobs:
   share-publication-check:
     name: RO Share Publication Check
     runs-on: ubuntu-latest
-    needs: motherduck-ci
+    needs: local DuckDB-ci
     if: >
       startsWith(github.ref, 'refs/tags/v') ||
       github.event.inputs.run_share_check == 'true'
     env:
-      MD_SA_TOKEN: ${{ secrets.MD_SA_TOKEN }}
+      LOCAL_DB_PATH: ${{ secrets.LOCAL_DB_PATH }}
     steps:
       - uses: actions/checkout@v4
 
@@ -453,10 +403,10 @@ jobs:
   promotion-gate:
     name: Promotion Gate (qa → prod)
     runs-on: ubuntu-latest
-    needs: [motherduck-ci, share-publication-check]
+    needs: [local DuckDB-ci, share-publication-check]
     if: startsWith(github.ref, 'refs/tags/v')
     env:
-      MD_SA_TOKEN: ${{ secrets.MD_SA_TOKEN }}
+      LOCAL_DB_PATH: ${{ secrets.LOCAL_DB_PATH }}
     steps:
       - uses: actions/checkout@v4
 

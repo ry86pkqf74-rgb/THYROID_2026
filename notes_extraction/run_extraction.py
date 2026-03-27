@@ -2,8 +2,8 @@
 """
 run_extraction.py — Run all entity extractors on clinical_notes_long
 
-MotherDuck does not run extraction: it stores tables uploaded from this
-repo (e.g. scripts/09b_motherduck_upload_notes_entities.py).
+local DuckDB does not run extraction: it stores tables uploaded from this
+repo (e.g. scripts/09b_local DuckDB_upload_notes_entities.py).
 
 Loads processed/clinical_notes_long.parquet, applies regex (and optionally
 LLM) extractors, and writes one parquet per entity domain:

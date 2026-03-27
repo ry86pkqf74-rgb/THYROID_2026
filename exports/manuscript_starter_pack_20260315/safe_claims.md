@@ -1,7 +1,7 @@
 # Safe Claims — THYROID_2026 Manuscript
 
 **Generated:** 2026-03-15  
-**Source:** Verified against MotherDuck production (20/20 critical table counts PASS)  
+**Source:** Verified against local DuckDB production (20/20 critical table counts PASS)  
 **Rule:** Every number below is sourced from a frozen table with a documented SQL fragment in the metric registry. Authors may cite these directly without additional verification.
 
 ---

@@ -38,13 +38,13 @@
 
 - **Static CSV checks:** Row count **558** for `patient_level_dataset.csv`; **238** lobectomy / **320** total; **635** broad cohort with **375** total; **20** preoperative molecular tests; symmetric ID validation **0** mismatch in `validation_report.md` (source file).
 - **Figure linkage:** `manuscript_submission_v1.md` cites **publication** figures (`fig1_cohort_flow_publication.*`, `fig2_forest_primary_publication.*`); legends in **`figure_legends_v2.md`**. Legacy rasters remain for replication.
-- **`study_pipeline.py`:** Inspection (prior notes) confirms **SELECT**-only MotherDuck use for cohort build in reviewed paths; **local** CSV writes in `run()`. **This authoring pass did not execute `study_pipeline.py`.**
+- **`study_pipeline.py`:** Inspection (prior notes) confirms **SELECT**-only local DuckDB use for cohort build in reviewed paths; **local** CSV writes in `run()`. **This authoring pass did not execute `study_pipeline.py`.**
 
 **If a future refresh is run:** record new `analysis_manifest.json` `run_utc` and `git_sha`; regenerate all dependent CSVs and figures; update `CLAIM_SOURCE_LEDGER.md` if any number shifts.
 
-### Read-only MotherDuck spot-check (historical note in prior package)
+### Read-only local DuckDB spot-check (historical note in prior package)
 
-Using `MotherDuckClient.connect_ro_share()` (prod) with qualified table `thyroid_share.operative_episode_detail_v2`, count of rows matching cohort `research_id` list with `procedure_normalized IN ('hemithyroidectomy','total_thyroidectomy')` was **559**, matching `validation_report.md` (`operative_rows_over_cohort_ids` ratio **1.0018** for **558** patients). **No writes** were executed.
+Using `local DuckDBClient.connect_ro_share()` (prod) with qualified table `thyroid_share.operative_episode_detail_v2`, count of rows matching cohort `research_id` list with `procedure_normalized IN ('hemithyroidectomy','total_thyroidectomy')` was **559**, matching `validation_report.md` (`operative_rows_over_cohort_ids` ratio **1.0018** for **558** patients). **No writes** were executed.
 
 ---
 

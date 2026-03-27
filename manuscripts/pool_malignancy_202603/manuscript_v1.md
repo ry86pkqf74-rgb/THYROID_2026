@@ -39,7 +39,7 @@ Here we report a propensity-score matched analysis of 6,630 thyroid cancer patie
 - N=11,673 patients who underwent thyroid surgery
 - Analytic cohort: N=6,630 with complete risk stratification data from `risk_enriched_mv`
 - Inclusion: confirmed thyroid malignancy, known ETE status, adequate follow-up
-- Data stored in THYROID_2026 research lakehouse (DuckDB/MotherDuck)
+- Data stored in THYROID_2026 research lakehouse (DuckDB/local DuckDB)
 
 ### 2.2 Data Sources and Variables
 

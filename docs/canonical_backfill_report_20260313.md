@@ -19,7 +19,7 @@ the canonical episode layer.
 | 6 | `imaging_nodule_long_v2.linked_fna_episode_id` | `imaging_fna_linkage_v3` (score_rank=1) |
 
 Additionally: added `episode_analysis_resolved_v1_dedup` and
-`manuscript_cohort_v1` to `scripts/26_motherduck_materialize_v2.py`
+`manuscript_cohort_v1` to `scripts/26_local DuckDB_materialize_v2.py`
 MATERIALIZATION_MAP.
 
 ## Results — Before / After

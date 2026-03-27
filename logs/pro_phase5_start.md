@@ -2,11 +2,11 @@
 
 _Generated: 2026-03-12_
 
-## MotherDuck Business Pro Connection
+## local DuckDB Business Pro Connection
 
 - **Status:** Connected
 - **DuckDB version:** 1.4.4
-- **Database:** thyroid_research_2026
+- **Database:** thyroid_master.duckdb
 
 ## Baseline Counts
 
@@ -77,6 +77,6 @@ _Generated: 2026-03-12_
 ## Plan
 1. Build `extraction_audit_engine_v3.py` with new parser classes
 2. Execute each variable in priority order with intrinsic evaluation
-3. Materialize refined tables to MotherDuck
+3. Materialize refined tables to local DuckDB
 4. Update staging flags, advanced features, and validation
 5. Re-run H1/H2 sensitivity

@@ -26,8 +26,8 @@ STUDY_DIR = REPO / "studies" / "nsqip_linkage"
 STUDY_DIR.mkdir(parents=True, exist_ok=True)
 
 import duckdb
-token = os.getenv("MOTHERDUCK_TOKEN")
-con = duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+token = os.getenv("LOCAL_DB_PATH")
+con = duckdb.connect(f"thyroid_master.duckdb")
 
 # ════════════════════════════════════════════════════════════════════
 # PART A: Recover 2 additional matches, finalize linkage

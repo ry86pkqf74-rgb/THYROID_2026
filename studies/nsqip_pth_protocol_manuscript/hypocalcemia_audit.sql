@@ -161,9 +161,9 @@ SELECT
 FROM nsqip_tc;
 
 -- =============================================================================
--- QUERY 9: MotherDuck institutional cross-check
+-- QUERY 9: local DuckDB institutional cross-check
 -- =============================================================================
--- Run against MotherDuck:
+-- Run against local DuckDB:
 -- SELECT COUNT(DISTINCT research_id) FROM complications WHERE hypocalcemia IS NOT NULL;
 -- Expected: 0 (all NULL)
 

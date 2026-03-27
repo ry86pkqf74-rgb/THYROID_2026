@@ -1,6 +1,6 @@
 # Methods & Results — Molecular Utilization (ThyroSeq vs Afirma, Bethesda III–V)
 
-**Design:** Retrospective descriptive study using the institutional THYROID_2026 lakehouse (`thyroid_research_2026`, tag `v2026.03.13`). No formal hypothesis tests; counts and percentages only.
+**Design:** Retrospective descriptive study using the institutional THYROID_2026 lakehouse (`thyroid_master.duckdb`, tag `v2026.03.13`). No formal hypothesis tests; counts and percentages only.
 
 **Study design (editorial).** The **primary** manuscript is **Bethesda III/IV–centric**: utilization and result-mix denominators should be defined on **all-eligible** and **tested** cohort shells **without** requiring surgery or `histology_final`. **Bethesda V** and **operated+histology** subsets are **secondary/exploratory** (ROM, procedure mix); the prior operated-only spine (`indeterminate_molecular_cohort_v1`, *N* = 641 Bethesda III–V with surgery and histology) remains a **prespecified sensitivity** shell—not the sole primary population. See **`STUDY_DESIGN_EDITORIAL.md`** for exact cohort shells, denominator logic, table/figure list, and non-causal limitations language.
 
@@ -8,7 +8,7 @@
 
 ## Methods (skeleton)
 
-**Cohort.** *Legacy operated-and-histology row (sensitivity / ROM shell):* Adults were included if they appeared in `manuscript_cohort_v1` with **Bethesda category III, IV, or V** on the resolved cytology layer (`fna_bethesda_final` ∈ {3, 4, 5}), a non-missing **first surgery date** (`surg_first_date`), and a non-empty **final surgical histology string** (`histology_final`). This yields a **patient-level** analytic file (`indeterminate_molecular_cohort_v1`, *N* = 641 in the March 2026 MotherDuck snapshot). *Primary utilization cohort:* **Bethesda III or IV** in `manuscript_cohort_v1` **without** requiring surgery/histology; refresh *N* in SQL after view split (see editorial doc).
+**Cohort.** *Legacy operated-and-histology row (sensitivity / ROM shell):* Adults were included if they appeared in `manuscript_cohort_v1` with **Bethesda category III, IV, or V** on the resolved cytology layer (`fna_bethesda_final` ∈ {3, 4, 5}), a non-missing **first surgery date** (`surg_first_date`), and a non-empty **final surgical histology string** (`histology_final`). This yields a **patient-level** analytic file (`indeterminate_molecular_cohort_v1`, *N* = 641 in the March 2026 local DuckDB snapshot). *Primary utilization cohort:* **Bethesda III or IV** in `manuscript_cohort_v1` **without** requiring surgery/histology; refresh *N* in SQL after view split (see editorial doc).
 
 **Index nodule size.** Size strata used `COALESCE(path_tumor_size_cm, imaging_nodule_size_cm)` from the manuscript layer; missing sizes labeled **Unknown**.
 
@@ -26,7 +26,7 @@
 
 ## Results (skeleton)
 
-*Replace bracketed numbers after refreshing MotherDuck.*
+*Replace bracketed numbers after refreshing local DuckDB.*
 
 - The operated Bethesda III–V cohort with documented final histology comprised **641** patients; **69 (10.8%)** had at least one **preoperative** ThyroSeq or Afirma result (**Table 1**).
 - Utilization by **surgery year** and Bethesda category is summarized in **Table 1a**; **size** and **era** stratifications appear in **Table 1b–c** (exports under `outputs/`).

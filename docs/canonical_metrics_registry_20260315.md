@@ -110,7 +110,7 @@
 
 | ID | Name | Value | Use Tier | Source Table | Limitation |
 |---|---|---|---|---|---|
-| `motherduck_table_count` | MotherDuck Table Count | **629** | descriptive | `information_schema.tables` | — |
+| `local DuckDB_table_count` | local DuckDB Table Count | **629** | descriptive | `information_schema.tables` | — |
 
 ### Demographics
 

@@ -1,4 +1,4 @@
-"""Validation Engine tab — MotherDuck-native data quality dashboard.
+"""Validation Engine tab — local DuckDB-native data quality dashboard.
 
 Surfaces adjudication confirmations, chronology anomalies,
 missing-but-derivable fields, unlinked-but-linkable events,

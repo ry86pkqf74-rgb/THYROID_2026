@@ -35,10 +35,10 @@ def get_connection(use_md: bool) -> duckdb.DuckDBPyConnection:
     if use_md:
         try:
             import toml
-            token = toml.load(".streamlit/secrets.toml")["MOTHERDUCK_TOKEN"]
+            token = toml.load(".streamlit/secrets.toml")["LOCAL_DB_PATH"]
         except Exception:
-            token = os.getenv("MOTHERDUCK_TOKEN", "")
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+            token = os.getenv("LOCAL_DB_PATH", "")
+        return duckdb.connect(f"thyroid_master.duckdb")
     return duckdb.connect("thyroid_master_local.duckdb")
 
 
@@ -551,7 +551,7 @@ def plot_weight_by_race_sex(df: pd.DataFrame) -> None:
 
 def main():
     parser = argparse.ArgumentParser(description="Hypothesis 2: Goiter SDOH Analysis")
-    parser.add_argument("--md", action="store_true", default=True, help="Use MotherDuck")
+    parser.add_argument("--md", action="store_true", default=True, help="Use local DuckDB")
     parser.add_argument("--local", action="store_true", help="Use local DuckDB")
     parser.add_argument("--dry-run", action="store_true", help="Print SQL only")
     args = parser.parse_args()
@@ -566,7 +566,7 @@ def main():
     print("=" * 70)
 
     con = get_connection(use_md)
-    print(f"\n[1/8] Loading goiter cohort ({'MotherDuck' if use_md else 'local'})...")
+    print(f"\n[1/8] Loading goiter cohort ({'local DuckDB' if use_md else 'local'})...")
     df = load_goiter_cohort(con)
     print(f"  → {len(df)} goiter patients")
     print(f"  → Cervical: {(df['goiter_type']=='Cervical').sum()}, Substernal: {(df['goiter_type']=='Substernal').sum()}")
@@ -666,7 +666,7 @@ def main():
             "No ethnicity/Hispanic identifier (separate from race)",
             "Race serves as only available SDOH proxy variable",
         ],
-        "data_source": "MotherDuck" if use_md else "local DuckDB",
+        "data_source": "local DuckDB" if use_md else "local DuckDB",
         "generated_at": datetime.now().isoformat(),
         "random_seed": 42,
     }

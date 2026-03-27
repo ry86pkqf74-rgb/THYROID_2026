@@ -29,7 +29,7 @@
 
 ### Claims That Are Now Accurate
 
-- "578 MotherDuck tables" — verified via `information_schema.tables`
+- "578 local DuckDB tables" — verified via `information_schema.tables`
 - "10,871 manuscript cohort" — verified via `manuscript_cohort_v1`
 - "4,136 analysis-eligible cancer patients" — verified
 - "13-phase extraction pipeline" — verified (v1 through v11 engines)

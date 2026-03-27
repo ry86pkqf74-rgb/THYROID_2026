@@ -1,7 +1,7 @@
 """
 Second-pass RLN injury refinement pipeline.
 
-Creates `extracted_rln_injury_refined_v2` in MotherDuck with context-aware
+Creates `extracted_rln_injury_refined_v2` in local DuckDB with context-aware
 classification of NLP-extracted RLN injury mentions, dramatically reducing
 false positives from boilerplate risk discussions and preservation language.
 
@@ -411,8 +411,8 @@ def _get_connection(use_md: bool) -> duckdb.DuckDBPyConnection:
     if use_md:
         import toml
         secrets = toml.load(str(PROJECT_ROOT / ".streamlit" / "secrets.toml"))
-        token = secrets["MOTHERDUCK_TOKEN"]
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+        token = secrets["LOCAL_DB_PATH"]
+        return duckdb.connect(f"thyroid_master.duckdb")
     return duckdb.connect(str(PROJECT_ROOT / "thyroid_master.duckdb"))
 
 
@@ -446,7 +446,7 @@ def run_intrinsic_evaluation(
 
 def main():
     parser = argparse.ArgumentParser(description="RLN injury refinement pipeline")
-    parser.add_argument("--md", action="store_true", help="Use MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Use local DuckDB")
     parser.add_argument("--local", action="store_true", help="Use local DuckDB")
     parser.add_argument("--dry-run", action="store_true", help="Print SQL without executing")
     parser.add_argument("--eval-only", action="store_true", help="Run intrinsic evaluation only")
@@ -455,7 +455,7 @@ def main():
 
     use_md = args.md or not args.local
     con = _get_connection(use_md)
-    target = "MotherDuck" if use_md else "local DuckDB"
+    target = "local DuckDB" if use_md else "local DuckDB"
     print(f"Connected to {target}")
 
     if args.eval_only:

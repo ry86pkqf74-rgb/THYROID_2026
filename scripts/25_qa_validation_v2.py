@@ -344,20 +344,20 @@ ORDER BY check_id, research_id
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--md", action="store_true", help="Deploy to MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Deploy to local DuckDB")
     args = parser.parse_args()
 
     section("25 -- QA Validation v2")
 
     if args.md:
         try:
-            from motherduck_client import MotherDuckClient, MotherDuckConfig
-            cfg = MotherDuckConfig(database="thyroid_research_2026")
-            client = MotherDuckClient(cfg)
+            from local DuckDB_client import local DuckDBClient, local DuckDBConfig
+            cfg = local DuckDBConfig(database="thyroid_master.duckdb")
+            client = local DuckDBClient(cfg)
             con = client.connect_rw()
-            print("  Connected to MotherDuck (RW)")
+            print("  Connected to local DuckDB (RW)")
         except Exception as e:
-            print(f"  MotherDuck unavailable: {e}")
+            print(f"  local DuckDB unavailable: {e}")
             con = duckdb.connect(str(DB_PATH))
     else:
         con = duckdb.connect(str(DB_PATH))

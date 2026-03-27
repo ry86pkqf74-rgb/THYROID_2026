@@ -71,7 +71,7 @@ def safe_int(con, sql: str) -> int:
 # ═══════════════════════════════════════════════════════════════════════
 
 def build_metric_definitions(con) -> pd.DataFrame:
-    """Build canonical metric definitions from live MotherDuck data."""
+    """Build canonical metric definitions from live local DuckDB data."""
 
     defs = []
 
@@ -864,16 +864,16 @@ def build_recon_status(con) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--md", action="store_true", help="Run against MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Run against local DuckDB")
     parser.add_argument("--local", action="store_true", help="Force local DuckDB")
     parser.add_argument("--dry-run", action="store_true", help="Print plan only")
     args = parser.parse_args()
 
     if args.md:
         import toml
-        tok = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["MOTHERDUCK_TOKEN"]
-        con = duckdb.connect(f"md:thyroid_research_2026?motherduck_token={tok}")
-        print("[INFO] Connected to MotherDuck")
+        tok = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
+        con = duckdb.connect(f"thyroid_master.duckdb")
+        print("[INFO] Connected to local DuckDB")
     else:
         con = duckdb.connect(str(DB_PATH))
         print(f"[INFO] Connected to local DuckDB: {DB_PATH}")
@@ -978,7 +978,7 @@ def main() -> None:
         "generated_at": TS,
         "script": "scripts/69_manuscript_reconciliation.py",
         "tables_created": tables,
-        "connection": "motherduck" if args.md else "local",
+        "connection": "local DuckDB" if args.md else "local",
     }
     with open(out_dir / "manifest.json", "w") as f:
         json.dump(manifest, f, indent=2, default=str)

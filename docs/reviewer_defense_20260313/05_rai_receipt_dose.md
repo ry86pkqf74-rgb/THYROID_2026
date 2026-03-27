@@ -72,11 +72,11 @@ Criteria: Tg < 0.2 ng/mL = excellent; 0.2–1.0 = indeterminate; > 1.0 without s
 
 ## Key References
 
-- **Canonical episodes**: `rai_treatment_episode_v2` (MotherDuck, 1,857 rows)
-- **Validated episodes**: `extracted_rai_validated_v1` (MotherDuck, 862 rows)
-- **Dose table**: `extracted_rai_dose_refined_v1` (MotherDuck, 307 rows)
-- **Structural coverage audit**: `val_rai_structural_coverage_v1` (MotherDuck, 27 rows)
-- **Source limitation audit**: `val_rai_source_limitation_v1` (MotherDuck, 5 rows)
-- **Response summary**: `vw_rai_response_summary` (MotherDuck, 5 rows)
+- **Canonical episodes**: `rai_treatment_episode_v2` (local DuckDB, 1,857 rows)
+- **Validated episodes**: `extracted_rai_validated_v1` (local DuckDB, 862 rows)
+- **Dose table**: `extracted_rai_dose_refined_v1` (local DuckDB, 307 rows)
+- **Structural coverage audit**: `val_rai_structural_coverage_v1` (local DuckDB, 27 rows)
+- **Source limitation audit**: `val_rai_source_limitation_v1` (local DuckDB, 5 rows)
+- **Response summary**: `vw_rai_response_summary` (local DuckDB, 5 rows)
 - **RAI gap doc**: `docs/rai_structural_gap_maximization_20260313.md`
 - **Script 76 Phase B**: `scripts/76_canonical_gap_closure.py` (RAI dose backfill)

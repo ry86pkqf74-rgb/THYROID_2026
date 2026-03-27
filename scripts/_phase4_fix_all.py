@@ -11,7 +11,7 @@ Fixes:
   6. logistic_regression.csv: Missing output → generate
   7. analysis_metadata.json: Add cox_complete_cases + concordance
 
-Data source: MotherDuck (live, positive time_to_event_days)
+Data source: local DuckDB (live, positive time_to_event_days)
 """
 from __future__ import annotations
 import json
@@ -32,24 +32,24 @@ ANALYTIC_DIR = REPO / "studies" / "analytic_models"
 PROPOSAL_FIG_DIR.mkdir(parents=True, exist_ok=True)
 MANUSCRIPT_FIG_DIR.mkdir(parents=True, exist_ok=True)
 
-# ── MotherDuck connection ─────────────────────────────────────────────────
+# ── local DuckDB connection ─────────────────────────────────────────────────
 def get_md_token() -> str:
-    token = os.environ.get("MOTHERDUCK_TOKEN", "")
+    token = os.environ.get("LOCAL_DB_PATH", "")
     if not token:
         try:
             import toml
-            token = toml.load(REPO / ".streamlit" / "secrets.toml")["MOTHERDUCK_TOKEN"]
+            token = toml.load(REPO / ".streamlit" / "secrets.toml")["LOCAL_DB_PATH"]
         except Exception:
             pass
     if not token:
-        sys.exit("ERROR: MOTHERDUCK_TOKEN not found")
+        sys.exit("ERROR: LOCAL_DB_PATH not found")
     return token
 
 def connect_md():
     import duckdb
     token = get_md_token()
-    con = duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
-    print("✅ Connected to MotherDuck")
+    con = duckdb.connect(f"thyroid_master.duckdb")
+    print("✅ Connected to local DuckDB")
     return con
 
 def q(con, sql: str) -> pd.DataFrame:
@@ -448,7 +448,7 @@ def main() -> None:
     con = connect_md()
 
     # Load data
-    print("\n📊 Loading data from MotherDuck...")
+    print("\n📊 Loading data from local DuckDB...")
     risk = q(con, "SELECT * FROM risk_enriched_mv")
     survival = q(con, "SELECT * FROM survival_cohort_ready_mv")
     print(f"  risk_enriched_mv        : {len(risk):,} rows")

@@ -83,7 +83,7 @@ may apply judgment-based adjustments (e.g., downgrading borderline nodules).
 
 ---
 
-## Tables Deployed to MotherDuck
+## Tables Deployed to local DuckDB
 
 | Table | Rows | Description |
 |-------|------|-------------|

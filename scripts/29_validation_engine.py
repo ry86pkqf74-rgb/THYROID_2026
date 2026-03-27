@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-29_validation_engine.py -- MotherDuck-native validation engine
+29_validation_engine.py -- local DuckDB-native validation engine
 
-Uses MotherDuck SQL to confirm, validate, reconcile, and quantify
+Uses local DuckDB SQL to confirm, validate, reconcile, and quantify
 extraction/linkage quality across all clinical domains.
 
 Tables created (all prefixed val_):
@@ -16,7 +16,7 @@ Tables created (all prefixed val_):
   8. val_review_queue_combined       -- priority-ranked combined review export
 
 Run after scripts 22-25 (canonical episodes + QA).
-Supports --md flag for MotherDuck deployment.
+Supports --md flag for local DuckDB deployment.
 """
 from __future__ import annotations
 
@@ -1678,20 +1678,20 @@ def print_summary(con: duckdb.DuckDBPyConnection) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--md", action="store_true",
-                        help="Deploy to MotherDuck instead of local DuckDB")
+                        help="Deploy to local DuckDB instead of local DuckDB")
     args = parser.parse_args()
 
     section("29 -- Validation Engine")
 
     if args.md:
         try:
-            from motherduck_client import MotherDuckClient, MotherDuckConfig
-            cfg = MotherDuckConfig(database="thyroid_research_2026")
-            client = MotherDuckClient(cfg)
+            from local DuckDB_client import local DuckDBClient, local DuckDBConfig
+            cfg = local DuckDBConfig(database="thyroid_master.duckdb")
+            client = local DuckDBClient(cfg)
             con = client.connect_rw()
-            print("  Connected to MotherDuck (RW)")
+            print("  Connected to local DuckDB (RW)")
         except Exception as e:
-            print(f"  MotherDuck unavailable: {e}")
+            print(f"  local DuckDB unavailable: {e}")
             print("  Falling back to local DuckDB")
             con = duckdb.connect(str(DB_PATH))
     else:

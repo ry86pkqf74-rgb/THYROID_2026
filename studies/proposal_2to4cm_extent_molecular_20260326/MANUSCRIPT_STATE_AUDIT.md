@@ -2,7 +2,7 @@
 
 **Scope:** This audit treats [`studies/proposal_2to4cm_extent_molecular_20260326/`](.) as the **only** quantitative source of truth for this paper. Repo-root KPIs ([`README.md`](../../README.md)), [`MANUSCRIPT_TRACKER.md`](../../MANUSCRIPT_TRACKER.md), and other study folders are **not** used to override numbers here.
 
-**MotherDuck:** This documentation pass used **artifact-first** verification (CSVs, JSON, local Python aggregates). No MotherDuck tables, views, or data were created, altered, or deleted.
+**local DuckDB:** This documentation pass used **artifact-first** verification (CSVs, JSON, local Python aggregates). No local DuckDB tables, views, or data were created, altered, or deleted.
 
 ---
 
@@ -142,7 +142,7 @@ When sources disagree, rank as follows:
 
 | File | Role |
 |------|------|
-| `study_pipeline.py` | End-to-end extract, cohorts, tables, models *(MotherDuck **read** queries; **local** writes only)* |
+| `study_pipeline.py` | End-to-end extract, cohorts, tables, models *(local DuckDB **read** queries; **local** writes only)* |
 | `cohort_logic.py` | Cohort construction helpers |
 | `generate_manuscript_bundle.py` | Reads **local** CSVs only; generates auxiliary markdown |
 | `run_schema_audit.py` | Schema audit helper |

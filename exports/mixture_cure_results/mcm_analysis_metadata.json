@@ -17,7 +17,7 @@
   "n_boot": 20,
   "dry_run": false,
   "git_sha": "b2ba4d549c0c4a7590f6934bdcbea57460366edd",
-  "database": "thyroid_research_2026",
+  "database": "thyroid_master.duckdb",
   "input_table": "mixture_cure_cohort",
   "outputs": [
     "bootstrap_ci.csv",

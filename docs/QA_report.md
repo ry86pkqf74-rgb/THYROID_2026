@@ -138,7 +138,7 @@ Source: `raw/Notes 12_1_25.xlsx` (Sheet1 + Sheet2)
 - Publication bundle created: `exports/THYROID_2026_PUBLICATION_BUNDLE_20260310_0414/`
 - Local DuckDB backup created (trial-downgrade safety)
 - Streamlit dashboard tabs benchmarked (sub-second)
-- Ready for MotherDuck free-tier downgrade
+- Ready for local DuckDB free-tier downgrade
 
 **Publication folder:** `exports/THYROID_2026_PUBLICATION_BUNDLE_20260310_0414/`
 
@@ -168,7 +168,7 @@ Source: `raw/Notes 12_1_25.xlsx` (Sheet1 + Sheet2)
 | `23_cross_domain_linkage_v2.py` | 6 linkage tables with temporal confidence tiers | ✅ Deployed |
 | `24_reconciliation_review_v2.py` | 5 cross-domain review views | ✅ Deployed |
 | `25_qa_validation_v2.py` | `qa_issues_v2`, date completeness, high-priority review | ✅ Deployed |
-| `26_motherduck_materialize_v2.py` | 47 tables materialized in MotherDuck | ✅ Deployed |
+| `26_local DuckDB_materialize_v2.py` | 47 tables materialized in local DuckDB | ✅ Deployed |
 | `29_validation_runner.py` | 14-view validation + 6-domain review export | ✅ Deployed |
 
 ### Validation Run (2026-03-10 13:31)

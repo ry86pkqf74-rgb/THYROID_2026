@@ -1,7 +1,7 @@
 # Source-Limited Fields: Manuscript Defense Reference
-## THYROID_2026 — Verified 2026-03-14 Against Live MotherDuck
+## THYROID_2026 — Verified 2026-03-14 Against Live local DuckDB
 
-> **Purpose:** Canonical reviewer-defense reference for all gaps that cannot be resolved by further computation on existing data. Every metric below was verified against live MotherDuck on 2026-03-14. **No analytic values were changed to produce this document.**
+> **Purpose:** Canonical reviewer-defense reference for all gaps that cannot be resolved by further computation on existing data. Every metric below was verified against live local DuckDB on 2026-03-14. **No analytic values were changed to produce this document.**
 
 ---
 
@@ -9,7 +9,7 @@
 
 | Verification Date | Source DB | Query Script |
 |---|---|---|
-| 2026-03-14 | `md:thyroid_research_2026` | `/tmp/verify_source_limited.py` + `/tmp/verify2.py` |
+| 2026-03-14 | `thyroid_master.duckdb` | `/tmp/verify_source_limited.py` + `/tmp/verify2.py` |
 
 ---
 
@@ -362,4 +362,4 @@ At time of last AGENTS.md entry this table was documented as having 0 rows. **Li
 
 ---
 
-*Generated 2026-03-14 · All metrics verified against `md:thyroid_research_2026` · THYROID_2026 v3.2.0*
+*Generated 2026-03-14 · All metrics verified against `thyroid_master.duckdb` · THYROID_2026 v3.2.0*

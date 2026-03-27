@@ -14,7 +14,7 @@ Usage:
     python scripts/22_manuscript_package.py [--md] [--local] [--dry-run]
 
 Flags:
-    --md        Connect to MotherDuck (default; requires MOTHERDUCK_TOKEN)
+    --md        Connect to local DuckDB (default; requires LOCAL_DB_PATH)
     --local     Use local thyroid_master_local.duckdb instead
     --dry-run   Skip DB writes; verify figures and LaTeX only
 
@@ -85,20 +85,20 @@ def connect(use_md: bool, use_local: bool):
         path = ROOT / "thyroid_master_local.duckdb"
         print(f"  Connecting to local DuckDB: {path}")
         return duckdb.connect(str(path))
-    # MotherDuck
-    token = os.environ.get("MOTHERDUCK_TOKEN", "")
+    # local DuckDB
+    token = os.environ.get("LOCAL_DB_PATH", "")
     if not token:
         try:
             import toml
-            token = toml.load(str(ROOT / ".streamlit" / "secrets.toml")).get("MOTHERDUCK_TOKEN", "")
+            token = toml.load(str(ROOT / ".streamlit" / "secrets.toml")).get("LOCAL_DB_PATH", "")
         except Exception:
             pass
     if not token:
-        print("  ERROR: MOTHERDUCK_TOKEN not set. Use --local for local DuckDB.")
+        print("  ERROR: LOCAL_DB_PATH not set. Use --local for local DuckDB.")
         sys.exit(1)
-    os.environ["MOTHERDUCK_TOKEN"] = token
-    con = __import__("duckdb").connect(f"md:thyroid_research_2026?motherduck_token={token}")
-    print("  Connected to MotherDuck: thyroid_research_2026")
+    os.environ["LOCAL_DB_PATH"] = token
+    con = __import__("duckdb").connect(f"thyroid_master.duckdb")
+    print("  Connected to local DuckDB: thyroid_master.duckdb")
     return con
 
 
@@ -432,7 +432,7 @@ def make_zip(pkg_dir: Path, stamp: str) -> Path:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description="THYROID_2026 Manuscript Package Generator")
-    ap.add_argument("--md",      action="store_true", help="Connect to MotherDuck (default)")
+    ap.add_argument("--md",      action="store_true", help="Connect to local DuckDB (default)")
     ap.add_argument("--local",   action="store_true", help="Use local DuckDB")
     ap.add_argument("--dry-run", action="store_true", help="Skip DB writes")
     args = ap.parse_args()

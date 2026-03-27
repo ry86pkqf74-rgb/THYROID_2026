@@ -1,6 +1,6 @@
 # Multi-Surgery Truth Snapshot
 
-> Generated: 2026-03-15 | Source: `scripts/97_episode_linkage_audit.py` on MotherDuck dev  
+> Generated: 2026-03-15 | Source: `scripts/97_episode_linkage_audit.py` on local DuckDB dev  
 > Export: `exports/episode_linkage_audit_20260315_0036/`
 
 ---
@@ -158,7 +158,7 @@ The multi-surgery population's linkage quality does NOT degrade the overall data
 
 ## 6. Validation Artifacts
 
-All tables deployed to `thyroid_research_2026_dev`:
+All tables deployed to `thyroid_master.duckdb`:
 
 ```
 multi_surgery_episode_cohort_v1      1,576 rows
@@ -178,6 +178,6 @@ CSV exports: `exports/episode_linkage_audit_20260315_0036/` (7 CSVs + manifest.j
 
 - **Script**: `scripts/97_episode_linkage_audit.py`
 - **Execution**: `--env dev --export`
-- **Source data**: Cross-database read from `thyroid_research_2026.*` (prod) into `thyroid_research_2026_dev` (workspace mode, no ATTACH)
+- **Source data**: Cross-database read from `thyroid_master.duckdb.*` (prod) into `thyroid_master.duckdb` (workspace mode, no ATTACH)
 - **All 7 tables created successfully** with 0 errors
 - **Reproducible**: Re-run with `--env dev` to regenerate all tables from scratch

@@ -101,7 +101,7 @@ row count remains 9,368 (unchanged). The manuscript cohort row count remains 10,
 
 ## Validation
 
-`val_operative_nlp_final_sync_v1` table on MotherDuck (28 rows):
+`val_operative_nlp_final_sync_v1` table on local DuckDB (28 rows):
 - All FIXED/NEW fields show before=0, after>0
 - SOURCE_LIMITED fields show before=0, after=0 with documented justification
 - Export: `exports/final_operative_nlp_sync_20260314/val_operative_nlp_final_sync_v1.csv`

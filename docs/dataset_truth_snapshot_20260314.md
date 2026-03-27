@@ -1,7 +1,7 @@
 # Dataset Truth Snapshot — 20260314
 
 Generated: 2026-03-14T23:57:22.850888
-Source: MotherDuck `thyroid_research_2026`
+Source: local DuckDB `thyroid_master.duckdb`
 
 ## 1. Core Dataset Metrics
 
@@ -107,7 +107,7 @@ Recurrence review packets exported: 1986 cases → `exports/recurrence_review_pa
 
 | Document | Metric | Documented | Live | Action |
 |----------|--------|-----------|------|--------|
-| README.md | MotherDuck tables | 578 | 605 | **Updated** |
+| README.md | local DuckDB tables | 578 | 605 | **Updated** |
 | MANUSCRIPT_CAVEATS | BRAF positive | 376 | 546 | Stale — pre-NLP-recovery number |
 | source_limited_field_registry | BRAF positive | 441 | 546 | Stale — pre-FP-correction number |
 | reviewer_gap_FAQ | BRAF positive | 546 | 546 | ✓ Correct |

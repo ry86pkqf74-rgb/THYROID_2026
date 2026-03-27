@@ -6,7 +6,7 @@ import re
 import numpy as np
 import pandas as pd
 
-# Path-synoptic completion cues (aligned with run_completion_audit_motherduck.py)
+# Path-synoptic completion cues (aligned with run_completion_audit_local DuckDB.py)
 _TP_COMPLETION_RE = re.compile(
     r"(completion\s+thyroidectomy|compl\.?\s*thyroidectomy|complete\s+thyroidectomy|"
     r"completion\s+of\s+(the\s+)?thyroid|second\s*[- ]stage\s+thyroidectomy|"

@@ -50,14 +50,14 @@ Combined TR4+TR5 = 68.1% — consistent with a surgical cohort enriched for susp
 ## Known Limitations
 
 1. **68% of patients lack TIRADS data** — ultrasound was performed at external facilities, pre-dates the institutional reporting period, or was not documented in extracted data sources
-2. **`imaging_nodule_long_v2`** canonical V2 table has ALL size/TIRADS columns NULL on MotherDuck (schema exists, data not populated from Excel sources); the separately built `imaging_nodule_master_v1` (19,891 per-nodule records) and `extracted_tirads_validated_v1` (3,474 rows) have full dimensional data
+2. **`imaging_nodule_long_v2`** canonical V2 table has ALL size/TIRADS columns NULL on local DuckDB (schema exists, data not populated from Excel sources); the separately built `imaging_nodule_master_v1` (19,891 per-nodule records) and `extracted_tirads_validated_v1` (3,474 rows) have full dimensional data
 3. **CT/MRI/PET imaging**: exists only in clinical note free-text; no structured radiology report tables available. ENE imaging assessment (CT 369 patients, US 465, PET 63) was extracted from notes separately
 
 ## Key References
 
-- **Validated TIRADS**: `extracted_tirads_validated_v1` (MotherDuck, 3,474 rows)
-- **Per-nodule master**: `imaging_nodule_master_v1` (MotherDuck, 19,891 rows)
-- **ACR concordance**: `val_phase12_tirads_validation` (MotherDuck, 4 rows)
-- **TIRADS summary view**: `vw_us_nodule_tirads_validated` (MotherDuck, 5 rows)
+- **Validated TIRADS**: `extracted_tirads_validated_v1` (local DuckDB, 3,474 rows)
+- **Per-nodule master**: `imaging_nodule_master_v1` (local DuckDB, 19,891 rows)
+- **ACR concordance**: `val_phase12_tirads_validation` (local DuckDB, 4 rows)
+- **TIRADS summary view**: `vw_us_nodule_tirads_validated` (local DuckDB, 5 rows)
 - **Phase 12 engine**: `notes_extraction/extraction_audit_engine_v10.py`
 - **Excel ingestion**: Phase 12 `ingest_complete_us_excel()` and `ingest_tirads_scored_excel()`

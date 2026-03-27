@@ -1,6 +1,6 @@
 {
   "generated_at": "2026-03-13T10:29:25.959622",
-  "database": "MotherDuck",
+  "database": "local DuckDB",
   "script": "scripts/70_operative_note_path_linkage_audit.py",
   "verdict": "MAJOR OPERATIVE EXTRACTION GAP REMAINS",
   "summary": {

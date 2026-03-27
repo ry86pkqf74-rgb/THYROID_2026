@@ -1,7 +1,7 @@
 {
   "script": "97_repo_truth_sync.py",
   "run_at": "20260314_2213",
-  "database": "md:thyroid_research_2026",
+  "database": "thyroid_master.duckdb",
   "output_dir": "/Users/ros/THyroid 2026/THYROID_2026/exports/repo_truth_sync_20260314_2213",
   "files": [
     "truth_sync_metrics.json",

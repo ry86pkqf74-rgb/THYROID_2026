@@ -58,7 +58,7 @@ Implements a deterministic, gate-checked DEV → QA → PROD promotion workflow.
 4. Core columns non-null
 5. Hardening tables present
 6. MAP dedup (runs script 94)
-7. `prod_db_accessible` — prod DB (`thyroid_research_2026`) directly reachable (prod only)
+7. `prod_db_accessible` — prod DB (`thyroid_master.duckdb`) directly reachable (prod only)
 8. `prod_ro_share_accessible` — publication RO share (`thyroid_share` catalog alias) reachable (prod only)
 
 > **micro-hardening 2026-03-14**: former single `ro_share` gate split into gates 7 + 8
@@ -71,11 +71,11 @@ Implements a deterministic, gate-checked DEV → QA → PROD promotion workflow.
 **Usage:**
 ```bash
 # dry-run from qa to prod
-MOTHERDUCK_TOKEN=... .venv/bin/python scripts/95_environment_promotion.py \
+LOCAL_DB_PATH=... .venv/bin/python scripts/95_environment_promotion.py \
     --from qa --to prod --dry-run
 
 # actual promotion with service-account token
-MD_SA_TOKEN=... .venv/bin/python scripts/95_environment_promotion.py \
+LOCAL_DB_PATH=... .venv/bin/python scripts/95_environment_promotion.py \
     --from qa --to prod --sa
 ```
 
@@ -106,16 +106,16 @@ Output files:
 **Usage:**
 ```bash
 # Read from prod and write manifest  (default --env prod; no --md flag)
-MOTHERDUCK_TOKEN=... .venv/bin/python scripts/96_release_manifest.py
+LOCAL_DB_PATH=... .venv/bin/python scripts/96_release_manifest.py
 
 # Target a specific environment
-MOTHERDUCK_TOKEN=... .venv/bin/python scripts/96_release_manifest.py --env qa
+LOCAL_DB_PATH=... .venv/bin/python scripts/96_release_manifest.py --env qa
 
 # Dry-run (print; do not write file)
 .venv/bin/python scripts/96_release_manifest.py --dry-run
 
 # Use service-account token
-MD_SA_TOKEN=... .venv/bin/python scripts/96_release_manifest.py --sa
+LOCAL_DB_PATH=... .venv/bin/python scripts/96_release_manifest.py --sa
 ```
 
 > **Note:** Script 96 uses `--env {dev|qa|prod}` (default: `prod`).
@@ -154,12 +154,12 @@ Added prod-sourcing enforcement block before the validation phase:
 
 ```python
 MANUSCRIPT_SOURCE_ENV = "prod"
-PROD_DB_NAME = "thyroid_research_2026"
-NON_PROD_DB_NAMES = {"thyroid_research_2026_dev", "thyroid_research_2026_qa"}
+PROD_DB_NAME = "thyroid_master.duckdb"
+NON_PROD_DB_NAMES = {"thyroid_master.duckdb", "thyroid_master.duckdb"}
 ```
 
 Behaviour:
-- **prod (`thyroid_research_2026`)**: passes; status=VERIFIED_PROD
+- **prod (`thyroid_master.duckdb`)**: passes; status=VERIFIED_PROD
 - **non-prod** without `--allow-nonprod`: exits 1 (BLOCKED)
 - **non-prod** with `--allow-nonprod`: passes with WARN status; audit artifact
   written to `exports/manuscript_cohort_freeze/source_audit_<ts>.json`
@@ -184,11 +184,11 @@ Three additions:
 ```
 Fails the lint job if true MAP duplicates are found.  Runs on every push.
 
-#### 6.2 Manuscript source-env verification in `motherduck-ci`
-Verifies that `current_database()` returns `thyroid_research_2026` (prod).
+#### 6.2 Manuscript source-env verification in `local DuckDB-ci`
+Verifies that `current_database()` returns `thyroid_master.duckdb` (prod).
 Blocks if connected to dev/qa databases (would indicate CI misconfiguration).
 
-#### 6.3 Release manifest freshness check in `motherduck-ci`
+#### 6.3 Release manifest freshness check in `local DuckDB-ci`
 Reads `LATEST_MANIFEST.json`; warns (non-blocking) if:
 - File does not exist (manual: run `scripts/96_release_manifest.py --md`)
 - `overall_status == "BLOCKED"` before a tagged release
@@ -206,6 +206,6 @@ Reads `LATEST_MANIFEST.json`; warns (non-blocking) if:
 | `scripts/96_release_manifest.py` | New | Release manifest generator |
 | `exports/.../source_limited_field_registry.csv` | New | 38-row field classification registry |
 | `docs/final_release_hardening_20260314.md` | New | This document |
-| `docs/motherduck_promotion_runbook_20260314.md` | New | Step-by-step promotion runbook |
+| `docs/local DuckDB_promotion_runbook_20260314.md` | New | Step-by-step promotion runbook |
 | `docs/source_limited_field_registry_20260314.md` | New | Field registry narrative |
 | `.github/workflows/ci.yml` | Modified | +3 new CI checks |

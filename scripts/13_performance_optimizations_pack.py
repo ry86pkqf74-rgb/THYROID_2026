@@ -50,7 +50,7 @@ log = logging.getLogger("perf_pack")
 ROOT = Path(__file__).resolve().parent.parent
 EXPORTS = ROOT / "exports"
 QA_DIR = ROOT / "studies" / "qa_crosscheck"
-MD_DATABASE = "thyroid_research_2026"
+MD_DATABASE = "thyroid_master.duckdb"
 
 EXPORT_DATE = datetime.now().strftime("%Y%m%d_%H%M")
 EXPORT_DIR = EXPORTS / f"publication_snapshot_{EXPORT_DATE}"
@@ -60,10 +60,10 @@ PHASE_TIMES: dict[str, float] = {}
 
 def _get_connection():
     import duckdb
-    token = os.getenv("MOTHERDUCK_TOKEN")
+    token = os.getenv("LOCAL_DB_PATH")
     if token:
-        return duckdb.connect(f"md:{MD_DATABASE}?motherduck_token={token}")
-    return duckdb.connect(f"md:{MD_DATABASE}")
+        return duckdb.connect(f"thyroid_master.duckdb")
+    return duckdb.connect(f"thyroid_master.duckdb")
 
 
 def _table_exists(con, name: str) -> bool:
@@ -735,7 +735,7 @@ def final_summary(con) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Performance Optimizations Pack — execute all optimizations "
-        "while MotherDuck Business-tier compute is free"
+        "while local DuckDB Business-tier compute is free"
     )
     parser.add_argument(
         "--dry-run", action="store_true",
@@ -757,7 +757,7 @@ def main() -> None:
 
     db = con.execute("SELECT current_database()").fetchone()[0]
     ver = con.execute("SELECT version()").fetchone()[0]
-    log.info(f"  Connected to MotherDuck: {db} (DuckDB {ver})")
+    log.info(f"  Connected to local DuckDB: {db} (DuckDB {ver})")
     log.info(f"  Business tier active — ~18 days remaining\n")
 
     try:

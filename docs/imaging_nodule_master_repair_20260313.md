@@ -6,7 +6,7 @@
 
 ## Status: FULLY POPULATED AND VERIFIED
 
-The `imaging_nodule_master_v1` table is correctly populated on MotherDuck with comprehensive
+The `imaging_nodule_master_v1` table is correctly populated on local DuckDB with comprehensive
 data. No repair was needed.
 
 ## Verification Results

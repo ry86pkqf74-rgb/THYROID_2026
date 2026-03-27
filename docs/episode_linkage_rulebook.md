@@ -225,4 +225,4 @@ Checks whether downstream tables carry correct `surgery_episode_id` for multi-su
 | `val_episode_ambiguity_review_v1` | 3,992 | Near-equidistant artifacts requiring review |
 | `val_episode_linkage_summary_v1` | 13 | Aggregate KPI summary |
 
-All tables deployed to `thyroid_research_2026_dev`. Promotion path: dev → qa → prod via `scripts/95`.
+All tables deployed to `thyroid_master.duckdb`. Promotion path: dev → qa → prod via `scripts/95`.

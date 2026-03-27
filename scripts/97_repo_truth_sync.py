@@ -3,7 +3,7 @@
 Script 97 — Repo Truth-Sync and Release-Readiness Reconciliation
 Date: 2026-03-14
 
-Queries live MotherDuck for canonical metrics, compares with repo claims,
+Queries live local DuckDB for canonical metrics, compares with repo claims,
 writes exports/repo_truth_sync_YYYYMMDD_HHMM/ and docs/repo_truth_sync_YYYYMMDD.md
 """
 import os
@@ -25,18 +25,18 @@ OUT_DIR = EXPORTS / f"repo_truth_sync_{TS}"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # ── Connect ────────────────────────────────────────────────────────────────
-tok = os.environ.get("MOTHERDUCK_TOKEN", "")
+tok = os.environ.get("LOCAL_DB_PATH", "")
 if not tok:
     try:
         import toml
-        tok = toml.load(str(BASE / ".streamlit/secrets.toml"))["MOTHERDUCK_TOKEN"]
+        tok = toml.load(str(BASE / ".streamlit/secrets.toml"))["LOCAL_DB_PATH"]
     except Exception:
         pass
 if not tok:
-    sys.exit("ERROR: MOTHERDUCK_TOKEN not found")
+    sys.exit("ERROR: LOCAL_DB_PATH not found")
 
-con = duckdb.connect(f"md:thyroid_research_2026?motherduck_token={tok}")
-print("Connected to MotherDuck thyroid_research_2026")
+con = duckdb.connect(f"thyroid_master.duckdb")
+print("Connected to local DuckDB thyroid_master.duckdb")
 
 
 def q(sql, label=""):
@@ -345,7 +345,7 @@ print("\n── Section 9: MATERIALIZATION_MAP stats ──")
 
 # Read the MATERIALIZATION_MAP from script 26
 import ast, re
-script26 = (BASE / "scripts/26_motherduck_materialize_v2.py").read_text()
+script26 = (BASE / "scripts/26_local DuckDB_materialize_v2.py").read_text()
 try:
     start = script26.index("MATERIALIZATION_MAP: list[tuple[str, str]] = [")
     i_start = start + script26[start:].index("[")
@@ -459,7 +459,7 @@ if actual_op_zero is not None and actual_op_zero != doc_claim_op_zero:
         "new_canonical_value": f"{actual_op_zero} fields at 0%",
         "zero_field_list": ", ".join(metrics.get("operative_zero_fields_list", [])),
         "reason": "Script 86 propagated some fields; count changed post-March-13 hardening",
-        "action": "Update docs to use actual count from live MotherDuck",
+        "action": "Update docs to use actual count from live local DuckDB",
     })
 else:
     discrepancies.append({
@@ -571,7 +571,7 @@ print(f"  val inventory → {val_path}")
 manifest = {
     "script": "97_repo_truth_sync.py",
     "run_at": TS,
-    "database": "md:thyroid_research_2026",
+    "database": "thyroid_master.duckdb",
     "output_dir": str(OUT_DIR),
     "files": [metrics_path.name, disc_path.name, lab_path.name, op_path.name, val_path.name],
 }
@@ -639,7 +639,7 @@ for t, v_val in val_status.items():
 doc_content = f"""# Repo Truth-Sync Report — {DS}
 
 **Generated:** {TS} UTC  
-**Source DB:** `md:thyroid_research_2026` (live MotherDuck)  
+**Source DB:** `thyroid_master.duckdb` (live local DuckDB)  
 **Script:** `scripts/97_repo_truth_sync.py`  
 **Purpose:** Deterministic reconciliation of all repo documentation claims against live data.
 
@@ -711,7 +711,7 @@ Total operative episodes: **{v("operative_episodes_total")}**
 {op_table}
 > Fields marked **ZERO** remain NOT_PARSED (not confirmed-negative). The V2 extractor
 > codebase exists at `notes_extraction/extract_operative_v2.py` but outputs were never
-> materialized to MotherDuck. `FALSE` = UNKNOWN, not confirmed-absent.
+> materialized to local DuckDB. `FALSE` = UNKNOWN, not confirmed-absent.
 
 **Zero-materialized count: {op_zero_count}**  
 **Fields: {op_zero_list}**
@@ -792,7 +792,7 @@ Missing: {val_missing}
 
 ## Summary
 
-This report is generated deterministically from live MotherDuck data.
+This report is generated deterministically from live local DuckDB data.
 All metrics above supersede any earlier documentation for the same date.
 See `exports/repo_truth_sync_{TS}/` for raw CSV and JSON outputs.
 """

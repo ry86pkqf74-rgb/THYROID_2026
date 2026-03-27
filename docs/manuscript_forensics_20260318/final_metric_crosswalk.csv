@@ -14,7 +14,7 @@ MET12,Results text,"mETE T-stage downstaged %",71.5% (1241/1736),proposal2_expan
 MET13,Results text,"Overall stage downstaged %",57.3% (1872/3269),proposal2_expanded_cohort.py,stage_migration_analysis(),analysis_metadata.yaml,analytic_cohort_expanded.csv,YES (from export),YES,
 MET14,Results text / Table,"AUC Base model (5-fold CV)",0.851 (SD 0.020),proposal2_ete_analysis.py,prognostic_performance(),analysis_metadata.yaml,analytic_cohort.csv,NO (requires re-run),YES (from metadata),
 MET15,Results text / Table,"AUC Full model (5-fold CV)",0.876 (SD 0.010),proposal2_ete_analysis.py,prognostic_performance(),analysis_metadata.yaml,analytic_cohort.csv,NO (requires re-run),YES (from metadata),delta = 0.025
-MET16,Table 3 / Cox,"Cox PH concordance",0.853,proposal2_cox_regression.py,run_cox(),table3_cox_regression.csv,risk_enriched_mv (MotherDuck),NO (requires MotherDuck),YES (from output file),penalizer=0.1
+MET16,Table 3 / Cox,"Cox PH concordance",0.853,proposal2_cox_regression.py,run_cox(),table3_cox_regression.csv,risk_enriched_mv (local DuckDB),NO (requires local DuckDB),YES (from output file),penalizer=0.1
 MET17,Table 7 / Results,"Stratified ≤1cm mETE OR",1.324 (0.74-2.37),proposal2_endpoint_psm_strata.py,stratified_models(),table7_stratified_models.csv,analytic_cohort_expanded.csv,NO,YES (from output file),p=0.346
 MET18,Table 7 / Results,"Stratified 1-2cm mETE OR",1.456 (0.80-2.67),proposal2_endpoint_psm_strata.py,stratified_models(),table7_stratified_models.csv,analytic_cohort_expanded.csv,NO,YES (from output file),p=0.224
 MET19,Table 7 / Results,"Stratified 2-4cm mETE OR",1.574 (0.92-2.68),proposal2_endpoint_psm_strata.py,stratified_models(),table7_stratified_models.csv,analytic_cohort_expanded.csv,NO,YES (from output file),p=0.095

@@ -1,7 +1,7 @@
 ======================================================================
 HYPOTHESIS 1 & 2 — FULL VALIDATION, SENSITIVITY & EXTENSION
 Date: 2026-03-12T18:52:55.836240
-Data source: MotherDuck
+Data source: local DuckDB
 ======================================================================
   path_synoptics: 11,688 rows
   recurrence_risk_features_mv: 4,976 rows
@@ -24,7 +24,7 @@ Data source: MotherDuck
   Race distribution (live): {'Black': 2991, 'White': 2555, 'Unknown/Other': 442, 'Asian': 214, 'NHPI': 10, 'Hispanic': 6}
 
 
-# STEP 2: STATISTICAL CONFIRMATION (live MotherDuck)
+# STEP 2: STATISTICAL CONFIRMATION (live local DuckDB)
 ======================================================================
 
 ## H1: Crude recurrence by CLN status
@@ -215,7 +215,7 @@ H2_Goiter_Substernal  285 58.1 (13.8)      70.2%
 
 ### Methods Update (Validation & Sensitivity)
 
-All analyses were reproduced against live MotherDuck server-side data to verify
+All analyses were reproduced against live local DuckDB server-side data to verify
 concordance with the initial cohort extraction. FDR correction (Benjamini-Hochberg)
 was applied across all hypothesis tests jointly. For Hypothesis 1, propensity score
 matching (1:1 nearest-neighbor, caliper = 0.2 × SD) was performed on age, tumor size,
@@ -232,7 +232,7 @@ demographic strata.
 
 ### Results Paragraph (Validation & Sensitivity)
 
-Data extraction was fully concordant between the saved cohort CSVs and live MotherDuck
+Data extraction was fully concordant between the saved cohort CSVs and live local DuckDB
 queries. All primary statistical results reproduced within tolerance (p-value delta < 0.01
 for all tests). After FDR correction, all originally significant associations remained
 significant.

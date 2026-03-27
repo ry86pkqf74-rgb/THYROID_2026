@@ -5,12 +5,12 @@ Last updated: 2026-03-13 (post-audit verification wave).
 
 ## Data & Pipeline
 
-- [x] Scripts 1–9 executed (ingest, DuckDB build, views, MotherDuck upload)
+- [x] Scripts 1–9 executed (ingest, DuckDB build, views, local DuckDB upload)
 - [x] Scripts 13–15 executed (performance MVs, publication prep, final validation)
-- [x] Script 21 executed: `duckdb "md:thyroid_research_2026" < scripts/21_survival_analysis_v3.sql` (builds survival v3 views)
+- [x] Script 21 executed: `duckdb "thyroid_master.duckdb" < scripts/21_survival_analysis_v3.sql` (builds survival v3 views)
 - [x] Script 27 executed: `python scripts/27_fix_legacy_episode_compatibility.py` (legacy compatibility layer)
 - [x] Local DuckDB backup present: `thyroid_master_local.duckdb` (optional, for downgrade/reproducibility)
-- [x] MotherDuck database `thyroid_research_2026` has all required views/tables
+- [x] local DuckDB database `thyroid_master.duckdb` has all required views/tables
 
 ## Dashboard
 
@@ -64,8 +64,8 @@ Last updated: 2026-03-13 (post-audit verification wave).
 # Check results
 .venv/bin/python -c "
 import duckdb, toml
-token = toml.load('.streamlit/secrets.toml')['MOTHERDUCK_TOKEN']
-con = duckdb.connect(f'md:thyroid_research_2026?motherduck_token={token}')
+token = toml.load('.streamlit/secrets.toml')['LOCAL_DB_PATH']
+con = duckdb.connect(f'thyroid_master.duckdb')
 r = con.execute(\"\"\"
     SELECT check_id, severity, COUNT(*) AS n
     FROM val_provenance_traceability
@@ -212,7 +212,7 @@ streamlit run dashboard.py
 - [x] Provenance columns hardened (4 columns x 4 analysis tables = 100% fill)
 - [x] Chronology anomalies classified (626 -> 4 buckets)
 - [x] Health monitoring tables deployed (3 new `val_*` tables)
-- [x] MotherDuck optimization (ANALYZE TABLE on 10 canonical tables)
+- [x] local DuckDB optimization (ANALYZE TABLE on 10 canonical tables)
 - [x] MATERIALIZATION_MAP updated with 4 new entries
 
 ### Known gaps (verified open — not blocking manuscript)

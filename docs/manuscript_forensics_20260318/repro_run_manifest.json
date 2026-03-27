@@ -115,7 +115,7 @@
 
   "unresolved_items": [
     "CT timing interval breakdown (≤30d, 31-365d, >365d) not present in frozen cohort data",
-    "Exact imaging correlation data used for structural endpoint may require MotherDuck live query",
+    "Exact imaging correlation data used for structural endpoint may require local DuckDB live query",
     "Cox PH analysis uses risk_enriched_mv directly (N≈5,794) — not subset of frozen CSVs"
   ]
 }

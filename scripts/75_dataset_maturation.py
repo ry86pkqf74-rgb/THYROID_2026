@@ -10,11 +10,11 @@ Orchestrates 10 phases of post-audit dataset maturation:
   Phase 5: Chronology anomaly adjudication
   Phase 6: Repository documentation sync (handled externally)
   Phase 7: Dataset health dashboard tables
-  Phase 8: MotherDuck optimization
+  Phase 8: local DuckDB optimization
   Phase 9: Final verification pass (delegates to existing scripts)
   Phase 10: Deliverables + export
 
-Supports --md (MotherDuck writes), --phase N (run single phase),
+Supports --md (local DuckDB writes), --phase N (run single phase),
 --all (run all phases), --dry-run (preview only).
 """
 from __future__ import annotations
@@ -66,9 +66,9 @@ def fill_rate(con: duckdb.DuckDBPyConnection, tbl: str, col: str) -> dict[str, A
 
 
 def connect_md() -> duckdb.DuckDBPyConnection:
-    from motherduck_client import MotherDuckClient, MotherDuckConfig
-    cfg = MotherDuckConfig(database="thyroid_research_2026")
-    client = MotherDuckClient(cfg)
+    from local DuckDB_client import local DuckDBClient, local DuckDBConfig
+    cfg = local DuckDBConfig(database="thyroid_master.duckdb")
+    client = local DuckDBClient(cfg)
     return client.connect_rw()
 
 
@@ -718,7 +718,7 @@ def phase7_dashboard_tables(con: duckdb.DuckDBPyConnection, dry_run: bool) -> di
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# PHASE 8 — MotherDuck Optimization
+# PHASE 8 — local DuckDB Optimization
 # ═══════════════════════════════════════════════════════════════════════════
 
 ANALYZE_TARGETS = [
@@ -735,8 +735,8 @@ ANALYZE_TARGETS = [
 ]
 
 
-def phase8_motherduck_optimization(con: duckdb.DuckDBPyConnection, dry_run: bool) -> dict:
-    section("Phase 8 — MotherDuck Optimization")
+def phase8_local DuckDB_optimization(con: duckdb.DuckDBPyConnection, dry_run: bool) -> dict:
+    section("Phase 8 — local DuckDB Optimization")
     results: dict[str, Any] = {}
 
     if dry_run:
@@ -883,7 +883,7 @@ def generate_maturation_report(all_results: dict, output_path: Path) -> None:
         "- `val_provenance_completeness_v2`",
         "- `val_episode_linkage_completeness_v1`",
         "",
-        "### MotherDuck Optimization",
+        "### local DuckDB Optimization",
         "- ANALYZE TABLE run on all large canonical tables",
         "",
         "## Remaining Structural Limitations",
@@ -942,7 +942,7 @@ def export_results(con: duckdb.DuckDBPyConnection, export_dir: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--md", action="store_true", help="Write to MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Write to local DuckDB")
     parser.add_argument("--phase", type=int, help="Run single phase (1-10)")
     parser.add_argument("--all", action="store_true", help="Run all phases")
     parser.add_argument("--dry-run", action="store_true", help="Preview only")
@@ -953,14 +953,14 @@ def main() -> None:
         sys.exit(1)
 
     section("75 — Dataset Maturation Pass")
-    print(f"  Mode:      {'MotherDuck' if args.md else 'local'}")
+    print(f"  Mode:      {'local DuckDB' if args.md else 'local'}")
     print(f"  Dry run:   {args.dry_run}")
     print(f"  Phase:     {'all' if args.all else args.phase}")
     print(f"  Timestamp: {TIMESTAMP}")
 
     if args.md:
         con = connect_md()
-        print("  Connected to MotherDuck (RW)")
+        print("  Connected to local DuckDB (RW)")
     else:
         con = duckdb.connect(str(DB_PATH))
         print(f"  Connected to local DB: {DB_PATH}")
@@ -985,7 +985,7 @@ def main() -> None:
         elif phase_num == 7:
             all_results["phase7"] = phase7_dashboard_tables(con, args.dry_run)
         elif phase_num == 8:
-            all_results["phase8"] = phase8_motherduck_optimization(con, args.dry_run)
+            all_results["phase8"] = phase8_local DuckDB_optimization(con, args.dry_run)
         elif phase_num == 9:
             section("Phase 9 — Final Verification Pass")
             print("  Run verification scripts externally:")
@@ -1005,7 +1005,7 @@ def main() -> None:
 
     section("Dataset Maturation Pass — Complete")
     print(f"  Phases run: {phases_to_run}")
-    print(f"  Mode: {'MotherDuck' if args.md else 'local'}")
+    print(f"  Mode: {'local DuckDB' if args.md else 'local'}")
     if not args.dry_run and 10 in phases_to_run:
         print(f"  Exports: {EXPORT_DIR}")
     print()

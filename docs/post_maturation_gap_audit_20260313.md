@@ -3,7 +3,7 @@
 ## Summary
 
 Audit of canonical table propagation gaps after script 75 dataset maturation.
-Profiled against live MotherDuck `thyroid_research_2026` database.
+Profiled against live local DuckDB `thyroid_master.duckdb` database.
 
 ---
 

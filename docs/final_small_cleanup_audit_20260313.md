@@ -40,7 +40,7 @@ outputs.
 
 All 8 unfilled columns are **Category C** — the `OperativeDetailExtractor`
 (`notes_extraction/extract_operative_v2.py`) exists but has never been run
-against MotherDuck. Running it would constitute a new extraction campaign,
+against local DuckDB. Running it would constitute a new extraction campaign,
 which is out of scope for this cleanup pass. The structural columns were
 added by script 76 Phase A as stubs awaiting future extractor output.
 
@@ -111,7 +111,7 @@ This removes 5,993 excess rows without losing any patient or measurement.
 |---------|-------|-----|
 | 65-73 | "Remaining Source-Limited Gaps" duplicated | Consolidate |
 | 90-92 | "If the app asks you to sign in..." stale guidance | Move to deployment section, reduce prominence |
-| 302-313 | "New Dashboard Features (enabled during MotherDuck trial)" | Remove — these are standard features now |
+| 302-313 | "New Dashboard Features (enabled during local DuckDB trial)" | Remove — these are standard features now |
 | 302 | "Five new tabs added by scripts/12..." | Replace with current 6-section structure |
 | 364-368 | "V3 Dashboard Materialization" references old deploy order | Update to current pipeline chain |
 | 438 | "(Current)" tag on v2026.03.10-v3-dashboard in RELEASE_NOTES | Move to v2026.03.13-final-hardening |
@@ -136,7 +136,7 @@ No changes needed except minor caveat text additions.
 
 ---
 
-## MotherDuck Object Status
+## local DuckDB Object Status
 
 | Object | Status | Rows |
 |--------|--------|------|

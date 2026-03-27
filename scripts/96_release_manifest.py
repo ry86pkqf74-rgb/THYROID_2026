@@ -2,7 +2,7 @@
 """
 96_release_manifest.py  —  Generate a deterministic release manifest
 
-Captures a point-in-time snapshot of the promoted MotherDuck production
+Captures a point-in-time snapshot of the promoted local DuckDB production
 database suitable for embedding in a GitHub release.
 
 Output: exports/release_manifests/release_manifest_<sha7>_<timestamp>.json
@@ -21,16 +21,16 @@ Fields
 Usage
 ─────
   # Read from prod and write manifest
-  MOTHERDUCK_TOKEN=... .venv/bin/python scripts/96_release_manifest.py
+  LOCAL_DB_PATH=... .venv/bin/python scripts/96_release_manifest.py
 
   # Point to a specific env (e.g. qa)
-  MOTHERDUCK_TOKEN=... .venv/bin/python scripts/96_release_manifest.py --env qa
+  LOCAL_DB_PATH=... .venv/bin/python scripts/96_release_manifest.py --env qa
 
   # Dry-run (print but do not write)
   .venv/bin/python scripts/96_release_manifest.py --dry-run
 
   # Use service-account token
-  MD_SA_TOKEN=... .venv/bin/python scripts/96_release_manifest.py --sa
+  LOCAL_DB_PATH=... .venv/bin/python scripts/96_release_manifest.py --sa
 
 Exit codes
 ──────────
@@ -54,9 +54,9 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 
 ENV_DATABASES = {
-    "dev":  "thyroid_research_2026_dev",
-    "qa":   "thyroid_research_2026_qa",
-    "prod": "thyroid_research_2026",
+    "dev":  "thyroid_master.duckdb",
+    "qa":   "thyroid_master.duckdb",
+    "prod": "thyroid_master.duckdb",
 }
 
 MANIFEST_DIR = ROOT / "exports" / "release_manifests"
@@ -128,19 +128,19 @@ def get_connection(env: str, sa: bool = False):
     import duckdb
     db_name = ENV_DATABASES[env]
     if sa:
-        token = os.environ.get("MD_SA_TOKEN") or os.environ.get("MOTHERDUCK_TOKEN")
+        token = os.environ.get("LOCAL_DB_PATH") or os.environ.get("LOCAL_DB_PATH")
     else:
-        token = os.environ.get("MOTHERDUCK_TOKEN")
+        token = os.environ.get("LOCAL_DB_PATH")
         if not token:
             try:
                 import toml
-                token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["MOTHERDUCK_TOKEN"]
+                token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
             except Exception:
                 pass
     if not token:
-        print(f"ERROR: No MotherDuck token for env={env}")
+        print(f"ERROR: No local DuckDB token for env={env}")
         sys.exit(2)
-    return duckdb.connect(f"md:{db_name}?motherduck_token={token}")
+    return duckdb.connect(f"thyroid_master.duckdb")
 
 
 # ── Git helpers ────────────────────────────────────────────────────────────
@@ -291,7 +291,7 @@ def main() -> None:
     ap.add_argument("--env", default="prod", choices=list(ENV_DATABASES),
                     help="Database environment to snapshot (default: prod)")
     ap.add_argument("--sa", action="store_true",
-                    help="Use MD_SA_TOKEN instead of MOTHERDUCK_TOKEN")
+                    help="Use LOCAL_DB_PATH instead of LOCAL_DB_PATH")
     ap.add_argument("--dry-run", action="store_true",
                     help="Collect and print but do not write file")
     ap.add_argument("--allow-dirty", action="store_true",

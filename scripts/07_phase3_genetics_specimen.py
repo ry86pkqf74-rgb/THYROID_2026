@@ -341,7 +341,7 @@ def ingest_preop_imaging_summary(con: duckdb.DuckDBPyConnection) -> pl.DataFrame
         print("  ⚠️  Required tables missing — skipping preop_imaging_summary")
         return None
 
-    print("  Building preop_imaging_summary from MotherDuck …")
+    print("  Building preop_imaging_summary from local DuckDB …")
 
     # ── Ultrasound summary ────────────────────────────────────────
     us_cols_available = {r[0] for r in con.execute("DESCRIBE ultrasound_reports").fetchall()}

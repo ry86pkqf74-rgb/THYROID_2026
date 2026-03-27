@@ -62,7 +62,7 @@ Ambiguous items are exported to `exports/episode_linkage_manual_review_packets/`
 - **RAI dose**: 59% missing, capped by structured data availability
 - **Operative NLP fields**: V2 extractor outputs not fully materialized
 
-## MotherDuck Objects Created
+## local DuckDB Objects Created
 
 | Table | Purpose |
 |-------|---------|
@@ -72,4 +72,4 @@ Ambiguous items are exported to `exports/episode_linkage_manual_review_packets/`
 | episode_pathrai_linkage_repair_v1 | Pathology/RAI anchoring |
 | episode_ambiguity_registry_v1 | All ambiguous linkages |
 | episode_linkage_repair_summary_v1 | Per-domain summary metrics |
-| md_episode_*_v1 | MotherDuck mirrors of above |
+| md_episode_*_v1 | local DuckDB mirrors of above |

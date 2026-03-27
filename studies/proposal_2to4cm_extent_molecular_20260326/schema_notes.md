@@ -1,10 +1,10 @@
-# Schema notes (live MotherDuck audit)
+# Schema notes (live local DuckDB audit)
 
 Generated: 2026-03-26T04:15:27.410520+00:00
 
 ## Catalog
 
-- Database: `thyroid_research_2026` (read-write connection used for SELECT only in this study).
+- Database: `thyroid_master.duckdb` (read-write connection used for SELECT only in this study).
 
 ## Discrepancy vs repo docs (AGENTS / pipeline_architecture)
 

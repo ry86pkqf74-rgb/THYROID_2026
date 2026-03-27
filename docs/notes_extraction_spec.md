@@ -4,7 +4,7 @@
 
 This document describes the entity-extraction framework that operates on
 `clinical_notes_long` and produces normalised derived tables in DuckDB /
-MotherDuck.  Every extracted fact is traceable back to the source note via
+local DuckDB.  Every extracted fact is traceable back to the source note via
 `note_row_id` and an exact `evidence_span` substring.
 
 ## Derived Tables

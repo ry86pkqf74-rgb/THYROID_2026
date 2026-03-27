@@ -325,5 +325,5 @@ column; scores are never silently computed when required inputs are missing.
   `docs/statistical_analysis_plan_thyroid_manuscript.md`.
 - The Zenodo archive (DOI: 10.5281/zenodo.18945510) contains code, de-identified
   analytic tables, and documentation sufficient to reproduce all reported results.
-- MotherDuck cloud database and local DuckDB are synchronized via a 163-entry
+- local DuckDB cloud database and local DuckDB are synchronized via a 163-entry
   materialization map covering all analytic tables.

@@ -39,7 +39,7 @@ np.random.seed(42)
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from motherduck_client import MotherDuckClient, MotherDuckConfig
+from local DuckDB_client import local DuckDBClient, local DuckDBConfig
 from utils.statistical_analysis import (
     ThyroidStatisticalAnalyzer,
     THYROID_PREDICTORS,
@@ -65,9 +65,9 @@ def _get_connection(args):
         local_path = os.getenv("LOCAL_DUCKDB_PATH", str(ROOT / "thyroid_master_local.duckdb"))
         log.info("Connecting to local DuckDB: %s", local_path)
         return duckdb.connect(local_path)
-    log.info("Connecting to MotherDuck (thyroid_research_2026)...")
-    cfg = MotherDuckConfig(database="thyroid_research_2026")
-    return MotherDuckClient(cfg).connect_rw()
+    log.info("Connecting to local DuckDB (thyroid_master.duckdb)...")
+    cfg = local DuckDBConfig(database="thyroid_master.duckdb")
+    return local DuckDBClient(cfg).connect_rw()
 
 
 def _safe_query(con, sql: str) -> pd.DataFrame:
@@ -428,7 +428,7 @@ def main() -> None:
         description="Run statistical analysis examples on the thyroid cohort."
     )
     ap.add_argument("--local", action="store_true", help="Use local DuckDB")
-    ap.add_argument("--md", action="store_true", help="Use MotherDuck (default)")
+    ap.add_argument("--md", action="store_true", help="Use local DuckDB (default)")
     args = ap.parse_args()
     sys.exit(run(args))
 

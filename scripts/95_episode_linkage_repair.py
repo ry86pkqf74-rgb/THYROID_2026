@@ -22,7 +22,7 @@ Usage:
   .venv/bin/python scripts/95_episode_linkage_repair.py --md --dry-run
 
 Outputs:
-  MotherDuck tables:
+  local DuckDB tables:
     - episode_note_linkage_repair_v1
     - episode_lab_linkage_repair_v1
     - episode_chain_linkage_repair_v1
@@ -75,8 +75,8 @@ def get_connection(args) -> duckdb.DuckDBPyConnection:
         print(f"  [local] {path}")
         return duckdb.connect(path)
     else:
-        print("  [MotherDuck] md:thyroid_research_2026")
-        return duckdb.connect("md:thyroid_research_2026")
+        print("  [local DuckDB] thyroid_master.duckdb")
+        return duckdb.connect("thyroid_master.duckdb")
 
 
 def safe_execute(con, sql: str, label: str = "", dry_run: bool = False) -> int:
@@ -897,7 +897,7 @@ SELECT 'labs' AS domain, * FROM lab_check
 
 
 # ---------------------------------------------------------------------------
-# Materialization map for MotherDuck mirrors
+# Materialization map for local DuckDB mirrors
 # ---------------------------------------------------------------------------
 MIRROR_MAP = [
     ("md_episode_note_linkage_repair_v1", "episode_note_linkage_repair_v1"),
@@ -1177,7 +1177,7 @@ def run_phase_h(con, dry_run: bool):
 
 
 def materialize_mirrors(con, dry_run: bool):
-    section("Materialize MotherDuck mirrors")
+    section("Materialize local DuckDB mirrors")
     for md_name, src_name in MIRROR_MAP:
         if dry_run:
             print(f"  [DRY-RUN] {md_name} ← {src_name}")
@@ -1279,7 +1279,7 @@ Ambiguous items are exported to `exports/episode_linkage_manual_review_packets/`
 - **RAI dose**: 59% missing, capped by structured data availability
 - **Operative NLP fields**: V2 extractor outputs not fully materialized
 
-## MotherDuck Objects Created
+## local DuckDB Objects Created
 
 | Table | Purpose |
 |-------|---------|
@@ -1289,7 +1289,7 @@ Ambiguous items are exported to `exports/episode_linkage_manual_review_packets/`
 | episode_pathrai_linkage_repair_v1 | Pathology/RAI anchoring |
 | episode_ambiguity_registry_v1 | All ambiguous linkages |
 | episode_linkage_repair_summary_v1 | Per-domain summary metrics |
-| md_episode_*_v1 | MotherDuck mirrors of above |
+| md_episode_*_v1 | local DuckDB mirrors of above |
 """
     repair_path = DOCS_DIR / f"episode_linkage_repair_{DATE_TAG}.md"
     repair_path.write_text(report)
@@ -1339,7 +1339,7 @@ surgery_episode_id = 1. Any deviation indicates a regression.
 # ===========================================================================
 def main():
     parser = argparse.ArgumentParser(description="Episode-aware linkage repair")
-    parser.add_argument("--md", action="store_true", help="Use MotherDuck (default)")
+    parser.add_argument("--md", action="store_true", help="Use local DuckDB (default)")
     parser.add_argument("--local", action="store_true", help="Use local DuckDB")
     parser.add_argument("--dry-run", action="store_true", help="Show plan, don't execute")
     parser.add_argument("--phase", type=str, default="all",
@@ -1347,10 +1347,10 @@ def main():
     args = parser.parse_args()
 
     if not args.local:
-        args.md = True  # default to MotherDuck
+        args.md = True  # default to local DuckDB
 
     print(f"Episode Linkage Repair — {TIMESTAMP}")
-    print(f"  Mode: {'MotherDuck' if args.md else 'local'}")
+    print(f"  Mode: {'local DuckDB' if args.md else 'local'}")
     print(f"  Phase: {args.phase}")
     print(f"  Dry-run: {args.dry_run}")
 

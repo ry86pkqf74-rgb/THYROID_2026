@@ -2,10 +2,10 @@
 """
 11_quality_assurance_crosscheck.py — Complete Validation & Final Extraction
 
-Last heavy-compute step while MotherDuck Business trial is free.
+Last heavy-compute step while local DuckDB Business trial is free.
 
 Phases:
-  1. Connect to MotherDuck, print compute tier info
+  1. Connect to local DuckDB, print compute tier info
   2. Build master_timeline (one row per patient-surgery, handles multi-surgery)
   3. Upgrade extracted_clinical_events_v3 → v4 with relative-day anchoring
   4. Domain-specific consistency checks → qa_issues table
@@ -40,7 +40,7 @@ ROOT = Path(__file__).resolve().parent.parent
 EXPORTS = ROOT / "exports"
 STUDIES = ROOT / "studies"
 QA_DIR = STUDIES / "qa_crosscheck"
-MD_DATABASE = "thyroid_research_2026"
+MD_DATABASE = "thyroid_master.duckdb"
 
 PHASE_TIMES: dict[str, float] = {}
 
@@ -638,12 +638,12 @@ ADVANCED_V3_SQL = textwrap.dedent("""\
 
 def _get_connection():
     import duckdb
-    token = os.getenv("MOTHERDUCK_TOKEN")
+    token = os.getenv("LOCAL_DB_PATH")
     if not token:
         raise RuntimeError(
-            "MOTHERDUCK_TOKEN not set. Export it before running this script."
+            "LOCAL_DB_PATH not set. Export it before running this script."
         )
-    return duckdb.connect(f"md:{MD_DATABASE}?motherduck_token={token}")
+    return duckdb.connect(f"thyroid_master.duckdb")
 
 
 def _table_exists(con, name: str) -> bool:
@@ -705,9 +705,9 @@ def phase1_connect(con) -> list[str]:
     report.append(f"- Database: `{db_name}`")
     report.append(f"- DuckDB version: {version}")
 
-    tier = "Unknown (check MotherDuck UI)"
+    tier = "Unknown (check local DuckDB UI)"
     for probe_sql in [
-        "SELECT current_setting('motherduck_attached_database_type')",
+        "SELECT current_setting('local DuckDB_attached_database_type')",
         "CALL pragma_database_list()",
     ]:
         try:
@@ -723,7 +723,7 @@ def phase1_connect(con) -> list[str]:
     log.info("")
     log.info("  Compute advisory:")
     log.info("    Business trial active — using large compute for heavy QA.")
-    log.info("    If Jumbo/Mega available, switch via MotherDuck UI for faster joins.")
+    log.info("    If Jumbo/Mega available, switch via local DuckDB UI for faster joins.")
     report.append("- Advisory: Business trial active — large compute enabled")
 
     try:
@@ -1174,7 +1174,7 @@ def phase7_safety(con, dry_run: bool) -> list[str]:
     total_time = sum(PHASE_TIMES.values())
     log.info(f"  Total compute time this run: {total_time:.1f}s")
     log.info("")
-    log.info("  MotherDuck trial utilization summary:")
+    log.info("  local DuckDB trial utilization summary:")
     log.info("    - All QA checks persisted as tables (survive downgrade)")
     log.info("    - extracted_clinical_events_v4: surgery-anchored relative days")
     log.info("    - master_timeline: multi-surgery patients properly tracked")
@@ -1183,7 +1183,7 @@ def phase7_safety(con, dry_run: bool) -> list[str]:
     log.info("-" * 72)
 
     report.append(f"\n**Total compute: {total_time:.1f}s**")
-    report.append("\nMotherDuck trial utilization summary — "
+    report.append("\nlocal DuckDB trial utilization summary — "
                   "ready for dashboard connection or downgrade")
 
     return report
@@ -1235,7 +1235,7 @@ def main() -> None:
     log.info(f"  QA report: {QA_DIR / 'qa_summary_report.md'}")
     log.info(f"  Exports:   {EXPORTS}")
     log.info("")
-    log.info("  MotherDuck trial utilization summary — "
+    log.info("  local DuckDB trial utilization summary — "
              "ready for dashboard connection or downgrade")
     log.info("=" * 72)
 

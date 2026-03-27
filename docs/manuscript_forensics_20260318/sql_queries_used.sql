@@ -1,7 +1,7 @@
 -- ============================================================================
 -- SQL Queries Used in THYROID_2026 ETE Staging Manuscript
 -- Forensic extraction: 2026-03-18
--- Database: thyroid_research_2026 (MotherDuck)
+-- Database: thyroid_master.duckdb (local DuckDB)
 -- ============================================================================
 
 -- ============================================================================

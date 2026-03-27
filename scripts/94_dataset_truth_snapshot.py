@@ -2,7 +2,7 @@
 """
 94_dataset_truth_snapshot.py — Final repo-wide dataset verification & truth snapshot.
 
-Connects to live MotherDuck, computes canonical metrics, audits operative NLP
+Connects to live local DuckDB, computes canonical metrics, audits operative NLP
 propagation, exports recurrence review packets, and reconciles documentation.
 
 Usage:
@@ -31,10 +31,10 @@ DOCS_DIR = pathlib.Path("docs")
 # ── helpers ────────────────────────────────────────────────────────────────────
 
 def get_md_token():
-    tok = os.environ.get("MOTHERDUCK_TOKEN", "")
+    tok = os.environ.get("LOCAL_DB_PATH", "")
     if not tok and toml:
         try:
-            tok = toml.load(".streamlit/secrets.toml").get("MOTHERDUCK_TOKEN", "")
+            tok = toml.load(".streamlit/secrets.toml").get("LOCAL_DB_PATH", "")
         except Exception:
             pass
     return tok
@@ -43,10 +43,10 @@ def connect(use_md: bool):
     if use_md:
         tok = get_md_token()
         if not tok:
-            sys.exit("MOTHERDUCK_TOKEN not found")
-        os.environ["MOTHERDUCK_TOKEN"] = tok
-        con = duckdb.connect("md:thyroid_research_2026")
-        print("✓ Connected to MotherDuck thyroid_research_2026")
+            sys.exit("LOCAL_DB_PATH not found")
+        os.environ["LOCAL_DB_PATH"] = tok
+        con = duckdb.connect("thyroid_master.duckdb")
+        print("✓ Connected to local DuckDB thyroid_master.duckdb")
     else:
         con = duckdb.connect("thyroid_master.duckdb", read_only=True)
         print("✓ Connected to local DuckDB")
@@ -112,7 +112,7 @@ METRIC_QUERIES = {
     "complications_patients": "SELECT COUNT(DISTINCT research_id) FROM patient_refined_complication_flags_v2",
     "master_clinical_v12_rows": "SELECT COUNT(*) FROM patient_refined_master_clinical_v12",
     "demographics_harmonized_rows": "SELECT COUNT(*) FROM demographics_harmonized_v2",
-    "motherduck_table_count": "SELECT COUNT(DISTINCT table_name) FROM information_schema.tables WHERE table_schema = 'main'",
+    "local DuckDB_table_count": "SELECT COUNT(DISTINCT table_name) FROM information_schema.tables WHERE table_schema = 'main'",
 }
 
 def compute_metrics(con) -> dict:
@@ -329,7 +329,7 @@ DOC_NUMBERS = {
         "analysis_eligible_cancer": "4,136",
         "rai_dose_coverage_pct": "41%",
         "recurrence_dates_unresolved_pct": "88.8%",
-        "motherduck_tables": "578",
+        "local DuckDB_tables": "578",
     },
     "docs/MANUSCRIPT_CAVEATS_20260313.md": {
         "rai_dose_pct": None,  # will search
@@ -355,14 +355,14 @@ def reconcile_docs(con, metrics: dict) -> list[dict]:
     live_rec_unresolved = safe_int(metrics.get("recurrence_date_unresolved", 0))
     live_rec_total = safe_int(metrics.get("recurrence_total_flagged", 0))
     live_rec_pct = round(100.0 * live_rec_unresolved / live_rec_total, 1) if live_rec_total > 0 else 0
-    live_md_tables = safe_int(metrics.get("motherduck_table_count", 0))
+    live_md_tables = safe_int(metrics.get("local DuckDB_table_count", 0))
 
     checks = [
         ("README.md", "manuscript cohort size", "10,871", f"{live_patients:,}"),
         ("README.md", "cancer cohort size", "4,136", f"{live_cancer:,}"),
         ("README.md", "RAI dose coverage", "41%", f"{round(live_rai_pct)}%"),
         ("README.md", "recurrence unresolved pct", "88.8%", f"{live_rec_pct}%"),
-        ("README.md", "MotherDuck tables", "578", str(live_md_tables)),
+        ("README.md", "local DuckDB tables", "578", str(live_md_tables)),
     ]
 
     for doc, label, documented, live in checks:
@@ -383,7 +383,7 @@ def write_truth_snapshot_md(metrics, op_audit, rec_count, mismatches):
         f"# Dataset Truth Snapshot — {DATESTAMP}",
         "",
         f"Generated: {NOW.isoformat()}",
-        f"Source: MotherDuck `thyroid_research_2026`",
+        f"Source: local DuckDB `thyroid_master.duckdb`",
         "",
         "## 1. Core Dataset Metrics",
         "",
@@ -589,7 +589,7 @@ def write_exports(metrics, op_audit):
     # manifest
     manifest = {
         "generated": TIMESTAMP,
-        "source": "MotherDuck thyroid_research_2026",
+        "source": "local DuckDB thyroid_master.duckdb",
         "files": [
             "dataset_metrics.csv",
             "operative_nlp_audit.csv",
@@ -605,7 +605,7 @@ def write_exports(metrics, op_audit):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--md", action="store_true", help="Use MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Use local DuckDB")
     parser.add_argument("--local", action="store_true", help="Use local DuckDB")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()

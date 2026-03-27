@@ -36,7 +36,7 @@ logging.basicConfig(
 log = logging.getLogger("mrn_crosswalk_v3")
 
 ROOT = Path(__file__).resolve().parent.parent
-MD_DATABASE = "thyroid_research_2026"
+MD_DATABASE = "thyroid_master.duckdb"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #  Phase 1: mrn_crosswalk_v1 — Permanent MRN spine from all raw sources
@@ -764,16 +764,16 @@ QA_MISSING_V3_SQL = textwrap.dedent("""\
 def get_connection(use_md: bool):
     import duckdb
     if use_md:
-        token = os.getenv("MOTHERDUCK_TOKEN")
+        token = os.getenv("LOCAL_DB_PATH")
         if not token:
             try:
                 import toml
-                token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["MOTHERDUCK_TOKEN"]
+                token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
             except Exception:
                 pass
         if not token:
-            raise RuntimeError("MOTHERDUCK_TOKEN not set")
-        return duckdb.connect(f"md:{MD_DATABASE}?motherduck_token={token}")
+            raise RuntimeError("LOCAL_DB_PATH not set")
+        return duckdb.connect(f"thyroid_master.duckdb")
     else:
         db_path = ROOT / "thyroid_master.duckdb"
         return duckdb.connect(str(db_path))
@@ -932,7 +932,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Permanent MRN Crosswalk + Demographics v3"
     )
-    parser.add_argument("--md", action="store_true", help="Use MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Use local DuckDB")
     parser.add_argument("--local", action="store_true", help="Use local DuckDB")
     parser.add_argument("--dry-run", action="store_true", help="Print SQL only")
     args = parser.parse_args()
@@ -944,7 +944,7 @@ def main() -> None:
 
     log.info("=" * 72)
     log.info("  MRN CROSSWALK v1 + DEMOGRAPHICS v3")
-    log.info(f"  Target: {'MotherDuck' if use_md else 'Local DuckDB'}")
+    log.info(f"  Target: {'local DuckDB' if use_md else 'Local DuckDB'}")
     log.info("=" * 72)
 
     if args.dry_run:

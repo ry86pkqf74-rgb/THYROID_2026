@@ -925,8 +925,8 @@ def _get_connection(use_md: bool, local_path: str = "thyroid_master.duckdb"):
     import duckdb
     import toml
     if use_md:
-        token = toml.load(".streamlit/secrets.toml")["MOTHERDUCK_TOKEN"]
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+        token = toml.load(".streamlit/secrets.toml")["LOCAL_DB_PATH"]
+        return duckdb.connect(f"thyroid_master.duckdb")
     return duckdb.connect(local_path)
 
 
@@ -935,7 +935,7 @@ def main() -> None:
     parser.add_argument("--all", action="store_true", help="Audit all entities")
     parser.add_argument("--entity", type=str, default=None, help="Single entity to audit")
     parser.add_argument("--inventory-only", action="store_true", help="Print inventory and exit")
-    parser.add_argument("--md", action="store_true", help="Use MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Use local DuckDB")
     parser.add_argument("--local", action="store_true", help="Use local DuckDB")
     parser.add_argument("--dry-run", action="store_true", help="Print SQL, don't execute")
     parser.add_argument("--sample", type=int, default=200, help="Sample size per entity")
@@ -952,7 +952,7 @@ def main() -> None:
 
     use_md = args.md or (not args.local)
     if args.dry_run:
-        print("DRY RUN — would connect to", "MotherDuck" if use_md else "local DuckDB")
+        print("DRY RUN — would connect to", "local DuckDB" if use_md else "local DuckDB")
         return
 
     con = _get_connection(use_md)

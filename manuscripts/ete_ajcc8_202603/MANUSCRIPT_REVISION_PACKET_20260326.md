@@ -224,4 +224,4 @@ Use after cohort sentence; **do not** use 6,630 / 1,497 / HR 1.84 for this ETE m
 
 ---
 
-*Packet produced under audit-first rules; MotherDuck untouched.*
+*Packet produced under audit-first rules; local DuckDB untouched.*

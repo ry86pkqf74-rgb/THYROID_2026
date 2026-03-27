@@ -1,18 +1,18 @@
 # Lobectomy vs total thyroidectomy (2–4 cm, imaging-defined N0)
 
-Retrospective cohort extraction and statistics from the THYROID_2026 MotherDuck lakehouse (`thyroid_research_2026`).
+Retrospective cohort extraction and statistics from the THYROID_2026 local DuckDB lakehouse (`thyroid_master.duckdb`).
 
 ## Prerequisites
 
 - Python 3.11+ (repo uses `.venv` with DuckDB ≤1.4.x per `AGENTS.md`)
-- `MOTHERDUCK_TOKEN` or `MD_SA_TOKEN` in the environment, **or** `.streamlit/secrets.toml` with the same keys
+- `LOCAL_DB_PATH` or `LOCAL_DB_PATH` in the environment, **or** `.streamlit/secrets.toml` with the same keys
 - Run commands from repository root: `THYROID_2026/` (this directory’s parent’s parent)
 
 ## Reproduce cohort + tables + figures
 
 ```bash
 cd /path/to/THYROID_2026
-export MOTHERDUCK_TOKEN="your_token_here"   # or rely on secrets.toml
+export LOCAL_DB_PATH="your_token_here"   # or rely on secrets.toml
 .venv/bin/python studies/lobectomy_molecular_202603/run_pipeline.py
 ```
 
@@ -20,7 +20,7 @@ Artifacts land in `outputs/lobectomy_molecular_202603/`:
 
 | Output | Description |
 |--------|-------------|
-| `cohort_analytic_v1.csv` | Raw MotherDuck cohort pull |
+| `cohort_analytic_v1.csv` | Raw local DuckDB cohort pull |
 | `analytic_ready_v1.csv` | Engineered variables |
 | `cohort_summary.json` | Ns and flow hints |
 | `tables/table1.md` | Table 1 (overall + by surgery type) |
@@ -32,21 +32,21 @@ Artifacts land in `outputs/lobectomy_molecular_202603/`:
 | `figures/sankey_genetics_surgery_completion.html` | Sankey (interpret cautiously; see data quality notes) |
 | `data_quality_issues.md` | Known gaps |
 
-## Ad hoc MotherDuck SQL
+## Ad hoc local DuckDB SQL
 
 ```bash
 cd /path/to/THYROID_2026
 .venv/bin/python -c "
 from pathlib import Path
-from motherduck_client import MotherDuckClient
+from local DuckDB_client import local DuckDBClient
 sql = Path('studies/lobectomy_molecular_202603/sql/01_cohort_base.sql').read_text()
-con = MotherDuckClient.for_env('prod').connect_rw()
+con = local DuckDBClient.for_env('prod').connect_rw()
 print(con.execute(sql).fetchdf().head())
 con.close()
 "
 ```
 
-**Note:** The project discourages `CREATE TABLE` writes on MotherDuck without explicit approval; this pipeline is **read-only**.
+**Note:** The project discourages `CREATE TABLE` writes on local DuckDB without explicit approval; this pipeline is **read-only**.
 
 ## Optional multiple imputation (MICE)
 
@@ -65,4 +65,4 @@ pandoc studies/lobectomy_molecular_202603/manuscript_draft.md \
 
 - **Zenodo (code + bundle):** [10.5281/zenodo.18945510](https://doi.org/10.5281/zenodo.18945510)  
 - **Git tag:** `v2026.03.10-publication-ready`  
-- **MotherDuck:** database `thyroid_research_2026`; read-only share path defined in `motherduck_client.py`
+- **local DuckDB:** database `thyroid_master.duckdb`; read-only share path defined in `local DuckDB_client.py`

@@ -27,7 +27,7 @@ Constraints:
   - Never fabricates precision; uses exact/approximate/inferred status flags
   - Designed to run after script 78 (final hardening)
 
-Supports --md (MotherDuck), --local, --dry-run.
+Supports --md (local DuckDB), --local, --dry-run.
 """
 from __future__ import annotations
 
@@ -87,12 +87,12 @@ def get_connection(use_md: bool) -> duckdb.DuckDBPyConnection:
     if use_md:
         try:
             import toml
-            token = os.environ.get("MOTHERDUCK_TOKEN") or toml.load(
+            token = os.environ.get("LOCAL_DB_PATH") or toml.load(
                 str(ROOT / ".streamlit" / "secrets.toml")
-            )["MOTHERDUCK_TOKEN"]
+            )["LOCAL_DB_PATH"]
         except Exception:
-            token = os.environ["MOTHERDUCK_TOKEN"]
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+            token = os.environ["LOCAL_DB_PATH"]
+        return duckdb.connect(f"thyroid_master.duckdb")
     return duckdb.connect(str(DB_PATH))
 
 
@@ -353,7 +353,7 @@ def domain_summary_sql(table: str, domain: str) -> str:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--md", action="store_true", help="Use MotherDuck")
+    ap.add_argument("--md", action="store_true", help="Use local DuckDB")
     ap.add_argument("--local", action="store_true", help="Use local DuckDB")
     ap.add_argument("--dry-run", action="store_true", help="Skip writes")
     args = ap.parse_args()

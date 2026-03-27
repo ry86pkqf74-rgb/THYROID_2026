@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-30_readiness_check.py -- MotherDuck / local DuckDB readiness report
+30_readiness_check.py -- local DuckDB / local DuckDB readiness report
 
 Checks the presence and row counts of all critical v3 tables and views,
 prints a readiness report, and exits non-zero if any critical tables are
 missing.
 
-Supports --md flag for MotherDuck.
+Supports --md flag for local DuckDB.
 """
 from __future__ import annotations
 
@@ -97,14 +97,14 @@ def row_count(con: duckdb.DuckDBPyConnection, name: str) -> int:
 def get_connection(use_md: bool) -> duckdb.DuckDBPyConnection:
     if use_md:
         try:
-            from motherduck_client import MotherDuckClient, MotherDuckConfig
-            cfg = MotherDuckConfig(database="thyroid_research_2026")
-            client = MotherDuckClient(cfg)
+            from local DuckDB_client import local DuckDBClient, local DuckDBConfig
+            cfg = local DuckDBConfig(database="thyroid_master.duckdb")
+            client = local DuckDBClient(cfg)
             con = client.connect_rw()
-            print("  Connected to MotherDuck (RW)")
+            print("  Connected to local DuckDB (RW)")
             return con
         except Exception as e:
-            print(f"  MotherDuck unavailable: {e}")
+            print(f"  local DuckDB unavailable: {e}")
             print("  Falling back to local DuckDB")
     con = duckdb.connect(str(DB_PATH), read_only=True)
     print(f"  Using local DuckDB: {DB_PATH}")
@@ -114,7 +114,7 @@ def get_connection(use_md: bool) -> duckdb.DuckDBPyConnection:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--md", action="store_true",
-                        help="Check MotherDuck instead of local DuckDB")
+                        help="Check local DuckDB instead of local DuckDB")
     parser.add_argument("--json", action="store_true",
                         help="Output as JSON")
     args = parser.parse_args()
@@ -125,7 +125,7 @@ def main() -> None:
 
     report: dict = {
         "checked_at": datetime.now(tz=timezone.utc).isoformat(),
-        "source": "motherduck" if args.md else str(DB_PATH),
+        "source": "local DuckDB" if args.md else str(DB_PATH),
         "critical": {},
         "optional": {},
         "critical_missing": [],
@@ -179,7 +179,7 @@ def main() -> None:
         print("\n  Run the following to fix:")
         print("    python scripts/22_canonical_episodes_v2.py [--md]")
         print("    python scripts/23_cross_domain_linkage_v2.py [--md]")
-        print("    python scripts/26_motherduck_materialize_v2.py [--md]")
+        print("    python scripts/26_local DuckDB_materialize_v2.py [--md]")
     else:
         print("\n  ALL CRITICAL TABLES PRESENT — system is ready.")
 

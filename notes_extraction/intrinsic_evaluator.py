@@ -401,7 +401,7 @@ def refine_extraction(
     Parameters
     ----------
     con : duckdb.DuckDBPyConnection
-        Active DuckDB/MotherDuck connection.
+        Active DuckDB/local DuckDB connection.
     entity_name : str
         Root entity name (e.g., "rln_injury", "hypocalcemia").
     sample_size : int

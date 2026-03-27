@@ -26,10 +26,10 @@ nsqip_df['_dob'] = pd.to_datetime(nsqip_df['Date of Birth'], format='%m/%d/%Y', 
 unmatched_cases = [112133, 138509, 142049, 142059, 142221, 142597, 143386, 144346]
 unmatched = nsqip_df[nsqip_df['Case Number'].isin(unmatched_cases)].copy()
 
-# Connect to MotherDuck
+# Connect to local DuckDB
 import duckdb
-token = os.getenv("MOTHERDUCK_TOKEN")
-con = duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+token = os.getenv("LOCAL_DB_PATH")
+con = duckdb.connect(f"thyroid_master.duckdb")
 
 mc_df = con.execute("SELECT * FROM master_cohort").fetchdf()
 mc_df['surgery_date_dt'] = pd.to_datetime(mc_df['surgery_date'], errors='coerce')

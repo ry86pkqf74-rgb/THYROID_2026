@@ -1,7 +1,7 @@
 # LLM Extraction Handoff — 2026-03-27
 
 ## Goal
-Run the full note-extraction pipeline with LLM assistance across `processed/clinical_notes_long.parquet`, then upload the standard entity tables to MotherDuck.
+Run the full note-extraction pipeline with LLM assistance across `processed/clinical_notes_long.parquet`, then upload the standard entity tables to local DuckDB.
 
 ## What changed in code
 
@@ -116,7 +116,7 @@ These come from the shared entity schema and should be checked after the run com
 Run:
 
 ```bash
-/Users/loganglosser/THYROID_2026/.venv/bin/python scripts/09b_motherduck_upload_notes_entities.py --confirm
+/Users/loganglosser/THYROID_2026/.venv/bin/python scripts/09b_local DuckDB_upload_notes_entities.py --confirm
 ```
 
 This uploads the standard notes/entity tables only:

@@ -2,7 +2,7 @@
 """
 Script 70 — Surgery–Operative Note–Pathology Linkage Verification Audit
 
-Creates validation and review tables on MotherDuck, measures coverage,
+Creates validation and review tables on local DuckDB, measures coverage,
 verifies linkage quality, and exports a comprehensive audit report.
 
 Usage:
@@ -28,12 +28,12 @@ def get_connection(use_md: bool):
         try:
             import toml
 
-            token = os.environ.get("MOTHERDUCK_TOKEN") or toml.load(
+            token = os.environ.get("LOCAL_DB_PATH") or toml.load(
                 ".streamlit/secrets.toml"
-            )["MOTHERDUCK_TOKEN"]
+            )["LOCAL_DB_PATH"]
         except Exception:
-            token = os.environ["MOTHERDUCK_TOKEN"]
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+            token = os.environ["LOCAL_DB_PATH"]
+        return duckdb.connect(f"thyroid_master.duckdb")
     return duckdb.connect("thyroid_master.duckdb")
 
 
@@ -403,7 +403,7 @@ FROM operative_episode_detail_v2
 def run_audit(con, use_md: bool) -> dict:
     """Execute all phases and return summary dict."""
     results = {}
-    mode = "MotherDuck" if use_md else "Local"
+    mode = "local DuckDB" if use_md else "Local"
     print(f"\n{'='*70}")
     print(f"  OPERATIVE NOTE–PATHOLOGY LINKAGE AUDIT  [{mode}]")
     print(f"  {datetime.datetime.now().isoformat()}")
@@ -626,7 +626,7 @@ def export_tables(con, export_dir: str):
 def write_report(results: dict, export_dir: str, use_md: bool):
     """Write markdown audit report."""
     r = results.get("coverage", {})
-    mode = "MotherDuck" if use_md else "Local DuckDB"
+    mode = "local DuckDB" if use_md else "Local DuckDB"
     report_path = f"docs/operative_note_path_linkage_audit_{TODAY}.md"
 
     # Phase 6 verdict
@@ -763,7 +763,7 @@ Total discordance/review items: {results.get('discordance_count', '?'):,}
 
 ### A. Are operative notes fully parsed?
 
-**No.** NLP enrichment covers {nlp_pct}% of operative episodes. On MotherDuck, NLP
+**No.** NLP enrichment covers {nlp_pct}% of operative episodes. On local DuckDB, NLP
 enrichment is **zero** — the materialized table was created before or without the
 NLP enrichment step from script 22's `enrich_from_v2_extractors()`. Local DuckDB has
 partial enrichment for episodes with matching clinical notes.
@@ -791,8 +791,8 @@ RLN monitoring status and intraoperative findings depend on parsed op notes.
 
 ### D. Is targeted additional extraction worthwhile?
 
-**Yes, targeted MotherDuck sync is the priority.** The NLP enrichment already exists
-in local DuckDB but was never propagated to MotherDuck. Re-running script 22 with
+**Yes, targeted local DuckDB sync is the priority.** The NLP enrichment already exists
+in local DuckDB but was never propagated to local DuckDB. Re-running script 22 with
 NLP enrichment then re-materializing via script 26 would immediately recover
 {r.get('episodes_with_nlp_parse', '?'):,} enriched episodes.
 
@@ -802,7 +802,7 @@ NLP enrichment then re-materializing via script 26 would immediately recover
 
 **Recommended actions:**
 1. Re-run script 22 `enrich_from_v2_extractors()` to ensure local NLP enrichment is current
-2. Re-materialize `operative_episode_detail_v2` to MotherDuck via script 26
+2. Re-materialize `operative_episode_detail_v2` to local DuckDB via script 26
 3. Populate CND/LND flags from `path_synoptics.central_compartment_dissection` (665 patients)
 4. For pre-2019 surgeries without op notes, accept path_synoptics as sole surgery evidence
 
@@ -810,7 +810,7 @@ NLP enrichment then re-materializing via script 26 would immediately recover
 
 ## Deliverables Created
 
-### MotherDuck Tables
+### local DuckDB Tables
 - `val_operative_note_coverage_v1` — per-patient operative note coverage flags
 - `val_operative_note_parse_coverage_v1` — per-episode NLP parse detail
 - `review_operative_note_linkage_v1` — surgery↔op note linkage with categories
@@ -856,7 +856,7 @@ def main():
     parser = argparse.ArgumentParser(
         description="Operative Note–Pathology Linkage Audit"
     )
-    parser.add_argument("--md", action="store_true", help="Use MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Use local DuckDB")
     parser.add_argument("--local", action="store_true", help="Use local DuckDB")
     args = parser.parse_args()
 

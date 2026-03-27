@@ -1,5 +1,5 @@
 """tests/test_materialization_map.py
-Validates the MATERIALIZATION_MAP in scripts/26_motherduck_materialize_v2.py.
+Validates the MATERIALIZATION_MAP in scripts/26_local DuckDB_materialize_v2.py.
 
 Rules enforced
 ──────────────
@@ -28,7 +28,7 @@ import pytest
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
-SCRIPT26 = Path(__file__).resolve().parent.parent / "scripts" / "26_motherduck_materialize_v2.py"
+SCRIPT26 = Path(__file__).resolve().parent.parent / "scripts" / "26_local DuckDB_materialize_v2.py"
 
 
 class MapEntry(NamedTuple):
@@ -101,7 +101,7 @@ def test_map_is_parseable(mat_map: list[MapEntry]) -> None:
 def test_no_duplicate_md_targets(md_names: list[str]) -> None:
     """Every md_* destination name must appear exactly once in the MAP.
 
-    Duplicate md_* targets mean the same MotherDuck table gets materialised
+    Duplicate md_* targets mean the same local DuckDB table gets materialised
     twice, with the second write silently clobbering the first.
     """
     seen: dict[str, int] = {}
@@ -118,7 +118,7 @@ def test_no_duplicate_source_names(src_names: list[str]) -> None:
     """Every source table name must appear exactly once in the MAP.
 
     Duplicate sources mean two different md_* tables carry the same data,
-    creating maintenance confusion and wasted MotherDuck storage.
+    creating maintenance confusion and wasted local DuckDB storage.
     """
     seen: dict[str, int] = {}
     for n in src_names:

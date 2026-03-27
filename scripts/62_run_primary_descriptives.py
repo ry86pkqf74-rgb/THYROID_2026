@@ -36,18 +36,18 @@ TODAY = datetime.now().strftime("%Y%m%d_%H%M")
 # ---------------------------------------------------------------------------
 
 def _get_token() -> str:
-    token = os.getenv("MOTHERDUCK_TOKEN")
+    token = os.getenv("LOCAL_DB_PATH")
     if token:
         return token
     secrets = ROOT / ".streamlit" / "secrets.toml"
     if secrets.exists():
         try:
             import toml
-            return toml.load(str(secrets))["MOTHERDUCK_TOKEN"]
+            return toml.load(str(secrets))["LOCAL_DB_PATH"]
         except Exception:
             pass
     raise RuntimeError(
-        "MOTHERDUCK_TOKEN not set. Export it or add to .streamlit/secrets.toml."
+        "LOCAL_DB_PATH not set. Export it or add to .streamlit/secrets.toml."
     )
 
 
@@ -55,7 +55,7 @@ def get_connection(md: bool):
     import duckdb
     if md:
         token = _get_token()
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+        return duckdb.connect(f"thyroid_master.duckdb")
     return duckdb.connect(
         os.environ.get("LOCAL_DUCKDB_PATH", str(ROOT / "thyroid_master.duckdb"))
     )
@@ -343,7 +343,7 @@ def build_missingness_table(df: pd.DataFrame) -> pd.DataFrame:
 def main():
     parser = argparse.ArgumentParser(description="Run primary descriptive statistics")
     grp = parser.add_mutually_exclusive_group()
-    grp.add_argument("--md", action="store_true", help="Use MotherDuck")
+    grp.add_argument("--md", action="store_true", help="Use local DuckDB")
     grp.add_argument("--local", action="store_true", help="Use local DuckDB")
     parser.add_argument("--dry-run", action="store_true", help="Print plan only")
     args = parser.parse_args()
@@ -355,7 +355,7 @@ def main():
     section("62 · Primary Descriptive Statistics")
 
     if args.dry_run:
-        print("[DRY-RUN] Would connect to", "MotherDuck" if use_md else "local DuckDB")
+        print("[DRY-RUN] Would connect to", "local DuckDB" if use_md else "local DuckDB")
         print("[DRY-RUN] Would produce Tables 1-3, cohort flow, missingness")
         print("[DRY-RUN] Output dir:", TABLES_DIR)
         return

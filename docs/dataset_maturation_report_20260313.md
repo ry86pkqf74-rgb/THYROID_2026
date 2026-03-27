@@ -21,7 +21,7 @@ THYROID_2026 from **manuscript-ready** to **dataset-mature** status.
 - `val_provenance_completeness_v2`
 - `val_episode_linkage_completeness_v1`
 
-### MotherDuck Optimization
+### local DuckDB Optimization
 - ANALYZE TABLE run on all large canonical tables
 
 ## Remaining Structural Limitations

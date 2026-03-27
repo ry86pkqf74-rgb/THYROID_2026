@@ -3,7 +3,7 @@
 103_source_limited_enforcement.py  —  Source-Limited & Pipeline-Limited Field Enforcement
 
 Reads the 43-field source_limited_field_registry CSV, extends it with governance
-columns, and materialises enforcement & audit tables to DuckDB/MotherDuck:
+columns, and materialises enforcement & audit tables to DuckDB/local DuckDB:
 
   source_limited_enforcement_registry_v2  — extended field-level registry (43+ rows)
   source_limited_enforcement_summary_v1   — per-tier summary
@@ -22,7 +22,7 @@ Limitation categories:
   review         — needs human adjudication to resolve discordance
 
 Usage:
-  MOTHERDUCK_TOKEN=... .venv/bin/python scripts/103_source_limited_enforcement.py --md
+  LOCAL_DB_PATH=... .venv/bin/python scripts/103_source_limited_enforcement.py --md
   .venv/bin/python scripts/103_source_limited_enforcement.py --local
   .venv/bin/python scripts/103_source_limited_enforcement.py --dry-run
 """
@@ -390,11 +390,11 @@ def connect(args) -> "duckdb.DuckDBPyConnection":
     import duckdb
 
     if args.md:
-        token = os.environ.get("MOTHERDUCK_TOKEN", "")
+        token = os.environ.get("LOCAL_DB_PATH", "")
         if not token:
-            print("ERROR: MOTHERDUCK_TOKEN not set")
+            print("ERROR: LOCAL_DB_PATH not set")
             sys.exit(2)
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+        return duckdb.connect(f"thyroid_master.duckdb")
     else:
         local_path = ROOT / "thyroid_master.duckdb"
         if not local_path.exists():
@@ -404,7 +404,7 @@ def connect(args) -> "duckdb.DuckDBPyConnection":
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--md", action="store_true", help="Target MotherDuck")
+    ap.add_argument("--md", action="store_true", help="Target local DuckDB")
     ap.add_argument("--local", action="store_true", help="Target local DuckDB")
     ap.add_argument("--dry-run", action="store_true", help="Print actions without executing")
     args = ap.parse_args()
@@ -413,7 +413,7 @@ def main() -> None:
 
     print("\n" + "=" * 72)
     print("  103_source_limited_enforcement.py  —  Source-Limited Field Enforcement")
-    print(f"  Target: {'MotherDuck' if args.md else 'Local DuckDB'}")
+    print(f"  Target: {'local DuckDB' if args.md else 'Local DuckDB'}")
     print("=" * 72)
 
     t0 = time.time()

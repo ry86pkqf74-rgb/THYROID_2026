@@ -1,8 +1,8 @@
 # Reviewer Gap FAQ — THYROID_2026
 ## Pre-Written Responses to Anticipated Reviewer Queries on Data Gaps
-### Verified 2026-03-14 Against Live MotherDuck
+### Verified 2026-03-14 Against Live local DuckDB
 
-> **Purpose:** Ready-to-use point-by-point responses for manuscript peer review comments. All numbers verified against `md:thyroid_research_2026` on 2026-03-14. Copy-paste into rebuttal letters with minimal adaptation.
+> **Purpose:** Ready-to-use point-by-point responses for manuscript peer review comments. All numbers verified against `thyroid_master.duckdb` on 2026-03-14. Copy-paste into rebuttal letters with minimal adaptation.
 
 ---
 
@@ -239,4 +239,4 @@ For variables with >65% FMI (specimen weight), we qualify results with additiona
 
 ---
 
-*Generated 2026-03-14 · All metrics verified against `md:thyroid_research_2026` · THYROID_2026 v3.2.0*
+*Generated 2026-03-14 · All metrics verified against `thyroid_master.duckdb` · THYROID_2026 v3.2.0*

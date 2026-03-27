@@ -62,7 +62,7 @@ Variables **at risk if interpreted as “whole specime” but only tumor 1 used*
 
 ## E. Remediation
 
-See **`MULTI_TUMOR_PATHOLOGY_REMEDIATION_SUMMARY.md`** — Phase 10 SQL extended to tumors **4–5**; new long table builder **108**; MotherDuck: rerun Phase 8 engine + materialization after deploy.
+See **`MULTI_TUMOR_PATHOLOGY_REMEDIATION_SUMMARY.md`** — Phase 10 SQL extended to tumors **4–5**; new long table builder **108**; local DuckDB: rerun Phase 8 engine + materialization after deploy.
 
 ## F. Code / file paths
 

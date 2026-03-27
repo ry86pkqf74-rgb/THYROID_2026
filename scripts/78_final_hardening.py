@@ -8,7 +8,7 @@ Phases:
   C: RAI dose missingness classification
   D: Lab canonical contract validation
 
-Supports --md (MotherDuck), --local, --dry-run, --phase A/B/C/D/all.
+Supports --md (local DuckDB), --local, --dry-run, --phase A/B/C/D/all.
 """
 from __future__ import annotations
 
@@ -63,8 +63,8 @@ def table_exists(con: duckdb.DuckDBPyConnection, tbl: str) -> bool:
 def connect(args) -> duckdb.DuckDBPyConnection:
     if args.md:
         import toml
-        token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["MOTHERDUCK_TOKEN"]
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+        token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
+        return duckdb.connect(f"thyroid_master.duckdb")
     return duckdb.connect(str(DB_PATH))
 
 
@@ -641,7 +641,7 @@ def phase_d(con: duckdb.DuckDBPyConnection, dry: bool) -> dict:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description="Final hardening pass")
-    ap.add_argument("--md", action="store_true", help="Use MotherDuck")
+    ap.add_argument("--md", action="store_true", help="Use local DuckDB")
     ap.add_argument("--local", action="store_true", help="Use local DuckDB")
     ap.add_argument("--dry-run", action="store_true", help="Print SQL only")
     ap.add_argument("--phase", default="all",

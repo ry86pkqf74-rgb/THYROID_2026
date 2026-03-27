@@ -10,13 +10,13 @@ tables (`path_synoptics`, `operative_details`) from raw sources.  That build set
 all NLP-derived flag columns to their default values (`FALSE` for booleans, `NULL`
 for text fields) because NLP inference had not been applied at construction time.
 
-**Script 26** (MotherDuck materialization) runs after script 22.  Historically it
+**Script 26** (local DuckDB materialization) runs after script 22.  Historically it
 materialized `operative_episode_detail_v2` immediately — *before* **script 71**
-had a chance to execute the NLP UPDATE pass.  The consequence: MotherDuck contained
+had a chance to execute the NLP UPDATE pass.  The consequence: local DuckDB contained
 the un-enriched base table and the NLP fields remained at default values.
 
-**Script 71** (`71_operative_nlp_to_motherduck.py`) is the correct fix path.  It:
-1. Connects to MotherDuck RW (`thyroid_research_2026`)
+**Script 71** (`71_operative_nlp_to_local DuckDB.py`) is the correct fix path.  It:
+1. Connects to local DuckDB RW (`thyroid_master.duckdb`)
 2. Loads `clinical_notes_long` (operative note sub-set)
 3. Runs `OperativeDetailExtractor` (in `notes_extraction/extract_operative_v2.py`)
 4. Stages results into a temp table `_v2_operative_enrichment`
@@ -28,7 +28,7 @@ The correct **deployment order** is:
 22 → 23 → 24 → 25 → 71 → 26 --md
 ```
 Script 71 must run **before** script 26 materializes the mirror; running it after
-requires a targeted re-materialize (`scripts/26_motherduck_materialize_v2.py --md --table md_oper_episode_detail_v2`).
+requires a targeted re-materialize (`scripts/26_local DuckDB_materialize_v2.py --md --table md_oper_episode_detail_v2`).
 
 ---
 
@@ -107,16 +107,16 @@ Category C fields cannot be improved without adding entities to
 
 ```bash
 # 1. Run operative NLP enrichment (takes 15-30 min for full note corpus)
-MOTHERDUCK_TOKEN=$(python -c "import toml; print(toml.load('.streamlit/secrets.toml')['MOTHERDUCK_TOKEN'])")
-export MOTHERDUCK_TOKEN
+LOCAL_DB_PATH=$(python -c "import toml; print(toml.load('.streamlit/secrets.toml')['LOCAL_DB_PATH'])")
+export LOCAL_DB_PATH
 
-.venv/bin/python scripts/71_operative_nlp_to_motherduck.py --md
+.venv/bin/python scripts/71_operative_nlp_to_local DuckDB.py --md
 
 # 2. Validate propagation coverage
 .venv/bin/python scripts/81_operative_nlp_propagation_validate.py --md
 
 # 3. Re-materialize updated mirror
-.venv/bin/python scripts/26_motherduck_materialize_v2.py --md
+.venv/bin/python scripts/26_local DuckDB_materialize_v2.py --md
 ```
 
 Exports written to `exports/final_md_optimization_20260314/operative_nlp_*.csv`.

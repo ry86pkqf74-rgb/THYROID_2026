@@ -43,5 +43,5 @@ AFTER (script-94 fix applied)
 Action taken:
   • Fixed check_map_duplicates() in 85_materialization_performance_audit.py
   • Created 94_map_dedup_validator.py as the authoritative CI check
-  • CI job added: runs script 94 in lint-and-syntax job (no MotherDuck needed)
+  • CI job added: runs script 94 in lint-and-syntax job (no local DuckDB needed)
 

@@ -65,7 +65,7 @@ ROOT = Path(__file__).resolve().parent.parent
 LOCAL_DB = ROOT / "thyroid_master.duckdb"
 OUT_DIR = ROOT / "exports" / "mixture_cure_results"
 LEGACY_OUT_DIR = ROOT / "exports" / "cure_results"
-DATABASE = "thyroid_research_2026"
+DATABASE = "thyroid_master.duckdb"
 
 sys.path.insert(0, str(ROOT))
 
@@ -110,20 +110,20 @@ def _get_con(use_md: bool, use_local: bool):
         return duckdb.connect(str(LOCAL_DB)), False
     if use_md:
         import os
-        token = os.environ.get("MOTHERDUCK_TOKEN", "")
+        token = os.environ.get("LOCAL_DB_PATH", "")
         if not token:
             try:
                 import toml
                 token = toml.load(str(ROOT / ".streamlit" / "secrets.toml")).get(
-                    "MOTHERDUCK_TOKEN", ""
+                    "LOCAL_DB_PATH", ""
                 )
             except Exception:
                 pass
         if not token:
-            print("  ERROR: MOTHERDUCK_TOKEN not set. Use --local for local DuckDB.")
+            print("  ERROR: LOCAL_DB_PATH not set. Use --local for local DuckDB.")
             sys.exit(1)
-        con = duckdb.connect(f"md:?motherduck_token={token}")
-        con.execute("USE thyroid_research_2026;")
+        con = duckdb.connect(f"thyroid_master.duckdb")
+        con.execute("USE thyroid_master.duckdb;")
         return con, True
     return duckdb.connect(str(LOCAL_DB)), False
 
@@ -712,7 +712,7 @@ def run(args: argparse.Namespace) -> int:
     con.close()
 
     if df.empty:
-        print("  ERROR: No data. Run `python scripts/26_motherduck_materialize_v2.py --md` first.")
+        print("  ERROR: No data. Run `python scripts/26_local DuckDB_materialize_v2.py --md` first.")
         return 1
 
     df["time_days"] = pd.to_numeric(df["time_days"], errors="coerce").fillna(MAX_TIME).clip(lower=1)
@@ -956,7 +956,7 @@ def run(args: argparse.Namespace) -> int:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--md", action="store_true", help="Read from MotherDuck")
+    ap.add_argument("--md", action="store_true", help="Read from local DuckDB")
     ap.add_argument("--local", action="store_true", help="Force local DuckDB")
     ap.add_argument("--dry-run", action="store_true", help="Use 500-row sample only")
     ap.add_argument("--boot", type=int, default=300,

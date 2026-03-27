@@ -36,27 +36,27 @@ def _get_con(use_md: bool, use_local: bool):
     if use_local:
         return duckdb.connect(str(ROOT / "thyroid_master.duckdb")), False
     if use_md:
-        token = os.environ.get("MOTHERDUCK_TOKEN", "")
+        token = os.environ.get("LOCAL_DB_PATH", "")
         if not token:
             try:
                 import toml
                 token = toml.load(str(ROOT / ".streamlit" / "secrets.toml")).get(
-                    "MOTHERDUCK_TOKEN", ""
+                    "LOCAL_DB_PATH", ""
                 )
             except Exception:
                 pass
         if not token:
-            print("  ERROR: MOTHERDUCK_TOKEN not set.")
+            print("  ERROR: LOCAL_DB_PATH not set.")
             sys.exit(1)
-        con = duckdb.connect(f"md:?motherduck_token={token}")
-        con.execute("USE thyroid_research_2026;")
+        con = duckdb.connect(f"thyroid_master.duckdb")
+        con.execute("USE thyroid_master.duckdb;")
         return con, True
     return duckdb.connect(str(ROOT / "thyroid_master.duckdb")), False
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--md", action="store_true", help="Read from MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Read from local DuckDB")
     parser.add_argument("--local", action="store_true", help="Force local DuckDB")
     parser.add_argument("--dry-run", action="store_true", help="Skip heavy operations")
     args = parser.parse_args()
@@ -74,7 +74,7 @@ def main() -> None:
 
     pa = ThyroidPredictiveAnalyzer(con)
     print(f"  PTCM available: {pa.ptcm_available}")
-    print(f"  Source: {'MotherDuck' if is_md else 'local DuckDB'}\n")
+    print(f"  Source: {'local DuckDB' if is_md else 'local DuckDB'}\n")
 
     ts = datetime.now().strftime("%Y%m%d_%H%M")
 
@@ -198,7 +198,7 @@ def main() -> None:
     con.close()
     manifest = {
         "generated_at": datetime.now().isoformat(),
-        "source": "MotherDuck" if is_md else "local",
+        "source": "local DuckDB" if is_md else "local",
         "ptcm_available": pa.ptcm_available,
         "models_compared": comp.get("n_models", 0) if "error" not in comp else 0,
         "competing_risks_n": cr.get("n_obs", 0) if "error" not in cr else 0,

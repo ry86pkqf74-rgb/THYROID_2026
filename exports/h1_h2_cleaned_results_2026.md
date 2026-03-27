@@ -159,7 +159,7 @@ mentions in consent templates.
 | Recurrence models | **90/100** | Structural data, unchanged by refinement |
 | RLN injury models | **85/100** | Low event count limits power (40 events in 5,277) |
 | H2 complication models | **75/100** | Very low events (10-26) in goiter subsets; models unstable |
-| Reproducibility | **100/100** | All results reproduced exactly against live MotherDuck |
+| Reproducibility | **100/100** | All results reproduced exactly against live local DuckDB |
 
 **Overall model cleanliness confidence: 90/100**
 
@@ -173,4 +173,4 @@ reduced (but correct) event counts.
 - `scripts/42_hypothesis1_cln_lobectomy.py` — replaced `note_entities_complications` + `vw_patient_postop_rln_injury_detail` with `patient_refined_complication_flags_v2`
 - `scripts/43_hypothesis2_goiter_sdoh.py` — replaced `note_entities_complications` + `vw_patient_postop_rln_injury_detail` with `patient_refined_complication_flags_v2`
 - `scripts/44_hypothesis_validation_extension.py` — replaced all NLP queries with refined flags
-- `logs/pro_connection_verified.md` — MotherDuck Pro connection verification
+- `logs/pro_connection_verified.md` — local DuckDB Pro connection verification

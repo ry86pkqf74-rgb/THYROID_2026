@@ -1,5 +1,5 @@
 opportunity_id,opportunity,clinical_value,manuscript_value,effort,source_available,do_now,category,detail
-1,Operative note NLP enrichment,HIGH,HIGH,MEDIUM,Yes,YES_MUST_DO,backfill,OperativeDetailExtractor exists but was never run on MotherDuck; 14 NLP columns at 0%
+1,Operative note NLP enrichment,HIGH,HIGH,MEDIUM,Yes,YES_MUST_DO,backfill,OperativeDetailExtractor exists but was never run on local DuckDB; 14 NLP columns at 0%
 2,RAI dose backfill,HIGH,HIGH,LOW,Yes,YES_MUST_DO,backfill,extracted_rai_dose_refined_v1 has 307 doses; rai_treatment_episode_v2 has only 55
 3,RAS flag propagation,HIGH,HIGH,LOW,Yes,YES_MUST_DO,backfill,extracted_ras_subtypes_v1 has 316+ patients; molecular_test_episode_v2.ras_flag is 0
 4,Linkage ID backfill,MEDIUM,MEDIUM,LOW,Yes,YES_SHOULD_DO,backfill,V3 linkage tables exist but IDs not propagated to canonical episodes

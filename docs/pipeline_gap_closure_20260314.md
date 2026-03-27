@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-Four targeted workstreams executed against live MotherDuck (`thyroid_research_2026`).
+Four targeted workstreams executed against live local DuckDB (`thyroid_master.duckdb`).
 Only pipeline-limited and process-limited gaps addressed; source-limited gaps documented
 as permanent limitations.
 
@@ -44,7 +44,7 @@ record outside the structured `operative_details` table or their procedure was n
 in the V2 extraction pipeline. No fabrication of data performed.
 
 ### Deliverables
-- `val_operative_coverage_v2` table (MotherDuck): field-level coverage counts with
+- `val_operative_coverage_v2` table (local DuckDB): field-level coverage counts with
   episode-level, patient-level, and NLP-supplement breakdowns
 - Patient-level op_* aggregates in `patient_analysis_resolved_v1` and
   `manuscript_cohort_v1` refreshed with proper `LOWER(CAST(...))` boolean handling
@@ -68,7 +68,7 @@ High-confidence only (score ≥ 0.65): 646
 
 ### Source Limitation Confirmed
 - `imaging_nodule_long_v2` (10,866 rows): ALL feature columns = 0 (size_cm_max, composition, shape)
-- This table is V2 NLP-populated and the extractor outputs were **never materialized** to MotherDuck
+- This table is V2 NLP-populated and the extractor outputs were **never materialized** to local DuckDB
 - Use `imaging_nodule_master_v1` (19,891 rows, 3,439 patients) as the canonical imaging source
 
 ### Deliverables
@@ -105,7 +105,7 @@ track review yield over time.
 **Most efficient review target**: Priority 2 (n=224) — likely to recover dates with minimal effort per case.
 
 ### Deliverables
-- `recurrence_review_queue_v1` MotherDuck table (1,986 rows): research_id, priority,
+- `recurrence_review_queue_v1` local DuckDB table (1,986 rows): research_id, priority,
   Tg values, RAI status, scan findings, surgery date, histology, stage, BRAF
 - `recurrence_date_tier_summary_v1` table
 - `recurrence_review_yield_tracker_v1` table (sprint baseline: 0 completed)
@@ -139,7 +139,7 @@ high-priority cases.
 
 ---
 
-## New MotherDuck Tables Created
+## New local DuckDB Tables Created
 
 | Table | Rows | Purpose |
 |---|---|---|
@@ -156,7 +156,7 @@ high-priority cases.
 
 | Gap | Root Cause |
 |---|---|
-| `imaging_nodule_long_v2` feature columns all zero | V2 extractor outputs never materialized to MotherDuck |
+| `imaging_nodule_long_v2` feature columns all zero | V2 extractor outputs never materialized to local DuckDB |
 | `operative_episode_detail_v2` 32 NLP-only parathyroid patients | No operative_details row for these patients |
 | Recurrence `unresolved_date` = 88.8% of recurrence flags | `recurrence_risk_features_mv` stores boolean only, no day-level date |
 | RAI dose missingness ~59% | Nuclear medicine reports absent from clinical_notes_long corpus |

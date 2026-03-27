@@ -15,26 +15,26 @@ Root causes addressed (see ADR in module doc below):
      in parquet-only paths.
 
 This script:
-  - Optionally queries MotherDuck for baseline diagnostics (--diagnose-md).
-  - Loads research_id → surg_date from the synoptic workbook (or MotherDuck
+  - Optionally queries local DuckDB for baseline diagnostics (--diagnose-md).
+  - Loads research_id → surg_date from the synoptic workbook (or local DuckDB
     path_synoptics when --md --use-md-surgery-dates).
   - Re-extracts all OPNote columns from Notes 12_1_25.xlsx via config/notes_column_map.csv
     using extended date scanning (50k chars) + surg_date fallback.
   - Optionally scans every .xlsx under raw/** and extra roots for additional
     operative-like text columns (heuristic, auditable).
   - Writes exports/operative_notes_full_history_<stamp>/ audit artifacts + parquet.
-  - Optionally CREATE OR REPLACE TABLE raw.operative_notes_full_history_v2 on MotherDuck.
+  - Optionally CREATE OR REPLACE TABLE raw.operative_notes_full_history_v2 on local DuckDB.
 
 Usage (local artifacts only):
   .venv/bin/python scripts/110_operative_notes_full_history_scan.py \\
     --extra-root '/Users/you/Downloads/Active Master Files 2'
 
-Usage (MotherDuck diagnostics + publish table):
-  export MOTHERDUCK_TOKEN='...'
+Usage (local DuckDB diagnostics + publish table):
+  export LOCAL_DB_PATH='...'
   .venv/bin/python scripts/110_operative_notes_full_history_scan.py --md --diagnose-md --publish-md \\
     --extra-root '/Users/you/Downloads/Active Master Files 2'
 
-Do NOT commit tokens. Load MOTHERDUCK_TOKEN from your environment or secret manager.
+Do NOT commit tokens. Load LOCAL_DB_PATH from your environment or secret manager.
 """
 
 from __future__ import annotations
@@ -52,7 +52,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from motherduck_client import MotherDuckClient  # noqa: E402
+from local DuckDB_client import local DuckDBClient  # noqa: E402
 from utils.text_helpers import (  # noqa: E402
     clean_research_id,
     extract_note_date,
@@ -143,7 +143,7 @@ def load_surgery_lookup_from_synoptic(path: Path) -> pd.DataFrame:
     return lu
 
 
-def load_surgery_lookup_motherduck(con) -> pd.DataFrame:
+def load_surgery_lookup_local DuckDB(con) -> pd.DataFrame:
     # surg_date is often VARCHAR with mixed formats; native DATE also occurs.
     q = """
     SELECT CAST(research_id AS BIGINT) AS research_id,
@@ -310,8 +310,8 @@ def heuristic_scan_sheet(
     return recs
 
 
-def diagnose_motherduck(con) -> None:
-    print("\n=== MotherDuck: clinical_notes_long operative baseline ===\n")
+def diagnose_local DuckDB(con) -> None:
+    print("\n=== local DuckDB: clinical_notes_long operative baseline ===\n")
     try:
         q = """
         SELECT
@@ -364,7 +364,7 @@ def validation_report(df: pd.DataFrame, baseline_pre2019: int | None) -> None:
     print(f"Unique patients (pre-2019 resolved): {df.loc[pre, 'research_id'].nunique():,}")
     if baseline_pre2019 is not None:
         print(
-            f"\nDelta vs MotherDuck pre_2019_with_note_date: "
+            f"\nDelta vs local DuckDB pre_2019_with_note_date: "
             f"+{max(0, int(pre.sum()) - baseline_pre2019):,} "
             f"(baseline was {baseline_pre2019})"
         )
@@ -387,7 +387,7 @@ def main() -> None:
     parser.add_argument(
         "--md",
         action="store_true",
-        help="Use MotherDuck token for optional publish/diagnose steps.",
+        help="Use local DuckDB token for optional publish/diagnose steps.",
     )
     parser.add_argument(
         "--diagnose-md",
@@ -397,12 +397,12 @@ def main() -> None:
     parser.add_argument(
         "--publish-md",
         action="store_true",
-        help="CREATE OR REPLACE TABLE raw.operative_notes_full_history_v2 on MotherDuck.",
+        help="CREATE OR REPLACE TABLE raw.operative_notes_full_history_v2 on local DuckDB.",
     )
     parser.add_argument(
         "--use-md-surgery-dates",
         action="store_true",
-        help="Prefer path_synoptics.surg_date on MotherDuck for fallback (instead of local synoptic xlsx).",
+        help="Prefer path_synoptics.surg_date on local DuckDB for fallback (instead of local synoptic xlsx).",
     )
     parser.add_argument(
         "--heuristic-scan",
@@ -431,10 +431,10 @@ def main() -> None:
     baseline_pre2019 = None
     md_con = None
     if args.md and (args.diagnose_md or args.publish_md or args.use_md_surgery_dates):
-        md_con = MotherDuckClient().connect_rw()
+        md_con = local DuckDBClient().connect_rw()
 
     if args.diagnose_md and md_con:
-        diagnose_motherduck(md_con)
+        diagnose_local DuckDB(md_con)
         try:
             baseline_pre2019 = int(
                 md_con.execute(
@@ -450,8 +450,8 @@ def main() -> None:
             baseline_pre2019 = None
 
     if args.use_md_surgery_dates and md_con:
-        surgery_lu = load_surgery_lookup_motherduck(md_con)
-        print(f"\nSurgery lookup rows (MotherDuck path_synoptics): {len(surgery_lu):,}")
+        surgery_lu = load_surgery_lookup_local DuckDB(md_con)
+        print(f"\nSurgery lookup rows (local DuckDB path_synoptics): {len(surgery_lu):,}")
     elif synoptic_path is not None:
         surgery_lu = load_surgery_lookup_from_synoptic(synoptic_path)
         print(f"\nSurgery lookup rows (local synoptic): {len(surgery_lu):,}")
@@ -521,7 +521,7 @@ def main() -> None:
         n = md_con.execute(
             "SELECT COUNT(*) FROM raw.operative_notes_full_history_v2"
         ).fetchone()[0]
-        print(f"\nMotherDuck raw.operative_notes_full_history_v2 rows: {n:,}")
+        print(f"\nlocal DuckDB raw.operative_notes_full_history_v2 rows: {n:,}")
 
     if md_con:
         md_con.close()

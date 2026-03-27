@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-18  
 **Auditor:** Copilot (Claude Opus 4.6)  
-**Environment:** MotherDuck `thyroid_research_2026` (679 tables, live)  
+**Environment:** local DuckDB `thyroid_master.duckdb` (679 tables, live)  
 
 ---
 
@@ -277,7 +277,7 @@ WHERE vol.n >= 20;
 
 | Step | Priority | Status |
 |------|----------|--------|
-| Deploy `clean_surgeon_id_v1` to MotherDuck | P0 | Ready (SQL above) |
+| Deploy `clean_surgeon_id_v1` to local DuckDB | P0 | Ready (SQL above) |
 | Update MANUSCRIPT_TRACKER.md: "Surgeon ID feasibility check → Complete" | P0 | Ready |
 | Create `studies/proposal_surgeon_variability/` directory | P1 | Next session |
 | Write Paper 3 SAP with volume threshold sensitivity design | P1 | Next session |

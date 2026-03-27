@@ -6,7 +6,7 @@ Enforces 100% direct-source traceability and accurate event-date precedence
 (lab collection date ALWAYS takes precedence over note_date).
 
 Steps performed:
-  1. Schema audit: check every MotherDuck table for 7 provenance columns
+  1. Schema audit: check every local DuckDB table for 7 provenance columns
   2. Lab-date accuracy audit: measure note_date fallback rate per lab type
   3. Create provenance_enriched_events_v1 TABLE (strict date precedence)
   4. Create lineage_audit_v1 TABLE (raw -> note -> extracted -> final cohort)
@@ -15,7 +15,7 @@ Steps performed:
   7. Write docs/date_accuracy_verification_report_YYYYMMDD.md
 
 Usage:
-  .venv/bin/python scripts/46_provenance_audit.py --md           # MotherDuck
+  .venv/bin/python scripts/46_provenance_audit.py --md           # local DuckDB
   .venv/bin/python scripts/46_provenance_audit.py --local        # local DuckDB
   .venv/bin/python scripts/46_provenance_audit.py --md --dry-run # audit only
 """
@@ -54,24 +54,24 @@ PROVENANCE_COLUMNS = [
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 def _get_token() -> str:
-    token = os.getenv("MOTHERDUCK_TOKEN")
+    token = os.getenv("LOCAL_DB_PATH")
     if token:
         return token
     secrets = ROOT / ".streamlit" / "secrets.toml"
     if secrets.exists():
         try:
             import toml
-            return toml.load(str(secrets))["MOTHERDUCK_TOKEN"]
+            return toml.load(str(secrets))["LOCAL_DB_PATH"]
         except Exception:
             pass
     raise RuntimeError(
-        "MOTHERDUCK_TOKEN not set. Export it or add to .streamlit/secrets.toml."
+        "LOCAL_DB_PATH not set. Export it or add to .streamlit/secrets.toml."
     )
 
 
 def connect_md() -> duckdb.DuckDBPyConnection:
     token = _get_token()
-    return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+    return duckdb.connect(f"thyroid_master.duckdb")
 
 
 def connect_local() -> duckdb.DuckDBPyConnection:
@@ -831,7 +831,7 @@ def main() -> None:
         description="46 -- Provenance audit + date-accuracy enforcement"
     )
     parser.add_argument("--md", action="store_true",
-                        help="Use MotherDuck (default: local DuckDB)")
+                        help="Use local DuckDB (default: local DuckDB)")
     parser.add_argument("--local", action="store_true",
                         help="Use local DuckDB explicitly")
     parser.add_argument("--dry-run", action="store_true",
@@ -844,9 +844,9 @@ def main() -> None:
     if args.md and not args.local:
         try:
             con = connect_md()
-            print("  Connected to MotherDuck (RW)")
+            print("  Connected to local DuckDB (RW)")
         except Exception as exc:
-            print(f"  MotherDuck unavailable: {exc}")
+            print(f"  local DuckDB unavailable: {exc}")
             print("  Falling back to local DuckDB")
             con = connect_local()
     else:

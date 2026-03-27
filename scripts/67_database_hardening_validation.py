@@ -20,7 +20,7 @@ Creates:
   val_metric_definition_conflicts-- conflicting definitions across tables
   hardening_review_queue         -- priority-ranked items for manual review
 
-Supports --md flag for MotherDuck deployment.
+Supports --md flag for local DuckDB deployment.
 """
 from __future__ import annotations
 
@@ -550,16 +550,16 @@ def build_review_queue(con: duckdb.DuckDBPyConnection) -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Database hardening validation")
-    parser.add_argument("--md", action="store_true", help="Run against MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Run against local DuckDB")
     parser.add_argument("--local", action="store_true", help="Force local DuckDB")
     parser.add_argument("--dry-run", action="store_true", help="Print SQL only")
     args = parser.parse_args()
 
     if args.md:
         import toml
-        tok = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["MOTHERDUCK_TOKEN"]
-        con = duckdb.connect(f"md:thyroid_research_2026?motherduck_token={tok}")
-        print("[INFO] Connected to MotherDuck (thyroid_research_2026)")
+        tok = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
+        con = duckdb.connect(f"thyroid_master.duckdb")
+        print("[INFO] Connected to local DuckDB (thyroid_master.duckdb)")
     else:
         con = duckdb.connect(str(DB_PATH))
         print(f"[INFO] Connected to local DuckDB: {DB_PATH}")

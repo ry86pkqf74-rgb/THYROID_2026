@@ -27,14 +27,14 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from motherduck_client import MotherDuckClient, MotherDuckConfig
+from local DuckDB_client import local DuckDBClient, local DuckDBConfig
 
 OUT_DIR = ROOT / "exports" / "FINAL_RELEASE"
 
 
 def _get_con(use_md: bool):
     if use_md:
-        return MotherDuckClient().connect_rw()
+        return local DuckDBClient().connect_rw()
     return __import__("duckdb").connect(str(ROOT / "thyroid_master.duckdb"))
 
 
@@ -64,7 +64,7 @@ def _safe_export(con, table: str, label: str, out_dir: Path) -> int:
 
 def main():
     parser = argparse.ArgumentParser(description="Publication export pipeline")
-    parser.add_argument("--md", action="store_true", help="Use MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Use local DuckDB")
     args = parser.parse_args()
 
     ts = datetime.now().strftime("%Y%m%d_%H%M")
@@ -139,7 +139,7 @@ def main():
     # Manifest
     manifest = {
         "generated_at": ts,
-        "source": "thyroid_research_2026",
+        "source": "thyroid_master.duckdb",
         "exports": exports,
         "git_sha": "see CITATION.cff",
     }

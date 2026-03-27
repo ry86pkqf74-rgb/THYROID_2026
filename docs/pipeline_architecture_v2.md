@@ -23,11 +23,11 @@ Phase 3: Quality & Extraction
 
 Phase 4: Integration
   08_integrate_missing_sources.py  Phase 6 integration
-  09_motherduck_upload_verify_extract.py  MotherDuck upload
-  09b_motherduck_upload_notes_entities.py  Notes upload
+  09_local DuckDB_upload_verify_extract.py  local DuckDB upload
+  09b_local DuckDB_upload_notes_entities.py  Notes upload
 
 Phase 5: Optimization & QA
-  10_maximize_motherduck_trial.py  Trial analytics
+  10_maximize_local DuckDB_trial.py  Trial analytics
   11_quality_assurance_crosscheck.py  Master timeline, QA
   11.5_cross_file_validation.py  Cross-file QA
   12_update_streamlit_dashboard.py  Dashboard v3
@@ -46,7 +46,7 @@ Phase 7: v2 Upgrade (deploy: 22 -> 23 -> 24 -> 25 -> 26)
   23_cross_domain_linkage_v2.py  Cross-domain linkage
   24_reconciliation_review_v2.py 5 reconciliation review views
   25_qa_validation_v2.py         10-category QA
-  26_motherduck_materialize_v2.py  MotherDuck materialization
+  26_local DuckDB_materialize_v2.py  local DuckDB materialization
 ```
 
 ## Canonical Data Model (v2)
@@ -136,7 +136,7 @@ For dates:
 | imaging_pathology_concordance_review_v2 | laterality_and_size, laterality_only, size_only | error/warning |
 | operative_pathology_reconciliation_review_v2 | op_path_laterality, cnd_no_nodal_path, nodal_path_no_cnd, bilateral_in_lobectomy | error/warning |
 
-## MotherDuck Materialization
+## local DuckDB Materialization
 
 All v2 tables are materialized with `md_` prefix via script 26. The mapping preserves the same schema. Streamlit dashboards query with fallback: try source table name first, then `md_` prefix.
 

@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-13
 **Pass type:** Denominator language alignment + metric reconciliation verification
-**Database:** MotherDuck `thyroid_research_2026`
+**Database:** local DuckDB `thyroid_master.duckdb`
 **Overall Status:** READY FOR MANUSCRIPT FREEZE
 
 ---
@@ -12,7 +12,7 @@
 This alignment pass resolved all outstanding discrepancies between the canonical metric definitions in `manuscript_metrics_v2` and the manuscript-facing documentation, LaTeX tables, markdown tables, and reports across the repository. No database changes were made — all corrections are to documentation, exports, and wording.
 
 **Key outcomes:**
-- 11 canonical metrics verified against live MotherDuck source tables (all PASS)
+- 11 canonical metrics verified against live local DuckDB source tables (all PASS)
 - 4 cross-source consistency checks confirmed (all CONSISTENT)
 - 6 denominator validation checks confirmed (all PASS)
 - 12 files updated with corrected values and explicit denominator language
@@ -22,7 +22,7 @@ This alignment pass resolved all outstanding discrepancies between the canonical
 
 ## Canonical Metrics (Single Source of Truth)
 
-All values below are from `manuscript_metrics_v2` on MotherDuck, verified 2026-03-13.
+All values below are from `manuscript_metrics_v2` on local DuckDB, verified 2026-03-13.
 
 | Metric | Value | Numerator | Denominator | Population Label | Source Table |
 |--------|------:|----------:|------------:|-----------------|-------------|
@@ -122,7 +122,7 @@ Every rate in manuscript-facing outputs now includes three components:
 | Metrics v1 vs v2 consistent | PASS |
 | RAI definite_received empty documented | PASS_WITH_NOTE |
 
-### Live Metric Verification (11 checks against MotherDuck)
+### Live Metric Verification (11 checks against local DuckDB)
 
 All 11 canonical metrics verified against their source SQL queries. All PASS.
 
@@ -168,6 +168,6 @@ All 11 canonical metrics verified against their source SQL queries. All PASS.
 ---
 
 *Generated: 2026-03-13*
-*Canonical metric source: `manuscript_metrics_v2` on MotherDuck `thyroid_research_2026`*
+*Canonical metric source: `manuscript_metrics_v2` on local DuckDB `thyroid_master.duckdb`*
 *Validation: `val_recon_status_v1`, `val_recon_metric_consistency_v1`, `val_denominator_checks`, `val_metric_definition_conflicts`*
 *Prior audit: `docs/manuscript_metric_reconciliation_20260313.md`*

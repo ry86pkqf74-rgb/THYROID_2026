@@ -13,7 +13,7 @@ import pandas as pd
 import streamlit as st
 
 SHARE_CATALOG = "thyroid_share"
-DATABASE = "thyroid_research_2026"
+DATABASE = "thyroid_master.duckdb"
 
 try:
     import openpyxl  # noqa: F401
@@ -88,14 +88,14 @@ def tbl_exists(con, name: str) -> bool:
 
 
 def qual(table: str) -> str:
-    """Return fully-qualified table name for the active MotherDuck catalog.
+    """Return fully-qualified table name for the active local DuckDB catalog.
 
     After _get_con() issues USE <catalog>, most unqualified names resolve
     automatically.  This helper is available for edge cases that need
     explicit qualification.
     """
     try:
-        cat = st.session_state.get("_motherduck_catalog", DATABASE)
+        cat = st.session_state.get("_local DuckDB_catalog", DATABASE)
     except Exception:
         cat = DATABASE
     return f"{cat}.{table}"
@@ -135,7 +135,7 @@ def multi_export(df: pd.DataFrame, prefix: str, key_sfx: str = "") -> None:
     ts = datetime.now().strftime("%Y%m%d_%H%M")
     df_export = df.copy()
 
-    # 1. Datetime columns (tz-aware from MotherDuck)
+    # 1. Datetime columns (tz-aware from local DuckDB)
     datetime_cols = [col for col in df_export.columns if pd.api.types.is_datetime64_any_dtype(df_export[col])]
     for col in datetime_cols:
         if hasattr(df_export[col].dt, "tz_localize"):
@@ -201,7 +201,7 @@ def get_runtime_info() -> dict:
     """Collect runtime status from session state for display."""
     return {
         "version": st.session_state.get("_app_version", "unknown"),
-        "catalog": st.session_state.get("_motherduck_catalog", DATABASE),
+        "catalog": st.session_state.get("_local DuckDB_catalog", DATABASE),
         "connection_mode": st.session_state.get("_connection_mode", "unknown"),
         "connection_detail": st.session_state.get("_connection_detail", ""),
         "is_ro_share": st.session_state.get("_connection_mode") == "ro_share",

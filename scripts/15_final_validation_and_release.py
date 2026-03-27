@@ -32,12 +32,12 @@ RELEASE_DIR = ROOT / "exports" / f"FINAL_RELEASE_v2026.03.10_{EXPORT_DATE}"
 
 
 def _get_connection() -> duckdb.DuckDBPyConnection:
-    token = os.getenv("MOTHERDUCK_TOKEN")
+    token = os.getenv("LOCAL_DB_PATH")
     if not token:
         raise RuntimeError(
-            "Missing MOTHERDUCK_TOKEN. Export your MotherDuck token before connecting."
+            "Missing LOCAL_DB_PATH. Export your local DuckDB token before connecting."
         )
-    return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+    return duckdb.connect(f"thyroid_master.duckdb")
 
 
 def _safe_count(con: duckdb.DuckDBPyConnection, table: str) -> int:
@@ -212,8 +212,8 @@ def phase5_checklist() -> None:
     for item in items:
         print(f"  [OK] {item}")
 
-    print("\n  MotherDuck Trial Downgrade Steps (when ready):")
-    print("    1. Downgrade to free tier in MotherDuck settings")
+    print("\n  local DuckDB Trial Downgrade Steps (when ready):")
+    print("    1. Downgrade to free tier in local DuckDB settings")
     print("    2. Keep the read-only share active")
     print("    3. Use local DuckDB (thyroid_master_local.duckdb) for any heavy work")
     print("    4. All MVs remain queryable via the attached local DB")
@@ -233,7 +233,7 @@ def main() -> None:
     con = _get_connection()
     db = con.execute("SELECT current_database()").fetchone()[0]
     ver = con.execute("SELECT version()").fetchone()[0]
-    print(f"  Connected to MotherDuck: {db} (DuckDB {ver})")
+    print(f"  Connected to local DuckDB: {db} (DuckDB {ver})")
 
     try:
         phase1_validation(con)

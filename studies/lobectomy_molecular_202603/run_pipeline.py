@@ -5,7 +5,7 @@ End-to-end cohort extraction + stats for lobectomy vs total thyroidectomy (2–4
 Run from repo root THYROID_2026/:
   .venv/bin/python studies/lobectomy_molecular_202603/run_pipeline.py
 
-Requires MOTHERDUCK_TOKEN (or secrets.toml).
+Requires LOCAL_DB_PATH (or secrets.toml).
 """
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ SQL_PATH = Path(__file__).resolve().parent / "sql" / "01_cohort_base.sql"
 
 sys.path.insert(0, str(REPO_ROOT))
 
-from motherduck_client import MotherDuckClient  # noqa: E402
+from local DuckDB_client import local DuckDBClient  # noqa: E402
 from utils.statistical_analysis import ThyroidStatisticalAnalyzer  # noqa: E402
 
 
@@ -115,7 +115,7 @@ def engineer(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def cohort_flow_counts(con) -> dict:
-    """Approximate CONSORT-style counts (MotherDuck)."""
+    """Approximate CONSORT-style counts (local DuckDB)."""
     q = """
     WITH first_op AS (
         SELECT research_id, procedure_normalized,
@@ -208,7 +208,7 @@ def main() -> None:
     (OUT / "tables").mkdir(exist_ok=True)
     (OUT / "figures").mkdir(exist_ok=True)
 
-    client = MotherDuckClient.for_env("prod")
+    client = local DuckDBClient.for_env("prod")
     con = client.connect_rw()
     sql = SQL_PATH.read_text()
     df = con.execute(sql).fetchdf()

@@ -1,8 +1,8 @@
-# THYROID_2026 — MotherDuck promotion & release helpers
+# THYROID_2026 — local DuckDB promotion & release helpers
 # ──────────────────────────────────────────────────────
 # Token resolution (in priority order):
-#   1. MD_SA_TOKEN  – service-account token for CI / shared environments
-#   2. MOTHERDUCK_TOKEN – personal token (fallback to .streamlit/secrets.toml inside scripts)
+#   1. LOCAL_DB_PATH  – service-account token for CI / shared environments
+#   2. LOCAL_DB_PATH – personal token (fallback to .streamlit/secrets.toml inside scripts)
 #
 # Usage:
 #   make md-promote-dryrun-dev-qa       # dry-run DEV → QA gate
@@ -13,17 +13,17 @@ PYTHON := .venv/bin/python
 
 # ── token guard ────────────────────────────────────────
 define check_token
-	@if [ -z "$$MOTHERDUCK_TOKEN" ] && [ -z "$$MD_SA_TOKEN" ]; then \
-		echo "ERROR: Neither MOTHERDUCK_TOKEN nor MD_SA_TOKEN is set."; \
-		echo "  export MOTHERDUCK_TOKEN=<token>   (personal)"; \
-		echo "  export MD_SA_TOKEN=<token>         (service account)"; \
+	@if [ -z "$$LOCAL_DB_PATH" ] && [ -z "$$LOCAL_DB_PATH" ]; then \
+		echo "ERROR: Neither LOCAL_DB_PATH nor LOCAL_DB_PATH is set."; \
+		echo "  export LOCAL_DB_PATH=<token>   (personal)"; \
+		echo "  export LOCAL_DB_PATH=<token>         (service account)"; \
 		exit 1; \
 	fi
 endef
 
 # ── SA flag helper ─────────────────────────────────────
-# Appends --sa when MD_SA_TOKEN is set so scripts use the SA path.
-SA_FLAG := $(if $(MD_SA_TOKEN),--sa,)
+# Appends --sa when LOCAL_DB_PATH is set so scripts use the SA path.
+SA_FLAG := $(if $(LOCAL_DB_PATH),--sa,)
 
 # ── promotion dry-runs ─────────────────────────────────
 .PHONY: md-promote-dryrun-dev-qa
@@ -47,7 +47,7 @@ md-release-manifest-prod:
 .PHONY: md-promote-dryrun-all
 md-promote-dryrun-all: md-promote-dryrun-dev-qa md-promote-dryrun-qa-prod
 
-# ── manifest status quick-check (no MotherDuck needed) ─
+# ── manifest status quick-check (no local DuckDB needed) ─
 .PHONY: md-manifest-status
 md-manifest-status:
 	@$(PYTHON) -c "\

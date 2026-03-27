@@ -2,11 +2,11 @@
 """
 11.5_cross_file_validation.py — Cross-File Logical Consistency QA
 
-Runs between scripts 11 and 12 while MotherDuck trial compute is active.
+Runs between scripts 11 and 12 while local DuckDB trial compute is active.
 Complements single-file QA (script 11) with cross-table consistency checks.
 
 Phases:
-  1. Connect + MotherDuck optimization review (varchar check, excel ext)
+  1. Connect + local DuckDB optimization review (varchar check, excel ext)
   2. Execute 3 cross-file consistency checks → materialized tables
   3. Insert flagged issues into qa_issues
   4. Update qa_summary_report.md, export Parquet
@@ -46,12 +46,12 @@ log = logging.getLogger("xfile_validation")
 ROOT = Path(__file__).resolve().parent.parent
 EXPORTS = ROOT / "exports"
 QA_DIR = ROOT / "studies" / "qa_crosscheck"
-MD_DATABASE = "thyroid_research_2026"
+MD_DATABASE = "thyroid_master.duckdb"
 
 PHASE_TIMES: dict[str, float] = {}
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-#  MotherDuck Optimization Notes
+#  local DuckDB Optimization Notes
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #
 # Future ingestion improvement — replace read_xlsx (all_varchar=True):
@@ -59,11 +59,11 @@ PHASE_TIMES: dict[str, float] = {}
 #   CREATE TABLE tbl AS SELECT * FROM read_excel('file.xlsx', sheet='Sheet1');
 #   Preserves native types and avoids downstream TRY_CAST overhead.
 #
-# Compute Tier Switching (MotherDuck Business/Enterprise):
-#   SET motherduck_default_server_instance_type = 'jumbo';
+# Compute Tier Switching (local DuckDB Business/Enterprise):
+#   SET local DuckDB_default_server_instance_type = 'jumbo';
 #   -- or 'mega' for heaviest workloads
 #   -- Check current tier:
-#   SELECT current_setting('motherduck_default_server_instance_type');
+#   SELECT current_setting('local DuckDB_default_server_instance_type');
 #
 # Read-replica awareness:
 #   For dashboard queries on read-replica, append ?access_mode=read_only
@@ -288,12 +288,12 @@ DEMOGRAPHICS_SQL = textwrap.dedent("""\
 
 def _get_connection():
     import duckdb
-    token = os.getenv("MOTHERDUCK_TOKEN")
+    token = os.getenv("LOCAL_DB_PATH")
     if not token:
         raise RuntimeError(
-            "MOTHERDUCK_TOKEN not set. Export it before running this script."
+            "LOCAL_DB_PATH not set. Export it before running this script."
         )
-    return duckdb.connect(f"md:{MD_DATABASE}?motherduck_token={token}")
+    return duckdb.connect(f"thyroid_master.duckdb")
 
 
 def _table_exists(con, name: str) -> bool:
@@ -407,8 +407,8 @@ def phase1_connect_optimize(con) -> list[str]:
     log.info("\n  Compute tier advisory:")
     log.info("    Business trial active — using trial compute for "
              "cross-file joins.")
-    log.info("    For heavier workloads, switch via MotherDuck UI or:")
-    log.info("      SET motherduck_default_server_instance_type = 'jumbo';")
+    log.info("    For heavier workloads, switch via local DuckDB UI or:")
+    log.info("      SET local DuckDB_default_server_instance_type = 'jumbo';")
     report.append("- Advisory: Business trial active — cross-file joins "
                   "enabled")
 

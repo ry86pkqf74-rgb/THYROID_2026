@@ -1,7 +1,7 @@
 {
   "script": "101_multi_episode_linkage_hardening.py",
   "timestamp": "20260315_1546",
-  "target": "motherduck",
+  "target": "local DuckDB",
   "dry_run": false,
   "tables_created": [
     "val_multi_episode_linkage_v1",

@@ -1,6 +1,6 @@
 # Schema & Linkage Audit — Molecular Utilization (THYROID_2026)
 
-**Generated:** 2026-03-26 (live MotherDuck `thyroid_research_2026`)  
+**Generated:** 2026-03-26 (live local DuckDB `thyroid_master.duckdb`)  
 **Repo reference:** tag `v2026.03.13`, Zenodo [10.5281/zenodo.18945510](https://doi.org/10.5281/zenodo.18945510)
 
 ---
@@ -10,7 +10,7 @@
 | Source | Relevance |
 |--------|-----------|
 | [`data_dictionary.md`](../data_dictionary.md) / CSV | Episode tables: `molecular_test_episode_v2` (`overall_result_class`, `platform`, dates, flags); `fna_episode_master_v2` (`bethesda_category`, linkage columns). `tumor_pathology` malignant-focused fields including `histology_1_type`. |
-| [`MANUSCRIPT_READY_CHECKLIST.md`](../MANUSCRIPT_READY_CHECKLIST.md) | Confirms MotherDuck DB name, `val_*` validation layer, provenance caveats (non-Tg lab dates 0%, etc.). |
+| [`MANUSCRIPT_READY_CHECKLIST.md`](../MANUSCRIPT_READY_CHECKLIST.md) | Confirms local DuckDB DB name, `val_*` validation layer, provenance caveats (non-Tg lab dates 0%, etc.). |
 | [`docs/FINAL_REPO_STATUS_20260313.md`](../docs/FINAL_REPO_STATUS_20260313.md) | Manuscript cohort ready; **molecular date accuracy ~45% day-level** noted — analyses should surface `date_status` where relevant. |
 | [`docs/database_hardening_audit_20260313.md`](../docs/database_hardening_audit_20260313.md) | V3 linkage tables are the documented production chain (`fna_molecular_linkage_v3`, `preop_surgery_linkage_v3`, `surgery_pathology_linkage_v3`). |
 | [`scripts/78_final_hardening.py`](../scripts/78_final_hardening.py) | Imaging–FNA relaxed union, lab validation; supports re-linking upstream of analysis. |
@@ -20,7 +20,7 @@
 
 ---
 
-## 2. Live table inventory (MotherDuck)
+## 2. Live table inventory (local DuckDB)
 
 | Table | Rows (live) | Column count (information_schema) | Notes |
 |-------|-------------|-----------------------------------|--------|
@@ -42,7 +42,7 @@
 
 ## 3. Column listings (how to reproduce)
 
-Run on MotherDuck:
+Run on local DuckDB:
 
 ```sql
 SELECT column_name, data_type
@@ -131,7 +131,7 @@ Cross-check vs manuscript-only filter:
 ## 6. Provenance
 
 - **Code / SQL:** `studies/molecular_utilization_2026/sql/01_views_and_cohort.sql`
-- **Verification:** `sql/02_motherduck_verification.sql`
+- **Verification:** `sql/02_local DuckDB_verification.sql`
 - **Repository tag:** `v2026.03.13`
 - **Archive DOI:** `10.5281/zenodo.18945510`
 

@@ -1,6 +1,6 @@
 {
   "generated_at": "2026-03-15T01:50:47.042976",
-  "script26_path": "/Users/ros/THyroid 2026/THYROID_2026/scripts/26_motherduck_materialize_v2.py",
+  "script26_path": "/Users/ros/THyroid 2026/THYROID_2026/scripts/26_local DuckDB_materialize_v2.py",
   "total_entries": 220,
   "unique_md_targets": 220,
   "unique_source_names": 220,

@@ -4,7 +4,7 @@
 Reuses cohort_logic from the 2–4 cm manuscript study (same definitions as table7 /
 completion audits). Writes:
   - exports/patient_completion_oed_path_linkage_v1/  (parquet, csv, manifest.json)
-  - MotherDuck tables patient_completion_oed_path_linkage_v1 + md_* mirror (--md)
+  - local DuckDB tables patient_completion_oed_path_linkage_v1 + md_* mirror (--md)
 
 Spine = distinct research_id appearing in operative_episode_detail_v2 OR path_synoptics.
 Completion fields apply to lobectomy-first patients only; others have NULL completion
@@ -13,7 +13,7 @@ columns (not applicable).
 Usage:
   .venv/bin/python scripts/107_global_completion_oed_path_linkage.py
   .venv/bin/python scripts/107_global_completion_oed_path_linkage.py --md
-  .venv/bin/python scripts/107_global_completion_oed_path_linkage.py --md --sa   # CI: prefer MD_SA_TOKEN
+  .venv/bin/python scripts/107_global_completion_oed_path_linkage.py --md --sa   # CI: prefer LOCAL_DB_PATH
   .venv/bin/python scripts/107_global_completion_oed_path_linkage.py --skip-md   # exports only
 """
 from __future__ import annotations
@@ -36,7 +36,7 @@ STUDY_PATIENT_CSV = STUDY / "patient_level_dataset.csv"
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(STUDY))
 
-from motherduck_client import MotherDuckClient, MotherDuckConfig  # noqa: E402
+from local DuckDB_client import local DuckDBClient, local DuckDBConfig  # noqa: E402
 
 import cohort_logic as cl  # noqa: E402
 
@@ -185,7 +185,7 @@ def cohort_consistency_check(out: pd.DataFrame) -> dict:
     }
 
 
-def push_motherduck(con, df: pd.DataFrame) -> None:
+def push_local DuckDB(con, df: pd.DataFrame) -> None:
     """Materialize RW tables via in-process register (avoids local path read on md:)."""
     con.register("_linkage_upload_v1", df)
     try:
@@ -207,7 +207,7 @@ def push_motherduck(con, df: pd.DataFrame) -> None:
     n = con.execute(
         "SELECT COUNT(*) FROM patient_completion_oed_path_linkage_v1"
     ).fetchone()[0]
-    print(f"MotherDuck patient_completion_oed_path_linkage_v1 rows: {n}")
+    print(f"local DuckDB patient_completion_oed_path_linkage_v1 rows: {n}")
 
 
 def main() -> int:
@@ -215,7 +215,7 @@ def main() -> int:
     ap.add_argument(
         "--md",
         action="store_true",
-        help="Write to MotherDuck (requires MOTHERDUCK_TOKEN)",
+        help="Write to local DuckDB (requires LOCAL_DB_PATH)",
     )
     ap.add_argument(
         "--skip-md",
@@ -225,12 +225,12 @@ def main() -> int:
     ap.add_argument(
         "--sa",
         action="store_true",
-        help="Prefer MD_SA_TOKEN over MOTHERDUCK_TOKEN (match GitHub Actions)",
+        help="Prefer LOCAL_DB_PATH over LOCAL_DB_PATH (match GitHub Actions)",
     )
     args = ap.parse_args()
     do_md = bool(args.md) and not args.skip_md
 
-    client = MotherDuckClient(MotherDuckConfig(use_service_account=bool(args.sa)))
+    client = local DuckDBClient(local DuckDBConfig(use_service_account=bool(args.sa)))
     con = client.connect_rw()
 
     ops, path_syn = load_ops_path(con)
@@ -276,7 +276,7 @@ def main() -> int:
         raise SystemExit("cohort consistency FAIL — see manifest cohort_consistency_vs_study_csv")
 
     if do_md:
-        push_motherduck(con, out)
+        push_local DuckDB(con, out)
 
     return 0
 

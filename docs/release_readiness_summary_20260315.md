@@ -22,7 +22,7 @@ Phase 3 delivers three governance capabilities to the THYROID_2026 pipeline:
 
 ## Deployment Status
 
-| Component | Script | MotherDuck | Status |
+| Component | Script | local DuckDB | Status |
 |-----------|--------|------------|--------|
 | Unified review queue | 101 | 18,866 rows | ✓ Deployed |
 | Review ops progress | 101 | 8 domains | ✓ Deployed |
@@ -53,7 +53,7 @@ G11 nonregression_proof       PASS   All 5 tables above minimum thresholds
 
 ## Artifacts Produced
 
-### MotherDuck Tables (6 new)
+### local DuckDB Tables (6 new)
 - `unified_review_queue_v1`
 - `review_ops_progress_v1`
 - `review_ops_kpi_v1`

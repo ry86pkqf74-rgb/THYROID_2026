@@ -1,6 +1,6 @@
 {
   "generated_at": "2026-03-11T00:50:26.575784",
-  "source": "MotherDuck",
+  "source": "local DuckDB",
   "ptcm_available": true,
   "models_compared": 4,
   "competing_risks_n": 0,

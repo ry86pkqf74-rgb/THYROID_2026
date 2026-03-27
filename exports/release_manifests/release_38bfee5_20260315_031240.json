@@ -1,7 +1,7 @@
 {
   "manifest_id": "release_38bfee5_20260315_031240",
   "env": "prod",
-  "database": "thyroid_research_2026",
+  "database": "thyroid_master.duckdb",
   "git_sha": "38bfee51248af9e08af0e289a52d35b5bd30d18d",
   "git_sha_short": "38bfee5",
   "git_branch": "main",

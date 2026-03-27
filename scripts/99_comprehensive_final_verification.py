@@ -2,7 +2,7 @@
 """
 99_comprehensive_final_verification.py — Enhanced comprehensive final verification
 
-Combines 5 workstreams against live MotherDuck prod:
+Combines 5 workstreams against live local DuckDB prod:
   A) Canonical truth snapshot (all core metrics)
   B) Multi-surgery episode linkage integrity (per-artifact-per-episode audit)
   C) Operative NLP propagation audit + downstream repair
@@ -50,7 +50,7 @@ DOCS                 = ROOT / "docs"
 # ─── Helpers ──────────────────────────────────────────────────────────────────
 
 def get_md_token() -> str:
-    for key in ("MD_SA_TOKEN", "MOTHERDUCK_TOKEN"):
+    for key in ("LOCAL_DB_PATH", "LOCAL_DB_PATH"):
         tok = os.environ.get(key, "")
         if tok:
             return tok
@@ -59,18 +59,18 @@ def get_md_token() -> str:
                    pathlib.Path.home() / ".streamlit" / "secrets.toml"):
             if p.exists():
                 try:
-                    return toml.load(str(p)).get("MOTHERDUCK_TOKEN", "")
+                    return toml.load(str(p)).get("LOCAL_DB_PATH", "")
                 except Exception:
                     pass
     return ""
 
 
-def connect_md(db: str = "thyroid_research_2026") -> duckdb.DuckDBPyConnection:
+def connect_md(db: str = "thyroid_master.duckdb") -> duckdb.DuckDBPyConnection:
     tok = get_md_token()
     if not tok:
-        sys.exit("MOTHERDUCK_TOKEN not found")
-    os.environ["MOTHERDUCK_TOKEN"] = tok
-    con = duckdb.connect(f"md:{db}?motherduck_token={tok}")
+        sys.exit("LOCAL_DB_PATH not found")
+    os.environ["LOCAL_DB_PATH"] = tok
+    con = duckdb.connect(f"thyroid_master.duckdb")
     print(f"✓ Connected to md:{db}")
     return con
 
@@ -822,7 +822,7 @@ def write_truth_snapshot(metrics, op_audit, rec_info, linkage, mismatches):
         f"# Dataset Truth Snapshot — {DATESTAMP}",
         "",
         f"Generated: {NOW.isoformat()}",
-        f"Source: MotherDuck `thyroid_research_2026` (prod)",
+        f"Source: local DuckDB `thyroid_master.duckdb` (prod)",
         f"Script: `scripts/99_comprehensive_final_verification.py`",
         "",
         "## 1. Core Dataset Metrics",
@@ -989,7 +989,7 @@ def write_truth_snapshot(metrics, op_audit, rec_info, linkage, mismatches):
         for m in mismatches:
             lines.append(f"| {m['doc']} | {m['metric']} | {m['documented']} | {m['live']} |")
     else:
-        lines.append("All documentation numbers match live MotherDuck. No updates needed.")
+        lines.append("All documentation numbers match live local DuckDB. No updates needed.")
 
     # Source-limited
     lines += [
@@ -1021,7 +1021,7 @@ def write_linkage_audit(linkage):
         f"# Multi-Surgery Episode Linkage Audit — {DATESTAMP}",
         "",
         f"Generated: {NOW.isoformat()}",
-        f"Source: MotherDuck `thyroid_research_2026` (prod)",
+        f"Source: local DuckDB `thyroid_master.duckdb` (prod)",
         f"Script: `scripts/99_comprehensive_final_verification.py`",
         "",
         "## Summary",
@@ -1195,7 +1195,7 @@ def write_operative_audit(op_audit):
         f"# Operative NLP Propagation Audit — {DATESTAMP}",
         "",
         f"Generated: {NOW.isoformat()}",
-        f"Source: MotherDuck `thyroid_research_2026` (prod)",
+        f"Source: local DuckDB `thyroid_master.duckdb` (prod)",
         "",
         "## Summary",
         "",
@@ -1344,7 +1344,7 @@ def write_exports(metrics, op_audit, linkage, rec_info, mismatches):
     # Manifest
     manifest = {
         "generated": TIMESTAMP,
-        "source": "MotherDuck thyroid_research_2026 (prod)",
+        "source": "local DuckDB thyroid_master.duckdb (prod)",
         "script": "scripts/99_comprehensive_final_verification.py",
         "workstreams": ["A_truth_snapshot", "B_multi_surgery_linkage",
                         "C_operative_nlp", "D_recurrence_packets", "E_doc_reconciliation"],
@@ -1378,7 +1378,7 @@ def write_exports(metrics, op_audit, linkage, rec_info, mismatches):
             w.writerows(v3)
     link_manifest = {
         "generated": TIMESTAMP,
-        "source": "MotherDuck thyroid_research_2026 (prod)",
+        "source": "local DuckDB thyroid_master.duckdb (prod)",
         "ms_patients": linkage.get("cohort_patients", 0),
         "ms_episodes": linkage.get("cohort_episodes", 0),
         "review_queue": linkage.get("review_queue_total", 0),
@@ -1408,7 +1408,7 @@ def main():
     print("=" * 78)
 
     if args.local:
-        sys.exit("ERROR: This script requires MotherDuck for production verification.")
+        sys.exit("ERROR: This script requires local DuckDB for production verification.")
 
     con = connect_md()
 
@@ -1447,7 +1447,7 @@ def main():
     print(f"  Patient agg fields:       {len([r for r in op_audit if r.get('status') == 'patient_agg'])}")
     print(f"  Recurrence cases:         {rec_info.get('total', 'N/A')}")
     print(f"  Doc mismatches:           {len(mismatches)}")
-    print(f"  MotherDuck tables created: val_multi_surgery_cohort_v3, val_multi_surgery_review_queue_v3")
+    print(f"  local DuckDB tables created: val_multi_surgery_cohort_v3, val_multi_surgery_review_queue_v3")
 
     con.close()
     return 0 if len(mismatches) == 0 else 1

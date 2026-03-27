@@ -1,12 +1,12 @@
 # Output bundle: lobectomy vs total thyroidectomy (2–4 cm)
 
-Produced by `studies/lobectomy_molecular_202603/run_pipeline.py` against MotherDuck `thyroid_research_2026`.
+Produced by `studies/lobectomy_molecular_202603/run_pipeline.py` against local DuckDB `thyroid_master.duckdb`.
 
 ## Quick reproduce
 
 ```bash
 cd "$(git rev-parse --show-toplevel)"
-export MOTHERDUCK_TOKEN="…"
+export LOCAL_DB_PATH="…"
 .venv/bin/python studies/lobectomy_molecular_202603/run_pipeline.py
 ```
 

@@ -2,7 +2,7 @@
 
 **Generated**: 20260315_1310
 **Script**: `scripts/98_multi_surgery_artifact_linkage_audit.py`
-**Target**: MotherDuck `thyroid_research_2026` (prod)
+**Target**: local DuckDB `thyroid_master.duckdb` (prod)
 **Predecessor**: `scripts/96_episode_downstream_repair.py` (ep-id fix)
 
 ## Purpose

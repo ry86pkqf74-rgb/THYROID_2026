@@ -1,5 +1,5 @@
 -- THYROID_2026 molecular utilization study
--- Database: MotherDuck / local DuckDB  database thyroid_research_2026
+-- Database: local DuckDB / local DuckDB  database thyroid_master.duckdb
 -- Tag: v2026.03.13 | Descriptive counts only (no inference)
 --
 -- Cohort: Bethesda III–V (fna_bethesda_final IN (3,4,5)), surgery date present,

@@ -6,7 +6,7 @@
 
 ## 1. Executive Summary
 
-The ETE staging manuscript is a retrospective cohort analysis of papillary thyroid carcinoma (PTC) patients evaluating the impact of microscopic extrathyroidal extension (mETE) versus gross ETE on AJCC 8th edition staging, recurrence risk stratification, and structural disease outcomes. The analytical architecture consists of six Python scripts in `studies/proposal2_ete_staging/` that operate on `risk_enriched_mv` (a MotherDuck materialized table joining `recurrence_risk_features_mv` and `survival_cohort_ready_mv`). The primary analysis uses N=596 classic PTC patients; sensitivity analyses expand to N=3,278 all-PTC patients. Analyses include: (1) stage migration quantification (AJCC 7→8, McNemar test), (2) ordinal logistic regression for recurrence risk band with multiple imputation (m=20, Rubin's rules), (3) propensity score matching (1:1, caliper=0.05, N=711 pairs), (4) Cox proportional hazards (L2-penalized, penalizer=0.1), (5) Kaplan-Meier disease-free survival with log-rank tests, (6) tumor-size–stratified logistic models, (7) interaction tests (mETE × size, mETE × age, mETE × nodal status), and (8) aggressive-variant safety analysis. All analyses use seed=42 for reproducibility, Python 3.14.2, and specific package versions documented in `analysis_metadata.yaml`.
+The ETE staging manuscript is a retrospective cohort analysis of papillary thyroid carcinoma (PTC) patients evaluating the impact of microscopic extrathyroidal extension (mETE) versus gross ETE on AJCC 8th edition staging, recurrence risk stratification, and structural disease outcomes. The analytical architecture consists of six Python scripts in `studies/proposal2_ete_staging/` that operate on `risk_enriched_mv` (a local DuckDB materialized table joining `recurrence_risk_features_mv` and `survival_cohort_ready_mv`). The primary analysis uses N=596 classic PTC patients; sensitivity analyses expand to N=3,278 all-PTC patients. Analyses include: (1) stage migration quantification (AJCC 7→8, McNemar test), (2) ordinal logistic regression for recurrence risk band with multiple imputation (m=20, Rubin's rules), (3) propensity score matching (1:1, caliper=0.05, N=711 pairs), (4) Cox proportional hazards (L2-penalized, penalizer=0.1), (5) Kaplan-Meier disease-free survival with log-rank tests, (6) tumor-size–stratified logistic models, (7) interaction tests (mETE × size, mETE × age, mETE × nodal status), and (8) aggressive-variant safety analysis. All analyses use seed=42 for reproducibility, Python 3.14.2, and specific package versions documented in `analysis_metadata.yaml`.
 
 ---
 
@@ -469,12 +469,12 @@ matplotlib: 3.10.8
 lifelines: 0.30.3
 ```
 
-### 10.2 DuckDB / MotherDuck
+### 10.2 DuckDB / local DuckDB
 
-- DuckDB 1.4.4 (MotherDuck compatible)
-- Database: `thyroid_research_2026` on MotherDuck
+- DuckDB 1.4.4 (local DuckDB compatible)
+- Database: `thyroid_master.duckdb` on local DuckDB
 - Key view: `risk_enriched_mv` = `recurrence_risk_features_mv` LEFT JOIN `survival_cohort_ready_mv`
-- Fallback CSV exports used when MotherDuck unavailable
+- Fallback CSV exports used when local DuckDB unavailable
 
 ### 10.3 Random Seed
 

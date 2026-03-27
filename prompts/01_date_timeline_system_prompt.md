@@ -8,7 +8,7 @@ event-level temporal resolution.
 
 ## Database Targeting
 
-- **All writes** (CREATE VIEW, ALTER TABLE, UPDATE, INSERT) target `thyroid_research_2026` using bare table names.
+- **All writes** (CREATE VIEW, ALTER TABLE, UPDATE, INSERT) target `thyroid_master.duckdb` using bare table names.
 - **Note entity reads** in enriched views may come from `thyroid_share.note_entities_*` (read-only share) or bare names in the RW database.
 - **Never write** to `thyroid_share`; it is read-only.
 

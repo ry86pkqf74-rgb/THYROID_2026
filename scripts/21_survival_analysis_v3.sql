@@ -2,7 +2,7 @@
 -- Survival Analysis V3 views for publication-ready analytics
 -- uses inferred_event_date from timeline rescue for accuracy
 
-USE thyroid_research_2026;
+USE thyroid_master.duckdb;
 
 CREATE OR REPLACE VIEW time_to_rai_v3_mv AS
 WITH patient_level AS (

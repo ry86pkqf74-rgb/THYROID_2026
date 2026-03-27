@@ -18,7 +18,7 @@ STUDY = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(STUDY))
 
-from motherduck_client import MotherDuckClient, MotherDuckConfig  # noqa: E402
+from local DuckDB_client import local DuckDBClient, local DuckDBConfig  # noqa: E402
 
 import cohort_logic as cl  # noqa: E402
 
@@ -28,7 +28,7 @@ pd.options.mode.copy_on_write = True
 
 
 def connect():
-    return MotherDuckClient(MotherDuckConfig()).connect_rw()
+    return local DuckDBClient(local DuckDBConfig()).connect_rw()
 
 
 def qdf(con, sql: str) -> pd.DataFrame:
@@ -39,7 +39,7 @@ def load_core(
     con,
     research_ids: np.ndarray | None = None,
 ) -> dict[str, pd.DataFrame]:
-    """Pull MotherDuck slices (small/medium tables).
+    """Pull local DuckDB slices (small/medium tables).
 
     When *research_id* filter is provided, narrow large FNA / imaging pulls.
     """
@@ -564,7 +564,7 @@ def write_validation_report(
     patient_df: pd.DataFrame,
     study_dir: Path,
 ) -> None:
-    """Check CSV vs DataFrame; MotherDuck id registration overlap; flag >0.1% mismatch."""
+    """Check CSV vs DataFrame; local DuckDB id registration overlap; flag >0.1% mismatch."""
     path_csv = study_dir / "patient_level_dataset.csv"
     file_df = pd.read_csv(path_csv, low_memory=False)
     n_file = len(file_df)
@@ -599,7 +599,7 @@ def write_validation_report(
         ).fetchone()[0]
         con.unregister("_val_cohort")
         lines.append(
-            f"- MotherDuck operative rows matching cohort IDs (any hemi/total row): {n_mv}"
+            f"- local DuckDB operative rows matching cohort IDs (any hemi/total row): {n_mv}"
         )
         lines.append(
             f"- ratio operative_rows_over_cohort_ids: {n_mv / max(len(id_mem), 1):.4f}"
@@ -1195,7 +1195,7 @@ def run() -> None:
     (STUDY / "README.md").write_text(
         "# Proposal: 2–4 cm extent + molecular\n\n"
         "Run: `.venv/bin/python studies/proposal_2to4cm_extent_molecular_20260326/study_pipeline.py`\n\n"
-        "Requires `MOTHERDUCK_TOKEN`.\n"
+        "Requires `LOCAL_DB_PATH`.\n"
     )
     (STUDY / "analysis_plan.md").write_text(
         "# Analysis plan\n\n"
@@ -1218,7 +1218,7 @@ def run() -> None:
 ## Abstract
 
 **Background:** For 2–4 cm thyroid nodules, the choice of lobectomy versus total thyroidectomy varies.\n
-**Methods:** Retrospective cohort from integrated thyroid research database (MotherDuck). "
+**Methods:** Retrospective cohort from integrated thyroid research database (local DuckDB). "
 Primary cohort used preoperative ultrasound nodule size 2.0–4.0 cm; sensitivity analysis used pathology size. "
 Patients with definite preoperative lymph-node involvement (imaging or malignant node FNA) were excluded (strict rule).\n
 **Results:** Primary analytic cohort N={len(patient_df)} (lobectomy n={n_lob}, initial total n={n_tot}). "

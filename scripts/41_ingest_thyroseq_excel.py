@@ -9,7 +9,7 @@ fills only missing canonical values, and generates QA/review outputs.
 Usage:
     .venv/bin/python scripts/41_ingest_thyroseq_excel.py \\
         --input '/path/to/Thyroseq Data Complete.xlsx' \\
-        [--md]    # target MotherDuck instead of local DuckDB
+        [--md]    # target local DuckDB instead of local DuckDB
         [--local] # force local DuckDB
         [--dry-run] # parse + match only, no DB writes
 
@@ -104,17 +104,17 @@ def connect(use_md: bool = False, use_local: bool = False) -> duckdb.DuckDBPyCon
         log.info(f"Connecting to local DuckDB: {path}")
         return duckdb.connect(path)
     if use_md:
-        token = os.environ.get("MOTHERDUCK_TOKEN")
+        token = os.environ.get("LOCAL_DB_PATH")
         if not token:
             import toml
             try:
-                token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["MOTHERDUCK_TOKEN"]
+                token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
             except Exception:
                 pass
         if not token:
-            raise RuntimeError("MOTHERDUCK_TOKEN not found")
-        log.info("Connecting to MotherDuck")
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+            raise RuntimeError("LOCAL_DB_PATH not found")
+        log.info("Connecting to local DuckDB")
+        return duckdb.connect(f"thyroid_master.duckdb")
     path = str(ROOT / "thyroid_master_local.duckdb")
     log.info(f"Connecting to local DuckDB: {path}")
     return duckdb.connect(path)
@@ -1049,7 +1049,7 @@ def write_integration_report(out_dir: Path, manifest: dict, matches: pd.DataFram
 def main():
     ap = argparse.ArgumentParser(description="ThyroSeq workbook integration pipeline")
     ap.add_argument("--input", required=True, help="Path to Thyroseq Data Complete.xlsx")
-    ap.add_argument("--md", action="store_true", help="Use MotherDuck")
+    ap.add_argument("--md", action="store_true", help="Use local DuckDB")
     ap.add_argument("--local", action="store_true", help="Force local DuckDB")
     ap.add_argument("--dry-run", action="store_true", help="Parse/match only, no DB writes")
     args = ap.parse_args()

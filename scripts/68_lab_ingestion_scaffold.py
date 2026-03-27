@@ -264,9 +264,9 @@ def main() -> None:
 
     if args.md:
         import toml
-        tok = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["MOTHERDUCK_TOKEN"]
-        con = duckdb.connect(f"md:thyroid_research_2026?motherduck_token={tok}")
-        print("[INFO] Connected to MotherDuck")
+        tok = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
+        con = duckdb.connect(f"thyroid_master.duckdb")
+        print("[INFO] Connected to local DuckDB")
     else:
         con = duckdb.connect(str(DB_PATH))
         print(f"[INFO] Connected to local DuckDB: {DB_PATH}")

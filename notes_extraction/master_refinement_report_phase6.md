@@ -4,7 +4,7 @@ _Generated: 2026-03-12 | Engine: extraction_audit_engine_v4.py_
 
 ## Executive Summary
 
-Phase 6 refines 6 staging variables with source hierarchy attribution (path_synoptic 1.0 > op_note 0.9 > imaging 0.7 > consent 0.2). Three new parser classes (MarginDistanceParser, InvasionGrader, LNYieldCalculator) were deployed to MotherDuck Business Pro, producing 9 tables and a unified 81-column master clinical table (v5).
+Phase 6 refines 6 staging variables with source hierarchy attribution (path_synoptic 1.0 > op_note 0.9 > imaging 0.7 > consent 0.2). Three new parser classes (MarginDistanceParser, InvasionGrader, LNYieldCalculator) were deployed to local DuckDB Business Pro, producing 9 tables and a unified 81-column master clinical table (v5).
 
 **Data-Quality Score: 93/100** (up from 91 in Phase 5)
 
@@ -152,7 +152,7 @@ Phase 6 refines 6 staging variables with source hierarchy attribution (path_syno
 
 ---
 
-## 9. Materialized Tables (MotherDuck Pro)
+## 9. Materialized Tables (local DuckDB Pro)
 
 | Table | Rows | Type |
 |-------|------|------|

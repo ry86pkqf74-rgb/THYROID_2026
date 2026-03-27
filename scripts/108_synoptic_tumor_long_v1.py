@@ -5,7 +5,7 @@ Source: wide `processed/path_synoptics.parquet` (or table if already in DuckDB).
 Outputs:
   - processed/synoptic_tumor_long_v1.parquet
   - CREATE OR REPLACE TABLE synoptic_tumor_long_v1 in local thyroid_master.duckdb
-  - With --md: same table + md_synoptic_tumor_long_v1 on MotherDuck (requires token)
+  - With --md: same table + md_synoptic_tumor_long_v1 on local DuckDB (requires token)
 
 Provenance columns: source_file, source_column_prefix, tumor_index, synoptic_row_ix.
 
@@ -192,19 +192,19 @@ def materialize_local(df: pd.DataFrame) -> None:
     print("  Local table synoptic_tumor_long_v1 refreshed")
 
 
-def materialize_motherduck(df: pd.DataFrame) -> None:
-    from motherduck_client import get_token, resolve_database_for_env
+def materialize_local DuckDB(df: pd.DataFrame) -> None:
+    from local DuckDB_client import get_token, resolve_database_for_env
 
     prefer_sa = os.getenv("CI", "").lower() in ("1", "true", "yes")
     tok = get_token(prefer_service_account=prefer_sa)
     if not tok:
-        raise SystemExit("MOTHERDUCK_TOKEN or MD_SA_TOKEN required for --md")
+        raise SystemExit("LOCAL_DB_PATH or LOCAL_DB_PATH required for --md")
     with tempfile.NamedTemporaryFile(suffix=".parquet", delete=False) as tmp:
         tmp_path = tmp.name
     try:
         df.to_parquet(tmp_path, index=False)
-        md_db = resolve_database_for_env(os.getenv("MOTHERDUCK_ENV"))
-        uri = f"md:{md_db}?motherduck_token={tok}"
+        md_db = resolve_database_for_env(os.getenv("LOCAL_DB_ENV"))
+        uri = f"thyroid_master.duckdb"
         con = duckdb.connect(uri)
         con.execute(
             f"CREATE OR REPLACE TABLE synoptic_tumor_long_v1 AS "
@@ -215,7 +215,7 @@ def materialize_motherduck(df: pd.DataFrame) -> None:
             "SELECT * FROM synoptic_tumor_long_v1"
         )
         con.close()
-        print("  MotherDuck tables synoptic_tumor_long_v1 + md_synoptic_tumor_long_v1 refreshed")
+        print("  local DuckDB tables synoptic_tumor_long_v1 + md_synoptic_tumor_long_v1 refreshed")
     finally:
         try:
             os.remove(tmp_path)
@@ -225,7 +225,7 @@ def materialize_motherduck(df: pd.DataFrame) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--md", action="store_true", help="Push to MotherDuck")
+    ap.add_argument("--md", action="store_true", help="Push to local DuckDB")
     args = ap.parse_args()
 
     pq = PROCESSED / "path_synoptics.parquet"
@@ -235,7 +235,7 @@ def main() -> None:
     df = build_long_frame(ps)
     materialize_local(df)
     if args.md:
-        materialize_motherduck(df)
+        materialize_local DuckDB(df)
     print(f"Done. Rows: {len(df):,}")
 
 

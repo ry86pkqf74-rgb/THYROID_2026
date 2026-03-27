@@ -20,16 +20,16 @@
 3. **`studies/proposal2_ete_staging/run_pathology_ln_audit.py`**  
    Offline audit against `manuscript_cohort_v1.csv`; writes  
    `studies/proposal2_ete_staging/outputs/pathology_ln_audit_summary.json`.  
-   Optional `--md` samples pathology-like notes from MotherDuck when `MOTHERDUCK_TOKEN` is set (**does not** replace full-corpus materialization).
+   Optional `--md` samples pathology-like notes from local DuckDB when `LOCAL_DB_PATH` is set (**does not** replace full-corpus materialization).
 
 4. **Documentation**  
    Completeness audit markdown (this folder).
 
 ---
 
-## What was *not* done (requires your approval / MotherDuck)
+## What was *not* done (requires your approval / local DuckDB)
 
-- **No** new MotherDuck tables were created in this session (token unavailable in the agent environment).
+- **No** new local DuckDB tables were created in this session (token unavailable in the agent environment).
 - **No** overwrite of `manuscript_cohort_v1` or publication bundles.
 - **No** automatic rewire of `enrich_from_v2_extractors()` to run histology narrative at scale (would be long-running and needs resource planning).
 

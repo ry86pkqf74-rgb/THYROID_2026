@@ -17,7 +17,7 @@ tumor-level tables (e.g. synoptic_tumor_long_v1.synoptic_row_ix, surgery_episode
 Usage:
   .venv/bin/python scripts/109_synoptic_encounter_qc.py
   .venv/bin/python scripts/109_synoptic_encounter_qc.py --local ./thyroid_master_local.duckdb
-  MOTHERDUCK_TOKEN=... .venv/bin/python scripts/109_synoptic_encounter_qc.py --md
+  LOCAL_DB_PATH=... .venv/bin/python scripts/109_synoptic_encounter_qc.py --md
   .venv/bin/python scripts/109_synoptic_encounter_qc.py --md --dry-run
 """
 from __future__ import annotations
@@ -34,7 +34,7 @@ if str(ROOT) not in sys.path:
 
 import duckdb  # noqa: E402
 
-from motherduck_client import get_token, resolve_database_for_env  # noqa: E402
+from local DuckDB_client import get_token, resolve_database_for_env  # noqa: E402
 from utils.surg_date_canonical import (  # noqa: E402
     surgery_date_canonical_sql,
     surgery_date_parse_tier_sql,
@@ -114,8 +114,8 @@ def _mirror_md_sql() -> tuple[str, str]:
 def main() -> int:
     ap = argparse.ArgumentParser(description="Deploy path_synoptics encounter QC objects")
     ap.add_argument("--local", type=str, default=None, help="Local DuckDB path")
-    ap.add_argument("--md", action="store_true", help="Apply to MotherDuck (token required)")
-    ap.add_argument("--sa", action="store_true", help="Prefer MD_SA_TOKEN for MotherDuck")
+    ap.add_argument("--md", action="store_true", help="Apply to local DuckDB (token required)")
+    ap.add_argument("--sa", action="store_true", help="Prefer LOCAL_DB_PATH for local DuckDB")
     ap.add_argument("--dry-run", action="store_true", help="Print SQL only")
     args = ap.parse_args()
 
@@ -133,14 +133,14 @@ def main() -> int:
     if args.md:
         tok = get_token(prefer_service_account=args.sa)
         if not tok:
-            print("Missing MOTHERDUCK_TOKEN / MD_SA_TOKEN for --md", file=sys.stderr)
+            print("Missing LOCAL_DB_PATH / LOCAL_DB_PATH for --md", file=sys.stderr)
             return 1
         for k in ("USE_LOCAL_DUCKDB", "use_local_duckdb"):
             os.environ.pop(k, None)
-        db = resolve_database_for_env(os.getenv("MOTHERDUCK_ENV", "prod"))
-        uri = f"md:{db}?motherduck_token={tok}"
+        db = resolve_database_for_env(os.getenv("LOCAL_DB_ENV", "prod"))
+        uri = f"thyroid_master.duckdb"
         con: duckdb.DuckDBPyConnection = duckdb.connect(uri)
-        label = f"md:{db}"
+        label = f"thyroid_master.duckdb"
     else:
         path = Path(args.local or DB_PATH).expanduser()
         if not path.is_file():

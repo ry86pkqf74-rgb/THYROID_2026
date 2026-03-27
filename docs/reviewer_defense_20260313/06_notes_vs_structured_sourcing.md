@@ -72,10 +72,10 @@ BRAF FP breakdown: 34 confirmed negatives, 68 ambiguous mentions, 11 conflicting
 
 ## Key References
 
-- **Structured sources**: `path_synoptics`, `operative_episode_detail_v2`, `molecular_testing`, `thyroglobulin_labs`, `recurrence_risk_features_mv` (all on MotherDuck)
+- **Structured sources**: `path_synoptics`, `operative_episode_detail_v2`, `molecular_testing`, `thyroglobulin_labs`, `recurrence_risk_features_mv` (all on local DuckDB)
 - **NLP refinement pipeline**: `notes_extraction/complications_refined_pipeline.py`, `notes_extraction/rln_refined_pipeline.py`
 - **Molecular FP correction**: `notes_extraction/extraction_audit_engine_v9.py` (Phase 11)
-- **Complication refinement audit**: `extracted_complications_exclusion_audit_v2` (MotherDuck)
+- **Complication refinement audit**: `extracted_complications_exclusion_audit_v2` (local DuckDB)
 - **Source reliability scores**: `notes_extraction/extraction_audit_engine_v4.py` (Phase 5 source hierarchy)
-- **Validation table**: `val_complication_refinement` (MotherDuck, per-entity raw vs refined counts)
+- **Validation table**: `val_complication_refinement` (local DuckDB, per-entity raw vs refined counts)
 - **Overall data quality report**: `notes_extraction/phase8_final_report.md` (96/100 composite score)

@@ -1,5 +1,5 @@
 -- Lobectomy vs total thyroidectomy analytic cohort
--- Database: thyroid_research_2026 (MotherDuck)
+-- Database: thyroid_master.duckdb (local DuckDB)
 --
 -- Inclusion:
 --   * First operative_episode_detail_v2 row only; procedure hemithyroidectomy OR total_thyroidectomy.

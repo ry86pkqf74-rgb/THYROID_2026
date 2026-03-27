@@ -221,4 +221,4 @@ def render_adjudication_summary(con) -> None:
         lq_df = pd.DataFrame(linkage_rows)
         st.dataframe(lq_df, use_container_width=True, hide_index=True)
     else:
-        st.info("Granular linkage tables not yet materialized. Run `scripts/26_motherduck_materialize_v2.py`.")
+        st.info("Granular linkage tables not yet materialized. Run `scripts/26_local DuckDB_materialize_v2.py`.")

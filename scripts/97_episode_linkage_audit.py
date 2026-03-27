@@ -7,7 +7,7 @@ multi-surgery cohort, then audits ALL clinical artifacts (notes, labs, RAI,
 molecular, FNA, imaging, pathology, complications) against the temporal
 surgery windows to detect mislinks, ambiguities, and orphaned artifacts.
 
-Output tables  (all deployed to MotherDuck target env)
+Output tables  (all deployed to local DuckDB target env)
 ─────────────────────────────────────────────────────────
   multi_surgery_episode_cohort_v1      — one row per surgery per patient
   val_episode_artifact_assignment_v1   — per-artifact → surgery assignment
@@ -50,7 +50,7 @@ def section(title: str) -> None:
 
 
 def get_token() -> str:
-    for key in ("MD_SA_TOKEN", "MOTHERDUCK_TOKEN"):
+    for key in ("LOCAL_DB_PATH", "LOCAL_DB_PATH"):
         tok = os.environ.get(key)
         if tok:
             return tok
@@ -64,16 +64,16 @@ def get_token() -> str:
         if p.exists():
             try:
                 import toml
-                return toml.load(str(p))["MOTHERDUCK_TOKEN"]
+                return toml.load(str(p))["LOCAL_DB_PATH"]
             except Exception:
                 continue
-    raise RuntimeError("No MOTHERDUCK_TOKEN found in env or secrets.toml")
+    raise RuntimeError("No LOCAL_DB_PATH found in env or secrets.toml")
 
 
 def resolve_db(env: str) -> str:
-    m = {"dev": "thyroid_research_2026_dev",
-         "qa": "thyroid_research_2026_qa",
-         "prod": "thyroid_research_2026"}
+    m = {"dev": "thyroid_master.duckdb",
+         "qa": "thyroid_master.duckdb",
+         "prod": "thyroid_master.duckdb"}
     return m.get(env, env)
 
 
@@ -81,18 +81,18 @@ def src_prefix(env: str) -> str:
     """Return the qualified prefix for reading source tables from prod.
     
     In workspace mode, all databases in the account are accessible by name.
-    No ATTACH needed — just qualify with 'thyroid_research_2026.' for dev/qa.
+    No ATTACH needed — just qualify with 'thyroid_master.duckdb.' for dev/qa.
     """
-    return "thyroid_research_2026." if env in ("dev", "qa") else ""
+    return "thyroid_master.duckdb." if env in ("dev", "qa") else ""
 
 
 def connect(env: str) -> duckdb.DuckDBPyConnection:
     tok = get_token()
     db = resolve_db(env)
-    con = duckdb.connect(f"md:{db}?motherduck_token={tok}")
+    con = duckdb.connect(f"thyroid_master.duckdb")
     print(f"  ✓ Connected to md:{db}")
     if env in ("dev", "qa"):
-        print(f"  ℹ Source tables read from thyroid_research_2026.* (workspace mode)")
+        print(f"  ℹ Source tables read from thyroid_master.duckdb.* (workspace mode)")
     return con
 
 
@@ -119,7 +119,7 @@ def safe_exec(con: duckdb.DuckDBPyConnection, sql: str, label: str = "") -> int:
 
 def materialize_df(con: duckdb.DuckDBPyConnection, df: pd.DataFrame,
                    table_name: str) -> int:
-    """Write a DataFrame to MotherDuck via parquet intermediary."""
+    """Write a DataFrame to local DuckDB via parquet intermediary."""
     with tempfile.NamedTemporaryFile(suffix=".parquet", delete=False) as f:
         tmp = f.name
     df.to_parquet(tmp, index=False)
@@ -923,7 +923,7 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--env", default="dev",
                         choices=["dev", "qa", "prod"],
-                        help="Target MotherDuck environment")
+                        help="Target local DuckDB environment")
     parser.add_argument("--dry-run", action="store_true",
                         help="Print SQL plan without executing")
     parser.add_argument("--export", action="store_true",

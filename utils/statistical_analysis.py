@@ -286,7 +286,7 @@ class ThyroidStatisticalAnalyzer:
     Parameters
     ----------
     con : duckdb.DuckDBPyConnection
-        Active DuckDB / MotherDuck connection (read-only sufficient).
+        Active DuckDB / local DuckDB connection (read-only sufficient).
     """
 
     def __init__(self, con: Any) -> None:
@@ -313,7 +313,7 @@ class ThyroidStatisticalAnalyzer:
         """Return the first available view from the priority list.
 
         Also checks _TABLE_FALLBACK for alternative names (e.g. when a
-        MotherDuck transaction lock blocks the canonical name).
+        local DuckDB transaction lock blocks the canonical name).
         """
         candidates = [preferred] if preferred else []
         candidates.extend(_VIEW_PRIORITY)

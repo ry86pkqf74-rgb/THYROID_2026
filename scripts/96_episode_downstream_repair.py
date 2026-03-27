@@ -57,23 +57,23 @@ def section(title: str):
 
 
 def get_connection(args):
-    tok = os.environ.get("MOTHERDUCK_TOKEN", "")
+    tok = os.environ.get("LOCAL_DB_PATH", "")
     if not tok:
         try:
             import toml
             for p in [ROOT / ".streamlit" / "secrets.toml",
                       pathlib.Path.home() / ".streamlit" / "secrets.toml"]:
                 if p.exists():
-                    tok = toml.load(str(p)).get("MOTHERDUCK_TOKEN", "")
+                    tok = toml.load(str(p)).get("LOCAL_DB_PATH", "")
                     if tok:
                         break
         except ImportError:
             pass
     if not tok:
-        sys.exit("MOTHERDUCK_TOKEN not found")
-    os.environ["MOTHERDUCK_TOKEN"] = tok
-    db = "thyroid_research_2026"
-    con = duckdb.connect(f"md:{db}?motherduck_token={tok}")
+        sys.exit("LOCAL_DB_PATH not found")
+    os.environ["LOCAL_DB_PATH"] = tok
+    db = "thyroid_master.duckdb"
+    con = duckdb.connect(f"thyroid_master.duckdb")
     print(f"Connected to md:{db}")
     return con
 
@@ -598,7 +598,7 @@ def generate_report(before, after, fix_stats, provenance, nonreg) -> str:
     a("")
     a(f"**Generated**: {TIMESTAMP}")
     a(f"**Script**: `scripts/96_episode_downstream_repair.py`")
-    a(f"**Target**: MotherDuck `thyroid_research_2026` (prod)")
+    a(f"**Target**: local DuckDB `thyroid_master.duckdb` (prod)")
     a("")
 
     a("## Problem")
@@ -695,7 +695,7 @@ def generate_report(before, after, fix_stats, provenance, nonreg) -> str:
         a(f"| {r[0]} | {r[1]} | {r[2]} |")
     a("")
 
-    a("## MotherDuck Objects Modified")
+    a("## local DuckDB Objects Modified")
     a("")
     a("| Table | Action |")
     a("|-------|--------|")

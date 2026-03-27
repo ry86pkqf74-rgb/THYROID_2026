@@ -4,7 +4,7 @@
   "blocking_findings": 0,
   "non_blocking_findings": 5,
   "external_pending_items": 3,
-  "database": "thyroid_research_2026",
+  "database": "thyroid_master.duckdb",
   "total_tables": 668,
   "row_count_checks": {
     "total": 20,

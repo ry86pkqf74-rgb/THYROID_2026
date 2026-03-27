@@ -15,7 +15,7 @@
 | 6a | Eligibility criteria | ✅ | Preop imaging 2–4 cm; exclusions documented in supplement |
 | 6b | Sources and methods of selection | ✅ | `cohort_flow.csv`, `cohort_build_log.md` |
 | 7 | Variables | ✅ | Predictors + outcome defined; `supplement_exclusions_and_definitions.csv` |
-| 8 | Data sources / measurement | ⚠️ | MotherDuck database noted; detailed measurement methods (e.g., nodule sizing protocol) missing |
+| 8 | Data sources / measurement | ⚠️ | local DuckDB database noted; detailed measurement methods (e.g., nodule sizing protocol) missing |
 | 9 | Bias | ❌ **GAP** | No formal bias discussion; selection bias from single-center, exclusion of LN+ not discussed |
 | 10 | Study size | ✅ | N=558 documented; no a priori power calculation (common for retrospective) |
 | 11 | Quantitative variables | ✅ | Bethesda ≥4 binarized, age continuous, documented |

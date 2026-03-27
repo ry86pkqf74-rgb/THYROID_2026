@@ -2,12 +2,12 @@
 
 **Date:** 2026-03-15  
 **Script:** `scripts/103_source_limited_enforcement.py`  
-**Target:** MotherDuck `thyroid_research_2026` (prod)
+**Target:** local DuckDB `thyroid_master.duckdb` (prod)
 
 ## Purpose
 
 Extends the source-limited field registry from a flat CSV into a governed
-MotherDuck table with analysis-tier eligibility, limitation categories, and
+local DuckDB table with analysis-tier eligibility, limitation categories, and
 manuscript-safe wording. Provides automated validation assertions.
 
 ## Output Tables
@@ -36,7 +36,7 @@ Each field is classified into one of 4 limitation categories:
 - **template** (5 fields): Operative note template records risk discussion boilerplate
   as default values (e.g., `FALSE` meaning "not parsed", not "confirmed negative")
 - **pipeline** (7 fields): V2 extractor output exists but not materialized to
-  MotherDuck (e.g., berry_ligament_flag, frozen_section_flag)
+  local DuckDB (e.g., berry_ligament_flag, frozen_section_flag)
 - **review** (12 fields): Fields requiring clinical adjudication before population-level
   denominators are valid
 

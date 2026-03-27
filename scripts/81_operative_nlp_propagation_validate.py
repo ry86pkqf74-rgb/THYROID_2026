@@ -2,7 +2,7 @@
 """
 81_operative_nlp_propagation_validate.py
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Validate and report operative NLP field coverage in MotherDuck canonical tables.
+Validate and report operative NLP field coverage in local DuckDB canonical tables.
 
 This script is a *validation companion* to script 71 (which runs the actual
 UPDATE).  It confirms that operative NLP-enriched fields are correctly
@@ -83,12 +83,12 @@ def get_connection(use_md: bool):
     if use_md:
         try:
             import toml
-            token = os.environ.get("MOTHERDUCK_TOKEN") or toml.load(
+            token = os.environ.get("LOCAL_DB_PATH") or toml.load(
                 str(ROOT / ".streamlit" / "secrets.toml")
-            )["MOTHERDUCK_TOKEN"]
+            )["LOCAL_DB_PATH"]
         except Exception:
-            token = os.environ["MOTHERDUCK_TOKEN"]
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+            token = os.environ["LOCAL_DB_PATH"]
+        return duckdb.connect(f"thyroid_master.duckdb")
     db = ROOT / "thyroid_master.duckdb"
     return duckdb.connect(str(db))
 
@@ -156,15 +156,15 @@ def run_validation(con, table: str) -> list[dict]:
 
 
 def compare_local_md(con_local, con_md, table: str) -> dict:
-    """Compare row counts between local and MotherDuck."""
+    """Compare row counts between local and local DuckDB."""
     local_n = safe_count(con_local, f"SELECT COUNT(*) FROM {table}")
     md_n = safe_count(con_md, f"SELECT COUNT(*) FROM {table}")
-    return {"local": local_n, "motherduck": md_n, "match": local_n == md_n}
+    return {"local": local_n, "local DuckDB": md_n, "match": local_n == md_n}
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--md", action="store_true", help="Connect to MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Connect to local DuckDB")
     parser.add_argument("--local", action="store_true", help="Use local DuckDB only")
     args = parser.parse_args()
 
@@ -186,7 +186,7 @@ def main() -> None:
     print(f"  Validating mirror {mirror}...")
     mirror_results = run_validation(con, mirror)
 
-    # ── 3. Local vs MotherDuck comparison ────────────────────────────────
+    # ── 3. Local vs local DuckDB comparison ────────────────────────────────
     sync_status: dict = {}
     if use_md:
         try:
@@ -222,7 +222,7 @@ def main() -> None:
         "fields have any TRUE values"
     )
     if sync_status:
-        print(f"\n  Local vs MotherDuck row count: {sync_status}")
+        print(f"\n  Local vs local DuckDB row count: {sync_status}")
 
     # ── 5. Identify missing propagation ──────────────────────────────────
     unpropagated = [
@@ -232,7 +232,7 @@ def main() -> None:
         print("\n  ⚠ UNPROPAGATED FIELDS (script 71 not yet run or produced 0 entities):")
         for r in unpropagated:
             print(f"    - {r['field']}")
-        print("  → Run: .venv/bin/python scripts/71_operative_nlp_to_motherduck.py --md")
+        print("  → Run: .venv/bin/python scripts/71_operative_nlp_to_local DuckDB.py --md")
     else:
         print("\n  ✓ All Category-B NLP fields populated (script 71 has run).")
 

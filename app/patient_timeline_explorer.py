@@ -356,7 +356,7 @@ def _render_publication_snapshot(con, enr_tbl: str | None):
     if not enr_tbl:
         st.warning(
             "enriched_patient_timeline_v3_mv is not yet materialized. "
-            "Run `scripts/20_enriched_patient_timeline_v3.sql` in MotherDuck first.",
+            "Run `scripts/20_enriched_patient_timeline_v3.sql` in local DuckDB first.",
             icon="⚠️",
         )
         return

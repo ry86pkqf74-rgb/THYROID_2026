@@ -1,142 +1,38 @@
 #!/usr/bin/env python3
 """
-Thyroid Cohort Explorer — Workflow Dashboard
-Powered by MotherDuck cloud DuckDB.
-
-6 workflow sections: Overview, Patient Explorer, Data Quality,
-Linkage & Episodes, Outcomes & Analytics, Manuscript & Export.
+Thyroid Cohort Explorer — Interactive Streamlit Dashboard
+Powered by local DuckDB cloud data warehouse.
 
 Run locally:
-    export MOTHERDUCK_TOKEN='your_token'
+    export LOCAL_DB_PATH='your_token'
     streamlit run dashboard.py
-"""
-from __future__ import annotations
-import io
-import importlib.util
-import os, sys, time, requests
-import subprocess
-from datetime import datetime
-from pathlib import Path
-
-import duckdb
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-import streamlit as st
-
-try:
-    from lifelines import KaplanMeierFitter
-    HAS_LIFELINES = True
-except ImportError:
-    HAS_LIFELINES = False
-
-HAS_OPENPYXL = importlib.util.find_spec("openpyxl") is not None
-
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from motherduck_client import MotherDuckClient, MotherDuckConfig
-
-from app.cohort_qc import render_cohort_qc
-from app.patient_audit import render_patient_audit
-from app.review_histology import render_review_histology
-from app.review_molecular import render_review_molecular
-from app.review_rai import render_review_rai
-from app.review_timeline import render_review_timeline
-from app.review_queue import render_review_queue
-from app.diagnostics import render_diagnostics
-from app.extraction_completeness import render_extraction_completeness
-from app.molecular_dashboard import render_molecular_dashboard
-from app.rai_dashboard import render_rai_dashboard
-from app.imaging_nodule_dashboard import render_imaging_nodule_dashboard
-from app.operative_dashboard import render_operative_dashboard
-from app.adjudication_summary import render_adjudication_summary
-from app.validation_engine import render_validation_engine
-from app.advanced_survival import render_advanced_survival
-from app.statistical_analysis import render_statistical_analysis
-from app.cure_probability import render_cure_probability
-from app.patient_timeline_explorer import render_patient_timeline_explorer
-from app.advanced_analytics import render_advanced_analytics
-from app.predictive_analytics import render_predictive_analytics
-from app.thyroseq_integration import render_thyroseq_integration
-from app.qa_workbench import render_qa_workbench
-from app.manual_review_workbench import render_manual_review_workbench
-from app.episode_linkage_qa import render_episode_linkage_qa
-
-# ── Page config ───────────────────────────────────────────────────────────
-st.set_page_config(page_title="Thyroid Cohort Explorer", page_icon="🔬",
-                   layout="wide", initial_sidebar_state="expanded")
-
-# ── Dark theme ────────────────────────────────────────────────────────────
-st.markdown("""
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
-  :root{--bg:#07090f;--surface:#0e1219;--surface2:#141923;--border:#1e2535;--teal:#2dd4bf;--teal-dim:#1a8a7a;--amber:#f59e0b;--rose:#f43f5e;--sky:#38bdf8;--violet:#a78bfa;--green:#34d399;--text-hi:#f0f4ff;--text-mid:#8892a4;--text-lo:#4a5568;--font-d:'DM Serif Display',serif;--font-b:'DM Sans',sans-serif;--font-m:'DM Mono',monospace}
-  html,body,[data-testid="stAppViewContainer"]{background:var(--bg)!important;font-family:var(--font-b)!important;color:var(--text-hi)!important}
-  [data-testid="stSidebar"]{background:var(--surface)!important;border-right:1px solid var(--border)!important}
-  [data-testid="stSidebar"] *{color:var(--text-hi)!important}
-  h1,h2,h3{font-family:var(--font-d)!important;color:var(--text-hi)!important}
-  h1{font-size:2.2rem!important;letter-spacing:-0.02em}
-  h2{font-size:1.4rem!important;color:var(--teal)!important}
-  .stTabs [data-baseweb="tab-list"]{background:var(--surface)!important;border-radius:10px;padding:4px;gap:2px;border:1px solid var(--border)}
-  .stTabs [data-baseweb="tab"]{background:transparent!important;color:var(--text-mid)!important;border-radius:7px!important;font-family:var(--font-b)!important;font-size:0.82rem!important;font-weight:500!important;padding:7px 14px!important;transition:all .15s ease}
-  .stTabs [aria-selected="true"]{background:var(--teal)!important;color:var(--bg)!important}
-  .stTabs [data-baseweb="tab-panel"]{padding-top:1.2rem!important}
-  .metric-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;position:relative;overflow:hidden;transition:border-color .2s ease}
-  .metric-card:hover{border-color:var(--teal-dim)}
-  .metric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--teal),var(--sky));opacity:.7}
-  .metric-label{font-family:var(--font-m);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-mid);margin-bottom:5px}
-  .metric-value{font-family:var(--font-d);font-size:1.8rem;color:var(--text-hi);line-height:1}
-  .metric-delta{font-size:.7rem;color:var(--teal);margin-top:3px}
-  .section-label{font-family:var(--font-m);font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--teal);margin:1.4rem 0 .5rem 0;display:block}
-  .insight-box{background:linear-gradient(135deg,#0a1a20,#0e1219);border:1px solid var(--teal-dim);border-left:3px solid var(--teal);border-radius:10px;padding:1.2rem 1.4rem;margin-top:.8rem}
-  .insight-header{font-family:var(--font-m);font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
-  .stButton>button{background:var(--teal)!important;color:var(--bg)!important;border:none!important;border-radius:8px!important;font-family:var(--font-b)!important;font-weight:600!important;padding:.45rem 1.2rem!important;font-size:.83rem!important;transition:all .2s ease!important}
-  .stButton>button:hover{background:#22c4ac!important;transform:translateY(-1px);box-shadow:0 4px 18px rgba(45,212,191,.3)!important}
-  .stSelectbox>div>div,.stMultiSelect>div>div,.stTextInput>div>div{background:var(--surface2)!important;border:1px solid var(--border)!important;border-radius:8px!important;color:var(--text-hi)!important}
-  ::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
-  #MainMenu,footer,header{visibility:hidden}.block-container{padding-top:1.5rem!important;max-width:1420px}
-</style>""", unsafe_allow_html=True)
-
-PL = dict(paper_bgcolor="rgba(0,0,0,0)",plot_bgcolor="rgba(14,18,25,0.8)",
-          font=dict(family="DM Sans",color="#8892a4",size=12),
-          title_font=dict(family="DM Serif Display",color="#f0f4ff",size=15),
-          xaxis=dict(gridcolor="#1e2535",linecolor="#1e2535",zerolinecolor="#1e2535"),
-          yaxis=dict(gridcolor="#1e2535",linecolor="#1e2535",zerolinecolor="#1e2535"),
-          legend=dict(bgcolor="rgba(14,18,25,0.8)",bordercolor="#1e2535",borderwidth=1),
-          margin=dict(l=16,r=16,t=36,b=16),
-          colorway=["#2dd4bf","#38bdf8","#a78bfa","#f59e0b","#f43f5e","#34d399","#fb923c"],
-          hoverlabel=dict(bgcolor="#141923",bordercolor="#1e2535",font_color="#f0f4ff"))
-SEQ_TEAL = [[0,"#0a1a20"],[0.5,"#1a8a7a"],[1,"#2dd4bf"]]
-SHARE_PATH = "md:_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c"
-DATABASE   = "thyroid_research_2026"
-SHARE_CATALOG = "thyroid_share"
-_APP_VERSION = "v3.3.0-2026.03.13"
+SHARE_PATH = (
+    "thyroid_master.duckdb"
+)
+DATABASE = "thyroid_master.duckdb"
 
 # Tracks which catalog _get_con() activated (used by qual())
 _ACTIVE_CATALOG: str = DATABASE
 _CONNECTION_META: dict = {"mode": "unknown", "detail": "", "connected_at": ""}
 
 
-def qual(table: str) -> str:
-    """Return fully-qualified table name for the active MotherDuck catalog."""
-    return f"{_ACTIVE_CATALOG}.{table}"
-
-
-# ─────────────────────────────────────────────────────────────────────────
-# CONNECTION
-# ─────────────────────────────────────────────────────────────────────────
-def _ensure_token():
-    if os.getenv("MOTHERDUCK_TOKEN"): return True
+def _ensure_token() -> bool:
+    """Bridge Streamlit secrets into env so local DuckDBClient can find it."""
+    if os.getenv("LOCAL_DB_PATH"):
+        return True
     try:
-        os.environ["MOTHERDUCK_TOKEN"] = st.secrets["MOTHERDUCK_TOKEN"]; return True
-    except (KeyError,FileNotFoundError): return False
+        os.environ["LOCAL_DB_PATH"] = st.secrets["LOCAL_DB_PATH"]
+        return True
+    except (KeyError, FileNotFoundError):
+        return False
 
-@st.cache_resource(show_spinner="Connecting to MotherDuck…")
+@st.cache_resource(show_spinner="Connecting to local DuckDB…")
 def _get_con():
-    """Connect to MotherDuck and set the default catalog.
+    """Connect to local DuckDB and set the default catalog.
 
-    MotherDuck mounts read-only shares under a separate catalog
+    local DuckDB mounts read-only shares under a separate catalog
     (e.g. 'thyroid_share') rather than the original database name
-    ('thyroid_research_2026').  Without an explicit USE, every
+    ('thyroid_master.duckdb').  Without an explicit USE, every
     unqualified table reference fails with a Catalog Error because
     DuckDB sees the name in multiple attached catalogs and cannot
     resolve the ambiguity.
@@ -144,44 +40,18 @@ def _get_con():
     The USE statement sets the default catalog so all SQL in the app
     works with plain table names — no per-query qualification needed.
 
-    Connection mode is stored in _CONNECTION_META for UI display.
-    """
-    global _ACTIVE_CATALOG, _CONNECTION_META
-    cfg = MotherDuckConfig(database=DATABASE, share_path=SHARE_PATH)
-    cli = MotherDuckClient(cfg)
+@st.cache_resource(show_spinner="Connecting to local DuckDB\u2026")
+def _get_connection() -> duckdb.DuckDBPyConnection:
+    config = None  # Local config
+    client = local DuckDBClient(config)
     try:
-        con = cli.connect_ro_share()
-        con.execute(f"USE {SHARE_CATALOG};")
-        _ACTIVE_CATALOG = SHARE_CATALOG
-        _CONNECTION_META = {
-            "mode": "ro_share",
-            "detail": f"RO share: {SHARE_CATALOG}",
-            "connected_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        }
-        return con
-    except Exception as ro_err:
-        try:
-            con = cli.connect_rw()
-            try:
-                con.execute(f"USE {DATABASE};")
-            except Exception:
-                pass
-            _ACTIVE_CATALOG = DATABASE
-            _CONNECTION_META = {
-                "mode": "rw_fallback",
-                "detail": f"RO share failed ({ro_err!r:.80s}…), using RW: {DATABASE}",
-                "connected_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            }
-            return con
-        except Exception:
-            _ACTIVE_CATALOG = DATABASE
-            _CONNECTION_META = {
-                "mode": "local",
-                "detail": "Both MotherDuck paths failed; using local DuckDB",
-                "connected_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            }
-            con = duckdb.connect(os.getenv("LOCAL_DUCKDB_PATH", "thyroid_master_local.duckdb"))
-            return con
+        return duckdb.connect("thyroid_master.duckdb")
+    except Exception:
+        return duckdb.connect("thyroid_master.duckdb")
+
+
+# ── Cached query helpers ─────────────────────────────────────────────────
+
 
 @st.cache_data(ttl=300, show_spinner=False)
 def qdf(_con, sql):  return _con.execute(sql).fetchdf()
@@ -212,7 +82,7 @@ def cached_sqdf(con, sql: str, key: str = "query") -> pd.DataFrame:
         t0 = time.perf_counter()
         df = _cached_qdf(con, sql)
         elapsed = time.perf_counter() - t0
-        st.caption(f"🔥 `{key}` — {elapsed*1000:.0f} ms · MotherDuck optimized")
+        st.caption(f"🔥 `{key}` — {elapsed*1000:.0f} ms · local DuckDB optimized")
         return df
     except Exception as e:
         st.warning(f"Query failed ({key}): {e}", icon="⚠️")
@@ -236,7 +106,7 @@ def multi_export(df, prefix, key_sfx=""):
     ts = datetime.now().strftime("%Y%m%d_%H%M")
     df_export = df.copy()
 
-    # 1. Handle datetime columns (including tz-aware from MotherDuck)
+    # 1. Handle datetime columns (including tz-aware from local DuckDB)
     datetime_cols = [col for col in df_export.columns if pd.api.types.is_datetime64_any_dtype(df_export[col])]
     for col in datetime_cols:
         if hasattr(df_export[col].dt, "tz_localize"):
@@ -304,7 +174,7 @@ def build_sidebar(df):
         sel_days = st.radio("Days range", days_opts, horizontal=True,
                             key="days_filt")
         st.markdown("---")
-        st.markdown('<div style="font-family:monospace;font-size:.6rem;color:#4a5568">DATABASE<br><span style="color:#2dd4bf">thyroid_research_2026</span></div>',unsafe_allow_html=True)
+        st.markdown('<div style="font-family:monospace;font-size:.6rem;color:#4a5568">DATABASE<br><span style="color:#2dd4bf">thyroid_master.duckdb</span></div>',unsafe_allow_html=True)
         if st.button("Clear filters"): st.rerun()
 
     f = df.copy()
@@ -1329,7 +1199,7 @@ def render_complications(con):
                 "`vw_confirmed_postop_rln_injury`: vocal cord **paresis** or **paralysis** "
                 "on postoperative laryngoscopy (date strictly after first surgery date).\n\n"
                 "Upgrade to the multi-source summary view by re-running "
-                "`python scripts/10_maximize_motherduck_trial.py`."
+                "`python scripts/10_maximize_local DuckDB_trial.py`."
             )
         else:
             st.markdown(
@@ -1337,7 +1207,7 @@ def render_complications(con):
                 "Patient-level count where "
                 "`rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy` is not empty, "
                 "'no', 'none', or other negation values. No temporal constraint applied.\n\n"
-                "Run `python scripts/10_maximize_motherduck_trial.py` to create the "
+                "Run `python scripts/10_maximize_local DuckDB_trial.py` to create the "
                 "publication-quality views."
             )
 
@@ -2159,7 +2029,7 @@ def render_survival(con):
     else:
         st.info(
             "Promotion cure cohort not yet materialized. Run:\n"
-            "```bash\npython scripts/26_motherduck_materialize_v2.py --md\n"
+            "```bash\npython scripts/26_local DuckDB_materialize_v2.py --md\n"
             "python scripts/39_promotion_time_cure_models.py --md\n```",
             icon="🔬",
         )
@@ -2270,7 +2140,7 @@ def render_survival(con):
         else:
             st.info(
                 "Mixture cure cohort not yet materialized. Run:\n"
-                "```bash\npython scripts/26_motherduck_materialize_v2.py --md\n"
+                "```bash\npython scripts/26_local DuckDB_materialize_v2.py --md\n"
                 "python scripts/38_mixture_cure_models.py --md\n```",
                 icon="🔮",
             )
@@ -2458,7 +2328,7 @@ def render_survival_outcomes(con):
     if not tbl_exists(con, "genotype_stratified_outcomes_v3_mv"):
         st.info(
             "Survival v3 views not available. Run:\n"
-            "```bash\nduckdb \"md:thyroid_research_2026\" < scripts/21_survival_analysis_v3.sql\n```",
+            "```bash\nduckdb \"thyroid_master.duckdb" < scripts/21_survival_analysis_v3.sql\n```",
             icon="📉",
         )
         return
@@ -2748,39 +2618,41 @@ def main():
     if not _ensure_token():
         st.title("🔬 Thyroid Cohort Explorer")
         st.error(
-            "**MotherDuck token not found.**\n\n"
-            "Set `MOTHERDUCK_TOKEN` in `.streamlit/secrets.toml` or as an environment variable.\n\n"
-            "```bash\n"
-            "# Option A: environment variable\n"
-            "export MOTHERDUCK_TOKEN='your_token'\n\n"
-            "# Option B: Streamlit secrets\n"
-            "mkdir -p .streamlit\n"
-            "echo 'MOTHERDUCK_TOKEN = \"your_token\"' > .streamlit/secrets.toml\n"
-            "```"
+            "**local DuckDB token not found.**\n\n"
+            "Provide your token via one of:\n\n"
+            "1. **Environment variable:**  \n"
+            "   `export LOCAL_DB_PATH='your_token'`\n\n"
+            "2. **Streamlit secrets** (`.streamlit/secrets.toml`):  \n"
+            '   `LOCAL_DB_PATH = "your_token_here"`\n\n'
+            "Get a token at [app.local DuckDB.com]"
+            "(https://app.local DuckDB.com) \u2192 Settings \u2192 Access Tokens."
         )
         st.stop()
     try: con = _get_con()
-    except Exception as exc: st.error(f"Failed to connect to MotherDuck: {exc}"); st.stop()
-    st.session_state["_motherduck_catalog"] = _ACTIVE_CATALOG
+    except Exception as exc: st.error(f"Failed to connect to local DuckDB: {exc}"); st.stop()
+    st.session_state["_local DuckDB_catalog"] = _ACTIVE_CATALOG
     st.session_state["_app_version"] = _APP_VERSION
     st.session_state["_connection_mode"] = _CONNECTION_META["mode"]
     st.session_state["_connection_detail"] = _CONNECTION_META["detail"]
     st.session_state["_loaded_at"] = f"Connected {_CONNECTION_META['connected_at']}"
 
-    _check_critical_tables(con)
+    try:
+        con = _get_connection()
+    except Exception as exc:
+        st.error(f"Failed to connect to local DuckDB: {exc}")
+        st.stop()
 
-    # --- Fallback warning banner (prominent, above everything) ---
-    if _CONNECTION_META["mode"] == "rw_fallback":
-        st.warning(
-            "**Read-only share unavailable** — connected via read-write fallback. "
-            "Data is live but writes are possible. Review sidebar Connection Help for details.",
-            icon="⚡",
-        )
-    elif _CONNECTION_META["mode"] == "local":
+    st.title("\U0001f52c Thyroid Cohort Explorer (local DuckDB)")
+    st.caption(
+        "Interactive dashboard for the thyroid cancer research cohort "
+        "\u2022 11,673 patients"
+    )
+
+    df_full = _load_advanced_features(con)
+    if df_full.empty:
         st.error(
-            "**MotherDuck unreachable** — using local DuckDB file. "
-            "Data may be stale. Check your token and network connection.",
-            icon="🔌",
+            "Could not load `advanced_features_view`. "
+            "Verify the view exists in local DuckDB."
         )
 
     # --- Compact status banner ---
@@ -2806,7 +2678,7 @@ def main():
     )
     ci,ct = st.columns([1,11])
     with ci: st.markdown('<div style="font-size:2.8rem;margin-top:4px">🔬</div>',unsafe_allow_html=True)
-    with ct: st.markdown('<h1 style="margin:0;padding:0">THYROID_2026</h1><p style="margin:2px 0 0 2px;color:#8892a4;font-size:.78rem;font-family:\'DM Mono\',monospace;letter-spacing:.08em">THYROID CANCER RESEARCH LAKEHOUSE · 11,673 PATIENTS · 13 TABLES · MOTHERDUCK</p>',unsafe_allow_html=True)
+    with ct: st.markdown('<h1 style="margin:0;padding:0">THYROID_2026</h1><p style="margin:2px 0 0 2px;color:#8892a4;font-size:.78rem;font-family:\'DM Mono\',monospace;letter-spacing:.08em">THYROID CANCER RESEARCH LAKEHOUSE · 11,673 PATIENTS · 13 TABLES · LOCAL_DB</p>',unsafe_allow_html=True)
     st.markdown("---")
 
     # Prefer the physically-sorted materialized table for instant reads;
@@ -2821,10 +2693,10 @@ def main():
     with st.sidebar:
         st.markdown(sl("⚡ Compute Tier"), unsafe_allow_html=True)
         st.markdown('<div style="font-family:monospace;font-size:.65rem;color:#2dd4bf">'
-                    'MotherDuck Business Trial</div>', unsafe_allow_html=True)
+                    'local DuckDB Business Trial</div>', unsafe_allow_html=True)
         if st.button("Switch to Jumbo 🚀", key="jumbo_btn"):
             try:
-                con.execute("SET motherduck_default_server_instance_type = 'jumbo'")
+                con.execute("SET local DuckDB_default_server_instance_type = 'jumbo'")
                 st.success("Switched to Jumbo compute!")
             except Exception as e:
                 st.error(f"Could not switch: {e}")
@@ -2860,8 +2732,8 @@ def main():
         rw_con = None
         if review_mode:
             try:
-                cfg = MotherDuckConfig(database=DATABASE)
-                rw_con = MotherDuckClient(cfg).connect_rw()
+                cfg = local DuckDBConfig(database=DATABASE)
+                rw_con = local DuckDBClient(cfg).connect_rw()
                 rw_con.execute(f"USE {DATABASE};")
                 st.markdown(
                     '<div style="font-family:monospace;font-size:.6rem;color:#34d399">'
@@ -2874,332 +2746,12 @@ def main():
         else:
             st.caption("Read-only mode. Toggle to enter decisions.")
 
-        # ── Quick Launch: Predictive Analytics ─────────────────────
-        st.markdown(sl("🔮 Cure Calculator"), unsafe_allow_html=True)
-        _ptcm_meta = Path(__file__).resolve().parent / "exports" / "promotion_cure_results" / "analysis_metadata.json"
-        if _ptcm_meta.exists():
-            try:
-                import json as _json
-                _pm = _json.loads(_ptcm_meta.read_text(encoding="utf-8"))
-                st.markdown(
-                    f'<div style="background:#0e1219;border:1px solid #1e2535;'
-                    f'border-radius:8px;padding:0.6rem 0.8rem;margin-bottom:0.5rem">'
-                    f'<div style="font-size:.65rem;color:#8892a4;letter-spacing:.08em;'
-                    f'text-transform:uppercase">PTCM Status</div>'
-                    f'<div style="color:#2dd4bf;font-size:1.1rem;font-weight:700">'
-                    f'π\u0304 = {_pm.get("overall_cure_fraction", 0):.1%}</div>'
-                    f'<div style="font-size:.65rem;color:#8892a4">'
-                    f'N={_pm.get("n_total", 0):,} · '
-                    f'{_pm.get("n_events", 0)} events · '
-                    f'AIC={_pm.get("aic", 0):.0f}</div></div>',
-                    unsafe_allow_html=True,
-                )
-            except Exception:
-                pass
-            st.caption("Navigate to **🔮 Predictive Analytics** → **Cure Calculator** tab")
-        else:
-            st.caption("PTCM not fitted. Run script 39 first.")
-
-        # ── Runtime Status ─────────────────────────────────────────
-        with st.expander("🖥️ Runtime Status", expanded=True):
-            _mode_map = {
-                "ro_share": ("Read-Only Share", "✅"),
-                "rw_fallback": ("Read-Write Fallback", "⚠️"),
-                "local": ("Local DuckDB", "📁"),
-            }
-            _ml, _mi = _mode_map.get(_CONNECTION_META["mode"], ("Unknown", "❓"))
-            st.markdown(f"**Mode:** {_mi} {_ml}")
-            st.markdown(f"**Catalog:** `{_ACTIVE_CATALOG}`")
-            st.markdown(f"**Version:** `{_APP_VERSION}`")
-            st.markdown(f"**Connected:** {_CONNECTION_META['connected_at']}")
-            if _CONNECTION_META["mode"] != "ro_share":
-                st.markdown(f"**Detail:** {_CONNECTION_META['detail']}")
-            st.markdown(f"**Review Mode:** {'🟢 Active (RW)' if review_mode and rw_con else '⚪ Off (RO)'}")
-
-        # ── Data Build Info ──────────────────────────────────────────
-        with st.expander("📋 Data Build Info"):
-            st.markdown("**Deploy order:** 15→20 (adjudication) · 22→27 (v2 canonical)")
-            for vname, label in [
-                ("molecular_episode_v3", "Molecular v3"),
-                ("rai_episode_v3", "RAI v3"),
-                ("validation_failures_v3", "Validation v3"),
-                ("adjudication_decisions", "Reviewer Decisions"),
-                ("tumor_episode_master_v2", "Canonical Episodes v2"),
-                ("linkage_summary_v2", "Cross-Domain Linkage"),
-                ("qa_issues_v2", "QA Validation v2"),
-                ("date_rescue_rate_summary", "Date Provenance"),
-                ("manuscript_cohort_v1", "Manuscript Cohort"),
-                ("val_dataset_integrity_summary_v1", "Integrity Health"),
-            ]:
-                avail = tbl_exists(con, vname)
-                icon = "✅" if avail else "❌"
-                st.markdown(f"{icon} {label}")
-            st.caption("🚀 MotherDuck Optimized • Materialized tables + caching active")
-
-        # ── Data Freshness & QC ──────────────────────────────────────
-        with st.expander("📊 Data Freshness & QC"):
-            _qc_tbl = qual("streamlit_cohort_qc_summary_v")
-            if tbl_exists(con, "streamlit_cohort_qc_summary_v"):
-                try:
-                    _qc_df = cached_sqdf(
-                        con,
-                        f"SELECT * FROM {_qc_tbl}",
-                        key="data_freshness_qc",
-                    )
-                    if not _qc_df.empty:
-                        _qc = _qc_df.iloc[0]
-                        _refresh = _qc.get("last_refresh_date", "unknown")
-                        _build = _qc.get("build_version", "unknown")
-                        _total = int(_qc.get("total_patients", 0))
-                        st.markdown(f"**Last Refresh:** {_refresh}")
-                        st.markdown(f"**Build Version:** {_build}")
-                        st.markdown(f"**Total Patients:** {_total:,}")
-                        st.markdown("---")
-                        st.markdown("**View Status:**")
-                        for _vn in [
-                            "streamlit_cohort_qc_summary_v",
-                            "streamlit_patient_header_v",
-                            "advanced_features_sorted",
-                            "overview_kpis",
-                            "survival_cohort",
-                            "publication_kpis",
-                        ]:
-                            _avail = tbl_exists(con, _vn)
-                            st.markdown(
-                                f"{'✅' if _avail else '❌'} `{_vn}`"
-                            )
-                    else:
-                        st.info("QC summary table is empty.")
-                except Exception as _qc_err:
-                    st.warning(f"Could not read QC summary: {_qc_err}")
-            else:
-                st.warning(
-                    "QC summary table not yet materialized. "
-                    "Run `python scripts/03_research_views.py --md`.",
-                    icon="⚠️",
-                )
-
-        with st.expander("🎯 Cure KPIs"):
-            if tbl_exists(con, "cure_kpis"):
-                try:
-                    _cure_df = cached_sqdf(
-                        con,
-                        f"SELECT * FROM {qual('cure_kpis')} LIMIT 1",
-                        key="sidebar_cure_kpis",
-                    )
-                    if not _cure_df.empty:
-                        _row = _cure_df.iloc[0]
-                        st.markdown(f"**N Total:** {int(_row.get('n_total', 0)):,}")
-                        st.markdown(f"**Observed Event Rate:** {float(_row.get('observed_event_rate', 0.0)):.1%}")
-                        st.markdown(f"**Crude Cure Rate:** {float(_row.get('crude_cure_rate', 0.0)):.1%}")
-                    else:
-                        st.info("cure_kpis is available but empty.")
-                except Exception as _cure_err:
-                    st.warning(f"Could not read cure KPIs: {_cure_err}")
-            else:
-                st.caption("Run `python scripts/26_motherduck_materialize_v2.py --md` to build cure_kpis.")
-
-        with st.expander("🔬 Promotion Cure KPIs (PTCM)"):
-            _ptcm_kpi_tbl = "promotion_cure_kpis"
-            _ptcm_sum_path = Path(__file__).resolve().parent / "exports" / "promotion_cure_results" / "ptcm_summary.csv"
-            if _ptcm_sum_path.exists():
-                try:
-                    _ptcm_kpi_row = pd.read_csv(_ptcm_sum_path).iloc[0]
-                    st.markdown(f"**N:** {int(_ptcm_kpi_row.get('n_total', 0)):,}")
-                    st.markdown(f"**Cure fraction π̄:** {float(_ptcm_kpi_row.get('overall_cure_fraction', 0)):.1%}")
-                    st.markdown(f"**10y plateau:** {float(_ptcm_kpi_row.get('plateau_10y_rate', 0)):.1%}")
-                    st.markdown(f"**AIC:** {float(_ptcm_kpi_row.get('aic', 0)):.1f}")
-                    st.markdown(f"**Weibull κ:** {float(_ptcm_kpi_row.get('weibull_kappa', 0)):.4f}")
-                except Exception as _e:
-                    st.warning(f"Could not read PTCM summary: {_e}")
-            elif tbl_exists(con, _ptcm_kpi_tbl):
-                try:
-                    _pkpi = cached_sqdf(con, f"SELECT * FROM {qual(_ptcm_kpi_tbl)} LIMIT 1",
-                                        key="sidebar_ptcm_kpis")
-                    if not _pkpi.empty:
-                        _pr = _pkpi.iloc[0]
-                        st.markdown(f"**N:** {int(_pr.get('n_total', 0)):,}")
-                        st.markdown(f"**Event rate:** {float(_pr.get('event_rate', 0)):.1%}")
-                        st.markdown(f"**10y plateau:** {float(_pr.get('plateau_10y_rate', 0)):.1%}")
-                    else:
-                        st.info("promotion_cure_kpis is empty.")
-                except Exception as _e:
-                    st.warning(f"Could not read PTCM KPIs: {_e}")
-            else:
-                st.caption(
-                    "Run `python scripts/26_motherduck_materialize_v2.py --md` then "
-                    "`python scripts/39_promotion_time_cure_models.py --md`."
-                )
-
-        with st.expander("⚔️ Cure Model Comparison KPIs"):
-            _comp_csv = Path(__file__).resolve().parent / "exports" / "cure_comparison" / "cure_model_comparison.csv"
-            _mcm_sum_side = Path(__file__).resolve().parent / "exports" / "mixture_cure_results" / "mcm_summary.csv"
-            if _comp_csv.exists():
-                try:
-                    _comp_side = pd.read_csv(_comp_csv)
-                    for _, _r in _comp_side.iterrows():
-                        _m = _r.get("metric", "")
-                        st.markdown(f"**{_m}:** MCM={_r.get('MCM', 'N/A')} | PTCM={_r.get('PTCM', 'N/A')}")
-                except Exception as _e:
-                    st.warning(f"Could not read comparison KPIs: {_e}")
-            elif _mcm_sum_side.exists():
-                try:
-                    _ms = pd.read_csv(_mcm_sum_side).iloc[0]
-                    st.markdown(f"**MCM N:** {int(_ms.get('n_total', 0)):,}")
-                    st.markdown(f"**MCM Cure π̄:** {float(_ms.get('overall_cure_fraction', 0)):.1%}")
-                    st.markdown(f"**MCM AIC:** {float(_ms.get('em_aic', _ms.get('best_aic', 0))):.1f}")
-                except Exception as _e:
-                    st.warning(f"Could not read MCM summary: {_e}")
-            elif tbl_exists(con, "mixture_cure_kpis"):
-                try:
-                    _mkpi = cached_sqdf(con, f"SELECT * FROM {qual('mixture_cure_kpis')} LIMIT 1",
-                                        key="sidebar_mixture_cure_kpis")
-                    if not _mkpi.empty:
-                        _mr = _mkpi.iloc[0]
-                        st.markdown(f"**N:** {int(_mr.get('n_total', 0)):,}")
-                        st.markdown(f"**Event rate:** {float(_mr.get('event_rate', 0)):.1%}")
-                        st.markdown(f"**Crude cure:** {float(_mr.get('crude_cure_rate', 0)):.1%}")
-                except Exception as _e:
-                    st.warning(f"Could not read mixture cure KPIs: {_e}")
-            else:
-                st.caption(
-                    "Run `python scripts/38_mixture_cure_models.py --md` then "
-                    "`python scripts/40_cure_model_comparison.py`."
-                )
-
-        # ── Connection Help ──────────────────────────────────────────
-        with st.expander("❓ Connection Help"):
-            st.markdown(
-                "**Current status:** "
-                f"`{_CONNECTION_META['mode']}` — {_CONNECTION_META['detail']}\n\n"
-                "---\n\n"
-                "Set `MOTHERDUCK_TOKEN` before running the dashboard:\n\n"
-                "**Option A** — environment variable:\n"
-                "```bash\nexport MOTHERDUCK_TOKEN='your_token'\n```\n\n"
-                "**Option B** — Streamlit secrets:\n"
-                "```bash\nmkdir -p .streamlit\n"
-                "echo 'MOTHERDUCK_TOKEN = \"your_token\"' > .streamlit/secrets.toml\n```\n\n"
-                "If critical v3 tables are missing, run:\n"
-                "```bash\npython scripts/26_motherduck_materialize_v2.py --md\n"
-                "python scripts/29_validation_engine.py --md\n```\n\n"
-                "---\n\n"
-                "**Troubleshooting fallback modes:**\n\n"
-                "| Symptom | Cause | Fix |\n"
-                "|---------|-------|-----|\n"
-                "| RW FALLBACK badge | RO share URL changed or inaccessible | "
-                "Verify `SHARE_PATH` in `dashboard.py` matches your MotherDuck share |\n"
-                "| LOCAL badge | Token missing or MotherDuck unreachable | "
-                "Check `MOTHERDUCK_TOKEN` and network |\n"
-                "| Sign-in required on Streamlit Cloud | App not configured for public access | "
-                "Set sharing to Public in Streamlit Cloud settings |\n"
-            )
-
-    # ── 6 Workflow Sections ──────────────────────────────────────────────
-    sec_overview, sec_patient, sec_quality, sec_linkage, sec_outcomes, sec_manuscript = st.tabs([
-        "Overview",
-        "Patient Explorer",
-        "Data Quality",
-        "Linkage & Episodes",
-        "Outcomes & Analytics",
-        "Manuscript & Export",
-    ])
-
-    # ── Section 1: Cohort Overview ─────────────────────────────────────
-    with sec_overview:
-        render_overview(con)
-
-    # ── Section 2: Patient Explorer ────────────────────────────────────
-    with sec_patient:
-        _p1, _p2, _p3, _p4 = st.tabs([
-            "Patient Timeline", "Patient Audit", "Data Explorer", "Visualizations",
-        ])
-        with _p1: render_patient_timeline_explorer(con)
-        with _p2: render_patient_audit(con, rw_con)
-        with _p3: render_explorer(df_filt)
-        with _p4: render_viz(con)
-
-    # ── Section 3: Data Quality & Provenance ───────────────────────────
-    with sec_quality:
-        _q1, _q2, _q3, _q4, _q5, _q6 = st.tabs([
-            "QA Workbench", "Manual Review", "Validation Engine",
-            "QA Dashboard", "Diagnostics", "Cohort QC",
-        ])
-        with _q1: render_qa_workbench(con)
-        with _q2: render_manual_review_workbench(con)
-        with _q3: render_validation_engine(con)
-        with _q4: render_qa_dashboard(con)
-        with _q5: render_diagnostics(con)
-        with _q6: render_cohort_qc(con)
-
-    # ── Section 4: Cross-Domain Linkage & Episodes ─────────────────────
-    with sec_linkage:
-        _l1, _l2, _l3, _l4, _l5, _l6, _l7, _l8, _l9 = st.tabs([
-            "Extraction Completeness", "Molecular Episodes", "RAI Episodes",
-            "Imaging & Nodules", "Operative Detail", "QA & Adjudication",
-            "Features v3", "Timeline & Events", "Episode Linkage QA",
-        ])
-        with _l1: render_extraction_completeness(con)
-        with _l2: render_molecular_dashboard(con)
-        with _l3: render_rai_dashboard(con)
-        with _l4: render_imaging_nodule_dashboard(con)
-        with _l5: render_operative_dashboard(con)
-        with _l6: render_adjudication_summary(con)
-        with _l7: render_afv3_explorer(con)
-        with _l8:
-            _le1, _le2 = st.tabs(["Timeline", "Events"])
-            with _le1: render_timeline(con)
-            with _le2: render_events(con)
-        with _l9: render_episode_linkage_qa(con)
-
-    # ── Section 5: Outcomes & Analytics ────────────────────────────────
-    with sec_outcomes:
-        _o1, _o2, _o3, _o4, _o5, _o6, _o7 = st.tabs([
-            "Survival", "Advanced Survival", "Statistical Analysis",
-            "Predictive Analytics", "Advanced Analytics & AI",
-            "Cure Probability", "Survival & Outcomes",
-        ])
-        with _o1: render_survival(con)
-        with _o2: render_advanced_survival(con)
-        with _o3: render_statistical_analysis(con)
-        with _o4: render_predictive_analytics(con)
-        with _o5: render_advanced_analytics(con)
-        with _o6: render_cure_probability(con)
-        with _o7: render_survival_outcomes(con)
-
-    # ── Section 6: Manuscript & Export ─────────────────────────────────
-    with sec_manuscript:
-        _m1, _m2, _m3, _m4, _m5, _m6, _m7, _m8, _m9, _m10 = st.tabs([
-            "Genetics & Molecular", "Specimen Details", "Complications",
-            "Pre-Op Imaging", "ThyroSeq Integration", "Advanced",
-            "Review Histology", "Review Molecular", "Review RAI",
-            "Review Queue",
-        ])
-        with _m1: render_genetics(con)
-        with _m2: render_specimen(con)
-        with _m3: render_complications(con)
-        with _m4: render_imaging(con)
-        with _m5: render_thyroseq_integration(con)
-        with _m6: render_advanced(con)
-        with _m7: render_review_histology(con, rw_con)
-        with _m8: render_review_molecular(con, rw_con)
-        with _m9: render_review_rai(con, rw_con)
-        with _m10: render_review_queue(con)
-
-    st.markdown("---")
-    _ft_mode = {
-        "ro_share": "RO Share",
-        "rw_fallback": "RW Fallback ⚠",
-        "local": "Local DB",
-    }.get(_CONNECTION_META["mode"], "Unknown")
-    st.markdown(
-        '<div style="text-align:center;padding:0.6rem 0;font-family:\'DM Mono\',monospace;'
-        'font-size:0.65rem;color:#4a5568;letter-spacing:0.08em;">'
-        f"THYROID_2026 {_APP_VERSION} &nbsp;·&nbsp; "
-        f"{_ft_mode} &nbsp;·&nbsp; "
-        f"Catalog <code>{_ACTIVE_CATALOG}</code> &nbsp;·&nbsp; "
-        f"Connected {_CONNECTION_META['connected_at']}"
-        "</div>",
-        unsafe_allow_html=True,
+    st.divider()
+    st.caption(
+        f"**Data source:** local DuckDB `{DATABASE}` \u2022 "
+        f"Read-only share: `{SHARE_PATH}` \u2022 "
+        f"Last loaded: {datetime.now().strftime('%Y-%m-%d %H:%M')} \u2022 "
+        "Built with Streamlit + DuckDB + Plotly"
     )
 
 if __name__ == "__main__":

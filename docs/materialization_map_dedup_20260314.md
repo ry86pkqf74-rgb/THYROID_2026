@@ -3,7 +3,7 @@
 ## Status
 
 **No data-layer changes required.**  
-The `MATERIALIZATION_MAP` in `scripts/26_motherduck_materialize_v2.py` currently
+The `MATERIALIZATION_MAP` in `scripts/26_local DuckDB_materialize_v2.py` currently
 contains **220 unique entries** with zero md_\* target duplicates and zero source
 duplicates.
 
@@ -56,7 +56,7 @@ additional MAP entries.
 
 ## Fixes Applied
 
-### 1. Module-level uniqueness guard — `scripts/26_motherduck_materialize_v2.py`
+### 1. Module-level uniqueness guard — `scripts/26_local DuckDB_materialize_v2.py`
 
 Added immediately after the MAP's closing `]`:
 
@@ -131,7 +131,7 @@ Run with:
 ## Materialization Contract
 
 The `MATERIALIZATION_MAP` is the **single source of truth** for what gets pushed
-to MotherDuck. The following rules are now enforced at multiple levels:
+to local DuckDB. The following rules are now enforced at multiple levels:
 
 | Level | Mechanism |
 |---|---|

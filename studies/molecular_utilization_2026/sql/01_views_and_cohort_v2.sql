@@ -1,5 +1,5 @@
 -- THYROID_2026 molecular utilization study — V2 manuscript refresh
--- Database: MotherDuck / DuckDB  thyroid_research_2026
+-- Database: local DuckDB / DuckDB  thyroid_master.duckdb
 --
 -- Design: Primary paper = Bethesda III/IV, patient-level temporal spine + episode sensitivity.
 --         Denominator = index indeterminate FNA in molecular era (2015+); sensitivity era column 2018+.

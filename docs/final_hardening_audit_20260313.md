@@ -13,7 +13,7 @@ workflow-first refactor.
 | `scripts/75_dataset_maturation.py` | Script | 10-phase maturation pass |
 | `scripts/76_canonical_gap_closure.py` | Script | 5-phase canonical gap closure (A-E) |
 | `scripts/77_lab_canonical_layer.py` | Script | Canonical lab scaffold |
-| `scripts/26_motherduck_materialize_v2.py` | Script | 163-entry materialization map |
+| `scripts/26_local DuckDB_materialize_v2.py` | Script | 163-entry materialization map |
 | `dashboard.py` | App | 6-section workflow-first layout |
 | `app/qa_workbench.py` | Module | Dataset health monitoring |
 | `app/manual_review_workbench.py` | Module | Prioritized triage |
@@ -28,8 +28,8 @@ workflow-first refactor.
 
 ### Current State
 
-Script 71 (`71_operative_nlp_to_motherduck.py`) already pushed 11 NLP boolean
-columns to MotherDuck. Before/after:
+Script 71 (`71_operative_nlp_to_local DuckDB.py`) already pushed 11 NLP boolean
+columns to local DuckDB. Before/after:
 
 | Column | Before | After |
 |--------|--------|-------|
@@ -43,7 +43,7 @@ columns to MotherDuck. Before/after:
 Script 76 Phase A added 6 further columns via `note_entities_procedures`:
 `parathyroid_identified_count`, `parathyroid_resection_flag`,
 `frozen_section_flag`, `berry_ligament_flag`, `ebl_ml_nlp`,
-`op_enrichment_source`. These may or may not be propagated on MotherDuck
+`op_enrichment_source`. These may or may not be propagated on local DuckDB
 depending on whether script 76 Phase A was run with `--md`.
 
 ### Remaining Unwired Fields
@@ -106,7 +106,7 @@ exhausted. Review queue created in this hardening pass.
 1. `imaging_nodule_long_v2` has 10,866 rows from `serial_imaging_us` but ALL
    size/TIRADS/composition columns are NULL (placeholder schema from unpopulated
    `dominant_nodule_size_on_us` column).
-2. `imaging_nodule_master_v1` was **empty (0 rows)** on MotherDuck when
+2. `imaging_nodule_master_v1` was **empty (0 rows)** on local DuckDB when
    script 49 ran.
 3. The V3 UNION ALL supplements v2 with v1 for patients NOT already in v2.
    Since v2 has 6,123 patients with non-null `exam_date_native`, v1 patients

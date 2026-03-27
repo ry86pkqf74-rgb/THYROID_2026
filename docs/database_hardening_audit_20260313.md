@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-13
 **Auditor:** Automated hardening pass (script 67 + manual review)
-**Database:** MotherDuck `thyroid_research_2026`
+**Database:** local DuckDB `thyroid_master.duckdb`
 **Overall Status:** CONDITIONALLY READY FOR MANUSCRIPT
 
 ---
@@ -39,7 +39,7 @@ The database **IS** ready for manuscript-grade analysis of the cancer subcohort 
 | Test files | 15 | In `tests/` |
 | Documentation | 9 | In `docs/` |
 
-### MotherDuck Tables (script 26 MATERIALIZATION_MAP)
+### local DuckDB Tables (script 26 MATERIALIZATION_MAP)
 
 - **175 entries** in MATERIALIZATION_MAP (155 explicit + 9 inline SQL + 12 new hardening/lab)
 - **9 survival/cure cohort tables** built via inline SQL
@@ -61,9 +61,9 @@ Several script numbers are reused (not a functional issue but may cause confusio
 
 ## Phase 1 — Backup / Recovery Prep
 
-### MotherDuck Recovery Plan
+### local DuckDB Recovery Plan
 
-MotherDuck provides automatic point-in-time recovery for all databases. The recovery strategy for this hardening pass:
+local DuckDB provides automatic point-in-time recovery for all databases. The recovery strategy for this hardening pass:
 
 1. **No destructive operations performed** — all new tables are additive (`CREATE OR REPLACE TABLE`)
 2. **All new tables are prefixed** — `val_hardening_*`, `lab_*`, `hardening_review_queue`
@@ -199,7 +199,7 @@ The existing validation framework already covers:
 ### Architecture Assessment
 
 The current materialization strategy is sound:
-- **164+ tables** materialized to MotherDuck for dashboard consumption
+- **164+ tables** materialized to local DuckDB for dashboard consumption
 - **Expensive views** (multi-CTE, multi-JOIN) are persisted as tables, not re-computed at query time
 - **Standard Duckling** sufficient for all routine ETL and validation
 - **Pull-to-pandas + push-via-parquet** strategy documented for complex multi-CTE SQL
@@ -220,7 +220,7 @@ The current materialization strategy is sound:
 
 ## Phase 6 — Lab Integration Scaffolding
 
-### Tables Deployed to MotherDuck
+### Tables Deployed to local DuckDB
 
 | Table | Rows | Purpose |
 |-------|------|---------|
@@ -356,10 +356,10 @@ No orphaned views detected. Script number collisions (documented above) are cosm
 |------|--------|-------------|
 | `scripts/67_database_hardening_validation.py` | **Created** | Comprehensive hardening validation (9 tables) |
 | `scripts/68_lab_ingestion_scaffold.py` | **Created** | Lab integration scaffolding (3 tables, 1 view) |
-| `scripts/26_motherduck_materialize_v2.py` | **Modified** | Added 12 entries to MATERIALIZATION_MAP |
+| `scripts/26_local DuckDB_materialize_v2.py` | **Modified** | Added 12 entries to MATERIALIZATION_MAP |
 | `docs/database_hardening_audit_20260313.md` | **Created** | This audit report |
 
-## SQL Objects Created/Updated on MotherDuck
+## SQL Objects Created/Updated on local DuckDB
 
 | Object | Type | Rows |
 |--------|------|------|

@@ -13,7 +13,7 @@ survival_cohort_ready_mv, recurrence_risk_features_mv):
   5. Advanced Features v3 Exp.   — full column selector
 
 Also adds sidebar filters (surgery count, QA flag, days-since-surgery),
-MotherDuck compute-tier controls, publication snapshot button, and
+local DuckDB compute-tier controls, publication snapshot button, and
 multi-format export (CSV/Excel/Parquet). Updates requirements.txt & README.
 
 v3.1 enhancements (script 11.5 integration):
@@ -52,7 +52,7 @@ DASHBOARD = ROOT / "dashboard.py"
 REQUIREMENTS = ROOT / "requirements.txt"
 README = ROOT / "README.md"
 TRIAL_LOG = ROOT / "trial_utilization_log.md"
-MD_DATABASE = "thyroid_research_2026"
+MD_DATABASE = "thyroid_master.duckdb"
 
 REQUIRED_TABLES = [
     "master_timeline",
@@ -96,12 +96,12 @@ SQL_PREVIEW = {
 def _get_connection():
     import duckdb
 
-    token = os.getenv("MOTHERDUCK_TOKEN")
+    token = os.getenv("LOCAL_DB_PATH")
     if not token:
         raise RuntimeError(
-            "MOTHERDUCK_TOKEN not set. Export it before running."
+            "LOCAL_DB_PATH not set. Export it before running."
         )
-    return duckdb.connect(f"md:{MD_DATABASE}?motherduck_token={token}")
+    return duckdb.connect(f"thyroid_master.duckdb")
 
 
 def verify_tables(con) -> list[str]:
@@ -231,7 +231,7 @@ def update_readme(dry_run: bool) -> None:
         return
     section = textwrap.dedent("""\
 
-    ## New Dashboard Features (enabled during MotherDuck trial)
+    ## New Dashboard Features (enabled during local DuckDB trial)
 
     Five new tabs added by `scripts/12_update_streamlit_dashboard.py`:
 
@@ -245,7 +245,7 @@ def update_readme(dry_run: bool) -> None:
 
     **New sidebar filters:** Surgery count, QA status (clean / flagged).
 
-    **Performance controls:** MotherDuck compute tier display, Jumbo instance toggle.
+    **Performance controls:** local DuckDB compute tier display, Jumbo instance toggle.
 
     Requires `lifelines` (Kaplan-Meier). Install: `pip install -r requirements.txt`.
     """)
@@ -273,7 +273,7 @@ def create_trial_log(dry_run: bool) -> None:
     ### What was added
     - 5 new Streamlit tabs: Timeline, Events, QA, Survival, Advanced Features v3
     - Sidebar filters: surgery count, QA flag
-    - MotherDuck compute-tier controls (Business trial → Jumbo toggle)
+    - local DuckDB compute-tier controls (Business trial → Jumbo toggle)
     - Kaplan-Meier survival plots via lifelines
 
     ### Tables/views used (all require script 10 + 11)
@@ -286,13 +286,13 @@ def create_trial_log(dry_run: bool) -> None:
 
     ### Connection instructions
     ```bash
-    export MOTHERDUCK_TOKEN='your_token'
+    export LOCAL_DB_PATH='your_token'
     streamlit run dashboard.py
     # Opens at http://localhost:8501
     ```
 
     ### Trial utilization
-    - Compute: MotherDuck Business trial (large instances + replicas)
+    - Compute: local DuckDB Business trial (large instances + replicas)
     - All new tabs use `@st.cache_data(ttl=300)` for query caching
     - Jumbo compute toggle available in sidebar
     """)
@@ -303,7 +303,7 @@ def create_trial_log(dry_run: bool) -> None:
         existing = TRIAL_LOG.read_text()
         TRIAL_LOG.write_text(existing.rstrip() + "\n\n---\n\n" + entry)
     else:
-        TRIAL_LOG.write_text("# MotherDuck Trial Utilization Log\n\n" + entry)
+        TRIAL_LOG.write_text("# local DuckDB Trial Utilization Log\n\n" + entry)
     log.info("  ✓ Wrote trial_utilization_log.md entry")
 
 
@@ -323,7 +323,7 @@ def main() -> None:
     log.info("=" * 60)
 
     # Phase 1: Connect
-    log.info("\nPhase 1: Connecting to MotherDuck")
+    log.info("\nPhase 1: Connecting to local DuckDB")
     try:
         con = _get_connection()
         log.info("  ✓ Connected to %s", MD_DATABASE)

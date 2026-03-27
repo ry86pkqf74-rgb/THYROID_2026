@@ -2,7 +2,7 @@
 """
 98_multi_surgery_artifact_linkage_audit.py
 
-Focused MotherDuck-backed hardening pass for multi-surgery artifact linkage
+Focused local DuckDB-backed hardening pass for multi-surgery artifact linkage
 AFTER the downstream episode_id repair (script 96).
 
 Builds on script 97's general audit by answering:
@@ -12,7 +12,7 @@ Builds on script 97's general audit by answering:
   4. Which multi-surgery patients still have only 1 OED row despite >1 canonical episode?
   5. Which artifacts have no anchor date (unresolvable)?
 
-Output tables (all deployed to MotherDuck prod):
+Output tables (all deployed to local DuckDB prod):
   val_multi_surgery_artifact_linkage_v1    — per-artifact linkage verdict (one row per artifact)
   multi_surgery_artifact_review_queue_v1   — triaged review queue (priorities + reasons)
   multi_surgery_oed_coverage_gap_v1        — OED ↔ canonical episode coverage mismatch
@@ -64,7 +64,7 @@ def section(title: str):
 
 
 def get_connection():
-    tok = os.environ.get("MOTHERDUCK_TOKEN", "")
+    tok = os.environ.get("LOCAL_DB_PATH", "")
     if not tok:
         try:
             import toml
@@ -72,16 +72,16 @@ def get_connection():
                       pathlib.Path.home() / ".streamlit" / "secrets.toml",
                       pathlib.Path("/Users/ros/Desktop/FInal Cleaned Thyroid Data/.streamlit/secrets.toml")]:
                 if p.exists():
-                    tok = toml.load(str(p)).get("MOTHERDUCK_TOKEN", "")
+                    tok = toml.load(str(p)).get("LOCAL_DB_PATH", "")
                     if tok:
                         break
         except ImportError:
             pass
     if not tok:
-        sys.exit("MOTHERDUCK_TOKEN not found in env or secrets.toml")
-    os.environ["MOTHERDUCK_TOKEN"] = tok
-    db = "thyroid_research_2026"
-    con = duckdb.connect(f"md:{db}?motherduck_token={tok}")
+        sys.exit("LOCAL_DB_PATH not found in env or secrets.toml")
+    os.environ["LOCAL_DB_PATH"] = tok
+    db = "thyroid_master.duckdb"
+    con = duckdb.connect(f"thyroid_master.duckdb")
     print(f"  Connected to md:{db}")
     return con
 
@@ -880,7 +880,7 @@ def generate_report(kpis: dict, results: dict) -> str:
     a("")
     a(f"**Generated**: {TIMESTAMP}")
     a("**Script**: `scripts/98_multi_surgery_artifact_linkage_audit.py`")
-    a("**Target**: MotherDuck `thyroid_research_2026` (prod)")
+    a("**Target**: local DuckDB `thyroid_master.duckdb` (prod)")
     a("**Predecessor**: `scripts/96_episode_downstream_repair.py` (ep-id fix)")
     a("")
 
@@ -1012,7 +1012,7 @@ def main():
     parser = argparse.ArgumentParser(
         description="Multi-surgery artifact linkage audit (post ep-id repair)")
     parser.add_argument("--md", action="store_true", default=True,
-                        help="Connect to MotherDuck (default)")
+                        help="Connect to local DuckDB (default)")
     parser.add_argument("--dry-run", action="store_true",
                         help="Print SQL plan without executing")
     args = parser.parse_args()

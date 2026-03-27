@@ -6,7 +6,7 @@
 
 ## Summary
 
-Script 71 (`71_operative_nlp_to_motherduck.py --md`) was executed to close the operative
+Script 71 (`71_operative_nlp_to_local DuckDB.py --md`) was executed to close the operative
 NLP enrichment gap. The V2 OperativeDetailExtractor successfully extracted 13,186 operative
 entities from 10,499 clinical notes in 112.8 seconds. However, the UPDATE produced zero
 delta due to COALESCE guards.

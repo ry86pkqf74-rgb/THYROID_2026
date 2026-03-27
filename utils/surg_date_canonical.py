@@ -1,7 +1,7 @@
 """
 Canonical surgery-date resolution for synoptic / path_synoptics rows.
 
-Excel and MotherDuck may store `surg_date` as VARCHAR with leading whitespace or
+Excel and local DuckDB may store `surg_date` as VARCHAR with leading whitespace or
 US-style M/D/YYYY strings that do not cast with TRY_CAST alone. Episode linkage,
 Excel reconciliation, and pathology–surgery joins should use the same resolution
 chain so each synoptic row maps to the correct surgical encounter key.

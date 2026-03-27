@@ -4,7 +4,7 @@
 linkage for multi-surgery patients (re-operations, completion thyroidectomy,
 nodal recurrence surgery, or other multi-episode care).
 
-Creates three new MotherDuck tables
+Creates three new local DuckDB tables
 ──────────────────────────────────────
   val_multi_episode_linkage_v1
       Per-domain, per-episode linkage quality for every multi-surgery patient.
@@ -51,7 +51,7 @@ import numpy as np
 
 def cli() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Multi-episode linkage hardening")
-    p.add_argument("--md", action="store_true", help="Target MotherDuck (default: local)")
+    p.add_argument("--md", action="store_true", help="Target local DuckDB (default: local)")
     p.add_argument("--local", action="store_true", help="Target local DuckDB")
     p.add_argument("--dry-run", action="store_true", help="Audit only, no writes")
     return p.parse_args()
@@ -65,18 +65,18 @@ def section(title: str) -> None:
 
 
 def get_token() -> str:
-    for key in ("MD_SA_TOKEN", "MOTHERDUCK_TOKEN"):
+    for key in ("LOCAL_DB_PATH", "LOCAL_DB_PATH"):
         tok = os.environ.get(key)
         if tok:
             return tok
-    raise RuntimeError("No MOTHERDUCK_TOKEN found in environment")
+    raise RuntimeError("No LOCAL_DB_PATH found in environment")
 
 
 def connect(use_md: bool) -> duckdb.DuckDBPyConnection:
     if use_md:
         tok = get_token()
-        con = duckdb.connect(f"md:thyroid_research_2026?motherduck_token={tok}")
-        print("  ✓ Connected to md:thyroid_research_2026")
+        con = duckdb.connect(f"thyroid_master.duckdb")
+        print("  ✓ Connected to thyroid_master.duckdb")
     else:
         db_path = str(ROOT / "thyroid_master_local.duckdb")
         con = duckdb.connect(db_path)
@@ -636,7 +636,7 @@ def main() -> None:
     ts = dt.datetime.now().strftime("%Y%m%d_%H%M")
 
     section("101  Multi-Episode Linkage Hardening")
-    print(f"  target: {'MotherDuck' if use_md else 'local'}")
+    print(f"  target: {'local DuckDB' if use_md else 'local'}")
     print(f"  dry_run: {dry_run}")
 
     con = connect(use_md)
@@ -769,7 +769,7 @@ def main() -> None:
     manifest = {
         "script": "101_multi_episode_linkage_hardening.py",
         "timestamp": ts,
-        "target": "motherduck" if use_md else "local",
+        "target": "local DuckDB" if use_md else "local",
         "dry_run": dry_run,
         "tables_created": [
             "val_multi_episode_linkage_v1",
@@ -847,7 +847,7 @@ def generate_report(metrics: dict, df_linkage: pd.DataFrame,
 
 **Generated**: {ts}
 **Script**: `scripts/101_multi_episode_linkage_hardening.py`
-**Target**: MotherDuck `thyroid_research_2026`
+**Target**: local DuckDB `thyroid_master.duckdb`
 
 ## Executive Summary
 

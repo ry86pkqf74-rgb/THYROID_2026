@@ -29,7 +29,7 @@ def render_cure_probability(con) -> None:
     if not tbl_exists(con, "cure_cohort"):
         st.warning(
             "Cure cohort table is not available yet. "
-            "Run `python scripts/26_motherduck_materialize_v2.py --md` first.",
+            "Run `python scripts/26_local DuckDB_materialize_v2.py --md` first.",
             icon="⚠️",
         )
         return

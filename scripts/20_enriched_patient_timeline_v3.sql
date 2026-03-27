@@ -15,10 +15,10 @@
 --   imaging_nodule_long_v2   : nodule_size_mm, composition
 --   operative_episode_detail_v2: operative_approach, rln_monitoring_flag
 --
--- Deployment: run this SQL directly in MotherDuck SQL editor or via
---   duckdb "md:thyroid_research_2026" < scripts/20_enriched_patient_timeline_v3.sql
+-- Deployment: run this SQL directly in local DuckDB SQL editor or via
+--   duckdb "thyroid_master.duckdb" < scripts/20_enriched_patient_timeline_v3.sql
 -- ---------------------------------------------------------------------------
-USE thyroid_research_2026;
+USE thyroid_master.duckdb;
 
 CREATE OR REPLACE VIEW enriched_patient_timeline_v3_mv AS
 WITH

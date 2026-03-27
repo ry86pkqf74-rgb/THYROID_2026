@@ -104,7 +104,7 @@ odds of confirmed RLN injury (p=0.021).
    framework. Hypocalcemia is the recommended next target (2,740 NLP mentions likely
    have similar boilerplate contamination).
 
-## MotherDuck Tables Created
+## local DuckDB Tables Created
 
 | Table | Rows | Description |
 |-------|------|-------------|

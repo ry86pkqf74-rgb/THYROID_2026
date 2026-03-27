@@ -18,7 +18,7 @@
 │    • Nuclear_Med_final.xlsx                                     │
 │    • US Nodules TIRADS 12_1_25.xlsx                             │
 │                                                                 │
-│  Output → DuckDB tables (local + MotherDuck):                  │
+│  Output → DuckDB tables (local + local DuckDB):                  │
 │    path_synoptics, tumor_pathology, clinical_notes_long,        │
 │    operative_details, molecular_testing, serial_imaging_us,     │
 │    benign_pathology, fna_cytology, genetic_testing              │
@@ -205,12 +205,12 @@ path_synoptics.research_id (INTEGER, primary key across all tables)
 | proposal2_expanded_cohort.py | studies/proposal2_ete_staging/ | Expanded + MI + safety | **YES** |
 | proposal2_recommendations.py | studies/proposal2_ete_staging/ | Sensitivity + recommendations | **YES** |
 | audit_reproduce.py | studies/proposal2_ete_staging/ | Independent audit | **YES** |
-| risk_enriched_mv | MotherDuck: thyroid_research_2026 | Upstream source table | **YES** |
+| risk_enriched_mv | local DuckDB: thyroid_master.duckdb | Upstream source table | **YES** |
 | manuscript_v1.md | manuscripts/pool_malignancy_202603/ | Manuscript text | **YES** |
 | ptc_full.csv | studies/proposal2_ete_staging/tables/ | Intermediate (PTC demographics) | intermediate |
 | recurrence_full.csv | studies/proposal2_ete_staging/tables/ | Intermediate (risk features) | intermediate |
 | imaging_correlation.csv | studies/proposal2_ete_staging/tables/ | Intermediate (imaging data) | intermediate |
-| manuscript_cohort_v1 | MotherDuck table | Repo-level cohort (broader) | NO (different analysis) |
+| manuscript_cohort_v1 | local DuckDB table | Repo-level cohort (broader) | NO (different analysis) |
 | scripts/62-66_*.py | scripts/ | Repo-level Tables 1-3 | NO (different analysis) |
 
 ---

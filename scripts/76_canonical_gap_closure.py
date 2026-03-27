@@ -9,7 +9,7 @@ Phases:
   D: Linkage ID propagation from v3 linkage tables into canonical tables
   E: Recurrence date hardening with quality tiers
 
-Supports --md (MotherDuck), --local, --dry-run, --phase A/B/C/D/E.
+Supports --md (local DuckDB), --local, --dry-run, --phase A/B/C/D/E.
 """
 from __future__ import annotations
 
@@ -71,8 +71,8 @@ def table_exists(con: duckdb.DuckDBPyConnection, tbl: str) -> bool:
 def connect(args) -> duckdb.DuckDBPyConnection:
     if args.md:
         import toml
-        token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["MOTHERDUCK_TOKEN"]
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+        token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
+        return duckdb.connect(f"thyroid_master.duckdb")
     return duckdb.connect(str(DB_PATH))
 
 
@@ -607,7 +607,7 @@ def phase_e_recurrence(con: duckdb.DuckDBPyConnection, dry: bool) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(description="Canonical gap closure")
-    parser.add_argument("--md", action="store_true", help="Target MotherDuck")
+    parser.add_argument("--md", action="store_true", help="Target local DuckDB")
     parser.add_argument("--local", action="store_true", help="Target local DuckDB")
     parser.add_argument("--dry-run", action="store_true", help="Preview only")
     parser.add_argument("--phase", choices=["A", "B", "C", "D", "E", "all"], default="all")

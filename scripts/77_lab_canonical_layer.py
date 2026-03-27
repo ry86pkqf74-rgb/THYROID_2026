@@ -32,8 +32,8 @@ TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M")
 def connect(args) -> duckdb.DuckDBPyConnection:
     if args.md:
         import toml
-        token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["MOTHERDUCK_TOKEN"]
-        return duckdb.connect(f"md:thyroid_research_2026?motherduck_token={token}")
+        token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
+        return duckdb.connect(f"thyroid_master.duckdb")
     return duckdb.connect(str(DB_PATH))
 
 
@@ -232,7 +232,7 @@ def main():
     con = connect(args)
     dry = args.dry_run
 
-    print(f"Target: {'MotherDuck' if args.md else 'local'}")
+    print(f"Target: {'local DuckDB' if args.md else 'local'}")
     print(f"Timestamp: {TIMESTAMP}")
 
     # Build canonical table

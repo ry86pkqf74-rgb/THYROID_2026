@@ -48,6 +48,6 @@ Generated: 20260318_0604
 ## Caveats
 
 - `first_recurrence_date`: Only 2.7% exact-source dates; 88.8% unresolved. Not suitable for precise time-to-event analysis without further adjudication.
-- Boolean flags from MotherDuck may arrive as text 'true'/'false'; coerced to Python bool in dataset.
+- Boolean flags from local DuckDB may arrive as text 'true'/'false'; coerced to Python bool in dataset.
 - `imaging_nodule_long_v2` is deprecated; `imaging_nodule_master_v1` and `imaging_patient_summary_v1` used instead.
 - No PHI or full note text is included in any deliverable.

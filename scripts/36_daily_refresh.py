@@ -44,7 +44,7 @@ V2_CHAIN = [
     "23_cross_domain_linkage_v2.py",
     "24_reconciliation_review_v2.py",
     "25_qa_engine_v2.py",
-    "26_motherduck_materialize_v2.py",
+    "26_local DuckDB_materialize_v2.py",
     "27_date_provenance.py",
 ]
 

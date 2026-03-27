@@ -4,7 +4,7 @@
 **Date**: 2026-03-12  
 **Analyst**: Extraction Audit Engine v1.0  
 **Scope**: All NLP-extracted complication entities used in H1/H2 models and dashboard  
-**MotherDuck DB**: `thyroid_research_2026`
+**local DuckDB DB**: `thyroid_master.duckdb`
 
 ---
 
@@ -16,7 +16,7 @@
 
 **Impact**: All `nlp_*` complication flags in the H1/H2 models are inflated by 10–100× the true rates. The models should not be published using unrefined flags.
 
-**Resolution**: A SQL-based context-aware refinement pipeline (`complications_refined_pipeline.py`) has been deployed to MotherDuck, reducing false positives by 75–99% per entity while preserving true events. New `extracted_complications_refined_v5` and `patient_refined_complication_flags_v2` tables are now the single source of truth.
+**Resolution**: A SQL-based context-aware refinement pipeline (`complications_refined_pipeline.py`) has been deployed to local DuckDB, reducing false positives by 75–99% per entity while preserving true events. New `extracted_complications_refined_v5` and `patient_refined_complication_flags_v2` tables are now the single source of truth.
 
 ---
 
@@ -231,7 +231,7 @@ Same NLP flags used; same refinement applies. Additionally:
 
 ---
 
-## New Tables Deployed to MotherDuck
+## New Tables Deployed to local DuckDB
 
 | Table | Rows | Description |
 |-------|------|-------------|

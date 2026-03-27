@@ -1041,7 +1041,7 @@ Applied to all enriched views via `scripts/17_semantic_cleanup_v3.sql` and `scri
 ### Deployment
 
 Script 27 depends on script 15 views (`missing_date_associations_audit`) and all
-base tables being present in `thyroid_research_2026`. Run after scripts 15–26.
+base tables being present in `thyroid_master.duckdb`. Run after scripts 15–26.
 
 ---
 
@@ -1152,7 +1152,7 @@ modern table stack. Run this script if the dashboard shows "Missing critical tab
 # Fix dashboard "Missing critical tables" error:
 .venv/bin/python scripts/27_fix_legacy_episode_compatibility.py
 
-# Use local DuckDB instead of MotherDuck:
+# Use local DuckDB instead of local DuckDB:
 .venv/bin/python scripts/27_fix_legacy_episode_compatibility.py --local
 
 # Dry-run preview:

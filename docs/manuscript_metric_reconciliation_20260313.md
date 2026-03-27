@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-13
 **Auditor:** Manuscript reconciliation pass (script 69)
-**Database:** MotherDuck `thyroid_research_2026`
+**Database:** local DuckDB `thyroid_master.duckdb`
 **Overall Status:** CONDITIONALLY READY FOR MANUSCRIPT FREEZE
 
 ---

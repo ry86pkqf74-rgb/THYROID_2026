@@ -2,7 +2,7 @@
 """
 94_map_dedup_validator.py  —  MATERIALIZATION_MAP duplicate & integrity check
 
-Parses the MATERIALIZATION_MAP list in scripts/26_motherduck_materialize_v2.py
+Parses the MATERIALIZATION_MAP list in scripts/26_local DuckDB_materialize_v2.py
 and fails hard (exit 1) if any of the following are found:
 
   1. Duplicate md_* destination names  → same table would be overwritten twice
@@ -21,7 +21,7 @@ Usage
   python scripts/94_map_dedup_validator.py --report exports/map_dedup_report.json
 
   # Check a different script path
-  python scripts/94_map_dedup_validator.py --script scripts/26_motherduck_materialize_v2.py
+  python scripts/94_map_dedup_validator.py --script scripts/26_local DuckDB_materialize_v2.py
 
 Exit codes
 ──────────
@@ -42,7 +42,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-DEFAULT_SCRIPT = ROOT / "scripts" / "26_motherduck_materialize_v2.py"
+DEFAULT_SCRIPT = ROOT / "scripts" / "26_local DuckDB_materialize_v2.py"
 
 
 # ── Core parser ────────────────────────────────────────────────────────────
@@ -196,7 +196,7 @@ AFTER (script-94 fix applied)
 Action taken:
   • Fixed check_map_duplicates() in 85_materialization_performance_audit.py
   • Created 94_map_dedup_validator.py as the authoritative CI check
-  • CI job added: runs script 94 in lint-and-syntax job (no MotherDuck needed)
+  • CI job added: runs script 94 in lint-and-syntax job (no local DuckDB needed)
 """
 
 

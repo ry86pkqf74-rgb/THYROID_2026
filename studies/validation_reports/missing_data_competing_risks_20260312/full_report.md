@@ -1,7 +1,7 @@
 ======================================================================
 MISSING-DATA SENSITIVITY (MICE) + COMPETING-RISKS EXTENSION
 Date: 2026-03-12T12:18:01.846156
-Source: MotherDuck
+Source: local DuckDB
 Output: /Users/loganglosser/THYROID_2026/studies/validation_reports/missing_data_competing_risks_20260312
 ======================================================================
   path_synoptics: 11,688 rows

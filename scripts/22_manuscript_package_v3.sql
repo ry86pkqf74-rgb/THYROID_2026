@@ -7,7 +7,7 @@
 --             time_to_rai_v3_mv, recurrence_free_survival_v3_mv
 -- Run after: scripts/21_survival_analysis_v3.sql
 
-USE thyroid_research_2026;
+USE thyroid_master.duckdb;
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- TABLE 1: Patient Demographics

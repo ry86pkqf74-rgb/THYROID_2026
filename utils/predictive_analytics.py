@@ -314,7 +314,7 @@ class ThyroidPredictiveAnalyzer:
     Parameters
     ----------
     con : duckdb.DuckDBPyConnection
-        Active DuckDB / MotherDuck connection.
+        Active DuckDB / local DuckDB connection.
     """
 
     def __init__(self, con: Any) -> None:

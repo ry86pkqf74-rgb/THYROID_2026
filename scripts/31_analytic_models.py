@@ -47,7 +47,7 @@ np.random.seed(42)
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from motherduck_client import MotherDuckClient, MotherDuckConfig
+from local DuckDB_client import local DuckDBClient, local DuckDBConfig
 
 logging.basicConfig(
     level=logging.INFO,
@@ -98,9 +98,9 @@ def _get_connection(args):
         local_path = os.getenv("LOCAL_DUCKDB_PATH", str(ROOT / "thyroid_master_local.duckdb"))
         log.info("Connecting to local DuckDB: %s", local_path)
         return duckdb.connect(local_path)
-    log.info("Connecting to MotherDuck (thyroid_research_2026)…")
-    cfg = MotherDuckConfig(database="thyroid_research_2026")
-    return MotherDuckClient(cfg).connect_rw()
+    log.info("Connecting to local DuckDB (thyroid_master.duckdb)…")
+    cfg = local DuckDBConfig(database="thyroid_master.duckdb")
+    return local DuckDBClient(cfg).connect_rw()
 
 
 # ── Phase 1: Table 1 — Cohort Description ────────────────────────────────
@@ -812,7 +812,7 @@ def run(args: argparse.Namespace) -> int:
 
     if args.dry_run:
         log.info("[DRY RUN] Would run 7 analytic phases against %s",
-                 "local DB" if args.local else "MotherDuck")
+                 "local DB" if args.local else "local DuckDB")
         return 0
 
     df = phase1_table1(con, OUT_DIR)
@@ -832,7 +832,7 @@ def run(args: argparse.Namespace) -> int:
         "script": "31_analytic_models.py",
         "timestamp": datetime.now().isoformat(),
         "random_seed": 42,
-        "source": "local" if args.local else "motherduck",
+        "source": "local" if args.local else "local DuckDB",
         "cohort_rows": len(df),
         "elapsed_seconds": round(elapsed, 2),
         "lifelines_available": HAS_LIFELINES,

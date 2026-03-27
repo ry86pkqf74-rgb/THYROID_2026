@@ -4,8 +4,8 @@
   "created_at": "2026-03-15T20:29:17.479689+00:00",
   "created_by": "scripts/105_manuscript_freeze_v1.py",
   "source": {
-    "type": "motherduck_prod",
-    "database": "thyroid_research_2026",
+    "type": "local DuckDB_prod",
+    "database": "thyroid_master.duckdb",
     "is_prod": true
   },
   "git": {

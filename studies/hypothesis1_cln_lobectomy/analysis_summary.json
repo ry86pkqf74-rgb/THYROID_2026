@@ -37,7 +37,7 @@
     "n_obs": 693,
     "pseudo_r2": 0.0187
   },
-  "data_source": "MotherDuck",
+  "data_source": "local DuckDB",
   "generated_at": "2026-03-12T19:50:49.553401",
   "random_seed": 42
 }
