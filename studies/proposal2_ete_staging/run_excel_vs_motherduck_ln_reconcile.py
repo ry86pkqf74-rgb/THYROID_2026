@@ -5,7 +5,7 @@ and MotherDuck `path_synoptics` (Excel = source-of-truth snapshot in `raw/`).
 
 Usage:
   MOTHERDUCK_TOKEN=... .venv/bin/python studies/proposal2_ete_staging/run_excel_vs_motherduck_ln_reconcile.py
-  MOTHERDUCK_TOKEN=... .venv/bin/python .../run_excel_vs_motherduck_ln_reconcile.py --env prod
+  MOTHERDUCK_ENV=qa MOTHERDUCK_TOKEN=... .venv/bin/python .../run_excel_vs_motherduck_ln_reconcile.py
 
 Optional local DuckDB (no cloud):
   .venv/bin/python .../run_excel_vs_motherduck_ln_reconcile.py --local thyroid_master_local.duckdb
