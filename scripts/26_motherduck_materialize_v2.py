@@ -301,6 +301,8 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_val_provenance_hardening_summary_v1",  "val_provenance_hardening_summary_v1"),
     ("md_val_query_benchmark_v1",               "val_query_benchmark_v1"),
     ("md_val_materialization_perf_v1",          "val_materialization_perf_v1"),
+    # ── Global OED vs path-synoptic completion linkage (script 107) ─────────
+    ("md_patient_completion_oed_path_linkage_v1", "patient_completion_oed_path_linkage_v1"),
 ]
 
 # ── MATERIALIZATION_MAP uniqueness guard ──────────────────────────────────────

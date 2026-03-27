@@ -1,0 +1,19 @@
+{
+  "table": "patient_completion_oed_path_linkage_v1",
+  "n_rows": 11506,
+  "n_lobectomy_first": 3809,
+  "n_oed_completion_true": 0,
+  "n_path_synoptic_definite": 352,
+  "cohort_consistency_vs_study_csv": {
+    "status": "PASS",
+    "n_lobectomy_study": 238,
+    "oed_flag_mismatch_vs_study_csv": 0
+  },
+  "git_sha": "edf88c16445c2bec99ca9017ccc777d172ae982f",
+  "built_utc": "2026-03-27T02:57:20Z",
+  "definitions": {
+    "first_surgery": "first_qualifying_surgeries hemithyroidectomy|total_thyroidectomy",
+    "oed_completion": "later OED row with total_thyroidectomy or completion_thyroidectomy",
+    "path_synoptic_definite": "path_synoptic_completion_after_lobectomy in cohort_logic.py"
+  }
+}

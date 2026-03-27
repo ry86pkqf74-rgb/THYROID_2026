@@ -79,6 +79,11 @@ BUNDLE_CANDIDATES = [
     "exports/THYROID_2026_PUBLICATION_BUNDLE_20260310_0414",
 ]
 
+# Additional export folders to mirror into the archive `exports/` subtree (if present).
+EXTRA_EXPORT_DIRS = [
+    "exports/patient_completion_oed_path_linkage_v1",
+]
+
 EXCLUDE_PATTERNS = {".pyc", "__pycache__", ".DS_Store", ".git", ".venv", ".dvc", "node_modules"}
 
 
@@ -222,6 +227,16 @@ def run(args: argparse.Namespace) -> int:
         total_files += n
     else:
         print("  [SKIP] No publication bundle found")
+
+    print("\n── Extra exports (linkage / reproducibility) ─────────────────────")
+    for rel in EXTRA_EXPORT_DIRS:
+        p = ROOT / rel
+        if not p.exists():
+            print(f"  [SKIP] {rel} — not found")
+            continue
+        n = _copy_tree(p, ARCHIVE_DIR, manifest, args.dry_run)
+        print(f"  {rel}/: {n} files")
+        total_files += n
 
     # .zenodo.json
     zenodo_meta = {
