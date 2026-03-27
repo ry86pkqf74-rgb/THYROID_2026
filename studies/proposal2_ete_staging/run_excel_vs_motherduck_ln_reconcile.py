@@ -30,7 +30,7 @@ import json
 import os
 import sys
 import time
-from datetime import date, datetime, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -42,6 +42,11 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from motherduck_client import get_token, resolve_database_for_env  # noqa: E402
+from utils.surg_date_canonical import (  # noqa: E402
+    canonical_surgery_date_key,
+    surgery_date_canonical_sql,
+    surgery_date_parse_tier_sql,
+)
 from utils.text_helpers import clean_research_id, standardize_columns  # noqa: E402
 
 STUDY_DIR = Path(__file__).resolve().parent
@@ -128,22 +133,6 @@ def _load_excel(path: Path, sheet: str) -> pd.DataFrame:
         raise RuntimeError(f"Excel missing columns: {missing}")
     df["excel_row_order"] = np.arange(1, len(df) + 1, dtype=np.int64)
     return df
-
-
-def _surgery_key(s: pd.Series) -> pd.Series:
-    dt = pd.to_datetime(s, errors="coerce", utc=False)
-    d = dt.dt.normalize()
-
-    def _to_key(x: Any) -> date | None:
-        if pd.isna(x):
-            return None
-        if isinstance(x, pd.Timestamp):
-            return x.date()
-        if hasattr(x, "date"):
-            return x.date()
-        return None
-
-    return d.map(_to_key)
 
 
 def _py_clean_ln(series: pd.Series) -> pd.Series:
@@ -243,7 +232,7 @@ def main() -> int:
     t0 = time.perf_counter()
 
     ex = _load_excel(args.excel, args.sheet)
-    ex["surgery_date_key"] = _surgery_key(ex["surg_date"])
+    ex["surgery_date_key"] = canonical_surgery_date_key(ex["surg_date"])
     ex[f"{LN_EXAMINED}_v"] = ex[LN_EXAMINED]
     ex[f"{LN_INVOLVED}_v"] = ex[LN_INVOLVED]
     ex[f"{LN_EXAMINED}_clean"] = _py_clean_ln(ex[LN_EXAMINED])
@@ -256,10 +245,14 @@ def main() -> int:
 
     exam_sql = _sql_clean_expr("tumor_1_ln_examined")
     inv_sql = _sql_clean_expr("tumor_1_ln_involved")
+    canon_sql = surgery_date_canonical_sql("surg_date")
+    tier_sql = surgery_date_parse_tier_sql("surg_date")
     md_sql = f"""
     SELECT
       research_id,
       surg_date,
+      {canon_sql} AS surg_date_canonical,
+      {tier_sql} AS surg_date_parse_tier,
       {LN_EXAMINED} AS {LN_EXAMINED}_v,
       {LN_INVOLVED} AS {LN_INVOLVED}_v,
       {exam_sql} AS {LN_EXAMINED}_clean_sql,
@@ -268,7 +261,7 @@ def main() -> int:
     WHERE research_id IS NOT NULL
     """
     md = con.execute(md_sql).df()
-    md["surgery_date_key"] = _surgery_key(md["surg_date"])
+    md["surgery_date_key"] = canonical_surgery_date_key(md["surg_date_canonical"])
     md[f"{LN_EXAMINED}_clean"] = md[f"{LN_EXAMINED}_clean_sql"]
     md[f"{LN_INVOLVED}_clean"] = md[f"{LN_INVOLVED}_clean_sql"]
 
@@ -404,7 +397,10 @@ def main() -> int:
         "",
         "## Method",
         "",
-        "Rows are matched on `(research_id, surgery_date)` after `pandas.to_datetime(..., errors='coerce').normalize()`. "
+        "Rows are matched on `(research_id, surgery_encounter_date)` using the **canonical surgery-date chain** "
+        "(same as `utils.surg_date_canonical` / `surgery_date_canonical_sql`): native `DATE`, trimmed cast, "
+        "then `%m/%d/%Y`, `%m/%d/%y`, `%Y-%m-%d` after trim — so leading tabs/spaces and US-style strings align "
+        "with MotherDuck. MotherDuck pulls include `surg_date_canonical` and `surg_date_parse_tier` for audits. "
         "Duplicate keys on a side are collapsed to a single row; if duplicate rows disagree on LN fields, "
         "they are listed in `excel_md_ln_ambiguous_keys.csv`.",
         "",
