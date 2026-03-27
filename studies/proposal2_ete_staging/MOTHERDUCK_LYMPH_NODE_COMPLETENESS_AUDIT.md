@@ -1,6 +1,6 @@
 # MotherDuck lymph node completeness audit (THYROID_2026)
 
-**Generated (UTC):** 2026-03-27T05:59Z  
+**Generated (UTC):** 2026-03-27T06:06Z  
 **Database:** `thyroid_research_2026` (MotherDuck prod, authenticated)  
 **Runner:** `studies/proposal2_ete_staging/run_motherduck_ln_completeness_audit.py` (`--sa` for GitHub / `MD_SA_TOKEN`; `--deep` for extra `COUNT(*)` proof; `--quiet` to silence timing logs)  
 **SQL reference:** `studies/proposal2_ete_staging/sql/motherduck_lymph_node_completeness_audit.sql` (specimen spine SQL is embedded in the runner)
@@ -18,17 +18,17 @@ DuckDB is a **columnar** engine; MotherDuck runs those operators on **remote** s
 
 | Step | Seconds |
 |------|--------:|
-| `build_ln_specimen_temp` | 0.2129 |
-| `connect_md` | 0.4983 |
-| `deep_full_table_counts` | 0.072 |
-| `query_inconsistencies` | 0.0245 |
-| `query_missing_unresolved` | 0.0247 |
-| `query_subgroup_summary` | 0.0133 |
-| `recurrence_risk_mv_summary` | 0.0418 |
-| `specimen_summary_aggregates` | 0.0044 |
-| `table_presence_check` | 0.4201 |
-| `wall_clock_total_s` | 3.0445 |
-| `write_csv_exports` | 0.0802 |
+| `build_ln_specimen_temp` | 0.1975 |
+| `connect_md` | 0.7385 |
+| `deep_full_table_counts` | 0.0722 |
+| `query_inconsistencies` | 0.0205 |
+| `query_missing_unresolved` | 0.017 |
+| `query_subgroup_summary` | 0.01 |
+| `recurrence_risk_mv_summary` | 0.039 |
+| `specimen_summary_aggregates` | 0.0041 |
+| `table_presence_check` | 0.47 |
+| `wall_clock_total_s` | 2.9798 |
+| `write_csv_exports` | 0.0689 |
 
 ### Deep full-table counts (this run, `--deep`)
 
@@ -132,11 +132,11 @@ Rationale: on the **`path_synoptics` specimen spine**, only **35.92%** of rows h
 
 ## Related — Excel source-of-truth cross-check
 
-To verify that `path_synoptics` lymph-node fields match the canonical synoptic workbook row-for-key (after join on `research_id` + surgery date), run:
+To verify that `path_synoptics` lymph-node fields match the canonical synoptic workbook on `(research_id, surgery_date)` (PHI-safe CSVs by default), run:
 
 `studies/proposal2_ete_staging/run_excel_vs_motherduck_ln_reconcile.py`
 
-Outputs: `EXCEL_VS_MOTHERDUCK_LN_RECONCILE.md` and `audit_excel_vs_md_ln/` under the same study folder.
+Outputs: `EXCEL_VS_MOTHERDUCK_LN_RECONCILE.md` and `audit_excel_vs_md_ln/` (see runner `--wide-phi-export` for full-row debugging only on secure hosts).
 
 ---
 *This report is generated from live MotherDuck queries; re-run the runner to refresh.*

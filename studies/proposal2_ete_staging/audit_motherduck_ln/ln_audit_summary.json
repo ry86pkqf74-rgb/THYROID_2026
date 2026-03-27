@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-03-27T05:59Z",
+  "generated_at_utc": "2026-03-27T06:06Z",
   "motherduck_auth": "connected",
   "motherduck_database": "thyroid_research_2026",
   "motherduck_connection_proof": {
@@ -108,17 +108,17 @@
     ]
   },
   "execution_profile_seconds": {
-    "connect_md": 0.4983,
-    "table_presence_check": 0.4201,
-    "deep_full_table_counts": 0.072,
-    "build_ln_specimen_temp": 0.2129,
-    "specimen_summary_aggregates": 0.0044,
-    "recurrence_risk_mv_summary": 0.0418,
-    "query_missing_unresolved": 0.0247,
-    "query_inconsistencies": 0.0245,
-    "query_subgroup_summary": 0.0133,
-    "write_csv_exports": 0.0802,
-    "wall_clock_total_s": 3.0445
+    "connect_md": 0.7385,
+    "table_presence_check": 0.47,
+    "deep_full_table_counts": 0.0722,
+    "build_ln_specimen_temp": 0.1975,
+    "specimen_summary_aggregates": 0.0041,
+    "recurrence_risk_mv_summary": 0.039,
+    "query_missing_unresolved": 0.017,
+    "query_inconsistencies": 0.0205,
+    "query_subgroup_summary": 0.01,
+    "write_csv_exports": 0.0689,
+    "wall_clock_total_s": 2.9798
   },
   "deep_full_table_counts": {
     "path_synoptics_all_rows": 11688,

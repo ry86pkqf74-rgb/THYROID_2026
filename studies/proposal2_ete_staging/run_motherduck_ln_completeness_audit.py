@@ -583,6 +583,14 @@ See **`audit_motherduck_ln/ln_audit_subgroup_summary.csv`** (by year, surgery ex
 Rationale: on the **`path_synoptics` specimen spine**, only **{pct_both}%** of rows have **both** examined and positive numeric LN fields populated; **{pct_unres}%** have **both** NULL after cleaning — **not** “complete for analytic use” without explicit missing-data handling. By contrast, among rows in **`recurrence_risk_features_mv`** (the MotherDuck object documented for proposal2 analytic features), **~93%** of rows have both `ln_examined` and `ln_positive` non-null — but that view is a **narrower, tumor-pathology–filtered cohort** with multiple rows per patient possible, **not** proof that every synoptic specimen row is enumerated. Any analysis must align the completeness statement with the **exact table grain** used. Structured synoptic LN coverage remains a **remediation target** if specimen-level completeness is required.
 
 {v12_note}
+## Related — Excel source-of-truth cross-check
+
+To verify that `path_synoptics` lymph-node fields match the canonical synoptic workbook on `(research_id, surgery_date)` (PHI-safe CSVs by default), run:
+
+`studies/proposal2_ete_staging/run_excel_vs_motherduck_ln_reconcile.py`
+
+Outputs: `EXCEL_VS_MOTHERDUCK_LN_RECONCILE.md` and `audit_excel_vs_md_ln/` (see runner `--wide-phi-export` for full-row debugging only on secure hosts).
+
 ---
 *This report is generated from live MotherDuck queries; re-run the runner to refresh.*
 """

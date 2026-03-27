@@ -1,0 +1,19 @@
+{
+  "generated_at_utc": "2026-03-27T06:08:30.377052+00:00",
+  "excel_path": "raw/All Diagnoses & synoptic 12_1_2025.xlsx",
+  "sheet": "synoptics + Dx merged",
+  "connection": "md:thyroid_research_2026",
+  "excel_rows": 11688,
+  "excel_unique_keys": 11687,
+  "md_rows_raw": 11688,
+  "md_unique_keys": 11687,
+  "matched_keys": 11686,
+  "unmatched_excel_keys": 1,
+  "unmatched_md_keys": 1,
+  "discordant_clean_ln_keys": 0,
+  "excel_internal_ambiguous_keys": 1,
+  "md_internal_ambiguous_keys": 1,
+  "runtime_seconds": 30.373,
+  "verdict": "FAIL",
+  "phi_safe_csv_exports": true
+}

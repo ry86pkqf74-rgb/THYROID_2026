@@ -18,6 +18,9 @@ Outputs (studies/proposal2_ete_staging/audit_excel_vs_md_ln/):
   - excel_md_ln_ambiguous_keys.csv
 
 Also writes: studies/proposal2_ete_staging/EXCEL_VS_MOTHERDUCK_LN_RECONCILE.md
+
+By default, CSV row exports are **PHI-safe** (research_id, surgery_date_key, surg_date*, LN columns,
+row flags only). Use `--wide-phi-export` only on secure workstations to debug joins (full synoptic width).
 """
 
 from __future__ import annotations
@@ -50,6 +53,36 @@ DEFAULT_SHEET = "synoptics + Dx merged"
 
 LN_EXAMINED = "tumor_1_ln_examined"
 LN_INVOLVED = "tumor_1_ln_involved"
+
+
+def _phi_safe_ln_export_columns(df: pd.DataFrame) -> list[str]:
+    """Subset of columns safe to commit (no names, MRN, DOB, narratives)."""
+    out: list[str] = []
+    for c in df.columns:
+        if c == "_merge":
+            continue
+        if c in ("research_id", "surgery_date_key"):
+            out.append(c)
+        elif c.startswith("excel_row_order"):
+            out.append(c)
+        elif c.startswith("surg_date"):
+            out.append(c)
+        elif (LN_EXAMINED in c or LN_INVOLVED in c) and "_comment" not in c:
+            out.append(c)
+        elif c.startswith("internal_ln_") or c.startswith("n_rows"):
+            out.append(c)
+        elif c in ("_ex_exam_clean", "_ex_inv_clean", "_md_exam_clean", "_md_inv_clean"):
+            out.append(c)
+    return out
+
+
+def _export_csv(df: pd.DataFrame, path: Path, *, wide_phi: bool) -> None:
+    if df.empty:
+        cols = list(df.columns) if wide_phi else _phi_safe_ln_export_columns(df)
+        pd.DataFrame(columns=cols).to_csv(path, index=False)
+        return
+    sub = df if wide_phi else df[_phi_safe_ln_export_columns(df)]
+    sub.to_csv(path, index=False)
 
 
 def _connect(*, local: str | None, use_sa: bool):
@@ -199,6 +232,11 @@ def main() -> int:
     ap.add_argument("--sheet", default=DEFAULT_SHEET)
     ap.add_argument("--local", type=str, default=None, help="Local DuckDB path (skip MotherDuck)")
     ap.add_argument("--sa", action="store_true", help="Prefer MD_SA_TOKEN over MOTHERDUCK_TOKEN")
+    ap.add_argument(
+        "--wide-phi-export",
+        action="store_true",
+        help="Write full merged columns for unmatched/discordant CSVs (contains PHI; default is strict subset).",
+    )
     args = ap.parse_args()
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -273,9 +311,13 @@ def main() -> int:
         )
     ].copy()
 
+    try:
+        excel_path_rel = str(args.excel.resolve().relative_to(ROOT))
+    except ValueError:
+        excel_path_rel = str(args.excel.resolve())
     summary: dict[str, Any] = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "excel_path": str(args.excel.resolve()),
+        "excel_path": excel_path_rel,
         "sheet": args.sheet,
         "connection": conn_label,
         "excel_rows": int(len(ex)),
@@ -291,14 +333,18 @@ def main() -> int:
         "runtime_seconds": round(time.perf_counter() - t0, 4),
     }
 
-    unmatched_ex[[c for c in unmatched_ex.columns if c != "_merge"]].to_csv(
-        OUT_DIR / "excel_md_ln_unmatched_excel.csv", index=False
+    _export_csv(
+        unmatched_ex.drop(columns=["_merge"], errors="ignore"),
+        OUT_DIR / "excel_md_ln_unmatched_excel.csv",
+        wide_phi=args.wide_phi_export,
     )
-    unmatched_md[[c for c in unmatched_md.columns if c != "_merge"]].to_csv(
-        OUT_DIR / "excel_md_ln_unmatched_md.csv", index=False
+    _export_csv(
+        unmatched_md.drop(columns=["_merge"], errors="ignore"),
+        OUT_DIR / "excel_md_ln_unmatched_md.csv",
+        wide_phi=args.wide_phi_export,
     )
     disc_out = disc.drop(columns=["_merge"], errors="ignore")
-    disc_out.to_csv(OUT_DIR / "excel_md_ln_discordant.csv", index=False)
+    _export_csv(disc_out, OUT_DIR / "excel_md_ln_discordant.csv", wide_phi=args.wide_phi_export)
     amb_all = pd.concat([ex_amb, md_amb], ignore_index=True)
     if not amb_all.empty:
         amb_all.to_csv(OUT_DIR / "excel_md_ln_ambiguous_keys.csv", index=False)
@@ -313,6 +359,7 @@ def main() -> int:
         else "FAIL"
     )
     summary["verdict"] = verdict
+    summary["phi_safe_csv_exports"] = not args.wide_phi_export
 
     (OUT_DIR / "excel_md_ln_summary.json").write_text(
         json.dumps(summary, indent=2, default=str), encoding="utf-8"
@@ -322,7 +369,7 @@ def main() -> int:
         "# Excel vs MotherDuck — lymph node reconciliation",
         "",
         f"- **Generated (UTC)**: {summary['generated_at_utc']}",
-        f"- **Excel**: `{summary['excel_path']}` sheet `{args.sheet}`",
+        f"- **Excel**: `{excel_path_rel}` sheet `{args.sheet}`",
         f"- **Database**: `{summary['connection']}`",
         f"- **Verdict**: **{verdict}** (cleaned `tumor_1_ln_examined` / `tumor_1_ln_involved` vs SQL-cleaned `path_synoptics`)",
         "",
@@ -340,6 +387,7 @@ def main() -> int:
         f"| Discordant cleaned LN (matched keys) | {summary['discordant_clean_ln_keys']} |",
         f"| Excel duplicate-key internal ambiguity | {summary['excel_internal_ambiguous_keys']} |",
         f"| MD duplicate-key internal ambiguity | {summary['md_internal_ambiguous_keys']} |",
+        f"| PHI-safe CSV exports (no wide synoptic row) | {summary.get('phi_safe_csv_exports', True)} |",
         "",
         "## Outputs",
         "",
@@ -359,6 +407,11 @@ def main() -> int:
         "Rows are matched on `(research_id, surgery_date)` after `pandas.to_datetime(..., errors='coerce').normalize()`. "
         "Duplicate keys on a side are collapsed to a single row; if duplicate rows disagree on LN fields, "
         "they are listed in `excel_md_ln_ambiguous_keys.csv`.",
+        "",
+        "## PHI safety",
+        "",
+        "Row-level CSVs default to **no PHI** (`research_id`, dates, LN fields, flags only). "
+        "Use `--wide-phi-export` locally if you need the full synoptic row for investigation.",
         "",
     ]
     REPORT_MD.write_text("\n".join(lines), encoding="utf-8")
