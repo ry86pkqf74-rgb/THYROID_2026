@@ -26,18 +26,46 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-# Same “primary” workbooks referenced by ingest / AGENTS.md reality checks
-PRIMARY_EXCEL = [
-    "All Diagnoses & synoptic 12_1_2025.xlsx",
-    "Notes 12_1_25.xlsx",
-    "Thyroid OP Sheet data.xlsx",
-    "Thyroid all_Complications 12_1_25.xlsx",
-    "FINAL_UPDATE_TumorPath_12_8_CLEANED.xlsx",
-    "Imaging_12_1_25.xlsx",
-    "genetic_testing_TumorPath_update_Final_Cleaned 12_11.xlsx",
-    "COMPLETE_MULTI_SHEET_ULTRASOUND_REPORTS.xlsx",
-    "Thyroseq Data Complete.xlsx",
-]
+# Primary raw/*.xlsx used by the lakehouse: union of
+#   scripts/01_ingest_all_files.py FILE_MAP (each filename once),
+#   scripts/09_motherduck_upload_verify_extract.py RAW_XLSX_SOURCES,
+#   scripts/07_phase3_genetics_specimen.py (THYROSEQ_AFIRMA_12_5.xlsx),
+#   scripts/41_ingest_thyroseq_excel.py default workbook + Thyroseq crosswalk inputs,
+#   studies/nsqip_linkage (NSQIP + case-details spreadsheets when kept under raw/).
+# Keep filenames identical to on-disk names (including spacing and typos such as
+# "THyroid" / "Frozen sectin") so scans match ingest expectations.
+PRIMARY_EXCEL = sorted(
+    {
+        # 01_ingest_all_files.FILE_MAP
+        "THyroid Sizes, Stanardized_12_2_25.xlsx",
+        "Nuclear_Med_final.xlsx",
+        "FINAL_UPDATE_TumorPath_12_8_CLEANED.xlsx",
+        "FINAL_UPDATE_BenignPath_12_8_WithText.xlsx",
+        "Thyroid_Weight_Data_12_2_25.xlsx",
+        "anti_thyroglobulin_antibody_wide_by_research_id_split.xlsx",
+        "thyroglobulin_wide_by_research_id_split.xlsx",
+        "FNAs_Rescored_Long_Format.xlsx",
+        "Frozen sectin parsed.xlsx",
+        "COMPLETE_MULTI_SHEET_ULTRASOUND_REPORTS.xlsx",
+        "CT_thyroid_extraction_FINAL_11_20_25.xlsx",
+        "mri_extraction__FINAL_11_20_25.xlsx",
+        "parathyroid_notes_intent.xlsx",
+        "FNAs 12_5_2025.xlsx",
+        "US Nodules TIRADS 12_1_25.xlsx",
+        "All Diagnoses & synoptic 12_1_2025.xlsx",
+        "Imaging_12_1_25.xlsx",
+        "Notes 12_1_25.xlsx",
+        # 09_motherduck_upload_verify_extract.RAW_XLSX_SOURCES, 07 genetics, 41 Thyroseq
+        "Thyroid all_Complications 12_1_25.xlsx",
+        "THYROSEQ_AFIRMA_12_5.xlsx",
+        "Thyroid OP Sheet data.xlsx",
+        "Thyroseq Data Complete.xlsx",
+        "genetic_testing_TumorPath_update_Final_Cleaned 12_11.xlsx",
+        # NSQIP / custom export sometimes placed in raw/
+        "Thyroid NSQIP dataset 2010-2023.xlsx",
+        "Case_Details_and_Custom_Fields_Report-14-Dec-2025-1204.xlsx",
+    }
+)
 
 # Word-safe ATA / American Thyroid mentions (minimize noise from unrelated “ata” substrings)
 ATA_RE = re.compile(
