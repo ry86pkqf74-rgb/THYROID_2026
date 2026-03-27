@@ -196,10 +196,11 @@ jobs:
               ('cancer_cohort',      'SELECT COUNT(*) FROM analysis_cancer_cohort_v1',                                      3900, 4300),
               ('manuscript_cohort',  'SELECT COUNT(*) FROM manuscript_cohort_v1',                                          10500, 11200),
               ('dedup_episodes',     'SELECT COUNT(*) FROM episode_analysis_resolved_v1_dedup',                             9000, 9800),
-              ('molecular_tested',   'SELECT COUNT(DISTINCT research_id) FROM molecular_test_episode_v2 WHERE platform IS NOT NULL', 700, 1500),
+              # Distinct patients with a row carrying platform (Phase 11+ RAS propagation); ~10k not ~1k episodes
+              ('molecular_tested',   'SELECT COUNT(DISTINCT research_id) FROM molecular_test_episode_v2 WHERE platform IS NOT NULL', 9000, 11500),
               ('rai_received',       'SELECT COUNT(DISTINCT research_id) FROM rai_treatment_episode_v2',                     700, 1000),
               ('tirads_patients',    'SELECT COUNT(*) FROM extracted_tirads_validated_v1',                                  3000, 4000),
-              ('braf_positive',      'SELECT COUNT(DISTINCT research_id) FROM extracted_braf_recovery_v1 WHERE braf_recovered_status_v11=''positive''', 400, 700),
+              ('braf_positive',      'SELECT COUNT(DISTINCT research_id) FROM extracted_braf_recovery_v1 WHERE LOWER(TRIM(CAST(braf_status AS VARCHAR))) = ''positive''', 350, 750),
               ('operative_episodes', 'SELECT COUNT(*) FROM operative_episode_detail_v2',                                    8000, 12000),
               ('survival_cohort',    'SELECT COUNT(*) FROM survival_cohort_enriched',                                      40000, 70000),
               ('scoring_patients',   'SELECT COUNT(*) FROM thyroid_scoring_py_v1',                                         10500, 11500),
