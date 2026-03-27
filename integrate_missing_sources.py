@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import csv
 import logging
+import os
 import re
 from pathlib import Path
 
@@ -319,6 +320,18 @@ def main() -> None:
     log.info("=" * 70)
     log.info("PHASE 6 INTEGRATION")
     log.info("=" * 70)
+
+    flag = os.environ.get("FULL_HISTORICAL_OPERATIVE_RELOAD", "").strip().lower()
+    if flag in ("1", "true", "yes"):
+        log.info(
+            "FULL_HISTORICAL_OPERATIVE_RELOAD is set: run "
+            "scripts/110_operative_notes_full_history_scan.py with "
+            "--extra-root pointing at your Active Master Files folder; "
+            "then scripts/build_clinical_notes_long.py, "
+            "scripts/09b_motherduck_upload_notes_entities.py --confirm, "
+            "and SQL from scripts/sql/110_operative_notes_merge_clinical_notes_long.sql "
+            "if merging into an existing MotherDuck table."
+        )
 
     results = {}
 

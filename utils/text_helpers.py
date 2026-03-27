@@ -120,7 +120,8 @@ _LEADING_DATE = re.compile(
 _SERVICE_DATE = re.compile(
     r"(?:date\s+of\s+service|service\s+date|admission\s+date|encounter\s+date"
     r"|date\s+of\s+visit|visit\s+date|procedure\s+date|surgery\s+date"
-    r"|operative\s+date|date\s+of\s+procedure)\s*:?\s*"
+    r"|operative\s+date|date\s+of\s+procedure|date\s+of\s+surgery"
+    r"|date\s+of\s+operation)\s*:?\s*"
     r"(\d{1,2}/\d{1,2}/\d{2,4})",
     re.IGNORECASE,
 )
@@ -131,20 +132,29 @@ _HEADER_DATE = re.compile(
 NOTE_DATE_SCAN_CHARS = 500
 
 
-def extract_note_date(note_text: str) -> str | None:
+def extract_note_date(note_text: str, *, max_scan_chars: int | None = None) -> str | None:
     """Extract the most likely encounter/service date from a clinical note.
 
     Strategy (in priority order):
-      1. Explicit "Date of Service: MM/DD/YYYY" label within the first 500 chars
+      1. Explicit "Date of Service: MM/DD/YYYY" (etc.) within the scan window
       2. A date at the very start of the note (common pattern)
-      3. First date found in the first 500 chars (heuristic fallback)
+      3. First MM/DD/YYYY-like token in the scan window (heuristic fallback)
+
+    Args:
+        note_text: Raw note body.
+        max_scan_chars: Upper bound on prefix to scan (default: NOTE_DATE_SCAN_CHARS).
+          Operative dictation often omits dates in the first 500 characters; pass a larger
+          value (e.g. 50_000) when rebuilding ``clinical_notes_long`` op_note rows so
+          embedded "Date of service" lines deeper in the header are found.
 
     Returns ISO YYYY-MM-DD or None.
     """
     if not note_text or len(note_text.strip()) < 4:
         return None
 
-    header = note_text[:NOTE_DATE_SCAN_CHARS]
+    limit = max_scan_chars if max_scan_chars is not None else NOTE_DATE_SCAN_CHARS
+    limit = max(NOTE_DATE_SCAN_CHARS, min(limit, 200_000))
+    header = note_text[:limit]
 
     m = _SERVICE_DATE.search(header)
     if m:

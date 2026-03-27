@@ -19,6 +19,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import os
 import subprocess
 import sys
 import time
@@ -103,9 +104,19 @@ def main():
     parser.add_argument("--skip-analytics", action="store_true")
     parser.add_argument("--skip-v2", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--operative-notes-extra-root",
+        metavar="DIR",
+        help=(
+            "If set, runs scripts/110_operative_notes_full_history_scan.py first "
+            "with --extra-root DIR (and --publish-md --diagnose-md when --md). "
+            "Alternatively set env OPERATIVE_NOTES_EXTRA_ROOT."
+        ),
+    )
     args = parser.parse_args()
 
     extra = ["--md"] if args.md else []
+    op_root = args.operative_notes_extra_root or os.environ.get("OPERATIVE_NOTES_EXTRA_ROOT", "").strip()
     ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"{'=' * 60}")
     print(f"THYROID_2026 Daily Refresh — {ts}")
@@ -113,6 +124,14 @@ def main():
 
     t_start = time.time()
     failed = []
+
+    if op_root:
+        print("\n▶ OPERATIVE NOTES — full historical scan (110)")
+        scan_args = ["--extra-root", op_root]
+        if args.md:
+            scan_args.extend(["--md", "--diagnose-md", "--publish-md"])
+        if not _run("110_operative_notes_full_history_scan.py", scan_args, args.dry_run):
+            failed.append("110_operative_notes_full_history_scan.py")
 
     print("\n▶ PHASE 6 — Adjudication Chain (15→19)")
     for s in PHASE6_CHAIN:

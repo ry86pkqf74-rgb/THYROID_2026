@@ -204,6 +204,8 @@ def build_clinical_notes_long(df: pl.DataFrame) -> pl.DataFrame:
                 )
 
     add_family("h_p_", "HP", 4)
+    # Standardized Excel header "OPNote-1" → column opnote_1 (not op_note_1)
+    add_family("opnote_", "OPNOTE", 4)
     add_family("op_note_", "OPNOTE", 4)
     add_family("dc_sum_", "DC_SUM", 4)
 

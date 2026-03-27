@@ -10,7 +10,6 @@ Reads config/notes_column_map.csv and raw/Notes 12_1_25.xlsx, producing:
 
 from __future__ import annotations
 
-import csv
 import logging
 import sys
 from pathlib import Path
@@ -97,12 +96,13 @@ def build_long(raw_path: Path, col_map: pd.DataFrame) -> pd.DataFrame:
                     continue
 
                 text_str = str(text).strip()
+                date_scan = 50_000 if str(note_type).lower() in ("op_note", "opnote") else None
                 all_records.append({
                     "note_row_id": make_note_row_id(rid, sheet_name, snake_col),
                     "research_id": int(rid),
                     "note_type": str(note_type),
                     "note_index": int(note_index),
-                    "note_date": extract_note_date(text_str),
+                    "note_date": extract_note_date(text_str, max_scan_chars=date_scan),
                     "note_text": text_str,
                     "source_sheet": sheet_name,
                     "source_column": snake_col,
