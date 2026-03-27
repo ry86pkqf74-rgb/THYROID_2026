@@ -26,6 +26,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import logging
 import sys
 from pathlib import Path
@@ -70,14 +71,14 @@ DOMAIN_TO_FILE = {
 def run_extractors(
     notes_df: pd.DataFrame,
     extractors: list[BaseExtractor],
+    max_workers: int = 1,
 ) -> dict[str, list[dict]]:
     """Run all extractors across every note row, grouping results by domain."""
     domain_results: dict[str, list[dict]] = {}
 
     has_note_date = "note_date" in notes_df.columns
 
-    total = len(notes_df)
-    for i, (_, row) in enumerate(notes_df.iterrows()):
+    def extract_one(row: dict) -> dict[str, list[dict]]:
         note_row_id = row["note_row_id"]
         research_id = int(row["research_id"])
         note_type = row["note_type"]
@@ -86,16 +87,38 @@ def run_extractors(
         if pd.isna(note_date):
             note_date = None
 
+        row_results: dict[str, list[dict]] = {}
         for ext in extractors:
             matches = ext.extract(note_row_id, research_id, note_type, note_text, note_date=note_date)
             if matches:
                 domain = ext.entity_domain
-                domain_results.setdefault(domain, [])
-                for m in matches:
-                    domain_results[domain].append(m.to_dict())
+                row_results.setdefault(domain, [])
+                row_results[domain].extend(m.to_dict() for m in matches)
+        return row_results
 
-        if (i + 1) % 2000 == 0:
-            log.info(f"  Processed {i+1:,}/{total:,} notes ...")
+    total = len(notes_df)
+    rows = notes_df.to_dict("records")
+
+    if max_workers <= 1:
+        for i, row in enumerate(rows):
+            row_results = extract_one(row)
+            for domain, records in row_results.items():
+                domain_results.setdefault(domain, []).extend(records)
+
+            if (i + 1) % 2000 == 0:
+                log.info(f"  Processed {i+1:,}/{total:,} notes ...")
+        return domain_results
+
+    log.info(f"  Parallel extraction enabled with {max_workers} worker threads")
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = [executor.submit(extract_one, row) for row in rows]
+        for i, future in enumerate(as_completed(futures), start=1):
+            row_results = future.result()
+            for domain, records in row_results.items():
+                domain_results.setdefault(domain, []).extend(records)
+
+            if i % 500 == 0 or i == total:
+                log.info(f"  Processed {i:,}/{total:,} notes ...")
 
     return domain_results
 
@@ -165,6 +188,15 @@ def main() -> None:
             "Combines with --target if both are given."
         ),
     )
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=None,
+        help=(
+            "Note-level worker threads. Default: auto (3 when LLM is enabled, 1 otherwise). "
+            "Use 1 for fully sequential extraction."
+        ),
+    )
     args = parser.parse_args()
 
     # Validate --target
@@ -226,6 +258,11 @@ def main() -> None:
     else:
         log.info("  LLM extractor disabled (no API key)")
 
+    worker_count = args.workers
+    if worker_count is None:
+        worker_count = 3 if llm.available else 1
+    worker_count = max(1, worker_count)
+
     # Filter to target domain if specified
     if target_domain:
         extractors = [
@@ -240,7 +277,7 @@ def main() -> None:
     else:
         extractors = all_extractors
 
-    domain_results = run_extractors(notes_df, extractors)
+    domain_results = run_extractors(notes_df, extractors, max_workers=worker_count)
 
     dfs = results_to_dataframes(domain_results)
 

@@ -26,8 +26,11 @@ from __future__ import annotations
 import json
 import logging
 import os
+from threading import local
+import time
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any, cast
 
 from notes_extraction.base import BaseExtractor, EntityMatch
 
@@ -41,18 +44,52 @@ PROMPT_DIR = ROOT / "prompts"
 _OP_NOTE_TYPES = frozenset({"op_note", "OPNOTE"})
 
 
+# GitHub Models endpoint (free tier, same openai SDK)
+_GITHUB_MODELS_BASE_URL = "https://models.github.ai/inference/"
+# Model IDs: GitHub Models uses "openai/gpt-4o-mini" format
+_GITHUB_MODEL_ID = "openai/gpt-4o-mini"
+_OPENAI_MODEL_ID = "gpt-4o-mini"
+
+
 class LLMExtractor(BaseExtractor):
-    """Structured LLM extraction with evidence-span enforcement and lab-date priority."""
+    """Structured LLM extraction with evidence-span enforcement and lab-date priority.
+
+    Provider priority:
+      1. GITHUB_TOKEN  → GitHub Models (free, rate-limited)
+      2. OPENAI_API_KEY → OpenAI API (paid)
+    """
 
     entity_domain = "llm"
 
-    def __init__(self, api_key_env: str = "OPENAI_API_KEY") -> None:
-        self._api_key = os.getenv(api_key_env)
-        if not self._api_key:
-            log.warning(
-                f"LLMExtractor: {api_key_env} not set — LLM extraction disabled. "
-                "Set the env var to enable."
-            )
+    def __init__(self) -> None:
+        self._api_key: str | None = None
+        self._base_url: str | None = None
+        self._model_id: str = _OPENAI_MODEL_ID
+        self._provider: str = "none"
+        self._thread_local = local()
+
+        # 1. Prefer GitHub Models (free)
+        gh_token = os.getenv("GITHUB_TOKEN")
+        if gh_token:
+            self._api_key = gh_token
+            self._base_url = _GITHUB_MODELS_BASE_URL
+            self._model_id = _GITHUB_MODEL_ID
+            self._provider = "github_models"
+            log.info("LLMExtractor: using GitHub Models (free tier) — model %s", self._model_id)
+        else:
+            # 2. Fall back to OpenAI API
+            oai_key = os.getenv("OPENAI_API_KEY")
+            if oai_key:
+                self._api_key = oai_key
+                self._base_url = None  # default openai endpoint
+                self._model_id = _OPENAI_MODEL_ID
+                self._provider = "openai"
+                log.info("LLMExtractor: using OpenAI API — model %s", self._model_id)
+            else:
+                log.warning(
+                    "LLMExtractor: neither GITHUB_TOKEN nor OPENAI_API_KEY set — "
+                    "LLM extraction disabled. Set one to enable."
+                )
 
     @property
     def available(self) -> bool:
@@ -131,6 +168,20 @@ class LLMExtractor(BaseExtractor):
 
     # ── LLM API call ─────────────────────────────────────────────────────────
 
+    def _get_client(self):
+        client = getattr(self._thread_local, "client", None)
+        if client is not None:
+            return client
+
+        import openai
+
+        client_kwargs: dict = {"api_key": self._api_key, "max_retries": 0}
+        if self._base_url:
+            client_kwargs["base_url"] = self._base_url
+        client = openai.OpenAI(**client_kwargs)
+        self._thread_local.client = client
+        return client
+
     def _call_llm(
         self,
         note_row_id: str,
@@ -143,25 +194,44 @@ class LLMExtractor(BaseExtractor):
     ) -> list[EntityMatch]:
         """Call the OpenAI API and parse structured JSON output."""
         try:
-            import openai
+            client = self._get_client()
         except ImportError:
             log.error("openai package not installed. Run: pip install openai")
             return []
 
-        client = openai.OpenAI(api_key=self._api_key)
-        messages = self._build_prompt(note_type, text, note_date, operative=operative)
+        messages = cast(Any, self._build_prompt(note_type, text, note_date, operative=operative))
         max_out = 4096 if operative else 2000
 
         try:
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=messages,
-                temperature=0,
-                response_format={"type": "json_object"},
-                max_tokens=max_out,
-            )
+            response = None
+            max_retries = 5
+            for attempt in range(max_retries):
+                try:
+                    response = client.chat.completions.create(
+                        model=self._model_id,
+                        messages=messages,
+                        temperature=0,
+                        response_format={"type": "json_object"},
+                        max_tokens=max_out,
+                    )
+                    break
+                except Exception as retry_exc:
+                    err_str = str(retry_exc).lower()
+                    status_code = getattr(retry_exc, "status_code", None)
+                    if status_code == 429 or "rate" in err_str or "429" in err_str or "limit" in err_str:
+                        wait = min(60, 5 * (2**attempt))
+                        log.warning(
+                            f"Rate limited (attempt {attempt+1}/{max_retries}), "
+                            f"waiting {wait}s ..."
+                        )
+                        time.sleep(wait)
+                    else:
+                        raise retry_exc
+            if response is None:
+                log.error(f"LLM API exhausted {max_retries} retries for {note_row_id}")
+                return []
         except Exception as exc:
-            log.error(f"OpenAI API call failed: {exc}")
+            log.error(f"LLM API call failed ({self._provider}): {exc}")
             return []
 
         raw_json = response.choices[0].message.content or "{}"
@@ -236,7 +306,8 @@ class LLMExtractor(BaseExtractor):
                 except ValueError:
                     pass
 
-            ext_method = "llm_gpt4o_mini_operative" if llm_operative else "llm_gpt4o_mini"
+            provider_tag = self._provider  # "github_models" or "openai"
+            ext_method = f"llm_{provider_tag}_operative" if llm_operative else f"llm_{provider_tag}"
             match = EntityMatch(
                 research_id=research_id,
                 note_row_id=note_row_id,
