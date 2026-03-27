@@ -166,6 +166,7 @@ MATERIALIZATION_MAP: list[tuple[str, str]] = [
     ("md_extracted_lateral_neck_v1", "extracted_lateral_neck_v1"),
     ("md_vw_lateral_neck", "vw_lateral_neck"),
     ("md_extracted_multi_tumor_aggregate_v1", "extracted_multi_tumor_aggregate_v1"),
+    ("md_synoptic_tumor_long_v1", "synoptic_tumor_long_v1"),
     ("md_extracted_staging_recovery_v1", "extracted_staging_recovery_v1"),
     ("md_extracted_mice_summary_v1", "extracted_mice_summary_v1"),
     ("md_patient_refined_master_clinical_v9", "patient_refined_master_clinical_v9"),

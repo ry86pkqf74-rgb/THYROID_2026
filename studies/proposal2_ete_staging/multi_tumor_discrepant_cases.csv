@@ -1,0 +1,365 @@
+synoptic_row_ix,research_id,issue_type,tumor_1_size_cm,max_tumor_2_5_size_cm,detail
+105,43,secondary_focus_larger_cm,4.0,8.0,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+161,744,secondary_focus_larger_cm,0.2,0.3,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+182,849,secondary_focus_larger_cm,0.6,4.4,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+504,3200,secondary_focus_larger_cm,2.0,4.0,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+603,4123,secondary_focus_larger_cm,0.3,0.5,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+786,5569,size_only_in_secondary,,0.13,Tumor 1 size missing; size reported in tumor 2–5
+825,5848,secondary_focus_larger_cm,0.9,1.8,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+856,6133,secondary_focus_larger_cm,0.45,0.9,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+928,6814,secondary_focus_larger_cm,0.5,3.8,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+929,6814,secondary_focus_larger_cm,1.5,2.4,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+1049,7786,secondary_focus_larger_cm,0.05,0.1,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+1071,8039,secondary_focus_larger_cm,1.5,5.4,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+1220,9438,secondary_focus_larger_cm,2.8,3.0,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+1280,9934,secondary_focus_larger_cm,0.6,0.7,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+1490,2142,secondary_focus_larger_cm,1.0,1.5,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+1715,154,secondary_focus_larger_cm,0.4,0.5,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+1862,2297,secondary_focus_larger_cm,0.1,0.2,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+1956,432,secondary_focus_larger_cm,0.1,0.2,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+2052,556,secondary_focus_larger_cm,0.1,0.2,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+2172,697,secondary_focus_larger_cm,2.6,5.0,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+2207,735,secondary_focus_larger_cm,0.03,0.2,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+2989,2940,secondary_focus_larger_cm,3.0,4.1,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+3143,1882,secondary_focus_larger_cm,0.1,0.8,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+3190,1934,secondary_focus_larger_cm,1.2,1.3,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+3213,1962,size_only_in_secondary,,0.6,Tumor 1 size missing; size reported in tumor 2–5
+3754,3712,secondary_focus_larger_cm,0.3,2.0,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+3833,2741,secondary_focus_larger_cm,1.1,2.3,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+4003,2978,secondary_focus_larger_cm,2.3,3.5,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+4673,3852,secondary_focus_larger_cm,0.2,0.4,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+4835,5166,size_only_in_secondary,,0.15,Tumor 1 size missing; size reported in tumor 2–5
+4863,4076,secondary_focus_larger_cm,0.7,3.7,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+4904,5204,secondary_focus_larger_cm,0.7,1.0,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+5055,4293,secondary_focus_larger_cm,0.7,0.8,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+5370,4668,secondary_focus_larger_cm,3.1,4.2,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+5478,4793,secondary_focus_larger_cm,6.0,6.5,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+5600,5802,secondary_focus_larger_cm,0.3,7.0,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+5760,5141,secondary_focus_larger_cm,1.2,9.2,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+5818,6026,secondary_focus_larger_cm,0.5,2.9,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+6036,5490,secondary_focus_larger_cm,3.5,10.8,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+6192,6425,secondary_focus_larger_cm,0.8,2.8,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+6292,6541,secondary_focus_larger_cm,0.5,1.7,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+6375,5913,secondary_focus_larger_cm,0.1,2.2,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+6582,6161,secondary_focus_larger_cm,0.4,0.9,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+6608,6922,secondary_focus_larger_cm,1.5,2.0,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+6770,6374,secondary_focus_larger_cm,0.4,0.8,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+7149,7480,secondary_focus_larger_cm,4.0,5.5,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+7214,6898,secondary_focus_larger_cm,0.8,1.2,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+7243,6939,secondary_focus_larger_cm,0.2,1.9,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+7290,7719,secondary_focus_larger_cm,0.7,1.7,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+7313,7022,secondary_focus_larger_cm,0.6,1.6,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+7899,7722,secondary_focus_larger_cm,0.2,1.5,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+8056,7911,secondary_focus_larger_cm,0.4,2.5,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+8079,8553,secondary_focus_larger_cm,0.15,0.3,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+8098,7962,secondary_focus_larger_cm,0.15,0.32,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+8349,8799,secondary_focus_larger_cm,0.8,1.1,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+8358,8276,secondary_focus_larger_cm,0.5,7.0,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+8380,8307,secondary_focus_larger_cm,0.3,3.7,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+8579,8542,secondary_focus_larger_cm,0.08,0.14,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+8667,9136,secondary_focus_larger_cm,1.5,2.0,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+8684,8658,secondary_focus_larger_cm,1.5,3.2,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+8705,9163,secondary_focus_larger_cm,0.2,1.6,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+8723,8707,secondary_focus_larger_cm,1.9,2.0,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+8956,9373,secondary_focus_larger_cm,4.0,4.7,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+9023,9422,size_only_in_secondary,,4.3,Tumor 1 size missing; size reported in tumor 2–5
+9155,9551,secondary_focus_larger_cm,2.7,3.3,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+9181,9230,secondary_focus_larger_cm,2.3,3.6,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+9338,9761,secondary_focus_larger_cm,0.1,1.3,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+9427,9518,secondary_focus_larger_cm,0.3,0.6,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+9451,9548,secondary_focus_larger_cm,0.15,1.5,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+9527,9636,secondary_focus_larger_cm,0.15,1.0,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+9603,9727,secondary_focus_larger_cm,1.0,4.0,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+9789,9966,secondary_focus_larger_cm,0.1,4.6,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+9932,10150,secondary_focus_larger_cm,0.95,4.1,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+9982,10483,secondary_focus_larger_cm,1.1,3.0,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+9985,10219,secondary_focus_larger_cm,1.2,6.4,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+10265,10743,secondary_focus_larger_cm,0.3,1.4,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+10274,10558,secondary_focus_larger_cm,2.7,4.5,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+10324,10610,secondary_focus_larger_cm,0.2,2.0,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+10408,10860,secondary_focus_larger_cm,1.6,2.5,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+10598,11082,secondary_focus_larger_cm,1.1,1.8,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+10605,10963,secondary_focus_larger_cm,0.6,6.2,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+10614,11094,secondary_focus_larger_cm,0.5,0.7,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+10664,11030,secondary_focus_larger_cm,0.15,4.1,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+10686,11060,secondary_focus_larger_cm,1.2,1.5,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+10800,11191,secondary_focus_larger_cm,0.1,3.6,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+10876,11281,secondary_focus_larger_cm,0.3,4.3,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+10905,11316,secondary_focus_larger_cm,0.8,3.1,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+10986,11408,secondary_focus_larger_cm,0.4,1.4,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+11008,11430,secondary_focus_larger_cm,0.5,2.3,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+11064,11500,secondary_focus_larger_cm,0.1,0.3,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+11066,11502,secondary_focus_larger_cm,0.26,2.4,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+11080,11517,secondary_focus_larger_cm,0.7,6.9,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+11286,11753,secondary_focus_larger_cm,0.7,2.0,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+11321,11794,secondary_focus_larger_cm,0.4,1.7,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+11401,11879,size_only_in_secondary,,4.8,Tumor 1 size missing; size reported in tumor 2–5
+11486,11984,secondary_focus_larger_cm,0.45,4.5,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+11493,11991,secondary_focus_larger_cm,0.7,2.8,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+11513,12019,secondary_focus_larger_cm,0.5,4.2,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+11539,12043,size_only_in_secondary,,0.6,Tumor 1 size missing; size reported in tumor 2–5
+11544,12048,secondary_focus_larger_cm,0.4,1.5,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+11555,12061,size_only_in_secondary,,0.5,Tumor 1 size missing; size reported in tumor 2–5
+11556,12062,secondary_focus_larger_cm,3.2,3.9,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+11600,12111,secondary_focus_larger_cm,0.9,5.9,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+11624,12135,secondary_focus_larger_cm,0.1,3.7,Max size in tumor slots 2–5 exceeds tumor 1 by >0.01 cm
+11683,1294,size_only_in_secondary,,0.3,Tumor 1 size missing; size reported in tumor 2–5
+114,141,histology_differs_across_foci,4.0,0.5,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+119,459,histology_differs_across_foci,2.2,0.1,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC
+120,461,histology_differs_across_foci,2.5,0.1,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+182,849,histology_differs_across_foci,0.6,4.4,tumor_1_histologic_type=PTC | tumor_2_histologic_type=Follicular carcinoma
+373,2201,histology_differs_across_foci,1.2,1.0,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=residual Poorly differentiated thyroid carcinoma
+455,2944,histology_differs_across_foci,2.2,0.2,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+542,3523,histology_differs_across_foci,1.0,1.0,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC follicular variant | tumor_3_histologic_type=PTC | tumor_4_histologic_type=PTC | tumor_5_histologic_type=PTC
+621,4287,histology_differs_across_foci,9.0,0.2,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC microcarcinoma | tumor_3_histologic_type=PTC microcarcinoma
+719,5049,histology_differs_across_foci,2.4,0.2,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC microcarcinoma | tumor_3_histologic_type=PTC
+802,5746,histology_differs_across_foci,1.5,0.32,tumor_1_histologic_type=NIFTP | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC | tumor_4_histologic_type=PTC
+825,5848,histology_differs_across_foci,0.9,1.8,tumor_1_histologic_type=PTC | tumor_2_histologic_type=medullary carcinoma
+832,5975,histology_differs_across_foci,5.2,0.1,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+836,6014,histology_differs_across_foci,4.0,0.43,tumor_1_histologic_type=NIFTP | tumor_2_histologic_type=PTC
+856,6133,histology_differs_across_foci,0.45,0.9,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+906,6690,histology_differs_across_foci,4.6,1.4,tumor_1_histologic_type=Follicular carcinoma | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC | tumor_4_histologic_type=PTC | tumor_5_histologic_type=PTC
+928,6814,histology_differs_across_foci,0.5,3.8,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma | tumor_3_histologic_type=PTC
+1071,8039,histology_differs_across_foci,1.5,5.4,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC | tumor_4_histologic_type=PTC
+1167,8938,histology_differs_across_foci,4.3,0.3,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+1220,9438,histology_differs_across_foci,2.8,3.0,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma | tumor_3_histologic_type=medullary carcinoma | tumor_4_histologic_type=PTC | tumor_5_histologic_type=PTC
+1228,1718,histology_differs_across_foci,2.3,1.7,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC classical
+1280,9934,histology_differs_across_foci,0.6,0.7,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma | tumor_3_histologic_type=PTC
+1337,10340,histology_differs_across_foci,4.8,0.5,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+1395,10809,histology_differs_across_foci,2.4,0.1,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+1398,2002,histology_differs_across_foci,0.4,0.3,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+1423,11011,histology_differs_across_foci,7.0,2.9,tumor_1_histologic_type=PTC | tumor_2_histologic_type=metastatic PTC classical?
+1441,11104,histology_differs_across_foci,4.3,0.8,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=follicular carcinoma | tumor_3_histologic_type=PTC | tumor_4_histologic_type=PTC | tumor_5_histologic_type=PTC
+1445,11113,histology_differs_across_foci,1.3,0.5,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP | tumor_3_histologic_type=NIFTP
+1637,57,histology_differs_across_foci,3.0,0.6,tumor_1_histologic_type=PTC | tumor_2_histologic_type=poorly differentiated thyroid carcinoma
+1938,413,histology_differs_across_foci,7.2,4.3,tumor_1_histologic_type=anaplastic carcinoma | tumor_2_histologic_type=PTC
+1993,481,histology_differs_across_foci,2.0,,tumor_1_histologic_type=PTC | tumor_2_histologic_type=sarcomatoid anaplastic carcinoma
+2207,735,histology_differs_across_foci,0.03,0.2,tumor_1_histologic_type=PTC  | tumor_2_histologic_type=PTC follicular variant microcarcinoma
+2384,949,histology_differs_across_foci,0.8,0.6,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma
+3060,1773,histology_differs_across_foci,4.5,0.7,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+3204,1949,histology_differs_across_foci,4.2,0.3,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC
+3336,2100,histology_differs_across_foci,1.9,1.2,tumor_1_histologic_type=PTC | tumor_2_histologic_type=MTC
+3463,2168,histology_differs_across_foci,4.0,2.3,"tumor_1_histologic_type=MTC
+PTC mixed composit | tumor_2_histologic_type=MTC"
+3511,3395,histology_differs_across_foci,7.2,0.2,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC microcarcinoma | tumor_3_histologic_type=PTC microcarcinoma
+3514,3400,histology_differs_across_foci,1.5,0.7,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC classical | tumor_3_histologic_type=PTC | tumor_4_histologic_type=PTC
+3539,2342,histology_differs_across_foci,,,tumor_1_histologic_type=Follicular carcinoma | tumor_2_histologic_type=insular carcinoma
+3663,2510,histology_differs_across_foci,3.0,1.0,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+3680,3624,histology_differs_across_foci,1.2,0.6,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC follicular variant
+3754,3712,histology_differs_across_foci,0.3,2.0,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma
+3774,3747,histology_differs_across_foci,6.0,0.9,tumor_1_histologic_type=PTC | tumor_2_histologic_type=*PTC
+3782,2678,histology_differs_across_foci,15.0,11.5,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=metastatic insular carcinoma | tumor_3_histologic_type=metastatic insular carcinoma
+3949,2892,histology_differs_across_foci,6.5,0.1,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+4003,2978,histology_differs_across_foci,2.3,3.5,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma
+4249,3321,histology_differs_across_foci,1.5,0.6,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+4382,3478,histology_differs_across_foci,2.0,0.2,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC
+4451,4744,histology_differs_across_foci,4.3,1.7,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma | tumor_3_histologic_type=PTC
+4532,4864,histology_differs_across_foci,1.1,0.6,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC
+4670,3849,histology_differs_across_foci,0.67,0.5,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC classical
+4758,5114,histology_differs_across_foci,5.2,0.1,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC
+4774,3968,histology_differs_across_foci,8.0,5.0,tumor_1_histologic_type=Follicular carcinoma | tumor_2_histologic_type=Follicular caricinoma
+4869,4082,histology_differs_across_foci,1.5,1.5,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC NOS | tumor_3_histologic_type=PTC
+5124,4379,histology_differs_across_foci,10.0,0.14,tumor_1_histologic_type= Poorly differentiated thyroid carcinoma | tumor_2_histologic_type=PTC
+5208,5497,histology_differs_across_foci,2.5,0.6,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+5337,5587,histology_differs_across_foci,1.7,0.15,tumor_1_histologic_type=MTC | tumor_2_histologic_type=medullary
+5416,5652,histology_differs_across_foci,4.5,0.5,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+5479,5706,histology_differs_across_foci,4.8,0.3,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=NIFTP | tumor_5_histologic_type=NIFTP
+5595,4930,histology_differs_across_foci,0.2,0.1,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC microcarcinoma
+5600,5802,histology_differs_across_foci,0.3,7.0,tumor_1_histologic_type=PTC | tumor_2_histologic_type=HÜRTHLE cell neoplasm of uncertain malignant potential
+5639,4986,histology_differs_across_foci,4.5,2.1,tumor_1_histologic_type=MTC | tumor_2_histologic_type=MTC | tumor_3_histologic_type=PTC
+5736,5923,histology_differs_across_foci,4.6,2.1,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma
+5760,5141,histology_differs_across_foci,1.2,9.2,tumor_1_histologic_type=PTC | tumor_2_histologic_type=Follicular carcinoma
+5770,5151,histology_differs_across_foci,4.8,2.2,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+5818,6026,histology_differs_across_foci,0.5,2.9,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC | tumor_4_histologic_type=NIFTP | tumor_5_histologic_type=PTC
+5909,6122,histology_differs_across_foci,1.8,1.6,"tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC | tumor_4_histologic_type=PTC
+(NIFTP??)"
+5970,6177,histology_differs_across_foci,1.0,0.4,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+5977,5413,histology_differs_across_foci,5.1,1.3,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+6036,5490,histology_differs_across_foci,3.5,10.8,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+6160,5655,histology_differs_across_foci,0.1,0.05,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+6192,6425,histology_differs_across_foci,0.8,2.8,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC | tumor_4_histologic_type=NIFTP | tumor_5_histologic_type=NIFTP
+6200,6436,histology_differs_across_foci,4.2,0.1,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+6232,5738,histology_differs_across_foci,2.2,1.8,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=NIFTP
+6249,6493,histology_differs_across_foci,7.7,0.17,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+6292,6541,histology_differs_across_foci,0.5,1.7,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=microcarcinoma | tumor_4_histologic_type=PTC
+6356,6659,histology_differs_across_foci,2.6,0.37,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP | tumor_3_histologic_type=NIFTP | tumor_4_histologic_type=NIFTP
+6357,5895,histology_differs_across_foci,1.4,0.1,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+6364,5902,histology_differs_across_foci,5.7,0.4,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+6375,5913,histology_differs_across_foci,0.1,2.2,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+6401,6703,histology_differs_across_foci,2.8,0.3,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP | tumor_3_histologic_type=PTC
+6452,6002,histology_differs_across_foci,1.5,0.3,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+6464,6754,histology_differs_across_foci,2.3,1.1,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC | tumor_4_histologic_type=PTC
+6487,6043,histology_differs_across_foci,5.8,2.3,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+6517,6079,histology_differs_across_foci,1.8,0.6,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+6547,6118,histology_differs_across_foci,2.2,1.8,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+6582,6161,histology_differs_across_foci,0.4,0.9,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC | tumor_4_histologic_type=NIFTP
+6648,6963,histology_differs_across_foci,2.6,1.0,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+6654,6238,histology_differs_across_foci,1.7,0.5,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+6685,6273,histology_differs_across_foci,7.0,3.1,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP | tumor_3_histologic_type=PTC | tumor_4_histologic_type=PTC
+6770,6374,histology_differs_across_foci,0.4,0.8,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+6809,6417,histology_differs_across_foci,2.0,0.5,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+6810,7074,histology_differs_across_foci,2.7,0.5,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+6826,7085,histology_differs_across_foci,5.4,0.15,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+6868,7145,histology_differs_across_foci,5.6,4.0,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+6895,7171,histology_differs_across_foci,2.8,0.8,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma | tumor_3_histologic_type=PTC
+7005,6642,histology_differs_across_foci,1.7,1.6,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+7149,7480,histology_differs_across_foci,4.0,5.5,tumor_1_histologic_type=PTC | tumor_2_histologic_type=metastatic PTC classical
+7214,6898,histology_differs_across_foci,0.8,1.2,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC | tumor_4_histologic_type=NIFTP
+7221,7552,histology_differs_across_foci,2.7,1.8,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=follicular carcinoma | tumor_3_histologic_type=PTC | tumor_4_histologic_type=NIFTP
+7243,6939,histology_differs_across_foci,0.2,1.9,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+7290,7719,histology_differs_across_foci,0.7,1.7,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma
+7399,7132,histology_differs_across_foci,3.9,0.3,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+7509,7251,histology_differs_across_foci,0.8,0.25,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=NIFTP
+7666,8117,histology_differs_across_foci,3.8,0.2,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=NIFTP
+7801,8282,histology_differs_across_foci,6.6,0.15,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+7851,7669,histology_differs_across_foci,4.3,0.3,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+7876,8350,histology_differs_across_foci,1.2,1.0,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=MTC
+7899,7722,histology_differs_across_foci,0.2,1.5,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma
+7991,8465,histology_differs_across_foci,3.4,0.1,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC
+8056,7911,histology_differs_across_foci,0.4,2.5,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+8072,8551,histology_differs_across_foci,2.5,0.5,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+8079,8553,histology_differs_across_foci,0.15,0.3,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=NIFTP
+8098,7962,histology_differs_across_foci,0.15,0.32,tumor_1_histologic_type=PTC | tumor_2_histologic_type= (NIFTP) | tumor_3_histologic_type=PTC | tumor_4_histologic_type=NIFTP
+8099,7963,histology_differs_across_foci,0.2,0.05,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+8151,8609,histology_differs_across_foci,2.1,1.0,tumor_1_histologic_type=MTC | tumor_2_histologic_type=MTC | tumor_3_histologic_type=PTC
+8179,8055,histology_differs_across_foci,2.2,0.5,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+8221,8108,histology_differs_across_foci,2.5,0.6,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+8251,8145,histology_differs_across_foci,0.8,0.15,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=NIFTP
+8318,8744,histology_differs_across_foci,0.5,0.05,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC
+8326,8778,histology_differs_across_foci,2.5,0.5,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+8339,8254,histology_differs_across_foci,6.0,0.1,tumor_1_histologic_type=anaplastic carcinoma | tumor_2_histologic_type=PTC
+8349,8799,histology_differs_across_foci,0.8,1.1,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=NIFTP
+8358,8276,histology_differs_across_foci,0.5,7.0,tumor_1_histologic_type=PTC | tumor_2_histologic_type=FTUMP
+8380,8307,histology_differs_across_foci,0.3,3.7,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+8475,8422,histology_differs_across_foci,8.5,0.8,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+8477,8924,histology_differs_across_foci,4.6,0.9,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+8553,9008,histology_differs_across_foci,6.2,0.3,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+8641,9098,histology_differs_across_foci,3.2,0.8,tumor_1_histologic_type=Follicular carcinoma | tumor_2_histologic_type=MTC
+8650,8622,histology_differs_across_foci,2.0,2.0,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP | tumor_3_histologic_type=PTC
+8667,9136,histology_differs_across_foci,1.5,2.0,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma | tumor_3_histologic_type=follicular carcinoma
+8677,8651,histology_differs_across_foci,7.5,1.0,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+8705,9163,histology_differs_across_foci,0.2,1.6,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+8711,9166,histology_differs_across_foci,3.6,1.6,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=NIFTP
+8839,8836,histology_differs_across_foci,4.5,0.9,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+8876,8877,histology_differs_across_foci,4.6,0.6,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=NIFTP
+8956,9373,histology_differs_across_foci,4.0,4.7,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+9023,9422,histology_differs_across_foci,,4.3,tumor_1_histologic_type=PTC | tumor_2_histologic_type=Follicular carcinoma | tumor_3_histologic_type=Follicular carcinoma
+9036,9066,histology_differs_across_foci,2.7,0.2,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+9109,9495,histology_differs_across_foci,4.2,2.7,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma
+9113,9152,histology_differs_across_foci,1.8,0.5,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+9115,9502,histology_differs_across_foci,4.3,0.2,tumor_1_histologic_type=poorly differentiated thyroid carcinoma | tumor_2_histologic_type=PTC
+9150,9195,histology_differs_across_foci,4.1,1.2,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC | tumor_3_histologic_type=NIFTP
+9155,9551,histology_differs_across_foci,2.7,3.3,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma | tumor_3_histologic_type=PTC | tumor_4_histologic_type=PTC | tumor_5_histologic_type=PTC
+9181,9230,histology_differs_across_foci,2.3,3.6,tumor_1_histologic_type=PTC | tumor_2_histologic_type=Follicular carcinoma | tumor_3_histologic_type=PTC
+9186,9235,histology_differs_across_foci,4.4,0.2,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+9256,9659,histology_differs_across_foci,3.5,,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+9307,9724,histology_differs_across_foci,3.0,0.1,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+9338,9761,histology_differs_across_foci,0.1,1.3,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+9410,9498,histology_differs_across_foci,1.4,1.2,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=MTC
+9414,9823,histology_differs_across_foci,1.4,1.3,tumor_1_histologic_type=MTC | tumor_2_histologic_type=MTC | tumor_3_histologic_type=MTC | tumor_4_histologic_type=PTC
+9427,9518,histology_differs_across_foci,0.3,0.6,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=NIFTP
+9451,9548,histology_differs_across_foci,0.15,1.5,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP | tumor_3_histologic_type=NIFTP
+9476,9577,histology_differs_across_foci,3.3,0.1,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+9486,9588,histology_differs_across_foci,3.8,0.25,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+9526,9950,histology_differs_across_foci,2.2,0.5,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=NIFTP
+9527,9636,histology_differs_across_foci,0.15,1.0,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=  atypical follicular adenoma (1.0 cm) (FTUMP??)
+9550,9662,histology_differs_across_foci,0.5,0.4,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+9589,9712,histology_differs_across_foci,5.2,0.1,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+9603,9727,histology_differs_across_foci,1.0,4.0,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma | tumor_3_histologic_type=NIFTP
+9605,9729,histology_differs_across_foci,5.0,0.1,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+9616,10074,histology_differs_across_foci,1.5,0.7,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=MTC
+9728,10224,histology_differs_across_foci,3.6,,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC
+9732,9892,histology_differs_across_foci,2.9,0.15,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+9789,9966,histology_differs_across_foci,0.1,4.6,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+9813,9995,histology_differs_across_foci,3.1,0.05,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+9815,9998,histology_differs_across_foci,3.4,0.3,tumor_1_histologic_type=FTUMP | tumor_2_histologic_type=NIFTP
+9816,9999,histology_differs_across_foci,9.0,2.0,tumor_1_histologic_type=anaplastic carcinoma | tumor_2_histologic_type=PTC
+9830,10314,histology_differs_across_foci,1.3,0.1,tumor_1_histologic_type=PTC | tumor_3_histologic_type=NIFTP
+9861,10343,histology_differs_across_foci,2.5,0.11,tumor_1_histologic_type=poorly differentiated thyroid carcinoma | tumor_2_histologic_type=PTC
+9932,10150,histology_differs_across_foci,0.95,4.1,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma | tumor_3_histologic_type=PTC | tumor_4_histologic_type=PTC
+9935,10153,histology_differs_across_foci,3.7,2.2,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC | tumor_4_histologic_type=NIFTP
+9955,10186,histology_differs_across_foci,1.7,0.7,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+9971,10458,histology_differs_across_foci,3.1,0.1,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+9982,10483,histology_differs_across_foci,1.1,3.0,tumor_1_histologic_type=PTC | tumor_2_histologic_type=Follicular carcinoma
+9985,10219,histology_differs_across_foci,1.2,6.4,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma
+10041,10288,histology_differs_across_foci,2.0,1.0,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=NIFTP
+10058,10306,histology_differs_across_foci,6.1,0.5,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+10090,10347,histology_differs_across_foci,2.4,0.1,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+10111,10374,histology_differs_across_foci,2.9,0.5,tumor_1_histologic_type=Follicular carcinoma | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC | tumor_4_histologic_type=PTC
+10167,10446,histology_differs_across_foci,1.9,0.5,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=NIFTP
+10175,10642,histology_differs_across_foci,2.3,0.5,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma | tumor_3_histologic_type=PTC
+10230,10514,histology_differs_across_foci,1.8,0.1,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=follicular carcinoma
+10265,10743,histology_differs_across_foci,0.3,1.4,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma
+10274,10558,histology_differs_across_foci,2.7,4.5,"tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=Low-risk atypical follicular neoplasm (follicular thyroid neoplasm of uncertain malignant potential, FT-UMP)"
+10275,10559,histology_differs_across_foci,1.6,0.6,tumor_1_histologic_type=Follicular carcinoma | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC | tumor_4_histologic_type=PTC
+10324,10610,histology_differs_across_foci,0.2,2.0,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=NIFTP
+10408,10860,histology_differs_across_foci,1.6,2.5,tumor_1_histologic_type=PTC | tumor_2_histologic_type=poorly differentiated thyroid carcinoma | tumor_3_histologic_type=PTC 
+10444,10889,histology_differs_across_foci,2.3,0.6,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+10490,10823,histology_differs_across_foci,3.9,0.3,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+10495,10828,histology_differs_across_foci,4.2,0.15,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC 
+10512,10961,histology_differs_across_foci,4.0,0.3,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=NIFTP
+10516,10849,histology_differs_across_foci,3.8,2.8,tumor_1_histologic_type=PTC | tumor_2_histologic_type=FTUMP
+10519,10978,histology_differs_across_foci,2.0,1.5,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=Follicular carcinoma
+10539,11016,histology_differs_across_foci,2.1,1.1,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma
+10564,11039,histology_differs_across_foci,2.7,2.2,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma | tumor_3_histologic_type=PTC | tumor_4_histologic_type=PTC | tumor_5_histologic_type=PTC
+10598,11082,histology_differs_across_foci,1.1,1.8,tumor_1_histologic_type=PTC | tumor_2_histologic_type=FTUMP
+10605,10963,histology_differs_across_foci,0.6,6.2,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=NIFTP | tumor_4_histologic_type=PTC
+10614,11094,histology_differs_across_foci,0.5,0.7,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=Follicular carcinoma
+10626,10986,histology_differs_across_foci,2.7,1.9,tumor_1_histologic_type=PTC | tumor_2_histologic_type=Oncocytic follicular tumor of uncertain malignant potential 
+10652,11128,histology_differs_across_foci,0.9,0.9,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+10664,11030,histology_differs_across_foci,0.15,4.1,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+10735,11249,histology_differs_across_foci,1.6,0.5,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=follicular carcinoma
+10800,11191,histology_differs_across_foci,0.1,3.6,tumor_1_histologic_type=PTC | tumor_2_histologic_type=Follicular tumor of uncertain malignant potential  with focal high-grade features 
+10832,11319,histology_differs_across_foci,7.6,0.3,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+10844,11241,histology_differs_across_foci,8.5,2.2,tumor_1_histologic_type=NUT carcinoma | tumor_2_histologic_type=PTC classical
+10857,11343,histology_differs_across_foci,1.0,0.2,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+10858,11255,histology_differs_across_foci,2.1,1.1,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=Oncocytic tumor of uncertain malignant potential (atypical oncocytic tumor) 
+10861,11258,histology_differs_across_foci,3.8,0.3,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+10876,11281,histology_differs_across_foci,0.3,4.3,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+10905,11316,histology_differs_across_foci,0.8,3.1,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=NIFTP
+10926,11337,histology_differs_across_foci,3.4,2.2,tumor_1_histologic_type=FTUMP | tumor_2_histologic_type=NIFTP
+10963,11382,histology_differs_across_foci,1.6,0.1,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+10964,11463,histology_differs_across_foci,1.9,0.05,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC
+10986,11408,histology_differs_across_foci,0.4,1.4,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=NIFTP
+11008,11430,histology_differs_across_foci,0.5,2.3,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+11039,11467,histology_differs_across_foci,4.6,1.2,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=FTUMP
+11041,11469,histology_differs_across_foci,4.1,0.1,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+11049,11481,histology_differs_across_foci,3.1,1.4,tumor_1_histologic_type=PTC | tumor_2_histologic_type=FTUMP
+11050,11551,histology_differs_across_foci,1.7,0.1,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+11064,11500,histology_differs_across_foci,0.1,0.3,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=Oncocytic lesion of uncertain malignant potential
+11066,11502,histology_differs_across_foci,0.26,2.4,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+11072,11508,histology_differs_across_foci,3.5,0.1,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC
+11080,11517,histology_differs_across_foci,0.7,6.9,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma
+11111,11552,histology_differs_across_foci,5.8,0.1,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+11128,11570,histology_differs_across_foci,1.4,0.5,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=NIFTP
+11196,11650,histology_differs_across_foci,5.1,0.1,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+11202,11715,histology_differs_across_foci,0.4,0.3,tumor_1_histologic_type=PTC | tumor_2_histologic_type=NIFTP
+11210,11736,histology_differs_across_foci,3.0,0.2,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC
+11286,11753,histology_differs_across_foci,0.7,2.0,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma
+11287,11754,histology_differs_across_foci,4.2,,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+11301,11770,histology_differs_across_foci,2.2,0.3,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC
+11321,11794,histology_differs_across_foci,0.4,1.7,tumor_1_histologic_type=PTC | tumor_2_histologic_type=FTUMP
+11333,11837,histology_differs_across_foci,7.5,0.5,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+11367,11841,histology_differs_across_foci,2.4,0.3,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+11401,11879,histology_differs_across_foci,,4.8,tumor_1_histologic_type=PTC | tumor_2_histologic_type=FTUMP | tumor_3_histologic_type=FTUMP | tumor_4_histologic_type=FTUMP
+11437,11927,histology_differs_across_foci,0.4,0.3,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=MTC | tumor_4_histologic_type=MTC
+11453,11945,histology_differs_across_foci,7.4,,tumor_1_histologic_type=differentiated high grade thyroid carcinoma | tumor_2_histologic_type=PTC
+11459,11951,histology_differs_across_foci,2.0,1.5,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=NIFTP | tumor_3_histologic_type=NIFTP
+11486,11984,histology_differs_across_foci,0.45,4.5,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=FTUMP
+11488,11986,histology_differs_across_foci,4.5,0.55,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=NIFTP | tumor_4_histologic_type=PTC | tumor_5_histologic_type=NIFTP
+11493,11991,histology_differs_across_foci,0.7,2.8,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma | tumor_3_histologic_type=PTC
+11512,12013,histology_differs_across_foci,0.2,0.1,tumor_1_histologic_type=PTC | tumor_2_histologic_type=MTC
+11513,12019,histology_differs_across_foci,0.5,4.2,tumor_1_histologic_type=PTC | tumor_2_histologic_type=FTUMP
+11539,12043,histology_differs_across_foci,,0.6,tumor_1_histologic_type=metastatic PTC | tumor_2_histologic_type=NIFTP
+11544,12048,histology_differs_across_foci,0.4,1.5,tumor_1_histologic_type=PTC  | tumor_2_histologic_type=NIFTP
+11549,12053,histology_differs_across_foci,1.5,1.1,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+11550,12059,histology_differs_across_foci,2.1,1.3,tumor_1_histologic_type=MTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=MTC | tumor_4_histologic_type=MTC
+11555,12061,histology_differs_across_foci,,0.5,tumor_1_histologic_type=metastatic Anaplastic carcinoma | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC | tumor_4_histologic_type=PTC | tumor_5_histologic_type=PTC
+11600,12111,histology_differs_across_foci,0.9,5.9,tumor_1_histologic_type=PTC | tumor_2_histologic_type=follicular carcinoma | tumor_3_histologic_type=Follicular carcinoma
+11604,12113,histology_differs_across_foci,1.7,0.2,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+11614,12125,histology_differs_across_foci,5.8,0.3,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC | tumor_3_histologic_type=PTC
+11624,12135,histology_differs_across_foci,0.1,3.7,tumor_1_histologic_type=PTC | tumor_2_histologic_type=Follicular carcinoma
+11641,12154,histology_differs_across_foci,2.3,0.1,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+11673,12190,histology_differs_across_foci,1.4,0.1,tumor_1_histologic_type=follicular carcinoma | tumor_2_histologic_type=PTC
+11683,1294,histology_differs_across_foci,,0.3,tumor_1_histologic_type=metastatic PTC | tumor_2_histologic_type=anaplastic carcinoma
+11684,20042,histology_differs_across_foci,3.8,2.0,tumor_1_histologic_type=PTC | tumor_2_histologic_type=PTC | tumor_3_histologic_type=NIFTP | tumor_4_histologic_type=NIFTP

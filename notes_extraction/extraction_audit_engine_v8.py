@@ -933,38 +933,51 @@ ORDER BY source_type, n_patients DESC;
 
 
 def build_multi_tumor_aggregate_sql() -> str:
-    """extracted_multi_tumor_aggregate_v1 — worst-case invasion across tumors 1–5."""
+    """extracted_multi_tumor_aggregate_v1 — worst-case invasion across tumors 1–5.
+
+    Per-tumor LN positive counts exist only for tumor_1 (ln_involved) and tumor_2
+    (lns_involved) in path_synoptics; tumors 3–5 have no LN-involved columns.
+    Absent-tier logic for angioinvasion remains conservative (primarily tumors 1–2).
+    """
     return """
 CREATE OR REPLACE TABLE extracted_multi_tumor_aggregate_v1 AS
 WITH multi_tumor_pts AS (
-    SELECT research_id
+    SELECT DISTINCT research_id
     FROM path_synoptics
-    WHERE tumor_2_histologic_type IS NOT NULL
-    GROUP BY research_id
+    WHERE TRIM(COALESCE(CAST(tumor_2_histologic_type AS VARCHAR), '')) <> ''
+       OR TRIM(COALESCE(CAST(tumor_3_histologic_type AS VARCHAR), '')) <> ''
+       OR TRIM(COALESCE(CAST(tumor_4_histologic_type AS VARCHAR), '')) <> ''
+       OR TRIM(COALESCE(CAST(tumor_5_histologic_type AS VARCHAR), '')) <> ''
 ),
 
 per_patient AS (
     SELECT
         ps.research_id,
 
-        -- Tumor count
-        (CASE WHEN ps.tumor_1_histologic_type IS NOT NULL THEN 1 ELSE 0 END +
-         CASE WHEN ps.tumor_2_histologic_type IS NOT NULL THEN 1 ELSE 0 END +
-         CASE WHEN ps.tumor_3_histologic_type IS NOT NULL THEN 1 ELSE 0 END +
-         CASE WHEN ps.tumor_4_histologic_type IS NOT NULL THEN 1 ELSE 0 END +
-         CASE WHEN ps.tumor_5_histologic_type IS NOT NULL THEN 1 ELSE 0 END) AS n_tumors,
+        -- Tumor count (histology-non-empty slots; aligns with manuscript tumor foci)
+        (CASE WHEN TRIM(COALESCE(CAST(ps.tumor_1_histologic_type AS VARCHAR), '')) <> '' THEN 1 ELSE 0 END +
+         CASE WHEN TRIM(COALESCE(CAST(ps.tumor_2_histologic_type AS VARCHAR), '')) <> '' THEN 1 ELSE 0 END +
+         CASE WHEN TRIM(COALESCE(CAST(ps.tumor_3_histologic_type AS VARCHAR), '')) <> '' THEN 1 ELSE 0 END +
+         CASE WHEN TRIM(COALESCE(CAST(ps.tumor_4_histologic_type AS VARCHAR), '')) <> '' THEN 1 ELSE 0 END +
+         CASE WHEN TRIM(COALESCE(CAST(ps.tumor_5_histologic_type AS VARCHAR), '')) <> '' THEN 1 ELSE 0 END) AS n_tumors,
 
         -- Worst angioinvasion (hierarchy: extensive > focal > present > absent)
         CASE
             WHEN LOWER(COALESCE(CAST(ps.tumor_1_angioinvasion AS VARCHAR), '')) IN ('extensive','extensivre','estensive','extrensive')
                  OR LOWER(COALESCE(CAST(ps.tumor_2_angioinvasion AS VARCHAR), '')) IN ('extensive','extensivre')
-                 OR LOWER(COALESCE(CAST(ps.tumor_3_angioinvasion AS VARCHAR), '')) IN ('extensive','extensivre') THEN 'extensive'
+                 OR LOWER(COALESCE(CAST(ps.tumor_3_angioinvasion AS VARCHAR), '')) IN ('extensive','extensivre')
+                 OR LOWER(COALESCE(CAST(ps.tumor_4_angioinvasion AS VARCHAR), '')) IN ('extensive','extensivre')
+                 OR LOWER(COALESCE(CAST(ps.tumor_5_angioinvasion AS VARCHAR), '')) IN ('extensive','extensivre') THEN 'extensive'
             WHEN LOWER(COALESCE(CAST(ps.tumor_1_angioinvasion AS VARCHAR), '')) IN ('focal','foacl','minimal','limited')
                  OR LOWER(COALESCE(CAST(ps.tumor_2_angioinvasion AS VARCHAR), '')) IN ('focal','foacl')
-                 OR LOWER(COALESCE(CAST(ps.tumor_3_angioinvasion AS VARCHAR), '')) IN ('focal','foacl') THEN 'focal'
+                 OR LOWER(COALESCE(CAST(ps.tumor_3_angioinvasion AS VARCHAR), '')) IN ('focal','foacl')
+                 OR LOWER(COALESCE(CAST(ps.tumor_4_angioinvasion AS VARCHAR), '')) IN ('focal','foacl')
+                 OR LOWER(COALESCE(CAST(ps.tumor_5_angioinvasion AS VARCHAR), '')) IN ('focal','foacl') THEN 'focal'
             WHEN LOWER(COALESCE(CAST(ps.tumor_1_angioinvasion AS VARCHAR), '')) IN ('x','present','identified','yes')
                  OR LOWER(COALESCE(CAST(ps.tumor_2_angioinvasion AS VARCHAR), '')) IN ('x','present','identified')
-                 OR LOWER(COALESCE(CAST(ps.tumor_3_angioinvasion AS VARCHAR), '')) IN ('x','present','identified') THEN 'present_ungraded'
+                 OR LOWER(COALESCE(CAST(ps.tumor_3_angioinvasion AS VARCHAR), '')) IN ('x','present','identified')
+                 OR LOWER(COALESCE(CAST(ps.tumor_4_angioinvasion AS VARCHAR), '')) IN ('x','present','identified')
+                 OR LOWER(COALESCE(CAST(ps.tumor_5_angioinvasion AS VARCHAR), '')) IN ('x','present','identified') THEN 'present_ungraded'
             WHEN LOWER(COALESCE(CAST(ps.tumor_1_angioinvasion AS VARCHAR), '')) IN ('absent','no','none','negative')
                  AND (ps.tumor_2_angioinvasion IS NULL OR LOWER(CAST(ps.tumor_2_angioinvasion AS VARCHAR)) IN ('absent','no','none','negative',''))
                  THEN 'absent'
@@ -975,11 +988,19 @@ per_patient AS (
         CASE
             WHEN LOWER(COALESCE(CAST(ps.tumor_1_margin_status AS VARCHAR), '')) IN ('x','involved','involvd','positive','present')
                  OR LOWER(COALESCE(CAST(ps.tumor_2_margin_status AS VARCHAR), '')) IN ('x','involved','positive')
-                 OR LOWER(COALESCE(CAST(ps.tumor_3_margin_status AS VARCHAR), '')) IN ('x','involved','positive') THEN 'involved'
+                 OR LOWER(COALESCE(CAST(ps.tumor_3_margin_status AS VARCHAR), '')) IN ('x','involved','positive')
+                 OR LOWER(COALESCE(CAST(ps.tumor_4_margin_status AS VARCHAR), '')) IN ('x','involved','positive')
+                 OR LOWER(COALESCE(CAST(ps.tumor_5_margin_status AS VARCHAR), '')) IN ('x','involved','positive') THEN 'involved'
             WHEN LOWER(COALESCE(CAST(ps.tumor_1_margin_status AS VARCHAR), '')) IN ('close','<1mm')
-                 OR LOWER(COALESCE(CAST(ps.tumor_2_margin_status AS VARCHAR), '')) IN ('close','<1mm') THEN 'close'
+                 OR LOWER(COALESCE(CAST(ps.tumor_2_margin_status AS VARCHAR), '')) IN ('close','<1mm')
+                 OR LOWER(COALESCE(CAST(ps.tumor_3_margin_status AS VARCHAR), '')) IN ('close','<1mm')
+                 OR LOWER(COALESCE(CAST(ps.tumor_4_margin_status AS VARCHAR), '')) IN ('close','<1mm')
+                 OR LOWER(COALESCE(CAST(ps.tumor_5_margin_status AS VARCHAR), '')) IN ('close','<1mm') THEN 'close'
             WHEN LOWER(COALESCE(CAST(ps.tumor_1_margin_status AS VARCHAR), '')) IN ('negative','free','uninvolved','clear')
-                 OR LOWER(COALESCE(CAST(ps.tumor_2_margin_status AS VARCHAR), '')) IN ('negative','free') THEN 'negative'
+                 OR LOWER(COALESCE(CAST(ps.tumor_2_margin_status AS VARCHAR), '')) IN ('negative','free')
+                 OR LOWER(COALESCE(CAST(ps.tumor_3_margin_status AS VARCHAR), '')) IN ('negative','free')
+                 OR LOWER(COALESCE(CAST(ps.tumor_4_margin_status AS VARCHAR), '')) IN ('negative','free')
+                 OR LOWER(COALESCE(CAST(ps.tumor_5_margin_status AS VARCHAR), '')) IN ('negative','free') THEN 'negative'
             ELSE NULL
         END AS worst_margin,
 
@@ -988,12 +1009,24 @@ per_patient AS (
             WHEN LOWER(COALESCE(CAST(ps.tumor_1_extrathyroidal_extension AS VARCHAR), '')) LIKE '%extensive%'
                  OR LOWER(COALESCE(CAST(ps.tumor_1_extrathyroidal_extension AS VARCHAR), '')) LIKE '%gross%'
                  OR LOWER(COALESCE(CAST(ps.tumor_2_extrathyroidal_extension AS VARCHAR), '')) LIKE '%extensive%'
-                 OR LOWER(COALESCE(CAST(ps.tumor_2_extrathyroidal_extension AS VARCHAR), '')) LIKE '%gross%' THEN 'gross'
+                 OR LOWER(COALESCE(CAST(ps.tumor_2_extrathyroidal_extension AS VARCHAR), '')) LIKE '%gross%'
+                 OR LOWER(COALESCE(CAST(ps.tumor_3_extrathyroidal_extension AS VARCHAR), '')) LIKE '%extensive%'
+                 OR LOWER(COALESCE(CAST(ps.tumor_3_extrathyroidal_extension AS VARCHAR), '')) LIKE '%gross%'
+                 OR LOWER(COALESCE(CAST(ps.tumor_4_extrathyroidal_extension AS VARCHAR), '')) LIKE '%extensive%'
+                 OR LOWER(COALESCE(CAST(ps.tumor_4_extrathyroidal_extension AS VARCHAR), '')) LIKE '%gross%'
+                 OR LOWER(COALESCE(CAST(ps.tumor_5_extrathyroidal_extension AS VARCHAR), '')) LIKE '%extensive%'
+                 OR LOWER(COALESCE(CAST(ps.tumor_5_extrathyroidal_extension AS VARCHAR), '')) LIKE '%gross%' THEN 'gross'
             WHEN LOWER(COALESCE(CAST(ps.tumor_1_extrathyroidal_extension AS VARCHAR), '')) LIKE '%microscopic%'
                  OR LOWER(COALESCE(CAST(ps.tumor_1_extrathyroidal_extension AS VARCHAR), '')) LIKE '%minimal%'
-                 OR LOWER(COALESCE(CAST(ps.tumor_2_extrathyroidal_extension AS VARCHAR), '')) LIKE '%microscopic%' THEN 'microscopic'
+                 OR LOWER(COALESCE(CAST(ps.tumor_2_extrathyroidal_extension AS VARCHAR), '')) LIKE '%microscopic%'
+                 OR LOWER(COALESCE(CAST(ps.tumor_3_extrathyroidal_extension AS VARCHAR), '')) LIKE '%microscopic%'
+                 OR LOWER(COALESCE(CAST(ps.tumor_4_extrathyroidal_extension AS VARCHAR), '')) LIKE '%microscopic%'
+                 OR LOWER(COALESCE(CAST(ps.tumor_5_extrathyroidal_extension AS VARCHAR), '')) LIKE '%microscopic%' THEN 'microscopic'
             WHEN LOWER(COALESCE(CAST(ps.tumor_1_extrathyroidal_extension AS VARCHAR), '')) IN ('x','yes','present','yes, minimal','yes, extensive')
-                 OR LOWER(COALESCE(CAST(ps.tumor_2_extrathyroidal_extension AS VARCHAR), '')) IN ('x','yes','present') THEN 'present_ungraded'
+                 OR LOWER(COALESCE(CAST(ps.tumor_2_extrathyroidal_extension AS VARCHAR), '')) IN ('x','yes','present')
+                 OR LOWER(COALESCE(CAST(ps.tumor_3_extrathyroidal_extension AS VARCHAR), '')) IN ('x','yes','present')
+                 OR LOWER(COALESCE(CAST(ps.tumor_4_extrathyroidal_extension AS VARCHAR), '')) IN ('x','yes','present')
+                 OR LOWER(COALESCE(CAST(ps.tumor_5_extrathyroidal_extension AS VARCHAR), '')) IN ('x','yes','present') THEN 'present_ungraded'
             WHEN LOWER(COALESCE(CAST(ps.tumor_1_extrathyroidal_extension AS VARCHAR), '')) IN ('no','none','absent','negative','not identified')
                  AND (ps.tumor_2_extrathyroidal_extension IS NULL
                       OR LOWER(CAST(ps.tumor_2_extrathyroidal_extension AS VARCHAR)) IN ('no','none','absent','negative','')) THEN 'absent'
@@ -1004,7 +1037,9 @@ per_patient AS (
         GREATEST(
             COALESCE(TRY_CAST(regexp_extract(CAST(ps.tumor_1_angioinvasion_quantify AS VARCHAR), '(\\d+)', 1) AS INTEGER), 0),
             COALESCE(TRY_CAST(regexp_extract(CAST(ps.tumor_2_angioinvasion_quantify AS VARCHAR), '(\\d+)', 1) AS INTEGER), 0),
-            COALESCE(TRY_CAST(regexp_extract(CAST(ps.tumor_3_angioinvasion_quantify AS VARCHAR), '(\\d+)', 1) AS INTEGER), 0)
+            COALESCE(TRY_CAST(regexp_extract(CAST(ps.tumor_3_angioinvasion_quantify AS VARCHAR), '(\\d+)', 1) AS INTEGER), 0),
+            COALESCE(TRY_CAST(regexp_extract(CAST(ps.tumor_4_angioinvasion_quantify AS VARCHAR), '(\\d+)', 1) AS INTEGER), 0),
+            COALESCE(TRY_CAST(regexp_extract(CAST(ps.tumor_5_angioinvasion_quantify AS VARCHAR), '(\\d+)', 1) AS INTEGER), 0)
         ) AS max_vessel_count,
 
         -- Max tumor size across all tumors
@@ -1012,10 +1047,11 @@ per_patient AS (
             COALESCE(TRY_CAST(REPLACE(CAST(ps.tumor_1_size_greatest_dimension_cm AS VARCHAR), ';', '') AS DOUBLE), 0),
             COALESCE(TRY_CAST(REPLACE(CAST(ps.tumor_2_size_greatest_dimension_cm AS VARCHAR), ';', '') AS DOUBLE), 0),
             COALESCE(TRY_CAST(REPLACE(CAST(ps.tumor_3_size_greatest_dimension_cm AS VARCHAR), ';', '') AS DOUBLE), 0),
-            COALESCE(TRY_CAST(REPLACE(CAST(ps.tumor_4_size_greatest_dimension_cm AS VARCHAR), ';', '') AS DOUBLE), 0)
+            COALESCE(TRY_CAST(REPLACE(CAST(ps.tumor_4_size_greatest_dimension_cm AS VARCHAR), ';', '') AS DOUBLE), 0),
+            COALESCE(TRY_CAST(REPLACE(CAST(ps.tumor_5_size_greatest_dimension_cm AS VARCHAR), ';', '') AS DOUBLE), 0)
         ) AS max_tumor_size_cm,
 
-        -- Total LN burden across all tumors
+        -- Total LN burden: only tumor_1 and tumor_2 have LN-involved fields in synoptics schema
         COALESCE(TRY_CAST(REPLACE(CAST(ps.tumor_1_ln_involved AS VARCHAR), ';', '') AS INTEGER), 0)
         + COALESCE(TRY_CAST(REPLACE(CAST(ps.tumor_2_lns_involved AS VARCHAR), ';', '') AS INTEGER), 0) AS total_ln_positive
 

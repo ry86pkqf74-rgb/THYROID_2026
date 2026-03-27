@@ -1,0 +1,7 @@
+metric,value,notes
+path_synoptics_rows,11688,specimen-level wide rows (775 patients have >1 row)
+rows_with_any_tumor2_5_data,1379,any nonempty tumor 2–5 column block (Excel == parquet)
+distribution_n_slots_nonempty_any_field,"{0: 2629, 1: 7680, 2: 920, 3: 306, 4: 98, 5: 55}",count of slots 1–5 with any nonempty field in that slot's columns
+excel_vs_parquet_row_aligned_slot_mismatches,0,"per-slot mismatches {1: 0, 2: 0, 3: 0, 4: 0, 5: 0} (expect all 0)"
+tumor_episode_master_v2_max_tumor_ordinal,1,local thyroid_master.duckdb only; 1 = tumor-1-only canonical
+discrepant_cases_csv_rows,362,size/histology issues for manuscript if tumor_1-only vars used
