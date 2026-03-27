@@ -1,6 +1,6 @@
 # MotherDuck lymph node completeness audit (THYROID_2026)
 
-**Generated (UTC):** 2026-03-27T04:19Z  
+**Generated (UTC):** 2026-03-27T05:57Z  
 **Database:** `thyroid_research_2026` (MotherDuck prod, authenticated)  
 **Runner:** `studies/proposal2_ete_staging/run_motherduck_ln_completeness_audit.py` (`--sa` for GitHub / `MD_SA_TOKEN`)  
 **SQL reference:** `studies/proposal2_ete_staging/sql/motherduck_lymph_node_completeness_audit.sql` (specimen spine SQL is embedded in the runner)
