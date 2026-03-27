@@ -55,7 +55,7 @@ Values below match **`CLAIM_SOURCE_LEDGER.md`**, **`analysis_manifest.json`**, a
 
 6. **Dhir M, et al.** Correct extent of thyroidectomy is poorly predicted preoperatively by the ATA guidelines for low and intermediate risk thyroid cancers. *Surgery*. 2018. Limits of preoperative prediction in **1–4 cm** context.
 
-7. **Hao Q, et al.** Hemithyroidectomy versus total thyroidectomy for patients with differentiated thyroid cancer: systematic review and meta-analysis. *Gland Surg*. 2025. Pooled context for extent trade-offs.
+7. **Hao Q, Segel JE, Vanness DJ, Shen C, Hao J, Hollenbeak CS.** Hemithyroidectomy versus total thyroidectomy for patients with differentiated thyroid cancer: systematic review and meta-analysis. *Gland Surg*. 2025 Nov;14(11):2271-2287. PMID: 41377887. Pooled context for extent trade-offs.
 
 8. **From Lobectomy to Completion Thyroidectomy: A Cohort Study and Systematic Review.** *Clin Endocrinol (Oxf)*. **2025/2026** (Grok: recent SR; **N = 23,899** pooled; completion **~19.2%**, up to **~45%** in 1–4 cm–focused studies). **Verify** exact volume/issue/DOI — **not** in formal `references_working` list; if used, contrast **only** with **named** ascertainment (**OED 0/238** vs **path-synoptic definite 25/238**, **`table7`**).
 
@@ -63,11 +63,11 @@ Values below match **`CLAIM_SOURCE_LEDGER.md`**, **`analysis_manifest.json`**, a
 
 10. **Kim MH, et al.** Management of 2–4 cm Papillary Thyroid Carcinoma. *J Endocr Surg*. 2020. Size-specific framing.
 
-11. **Sutton W, et al.** Impact of the 2015 ATA guidelines on treatment of low-risk papillary thyroid cancer in older adults. *Am J Surg*. 2022. Age-stratified extent variation — **parallel** to age **aOR 0.986**/year.
+11. **Sutton W, Crepeau PK, Canner JK, Karzai S, Segev DL, Mathur A.** Impact of the 2015 American thyroid association guidelines on treatment in older adults with low-risk, differentiated thyroid cancer. *Am J Surg*. 2022 Jul;224(1 Pt B):412-417. PMID: 35123768. Age-stratified extent variation — **parallel** to age **aOR 0.986**/year.
 
-12. **Kiss A, et al.** Comparison of surgical strategies in low-risk papillary thyroid carcinoma. *BMC Endocr Disord*. 2023. Size and age effects on extent.
+12. **Kiss A, Szili B, Bakos B, Ármós R, Putz Z, Árvai K, et al.** Comparison of surgical strategies in the treatment of low-risk differentiated thyroid cancer. *BMC Endocr Disord*. 2023 Jan 26;23(1):23. PMID: 36703169. Size and age effects on extent.
 
-13. **Loderer T, et al.** Malignancy risk in Bethesda class IV thyroid nodules… impact of 2015 ATA guidelines on surgical approach. *Ann Ital Chir*. 2023 (**PMC10506119**). Bethesda influence on total vs lobectomy — **parallel** to **Bethesda ≥4 aOR 2.74**.
+13. **Loderer T, Bonati E, Donato V, Viani L, Cozzani F, Del Rio P.** Malignancy risk in Bethesda class IV thyroid nodules in an iodine deficient region. *Gland Surg*. 2023 Jul;12(7):884-893. PMID: 37727346. PMCID: PMC10506119. Bethesda influence on total vs lobectomy — **parallel** to **Bethesda ≥4 aOR 2.74**.
 
 14. **Xu J, et al.** Lobectomy sufficiency for 1–4 cm differentiated thyroid cancer. *Sci Rep*. 2024. DOI: 10.1038/s41598-024-83893-4. Size-specific context (**Grok prior pass cited oncologic endpoints** — if cited here, use **only** as background; **this** paper does **not** report recurrence/DSS as primary).
 

@@ -26,14 +26,17 @@ Bibliographic and stylistic pass **only**; **no** numeric results, cohorts, tabl
 5. **Dhir et al.** — *Surgery* 2018;163(1):81–87; DOI + PMID.
 6. **Wang et al.** — *World J Surg Oncol* 2020;18(1):310; DOI + PMCID.
 
-## References intentionally left unresolved
+## References verified (manuscript 7–10) — PubMed/PMC 2026-03-26
 
-**7.** Kiss A, et al. *BMC Endocr Disord*. 2023.  
-**8.** Sutton W, et al. *Am J Surg*. 2022.  
-**9.** Loderer T, et al. *Ann Ital Chir*. 2023.  
-**10.** Hao Q, et al. *Gland Surg*. 2025.  
+**7.** Kiss A, Szili B, Bakos B, Ármós R, Putz Z, Árvai K, et al. Comparison of surgical strategies in the treatment of low-risk differentiated thyroid cancer. *BMC Endocr Disord*. 2023 Jan 26;23(1):23. doi:10.1186/s12902-023-01276-8. PMID: 36703169. PMCID: PMC9881362.
 
-All tagged **NEEDS AUTHOR CHECK / UNVERIFIED** in manuscript and working file. **No** fabricated volume, pages, or DOI.
+**8.** Sutton W, Crepeau PK, Canner JK, Karzai S, Segev DL, Mathur A. Impact of the 2015 American thyroid association guidelines on treatment in older adults with low-risk, differentiated thyroid cancer. *Am J Surg*. 2022 Jul;224(1 Pt B):412-417. doi:10.1016/j.amjsurg.2022.01.033. PMID: 35123768. PMCID: PMC9232901.
+
+**9.** Loderer T, Bonati E, Donato V, Viani L, Cozzani F, Del Rio P. Malignancy risk in Bethesda class IV thyroid nodules in an iodine deficient region. *Gland Surg*. 2023 Jul;12(7):884-893. doi:10.21037/gs-22-491. PMID: 37727346. PMCID: PMC10506119.
+
+**10.** Hao Q, Segel JE, Vanness DJ, Shen C, Hao J, Hollenbeak CS. Hemithyroidectomy versus total thyroidectomy for patients with differentiated thyroid cancer: a systematic review and meta-analysis. *Gland Surg*. 2025 Nov;14(11):2271-2287. doi:10.21037/gs-2025-364. PMID: 41377887. PMCID: PMC12685788.
+
+Manuscript ref **[8]** is **Sutton** (*Am J Surg* 2022), not Conroy (*Surgery* 2022); Conroy is listed under **Removed** in `references_working_20260326.md`.
 
 ## Placeholder / removed from active use
 
@@ -56,10 +59,9 @@ Commands and results (2026-03-26):
 
 ## Remaining author actions
 
-1. PubMed / journal sites for **refs 7–10** (full metadata + consistent Vancouver typography).
-2. Institution, IRB, funding, COI per existing `AUTHOR_*` docs.
-3. Optional **Figure 1** relabel for production.
+1. Institution, IRB, funding, COI per existing `AUTHOR_*` docs.
+2. Optional **Figure 1** relabel for production.
 
 ## Readiness
 
-Suitable for **next figure / package / DOCX** assembly **after** ref **7–10** verification for submission portals that require complete bibliographies; internal numeric story unchanged and **READY** per `CLAIM_SOURCE_LEDGER.md`.
+Refs **7–10** are **complete** in `manuscript_submission_v1.md` and `references_working_20260326.md` (2026-03-26 verification). Suitable for **figure / package / DOCX** assembly where complete bibliographies are required; internal numeric story unchanged and **READY** per `CLAIM_SOURCE_LEDGER.md`.

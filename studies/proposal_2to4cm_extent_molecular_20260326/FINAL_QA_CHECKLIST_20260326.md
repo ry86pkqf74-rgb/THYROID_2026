@@ -77,7 +77,7 @@ Legend text for Figure 2 grammar corrected in this QA pass (“binary outcome”
 
 | Item | Owner |
 |------|--------|
-| Complete **NEEDS AUTHOR CHECK** on refs 3–4, 6–12 | Authors |
+| Optional: Barbaro / statsmodels **NEEDS AUTHOR CHECK** lines in `references_working_20260326.md` (not in manuscript 1–10) | Authors |
 | Replace placeholder text for ref **12** before leaning on pooled completion statistics | Authors |
 | Figure 1 publication relabel (truncated export) | Authors (`AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`) |
 
