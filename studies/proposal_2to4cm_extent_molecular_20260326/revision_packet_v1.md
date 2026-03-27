@@ -24,9 +24,11 @@
 
 ## References — `references_working_20260326.md`
 
-- In-text Vancouver citations **1–12** appear at the end of `manuscript_submission_v1.md`.
-- Entries **3, 4, 6–12** retain **NEEDS AUTHOR CHECK** until authors complete pagination/DOI from primary sources.
-- Optional background list items (e.g., Barbaro narrative review, Xu *Sci Rep*) remain in `references_working_20260326.md` under **Not used** unless authors expand Discussion.
+- In-text Vancouver citations **1–10** appear at the end of `manuscript_submission_v1.md` (post–ScholarGPT reconciliation, 2026-03-26).
+- Entries **1–6** are **verified** (Ringel *Thyroid* 2025 **without** the incorrect DOI; Worrall *Endocr Oncol.*; full STROBE author line; Dhir *Surgery* 2018; Wang *World J Surg Oncol*; Montgomery unchanged).
+- Entries **7–10** (Kiss, Sutton, Loderer, Hao) are **NEEDS AUTHOR CHECK / UNVERIFIED** minimal stubs only.
+- **Removed from active manuscript list:** Kim MH (former ref 4); placeholder completion systematic review (former ref 12). See `SCHOLAR_GPT_REFERENCE_RECONCILIATION_20260326.md`.
+- Optional background list items (e.g., Barbaro narrative review, Xu *Sci Rep*) remain under **Not used** unless authors expand Discussion.
 
 **Do not fabricate** bibliographic fields.
 

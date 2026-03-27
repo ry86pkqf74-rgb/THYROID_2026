@@ -36,7 +36,7 @@
 
 | In-text IDs | Present in `references_working` numbered list 1–12? | Result |
 |-------------|------------------------------------------------------|--------|
-| [1]–[12] | Yes (items **1.**–**12.**) | **PASS** |
+| [1]–[10] | Yes (items **1.**–**10.**; former **11–12** retired) | **PASS** |
 
 ---
 
