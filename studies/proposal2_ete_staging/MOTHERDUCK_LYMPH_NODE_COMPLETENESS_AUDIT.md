@@ -130,5 +130,13 @@ Rationale: on the **`path_synoptics` specimen spine**, only **35.92%** of rows h
 
 **patient_refined_master_clinical_v12:** 10,350 patient rows (joined to specimen cohort) have `ln_total_examined` OR `ln_positive_v6` non-null (ad hoc count; columns may differ from path_synoptics grain).
 
+## Related — Excel source-of-truth cross-check
+
+To verify that `path_synoptics` lymph-node fields match the canonical synoptic workbook row-for-key (after join on `research_id` + surgery date), run:
+
+`studies/proposal2_ete_staging/run_excel_vs_motherduck_ln_reconcile.py`
+
+Outputs: `EXCEL_VS_MOTHERDUCK_LN_RECONCILE.md` and `audit_excel_vs_md_ln/` under the same study folder.
+
 ---
 *This report is generated from live MotherDuck queries; re-run the runner to refresh.*
