@@ -24,23 +24,22 @@ These six entries are **authoritative** for submission v1 after 2026-03-26 recon
 
 ---
 
-## 2) Verified references (manuscript 7–10) — reconciled 2026-03-27
+## 2) Verified references (manuscript 7–10) — reconciled 2026-03-27 (PubMed/PMC complete 2026-03-26)
 
-Cross-checked against Crossref / journal pages (or PubMed/PMC for ref 9).
+**7.** Kiss A, Szili B, Bakos B, Ármós R, Putz Z, Árvai K, et al. Comparison of surgical strategies in the treatment of low-risk differentiated thyroid cancer. *BMC Endocr Disord*. 2023 Jan 26;23(1):23. doi:10.1186/s12902-023-01276-8. PMID: 36703169. PMCID: PMC9881362.
 
-**7.** Kiss A, Szili B, Bakos B, et al. Comparison of surgical strategies in the treatment of low-risk differentiated thyroid cancer. *BMC Endocr Disord*. 2023;23:23. doi:10.1186/s12902-023-01276-8.
+**8.** Sutton W, Crepeau PK, Canner JK, Karzai S, Segev DL, Mathur A. Impact of the 2015 American thyroid association guidelines on treatment in older adults with low-risk, differentiated thyroid cancer. *Am J Surg*. 2022 Jul;224(1 Pt B):412-417. doi:10.1016/j.amjsurg.2022.01.033. PMID: 35123768. PMCID: PMC9232901.
 
-**8.** Conroy PC, Wilhelm A, Calthorpe L, et al. Endocrine surgeons are performing more thyroid lobectomies for low-risk differentiated thyroid cancer since the 2015 ATA guidelines. *Surgery*. 2022;172(5):1392-1400. doi:10.1016/j.surg.2022.06.031.
+**9.** Loderer T, Bonati E, Donato V, Viani L, Cozzani F, Del Rio P. Malignancy risk in Bethesda class IV thyroid nodules in an iodine deficient region. *Gland Surg*. 2023 Jul;12(7):884-893. doi:10.21037/gs-22-491. PMID: 37727346. PMCID: PMC10506119.
 
-**9.** Loderer T, Bonati E, Donato V, et al. Malignancy risk in Bethesda class IV thyroid nodules in an iodine deficient region. *Gland Surg*. 2023;12(7):884-893. doi:10.21037/gs-22-491. PMCID: PMC10506119.
-
-**10.** Hao Q, Segel JE, Vanness DJ, et al. Hemithyroidectomy versus total thyroidectomy for patients with differentiated thyroid cancer: a systematic review and meta-analysis. *Gland Surg*. 2025;14(11):2271-2287. doi:10.21037/gs-2025-364.
+**10.** Hao Q, Segel JE, Vanness DJ, Shen C, Hao J, Hollenbeak CS. Hemithyroidectomy versus total thyroidectomy for patients with differentiated thyroid cancer: a systematic review and meta-analysis. *Gland Surg*. 2025 Nov;14(11):2271-2287. doi:10.21037/gs-2025-364. PMID: 41377887. PMCID: PMC12685788.
 
 ---
 
 ## 3) Removed / not used in manuscript (active citation list)
 
 - **Kim MH, et al.** (*J Endocr Surg*., 2–4 cm management). Former in-text ref **[4]** — **removed** from manuscript narrative and formal numbered list after reconciliation.
+- **Conroy PC, et al.** (*Surgery* 2022 lobectomy/ATA guidelines). Former working-file ref **[8]** — **replaced** by Sutton *Am J Surg* 2022 (manuscript ref **[8]**) after verified quartet reconciliation; do not cite Conroy in this packet unless restored deliberately.
 - **Placeholder “completion thyroidectomy systematic review”** (Grok / *Clin Endocrinol (Oxf)* working title, former ref **[12]**). **Removed** from formal reference list; **do not cite** in manuscript. Replace with verified sources if completion rates are discussed quantitatively in future versions.
 
 ---
