@@ -52,7 +52,12 @@ def canonical_surgery_date_series(s: pd.Series) -> pd.Series:
             else str(x).strip()
         )
     )
-    return pd.to_datetime(s_str, errors="coerce", utc=False).dt.normalize()
+    # Mixed ISO timestamps + US m/d/y in the same column (synoptic Excel):
+    # vectorized parse without format= can yield NaT for m/d/y when batched with
+    # YYYY-MM-DD strings (pandas 2.x).
+    return pd.to_datetime(
+        s_str, errors="coerce", utc=False, format="mixed"
+    ).dt.normalize()
 
 
 def canonical_surgery_date_key(s: pd.Series) -> pd.Series:
