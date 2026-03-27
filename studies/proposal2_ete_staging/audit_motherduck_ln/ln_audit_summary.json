@@ -1,0 +1,45 @@
+{
+  "generated_at_utc": "2026-03-27T04:19Z",
+  "motherduck_auth": "connected",
+  "motherduck_database": "thyroid_research_2026",
+  "tables_present": [
+    "path_synoptics",
+    "patient_refined_master_clinical_v12",
+    "recurrence_risk_features_mv",
+    "risk_enriched_mv",
+    "tumor_episode_master_v2",
+    "tumor_pathology"
+  ],
+  "specimen_summary": {
+    "n_pathology_specimens": 12396.0,
+    "n_examined_populated": 9586.0,
+    "n_positive_populated": 4467.0,
+    "n_both_populated": 4453.0,
+    "n_explicit_zero_representation": 7920.0,
+    "n_both_null_unresolved": 2796.0,
+    "n_partial_or_unresolved_nonzero_pattern": 2811.0
+  },
+  "recurrence_risk_features_mv_summary": {
+    "n_rrf_rows": 4976.0,
+    "n_rrf_patients": 3986.0,
+    "n_examined_populated": 4884.0,
+    "n_positive_populated": 4611.0,
+    "n_both_populated": 4610.0,
+    "n_ln_ratio_populated": 4608.0,
+    "n_ratio_without_both_counts": 0.0
+  },
+  "verdict": "NOT ADEQUATE / REQUIRES REMEDIATION",
+  "counts": {
+    "logical_inconsistency_rows": 4786,
+    "duplicate_conflict_rows": 4,
+    "missing_unresolved_rows": 7943
+  },
+  "inconsistency_issue_breakdown": {
+    "specimen_vs_tumor_path_examined_mismatch": 2327,
+    "n1_family_zero_or_missing_positive_nodespec": 2033,
+    "specimen_vs_tumor_path_positive_mismatch": 407,
+    "positive_without_examined": 14,
+    "duplicate_surgery_conflicting_ln_counts": 4,
+    "positive_gt_examined": 1
+  }
+}
