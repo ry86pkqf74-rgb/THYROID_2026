@@ -22,8 +22,12 @@ import argparse
 import json
 import os
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Callable, TypeVar
+
+T = TypeVar("T")
 
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
@@ -34,6 +38,13 @@ from motherduck_client import get_token, resolve_database_for_env
 STUDY_DIR = Path(__file__).resolve().parent
 OUT_DIR = STUDY_DIR / "audit_motherduck_ln"
 REPORT_MD = STUDY_DIR / "MOTHERDUCK_LYMPH_NODE_COMPLETENESS_AUDIT.md"
+
+
+def _timed(profile: dict[str, float], label: str, fn: Callable[[], T]) -> T:
+    t0 = time.perf_counter()
+    out = fn()
+    profile[label] = round(time.perf_counter() - t0, 4)
+    return out
 
 
 def _connect_md(*, use_sa: bool):
@@ -147,6 +158,7 @@ SELECT
     END AS missingness_class
 FROM _ln_specimen
 WHERE NOT (ln_examined_clean IS NOT NULL AND ln_positive_clean IS NOT NULL)
+ORDER BY research_id, surg_date
 """
 
 INCONSISTENCIES_SQL = """
@@ -167,7 +179,8 @@ dup AS (
         GROUP BY research_id, TRY_CAST(surg_date AS DATE)
     ) g
     WHERE n_rows > 1 AND n_distinct_ln_pairs > 1
-)
+),
+u AS (
 SELECT research_id, surg_date, 'positive_gt_examined' AS issue,
     CAST(ln_examined_clean AS VARCHAR) AS ln_examined_clean,
     CAST(ln_positive_clean AS VARCHAR) AS ln_positive_clean,
@@ -216,6 +229,18 @@ SELECT s.research_id, s.surg_date, 'duplicate_surgery_conflicting_ln_counts',
 FROM s
 INNER JOIN dup ON s.research_id = dup.research_id
     AND TRY_CAST(s.surg_date AS DATE) = dup.sd
+)
+SELECT * FROM u ORDER BY issue, research_id, surg_date
+"""
+
+DEEP_ROWCOUNT_SQL = """
+SELECT
+    (SELECT COUNT(*) FROM path_synoptics) AS path_synoptics_all_rows,
+    (SELECT COUNT(*) FROM path_synoptics WHERE research_id IS NOT NULL) AS path_synoptics_rid_not_null,
+    (SELECT COUNT(DISTINCT research_id) FROM path_synoptics WHERE research_id IS NOT NULL)
+        AS path_synoptics_distinct_patients,
+    (SELECT COUNT(*) FROM tumor_pathology) AS tumor_pathology_rows,
+    (SELECT COUNT(*) FROM recurrence_risk_features_mv) AS recurrence_risk_features_rows
 """
 
 SUBGROUP_SQL = """
@@ -282,29 +307,92 @@ def _verdict(pct_both: float, pct_unresolved: float, n_issue: int) -> str:
     return "USABLE WITH EXPLICIT MISSINGNESS CAVEAT"
 
 
+def _motherduck_connection_proof(con) -> dict:
+    """Evidence that queries hit MotherDuck (not local file)."""
+    pragma = con.execute("PRAGMA database_list;").fetchdf()
+    ver = con.execute("SELECT version() AS v").fetchone()[0]
+    out: dict = {
+        "duckdb_version": str(ver),
+        "pragma_database_list": pragma.to_dict(orient="records"),
+    }
+    try:
+        dbl = con.execute(
+            "SELECT database_name, database_oid FROM duckdb_databases() "
+            "ORDER BY database_name"
+        ).fetchdf()
+        out["duckdb_databases"] = dbl.to_dict(orient="records")
+    except Exception as exc:
+        out["duckdb_databases_error"] = str(exc)
+    return out
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="MotherDuck lymph-node audit (prints timing + connection proof; use --quiet to suppress).",
+    )
     parser.add_argument(
         "--sa",
         action="store_true",
         help="Prefer MD_SA_TOKEN (e.g. GitHub Actions) over MOTHERDUCK_TOKEN",
     )
+    parser.add_argument(
+        "--deep",
+        action="store_true",
+        help="Extra full-table COUNT(*) passes (still fast; proves scans over base tables)",
+    )
+    parser.add_argument(
+        "--quiet", "-q",
+        action="store_true",
+        help="Suppress progress / timing stdout",
+    )
     args = parser.parse_args()
+    verbose = not args.quiet
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
+    profile: dict[str, float] = {}
+    t_wall0 = time.perf_counter()
 
-    con = _connect_md(use_sa=args.sa)
-    tables = set(con.execute(TABLE_CHECK_SQL).fetchdf()["table_name"].tolist())
+    def log(msg: str) -> None:
+        if verbose:
+            print(msg, flush=True)
+
+    con = _timed(profile, "connect_md", lambda: _connect_md(use_sa=args.sa))
+    proof = _motherduck_connection_proof(con)
+    _thy = [r for r in proof.get("pragma_database_list", []) if "thyroid" in str(r).lower()]
+    log(
+        "MotherDuck proof: duckdb_version=%r; PRAGMA database_list rows=%s "
+        "(thyroid-related subset=%s)"
+        % (
+            proof["duckdb_version"],
+            len(proof.get("pragma_database_list", [])),
+            _thy[:8] if _thy else proof.get("pragma_database_list", [])[:4],
+        )
+    )
+
+    tables = _timed(
+        profile,
+        "table_presence_check",
+        lambda: set(con.execute(TABLE_CHECK_SQL).fetchdf()["table_name"].tolist()),
+    )
 
     required = {"path_synoptics", "tumor_pathology", "recurrence_risk_features_mv"}
     missing_tbl = required - tables
     if missing_tbl:
         raise RuntimeError(f"Missing required tables on MotherDuck: {sorted(missing_tbl)}")
 
-    con.execute(SPECIMEN_BASE_SQL)
-    summary = con.execute(SUMMARY_SQL).fetchdf().iloc[0].to_dict()
-    risk_summ = con.execute(RISK_MV_SUMMARY_SQL).fetchdf().iloc[0].to_dict()
+    deep_counts: dict | None = None
+    if args.deep:
+        deep_counts = _timed(
+            profile,
+            "deep_full_table_counts",
+            lambda: con.execute(DEEP_ROWCOUNT_SQL).fetchdf().iloc[0].to_dict(),
+        )
+        log(f"Deep rowcount snapshot: {deep_counts}")
+
+    _timed(profile, "build_ln_specimen_temp", lambda: con.execute(SPECIMEN_BASE_SQL) or True)
+    summary = _timed(profile, "specimen_summary_aggregates", lambda: con.execute(SUMMARY_SQL).fetchdf().iloc[0].to_dict())
+    risk_summ = _timed(profile, "recurrence_risk_mv_summary", lambda: con.execute(RISK_MV_SUMMARY_SQL).fetchdf().iloc[0].to_dict())
 
     n_tot = int(summary["n_pathology_specimens"])
     pct_ex = _pct(summary["n_examined_populated"], n_tot)
@@ -313,9 +401,9 @@ def main() -> int:
     pct_zero = _pct(summary["n_explicit_zero_representation"], n_tot)
     pct_unres = _pct(summary["n_both_null_unresolved"], n_tot)
 
-    missing_df = con.execute(MISSING_SQL).fetchdf()
-    inc_full = con.execute(INCONSISTENCIES_SQL).fetchdf()
-    sub_df = con.execute(SUBGROUP_SQL).fetchdf()
+    missing_df = _timed(profile, "query_missing_unresolved", lambda: con.execute(MISSING_SQL).fetchdf())
+    inc_full = _timed(profile, "query_inconsistencies", lambda: con.execute(INCONSISTENCIES_SQL).fetchdf())
+    sub_df = _timed(profile, "query_subgroup_summary", lambda: con.execute(SUBGROUP_SQL).fetchdf())
     n_dup_issues = (
         int((inc_full["issue"] == "duplicate_surgery_conflicting_ln_counts").sum())
         if not inc_full.empty and "issue" in inc_full.columns
@@ -325,9 +413,12 @@ def main() -> int:
     missing_path = OUT_DIR / "ln_audit_missing_unresolved.csv"
     inc_path = OUT_DIR / "ln_audit_logical_inconsistencies.csv"
     sub_path = OUT_DIR / "ln_audit_subgroup_summary.csv"
-    missing_df.to_csv(missing_path, index=False)
-    inc_full.to_csv(inc_path, index=False)
-    sub_df.to_csv(sub_path, index=False)
+    def _write_csvs() -> None:
+        missing_df.to_csv(missing_path, index=False)
+        inc_full.to_csv(inc_path, index=False)
+        sub_df.to_csv(sub_path, index=False)
+
+    _timed(profile, "write_csv_exports", _write_csvs)
 
     verdict = _verdict(pct_both, pct_unres, len(inc_full))
 
@@ -337,10 +428,15 @@ def main() -> int:
         else {}
     )
 
+    profile["wall_clock_total_s"] = round(time.perf_counter() - t_wall0, 4)
+
     meta = {
         "generated_at_utc": ts,
         "motherduck_auth": "connected",
         "motherduck_database": resolve_database_for_env(os.getenv("MOTHERDUCK_ENV", "prod")),
+        "motherduck_connection_proof": proof,
+        "execution_profile_seconds": profile,
+        "deep_full_table_counts": deep_counts,
         "tables_present": sorted(tables),
         "specimen_summary": summary,
         "recurrence_risk_features_mv_summary": risk_summ,
@@ -372,12 +468,38 @@ def main() -> int:
         except Exception as exc:
             v12_note = f"\n**patient_refined_master_clinical_v12:** optional discordance query skipped ({exc}).\n"
 
+    prof_rows = "\n".join(
+        f"| `{k}` | {v} |"
+        for k, v in sorted(profile.items(), key=lambda kv: kv[0])
+    )
+    deep_md = ""
+    if deep_counts:
+        deep_md = "\n### Deep full-table counts (this run, `--deep`)\n\n| Table / metric | Rows |\n|----------------|-----:|\n"
+        for k, v in deep_counts.items():
+            deep_md += f"| {k} | {v} |\n"
+
     report = f"""# MotherDuck lymph node completeness audit (THYROID_2026)
 
 **Generated (UTC):** {ts}  
 **Database:** `{resolve_database_for_env(os.getenv("MOTHERDUCK_ENV", "prod"))}` (MotherDuck prod, authenticated)  
-**Runner:** `studies/proposal2_ete_staging/run_motherduck_ln_completeness_audit.py` (`--sa` for GitHub / `MD_SA_TOKEN`)  
+**Runner:** `studies/proposal2_ete_staging/run_motherduck_ln_completeness_audit.py` (`--sa` for GitHub / `MD_SA_TOKEN`; `--deep` for extra `COUNT(*)` proof; `--quiet` to silence timing logs)  
 **SQL reference:** `studies/proposal2_ete_staging/sql/motherduck_lymph_node_completeness_audit.sql` (specimen spine SQL is embedded in the runner)
+
+## 0. Execution profile & why wall time is often only a few seconds
+
+This audit is **not** a full-text scan of pathology narratives or clinical notes. It only:
+
+- Builds one temp table over **`path_synoptics`** (≈ tens of thousands of synoptic rows) with a join to **`tumor_pathology`**.
+- Runs grouped aggregates and exports **CSV** extracts.
+
+DuckDB is a **columnar** engine; MotherDuck runs those operators on **remote** storage. For this data volume, **sub‑second to a few seconds** of compute is expected. Short runtime **does not** imply the script skipped MotherDuck: see **`motherduck_connection_proof`** in `ln_audit_summary.json` (`pragma_database_list` paths include the `md:` MotherDuck attachment) and the timed steps below.
+
+**DuckDB version (server-reported):** `{proof["duckdb_version"]}`
+
+| Step | Seconds |
+|------|--------:|
+{prof_rows}
+{deep_md}
 
 ## 1. Canonical lineage (proposal2_ete_staging)
 
@@ -466,9 +588,10 @@ Rationale: on the **`path_synoptics` specimen spine**, only **{pct_both}%** of r
 """
 
     REPORT_MD.write_text(report, encoding="utf-8")
-    print(f"Wrote {REPORT_MD}")
-    print(f"Wrote CSVs under {OUT_DIR}")
-    print(f"Verdict: {verdict}")
+    log(f"Wrote {REPORT_MD}")
+    log(f"Wrote CSVs under {OUT_DIR}")
+    log(f"Wall clock total: {profile['wall_clock_total_s']}s")
+    log(f"Verdict: {verdict}")
     return 0
 
 

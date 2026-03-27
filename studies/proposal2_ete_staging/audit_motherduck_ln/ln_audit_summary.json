@@ -1,7 +1,132 @@
 {
-  "generated_at_utc": "2026-03-27T05:57Z",
+  "generated_at_utc": "2026-03-27T05:59Z",
   "motherduck_auth": "connected",
   "motherduck_database": "thyroid_research_2026",
+  "motherduck_connection_proof": {
+    "duckdb_version": "v1.4.4",
+    "pragma_database_list": [
+      {
+        "seq": 1027,
+        "name": "md_information_schema",
+        "file": null
+      },
+      {
+        "seq": 1090,
+        "name": "thyroid_ro_",
+        "file": "_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c"
+      },
+      {
+        "seq": 1092,
+        "name": "thyroid_share",
+        "file": "_share/thyroid_research_2026/4839c7d2-67ce-48cb-952d-98b25f85d989"
+      },
+      {
+        "seq": 1094,
+        "name": "thyroid_research_ro",
+        "file": "_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c"
+      },
+      {
+        "seq": 1096,
+        "name": "sample_data",
+        "file": "_share/sample_data/23b0d623-1361-421d-ae77-62d701d471e6"
+      },
+      {
+        "seq": 1098,
+        "name": "rosflow",
+        "file": "rosflow"
+      },
+      {
+        "seq": 1100,
+        "name": "thyroid_research_2026_dev",
+        "file": "thyroid_research_2026_dev"
+      },
+      {
+        "seq": 1102,
+        "name": "thyroid_research_2026_qa",
+        "file": "thyroid_research_2026_qa"
+      },
+      {
+        "seq": 1104,
+        "name": "thyroid_research_2026",
+        "file": "thyroid_research_2026"
+      },
+      {
+        "seq": 1106,
+        "name": "my_db",
+        "file": "my_db"
+      }
+    ],
+    "duckdb_databases": [
+      {
+        "database_name": "md_information_schema",
+        "database_oid": 1027
+      },
+      {
+        "database_name": "my_db",
+        "database_oid": 1106
+      },
+      {
+        "database_name": "rosflow",
+        "database_oid": 1098
+      },
+      {
+        "database_name": "sample_data",
+        "database_oid": 1096
+      },
+      {
+        "database_name": "system",
+        "database_oid": 0
+      },
+      {
+        "database_name": "temp",
+        "database_oid": 2557
+      },
+      {
+        "database_name": "thyroid_research_2026",
+        "database_oid": 1104
+      },
+      {
+        "database_name": "thyroid_research_2026_dev",
+        "database_oid": 1100
+      },
+      {
+        "database_name": "thyroid_research_2026_qa",
+        "database_oid": 1102
+      },
+      {
+        "database_name": "thyroid_research_ro",
+        "database_oid": 1094
+      },
+      {
+        "database_name": "thyroid_ro_",
+        "database_oid": 1090
+      },
+      {
+        "database_name": "thyroid_share",
+        "database_oid": 1092
+      }
+    ]
+  },
+  "execution_profile_seconds": {
+    "connect_md": 0.4983,
+    "table_presence_check": 0.4201,
+    "deep_full_table_counts": 0.072,
+    "build_ln_specimen_temp": 0.2129,
+    "specimen_summary_aggregates": 0.0044,
+    "recurrence_risk_mv_summary": 0.0418,
+    "query_missing_unresolved": 0.0247,
+    "query_inconsistencies": 0.0245,
+    "query_subgroup_summary": 0.0133,
+    "write_csv_exports": 0.0802,
+    "wall_clock_total_s": 3.0445
+  },
+  "deep_full_table_counts": {
+    "path_synoptics_all_rows": 11688,
+    "path_synoptics_rid_not_null": 11688,
+    "path_synoptics_distinct_patients": 10871,
+    "tumor_pathology_rows": 4290,
+    "recurrence_risk_features_rows": 4976
+  },
   "tables_present": [
     "path_synoptics",
     "patient_refined_master_clinical_v12",

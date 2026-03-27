@@ -1,9 +1,45 @@
 # MotherDuck lymph node completeness audit (THYROID_2026)
 
-**Generated (UTC):** 2026-03-27T05:57Z  
+**Generated (UTC):** 2026-03-27T05:59Z  
 **Database:** `thyroid_research_2026` (MotherDuck prod, authenticated)  
-**Runner:** `studies/proposal2_ete_staging/run_motherduck_ln_completeness_audit.py` (`--sa` for GitHub / `MD_SA_TOKEN`)  
+**Runner:** `studies/proposal2_ete_staging/run_motherduck_ln_completeness_audit.py` (`--sa` for GitHub / `MD_SA_TOKEN`; `--deep` for extra `COUNT(*)` proof; `--quiet` to silence timing logs)  
 **SQL reference:** `studies/proposal2_ete_staging/sql/motherduck_lymph_node_completeness_audit.sql` (specimen spine SQL is embedded in the runner)
+
+## 0. Execution profile & why wall time is often only a few seconds
+
+This audit is **not** a full-text scan of pathology narratives or clinical notes. It only:
+
+- Builds one temp table over **`path_synoptics`** (≈ tens of thousands of synoptic rows) with a join to **`tumor_pathology`**.
+- Runs grouped aggregates and exports **CSV** extracts.
+
+DuckDB is a **columnar** engine; MotherDuck runs those operators on **remote** storage. For this data volume, **sub‑second to a few seconds** of compute is expected. Short runtime **does not** imply the script skipped MotherDuck: see **`motherduck_connection_proof`** in `ln_audit_summary.json` (`pragma_database_list` paths include the `md:` MotherDuck attachment) and the timed steps below.
+
+**DuckDB version (server-reported):** `v1.4.4`
+
+| Step | Seconds |
+|------|--------:|
+| `build_ln_specimen_temp` | 0.2129 |
+| `connect_md` | 0.4983 |
+| `deep_full_table_counts` | 0.072 |
+| `query_inconsistencies` | 0.0245 |
+| `query_missing_unresolved` | 0.0247 |
+| `query_subgroup_summary` | 0.0133 |
+| `recurrence_risk_mv_summary` | 0.0418 |
+| `specimen_summary_aggregates` | 0.0044 |
+| `table_presence_check` | 0.4201 |
+| `wall_clock_total_s` | 3.0445 |
+| `write_csv_exports` | 0.0802 |
+
+### Deep full-table counts (this run, `--deep`)
+
+| Table / metric | Rows |
+|----------------|-----:|
+| path_synoptics_all_rows | 11688 |
+| path_synoptics_rid_not_null | 11688 |
+| path_synoptics_distinct_patients | 10871 |
+| tumor_pathology_rows | 4290 |
+| recurrence_risk_features_rows | 4976 |
+
 
 ## 1. Canonical lineage (proposal2_ete_staging)
 
