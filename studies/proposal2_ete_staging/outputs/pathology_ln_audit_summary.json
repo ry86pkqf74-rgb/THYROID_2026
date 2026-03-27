@@ -1,0 +1,17 @@
+{
+  "manuscript_cohort_audit": {
+    "artifact": "/Users/loganglosser/THYROID_2026/exports/FINAL_PUBLICATION_BUNDLE_20260313/manuscript_cohort_v1.csv",
+    "n_rows": 10871,
+    "path_ln_examined_raw_nonnull": 7730,
+    "path_ln_examined_raw_pct": 71.11,
+    "path_ln_positive_raw_nonnull": 3603,
+    "path_ln_positive_raw_pct": 33.14,
+    "ln_positive_final_nonnull": 4060,
+    "ln_positive_final_pct": 37.35,
+    "both_path_raw_nonnull": 3493,
+    "ajcc8_n1_family_count": 2640,
+    "n1_family_ln_positive_final_null_or_zero": 1519,
+    "positive_gt_examined_path_raw": 1,
+    "examined_eq_zero_count": 4231
+  }
+}
