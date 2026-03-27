@@ -135,4 +135,6 @@ Outputs: `logistic_*.csv`, combined `table2_multivariable_total_vs_lobectomy.csv
 
 ## 8. Figure exports (submission note)
 
-Raster figures `fig_*.png` are written by plotting helpers in `study_pipeline.py` when the pipeline is run. The 2026-03-26 manuscript package cites **`fig_cohort_flow.png`** and **`fig_forest_total_vs_lobectomy.png`** as **Figures 1–2**; see **`figure_legends_v1.md`** for exports **excluded** from main submission.
+Raster figures `fig_*.png` are written by plotting helpers in `study_pipeline.py` when the pipeline is run.
+
+**Correction:** Publication **Figures 1–2** for submission are **`fig1_cohort_flow_publication.png`/`.pdf`** and **`fig2_forest_primary_publication.png`/`.pdf`**, with legends in **`figure_legends_v2.md`**. Legacy **`fig_cohort_flow.png`** and **`fig_forest_total_vs_lobectomy.png`** (150 DPI) are **internal replication** exports only.

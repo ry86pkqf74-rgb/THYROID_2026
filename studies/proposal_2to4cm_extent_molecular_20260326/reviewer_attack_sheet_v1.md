@@ -54,7 +54,7 @@ Anticipated critiques and **documented** responses (evidence in this folder). **
 
 ## 9. “STROBE flow figure missing.”
 
-**Response:** **Addressed in package.** **Figure 1** (`fig_cohort_flow.png`) visualizes pipeline counts; legend documents **truncated** labels and pathology-arm zeros (`figure_legends_v1.md`). Editors may still request a **reformatted** CONSORT-style diagram—see `AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`.
+**Response:** **Addressed in package.** **Figure 1** publication asset (`fig1_cohort_flow_publication.png`/`.pdf`) is CONSORT-style with full labels and explicit **N = 0** pathology-size arm (`figure_legends_v2.md`). Legacy `fig_cohort_flow.png` remains for internal replication only.
 
 ---
 

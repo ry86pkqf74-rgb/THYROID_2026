@@ -636,7 +636,7 @@ strobe_text = f"""# STROBE / TRIPOD Gap Check for Manuscript Submission
 | 12c | Missing data handling | ⚠️ | bethesda_ge4 fillna(0) documented; need explicit statement re: imputation approach |
 | 12d | Sensitivity analyses | ✅ | Broad nodal exclusion + bethesda complete-case in `sensitivity_summary.csv` |
 | 12e | Loss to follow-up | N/A | Cross-sectional outcome (initial procedure type) |
-| 13a | Participants: flow diagram | ✅ | `fig_cohort_flow.png`, `cohort_flow.csv` |
+| 13a | Participants: flow diagram | ✅ | `fig1_cohort_flow_publication.png`/`.pdf` (submit), `cohort_flow.csv` |
 | 13b | Non-participation reasons | ⚠️ | Exclusions counted; reasons for missing data not individually traced |
 | 14a | Descriptive data: characteristics | ✅ | `baseline_table_primary.csv`, `baseline_table_broad_nodal.csv` |
 | 14b | Missing data by variable | ✅ | `missingness_summary.csv` |

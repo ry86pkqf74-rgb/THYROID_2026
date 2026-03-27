@@ -6,9 +6,9 @@
 |----------------|--------|
 | `manuscript_full_draft.md` | Expanded to full IMRAD as `manuscript_submission_v1.md` with outcomes tied to CSVs. |
 | `claims_ledger.csv` | Superseded by **`CLAIM_SOURCE_LEDGER.md`**. |
-| `figure_legends.md` | Superseded by **`figure_legends_v1.md`**. |
+| `figure_legends.md` | Superseded by **`figure_legends_v1.md`** (legacy rasters); **journal submit** prefers **`figure_legends_v2.md`**. |
 | No combined audit | Added **`MANUSCRIPT_STATE_AUDIT.md`**, **`MANUSCRIPT_GAP_LIST.md`**. |
-| “No figures in folder” | **Obviated:** seven `fig_*.png` exports exist and track in git; **main text** uses **Figure 1** (`fig_cohort_flow.png`) and **Figure 2** (`fig_forest_total_vs_lobectomy.png`) per `figure_legends_v1.md`. |
+| Legacy-only main figures | **Resolved:** publication **PNG + PDF** for Figures 1–2 (`fig1_cohort_flow_publication.*`, `fig2_forest_primary_publication.*`) per **`figure_legends_v2.md`**; pipeline `fig_cohort_flow.png` / `fig_forest_total_vs_lobectomy.png` retained **internal only**. |
 
 ---
 
@@ -37,7 +37,7 @@
 ## Reproducibility — what was verified this pass
 
 - **Static CSV checks:** Row count **558** for `patient_level_dataset.csv`; **238** lobectomy / **320** total; **635** broad cohort with **375** total; **20** preoperative molecular tests; symmetric ID validation **0** mismatch in `validation_report.md` (source file).
-- **Figure linkage:** `fig_cohort_flow.png` and `fig_forest_total_vs_lobectomy.png` are cited in `manuscript_submission_v1.md` and described in `figure_legends_v1.md`.
+- **Figure linkage:** `manuscript_submission_v1.md` cites **publication** figures (`fig1_cohort_flow_publication.*`, `fig2_forest_primary_publication.*`); legends in **`figure_legends_v2.md`**. Legacy rasters remain for replication.
 - **`study_pipeline.py`:** Inspection (prior notes) confirms **SELECT**-only MotherDuck use for cohort build in reviewed paths; **local** CSV writes in `run()`. **This authoring pass did not execute `study_pipeline.py`.**
 
 **If a future refresh is run:** record new `analysis_manifest.json` `run_utc` and `git_sha`; regenerate all dependent CSVs and figures; update `CLAIM_SOURCE_LEDGER.md` if any number shifts.
@@ -55,7 +55,8 @@ Using `MotherDuckClient.connect_ro_share()` (prod) with qualified table `thyroid
 - `MANUSCRIPT_GAP_LIST.md`
 - `manuscript_submission_v1.md`
 - `abstract_structured_v1.md`
-- `figure_legends_v1.md`
+- `figure_legends_v2.md` (**preferred** for submission)
+- `figure_legends_v1.md` (legacy raster documentation)
 - `references_working_20260326.md`
 - `AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`
 - `AUTHOR_INPUTS_REQUIRED_20260326.md`
@@ -73,7 +74,7 @@ Using `MotherDuckClient.connect_ro_share()` (prod) with qualified table `thyroid
 ## Suggested revision-order (if desk-rejected or R&R)
 
 1. Apply target journal reference style to **`references_working_20260326.md` items 1–10** (sources verified; formatting may differ by journal).  
-2. Production **Figure 1** relabeling if editors require CONSORT-style layout.  
+2. **Figure 1** publication CONSORT asset is already in-folder (`fig1_cohort_flow_publication.*`); further relabel only if editors request wording changes.  
 3. Add **ethics / IRB** and **funding / COI** (see `AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`).  
 4. Optional **extended-model** supplemental forest figure from `logistic_primary_extended.csv`.  
 5. Optional **missing-data sensitivity** (Bethesda / FNA-linked complete-case subset).  

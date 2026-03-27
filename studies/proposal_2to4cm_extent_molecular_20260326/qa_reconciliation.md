@@ -46,7 +46,8 @@
 
 ## 6. Figure inventory
 
-- Total figure PNG files: **7**
+- **Canonical submission (main text):** `fig1_cohort_flow_publication.png`, `fig1_cohort_flow_publication.pdf`, `fig2_forest_primary_publication.png`, `fig2_forest_primary_publication.pdf` — see **`figure_legends_v2.md`**.
+- **Legacy pipeline PNG (internal / replication):** **7** files
 
   - `fig_bethesda_by_extent.png`
   - `fig_cohort_flow.png`

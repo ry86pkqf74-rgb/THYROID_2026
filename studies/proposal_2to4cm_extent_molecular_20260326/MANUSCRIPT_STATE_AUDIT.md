@@ -48,6 +48,7 @@ When sources disagree, rank as follows:
 ## 4. Known stale / ambiguous artifacts
 
 - **[`cohort_flow.csv`](cohort_flow.csv)** / **[`cohort_flow.md`](cohort_flow.md):** Some intermediate `n` values are **zero** (e.g. pathology size arm, path cohort after strict exclusion) while later steps show **558** / **635**. This is **consistent** with an **empty pathology sensitivity analytic set** and with pipeline ordering, but the flow table is **easy to misread** without [`cohort_build_log.md`](cohort_build_log.md). **Prefer** cohort_build_log + validation_report + row counts on `patient_level_dataset.csv`.
+- **`completion_cases.csv`:** OED completion flags for **every** patient whose **first** qualifying procedure was **hemithyroidectomy** in the surgical spine (`cohort_logic.completion_after_lobectomy`), **not** restricted to primary **N = 558** (row count ≫ **238**). For the manuscript lobectomy arm, use **`patient_level_dataset.csv`**, **`table7_completion_thyroidectomy.csv`**, and **`completion_audit_outputs/candidate_completion_cases.csv`**.
 - **`journal_style_results.md`:** Single-line file; redundant with CSVs — low authority.
 - **`model_summary_final.csv`:** Convenience rollup; **completion_after_lobe** and **molecular_subset** rows reflect **separation / non-convergence** — align with [`logistic_completion_after_lobe.csv`](logistic_completion_after_lobe.csv) and [`model_summary_final.csv`](model_summary_final.csv) `separation_flag` before citing ORs.
 
@@ -73,7 +74,7 @@ When sources disagree, rank as follows:
 | `abstract_only.md` | Abstract variant |
 | `journal_style_results.md` | Minimal results line |
 | `supplement.md` | Supplement draft |
-| `figure_legends.md` | Superseded by `figure_legends_v1.md` |
+| `figure_legends.md` | Superseded by `figure_legends_v1.md` (legacy rasters); **submission** prefers **`figure_legends_v2.md`** |
 | `analysis_plan.md` | Short study classification |
 | `cohort_build_log.md` | **Canonical cohort narrative** |
 | `cohort_flow.md` / `cohort_flow.csv` | Flow counts (see ambiguity above) |
@@ -92,7 +93,7 @@ When sources disagree, rank as follows:
 | `patient_level_dataset.csv` | Primary analytic cohort (N=558) |
 | `patient_level_dataset_broad_nodal_exclusion.csv` | Broad exclusion cohort (N=635) |
 | `lesion_level_dataset.csv` | Lesion-level export |
-| `completion_cases.csv` | Completion linkage |
+| `completion_cases.csv` | OED completion flags, **surgical-spine** lobectomy-first patients (see §4—not n=238 alone) |
 | `surgery_extent_audit.csv` | Extent audit |
 | `table1_by_initial_extent.csv` | Table 1 |
 | `table2_multivariable_total_vs_lobectomy.csv` | Pooled multivariable OR tables |
@@ -114,19 +115,28 @@ When sources disagree, rank as follows:
 
 **Spreadsheet:** No `.xlsx` in folder.
 
-### Figures (`fig_*.png`)
+### Figures — canonical submission (PNG + PDF)
 
 | File | Role | Main text? |
 |------|------|------------|
-| `fig_cohort_flow.png` | Pipeline cohort counts (zeros for pathology arm / intermediate steps per `cohort_build_log.md`) | **Yes — Figure 1** |
-| `fig_forest_total_vs_lobectomy.png` | Forest plot, **primary_parsimonious** model | **Yes — Figure 2** |
-| `fig_completion_rates.png` | OED vs path-synoptic completion bars | **Optional** supplemental (authors’ choice) |
+| `fig1_cohort_flow_publication.png` | CONSORT-style cohort flow, 300 DPI | **Yes — Figure 1** |
+| `fig1_cohort_flow_publication.pdf` | Same, vector/press | **Yes — Figure 1** |
+| `fig2_forest_primary_publication.png` | Forest plot, primary parsimonious model, 300 DPI | **Yes — Figure 2** |
+| `fig2_forest_primary_publication.pdf` | Same, vector/press | **Yes — Figure 2** |
+
+### Figures — legacy pipeline rasters (internal / replication)
+
+| File | Role | Main text? |
+|------|------|------------|
+| `fig_cohort_flow.png` | Horizontal bar chart, truncated labels (150 DPI) | **No** — internal; replaced by `fig1_*_publication.*` |
+| `fig_forest_total_vs_lobectomy.png` | Forest plot, 150 DPI | **No** — internal; replaced by `fig2_*_publication.*` |
+| `fig_completion_rates.png` | OED-only vs path-synoptic completion bars | **Optional** supplemental |
 | `fig_bethesda_by_extent.png` | Extent counts by group | Optional / redundant with Table 1 |
 | `fig_initial_to_ultimate_extent.png` | Initial vs ultimate extent | Optional supplement only |
-| `fig_molecular_result_by_extent.png` | Rates by molecular class (tiny N per cell) | **No** — exploratory, misleading if overread |
+| `fig_molecular_result_by_extent.png` | Rates by molecular class (tiny N per cell) | **No** — exploratory |
 | `fig_platform_specific_extent.png` | Platform N bar chart | **No** — overlapping labels |
 
-**No** separate `.svg` / publication `.pdf` exports are in-folder; journals may require vector replot.
+**Legends:** **`figure_legends_v2.md`** (submission); **`figure_legends_v1.md`** documents legacy rasters only.
 
 ### Code
 
@@ -155,4 +165,4 @@ When sources disagree, rank as follows:
 
 ## 7. README / discoverability
 
-Study [`README.md`](README.md) should point to `manuscript_submission_v1.md` and this audit trio (updated in this task).
+Study [`README.md`](README.md) points to the manuscript, **publication** figures, dual-definition completion wording, and the `completion_cases.csv` scope note.

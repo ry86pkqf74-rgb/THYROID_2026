@@ -18,8 +18,9 @@ Companion to **`AUTHOR_INPUTS_REQUIRED_20260326.md`** (institution, IRB, COI, fu
 
 | Item | Action |
 |------|--------|
-| **Figure 1** (`fig_cohort_flow.png`) | Pipeline export uses **truncated** y-axis labels and a **horizontal bar** layout. For submission, **relabeled** “publication” flow (full text per `cohort_build_log.md` / `cohort_flow.csv`) is **recommended** (redraw in Illustrator/PowerPoint or regenerate labels if a future pipeline run is approved). |
-| **Figure 2** (`fig_forest_total_vs_lobectomy.png`) | Matches **primary parsimonious** model; suitable as main figure. Confirm font size meets target journal minimum on export. |
+| **Figure 1** (**submit** `fig1_cohort_flow_publication.png` / `.pdf`) | **In-folder** CONSORT-style flow (300 DPI + vector). Legacy `fig_cohort_flow.png` is **internal only** (truncated bar labels). |
+| **Figure 2** (**submit** `fig2_forest_primary_publication.png` / `.pdf`) | **Primary parsimonious** forest plot; confirm font size meets target journal minimum. Legacy `fig_forest_total_vs_lobectomy.png` is **internal only**. |
+| **Legends** | Prefer **`figure_legends_v2.md`** for upload checklists. |
 | **Optional supplemental** | `fig_completion_rates.png` (OED vs path-synoptic completion bars; non-blank after 2026-03-27 pipeline). `fig_molecular_result_by_extent.png` (tiny cell sizes; **not** a performance figure). `fig_platform_specific_extent.png` (**overlapping** x-labels). |
 | **Not proposed as main text figures** | `fig_bethesda_by_extent.png`, `fig_initial_to_ultimate_extent.png` — redundant with **Table 1** / text; use only if a journal requests a simple extent diagram. |
 

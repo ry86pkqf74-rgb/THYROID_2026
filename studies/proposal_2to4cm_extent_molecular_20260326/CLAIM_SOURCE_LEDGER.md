@@ -43,6 +43,8 @@ Maps numeric claims in **`manuscript_submission_v1.md`** and **`abstract_structu
 
 ## Completion — `table7_completion_thyroidectomy.csv`
 
+**Preferred manuscript sentence (all definitions in one place):** Among **238** initial lobectomy patients, **0** had later completion captured by the **OED-only** operative-episode pipeline, **25/238 (10.5%)** had **path-synoptic definite** later completion, **26** had **any** later thyroid-related event, and **1** remained **ambiguous**.
+
 | Claim | Value | Source | Location | Status |
 |-------|-------|--------|----------|--------|
 | Lobectomy subgroup n | 238 | `table7_completion_thyroidectomy.csv` | row `all_lobectomy`, `n` | VERIFIED |

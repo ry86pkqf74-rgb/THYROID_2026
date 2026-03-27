@@ -1,11 +1,13 @@
 # Figure legends — submission v1 (2026-03-26)
 
-## Submission disposition (main text)
+> **Status (2026-03-27):** **`figure_legends_v2.md`** is the **preferred** file for journal submission. Publication assets: **`fig1_cohort_flow_publication.png`/`.pdf`**, **`fig2_forest_primary_publication.png`/`.pdf`**. This v1 file documents **legacy** 150 DPI exports produced by `study_pipeline.py` for replication; **do not** treat v1 as the canonical submit set.
+
+## Legacy pipeline exports (internal / reproducibility)
 
 | File | Role |
 |------|------|
-| `fig_cohort_flow.png` | **Figure 1** (main)—cohort selection counts from the frozen pipeline export. |
-| `fig_forest_total_vs_lobectomy.png` | **Figure 2** (main)—forest plot, **primary parsimonious** logistic model. |
+| `fig_cohort_flow.png` | **Legacy Figure 1**—horizontal bar chart from the frozen pipeline export (truncated labels). |
+| `fig_forest_total_vs_lobectomy.png` | **Legacy Figure 2**—forest plot, **primary parsimonious** logistic model. |
 
 ## Not for main submission (retained in folder)
 
@@ -15,7 +17,7 @@
 | `fig_molecular_result_by_extent.png` | Exploratory; **tiny** denominators by molecular class; risks misreading as performance—**not** a main figure. |
 | `fig_platform_specific_extent.png` | **Overlapping** x-axis labels; descriptive **n=20** context only—**not** a main figure. |
 | `fig_bethesda_by_extent.png` | Largely **redundant** with Table 1; optional only if a journal requests a simple bar summary. |
-| `fig_initial_to_ultimate_extent.png` | Descriptive transition counts; **redundant** with text (**0** completion in lobectomy arm under flags); optional supplement only. |
+| `fig_initial_to_ultimate_extent.png` | Descriptive transition counts; **redundant** with text (25 lobectomy patients with ultimate total-class extent per `initial_ultimate_extent_transition_counts.csv`; **OED-only** completion flags remain **0/238**); optional supplement only. |
 
 ---
 

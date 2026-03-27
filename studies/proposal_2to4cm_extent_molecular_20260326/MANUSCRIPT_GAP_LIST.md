@@ -10,7 +10,7 @@ Gaps are relative to a typical observational surgery manuscript and to **what th
 |-----|----------|-------|
 | **Full IMRAD draft** | Lower | Addressed by `manuscript_submission_v1.md` + **Figures 1–2** callouts. |
 | **References / bibliography** | **Low–Medium** | `references_working_20260326.md` — items **1–10** reconciled 2026-03-27 (Crossref / PMC). **Kim MH** (ex-ref 4) and **placeholder completion SR** (ex-ref 12) remain **removed** (`SCHOLAR_GPT_REFERENCE_RECONCILIATION_20260326.md`). |
-| **Figure assets** | **Lower** | **Main:** `fig_cohort_flow.png`, `fig_forest_total_vs_lobectomy.png`. **Figure 1** labels truncated—production relabel recommended (`AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`). |
+| **Figure assets** | **Lower** | **Submit:** `fig1_cohort_flow_publication.png`/`.pdf`, `fig2_forest_primary_publication.png`/`.pdf` (`figure_legends_v2.md`). **Internal:** legacy `fig_cohort_flow.png`, `fig_forest_total_vs_lobectomy.png` from pipeline. |
 | **Institution, IRB, funding, COI** | **High** | `AUTHOR_INPUTS_REQUIRED_20260326.md` + `AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`. |
 | **Exact calendar study period** | Medium | `surgery_year` exists in data but **year range not asserted** in prose without explicit summary table in folder. |
 | **STARD/TRIPOD** | Low–N/A | Observational cohort, not diagnostic/prognostic model paper; STROBE is primary. |
@@ -52,7 +52,7 @@ Gaps are relative to a typical observational surgery manuscript and to **what th
 
 | Topic | Gap |
 |-------|-----|
-| Flow diagram | **Figure 1** present; may need **relabel** for publication (truncated axis text in export). |
+| Flow diagram | **Figure 1** publication CONSORT asset in-folder; legacy bar export optional for supplements only. |
 | Non-participants | Not quantified separately from exclusions in one table **in manuscript** (exclusion logic in CSV + code). |
 | **Address missingness** | `missingness_summary.csv` available; prose cites key columns (Bethesda, completion, molecular). |
 
@@ -60,7 +60,8 @@ Gaps are relative to a typical observational surgery manuscript and to **what th
 
 ## Resolved or improved by 2026-03-26 package pass
 
-- **`figure_legends_v1.md`** — main vs non-submitted figures documented.  
+- **`figure_legends_v2.md`** — canonical submit figures (publication PNG/PDF) + legacy/internal list.  
+- **`figure_legends_v1.md`** — legacy pipeline raster documentation.  
 - **`manuscript_submission_v1.md`** — numbered references; **no** `[REF:NEEDS_*]` tags; STROBE citation; figure callouts.  
 - **`references_working_20260326.md`** — Working bibliography (verified **1–10** in two blocks; ScholarGPT reconciliation 2026-03-26).  
 - **`AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`** — submission blockers consolidated.  

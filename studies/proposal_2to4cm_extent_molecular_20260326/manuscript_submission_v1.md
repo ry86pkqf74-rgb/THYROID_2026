@@ -1,6 +1,6 @@
 # Initial thyroidectomy extent among adults with preoperative 2.0–4.0 cm thyroid nodules: a retrospective cohort study
 
-**Version:** submission v1 (markdown); **figures revision** 2026-03-26  
+**Version:** submission v1 (markdown); **figures** publication-ready assets 2026-03-26 (`fig1_*_publication`, `fig2_*_publication`; legends `figure_legends_v2.md`)  
 **Frozen outputs:** See `analysis_manifest.json` (git SHA and run timestamp).  
 **Quantitative traceability:** `CLAIM_SOURCE_LEDGER.md`  
 **Working bibliography:** `references_working_20260326.md`
@@ -73,11 +73,11 @@ Key column missingness is summarized in `missingness_summary.csv` (exported long
 
 The **primary analytic cohort** comprised **558** patients (**238** initial lobectomy, **320** initial total thyroidectomy; **320/558 = 57.3%** initial total). The **broad** suspicious-node exclusion cohort comprised **635** patients (**375** initial total; **375/635 = 59.1%**). The **pathology-defined 2–4 cm** cohort after strict nodal exclusion contained **0** patients in this frozen run; we do **not** report pathology-size parallels beyond that result (`cohort_build_log.md`).
 
-**Figure 1** shows pipeline cohort selection counts (`fig_cohort_flow.png`), including the imaging-defined 2.0–4.0 cm step and final primary **N = 558**; steps with **zero** eligible patients (pathology-defined size under the current implementation; an intermediate strict preoperative LN exclusion row) are visible as empty bars and align with `cohort_build_log.md`. Y-axis labels in this export are **abbreviated**; authors may supply a relabeled flow for final production (`AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`).
+**Figure 1** is the **publication** CONSORT-style cohort flow (`fig1_cohort_flow_publication.png` or `.pdf`), including the imaging-defined 2.0–4.0 cm step, strict vs broad analytic cohorts, and the **N = 0** pathology-size sensitivity arm (`figure_legends_v2.md`). The pipeline also writes a legacy horizontal-bar export (`fig_cohort_flow.png`, truncated labels) for internal replication only.
 
 ### Figure 2 (primary parsimonious model)
 
-**Figure 2** is a forest plot of adjusted odds ratios from the **primary parsimonious** logistic model (`fig_forest_total_vs_lobectomy.png`; `logistic_primary_parsimonious.csv`).
+**Figure 2** is a forest plot of adjusted odds ratios from the **primary parsimonious** logistic model (`fig2_forest_primary_publication.png` or `.pdf`; `logistic_primary_parsimonious.csv`). Legacy export: `fig_forest_total_vs_lobectomy.png` (internal only).
 
 ### Practice pattern evidence (Table 1)
 
@@ -90,7 +90,7 @@ Source file: **`table1_by_initial_extent.csv`**.
 
 ### Completion after lobectomy
 
-Among **238** initial lobectomy patients (**Table 4** / **`table7_completion_thyroidectomy.csv`**), **zero** had a **later operative episode** meeting OED pipeline criteria for completion (**0 / 238** for ever and within 30, 90, and 365 days). Separately, **25 / 238 (10.5%)** had **path-synoptic definite** completion on a later synoptic row after index surgery (**2**, **13**, and **20** within **30**, **90**, and **365** days, respectively). **26** patients had **any** later thyroid-related operative or synoptic row after index lobectomy; **1** had later surgery without meeting **definite** OED or path-synoptic rules (**ambiguous** bucket). **`fig_completion_rates.png`** contrasts OED-pipeline versus path-synoptic proportions (ever and windowed).
+Among **238** initial lobectomy patients (**Table 4** / **`table7_completion_thyroidectomy.csv`**), **0** had later completion captured by the **OED-only** operative-episode pipeline (**0 / 238** for ever and within 30, 90, and 365 days). **25 / 238 (10.5%)** had **path-synoptic definite** completion on a later synoptic row after index surgery (**2**, **13**, and **20** within **30**, **90**, and **365** days, respectively). **26** patients had **any** later thyroid-related operative or synoptic row after index lobectomy; **1** had later surgery without meeting **definite** OED or path-synoptic rules (**ambiguous** bucket). **`fig_completion_rates.png`** (optional **supplemental** figure) contrasts OED-pipeline versus path-synoptic proportions (ever and windowed); see **`figure_legends_v2.md`**.
 
 ### Univariable associations
 
@@ -168,9 +168,9 @@ Tabular analytic exports referenced in this manuscript are in **`studies/proposa
 
 | Label | Source |
 |-------|--------|
-| **Figure 1** | `fig_cohort_flow.png` (see `figure_legends_v1.md`) |
-| **Figure 2** | `fig_forest_total_vs_lobectomy.png` |
-| **Figure 3 (completion)** | `fig_completion_rates.png` — OED pipeline vs path-synoptic definite (`figure_legends_v1.md`) |
+| **Figure 1** | `fig1_cohort_flow_publication.png` / `.pdf` — canonical; legacy `fig_cohort_flow.png` internal only (`figure_legends_v2.md`) |
+| **Figure 2** | `fig2_forest_primary_publication.png` / `.pdf` — canonical; legacy `fig_forest_total_vs_lobectomy.png` internal only (`figure_legends_v2.md`) |
+| **Figure 3 (completion, optional)** | `fig_completion_rates.png` — OED-only vs path-synoptic definite (`figure_legends_v2.md`; **supplemental** unless journal requests in main text) |
 | Table 1 | `table1_by_initial_extent.csv` |
 | Table 2a–b | `logistic_primary_parsimonious.csv`, `logistic_primary_extended.csv` |
 | Table 3 | `logistic_broad_nodal_parsimonious.csv` |
@@ -178,7 +178,7 @@ Tabular analytic exports referenced in this manuscript are in **`studies/proposa
 | Table 5 | `univariable_tests.csv` |
 | Table 6 | `table6_molecular_pathology_concordance.csv` |
 
-**Completion figure:** `fig_completion_rates.png` is now **non-blank** (OED vs path-synoptic bars); authors may include as **supplemental** or relabel for journal. Exploratory bar charts `fig_molecular_result_by_extent.png`, `fig_platform_specific_extent.png` remain **not** main figures (`AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`; update that note locally).
+**Completion figure:** `fig_completion_rates.png` (**optional supplemental**) shows OED-only **0/238** vs path-synoptic definite rates; relabel for journal if included. Exploratory charts `fig_molecular_result_by_extent.png`, `fig_platform_specific_extent.png` remain **not** main figures. **Preferred legends file:** **`figure_legends_v2.md`**.
 
 ---
 

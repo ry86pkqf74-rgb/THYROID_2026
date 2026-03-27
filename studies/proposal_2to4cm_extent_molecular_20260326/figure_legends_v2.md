@@ -1,5 +1,7 @@
 # Figure legends — submission v2 (2026-03-26, publication-ready redraw)
 
+**Canonical for journal upload:** use this file (v2) + **`fig1_cohort_flow_publication.*`** + **`fig2_forest_primary_publication.*`**. See v1 only for legacy pipeline raster documentation.
+
 ## Submission disposition (main text)
 
 | Filename | Role | Resolution |
@@ -39,7 +41,7 @@
 
 ---
 
-## Tables (unchanged from v1)
+## Tables
 
 Primary numeric displays remain tabular as listed in `manuscript_submission_v1.md` (Tables 1–6).
 

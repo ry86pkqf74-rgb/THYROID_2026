@@ -40,14 +40,14 @@
 
 ---
 
-## 3. Figures vs `figure_legends_v1.md` and files on disk
+## 3. Figures vs `figure_legends_v2.md` and files on disk
 
-| Callout | File | In “kept main” table? | File exists | Result |
-|---------|------|------------------------|-------------|--------|
-| Figure 1 | `fig_cohort_flow.png` | Yes | Yes | **PASS** |
-| Figure 2 | `fig_forest_total_vs_lobectomy.png` | Yes | Yes | **PASS** |
+| Callout | Canonical submit file(s) | File exists | Result |
+|---------|--------------------------|-------------|--------|
+| Figure 1 | `fig1_cohort_flow_publication.png`, `fig1_cohort_flow_publication.pdf` | Yes | **PASS** |
+| Figure 2 | `fig2_forest_primary_publication.png`, `fig2_forest_primary_publication.pdf` | Yes | **PASS** |
 
-Legend text for Figure 2 grammar corrected in this QA pass (“binary outcome” phrasing).
+Legacy `fig_cohort_flow.png` / `fig_forest_total_vs_lobectomy.png` remain for internal replication only.
 
 ---
 
