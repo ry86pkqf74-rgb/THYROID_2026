@@ -25,7 +25,7 @@
 ## References — `references_working_20260326.md`
 
 - In-text Vancouver citations **1–10** appear at the end of `manuscript_submission_v1.md`.
-- Entries **1–6** are **verified** (Ringel *Thyroid* 2025 **without** the incorrect DOI; Worrall *Endocr Oncol.*; full STROBE author line; Dhir *Surgery* 2018; Wang *World J Surg Oncol*; Montgomery *Surgery* 2023).
+- Entries **1–6** are **verified** (manuscript order: Ringel *Thyroid* 2025 **without** the incorrect DOI; Montgomery *Surgery* 2023; Worrall *Endocr Oncol.*; STROBE *Ann Intern Med*; Dhir *Surgery* 2018; Wang *World J Surg Oncol*).
 - Entries **7–10** are **verified** (Kiss *BMC Endocr Disord* 2023; Sutton *Am J Surg* 2022; Loderer *Gland Surg* 2023; Hao *Gland Surg* 2025) — PubMed/PMC-complete per `references_working_20260326.md`; apply journal reference style at submit time.
 - **Removed from active manuscript list:** Kim MH (former ref 4); Conroy *Surgery* 2022 (superseded by Sutton as manuscript ref **8**); placeholder completion systematic review (former ref 12). See `SCHOLAR_GPT_REFERENCE_RECONCILIATION_20260326.md`.
 - Optional background list items (e.g., Barbaro narrative review, Xu *Sci Rep*) remain under **Not used** unless authors expand Discussion.

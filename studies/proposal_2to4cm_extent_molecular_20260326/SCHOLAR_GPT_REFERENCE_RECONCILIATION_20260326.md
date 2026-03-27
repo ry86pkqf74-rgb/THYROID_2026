@@ -8,7 +8,7 @@ Bibliographic and stylistic pass **only**; **no** numeric results, cohorts, tabl
 |------|----------------|
 | `manuscript_submission_v1.md` | Intro / Discussion / limitations prose; molecular “not associated” → caveat language; Vancouver list **1–10**; removed **Kim MH** and placeholder **12**; STROBE **\[4\]**; renumbered citations; incorrect ATA DOI removed |
 | `abstract_structured_v1.md` | Parsimonious-model paragraph: sex vs molecular split + sparse-testing caveat (**instruction 8**) |
-| `references_working_20260326.md` | Restructured: verified **1–6**, unverified **7–10**, removed/not used, optional background |
+| `references_working_20260326.md` | Restructured: verified **1–10** (§1 = items 1–6, §2 = items 7–10), removed/not used, optional background |
 | `MANUSCRIPT_GAP_LIST.md` | Bibliography gap row + resolved/improved note |
 | `READY_TO_SUBMIT_STATUS_20260326.md` | Citations **\[1\]–\[10\]**, external bib gate, next actions |
 | `revision_packet_v1.md` | Reference section reflects reconciliation |

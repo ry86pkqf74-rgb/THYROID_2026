@@ -43,6 +43,8 @@ Values below match **`CLAIM_SOURCE_LEDGER.md`**, **`analysis_manifest.json`**, a
 
 **Editorial note:** Grok’s heading requested “strictly **2025–2026**” sources, but the list below includes **2007, 2018, 2020, 2021, 2022, 2023, 2024** items (e.g., STROBE, Dhir, Wang). Treat the set as a **starter bibliography**; **verify** each citation (journal name, year, DOI/PMID, PMC ID) in PubMed/publisher sites before insertion. Some entries use “or equivalent” wording — **resolve** to a single verified reference.
 
+**Packet citation warning:** The **DOI** printed below for Ringel et al. **item 1** (`10.1177/10507256251363120`) is **wrong** for the 2025 *Thyroid* guideline (see reconciliation in `SCHOLAR_GPT_REFERENCE_RECONCILIATION_20260326.md`). **Do not** copy it into submission files; use **`manuscript_submission_v1.md`** / PubMed **PMID: 40844370** only.
+
 1. **Ringel MD, Sosa JA, Baloch Z, et al.** 2025 American Thyroid Association Management Guidelines for Adult Patients with Differentiated Thyroid Cancer. *Thyroid*. 2025 Aug;35(8):841-985. DOI: 10.1177/10507256251363120. PMID: 40844370. Guideline — initial surgical extent (lobectomy appropriate/option for many unilateral **>2 and ≤4 cm** cT2N0M0 cases; contralateral nodules; patient preference).
 
 2. **von Elm E, Altman DG, Egger M, et al.** The Strengthening the Reporting of Observational Studies in Epidemiology (STROBE) statement. *Ann Intern Med*. 2007 Oct 16;147(8):573-577. DOI: 10.7326/0003-4819-147-8-200710160-00010. PMID: 17938396. Reporting guideline.

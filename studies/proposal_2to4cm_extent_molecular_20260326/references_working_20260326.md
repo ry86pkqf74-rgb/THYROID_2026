@@ -6,9 +6,9 @@
 
 ---
 
-## 1) Verified references used in manuscript (1–6)
+## 1) Verified references — manuscript items 1–6
 
-These six entries are **authoritative** for submission v1 after 2026-03-26 reconciliation (Vancouver order in manuscript).
+Entries **1–6** are **authoritative** for submission v1 (reconciliation 2026-03-26). Items **7–10** are listed in §2; the **active manuscript bibliography** is the combined **1–10** list at the end of `manuscript_submission_v1.md`.
 
 **1.** Ringel MD, Sosa JA, Baloch ZW, et al. 2025 American Thyroid Association management guidelines for adult patients with differentiated thyroid cancer. *Thyroid*. 2025;35(8):841-985. PMID: 40844370. *(Incorrect DOI removed; do not substitute a guessed DOI.)*
 

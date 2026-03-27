@@ -62,6 +62,6 @@ Gaps are relative to a typical observational surgery manuscript and to **what th
 
 - **`figure_legends_v1.md`** — main vs non-submitted figures documented.  
 - **`manuscript_submission_v1.md`** — numbered references; **no** `[REF:NEEDS_*]` tags; STROBE citation; figure callouts.  
-- **`references_working_20260326.md`** — Working bibliography (verified vs unverified sections; ScholarGPT reconciliation 2026-03-26).  
+- **`references_working_20260326.md`** — Working bibliography (verified **1–10** in two blocks; ScholarGPT reconciliation 2026-03-26).  
 - **`AUTHOR_FILL_INS_FOR_SUBMISSION_20260326.md`** — submission blockers consolidated.  
 - **`journal_fit_matrix_v1.md`** — three concrete targets (*Thyroid*, *Head & Neck*, *Ann Surg Onc*).  
