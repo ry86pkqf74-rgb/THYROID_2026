@@ -1,0 +1,26 @@
+research_id,index_surgery_date,path_later_surg_date,path_thyroid_procedure,path_completion_column,study_oed_based_completion_flag,interpretation
+5358,2016-04-27T00:00:00,2016-06-29T00:00:00,Right Lobectomy (RL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+5405,2016-06-02T00:00:00,2017-07-13T00:00:00,Left Lobectomy (LL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+5501,2016-08-18T00:00:00,2016-10-26T00:00:00,Right Lobectomy (RL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+5581,2016-10-10T00:00:00,2023-02-22T00:00:00,Left Lobectomy (LL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+5710,2016-12-21T00:00:00,2017-02-15T00:00:00,Right Lobectomy (RL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+5757,2017-01-19T00:00:00,2017-02-02T00:00:00,Left Lobectomy (LL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+6133,2017-07-31T00:00:00,2020-09-28T00:00:00,Left Lobectomy (LL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+6252,2017-10-12T00:00:00,2017-12-21T00:00:00,Left Lobectomy (LL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+6356,2017-12-12T00:00:00,2018-02-16T00:00:00,Left Lobectomy (LL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+6538,2018-04-06T00:00:00,2018-07-03T00:00:00,Left Lobectomy (LL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+7564,2019-08-23T00:00:00,2020-01-24T00:00:00,Right Lobectomy (RL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+7577,2019-08-28T00:00:00,2020-02-19T00:00:00,Right Lobectomy (RL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+8255,2020-08-04T00:00:00,2020-08-28T00:00:00,Left Lobectomy (LL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+8689,2021-03-02T00:00:00,2021-04-29T00:00:00,Left Lobectomy (LL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+8938,2021-06-24T00:00:00,2021-08-10T00:00:00,Left Lobectomy (LL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+8950,2021-06-29T00:00:00,2022-03-31T00:00:00,Left Lobectomy (LL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+9038,2021-08-13T00:00:00,2021-10-13T00:00:00,Right Lobectomy (RL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+9078,2021-09-02T00:00:00,2021-11-19T00:00:00,Left Lobectomy (LL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+9371,2022-02-23T00:00:00,2022-05-31T00:00:00,Left Lobectomy (LL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+9528,2022-05-17T00:00:00,2022-09-06T00:00:00,Left Lobectomy (LL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+9632,2022-07-05T00:00:00,2022-08-09T00:00:00,Right Lobectomy (RL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+9648,2022-07-12T00:00:00,2023-10-10T00:00:00,Left Lobectomy (LL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+9710,2022-08-05T00:00:00,2023-03-31T00:00:00,Right Lobectomy (RL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+9762,2022-09-02T00:00:00,2022-12-16T00:00:00,Right Lobectomy (RL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this
+9786,2022-09-19T00:00:00,2024-03-04T00:00:00,Right Lobectomy (RL),yes,False,path_synoptic later row; OED lacks second episode — study logic cannot see this

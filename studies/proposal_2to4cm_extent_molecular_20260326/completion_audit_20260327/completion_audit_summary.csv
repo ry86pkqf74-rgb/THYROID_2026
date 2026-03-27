@@ -1,0 +1,12 @@
+metric,value
+definition_study_completion,completion_after_lobectomy (cohort_logic.py): initial hemithyroidectomy in first_qualifying_surgeries; later row in operative_episode_detail_v2 with procedure_normalized=='total_thyroidectomy' ONLY; date strictly > index
+operative_v2_also_maps_completion_string,script 22 maps path_synoptics LIKE '%completion%' to procedure_normalized completion_thyroidectomy — never observed on LATER oed row in this cohort because OED has no second row
+primary_cohort_unique_patients,558
+initial_lobectomy_n,238
+initial_total_n,320
+study_csv_completion_true_among_lobectomy,0
+oed_patients_with_any_row_strictly_after_index,0
+path_syn_patients_later_row_with_completion_col_yes,25
+path_syn_rows_after_index_total_lob_cohort,26
+csv_vs_python_replay_mismatch_count,0
+token_mode,secrets.toml:MOTHERDUCK_TOKEN

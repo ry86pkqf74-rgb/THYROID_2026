@@ -1,0 +1,12 @@
+{
+  "audit_utc": "20260327",
+  "cohort_csv": "/Users/loganglosser/THYROID_2026/studies/proposal_2to4cm_extent_molecular_20260326/patient_level_dataset.csv",
+  "output_dir": "/Users/loganglosser/THYROID_2026/studies/proposal_2to4cm_extent_molecular_20260326/completion_audit_20260327",
+  "counts": {
+    "primary_n": 558,
+    "lobe_n": 238,
+    "study_oed_completion": 0,
+    "oed_any_later": 0,
+    "path_completion_yes_patients": 25
+  }
+}
