@@ -2,12 +2,16 @@
 """
 run_extraction.py — Run all entity extractors on clinical_notes_long
 
+MotherDuck does not run extraction: it stores tables uploaded from this
+repo (e.g. scripts/09b_motherduck_upload_notes_entities.py).
+
 Loads processed/clinical_notes_long.parquet, applies regex (and optionally
 LLM) extractors, and writes one parquet per entity domain:
 
   processed/note_entities_staging.parquet
   processed/note_entities_genetics.parquet
   processed/note_entities_procedures.parquet
+  processed/note_entities_operative_detail.parquet
   processed/note_entities_complications.parquet
   processed/note_entities_medications.parquet
   processed/note_entities_problem_list.parquet
@@ -32,8 +36,9 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from notes_extraction.base import BaseExtractor, EntityMatch
+from notes_extraction.base import BaseExtractor
 from notes_extraction.extract_llm import LLMExtractor
+from notes_extraction.extract_operative_v2 import OperativeDetailExtractor
 from notes_extraction.extract_regex import ALL_REGEX_EXTRACTORS
 from notes_extraction.vocab import ENTITY_SCHEMA_COLUMNS
 from utils.text_helpers import save_parquet
@@ -55,6 +60,7 @@ DOMAIN_TO_FILE = {
     "staging": "note_entities_staging",
     "genetics": "note_entities_genetics",
     "procedures": "note_entities_procedures",
+    "operative_detail": "note_entities_operative_detail",
     "complications": "note_entities_complications",
     "medications": "note_entities_medications",
     "problem_list": "note_entities_problem_list",
@@ -207,13 +213,16 @@ def main() -> None:
             f"({before - len(notes_df):,} excluded by research-id filter)"
         )
 
-    # Select extractors
-    all_extractors: list[BaseExtractor] = [cls() for cls in ALL_REGEX_EXTRACTORS]
+    # Select extractors: standard regex domains + deep operative-note regex (op_note only).
+    all_extractors: list[BaseExtractor] = [
+        *(cls() for cls in ALL_REGEX_EXTRACTORS),
+        OperativeDetailExtractor(),
+    ]
 
     llm = LLMExtractor()
     if llm.available:
         all_extractors.append(llm)
-        log.info("  LLM extractor enabled")
+        log.info("  LLM extractor enabled (operative notes use extended chunk + prompt when OPENAI_API_KEY set)")
     else:
         log.info("  LLM extractor disabled (no API key)")
 
@@ -221,8 +230,11 @@ def main() -> None:
     if target_domain:
         extractors = [
             e for e in all_extractors
-            if e.entity_domain == target_domain or e.entity_domain == "llm"
+            if e.entity_domain == target_domain
         ]
+        # Optionally add LLM for non–operative-detail targets (operative_detail is regex-only by default).
+        if target_domain != "operative_detail":
+            extractors.extend(e for e in all_extractors if e.entity_domain == "llm")
         log.info(f"  Target domain filter: '{target_domain}' "
                  f"({len(extractors)} extractor(s) active)")
     else:

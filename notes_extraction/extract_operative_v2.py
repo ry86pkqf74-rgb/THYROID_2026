@@ -411,6 +411,9 @@ class OperativeDetailExtractor(BaseExtractor):
         seen: set[tuple[str, int]] = set()
         if not note_text:
             return results
+        # Avoid H&P / consent false positives (operative patterns appear in risk discussions).
+        if (note_type or "").strip().lower() not in ("op_note", "opnote"):
+            return results
 
         for bank in self._DOMAIN_PATTERNS:
             for pat, norm_val, etype, conf in bank:

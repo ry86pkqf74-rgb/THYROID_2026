@@ -30,13 +30,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from notes_extraction.base import BaseExtractor, EntityMatch
-from notes_extraction.vocab import ENTITY_SCHEMA_COLUMNS
 
 log = logging.getLogger(__name__)
 
 MAX_CHUNK_CHARS = 6000
+# Operative dictation is long; use a larger prefix when OPENAI is enabled (cost/latency tradeoff).
+OP_NOTE_CHUNK_CHARS = 24_000
 ROOT = Path(__file__).resolve().parent.parent
 PROMPT_DIR = ROOT / "prompts"
+_OP_NOTE_TYPES = frozenset({"op_note", "OPNOTE"})
 
 
 class LLMExtractor(BaseExtractor):
@@ -67,20 +69,33 @@ class LLMExtractor(BaseExtractor):
         if not self.available:
             return []
 
-        chunk = note_text[:MAX_CHUNK_CHARS]
+        is_op = note_type in _OP_NOTE_TYPES
+        limit = OP_NOTE_CHUNK_CHARS if is_op else MAX_CHUNK_CHARS
+        chunk = note_text[:limit]
 
         try:
-            return self._call_llm(note_row_id, research_id, note_type, chunk, note_date)
+            return self._call_llm(
+                note_row_id,
+                research_id,
+                note_type,
+                chunk,
+                note_date,
+                operative=is_op,
+            )
         except Exception as exc:
             log.error(f"LLM extraction failed for {note_row_id}: {exc}")
             return []
 
     # ── Prompt building ──────────────────────────────────────────────────────
 
-    def _load_system_prompt(self) -> str:
-        """Load the lab-date extraction system prompt."""
+    def _load_system_prompt(self, *, operative: bool = False) -> str:
+        """Load system prompt: operative dictation vs general / lab-aware default."""
+        if operative:
+            op_path = PROMPT_DIR / "operative_note_extraction_v1.txt"
+            if op_path.exists():
+                return op_path.read_text(encoding="utf-8")
         prompt_path = PROMPT_DIR / "lab_date_extraction_v1.txt"
-        if prompt_path.exists():
+        if prompt_path.exists() and not operative:
             return prompt_path.read_text(encoding="utf-8")
         return _DEFAULT_SYSTEM_PROMPT
 
@@ -89,16 +104,26 @@ class LLMExtractor(BaseExtractor):
         note_type: str,
         note_text: str,
         note_date: str | None,
+        *,
+        operative: bool = False,
     ) -> list[dict]:
         """Build the OpenAI messages list for entity + date extraction."""
-        system = self._load_system_prompt()
-        user_content = (
-            f"NOTE TYPE: {note_type}\n"
-            f"ENCOUNTER DATE (note_date): {note_date or 'unknown'}\n\n"
-            "IMPORTANT: Lab-specific dates (collected on, drawn on, specimen date, "
-            "result date) ALWAYS take precedence over the encounter date above.\n\n"
-            f"NOTE TEXT:\n{note_text}"
-        )
+        system = self._load_system_prompt(operative=operative)
+        if operative:
+            user_content = (
+                f"NOTE TYPE: {note_type} (operative dictation)\n"
+                f"ANCHOR ENCOUNTER DATE (clinical_notes_long.note_date): {note_date or 'unknown'}\n"
+                "Use this only when no explicit operative/procedure date exists in the excerpt.\n\n"
+                f"OPERATIVE NOTE TEXT:\n{note_text}"
+            )
+        else:
+            user_content = (
+                f"NOTE TYPE: {note_type}\n"
+                f"ENCOUNTER DATE (note_date): {note_date or 'unknown'}\n\n"
+                "IMPORTANT: Lab-specific dates (collected on, drawn on, specimen date, "
+                "result date) ALWAYS take precedence over the encounter date above.\n\n"
+                f"NOTE TEXT:\n{note_text}"
+            )
         return [
             {"role": "system", "content": system},
             {"role": "user", "content": user_content},
@@ -113,6 +138,8 @@ class LLMExtractor(BaseExtractor):
         note_type: str,
         text: str,
         note_date: str | None = None,
+        *,
+        operative: bool = False,
     ) -> list[EntityMatch]:
         """Call the OpenAI API and parse structured JSON output."""
         try:
@@ -122,7 +149,8 @@ class LLMExtractor(BaseExtractor):
             return []
 
         client = openai.OpenAI(api_key=self._api_key)
-        messages = self._build_prompt(note_type, text, note_date)
+        messages = self._build_prompt(note_type, text, note_date, operative=operative)
+        max_out = 4096 if operative else 2000
 
         try:
             response = client.chat.completions.create(
@@ -130,7 +158,7 @@ class LLMExtractor(BaseExtractor):
                 messages=messages,
                 temperature=0,
                 response_format={"type": "json_object"},
-                max_tokens=2000,
+                max_tokens=max_out,
             )
         except Exception as exc:
             log.error(f"OpenAI API call failed: {exc}")
@@ -138,7 +166,13 @@ class LLMExtractor(BaseExtractor):
 
         raw_json = response.choices[0].message.content or "{}"
         return self._parse_llm_response(
-            raw_json, note_row_id, research_id, note_type, text, note_date
+            raw_json,
+            note_row_id,
+            research_id,
+            note_type,
+            text,
+            note_date,
+            llm_operative=operative,
         )
 
     # ── Response parsing ─────────────────────────────────────────────────────
@@ -151,6 +185,8 @@ class LLMExtractor(BaseExtractor):
         note_type: str,
         source_text: str,
         note_date: str | None,
+        *,
+        llm_operative: bool = False,
     ) -> list[EntityMatch]:
         """Parse LLM JSON output into EntityMatch objects."""
         try:
@@ -174,9 +210,7 @@ class LLMExtractor(BaseExtractor):
             entity_type = str(item.get("entity_type", "unknown"))
             present_or_negated = str(item.get("present_or_negated", "present"))
             confidence = float(item.get("confidence", 0.8))
-            date_confidence = float(item.get("date_confidence", 0.0))
             raw_date = item.get("entity_date")
-            source_line = item.get("source_line", 0)
 
             # Validate evidence span
             if evidence_text and not self._validate_evidence_span(evidence_text, source_text):
@@ -202,6 +236,7 @@ class LLMExtractor(BaseExtractor):
                 except ValueError:
                     pass
 
+            ext_method = "llm_gpt4o_mini_operative" if llm_operative else "llm_gpt4o_mini"
             match = EntityMatch(
                 research_id=research_id,
                 note_row_id=note_row_id,
@@ -216,7 +251,7 @@ class LLMExtractor(BaseExtractor):
                 evidence_end=ev_end,
                 entity_date=entity_date,
                 note_date=note_date,
-                extraction_method="llm_gpt4o",
+                extraction_method=ext_method,
                 extracted_at=datetime.now(timezone.utc).isoformat(),
             )
             results.append(match)

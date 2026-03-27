@@ -10,6 +10,7 @@ Tables uploaded:
   note_entities_staging
   note_entities_genetics
   note_entities_procedures
+  note_entities_operative_detail
   note_entities_complications
   note_entities_medications
   note_entities_problem_list
@@ -24,7 +25,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from motherduck_client import MotherDuckClient, MotherDuckConfig
+from motherduck_client import MotherDuckClient
 
 PROCESSED = ROOT / "processed"
 
@@ -33,6 +34,7 @@ TABLES_TO_UPLOAD = [
     "note_entities_staging",
     "note_entities_genetics",
     "note_entities_procedures",
+    "note_entities_operative_detail",
     "note_entities_complications",
     "note_entities_medications",
     "note_entities_problem_list",
@@ -83,7 +85,8 @@ def main() -> None:
                 f"CREATE OR REPLACE TABLE {tbl} AS "
                 f"SELECT * FROM read_parquet('{pq}')"
             )
-            cnt = con.execute(f"SELECT COUNT(*) FROM {tbl}").fetchone()[0]
+            count_row = con.execute(f"SELECT COUNT(*) FROM {tbl}").fetchone()
+            cnt = int(count_row[0]) if count_row else 0
             print(f"  Uploaded {tbl:40s}  {cnt:>8,} rows")
         except Exception as exc:
             print(f"  FAILED  {tbl}: {exc}")
