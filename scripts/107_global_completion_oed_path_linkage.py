@@ -13,6 +13,7 @@ columns (not applicable).
 Usage:
   .venv/bin/python scripts/107_global_completion_oed_path_linkage.py
   .venv/bin/python scripts/107_global_completion_oed_path_linkage.py --md
+  .venv/bin/python scripts/107_global_completion_oed_path_linkage.py --md --sa   # CI: prefer MD_SA_TOKEN
   .venv/bin/python scripts/107_global_completion_oed_path_linkage.py --skip-md   # exports only
 """
 from __future__ import annotations
@@ -221,10 +222,15 @@ def main() -> int:
         action="store_true",
         help="Only write exports (default if --md not passed)",
     )
+    ap.add_argument(
+        "--sa",
+        action="store_true",
+        help="Prefer MD_SA_TOKEN over MOTHERDUCK_TOKEN (match GitHub Actions)",
+    )
     args = ap.parse_args()
     do_md = bool(args.md) and not args.skip_md
 
-    client = MotherDuckClient(MotherDuckConfig())
+    client = MotherDuckClient(MotherDuckConfig(use_service_account=bool(args.sa)))
     con = client.connect_rw()
 
     ops, path_syn = load_ops_path(con)

@@ -41,6 +41,12 @@ on:
         default: "false"
         type: choice
         options: ["true", "false"]
+      run_completion_linkage:
+        description: "Rebuild patient_completion_oed_path_linkage_v1 on MotherDuck (script 107)"
+        required: false
+        default: "false"
+        type: choice
+        options: ["true", "false"]
 
 jobs:
   # ── Job 1: Static Analysis ─────────────────────────────────────────────────
@@ -341,6 +347,40 @@ jobs:
           sys.exit(0)
           "
         continue-on-error: true
+
+  # ── Job 3b: Global OED vs path-synoptic completion linkage (manual only) ──
+  # Uses GitHub secrets MD_SA_TOKEN (preferred via --sa) and MOTHERDUCK fallback.
+  # Does not commit CSVs to the repo; refreshes MotherDuck tables only.
+  completion-linkage-motherduck:
+    name: Completion linkage — MotherDuck (script 107)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_completion_linkage == 'true'
+    needs: lint-and-syntax
+    env:
+      MD_SA_TOKEN: ${{ secrets.MD_SA_TOKEN }}
+      MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Assert token present
+        run: |
+          python -c "
+          from motherduck_client import get_token
+          t = get_token(prefer_service_account=True)
+          assert t, 'No MotherDuck token: set repo secrets MD_SA_TOKEN and/or MOTHERDUCK'
+          print('Token resolved (service-account precedence)')
+          "
+
+      - name: Run script 107 — materialize linkage tables
+        run: |
+          python scripts/107_global_completion_oed_path_linkage.py --md --sa
 
   # ── Job 4: Query Benchmark Regression (every push, non-blocking on missing baseline)
   benchmark-regression:
