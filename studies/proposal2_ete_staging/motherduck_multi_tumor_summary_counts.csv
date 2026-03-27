@@ -1,0 +1,20 @@
+metric,value
+connection_source,local:memory+path_synoptics.parquet(synthetic tumor_episode + aggregate)
+token_mode,local
+path_synoptics_rows,11688
+specimens_n_slots_ge_2_any_field,1379
+specimens_n_histology_slots_ge_2,1366
+specimens_multifocal_text_flag,1
+synoptic_tumor_long_table,synoptic_tumor_long_v1
+synoptic_tumor_long_rowcount,11103
+tumor_episode_table,tumor_episode_master_v2
+multi_tumor_aggregate_table,extracted_multi_tumor_aggregate_v1
+tumor_pathology_table,(absent)
+lesion_resolved_table,(absent)
+lesion_kpis_json,
+dist_n_slots_any_0,2630
+dist_n_slots_any_1,7679
+dist_n_slots_any_2,921
+dist_n_slots_any_3,305
+dist_n_slots_any_4,98
+dist_n_slots_any_5,55
