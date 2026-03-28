@@ -92,6 +92,13 @@ DOMAIN_PROMPT = {
     "us_nodule_dynamics": "us_nodule_dynamics_extraction_v1.txt",
     "cervical_ln_detail": "cervical_ln_detail_extraction_v1.txt",
     "patient_decision_adherence": "patient_decision_adherence_extraction_v1.txt",
+    # ── Phase 2: 6 targeted enrichment domains (100% coverage) ──
+    "operative_v2_enrichment": "operative_v2_enrichment_extraction_v1.txt",
+    "complications_rln_laryngoscopy": "complications_rln_laryngoscopy_extraction_v1.txt",
+    "molecular_thyroseq_afirma": "molecular_thyroseq_afirma_extraction_v1.txt",
+    "synoptic_pathology_enrichment": "synoptic_pathology_enrichment_extraction_v1.txt",
+    "tirads_granular": "tirads_granular_extraction_v1.txt",
+    "parathyroid_per_gland": "parathyroid_per_gland_extraction_v1.txt",
 }
 
 ALL_DOMAINS = list(DOMAIN_PROMPT.keys())
