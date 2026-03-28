@@ -1,0 +1,240 @@
+// ============================================================
+// THYROID_2026 — DAX Measures
+// Power BI Desktop: Modeling tab → New Measure → paste each block
+// Table assignment shown in comments
+// ============================================================
+
+
+// ── PATIENT DIMENSION MEASURES ─────────────────────────────
+
+// [Dim_Patient] Total patients in current filter context
+Total_Patients = DISTINCTCOUNT(Dim_Patient[research_id])
+
+// [Dim_Patient] Mean age at index surgery
+Mean_Age_At_Surgery = AVERAGE(Dim_Patient[age_at_surgery])
+
+// [Dim_Patient] Median age at index surgery
+Median_Age_At_Surgery = MEDIAN(Dim_Patient[age_at_surgery])
+
+// [Dim_Patient] % Female
+Pct_Female =
+DIVIDE(
+    CALCULATE(DISTINCTCOUNT(Dim_Patient[research_id]), Dim_Patient[sex] = "Female"),
+    [Total_Patients],
+    0
+)
+
+// [Dim_Patient] Patients with each data domain
+Patients_With_Molecular =
+CALCULATE(DISTINCTCOUNT(Dim_Patient[research_id]), Dim_Patient[has_tumor_pathology] = TRUE())
+
+Patients_With_Labs =
+CALCULATE(DISTINCTCOUNT(Dim_Patient[research_id]), Dim_Patient[has_thyroglobulin_labs] = TRUE())
+
+Patients_With_Imaging =
+CALCULATE(DISTINCTCOUNT(Dim_Patient[research_id]),
+    Dim_Patient[has_ct_imaging] = TRUE() ||
+    Dim_Patient[has_ultrasound_reports] = TRUE() ||
+    Dim_Patient[has_nuclear_med] = TRUE()
+)
+
+
+// ── PATHOLOGY & STAGING MEASURES ──────────────────────────
+
+// [Fact_Outcome] AJCC 8 Stage distribution
+Stage_I_Count =
+CALCULATE(DISTINCTCOUNT(Fact_Outcome[research_id]),
+    Fact_Outcome[overall_stage_ajcc8] = "I")
+
+Stage_II_Count =
+CALCULATE(DISTINCTCOUNT(Fact_Outcome[research_id]),
+    Fact_Outcome[overall_stage_ajcc8] = "II")
+
+Stage_III_Count =
+CALCULATE(DISTINCTCOUNT(Fact_Outcome[research_id]),
+    Fact_Outcome[overall_stage_ajcc8] = "III")
+
+Stage_IV_Count =
+CALCULATE(DISTINCTCOUNT(Fact_Outcome[research_id]),
+    Fact_Outcome[overall_stage_ajcc8] = "IV")
+
+Pct_Stage_I =
+DIVIDE([Stage_I_Count], [Total_Patients], 0)
+
+// [Fact_Outcome] Papillary thyroid carcinoma rate
+Pct_Papillary =
+DIVIDE(
+    CALCULATE(DISTINCTCOUNT(Fact_Outcome[research_id]),
+        SEARCH("papillary", Fact_Outcome[histology_1_type], 1, 0) > 0),
+    [Total_Patients], 0
+)
+
+// [Fact_Outcome] Mean largest tumor size (cm)
+Mean_Tumor_Size_cm = AVERAGE(Fact_Outcome[largest_tumor_cm])
+
+// [Fact_Outcome] Multifocal tumor rate
+Pct_Multifocal =
+DIVIDE(
+    CALCULATE(DISTINCTCOUNT(Fact_Outcome[research_id]),
+        Fact_Outcome[tumor_focality_overall] = "Multifocal"),
+    [Total_Patients], 0
+)
+
+// [Fact_Outcome] Gross extra-thyroidal extension rate
+Pct_Gross_ETE =
+DIVIDE(
+    CALCULATE(DISTINCTCOUNT(Fact_Outcome[research_id]),
+        Fact_Outcome[tumor_1_gross_ete] = "Yes"),
+    [Total_Patients], 0
+)
+
+// [Fact_Outcome] Lymph node positivity (among those with data)
+LN_Positivity_Rate =
+DIVIDE(
+    CALCULATE(
+        COUNTROWS(Fact_Outcome),
+        Fact_Outcome[ln_positive] > 0
+    ),
+    CALCULATE(
+        COUNTROWS(Fact_Outcome),
+        NOT(ISBLANK(Fact_Outcome[ln_positive]))
+    ), 0
+)
+
+Mean_LN_Examined = AVERAGE(Fact_Outcome[ln_examined])
+Mean_LN_Positive = AVERAGE(Fact_Outcome[ln_positive])
+
+
+// ── TREATMENT MEASURES ────────────────────────────────────
+
+// [Fact_Treatment] Total surgical episodes
+Total_Surgical_Episodes = COUNTROWS(Fact_Treatment)
+
+// [Fact_Treatment] Total thyroidectomies
+Total_Thyroidectomies =
+CALCULATE(COUNTROWS(Fact_Treatment),
+    SEARCH("thyroid", Fact_Treatment[procedure_normalized], 1, 0) > 0)
+
+// [Fact_Treatment] Central neck dissection rate
+Pct_Central_Neck_Dissection =
+DIVIDE(
+    CALCULATE(COUNTROWS(Fact_Treatment), Fact_Treatment[central_neck_dissection_flag] = TRUE()),
+    [Total_Surgical_Episodes], 0
+)
+
+// [Fact_Treatment] Lateral neck dissection rate
+Pct_Lateral_Neck_Dissection =
+DIVIDE(
+    CALCULATE(COUNTROWS(Fact_Treatment), Fact_Treatment[lateral_neck_dissection_flag] = TRUE()),
+    [Total_Surgical_Episodes], 0
+)
+
+// [Fact_Treatment] RLN monitoring utilization
+Pct_RLN_Monitoring =
+DIVIDE(
+    CALCULATE(COUNTROWS(Fact_Treatment), Fact_Treatment[rln_monitoring_flag] = TRUE()),
+    [Total_Surgical_Episodes], 0
+)
+
+// [Fact_Treatment] Gross ETE at surgery rate
+Pct_Gross_ETE_Surgery =
+DIVIDE(
+    CALCULATE(COUNTROWS(Fact_Treatment), Fact_Treatment[gross_ete_flag] = TRUE()),
+    [Total_Surgical_Episodes], 0
+)
+
+// [Fact_Treatment] Parathyroid autograft rate
+Pct_Parathyroid_Autograft =
+DIVIDE(
+    CALCULATE(COUNTROWS(Fact_Treatment), Fact_Treatment[parathyroid_autograft_flag] = TRUE()),
+    [Total_Surgical_Episodes], 0
+)
+
+
+// ── MOLECULAR / FNA MEASURES ───────────────────────────────
+
+// [Fact_Molecular] Patients with molecular testing
+Patients_With_Molecular_Testing =
+DISTINCTCOUNT(Fact_Molecular[research_id])
+
+// [Fact_FnaEpisode] Total FNA episodes
+Total_FNA_Episodes = COUNTROWS(Fact_FnaEpisode)
+
+// [Fact_FnaEpisode] Patients with FNA
+Patients_With_FNA = DISTINCTCOUNT(Fact_FnaEpisode[research_id])
+
+// [Fact_FnaEpisode] Bethesda IV-VI rate (indeterminate/malignant)
+Pct_Bethesda_IV_plus =
+DIVIDE(
+    CALCULATE(COUNTROWS(Fact_FnaEpisode),
+        Fact_FnaEpisode[bethesda_category] >= 4),
+    [Total_FNA_Episodes], 0
+)
+
+
+// ── LAB MEASURES (Thyroglobulin) ──────────────────────────
+
+// [Fact_LabTg] Total Tg lab measurements
+Total_Tg_Measurements = COUNTROWS(Fact_LabTg)
+
+// [Fact_LabTg] Mean Tg value
+Mean_Tg_Value = AVERAGE(Fact_LabTg[result])
+
+// [Fact_LabTg] Patients with detectable Tg (> 0.1)
+Patients_Detectable_Tg =
+CALCULATE(DISTINCTCOUNT(Fact_LabTg[research_id]),
+    Fact_LabTg[result] > 0.1)
+
+
+// ── COMPLICATION MEASURES ─────────────────────────────────
+
+// [Fact_Complications] Any complication rate
+Pct_Any_Complication =
+DIVIDE(
+    CALCULATE(DISTINCTCOUNT(Fact_Complications[research_id])),
+    [Total_Patients], 0
+)
+
+// [Fact_Complications] Total complication events
+Total_Complication_Events = COUNTROWS(Fact_Complications)
+
+// [Fact_ComplicationSeverity] Mean severity score
+Mean_Complication_Severity = AVERAGE(Fact_ComplicationSeverity[severity_score])
+
+
+// ── IMAGING MEASURES ──────────────────────────────────────
+
+// [Fact_ImagingCT] Patients with CT imaging
+Patients_With_CT = DISTINCTCOUNT(Fact_ImagingCT[research_id])
+
+// [Fact_ImagingUS] Patients with ultrasound
+Patients_With_Ultrasound = DISTINCTCOUNT(Fact_ImagingUS[research_id])
+
+// [Fact_ImagingNuclear] Patients with nuclear medicine
+Patients_With_NucMed = DISTINCTCOUNT(Fact_ImagingNuclear[research_id])
+
+
+// ── DATA QUALITY / VALIDATION MEASURES ───────────────────
+
+// Row count reconciliation — Silver layer totals
+Silver_Patient_Count = DISTINCTCOUNT(Dim_Patient[research_id])
+
+Silver_Treatment_Count = COUNTROWS(Fact_Treatment)
+
+Silver_Outcome_Count = COUNTROWS(Fact_Outcome)
+
+// % patients with complete staging data
+Pct_With_Staging =
+DIVIDE(
+    CALCULATE(DISTINCTCOUNT(Fact_Outcome[research_id]),
+        NOT(ISBLANK(Fact_Outcome[overall_stage_ajcc8]))),
+    [Total_Patients], 0
+)
+
+// % patients with surgeon note
+Pct_With_Op_Note =
+DIVIDE(
+    CALCULATE(DISTINCTCOUNT(Fact_ClinicalNotes[research_id]),
+        NOT(ISBLANK(Fact_ClinicalNotes[opnote_1]))),
+    [Total_Patients], 0
+)

@@ -1,0 +1,119 @@
+{
+  "generated_at": "2026-03-27T20:44:59.530769",
+  "tables": [
+    {
+      "file": "clinical_notes_masked.parquet",
+      "rows": 10863,
+      "sha256": "758ff6e5c559ea500c42a86f566e64448d481b237471fc7d0fa9021534253691",
+      "size_mb": 9.62
+    },
+    {
+      "file": "complication_severity_facts.parquet",
+      "rows": 11168,
+      "sha256": "1286a89748fe7bbaf9244cdb3ed40e157e524044dda8d3b0517f79c0b9d27cd9",
+      "size_mb": 0.07
+    },
+    {
+      "file": "complications_facts.parquet",
+      "rows": 10864,
+      "sha256": "9231f568a34b83e0d66993f4caf24fb66cfa295774ec97ab74517f2ed266f3a8",
+      "size_mb": 0.05
+    },
+    {
+      "file": "dim_date.parquet",
+      "rows": 11323,
+      "sha256": "64aad04d00b883a06fc04526e6ee6faa8b81ffb56b37807164bfa6674d0d7147",
+      "size_mb": 0.03
+    },
+    {
+      "file": "fna_cytology_facts.parquet",
+      "rows": 8063,
+      "sha256": "17cf2ce3eaa86fcce9ef98aebeb1a043c4c731c2c9455ec8b65d292aa7cb8da0",
+      "size_mb": 1.05
+    },
+    {
+      "file": "fna_episode_facts.parquet",
+      "rows": 59620,
+      "sha256": "4a91e6ef1f517a3a76e2fcfbef58288943d4080fba0925ea20e896b0346a30dd",
+      "size_mb": 0.87
+    },
+    {
+      "file": "frozen_section_facts.parquet",
+      "rows": 11687,
+      "sha256": "149cf98bf25e7ef46d7e37e78772c7969b90b23b96b99142fb885afdbcfb961d",
+      "size_mb": 0.23
+    },
+    {
+      "file": "imaging_ct_facts.parquet",
+      "rows": 7701,
+      "sha256": "bcd5f887cff5c7e7e7624c90202ef11387a9161dfca2c19f2e22f8eb31c9d38d",
+      "size_mb": 4.34
+    },
+    {
+      "file": "imaging_nuclear_facts.parquet",
+      "rows": 2220,
+      "sha256": "5f8d144df6f4305aa983d67b12510c2b905d769c3477574997a403ebcbdced33",
+      "size_mb": 0.75
+    },
+    {
+      "file": "imaging_ultrasound_facts.parquet",
+      "rows": 6793,
+      "sha256": "d7a918cd0766dc251d5ad4229ed150cbef41c0f4465003fb52f71d416422cc2e",
+      "size_mb": 1.47
+    },
+    {
+      "file": "lab_anti_thyroglobulin_facts.parquet",
+      "rows": 14314,
+      "sha256": "d0a33476d18e1a4bd5cb13957fcf2f7ab3caffc3966d0ebb4636e2ebe22c3087",
+      "size_mb": 0.08
+    },
+    {
+      "file": "lab_thyroglobulin_facts.parquet",
+      "rows": 30245,
+      "sha256": "9396b0543dd002eaee1bb85deb3e368865d3a68b9149c236b0f144132d6ad62b",
+      "size_mb": 0.14
+    },
+    {
+      "file": "molecular_facts.parquet",
+      "rows": 10126,
+      "sha256": "cb4cd75cbe764ce8a4ad60772e1751b965bb1abd013b198be2b9299e7c6f816f",
+      "size_mb": 0.19
+    },
+    {
+      "file": "outcome_facts.parquet",
+      "rows": 6359,
+      "sha256": "2e03b1e5af5b42f38803a363c52e789e290b9beb1c5d779c4d90ec1ed6a86f2f",
+      "size_mb": 1.38
+    },
+    {
+      "file": "parathyroid_facts.parquet",
+      "rows": 3873,
+      "sha256": "94eed8c532fae730b3b35cb8119ab6aa07c7c9610d95460acfda91e26d4dab77",
+      "size_mb": 1.92
+    },
+    {
+      "file": "pathology_facts.parquet",
+      "rows": 4290,
+      "sha256": "2c5a7dd2d097034159d08d975aea0062a089c8392929d97aab0559d618362fa5",
+      "size_mb": 0.82
+    },
+    {
+      "file": "patient_demographics.parquet",
+      "rows": 11673,
+      "sha256": "9bcc23128990b1607cdb03c1ca2dffc4dcc313f6f2938d371af7d10471c3927d",
+      "size_mb": 0.07
+    },
+    {
+      "file": "synoptic_pathology_facts.parquet",
+      "rows": 11688,
+      "sha256": "5bf25fb44db45167a352f388560f3ba675ddf473c4b9ff46a7683f5ad2df53fc",
+      "size_mb": 6.2
+    },
+    {
+      "file": "treatment_facts.parquet",
+      "rows": 9371,
+      "sha256": "d2c01e28d20d3ff999140179e967128fcaca208c6c011a4768a7f24dca6dcfc1",
+      "size_mb": 0.14
+    }
+  ]
+}
