@@ -3,8 +3,8 @@
 
 **Project:** 11,673-patient thyroid cancer research lakehouse
 **Current:** DuckDB/MotherDuck + Streamlit (being eliminated)
-**Target:** Local Microsoft 365 power stack (100% air-gapped PHI)
-**Timeline:** Phase 4 (14 days: 2026-03-27 to 2026-04-10)
+**Target:** Local Microsoft 365 power stack + ElevenLabs + Replit + LangGraph (100% air-gapped PHI)
+**Timeline:** Phase 4 (25 days: 2026-03-27 to 2026-04-21)
 **Owner:** Logan Glosser (LGLOSSE@emory.edu), Emory University
 
 ---
@@ -106,7 +106,26 @@ Complete mapping of MotherDuck operations to Microsoft 365 / local DuckDB equiva
 
 ---
 
-### 5. COWORK_IMPLEMENTATION_PROMPT.md (264 lines)
+### 5. SUPPLEMENTARY_TOOLCHAIN.md (449 lines)
+**ElevenLabs + Replit + LangChain/LangGraph integration plan**
+
+Extends the Microsoft-only pipeline with three supplementary tools that fill gaps M365 can't:
+
+**Coverage:**
+- ElevenLabs: Voice-powered research assistant (Knowledge Base), TTS for presentations, STT for clinical notes (Phase 5+)
+- Replit: Full-stack dashboard (FastAPI + React), LangGraph agent backend API, figure generation service, batch workers
+- LangChain/LangGraph: Clinical note extraction agent, data quality monitoring, natural language query agent, manuscript drafting
+- Combined architecture diagram (local Mac ↔ cloud services with PHI safety)
+- PHI Safety Matrix (9-row assessment of every service)
+- Implementation timeline: Phases 4G-4I (Days 15-25)
+- Cost: ~$203-205/mo total (Replit $200 existing + Claude API ~$3-5)
+- Capability comparison: Microsoft-only vs. full stack (12 capabilities)
+
+**Use this file for:** Understanding how ElevenLabs, Replit, and LangGraph extend the M365 pipeline
+
+---
+
+### 6. COWORK_IMPLEMENTATION_PROMPT.md (300+ lines)
 **Ready-to-paste prompt for starting Cowork implementation session**
 
 Complete briefing that can be copied directly into a Claude Code Cowork session to begin Phase 4 work.
@@ -137,6 +156,9 @@ Complete briefing that can be copied directly into a Claude Code Cowork session 
 | **4D** | Days 6-7 | Power Automate automation, osascript helpers | Automated weekly refresh pipeline working end-to-end |
 | **4E** | Days 8-10 | MotherDuck elimination, refactor 307 files | 307 files cleaned; grep -r "motherduck" = 0 |
 | **4F** | Days 11-14 | Validation, compliance sign-off, manuscript pipeline | Production-ready system; all tests pass; sign-offs complete |
+| **4G** | Days 15-18 | ElevenLabs voice assistant + Replit dashboard deployment | Voice research agent live; FastAPI + React dashboard deployed |
+| **4H** | Days 19-22 | LangGraph clinical extraction + data quality agents | Note extraction pipeline tested on 100+ notes; QA agent running |
+| **4I** | Days 23-25 | Integration testing + voice→agent→answer pipeline | Full stack validated end-to-end; all services connected |
 
 ---
 
@@ -166,11 +188,12 @@ Complete briefing that can be copied directly into a Claude Code Cowork session 
 |---|---|
 | **Project Size** | 11,673 patients, 13 base tables, 8+ analytic views |
 | **Files to Clean** | 307 files, 1,786 MotherDuck references |
-| **Documentation Created** | 5 files, 2,288 lines total, 105 KB |
+| **Documentation Created** | 7 files, 2,950+ lines total, 142 KB |
 | **M365 Apps in Scope** | 30 apps, 5 P0-critical, 8 P1-important, 7 P2-nice-to-have |
 | **Power BI Star Schema** | 13 fact tables, 8 dimensions, 12 relationships, 20+ DAX measures, 6 report pages |
-| **Implementation Timeline** | 14 days (Phase 4A-F), ~56 hours active work |
-| **Cost Savings** | ~$100-500/year (MotherDuck elimination) |
+| **Implementation Timeline** | 25 days (Phase 4A-I), ~110 hours active work |
+| **Supplementary Tools** | ElevenLabs (Free), Replit ($200/mo), LangGraph (OSS), Claude API (~$3-5/mo) |
+| **Cost Savings** | ~$100-500/year (MotherDuck elimination); net cost ~$203-205/mo |
 | **Security Baseline** | FileVault encryption, research_id-only linking, 7-year audit retention, HIPAA compliance |
 
 ---
@@ -197,6 +220,9 @@ All files in this directory implement 6 non-negotiable security rules:
 5. **Phase 4D (Days 6-7):** Wire automation (MICROSOFT_DEPLOYMENT_PLAN.md Section 9)
 6. **Phase 4E (Days 8-10):** Eliminate MotherDuck (MOTHERDUCK_MIGRATION_MAP.md)
 7. **Phase 4F (Days 11-14):** Validate system (MICROSOFT_DEPLOYMENT_PLAN.md Section 11)
+8. **Phase 4G (Days 15-18):** Deploy Replit dashboard + ElevenLabs voice assistant (SUPPLEMENTARY_TOOLCHAIN.md)
+9. **Phase 4H (Days 19-22):** Build LangGraph extraction + QA agents (SUPPLEMENTARY_TOOLCHAIN.md)
+10. **Phase 4I (Days 23-25):** Integration testing, full pipeline validation (SUPPLEMENTARY_TOOLCHAIN.md)
 
 ---
 
@@ -211,7 +237,7 @@ All files in this directory implement 6 non-negotiable security rules:
 
 ---
 
-**Documentation Version:** 1.0
+**Documentation Version:** 2.0
 **Created:** 2026-03-27
 **Status:** Publication-Grade, Ready for Implementation
 **Next Review:** Phase 4A completion (2026-03-28)

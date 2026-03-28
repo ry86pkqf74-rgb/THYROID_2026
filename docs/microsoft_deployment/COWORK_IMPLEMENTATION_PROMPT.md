@@ -218,6 +218,33 @@ Before starting, review these reference documents (all in `/sessions/optimistic-
 
 ---
 
+### Supplementary Toolchain (ElevenLabs + Replit + LangChain/LangGraph)
+
+In addition to the Microsoft 365 stack, the following tools extend the pipeline beyond what M365 can do alone:
+
+**ElevenLabs** (Free tier: 10K TTS credits, 15 min voice agent calls):
+- Voice-powered research assistant with Knowledge Base (de-identified data dictionary + SOPs)
+- Audio narration for conference presentations and dashboard walkthroughs
+- Speech-to-text pipeline for clinical note dictation (Phase 5+, requires HIPAA BAA upgrade)
+
+**Replit** ($200/mo team credits, ROS Workspace, 12 existing projects):
+- Full-stack thyroid research dashboard (FastAPI + React) replacing Streamlit — shareable via URL
+- LangGraph agent backend API (always-on reserved VM deployment)
+- Manuscript figure generation service (matplotlib/seaborn → publication-grade SVG/PNG)
+- Batch data processing workers (survival analysis, PSM, cure models offloaded from local Mac)
+
+**LangChain/LangGraph** (open source, $0 + ~$3-5/mo Claude API):
+- Clinical note extraction agent: operative notes → structured Parquet via stateful graph pipeline
+- Data quality monitoring agent: weekly scans for missing data, outliers, referential integrity
+- Natural language query agent: "What's the recurrence rate for PTC tall cell?" → SQL → answer + chart
+- Manuscript drafting agent: Power BI tables → statistical narrative → draft Methods/Results sections
+
+**Architecture principle:** PHI stays local (FileVault Mac). Only de-identified research_id-keyed exports reach cloud services (Replit, ElevenLabs). LangGraph runs locally for any PHI-adjacent processing.
+
+See `SUPPLEMENTARY_TOOLCHAIN.md` for the full integration plan, code examples, PHI safety matrix, and implementation timeline (Phases 4G-4I, Days 15-25).
+
+---
+
 ## READY TO START
 
 I am ready to begin Phase 4A (Day 1) implementation.
@@ -251,14 +278,34 @@ When pasting into Cowork, the Claude Code agent will:
 5. Refactor 307 files to eliminate MotherDuck
 6. Generate audit trails and compliance documentation
 7. Validate the system end-to-end
+8. Deploy Replit dashboard + LangGraph agent backend
+9. Configure ElevenLabs voice research assistant
+10. Wire up the full voice → agent → answer pipeline
 
 All work will be tracked in git commits and VALIDATION_AUDITS/ logs. The entire implementation is modular (each phase can be paused/resumed) and fully reversible (all changes backed up daily).
 
-**Estimated Total Time:** 14 days elapsed; ~56 hours active work
+**Estimated Total Time:** 25 days elapsed; ~110 hours active work
 **Team Required:** Logan (owner/reviewer), optionally: Emory IRB/Privacy Officer (Phase 4F sign-off)
+
+### Full Toolchain Summary
+| Tool | Role | PHI Access | Monthly Cost |
+|------|------|-----------|-------------|
+| Power BI Desktop | Semantic model + reports | Local only | $0 (M365 Enterprise) |
+| Excel / Power Query | Light transforms, QC | Local only | $0 (M365 Enterprise) |
+| Power Automate | Weekly refresh orchestration | Metadata only | $0 (M365 Enterprise) |
+| OneDrive / SharePoint | De-id backup + collaboration | De-id only | $0 (M365 Enterprise) |
+| Desktop Commander | File ops, Python execution | Local shell | $0 |
+| osascript | App control, UI automation | Local shell | $0 |
+| Claude in Chrome | M365 web app interaction | Browser only | $0 |
+| Replit | Dashboard, API, workers | De-id exports only | $200/mo (existing) |
+| ElevenLabs | Voice assistant, TTS | De-id KB only | $0 (Free tier) |
+| LangGraph | Agent orchestration | Local execution | $0 (open source) |
+| Claude API | LLM for agents | De-id prompts only | ~$3-5/mo |
+| **Total** | | | **~$203-205/mo** |
 
 ---
 
-**Prompt Version:** 1.0
+**Prompt Version:** 2.0
 **Created:** 2026-03-27
+**Updated:** 2026-03-27 (added ElevenLabs, Replit, LangChain/LangGraph)
 **For:** Claude Code / Cowork Session
