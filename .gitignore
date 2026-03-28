@@ -7,6 +7,11 @@ __pycache__/
 .venv/
 .vscode/
 
+# ── Secrets — NEVER commit ────────────────────────────────────────────────
+.env
+*.env
+!.env.example
+
 # Raw source data — PHI-sensitive, must not be committed
 raw/
 
