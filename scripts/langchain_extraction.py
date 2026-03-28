@@ -166,13 +166,16 @@ def build_extraction_chain(
     from langchain_core.runnables import RunnableLambda
 
     # Try langchain-ollama first, fall back to langchain-community
+    # num_predict=8000: qwen3 uses <think>...</think> reasoning tokens before
+    # producing JSON. 2000 was too low -- model exhausted budget on thinking
+    # and never output JSON. 8000 gives ample room for both.
     try:
         from langchain_ollama import ChatOllama
         llm = ChatOllama(
             base_url=base_url.replace("/v1", ""),  # Ollama native URL
             model=model,
             temperature=temperature,
-            num_predict=2000,
+            num_predict=8000,
             format="json",
         )
     except ImportError:
@@ -181,7 +184,7 @@ def build_extraction_chain(
             base_url=base_url.replace("/v1", ""),
             model=model,
             temperature=temperature,
-            num_predict=2000,
+            num_predict=8000,
             format="json",
         )
 
@@ -189,11 +192,16 @@ def build_extraction_chain(
     parser = JsonOutputParser(pydantic_object=ExtractionResult)
     format_instructions = parser.get_format_instructions()
 
+    # Prepend /no_think to disable qwen3's chain-of-thought reasoning tokens.
+    # This prevents the model from burning num_predict budget on <think>...</think>
+    # and ensures JSON output starts immediately.
+    no_think_prefix = "/no_think\n\n"
+
     # Build messages directly (avoids ChatPromptTemplate escaping issues
     # with { } in prompt JSON examples)
     def _build_messages(inputs: dict) -> list:
         return [
-            SystemMessage(content=system_prompt_text + "\n\n" + format_instructions),
+            SystemMessage(content=no_think_prefix + system_prompt_text + "\n\n" + format_instructions),
             HumanMessage(content=inputs["note_text"]),
         ]
 
@@ -249,6 +257,7 @@ def extract_domain(
     model: str,
     output_dir: Path,
     batch_size: int = 50,
+    max_notes: int = 0,
 ) -> Path:
     """Run LangChain extraction for one domain with per-note checkpointing.
 
@@ -278,6 +287,8 @@ def extract_domain(
                      f"{len(notes_df) - len(done_ids):,} remaining")
 
     remaining_df = notes_df[~notes_df["note_row_id"].astype(str).isin(done_ids)]
+    if max_notes > 0:
+        remaining_df = remaining_df.head(max_notes)
     n_total = len(notes_df)
     n_remaining = len(remaining_df)
 
@@ -360,6 +371,8 @@ def main() -> None:
                         help="Input parquet file")
     parser.add_argument("--batch-size", type=int, default=50,
                         help="Logging batch size")
+    parser.add_argument("--max-notes", type=int, default=0,
+                        help="Max notes to process per domain (0=all)")
 
     args = parser.parse_args()
 
@@ -404,6 +417,7 @@ def main() -> None:
             model=args.model,
             output_dir=output_dir,
             batch_size=args.batch_size,
+            max_notes=args.max_notes,
         )
 
     log.info("\n" + "=" * 70)
