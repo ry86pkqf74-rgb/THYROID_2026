@@ -1,0 +1,6160 @@
+{
+  "name": "THYROID_2026_SemanticModel",
+  "compatibilityLevel": 1550,
+  "model": {
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "tables": [
+      {
+        "name": "SilverLayerPath",
+        "columns": [
+          {
+            "name": "SilverLayerPath",
+            "dataType": "string",
+            "sourceColumn": "SilverLayerPath"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "SilverLayerPath_partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "\"/Users/ros/THYROID_SECURE_2026/01_SILVER_DEID_PARQUET/\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Dim_Patient",
+        "columns": [
+          {
+            "name": "research_id",
+            "dataType": "string",
+            "sourceColumn": "research_id",
+            "isKey": true
+          },
+          {
+            "name": "age_at_surgery",
+            "dataType": "int64",
+            "sourceColumn": "age_at_surgery"
+          },
+          {
+            "name": "sex",
+            "dataType": "string",
+            "sourceColumn": "sex"
+          },
+          {
+            "name": "surgery_date",
+            "dataType": "string",
+            "sourceColumn": "surgery_date"
+          },
+          {
+            "name": "has_anti_thyroglobulin_labs",
+            "dataType": "boolean",
+            "sourceColumn": "has_anti_thyroglobulin_labs"
+          },
+          {
+            "name": "has_benign_pathology",
+            "dataType": "boolean",
+            "sourceColumn": "has_benign_pathology"
+          },
+          {
+            "name": "has_ct_imaging",
+            "dataType": "boolean",
+            "sourceColumn": "has_ct_imaging"
+          },
+          {
+            "name": "has_fna_cytology",
+            "dataType": "boolean",
+            "sourceColumn": "has_fna_cytology"
+          },
+          {
+            "name": "has_frozen_sections",
+            "dataType": "boolean",
+            "sourceColumn": "has_frozen_sections"
+          },
+          {
+            "name": "has_mri_imaging",
+            "dataType": "boolean",
+            "sourceColumn": "has_mri_imaging"
+          },
+          {
+            "name": "has_nuclear_med",
+            "dataType": "boolean",
+            "sourceColumn": "has_nuclear_med"
+          },
+          {
+            "name": "has_parathyroid",
+            "dataType": "boolean",
+            "sourceColumn": "has_parathyroid"
+          },
+          {
+            "name": "has_thyroglobulin_labs",
+            "dataType": "boolean",
+            "sourceColumn": "has_thyroglobulin_labs"
+          },
+          {
+            "name": "has_thyroid_sizes",
+            "dataType": "boolean",
+            "sourceColumn": "has_thyroid_sizes"
+          },
+          {
+            "name": "has_thyroid_weights",
+            "dataType": "boolean",
+            "sourceColumn": "has_thyroid_weights"
+          },
+          {
+            "name": "has_tumor_pathology",
+            "dataType": "boolean",
+            "sourceColumn": "has_tumor_pathology"
+          },
+          {
+            "name": "has_ultrasound_reports",
+            "dataType": "boolean",
+            "sourceColumn": "has_ultrasound_reports"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Dim_Patient_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Parquet.Contents(SilverLayerPath & \"patient_demographics.parquet\")\nin\n    Source"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "SourceFile",
+            "value": "patient_demographics.parquet"
+          }
+        ]
+      },
+      {
+        "name": "Dim_Date",
+        "columns": [
+          {
+            "name": "date_key",
+            "dataType": "dateTime",
+            "sourceColumn": "date_key",
+            "isKey": true
+          },
+          {
+            "name": "year",
+            "dataType": "int64",
+            "sourceColumn": "year"
+          },
+          {
+            "name": "month",
+            "dataType": "int64",
+            "sourceColumn": "month"
+          },
+          {
+            "name": "day",
+            "dataType": "int64",
+            "sourceColumn": "day"
+          },
+          {
+            "name": "day_of_week",
+            "dataType": "int64",
+            "sourceColumn": "day_of_week"
+          },
+          {
+            "name": "day_of_year",
+            "dataType": "int64",
+            "sourceColumn": "day_of_year"
+          },
+          {
+            "name": "quarter",
+            "dataType": "int64",
+            "sourceColumn": "quarter"
+          },
+          {
+            "name": "year_month",
+            "dataType": "string",
+            "sourceColumn": "year_month"
+          },
+          {
+            "name": "is_weekend",
+            "dataType": "boolean",
+            "sourceColumn": "is_weekend"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Dim_Date_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Parquet.Contents(SilverLayerPath & \"dim_date.parquet\")\nin\n    Source"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "SourceFile",
+            "value": "dim_date.parquet"
+          }
+        ]
+      },
+      {
+        "name": "Fact_Pathology",
+        "columns": [
+          {
+            "name": "research_id",
+            "dataType": "string",
+            "sourceColumn": "research_id"
+          },
+          {
+            "name": "original_procedure_label",
+            "dataType": "string",
+            "sourceColumn": "original_procedure_label"
+          },
+          {
+            "name": "surgery_date",
+            "dataType": "string",
+            "sourceColumn": "surgery_date"
+          },
+          {
+            "name": "age_at_surgery",
+            "dataType": "int64",
+            "sourceColumn": "age_at_surgery"
+          },
+          {
+            "name": "sex",
+            "dataType": "string",
+            "sourceColumn": "sex"
+          },
+          {
+            "name": "tumor_focality_overall",
+            "dataType": "string",
+            "sourceColumn": "tumor_focality_overall"
+          },
+          {
+            "name": "tumor_focality_source",
+            "dataType": "string",
+            "sourceColumn": "tumor_focality_source"
+          },
+          {
+            "name": "tumor_laterality_overall",
+            "dataType": "string",
+            "sourceColumn": "tumor_laterality_overall"
+          },
+          {
+            "name": "tumor_laterality_source",
+            "dataType": "string",
+            "sourceColumn": "tumor_laterality_source"
+          },
+          {
+            "name": "num_tumors_identified",
+            "dataType": "int64",
+            "sourceColumn": "num_tumors_identified"
+          },
+          {
+            "name": "histology_1_type",
+            "dataType": "string",
+            "sourceColumn": "histology_1_type"
+          },
+          {
+            "name": "histology_1_num_tumors",
+            "dataType": "int64",
+            "sourceColumn": "histology_1_num_tumors"
+          },
+          {
+            "name": "histology_1_dominant",
+            "dataType": "boolean",
+            "sourceColumn": "histology_1_dominant"
+          },
+          {
+            "name": "histology_1_largest_tumor_cm",
+            "dataType": "double",
+            "sourceColumn": "histology_1_largest_tumor_cm"
+          },
+          {
+            "name": "histology_1_t_stage_ajcc8",
+            "dataType": "string",
+            "sourceColumn": "histology_1_t_stage_ajcc8"
+          },
+          {
+            "name": "histology_1_n_stage_ajcc8",
+            "dataType": "string",
+            "sourceColumn": "histology_1_n_stage_ajcc8"
+          },
+          {
+            "name": "histology_1_m_stage_ajcc8",
+            "dataType": "string",
+            "sourceColumn": "histology_1_m_stage_ajcc8"
+          },
+          {
+            "name": "histology_1_overall_stage_ajcc8",
+            "dataType": "string",
+            "sourceColumn": "histology_1_overall_stage_ajcc8"
+          },
+          {
+            "name": "histology_1_age_group",
+            "dataType": "string",
+            "sourceColumn": "histology_1_age_group"
+          },
+          {
+            "name": "histology_1_ln_examined",
+            "dataType": "int64",
+            "sourceColumn": "histology_1_ln_examined"
+          },
+          {
+            "name": "histology_1_ln_positive",
+            "dataType": "int64",
+            "sourceColumn": "histology_1_ln_positive"
+          },
+          {
+            "name": "histology_1_ln_any_positive",
+            "dataType": "int64",
+            "sourceColumn": "histology_1_ln_any_positive"
+          },
+          {
+            "name": "histology_1_ln_largest_deposit_cm",
+            "dataType": "double",
+            "sourceColumn": "histology_1_ln_largest_deposit_cm"
+          },
+          {
+            "name": "histology_1_ln_ratio",
+            "dataType": "double",
+            "sourceColumn": "histology_1_ln_ratio"
+          },
+          {
+            "name": "histology_1_ln_extranodal_extension",
+            "dataType": "int64",
+            "sourceColumn": "histology_1_ln_extranodal_extension"
+          },
+          {
+            "name": "histology_1_ln_central_positive",
+            "dataType": "int64",
+            "sourceColumn": "histology_1_ln_central_positive"
+          },
+          {
+            "name": "histology_1_ln_lateral_positive",
+            "dataType": "int64",
+            "sourceColumn": "histology_1_ln_lateral_positive"
+          },
+          {
+            "name": "dominant_histology_type",
+            "dataType": "string",
+            "sourceColumn": "dominant_histology_type"
+          },
+          {
+            "name": "tumor_1_present",
+            "dataType": "boolean",
+            "sourceColumn": "tumor_1_present"
+          },
+          {
+            "name": "tumor_1_histology",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_histology"
+          },
+          {
+            "name": "tumor_1_histology_source",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_histology_source"
+          },
+          {
+            "name": "tumor_1_metastatic_disease",
+            "dataType": "boolean",
+            "sourceColumn": "tumor_1_metastatic_disease"
+          },
+          {
+            "name": "tumor_1_size_cm",
+            "dataType": "double",
+            "sourceColumn": "tumor_1_size_cm"
+          },
+          {
+            "name": "tumor_1_size_source",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_size_source"
+          },
+          {
+            "name": "tumor_1_dim1",
+            "dataType": "double",
+            "sourceColumn": "tumor_1_dim1"
+          },
+          {
+            "name": "tumor_1_dim2",
+            "dataType": "double",
+            "sourceColumn": "tumor_1_dim2"
+          },
+          {
+            "name": "tumor_1_dim3",
+            "dataType": "double",
+            "sourceColumn": "tumor_1_dim3"
+          },
+          {
+            "name": "tumor_1_volume_cc",
+            "dataType": "double",
+            "sourceColumn": "tumor_1_volume_cc"
+          },
+          {
+            "name": "tumor_1_site",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_site"
+          },
+          {
+            "name": "tumor_1_histology_base",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_histology_base"
+          },
+          {
+            "name": "tumor_1_histology_variant",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_histology_variant"
+          },
+          {
+            "name": "tumor_1_histology_subtype_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_histology_subtype_detail"
+          },
+          {
+            "name": "tumor_1_tumor_capsule",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_tumor_capsule"
+          },
+          {
+            "name": "tumor_1_capsular_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_capsular_invasion"
+          },
+          {
+            "name": "tumor_1_lymphatic_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_lymphatic_invasion"
+          },
+          {
+            "name": "tumor_1_vascular_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_vascular_invasion"
+          },
+          {
+            "name": "tumor_1_perineural_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_perineural_invasion"
+          },
+          {
+            "name": "tumor_1_angioinvasion_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_angioinvasion_detail"
+          },
+          {
+            "name": "tumor_1_margin_status",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_margin_status"
+          },
+          {
+            "name": "tumor_1_margin_distance_mm",
+            "dataType": "double",
+            "sourceColumn": "tumor_1_margin_distance_mm"
+          },
+          {
+            "name": "tumor_1_margin_site",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_margin_site"
+          },
+          {
+            "name": "tumor_1_margin_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_margin_detail"
+          },
+          {
+            "name": "tumor_1_extrathyroidal_ext",
+            "dataType": "boolean",
+            "sourceColumn": "tumor_1_extrathyroidal_ext"
+          },
+          {
+            "name": "tumor_1_gross_ete",
+            "dataType": "int64",
+            "sourceColumn": "tumor_1_gross_ete"
+          },
+          {
+            "name": "tumor_1_ete_microscopic_only",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_ete_microscopic_only"
+          },
+          {
+            "name": "tumor_1_strap_muscles",
+            "dataType": "int64",
+            "sourceColumn": "tumor_1_strap_muscles"
+          },
+          {
+            "name": "tumor_1_ete_beyond_strap",
+            "dataType": "int64",
+            "sourceColumn": "tumor_1_ete_beyond_strap"
+          },
+          {
+            "name": "tumor_1_ete_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_ete_detail"
+          },
+          {
+            "name": "tumor_1_distant_mets",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_distant_mets"
+          },
+          {
+            "name": "tumor_2_present",
+            "dataType": "boolean",
+            "sourceColumn": "tumor_2_present"
+          },
+          {
+            "name": "tumor_2_histology",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_histology"
+          },
+          {
+            "name": "tumor_2_histology_source",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_histology_source"
+          },
+          {
+            "name": "tumor_2_histology_base",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_histology_base"
+          },
+          {
+            "name": "tumor_2_histology_variant",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_histology_variant"
+          },
+          {
+            "name": "tumor_2_histology_subtype_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_histology_subtype_detail"
+          },
+          {
+            "name": "tumor_2_metastatic_disease",
+            "dataType": "int64",
+            "sourceColumn": "tumor_2_metastatic_disease"
+          },
+          {
+            "name": "tumor_2_size_cm",
+            "dataType": "double",
+            "sourceColumn": "tumor_2_size_cm"
+          },
+          {
+            "name": "tumor_2_size_source",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_size_source"
+          },
+          {
+            "name": "tumor_2_dim1",
+            "dataType": "double",
+            "sourceColumn": "tumor_2_dim1"
+          },
+          {
+            "name": "tumor_2_dim2",
+            "dataType": "double",
+            "sourceColumn": "tumor_2_dim2"
+          },
+          {
+            "name": "tumor_2_dim3",
+            "dataType": "double",
+            "sourceColumn": "tumor_2_dim3"
+          },
+          {
+            "name": "tumor_2_volume_cc",
+            "dataType": "double",
+            "sourceColumn": "tumor_2_volume_cc"
+          },
+          {
+            "name": "tumor_2_site",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_site"
+          },
+          {
+            "name": "tumor_2_tumor_capsule",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_tumor_capsule"
+          },
+          {
+            "name": "tumor_2_capsular_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_capsular_invasion"
+          },
+          {
+            "name": "tumor_2_lymphatic_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_lymphatic_invasion"
+          },
+          {
+            "name": "tumor_2_vascular_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_vascular_invasion"
+          },
+          {
+            "name": "tumor_2_perineural_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_perineural_invasion"
+          },
+          {
+            "name": "tumor_2_angioinvasion_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_angioinvasion_detail"
+          },
+          {
+            "name": "tumor_2_margin_status",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_margin_status"
+          },
+          {
+            "name": "tumor_2_margin_distance_mm",
+            "dataType": "double",
+            "sourceColumn": "tumor_2_margin_distance_mm"
+          },
+          {
+            "name": "tumor_2_margin_site",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_margin_site"
+          },
+          {
+            "name": "tumor_2_margin_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_margin_detail"
+          },
+          {
+            "name": "tumor_2_extrathyroidal_ext",
+            "dataType": "int64",
+            "sourceColumn": "tumor_2_extrathyroidal_ext"
+          },
+          {
+            "name": "tumor_2_gross_ete",
+            "dataType": "int64",
+            "sourceColumn": "tumor_2_gross_ete"
+          },
+          {
+            "name": "tumor_2_strap_muscles",
+            "dataType": "int64",
+            "sourceColumn": "tumor_2_strap_muscles"
+          },
+          {
+            "name": "tumor_3_present",
+            "dataType": "boolean",
+            "sourceColumn": "tumor_3_present"
+          },
+          {
+            "name": "tumor_3_histology",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_histology"
+          },
+          {
+            "name": "tumor_3_histology_source",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_histology_source"
+          },
+          {
+            "name": "tumor_3_histology_base",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_histology_base"
+          },
+          {
+            "name": "tumor_3_histology_variant",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_histology_variant"
+          },
+          {
+            "name": "tumor_3_histology_subtype_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_histology_subtype_detail"
+          },
+          {
+            "name": "tumor_3_metastatic_disease",
+            "dataType": "int64",
+            "sourceColumn": "tumor_3_metastatic_disease"
+          },
+          {
+            "name": "tumor_3_size_cm",
+            "dataType": "double",
+            "sourceColumn": "tumor_3_size_cm"
+          },
+          {
+            "name": "tumor_3_size_source",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_size_source"
+          },
+          {
+            "name": "tumor_3_dim1",
+            "dataType": "double",
+            "sourceColumn": "tumor_3_dim1"
+          },
+          {
+            "name": "tumor_3_dim2",
+            "dataType": "double",
+            "sourceColumn": "tumor_3_dim2"
+          },
+          {
+            "name": "tumor_3_dim3",
+            "dataType": "double",
+            "sourceColumn": "tumor_3_dim3"
+          },
+          {
+            "name": "tumor_3_volume_cc",
+            "dataType": "double",
+            "sourceColumn": "tumor_3_volume_cc"
+          },
+          {
+            "name": "tumor_3_site",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_site"
+          },
+          {
+            "name": "tumor_3_tumor_capsule",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_tumor_capsule"
+          },
+          {
+            "name": "tumor_3_capsular_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_capsular_invasion"
+          },
+          {
+            "name": "tumor_3_lymphatic_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_lymphatic_invasion"
+          },
+          {
+            "name": "tumor_3_vascular_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_vascular_invasion"
+          },
+          {
+            "name": "tumor_3_perineural_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_perineural_invasion"
+          },
+          {
+            "name": "tumor_3_angioinvasion_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_angioinvasion_detail"
+          },
+          {
+            "name": "tumor_3_margin_status",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_margin_status"
+          },
+          {
+            "name": "tumor_3_margin_distance_mm",
+            "dataType": "double",
+            "sourceColumn": "tumor_3_margin_distance_mm"
+          },
+          {
+            "name": "tumor_3_margin_site",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_margin_site"
+          },
+          {
+            "name": "tumor_3_margin_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_margin_detail"
+          },
+          {
+            "name": "tumor_3_extrathyroidal_ext",
+            "dataType": "int64",
+            "sourceColumn": "tumor_3_extrathyroidal_ext"
+          },
+          {
+            "name": "tumor_3_gross_ete",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_gross_ete"
+          },
+          {
+            "name": "tumor_3_strap_muscles",
+            "dataType": "int64",
+            "sourceColumn": "tumor_3_strap_muscles"
+          },
+          {
+            "name": "tumor_4_present",
+            "dataType": "boolean",
+            "sourceColumn": "tumor_4_present"
+          },
+          {
+            "name": "tumor_4_histology",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_histology"
+          },
+          {
+            "name": "tumor_4_histology_source",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_histology_source"
+          },
+          {
+            "name": "tumor_4_histology_base",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_histology_base"
+          },
+          {
+            "name": "tumor_4_histology_variant",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_histology_variant"
+          },
+          {
+            "name": "tumor_4_histology_subtype_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_histology_subtype_detail"
+          },
+          {
+            "name": "tumor_4_metastatic_disease",
+            "dataType": "int64",
+            "sourceColumn": "tumor_4_metastatic_disease"
+          },
+          {
+            "name": "tumor_4_size_cm",
+            "dataType": "double",
+            "sourceColumn": "tumor_4_size_cm"
+          },
+          {
+            "name": "tumor_4_size_source",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_size_source"
+          },
+          {
+            "name": "tumor_4_dim1",
+            "dataType": "double",
+            "sourceColumn": "tumor_4_dim1"
+          },
+          {
+            "name": "tumor_4_dim2",
+            "dataType": "double",
+            "sourceColumn": "tumor_4_dim2"
+          },
+          {
+            "name": "tumor_4_dim3",
+            "dataType": "double",
+            "sourceColumn": "tumor_4_dim3"
+          },
+          {
+            "name": "tumor_4_volume_cc",
+            "dataType": "double",
+            "sourceColumn": "tumor_4_volume_cc"
+          },
+          {
+            "name": "tumor_4_site",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_site"
+          },
+          {
+            "name": "tumor_4_tumor_capsule",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_tumor_capsule"
+          },
+          {
+            "name": "tumor_4_capsular_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_capsular_invasion"
+          },
+          {
+            "name": "tumor_4_lymphatic_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_lymphatic_invasion"
+          },
+          {
+            "name": "tumor_4_vascular_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_vascular_invasion"
+          },
+          {
+            "name": "tumor_4_perineural_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_perineural_invasion"
+          },
+          {
+            "name": "tumor_4_angioinvasion_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_angioinvasion_detail"
+          },
+          {
+            "name": "tumor_4_margin_status",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_margin_status"
+          },
+          {
+            "name": "tumor_4_margin_distance_mm",
+            "dataType": "double",
+            "sourceColumn": "tumor_4_margin_distance_mm"
+          },
+          {
+            "name": "tumor_4_margin_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_margin_detail"
+          },
+          {
+            "name": "tumor_4_extrathyroidal_ext",
+            "dataType": "int64",
+            "sourceColumn": "tumor_4_extrathyroidal_ext"
+          },
+          {
+            "name": "tumor_4_gross_ete",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_gross_ete"
+          },
+          {
+            "name": "tumor_4_strap_muscles",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_strap_muscles"
+          },
+          {
+            "name": "tumor_5_present",
+            "dataType": "boolean",
+            "sourceColumn": "tumor_5_present"
+          },
+          {
+            "name": "tumor_5_histology",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_histology"
+          },
+          {
+            "name": "tumor_5_histology_source",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_histology_source"
+          },
+          {
+            "name": "tumor_5_histology_base",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_histology_base"
+          },
+          {
+            "name": "tumor_5_histology_variant",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_histology_variant"
+          },
+          {
+            "name": "tumor_5_histology_subtype_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_histology_subtype_detail"
+          },
+          {
+            "name": "tumor_5_metastatic_disease",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_metastatic_disease"
+          },
+          {
+            "name": "tumor_5_size_cm",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_size_cm"
+          },
+          {
+            "name": "tumor_5_size_source",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_size_source"
+          },
+          {
+            "name": "tumor_5_dim1",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_dim1"
+          },
+          {
+            "name": "tumor_5_dim2",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_dim2"
+          },
+          {
+            "name": "tumor_5_dim3",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_dim3"
+          },
+          {
+            "name": "tumor_5_volume_cc",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_volume_cc"
+          },
+          {
+            "name": "tumor_5_site",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_site"
+          },
+          {
+            "name": "tumor_5_tumor_capsule",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_tumor_capsule"
+          },
+          {
+            "name": "tumor_5_capsular_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_capsular_invasion"
+          },
+          {
+            "name": "tumor_5_lymphatic_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_lymphatic_invasion"
+          },
+          {
+            "name": "tumor_5_vascular_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_vascular_invasion"
+          },
+          {
+            "name": "tumor_5_perineural_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_perineural_invasion"
+          },
+          {
+            "name": "tumor_5_angioinvasion_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_angioinvasion_detail"
+          },
+          {
+            "name": "tumor_5_margin_status",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_margin_status"
+          },
+          {
+            "name": "tumor_5_margin_distance_mm",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_margin_distance_mm"
+          },
+          {
+            "name": "tumor_5_margin_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_margin_detail"
+          },
+          {
+            "name": "tumor_5_extrathyroidal_ext",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_extrathyroidal_ext"
+          },
+          {
+            "name": "tumor_5_gross_ete",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_gross_ete"
+          },
+          {
+            "name": "tumor_5_strap_muscles",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_strap_muscles"
+          },
+          {
+            "name": "primary_ln_ln_total_examined",
+            "dataType": "int64",
+            "sourceColumn": "primary_ln_ln_total_examined"
+          },
+          {
+            "name": "primary_ln_ln_total_positive",
+            "dataType": "int64",
+            "sourceColumn": "primary_ln_ln_total_positive"
+          },
+          {
+            "name": "primary_ln_ln_location_detail",
+            "dataType": "string",
+            "sourceColumn": "primary_ln_ln_location_detail"
+          },
+          {
+            "name": "primary_ln_ln_levels_examined",
+            "dataType": "string",
+            "sourceColumn": "primary_ln_ln_levels_examined"
+          },
+          {
+            "name": "primary_ln_ln_levels_involved",
+            "dataType": "string",
+            "sourceColumn": "primary_ln_ln_levels_involved"
+          },
+          {
+            "name": "primary_ln_ln_largest_deposit_cm",
+            "dataType": "double",
+            "sourceColumn": "primary_ln_ln_largest_deposit_cm"
+          },
+          {
+            "name": "primary_ln_ln_comment",
+            "dataType": "string",
+            "sourceColumn": "primary_ln_ln_comment"
+          },
+          {
+            "name": "primary_ln_ln_extranodal_extension",
+            "dataType": "int64",
+            "sourceColumn": "primary_ln_ln_extranodal_extension"
+          },
+          {
+            "name": "primary_ln_ln_central_positive",
+            "dataType": "int64",
+            "sourceColumn": "primary_ln_ln_central_positive"
+          },
+          {
+            "name": "primary_ln_ln_lateral_positive",
+            "dataType": "int64",
+            "sourceColumn": "primary_ln_ln_lateral_positive"
+          },
+          {
+            "name": "primary_ln_ln_ratio",
+            "dataType": "double",
+            "sourceColumn": "primary_ln_ln_ratio"
+          },
+          {
+            "name": "primary_ln_ln_any_positive",
+            "dataType": "int64",
+            "sourceColumn": "primary_ln_ln_any_positive"
+          },
+          {
+            "name": "pathology_excerpt",
+            "dataType": "string",
+            "sourceColumn": "pathology_excerpt"
+          },
+          {
+            "name": "tumor_2_ete_microscopic_only",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_ete_microscopic_only"
+          },
+          {
+            "name": "tumor_2_ete_beyond_strap",
+            "dataType": "int64",
+            "sourceColumn": "tumor_2_ete_beyond_strap"
+          },
+          {
+            "name": "tumor_2_ete_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_ete_detail"
+          },
+          {
+            "name": "tumor_3_ete_microscopic_only",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_ete_microscopic_only"
+          },
+          {
+            "name": "tumor_3_ete_beyond_strap",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_ete_beyond_strap"
+          },
+          {
+            "name": "tumor_3_ete_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_ete_detail"
+          },
+          {
+            "name": "tumor_4_ete_microscopic_only",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_ete_microscopic_only"
+          },
+          {
+            "name": "tumor_4_ete_beyond_strap",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_ete_beyond_strap"
+          },
+          {
+            "name": "tumor_4_ete_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_ete_detail"
+          },
+          {
+            "name": "tumor_5_ete_microscopic_only",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_ete_microscopic_only"
+          },
+          {
+            "name": "tumor_5_ete_beyond_strap",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_ete_beyond_strap"
+          },
+          {
+            "name": "tumor_5_ete_detail",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_ete_detail"
+          },
+          {
+            "name": "histology_1_overall_stage_collapsed",
+            "dataType": "string",
+            "sourceColumn": "histology_1_overall_stage_collapsed"
+          },
+          {
+            "name": "tumor_1_gross_ete_source",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_gross_ete_source"
+          },
+          {
+            "name": "ln_locations_parsed_count",
+            "dataType": "int64",
+            "sourceColumn": "ln_locations_parsed_count"
+          },
+          {
+            "name": "ln_central_examined",
+            "dataType": "int64",
+            "sourceColumn": "ln_central_examined"
+          },
+          {
+            "name": "ln_central_positive",
+            "dataType": "int64",
+            "sourceColumn": "ln_central_positive"
+          },
+          {
+            "name": "ln_lateral_left_examined",
+            "dataType": "int64",
+            "sourceColumn": "ln_lateral_left_examined"
+          },
+          {
+            "name": "ln_lateral_left_positive",
+            "dataType": "int64",
+            "sourceColumn": "ln_lateral_left_positive"
+          },
+          {
+            "name": "ln_lateral_right_examined",
+            "dataType": "int64",
+            "sourceColumn": "ln_lateral_right_examined"
+          },
+          {
+            "name": "ln_lateral_right_positive",
+            "dataType": "int64",
+            "sourceColumn": "ln_lateral_right_positive"
+          },
+          {
+            "name": "ln_bilateral_lateral_examined",
+            "dataType": "int64",
+            "sourceColumn": "ln_bilateral_lateral_examined"
+          },
+          {
+            "name": "ln_bilateral_lateral_positive",
+            "dataType": "int64",
+            "sourceColumn": "ln_bilateral_lateral_positive"
+          },
+          {
+            "name": "ln_other_examined",
+            "dataType": "int64",
+            "sourceColumn": "ln_other_examined"
+          },
+          {
+            "name": "ln_other_positive",
+            "dataType": "int64",
+            "sourceColumn": "ln_other_positive"
+          },
+          {
+            "name": "ln_total_examined_from_locations",
+            "dataType": "int64",
+            "sourceColumn": "ln_total_examined_from_locations"
+          },
+          {
+            "name": "ln_total_positive_from_locations",
+            "dataType": "int64",
+            "sourceColumn": "ln_total_positive_from_locations"
+          },
+          {
+            "name": "ln_parsed_locations_json",
+            "dataType": "string",
+            "sourceColumn": "ln_parsed_locations_json"
+          },
+          {
+            "name": "ln_mets_ptc",
+            "dataType": "boolean",
+            "sourceColumn": "ln_mets_ptc"
+          },
+          {
+            "name": "ln_mets_ptc_variant",
+            "dataType": "string",
+            "sourceColumn": "ln_mets_ptc_variant"
+          },
+          {
+            "name": "ln_mets_ftc",
+            "dataType": "boolean",
+            "sourceColumn": "ln_mets_ftc"
+          },
+          {
+            "name": "ln_mets_hurthle",
+            "dataType": "boolean",
+            "sourceColumn": "ln_mets_hurthle"
+          },
+          {
+            "name": "ln_mets_mtc",
+            "dataType": "boolean",
+            "sourceColumn": "ln_mets_mtc"
+          },
+          {
+            "name": "ln_mets_atc",
+            "dataType": "boolean",
+            "sourceColumn": "ln_mets_atc"
+          },
+          {
+            "name": "ln_mets_pdtc",
+            "dataType": "boolean",
+            "sourceColumn": "ln_mets_pdtc"
+          },
+          {
+            "name": "ln_mets_micrometastasis",
+            "dataType": "boolean",
+            "sourceColumn": "ln_mets_micrometastasis"
+          },
+          {
+            "name": "ln_mets_extranodal_extension",
+            "dataType": "boolean",
+            "sourceColumn": "ln_mets_extranodal_extension"
+          },
+          {
+            "name": "ln_mets_cystic",
+            "dataType": "boolean",
+            "sourceColumn": "ln_mets_cystic"
+          },
+          {
+            "name": "ln_histology_source",
+            "dataType": "string",
+            "sourceColumn": "ln_histology_source"
+          },
+          {
+            "name": "ln_histology_raw_text",
+            "dataType": "string",
+            "sourceColumn": "ln_histology_raw_text"
+          },
+          {
+            "name": "ln_level_i_examined",
+            "dataType": "int64",
+            "sourceColumn": "ln_level_i_examined"
+          },
+          {
+            "name": "ln_level_i_positive",
+            "dataType": "int64",
+            "sourceColumn": "ln_level_i_positive"
+          },
+          {
+            "name": "ln_level_ii_examined",
+            "dataType": "int64",
+            "sourceColumn": "ln_level_ii_examined"
+          },
+          {
+            "name": "ln_level_ii_positive",
+            "dataType": "int64",
+            "sourceColumn": "ln_level_ii_positive"
+          },
+          {
+            "name": "ln_level_iii_examined",
+            "dataType": "int64",
+            "sourceColumn": "ln_level_iii_examined"
+          },
+          {
+            "name": "ln_level_iii_positive",
+            "dataType": "int64",
+            "sourceColumn": "ln_level_iii_positive"
+          },
+          {
+            "name": "ln_level_iv_examined",
+            "dataType": "int64",
+            "sourceColumn": "ln_level_iv_examined"
+          },
+          {
+            "name": "ln_level_iv_positive",
+            "dataType": "int64",
+            "sourceColumn": "ln_level_iv_positive"
+          },
+          {
+            "name": "ln_level_v_examined",
+            "dataType": "int64",
+            "sourceColumn": "ln_level_v_examined"
+          },
+          {
+            "name": "ln_level_v_positive",
+            "dataType": "int64",
+            "sourceColumn": "ln_level_v_positive"
+          },
+          {
+            "name": "ln_level_vi_examined",
+            "dataType": "int64",
+            "sourceColumn": "ln_level_vi_examined"
+          },
+          {
+            "name": "ln_level_vi_positive",
+            "dataType": "int64",
+            "sourceColumn": "ln_level_vi_positive"
+          },
+          {
+            "name": "ln_level_vii_examined",
+            "dataType": "int64",
+            "sourceColumn": "ln_level_vii_examined"
+          },
+          {
+            "name": "ln_level_vii_positive",
+            "dataType": "int64",
+            "sourceColumn": "ln_level_vii_positive"
+          },
+          {
+            "name": "ln_level_unspecified_examined",
+            "dataType": "int64",
+            "sourceColumn": "ln_level_unspecified_examined"
+          },
+          {
+            "name": "ln_level_unspecified_positive",
+            "dataType": "int64",
+            "sourceColumn": "ln_level_unspecified_positive"
+          },
+          {
+            "name": "ln_region_central_examined",
+            "dataType": "int64",
+            "sourceColumn": "ln_region_central_examined"
+          },
+          {
+            "name": "ln_region_central_positive",
+            "dataType": "int64",
+            "sourceColumn": "ln_region_central_positive"
+          },
+          {
+            "name": "ln_region_lateral_left_examined",
+            "dataType": "int64",
+            "sourceColumn": "ln_region_lateral_left_examined"
+          },
+          {
+            "name": "ln_region_lateral_left_positive",
+            "dataType": "int64",
+            "sourceColumn": "ln_region_lateral_left_positive"
+          },
+          {
+            "name": "ln_region_lateral_right_examined",
+            "dataType": "int64",
+            "sourceColumn": "ln_region_lateral_right_examined"
+          },
+          {
+            "name": "ln_region_lateral_right_positive",
+            "dataType": "int64",
+            "sourceColumn": "ln_region_lateral_right_positive"
+          },
+          {
+            "name": "ln_region_other_examined",
+            "dataType": "int64",
+            "sourceColumn": "ln_region_other_examined"
+          },
+          {
+            "name": "ln_region_other_positive",
+            "dataType": "int64",
+            "sourceColumn": "ln_region_other_positive"
+          },
+          {
+            "name": "ln_total_levels_involved",
+            "dataType": "int64",
+            "sourceColumn": "ln_total_levels_involved"
+          },
+          {
+            "name": "ln_total_locations_parsed",
+            "dataType": "int64",
+            "sourceColumn": "ln_total_locations_parsed"
+          },
+          {
+            "name": "ln_parsed_data_json",
+            "dataType": "string",
+            "sourceColumn": "ln_parsed_data_json"
+          },
+          {
+            "name": "braf_mutation_mentioned",
+            "dataType": "boolean",
+            "sourceColumn": "braf_mutation_mentioned"
+          },
+          {
+            "name": "ras_mutation_mentioned",
+            "dataType": "boolean",
+            "sourceColumn": "ras_mutation_mentioned"
+          },
+          {
+            "name": "ret_mutation_mentioned",
+            "dataType": "boolean",
+            "sourceColumn": "ret_mutation_mentioned"
+          },
+          {
+            "name": "tert_mutation_mentioned",
+            "dataType": "boolean",
+            "sourceColumn": "tert_mutation_mentioned"
+          },
+          {
+            "name": "ntrk_mutation_mentioned",
+            "dataType": "boolean",
+            "sourceColumn": "ntrk_mutation_mentioned"
+          },
+          {
+            "name": "alk_mutation_mentioned",
+            "dataType": "boolean",
+            "sourceColumn": "alk_mutation_mentioned"
+          },
+          {
+            "name": "variant_standardized",
+            "dataType": "string",
+            "sourceColumn": "variant_standardized"
+          },
+          {
+            "name": "surgery_type_normalized",
+            "dataType": "string",
+            "sourceColumn": "surgery_type_normalized"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Fact_Pathology_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Parquet.Contents(SilverLayerPath & \"pathology_facts.parquet\")\nin\n    Source"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "SourceFile",
+            "value": "pathology_facts.parquet"
+          }
+        ]
+      },
+      {
+        "name": "Fact_SynopticPath",
+        "columns": [
+          {
+            "name": "research_id",
+            "dataType": "int64",
+            "sourceColumn": "research_id"
+          },
+          {
+            "name": "Gender",
+            "dataType": "string",
+            "sourceColumn": "Gender"
+          },
+          {
+            "name": "Age",
+            "dataType": "double",
+            "sourceColumn": "Age"
+          },
+          {
+            "name": "Thyroid_Procedure",
+            "dataType": "string",
+            "sourceColumn": "Thyroid_Procedure"
+          },
+          {
+            "name": "Reop",
+            "dataType": "string",
+            "sourceColumn": "Reop"
+          },
+          {
+            "name": "Surgery#",
+            "dataType": "string",
+            "sourceColumn": "Surgery#"
+          },
+          {
+            "name": "Completion",
+            "dataType": "string",
+            "sourceColumn": "Completion"
+          },
+          {
+            "name": "substernal resection",
+            "dataType": "string",
+            "sourceColumn": "substernal resection"
+          },
+          {
+            "name": "Procedure_other_description",
+            "dataType": "string",
+            "sourceColumn": "Procedure_other_description"
+          },
+          {
+            "name": "IO RLN monitoring",
+            "dataType": "string",
+            "sourceColumn": "IO RLN monitoring"
+          },
+          {
+            "name": "Central compartment dissection",
+            "dataType": "string",
+            "sourceColumn": "Central compartment dissection"
+          },
+          {
+            "name": "Right neck dissection",
+            "dataType": "string",
+            "sourceColumn": "Right neck dissection"
+          },
+          {
+            "name": "Left neck dissection ",
+            "dataType": "string",
+            "sourceColumn": "Left neck dissection "
+          },
+          {
+            "name": "Bilateral neck dissection",
+            "dataType": "string",
+            "sourceColumn": "Bilateral neck dissection"
+          },
+          {
+            "name": "Other LN dissection",
+            "dataType": "string",
+            "sourceColumn": "Other LN dissection"
+          },
+          {
+            "name": "parathyroid operation",
+            "dataType": "string",
+            "sourceColumn": "parathyroid operation"
+          },
+          {
+            "name": "Path Special Studies",
+            "dataType": "string",
+            "sourceColumn": "Path Special Studies"
+          },
+          {
+            "name": "clinical information (pre-op diagnosis)",
+            "dataType": "string",
+            "sourceColumn": "clinical information (pre-op diagnosis)"
+          },
+          {
+            "name": "PATH DIAGNOSIS COMMENT",
+            "dataType": "string",
+            "sourceColumn": "PATH DIAGNOSIS COMMENT"
+          },
+          {
+            "name": "Path Diagnosis Summary",
+            "dataType": "string",
+            "sourceColumn": "Path Diagnosis Summary"
+          },
+          {
+            "name": "Synoptic diagnosis",
+            "dataType": "string",
+            "sourceColumn": "Synoptic diagnosis"
+          },
+          {
+            "name": "Microscopic description",
+            "dataType": "string",
+            "sourceColumn": "Microscopic description"
+          },
+          {
+            "name": "path extended (Gross path)",
+            "dataType": "string",
+            "sourceColumn": "path extended (Gross path)"
+          },
+          {
+            "name": "RL size (cm)",
+            "dataType": "double",
+            "sourceColumn": "RL size (cm)"
+          },
+          {
+            "name": "LL Size (cm)",
+            "dataType": "double",
+            "sourceColumn": "LL Size (cm)"
+          },
+          {
+            "name": "isthmus size (cm)",
+            "dataType": "double",
+            "sourceColumn": "isthmus size (cm)"
+          },
+          {
+            "name": "pyramidal lobe (cm)",
+            "dataType": "string",
+            "sourceColumn": "pyramidal lobe (cm)"
+          },
+          {
+            "name": "Total thyroid size",
+            "dataType": "string",
+            "sourceColumn": "Total thyroid size"
+          },
+          {
+            "name": "substernal goiter size (cm)",
+            "dataType": "double",
+            "sourceColumn": "substernal goiter size (cm)"
+          },
+          {
+            "name": "Other (label)",
+            "dataType": "string",
+            "sourceColumn": "Other (label)"
+          },
+          {
+            "name": "specimen integrity",
+            "dataType": "string",
+            "sourceColumn": "specimen integrity"
+          },
+          {
+            "name": " weight Total",
+            "dataType": "string",
+            "sourceColumn": " weight Total"
+          },
+          {
+            "name": "RL (g)",
+            "dataType": "string",
+            "sourceColumn": "RL (g)"
+          },
+          {
+            "name": "LL (g)",
+            "dataType": "string",
+            "sourceColumn": "LL (g)"
+          },
+          {
+            "name": "Isthmus (g)",
+            "dataType": "string",
+            "sourceColumn": "Isthmus (g)"
+          },
+          {
+            "name": "pyramidal (g)",
+            "dataType": "string",
+            "sourceColumn": "pyramidal (g)"
+          },
+          {
+            "name": "substernal  (g)",
+            "dataType": "string",
+            "sourceColumn": "substernal  (g)"
+          },
+          {
+            "name": "Other (g)",
+            "dataType": "string",
+            "sourceColumn": "Other (g)"
+          },
+          {
+            "name": "tumor focality",
+            "dataType": "string",
+            "sourceColumn": "tumor focality"
+          },
+          {
+            "name": "Tumor laterality",
+            "dataType": "string",
+            "sourceColumn": "Tumor laterality"
+          },
+          {
+            "name": "DOMINANT ( 1)",
+            "dataType": "string",
+            "sourceColumn": "DOMINANT ( 1)"
+          },
+          {
+            "name": "Tumor 1 site/laterality",
+            "dataType": "string",
+            "sourceColumn": "Tumor 1 site/laterality"
+          },
+          {
+            "name": "tumor_1_ size greatest dimension (cm)",
+            "dataType": "double",
+            "sourceColumn": "tumor_1_ size greatest dimension (cm)"
+          },
+          {
+            "name": "Tumor_1_additional dimension_1",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_additional dimension_1"
+          },
+          {
+            "name": "Tumor_1_additional dimension _2",
+            "dataType": "double",
+            "sourceColumn": "Tumor_1_additional dimension _2"
+          },
+          {
+            "name": "Tumor_1_histologic type",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_histologic type"
+          },
+          {
+            "name": "Tumor _1_variant",
+            "dataType": "string",
+            "sourceColumn": "Tumor _1_variant"
+          },
+          {
+            "name": "Tumor_1_Histology comment",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_Histology comment"
+          },
+          {
+            "name": "#tumors if separate synoptics not included",
+            "dataType": "string",
+            "sourceColumn": "#tumors if separate synoptics not included"
+          },
+          {
+            "name": "Tumor_1_architecture",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_architecture"
+          },
+          {
+            "name": "Tumor_1_cytomorphology",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_cytomorphology"
+          },
+          {
+            "name": "Tumor_1_Histologic Grade",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_Histologic Grade"
+          },
+          {
+            "name": "Tumor_1_Capsule",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_Capsule"
+          },
+          {
+            "name": "Tumor_1_ Capsular invasion",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_ Capsular invasion"
+          },
+          {
+            "name": "Tumor_1_Ki-67 Labeling Index (%)",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_Ki-67 Labeling Index (%)"
+          },
+          {
+            "name": "Tumor_1_mitotic Rate (per 2mm2)",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_mitotic Rate (per 2mm2)"
+          },
+          {
+            "name": "tumor_1_necrosis",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_necrosis"
+          },
+          {
+            "name": "Tumor_1_extrathyroidal extension",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_extrathyroidal extension"
+          },
+          {
+            "name": "Tumor_1_angioinvasion",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_angioinvasion"
+          },
+          {
+            "name": "Tumor_1_angioinvasion quantify",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_angioinvasion quantify"
+          },
+          {
+            "name": "Tumor_1_lymphatic invasion",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_lymphatic invasion"
+          },
+          {
+            "name": "Tumor_1_perineural invasion",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_perineural invasion"
+          },
+          {
+            "name": "Tumor_1_margin status",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_margin status"
+          },
+          {
+            "name": "Tumor_1_distance to closest margin (mm)",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_distance to closest margin (mm)"
+          },
+          {
+            "name": "Tumor_1_Site of involvement",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_Site of involvement"
+          },
+          {
+            "name": "Tumor_1_margin & angiolymphatic invasion comment",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_margin & angiolymphatic invasion comment"
+          },
+          {
+            "name": "Tumor_1_#LN involved",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_#LN involved"
+          },
+          {
+            "name": "Tumor_1_Level involved",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_Level involved"
+          },
+          {
+            "name": "Tumor_1_Size of largest metastatic deposit (cm)",
+            "dataType": "double",
+            "sourceColumn": "Tumor_1_Size of largest metastatic deposit (cm)"
+          },
+          {
+            "name": "Tumor_1_Extranodal extension",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_Extranodal extension"
+          },
+          {
+            "name": "Tumor_1_#LN examined",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_#LN examined"
+          },
+          {
+            "name": "Tumor_1_level examined",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_level examined"
+          },
+          {
+            "name": "Tumor_1_LN examined comment",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_LN examined comment"
+          },
+          {
+            "name": "Tumor_1_LN location",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_LN location"
+          },
+          {
+            "name": "Tumor_1_multiple tumor",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_multiple tumor"
+          },
+          {
+            "name": "Tumor_1_pT",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_pT"
+          },
+          {
+            "name": "Tumor_1_pN",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_pN"
+          },
+          {
+            "name": "Tumor_1_pM",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_pM"
+          },
+          {
+            "name": "Tumor_1_additional finding 1",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_additional finding 1"
+          },
+          {
+            "name": "Tumor_1_additional finding 2",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_additional finding 2"
+          },
+          {
+            "name": "Tumor_1_additional finding 3",
+            "dataType": "string",
+            "sourceColumn": "Tumor_1_additional finding 3"
+          },
+          {
+            "name": "# parathyroid glands",
+            "dataType": "string",
+            "sourceColumn": "# parathyroid glands"
+          },
+          {
+            "name": "Location of parathyroid glands",
+            "dataType": "string",
+            "sourceColumn": "Location of parathyroid glands"
+          },
+          {
+            "name": "Parathyroid gland findings",
+            "dataType": "string",
+            "sourceColumn": "Parathyroid gland findings"
+          },
+          {
+            "name": "Ancillary studies",
+            "dataType": "string",
+            "sourceColumn": "Ancillary studies"
+          },
+          {
+            "name": "TUMOR \n2",
+            "dataType": "double",
+            "sourceColumn": "TUMOR \n2"
+          },
+          {
+            "name": "Tumor 2 Site",
+            "dataType": "string",
+            "sourceColumn": "Tumor 2 Site"
+          },
+          {
+            "name": "tumor_2_ size greatest dimension (cm)",
+            "dataType": "double",
+            "sourceColumn": "tumor_2_ size greatest dimension (cm)"
+          },
+          {
+            "name": "tumor_2_additional dimension 1",
+            "dataType": "double",
+            "sourceColumn": "tumor_2_additional dimension 1"
+          },
+          {
+            "name": "tumor_2_additional dimension 2",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_additional dimension 2"
+          },
+          {
+            "name": "tumor_2_histologic type",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_histologic type"
+          },
+          {
+            "name": "tumor_2_histologic variants",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_histologic variants"
+          },
+          {
+            "name": "tumor_2_histology comment",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_histology comment"
+          },
+          {
+            "name": "tumor_2_architecture",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_architecture"
+          },
+          {
+            "name": "tumor_2_cytomorphology",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_cytomorphology"
+          },
+          {
+            "name": "tumor_2_histologic grade",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_histologic grade"
+          },
+          {
+            "name": "Tumor_2_Capsule",
+            "dataType": "string",
+            "sourceColumn": "Tumor_2_Capsule"
+          },
+          {
+            "name": "Tumor_2_Capsular invasion",
+            "dataType": "string",
+            "sourceColumn": "Tumor_2_Capsular invasion"
+          },
+          {
+            "name": "tumor_2_mitotic Rate (per 2mm2)",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_mitotic Rate (per 2mm2)"
+          },
+          {
+            "name": "tumor_2_necrosis",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_necrosis"
+          },
+          {
+            "name": "tumor_2_angioinvasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_angioinvasion"
+          },
+          {
+            "name": "tumor_2_angioinvasion quantify",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_angioinvasion quantify"
+          },
+          {
+            "name": "tumor_2_lymphatic invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_lymphatic invasion"
+          },
+          {
+            "name": "tumor_2_perineural invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_perineural invasion"
+          },
+          {
+            "name": "tumor_2_extrathyroidal extension",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_extrathyroidal extension"
+          },
+          {
+            "name": "tumor_2_margin status",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_margin status"
+          },
+          {
+            "name": "tumor_2_distance to closest margin (mm)",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_distance to closest margin (mm)"
+          },
+          {
+            "name": "tumor_2_site of margin involvement",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_site of margin involvement"
+          },
+          {
+            "name": "tumor_2_margin comment",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_margin comment"
+          },
+          {
+            "name": "tumor_2_LNs involved",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_LNs involved"
+          },
+          {
+            "name": "tumor_2_level involved",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_level involved"
+          },
+          {
+            "name": "tumor_2_largest metastatic deposit (cm)",
+            "dataType": "double",
+            "sourceColumn": "tumor_2_largest metastatic deposit (cm)"
+          },
+          {
+            "name": "tumor_2_Extranodal extension",
+            "dataType": "string",
+            "sourceColumn": "tumor_2_Extranodal extension"
+          },
+          {
+            "name": "STAGE tumor 2",
+            "dataType": "string",
+            "sourceColumn": "STAGE tumor 2"
+          },
+          {
+            "name": "Tumor 2 Comment",
+            "dataType": "string",
+            "sourceColumn": "Tumor 2 Comment"
+          },
+          {
+            "name": "TUMOR\n3",
+            "dataType": "double",
+            "sourceColumn": "TUMOR\n3"
+          },
+          {
+            "name": "Tumor 3 Site",
+            "dataType": "string",
+            "sourceColumn": "Tumor 3 Site"
+          },
+          {
+            "name": "tumor_3_ size greatest dimension (cm)",
+            "dataType": "double",
+            "sourceColumn": "tumor_3_ size greatest dimension (cm)"
+          },
+          {
+            "name": "tumor_3_additional dimension 1",
+            "dataType": "double",
+            "sourceColumn": "tumor_3_additional dimension 1"
+          },
+          {
+            "name": "tumor_3_additional dimension 2",
+            "dataType": "double",
+            "sourceColumn": "tumor_3_additional dimension 2"
+          },
+          {
+            "name": "tumor_3_histologic type",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_histologic type"
+          },
+          {
+            "name": "tumor_3_Histologic variant",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_Histologic variant"
+          },
+          {
+            "name": "tumor_3_histology comment",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_histology comment"
+          },
+          {
+            "name": "tumor_3_architecture",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_architecture"
+          },
+          {
+            "name": "tumor_3_cytomorphology",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_cytomorphology"
+          },
+          {
+            "name": "tumor_3_histologic grade",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_histologic grade"
+          },
+          {
+            "name": "tumor_3_Tumor Capsule",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_Tumor Capsule"
+          },
+          {
+            "name": "Tumor_3_Capsular invasion",
+            "dataType": "string",
+            "sourceColumn": "Tumor_3_Capsular invasion"
+          },
+          {
+            "name": "tumor_3 necrosis",
+            "dataType": "string",
+            "sourceColumn": "tumor_3 necrosis"
+          },
+          {
+            "name": "tumor_3_mitotic Rate (per 2mm2)",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_mitotic Rate (per 2mm2)"
+          },
+          {
+            "name": "tumor_3_angioinvasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_angioinvasion"
+          },
+          {
+            "name": "tumor_3_angioinvasion quantify",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_angioinvasion quantify"
+          },
+          {
+            "name": "tumor_3_lymphatic invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_lymphatic invasion"
+          },
+          {
+            "name": "tumor_3_perineural invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_perineural invasion"
+          },
+          {
+            "name": "tumor_3_extrathyroidal extension",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_extrathyroidal extension"
+          },
+          {
+            "name": "tumor_3_margin status",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_margin status"
+          },
+          {
+            "name": "tumor_3_distance to closest margin (mm)",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_distance to closest margin (mm)"
+          },
+          {
+            "name": "tumor_3_margin comment",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_margin comment"
+          },
+          {
+            "name": "tumor_3_STAGE tumor 3",
+            "dataType": "string",
+            "sourceColumn": "tumor_3_STAGE tumor 3"
+          },
+          {
+            "name": "Tumor 4",
+            "dataType": "double",
+            "sourceColumn": "Tumor 4"
+          },
+          {
+            "name": "Tumor 4 Site",
+            "dataType": "string",
+            "sourceColumn": "Tumor 4 Site"
+          },
+          {
+            "name": "tumor_4_size greatest dimension (cm)",
+            "dataType": "double",
+            "sourceColumn": "tumor_4_size greatest dimension (cm)"
+          },
+          {
+            "name": "tumor_4_additional dimension 1",
+            "dataType": "double",
+            "sourceColumn": "tumor_4_additional dimension 1"
+          },
+          {
+            "name": "tumor_4_additional dimension 2",
+            "dataType": "double",
+            "sourceColumn": "tumor_4_additional dimension 2"
+          },
+          {
+            "name": "tumor_4_histologic type",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_histologic type"
+          },
+          {
+            "name": "tumor_4_histologic variant",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_histologic variant"
+          },
+          {
+            "name": "tumor_4_architecture",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_architecture"
+          },
+          {
+            "name": "tumor_4_cytomorphology",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_cytomorphology"
+          },
+          {
+            "name": "tumor_4_histologic grade",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_histologic grade"
+          },
+          {
+            "name": "Tumor_4_Capsule",
+            "dataType": "string",
+            "sourceColumn": "Tumor_4_Capsule"
+          },
+          {
+            "name": "Tumor Capsular invasion",
+            "dataType": "string",
+            "sourceColumn": "Tumor Capsular invasion"
+          },
+          {
+            "name": "tumor_4_ necrosis",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_ necrosis"
+          },
+          {
+            "name": "tumor_4_ mitotic Rate (per 2mm2)",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_ mitotic Rate (per 2mm2)"
+          },
+          {
+            "name": "tumor_4_ angioinvasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_ angioinvasion"
+          },
+          {
+            "name": "tumor_4_ angioinvasion quantify",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_ angioinvasion quantify"
+          },
+          {
+            "name": "tumor_4_ lymphatic invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_ lymphatic invasion"
+          },
+          {
+            "name": "tumor_4_ perineural invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_ perineural invasion"
+          },
+          {
+            "name": "tumor_4_ extrathyroidal extension",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_ extrathyroidal extension"
+          },
+          {
+            "name": "tumor_4_ margin status",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_ margin status"
+          },
+          {
+            "name": "tumor_4_ distance to closest margin (mm)",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_ distance to closest margin (mm)"
+          },
+          {
+            "name": "tumor_4_ margin comment",
+            "dataType": "string",
+            "sourceColumn": "tumor_4_ margin comment"
+          },
+          {
+            "name": "STAGE tumor 4",
+            "dataType": "string",
+            "sourceColumn": "STAGE tumor 4"
+          },
+          {
+            "name": "Tumor 5",
+            "dataType": "double",
+            "sourceColumn": "Tumor 5"
+          },
+          {
+            "name": "Tumor 5 Site",
+            "dataType": "string",
+            "sourceColumn": "Tumor 5 Site"
+          },
+          {
+            "name": "tumor_5_ size greatest dimension (cm)",
+            "dataType": "double",
+            "sourceColumn": "tumor_5_ size greatest dimension (cm)"
+          },
+          {
+            "name": "tumor_5_additional dimension 1",
+            "dataType": "double",
+            "sourceColumn": "tumor_5_additional dimension 1"
+          },
+          {
+            "name": "tumor_5_additional dimension 2",
+            "dataType": "double",
+            "sourceColumn": "tumor_5_additional dimension 2"
+          },
+          {
+            "name": "tumor_5_histologic type",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_histologic type"
+          },
+          {
+            "name": "tumor_5_histologic variant",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_histologic variant"
+          },
+          {
+            "name": "tumor_5_architecture",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_architecture"
+          },
+          {
+            "name": "tumor_5_cytomorphology",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_cytomorphology"
+          },
+          {
+            "name": "tumor_5_histologic grade",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_histologic grade"
+          },
+          {
+            "name": "Tumor_5_Capsule",
+            "dataType": "string",
+            "sourceColumn": "Tumor_5_Capsule"
+          },
+          {
+            "name": "Tumor_5_Capsular invasion",
+            "dataType": "string",
+            "sourceColumn": "Tumor_5_Capsular invasion"
+          },
+          {
+            "name": "tumor_5_necrosis",
+            "dataType": "double",
+            "sourceColumn": "tumor_5_necrosis"
+          },
+          {
+            "name": "tumor_5_mitotic Rate (per 2mm2)",
+            "dataType": "double",
+            "sourceColumn": "tumor_5_mitotic Rate (per 2mm2)"
+          },
+          {
+            "name": "tumor_5_angioinvasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_angioinvasion"
+          },
+          {
+            "name": "tumor_5_angioinvasion quantify",
+            "dataType": "double",
+            "sourceColumn": "tumor_5_angioinvasion quantify"
+          },
+          {
+            "name": "tumor_5_lymphatic invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_lymphatic invasion"
+          },
+          {
+            "name": "tumor_5_perineural invasion",
+            "dataType": "double",
+            "sourceColumn": "tumor_5_perineural invasion"
+          },
+          {
+            "name": "tumor_5_extrathyroidal extension",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_extrathyroidal extension"
+          },
+          {
+            "name": "tumor_5_margin status",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_margin status"
+          },
+          {
+            "name": "tumor_5_distance to closest margin (mm)",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_distance to closest margin (mm)"
+          },
+          {
+            "name": "tumor_5_margin comment",
+            "dataType": "string",
+            "sourceColumn": "tumor_5_margin comment"
+          },
+          {
+            "name": "STAGE tumor 5",
+            "dataType": "double",
+            "sourceColumn": "STAGE tumor 5"
+          },
+          {
+            "name": "Frozen Section Obtained",
+            "dataType": "boolean",
+            "sourceColumn": "Frozen Section Obtained"
+          },
+          {
+            "name": "FS Pathology (Frozen Section)",
+            "dataType": "string",
+            "sourceColumn": "FS Pathology (Frozen Section)"
+          },
+          {
+            "name": "Carcinoma identified on FS sent intraop",
+            "dataType": "boolean",
+            "sourceColumn": "Carcinoma identified on FS sent intraop"
+          },
+          {
+            "name": "other  findings",
+            "dataType": "string",
+            "sourceColumn": "other  findings"
+          },
+          {
+            "name": "Adenoma/nodule size/info (not all complete)",
+            "dataType": "string",
+            "sourceColumn": "Adenoma/nodule size/info (not all complete)"
+          },
+          {
+            "name": "Atypical  adenomas",
+            "dataType": "string",
+            "sourceColumn": "Atypical  adenomas"
+          },
+          {
+            "name": "hyperplastic change (follicular hyperplasia)",
+            "dataType": "string",
+            "sourceColumn": "hyperplastic change (follicular hyperplasia)"
+          },
+          {
+            "name": "Multinodular goiter",
+            "dataType": "boolean",
+            "sourceColumn": "Multinodular goiter"
+          },
+          {
+            "name": "Substernal Multinodular goiter",
+            "dataType": "string",
+            "sourceColumn": "Substernal Multinodular goiter"
+          },
+          {
+            "name": " adenomatous hyperplasia",
+            "dataType": "string",
+            "sourceColumn": " adenomatous hyperplasia"
+          },
+          {
+            "name": "papillary hyperplasia",
+            "dataType": "string",
+            "sourceColumn": "papillary hyperplasia"
+          },
+          {
+            "name": "Hurthle cell (oncocytic) adenoma ",
+            "dataType": "string",
+            "sourceColumn": "Hurthle cell (oncocytic) adenoma "
+          },
+          {
+            "name": "Follicular adenoma",
+            "dataType": "boolean",
+            "sourceColumn": "Follicular adenoma"
+          },
+          {
+            "name": "hyalinizing trabecular tumor (adenoma)",
+            "dataType": "string",
+            "sourceColumn": "hyalinizing trabecular tumor (adenoma)"
+          },
+          {
+            "name": "Lymphocytic thyroiditis",
+            "dataType": "boolean",
+            "sourceColumn": "Lymphocytic thyroiditis"
+          },
+          {
+            "name": "chronic lymphocytic thyroiditis",
+            "dataType": "string",
+            "sourceColumn": "chronic lymphocytic thyroiditis"
+          },
+          {
+            "name": "Hashimoto Thyroiditis",
+            "dataType": "boolean",
+            "sourceColumn": "Hashimoto Thyroiditis"
+          },
+          {
+            "name": "palpation thyroiditis",
+            "dataType": "string",
+            "sourceColumn": "palpation thyroiditis"
+          },
+          {
+            "name": "Chronic thyroiditis",
+            "dataType": "string",
+            "sourceColumn": "Chronic thyroiditis"
+          },
+          {
+            "name": "De Quervain thyroiditis, granulomatous thyroiditis, or giant cell thyroiditis)",
+            "dataType": "string",
+            "sourceColumn": "De Quervain thyroiditis, granulomatous thyroiditis, or giant cell thyroiditis)"
+          },
+          {
+            "name": "autoimmune thyroiditis",
+            "dataType": "string",
+            "sourceColumn": "autoimmune thyroiditis"
+          },
+          {
+            "name": "riedels (fibrosing) thyroiditis",
+            "dataType": "string",
+            "sourceColumn": "riedels (fibrosing) thyroiditis"
+          },
+          {
+            "name": "chronic inflammation",
+            "dataType": "string",
+            "sourceColumn": "chronic inflammation"
+          },
+          {
+            "name": "cystic degeneration",
+            "dataType": "string",
+            "sourceColumn": "cystic degeneration"
+          },
+          {
+            "name": "c-cell hyperplasia",
+            "dataType": "string",
+            "sourceColumn": "c-cell hyperplasia"
+          },
+          {
+            "name": "Hurthle cell change",
+            "dataType": "string",
+            "sourceColumn": "Hurthle cell change"
+          },
+          {
+            "name": "hurthle cell metaplasia",
+            "dataType": "string",
+            "sourceColumn": "hurthle cell metaplasia"
+          },
+          {
+            "name": "hurthle cell nodule",
+            "dataType": "string",
+            "sourceColumn": "hurthle cell nodule"
+          },
+          {
+            "name": "follicular nodule",
+            "dataType": "string",
+            "sourceColumn": "follicular nodule"
+          },
+          {
+            "name": "Hyperplastic  nodules",
+            "dataType": "string",
+            "sourceColumn": "Hyperplastic  nodules"
+          },
+          {
+            "name": "adenomatoid nodules",
+            "dataType": "string",
+            "sourceColumn": "adenomatoid nodules"
+          },
+          {
+            "name": "Colloid nodule",
+            "dataType": "string",
+            "sourceColumn": "Colloid nodule"
+          },
+          {
+            "name": "colloid cyst",
+            "dataType": "string",
+            "sourceColumn": "colloid cyst"
+          },
+          {
+            "name": "graves",
+            "dataType": "boolean",
+            "sourceColumn": "graves"
+          },
+          {
+            "name": "thymic tissue",
+            "dataType": "string",
+            "sourceColumn": "thymic tissue"
+          },
+          {
+            "name": "thyroglossal duct cyst",
+            "dataType": "string",
+            "sourceColumn": "thyroglossal duct cyst"
+          },
+          {
+            "name": "Parathyroid Gland &/oR tissue included in resected specimen?",
+            "dataType": "string",
+            "sourceColumn": "Parathyroid Gland &/oR tissue included in resected specimen?"
+          },
+          {
+            "name": "incidental gland excision",
+            "dataType": "string",
+            "sourceColumn": "incidental gland excision"
+          },
+          {
+            "name": "ParaG_1 location",
+            "dataType": "string",
+            "sourceColumn": "ParaG_1 location"
+          },
+          {
+            "name": "ParaG_1 biopsy (incisional)",
+            "dataType": "string",
+            "sourceColumn": "ParaG_1 biopsy (incisional)"
+          },
+          {
+            "name": "paraG 1 parathyroidectomy (excisional)",
+            "dataType": "string",
+            "sourceColumn": "paraG 1 parathyroidectomy (excisional)"
+          },
+          {
+            "name": "paraG 1 cellularity",
+            "dataType": "string",
+            "sourceColumn": "paraG 1 cellularity"
+          },
+          {
+            "name": "paraG 1 weight\n(grams)",
+            "dataType": "string",
+            "sourceColumn": "paraG 1 weight\n(grams)"
+          },
+          {
+            "name": "paraG 1 description",
+            "dataType": "string",
+            "sourceColumn": "paraG 1 description"
+          },
+          {
+            "name": "paraG 1 size",
+            "dataType": "string",
+            "sourceColumn": "paraG 1 size"
+          },
+          {
+            "name": "paraG 2\nlocation",
+            "dataType": "string",
+            "sourceColumn": "paraG 2\nlocation"
+          },
+          {
+            "name": "paraG 2 biopsy (incisional)",
+            "dataType": "string",
+            "sourceColumn": "paraG 2 biopsy (incisional)"
+          },
+          {
+            "name": "paraG 2 parathyroidectomy (excisional)",
+            "dataType": "string",
+            "sourceColumn": "paraG 2 parathyroidectomy (excisional)"
+          },
+          {
+            "name": "paraG 2 cellularity",
+            "dataType": "string",
+            "sourceColumn": "paraG 2 cellularity"
+          },
+          {
+            "name": "paraG 2 weight (grams)",
+            "dataType": "string",
+            "sourceColumn": "paraG 2 weight (grams)"
+          },
+          {
+            "name": "paraG 2 description",
+            "dataType": "string",
+            "sourceColumn": "paraG 2 description"
+          },
+          {
+            "name": "paraG 2 size",
+            "dataType": "string",
+            "sourceColumn": "paraG 2 size"
+          },
+          {
+            "name": "paraG 3\nlocation",
+            "dataType": "string",
+            "sourceColumn": "paraG 3\nlocation"
+          },
+          {
+            "name": "paraG 3\nbiopsy (incisional)",
+            "dataType": "string",
+            "sourceColumn": "paraG 3\nbiopsy (incisional)"
+          },
+          {
+            "name": "paraG 3 parathyroidectomy (excisional)",
+            "dataType": "string",
+            "sourceColumn": "paraG 3 parathyroidectomy (excisional)"
+          },
+          {
+            "name": "paraG 3 cellularity",
+            "dataType": "string",
+            "sourceColumn": "paraG 3 cellularity"
+          },
+          {
+            "name": "paraG 3 weight (grams)",
+            "dataType": "string",
+            "sourceColumn": "paraG 3 weight (grams)"
+          },
+          {
+            "name": "paraG 3 description",
+            "dataType": "string",
+            "sourceColumn": "paraG 3 description"
+          },
+          {
+            "name": "paraG 3 size",
+            "dataType": "string",
+            "sourceColumn": "paraG 3 size"
+          },
+          {
+            "name": "paraG_4\nlocation",
+            "dataType": "string",
+            "sourceColumn": "paraG_4\nlocation"
+          },
+          {
+            "name": "paraG_4 biopsy (incisional)",
+            "dataType": "string",
+            "sourceColumn": "paraG_4 biopsy (incisional)"
+          },
+          {
+            "name": "paraG_4 parathyroidectomy (excisional)",
+            "dataType": "string",
+            "sourceColumn": "paraG_4 parathyroidectomy (excisional)"
+          },
+          {
+            "name": "paraG 4 cellularity",
+            "dataType": "string",
+            "sourceColumn": "paraG 4 cellularity"
+          },
+          {
+            "name": "paraG 4 weight (grams)",
+            "dataType": "double",
+            "sourceColumn": "paraG 4 weight (grams)"
+          },
+          {
+            "name": "paraG 4 description",
+            "dataType": "string",
+            "sourceColumn": "paraG 4 description"
+          },
+          {
+            "name": "paraG 4 size",
+            "dataType": "string",
+            "sourceColumn": "paraG 4 size"
+          },
+          {
+            "name": "paraG 5\nlocation",
+            "dataType": "string",
+            "sourceColumn": "paraG 5\nlocation"
+          },
+          {
+            "name": "paraG 5 biopsy (incisional)",
+            "dataType": "string",
+            "sourceColumn": "paraG 5 biopsy (incisional)"
+          },
+          {
+            "name": "paraG 5 parathyroidectomy (excisional)",
+            "dataType": "string",
+            "sourceColumn": "paraG 5 parathyroidectomy (excisional)"
+          },
+          {
+            "name": "paraG 5 cellularity",
+            "dataType": "string",
+            "sourceColumn": "paraG 5 cellularity"
+          },
+          {
+            "name": "paraG 5 weight (grams)",
+            "dataType": "double",
+            "sourceColumn": "paraG 5 weight (grams)"
+          },
+          {
+            "name": "paraG 5 description",
+            "dataType": "string",
+            "sourceColumn": "paraG 5 description"
+          },
+          {
+            "name": "paraG 5 size",
+            "dataType": "double",
+            "sourceColumn": "paraG 5 size"
+          },
+          {
+            "name": "paraG 6\nlocation",
+            "dataType": "string",
+            "sourceColumn": "paraG 6\nlocation"
+          },
+          {
+            "name": "paraG 6 biopsy (incisional)",
+            "dataType": "string",
+            "sourceColumn": "paraG 6 biopsy (incisional)"
+          },
+          {
+            "name": "paraG 6 parathyroidectomy (excisional)",
+            "dataType": "double",
+            "sourceColumn": "paraG 6 parathyroidectomy (excisional)"
+          },
+          {
+            "name": "paraG 6 cellularity",
+            "dataType": "double",
+            "sourceColumn": "paraG 6 cellularity"
+          },
+          {
+            "name": "paraG 6 weight (grams)",
+            "dataType": "double",
+            "sourceColumn": "paraG 6 weight (grams)"
+          },
+          {
+            "name": "paraG 6 description",
+            "dataType": "string",
+            "sourceColumn": "paraG 6 description"
+          },
+          {
+            "name": "paraG 6 size",
+            "dataType": "double",
+            "sourceColumn": "paraG 6 size"
+          },
+          {
+            "name": "Surg_Date_year",
+            "dataType": "string",
+            "sourceColumn": "Surg_Date_year"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Fact_SynopticPath_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Parquet.Contents(SilverLayerPath & \"synoptic_pathology_facts.parquet\")\nin\n    Source"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "SourceFile",
+            "value": "synoptic_pathology_facts.parquet"
+          }
+        ]
+      },
+      {
+        "name": "Fact_FrozenSection",
+        "columns": [
+          {
+            "name": "research_id",
+            "dataType": "string",
+            "sourceColumn": "research_id"
+          },
+          {
+            "name": "surgery_date",
+            "dataType": "string",
+            "sourceColumn": "surgery_date"
+          },
+          {
+            "name": "frozen_section_obtained",
+            "dataType": "string",
+            "sourceColumn": "frozen_section_obtained"
+          },
+          {
+            "name": "number_of_frozen_sections",
+            "dataType": "int64",
+            "sourceColumn": "number_of_frozen_sections"
+          },
+          {
+            "name": "fs_count",
+            "dataType": "int64",
+            "sourceColumn": "fs_count"
+          },
+          {
+            "name": "fs_result_1",
+            "dataType": "string",
+            "sourceColumn": "fs_result_1"
+          },
+          {
+            "name": "fs_target_1",
+            "dataType": "string",
+            "sourceColumn": "fs_target_1"
+          },
+          {
+            "name": "fs_purpose_1",
+            "dataType": "string",
+            "sourceColumn": "fs_purpose_1"
+          },
+          {
+            "name": "fs_result_2",
+            "dataType": "string",
+            "sourceColumn": "fs_result_2"
+          },
+          {
+            "name": "fs_target_2",
+            "dataType": "string",
+            "sourceColumn": "fs_target_2"
+          },
+          {
+            "name": "fs_purpose_2",
+            "dataType": "string",
+            "sourceColumn": "fs_purpose_2"
+          },
+          {
+            "name": "fs_result_3",
+            "dataType": "string",
+            "sourceColumn": "fs_result_3"
+          },
+          {
+            "name": "fs_target_3",
+            "dataType": "string",
+            "sourceColumn": "fs_target_3"
+          },
+          {
+            "name": "fs_purpose_3",
+            "dataType": "string",
+            "sourceColumn": "fs_purpose_3"
+          },
+          {
+            "name": "concordance_with_final",
+            "dataType": "string",
+            "sourceColumn": "concordance_with_final"
+          },
+          {
+            "name": "extraction_confidence",
+            "dataType": "string",
+            "sourceColumn": "extraction_confidence"
+          },
+          {
+            "name": "source_fields_used",
+            "dataType": "string",
+            "sourceColumn": "source_fields_used"
+          },
+          {
+            "name": "frozen_section_source_text",
+            "dataType": "string",
+            "sourceColumn": "frozen_section_source_text"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Fact_FrozenSection_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Parquet.Contents(SilverLayerPath & \"frozen_section_facts.parquet\")\nin\n    Source"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "SourceFile",
+            "value": "frozen_section_facts.parquet"
+          }
+        ]
+      },
+      {
+        "name": "Fact_Molecular",
+        "columns": [
+          {
+            "name": "research_id",
+            "dataType": "int64",
+            "sourceColumn": "research_id"
+          },
+          {
+            "name": "other_thyroid_genetic_testing",
+            "dataType": "string",
+            "sourceColumn": "other_thyroid_genetic_testing"
+          },
+          {
+            "name": "thyroseq_afirma",
+            "dataType": "string",
+            "sourceColumn": "thyroseq_afirma"
+          },
+          {
+            "name": "nodule_info",
+            "dataType": "string",
+            "sourceColumn": "nodule_info"
+          },
+          {
+            "name": "fna_bethesda",
+            "dataType": "double",
+            "sourceColumn": "fna_bethesda"
+          },
+          {
+            "name": "date",
+            "dataType": "string",
+            "sourceColumn": "date"
+          },
+          {
+            "name": "genetic_test_performed",
+            "dataType": "string",
+            "sourceColumn": "genetic_test_performed"
+          },
+          {
+            "name": "result",
+            "dataType": "string",
+            "sourceColumn": "result"
+          },
+          {
+            "name": "detailed_findings",
+            "dataType": "string",
+            "sourceColumn": "detailed_findings"
+          },
+          {
+            "name": "mutation",
+            "dataType": "string",
+            "sourceColumn": "mutation"
+          },
+          {
+            "name": "test_index",
+            "dataType": "int64",
+            "sourceColumn": "test_index"
+          },
+          {
+            "name": "other_genetic_testing",
+            "dataType": "string",
+            "sourceColumn": "other_genetic_testing"
+          },
+          {
+            "name": "genetic_test",
+            "dataType": "string",
+            "sourceColumn": "genetic_test"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Fact_Molecular_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Parquet.Contents(SilverLayerPath & \"molecular_facts.parquet\")\nin\n    Source"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "SourceFile",
+            "value": "molecular_facts.parquet"
+          }
+        ]
+      },
+      {
+        "name": "Fact_ClinicalNotes",
+        "columns": [
+          {
+            "name": "research_id",
+            "dataType": "int64",
+            "sourceColumn": "research_id"
+          },
+          {
+            "name": "thyroid_cx_history_summary",
+            "dataType": "string",
+            "sourceColumn": "thyroid_cx_history_summary"
+          },
+          {
+            "name": "other_history",
+            "dataType": "string",
+            "sourceColumn": "other_history"
+          },
+          {
+            "name": "h_p_1",
+            "dataType": "string",
+            "sourceColumn": "h_p_1"
+          },
+          {
+            "name": "h_p_2",
+            "dataType": "string",
+            "sourceColumn": "h_p_2"
+          },
+          {
+            "name": "h_p_3",
+            "dataType": "string",
+            "sourceColumn": "h_p_3"
+          },
+          {
+            "name": "h_p_4",
+            "dataType": "string",
+            "sourceColumn": "h_p_4"
+          },
+          {
+            "name": "opnote_1",
+            "dataType": "string",
+            "sourceColumn": "opnote_1"
+          },
+          {
+            "name": "opnote_2",
+            "dataType": "string",
+            "sourceColumn": "opnote_2"
+          },
+          {
+            "name": "opnote_3",
+            "dataType": "string",
+            "sourceColumn": "opnote_3"
+          },
+          {
+            "name": "opnote_4",
+            "dataType": "string",
+            "sourceColumn": "opnote_4"
+          },
+          {
+            "name": "dc_sum_1",
+            "dataType": "string",
+            "sourceColumn": "dc_sum_1"
+          },
+          {
+            "name": "dc_sum_2",
+            "dataType": "string",
+            "sourceColumn": "dc_sum_2"
+          },
+          {
+            "name": "dc_sum_3",
+            "dataType": "string",
+            "sourceColumn": "dc_sum_3"
+          },
+          {
+            "name": "dc_sum_4",
+            "dataType": "string",
+            "sourceColumn": "dc_sum_4"
+          },
+          {
+            "name": "last_endocrine_fm_note",
+            "dataType": "string",
+            "sourceColumn": "last_endocrine_fm_note"
+          },
+          {
+            "name": "ed_note_1",
+            "dataType": "string",
+            "sourceColumn": "ed_note_1"
+          },
+          {
+            "name": "ed_note_2",
+            "dataType": "string",
+            "sourceColumn": "ed_note_2"
+          },
+          {
+            "name": "other_notes",
+            "dataType": "string",
+            "sourceColumn": "other_notes"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Fact_ClinicalNotes_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Parquet.Contents(SilverLayerPath & \"clinical_notes_masked.parquet\")\nin\n    Source"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "SourceFile",
+            "value": "clinical_notes_masked.parquet"
+          }
+        ]
+      },
+      {
+        "name": "Fact_Treatment",
+        "columns": [
+          {
+            "name": "research_id",
+            "dataType": "int64",
+            "sourceColumn": "research_id"
+          },
+          {
+            "name": "surgery_episode_id",
+            "dataType": "int64",
+            "sourceColumn": "surgery_episode_id"
+          },
+          {
+            "name": "surgery_date_native",
+            "dataType": "string",
+            "sourceColumn": "surgery_date_native"
+          },
+          {
+            "name": "resolved_surgery_date",
+            "dataType": "string",
+            "sourceColumn": "resolved_surgery_date"
+          },
+          {
+            "name": "date_status",
+            "dataType": "string",
+            "sourceColumn": "date_status"
+          },
+          {
+            "name": "procedure_raw",
+            "dataType": "string",
+            "sourceColumn": "procedure_raw"
+          },
+          {
+            "name": "procedure_normalized",
+            "dataType": "string",
+            "sourceColumn": "procedure_normalized"
+          },
+          {
+            "name": "laterality",
+            "dataType": "string",
+            "sourceColumn": "laterality"
+          },
+          {
+            "name": "central_neck_dissection_flag",
+            "dataType": "boolean",
+            "sourceColumn": "central_neck_dissection_flag"
+          },
+          {
+            "name": "lateral_neck_dissection_flag",
+            "dataType": "boolean",
+            "sourceColumn": "lateral_neck_dissection_flag"
+          },
+          {
+            "name": "rln_monitoring_flag",
+            "dataType": "boolean",
+            "sourceColumn": "rln_monitoring_flag"
+          },
+          {
+            "name": "rln_finding_raw",
+            "dataType": "string",
+            "sourceColumn": "rln_finding_raw"
+          },
+          {
+            "name": "parathyroid_autograft_flag",
+            "dataType": "boolean",
+            "sourceColumn": "parathyroid_autograft_flag"
+          },
+          {
+            "name": "parathyroid_autograft_count",
+            "dataType": "int64",
+            "sourceColumn": "parathyroid_autograft_count"
+          },
+          {
+            "name": "parathyroid_autograft_site",
+            "dataType": "string",
+            "sourceColumn": "parathyroid_autograft_site"
+          },
+          {
+            "name": "parathyroid_resection_flag",
+            "dataType": "boolean",
+            "sourceColumn": "parathyroid_resection_flag"
+          },
+          {
+            "name": "gross_ete_flag",
+            "dataType": "boolean",
+            "sourceColumn": "gross_ete_flag"
+          },
+          {
+            "name": "local_invasion_flag",
+            "dataType": "boolean",
+            "sourceColumn": "local_invasion_flag"
+          },
+          {
+            "name": "tracheal_involvement_flag",
+            "dataType": "boolean",
+            "sourceColumn": "tracheal_involvement_flag"
+          },
+          {
+            "name": "esophageal_involvement_flag",
+            "dataType": "boolean",
+            "sourceColumn": "esophageal_involvement_flag"
+          },
+          {
+            "name": "strap_muscle_involvement_flag",
+            "dataType": "boolean",
+            "sourceColumn": "strap_muscle_involvement_flag"
+          },
+          {
+            "name": "reoperative_field_flag",
+            "dataType": "boolean",
+            "sourceColumn": "reoperative_field_flag"
+          },
+          {
+            "name": "ebl_ml",
+            "dataType": "double",
+            "sourceColumn": "ebl_ml"
+          },
+          {
+            "name": "drain_flag",
+            "dataType": "boolean",
+            "sourceColumn": "drain_flag"
+          },
+          {
+            "name": "operative_findings_raw",
+            "dataType": "string",
+            "sourceColumn": "operative_findings_raw"
+          },
+          {
+            "name": "source_tables",
+            "dataType": "string",
+            "sourceColumn": "source_tables"
+          },
+          {
+            "name": "op_confidence",
+            "dataType": "double",
+            "sourceColumn": "op_confidence"
+          },
+          {
+            "name": "note_date_resolved",
+            "dataType": "string",
+            "sourceColumn": "note_date_resolved"
+          },
+          {
+            "name": "note_date_source",
+            "dataType": "string",
+            "sourceColumn": "note_date_source"
+          },
+          {
+            "name": "note_date_confidence",
+            "dataType": "string",
+            "sourceColumn": "note_date_confidence"
+          },
+          {
+            "name": "parathyroid_identified_count",
+            "dataType": "int64",
+            "sourceColumn": "parathyroid_identified_count"
+          },
+          {
+            "name": "frozen_section_flag",
+            "dataType": "boolean",
+            "sourceColumn": "frozen_section_flag"
+          },
+          {
+            "name": "berry_ligament_flag",
+            "dataType": "boolean",
+            "sourceColumn": "berry_ligament_flag"
+          },
+          {
+            "name": "ebl_ml_nlp",
+            "dataType": "double",
+            "sourceColumn": "ebl_ml_nlp"
+          },
+          {
+            "name": "op_enrichment_source",
+            "dataType": "string",
+            "sourceColumn": "op_enrichment_source"
+          },
+          {
+            "name": "linked_pathology_episode_id",
+            "dataType": "string",
+            "sourceColumn": "linked_pathology_episode_id"
+          },
+          {
+            "name": "path_link_score_v3",
+            "dataType": "double",
+            "sourceColumn": "path_link_score_v3"
+          },
+          {
+            "name": "linked_fna_episode_id",
+            "dataType": "string",
+            "sourceColumn": "linked_fna_episode_id"
+          },
+          {
+            "name": "fna_link_score_v3",
+            "dataType": "double",
+            "sourceColumn": "fna_link_score_v3"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Fact_Treatment_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Parquet.Contents(SilverLayerPath & \"treatment_facts.parquet\")\nin\n    Source"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "SourceFile",
+            "value": "treatment_facts.parquet"
+          }
+        ]
+      },
+      {
+        "name": "Fact_Outcome",
+        "columns": [
+          {
+            "name": "research_id",
+            "dataType": "string",
+            "sourceColumn": "research_id"
+          },
+          {
+            "name": "age_at_surgery",
+            "dataType": "int64",
+            "sourceColumn": "age_at_surgery"
+          },
+          {
+            "name": "sex",
+            "dataType": "string",
+            "sourceColumn": "sex"
+          },
+          {
+            "name": "surgery_date",
+            "dataType": "string",
+            "sourceColumn": "surgery_date"
+          },
+          {
+            "name": "histology_1_type",
+            "dataType": "string",
+            "sourceColumn": "histology_1_type"
+          },
+          {
+            "name": "variant_standardized",
+            "dataType": "string",
+            "sourceColumn": "variant_standardized"
+          },
+          {
+            "name": "malignant_surgery_type",
+            "dataType": "string",
+            "sourceColumn": "malignant_surgery_type"
+          },
+          {
+            "name": "overall_stage_ajcc8",
+            "dataType": "string",
+            "sourceColumn": "overall_stage_ajcc8"
+          },
+          {
+            "name": "largest_tumor_cm",
+            "dataType": "double",
+            "sourceColumn": "largest_tumor_cm"
+          },
+          {
+            "name": "tumor_focality_overall",
+            "dataType": "string",
+            "sourceColumn": "tumor_focality_overall"
+          },
+          {
+            "name": "num_tumors",
+            "dataType": "string",
+            "sourceColumn": "num_tumors"
+          },
+          {
+            "name": "tumor_1_vascular_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_vascular_invasion"
+          },
+          {
+            "name": "tumor_1_lymphatic_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_lymphatic_invasion"
+          },
+          {
+            "name": "tumor_1_perineural_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_perineural_invasion"
+          },
+          {
+            "name": "tumor_1_capsular_invasion",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_capsular_invasion"
+          },
+          {
+            "name": "tumor_1_extrathyroidal_ext",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_extrathyroidal_ext"
+          },
+          {
+            "name": "tumor_1_gross_ete",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_gross_ete"
+          },
+          {
+            "name": "tumor_1_ete_microscopic_only",
+            "dataType": "string",
+            "sourceColumn": "tumor_1_ete_microscopic_only"
+          },
+          {
+            "name": "ln_examined",
+            "dataType": "double",
+            "sourceColumn": "ln_examined"
+          },
+          {
+            "name": "ln_positive",
+            "dataType": "double",
+            "sourceColumn": "ln_positive"
+          },
+          {
+            "name": "ln_ratio",
+            "dataType": "double",
+            "sourceColumn": "ln_ratio"
+          },
+          {
+            "name": "braf_mutation_mentioned",
+            "dataType": "boolean",
+            "sourceColumn": "braf_mutation_mentioned"
+          },
+          {
+            "name": "ras_mutation_mentioned",
+            "dataType": "boolean",
+            "sourceColumn": "ras_mutation_mentioned"
+          },
+          {
+            "name": "ret_mutation_mentioned",
+            "dataType": "boolean",
+            "sourceColumn": "ret_mutation_mentioned"
+          },
+          {
+            "name": "tert_mutation_mentioned",
+            "dataType": "boolean",
+            "sourceColumn": "tert_mutation_mentioned"
+          },
+          {
+            "name": "ntrk_mutation_mentioned",
+            "dataType": "boolean",
+            "sourceColumn": "ntrk_mutation_mentioned"
+          },
+          {
+            "name": "alk_mutation_mentioned",
+            "dataType": "boolean",
+            "sourceColumn": "alk_mutation_mentioned"
+          },
+          {
+            "name": "is_mng",
+            "dataType": "boolean",
+            "sourceColumn": "is_mng"
+          },
+          {
+            "name": "is_graves",
+            "dataType": "boolean",
+            "sourceColumn": "is_graves"
+          },
+          {
+            "name": "is_follicular_adenoma",
+            "dataType": "boolean",
+            "sourceColumn": "is_follicular_adenoma"
+          },
+          {
+            "name": "is_hurthle_adenoma",
+            "dataType": "boolean",
+            "sourceColumn": "is_hurthle_adenoma"
+          },
+          {
+            "name": "is_hashimoto",
+            "dataType": "boolean",
+            "sourceColumn": "is_hashimoto"
+          },
+          {
+            "name": "is_hyalinizing_trabecular",
+            "dataType": "boolean",
+            "sourceColumn": "is_hyalinizing_trabecular"
+          },
+          {
+            "name": "is_tgdc",
+            "dataType": "boolean",
+            "sourceColumn": "is_tgdc"
+          },
+          {
+            "name": "benign_surgery_type",
+            "dataType": "string",
+            "sourceColumn": "benign_surgery_type"
+          },
+          {
+            "name": "has_tumor_pathology",
+            "dataType": "boolean",
+            "sourceColumn": "has_tumor_pathology"
+          },
+          {
+            "name": "has_benign_pathology",
+            "dataType": "boolean",
+            "sourceColumn": "has_benign_pathology"
+          },
+          {
+            "name": "has_fna_cytology",
+            "dataType": "boolean",
+            "sourceColumn": "has_fna_cytology"
+          },
+          {
+            "name": "has_ultrasound_reports",
+            "dataType": "boolean",
+            "sourceColumn": "has_ultrasound_reports"
+          },
+          {
+            "name": "has_ct_imaging",
+            "dataType": "boolean",
+            "sourceColumn": "has_ct_imaging"
+          },
+          {
+            "name": "has_mri_imaging",
+            "dataType": "boolean",
+            "sourceColumn": "has_mri_imaging"
+          },
+          {
+            "name": "has_nuclear_med",
+            "dataType": "boolean",
+            "sourceColumn": "has_nuclear_med"
+          },
+          {
+            "name": "has_thyroglobulin_labs",
+            "dataType": "boolean",
+            "sourceColumn": "has_thyroglobulin_labs"
+          },
+          {
+            "name": "has_anti_thyroglobulin_labs",
+            "dataType": "boolean",
+            "sourceColumn": "has_anti_thyroglobulin_labs"
+          },
+          {
+            "name": "has_parathyroid",
+            "dataType": "boolean",
+            "sourceColumn": "has_parathyroid"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Fact_Outcome_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Parquet.Contents(SilverLayerPath & \"outcome_facts.parquet\")\nin\n    Source"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "SourceFile",
+            "value": "outcome_facts.parquet"
+          }
+        ]
+      },
+      {
+        "name": "Fact_LabTg",
+        "columns": [
+          {
+            "name": "research_id",
+            "dataType": "string",
+            "sourceColumn": "research_id"
+          },
+          {
+            "name": "test_name",
+            "dataType": "string",
+            "sourceColumn": "test_name"
+          },
+          {
+            "name": "specimen_collect_dt",
+            "dataType": "string",
+            "sourceColumn": "specimen_collect_dt"
+          },
+          {
+            "name": "result",
+            "dataType": "string",
+            "sourceColumn": "result"
+          },
+          {
+            "name": "units",
+            "dataType": "string",
+            "sourceColumn": "units"
+          },
+          {
+            "name": "lab_index",
+            "dataType": "int64",
+            "sourceColumn": "lab_index"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Fact_LabTg_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Parquet.Contents(SilverLayerPath & \"lab_thyroglobulin_facts.parquet\")\nin\n    Source"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "SourceFile",
+            "value": "lab_thyroglobulin_facts.parquet"
+          }
+        ]
+      },
+      {
+        "name": "Fact_LabAntiTg",
+        "columns": [
+          {
+            "name": "research_id",
+            "dataType": "string",
+            "sourceColumn": "research_id"
+          },
+          {
+            "name": "test_name",
+            "dataType": "string",
+            "sourceColumn": "test_name"
+          },
+          {
+            "name": "specimen_collect_dt",
+            "dataType": "string",
+            "sourceColumn": "specimen_collect_dt"
+          },
+          {
+            "name": "result",
+            "dataType": "string",
+            "sourceColumn": "result"
+          },
+          {
+            "name": "units",
+            "dataType": "string",
+            "sourceColumn": "units"
+          },
+          {
+            "name": "lab_index",
+            "dataType": "int64",
+            "sourceColumn": "lab_index"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Fact_LabAntiTg_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Parquet.Contents(SilverLayerPath & \"lab_anti_thyroglobulin_facts.parquet\")\nin\n    Source"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "SourceFile",
+            "value": "lab_anti_thyroglobulin_facts.parquet"
+          }
+        ]
+      },
+      {
+        "name": "Fact_FnaEpisode",
+        "columns": [
+          {
+            "name": "research_id",
+            "dataType": "int64",
+            "sourceColumn": "research_id"
+          },
+          {
+            "name": "fna_episode_id",
+            "dataType": "int64",
+            "sourceColumn": "fna_episode_id"
+          },
+          {
+            "name": "fna_date_native",
+            "dataType": "string",
+            "sourceColumn": "fna_date_native"
+          },
+          {
+            "name": "resolved_fna_date",
+            "dataType": "string",
+            "sourceColumn": "resolved_fna_date"
+          },
+          {
+            "name": "date_status",
+            "dataType": "string",
+            "sourceColumn": "date_status"
+          },
+          {
+            "name": "date_confidence",
+            "dataType": "string",
+            "sourceColumn": "date_confidence"
+          },
+          {
+            "name": "bethesda_raw",
+            "dataType": "string",
+            "sourceColumn": "bethesda_raw"
+          },
+          {
+            "name": "bethesda_category",
+            "dataType": "int64",
+            "sourceColumn": "bethesda_category"
+          },
+          {
+            "name": "pathology_diagnosis",
+            "dataType": "string",
+            "sourceColumn": "pathology_diagnosis"
+          },
+          {
+            "name": "pathology_extended",
+            "dataType": "string",
+            "sourceColumn": "pathology_extended"
+          },
+          {
+            "name": "specimen_site_raw",
+            "dataType": "string",
+            "sourceColumn": "specimen_site_raw"
+          },
+          {
+            "name": "laterality",
+            "dataType": "string",
+            "sourceColumn": "laterality"
+          },
+          {
+            "name": "linked_molecular_episode_id",
+            "dataType": "string",
+            "sourceColumn": "linked_molecular_episode_id"
+          },
+          {
+            "name": "linked_imaging_nodule_id",
+            "dataType": "string",
+            "sourceColumn": "linked_imaging_nodule_id"
+          },
+          {
+            "name": "linked_surgery_episode_id",
+            "dataType": "string",
+            "sourceColumn": "linked_surgery_episode_id"
+          },
+          {
+            "name": "source_table",
+            "dataType": "string",
+            "sourceColumn": "source_table"
+          },
+          {
+            "name": "fna_confidence",
+            "dataType": "double",
+            "sourceColumn": "fna_confidence"
+          },
+          {
+            "name": "surgery_link_score_v3",
+            "dataType": "double",
+            "sourceColumn": "surgery_link_score_v3"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Fact_FnaEpisode_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Parquet.Contents(SilverLayerPath & \"fna_episode_facts.parquet\")\nin\n    Source"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "SourceFile",
+            "value": "fna_episode_facts.parquet"
+          }
+        ]
+      },
+      {
+        "name": "Fact_FnaCytology",
+        "columns": [
+          {
+            "name": "research_id",
+            "dataType": "string",
+            "sourceColumn": "research_id"
+          },
+          {
+            "name": "fna_index",
+            "dataType": "int64",
+            "sourceColumn": "fna_index"
+          },
+          {
+            "name": "fna_date",
+            "dataType": "string",
+            "sourceColumn": "fna_date"
+          },
+          {
+            "name": "specimen_location",
+            "dataType": "string",
+            "sourceColumn": "specimen_location"
+          },
+          {
+            "name": "path_text",
+            "dataType": "string",
+            "sourceColumn": "path_text"
+          },
+          {
+            "name": "path_text_length",
+            "dataType": "int64",
+            "sourceColumn": "path_text_length"
+          },
+          {
+            "name": "original_bethesda",
+            "dataType": "string",
+            "sourceColumn": "original_bethesda"
+          },
+          {
+            "name": "category_num",
+            "dataType": "int64",
+            "sourceColumn": "category_num"
+          },
+          {
+            "name": "confidence",
+            "dataType": "double",
+            "sourceColumn": "confidence"
+          },
+          {
+            "name": "evidence",
+            "dataType": "string",
+            "sourceColumn": "evidence"
+          },
+          {
+            "name": "method",
+            "dataType": "string",
+            "sourceColumn": "method"
+          },
+          {
+            "name": "bethesda_2010_num",
+            "dataType": "int64",
+            "sourceColumn": "bethesda_2010_num"
+          },
+          {
+            "name": "bethesda_2010_name",
+            "dataType": "string",
+            "sourceColumn": "bethesda_2010_name"
+          },
+          {
+            "name": "bethesda_2015_num",
+            "dataType": "int64",
+            "sourceColumn": "bethesda_2015_num"
+          },
+          {
+            "name": "bethesda_2015_name",
+            "dataType": "string",
+            "sourceColumn": "bethesda_2015_name"
+          },
+          {
+            "name": "bethesda_2023_num",
+            "dataType": "int64",
+            "sourceColumn": "bethesda_2023_num"
+          },
+          {
+            "name": "bethesda_2023_name",
+            "dataType": "string",
+            "sourceColumn": "bethesda_2023_name"
+          },
+          {
+            "name": "reasoning",
+            "dataType": "string",
+            "sourceColumn": "reasoning"
+          },
+          {
+            "name": "subtype",
+            "dataType": "string",
+            "sourceColumn": "subtype"
+          },
+          {
+            "name": "provider",
+            "dataType": "string",
+            "sourceColumn": "provider"
+          },
+          {
+            "name": "rules_category",
+            "dataType": "int64",
+            "sourceColumn": "rules_category"
+          },
+          {
+            "name": "rules_confidence",
+            "dataType": "double",
+            "sourceColumn": "rules_confidence"
+          },
+          {
+            "name": "error",
+            "dataType": "string",
+            "sourceColumn": "error"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Fact_FnaCytology_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Parquet.Contents(SilverLayerPath & \"fna_cytology_facts.parquet\")\nin\n    Source"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "SourceFile",
+            "value": "fna_cytology_facts.parquet"
+          }
+        ]
+      },
+      {
+        "name": "Fact_ImagingCT",
+        "columns": [
+          {
+            "name": "research_id",
+            "dataType": "string",
+            "sourceColumn": "research_id"
+          },
+          {
+            "name": "ct_column",
+            "dataType": "string",
+            "sourceColumn": "ct_column"
+          },
+          {
+            "name": "date_of_exam",
+            "dataType": "string",
+            "sourceColumn": "date_of_exam"
+          },
+          {
+            "name": "exam_type_normalized",
+            "dataType": "string",
+            "sourceColumn": "exam_type_normalized"
+          },
+          {
+            "name": "contrast",
+            "dataType": "string",
+            "sourceColumn": "contrast"
+          },
+          {
+            "name": "indication",
+            "dataType": "string",
+            "sourceColumn": "indication"
+          },
+          {
+            "name": "thyroid_normal",
+            "dataType": "boolean",
+            "sourceColumn": "thyroid_normal"
+          },
+          {
+            "name": "thyroid_nodule",
+            "dataType": "boolean",
+            "sourceColumn": "thyroid_nodule"
+          },
+          {
+            "name": "thyroid_enlarged",
+            "dataType": "boolean",
+            "sourceColumn": "thyroid_enlarged"
+          },
+          {
+            "name": "thyroid_heterogeneous",
+            "dataType": "boolean",
+            "sourceColumn": "thyroid_heterogeneous"
+          },
+          {
+            "name": "thyroid_postsurgical",
+            "dataType": "boolean",
+            "sourceColumn": "thyroid_postsurgical"
+          },
+          {
+            "name": "thyroid_not_visualized",
+            "dataType": "boolean",
+            "sourceColumn": "thyroid_not_visualized"
+          },
+          {
+            "name": "thyroid_other_abnormality",
+            "dataType": "boolean",
+            "sourceColumn": "thyroid_other_abnormality"
+          },
+          {
+            "name": "goiter_present",
+            "dataType": "boolean",
+            "sourceColumn": "goiter_present"
+          },
+          {
+            "name": "substernal_extension",
+            "dataType": "boolean",
+            "sourceColumn": "substernal_extension"
+          },
+          {
+            "name": "thyroid_details",
+            "dataType": "string",
+            "sourceColumn": "thyroid_details"
+          },
+          {
+            "name": "tracheal_deviation",
+            "dataType": "string",
+            "sourceColumn": "tracheal_deviation"
+          },
+          {
+            "name": "tracheal_deviation_direction",
+            "dataType": "string",
+            "sourceColumn": "tracheal_deviation_direction"
+          },
+          {
+            "name": "tracheal_narrowing",
+            "dataType": "string",
+            "sourceColumn": "tracheal_narrowing"
+          },
+          {
+            "name": "airway_compromise_comment",
+            "dataType": "string",
+            "sourceColumn": "airway_compromise_comment"
+          },
+          {
+            "name": "lymph_nodes_enlarged",
+            "dataType": "boolean",
+            "sourceColumn": "lymph_nodes_enlarged"
+          },
+          {
+            "name": "lymph_nodes_suspicious",
+            "dataType": "boolean",
+            "sourceColumn": "lymph_nodes_suspicious"
+          },
+          {
+            "name": "lymph_nodes_mentioned",
+            "dataType": "boolean",
+            "sourceColumn": "lymph_nodes_mentioned"
+          },
+          {
+            "name": "pathologic_lymph_nodes",
+            "dataType": "boolean",
+            "sourceColumn": "pathologic_lymph_nodes"
+          },
+          {
+            "name": "lymph_node_locations",
+            "dataType": "string",
+            "sourceColumn": "lymph_node_locations"
+          },
+          {
+            "name": "largest_lymph_node_short_axis_mm",
+            "dataType": "double",
+            "sourceColumn": "largest_lymph_node_short_axis_mm"
+          },
+          {
+            "name": "lymph_node_details",
+            "dataType": "string",
+            "sourceColumn": "lymph_node_details"
+          },
+          {
+            "name": "confidence",
+            "dataType": "string",
+            "sourceColumn": "confidence"
+          },
+          {
+            "name": "original_report",
+            "dataType": "string",
+            "sourceColumn": "original_report"
+          },
+          {
+            "name": "exam_information",
+            "dataType": "string",
+            "sourceColumn": "exam_information"
+          },
+          {
+            "name": "thyroid_findings",
+            "dataType": "string",
+            "sourceColumn": "thyroid_findings"
+          },
+          {
+            "name": "thyroid_classification",
+            "dataType": "string",
+            "sourceColumn": "thyroid_classification"
+          },
+          {
+            "name": "thyroid_surgical_details",
+            "dataType": "string",
+            "sourceColumn": "thyroid_surgical_details"
+          },
+          {
+            "name": "airway_tracheal_findings",
+            "dataType": "string",
+            "sourceColumn": "airway_tracheal_findings"
+          },
+          {
+            "name": "lymph_node_findings",
+            "dataType": "string",
+            "sourceColumn": "lymph_node_findings"
+          },
+          {
+            "name": "metadata",
+            "dataType": "string",
+            "sourceColumn": "metadata"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Fact_ImagingCT_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Parquet.Contents(SilverLayerPath & \"imaging_ct_facts.parquet\")\nin\n    Source"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "SourceFile",
+            "value": "imaging_ct_facts.parquet"
+          }
+        ]
+      },
+      {
+        "name": "Fact_ImagingUS",
+        "columns": [
+          {
+            "name": "research_id",
+            "dataType": "string",
+            "sourceColumn": "research_id"
+          },
+          {
+            "name": "us_report_number",
+            "dataType": "int64",
+            "sourceColumn": "us_report_number"
+          },
+          {
+            "name": "sheet_name",
+            "dataType": "string",
+            "sourceColumn": "sheet_name"
+          },
+          {
+            "name": "ultrasound_date",
+            "dataType": "string",
+            "sourceColumn": "ultrasound_date"
+          },
+          {
+            "name": "radiologist",
+            "dataType": "string",
+            "sourceColumn": "radiologist"
+          },
+          {
+            "name": "equipment",
+            "dataType": "string",
+            "sourceColumn": "equipment"
+          },
+          {
+            "name": "study_indication",
+            "dataType": "string",
+            "sourceColumn": "study_indication"
+          },
+          {
+            "name": "patient_age",
+            "dataType": "int64",
+            "sourceColumn": "patient_age"
+          },
+          {
+            "name": "patient_gender",
+            "dataType": "string",
+            "sourceColumn": "patient_gender"
+          },
+          {
+            "name": "report_type",
+            "dataType": "string",
+            "sourceColumn": "report_type"
+          },
+          {
+            "name": "number_of_nodules",
+            "dataType": "int64",
+            "sourceColumn": "number_of_nodules"
+          },
+          {
+            "name": "right_lobe_dimensions",
+            "dataType": "string",
+            "sourceColumn": "right_lobe_dimensions"
+          },
+          {
+            "name": "left_lobe_dimensions",
+            "dataType": "string",
+            "sourceColumn": "left_lobe_dimensions"
+          },
+          {
+            "name": "isthmus_thickness",
+            "dataType": "string",
+            "sourceColumn": "isthmus_thickness"
+          },
+          {
+            "name": "total_thyroid_size",
+            "dataType": "string",
+            "sourceColumn": "total_thyroid_size"
+          },
+          {
+            "name": "right_lobe_volume_ml",
+            "dataType": "string",
+            "sourceColumn": "right_lobe_volume_ml"
+          },
+          {
+            "name": "left_lobe_volume_ml",
+            "dataType": "string",
+            "sourceColumn": "left_lobe_volume_ml"
+          },
+          {
+            "name": "total_thyroid_volume_ml",
+            "dataType": "string",
+            "sourceColumn": "total_thyroid_volume_ml"
+          },
+          {
+            "name": "source_us_impression",
+            "dataType": "string",
+            "sourceColumn": "source_us_impression"
+          },
+          {
+            "name": "nodule_1_dimensions",
+            "dataType": "string",
+            "sourceColumn": "nodule_1_dimensions"
+          },
+          {
+            "name": "nodule_1_length_mm",
+            "dataType": "double",
+            "sourceColumn": "nodule_1_length_mm"
+          },
+          {
+            "name": "nodule_1_width_mm",
+            "dataType": "double",
+            "sourceColumn": "nodule_1_width_mm"
+          },
+          {
+            "name": "nodule_1_height_mm",
+            "dataType": "double",
+            "sourceColumn": "nodule_1_height_mm"
+          },
+          {
+            "name": "nodule_1_volume",
+            "dataType": "string",
+            "sourceColumn": "nodule_1_volume"
+          },
+          {
+            "name": "nodule_1_location",
+            "dataType": "string",
+            "sourceColumn": "nodule_1_location"
+          },
+          {
+            "name": "nodule_1_ti_rads",
+            "dataType": "string",
+            "sourceColumn": "nodule_1_ti_rads"
+          },
+          {
+            "name": "nodule_1_composition",
+            "dataType": "string",
+            "sourceColumn": "nodule_1_composition"
+          },
+          {
+            "name": "nodule_1_echogenicity",
+            "dataType": "string",
+            "sourceColumn": "nodule_1_echogenicity"
+          },
+          {
+            "name": "nodule_1_calcifications",
+            "dataType": "string",
+            "sourceColumn": "nodule_1_calcifications"
+          },
+          {
+            "name": "nodule_1_margins",
+            "dataType": "string",
+            "sourceColumn": "nodule_1_margins"
+          },
+          {
+            "name": "nodule_1_shape",
+            "dataType": "string",
+            "sourceColumn": "nodule_1_shape"
+          },
+          {
+            "name": "nodule_1_source_score",
+            "dataType": "int64",
+            "sourceColumn": "nodule_1_source_score"
+          },
+          {
+            "name": "nodule_1_source_description",
+            "dataType": "string",
+            "sourceColumn": "nodule_1_source_description"
+          },
+          {
+            "name": "nodule_2_dimensions",
+            "dataType": "string",
+            "sourceColumn": "nodule_2_dimensions"
+          },
+          {
+            "name": "nodule_2_length_mm",
+            "dataType": "double",
+            "sourceColumn": "nodule_2_length_mm"
+          },
+          {
+            "name": "nodule_2_width_mm",
+            "dataType": "double",
+            "sourceColumn": "nodule_2_width_mm"
+          },
+          {
+            "name": "nodule_2_height_mm",
+            "dataType": "double",
+            "sourceColumn": "nodule_2_height_mm"
+          },
+          {
+            "name": "nodule_2_volume",
+            "dataType": "string",
+            "sourceColumn": "nodule_2_volume"
+          },
+          {
+            "name": "nodule_2_location",
+            "dataType": "string",
+            "sourceColumn": "nodule_2_location"
+          },
+          {
+            "name": "nodule_2_ti_rads",
+            "dataType": "string",
+            "sourceColumn": "nodule_2_ti_rads"
+          },
+          {
+            "name": "nodule_2_composition",
+            "dataType": "string",
+            "sourceColumn": "nodule_2_composition"
+          },
+          {
+            "name": "nodule_2_echogenicity",
+            "dataType": "string",
+            "sourceColumn": "nodule_2_echogenicity"
+          },
+          {
+            "name": "nodule_2_calcifications",
+            "dataType": "string",
+            "sourceColumn": "nodule_2_calcifications"
+          },
+          {
+            "name": "nodule_2_margins",
+            "dataType": "string",
+            "sourceColumn": "nodule_2_margins"
+          },
+          {
+            "name": "nodule_2_shape",
+            "dataType": "string",
+            "sourceColumn": "nodule_2_shape"
+          },
+          {
+            "name": "nodule_2_source_score",
+            "dataType": "int64",
+            "sourceColumn": "nodule_2_source_score"
+          },
+          {
+            "name": "nodule_2_source_description",
+            "dataType": "string",
+            "sourceColumn": "nodule_2_source_description"
+          },
+          {
+            "name": "nodule_3_dimensions",
+            "dataType": "string",
+            "sourceColumn": "nodule_3_dimensions"
+          },
+          {
+            "name": "nodule_3_length_mm",
+            "dataType": "double",
+            "sourceColumn": "nodule_3_length_mm"
+          },
+          {
+            "name": "nodule_3_width_mm",
+            "dataType": "double",
+            "sourceColumn": "nodule_3_width_mm"
+          },
+          {
+            "name": "nodule_3_height_mm",
+            "dataType": "double",
+            "sourceColumn": "nodule_3_height_mm"
+          },
+          {
+            "name": "nodule_3_volume",
+            "dataType": "string",
+            "sourceColumn": "nodule_3_volume"
+          },
+          {
+            "name": "nodule_3_location",
+            "dataType": "string",
+            "sourceColumn": "nodule_3_location"
+          },
+          {
+            "name": "nodule_3_ti_rads",
+            "dataType": "string",
+            "sourceColumn": "nodule_3_ti_rads"
+          },
+          {
+            "name": "nodule_3_composition",
+            "dataType": "string",
+            "sourceColumn": "nodule_3_composition"
+          },
+          {
+            "name": "nodule_3_echogenicity",
+            "dataType": "string",
+            "sourceColumn": "nodule_3_echogenicity"
+          },
+          {
+            "name": "nodule_3_calcifications",
+            "dataType": "string",
+            "sourceColumn": "nodule_3_calcifications"
+          },
+          {
+            "name": "nodule_3_margins",
+            "dataType": "string",
+            "sourceColumn": "nodule_3_margins"
+          },
+          {
+            "name": "nodule_3_shape",
+            "dataType": "string",
+            "sourceColumn": "nodule_3_shape"
+          },
+          {
+            "name": "nodule_3_source_score",
+            "dataType": "int64",
+            "sourceColumn": "nodule_3_source_score"
+          },
+          {
+            "name": "nodule_3_source_description",
+            "dataType": "string",
+            "sourceColumn": "nodule_3_source_description"
+          },
+          {
+            "name": "nodule_4_dimensions",
+            "dataType": "string",
+            "sourceColumn": "nodule_4_dimensions"
+          },
+          {
+            "name": "nodule_4_length_mm",
+            "dataType": "double",
+            "sourceColumn": "nodule_4_length_mm"
+          },
+          {
+            "name": "nodule_4_width_mm",
+            "dataType": "double",
+            "sourceColumn": "nodule_4_width_mm"
+          },
+          {
+            "name": "nodule_4_height_mm",
+            "dataType": "double",
+            "sourceColumn": "nodule_4_height_mm"
+          },
+          {
+            "name": "nodule_4_volume",
+            "dataType": "string",
+            "sourceColumn": "nodule_4_volume"
+          },
+          {
+            "name": "nodule_4_location",
+            "dataType": "string",
+            "sourceColumn": "nodule_4_location"
+          },
+          {
+            "name": "nodule_4_ti_rads",
+            "dataType": "string",
+            "sourceColumn": "nodule_4_ti_rads"
+          },
+          {
+            "name": "nodule_4_composition",
+            "dataType": "string",
+            "sourceColumn": "nodule_4_composition"
+          },
+          {
+            "name": "nodule_4_echogenicity",
+            "dataType": "string",
+            "sourceColumn": "nodule_4_echogenicity"
+          },
+          {
+            "name": "nodule_4_calcifications",
+            "dataType": "string",
+            "sourceColumn": "nodule_4_calcifications"
+          },
+          {
+            "name": "nodule_4_margins",
+            "dataType": "string",
+            "sourceColumn": "nodule_4_margins"
+          },
+          {
+            "name": "nodule_4_shape",
+            "dataType": "string",
+            "sourceColumn": "nodule_4_shape"
+          },
+          {
+            "name": "nodule_4_source_score",
+            "dataType": "int64",
+            "sourceColumn": "nodule_4_source_score"
+          },
+          {
+            "name": "nodule_4_source_description",
+            "dataType": "string",
+            "sourceColumn": "nodule_4_source_description"
+          },
+          {
+            "name": "nodule_5_dimensions",
+            "dataType": "string",
+            "sourceColumn": "nodule_5_dimensions"
+          },
+          {
+            "name": "nodule_5_length_mm",
+            "dataType": "double",
+            "sourceColumn": "nodule_5_length_mm"
+          },
+          {
+            "name": "nodule_5_width_mm",
+            "dataType": "double",
+            "sourceColumn": "nodule_5_width_mm"
+          },
+          {
+            "name": "nodule_5_height_mm",
+            "dataType": "double",
+            "sourceColumn": "nodule_5_height_mm"
+          },
+          {
+            "name": "nodule_5_volume",
+            "dataType": "string",
+            "sourceColumn": "nodule_5_volume"
+          },
+          {
+            "name": "nodule_5_location",
+            "dataType": "string",
+            "sourceColumn": "nodule_5_location"
+          },
+          {
+            "name": "nodule_5_ti_rads",
+            "dataType": "string",
+            "sourceColumn": "nodule_5_ti_rads"
+          },
+          {
+            "name": "nodule_5_composition",
+            "dataType": "string",
+            "sourceColumn": "nodule_5_composition"
+          },
+          {
+            "name": "nodule_5_echogenicity",
+            "dataType": "string",
+            "sourceColumn": "nodule_5_echogenicity"
+          },
+          {
+            "name": "nodule_5_calcifications",
+            "dataType": "string",
+            "sourceColumn": "nodule_5_calcifications"
+          },
+          {
+            "name": "nodule_5_margins",
+            "dataType": "string",
+            "sourceColumn": "nodule_5_margins"
+          },
+          {
+            "name": "nodule_5_shape",
+            "dataType": "string",
+            "sourceColumn": "nodule_5_shape"
+          },
+          {
+            "name": "nodule_5_source_score",
+            "dataType": "int64",
+            "sourceColumn": "nodule_5_source_score"
+          },
+          {
+            "name": "nodule_5_source_description",
+            "dataType": "string",
+            "sourceColumn": "nodule_5_source_description"
+          },
+          {
+            "name": "nodule_6_dimensions",
+            "dataType": "string",
+            "sourceColumn": "nodule_6_dimensions"
+          },
+          {
+            "name": "nodule_6_length_mm",
+            "dataType": "double",
+            "sourceColumn": "nodule_6_length_mm"
+          },
+          {
+            "name": "nodule_6_width_mm",
+            "dataType": "double",
+            "sourceColumn": "nodule_6_width_mm"
+          },
+          {
+            "name": "nodule_6_height_mm",
+            "dataType": "double",
+            "sourceColumn": "nodule_6_height_mm"
+          },
+          {
+            "name": "nodule_6_volume",
+            "dataType": "string",
+            "sourceColumn": "nodule_6_volume"
+          },
+          {
+            "name": "nodule_6_location",
+            "dataType": "string",
+            "sourceColumn": "nodule_6_location"
+          },
+          {
+            "name": "nodule_6_ti_rads",
+            "dataType": "string",
+            "sourceColumn": "nodule_6_ti_rads"
+          },
+          {
+            "name": "nodule_6_composition",
+            "dataType": "string",
+            "sourceColumn": "nodule_6_composition"
+          },
+          {
+            "name": "nodule_6_echogenicity",
+            "dataType": "string",
+            "sourceColumn": "nodule_6_echogenicity"
+          },
+          {
+            "name": "nodule_6_calcifications",
+            "dataType": "string",
+            "sourceColumn": "nodule_6_calcifications"
+          },
+          {
+            "name": "nodule_6_margins",
+            "dataType": "string",
+            "sourceColumn": "nodule_6_margins"
+          },
+          {
+            "name": "nodule_6_shape",
+            "dataType": "string",
+            "sourceColumn": "nodule_6_shape"
+          },
+          {
+            "name": "nodule_6_source_score",
+            "dataType": "int64",
+            "sourceColumn": "nodule_6_source_score"
+          },
+          {
+            "name": "nodule_6_source_description",
+            "dataType": "string",
+            "sourceColumn": "nodule_6_source_description"
+          },
+          {
+            "name": "nodule_7_dimensions",
+            "dataType": "string",
+            "sourceColumn": "nodule_7_dimensions"
+          },
+          {
+            "name": "nodule_7_length_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_7_length_mm"
+          },
+          {
+            "name": "nodule_7_width_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_7_width_mm"
+          },
+          {
+            "name": "nodule_7_height_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_7_height_mm"
+          },
+          {
+            "name": "nodule_7_volume",
+            "dataType": "string",
+            "sourceColumn": "nodule_7_volume"
+          },
+          {
+            "name": "nodule_7_location",
+            "dataType": "string",
+            "sourceColumn": "nodule_7_location"
+          },
+          {
+            "name": "nodule_7_ti_rads",
+            "dataType": "string",
+            "sourceColumn": "nodule_7_ti_rads"
+          },
+          {
+            "name": "nodule_7_composition",
+            "dataType": "string",
+            "sourceColumn": "nodule_7_composition"
+          },
+          {
+            "name": "nodule_7_echogenicity",
+            "dataType": "string",
+            "sourceColumn": "nodule_7_echogenicity"
+          },
+          {
+            "name": "nodule_7_calcifications",
+            "dataType": "string",
+            "sourceColumn": "nodule_7_calcifications"
+          },
+          {
+            "name": "nodule_7_margins",
+            "dataType": "string",
+            "sourceColumn": "nodule_7_margins"
+          },
+          {
+            "name": "nodule_7_shape",
+            "dataType": "string",
+            "sourceColumn": "nodule_7_shape"
+          },
+          {
+            "name": "nodule_7_source_score",
+            "dataType": "string",
+            "sourceColumn": "nodule_7_source_score"
+          },
+          {
+            "name": "nodule_7_source_description",
+            "dataType": "string",
+            "sourceColumn": "nodule_7_source_description"
+          },
+          {
+            "name": "nodule_8_dimensions",
+            "dataType": "string",
+            "sourceColumn": "nodule_8_dimensions"
+          },
+          {
+            "name": "nodule_8_length_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_8_length_mm"
+          },
+          {
+            "name": "nodule_8_width_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_8_width_mm"
+          },
+          {
+            "name": "nodule_8_height_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_8_height_mm"
+          },
+          {
+            "name": "nodule_8_volume",
+            "dataType": "string",
+            "sourceColumn": "nodule_8_volume"
+          },
+          {
+            "name": "nodule_8_location",
+            "dataType": "string",
+            "sourceColumn": "nodule_8_location"
+          },
+          {
+            "name": "nodule_8_ti_rads",
+            "dataType": "string",
+            "sourceColumn": "nodule_8_ti_rads"
+          },
+          {
+            "name": "nodule_8_composition",
+            "dataType": "string",
+            "sourceColumn": "nodule_8_composition"
+          },
+          {
+            "name": "nodule_8_echogenicity",
+            "dataType": "string",
+            "sourceColumn": "nodule_8_echogenicity"
+          },
+          {
+            "name": "nodule_8_calcifications",
+            "dataType": "string",
+            "sourceColumn": "nodule_8_calcifications"
+          },
+          {
+            "name": "nodule_8_margins",
+            "dataType": "string",
+            "sourceColumn": "nodule_8_margins"
+          },
+          {
+            "name": "nodule_8_shape",
+            "dataType": "string",
+            "sourceColumn": "nodule_8_shape"
+          },
+          {
+            "name": "nodule_8_source_score",
+            "dataType": "string",
+            "sourceColumn": "nodule_8_source_score"
+          },
+          {
+            "name": "nodule_8_source_description",
+            "dataType": "string",
+            "sourceColumn": "nodule_8_source_description"
+          },
+          {
+            "name": "nodule_9_dimensions",
+            "dataType": "string",
+            "sourceColumn": "nodule_9_dimensions"
+          },
+          {
+            "name": "nodule_9_length_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_9_length_mm"
+          },
+          {
+            "name": "nodule_9_width_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_9_width_mm"
+          },
+          {
+            "name": "nodule_9_height_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_9_height_mm"
+          },
+          {
+            "name": "nodule_9_volume",
+            "dataType": "string",
+            "sourceColumn": "nodule_9_volume"
+          },
+          {
+            "name": "nodule_9_location",
+            "dataType": "string",
+            "sourceColumn": "nodule_9_location"
+          },
+          {
+            "name": "nodule_9_ti_rads",
+            "dataType": "string",
+            "sourceColumn": "nodule_9_ti_rads"
+          },
+          {
+            "name": "nodule_9_composition",
+            "dataType": "string",
+            "sourceColumn": "nodule_9_composition"
+          },
+          {
+            "name": "nodule_9_echogenicity",
+            "dataType": "string",
+            "sourceColumn": "nodule_9_echogenicity"
+          },
+          {
+            "name": "nodule_9_calcifications",
+            "dataType": "string",
+            "sourceColumn": "nodule_9_calcifications"
+          },
+          {
+            "name": "nodule_9_margins",
+            "dataType": "string",
+            "sourceColumn": "nodule_9_margins"
+          },
+          {
+            "name": "nodule_9_shape",
+            "dataType": "string",
+            "sourceColumn": "nodule_9_shape"
+          },
+          {
+            "name": "nodule_9_source_score",
+            "dataType": "string",
+            "sourceColumn": "nodule_9_source_score"
+          },
+          {
+            "name": "nodule_9_source_description",
+            "dataType": "string",
+            "sourceColumn": "nodule_9_source_description"
+          },
+          {
+            "name": "nodule_10_dimensions",
+            "dataType": "string",
+            "sourceColumn": "nodule_10_dimensions"
+          },
+          {
+            "name": "nodule_10_length_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_10_length_mm"
+          },
+          {
+            "name": "nodule_10_width_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_10_width_mm"
+          },
+          {
+            "name": "nodule_10_height_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_10_height_mm"
+          },
+          {
+            "name": "nodule_10_volume",
+            "dataType": "string",
+            "sourceColumn": "nodule_10_volume"
+          },
+          {
+            "name": "nodule_10_location",
+            "dataType": "string",
+            "sourceColumn": "nodule_10_location"
+          },
+          {
+            "name": "nodule_10_ti_rads",
+            "dataType": "string",
+            "sourceColumn": "nodule_10_ti_rads"
+          },
+          {
+            "name": "nodule_10_composition",
+            "dataType": "string",
+            "sourceColumn": "nodule_10_composition"
+          },
+          {
+            "name": "nodule_10_echogenicity",
+            "dataType": "string",
+            "sourceColumn": "nodule_10_echogenicity"
+          },
+          {
+            "name": "nodule_10_calcifications",
+            "dataType": "string",
+            "sourceColumn": "nodule_10_calcifications"
+          },
+          {
+            "name": "nodule_10_margins",
+            "dataType": "string",
+            "sourceColumn": "nodule_10_margins"
+          },
+          {
+            "name": "nodule_10_shape",
+            "dataType": "string",
+            "sourceColumn": "nodule_10_shape"
+          },
+          {
+            "name": "nodule_10_source_score",
+            "dataType": "string",
+            "sourceColumn": "nodule_10_source_score"
+          },
+          {
+            "name": "nodule_10_source_description",
+            "dataType": "string",
+            "sourceColumn": "nodule_10_source_description"
+          },
+          {
+            "name": "nodule_11_dimensions",
+            "dataType": "string",
+            "sourceColumn": "nodule_11_dimensions"
+          },
+          {
+            "name": "nodule_11_length_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_11_length_mm"
+          },
+          {
+            "name": "nodule_11_width_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_11_width_mm"
+          },
+          {
+            "name": "nodule_11_height_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_11_height_mm"
+          },
+          {
+            "name": "nodule_11_volume",
+            "dataType": "string",
+            "sourceColumn": "nodule_11_volume"
+          },
+          {
+            "name": "nodule_11_location",
+            "dataType": "string",
+            "sourceColumn": "nodule_11_location"
+          },
+          {
+            "name": "nodule_11_ti_rads",
+            "dataType": "string",
+            "sourceColumn": "nodule_11_ti_rads"
+          },
+          {
+            "name": "nodule_11_composition",
+            "dataType": "string",
+            "sourceColumn": "nodule_11_composition"
+          },
+          {
+            "name": "nodule_11_echogenicity",
+            "dataType": "string",
+            "sourceColumn": "nodule_11_echogenicity"
+          },
+          {
+            "name": "nodule_11_calcifications",
+            "dataType": "string",
+            "sourceColumn": "nodule_11_calcifications"
+          },
+          {
+            "name": "nodule_11_margins",
+            "dataType": "string",
+            "sourceColumn": "nodule_11_margins"
+          },
+          {
+            "name": "nodule_11_shape",
+            "dataType": "string",
+            "sourceColumn": "nodule_11_shape"
+          },
+          {
+            "name": "nodule_11_source_score",
+            "dataType": "string",
+            "sourceColumn": "nodule_11_source_score"
+          },
+          {
+            "name": "nodule_11_source_description",
+            "dataType": "string",
+            "sourceColumn": "nodule_11_source_description"
+          },
+          {
+            "name": "nodule_12_dimensions",
+            "dataType": "string",
+            "sourceColumn": "nodule_12_dimensions"
+          },
+          {
+            "name": "nodule_12_length_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_12_length_mm"
+          },
+          {
+            "name": "nodule_12_width_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_12_width_mm"
+          },
+          {
+            "name": "nodule_12_height_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_12_height_mm"
+          },
+          {
+            "name": "nodule_12_volume",
+            "dataType": "string",
+            "sourceColumn": "nodule_12_volume"
+          },
+          {
+            "name": "nodule_12_location",
+            "dataType": "string",
+            "sourceColumn": "nodule_12_location"
+          },
+          {
+            "name": "nodule_12_ti_rads",
+            "dataType": "string",
+            "sourceColumn": "nodule_12_ti_rads"
+          },
+          {
+            "name": "nodule_12_composition",
+            "dataType": "string",
+            "sourceColumn": "nodule_12_composition"
+          },
+          {
+            "name": "nodule_12_echogenicity",
+            "dataType": "string",
+            "sourceColumn": "nodule_12_echogenicity"
+          },
+          {
+            "name": "nodule_12_calcifications",
+            "dataType": "string",
+            "sourceColumn": "nodule_12_calcifications"
+          },
+          {
+            "name": "nodule_12_margins",
+            "dataType": "string",
+            "sourceColumn": "nodule_12_margins"
+          },
+          {
+            "name": "nodule_12_shape",
+            "dataType": "string",
+            "sourceColumn": "nodule_12_shape"
+          },
+          {
+            "name": "nodule_12_source_score",
+            "dataType": "string",
+            "sourceColumn": "nodule_12_source_score"
+          },
+          {
+            "name": "nodule_12_source_description",
+            "dataType": "string",
+            "sourceColumn": "nodule_12_source_description"
+          },
+          {
+            "name": "nodule_13_dimensions",
+            "dataType": "string",
+            "sourceColumn": "nodule_13_dimensions"
+          },
+          {
+            "name": "nodule_13_length_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_13_length_mm"
+          },
+          {
+            "name": "nodule_13_width_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_13_width_mm"
+          },
+          {
+            "name": "nodule_13_height_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_13_height_mm"
+          },
+          {
+            "name": "nodule_13_volume",
+            "dataType": "string",
+            "sourceColumn": "nodule_13_volume"
+          },
+          {
+            "name": "nodule_13_location",
+            "dataType": "string",
+            "sourceColumn": "nodule_13_location"
+          },
+          {
+            "name": "nodule_13_ti_rads",
+            "dataType": "string",
+            "sourceColumn": "nodule_13_ti_rads"
+          },
+          {
+            "name": "nodule_13_composition",
+            "dataType": "string",
+            "sourceColumn": "nodule_13_composition"
+          },
+          {
+            "name": "nodule_13_echogenicity",
+            "dataType": "string",
+            "sourceColumn": "nodule_13_echogenicity"
+          },
+          {
+            "name": "nodule_13_calcifications",
+            "dataType": "string",
+            "sourceColumn": "nodule_13_calcifications"
+          },
+          {
+            "name": "nodule_13_margins",
+            "dataType": "string",
+            "sourceColumn": "nodule_13_margins"
+          },
+          {
+            "name": "nodule_13_shape",
+            "dataType": "string",
+            "sourceColumn": "nodule_13_shape"
+          },
+          {
+            "name": "nodule_13_source_score",
+            "dataType": "string",
+            "sourceColumn": "nodule_13_source_score"
+          },
+          {
+            "name": "nodule_13_source_description",
+            "dataType": "string",
+            "sourceColumn": "nodule_13_source_description"
+          },
+          {
+            "name": "nodule_14_dimensions",
+            "dataType": "string",
+            "sourceColumn": "nodule_14_dimensions"
+          },
+          {
+            "name": "nodule_14_length_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_14_length_mm"
+          },
+          {
+            "name": "nodule_14_width_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_14_width_mm"
+          },
+          {
+            "name": "nodule_14_height_mm",
+            "dataType": "string",
+            "sourceColumn": "nodule_14_height_mm"
+          },
+          {
+            "name": "nodule_14_volume",
+            "dataType": "string",
+            "sourceColumn": "nodule_14_volume"
+          },
+          {
+            "name": "nodule_14_location",
+            "dataType": "string",
+            "sourceColumn": "nodule_14_location"
+          },
+          {
+            "name": "nodule_14_ti_rads",
+            "dataType": "string",
+            "sourceColumn": "nodule_14_ti_rads"
+          },
+          {
+            "name": "nodule_14_composition",
+            "dataType": "string",
+            "sourceColumn": "nodule_14_composition"
+          },
+          {
+            "name": "nodule_14_echogenicity",
+            "dataType": "string",
+            "sourceColumn": "nodule_14_echogenicity"
+          },
+          {
+            "name": "nodule_14_calcifications",
+            "dataType": "string",
+            "sourceColumn": "nodule_14_calcifications"
+          },
+          {
+            "name": "nodule_14_margins",
+            "dataType": "string",
+            "sourceColumn": "nodule_14_margins"
+          },
+          {
+            "name": "nodule_14_shape",
+            "dataType": "string",
+            "sourceColumn": "nodule_14_shape"
+          },
+          {
+            "name": "nodule_14_source_score",
+            "dataType": "string",
+            "sourceColumn": "nodule_14_source_score"
+          },
+          {
+            "name": "nodule_14_source_description",
+            "dataType": "string",
+            "sourceColumn": "nodule_14_source_description"
+          },
+          {
+            "name": "lymph_node_assessment",
+            "dataType": "string",
+            "sourceColumn": "lymph_node_assessment"
+          },
+          {
+            "name": "clinical_impression",
+            "dataType": "string",
+            "sourceColumn": "clinical_impression"
+          },
+          {
+            "name": "recommendation",
+            "dataType": "string",
+            "sourceColumn": "recommendation"
+          },
+          {
+            "name": "report_quality",
+            "dataType": "string",
+            "sourceColumn": "report_quality"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Fact_ImagingUS_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Parquet.Contents(SilverLayerPath & \"imaging_ultrasound_facts.parquet\")\nin\n    Source"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "SourceFile",
+            "value": "imaging_ultrasound_facts.parquet"
+          }
+        ]
+      },
+      {
+        "name": "Fact_ImagingNuclear",
+        "columns": [
+          {
+            "name": "research_id",
+            "dataType": "string",
+            "sourceColumn": "research_id"
+          },
+          {
+            "name": "scan_present",
+            "dataType": "string",
+            "sourceColumn": "scan_present"
+          },
+          {
+            "name": "scandate",
+            "dataType": "string",
+            "sourceColumn": "scandate"
+          },
+          {
+            "name": "indication_text",
+            "dataType": "string",
+            "sourceColumn": "indication_text"
+          },
+          {
+            "name": "radiotracer",
+            "dataType": "string",
+            "sourceColumn": "radiotracer"
+          },
+          {
+            "name": "uptake_6hour",
+            "dataType": "string",
+            "sourceColumn": "uptake_6hour"
+          },
+          {
+            "name": "findings_text",
+            "dataType": "string",
+            "sourceColumn": "findings_text"
+          },
+          {
+            "name": "impression_text",
+            "dataType": "string",
+            "sourceColumn": "impression_text"
+          },
+          {
+            "name": "lab_summary",
+            "dataType": "string",
+            "sourceColumn": "lab_summary"
+          },
+          {
+            "name": "uptake_general",
+            "dataType": "string",
+            "sourceColumn": "uptake_general"
+          },
+          {
+            "name": "uptake_24hour",
+            "dataType": "string",
+            "sourceColumn": "uptake_24hour"
+          },
+          {
+            "name": "scantype",
+            "dataType": "string",
+            "sourceColumn": "scantype"
+          },
+          {
+            "name": "scan_index",
+            "dataType": "int64",
+            "sourceColumn": "scan_index"
+          },
+          {
+            "name": "rai_avid_flag",
+            "dataType": "string",
+            "sourceColumn": "rai_avid_flag"
+          },
+          {
+            "name": "metastasis_sites",
+            "dataType": "string",
+            "sourceColumn": "metastasis_sites"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Fact_ImagingNuclear_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Parquet.Contents(SilverLayerPath & \"imaging_nuclear_facts.parquet\")\nin\n    Source"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "SourceFile",
+            "value": "imaging_nuclear_facts.parquet"
+          }
+        ]
+      },
+      {
+        "name": "Fact_Complications",
+        "columns": [
+          {
+            "name": "research_id",
+            "dataType": "int64",
+            "sourceColumn": "research_id"
+          },
+          {
+            "name": "rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy",
+            "dataType": "string",
+            "sourceColumn": "rln_injury_or_vocal_cord_paralysis_vocal_cord_palsy"
+          },
+          {
+            "name": "laryngoscopy_notes",
+            "dataType": "string",
+            "sourceColumn": "laryngoscopy_notes"
+          },
+          {
+            "name": "other_note_re_vocal_cords",
+            "dataType": "string",
+            "sourceColumn": "other_note_re_vocal_cords"
+          },
+          {
+            "name": "seroma",
+            "dataType": "string",
+            "sourceColumn": "seroma"
+          },
+          {
+            "name": "hematoma",
+            "dataType": "string",
+            "sourceColumn": "hematoma"
+          },
+          {
+            "name": "wound_infection",
+            "dataType": "double",
+            "sourceColumn": "wound_infection"
+          },
+          {
+            "name": "readmission",
+            "dataType": "double",
+            "sourceColumn": "readmission"
+          },
+          {
+            "name": "los",
+            "dataType": "double",
+            "sourceColumn": "los"
+          },
+          {
+            "name": "hypocalcemia",
+            "dataType": "double",
+            "sourceColumn": "hypocalcemia"
+          },
+          {
+            "name": "hypoparathyroidism",
+            "dataType": "double",
+            "sourceColumn": "hypoparathyroidism"
+          },
+          {
+            "name": "_raw_laryngoscopy_note",
+            "dataType": "string",
+            "sourceColumn": "_raw_laryngoscopy_note"
+          },
+          {
+            "name": "vocal_cord_status",
+            "dataType": "string",
+            "sourceColumn": "vocal_cord_status"
+          },
+          {
+            "name": "affected_side",
+            "dataType": "string",
+            "sourceColumn": "affected_side"
+          },
+          {
+            "name": "laryngoscopy_date",
+            "dataType": "string",
+            "sourceColumn": "laryngoscopy_date"
+          },
+          {
+            "name": "vocal_cord_palsy_detail",
+            "dataType": "string",
+            "sourceColumn": "vocal_cord_palsy_detail"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Fact_Complications_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Parquet.Contents(SilverLayerPath & \"complications_facts.parquet\")\nin\n    Source"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "SourceFile",
+            "value": "complications_facts.parquet"
+          }
+        ]
+      },
+      {
+        "name": "Fact_ComplicationSev",
+        "columns": [
+          {
+            "name": "research_id",
+            "dataType": "string",
+            "sourceColumn": "research_id"
+          },
+          {
+            "name": "age_at_surgery",
+            "dataType": "int64",
+            "sourceColumn": "age_at_surgery"
+          },
+          {
+            "name": "sex",
+            "dataType": "string",
+            "sourceColumn": "sex"
+          },
+          {
+            "name": "surgery_date",
+            "dataType": "string",
+            "sourceColumn": "surgery_date"
+          },
+          {
+            "name": "rln_injury",
+            "dataType": "string",
+            "sourceColumn": "rln_injury"
+          },
+          {
+            "name": "vocal_cord_status",
+            "dataType": "string",
+            "sourceColumn": "vocal_cord_status"
+          },
+          {
+            "name": "affected_side",
+            "dataType": "string",
+            "sourceColumn": "affected_side"
+          },
+          {
+            "name": "seroma",
+            "dataType": "string",
+            "sourceColumn": "seroma"
+          },
+          {
+            "name": "hematoma",
+            "dataType": "string",
+            "sourceColumn": "hematoma"
+          },
+          {
+            "name": "hypocalcemia",
+            "dataType": "double",
+            "sourceColumn": "hypocalcemia"
+          },
+          {
+            "name": "hypoparathyroidism",
+            "dataType": "double",
+            "sourceColumn": "hypoparathyroidism"
+          },
+          {
+            "name": "laryngoscopy_date",
+            "dataType": "string",
+            "sourceColumn": "laryngoscopy_date"
+          },
+          {
+            "name": "ebl",
+            "dataType": "string",
+            "sourceColumn": "ebl"
+          },
+          {
+            "name": "operative_time_min",
+            "dataType": "double",
+            "sourceColumn": "operative_time_min"
+          },
+          {
+            "name": "bmi",
+            "dataType": "double",
+            "sourceColumn": "bmi"
+          },
+          {
+            "name": "surgery_type_normalized",
+            "dataType": "string",
+            "sourceColumn": "surgery_type_normalized"
+          },
+          {
+            "name": "histology_1_type",
+            "dataType": "string",
+            "sourceColumn": "histology_1_type"
+          },
+          {
+            "name": "complication_severity_score",
+            "dataType": "int64",
+            "sourceColumn": "complication_severity_score"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Fact_ComplicationSev_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Parquet.Contents(SilverLayerPath & \"complication_severity_facts.parquet\")\nin\n    Source"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "SourceFile",
+            "value": "complication_severity_facts.parquet"
+          }
+        ]
+      },
+      {
+        "name": "Fact_Parathyroid",
+        "columns": [
+          {
+            "name": "research_id",
+            "dataType": "string",
+            "sourceColumn": "research_id"
+          },
+          {
+            "name": "parathyroid_gland_or_tissue_included_in_resected_specimen",
+            "dataType": "string",
+            "sourceColumn": "parathyroid_gland_or_tissue_included_in_resected_specimen"
+          },
+          {
+            "name": "incidental_gland_excision",
+            "dataType": "string",
+            "sourceColumn": "incidental_gland_excision"
+          },
+          {
+            "name": "pathologic_glands",
+            "dataType": "string",
+            "sourceColumn": "pathologic_glands"
+          },
+          {
+            "name": "parathyroid_abnormality",
+            "dataType": "string",
+            "sourceColumn": "parathyroid_abnormality"
+          },
+          {
+            "name": "removal_intent",
+            "dataType": "string",
+            "sourceColumn": "removal_intent"
+          },
+          {
+            "name": "removal_intent_evidence",
+            "dataType": "string",
+            "sourceColumn": "removal_intent_evidence"
+          },
+          {
+            "name": "final_path_diagnosis_original",
+            "dataType": "string",
+            "sourceColumn": "final_path_diagnosis_original"
+          },
+          {
+            "name": "path_extended_gross_path_n_a_not_available",
+            "dataType": "string",
+            "sourceColumn": "path_extended_gross_path_n_a_not_available"
+          },
+          {
+            "name": "parathyroid_supporting_fields",
+            "dataType": "string",
+            "sourceColumn": "parathyroid_supporting_fields"
+          },
+          {
+            "name": "g1_location",
+            "dataType": "string",
+            "sourceColumn": "g1_location"
+          },
+          {
+            "name": "g1_biopsy",
+            "dataType": "string",
+            "sourceColumn": "g1_biopsy"
+          },
+          {
+            "name": "g1_excision",
+            "dataType": "string",
+            "sourceColumn": "g1_excision"
+          },
+          {
+            "name": "g1_cellularity",
+            "dataType": "string",
+            "sourceColumn": "g1_cellularity"
+          },
+          {
+            "name": "g1_weight",
+            "dataType": "string",
+            "sourceColumn": "g1_weight"
+          },
+          {
+            "name": "g1_size",
+            "dataType": "string",
+            "sourceColumn": "g1_size"
+          },
+          {
+            "name": "g2_location",
+            "dataType": "string",
+            "sourceColumn": "g2_location"
+          },
+          {
+            "name": "g2_biopsy",
+            "dataType": "string",
+            "sourceColumn": "g2_biopsy"
+          },
+          {
+            "name": "g2_excision",
+            "dataType": "string",
+            "sourceColumn": "g2_excision"
+          },
+          {
+            "name": "g2_cellularity",
+            "dataType": "string",
+            "sourceColumn": "g2_cellularity"
+          },
+          {
+            "name": "g2_weight",
+            "dataType": "string",
+            "sourceColumn": "g2_weight"
+          },
+          {
+            "name": "g2_size",
+            "dataType": "string",
+            "sourceColumn": "g2_size"
+          },
+          {
+            "name": "g3_location",
+            "dataType": "string",
+            "sourceColumn": "g3_location"
+          },
+          {
+            "name": "g3_biopsy",
+            "dataType": "string",
+            "sourceColumn": "g3_biopsy"
+          },
+          {
+            "name": "g3_excision",
+            "dataType": "string",
+            "sourceColumn": "g3_excision"
+          },
+          {
+            "name": "g3_cellularity",
+            "dataType": "string",
+            "sourceColumn": "g3_cellularity"
+          },
+          {
+            "name": "g3_weight",
+            "dataType": "string",
+            "sourceColumn": "g3_weight"
+          },
+          {
+            "name": "g3_size",
+            "dataType": "string",
+            "sourceColumn": "g3_size"
+          },
+          {
+            "name": "g4_location",
+            "dataType": "string",
+            "sourceColumn": "g4_location"
+          },
+          {
+            "name": "g4_biopsy",
+            "dataType": "string",
+            "sourceColumn": "g4_biopsy"
+          },
+          {
+            "name": "g4_excision",
+            "dataType": "string",
+            "sourceColumn": "g4_excision"
+          },
+          {
+            "name": "g4_cellularity",
+            "dataType": "string",
+            "sourceColumn": "g4_cellularity"
+          },
+          {
+            "name": "g4_weight",
+            "dataType": "string",
+            "sourceColumn": "g4_weight"
+          },
+          {
+            "name": "g4_size",
+            "dataType": "string",
+            "sourceColumn": "g4_size"
+          },
+          {
+            "name": "g5_location",
+            "dataType": "string",
+            "sourceColumn": "g5_location"
+          },
+          {
+            "name": "g5_biopsy",
+            "dataType": "string",
+            "sourceColumn": "g5_biopsy"
+          },
+          {
+            "name": "g5_excision",
+            "dataType": "string",
+            "sourceColumn": "g5_excision"
+          },
+          {
+            "name": "g5_cellularity",
+            "dataType": "string",
+            "sourceColumn": "g5_cellularity"
+          },
+          {
+            "name": "g5_weight",
+            "dataType": "string",
+            "sourceColumn": "g5_weight"
+          },
+          {
+            "name": "g5_size",
+            "dataType": "string",
+            "sourceColumn": "g5_size"
+          },
+          {
+            "name": "g6_location",
+            "dataType": "string",
+            "sourceColumn": "g6_location"
+          },
+          {
+            "name": "g6_biopsy",
+            "dataType": "string",
+            "sourceColumn": "g6_biopsy"
+          },
+          {
+            "name": "g6_excision",
+            "dataType": "string",
+            "sourceColumn": "g6_excision"
+          },
+          {
+            "name": "g6_cellularity",
+            "dataType": "string",
+            "sourceColumn": "g6_cellularity"
+          },
+          {
+            "name": "g6_weight",
+            "dataType": "string",
+            "sourceColumn": "g6_weight"
+          },
+          {
+            "name": "g6_size",
+            "dataType": "string",
+            "sourceColumn": "g6_size"
+          },
+          {
+            "name": "incidental_status_refined",
+            "dataType": "string",
+            "sourceColumn": "incidental_status_refined"
+          },
+          {
+            "name": "note_intent_inferred",
+            "dataType": "string",
+            "sourceColumn": "note_intent_inferred"
+          },
+          {
+            "name": "note_intent_evidence",
+            "dataType": "string",
+            "sourceColumn": "note_intent_evidence"
+          },
+          {
+            "name": "is_parathyroid_adenoma",
+            "dataType": "boolean",
+            "sourceColumn": "is_parathyroid_adenoma"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Fact_Parathyroid_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Parquet.Contents(SilverLayerPath & \"parathyroid_facts.parquet\")\nin\n    Source"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "SourceFile",
+            "value": "parathyroid_facts.parquet"
+          }
+        ]
+      },
+      {
+        "name": "_Measures",
+        "columns": [
+          {
+            "name": "Placeholder",
+            "dataType": "string",
+            "sourceColumn": "Placeholder"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "_M_p",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": "let Source = #table({\"Placeholder\"},{{\"\"}})\nin Source"
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "Total_Patients",
+            "expression": "DISTINCTCOUNT(Dim_Patient[research_id])",
+            "displayFolder": "Patients"
+          },
+          {
+            "name": "Mean_Age_At_Surgery",
+            "expression": "AVERAGE(Dim_Patient[age_at_surgery])",
+            "displayFolder": "Patients"
+          },
+          {
+            "name": "Median_Age_At_Surgery",
+            "expression": "MEDIAN(Dim_Patient[age_at_surgery])",
+            "displayFolder": "Patients"
+          },
+          {
+            "name": "Pct_Female",
+            "expression": "DIVIDE(CALCULATE(DISTINCTCOUNT(Dim_Patient[research_id]),Dim_Patient[sex]=\"Female\"),[Total_Patients],0)",
+            "displayFolder": "Patients"
+          },
+          {
+            "name": "Stage_I_Count",
+            "expression": "CALCULATE(DISTINCTCOUNT(Fact_Outcome[research_id]),Fact_Outcome[overall_stage_ajcc8]=\"I\")",
+            "displayFolder": "Staging"
+          },
+          {
+            "name": "Stage_II_Count",
+            "expression": "CALCULATE(DISTINCTCOUNT(Fact_Outcome[research_id]),Fact_Outcome[overall_stage_ajcc8]=\"II\")",
+            "displayFolder": "Staging"
+          },
+          {
+            "name": "Stage_III_Count",
+            "expression": "CALCULATE(DISTINCTCOUNT(Fact_Outcome[research_id]),Fact_Outcome[overall_stage_ajcc8]=\"III\")",
+            "displayFolder": "Staging"
+          },
+          {
+            "name": "Stage_IV_Count",
+            "expression": "CALCULATE(DISTINCTCOUNT(Fact_Outcome[research_id]),Fact_Outcome[overall_stage_ajcc8]=\"IV\")",
+            "displayFolder": "Staging"
+          },
+          {
+            "name": "Pct_Stage_I",
+            "expression": "DIVIDE([Stage_I_Count],[Total_Patients],0)",
+            "displayFolder": "Staging"
+          },
+          {
+            "name": "Mean_Tumor_Size_cm",
+            "expression": "AVERAGE(Fact_Outcome[largest_tumor_cm])",
+            "displayFolder": "Pathology"
+          },
+          {
+            "name": "Pct_Multifocal",
+            "expression": "DIVIDE(CALCULATE(DISTINCTCOUNT(Fact_Outcome[research_id]),Fact_Outcome[tumor_focality_overall]=\"Multifocal\"),[Total_Patients],0)",
+            "displayFolder": "Pathology"
+          },
+          {
+            "name": "LN_Positivity_Rate",
+            "expression": "DIVIDE(CALCULATE(COUNTROWS(Fact_Outcome),Fact_Outcome[ln_positive]>0),CALCULATE(COUNTROWS(Fact_Outcome),NOT(ISBLANK(Fact_Outcome[ln_positive]))),0)",
+            "displayFolder": "Pathology"
+          },
+          {
+            "name": "Total_Surgical_Episodes",
+            "expression": "COUNTROWS(Fact_Treatment)",
+            "displayFolder": "Treatment"
+          },
+          {
+            "name": "Pct_Central_Neck_Dissection",
+            "expression": "DIVIDE(CALCULATE(COUNTROWS(Fact_Treatment),Fact_Treatment[central_neck_dissection_flag]=TRUE()),[Total_Surgical_Episodes],0)",
+            "displayFolder": "Treatment"
+          },
+          {
+            "name": "Pct_RLN_Monitoring",
+            "expression": "DIVIDE(CALCULATE(COUNTROWS(Fact_Treatment),Fact_Treatment[rln_monitoring_flag]=TRUE()),[Total_Surgical_Episodes],0)",
+            "displayFolder": "Treatment"
+          },
+          {
+            "name": "Pct_Parathyroid_Autograft",
+            "expression": "DIVIDE(CALCULATE(COUNTROWS(Fact_Treatment),Fact_Treatment[parathyroid_autograft_flag]=TRUE()),[Total_Surgical_Episodes],0)",
+            "displayFolder": "Treatment"
+          },
+          {
+            "name": "Total_FNA_Episodes",
+            "expression": "COUNTROWS(Fact_FnaEpisode)",
+            "displayFolder": "FNA"
+          },
+          {
+            "name": "Pct_Any_Complication",
+            "expression": "DIVIDE(CALCULATE(DISTINCTCOUNT(Fact_Complications[research_id])),[Total_Patients],0)",
+            "displayFolder": "Complications"
+          },
+          {
+            "name": "Patients_With_CT",
+            "expression": "DISTINCTCOUNT(Fact_ImagingCT[research_id])",
+            "displayFolder": "Imaging"
+          },
+          {
+            "name": "Patients_With_Ultrasound",
+            "expression": "DISTINCTCOUNT(Fact_ImagingUS[research_id])",
+            "displayFolder": "Imaging"
+          },
+          {
+            "name": "Patients_With_NucMed",
+            "expression": "DISTINCTCOUNT(Fact_ImagingNuclear[research_id])",
+            "displayFolder": "Imaging"
+          },
+          {
+            "name": "Pct_With_Staging",
+            "expression": "DIVIDE(CALCULATE(DISTINCTCOUNT(Fact_Outcome[research_id]),NOT(ISBLANK(Fact_Outcome[overall_stage_ajcc8]))),[Total_Patients],0)",
+            "displayFolder": "DataQuality"
+          },
+          {
+            "name": "Silver_Patient_Count",
+            "expression": "DISTINCTCOUNT(Dim_Patient[research_id])",
+            "displayFolder": "DataQuality"
+          },
+          {
+            "name": "Pct_With_Op_Note",
+            "expression": "DIVIDE(CALCULATE(DISTINCTCOUNT(Fact_ClinicalNotes[research_id]),NOT(ISBLANK(Fact_ClinicalNotes[opnote_1]))),[Total_Patients],0)",
+            "displayFolder": "DataQuality"
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "Rel_01_Fact_Pathology",
+        "fromTable": "Fact_Pathology",
+        "fromColumn": "research_id",
+        "toTable": "Dim_Patient",
+        "toColumn": "research_id",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "Rel_02_Fact_SynopticPath",
+        "fromTable": "Fact_SynopticPath",
+        "fromColumn": "research_id",
+        "toTable": "Dim_Patient",
+        "toColumn": "research_id",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "Rel_03_Fact_FrozenSection",
+        "fromTable": "Fact_FrozenSection",
+        "fromColumn": "research_id",
+        "toTable": "Dim_Patient",
+        "toColumn": "research_id",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "Rel_04_Fact_Molecular",
+        "fromTable": "Fact_Molecular",
+        "fromColumn": "research_id",
+        "toTable": "Dim_Patient",
+        "toColumn": "research_id",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "Rel_05_Fact_ClinicalNotes",
+        "fromTable": "Fact_ClinicalNotes",
+        "fromColumn": "research_id",
+        "toTable": "Dim_Patient",
+        "toColumn": "research_id",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "Rel_06_Fact_Treatment",
+        "fromTable": "Fact_Treatment",
+        "fromColumn": "research_id",
+        "toTable": "Dim_Patient",
+        "toColumn": "research_id",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "Rel_07_Fact_Outcome",
+        "fromTable": "Fact_Outcome",
+        "fromColumn": "research_id",
+        "toTable": "Dim_Patient",
+        "toColumn": "research_id",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "Rel_08_Fact_LabTg",
+        "fromTable": "Fact_LabTg",
+        "fromColumn": "research_id",
+        "toTable": "Dim_Patient",
+        "toColumn": "research_id",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "Rel_09_Fact_LabAntiTg",
+        "fromTable": "Fact_LabAntiTg",
+        "fromColumn": "research_id",
+        "toTable": "Dim_Patient",
+        "toColumn": "research_id",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "Rel_10_Fact_FnaEpisode",
+        "fromTable": "Fact_FnaEpisode",
+        "fromColumn": "research_id",
+        "toTable": "Dim_Patient",
+        "toColumn": "research_id",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "Rel_11_Fact_FnaCytology",
+        "fromTable": "Fact_FnaCytology",
+        "fromColumn": "research_id",
+        "toTable": "Dim_Patient",
+        "toColumn": "research_id",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "Rel_12_Fact_ImagingCT",
+        "fromTable": "Fact_ImagingCT",
+        "fromColumn": "research_id",
+        "toTable": "Dim_Patient",
+        "toColumn": "research_id",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": true
+      },
+      {
+        "name": "Rel_13_Treatment_Date",
+        "fromTable": "Fact_Treatment",
+        "fromColumn": "resolved_surgery_date",
+        "toTable": "Dim_Date",
+        "toColumn": "date_key",
+        "fromCardinality": "many",
+        "toCardinality": "one",
+        "isActive": false
+      }
+    ],
+    "annotations": [
+      {
+        "name": "ProjectName",
+        "value": "THYROID_2026"
+      },
+      {
+        "name": "CreatedAt",
+        "value": "2026-03-27"
+      },
+      {
+        "name": "PatientCount",
+        "value": "11673"
+      },
+      {
+        "name": "TableCount",
+        "value": "19"
+      },
+      {
+        "name": "MeasureCount",
+        "value": "24"
+      },
+      {
+        "name": "Note",
+        "value": "Import via Tabular Editor 3 \u2192 Power BI Service workspace (XMLA endpoint)"
+      }
+    ]
+  }
+}
