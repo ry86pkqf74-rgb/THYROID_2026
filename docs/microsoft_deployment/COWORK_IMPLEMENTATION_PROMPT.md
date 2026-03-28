@@ -227,13 +227,13 @@ In addition to the Microsoft 365 stack, the following tools extend the pipeline 
 - Audio narration for conference presentations and dashboard walkthroughs
 - Speech-to-text pipeline for clinical note dictation (Phase 5+, requires HIPAA BAA upgrade)
 
-**Replit** ($200/mo team credits, ROS Workspace, 12 existing projects):
+**Replit** (existing ROS team plan — $200/mo credits reset monthly, no additional cost):
 - Full-stack thyroid research dashboard (FastAPI + React) replacing Streamlit — shareable via URL
 - LangGraph agent backend API (always-on reserved VM deployment)
 - Manuscript figure generation service (matplotlib/seaborn → publication-grade SVG/PNG)
 - Batch data processing workers (survival analysis, PSM, cure models offloaded from local Mac)
 
-**LangChain/LangGraph** (open source, $0 + ~$3-5/mo Claude API):
+**LangChain/LangGraph** (open source, $0 — agent LLM calls routed through existing Claude subscription):
 - Clinical note extraction agent: operative notes → structured Parquet via stateful graph pipeline
 - Data quality monitoring agent: weekly scans for missing data, outliers, referential integrity
 - Natural language query agent: "What's the recurrence rate for PTC tall cell?" → SQL → answer + chart
@@ -297,11 +297,11 @@ All work will be tracked in git commits and VALIDATION_AUDITS/ logs. The entire 
 | Desktop Commander | File ops, Python execution | Local shell | $0 |
 | osascript | App control, UI automation | Local shell | $0 |
 | Claude in Chrome | M365 web app interaction | Browser only | $0 |
-| Replit | Dashboard, API, workers | De-id exports only | $200/mo (existing) |
+| Replit | Dashboard, API, workers | De-id exports only | $0 (pre-paid monthly credits) |
 | ElevenLabs | Voice assistant, TTS | De-id KB only | $0 (Free tier) |
 | LangGraph | Agent orchestration | Local execution | $0 (open source) |
-| Claude API | LLM for agents | De-id prompts only | ~$3-5/mo |
-| **Total** | | | **~$203-205/mo** |
+| Claude (Cowork) | LLM for agents | De-id prompts only | $0 (existing subscription) |
+| **Total incremental cost** | | | **$0** |
 
 ---
 

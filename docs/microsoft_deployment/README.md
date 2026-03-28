@@ -118,7 +118,7 @@ Extends the Microsoft-only pipeline with three supplementary tools that fill gap
 - Combined architecture diagram (local Mac ↔ cloud services with PHI safety)
 - PHI Safety Matrix (9-row assessment of every service)
 - Implementation timeline: Phases 4G-4I (Days 15-25)
-- Cost: ~$203-205/mo total (Replit $200 existing + Claude API ~$3-5)
+- Cost: $0 incremental (Replit credits pre-paid monthly, ElevenLabs Free tier, LangGraph agents routed through existing Claude subscription)
 - Capability comparison: Microsoft-only vs. full stack (12 capabilities)
 
 **Use this file for:** Understanding how ElevenLabs, Replit, and LangGraph extend the M365 pipeline
@@ -192,8 +192,8 @@ Complete briefing that can be copied directly into a Claude Code Cowork session 
 | **M365 Apps in Scope** | 30 apps, 5 P0-critical, 8 P1-important, 7 P2-nice-to-have |
 | **Power BI Star Schema** | 13 fact tables, 8 dimensions, 12 relationships, 20+ DAX measures, 6 report pages |
 | **Implementation Timeline** | 25 days (Phase 4A-I), ~110 hours active work |
-| **Supplementary Tools** | ElevenLabs (Free), Replit ($200/mo), LangGraph (OSS), Claude API (~$3-5/mo) |
-| **Cost Savings** | ~$100-500/year (MotherDuck elimination); net cost ~$203-205/mo |
+| **Supplementary Tools** | ElevenLabs (Free tier), Replit (pre-paid, $0 extra), LangGraph (OSS), Claude via Cowork |
+| **Net Incremental Cost** | $0 — all tools are free, Emory-provided, or pre-paid |
 | **Security Baseline** | FileVault encryption, research_id-only linking, 7-year audit retention, HIPAA compliance |
 
 ---

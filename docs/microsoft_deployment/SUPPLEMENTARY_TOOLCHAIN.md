@@ -153,13 +153,14 @@ DATA FLOW EXAMPLES:
 | Service | Tier | Cost | Notes |
 |---|---|---|---|
 | **ElevenLabs** | Free | $0 | 10K TTS credits + 15 min Agents; 0 credits used to date |
-| **Replit** | Core + Team | $25 + $200 team | Existing subscription; covers 5 users + 4 vCPU/8GB VM + PostgreSQL |
-| **Claude API** | Pay-as-you-go | ~$3-5/mo | Typical usage: 100K tokens/month at $3/1M input, $15/1M output |
+| **Replit** | Core + Team | $0 additional | Pre-paid $200/mo credits reset monthly — already budgeted, not an incremental charge |
+| **LangGraph agents (LLM)** | Claude via Cowork | $0 additional | Route agent calls through existing Claude subscription; no separate API key needed |
 | **LangChain/LangGraph** | Open source | $0 | Apache 2.0; no licensing cost |
 | **DuckDB** | Open source | $0 | No licensing cost; local execution |
-| **Total** | | ~$228-230/mo | Minimal incremental cost (Replit already budgeted) |
+| **M365** | Emory Enterprise | $0 | Institution-provided |
+| **Total incremental cost** | | **$0** | Every tool is free, pre-paid, or institution-provided |
 
-**Cost Comparison:** MotherDuck $100-500/yr vs. Replit $2,400/yr + Claude $36-60/yr = net cost increase $2,000-2,300/yr, but gains: local data control, offline operation, no vendor lock-in, extensible LLM agents.
+**Net cost:** $0 additional spending. Replit credits are pre-allocated and reset regardless of usage. ElevenLabs Free tier has unused capacity. LangGraph runs locally using Claude through your existing Cowork subscription. M365 is Emory-funded.
 
 ### Team Effort (Phases 4G-4I)
 
