@@ -8,7 +8,7 @@ Fixes:
      - 5 in YYYY-MM-DD HH:MM:SS format (parsed via TRY_STRPTIME '%Y-%m-%d')
      - Result: 100% date coverage (was 99.4%)
 
-  2. Creates ct_imaging_surgery_timing table (7,701 rows, 3,086 patients)
+    2. Creates ct_imaging_surgery_timing table for institutional CT-to-surgery timing linkage
      - Joins ct_imaging.date_of_exam with path_synoptics first surgery date
      - Computes days_from_surgery, timing_category, post_30d/1yr flags
 

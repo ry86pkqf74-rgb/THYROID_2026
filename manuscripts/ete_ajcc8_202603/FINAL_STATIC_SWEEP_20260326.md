@@ -19,7 +19,7 @@ Read-only repo sweep. No analyses rerun; CSV row checks and greps only. Scope: E
 | `studies/proposal2_ete_staging/audit_report.md` | Expanded cohort Table 1 + sensitivity table | N1 (any): **412 (56.9%)** / **1166 (67.2%)** / **611 (74.7%)** (line 40). Sensitivity mETE ORs: age ≥55 **0.87**, age \<55 **0.44**, etc. (lines 104–111). |
 | `studies/proposal2_ete_staging/analysis_report.md` | **Classic N=596** report (distinct pipeline) | N1 (any): **82 (44.3%)** / **170 (68.3%)** / **105 (64.8%)** (lines 64–65). Ordinal `ete_micro` OR **0.42** Table 4 — **not** the expanded‑cohort OR **~0.60**. |
 | `studies/proposal2_ete_staging/cox_regression_report.md` | Cox supplement | **N = 5,794** (different analytic frame than 3,278 expanded PTC file). |
-| `outputs/manuscript_forensics_20260318/ct_imaging_surgery_timing.csv` | Institutional CT timing | **7702** lines = **7701** data rows + header → matches “7,701 examination rows”. |
+| `outputs/manuscript_forensics_20260318/ct_imaging_surgery_timing.csv` | Institutional CT timing | **7702** lines = **7701** data rows + header. Provenance only; this total should **not** be quoted in the manuscript text. |
 | `outputs/manuscript_forensics_20260318/ptc_ct_imaging_events.csv` | PTC CT extract | **3019** lines = **3018** rows + header; **650** patients; pathologic rows **1245**; patients with ≥1 pathologic row **331**; among pathologic rows, **508** preoperative + **73** perioperative (0–29 d) = **581** (**46.67%** of 1245); **664** ≥30 d — **matches revision packet text**. |
 | `outputs/manuscript_forensics_20260318/final_manuscript_dataset_provenance.json` | Forensics linkage manifest | **Conflicts** with frozen audit on several cohort sizes (see §3). CT timing block matches 3018/650. |
 | `docs/manuscript_forensics_20260318/final_metric_crosswalk.csv` | Metric ledger | MET08 records **503** pairs “reproduced” vs manuscript **711** — flagged in packet. MET06 primary ordinal OR **0.42** vs expanded **0.60** — cohort label risk. |
@@ -34,7 +34,7 @@ Read-only repo sweep. No analyses rerun; CSV row checks and greps only. Scope: E
 
 | Term | Verdict | Evidence |
 |------|---------|----------|
-| **701** vs **7,701** | **Risk if “701” used as N of exams** | Row count on `ct_imaging_surgery_timing.csv` supports **7,701** data rows. Literal **701** appears only as **`days_from_surgery`** in patient rows (e.g. research_id 9645), **not** as exam N — easy mistranscription; packet warns explicitly. |
+| **701** vs **7,701** | **Risk if either appears in manuscript text** | Row count on `ct_imaging_surgery_timing.csv` supports **7,701** data rows as an internal provenance check. Literal **701** appears only as **`days_from_surgery`** in patient rows (e.g. research_id 9645), **not** as exam N. Submission text should avoid citing the total institutional CT exam count altogether. |
 | **650**, **1,245**, **331**, **581**, **508**, **73** | **Consistent** with `ptc_ct_imaging_events.csv` | Validated by pandas summary on current export (§1). |
 | **596** vs **589** | **Both “correct” for different statements** | **596** rows `tables/analytic_cohort.csv` / metadata `original_classic_N`; **589** = deduped classic in forensics `primary_classic_ptc` — packet: footnote **7** `research_id` collisions if citing 589. |
 | **3,269** | **Canonical complete-case expanded ordinal N** | `analysis_metadata.yaml` `expanded_cohorts[0].cc_n: 3269`; packet cites **3,269** for CC ordinal. |
@@ -90,7 +90,7 @@ Read-only repo sweep. No analyses rerun; CSV row checks and greps only. Scope: E
 
 ## 5. Suspicious or easy-to-misread wording
 
-- **“701 CT exams”** — almost certainly **`days_from_surgey=701`** or typo for **7,701**; packet already correct.  
+- **“701 CT exams”** or **“7,701 CT exams”** — do **not** use either phrasing in the manuscript. `701` is almost certainly a mistranscribed `days_from_surgery` value, while `7,701` is an internal export row count that is not manuscript-relevant.  
 - **“Within 30 days of surgery”** for pathologic CTs — must keep **preop + peri (0–29 d)** semantics (packet wording).  
 - **`n_positive_flag` definition** — ensure Methods match **AJCC N1** (not raw LN count positivity) to avoid reviewer contradiction with forensics prose.
 
