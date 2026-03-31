@@ -64,3 +64,13 @@ notes_extraction/phase*_preop_molecular_refinement_*.md
 
 # ── Study outputs with timestamped duplicates ─────────────────
 studies/manuscript_package_*/
+
+# ── Extraction pipeline: PHI-sensitive data (never commit) ────
+processed/remaining/*.parquet
+processed/remaining/*.csv
+output/*.parquet
+
+# ── Extraction pipeline: checkpoint & output data (OK to commit) ──
+# output/*.ckpt.jsonl — these are committed
+# output/server_checkpoints/ — committed
+# output/v2_backup/ — committed
