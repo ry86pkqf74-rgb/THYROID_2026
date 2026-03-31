@@ -245,6 +245,16 @@ def compute_table1(df):
     row_sex["p-value"] = _pval_str(p_sex)
     table_rows.append(row_sex)
 
+    # --- Histology (cohort is classic-variant PTC by construction; subvariant often missing in extract) ---
+    row_histo = {
+        "Variable": "Classic-variant PTC (cohort definition), n (%)",
+        "p-value": "—",
+    }
+    for g in groups:
+        sub = df[df["ete_group"] == g]
+        row_histo[g] = f"{len(sub)} (100.0%)"
+    table_rows.append(row_histo)
+
     # --- Tumor size ---
     size_data = {}
     for g in groups:
@@ -257,6 +267,20 @@ def compute_table1(df):
         row_size[g] = f"{s.median():.1f} [{s.quantile(0.25):.1f}–{s.quantile(0.75):.1f}]"
     row_size["p-value"] = _pval_str(p_size)
     table_rows.append(row_size)
+
+    # Tumor size mean ± SD (one-way ANOVA); distribution remains right-skewed vs median row
+    try:
+        samples_mu = [size_data[g] for g in groups]
+        f_stat, p_anova = stats.f_oneway(*samples_mu)
+        p_mu = p_anova
+    except Exception:
+        p_mu = np.nan
+    row_size_mu = {"Variable": "Tumor size (cm), mean ± SD"}
+    for g in groups:
+        s = size_data[g]
+        row_size_mu[g] = f"{s.mean():.1f} ± {s.std():.1f}" if len(s) > 0 else "—"
+    row_size_mu["p-value"] = _pval_str(p_mu) if not np.isnan(p_mu) else "—"
+    table_rows.append(row_size_mu)
 
     # Tumor size categories
     df["size_cat"] = pd.cut(
