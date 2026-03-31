@@ -1,6 +1,6 @@
-# THYROID_2026 Power BI & Microsoft 365 Architecture — Comprehensive Summary
+# THYROID_2026 Power BI & Microsoft Fabric Architecture — Comprehensive Summary
 
-**Date:** 2026-03-31
+**Date:** 2026-03-31 (updated)
 **Author:** Logan Glosser (Emory University Surgery Research)
 **Purpose:** Share with AI assistants (Grok, ChatGPT, Claude) for architecture review before further implementation
 
@@ -8,27 +8,92 @@
 
 ## 1. Project Context
 
-**What this is:** A 11,673-patient thyroid cancer research data lakehouse supporting clinical extraction, statistical analysis, and manuscript publication. The NLP extraction pipeline (running on 9 GPU servers) feeds structured data into this analytics layer.
+**What this is:** An 11,673-patient thyroid cancer research data lakehouse supporting clinical extraction, statistical analysis, and manuscript publication. The NLP extraction pipeline (running on 9 GPU servers) feeds structured data into this analytics layer.
 
-**Migration in progress:** Moving from MotherDuck (cloud DuckDB) + Streamlit dashboards → 100% local Power BI Desktop + Microsoft 365 stack. The migration is planned but implementation has not yet started.
+**Current state:** The project has completed the MotherDuck cloud database export and is migrating to a Microsoft Fabric Lakehouse + Power BI stack. A star-schema Excel workbook (THYROID_CORE_POWERBI) already exists with dimension and fact tables populated from the exported data. The Fabric Lakehouse has been provisioned but not yet loaded with data.
 
-**Why migrating:** IRB defensibility (no PHI in cloud), publication-grade provenance, cost savings ($100-500/yr MotherDuck elimination), no vendor lock-in, and Emory provides full M365 Enterprise for free.
-
----
-
-## 2. Current State (Being Eliminated)
-
-- **Database:** MotherDuck cloud DuckDB (307 files, 1,786 references in codebase)
-- **Dashboards:** Streamlit (dashboard.py + app/ modules)
-- **Data files:** DVC-tracked Parquet files in processed/
-- **Auth:** Token-based (MOTHERDUCK_TOKEN, MD_SA_TOKEN)
-- **Problems:** Cloud PHI exposure risk, recurring costs, vendor dependency, no M365 integration
+**Why migrating:** IRB defensibility (no PHI in cloud except via Emory-managed Fabric tenant), publication-grade provenance, cost savings ($100-500/yr MotherDuck elimination), no vendor lock-in, and Emory provides full M365 Enterprise for free.
 
 ---
 
-## 3. Target Architecture
+## 2. Previous State (MotherDuck — ELIMINATED)
 
-### 3.1 Data Flow (Medallion Architecture)
+**Status: EXPORT COMPLETE as of 2026-03-27**
+
+- **Database:** MotherDuck cloud DuckDB — `thyroid_research_2026`
+- **Export results:** 592 tables, 67 views, 4,678,536 total rows, 165 MB compressed Parquet
+- **Export location:** `~/Desktop/Thyroid_Export_20260327/` (tables/, views/, schema.sql, export_manifest.json)
+- **Export script:** `scripts/archive/export_motherduck_to_parquet_MIGRATION_COMPLETE_20260327.py` (archived)
+- **Export report:** `exports/MOTHERDUCK_EXPORT_REPORT_20260327.md`
+- **21 stale views** with schema drift were preserved as DDL only
+- **Remaining cleanup:** 307 files with 1,786 MotherDuck references still in codebase (connection strings, queries, imports) — need updating/removal
+
+### Key Exported Tables
+
+| Table | Rows | Distinct research_ids |
+|-------|------|-----------------------|
+| master_cohort (view) | 11,673 | 11,673 |
+| molecular_testing | 10,126 | 10,026 |
+| clinical_notes | 10,863 | 10,863 |
+| synoptic_pathology | 11,688 | 10,871 |
+| thyroglobulin_labs | 30,245 | 2,569 |
+| fna_episode_master_v2 | 59,620 | 5,263 |
+| tumor_episode_master_v2 | 11,691 | 10,871 |
+| operative_episode_detail_v2 | 9,371 | 9,368 |
+| survival_cohort | 6,359 | 3,048 |
+
+---
+
+## 3. Current State — What Exists Today
+
+### 3.1 Microsoft Fabric Workspace
+
+**Account:** LGLOSSE@emory.edu (Emory Enterprise M365, tenant e004fb9c)
+**Power BI Trial:** 56 days remaining (as of 2026-03-31)
+**Workspace URL:** https://app.powerbi.com/groups/53b9b2b7-e013-4df0-b3b2-92207085aef1/
+
+**Workspace contains 5 items:**
+
+| Item | Type | Status |
+|------|------|--------|
+| Getting Started Report | Report + Semantic model | Default/template |
+| THYROID_2026 | Lakehouse | Created, **Files and Tables empty** — no data loaded yet |
+| THYROID_2026 | SQL analytics endpoint | Provisioned (linked to Lakehouse) |
+| THYROID_CORE_POWERBI | Excel Workbook | **Populated with star schema data**, refreshed 2026-03-30 |
+
+### 3.2 THYROID_CORE_POWERBI Workbook (Star Schema — EXISTS)
+
+This Excel workbook in the Fabric workspace contains the following sheets with populated data:
+
+**Dimension Tables:**
+- **Dim_Patient** — research_id, age_at_surgery, sex, surgery_date, plus boolean data-availability flags (thyroglobulin, benign_path, ct_image, fna_cyto, frozen_section, mri_image, nuclear_scan, parathyroid, ultrasound_reports, etc.)
+- **Dim_Date** — Standard date dimension
+
+**Fact Tables:**
+- **Fact_Treatment** — Surgery types, RAI dosing, treatment details
+- **Fact_Outcome** — Clinical outcomes, recurrence status
+- **Fact_LabTg** — Thyroglobulin lab results over time
+- **Fact_LabAntiTg** — Anti-thyroglobulin antibody results
+- **Fact_FnaEpisode** — Fine-needle aspiration episodes
+- **Fact_Molecular** — Molecular testing results (ThyroSeq, Afirma, etc.)
+- **Fact_Complications** — Surgical complications data
+
+### 3.3 Fabric Lakehouse (THYROID_2026 — EMPTY)
+
+The Lakehouse has been provisioned with a SQL analytics endpoint but **no data has been loaded** into Files or Tables yet. The upload script exists:
+
+- **Script:** `scripts/09b_fabric_upload_notes_entities.py`
+- **Method:** Azure Data Lake Storage Gen2 REST API via `azure-storage-file-datalake`
+- **Auth:** Service principal (AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET) or DefaultAzureCredential fallback
+- **Target path:** `abfss://<workspace_id>@onelake.dfs.core.windows.net/<lakehouse_name>.Lakehouse/Files/note_entities_{domain}/part-000.parquet`
+- **Env vars needed:** FABRIC_LAKEHOUSE_WORKSPACE_ID, LAKEHOUSE_NAME, ONELAKE_ACCOUNT_URL
+- **Status:** Script written but **not yet executed** — waiting for extraction pipeline to complete
+
+---
+
+## 4. Target Architecture
+
+### 4.1 Data Flow (Medallion Architecture)
 
 ```
 00_RAW_PHI/                    ← Raw Excel/CSV from clinical systems (read-only, FileVault-encrypted)
@@ -41,39 +106,34 @@
     │
 01_SILVER_DEID_PARQUET/        ← De-identified Parquet files (research_id only)
     │
-    ▼  [Power Query / Python ETL]
+    ▼  [09b_fabric_upload_notes_entities.py — ADLS Gen2 upload to OneLake]
     │
-02_GOLD_POWERBI/               ← Power BI .pbix semantic model (star schema, Import mode)
+THYROID_2026 Lakehouse         ← Fabric Lakehouse (OneLake storage, SQL analytics endpoint)
     │
+    ├── Power BI Semantic Model ← Star schema (Import or DirectLake mode)
+    │     └── 6 report pages
     ├── 03_DEID_EXPORTS/       ← Date-stamped de-identified bundles for manuscripts
     ├── 04_EXTRACTION_OUTPUTS/  ← NLP extraction results (from GPU fleet)
-    ├── 05_ARCHIVE_BACKUPS/    ← Weekly encrypted snapshots
-    ├── SCRIPTS/               ← Python ETL scripts (updated for local paths)
+    ├── SCRIPTS/               ← Python ETL scripts
     ├── DOCUMENTATION/         ← Data dictionary, SOPs
     └── VALIDATION_AUDITS/     ← QC reports, compliance sign-offs
 ```
 
 All PHI stays in 00_RAW_PHI on the local encrypted Mac. Everything downstream uses research_id only.
 
-### 3.2 Power BI Semantic Model Design
+### 4.2 Power BI Semantic Model Design (Planned Expansion)
 
-**Mode:** Import (no cloud DirectQuery — all data local in .pbix file)
+**Mode:** Import or DirectLake (to be decided — DirectLake avoids data duplication in .pbix)
 
-**Star Schema:**
+**Current star schema (9 tables in THYROID_CORE_POWERBI):**
+- 2 Dimension tables: Dim_Patient, Dim_Date
+- 7 Fact tables: Fact_Treatment, Fact_Outcome, Fact_LabTg, Fact_LabAntiTg, Fact_FnaEpisode, Fact_Molecular, Fact_Complications
 
-13 Fact Tables:
-- Demographics, Episodes, Labs, Imaging, Pathology, Treatment, NSQIP, Outcomes
-- Plus NLP extraction tables: Complications, Staging, Recurrence, Medications, Procedures
+**Planned additions (from NLP extraction pipeline):**
+- Additional Fact tables: Staging, Recurrence, Medications, Procedures, Problem_List, Imaging, Pathology, Physical_Exam, etc. (35 extraction domains total)
+- Additional Dimension tables: DimStaging (AJCC edition, T/N/M, risk strat), DimTreatmentIntent, DimOutcomeStatus, DimProvider, DimFacility, DimInsurance
 
-8 Dimension Tables:
-- DimPatient (research_id, age_at_dx, sex, race, insurance)
-- DimDate (standard date dimension with fiscal periods)
-- DimStaging (AJCC edition, T/N/M, risk strat)
-- DimTreatmentIntent (curative, palliative, diagnostic)
-- DimOutcomeStatus (NED, recurrence, persistent, deceased)
-- DimProvider, DimFacility, DimInsurance
-
-12 Relationships: All join on research_id (single linkage key everywhere)
+**All tables join on research_id** (single linkage key everywhere)
 
 **DAX Measures (20+ planned):**
 - Total Patients, Recurrence Rate, Mortality Rate, Mean Age at Dx
@@ -81,7 +141,7 @@ All PHI stays in 00_RAW_PHI on the local encrypted Mac. Everything downstream us
 - Time-to-Recurrence, Dynamic Risk Reclassification Rate
 - Data Completeness Score, Missing Rate per Domain
 
-**Report Pages (6):**
+**Report Pages (6 planned):**
 1. Executive Dashboard — KPIs, cohort funnel, key outcomes
 2. Labs Analytics — TSH/Tg/TgAb trends, suppression adequacy
 3. Imaging — TI-RADS distributions, nodule size tracking
@@ -89,53 +149,35 @@ All PHI stays in 00_RAW_PHI on the local encrypted Mac. Everything downstream us
 5. Treatment — Surgery types, RAI dosing, completion rates
 6. Data Quality — Completeness heatmap, extraction coverage, validation flags
 
-### 3.3 M365 App Roles
+### 4.3 M365 App Roles
 
-**Account:** LGLOSSE@emory.edu (Emory Enterprise M365, tenant e004fb9c)
-
-| App | Role | Phase |
-|-----|------|-------|
-| **Power BI Desktop** | Semantic model engine, all analysis | 4C |
-| **Excel** | Power Query transforms, QC spot-checks | 4C |
-| **Word** | Manuscript authoring | 4C |
-| **OneDrive** | Metadata-only backups (no PHI) | 4D |
-| **Power Automate** | Weekly refresh orchestration | 4D |
-| **SharePoint** | Team document library (de-identified only) | 4D |
-| **Teams** | Alerts, collaboration | 4D |
-| **Lists** | Tracking extraction progress, QC tasks | 4D |
-| **Planner** | Project management | 4D |
-| **Forms** | Data collection (REDCap supplement) | 4F |
-| **Visio** | Data flow diagrams | 4F |
-
-### 3.4 Automation Pipeline
-
-```
-Weekly Refresh (Monday 9 AM UTC):
-  Power Automate Cloud trigger
-    → Power Automate Desktop (RPA)
-      → Run Python ETL scripts (local)
-        → 00_deid_gateway.py (de-identify any new raw data)
-        → Silver layer Parquet refresh
-      → Power BI Desktop refresh (Import mode)
-      → Teams notification (success/failure + row counts)
-      → OneDrive backup (metadata manifest only, no PHI)
-```
+| App | Role | Status |
+|-----|------|--------|
+| **Power BI (Fabric)** | Semantic model engine, all analysis | Star schema built, reports pending |
+| **Excel** | Power Query transforms, QC spot-checks | THYROID_CORE_POWERBI workbook active |
+| **Word** | Manuscript authoring | Available |
+| **OneDrive** | Metadata-only backups (no PHI) | Available |
+| **Power Automate** | Weekly refresh orchestration | Not yet configured |
+| **SharePoint** | Team document library (de-identified only) | Not yet configured |
+| **Teams** | Alerts, collaboration | Available |
+| **Lists** | Tracking extraction progress, QC tasks | Not yet configured |
+| **Planner** | Project management | Not yet configured |
 
 ---
 
-## 4. NLP Extraction Pipeline (Currently Running)
+## 5. NLP Extraction Pipeline (Currently Running)
 
 This feeds data INTO the Power BI model. Currently running on 9 GPU servers:
 
 **V2 (Vast.ai H200 NVL, 140GB VRAM):**
-- Model: qwen3:32b via Ollama
-- 4 parallel extraction workers
-- 10/35 domains COMPLETE (11,037 notes each)
+- Model: qwen3:32b via Ollama (OLLAMA_NUM_PARALLEL=4)
+- 4 parallel extraction workers running simultaneously
+- 10/35 domains COMPLETE (~11,037 notes each)
 - 4 domains in progress, 21 queued
-- ~18-20 hours to finish all 35
+- Budget: $7.37 remaining at ~$0.027/hr (~11 hours runtime)
 
 **S1-S8 (Hetzner/Contabo, qwen3:14b):**
-- 8 servers, 1 domain each + 6 Phase 2 domains queued per server
+- 8 servers, 1 domain each + queued Phase 2 domains per server
 - Currently 2-12% through their first domains
 
 **35 Extraction Domains:**
@@ -145,93 +187,81 @@ Each domain produces a JSONL checkpoint (one JSON row per clinical note) followi
 
 ---
 
-## 5. MotherDuck Elimination Plan
-
-**Scope:** 307 files, 1,786 references across:
-- Python scripts (connection strings, queries, views)
-- Streamlit dashboard (dashboard.py, app/ modules)
-- Config files (.env, settings)
-- Tests and notebooks
-- DVC pipeline definitions
-
-**Strategy:** Replace MotherDuck operations with local DuckDB + Parquet:
-- `md:thyroid_2026` → `local_thyroid.duckdb` (or direct Parquet reads)
-- MotherDuck views → DuckDB views or Power Query transforms
-- Streamlit dashboards → Power BI report pages
-- Cloud access control → FileVault + folder permissions
-
----
-
 ## 6. Security & Compliance (Non-Negotiable)
 
 1. **PHI isolation** — Raw PHI read-only on local encrypted Mac; research_id-only downstream
 2. **research_id linkage** — Single minimal pseudonymous identifier everywhere
 3. **De-identification audit trail** — Every run logged (timestamp, row counts, columns dropped, SHA256)
-4. **No cloud materialization** — Metadata only to OneDrive/SharePoint/Teams
+4. **Fabric tenant** — Emory-managed M365 Enterprise tenant (e004fb9c); no personal cloud storage for PHI
 5. **Backup & DR** — Weekly encrypted local snapshots; 7-year HIPAA retention
 6. **Quarterly compliance sign-offs** — Access logs, breach protocol documented
 
 ---
 
-## 7. Implementation Timeline (Not Yet Started)
+## 7. Remaining Implementation Work
 
-| Phase | Days | Focus | Status |
-|-------|------|-------|--------|
-| 4A | 1 | Security: folder structure, credentials purge | NOT STARTED |
-| 4B | 2-3 | De-identification: Silver layer Parquet + audit trail | NOT STARTED |
-| 4C | 4-5 | Power BI: .pbix file, star schema, 6 report pages | NOT STARTED |
-| 4D | 6-7 | Automation: Power Automate weekly refresh | NOT STARTED |
-| 4E | 8-10 | MotherDuck elimination: 307 files cleaned | NOT STARTED |
-| 4F | 11-14 | Validation: production-ready, compliance sign-offs | NOT STARTED |
-
-**Optional extended phases (supplementary toolchain):**
-
-| Phase | Days | Focus |
-|-------|------|-------|
-| 4G | 15-18 | Replit dashboard + ElevenLabs voice assistant |
-| 4H | 19-22 | LangGraph agents (extraction QA, NLQ) |
-| 4I | 23-25 | End-to-end integration testing |
+| Task | Focus | Status |
+|------|-------|--------|
+| Load Lakehouse | Upload exported Parquet + extraction outputs to THYROID_2026 Lakehouse via 09b script | NOT STARTED |
+| Build semantic model | Create Power BI semantic model on top of Lakehouse tables (DirectLake or Import) | NOT STARTED |
+| Create report pages | 6 report pages with DAX measures | NOT STARTED |
+| Configure Power Automate | Weekly refresh orchestration (Cloud→Desktop→Python→Power BI) | NOT STARTED |
+| MotherDuck code cleanup | Remove 1,786 references across 307 files | NOT STARTED |
+| Add NLP extraction tables | Integrate 35 extraction domain outputs into star schema | BLOCKED (extraction in progress) |
+| Validation & compliance | Production-ready sign-offs, data quality monitoring | NOT STARTED |
 
 ---
 
 ## 8. Cost Analysis
 
-| Item | Current (MotherDuck) | Target (M365 Local) |
-|------|---------------------|---------------------|
-| Database | $0.20/GB/month | $0 (local DuckDB) |
-| Query compute | $0.003/GB scanned | $0 (local) |
-| Dashboard hosting | Streamlit Cloud or local | $0 (Power BI Desktop) |
+| Item | Previous (MotherDuck) | Current (Fabric + M365) |
+|------|----------------------|------------------------|
+| Database | $0.20/GB/month | $0 (Fabric included in Emory M365 E5) |
+| Query compute | $0.003/GB scanned | $0 (Fabric capacity via Emory) |
+| Dashboard hosting | Streamlit Cloud or local | $0 (Power BI via Emory) |
 | M365 apps | N/A | $0 (Emory Enterprise) |
+| Power BI Trial | N/A | 56 days remaining (free) |
 | LangSmith | $39/mo (Plus plan) | $39/mo (retained for NLP monitoring) |
-| Vast.ai GPU | ~$2.20/hr (H200 NVL) | Temporary (extraction only) |
+| Vast.ai GPU | ~$2.20/hr (H200 NVL) | Temporary (extraction only, $7.37 remaining) |
 | **Annual savings** | | **~$100-500/yr** |
 
 ---
 
 ## 9. Key Files in Repository
 
-All planning docs are in `docs/microsoft_deployment/`:
+**Completed exports:**
+- `exports/MOTHERDUCK_EXPORT_REPORT_20260327.md` — Full export audit (592 tables, 67 views, 4.7M rows)
+- `scripts/archive/export_motherduck_to_parquet_MIGRATION_COMPLETE_20260327.py` — Archived export script
+
+**Fabric integration:**
+- `scripts/09b_fabric_upload_notes_entities.py` — ADLS Gen2 upload script for OneLake (not yet run)
+
+**Planning docs (in `docs/microsoft_deployment/`):**
 - `MICROSOFT_DEPLOYMENT_PLAN.md` — Master plan (572 lines, 12 sections)
 - `M365_APP_MATRIX.md` — App-by-app capability matrix (433 lines)
 - `MOTHERDUCK_MIGRATION_MAP.md` — File-by-file migration guide (855 lines)
 - `FOLDER_SETUP.sh` — Bash script to create folder structure (164 lines)
 - `COWORK_IMPLEMENTATION_PROMPT.md` — Ready-to-paste briefing for AI sessions
-- `SUPPLEMENTARY_TOOLCHAIN.md` — ElevenLabs, Replit, LangGraph integration plan
+
+**Extraction pipeline:**
+- `output/v2_checkpoints/` — V2 GPU server checkpoint files
+- `output/v2_parquets/` — V2 Parquet exports
+- `output/server_checkpoints/S1-S8/` — Per-server checkpoint files
 
 ---
 
 ## 10. Questions for Review
 
-1. **Star schema design** — Is 13 fact + 8 dimension tables the right granularity, or should we consolidate/split differently for Power BI Import mode performance?
+1. **DirectLake vs Import mode** — The Fabric Lakehouse supports DirectLake mode (queries Parquet/Delta directly without import). Given our 11,673-patient dataset, is DirectLake worth the setup complexity, or is Import mode simpler and sufficient?
 
-2. **NLP → Power BI integration** — The extraction produces JSONL with a flat 9-field schema per entity. Best approach to ingest into the star schema? Direct Parquet import vs. Python consolidation step vs. Power Query transforms?
+2. **NLP → Lakehouse integration** — The extraction produces JSONL with a flat 9-field schema per entity. Best approach to load into Fabric: upload as Parquet via ADLS Gen2 (script exists) then register as Delta tables in a Fabric notebook? Or use Dataflows Gen2?
 
-3. **DAX measures** — Any critical clinical research measures we're missing? Particularly around time-to-event analysis, Kaplan-Meier survival curves, or longitudinal lab trending?
+3. **Star schema expansion** — Current schema has 2 dim + 7 fact tables. With 35 extraction domains incoming, should each domain become its own fact table, or should we consolidate into fewer, wider tables?
 
-4. **Power Automate architecture** — Is the Cloud→Desktop→Python→PowerBI chain the right pattern, or is there a simpler approach for weekly local refresh?
+4. **DAX measures** — Any critical clinical research measures we're missing? Particularly around time-to-event analysis, Kaplan-Meier survival curves, or longitudinal lab trending?
 
-5. **MotherDuck elimination sequencing** — Should we build the Power BI model first (Phase 4C) and THEN eliminate MotherDuck (4E), or eliminate MotherDuck first to avoid maintaining two systems?
+5. **Power Automate architecture** — Is the Cloud→Desktop→Python→Power BI chain the right pattern for weekly refresh, or can Fabric Pipelines handle the orchestration natively?
 
-6. **Supplementary toolchain priority** — Given budget constraints ($7.37 Vast.ai credits remaining, $39/mo LangSmith), should Phases 4G-4I (Replit, ElevenLabs, LangGraph) be deferred or are any components worth fast-tracking?
+6. **MotherDuck cleanup sequencing** — 307 files with 1,786 references remain. Should we clean these up now, or wait until the Fabric Lakehouse is fully loaded and validated?
 
 7. **Data quality monitoring** — What's the best approach for ongoing extraction quality validation in Power BI? Completeness heatmaps, inter-rater reliability dashboards, or something else?
