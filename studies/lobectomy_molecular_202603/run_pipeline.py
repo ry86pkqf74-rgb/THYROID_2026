@@ -23,7 +23,7 @@ SQL_PATH = Path(__file__).resolve().parent / "sql" / "01_cohort_base.sql"
 
 sys.path.insert(0, str(REPO_ROOT))
 
-from local DuckDB_client import local DuckDBClient  # noqa: E402
+from motherduck_client import MotherDuckClient  # noqa: E402
 from utils.statistical_analysis import ThyroidStatisticalAnalyzer  # noqa: E402
 
 
@@ -208,7 +208,7 @@ def main() -> None:
     (OUT / "tables").mkdir(exist_ok=True)
     (OUT / "figures").mkdir(exist_ok=True)
 
-    client = local DuckDBClient.for_env("prod")
+    client = MotherDuckClient.for_env("prod")
     con = client.connect_rw()
     sql = SQL_PATH.read_text()
     df = con.execute(sql).fetchdf()

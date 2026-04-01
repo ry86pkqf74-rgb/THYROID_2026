@@ -1,6 +1,6 @@
 # VastAI Extraction Fleet Status 2026-04-01
 
-Snapshot taken on 2026-04-01 during the active V2 thyroid note extraction run.
+Post-remediation snapshot taken on 2026-04-01 after direct live audit, queue rollover repair, and A40 retirement/destruction.
 
 ## Server access
 
@@ -9,24 +9,37 @@ All workers expose Ollama locally at `http://localhost:11434/v1`.
 ### Primary H200
 - SSH: `ssh -p 43384 -o StrictHostKeyChecking=no root@107.206.71.138`
 - Vast proxy: `ssh -p 14710 -o StrictHostKeyChecking=no root@ssh1.vast.ai`
-- Active queue: `physical_exam tirads_granular parathyroid_per_gland operative_v2_enrichment dynamic_risk_response presenting_symptoms past_medical_hx rad_treatment`
+- Active queue: `tirads_granular parathyroid_per_gland operative_v2_enrichment`
 - Active domain at snapshot: `tirads_granular`
+- Operational note: this host had been launched directly under the extractor and would not have rolled to the next queue item. It was relaunched under `supervisor_qwen32b.sh`, lock file recreated, and automatic rollover is now restored.
 
 ### Fast worker A
 - SSH: `ssh -p 15192 -o StrictHostKeyChecking=no root@ssh8.vast.ai`
-- Active queue: `vascular_invasion`
+- Active queue: `vascular_invasion dynamic_risk_response presenting_symptoms past_medical_hx rad_treatment`
 - Active domain at snapshot: `vascular_invasion`
 
 ### Fast worker B
 - SSH: `ssh -p 15506 -o StrictHostKeyChecking=no root@ssh6.vast.ai`
-- Active queue: `rai_detailed recurrence_detailed medication_management tg_kinetics parathyroid_detail airway_invasion frozen_section_detail us_nodule_dynamics cervical_ln_detail complications_rln_laryngoscopy molecular_thyroseq_afirma synoptic_pathology_enrichment`
+- Active queue: `rai_detailed recurrence_detailed medication_management`
 - Active domain at snapshot: `rai_detailed`
+- Operational note: a stale launcher shell was cleaned up. The real supervisor and extractor remained healthy.
 
-### A40 worker
-- SSH: `ssh -p 13782 -o StrictHostKeyChecking=no root@ssh5.vast.ai`
-- Active queue: `survival_followup`
+### Fast worker C
+- SSH: `ssh -p 17332 -o StrictHostKeyChecking=no root@ssh4.vast.ai`
+- Active queue: `survival_followup tg_kinetics parathyroid_detail`
 - Active domain at snapshot: `survival_followup`
-- Operational note: this worker was timing out repeatedly at concurrency 3. It was restarted on 2026-04-01 05:13 UTC-equivalent local session time with `EXTRACTION_CONCURRENCY=1`, after which it resumed forward progress.
+- Operational note: this worker replaced the A40 after the `survival_followup` checkpoint handoff. A stale launcher shell was cleaned up. The real supervisor and extractor remained healthy.
+
+### Fast worker D
+- SSH: `ssh -p 17332 -o StrictHostKeyChecking=no root@ssh6.vast.ai`
+- Active queue: `airway_invasion frozen_section_detail us_nodule_dynamics cervical_ln_detail complications_rln_laryngoscopy molecular_thyroseq_afirma synoptic_pathology_enrichment`
+- Active domain at snapshot: `airway_invasion`
+- Operational note: this host had been launched directly under the extractor and would not have rolled to the next queue item. It was relaunched under `supervisor_qwen32b.sh`, lock file recreated, and automatic rollover is now restored.
+
+### Retired A40
+- Former instance ID: `33933782`
+- Former SSH: `ssh -p 13782 -o StrictHostKeyChecking=no root@ssh5.vast.ai`
+- Final disposition: destroyed after verifying its local `survival_followup` checkpoint rows were fully contained on worker C and that its remaining tarball only wrapped the same checkpoint.
 
 ## Progress snapshot
 
@@ -34,10 +47,11 @@ Input corpus size for each domain: 11,037 notes.
 
 | Server | Domain | Rows complete | Status | Notes |
 | --- | --- | ---: | --- | --- |
-| Primary H200 | `tirads_granular` | 3,807 | Active | Provenance present and positive entity payloads verified |
-| Fast worker A | `vascular_invasion` | 197 | Active | Provenance present |
-| Fast worker B | `rai_detailed` | 66 | Active | Provenance present |
-| A40 worker | `survival_followup` | 71 | Active after restart | Concurrency reduced from 3 to 1 to clear timeout loop |
+| Primary H200 | `tirads_granular` | 5,655 | Active | Running under supervisor with lock file; fresh HTTP 200 traffic after relaunch |
+| Fast worker A | `vascular_invasion` | 286 | Active | Running under supervisor with non-overlapping 5-domain queue |
+| Fast worker B | `rai_detailed` | 167 | Active | Running under supervisor after stale wrapper cleanup |
+| Fast worker C | `survival_followup` | 193 | Active | Running under supervisor after A40 checkpoint handoff |
+| Fast worker D | `airway_invasion` | 162 | Active | Running under supervisor with lock file; resumed from checkpoint after relaunch |
 
 ## Completed domains archived locally
 
@@ -50,7 +64,8 @@ No domain overlap was present at the time of audit.
 - Primary H200 current domain: `tirads_granular`
 - Fast worker A current domain: `vascular_invasion`
 - Fast worker B current domain: `rai_detailed`
-- A40 current domain: `survival_followup`
+- Fast worker C current domain: `survival_followup`
+- Fast worker D current domain: `airway_invasion`
 
 Queued domains are also non-overlapping across servers.
 
@@ -65,6 +80,8 @@ Queued domains are also non-overlapping across servers.
 - Primary H200: one supervisor, one extraction worker, one Ollama server.
 - Fast worker A: one supervisor, one extraction worker, one Ollama server.
 - Fast worker B: one supervisor, one extraction worker, one Ollama server.
-- A40 worker: one supervisor, one extraction worker, one Ollama server after restart.
+- Fast worker C: one supervisor, one extraction worker, one Ollama server.
+- Fast worker D: one supervisor, one extraction worker, one Ollama server.
+- A40: no remaining extraction or Ollama processes; instance destroyed.
 
 No concurrent duplicate extractors were running for the same domain at the time of this snapshot.

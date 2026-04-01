@@ -10,7 +10,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from local DuckDB_client import local DuckDBClient, local DuckDBConfig
+from motherduck_client import MotherDuckClient, MotherDuckConfig
 
 TUMOR_SQL = """
 CREATE OR REPLACE TABLE tumor_episode_master_v2 AS
@@ -789,8 +789,8 @@ ORDER BY research_id, event_date NULLS LAST, event_type
 
 
 def main() -> None:
-    cfg = local DuckDBConfig(database="thyroid_master.duckdb")
-    client = local DuckDBClient(cfg)
+    cfg = MotherDuckConfig(database="thyroid_master.duckdb")
+    client = MotherDuckClient(cfg)
     con = client.connect_rw()
     print("Connected to local DuckDB RW")
 

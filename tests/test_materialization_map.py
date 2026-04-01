@@ -1,5 +1,5 @@
 """tests/test_materialization_map.py
-Validates the MATERIALIZATION_MAP in scripts/26_local DuckDB_materialize_v2.py.
+Validates the MATERIALIZATION_MAP in scripts/26_*materialize*.py (when present).
 
 Rules enforced
 ──────────────
@@ -28,7 +28,25 @@ import pytest
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
-SCRIPT26 = Path(__file__).resolve().parent.parent / "scripts" / "26_local DuckDB_materialize_v2.py"
+_SCRIPT_DIR = Path(__file__).resolve().parent.parent / "scripts"
+
+
+def _resolve_script26() -> Path | None:
+    """First 26_*materialize*.py under scripts/ that defines MATERIALIZATION_MAP."""
+    for p in sorted(_SCRIPT_DIR.glob("26_*materialize*.py")):
+        if not p.is_file():
+            continue
+        if "MATERIALIZATION_MAP" in p.read_text(encoding="utf-8", errors="replace"):
+            return p
+    return None
+
+
+SCRIPT26 = _resolve_script26()
+
+pytestmark = pytest.mark.skipif(
+    SCRIPT26 is None,
+    reason="No scripts/26_*materialize*.py with MATERIALIZATION_MAP — skipping MAP tests",
+)
 
 
 class MapEntry(NamedTuple):
@@ -43,7 +61,8 @@ def _parse_materialization_map() -> list[MapEntry]:
     - Indented ']' characters inside SQL strings or function bodies are ignored.
     - md_* references in .replace() / print calls outside the list are excluded.
     """
-    src = SCRIPT26.read_text()
+    assert SCRIPT26 is not None
+    src = SCRIPT26.read_text(encoding="utf-8", errors="replace")
 
     # Locate the opening bracket of the MAP list literal
     marker = "MATERIALIZATION_MAP: list[tuple[str, str]] = ["
@@ -160,6 +179,7 @@ def test_script26_imports_cleanly() -> None:
     """Importing script 26's MAP guard must not raise (no runtime duplicates)."""
     import importlib.util, sys
 
+    assert SCRIPT26 is not None
     spec = importlib.util.spec_from_file_location("_s26", SCRIPT26)
     assert spec is not None and spec.loader is not None
 

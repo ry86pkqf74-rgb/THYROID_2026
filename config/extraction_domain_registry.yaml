@@ -1,0 +1,74 @@
+# Machine-readable map: extraction domain → Parquet stem → prompt / schema version.
+# Primary pipeline: notes_extraction/ (regex + LLM). Expanded prompts: notes_extraction_new/prompts/.
+schema_version: "entity_schema_v2_2026-04-01"
+
+domains:
+  staging:
+    parquet_stem: note_entities_staging
+    extractors: [regex]
+    prompts: []
+  genetics:
+    parquet_stem: note_entities_genetics
+    extractors: [regex, llm]
+    prompts:
+      - repo_path: prompts/lab_date_extraction_v1.txt
+        scope: llm_general_notes
+  procedures:
+    parquet_stem: note_entities_procedures
+    extractors: [regex, llm]
+    prompts:
+      - repo_path: prompts/lab_date_extraction_v1.txt
+        scope: llm_general_notes
+      - repo_path: prompts/operative_note_extraction_v1.txt
+        scope: llm_operative_notes
+  operative_detail:
+    parquet_stem: note_entities_operative_detail
+    extractors: [regex]
+    prompts:
+      - repo_path: prompts/operative_note_extraction_v1.txt
+        scope: operative_v2_extractor
+  complications:
+    parquet_stem: note_entities_complications
+    extractors: [regex, llm]
+    prompts:
+      - repo_path: prompts/lab_date_extraction_v1.txt
+        scope: llm_general_notes
+  medications:
+    parquet_stem: note_entities_medications
+    extractors: [regex, llm]
+    prompts:
+      - repo_path: prompts/lab_date_extraction_v1.txt
+        scope: llm_general_notes
+  problem_list:
+    parquet_stem: note_entities_problem_list
+    extractors: [regex, llm]
+    prompts:
+      - repo_path: prompts/lab_date_extraction_v1.txt
+        scope: llm_general_notes
+  llm:
+    parquet_stem: note_entities_llm
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/lab_date_extraction_v1.txt
+        scope: llm_merged_output
+      - repo_path: prompts/operative_note_extraction_v1.txt
+        scope: llm_operative_notes
+
+notes_extraction_new:
+  runner: notes_extraction_new/run_extraction_local.py
+  prompt_dir: notes_extraction_new/prompts
+  # Per-domain prompt files follow *_extraction_v1.txt; align ENTITY_SCHEMA_COLUMNS before upload.
+
+canonical_outputs:
+  fact_long_table:
+    duckdb_table: canonical_extracted_fact_long_v1
+    parquet_path: processed/canonical_extracted_fact_long_v1.parquet
+    materialize_script: scripts/103_fact_lineage_materialize.py
+  quarantine_table:
+    duckdb_table: canonical_fact_quarantine_v1
+    parquet_path: processed/canonical_fact_quarantine_v1.parquet
+    materialize_script: scripts/103_fact_lineage_materialize.py
+  runs_table:
+    duckdb_table: note_extraction_runs
+    parquet_path: processed/note_extraction_runs.parquet
+    materialize_script: notes_extraction/run_extraction.py

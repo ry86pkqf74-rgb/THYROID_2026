@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[2]
 STUDY = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 
-from local DuckDB_client import local DuckDBClient, local DuckDBConfig, get_token, token_mode  # noqa: E402
+from motherduck_client import MotherDuckClient, MotherDuckConfig, get_token, token_mode  # noqa: E402
 
 import cohort_logic as cl  # noqa: E402
 
@@ -55,7 +55,7 @@ def main() -> None:
     pl["research_id"] = pd.to_numeric(pl["research_id"], errors="coerce").astype("Int64")
     n_primary = int(pl["research_id"].nunique())
 
-    con = local DuckDBClient(local DuckDBConfig()).connect_rw()
+    con = MotherDuckClient(MotherDuckConfig()).connect_rw()
     fh = SQL_LOG.open("w")
     fh.write(
         f"-- Independent completion audit {AUDIT_TAG}\n"

@@ -36,6 +36,8 @@ SQL_OUT = ROOT / "scripts" / "22_canonical_episodes_v2_views.sql"
 
 sys.path.insert(0, str(ROOT))
 
+from utils.md_connect import connect_md_or_file  # noqa: E402
+
 
 def section(title: str) -> None:
     print(f"\n{'=' * 80}")
@@ -1233,20 +1235,7 @@ def main() -> None:
 
     section("22 — Canonical Episode Tables v2")
 
-    if args.md:
-        try:
-            from local DuckDB_client import local DuckDBClient, local DuckDBConfig
-            cfg = local DuckDBConfig(database="thyroid_master.duckdb")
-            client = local DuckDBClient(cfg)
-            con = client.connect_rw()
-            print("  Connected to local DuckDB (RW)")
-        except Exception as e:
-            print(f"  local DuckDB unavailable: {e}")
-            print("  Falling back to local DuckDB")
-            con = duckdb.connect(str(DB_PATH))
-    else:
-        con = duckdb.connect(str(DB_PATH))
-        print(f"  Using local DuckDB: {DB_PATH}")
+    con = connect_md_or_file(DB_PATH, md=args.md)
 
     register_parquets(con)
     build_all(con)

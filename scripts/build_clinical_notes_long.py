@@ -12,9 +12,12 @@ from __future__ import annotations
 
 import logging
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
+
+BUILD_CLINICAL_NOTES_LONG_VERSION = "build_clinical_notes_long_v2"
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -58,6 +61,8 @@ def build_long(raw_path: Path, col_map: pd.DataFrame) -> pd.DataFrame:
 
     sheets_needed = note_rows["sheet"].unique()
     all_records: list[dict] = []
+    ingested_at_utc = datetime.now(timezone.utc).isoformat()
+    source_workbook = raw_path.name
 
     for sheet_name in sheets_needed:
         if sheet_name not in xl.sheet_names:
@@ -86,7 +91,7 @@ def build_long(raw_path: Path, col_map: pd.DataFrame) -> pd.DataFrame:
 
             note_index = int(note_index) if pd.notna(note_index) and str(note_index).strip() else 1
 
-            for _, row in df.iterrows():
+            for excel_row_0based, (_, row) in enumerate(df.iterrows()):
                 rid = row.get("research_id")
                 text = row.get(snake_col)
 
@@ -107,6 +112,11 @@ def build_long(raw_path: Path, col_map: pd.DataFrame) -> pd.DataFrame:
                     "source_sheet": sheet_name,
                     "source_column": snake_col,
                     "char_count": len(text_str),
+                    "excel_row_0based": int(excel_row_0based),
+                    "source_workbook": source_workbook,
+                    "ingest_sheet_spec": sheet_name,
+                    "ingest_script_version": BUILD_CLINICAL_NOTES_LONG_VERSION,
+                    "ingested_at_utc": ingested_at_utc,
                 })
 
     if not all_records:
@@ -114,6 +124,8 @@ def build_long(raw_path: Path, col_map: pd.DataFrame) -> pd.DataFrame:
         return pd.DataFrame(columns=[
             "note_row_id", "research_id", "note_type", "note_index",
             "note_date", "note_text", "source_sheet", "source_column", "char_count",
+            "excel_row_0based", "source_workbook", "ingest_sheet_spec",
+            "ingest_script_version", "ingested_at_utc",
         ])
 
     result = pd.DataFrame(all_records)

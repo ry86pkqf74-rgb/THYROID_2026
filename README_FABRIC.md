@@ -29,10 +29,11 @@ Pinned list: see `requirements-fabric-onelake.txt`.
 
    In Fabric: open the Lakehouse → **Properties** / URL — the id is the Lakehouse artifact GUID (also used as the `abfss://` filesystem segment).
 
-4. Run the uploader:
+4. Run the uploader (`all` = note_entities_* only; `release` = canonical fact long, quarantine, and run log):
 
    ```bash
    python scripts/09b_fabric_upload_notes_entities.py --domain all
+   python scripts/09b_fabric_upload_notes_entities.py --domain release
    ```
 
 ### Option B — Service principal (CI / headless)
@@ -57,9 +58,15 @@ Pinned list: see `requirements-fabric-onelake.txt`.
 ## Paths
 
 - Local outputs: `processed/note_entities_<domain>.parquet` (from `notes_extraction/run_extraction.py` or `notes_extraction_new/run_extraction_local.py`).
+- Canonical fact long (clean + quarantine) and extraction run log (same repo, DVC-tracked when enabled):
+  - `processed/canonical_extracted_fact_long_v1.parquet` — analysis-ready facts (`scripts/103_fact_lineage_materialize.py`)
+  - `processed/canonical_fact_quarantine_v1.parquet` — conservative exclusions from clean canonical
+  - `processed/note_extraction_runs.parquet` — one row per `run_extraction.py` invocation
 - OneLake layout:
 
   `abfss://<FABRIC_LAKEHOUSE_WORKSPACE_ID>@onelake.dfs.core.windows.net/Files/note_entities_<domain>/part-000.parquet`
+
+  The same layout is produced by `python scripts/09b_fabric_upload_notes_entities.py --domain release` (or upload each table key individually). Register Delta tables from the printed notebook snippets per folder.
 
 ## Delta tables (`mssparkutils` / Spark)
 

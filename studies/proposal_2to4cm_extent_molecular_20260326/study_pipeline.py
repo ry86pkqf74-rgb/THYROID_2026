@@ -18,7 +18,7 @@ STUDY = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(STUDY))
 
-from local DuckDB_client import local DuckDBClient, local DuckDBConfig  # noqa: E402
+from motherduck_client import MotherDuckClient, MotherDuckConfig  # noqa: E402
 
 import cohort_logic as cl  # noqa: E402
 
@@ -28,7 +28,7 @@ pd.options.mode.copy_on_write = True
 
 
 def connect():
-    return local DuckDBClient(local DuckDBConfig()).connect_rw()
+    return MotherDuckClient(MotherDuckConfig()).connect_rw()
 
 
 def qdf(con, sql: str) -> pd.DataFrame:

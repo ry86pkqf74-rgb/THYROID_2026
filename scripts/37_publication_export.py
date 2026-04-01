@@ -27,14 +27,14 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from local DuckDB_client import local DuckDBClient, local DuckDBConfig
+from motherduck_client import MotherDuckClient, MotherDuckConfig
 
 OUT_DIR = ROOT / "exports" / "FINAL_RELEASE"
 
 
 def _get_con(use_md: bool):
     if use_md:
-        return local DuckDBClient().connect_rw()
+        return MotherDuckClient().connect_rw()
     return __import__("duckdb").connect(str(ROOT / "thyroid_master.duckdb"))
 
 

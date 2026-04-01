@@ -192,20 +192,18 @@ def materialize_local(df: pd.DataFrame) -> None:
     print("  Local table synoptic_tumor_long_v1 refreshed")
 
 
-def materialize_local DuckDB(df: pd.DataFrame) -> None:
-    from local DuckDB_client import get_token, resolve_database_for_env
+def materialize_motherduck(df: pd.DataFrame) -> None:
+    from motherduck_client import MotherDuckClient, MotherDuckConfig, get_token
 
     prefer_sa = os.getenv("CI", "").lower() in ("1", "true", "yes")
-    tok = get_token(prefer_service_account=prefer_sa)
-    if not tok:
-        raise SystemExit("LOCAL_DB_PATH or LOCAL_DB_PATH required for --md")
+    if not get_token(prefer_service_account=prefer_sa):
+        raise SystemExit("MOTHERDUCK_TOKEN / MD_SA_TOKEN / LOCAL_DB_PATH (JWT) required for --md")
     with tempfile.NamedTemporaryFile(suffix=".parquet", delete=False) as tmp:
         tmp_path = tmp.name
     try:
         df.to_parquet(tmp_path, index=False)
-        md_db = resolve_database_for_env(os.getenv("LOCAL_DB_ENV"))
-        uri = f"thyroid_master.duckdb"
-        con = duckdb.connect(uri)
+        cfg = MotherDuckConfig(use_service_account=prefer_sa)
+        con = MotherDuckClient(cfg).connect_rw()
         con.execute(
             f"CREATE OR REPLACE TABLE synoptic_tumor_long_v1 AS "
             f"SELECT * FROM read_parquet('{tmp_path}')"
@@ -215,7 +213,9 @@ def materialize_local DuckDB(df: pd.DataFrame) -> None:
             "SELECT * FROM synoptic_tumor_long_v1"
         )
         con.close()
-        print("  local DuckDB tables synoptic_tumor_long_v1 + md_synoptic_tumor_long_v1 refreshed")
+        print(
+            "  MotherDuck tables synoptic_tumor_long_v1 + md_synoptic_tumor_long_v1 refreshed"
+        )
     finally:
         try:
             os.remove(tmp_path)
@@ -235,7 +235,7 @@ def main() -> None:
     df = build_long_frame(ps)
     materialize_local(df)
     if args.md:
-        materialize_local DuckDB(df)
+        materialize_motherduck(df)
     print(f"Done. Rows: {len(df):,}")
 
 

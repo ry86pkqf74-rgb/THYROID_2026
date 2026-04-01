@@ -23,6 +23,7 @@ Lab date precedence rule enforced in prompts:
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import os
@@ -33,8 +34,12 @@ from pathlib import Path
 from typing import Any, cast
 
 from notes_extraction.base import BaseExtractor, EntityMatch
+from notes_extraction.run_telemetry import RunTelemetryContext
 
 log = logging.getLogger(__name__)
+
+VERIFIER_NAME = "evidence_substring_verifier"
+VERIFIER_VERSION = "1.0"
 
 MAX_CHUNK_CHARS = 6000
 # Operative dictation is long; use a larger prefix when OPENAI is enabled (cost/latency tradeoff).
@@ -61,7 +66,8 @@ class LLMExtractor(BaseExtractor):
 
     entity_domain = "llm"
 
-    def __init__(self) -> None:
+    def __init__(self, telemetry: RunTelemetryContext | None = None) -> None:
+        self._telemetry = telemetry
         self._api_key: str | None = None
         self._base_url: str | None = None
         self._model_id: str = _OPENAI_MODEL_ID
@@ -109,6 +115,8 @@ class LLMExtractor(BaseExtractor):
         is_op = note_type in _OP_NOTE_TYPES
         limit = OP_NOTE_CHUNK_CHARS if is_op else MAX_CHUNK_CHARS
         chunk = note_text[:limit]
+        chunk_char_start = 0
+        chunk_char_end = len(chunk)
 
         try:
             return self._call_llm(
@@ -117,10 +125,21 @@ class LLMExtractor(BaseExtractor):
                 note_type,
                 chunk,
                 note_date,
+                full_note_text=note_text,
+                chunk_char_start=chunk_char_start,
+                chunk_char_end=chunk_char_end,
+                chunk_index=0,
                 operative=is_op,
             )
         except Exception as exc:
-            log.error(f"LLM extraction failed for {note_row_id}: {exc}")
+            log.error(
+                "LLM extraction failed for %s (research_id=%s): %s — returning no entities",
+                note_row_id,
+                research_id,
+                exc,
+            )
+            if self._telemetry:
+                self._telemetry.record_api_failure()
             return []
 
     # ── Prompt building ──────────────────────────────────────────────────────
@@ -135,6 +154,16 @@ class LLMExtractor(BaseExtractor):
         if prompt_path.exists() and not operative:
             return prompt_path.read_text(encoding="utf-8")
         return _DEFAULT_SYSTEM_PROMPT
+
+    def _prompt_version(self, *, operative: bool) -> str:
+        rel = (
+            "operative_note_extraction_v1.txt" if operative else "lab_date_extraction_v1.txt"
+        )
+        path = PROMPT_DIR / rel
+        if path.exists():
+            digest = hashlib.sha256(path.read_bytes()).hexdigest()[:12]
+            return f"{rel}|{digest}"
+        return "embedded_fallback|0"
 
     def _build_prompt(
         self,
@@ -190,6 +219,10 @@ class LLMExtractor(BaseExtractor):
         text: str,
         note_date: str | None = None,
         *,
+        full_note_text: str,
+        chunk_char_start: int,
+        chunk_char_end: int,
+        chunk_index: int = 0,
         operative: bool = False,
     ) -> list[EntityMatch]:
         """Call the OpenAI API and parse structured JSON output."""
@@ -197,6 +230,8 @@ class LLMExtractor(BaseExtractor):
             client = self._get_client()
         except ImportError:
             log.error("openai package not installed. Run: pip install openai")
+            if self._telemetry:
+                self._telemetry.record_api_failure()
             return []
 
         messages = cast(Any, self._build_prompt(note_type, text, note_date, operative=operative))
@@ -219,6 +254,8 @@ class LLMExtractor(BaseExtractor):
                     err_str = str(retry_exc).lower()
                     status_code = getattr(retry_exc, "status_code", None)
                     if status_code == 429 or "rate" in err_str or "429" in err_str or "limit" in err_str:
+                        if self._telemetry:
+                            self._telemetry.record_retry(1)
                         wait = min(60, 5 * (2**attempt))
                         log.warning(
                             f"Rate limited (attempt {attempt+1}/{max_retries}), "
@@ -229,9 +266,13 @@ class LLMExtractor(BaseExtractor):
                         raise retry_exc
             if response is None:
                 log.error(f"LLM API exhausted {max_retries} retries for {note_row_id}")
+                if self._telemetry:
+                    self._telemetry.record_api_failure()
                 return []
         except Exception as exc:
             log.error(f"LLM API call failed ({self._provider}): {exc}")
+            if self._telemetry:
+                self._telemetry.record_api_failure()
             return []
 
         raw_json = response.choices[0].message.content or "{}"
@@ -240,8 +281,12 @@ class LLMExtractor(BaseExtractor):
             note_row_id,
             research_id,
             note_type,
-            text,
-            note_date,
+            chunk_text=text,
+            full_note_text=full_note_text,
+            note_date=note_date,
+            chunk_char_start=chunk_char_start,
+            chunk_char_end=chunk_char_end,
+            chunk_index=chunk_index,
             llm_operative=operative,
         )
 
@@ -253,23 +298,42 @@ class LLMExtractor(BaseExtractor):
         note_row_id: str,
         research_id: int,
         note_type: str,
-        source_text: str,
-        note_date: str | None,
         *,
+        chunk_text: str,
+        full_note_text: str,
+        note_date: str | None,
+        chunk_char_start: int,
+        chunk_char_end: int,
+        chunk_index: int,
         llm_operative: bool = False,
     ) -> list[EntityMatch]:
         """Parse LLM JSON output into EntityMatch objects."""
+        response_hash = hashlib.sha256(raw_json.encode("utf-8")).hexdigest()
         try:
             data = json.loads(raw_json)
         except json.JSONDecodeError as exc:
-            log.warning(f"LLM returned invalid JSON for {note_row_id}: {exc}")
+            log.warning(
+                "LLM returned invalid JSON for %s (research_id=%s): %s",
+                note_row_id,
+                research_id,
+                exc,
+            )
+            if self._telemetry:
+                self._telemetry.record_parse_failure()
             return []
 
         entities = data.get("entities", [])
         if not isinstance(entities, list):
-            log.warning(f"LLM response missing 'entities' list for {note_row_id}")
+            log.warning(
+                "LLM response missing 'entities' list for %s (research_id=%s)",
+                note_row_id,
+                research_id,
+            )
+            if self._telemetry:
+                self._telemetry.record_parse_failure()
             return []
 
+        prompt_ver = self._prompt_version(operative=llm_operative)
         results: list[EntityMatch] = []
         for item in entities:
             if not isinstance(item, dict):
@@ -281,20 +345,45 @@ class LLMExtractor(BaseExtractor):
             present_or_negated = str(item.get("present_or_negated", "present"))
             confidence = float(item.get("confidence", 0.8))
             raw_date = item.get("entity_date")
+            date_confidence = float(item.get("date_confidence", 0.0))
+            try:
+                sl = item.get("source_line")
+                source_line = int(sl) if sl is not None and str(sl).strip() != "" else None
+            except (TypeError, ValueError):
+                source_line = None
 
-            # Validate evidence span
-            if evidence_text and not self._validate_evidence_span(evidence_text, source_text):
+            g_start = full_note_text.find(evidence_text) if evidence_text else -1
+            if evidence_text and g_start < 0:
                 log.debug(
-                    f"Evidence span not found in source text for {note_row_id}; truncating"
+                    "Evidence not found in full note for %s; marking rejected",
+                    note_row_id,
                 )
-                evidence_text = evidence_text[:120]
+                verification_status = "rejected"
+                verification_step = "substring_check"
+                evidence_text = evidence_text[:500]
+                g_start, g_end = 0, 0
+                c_start, c_end = 0, 0
+            elif evidence_text and g_start >= 0:
+                verification_status = "verified_substring"
+                verification_step = "substring_ok"
+                g_end = g_start + len(evidence_text)
+                c_start = (
+                    g_start - chunk_char_start
+                    if chunk_char_start <= g_start < chunk_char_end
+                    else chunk_text.find(evidence_text)
+                )
+                c_end = c_start + len(evidence_text) if c_start >= 0 else 0
+                if c_start < 0:
+                    c_start, c_end = 0, 0
+            else:
+                verification_status = "unverified"
+                verification_step = "no_evidence_text"
+                g_start, g_end, c_start, c_end = 0, 0, 0, 0
 
-            # Resolve character offsets from evidence span
-            ev_start = source_text.find(evidence_text) if evidence_text else 0
-            ev_end = ev_start + len(evidence_text) if ev_start >= 0 else 0
-            if ev_start < 0:
-                ev_start = 0
-                ev_end = 0
+            if verification_step in ("substring_ok", "substring_check"):
+                v_name, v_ver = VERIFIER_NAME, VERIFIER_VERSION
+            else:
+                v_name, v_ver = None, None
 
             # Validate and normalise date
             entity_date: str | None = None
@@ -318,12 +407,28 @@ class LLMExtractor(BaseExtractor):
                 present_or_negated=present_or_negated,
                 confidence=confidence,
                 evidence_span=evidence_text[:500],
-                evidence_start=ev_start,
-                evidence_end=ev_end,
+                evidence_start=c_start if c_start >= 0 else 0,
+                evidence_end=c_end if c_end >= 0 else 0,
                 entity_date=entity_date,
                 note_date=note_date,
                 extraction_method=ext_method,
                 extracted_at=datetime.now(timezone.utc).isoformat(),
+                date_confidence=date_confidence,
+                source_line=source_line,
+                chunk_index=chunk_index,
+                chunk_char_start=chunk_char_start,
+                chunk_char_end=chunk_char_end,
+                evidence_global_start=g_start,
+                evidence_global_end=g_end,
+                raw_response_sha256=response_hash,
+                verification_status=verification_status,
+                verification_step=verification_step,
+                extractor_name="LLMExtractor",
+                model_name=self._model_id,
+                model_version=self._model_id,
+                prompt_version=prompt_ver,
+                verifier_name=v_name,
+                verifier_version=v_ver,
             )
             results.append(match)
 

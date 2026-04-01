@@ -2,11 +2,13 @@
 """
 09b_fabric_upload_notes_entities.py
 
-Upload note-entity Parquet files from local `processed/` to Microsoft Fabric
-Lakehouse Files area on OneLake using the Azure Data Lake Storage Gen2 REST client.
+Upload note-entity and (optional) canonical-release Parquet files from local `processed/`
+to a Microsoft Fabric Lakehouse Files area on OneLake (Azure Data Lake Storage Gen2 REST client).
 
-Target layout (per domain) — 2026 OneLake ABFSS path:
-  abfss://<workspace_id>@onelake.dfs.core.windows.net/<lakehouse_name>.Lakehouse/Files/note_entities_{domain}/part-000.parquet
+Target layout — 2026 OneLake ABFSS paths:
+
+  Entities: .../Files/note_entities_{domain}/part-000.parquet
+  Canonical release (`--domain release` or per-table key): .../Files/<table_stem>/part-000.parquet
 
 Auth:
   - Service principal (preferred): set AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET in .env
@@ -28,9 +30,9 @@ Delta / registered tables:
   notebook snippet to register Delta tables after Parquet land in Files/.
 
 Usage (repo root):
-  python scripts/09b_fabric_upload_notes_entities.py --domain all
+  python scripts/09b_fabric_upload_notes_entities.py --domain all …
+  python scripts/09b_fabric_upload_notes_entities.py --domain release …
   python scripts/09b_fabric_upload_notes_entities.py --domain staging --dry-run
-  python scripts/09b_fabric_upload_notes_entities.py --domain all --processed-dir processed/remaining
 
 Pip:
   azure-storage-file-datalake azure-identity pyarrow pandas adlfs python-dotenv
@@ -61,7 +63,7 @@ except ImportError:
     pass  # python-dotenv optional; rely on shell env if not installed
 
 PROCESSED = ROOT / "processed"
-SCRIPT_VERSION = "09b_fabric_upload_notes_entities_v2"
+SCRIPT_VERSION = "09b_fabric_upload_notes_entities_v3"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -81,6 +83,13 @@ DOMAIN_TO_FILE = {
     "problem_list":      "note_entities_problem_list",
     "llm":               "note_entities_llm",
 }
+
+# Canonical fact long + quarantine + extraction run log (scripts/103 + run_extraction)
+CANONICAL_RELEASE_STEMS: tuple[str, ...] = (
+    "canonical_extracted_fact_long_v1",
+    "canonical_fact_quarantine_v1",
+    "note_extraction_runs",
+)
 
 
 def _credential():
@@ -154,18 +163,24 @@ def _enrich_provenance(df: pd.DataFrame, run_id: str, local_path: Path) -> pd.Da
     return out
 
 
-def fabric_notebook_snippet(workspace_id: str, lakehouse_name: str, domain: str) -> str:
+def fabric_notebook_snippet(
+    workspace_id: str,
+    lakehouse_name: str,
+    *,
+    files_subpath: str,
+    delta_table: str,
+) -> str:
     """
     PySpark / Fabric notebook snippet — run inside a Lakehouse notebook to
     convert the landed Parquet to Delta and register it as a table.
-    2026 best practice: use saveAsTable with delta format (not spark.catalog.createTable).
+    `files_subpath` is the folder under Files/ (e.g. note_entities_staging or
+    canonical_extracted_fact_long_v1).
     """
     lakehouse_fs = f"{lakehouse_name}.Lakehouse"
     parquet_path = (
         f"abfss://{workspace_id}@onelake.dfs.core.windows.net"
-        f"/{lakehouse_fs}/Files/note_entities_{domain}/"
+        f"/{lakehouse_fs}/Files/{files_subpath}/"
     )
-    table = f"note_entities_{domain}"
     return f"""
 # ── Paste into Fabric Notebook (attach to Lakehouse: {lakehouse_name}) ──
 # Converts landed Parquet → Delta and registers as a managed table.
@@ -176,12 +191,12 @@ spark = SparkSession.builder.getOrCreate()
 parquet_path = "{parquet_path}"
 df = spark.read.format("parquet").load(parquet_path)
 (df.write
-   .format("delta")
-   .mode("overwrite")
-   .option("overwriteSchema", "true")
-   .saveAsTable("{table}"))
+ .format("delta")
+ .mode("overwrite")
+ .option("overwriteSchema", "true")
+ .saveAsTable("{delta_table}"))
 
-print("Delta table ready:", "{table}", "| rows:", df.count())
+print("Delta table ready:", "{delta_table}", "| rows:", df.count())
 # ── end snippet ──
 """.strip()
 
@@ -197,23 +212,36 @@ def try_mssparkutils_hint() -> None:
         )
 
 
-def _remote_path_for(lakehouse_name: str, remote_prefix: str, domain: str) -> str:
+def _remote_path_note_entity(lakehouse_name: str, remote_prefix: str, domain: str) -> str:
     """
-    Build the correct OneLake ADLS Gen2 remote path.
-    2026 format: <lakehouse_name>.Lakehouse/<remote_prefix>/note_entities_<domain>/part-000.parquet
+    OneLake path for note_entities: .../Files/note_entities_{domain}/part-000.parquet
     """
     lakehouse_fs_segment = f"{lakehouse_name}.Lakehouse"
-    return f"{lakehouse_fs_segment}/{remote_prefix.strip('/')}/note_entities_{domain}/part-000.parquet"
+    return (
+        f"{lakehouse_fs_segment}/{remote_prefix.strip('/')}"
+        f"/note_entities_{domain}/part-000.parquet"
+    )
+
+
+def _remote_path_release_table(lakehouse_name: str, remote_prefix: str, table_stem: str) -> str:
+    """OneLake path for canonical/quarantine/run artefacts: .../Files/<stem>/part-000.parquet"""
+    lakehouse_fs_segment = f"{lakehouse_name}.Lakehouse"
+    return (
+        f"{lakehouse_fs_segment}/{remote_prefix.strip('/')}/{table_stem}/part-000.parquet"
+    )
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Upload note_entities Parquet files to OneLake / Fabric Lakehouse (2026)"
     )
+    all_domain_choices = (
+        "all | release | " + " | ".join(sorted(DOMAIN_TO_FILE)) + " | " + " | ".join(CANONICAL_RELEASE_STEMS)
+    )
     parser.add_argument(
         "--domain",
         default="all",
-        help=f"Domain to upload: all | {' | '.join(sorted(DOMAIN_TO_FILE))}",
+        help=f"Upload target: {all_domain_choices}",
     )
     parser.add_argument(
         "--processed-dir",
@@ -270,14 +298,20 @@ def main() -> None:
     file_system    = args.file_system    or "<YOUR_WORKSPACE_GUID>"
     lakehouse_name = args.lakehouse_name or "<YOUR_LAKEHOUSE_NAME>"
 
-    # ── Domain selection ────────────────────────────────────────────────────
+    # ── Upload job list: (kind, label_for_log, parquet_stem) ─────────────────
     if args.domain == "all":
-        domains = sorted(DOMAIN_TO_FILE.keys())
-    elif args.domain not in DOMAIN_TO_FILE:
-        log.error(f"Unknown domain '{args.domain}'. Choose: all | {' | '.join(sorted(DOMAIN_TO_FILE))}")
-        sys.exit(1)
+        jobs = [
+            ("entity", d, DOMAIN_TO_FILE[d]) for d in sorted(DOMAIN_TO_FILE.keys())
+        ]
+    elif args.domain == "release":
+        jobs = [("release", s, s) for s in CANONICAL_RELEASE_STEMS]
+    elif args.domain in DOMAIN_TO_FILE:
+        jobs = [("entity", args.domain, DOMAIN_TO_FILE[args.domain])]
+    elif args.domain in CANONICAL_RELEASE_STEMS:
+        jobs = [("release", args.domain, args.domain)]
     else:
-        domains = [args.domain]
+        log.error(f"Unknown --domain '{args.domain}'. See --help for choices.")
+        sys.exit(1)
 
     processed_dir: Path = args.processed_dir.resolve()
     if not processed_dir.is_dir():
@@ -288,7 +322,7 @@ def main() -> None:
 
     run_id = str(uuid.uuid4())
     log.info("=" * 70)
-    log.info("  FABRIC / ONELAKE UPLOAD — note_entities  (script v2)")
+    log.info("  FABRIC / ONELAKE UPLOAD — entities + optional canonical release (v3)")
     log.info("=" * 70)
     log.info(f"  Account URL  : {args.account_url}")
     log.info(f"  Workspace ID : {file_system}")
@@ -311,25 +345,37 @@ def main() -> None:
     uploaded: list[str] = []
     skipped:  list[str] = []
 
-    for domain in domains:
-        stem       = DOMAIN_TO_FILE[domain]
+    for kind, label, stem in jobs:
         local_path = processed_dir / f"{stem}.parquet"
         if not local_path.exists():
             log.warning(f"  ⚠ Skip missing file: {local_path.name}")
-            skipped.append(domain)
+            skipped.append(label)
             continue
 
-        remote_path = _remote_path_for(lakehouse_name, args.remote_prefix, domain)
+        if kind == "entity":
+            remote_path = _remote_path_note_entity(lakehouse_name, args.remote_prefix, label)
+            files_subpath = f"note_entities_{label}"
+            delta_table = files_subpath
+        else:
+            remote_path = _remote_path_release_table(lakehouse_name, args.remote_prefix, stem)
+            files_subpath = stem
+            delta_table = stem
+
         abfss_uri = (
             f"abfss://{file_system}@onelake.dfs.core.windows.net/{remote_path}"
         )
-        log.info(f"\n  [{domain}]")
+        log.info(f"\n  [{label}] ({stem}.parquet)")
         log.info(f"    local  : {local_path.name}  ({local_path.stat().st_size / 1e6:.1f} MB)")
         log.info(f"    remote : {abfss_uri}")
 
         if args.dry_run:
-            snippets[domain] = fabric_notebook_snippet(file_system, lakehouse_name, domain)
-            uploaded.append(domain)
+            snippets[label] = fabric_notebook_snippet(
+                file_system,
+                lakehouse_name,
+                files_subpath=files_subpath,
+                delta_table=delta_table,
+            )
+            uploaded.append(label)
             continue
 
         try:
@@ -346,12 +392,17 @@ def main() -> None:
                     _upload_bytes(fs, remote_path, buf_path.read_bytes())
                 finally:
                     buf_path.unlink(missing_ok=True)
-            uploaded.append(domain)
+            uploaded.append(label)
         except Exception as exc:
-            log.error(f"    Upload failed for domain '{domain}': {exc}")
+            log.error(f"    Upload failed for '{label}': {exc}")
             sys.exit(1)
 
-        snippets[domain] = fabric_notebook_snippet(file_system, lakehouse_name, domain)
+        snippets[label] = fabric_notebook_snippet(
+            file_system,
+            lakehouse_name,
+            files_subpath=files_subpath,
+            delta_table=delta_table,
+        )
 
     # ── Manifest ────────────────────────────────────────────────────────────
     manifest = {
@@ -380,9 +431,9 @@ def main() -> None:
 
     log.info("\n" + "=" * 70)
     if args.dry_run:
-        log.info(f"  DRY RUN COMPLETE | would upload {len(uploaded)} domain(s)")
+        log.info(f"  DRY RUN COMPLETE | would upload {len(uploaded)} artefact(s)")
     else:
-        log.info(f"  UPLOAD COMPLETE | {len(uploaded)} domain(s) uploaded, {len(skipped)} skipped")
+        log.info(f"  UPLOAD COMPLETE | {len(uploaded)} artefact(s) uploaded, {len(skipped)} skipped")
     log.info("=" * 70)
 
 

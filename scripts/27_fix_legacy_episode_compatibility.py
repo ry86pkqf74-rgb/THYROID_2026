@@ -33,7 +33,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from local DuckDB_client import local DuckDBClient, local DuckDBConfig
+from motherduck_client import MotherDuckClient, MotherDuckConfig
 
 logging.basicConfig(
     level=logging.INFO,
@@ -276,8 +276,8 @@ def run(args: argparse.Namespace) -> int:
         con = duckdb.connect(local_path)
     else:
         log.info("Connecting to local DuckDB (thyroid_master.duckdb)…")
-        cfg = local DuckDBConfig(database="thyroid_master.duckdb")
-        cli = local DuckDBClient(cfg)
+        cfg = MotherDuckConfig(database="thyroid_master.duckdb")
+        cli = MotherDuckClient(cfg)
         con = cli.connect_rw()
 
     created: list[str] = []

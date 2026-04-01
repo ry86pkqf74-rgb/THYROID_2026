@@ -10,12 +10,15 @@ Handles: column standardization, research_id unification,
 import polars as pl
 import re
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 RAW = ROOT / "raw"
 PROCESSED = ROOT / "processed"
 PROCESSED.mkdir(exist_ok=True)
+
+INGEST_SCRIPT_VERSION = "01_ingest_all_files_v2"
 
 RESEARCH_ID_ALIASES = {
     "research_id",
@@ -148,14 +151,21 @@ def melt_nuclear_med(df: pl.DataFrame) -> pl.DataFrame:
     return result
 
 
-def build_clinical_notes_long(df: pl.DataFrame) -> pl.DataFrame:
+def build_clinical_notes_long(
+    df: pl.DataFrame,
+    *,
+    logical_sheet: str = "Sheet2",
+) -> pl.DataFrame:
     """Unpivot Sheet2 of Notes workbook into long-format clinical notes.
 
     Expects columns already standardized to snake_case by standardize_columns().
-    Returns rows: research_id, note_type, note_index, note_text, source_sheet, source_column.
+    Returns rows including excel_row_0based (wide-sheet row index).
+    File-level provenance is applied in main() via add_ingest_provenance().
     """
     if "research_id" not in df.columns:
         return df
+
+    df = df.with_row_index("excel_row_0based")
 
     # Candidate note columns in standardized form
     direct_map = {
@@ -175,11 +185,12 @@ def build_clinical_notes_long(df: pl.DataFrame) -> pl.DataFrame:
             rows.append(
                 df.select(
                     [
+                        pl.col("excel_row_0based"),
                         pl.col("research_id"),
                         pl.lit(nt).alias("note_type"),
                         (pl.lit(ni).cast(pl.Int32) if ni is not None else pl.lit(None).cast(pl.Int32)).alias("note_index"),
                         pl.col(col).cast(pl.Utf8).alias("note_text"),
-                        pl.lit("Sheet2").alias("source_sheet"),
+                        pl.lit(logical_sheet).alias("source_sheet"),
                         pl.lit(col).alias("source_column"),
                     ]
                 )
@@ -193,11 +204,12 @@ def build_clinical_notes_long(df: pl.DataFrame) -> pl.DataFrame:
                 rows.append(
                     df.select(
                         [
+                            pl.col("excel_row_0based"),
                             pl.col("research_id"),
                             pl.lit(note_type).alias("note_type"),
                             pl.lit(i).cast(pl.Int32).alias("note_index"),
                             pl.col(c).cast(pl.Utf8).alias("note_text"),
-                            pl.lit("Sheet2").alias("source_sheet"),
+                            pl.lit(logical_sheet).alias("source_sheet"),
                             pl.lit(c).alias("source_column"),
                         ]
                     )
@@ -223,6 +235,17 @@ def build_clinical_notes_long(df: pl.DataFrame) -> pl.DataFrame:
         & (pl.col("research_id") != "")
     )
     return out
+
+
+def add_ingest_provenance(df: pl.DataFrame, fname: str, sheet: str | None) -> pl.DataFrame:
+    """Attach uniform file-level provenance to any ingested Parquet."""
+    ts = datetime.now(timezone.utc).isoformat()
+    return df.with_columns(
+        pl.lit(fname).alias("source_workbook"),
+        pl.lit(sheet or "").alias("ingest_sheet_spec"),
+        pl.lit(INGEST_SCRIPT_VERSION).alias("ingest_script_version"),
+        pl.lit(ts).alias("ingested_at_utc"),
+    )
 
 
 # ── File Manifest ────────────────────────────────────────────────
@@ -385,8 +408,10 @@ def main() -> None:
                 df = melt_nuclear_med(df)
                 print(f"      melted → {df.shape[0]:>7,} rows × {df.shape[1]:>3} cols")
             elif melt == "notes_long":
-                df = build_clinical_notes_long(df)
+                df = build_clinical_notes_long(df, logical_sheet=sheet or "Sheet2")
                 print(f"      melted → {df.shape[0]:>7,} rows × {df.shape[1]:>3} cols")
+
+            df = add_ingest_provenance(df, fname, sheet)
 
             out = PROCESSED / f"{table}.parquet"
             df.write_parquet(out)

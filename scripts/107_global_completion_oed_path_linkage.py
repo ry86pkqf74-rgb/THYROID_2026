@@ -36,7 +36,7 @@ STUDY_PATIENT_CSV = STUDY / "patient_level_dataset.csv"
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(STUDY))
 
-from local DuckDB_client import local DuckDBClient, local DuckDBConfig  # noqa: E402
+from motherduck_client import MotherDuckClient, MotherDuckConfig  # noqa: E402
 
 import cohort_logic as cl  # noqa: E402
 
@@ -185,7 +185,7 @@ def cohort_consistency_check(out: pd.DataFrame) -> dict:
     }
 
 
-def push_local DuckDB(con, df: pd.DataFrame) -> None:
+def push_motherduck(con, df: pd.DataFrame) -> None:
     """Materialize RW tables via in-process register (avoids local path read on md:)."""
     con.register("_linkage_upload_v1", df)
     try:
@@ -230,7 +230,7 @@ def main() -> int:
     args = ap.parse_args()
     do_md = bool(args.md) and not args.skip_md
 
-    client = local DuckDBClient(local DuckDBConfig(use_service_account=bool(args.sa)))
+    client = MotherDuckClient(MotherDuckConfig(use_service_account=bool(args.sa)))
     con = client.connect_rw()
 
     ops, path_syn = load_ops_path(con)
@@ -276,7 +276,7 @@ def main() -> int:
         raise SystemExit("cohort consistency FAIL — see manifest cohort_consistency_vs_study_csv")
 
     if do_md:
-        push_local DuckDB(con, out)
+        push_motherduck(con, out)
 
     return 0
 

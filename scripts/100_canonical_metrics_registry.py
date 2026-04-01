@@ -42,7 +42,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from local DuckDB_client import local DuckDBClient  # noqa: E402
+from motherduck_client import MotherDuckClient  # noqa: E402
 
 NOW = datetime.now(timezone.utc)
 DATESTAMP = NOW.strftime("%Y%m%d")
@@ -665,7 +665,7 @@ def main() -> None:
 
     # ── Connect ───────────────────────────────────────────────────────────
     try:
-        client = local DuckDBClient.for_env(args.env, use_service_account=args.sa)
+        client = MotherDuckClient.for_env(args.env, use_service_account=args.sa)
         con = client.connect_rw()
         print(f"  Connected to: {client.config.database}")
     except Exception as e:
