@@ -32,9 +32,17 @@ ENTITY_TABLES = [
     "note_entities_staging",
     "note_entities_genetics",
     "note_entities_procedures",
+    "note_entities_operative_detail",
     "note_entities_complications",
     "note_entities_medications",
     "note_entities_problem_list",
+    "note_entities_llm",
+]
+
+CANONICAL_AND_RUN_TABLES = [
+    "canonical_extracted_fact_long_v1",
+    "canonical_fact_quarantine_v1",
+    "note_extraction_runs",
 ]
 
 ENTITY_SUMMARY_SQL = """
@@ -49,6 +57,9 @@ WITH all_entities AS (
     SELECT research_id, 'procedures', entity_value_norm, present_or_negated
     FROM note_entities_procedures
     UNION ALL
+    SELECT research_id, 'operative_detail', entity_value_norm, present_or_negated
+    FROM note_entities_operative_detail
+    UNION ALL
     SELECT research_id, 'complications', entity_value_norm, present_or_negated
     FROM note_entities_complications
     UNION ALL
@@ -57,6 +68,9 @@ WITH all_entities AS (
     UNION ALL
     SELECT research_id, 'problem_list', entity_value_norm, present_or_negated
     FROM note_entities_problem_list
+    UNION ALL
+    SELECT research_id, 'llm', entity_value_norm, present_or_negated
+    FROM note_entities_llm
 )
 SELECT
     CAST(research_id AS VARCHAR) AS research_id,
@@ -64,9 +78,11 @@ SELECT
     SUM(CASE WHEN domain = 'staging' THEN 1 ELSE 0 END) AS n_staging,
     SUM(CASE WHEN domain = 'genetics' THEN 1 ELSE 0 END) AS n_genetics,
     SUM(CASE WHEN domain = 'procedures' THEN 1 ELSE 0 END) AS n_procedures,
+    SUM(CASE WHEN domain = 'operative_detail' THEN 1 ELSE 0 END) AS n_operative_detail,
     SUM(CASE WHEN domain = 'complications' THEN 1 ELSE 0 END) AS n_complications,
     SUM(CASE WHEN domain = 'medications' THEN 1 ELSE 0 END) AS n_medications,
     SUM(CASE WHEN domain = 'problem_list' THEN 1 ELSE 0 END) AS n_problems,
+    SUM(CASE WHEN domain = 'llm' THEN 1 ELSE 0 END) AS n_llm,
     SUM(CASE WHEN present_or_negated = 'present' THEN 1 ELSE 0 END) AS n_present,
     SUM(CASE WHEN present_or_negated = 'negated' THEN 1 ELSE 0 END) AS n_negated
 FROM all_entities
@@ -158,6 +174,17 @@ def main() -> None:
     con = duckdb.connect(str(DB_PATH))
 
     for tbl in ENTITY_TABLES:
+        pq = PROCESSED / f"{tbl}.parquet"
+        if not pq.exists():
+            print(f"  SKIP {tbl} — parquet not found")
+            continue
+        con.execute(
+            f"CREATE OR REPLACE TABLE {tbl} AS SELECT * FROM read_parquet('{pq}')"
+        )
+        cnt = con.execute(f"SELECT COUNT(*) FROM {tbl}").fetchone()[0]
+        print(f"  Loaded {tbl:40s}  {cnt:>8,} rows")
+
+    for tbl in CANONICAL_AND_RUN_TABLES:
         pq = PROCESSED / f"{tbl}.parquet"
         if not pq.exists():
             print(f"  SKIP {tbl} — parquet not found")

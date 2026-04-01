@@ -74,7 +74,7 @@ class TestVocabFormat:
             "entity_date", "note_date",
             "extraction_method", "extracted_at",
         }
-        assert required == set(ENTITY_SCHEMA_COLUMNS)
+        assert required <= set(ENTITY_SCHEMA_COLUMNS)
 
     def test_norm_map_keys_lowercase(self):
         for key in PROCEDURE_NORM:

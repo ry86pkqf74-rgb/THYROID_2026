@@ -21,10 +21,12 @@ Supports --md flag for local DuckDB deployment.
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
 import duckdb
+import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 DB_PATH = ROOT / "thyroid_master.duckdb"
@@ -56,7 +58,11 @@ def register_parquets(con: duckdb.DuckDBPyConnection) -> None:
         "note_entities_staging", "note_entities_genetics",
         "note_entities_medications", "note_entities_procedures",
         "note_entities_complications", "note_entities_problem_list",
+        "note_entities_llm", "note_entities_operative_detail",
         "clinical_notes_long",
+        "canonical_extracted_fact_long_v1",
+        "canonical_fact_quarantine_v1",
+        "note_extraction_runs",
     ]
     for tbl in tables:
         pq = PROCESSED / f"{tbl}.parquet"
@@ -65,6 +71,82 @@ def register_parquets(con: duckdb.DuckDBPyConnection) -> None:
                 f"CREATE OR REPLACE TABLE {tbl} AS "
                 f"SELECT * FROM read_parquet('{pq}')"
             )
+
+
+def build_fact_release_metrics(con: duckdb.DuckDBPyConnection) -> None:
+    """Single-row table with canonical + quarantine release fill rates."""
+    section("Fact release metrics (val_fact_release_metrics_v1)")
+    if not table_available(con, "canonical_extracted_fact_long_v1"):
+        print(
+            "  SKIP — canonical_extracted_fact_long_v1 not available "
+            "(run scripts/103_fact_lineage_materialize.py)"
+        )
+        return
+    n_q = 0
+    if table_available(con, "canonical_fact_quarantine_v1"):
+        n_q = int(con.execute("SELECT COUNT(*) FROM canonical_fact_quarantine_v1").fetchone()[0])
+    r = con.execute(
+        """
+        SELECT
+          COUNT(*) AS n_clean,
+          COALESCE(ROUND(100.0 * SUM(
+            CASE WHEN source_file_id IS NOT NULL
+              AND CAST(source_file_id AS VARCHAR) NOT IN ('', 'nan', 'None')
+            THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0), 2), 0) AS pct_source_file_id,
+          COALESCE(ROUND(100.0 * SUM(
+            CASE WHEN inferred_surgery_episode_id IS NOT NULL THEN 1 ELSE 0 END
+          ) / NULLIF(COUNT(*), 0), 2), 0) AS pct_episode_linkage,
+          COALESCE(ROUND(100.0 * SUM(
+            CASE WHEN extraction_run_id IS NOT NULL
+              AND CAST(extraction_run_id AS VARCHAR) NOT IN ('', 'nan', 'None')
+            THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0), 2), 0) AS pct_extraction_run_id,
+          COALESCE(ROUND(100.0 * SUM(
+            CASE WHEN prompt_version IS NOT NULL
+              AND CAST(prompt_version AS VARCHAR) NOT IN ('', 'regex_only', 'none', 'nan', 'None')
+            THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0), 2), 0) AS pct_prompt_version_non_regex,
+          COALESCE(ROUND(100.0 * SUM(
+            CASE WHEN fact_domain = 'llm' AND model_name IS NOT NULL
+              AND CAST(model_name AS VARCHAR) NOT IN ('', 'nan', 'None')
+            THEN 1 ELSE 0 END
+          ) / NULLIF(SUM(CASE WHEN fact_domain = 'llm' THEN 1 ELSE 0 END), 0), 2), 0)
+            AS pct_llm_model_name_among_llm,
+          COALESCE(ROUND(100.0 * SUM(
+            CASE WHEN fact_domain = 'llm' AND verification_status IS NOT NULL
+              AND verification_status != 'unverified'
+            THEN 1 ELSE 0 END
+          ) / NULLIF(SUM(CASE WHEN fact_domain = 'llm' THEN 1 ELSE 0 END), 0), 2), 0)
+            AS pct_llm_back_checked
+        FROM canonical_extracted_fact_long_v1
+        """
+    ).fetchone()
+    n_clean = int(r[0])
+    denom = n_clean + n_q
+    pct_quarantine = round(100.0 * n_q / denom, 2) if denom > 0 else 0.0
+    row_df = pd.DataFrame(
+        [
+            {
+                "n_clean_facts": n_clean,
+                "n_quarantine_facts": n_q,
+                "pct_quarantine_of_all_facts": pct_quarantine,
+                "pct_source_file_id": r[1],
+                "pct_episode_linkage": r[2],
+                "pct_extraction_run_id": r[3],
+                "pct_prompt_version_non_regex": r[4],
+                "pct_llm_model_name_among_llm": r[5],
+                "pct_llm_back_checked": r[6],
+            }
+        ]
+    )
+    con.register("_fact_release_metrics_build", row_df)
+    con.execute(
+        "CREATE OR REPLACE TABLE val_fact_release_metrics_v1 AS "
+        "SELECT *, CURRENT_TIMESTAMP AS metric_at FROM _fact_release_metrics_build"
+    )
+    try:
+        con.unregister("_fact_release_metrics_build")
+    except Exception:
+        pass
+    print(f"  val_fact_release_metrics_v1: n_clean={n_clean:,} n_quarantine={n_q:,}")
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1142,6 +1224,38 @@ FROM lineage_audit_v1
 WHERE date_traceability_status = 'untraced'
 """
 
+VAL_FACT_PROVENANCE_SQL = """
+CREATE OR REPLACE TABLE val_fact_provenance_v1 AS
+SELECT
+    'llm_rejected_evidence' AS issue_type,
+    'warning' AS severity,
+    CAST(research_id AS INTEGER) AS research_id,
+    note_row_id,
+    CAST('llm' AS VARCHAR) AS fact_domain,
+    verification_status,
+    evidence_span,
+    CURRENT_TIMESTAMP AS validated_at
+FROM note_entities_llm
+WHERE verification_status = 'rejected'
+
+UNION ALL
+
+SELECT
+    'evidence_span_note_mismatch' AS issue_type,
+    'error' AS severity,
+    CAST(ne.research_id AS INTEGER) AS research_id,
+    ne.note_row_id,
+    CAST('llm' AS VARCHAR) AS fact_domain,
+    ne.verification_status,
+    ne.evidence_span,
+    CURRENT_TIMESTAMP AS validated_at
+FROM note_entities_llm ne
+INNER JOIN clinical_notes_long cn ON ne.note_row_id = cn.note_row_id
+WHERE ne.evidence_span IS NOT NULL
+  AND length(trim(CAST(ne.evidence_span AS VARCHAR))) > 0
+  AND strpos(CAST(cn.note_text AS VARCHAR), CAST(ne.evidence_span AS VARCHAR)) = 0
+"""
+
 
 # NOTE: ALL_VALIDATION_SQL is assembled after all SQL variable definitions below.
 # See the end of this module for the list definition.
@@ -1545,6 +1659,7 @@ ALL_VALIDATION_SQL: list[tuple[str, str, str]] = [
     ("val_phase9_targeted_refinement", VAL_PHASE9_TARGETED_REFINEMENT_SQL, "Phase 9 targeted refinement audit"),
     ("val_phase10_staging_recovery",   VAL_PHASE10_STAGING_RECOVERY_SQL,  "Phase 10 source-linked recovery audit"),
     ("val_provenance_traceability",    VAL_PROVENANCE_TRACEABILITY_SQL,   "Phase 11 provenance + date-accuracy traceability"),
+    ("val_fact_provenance_v1",         VAL_FACT_PROVENANCE_SQL,            "Note-entity fact provenance + episode hints"),
     ("val_phase13_final_gaps",         VAL_PHASE13_FINAL_GAPS_SQL,        "Phase 13 final gaps closure audit"),
     ("val_lab_canonical_v1",             VAL_LAB_CANONICAL_SQL,             "Canonical lab contract validation"),
 ]
@@ -1684,19 +1799,20 @@ def main() -> None:
     section("29 -- Validation Engine")
 
     if args.md:
-        try:
-            from local DuckDB_client import local DuckDBClient, local DuckDBConfig
-            cfg = local DuckDBConfig(database="thyroid_master.duckdb")
-            client = local DuckDBClient(cfg)
-            con = client.connect_rw()
-            print("  Connected to local DuckDB (RW)")
-        except Exception as e:
-            print(f"  local DuckDB unavailable: {e}")
-            print("  Falling back to local DuckDB")
+        token = os.environ.get("motherduck_token") or os.environ.get("MOTHERDUCK_TOKEN")
+        if token:
+            try:
+                con = duckdb.connect(f"md:thyroid_master?motherduck_token={token}")
+                print("  Connected to MotherDuck (md:thyroid_master)")
+            except Exception as e:
+                print(f"  MotherDuck unavailable: {e} — using file {DB_PATH}")
+                con = duckdb.connect(str(DB_PATH))
+        else:
             con = duckdb.connect(str(DB_PATH))
+            print(f"  Using file DB (--md, no MOTHERDUCK_TOKEN): {DB_PATH}")
     else:
         con = duckdb.connect(str(DB_PATH))
-        print(f"  Using local DuckDB: {DB_PATH}")
+        print(f"  Using local file DB: {DB_PATH}")
 
     register_parquets(con)
 
@@ -1713,6 +1829,7 @@ def main() -> None:
         sys.exit(1)
 
     build_all(con)
+    build_fact_release_metrics(con)
     print_summary(con)
 
     con.close()
