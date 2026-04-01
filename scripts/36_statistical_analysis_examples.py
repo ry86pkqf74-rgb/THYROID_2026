@@ -39,7 +39,7 @@ np.random.seed(42)
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from local DuckDB_client import local DuckDBClient, local DuckDBConfig
+from motherduck_client import MotherDuckClient, MotherDuckConfig
 from utils.statistical_analysis import (
     ThyroidStatisticalAnalyzer,
     THYROID_PREDICTORS,
@@ -66,8 +66,8 @@ def _get_connection(args):
         log.info("Connecting to local DuckDB: %s", local_path)
         return duckdb.connect(local_path)
     log.info("Connecting to local DuckDB (thyroid_master.duckdb)...")
-    cfg = local DuckDBConfig(database="thyroid_master.duckdb")
-    return local DuckDBClient(cfg).connect_rw()
+    cfg = MotherDuckConfig(database="thyroid_master.duckdb")
+    return MotherDuckClient(cfg).connect_rw()
 
 
 def _safe_query(con, sql: str) -> pd.DataFrame:

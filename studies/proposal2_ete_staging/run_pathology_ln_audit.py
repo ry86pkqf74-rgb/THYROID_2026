@@ -74,7 +74,7 @@ def audit_manuscript_cohort(path: Path) -> dict:
     return summary
 
 
-def sample_narrative_from_local DuckDB(limit: int) -> dict:
+def sample_narrative_from_motherduck(limit: int) -> dict:
     token = os.environ.get("LOCAL_DB_PATH", "")
     if not token:
         return {"status": "skipped", "reason": "LOCAL_DB_PATH unset"}
@@ -139,7 +139,7 @@ def main() -> None:
         "manuscript_cohort_audit": audit_manuscript_cohort(args.cohort),
     }
     if args.md:
-        out["local DuckDB_narrative_sample"] = sample_narrative_from_local DuckDB(args.md_limit)
+        out["motherduck_narrative_sample"] = sample_narrative_from_motherduck(args.md_limit)
 
     outp = OUTPUT_DIR / "pathology_ln_audit_summary.json"
     outp.write_text(json.dumps(out, indent=2), encoding="utf-8")

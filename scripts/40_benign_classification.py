@@ -125,9 +125,9 @@ def main() -> None:
     print("=" * 80)
 
     if args.md:
-        from local DuckDB_client import local DuckDBClient
+        from motherduck_client import MotherDuckClient
 
-        con = local DuckDBClient().connect_rw()
+        con = MotherDuckClient().connect_rw()
     else:
         con = duckdb.connect(str(DB_PATH))
         pq = PROCESSED / "path_synoptics.parquet"

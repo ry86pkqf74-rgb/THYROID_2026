@@ -34,7 +34,7 @@ if str(ROOT) not in sys.path:
 
 import duckdb  # noqa: E402
 
-from local DuckDB_client import get_token, resolve_database_for_env  # noqa: E402
+from motherduck_client import get_token, MotherDuckClient, MotherDuckConfig  # noqa: E402
 from utils.surg_date_canonical import (  # noqa: E402
     surgery_date_canonical_sql,
     surgery_date_parse_tier_sql,
@@ -137,10 +137,9 @@ def main() -> int:
             return 1
         for k in ("USE_LOCAL_DUCKDB", "use_local_duckdb"):
             os.environ.pop(k, None)
-        db = resolve_database_for_env(os.getenv("LOCAL_DB_ENV", "prod"))
-        uri = f"thyroid_master.duckdb"
-        con: duckdb.DuckDBPyConnection = duckdb.connect(uri)
-        label = f"thyroid_master.duckdb"
+        cfg = MotherDuckConfig(use_service_account=args.sa)
+        con = MotherDuckClient(cfg).connect_rw()
+        label = f"MotherDuck rw ({cfg.database})"
     else:
         path = Path(args.local or DB_PATH).expanduser()
         if not path.is_file():

@@ -53,10 +53,10 @@ def _get_connection(args):
         local_path = os.getenv("LOCAL_DUCKDB_PATH", str(ROOT / "thyroid_master_local.duckdb"))
         print(f"  Connecting to local DuckDB: {local_path}")
         return duckdb.connect(local_path)
-    from local DuckDB_client import local DuckDBClient, local DuckDBConfig
-    cfg = local DuckDBConfig(database="thyroid_master.duckdb")
+    from motherduck_client import MotherDuckClient, MotherDuckConfig
+    cfg = MotherDuckConfig(database="thyroid_master.duckdb")
     print("  Connecting to local DuckDB …")
-    return local DuckDBClient(cfg).connect_rw()
+    return MotherDuckClient(cfg).connect_rw()
 
 
 def _load_cohort(con) -> pd.DataFrame:

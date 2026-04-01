@@ -193,8 +193,8 @@ def run_excel_scan(raw_dir: Path) -> Path:
     return out_dir
 
 
-def run_local DuckDB_scoring() -> int:
-    from local DuckDB_client import get_token
+def run_motherduck_scoring() -> int:
+    from motherduck_client import get_token
 
     if not get_token():
         print(
@@ -235,7 +235,7 @@ def main() -> None:
         run_excel_scan(args.raw_dir.resolve())
 
     if args.md:
-        code = run_local DuckDB_scoring()
+        code = run_motherduck_scoring()
         raise SystemExit(code)
 
 

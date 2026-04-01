@@ -1014,8 +1014,8 @@ def main() -> None:
     print("=" * 80)
 
     if args.md:
-        from local DuckDB_client import local DuckDBClient
-        client = local DuckDBClient()
+        from motherduck_client import MotherDuckClient
+        client = MotherDuckClient()
         con = client.connect_rw()
     else:
         con = duckdb.connect(str(DB_PATH))

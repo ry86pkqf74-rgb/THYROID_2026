@@ -22,7 +22,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
 
-from local DuckDB_client import local DuckDBClient  # noqa: E402
+from motherduck_client import MotherDuckClient  # noqa: E402
 
 OUT = Path(__file__).resolve().parent
 QUERY_LOG: list[str] = []
@@ -787,9 +787,9 @@ def main():
     print("=" * 70)
 
     # Connect read-only to local DuckDB production
-    client = local DuckDBClient.for_env("prod")
+    client = MotherDuckClient.for_env("prod")
     con = client.connect_rw()
-    print(f"Connected to local DuckDB (token mode: {__import__('local DuckDB_client').token_mode()})")
+    print(f"Connected to local DuckDB (token mode: {__import__('motherduck_client').token_mode()})")
 
     # 1. Schema Inventory
     print("\n[1/9] Schema inventory...")

@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from local DuckDB_client import local DuckDBClient, local DuckDBConfig  # noqa: E402
+from motherduck_client import MotherDuckClient, MotherDuckConfig  # noqa: E402
 
 STUDY_DIR = Path(__file__).resolve().parent
 
@@ -55,7 +55,7 @@ CANDIDATES = [
 
 
 def connect():
-    return local DuckDBClient(local DuckDBConfig()).connect_rw()
+    return MotherDuckClient(MotherDuckConfig()).connect_rw()
 
 
 def main() -> None:

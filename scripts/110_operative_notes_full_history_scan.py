@@ -52,7 +52,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from local DuckDB_client import local DuckDBClient  # noqa: E402
+from motherduck_client import MotherDuckClient  # noqa: E402
 from utils.text_helpers import (  # noqa: E402
     clean_research_id,
     extract_note_date,
@@ -143,7 +143,7 @@ def load_surgery_lookup_from_synoptic(path: Path) -> pd.DataFrame:
     return lu
 
 
-def load_surgery_lookup_local DuckDB(con) -> pd.DataFrame:
+def load_surgery_lookup_motherduck(con) -> pd.DataFrame:
     # surg_date is often VARCHAR with mixed formats; native DATE also occurs.
     q = """
     SELECT CAST(research_id AS BIGINT) AS research_id,
@@ -310,7 +310,7 @@ def heuristic_scan_sheet(
     return recs
 
 
-def diagnose_local DuckDB(con) -> None:
+def diagnose_motherduck(con) -> None:
     print("\n=== local DuckDB: clinical_notes_long operative baseline ===\n")
     try:
         q = """
@@ -431,10 +431,10 @@ def main() -> None:
     baseline_pre2019 = None
     md_con = None
     if args.md and (args.diagnose_md or args.publish_md or args.use_md_surgery_dates):
-        md_con = local DuckDBClient().connect_rw()
+        md_con = MotherDuckClient().connect_rw()
 
     if args.diagnose_md and md_con:
-        diagnose_local DuckDB(md_con)
+        diagnose_motherduck(md_con)
         try:
             baseline_pre2019 = int(
                 md_con.execute(
@@ -450,7 +450,7 @@ def main() -> None:
             baseline_pre2019 = None
 
     if args.use_md_surgery_dates and md_con:
-        surgery_lu = load_surgery_lookup_local DuckDB(md_con)
+        surgery_lu = load_surgery_lookup_motherduck(md_con)
         print(f"\nSurgery lookup rows (local DuckDB path_synoptics): {len(surgery_lu):,}")
     elif synoptic_path is not None:
         surgery_lu = load_surgery_lookup_from_synoptic(synoptic_path)

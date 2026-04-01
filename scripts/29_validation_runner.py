@@ -84,9 +84,9 @@ def git_sha() -> str:
 def get_connection(use_md: bool) -> duckdb.DuckDBPyConnection:
     if use_md:
         try:
-            from local DuckDB_client import local DuckDBClient, local DuckDBConfig
-            cfg = local DuckDBConfig(database="thyroid_master.duckdb")
-            client = local DuckDBClient(cfg)
+            from motherduck_client import MotherDuckClient, MotherDuckConfig
+            cfg = MotherDuckConfig(database="thyroid_master.duckdb")
+            client = MotherDuckClient(cfg)
             con = client.connect_rw()
             print("  Connected to local DuckDB (RW)")
             return con
