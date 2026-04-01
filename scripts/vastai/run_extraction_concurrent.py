@@ -45,6 +45,7 @@ logging.basicConfig(
 log = logging.getLogger("split_extraction")
 
 CONCURRENCY = int(os.environ.get("EXTRACTION_CONCURRENCY", "3"))
+LLM_TIMEOUT_SECONDS = int(os.environ.get("LLM_TIMEOUT_SECONDS", "120"))
 
 DOMAIN_PROMPT = {
     "complications": "complications_extraction_v1.txt",
@@ -91,12 +92,14 @@ ALL_DOMAINS = list(DOMAIN_PROMPT.keys())
 def _load_prompt(domain: str) -> str:
     fname = DOMAIN_PROMPT.get(domain)
     if not fname:
-        return f"Extract {domain} entities from the following clinical note. Return JSON."
+        raise KeyError(f"Unknown extraction domain: {domain}")
     path = PROMPTS_DIR / fname
-    if path.exists():
-        return path.read_text(encoding="utf-8")
-    log.warning("Prompt file not found: %s -- using fallback.", path)
-    return f"Extract {domain} entities from the following clinical note. Return JSON."
+    if not path.exists():
+        raise FileNotFoundError(f"Prompt file not found for {domain}: {path}")
+    prompt_text = path.read_text(encoding="utf-8").strip()
+    if not prompt_text:
+        raise ValueError(f"Prompt file is empty for {domain}: {path}")
+    return prompt_text
 
 
 def _call_llm(client: Any, model: str, system_prompt: str, note_text: str) -> dict:
@@ -111,7 +114,7 @@ def _call_llm(client: Any, model: str, system_prompt: str, note_text: str) -> di
             ],
             temperature=0,
             max_tokens=1500,
-            timeout=120,
+            timeout=LLM_TIMEOUT_SECONDS,
         )
         if response_fmt:
             kwargs["response_format"] = response_fmt
@@ -181,6 +184,30 @@ def _rewrite_checkpoint(ckpt_path: Path, rows: list[dict]) -> None:
         for row in rows:
             handle.write(json.dumps(row) + "\n")
     tmp_path.replace(ckpt_path)
+
+
+def _dedupe_checkpoint_rows(ckpt_path: Path, rows: list[dict], domain: str) -> list[dict]:
+    if not rows:
+        return rows
+
+    seen_note_row_ids: set[str] = set()
+    deduped_reversed: list[dict] = []
+    duplicates_removed = 0
+    for row in reversed(rows):
+        note_row_id = str(row.get("note_row_id", ""))
+        if note_row_id in seen_note_row_ids:
+            duplicates_removed += 1
+            continue
+        seen_note_row_ids.add(note_row_id)
+        deduped_reversed.append(row)
+
+    if duplicates_removed == 0:
+        return rows
+
+    deduped_rows = list(reversed(deduped_reversed))
+    _rewrite_checkpoint(ckpt_path, deduped_rows)
+    log.info("  [%s] removed %s duplicate checkpoint rows", domain, f"{duplicates_removed:,}")
+    return deduped_rows
 
 
 def _backfill_checkpoint_rows(ckpt_path: Path, rows: list[dict], notes_df: pd.DataFrame, domain: str) -> list[dict]:
@@ -257,7 +284,9 @@ def extract_domain(
                 except json.JSONDecodeError:
                     continue
                 existing_rows.append(row)
-                done_ids.add(str(row.get("note_row_id", "")))
+        existing_rows = _dedupe_checkpoint_rows(ckpt_path, existing_rows, domain)
+        for row in existing_rows:
+            done_ids.add(str(row.get("note_row_id", "")))
         existing_rows = _backfill_checkpoint_rows(ckpt_path, existing_rows, notes_df, domain)
         if done_ids:
             log.info(

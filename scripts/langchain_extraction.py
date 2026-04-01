@@ -146,12 +146,14 @@ ALL_DOMAINS = list(DOMAIN_PROMPT.keys())
 def _load_prompt(domain: str) -> str:
     fname = DOMAIN_PROMPT.get(domain)
     if not fname:
-        return f"Extract {domain} entities from the following clinical note. Return JSON."
+        raise KeyError(f"Unknown extraction domain: {domain}")
     path = PROMPTS_DIR / fname
-    if path.exists():
-        return path.read_text(encoding="utf-8")
-    log.warning(f"Prompt file not found: {path} -- using fallback.")
-    return f"Extract {domain} entities from the following clinical note. Return JSON."
+    if not path.exists():
+        raise FileNotFoundError(f"Prompt file not found for {domain}: {path}")
+    prompt_text = path.read_text(encoding="utf-8").strip()
+    if not prompt_text:
+        raise ValueError(f"Prompt file is empty for {domain}: {path}")
+    return prompt_text
 
 
 # ---------------------------------------------------------------------------

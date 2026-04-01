@@ -7,6 +7,7 @@ umask 002
 MODEL="${MODEL:-qwen3:32b}"
 CONCURRENCY="${EXTRACTION_CONCURRENCY:-3}"
 TOTAL_NOTES="${TOTAL_NOTES:-11037}"
+INVALIDATE_DOMAINS="${INVALIDATE_DOMAINS:-}"
 LOCK_FILE="/var/run/thyroid_qwen32b_supervisor.lock"
 LOG="/var/log/supervisor_qwen32b.log"
 
@@ -69,6 +70,36 @@ archive_stale_artifacts() {
         done
 }
 
+archive_domain_artifacts() {
+    local domain="$1"
+    local reason="$2"
+    local archive_dir
+    archive_dir="output/archive_$(date '+%Y%m%d_%H%M%S')_${domain}"
+    mkdir -p "$archive_dir"
+
+    for artifact in \
+        "output/note_entities_llm_${domain}.ckpt.jsonl" \
+        "output/note_entities_llm_${domain}.parquet" \
+        "/var/log/worker_${domain}.log"
+    do
+        if [[ -f "$artifact" ]]; then
+            mv "$artifact" "$archive_dir/"
+            log "Archived $domain artifact due to $reason: $(basename "$artifact")"
+        fi
+    done
+}
+
+invalidate_requested_domains() {
+    if [[ -z "$INVALIDATE_DOMAINS" ]]; then
+        return 0
+    fi
+
+    log "Invalidating domains before run: $INVALIDATE_DOMAINS"
+    for domain in $INVALIDATE_DOMAINS; do
+        archive_domain_artifacts "$domain" "requested_invalidation"
+    done
+}
+
 run_domain() {
     local domain="$1"
     local ckpt="output/note_entities_llm_${domain}.ckpt.jsonl"
@@ -86,10 +117,8 @@ run_domain() {
         log "START $domain (fresh)"
     fi
 
-    mkdir -p processed/remaining output notes_extraction_new
+    mkdir -p processed/remaining output notes_extraction_new/prompts
     ln -sf /opt/thyroid_extraction/clinical_notes_long.parquet processed/remaining/clinical_notes_long.parquet
-    rm -rf notes_extraction_new/prompts 2>/dev/null || true
-    ln -sf /opt/thyroid_extraction/prompts notes_extraction_new/prompts
 
     python3 scripts/run_extraction_concurrent.py \
         --url http://localhost:11434/v1 \
@@ -115,6 +144,7 @@ run_domain() {
 
 acquire_lock
 archive_stale_artifacts
+invalidate_requested_domains
 
 log "=== QWEN32B SUPERVISOR (model=$MODEL, concurrency=$CONCURRENCY) ==="
 log "Queue: $DOMAINS"

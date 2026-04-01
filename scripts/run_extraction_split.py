@@ -60,6 +60,8 @@ logging.basicConfig(
 )
 log = logging.getLogger("split_extraction")
 
+LLM_TIMEOUT_SECONDS = int(os.environ.get("LLM_TIMEOUT_SECONDS", "120"))
+
 # -- Domain -> prompt file mapping ----------------------------------------
 DOMAIN_PROMPT = {
     "complications":  "complications_extraction_v1.txt",
@@ -107,12 +109,46 @@ ALL_DOMAINS = list(DOMAIN_PROMPT.keys())
 def _load_prompt(domain: str) -> str:
     fname = DOMAIN_PROMPT.get(domain)
     if not fname:
-        return f"Extract {domain} entities from the following clinical note. Return JSON."
+        raise KeyError(f"Unknown extraction domain: {domain}")
     path = PROMPTS_DIR / fname
-    if path.exists():
-        return path.read_text(encoding="utf-8")
-    log.warning(f"Prompt file not found: {path} -- using fallback.")
-    return f"Extract {domain} entities from the following clinical note. Return JSON."
+    if not path.exists():
+        raise FileNotFoundError(f"Prompt file not found for {domain}: {path}")
+    prompt_text = path.read_text(encoding="utf-8").strip()
+    if not prompt_text:
+        raise ValueError(f"Prompt file is empty for {domain}: {path}")
+    return prompt_text
+
+
+def _rewrite_checkpoint(ckpt_path: Path, rows: list[dict]) -> None:
+    tmp_path = ckpt_path.with_suffix('.tmp')
+    with open(tmp_path, 'w', encoding='utf-8') as handle:
+        for row in rows:
+            handle.write(json.dumps(row) + '\n')
+    tmp_path.replace(ckpt_path)
+
+
+def _dedupe_checkpoint_rows(ckpt_path: Path, rows: list[dict], domain: str) -> list[dict]:
+    if not rows:
+        return rows
+
+    seen_note_row_ids: set[str] = set()
+    deduped_reversed: list[dict] = []
+    duplicates_removed = 0
+    for row in reversed(rows):
+        note_row_id = str(row.get("note_row_id", ""))
+        if note_row_id in seen_note_row_ids:
+            duplicates_removed += 1
+            continue
+        seen_note_row_ids.add(note_row_id)
+        deduped_reversed.append(row)
+
+    if duplicates_removed == 0:
+        return rows
+
+    deduped_rows = list(reversed(deduped_reversed))
+    _rewrite_checkpoint(ckpt_path, deduped_rows)
+    log.info(f"  [{domain}] removed {duplicates_removed:,} duplicate checkpoint rows")
+    return deduped_rows
 
 
 def _call_llm(client: Any, model: str, system_prompt: str, note_text: str) -> dict:
@@ -132,7 +168,7 @@ def _call_llm(client: Any, model: str, system_prompt: str, note_text: str) -> di
             ],
             temperature=0,
             max_tokens=1500,
-            timeout=120,
+            timeout=LLM_TIMEOUT_SECONDS,
         )
         if response_fmt:
             kwargs["response_format"] = response_fmt
@@ -167,6 +203,7 @@ def extract_domain(
     api_key: str,
     model: str,
     output_dir: Path,
+    output_suffix: str = "",
 ) -> Path:
     """Run extraction for one domain with per-note JSONL checkpointing.
 
@@ -178,8 +215,9 @@ def extract_domain(
     """
     import openai
 
-    ckpt_path = output_dir / f"note_entities_llm_{domain}.ckpt.jsonl"
-    out_path  = output_dir / f"note_entities_llm_{domain}.parquet"
+    suffix = f"_{output_suffix}" if output_suffix else ""
+    ckpt_path = output_dir / f"note_entities_llm_{domain}{suffix}.ckpt.jsonl"
+    out_path  = output_dir / f"note_entities_llm_{domain}{suffix}.parquet"
 
     # -- Load existing checkpoint (resume support) -------------------------
     done_ids: set = set()
@@ -193,9 +231,11 @@ def extract_domain(
                 try:
                     row = json.loads(line)
                     existing_rows.append(row)
-                    done_ids.add(str(row.get("note_row_id", "")))
                 except json.JSONDecodeError:
                     pass
+        existing_rows = _dedupe_checkpoint_rows(ckpt_path, existing_rows, domain)
+        for row in existing_rows:
+            done_ids.add(str(row.get("note_row_id", "")))
         if done_ids:
             log.info(f"  [{domain}] RESUME -- {len(done_ids):,} notes already done, "
                      f"{len(notes_df) - len(done_ids):,} remaining")
@@ -295,6 +335,12 @@ def main() -> None:
                         help="API key (ollama doesn't need a real one)")
     parser.add_argument("--domains", nargs="+", default=ALL_DOMAINS,
                         help="Domains to extract (default: all 7)")
+    parser.add_argument("--row-start", type=int, default=0,
+                        help="Zero-based inclusive start row for note sharding")
+    parser.add_argument("--row-end", type=int, default=None,
+                        help="Zero-based inclusive end row for note sharding")
+    parser.add_argument("--output-suffix", default="",
+                        help="Optional suffix appended to checkpoint/parquet filenames")
     parser.add_argument("--dry-run", action="store_true",
                         help="Check connectivity only, do not run extraction")
     args = parser.parse_args()
@@ -314,6 +360,15 @@ def main() -> None:
     if "note_row_id" not in notes_df.columns:
         notes_df["note_row_id"] = notes_df.index.astype(str)
 
+    total_notes = len(notes_df)
+    row_start = max(args.row_start, 0)
+    row_end = total_notes - 1 if args.row_end is None else min(args.row_end, total_notes - 1)
+    if row_start > row_end:
+        log.error(f"Invalid row range: start={row_start} end={row_end}")
+        sys.exit(1)
+    notes_df = notes_df.iloc[row_start:row_end + 1].copy()
+    log.info(f"  Note shard: rows {row_start}-{row_end}  ({len(notes_df):,} notes)")
+
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
     # -- Server health check -----------------------------------------------
@@ -331,6 +386,8 @@ def main() -> None:
     log.info(f"  Domains: {args.domains}")
     log.info(f"  Model:   {args.model}")
     log.info(f"  URL:     {args.url}")
+    if args.output_suffix:
+        log.info(f"  Output suffix: {args.output_suffix}")
 
     if args.dry_run:
         log.info("  [dry-run] Connectivity check complete. Exiting.")
@@ -342,7 +399,8 @@ def main() -> None:
     all_output_paths: list[Path] = []
     for domain in args.domains:
         out_path = extract_domain(notes_df, domain, args.url, args.api_key,
-                                  args.model, args.output_dir)
+                                  args.model, args.output_dir,
+                                  output_suffix=args.output_suffix)
         all_output_paths.append(out_path)
 
     # -- Merge all domain outputs into one combined parquet ----------------
@@ -350,7 +408,8 @@ def main() -> None:
         parts = [pd.read_parquet(p) for p in all_output_paths if p.exists()]
         if parts:
             combined = pd.concat(parts, ignore_index=True)
-            combined_path = args.output_dir / "note_entities_llm_combined.parquet"
+            combined_suffix = f"_{args.output_suffix}" if args.output_suffix else ""
+            combined_path = args.output_dir / f"note_entities_llm_combined{combined_suffix}.parquet"
             combined.to_parquet(combined_path, index=False)
             log.info(f"  Combined LLM entities: {len(combined):,} rows -> {combined_path.name}")
 
