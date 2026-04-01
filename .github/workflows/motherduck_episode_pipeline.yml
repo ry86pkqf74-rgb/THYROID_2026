@@ -1,0 +1,47 @@
+# Manual run: canonical episodes v2 + linkage + reconciliation + QA on MotherDuck.
+# Uses repository secrets (not readable locally). Trigger: Actions → this workflow → Run workflow.
+name: MotherDuck — episodes v2 pipeline
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: motherduck-episode-pipeline
+  cancel-in-progress: false
+
+jobs:
+  v2-pipeline:
+    name: Scripts 22–25 + validation (MotherDuck)
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      # Primary secret name in repo; fall back to MOTHERDUCK if TOKEN variant unset.
+      MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN || secrets.MOTHERDUCK }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Assert MotherDuck token
+        run: |
+          python -c "import os; t=os.environ.get('MOTHERDUCK_TOKEN','').strip(); assert t, 'Set repo secret MOTHERDUCK_TOKEN (or MOTHERDUCK)'; print('MOTHERDUCK_TOKEN: set')"
+
+      - name: "22 — canonical_episodes_v2"
+        run: python scripts/22_canonical_episodes_v2.py --md
+
+      - name: "23 — cross_domain_linkage_v2"
+        run: python scripts/23_cross_domain_linkage_v2.py --md
+
+      - name: "24 — reconciliation_review_v2"
+        run: python scripts/24_reconciliation_review_v2.py --md
+
+      - name: "25 — qa_validation_v2"
+        run: python scripts/25_qa_validation_v2.py --md
+
+      - name: "29 — validation_engine"
+        run: python scripts/29_validation_engine.py --md
