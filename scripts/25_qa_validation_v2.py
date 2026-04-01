@@ -38,6 +38,8 @@ DB_PATH = ROOT / "thyroid_master.duckdb"
 
 sys.path.insert(0, str(ROOT))
 
+from utils.md_connect import connect_md_or_file  # noqa: E402
+
 
 def section(title: str) -> None:
     print(f"\n{'=' * 80}")
@@ -349,19 +351,7 @@ def main() -> None:
 
     section("25 -- QA Validation v2")
 
-    if args.md:
-        try:
-            from local DuckDB_client import local DuckDBClient, local DuckDBConfig
-            cfg = local DuckDBConfig(database="thyroid_master.duckdb")
-            client = local DuckDBClient(cfg)
-            con = client.connect_rw()
-            print("  Connected to local DuckDB (RW)")
-        except Exception as e:
-            print(f"  local DuckDB unavailable: {e}")
-            con = duckdb.connect(str(DB_PATH))
-    else:
-        con = duckdb.connect(str(DB_PATH))
-        print(f"  Using local DuckDB: {DB_PATH}")
+    con = connect_md_or_file(DB_PATH, md=args.md)
 
     required = [
         "tumor_episode_master_v2", "molecular_test_episode_v2",
