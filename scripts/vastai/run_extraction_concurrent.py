@@ -14,6 +14,7 @@ import argparse
 import json
 import logging
 import os
+import re
 import sys
 import threading
 import time
@@ -87,6 +88,19 @@ DOMAIN_PROMPT = {
 }
 
 ALL_DOMAINS = list(DOMAIN_PROMPT.keys())
+
+RECURRENCE_DETAILED_ALLOWED_ENTITY_TYPES = {
+    "recurrence_site",
+    "recurrence_type",
+    "detection_modality",
+    "recurrence_date",
+    "biochemical_recurrence",
+    "structural_recurrence",
+    "confirmation_method",
+    "time_to_recurrence",
+    "salvage_treatment",
+    "recurrence_free_interval",
+}
 
 
 def _load_prompt(domain: str) -> str:
@@ -176,6 +190,136 @@ def _row_provenance(note_row: pd.Series) -> dict[str, str]:
         "preprocessed_at_utc": preprocessed_at_utc,
         "preprocess_script_version": _clean_text(note_row.get("preprocess_script_version", "")),
     }
+
+
+def _tokenize_with_spans(text: str) -> list[tuple[str, int, int]]:
+    return [(match.group(0), match.start(), match.end()) for match in re.finditer(r"\S+", text)]
+
+
+def _repair_evidence_text(note_text: str, evidence_text: str) -> str:
+    evidence_text = _clean_text(evidence_text)
+    if not evidence_text:
+        return ""
+    if evidence_text in note_text:
+        return evidence_text
+
+    evidence_tokens = re.findall(r"\S+", evidence_text)
+    note_tokens = _tokenize_with_spans(note_text)
+    if not evidence_tokens or len(evidence_tokens) > len(note_tokens):
+        return ""
+
+    note_words = [token for token, _, _ in note_tokens]
+    target_len = len(evidence_tokens)
+    for index in range(len(note_words) - target_len + 1):
+        if note_words[index : index + target_len] == evidence_tokens:
+            start = note_tokens[index][1]
+            end = note_tokens[index + target_len - 1][2]
+            return note_text[start:end]
+    return ""
+
+
+def _normalize_iso_date(value: Any) -> str:
+    parsed = pd.to_datetime(value, errors="coerce")
+    if pd.isna(parsed):
+        return ""
+    return parsed.date().isoformat()
+
+
+def _sanitize_entities_payload(payload: dict[str, Any], note_row: pd.Series) -> dict[str, Any]:
+    entities = payload.get("entities", [])
+    if not isinstance(entities, list):
+        sanitized_payload = dict(payload)
+        sanitized_payload["entities"] = []
+        return sanitized_payload
+
+    note_text = str(note_row.get("note_text", "") or "")
+    sanitized_entities: list[dict[str, Any]] = []
+    seen_signatures: set[tuple[str, str, str, str]] = set()
+
+    for entity in entities:
+        if not isinstance(entity, dict):
+            continue
+
+        entity_type = _clean_text(entity.get("entity_type", ""))
+        entity_value = _clean_text(entity.get("entity_value", ""))
+        evidence_text = _repair_evidence_text(note_text, entity.get("evidence_text", ""))
+        entity_date = _normalize_iso_date(entity.get("entity_date", ""))
+
+        if not entity_type or not entity_value or not evidence_text:
+            continue
+
+        sanitized = dict(entity)
+        sanitized["entity_type"] = entity_type
+        sanitized["entity_value"] = entity_value
+        sanitized["evidence_text"] = evidence_text
+        sanitized["entity_date"] = entity_date or None
+
+        date_source_keyword = _clean_text(sanitized.get("date_source_keyword", ""))
+        sanitized["date_source_keyword"] = date_source_keyword or None
+
+        present_or_negated = _clean_text(sanitized.get("present_or_negated", "present")).lower()
+        sanitized["present_or_negated"] = present_or_negated if present_or_negated in {"present", "negated"} else "present"
+
+        signature = (entity_type, entity_value, sanitized["entity_date"] or "", evidence_text)
+        if signature in seen_signatures:
+            continue
+        seen_signatures.add(signature)
+        sanitized_entities.append(sanitized)
+
+    sanitized_payload = dict(payload)
+    sanitized_payload["entities"] = sanitized_entities
+    return sanitized_payload
+
+
+def _build_system_prompt(domain: str, base_prompt: str, note_row: pd.Series) -> str:
+    if domain != "recurrence_detailed":
+        return base_prompt
+    note_date = _normalize_iso_date(note_row.get("note_date", ""))
+    if not note_date:
+        return base_prompt
+    return (
+        f"{base_prompt}\n\n"
+        f"CURRENT NOTE DATE: {note_date}\n"
+        "Do not emit any recurrence entity with entity_date later than the current note date.\n"
+        "If the note only contains historical cancer diagnosis or treatment history without a documented recurrence event, return {\"entities\": []}."
+    )
+
+
+def _sanitize_recurrence_detailed_result(result: Any, note_row: pd.Series) -> dict[str, list[dict[str, Any]]]:
+    payload = result if isinstance(result, dict) else {}
+    payload = _sanitize_entities_payload(payload, note_row)
+    entities = payload.get("entities", [])
+
+    note_date = _normalize_iso_date(note_row.get("note_date", ""))
+    sanitized_entities: list[dict[str, Any]] = []
+
+    for entity in entities:
+        entity_type = entity.get("entity_type")
+        entity_value = entity.get("entity_value")
+        entity_date = entity.get("entity_date") or ""
+        date_source_keyword = entity.get("date_source_keyword") or ""
+        evidence_text = entity.get("evidence_text") or ""
+
+        if entity_type not in RECURRENCE_DETAILED_ALLOWED_ENTITY_TYPES:
+            continue
+        if not entity_value or not entity_date or not date_source_keyword or not evidence_text:
+            continue
+        if note_date and entity_date > note_date:
+            continue
+
+        sanitized_entities.append(entity)
+
+    return {"entities": sanitized_entities}
+
+
+def _sanitize_result(domain: str, result: Any, note_row: pd.Series) -> dict[str, Any]:
+    if domain == "recurrence_detailed":
+        return _sanitize_recurrence_detailed_result(result, note_row)
+    if isinstance(result, dict):
+        if "entities" in result:
+            return _sanitize_entities_payload(result, note_row)
+        return result
+    return {"parse_error": True, "raw": str(result)[:500]}
 
 
 def _rewrite_checkpoint(ckpt_path: Path, rows: list[dict]) -> None:
@@ -325,10 +469,12 @@ def extract_domain(
     domain_start = time.time()
 
     def _process_note(note_row: pd.Series) -> dict:
+        system_prompt_with_context = _build_system_prompt(domain, system_prompt, note_row)
         try:
-            result = call_with_retry(client, model, system_prompt, str(note_row.get("note_text", "")))
+            result = call_with_retry(client, model, system_prompt_with_context, str(note_row.get("note_text", "")))
         except Exception as exc:
             result = {"error": str(exc)}
+        result = _sanitize_result(domain, result, note_row)
 
         row = {
             "note_row_id": str(note_row.get("note_row_id", "")),

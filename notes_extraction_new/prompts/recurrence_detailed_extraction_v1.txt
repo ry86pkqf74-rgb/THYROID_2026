@@ -15,6 +15,10 @@ Priority order (highest → lowest):
   4. Else null with date_confidence 0.0
 
 CRITICAL: Distinguish NEW recurrence from PERSISTENT DISEASE (never achieved remission).
+CRITICAL: The only valid entity_type values are the 10 recurrence entity types listed below.
+Do NOT emit diagnosis history, pathology labels, cancer subtype names, surgery history, or any other entity_type outside this list.
+If an entity lacks an exact evidence span, an anchored entity_date, or a date_source_keyword, do not emit that entity.
+If the note only summarizes prior thyroid cancer history without a documented recurrence event for this patient, return {"entities": []}.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ENTITY TYPES TO EXTRACT (recurrence domain only):
@@ -99,6 +103,7 @@ FIELD RULES:
   - date_confidence: 1.0 | 0.85 | 0.7 | 0.0 per precedence above
   - date_source_keyword: the exact keyword phrase that provided the date, or null
   - evidence_text: MUST be an exact substring of the input note (verbatim)
+  - Every emitted entity MUST have non-null entity_type, entity_value, entity_date, date_source_keyword, and evidence_text
   - source_line: 1-based line number in the note where the entity appears
   - confidence: 0.0-1.0 reflecting extraction certainty
   - Return {"entities": []} if no recurrence events are documented
