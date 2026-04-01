@@ -1,6 +1,6 @@
 # VastAI Extraction Fleet Status 2026-04-01
 
-Post-remediation snapshot taken on 2026-04-01 after direct live audit, queue rollover repair, and A40 retirement/destruction.
+Post-remediation snapshot taken on 2026-04-01 after direct live audit, queue rollover repair, A40 retirement/destruction, and same-day H200 queue rebalancing.
 
 ## Server access
 
@@ -9,18 +9,18 @@ All workers expose Ollama locally at `http://localhost:11434/v1`.
 ### Primary H200
 - SSH: `ssh -p 43384 -o StrictHostKeyChecking=no root@107.206.71.138`
 - Vast proxy: `ssh -p 14710 -o StrictHostKeyChecking=no root@ssh1.vast.ai`
-- Active queue: `tirads_granular parathyroid_per_gland operative_v2_enrichment`
-- Active domain at snapshot: `tirads_granular`
-- Operational note: this host had been launched directly under the extractor and would not have rolled to the next queue item. It was relaunched under `supervisor_qwen32b.sh`, lock file recreated, and automatic rollover is now restored.
+- Active queue after recovery: `staging recurrence_detailed medication_management dynamic_risk_response presenting_symptoms past_medical_hx rad_treatment`
+- Active domain after recovery: `staging`
+- Operational note: this host had completed its earlier three-domain queue and briefly went idle. It was recovered through the direct SSH endpoint, resumed from the existing `staging` checkpoint, and then rebalanced to absorb the A/B follow-on backlog so it will not go idle after `staging` completes.
 
 ### Fast worker A
 - SSH: `ssh -p 15192 -o StrictHostKeyChecking=no root@ssh8.vast.ai`
-- Active queue: `vascular_invasion dynamic_risk_response presenting_symptoms past_medical_hx rad_treatment`
+- Active queue after rebalance: `vascular_invasion`
 - Active domain at snapshot: `vascular_invasion`
 
 ### Fast worker B
 - SSH: `ssh -p 15506 -o StrictHostKeyChecking=no root@ssh6.vast.ai`
-- Active queue: `rai_detailed recurrence_detailed medication_management`
+- Active queue after rebalance: `rai_detailed`
 - Active domain at snapshot: `rai_detailed`
 - Operational note: a stale launcher shell was cleaned up. The real supervisor and extractor remained healthy.
 
@@ -56,6 +56,16 @@ Input corpus size for each domain: 11,037 notes.
 ## Completed domains archived locally
 
 - `physical_exam` completed on the primary H200 and was copied into the repo at `output/v2_parquets/note_entities_llm_physical_exam.parquet`.
+- `operative_v2_enrichment` completed on the primary H200, validated locally with 11,037 rows plus provenance/date fields, and was copied into `output/v2_parquets/note_entities_llm_operative_v2_enrichment.parquet`.
+- `parathyroid_per_gland` completed on the primary H200, validated locally with 11,037 rows plus provenance/date fields, and was copied into `output/v2_parquets/note_entities_llm_parathyroid_per_gland.parquet`.
+- `tirads_granular` completed on the primary H200, validated locally with 11,037 rows plus provenance/date fields, and was copied into `output/v2_parquets/note_entities_llm_tirads_granular.parquet`.
+
+## Current queue distribution after H200 rebalance
+
+- Primary H200 carries the bulk post-`staging` queue: `recurrence_detailed`, `medication_management`, `dynamic_risk_response`, `presenting_symptoms`, `past_medical_hx`, `rad_treatment`.
+- H200 F carries the other bulk queue: `survival_followup`, `airway_invasion`, `tg_kinetics`, `parathyroid_detail`, `frozen_section_detail`, `us_nodule_dynamics`, `cervical_ln_detail`, `complications_rln_laryngoscopy`, `molecular_thyroseq_afirma`, `synoptic_pathology_enrichment`.
+- Worker A is intentionally reduced to `vascular_invasion` only.
+- Worker B is intentionally reduced to `rai_detailed` only.
 
 ## Overlap check
 
