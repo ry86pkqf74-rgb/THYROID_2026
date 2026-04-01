@@ -147,20 +147,31 @@ def _flush_parquet(rows: list[dict], out_path: Path, domain: str) -> None:
     tmp.replace(out_path)
 
 
+def _clean_text(value: Any) -> str:
+    if value is None or pd.isna(value):
+        return ""
+    text = str(value).strip()
+    if text.lower() in {"", "nan", "nat", "none"}:
+        return ""
+    return text
+
+
 def _row_provenance(note_row: pd.Series) -> dict[str, str]:
-    note_date = str(note_row.get("note_date", "") or "")
+    note_date = _clean_text(note_row.get("note_date", ""))
+    preprocessed_at_utc = _clean_text(note_row.get("preprocessed_at_utc", ""))
+    linkage_date = note_date or preprocessed_at_utc[:10]
     return {
-        "research_id": str(note_row.get("research_id", "")),
-        "note_type": str(note_row.get("note_type", "")),
+        "research_id": _clean_text(note_row.get("research_id", "")),
+        "note_type": _clean_text(note_row.get("note_type", "")),
         "note_date": note_date,
-        "linkage_date": note_date,
-        "source_workbook": str(note_row.get("source_workbook", "") or ""),
-        "source_sheet": str(note_row.get("source_sheet", "") or ""),
-        "source_column": str(note_row.get("source_column", "") or ""),
-        "note_index": str(note_row.get("note_index", "") or ""),
-        "preprocess_batch_id": str(note_row.get("preprocess_batch_id", "") or ""),
-        "preprocessed_at_utc": str(note_row.get("preprocessed_at_utc", "") or ""),
-        "preprocess_script_version": str(note_row.get("preprocess_script_version", "") or ""),
+        "linkage_date": linkage_date,
+        "source_workbook": _clean_text(note_row.get("source_workbook", "")),
+        "source_sheet": _clean_text(note_row.get("source_sheet", "")),
+        "source_column": _clean_text(note_row.get("source_column", "")),
+        "note_index": _clean_text(note_row.get("note_index", "")),
+        "preprocess_batch_id": _clean_text(note_row.get("preprocess_batch_id", "")),
+        "preprocessed_at_utc": preprocessed_at_utc,
+        "preprocess_script_version": _clean_text(note_row.get("preprocess_script_version", "")),
     }
 
 
@@ -201,10 +212,10 @@ def _backfill_checkpoint_rows(ckpt_path: Path, rows: list[dict], notes_df: pd.Da
                 source_row = source_row.iloc[0]
             provenance = _row_provenance(source_row)
             for field, value in provenance.items():
-                if not str(row.get(field, "") or ""):
+                if _clean_text(row.get(field, "")) == "":
                     row[field] = value
                     needs_rewrite = True
-        missing_required = any(not str(row.get(field, "") or "") for field in required_fields)
+        missing_required = any(_clean_text(row.get(field, "")) == "" for field in required_fields)
         if missing_required:
             log.warning("  [%s] checkpoint row still missing provenance for note_row_id=%s", domain, note_row_id)
         enriched_rows.append(row)
