@@ -11,6 +11,7 @@ combined files.
 from __future__ import annotations
 
 import argparse
+import functools
 import json
 import logging
 import os
@@ -114,6 +115,25 @@ def _load_prompt(domain: str) -> str:
     if not prompt_text:
         raise ValueError(f"Prompt file is empty for {domain}: {path}")
     return prompt_text
+
+
+@functools.lru_cache(maxsize=None)
+def _allowed_entity_types_for_domain(domain: str) -> set[str]:
+    prompt_text = _load_prompt(domain)
+    match = re.search(
+        r"ENTITY TYPES TO EXTRACT.*?\n(.*?)(?:\n[━-]{10,}|\nNEGATION DETECTION:)",
+        prompt_text,
+        re.DOTALL,
+    )
+    if not match:
+        return set()
+
+    allowed_types: set[str] = set()
+    for line in match.group(1).splitlines():
+        entity_match = re.match(r"\s*-\s*([A-Za-z0-9_]+)\s*:", line)
+        if entity_match:
+            allowed_types.add(entity_match.group(1))
+    return allowed_types
 
 
 def _call_llm(client: Any, model: str, system_prompt: str, note_text: str) -> dict:
@@ -225,7 +245,7 @@ def _normalize_iso_date(value: Any) -> str:
     return parsed.date().isoformat()
 
 
-def _sanitize_entities_payload(payload: dict[str, Any], note_row: pd.Series) -> dict[str, Any]:
+def _sanitize_entities_payload(payload: dict[str, Any], note_row: pd.Series, allowed_types: set[str] | None = None) -> dict[str, Any]:
     entities = payload.get("entities", [])
     if not isinstance(entities, list):
         sanitized_payload = dict(payload)
@@ -245,6 +265,8 @@ def _sanitize_entities_payload(payload: dict[str, Any], note_row: pd.Series) -> 
         evidence_text = _repair_evidence_text(note_text, entity.get("evidence_text", ""))
         entity_date = _normalize_iso_date(entity.get("entity_date", ""))
 
+        if allowed_types and entity_type not in allowed_types:
+            continue
         if not entity_type or not entity_value or not evidence_text:
             continue
 
@@ -287,7 +309,7 @@ def _build_system_prompt(domain: str, base_prompt: str, note_row: pd.Series) -> 
 
 def _sanitize_recurrence_detailed_result(result: Any, note_row: pd.Series) -> dict[str, list[dict[str, Any]]]:
     payload = result if isinstance(result, dict) else {}
-    payload = _sanitize_entities_payload(payload, note_row)
+    payload = _sanitize_entities_payload(payload, note_row, RECURRENCE_DETAILED_ALLOWED_ENTITY_TYPES)
     entities = payload.get("entities", [])
 
     note_date = _normalize_iso_date(note_row.get("note_date", ""))
@@ -317,7 +339,7 @@ def _sanitize_result(domain: str, result: Any, note_row: pd.Series) -> dict[str,
         return _sanitize_recurrence_detailed_result(result, note_row)
     if isinstance(result, dict):
         if "entities" in result:
-            return _sanitize_entities_payload(result, note_row)
+            return _sanitize_entities_payload(result, note_row, _allowed_entity_types_for_domain(domain))
         return result
     return {"parse_error": True, "raw": str(result)[:500]}
 
