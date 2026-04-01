@@ -13,6 +13,14 @@ All workers expose Ollama locally at `http://localhost:11434/v1`.
 - Active domain after recovery: `staging`
 - Operational note: this host had completed its earlier three-domain queue and briefly went idle. It was recovered through the direct SSH endpoint, resumed from the existing `staging` checkpoint, and then rebalanced to absorb the A/B follow-on backlog so it will not go idle after `staging` completes.
 
+### High-throughput H200 G
+- Vast instance ID: `33964874`
+- SSH: `ssh -p 14874 -o StrictHostKeyChecking=no root@ssh5.vast.ai`
+- Active queue: `functional_outcomes patient_decision_adherence past_surgical_hx operative_details complications`
+- Active domain at bring-up: `functional_outcomes`
+- Runtime profile: `OLLAMA_NUM_PARALLEL=6`, `EXTRACTION_CONCURRENCY=6`, `MODEL=qwen3:32b`
+- Operational note: this host was added on 2026-04-01 as a higher-throughput H200 lane using the repo-tracked VastAI runtime. Bootstrap issues were fixed in sequence (missing Python packages, misplaced parquet input symlink), after which the node came up cleanly under one supervisor plus one worker with live HTTP 200 inference traffic, nonzero checkpoint growth, and ~82 GB VRAM in use.
+
 ### Fast worker A
 - SSH: `ssh -p 15192 -o StrictHostKeyChecking=no root@ssh8.vast.ai`
 - Active queue after rebalance: `vascular_invasion`
@@ -64,6 +72,7 @@ Input corpus size for each domain: 11,037 notes.
 
 - Primary H200 carries the bulk post-`staging` queue: `recurrence_detailed`, `medication_management`, `dynamic_risk_response`, `presenting_symptoms`, `past_medical_hx`, `rad_treatment`.
 - H200 F carries the other bulk queue: `survival_followup`, `airway_invasion`, `tg_kinetics`, `parathyroid_detail`, `frozen_section_detail`, `us_nodule_dynamics`, `cervical_ln_detail`, `complications_rln_laryngoscopy`, `molecular_thyroseq_afirma`, `synoptic_pathology_enrichment`.
+- H200 G carries an additional non-overlapping backlog queue: `functional_outcomes`, `patient_decision_adherence`, `past_surgical_hx`, `operative_details`, `complications`.
 - Worker A is intentionally reduced to `vascular_invasion` only.
 - Worker B is intentionally reduced to `rai_detailed` only.
 
