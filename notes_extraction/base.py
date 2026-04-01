@@ -34,6 +34,24 @@ class EntityMatch:
     note_date: str | None = None
     extraction_method: str = "regex"
     extracted_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    date_confidence: float | None = None
+    source_line: int | None = None
+    chunk_index: int = 0
+    chunk_char_start: int = 0
+    chunk_char_end: int = 0
+    evidence_global_start: int = 0
+    evidence_global_end: int = 0
+    raw_response_sha256: str | None = None
+    verification_status: str = "unverified"
+    verification_step: str = "none"
+    extraction_run_id: str | None = None
+    extractor_name: str | None = None
+    extractor_version: str | None = None
+    model_name: str | None = None
+    model_version: str | None = None
+    prompt_version: str | None = None
+    verifier_name: str | None = None
+    verifier_version: str | None = None
 
     def to_dict(self) -> dict:
         return {
@@ -52,6 +70,24 @@ class EntityMatch:
             "note_date": self.note_date,
             "extraction_method": self.extraction_method,
             "extracted_at": self.extracted_at,
+            "date_confidence": self.date_confidence,
+            "source_line": self.source_line,
+            "chunk_index": self.chunk_index,
+            "chunk_char_start": self.chunk_char_start,
+            "chunk_char_end": self.chunk_char_end,
+            "evidence_global_start": self.evidence_global_start,
+            "evidence_global_end": self.evidence_global_end,
+            "raw_response_sha256": self.raw_response_sha256,
+            "verification_status": self.verification_status,
+            "verification_step": self.verification_step,
+            "extraction_run_id": self.extraction_run_id,
+            "extractor_name": self.extractor_name,
+            "extractor_version": self.extractor_version,
+            "model_name": self.model_name,
+            "model_version": self.model_version,
+            "prompt_version": self.prompt_version,
+            "verifier_name": self.verifier_name,
+            "verifier_version": self.verifier_version,
         }
 
 

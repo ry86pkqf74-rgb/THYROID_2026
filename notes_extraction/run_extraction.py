@@ -29,6 +29,7 @@ import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import logging
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
@@ -41,7 +42,12 @@ from notes_extraction.base import BaseExtractor
 from notes_extraction.extract_llm import LLMExtractor
 from notes_extraction.extract_operative_v2 import OperativeDetailExtractor
 from notes_extraction.extract_regex import ALL_REGEX_EXTRACTORS
-from notes_extraction.vocab import ENTITY_SCHEMA_COLUMNS
+from notes_extraction.run_telemetry import (
+    RunTelemetryContext,
+    append_note_extraction_run,
+    new_extraction_run_id,
+)
+from notes_extraction.vocab import ENTITY_SCHEMA_COLUMNS, EXTRACTOR_BUILD_VERSION
 from utils.text_helpers import save_parquet
 
 logging.basicConfig(
@@ -68,10 +74,25 @@ DOMAIN_TO_FILE = {
 }
 
 
+def _stamp_row(ext: BaseExtractor, rec: dict, extraction_run_id: str) -> dict:
+    rec["extraction_run_id"] = extraction_run_id
+    rec["extractor_name"] = ext.__class__.__name__
+    rec["extractor_version"] = EXTRACTOR_BUILD_VERSION
+    if ext.entity_domain != "llm":
+        rec["model_name"] = None
+        rec["model_version"] = None
+        rec["prompt_version"] = "regex_only"
+        rec["verifier_name"] = None
+        rec["verifier_version"] = None
+    return rec
+
+
 def run_extractors(
     notes_df: pd.DataFrame,
     extractors: list[BaseExtractor],
     max_workers: int = 1,
+    *,
+    extraction_run_id: str,
 ) -> dict[str, list[dict]]:
     """Run all extractors across every note row, grouping results by domain."""
     domain_results: dict[str, list[dict]] = {}
@@ -93,7 +114,8 @@ def run_extractors(
             if matches:
                 domain = ext.entity_domain
                 row_results.setdefault(domain, [])
-                row_results[domain].extend(m.to_dict() for m in matches)
+                for m in matches:
+                    row_results[domain].append(_stamp_row(ext, m.to_dict(), extraction_run_id))
         return row_results
 
     total = len(notes_df)
@@ -161,12 +183,22 @@ def _merge_into_existing(
     mask = existing_df["research_id"].astype(int).isin(replace_research_ids)
     kept_existing = existing_df[~mask].copy()
 
-    # Concatenate kept rows + new extractions
+    # Align columns for older parquets missing new provenance fields
+    for col in new_df.columns:
+        if col not in kept_existing.columns:
+            kept_existing[col] = None
+    for col in kept_existing.columns:
+        if col not in new_df.columns:
+            new_df[col] = None
     merged = pd.concat([kept_existing, new_df], ignore_index=True)
     return merged
 
 
 def main() -> None:
+    started_at = datetime.now(timezone.utc).isoformat()
+    extraction_run_id = new_extraction_run_id()
+    telemetry = RunTelemetryContext()
+
     parser = argparse.ArgumentParser(
         description="Run entity extractors on clinical_notes_long"
     )
@@ -251,12 +283,18 @@ def main() -> None:
         OperativeDetailExtractor(),
     ]
 
-    llm = LLMExtractor()
+    llm = LLMExtractor(telemetry=telemetry)
     if llm.available:
         all_extractors.append(llm)
-        log.info("  LLM extractor enabled (operative notes use extended chunk + prompt when OPENAI_API_KEY set)")
+        log.info(
+            "  LLM extractor enabled (GITHUB_TOKEN or OPENAI_API_KEY; operative notes use extended chunk)"
+        )
     else:
-        log.info("  LLM extractor disabled (no API key)")
+        telemetry.llm_disabled = True
+        log.warning(
+            "  LLM extractor disabled (set GITHUB_TOKEN or OPENAI_API_KEY) — "
+            "llm domain will be empty; this is not the same as 'no clinical findings'"
+        )
 
     worker_count = args.workers
     if worker_count is None:
@@ -277,7 +315,13 @@ def main() -> None:
     else:
         extractors = all_extractors
 
-    domain_results = run_extractors(notes_df, extractors, max_workers=worker_count)
+    log.info("  extraction_run_id=%s", extraction_run_id)
+    domain_results = run_extractors(
+        notes_df,
+        extractors,
+        max_workers=worker_count,
+        extraction_run_id=extraction_run_id,
+    )
 
     dfs = results_to_dataframes(domain_results)
 
@@ -320,7 +364,39 @@ def main() -> None:
             log.info(f"      {val}: {cnt:,}")
 
     if not dfs:
-        log.warning("  No entities extracted!")
+        log.warning(
+            "  No entities extracted for selected domains — check API keys, input paths, and filters"
+        )
+
+    out_count = sum(len(dfs[d]) for d in dfs if d in domains_to_write)
+    completed_at = datetime.now(timezone.utc).isoformat()
+    fstage = telemetry.failure_stage()
+    warn_obj = {
+        "llm_telemetry": {
+            "llm_disabled": telemetry.llm_disabled,
+            "api_failures": telemetry.api_failures,
+            "parse_failures": telemetry.parse_failures,
+            "retry_attempts": telemetry.retry_attempts,
+        },
+        "domains_with_output": sorted(dfs.keys()),
+        "partial_run_target": target_domain,
+    }
+
+    append_note_extraction_run(
+        PROCESSED,
+        run_id=extraction_run_id,
+        started_at=started_at,
+        completed_at=completed_at,
+        success=True,
+        failure_stage=fstage,
+        retry_count=telemetry.retry_attempts,
+        output_record_count=int(out_count),
+        warnings=warn_obj,
+        domains_requested=",".join(sorted(domains_to_write)) if dfs else ",".join(sorted(DOMAIN_TO_FILE.keys())),
+        research_id_filter_note=args.research_ids,
+        target_domain=target_domain,
+    )
+    log.info("  note_extraction_runs updated (failure_stage=%s, entities=%s)", fstage, out_count)
 
     log.info("\n" + "=" * 70)
     log.info("  EXTRACTION COMPLETE")

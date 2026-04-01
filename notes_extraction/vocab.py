@@ -31,7 +31,30 @@ ENTITY_SCHEMA_COLUMNS: list[str] = [
     "note_date",
     "extraction_method",
     "extracted_at",
+    # LLM / verification provenance (nullable for regex extractors)
+    "date_confidence",
+    "source_line",
+    "chunk_index",
+    "chunk_char_start",
+    "chunk_char_end",
+    "evidence_global_start",
+    "evidence_global_end",
+    "raw_response_sha256",
+    "verification_status",
+    "verification_step",
+    # Run / model / verifier provenance (nullable for legacy rows)
+    "extraction_run_id",
+    "extractor_name",
+    "extractor_version",
+    "model_name",
+    "model_version",
+    "prompt_version",
+    "verifier_name",
+    "verifier_version",
 ]
+
+# Aligned with config/extraction_domain_registry.yaml schema_version
+EXTRACTOR_BUILD_VERSION = "entity_schema_v2_2026-04-01"
 
 # ── Procedures ───────────────────────────────────────────────────
 
