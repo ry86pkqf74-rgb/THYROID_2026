@@ -140,7 +140,7 @@ def test_note_extraction_run_append_and_failure_stage(tmp_path):
 
 
 def test_entity_schema_includes_provenance_columns():
-    from notes_extraction.vocab import ENTITY_SCHEMA_COLUMNS
+    from notes_extraction.vocab import ENTITY_SCHEMA_COLUMNS, PROVENANCE_FIELD_DEFAULTS
 
     for col in (
         "extraction_run_id",
@@ -150,6 +150,88 @@ def test_entity_schema_includes_provenance_columns():
         "prompt_version",
     ):
         assert col in ENTITY_SCHEMA_COLUMNS
+    assert PROVENANCE_FIELD_DEFAULTS.get("verification_status") == "unverified"
+
+
+def test_md_connect_uses_local_file_when_md_false(tmp_path):
+    from utils.md_connect import connect_md_or_file
+
+    db = tmp_path / "t.duckdb"
+    con = connect_md_or_file(db, md=False)
+    try:
+        con.execute("SELECT 1")
+    finally:
+        con.close()
+    assert db.exists()
+
+
+def test_md_connect_md_flag_falls_back_to_file_without_token(tmp_path, monkeypatch):
+    from utils import md_connect as md_mod
+
+    monkeypatch.setattr(md_mod, "get_token", lambda prefer_service_account=False: None)
+    db = tmp_path / "fallback.duckdb"
+    con = md_mod.connect_md_or_file(db, md=True)
+    try:
+        con.execute("SELECT 1")
+    finally:
+        con.close()
+    assert db.exists()
+
+
+def test_provenance_hash_without_source_row_number():
+    """Recoverable provenance via evidence text when excel/source_line is absent."""
+    from utils.provenance import hash_evidence_span
+
+    h = hash_evidence_span("  quoted phrase  ")
+    assert h is not None and len(h) == 64
+    assert hash_evidence_span(None) is None
+    assert hash_evidence_span("") is None
+
+
+def test_note_extraction_run_failed_llm_persisted(tmp_path):
+    from notes_extraction.run_telemetry import append_note_extraction_run
+
+    append_note_extraction_run(
+        tmp_path,
+        run_id="test-run-fail",
+        started_at="2026-01-01T00:00:00Z",
+        completed_at="2026-01-01T00:01:00Z",
+        success=False,
+        failure_stage="llm_api_error",
+        retry_count=2,
+        output_record_count=0,
+        warnings={" err": "timeout"},
+        domains_requested="staging",
+        research_id_filter_note=None,
+        target_domain=None,
+    )
+    df = pd.read_parquet(tmp_path / "note_extraction_runs.parquet")
+    assert len(df) == 1
+    assert bool(df.iloc[0]["success"]) is False
+    assert df.iloc[0]["failure_stage"] == "llm_api_error"
+    assert int(df.iloc[0]["retry_count"]) == 2
+
+
+def test_empty_successful_extraction_zero_rows(tmp_path):
+    from notes_extraction.run_telemetry import append_note_extraction_run
+
+    append_note_extraction_run(
+        tmp_path,
+        run_id="test-empty-ok",
+        started_at="2026-01-02T00:00:00Z",
+        completed_at="2026-01-02T00:00:01Z",
+        success=True,
+        failure_stage="none",
+        retry_count=0,
+        output_record_count=0,
+        warnings={},
+        domains_requested="llm",
+        research_id_filter_note=None,
+        target_domain=None,
+    )
+    df = pd.read_parquet(tmp_path / "note_extraction_runs.parquet")
+    assert bool(df.iloc[0]["success"]) is True
+    assert int(df.iloc[0]["output_record_count"]) == 0
 
 
 def test_stamp_row_sets_regex_prompt_version():

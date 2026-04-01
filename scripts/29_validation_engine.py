@@ -21,7 +21,6 @@ Supports --md flag for local DuckDB deployment.
 from __future__ import annotations
 
 import argparse
-import os
 import sys
 from pathlib import Path
 
@@ -33,6 +32,31 @@ DB_PATH = ROOT / "thyroid_master.duckdb"
 PROCESSED = ROOT / "processed"
 
 sys.path.insert(0, str(ROOT))
+
+from utils.md_connect import connect_md_or_file  # noqa: E402
+
+# Release gate thresholds (human-readable contract for final dataset hardening).
+FACT_RELEASE_THRESHOLDS: dict[str, float] = {
+    "pct_source_file_id_min": 95.0,
+    "pct_episode_linkage_min": 85.0,
+    "pct_extraction_run_id_min": 95.0,
+    "pct_prompt_version_non_regex_min": 90.0,
+    "pct_llm_back_checked_min": 80.0,
+    "pct_quarantine_max": 5.0,
+}
+
+_VAL_FACT_RELEASE_ROW_DTYPES: dict[str, str] = {
+    "n_clean_facts": "Int64",
+    "n_quarantine_facts": "Int64",
+    "n_llm_facts": "Int64",
+    "pct_quarantine_of_all_facts": "float64",
+    "pct_source_file_id": "float64",
+    "pct_episode_linkage": "float64",
+    "pct_extraction_run_id": "float64",
+    "pct_prompt_version_non_regex": "float64",
+    "pct_llm_model_name_among_llm": "float64",
+    "pct_llm_back_checked": "float64",
+}
 
 
 def section(title: str) -> None:
@@ -121,11 +145,13 @@ def build_fact_release_metrics(con: duckdb.DuckDBPyConnection) -> None:
               AND verification_status != 'unverified'
             THEN 1 ELSE 0 END
           ) / NULLIF(SUM(CASE WHEN fact_domain = 'llm' THEN 1 ELSE 0 END), 0), 2), 0)
-            AS pct_llm_back_checked
+            AS pct_llm_back_checked,
+          SUM(CASE WHEN fact_domain = 'llm' THEN 1 ELSE 0 END) AS n_llm_facts
         FROM canonical_extracted_fact_long_v1
         """
     ).fetchone()
     n_clean = int(r[0])
+    n_llm = int(r[7]) if r[7] is not None else 0
     denom = n_clean + n_q
     pct_quarantine = round(100.0 * n_q / denom, 2) if denom > 0 else 0.0
     row_df = pd.DataFrame(
@@ -133,6 +159,7 @@ def build_fact_release_metrics(con: duckdb.DuckDBPyConnection) -> None:
             {
                 "n_clean_facts": n_clean,
                 "n_quarantine_facts": n_q,
+                "n_llm_facts": n_llm,
                 "pct_quarantine_of_all_facts": pct_quarantine,
                 "pct_source_file_id": r[1],
                 "pct_episode_linkage": r[2],
@@ -143,6 +170,9 @@ def build_fact_release_metrics(con: duckdb.DuckDBPyConnection) -> None:
             }
         ]
     )
+    for c, dt in _VAL_FACT_RELEASE_ROW_DTYPES.items():
+        if c in row_df.columns:
+            row_df[c] = row_df[c].astype(dt)
     con.register("_fact_release_metrics_build", row_df)
     con.execute(
         "CREATE OR REPLACE TABLE val_fact_release_metrics_v1 AS "
@@ -153,6 +183,111 @@ def build_fact_release_metrics(con: duckdb.DuckDBPyConnection) -> None:
     except Exception:
         pass
     print(f"  val_fact_release_metrics_v1: n_clean={n_clean:,} n_quarantine={n_q:,}")
+    print_fact_release_gate(con)
+
+
+def print_fact_release_gate(con: duckdb.DuckDBPyConnection) -> None:
+    """Print PASS/FAIL sections for val_fact_release_metrics_v1 with suggested actions."""
+    if not table_available(con, "val_fact_release_metrics_v1"):
+        return
+    df = con.execute(
+        "SELECT * FROM val_fact_release_metrics_v1 ORDER BY metric_at DESC LIMIT 1"
+    ).fetchdf()
+    if df.empty:
+        return
+    row = df.iloc[0]
+    th = FACT_RELEASE_THRESHOLDS
+
+    def pct(name: str) -> float:
+        v = row.get(name)
+        return float(v) if v is not None and not (isinstance(v, float) and pd.isna(v)) else 0.0
+
+    def n(name: str) -> int:
+        v = row.get(name)
+        return int(v) if v is not None and pd.notna(v) else 0
+
+    lines_pass: list[str] = []
+    lines_fail: list[str] = []
+    actions: list[str] = []
+
+    nlf = n("n_llm_facts")
+    pq = pct("pct_quarantine_of_all_facts")
+    ps = pct("pct_source_file_id")
+    pe = pct("pct_episode_linkage")
+    pr = pct("pct_extraction_run_id")
+    pp = pct("pct_prompt_version_non_regex")
+    pb = pct("pct_llm_back_checked")
+    pm = pct("pct_llm_model_name_among_llm")
+
+    lines_pass.append(
+        f"  Clean facts: {n('n_clean_facts'):,} | Quarantine rows: {n('n_quarantine_facts'):,} "
+        f"({pq:.1f}% of all)"
+    )
+    lines_pass.append(
+        f"  Provenance fill — source_file_id {ps:.1f}% | extraction_run_id {pr:.1f}% | "
+        f"prompt≠regex {pp:.1f}% | episode linkage {pe:.1f}%"
+    )
+    if nlf > 0:
+        lines_pass.append(
+            f"  LLM subset (n={nlf:,}) — model_name fill {pm:.1f}% | back-checked {pb:.1f}%"
+        )
+    else:
+        lines_pass.append("  LLM subset — none (n=0); LLM metric gates skipped.")
+
+    if pq > th["pct_quarantine_max"]:
+        lines_fail.append(
+            f"  Quarantine {pq:.1f}% exceeds max {th['pct_quarantine_max']:.0f}%."
+        )
+        actions.append(
+            "Review canonical_fact_quarantine_v1 reasons and episode inference for multi-surgery patients."
+        )
+    if ps < th["pct_source_file_id_min"]:
+        lines_fail.append(
+            f"  source_file_id fill {ps:.1f}% is below {th['pct_source_file_id_min']:.0f}%."
+        )
+        actions.append(
+            "Merge clinical_notes_long source_workbook into facts before materialization (103)."
+        )
+    if pr < th["pct_extraction_run_id_min"]:
+        lines_fail.append(
+            f"  extraction_run_id fill {pr:.1f}% is below {th['pct_extraction_run_id_min']:.0f}%."
+        )
+        actions.append("Re-run notes extraction with run telemetry so rows carry extraction_run_id.")
+    if pp < th["pct_prompt_version_non_regex_min"]:
+        lines_fail.append(
+            f"  Non-regex prompt_version fill {pp:.1f}% is below "
+            f"{th['pct_prompt_version_non_regex_min']:.0f}%."
+        )
+        actions.append("Stamp prompt_version for LLM paths and retire ambiguous 'regex_only' on LLM rows.")
+    if pe < th["pct_episode_linkage_min"]:
+        lines_fail.append(
+            f"  Episode linkage {pe:.1f}% is below {th['pct_episode_linkage_min']:.0f}%."
+        )
+        actions.append(
+            "Check operative_episode_detail_v2 availability and inferred_surgery_episode_id logic in 103."
+        )
+    if nlf > 0 and pb < th["pct_llm_back_checked_min"]:
+        lines_fail.append(
+            f"  LLM back-check rate {pb:.1f}% is below {th['pct_llm_back_checked_min']:.0f}% "
+            f"for n_llm={nlf:,}."
+        )
+        actions.append("Run LLM verification pass or lower unverified volume before release.")
+
+    print("\n  ─── Release gate (thresholds) ───")
+    print("  --- PASS (metrics snapshot) ---")
+    for ln in lines_pass:
+        print(ln)
+    if lines_fail:
+        print("\n  --- FAIL (below threshold) ---")
+        for ln in lines_fail:
+            print(ln)
+        print("\n  Suggested actions:")
+        for a in actions:
+            print(f"    • {a}")
+    else:
+        print("\n  --- FAIL (below threshold) ---")
+        print("  (none)\n")
+        print("  Overall gate: PASS — all checked metrics meet configured thresholds.")
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1798,27 +1933,16 @@ def print_summary(con: duckdb.DuckDBPyConnection) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--md", action="store_true",
-                        help="Deploy to local DuckDB instead of local DuckDB")
+    parser.add_argument(
+        "--md",
+        action="store_true",
+        help="Use MotherDuck when token/env is configured (see utils/md_connect.py); else local file",
+    )
     args = parser.parse_args()
 
     section("29 -- Validation Engine")
 
-    if args.md:
-        token = os.environ.get("motherduck_token") or os.environ.get("MOTHERDUCK_TOKEN")
-        if token:
-            try:
-                con = duckdb.connect(f"md:thyroid_master?motherduck_token={token}")
-                print("  Connected to MotherDuck (md:thyroid_master)")
-            except Exception as e:
-                print(f"  MotherDuck unavailable: {e} — using file {DB_PATH}")
-                con = duckdb.connect(str(DB_PATH))
-        else:
-            con = duckdb.connect(str(DB_PATH))
-            print(f"  Using file DB (--md, no MOTHERDUCK_TOKEN): {DB_PATH}")
-    else:
-        con = duckdb.connect(str(DB_PATH))
-        print(f"  Using local file DB: {DB_PATH}")
+    con = connect_md_or_file(DB_PATH, md=args.md)
 
     register_parquets(con)
 

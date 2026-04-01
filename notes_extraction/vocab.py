@@ -53,6 +53,77 @@ ENTITY_SCHEMA_COLUMNS: list[str] = [
     "verifier_version",
 ]
 
+# Nullable pandas dtypes for round-tripped entity DataFrames (explicit, backward-compatible).
+ENTITY_SCHEMA_DTYPES: dict[str, str] = {
+    "research_id": "Int64",
+    "note_row_id": "string",
+    "note_type": "string",
+    "entity_type": "string",
+    "entity_value_raw": "string",
+    "entity_value_norm": "string",
+    "present_or_negated": "string",
+    "confidence": "float64",
+    "evidence_span": "string",
+    "evidence_start": "Int64",
+    "evidence_end": "Int64",
+    "entity_date": "object",
+    "note_date": "object",
+    "extraction_method": "string",
+    "extracted_at": "string",
+    "date_confidence": "float64",
+    "source_line": "Int64",
+    "chunk_index": "Int64",
+    "chunk_char_start": "Int64",
+    "chunk_char_end": "Int64",
+    "evidence_global_start": "Int64",
+    "evidence_global_end": "Int64",
+    "raw_response_sha256": "string",
+    "verification_status": "string",
+    "verification_step": "string",
+    "extraction_run_id": "string",
+    "extractor_name": "string",
+    "extractor_version": "string",
+    "model_name": "string",
+    "model_version": "string",
+    "prompt_version": "string",
+    "verifier_name": "string",
+    "verifier_version": "string",
+}
+
+# Defaults for new provenance fields when absent (legacy rows, regex-only paths).
+PROVENANCE_FIELD_DEFAULTS: dict[str, object | None] = {
+    "date_confidence": None,
+    "source_line": None,
+    "chunk_index": 0,
+    "chunk_char_start": 0,
+    "chunk_char_end": 0,
+    "evidence_global_start": None,
+    "evidence_global_end": None,
+    "raw_response_sha256": None,
+    "verification_status": "unverified",
+    "verification_step": "none",
+    "extraction_run_id": None,
+    "extractor_name": None,
+    "extractor_version": None,
+    "model_name": None,
+    "model_version": None,
+    "prompt_version": None,
+    "verifier_name": None,
+    "verifier_version": None,
+}
+
+# Optional casts on canonical long output (post-contract) for stable parquet types.
+CANONICAL_FACT_CONTRACT_DTYPES: dict[str, str] = {
+    "linkage_confidence": "float64",
+    "date_source_type": "string",
+    "source_text_hash": "string",
+    "source_text_span_start": "float64",
+    "source_text_span_end": "float64",
+    "source_file_id": "string",
+    "canonical_domain": "string",
+    "canonical_fact_type": "string",
+}
+
 # Aligned with config/extraction_domain_registry.yaml schema_version
 EXTRACTOR_BUILD_VERSION = "entity_schema_v2_2026-04-01"
 

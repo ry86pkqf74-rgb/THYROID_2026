@@ -18,6 +18,7 @@ Creates views:
 
 from __future__ import annotations
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -26,6 +27,9 @@ import duckdb
 ROOT = Path(__file__).resolve().parent.parent
 PROCESSED = ROOT / "processed"
 DB_PATH = ROOT / "thyroid_master.duckdb"
+
+sys.path.insert(0, str(ROOT))
+from utils.md_connect import connect_md_or_file  # noqa: E402
 
 ENTITY_TABLES = [
     "clinical_notes_long",
@@ -164,14 +168,22 @@ LEFT JOIN notes_entity_summary nes
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--md",
+        action="store_true",
+        help="Use MotherDuck when token/env is configured; else local file",
+    )
+    args = parser.parse_args()
+
     print("=" * 70)
     print("  REGISTER NOTES & ENTITY TABLES IN DUCKDB")
     print("=" * 70)
 
-    if not DB_PATH.exists():
+    if not args.md and not DB_PATH.exists():
         print(f"  DuckDB not found — creating {DB_PATH}")
 
-    con = duckdb.connect(str(DB_PATH))
+    con = connect_md_or_file(DB_PATH, md=args.md)
 
     for tbl in ENTITY_TABLES:
         pq = PROCESSED / f"{tbl}.parquet"

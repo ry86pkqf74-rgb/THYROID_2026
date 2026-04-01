@@ -14,6 +14,7 @@ from notes_extraction.vocab import (
     COMPLICATION_NORM,
     COMPLICATION_TYPES,
     ENTITY_SCHEMA_COLUMNS,
+    ENTITY_SCHEMA_DTYPES,
     GENE_NAMES,
     GENE_NORM,
     MEDICATION_NORM,
@@ -75,6 +76,9 @@ class TestVocabFormat:
             "extraction_method", "extracted_at",
         }
         assert required <= set(ENTITY_SCHEMA_COLUMNS)
+
+    def test_entity_schema_dtypes_match_columns(self):
+        assert set(ENTITY_SCHEMA_DTYPES.keys()) == set(ENTITY_SCHEMA_COLUMNS)
 
     def test_norm_map_keys_lowercase(self):
         for key in PROCEDURE_NORM:
