@@ -64,13 +64,19 @@ def register_parquets(con: duckdb.DuckDBPyConnection) -> None:
         "canonical_fact_quarantine_v1",
         "note_extraction_runs",
     ]
+    reloaded: list[str] = []
     for tbl in tables:
         pq = PROCESSED / f"{tbl}.parquet"
-        if pq.exists() and not table_available(con, tbl):
+        if pq.exists():
             con.execute(
                 f"CREATE OR REPLACE TABLE {tbl} AS "
                 f"SELECT * FROM read_parquet('{pq}')"
             )
+            reloaded.append(tbl)
+    if reloaded:
+        print(
+            f"  register_parquets: (re)loaded {len(reloaded)} table(s) from processed/*.parquet"
+        )
 
 
 def build_fact_release_metrics(con: duckdb.DuckDBPyConnection) -> None:

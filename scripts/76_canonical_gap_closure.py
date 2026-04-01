@@ -80,6 +80,17 @@ def connect(args) -> duckdb.DuckDBPyConnection:
 # PHASE A — Operative NLP Enrichment
 # ═══════════════════════════════════════════════════════════════════════
 
+# Patient-level NLP rollups are only safe when exactly one operative episode exists;
+# multi-surgery patients require episode-keyed facts (see canonical_extracted_fact_long_v1).
+_SINGLE_SURGERY_SUBQUERY = """
+  AND o.research_id IN (
+    SELECT CAST(research_id AS INTEGER) AS rid
+    FROM operative_episode_detail_v2
+    GROUP BY rid
+    HAVING COUNT(*) = 1
+  )
+"""
+
 OP_ADD_COLS_SQL = [
     "ALTER TABLE operative_episode_detail_v2 ADD COLUMN IF NOT EXISTS parathyroid_identified_count INTEGER;",
     "ALTER TABLE operative_episode_detail_v2 ADD COLUMN IF NOT EXISTS parathyroid_resection_flag BOOLEAN;",
@@ -89,7 +100,8 @@ OP_ADD_COLS_SQL = [
     "ALTER TABLE operative_episode_detail_v2 ADD COLUMN IF NOT EXISTS op_enrichment_source VARCHAR;",
 ]
 
-OP_PARATHYROID_COUNT_SQL = """
+OP_PARATHYROID_COUNT_SQL = (
+    """
 UPDATE operative_episode_detail_v2 o
 SET parathyroid_identified_count = src.para_count
 FROM (
@@ -105,8 +117,11 @@ WHERE o.research_id = src.research_id
   AND o.parathyroid_identified_count IS NULL
   AND src.para_count IS NOT NULL
 """
+    + _SINGLE_SURGERY_SUBQUERY
+)
 
-OP_PARATHYROID_RESECTION_SQL = """
+OP_PARATHYROID_RESECTION_SQL = (
+    """
 UPDATE operative_episode_detail_v2 o
 SET parathyroid_resection_flag = TRUE
 FROM (
@@ -118,8 +133,11 @@ FROM (
 WHERE o.research_id = src.research_id
   AND o.parathyroid_resection_flag IS NULL
 """
+    + _SINGLE_SURGERY_SUBQUERY
+)
 
-OP_FROZEN_SECTION_SQL = """
+OP_FROZEN_SECTION_SQL = (
+    """
 UPDATE operative_episode_detail_v2 o
 SET frozen_section_flag = TRUE
 FROM (
@@ -131,8 +149,11 @@ FROM (
 WHERE o.research_id = src.research_id
   AND o.frozen_section_flag IS NULL
 """
+    + _SINGLE_SURGERY_SUBQUERY
+)
 
-OP_BERRY_LIGAMENT_SQL = """
+OP_BERRY_LIGAMENT_SQL = (
+    """
 UPDATE operative_episode_detail_v2 o
 SET berry_ligament_flag = TRUE
 FROM (
@@ -144,8 +165,11 @@ FROM (
 WHERE o.research_id = src.research_id
   AND o.berry_ligament_flag IS NULL
 """
+    + _SINGLE_SURGERY_SUBQUERY
+)
 
-OP_EBL_SQL = """
+OP_EBL_SQL = (
+    """
 UPDATE operative_episode_detail_v2 o
 SET ebl_ml_nlp = src.ebl_val
 FROM (
@@ -162,8 +186,20 @@ WHERE o.research_id = src.research_id
   AND src.ebl_val IS NOT NULL
   AND src.ebl_val BETWEEN 1 AND 5000
 """
+    + _SINGLE_SURGERY_SUBQUERY
+)
 
-OP_PROVENANCE_SQL = """
+_OP_PROVENANCE_SINGLE_SURGERY = """
+  AND CAST(research_id AS INTEGER) IN (
+    SELECT CAST(research_id AS INTEGER) AS rid
+    FROM operative_episode_detail_v2
+    GROUP BY rid
+    HAVING COUNT(*) = 1
+  )
+"""
+
+OP_PROVENANCE_SQL = (
+    """
 UPDATE operative_episode_detail_v2
 SET op_enrichment_source = 'nlp_extract_operative_v2'
 WHERE op_enrichment_source IS NULL
@@ -173,6 +209,8 @@ WHERE op_enrichment_source IS NULL
        OR berry_ligament_flag IS TRUE
        OR ebl_ml_nlp IS NOT NULL)
 """
+    + _OP_PROVENANCE_SINGLE_SURGERY
+)
 
 
 def phase_a_operative(con: duckdb.DuckDBPyConnection, dry: bool) -> dict:

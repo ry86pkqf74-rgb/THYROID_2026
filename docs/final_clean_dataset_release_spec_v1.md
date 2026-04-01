@@ -44,7 +44,7 @@ Row-level LLM QA remains in `val_fact_provenance_v1`.
 ## Known limitations
 
 - RegEx-only domains use `prompt_version = 'regex_only'` and null model fields.
-- LLM disabled runs are **not** failures: `note_extraction_runs.failure_stage = 'llm_disabled'` with `success = true` distinguishes missing API config from pipeline errors.
+- LLM disabled runs are **not** treated as extraction failures: `failure_stage = 'llm_disabled'` and `success = true` (regex-only mode). LLM API or JSON parse problems set `failure_stage` to `llm_api_error` / `llm_parse_error` and `success = false`.
 - Quarantine is **conservative**: some valid rows may be sidelined when episode or date context is weak; review `canonical_fact_quarantine_v1` for secondary use.
 
 ## Build command sequence

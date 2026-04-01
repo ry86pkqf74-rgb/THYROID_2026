@@ -371,6 +371,8 @@ def main() -> None:
     out_count = sum(len(dfs[d]) for d in dfs if d in domains_to_write)
     completed_at = datetime.now(timezone.utc).isoformat()
     fstage = telemetry.failure_stage()
+    # success=false only for partial LLM failure; llm_disabled is an expected mode (regex-only).
+    pipeline_success = fstage in ("none", "llm_disabled")
     warn_obj = {
         "llm_telemetry": {
             "llm_disabled": telemetry.llm_disabled,
@@ -387,7 +389,7 @@ def main() -> None:
         run_id=extraction_run_id,
         started_at=started_at,
         completed_at=completed_at,
-        success=True,
+        success=pipeline_success,
         failure_stage=fstage,
         retry_count=telemetry.retry_attempts,
         output_record_count=int(out_count),
@@ -396,7 +398,12 @@ def main() -> None:
         research_id_filter_note=args.research_ids,
         target_domain=target_domain,
     )
-    log.info("  note_extraction_runs updated (failure_stage=%s, entities=%s)", fstage, out_count)
+    log.info(
+        "  note_extraction_runs updated (success=%s, failure_stage=%s, entities=%s)",
+        pipeline_success,
+        fstage,
+        out_count,
+    )
 
     log.info("\n" + "=" * 70)
     log.info("  EXTRACTION COMPLETE")

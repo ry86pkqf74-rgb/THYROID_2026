@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -66,10 +67,11 @@ def fill_rate(con: duckdb.DuckDBPyConnection, tbl: str, col: str) -> dict[str, A
 
 
 def connect_md() -> duckdb.DuckDBPyConnection:
-    from local DuckDB_client import local DuckDBClient, local DuckDBConfig
-    cfg = local DuckDBConfig(database="thyroid_master.duckdb")
-    client = local DuckDBClient(cfg)
-    return client.connect_rw()
+    """MotherDuck when MOTHERDUCK_TOKEN set; else workspace file DB."""
+    token = os.environ.get("motherduck_token") or os.environ.get("MOTHERDUCK_TOKEN")
+    if token:
+        return duckdb.connect(f"md:thyroid_master?motherduck_token={token}")
+    return duckdb.connect(str(DB_PATH))
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -618,7 +620,6 @@ LEFT JOIN (
 
 VAL_PROVENANCE_COMPLETENESS_SQL = """
 CREATE OR REPLACE TABLE val_provenance_completeness_v2 AS
-
 WITH targets AS (
     SELECT * FROM (VALUES
         ('patient_analysis_resolved_v1'),
@@ -634,7 +635,8 @@ prov_cols AS (
         ('provenance_note'),
         ('resolved_layer_version')
     ) c(col_name)
-)
+),
+meta AS (
 SELECT
     t.table_name,
     p.col_name,
@@ -646,6 +648,67 @@ LEFT JOIN information_schema.columns ic
     ON ic.table_name = t.table_name
     AND ic.column_name = p.col_name
     AND ic.table_schema = 'main'
+),
+fill_patient AS (
+    SELECT
+        'patient_analysis_resolved_v1' AS table_name,
+        COUNT(*) AS row_count,
+        ROUND(100.0 * COUNT(source_table) / NULLIF(COUNT(*), 0), 2) AS source_table_fill_pct,
+        ROUND(100.0 * COUNT(source_script) / NULLIF(COUNT(*), 0), 2) AS source_script_fill_pct,
+        ROUND(100.0 * COUNT(provenance_note) / NULLIF(COUNT(*), 0), 2) AS provenance_note_fill_pct,
+        ROUND(100.0 * COUNT(resolved_layer_version) / NULLIF(COUNT(*), 0), 2) AS resolved_layer_version_fill_pct
+    FROM patient_analysis_resolved_v1
+),
+fill_episode AS (
+    SELECT
+        'episode_analysis_resolved_v1_dedup' AS table_name,
+        COUNT(*) AS row_count,
+        ROUND(100.0 * COUNT(source_table) / NULLIF(COUNT(*), 0), 2) AS source_table_fill_pct,
+        ROUND(100.0 * COUNT(source_script) / NULLIF(COUNT(*), 0), 2) AS source_script_fill_pct,
+        ROUND(100.0 * COUNT(provenance_note) / NULLIF(COUNT(*), 0), 2) AS provenance_note_fill_pct,
+        ROUND(100.0 * COUNT(resolved_layer_version) / NULLIF(COUNT(*), 0), 2) AS resolved_layer_version_fill_pct
+    FROM episode_analysis_resolved_v1_dedup
+),
+fill_lesion AS (
+    SELECT
+        'lesion_analysis_resolved_v1' AS table_name,
+        COUNT(*) AS row_count,
+        ROUND(100.0 * COUNT(source_table) / NULLIF(COUNT(*), 0), 2) AS source_table_fill_pct,
+        ROUND(100.0 * COUNT(source_script) / NULLIF(COUNT(*), 0), 2) AS source_script_fill_pct,
+        ROUND(100.0 * COUNT(provenance_note) / NULLIF(COUNT(*), 0), 2) AS provenance_note_fill_pct,
+        ROUND(100.0 * COUNT(resolved_layer_version) / NULLIF(COUNT(*), 0), 2) AS resolved_layer_version_fill_pct
+    FROM lesion_analysis_resolved_v1
+),
+fill_survival AS (
+    SELECT
+        'survival_cohort_enriched' AS table_name,
+        COUNT(*) AS row_count,
+        ROUND(100.0 * COUNT(source_table) / NULLIF(COUNT(*), 0), 2) AS source_table_fill_pct,
+        ROUND(100.0 * COUNT(source_script) / NULLIF(COUNT(*), 0), 2) AS source_script_fill_pct,
+        ROUND(100.0 * COUNT(provenance_note) / NULLIF(COUNT(*), 0), 2) AS provenance_note_fill_pct,
+        ROUND(100.0 * COUNT(resolved_layer_version) / NULLIF(COUNT(*), 0), 2) AS resolved_layer_version_fill_pct
+    FROM survival_cohort_enriched
+),
+fill_union AS (
+    SELECT * FROM fill_patient
+    UNION ALL SELECT * FROM fill_episode
+    UNION ALL SELECT * FROM fill_lesion
+    UNION ALL SELECT * FROM fill_survival
+)
+SELECT
+    m.table_name,
+    m.col_name,
+    m.column_exists,
+    f.row_count AS target_table_row_count,
+    CASE m.col_name
+        WHEN 'source_table' THEN f.source_table_fill_pct
+        WHEN 'source_script' THEN f.source_script_fill_pct
+        WHEN 'provenance_note' THEN f.provenance_note_fill_pct
+        WHEN 'resolved_layer_version' THEN f.resolved_layer_version_fill_pct
+    END AS non_null_fill_pct,
+    m.checked_at
+FROM meta m
+LEFT JOIN fill_union f ON m.table_name = f.table_name
 """
 
 VAL_EPISODE_LINKAGE_SQL = """
@@ -735,8 +798,8 @@ ANALYZE_TARGETS = [
 ]
 
 
-def phase8_local DuckDB_optimization(con: duckdb.DuckDBPyConnection, dry_run: bool) -> dict:
-    section("Phase 8 — local DuckDB Optimization")
+def phase8_duckdb_optimization(con: duckdb.DuckDBPyConnection, dry_run: bool) -> dict:
+    section("Phase 8 — DuckDB ANALYZE")
     results: dict[str, Any] = {}
 
     if dry_run:
@@ -985,7 +1048,7 @@ def main() -> None:
         elif phase_num == 7:
             all_results["phase7"] = phase7_dashboard_tables(con, args.dry_run)
         elif phase_num == 8:
-            all_results["phase8"] = phase8_local DuckDB_optimization(con, args.dry_run)
+            all_results["phase8"] = phase8_duckdb_optimization(con, args.dry_run)
         elif phase_num == 9:
             section("Phase 9 — Final Verification Pass")
             print("  Run verification scripts externally:")

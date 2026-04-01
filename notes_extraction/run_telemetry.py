@@ -87,7 +87,11 @@ def append_note_extraction_run(
     research_id_filter_note: str | None = None,
     target_domain: str | None = None,
 ) -> Path:
-    """Append one run row to processed/note_extraction_runs.parquet."""
+    """Append one run row to processed/note_extraction_runs.parquet.
+
+    ``success`` should be True when ``failure_stage`` is ``none`` or ``llm_disabled``,
+    and False for ``llm_api_error`` / ``llm_parse_error`` (partial LLM failure).
+    """
     path = processed_dir / "note_extraction_runs.parquet"
     if isinstance(warnings, (dict, list)):
         warnings_str = json.dumps(warnings, default=str)

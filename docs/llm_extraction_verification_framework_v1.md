@@ -34,7 +34,7 @@
 
 **Distinguishing outcomes**
 
-- **`success = true`** in `note_extraction_runs` means the Python pipeline finished; it does **not** guarantee every note had LLM entities.
+- **`success`** in `note_extraction_runs` is `true` when the run finished without LLM API/parse failures (`failure_stage` is `none` or `llm_disabled`). It is `false` when `failure_stage` is `llm_api_error` or `llm_parse_error` (pipeline still wrote a row). It does **not** guarantee every note had LLM entities.
 - **`failure_stage = llm_disabled`** with **`output_record_count = 0`** is a configuration state, not a failed HTTP call.
 - Per-note API failures increment `api_failures` in the `warnings` JSON; inspect `retry_count` for aggregate rate-limit retries.
 

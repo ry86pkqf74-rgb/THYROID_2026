@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -95,19 +96,22 @@ def row_count(con: duckdb.DuckDBPyConnection, name: str) -> int:
 
 
 def get_connection(use_md: bool) -> duckdb.DuckDBPyConnection:
+    """Open DuckDB: optional MotherDuck when --md and token set; else local file."""
     if use_md:
-        try:
-            from local DuckDB_client import local DuckDBClient, local DuckDBConfig
-            cfg = local DuckDBConfig(database="thyroid_master.duckdb")
-            client = local DuckDBClient(cfg)
-            con = client.connect_rw()
-            print("  Connected to local DuckDB (RW)")
-            return con
-        except Exception as e:
-            print(f"  local DuckDB unavailable: {e}")
-            print("  Falling back to local DuckDB")
+        token = os.environ.get("motherduck_token") or os.environ.get("MOTHERDUCK_TOKEN")
+        if token:
+            try:
+                con = duckdb.connect(f"md:thyroid_master?motherduck_token={token}")
+                print("  Connected to MotherDuck (md:thyroid_master)")
+                return con
+            except Exception as e:
+                print(f"  MotherDuck unavailable: {e}")
+                print("  Falling back to local thyroid_master.duckdb file")
+        con = duckdb.connect(str(DB_PATH), read_only=True)
+        print(f"  Using local file DB (--md): {DB_PATH}")
+        return con
     con = duckdb.connect(str(DB_PATH), read_only=True)
-    print(f"  Using local DuckDB: {DB_PATH}")
+    print(f"  Using local file DB: {DB_PATH}")
     return con
 
 
@@ -125,7 +129,7 @@ def main() -> None:
 
     report: dict = {
         "checked_at": datetime.now(tz=timezone.utc).isoformat(),
-        "source": "local DuckDB" if args.md else str(DB_PATH),
+        "source": ("motherduck_or_local" if args.md else str(DB_PATH)),
         "critical": {},
         "optional": {},
         "critical_missing": [],
@@ -179,7 +183,7 @@ def main() -> None:
         print("\n  Run the following to fix:")
         print("    python scripts/22_canonical_episodes_v2.py [--md]")
         print("    python scripts/23_cross_domain_linkage_v2.py [--md]")
-        print("    python scripts/26_local DuckDB_materialize_v2.py [--md]")
+        print("    Re-run canonical linkage + materialization scripts for your environment (see MANUSCRIPT_READY_CHECKLIST.md).")
     else:
         print("\n  ALL CRITICAL TABLES PRESENT — system is ready.")
 

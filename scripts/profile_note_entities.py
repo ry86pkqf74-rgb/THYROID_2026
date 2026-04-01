@@ -7,15 +7,14 @@ and histology/RAI/genetics table inventory.
 from __future__ import annotations
 
 import sys
-import os
+from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 
 import duckdb
-from local DuckDB_client import local DuckDBClient, local DuckDBConfig
 
-SHARE_RO = ""
-SHARE_RW = "thyroid_master.duckdb"
+DB_PATH = ROOT / "thyroid_master.duckdb"
 
 NOTE_TABLES = [
     "note_entities_genetics",
@@ -24,9 +23,17 @@ NOTE_TABLES = [
     "note_entities_complications",
     "note_entities_medications",
     "note_entities_problem_list",
+    "note_entities_operative_detail",
+    "note_entities_llm",
 ]
 
-DB_PREFIX = "thyroid_master.duckdb"
+
+def tbl_exists(con: duckdb.DuckDBPyConnection, name: str) -> bool:
+    try:
+        con.execute(f"SELECT 1 FROM {name} LIMIT 1")
+        return True
+    except Exception:
+        return False
 
 
 def section(title: str) -> None:
@@ -36,17 +43,8 @@ def section(title: str) -> None:
 
 
 def run() -> None:
-    client = local DuckDBClient()
-    con = client.connect_rw()
-
-    try:
-        con.execute(f"ATTACH '{SHARE_RO}' AS thyroid_ro_")
-    except Exception:
-        pass
-    try:
-        con.execute(f"ATTACH '{SHARE_RW}' AS thyroid_rw")
-    except Exception:
-        pass
+    con = duckdb.connect(str(DB_PATH), read_only=True)
+    print(f"  Connected (read-only): {DB_PATH}")
 
     # ── 1. SHOW ALL TABLES ──
     section("1. ALL TABLES INVENTORY")
@@ -59,7 +57,6 @@ def run() -> None:
     schema_idx = col_names.index("schema") if "schema" in col_names else 1
     name_idx = col_names.index("name") if "name" in col_names else 2
     for r in rows:
-        cols = [str(c) for c in r]
         db = r[db_idx] if db_idx < len(r) else ""
         schema = r[schema_idx] if schema_idx < len(r) else ""
         name = r[name_idx] if name_idx < len(r) else ""
@@ -71,14 +68,14 @@ def run() -> None:
     section("2. TABLE SCHEMAS")
     tables_to_describe = ["clinical_notes_long"] + NOTE_TABLES
     for tbl in tables_to_describe:
-        print(f"\n--- DESCRIBE {DB_PREFIX}.{tbl} ---")
+        print(f"\n--- DESCRIBE {tbl} ---")
         try:
-            rows = con.execute(f"DESCRIBE {DB_PREFIX}.{tbl}").fetchall()
+            drows = con.execute(f"DESCRIBE {tbl}").fetchall()
             print(f"  {'column_name':<35} {'column_type':<25} {'null':<8} {'key':<8} {'default'}")
-            for r in rows:
+            for r in drows:
                 print(f"  {str(r[0]):<35} {str(r[1]):<25} {str(r[2]):<8} {str(r[3]):<8} {str(r[4]) if len(r) > 4 else ''}")
         except Exception as e:
-            print(f"  ERROR: {e}")
+            print(f"  SKIP: {e}")
 
     # ── 3. NULL-RATE PROFILING ──
     section("3. NULL-RATE PROFILING")
@@ -92,7 +89,7 @@ def run() -> None:
             SUM(CASE WHEN note_date IS NULL THEN 1 ELSE 0 END) AS note_date_nulls,
             SUM(CASE WHEN entity_date IS NULL THEN 1 ELSE 0 END) AS entity_date_nulls,
             ROUND(100.0 * SUM(CASE WHEN entity_date IS NULL THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0), 2) AS entity_date_null_pct
-        FROM {DB_PREFIX}.{tbl}
+        FROM {tbl}
         """
         try:
             r = con.execute(sql).fetchone()
@@ -103,32 +100,39 @@ def run() -> None:
     # ── 4. DATE IN EVIDENCE BUT MISSING IN COLUMNS ──
     section("4. DATE-IN-EVIDENCE BUT MISSING entity_date")
 
-    # First find the right column name for evidence text
+    first_tbl = next((t for t in NOTE_TABLES if tbl_exists(con, t)), None)
     evidence_col = None
-    for candidate in ["evidence_span", "evidence_text", "evidence", "text_span", "span"]:
-        try:
-            con.execute(f"SELECT {candidate} FROM {DB_PREFIX}.{NOTE_TABLES[0]} LIMIT 1")
-            evidence_col = candidate
-            break
-        except Exception:
-            continue
+    if first_tbl:
+        for candidate in ["evidence_span", "evidence_text", "evidence", "text_span", "span"]:
+            try:
+                con.execute(f"SELECT {candidate} FROM {first_tbl} LIMIT 1")
+                evidence_col = candidate
+                break
+            except Exception:
+                continue
 
-    if evidence_col is None:
-        # Fall back to inspecting columns
-        cols = con.execute(f"DESCRIBE {DB_PREFIX}.{NOTE_TABLES[0]}").fetchall()
+    if evidence_col is None or first_tbl is None:
+        cols = (
+            con.execute(f"DESCRIBE {first_tbl}").fetchall()
+            if first_tbl
+            else []
+        )
         text_cols = [c[0] for c in cols if "VARCHAR" in str(c[1]).upper() or "TEXT" in str(c[1]).upper()]
-        print(f"  Could not find evidence column. Text columns available: {text_cols}")
+        print(f"  Could not find evidence column. Text columns on sample: {text_cols}")
     else:
-        print(f"  Using evidence column: {evidence_col}")
+        print(f"  Using evidence column: {evidence_col} (sample table {first_tbl})")
         date_regex = r"(?i)\b(\d{1,2}[/-]\d{1,2}[/-]\d{2,4}|\d{4}-\d{2}-\d{2}|jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)\b"
         print(f"\n{'table_name':<35} {'n_date_like_missing_entity_date':>33} {'pct_of_table':>14}")
         print("-" * 85)
         for tbl in NOTE_TABLES:
+            if not tbl_exists(con, tbl):
+                print(f"{tbl:<35} SKIP (table missing)")
+                continue
             sql = f"""
             SELECT
                 COUNT(*) AS n_date_like_but_missing_entity_date,
-                ROUND(100.0 * COUNT(*) / NULLIF((SELECT COUNT(*) FROM {DB_PREFIX}.{tbl}), 0), 2) AS pct_of_table
-            FROM {DB_PREFIX}.{tbl}
+                ROUND(100.0 * COUNT(*) / NULLIF((SELECT COUNT(*) FROM {tbl}), 0), 2) AS pct_of_table
+            FROM {tbl}
             WHERE entity_date IS NULL
               AND regexp_matches({evidence_col}, '{date_regex}')
             """
@@ -143,7 +147,7 @@ def run() -> None:
     sql = """
     SELECT table_catalog, table_schema, table_name, table_type
     FROM information_schema.tables
-    WHERE table_catalog LIKE '%thyroid%'
+    WHERE table_schema = 'main'
       AND (lower(table_name) LIKE '%histo%'
         OR lower(table_name) LIKE '%path%'
         OR lower(table_name) LIKE '%thyroseq%'
@@ -165,15 +169,20 @@ def run() -> None:
         section("5b. SCHEMAS OF DISCOVERED TABLES")
         for r in rows:
             catalog, schema, tname = r[0], r[1], r[2]
-            qualified = f"{catalog}.{schema}.{tname}" if schema != "main" else f"{catalog}.{tname}"
+            qualified = f'"{catalog}"."{schema}"."{tname}"' if schema and schema != "main" else f'"{catalog}"."{tname}"'
             print(f"\n--- DESCRIBE {qualified} ---")
             try:
                 desc_rows = con.execute(f"DESCRIBE {qualified}").fetchall()
                 print(f"  {'column_name':<35} {'column_type':<25} {'null':<8} {'key':<8}")
                 for dr in desc_rows:
                     print(f"  {str(dr[0]):<35} {str(dr[1]):<25} {str(dr[2]):<8} {str(dr[3]):<8}")
-            except Exception as e:
-                print(f"  ERROR: {e}")
+            except Exception:
+                try:
+                    desc_rows = con.execute(f"DESCRIBE {tname}").fetchall()
+                    for dr in desc_rows:
+                        print(f"  {str(dr[0]):<35} {str(dr[1]):<25}")
+                except Exception as e2:
+                    print(f"  ERROR: {e2}")
 
     con.close()
     print("\n\nDone.")
