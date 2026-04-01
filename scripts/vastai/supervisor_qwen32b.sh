@@ -1,0 +1,126 @@
+#!/bin/bash
+set -euo pipefail
+
+cd /opt/thyroid_extraction
+umask 002
+
+MODEL="${MODEL:-qwen3:32b}"
+CONCURRENCY="${EXTRACTION_CONCURRENCY:-3}"
+TOTAL_NOTES="${TOTAL_NOTES:-11037}"
+LOCK_FILE="/var/run/thyroid_qwen32b_supervisor.lock"
+LOG="/var/log/supervisor_qwen32b.log"
+
+# Prioritize domains that already have meaningful checkpoint progress or are
+# the next highest-value V2 follow-ons. This avoids serializing the whole queue
+# through dozens of low-signal domains.
+DOMAINS="${DOMAINS:-physical_exam tirads_granular parathyroid_per_gland operative_v2_enrichment dynamic_risk_response presenting_symptoms past_medical_hx rad_treatment}"
+
+log() {
+    printf '[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*" | tee -a "$LOG"
+}
+
+cleanup_lock() {
+    rm -f "$LOCK_FILE"
+}
+
+acquire_lock() {
+    if [[ -f "$LOCK_FILE" ]]; then
+        local old_pid
+        old_pid="$(cat "$LOCK_FILE" 2>/dev/null || true)"
+        if [[ -n "$old_pid" ]] && kill -0 "$old_pid" 2>/dev/null; then
+            log "ABORT another supervisor is already running (pid=$old_pid)"
+            exit 1
+        fi
+        log "Removing stale supervisor lock: $LOCK_FILE"
+        rm -f "$LOCK_FILE"
+    fi
+    echo $$ > "$LOCK_FILE"
+    trap cleanup_lock EXIT
+}
+
+archive_stale_artifacts() {
+    local archive_dir
+    archive_dir="output/archive_$(date '+%Y%m%d_%H%M%S')"
+    mkdir -p "$archive_dir"
+
+    if [[ -f output/note_entities_llm_combined.parquet ]]; then
+        mv output/note_entities_llm_combined.parquet "$archive_dir/"
+        log "Archived stale single-domain combined parquet"
+    fi
+
+    if [[ -f output/note_entities_llm_staging.parquet.contaminated ]]; then
+        mv output/note_entities_llm_staging.parquet.contaminated "$archive_dir/"
+        log "Archived contaminated staging parquet marker"
+    fi
+
+    for domain in complications functional_outcomes operative_details past_surgical_hx patient_decision_adherence; do
+        local ckpt
+        ckpt="output/note_entities_llm_${domain}.ckpt.jsonl"
+        if [[ -f "$ckpt" ]] && [[ "$(wc -l < "$ckpt")" -eq 0 ]]; then
+            mv "$ckpt" "$archive_dir/"
+            log "Archived zero-row checkpoint: $domain"
+        fi
+    done
+
+    find /var/log -maxdepth 1 -type f -name 'worker_*.log' -size -2k -print0 2>/dev/null |
+        while IFS= read -r -d '' file; do
+            mv "$file" "$archive_dir/$(basename "$file")"
+            log "Archived tiny stale worker log: $(basename "$file")"
+        done
+}
+
+run_domain() {
+    local domain="$1"
+    local ckpt="output/note_entities_llm_${domain}.ckpt.jsonl"
+    local before_count=0
+    local after_count=0
+
+    if [[ -f "$ckpt" ]]; then
+        before_count="$(wc -l < "$ckpt")"
+        if [[ "$before_count" -ge "$TOTAL_NOTES" ]]; then
+            log "SKIP $domain -- complete ($before_count/$TOTAL_NOTES)"
+            return 0
+        fi
+        log "RESUME $domain ($before_count/$TOTAL_NOTES)"
+    else
+        log "START $domain (fresh)"
+    fi
+
+    mkdir -p processed/remaining output notes_extraction_new
+    ln -sf /opt/thyroid_extraction/clinical_notes_long.parquet processed/remaining/clinical_notes_long.parquet
+    rm -rf notes_extraction_new/prompts 2>/dev/null || true
+    ln -sf /opt/thyroid_extraction/prompts notes_extraction_new/prompts
+
+    python3 scripts/run_extraction_concurrent.py \
+        --url http://localhost:11434/v1 \
+        --model "$MODEL" \
+        --domains "$domain" \
+        --concurrency "$CONCURRENCY" \
+        --output-dir /opt/thyroid_extraction/output \
+        --input-parquet /opt/thyroid_extraction/processed/remaining/clinical_notes_long.parquet \
+        2>&1 | tee -a "/var/log/worker_${domain}.log"
+
+    if [[ -f "$ckpt" ]]; then
+        after_count="$(wc -l < "$ckpt")"
+    fi
+
+    if [[ "$after_count" -le "$before_count" ]]; then
+        log "NO_PROGRESS $domain ($before_count -> $after_count)"
+        return 1
+    fi
+
+    log "FINISHED $domain ($after_count/$TOTAL_NOTES)"
+    return 0
+}
+
+acquire_lock
+archive_stale_artifacts
+
+log "=== QWEN32B SUPERVISOR (model=$MODEL, concurrency=$CONCURRENCY) ==="
+log "Queue: $DOMAINS"
+
+for domain in $DOMAINS; do
+    run_domain "$domain"
+done
+
+log "=== SUPERVISOR QUEUE COMPLETE ==="
