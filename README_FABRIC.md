@@ -57,9 +57,15 @@ Pinned list: see `requirements-fabric-onelake.txt`.
 ## Paths
 
 - Local outputs: `processed/note_entities_<domain>.parquet` (from `notes_extraction/run_extraction.py` or `notes_extraction_new/run_extraction_local.py`).
+- Canonical fact long (clean + quarantine) and extraction run log (same repo, DVC-tracked when enabled):
+  - `processed/canonical_extracted_fact_long_v1.parquet` — analysis-ready facts (`scripts/103_fact_lineage_materialize.py`)
+  - `processed/canonical_fact_quarantine_v1.parquet` — conservative exclusions from clean canonical
+  - `processed/note_extraction_runs.parquet` — one row per `run_extraction.py` invocation
 - OneLake layout:
 
   `abfss://<FABRIC_LAKEHOUSE_WORKSPACE_ID>@onelake.dfs.core.windows.net/Files/note_entities_<domain>/part-000.parquet`
+
+  Register optional folders `canonical_extracted_fact_long_v1`, `canonical_fact_quarantine_v1`, `note_extraction_runs` beside `note_entities_*` if you mirror the full release artefacts to Fabric.
 
 ## Delta tables (`mssparkutils` / Spark)
 
