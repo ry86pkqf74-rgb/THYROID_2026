@@ -147,6 +147,75 @@ def _flush_parquet(rows: list[dict], out_path: Path, domain: str) -> None:
     tmp.replace(out_path)
 
 
+def _row_provenance(note_row: pd.Series) -> dict[str, str]:
+    note_date = str(note_row.get("note_date", "") or "")
+    return {
+        "research_id": str(note_row.get("research_id", "")),
+        "note_type": str(note_row.get("note_type", "")),
+        "note_date": note_date,
+        "linkage_date": note_date,
+        "source_workbook": str(note_row.get("source_workbook", "") or ""),
+        "source_sheet": str(note_row.get("source_sheet", "") or ""),
+        "source_column": str(note_row.get("source_column", "") or ""),
+        "note_index": str(note_row.get("note_index", "") or ""),
+        "preprocess_batch_id": str(note_row.get("preprocess_batch_id", "") or ""),
+        "preprocessed_at_utc": str(note_row.get("preprocessed_at_utc", "") or ""),
+        "preprocess_script_version": str(note_row.get("preprocess_script_version", "") or ""),
+    }
+
+
+def _rewrite_checkpoint(ckpt_path: Path, rows: list[dict]) -> None:
+    tmp_path = ckpt_path.with_suffix(".tmp")
+    with open(tmp_path, "w", encoding="utf-8") as handle:
+        for row in rows:
+            handle.write(json.dumps(row) + "\n")
+    tmp_path.replace(ckpt_path)
+
+
+def _backfill_checkpoint_rows(ckpt_path: Path, rows: list[dict], notes_df: pd.DataFrame, domain: str) -> list[dict]:
+    if not rows:
+        return rows
+
+    notes_lookup = notes_df.set_index(notes_df["note_row_id"].astype(str), drop=False)
+    required_fields = (
+        "research_id",
+        "note_type",
+        "note_date",
+        "linkage_date",
+        "source_workbook",
+        "source_sheet",
+        "source_column",
+        "note_index",
+        "preprocess_batch_id",
+        "preprocessed_at_utc",
+        "preprocess_script_version",
+    )
+
+    needs_rewrite = False
+    enriched_rows: list[dict] = []
+    for row in rows:
+        note_row_id = str(row.get("note_row_id", ""))
+        if note_row_id in notes_lookup.index:
+            source_row = notes_lookup.loc[note_row_id]
+            if isinstance(source_row, pd.DataFrame):
+                source_row = source_row.iloc[0]
+            provenance = _row_provenance(source_row)
+            for field, value in provenance.items():
+                if not str(row.get(field, "") or ""):
+                    row[field] = value
+                    needs_rewrite = True
+        missing_required = any(not str(row.get(field, "") or "") for field in required_fields)
+        if missing_required:
+            log.warning("  [%s] checkpoint row still missing provenance for note_row_id=%s", domain, note_row_id)
+        enriched_rows.append(row)
+
+    if needs_rewrite:
+        _rewrite_checkpoint(ckpt_path, enriched_rows)
+        log.info("  [%s] backfilled provenance on %s existing checkpoint rows", domain, f"{len(enriched_rows):,}")
+
+    return enriched_rows
+
+
 def extract_domain(
     notes_df: pd.DataFrame,
     domain: str,
@@ -178,6 +247,7 @@ def extract_domain(
                     continue
                 existing_rows.append(row)
                 done_ids.add(str(row.get("note_row_id", "")))
+        existing_rows = _backfill_checkpoint_rows(ckpt_path, existing_rows, notes_df, domain)
         if done_ids:
             log.info(
                 "  [%s] RESUME -- %s notes already done, %s remaining",
@@ -220,17 +290,16 @@ def extract_domain(
         except Exception as exc:
             result = {"error": str(exc)}
 
-        return {
+        row = {
             "note_row_id": str(note_row.get("note_row_id", "")),
-            "research_id": str(note_row.get("research_id", "")),
-            "note_type": str(note_row.get("note_type", "")),
-            "note_date": str(note_row.get("note_date", "") or ""),
             "domain": domain,
             "llm_model": model,
             "llm_base_url": base_url,
             "extracted_at": datetime.now(timezone.utc).isoformat(),
             "result_json": json.dumps(result),
         }
+        row.update(_row_provenance(note_row))
+        return row
 
     with open(ckpt_path, "a", encoding="utf-8") as ckpt_handle:
         with ThreadPoolExecutor(max_workers=concurrency) as executor:
