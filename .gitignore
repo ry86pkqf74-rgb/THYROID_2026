@@ -47,6 +47,8 @@ exports/zenodo_archive_*.zip
 exports/*_temp/
 exports/*_draft/
 exports/validation_run_*/
+exports/motherduck_gold_daily_*/
+exports/motherduck_provenance_*/
 
 # ── Root-level manuscript/freeze ZIPs (reproducible) ──────────
 THYROID_2026_MANUSCRIPT_PACKAGE_*.zip

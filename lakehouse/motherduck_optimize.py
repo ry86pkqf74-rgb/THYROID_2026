@@ -52,6 +52,42 @@ PARQUET_HYDRATION_DEFAULTS: dict[str, Path] = {
     "canonical_extracted_fact_long_v1": ROOT / "processed" / "canonical_extracted_fact_long_v1.parquet",
 }
 
+# MotherDuck catalog may store trial data under v2_stage (not main); use schema.table in
+# MOTHERDUCK_OPTIMIZE_TABLES when needed.
+MOTHERDUCK_V2_STAGE_TABLES: tuple[str, ...] = (
+    "v2_stage.note_entities_llm_combined",
+    "v2_stage.note_entities_llm_complications",
+    "v2_stage.note_entities_llm_genetics",
+    "v2_stage.note_entities_llm_imaging",
+    "v2_stage.note_entities_llm_labs",
+    "v2_stage.note_entities_llm_medications",
+    "v2_stage.note_entities_llm_operative_v2_enrichment",
+    "v2_stage.note_entities_llm_parathyroid_per_gland",
+    "v2_stage.note_entities_llm_pathology",
+    "v2_stage.note_entities_llm_physical_exam",
+    "v2_stage.note_entities_llm_problem_list",
+    "v2_stage.note_entities_llm_procedures",
+    "v2_stage.note_entities_llm_recurrence",
+    "v2_stage.note_entities_llm_staging",
+    "v2_stage.note_entities_llm_tirads_granular",
+)
+
+
+def _split_table_ref(ref: str) -> tuple[str, str]:
+    ref = ref.strip()
+    if "." in ref:
+        s, t = ref.split(".", 1)
+        return s.strip(), t.strip()
+    return "main", ref
+
+
+def _sql_table_id(schema: str, table: str) -> str:
+    return f'"{schema}"."{table}"'
+
+
+def _export_filename(ref: str) -> str:
+    return ref.replace(".", "__") + ".parquet"
+
 
 def _resolve_table_list(max_tables: int) -> list[str]:
     raw = (os.environ.get("MOTHERDUCK_OPTIMIZE_TABLES") or "").strip()
@@ -80,14 +116,15 @@ def _git_sha() -> str | None:
         return None
 
 
-def _table_exists(con: Any, table_name: str) -> bool:
+def _table_exists(con: Any, table_ref: str) -> bool:
+    schema, tbl = _split_table_ref(table_ref)
     row = con.execute(
         """
         SELECT COUNT(*)::BIGINT
         FROM information_schema.tables
-        WHERE table_schema = 'main' AND table_name = ?
+        WHERE table_schema = ? AND table_name = ?
         """,
-        [table_name],
+        [schema, tbl],
     ).fetchone()
     return row is not None and int(row[0]) > 0
 
@@ -104,7 +141,7 @@ def _hydrate_from_parquet(con: Any, table_name: str, pq: Path, dry_run: bool) ->
         print(f"  [dry-run] would run: {sql[:120]}...")
         return True
     con.execute(sql)
-    n = con.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()[0]
+    n = con.execute(f"SELECT COUNT(*) FROM {_sql_table_id('main', table_name)}").fetchone()[0]
     print(f"  [hydrate] {table_name} from {pq.name}: {n:,} rows")
     return True
 
@@ -157,7 +194,8 @@ def _create_views(con: Any, dry_run: bool) -> None:
         if not _table_exists(con, base):
             print(f"  [skip view {view_name}] base table missing: {base}")
             continue
-        sql = f"CREATE OR REPLACE VIEW {view_name} AS SELECT * FROM {base}"
+        bs, bt = _split_table_ref(base)
+        sql = f"CREATE OR REPLACE VIEW {view_name} AS SELECT * FROM {_sql_table_id(bs, bt)}"
         if dry_run:
             print(f"  [dry-run] {sql}")
         else:
@@ -172,11 +210,17 @@ def _analyze_tables(con: Any, tables: list[str], dry_run: bool) -> None:
         if dry_run:
             print(f"  [dry-run] ANALYZE {t}")
             continue
+        s, tbl = _split_table_ref(t)
+        qid = _sql_table_id(s, tbl)
         try:
-            con.execute(f"ANALYZE {t}")
+            con.execute(f"ANALYZE {qid}")
             print(f"  [analyze] {t}")
         except Exception as e:
-            print(f"  [analyze] {t}: {e}")
+            msg = str(e).lower()
+            if "vacuum" in msg or "not implemented" in msg:
+                print(f"  [analyze] {t}: skipped (MotherDuck/remote: {e})")
+            else:
+                print(f"  [analyze] {t}: {e}")
 
 
 def _export_parquet(
@@ -191,12 +235,14 @@ def _export_parquet(
     for t in tables:
         if not _table_exists(con, t):
             continue
-        out = export_dir / f"{t}.parquet"
+        out = export_dir / _export_filename(t)
+        s, tbl = _split_table_ref(t)
+        qid = _sql_table_id(s, tbl)
         if dry_run:
             print(f"  [dry-run] COPY {t} -> {out}")
             continue
-        con.execute(f"COPY (SELECT * FROM {t}) TO '{out.as_posix()}' (FORMAT PARQUET)")
-        cnt = con.execute(f"SELECT COUNT(*)::BIGINT FROM {t}").fetchone()[0]
+        con.execute(f"COPY (SELECT * FROM {qid}) TO '{out.as_posix()}' (FORMAT PARQUET)")
+        cnt = con.execute(f"SELECT COUNT(*)::BIGINT FROM {qid}").fetchone()[0]
         counts[t] = int(cnt)
         exported.append(t)
         print(f"  [export] {t} -> {out.name} ({cnt:,} rows)")
@@ -258,11 +304,25 @@ def main() -> None:
     )
     parser.add_argument("--skip-export", action="store_true")
     parser.add_argument("--skip-analyze", action="store_true")
+    parser.add_argument(
+        "--v2-stage",
+        action="store_true",
+        help="Use the 15 v2_stage.note_entities_llm_* tables (MotherDuck Thyroid 2026 layout).",
+    )
     args = parser.parse_args()
 
-    tables = _resolve_table_list(args.max_tables)
+    if args.v2_stage:
+        tables = list(MOTHERDUCK_V2_STAGE_TABLES)
+        if os.environ.get("MOTHERDUCK_OPTIMIZE_TABLES", "").strip():
+            raise SystemExit("Do not combine --v2-stage with MOTHERDUCK_OPTIMIZE_TABLES.")
+    else:
+        tables = _resolve_table_list(args.max_tables)
+    if len(tables) > args.max_tables:
+        raise SystemExit(f"Resolved table list length {len(tables)} > --max-tables={args.max_tables}")
     if len(GOLD_OPTIMIZE_TABLES) > 15:
         raise SystemExit("Internal GOLD_OPTIMIZE_TABLES exceeds trial cap of 15; fix constants.")
+    if len(MOTHERDUCK_V2_STAGE_TABLES) != 15:
+        raise SystemExit("MOTHERDUCK_V2_STAGE_TABLES must contain exactly 15 entries.")
 
     ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M")
     export_dir = args.export_dir or (ROOT / "exports" / f"motherduck_gold_daily_{ts}")

@@ -37,7 +37,8 @@ jobs:
 
       - name: Run MotherDuck optimize
         run: |
-          python lakehouse/motherduck_optimize.py --sa --export-dir exports/motherduck_gold_daily_ci
+          # --v2-stage: Thyroid 2026 catalog holds LLM entities under v2_stage (main.* manuscript tables optional).
+          python lakehouse/motherduck_optimize.py --sa --v2-stage --export-dir exports/motherduck_gold_daily_ci
 
       - name: Upload export bundle
         uses: actions/upload-artifact@v4
