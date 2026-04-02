@@ -1,0 +1,32 @@
+{
+  "ran_at_utc": "2026-04-02T06:22:13.201847+00:00",
+  "motherduck_database": "my_db",
+  "verification_mode": "plain_md_session_read_parquet",
+  "labs": {
+    "path": "/Users/loganglosser/THYROID_2026/output/v2_parquets/note_entities_llm_labs.parquet",
+    "backup_path": "/tmp/note_entities_llm_labs_pre_dedup_20260402.parquet",
+    "rows": 11037,
+    "unique_note_row_id": 11037,
+    "motherduck_verification": {
+      "rows": 11037,
+      "unique_note_row_id": 11037,
+      "empty_result_json": 0,
+      "domain_count": 1,
+      "min_domain": "labs",
+      "max_domain": "labs"
+    }
+  },
+  "complications": {
+    "path": "/Users/loganglosser/THYROID_2026/output/v2_parquets/note_entities_llm_complications.parquet",
+    "rows": 11037,
+    "unique_note_row_id": 11037,
+    "motherduck_verification": {
+      "rows": 11037,
+      "unique_note_row_id": 11037,
+      "empty_result_json": 0,
+      "domain_count": 1,
+      "min_domain": "complications",
+      "max_domain": "complications"
+    }
+  }
+}
