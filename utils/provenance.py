@@ -96,10 +96,14 @@ def apply_provenance_contract_columns(
         out["source_text_hash"] = None
 
     em = out["extraction_method"].astype(str)
-    dc = pd.to_numeric(out.get("date_confidence"), errors="coerce")
+    dc = (
+        pd.to_numeric(out["date_confidence"], errors="coerce")
+        if "date_confidence" in out.columns
+        else pd.Series(np.nan, index=out.index, dtype="float64")
+    )
     dst: list[str] = []
     for i in range(len(out)):
-        dst.append(infer_date_source_type(em.iloc[i], dc.iloc[i] if len(dc) else np.nan))
+        dst.append(infer_date_source_type(em.iloc[i], dc.iloc[i]))
     out["date_source_type"] = dst
 
     epd = (
@@ -150,7 +154,11 @@ def quarantine_masks(
     reason = reason.where(~m1, "multi_surgery_episode_ambiguous")
 
     em = uni["extraction_method"].astype(str)
-    dc = pd.to_numeric(uni.get("date_confidence"), errors="coerce")
+    dc = (
+        pd.to_numeric(uni["date_confidence"], errors="coerce")
+        if "date_confidence" in uni.columns
+        else pd.Series(np.nan, index=uni.index, dtype="float64")
+    )
     has_ed = (
         uni["entity_date"].notna()
         if "entity_date" in uni.columns

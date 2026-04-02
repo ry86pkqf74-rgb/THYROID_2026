@@ -32,11 +32,7 @@ sys.path.insert(0, str(ROOT))
 from llm_extraction.vocab import CANONICAL_FACT_CONTRACT_DTYPES  # noqa: E402
 from utils.md_connect import connect_md_or_file  # noqa: E402
 from utils.provenance import (  # noqa: E402
-    LOW_LLM_DATE_CONF,
-    MULTI_SURGERY_EP_DIST_THRESH_DAYS,
-    TEMPORAL_CONFLICT_DAYS,
     apply_provenance_contract_columns,
-    quarantine_masks,
     split_quarantine,
 )
 from utils.text_helpers import save_parquet  # noqa: E402
@@ -68,10 +64,29 @@ def add_contract_columns(uni: pd.DataFrame, multi_surgery_rids: set[int]) -> pd.
     return apply_provenance_contract_columns(uni, multi_surgery_rids)
 
 
+def _ensure_surgery_date_column(df: pd.DataFrame) -> pd.DataFrame:
+    """operative_episode_detail_v2 uses resolved_surgery_date + surgery_date_native (no surgery_date)."""
+    if "surgery_date" in df.columns and df["surgery_date"].notna().any():
+        return df
+    out = df.copy()
+    rs = (
+        pd.to_datetime(out["resolved_surgery_date"], errors="coerce")
+        if "resolved_surgery_date" in out.columns
+        else pd.Series(pd.NaT, index=out.index)
+    )
+    sn = (
+        pd.to_datetime(out["surgery_date_native"], errors="coerce")
+        if "surgery_date_native" in out.columns
+        else pd.Series(pd.NaT, index=out.index)
+    )
+    out["surgery_date"] = rs.fillna(sn)
+    return out
+
+
 def _load_op_episodes() -> pd.DataFrame | None:
     pq = PROCESSED / "operative_episode_detail_v2.parquet"
     if pq.exists():
-        return pd.read_parquet(pq)
+        return _ensure_surgery_date_column(pd.read_parquet(pq))
     con = duckdb.connect(str(DB_PATH), read_only=True)
     try:
         con.execute("SELECT 1 FROM operative_episode_detail_v2 LIMIT 1")
@@ -79,7 +94,14 @@ def _load_op_episodes() -> pd.DataFrame | None:
         con.close()
         return None
     df = con.execute(
-        "SELECT research_id, surgery_episode_id, surgery_date FROM operative_episode_detail_v2"
+        """
+        SELECT research_id, surgery_episode_id,
+               COALESCE(
+                   TRY_CAST(resolved_surgery_date AS DATE),
+                   surgery_date_native
+               ) AS surgery_date
+        FROM operative_episode_detail_v2
+        """
     ).fetchdf()
     con.close()
     return df

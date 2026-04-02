@@ -25,6 +25,8 @@ def _load_fact_lineage_module():
 
 fact103 = _load_fact_lineage_module()
 
+from utils.provenance import quarantine_masks  # noqa: E402
+
 
 def test_quarantine_multi_surgery_large_gap():
     multi = {100}
@@ -38,7 +40,7 @@ def test_quarantine_multi_surgery_large_gap():
             "inferred_surgery_date": [pd.Timestamp("2019-06-01")] * 3,
         }
     )
-    q, reason = fact103.quarantine_masks(uni, multi)
+    q, reason = quarantine_masks(uni, multi)
     assert q.iloc[0]  # multi + dist > 90
     assert "multi_surgery" in reason.iloc[0]
     assert not q.iloc[1]  # close enough episode match
@@ -55,7 +57,7 @@ def test_quarantine_low_confidence_llm_date():
             "inferred_surgery_date": [pd.Timestamp("2021-01-15")],
         }
     )
-    q, reason = fact103.quarantine_masks(uni, set())
+    q, reason = quarantine_masks(uni, set())
     assert q.iloc[0]
     assert "low_confidence" in reason.iloc[0]
 
@@ -71,7 +73,7 @@ def test_quarantine_temporal_conflict():
             "inferred_surgery_date": [pd.Timestamp("2022-01-01")],
         }
     )
-    q, reason = fact103.quarantine_masks(uni, set())
+    q, reason = quarantine_masks(uni, set())
     assert q.iloc[0]
     assert "temporal_conflict" in reason.iloc[0]
 
