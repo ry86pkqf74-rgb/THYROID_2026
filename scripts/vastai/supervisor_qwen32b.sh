@@ -5,7 +5,10 @@ cd /opt/thyroid_extraction
 umask 002
 
 MODEL="${MODEL:-qwen3:32b}"
-CONCURRENCY="${EXTRACTION_CONCURRENCY:-3}"
+CONCURRENCY="${EXTRACTION_CONCURRENCY:-6}"
+export OLLAMA_NUM_PARALLEL="${OLLAMA_NUM_PARALLEL:-4}"
+export OLLAMA_MAX_LOADED_MODELS="${OLLAMA_MAX_LOADED_MODELS:-4}"
+export OLLAMA_FLASH_ATTENTION="${OLLAMA_FLASH_ATTENTION:-1}"
 TOTAL_NOTES="${TOTAL_NOTES:-11037}"
 INVALIDATE_DOMAINS="${INVALIDATE_DOMAINS:-}"
 LOCK_FILE="/var/run/thyroid_qwen32b_supervisor.lock"
@@ -204,7 +207,7 @@ archive_stale_artifacts
 invalidate_requested_domains
 DOMAINS="$(filter_completed_domains)"
 
-log "=== QWEN32B SUPERVISOR (model=$MODEL, concurrency=$CONCURRENCY) ==="
+log "=== QWEN32B SUPERVISOR (model=$MODEL, concurrency=$CONCURRENCY, ollama_num_parallel=$OLLAMA_NUM_PARALLEL, ollama_max_loaded_models=$OLLAMA_MAX_LOADED_MODELS, flash_attention=$OLLAMA_FLASH_ATTENTION) ==="
 log "Queue: $DOMAINS"
 
 if [[ -z "$DOMAINS" ]]; then

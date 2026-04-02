@@ -47,6 +47,9 @@ logging.basicConfig(
 )
 log = logging.getLogger("split_extraction")
 
+_MALFORMED_ENTITY_DATE_SHAPES_LOGGED: set[str] = set()
+_MALFORMED_ENTITY_DATE_LOCK = threading.Lock()
+
 CONCURRENCY = int(os.environ.get("EXTRACTION_CONCURRENCY", "3"))
 LLM_TIMEOUT_SECONDS = int(os.environ.get("LLM_TIMEOUT_SECONDS", "120"))
 
@@ -275,7 +278,72 @@ def _normalize_iso_date(value: Any) -> str:
     return parsed.date().isoformat()
 
 
-def _sanitize_entities_payload(payload: dict[str, Any], note_row: pd.Series, allowed_types: set[str] | None = None) -> dict[str, Any]:
+def _summarize_entity_date_shape(value: Any, depth: int = 0) -> dict[str, Any]:
+    if value is None:
+        return {"type": "none"}
+
+    if isinstance(value, dict):
+        keys = [str(key) for key in value.keys()]
+        summary: dict[str, Any] = {
+            "type": "dict",
+            "keys": sorted(keys)[:8],
+            "key_count": len(keys),
+        }
+        if depth < 1:
+            nested: dict[str, Any] = {}
+            for key in ("date", "entity_date", "value", "raw", "text"):
+                if key in value:
+                    nested[key] = _summarize_entity_date_shape(value.get(key), depth + 1)
+            if nested:
+                summary["nested"] = nested
+        return summary
+
+    if isinstance(value, (list, tuple, set)):
+        items = list(value)
+        return {
+            "type": type(value).__name__,
+            "length": len(items),
+            "items": [_summarize_entity_date_shape(item, depth + 1) for item in items[:3]],
+        }
+
+    if isinstance(value, str):
+        text = value.strip()
+        return {
+            "type": "str",
+            "length": len(text),
+            "has_digits": bool(re.search(r"\d", text)),
+            "has_alpha": bool(re.search(r"[A-Za-z]", text)),
+            "has_dash": "-" in text,
+            "has_slash": "/" in text,
+        }
+
+    return {"type": type(value).__name__}
+
+
+def _log_malformed_entity_date_shape(domain: str | None, entity_type: str, value: Any, note_row: pd.Series) -> None:
+    summary = _summarize_entity_date_shape(value)
+    dedupe_key = json.dumps({"domain": domain, "entity_type": entity_type, "shape": summary}, sort_keys=True)
+    with _MALFORMED_ENTITY_DATE_LOCK:
+        if dedupe_key in _MALFORMED_ENTITY_DATE_SHAPES_LOGGED:
+            return
+        _MALFORMED_ENTITY_DATE_SHAPES_LOGGED.add(dedupe_key)
+
+    log.warning(
+        "Malformed entity_date payload dropped | domain=%s | note_row_id=%s | research_id=%s | entity_type=%s | shape=%s",
+        domain or "unknown",
+        str(note_row.get("note_row_id", "") or ""),
+        str(note_row.get("research_id", "") or ""),
+        entity_type or "unknown",
+        json.dumps(summary, sort_keys=True),
+    )
+
+
+def _sanitize_entities_payload(
+    payload: dict[str, Any],
+    note_row: pd.Series,
+    allowed_types: set[str] | None = None,
+    domain: str | None = None,
+) -> dict[str, Any]:
     entities = payload.get("entities", [])
     if not isinstance(entities, list):
         sanitized_payload = dict(payload)
@@ -293,7 +361,11 @@ def _sanitize_entities_payload(payload: dict[str, Any], note_row: pd.Series, all
         entity_type = _clean_text(entity.get("entity_type", ""))
         entity_value = _clean_text(entity.get("entity_value", ""))
         evidence_text = _repair_evidence_text(note_text, entity.get("evidence_text", ""))
-        entity_date = _normalize_iso_date(entity.get("entity_date", ""))
+        raw_entity_date = entity.get("entity_date", "")
+        entity_date = _normalize_iso_date(raw_entity_date)
+
+        if raw_entity_date not in (None, "") and not entity_date and isinstance(raw_entity_date, (dict, list, tuple, set)):
+            _log_malformed_entity_date_shape(domain, entity_type, raw_entity_date, note_row)
 
         if allowed_types and entity_type not in allowed_types:
             continue
@@ -339,7 +411,12 @@ def _build_system_prompt(domain: str, base_prompt: str, note_row: pd.Series) -> 
 
 def _sanitize_recurrence_detailed_result(result: Any, note_row: pd.Series) -> dict[str, list[dict[str, Any]]]:
     payload = result if isinstance(result, dict) else {}
-    payload = _sanitize_entities_payload(payload, note_row, RECURRENCE_DETAILED_ALLOWED_ENTITY_TYPES)
+    payload = _sanitize_entities_payload(
+        payload,
+        note_row,
+        RECURRENCE_DETAILED_ALLOWED_ENTITY_TYPES,
+        domain="recurrence_detailed",
+    )
     entities = payload.get("entities", [])
 
     note_date = _normalize_iso_date(note_row.get("note_date", ""))
@@ -369,7 +446,7 @@ def _sanitize_result(domain: str, result: Any, note_row: pd.Series) -> dict[str,
         return _sanitize_recurrence_detailed_result(result, note_row)
     if isinstance(result, dict):
         if "entities" in result:
-            return _sanitize_entities_payload(result, note_row, _allowed_entity_types_for_domain(domain))
+            return _sanitize_entities_payload(result, note_row, _allowed_entity_types_for_domain(domain), domain=domain)
         return result
     return {"parse_error": True, "raw": str(result)[:500]}
 
