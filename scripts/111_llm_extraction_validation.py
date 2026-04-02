@@ -60,6 +60,71 @@ RUNS_DIR = WORKSPACE_DIR / "runs"
 STRUCTURED_SOURCE_LIMITED_DOMAINS = {"problem_list", "unmapped"}
 
 ORIGINAL_VALUE_PREVIEW_MAX = 500
+
+
+def expand_v2_combined_json_if_needed(llm_df: pd.DataFrame) -> pd.DataFrame:
+    """Expand per-note v2 fleet format (result_json with entities[]) to entity-level rows."""
+    if "entity_type" in llm_df.columns:
+        return llm_df
+    if "result_json" not in llm_df.columns:
+        return llm_df
+
+    out_rows: list[dict] = []
+    for _, row in llm_df.iterrows():
+        raw = row.get("result_json")
+        if raw is None or (isinstance(raw, float) and pd.isna(raw)):
+            continue
+        try:
+            payload = json.loads(str(raw))
+        except (json.JSONDecodeError, TypeError):
+            continue
+        entities = payload.get("entities") if isinstance(payload, dict) else None
+        if not isinstance(entities, list):
+            continue
+        for ent in entities:
+            if not isinstance(ent, dict):
+                continue
+            ev = ent.get("entity_value") or ent.get("entity_value_raw") or ""
+            conf = ent.get("confidence")
+            try:
+                conf_f = float(conf) if conf is not None and str(conf) != "" else None
+            except (TypeError, ValueError):
+                conf_f = None
+            sl = ent.get("source_line")
+            try:
+                sl_i = int(sl) if sl is not None and str(sl) != "" else pd.NA
+            except (TypeError, ValueError):
+                sl_i = pd.NA
+            out_rows.append(
+                {
+                    "research_id": row.get("research_id"),
+                    "note_row_id": row.get("note_row_id"),
+                    "note_type": row.get("note_type"),
+                    "note_index": row.get("note_index"),
+                    "source_sheet": row.get("source_sheet"),
+                    "source_column": row.get("source_column"),
+                    "entity_type": ent.get("entity_type"),
+                    "entity_value_raw": ev,
+                    "entity_value_norm": ev,
+                    "present_or_negated": ent.get("present_or_negated") or "present",
+                    "confidence": conf_f,
+                    "confidence_score": conf_f,
+                    "evidence_span": ent.get("evidence_text") or ent.get("evidence_span") or "",
+                    "entity_date": ent.get("entity_date"),
+                    "note_date": row.get("note_date"),
+                    "extraction_method": "llm_v2_combined",
+                    "extracted_at": row.get("extracted_at"),
+                    "date_confidence": ent.get("date_confidence"),
+                    "source_line": sl_i,
+                    "llm_model": row.get("llm_model"),
+                }
+            )
+
+    if not out_rows:
+        return pd.DataFrame()
+    expanded = pd.DataFrame(out_rows)
+    LOG.info("Expanded v2 combined input: %s note rows -> %s entity rows", len(llm_df), len(expanded))
+    return expanded
 MANUAL_QUEUE_ORIGINAL_MAX = 2000
 
 
@@ -1074,15 +1139,19 @@ def maybe_motherduck_attach(summary_df: pd.DataFrame) -> None:
     if not token:
         LOG.warning("MOTHERDUCK_TOKEN unset; skip --motherduck-attach")
         return
-    db = os.environ.get("MOTHERDUCK_DATABASE", "")
-    if not db:
-        LOG.warning("MOTHERDUCK_DATABASE unset; skip --motherduck-attach")
-        return
-    con = duckdb.connect(f"md:{db}?motherduck_token={token}")
+    db = (os.environ.get("MOTHERDUCK_DATABASE") or "").strip()
+    if db:
+        uri = f"md:{db}?motherduck_token={token}"
+    else:
+        uri = f"md:?motherduck_token={token}"
+    con = duckdb.connect(uri)
     try:
         con.register("_val_llm_summary", summary_df)
         con.execute("CREATE OR REPLACE TABLE val_llm_concordance_summary AS SELECT * FROM _val_llm_summary")
-        LOG.info("Created/replaced val_llm_concordance_summary on MotherDuck database %s", db)
+        LOG.info(
+            "Created/replaced val_llm_concordance_summary on MotherDuck (database=%s)",
+            db or "default",
+        )
     finally:
         con.close()
 
@@ -1170,9 +1239,23 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     llm_df = pd.read_parquet(input_path)
+    if "entity_type" not in llm_df.columns and "result_json" in llm_df.columns:
+        llm_df = expand_v2_combined_json_if_needed(llm_df)
+        if llm_df.empty:
+            raise SystemExit(
+                "Input looks like v2 combined (result_json) but no entities were expanded. "
+                "Use entity-grain note_entities_llm.parquet or fix result_json content."
+            )
+
     missing = [column for column in ENTITY_SCHEMA_COLUMNS if column not in llm_df.columns]
     if missing:
-        raise SystemExit(f"Input parquet is missing required extraction columns: {missing}")
+        LOG.info("Backfilling %s missing columns with null", len(missing))
+        for column in missing:
+            llm_df[column] = pd.NA
+
+    required_keys = {"research_id", "note_row_id"}
+    if not required_keys.issubset(llm_df.columns):
+        raise SystemExit(f"Input parquet missing required columns: {required_keys - set(llm_df.columns)}")
 
     llm_df = llm_df[ENTITY_SCHEMA_COLUMNS].copy()
     rename_map = {}
