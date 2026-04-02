@@ -71,6 +71,7 @@ DOMAIN_TO_FILE = {
     "complications": "note_entities_complications",
     "medications": "note_entities_medications",
     "problem_list": "note_entities_problem_list",
+    "llm": "note_entities_llm",
 }
 
 

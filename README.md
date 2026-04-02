@@ -33,6 +33,7 @@ documented source limitations, not data quality failures.
 | Zenodo ↔ GitHub | [`docs/ZENODO_GITHUB_SYNC_NOTES_20260326.md`](docs/ZENODO_GITHUB_SYNC_NOTES_20260326.md) — how to publish a new Zenodo version after pushes |
 | ETE manuscript revision packet | [`manuscripts/ete_ajcc8_202603/MANUSCRIPT_REVISION_PACKET_20260326.md`](manuscripts/ete_ajcc8_202603/MANUSCRIPT_REVISION_PACKET_20260326.md) |
 | LLM extraction handoff | [`docs/llm_extraction_handoff_20260327.md`](docs/llm_extraction_handoff_20260327.md) |
+| LLM validation workspace | [`studies/llm_extraction_validation/README.md`](studies/llm_extraction_validation/README.md) |
 | Git tag | [`v2026.03.10-publication-ready`](../../releases/tag/v2026.03.10-publication-ready) |
 
 ### What "manuscript-ready" means
@@ -89,6 +90,7 @@ structured JSON entity extraction from clinical notes.
 |-----------|----------|
 | LLM extractor | `notes_extraction/extract_llm.py` |
 | Pipeline runner | `notes_extraction/run_extraction.py` |
+| Validation workspace | [`studies/llm_extraction_validation/README.md`](studies/llm_extraction_validation/README.md) |
 | System prompt | `prompts/lab_date_extraction_v1.txt` |
 | Handoff doc | [`docs/llm_extraction_handoff_20260327.md`](docs/llm_extraction_handoff_20260327.md) |
 
@@ -100,8 +102,9 @@ export GITHUB_TOKEN='ghp_...'
 ```
 
 - 11,037 notes, 5,641 patients, 6 entity domains
-- Output: `processed/note_entities_{domain}_sorted.parquet` (15-column schema)
-- Post-extraction: upload to local DuckDB via `scripts/09b_local DuckDB_upload_notes_entities.py --confirm`
+- Output: `processed/note_entities_{domain}.parquet` plus `processed/note_entities_llm.parquet` when LLM extraction is enabled
+- Validation and side-by-side comparison: `studies/llm_extraction_validation/`
+- Post-extraction: publish entity outputs with the repo uploader for your target environment; the checked-in uploader is `scripts/09b_fabric_upload_notes_entities.py`
 
 **API priority:** GitHub Models (`GITHUB_TOKEN`) → OpenAI fallback (`OPENAI_API_KEY`).
 Thread-local clients with 5-retry exponential backoff and `--workers` concurrency.
