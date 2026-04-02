@@ -1,0 +1,14 @@
+# MotherDuck environment → database mapping.
+# Loaded by motherduck_client.py::_load_env_databases().
+# Override at runtime: MOTHERDUCK_DATABASE="other_db" or MOTHERDUCK_ENV="dev".
+#
+# The "Thyroid 2026" catalog is the single MotherDuck database for all envs.
+# Schemas provide isolation: main (canonical), v2_stage (LLM entities).
+
+environments:
+  dev:
+    database: "Thyroid 2026"
+  qa:
+    database: "Thyroid 2026"
+  prod:
+    database: "Thyroid 2026"

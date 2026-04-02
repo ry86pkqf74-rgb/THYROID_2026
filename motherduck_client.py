@@ -37,12 +37,12 @@ LOCAL_DUCKDB_PATH = os.getenv(
 
 # Default environment databases (overridden by environments.yml when present)
 _ENV_DATABASES: dict[str, str] = {
-    "dev":  "thyroid_research_2026_dev",
-    "qa":   "thyroid_research_2026_qa",
-    "prod": "thyroid_research_2026",
+    "dev":  "Thyroid 2026",
+    "qa":   "Thyroid 2026",
+    "prod": "Thyroid 2026",
 }
 
-_SHARE_PATH_PROD = "md:_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c"
+_SHARE_PATH_PROD = "md:_share/thyroid_research_ro_v2/2558f066-1c5d-46a5-afbc-800fd5f7568d"
 
 
 def _jwt_like(value: str | None) -> str | None:
@@ -174,7 +174,7 @@ def token_mode() -> str:
 
 @dataclass(frozen=True)
 class MotherDuckConfig:
-    database: str = "thyroid_research_2026"
+    database: str = "Thyroid 2026"
     token_env_var: str = "MOTHERDUCK_TOKEN"
     share_path: str | None = None
     use_local: bool = False
@@ -205,6 +205,10 @@ class MotherDuckClient:
         token = self._require_token()
         db = (os.environ.get("MOTHERDUCK_DATABASE") or os.environ.get("MOTHERDUCK_DB") or "").strip()
         attach = db or self.config.database
+        if " " in attach:
+            con = duckdb.connect(f"md:?motherduck_token={token}")
+            con.execute(f'USE "{attach}"')
+            return con
         return duckdb.connect(f"md:{attach}?motherduck_token={token}")
 
     def connect_ro_share(self) -> duckdb.DuckDBPyConnection:
@@ -236,7 +240,7 @@ class MotherDuckClient:
             client = MotherDuckClient.for_env("prod", use_service_account=True)
         """
         db = resolve_database_for_env(env)
-        share = _SHARE_PATH_PROD if (env or "prod").lower() == "prod" else None
+        share = _SHARE_PATH_PROD if (_SHARE_PATH_PROD and (env or "prod").lower() == "prod") else None
         cfg = MotherDuckConfig(
             database=db,
             share_path=share,
@@ -264,8 +268,11 @@ if __name__ == "__main__":
 
     client = MotherDuckClient.for_env(args.env, use_service_account=args.sa)
     con = client.connect_rw()
-    row = client.query_one(con, "SELECT COUNT(DISTINCT research_id) FROM master_cohort")
-    if row is None:
-        raise RuntimeError("Expected a result from master_cohort count query")
-    print(f"[{args.env}] master_cohort patients: {row[0]:,}")
+    db = con.execute("SELECT current_database()").fetchone()
+    print(f"[{args.env}] database: {db[0] if db else '?'}")
+    tables = con.execute(
+        "SELECT COUNT(*) FROM information_schema.tables "
+        "WHERE table_catalog = current_database() AND table_schema = 'main'"
+    ).fetchone()
+    print(f"[{args.env}] main schema tables: {tables[0] if tables else 0}")
     con.close()

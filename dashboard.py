@@ -106,9 +106,9 @@ PL = dict(paper_bgcolor="rgba(0,0,0,0)",plot_bgcolor="rgba(14,18,25,0.8)",
           colorway=["#2dd4bf","#38bdf8","#a78bfa","#f59e0b","#f43f5e","#34d399","#fb923c"],
           hoverlabel=dict(bgcolor="#141923",bordercolor="#1e2535",font_color="#f0f4ff"))
 SEQ_TEAL = [[0,"#0a1a20"],[0.5,"#1a8a7a"],[1,"#2dd4bf"]]
-SHARE_PATH = "md:_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c"
-DATABASE   = "thyroid_research_2026"
-SHARE_CATALOG = "thyroid_share"
+SHARE_PATH = "md:_share/thyroid_research_ro_v2/2558f066-1c5d-46a5-afbc-800fd5f7568d"
+DATABASE   = "Thyroid 2026"
+SHARE_CATALOG = "thyroid_research_ro_v2"
 _APP_VERSION = "v3.3.0-2026.03.13"
 
 # Tracks which catalog _get_con() activated (used by qual())
@@ -151,7 +151,7 @@ def _get_con():
     cli = MotherDuckClient(cfg)
     try:
         con = cli.connect_ro_share()
-        con.execute(f"USE {SHARE_CATALOG};")
+        con.execute(f'USE "{SHARE_CATALOG}";')
         _ACTIVE_CATALOG = SHARE_CATALOG
         _CONNECTION_META = {
             "mode": "ro_share",
@@ -163,7 +163,7 @@ def _get_con():
         try:
             con = cli.connect_rw()
             try:
-                con.execute(f"USE {DATABASE};")
+                con.execute(f'USE "{DATABASE}";')
             except Exception:
                 pass
             _ACTIVE_CATALOG = DATABASE
@@ -2862,7 +2862,7 @@ def main():
             try:
                 cfg = MotherDuckConfig(database=DATABASE)
                 rw_con = MotherDuckClient(cfg).connect_rw()
-                rw_con.execute(f"USE {DATABASE};")
+                rw_con.execute(f'USE "{DATABASE}";')
                 st.markdown(
                     '<div style="font-family:monospace;font-size:.6rem;color:#34d399">'
                     '● REVIEW MODE ACTIVE (read-write)</div>',
