@@ -1,0 +1,411 @@
+{
+  "generated_at": "2026-04-02T09:42:31.881413+00:00",
+  "input_path": "processed/output/v2_parquets/note_entities_llm_combined.parquet",
+  "source_notes_path": "processed/clinical_notes_long.parquet",
+  "db_path": "/Users/loganglosser/THYROID_2026/thyroid_master.duckdb",
+  "workspace_dir": "studies/llm_extraction_validation/runs/qwen_20260402_full",
+  "review_csv_merged": null,
+  "gold_require_manual": false,
+  "trust_fill_candidate_auto": false,
+  "llm_rows": 8428,
+  "lineage_rows": 8428,
+  "side_by_side_rows": 8428,
+  "gold_rows": 178,
+  "manual_review_queue_rows": 365,
+  "unique_patients": 1759,
+  "domains": [
+    "complications",
+    "genetics",
+    "medications",
+    "operative_detail",
+    "problem_list",
+    "procedures",
+    "staging",
+    "unmapped"
+  ],
+  "algorithm_status_counts": [
+    {
+      "comparison_domain": "complications",
+      "algorithm_comparison_status": "existing_missing_fill_candidate",
+      "llm_rows": 1,
+      "unique_patients": 1,
+      "evidence_spans_found": 1,
+      "source_note_links": 1,
+      "structured_matches": 0,
+      "baseline_matches": 0,
+      "fill_candidates": 1,
+      "review_conflicts": 0
+    },
+    {
+      "comparison_domain": "genetics",
+      "algorithm_comparison_status": "concordant_existing",
+      "llm_rows": 1,
+      "unique_patients": 1,
+      "evidence_spans_found": 1,
+      "source_note_links": 1,
+      "structured_matches": 1,
+      "baseline_matches": 1,
+      "fill_candidates": 0,
+      "review_conflicts": 0
+    },
+    {
+      "comparison_domain": "genetics",
+      "algorithm_comparison_status": "concordant_existing_extraction_only",
+      "llm_rows": 5,
+      "unique_patients": 5,
+      "evidence_spans_found": 4,
+      "source_note_links": 5,
+      "structured_matches": 0,
+      "baseline_matches": 5,
+      "fill_candidates": 0,
+      "review_conflicts": 0
+    },
+    {
+      "comparison_domain": "genetics",
+      "algorithm_comparison_status": "discordant_existing",
+      "llm_rows": 4,
+      "unique_patients": 4,
+      "evidence_spans_found": 3,
+      "source_note_links": 4,
+      "structured_matches": 0,
+      "baseline_matches": 0,
+      "fill_candidates": 0,
+      "review_conflicts": 4
+    },
+    {
+      "comparison_domain": "genetics",
+      "algorithm_comparison_status": "existing_missing_fill_candidate",
+      "llm_rows": 85,
+      "unique_patients": 78,
+      "evidence_spans_found": 46,
+      "source_note_links": 85,
+      "structured_matches": 0,
+      "baseline_matches": 0,
+      "fill_candidates": 85,
+      "review_conflicts": 0
+    },
+    {
+      "comparison_domain": "medications",
+      "algorithm_comparison_status": "concordant_existing",
+      "llm_rows": 4,
+      "unique_patients": 3,
+      "evidence_spans_found": 4,
+      "source_note_links": 4,
+      "structured_matches": 4,
+      "baseline_matches": 4,
+      "fill_candidates": 0,
+      "review_conflicts": 0
+    },
+    {
+      "comparison_domain": "medications",
+      "algorithm_comparison_status": "concordant_existing_extraction_only",
+      "llm_rows": 56,
+      "unique_patients": 48,
+      "evidence_spans_found": 42,
+      "source_note_links": 56,
+      "structured_matches": 0,
+      "baseline_matches": 56,
+      "fill_candidates": 0,
+      "review_conflicts": 0
+    },
+    {
+      "comparison_domain": "medications",
+      "algorithm_comparison_status": "existing_missing_fill_candidate",
+      "llm_rows": 7,
+      "unique_patients": 6,
+      "evidence_spans_found": 6,
+      "source_note_links": 7,
+      "structured_matches": 0,
+      "baseline_matches": 0,
+      "fill_candidates": 7,
+      "review_conflicts": 0
+    },
+    {
+      "comparison_domain": "operative_detail",
+      "algorithm_comparison_status": "concordant_existing",
+      "llm_rows": 4,
+      "unique_patients": 3,
+      "evidence_spans_found": 4,
+      "source_note_links": 4,
+      "structured_matches": 4,
+      "baseline_matches": 0,
+      "fill_candidates": 0,
+      "review_conflicts": 0
+    },
+    {
+      "comparison_domain": "operative_detail",
+      "algorithm_comparison_status": "discordant_existing",
+      "llm_rows": 135,
+      "unique_patients": 110,
+      "evidence_spans_found": 102,
+      "source_note_links": 135,
+      "structured_matches": 0,
+      "baseline_matches": 0,
+      "fill_candidates": 0,
+      "review_conflicts": 135
+    },
+    {
+      "comparison_domain": "operative_detail",
+      "algorithm_comparison_status": "existing_missing_fill_candidate",
+      "llm_rows": 144,
+      "unique_patients": 125,
+      "evidence_spans_found": 70,
+      "source_note_links": 144,
+      "structured_matches": 0,
+      "baseline_matches": 0,
+      "fill_candidates": 144,
+      "review_conflicts": 0
+    },
+    {
+      "comparison_domain": "problem_list",
+      "algorithm_comparison_status": "concordant_existing_extraction_only",
+      "llm_rows": 4,
+      "unique_patients": 4,
+      "evidence_spans_found": 3,
+      "source_note_links": 4,
+      "structured_matches": 0,
+      "baseline_matches": 4,
+      "fill_candidates": 0,
+      "review_conflicts": 0
+    },
+    {
+      "comparison_domain": "problem_list",
+      "algorithm_comparison_status": "source_limited",
+      "llm_rows": 15,
+      "unique_patients": 14,
+      "evidence_spans_found": 12,
+      "source_note_links": 15,
+      "structured_matches": 0,
+      "baseline_matches": 0,
+      "fill_candidates": 0,
+      "review_conflicts": 0
+    },
+    {
+      "comparison_domain": "procedures",
+      "algorithm_comparison_status": "concordant_existing",
+      "llm_rows": 109,
+      "unique_patients": 71,
+      "evidence_spans_found": 77,
+      "source_note_links": 109,
+      "structured_matches": 109,
+      "baseline_matches": 93,
+      "fill_candidates": 0,
+      "review_conflicts": 0
+    },
+    {
+      "comparison_domain": "procedures",
+      "algorithm_comparison_status": "discordant_existing",
+      "llm_rows": 211,
+      "unique_patients": 166,
+      "evidence_spans_found": 142,
+      "source_note_links": 211,
+      "structured_matches": 0,
+      "baseline_matches": 19,
+      "fill_candidates": 0,
+      "review_conflicts": 211
+    },
+    {
+      "comparison_domain": "procedures",
+      "algorithm_comparison_status": "existing_missing_fill_candidate",
+      "llm_rows": 4,
+      "unique_patients": 4,
+      "evidence_spans_found": 4,
+      "source_note_links": 4,
+      "structured_matches": 0,
+      "baseline_matches": 0,
+      "fill_candidates": 4,
+      "review_conflicts": 0
+    },
+    {
+      "comparison_domain": "staging",
+      "algorithm_comparison_status": "concordant_existing",
+      "llm_rows": 10,
+      "unique_patients": 9,
+      "evidence_spans_found": 8,
+      "source_note_links": 10,
+      "structured_matches": 10,
+      "baseline_matches": 0,
+      "fill_candidates": 0,
+      "review_conflicts": 0
+    },
+    {
+      "comparison_domain": "staging",
+      "algorithm_comparison_status": "discordant_existing",
+      "llm_rows": 15,
+      "unique_patients": 14,
+      "evidence_spans_found": 6,
+      "source_note_links": 15,
+      "structured_matches": 0,
+      "baseline_matches": 8,
+      "fill_candidates": 0,
+      "review_conflicts": 15
+    },
+    {
+      "comparison_domain": "unmapped",
+      "algorithm_comparison_status": "source_limited",
+      "llm_rows": 7614,
+      "unique_patients": 1680,
+      "evidence_spans_found": 5633,
+      "source_note_links": 7614,
+      "structured_matches": 0,
+      "baseline_matches": 0,
+      "fill_candidates": 0,
+      "review_conflicts": 0
+    }
+  ],
+  "verification_status_counts": [
+    {
+      "comparison_domain": "complications",
+      "verification_status": "existing_missing_fill_candidate",
+      "llm_rows": 1,
+      "unique_patients": 1,
+      "evidence_spans_found": 1,
+      "verified_auto": 1,
+      "verified_manual": 0
+    },
+    {
+      "comparison_domain": "genetics",
+      "verification_status": "concordant",
+      "llm_rows": 6,
+      "unique_patients": 6,
+      "evidence_spans_found": 5,
+      "verified_auto": 6,
+      "verified_manual": 0
+    },
+    {
+      "comparison_domain": "genetics",
+      "verification_status": "existing_missing_fill_candidate",
+      "llm_rows": 85,
+      "unique_patients": 78,
+      "evidence_spans_found": 46,
+      "verified_auto": 85,
+      "verified_manual": 0
+    },
+    {
+      "comparison_domain": "genetics",
+      "verification_status": "pending_review",
+      "llm_rows": 4,
+      "unique_patients": 4,
+      "evidence_spans_found": 3,
+      "verified_auto": 4,
+      "verified_manual": 0
+    },
+    {
+      "comparison_domain": "medications",
+      "verification_status": "concordant",
+      "llm_rows": 60,
+      "unique_patients": 51,
+      "evidence_spans_found": 46,
+      "verified_auto": 60,
+      "verified_manual": 0
+    },
+    {
+      "comparison_domain": "medications",
+      "verification_status": "existing_missing_fill_candidate",
+      "llm_rows": 7,
+      "unique_patients": 6,
+      "evidence_spans_found": 6,
+      "verified_auto": 7,
+      "verified_manual": 0
+    },
+    {
+      "comparison_domain": "operative_detail",
+      "verification_status": "concordant",
+      "llm_rows": 4,
+      "unique_patients": 3,
+      "evidence_spans_found": 4,
+      "verified_auto": 4,
+      "verified_manual": 0
+    },
+    {
+      "comparison_domain": "operative_detail",
+      "verification_status": "existing_missing_fill_candidate",
+      "llm_rows": 144,
+      "unique_patients": 125,
+      "evidence_spans_found": 70,
+      "verified_auto": 144,
+      "verified_manual": 0
+    },
+    {
+      "comparison_domain": "operative_detail",
+      "verification_status": "pending_review",
+      "llm_rows": 135,
+      "unique_patients": 110,
+      "evidence_spans_found": 102,
+      "verified_auto": 135,
+      "verified_manual": 0
+    },
+    {
+      "comparison_domain": "problem_list",
+      "verification_status": "concordant",
+      "llm_rows": 4,
+      "unique_patients": 4,
+      "evidence_spans_found": 3,
+      "verified_auto": 4,
+      "verified_manual": 0
+    },
+    {
+      "comparison_domain": "problem_list",
+      "verification_status": "source_limited",
+      "llm_rows": 15,
+      "unique_patients": 14,
+      "evidence_spans_found": 12,
+      "verified_auto": 15,
+      "verified_manual": 0
+    },
+    {
+      "comparison_domain": "procedures",
+      "verification_status": "concordant",
+      "llm_rows": 109,
+      "unique_patients": 71,
+      "evidence_spans_found": 77,
+      "verified_auto": 109,
+      "verified_manual": 0
+    },
+    {
+      "comparison_domain": "procedures",
+      "verification_status": "existing_missing_fill_candidate",
+      "llm_rows": 4,
+      "unique_patients": 4,
+      "evidence_spans_found": 4,
+      "verified_auto": 4,
+      "verified_manual": 0
+    },
+    {
+      "comparison_domain": "procedures",
+      "verification_status": "pending_review",
+      "llm_rows": 211,
+      "unique_patients": 166,
+      "evidence_spans_found": 142,
+      "verified_auto": 211,
+      "verified_manual": 0
+    },
+    {
+      "comparison_domain": "staging",
+      "verification_status": "concordant",
+      "llm_rows": 10,
+      "unique_patients": 9,
+      "evidence_spans_found": 8,
+      "verified_auto": 10,
+      "verified_manual": 0
+    },
+    {
+      "comparison_domain": "staging",
+      "verification_status": "pending_review",
+      "llm_rows": 15,
+      "unique_patients": 14,
+      "evidence_spans_found": 6,
+      "verified_auto": 15,
+      "verified_manual": 0
+    },
+    {
+      "comparison_domain": "unmapped",
+      "verification_status": "source_limited",
+      "llm_rows": 7614,
+      "unique_patients": 1680,
+      "evidence_spans_found": 5633,
+      "verified_auto": 7614,
+      "verified_manual": 0
+    }
+  ]
+}
