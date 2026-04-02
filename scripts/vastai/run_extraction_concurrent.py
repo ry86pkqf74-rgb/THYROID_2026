@@ -239,7 +239,36 @@ def _repair_evidence_text(note_text: str, evidence_text: str) -> str:
 
 
 def _normalize_iso_date(value: Any) -> str:
-    parsed = pd.to_datetime(value, errors="coerce")
+    if value is None:
+        return ""
+
+    if isinstance(value, dict):
+        year = value.get("year")
+        month = value.get("month")
+        day = value.get("day")
+        if year is not None and month is not None and day is not None:
+            try:
+                return f"{int(year):04d}-{int(month):02d}-{int(day):02d}"
+            except (TypeError, ValueError):
+                return ""
+        for key in ("date", "entity_date", "value", "raw", "text"):
+            normalized = _normalize_iso_date(value.get(key))
+            if normalized:
+                return normalized
+        return ""
+
+    if isinstance(value, (list, tuple, set)):
+        for item in value:
+            normalized = _normalize_iso_date(item)
+            if normalized:
+                return normalized
+        return ""
+
+    text = str(value).strip()
+    if not text or text.lower() in {"null", "none", "nat"}:
+        return ""
+
+    parsed = pd.to_datetime(text, errors="coerce")
     if pd.isna(parsed):
         return ""
     return parsed.date().isoformat()

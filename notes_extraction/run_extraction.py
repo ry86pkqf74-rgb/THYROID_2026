@@ -75,16 +75,38 @@ DOMAIN_TO_FILE = {
 }
 
 
-def _stamp_row(ext: BaseExtractor, rec: dict, extraction_run_id: str) -> dict:
+def _value_or_none(value):
+    if pd.isna(value):
+        return None
+    return value
+
+
+def _stamp_row(ext: BaseExtractor, rec: dict, extraction_run_id: str, source_row: dict) -> dict:
     rec["extraction_run_id"] = extraction_run_id
     rec["extractor_name"] = ext.__class__.__name__
     rec["extractor_version"] = EXTRACTOR_BUILD_VERSION
+    rec["episode_id"] = _value_or_none(source_row.get("episode_id"))
+    rec["note_index"] = _value_or_none(source_row.get("note_index"))
+    rec["source_sheet"] = _value_or_none(source_row.get("source_sheet"))
+    rec["source_column"] = _value_or_none(source_row.get("source_column"))
+    extracted_at = rec.get("extracted_at") or datetime.now(timezone.utc).isoformat()
+    rec["extracted_at"] = extracted_at
+    rec["extraction_timestamp_utc"] = extracted_at
+    rec["confidence_score"] = rec.get("confidence")
     if ext.entity_domain != "llm":
         rec["model_name"] = None
         rec["model_version"] = None
         rec["prompt_version"] = "regex_only"
+        rec["llm_model"] = None
+        rec["llm_prompt_version"] = "regex_only"
         rec["verifier_name"] = None
         rec["verifier_version"] = None
+    else:
+        rec["llm_model"] = rec.get("model_name")
+        rec["llm_prompt_version"] = rec.get("prompt_version")
+        if getattr(ext, "force_pending_verification", False):
+            rec["verification_status"] = "pending"
+            rec["verification_step"] = "awaiting_review"
     return rec
 
 
@@ -116,7 +138,9 @@ def run_extractors(
                 domain = ext.entity_domain
                 row_results.setdefault(domain, [])
                 for m in matches:
-                    row_results[domain].append(_stamp_row(ext, m.to_dict(), extraction_run_id))
+                    row_results[domain].append(
+                        _stamp_row(ext, m.to_dict(), extraction_run_id, row)
+                    )
         return row_results
 
     total = len(notes_df)
