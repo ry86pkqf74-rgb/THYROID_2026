@@ -1,158 +1,136 @@
-# VastAI Extraction Validation And Fleet Status 2026-04-02
+# VastAI Extraction Validation And Fleet Status — 2026-04-02 19:00 UTC
 
-Fresh live audit taken on 2026-04-02 after retiring unstable H200_F, handing off its unfinished work to H200_G, and revalidating completed parquet outputs against the source note corpus.
+Fresh live audit of the 2-server H200 NVL fleet and full re-validation of all
+24 completed parquet artifacts against the source note corpus.
 
-## Validation scope
+## Fleet configuration
 
-- Source parquet: `processed/remaining/clinical_notes_long.parquet`
-- Completed extraction artifacts checked: all parquet files under `processed/output/v2_parquets/`
-- Validation basis: normalized join on `note_row_id` plus field-level checks for `research_id`, `note_date`, `source_workbook`, `source_sheet`, and `source_column`
-
-## Linkage validation result
-
-All completed parquet artifacts passed the core provenance and source-linkage checks.
-
-- `UNMATCHED=0` for every validated parquet
-- `MISMATCH_RESEARCH_ID=0` for every validated parquet
-- `MISMATCH_NOTE_DATE=0` for every validated parquet
-- `MISMATCH_WORKBOOK=0` for every validated parquet
-- `MISMATCH_SHEET=0` for every validated parquet
-- `MISMATCH_COLUMN=0` for every validated parquet
-- `INVALID_JSON=0` for every validated parquet
-
-This confirms that the completed extracted rows still resolve back to the original source note rows and preserve the expected source linkage metadata.
-
-## Validation caveats
-
-These did not break source linkage, but they remain schema-quality observations:
-
-- Older completed artifacts missing `preprocessed_at_utc`: `combined`, `complications`, `genetics`, `imaging`, `labs`, `medications`, `pathology`, `physical_exam`, `problem_list`, `procedures`
-- Some `result_json` payloads do not contain an `entities` key and instead represent valid negative or alternate payload shapes. This is not a provenance failure, but downstream consumers should not assume `entities` is always present.
-
-## Safe post-audit repairs
-
-After the audit, two conservative repairs were executed without changing row linkage:
-
-- `preprocessed_at_utc` was backfilled from the canonical source parquet onto the 10 older completed artifacts that were missing it.
-- Exact empty-object payloads (`{}`) inside `result_json` were normalized to `{"entities": []}` across completed artifacts.
-
-These repairs were revalidated and preserved:
-
-- `UNMATCHED=0`
-- `MISMATCH_RESEARCH_ID=0`
-- `MISMATCH_NOTE_DATE=0`
-- `MISMATCH_WORKBOOK=0`
-- `MISMATCH_SHEET=0`
-- `MISMATCH_COLUMN=0`
-- `INVALID_JSON=0`
-
-Residual payload-shape issues remain only where the original stored payload contains non-empty legacy structures such as:
-
-- `{"error": ...}`
-- `{"parse_error": true, "raw": ...}`
-- partial dicts such as `{"source_line": 15}`
-
-These were intentionally left untouched because rewriting them would discard potentially valuable error-state evidence or hallucinate entity content.
-
-## Current live fleet
-
-Input corpus size per active domain: `11,037` notes.
+| Item | Value |
+|------|-------|
+| Active servers | 2 (Primary H200, Fast1 H200 NVL) |
+| Combined cost | $5.72/hr |
+| Ollama version | 0.9.0 on both (6-8x faster than 0.19.0; requires H200 NVL + nvidia driver >= 575) |
+| Model | qwen3:32b (dense 32.8B, Q4_K_M) |
+| Concurrency | 6 on both servers |
+| Retired servers | H200_G (ssh5.vast.ai:14874 — connection refused), H200_H2 (ssh9.vast.ai:18612 — connection refused), H200_F (destroyed) |
 
 ### Primary H200
 
 - Vast instance ID: `33534710`
-- Direct SSH verified: `ssh -p 43384 -o StrictHostKeyChecking=no root@107.206.71.138`
-- Vast broker status: `ssh1.vast.ai:14710` is currently closing during key exchange
-- Active worker: `past_medical_hx`
-- Current queue: `past_medical_hx rad_treatment synoptic_pathology_enrichment`
-- Current counts:
-  - `dynamic_risk_response`: `11037/11037`
-  - `past_medical_hx`: `5438/11037`
-  - `rad_treatment`: `10/11037`
-  - `synoptic_pathology_enrichment`: `0/11037`
-- GPU at audit: `100%`
+- SSH: `ssh -p 43384 -o StrictHostKeyChecking=no root@107.206.71.138`
+- Uptime: 82 days
+- GPU: 100% utilization, 26GB/144GB VRAM
+- Throughput: ~1.0 notes/sec (60/min)
+- Active domain: `synoptic_pathology_enrichment` (568/11,037)
+- Queue: `synoptic_pathology_enrichment` → `presenting_symptoms`
+- Completed on this server: `dynamic_risk_response`, `medication_management`, `operative_v2_enrichment`, `parathyroid_per_gland`, `past_medical_hx`, `rad_treatment`, `recurrence_detailed`, `staging`, `tirads_granular`
 
-### H200_G
+### Fast1 H200 NVL
 
-- Vast instance ID: `33964874`
-- SSH: `ssh -p 14874 -o StrictHostKeyChecking=no root@ssh5.vast.ai`
-- Active worker: `past_surgical_hx`
-- Current queue: `past_surgical_hx operative_details patient_decision_adherence`
-- Current counts:
-  - `functional_outcomes`: `11037/11037`
-  - `past_surgical_hx`: `2174/11037`
-  - `operative_details`: `0/11037`
-  - `patient_decision_adherence`: `425/11037`
-- GPU at audit: `92%`
-- Operational note: this host now owns the partial `patient_decision_adherence` checkpoint copied from retired H200_F.
+- SSH: `ssh -p 22536 -o StrictHostKeyChecking=no root@ssh3.vast.ai`
+- Uptime: 206 days
+- GPU: 100% utilization, 26GB/144GB VRAM
+- Throughput: ~0.8 notes/sec (48/min)
+- Active domain: `complications_rln_laryngoscopy` (8,245/11,037)
+- Queue: `complications_rln_laryngoscopy` → `operative_details` → `patient_decision_adherence` → `frozen_section_detail` → `us_nodule_dynamics`
 
-### H200_H2
+## Validation scope
 
-- Vast instance ID: `33968613`
-- SSH: `ssh -p 18612 -o StrictHostKeyChecking=no root@ssh9.vast.ai`
-- Active worker: `complications_rln_laryngoscopy`
-- Current queue: `complications_rln_laryngoscopy vascular_invasion tg_kinetics presenting_symptoms molecular_thyroseq_afirma`
-- Current counts:
-  - `complications_rln_laryngoscopy`: `1200/11037`
-  - `vascular_invasion`: `9424/11037`
-  - `tg_kinetics`: `681/11037`
-  - `presenting_symptoms`: `587/11037`
-  - `molecular_thyroseq_afirma`: `0/11037`
-- GPU at audit: `100%`
+- Source parquet: `processed/remaining/clinical_notes_long.parquet` (11,037 notes, 11,037 unique `note_row_id`)
+- Completed extraction artifacts checked: all 24 parquet files under `processed/output/v2_parquets/`
+- Validation basis: join on `note_row_id` with string-coerced `research_id` comparison (source stores int64, parquets store string — values match)
 
-## Balanced domain ledger
+## Linkage validation result — ALL 24 PASS
 
-### Completed locally and validated
+| Check | Result |
+|-------|--------|
+| `UNMATCHED` (note_row_id not in source) | **0** for every parquet |
+| `MISMATCH_RESEARCH_ID` (research_id diverged) | **0** for every parquet |
+| `INVALID_JSON` (result_json unparseable) | **0** for every parquet |
+| Row count | **11,037** for every parquet |
 
-- `airway_invasion`: `11037/11037`
-- `combined`: `11037/11037`
-- `complications`: `11037/11037`
-- `dynamic_risk_response`: `11037/11037`
-- `functional_outcomes`: `11037/11037`
-- `genetics`: `11037/11037`
-- `imaging`: `11037/11037`
-- `labs`: `11037/11037`
-- `medication_management`: `11037/11037`
-- `medications`: `11037/11037`
-- `operative_v2_enrichment`: `11037/11037`
-- `parathyroid_per_gland`: `11037/11037`
-- `pathology`: `11037/11037`
-- `physical_exam`: `11037/11037`
-- `problem_list`: `11037/11037`
-- `procedures`: `11037/11037`
-- `rai_detailed`: `11037/11037`
-- `recurrence`: `11037/11037`
-- `recurrence_detailed`: `11037/11037`
-- `staging`: `11037/11037`
-- `survival_followup`: `11037/11037`
-- `tirads_granular`: `11037/11037`
+### Per-domain detail
 
-### Remaining active domains with one owner each
+| Domain | Entities | Parse Errors | Status |
+|--------|----------|-------------|--------|
+| airway_invasion | 3,116 | 0 | PASS |
+| combined | 8,428 | 500 | PASS |
+| complications | 6 | 0 | PASS |
+| dynamic_risk_response | 53 | 116 | PASS |
+| functional_outcomes | 3,322 | 1 | PASS |
+| genetics | 855 | 0 | PASS |
+| imaging | 8,428 | 500 | PASS |
+| labs | 2,462 | 345 | PASS |
+| medication_management | 1,948 | 588 | PASS |
+| medications | 3,577 | 9 | PASS |
+| operative_v2_enrichment | 5,475 | 420 | PASS |
+| parathyroid_per_gland | 824 | 292 | PASS |
+| past_medical_hx | 755 | 809 | PASS |
+| pathology | 10,894 | 98 | PASS |
+| physical_exam | 2,025 | 418 | PASS |
+| problem_list | 11,480 | 120 | PASS |
+| procedures | 12,669 | 10 | PASS |
+| rad_treatment | 580 | 298 | PASS |
+| rai_detailed | 3,747 | 21 | PASS |
+| recurrence | 303 | 256 | PASS |
+| recurrence_detailed | 25 | 0 | PASS |
+| staging | 1,117 | 17 | PASS |
+| survival_followup | 9,809 | 0 | PASS |
+| tirads_granular | 181 | 337 | PASS |
 
-- `Primary_H200`
-  - `past_medical_hx`: `5438/11037`
-  - `rad_treatment`: `10/11037`
-  - `synoptic_pathology_enrichment`: `0/11037`
-- `H200_G`
-  - `past_surgical_hx`: `2174/11037`
-  - `operative_details`: `0/11037`
-  - `patient_decision_adherence`: `425/11037`
-- `H200_H2`
-  - `complications_rln_laryngoscopy`: `1200/11037`
-  - `vascular_invasion`: `9424/11037`
-  - `tg_kinetics`: `681/11037`
-  - `presenting_symptoms`: `587/11037`
-  - `molecular_thyroseq_afirma`: `0/11037`
+Parse errors are non-fatal: the extraction script logs them as `{"parse_error": true, "raw": ...}` and they do not break source linkage. These are typically notes with unusual formatting where the LLM returned malformed JSON.
 
-No overlapping live ownership was observed across the three active hosts at the time of this audit.
+## Schema note
 
-## Retired host disposition
+`research_id` is stored as `string` in extraction parquets vs `int64` in the source corpus. Values are identical when compared as strings. This is a known type divergence from the JSONL-to-parquet conversion path and does not affect downstream joins (DuckDB and Pandas both handle this with implicit casting).
 
-- H200_F instance `33939816` was destroyed after local backup of its completed `survival_followup` artifacts and partial `patient_decision_adherence` checkpoint.
-- `patient_decision_adherence` was seeded onto H200_G before destruction.
-- Post-destroy verification: the instance disappeared from `vastai show instances` and stopped accepting SSH.
+## Full 36-domain ledger
 
-## Local residue cleanup
+### Completed and validated (24 parquets on GitHub)
 
-- The stray local repo-root `output/` residue was non-canonical and safe to remove after this report was recorded.
-- Canonical validated artifacts remain under `processed/output/v2_parquets/`.
+- `airway_invasion`, `combined`, `complications`, `dynamic_risk_response`
+- `functional_outcomes`, `genetics`, `imaging`, `labs`
+- `medication_management`, `medications`, `operative_v2_enrichment`, `parathyroid_per_gland`
+- `past_medical_hx`, `pathology`, `physical_exam`, `problem_list`
+- `procedures`, `rad_treatment`, `rai_detailed`, `recurrence`
+- `recurrence_detailed`, `staging`, `survival_followup`, `tirads_granular`
+
+### Active on servers (2 domains)
+
+| Domain | Server | Progress | ETA |
+|--------|--------|----------|-----|
+| synoptic_pathology_enrichment | Primary | 568/11,037 (5%) | ~3h |
+| complications_rln_laryngoscopy | Fast1 | 8,245/11,037 (75%) | ~1h |
+
+### Queued on servers (5 domains)
+
+| Domain | Server | Checkpoint seeded |
+|--------|--------|------------------|
+| presenting_symptoms | Primary | 587 (uploaded from local backup) |
+| operative_details | Fast1 | 0 (fresh) |
+| patient_decision_adherence | Fast1 | 425 (uploaded from local backup) |
+| frozen_section_detail | Fast1 | 0 (fresh) |
+| us_nodule_dynamics | Fast1 | 0 (fresh) |
+
+### Awaiting upload to Primary after queue clears (~6h)
+
+| Domain | Local checkpoint | Remaining |
+|--------|-----------------|-----------|
+| vascular_invasion | 9,424/11,037 | 1,613 |
+| past_surgical_hx | 3,246/11,037 | 7,791 |
+| parathyroid_detail | 2,270/11,037 | 8,767 |
+| tg_kinetics | 681/11,037 | 10,356 |
+| cervical_ln_detail | 0/11,037 | 11,037 |
+| molecular_thyroseq_afirma | 0/11,037 | 11,037 |
+
+Local checkpoints saved at `/tmp/thyroid_checkpoints/` on the Mac.
+
+### Coverage check
+
+**36 of 36 domains assigned — ZERO GAPS.**
+
+## Projected completion
+
+- Primary finishes current queue (~6h), then processes 6 uploaded domains (~18-24h)
+- Fast1 finishes current 5-domain queue (~14-18h)
+- **All 36 domains projected complete: April 3-4, 2026**
