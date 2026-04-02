@@ -1,23 +1,23 @@
-# VastAI Extraction Validation And Fleet Status — 2026-04-02 19:00 UTC
+# VastAI Extraction Validation And Fleet Status — 2026-04-02 19:40 UTC
 
-Fresh live audit of the 2-server H200 NVL fleet and full re-validation of all
-24 completed parquet artifacts against the source note corpus.
+Live audit of the 3-server fleet and full re-validation of all 24 completed
+parquet artifacts against the source note corpus.
 
 ## Fleet configuration
 
 | Item | Value |
 |------|-------|
-| Active servers | 2 (Primary H200, Fast1 H200 NVL) |
-| Combined cost | $5.72/hr |
-| Ollama version | 0.9.0 on both (6-8x faster than 0.19.0; requires H200 NVL + nvidia driver >= 575) |
+| Active servers | 3 (Primary H200 NVL, Fast1 H200 NVL, Fast2 H200) |
+| Combined cost | $7.71/hr |
 | Model | qwen3:32b (dense 32.8B, Q4_K_M) |
-| Concurrency | 6 on both servers |
-| Retired servers | H200_G (ssh5.vast.ai:14874 — connection refused), H200_H2 (ssh9.vast.ai:18612 — connection refused), H200_F (destroyed) |
+| Concurrency | 6 on all servers |
+| Retired servers | H200_G (ssh5.vast.ai:14874 — down), H200_H2 (ssh9.vast.ai:18612 — down), H200_F (destroyed) |
 
-### Primary H200
+### Primary H200 NVL
 
 - Vast instance ID: `33534710`
 - SSH: `ssh -p 43384 -o StrictHostKeyChecking=no root@107.206.71.138`
+- Ollama: 0.9.0
 - Uptime: 82 days
 - GPU: 100% utilization, 26GB/144GB VRAM
 - Throughput: ~1.0 notes/sec (60/min)
@@ -112,25 +112,32 @@ Parse errors are non-fatal: the extraction script logs them as `{"parse_error": 
 | frozen_section_detail | Fast1 | 0 (fresh) |
 | us_nodule_dynamics | Fast1 | 0 (fresh) |
 
-### Awaiting upload to Primary after queue clears (~6h)
+### Assigned to Fast2 H200 (newly provisioned)
 
-| Domain | Local checkpoint | Remaining |
-|--------|-----------------|-----------|
-| vascular_invasion | 9,424/11,037 | 1,613 |
+| Domain | Checkpoint | Remaining |
+|--------|-----------|-----------|
+| vascular_invasion | 9,457/11,037 | 1,580 |
 | past_surgical_hx | 3,246/11,037 | 7,791 |
 | parathyroid_detail | 2,270/11,037 | 8,767 |
-| tg_kinetics | 681/11,037 | 10,356 |
+| tg_kinetics | 0/11,037 | 11,037 |
 | cervical_ln_detail | 0/11,037 | 11,037 |
 | molecular_thyroseq_afirma | 0/11,037 | 11,037 |
 
-Local checkpoints saved at `/tmp/thyroid_checkpoints/` on the Mac.
-
 ### Coverage check
 
-**36 of 36 domains assigned — ZERO GAPS.**
+**36 of 36 domains assigned across 3 servers — ZERO GAPS.**
 
 ## Projected completion
 
-- Primary finishes current queue (~6h), then processes 6 uploaded domains (~18-24h)
-- Fast1 finishes current 5-domain queue (~14-18h)
-- **All 36 domains projected complete: April 3-4, 2026**
+- Primary: finishes current 2-domain queue in ~6h
+- Fast1: finishes current 5-domain queue in ~14-18h
+- Fast2: finishes 6-domain queue in ~36-48h (standard H200, ~0.1 notes/sec vs ~1.0/sec on NVL; Ollama 0.19.0 with OLLAMA_CONTEXT_LENGTH=4096)
+- **All 36 domains projected complete: April 4-5, 2026**
+
+## Fast2 provisioning notes
+
+- Vast instance ID: `34031836`
+- Offer ID: `27334652` — H200 (non-NVL) in France, $1.99/hr, driver 575.57.08
+- Ollama 0.9.0 failed to use GPU properly on standard H200 — loaded model to GPU (65/65 layers) but ran inference on CPU (2400% CPU load). Reverted to Ollama 0.19.0 with `OLLAMA_CONTEXT_LENGTH=4096` which correctly offloads to GPU with ~22 tok/s.
+- Throughput: ~6 notes/min (vs ~60/min on NVL servers). Slower but cost-effective at $1.99/hr.
+- Checkpoints from retired H200_G/H200_H2 servers were uploaded from local backups at `/tmp/thyroid_checkpoints/`.

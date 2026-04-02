@@ -2,22 +2,24 @@
 
 ## Live status (19:00 UTC)
 
-Fleet consolidated to 2 H200 NVL servers running Ollama 0.9.0 (6-8x faster
-than 0.19.0; requires nvidia driver >= 575). Combined cost $5.72/hr.
-Previous servers H200_G, H200_H2, and H200_F have been retired (connection
-refused or destroyed). All their checkpoint progress was backed up locally
-before retirement.
+Fleet expanded to 3 servers: 2 H200 NVL (Ollama 0.9.0) + 1 standard H200
+(Ollama 0.19.0 with OLLAMA_CONTEXT_LENGTH=4096). Combined cost $7.71/hr.
+Previous servers H200_G, H200_H2, and H200_F have been retired. All their
+checkpoint progress was backed up locally before retirement and redistributed
+to the active fleet.
 
-Root cause of prior throughput issues: Ollama 0.19.0 KV cache bloat. Mitigated
-by `OLLAMA_CONTEXT_LENGTH=4096` on 0.19.0, but Ollama 0.9.0 on H200 NVL
-hardware eliminates the issue entirely.
+Ollama version note: 0.9.0 runs 6-8x faster on H200 NVL hardware (nvidia
+driver >= 575). On standard H200, 0.9.0 incorrectly runs inference on CPU
+despite loading model to GPU — use 0.19.0 with `OLLAMA_CONTEXT_LENGTH=4096`
+as workaround.
 
 ## Per-server matrix
 
 | Server | SSH target | Ollama | Active domain | Progress | Throughput | Queue depth |
 | --- | --- | --- | --- | ---: | --- | --- |
-| Primary H200 | `ssh -p 43384 root@107.206.71.138` | 0.9.0 | `synoptic_pathology_enrichment` | 568 / 11,037 | 1.0 notes/sec | 2 (+ 6 awaiting upload) |
+| Primary H200 NVL | `ssh -p 43384 root@107.206.71.138` | 0.9.0 | `synoptic_pathology_enrichment` | 568 / 11,037 | 1.0 notes/sec | 2 |
 | Fast1 H200 NVL | `ssh -p 22536 root@ssh3.vast.ai` | 0.9.0 | `complications_rln_laryngoscopy` | 8,245 / 11,037 | 0.8 notes/sec | 5 |
+| Fast2 H200 | `ssh -p 31836 root@ssh7.vast.ai` | 0.19.0 | `vascular_invasion` | 9,457 / 11,037 | 0.1 notes/sec | 6 |
 
 ## Domain progress snapshot (36 domains)
 
@@ -67,19 +69,18 @@ hardware eliminates the issue entirely.
 | frozen_section_detail | Fast1 | 0 |
 | us_nodule_dynamics | Fast1 | 0 |
 
-### Awaiting upload to Primary — 6 domains
+### Assigned to Fast2 H200 — 6 domains
 
-| Domain | Local checkpoint | Remaining |
+| Domain | Checkpoint | Remaining |
 | --- | ---: | ---: |
-| vascular_invasion | 9,424 | 1,613 |
+| vascular_invasion | 9,457 | 1,580 |
 | past_surgical_hx | 3,246 | 7,791 |
 | parathyroid_detail | 2,270 | 8,767 |
-| tg_kinetics | 681 | 10,356 |
+| tg_kinetics | 0 | 11,037 |
 | cervical_ln_detail | 0 | 11,037 |
 | molecular_thyroseq_afirma | 0 | 11,037 |
 
-Local checkpoints at `/tmp/thyroid_checkpoints/` on Mac. Upload to Primary
-after its current 2-domain queue clears (~6h).
+Checkpoints uploaded from local backups at `/tmp/thyroid_checkpoints/`.
 
 ## Coverage audit
 
@@ -87,16 +88,17 @@ after its current 2-domain queue clears (~6h).
 
 ## Estimated completion
 
-- Primary: current queue ~6h, then 6 upload domains ~18-24h
-- Fast1: current 5-domain queue ~14-18h
-- **All 36 domains projected complete: April 3-4, 2026**
+- Primary NVL: current 2-domain queue ~6h
+- Fast1 NVL: current 5-domain queue ~14-18h
+- Fast2: current 6-domain queue ~36-48h (standard H200, lower throughput)
+- **All 36 domains projected complete: April 4-5, 2026**
 
 ## Retired servers
 
 | Server | SSH | Status | Disposition |
 | --- | --- | --- | --- |
-| H200_G | ssh5.vast.ai:14874 | Connection refused | Checkpoints backed up locally |
-| H200_H2 | ssh9.vast.ai:18612 | Connection refused | Checkpoints backed up locally |
+| H200_G | ssh5.vast.ai:14874 | Connection refused | Checkpoints backed up and redistributed to Fast2 |
+| H200_H2 | ssh9.vast.ai:18612 | Connection refused | Checkpoints backed up and redistributed to Fast2 |
 | H200_F | (destroyed) | Destroyed | survival_followup artifacts + patient_decision_adherence checkpoint saved |
-| Fast worker A | ssh8.vast.ai:15192 | Retired | vascular_invasion checkpoint saved |
+| Fast worker A | ssh8.vast.ai:15192 | Retired | vascular_invasion checkpoint saved and uploaded to Fast2 |
 | Fast worker B | ssh6.vast.ai:15506 | Retired | presenting_symptoms checkpoint saved |
