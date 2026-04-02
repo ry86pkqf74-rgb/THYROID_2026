@@ -2,65 +2,163 @@
 
 ## Outcome
 
-Installing the DuckDB CLI changed the picture.
+MotherDuck remains unusable as a thyroid reconciliation target in this session.
 
-The CLI can authenticate with the repo-visible `MOTHERDUCK_TOKEN` and now exposes a real catalog named `Thyroid 2026` in addition to the generic/sample catalogs.
+The exact state after re-probing with both the DuckDB CLI and the repo's own `motherduck_client.py` resolver is:
 
-However, table enumeration from this session still returns zero visible tables for both `my_db` and `md:Thyroid 2026`, so there is still no usable in-cloud table inventory to reconcile against.
+1. The workspace token is real and usable, but it is only discoverable through `.streamlit/secrets.toml` in this session, not through exported shell env vars.
+2. The visible database list includes `Thyroid 2026`, but that catalog's `main` schema has no visible thyroid tables.
+3. The repo-configured RW target `thyroid_research_2026` does not exist for this token.
+4. The repo-configured RO share path `md:_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c` does not exist for this token.
+5. The only populated non-sample catalog reachable to this token is `rosflow`, which is unrelated to thyroid.
 
-## Auth paths tested
+Because of that, there is still no authoritative in-cloud thyroid object set available for local-vs-MotherDuck V2 reconciliation.
 
-Without printing secret values, the following repo-visible auth contexts were probed:
+## Token / auth findings
 
-| Auth source | Result |
+Without exposing secret values, the reachable auth sources were:
+
+| Source | Observed behavior |
 | --- | --- |
-| `LOCAL_DB_PATH` | missing |
-| `MD_SA_TOKEN` | missing |
-| `MOTHERDUCK_TOKEN` | DuckDB CLI connects and reveals `Thyroid 2026`, but `SHOW TABLES` / `information_schema.tables` currently return 0 visible tables |
+| `MOTHERDUCK_TOKEN` in exported shell env | absent in fresh terminal sessions |
+| `MD_SA_TOKEN` | absent |
+| `LOCAL_DB_PATH` as JWT/PAT fallback | absent |
+| `.streamlit/secrets.toml` `MOTHERDUCK_TOKEN` | present and usable |
 
-The only key present in `.streamlit/secrets.toml` for this session was `MOTHERDUCK_TOKEN`.
+The repo resolver reports:
 
-## Local V2 parquet inventory
+- `TOKEN_MODE secrets.toml:MOTHERDUCK_TOKEN`
+- `TOKEN_PRESENT True`
 
-The accessible local inventory under `output/v2_parquets/` contains 15 parquet files, including the legacy combined file and 14 domain files.
+## Exact commands tried
 
-| File | Rows | Unique `note_row_id` | `source_sheet` present | `source_column` present |
-| --- | ---: | ---: | --- | --- |
-| `note_entities_llm_combined.parquet` | 11,037 | 11,037 | no | no |
-| `note_entities_llm_complications.parquet` | 11,037 | 11,037 | no | no |
-| `note_entities_llm_genetics.parquet` | 11,037 | 11,037 | no | no |
-| `note_entities_llm_imaging.parquet` | 11,037 | 11,037 | no | no |
-| `note_entities_llm_labs.parquet` | 11,037 | 11,037 | no | no |
-| `note_entities_llm_medications.parquet` | 11,037 | 11,037 | no | no |
-| `note_entities_llm_operative_v2_enrichment.parquet` | 11,037 | 11,037 | yes | yes |
-| `note_entities_llm_parathyroid_per_gland.parquet` | 11,037 | 11,037 | yes | yes |
-| `note_entities_llm_pathology.parquet` | 11,037 | 11,037 | no | no |
-| `note_entities_llm_physical_exam.parquet` | 11,037 | 11,037 | no | no |
-| `note_entities_llm_problem_list.parquet` | 11,037 | 11,037 | no | no |
-| `note_entities_llm_procedures.parquet` | 11,037 | 11,037 | no | no |
-| `note_entities_llm_recurrence.parquet` | 11,037 | 11,037 | yes | yes |
-| `note_entities_llm_staging.parquet` | 11,037 | 11,037 | yes | yes |
-| `note_entities_llm_tirads_granular.parquet` | 11,037 | 11,037 | yes | yes |
+### 1. Root database enumeration through DuckDB CLI with token loaded from workspace secrets
 
-## Consistency findings
+```bash
+TOKEN=$(.venv/bin/python -c "import toml; print(toml.load('.streamlit/secrets.toml')['MOTHERDUCK_TOKEN'])")
+duckdb "md:?motherduck_token=$TOKEN" -c "SHOW DATABASES"
+```
 
-- All inventoried local parquets are row-complete at 11,037 rows and 11,037 unique `note_row_id` values.
-- The older domain artifacts are not provenance-complete by the stricter V2 standard: several still lack `source_sheet` and `source_column`.
-- Because the accessible MotherDuck catalog is empty/non-thyroid, there is currently nothing authoritative to compare these local artifacts against in-cloud.
+Observed result:
 
-## Canonical-promotion recommendation
+```text
+Thyroid 2026
+md_information_schema
+my_db
+rosflow
+sample_data
+```
 
-Do not promote the current local V2 parquet set into a more canonical tracked/exported location yet.
+### 2. Direct inspection of the visible thyroid catalog with DuckDB CLI
 
-Reason:
+```bash
+duckdb "md:Thyroid 2026?motherduck_token=$TOKEN" -c "SELECT current_database()"
+duckdb "md:Thyroid 2026?motherduck_token=$TOKEN" -c "SELECT table_catalog, COUNT(*) FROM information_schema.tables GROUP BY 1 ORDER BY 1"
+```
 
-1. MotherDuck cannot currently serve as the reconciliation target.
-2. Provenance completeness is inconsistent across the local V2 artifacts.
-3. The extraction fleet is still in-flight on several high-value tail domains.
+Observed result:
 
-Recommended next promotion gate:
+```text
+current_database() = Thyroid 2026
 
-1. Restore access to the actual thyroid MotherDuck catalog or share.
-2. Re-run the inventory against that real target.
-3. Normalize missing provenance on any older copied parquet artifacts.
-4. Only then freeze a canonical bundle from `output/v2_parquets/` into a dated manifest-based export location.
+table_catalog counts:
+md_information_schema = 8
+rosflow = 13
+sample_data = 8
+```
+
+No `Thyroid 2026` tables appeared in `information_schema.tables`.
+
+### 3. Repo-configured RO share attach via repo resolver
+
+```bash
+.venv/bin/python -c "from motherduck_client import MotherDuckClient; client = MotherDuckClient.for_env('prod'); con = client.connect_ro_share()"
+```
+
+Observed result:
+
+```text
+Failed to attach '_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c':
+no database/share named '_share/thyroid_research_ro/7962a053-3581-4ebf-abf6-57af957efb1c' found
+```
+
+### 4. Repo-configured RW catalog attach via repo resolver
+
+```bash
+.venv/bin/python -c "from motherduck_client import MotherDuckClient, MotherDuckConfig, resolve_database_for_env; con = MotherDuckClient(MotherDuckConfig(database=resolve_database_for_env())).connect_rw()"
+```
+
+Observed result:
+
+```text
+RESOLVED_DB thyroid_research_2026
+Failed to attach 'thyroid_research_2026':
+no database/share named 'thyroid_research_2026' found
+```
+
+### 5. Sanity sweep of the other visible user databases
+
+```bash
+.venv/bin/python -c "import toml, duckdb; token = toml.load('.streamlit/secrets.toml')['MOTHERDUCK_TOKEN']; ... connect to my_db and rosflow ..."
+```
+
+Observed result:
+
+- `my_db` table set is the same `rosflow` + `sample_data` + `md_information_schema` mix.
+- `rosflow` contains only `rosflow_*` tables and views.
+- No thyroid tables were found in either catalog.
+
+## Diagnosis
+
+This is not a generic MotherDuck outage and not a quoting bug.
+
+The most defensible diagnosis is:
+
+1. The workspace token is valid.
+2. The repo's legacy thyroid RW database name and RO share path are both stale or no longer shared to this token.
+3. A new database name, access grant, or share mapping likely replaced the historical `thyroid_research_2026` / `thyroid_research_ro` objects.
+4. The visible `Thyroid 2026` catalog is either an empty shell, a newly created placeholder, or a database where the thyroid tables have not been materialized/shared to this principal.
+
+## Operational consequence
+
+Do not attempt MotherDuck parity reconciliation yet.
+
+There is no reachable thyroid table inventory to compare against the 14 staged V2 domain parquets, so any parity report would be fabricated.
+
+## Local V2 inventory status
+
+Local V2 staging remains intact in `output/v2_parquets/`:
+
+- 14 domain parquets
+- 1 combined parquet
+
+Those staged artifacts remain the live landing zone only.
+
+## Addendum — CLI staging build executed
+
+After the blocker diagnosis above, a direct DuckDB CLI write canary was run successfully against the visible `Thyroid 2026` catalog, followed by a scoped staging build.
+
+Executed build shape:
+
+1. `CREATE SCHEMA IF NOT EXISTS v2_stage`
+2. `CREATE OR REPLACE TABLE v2_stage.<parquet_stem> AS SELECT * FROM read_parquet(...)`
+3. verified row counts against local parquet metadata
+
+Result:
+
+- 15 tables now exist in `Thyroid 2026.v2_stage`
+- all 15 have row parity with the local staged parquets at 11,037 rows each
+- the catalog is therefore usable as a writable staging target via the DuckDB CLI
+
+What did **not** change:
+
+- the repo's legacy RW database name `thyroid_research_2026` is still stale for this token
+- the repo's legacy RO share path is still stale for this token
+- `Thyroid 2026.main` still does not expose the historical thyroid canonical tables the repo expects
+
+That means the current usable state is:
+
+- `Thyroid 2026.v2_stage` = valid MotherDuck staging area created in this session
+- legacy repo-wired thyroid canonical access path = still broken/stale
+
+The concrete parity report for the successful staging build is in `studies/motherduck_v2_stage_build_and_parity_20260402.md`.
