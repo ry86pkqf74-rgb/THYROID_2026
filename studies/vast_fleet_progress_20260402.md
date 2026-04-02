@@ -4,13 +4,13 @@
 
 All 6 active Vast workers were re-audited live after the primary H200 failure was traced to a malformed `entity_date` payload in `scripts/vastai/run_extraction_concurrent.py`.
 
-The runtime was patched in-repo and synced to the primary worker. The primary lane resumed `dynamic_risk_response` and worker logs returned to live `HTTP 200` traffic.
+The runtime was patched in-repo and synced to the primary worker. The supervisor wrapper on the primary host did not stay alive, so the active lane was restored by launching the runtime directly. The primary lane resumed `dynamic_risk_response`, advanced from 1,932 to 2,013 checkpoint rows during verification, and worker logs returned to live `HTTP 200` traffic.
 
 ## Per-server matrix
 
 | Server | SSH target | Active domain checked | Checkpoint rows | Live evidence | Health note |
 | --- | --- | --- | ---: | --- | --- |
-| Primary H200 | `ssh -p 43384 root@107.206.71.138` | `dynamic_risk_response` | 1,932 | `HTTP 200` lines in `worker_dynamic_risk_response.log` at 07:58 | Recovered after date-normalization hotfix sync |
+| Primary H200 | `ssh -p 43384 root@107.206.71.138` | `dynamic_risk_response` | 2,013 | direct runtime process + `HTTP 200` lines in `worker_dynamic_risk_response.log` at 08:29 | Recovered after date-normalization hotfix sync; supervisor bypassed |
 | H200 F | `ssh -p 19816 root@ssh9.vast.ai` | `survival_followup` | 9,411 | `HTTP 200` lines at 08:19–08:20 | Healthy single-domain lane |
 | H200 G | `ssh -p 14874 root@ssh5.vast.ai` | `functional_outcomes` | 10,260 | `HTTP 200` lines at 08:19–08:20 | Healthy; near completion |
 | H200 H2 | `ssh -p 18612 root@ssh9.vast.ai` | `airway_invasion` | 9,637 | `HTTP 200` lines at 08:19–08:20 | Healthy; near completion |
@@ -26,7 +26,7 @@ The runtime was patched in-repo and synced to the primary worker. The primary la
 | `tirads_granular` | complete | local parquet present in `output/v2_parquets/` |
 | `physical_exam` | complete | local parquet present in `output/v2_parquets/` |
 | `rai_detailed` | complete at row-count level, not promoted in this session | prior Fast B checkpoint completed; current lane moved off domain |
-| `dynamic_risk_response` | in progress | primary H200 at 1,932 rows with live traffic |
+| `dynamic_risk_response` | in progress | primary H200 at 2,013 rows with live traffic |
 | `survival_followup` | in progress | H200 F at 9,411 rows with live traffic |
 | `functional_outcomes` | in progress | H200 G at 10,260 rows with live traffic |
 | `airway_invasion` | in progress | H200 H2 at 9,637 rows with live traffic |
@@ -52,3 +52,4 @@ The runtime was patched in-repo and synced to the primary worker. The primary la
 - Primary root cause fixed: `_normalize_iso_date(...)` in `scripts/vastai/run_extraction_concurrent.py` now safely handles mapping/list payloads instead of passing them straight into `pandas.to_datetime(...)`.
 - The fleet is currently non-overlapping by active domain.
 - Fast worker B is now the active `presenting_symptoms` lane; `rai_detailed` should stay off the active queue unless a semantic cleanup rerun is explicitly required.
+- The primary host currently runs the active domain directly instead of under `supervisor_qwen32b.sh`. Downstream intended queue remains `past_medical_hx` then `rad_treatment`.

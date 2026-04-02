@@ -23,6 +23,8 @@ Without printing secret values, the following repo-visible auth contexts were pr
 | `MD_SA_TOKEN` | missing |
 | `MOTHERDUCK_TOKEN` | connected, but only generic/sample catalogs visible |
 
+The only key present in `.streamlit/secrets.toml` for this session was `MOTHERDUCK_TOKEN`.
+
 ## Local V2 parquet inventory
 
 The accessible local inventory under `output/v2_parquets/` contains 15 parquet files, including the legacy combined file and 14 domain files.
