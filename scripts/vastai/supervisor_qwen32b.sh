@@ -14,7 +14,7 @@ LOG="/var/log/supervisor_qwen32b.log"
 # Prioritize domains that already have meaningful checkpoint progress or are
 # the next highest-value V2 follow-ons. This avoids serializing the whole queue
 # through dozens of low-signal domains.
-DOMAINS="${DOMAINS:-physical_exam tirads_granular parathyroid_per_gland operative_v2_enrichment dynamic_risk_response presenting_symptoms past_medical_hx rad_treatment}"
+DOMAINS="${DOMAINS:-dynamic_risk_response presenting_symptoms past_medical_hx rad_treatment survival_followup patient_decision_adherence functional_outcomes past_surgical_hx operative_details airway_invasion complications_rln_laryngoscopy synoptic_pathology_enrichment vascular_invasion molecular_thyroseq_afirma}"
 
 log() {
     printf '[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*" | tee -a "$LOG"
@@ -100,11 +100,68 @@ invalidate_requested_domains() {
     done
 }
 
+parquet_note_count() {
+    local parquet_path="$1"
+    python3 - "$parquet_path" <<'PY'
+import sys
+
+import pandas as pd
+
+path = sys.argv[1]
+try:
+    frame = pd.read_parquet(path, columns=["note_row_id"])
+    print(int(frame["note_row_id"].astype(str).nunique()))
+except Exception:
+    print(0)
+PY
+}
+
+domain_is_complete() {
+    local domain="$1"
+    local ckpt="output/note_entities_llm_${domain}.ckpt.jsonl"
+    local parquet="output/note_entities_llm_${domain}.parquet"
+
+    if [[ -f "$ckpt" ]] && [[ "$(wc -l < "$ckpt")" -ge "$TOTAL_NOTES" ]]; then
+        return 0
+    fi
+
+    if [[ -f "$parquet" ]] && [[ "$(parquet_note_count "$parquet")" -ge "$TOTAL_NOTES" ]]; then
+        return 0
+    fi
+
+    return 1
+}
+
+filter_completed_domains() {
+    local filtered=()
+    local removed=()
+    local domain
+
+    for domain in $DOMAINS; do
+        if domain_is_complete "$domain"; then
+            removed+=("$domain")
+        else
+            filtered+=("$domain")
+        fi
+    done
+
+    if (( ${#removed[@]} > 0 )); then
+        log "Filtered completed domains from queue: ${removed[*]}"
+    fi
+
+    printf '%s' "${filtered[*]}"
+}
+
 run_domain() {
     local domain="$1"
     local ckpt="output/note_entities_llm_${domain}.ckpt.jsonl"
     local before_count=0
     local after_count=0
+
+    if domain_is_complete "$domain"; then
+        log "SKIP $domain -- complete artifact already present"
+        return 0
+    fi
 
     if [[ -f "$ckpt" ]]; then
         before_count="$(wc -l < "$ckpt")"
@@ -145,9 +202,15 @@ run_domain() {
 acquire_lock
 archive_stale_artifacts
 invalidate_requested_domains
+DOMAINS="$(filter_completed_domains)"
 
 log "=== QWEN32B SUPERVISOR (model=$MODEL, concurrency=$CONCURRENCY) ==="
 log "Queue: $DOMAINS"
+
+if [[ -z "$DOMAINS" ]]; then
+    log "No remaining domains after completion filter"
+    exit 0
+fi
 
 for domain in $DOMAINS; do
     run_domain "$domain"
