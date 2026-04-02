@@ -1,7 +1,10 @@
-# VastAI Extraction Validation And Fleet Status — 2026-04-02 19:40 UTC
+# VastAI Extraction Validation And Fleet Status — 2026-04-02 (updated 21:45 UTC)
 
-Live audit of the 3-server fleet and full re-validation of all 24 completed
+Live audit of the 3-server fleet and full re-validation of all completed
 parquet artifacts against the source note corpus.
+
+> **See `vastai_fleet_handoff_2026-04-02.md` for the current handoff document
+> including SSH commands, restart procedures, and per-domain sync workflow.**
 
 ## Fleet configuration
 
@@ -84,60 +87,50 @@ Parse errors are non-fatal: the extraction script logs them as `{"parse_error": 
 
 `research_id` is stored as `string` in extraction parquets vs `int64` in the source corpus. Values are identical when compared as strings. This is a known type divergence from the JSONL-to-parquet conversion path and does not affect downstream joins (DuckDB and Pandas both handle this with implicit casting).
 
-## Full 36-domain ledger
+## Full 36-domain ledger (updated 21:45 UTC Apr 2)
 
-### Completed and validated (24 parquets on GitHub)
+### Completed and validated (26 parquets on GitHub)
 
-- `airway_invasion`, `combined`, `complications`, `dynamic_risk_response`
+- `airway_invasion`, `combined`, `complications`, `complications_rln_laryngoscopy`, `dynamic_risk_response`
 - `functional_outcomes`, `genetics`, `imaging`, `labs`
 - `medication_management`, `medications`, `operative_v2_enrichment`, `parathyroid_per_gland`
 - `past_medical_hx`, `pathology`, `physical_exam`, `problem_list`
 - `procedures`, `rad_treatment`, `rai_detailed`, `recurrence`
 - `recurrence_detailed`, `staging`, `survival_followup`, `tirads_granular`
+- `vascular_invasion`
 
-### Active on servers (2 domains)
+Added this session: `complications_rln_laryngoscopy` (Fast1), `vascular_invasion` (NewFast2 instance 34034310)
 
-| Domain | Server | Progress | ETA |
-|--------|--------|----------|-----|
-| synoptic_pathology_enrichment | Primary | 568/11,037 (5%) | ~3h |
-| complications_rln_laryngoscopy | Fast1 | 8,245/11,037 (75%) | ~1h |
+### Active on servers (10 domains)
 
-### Queued on servers (5 domains)
-
-| Domain | Server | Checkpoint seeded |
-|--------|--------|------------------|
-| presenting_symptoms | Primary | 587 (uploaded from local backup) |
-| operative_details | Fast1 | 0 (fresh) |
-| patient_decision_adherence | Fast1 | 425 (uploaded from local backup) |
-| frozen_section_detail | Fast1 | 0 (fresh) |
-| us_nodule_dynamics | Fast1 | 0 (fresh) |
-
-### Assigned to Fast2 H200 (newly provisioned)
-
-| Domain | Checkpoint | Remaining |
-|--------|-----------|-----------|
-| vascular_invasion | 9,457/11,037 | 1,580 |
-| past_surgical_hx | 3,246/11,037 | 7,791 |
-| parathyroid_detail | 2,270/11,037 | 8,767 |
-| tg_kinetics | 0/11,037 | 11,037 |
-| cervical_ln_detail | 0/11,037 | 11,037 |
-| molecular_thyroseq_afirma | 0/11,037 | 11,037 |
+| Domain | Server | Progress ~21:45 UTC | Rate | ETA |
+|--------|--------|---------------------|------|-----|
+| synoptic_pathology_enrichment | Primary | ~7,260/11,037 | 42/min | ~23:05 UTC |
+| presenting_symptoms | Primary | 587/11,037 (queued) | 42/min | ~Apr 3 03:20 UTC |
+| tg_kinetics | Primary | 0/11,037 (queued) | 42/min | ~Apr 3 07:40 UTC |
+| operative_details | Fast1 | ~4,790/11,037 | 52/min | ~Apr 3 00:00 UTC |
+| patient_decision_adherence | Fast1 | 425/11,037 (queued) | 52/min | ~Apr 3 03:30 UTC |
+| frozen_section_detail | Fast1 | 0/11,037 (queued) | 52/min | ~Apr 3 07:00 UTC |
+| us_nodule_dynamics | Fast1 | 0/11,037 (queued) | 52/min | ~Apr 3 10:30 UTC |
+| cervical_ln_detail | Fast1 | 0/11,037 (queued) | 52/min | ~Apr 3 14:00 UTC |
+| molecular_thyroseq_afirma | Fast1 | 0/11,037 (queued) | 52/min | ~Apr 3 17:30 UTC |
+| past_surgical_hx | NewFast2 | ~5,460/11,037 | 40/min | ~Apr 3 00:20 UTC |
+| parathyroid_detail | NewFast2 | 2,270/11,037 (queued) | 40/min | ~Apr 3 07:40 UTC |
 
 ### Coverage check
 
-**36 of 36 domains assigned across 3 servers — ZERO GAPS.**
+**36 of 36 domains assigned — ZERO GAPS.**
 
-## Projected completion
+## Projected completion (updated)
 
-- Primary: finishes current 2-domain queue in ~6h
-- Fast1: finishes current 5-domain queue in ~14-18h
-- Fast2: finishes 6-domain queue in ~36-48h (standard H200, ~0.1 notes/sec vs ~1.0/sec on NVL; Ollama 0.19.0 with OLLAMA_CONTEXT_LENGTH=4096)
-- **All 36 domains projected complete: April 4-5, 2026**
+- Primary: synoptic → presenting_symptoms → tg_kinetics, done ~Apr 3 07:40 UTC
+- Fast1: operative_details → … → molecular_thyroseq_afirma, **done ~Apr 3 17:30 UTC** ← bottleneck
+- NewFast2: past_surgical_hx → parathyroid_detail, done ~Apr 3 07:40 UTC → **destroy after**
+- **All 36 domains complete: ~April 3, 2026 17:30 UTC (~1:30 PM ET)**
 
-## Fast2 provisioning notes
+## Fleet changes this session (Apr 2, 2026)
 
-- Vast instance ID: `34031836`
-- Offer ID: `27334652` — H200 (non-NVL) in France, $1.99/hr, driver 575.57.08
-- Ollama 0.9.0 failed to use GPU properly on standard H200 — loaded model to GPU (65/65 layers) but ran inference on CPU (2400% CPU load). Reverted to Ollama 0.19.0 with `OLLAMA_CONTEXT_LENGTH=4096` which correctly offloads to GPU with ~22 tok/s.
-- Throughput: ~6 notes/min (vs ~60/min on NVL servers). Slower but cost-effective at $1.99/hr.
-- Checkpoints from retired H200_G/H200_H2 servers were uploaded from local backups at `/tmp/thyroid_checkpoints/`.
+- **Old Fast2 (34031836) destroyed** — H200 (non-NVL), France, Ollama 0.19.0, only 10 notes/min
+- **NewFast2 (34034310) provisioned** — H200 NVL, Czechia, Ollama 0.9.0, 40-51 notes/min
+- **NewFast2 queue trimmed** — `tg_kinetics`, `cervical_ln_detail`, `molecular_thyroseq_afirma` moved to Primary and Fast1 respectively
+- **Supervisor bug fixed** — `filter_completed_domains()` log() redirect to stderr on Fast1 and NewFast2
