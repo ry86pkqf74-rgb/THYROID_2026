@@ -29,6 +29,31 @@ These did not break source linkage, but they remain schema-quality observations:
 - Older completed artifacts missing `preprocessed_at_utc`: `combined`, `complications`, `genetics`, `imaging`, `labs`, `medications`, `pathology`, `physical_exam`, `problem_list`, `procedures`
 - Some `result_json` payloads do not contain an `entities` key and instead represent valid negative or alternate payload shapes. This is not a provenance failure, but downstream consumers should not assume `entities` is always present.
 
+## Safe post-audit repairs
+
+After the audit, two conservative repairs were executed without changing row linkage:
+
+- `preprocessed_at_utc` was backfilled from the canonical source parquet onto the 10 older completed artifacts that were missing it.
+- Exact empty-object payloads (`{}`) inside `result_json` were normalized to `{"entities": []}` across completed artifacts.
+
+These repairs were revalidated and preserved:
+
+- `UNMATCHED=0`
+- `MISMATCH_RESEARCH_ID=0`
+- `MISMATCH_NOTE_DATE=0`
+- `MISMATCH_WORKBOOK=0`
+- `MISMATCH_SHEET=0`
+- `MISMATCH_COLUMN=0`
+- `INVALID_JSON=0`
+
+Residual payload-shape issues remain only where the original stored payload contains non-empty legacy structures such as:
+
+- `{"error": ...}`
+- `{"parse_error": true, "raw": ...}`
+- partial dicts such as `{"source_line": 15}`
+
+These were intentionally left untouched because rewriting them would discard potentially valuable error-state evidence or hallucinate entity content.
+
 ## Current live fleet
 
 Input corpus size per active domain: `11,037` notes.
