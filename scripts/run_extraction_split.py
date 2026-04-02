@@ -10,8 +10,8 @@ Per-note JSONL checkpointing: every row is flushed immediately so zero
 progress is lost on crash/restart.
 
 Input:  processed/remaining/clinical_notes_long.parquet  (11 037 rows)
-Output: processed/remaining/note_entities_llm_<domain>.parquet  (per domain)
-        processed/remaining/note_entities_llm_combined.parquet   (merged)
+Output: processed/output/note_entities_llm_<domain>.parquet  (per domain)
+        processed/output/note_entities_llm_combined.parquet   (merged)
 
 Usage:
   # Run all 7 domains locally:
@@ -51,7 +51,8 @@ except ImportError:
     pass
 
 PROCESSED_REMAINING = ROOT / "processed" / "remaining"
-PROMPTS_DIR = ROOT / "notes_extraction_new" / "prompts"
+PROCESSED_OUTPUT = ROOT / "processed" / "output"
+PROMPTS_DIR = ROOT / "llm_extraction" / "prompts"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -326,7 +327,7 @@ def main() -> None:
         description="LLM extraction via local Ollama (single or multi-server deployment)")
     parser.add_argument("--input-parquet", type=Path,
                         default=PROCESSED_REMAINING / "clinical_notes_long.parquet")
-    parser.add_argument("--output-dir", type=Path, default=PROCESSED_REMAINING)
+    parser.add_argument("--output-dir", type=Path, default=PROCESSED_OUTPUT)
     parser.add_argument("--url",   default="http://localhost:11434/v1",
                         help="Ollama OpenAI-compatible endpoint")
     parser.add_argument("--model", default="qwen3:14b",

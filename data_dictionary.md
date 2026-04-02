@@ -776,7 +776,7 @@ All six entity tables share a common schema:
 
 Aggregated entity counts per patient across all domains.
 
-See `docs/notes_extraction_spec.md` for controlled vocabularies and extraction details.
+See `docs/llm_extraction_spec.md` for controlled vocabularies and extraction details.
 
 ---
 
@@ -1096,12 +1096,12 @@ COALESCE(
 - Keywords: "collected on", "drawn on", "specimen date:", "result date:", "received:", "reported on", "accession date:"
 - Returns `(date, 1.0)` when keyword found, `(date, 0.7)` for generic nearby date
 
-**`notes_extraction/extract_llm.py` — Functional LLM extractor:**
+**`llm_extraction/extract_llm.py` — Functional LLM extractor:**
 - `_build_prompt()` loads `prompts/lab_date_extraction_v1.txt` system prompt
 - Output JSON schema: `{entity_type, entity_value, entity_date, date_confidence, present_or_negated, evidence_text, source_line}`
 - Explicit instruction: lab dates > note encounter date; `date_confidence=1.0` for keyword-found dates
 
-**`notes_extraction/run_extraction.py` — Selective re-extraction:**
+**`llm_extraction/run_extraction.py` — Selective re-extraction:**
 - `--target DOMAIN` re-extracts only one entity domain (merges with existing parquet)
 - `--research-ids FILE` re-extracts only flagged patients (one research_id per line)
 

@@ -42,7 +42,7 @@ extract these fields, but its output was never materialized to the
 
 ## Architecture Gap: V2 Extractor Materialization
 
-The `OperativeDetailExtractor` in `notes_extraction/extract_operative_v2.py`
+The `OperativeDetailExtractor` in `llm_extraction/extract_operative_v2.py`
 has 13 domain pattern banks that CAN extract berry_ligament, frozen_section,
 EBL, parathyroid management, and more. However:
 

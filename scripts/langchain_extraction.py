@@ -56,7 +56,8 @@ except ImportError:
     pass
 
 PROCESSED_REMAINING = ROOT / "processed" / "remaining"
-PROMPTS_DIR = ROOT / "notes_extraction_new" / "prompts"
+PROCESSED_OUTPUT = ROOT / "processed" / "output"
+PROMPTS_DIR = ROOT / "llm_extraction" / "prompts"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -386,7 +387,7 @@ def main() -> None:
     args = parser.parse_args()
 
     # Resolve paths
-    output_dir = args.output_dir or PROCESSED_REMAINING
+    output_dir = args.output_dir or PROCESSED_OUTPUT
     input_parquet = args.input_parquet or (PROCESSED_REMAINING / "clinical_notes_long.parquet")
     output_dir.mkdir(parents=True, exist_ok=True)
 

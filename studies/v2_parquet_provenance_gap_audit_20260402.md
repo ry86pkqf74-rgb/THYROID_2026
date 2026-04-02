@@ -2,7 +2,7 @@
 
 ## Scope
 
-This audit compares the schemas of all parquet files currently staged under `output/v2_parquets/` and treats the union of observed columns as the stricter current V2 staging schema.
+This audit compares the schemas of all parquet files currently staged under `processed/output/v2_parquets/` and treats the union of observed columns as the stricter current V2 staging schema.
 
 Observed full column set:
 
@@ -64,4 +64,4 @@ The staged V2 parquet set is still mixed-schema.
 - 5 files are provenance-complete under the current stricter schema.
 - 10 files are older copied artifacts that still lack the 3 preprocessing fields.
 
-That is sufficient reason to keep `output/v2_parquets/` as a live staging area rather than promoting it to a canonical frozen bundle.
+That is sufficient reason to keep `processed/output/v2_parquets/` as a live staging area rather than promoting it to a canonical frozen bundle.

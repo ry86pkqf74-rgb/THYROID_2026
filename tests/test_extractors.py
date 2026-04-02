@@ -1,4 +1,4 @@
-"""Tests for notes_extraction regex extractors."""
+"""Tests for llm_extraction regex extractors."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from notes_extraction.extract_regex import (
+from llm_extraction.extract_regex import (
     ComplicationExtractor,
     GeneticsExtractor,
     MedicationExtractor,

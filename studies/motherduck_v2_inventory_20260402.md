@@ -127,7 +127,7 @@ There is no reachable thyroid table inventory to compare against the 14 staged V
 
 ## Local V2 inventory status
 
-Local V2 staging remains intact in `output/v2_parquets/`:
+Local V2 staging remains intact in `processed/output/v2_parquets/`:
 
 - 14 domain parquets
 - 1 combined parquet

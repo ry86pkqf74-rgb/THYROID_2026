@@ -492,7 +492,7 @@ Executed: {timestamp}
 
 ```
 clinical_notes_long
-    ↓ OperativeDetailExtractor (notes_extraction/extract_operative_v2.py)
+    ↓ OperativeDetailExtractor (llm_extraction/extract_operative_v2.py)
     ↓
 script 71 — UPDATE operative_episode_detail_v2 (10/11 NLP fields populated)
     ↓

@@ -94,7 +94,7 @@ Total operative episodes: **9371**
 | `parathyroid_resection_flag` | 0 | 0.0% | **ZERO** |
 
 > Fields marked **ZERO** remain NOT_PARSED (not confirmed-negative). The V2 extractor
-> codebase exists at `notes_extraction/extract_operative_v2.py` but outputs were never
+> codebase exists at `llm_extraction/extract_operative_v2.py` but outputs were never
 > materialized to local DuckDB. `FALSE` = UNKNOWN, not confirmed-absent.
 
 **Zero-materialized count: 5** (per `val_operative_nlp_propagation_v1`)  

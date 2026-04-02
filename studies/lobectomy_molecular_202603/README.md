@@ -16,7 +16,7 @@ export LOCAL_DB_PATH="your_token_here"   # or rely on secrets.toml
 .venv/bin/python studies/lobectomy_molecular_202603/run_pipeline.py
 ```
 
-Artifacts land in `outputs/lobectomy_molecular_202603/`:
+Artifacts land in `processed/processed/outputs/lobectomy_molecular_202603/`:
 
 | Output | Description |
 |--------|-------------|
@@ -58,7 +58,7 @@ See [`manuscript_draft.md`](manuscript_draft.md). Word export (requires [pandoc]
 
 ```bash
 pandoc studies/lobectomy_molecular_202603/manuscript_draft.md \
-  -o outputs/lobectomy_molecular_202603/manuscript_draft.docx
+  -o processed/outputs/lobectomy_molecular_202603/manuscript_draft.docx
 ```
 
 ## Citation / provenance

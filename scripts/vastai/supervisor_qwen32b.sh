@@ -41,22 +41,22 @@ acquire_lock() {
 
 archive_stale_artifacts() {
     local archive_dir
-    archive_dir="output/archive_$(date '+%Y%m%d_%H%M%S')"
+    archive_dir="processed/output/archive_$(date '+%Y%m%d_%H%M%S')"
     mkdir -p "$archive_dir"
 
-    if [[ -f output/note_entities_llm_combined.parquet ]]; then
-        mv output/note_entities_llm_combined.parquet "$archive_dir/"
+    if [[ -f processed/output/note_entities_llm_combined.parquet ]]; then
+        mv processed/output/note_entities_llm_combined.parquet "$archive_dir/"
         log "Archived stale single-domain combined parquet"
     fi
 
-    if [[ -f output/note_entities_llm_staging.parquet.contaminated ]]; then
-        mv output/note_entities_llm_staging.parquet.contaminated "$archive_dir/"
+    if [[ -f processed/output/note_entities_llm_staging.parquet.contaminated ]]; then
+        mv processed/output/note_entities_llm_staging.parquet.contaminated "$archive_dir/"
         log "Archived contaminated staging parquet marker"
     fi
 
     for domain in complications functional_outcomes operative_details past_surgical_hx patient_decision_adherence; do
         local ckpt
-        ckpt="output/note_entities_llm_${domain}.ckpt.jsonl"
+        ckpt="processed/output/note_entities_llm_${domain}.ckpt.jsonl"
         if [[ -f "$ckpt" ]] && [[ "$(wc -l < "$ckpt")" -eq 0 ]]; then
             mv "$ckpt" "$archive_dir/"
             log "Archived zero-row checkpoint: $domain"
@@ -74,12 +74,12 @@ archive_domain_artifacts() {
     local domain="$1"
     local reason="$2"
     local archive_dir
-    archive_dir="output/archive_$(date '+%Y%m%d_%H%M%S')_${domain}"
+    archive_dir="processed/output/archive_$(date '+%Y%m%d_%H%M%S')_${domain}"
     mkdir -p "$archive_dir"
 
     for artifact in \
-        "output/note_entities_llm_${domain}.ckpt.jsonl" \
-        "output/note_entities_llm_${domain}.parquet" \
+        "processed/output/note_entities_llm_${domain}.ckpt.jsonl" \
+        "processed/output/note_entities_llm_${domain}.parquet" \
         "/var/log/worker_${domain}.log"
     do
         if [[ -f "$artifact" ]]; then
@@ -118,8 +118,8 @@ PY
 
 domain_is_complete() {
     local domain="$1"
-    local ckpt="output/note_entities_llm_${domain}.ckpt.jsonl"
-    local parquet="output/note_entities_llm_${domain}.parquet"
+    local ckpt="processed/output/note_entities_llm_${domain}.ckpt.jsonl"
+    local parquet="processed/output/note_entities_llm_${domain}.parquet"
 
     if [[ -f "$ckpt" ]] && [[ "$(wc -l < "$ckpt")" -ge "$TOTAL_NOTES" ]]; then
         return 0
@@ -154,7 +154,7 @@ filter_completed_domains() {
 
 run_domain() {
     local domain="$1"
-    local ckpt="output/note_entities_llm_${domain}.ckpt.jsonl"
+    local ckpt="processed/output/note_entities_llm_${domain}.ckpt.jsonl"
     local before_count=0
     local after_count=0
 
@@ -174,7 +174,7 @@ run_domain() {
         log "START $domain (fresh)"
     fi
 
-    mkdir -p processed/remaining output notes_extraction_new/prompts
+    mkdir -p processed/remaining processed/output llm_extraction/prompts
     ln -sf /opt/thyroid_extraction/clinical_notes_long.parquet processed/remaining/clinical_notes_long.parquet
 
     python3 scripts/run_extraction_concurrent.py \
@@ -182,7 +182,7 @@ run_domain() {
         --model "$MODEL" \
         --domains "$domain" \
         --concurrency "$CONCURRENCY" \
-        --output-dir /opt/thyroid_extraction/output \
+        --output-dir /opt/thyroid_extraction/processed/output \
         --input-parquet /opt/thyroid_extraction/processed/remaining/clinical_notes_long.parquet \
         2>&1 | tee -a "/var/log/worker_${domain}.log"
 

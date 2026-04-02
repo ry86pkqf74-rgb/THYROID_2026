@@ -6,7 +6,7 @@ Verification mode: plain_md_session_read_parquet
 
 ## Labs
 
-- Fixed parquet: /Users/loganglosser/THYROID_2026/output/v2_parquets/note_entities_llm_labs.parquet
+- Fixed parquet: /Users/loganglosser/THYROID_2026/processed/output/v2_parquets/note_entities_llm_labs.parquet
 - Backup parquet: /tmp/note_entities_llm_labs_pre_dedup_20260402.parquet
 - Local rows: 11037
 - Local unique note_row_id: 11037
@@ -16,7 +16,7 @@ Verification mode: plain_md_session_read_parquet
 
 ## Complications
 
-- Materialized parquet: /Users/loganglosser/THYROID_2026/output/v2_parquets/note_entities_llm_complications.parquet
+- Materialized parquet: /Users/loganglosser/THYROID_2026/processed/output/v2_parquets/note_entities_llm_complications.parquet
 - Local rows: 11037
 - Local unique note_row_id: 11037
 - MotherDuck rows: 11037

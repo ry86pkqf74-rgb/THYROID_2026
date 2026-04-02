@@ -113,6 +113,6 @@ lower bounds, not prevalences.
 2. **Annotate `not_parsed_as_false`** boolean fields in the SAP and manuscript methods
    for `berry_ligament`, `frozen_section`, `ebl` fields
 3. **Targeted NLP re-run** for parathyroid autotransplant: run
-   `notes_extraction/extract_operative_v2.py` against the 32 identified patients and
+   `llm_extraction/extract_operative_v2.py` against the 32 identified patients and
    check if they appear in `operative_details` under different surgery dates
 4. **RLN monitoring** (1,702, 15.6%) is reliable and usable as a process quality indicator

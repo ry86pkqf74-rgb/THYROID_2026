@@ -59,5 +59,5 @@ Survival analyses use the 222 patients with usable event dates plus all censored
 - **Tg labs**: `thyroglobulin_labs` (local DuckDB, 30,245 values, 2,569 patients)
 - **Date readiness audit**: `val_recurrence_readiness_v1` (local DuckDB, 10 rows)
 - **Recurrence detection view**: `vw_recurrence_by_detection_method` (4 rows)
-- **Phase 8 report**: `notes_extraction/phase8_final_report.md`
+- **Phase 8 report**: `llm_extraction/phase8_final_report.md`
 - **Structural gap doc**: `docs/recurrence_structural_gap_maximization_20260313.md`

@@ -20,8 +20,8 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from notes_extraction.extract_rai_v2 import RAIDetailExtractor
-from notes_extraction.extract_operative_v2 import OperativeDetailExtractor
+from llm_extraction.extract_rai_v2 import RAIDetailExtractor
+from llm_extraction.extract_operative_v2 import OperativeDetailExtractor
 
 NOTE_ROW_ID = "test_enrich_001"
 RESEARCH_ID = 42

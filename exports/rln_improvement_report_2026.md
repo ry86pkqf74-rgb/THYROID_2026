@@ -1,8 +1,8 @@
 # RLN Injury Refinement Report
 
 **Date:** 2026-03-12
-**Pipeline:** `notes_extraction/rln_refined_pipeline.py`
-**Evaluator:** `notes_extraction/intrinsic_evaluator.py`
+**Pipeline:** `llm_extraction/rln_refined_pipeline.py`
+**Evaluator:** `llm_extraction/intrinsic_evaluator.py`
 
 ## Executive Summary
 
@@ -116,10 +116,10 @@ odds of confirmed RLN injury (p=0.021).
 
 | File | Purpose |
 |------|---------|
-| `notes_extraction/intrinsic_evaluator.py` | Reusable evaluation framework (any entity) |
-| `notes_extraction/rln_refined_pipeline.py` | RLN-specific pipeline + deploy function |
+| `llm_extraction/intrinsic_evaluator.py` | Reusable evaluation framework (any entity) |
+| `llm_extraction/rln_refined_pipeline.py` | RLN-specific pipeline + deploy function |
 | `prompts/rln_injury_v2.txt` | Structured LLM judge prompt template |
-| `notes_extraction/rln_intrinsic_eval_report.md` | Intrinsic evaluation report |
+| `llm_extraction/rln_intrinsic_eval_report.md` | Intrinsic evaluation report |
 | `notebooks/rln_sensitivity_v2.ipynb` | Interactive sensitivity analysis notebook |
 | `exports/rln_sensitivity_analysis_v2.csv` | OR results for all tier definitions |
 | `exports/rln_improvement_report_2026.md` | This report |

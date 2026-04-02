@@ -55,12 +55,12 @@ exports/THYROID_2026_MANUSCRIPT_FREEZE_*.zip
 # ── Logs (ephemeral) ─────────────────────────────────────────
 logs/
 
-# ── Notes extraction intermediate artifacts ───────────────────
-notes_extraction/audit_*.parquet
-notes_extraction/rln_*.parquet
-notes_extraction/missed_data_sweep_*.parquet
-notes_extraction/phase*_results_*.json
-notes_extraction/phase*_preop_molecular_refinement_*.md
+# ── LLM extraction intermediate artifacts ───────────────────
+llm_extraction/audit_*.parquet
+llm_extraction/rln_*.parquet
+llm_extraction/missed_data_sweep_*.parquet
+llm_extraction/phase*_results_*.json
+llm_extraction/phase*_preop_molecular_refinement_*.md
 
 # ── Study outputs with timestamped duplicates ─────────────────
 studies/manuscript_package_*/
@@ -68,9 +68,9 @@ studies/manuscript_package_*/
 # ── Extraction pipeline: PHI-sensitive data (never commit) ────
 processed/remaining/*.parquet
 processed/remaining/*.csv
-output/*.parquet
+processed/output/*.parquet
 
 # ── Extraction pipeline: checkpoint & output data (OK to commit) ──
-# output/*.ckpt.jsonl — these are committed
-# output/server_checkpoints/ — committed
-# output/v2_backup/ — committed
+# processed/output/*.ckpt.jsonl — may be committed
+# processed/output/server_checkpoints/ — committed
+# processed/output/v2_backup/ — committed

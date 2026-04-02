@@ -18,7 +18,7 @@ the un-enriched base table and the NLP fields remained at default values.
 **Script 71** (`71_operative_nlp_to_local DuckDB.py`) is the correct fix path.  It:
 1. Connects to local DuckDB RW (`thyroid_master.duckdb`)
 2. Loads `clinical_notes_long` (operative note sub-set)
-3. Runs `OperativeDetailExtractor` (in `notes_extraction/extract_operative_v2.py`)
+3. Runs `OperativeDetailExtractor` (in `llm_extraction/extract_operative_v2.py`)
 4. Stages results into a temp table `_v2_operative_enrichment`
 5. Issues `UPDATE operative_episode_detail_v2 SET ... FROM _v2_operative_enrichment`
 6. Recreates the `md_oper_episode_detail_v2` mirror via script 26 re-run
@@ -72,7 +72,7 @@ requires a targeted re-materialize (`scripts/26_local DuckDB_materialize_v2.py -
 | `parathyroid_resection_flag` | Separate entity from autograft, not yet added |
 
 Category C fields cannot be improved without adding entities to
-`notes_extraction/vocab.py` and re-running script 71.
+`llm_extraction/vocab.py` and re-running script 71.
 
 ---
 

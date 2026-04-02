@@ -10,7 +10,7 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from notes_extraction.extract_histology_v2 import HistologyDetailExtractor
+from llm_extraction.extract_histology_v2 import HistologyDetailExtractor
 
 NOTE_ROW_ID = "test_001"
 RESEARCH_ID = 1

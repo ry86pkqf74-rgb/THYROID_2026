@@ -37,7 +37,7 @@
 
 - Tech stack: Python, pandas, scipy, statsmodels, lifelines, scikit-learn, matplotlib, DuckDB, local DuckDB, Streamlit, Parquet (DVC-tracked), openpyxl for Excel
 - Primary key for all tables: `research_id` (int); standardize column names like "Research ID number", "Research_ID#" to `research_id`
-- Project layout: `/processed/` (parquet), `/raw/` (source files), `/exports/` (CSV exports), `/scripts/` (ETL), `/studies/` (study outputs)
+- Project layout: `/processed/` (parquet + `processed/output/` LLM staging + `processed/outputs/` gold-style study artifacts), `/raw/` (source files), `/exports/` (CSV exports), `/scripts/` (ETL), `/studies/` (study outputs), `/llm_extraction/` (Python package: regex + LLM extractors; import `llm_extraction`, formerly `notes_extraction`), `/lakehouse/` (bronze/silver/gold READMEs; see `docs/REPO_ARCHITECTURE_V2.md`)
 - Key views/tables: `ptc_cohort`, `recurrence_risk_cohort`, `tumor_pathology`, `master_cohort`, `advanced_features_view`, `advanced_features_v2`, `advanced_features_v3`
 - Reconciliation V2 views (script 16): `histology_reconciliation_v2`, `molecular_episode_v2`, `molecular_unresolved_audit_mv`, `rai_episode_v2`, `rai_unresolved_audit_mv`, `timeline_rescue_mv`, `timeline_unresolved_summary_mv`, `validation_failures_v2`, `patient_validation_rollup_mv`, `patient_master_timeline_v2`, `patient_reconciliation_summary_v`, `patient_episode_audit_v`
 - Semantic Cleanup V3 views (script 17): replaces all 6 `enriched_note_entities_*` views with date_status taxonomy; adds `validation_failures_v3`, `patient_validation_rollup_v2_mv`, `timeline_rescue_v2_mv`, `timeline_unresolved_summary_v2_mv`
@@ -88,7 +88,7 @@
 - V2 QA tables (script 25): `qa_issues_v2`, `qa_date_completeness_v2`, `qa_summary_by_domain_v2`, `qa_high_priority_review_v2`
 - V2 local DuckDB materialization (script 26): all v2 tables with `md_` prefix plus `md_manual_review_queue_summary_v2`
 - V2 deployment order: 22 -> 23 -> 24 -> 25 -> 26 (after existing scripts 15-20)
-- V2 extractors: `MolecularDetailExtractor`, `RAIDetailExtractor`, `ImagingNoduleExtractor`, `OperativeDetailExtractor`, `HistologyDetailExtractor` in `notes_extraction/extract_*_v2.py`
+- V2 extractors: `MolecularDetailExtractor`, `RAIDetailExtractor`, `ImagingNoduleExtractor`, `OperativeDetailExtractor`, `HistologyDetailExtractor` in `llm_extraction/extract_*_v2.py`
 - V2 date utilities in `utils/date_utils.py`: `classify_date_status`, `compute_date_confidence`, `resolve_event_date`, `compute_temporal_offset`, `parse_date_safe`, `find_best_anchor`
 - `extract_nearby_date` supports MM/DD/YYYY, YYYY-MM-DD (ISO), and month-name formats (e.g. "January 15, 2024", "15 Mar 2024"); year bounds 1990-2030
 - `safe_float()` in `utils/text_helpers.py` provides safe numeric parsing; all V2 extractors use it instead of bare `float()`
@@ -103,7 +103,7 @@
 - All 5 V2 extractors guard against `None`/empty `note_text` and return `[]`; Bethesda extraction uses `check_negation()` instead of hardcoded `"present"`
 - V2 test suite: `test_molecular_parser.py`, `test_rai_parser.py`, `test_imaging_parser.py`, `test_operative_parser.py`, `test_histology_parser.py`, `test_date_utils.py`, `test_linkage_confidence.py` in `tests/`
 - V2 test fixtures in `conftest.py`: `sample_molecular_report`, `sample_rai_report`, `sample_us_report`, `sample_detailed_op_note`, `sample_path_report`, `sample_conflicting_path`
-- V2 normalization maps added to `notes_extraction/vocab.py`: `MOLECULAR_PLATFORM_NORM`, `MOLECULAR_RESULT_NORM`, `RAI_INTENT_NORM`, `RAI_STATUS_NORM`, `COMPOSITION_NORM`, `ECHOGENICITY_NORM`, `OPERATIVE_FINDING_NORM`, `HISTOLOGY_DETAIL_NORM`
+- V2 normalization maps added to `llm_extraction/vocab.py`: `MOLECULAR_PLATFORM_NORM`, `MOLECULAR_RESULT_NORM`, `RAI_INTENT_NORM`, `RAI_STATUS_NORM`, `COMPOSITION_NORM`, `ECHOGENICITY_NORM`, `OPERATIVE_FINDING_NORM`, `HISTOLOGY_DETAIL_NORM`
 - V2 app module files: `extraction_completeness.py`, `molecular_dashboard.py`, `rai_dashboard.py`, `imaging_nodule_dashboard.py`, `operative_dashboard.py`, `adjudication_summary.py`
 - Streamlit v2 tabs query with `tbl_exists` fallback: try canonical table name first (e.g. `molecular_test_episode_v2`), then `md_` prefixed version (e.g. `md_molecular_test_episode_v2`)
 - All writes target `thyroid_master.duckdb` (bare names); all `note_entities_*` reads in enriched views come from `thyroid_share.note_entities_*` or bare names depending on context
@@ -323,8 +323,8 @@
 - Column provenance for high-missingness variables: `tumor_size_cm` from `tumor_pathology.histology_1_largest_tumor_cm` or `path_synoptics.tumor_1_size_greatest_dimension_cm`; `ln_positive` from `tumor_pathology.histology_1_ln_positive` or `path_synoptics.tumor_1_ln_involved`; `specimen_weight_g` from `path_synoptics.weight_total`; semicolons in path_synoptics numeric fields cleaned via `REPLACE(';','')`
 - Competing-risks preset `COMPETING_RISK_PRESETS["recurrence_vs_death"]` expects `time_to_event_days`/`event_occurred`/`death_occurred` but `survival_cohort_enriched` uses `time_days`/`event`; column renaming required at consumption
 - Validation framework comprises 7 scripts: `21_validation_tests.py`, `25_qa_validation_v2.py` (18 QA rules), `29_validation_engine.py` (9 `val_*` tables incl. `val_rln_intrinsic_eval`), `29_validation_runner.py`, `44_hypothesis_validation_extension.py`, `15_final_validation_and_release.py`, `11.5_cross_file_validation.py`
-- RLN refinement pipeline: `notes_extraction/rln_refined_pipeline.py` deploys `extracted_rln_injury_refined_v2` (92 rows), `extracted_rln_injury_refined_summary_v2` (1 row), `extracted_rln_exclusion_audit_v2` (1 row) to local DuckDB; context-aware SQL rules exclude 587/654 Tier 3 false positives (risk discussions, preservation language, historical references, same-day H&P boilerplate)
-- `notes_extraction/intrinsic_evaluator.py`: reusable `IntrinsicEvaluator` class + `refine_extraction(entity_name, sample_size)` function for any complication entity; heuristic rules: risk_discussion, preservation_language, historical_reference, same_day_hp_generic, true_injury_language, diagnosis_section, specific_entity_post_day0
+- RLN refinement pipeline: `llm_extraction/rln_refined_pipeline.py` deploys `extracted_rln_injury_refined_v2` (92 rows), `extracted_rln_injury_refined_summary_v2` (1 row), `extracted_rln_exclusion_audit_v2` (1 row) to local DuckDB; context-aware SQL rules exclude 587/654 Tier 3 false positives (risk discussions, preservation language, historical references, same-day H&P boilerplate)
+- `llm_extraction/intrinsic_evaluator.py`: reusable `IntrinsicEvaluator` class + `refine_extraction(entity_name, sample_size)` function for any complication entity; heuristic rules: risk_discussion, preservation_language, historical_reference, same_day_hp_generic, true_injury_language, diagnosis_section, specific_entity_post_day0
 - Original Tier 3 NLP RLN precision: 3.5% (intrinsic eval n=200); 92% of mentions are consent/risk boilerplate; same-day H&P `rln_injury` matches are essentially all false positives; `vocal_cord_paralysis`/`vocal_cord_paresis` have higher specificity
 - Refined RLN rates: total 92 patients (0.85%), confirmed 59 (0.54%); Tier 1: 6, Tier 2: 19, Tier 3 confirmed: 34, Tier 3 suspected: 33; aligns with published 1-3% transient / <1% permanent benchmarks
 - Sensitivity analysis: refined confirmed CLN-RLN OR=1.878 (p=0.021) vs original inflated OR=1.485 (p<0.0001); removing false positives *strengthens* the association signal
@@ -335,7 +335,7 @@
 - Consent boilerplate source: every H&P contains verbatim risk list "scarring, hypocalcemia, hoarseness, chyle leak, seroma, numbness, orodental trauma..." — this contaminates ALL entity extractions from H&P notes
 - Valsalva hemostasis check phrase source: "Valsalva to 20-30 cm H2O performed to confirm hemostasis and lack of a chyle leak" appears in ~2,300 op_notes; regex matches "chyle leak" but meaning is confirmed ABSENCE — adds "lack of" to NEGATION_CUES recommendation
 - SSI abbreviation collision: "SSI" in wound_infection matches sliding scale insulin in diabetic management notes; recommend removing "SSI" from wound_infection regex vocabulary
-- Complication refinement pipeline: `notes_extraction/complications_refined_pipeline.py` deploys 9 tables including `extracted_complications_refined_v5` (358 rows UNION ALL) and `patient_refined_complication_flags_v2` (287 patients with any refined complication)
+- Complication refinement pipeline: `llm_extraction/complications_refined_pipeline.py` deploys 9 tables including `extracted_complications_refined_v5` (358 rows UNION ALL) and `patient_refined_complication_flags_v2` (287 patients with any refined complication)
 - Refined complication counts post-refinement: chyle_leak=20 confirmed, seroma=28 confirmed (from structured), hematoma=38 confirmed (from structured), hypocalcemia=18 confirmed+47 probable, hypoparathyroidism=34 confirmed+21 probable, rln_injury=92 (already refined), wound_infection=2 confirmed
 - `extracted_complications_refined_v5`: UNION ALL of all 7 entities; schema: research_id, detection_date, entity_name, entity_is_confirmed, entity_tier (1=confirmed/2=probable/3=uncertain), entity_evidence_strength, source_tier_label, mention_count, refined_at
 - `patient_refined_complication_flags_v2`: wide-format per-patient flags; columns: refined_*/confirmed_* for each entity; use this table in H1/H2 models instead of raw `note_entities_complications` NLP queries
@@ -343,12 +343,12 @@
 - `complications.hypocalcemia` and `complications.hypoparathyroidism` are ALL NULL across 10,864 rows — these structured fields were never populated; only source is refined NLP
 - NLP `recurrence` events in `extracted_clinical_events_v4` are contaminated (6,405 events from single words "recurrence/recurrent" in H&P notes); use `recurrence_risk_features_mv.recurrence_flag` (structured) as recurrence endpoint in H1/H2
 - Script 29 validation engine now has `val_complication_refinement` table (10th validation view) comparing raw vs refined counts per entity
-- Audit engine: `notes_extraction/extraction_audit_engine.py` with `EntityClassifier`, `MissedEventDetector`, `ExcelCellAnalyzer`, `audit_entity()`, `master_audit()`, `run_missed_data_sweep()`; CLI: `--all/--entity/--inventory-only/--md/--local/--dry-run`
-- One-command runner: `notes_extraction/run_full_audit_and_refine.py` orchestrates audit + refinement; flags: `--all`, `--entity`, `--inventory-only`, `--refine-only`, `--audit-only`, `--md`, `--local`, `--dry-run`
+- Audit engine: `llm_extraction/extraction_audit_engine.py` with `EntityClassifier`, `MissedEventDetector`, `ExcelCellAnalyzer`, `audit_entity()`, `master_audit()`, `run_missed_data_sweep()`; CLI: `--all/--entity/--inventory-only/--md/--local/--dry-run`
+- One-command runner: `llm_extraction/run_full_audit_and_refine.py` orchestrates audit + refinement; flags: `--all`, `--entity`, `--inventory-only`, `--refine-only`, `--audit-only`, `--md`, `--local`, `--dry-run`
 - Missed-data sweep results: very few missed true events (7 potential in 500 patients); false positives dominate over false negatives for all complication entities
 - Overall data-quality confidence score (post-refinement): 87/100; raw NLP complication flags = 3.3% precision and must NOT be used in published analyses without refinement
 - Phase 4 Source-Specific Variable Refinement (2026-03-12): source hierarchy path_report (1.0) > op_note (0.9) > endocrine (0.8) > discharge (0.7) > imaging (0.7) > other (0.5) > h_p_consent (0.2)
-- Phase 4 audit engine v2: `notes_extraction/extraction_audit_engine_v2.py` with `SourceClassifier`, `SourceWeightedClassifier`, `CrossSourceReconciler`, `audit_and_refine_by_source()`; VARIABLE_CONFIGS dict for ete/tumor_size/margin_status/vascular_invasion/perineural_invasion/lvi/braf_status/recurrence_site
+- Phase 4 audit engine v2: `llm_extraction/extraction_audit_engine_v2.py` with `SourceClassifier`, `SourceWeightedClassifier`, `CrossSourceReconciler`, `audit_and_refine_by_source()`; VARIABLE_CONFIGS dict for ete/tumor_size/margin_status/vascular_invasion/perineural_invasion/lvi/braf_status/recurrence_site
 - ETE NLP audit: 289/889 (32.5%) mentions are h&p consent boilerplate (0% precision); path_report/op_note/endocrine have 100% precision; structured path_synoptics is gold standard (3,850 patients)
 - ETE grade distribution (10,871 patients): gross=27 (0.25%), microscopic=265 (2.4%), present_ungraded=3,558 (32.7%), none=7,021 (64.6%); 'x' placeholder = present_ungraded (3,382 cases)
 - `extracted_ete_refined_v1` table: per-patient ETE with path/op/imaging source split; columns: ete_path_confirmed, ete_op_note_observed, ete_overall_confirmed, ete_grade, ete_source_of_truth, ete_concordance_status
@@ -360,7 +360,7 @@
 - path_synoptics 'x' pattern: ALL invasion/margin fields use 'x' as present/positive placeholder (same as ETE); normalize 'x'/'X'/'present' → 'positive' for margins, 'present_ungraded' for vascular/LVI
 - `val_source_specific_refinement` validation table (11th val_* table in script 29): cross-source concordance audit for ETE, vascular invasion, LVI, PNI, margin
 - H1 Phase 4 sensitivity: CLN-recurrence OR=1.265 unchanged after adjusting for path-confirmed ETE (ETE OR=1.035, p=0.661); ETE not a confounder of CLN-recurrence association in lobectomy cohort
-- Variable inventory: `notes_extraction/variable_inventory_phase4.{py,md,json}` with 15 variables scored on clinical_impact/fill_rate/precision/source_diversity; top priority = ETE, tumor_size, margin_status, vascular_invasion, LVI, PNI, BRAF, recurrence_site
+- Variable inventory: `llm_extraction/variable_inventory_phase4.{py,md,json}` with 15 variables scored on clinical_impact/fill_rate/precision/source_diversity; top priority = ETE, tumor_size, margin_status, vascular_invasion, LVI, PNI, BRAF, recurrence_site
 - Overall data quality uplift Phase 4: 87 → 91/100; remaining gap: TERT molecular attribution, 'x' placeholder sub-grading (3,558 ungraded ETE), calcium/PTH lab table
 - DuckDB `DISTINCT ON (col)` does not reliably deduplicate when joining tables that themselves have multiple rows per key (e.g., `recurrence_risk_features_mv` has up to 25 rows per research_id); always use `QUALIFY ROW_NUMBER() OVER (PARTITION BY research_id ORDER BY ...) = 1` or `GROUP BY research_id` with aggregation for safe deduplication before joining
 - `recurrence_risk_features_mv` has multiple rows per research_id (up to 25; 4,976 rows for 3,986 unique patients); always aggregate with `GROUP BY research_id` + `BOOL_OR(recurrence_flag)` / `MIN(first_recurrence_date)` before using in joins
@@ -369,7 +369,7 @@
 - Python dataclass inheritance with required fields: when a parent dataclass has required positional fields (no defaults), a child dataclass cannot add new fields (even with defaults) without providing all parent required fields at construction time; workaround is to define a standalone flat dataclass that mirrors parent fields rather than inheriting
 - When building per-patient wide tables from path_synoptics, join to recurrence_risk_features_mv and molecular_test_episode_v2 using `CAST(research_id AS VARCHAR)` = `CAST(other.research_id AS VARCHAR)` for safe cross-type key matching, or ensure both sides have the same integer type
 - `logistic_regression_recurrence(df, include_ete=True)` in script 42 is the Phase 4 ETE sensitivity entry point; it adds `ete_path_confirmed_int` as an additional covariate when `patient_refined_staging_flags_v3` is joined via the main cohort SQL
-- Phase 5 engine: `notes_extraction/extraction_audit_engine_v3.py` with GradingParser, MolecularMarkerCleaner, NumericValueParser, LabIngestionPipeline, CrossSourceReconciler_v2, ExtranodaParser, plus `audit_and_refine_top5()` orchestrator
+- Phase 5 engine: `llm_extraction/extraction_audit_engine_v3.py` with GradingParser, MolecularMarkerCleaner, NumericValueParser, LabIngestionPipeline, CrossSourceReconciler_v2, ExtranodaParser, plus `audit_and_refine_top5()` orchestrator
 - Phase 5 new tables: `extracted_ete_subgraded_v1` (3,558 rows), `extracted_molecular_refined_v1` (11,296 rows), `extracted_postop_labs_v1` (350 rows), `extracted_rai_validated_v1` (862 rows), `extracted_ene_refined_v1` (1,266 rows), `patient_refined_master_clinical_v4` (11,861 rows)
 - ETE sub-grading results: 183 of 3,558 ungraded sub-graded (21 gross, 1 microscopic, 161 op-note-none-but-path-positive); combined: 48 gross (up from 27), 266 microscopic (up from 265), 3,375 still ungraded
 - TERT recovery: 1 → 96 TERT-positive patients; 5,075 tested; sourced from `molecular_test_episode_v2.tert_flag`; `recurrence_risk_features_mv` only had 1 TERT+ (severe undercounting)
@@ -382,10 +382,10 @@
 - Script 26 MATERIALIZATION_MAP expanded to 80 entries (was 74): adds 6 Phase 5 tables (`md_extracted_ete_subgraded_v1`, `md_extracted_molecular_refined_v1`, `md_extracted_postop_labs_v1`, `md_extracted_rai_validated_v1`, `md_extracted_ene_refined_v1`, `md_patient_refined_master_clinical_v4`)
 - Script 29 validation expanded with `val_phase5_refinement` (12th val_* table): tracks per-variable input/refined/still-ungraded counts
 - Overall data quality score Phase 5: 91 → 93/100; molecular markers domain: 45 → 85/100 (TERT fix); post-op labs: 0 → 35/100 (new table)
-- Phase 5 report: `notes_extraction/master_top5_refinement_report_phase5.md`
+- Phase 5 report: `llm_extraction/master_top5_refinement_report_phase5.md`
 - Phase 5 figure: `exports/fig_ete_subgrading_distribution.png` (300 DPI, before/after ETE distribution)
 - Phase 5 suggested Phase 6 priorities: (1) calcium/PTH lab expansion from Excel, (2) RAI dose NLP from nuclear medicine notes, (3) ETE x→microscopic reclassification rule, (4) TERT C228T/C250T sub-typing, (5) ENE extent grading from path reports
-- Phase 6 engine: `notes_extraction/extraction_audit_engine_v4.py` with MarginDistanceParser, InvasionGrader (WHO 2022 vascular grading), LNYieldCalculator, ENEDeepener, plus `audit_and_refine_phase6()` orchestrator
+- Phase 6 engine: `llm_extraction/extraction_audit_engine_v4.py` with MarginDistanceParser, InvasionGrader (WHO 2022 vascular grading), LNYieldCalculator, ENEDeepener, plus `audit_and_refine_phase6()` orchestrator
 - Phase 6 new tables: `extracted_margins_refined_v1` (3,957 rows), `extracted_invasion_profile_v1` (3,780 rows), `extracted_ln_yield_v1` (8,339 rows), `extracted_ene_refined_v2` (1,267 rows), `extracted_staging_details_refined_v1` (8,399 rows consolidated), `patient_refined_master_clinical_v5` (11,861 rows, 81 columns)
 - Phase 6 summary views: `vw_margins_by_source` (4 rows: R-class breakdown), `vw_invasion_profile` (12 rows: entity x grade), `vw_ln_yield_summary` (1 row: aggregate stats)
 - Margin R-classification: R0=1, R1=3896, R2=25, Rx=35; 'x' in path_synoptics margin_status = involved; 1,525/3,957 (38.5%) have distance measurement; R2 requires both margin_involved + gross ETE
@@ -398,10 +398,10 @@
 - Script 26 MATERIALIZATION_MAP expanded to 89 entries (was 80): adds 9 Phase 6 tables
 - Script 29 validation expanded with `val_phase6_staging_refinement` (13th val_* table): per-variable counts with source attribution
 - Overall data quality score Phase 6: 93/100 (up from 91 in Phase 5); 87% of vascular/LVI remain 'present_ungraded' — primary gap
-- Phase 6 report: `notes_extraction/master_refinement_report_phase6.md`; figure: `exports/fig_margins_invasions_by_source.png`
-- Phase 6 auto-generated report: `notes_extraction/phase6_staging_refinement_YYYYMMDD_HHMM.md`
+- Phase 6 report: `llm_extraction/master_refinement_report_phase6.md`; figure: `exports/fig_margins_invasions_by_source.png`
+- Phase 6 auto-generated report: `llm_extraction/phase6_staging_refinement_YYYYMMDD_HHMM.md`
 - path_synoptics `age` column is named `age` (not `age_at_surgery`); use `ps.age` when querying path_synoptics directly
-- Phase 7 engine: `notes_extraction/extraction_audit_engine_v5.py` with FNABethesdaParser, MolecularPanelCleaner, PreopImagingReconciler, plus `audit_and_refine_phase7()` orchestrator
+- Phase 7 engine: `llm_extraction/extraction_audit_engine_v5.py` with FNABethesdaParser, MolecularPanelCleaner, PreopImagingReconciler, plus `audit_and_refine_phase7()` orchestrator
 - Phase 7 new tables: `extracted_fna_bethesda_v1` (5,249 rows), `extracted_molecular_panel_v1` (10,025 rows), `extracted_preop_imaging_concordance_v1` (4,030 rows), `extracted_fna_path_concordance_v1` (5,443 rows), `patient_refined_master_clinical_v6` (12,885 rows, 128 columns)
 - Phase 7 summary views: `vw_fna_by_source` (12 rows: Bethesda by source), `vw_preop_molecular_panel` (7 rows: per-gene positivity)
 - FNA Bethesda sources: fna_cytology (gold, 1.0), fna_episode_master_v2 (0.92), molecular_testing (0.85); 5,249 patients with Bethesda; worst Bethesda preferred; cross-source concordance tracked
@@ -416,10 +416,10 @@
 - H1 Phase 7 sensitivity: CLN crude OR=2.126; base model (N=2,279) CLN OR=1.283 (1.072–1.535) p=0.006; Phase 7 model (N=1,571, +bethesda+BRAF+molecular_risk) CLN OR=1.487 (1.184–1.866) p=0.0006; CLN effect INCREASED +15.9% after molecular adjustment — BRAF/Bethesda are not confounders of CLN-recurrence
 - H2 Phase 7: imaging data insufficient (0 patients with both TIRADS+imaging size in goiter cohort) due to empty imaging_nodule_long_v2 size columns
 - `patient_refined_master_clinical_v6`: extends v5 with 47 new Phase 7 columns (bethesda_final, molecular panel per-gene, FNA-path concordance, preop imaging); 128 total columns
-- Phase 7 report: `notes_extraction/phase7_preop_molecular_refinement_YYYYMMDD_HHMM.md`
+- Phase 7 report: `llm_extraction/phase7_preop_molecular_refinement_YYYYMMDD_HHMM.md`
 - Overall data quality score Phase 7: 93 → 94/100; FNA domain: 0 → 90/100 (new structured Bethesda); molecular panel: 85 → 92/100 (full gene panel + method detection + variant typing); preop imaging: 0 → 10/100 (schema only, no size data)
 - Phase 8 priorities: (1) populate imaging_nodule_long_v2 size/TIRADS from NLP extraction on US reports, (2) parse RAS subtypes from mutation text in molecular_testing, (3) Excel pre-op text block mining for remaining unstructured FNA data, (4) IHC-specific BRAF validation from pathology notes, (5) cross-validate BRAF positivity rates against published 40-45% PTC prevalence (current 2.7% suggests under-detection in structured flags)
-- Phase 8 engine: `notes_extraction/extraction_audit_engine_v6.py` with RecurrenceEventParser, LongTermOutcomeReconciler, RAIResponseAssessor, CompletionReasonClassifier, plus `audit_and_refine_phase8()` orchestrator
+- Phase 8 engine: `llm_extraction/extraction_audit_engine_v6.py` with RecurrenceEventParser, LongTermOutcomeReconciler, RAIResponseAssessor, CompletionReasonClassifier, plus `audit_and_refine_phase8()` orchestrator
 - Phase 8 new tables: `extracted_recurrence_refined_v1` (10,871 rows), `extracted_rai_response_v1` (862 rows), `extracted_longterm_outcomes_v1` (10,871 rows), `extracted_completion_reasons_v1` (686 rows), `extracted_followup_audit_v1` (10,871 rows), `extracted_missed_data_sweep_v1` (1,000 rows), `patient_refined_master_clinical_v7` (12,886 rows, 172 columns)
 - Phase 8 summary views: `vw_recurrence_by_detection_method` (4 rows), `vw_longterm_outcomes` (4 rows), `vw_rai_response_summary` (5 rows), `vw_completion_reasons` (5 rows)
 - Recurrence refined: 18.3% overall rate (1,986/10,871); structural_confirmed=54, biochemical_only=168 (rising Tg), structural_date_unknown=1,764; source-linked to recurrence_risk_features_mv + thyroglobulin_labs + rai_treatment_episode_v2
@@ -434,12 +434,12 @@
 - H1 Phase 8 sensitivity: CLN-Recurrence OR=2.032 (1.702–2.426), p<0.0001; 4,622 lobectomy patients (967 CLN+, 3,655 CLN-); CLN+ recurrence 23.4% vs CLN- 13.1%; consistent with all prior phases — CLN remains significant predictor
 - H2 Phase 8: substernal goiter recurrence 4.7% vs cervical 14.4%; follow-up completeness varies by race: Asian 40.0, Black 38.8, White 31.9, Other 28.9
 - Overall data quality score Phase 8: 94 → 96/100; recurrence domain: 60 → 85 (source-linked + Tg trajectory); RAI: 75 → 85 (ATA response); voice: 10 → 25 (timeline); follow-up: 40 → 65 (quantified); source linkage: 90 → 100 (verified via sweep)
-- Phase 8 report: `notes_extraction/phase8_final_report.md`
+- Phase 8 report: `llm_extraction/phase8_final_report.md`
 - Phase 8 new vocab maps: `RECURRENCE_SITE_NORM` (24 entries), `RECURRENCE_DETECTION_NORM` (28 entries), `RAI_RESPONSE_NORM` (13 entries), `VOICE_OUTCOME_NORM` (24 entries), `COMPLETION_REASON_NORM` (24 entries)
 - `patient_refined_master_clinical_v7` = FINAL master table; extends v6 with 44 Phase 8 columns (15 recurrence, 8 RAI response, 10 long-term outcomes, 7 completion reason, 5 follow-up audit); 172 total columns
 - Deployment order updated: script 15 → ... → 45 → Phase 8 engine v6
 - All 8 extraction audit engine phases complete (v1→v6); entire pipeline from raw NLP → source-classified → refined → master clinical table is source-linked and verified
-- Phase 9 engine: `notes_extraction/extraction_audit_engine_v7.py` with LabExpansionPipeline, RAIDoseParser, GradingRuleEngine, plus `audit_and_refine_phase9()` orchestrator
+- Phase 9 engine: `llm_extraction/extraction_audit_engine_v7.py` with LabExpansionPipeline, RAIDoseParser, GradingRuleEngine, plus `audit_and_refine_phase9()` orchestrator
 - Phase 9 new tables: `extracted_postop_labs_expanded_v1` (1,395 rows), `vw_postop_lab_expanded` (1,026 rows), `extracted_rai_dose_refined_v1` (307 rows), `vw_rai_dose_by_source` (13 rows), `extracted_ete_ene_tert_refined_v1` (3,985 rows), `vw_ete_microscopic_rule` (5 rows), `patient_refined_master_clinical_v8` (12,886 rows, +23 Phase 9 columns)
 - Lab expansion results: PTH 131→673 patients (5.1x), calcium 69→559 patients (8.1x), total values 350→1,395 (4.0x); sources: `extracted_clinical_events_v4` (DOUBLE event_value), enhanced NLP, existing v1; hypoparathyroidism (PTH<15): 11 patients, hypocalcemia (Ca<8.0): 5 patients
 - `extracted_clinical_events_v4.event_value` is DOUBLE type (not VARCHAR); use directly without CAST/TRIM; `source_column` (not `event_source`) for source attribution
@@ -455,7 +455,7 @@
 - H1 Phase 9 sensitivity: lobectomy cohort 5,376 patients (247 CLN+); 1,793 with ETE v9 (1,706 microscopic, 72 gross); CLN+ recurrence 73.7% vs CLN- 13.2%; crude OR=18.4 (indication bias persists)
 - H2 Phase 9: goiter+hypocalcemia=3, non-goiter+hypocalcemia=2; avg PTH nadir 103.4 pg/mL, avg Ca nadir 9.1 mg/dL; lab coverage still low for goiter-specific complication analysis
 - Overall data quality score Phase 9: 96 → 97/100; post-op labs: 35→55; RAI dose: 75→82; ETE grading: 40→95 (+55, biggest single-domain improvement); TERT: 92→93; ENE: 25→26
-- Phase 9 report: `notes_extraction/master_refinement_report_phase9.md`; figure: `exports/fig_lab_rai_ete_grading.png`
+- Phase 9 report: `llm_extraction/master_refinement_report_phase9.md`; figure: `exports/fig_lab_rai_ete_grading.png`
 - Deployment order updated: script 15 → ... → 45 → Phase 8 engine v6 → Phase 9 engine v7
 - Phase 9b: Multi-source ENE extraction with 7 modalities — `extracted_ene_multisource_v1` (2,396 rows, 1,596 patients), `vw_ene_concordance` (1,596 rows wide-format), `vw_ene_source_summary` (7 rows)
 - ENE source modalities: `path_synoptic` (1,266 pts, structured 'x'/'present'), `path_report_nlp` (21 pts, free-text with extent grading: 2 microscopic, 1 focal, 9 present, 9 absent), `op_note_intraop` (12 pts: 6 absent, 4 gross, 2 present), `CT` (369 pts: 281 suspicious, 19 negative), `US` (465 pts: 351 suspicious, 27 negative), `PET` (63 pts: 60 avid), `RAI_scan` (200 pts: 161 uptake-positive)
@@ -468,7 +468,7 @@
 - `imaging_nodule_long_v2` has 10,866 rows but ALL suspicious_node_flag = FALSE and only US modality; CT/MRI/PET imaging data exists only in clinical note free-text
 - Script 26 MATERIALIZATION_MAP expanded to 99 entries (was 96): adds 3 Phase 9b ENE tables
 - All 9 extraction audit engine phases complete (v1→v7); 99 tables in MATERIALIZATION_MAP; 14 val_* validation tables
-- Phase 10 engine: `notes_extraction/extraction_audit_engine_v8.py` with MarginR0RecoveryParser, InvasionGradingResolver, LateralNeckDissectionDetector, MultiTumorAggregator, MICEImputer, plus `audit_and_refine_phase10()` orchestrator
+- Phase 10 engine: `llm_extraction/extraction_audit_engine_v8.py` with MarginR0RecoveryParser, InvasionGradingResolver, LateralNeckDissectionDetector, MultiTumorAggregator, MICEImputer, plus `audit_and_refine_phase10()` orchestrator
 - Phase 10 new tables: `extracted_margin_r0_recovery_v1` (7,157 rows), `vw_margin_r0_recovery` (3 rows), `extracted_invasion_grading_recovery_v1` (204 rows), `extracted_lateral_neck_v1` (119 rows), `vw_lateral_neck` (17 rows), `extracted_multi_tumor_aggregate_v1` (1,346 rows), `extracted_staging_recovery_v1` (10,871 rows), `extracted_mice_summary_v1` (5 rows), `patient_refined_master_clinical_v9` (12,886 rows, 230 columns)
 - Margin R0 recovery: 7,454 NULL margin patients → 7,144 benign (NA_benign), 11 R0, 2 R1 from op note NLP; new R-class total R0=12 (was 1)
 - Vascular/LVI grading recovery: 204 resolved (111 focal + 84 extensive from quantify, 3+3 from NLP, 1+1 from multi-tumor, 1+1 LVI from NLP); 87% of vascular invasion remains 'present_ungraded' (path_synoptics 'x' without vessel count)
@@ -483,10 +483,10 @@
 - H1 Phase 10: 4,645 lobectomies (227 CLN+, 4,418 CLN-); crude OR=25.842 (18.740–35.636); CLN+ recurrence 76.7% vs CLN- 11.3%; 1,334 with R-class, 160 with vascular grade, 25 lateral, 187 multi-tumor
 - H2 Phase 10: substernal goiter 282 patients — lowest multifocality (0 multitumor), lowest lateral dissection (1), smallest vasc graded count (1); avg max tumor 2.70cm vs cervical 1.88cm
 - Overall data quality score Phase 10: 97 → 98/100; lateral neck: 25→119 (major improvement); multi-tumor: 0→1,346 (new domain); MICE: publication-blocking missingness eliminated
-- Phase 10 report: `notes_extraction/master_refinement_report_phase10.md`; figure: `exports/fig_margin_invasion_recovery.png` (4-panel: margin R-class, vascular grading, lateral neck, MICE)
+- Phase 10 report: `llm_extraction/master_refinement_report_phase10.md`; figure: `exports/fig_margin_invasion_recovery.png` (4-panel: margin R-class, vascular grading, lateral neck, MICE)
 - Deployment order updated: script 15 → ... → 45 → Phase 8 v6 → Phase 9 v7 → Phase 10 v8
 - All 10 extraction audit engine phases complete (v1→v8); 105 tables in MATERIALIZATION_MAP; 15 val_* validation tables
-- Phase 11 engine: `notes_extraction/extraction_audit_engine_v9.py` (FINAL engine) with USImagingTIRADSParser, NoduleSizeExtractor (via SQL NLP), RASMolecularSubtyper, BRAFIHCNLPRecovery, PreOpExcelFinalSweep, plus `audit_and_refine_phase11()` orchestrator
+- Phase 11 engine: `llm_extraction/extraction_audit_engine_v9.py` (FINAL engine) with USImagingTIRADSParser, NoduleSizeExtractor (via SQL NLP), RASMolecularSubtyper, BRAFIHCNLPRecovery, PreOpExcelFinalSweep, plus `audit_and_refine_phase11()` orchestrator
 - Phase 11 new tables: `extracted_us_tirads_v1` (417 rows), `extracted_nodule_sizes_v1` (3,051 rows), `extracted_ras_subtypes_v1` (434 rows), `extracted_ras_patient_summary_v1` (348 rows), `extracted_braf_recovery_v1` (441 rows), `vw_braf_audit` (441 rows), `extracted_preop_sweep_v1` (340 rows), `vw_us_tirads` (5 rows), `vw_molecular_subtypes` (7 rows), `extracted_imaging_molecular_final_v1` (3,327 rows), `patient_refined_master_clinical_v10` (12,886 rows)
 - TIRADS extraction: 0 → 417 patients (3.2%); TR4 Moderately Suspicious largest group (153); limited by absence of structured US radiology reports in clinical_notes_long
 - Nodule size extraction: 0 → 3,051 patients (23.7%); avg 3.7cm, median 3.2cm; NLP from h_p (2,147) and op_note (539)
@@ -503,7 +503,7 @@
 - H2 Phase 11: 6,668 goiter (292 substernal); cervical BRAF 4.5% / RAS 3.2%; substernal BRAF 1.0% / RAS 0.3%; substernal goiter has negligible molecular positivity (predominantly benign)
 - H2 race weight disparity: Black 106.3g vs White 29.9g (3.6x) — persists across all phases
 - Overall data quality score Phase 11: 97 → 98/100; TIRADS: 0→10; RAS subtypes: 0→85; BRAF: 85→92; imaging nodule size: 0→55; pre-op molecular: 85→90
-- Phase 11 report: `notes_extraction/master_refinement_report_phase11.md`; figure: `exports/fig_braf_ras_tirads.png`
+- Phase 11 report: `llm_extraction/master_refinement_report_phase11.md`; figure: `exports/fig_braf_ras_tirads.png`
 - Deployment order updated: script 15 → ... → 45 → Phase 8 v6 → Phase 9 v7 → Phase 10 v8 → Phase 11 v9 (FINAL)
 - All 11 extraction audit engine phases complete (v1→v9); 116 tables in MATERIALIZATION_MAP; pipeline FINAL
 - `regexp_extract` in DuckDB returns empty string '' (not NULL) when no match; always wrap with `NULLIF(..., '')` before `TRY_CAST` to avoid conversion errors
@@ -515,7 +515,7 @@
 - Clinical notes BRAF positive patterns: 142 patients via regex `braf.{0,20}(positive|detected|present|v600e|mutation identified)`; note_type breakdown: h_p 115, op_note 34, other_history 19
 - TIRADS NLP patterns: `TI-?RADS\s*[1-5]` captures both "TI-RADS 4" and "TIRADS 3" formats; ~485 patients in clinical notes with extractable scores; h_p (2,260 notes), op_note (1,911), history_summary (61)
 - Nodule size NLP: regex `(?:nodule|thyroid|lobe).{0,80}?\d+(?:\.\d+)?\s*cm` captures majority; mm→cm conversion needed; plausibility guard: 0.1–15.0 cm range
-- Phase 12 engine: `notes_extraction/extraction_audit_engine_v10.py` with ACRTIRADSCalculator, ingest_complete_us_excel(), ingest_tirads_scored_excel(), reconcile_tirads(), plus `audit_and_refine_phase12()` orchestrator
+- Phase 12 engine: `llm_extraction/extraction_audit_engine_v10.py` with ACRTIRADSCalculator, ingest_complete_us_excel(), ingest_tirads_scored_excel(), reconcile_tirads(), plus `audit_and_refine_phase12()` orchestrator
 - Phase 12 Excel sources: `COMPLETE_MULTI_SHEET_ULTRASOUND_REPORTS.xlsx` (6,793 reports, 4,074 pts, 219 cols with per-nodule ACR criteria), `US Nodules TIRADS 12_1_25.xlsx` (14 sheets, ~10,862 pts each, scores only)
 - Phase 12 new tables: `raw_us_tirads_excel_v1` (19,891 rows), `raw_us_tirads_scored_v1` (19,549 rows), `extracted_tirads_validated_v1` (3,474 rows), `vw_us_nodule_tirads_validated` (5 rows), `val_phase12_tirads_validation` (4 rows), `patient_refined_master_clinical_v11` (12,886 rows), `advanced_features_v5` (16,062 rows)
 - TIRADS fill rate: 4.19% → 32.46% (7.7x, +3,643 patients); ACR concordance 80.1% (15,671/19,572); systematic -1.0 mean mismatch (radiologists tend to score 1 tier lower than ACR recalculation)
@@ -533,7 +533,7 @@
 - Script 26 MATERIALIZATION_MAP expanded to 123 entries (was 116): adds 7 Phase 12 tables
 - Deployment order updated: script 15 → ... → Phase 11 v9 → Phase 12 v10
 - Overall data quality score Phase 12: TIRADS domain 10→75/100 (+65); overall 98/100 (ceiling)
-- Phase 13 engine: `notes_extraction/extraction_audit_engine_v11.py` (FINAL) with VascularInvasionGrader, IHC_BRAF_Recovery, RAS_SubtypeResolver, plus `audit_and_refine_phase13()` orchestrator
+- Phase 13 engine: `llm_extraction/extraction_audit_engine_v11.py` (FINAL) with VascularInvasionGrader, IHC_BRAF_Recovery, RAS_SubtypeResolver, plus `audit_and_refine_phase13()` orchestrator
 - Phase 13 new tables: `extracted_vascular_grading_v13` (3,846 rows), `vw_vascular_invasion_grade` (10 rows), `extracted_ihc_braf_v13` (2 rows), `vw_molecular_ihc_braf` (2 rows), `extracted_ras_resolved_v13` (34 rows), `vw_ras_subtypes` (7 rows), `val_phase13_final_gaps` (4 rows), `patient_refined_master_clinical_v12` (12,886 rows, 136 columns)
 - Vascular grading Phase 13: 819 graded (463 focal + 356 extensive); 4,652 present_ungraded; 99 indeterminate; 'x' placeholder in path_synoptics = present_ungraded (3,120 patients) — synoptic template limitation, not data quality gap
 - `tumor_1_angioinvasion_quantify` has vessel counts for only 310 of 3,846 positive patients; WHO 2022: <4 vessels = focal, >=4 = extensive
@@ -562,13 +562,13 @@
 - Lab date accuracy: thyroglobulin 99.5% correct via `thyroglobulin_labs.specimen_collect_dt`; anti_thyroglobulin 97.7%; TSH / PTH / calcium / vitamin_D = 0% (not in thyroglobulin_labs, no structured collection date available)
 - `scripts/29_validation_engine.py` had a pre-existing NameError bug: `ALL_VALIDATION_SQL` list was assembled at ~line 1077 before several SQL variables (e.g. `VAL_COMPLICATION_REFINEMENT_SQL`, `VAL_PHASE10_STAGING_RECOVERY_SQL`) were defined later in the file; fixed by moving `ALL_VALIDATION_SQL` to just before `def build_all()` after all SQL variable definitions; this is why `--md` runs previously silently fell back to local DuckDB
 - `utils/text_helpers.py`: added `_LAB_DATE_KEYWORDS` compiled regex that scans for "collected on", "drawn on", "specimen date:", "result date:", "received:", "reported on", "accession date:" before generic date search; added `extract_nearby_date_with_confidence()` returning `(date, confidence)` tuple — confidence 1.0=keyword-found, 0.7=generic nearby, 0.0=none
-- `notes_extraction/run_extraction.py`: `--target DOMAIN` re-extracts a single entity domain and merges with the existing parquet (replaces rows for affected research_ids, preserves others); `--research-ids FILE` filters notes to specific patients (one research_id per line); combine both for targeted patient+domain re-runs
-- `notes_extraction/extract_llm.py`: upgraded from stub; `_build_prompt()` loads `prompts/lab_date_extraction_v1.txt` system prompt; JSON output schema includes `date_confidence` (1.0=explicit lab keyword, 0.85=near value, 0.0=none) and `source_line`; functional when `OPENAI_API_KEY` set, empty stub otherwise
+- `llm_extraction/run_extraction.py`: `--target DOMAIN` re-extracts a single entity domain and merges with the existing parquet (replaces rows for affected research_ids, preserves others); `--research-ids FILE` filters notes to specific patients (one research_id per line); combine both for targeted patient+domain re-runs
+- `llm_extraction/extract_llm.py`: upgraded from stub; `_build_prompt()` loads `prompts/lab_date_extraction_v1.txt` system prompt; JSON output schema includes `date_confidence` (1.0=explicit lab keyword, 0.85=near value, 0.0=none) and `source_line`; functional when `OPENAI_API_KEY` set, empty stub otherwise
 - `prompts/lab_date_extraction_v1.txt`: structured system prompt for lab-date extraction with priority chain (keyword > near-value > null for labs), entity types, negation rules, and explicit consent-boilerplate exclusion
 - `patient_refined_master_clinical_v9` uses phase-suffixed column names: `braf_positive_v7` (not `braf_positive_refined`), `tert_positive_v9` (not `tert_positive_refined`), `ete_grade_v9` (not `ete_grade`); safe columns: `margin_status_refined`, `vascular_who_2022_grade`, `ln_positive_v6`, `recurrence_confirmed`
 - `information_schema.columns` on local DuckDB returns duplicate rows per column (one per attached schema/catalog); always filter with `WHERE table_schema = 'main'` AND use `DISTINCT column_name` to get correct unique column lists
 - `local DuckDB_client.py` reads `LOCAL_DB_PATH` from env var only; `scripts/46_provenance_audit.py` falls back to `.streamlit/secrets.toml` for token — scripts using `local DuckDBClient` directly (like script 29) need `LOCAL_DB_PATH` set as an env var or they silently fall back to local DuckDB even when `--md` is passed
-- Phase 13 engine: `notes_extraction/extraction_audit_engine_v11.py` (FINAL FINAL) closing the last 3 gaps: (1) vascular invasion grading via vessel count expansion, (2) IHC BRAF recovery, (3) RAS_unspecified resolution
+- Phase 13 engine: `llm_extraction/extraction_audit_engine_v11.py` (FINAL FINAL) closing the last 3 gaps: (1) vascular invasion grading via vessel count expansion, (2) IHC BRAF recovery, (3) RAS_unspecified resolution
 - Phase 13 results: vascular — 819 total graded (419+new), 4,652 remain genuine 'x' synoptic limitation; IHC BRAF — only 2 results (VE1 reports not in clinical_notes_long corpus, data not present); RAS — 34/65 resolved (NRAS=19, HRAS=9, KRAS=6), 31 truly unresolvable
 - `patient_refined_master_clinical_v12`: FINAL publication-ready master table; extends v11 with Phase 13 columns
 - Critical user correction (Phase 13 mutation review): presence of a gene name alone (e.g., "BRAF") does NOT constitute a positive result; NLP positivity requires explicit qualifiers: "positive", "detected", "identified", "V600E", or equivalent — bare mentions are NOT sufficient and produce false positives
@@ -690,7 +690,7 @@
 - MATERIALIZATION_MAP expanded to include `md_longitudinal_lab_canonical_v1` and `md_val_lab_completeness_v1` (script 77 outputs)
 - Deployment order updated: ... → 75 → 76 → 77 → 78 → 26 --md
 - Lab canonical dedup (2026-03-13): 5,993 exact-duplicate rows removed from `longitudinal_lab_canonical_v1` (45,954 → 39,961); root cause: script 77 ingested threshold values as both censored and uncensored rows; dedup rule: prefer `is_censored=TRUE`, tiebreak by `ingestion_wave DESC`; backup preserved as `longitudinal_lab_canonical_v1_pre_dedup`; `val_lab_canonical_v1` rebuilt with 0 duplicate groups (all PASS except calcium_total WARN for pre-existing plausibility)
-- Operative V2 NLP fields at 0%: `berry_ligament_flag`, `frozen_section_flag`, `ebl_ml_nlp`, `parathyroid_identified_count`, `parathyroid_autograft_count`, `parathyroid_autograft_site`, `op_confidence`, `op_enrichment_source` — all Category C (raw text only, extractor exists at `notes_extraction/extract_operative_v2.py` but outputs never materialized to local DuckDB); no safe landing without running full V2 extraction pipeline
+- Operative V2 NLP fields at 0%: `berry_ligament_flag`, `frozen_section_flag`, `ebl_ml_nlp`, `parathyroid_identified_count`, `parathyroid_autograft_count`, `parathyroid_autograft_site`, `op_confidence`, `op_enrichment_source` — all Category C (raw text only, extractor exists at `llm_extraction/extract_operative_v2.py` but outputs never materialized to local DuckDB); no safe landing without running full V2 extraction pipeline
 - QA workbench now surfaces: lab canonical status (dedup count, validation), operative NLP enrichment caveat (source-limited, not data quality), and all prior sections (integrity, provenance, linkage, chronology, imaging-FNA, molecular chain, RAI missingness, recurrence dates)
 - Dashboard version updated: `_APP_VERSION = "v3.2.0-2026.03.13"`; docstring reflects current workflow-first architecture
 - README simplified: removed stale "sign in" guidance, old flat-tab references, duplicated gap section; consolidated deploy instructions; added operative V2 gap to source-limited list

@@ -100,7 +100,7 @@ def test_split_quarantine_columns():
 
 
 def test_note_extraction_run_append_and_failure_stage(tmp_path):
-    from notes_extraction.run_telemetry import (
+    from llm_extraction.run_telemetry import (
         RunTelemetryContext,
         append_note_extraction_run,
     )
@@ -140,7 +140,7 @@ def test_note_extraction_run_append_and_failure_stage(tmp_path):
 
 
 def test_entity_schema_includes_provenance_columns():
-    from notes_extraction.vocab import ENTITY_SCHEMA_COLUMNS, PROVENANCE_FIELD_DEFAULTS
+    from llm_extraction.vocab import ENTITY_SCHEMA_COLUMNS, PROVENANCE_FIELD_DEFAULTS
 
     for col in (
         "extraction_run_id",
@@ -189,7 +189,7 @@ def test_provenance_hash_without_source_row_number():
 
 
 def test_note_extraction_run_failed_llm_persisted(tmp_path):
-    from notes_extraction.run_telemetry import append_note_extraction_run
+    from llm_extraction.run_telemetry import append_note_extraction_run
 
     append_note_extraction_run(
         tmp_path,
@@ -213,7 +213,7 @@ def test_note_extraction_run_failed_llm_persisted(tmp_path):
 
 
 def test_empty_successful_extraction_zero_rows(tmp_path):
-    from notes_extraction.run_telemetry import append_note_extraction_run
+    from llm_extraction.run_telemetry import append_note_extraction_run
 
     append_note_extraction_run(
         tmp_path,
@@ -235,8 +235,8 @@ def test_empty_successful_extraction_zero_rows(tmp_path):
 
 
 def test_stamp_row_sets_regex_prompt_version():
-    from notes_extraction.run_extraction import _stamp_row
-    from notes_extraction.extract_regex import StagingExtractor
+    from llm_extraction.run_extraction import _stamp_row
+    from llm_extraction.extract_regex import StagingExtractor
 
     ext = StagingExtractor()
     rec = {
@@ -274,7 +274,7 @@ def test_stamp_row_sets_regex_prompt_version():
         "verifier_name": None,
         "verifier_version": None,
     }
-    out = _stamp_row(ext, rec, "run-uuid")
+    out = _stamp_row(ext, rec, "run-uuid", {})
     assert out["extraction_run_id"] == "run-uuid"
     assert out["extractor_name"] == "StagingExtractor"
     assert out["prompt_version"] == "regex_only"

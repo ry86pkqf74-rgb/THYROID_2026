@@ -6,7 +6,7 @@ Produces the exact patient-level analytic dataset underlying the ETE staging
 manuscript, keyed by research_id, with full provenance and analysis-subset flags.
 
 Deliverables:
-  outputs/manuscript_forensics_20260318/
+  processed/outputs/manuscript_forensics_20260318/
     final_manuscript_analytic_dataset_research_id.csv
     final_manuscript_analytic_dataset_research_id.parquet
     final_manuscript_dataset_dictionary.csv
@@ -34,7 +34,7 @@ np.random.seed(SEED)
 
 ROOT = Path(__file__).resolve().parent.parent
 STUDY = ROOT / "studies" / "proposal2_ete_staging"
-OUT   = ROOT / "outputs" / "manuscript_forensics_20260318"
+OUT   = ROOT / "processed" / "outputs" / "manuscript_forensics_20260318"
 DOCS  = ROOT / "docs"    / "manuscript_forensics_20260318"
 OUT.mkdir(parents=True, exist_ok=True)
 DOCS.mkdir(parents=True, exist_ok=True)
@@ -666,11 +666,11 @@ print("\n── Creating analysis bundle ZIP ──")
 zip_path = OUT / "final_manuscript_analysis_bundle.zip"
 with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
     for f in OUT.glob("*.csv"):
-        zf.write(f, f"outputs/{f.name}")
+        zf.write(f, f"processed/outputs/{f.name}")
     for f in OUT.glob("*.parquet"):
-        zf.write(f, f"outputs/{f.name}")
+        zf.write(f, f"processed/outputs/{f.name}")
     for f in OUT.glob("*.json"):
-        zf.write(f, f"outputs/{f.name}")
+        zf.write(f, f"processed/outputs/{f.name}")
 print(f"✓ Bundle: {zip_path.name}")
 
 # ── TERMINAL SUMMARY ────────────────────────────────────────────────────

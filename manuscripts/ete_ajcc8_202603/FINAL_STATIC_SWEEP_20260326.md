@@ -1,6 +1,6 @@
 # Final static QC sweep — ETE / AJCC 8 submission package (2026-03-26)
 
-Read-only repo sweep. No analyses rerun; CSV row checks and greps only. Scope: ETE manuscript support under `manuscripts/ete_ajcc8_202603/`, canonical analytics under `studies/proposal2_ete_staging/`, CT timing exports under `outputs/manuscript_forensics_20260318/`, forensics docs/crosswalk, and the paired **wrong-cohort** draft in `manuscripts/pool_malignancy_202603/`.
+Read-only repo sweep. No analyses rerun; CSV row checks and greps only. Scope: ETE manuscript support under `manuscripts/ete_ajcc8_202603/`, canonical analytics under `studies/proposal2_ete_staging/`, CT timing exports under `processed/outputs/manuscript_forensics_20260318/`, forensics docs/crosswalk, and the paired **wrong-cohort** draft in `manuscripts/pool_malignancy_202603/`.
 
 ---
 
@@ -19,9 +19,9 @@ Read-only repo sweep. No analyses rerun; CSV row checks and greps only. Scope: E
 | `studies/proposal2_ete_staging/audit_report.md` | Expanded cohort Table 1 + sensitivity table | N1 (any): **412 (56.9%)** / **1166 (67.2%)** / **611 (74.7%)** (line 40). Sensitivity mETE ORs: age ≥55 **0.87**, age \<55 **0.44**, etc. (lines 104–111). |
 | `studies/proposal2_ete_staging/analysis_report.md` | **Classic N=596** report (distinct pipeline) | N1 (any): **82 (44.3%)** / **170 (68.3%)** / **105 (64.8%)** (lines 64–65). Ordinal `ete_micro` OR **0.42** Table 4 — **not** the expanded‑cohort OR **~0.60**. |
 | `studies/proposal2_ete_staging/cox_regression_report.md` | Cox supplement | **N = 5,794** (different analytic frame than 3,278 expanded PTC file). |
-| `outputs/manuscript_forensics_20260318/ct_imaging_surgery_timing.csv` | Institutional CT timing | **7702** lines = **7701** data rows + header. Provenance only; this total should **not** be quoted in the manuscript text. |
-| `outputs/manuscript_forensics_20260318/ptc_ct_imaging_events.csv` | PTC CT extract | **3019** lines = **3018** rows + header; **650** patients; pathologic rows **1245**; patients with ≥1 pathologic row **331**; among pathologic rows, **508** preoperative + **73** perioperative (0–29 d) = **581** (**46.67%** of 1245); **664** ≥30 d — **matches revision packet text**. |
-| `outputs/manuscript_forensics_20260318/final_manuscript_dataset_provenance.json` | Forensics linkage manifest | **Conflicts** with frozen audit on several cohort sizes (see §3). CT timing block matches 3018/650. |
+| `processed/outputs/manuscript_forensics_20260318/ct_imaging_surgery_timing.csv` | Institutional CT timing | **7702** lines = **7701** data rows + header. Provenance only; this total should **not** be quoted in the manuscript text. |
+| `processed/outputs/manuscript_forensics_20260318/ptc_ct_imaging_events.csv` | PTC CT extract | **3019** lines = **3018** rows + header; **650** patients; pathologic rows **1245**; patients with ≥1 pathologic row **331**; among pathologic rows, **508** preoperative + **73** perioperative (0–29 d) = **581** (**46.67%** of 1245); **664** ≥30 d — **matches revision packet text**. |
+| `processed/outputs/manuscript_forensics_20260318/final_manuscript_dataset_provenance.json` | Forensics linkage manifest | **Conflicts** with frozen audit on several cohort sizes (see §3). CT timing block matches 3018/650. |
 | `docs/manuscript_forensics_20260318/final_metric_crosswalk.csv` | Metric ledger | MET08 records **503** pairs “reproduced” vs manuscript **711** — flagged in packet. MET06 primary ordinal OR **0.42** vs expanded **0.60** — cohort label risk. |
 | `manuscripts/pool_malignancy_202603/manuscript_v1.md` | Other paper | Abstract: **6,630** patients, **1,497** pairs, Cox HR **~1.84** — **inconsistent** with ETE package. |
 | `studies/proposal2_ete_staging/analysis_metadata.yaml` `outputs.figures` | Declared figure list | Lists **`fig1_ete_distribution.png`** … **`fig9_forest_expanded.png`** — **no matching `.png` files** found under `studies/proposal2_ete_staging/figures/` (only **`.html`** bundles: `fig1_ajcc_stage_distribution.html`, etc.). |

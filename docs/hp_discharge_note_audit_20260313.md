@@ -249,7 +249,7 @@ Build a targeted H&P extractor for the top 3 HIGH VALUE / EASY variables:
 3. symptomatic_hypocalcemia_discharge (from the 169 DC notes)
 
 Use the existing extraction pipeline architecture (BaseExtractor pattern
-in notes_extraction/base.py). Apply consent-boilerplate filtering from
+in llm_extraction/base.py). Apply consent-boilerplate filtering from
 the start (skip h_p_consent source tier for complications).
 Deploy results to local DuckDB and update patient_refined_master_clinical.
 ```

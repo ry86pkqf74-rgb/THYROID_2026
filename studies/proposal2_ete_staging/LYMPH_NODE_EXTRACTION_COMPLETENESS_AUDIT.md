@@ -44,20 +44,20 @@ File: `scripts/22_canonical_episodes_v2.py`, function `enrich_from_v2_extractors
 - Loads RAI, Operative, Molecular, and Imaging extractors only. **`HistologyDetailExtractor` is not imported or run** in this enrichment loop, so **no** production merge from that extractor into `tumor_episode_master_v2`.
 
 ```853:869:scripts/22_canonical_episodes_v2.py
-    from notes_extraction.extract_rai_v2 import RAIDetailExtractor
-    from notes_extraction.extract_operative_v2 import OperativeDetailExtractor
-    from notes_extraction.extract_molecular_v2 import MolecularDetailExtractor
-    from notes_extraction.extract_imaging_v2 import ImagingNoduleExtractor
+    from llm_extraction.extract_rai_v2 import RAIDetailExtractor
+    from llm_extraction.extract_operative_v2 import OperativeDetailExtractor
+    from llm_extraction.extract_molecular_v2 import MolecularDetailExtractor
+    from llm_extraction.extract_imaging_v2 import ImagingNoduleExtractor
 ```
 
 ### 2.3 Histology / pathology narrative extractor (library exists; not production spine)
 
-File: `notes_extraction/extract_histology_v2.py`
+File: `llm_extraction/extract_histology_v2.py`
 
 - Declares extraction from “pathology reports, synoptic text, and clinical notes.”
 - LN pattern is **narrow**: `(\d+) (of|out of|/) (\d+) (lymph )?nodes? (positive|involved|with metast…)` — it does **not** cover many common negation/“no nodal mets” sentences unless they match this shape.
 
-```118:123:notes_extraction/extract_histology_v2.py
+```118:123:llm_extraction/extract_histology_v2.py
 _LN_COUNT = re.compile(
     r"\b(\d+)\s+(?:of|out\s+of|/)\s*(\d+)\s+"
     r"(?:lymph\s+nodes?|nodes?)\s+"
@@ -69,7 +69,7 @@ Tests: `tests/test_histology_parser.py` (`TestLymphNodeCounts`).
 
 ### 2.4 Phase 6 LN yield (structured + location text)
 
-File: `notes_extraction/extraction_audit_engine_v4.py`
+File: `llm_extraction/extraction_audit_engine_v4.py`
 
 - Class `LNYieldCalculator` parses **`path_synoptic`** fields (`raw_examined`, `raw_involved`, location strings). `'x'` in involved is treated as **positive without numeric count**.
 - `build_ln_yield_sql()` builds `extracted_ln_yield_v1` from **`path_synoptics`** only (not from free-text CAP narrative tables).

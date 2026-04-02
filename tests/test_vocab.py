@@ -1,4 +1,4 @@
-"""Tests for notes_extraction/vocab.py — controlled vocabularies."""
+"""Tests for llm_extraction/vocab.py — controlled vocabularies."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from notes_extraction.vocab import (
+from llm_extraction.vocab import (
     COMPLICATION_NORM,
     COMPLICATION_TYPES,
     ENTITY_SCHEMA_COLUMNS,

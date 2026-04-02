@@ -57,7 +57,7 @@ Pinned list: see `requirements-fabric-onelake.txt`.
 
 ## Paths
 
-- Local outputs: `processed/note_entities_<domain>.parquet` (from `notes_extraction/run_extraction.py` or `notes_extraction_new/run_extraction_local.py`).
+- Local outputs: `processed/note_entities_<domain>.parquet` (from `llm_extraction/run_extraction.py` or `llm_extraction/run_extraction_local.py`).
 - Canonical fact long (clean + quarantine) and extraction run log (same repo, DVC-tracked when enabled):
   - `processed/canonical_extracted_fact_long_v1.parquet` — analysis-ready facts (`scripts/103_fact_lineage_materialize.py`)
   - `processed/canonical_fact_quarantine_v1.parquet` — conservative exclusions from clean canonical
@@ -96,7 +96,7 @@ Adjust `domain` per folder. Register tables in the **Lakehouse** default semanti
 ```bash
 export VLLM_MODEL=<served-model-name>
 export VLLM_OPENAI_BASE_URL=http://localhost:8000/v1   # default
-python notes_extraction_new/run_extraction_local.py
+python llm_extraction/run_extraction_local.py
 ```
 
 ## Troubleshooting

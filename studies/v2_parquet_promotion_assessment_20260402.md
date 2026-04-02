@@ -2,19 +2,19 @@
 
 ## Decision
 
-Do not promote the current V2 LLM parquet set beyond `output/v2_parquets/` yet.
+Do not promote the current V2 LLM parquet set beyond `processed/output/v2_parquets/` yet.
 
 ## What is true right now
 
-1. The repo has a complete local V2 artifact set in `output/v2_parquets/`: 14 domain parquets plus `note_entities_llm_combined.parquet`.
-2. Existing repo documentation already treats `output/v2_parquets/` as the active V2 export/staging location.
+1. The repo has a complete local V2 artifact set in `processed/output/v2_parquets/`: 14 domain parquets plus `note_entities_llm_combined.parquet`.
+2. Existing repo documentation already treats `processed/output/v2_parquets/` as the active V2 export/staging location.
 3. The local inventory is structurally complete at the file level, but provenance completeness is mixed across domains.
 4. The accessible MotherDuck catalog is not usable as a reconciliation target from this session: DuckDB CLI can open `Thyroid 2026`, but `information_schema.tables` returns zero thyroid tables.
 5. The Vast extraction fleet is still actively producing remaining tail domains, so freezing a higher-level canonical bundle now would lock in an incomplete moment.
 
 ## Evidence
 
-- `output/v2_parquets/` contains:
+- `processed/output/v2_parquets/` contains:
   - `note_entities_llm_complications.parquet`
   - `note_entities_llm_genetics.parquet`
   - `note_entities_llm_imaging.parquet`
@@ -30,13 +30,13 @@ Do not promote the current V2 LLM parquet set beyond `output/v2_parquets/` yet.
   - `note_entities_llm_staging.parquet`
   - `note_entities_llm_tirads_granular.parquet`
   - `note_entities_llm_combined.parquet`
-- `docs/POWERBI_SETUP_SUMMARY.md` already labels `output/v2_parquets/` as `V2 Parquet exports`.
-- `docs/vastai_extraction_fleet_2026-04-01.md` documents completed domains being copied into `output/v2_parquets/`.
+- `docs/POWERBI_SETUP_SUMMARY.md` already labels `processed/output/v2_parquets/` as `V2 Parquet exports`.
+- `docs/vastai_extraction_fleet_2026-04-01.md` documents completed domains being copied into `processed/output/v2_parquets/`.
 - `studies/motherduck_v2_inventory_20260402.md` shows the local inventory is complete but MotherDuck table enumeration is empty in the visible thyroid catalog.
 
 ## Interpretation
 
-`output/v2_parquets/` should be treated as the active working landing zone, not as the final canonical publication layer.
+`processed/output/v2_parquets/` should be treated as the active working landing zone, not as the final canonical publication layer.
 
 That means:
 
@@ -55,7 +55,7 @@ Promote only after all of the following are true:
 
 ## Recommended canonical target when ready
 
-When the gate is met, create a dated export bundle under `exports/` rather than repurposing `output/v2_parquets/` itself.
+When the gate is met, create a dated export bundle under `exports/` rather than repurposing `processed/output/v2_parquets/` itself.
 
 Preferred shape:
 
@@ -68,4 +68,4 @@ Preferred shape:
 
 No additional promotion action is warranted today.
 
-The remaining safe action is to keep `output/v2_parquets/` as the live staging area, finish fleet extraction and reconciliation, restore a usable MotherDuck comparison target, and only then freeze a canonical export bundle under `exports/`.
+The remaining safe action is to keep `processed/output/v2_parquets/` as the live staging area, finish fleet extraction and reconciliation, restore a usable MotherDuck comparison target, and only then freeze a canonical export bundle under `exports/`.

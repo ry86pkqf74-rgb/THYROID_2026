@@ -36,7 +36,7 @@ Applies to:
 |--------|-----------|
 | `extraction_run_id` | UUID for one `run_extraction.py` invocation |
 | `extractor_name` | Python class name (e.g. `StagingExtractor`, `LLMExtractor`) |
-| `extractor_version` | `EXTRACTOR_BUILD_VERSION` in `notes_extraction/vocab.py` / registry `schema_version` |
+| `extractor_version` | `EXTRACTOR_BUILD_VERSION` in `llm_extraction/vocab.py` / registry `schema_version` |
 | `extraction_method` | `regex`, `llm_github_models`, `llm_openai`, etc. |
 | `model_name`, `model_version` | LLM API model id; null for regex |
 | `prompt_version` | `'<file>|<sha256-12>'` for LLM prompts on disk; `regex_only` for regex |
@@ -82,5 +82,5 @@ Applies to:
 ## Reference
 
 - Materializer: `scripts/103_fact_lineage_materialize.py`
-- Schema columns: `notes_extraction/vocab.py` → `ENTITY_SCHEMA_COLUMNS`
+- Schema columns: `llm_extraction/vocab.py` → `ENTITY_SCHEMA_COLUMNS`
 - Machine-readable map: `config/extraction_domain_registry.yaml`

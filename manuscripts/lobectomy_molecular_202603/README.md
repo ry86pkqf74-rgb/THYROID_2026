@@ -8,7 +8,7 @@ Executable cohort logic and tables remain under **`studies/lobectomy_molecular_2
 
 ```bash
 pandoc studies/lobectomy_molecular_202603/manuscript_draft.md \
-  -o outputs/lobectomy_molecular_202603/manuscript_draft.docx
+  -o processed/outputs/lobectomy_molecular_202603/manuscript_draft.docx
 ```
 
 Add paper-specific revision packets or sensitivity folders here as **`revision_*`** subdirectories when they accumulate.

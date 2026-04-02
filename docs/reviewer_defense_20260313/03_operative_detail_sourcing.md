@@ -60,6 +60,6 @@ The V2 NLP OperativeDetailExtractor was run (13,186 entities extracted), but `CO
 - **Canonical table**: `operative_episode_detail_v2` (local DuckDB, 9,371 rows)
 - **Field semantics audit**: `val_operative_field_semantics_v1` (local DuckDB, 17 rows)
 - **Lateral neck table**: `extracted_lateral_neck_v1` (local DuckDB, 119 rows)
-- **V2 extractor**: `notes_extraction/extract_operative_v2.py`
+- **V2 extractor**: `llm_extraction/extract_operative_v2.py`
 - **Operative semantics doc**: `docs/operative_semantics_hardening_20260313.md`
 - **Script 22**: `scripts/22_canonical_episode_tables.py`

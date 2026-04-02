@@ -2,6 +2,8 @@
 
 ## Dataset Maturation Layer (v2026.03.13)
 
+**Layout (2026-04-02):** LLM extraction lives in [`llm_extraction/`](llm_extraction/) (merged legacy `notes_extraction` + `notes_extraction_new`). Staging checkpoints sit under [`processed/output/`](processed/output/); study/manuscript artifact trees under [`processed/outputs/`](processed/outputs/). Medallion tiers are documented in [`docs/REPO_ARCHITECTURE_V2.md`](docs/REPO_ARCHITECTURE_V2.md).
+
 **Status:** Manuscript-ready (with scoped caveats) | Extraction pipeline complete | 626 local DuckDB tables
 
 A final manuscript-readiness hardening pass on 2026-03-13 audited 578 local DuckDB
@@ -33,6 +35,7 @@ documented source limitations, not data quality failures.
 | Zenodo ↔ GitHub | [`docs/ZENODO_GITHUB_SYNC_NOTES_20260326.md`](docs/ZENODO_GITHUB_SYNC_NOTES_20260326.md) — how to publish a new Zenodo version after pushes |
 | ETE manuscript revision packet | [`manuscripts/ete_ajcc8_202603/MANUSCRIPT_REVISION_PACKET_20260326.md`](manuscripts/ete_ajcc8_202603/MANUSCRIPT_REVISION_PACKET_20260326.md) |
 | LLM extraction handoff | [`docs/llm_extraction_handoff_20260327.md`](docs/llm_extraction_handoff_20260327.md) |
+| Repo architecture (medallion) | [`docs/REPO_ARCHITECTURE_V2.md`](docs/REPO_ARCHITECTURE_V2.md) |
 | LLM validation workspace | [`studies/llm_extraction_validation/README.md`](studies/llm_extraction_validation/README.md) |
 | Git tag | [`v2026.03.10-publication-ready`](../../releases/tag/v2026.03.10-publication-ready) |
 
@@ -88,8 +91,9 @@ structured JSON entity extraction from clinical notes.
 
 | Component | Location |
 |-----------|----------|
-| LLM extractor | `notes_extraction/extract_llm.py` |
-| Pipeline runner | `notes_extraction/run_extraction.py` |
+| LLM extractor | `llm_extraction/extract_llm.py` |
+| Pipeline runner | `llm_extraction/run_extraction.py` |
+| Expanded domain prompts (V2 fleet) | `llm_extraction/prompts/` |
 | Validation workspace | [`studies/llm_extraction_validation/README.md`](studies/llm_extraction_validation/README.md) |
 | System prompt | `prompts/lab_date_extraction_v1.txt` |
 | Handoff doc | [`docs/llm_extraction_handoff_20260327.md`](docs/llm_extraction_handoff_20260327.md) |
@@ -97,7 +101,7 @@ structured JSON entity extraction from clinical notes.
 **Run:**
 ```bash
 export GITHUB_TOKEN='ghp_...'
-.venv/bin/python notes_extraction/run_extraction.py \
+.venv/bin/python llm_extraction/run_extraction.py \
   --workers 3 --input processed/clinical_notes_long.parquet
 ```
 
@@ -134,10 +138,13 @@ All data encrypted on local drive (PHI compliance).
 │   └── secrets.toml          # (gitignored) local config
 ├── .github/workflows/
 │   └── ci.yml                # CI: syntax check + local DuckDB smoke test
+├── llm_extraction/           # Regex + LLM entity extraction (package: llm_extraction)
+├── lakehouse/                # Medallion docs: bronze/ silver/ gold/
+├── prompts/                  # Shared prompt text (e.g. lab_date_extraction_v1)
 ├── scripts/                  # ETL and view-creation scripts
 ├── notebooks/                # Jupyter exploration notebooks
-├── exports/                  # Publication-ready CSV exports
-├── processed/                # DVC-tracked parquet files
+├── exports/                  # Publication-ready CSV exports (often gitignored)
+├── processed/                # Silver: DVC parquets, remaining/, output/, outputs/
 ├── studies/                  # Per-proposal analysis folders
 ├── docs/                     # Documentation (QA report, architecture)
 ├── data_dictionary.md        # Full schema documentation

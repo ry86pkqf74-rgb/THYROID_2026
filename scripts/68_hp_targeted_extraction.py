@@ -36,8 +36,8 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from notes_extraction.base import EntityMatch
-from notes_extraction.extract_hp_targeted import (
+from llm_extraction.base import EntityMatch
+from llm_extraction.extract_hp_targeted import (
     BMIExtractor,
     SmokingStatusExtractor,
 )

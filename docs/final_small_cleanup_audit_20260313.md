@@ -39,7 +39,7 @@ outputs.
 ### Verdict
 
 All 8 unfilled columns are **Category C** — the `OperativeDetailExtractor`
-(`notes_extraction/extract_operative_v2.py`) exists but has never been run
+(`llm_extraction/extract_operative_v2.py`) exists but has never been run
 against local DuckDB. Running it would constitute a new extraction campaign,
 which is out of scope for this cleanup pass. The structural columns were
 added by script 76 Phase A as stubs awaiting future extractor output.

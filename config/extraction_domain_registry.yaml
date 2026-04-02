@@ -1,5 +1,5 @@
 # Machine-readable map: extraction domain → Parquet stem → prompt / schema version.
-# Primary pipeline: notes_extraction/ (regex + LLM). Expanded prompts: notes_extraction_new/prompts/.
+# Primary pipeline: llm_extraction/ (regex + LLM). Expanded prompts: llm_extraction/prompts/.
 schema_version: "entity_schema_v2_2026-04-01"
 
 domains:
@@ -54,9 +54,9 @@ domains:
       - repo_path: prompts/operative_note_extraction_v1.txt
         scope: llm_operative_notes
 
-notes_extraction_new:
-  runner: notes_extraction_new/run_extraction_local.py
-  prompt_dir: notes_extraction_new/prompts
+llm_extraction:
+  runner: llm_extraction/run_extraction_local.py
+  prompt_dir: llm_extraction/prompts
   # Per-domain prompt files follow *_extraction_v1.txt; align ENTITY_SCHEMA_COLUMNS before upload.
 
 canonical_outputs:
@@ -71,4 +71,4 @@ canonical_outputs:
   runs_table:
     duckdb_table: note_extraction_runs
     parquet_path: processed/note_extraction_runs.parquet
-    materialize_script: notes_extraction/run_extraction.py
+    materialize_script: llm_extraction/run_extraction.py

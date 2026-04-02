@@ -75,10 +75,10 @@ Input corpus size for each domain: 11,037 notes.
 
 ## Completed domains archived locally
 
-- `physical_exam` completed on the primary H200 and was copied into the repo at `output/v2_parquets/note_entities_llm_physical_exam.parquet`.
-- `operative_v2_enrichment` completed on the primary H200, validated locally with 11,037 rows plus provenance/date fields, and was copied into `output/v2_parquets/note_entities_llm_operative_v2_enrichment.parquet`.
-- `parathyroid_per_gland` completed on the primary H200, validated locally with 11,037 rows plus provenance/date fields, and was copied into `output/v2_parquets/note_entities_llm_parathyroid_per_gland.parquet`.
-- `tirads_granular` completed on the primary H200, validated locally with 11,037 rows plus provenance/date fields, and was copied into `output/v2_parquets/note_entities_llm_tirads_granular.parquet`.
+- `physical_exam` completed on the primary H200 and was copied into the repo at `processed/output/v2_parquets/note_entities_llm_physical_exam.parquet`.
+- `operative_v2_enrichment` completed on the primary H200, validated locally with 11,037 rows plus provenance/date fields, and was copied into `processed/output/v2_parquets/note_entities_llm_operative_v2_enrichment.parquet`.
+- `parathyroid_per_gland` completed on the primary H200, validated locally with 11,037 rows plus provenance/date fields, and was copied into `processed/output/v2_parquets/note_entities_llm_parathyroid_per_gland.parquet`.
+- `tirads_granular` completed on the primary H200, validated locally with 11,037 rows plus provenance/date fields, and was copied into `processed/output/v2_parquets/note_entities_llm_tirads_granular.parquet`.
 
 ## Current queue distribution after final H200 launch
 

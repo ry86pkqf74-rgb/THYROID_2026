@@ -244,9 +244,9 @@ Each domain produces a JSONL checkpoint (one JSON row per clinical note) followi
 - `COWORK_IMPLEMENTATION_PROMPT.md` — Ready-to-paste briefing for AI sessions
 
 **Extraction pipeline:**
-- `output/v2_checkpoints/` — V2 GPU server checkpoint files
-- `output/v2_parquets/` — V2 Parquet exports
-- `output/server_checkpoints/S1-S8/` — Per-server checkpoint files
+- `processed/output/v2_checkpoints/` — V2 GPU server checkpoint files
+- `processed/output/v2_parquets/` — V2 Parquet exports
+- `processed/output/server_checkpoints/S1-S8/` — Per-server checkpoint files
 
 ---
 

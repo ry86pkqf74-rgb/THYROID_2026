@@ -21,9 +21,9 @@
 | Ordinal regression (expanded CC) | [`audit_tables/table3_ordinal_regression.csv`](../../studies/proposal2_ete_staging/audit_tables/table3_ordinal_regression.csv) |
 | PSM effect / balance | [`audit_tables/table6_propensity_matching_effect.csv`](../../studies/proposal2_ete_staging/audit_tables/table6_propensity_matching_effect.csv), [`audit_tables/table6_propensity_matching_balance.csv`](../../studies/proposal2_ete_staging/audit_tables/table6_propensity_matching_balance.csv) |
 | Interactions (structural logistic) | [`audit_tables/table8_interaction_tests.csv`](../../studies/proposal2_ete_staging/audit_tables/table8_interaction_tests.csv) |
-| PSM / table hashes (sub-freeze note) | [`outputs/manuscript_forensics_20260318/final_manuscript_dataset_provenance.json`](../../outputs/manuscript_forensics_20260318/final_manuscript_dataset_provenance.json) → `psm_freeze` |
+| PSM / table hashes (sub-freeze note) | [`processed/outputs/manuscript_forensics_20260318/final_manuscript_dataset_provenance.json`](../../processed/outputs/manuscript_forensics_20260318/final_manuscript_dataset_provenance.json) → `psm_freeze` |
 
-**Post-freeze supplementary (CT timing only):** [`outputs/manuscript_forensics_20260318/ptc_ct_imaging_events.csv`](../../outputs/manuscript_forensics_20260318/ptc_ct_imaging_events.csv), [`ct_imaging_surgery_timing.csv`](../../outputs/manuscript_forensics_20260318/ct_imaging_surgery_timing.csv), and SQL logic in [`scripts/106_ct_imaging_date_recovery.py`](../../scripts/106_ct_imaging_date_recovery.py).
+**Post-freeze supplementary (CT timing only):** [`processed/outputs/manuscript_forensics_20260318/ptc_ct_imaging_events.csv`](../../processed/outputs/manuscript_forensics_20260318/ptc_ct_imaging_events.csv), [`ct_imaging_surgery_timing.csv`](../../processed/outputs/manuscript_forensics_20260318/ct_imaging_surgery_timing.csv), and SQL logic in [`scripts/106_ct_imaging_date_recovery.py`](../../scripts/106_ct_imaging_date_recovery.py).
 
 **Not the ETE quantitative source:** [`manuscripts/pool_malignancy_202603/manuscript_v1.md`](../pool_malignancy_202603/manuscript_v1.md) — Abstract opens with a **different** design (**6,630** patients, **1,497** matched pairs, Cox HR **~1.84**), inconsistent with this ETE package (**3,278** expanded PTC; **711** mETE vs no-ETE pairs on structural endpoint). **Action:** replace that Abstract/Methods block with ETE-specific text **or** use a separate draft file for the ETE paper.
 
@@ -192,7 +192,7 @@ Use after cohort sentence; **do not** use 6,630 / 1,497 / HR 1.84 for this ETE m
 | PSM balance | [`audit_tables/table6_propensity_matching_balance.csv`](../../studies/proposal2_ete_staging/audit_tables/table6_propensity_matching_balance.csv) |
 | Interactions | [`audit_tables/table8_interaction_tests.csv`](../../studies/proposal2_ete_staging/audit_tables/table8_interaction_tests.csv) |
 | CT timing SQL | [`scripts/106_ct_imaging_date_recovery.py`](../../scripts/106_ct_imaging_date_recovery.py) L100–133 |
-| CT CSV counts | `THYROID_2026/outputs/manuscript_forensics_20260318/ptc_ct_imaging_events.csv`, `ct_imaging_surgery_timing.csv` (summarized 2026-03-26) |
+| CT CSV counts | `THYROID_2026/processed/outputs/manuscript_forensics_20260318/ptc_ct_imaging_events.csv`, `ct_imaging_surgery_timing.csv` (summarized 2026-03-26) |
 | Structural / PSM code | [`proposal2_endpoint_psm_strata.py`](../../studies/proposal2_ete_staging/proposal2_endpoint_psm_strata.py) L83–117, L150–232 |
 | PSM rerun | [`revision_rerun_20260326/run_psm_reproduction.py`](revision_rerun_20260326/run_psm_reproduction.py), outputs `*_rerun.csv` |
 

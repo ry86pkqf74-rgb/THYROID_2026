@@ -78,7 +78,7 @@ Every rate in manuscript-facing outputs now includes three components:
 | `exports/manuscript_tables/table3_outcomes.md` | Split into Section A (cancer-eligible 4,136) and Section B (full cohort 10,871 complications). Added per-entity complication breakdown. | CRITICAL FIX |
 | `exports/manuscript_tables/table2_tumor_treatment.md` | Corrected RAI label to "dose-verified". Added footnote specifying dual-denominator RAI rates. | DENOMINATOR FIX |
 | `exports/FINAL_PUBLICATION_BUNDLE_20260313/PHASE13_FINAL_REPORT.md` | Corrected BRAF from 659 to 376, RAS from 364 to 292. Added reconciliation notes explaining corrections. | STALE VALUE FIX |
-| `notes_extraction/master_refinement_report_phase13.md` | Same BRAF/RAS corrections as PHASE13_FINAL_REPORT. | STALE VALUE FIX |
+| `llm_extraction/master_refinement_report_phase13.md` | Same BRAF/RAS corrections as PHASE13_FINAL_REPORT. | STALE VALUE FIX |
 | `docs/database_hardening_audit_20260313.md` | Fixed BRAF denominator (10,871 to 10,025). Fixed RAI label (definite to likely_received). Updated BRAF/RAS narrative counts. | DENOMINATOR FIX |
 | `docs/statistical_analysis_plan_thyroid_manuscript.md` | Corrected BRAF count from 546 to 376 with proper denominator language. | STALE VALUE FIX |
 | `README.md` | Replaced "Publication-Ready Release" with "Manuscript-Ready Data Layer". Added reconciliation report reference. | STATUS ALIGNMENT |
@@ -142,7 +142,7 @@ All 11 canonical metrics verified against their source SQL queries. All PASS.
 |------|----------|----------------|
 | 2 Bethesda VI patients (research_id 5012) | Warning | Review for potential reclassification. Non-blocking. |
 | `manuscript_v1.md` uses 6,630-patient ETE subanalysis cohort | Info | This is a valid subanalysis (ptc_cohort with staging). Document the distinct denominator in the ETE manuscript. |
-| Phase reports in `notes_extraction/` contain historical counts | Info | Reconciliation notes added to Phase 13 report. Earlier phase reports are archival. |
+| Phase reports in `llm_extraction/` contain historical counts | Info | Reconciliation notes added to Phase 13 report. Earlier phase reports are archival. |
 
 ---
 

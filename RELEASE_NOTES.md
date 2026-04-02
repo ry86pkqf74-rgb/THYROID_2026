@@ -28,7 +28,7 @@ metrics modified.
 CI workflow now runs 3 jobs: lint-and-syntax (full script corpus), unit-tests,
 and local DuckDB-ci (12 table checks + 11 metric ranges + row multiplication
 guard + null-threshold guard + dashboard smoke tests). Trigger paths expanded
-to `scripts/**`, `app/**`, `utils/**`, `notes_extraction/**`.
+to `scripts/**`, `app/**`, `utils/**`, `llm_extraction/**`.
 
 #### Config
 `config/local DuckDB_environments.yml` — documents dev/qa/prod, Duckling sizing,
@@ -580,9 +580,9 @@ All regression results include plain-English interpretation strings, e.g.:
 - `27_date_provenance_formalization.py` — ALTER TABLE adds 4 provenance columns to all 6 `note_entities_*` tables; `enriched_master_timeline` + `date_rescue_rate_summary` KPI views
 
 ### V2 Extraction Layer
-- `MolecularDetailExtractor`, `RAIDetailExtractor`, `ImagingNoduleExtractor`, `OperativeDetailExtractor`, `HistologyDetailExtractor` in `notes_extraction/extract_*_v2.py`
+- `MolecularDetailExtractor`, `RAIDetailExtractor`, `ImagingNoduleExtractor`, `OperativeDetailExtractor`, `HistologyDetailExtractor` in `llm_extraction/extract_*_v2.py`
 - Date utilities: `classify_date_status`, `compute_date_confidence`, `resolve_event_date` in `utils/date_utils.py`
-- Vocabulary normalization maps in `notes_extraction/vocab.py`
+- Vocabulary normalization maps in `llm_extraction/vocab.py`
 
 ### Validation & Readiness (Scripts 28–30)
 - `28_manual_review_export.py` — manual review queue export with `--md` flag

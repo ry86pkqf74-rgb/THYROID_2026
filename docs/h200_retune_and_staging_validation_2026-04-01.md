@@ -35,7 +35,7 @@
 
 ### Initial finding
 
-- Archived file `output/v2_parquets/note_entities_llm_staging.parquet` was an older-format artifact.
+- Archived file `processed/output/v2_parquets/note_entities_llm_staging.parquet` was an older-format artifact.
 - It had `11,037` rows but only these fields:
   - `note_row_id`
   - `research_id`
@@ -50,7 +50,7 @@
 
 ### Repair performed
 
-- Rebuilt the completed `staging` parquet from the local checkpoint `output/v2_checkpoints/note_entities_llm_staging.ckpt.jsonl` using the current `scripts/vastai/run_extraction_concurrent.py` backfill path.
+- Rebuilt the completed `staging` parquet from the local checkpoint `processed/output/v2_checkpoints/note_entities_llm_staging.ckpt.jsonl` using the current `scripts/vastai/run_extraction_concurrent.py` backfill path.
 - The extractor rewrote all `11,037` checkpoint rows with the newer provenance payload and rebuilt the parquet without re-running model extraction.
 
 ### Validation results for rebuilt staging parquet
@@ -90,5 +90,5 @@ This mixed-model history reflects prior completed checkpoint content rather than
 ## Publish decision
 
 - The rebuilt `staging` parquet is structurally valid and linked correctly back to the source note parquet.
-- The repaired archive should replace the older staging parquet in `output/v2_parquets/`.
+- The repaired archive should replace the older staging parquet in `processed/output/v2_parquets/`.
 - The three anomalous rows are small enough to treat as a targeted follow-up review item, not a blocker for publishing the repaired artifact.

@@ -21,10 +21,10 @@ The runtime was patched in-repo and synced to the primary worker. The supervisor
 
 | Domain | Status | Evidence |
 | --- | --- | --- |
-| `operative_v2_enrichment` | complete | local parquet present in `output/v2_parquets/` |
-| `parathyroid_per_gland` | complete | local parquet present in `output/v2_parquets/` |
-| `tirads_granular` | complete | local parquet present in `output/v2_parquets/` |
-| `physical_exam` | complete | local parquet present in `output/v2_parquets/` |
+| `operative_v2_enrichment` | complete | local parquet present in `processed/output/v2_parquets/` |
+| `parathyroid_per_gland` | complete | local parquet present in `processed/output/v2_parquets/` |
+| `tirads_granular` | complete | local parquet present in `processed/output/v2_parquets/` |
+| `physical_exam` | complete | local parquet present in `processed/output/v2_parquets/` |
 | `rai_detailed` | complete at row-count level, not promoted in this session | prior Fast B checkpoint completed; current lane moved off domain |
 | `dynamic_risk_response` | in progress | primary H200 at 2,667 / 11,037 |
 | `survival_followup` | in progress | H200 F at 9,621 / 11,037 |

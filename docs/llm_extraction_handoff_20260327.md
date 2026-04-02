@@ -6,7 +6,7 @@ Run the full note-extraction pipeline with LLM assistance across `processed/clin
 ## What changed in code
 
 ### 1. GitHub Models support
-File: `notes_extraction/extract_llm.py`
+File: `llm_extraction/extract_llm.py`
 - `LLMExtractor` now prefers `GITHUB_TOKEN` first, then falls back to `OPENAI_API_KEY`.
 - GitHub Models endpoint:
   - base URL: `https://models.github.ai/inference/`
@@ -14,7 +14,7 @@ File: `notes_extraction/extract_llm.py`
 - If neither token is present, LLM extraction is disabled.
 
 ### 2. Explicit rate-limit handling
-File: `notes_extraction/extract_llm.py`
+File: `llm_extraction/extract_llm.py`
 - OpenAI SDK auto-retries were disabled with `max_retries=0`.
 - Custom backoff was added for 429/rate-limit responses.
 - Current backoff schedule per request:
@@ -26,7 +26,7 @@ File: `notes_extraction/extract_llm.py`
 - One API client is cached per worker thread for lower overhead.
 
 ### 3. Parallel note-level extraction
-File: `notes_extraction/run_extraction.py`
+File: `llm_extraction/run_extraction.py`
 - Added `--workers` argument.
 - Extraction can now run with note-level thread parallelism.
 - Current safe setting found in this session: `--workers 3`
@@ -37,7 +37,7 @@ From repo root:
 
 ```bash
 export GITHUB_TOKEN="<your github models token>"
-/Users/loganglosser/THYROID_2026/.venv/bin/python -u notes_extraction/run_extraction.py --workers 3
+/Users/loganglosser/THYROID_2026/.venv/bin/python -u llm_extraction/run_extraction.py --workers 3
 ```
 
 On another computer, after cloning the repo, use the local repo path instead of the absolute path above, e.g.:
@@ -49,7 +49,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 pip install openai
 export GITHUB_TOKEN="<your github models token>"
-python -u notes_extraction/run_extraction.py --workers 3
+python -u llm_extraction/run_extraction.py --workers 3
 ```
 
 ## Environment/setup required
@@ -137,8 +137,8 @@ This uploads the standard notes/entity tables only:
 5. Stage, commit, and push only the extraction-related changes.
 
 ## Files changed in this session
-- `notes_extraction/extract_llm.py`
-- `notes_extraction/run_extraction.py`
+- `llm_extraction/extract_llm.py`
+- `llm_extraction/run_extraction.py`
 - `docs/llm_extraction_handoff_20260327.md`
 
 ## Resume point

@@ -37,7 +37,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from notes_extraction.vocab import ENTITY_SCHEMA_COLUMNS
+from llm_extraction.vocab import ENTITY_SCHEMA_COLUMNS
 from utils.text_helpers import save_parquet
 
 LOG = logging.getLogger("llm_validation")

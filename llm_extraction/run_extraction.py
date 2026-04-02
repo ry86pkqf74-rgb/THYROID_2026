@@ -1,0 +1,439 @@
+#!/usr/bin/env python3
+"""
+run_extraction.py — Run all entity extractors on clinical_notes_long
+
+local DuckDB does not run extraction: it stores tables uploaded from this
+repo (e.g. scripts/09b_local DuckDB_upload_notes_entities.py).
+
+Loads processed/clinical_notes_long.parquet, applies regex (and optionally
+LLM) extractors, and writes one parquet per entity domain:
+
+  processed/note_entities_staging.parquet
+  processed/note_entities_genetics.parquet
+  processed/note_entities_procedures.parquet
+  processed/note_entities_operative_detail.parquet
+  processed/note_entities_complications.parquet
+  processed/note_entities_medications.parquet
+  processed/note_entities_problem_list.parquet
+
+Usage:
+  python llm_extraction/run_extraction.py
+      --target medications        # re-run only the medications domain
+      --research-ids ids.txt      # re-run only notes for listed research_ids
+      --target genetics --research-ids ids.txt  # combined filter
+"""
+
+from __future__ import annotations
+
+import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import logging
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+
+from llm_extraction.base import BaseExtractor
+from llm_extraction.extract_llm import LLMExtractor
+from llm_extraction.extract_operative_v2 import OperativeDetailExtractor
+from llm_extraction.extract_regex import ALL_REGEX_EXTRACTORS
+from llm_extraction.run_telemetry import (
+    RunTelemetryContext,
+    append_note_extraction_run,
+    new_extraction_run_id,
+)
+from llm_extraction.vocab import ENTITY_SCHEMA_COLUMNS, EXTRACTOR_BUILD_VERSION
+from utils.text_helpers import save_parquet
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s  %(levelname)-8s  %(message)s",
+    datefmt="%H:%M:%S",
+)
+log = logging.getLogger("extraction")
+
+PROCESSED = ROOT / "processed"
+np.random.seed(42)
+
+PHI_SNIPPET_LEN = 80
+
+# Map extractor class entity_domain -> output parquet stem
+DOMAIN_TO_FILE = {
+    "staging": "note_entities_staging",
+    "genetics": "note_entities_genetics",
+    "procedures": "note_entities_procedures",
+    "operative_detail": "note_entities_operative_detail",
+    "complications": "note_entities_complications",
+    "medications": "note_entities_medications",
+    "problem_list": "note_entities_problem_list",
+    "llm": "note_entities_llm",
+}
+
+
+def _value_or_none(value):
+    if pd.isna(value):
+        return None
+    return value
+
+
+def _stamp_row(ext: BaseExtractor, rec: dict, extraction_run_id: str, source_row: dict) -> dict:
+    rec["extraction_run_id"] = extraction_run_id
+    rec["extractor_name"] = ext.__class__.__name__
+    rec["extractor_version"] = EXTRACTOR_BUILD_VERSION
+    rec["episode_id"] = _value_or_none(source_row.get("episode_id"))
+    rec["note_index"] = _value_or_none(source_row.get("note_index"))
+    rec["source_sheet"] = _value_or_none(source_row.get("source_sheet"))
+    rec["source_column"] = _value_or_none(source_row.get("source_column"))
+    extracted_at = rec.get("extracted_at") or datetime.now(timezone.utc).isoformat()
+    rec["extracted_at"] = extracted_at
+    rec["extraction_timestamp_utc"] = extracted_at
+    rec["confidence_score"] = rec.get("confidence")
+    if ext.entity_domain != "llm":
+        rec["model_name"] = None
+        rec["model_version"] = None
+        rec["prompt_version"] = "regex_only"
+        rec["llm_model"] = None
+        rec["llm_prompt_version"] = "regex_only"
+        rec["verifier_name"] = None
+        rec["verifier_version"] = None
+    else:
+        rec["llm_model"] = rec.get("model_name")
+        rec["llm_prompt_version"] = rec.get("prompt_version")
+        if getattr(ext, "force_pending_verification", False):
+            rec["verification_status"] = "pending"
+            rec["verification_step"] = "awaiting_review"
+    return rec
+
+
+def run_extractors(
+    notes_df: pd.DataFrame,
+    extractors: list[BaseExtractor],
+    max_workers: int = 1,
+    *,
+    extraction_run_id: str,
+) -> dict[str, list[dict]]:
+    """Run all extractors across every note row, grouping results by domain."""
+    domain_results: dict[str, list[dict]] = {}
+
+    has_note_date = "note_date" in notes_df.columns
+
+    def extract_one(row: dict) -> dict[str, list[dict]]:
+        note_row_id = row["note_row_id"]
+        research_id = int(row["research_id"])
+        note_type = row["note_type"]
+        note_text = str(row["note_text"])
+        note_date = row.get("note_date") if has_note_date else None
+        if pd.isna(note_date):
+            note_date = None
+
+        row_results: dict[str, list[dict]] = {}
+        for ext in extractors:
+            matches = ext.extract(note_row_id, research_id, note_type, note_text, note_date=note_date)
+            if matches:
+                domain = ext.entity_domain
+                row_results.setdefault(domain, [])
+                for m in matches:
+                    row_results[domain].append(
+                        _stamp_row(ext, m.to_dict(), extraction_run_id, row)
+                    )
+        return row_results
+
+    total = len(notes_df)
+    rows = notes_df.to_dict("records")
+
+    if max_workers <= 1:
+        for i, row in enumerate(rows):
+            row_results = extract_one(row)
+            for domain, records in row_results.items():
+                domain_results.setdefault(domain, []).extend(records)
+
+            if (i + 1) % 2000 == 0:
+                log.info(f"  Processed {i+1:,}/{total:,} notes ...")
+        return domain_results
+
+    log.info(f"  Parallel extraction enabled with {max_workers} worker threads")
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = [executor.submit(extract_one, row) for row in rows]
+        for i, future in enumerate(as_completed(futures), start=1):
+            row_results = future.result()
+            for domain, records in row_results.items():
+                domain_results.setdefault(domain, []).extend(records)
+
+            if i % 500 == 0 or i == total:
+                log.info(f"  Processed {i:,}/{total:,} notes ...")
+
+    return domain_results
+
+
+def results_to_dataframes(domain_results: dict[str, list[dict]]) -> dict[str, pd.DataFrame]:
+    """Convert domain results to validated DataFrames."""
+    dfs: dict[str, pd.DataFrame] = {}
+    for domain, records in domain_results.items():
+        if not records:
+            continue
+        df = pd.DataFrame(records)
+        for col in ENTITY_SCHEMA_COLUMNS:
+            if col not in df.columns:
+                df[col] = None
+        df = df[ENTITY_SCHEMA_COLUMNS]
+        BaseExtractor.validate_output(df)
+        dfs[domain] = df
+    return dfs
+
+
+def _merge_into_existing(
+    domain: str,
+    new_df: pd.DataFrame,
+    replace_research_ids: set[int] | None,
+) -> pd.DataFrame:
+    """Merge new extraction results into an existing parquet (for targeted runs).
+
+    Replaces rows for the given research_ids (or all rows if replace_research_ids
+    is None, i.e., full run) and appends any new rows not previously in the file.
+    """
+    out_path = PROCESSED / f"{DOMAIN_TO_FILE[domain]}.parquet"
+    if not out_path.exists() or replace_research_ids is None:
+        return new_df  # Full run: just return new_df as-is
+
+    existing_df = pd.read_parquet(out_path)
+    if "research_id" not in existing_df.columns:
+        return new_df
+
+    # Drop rows for the targeted research_ids from the existing parquet
+    mask = existing_df["research_id"].astype(int).isin(replace_research_ids)
+    kept_existing = existing_df[~mask].copy()
+
+    # Align columns for older parquets missing new provenance fields
+    for col in new_df.columns:
+        if col not in kept_existing.columns:
+            kept_existing[col] = None
+    for col in kept_existing.columns:
+        if col not in new_df.columns:
+            new_df[col] = None
+    merged = pd.concat([kept_existing, new_df], ignore_index=True)
+    return merged
+
+
+def main() -> None:
+    started_at = datetime.now(timezone.utc).isoformat()
+    extraction_run_id = new_extraction_run_id()
+    telemetry = RunTelemetryContext()
+
+    parser = argparse.ArgumentParser(
+        description="Run entity extractors on clinical_notes_long"
+    )
+    parser.add_argument(
+        "--target",
+        metavar="DOMAIN",
+        help=(
+            "Re-extract only a specific entity domain "
+            f"(choices: {', '.join(sorted(DOMAIN_TO_FILE))}). "
+            "Merges results with existing parquet for unaffected research_ids."
+        ),
+    )
+    parser.add_argument(
+        "--research-ids",
+        metavar="FILE",
+        help=(
+            "Path to a text file with one research_id per line. "
+            "Only notes for those patients will be (re-)extracted. "
+            "Combines with --target if both are given."
+        ),
+    )
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=None,
+        help=(
+            "Note-level worker threads. Default: auto (3 when LLM is enabled, 1 otherwise). "
+            "Use 1 for fully sequential extraction."
+        ),
+    )
+    args = parser.parse_args()
+
+    # Validate --target
+    target_domain: str | None = args.target
+    if target_domain and target_domain not in DOMAIN_TO_FILE:
+        parser.error(
+            f"Unknown domain '{target_domain}'. "
+            f"Valid domains: {', '.join(sorted(DOMAIN_TO_FILE))}"
+        )
+
+    # Load research_id filter
+    research_id_filter: set[int] | None = None
+    if args.research_ids:
+        ids_path = Path(args.research_ids)
+        if not ids_path.exists():
+            log.error(f"research-ids file not found: {ids_path}")
+            sys.exit(1)
+        research_id_filter = {
+            int(line.strip())
+            for line in ids_path.read_text().splitlines()
+            if line.strip().isdigit()
+        }
+        log.info(f"  Research-id filter: {len(research_id_filter):,} patients")
+
+    log.info("=" * 70)
+    log.info("  ENTITY EXTRACTION PIPELINE")
+    log.info("=" * 70)
+
+    notes_path = PROCESSED / "clinical_notes_long.parquet"
+    if not notes_path.exists():
+        log.error(f"Input not found: {notes_path}")
+        log.error("Run scripts/build_clinical_notes_long.py first.")
+        sys.exit(1)
+
+    notes_df = pd.read_parquet(notes_path)
+    log.info(f"  Loaded {len(notes_df):,} notes from {notes_path.name}")
+
+    # Apply research_id filter
+    if research_id_filter:
+        before = len(notes_df)
+        notes_df = notes_df[
+            notes_df["research_id"].astype(int).isin(research_id_filter)
+        ].reset_index(drop=True)
+        log.info(
+            f"  Filtered to {len(notes_df):,} notes "
+            f"({before - len(notes_df):,} excluded by research-id filter)"
+        )
+
+    # Select extractors: standard regex domains + deep operative-note regex (op_note only).
+    all_extractors: list[BaseExtractor] = [
+        *(cls() for cls in ALL_REGEX_EXTRACTORS),
+        OperativeDetailExtractor(),
+    ]
+
+    llm = LLMExtractor(telemetry=telemetry)
+    if llm.available:
+        all_extractors.append(llm)
+        log.info(
+            "  LLM extractor enabled (GITHUB_TOKEN or OPENAI_API_KEY; operative notes use extended chunk)"
+        )
+    else:
+        telemetry.llm_disabled = True
+        log.warning(
+            "  LLM extractor disabled (set GITHUB_TOKEN or OPENAI_API_KEY) — "
+            "llm domain will be empty; this is not the same as 'no clinical findings'"
+        )
+
+    worker_count = args.workers
+    if worker_count is None:
+        worker_count = 3 if llm.available else 1
+    worker_count = max(1, worker_count)
+
+    # Filter to target domain if specified
+    if target_domain:
+        extractors = [
+            e for e in all_extractors
+            if e.entity_domain == target_domain
+        ]
+        # Optionally add LLM for non–operative-detail targets (operative_detail is regex-only by default).
+        if target_domain != "operative_detail":
+            extractors.extend(e for e in all_extractors if e.entity_domain == "llm")
+        log.info(f"  Target domain filter: '{target_domain}' "
+                 f"({len(extractors)} extractor(s) active)")
+    else:
+        extractors = all_extractors
+
+    log.info("  extraction_run_id=%s", extraction_run_id)
+    domain_results = run_extractors(
+        notes_df,
+        extractors,
+        max_workers=worker_count,
+        extraction_run_id=extraction_run_id,
+    )
+
+    dfs = results_to_dataframes(domain_results)
+
+    # Determine which domains to write
+    if target_domain:
+        domains_to_write = {target_domain} | ({"llm"} if "llm" in dfs else set())
+    else:
+        domains_to_write = set(DOMAIN_TO_FILE.keys()) | ({"llm"} if "llm" in dfs else set())
+
+    log.info("\n  Results summary:")
+    for domain, df in dfs.items():
+        if domain not in domains_to_write:
+            continue
+
+        file_stem = DOMAIN_TO_FILE.get(domain, f"note_entities_{domain}")
+        out_path = PROCESSED / f"{file_stem}.parquet"
+
+        # Merge with existing parquet on targeted re-runs
+        final_df = _merge_into_existing(domain, df, research_id_filter)
+        save_parquet(final_df, out_path)
+
+        n_present = (df["present_or_negated"] == "present").sum()
+        n_negated = (df["present_or_negated"] == "negated").sum()
+        n_patients = df["research_id"].nunique()
+        n_entity_dated = df["entity_date"].notna().sum()
+        n_note_dated = df["note_date"].notna().sum()
+
+        log.info(
+            f"    {domain:20s}  {len(df):>6,} entities  "
+            f"({n_present:,} present, {n_negated:,} negated)  "
+            f"{n_patients:,} patients"
+        )
+        log.info(
+            f"      dates: {n_entity_dated:,} entity_date, "
+            f"{n_note_dated:,} note_date"
+        )
+
+        top = df["entity_value_norm"].value_counts().head(5)
+        for val, cnt in top.items():
+            log.info(f"      {val}: {cnt:,}")
+
+    if not dfs:
+        log.warning(
+            "  No entities extracted for selected domains — check API keys, input paths, and filters"
+        )
+
+    out_count = sum(len(dfs[d]) for d in dfs if d in domains_to_write)
+    completed_at = datetime.now(timezone.utc).isoformat()
+    fstage = telemetry.failure_stage()
+    # success=false only for partial LLM failure; llm_disabled is an expected mode (regex-only).
+    pipeline_success = fstage in ("none", "llm_disabled")
+    warn_obj = {
+        "llm_telemetry": {
+            "llm_disabled": telemetry.llm_disabled,
+            "api_failures": telemetry.api_failures,
+            "parse_failures": telemetry.parse_failures,
+            "retry_attempts": telemetry.retry_attempts,
+        },
+        "domains_with_output": sorted(dfs.keys()),
+        "partial_run_target": target_domain,
+    }
+
+    append_note_extraction_run(
+        PROCESSED,
+        run_id=extraction_run_id,
+        started_at=started_at,
+        completed_at=completed_at,
+        success=pipeline_success,
+        failure_stage=fstage,
+        retry_count=telemetry.retry_attempts,
+        output_record_count=int(out_count),
+        warnings=warn_obj,
+        domains_requested=",".join(sorted(domains_to_write)) if dfs else ",".join(sorted(DOMAIN_TO_FILE.keys())),
+        research_id_filter_note=args.research_ids,
+        target_domain=target_domain,
+    )
+    log.info(
+        "  note_extraction_runs updated (success=%s, failure_stage=%s, entities=%s)",
+        pipeline_success,
+        fstage,
+        out_count,
+    )
+
+    log.info("\n" + "=" * 70)
+    log.info("  EXTRACTION COMPLETE")
+    log.info("=" * 70)
+
+
+if __name__ == "__main__":
+    main()

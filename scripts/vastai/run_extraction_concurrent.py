@@ -37,7 +37,8 @@ except ImportError:
     pass
 
 PROCESSED_REMAINING = ROOT / "processed" / "remaining"
-PROMPTS_DIR = ROOT / "notes_extraction_new" / "prompts"
+PROCESSED_OUTPUT = ROOT / "processed" / "output"
+PROMPTS_DIR = ROOT / "llm_extraction" / "prompts"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -598,7 +599,7 @@ def main() -> None:
 
     parser = argparse.ArgumentParser(description="LLM extraction with concurrent Ollama requests")
     parser.add_argument("--input-parquet", type=Path, default=PROCESSED_REMAINING / "clinical_notes_long.parquet")
-    parser.add_argument("--output-dir", type=Path, default=PROCESSED_REMAINING)
+    parser.add_argument("--output-dir", type=Path, default=PROCESSED_OUTPUT)
     parser.add_argument("--url", default="http://localhost:11434/v1")
     parser.add_argument("--model", default="qwen3:32b")
     parser.add_argument("--api-key", default="ollama")

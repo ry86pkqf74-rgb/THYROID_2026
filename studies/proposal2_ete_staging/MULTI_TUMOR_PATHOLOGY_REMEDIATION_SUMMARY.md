@@ -10,7 +10,7 @@
 
 ## What was changed in code
 
-1. **`notes_extraction/extraction_audit_engine_v8.py`** — `extracted_multi_tumor_aggregate_v1` SQL:
+1. **`llm_extraction/extraction_audit_engine_v8.py`** — `extracted_multi_tumor_aggregate_v1` SQL:
    - **Eligibility:** `multi_tumor_pts` now includes any patient with **non-empty histology text** in tumor **3, 4, or 5** (not only tumor 2).
    - **Worst-of rollups:** Angioinvasion, margin, ETE, vessel quantify, and max size now include **tumor 4 and 5** wherever those columns exist.
    - **LN sum:** Unchanged — `path_synoptics` only exposes LN positive counts for **tumor_1** (`ln_involved`) and **tumor_2** (`lns_involved`); there are no per-focus LN columns for tumors 3–5 (schema limitation).
@@ -25,7 +25,7 @@
 
 ## Deploy / rerun checklist (local DuckDB)
 
-1. Re-run Phase 10 extraction deploy that executes `build_multi_tumor_aggregate_sql()` (e.g. `notes_extraction` Phase 10 / `audit_and_refine_phase10` per your pipeline).
+1. Re-run Phase 10 extraction deploy that executes `build_multi_tumor_aggregate_sql()` (e.g. `llm_extraction` Phase 10 / `audit_and_refine_phase10` per your pipeline).
 2. Run `scripts/108_synoptic_tumor_long_v1.py --md` (or load Parquet via your standard promote path).
 3. Run `scripts/26_local DuckDB_materialize_v2.py --md` to refresh `md_*` mirrors.
 

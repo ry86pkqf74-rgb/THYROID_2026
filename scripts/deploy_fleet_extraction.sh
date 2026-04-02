@@ -25,7 +25,7 @@ REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 REMOTE_DIR="/opt/thyroid_extraction"
 INPUT_PARQUET="$REPO_ROOT/processed/remaining/clinical_notes_long.parquet"
 EXTRACTION_SCRIPT="$REPO_ROOT/scripts/run_extraction_split.py"
-PROMPTS_DIR="$REPO_ROOT/notes_extraction_new/prompts"
+PROMPTS_DIR="$REPO_ROOT/llm_extraction/prompts"
 
 # Server definitions: NAME:IP:PASSWORD:DOMAINS
 SERVERS=(
@@ -59,7 +59,7 @@ check_status() {
     ssh_cmd "$ip" "$pass" "
       if [ -d $REMOTE_DIR ]; then
         echo 'Extraction dir: exists'
-        for f in $REMOTE_DIR/output/note_entities_llm_*.ckpt.jsonl; do
+        for f in $REMOTE_DIR/processed/output/note_entities_llm_*.ckpt.jsonl; do
           if [ -f \"\$f\" ]; then
             domain=\$(basename \"\$f\" | sed 's/note_entities_llm_//;s/.ckpt.jsonl//')
             count=\$(wc -l < \"\$f\")
@@ -87,7 +87,7 @@ deploy_and_run() {
     log "=== Deploying to $name ($ip) -- domains: $domains ==="
 
     # Create remote directory structure
-    ssh_cmd "$ip" "$pass" "mkdir -p $REMOTE_DIR/prompts $REMOTE_DIR/output" || {
+    ssh_cmd "$ip" "$pass" "mkdir -p $REMOTE_DIR/prompts $REMOTE_DIR/processed/output $REMOTE_DIR/processed/remaining" || {
       log "  FAILED to create dirs on $name"; continue
     }
 
@@ -118,15 +118,15 @@ deploy_and_run() {
 #!/bin/bash
 cd $REMOTE_DIR
 # The script expects repo structure; create symlinks
-mkdir -p processed/remaining notes_extraction_new
+mkdir -p processed/remaining llm_extraction
 ln -sf $REMOTE_DIR/clinical_notes_long.parquet processed/remaining/clinical_notes_long.parquet
-ln -sf $REMOTE_DIR/prompts notes_extraction_new/prompts
+ln -sf $REMOTE_DIR/prompts llm_extraction/prompts
 
 python3 run_extraction_split.py \\
   --url http://localhost:11434/v1 \\
   --model qwen3:14b \\
   --domains \$@ \\
-  --output-dir $REMOTE_DIR/output \\
+  --output-dir $REMOTE_DIR/processed/output \\
   --input-parquet $REMOTE_DIR/processed/remaining/clinical_notes_long.parquet
 
 echo \"Extraction finished at \$(date)\" >> $REMOTE_DIR/extraction.log

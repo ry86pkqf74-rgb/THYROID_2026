@@ -63,3 +63,19 @@ md-manifest-status:
 	print(f'SHA      : {m[\"git_sha\"]}  (HEAD={head}, {\"fresh\" if sha_match else \"STALE — re-run manifest\"})'); \
 	print(f'Generated: {m[\"generated_at\"]}'); \
 	sys.exit(0 if m['overall_status'] == 'RELEASE_READY' and sha_match else 1)"
+
+# ── local hygiene (no data / venv removal) ─────────────────
+.PHONY: clean
+clean:
+	@echo "clean: removing __pycache__ / .pytest_cache under repo ( .venv and .git skipped )"
+	@find . \( -path './.git' -o -path './.venv' \) -prune -o -type d -name '__pycache__' -print0 2>/dev/null | xargs -0 rm -rf 2>/dev/null || true
+	@rm -rf .pytest_cache 2>/dev/null || true
+	@find . \( -path './.git' -o -path './.venv' \) -prune -o -type f -name '*.pyc' -delete 2>/dev/null || true
+
+# ── provenance audit (read-only: --dry-run) ─────────────────
+# For full materialization (mutates DuckDB), run without --dry-run:
+#   $(PYTHON) scripts/46_provenance_audit.py --md
+.PHONY: verify-provenance
+verify-provenance:
+	$(check_token)
+	$(PYTHON) scripts/46_provenance_audit.py --md --dry-run

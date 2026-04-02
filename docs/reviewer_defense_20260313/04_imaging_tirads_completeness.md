@@ -59,5 +59,5 @@ Combined TR4+TR5 = 68.1% — consistent with a surgical cohort enriched for susp
 - **Per-nodule master**: `imaging_nodule_master_v1` (local DuckDB, 19,891 rows)
 - **ACR concordance**: `val_phase12_tirads_validation` (local DuckDB, 4 rows)
 - **TIRADS summary view**: `vw_us_nodule_tirads_validated` (local DuckDB, 5 rows)
-- **Phase 12 engine**: `notes_extraction/extraction_audit_engine_v10.py`
+- **Phase 12 engine**: `llm_extraction/extraction_audit_engine_v10.py`
 - **Excel ingestion**: Phase 12 `ingest_complete_us_excel()` and `ingest_tirads_scored_excel()`

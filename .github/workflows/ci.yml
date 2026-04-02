@@ -27,7 +27,7 @@ on:
       - "scripts/**"
       - "app/**"
       - "utils/**"
-      - "notes_extraction/**"
+      - "llm_extraction/**"
       - ".github/workflows/ci.yml"
   pull_request:
     branches: [main]
@@ -72,7 +72,7 @@ jobs:
       - name: Syntax check — all scripts
         run: |
           fail=0
-          for f in scripts/*.py app/*.py utils/*.py notes_extraction/*.py; do
+          for f in scripts/*.py app/*.py utils/*.py llm_extraction/*.py; do
             python -m py_compile "$f" 2>&1 || { echo "FAIL: $f"; fail=1; }
           done
           exit $fail

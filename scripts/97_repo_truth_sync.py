@@ -710,7 +710,7 @@ Total operative episodes: **{v("operative_episodes_total")}**
 |-------|-----------|---|--------|
 {op_table}
 > Fields marked **ZERO** remain NOT_PARSED (not confirmed-negative). The V2 extractor
-> codebase exists at `notes_extraction/extract_operative_v2.py` but outputs were never
+> codebase exists at `llm_extraction/extract_operative_v2.py` but outputs were never
 > materialized to local DuckDB. `FALSE` = UNKNOWN, not confirmed-absent.
 
 **Zero-materialized count: {op_zero_count}**  

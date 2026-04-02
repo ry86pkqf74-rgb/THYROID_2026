@@ -852,10 +852,10 @@ def enrich_from_v2_extractors(con: duckdb.DuckDBPyConnection) -> None:
         print("  SKIP: clinical_notes_long not available")
         return
 
-    from notes_extraction.extract_rai_v2 import RAIDetailExtractor
-    from notes_extraction.extract_operative_v2 import OperativeDetailExtractor
-    from notes_extraction.extract_molecular_v2 import MolecularDetailExtractor
-    from notes_extraction.extract_imaging_v2 import ImagingNoduleExtractor
+    from llm_extraction.extract_rai_v2 import RAIDetailExtractor
+    from llm_extraction.extract_operative_v2 import OperativeDetailExtractor
+    from llm_extraction.extract_molecular_v2 import MolecularDetailExtractor
+    from llm_extraction.extract_imaging_v2 import ImagingNoduleExtractor
 
     notes_df = con.execute(
         "SELECT note_row_id, CAST(research_id AS INTEGER) AS research_id, "

@@ -74,7 +74,7 @@ WHERE c.note_row_id = v.note_row_id
 -- ---------------------------------------------------------------------------
 -- D) Downstream (run existing pipelines — do not hand-edit analytic MVs)
 -- ---------------------------------------------------------------------------
--- 1. notes_extraction/run_extraction.py --target procedures (or full domain set)
+-- 1. llm_extraction/run_extraction.py --target procedures (or full domain set)
 -- 2. scripts/46_provenance_audit.py --md
 -- 3. scripts/48_* / 51b / manuscript rebuild chain per docs/analysis_resolved_layer.md
 -- 4. scripts/90_manuscript_freeze_rebuild.py --md  (if manuscript tables must move)

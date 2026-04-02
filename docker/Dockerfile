@@ -16,10 +16,10 @@ RUN pip install -r requirements.txt
 # Copy extraction code
 COPY scripts/langchain_extraction.py scripts/
 COPY scripts/run_extraction_split.py scripts/
-COPY notes_extraction_new/prompts/ notes_extraction_new/prompts/
+COPY llm_extraction/prompts/ llm_extraction/prompts/
 
 # Data and output dirs (mounted at runtime)
-RUN mkdir -p processed/remaining output
+RUN mkdir -p processed/remaining processed/output
 
 # Default env vars
 ENV OLLAMA_BASE_URL=http://host.docker.internal:11434/v1

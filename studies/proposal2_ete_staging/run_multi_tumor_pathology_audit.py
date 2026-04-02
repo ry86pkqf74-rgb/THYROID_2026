@@ -293,7 +293,7 @@ See **`MULTI_TUMOR_PATHOLOGY_REMEDIATION_SUMMARY.md`** — Phase 10 SQL extended
 - `scripts/01_ingest_all_files.py` — Excel ingest + `standardize_columns`
 - `processed/path_synoptics.parquet` — wide analytic spine
 - `scripts/22_canonical_episodes_v2.py` — `tumor_episode_master_v2` (tumor 1)
-- `notes_extraction/extraction_audit_engine_v8.py` — `extracted_multi_tumor_aggregate_v1` SQL
+- `llm_extraction/extraction_audit_engine_v8.py` — `extracted_multi_tumor_aggregate_v1` SQL
 - `scripts/03_research_views.py` — `ptc_cohort` / exports
 - `studies/proposal2_ete_staging/proposal2_ete_analysis.py` — reads `exports/ptc_full.csv`
 - `scripts/108_synoptic_tumor_long_v1.py` — **`synoptic_tumor_long_v1`**

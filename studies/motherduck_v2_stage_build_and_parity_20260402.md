@@ -7,7 +7,7 @@ Generated at: 2026-04-02T09:08:13.337752+00:00
 - MotherDuck catalog: `Thyroid 2026`
 - MotherDuck schema: `v2_stage`
 - Build method: DuckDB CLI `CREATE OR REPLACE TABLE ... AS SELECT * FROM read_parquet(...)`
-- Source set: 14 domain parquets plus `note_entities_llm_combined.parquet` from `output/v2_parquets/`
+- Source set: 14 domain parquets plus `note_entities_llm_combined.parquet` from `processed/output/v2_parquets/`
 
 ## Result
 

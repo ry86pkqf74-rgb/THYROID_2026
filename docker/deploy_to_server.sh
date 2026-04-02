@@ -30,7 +30,7 @@ echo "    Domains: $DOMAINS"
 
 # 1. Create remote directory structure
 echo "--- Creating directories ---"
-eval $SSH_CMD "'mkdir -p $REMOTE_DIR/{docker,scripts,notes_extraction_new/prompts,processed/remaining,output}'"
+eval $SSH_CMD "'mkdir -p $REMOTE_DIR/{docker,scripts,llm_extraction/prompts,processed/remaining,processed/output}'"
 
 # 2. Copy files
 echo "--- Copying Docker files ---"
@@ -42,7 +42,7 @@ eval $SCP_CMD "$SCRIPT_DIR/scripts/langchain_extraction.py" "root@$SERVER_IP:$RE
 eval $SCP_CMD "$SCRIPT_DIR/scripts/run_extraction_split.py" "root@$SERVER_IP:$REMOTE_DIR/scripts/"
 
 echo "--- Copying prompt files ---"
-eval $SCP_CMD -r "$SCRIPT_DIR/notes_extraction_new/prompts/" "root@$SERVER_IP:$REMOTE_DIR/notes_extraction_new/prompts/"
+eval $SCP_CMD -r "$SCRIPT_DIR/llm_extraction/prompts/" "root@$SERVER_IP:$REMOTE_DIR/llm_extraction/prompts/"
 
 # 3. Build Docker image
 echo "--- Building Docker image ---"
@@ -56,14 +56,14 @@ for d in $DOMAINS; do DOMAIN_ARGS="$DOMAIN_ARGS $d"; done
 eval $SSH_CMD "'cd $REMOTE_DIR && docker run -d \
     --name thyroid-langchain-\$(date +%s) \
     -v $REMOTE_DIR/processed/remaining:/app/processed/remaining:ro \
-    -v $REMOTE_DIR/output:/app/output \
-    -v $REMOTE_DIR/notes_extraction_new/prompts:/app/notes_extraction_new/prompts:ro \
+    -v $REMOTE_DIR/processed/output:/app/processed/output \
+    -v $REMOTE_DIR/llm_extraction/prompts:/app/llm_extraction/prompts:ro \
     --add-host host.docker.internal:host-gateway \
     -e OLLAMA_BASE_URL=http://host.docker.internal:11434/v1 \
     -e OLLAMA_MODEL=qwen3:14b \
     thyroid-extractor:latest \
     --domains $DOMAIN_ARGS \
-    --output-dir /app/output \
+    --output-dir /app/processed/output \
     --input-parquet /app/processed/remaining/clinical_notes_long.parquet'"
 
 echo "=== Deployment complete ==="

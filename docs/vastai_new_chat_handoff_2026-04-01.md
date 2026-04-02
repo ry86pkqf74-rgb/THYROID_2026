@@ -77,11 +77,11 @@ This is the latest known good state after recovering the interrupted scale-out, 
 
 - Supervisor log: `/var/log/supervisor_qwen32b.log`
 - Per-domain log: `/var/log/worker_<domain>.log`
-- Checkpoint: `/opt/thyroid_extraction/output/note_entities_llm_<domain>.ckpt.jsonl`
-- Final parquet: `/opt/thyroid_extraction/output/note_entities_llm_<domain>.parquet`
+- Checkpoint: `/opt/thyroid_extraction/processed/output/note_entities_llm_<domain>.ckpt.jsonl`
+- Final parquet: `/opt/thyroid_extraction/processed/output/note_entities_llm_<domain>.parquet`
 - Input parquet: `/opt/thyroid_extraction/processed/remaining/clinical_notes_long.parquet`
 - Root input parquet on H200 H2 bootstrap path: `/opt/thyroid_extraction/clinical_notes_long.parquet`
-- Prompt directory: `/opt/thyroid_extraction/notes_extraction_new/prompts`
+- Prompt directory: `/opt/thyroid_extraction/llm_extraction/prompts`
 
 ## Exact operator prompt for a new chat
 
@@ -143,11 +143,11 @@ For each active worker, do all of the following:
    - tail -n 40 /var/log/supervisor_qwen32b.log
    - tail -n 40 /var/log/worker_<current-domain>.log if present
 3. Confirm live forward progress:
-   - wc -l /opt/thyroid_extraction/output/note_entities_llm_<current-domain>.ckpt.jsonl
+   - wc -l /opt/thyroid_extraction/processed/output/note_entities_llm_<current-domain>.ckpt.jsonl
    - look for recent HTTP 200 lines in logs
   - if the worker is meant to be a single-domain host, confirm its queue/env does not still include former tail domains
 4. Confirm the queue and prompt wiring make sense:
-   - verify the intended prompt files exist under /opt/thyroid_extraction/notes_extraction_new/prompts
+   - verify the intended prompt files exist under /opt/thyroid_extraction/llm_extraction/prompts
    - verify the input parquet exists at /opt/thyroid_extraction/processed/remaining/clinical_notes_long.parquet
 5. Check for overlap or accidental duplicate processing across workers.
 
@@ -168,7 +168,7 @@ Completion rule:
 - treat a domain as complete if its checkpoint has 11037 rows and/or the domain parquet exists and is consistent with the checkpoint.
 
 For any completed domain:
-1. Copy the parquet back into the repo under output/v2_parquets/
+1. Copy the parquet back into the repo under processed/output/v2_parquets/
 2. Validate the parquet is readable and appears to contain the expected provenance fields
 3. Check git status carefully
 4. Stage only the completed-domain artifact(s) and any directly related documentation updates
@@ -209,7 +209,7 @@ ssh -p <PORT> -o StrictHostKeyChecking=no root@<HOST> '
 
 ```bash
 ssh -p <PORT> -o StrictHostKeyChecking=no root@<HOST> '
-  wc -l /opt/thyroid_extraction/output/note_entities_llm_<domain>.ckpt.jsonl 2>/dev/null || true;
+  wc -l /opt/thyroid_extraction/processed/output/note_entities_llm_<domain>.ckpt.jsonl 2>/dev/null || true;
   tail -n 20 /var/log/worker_<domain>.log 2>/dev/null | cat
 '
 ```
@@ -218,7 +218,7 @@ ssh -p <PORT> -o StrictHostKeyChecking=no root@<HOST> '
 
 ```bash
 ssh -p <PORT> -o StrictHostKeyChecking=no root@<HOST> '
-  ls -lh /opt/thyroid_extraction/output/note_entities_llm_<domain>.parquet 2>/dev/null || true
+  ls -lh /opt/thyroid_extraction/processed/output/note_entities_llm_<domain>.parquet 2>/dev/null || true
 '
 ```
 
@@ -227,8 +227,8 @@ ssh -p <PORT> -o StrictHostKeyChecking=no root@<HOST> '
 ```bash
 cd /Users/ros/THyroid\ 2026/THYROID_2026
 scp -P <PORT> -o StrictHostKeyChecking=no \
-  root@<HOST>:/opt/thyroid_extraction/output/note_entities_llm_<domain>.parquet \
-  output/v2_parquets/
+  root@<HOST>:/opt/thyroid_extraction/processed/output/note_entities_llm_<domain>.parquet \
+  processed/output/v2_parquets/
 ```
 
 ### Validate a copied parquet locally
@@ -237,7 +237,7 @@ scp -P <PORT> -o StrictHostKeyChecking=no \
 cd /Users/ros/THyroid\ 2026/THYROID_2026
 .venv/bin/python - <<'PY'
 import pandas as pd
-path = 'output/v2_parquets/note_entities_llm_<domain>.parquet'
+path = 'processed/output/v2_parquets/note_entities_llm_<domain>.parquet'
 df = pd.read_parquet(path)
 print(path, len(df), sorted(set(df.columns) & {
     'research_id', 'note_row_id', 'note_type', 'note_date', 'linkage_date',
@@ -255,7 +255,7 @@ cd /Users/ros/THyroid\ 2026/THYROID_2026
 import pandas as pd
 
 domain = '<domain>'
-artifact = pd.read_parquet(f'output/v2_parquets/note_entities_llm_{domain}.parquet')
+artifact = pd.read_parquet(f'processed/output/v2_parquets/note_entities_llm_{domain}.parquet')
 source = pd.read_parquet(
   'processed/remaining/clinical_notes_long.parquet',
   columns=['note_row_id', 'research_id', 'note_date', 'source_workbook', 'source_sheet', 'source_column']
@@ -279,7 +279,7 @@ cd /Users/ros/THyroid\ 2026/THYROID_2026
 from pathlib import Path
 
 domain = '<domain>'
-prompt_path = Path('notes_extraction_new/prompts') / f'{domain}_extraction_v1.txt'
+prompt_path = Path('llm_extraction/prompts') / f'{domain}_extraction_v1.txt'
 print(prompt_path.read_text()[:4000])
 print('\nNext step: compare the prompt fields above against the explicit downstream columns for this domain and flag any field that is only present inside result_json.')
 PY
@@ -290,7 +290,7 @@ PY
 ```bash
 cd /Users/ros/THyroid\ 2026/THYROID_2026
 git status --short
-git add output/v2_parquets/note_entities_llm_<domain>.parquet docs/<optional-doc-update>.md
+git add processed/output/v2_parquets/note_entities_llm_<domain>.parquet docs/<optional-doc-update>.md
 git commit -m "Archive completed <domain> extraction artifact"
 git push origin <active-branch>
 ```

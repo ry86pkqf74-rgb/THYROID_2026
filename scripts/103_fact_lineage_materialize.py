@@ -29,7 +29,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from notes_extraction.vocab import CANONICAL_FACT_CONTRACT_DTYPES  # noqa: E402
+from llm_extraction.vocab import CANONICAL_FACT_CONTRACT_DTYPES  # noqa: E402
 from utils.md_connect import connect_md_or_file  # noqa: E402
 from utils.provenance import (  # noqa: E402
     LOW_LLM_DATE_CONF,

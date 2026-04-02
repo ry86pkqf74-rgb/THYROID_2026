@@ -127,7 +127,7 @@ def _repair_artifact(path: Path, source: pd.DataFrame, backup_dir: Path | None, 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Backfill missing provenance fields in completed local V2 parquet artifacts")
     parser.add_argument("--source-parquet", type=Path, default=Path("processed/clinical_notes_long.parquet"))
-    parser.add_argument("--artifacts-dir", type=Path, default=Path("output/v2_parquets"))
+    parser.add_argument("--artifacts-dir", type=Path, default=Path("processed/output/v2_parquets"))
     parser.add_argument("--files", nargs="*", default=[])
     parser.add_argument("--default-source-workbook", default=DEFAULT_SOURCE_WORKBOOK)
     parser.add_argument(

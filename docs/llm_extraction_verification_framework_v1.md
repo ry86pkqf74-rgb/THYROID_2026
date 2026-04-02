@@ -2,9 +2,9 @@
 
 ## Components
 
-- **Runner:** `notes_extraction/run_extraction.py` — orchestrates regex + optional `LLMExtractor`.
-- **LLM module:** `notes_extraction/extract_llm.py` — OpenAI-compatible chat JSON; GitHub Models preferred when `GITHUB_TOKEN` is set, else `OPENAI_API_KEY`.
-- **Telemetry:** `notes_extraction/run_telemetry.py` — thread-safe counters and `note_extraction_runs` persistence.
+- **Runner:** `llm_extraction/run_extraction.py` — orchestrates regex + optional `LLMExtractor`.
+- **LLM module:** `llm_extraction/extract_llm.py` — OpenAI-compatible chat JSON; GitHub Models preferred when `GITHUB_TOKEN` is set, else `OPENAI_API_KEY`.
+- **Telemetry:** `llm_extraction/run_telemetry.py` — thread-safe counters and `note_extraction_runs` persistence.
 - **Verification:** Deterministic substring check of `evidence_text` against full note text; outcomes recorded in `verification_status` / `verification_step`.
 
 ## Model and prompt versioning

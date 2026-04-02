@@ -10,7 +10,7 @@ Define what is included in **THYROID_2026 clean dataset v1** for analysis that d
 |----------|----------|-------------|
 | Clean facts | `processed/canonical_extracted_fact_long_v1.parquet` | Union of all `note_entities_*` domains merged with `clinical_notes_long` provenance, contract columns, episode inference; excludes quarantined rows |
 | Quarantine | `processed/canonical_fact_quarantine_v1.parquet` | Same schema as clean plus `quarantine_reason`, `quarantine_date` |
-| Run log | `processed/note_extraction_runs.parquet` | One row per `notes_extraction/run_extraction.py` run (`success`, `failure_stage`, counts, LLM telemetry JSON) |
+| Run log | `processed/note_extraction_runs.parquet` | One row per `llm_extraction/run_extraction.py` run (`success`, `failure_stage`, counts, LLM telemetry JSON) |
 | Notes source | `processed/clinical_notes_long.parquet` | Long-form notes with workbook / row provenance |
 
 Downstream DuckDB objects mirror these names when registered via `scripts/02b_register_notes_entities.py` or `scripts/103_fact_lineage_materialize.py`.
