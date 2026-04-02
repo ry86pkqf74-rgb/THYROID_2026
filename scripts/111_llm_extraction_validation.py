@@ -1,23 +1,27 @@
 #!/usr/bin/env python3
 """Build local lineage and side-by-side validation artifacts for LLM extraction.
 
-This script is intentionally local-only. It does not write to MotherDuck.
-
 Primary workflow:
   1. Read a completed LLM extraction parquet (default: processed/note_entities_llm.parquet)
   2. Join every extracted row back to clinical_notes_long via note_row_id
   3. Route each value into a comparison domain/token
-  4. Compare against:
-       - canonical/structured local DuckDB tables where available
-       - existing note_entities_* tables as an extraction-baseline fallback
-  5. Emit auditable artifacts under studies/llm_extraction_validation/runs/<timestamp>/
+  4. Compare against structured DuckDB tables and note_entities_* baseline
+  5. Emit auditable artifacts under studies/llm_extraction_validation/runs/<label>/
+
+Gold policy (see --gold-require-manual, --trust-fill-candidate-auto):
+  - verification_status concordant: may enter gold with verified_by=auto unless --gold-require-manual
+  - verification_status existing_missing_fill_candidate: enters gold only if verified_by=manual,
+    unless --trust-fill-candidate-auto
+
+MotherDuck: generates motherduck_setup.sql (ATTACH + read_parquet template); no cloud writes by default.
 
 Outputs:
   - llm_lineage.parquet / .csv
-  - llm_side_by_side.parquet / .csv
-  - llm_validation_summary.csv
-  - manifest.json
-  - report.md
+  - llm_side_by_side.parquet / .csv (includes original_source_link, extraction_ts, verification_status)
+  - llm_manual_review_queue.csv
+  - gold_llm_verified_facts.parquet (after review / per policy)
+  - val_llm_concordance_summary.parquet / .csv
+  - llm_validation_summary.csv, motherduck_setup.sql, manifest.json, report.md
 """
 
 from __future__ import annotations
@@ -25,6 +29,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import os
 import re
 import sys
 from collections.abc import Iterable
@@ -54,6 +59,9 @@ RUNS_DIR = WORKSPACE_DIR / "runs"
 
 STRUCTURED_SOURCE_LIMITED_DOMAINS = {"problem_list", "unmapped"}
 
+ORIGINAL_VALUE_PREVIEW_MAX = 500
+MANUAL_QUEUE_ORIGINAL_MAX = 2000
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -79,11 +87,74 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Explicit output directory. Defaults to studies/llm_extraction_validation/runs/<label>/.",
     )
+    parser.add_argument(
+        "--review-csv",
+        default=None,
+        help="Merged manual decisions (llm_entity_id, verification_status, ...). "
+        "Default: <output_dir>/llm_manual_review_queue.csv if that file exists.",
+    )
+    parser.add_argument(
+        "--review-include-source-limited",
+        action="store_true",
+        help="Include source_limited rows in llm_manual_review_queue.csv.",
+    )
+    parser.add_argument(
+        "--gold-require-manual",
+        action="store_true",
+        help="Require verified_by=manual for gold concordant rows (strict).",
+    )
+    parser.add_argument(
+        "--trust-fill-candidate-auto",
+        action="store_true",
+        help="Allow existing_missing_fill_candidate into gold with verified_by=auto (not recommended).",
+    )
+    parser.add_argument(
+        "--write-motherduck-sql",
+        default=None,
+        help="Optional path for MotherDuck setup SQL (default: <output_dir>/motherduck_setup.sql).",
+    )
+    parser.add_argument(
+        "--motherduck-attach",
+        action="store_true",
+        help="If MOTHERDUCK_TOKEN is set, ATTACH md: and create/replace val_llm_concordance_summary.",
+    )
     return parser.parse_args()
 
 
 def stable_timestamp() -> str:
     return datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+
+
+def snippet_around_evidence(note_text: object, evidence_span: object, total_max: int = 200) -> str:
+    """Return up to total_max chars centered on evidence_span; PHI-safe snippet only."""
+    if not isinstance(note_text, str) or not note_text.strip():
+        return ""
+    span = ""
+    if evidence_span is not None and not (isinstance(evidence_span, float) and pd.isna(evidence_span)):
+        span = str(evidence_span).strip()
+    if span and span in note_text:
+        idx = note_text.index(span)
+        half = max((total_max - len(span)) // 2, 0)
+        start = max(0, idx - half)
+        end = min(len(note_text), idx + len(span) + (total_max - len(span) - (idx - start)))
+        chunk = note_text[start:end]
+        if start > 0:
+            chunk = "…" + chunk
+        if end < len(note_text):
+            chunk = chunk + "…"
+        return chunk[:total_max]
+    return (note_text[:total_max] + ("…" if len(note_text) > total_max else ""))[:total_max]
+
+
+def coalesce_extraction_ts(row: pd.Series) -> str:
+    for key in ("extraction_timestamp_utc", "extracted_at"):
+        val = row.get(key)
+        if val is None or (isinstance(val, float) and pd.isna(val)):
+            continue
+        s = str(val).strip()
+        if s:
+            return s
+    return ""
 
 
 def canonical_text(value: object) -> str:
@@ -367,6 +438,11 @@ def build_lineage(llm_df: pd.DataFrame, notes_df: pd.DataFrame) -> pd.DataFrame:
         )
     )
     lineage["token_parse_success_flag"] = lineage["comparison_domain"] != "unmapped"
+    lineage["original_source_link"] = lineage.apply(
+        lambda row: snippet_around_evidence(row["note_text"], row.get("evidence_span")),
+        axis=1,
+    )
+    lineage["extraction_ts"] = lineage.apply(coalesce_extraction_ts, axis=1)
     lineage = lineage.drop(columns=["note_text"])
     return lineage
 
@@ -773,10 +849,11 @@ def build_side_by_side(
             return "source_limited"
         return "existing_missing_fill_candidate"
 
-    comparison["confirmation_status"] = comparison.apply(status_for_row, axis=1)
-    comparison["candidate_fill_missing"] = comparison["confirmation_status"] == "existing_missing_fill_candidate"
-    comparison["candidate_review_conflict"] = comparison["confirmation_status"] == "discordant_existing"
-    comparison["candidate_hold_source_limited"] = comparison["confirmation_status"] == "source_limited"
+    comparison["algorithm_comparison_status"] = comparison.apply(status_for_row, axis=1)
+    comparison["confirmation_status"] = comparison["algorithm_comparison_status"]
+    comparison["candidate_fill_missing"] = comparison["algorithm_comparison_status"] == "existing_missing_fill_candidate"
+    comparison["candidate_review_conflict"] = comparison["algorithm_comparison_status"] == "discordant_existing"
+    comparison["candidate_hold_source_limited"] = comparison["algorithm_comparison_status"] == "source_limited"
     comparison["needs_review"] = comparison["candidate_review_conflict"] | comparison["candidate_fill_missing"]
     comparison["existing_values_preview"] = comparison.apply(
         lambda row: row["structured_display_json"] if row["structured_value_count"] > 0 else row["baseline_display_json"],
@@ -789,9 +866,230 @@ def build_side_by_side(
     return comparison
 
 
+def compute_original_value_vs_llm_diff(row: pd.Series) -> str:
+    llm_tok = str(row.get("comparison_token") or "")
+    if row.get("structured_match_flag") or row.get("baseline_match_flag"):
+        return "match"
+    s_count = int(row.get("structured_value_count") or 0)
+    b_count = int(row.get("baseline_value_count") or 0)
+    if s_count > 0 or b_count > 0:
+        preview = row.get("existing_values_preview")
+        if isinstance(preview, str) and preview:
+            trimmed = preview[:ORIGINAL_VALUE_PREVIEW_MAX]
+            return f"mismatch|llm_token={llm_tok}|existing_preview={trimmed}"
+        return f"mismatch|llm_token={llm_tok}"
+    if row.get("comparison_domain") == "unmapped":
+        return "no_comparator_domain"
+    return "no_structured_baseline"
+
+
+def default_verification_status(algorithm_status: object) -> str:
+    s = str(algorithm_status or "")
+    if s in ("concordant_existing", "concordant_existing_extraction_only"):
+        return "concordant"
+    if s == "existing_missing_fill_candidate":
+        return "existing_missing_fill_candidate"
+    if s == "discordant_existing":
+        return "pending_review"
+    if s == "source_limited":
+        return "source_limited"
+    return "pending_review"
+
+
+def enrich_side_by_side_verification(side_by_side_df: pd.DataFrame) -> pd.DataFrame:
+    df = side_by_side_df.copy()
+    df["original_value_vs_llm_diff"] = df.apply(compute_original_value_vs_llm_diff, axis=1)
+    df["verification_status"] = df["algorithm_comparison_status"].map(default_verification_status)
+    df["verified_by"] = "auto"
+    return df
+
+
+def merge_manual_review(side_by_side_df: pd.DataFrame, review_path: Path) -> pd.DataFrame:
+    rev = pd.read_csv(review_path)
+    if "llm_entity_id" not in rev.columns:
+        LOG.warning("Review CSV has no llm_entity_id; skip merge")
+        return side_by_side_df
+    if "verification_status" not in rev.columns:
+        LOG.warning("Review CSV has no verification_status; skip merge")
+        return side_by_side_df
+
+    df = side_by_side_df.copy()
+    merged = 0
+    for _, r in rev.iterrows():
+        raw_eid = r.get("llm_entity_id")
+        if raw_eid is None or (isinstance(raw_eid, float) and pd.isna(raw_eid)):
+            continue
+        eid = int(raw_eid)
+        vs = r.get("verification_status")
+        if vs is None or (isinstance(vs, float) and pd.isna(vs)):
+            continue
+        status = str(vs).strip()
+        if not status:
+            continue
+        mask = df["llm_entity_id"] == eid
+        if not mask.any():
+            continue
+        if "note_row_id" in rev.columns and pd.notna(r.get("note_row_id")):
+            expected = str(df.loc[mask, "note_row_id"].iloc[0])
+            if str(r.get("note_row_id")).strip() != expected:
+                LOG.warning("note_row_id mismatch for llm_entity_id=%s; skip merge for this row", eid)
+                continue
+        df.loc[mask, "verification_status"] = status
+        df.loc[mask, "verified_by"] = "manual"
+        merged += 1
+    LOG.info("Merged %s manual verification_status rows from %s", merged, review_path.name)
+    return df
+
+
+def build_manual_review_queue(side_by_side_df: pd.DataFrame, include_source_limited: bool) -> pd.DataFrame:
+    mask = side_by_side_df["algorithm_comparison_status"] == "discordant_existing"
+    if include_source_limited:
+        mask = mask | (side_by_side_df["algorithm_comparison_status"] == "source_limited")
+    q = side_by_side_df.loc[mask].copy()
+
+    def llm_val(row: pd.Series) -> str:
+        return str(row.get("entity_value_norm") or row.get("entity_value_raw") or "")
+
+    def orig_val(row: pd.Series) -> str:
+        p = row.get("existing_values_preview")
+        if p is None:
+            return ""
+        s = str(p)
+        return s[:MANUAL_QUEUE_ORIGINAL_MAX] if len(s) > MANUAL_QUEUE_ORIGINAL_MAX else s
+
+    out = pd.DataFrame(
+        {
+            "llm_entity_id": q["llm_entity_id"],
+            "research_id": q["research_id"],
+            "note_row_id": q["note_row_id"],
+            "llm_value": q.apply(llm_val, axis=1),
+            "original_value": q.apply(orig_val, axis=1),
+            "evidence_span": q["evidence_span"].fillna("").astype(str),
+            "algorithm_comparison_status": q["algorithm_comparison_status"],
+            "comparison_domain": q["comparison_domain"],
+            "comparison_token": q["comparison_token"],
+            "verification_status": "",
+        }
+    )
+    return out
+
+
+def build_gold_facts(
+    side_by_side_df: pd.DataFrame,
+    gold_require_manual: bool,
+    trust_fill_candidate_auto: bool,
+) -> pd.DataFrame:
+    def eligible(row: pd.Series) -> bool:
+        vs = row.get("verification_status")
+        if vs not in ("concordant", "existing_missing_fill_candidate"):
+            return False
+        pol = row.get("present_or_negated")
+        if str(pol or "").strip().lower() != "present":
+            return False
+        vb = str(row.get("verified_by") or "")
+        if vs == "concordant":
+            if gold_require_manual:
+                return vb == "manual"
+            return True
+        if trust_fill_candidate_auto:
+            return True
+        return vb == "manual"
+
+    mask = side_by_side_df.apply(eligible, axis=1)
+    return side_by_side_df.loc[mask].copy()
+
+
+def build_val_llm_concordance_summary(side_by_side_df: pd.DataFrame) -> pd.DataFrame:
+    def count_auto(s: pd.Series) -> int:
+        return int((s.astype(str) == "auto").sum())
+
+    def count_manual(s: pd.Series) -> int:
+        return int((s.astype(str) == "manual").sum())
+
+    summary = (
+        side_by_side_df.groupby(["comparison_domain", "verification_status"], dropna=False)
+        .agg(
+            llm_rows=("llm_entity_id", "count"),
+            unique_patients=("research_id", pd.Series.nunique),
+            evidence_spans_found=("evidence_span_found_flag", "sum"),
+            verified_auto=("verified_by", count_auto),
+            verified_manual=("verified_by", count_manual),
+        )
+        .reset_index()
+        .sort_values(["comparison_domain", "verification_status"])
+    )
+    return summary
+
+
+def resolve_review_csv_path(explicit: str | None, output_dir: Path) -> Path | None:
+    if explicit:
+        p = Path(explicit)
+        return p if p.is_file() else None
+    default = output_dir / "llm_manual_review_queue.csv"
+    if not default.is_file():
+        return None
+    try:
+        rev = pd.read_csv(default)
+    except Exception:
+        return None
+    if "verification_status" not in rev.columns:
+        return None
+    vs = rev["verification_status"].dropna().astype(str).str.strip()
+    if vs.eq("").all() or vs.eq("nan").all():
+        return None
+    return default
+
+
+def write_motherduck_sql(
+    output_path: Path,
+    side_by_side_parquet_abs: Path,
+    summary_parquet_abs: Path,
+    gold_parquet_abs: Path,
+) -> None:
+    p_side = str(side_by_side_parquet_abs.resolve()).replace("\\", "/").replace("'", "''")
+    p_sum = str(summary_parquet_abs.resolve()).replace("\\", "/").replace("'", "''")
+    p_gold = str(gold_parquet_abs.resolve()).replace("\\", "/").replace("'", "''")
+    lines = [
+        "-- MotherDuck / DuckDB: paste into MotherDuck SQL editor after uploading Parquet or using a path DuckDB can read.",
+        "-- Do not commit MOTHERDUCK_TOKEN. Example attach:",
+        "--   ATTACH 'md:YOUR_DATABASE?motherduck_token=<SECRET>' AS md (TYPE DUCKDB);",
+        "",
+        "ATTACH 'md:YOUR_DATABASE' AS md (TYPE DUCKDB);",
+        "",
+        "CREATE OR REPLACE TABLE md.val_llm_concordance_summary AS",
+        f"SELECT * FROM read_parquet('{p_sum}');",
+        "",
+        "-- SELECT * FROM md.val_llm_concordance_summary;",
+        "",
+        "-- Optional (large):",
+        f"-- CREATE OR REPLACE TABLE md.llm_side_by_side AS SELECT * FROM read_parquet('{p_side}');",
+        f"-- CREATE OR REPLACE TABLE md.gold_llm_verified_facts AS SELECT * FROM read_parquet('{p_gold}');",
+        "",
+    ]
+    output_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def maybe_motherduck_attach(summary_df: pd.DataFrame) -> None:
+    token = os.environ.get("MOTHERDUCK_TOKEN")
+    if not token:
+        LOG.warning("MOTHERDUCK_TOKEN unset; skip --motherduck-attach")
+        return
+    db = os.environ.get("MOTHERDUCK_DATABASE", "")
+    if not db:
+        LOG.warning("MOTHERDUCK_DATABASE unset; skip --motherduck-attach")
+        return
+    con = duckdb.connect(f"md:{db}?motherduck_token={token}")
+    try:
+        con.register("_val_llm_summary", summary_df)
+        con.execute("CREATE OR REPLACE TABLE val_llm_concordance_summary AS SELECT * FROM _val_llm_summary")
+        LOG.info("Created/replaced val_llm_concordance_summary on MotherDuck database %s", db)
+    finally:
+        con.close()
+
+
 def build_summary(side_by_side_df: pd.DataFrame) -> pd.DataFrame:
     summary = (
-        side_by_side_df.groupby(["comparison_domain", "confirmation_status"], dropna=False)
+        side_by_side_df.groupby(["comparison_domain", "algorithm_comparison_status"], dropna=False)
         .agg(
             llm_rows=("llm_entity_id", "count"),
             unique_patients=("research_id", pd.Series.nunique),
@@ -803,12 +1101,18 @@ def build_summary(side_by_side_df: pd.DataFrame) -> pd.DataFrame:
             review_conflicts=("candidate_review_conflict", "sum"),
         )
         .reset_index()
-        .sort_values(["comparison_domain", "confirmation_status"])
+        .sort_values(["comparison_domain", "algorithm_comparison_status"])
     )
     return summary
 
 
-def write_report(output_dir: Path, input_path: Path, side_by_side_df: pd.DataFrame, summary_df: pd.DataFrame) -> None:
+def write_report(
+    output_dir: Path,
+    input_path: Path,
+    side_by_side_df: pd.DataFrame,
+    summary_df: pd.DataFrame,
+    gold_df: pd.DataFrame,
+) -> None:
     lines = [
         "# LLM Extraction Validation Report",
         "",
@@ -816,15 +1120,16 @@ def write_report(output_dir: Path, input_path: Path, side_by_side_df: pd.DataFra
         f"- Generated at: `{datetime.now(timezone.utc).isoformat()}`",
         f"- Total LLM rows: `{len(side_by_side_df):,}`",
         f"- Unique patients: `{side_by_side_df['research_id'].nunique():,}`",
+        f"- Gold rows (`verification_status` concordant | existing_missing_fill_candidate, per policy): `{len(gold_df):,}`",
         "",
-        "## Domain Status Summary",
+        "## Domain / algorithm status",
         "",
-        "| Domain | Status | Rows | Patients | Structured matches | Baseline matches | Fill candidates | Review conflicts |",
+        "| Domain | Algorithm status | Rows | Patients | Structured matches | Baseline matches | Fill candidates | Review conflicts |",
         "|---|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for row in summary_df.to_dict("records"):
         lines.append(
-            f"| {row['comparison_domain']} | {row['confirmation_status']} | {row['llm_rows']:,} | {row['unique_patients']:,} | {row['structured_matches']:,} | {row['baseline_matches']:,} | {row['fill_candidates']:,} | {row['review_conflicts']:,} |"
+            f"| {row['comparison_domain']} | {row['algorithm_comparison_status']} | {row['llm_rows']:,} | {row['unique_patients']:,} | {row['structured_matches']:,} | {row['baseline_matches']:,} | {row['fill_candidates']:,} | {row['review_conflicts']:,} |"
         )
 
     top_conflicts = side_by_side_df[side_by_side_df["candidate_review_conflict"]].head(20)
@@ -870,6 +1175,14 @@ def main() -> None:
         raise SystemExit(f"Input parquet is missing required extraction columns: {missing}")
 
     llm_df = llm_df[ENTITY_SCHEMA_COLUMNS].copy()
+    rename_map = {}
+    if "verification_status" in llm_df.columns:
+        rename_map["verification_status"] = "llm_verification_status"
+    if "verification_step" in llm_df.columns:
+        rename_map["verification_step"] = "llm_verification_step"
+    if rename_map:
+        llm_df = llm_df.rename(columns=rename_map)
+
     llm_df.insert(0, "llm_entity_id", range(1, len(llm_df) + 1))
     llm_df["research_id"] = llm_df["research_id"].astype(int)
 
@@ -896,7 +1209,20 @@ def main() -> None:
     baseline_agg = aggregate_comparators(baseline_df, "baseline")
     structured_agg = aggregate_comparators(structured_df, "structured")
     side_by_side_df = build_side_by_side(lineage_df, baseline_agg, structured_agg)
+    side_by_side_df = enrich_side_by_side_verification(side_by_side_df)
+
+    review_path = resolve_review_csv_path(args.review_csv, output_dir)
+    if review_path:
+        side_by_side_df = merge_manual_review(side_by_side_df, review_path)
+
     summary_df = build_summary(side_by_side_df)
+    concordance_df = build_val_llm_concordance_summary(side_by_side_df)
+    review_queue_df = build_manual_review_queue(side_by_side_df, args.review_include_source_limited)
+    gold_df = build_gold_facts(
+        side_by_side_df,
+        gold_require_manual=args.gold_require_manual,
+        trust_fill_candidate_auto=args.trust_fill_candidate_auto,
+    )
 
     save_parquet(lineage_df, output_dir / "llm_lineage.parquet")
     lineage_df.to_csv(output_dir / "llm_lineage.csv", index=False)
@@ -904,21 +1230,65 @@ def main() -> None:
     side_by_side_df.to_csv(output_dir / "llm_side_by_side.csv", index=False)
     summary_df.to_csv(output_dir / "llm_validation_summary.csv", index=False)
 
+    save_parquet(concordance_df, output_dir / "val_llm_concordance_summary.parquet")
+    concordance_df.to_csv(output_dir / "val_llm_concordance_summary.csv", index=False)
+
+    queue_path = output_dir / "llm_manual_review_queue.csv"
+    pending_path = output_dir / "llm_manual_review_queue_pending.csv"
+    if queue_path.is_file():
+        try:
+            existing_q = pd.read_csv(queue_path)
+            has_manual = (
+                "verification_status" in existing_q.columns
+                and existing_q["verification_status"].dropna().astype(str).str.strip().ne("").any()
+            )
+        except Exception:
+            has_manual = False
+        if has_manual:
+            review_queue_df.to_csv(pending_path, index=False)
+            LOG.info(
+                "Preserving %s with manual verification_status; wrote fresh discordant list to %s",
+                queue_path.name,
+                pending_path.name,
+            )
+        else:
+            review_queue_df.to_csv(queue_path, index=False)
+    else:
+        review_queue_df.to_csv(queue_path, index=False)
+    save_parquet(gold_df, output_dir / "gold_llm_verified_facts.parquet")
+
+    md_sql = Path(args.write_motherduck_sql) if args.write_motherduck_sql else output_dir / "motherduck_setup.sql"
+    write_motherduck_sql(
+        md_sql,
+        output_dir / "llm_side_by_side.parquet",
+        output_dir / "val_llm_concordance_summary.parquet",
+        output_dir / "gold_llm_verified_facts.parquet",
+    )
+
+    if args.motherduck_attach:
+        maybe_motherduck_attach(concordance_df)
+
     manifest = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "input_path": str(input_path.relative_to(ROOT)) if input_path.is_relative_to(ROOT) else str(input_path),
         "source_notes_path": str(notes_path.relative_to(ROOT)),
         "db_path": str(Path(args.db_path)),
         "workspace_dir": str(output_dir.relative_to(ROOT)) if output_dir.is_relative_to(ROOT) else str(output_dir),
+        "review_csv_merged": str(review_path) if review_path else None,
+        "gold_require_manual": bool(args.gold_require_manual),
+        "trust_fill_candidate_auto": bool(args.trust_fill_candidate_auto),
         "llm_rows": int(len(llm_df)),
         "lineage_rows": int(len(lineage_df)),
         "side_by_side_rows": int(len(side_by_side_df)),
+        "gold_rows": int(len(gold_df)),
+        "manual_review_queue_rows": int(len(review_queue_df)),
         "unique_patients": int(side_by_side_df["research_id"].nunique()),
         "domains": sorted(side_by_side_df["comparison_domain"].dropna().unique().tolist()),
-        "status_counts": summary_df.to_dict("records"),
+        "algorithm_status_counts": summary_df.to_dict("records"),
+        "verification_status_counts": concordance_df.to_dict("records"),
     }
     (output_dir / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
-    write_report(output_dir, input_path, side_by_side_df, summary_df)
+    write_report(output_dir, input_path, side_by_side_df, summary_df, gold_df)
 
     LOG.info("Validation workspace written to %s", output_dir)
 
