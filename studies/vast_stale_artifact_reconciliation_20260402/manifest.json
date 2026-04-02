@@ -1,0 +1,37 @@
+{
+  "study": "vast_stale_artifact_reconciliation_20260402",
+  "created_at": "2026-04-02",
+  "source_host": "33534710 / 107.206.71.138:43384",
+  "validated_complete_domains": [
+    "staging",
+    "recurrence_detailed",
+    "operative_v2_enrichment",
+    "parathyroid_per_gland",
+    "tirads_granular"
+  ],
+  "comparison_outputs": [
+    {
+      "domain": "staging",
+      "artifact": "note_entities_llm_staging_partial_clean_for_comparison.parquet",
+      "rows": 1885,
+      "unique_note_row_id": 1885,
+      "parse_errors": 0,
+      "status": "clean_partial_subset"
+    },
+    {
+      "domain": "complications",
+      "artifact": "note_entities_llm_complications_repaired_for_comparison.parquet",
+      "rows": 11037,
+      "unique_note_row_id": 11037,
+      "parse_errors_in_original_checkpoint": 1,
+      "normalized_conflict_note_ids": 0,
+      "status": "repaired_from_old_parquet"
+    }
+  ],
+  "rejected_inputs": [
+    {
+      "artifact": "note_entities_llm_complications.ckpt.jsonl",
+      "reason": "Malformed line, 2668 duplicate rows, missing source lineage columns"
+    }
+  ]
+}
