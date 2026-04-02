@@ -1,0 +1,48 @@
+# Twice-daily MotherDuck trial optimization: ANALYZE, gold views, Parquet export, provenance check.
+# Requires MD_SA_TOKEN or MOTHERDUCK_TOKEN. Set repo Variable MOTHERDUCK_DATABASE if catalog != default.
+name: MotherDuck — gold optimize (Phase 3)
+
+on:
+  schedule:
+    - cron: "0 6,18 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: motherduck-optimize
+  cancel-in-progress: false
+
+jobs:
+  optimize:
+    name: lakehouse/motherduck_optimize.py
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      MD_SA_TOKEN: ${{ secrets.MD_SA_TOKEN }}
+      MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN || secrets.MOTHERDUCK }}
+      # Optional: e.g. "Thyroid 2026" — leave unset to use motherduck_client default / MOTHERDUCK_ENV mapping
+      MOTHERDUCK_DATABASE: ${{ vars.MOTHERDUCK_DATABASE }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Assert MotherDuck token
+        run: |
+          python -c "import os; t=(os.environ.get('MD_SA_TOKEN') or os.environ.get('MOTHERDUCK_TOKEN') or '').strip(); assert t, 'Set MD_SA_TOKEN or MOTHERDUCK_TOKEN'; print('token: ok')"
+
+      - name: Run MotherDuck optimize
+        run: |
+          python lakehouse/motherduck_optimize.py --sa --export-dir exports/motherduck_gold_daily_ci
+
+      - name: Upload export bundle
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: motherduck-gold-daily-${{ github.run_id }}
+          path: exports/motherduck_gold_daily_ci
+          retention-days: 14
