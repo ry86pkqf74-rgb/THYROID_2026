@@ -2,16 +2,11 @@
 
 ## Outcome
 
-MotherDuck-side reconciliation is currently blocked by auth/catalog scope, not by query logic.
+Installing the DuckDB CLI changed the picture.
 
-The only repo-visible token context exposed these catalogs:
+The CLI can authenticate with the repo-visible `MOTHERDUCK_TOKEN` and now exposes a real catalog named `Thyroid 2026` in addition to the generic/sample catalogs.
 
-- `md_information_schema`
-- `my_db`
-- `rosflow`
-- `sample_data`
-
-`my_db` is empty in the current session, and the expected thyroid catalog (`thyroid_research_2026`) is not visible from any repo-visible token source.
+However, table enumeration from this session still returns zero visible tables for both `my_db` and `md:Thyroid 2026`, so there is still no usable in-cloud table inventory to reconcile against.
 
 ## Auth paths tested
 
@@ -21,7 +16,7 @@ Without printing secret values, the following repo-visible auth contexts were pr
 | --- | --- |
 | `LOCAL_DB_PATH` | missing |
 | `MD_SA_TOKEN` | missing |
-| `MOTHERDUCK_TOKEN` | connected, but only generic/sample catalogs visible |
+| `MOTHERDUCK_TOKEN` | DuckDB CLI connects and reveals `Thyroid 2026`, but `SHOW TABLES` / `information_schema.tables` currently return 0 visible tables |
 
 The only key present in `.streamlit/secrets.toml` for this session was `MOTHERDUCK_TOKEN`.
 
