@@ -444,9 +444,18 @@ def split_quarantine_v2(
         if "inferred_surgery_episode_id" in uni.columns
         else pd.Series(False, index=uni.index)
     )
-    m_no_ep = ~has_ep & ~q
-    q = q | m_no_ep
-    reason = reason.where(~m_no_ep, "no_episode_linkage")
+    # Only quarantine on missing episode linkage when episode source tables are
+    # actually available.  When the sources are absent (e.g. local DuckDB without
+    # materialized episode tables), every row would be quarantined — that is a
+    # data-availability gap, not a quality issue with the extraction itself.
+    any_episode_sources = any(
+        _get_episode_source(t) is not None
+        for t in set(FAMILY_EPISODE_SOURCE.values())
+    )
+    if any_episode_sources:
+        m_no_ep = ~has_ep & ~q
+        q = q | m_no_ep
+        reason = reason.where(~m_no_ep, "no_episode_linkage")
 
     quar = uni.loc[q].copy()
     quar["quarantine_reason"] = reason.loc[q]
@@ -562,12 +571,30 @@ def main() -> None:
     print("=" * 70)
 
     # ── Load all domain parquets ──────────────────────────────────────────
+    V2_FLEET_DIR = PROCESSED / "output" / "v2_parquets"
     frames: list[pd.DataFrame] = []
     for entry in ENTITY_DOMAIN_MAP:
         stem, domain = entry[0], entry[1]
         family = entry[2] if len(entry) > 2 else "audit"
-        pq = PROCESSED / f"{stem}.parquet"
-        if not pq.exists():
+        pq_local = PROCESSED / f"{stem}.parquet"
+        pq_fleet = V2_FLEET_DIR / f"{stem}.parquet"
+        if pq_local.exists() and pq_fleet.exists():
+            import pyarrow.parquet as _pq
+            local_n = _pq.read_metadata(pq_local).num_rows
+            fleet_n = _pq.read_metadata(pq_fleet).num_rows
+            if fleet_n > local_n:
+                print(
+                    f"  WARNING: {stem} — processed/ has {local_n:,} rows but "
+                    f"v2_parquets/ has {fleet_n:,}; using larger fleet file"
+                )
+                pq = pq_fleet
+            else:
+                pq = pq_local
+        elif pq_local.exists():
+            pq = pq_local
+        elif pq_fleet.exists():
+            pq = pq_fleet
+        else:
             print(f"  skip (no parquet): {stem}")
             continue
         df = pd.read_parquet(pq).copy()

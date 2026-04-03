@@ -795,6 +795,19 @@
 - Workflow docs: `docs/manuscript_freeze_workflow_20260315.md`
 - Script 107 (`107_global_completion_oed_path_linkage.py`): **global** spine (`operative_episode_detail_v2` ∪ `path_synoptics` research_ids) for **OED vs path-synoptic** completion-after-lobectomy flags using `studies/proposal_2to4cm_extent_molecular_20260326/cohort_logic.py`; materializes `patient_completion_oed_path_linkage_v1` + `md_patient_completion_oed_path_linkage_v1` on local DuckDB; exports `exports/patient_completion_oed_path_linkage_v1/` (parquet/csv/manifest); included in Zenodo prep via `scripts/32_zenodo_archive_prep.py` `EXTRA_EXPORT_DIRS`; run `.venv/bin/python scripts/107_global_completion_oed_path_linkage.py --md` or `--md --sa` (GitHub Actions: workflow **local DuckDB — completion linkage (107)** `.github/workflows/completion_linkage_local DuckDB.yml` using secrets `LOCAL_DB_PATH` / `LOCAL_DB`; main `ci.yml` also supports manual `run_completion_linkage=true`)
 - Script 109 (`109_synoptic_encounter_qc.py`): **`path_synoptics` encounter isolation** — VIEW `path_synoptics_encounter_qc_v1` adds `surg_date_canonical` / `surg_date_parse_tier` (`utils/surg_date_canonical.py`) and `encounter_synoptic_row_ix`; TABLE `val_path_synoptic_encounter_isolation_v1` flags same-calendar encounters with conflicting `tumor_1` LN columns or unresolved canonical dates; `--md` also builds `md_*` copies; in `MATERIALIZATION_MAP` (script 26); Excel vs local DuckDB LN reconcile uses the same canonical date keys
+- `llm_extraction/registry.py` has `prompts_for_domain(domain)` returning ALL prompts (list), and `prompt_for_domain(domain)` returning only the first (backward-compat); callers needing complete multi-prompt coverage must use `prompts_for_domain()`
+- `run_extraction.py` `run_llm_for_domain()` now stamps `entity_domain = domain_name` on each entity row so per-domain parquets have correct domain labels (not `"llm"`)
+- `_filter_notes_by_scope()` raises `ValueError` for unknown scopes instead of warn-and-pass-all; add new scopes to `_NOTE_SCOPE_TYPES` before using them in registry YAML
+- `_log_domain_summary()` suppresses entity_value_norm values with <5 occurrences to avoid PHI re-identification risk
+- `utils/text_helpers.py` `save_parquet()` logs a regression warning when the new file is >10% smaller than the existing file being replaced
+- Scripts 103 and 113 use `fail_closed=args.md` for MotherDuck connections; 18 additional scripts that hardcode `md=True` now also include `fail_closed=True`
+- Script 103 `_fact_lineage_materialize.py` prefers the larger file when both `processed/{stem}.parquet` and `processed/output/v2_parquets/{stem}.parquet` exist, with a row-count warning
+- Script 112 G7 gate distinguishes same-domain vs cross-domain discordance; only same-domain discordance blocks promotion
+- Script 112 G3 provenance gate now fails (not conditional-pass) when no domain has provenance columns
+- Script 113 Phase M adds `lab_same_day_value_review_v1` table for same-day, single-wave Tg value mismatches (pre/post-dose scenarios)
+- Script 111 bare invocation (no `--domain`/`--all-llm-domains`/`--input`) errors when legacy `note_entities_llm.parquet` is absent, warns when falling back to it
+- `docs/v2_extraction_adversarial_review.md`: adversarial review of 11 findings; 10 of 11 fixed; Finding 4 (fleet/registry DOMAIN_PROMPT sync) remains open as a process gap requiring CI check
+- VastAI fleet `scripts/vastai/run_extraction_concurrent.py` `DOMAIN_PROMPT` dict (36 entries) is NOT read from registry YAML; divergence is possible — treat registry YAML as SSOT and validate fleet map against it before fleet runs
 
 ---
 

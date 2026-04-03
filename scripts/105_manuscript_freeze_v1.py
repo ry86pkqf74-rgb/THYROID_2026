@@ -180,7 +180,7 @@ def get_connection(use_md):
 def get_rw_connection():
     """Read-write connection for --stamp mode."""
     from utils.md_connect import connect_md_or_file
-    return connect_md_or_file(DB_PATH, md=True)
+    return connect_md_or_file(DB_PATH, md=True, fail_closed=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════════

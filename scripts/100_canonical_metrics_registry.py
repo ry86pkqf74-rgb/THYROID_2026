@@ -666,7 +666,7 @@ def main() -> None:
     # ── Connect ───────────────────────────────────────────────────────────
     try:
         from utils.md_connect import connect_md_or_file
-        con = connect_md_or_file(ROOT / "thyroid_master.duckdb", md=True)
+        con = connect_md_or_file(ROOT / "thyroid_master.duckdb", md=True, fail_closed=True)
     except Exception as e:
         print(f"  ERROR: Cannot connect: {e}")
         sys.exit(2)

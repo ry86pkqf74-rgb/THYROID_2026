@@ -49,7 +49,7 @@ def section(title: str) -> None:
 
 def connect_md() -> duckdb.DuckDBPyConnection:
     from utils.md_connect import connect_md_or_file
-    return connect_md_or_file(DB_PATH, md=True)
+    return connect_md_or_file(DB_PATH, md=True, fail_closed=True)
 def connect_local() -> duckdb.DuckDBPyConnection:
     return duckdb.connect(str(DB_PATH))
 

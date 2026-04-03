@@ -105,15 +105,18 @@ _NOTE_SCOPE_TYPES: dict[str, frozenset[str] | None] = {
 def _filter_notes_by_scope(notes_df: pd.DataFrame, note_scope: str) -> pd.DataFrame:
     """Return the subset of notes whose note_type satisfies *note_scope*.
 
-    Unrecognised scope values are treated as 'all' (no filtering) with a
-    warning so new scopes added to the registry don't silently break runs.
+    Raises ValueError for unrecognised scopes so new values added to the
+    registry YAML are caught immediately rather than silently processing
+    all notes.
     """
+    if note_scope not in _NOTE_SCOPE_TYPES:
+        raise ValueError(
+            f"Unknown note_scope '{note_scope}' — add it to _NOTE_SCOPE_TYPES "
+            f"in run_extraction.py or fix the registry YAML. "
+            f"Valid scopes: {sorted(_NOTE_SCOPE_TYPES)}"
+        )
     allowed = _NOTE_SCOPE_TYPES.get(note_scope)
     if allowed is None:
-        if note_scope not in _NOTE_SCOPE_TYPES:
-            log.warning(
-                "  Unknown note_scope '%s' — treating as 'all' (no filter)", note_scope
-            )
         return notes_df
     mask = notes_df["note_type"].isin(allowed)
     filtered = notes_df[mask].reset_index(drop=True)
@@ -304,6 +307,7 @@ def run_llm_for_domain(
         row_records: list[dict] = []
         for m in matches:
             rec = m.to_dict()
+            rec["entity_domain"] = domain_name
             rec = _stamp_row(llm, rec, extraction_run_id, row, is_llm=True)
             row_records.append(rec)
         return row_records
@@ -441,6 +445,9 @@ def _log_domain_summary(domain: str, df: pd.DataFrame) -> None:
     )
     top = df["entity_value_norm"].value_counts().head(5)
     for val, cnt in top.items():
+        if cnt < 5:
+            log.info("      [<5 occurrences suppressed for PHI safety]")
+            break
         log.info("      %s: %s", val, f"{cnt:,}")
 
 

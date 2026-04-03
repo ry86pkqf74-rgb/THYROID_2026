@@ -56,7 +56,7 @@ PROVENANCE_COLUMNS = [
 
 def connect_md() -> duckdb.DuckDBPyConnection:
     from utils.md_connect import connect_md_or_file
-    return connect_md_or_file(DB_PATH, md=True)
+    return connect_md_or_file(DB_PATH, md=True, fail_closed=True)
 def connect_local() -> duckdb.DuckDBPyConnection:
     local_path = os.getenv("LOCAL_DUCKDB_PATH", str(ROOT / "thyroid_master_local.duckdb"))
     return duckdb.connect(local_path)

@@ -337,8 +337,13 @@ def make_note_row_id(research_id: int | str, source_sheet: str, source_column: s
 
 
 def save_parquet(df: pd.DataFrame, out_path, *, coerce_object: bool = True) -> None:
-    """Write DataFrame to Parquet.  Coerces mixed-type object columns to string."""
+    """Write DataFrame to Parquet.  Coerces mixed-type object columns to string.
+
+    Logs a regression warning when the new file has significantly fewer rows
+    than the existing file it replaces (>10% drop).
+    """
     from pathlib import Path
+    import pyarrow.parquet as pq  # noqa: F811
 
     df = df.copy()
     if coerce_object:
@@ -348,6 +353,19 @@ def save_parquet(df: pd.DataFrame, out_path, *, coerce_object: bool = True) -> N
                     lambda x: str(x) if pd.notna(x) and x is not None else None
                 )
     out_path = Path(out_path)
+    prev_rows: int | None = None
+    if out_path.exists():
+        try:
+            prev_rows = pq.read_metadata(out_path).num_rows
+        except Exception:
+            pass
     df.to_parquet(out_path, engine="pyarrow", index=False)
     size_mb = out_path.stat().st_size / (1024 * 1024)
     log.info(f"  => {out_path.name}  {len(df):>8,} rows x {len(df.columns):>3} cols  ({size_mb:.2f} MB)")
+    if prev_rows is not None and prev_rows > 0:
+        drop_pct = (prev_rows - len(df)) / prev_rows
+        if drop_pct > 0.10:
+            log.warning(
+                "  ⚠ REGRESSION: %s shrank from %s to %s rows (%.1f%% drop)",
+                out_path.name, f"{prev_rows:,}", f"{len(df):,}", drop_pct * 100,
+            )

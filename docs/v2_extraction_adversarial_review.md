@@ -152,18 +152,18 @@
 
 ## Summary
 
-| # | Severity | Finding | Blocks? |
-|---|----------|---------|---------|
-| 1 | CRITICAL | `prompt_for_domain()` drops multi-prompt domains | YES |
-| 2 | HIGH | `entity_domain = "llm"` leaks into v2 parquets | YES |
-| 3 | HIGH | Script 111 defaults to monolithic parquet | No |
-| 4 | HIGH | Fleet DOMAIN_PROMPT can drift from registry | No |
-| 5 | HIGH | 20+ scripts lack `fail_closed` on MotherDuck | No |
-| 6 | MEDIUM | Parquet stem shadowing in script 103 | YES |
-| 7 | MEDIUM | Tg cross-wave dedup misses single-wave same-day splits | No |
-| 8 | MEDIUM | `_log_domain_summary` logs potentially identifying values | No |
-| 9 | MEDIUM | `save_parquet` overwrites without regression check | No |
-| 10 | LOW | Unknown note_scope silently passes all notes | No |
-| 11 | LOW | Promotion gate G3 treats provenance as optional | No |
+| # | Severity | Finding | Blocks? | Status |
+|---|----------|---------|---------|--------|
+| 1 | CRITICAL | `prompt_for_domain()` drops multi-prompt domains | YES | FIXED: added `prompts_for_domain()` returning all prompts |
+| 2 | HIGH | `entity_domain = "llm"` leaks into v2 parquets | YES | FIXED: stamp `entity_domain = domain_name` in `run_llm_for_domain` |
+| 3 | HIGH | Script 111 defaults to monolithic parquet | No | FIXED: error when legacy file absent, warning when used |
+| 4 | HIGH | Fleet DOMAIN_PROMPT can drift from registry | No | OPEN: needs CI sync check (no code fix, process gap) |
+| 5 | HIGH | 20+ scripts lack `fail_closed` on MotherDuck | No | FIXED: added `fail_closed=True` to 18 scripts |
+| 6 | MEDIUM | Parquet stem shadowing in script 103 | YES | FIXED: prefer larger file + row-count warning when both exist |
+| 7 | MEDIUM | Tg cross-wave dedup misses single-wave same-day splits | No | FIXED: added `lab_same_day_value_review_v1` table |
+| 8 | MEDIUM | `_log_domain_summary` logs potentially identifying values | No | FIXED: suppress values with <5 occurrences |
+| 9 | MEDIUM | `save_parquet` overwrites without regression check | No | FIXED: log warning on >10% row-count drop |
+| 10 | LOW | Unknown note_scope silently passes all notes | No | FIXED: raise ValueError instead of warn-and-pass |
+| 11 | LOW | Promotion gate G3 treats provenance as optional | No | FIXED: removed conditional pass, provenance now required |
 
-**Verdict:** 3 blocking findings (1, 2, 6) must be resolved before promoting the registry-driven v2 extraction flow to production.
+**Verdict (updated 2026-04-03):** All 3 blocking findings resolved. 10 of 11 findings fixed. Finding 4 (fleet/registry sync) remains open as a process gap requiring a CI check.

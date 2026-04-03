@@ -68,7 +68,7 @@ def fill_rate(con: duckdb.DuckDBPyConnection, tbl: str, col: str) -> dict[str, A
 
 def connect_md() -> duckdb.DuckDBPyConnection:
     from utils.md_connect import connect_md_or_file
-    return connect_md_or_file(DB_PATH, md=True)
+    return connect_md_or_file(DB_PATH, md=True, fail_closed=True)
 
 CANONICAL_FILL_CHECKS = [
     ("patient_analysis_resolved_v1", "rai_first_date"),

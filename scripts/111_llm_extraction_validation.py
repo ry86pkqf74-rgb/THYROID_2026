@@ -1645,8 +1645,25 @@ def main() -> None:
         return
 
     # ── Mode: legacy --input (or bare default) ──────────────────────────────
-    # When neither --domain nor --all-llm-domains is given, fall back to the
-    # original behaviour: validate a single explicitly-provided (or default) path.
+    # When neither --domain nor --all-llm-domains is given and no explicit
+    # --input is provided, error out rather than silently defaulting to the
+    # legacy monolithic note_entities_llm.parquet (which is only written with
+    # --merge-audit and is typically stale or absent in the v2 world).
+    if not args.input:
+        legacy_path = PROCESSED / "note_entities_llm.parquet"
+        if not legacy_path.exists():
+            LOG.error(
+                "No --domain, --all-llm-domains, or --input specified, and the legacy "
+                "merged audit file %s does not exist.  In the v2 registry world, use "
+                "--all-llm-domains or --domain <name> to validate per-domain parquets.",
+                legacy_path,
+            )
+            raise SystemExit(1)
+        LOG.warning(
+            "Falling back to legacy merged audit file %s.  "
+            "Consider using --all-llm-domains for per-domain v2 validation.",
+            legacy_path,
+        )
     resolved_input = args.input if args.input else str(PROCESSED / "note_entities_llm.parquet")
     input_path = Path(resolved_input)
     output_dir = Path(args.output_dir) if args.output_dir else RUNS_DIR / output_label

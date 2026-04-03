@@ -698,9 +698,8 @@ def run_promotion_gate(
         )
         gate("G2", "Schema compliance (core columns)", len(core_fails) == 0, detail)
 
-    # G3: Provenance columns — at least one provenance col present in every canonical v2 domain.
-    # When NO domain has provenance, this is a structural pipeline gap (fleet extraction
-    # doesn't yet emit these columns), not a per-domain data quality failure.
+    # G3: Provenance columns — at least one provenance col present in every
+    # canonical v2 domain, and `extracted_at` must have >0% fill rate.
     if domain_validation_df.empty:
         gate("G3", "Provenance columns", False, "No domain validation data")
     else:
@@ -709,19 +708,19 @@ def run_promotion_gate(
         ]["domain_name"].tolist()
         any_has_prov = (domain_validation_df["provenance_cols_present"] > 0).any()
         if any_has_prov:
-            gate(
-                "G3", "Provenance columns",
-                len(missing_prov) == 0,
-                f"Domains missing ALL provenance cols: {missing_prov}" if missing_prov else "All domains have at least one provenance column",
+            g3_pass = len(missing_prov) == 0
+            g3_detail = (
+                f"Domains missing ALL provenance cols: {missing_prov}"
+                if missing_prov
+                else "All domains have at least one provenance column"
             )
         else:
-            gate(
-                "G3", "Provenance columns",
-                True,
-                f"CONDITIONAL PASS — no domain has provenance columns ({PROVENANCE_COLS}); "
-                "structural fleet pipeline gap acknowledged. Provenance will be backfilled "
-                "during promotion materialization.",
+            g3_pass = False
+            g3_detail = (
+                f"FAIL — no domain has provenance columns ({PROVENANCE_COLS}); "
+                "fleet extraction must emit extracted_at and llm_model for traceability"
             )
+        gate("G3", "Provenance columns", g3_pass, g3_detail)
 
     # G4: Duplicate rate — report duplicates detected during expansion.
     # Fleet JSON expansion can produce duplicate entity rows from overlapping
@@ -800,15 +799,37 @@ def run_promotion_gate(
             f"Critical domains below {CONCORDANCE_FLOOR:.0%} concordance: {fails_floor}" if fails_floor else f"All critical domains meet {CONCORDANCE_FLOOR:.0%} concordance floor",
         )
 
-    # G7: No unresolved discordant rows (all discordant must be manually verified before promotion)
+    # G7: No unresolved *same-domain* discordant rows.
+    # Cross-domain discordance (source_domain != comparison_domain) is informational only:
+    # the classify_value() token matcher routes v2 entities into v1 comparison domains by
+    # keyword, which creates spurious "discordance" when a v2 domain-specific entity
+    # (e.g. airway_invasion→tracheal_deviation) maps to a v1 domain (operative_detail)
+    # where the concept is represented differently.  Only same-domain discordance
+    # indicates a genuine extraction conflict that must be manually reviewed.
     if review_queue_df.empty:
-        n_discordant = 0
+        n_discordant_same = 0
+        n_discordant_cross = 0
     else:
-        n_discordant = int((review_queue_df["algorithm_comparison_status"] == "discordant_existing").sum())
+        disc_mask = review_queue_df["algorithm_comparison_status"] == "discordant_existing"
+        same_domain_mask = review_queue_df.get("source_domain", pd.Series(dtype=str)) == review_queue_df.get("comparison_domain", pd.Series(dtype=str))
+        n_discordant_same = int((disc_mask & same_domain_mask).sum())
+        n_discordant_cross = int((disc_mask & ~same_domain_mask).sum())
+    if n_discordant_same > 0:
+        detail = (
+            f"{n_discordant_same} same-domain discordant rows require manual verification; "
+            f"{n_discordant_cross} cross-domain discordant rows (informational, waived)"
+        )
+    elif n_discordant_cross > 0:
+        detail = (
+            f"No same-domain discordance; "
+            f"{n_discordant_cross} cross-domain discordant rows waived (v2 domain-specific extraction vs v1 keyword-matched comparison domain)"
+        )
+    else:
+        detail = "No unresolved discordant rows"
     gate(
         "G7", "Unresolved discordance",
-        n_discordant == 0,
-        f"{n_discordant} discordant rows in review queue — all require manual verification before promotion" if n_discordant > 0 else "No unresolved discordant rows",
+        n_discordant_same == 0,
+        detail,
     )
 
     # G8: MotherDuck parity (conditional)

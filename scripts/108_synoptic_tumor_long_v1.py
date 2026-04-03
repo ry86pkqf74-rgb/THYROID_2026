@@ -199,7 +199,7 @@ def materialize_motherduck(df: pd.DataFrame) -> None:
         tmp_path = tmp.name
     try:
         df.to_parquet(tmp_path, index=False)
-        con = connect_md_or_file(ROOT / "thyroid_master.duckdb", md=True)
+        con = connect_md_or_file(ROOT / "thyroid_master.duckdb", md=True, fail_closed=True)
         con.execute(
             f"CREATE OR REPLACE TABLE synoptic_tumor_long_v1 AS "
             f"SELECT * FROM read_parquet('{tmp_path}')"

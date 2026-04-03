@@ -432,7 +432,7 @@ def main() -> None:
     md_con = None
     if args.md and (args.diagnose_md or args.publish_md or args.use_md_surgery_dates):
         from utils.md_connect import connect_md_or_file
-        md_con = connect_md_or_file(ROOT / "thyroid_master.duckdb", md=True)
+        md_con = connect_md_or_file(ROOT / "thyroid_master.duckdb", md=True, fail_closed=True)
 
     if args.diagnose_md and md_con:
         diagnose_motherduck(md_con)

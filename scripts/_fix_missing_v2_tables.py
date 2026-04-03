@@ -790,7 +790,7 @@ ORDER BY research_id, event_date NULLS LAST, event_type
 
 def main() -> None:
     from utils.md_connect import connect_md_or_file
-    con = connect_md_or_file(Path("thyroid_master.duckdb"), md=True)
+    con = connect_md_or_file(Path("thyroid_master.duckdb"), md=True, fail_closed=True)
     print("Connected")
 
     for name, sql in [

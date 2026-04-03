@@ -65,7 +65,7 @@ def section(title: str):
 
 def get_connection():
     from utils.md_connect import connect_md_or_file
-    return connect_md_or_file(ROOT / "thyroid_master.duckdb", md=True)
+    return connect_md_or_file(ROOT / "thyroid_master.duckdb", md=True, fail_closed=True)
 
 
 def q1(con, sql, default=None):

@@ -1143,6 +1143,49 @@ def phase_m_cross_wave_reconciliation(
         for s, c in sev:
             print(f"      {s}: {c:,}")
 
+    print("  Building same-day value mismatch review (single-wave)...")
+    con.execute("""
+        CREATE OR REPLACE TABLE lab_same_day_value_review_v1 AS
+        WITH per_day AS (
+            SELECT
+                research_id,
+                lab_date,
+                lab_name_standardized,
+                ingestion_wave,
+                COUNT(*) AS n_measurements,
+                COUNT(DISTINCT value_numeric) AS n_distinct_values,
+                MIN(value_numeric) AS val_min,
+                MAX(value_numeric) AS val_max,
+                LIST(DISTINCT CAST(value_numeric AS VARCHAR)
+                     ORDER BY CAST(value_numeric AS VARCHAR)) AS values_list
+            FROM longitudinal_lab_canonical_v1
+            WHERE lab_name_standardized IN ('thyroglobulin', 'anti_thyroglobulin')
+              AND value_numeric IS NOT NULL
+              AND lab_date IS NOT NULL
+            GROUP BY research_id, lab_date, lab_name_standardized, ingestion_wave
+            HAVING COUNT(DISTINCT value_numeric) > 1
+        )
+        SELECT
+            *,
+            ROUND(ABS(val_max - val_min), 4) AS value_delta,
+            CASE
+                WHEN val_min > 0 THEN ROUND(val_max / val_min, 2)
+                ELSE NULL
+            END AS value_ratio,
+            CASE
+                WHEN val_min > 0 AND val_max / val_min > 1.5 THEN 'high'
+                WHEN val_min > 0 AND val_max / val_min > 1.1 THEN 'medium'
+                ELSE 'low'
+            END AS discrepancy_severity,
+            'same_day_value_mismatch' AS review_reason
+        FROM per_day
+    """)
+    same_day_n = con.execute(
+        "SELECT COUNT(*) FROM lab_same_day_value_review_v1"
+    ).fetchone()[0]
+    stats["same_day_value_review_rows"] = same_day_n
+    print(f"    Same-day value mismatches (within single wave): {same_day_n:,}")
+
     print("  Building deduped view (longitudinal_lab_deduped_v)...")
     con.execute(DEDUP_VIEW_SQL)
     deduped_n = con.execute(

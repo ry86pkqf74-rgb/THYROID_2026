@@ -117,10 +117,23 @@ class Registry:
         return [v.parquet_stem for v in self.domains.values()]
 
     def prompt_for_domain(self, domain: str) -> PromptSpec | None:
+        """Return the *first* prompt for a domain (backward-compat convenience).
+
+        Prefer ``prompts_for_domain`` when the caller can handle multiple
+        prompts — multi-prompt domains (e.g. genetics, recurrence) need all
+        their prompts to be exercised for complete extraction.
+        """
         spec = self.domains.get(domain)
         if spec and spec.prompts:
             return spec.prompts[0]
         return None
+
+    def prompts_for_domain(self, domain: str) -> list[PromptSpec]:
+        """Return *all* prompts for a domain (empty list if unknown/no prompts)."""
+        spec = self.domains.get(domain)
+        if spec and spec.prompts:
+            return list(spec.prompts)
+        return []
 
     def domains_for_note_scope(self, scope: str) -> dict[str, DomainSpec]:
         """Return domains whose note_scope matches the given scope or 'all'."""
