@@ -130,12 +130,71 @@ MANUAL_QUEUE_ORIGINAL_MAX = 2000
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Build local lineage and validation artifacts for LLM extraction output."
+        description="Build local lineage and validation artifacts for LLM extraction output.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Modes
+-----
+Legacy / custom path (default):
+    python scripts/111_llm_extraction_validation.py
+    python scripts/111_llm_extraction_validation.py --input processed/note_entities_llm.parquet
+
+Single registry domain:
+    python scripts/111_llm_extraction_validation.py --domain imaging
+    python scripts/111_llm_extraction_validation.py --domain tg_kinetics
+
+Batch — all v2 LLM domains:
+    python scripts/111_llm_extraction_validation.py --all-llm-domains
+    python scripts/111_llm_extraction_validation.py --all-llm-domains --merge-report
+
+Mutual exclusivity:
+    --domain and --all-llm-domains are mutually exclusive.
+    --domain and --input are mutually exclusive.
+""",
     )
-    parser.add_argument(
+
+    # --- Input source (mutually exclusive group) ---
+    input_group = parser.add_mutually_exclusive_group()
+    input_group.add_argument(
         "--input",
-        default=str(PROCESSED / "note_entities_llm.parquet"),
-        help="Input parquet to validate. Defaults to processed/note_entities_llm.parquet.",
+        default=None,
+        help=(
+            "Input parquet to validate. "
+            "When none of --input / --domain / --all-llm-domains is given, "
+            "defaults to processed/note_entities_llm.parquet (legacy merged audit file)."
+        ),
+    )
+    input_group.add_argument(
+        "--domain",
+        metavar="DOMAIN_NAME",
+        default=None,
+        help=(
+            "Validate a single named registry domain. "
+            "The parquet path is resolved from the registry "
+            "(processed/<parquet_stem>.parquet). "
+            "Mutually exclusive with --input and --all-llm-domains."
+        ),
+    )
+    input_group.add_argument(
+        "--all-llm-domains",
+        action="store_true",
+        default=False,
+        help=(
+            "Validate every registry domain that has 'llm' in its extractors list. "
+            "Produces per-domain output folders plus an aggregate summary. "
+            "Mutually exclusive with --input and --domain."
+        ),
+    )
+
+    parser.add_argument(
+        "--merge-report",
+        action="store_true",
+        default=False,
+        help=(
+            "When used with --all-llm-domains, emit an aggregate_summary.csv "
+            "in the top-level run folder summarising pass/fail, row counts, "
+            "concordance, and manual-review burden per domain."
+        ),
     )
     parser.add_argument(
         "--db-path",
@@ -1227,17 +1286,43 @@ def write_report(
     (output_dir / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def main() -> None:
-    args = parse_args()
-    input_path = Path(args.input)
+def _resolve_input_path_for_domain(domain_name: str) -> Path:
+    """Look up a domain's canonical parquet path from the registry.
+
+    Raises SystemExit with a clear message for unknown domain names.
+    """
+    try:
+        from llm_extraction.registry import load_registry as _load_reg
+        reg = _load_reg()
+        spec = reg.resolve_domain(domain_name)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
+    return PROCESSED / spec.parquet_filename
+
+
+def _run_single_validation(
+    input_path: Path,
+    output_dir: Path,
+    db_path: str,
+    *,
+    review_csv: str | None = None,
+    review_include_source_limited: bool = False,
+    gold_require_manual: bool = False,
+    trust_fill_candidate_auto: bool = False,
+    write_motherduck_sql_path: str | None = None,
+    motherduck_attach: bool = False,
+) -> dict:
+    """Run the full validation pipeline for a single parquet input.
+
+    Returns a summary dict suitable for inclusion in an aggregate report.
+    Raises SystemExit on fatal errors (missing input, missing notes, etc.).
+    """
     if not input_path.exists():
         raise SystemExit(
             f"Input parquet not found: {input_path}. Wait for the LLM extraction run to finish, "
             "or pass --input to an existing note_entities parquet for a dry validation pass."
         )
 
-    output_label = args.run_label or stable_timestamp()
-    output_dir = Path(args.output_dir) if args.output_dir else RUNS_DIR / output_label
     output_dir.mkdir(parents=True, exist_ok=True)
 
     llm_df = pd.read_parquet(input_path)
@@ -1271,7 +1356,7 @@ def main() -> None:
     llm_df.insert(0, "llm_entity_id", range(1, len(llm_df) + 1))
     llm_df["research_id"] = llm_df["research_id"].astype(int)
 
-    con = duckdb.connect(str(args.db_path), read_only=True)
+    con = duckdb.connect(str(db_path), read_only=True)
     notes_path = PROCESSED / "clinical_notes_long.parquet"
     if not notes_path.exists() and not table_exists(con, "clinical_notes_long"):
         con.close()
@@ -1282,7 +1367,10 @@ def main() -> None:
     LOG.info("Loaded %s source notes linked to extraction input", f"{len(notes_df):,}")
 
     lineage_df = build_lineage(llm_df, notes_df)
-    target_domains = {domain for domain in lineage_df["comparison_domain"].dropna().unique().tolist() if domain != "unmapped"}
+    target_domains = {
+        domain for domain in lineage_df["comparison_domain"].dropna().unique().tolist()
+        if domain != "unmapped"
+    }
     LOG.info("Comparison domains in input: %s", ", ".join(sorted(target_domains)) or "none")
 
     LOG.info("Building baseline extraction comparators")
@@ -1296,17 +1384,17 @@ def main() -> None:
     side_by_side_df = build_side_by_side(lineage_df, baseline_agg, structured_agg)
     side_by_side_df = enrich_side_by_side_verification(side_by_side_df)
 
-    review_path = resolve_review_csv_path(args.review_csv, output_dir)
+    review_path = resolve_review_csv_path(review_csv, output_dir)
     if review_path:
         side_by_side_df = merge_manual_review(side_by_side_df, review_path)
 
     summary_df = build_summary(side_by_side_df)
     concordance_df = build_val_llm_concordance_summary(side_by_side_df)
-    review_queue_df = build_manual_review_queue(side_by_side_df, args.review_include_source_limited)
+    review_queue_df = build_manual_review_queue(side_by_side_df, review_include_source_limited)
     gold_df = build_gold_facts(
         side_by_side_df,
-        gold_require_manual=args.gold_require_manual,
-        trust_fill_candidate_auto=args.trust_fill_candidate_auto,
+        gold_require_manual=gold_require_manual,
+        trust_fill_candidate_auto=trust_fill_candidate_auto,
     )
 
     save_parquet(lineage_df, output_dir / "llm_lineage.parquet")
@@ -1342,31 +1430,39 @@ def main() -> None:
         review_queue_df.to_csv(queue_path, index=False)
     save_parquet(gold_df, output_dir / "gold_llm_verified_facts.parquet")
 
-    md_sql = Path(args.write_motherduck_sql) if args.write_motherduck_sql else output_dir / "motherduck_setup.sql"
+    md_sql_path = (
+        Path(write_motherduck_sql_path)
+        if write_motherduck_sql_path
+        else output_dir / "motherduck_setup.sql"
+    )
     write_motherduck_sql(
-        md_sql,
+        md_sql_path,
         output_dir / "llm_side_by_side.parquet",
         output_dir / "val_llm_concordance_summary.parquet",
         output_dir / "gold_llm_verified_facts.parquet",
     )
 
-    if args.motherduck_attach:
+    if motherduck_attach:
         maybe_motherduck_attach(concordance_df)
+
+    n_concordant = int((concordance_df.get("verification_status", pd.Series(dtype=str)) == "concordant").sum()) if not concordance_df.empty else 0
+    n_discordant = int(side_by_side_df["candidate_review_conflict"].sum()) if "candidate_review_conflict" in side_by_side_df.columns else 0
+    n_review_queue = int(len(review_queue_df))
 
     manifest = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "input_path": str(input_path.relative_to(ROOT)) if input_path.is_relative_to(ROOT) else str(input_path),
         "source_notes_path": str(notes_path.relative_to(ROOT)),
-        "db_path": str(Path(args.db_path)),
+        "db_path": str(Path(db_path)),
         "workspace_dir": str(output_dir.relative_to(ROOT)) if output_dir.is_relative_to(ROOT) else str(output_dir),
         "review_csv_merged": str(review_path) if review_path else None,
-        "gold_require_manual": bool(args.gold_require_manual),
-        "trust_fill_candidate_auto": bool(args.trust_fill_candidate_auto),
+        "gold_require_manual": bool(gold_require_manual),
+        "trust_fill_candidate_auto": bool(trust_fill_candidate_auto),
         "llm_rows": int(len(llm_df)),
         "lineage_rows": int(len(lineage_df)),
         "side_by_side_rows": int(len(side_by_side_df)),
         "gold_rows": int(len(gold_df)),
-        "manual_review_queue_rows": int(len(review_queue_df)),
+        "manual_review_queue_rows": n_review_queue,
         "unique_patients": int(side_by_side_df["research_id"].nunique()),
         "domains": sorted(side_by_side_df["comparison_domain"].dropna().unique().tolist()),
         "algorithm_status_counts": summary_df.to_dict("records"),
@@ -1376,6 +1472,195 @@ def main() -> None:
     write_report(output_dir, input_path, side_by_side_df, summary_df, gold_df)
 
     LOG.info("Validation workspace written to %s", output_dir)
+
+    # Summary row for aggregate reporting
+    return {
+        "input_path": str(input_path),
+        "output_dir": str(output_dir),
+        "llm_rows": int(len(llm_df)),
+        "unique_patients": int(side_by_side_df["research_id"].nunique()),
+        "concordant_rows": n_concordant,
+        "discordant_rows": n_discordant,
+        "manual_review_queue_rows": n_review_queue,
+        "gold_rows": int(len(gold_df)),
+        "status": "pass",
+    }
+
+
+def main() -> None:
+    args = parse_args()
+
+    output_label = args.run_label or stable_timestamp()
+
+    # ── Mode: --all-llm-domains ─────────────────────────────────────────────
+    if args.all_llm_domains:
+        try:
+            from llm_extraction.registry import load_registry as _load_reg
+            reg = _load_reg()
+        except Exception as exc:
+            raise SystemExit(f"Failed to load extraction registry: {exc}") from exc
+
+        top_dir = Path(args.output_dir) if args.output_dir else RUNS_DIR / output_label
+        top_dir.mkdir(parents=True, exist_ok=True)
+        LOG.info("=== Batch validation: all LLM domains  (label=%s) ===", output_label)
+
+        # Collect all domains with 'llm' in extractors (v2 + v1_debug "llm" bucket)
+        llm_domains = {
+            name: spec
+            for name, spec in reg.domains.items()
+            if "llm" in spec.extractors
+        }
+        LOG.info("  %d LLM domains in registry: %s", len(llm_domains), ", ".join(sorted(llm_domains)))
+
+        aggregate_rows: list[dict] = []
+        top_manifest: dict = {
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "run_label": output_label,
+            "top_dir": str(top_dir),
+            "db_path": args.db_path,
+            "domains": {},
+        }
+
+        for domain_name, spec in sorted(llm_domains.items()):
+            parquet_path = PROCESSED / spec.parquet_filename
+            domain_out_dir = top_dir / domain_name
+
+            if not parquet_path.exists():
+                LOG.warning("  [%s] parquet not found at %s — skipping", domain_name, parquet_path)
+                skip_row = {
+                    "domain": domain_name,
+                    "parquet_stem": spec.parquet_stem,
+                    "tier": spec.tier,
+                    "input_path": str(parquet_path),
+                    "output_dir": str(domain_out_dir),
+                    "llm_rows": 0,
+                    "unique_patients": 0,
+                    "concordant_rows": 0,
+                    "discordant_rows": 0,
+                    "manual_review_queue_rows": 0,
+                    "gold_rows": 0,
+                    "status": "no_output",
+                }
+                aggregate_rows.append(skip_row)
+                top_manifest["domains"][domain_name] = skip_row
+                continue
+
+            LOG.info("\n  ── Validating domain '%s' (%s) ──", domain_name, spec.tier)
+            try:
+                result = _run_single_validation(
+                    parquet_path,
+                    domain_out_dir,
+                    db_path=args.db_path,
+                    review_csv=args.review_csv,
+                    review_include_source_limited=args.review_include_source_limited,
+                    gold_require_manual=args.gold_require_manual,
+                    trust_fill_candidate_auto=args.trust_fill_candidate_auto,
+                    write_motherduck_sql_path=args.write_motherduck_sql,
+                    motherduck_attach=args.motherduck_attach,
+                )
+                result["domain"] = domain_name
+                result["parquet_stem"] = spec.parquet_stem
+                result["tier"] = spec.tier
+            except SystemExit as exc:
+                LOG.error("  [%s] validation failed: %s", domain_name, exc)
+                result = {
+                    "domain": domain_name,
+                    "parquet_stem": spec.parquet_stem,
+                    "tier": spec.tier,
+                    "input_path": str(parquet_path),
+                    "output_dir": str(domain_out_dir),
+                    "llm_rows": 0,
+                    "unique_patients": 0,
+                    "concordant_rows": 0,
+                    "discordant_rows": 0,
+                    "manual_review_queue_rows": 0,
+                    "gold_rows": 0,
+                    "status": "error",
+                }
+
+            aggregate_rows.append(result)
+            top_manifest["domains"][domain_name] = result
+
+        # Write top-level manifest
+        (top_dir / "manifest.json").write_text(
+            json.dumps(top_manifest, indent=2), encoding="utf-8"
+        )
+
+        # Aggregate summary CSV (always written in batch mode)
+        if aggregate_rows:
+            agg_df = pd.DataFrame(aggregate_rows)
+            col_order = [
+                "domain", "parquet_stem", "tier", "status",
+                "llm_rows", "unique_patients", "concordant_rows", "discordant_rows",
+                "manual_review_queue_rows", "gold_rows", "input_path", "output_dir",
+            ]
+            for c in col_order:
+                if c not in agg_df.columns:
+                    agg_df[c] = None
+            agg_df = agg_df[col_order]
+            agg_path = top_dir / "aggregate_summary.csv"
+            agg_df.to_csv(agg_path, index=False)
+            LOG.info("\n  Aggregate summary written to %s", agg_path)
+
+            if args.merge_report:
+                LOG.info("\n  ── Aggregate Domain Report ──")
+                LOG.info("  %-30s  %-12s  %8s  %8s  %8s  %8s  %8s",
+                         "Domain", "Status", "Rows", "Patients", "Concordant", "Discordant", "Review Q")
+                for row in agg_df.to_dict("records"):
+                    LOG.info("  %-30s  %-12s  %8s  %8s  %8s  %8s  %8s",
+                             row["domain"], row["status"],
+                             f"{row['llm_rows']:,}", f"{row['unique_patients']:,}",
+                             f"{row['concordant_rows']:,}", f"{row['discordant_rows']:,}",
+                             f"{row['manual_review_queue_rows']:,}")
+
+        pass_count = sum(1 for r in aggregate_rows if r.get("status") == "pass")
+        skip_count = sum(1 for r in aggregate_rows if r.get("status") == "no_output")
+        err_count = sum(1 for r in aggregate_rows if r.get("status") == "error")
+        LOG.info(
+            "\n  Batch complete: %d pass / %d skipped (no output) / %d error",
+            pass_count, skip_count, err_count,
+        )
+        return
+
+    # ── Mode: --domain <name> ───────────────────────────────────────────────
+    if args.domain:
+        input_path = _resolve_input_path_for_domain(args.domain)
+        LOG.info("  Domain '%s' resolved to: %s", args.domain, input_path)
+        output_dir = (
+            Path(args.output_dir)
+            if args.output_dir
+            else RUNS_DIR / output_label / args.domain
+        )
+        _run_single_validation(
+            input_path,
+            output_dir,
+            db_path=args.db_path,
+            review_csv=args.review_csv,
+            review_include_source_limited=args.review_include_source_limited,
+            gold_require_manual=args.gold_require_manual,
+            trust_fill_candidate_auto=args.trust_fill_candidate_auto,
+            write_motherduck_sql_path=args.write_motherduck_sql,
+            motherduck_attach=args.motherduck_attach,
+        )
+        return
+
+    # ── Mode: legacy --input (or bare default) ──────────────────────────────
+    # When neither --domain nor --all-llm-domains is given, fall back to the
+    # original behaviour: validate a single explicitly-provided (or default) path.
+    resolved_input = args.input if args.input else str(PROCESSED / "note_entities_llm.parquet")
+    input_path = Path(resolved_input)
+    output_dir = Path(args.output_dir) if args.output_dir else RUNS_DIR / output_label
+    _run_single_validation(
+        input_path,
+        output_dir,
+        db_path=args.db_path,
+        review_csv=args.review_csv,
+        review_include_source_limited=args.review_include_source_limited,
+        gold_require_manual=args.gold_require_manual,
+        trust_fill_candidate_auto=args.trust_fill_candidate_auto,
+        write_motherduck_sql_path=args.write_motherduck_sql,
+        motherduck_attach=args.motherduck_attach,
+    )
 
 
 if __name__ == "__main__":

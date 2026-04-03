@@ -18,6 +18,17 @@ Usage:
       --target genetics --research-ids ids.txt  # combined filter
       --merge-audit               # also write merged note_entities_llm audit artifact
       --validate-only             # validate registry and exit (no extraction)
+
+LLM v2 domain fan-out (registry tier == "v2"):
+  When the target domain is a v2 LLM-only domain (e.g. --target imaging),
+  the runner calls LLMExtractor.extract(..., domain="imaging") on each note,
+  filters notes by the domain's note_scope, and writes to the per-domain
+  parquet stem (note_entities_llm_imaging.parquet).
+
+  A full run (no --target) processes all v1 regex domains AND iterates
+  every v2 registry domain with the LLM extractor.
+
+  note_entities_llm.parquet is written ONLY when --merge-audit is passed.
 """
 
 from __future__ import annotations
@@ -39,7 +50,7 @@ from llm_extraction.base import BaseExtractor
 from llm_extraction.extract_llm import LLMExtractor
 from llm_extraction.extract_operative_v2 import OperativeDetailExtractor
 from llm_extraction.extract_regex import ALL_REGEX_EXTRACTORS
-from llm_extraction.registry import load_registry, validate_registry
+from llm_extraction.registry import DomainSpec, load_registry, validate_registry
 from llm_extraction.run_telemetry import (
     RunTelemetryContext,
     append_note_extraction_run,
@@ -78,6 +89,48 @@ _LEGACY_V1_FALLBACK = {
     "llm": "note_entities_llm",
 }
 
+# ---------------------------------------------------------------------------
+# Note-scope filtering for v2 LLM domains
+# ---------------------------------------------------------------------------
+
+# Registry note_scope → frozenset of note_type values that qualify.
+# None means "no filter — accept all note_type values".
+_NOTE_SCOPE_TYPES: dict[str, frozenset[str] | None] = {
+    "all": None,
+    "op_note": frozenset({"op_note", "OPNOTE"}),
+    "path_report": frozenset({"path_report"}),
+}
+
+
+def _filter_notes_by_scope(notes_df: pd.DataFrame, note_scope: str) -> pd.DataFrame:
+    """Return the subset of notes whose note_type satisfies *note_scope*.
+
+    Unrecognised scope values are treated as 'all' (no filtering) with a
+    warning so new scopes added to the registry don't silently break runs.
+    """
+    allowed = _NOTE_SCOPE_TYPES.get(note_scope)
+    if allowed is None:
+        if note_scope not in _NOTE_SCOPE_TYPES:
+            log.warning(
+                "  Unknown note_scope '%s' — treating as 'all' (no filter)", note_scope
+            )
+        return notes_df
+    mask = notes_df["note_type"].isin(allowed)
+    filtered = notes_df[mask].reset_index(drop=True)
+    if len(filtered) < len(notes_df):
+        log.info(
+            "  note_scope='%s' filter: %s/%s notes qualify",
+            note_scope,
+            f"{len(filtered):,}",
+            f"{len(notes_df):,}",
+        )
+    return filtered
+
+
+# ---------------------------------------------------------------------------
+# Provenance helpers
+# ---------------------------------------------------------------------------
+
 
 def _value_or_none(value):
     if pd.isna(value):
@@ -85,7 +138,19 @@ def _value_or_none(value):
     return value
 
 
-def _stamp_row(ext: BaseExtractor, rec: dict, extraction_run_id: str, source_row: dict) -> dict:
+def _is_llm_method(extraction_method: str | None) -> bool:
+    """True for LLM-sourced rows, which use extraction_method='llm_*'."""
+    return bool(extraction_method and str(extraction_method).startswith("llm_"))
+
+
+def _stamp_row(
+    ext: BaseExtractor,
+    rec: dict,
+    extraction_run_id: str,
+    source_row: dict,
+    *,
+    is_llm: bool | None = None,
+) -> dict:
     rec["extraction_run_id"] = extraction_run_id
     rec["extractor_name"] = ext.__class__.__name__
     rec["extractor_version"] = EXTRACTOR_BUILD_VERSION
@@ -97,7 +162,13 @@ def _stamp_row(ext: BaseExtractor, rec: dict, extraction_run_id: str, source_row
     rec["extracted_at"] = extracted_at
     rec["extraction_timestamp_utc"] = extracted_at
     rec["confidence_score"] = rec.get("confidence")
-    if ext.entity_domain != "llm":
+
+    # Detect LLM vs regex by extraction_method prefix or explicit flag.
+    # Checking entity_domain == "llm" is intentionally NOT used here so that
+    # v2 domain rows (which have their own domain name, not "llm") are still
+    # treated as LLM rows for provenance purposes.
+    llm_row = is_llm if is_llm is not None else _is_llm_method(rec.get("extraction_method"))
+    if not llm_row:
         rec["model_name"] = None
         rec["model_version"] = None
         rec["prompt_version"] = "regex_only"
@@ -112,6 +183,11 @@ def _stamp_row(ext: BaseExtractor, rec: dict, extraction_run_id: str, source_row
             rec["verification_status"] = "pending"
             rec["verification_step"] = "awaiting_review"
     return rec
+
+
+# ---------------------------------------------------------------------------
+# V1 regex extraction (unchanged behaviour)
+# ---------------------------------------------------------------------------
 
 
 def run_extractors(
@@ -172,6 +248,101 @@ def run_extractors(
                 log.info(f"  Processed {i:,}/{total:,} notes ...")
 
     return domain_results
+
+
+# ---------------------------------------------------------------------------
+# V2 LLM domain fan-out
+# ---------------------------------------------------------------------------
+
+
+def run_llm_for_domain(
+    notes_df: pd.DataFrame,
+    llm: LLMExtractor,
+    domain_name: str,
+    spec: DomainSpec,
+    extraction_run_id: str,
+    max_workers: int = 1,
+) -> list[dict]:
+    """Extract entities for one v2 registry domain using the LLM extractor.
+
+    Applies note_scope filtering, calls llm.extract(..., domain=domain_name)
+    per note, and returns a flat list of stamped row dicts.  Results are
+    keyed to *domain_name* — not "llm" — so the runner can write them to the
+    correct per-domain parquet.
+    """
+    if not llm.available:
+        log.debug("  LLM unavailable; skipping domain '%s'", domain_name)
+        return []
+
+    scoped_df = _filter_notes_by_scope(notes_df, spec.note_scope)
+    if scoped_df.empty:
+        log.info("  Domain '%s': 0 notes after scope filter — skipping", domain_name)
+        return []
+
+    has_note_date = "note_date" in scoped_df.columns
+    records: list[dict] = []
+    rows = scoped_df.to_dict("records")
+    total = len(rows)
+
+    def extract_one(row: dict) -> list[dict]:
+        note_row_id = row["note_row_id"]
+        research_id = int(row["research_id"])
+        note_type = row["note_type"]
+        note_text = str(row["note_text"])
+        note_date = row.get("note_date") if has_note_date else None
+        if isinstance(note_date, float) and pd.isna(note_date):
+            note_date = None
+
+        matches = llm.extract(
+            note_row_id,
+            research_id,
+            note_type,
+            note_text,
+            note_date=note_date,
+            domain=domain_name,
+        )
+        row_records: list[dict] = []
+        for m in matches:
+            rec = m.to_dict()
+            rec = _stamp_row(llm, rec, extraction_run_id, row, is_llm=True)
+            row_records.append(rec)
+        return row_records
+
+    if max_workers <= 1:
+        for i, row in enumerate(rows):
+            records.extend(extract_one(row))
+            if (i + 1) % 1000 == 0:
+                log.info(
+                    "  [%s] Processed %s/%s notes ...",
+                    domain_name,
+                    f"{i+1:,}",
+                    f"{total:,}",
+                )
+    else:
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = [executor.submit(extract_one, row) for row in rows]
+            for i, future in enumerate(as_completed(futures), start=1):
+                records.extend(future.result())
+                if i % 500 == 0 or i == total:
+                    log.info(
+                        "  [%s] Processed %s/%s notes ...",
+                        domain_name,
+                        f"{i:,}",
+                        f"{total:,}",
+                    )
+
+    log.info(
+        "  Domain '%s': %s entities extracted from %s notes",
+        domain_name,
+        f"{len(records):,}",
+        f"{total:,}",
+    )
+    return records
+
+
+# ---------------------------------------------------------------------------
+# DataFrame construction & validation
+# ---------------------------------------------------------------------------
 
 
 def results_to_dataframes(domain_results: dict[str, list[dict]]) -> dict[str, pd.DataFrame]:
@@ -243,6 +414,54 @@ def _validate_and_report(reg=None) -> bool:
     return True
 
 
+# ---------------------------------------------------------------------------
+# Per-domain write helpers
+# ---------------------------------------------------------------------------
+
+
+def _log_domain_summary(domain: str, df: pd.DataFrame) -> None:
+    n_present = (df["present_or_negated"] == "present").sum()
+    n_negated = (df["present_or_negated"] == "negated").sum()
+    n_patients = df["research_id"].nunique()
+    n_entity_dated = df["entity_date"].notna().sum()
+    n_note_dated = df["note_date"].notna().sum()
+
+    log.info(
+        "    %-24s  %6s entities  (%s present, %s negated)  %s patients",
+        domain,
+        f"{len(df):,}",
+        f"{n_present:,}",
+        f"{n_negated:,}",
+        f"{n_patients:,}",
+    )
+    log.info(
+        "      dates: %s entity_date, %s note_date",
+        f"{n_entity_dated:,}",
+        f"{n_note_dated:,}",
+    )
+    top = df["entity_value_norm"].value_counts().head(5)
+    for val, cnt in top.items():
+        log.info("      %s: %s", val, f"{cnt:,}")
+
+
+def _write_domain_parquet(
+    domain: str,
+    df: pd.DataFrame,
+    research_id_filter: set[int] | None,
+) -> Path:
+    """Merge-into-existing and write; returns the output path."""
+    file_stem = DOMAIN_TO_FILE.get(domain, f"note_entities_{domain}")
+    out_path = PROCESSED / f"{file_stem}.parquet"
+    final_df = _merge_into_existing(domain, df, research_id_filter)
+    save_parquet(final_df, out_path)
+    return out_path
+
+
+# ---------------------------------------------------------------------------
+# main()
+# ---------------------------------------------------------------------------
+
+
 def main() -> None:
     started_at = datetime.now(timezone.utc).isoformat()
     extraction_run_id = new_extraction_run_id()
@@ -282,7 +501,10 @@ def main() -> None:
         "--merge-audit",
         action="store_true",
         default=False,
-        help="Also write a merged note_entities_llm parquet combining all LLM domain outputs.",
+        help=(
+            "Also write a merged note_entities_llm parquet combining all LLM domain outputs. "
+            "This is an audit/debug artifact only — per-domain parquets are the canonical outputs."
+        ),
     )
     parser.add_argument(
         "--validate-only",
@@ -301,11 +523,20 @@ def main() -> None:
 
     # Validate --target against registry (fail loudly for unknown domains)
     target_domain: str | None = args.target
+    target_spec: DomainSpec | None = None
     if target_domain:
         try:
-            reg.resolve_domain(target_domain)
+            target_spec = reg.resolve_domain(target_domain)
         except ValueError as exc:
             parser.error(str(exc))
+
+    # Determine whether the target is a v2 LLM-only domain
+    target_is_v2_llm = (
+        target_spec is not None
+        and target_spec.is_v2
+        and "llm" in target_spec.extractors
+        and "regex" not in target_spec.extractors
+    )
 
     # Load research_id filter
     research_id_filter: set[int] | None = None
@@ -345,23 +576,18 @@ def main() -> None:
             f"({before - len(notes_df):,} excluded by research-id filter)"
         )
 
-    # Select extractors: standard regex domains + deep operative-note regex (op_note only).
-    all_extractors: list[BaseExtractor] = [
-        *(cls() for cls in ALL_REGEX_EXTRACTORS),
-        OperativeDetailExtractor(),
-    ]
-
+    # Build LLM extractor (shared across all domains)
     llm = LLMExtractor(telemetry=telemetry)
     if llm.available:
-        all_extractors.append(llm)
         log.info(
-            "  LLM extractor enabled (GITHUB_TOKEN or OPENAI_API_KEY; operative notes use extended chunk)"
+            "  LLM extractor enabled (provider=%s; operative notes use extended chunk)",
+            llm._provider,
         )
     else:
         telemetry.llm_disabled = True
         log.warning(
             "  LLM extractor disabled (set GITHUB_TOKEN or OPENAI_API_KEY) — "
-            "llm domain will be empty; this is not the same as 'no clinical findings'"
+            "v2 domains will be empty; this is not the same as 'no clinical findings'"
         )
 
     worker_count = args.workers
@@ -369,90 +595,172 @@ def main() -> None:
         worker_count = 3 if llm.available else 1
     worker_count = max(1, worker_count)
 
-    # Filter to target domain if specified
-    if target_domain:
-        extractors = [
-            e for e in all_extractors
-            if e.entity_domain == target_domain
+    log.info("  extraction_run_id=%s", extraction_run_id)
+    log.info("\n  Results summary:")
+
+    # Accumulate LLM domain DataFrames for optional --merge-audit
+    llm_domain_dfs: list[pd.DataFrame] = []
+    out_count = 0
+
+    # ── Path A: targeted v2 LLM domain ──────────────────────────────────────
+    if target_is_v2_llm:
+        assert target_domain is not None and target_spec is not None
+        log.info("  Target: v2 LLM domain '%s' (note_scope=%s)", target_domain, target_spec.note_scope)
+
+        records = run_llm_for_domain(
+            notes_df, llm, target_domain, target_spec, extraction_run_id, max_workers=worker_count
+        )
+        if records:
+            df = pd.DataFrame(records)
+            for col in ENTITY_SCHEMA_COLUMNS:
+                if col not in df.columns:
+                    df[col] = None
+            df = df[ENTITY_SCHEMA_COLUMNS]
+            BaseExtractor.validate_output(df)
+            _log_domain_summary(target_domain, df)
+            out_path = _write_domain_parquet(target_domain, df, research_id_filter)
+            log.info("  Wrote %s → %s", f"{len(df):,}", out_path.name)
+            llm_domain_dfs.append(df)
+            out_count = len(df)
+        else:
+            log.warning(
+                "  Domain '%s': no entities extracted — check API keys, input, and scope filter",
+                target_domain,
+            )
+
+    # ── Path B: targeted v1 domain (regex + optional LLM audit bucket) ──────
+    elif target_domain is not None:
+        assert target_spec is not None
+        log.info("  Target: v1 domain '%s'", target_domain)
+
+        # Select regex extractors matching this domain
+        all_extractors: list[BaseExtractor] = [
+            *(cls() for cls in ALL_REGEX_EXTRACTORS),
+            OperativeDetailExtractor(),
         ]
+        if llm.available:
+            all_extractors.append(llm)
+
+        extractors = [e for e in all_extractors if e.entity_domain == target_domain]
         if target_domain != "operative_detail":
             extractors.extend(e for e in all_extractors if e.entity_domain == "llm")
-        log.info(f"  Target domain filter: '{target_domain}' "
-                 f"({len(extractors)} extractor(s) active)")
-    else:
-        extractors = all_extractors
 
-    log.info("  extraction_run_id=%s", extraction_run_id)
-    domain_results = run_extractors(
-        notes_df,
-        extractors,
-        max_workers=worker_count,
-        extraction_run_id=extraction_run_id,
-    )
+        log.info(
+            "  Target domain filter: '%s' (%d extractor(s) active)",
+            target_domain,
+            len(extractors),
+        )
 
-    dfs = results_to_dataframes(domain_results)
-
-    # Determine which domains to write (registry-driven)
-    if target_domain:
+        domain_results = run_extractors(
+            notes_df, extractors, max_workers=worker_count,
+            extraction_run_id=extraction_run_id,
+        )
+        dfs = results_to_dataframes(domain_results)
         domains_to_write = {target_domain} | ({"llm"} if "llm" in dfs else set())
+
+        for domain, df in dfs.items():
+            if domain not in domains_to_write:
+                continue
+            _log_domain_summary(domain, df)
+            out_path = _write_domain_parquet(domain, df, research_id_filter)
+            log.info("  Wrote %s → %s", f"{len(df):,}", out_path.name)
+            if domain == "llm" or _is_llm_method(df["extraction_method"].iloc[0] if len(df) else None):
+                llm_domain_dfs.append(df)
+            out_count += len(df)
+
+    # ── Path C: full run (no --target) ──────────────────────────────────────
     else:
-        domains_to_write = set(DOMAIN_TO_FILE.keys()) | ({"llm"} if "llm" in dfs else set())
+        log.info("  Full run: v1 regex domains + all v2 LLM domains")
 
-    log.info("\n  Results summary:")
-    for domain, df in dfs.items():
-        if domain not in domains_to_write:
-            continue
-
-        file_stem = DOMAIN_TO_FILE.get(domain, f"note_entities_{domain}")
-        out_path = PROCESSED / f"{file_stem}.parquet"
-
-        final_df = _merge_into_existing(domain, df, research_id_filter)
-        save_parquet(final_df, out_path)
-
-        n_present = (df["present_or_negated"] == "present").sum()
-        n_negated = (df["present_or_negated"] == "negated").sum()
-        n_patients = df["research_id"].nunique()
-        n_entity_dated = df["entity_date"].notna().sum()
-        n_note_dated = df["note_date"].notna().sum()
-
-        log.info(
-            f"    {domain:20s}  {len(df):>6,} entities  "
-            f"({n_present:,} present, {n_negated:,} negated)  "
-            f"{n_patients:,} patients"
-        )
-        log.info(
-            f"      dates: {n_entity_dated:,} entity_date, "
-            f"{n_note_dated:,} note_date"
-        )
-
-        top = df["entity_value_norm"].value_counts().head(5)
-        for val, cnt in top.items():
-            log.info(f"      {val}: {cnt:,}")
-
-    # Optionally write merged audit artifact
-    if args.merge_audit and dfs:
-        llm_dfs = [
-            df for domain, df in dfs.items()
-            if domain in domains_to_write and domain != "llm"
-            and "llm" in (reg.domains.get(domain) or reg.domains.get("llm", reg.domains["staging"])).extractors
+        # --- v1 regex pass ---
+        all_extractors: list[BaseExtractor] = [
+            *(cls() for cls in ALL_REGEX_EXTRACTORS),
+            OperativeDetailExtractor(),
         ]
-        if "llm" in dfs:
-            llm_dfs.append(dfs["llm"])
-        if llm_dfs:
-            merged = pd.concat(llm_dfs, ignore_index=True)
+        if llm.available:
+            all_extractors.append(llm)
+
+        domain_results = run_extractors(
+            notes_df, all_extractors, max_workers=worker_count,
+            extraction_run_id=extraction_run_id,
+        )
+        dfs = results_to_dataframes(domain_results)
+        for domain, df in dfs.items():
+            if domain not in DOMAIN_TO_FILE and domain != "llm":
+                continue
+            _log_domain_summary(domain, df)
+            out_path = _write_domain_parquet(domain, df, research_id_filter)
+            log.info("  Wrote %s → %s", f"{len(df):,}", out_path.name)
+            if domain == "llm":
+                llm_domain_dfs.append(df)
+            out_count += len(df)
+
+        # --- v2 LLM domain pass ---
+        if llm.available:
+            v2_llm_domains = {
+                name: spec
+                for name, spec in reg.v2_domains.items()
+                if "llm" in spec.extractors
+            }
+            log.info(
+                "\n  LLM v2 domain fan-out: %d domains to process ...", len(v2_llm_domains)
+            )
+            for domain_name, spec in v2_llm_domains.items():
+                records = run_llm_for_domain(
+                    notes_df, llm, domain_name, spec, extraction_run_id,
+                    max_workers=worker_count,
+                )
+                if not records:
+                    continue
+                df = pd.DataFrame(records)
+                for col in ENTITY_SCHEMA_COLUMNS:
+                    if col not in df.columns:
+                        df[col] = None
+                df = df[ENTITY_SCHEMA_COLUMNS]
+                BaseExtractor.validate_output(df)
+                _log_domain_summary(domain_name, df)
+                out_path = _write_domain_parquet(domain_name, df, research_id_filter)
+                log.info("  Wrote %s → %s", f"{len(df):,}", out_path.name)
+                llm_domain_dfs.append(df)
+                out_count += len(df)
+        else:
+            log.warning(
+                "  Skipping v2 LLM domain fan-out (LLM extractor disabled)"
+            )
+
+    # ── Merged audit artifact (optional) ────────────────────────────────────
+    if args.merge_audit:
+        if llm_domain_dfs:
+            merged = pd.concat(llm_domain_dfs, ignore_index=True)
             audit_path = PROCESSED / "note_entities_llm.parquet"
             save_parquet(merged, audit_path)
-            log.info(f"  Merged LLM audit artifact: {len(merged):,} rows → {audit_path.name}")
+            log.info(
+                "\n  [--merge-audit] Merged LLM audit artifact: %s rows → %s",
+                f"{len(merged):,}",
+                audit_path.name,
+            )
+        else:
+            log.info(
+                "\n  [--merge-audit] No LLM domain output to merge — "
+                "note_entities_llm.parquet not written"
+            )
+    elif not target_domain and not target_is_v2_llm:
+        log.info(
+            "\n  note_entities_llm.parquet NOT written (use --merge-audit for merged audit artifact)"
+        )
 
-    if not dfs:
+    if out_count == 0:
         log.warning(
             "  No entities extracted for selected domains — check API keys, input paths, and filters"
         )
 
-    out_count = sum(len(dfs[d]) for d in dfs if d in domains_to_write)
+    # ── Telemetry ────────────────────────────────────────────────────────────
     completed_at = datetime.now(timezone.utc).isoformat()
     fstage = telemetry.failure_stage()
     pipeline_success = fstage in ("none", "llm_disabled")
+    domains_written = (
+        {target_domain} if target_domain else set(DOMAIN_TO_FILE.keys())
+    )
     warn_obj = {
         "llm_telemetry": {
             "llm_disabled": telemetry.llm_disabled,
@@ -460,7 +768,7 @@ def main() -> None:
             "parse_failures": telemetry.parse_failures,
             "retry_attempts": telemetry.retry_attempts,
         },
-        "domains_with_output": sorted(dfs.keys()),
+        "target_is_v2_llm": target_is_v2_llm,
         "partial_run_target": target_domain,
         "registry_version": reg.schema_version,
     }
@@ -475,7 +783,7 @@ def main() -> None:
         retry_count=telemetry.retry_attempts,
         output_record_count=int(out_count),
         warnings=warn_obj,
-        domains_requested=",".join(sorted(domains_to_write)) if dfs else ",".join(sorted(DOMAIN_TO_FILE.keys())),
+        domains_requested=",".join(sorted(domains_written)),
         research_id_filter_note=args.research_ids,
         target_domain=target_domain,
     )
