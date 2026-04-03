@@ -1,0 +1,9 @@
+gate_id,criterion,status,detail
+G1,Domain completeness,FAIL,"Missing canonical parquets: ['staging', 'genetics', 'procedures', 'operative_detail', 'complications', 'medications', 'problem_list', 'us_nodule_dynamics', 'cervical_ln_detail', 'presenting_symptoms', 'frozen_section_detail']"
+G2,Schema compliance,FAIL,"Schema failures: ['imaging', 'tirads_granular', 'labs', 'tg_kinetics', 'pathology', 'synoptic_pathology_enrichment', 'rai_detailed', 'rad_treatment', 'parathyroid_detail', 'recurrence', 'survival_followup', 'functional_outcomes', 'past_medical_hx', 'past_surgical_hx', 'physical_exam', 'vascular_invasion', 'airway_invasion', 'dynamic_risk_response', 'patient_decision_adherence', 'UNCLAIMED', 'UNCLAIMED', 'UNCLAIMED', 'UNCLAIMED', 'UNCLAIMED', 'UNCLAIMED', 'UNCLAIMED']"
+G3,Provenance columns,PASS,All domains have at least one provenance column
+G4,Duplicate rate,PASS,All domains below 5% duplicate threshold
+G5,Date coverage (critical domains),FAIL,"Critical domains with 0% entity_date fill: ['pathology', 'synoptic_pathology_enrichment', 'rai_detailed', 'recurrence', 'vascular_invasion']"
+G6,Concordance floor (critical domains),PASS,All critical domains meet 30% concordance floor
+G7,Unresolved discordance,FAIL,2869 discordant rows in review queue — all require manual verification before promotion
+G8,MotherDuck v2_stage parity,PASS,Skipped (--motherduck-check not set or MOTHERDUCK_TOKEN missing)

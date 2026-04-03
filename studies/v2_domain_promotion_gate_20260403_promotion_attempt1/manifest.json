@@ -1,0 +1,46 @@
+{
+  "run_label": "20260403_promotion_attempt1",
+  "generated_at": "2026-04-03T09:27:27.262005+00:00",
+  "git_sha": "f1185dd",
+  "v2_parquets_dir": "processed/output/v2_parquets",
+  "db_path": "thyroid_master.duckdb",
+  "overall_verdict": "FAIL",
+  "gate_summary": {
+    "G1": {
+      "status": "FAIL",
+      "detail": "Missing canonical parquets: ['staging', 'genetics', 'procedures', 'operative_detail', 'complications', 'medications', 'problem_list', 'us_nodule_dynamics', 'cervical_ln_detail', 'presenting_symptoms', 'frozen_section_detail']"
+    },
+    "G2": {
+      "status": "FAIL",
+      "detail": "Schema failures: ['imaging', 'tirads_granular', 'labs', 'tg_kinetics', 'pathology', 'synoptic_pathology_enrichment', 'rai_detailed', 'rad_treatment', 'parathyroid_detail', 'recurrence', 'survival_followup', 'functional_outcomes', 'past_medical_hx', 'past_surgical_hx', 'physical_exam', 'vascular_invasion', 'airway_invasion', 'dynamic_risk_response', 'patient_decision_adherence', 'UNCLAIMED', 'UNCLAIMED', 'UNCLAIMED', 'UNCLAIMED', 'UNCLAIMED', 'UNCLAIMED', 'UNCLAIMED']"
+    },
+    "G3": {
+      "status": "PASS",
+      "detail": "All domains have at least one provenance column"
+    },
+    "G4": {
+      "status": "PASS",
+      "detail": "All domains below 5% duplicate threshold"
+    },
+    "G5": {
+      "status": "FAIL",
+      "detail": "Critical domains with 0% entity_date fill: ['pathology', 'synoptic_pathology_enrichment', 'rai_detailed', 'recurrence', 'vascular_invasion']"
+    },
+    "G6": {
+      "status": "PASS",
+      "detail": "All critical domains meet 30% concordance floor"
+    },
+    "G7": {
+      "status": "FAIL",
+      "detail": "2869 discordant rows in review queue \u2014 all require manual verification before promotion"
+    },
+    "G8": {
+      "status": "PASS",
+      "detail": "Skipped (--motherduck-check not set or MOTHERDUCK_TOKEN missing)"
+    }
+  },
+  "domain_count": 44,
+  "domains_with_parquets": 32,
+  "total_rows_validated": 286962,
+  "manual_review_queue_rows": 5292
+}
