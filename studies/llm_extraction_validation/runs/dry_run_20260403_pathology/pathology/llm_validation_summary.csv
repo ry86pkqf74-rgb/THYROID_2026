@@ -1,0 +1,15 @@
+comparison_domain,algorithm_comparison_status,llm_rows,unique_patients,evidence_spans_found,source_note_links,structured_matches,baseline_matches,fill_candidates,review_conflicts
+complications,concordant_existing_extraction_only,2,2,1,2,0,2,0,0
+genetics,concordant_existing_extraction_only,464,351,368,464,0,464,0,0
+genetics,existing_missing_fill_candidate,58,53,51,58,0,0,58,0
+medications,concordant_existing_extraction_only,5,5,4,5,0,5,0,0
+medications,existing_missing_fill_candidate,1,1,0,1,0,0,1,0
+operative_detail,concordant_existing_extraction_only,6,6,5,6,0,6,0,0
+operative_detail,existing_missing_fill_candidate,32,30,13,32,0,0,32,0
+problem_list,concordant_existing_extraction_only,3,3,3,3,0,3,0,0
+problem_list,source_limited,9,8,2,9,0,0,0,0
+procedures,concordant_existing_extraction_only,168,140,115,168,0,168,0,0
+procedures,existing_missing_fill_candidate,92,82,54,92,0,0,92,0
+staging,concordant_existing_extraction_only,32,30,27,32,0,32,0,0
+staging,existing_missing_fill_candidate,500,423,353,500,0,0,500,0
+unmapped,source_limited,9522,2208,6681,9522,0,0,0,0

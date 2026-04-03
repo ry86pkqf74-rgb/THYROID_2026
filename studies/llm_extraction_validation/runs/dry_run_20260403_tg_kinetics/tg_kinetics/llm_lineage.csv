@@ -1,0 +1,950 @@
+llm_entity_id,research_id,note_row_id,episode_id,note_type,note_index_x,source_sheet_x,source_column_x,entity_type,entity_value_raw,entity_value_norm,present_or_negated,confidence,confidence_score,evidence_span,evidence_start,evidence_end,entity_date,note_date,extraction_method,extracted_at,extraction_timestamp_utc,date_confidence,source_line,chunk_index,chunk_char_start,chunk_char_end,evidence_global_start,evidence_global_end,raw_response_sha256,llm_verification_status,llm_verification_step,extraction_run_id,extractor_name,extractor_version,llm_model,model_name,model_version,llm_prompt_version,prompt_version,verifier_name,verifier_version,note_index_y,source_sheet_y,source_column_y,char_count,source_note_exists_flag,evidence_span_found_flag,comparison_domain,comparison_token,support_level,token_parse_success_flag,original_source_link,extraction_ts
+1,2978,358b30e0655adf52423f4bcb7d64623379541e51,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,negative,negative,negated,0.95,0.95,Thyrogen stimulated thyroglobulin negative in 2013,,,2013-01-01,,llm_v2_combined,2026-04-03T04:25:41.443280+00:00,,1.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,368,True,True,unmapped,negative,source_limited,False,"…l neck. III 
+     s/p  130 mCi I-131 with posttherapy scan negative. 
+     Thyrogen stimulated thyroglobulin negative in 2013",<NA>
+2,3087,d9725e0554d8d395655c5c231c9dc36b3fc41c90,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,<0.1 mg/dl,<0.1 mg/dl,negated,0.8,0.8,"Thyroglobulin :<0.1 mg/dl 2018,2019,2020,    2024 pending",,,,,llm_v2_combined,2026-04-03T04:25:46.861869+00:00,,0.0,7,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,578,True,True,unmapped,0.1 mg dl,source_limited,False,"…alities on ultrasound. 
+ 
+I131 whole body scan: yes
+I131 ablation: yes
+Thyroglobulin :<0.1 mg/dl 2018,2019,2020,    2024 pending  
+Thyroid US negative 2024 
+TSH goal: .5-2 mg/dl",<NA>
+3,2490,5c801d66a7bbc87c2ee9bcee90bb4864355e37bb,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,80,80,present,0.95,0.95,recieved Tg 80 in 2/08,,,2008-02-01,2024-08-07,llm_v2_combined,2026-04-03T04:25:51.449459+00:00,,0.85,3,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1076,True,True,unmapped,80,source_limited,False,"…edical Center by 
+     Dr. Orija. Cumulative dose per patient 450 mCi. per prior Records recieved Tg 80 in 2/08 and CT Chest 8/08 negative. 
+         
+     4. PET scan 4/09 small area of uptake in th",<NA>
+4,2490,5c801d66a7bbc87c2ee9bcee90bb4864355e37bb,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,8.7,8.7,present,0.95,0.95,Stimulated TG was 8.7.,,,2009-04-01,2024-08-07,llm_v2_combined,2026-04-03T04:25:51.449459+00:00,,0.85,4,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1076,True,True,unmapped,8.7,source_limited,False,"… Chest 8/08 negative. 
+         
+     4. PET scan 4/09 small area of uptake in the neck. Stimulated TG was 8.7. Neck U/S benign appearing LN. MRI showed 8 mm LN corresponding to scan (10/09). Baselin",<NA>
+5,2490,5c801d66a7bbc87c2ee9bcee90bb4864355e37bb,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,1.3,1.3,present,0.95,0.95,Baseline TG 1.3(11/09),,,2009-11-01,2024-08-07,llm_v2_combined,2026-04-03T04:25:51.449459+00:00,,0.85,4,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1076,True,True,unmapped,1.3,source_limited,False,"…was 8.7. Neck U/S benign appearing LN. MRI showed 8 mm LN corresponding to scan (10/09). Baseline TG 1.3(11/09) U/S and FNa confirmed papillary ca 
+         
+     5. s/p Lymph Node Dissection 8/17/20",<NA>
+6,2490,5c801d66a7bbc87c2ee9bcee90bb4864355e37bb,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,3.4,3.4,present,0.95,0.95,stimulated Tg 3.4( 4/11).,,,2011-04-01,2024-08-07,llm_v2_combined,2026-04-03T04:25:51.449459+00:00,,0.85,5,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1076,True,True,unmapped,3.4,source_limited,False,"…c paillary carcinoma 1.7x1.1 cm without extranodal extension. 
+         
+     5 b     .stimulated Tg 3.4( 4/11).      diagnostic I-131 scan no avid tissue 
+        5 c. Neck U/S- 7/2023- stable 
+   
+",<NA>
+7,3089,38487e0041f1791ce2191c12d1ef8431a89a974f,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,17,17,present,0.95,0.95,"Status post RAI 212  mCi on 2/18/10  
+a. Due to increased TG this year highest 17 with thyrogen WBS",,,2010-02-18,,llm_v2_combined,2026-04-03T04:26:00.913906+00:00,,0.85,12,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1468,True,True,unmapped,17,source_limited,False,"…ons. 
+c. Nuclear SPECT imaging no changes. 
+ 
+ -  Status post RAI 212  mCi on 2/18/10  
+a. Due to increased TG this year highest 17 with thyrogen WBS 
+b. Thyrogen PET scan was neg for uptake but poss",<NA>
+8,3089,38487e0041f1791ce2191c12d1ef8431a89a974f,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,15,15,present,0.7,0.7,"Repeat PET scan in 2011 and 2012 with thyrogen which show no uptake except for 2-4 mm pulmonary nodules non FDG avid but, stable and TG increases are still in the 15 range, stable.",,,2011-01-01,,llm_v2_combined,2026-04-03T04:26:00.913906+00:00,,0.0,14,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1468,True,True,unmapped,15,source_limited,False,"…take   
+ 
+Repeat PET scan in 2011 and 2012 with thyrogen which show no uptake except for 2-4 mm pulmonary nodules non FDG avid but, stable and TG increases are still in the 15 range, stable. In the i",<NA>
+9,3089,38487e0041f1791ce2191c12d1ef8431a89a974f,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,22,22,present,0.8,0.8,d. Thyrogen stimulated thyroglobulin showed an increase in TG level of 22.,,,2016-02-01,,llm_v2_combined,2026-04-03T04:26:00.913906+00:00,,0.0,17,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1468,True,True,unmapped,22,source_limited,False,"… nodules and Q6 month neck ultrasounds that are unrevealing.  
+d. Thyrogen stimulated thyroglobulin showed an increase in TG level of 22. 
+e. Status post another round of RAI 204 Mcui Feb 2016, so fa",<NA>
+10,3072,bd59775f746d426b882fdc18df114b951f58ba35,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,25,25,present,0.85,0.85,Stimulated Tg 25 on day 5,,,,,llm_v2_combined,2026-04-03T04:26:03.314770+00:00,,0.0,5,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,634,True,True,unmapped,25,source_limited,False,"…ost treatment scan- no metastatic disease. 
+         
+     c.Whole body scan negative. Stimulated Tg 25 on day 5 and baseline was 5. 
+     d    4/10: Left sided neck dissection     : 9 out of 50 LN p",<NA>
+11,3072,bd59775f746d426b882fdc18df114b951f58ba35,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,5,5,present,0.85,0.85,baseline was 5,,,,,llm_v2_combined,2026-04-03T04:26:03.314770+00:00,,0.0,5,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,634,True,True,unmapped,5,source_limited,False,"…etastatic disease. 
+         
+     c.Whole body scan negative. Stimulated Tg 25 on day 5 and baseline was 5. 
+     d    4/10: Left sided neck dissection     : 9 out of 50 LN positive. 
+        e .I-1",<NA>
+12,3072,bd59775f746d426b882fdc18df114b951f58ba35,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,0.5,0.5,present,0.85,0.85,stimualed tg 0.5,,,,,llm_v2_combined,2026-04-03T04:26:03.314770+00:00,,0.0,7,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,634,True,True,unmapped,0.5,source_limited,False,"… of 50 LN positive. 
+        e .I-131 ablation 7/10 200 mci    . post Rx scan negative.     stimualed tg 0.5 
+          
+     h.     Stimulated Tg 2012- 1.6    . baseline Tg-0.2;      stimulated Tg 1",<NA>
+13,3072,bd59775f746d426b882fdc18df114b951f58ba35,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,1.6,1.6,present,0.85,0.85,Stimulated Tg 2012- 1.6,,,2012-01-01,,llm_v2_combined,2026-04-03T04:26:03.314770+00:00,,0.7,8,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,634,True,True,unmapped,1.6,source_limited,False,"…n 7/10 200 mci    . post Rx scan negative.     stimualed tg 0.5 
+          
+     h.     Stimulated Tg 2012- 1.6    . baseline Tg-0.2;      stimulated Tg 12/2014: 0.9 
+      i. neck u/s -   2019  stab",<NA>
+14,3072,bd59775f746d426b882fdc18df114b951f58ba35,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,0.2,0.2,present,0.85,0.85,baseline Tg-0.2,,,,,llm_v2_combined,2026-04-03T04:26:03.314770+00:00,,0.0,8,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,634,True,True,unmapped,0.2,source_limited,False,"…Rx scan negative.     stimualed tg 0.5 
+          
+     h.     Stimulated Tg 2012- 1.6    . baseline Tg-0.2;      stimulated Tg 12/2014: 0.9 
+      i. neck u/s -   2019  stable, 
+          
+         ",<NA>
+15,3072,bd59775f746d426b882fdc18df114b951f58ba35,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,0.9,0.9,present,0.98,0.98,stimulated Tg 12/2014: 0.9,,,2014-12-01,,llm_v2_combined,2026-04-03T04:26:03.314770+00:00,,1.0,8,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,634,True,True,unmapped,0.9,source_limited,False,"…aled tg 0.5 
+          
+     h.     Stimulated Tg 2012- 1.6    . baseline Tg-0.2;      stimulated Tg 12/2014: 0.9 
+      i. neck u/s -   2019  stable, 
+          
+         stimulated tg Jan 2020- 1.7",<NA>
+16,3072,bd59775f746d426b882fdc18df114b951f58ba35,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,1.7,1.7,present,0.98,0.98,stimulated tg Jan 2020- 1.7,,,2020-01-01,,llm_v2_combined,2026-04-03T04:26:03.314770+00:00,,1.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,634,True,True,unmapped,1.7,source_limited,False,"… stimulated Tg 12/2014: 0.9 
+      i. neck u/s -   2019  stable, 
+          
+         stimulated tg Jan 2020- 1.7",<NA>
+17,3156,69993eef48f05ade0d59dcde109da629a735b477,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,1.0,1.0,present,0.95,0.95,"Tg 1,.o with TSH 22 in dec 2021",,,2021-12-01,,llm_v2_combined,2026-04-03T04:26:07.510175+00:00,,0.85,7,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,333,True,True,unmapped,1.0,source_limited,False,"…currence SCM and resection of tumor implant 
+     cont follow surveillance Tg 
+     Tg 1,.o with TSH 22 in dec 2021",<NA>
+18,2940,84612bf8c5295e027fb319548d408992fffc8fb6,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,8.8,8.8,present,0.85,0.85,"Her thyroglobulin was 8.8, and  
+     antibody was 24 when she was hypothyroid during the preparation of her prior  
+     iodine therapy when her TSH was 137.",,,,,llm_v2_combined,2026-04-03T04:26:10.832344+00:00,,0.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1817,True,True,unmapped,8.8,source_limited,False,"…lobulin antibodies.  Her thyroglobulin was 8.8, and  
+     antibody was 24 when she was hypothyroid during the preparation of her prior  
+     iodine therapy when her TSH was 137. 
+       
+     4. Ne",<NA>
+19,2940,84612bf8c5295e027fb319548d408992fffc8fb6,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,undetectable,undetectable,negated,0.9,0.9,Recent TG and anti TG undetectable . Previously  had TG ab.,,,,,llm_v2_combined,2026-04-03T04:26:10.832344+00:00,,0.0,16,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1817,True,True,unmapped,undetectable,source_limited,False,"… 7. Neck MRI 5/09: stable 
+       
+     8. Recent U/S stable( 2019) . Recent TG and anti TG undetectable . Previously  had TG ab. 
+       
+     9. Thyrogen stimulated Tg undectable 3/11 with negative",<NA>
+20,2940,84612bf8c5295e027fb319548d408992fffc8fb6,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,undetectable,undetectable,negated,0.98,0.98,Thyrogen stimulated Tg undectable 3/11 with negative abs ( abs- quest assay [1],,,2011-03-01,,llm_v2_combined,2026-04-03T04:26:10.832344+00:00,,1.0,17,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1817,True,True,unmapped,undetectable,source_limited,False,"…i TG undetectable . Previously  had TG ab. 
+       
+     9. Thyrogen stimulated Tg undectable 3/11 with negative abs ( abs- quest assay [1]",<NA>
+21,2940,84612bf8c5295e027fb319548d408992fffc8fb6,,history_summary,1,Sheet1,thyroid_cx_history_summary,anti_tg_value,24,24,present,0.85,0.85,"Her thyroglobulin was 8.8, and  
+     antibody was 24 when she was hypothyroid during the preparation of her prior  
+     iodine therapy when her TSH was 137.",,,,,llm_v2_combined,2026-04-03T04:26:10.832344+00:00,,0.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1817,True,True,unmapped,24,source_limited,False,"…lobulin antibodies.  Her thyroglobulin was 8.8, and  
+     antibody was 24 when she was hypothyroid during the preparation of her prior  
+     iodine therapy when her TSH was 137. 
+       
+     4. Ne",<NA>
+22,2940,84612bf8c5295e027fb319548d408992fffc8fb6,,history_summary,1,Sheet1,thyroid_cx_history_summary,anti_tg_value,undetectable,undetectable,negated,0.9,0.9,Recent TG and anti TG undetectable . Previously  had TG ab.,,,,,llm_v2_combined,2026-04-03T04:26:10.832344+00:00,,0.0,16,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1817,True,True,unmapped,undetectable,source_limited,False,"… 7. Neck MRI 5/09: stable 
+       
+     8. Recent U/S stable( 2019) . Recent TG and anti TG undetectable . Previously  had TG ab. 
+       
+     9. Thyrogen stimulated Tg undectable 3/11 with negative",<NA>
+23,2940,84612bf8c5295e027fb319548d408992fffc8fb6,,history_summary,1,Sheet1,thyroid_cx_history_summary,paired_tsh,137,137,present,0.85,0.85,"Her thyroglobulin was 8.8, and  
+     antibody was 24 when she was hypothyroid during the preparation of her prior  
+     iodine therapy when her TSH was 137.",,,,,llm_v2_combined,2026-04-03T04:26:10.832344+00:00,,0.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1817,True,True,unmapped,137,source_limited,False,"…lobulin antibodies.  Her thyroglobulin was 8.8, and  
+     antibody was 24 when she was hypothyroid during the preparation of her prior  
+     iodine therapy when her TSH was 137. 
+       
+     4. Ne",<NA>
+24,2940,84612bf8c5295e027fb319548d408992fffc8fb6,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_context,stimulated,stimulated,present,0.98,0.98,Thyrogen stimulated Tg undectable 3/11 with negative abs ( abs- quest assay [1],,,2011-03-01,,llm_v2_combined,2026-04-03T04:26:10.832344+00:00,,1.0,17,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1817,True,True,unmapped,stimulated,source_limited,False,"…i TG undetectable . Previously  had TG ab. 
+       
+     9. Thyrogen stimulated Tg undectable 3/11 with negative abs ( abs- quest assay [1]",<NA>
+25,2940,84612bf8c5295e027fb319548d408992fffc8fb6,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_assay_method,Quest assay,Quest assay,present,0.98,0.98,Thyrogen stimulated Tg undectable 3/11 with negative abs ( abs- quest assay [1],,,2011-03-01,,llm_v2_combined,2026-04-03T04:26:10.832344+00:00,,1.0,17,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1817,True,True,unmapped,quest assay,source_limited,False,"…i TG undetectable . Previously  had TG ab. 
+       
+     9. Thyrogen stimulated Tg undectable 3/11 with negative abs ( abs- quest assay [1]",<NA>
+26,3110,0b1aadc9c45f38e4689329df0aeec0d36248271d,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,3.1,3.1,present,0.7,0.7,preRxment with TG 3.1,,,,2009-02-25,llm_v2_combined,2026-04-03T04:26:18.334368+00:00,,0.0,5,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,2444,True,True,unmapped,3.1,source_limited,False,"…a.Status post RAI     98 Mcui     in April 09, post scan showed uptake only in the neck.,preRxment with TG 3.1 
+         
+        b. Status post Thyrogen stimulated WBS in 4/9/10 with no uptake but T",<NA>
+27,3110,0b1aadc9c45f38e4689329df0aeec0d36248271d,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,9.9,9.9,present,0.98,0.98,Thyrogen stimulated WBS in 4/9/10 with no uptake but TG elevation upto 9.9,,,2010-04-09,2009-02-25,llm_v2_combined,2026-04-03T04:26:18.334368+00:00,,1.0,7,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,2444,True,True,unmapped,9.9,source_limited,False,"… neck.,preRxment with TG 3.1 
+         
+        b. Status post Thyrogen stimulated WBS in 4/9/10 with no uptake but TG elevation upto 9.9 
+         
+        c. Status post RAI     159.2     Mcui  in ",<NA>
+28,3110,0b1aadc9c45f38e4689329df0aeec0d36248271d,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,19.3,19.3,present,0.98,0.98,Status post RAI     159.2     Mcui  in May 2011 with highest TG 19.3 post stimulation.,,,2011-05-01,2009-02-25,llm_v2_combined,2026-04-03T04:26:18.334368+00:00,,1.0,9,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,2444,True,True,unmapped,19.3,source_limited,False,"…o uptake but TG elevation upto 9.9 
+         
+        c. Status post RAI     159.2     Mcui  in May 2011 with highest TG 19.3 post stimulation. Post treatment scan with no uptake. 
+         
+        ",<NA>
+29,3110,0b1aadc9c45f38e4689329df0aeec0d36248271d,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,9.3,9.3,present,0.98,0.98,last one 2016 with TG at 9.3ng/ml at peak TSH,,,2016-01-01,2009-02-25,llm_v2_combined,2026-04-03T04:26:18.334368+00:00,,1.0,13,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,2444,True,True,unmapped,9.3,source_limited,False,"…hyroidism 
+       Status post thyrogen stimulated scans in the last 3 years, last one 2016 with TG at 9.3ng/ml at peak TSH with neg scans.  
+         
+        f.  Thyrogen stimulated thyroglobulin st",<NA>
+30,3110,0b1aadc9c45f38e4689329df0aeec0d36248271d,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,10.1,10.1,present,0.98,0.98,Thyrogen stimulated thyroglobulin study which is done in November 2019 which revealed maximum TG on stimulation was 10.1 nanograms per mL.,,,2019-11-01,2009-02-25,llm_v2_combined,2026-04-03T04:26:18.334368+00:00,,1.0,15,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,2444,True,True,unmapped,10.1,source_limited,False,"…scans.  
+         
+        f.  Thyrogen stimulated thyroglobulin study which is done in November 2019 which revealed maximum TG on stimulation was 10.1 nanograms per mL.  Repeat Thyrogen stimulated w",<NA>
+31,3110,0b1aadc9c45f38e4689329df0aeec0d36248271d,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,7.1,7.1,present,0.98,0.98,TG was 7.1 ng/ml,,,2023-06-01,2009-02-25,llm_v2_combined,2026-04-03T04:26:18.334368+00:00,,1.0,20,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,2444,True,True,unmapped,7.1,source_limited,False,"… that were biopsied and neg for cancer and it was not sarcoidosis. Follow up in June ?2023 
+TG was 7.1 ng/ml 
+ 
+2. Obesity: Unable to lose weight since 2010 or more
+ 
+3. Acromegaly s/p transphenoidal",<NA>
+32,3229,d6e344eb7c5bb413c0bcad94dbc21c3296f4decc,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,7.6,7.6,present,0.98,0.98,Thyrogen stimulated Tg 7.6 ( 12/11) neg ab,,,2011-12-01,,llm_v2_combined,2026-04-03T04:26:35.135454+00:00,,1.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1204,True,True,unmapped,7.6,source_limited,False,"…ter I-131 .  
+        He absolutely  does not want  to have repeat I-131 
+ 
+ . Thyrogen stimulated Tg 7.6 ( 12/11) neg ab; prior Tg 6.3 10/2010 and WBS negative. 
+        - 
+     Thyrogen stimulated ",<NA>
+33,3229,d6e344eb7c5bb413c0bcad94dbc21c3296f4decc,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,6.3,6.3,present,0.98,0.98,prior Tg 6.3 10/2010,,,2010-10-01,,llm_v2_combined,2026-04-03T04:26:35.135454+00:00,,1.0,9,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1204,True,True,unmapped,6.3,source_limited,False,"…ly  does not want  to have repeat I-131 
+ 
+ . Thyrogen stimulated Tg 7.6 ( 12/11) neg ab; prior Tg 6.3 10/2010 and WBS negative. 
+        - 
+     Thyrogen stimulated Tg 8.7( 4/2013) negative ab. Neck",<NA>
+34,3229,d6e344eb7c5bb413c0bcad94dbc21c3296f4decc,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,8.7,8.7,present,0.98,0.98,Thyrogen stimulated Tg 8.7( 4/2013) negative ab,,,2013-04-01,,llm_v2_combined,2026-04-03T04:26:35.135454+00:00,,1.0,12,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1204,True,True,unmapped,8.7,source_limited,False,"….6 ( 12/11) neg ab; prior Tg 6.3 10/2010 and WBS negative. 
+        - 
+     Thyrogen stimulated Tg 8.7( 4/2013) negative ab. Neck u/s 4/2013: stable 
+         
+  . CT chest 2013 without contrast nega",<NA>
+35,3229,d6e344eb7c5bb413c0bcad94dbc21c3296f4decc,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,8,8,present,0.98,0.98,Stimulated  TG in 4/2018: 8,,,2018-04-01,,llm_v2_combined,2026-04-03T04:26:35.135454+00:00,,1.0,16,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1204,True,True,unmapped,8,source_limited,False,"… I Node positive for PTC 8 mm. no EC extension 
+          
+        subsequent f/u    :Stimulated  TG in 4/2018: 8 
+     Neck u/s 11/2019 : level 2 ovoid node 1.6 cm 
+ 
+     FNA positive for PTC 
+ 
+  ",<NA>
+36,3229,d6e344eb7c5bb413c0bcad94dbc21c3296f4decc,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,1.7,1.7,present,0.98,0.98,stimulated tg Jan 2022-1.7,,,2022-01-01,,llm_v2_combined,2026-04-03T04:26:35.135454+00:00,,1.0,22,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1204,True,True,unmapped,1.7,source_limited,False,"…d neck dissection feb 2020/ left side - 1.4 cm node level 3  ( 2/20 no EN extension) 
+ stimulated tg Jan 2022-1.7",<NA>
+37,3359,61a8760e285227d8b6113e581f330a4d5d5916ef,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,mid 2 range,mid 2 range,present,0.95,0.95,last stimulated Tg rising to mid 2 range oct 2017,,,2017-10-01,,llm_v2_combined,2026-04-03T04:26:42.053232+00:00,,0.85,8,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,561,True,True,unmapped,mid 2 range,source_limited,False,"…lower 
+     lobe, and 3 subcentimeter nodules in the 2 to 3-mm range 
+     last stimulated Tg rising to mid 2 range oct 2017",<NA>
+38,3268,c40da2bc8d731b073821caafd50740c2fe892d09,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,141,141,present,0.95,0.95,May 2016 TG 141; Ab 27,,,2016-05-01,,llm_v2_combined,2026-04-03T04:26:51.880508+00:00,,0.85,12,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,2496,True,True,unmapped,141,source_limited,False,"…3 100.1 mCu 
+         June 2016 99.4 mCu 
+        
+        June 2016 TSH < 150 
+         May 2016 TG 141; Ab 27 
+          
+         Update: 
+                Here for f/u today.  Still seeing Dr. Mah",<NA>
+39,3268,c40da2bc8d731b073821caafd50740c2fe892d09,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,193,193,present,0.95,0.95,"2/2019 TSH 1.29, Tg 193, Tg ab 1",,,2019-02-01,,llm_v2_combined,2026-04-03T04:26:51.880508+00:00,,0.85,23,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,2496,True,True,unmapped,193,source_limited,False,"…h returned positive for metastatic papillary thyroid carcinoma.   
+        
+        2/2019 TSH 1.29, Tg 193, Tg ab 1 
+         6/2019 TSH 3.0, Tg 151, Tg ab 4 
+         October labs have not been rec",<NA>
+40,3268,c40da2bc8d731b073821caafd50740c2fe892d09,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,151,151,present,0.95,0.95,"6/2019 TSH 3.0, Tg 151, Tg ab 4",,,2019-06-01,,llm_v2_combined,2026-04-03T04:26:51.880508+00:00,,0.85,24,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,2496,True,True,unmapped,151,source_limited,False,"…y thyroid carcinoma.   
+        
+        2/2019 TSH 1.29, Tg 193, Tg ab 1 
+         6/2019 TSH 3.0, Tg 151, Tg ab 4 
+         October labs have not been received from Dr. Mahakala 
+            
+     ",<NA>
+41,3268,c40da2bc8d731b073821caafd50740c2fe892d09,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_trend,declining,declining,present,0.9,0.9,"6/2019 TSH 3.0, Tg 151, Tg ab 4",,,,,llm_v2_combined,2026-04-03T04:26:51.880508+00:00,,0.0,24,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,2496,True,True,unmapped,declining,source_limited,False,"…y thyroid carcinoma.   
+        
+        2/2019 TSH 1.29, Tg 193, Tg ab 1 
+         6/2019 TSH 3.0, Tg 151, Tg ab 4 
+         October labs have not been received from Dr. Mahakala 
+            
+     ",<NA>
+42,3268,c40da2bc8d731b073821caafd50740c2fe892d09,,history_summary,1,Sheet1,thyroid_cx_history_summary,paired_tsh,1.29,1.29,present,0.95,0.95,"2/2019 TSH 1.29, Tg 193, Tg ab 1",,,2019-02-01,,llm_v2_combined,2026-04-03T04:26:51.880508+00:00,,0.85,23,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,2496,True,True,unmapped,1.29,source_limited,False,"…h returned positive for metastatic papillary thyroid carcinoma.   
+        
+        2/2019 TSH 1.29, Tg 193, Tg ab 1 
+         6/2019 TSH 3.0, Tg 151, Tg ab 4 
+         October labs have not been rec",<NA>
+43,3268,c40da2bc8d731b073821caafd50740c2fe892d09,,history_summary,1,Sheet1,thyroid_cx_history_summary,paired_tsh,3.0,3.0,present,0.95,0.95,"6/2019 TSH 3.0, Tg 151, Tg ab 4",,,2019-06-01,,llm_v2_combined,2026-04-03T04:26:51.880508+00:00,,0.85,24,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,2496,True,True,unmapped,3.0,source_limited,False,"…y thyroid carcinoma.   
+        
+        2/2019 TSH 1.29, Tg 193, Tg ab 1 
+         6/2019 TSH 3.0, Tg 151, Tg ab 4 
+         October labs have not been received from Dr. Mahakala 
+            
+     ",<NA>
+44,3268,c40da2bc8d731b073821caafd50740c2fe892d09,,history_summary,1,Sheet1,thyroid_cx_history_summary,anti_tg_value,1,1,present,0.95,0.95,"2/2019 TSH 1.29, Tg 193, Tg ab 1",,,2019-02-01,,llm_v2_combined,2026-04-03T04:26:51.880508+00:00,,0.85,23,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,2496,True,True,unmapped,1,source_limited,False,"…h returned positive for metastatic papillary thyroid carcinoma.   
+        
+        2/2019 TSH 1.29, Tg 193, Tg ab 1 
+         6/2019 TSH 3.0, Tg 151, Tg ab 4 
+         October labs have not been rec",<NA>
+45,3268,c40da2bc8d731b073821caafd50740c2fe892d09,,history_summary,1,Sheet1,thyroid_cx_history_summary,anti_tg_value,4,4,present,0.95,0.95,"6/2019 TSH 3.0, Tg 151, Tg ab 4",,,2019-06-01,,llm_v2_combined,2026-04-03T04:26:51.880508+00:00,,0.85,24,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,2496,True,True,unmapped,4,source_limited,False,"…y thyroid carcinoma.   
+        
+        2/2019 TSH 1.29, Tg 193, Tg ab 1 
+         6/2019 TSH 3.0, Tg 151, Tg ab 4 
+         October labs have not been received from Dr. Mahakala 
+            
+     ",<NA>
+46,3129,9ddf2d5fb587274615c9be3eddc636ad364a52ab,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,1800,1800,present,0.85,0.85,"Because of TG 1800, MRI obtained which showed lymphadenopathy- B/L modified LN dissection and paratracheal LN dissection 3/09 Dr Chen about 22 LN involved, some had extracapsular extension",,,,,llm_v2_combined,2026-04-03T04:26:53.184517+00:00,,0.0,5,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1585,True,True,unmapped,1800,source_limited,False,"…a.
+b. Because of TG 1800, MRI obtained which showed lymphadenopathy- B/L modified LN dissection and paratracheal LN dissection 3/09 Dr Chen about 22 LN involved, some had extracapsular extension
+
+c. ",<NA>
+47,3129,9ddf2d5fb587274615c9be3eddc636ad364a52ab,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,12,12,present,0.95,0.95,"I-131 therapy 146 mCi 7/09.Post treatment scan uptake in neck, left side and mild diffuse in lungs TG 12 with thyrogen ( decreased from 1800 to 50)",,,2009-07-01,,llm_v2_combined,2026-04-03T04:26:53.184517+00:00,,0.85,7,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1585,True,True,unmapped,12,source_limited,False,"…tracapsular extension
+
+c. I-131 therapy 146 mCi 7/09.Post treatment scan uptake in neck, left side and mild diffuse in lungs TG 12 with thyrogen ( decreased from 1800 to 50)
+
+d. U/S 11/09 level 4 lef",<NA>
+48,3129,9ddf2d5fb587274615c9be3eddc636ad364a52ab,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,16,16,present,0.95,0.95,I-131 therapy offered to patient in 5/10 when she was hypothyoid and her Tg was 16 and scan was negative. Patient did not choose to have I-131 therapy done at that time.  tg 0.6 on supression ( 2011),,,2010-05-01,,llm_v2_combined,2026-04-03T04:26:53.184517+00:00,,0.85,9,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1585,True,True,unmapped,16,source_limited,False,…I-131 therapy offered to patient in 5/10 when she was hypothyoid and her Tg was 16 and scan was negative. Patient did not choose to have I-131 therapy done at that time.  tg 0.6 on supression ( 2011),<NA>
+49,3129,9ddf2d5fb587274615c9be3eddc636ad364a52ab,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,0.6,0.6,present,0.95,0.95,I-131 therapy offered to patient in 5/10 when she was hypothyoid and her Tg was 16 and scan was negative. Patient did not choose to have I-131 therapy done at that time.  tg 0.6 on supression ( 2011),,,2011-01-01,,llm_v2_combined,2026-04-03T04:26:53.184517+00:00,,0.85,9,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1585,True,True,unmapped,0.6,source_limited,False,…I-131 therapy offered to patient in 5/10 when she was hypothyoid and her Tg was 16 and scan was negative. Patient did not choose to have I-131 therapy done at that time.  tg 0.6 on supression ( 2011),<NA>
+50,3129,9ddf2d5fb587274615c9be3eddc636ad364a52ab,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,31,31,present,0.95,0.95,"E) July 2015 Stimulated Tg 31. CT scan neck/chest done outside, reveiwed at thyroid tumor board here. was advised 2nd round of I-131",,,2015-07-01,,llm_v2_combined,2026-04-03T04:26:53.184517+00:00,,0.85,11,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1585,True,True,unmapped,31,source_limited,False,"…e.  tg 0.6 on supression ( 2011)
+
+E) July 2015 Stimulated Tg 31. CT scan neck/chest done outside, reveiwed at thyroid tumor board here. was advised 2nd round of I-131 
+. I-131 Rx 150 mcI 12/2015. pos",<NA>
+51,3129,9ddf2d5fb587274615c9be3eddc636ad364a52ab,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,0.4,0.4,present,0.95,0.95,"labs at lab corp 2017 ( stimulated TSH- for the stimulated tg test, she was taking 1/2 thyroid dose( 1 pill) and then went back to regular dose.). Initially lab corp did not report TG and only reported Tg ab
+TG was added on  when TSH was 18, Tg was 0.4 ( ab-0.9)",,,2017-01-01,,llm_v2_combined,2026-04-03T04:26:53.184517+00:00,,0.85,13,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1585,True,True,unmapped,0.4,source_limited,False,"…labs at lab corp 2017 ( stimulated TSH- for the stimulated tg test, she was taking 1/2 thyroid dose( 1 pill) and then went back to regular dose.). Initially lab corp did not report TG and only report",<NA>
+52,3129,9ddf2d5fb587274615c9be3eddc636ad364a52ab,,history_summary,1,Sheet1,thyroid_cx_history_summary,anti_tg_value,0.9,0.9,present,0.95,0.95,"labs at lab corp 2017 ( stimulated TSH- for the stimulated tg test, she was taking 1/2 thyroid dose( 1 pill) and then went back to regular dose.). Initially lab corp did not report TG and only reported Tg ab
+TG was added on  when TSH was 18, Tg was 0.4 ( ab-0.9)",,,2017-01-01,,llm_v2_combined,2026-04-03T04:26:53.184517+00:00,,0.85,13,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1585,True,True,unmapped,0.9,source_limited,False,"…labs at lab corp 2017 ( stimulated TSH- for the stimulated tg test, she was taking 1/2 thyroid dose( 1 pill) and then went back to regular dose.). Initially lab corp did not report TG and only report",<NA>
+53,3129,9ddf2d5fb587274615c9be3eddc636ad364a52ab,,history_summary,1,Sheet1,thyroid_cx_history_summary,paired_tsh,18,18,present,0.95,0.95,"labs at lab corp 2017 ( stimulated TSH- for the stimulated tg test, she was taking 1/2 thyroid dose( 1 pill) and then went back to regular dose.). Initially lab corp did not report TG and only reported Tg ab
+TG was added on  when TSH was 18, Tg was 0.4 ( ab-0.9)",,,2017-01-01,,llm_v2_combined,2026-04-03T04:26:53.184517+00:00,,0.85,13,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1585,True,True,unmapped,18,source_limited,False,"…labs at lab corp 2017 ( stimulated TSH- for the stimulated tg test, she was taking 1/2 thyroid dose( 1 pill) and then went back to regular dose.). Initially lab corp did not report TG and only report",<NA>
+54,3162,a9ea1ef4495899fec058911ff96f6a8bba379432,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,0.1,0.1,present,0.98,0.98,In 8/21 her thyroglobulin was 0.1 with negative interfering AB.,,,2021-08-01,,llm_v2_combined,2026-04-03T04:26:58.099861+00:00,,1.0,5,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,806,True,True,unmapped,0.1,source_limited,False,"…en surveilled with neck ultrasounds and thyroglobulin measurements. In 8/21 her thyroglobulin was 0.1 with negative interfering AB.
+
+In 8/2020, neck ultrasound showed benign appearing cervical lymph ",<NA>
+55,3162,a9ea1ef4495899fec058911ff96f6a8bba379432,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,0.1,0.1,present,0.98,0.98,"In 8/2020, neck ultrasound showed benign appearing cervical lymph nodes.",,,2020-08-01,,llm_v2_combined,2026-04-03T04:26:58.099861+00:00,,1.0,6,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,806,True,True,unmapped,0.1,source_limited,False,"…n 8/21 her thyroglobulin was 0.1 with negative interfering AB.
+
+In 8/2020, neck ultrasound showed benign appearing cervical lymph nodes.
+
+8/22, neck ultrasound showed stable benign appearing cervical",<NA>
+56,3162,a9ea1ef4495899fec058911ff96f6a8bba379432,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,0.1,0.1,present,0.98,0.98,"8/22, neck ultrasound showed stable benign appearing cervical LN.",,,2022-08-01,,llm_v2_combined,2026-04-03T04:26:58.099861+00:00,,1.0,7,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,806,True,True,unmapped,0.1,source_limited,False,"…20, neck ultrasound showed benign appearing cervical lymph nodes.
+
+8/22, neck ultrasound showed stable benign appearing cervical LN.
+8/22 unstimulated TG 0.1 (negative AB)
+ 
+8/23 unstimulated TG <0.1",<NA>
+57,3162,a9ea1ef4495899fec058911ff96f6a8bba379432,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,<0.1,<0.1,present,0.98,0.98,8/23 unstimulated TG <0.1 (Ab 79.9)--patient started on IVIG prior to labs.,,,2023-08-01,,llm_v2_combined,2026-04-03T04:26:58.099861+00:00,,1.0,9,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,806,True,True,unmapped,0.1,source_limited,False,"…pearing cervical LN.
+8/22 unstimulated TG 0.1 (negative AB)
+ 
+8/23 unstimulated TG <0.1 (Ab 79.9)--patient started on IVIG prior to labs. 
+ 
+10/23 unstimulated Tg <0.1 (Ab 164.1)
+10/23 neck US showed",<NA>
+58,3162,a9ea1ef4495899fec058911ff96f6a8bba379432,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,<0.1,<0.1,present,0.98,0.98,10/23 unstimulated Tg <0.1 (Ab 164.1),,,2023-10-01,,llm_v2_combined,2026-04-03T04:26:58.099861+00:00,,1.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,806,True,True,unmapped,0.1,source_limited,False,"… 
+8/23 unstimulated TG <0.1 (Ab 79.9)--patient started on IVIG prior to labs. 
+ 
+10/23 unstimulated Tg <0.1 (Ab 164.1)
+10/23 neck US showed benign appearing cervical LN",<NA>
+59,3162,a9ea1ef4495899fec058911ff96f6a8bba379432,,history_summary,1,Sheet1,thyroid_cx_history_summary,anti_tg_value,79.9,79.9,present,0.98,0.98,8/23 unstimulated TG <0.1 (Ab 79.9)--patient started on IVIG prior to labs.,,,2023-08-01,,llm_v2_combined,2026-04-03T04:26:58.099861+00:00,,1.0,9,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,806,True,True,unmapped,79.9,source_limited,False,"…pearing cervical LN.
+8/22 unstimulated TG 0.1 (negative AB)
+ 
+8/23 unstimulated TG <0.1 (Ab 79.9)--patient started on IVIG prior to labs. 
+ 
+10/23 unstimulated Tg <0.1 (Ab 164.1)
+10/23 neck US showed",<NA>
+60,3162,a9ea1ef4495899fec058911ff96f6a8bba379432,,history_summary,1,Sheet1,thyroid_cx_history_summary,anti_tg_value,164.1,164.1,present,0.98,0.98,10/23 unstimulated Tg <0.1 (Ab 164.1),,,2023-10-01,,llm_v2_combined,2026-04-03T04:26:58.099861+00:00,,1.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,806,True,True,unmapped,164.1,source_limited,False,"… 
+8/23 unstimulated TG <0.1 (Ab 79.9)--patient started on IVIG prior to labs. 
+ 
+10/23 unstimulated Tg <0.1 (Ab 164.1)
+10/23 neck US showed benign appearing cervical LN",<NA>
+61,3162,a9ea1ef4495899fec058911ff96f6a8bba379432,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_context,unstimulated,unstimulated,present,0.98,0.98,"8/22, neck ultrasound showed stable benign appearing cervical LN.",,,2022-08-01,,llm_v2_combined,2026-04-03T04:26:58.099861+00:00,,1.0,7,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,806,True,True,unmapped,unstimulated,source_limited,False,"…20, neck ultrasound showed benign appearing cervical lymph nodes.
+
+8/22, neck ultrasound showed stable benign appearing cervical LN.
+8/22 unstimulated TG 0.1 (negative AB)
+ 
+8/23 unstimulated TG <0.1",<NA>
+62,3162,a9ea1ef4495899fec058911ff96f6a8bba379432,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_context,unstimulated,unstimulated,present,0.98,0.98,8/23 unstimulated TG <0.1 (Ab 79.9)--patient started on IVIG prior to labs.,,,2023-08-01,,llm_v2_combined,2026-04-03T04:26:58.099861+00:00,,1.0,9,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,806,True,True,unmapped,unstimulated,source_limited,False,"…pearing cervical LN.
+8/22 unstimulated TG 0.1 (negative AB)
+ 
+8/23 unstimulated TG <0.1 (Ab 79.9)--patient started on IVIG prior to labs. 
+ 
+10/23 unstimulated Tg <0.1 (Ab 164.1)
+10/23 neck US showed",<NA>
+63,3162,a9ea1ef4495899fec058911ff96f6a8bba379432,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_context,unstimulated,unstimulated,present,0.98,0.98,10/23 unstimulated Tg <0.1 (Ab 164.1),,,2023-10-01,,llm_v2_combined,2026-04-03T04:26:58.099861+00:00,,1.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,806,True,True,unmapped,unstimulated,source_limited,False,"… 
+8/23 unstimulated TG <0.1 (Ab 79.9)--patient started on IVIG prior to labs. 
+ 
+10/23 unstimulated Tg <0.1 (Ab 164.1)
+10/23 neck US showed benign appearing cervical LN",<NA>
+64,3462,7f4524d81952274870278281c5d83774f7230e66,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,0.1,0.1,present,0.95,0.95,"Diagnostic Thyrogen assisted whole body scan summer 2012 was 
+     negative with thyroglobulin 0.1.",,,2012-06-21,2011-03-10,llm_v2_combined,2026-04-03T04:27:01.545592+00:00,,0.85,4,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,933,True,True,unmapped,0.1,source_limited,False,"…of 
+     iodine avid metastatic disease. 
+     d. Diagnostic Thyrogen assisted whole body scan summer 2012 was 
+     negative with thyroglobulin 0.1. 
+     e. Thyrogen assisted whole body scan 11/08/",<NA>
+65,3462,7f4524d81952274870278281c5d83774f7230e66,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,0.1,0.1,present,0.98,0.98,"Thyrogen assisted whole body scan 11/08/2013 showing stimulated 
+     thyroglobulin at 0.1 and whole body scan negative.",,,2013-11-08,2011-03-10,llm_v2_combined,2026-04-03T04:27:01.545592+00:00,,1.0,5,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,933,True,True,unmapped,0.1,source_limited,False,"…gative with thyroglobulin 0.1. 
+     e. Thyrogen assisted whole body scan 11/08/2013 showing stimulated 
+     thyroglobulin at 0.1 and whole body scan negative. 
+     2. Postsurgical hypothyroidism. ",<NA>
+66,3462,7f4524d81952274870278281c5d83774f7230e66,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_assay_method,Thyrogen assisted,Thyrogen assisted,present,0.98,0.98,"Thyrogen assisted whole body scan 11/08/2013 showing stimulated 
+     thyroglobulin at 0.1 and whole body scan negative.",,,2013-11-08,2011-03-10,llm_v2_combined,2026-04-03T04:27:01.545592+00:00,,1.0,5,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,933,True,True,unmapped,thyrogen assisted,source_limited,False,"…gative with thyroglobulin 0.1. 
+     e. Thyrogen assisted whole body scan 11/08/2013 showing stimulated 
+     thyroglobulin at 0.1 and whole body scan negative. 
+     2. Postsurgical hypothyroidism. ",<NA>
+67,3512,8302d0e7b5766cb90c28684825ca7d91a46e42ad,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,0.1,0.1,present,0.98,0.98,"diagnostic scan 
+     11/16/2012, that was negative for iodine avid tissue. Her stimulated 
+     thyroglobulin on day 3 was 0.1, with negative antibody.",,,2012-11-16,2011-05-31,llm_v2_combined,2026-04-03T04:27:04.037813+00:00,,1.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,955,True,True,unmapped,0.1,source_limited,False,"…c disease. She then had diagnostic scan 
+     11/16/2012, that was negative for iodine avid tissue. Her stimulated 
+     thyroglobulin on day 3 was 0.1, with negative antibody. 
+     2. Postsurgical ",<NA>
+68,3474,06cec6b2e7a6c4996d8b20c3e00769dd0c4750fc,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,3.4-4.5,3.4-4.5,present,0.95,0.95,stimulated Tg is 3.4-4.5. in 2013,,,2013-01-01,,llm_v2_combined,2026-04-03T04:27:06.324610+00:00,,1.0,2,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,279,True,True,unmapped,3.4 4.5,source_limited,False,…issection and remnant ablation for metastatic papillary ca. last u/s is normal Her stimulated Tg is 3.4-4.5. in 2013 and 6.5 ( 2017) and 4.4 ( 9/2020)  .we need to continue to monitor periodically.  ,<NA>
+69,3474,06cec6b2e7a6c4996d8b20c3e00769dd0c4750fc,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,6.5,6.5,present,0.95,0.95,6.5 ( 2017),,,2017-01-01,,llm_v2_combined,2026-04-03T04:27:06.324610+00:00,,1.0,2,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,279,True,True,unmapped,6.5,source_limited,False,…ion for metastatic papillary ca. last u/s is normal Her stimulated Tg is 3.4-4.5. in 2013 and 6.5 ( 2017) and 4.4 ( 9/2020)  .we need to continue to monitor periodically.  her neck u/s was stable in ,<NA>
+70,3474,06cec6b2e7a6c4996d8b20c3e00769dd0c4750fc,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,4.4,4.4,present,0.95,0.95,4.4 ( 9/2020)  .we need to continue to monitor periodically.,,,2020-09-01,,llm_v2_combined,2026-04-03T04:27:06.324610+00:00,,1.0,2,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,279,True,True,unmapped,4.4,source_limited,False,…s is normal Her stimulated Tg is 3.4-4.5. in 2013 and 6.5 ( 2017) and 4.4 ( 9/2020)  .we need to continue to monitor periodically.  her neck u/s was stable in 8/2020,<NA>
+71,3507,91599b11a1e36c32a20cc61dab23cf6fdc1fb994,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,0.6,0.6,present,0.98,0.98,"Stimulated thyroglobulin with that on 04/15/2013 was 0.6 on 
+     04/11 with negative antibody.",,,2013-04-15,2011-05-18,llm_v2_combined,2026-04-03T04:27:07.160787+00:00,,1.0,5,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1071,True,True,unmapped,0.6,source_limited,False,"…terval resolution of the thyroid bed 
+     remnant. Stimulated thyroglobulin with that on 04/15/2013 was 0.6 on 
+     04/11 with negative antibody. 
+     d. Her original radioactive iodine remnant ab",<NA>
+72,3507,91599b11a1e36c32a20cc61dab23cf6fdc1fb994,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,0.2,0.2,present,0.95,0.95,Stimulated thyroglobulin 0.2 in July 2014 with diagnostic whole-body scan that was negative.,,,2014-07-01,2011-05-18,llm_v2_combined,2026-04-03T04:27:07.160787+00:00,,0.85,7,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1071,True,True,unmapped,0.2,source_limited,False,"…ng thyroid 
+     hormone withdrawal as well. 
+     -- Stimulated thyroglobulin 0.2 in July 2014 with diagnostic whole-body scan that was negative. 
+     2. Postsurgical hypothyroidism. 
+     3. She h",<NA>
+73,3535,5b5ac4d1935747a7b39f6c4af156ead4e13133cb,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,negative,negative,negated,0.95,0.95,Thyrogen stimulated thyroglobulin early 2015 negative,,,2015-01-01,,llm_v2_combined,2026-04-03T04:27:08.090855+00:00,,0.85,6,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,394,True,True,unmapped,negative,source_limited,False,"…9/2011 with
+posttherapy scan and PET scan showing no metastatic disease. Thyrogen stimulated thyroglobulin early 2015 negative",<NA>
+74,3571,980d92287f9066b7167d9a7ad5c7359986309fd6,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,< 0.1,< 0.1,negated,0.8,0.8,"postablation thyroid scan negative with < 0.1 thyroglobulin, anti Tg 0.1, antibody",,,,2011-08-20,llm_v2_combined,2026-04-03T04:27:24.377145+00:00,,0.0,5,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,794,True,True,unmapped,0.1,source_limited,False,"…
+     S/p radioablation 12/9/11 (150mCi I-131)       
+     postablation thyroid scan negative with < 0.1 thyroglobulin, anti Tg 0.1, antibody 
+     goal TSH 0.5-2  ( will repeat labs today and restar",<NA>
+75,3571,980d92287f9066b7167d9a7ad5c7359986309fd6,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,0.1,0.1,present,0.8,0.8,TG 0.1 stimulated --> 0.1 previously no new labs,,,,2011-08-20,llm_v2_combined,2026-04-03T04:27:24.377145+00:00,,0.0,13,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,794,True,True,unmapped,0.1,source_limited,False,"…lty breathing 
+     denies hoarseness. 
+      negative body scan 2018 
+     TG 0.1 stimulated --> 0.1 previously no new labs 
+     neg tg antibodies 
+     Supplements : no biotin 
+      DEXA ordered ",<NA>
+76,3571,980d92287f9066b7167d9a7ad5c7359986309fd6,,history_summary,1,Sheet1,thyroid_cx_history_summary,anti_tg_value,0.1,0.1,present,0.8,0.8,"postablation thyroid scan negative with < 0.1 thyroglobulin, anti Tg 0.1, antibody",,,,2011-08-20,llm_v2_combined,2026-04-03T04:27:24.377145+00:00,,0.0,5,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,794,True,True,unmapped,0.1,source_limited,False,"…
+     S/p radioablation 12/9/11 (150mCi I-131)       
+     postablation thyroid scan negative with < 0.1 thyroglobulin, anti Tg 0.1, antibody 
+     goal TSH 0.5-2  ( will repeat labs today and restar",<NA>
+77,3571,980d92287f9066b7167d9a7ad5c7359986309fd6,,history_summary,1,Sheet1,thyroid_cx_history_summary,anti_tg_value,negative,negative,present,0.8,0.8,neg tg antibodies,,,,2011-08-20,llm_v2_combined,2026-04-03T04:27:24.377145+00:00,,0.0,14,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,794,True,True,unmapped,negative,source_limited,False,"…      negative body scan 2018 
+     TG 0.1 stimulated --> 0.1 previously no new labs 
+     neg tg antibodies 
+     Supplements : no biotin 
+      DEXA ordered on 09/2022  but not done",<NA>
+78,3587,c438d74d98154ff3b3ebf0ce32f56e4a8ebace7e,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,128,128,present,0.95,0.95,Her thyroglobulin before surgery was 128.,,,,,llm_v2_combined,2026-04-03T04:27:30.772670+00:00,,0.0,5,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1510,True,True,unmapped,128,source_limited,False,"…apillary carcinoma had focal tall cell features. BRAF mutation 
+     positive. Her thyroglobulin before surgery was 128. 
+         
+     I-131 Rx (withdrawal Jan 2012) 150 mCi. post Rx scan negative ",<NA>
+79,3587,c438d74d98154ff3b3ebf0ce32f56e4a8ebace7e,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,46,46,present,0.95,0.95,Tg when hypothyroid was 46.,,,,,llm_v2_combined,2026-04-03T04:27:30.772670+00:00,,0.0,8,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1510,True,True,unmapped,46,source_limited,False,"…31 Rx (withdrawal Jan 2012) 150 mCi. post Rx scan negative for distant disease. 
+     Tg when hypothyroid was 46.(Tg ab not reported, previously reported as 0.7) 
+         
+     Feb 2013: Thyrogen te",<NA>
+80,3587,c438d74d98154ff3b3ebf0ce32f56e4a8ebace7e,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,17,17,present,0.98,0.98,Feb 2013: Thyrogen test stim Tg day 5 was 17.,,,2013-02-01,,llm_v2_combined,2026-04-03T04:27:30.772670+00:00,,1.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1510,True,True,unmapped,17,source_limited,False,"…roid was 46.(Tg ab not reported, previously reported as 0.7) 
+         
+     Feb 2013: Thyrogen test stim Tg day 5 was 17. neg abs. I-131 RAI.negarive 
+     11/2013 : CT chest: small 1-2 mm lung nodu",<NA>
+81,3587,c438d74d98154ff3b3ebf0ce32f56e4a8ebace7e,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,20,20,present,0.98,0.98,Jan 2014: Thyrogen stimulated Tg 20,,,2014-01-01,,llm_v2_combined,2026-04-03T04:27:30.772670+00:00,,1.0,12,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1510,True,True,unmapped,20,source_limited,False,"…11/2013 : CT chest: small 1-2 mm lung nodules more on rt side. 
+         
+        Jan 2014: Thyrogen stimulated Tg 20 
+         Jan 2014 : PET scan     no definite evidence of disease 
+        
+     ",<NA>
+82,3587,c438d74d98154ff3b3ebf0ce32f56e4a8ebace7e,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,30,30,present,0.98,0.98,9/2018: PET scan negative.  day 5 stimulated tg =- 30,,,2018-09-01,,llm_v2_combined,2026-04-03T04:27:30.772670+00:00,,1.0,16,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1510,True,True,unmapped,30,source_limited,False,"…scan neck and chest. non specific nodes and         
+          
+         9/2018: PET scan negative.  day 5 stimulated tg =- 30 
+          
+     CT 2021- no suspicious pul nodes 
+ 
+            
+      ",<NA>
+83,3587,c438d74d98154ff3b3ebf0ce32f56e4a8ebace7e,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,38,38,present,0.98,0.98,Thyrogen test in 9/2023  - stimulated was 38,,,2023-09-01,,llm_v2_combined,2026-04-03T04:27:30.772670+00:00,,1.0,19,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1510,True,True,unmapped,38,source_limited,False,"…      
+     CT 2021- no suspicious pul nodes 
+ 
+            
+         
+       Thyrogen test in 9/2023  - stimulated was 38
+PET scan :8/2023 :  
+No suspicious FDG avid lesions. No FDG evidence of recu",<NA>
+84,3644,89d55ca039801b9081f0ca0b30cec85011985f5d,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,0.3,0.3,present,0.98,0.98,"Thyroglobulin 0.3 with antibody 0.9 and TSH 133 
+     after Thyrogen.",,,2013-04-05,2011-12-16,llm_v2_combined,2026-04-03T04:27:35.677548+00:00,,1.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1489,True,True,unmapped,0.3,source_limited,False,"…ostic 04/05/2013 showed no evidence of 
+     iodine avid tissue. Thyroglobulin 0.3 with antibody 0.9 and TSH 133 
+     after Thyrogen. 
+     d. whole Body Scan diagnostic 4/3/2015 WBS negative, with ",<NA>
+85,3644,89d55ca039801b9081f0ca0b30cec85011985f5d,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,0.3,0.3,present,0.98,0.98,"whole Body Scan diagnostic 4/3/2015 WBS negative, with stimulated Tg 0.3",,,2015-04-03,2011-12-16,llm_v2_combined,2026-04-03T04:27:35.677548+00:00,,1.0,12,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1489,True,True,unmapped,0.3,source_limited,False,"….3 with antibody 0.9 and TSH 133 
+     after Thyrogen. 
+     d. whole Body Scan diagnostic 4/3/2015 WBS negative, with stimulated Tg 0.3 
+     d. Postsurgical hypothyroidism. 
+     2. History of macr",<NA>
+86,3723,e6fee0761b1bcda75c677d8d0bfab80ab359284a,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,0.2,0.2,present,0.98,0.98,11/2013: thyrogen test WBS negative TG-0.2,,,2013-11-01,,llm_v2_combined,2026-04-03T04:27:40.860248+00:00,,1.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,2020,True,True,unmapped,0.2,source_limited,False,"…o local recurrence. Benign bilateral cervical lymph nodes.
+           
+        11/2013: thyrogen test WBS negative TG-0.2
+           
+        -
+        Prolactinoma:.cabergoline stopped/ evaluation i",<NA>
+87,3730,316c74d14b3f0ac179682769027fa1824904fba3,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,1.1,1.1,present,0.95,0.95,His most recent Thyrogen stimulated thyroglobulin April 2019 1.1,,,2019-04-01,2012-08-01,llm_v2_combined,2026-04-03T04:27:45.359505+00:00,,0.85,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,577,True,True,unmapped,1.1,source_limited,False,"…cant uptake. His neck ultrasound last as to the right  
+            His most recent Thyrogen stimulated thyroglobulin April 2019 1.1 but lower than 2017 1.6",<NA>
+88,3730,316c74d14b3f0ac179682769027fa1824904fba3,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,1.6,1.6,present,0.95,0.95,but lower than 2017 1.6,,,2017-01-01,2012-08-01,llm_v2_combined,2026-04-03T04:27:45.359505+00:00,,0.85,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,577,True,True,unmapped,1.6,source_limited,False,"…he right  
+            His most recent Thyrogen stimulated thyroglobulin April 2019 1.1 but lower than 2017 1.6",<NA>
+89,3629,38ff824bf79c63581e6b6e61125de26bf0ed5979,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,3.5,3.5,present,0.98,0.98,"In 01/2013, his thyroglobulin was 3.5, with 
+     negative antibody.",,,2013-01-01,2011-10-05,llm_v2_combined,2026-04-03T04:27:48.973725+00:00,,1.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1042,True,True,unmapped,3.5,source_limited,False,"…ated thyroglobulins, each using 
+     thyroid hormone withdrawal. In 01/2013, his thyroglobulin was 3.5, with 
+     negative antibody. In 06/2013, thyroglobulin 2.3, with negative 
+     antibody. In ",<NA>
+90,3629,38ff824bf79c63581e6b6e61125de26bf0ed5979,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,2.3,2.3,present,0.98,0.98,"In 06/2013, thyroglobulin 2.3, with negative 
+     antibody.",,,2013-06-01,2011-10-05,llm_v2_combined,2026-04-03T04:27:48.973725+00:00,,1.0,11,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1042,True,True,unmapped,2.3,source_limited,False,"… In 01/2013, his thyroglobulin was 3.5, with 
+     negative antibody. In 06/2013, thyroglobulin 2.3, with negative 
+     antibody. In 01/2014, thyroglobulin 2.7, with negative antibody. Whole- 
+     ",<NA>
+91,3629,38ff824bf79c63581e6b6e61125de26bf0ed5979,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,2.7,2.7,present,0.98,0.98,"In 01/2014, thyroglobulin 2.7, with negative antibody.",,,2014-01-01,2011-10-05,llm_v2_combined,2026-04-03T04:27:48.973725+00:00,,1.0,12,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1042,True,True,unmapped,2.7,source_limited,False,"…e antibody. In 06/2013, thyroglobulin 2.3, with negative 
+     antibody. In 01/2014, thyroglobulin 2.7, with negative antibody. Whole- 
+     body scans have shown no iodine avid tissue.    On June 25",<NA>
+92,3629,38ff824bf79c63581e6b6e61125de26bf0ed5979,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,2.2,2.2,present,0.98,0.98,On June 25 2015 thyroglobulin was 2.2 with negative antibody on withdrawal with negative whole body scan.,,,2015-06-25,2011-10-05,llm_v2_combined,2026-04-03T04:27:48.973725+00:00,,1.0,13,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1042,True,True,unmapped,2.2,source_limited,False,…ody scans have shown no iodine avid tissue.    On June 25 2015 thyroglobulin was 2.2 with negative antibody on withdrawal with negative whole body scan.,<NA>
+93,3629,38ff824bf79c63581e6b6e61125de26bf0ed5979,,history_summary,1,Sheet1,thyroid_cx_history_summary,anti_tg_value,negative,negative,negated,0.98,0.98,"In 01/2013, his thyroglobulin was 3.5, with 
+     negative antibody.",,,2013-01-01,2011-10-05,llm_v2_combined,2026-04-03T04:27:48.973725+00:00,,1.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1042,True,True,unmapped,negative,source_limited,False,"…ated thyroglobulins, each using 
+     thyroid hormone withdrawal. In 01/2013, his thyroglobulin was 3.5, with 
+     negative antibody. In 06/2013, thyroglobulin 2.3, with negative 
+     antibody. In ",<NA>
+94,3629,38ff824bf79c63581e6b6e61125de26bf0ed5979,,history_summary,1,Sheet1,thyroid_cx_history_summary,anti_tg_value,negative,negative,negated,0.98,0.98,"In 06/2013, thyroglobulin 2.3, with negative 
+     antibody.",,,2013-06-01,2011-10-05,llm_v2_combined,2026-04-03T04:27:48.973725+00:00,,1.0,11,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1042,True,True,unmapped,negative,source_limited,False,"… In 01/2013, his thyroglobulin was 3.5, with 
+     negative antibody. In 06/2013, thyroglobulin 2.3, with negative 
+     antibody. In 01/2014, thyroglobulin 2.7, with negative antibody. Whole- 
+     ",<NA>
+95,3629,38ff824bf79c63581e6b6e61125de26bf0ed5979,,history_summary,1,Sheet1,thyroid_cx_history_summary,anti_tg_value,negative,negative,negated,0.98,0.98,"In 01/2014, thyroglobulin 2.7, with negative antibody.",,,2014-01-01,2011-10-05,llm_v2_combined,2026-04-03T04:27:48.973725+00:00,,1.0,12,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1042,True,True,unmapped,negative,source_limited,False,"…e antibody. In 06/2013, thyroglobulin 2.3, with negative 
+     antibody. In 01/2014, thyroglobulin 2.7, with negative antibody. Whole- 
+     body scans have shown no iodine avid tissue.    On June 25",<NA>
+96,3629,38ff824bf79c63581e6b6e61125de26bf0ed5979,,history_summary,1,Sheet1,thyroid_cx_history_summary,anti_tg_value,negative,negative,negated,0.98,0.98,On June 25 2015 thyroglobulin was 2.2 with negative antibody on withdrawal with negative whole body scan.,,,2015-06-25,2011-10-05,llm_v2_combined,2026-04-03T04:27:48.973725+00:00,,1.0,13,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1042,True,True,unmapped,negative,source_limited,False,…ody scans have shown no iodine avid tissue.    On June 25 2015 thyroglobulin was 2.2 with negative antibody on withdrawal with negative whole body scan.,<NA>
+97,3847,73de6b06cf290331cee5fd6b4c59b1242f8053c0,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,0.2,0.2,present,0.98,0.98,"Diagnostic whole-body scan 03/21/2014, showing no evidence of 
+     iodine-avid tissue. Thyroglobulin 0.2 with Thyrogen.",,,2014-03-21,2012-11-29,llm_v2_combined,2026-04-03T04:27:59.351192+00:00,,1.0,12,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1093,True,True,unmapped,0.2,source_limited,False,"…vidence of metastatic disease. 
+     c. Diagnostic whole-body scan 03/21/2014, showing no evidence of 
+     iodine-avid tissue. Thyroglobulin 0.2 with Thyrogen. 
+     2. Postsurgical hypothyroidism. ",<NA>
+98,3849,850575e85d2fa27dfb3b56478131a45f4c890043,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,<0.1,<0.1,negated,0.95,0.95,5/2014 stimulated Tg <0.1 WBS negative,,,2014-05-01,2012-10-11,llm_v2_combined,2026-04-03T04:28:03.358421+00:00,,0.85,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,862,True,True,unmapped,0.1,source_limited,False,"… had RAI , (Dr. Musey) post tx scan was negative
+         
+        surveillance: 5/2014 stimulated Tg <0.1 WBS negative
+         
+        u/s8/2023 
+ 
+IMPRESSION:
+1.  Stable ultrasound findings statu",<NA>
+99,3742,54fe78e6f97cf8fef1424360e6bb05b4bd0dbbb4,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,undetectable,undetectable,negated,0.95,0.95,TG elvel undetectable on thyrogen stimulation 7/13,,,2013-07-13,,llm_v2_combined,2026-04-03T04:28:05.638177+00:00,,0.85,6,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1030,True,True,unmapped,undetectable,source_limited,False,"…   WBS showed some uptake that was less than before total uptake 0.01% and TG elvel undetectable on thyrogen stimulation 7/13 
+          
+        
+      repeat thyrogen testing 8/2014 : stimulated Tg",<NA>
+100,3742,54fe78e6f97cf8fef1424360e6bb05b4bd0dbbb4,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,1.4,1.4,present,0.95,0.95,repeat thyrogen testing 8/2014 : stimulated Tg 1.4 with negative abs.,,,2014-08-01,,llm_v2_combined,2026-04-03T04:28:05.638177+00:00,,0.85,7,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1030,True,True,unmapped,1.4,source_limited,False,"…tectable on thyrogen stimulation 7/13 
+          
+        
+      repeat thyrogen testing 8/2014 : stimulated Tg 1.4 with negative abs. 
+         
+      suppressed Tg <0.1 and tgab<0.9( 8/2016) 
+     ",<NA>
+101,3742,54fe78e6f97cf8fef1424360e6bb05b4bd0dbbb4,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,<0.1,<0.1,negated,0.95,0.95,suppressed Tg <0.1 and tgab<0.9( 8/2016),,,2016-08-01,,llm_v2_combined,2026-04-03T04:28:05.638177+00:00,,0.85,8,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1030,True,True,unmapped,0.1,source_limited,False,"…thyrogen testing 8/2014 : stimulated Tg 1.4 with negative abs. 
+         
+      suppressed Tg <0.1 and tgab<0.9( 8/2016) 
+       serial neck u/s no abnormal nodules   -Us in   2023
+            
+     ",<NA>
+102,3742,54fe78e6f97cf8fef1424360e6bb05b4bd0dbbb4,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_detection_limit,<0.9,<0.9,negated,0.95,0.95,suppressed Tg <0.1 and tgab<0.9( 8/2016),,,2016-08-01,,llm_v2_combined,2026-04-03T04:28:05.638177+00:00,,0.85,8,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1030,True,True,unmapped,0.9,source_limited,False,"…thyrogen testing 8/2014 : stimulated Tg 1.4 with negative abs. 
+         
+      suppressed Tg <0.1 and tgab<0.9( 8/2016) 
+       serial neck u/s no abnormal nodules   -Us in   2023
+            
+     ",<NA>
+103,3742,54fe78e6f97cf8fef1424360e6bb05b4bd0dbbb4,,history_summary,1,Sheet1,thyroid_cx_history_summary,anti_tg_value,<0.9,<0.9,negated,0.95,0.95,suppressed Tg <0.1 and tgab<0.9( 8/2016),,,2016-08-01,,llm_v2_combined,2026-04-03T04:28:05.638177+00:00,,0.85,8,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1030,True,True,unmapped,0.9,source_limited,False,"…thyrogen testing 8/2014 : stimulated Tg 1.4 with negative abs. 
+         
+      suppressed Tg <0.1 and tgab<0.9( 8/2016) 
+       serial neck u/s no abnormal nodules   -Us in   2023
+            
+     ",<NA>
+104,3855,50c2f5fc02254e50dc3201bff3fdd746793b9da1,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,undetectable,undetectable,negated,0.98,0.98,pt had f/u with Dr. Shore on Monday 2-10-2020 and her TG is undetectable.,,,2020-02-10,,llm_v2_combined,2026-04-03T04:28:09.656145+00:00,,1.0,6,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,489,True,True,unmapped,undetectable,source_limited,False,"…  now s/p right MRND 1-21-2020.  4/23 LN + PTC 
+          
+    pt had f/u with Dr. Shore on Monday 2-10-2020 and her TG is undetectable.",<NA>
+105,4033,efac66e11a075cc021620b282079877d7562ee69,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,<0.1,<0.1,negated,0.8,0.8,Tg< 0.1,,,,,llm_v2_combined,2026-04-03T04:28:14.476670+00:00,,0.0,12,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,529,True,True,unmapped,0.1,source_limited,False,"…ecember 2013 
+     Posttherapy scan negative 
+     previous PET scan negative    
+     notation Tg< 0.1 with TSH in 60s at time off Lt4 previously",<NA>
+106,4031,a1460d9df7dbe8c23c0709704784dbe830d499b6,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,negative,negative,negated,0.95,0.95,Her Thyrogen stimulated thyroglobulin is negative winter 2015,,,2015-01-01,,llm_v2_combined,2026-04-03T04:28:15.718751+00:00,,0.85,6,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,315,True,True,unmapped,negative,source_limited,False,"…e. There is no evidence clinically of recurrent 
+     disease. 
+     Her Thyrogen stimulated thyroglobulin is negative winter 2015",<NA>
+107,4083,c9b0dc398f5bf716ea7fb0f4022892131beb331b,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,22.1,22.1,present,0.85,0.85,"Her thyroglobulin levels have been noted to be rising, with the most recent level being 22.1.",,,,,llm_v2_combined,2026-04-03T04:28:23.000550+00:00,,0.0,5,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1073,True,True,unmapped,22.1,source_limited,False,"…in August 2020 due to an undetermined biopsy result. Her thyroglobulin levels have been noted to be rising, with the most recent level being 22.1.
+ 
+The patient has been off thyroid cancer treatment ",<NA>
+108,3911,240a2102c79a6c4221a26aeffddc7d1ad32a2ef8,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,4.7,4.7,present,0.98,0.98,"In 5/13, she received 154mCi I-131 following Thyrogen.  Posttreatment scan showed focal uptake in thyroid bed w/ no evidence of distant metastases.  Stimulated TG was 4.7 (Ab 1.4).",,,2013-05-13,,llm_v2_combined,2026-04-03T04:28:40.404065+00:00,,1.0,4,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,958,True,True,unmapped,4.7,source_limited,False,"…     
+    In 5/13, she received 154mCi I-131 following Thyrogen.  Posttreatment scan showed focal uptake in thyroid bed w/ no evidence of distant metastases.  Stimulated TG was 4.7 (Ab 1.4). 
+       ",<NA>
+109,3911,240a2102c79a6c4221a26aeffddc7d1ad32a2ef8,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,undetectable,undetectable,negated,0.85,0.85,"Since, 2015, unstimulated TG has been undetectable; most recently today.",,,,,llm_v2_combined,2026-04-03T04:28:40.404065+00:00,,,8,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,958,True,True,unmapped,undetectable,source_limited,False,"…0.6cm), and 1/3 left level IV (no ENE, 0.7cm).  
+          
+    Since, 2015, unstimulated TG has been undetectable; most recently today.   
+          
+    Most recent neck imaging in 2018 showed no a",<NA>
+110,3911,240a2102c79a6c4221a26aeffddc7d1ad32a2ef8,,history_summary,1,Sheet1,thyroid_cx_history_summary,anti_tg_value,1.4,1.4,present,0.98,0.98,Stimulated TG was 4.7 (Ab 1.4).,,,2013-05-13,,llm_v2_combined,2026-04-03T04:28:40.404065+00:00,,1.0,4,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,958,True,True,unmapped,1.4,source_limited,False,"…ment scan showed focal uptake in thyroid bed w/ no evidence of distant metastases.  Stimulated TG was 4.7 (Ab 1.4). 
+          
+    In 1/2014, neck ultrasound showed suspicious left cervical LN.  FNA",<NA>
+111,3748,6ea9941d0ef6171c2593b44d71b1fd0b9f21f92b,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,2.2,2.2,present,0.98,0.98,"Her 
+     pretreatment thyroglobulin was 2.2 with negative antibody.",,,2012-08-16,2012-05-04,llm_v2_combined,2026-04-03T04:28:59.152017+00:00,,1.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1409,True,True,unmapped,2.2,source_limited,False,"… 
+     represented metastatic disease versus rest thyroid tissue. Her 
+     pretreatment thyroglobulin was 2.2 with negative antibody. 
+     c. Thyrogen stimulated whole body scan 09/27/2013, was neg",<NA>
+112,3748,6ea9941d0ef6171c2593b44d71b1fd0b9f21f92b,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,0.1,0.1,present,0.98,0.98,"Thyrogen stimulated whole body scan 09/27/2013, was negative and 
+     her stimulated thyroglobulin 0.1, with negative antibody.",,,2013-09-27,2012-05-04,llm_v2_combined,2026-04-03T04:28:59.152017+00:00,,1.0,13,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1409,True,True,unmapped,0.1,source_limited,False,"….2 with negative antibody. 
+     c. Thyrogen stimulated whole body scan 09/27/2013, was negative and 
+     her stimulated thyroglobulin 0.1, with negative antibody. 
+     d. A Thyrogen stimulated thy",<NA>
+113,3748,6ea9941d0ef6171c2593b44d71b1fd0b9f21f92b,,history_summary,1,Sheet1,thyroid_cx_history_summary,tg_value,<0.1,<0.1,present,0.98,0.98,"A Thyrogen stimulated thyroglobulin was less than 0.1 on 
+     07/11/2014.",,,2014-07-11,2012-05-04,llm_v2_combined,2026-04-03T04:28:59.152017+00:00,,1.0,15,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1409,True,True,unmapped,0.1,source_limited,False,"…stimulated thyroglobulin 0.1, with negative antibody. 
+     d. A Thyrogen stimulated thyroglobulin was less than 0.1 on 
+     07/11/2014. We did not do the scan with that at patient preference. 
+    ",<NA>
+114,3748,6ea9941d0ef6171c2593b44d71b1fd0b9f21f92b,,history_summary,1,Sheet1,thyroid_cx_history_summary,anti_tg_value,negative,negative,negated,0.98,0.98,"Radioactive iodine remnant ablation using Thyrogen 08/16/2012, 
+     with 153 millicuries of I-131.     Posttherapy scan showed expected uptake 
+     in the neck and also additional uptake in the areas of the mediastinum, 
+     cardiac and spleen. It was unclear at that time whether these 
+     represented metastatic disease versus rest thyroid tissue. Her 
+     pretreatment thyroglobulin was 2.2 with negative antibody.",,,2012-08-16,2012-05-04,llm_v2_combined,2026-04-03T04:28:59.152017+00:00,,1.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1409,True,True,unmapped,negative,source_limited,False,"…Radioactive iodine remnant ablation using Thyrogen 08/16/2012, 
+     with 153 millicuries of I-131.     Posttherapy scan showed expected uptake 
+     in the neck and also additional uptake in the are",<NA>
+115,3748,6ea9941d0ef6171c2593b44d71b1fd0b9f21f92b,,history_summary,1,Sheet1,thyroid_cx_history_summary,anti_tg_value,negative,negative,negated,0.98,0.98,"Thyrogen stimulated whole body scan 09/27/2013, was negative and 
+     her stimulated thyroglobulin 0.1, with negative antibody.",,,2013-09-27,2012-05-04,llm_v2_combined,2026-04-03T04:28:59.152017+00:00,,1.0,13,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1409,True,True,unmapped,negative,source_limited,False,"….2 with negative antibody. 
+     c. Thyrogen stimulated whole body scan 09/27/2013, was negative and 
+     her stimulated thyroglobulin 0.1, with negative antibody. 
+     d. A Thyrogen stimulated thy",<NA>
+116,3748,6ea9941d0ef6171c2593b44d71b1fd0b9f21f92b,,history_summary,1,Sheet1,thyroid_cx_history_summary,anti_tg_value,negative,negative,negated,0.98,0.98,"A Thyrogen stimulated thyroglobulin was less than 0.1 on 
+     07/11/2014.",,,2014-07-11,2012-05-04,llm_v2_combined,2026-04-03T04:28:59.152017+00:00,,1.0,15,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet1,thyroid_cx_history_summary,1409,True,True,unmapped,negative,source_limited,False,"…stimulated thyroglobulin 0.1, with negative antibody. 
+     d. A Thyrogen stimulated thyroglobulin was less than 0.1 on 
+     07/11/2014. We did not do the scan with that at patient preference. 
+    ",<NA>
+117,5118,f04d5b7c87ab04dd28e301211628d691d3582550,,other_history,1,Sheet2,other_history,tg_value,16,16,present,0.95,0.95,thyrogen test -3/2017. stimulated tg 16.. thyrogen test 4/2018: peak Tg 9.4,,,2017-03-01,2024-07-19,llm_v2_combined,2026-04-03T04:29:50.559066+00:00,,0.85,23,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,6497,True,True,unmapped,16,source_limited,False,"… 
+         
+        surveillance     : 
+           
+        a)thyrogen test -3/2017. stimulated tg 16.. thyrogen test 4/2018: peak Tg 9.4 
+      I-131 scan 3/2017  - no definite disease. artifact. 
+ ",<NA>
+118,5118,f04d5b7c87ab04dd28e301211628d691d3582550,,other_history,1,Sheet2,other_history,tg_value,9.4,9.4,present,0.95,0.95,thyrogen test -3/2017. stimulated tg 16.. thyrogen test 4/2018: peak Tg 9.4,,,2018-04-01,2024-07-19,llm_v2_combined,2026-04-03T04:29:50.559066+00:00,,0.85,23,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,6497,True,True,unmapped,9.4,source_limited,False,"… 
+         
+        surveillance     : 
+           
+        a)thyrogen test -3/2017. stimulated tg 16.. thyrogen test 4/2018: peak Tg 9.4 
+      I-131 scan 3/2017  - no definite disease. artifact. 
+ ",<NA>
+119,5118,f04d5b7c87ab04dd28e301211628d691d3582550,,other_history,1,Sheet2,other_history,tg_value,27,27,present,0.95,0.95,thyrogen test : 5/2021. Peak Tg day 5 : 27,,,2021-05-01,2024-07-19,llm_v2_combined,2026-04-03T04:29:50.559066+00:00,,0.85,27,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,6497,True,True,unmapped,27,source_limited,False,"…inite disease. artifact. 
+    CT neck and chest- 5/2017 
+ 
+         
+       b) thyrogen test : 5/2021. Peak Tg day 5 : 27 
+ 
+cThyrogen test : 9/2023. Day 3 : Tg 16. ( Day 5 not reported) 
+          
+",<NA>
+120,5118,f04d5b7c87ab04dd28e301211628d691d3582550,,other_history,1,Sheet2,other_history,tg_value,16,16,present,0.95,0.95,cThyrogen test : 9/2023. Day 3 : Tg 16. ( Day 5 not reported),,,2023-09-01,2024-07-19,llm_v2_combined,2026-04-03T04:29:50.559066+00:00,,0.85,30,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,6497,True,True,unmapped,16,source_limited,False,"…
+ 
+         
+       b) thyrogen test : 5/2021. Peak Tg day 5 : 27 
+ 
+cThyrogen test : 9/2023. Day 3 : Tg 16. ( Day 5 not reported) 
+          
+    CT neck and chest-4/2021- 
+ 
+US 10/2023 :  
+IMPRESSI",<NA>
+121,5118,f04d5b7c87ab04dd28e301211628d691d3582550,,other_history,1,Sheet2,other_history,tg_value,5-10,5-10,present,0.85,0.85,Her suppressed Tg is between 5-10,,,,2024-07-19,llm_v2_combined,2026-04-03T04:29:50.559066+00:00,,0.0,55,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,6497,True,True,unmapped,5 10,source_limited,False,"… 5.
+Day 3 Tg was 16 ( not  very high compared to prior levels). She had 27 in 2021
+Her suppressed Tg is between 5-10 
+   . 
+Monitoring reviewed( imaging studies per ENT and oncology) 
+ 
+Post surgical",<NA>
+122,5180,4906ac78731962ae3883655dfb3a4889e7c9a6cc,,other_history,1,Sheet2,other_history,tg_value,< 0.1,< 0.1,present,0.98,0.98,"03/30/2016 TSH 143, TG < 0.1, TGAb 2.7",,,2016-03-30,2019-10-03,llm_v2_combined,2026-04-03T04:29:54.091449+00:00,,1.0,15,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,8929,True,True,unmapped,0.1,source_limited,False,"…, 2cm right, with extrathyroidal extension, no positive central LNs. 
+     -     03/30/2016 TSH 143, TG < 0.1, TGAb 2.7 
+        -     3/31/2016- 150 mCi I-131 
+     - 4/7/16 whole-body scan:        ",<NA>
+123,5180,4906ac78731962ae3883655dfb3a4889e7c9a6cc,,other_history,1,Sheet2,other_history,tg_value,<0.1,<0.1,present,0.98,0.98,"5/3/16- TSH 0.3, TG <0.1, TGAb 3.3      [2] [1]",,,2016-05-03,2019-10-03,llm_v2_combined,2026-04-03T04:29:54.091449+00:00,,1.0,19,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,8929,True,True,unmapped,0.1,source_limited,False,"…seen on the pretherapy scan. 
+         - 4/22/16- Neck US negative 
+      - 5/3/16- TSH 0.3, TG <0.1, TGAb 3.3      [2] [1] 
+     6/16/2017- thyrogent stim WBS , Tg <0.1 
+        IMPRESSION:  
+     1",<NA>
+124,5180,4906ac78731962ae3883655dfb3a4889e7c9a6cc,,other_history,1,Sheet2,other_history,tg_value,<0.1,<0.1,present,0.98,0.98,"6/16/2017- thyrogent stim WBS , Tg <0.1",,,2017-06-16,2019-10-03,llm_v2_combined,2026-04-03T04:29:54.091449+00:00,,1.0,22,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,8929,True,True,unmapped,0.1,source_limited,False,"…Neck US negative 
+      - 5/3/16- TSH 0.3, TG <0.1, TGAb 3.3      [2] [1] 
+     6/16/2017- thyrogent stim WBS , Tg <0.1 
+        IMPRESSION:  
+     1. No evidence of I-131 avid tissue. 
+     2. 48-ho",<NA>
+125,5180,4906ac78731962ae3883655dfb3a4889e7c9a6cc,,other_history,1,Sheet2,other_history,tg_value,<0.1,<0.1,present,0.98,0.98,"10/2018 TSH 0.01, Tg <0.1, TgAb <0.9",,,2018-10-01,2019-10-03,llm_v2_combined,2026-04-03T04:29:54.091449+00:00,,1.0,25,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,8929,True,True,unmapped,0.1,source_limited,False,"…issue. 
+     2. 48-hour neck uptake is 0.1%. 
+     - 4/2018 - neg neck US 
+     - 10/2018 TSH 0.01, Tg <0.1, TgAb <0.9 
+     - 4/2019 - neg neck US 
+          
+     INTERVAL HISTORY: 
+        Feeling",<NA>
+126,5180,4906ac78731962ae3883655dfb3a4889e7c9a6cc,,other_history,1,Sheet2,other_history,tg_value,<0.1,<0.1,present,0.98,0.98,4/2019 - neg neck US,,,2019-04-01,2019-10-03,llm_v2_combined,2026-04-03T04:29:54.091449+00:00,,1.0,27,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,8929,True,True,unmapped,0.1,source_limited,False,"…s 0.1%. 
+     - 4/2018 - neg neck US 
+     - 10/2018 TSH 0.01, Tg <0.1, TgAb <0.9 
+     - 4/2019 - neg neck US 
+          
+     INTERVAL HISTORY: 
+        Feeling well today, traveling a lot for work",<NA>
+127,5191,a5f941827eb3fe5269e5222a943d6eda14cc7323,,other_history,1,Sheet2,other_history,tg_value,10 ng/mL,10 ng/mL,present,0.95,0.95,Her residual diffuse pulmonary metastases are no longer iodine avid and she has been anatomically & biochemically stable with suppressed thyroglobulin around 10 ng/mL and unchanged lung nodules for the past 9 years.,,,,2024-05-03,llm_v2_combined,2026-04-03T04:29:57.509063+00:00,,0.0,24,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,4324,True,True,unmapped,10 ng ml,source_limited,False,…Her residual diffuse pulmonary metastases are no longer iodine avid and she has been anatomically & biochemically stable with suppressed thyroglobulin around 10 ng/mL and unchanged lung nodules for t,<NA>
+128,5191,a5f941827eb3fe5269e5222a943d6eda14cc7323,,other_history,1,Sheet2,other_history,tg_value,7,7,present,0.9,0.9,baseline Tg-7,,,,2024-05-03,llm_v2_combined,2026-04-03T04:29:57.509063+00:00,,0.0,16,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,4324,True,True,unmapped,7,source_limited,False,"… studies -     CT scan 2024 : Pul nodules stable  
+         neck u/s - 6/2022 
+        
+     baseline Tg-7  
+       
+       
+       
+     Prior history details      
+       Back in 1970s, she reports",<NA>
+129,5191,a5f941827eb3fe5269e5222a943d6eda14cc7323,,other_history,1,Sheet2,other_history,tg_value,10,10,present,0.95,0.95,Her residual diffuse pulmonary metastases are no longer iodine avid and she has been anatomically & biochemically stable with suppressed thyroglobulin around 10 ng/mL and unchanged lung nodules for the past 9 years.,,,,2024-05-03,llm_v2_combined,2026-04-03T04:29:57.509063+00:00,,0.0,24,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,4324,True,True,unmapped,10,source_limited,False,…Her residual diffuse pulmonary metastases are no longer iodine avid and she has been anatomically & biochemically stable with suppressed thyroglobulin around 10 ng/mL and unchanged lung nodules for t,<NA>
+130,5204,9883f6319ef1378b97ff02983887cd03ecb0997c,,other_history,1,Sheet2,other_history,tg_value,0.7,0.7,present,0.95,0.95,stim Tg 0.7;  I-131 scan negative.,,,2017-01-01,2023-01-13,llm_v2_combined,2026-04-03T04:30:05.214634+00:00,,0.85,45,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,6402,True,True,unmapped,0.7,source_limited,False,"…(onc) Berkowitz( pulm) 
+           
+         Surveillance: January 2017. PET scan. stim Tg 0.7;  I-131 scan negative. PET scan uptake in  rt lower neck/ 
+         CT scan neck and chest 3/2019 
+     ",<NA>
+131,5204,9883f6319ef1378b97ff02983887cd03ecb0997c,,other_history,1,Sheet2,other_history,tg_value,0.1,0.1,present,0.95,0.95,stimulated tg was  0.7 jan 2016  and 0.1 in 9/2017 .,,,2017-09-01,2023-01-13,llm_v2_combined,2026-04-03T04:30:05.214634+00:00,,0.85,50,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,6402,True,True,unmapped,0.1,source_limited,False,"… Tg?  however iodine avid based on post Rx scans in 2016 and 2017 .       stimulated tg was  0.7 jan 2016  and 0.1 in 9/2017 .        
+           
+         
+     It seems no macrospcopic disease seen",<NA>
+132,5209,d7d6bf8c2ac8267ecd4a53c118c726616cdcdcd3,,other_history,1,Sheet2,other_history,tg_value,1.5,1.5,present,0.8,0.8,"most recent TG of 1.5, increased from 0.7",,,,2024-09-17,llm_v2_combined,2026-04-03T04:30:11.363750+00:00,,0.0,34,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,3142,True,True,unmapped,1.5,source_limited,False,"…-No RAI
+-her TG has remained variable in the past fluctuating from 0.7 to 2.0
+-most recent TG of 1.5, increased from 0.7
+-also TSH above target at 3.22
+-will increase LT4 dose to lower TSH to target ",<NA>
+133,5209,d7d6bf8c2ac8267ecd4a53c118c726616cdcdcd3,,other_history,1,Sheet2,other_history,tg_value,0.7,0.7,present,0.8,0.8,fluctuating from 0.7 to 2.0,,,,2024-09-17,llm_v2_combined,2026-04-03T04:30:11.363750+00:00,,0.0,33,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,3142,True,True,unmapped,0.7,source_limited,False,"… papillary nuclear features(NIFTP).
+-No RAI
+-her TG has remained variable in the past fluctuating from 0.7 to 2.0
+-most recent TG of 1.5, increased from 0.7
+-also TSH above target at 3.22
+-will incre",<NA>
+134,5472,1149dc99a6dc759d2d8c4a7daed1f115b2e9c795,,other_history,1,Sheet2,other_history,tg_value,0.9,0.9,present,0.98,0.98,2/22/2017 TSH 1.94 TG 0.9 TGAB (-),,,2017-02-22,2022-10-13,llm_v2_combined,2026-04-03T04:30:51.740215+00:00,,1.0,12,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,1382,True,True,unmapped,0.9,source_limited,False,"…invasive, negative margins, (-) LVI, one parathyroid gland noted
+-Pt declined RAI
+-2/22/2017 TSH 1.94 TG 0.9 TGAB (-)
+-7/13/2017 TSH 0.98 TG 0.5 TGAB 1.1
+-1/08/2018 TSH 0.02 FT4 2.0 Tg 0.3, Tg Ab neg",<NA>
+135,5472,1149dc99a6dc759d2d8c4a7daed1f115b2e9c795,,other_history,1,Sheet2,other_history,tg_value,0.5,0.5,present,0.95,0.95,7/13/2017 TSH 0.98 TG 0.5 TGAB 1.1,,,2017-07-13,2022-10-13,llm_v2_combined,2026-04-03T04:30:51.740215+00:00,,1.0,18,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,1382,True,True,unmapped,0.5,source_limited,False,"… one parathyroid gland noted
+-Pt declined RAI
+-2/22/2017 TSH 1.94 TG 0.9 TGAB (-)
+-7/13/2017 TSH 0.98 TG 0.5 TGAB 1.1
+-1/08/2018 TSH 0.02 FT4 2.0 Tg 0.3, Tg Ab neg
+-8/2019: Free T4 0.79, TSH 6.40, Tg",<NA>
+136,5809,2bb6fa0f3f242bfa92ffda2f50972e48a7d4c7f6,,other_history,1,Sheet2,other_history,tg_value,<0.5,<0.5,negated,0.95,0.95,"6/2020:     Tg Ab 60, Tg by LC-MS <0.5    , TSH 0.29, normal Free T4",,,2020-06-01,2021-09-22,llm_v2_combined,2026-04-03T04:31:30.047029+00:00,,0.85,18,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,4227,True,True,unmapped,0.5,source_limited,False,"…1/2019:      2 x 3 x 1 mm hypoechoic nodule on left side 
+       -6/2020:     Tg Ab 60, Tg by LC-MS <0.5    , TSH 0.29, normal Free T4 
+     -Thyroid US 6/2020:     1. Stable nonspecific tiny hypoech",<NA>
+137,5986,726242fd8210b4684737a5afd7d97bb272652014,,other_history,1,Sheet2,other_history,tg_value,133,133,present,0.85,0.85,"Stimulated TG was 133, TSH 12.9",,,2018-01-01,2024-01-08,llm_v2_combined,2026-04-03T04:31:41.206362+00:00,,0.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,882,True,True,unmapped,133,source_limited,False,"… lobe lung nodule. 
+         represent progression of metastatic disease    . 
+     Stimulated TG was 133, TSH 12.9 
+     2/2018 bronch BAL and FNA of RLL nodule negative for malignancy. 
+     Referr",<NA>
+138,5944,353b7a5cfafe2930f7733ae30baaee89e6f8deb2,,other_history,1,Sheet2,other_history,tg_value,4.9,4.9,present,0.98,0.98,"3/2021: Tg 4.9, Tg ab neg, TSH 1.12",,,2021-03-01,2021-07-28,llm_v2_combined,2026-04-03T04:32:06.937106+00:00,,1.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,1456,True,True,unmapped,4.9,source_limited,False,"…9 x 1.4cm without a fatty hilum, suspicious. 
+          
+     Outside labs  
+     3/2021: Tg 4.9, Tg ab neg, TSH 1.12 
+     7/2021: Tg 5.3, Tg ab neg, TSH 1.4 
+       
+       Pt denies any palpable n",<NA>
+139,5944,353b7a5cfafe2930f7733ae30baaee89e6f8deb2,,other_history,1,Sheet2,other_history,tg_value,5.3,5.3,present,0.98,0.98,"7/2021: Tg 5.3, Tg ab neg, TSH 1.4",,,2021-07-28,2021-07-28,llm_v2_combined,2026-04-03T04:32:06.937106+00:00,,1.0,11,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,1456,True,True,unmapped,5.3,source_limited,False,"…us. 
+          
+     Outside labs  
+     3/2021: Tg 4.9, Tg ab neg, TSH 1.12 
+     7/2021: Tg 5.3, Tg ab neg, TSH 1.4 
+       
+       Pt denies any palpable neck masses currently.  She does endorse s",<NA>
+140,5944,353b7a5cfafe2930f7733ae30baaee89e6f8deb2,,other_history,1,Sheet2,other_history,anti_tg_value,neg,neg,negated,0.95,0.95,"3/2021: Tg 4.9, Tg ab neg, TSH 1.12",,,2021-03-01,2021-07-28,llm_v2_combined,2026-04-03T04:32:06.937106+00:00,,1.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,1456,True,True,unmapped,neg,source_limited,False,"…9 x 1.4cm without a fatty hilum, suspicious. 
+          
+     Outside labs  
+     3/2021: Tg 4.9, Tg ab neg, TSH 1.12 
+     7/2021: Tg 5.3, Tg ab neg, TSH 1.4 
+       
+       Pt denies any palpable n",<NA>
+141,5944,353b7a5cfafe2930f7733ae30baaee89e6f8deb2,,other_history,1,Sheet2,other_history,anti_tg_value,neg,neg,negated,0.95,0.95,"7/2021: Tg 5.3, Tg ab neg, TSH 1.4",,,2021-07-28,2021-07-28,llm_v2_combined,2026-04-03T04:32:06.937106+00:00,,1.0,11,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,1456,True,True,unmapped,neg,source_limited,False,"…us. 
+          
+     Outside labs  
+     3/2021: Tg 4.9, Tg ab neg, TSH 1.12 
+     7/2021: Tg 5.3, Tg ab neg, TSH 1.4 
+       
+       Pt denies any palpable neck masses currently.  She does endorse s",<NA>
+142,5944,353b7a5cfafe2930f7733ae30baaee89e6f8deb2,,other_history,1,Sheet2,other_history,paired_tsh,1.12,1.12,present,0.95,0.95,"3/2021: Tg 4.9, Tg ab neg, TSH 1.12",,,2021-03-01,2021-07-28,llm_v2_combined,2026-04-03T04:32:06.937106+00:00,,1.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,1456,True,True,unmapped,1.12,source_limited,False,"…9 x 1.4cm without a fatty hilum, suspicious. 
+          
+     Outside labs  
+     3/2021: Tg 4.9, Tg ab neg, TSH 1.12 
+     7/2021: Tg 5.3, Tg ab neg, TSH 1.4 
+       
+       Pt denies any palpable n",<NA>
+143,5944,353b7a5cfafe2930f7733ae30baaee89e6f8deb2,,other_history,1,Sheet2,other_history,paired_tsh,1.4,1.4,present,0.95,0.95,"7/2021: Tg 5.3, Tg ab neg, TSH 1.4",,,2021-07-28,2021-07-28,llm_v2_combined,2026-04-03T04:32:06.937106+00:00,,1.0,11,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,1456,True,True,unmapped,1.4,source_limited,False,"…us. 
+          
+     Outside labs  
+     3/2021: Tg 4.9, Tg ab neg, TSH 1.12 
+     7/2021: Tg 5.3, Tg ab neg, TSH 1.4 
+       
+       Pt denies any palpable neck masses currently.  She does endorse s",<NA>
+144,6202,a7ba85368ab46d4e623afc45a4f01b661756225b,,other_history,1,Sheet2,other_history,tg_value,2.3,2.3,present,0.98,0.98,"10/6/17: Pt evaluated by Dr. Rene (endocrinology) 
+     TSH 0.203 
+     TG 2.3 (no antibodies) 
+     PTH 16",,,2017-10-06,2021-03-30,llm_v2_combined,2026-04-03T04:32:29.038089+00:00,,1.0,15,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,12228,True,True,unmapped,2.3,source_limited,False,"…side records reveals the following: 
+         10/6/17: Pt evaluated by Dr. Rene (endocrinology) 
+     TSH 0.203 
+     TG 2.3 (no antibodies) 
+     PTH 16 
+     10/23/17 - I-131 ablation with 150 miC ",<NA>
+145,6202,a7ba85368ab46d4e623afc45a4f01b661756225b,,other_history,1,Sheet2,other_history,anti_tg_value,<0.9,<0.9,negated,0.98,0.98,TG antibody <0.9,,,2018-01-19,2021-03-30,llm_v2_combined,2026-04-03T04:32:29.038089+00:00,,1.0,29,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,12228,True,True,unmapped,0.9,source_limited,False,"…tributes to salivary/swallowing issues. Found to be hypothyroid with     TSH 79.32, TG 3.6, TG antibody <0.9    , 25OHD 17.5, Ca 8.0 (corrected 7.6), PTH 17. Restarted on LT4 150 mcg daily, calcitrio",<NA>
+146,6310,6ac43ccd4b7aafc85bfd0057bdc99da5e3a6ea21,,other_history,1,Sheet2,other_history,tg_value,1.5-2.5,1.5-2.5,present,0.95,0.95,Thyroglobulin levels in range of 1.5-2.5.,,,,2024-05-01,llm_v2_combined,2026-04-03T04:32:45.928472+00:00,,0.0,4,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,812,True,True,unmapped,1.5 2.5,source_limited,False,…t dose scan showing uptake in thyroid bed. Continues on levothyroxine 200 mcg. Thyroglobulin levels in range of 1.5-2.5. Last US in Dec 2022 showed subcentimeter tissue bilaterally in thyroid bed and,<NA>
+147,6177,6d00a005362a46e4a567b8ce1fd35a7f1895ff43,,other_history,1,Sheet2,other_history,tg_value,0.2,0.2,present,0.95,0.95,Unstimulated TG in 10/17 was 0.2 with negative interfering Ab.,,,2017-10-01,2021-11-10,llm_v2_combined,2026-04-03T04:33:03.245305+00:00,,0.85,14,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,5087,True,True,unmapped,0.2,source_limited,False,"… and left 2.1cm and left 1.8cm indeterminate heterogenous nodules.   Unstimulated TG in 10/17 was 0.2 with negative interfering Ab.  
+           
+     She received 100.8mCi I-131 following Thyrogen a",<NA>
+148,6177,6d00a005362a46e4a567b8ce1fd35a7f1895ff43,,other_history,1,Sheet2,other_history,tg_value,1.0,1.0,present,0.98,0.98,1.0,,,2018-02-08,2021-11-10,llm_v2_combined,2026-04-03T04:33:03.245305+00:00,,1.0,15,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,5087,True,True,unmapped,1.0,source_limited,False,"…ma on 8/21/17.   
+          
+     Surgical pathology confirmed papillary thyroid cancer measuring 1.0 cm in the left lobe.  The carcinoma extended to the inked margin with possible extrathyroidal ext",<NA>
+149,6592,61368fef9ed8a1b46ec826b67ea2a591b5b9f0bf,,other_history,1,Sheet2,other_history,tg_value,10.7,10.7,present,0.98,0.98,"Osh labs 6-28-2021:  TSH 3.18; TG 10.7, neg TG Ab",,,2021-06-28,2021-07-26,llm_v2_combined,2026-04-03T04:33:27.159763+00:00,,1.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,1082,True,True,unmapped,10.7,source_limited,False,"…id lobe with 0.5 x 0.3 x 0.4 and 0.5 x 0.3 x 0.4 cm nodularity 
+           Osh labs 6-28-2021:  TSH 3.18; TG 10.7, neg TG Ab 
+          
+     Endocrinologist is Dr. Miragaya. 
+
+1.  Thyroid ca   C73 
+",<NA>
+150,6811,3bc8a5edda4ac337e93ce6a1b0d05b02faa7e485,,other_history,1,Sheet2,other_history,tg_value,1.78,1.78,present,0.98,0.98,"Thyroglobulin levels have been detectable but stable, 1.78 last visit.",,,2024-06-25,2024-06-25,llm_v2_combined,2026-04-03T04:33:58.707340+00:00,,1.0,3,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,700,True,True,unmapped,1.78,source_limited,False,"…er, pT1bN post thyroidecomty and I131 treatment 156 mCi in 2018. Thyroglobulin levels have been detectable but stable, 1.78 last visit. US at last visit showed normal appearing cervical lymph nodes a",<NA>
+151,6754,3b311ac7f860615049254426738f104e08b26a3a,,other_history,1,Sheet2,other_history,tg_value,Undetectable,Undetectable,negated,0.95,0.95,Undetectable calcitonin levels following thyroidectomy with decrease in CEA levels.,,,2024-04-09,2024-04-09,llm_v2_combined,2026-04-03T04:34:09.339954+00:00,,0.0,22,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,2330,True,True,unmapped,undetectable,source_limited,False,"…section did not show any evidence of metastatic disease. 
+Undetectable calcitonin levels following thyroidectomy with decrease in CEA levels. 
+No concerning cervical lymphadenopathy with last ultraso",<NA>
+152,6754,3b311ac7f860615049254426738f104e08b26a3a,,other_history,1,Sheet2,other_history,tg_value,Negative,Negative,negated,0.9,0.9,Negative Thyrogen stimulated thyroglobulin level in 9/19,,,2019-09-01,2024-04-09,llm_v2_combined,2026-04-03T04:34:09.339954+00:00,,0.0,11,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,2330,True,True,unmapped,negative,source_limited,False,"…8/19, 8/20 ,9/21,7/22 did not show any cervical lymphadenopathy. 
+     -Negative Thyrogen stimulated thyroglobulin level in 9/19 
+ 
+Interval history:
+Patient has been feeling well since her last visi",<NA>
+153,6866,ba65bc6213334a5babc19617a436e8ad25446604,,other_history,1,Sheet2,other_history,tg_value,<0.1,<0.1,present,0.95,0.95,Tg <0.1,,,,2018-10-17,llm_v2_combined,2026-04-03T04:35:16.942585+00:00,,0.0,1,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,3239,True,True,unmapped,0.1,source_limited,False,"…018 TSH 0.37 TG <0.1 TGAB 39.2 
+     01/2019 TSH 100 (thyrogen) TG <0.1 TGAB 19.2 
+     4/2019: Tg <0.1, TgAb 7.8, TSH-0.03 
+     7/2019: TSH 0.14 
+     10/2019- Tg Ab 6.4, Tg <0.1, TSH-1.1 
+     1/2",<NA>
+154,6866,ba65bc6213334a5babc19617a436e8ad25446604,,other_history,1,Sheet2,other_history,anti_tg_value,6.4,6.4,present,0.95,0.95,Tg Ab 6.4,,,,2018-10-17,llm_v2_combined,2026-04-03T04:35:16.942585+00:00,,0.0,1,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,3239,True,True,unmapped,6.4,source_limited,False,"…<0.1 TGAB 19.2 
+     4/2019: Tg <0.1, TgAb 7.8, TSH-0.03 
+     7/2019: TSH 0.14 
+     10/2019- Tg Ab 6.4, Tg <0.1, TSH-1.1 
+     1/2020-Tg Ab 4.3, Tg <0.1, TSH-0.20 
+          
+          Imaging: 
+  ",<NA>
+155,6866,ba65bc6213334a5babc19617a436e8ad25446604,,other_history,1,Sheet2,other_history,anti_tg_value,4.3,4.3,present,0.95,0.95,Tg Ab 4.3,,,,2018-10-17,llm_v2_combined,2026-04-03T04:35:16.942585+00:00,,0.0,2,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,3239,True,True,unmapped,4.3,source_limited,False,"…b 7.8, TSH-0.03 
+     7/2019: TSH 0.14 
+     10/2019- Tg Ab 6.4, Tg <0.1, TSH-1.1 
+     1/2020-Tg Ab 4.3, Tg <0.1, TSH-0.20 
+          
+          Imaging: 
+       -Thyroid US 10/2019 -     Small soft",<NA>
+156,6866,ba65bc6213334a5babc19617a436e8ad25446604,,other_history,1,Sheet2,other_history,paired_tsh,0.20,0.20,present,0.95,0.95,TSH-0.20,,,,2018-10-17,llm_v2_combined,2026-04-03T04:35:16.942585+00:00,,0.0,2,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,3239,True,True,unmapped,0.20,source_limited,False,"…   7/2019: TSH 0.14 
+     10/2019- Tg Ab 6.4, Tg <0.1, TSH-1.1 
+     1/2020-Tg Ab 4.3, Tg <0.1, TSH-0.20 
+          
+          Imaging: 
+       -Thyroid US 10/2019 -     Small soft tissue densities w",<NA>
+157,6866,ba65bc6213334a5babc19617a436e8ad25446604,,other_history,1,Sheet2,other_history,paired_tsh,0.2,0.2,present,0.95,0.95,Last TSH-0.2,,,,2018-10-17,llm_v2_combined,2026-04-03T04:35:16.942585+00:00,,0.0,10,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,other_history,3239,True,True,unmapped,0.2,source_limited,False,"…in Antibody 
+                
+            2.  Post-surgical hypothyroidism   E89.0 
+         -Last TSH-0.2 at goal 
+     -Update levels 
+     -Continue Synthroid 112mcg 6 days per week, 2 pills 1 day",<NA>
+158,7580,0f40d6d3f4318f3c93a268120f6dfc9b9119a9d0,,h_p,1,Sheet2,h_p_1,tg_value,10,10,present,0.7,0.7,his TG prior to RAI was 10.,,,,,llm_v2_combined,2026-04-03T04:40:10.597395+00:00,,0.0,102,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,h_p_1,7560,True,True,unmapped,10,source_limited,False,"… scheduled for labs with Dr. Arkin in Dec.  I asked him to send me the labs. 
+     -- his TG prior to RAI was 10. 
+          
+    will see pt in 2 months for recheck of VF. 
+       
+                 ",<NA>
+159,8705,e1063bec8240c9a91e044f9a38d2c57534a1903b,,h_p,1,Sheet2,h_p_1,anti_tg_value,<0.9 IU/mL,<0.9 IU/mL,negated,0.9,0.9,thyroglobulin Ab <0.9,,,,,llm_v2_combined,2026-04-03T04:54:03.184879+00:00,,0.0,12,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,h_p_1,5957,True,True,unmapped,0.9 iu ml,source_limited,False,"…
+5. 1cm R level 5 that is indeterminate
+ 
+Labs 
+Free T4 1.5, TSH 0.03, thyroglobulin 68, thyroglobulin Ab <0.9,
+ 
+Assessment/Plan
+Principal Problem:
+  Malignant neoplasm of thyroid gland (CMS/HCC)
+ 
+",<NA>
+160,8379,d8d63e5d6394fa19e2c11479e3273031873ac22e,,h_p,1,Sheet2,h_p_1,tg_value,15.5,15.5,present,0.95,0.95,thyroglobulin 15.5.,,,,1994-10-28,llm_v2_combined,2026-04-03T04:57:16.503757+00:00,,0.0,,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,h_p_1,6384,True,True,unmapped,15.5,source_limited,False,"…itonin was 64, metanephrine was 27 and normetanephrine was 44 (WNL). Thyroid labs normal, thyroglobulin 15.5. He does not have children, does have one brother and one sister. He does endorse feeling ",<NA>
+161,9448,7fcc407fa80c220a02900bb26757cd11c68df6d7,,h_p,1,Sheet2,h_p_1,tg_value,600%,600%,present,0.95,0.95,"2/2021 
+     TSI 600%",,,2022-02-01,,llm_v2_combined,2026-04-03T05:04:02.060145+00:00,,0.85,106,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,h_p_1,4247,True,True,unmapped,600,source_limited,False,"…      
+          12/6/21 
+     T3 >20 
+     t4, free 6.0 
+     TSH <0.01 
+          
+    2/2021 
+     TSI 600%",<NA>
+162,10145,dca9a9ebe753d0712cba9ab957fd476934f0e433,,h_p,1,Sheet2,h_p_1,tg_value,132.1,132.1,present,0.98,0.98,"4/24/24:
+Cr: 1.22
+Ca: 8.8
+25-OH Vit D: 63
+PTH: 63
+Thyroglobulin: 132.1
+Thyroglobulin antibody: <0.9
+TSH: 0.81",,,2024-04-24,2024-05-07,llm_v2_combined,2026-04-03T05:13:37.666556+00:00,,1.0,105,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,h_p_1,7650,True,True,unmapped,132.1,source_limited,False,"…erative, Appropriate mood and affect
+ 
+
+LABS
+4/24/24:
+Cr: 1.22
+Ca: 8.8
+25-OH Vit D: 63
+PTH: 63
+Thyroglobulin: 132.1
+Thyroglobulin antibody: <0.9
+TSH: 0.81
+ 
+ 
+
+DIAGNOSTICS
+3/5/24 US:
+IMPRESSION:
+ 
+1.",<NA>
+163,10145,dca9a9ebe753d0712cba9ab957fd476934f0e433,,h_p,1,Sheet2,h_p_1,anti_tg_value,<0.9,<0.9,negated,0.98,0.98,"4/24/24:
+Cr: 1.22
+Ca: 8.8
+25-OH Vit D: 63
+PTH: 63
+Thyroglobulin: 132.1
+Thyroglobulin antibody: <0.9
+TSH: 0.81",,,2024-04-24,2024-05-07,llm_v2_combined,2026-04-03T05:13:37.666556+00:00,,1.0,105,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,h_p_1,7650,True,True,unmapped,0.9,source_limited,False,"…erative, Appropriate mood and affect
+ 
+
+LABS
+4/24/24:
+Cr: 1.22
+Ca: 8.8
+25-OH Vit D: 63
+PTH: 63
+Thyroglobulin: 132.1
+Thyroglobulin antibody: <0.9
+TSH: 0.81
+ 
+ 
+
+DIAGNOSTICS
+3/5/24 US:
+IMPRESSION:
+ 
+1.",<NA>
+164,10145,dca9a9ebe753d0712cba9ab957fd476934f0e433,,h_p,1,Sheet2,h_p_1,paired_tsh,0.81,0.81,present,0.98,0.98,"4/24/24:
+Cr: 1.22
+Ca: 8.8
+25-OH Vit D: 63
+PTH: 63
+Thyroglobulin: 132.1
+Thyroglobulin antibody: <0.9
+TSH: 0.81",,,2024-04-24,2024-05-07,llm_v2_combined,2026-04-03T05:13:37.666556+00:00,,1.0,105,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,h_p_1,7650,True,True,unmapped,0.81,source_limited,False,"…erative, Appropriate mood and affect
+ 
+
+LABS
+4/24/24:
+Cr: 1.22
+Ca: 8.8
+25-OH Vit D: 63
+PTH: 63
+Thyroglobulin: 132.1
+Thyroglobulin antibody: <0.9
+TSH: 0.81
+ 
+ 
+
+DIAGNOSTICS
+3/5/24 US:
+IMPRESSION:
+ 
+1.",<NA>
+165,10157,027f9515aa839ad9c7fe4f5c9c52d4f42f3cff21,,h_p,1,Sheet2,h_p_1,tg_value,12.9 ng/mL,12.9 ng/mL,present,0.98,0.98,THYROGLB 12.9 04/14/2023,,,2023-04-14,,llm_v2_combined,2026-04-03T05:14:09.944109+00:00,,1.0,18,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,h_p_1,4821,True,True,unmapped,12.9 ng ml,source_limited,False,"…nd/or breast ultrasound.
+ 
+Lab Results
+Component Value Date
+  TSH 0.04 (L) 04/14/2023
+  THYROGLB 12.9 04/14/2023
+  THYROGLOBAB <0.9 04/14/2023
+  CREATININE 0.84 04/14/2023
+ 
+ 
+ 
+ 
+PHYSICAL EXAM:
+Gene",<NA>
+166,10947,c4b7fa677a731fa03b108efea0382d74a66a7460,,h_p,1,Sheet2,h_p_1,tg_value,< 1,< 1,negated,0.95,0.95,Thyroglobulin < 1,,,,,llm_v2_combined,2026-04-03T05:25:21.294745+00:00,,0.0,72,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,h_p_1,5343,True,True,unmapped,1,source_limited,False,"…e patient is cooperative with the exam.
+Voice - Normal in tone and volume
+ 
+Labs:
+TSH 1.46
+Thyroglobulin < 1
+TPO 1
+ 
+Imaging:
+EXAM: US THYROID
+EXAM: US HEAD NECK SOFT TISSUE
+ 
+CLINICAL INDICATION: TH",<NA>
+167,11215,c991410c06311cd1087022703530bd0afceee11f,,h_p,1,Sheet2,h_p_1,tg_value,63,63,present,0.85,0.85,FNA 10/9/24 shows PTC.  TG is 63 with negative Abs.,,,,,llm_v2_combined,2026-04-03T05:29:18.602779+00:00,,0.0,22,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,h_p_1,5511,True,True,unmapped,63,source_limited,False,"… ordered the US. She has an endocrinology appt arranged with Dr Brandt.
+ 
+FNA 10/9/24 shows PTC.  TG is 63 with negative Abs.
+ 
+THYROID PMH:
+Family history of benign thyroid disease: no
+Family histor",<NA>
+168,11463,d353575c8b6384c64ba1cfc6d3a3b48be53c3c64,,h_p,1,Sheet2,h_p_1,tg_value,387,387,present,0.8,0.8,calcitonin 387,,,,,llm_v2_combined,2026-04-03T05:33:15.054510+00:00,,0.0,1,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,h_p_1,4435,True,True,unmapped,387,source_limited,False,"…ry PGY2
+PIC 76123
+ 
+55 yo female with MTC of the left thyroid lobe, metanepharines negative, calcitonin 387
+Will refer to Emory genetics, Lateral neck US today
+Discussed total thyroid and bilateral c",<NA>
+169,11084,5ce1ecbcc7deebbfec900a1b9089b7a8e490995b,,h_p,2,Sheet2,h_p_2,tg_value,6.8,6.8,present,0.95,0.95,"164mCi RAI 5/2022, post treatment WBS intense uptake in central neck, no distant mets.",,,2022-02-01,2024-04-22,llm_v2_combined,2026-04-03T05:47:51.098986+00:00,,0.85,10,,,,,,,,,,,,qwen3:32b,,,,,,,2,Sheet2,h_p_2,5641,True,True,unmapped,6.8,source_limited,False,"…th outside surgeon, 3mm PTC with negative margins.
+--s/p 164mCi RAI 5/2022, post treatment WBS intense uptake in central neck, no distant mets.
+--Neck ultrasound 9/2023: Mildly prominent right neck I",<NA>
+170,11084,5ce1ecbcc7deebbfec900a1b9089b7a8e490995b,,h_p,2,Sheet2,h_p_2,tg_value,1.0,1.0,present,0.98,0.98,CT neck w contrast 1/18/24: no pathologically enlarged lymph node.,,,2024-01-18,2024-04-22,llm_v2_combined,2026-04-03T05:47:51.098986+00:00,,1.0,14,,,,,,,,,,,,qwen3:32b,,,,,,,2,Sheet2,h_p_2,5641,True,True,unmapped,1.0,source_limited,False,"… parenchyma along the foramen cecum.  Mets difficult to exclude.
+--CT neck w contrast 1/18/24: no pathologically enlarged lymph node.  Also had CT chest abd pelvis which did not identify any concern ",<NA>
+171,7203,bf734c8d61e91cb3696d2c7cb952ef6e09b11999,,endocrine_note,1,Sheet2,last_endocrine_fm_note,tg_value,0.1 (L),0.1 (L),negated,0.8,0.8,THYROGLB	0.1 (L)	05/19/2022,,,,2023-10-26,llm_v2_combined,2026-04-03T06:55:42.191874+00:00,,0.0,112,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,last_endocrine_fm_note,12582,True,True,unmapped,0.1 l,source_limited,False,"…ing lymph nodes.
+
+Lab Results
+Component	Value	Date
+ 	TSHREFLEX	33.59 (H)	10/04/2023
+ 	THYROGLB	0.1 (L)	05/19/2022
+ 	THYROGLOBAB	<0.9	05/19/2022
+ 
+Pathologist Currently Assigned to Case
+ 
+SURGICAL ROU",<NA>
+172,7203,bf734c8d61e91cb3696d2c7cb952ef6e09b11999,,endocrine_note,1,Sheet2,last_endocrine_fm_note,tg_value,<0.9,<0.9,negated,0.8,0.8,THYROGLOBAB	<0.9	05/19/2022,,,,2023-10-26,llm_v2_combined,2026-04-03T06:55:42.191874+00:00,,0.0,113,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,last_endocrine_fm_note,12582,True,True,unmapped,0.9,source_limited,False,"…Component	Value	Date
+ 	TSHREFLEX	33.59 (H)	10/04/2023
+ 	THYROGLB	0.1 (L)	05/19/2022
+ 	THYROGLOBAB	<0.9	05/19/2022
+ 
+Pathologist Currently Assigned to Case
+ 
+SURGICAL ROUTINE - EUH CONVERSIONS
+Order: ",<NA>
+173,7537,9fd77610c450b1539f91c44a60e2e61265b33016,,endocrine_note,1,Sheet2,last_endocrine_fm_note,tg_value,3.2 ng/mL,3.2 ng/mL,present,0.85,0.85,"levothyroxine (Synthroid, Levoxyl) 112 mcg tablet, Take 1 tablet (112 mcg) by mouth once daily., Disp: 90 tablet, Rfl: 3",,,2024-06-13,2024-06-13,llm_v2_combined,2026-04-03T07:02:12.669945+00:00,,0.0,18,,,,,,,,,,,,qwen3:32b,,,,,,,1,Sheet2,last_endocrine_fm_note,6116,True,True,unmapped,3.2 ng ml,source_limited,False,"…s
+ 
+Current Outpatient Medications: 
+•  levothyroxine (Synthroid, Levoxyl) 112 mcg tablet, Take 1 tablet (112 mcg) by mouth once daily., Disp: 90 tablet, Rfl: 3
+
+ 
+MVI daily 
+Not taking biotin 
+ 
+Obj",<NA>

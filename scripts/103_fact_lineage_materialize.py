@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -80,6 +81,79 @@ FAMILY_MAX_DAYS = {
     "demographics": 365,
     "audit": 365,
 }
+
+# ---------------------------------------------------------------------------
+# V2 fleet parquet expansion
+# ---------------------------------------------------------------------------
+def _expand_v2_fleet_parquet(df: pd.DataFrame) -> pd.DataFrame:
+    """Expand per-note fleet format (result_json with entities[]) to entity-level rows.
+
+    The GPU fleet delivers one row per clinical note with a ``result_json`` field
+    containing ``{"entities": [...]}```.  Script 103 needs one row per *entity* with
+    ``entity_type``, ``entity_value_norm``, ``entity_date``, etc. populated so that
+    the episode linker can match each entity to a surgery/pathology episode.
+
+    If the dataframe already has ``entity_type`` (v1 canonical format) it is returned
+    unchanged.  Empty or un-parseable rows are silently skipped; notes with zero
+    entities contribute nothing to the output.
+    """
+    if "entity_type" in df.columns:
+        return df
+    if "result_json" not in df.columns:
+        return df
+
+    out_rows: list[dict] = []
+    for _, row in df.iterrows():
+        raw = row.get("result_json")
+        if raw is None or (isinstance(raw, float) and pd.isna(raw)):
+            continue
+        try:
+            payload = json.loads(str(raw))
+        except (json.JSONDecodeError, TypeError):
+            continue
+        entities = payload.get("entities") if isinstance(payload, dict) else None
+        if not isinstance(entities, list):
+            continue
+        for ent in entities:
+            if not isinstance(ent, dict):
+                continue
+            ev = ent.get("entity_value") or ent.get("entity_value_raw") or ""
+            conf = ent.get("confidence")
+            try:
+                conf_f = float(conf) if conf is not None and str(conf) != "" else None
+            except (TypeError, ValueError):
+                conf_f = None
+            out_rows.append(
+                {
+                    "research_id": row.get("research_id"),
+                    "note_row_id": row.get("note_row_id"),
+                    "note_type": row.get("note_type"),
+                    "note_date": row.get("note_date") or row.get("linkage_date"),
+                    "note_index": row.get("note_index"),
+                    "source_sheet": row.get("source_sheet"),
+                    "source_column": row.get("source_column"),
+                    "entity_type": ent.get("entity_type"),
+                    "entity_value_raw": ev,
+                    "entity_value_norm": ev,
+                    "present_or_negated": ent.get("present_or_negated") or "present",
+                    "confidence": conf_f,
+                    "confidence_score": conf_f,
+                    "evidence_span": ent.get("evidence_text") or ent.get("evidence_span") or "",
+                    "entity_date": ent.get("entity_date"),
+                    "extraction_method": "llm_v2_fleet",
+                    "extracted_at": row.get("extracted_at"),
+                    "date_confidence": ent.get("date_confidence"),
+                    "llm_model": row.get("llm_model"),
+                    "preprocessed_at_utc": row.get("preprocessed_at_utc"),
+                }
+            )
+
+    if not out_rows:
+        return pd.DataFrame()
+    expanded = pd.DataFrame(out_rows)
+    print(f"    expanded fleet format: {len(df):,} note rows → {len(expanded):,} entity rows")
+    return expanded
+
 
 # ---------------------------------------------------------------------------
 # Registry-driven domain map
@@ -497,6 +571,10 @@ def main() -> None:
             print(f"  skip (no parquet): {stem}")
             continue
         df = pd.read_parquet(pq).copy()
+        df = _expand_v2_fleet_parquet(df)  # expand fleet JSONL rows if needed
+        if df.empty:
+            print(f"  skip (no entities after expansion): {stem}")
+            continue
         df["fact_domain"] = domain
         df["linkage_anchor_family"] = family
         frames.append(df)

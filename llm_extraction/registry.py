@@ -145,12 +145,27 @@ class Registry:
             out.setdefault(spec.linkage_anchor_family, []).append(name)
         return out
 
-    def generate_entity_summary_sql(self) -> str:
-        """Build CREATE VIEW notes_entity_summary from all canonical domains."""
+    def generate_entity_summary_sql(
+        self,
+        loaded_tables: set[str] | None = None,
+    ) -> str:
+        """Build CREATE VIEW notes_entity_summary from canonical domains.
+
+        Parameters
+        ----------
+        loaded_tables:
+            When provided, only domains whose ``parquet_stem`` is present in
+            this set are included in the UNION ALL.  Pass the set of table
+            names successfully loaded into DuckDB so the generated SQL does
+            not reference tables that do not yet exist.  When ``None`` (the
+            default), all canonical domains are included.
+        """
         unions: list[str] = []
         count_cases: list[str] = []
         for name, spec in self.canonical_domains.items():
             tbl = spec.parquet_stem
+            if loaded_tables is not None and tbl not in loaded_tables:
+                continue
             unions.append(
                 f"    SELECT research_id, '{name}' AS domain, "
                 f"entity_value_norm, present_or_negated\n"
@@ -159,6 +174,12 @@ class Registry:
             count_cases.append(
                 f"    SUM(CASE WHEN domain = '{name}' THEN 1 ELSE 0 END) "
                 f"AS n_{name}"
+            )
+        if not unions:
+            return (
+                "CREATE OR REPLACE VIEW notes_entity_summary AS "
+                "SELECT NULL::VARCHAR AS research_id, 0 AS n_entities_total, "
+                "0 AS n_present, 0 AS n_negated WHERE FALSE"
             )
         union_block = "\n    UNION ALL\n".join(unions)
         count_block = ",\n".join(count_cases)

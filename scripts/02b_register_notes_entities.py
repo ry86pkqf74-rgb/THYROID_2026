@@ -30,17 +30,20 @@ from utils.md_connect import connect_md_or_file  # noqa: E402
 # Registry-driven table lists
 # ---------------------------------------------------------------------------
 _REGISTRY_LOADED = False
-_ENTITY_SUMMARY_SQL_OVERRIDE: str | None = None
+_REGISTRY = None  # kept for runtime use in main()
 
 try:
     from llm_extraction.registry import load_registry as _load_registry
 
     _reg = _load_registry()
+    _REGISTRY = _reg
     ENTITY_TABLES: list[str] = ["clinical_notes_long"] + _reg.all_parquet_stems()
     CANONICAL_AND_RUN_TABLES: list[str] = [
         v.duckdb_table for v in _reg.canonical_outputs.values()
     ]
-    _ENTITY_SUMMARY_SQL_OVERRIDE = _reg.generate_entity_summary_sql()
+    # NOTE: generate_entity_summary_sql() is called inside main() once we know
+    # which tables were actually loaded — so the UNION ALL only references
+    # tables that exist in the target DuckDB session.
     _REGISTRY_LOADED = True
 except Exception:
     ENTITY_TABLES = [
@@ -102,7 +105,9 @@ FROM all_entities
 GROUP BY research_id
 """
 
-ENTITY_SUMMARY_SQL = _ENTITY_SUMMARY_SQL_OVERRIDE or _FALLBACK_ENTITY_SUMMARY_SQL
+# ENTITY_SUMMARY_SQL is generated at runtime inside main() once loaded tables
+# are known.  The fallback below is used only when _REGISTRY is unavailable.
+_ENTITY_SUMMARY_SQL_STATIC_FALLBACK = _FALLBACK_ENTITY_SUMMARY_SQL
 
 ADVANCED_V2_EXTENDED_SQL = """
 CREATE OR REPLACE VIEW advanced_features_v2 AS
@@ -199,6 +204,10 @@ def main() -> None:
 
     con = connect_md_or_file(DB_PATH, md=args.md)
 
+    # Track which entity tables were successfully loaded so we can build a
+    # summary SQL that only references tables that exist in this session.
+    loaded_entity_tables: set[str] = set()
+
     for tbl in ENTITY_TABLES:
         pq = PROCESSED / f"{tbl}.parquet"
         if not pq.exists():
@@ -209,6 +218,7 @@ def main() -> None:
         )
         cnt = con.execute(f"SELECT COUNT(*) FROM {tbl}").fetchone()[0]
         print(f"  Loaded {tbl:40s}  {cnt:>8,} rows")
+        loaded_entity_tables.add(tbl)
 
     for tbl in CANONICAL_AND_RUN_TABLES:
         pq = PROCESSED / f"{tbl}.parquet"
@@ -221,10 +231,39 @@ def main() -> None:
         cnt = con.execute(f"SELECT COUNT(*) FROM {tbl}").fetchone()[0]
         print(f"  Loaded {tbl:40s}  {cnt:>8,} rows")
 
+    # Generate summary SQL scoped to tables that were actually loaded AND have
+    # canonical entity columns (entity_value_norm, present_or_negated).  V2
+    # fleet-format parquets are loaded into DuckDB in their raw note-level
+    # format (result_json column) and do NOT have entity_value_norm; only v1
+    # tables and expanded v2 tables qualify for the summary view.
+    canonical_entity_tables: set[str] = set()
+    for tbl in loaded_entity_tables:
+        try:
+            cols = [
+                r[1] for r in
+                con.execute(f"PRAGMA table_info('{tbl}')").fetchall()
+            ]
+            if "entity_value_norm" in cols and "present_or_negated" in cols:
+                canonical_entity_tables.add(tbl)
+        except Exception:
+            pass
+
+    if _REGISTRY is not None:
+        entity_summary_sql = _REGISTRY.generate_entity_summary_sql(
+            loaded_tables=canonical_entity_tables
+        )
+        n_included = len([
+            1 for name, spec in _REGISTRY.canonical_domains.items()
+            if spec.parquet_stem in canonical_entity_tables
+        ])
+        print(f"\n  notes_entity_summary: {n_included}/{len(_REGISTRY.canonical_domains)} domains included (entity-schema tables only)")
+    else:
+        entity_summary_sql = _ENTITY_SUMMARY_SQL_STATIC_FALLBACK
+
     try:
-        con.execute(ENTITY_SUMMARY_SQL)
+        con.execute(entity_summary_sql)
         cnt = con.execute("SELECT COUNT(*) FROM notes_entity_summary").fetchone()[0]
-        print(f"\n  View notes_entity_summary: {cnt:,} patients with entities")
+        print(f"  View notes_entity_summary: {cnt:,} patients with entities")
     except Exception as exc:
         print(f"  notes_entity_summary FAILED: {exc}")
 

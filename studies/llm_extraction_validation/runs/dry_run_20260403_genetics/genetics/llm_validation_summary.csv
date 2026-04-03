@@ -1,0 +1,3 @@
+comparison_domain,algorithm_comparison_status,llm_rows,unique_patients,evidence_spans_found,source_note_links,structured_matches,baseline_matches,fill_candidates,review_conflicts
+genetics,concordant_existing_extraction_only,1668,580,1668,1668,0,1668,0,0
+genetics,existing_missing_fill_candidate,70,44,70,70,0,0,70,0

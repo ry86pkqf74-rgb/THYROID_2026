@@ -1,0 +1,44 @@
+{
+  "generated_at": "2026-04-03T12:50:12.421953+00:00",
+  "input_path": "processed/note_entities_llm_tg_kinetics.parquet",
+  "source_notes_path": "processed/clinical_notes_long.parquet",
+  "db_path": "/Users/ros/THyroid 2026/THYROID_2026/thyroid_master.duckdb",
+  "workspace_dir": "studies/llm_extraction_validation/runs/dry_run_20260403_tg_kinetics/tg_kinetics",
+  "review_csv_merged": null,
+  "gold_require_manual": false,
+  "trust_fill_candidate_auto": false,
+  "llm_rows": 173,
+  "lineage_rows": 173,
+  "side_by_side_rows": 173,
+  "gold_rows": 0,
+  "manual_review_queue_rows": 0,
+  "unique_patients": 61,
+  "domains": [
+    "unmapped"
+  ],
+  "algorithm_status_counts": [
+    {
+      "comparison_domain": "unmapped",
+      "algorithm_comparison_status": "source_limited",
+      "llm_rows": 173,
+      "unique_patients": 61,
+      "evidence_spans_found": 173,
+      "source_note_links": 173,
+      "structured_matches": 0,
+      "baseline_matches": 0,
+      "fill_candidates": 0,
+      "review_conflicts": 0
+    }
+  ],
+  "verification_status_counts": [
+    {
+      "comparison_domain": "unmapped",
+      "verification_status": "source_limited",
+      "llm_rows": 173,
+      "unique_patients": 61,
+      "evidence_spans_found": 173,
+      "verified_auto": 173,
+      "verified_manual": 0
+    }
+  ]
+}
