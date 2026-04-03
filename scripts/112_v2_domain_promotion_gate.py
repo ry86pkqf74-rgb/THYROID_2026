@@ -656,7 +656,12 @@ def run_promotion_gate(
         for d in missing_canonical:
             prompt_paths = registry_domains.get(d, {}).get("prompts", [])
             has_prompt = any(
-                (ROOT / p.get("repo_path", "")).exists() for p in prompt_paths
+                # repo_path values are relative to llm_extraction/ (per PromptSpec.absolute_path
+                # in llm_extraction/registry.py which prepends _REPO_ROOT/"llm_extraction").
+                # Also accept paths relative to ROOT directly for any future relocations.
+                (ROOT / "llm_extraction" / p.get("repo_path", "")).exists()
+                or (ROOT / p.get("repo_path", "")).exists()
+                for p in prompt_paths
             ) if prompt_paths else False
             if has_prompt:
                 truly_missing.append(d)
