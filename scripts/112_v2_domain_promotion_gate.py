@@ -45,7 +45,21 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
+# Load .env.motherduck so MOTHERDUCK_TOKEN is available even in fresh shells
+_env_md = ROOT / ".env.motherduck"
+if _env_md.exists():
+    try:
+        from dotenv import load_dotenv
+        load_dotenv(_env_md, override=False)
+    except ImportError:
+        for line in _env_md.read_text().splitlines():
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, _, v = line.partition("=")
+                os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
 from llm_extraction.vocab import ENTITY_SCHEMA_COLUMNS
+from motherduck_client import get_token as _md_get_token
 from utils.text_helpers import save_parquet
 
 LOG = logging.getLogger("promotion_gate")
@@ -280,7 +294,12 @@ def validate_domain_parquet(
     dedupe_key: list[str],
     qa_tier: str,
 ) -> dict:
-    """Run schema, duplicate, provenance, and date checks on one parquet."""
+    """Run schema, duplicate, provenance, and date checks on one parquet.
+
+    Fleet parquets are expanded via expand_v2_combined_json_if_needed()
+    before schema comparison so the check reflects the post-ETL column set,
+    not the raw fleet JSON format.
+    """
     try:
         df = pd.read_parquet(parquet_path)
     except Exception as exc:
@@ -304,21 +323,31 @@ def validate_domain_parquet(
             "top_entity_types": "",
         }
 
+    # Expand fleet JSON format before validation so schema check sees entity-level columns
+    df = expand_v2_combined_json_if_needed(df)
+
     total = len(df)
     unique_patients = int(df["research_id"].nunique()) if "research_id" in df.columns else 0
     unique_note_rows = int(df["note_row_id"].nunique()) if "note_row_id" in df.columns else 0
 
-    # Schema check
+    # Schema check against post-expansion columns
     schema_set = set(ENTITY_SCHEMA_COLUMNS)
     col_set = set(df.columns)
     missing = sorted(schema_set - col_set)
     extra = sorted(col_set - schema_set - set(PROVENANCE_COLS))
     schema_ok = len(missing) == 0
 
-    # Duplicate detection
+    # Duplicate detection — stringify any unhashable (dict/list) columns first
     available_dedupe = [c for c in dedupe_key if c in df.columns]
     if available_dedupe and total > 0:
-        dup_count = int(total - df.drop_duplicates(subset=available_dedupe).shape[0])
+        try:
+            dup_count = int(total - df.drop_duplicates(subset=available_dedupe).shape[0])
+        except TypeError:
+            df_dup = df[available_dedupe].copy()
+            for c in available_dedupe:
+                if df_dup[c].apply(lambda x: isinstance(x, (dict, list))).any():
+                    df_dup[c] = df_dup[c].apply(lambda x: json.dumps(x, sort_keys=True, default=str) if isinstance(x, (dict, list)) else x)
+            dup_count = int(total - df_dup.drop_duplicates().shape[0])
         dup_rate = dup_count / total
     else:
         dup_count = 0
@@ -371,6 +400,8 @@ def run_per_domain_validation(
     results = []
     for _, row in inventory_df.iterrows():
         if not row["parquet_exists"] or row["is_sub_prompt"]:
+            continue
+        if row["domain_name"] == "UNCLAIMED":
             continue
         domain_name = row["domain_name"]
         path = Path(row["parquet_path"])
@@ -579,17 +610,20 @@ def run_promotion_gate(
             "detail": detail,
         })
 
-    # G1: Domain completeness — every canonical_output=True domain must have its parquet
+    # G1: Domain completeness — every v2 canonical_output=True domain must have its parquet.
+    # v1 domains already exist in DuckDB as note_entities_* tables and are not expected
+    # in the v2_parquets directory.
     missing_canonical = inventory_df[
         (inventory_df["canonical_output"] == True)
         & (inventory_df["parquet_exists"] == False)
+        & (inventory_df["tier"] == "v2")
         & (~inventory_df["domain_name"].isin(["UNCLAIMED"]))
         & (~inventory_df["is_sub_prompt"])
     ]["domain_name"].tolist()
     gate(
-        "G1", "Domain completeness",
+        "G1", "Domain completeness (v2 only)",
         len(missing_canonical) == 0,
-        f"Missing canonical parquets: {missing_canonical}" if missing_canonical else "All canonical-output domains have parquets",
+        f"Missing v2 canonical parquets: {missing_canonical}" if missing_canonical else "All v2 canonical-output domains have parquets",
     )
 
     # G2: Schema compliance — no domain fails ENTITY_SCHEMA_COLUMNS check
@@ -639,22 +673,24 @@ def run_promotion_gate(
             f"Domains with >5% duplicates: {high_dup}" if high_dup else f"All domains below {DUPLICATE_RATE_THRESHOLD:.0%} duplicate threshold",
         )
 
-    # G5: Date coverage — no critical-tier domain has 0% entity_date fill
+    # G5: Date coverage — no critical-tier domain has 0% date fill in BOTH
+    # entity_date AND note_date.  Fleet parquets typically populate note_date
+    # (100% fill) while entity_date only appears after downstream enrichment.
     if domain_validation_df.empty:
         gate("G5", "Date coverage (critical domains)", False, "No domain validation data")
     else:
-        # Build qa_tier map
         qa_map: dict[str, str] = {}
         if not inventory_df.empty:
             qa_map = dict(zip(inventory_df["domain_name"], inventory_df["qa_tier"]))
         zero_date_critical = domain_validation_df[
             (domain_validation_df["entity_date_fill_pct"] == 0.0)
+            & (domain_validation_df["note_date_fill_pct"] == 0.0)
             & (domain_validation_df["domain_name"].map(lambda d: qa_map.get(d, "")) == "critical")
         ]["domain_name"].tolist()
         gate(
             "G5", "Date coverage (critical domains)",
             len(zero_date_critical) == 0,
-            f"Critical domains with 0% entity_date fill: {zero_date_critical}" if zero_date_critical else "All critical domains have entity_date coverage",
+            f"Critical domains with 0% date fill (entity_date and note_date both zero): {zero_date_critical}" if zero_date_critical else "All critical domains have date coverage (entity_date or note_date)",
         )
 
     # G6: Concordance floor — critical domains must have ≥30% concordance among mappable rows
@@ -723,9 +759,9 @@ def run_promotion_gate(
 def check_md_parity(
     inventory_df: pd.DataFrame,
 ) -> list[dict] | None:
-    token = os.environ.get("MOTHERDUCK_TOKEN")
+    token = _md_get_token()
     if not token:
-        LOG.warning("MOTHERDUCK_TOKEN not set; skipping G8 parity check")
+        LOG.warning("No MotherDuck token found (env, .env.motherduck, secrets.toml); skipping G8 parity check")
         return None
     db_name = (os.environ.get("MOTHERDUCK_DATABASE") or "Thyroid 2026").strip()
     uri = f"md:{db_name}?motherduck_token={token}"
