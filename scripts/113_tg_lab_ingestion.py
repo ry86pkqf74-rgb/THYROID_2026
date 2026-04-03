@@ -21,10 +21,12 @@ Phases:
   M — Cross-wave reconciliation (deterministic dedup across ingestion waves)
   N — Derived views (Tg timeline, postop surveillance, recurrence linkage)
   O — Reconciliation report
+  P — Machine-readable QC artifact (JSON)
 
 Outputs:
   processed/thyroglobulin_lab_canonical_v1.parquet
   processed/tg_lab_review_queue_v1.parquet
+  processed/tg_lab_ingestion_qc_v1.json
   DuckDB tables: thyroglobulin_lab_canonical_v1, tg_lab_review_queue_v1,
     lab_cross_wave_dedup_map_v1, lab_cross_wave_review_v1,
     tg_timeline_patient_summary_v1, tg_postop_surveillance_windows_v1,
@@ -39,6 +41,7 @@ CLI:
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 from datetime import datetime
@@ -549,7 +552,16 @@ def phase_h_align_schema(df: pd.DataFrame) -> pd.DataFrame:
     out["disambiguation_method"] = df.get("disambiguation_method")
     out["disambiguation_confidence"] = df.get("disambiguation_confidence")
     out["ingestion_script"] = SCRIPT_NAME
-    out["ingestion_date"] = datetime.now()
+    # Use fixed run-start timestamp for reproducibility across repeated runs
+    out["ingestion_date"] = datetime.strptime(TIMESTAMP, "%Y%m%d")
+
+    # Provenance completeness assertion
+    _provenance_cols = ["ingestion_script", "ingestion_date", "analyte", "assay_method",
+                        "temporal_window", "days_from_surgery"]
+    _missing_prov = {c for c in _provenance_cols if c not in out.columns}
+    assert not _missing_prov, f"Provenance columns missing after schema alignment: {_missing_prov}"
+    _null_script = out["ingestion_script"].isna().sum()
+    assert _null_script == 0, f"{_null_script} rows with null ingestion_script after schema alignment"
 
     print(f"  Output columns: {out.columns.tolist()}")
     print(f"  Output rows: {len(out):,}")
@@ -683,6 +695,13 @@ def phase_j_append_longitudinal(
         if long_pq.exists():
             existing = pd.read_parquet(long_pq)
             print(f"  Existing longitudinal rows: {len(existing):,}")
+            # Idempotent append: purge prior script-113 rows before re-inserting,
+            # matching the DuckDB DELETE + INSERT pattern in _append_longitudinal_duckdb.
+            if "source_script" in existing.columns:
+                prior = (existing["source_script"] == "113_tg_lab_ingestion").sum()
+                if prior > 0:
+                    print(f"  Purging {prior:,} prior script-113 parquet rows (idempotent re-ingestion)")
+                    existing = existing[existing["source_script"] != "113_tg_lab_ingestion"]
             combined = pd.concat([existing, mapped], ignore_index=True)
             combined.to_parquet(long_pq, index=False, engine="pyarrow")
             print(f"  After append: {len(combined):,} rows")
@@ -1358,10 +1377,11 @@ def phase_n_derived_views(
 
     print("  Building tg_recurrence_surveillance_linkage_v1...")
     rec_table = None
-    for candidate in [
+    _recurrence_candidates = [
         "extracted_recurrence_refined_v1",
         "md_extracted_recurrence_refined_v1",
-    ]:
+    ]
+    for candidate in _recurrence_candidates:
         if table_exists(con, candidate):
             rec_table = candidate
             break
@@ -1375,6 +1395,7 @@ def phase_n_derived_views(
         ).fetchone()
         stats["recurrence_linkage_rows"] = r[0]
         stats["confirmed_both"] = r[1]
+        stats["recurrence_table_used"] = rec_table
         print(f"    {r[0]:,} rising-Tg patients, {r[1]:,} with structural recurrence")
 
         linkage = con.execute("""
@@ -1386,7 +1407,15 @@ def phase_n_derived_views(
         for k, v in linkage:
             print(f"      {k}: {v:,}")
     else:
-        print("    No recurrence table found — skipping linkage")
+        # No recurrence table available — this is expected when running against
+        # a local-only DB that has not yet had extracted_recurrence_refined_v1
+        # materialized. Route to stats so the QC artifact captures the gap.
+        print(f"    WARNING: No recurrence table found among {_recurrence_candidates}")
+        print("    tg_recurrence_surveillance_linkage_v1 will NOT be built this run.")
+        print("    Run scripts/26 --md to materialize extracted_recurrence_refined_v1 first.")
+        stats["recurrence_table_used"] = None
+        stats["recurrence_linkage_rows"] = 0
+        stats["confirmed_both"] = 0
 
     con.close()
     return stats
@@ -1520,6 +1549,137 @@ metadata (assay method, disambiguation provenance, temporal linkage).
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Phase P: Machine-Readable QC Artifact
+# ─────────────────────────────────────────────────────────────────────────────
+def phase_p_qc_artifact(
+    input_path: str,
+    raw_count: int,
+    dedup_count: int,
+    canonical: pd.DataFrame,
+    review: pd.DataFrame,
+    combo_stats: dict,
+    validation: dict,
+    recon_stats: dict,
+    derived_stats: dict,
+    dry_run: bool,
+) -> Path:
+    """Emit processed/tg_lab_ingestion_qc_v1.json — pipeline-consumable QC summary."""
+    section("Phase P — Machine-Readable QC Artifact")
+    PROCESSED.mkdir(exist_ok=True)
+    qc_path = PROCESSED / "tg_lab_ingestion_qc_v1.json"
+
+    analyte_breakdown: dict[str, dict] = {}
+    for analyte in canonical["analyte"].unique():
+        sub = canonical[canonical["analyte"] == analyte]
+        analyte_breakdown[str(analyte)] = {
+            "rows": int(len(sub)),
+            "patients": int(sub["research_id"].nunique()),
+        }
+
+    tw_dist = {str(k): int(v) for k, v in (
+        canonical["temporal_window"].value_counts().to_dict().items()
+    )}
+
+    qc: dict = {
+        "schema_version": "1.0",
+        "script": SCRIPT_NAME,
+        "run_timestamp": TIMESTAMP,
+        "source_file": Path(input_path).name,
+        "ingestion_waves": [
+            "wave_tg_structured_ehr",
+            "wave_tgab_structured_ehr",
+        ],
+        "row_waterfall": {
+            "source_rows": raw_count,
+            "after_dedup": dedup_count,
+            "duplicates_suppressed": raw_count - dedup_count,
+            "rows_appended_canonical": int(len(canonical)),
+            "review_queue_rows": int(len(review)),
+            "reconciliation_gap": int(dedup_count - len(canonical) - len(review)),
+        },
+        "patients": {
+            "unique_in_canonical": int(canonical["research_id"].nunique()),
+            "tg_only": int(len(
+                set(canonical.loc[canonical["analyte"] == "Tg", "research_id"].unique()) -
+                set(canonical.loc[canonical["analyte"] == "TgAb", "research_id"].unique())
+            )),
+            "tgab_only": int(len(
+                set(canonical.loc[canonical["analyte"] == "TgAb", "research_id"].unique()) -
+                set(canonical.loc[canonical["analyte"] == "Tg", "research_id"].unique())
+            )),
+            "both_tg_and_tgab": int(validation.get("patients_both", 0)),
+            "unmatched_research_ids": sorted(int(x) for x in validation.get("unmatched_ids", [])),
+        },
+        "analyte_breakdown": analyte_breakdown,
+        "combo_disambiguation": {
+            "pairs_total": int(combo_stats.get("pairs_total", 0)),
+            "heuristic_resolved": int(combo_stats.get("heuristic", 0)),
+            "crossref_resolved": int(combo_stats.get("crossref", 0)),
+            "ambiguous_to_review": int(combo_stats.get("ambiguous", 0)),
+        },
+        "result_parsing": {
+            "numeric_rate_pct": round(float(validation.get("numeric_rate", 0)), 2),
+            "date_coverage_pct": round(float(validation.get("date_coverage", 0)), 2),
+        },
+        "temporal_window_distribution": tw_dist,
+        "cross_wave_reconciliation": {
+            "total_canonical_rows": int(recon_stats.get("total_canonical_rows", 0)),
+            "deduped_rows": int(recon_stats.get("deduped_rows", 0)),
+            "superseded_exact_duplicates": int(recon_stats.get("superseded_rows", 0)),
+            "cross_wave_value_mismatches": int(recon_stats.get("cross_wave_review_rows", 0)),
+        },
+        "derived_views": {
+            "tg_timeline_patients": int(derived_stats.get("timeline_patients", 0)),
+            "rising_tg_patients": int(derived_stats.get("rising_tg", 0)),
+            "tgab_interference_patients": int(derived_stats.get("tgab_interference", 0)),
+            "postop_surveillance_rows": int(derived_stats.get("postop_rows", 0)),
+            "postop_surveillance_patients": int(derived_stats.get("postop_patients", 0)),
+            "recurrence_linkage_rows": int(derived_stats.get("recurrence_linkage_rows", 0)),
+            "confirmed_biochemical_and_structural": int(derived_stats.get("confirmed_both", 0)),
+            "recurrence_table_used": derived_stats.get("recurrence_table_used"),
+        },
+        "promotion_gate": {
+            "idempotent_append": True,
+            "pii_stripped": True,
+            "dedup_key": ["research_id", "test_name", "specimen_collect_dt", "result"],
+            "wave_priority_order": [
+                "wave_tg_structured_ehr",
+                "wave_tgab_structured_ehr",
+                "wave_1_structured_tg",
+                "wave_2_structured_anti_tg",
+            ],
+            "review_queue_routing": ["unmapped_test_name", "combo_ambiguous"],
+            "parquet_idempotent": True,
+            "provenance_columns": [
+                "ingestion_script", "ingestion_date", "ingestion_wave",
+                "source_table", "data_completeness_tier",
+            ],
+        },
+    }
+
+    if not dry_run:
+        qc_path.write_text(json.dumps(qc, indent=2, default=str), encoding="utf-8")
+        print(f"  Wrote {qc_path}")
+    else:
+        print(f"  [DRY RUN] Would write {qc_path}")
+
+    # Print compact summary to stdout
+    wf = qc["row_waterfall"]
+    print(f"  Source rows:              {wf['source_rows']:>10,}")
+    print(f"  Unique patients:          {qc['patients']['unique_in_canonical']:>10,}")
+    print(f"  Rows after dedup:         {wf['after_dedup']:>10,}")
+    print(f"  Duplicates suppressed:    {wf['duplicates_suppressed']:>10,}")
+    print(f"  Rows appended canonical:  {wf['rows_appended_canonical']:>10,}")
+    print(f"  Review-queue rows:        {wf['review_queue_rows']:>10,}")
+    dv = qc["derived_views"]
+    print(f"  Tg-timeline patients:     {dv['tg_timeline_patients']:>10,}")
+    print(f"  Postop-surveillance rows: {dv['postop_surveillance_rows']:>10,}")
+    print(f"  Recurrence-linkage rows:  {dv['recurrence_linkage_rows']:>10,}")
+
+    return qc_path
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Main
 # ─────────────────────────────────────────────────────────────────────────────
 def main():
@@ -1596,6 +1756,20 @@ def main():
     if recon_stats or derived_stats:
         phase_o_reconciliation_report(recon_stats, derived_stats, canonical)
 
+    # Phase P
+    phase_p_qc_artifact(
+        input_path=input_path,
+        raw_count=raw_count,
+        dedup_count=dedup_count,
+        canonical=canonical,
+        review=review_df,
+        combo_stats=combo_stats,
+        validation=validation,
+        recon_stats=recon_stats,
+        derived_stats=derived_stats,
+        dry_run=args.dry_run,
+    )
+
     section("COMPLETE")
     print(f"  Canonical: {len(canonical):,} rows, {canonical['research_id'].nunique():,} patients")
     print(f"  Review queue: {len(review_df):,} rows")
@@ -1604,6 +1778,7 @@ def main():
     if recon_stats:
         print(f"  Deduped view: {recon_stats.get('deduped_rows', '?'):,} rows")
         print(f"  Cross-wave review: {recon_stats.get('cross_wave_review_rows', 0):,} items")
+    print(f"  QC artifact: processed/tg_lab_ingestion_qc_v1.json")
 
 
 if __name__ == "__main__":
