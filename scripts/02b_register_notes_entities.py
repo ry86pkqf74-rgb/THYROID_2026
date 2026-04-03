@@ -31,23 +31,35 @@ DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 from utils.md_connect import connect_md_or_file  # noqa: E402
 
-ENTITY_TABLES = [
-    "clinical_notes_long",
-    "note_entities_staging",
-    "note_entities_genetics",
-    "note_entities_procedures",
-    "note_entities_operative_detail",
-    "note_entities_complications",
-    "note_entities_medications",
-    "note_entities_problem_list",
-    "note_entities_llm",
-]
+# Registry-driven table lists (replaces hardcoded lists)
+try:
+    from llm_extraction.registry import load_registry as _load_registry
 
-CANONICAL_AND_RUN_TABLES = [
-    "canonical_extracted_fact_long_v1",
-    "canonical_fact_quarantine_v1",
-    "note_extraction_runs",
-]
+    _reg = _load_registry()
+    ENTITY_TABLES = ["clinical_notes_long"] + _reg.all_parquet_stems()
+    _CANONICAL_KEYS = [
+        k for k, v in _reg.canonical_outputs.items()
+    ]
+    CANONICAL_AND_RUN_TABLES = [
+        v.duckdb_table for v in _reg.canonical_outputs.values()
+    ]
+except Exception:
+    ENTITY_TABLES = [
+        "clinical_notes_long",
+        "note_entities_staging",
+        "note_entities_genetics",
+        "note_entities_procedures",
+        "note_entities_operative_detail",
+        "note_entities_complications",
+        "note_entities_medications",
+        "note_entities_problem_list",
+        "note_entities_llm",
+    ]
+    CANONICAL_AND_RUN_TABLES = [
+        "canonical_extracted_fact_long_v1",
+        "canonical_fact_quarantine_v1",
+        "note_extraction_runs",
+    ]
 
 ENTITY_SUMMARY_SQL = """
 CREATE OR REPLACE VIEW notes_entity_summary AS

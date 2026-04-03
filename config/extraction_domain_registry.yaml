@@ -1,69 +1,334 @@
 # Machine-readable map: extraction domain → Parquet stem → prompt / schema version.
 # Primary pipeline: llm_extraction/ (regex + LLM). Expanded prompts: llm_extraction/prompts/.
-schema_version: "entity_schema_v2_2026-04-01"
+#
+# This file is the SINGLE SOURCE OF TRUTH for the extraction domain inventory.
+# All downstream consumers (run_extraction, 02b_register, 09b_fabric, 103_fact_lineage)
+# read from this registry rather than maintaining hardcoded domain lists.
+schema_version: "entity_schema_v2_2026-04-03"
 
+# ──────────────────────────────────────────────────────────────────────────────
+# v1 domains: established, with regex extractors and existing note_entities_* tables.
+# ──────────────────────────────────────────────────────────────────────────────
 domains:
   staging:
     parquet_stem: note_entities_staging
-    extractors: [regex]
-    prompts: []
+    tier: v1
+    extractors: [regex, llm]
+    prompts:
+      - repo_path: prompts/staging_extraction_v1.txt
+        scope: staging
+    canonical_output: true
+
   genetics:
     parquet_stem: note_entities_genetics
+    tier: v1
     extractors: [regex, llm]
     prompts:
-      - repo_path: prompts/lab_date_extraction_v1.txt
-        scope: llm_general_notes
+      - repo_path: prompts/genetics_extraction_v1.txt
+        scope: genetics
+      - repo_path: prompts/molecular_thyroseq_afirma_extraction_v1.txt
+        scope: molecular_panel
+    canonical_output: true
+
   procedures:
     parquet_stem: note_entities_procedures
+    tier: v1
     extractors: [regex, llm]
     prompts:
-      - repo_path: prompts/lab_date_extraction_v1.txt
-        scope: llm_general_notes
-      - repo_path: prompts/operative_note_extraction_v1.txt
-        scope: llm_operative_notes
+      - repo_path: prompts/procedures_extraction_v1.txt
+        scope: procedures
+    canonical_output: true
+
   operative_detail:
     parquet_stem: note_entities_operative_detail
+    tier: v1
     extractors: [regex]
     prompts:
-      - repo_path: prompts/operative_note_extraction_v1.txt
+      - repo_path: prompts/operative_details_extraction_v1.txt
         scope: operative_v2_extractor
+      - repo_path: prompts/operative_v2_enrichment_extraction_v1.txt
+        scope: operative_v2_enrichment
+    canonical_output: true
+
   complications:
     parquet_stem: note_entities_complications
+    tier: v1
     extractors: [regex, llm]
     prompts:
-      - repo_path: prompts/lab_date_extraction_v1.txt
-        scope: llm_general_notes
+      - repo_path: prompts/complications_extraction_v1.txt
+        scope: complications
+      - repo_path: prompts/complications_rln_laryngoscopy_extraction_v1.txt
+        scope: complications_rln
+    canonical_output: true
+
   medications:
     parquet_stem: note_entities_medications
+    tier: v1
     extractors: [regex, llm]
     prompts:
-      - repo_path: prompts/lab_date_extraction_v1.txt
-        scope: llm_general_notes
+      - repo_path: prompts/medications_extraction_v1.txt
+        scope: medications
+      - repo_path: prompts/medication_management_extraction_v1.txt
+        scope: medication_management
+    canonical_output: true
+
   problem_list:
     parquet_stem: note_entities_problem_list
+    tier: v1
     extractors: [regex, llm]
     prompts:
-      - repo_path: prompts/lab_date_extraction_v1.txt
-        scope: llm_general_notes
+      - repo_path: prompts/problem_list_extraction_v1.txt
+        scope: problem_list
+    canonical_output: true
+
   llm:
     parquet_stem: note_entities_llm
+    tier: v1_debug
     extractors: [llm]
     prompts:
       - repo_path: prompts/lab_date_extraction_v1.txt
         scope: llm_merged_output
-      - repo_path: prompts/operative_note_extraction_v1.txt
-        scope: llm_operative_notes
+    canonical_output: false
 
+  # ────────────────────────────────────────────────────────────────────────────
+  # v2 domains: new prompt-driven extraction targets.
+  # Each domain writes to its own note_entities_llm_<domain>.parquet.
+  # Canonical output flows through canonical_extracted_fact_long_v2.
+  # ────────────────────────────────────────────────────────────────────────────
+  imaging:
+    parquet_stem: note_entities_llm_imaging
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/imaging_extraction_v1.txt
+        scope: imaging
+    canonical_output: true
+
+  tirads_granular:
+    parquet_stem: note_entities_llm_tirads_granular
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/tirads_granular_extraction_v1.txt
+        scope: tirads_scoring
+    canonical_output: true
+
+  us_nodule_dynamics:
+    parquet_stem: note_entities_llm_us_nodule_dynamics
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/us_nodule_dynamics_extraction_v1.txt
+        scope: us_nodule
+    canonical_output: true
+
+  labs:
+    parquet_stem: note_entities_llm_labs
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/labs_extraction_v1.txt
+        scope: labs
+    canonical_output: true
+
+  tg_kinetics:
+    parquet_stem: note_entities_llm_tg_kinetics
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/tg_kinetics_extraction_v1.txt
+        scope: tg_kinetics
+    canonical_output: true
+
+  pathology:
+    parquet_stem: note_entities_llm_pathology
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/pathology_extraction_v1.txt
+        scope: pathology
+    canonical_output: true
+
+  synoptic_pathology_enrichment:
+    parquet_stem: note_entities_llm_synoptic_pathology_enrichment
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/synoptic_pathology_enrichment_extraction_v1.txt
+        scope: synoptic_pathology
+    canonical_output: true
+
+  rai_detailed:
+    parquet_stem: note_entities_llm_rai_detailed
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/rai_detailed_extraction_v1.txt
+        scope: rai_detail
+    canonical_output: true
+
+  rad_treatment:
+    parquet_stem: note_entities_llm_rad_treatment
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/rad_treatment_extraction_v1.txt
+        scope: rad_treatment
+    canonical_output: true
+
+  parathyroid_detail:
+    parquet_stem: note_entities_llm_parathyroid_detail
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/parathyroid_detail_extraction_v1.txt
+        scope: parathyroid
+      - repo_path: prompts/parathyroid_per_gland_extraction_v1.txt
+        scope: parathyroid_per_gland
+    canonical_output: true
+
+  recurrence:
+    parquet_stem: note_entities_llm_recurrence
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/recurrence_extraction_v1.txt
+        scope: recurrence
+      - repo_path: prompts/recurrence_detailed_extraction_v1.txt
+        scope: recurrence_detailed
+    canonical_output: true
+
+  survival_followup:
+    parquet_stem: note_entities_llm_survival_followup
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/survival_followup_extraction_v1.txt
+        scope: survival_followup
+    canonical_output: true
+
+  cervical_ln_detail:
+    parquet_stem: note_entities_llm_cervical_ln_detail
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/cervical_ln_detail_extraction_v1.txt
+        scope: cervical_ln
+    canonical_output: true
+
+  functional_outcomes:
+    parquet_stem: note_entities_llm_functional_outcomes
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/functional_outcomes_extraction_v1.txt
+        scope: functional_outcomes
+    canonical_output: true
+
+  past_medical_hx:
+    parquet_stem: note_entities_llm_past_medical_hx
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/past_medical_hx_extraction_v1.txt
+        scope: past_medical_hx
+    canonical_output: true
+
+  past_surgical_hx:
+    parquet_stem: note_entities_llm_past_surgical_hx
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/past_surgical_hx_extraction_v1.txt
+        scope: past_surgical_hx
+    canonical_output: true
+
+  presenting_symptoms:
+    parquet_stem: note_entities_llm_presenting_symptoms
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/presenting_symptoms_extraction_v1.txt
+        scope: presenting_symptoms
+    canonical_output: true
+
+  physical_exam:
+    parquet_stem: note_entities_llm_physical_exam
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/physical_exam_extraction_v1.txt
+        scope: physical_exam
+    canonical_output: true
+
+  vascular_invasion:
+    parquet_stem: note_entities_llm_vascular_invasion
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/vascular_invasion_extraction_v1.txt
+        scope: vascular_invasion
+    canonical_output: true
+
+  airway_invasion:
+    parquet_stem: note_entities_llm_airway_invasion
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/airway_invasion_extraction_v1.txt
+        scope: airway_invasion
+    canonical_output: true
+
+  frozen_section_detail:
+    parquet_stem: note_entities_llm_frozen_section_detail
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/frozen_section_detail_extraction_v1.txt
+        scope: frozen_section
+    canonical_output: true
+
+  dynamic_risk_response:
+    parquet_stem: note_entities_llm_dynamic_risk_response
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/dynamic_risk_response_extraction_v1.txt
+        scope: dynamic_risk
+    canonical_output: true
+
+  patient_decision_adherence:
+    parquet_stem: note_entities_llm_patient_decision_adherence
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/patient_decision_adherence_extraction_v1.txt
+        scope: patient_decision
+    canonical_output: true
+
+# ──────────────────────────────────────────────────────────────────────────────
+# LLM extraction pipeline metadata
+# ──────────────────────────────────────────────────────────────────────────────
 llm_extraction:
-  runner: llm_extraction/run_extraction_local.py
+  runner: llm_extraction/run_extraction.py
   prompt_dir: llm_extraction/prompts
-  # Per-domain prompt files follow *_extraction_v1.txt; align ENTITY_SCHEMA_COLUMNS before upload.
+  default_prompt: prompts/lab_date_extraction_v1.txt
+  operative_prompt: prompts/operative_note_extraction_v1.txt
 
+# ──────────────────────────────────────────────────────────────────────────────
+# Canonical outputs — v1 preserved, v2 adds new domains
+# ──────────────────────────────────────────────────────────────────────────────
 canonical_outputs:
-  fact_long_table:
+  fact_long_table_v1:
     duckdb_table: canonical_extracted_fact_long_v1
     parquet_path: processed/canonical_extracted_fact_long_v1.parquet
     materialize_script: scripts/103_fact_lineage_materialize.py
+    domains: v1_only
+  fact_long_table_v2:
+    duckdb_table: canonical_extracted_fact_long_v2
+    parquet_path: processed/canonical_extracted_fact_long_v2.parquet
+    materialize_script: scripts/103_fact_lineage_materialize.py
+    domains: all
   quarantine_table:
     duckdb_table: canonical_fact_quarantine_v1
     parquet_path: processed/canonical_fact_quarantine_v1.parquet

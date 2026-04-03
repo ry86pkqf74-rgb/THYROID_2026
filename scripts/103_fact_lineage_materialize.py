@@ -40,16 +40,27 @@ from utils.text_helpers import save_parquet  # noqa: E402
 DB_PATH = ROOT / "thyroid_master.duckdb"
 PROCESSED = ROOT / "processed"
 
-ENTITY_DOMAIN_MAP: list[tuple[str, str]] = [
-    ("note_entities_staging", "staging"),
-    ("note_entities_genetics", "genetics"),
-    ("note_entities_procedures", "procedures"),
-    ("note_entities_operative_detail", "operative_detail"),
-    ("note_entities_complications", "complications"),
-    ("note_entities_medications", "medications"),
-    ("note_entities_problem_list", "problem_list"),
-    ("note_entities_llm", "llm"),
-]
+# Registry-driven domain map (replaces hardcoded list)
+try:
+    from llm_extraction.registry import load_registry as _load_registry
+
+    _reg = _load_registry()
+    ENTITY_DOMAIN_MAP: list[tuple[str, str]] = [
+        (spec.parquet_stem, name)
+        for name, spec in _reg.domains.items()
+        if spec.canonical_output
+    ]
+except Exception:
+    ENTITY_DOMAIN_MAP = [
+        ("note_entities_staging", "staging"),
+        ("note_entities_genetics", "genetics"),
+        ("note_entities_procedures", "procedures"),
+        ("note_entities_operative_detail", "operative_detail"),
+        ("note_entities_complications", "complications"),
+        ("note_entities_medications", "medications"),
+        ("note_entities_problem_list", "problem_list"),
+        ("note_entities_llm", "llm"),
+    ]
 
 def multi_surgery_research_ids(op: pd.DataFrame | None) -> set[int]:
     if op is None or op.empty or "research_id" not in op.columns:
@@ -276,17 +287,36 @@ def main() -> None:
     clean, quar = split_quarantine(uni, multi_ids)
     print(f"  quarantine split: clean={len(clean):,} quarantined={len(quar):,}")
 
+    # ── Separate v1 and v2 domain rows ──────────────────────────────────────
+    v1_domain_names: set[str] = set()
+    try:
+        v1_domain_names = {name for name, spec in _reg.domains.items() if spec.is_v1}
+    except Exception:
+        v1_domain_names = {
+            "staging", "genetics", "procedures", "operative_detail",
+            "complications", "medications", "problem_list", "llm",
+        }
+
+    clean_v1 = clean[clean["fact_domain"].isin(v1_domain_names)].copy()
+    quar_v1 = quar[quar["fact_domain"].isin(v1_domain_names)].copy()
+
     out_pq = PROCESSED / "canonical_extracted_fact_long_v1.parquet"
     out_q = PROCESSED / "canonical_fact_quarantine_v1.parquet"
+    out_pq_v2 = PROCESSED / "canonical_extracted_fact_long_v2.parquet"
     if args.dry_run:
-        print(f"  dry-run: would write {len(clean):,} rows → {out_pq}")
-        print(f"  dry-run: would write {len(quar):,} rows → {out_q}")
+        print(f"  dry-run: would write {len(clean_v1):,} v1 rows → {out_pq}")
+        print(f"  dry-run: would write {len(quar_v1):,} v1 quarantine → {out_q}")
+        print(f"  dry-run: would write {len(clean):,} v2 rows (all domains) → {out_pq_v2}")
         return
 
+    clean_v1 = _apply_contract_dtypes(clean_v1)
+    quar_v1 = _apply_contract_dtypes(quar_v1)
     clean = _apply_contract_dtypes(clean)
     quar = _apply_contract_dtypes(quar)
-    save_parquet(clean, out_pq)
-    save_parquet(quar, out_q)
+
+    save_parquet(clean_v1, out_pq)
+    save_parquet(quar_v1, out_q)
+    save_parquet(clean, out_pq_v2)
 
     con = connect_md_or_file(DB_PATH, md=args.md)
     con.execute(
@@ -296,6 +326,10 @@ def main() -> None:
     con.execute(
         f"CREATE OR REPLACE TABLE canonical_fact_quarantine_v1 AS "
         f"SELECT * FROM read_parquet('{out_q}')"
+    )
+    con.execute(
+        f"CREATE OR REPLACE TABLE canonical_extracted_fact_long_v2 AS "
+        f"SELECT * FROM read_parquet('{out_pq_v2}')"
     )
     runs_pq = PROCESSED / "note_extraction_runs.parquet"
     if runs_pq.exists():
@@ -308,9 +342,11 @@ def main() -> None:
 
     n = con.execute("SELECT COUNT(*) FROM canonical_extracted_fact_long_v1").fetchone()[0]
     nq = con.execute("SELECT COUNT(*) FROM canonical_fact_quarantine_v1").fetchone()[0]
+    n2 = con.execute("SELECT COUNT(*) FROM canonical_extracted_fact_long_v2").fetchone()[0]
     con.close()
-    print(f"  wrote {out_pq.name}; DuckDB canonical rows: {n:,}")
-    print(f"  wrote {out_q.name}; DuckDB quarantine rows: {nq:,}")
+    print(f"  wrote {out_pq.name}; DuckDB v1 canonical rows: {n:,}")
+    print(f"  wrote {out_q.name}; DuckDB v1 quarantine rows: {nq:,}")
+    print(f"  wrote {out_pq_v2.name}; DuckDB v2 canonical rows: {n2:,}")
     print("=" * 70)
 
 

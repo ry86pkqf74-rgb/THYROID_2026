@@ -562,30 +562,32 @@ def existing_note_entities(
     target_domains: set[str] | None = None,
 ) -> pd.DataFrame:
     rows: list[pd.DataFrame] = []
-    target_domains = target_domains or {
-        "staging",
-        "genetics",
-        "procedures",
-        "operative_detail",
-        "complications",
-        "medications",
-        "problem_list",
-    }
-    tables = []
-    if "staging" in target_domains:
-        tables.append("note_entities_staging")
-    if "genetics" in target_domains:
-        tables.append("note_entities_genetics")
-    if "procedures" in target_domains:
-        tables.append("note_entities_procedures")
-    if "operative_detail" in target_domains:
-        tables.append("note_entities_operative_detail")
-    if "complications" in target_domains:
-        tables.append("note_entities_complications")
-    if "medications" in target_domains:
-        tables.append("note_entities_medications")
-    if "problem_list" in target_domains:
-        tables.append("note_entities_problem_list")
+    # Registry-driven domain→table lookup (falls back to v1 hardcoded set)
+    try:
+        from llm_extraction.registry import load_registry as _load_reg
+
+        _r = _load_reg()
+        _all_domain_names = set(_r.domains.keys())
+        _domain_to_tbl = _r.domain_to_parquet_stem()
+    except Exception:
+        _all_domain_names = {
+            "staging", "genetics", "procedures", "operative_detail",
+            "complications", "medications", "problem_list",
+        }
+        _domain_to_tbl = {
+            "staging": "note_entities_staging",
+            "genetics": "note_entities_genetics",
+            "procedures": "note_entities_procedures",
+            "operative_detail": "note_entities_operative_detail",
+            "complications": "note_entities_complications",
+            "medications": "note_entities_medications",
+            "problem_list": "note_entities_problem_list",
+        }
+    target_domains = target_domains or _all_domain_names
+    tables = [
+        _domain_to_tbl[d] for d in target_domains
+        if d in _domain_to_tbl and d != "llm"
+    ]
 
     for table_name in tables:
         if not table_exists(con, table_name):

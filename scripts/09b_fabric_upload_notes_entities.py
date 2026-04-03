@@ -72,24 +72,32 @@ logging.basicConfig(
 )
 log = logging.getLogger("fabric_upload")
 
-# All entity domains produced by the extraction pipeline
-DOMAIN_TO_FILE = {
-    "staging":           "note_entities_staging",
-    "genetics":          "note_entities_genetics",
-    "procedures":        "note_entities_procedures",
-    "operative_detail":  "note_entities_operative_detail",   # ← added
-    "complications":     "note_entities_complications",
-    "medications":       "note_entities_medications",
-    "problem_list":      "note_entities_problem_list",
-    "llm":               "note_entities_llm",
-}
+# Registry-driven domain→file mapping (replaces hardcoded dict)
+sys.path.insert(0, str(ROOT))
+try:
+    from llm_extraction.registry import load_registry as _load_registry
 
-# Canonical fact long + quarantine + extraction run log (scripts/103 + run_extraction)
-CANONICAL_RELEASE_STEMS: tuple[str, ...] = (
-    "canonical_extracted_fact_long_v1",
-    "canonical_fact_quarantine_v1",
-    "note_extraction_runs",
-)
+    _reg = _load_registry()
+    DOMAIN_TO_FILE: dict[str, str] = _reg.domain_to_parquet_stem()
+    CANONICAL_RELEASE_STEMS: tuple[str, ...] = tuple(
+        v.duckdb_table for v in _reg.canonical_outputs.values()
+    )
+except Exception:
+    DOMAIN_TO_FILE = {
+        "staging":           "note_entities_staging",
+        "genetics":          "note_entities_genetics",
+        "procedures":        "note_entities_procedures",
+        "operative_detail":  "note_entities_operative_detail",
+        "complications":     "note_entities_complications",
+        "medications":       "note_entities_medications",
+        "problem_list":      "note_entities_problem_list",
+        "llm":               "note_entities_llm",
+    }
+    CANONICAL_RELEASE_STEMS = (
+        "canonical_extracted_fact_long_v1",
+        "canonical_fact_quarantine_v1",
+        "note_extraction_runs",
+    )
 
 
 def _credential():

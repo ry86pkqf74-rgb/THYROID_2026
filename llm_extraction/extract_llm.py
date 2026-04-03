@@ -144,8 +144,24 @@ class LLMExtractor(BaseExtractor):
 
     # ── Prompt building ──────────────────────────────────────────────────────
 
-    def _load_system_prompt(self, *, operative: bool = False) -> str:
-        """Load system prompt: operative dictation vs general / lab-aware default."""
+    def _load_system_prompt(
+        self, *, operative: bool = False, domain: str | None = None
+    ) -> str:
+        """Load system prompt: domain-specific → operative → general fallback.
+
+        When *domain* is provided, the registry is consulted for a matching prompt
+        file.  If the file exists it is used; otherwise the operative / general
+        fallback chain runs as before.
+        """
+        if domain:
+            try:
+                from llm_extraction.registry import load_registry
+
+                spec = load_registry().prompt_for_domain(domain)
+                if spec and spec.absolute_path.exists():
+                    return spec.absolute_path.read_text(encoding="utf-8")
+            except Exception:
+                pass
         if operative:
             op_path = PROMPT_DIR / "operative_note_extraction_v1.txt"
             if op_path.exists():
@@ -155,7 +171,19 @@ class LLMExtractor(BaseExtractor):
             return prompt_path.read_text(encoding="utf-8")
         return _DEFAULT_SYSTEM_PROMPT
 
-    def _prompt_version(self, *, operative: bool) -> str:
+    def _prompt_version(self, *, operative: bool, domain: str | None = None) -> str:
+        if domain:
+            try:
+                from llm_extraction.registry import load_registry
+
+                spec = load_registry().prompt_for_domain(domain)
+                if spec and spec.absolute_path.exists():
+                    digest = hashlib.sha256(
+                        spec.absolute_path.read_bytes()
+                    ).hexdigest()[:12]
+                    return f"{spec.repo_path}|{digest}"
+            except Exception:
+                pass
         rel = (
             "operative_note_extraction_v1.txt" if operative else "lab_date_extraction_v1.txt"
         )

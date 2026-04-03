@@ -62,17 +62,23 @@ np.random.seed(42)
 
 PHI_SNIPPET_LEN = 80
 
-# Map extractor class entity_domain -> output parquet stem
-DOMAIN_TO_FILE = {
-    "staging": "note_entities_staging",
-    "genetics": "note_entities_genetics",
-    "procedures": "note_entities_procedures",
-    "operative_detail": "note_entities_operative_detail",
-    "complications": "note_entities_complications",
-    "medications": "note_entities_medications",
-    "problem_list": "note_entities_problem_list",
-    "llm": "note_entities_llm",
-}
+# Registry-driven domain→parquet mapping (replaces hardcoded dict)
+try:
+    from llm_extraction.registry import load_registry as _load_registry
+
+    _reg = _load_registry()
+    DOMAIN_TO_FILE: dict[str, str] = _reg.domain_to_parquet_stem()
+except Exception:
+    DOMAIN_TO_FILE = {
+        "staging": "note_entities_staging",
+        "genetics": "note_entities_genetics",
+        "procedures": "note_entities_procedures",
+        "operative_detail": "note_entities_operative_detail",
+        "complications": "note_entities_complications",
+        "medications": "note_entities_medications",
+        "problem_list": "note_entities_problem_list",
+        "llm": "note_entities_llm",
+    }
 
 
 def _value_or_none(value):
