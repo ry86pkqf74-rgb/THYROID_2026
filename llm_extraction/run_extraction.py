@@ -2,25 +2,22 @@
 """
 run_extraction.py — Run all entity extractors on clinical_notes_long
 
-local DuckDB does not run extraction: it stores tables uploaded from this
-repo (e.g. scripts/09b_local DuckDB_upload_notes_entities.py).
+MotherDuck does not run extraction: it stores tables uploaded from this
+repo (e.g. scripts/09b_motherduck_upload_notes_entities.py).
 
 Loads processed/clinical_notes_long.parquet, applies regex (and optionally
-LLM) extractors, and writes one parquet per entity domain:
+LLM) extractors, and writes one parquet per entity domain.
 
-  processed/note_entities_staging.parquet
-  processed/note_entities_genetics.parquet
-  processed/note_entities_procedures.parquet
-  processed/note_entities_operative_detail.parquet
-  processed/note_entities_complications.parquet
-  processed/note_entities_medications.parquet
-  processed/note_entities_problem_list.parquet
+Registry-driven: domain→parquet mapping is read from
+config/extraction_domain_registry.yaml via llm_extraction.registry.
 
 Usage:
   python llm_extraction/run_extraction.py
       --target medications        # re-run only the medications domain
       --research-ids ids.txt      # re-run only notes for listed research_ids
       --target genetics --research-ids ids.txt  # combined filter
+      --merge-audit               # also write merged note_entities_llm audit artifact
+      --validate-only             # validate registry and exit (no extraction)
 """
 
 from __future__ import annotations
@@ -42,6 +39,7 @@ from llm_extraction.base import BaseExtractor
 from llm_extraction.extract_llm import LLMExtractor
 from llm_extraction.extract_operative_v2 import OperativeDetailExtractor
 from llm_extraction.extract_regex import ALL_REGEX_EXTRACTORS
+from llm_extraction.registry import load_registry, validate_registry
 from llm_extraction.run_telemetry import (
     RunTelemetryContext,
     append_note_extraction_run,
@@ -62,23 +60,23 @@ np.random.seed(42)
 
 PHI_SNIPPET_LEN = 80
 
-# Registry-driven domain→parquet mapping (replaces hardcoded dict)
-try:
-    from llm_extraction.registry import load_registry as _load_registry
+# ---------------------------------------------------------------------------
+# Registry-driven domain→parquet mapping
+# ---------------------------------------------------------------------------
+_registry = load_registry()
+DOMAIN_TO_FILE: dict[str, str] = _registry.domain_to_parquet_stem()
 
-    _reg = _load_registry()
-    DOMAIN_TO_FILE: dict[str, str] = _reg.domain_to_parquet_stem()
-except Exception:
-    DOMAIN_TO_FILE = {
-        "staging": "note_entities_staging",
-        "genetics": "note_entities_genetics",
-        "procedures": "note_entities_procedures",
-        "operative_detail": "note_entities_operative_detail",
-        "complications": "note_entities_complications",
-        "medications": "note_entities_medications",
-        "problem_list": "note_entities_problem_list",
-        "llm": "note_entities_llm",
-    }
+# Legacy fallback kept for import compatibility — identical to registry output.
+_LEGACY_V1_FALLBACK = {
+    "staging": "note_entities_staging",
+    "genetics": "note_entities_genetics",
+    "procedures": "note_entities_procedures",
+    "operative_detail": "note_entities_operative_detail",
+    "complications": "note_entities_complications",
+    "medications": "note_entities_medications",
+    "problem_list": "note_entities_problem_list",
+    "llm": "note_entities_llm",
+}
 
 
 def _value_or_none(value):
@@ -202,19 +200,18 @@ def _merge_into_existing(
     Replaces rows for the given research_ids (or all rows if replace_research_ids
     is None, i.e., full run) and appends any new rows not previously in the file.
     """
-    out_path = PROCESSED / f"{DOMAIN_TO_FILE[domain]}.parquet"
+    file_stem = DOMAIN_TO_FILE.get(domain, f"note_entities_{domain}")
+    out_path = PROCESSED / f"{file_stem}.parquet"
     if not out_path.exists() or replace_research_ids is None:
-        return new_df  # Full run: just return new_df as-is
+        return new_df
 
     existing_df = pd.read_parquet(out_path)
     if "research_id" not in existing_df.columns:
         return new_df
 
-    # Drop rows for the targeted research_ids from the existing parquet
     mask = existing_df["research_id"].astype(int).isin(replace_research_ids)
     kept_existing = existing_df[~mask].copy()
 
-    # Align columns for older parquets missing new provenance fields
     for col in new_df.columns:
         if col not in kept_existing.columns:
             kept_existing[col] = None
@@ -223,6 +220,27 @@ def _merge_into_existing(
             new_df[col] = None
     merged = pd.concat([kept_existing, new_df], ignore_index=True)
     return merged
+
+
+def _validate_and_report(reg=None) -> bool:
+    """Run registry validation and print results. Returns True if clean."""
+    if reg is None:
+        reg = load_registry()
+    issues = validate_registry(reg)
+    if not issues:
+        log.info("  Registry validation: PASS (%d domains, 0 issues)", len(reg.domains))
+        return True
+    for issue in issues:
+        log.warning("  Registry: %s", issue)
+    fatal = [i for i in issues if "Duplicate" in i or "not found" in i]
+    if fatal:
+        log.error("  Registry validation: FAIL (%d fatal issues)", len(fatal))
+        return False
+    log.info(
+        "  Registry validation: PASS with %d warnings (%d domains)",
+        len(issues), len(reg.domains),
+    )
+    return True
 
 
 def main() -> None:
@@ -260,15 +278,34 @@ def main() -> None:
             "Use 1 for fully sequential extraction."
         ),
     )
+    parser.add_argument(
+        "--merge-audit",
+        action="store_true",
+        default=False,
+        help="Also write a merged note_entities_llm parquet combining all LLM domain outputs.",
+    )
+    parser.add_argument(
+        "--validate-only",
+        action="store_true",
+        default=False,
+        help="Validate the registry and exit without running extraction.",
+    )
     args = parser.parse_args()
 
-    # Validate --target
+    # Always validate registry first
+    reg = load_registry()
+    clean = _validate_and_report(reg)
+
+    if args.validate_only:
+        sys.exit(0 if clean else 1)
+
+    # Validate --target against registry (fail loudly for unknown domains)
     target_domain: str | None = args.target
-    if target_domain and target_domain not in DOMAIN_TO_FILE:
-        parser.error(
-            f"Unknown domain '{target_domain}'. "
-            f"Valid domains: {', '.join(sorted(DOMAIN_TO_FILE))}"
-        )
+    if target_domain:
+        try:
+            reg.resolve_domain(target_domain)
+        except ValueError as exc:
+            parser.error(str(exc))
 
     # Load research_id filter
     research_id_filter: set[int] | None = None
@@ -285,7 +322,7 @@ def main() -> None:
         log.info(f"  Research-id filter: {len(research_id_filter):,} patients")
 
     log.info("=" * 70)
-    log.info("  ENTITY EXTRACTION PIPELINE")
+    log.info("  ENTITY EXTRACTION PIPELINE  (registry v3 — %d domains)", len(reg.domains))
     log.info("=" * 70)
 
     notes_path = PROCESSED / "clinical_notes_long.parquet"
@@ -338,7 +375,6 @@ def main() -> None:
             e for e in all_extractors
             if e.entity_domain == target_domain
         ]
-        # Optionally add LLM for non–operative-detail targets (operative_detail is regex-only by default).
         if target_domain != "operative_detail":
             extractors.extend(e for e in all_extractors if e.entity_domain == "llm")
         log.info(f"  Target domain filter: '{target_domain}' "
@@ -356,7 +392,7 @@ def main() -> None:
 
     dfs = results_to_dataframes(domain_results)
 
-    # Determine which domains to write
+    # Determine which domains to write (registry-driven)
     if target_domain:
         domains_to_write = {target_domain} | ({"llm"} if "llm" in dfs else set())
     else:
@@ -370,7 +406,6 @@ def main() -> None:
         file_stem = DOMAIN_TO_FILE.get(domain, f"note_entities_{domain}")
         out_path = PROCESSED / f"{file_stem}.parquet"
 
-        # Merge with existing parquet on targeted re-runs
         final_df = _merge_into_existing(domain, df, research_id_filter)
         save_parquet(final_df, out_path)
 
@@ -394,6 +429,21 @@ def main() -> None:
         for val, cnt in top.items():
             log.info(f"      {val}: {cnt:,}")
 
+    # Optionally write merged audit artifact
+    if args.merge_audit and dfs:
+        llm_dfs = [
+            df for domain, df in dfs.items()
+            if domain in domains_to_write and domain != "llm"
+            and "llm" in (reg.domains.get(domain) or reg.domains.get("llm", reg.domains["staging"])).extractors
+        ]
+        if "llm" in dfs:
+            llm_dfs.append(dfs["llm"])
+        if llm_dfs:
+            merged = pd.concat(llm_dfs, ignore_index=True)
+            audit_path = PROCESSED / "note_entities_llm.parquet"
+            save_parquet(merged, audit_path)
+            log.info(f"  Merged LLM audit artifact: {len(merged):,} rows → {audit_path.name}")
+
     if not dfs:
         log.warning(
             "  No entities extracted for selected domains — check API keys, input paths, and filters"
@@ -402,7 +452,6 @@ def main() -> None:
     out_count = sum(len(dfs[d]) for d in dfs if d in domains_to_write)
     completed_at = datetime.now(timezone.utc).isoformat()
     fstage = telemetry.failure_stage()
-    # success=false only for partial LLM failure; llm_disabled is an expected mode (regex-only).
     pipeline_success = fstage in ("none", "llm_disabled")
     warn_obj = {
         "llm_telemetry": {
@@ -413,6 +462,7 @@ def main() -> None:
         },
         "domains_with_output": sorted(dfs.keys()),
         "partial_run_target": target_domain,
+        "registry_version": reg.schema_version,
     }
 
     append_note_extraction_run(

@@ -4,7 +4,7 @@
 # This file is the SINGLE SOURCE OF TRUTH for the extraction domain inventory.
 # All downstream consumers (run_extraction, 02b_register, 09b_fabric, 103_fact_lineage)
 # read from this registry rather than maintaining hardcoded domain lists.
-schema_version: "entity_schema_v2_2026-04-03"
+schema_version: "entity_schema_v3_2026-04-03"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # v1 domains: established, with regex extractors and existing note_entities_* tables.
@@ -18,6 +18,11 @@ domains:
       - repo_path: prompts/staging_extraction_v1.txt
         scope: staging
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_staging
+    linkage_anchor_family: pathology
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: critical
 
   genetics:
     parquet_stem: note_entities_genetics
@@ -29,6 +34,11 @@ domains:
       - repo_path: prompts/molecular_thyroseq_afirma_extraction_v1.txt
         scope: molecular_panel
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_genetics
+    linkage_anchor_family: molecular
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: critical
 
   procedures:
     parquet_stem: note_entities_procedures
@@ -38,6 +48,11 @@ domains:
       - repo_path: prompts/procedures_extraction_v1.txt
         scope: procedures
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_procedures
+    linkage_anchor_family: operative
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: standard
 
   operative_detail:
     parquet_stem: note_entities_operative_detail
@@ -49,6 +64,11 @@ domains:
       - repo_path: prompts/operative_v2_enrichment_extraction_v1.txt
         scope: operative_v2_enrichment
     canonical_output: true
+    note_scope: op_note
+    canonical_target: note_entities_operative_detail
+    linkage_anchor_family: operative
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: standard
 
   complications:
     parquet_stem: note_entities_complications
@@ -60,6 +80,11 @@ domains:
       - repo_path: prompts/complications_rln_laryngoscopy_extraction_v1.txt
         scope: complications_rln
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_complications
+    linkage_anchor_family: operative
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: critical
 
   medications:
     parquet_stem: note_entities_medications
@@ -71,6 +96,11 @@ domains:
       - repo_path: prompts/medication_management_extraction_v1.txt
         scope: medication_management
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_medications
+    linkage_anchor_family: followup
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: standard
 
   problem_list:
     parquet_stem: note_entities_problem_list
@@ -80,15 +110,25 @@ domains:
       - repo_path: prompts/problem_list_extraction_v1.txt
         scope: problem_list
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_problem_list
+    linkage_anchor_family: demographics
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: informational
 
   llm:
     parquet_stem: note_entities_llm
     tier: v1_debug
     extractors: [llm]
     prompts:
-      - repo_path: prompts/lab_date_extraction_v1.txt
+      - repo_path: ../prompts/lab_date_extraction_v1.txt
         scope: llm_merged_output
     canonical_output: false
+    note_scope: all
+    canonical_target: note_entities_llm
+    linkage_anchor_family: audit
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: debug
 
   # ────────────────────────────────────────────────────────────────────────────
   # v2 domains: new prompt-driven extraction targets.
@@ -103,6 +143,11 @@ domains:
       - repo_path: prompts/imaging_extraction_v1.txt
         scope: imaging
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_llm_imaging
+    linkage_anchor_family: imaging
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: standard
 
   tirads_granular:
     parquet_stem: note_entities_llm_tirads_granular
@@ -112,6 +157,11 @@ domains:
       - repo_path: prompts/tirads_granular_extraction_v1.txt
         scope: tirads_scoring
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_llm_tirads_granular
+    linkage_anchor_family: imaging
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: standard
 
   us_nodule_dynamics:
     parquet_stem: note_entities_llm_us_nodule_dynamics
@@ -121,6 +171,11 @@ domains:
       - repo_path: prompts/us_nodule_dynamics_extraction_v1.txt
         scope: us_nodule
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_llm_us_nodule_dynamics
+    linkage_anchor_family: imaging
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: standard
 
   labs:
     parquet_stem: note_entities_llm_labs
@@ -130,6 +185,11 @@ domains:
       - repo_path: prompts/labs_extraction_v1.txt
         scope: labs
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_llm_labs
+    linkage_anchor_family: followup
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: standard
 
   tg_kinetics:
     parquet_stem: note_entities_llm_tg_kinetics
@@ -139,6 +199,11 @@ domains:
       - repo_path: prompts/tg_kinetics_extraction_v1.txt
         scope: tg_kinetics
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_llm_tg_kinetics
+    linkage_anchor_family: followup
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: standard
 
   pathology:
     parquet_stem: note_entities_llm_pathology
@@ -148,6 +213,11 @@ domains:
       - repo_path: prompts/pathology_extraction_v1.txt
         scope: pathology
     canonical_output: true
+    note_scope: path_report
+    canonical_target: note_entities_llm_pathology
+    linkage_anchor_family: pathology
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: critical
 
   synoptic_pathology_enrichment:
     parquet_stem: note_entities_llm_synoptic_pathology_enrichment
@@ -157,6 +227,11 @@ domains:
       - repo_path: prompts/synoptic_pathology_enrichment_extraction_v1.txt
         scope: synoptic_pathology
     canonical_output: true
+    note_scope: path_report
+    canonical_target: note_entities_llm_synoptic_pathology_enrichment
+    linkage_anchor_family: pathology
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: critical
 
   rai_detailed:
     parquet_stem: note_entities_llm_rai_detailed
@@ -166,6 +241,11 @@ domains:
       - repo_path: prompts/rai_detailed_extraction_v1.txt
         scope: rai_detail
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_llm_rai_detailed
+    linkage_anchor_family: rai
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: critical
 
   rad_treatment:
     parquet_stem: note_entities_llm_rad_treatment
@@ -175,6 +255,11 @@ domains:
       - repo_path: prompts/rad_treatment_extraction_v1.txt
         scope: rad_treatment
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_llm_rad_treatment
+    linkage_anchor_family: rai
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: standard
 
   parathyroid_detail:
     parquet_stem: note_entities_llm_parathyroid_detail
@@ -186,6 +271,11 @@ domains:
       - repo_path: prompts/parathyroid_per_gland_extraction_v1.txt
         scope: parathyroid_per_gland
     canonical_output: true
+    note_scope: op_note
+    canonical_target: note_entities_llm_parathyroid_detail
+    linkage_anchor_family: operative
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: standard
 
   recurrence:
     parquet_stem: note_entities_llm_recurrence
@@ -197,6 +287,11 @@ domains:
       - repo_path: prompts/recurrence_detailed_extraction_v1.txt
         scope: recurrence_detailed
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_llm_recurrence
+    linkage_anchor_family: followup
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: critical
 
   survival_followup:
     parquet_stem: note_entities_llm_survival_followup
@@ -206,6 +301,11 @@ domains:
       - repo_path: prompts/survival_followup_extraction_v1.txt
         scope: survival_followup
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_llm_survival_followup
+    linkage_anchor_family: followup
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: standard
 
   cervical_ln_detail:
     parquet_stem: note_entities_llm_cervical_ln_detail
@@ -215,6 +315,11 @@ domains:
       - repo_path: prompts/cervical_ln_detail_extraction_v1.txt
         scope: cervical_ln
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_llm_cervical_ln_detail
+    linkage_anchor_family: pathology
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: standard
 
   functional_outcomes:
     parquet_stem: note_entities_llm_functional_outcomes
@@ -224,6 +329,11 @@ domains:
       - repo_path: prompts/functional_outcomes_extraction_v1.txt
         scope: functional_outcomes
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_llm_functional_outcomes
+    linkage_anchor_family: followup
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: informational
 
   past_medical_hx:
     parquet_stem: note_entities_llm_past_medical_hx
@@ -233,6 +343,11 @@ domains:
       - repo_path: prompts/past_medical_hx_extraction_v1.txt
         scope: past_medical_hx
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_llm_past_medical_hx
+    linkage_anchor_family: demographics
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: informational
 
   past_surgical_hx:
     parquet_stem: note_entities_llm_past_surgical_hx
@@ -242,6 +357,11 @@ domains:
       - repo_path: prompts/past_surgical_hx_extraction_v1.txt
         scope: past_surgical_hx
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_llm_past_surgical_hx
+    linkage_anchor_family: demographics
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: informational
 
   presenting_symptoms:
     parquet_stem: note_entities_llm_presenting_symptoms
@@ -251,6 +371,11 @@ domains:
       - repo_path: prompts/presenting_symptoms_extraction_v1.txt
         scope: presenting_symptoms
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_llm_presenting_symptoms
+    linkage_anchor_family: demographics
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: informational
 
   physical_exam:
     parquet_stem: note_entities_llm_physical_exam
@@ -260,6 +385,11 @@ domains:
       - repo_path: prompts/physical_exam_extraction_v1.txt
         scope: physical_exam
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_llm_physical_exam
+    linkage_anchor_family: demographics
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: informational
 
   vascular_invasion:
     parquet_stem: note_entities_llm_vascular_invasion
@@ -269,6 +399,11 @@ domains:
       - repo_path: prompts/vascular_invasion_extraction_v1.txt
         scope: vascular_invasion
     canonical_output: true
+    note_scope: path_report
+    canonical_target: note_entities_llm_vascular_invasion
+    linkage_anchor_family: pathology
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: critical
 
   airway_invasion:
     parquet_stem: note_entities_llm_airway_invasion
@@ -278,6 +413,11 @@ domains:
       - repo_path: prompts/airway_invasion_extraction_v1.txt
         scope: airway_invasion
     canonical_output: true
+    note_scope: op_note
+    canonical_target: note_entities_llm_airway_invasion
+    linkage_anchor_family: operative
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: standard
 
   frozen_section_detail:
     parquet_stem: note_entities_llm_frozen_section_detail
@@ -287,6 +427,11 @@ domains:
       - repo_path: prompts/frozen_section_detail_extraction_v1.txt
         scope: frozen_section
     canonical_output: true
+    note_scope: op_note
+    canonical_target: note_entities_llm_frozen_section_detail
+    linkage_anchor_family: operative
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: standard
 
   dynamic_risk_response:
     parquet_stem: note_entities_llm_dynamic_risk_response
@@ -296,6 +441,11 @@ domains:
       - repo_path: prompts/dynamic_risk_response_extraction_v1.txt
         scope: dynamic_risk
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_llm_dynamic_risk_response
+    linkage_anchor_family: followup
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: standard
 
   patient_decision_adherence:
     parquet_stem: note_entities_llm_patient_decision_adherence
@@ -305,6 +455,11 @@ domains:
       - repo_path: prompts/patient_decision_adherence_extraction_v1.txt
         scope: patient_decision
     canonical_output: true
+    note_scope: all
+    canonical_target: note_entities_llm_patient_decision_adherence
+    linkage_anchor_family: followup
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: informational
 
 # ──────────────────────────────────────────────────────────────────────────────
 # LLM extraction pipeline metadata

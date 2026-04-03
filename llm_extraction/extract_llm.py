@@ -108,6 +108,8 @@ class LLMExtractor(BaseExtractor):
         note_type: str,
         note_text: str,
         note_date: str | None = None,
+        *,
+        domain: str | None = None,
     ) -> list[EntityMatch]:
         if not self.available:
             return []
@@ -130,6 +132,7 @@ class LLMExtractor(BaseExtractor):
                 chunk_char_end=chunk_char_end,
                 chunk_index=0,
                 operative=is_op,
+                domain=domain,
             )
         except Exception as exc:
             log.error(
@@ -200,9 +203,15 @@ class LLMExtractor(BaseExtractor):
         note_date: str | None,
         *,
         operative: bool = False,
+        domain: str | None = None,
     ) -> list[dict]:
-        """Build the OpenAI messages list for entity + date extraction."""
-        system = self._load_system_prompt(operative=operative)
+        """Build the OpenAI messages list for entity + date extraction.
+
+        When *domain* is provided, the registry-resolved prompt is used.
+        Falls back to operative/general prompt chain when no domain or
+        the domain prompt file is missing.
+        """
+        system = self._load_system_prompt(operative=operative, domain=domain)
         if operative:
             user_content = (
                 f"NOTE TYPE: {note_type} (operative dictation)\n"
@@ -252,6 +261,7 @@ class LLMExtractor(BaseExtractor):
         chunk_char_end: int,
         chunk_index: int = 0,
         operative: bool = False,
+        domain: str | None = None,
     ) -> list[EntityMatch]:
         """Call the OpenAI API and parse structured JSON output."""
         try:
@@ -262,7 +272,9 @@ class LLMExtractor(BaseExtractor):
                 self._telemetry.record_api_failure()
             return []
 
-        messages = cast(Any, self._build_prompt(note_type, text, note_date, operative=operative))
+        messages = cast(Any, self._build_prompt(
+            note_type, text, note_date, operative=operative, domain=domain,
+        ))
         max_out = 4096 if operative else 2000
 
         try:
@@ -316,6 +328,7 @@ class LLMExtractor(BaseExtractor):
             chunk_char_end=chunk_char_end,
             chunk_index=chunk_index,
             llm_operative=operative,
+            domain=domain,
         )
 
     # ── Response parsing ─────────────────────────────────────────────────────
@@ -334,6 +347,7 @@ class LLMExtractor(BaseExtractor):
         chunk_char_end: int,
         chunk_index: int,
         llm_operative: bool = False,
+        domain: str | None = None,
     ) -> list[EntityMatch]:
         """Parse LLM JSON output into EntityMatch objects."""
         response_hash = hashlib.sha256(raw_json.encode("utf-8")).hexdigest()
@@ -361,7 +375,7 @@ class LLMExtractor(BaseExtractor):
                 self._telemetry.record_parse_failure()
             return []
 
-        prompt_ver = self._prompt_version(operative=llm_operative)
+        prompt_ver = self._prompt_version(operative=llm_operative, domain=domain)
         results: list[EntityMatch] = []
         for item in entities:
             if not isinstance(item, dict):

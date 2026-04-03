@@ -11,7 +11,7 @@ Usage::
 from __future__ import annotations
 
 import functools
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +19,13 @@ import yaml
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 _DEFAULT_YAML = _REPO_ROOT / "config" / "extraction_domain_registry.yaml"
+
+_VALID_NOTE_SCOPES = frozenset({"all", "op_note", "path_report"})
+_VALID_QA_TIERS = frozenset({"critical", "standard", "informational", "debug"})
+_VALID_LINKAGE_FAMILIES = frozenset({
+    "pathology", "molecular", "operative", "imaging", "rai",
+    "followup", "demographics", "audit",
+})
 
 
 @dataclass(frozen=True)
@@ -39,6 +46,13 @@ class DomainSpec:
     extractors: list[str]
     prompts: list[PromptSpec]
     canonical_output: bool
+    note_scope: str = "all"
+    canonical_target: str = ""
+    linkage_anchor_family: str = "audit"
+    dedupe_key: list[str] = field(default_factory=lambda: [
+        "research_id", "note_row_id", "entity_type", "entity_value_norm",
+    ])
+    qa_tier: str = "standard"
 
     @property
     def parquet_filename(self) -> str:
@@ -55,6 +69,14 @@ class DomainSpec:
     @property
     def is_v2(self) -> bool:
         return self.tier == "v2"
+
+    @property
+    def is_operative_scoped(self) -> bool:
+        return self.note_scope == "op_note"
+
+    @property
+    def is_path_report_scoped(self) -> bool:
+        return self.note_scope == "path_report"
 
 
 @dataclass(frozen=True)
@@ -100,12 +122,43 @@ class Registry:
             return spec.prompts[0]
         return None
 
+    def domains_for_note_scope(self, scope: str) -> dict[str, DomainSpec]:
+        """Return domains whose note_scope matches the given scope or 'all'."""
+        return {
+            k: v for k, v in self.domains.items()
+            if v.note_scope == scope or v.note_scope == "all"
+        }
+
+    def domains_by_qa_tier(self, tier: str) -> dict[str, DomainSpec]:
+        return {k: v for k, v in self.domains.items() if v.qa_tier == tier}
+
+    def domains_by_linkage_family(self, family: str) -> dict[str, DomainSpec]:
+        return {
+            k: v for k, v in self.domains.items()
+            if v.linkage_anchor_family == family
+        }
+
+    def resolve_domain(self, name: str) -> DomainSpec:
+        """Look up a domain by name; raise ValueError for unknown domains."""
+        if name not in self.domains:
+            raise ValueError(
+                f"Unknown extraction domain '{name}'. "
+                f"Valid domains: {', '.join(sorted(self.domains))}"
+            )
+        return self.domains[name]
+
 
 def _parse_domain(name: str, raw: dict[str, Any]) -> DomainSpec:
     prompts = [
         PromptSpec(repo_path=p["repo_path"], scope=p["scope"])
         for p in raw.get("prompts", [])
     ]
+    dedupe_raw = raw.get("dedupe_key")
+    if isinstance(dedupe_raw, list):
+        dedupe_key = [str(k) for k in dedupe_raw]
+    else:
+        dedupe_key = ["research_id", "note_row_id", "entity_type", "entity_value_norm"]
+
     return DomainSpec(
         name=name,
         parquet_stem=raw["parquet_stem"],
@@ -113,6 +166,11 @@ def _parse_domain(name: str, raw: dict[str, Any]) -> DomainSpec:
         extractors=raw.get("extractors", ["llm"]),
         prompts=prompts,
         canonical_output=raw.get("canonical_output", True),
+        note_scope=raw.get("note_scope", "all"),
+        canonical_target=raw.get("canonical_target", raw["parquet_stem"]),
+        linkage_anchor_family=raw.get("linkage_anchor_family", "audit"),
+        dedupe_key=dedupe_key,
+        qa_tier=raw.get("qa_tier", "standard"),
     )
 
 
@@ -167,4 +225,32 @@ def validate_registry(reg: Registry | None = None) -> list[str]:
                 issues.append(
                     f"Domain '{name}': prompt '{p.repo_path}' not found at {p.absolute_path}"
                 )
+
+        if spec.note_scope not in _VALID_NOTE_SCOPES:
+            issues.append(
+                f"Domain '{name}': invalid note_scope '{spec.note_scope}' "
+                f"(valid: {sorted(_VALID_NOTE_SCOPES)})"
+            )
+
+        if spec.qa_tier not in _VALID_QA_TIERS:
+            issues.append(
+                f"Domain '{name}': invalid qa_tier '{spec.qa_tier}' "
+                f"(valid: {sorted(_VALID_QA_TIERS)})"
+            )
+
+        if spec.linkage_anchor_family not in _VALID_LINKAGE_FAMILIES:
+            issues.append(
+                f"Domain '{name}': invalid linkage_anchor_family "
+                f"'{spec.linkage_anchor_family}' "
+                f"(valid: {sorted(_VALID_LINKAGE_FAMILIES)})"
+            )
+
+        if not spec.canonical_target:
+            issues.append(f"Domain '{name}': missing canonical_target")
+
+        if "llm" in spec.extractors and not spec.prompts:
+            issues.append(
+                f"Domain '{name}': has 'llm' extractor but no prompt files defined"
+            )
+
     return issues
