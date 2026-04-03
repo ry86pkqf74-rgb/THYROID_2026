@@ -1,175 +1,76 @@
 # THYROID 2026 — Vast.ai Extraction Fleet Handoff
-## State as of April 3, 2026 ~04:35 UTC (post-crash recovery, 5 servers)
+## State as of April 3, 2026 ~14:05 UTC — **FLEET COMPLETE, 0 active instances**
 
-This document is the single source of truth to resume fleet monitoring and parquet sync
-from any machine. All servers are running and do not need to be restarted unless something
-has failed.
+This document records the Apr 2–3, 2026 Qwen32b note-entity extraction fleet: operational
+notes, destroyed instance IDs, and procedures for a **future** rerun. **There are no
+running vast.ai boxes for this wave** — all artifacts are in GitHub under
+`processed/output/v2_parquets/`.
 
 ---
 
 ## CRITICAL RULES
 
 - **NEVER print or expose clinical note text** — use `research_id` only, never PHI
-- **All extraction runs on remote servers** — never run locally
+- **All extraction runs on remote servers** — never run locally (for this fleet pattern)
 - **SSH key auth only** — no passwords
 
 ---
 
-## Active Fleet (5 servers, all running)
+## Fleet status — **COMPLETE**
 
-### Primary H200 NVL
-| Field | Value |
-|-------|-------|
-| Instance ID | `33534710` |
-| SSH | `ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 43384 root@107.206.71.138` |
-| GPU | H200 NVL, 144GB VRAM |
-| Ollama | 0.9.0 |
-| Output dir | `/opt/thyroid_extraction/processed/output/` |
-| Rate | ~42 notes/min |
-| Cost | ~$3.04/hr |
+| Item | Status |
+|------|--------|
+| **Active instances** | **0** |
+| **Domains** | **36 / 36** complete (11,037 notes each where applicable) |
+| **Canonical artifacts** | `processed/output/v2_parquets/note_entities_llm_*.parquet` on `main` |
+| **Validation** | Row/linkage/JSON checks; MotherDuck (`Thyroid 2026` DB) used for deep SQL validation on late domains |
+| **Last parquet pushed** | `molecular_thyroseq_afirma` — finished on Primary after Fast1 checkpoint handoff (~14:00 UTC) |
+| **Primary destroyed** | Instance `33534710` — after audit confirmed no newer data than GitHub |
 
-**DOMAINS env (in order):**
-```
-past_medical_hx presenting_symptoms rad_treatment
-```
-> `synoptic_pathology_enrichment` completed (11,037/11,037) — parquet synced locally.
-
-### Fast1 H200 NVL
-| Field | Value |
-|-------|-------|
-| Instance ID | `34022537` |
-| SSH | `ssh -o StrictHostKeyChecking=no -p 22536 root@ssh3.vast.ai` |
-| GPU | H200 NVL, 144GB VRAM |
-| Ollama | 0.9.0 |
-| Output dir | `/opt/thyroid_extraction/processed/output/` |
-| Rate | ~52 notes/min (fastest) |
-| Cost | ~$2.68/hr |
-
-**DOMAINS env (in order):**
-```
-patient_decision_adherence cervical_ln_detail molecular_thyroseq_afirma
-```
-> `operative_details` completed (11,037/11,037) — parquet synced locally.
-> `complications_rln_laryngoscopy` completed (11,037/11,037) — parquet synced locally.
-
-### Fast2 H200 NVL
-| Field | Value |
-|-------|-------|
-| Instance ID | `34034310` |
-| SSH | `ssh -o StrictHostKeyChecking=no -p 34310 root@ssh9.vast.ai` |
-| GPU | H200 NVL, 144GB VRAM |
-| Ollama | 0.9.0 |
-| Output dir | `/opt/thyroid_extraction/processed/output/` |
-| Rate | ~40 notes/min |
-| Cost | ~$2.72/hr |
-
-**DOMAINS env (in order):**
-```
-parathyroid_detail tg_kinetics
-```
-> `past_surgical_hx` completed (11,037/11,037) — parquet synced locally.
-> `vascular_invasion` completed (11,037/11,037) — parquet synced locally.
-
-### Server5 H200 NVL (launched Apr 3 ~03:00 UTC, post-crash replacement)
-| Field | Value |
-|-------|-------|
-| Instance ID | `34050323` |
-| SSH | `ssh -o StrictHostKeyChecking=no -p 10322 root@ssh5.vast.ai` |
-| GPU | H200 NVL, 144GB VRAM |
-| Ollama | **0.20.0** (0.9.0 did not detect GPU on driver 560; 0.20.0 with lspci/lshw installed works) |
-| Output dir | `/opt/thyroid_extraction/processed/output/` |
-| Rate | ~24 notes/min |
-| Cost | ~$2.48/hr |
-
-**DOMAINS env (in order):**
-```
-frozen_section_detail
-```
-> `us_nodule_dynamics` moved to Server6 (faster). After `frozen_section_detail` completes, destroy with `vastai destroy instance 34050323`
-
-### Server6 H200 NVL (launched Apr 3 ~04:25 UTC, accelerator for us_nodule_dynamics)
-| Field | Value |
-|-------|-------|
-| Instance ID | `34050871` |
-| SSH | `ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 10870 root@ssh1.vast.ai` |
-| GPU | H200 NVL, 144GB VRAM (Bulgaria, driver 565.57.01) |
-| Ollama | **0.20.0** (0.9.0 binary loads model to CPU on this driver) |
-| Output dir | `/opt/thyroid_extraction/processed/output/` |
-| Rate | ~24 notes/min |
-| Cost | ~$2.53/hr |
-
-**DOMAINS env (in order):**
-```
-us_nodule_dynamics
-```
-> After domain completes, destroy with `vastai destroy instance 34050871`
-
-### NewFast3 (DEAD — resources unavailable)
-| Field | Value |
-|-------|-------|
-| Instance ID | `34042551` |
-| Status | `exited` — crashed during fleet outage, cannot restart (resources unavailable) |
-| Domains | `frozen_section_detail us_nodule_dynamics` — reassigned to Server5 |
+**Late-run highlights (Apr 3):** checkpoint migrations (Server5→Primary for `frozen_section_detail`; Fast1→Primary for `molecular_thyroseq_afirma`); Server6/5/Fast2/Fast1 destroyed when idle or superseded; `us_nodule_dynamics` completed on Fast2 then synced.
 
 ---
 
-## Dead/Destroyed Instances
-- `34042551` (NewFast3) — exited, resources unavailable, domains reassigned to Server5
+## Destroyed / exited instances (audit trail)
+
+| Instance ID | Role | Notes |
+|---------------|------|--------|
+| `34042551` | NewFast3 | Exited during outage; work reassigned |
+| `34050871` | Server6 | `us_nodule_dynamics` → Fast2 |
+| `34050323` | Server5 | `frozen_section_detail` checkpoint → Primary |
+| `34034310` | Fast2 | Idle after `us_nodule_dynamics`; destroyed |
+| `34022537` | Fast1 | Checkpoint → Primary for `molecular_thyroseq_afirma`; destroyed |
+| `33534710` | Primary | Last box; final domain + prior Primary domains; destroyed after empty-server check |
 
 ---
 
-## Domain Assignment & Progress (as of ~04:35 UTC Apr 3)
+## Historical instance reference (SSH no longer valid — destroyed)
 
-### Completed and synced locally (5 fresh + 24 prior = 29/36 total)
-| Domain | Entities | Source | Synced |
-|--------|----------|--------|--------|
-| synoptic_pathology_enrichment | TBD | Primary | Apr 3 |
-| operative_details | TBD | Fast1 | Apr 3 |
-| complications_rln_laryngoscopy | TBD | Fast1 | Apr 3 |
-| past_surgical_hx | TBD | Fast2 | Apr 3 |
-| vascular_invasion | TBD | Fast2 | Apr 3 |
-| *(plus 24 prior domains — see previous version)* | | | prior |
+Use this table only when reading old logs or planning a **new** rental (new IPs/ports).
 
-### In-progress on servers (9 remaining across 5 servers, zero overlap)
-| Domain | Server | Progress at 04:35 UTC | Remaining | Rate | ETA (UTC) |
-|--------|--------|----------------------|-----------|------|-----------|
-| past_medical_hx | Primary | 10,276/11,037 | 761 | 42/min | ~04:55 |
-| presenting_symptoms | Primary | 62/11,037 | 10,975 | 42/min | ~09:15 |
-| rad_treatment | Primary | 10/11,037 | 11,027 | 42/min | ~13:35 |
-| patient_decision_adherence | Fast1 | 4,781/11,037 | 6,256 | 52/min | ~06:35 |
-| cervical_ln_detail | Fast1 | 0/11,037 | 11,037 | 52/min | ~10:05 |
-| molecular_thyroseq_afirma | Fast1 | 0/11,037 | 11,037 | 52/min | ~13:35 |
-| parathyroid_detail | Fast2 | 10,255/11,037 | 782 | 40/min | ~04:55 |
-| tg_kinetics | Fast2 | 0/11,037 | 11,037 | 40/min | ~09:35 |
-| frozen_section_detail | Server5 | 210/11,037 | 10,827 | 24/min | ~12:05 |
-| us_nodule_dynamics | **Server6** | 4/11,037 | 11,033 | 24/min | ~12:15 |
-
-**Bottleneck servers:**
-- **Primary** and **Fast1** finish at ~13:35 UTC (~9:35 AM ET) — last domains `rad_treatment` and `molecular_thyroseq_afirma`
-- **Server5** finishes at ~12:05 UTC — `frozen_section_detail` only
-- **Server6** finishes at ~12:15 UTC — `us_nodule_dynamics` only
-
-**All 36 domains complete: ~April 3, 2026 13:35 UTC (~9:35 AM ET)**
-> 6 hours faster than previous estimate (~19:40 UTC) thanks to parallelizing `us_nodule_dynamics` onto Server6
+| Name | Instance ID | Last known SSH / host |
+|------|-------------|------------------------|
+| Primary | `33534710` | `ssh … -p 43384 root@107.206.71.138` |
+| Fast1 | `34022537` | `ssh … -p 22536 root@ssh3.vast.ai` |
+| Fast2 | `34034310` | `ssh … -p 34310 root@ssh9.vast.ai` |
+| Server5 | `34050323` | `ssh … -p 10322 root@ssh5.vast.ai` |
+| Server6 | `34050871` | `ssh … -p 10870 root@ssh1.vast.ai` |
 
 ---
 
-## Monitoring — Quick status check (run from Mac)
+## Domain outcome (Apr 3 wave)
 
-```bash
-echo "=== $(date -u '+%H:%M UTC') ===" && \
-ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -p 43384 root@107.206.71.138 \
-  'echo "PRIMARY:"; for f in /opt/thyroid_extraction/processed/output/note_entities_llm_*.ckpt.jsonl; do bn=$(basename $f .ckpt.jsonl | sed "s/note_entities_llm_//"); count=$(wc -l < $f); if [ "$count" -eq 11037 ]; then echo "  DONE $bn"; else echo "  PARTIAL $bn: $count/11037"; fi; done | sort' &
-ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -p 22536 root@ssh3.vast.ai \
-  'echo "FAST1:"; for f in /opt/thyroid_extraction/processed/output/note_entities_llm_*.ckpt.jsonl; do bn=$(basename $f .ckpt.jsonl | sed "s/note_entities_llm_//"); count=$(wc -l < $f); if [ "$count" -eq 11037 ]; then echo "  DONE $bn"; else echo "  PARTIAL $bn: $count/11037"; fi; done | sort' &
-ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -p 34310 root@ssh9.vast.ai \
-  'echo "FAST2:"; for f in /opt/thyroid_extraction/processed/output/note_entities_llm_*.ckpt.jsonl; do bn=$(basename $f .ckpt.jsonl | sed "s/note_entities_llm_//"); count=$(wc -l < $f); if [ "$count" -eq 11037 ]; then echo "  DONE $bn"; else echo "  PARTIAL $bn: $count/11037"; fi; done | sort' &
-ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -p 10322 root@ssh5.vast.ai \
-  'echo "SERVER5:"; for f in /opt/thyroid_extraction/processed/output/note_entities_llm_*.ckpt.jsonl; do bn=$(basename $f .ckpt.jsonl | sed "s/note_entities_llm_//"); count=$(wc -l < $f); if [ "$count" -eq 11037 ]; then echo "  DONE $bn"; else echo "  PARTIAL $bn: $count/11037"; fi; done | sort' &
-ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 -p 10870 root@ssh1.vast.ai \
-  'echo "SERVER6:"; for f in /opt/thyroid_extraction/processed/output/note_entities_llm_*.ckpt.jsonl; do bn=$(basename $f .ckpt.jsonl | sed "s/note_entities_llm_//"); count=$(wc -l < $f); if [ "$count" -eq 11037 ]; then echo "  DONE $bn"; else echo "  PARTIAL $bn: $count/11037"; fi; done | sort' &
-wait
-```
+All domains listed in the supervisor queues for this fleet completed; parquets validated
+and pushed incrementally. **No remaining server-side-only outputs** after final Primary
+audit (archive folders on disk were older/smaller than repo — repo is source of truth).
+
+---
+
+## Monitoring — **N/A** (fleet complete)
+
+For a **future** fleet, reuse the per-host loop pattern: `wc -l` on
+`/opt/thyroid_extraction/processed/output/note_entities_llm_*.ckpt.jsonl` and compare to
+11,037; confirm `.parquet` exists before `scp`.
 
 ---
 
@@ -229,6 +130,16 @@ print(f"{domain}: rows={len(tbl)} unmatched={unmatched} rid_mismatch={rid_mismat
 # Expected: rows=11037, unmatched=0, rid_mismatch=0, invalid_json=0
 ```
 
+### Step 2b — MotherDuck deep validation (optional, faster SQL)
+
+Connect with `duckdb.connect("md:?motherduck_token=...")`, `USE "Thyroid 2026"`, then:
+
+- `CREATE TEMP VIEW source AS SELECT note_row_id, CAST(research_id AS VARCHAR) … FROM read_parquet('processed/clinical_notes_long.parquet')`
+- `CREATE TEMP VIEW tgt AS SELECT * FROM read_parquet('processed/output/v2_parquets/note_entities_llm_DOMAIN.parquet')`
+- Join `tgt` → `source` on `note_row_id`; assert `COUNT(*)=11037`, `COUNT(DISTINCT note_row_id)=11037`, zero unmatched / `research_id` mismatch / duplicate keys; `json_array_length` on `result_json` for entity totals and type histograms.
+
+Token: `.streamlit/secrets.toml` → `MOTHERDUCK_TOKEN` (do not commit the token).
+
 ### Step 3 — Commit & push
 ```bash
 git add processed/output/v2_parquets/note_entities_llm_DOMAIN.parquet
@@ -242,7 +153,9 @@ git push origin main
 
 ---
 
-## Restart procedures (if a server goes down)
+## Restart procedures (historical — **all instances above destroyed Apr 3, 2026**)
+
+Reference for a **future** fleet only. Replace host/port/instance IDs after a new `vastai create`.
 
 ### Any server — check if dead
 ```bash
