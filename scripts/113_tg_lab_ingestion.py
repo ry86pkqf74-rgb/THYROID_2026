@@ -15,15 +15,23 @@ Phases:
   G — Temporal linkage (days from surgery, temporal windows)
   H — Schema alignment to canonical output
   I — Write outputs (parquet, DuckDB)
-  J — Append to longitudinal_lab_canonical_v1
+  J — Append to longitudinal_lab_canonical_v1 (idempotent upsert)
   K — Validation
   L — Documentation
+  M — Cross-wave reconciliation (deterministic dedup across ingestion waves)
+  N — Derived views (Tg timeline, postop surveillance, recurrence linkage)
+  O — Reconciliation report
 
 Outputs:
   processed/thyroglobulin_lab_canonical_v1.parquet
   processed/tg_lab_review_queue_v1.parquet
-  DuckDB tables: thyroglobulin_lab_canonical_v1, tg_lab_review_queue_v1
+  DuckDB tables: thyroglobulin_lab_canonical_v1, tg_lab_review_queue_v1,
+    lab_cross_wave_dedup_map_v1, lab_cross_wave_review_v1,
+    tg_timeline_patient_summary_v1, tg_postop_surveillance_windows_v1,
+    tg_recurrence_surveillance_linkage_v1
+  DuckDB view: longitudinal_lab_deduped_v
   docs/tg_lab_ingestion_report_YYYYMMDD.md
+  docs/tg_lab_reconciliation_report_YYYYMMDD.md
 
 CLI:
   python scripts/113_tg_lab_ingestion.py --input <csv_path> [--duckdb] [--md] [--dry-run]
@@ -113,7 +121,21 @@ def section(title: str) -> None:
 
 def connect_duckdb(use_md: bool = False):
     from utils.md_connect import connect_md_or_file
-    return connect_md_or_file(DB_PATH, md=use_md)
+
+    con = connect_md_or_file(DB_PATH, md=use_md)
+    if use_md:
+        try:
+            dbs = con.execute("PRAGMA database_list").fetchall()
+            on_md = any("md:" in str(r) for r in dbs)
+        except Exception:
+            on_md = False
+        if not on_md:
+            con.close()
+            print("  FATAL: --md was requested but no MotherDuck connection established.")
+            print("  Ensure MOTHERDUCK_TOKEN or LOCAL_DB_PATH (JWT) env var is set.")
+            sys.exit(1)
+        print("  MotherDuck connection verified (fail-closed gate passed)")
+    return con
 
 
 def table_exists(con, tbl: str) -> bool:
@@ -687,19 +709,14 @@ def phase_j_append_longitudinal(
         print(f"  [DRY RUN] Would append {len(mapped):,} rows")
 
 
-def _append_longitudinal_duckdb(mapped: pd.DataFrame, use_md: bool) -> None:
-    import duckdb
+def _append_longitudinal_duckdb(mapped: pd.DataFrame, use_md: bool) -> int:
+    """Idempotent append: purge own wave rows before re-inserting.
+
+    Returns number of rows appended.
+    """
     con = connect_duckdb(use_md)
-    if table_exists(con, "longitudinal_lab_canonical_v1"):
-        con.register("_long_append", mapped)
-        con.execute(
-            "INSERT INTO longitudinal_lab_canonical_v1 SELECT * FROM _long_append"
-        )
-        r = con.execute(
-            "SELECT COUNT(*) FROM longitudinal_lab_canonical_v1"
-        ).fetchone()
-        print(f"    longitudinal_lab_canonical_v1 after append: {r[0]:,} rows")
-    else:
+
+    if not table_exists(con, "longitudinal_lab_canonical_v1"):
         con.register("_long_new", mapped)
         con.execute(
             "CREATE TABLE longitudinal_lab_canonical_v1 AS SELECT * FROM _long_new"
@@ -708,7 +725,36 @@ def _append_longitudinal_duckdb(mapped: pd.DataFrame, use_md: bool) -> None:
             "SELECT COUNT(*) FROM longitudinal_lab_canonical_v1"
         ).fetchone()
         print(f"    Created longitudinal_lab_canonical_v1: {r[0]:,} rows")
+        con.close()
+        return len(mapped)
+
+    pre = con.execute(
+        "SELECT COUNT(*) FROM longitudinal_lab_canonical_v1"
+    ).fetchone()[0]
+
+    existing_wave = con.execute(
+        "SELECT COUNT(*) FROM longitudinal_lab_canonical_v1 "
+        "WHERE source_script = '113_tg_lab_ingestion'"
+    ).fetchone()[0]
+
+    if existing_wave > 0:
+        print(f"    Purging {existing_wave:,} prior script-113 rows (idempotent re-ingestion)")
+        con.execute(
+            "DELETE FROM longitudinal_lab_canonical_v1 "
+            "WHERE source_script = '113_tg_lab_ingestion'"
+        )
+
+    con.register("_long_append", mapped)
+    con.execute(
+        "INSERT INTO longitudinal_lab_canonical_v1 SELECT * FROM _long_append"
+    )
+    post = con.execute(
+        "SELECT COUNT(*) FROM longitudinal_lab_canonical_v1"
+    ).fetchone()
+    print(f"    longitudinal_lab_canonical_v1: {pre:,} → {post[0]:,} rows "
+          f"(net +{post[0] - pre:,})")
     con.close()
+    return len(mapped)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -922,6 +968,571 @@ review.
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Phase M: Cross-Wave Reconciliation
+# ─────────────────────────────────────────────────────────────────────────────
+
+DEDUP_MAP_SQL = """
+CREATE OR REPLACE TABLE lab_cross_wave_dedup_map_v1 AS
+WITH numbered AS (
+    SELECT
+        *,
+        ROW_NUMBER() OVER (
+            PARTITION BY research_id,
+                         lab_date,
+                         lab_name_standardized,
+                         COALESCE(CAST(value_numeric AS VARCHAR), value_raw)
+            ORDER BY
+                CASE
+                    WHEN ingestion_wave LIKE 'wave_tg%'
+                      OR ingestion_wave LIKE 'wave_tgab%' THEN 1
+                    WHEN ingestion_wave LIKE 'wave_1%'
+                      OR ingestion_wave LIKE 'wave_2%' THEN 2
+                    ELSE 3
+                END,
+                source_script DESC
+        ) AS dedup_rank
+    FROM longitudinal_lab_canonical_v1
+    WHERE lab_name_standardized IN ('thyroglobulin', 'anti_thyroglobulin')
+)
+SELECT
+    research_id,
+    lab_date,
+    lab_name_standardized,
+    value_numeric,
+    value_raw,
+    ingestion_wave,
+    source_script,
+    dedup_rank,
+    CASE WHEN dedup_rank = 1 THEN 'keep' ELSE 'superseded' END AS dedup_action
+FROM numbered
+WHERE dedup_rank > 1
+"""
+
+CROSS_WAVE_REVIEW_SQL = """
+CREATE OR REPLACE TABLE lab_cross_wave_review_v1 AS
+WITH per_day AS (
+    SELECT
+        research_id,
+        lab_date,
+        lab_name_standardized,
+        COUNT(DISTINCT ingestion_wave) AS n_waves,
+        COUNT(DISTINCT value_numeric) AS n_distinct_values,
+        MIN(value_numeric) AS val_min,
+        MAX(value_numeric) AS val_max,
+        LIST(DISTINCT ingestion_wave ORDER BY ingestion_wave) AS waves,
+        LIST(DISTINCT CAST(value_numeric AS VARCHAR)
+             ORDER BY CAST(value_numeric AS VARCHAR)) AS values_list
+    FROM longitudinal_lab_canonical_v1
+    WHERE lab_name_standardized IN ('thyroglobulin', 'anti_thyroglobulin')
+      AND value_numeric IS NOT NULL
+      AND lab_date IS NOT NULL
+    GROUP BY research_id, lab_date, lab_name_standardized
+    HAVING COUNT(DISTINCT ingestion_wave) > 1
+       AND COUNT(DISTINCT value_numeric) > 1
+)
+SELECT
+    *,
+    ROUND(ABS(val_max - val_min), 4) AS value_delta,
+    CASE
+        WHEN val_min > 0 THEN ROUND(val_max / val_min, 2)
+        ELSE NULL
+    END AS value_ratio,
+    CASE
+        WHEN val_min > 0 AND val_max / val_min > 1.5 THEN 'high'
+        WHEN val_min > 0 AND val_max / val_min > 1.1 THEN 'medium'
+        ELSE 'low'
+    END AS discrepancy_severity,
+    'cross_wave_value_mismatch' AS review_reason
+FROM per_day
+"""
+
+DEDUP_VIEW_SQL = """
+CREATE OR REPLACE VIEW longitudinal_lab_deduped_v AS
+WITH ranked AS (
+    SELECT
+        *,
+        ROW_NUMBER() OVER (
+            PARTITION BY research_id,
+                         lab_date,
+                         lab_name_standardized,
+                         COALESCE(CAST(value_numeric AS VARCHAR), value_raw)
+            ORDER BY
+                CASE
+                    WHEN ingestion_wave LIKE 'wave_tg%'
+                      OR ingestion_wave LIKE 'wave_tgab%' THEN 1
+                    WHEN ingestion_wave LIKE 'wave_1%'
+                      OR ingestion_wave LIKE 'wave_2%' THEN 2
+                    ELSE 3
+                END,
+                source_script DESC
+        ) AS _rn
+    FROM longitudinal_lab_canonical_v1
+)
+SELECT * EXCLUDE (_rn) FROM ranked WHERE _rn = 1
+"""
+
+
+def phase_m_cross_wave_reconciliation(
+    use_duckdb: bool, use_md: bool, dry_run: bool,
+) -> dict:
+    section("Phase M — Cross-Wave Reconciliation")
+    stats: dict = {}
+    if not (use_duckdb or use_md):
+        print("  Skipped (no DuckDB target)")
+        return stats
+    if dry_run:
+        print("  [DRY RUN] Skipped")
+        return stats
+
+    con = connect_duckdb(use_md)
+    if not table_exists(con, "longitudinal_lab_canonical_v1"):
+        print("  longitudinal_lab_canonical_v1 not found — skipping")
+        con.close()
+        return stats
+
+    total = con.execute(
+        "SELECT COUNT(*) FROM longitudinal_lab_canonical_v1"
+    ).fetchone()[0]
+    stats["total_canonical_rows"] = total
+
+    by_wave = con.execute("""
+        SELECT ingestion_wave, COUNT(*) AS n, COUNT(DISTINCT research_id) AS pts
+        FROM longitudinal_lab_canonical_v1
+        GROUP BY ingestion_wave ORDER BY n DESC
+    """).fetchall()
+    print("  Canonical layer breakdown by wave:")
+    for wave, n, pts in by_wave:
+        print(f"    {wave}: {n:,} rows, {pts:,} patients")
+    stats["waves"] = {w: {"rows": n, "patients": p} for w, n, p in by_wave}
+
+    print("  Building dedup map...")
+    con.execute(DEDUP_MAP_SQL)
+    superseded = con.execute(
+        "SELECT COUNT(*) FROM lab_cross_wave_dedup_map_v1"
+    ).fetchone()[0]
+    stats["superseded_rows"] = superseded
+    print(f"    Superseded (exact-match duplicates across waves): {superseded:,}")
+
+    if superseded > 0:
+        by_wave_sup = con.execute("""
+            SELECT ingestion_wave, COUNT(*) FROM lab_cross_wave_dedup_map_v1
+            GROUP BY ingestion_wave ORDER BY 2 DESC
+        """).fetchall()
+        for w, c in by_wave_sup:
+            print(f"      {w}: {c:,} superseded")
+
+    print("  Building cross-wave review queue...")
+    con.execute(CROSS_WAVE_REVIEW_SQL)
+    review_n = con.execute(
+        "SELECT COUNT(*) FROM lab_cross_wave_review_v1"
+    ).fetchone()[0]
+    stats["cross_wave_review_rows"] = review_n
+    print(f"    Value mismatches across waves: {review_n:,}")
+    if review_n > 0:
+        sev = con.execute("""
+            SELECT discrepancy_severity, COUNT(*)
+            FROM lab_cross_wave_review_v1
+            GROUP BY 1 ORDER BY 1
+        """).fetchall()
+        for s, c in sev:
+            print(f"      {s}: {c:,}")
+
+    print("  Building deduped view (longitudinal_lab_deduped_v)...")
+    con.execute(DEDUP_VIEW_SQL)
+    deduped_n = con.execute(
+        "SELECT COUNT(*) FROM longitudinal_lab_deduped_v"
+    ).fetchone()[0]
+    stats["deduped_rows"] = deduped_n
+    print(f"    Deduped view: {deduped_n:,} rows (from {total:,} raw)")
+
+    con.close()
+    return stats
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Phase N: Derived Views
+# ─────────────────────────────────────────────────────────────────────────────
+
+TG_TIMELINE_SUMMARY_SQL = """
+CREATE OR REPLACE TABLE tg_timeline_patient_summary_v1 AS
+WITH src AS (
+    SELECT * FROM longitudinal_lab_deduped_v
+    WHERE lab_name_standardized IN ('thyroglobulin', 'anti_thyroglobulin')
+),
+tg AS (
+    SELECT * FROM src
+    WHERE lab_name_standardized = 'thyroglobulin' AND value_numeric IS NOT NULL
+),
+tgab AS (
+    SELECT * FROM src
+    WHERE lab_name_standardized = 'anti_thyroglobulin' AND value_numeric IS NOT NULL
+),
+tg_agg AS (
+    SELECT
+        research_id,
+        MIN(lab_date) AS first_tg_date,
+        MAX(lab_date) AS last_tg_date,
+        COUNT(*) AS n_tg_measurements,
+        MIN(value_numeric) AS tg_nadir,
+        MAX(value_numeric) AS tg_peak,
+        AVG(value_numeric) AS tg_mean
+    FROM tg GROUP BY research_id
+),
+tg_last AS (
+    SELECT research_id, value_numeric AS tg_last_value, is_censored AS tg_last_censored
+    FROM (
+        SELECT *, ROW_NUMBER() OVER (
+            PARTITION BY research_id ORDER BY lab_date DESC
+        ) AS rn FROM tg
+    ) WHERE rn = 1
+),
+tgab_agg AS (
+    SELECT
+        research_id,
+        MIN(lab_date) AS first_tgab_date,
+        MAX(lab_date) AS last_tgab_date,
+        COUNT(*) AS n_tgab_measurements,
+        MIN(value_numeric) AS tgab_nadir,
+        MAX(value_numeric) AS tgab_peak
+    FROM tgab GROUP BY research_id
+),
+tgab_last AS (
+    SELECT research_id, value_numeric AS tgab_last_value
+    FROM (
+        SELECT *, ROW_NUMBER() OVER (
+            PARTITION BY research_id ORDER BY lab_date DESC
+        ) AS rn FROM tgab
+    ) WHERE rn = 1
+),
+all_patients AS (
+    SELECT DISTINCT research_id FROM src
+)
+SELECT
+    p.research_id,
+    t.first_tg_date,  t.last_tg_date,  t.n_tg_measurements,
+    t.tg_nadir,  t.tg_peak,  t.tg_mean,
+    tl.tg_last_value,  tl.tg_last_censored,
+    CASE
+        WHEN t.tg_nadir IS NOT NULL AND t.tg_nadir > 0
+             AND tl.tg_last_value > 2 * t.tg_nadir THEN TRUE
+        ELSE FALSE
+    END AS tg_rising_flag,
+    CASE
+        WHEN tl.tg_last_value IS NULL THEN 'insufficient_data'
+        WHEN tl.tg_last_censored IS TRUE THEN 'suppressed'
+        WHEN tl.tg_last_value < 0.2 THEN 'suppressed'
+        WHEN tl.tg_last_value < 1.0 THEN 'low_stable'
+        WHEN t.tg_nadir > 0 AND tl.tg_last_value > 2 * t.tg_nadir THEN 'rising'
+        ELSE 'detectable_stable'
+    END AS tg_trajectory_class,
+    a.first_tgab_date,  a.last_tgab_date,  a.n_tgab_measurements,
+    a.tgab_nadir,  a.tgab_peak,
+    al.tgab_last_value,
+    CASE
+        WHEN al.tgab_last_value IS NOT NULL AND al.tgab_last_value > 1.0
+        THEN TRUE ELSE FALSE
+    END AS tgab_interference_flag,
+    COALESCE(t.n_tg_measurements, 0)
+        + COALESCE(a.n_tgab_measurements, 0) AS total_measurements,
+    CASE
+        WHEN t.last_tg_date IS NOT NULL AND t.first_tg_date IS NOT NULL
+        THEN DATE_DIFF('day', t.first_tg_date, t.last_tg_date)
+    END AS days_first_to_last_tg
+FROM all_patients p
+LEFT JOIN tg_agg t ON p.research_id = t.research_id
+LEFT JOIN tg_last tl ON p.research_id = tl.research_id
+LEFT JOIN tgab_agg a ON p.research_id = a.research_id
+LEFT JOIN tgab_last al ON p.research_id = al.research_id
+"""
+
+TG_POSTOP_SURVEILLANCE_SQL = """
+CREATE OR REPLACE TABLE tg_postop_surveillance_windows_v1 AS
+SELECT
+    c.research_id,
+    c.temporal_window,
+    c.analyte,
+    COUNT(*) AS n_measurements,
+    MIN(c.specimen_collect_dt) AS window_first_date,
+    MAX(c.specimen_collect_dt) AS window_last_date,
+    MIN(c.result_numeric) AS value_min,
+    MAX(c.result_numeric) AS value_max,
+    AVG(c.result_numeric) AS value_mean,
+    CASE
+        WHEN c.analyte = 'Tg' THEN
+            CASE
+                WHEN MAX(c.result_numeric) < 0.2 THEN 'excellent'
+                WHEN MAX(c.result_numeric) < 1.0 THEN 'indeterminate'
+                ELSE 'biochemical_incomplete'
+            END
+        ELSE NULL
+    END AS ata_response_in_window,
+    MIN(c.days_from_surgery) AS days_from_surgery_min,
+    MAX(c.days_from_surgery) AS days_from_surgery_max
+FROM thyroglobulin_lab_canonical_v1 c
+WHERE c.temporal_window IS NOT NULL
+  AND c.result_numeric IS NOT NULL
+GROUP BY c.research_id, c.temporal_window, c.analyte
+"""
+
+TG_RECURRENCE_LINKAGE_SQL = """
+CREATE OR REPLACE TABLE tg_recurrence_surveillance_linkage_v1 AS
+WITH rising AS (
+    SELECT
+        research_id,
+        tg_last_value,
+        tg_nadir,
+        tg_trajectory_class,
+        tgab_interference_flag,
+        n_tg_measurements
+    FROM tg_timeline_patient_summary_v1
+    WHERE tg_trajectory_class = 'rising'
+      AND n_tg_measurements >= 2
+),
+recurrence AS (
+    SELECT DISTINCT
+        research_id,
+        recurrence_any AS recurrence_flag,
+        recurrence_site_inferred,
+        detection_category
+    FROM {recurrence_table}
+    WHERE recurrence_any IS TRUE
+)
+SELECT
+    r.research_id,
+    r.tg_last_value,
+    r.tg_nadir,
+    r.tg_trajectory_class,
+    r.tgab_interference_flag,
+    r.n_tg_measurements,
+    CASE WHEN rec.research_id IS NOT NULL THEN TRUE ELSE FALSE
+    END AS has_structural_recurrence,
+    rec.recurrence_site_inferred,
+    rec.detection_category,
+    CASE
+        WHEN rec.research_id IS NOT NULL THEN 'confirmed_biochemical_and_structural'
+        WHEN r.tgab_interference_flag IS TRUE THEN 'rising_tg_but_tgab_interference'
+        WHEN r.tg_last_value > 10.0 THEN 'high_biochemical_suspicion'
+        WHEN r.tg_last_value > 1.0 THEN 'moderate_biochemical_suspicion'
+        ELSE 'low_biochemical_suspicion'
+    END AS surveillance_linkage_class
+FROM rising r
+LEFT JOIN recurrence rec ON r.research_id = rec.research_id
+"""
+
+
+def phase_n_derived_views(
+    use_duckdb: bool, use_md: bool, dry_run: bool,
+) -> dict:
+    section("Phase N — Derived Views (Tg Timeline / Postop / Recurrence)")
+    stats: dict = {}
+    if not (use_duckdb or use_md):
+        print("  Skipped (no DuckDB target)")
+        return stats
+    if dry_run:
+        print("  [DRY RUN] Skipped")
+        return stats
+
+    con = connect_duckdb(use_md)
+
+    print("  Building tg_timeline_patient_summary_v1...")
+    con.execute(TG_TIMELINE_SUMMARY_SQL)
+    r = con.execute(
+        "SELECT COUNT(*), "
+        "SUM(CASE WHEN tg_rising_flag THEN 1 ELSE 0 END), "
+        "SUM(CASE WHEN tgab_interference_flag THEN 1 ELSE 0 END) "
+        "FROM tg_timeline_patient_summary_v1"
+    ).fetchone()
+    stats["timeline_patients"] = r[0]
+    stats["rising_tg"] = r[1]
+    stats["tgab_interference"] = r[2]
+    print(f"    {r[0]:,} patients, {r[1]:,} rising Tg, {r[2]:,} TgAb interference")
+
+    traj = con.execute("""
+        SELECT tg_trajectory_class, COUNT(*)
+        FROM tg_timeline_patient_summary_v1
+        GROUP BY 1 ORDER BY 2 DESC
+    """).fetchall()
+    stats["trajectory_distribution"] = {t: c for t, c in traj}
+    for t, c in traj:
+        print(f"      {t}: {c:,}")
+
+    print("  Building tg_postop_surveillance_windows_v1...")
+    if table_exists(con, "thyroglobulin_lab_canonical_v1"):
+        con.execute(TG_POSTOP_SURVEILLANCE_SQL)
+        r = con.execute(
+            "SELECT COUNT(*), COUNT(DISTINCT research_id) "
+            "FROM tg_postop_surveillance_windows_v1"
+        ).fetchone()
+        stats["postop_rows"] = r[0]
+        stats["postop_patients"] = r[1]
+        print(f"    {r[0]:,} window-rows, {r[1]:,} patients")
+    else:
+        print("    thyroglobulin_lab_canonical_v1 not found — skipping postop windows")
+
+    print("  Building tg_recurrence_surveillance_linkage_v1...")
+    rec_table = None
+    for candidate in [
+        "extracted_recurrence_refined_v1",
+        "md_extracted_recurrence_refined_v1",
+    ]:
+        if table_exists(con, candidate):
+            rec_table = candidate
+            break
+    if rec_table:
+        sql = TG_RECURRENCE_LINKAGE_SQL.replace("{recurrence_table}", rec_table)
+        con.execute(sql)
+        r = con.execute(
+            "SELECT COUNT(*), "
+            "SUM(CASE WHEN has_structural_recurrence THEN 1 ELSE 0 END) "
+            "FROM tg_recurrence_surveillance_linkage_v1"
+        ).fetchone()
+        stats["recurrence_linkage_rows"] = r[0]
+        stats["confirmed_both"] = r[1]
+        print(f"    {r[0]:,} rising-Tg patients, {r[1]:,} with structural recurrence")
+
+        linkage = con.execute("""
+            SELECT surveillance_linkage_class, COUNT(*)
+            FROM tg_recurrence_surveillance_linkage_v1
+            GROUP BY 1 ORDER BY 2 DESC
+        """).fetchall()
+        stats["linkage_classes"] = {k: v for k, v in linkage}
+        for k, v in linkage:
+            print(f"      {k}: {v:,}")
+    else:
+        print("    No recurrence table found — skipping linkage")
+
+    con.close()
+    return stats
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Phase O: Reconciliation Report
+# ─────────────────────────────────────────────────────────────────────────────
+def phase_o_reconciliation_report(
+    recon_stats: dict,
+    derived_stats: dict,
+    canonical: pd.DataFrame,
+) -> Path:
+    section("Phase O — Reconciliation Report")
+    DOCS.mkdir(exist_ok=True)
+    rpt_path = DOCS / f"tg_lab_reconciliation_report_{TIMESTAMP}.md"
+
+    waves = recon_stats.get("waves", {})
+    wave_lines = "\n".join(
+        f"| {w} | {d['rows']:,} | {d['patients']:,} |"
+        for w, d in sorted(waves.items())
+    )
+
+    traj = derived_stats.get("trajectory_distribution", {})
+    traj_lines = "\n".join(
+        f"| {t} | {c:,} |" for t, c in sorted(traj.items(), key=lambda x: -x[1])
+    )
+
+    linkage = derived_stats.get("linkage_classes", {})
+    linkage_lines = "\n".join(
+        f"| {k} | {v:,} |" for k, v in sorted(linkage.items(), key=lambda x: -x[1])
+    ) if linkage else "| (no recurrence table available) | — |"
+
+    unresolved = []
+    if recon_stats.get("cross_wave_review_rows", 0) > 0:
+        unresolved.append(
+            f"- {recon_stats['cross_wave_review_rows']:,} cross-wave value mismatches "
+            f"in `lab_cross_wave_review_v1` — manual review recommended"
+        )
+    if derived_stats.get("tgab_interference", 0) > 0:
+        unresolved.append(
+            f"- {derived_stats['tgab_interference']:,} patients with TgAb interference "
+            f"(TgAb > 1.0 IU/mL) — Tg values may be unreliable"
+        )
+    unresolved_text = "\n".join(unresolved) if unresolved else "- None identified"
+
+    def _fmt(v):
+        return f"{v:,}" if isinstance(v, (int, float)) else str(v)
+
+    report = f"""# Tg/TgAb Lab Reconciliation Report
+
+**Generated**: {datetime.now().strftime('%Y-%m-%d %H:%M')}
+**Script**: `{SCRIPT_NAME}`
+
+## Canonical Layer State (Post-Reconciliation)
+
+| Metric | Value |
+|--------|-------|
+| Total canonical rows | {_fmt(recon_stats.get('total_canonical_rows', '—'))} |
+| Deduped rows (clean view) | {_fmt(recon_stats.get('deduped_rows', '—'))} |
+| Superseded exact-match duplicates | {_fmt(recon_stats.get('superseded_rows', '—'))} |
+| Cross-wave value mismatches → review | {_fmt(recon_stats.get('cross_wave_review_rows', '—'))} |
+
+## Ingestion Waves
+
+| Wave | Rows | Patients |
+|------|------|----------|
+{wave_lines}
+
+**Dedup rule**: When the same (research_id, lab_date, analyte, value) appears in
+multiple waves, the structured EHR wave (`wave_tg_structured_ehr` /
+`wave_tgab_structured_ehr`) is preferred over the older legacy waves
+(`wave_1_structured_tg` / `wave_2_structured_anti_tg`) because it carries richer
+metadata (assay method, disambiguation provenance, temporal linkage).
+
+## Derived Views
+
+### Tg Trajectory Summary (`tg_timeline_patient_summary_v1`)
+
+| Metric | Value |
+|--------|-------|
+| Patients | {_fmt(derived_stats.get('timeline_patients', '—'))} |
+| Rising Tg flag | {_fmt(derived_stats.get('rising_tg', '—'))} |
+| TgAb interference flag | {_fmt(derived_stats.get('tgab_interference', '—'))} |
+
+#### Trajectory Distribution
+
+| Class | Count |
+|-------|-------|
+{traj_lines}
+
+### Postop Surveillance Windows (`tg_postop_surveillance_windows_v1`)
+
+| Metric | Value |
+|--------|-------|
+| Window-rows | {_fmt(derived_stats.get('postop_rows', '—'))} |
+| Patients | {_fmt(derived_stats.get('postop_patients', '—'))} |
+
+### Recurrence-Surveillance Linkage (`tg_recurrence_surveillance_linkage_v1`)
+
+| Metric | Value |
+|--------|-------|
+| Rising-Tg patients | {_fmt(derived_stats.get('recurrence_linkage_rows', '—'))} |
+| Confirmed biochemical + structural | {_fmt(derived_stats.get('confirmed_both', '—'))} |
+
+| Linkage Class | Count |
+|---------------|-------|
+{linkage_lines}
+
+## Unresolved Issues
+
+{unresolved_text}
+
+## Tables Created/Updated
+
+| Table | Type | Purpose |
+|-------|------|---------|
+| `longitudinal_lab_canonical_v1` | TABLE | Append-only canonical (all waves) |
+| `longitudinal_lab_deduped_v` | VIEW | Deterministic dedup across waves |
+| `lab_cross_wave_dedup_map_v1` | TABLE | Superseded-row audit log |
+| `lab_cross_wave_review_v1` | TABLE | Value mismatches for manual review |
+| `tg_timeline_patient_summary_v1` | TABLE | Per-patient Tg/TgAb trajectory |
+| `tg_postop_surveillance_windows_v1` | TABLE | Per-patient × temporal window |
+| `tg_recurrence_surveillance_linkage_v1` | TABLE | Rising Tg ↔ structural recurrence |
+| `thyroglobulin_lab_canonical_v1` | TABLE | Script-113 canonical (Tg-specific) |
+| `tg_lab_review_queue_v1` | TABLE | Disambiguation review queue |
+"""
+    rpt_path.write_text(report, encoding="utf-8")
+    print(f"  Wrote {rpt_path}")
+    return rpt_path
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Main
 # ─────────────────────────────────────────────────────────────────────────────
 def main():
@@ -986,11 +1597,26 @@ def main():
     # Phase L
     phase_l_documentation(input_path, canonical, review_df, validation, combo_stats)
 
+    # Phase M
+    recon_stats = phase_m_cross_wave_reconciliation(
+        args.duckdb, args.md, args.dry_run
+    )
+
+    # Phase N
+    derived_stats = phase_n_derived_views(args.duckdb, args.md, args.dry_run)
+
+    # Phase O
+    if recon_stats or derived_stats:
+        phase_o_reconciliation_report(recon_stats, derived_stats, canonical)
+
     section("COMPLETE")
     print(f"  Canonical: {len(canonical):,} rows, {canonical['research_id'].nunique():,} patients")
     print(f"  Review queue: {len(review_df):,} rows")
     print(f"  Analytes: Tg={len(canonical[canonical['analyte'] == 'Tg']):,}, "
           f"TgAb={len(canonical[canonical['analyte'] == 'TgAb']):,}")
+    if recon_stats:
+        print(f"  Deduped view: {recon_stats.get('deduped_rows', '?'):,} rows")
+        print(f"  Cross-wave review: {recon_stats.get('cross_wave_review_rows', 0):,} items")
 
 
 if __name__ == "__main__":
