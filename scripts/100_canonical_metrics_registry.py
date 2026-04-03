@@ -665,11 +665,10 @@ def main() -> None:
 
     # ── Connect ───────────────────────────────────────────────────────────
     try:
-        client = MotherDuckClient.for_env(args.env, use_service_account=args.sa)
-        con = client.connect_rw()
-        print(f"  Connected to: {client.config.database}")
+        from utils.md_connect import connect_md_or_file
+        con = connect_md_or_file(ROOT / "thyroid_master.duckdb", md=True)
     except Exception as e:
-        print(f"  ERROR: Cannot connect to {args.env}: {e}")
+        print(f"  ERROR: Cannot connect: {e}")
         sys.exit(2)
 
     # ── Query all metrics ─────────────────────────────────────────────────

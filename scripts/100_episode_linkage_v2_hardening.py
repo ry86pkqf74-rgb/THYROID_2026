@@ -107,23 +107,13 @@ def get_token() -> str:
 
 
 def get_connection(args) -> duckdb.DuckDBPyConnection:
-    """Connect to local DuckDB target env or local DuckDB."""
+    """Connect to MotherDuck target env or local DuckDB."""
     if args.local:
         path = os.getenv("LOCAL_DUCKDB_PATH", "thyroid_master_local.duckdb")
         print(f"  [local] {path}")
         return duckdb.connect(path)
-    tok = get_token()
-    if not tok:
-        sys.exit("LOCAL_DB_PATH not found")
-    os.environ["LOCAL_DB_PATH"] = tok
-    db = ENV_MAP.get(args.env, "thyroid_master.duckdb")
-    con = duckdb.connect(f"thyroid_master.duckdb")
-    print(f"  [local DuckDB] connected to {db}")
-    # In workspace mode, all databases accessible by qualified name
-    if args.env != "prod":
-        print(f"  Source tables read from thyroid_master.duckdb.main.* (workspace mode)")
-        print(f"  UPDATEs to production tables SKIPPED in {args.env} env")
-    return con
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(ROOT / "thyroid_master.duckdb", md=getattr(args, "md", True))
 
 
 def q1(con, sql, default=None):

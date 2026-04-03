@@ -39,30 +39,11 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 # Connection
 # ---------------------------------------------------------------------------
 
-def _get_token() -> str:
-    token = os.getenv("LOCAL_DB_PATH")
-    if token:
-        return token
-    secrets = ROOT / ".streamlit" / "secrets.toml"
-    if secrets.exists():
-        try:
-            import toml
-            return toml.load(str(secrets))["LOCAL_DB_PATH"]
-        except Exception:
-            pass
-    raise RuntimeError(
-        "LOCAL_DB_PATH not set. Export it or add to .streamlit/secrets.toml."
-    )
 
 
 def get_connection(md: bool):
-    import duckdb
-    if md:
-        token = _get_token()
-        return duckdb.connect(f"thyroid_master.duckdb")
-    return duckdb.connect(
-        os.environ.get("LOCAL_DUCKDB_PATH", str(ROOT / "thyroid_master.duckdb"))
-    )
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=md)
 
 
 def resolve_table(con, preferred: str, fallback: str) -> str:

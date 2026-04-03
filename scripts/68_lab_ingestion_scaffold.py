@@ -262,14 +262,8 @@ def main() -> None:
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
-    if args.md:
-        import toml
-        tok = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
-        con = duckdb.connect(f"thyroid_master.duckdb")
-        print("[INFO] Connected to local DuckDB")
-    else:
-        con = duckdb.connect(str(DB_PATH))
-        print(f"[INFO] Connected to local DuckDB: {DB_PATH}")
+    from utils.md_connect import connect_md_or_file
+    con = connect_md_or_file(DB_PATH, md=args.md)
 
     steps = [
         ("Lab Staging Schema", LAB_STAGING_SCHEMA_SQL),

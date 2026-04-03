@@ -130,23 +130,10 @@ def main() -> int:
             print(";")
         return 0
 
-    if args.md:
-        tok = get_token(prefer_service_account=args.sa)
-        if not tok:
-            print("Missing LOCAL_DB_PATH / LOCAL_DB_PATH for --md", file=sys.stderr)
-            return 1
-        for k in ("USE_LOCAL_DUCKDB", "use_local_duckdb"):
-            os.environ.pop(k, None)
-        cfg = MotherDuckConfig(use_service_account=args.sa)
-        con = MotherDuckClient(cfg).connect_rw()
-        label = f"MotherDuck rw ({cfg.database})"
-    else:
-        path = Path(args.local or DB_PATH).expanduser()
-        if not path.is_file():
-            print(f"Local database not found: {path}", file=sys.stderr)
-            return 1
-        con = duckdb.connect(str(path))
-        label = str(path)
+    from utils.md_connect import connect_md_or_file
+    local_path = Path(args.local or DB_PATH).expanduser() if not args.md else DB_PATH
+    con = connect_md_or_file(local_path, md=args.md)
+    label = "MotherDuck" if args.md else str(local_path)
 
     try:
         for s in to_run:

@@ -293,21 +293,8 @@ def main() -> None:
 
     section("70 -- Canonical Episode Backfill")
 
-    if args.md:
-        try:
-            import toml  # type: ignore[import-untyped]
-            token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
-        except Exception:
-            import os
-            token = os.environ.get("LOCAL_DB_PATH")
-        if not token:
-            print("ERROR: LOCAL_DB_PATH not found")
-            sys.exit(1)
-        con = duckdb.connect(f"thyroid_master.duckdb")
-        print("  Connected to local DuckDB (thyroid_master.duckdb)")
-    else:
-        con = duckdb.connect(str(DB_PATH))
-        print(f"  Connected to local DB: {DB_PATH}")
+    from utils.md_connect import connect_md_or_file
+    con = connect_md_or_file(DB_PATH, md=args.md)
 
     audit = run_backfill(con)
 

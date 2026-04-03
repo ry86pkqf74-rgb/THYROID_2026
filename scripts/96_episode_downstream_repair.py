@@ -57,25 +57,8 @@ def section(title: str):
 
 
 def get_connection(args):
-    tok = os.environ.get("LOCAL_DB_PATH", "")
-    if not tok:
-        try:
-            import toml
-            for p in [ROOT / ".streamlit" / "secrets.toml",
-                      pathlib.Path.home() / ".streamlit" / "secrets.toml"]:
-                if p.exists():
-                    tok = toml.load(str(p)).get("LOCAL_DB_PATH", "")
-                    if tok:
-                        break
-        except ImportError:
-            pass
-    if not tok:
-        sys.exit("LOCAL_DB_PATH not found")
-    os.environ["LOCAL_DB_PATH"] = tok
-    db = "thyroid_master.duckdb"
-    con = duckdb.connect(f"thyroid_master.duckdb")
-    print(f"Connected to md:{db}")
-    return con
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(ROOT / "thyroid_master.duckdb", md=getattr(args, "md", False))
 
 
 def q1(con, sql, default=None):

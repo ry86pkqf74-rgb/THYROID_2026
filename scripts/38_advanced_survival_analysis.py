@@ -48,15 +48,8 @@ np.random.seed(SEED)
 # ── Connection ───────────────────────────────────────────────────────────
 
 def _get_connection(args):
-    if args.local or os.getenv("USE_LOCAL_DUCKDB", "").lower() in ("1", "true", "yes"):
-        import duckdb
-        local_path = os.getenv("LOCAL_DUCKDB_PATH", str(ROOT / "thyroid_master_local.duckdb"))
-        print(f"  Connecting to local DuckDB: {local_path}")
-        return duckdb.connect(local_path)
-    from motherduck_client import MotherDuckClient, MotherDuckConfig
-    cfg = MotherDuckConfig(database="thyroid_master.duckdb")
-    print("  Connecting to local DuckDB …")
-    return MotherDuckClient(cfg).connect_rw()
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(ROOT / "thyroid_master.duckdb", md=getattr(args, "md", not getattr(args, "local", False)))
 
 
 def _load_cohort(con) -> pd.DataFrame:

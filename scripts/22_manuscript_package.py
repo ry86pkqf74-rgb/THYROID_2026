@@ -79,27 +79,13 @@ def section(msg: str) -> None:
     print(f"{'─' * 72}\n")
 
 
-def connect(use_md: bool, use_local: bool):
-    import duckdb
-    if use_local:
-        path = ROOT / "thyroid_master_local.duckdb"
-        print(f"  Connecting to local DuckDB: {path}")
-        return duckdb.connect(str(path))
-    # local DuckDB
-    token = os.environ.get("LOCAL_DB_PATH", "")
-    if not token:
-        try:
-            import toml
-            token = toml.load(str(ROOT / ".streamlit" / "secrets.toml")).get("LOCAL_DB_PATH", "")
-        except Exception:
-            pass
-    if not token:
-        print("  ERROR: LOCAL_DB_PATH not set. Use --local for local DuckDB.")
-        sys.exit(1)
-    os.environ["LOCAL_DB_PATH"] = token
-    con = __import__("duckdb").connect(f"thyroid_master.duckdb")
-    print("  Connected to local DuckDB: thyroid_master.duckdb")
-    return con
+def connect(use_md: bool = False, use_local: bool = False) -> duckdb.DuckDBPyConnection:
+    import os as _os
+    if use_local or _os.environ.get('USE_LOCAL_DUCKDB'):
+        path = _os.environ.get('LOCAL_DUCKDB_PATH', str(ROOT / 'thyroid_master_local.duckdb'))
+        return duckdb.connect(path)
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=use_md)
 
 
 def deploy_sql(con, dry_run: bool) -> None:

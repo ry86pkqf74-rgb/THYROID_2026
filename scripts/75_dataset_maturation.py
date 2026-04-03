@@ -67,16 +67,8 @@ def fill_rate(con: duckdb.DuckDBPyConnection, tbl: str, col: str) -> dict[str, A
 
 
 def connect_md() -> duckdb.DuckDBPyConnection:
-    """MotherDuck when MOTHERDUCK_TOKEN set; else workspace file DB."""
-    token = os.environ.get("motherduck_token") or os.environ.get("MOTHERDUCK_TOKEN")
-    if token:
-        return duckdb.connect(f"md:thyroid_master?motherduck_token={token}")
-    return duckdb.connect(str(DB_PATH))
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# PHASE 1 — Canonical Layer Integrity Verification
-# ═══════════════════════════════════════════════════════════════════════════
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=True)
 
 CANONICAL_FILL_CHECKS = [
     ("patient_analysis_resolved_v1", "rai_first_date"),

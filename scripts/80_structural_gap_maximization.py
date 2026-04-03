@@ -69,16 +69,8 @@ def table_exists(con: duckdb.DuckDBPyConnection, tbl: str) -> bool:
 
 
 def connect(args) -> duckdb.DuckDBPyConnection:
-    if args.md:
-        import toml
-        token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
-        return duckdb.connect(f"thyroid_master.duckdb")
-    return duckdb.connect(str(DB_PATH))
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Phase A: RAI Structural Coverage
-# ─────────────────────────────────────────────────────────────────────────────
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=getattr(args, 'md', False))
 
 RAI_COVERAGE_SQL = """
 CREATE OR REPLACE TABLE val_rai_structural_coverage_v1 AS

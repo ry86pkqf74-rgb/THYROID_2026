@@ -69,22 +69,8 @@ def main() -> None:
     out_dir = EXPORT_DIR / f"manual_review_{ts}"
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    if args.md:
-        try:
-            sys.path.insert(0, str(ROOT))
-            from motherduck_client import MotherDuckClient, MotherDuckConfig
-            cfg = MotherDuckConfig(database="thyroid_master.duckdb")
-            client = MotherDuckClient(cfg)
-            con = client.connect_rw()
-            print("Source: local DuckDB (RW)")
-        except Exception as e:
-            print(f"local DuckDB unavailable: {e}")
-            print("Falling back to local DuckDB")
-            con = duckdb.connect(str(DB_PATH), read_only=True)
-            print(f"Source: {DB_PATH}")
-    else:
-        con = duckdb.connect(str(DB_PATH), read_only=True)
-        print(f"Source: {DB_PATH}")
+    from utils.md_connect import connect_md_or_file
+    con = connect_md_or_file(DB_PATH, md=args.md)
     print(f"Output: {out_dir}")
     if args.priority_min > 0:
         print(f"Filter: priority_score >= {args.priority_min}")

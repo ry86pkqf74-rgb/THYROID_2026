@@ -559,21 +559,9 @@ def export_artifacts(con, dry_run: bool = False) -> Path:
     return export_dir
 
 
-def connect(args) -> "duckdb.DuckDBPyConnection":
-    """Connect to local DuckDB or local DuckDB."""
-    import duckdb
-
-    if args.md:
-        token = os.environ.get("LOCAL_DB_PATH", "")
-        if not token:
-            print("ERROR: LOCAL_DB_PATH not set")
-            sys.exit(2)
-        return duckdb.connect(f"thyroid_master.duckdb")
-    else:
-        local_path = ROOT / "thyroid_master.duckdb"
-        if not local_path.exists():
-            local_path = ROOT / "thyroid_master_local.duckdb"
-        return duckdb.connect(str(local_path))
+def connect(args) -> duckdb.DuckDBPyConnection:
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=getattr(args, 'md', False))
 
 
 def main() -> None:

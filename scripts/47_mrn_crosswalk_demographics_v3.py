@@ -761,22 +761,9 @@ QA_MISSING_V3_SQL = textwrap.dedent("""\
 #  Helpers
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-def get_connection(use_md: bool):
-    import duckdb
-    if use_md:
-        token = os.getenv("LOCAL_DB_PATH")
-        if not token:
-            try:
-                import toml
-                token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
-            except Exception:
-                pass
-        if not token:
-            raise RuntimeError("LOCAL_DB_PATH not set")
-        return duckdb.connect(f"thyroid_master.duckdb")
-    else:
-        db_path = ROOT / "thyroid_master.duckdb"
-        return duckdb.connect(str(db_path))
+def get_connection(use_md):
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=use_md)
 
 
 def timed_execute(con, sql: str, label: str) -> float:

@@ -60,14 +60,8 @@ OUT_DIR = ROOT / "studies" / "statistical_analysis_examples"
 
 
 def _get_connection(args):
-    if args.local or os.getenv("USE_LOCAL_DUCKDB", "").lower() in ("1", "true", "yes"):
-        import duckdb
-        local_path = os.getenv("LOCAL_DUCKDB_PATH", str(ROOT / "thyroid_master_local.duckdb"))
-        log.info("Connecting to local DuckDB: %s", local_path)
-        return duckdb.connect(local_path)
-    log.info("Connecting to local DuckDB (thyroid_master.duckdb)...")
-    cfg = MotherDuckConfig(database="thyroid_master.duckdb")
-    return MotherDuckClient(cfg).connect_rw()
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(ROOT / "thyroid_master.duckdb", md=getattr(args, "md", not getattr(args, "local", False)))
 
 
 def _safe_query(con, sql: str) -> pd.DataFrame:

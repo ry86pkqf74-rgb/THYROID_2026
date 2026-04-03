@@ -83,22 +83,9 @@ def push_df(con: duckdb.DuckDBPyConnection, df: pd.DataFrame, name: str) -> None
         import os as _os; _os.unlink(tmp)
 
 
-def get_connection(use_md: bool) -> duckdb.DuckDBPyConnection:
-    if use_md:
-        try:
-            import toml
-            token = os.environ.get("LOCAL_DB_PATH") or toml.load(
-                str(ROOT / ".streamlit" / "secrets.toml")
-            )["LOCAL_DB_PATH"]
-        except Exception:
-            token = os.environ["LOCAL_DB_PATH"]
-        return duckdb.connect(f"thyroid_master.duckdb")
-    return duckdb.connect(str(DB_PATH))
-
-
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# A. RECURRENCE provenance
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+def get_connection(use_md):
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=use_md)
 RECURRENCE_PROVENANCE_SQL = """
 CREATE OR REPLACE TABLE val_recurrence_provenance_v2 AS
 WITH base AS (

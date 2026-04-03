@@ -81,21 +81,9 @@ def git_sha() -> str:
         return "unknown"
 
 
-def get_connection(use_md: bool) -> duckdb.DuckDBPyConnection:
-    if use_md:
-        try:
-            from motherduck_client import MotherDuckClient, MotherDuckConfig
-            cfg = MotherDuckConfig(database="thyroid_master.duckdb")
-            client = MotherDuckClient(cfg)
-            con = client.connect_rw()
-            print("  Connected to local DuckDB (RW)")
-            return con
-        except Exception as e:
-            print(f"  local DuckDB unavailable: {e}")
-            print("  Falling back to local DuckDB")
-    con = duckdb.connect(str(DB_PATH), read_only=True)
-    print(f"  Using local DuckDB: {DB_PATH}")
-    return con
+def get_connection(use_md):
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=use_md)
 
 
 def run_validation(con: duckdb.DuckDBPyConnection) -> dict:

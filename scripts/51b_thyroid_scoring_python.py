@@ -19,22 +19,8 @@ import numpy as np
 # ---------------------------------------------------------------------------
 
 def get_connection(md: bool):
-    import duckdb
-    if md:
-        token = os.environ.get("LOCAL_DB_PATH") or ""
-        if not token:
-            try:
-                import toml
-                token = toml.load(".streamlit/secrets.toml").get("LOCAL_DB_PATH", "")
-            except Exception:
-                pass
-        if not token:
-            sys.exit("LOCAL_DB_PATH not found")
-        con = duckdb.connect(f"thyroid_master.duckdb")
-    else:
-        db = os.environ.get("LOCAL_DUCKDB_PATH", "thyroid_master.duckdb")
-        con = duckdb.connect(db)
-    return con
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=md)
 
 
 def table_exists(con, name: str) -> bool:

@@ -39,18 +39,13 @@ def get_md_token():
             pass
     return tok
 
-def connect(use_md: bool):
-    if use_md:
-        tok = get_md_token()
-        if not tok:
-            sys.exit("LOCAL_DB_PATH not found")
-        os.environ["LOCAL_DB_PATH"] = tok
-        con = duckdb.connect("thyroid_master.duckdb")
-        print("✓ Connected to local DuckDB thyroid_master.duckdb")
-    else:
-        con = duckdb.connect("thyroid_master.duckdb", read_only=True)
-        print("✓ Connected to local DuckDB")
-    return con
+def connect(use_md: bool = False, use_local: bool = False) -> duckdb.DuckDBPyConnection:
+    import os as _os
+    if use_local or _os.environ.get('USE_LOCAL_DUCKDB'):
+        path = _os.environ.get('LOCAL_DUCKDB_PATH', str(ROOT / 'thyroid_master_local.duckdb'))
+        return duckdb.connect(path)
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=use_md)
 
 def q1(con, sql):
     """Return single scalar value."""

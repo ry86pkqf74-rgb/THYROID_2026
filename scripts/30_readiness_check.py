@@ -95,24 +95,9 @@ def row_count(con: duckdb.DuckDBPyConnection, name: str) -> int:
         return 0
 
 
-def get_connection(use_md: bool) -> duckdb.DuckDBPyConnection:
-    """Open DuckDB: optional MotherDuck when --md and token set; else local file."""
-    if use_md:
-        token = os.environ.get("motherduck_token") or os.environ.get("MOTHERDUCK_TOKEN")
-        if token:
-            try:
-                con = duckdb.connect(f"md:thyroid_master?motherduck_token={token}")
-                print("  Connected to MotherDuck (md:thyroid_master)")
-                return con
-            except Exception as e:
-                print(f"  MotherDuck unavailable: {e}")
-                print("  Falling back to local thyroid_master.duckdb file")
-        con = duckdb.connect(str(DB_PATH), read_only=True)
-        print(f"  Using local file DB (--md): {DB_PATH}")
-        return con
-    con = duckdb.connect(str(DB_PATH), read_only=True)
-    print(f"  Using local file DB: {DB_PATH}")
-    return con
+def get_connection(use_md):
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=use_md)
 
 
 def main() -> None:

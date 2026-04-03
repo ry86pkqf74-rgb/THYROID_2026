@@ -21,20 +21,9 @@ TODAY = datetime.datetime.now().strftime("%Y%m%d")
 EXPORT_DIR = f"exports/operative_note_path_linkage_audit_{TODAY}"
 
 
-def get_connection(use_md: bool):
-    import duckdb
-
-    if use_md:
-        try:
-            import toml
-
-            token = os.environ.get("LOCAL_DB_PATH") or toml.load(
-                ".streamlit/secrets.toml"
-            )["LOCAL_DB_PATH"]
-        except Exception:
-            token = os.environ["LOCAL_DB_PATH"]
-        return duckdb.connect(f"thyroid_master.duckdb")
-    return duckdb.connect("thyroid_master.duckdb")
+def get_connection(use_md):
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=use_md)
 
 
 def q1(con, label: str, sql: str):

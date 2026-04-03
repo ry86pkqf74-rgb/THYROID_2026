@@ -72,16 +72,13 @@ def get_token() -> str:
     raise RuntimeError("No LOCAL_DB_PATH found in environment")
 
 
-def connect(use_md: bool) -> duckdb.DuckDBPyConnection:
-    if use_md:
-        tok = get_token()
-        con = duckdb.connect(f"thyroid_master.duckdb")
-        print("  ✓ Connected to thyroid_master.duckdb")
-    else:
-        db_path = str(ROOT / "thyroid_master_local.duckdb")
-        con = duckdb.connect(db_path)
-        print(f"  ✓ Connected to local {db_path}")
-    return con
+def connect(use_md: bool = False, use_local: bool = False) -> duckdb.DuckDBPyConnection:
+    import os as _os
+    if use_local or _os.environ.get('USE_LOCAL_DUCKDB'):
+        path = _os.environ.get('LOCAL_DUCKDB_PATH', str(ROOT / 'thyroid_master_local.duckdb'))
+        return duckdb.connect(path)
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=use_md)
 
 
 def tbl_exists(con: duckdb.DuckDBPyConnection, tbl: str) -> bool:

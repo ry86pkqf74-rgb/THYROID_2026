@@ -111,27 +111,9 @@ def section(title: str) -> None:
     print(f"{'=' * 76}")
 
 
-def _get_token() -> str:
-    import os
-    token = os.getenv("LOCAL_DB_PATH")
-    if token:
-        return token
-    secrets = ROOT / ".streamlit" / "secrets.toml"
-    if secrets.exists():
-        try:
-            import toml
-            return toml.load(str(secrets))["LOCAL_DB_PATH"]
-        except Exception:
-            pass
-    raise RuntimeError("LOCAL_DB_PATH not set.")
-
-
 def connect_duckdb(use_md: bool = False):
-    import duckdb
-    if use_md:
-        _get_token()
-        return duckdb.connect("thyroid_master.duckdb")
-    return duckdb.connect(str(DB_PATH))
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=use_md)
 
 
 def table_exists(con, tbl: str) -> bool:

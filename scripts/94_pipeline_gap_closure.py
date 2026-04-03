@@ -45,17 +45,9 @@ EXPORT_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # ── connection ────────────────────────────────────────────────────────────────
-def get_connection(use_md: bool) -> duckdb.DuckDBPyConnection:
-    if use_md:
-        token = os.environ.get("LOCAL_DB_PATH", "")
-        if not token:
-            secrets = ROOT / ".streamlit" / "secrets.toml"
-            if secrets.exists():
-                import toml
-                token = toml.load(secrets).get("LOCAL_DB_PATH", "")
-        os.environ["LOCAL_DB_PATH"] = token
-        return duckdb.connect("thyroid_master.duckdb")
-    return duckdb.connect(str(ROOT / "thyroid_master_local.duckdb"))
+def get_connection(use_md):
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=use_md)
 
 
 def safe_exec(con, sql: str, label: str = "") -> int:

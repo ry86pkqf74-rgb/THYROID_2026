@@ -150,21 +150,8 @@ def log(msg, level="INFO"):
 
 
 def get_connection(use_md):
-    import duckdb
-    if use_md:
-        token = os.environ.get("LOCAL_DB_PATH")
-        if not token:
-            try:
-                import toml
-                token = toml.load(str(REPO_ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
-                os.environ["LOCAL_DB_PATH"] = token
-            except Exception:
-                pass
-        if not token:
-            log("LOCAL_DB_PATH not found; falling back to local", "WARN")
-            return duckdb.connect(str(REPO_ROOT / "thyroid_master.duckdb"), read_only=True)
-        return duckdb.connect(f"thyroid_master.duckdb", read_only=True)
-    return duckdb.connect(str(REPO_ROOT / "thyroid_master.duckdb"), read_only=True)
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(REPO_ROOT / 'thyroid_master.duckdb', md=use_md)
 
 
 def validate_source_tables(con):

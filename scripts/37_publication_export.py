@@ -33,9 +33,8 @@ OUT_DIR = ROOT / "exports" / "FINAL_RELEASE"
 
 
 def _get_con(use_md: bool):
-    if use_md:
-        return MotherDuckClient().connect_rw()
-    return __import__("duckdb").connect(str(ROOT / "thyroid_master.duckdb"))
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(ROOT / "thyroid_master.duckdb", md=use_md)
 
 
 def _tbl_exists(con, name: str) -> bool:

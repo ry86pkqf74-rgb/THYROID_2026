@@ -116,23 +116,8 @@ def export_study_cohort(
 
 
 def _connect(use_md: bool) -> duckdb.DuckDBPyConnection:
-    if use_md:
-        token = os.environ.get("LOCAL_DB_PATH") or ""
-        if not token:
-            try:
-                import tomllib
-            except ImportError:
-                import tomli as tomllib  # type: ignore
-            secrets_path = ROOT / ".streamlit" / "secrets.toml"
-            with open(secrets_path, "rb") as f:
-                token = tomllib.load(f).get("LOCAL_DB_PATH", "")
-        con = duckdb.connect(f"thyroid_master.duckdb")
-        con.execute(f"USE {MD_DATABASE}")
-        print(f"Connected to local DuckDB: {MD_DATABASE}")
-        return con
-    con = duckdb.connect(str(DB_PATH), read_only=True)
-    print(f"Connected to local: {DB_PATH}")
-    return con
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=use_md)
 
 
 def main() -> None:

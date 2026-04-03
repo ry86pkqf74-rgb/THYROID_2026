@@ -22,19 +22,10 @@ import sys
 import os
 
 def get_connection(args):
-    import duckdb
-    if args.md:
-        try:
-            import toml
-            token = toml.load('.streamlit/secrets.toml')['LOCAL_DB_PATH']
-        except Exception:
-            token = os.environ.get('LOCAL_DB_PATH', '')
-        if not token:
-            print("ERROR: No LOCAL_DB_PATH found", file=sys.stderr)
-            sys.exit(1)
-        return duckdb.connect(f"thyroid_master.duckdb")
-    else:
-        return duckdb.connect(args.local_db)
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from utils.md_connect import connect_md_or_file
+    from pathlib import Path
+    return connect_md_or_file(Path(getattr(args, "local_db", "thyroid_master.duckdb")), md=getattr(args, "md", False))
 
 
 def run(args):

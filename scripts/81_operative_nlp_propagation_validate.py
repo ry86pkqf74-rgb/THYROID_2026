@@ -78,19 +78,9 @@ CAT_LABELS = {
 }
 
 
-def get_connection(use_md: bool):
-    import duckdb
-    if use_md:
-        try:
-            import toml
-            token = os.environ.get("LOCAL_DB_PATH") or toml.load(
-                str(ROOT / ".streamlit" / "secrets.toml")
-            )["LOCAL_DB_PATH"]
-        except Exception:
-            token = os.environ["LOCAL_DB_PATH"]
-        return duckdb.connect(f"thyroid_master.duckdb")
-    db = ROOT / "thyroid_master.duckdb"
-    return duckdb.connect(str(db))
+def get_connection(use_md):
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=use_md)
 
 
 def safe_count(con, sql: str) -> int:

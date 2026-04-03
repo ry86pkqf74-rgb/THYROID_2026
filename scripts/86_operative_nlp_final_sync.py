@@ -80,11 +80,13 @@ def get_token() -> str:
     raise RuntimeError("LOCAL_DB_PATH not found in env or .streamlit/secrets.toml")
 
 
-def connect(use_md: bool) -> duckdb.DuckDBPyConnection:
-    if use_md:
-        token = get_token()
-        return duckdb.connect(f"thyroid_master.duckdb")
-    return duckdb.connect(str(ROOT / "thyroid_master.duckdb"))
+def connect(use_md: bool = False, use_local: bool = False) -> duckdb.DuckDBPyConnection:
+    import os as _os
+    if use_local or _os.environ.get('USE_LOCAL_DUCKDB'):
+        path = _os.environ.get('LOCAL_DUCKDB_PATH', str(ROOT / 'thyroid_master_local.duckdb'))
+        return duckdb.connect(path)
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=use_md)
 
 
 def safe_exec(con: duckdb.DuckDBPyConnection, sql: str) -> int:

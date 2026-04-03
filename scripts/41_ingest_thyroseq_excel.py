@@ -99,30 +99,12 @@ CROSSWALK_FILES = [
 # ═══════════════════════════════════════════════════════════════════════════
 
 def connect(use_md: bool = False, use_local: bool = False) -> duckdb.DuckDBPyConnection:
-    if use_local or os.environ.get("USE_LOCAL_DUCKDB"):
-        path = os.environ.get("LOCAL_DUCKDB_PATH", str(ROOT / "thyroid_master_local.duckdb"))
-        log.info(f"Connecting to local DuckDB: {path}")
+    import os as _os
+    if use_local or _os.environ.get('USE_LOCAL_DUCKDB'):
+        path = _os.environ.get('LOCAL_DUCKDB_PATH', str(ROOT / 'thyroid_master_local.duckdb'))
         return duckdb.connect(path)
-    if use_md:
-        token = os.environ.get("LOCAL_DB_PATH")
-        if not token:
-            import toml
-            try:
-                token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
-            except Exception:
-                pass
-        if not token:
-            raise RuntimeError("LOCAL_DB_PATH not found")
-        log.info("Connecting to local DuckDB")
-        return duckdb.connect(f"thyroid_master.duckdb")
-    path = str(ROOT / "thyroid_master_local.duckdb")
-    log.info(f"Connecting to local DuckDB: {path}")
-    return duckdb.connect(path)
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# Phase 1: Raw ingest
-# ═══════════════════════════════════════════════════════════════════════════
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=use_md)
 
 def ingest_raw(excel_path: str) -> pd.DataFrame:
     log.info(f"Phase 1: Loading {excel_path}")

@@ -455,27 +455,9 @@ LEFT JOIN benign_pathology bp ON mc.research_id = bp.research_id
 
 
 def _connect(use_md: bool) -> duckdb.DuckDBPyConnection:
-    """Return a DuckDB connection — local DuckDB RW when --md, otherwise local."""
-    if use_md:
-        token = os.environ.get("LOCAL_DB_PATH") or ""
-        if not token:
-            # Try loading from .streamlit/secrets.toml
-            try:
-                import tomllib  # Python 3.11+
-            except ImportError:
-                import tomli as tomllib  # type: ignore
-            secrets_path = ROOT / ".streamlit" / "secrets.toml"
-            with open(secrets_path, "rb") as f:
-                token = tomllib.load(f).get("LOCAL_DB_PATH", "")
-        if not token:
-            raise RuntimeError("LOCAL_DB_PATH not set and not found in secrets.toml")
-        con = duckdb.connect(f"thyroid_master.duckdb")
-        con.execute(f"USE {MD_DATABASE}")
-        print(f"Connected to local DuckDB: {MD_DATABASE}")
-    else:
-        con = duckdb.connect(str(DB_PATH))
-        print(f"Connected to local: {DB_PATH}")
-    return con
+    """Return a DuckDB connection — MotherDuck when --md, otherwise local."""
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=use_md)
 
 
 def main() -> None:

@@ -789,10 +789,9 @@ ORDER BY research_id, event_date NULLS LAST, event_type
 
 
 def main() -> None:
-    cfg = MotherDuckConfig(database="thyroid_master.duckdb")
-    client = MotherDuckClient(cfg)
-    con = client.connect_rw()
-    print("Connected to local DuckDB RW")
+    from utils.md_connect import connect_md_or_file
+    con = connect_md_or_file(Path("thyroid_master.duckdb"), md=True)
+    print("Connected")
 
     for name, sql in [
         ("tumor_episode_master_v2", TUMOR_SQL),

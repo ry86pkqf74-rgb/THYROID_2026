@@ -193,17 +193,13 @@ def materialize_local(df: pd.DataFrame) -> None:
 
 
 def materialize_motherduck(df: pd.DataFrame) -> None:
-    from motherduck_client import MotherDuckClient, MotherDuckConfig, get_token
+    from utils.md_connect import connect_md_or_file
 
-    prefer_sa = os.getenv("CI", "").lower() in ("1", "true", "yes")
-    if not get_token(prefer_service_account=prefer_sa):
-        raise SystemExit("MOTHERDUCK_TOKEN / MD_SA_TOKEN / LOCAL_DB_PATH (JWT) required for --md")
     with tempfile.NamedTemporaryFile(suffix=".parquet", delete=False) as tmp:
         tmp_path = tmp.name
     try:
         df.to_parquet(tmp_path, index=False)
-        cfg = MotherDuckConfig(use_service_account=prefer_sa)
-        con = MotherDuckClient(cfg).connect_rw()
+        con = connect_md_or_file(ROOT / "thyroid_master.duckdb", md=True)
         con.execute(
             f"CREATE OR REPLACE TABLE synoptic_tumor_long_v1 AS "
             f"SELECT * FROM read_parquet('{tmp_path}')"

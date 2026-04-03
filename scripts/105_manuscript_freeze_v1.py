@@ -172,42 +172,15 @@ def sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
-def get_connection(use_md: bool):
-    import duckdb
-
-    if use_md:
-        token = os.environ.get("LOCAL_DB_PATH")
-        if not token:
-            try:
-                import toml
-                token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
-                os.environ["LOCAL_DB_PATH"] = token
-            except Exception:
-                pass
-        if not token:
-            log("LOCAL_DB_PATH not found — falling back to local", "WARN")
-            return duckdb.connect(str(ROOT / "thyroid_master.duckdb"), read_only=True)
-        return duckdb.connect(
-            f"thyroid_master.duckdb", read_only=True
-        )
-    return duckdb.connect(str(ROOT / "thyroid_master.duckdb"), read_only=True)
+def get_connection(use_md):
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=use_md)
 
 
 def get_rw_connection():
     """Read-write connection for --stamp mode."""
-    import duckdb
-
-    token = os.environ.get("LOCAL_DB_PATH")
-    if not token:
-        try:
-            import toml
-            token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
-            os.environ["LOCAL_DB_PATH"] = token
-        except Exception:
-            pass
-    if not token:
-        raise RuntimeError("LOCAL_DB_PATH required for --stamp mode")
-    return duckdb.connect(f"thyroid_master.duckdb")
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════════

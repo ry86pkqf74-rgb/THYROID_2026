@@ -21,15 +21,9 @@ EXPORT_DIR = Path(f"exports/hp_discharge_note_audit_{TIMESTAMP}")
 SURGICAL_COHORT_SIZE = 10_871
 
 
-def get_connection(use_md: bool):
-    if use_md:
-        token = os.environ.get("LOCAL_DB_PATH")
-        if not token:
-            import toml
-            token = toml.load(".streamlit/secrets.toml")["LOCAL_DB_PATH"]
-            os.environ["LOCAL_DB_PATH"] = token
-        return duckdb.connect("thyroid_master.duckdb")
-    return duckdb.connect("thyroid_master.duckdb")
+def get_connection(use_md):
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=use_md)
 
 
 def phase1_inventory(con) -> dict:

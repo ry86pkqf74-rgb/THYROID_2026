@@ -230,8 +230,8 @@ def main() -> int:
     args = ap.parse_args()
     do_md = bool(args.md) and not args.skip_md
 
-    client = MotherDuckClient(MotherDuckConfig(use_service_account=bool(args.sa)))
-    con = client.connect_rw()
+    from utils.md_connect import connect_md_or_file
+    con = connect_md_or_file(ROOT / "thyroid_master.duckdb", md=do_md)
 
     ops, path_syn = load_ops_path(con)
     out = build_linkage_frame(ops, path_syn)

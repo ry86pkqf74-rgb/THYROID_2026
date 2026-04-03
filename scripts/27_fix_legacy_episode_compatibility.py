@@ -269,16 +269,8 @@ def table_row_count(con, table: str) -> int:
 
 
 def run(args: argparse.Namespace) -> int:
-    if args.local or os.getenv("USE_LOCAL_DUCKDB", "").lower() in ("1", "true", "yes"):
-        import duckdb
-        local_path = os.getenv("LOCAL_DUCKDB_PATH", str(ROOT / "thyroid_master_local.duckdb"))
-        log.info("Connecting to local DuckDB: %s", local_path)
-        con = duckdb.connect(local_path)
-    else:
-        log.info("Connecting to local DuckDB (thyroid_master.duckdb)…")
-        cfg = MotherDuckConfig(database="thyroid_master.duckdb")
-        cli = MotherDuckClient(cfg)
-        con = cli.connect_rw()
+    from utils.md_connect import connect_md_or_file
+    con = connect_md_or_file(ROOT / "thyroid_master.duckdb", md=not getattr(args, "local", False))
 
     created: list[str] = []
     failed: list[tuple[str, str]] = []

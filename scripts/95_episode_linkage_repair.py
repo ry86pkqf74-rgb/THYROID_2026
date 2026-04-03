@@ -70,13 +70,8 @@ def section(msg: str):
 
 
 def get_connection(args) -> duckdb.DuckDBPyConnection:
-    if args.local:
-        path = os.getenv("LOCAL_DUCKDB_PATH", "thyroid_master_local.duckdb")
-        print(f"  [local] {path}")
-        return duckdb.connect(path)
-    else:
-        print("  [local DuckDB] thyroid_master.duckdb")
-        return duckdb.connect("thyroid_master.duckdb")
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(Path("thyroid_master.duckdb"), md=getattr(args, "md", False))
 
 
 def safe_execute(con, sql: str, label: str = "", dry_run: bool = False) -> int:

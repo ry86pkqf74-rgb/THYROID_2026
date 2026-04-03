@@ -61,16 +61,8 @@ def table_exists(con: duckdb.DuckDBPyConnection, tbl: str) -> bool:
 
 
 def connect(args) -> duckdb.DuckDBPyConnection:
-    if args.md:
-        import toml
-        token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
-        return duckdb.connect(f"thyroid_master.duckdb")
-    return duckdb.connect(str(DB_PATH))
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Phase A: Recurrence manual review queue + validation summary
-# ─────────────────────────────────────────────────────────────────────────────
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=getattr(args, 'md', False))
 
 RECURRENCE_REVIEW_QUEUE_SQL = """
 CREATE OR REPLACE TABLE recurrence_manual_review_queue_v1 AS

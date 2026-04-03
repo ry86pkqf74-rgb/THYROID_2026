@@ -69,19 +69,8 @@ def table_exists(con: duckdb.DuckDBPyConnection, tbl: str) -> bool:
 
 
 def connect(args) -> duckdb.DuckDBPyConnection:
-    if args.md:
-        import toml
-        token = toml.load(str(ROOT / ".streamlit" / "secrets.toml"))["LOCAL_DB_PATH"]
-        return duckdb.connect(f"thyroid_master.duckdb")
-    return duckdb.connect(str(DB_PATH))
-
-
-# ═══════════════════════════════════════════════════════════════════════
-# PHASE A — Operative NLP Enrichment
-# ═══════════════════════════════════════════════════════════════════════
-
-# Patient-level NLP rollups are only safe when exactly one operative episode exists;
-# multi-surgery patients require episode-keyed facts (see canonical_extracted_fact_long_v1).
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=getattr(args, 'md', False))
 _SINGLE_SURGERY_SUBQUERY = """
   AND o.research_id IN (
     SELECT CAST(research_id AS INTEGER) AS rid

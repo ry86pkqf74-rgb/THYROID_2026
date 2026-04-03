@@ -998,17 +998,8 @@ def main() -> None:
     print("  Mode: " + ("local DuckDB" if args.md else "Local DuckDB"))
     print("=" * 80)
 
-    if args.md:
-        from motherduck_client import MotherDuckClient
-        client = MotherDuckClient()
-        con = client.connect_rw()
-        share_ro = ""
-        try:
-            con.execute(f"ATTACH '{share_ro}' AS thyroid_share")
-        except Exception:
-            pass
-    else:
-        con = duckdb.connect(str(DB_PATH))
+    from utils.md_connect import connect_md_or_file
+    con = connect_md_or_file(DB_PATH, md=args.md)
 
     # ── Register data ──
     section("REGISTERING DATA SOURCES")

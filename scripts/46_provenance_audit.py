@@ -53,27 +53,10 @@ PROVENANCE_COLUMNS = [
 # Connection helpers
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-def _get_token() -> str:
-    token = os.getenv("LOCAL_DB_PATH")
-    if token:
-        return token
-    secrets = ROOT / ".streamlit" / "secrets.toml"
-    if secrets.exists():
-        try:
-            import toml
-            return toml.load(str(secrets))["LOCAL_DB_PATH"]
-        except Exception:
-            pass
-    raise RuntimeError(
-        "LOCAL_DB_PATH not set. Export it or add to .streamlit/secrets.toml."
-    )
-
 
 def connect_md() -> duckdb.DuckDBPyConnection:
-    token = _get_token()
-    return duckdb.connect(f"thyroid_master.duckdb")
-
-
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=True)
 def connect_local() -> duckdb.DuckDBPyConnection:
     local_path = os.getenv("LOCAL_DUCKDB_PATH", str(ROOT / "thyroid_master_local.duckdb"))
     return duckdb.connect(local_path)

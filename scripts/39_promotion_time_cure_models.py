@@ -89,27 +89,10 @@ def _get_con(use_md: bool, use_local: bool):
     if use_local:
         db_path = ROOT / "thyroid_master.duckdb"
         return duckdb.connect(str(db_path)), False
-    if use_md:
-        # Load token from env or secrets.toml
-        import os
-        token = os.environ.get("LOCAL_DB_PATH", "")
-        if not token:
-            try:
-                import toml
-                token = toml.load(str(ROOT / ".streamlit" / "secrets.toml")).get(
-                    "LOCAL_DB_PATH", ""
-                )
-            except Exception:
-                pass
-        if not token:
-            print("  ERROR: LOCAL_DB_PATH not set.  Use --local for local DuckDB.")
-            sys.exit(1)
-        con = duckdb.connect(f"thyroid_master.duckdb")
-        con.execute("USE thyroid_master.duckdb;")
-        return con, True
-    # Default: local DuckDB
+    from utils.md_connect import connect_md_or_file
     db_path = ROOT / "thyroid_master.duckdb"
-    return duckdb.connect(str(db_path)), False
+    con = connect_md_or_file(db_path, md=use_md)
+    return con, use_md
 
 
 def _load_cohort(con, is_md: bool, dry_run: bool) -> pd.DataFrame:

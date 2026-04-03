@@ -65,14 +65,9 @@ def get_md_token() -> str:
     return ""
 
 
-def connect_md(db: str = "thyroid_master.duckdb") -> duckdb.DuckDBPyConnection:
-    tok = get_md_token()
-    if not tok:
-        sys.exit("LOCAL_DB_PATH not found")
-    os.environ["LOCAL_DB_PATH"] = tok
-    con = duckdb.connect(f"thyroid_master.duckdb")
-    print(f"✓ Connected to md:{db}")
-    return con
+def connect_md() -> duckdb.DuckDBPyConnection:
+    from utils.md_connect import connect_md_or_file
+    return connect_md_or_file(DB_PATH, md=True)
 
 
 def q1(con, sql):
