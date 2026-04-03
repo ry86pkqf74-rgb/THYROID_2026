@@ -2,17 +2,12 @@
 """
 02b_register_notes_entities.py — Register notes + entity parquets in DuckDB
 
-Registers:
-  - clinical_notes_long
-  - note_entities_staging
-  - note_entities_genetics
-  - note_entities_procedures
-  - note_entities_complications
-  - note_entities_medications
-  - note_entities_problem_list
+Reads the canonical extraction domain registry (config/extraction_domain_registry.yaml)
+to discover all entity tables and canonical outputs.  Falls back to a hardcoded list
+when the registry is unavailable.
 
 Creates views:
-  - notes_entity_summary   (aggregated counts per patient)
+  - notes_entity_summary   (aggregated counts per patient — columns driven by registry)
   - advanced_features_v2   (extended with entity-availability flags)
 """
 
@@ -31,18 +26,22 @@ DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 from utils.md_connect import connect_md_or_file  # noqa: E402
 
-# Registry-driven table lists (replaces hardcoded lists)
+# ---------------------------------------------------------------------------
+# Registry-driven table lists
+# ---------------------------------------------------------------------------
+_REGISTRY_LOADED = False
+_ENTITY_SUMMARY_SQL_OVERRIDE: str | None = None
+
 try:
     from llm_extraction.registry import load_registry as _load_registry
 
     _reg = _load_registry()
-    ENTITY_TABLES = ["clinical_notes_long"] + _reg.all_parquet_stems()
-    _CANONICAL_KEYS = [
-        k for k, v in _reg.canonical_outputs.items()
-    ]
-    CANONICAL_AND_RUN_TABLES = [
+    ENTITY_TABLES: list[str] = ["clinical_notes_long"] + _reg.all_parquet_stems()
+    CANONICAL_AND_RUN_TABLES: list[str] = [
         v.duckdb_table for v in _reg.canonical_outputs.values()
     ]
+    _ENTITY_SUMMARY_SQL_OVERRIDE = _reg.generate_entity_summary_sql()
+    _REGISTRY_LOADED = True
 except Exception:
     ENTITY_TABLES = [
         "clinical_notes_long",
@@ -58,10 +57,12 @@ except Exception:
     CANONICAL_AND_RUN_TABLES = [
         "canonical_extracted_fact_long_v1",
         "canonical_fact_quarantine_v1",
+        "canonical_extracted_fact_long_v2",
+        "canonical_fact_quarantine_v2",
         "note_extraction_runs",
     ]
 
-ENTITY_SUMMARY_SQL = """
+_FALLBACK_ENTITY_SUMMARY_SQL = """
 CREATE OR REPLACE VIEW notes_entity_summary AS
 WITH all_entities AS (
     SELECT research_id, 'staging' AS domain, entity_value_norm, present_or_negated
@@ -84,9 +85,6 @@ WITH all_entities AS (
     UNION ALL
     SELECT research_id, 'problem_list', entity_value_norm, present_or_negated
     FROM note_entities_problem_list
-    UNION ALL
-    SELECT research_id, 'llm', entity_value_norm, present_or_negated
-    FROM note_entities_llm
 )
 SELECT
     CAST(research_id AS VARCHAR) AS research_id,
@@ -98,12 +96,13 @@ SELECT
     SUM(CASE WHEN domain = 'complications' THEN 1 ELSE 0 END) AS n_complications,
     SUM(CASE WHEN domain = 'medications' THEN 1 ELSE 0 END) AS n_medications,
     SUM(CASE WHEN domain = 'problem_list' THEN 1 ELSE 0 END) AS n_problems,
-    SUM(CASE WHEN domain = 'llm' THEN 1 ELSE 0 END) AS n_llm,
     SUM(CASE WHEN present_or_negated = 'present' THEN 1 ELSE 0 END) AS n_present,
     SUM(CASE WHEN present_or_negated = 'negated' THEN 1 ELSE 0 END) AS n_negated
 FROM all_entities
 GROUP BY research_id
 """
+
+ENTITY_SUMMARY_SQL = _ENTITY_SUMMARY_SQL_OVERRIDE or _FALLBACK_ENTITY_SUMMARY_SQL
 
 ADVANCED_V2_EXTENDED_SQL = """
 CREATE OR REPLACE VIEW advanced_features_v2 AS
@@ -190,6 +189,9 @@ def main() -> None:
 
     print("=" * 70)
     print("  REGISTER NOTES & ENTITY TABLES IN DUCKDB")
+    print(f"  Registry: {'YAML-driven' if _REGISTRY_LOADED else 'hardcoded fallback'}")
+    print(f"  Entity tables: {len(ENTITY_TABLES)}")
+    print(f"  Canonical outputs: {len(CANONICAL_AND_RUN_TABLES)}")
     print("=" * 70)
 
     if not args.md and not DB_PATH.exists():

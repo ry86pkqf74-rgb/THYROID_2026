@@ -138,6 +138,45 @@ class Registry:
             if v.linkage_anchor_family == family
         }
 
+    def linkage_family_map(self) -> dict[str, list[str]]:
+        """Return {family: [domain_name, ...]} for all canonical domains."""
+        out: dict[str, list[str]] = {}
+        for name, spec in self.canonical_domains.items():
+            out.setdefault(spec.linkage_anchor_family, []).append(name)
+        return out
+
+    def generate_entity_summary_sql(self) -> str:
+        """Build CREATE VIEW notes_entity_summary from all canonical domains."""
+        unions: list[str] = []
+        count_cases: list[str] = []
+        for name, spec in self.canonical_domains.items():
+            tbl = spec.parquet_stem
+            unions.append(
+                f"    SELECT research_id, '{name}' AS domain, "
+                f"entity_value_norm, present_or_negated\n"
+                f"    FROM {tbl}"
+            )
+            count_cases.append(
+                f"    SUM(CASE WHEN domain = '{name}' THEN 1 ELSE 0 END) "
+                f"AS n_{name}"
+            )
+        union_block = "\n    UNION ALL\n".join(unions)
+        count_block = ",\n".join(count_cases)
+        return (
+            "CREATE OR REPLACE VIEW notes_entity_summary AS\n"
+            "WITH all_entities AS (\n"
+            f"{union_block}\n"
+            ")\n"
+            "SELECT\n"
+            "    CAST(research_id AS VARCHAR) AS research_id,\n"
+            "    COUNT(*) AS n_entities_total,\n"
+            f"{count_block},\n"
+            "    SUM(CASE WHEN present_or_negated = 'present' THEN 1 ELSE 0 END) AS n_present,\n"
+            "    SUM(CASE WHEN present_or_negated = 'negated' THEN 1 ELSE 0 END) AS n_negated\n"
+            "FROM all_entities\n"
+            "GROUP BY research_id"
+        )
+
     def resolve_domain(self, name: str) -> DomainSpec:
         """Look up a domain by name; raise ValueError for unknown domains."""
         if name not in self.domains:

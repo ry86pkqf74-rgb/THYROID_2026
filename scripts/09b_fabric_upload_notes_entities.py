@@ -72,8 +72,9 @@ logging.basicConfig(
 )
 log = logging.getLogger("fabric_upload")
 
-# Registry-driven domain→file mapping (replaces hardcoded dict)
+# Registry-driven domain→file mapping
 sys.path.insert(0, str(ROOT))
+_REGISTRY_LOADED = False
 try:
     from llm_extraction.registry import load_registry as _load_registry
 
@@ -82,6 +83,7 @@ try:
     CANONICAL_RELEASE_STEMS: tuple[str, ...] = tuple(
         v.duckdb_table for v in _reg.canonical_outputs.values()
     )
+    _REGISTRY_LOADED = True
 except Exception:
     DOMAIN_TO_FILE = {
         "staging":           "note_entities_staging",
@@ -96,6 +98,8 @@ except Exception:
     CANONICAL_RELEASE_STEMS = (
         "canonical_extracted_fact_long_v1",
         "canonical_fact_quarantine_v1",
+        "canonical_extracted_fact_long_v2",
+        "canonical_fact_quarantine_v2",
         "note_extraction_runs",
     )
 
@@ -331,6 +335,8 @@ def main() -> None:
     run_id = str(uuid.uuid4())
     log.info("=" * 70)
     log.info("  FABRIC / ONELAKE UPLOAD — entities + optional canonical release (v3)")
+    log.info(f"  Registry: {'YAML-driven' if _REGISTRY_LOADED else 'hardcoded fallback'}")
+    log.info(f"  Domains: {len(DOMAIN_TO_FILE)}, Canonical: {len(CANONICAL_RELEASE_STEMS)}")
     log.info("=" * 70)
     log.info(f"  Account URL  : {args.account_url}")
     log.info(f"  Workspace ID : {file_system}")

@@ -484,10 +484,16 @@ canonical_outputs:
     parquet_path: processed/canonical_extracted_fact_long_v2.parquet
     materialize_script: scripts/103_fact_lineage_materialize.py
     domains: all
-  quarantine_table:
+  quarantine_table_v1:
     duckdb_table: canonical_fact_quarantine_v1
     parquet_path: processed/canonical_fact_quarantine_v1.parquet
     materialize_script: scripts/103_fact_lineage_materialize.py
+    domains: v1_only
+  quarantine_table_v2:
+    duckdb_table: canonical_fact_quarantine_v2
+    parquet_path: processed/canonical_fact_quarantine_v2.parquet
+    materialize_script: scripts/103_fact_lineage_materialize.py
+    domains: all
   runs_table:
     duckdb_table: note_extraction_runs
     parquet_path: processed/note_extraction_runs.parquet
