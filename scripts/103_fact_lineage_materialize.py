@@ -681,7 +681,7 @@ def main() -> None:
     print(f"  QC report: {qc_path}")
 
     # ── DuckDB ────────────────────────────────────────────────────────────
-    con = connect_md_or_file(DB_PATH, md=args.md)
+    con = connect_md_or_file(DB_PATH, md=args.md, fail_closed=args.md)
     for tbl, pq in [
         ("canonical_extracted_fact_long_v1", out_v1),
         ("canonical_fact_quarantine_v1", outq_v1),

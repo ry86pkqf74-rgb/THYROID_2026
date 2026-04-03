@@ -122,20 +122,7 @@ def section(title: str) -> None:
 def connect_duckdb(use_md: bool = False):
     from utils.md_connect import connect_md_or_file
 
-    con = connect_md_or_file(DB_PATH, md=use_md)
-    if use_md:
-        try:
-            dbs = con.execute("PRAGMA database_list").fetchall()
-            on_md = any("md:" in str(r) for r in dbs)
-        except Exception:
-            on_md = False
-        if not on_md:
-            con.close()
-            print("  FATAL: --md was requested but no MotherDuck connection established.")
-            print("  Ensure MOTHERDUCK_TOKEN or LOCAL_DB_PATH (JWT) env var is set.")
-            sys.exit(1)
-        print("  MotherDuck connection verified (fail-closed gate passed)")
-    return con
+    return connect_md_or_file(DB_PATH, md=use_md, fail_closed=use_md)
 
 
 def table_exists(con, tbl: str) -> bool:

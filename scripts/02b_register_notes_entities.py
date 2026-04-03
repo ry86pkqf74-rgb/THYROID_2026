@@ -202,7 +202,7 @@ def main() -> None:
     if not args.md and not DB_PATH.exists():
         print(f"  DuckDB not found — creating {DB_PATH}")
 
-    con = connect_md_or_file(DB_PATH, md=args.md)
+    con = connect_md_or_file(DB_PATH, md=args.md, fail_closed=args.md)
 
     # Track which entity tables were successfully loaded so we can build a
     # summary SQL that only references tables that exist in this session.
