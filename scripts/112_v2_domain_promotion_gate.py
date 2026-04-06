@@ -806,18 +806,42 @@ def run_promotion_gate(
     # (e.g. airway_invasion→tracheal_deviation) maps to a v1 domain (operative_detail)
     # where the concept is represented differently.  Only same-domain discordance
     # indicates a genuine extraction conflict that must be manually reviewed.
+    _columns_absent_note = ""
     if review_queue_df.empty:
         n_discordant_same = 0
         n_discordant_cross = 0
     else:
         disc_mask = review_queue_df["algorithm_comparison_status"] == "discordant_existing"
-        same_domain_mask = review_queue_df.get("source_domain", pd.Series(dtype=str)) == review_queue_df.get("comparison_domain", pd.Series(dtype=str))
-        n_discordant_same = int((disc_mask & same_domain_mask).sum())
-        n_discordant_cross = int((disc_mask & ~same_domain_mask).sum())
+        _has_source = "source_domain" in review_queue_df.columns
+        _has_comparison = "comparison_domain" in review_queue_df.columns
+        if not _has_source or not _has_comparison:
+            # Fail closed: when the columns needed to distinguish same-domain from
+            # cross-domain discordance are absent, treat ALL discordant rows as
+            # same-domain (blocking).  Using .get() with an empty-Series fallback
+            # previously caused index misalignment that silently zeroed both counts,
+            # allowing the gate to pass even when discordant rows existed.
+            n_discordant_same = int(disc_mask.sum())
+            n_discordant_cross = 0
+            _missing = []
+            if not _has_source:
+                _missing.append("source_domain")
+            if not _has_comparison:
+                _missing.append("comparison_domain")
+            _columns_absent_note = (
+                f" [fail-closed: {', '.join(_missing)} column(s) absent — "
+                f"all {n_discordant_same} discordant row(s) counted as same-domain]"
+            )
+        else:
+            same_domain_mask = (
+                review_queue_df["source_domain"] == review_queue_df["comparison_domain"]
+            )
+            n_discordant_same = int((disc_mask & same_domain_mask).sum())
+            n_discordant_cross = int((disc_mask & ~same_domain_mask).sum())
     if n_discordant_same > 0:
         detail = (
             f"{n_discordant_same} same-domain discordant rows require manual verification; "
             f"{n_discordant_cross} cross-domain discordant rows (informational, waived)"
+            f"{_columns_absent_note}"
         )
     elif n_discordant_cross > 0:
         detail = (
