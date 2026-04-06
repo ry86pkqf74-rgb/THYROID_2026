@@ -751,8 +751,9 @@ def _append_longitudinal_duckdb(mapped: pd.DataFrame, use_md: bool) -> int:
         )
 
     con.register("_long_append", mapped)
+    mapped_cols = ", ".join(f'"{c}"' for c in mapped.columns)
     con.execute(
-        "INSERT INTO longitudinal_lab_canonical_v1 SELECT * FROM _long_append"
+        f"INSERT INTO longitudinal_lab_canonical_v1 ({mapped_cols}) SELECT {mapped_cols} FROM _long_append"
     )
     post = con.execute(
         "SELECT COUNT(*) FROM longitudinal_lab_canonical_v1"
@@ -1391,10 +1392,10 @@ def phase_n_derived_views(
         "SUM(CASE WHEN tgab_interference_flag THEN 1 ELSE 0 END) "
         "FROM tg_timeline_patient_summary_v1"
     ).fetchone()
-    stats["timeline_patients"] = r[0]
-    stats["rising_tg"] = r[1]
-    stats["tgab_interference"] = r[2]
-    print(f"    {r[0]:,} patients, {r[1]:,} rising Tg, {r[2]:,} TgAb interference")
+    stats["timeline_patients"] = r[0] or 0
+    stats["rising_tg"] = r[1] or 0
+    stats["tgab_interference"] = r[2] or 0
+    print(f"    {stats['timeline_patients']:,} patients, {stats['rising_tg']:,} rising Tg, {stats['tgab_interference']:,} TgAb interference")
 
     traj = con.execute("""
         SELECT tg_trajectory_class, COUNT(*)

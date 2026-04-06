@@ -1277,3 +1277,105 @@ Only auto-fill when: target field is NULL, source match confidence >= 0.7, sourc
     --input '/path/to/Thyroseq Data Complete.xlsx' \
     [--md] [--local] [--dry-run]
 ```
+
+---
+
+## V2 LLM Extraction Entity Tables
+
+Registry-driven extraction domains from `config/extraction_domain_registry.yaml` (schema version `entity_schema_v3_2026-04-03`). Each domain produces a `note_entities_llm_<domain>.parquet` in the v2 fleet directory, staged to `v2_stage` schema in MotherDuck and promoted to `main` after passing the 8-gate promotion pipeline.
+
+### V2 Domain Tables (23 canonical-output domains)
+
+| Table | QA Tier | Linkage Family | Note Scope |
+|-------|---------|----------------|------------|
+| `note_entities_llm_imaging` | standard | imaging | all |
+| `note_entities_llm_tirads_granular` | standard | imaging | all |
+| `note_entities_llm_us_nodule_dynamics` | standard | imaging | all |
+| `note_entities_llm_labs` | standard | followup | all |
+| `note_entities_llm_tg_kinetics` | standard | followup | all |
+| `note_entities_llm_pathology` | critical | pathology | path_report |
+| `note_entities_llm_synoptic_pathology_enrichment` | critical | pathology | path_report |
+| `note_entities_llm_rai_detailed` | critical | rai | all |
+| `note_entities_llm_rad_treatment` | standard | rai | all |
+| `note_entities_llm_parathyroid_detail` | standard | operative | op_note |
+| `note_entities_llm_recurrence` | critical | followup | all |
+| `note_entities_llm_survival_followup` | standard | followup | all |
+| `note_entities_llm_cervical_ln_detail` | standard | pathology | all |
+| `note_entities_llm_functional_outcomes` | informational | followup | all |
+| `note_entities_llm_past_medical_hx` | informational | demographics | all |
+| `note_entities_llm_past_surgical_hx` | informational | demographics | all |
+| `note_entities_llm_presenting_symptoms` | informational | demographics | all |
+| `note_entities_llm_physical_exam` | informational | demographics | all |
+| `note_entities_llm_vascular_invasion` | critical | pathology | path_report |
+| `note_entities_llm_airway_invasion` | standard | operative | op_note |
+| `note_entities_llm_frozen_section_detail` | standard | operative | op_note |
+| `note_entities_llm_dynamic_risk_response` | standard | followup | all |
+| `note_entities_llm_patient_decision_adherence` | informational | followup | all |
+
+### Canonical Fact Tables (v2)
+
+| Table | Description |
+|-------|-------------|
+| `canonical_extracted_fact_long_v2` | All v1 + v2 domains expanded to entity-level rows. Superset of v1. Columns per `docs/fact_provenance_contract_v1.md`. |
+| `canonical_fact_quarantine_v2` | Rows failing quality gates with `quarantine_reason` and `quarantine_date`. |
+
+### Sub-Prompt Parquets (merged into parent domain)
+
+| Parquet Stem | Parent Domain |
+|-------------|---------------|
+| `note_entities_llm_recurrence_detailed` | recurrence |
+| `note_entities_llm_complications_rln_laryngoscopy` | complications |
+| `note_entities_llm_medication_management` | medications |
+| `note_entities_llm_operative_details` | operative_detail |
+| `note_entities_llm_operative_v2_enrichment` | operative_detail |
+| `note_entities_llm_parathyroid_per_gland` | parathyroid_detail |
+| `note_entities_llm_molecular_thyroseq_afirma` | genetics |
+
+---
+
+## Thyroglobulin Lab Tables
+
+Source: `raw/Thyroid_Thyroglobulin_Lab_20251120.csv` (78,112 raw rows). Ingested by `scripts/113_tg_lab_ingestion.py`.
+
+| Table | Description | Rows |
+|-------|-------------|------|
+| `thyroglobulin_lab_canonical_v1` | Canonical Tg/TgAb lab results: `research_id`, `analyte` (Tg/TgAb), `result_numeric`, `result_text`, `result_date`, `lab_units`, `reference_range`, `temporal_window` | ~76,971 |
+| `tg_lab_review_queue_v1` | Ambiguous Tg+TgAb combo pairs requiring manual disambiguation | ~1,035 |
+| `tg_timeline_patient_summary_v1` | Per-patient summary: first/last Tg, nadir Tg, trend direction, surveillance window count | ~3,258 |
+| `tg_postop_surveillance_windows_v1` | Temporal surveillance windows with per-window Tg/TgAb statistics | Derived |
+| `tg_recurrence_surveillance_linkage_v1` | Join of rising-Tg patients to `extracted_recurrence_refined_v1` | Derived |
+
+### Key Columns in `thyroglobulin_lab_canonical_v1`
+
+- `research_id`: patient identifier (exact match to `master_cohort`)
+- `analyte`: `Tg` or `TgAb`
+- `result_numeric`: parsed numeric lab value
+- `result_date`: `YYYY-MM-DD` normalized
+- `temporal_window`: postoperative surveillance window assignment
+- `source_row_hash`: deterministic hash for deduplication
+
+---
+
+## QA Schema (MotherDuck)
+
+Schema `qa` in the `Thyroid 2026` catalog. Created by `scripts/114_qa_schema_setup.py`.
+
+| Table | Description |
+|-------|-------------|
+| `qa.promotion_scorecard` | Gate results per run: `run_label`, `gate_id`, `status`, `detail`, `git_sha` |
+| `qa.promotion_review_decisions` | Persisted review decisions: `verification_status`, `reviewer`, `waiver_reason` |
+| `qa.concordance_summary` | Per-domain concordance metrics by gate run |
+| `qa.domain_validation` | Schema compliance, dup rates, date coverage per gate run |
+| `qa.tg_lab_ingestion_qc` | Structured QC from script 113: reconciliation gap, parse rates, patient counts |
+| `qa.release_manifest` | Immutable release snapshot metadata: `release_tag`, `git_sha`, `tables_included` |
+
+---
+
+## MotherDuck Schema Layout
+
+| Schema | Purpose |
+|--------|---------|
+| `main` | Canonical/production tables. Stable contract surfaces for analysis, manuscripts, dashboards. |
+| `v2_stage` | Pre-promotion staging. Raw LLM fleet parquets (1 row per note, `result_json`). Not yet gate-validated. |
+| `qa` | Validation artifacts, gate scorecards, review decisions, release manifests. |
+| `release_YYYYMMDD` | Immutable point-in-time snapshots of canonical tables for manuscript reproducibility. |

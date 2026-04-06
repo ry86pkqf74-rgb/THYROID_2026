@@ -1,0 +1,106 @@
+{
+  "schema_version": "1.0",
+  "script": "scripts/113_tg_lab_ingestion.py",
+  "run_timestamp": "20260406",
+  "source_file": "Thyroid_Thyroglobulin_Lab_20251120.csv",
+  "ingestion_waves": [
+    "wave_tg_structured_ehr",
+    "wave_tgab_structured_ehr"
+  ],
+  "row_waterfall": {
+    "source_rows": 78112,
+    "after_dedup": 78006,
+    "duplicates_suppressed": 106,
+    "rows_appended_canonical": 76971,
+    "review_queue_rows": 1035,
+    "reconciliation_gap": 0
+  },
+  "patients": {
+    "unique_in_canonical": 3258,
+    "tg_only": 88,
+    "tgab_only": 201,
+    "both_tg_and_tgab": 2969,
+    "unmatched_research_ids": [
+      20038,
+      20040,
+      20041,
+      20044,
+      20045,
+      20048,
+      20049,
+      20054
+    ]
+  },
+  "analyte_breakdown": {
+    "Tg": {
+      "rows": 37966,
+      "patients": 3057
+    },
+    "TgAb": {
+      "rows": 39005,
+      "patients": 3170
+    }
+  },
+  "combo_disambiguation": {
+    "pairs_total": 17162,
+    "heuristic_resolved": 16173,
+    "crossref_resolved": 561,
+    "ambiguous_to_review": 607
+  },
+  "result_parsing": {
+    "numeric_rate_pct": 97.39,
+    "date_coverage_pct": 100.0
+  },
+  "temporal_window_distribution": {
+    "surveillance_5y": 32796,
+    "long_term": 22960,
+    "early_postop": 9120,
+    "surveillance_1y": 7520,
+    "pre_surgery": 3032,
+    "perioperative": 1543
+  },
+  "cross_wave_reconciliation": {
+    "total_canonical_rows": 76971,
+    "deduped_rows": 0,
+    "superseded_exact_duplicates": 21761,
+    "cross_wave_value_mismatches": 0
+  },
+  "derived_views": {
+    "tg_timeline_patients": 0,
+    "rising_tg_patients": 0,
+    "tgab_interference_patients": 0,
+    "postop_surveillance_rows": 16184,
+    "postop_surveillance_patients": 3250,
+    "recurrence_linkage_rows": 0,
+    "confirmed_biochemical_and_structural": 0,
+    "recurrence_table_used": null
+  },
+  "promotion_gate": {
+    "idempotent_append": true,
+    "pii_stripped": true,
+    "dedup_key": [
+      "research_id",
+      "test_name",
+      "specimen_collect_dt",
+      "result"
+    ],
+    "wave_priority_order": [
+      "wave_tg_structured_ehr",
+      "wave_tgab_structured_ehr",
+      "wave_1_structured_tg",
+      "wave_2_structured_anti_tg"
+    ],
+    "review_queue_routing": [
+      "unmapped_test_name",
+      "combo_ambiguous"
+    ],
+    "parquet_idempotent": true,
+    "provenance_columns": [
+      "ingestion_script",
+      "ingestion_date",
+      "ingestion_wave",
+      "source_table",
+      "data_completeness_tier"
+    ]
+  }
+}

@@ -289,6 +289,70 @@ jobs:
           "
         continue-on-error: true
 
+  # ── Job 3a: V2 Domain Promotion Validation ──────────────────────────────
+  v2-domain-validation:
+    name: V2 Domain Promotion Validation
+    runs-on: ubuntu-latest
+    needs: lint-and-syntax
+    env:
+      MD_SA_TOKEN: ${{ secrets.MD_SA_TOKEN }}
+      MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
+      LOCAL_DB_PATH: ${{ secrets.LOCAL_DB_PATH }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Registry validation
+        run: |
+          python -c "
+          from llm_extraction.registry import load_registry, validate_registry
+          reg = load_registry()
+          errs = validate_registry(reg)
+          print(f'Registry: {len(reg.domains)} domains, schema_version={reg.schema_version}')
+          if errs:
+              print('VALIDATION ERRORS:', errs)
+              exit(1)
+          print('Registry validation: PASS')
+          "
+
+      - name: V2 canonical table existence (MotherDuck)
+        run: |
+          python -c "
+          from motherduck_client import MotherDuckClient, MotherDuckConfig, get_token
+          assert get_token(prefer_service_account=True), 'No MotherDuck token'
+          con = MotherDuckClient(MotherDuckConfig(use_service_account=True)).connect_rw()
+          for tbl in ['canonical_extracted_fact_long_v2', 'canonical_fact_quarantine_v2']:
+              try:
+                  cnt = con.execute(f'SELECT COUNT(*) FROM {tbl}').fetchone()[0]
+                  print(f'  OK {tbl}: {cnt:,} rows')
+              except Exception as e:
+                  print(f'  WARN {tbl}: {e}')
+          con.close()
+          "
+        continue-on-error: true
+
+      - name: QA schema existence check
+        run: |
+          python -c "
+          from motherduck_client import MotherDuckClient, MotherDuckConfig, get_token
+          assert get_token(prefer_service_account=True), 'No MotherDuck token'
+          con = MotherDuckClient(MotherDuckConfig(use_service_account=True)).connect_rw()
+          schemas = [r[0] for r in con.execute('SHOW SCHEMAS').fetchall()]
+          print(f'Schemas: {schemas}')
+          qa_tables = con.execute(
+              \"SELECT table_name FROM information_schema.tables WHERE table_schema='qa' ORDER BY 1\"
+          ).fetchall()
+          print(f'QA tables: {[r[0] for r in qa_tables]}')
+          con.close()
+          "
+        continue-on-error: true
+
   # ── Job 3b: Global OED vs path-synoptic completion linkage (manual only) ──
   # Uses GitHub secrets; refreshes MotherDuck tables only (no repo commits).
   completion-linkage-motherduck:

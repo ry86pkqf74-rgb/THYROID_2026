@@ -52,24 +52,45 @@ PARQUET_HYDRATION_DEFAULTS: dict[str, Path] = {
     "canonical_extracted_fact_long_v1": ROOT / "processed" / "canonical_extracted_fact_long_v1.parquet",
 }
 
-# MotherDuck catalog may store trial data under v2_stage (not main); use schema.table in
-# MOTHERDUCK_OPTIMIZE_TABLES when needed.
-MOTHERDUCK_V2_STAGE_TABLES: tuple[str, ...] = (
-    "v2_stage.note_entities_llm_combined",
-    "v2_stage.note_entities_llm_complications",
-    "v2_stage.note_entities_llm_genetics",
+def _v2_stage_tables_from_registry() -> tuple[str, ...]:
+    """Derive v2_stage table list from the extraction domain registry."""
+    try:
+        from llm_extraction.registry import load_registry
+        reg = load_registry()
+        stems = [
+            f"v2_stage.{spec.parquet_stem}"
+            for spec in reg.domains.values()
+            if spec.tier == "v2" and spec.canonical_output
+        ]
+        return tuple(sorted(stems)) if stems else _V2_STAGE_FALLBACK
+    except Exception:
+        return _V2_STAGE_FALLBACK
+
+
+_V2_STAGE_FALLBACK: tuple[str, ...] = (
+    "v2_stage.note_entities_llm_airway_invasion",
+    "v2_stage.note_entities_llm_cervical_ln_detail",
+    "v2_stage.note_entities_llm_dynamic_risk_response",
+    "v2_stage.note_entities_llm_frozen_section_detail",
+    "v2_stage.note_entities_llm_functional_outcomes",
     "v2_stage.note_entities_llm_imaging",
     "v2_stage.note_entities_llm_labs",
-    "v2_stage.note_entities_llm_medications",
-    "v2_stage.note_entities_llm_operative_v2_enrichment",
-    "v2_stage.note_entities_llm_parathyroid_per_gland",
+    "v2_stage.note_entities_llm_parathyroid_detail",
+    "v2_stage.note_entities_llm_past_medical_hx",
+    "v2_stage.note_entities_llm_past_surgical_hx",
     "v2_stage.note_entities_llm_pathology",
+    "v2_stage.note_entities_llm_patient_decision_adherence",
     "v2_stage.note_entities_llm_physical_exam",
-    "v2_stage.note_entities_llm_problem_list",
-    "v2_stage.note_entities_llm_procedures",
+    "v2_stage.note_entities_llm_presenting_symptoms",
+    "v2_stage.note_entities_llm_rad_treatment",
+    "v2_stage.note_entities_llm_rai_detailed",
     "v2_stage.note_entities_llm_recurrence",
-    "v2_stage.note_entities_llm_staging",
+    "v2_stage.note_entities_llm_survival_followup",
+    "v2_stage.note_entities_llm_synoptic_pathology_enrichment",
+    "v2_stage.note_entities_llm_tg_kinetics",
     "v2_stage.note_entities_llm_tirads_granular",
+    "v2_stage.note_entities_llm_us_nodule_dynamics",
+    "v2_stage.note_entities_llm_vascular_invasion",
 )
 
 
@@ -307,22 +328,20 @@ def main() -> None:
     parser.add_argument(
         "--v2-stage",
         action="store_true",
-        help="Use the 15 v2_stage.note_entities_llm_* tables (MotherDuck Thyroid 2026 layout).",
+        help="Use registry-derived v2_stage.note_entities_llm_* tables.",
     )
     args = parser.parse_args()
 
     if args.v2_stage:
-        tables = list(MOTHERDUCK_V2_STAGE_TABLES)
+        tables = list(_v2_stage_tables_from_registry())
         if os.environ.get("MOTHERDUCK_OPTIMIZE_TABLES", "").strip():
             raise SystemExit("Do not combine --v2-stage with MOTHERDUCK_OPTIMIZE_TABLES.")
     else:
         tables = _resolve_table_list(args.max_tables)
-    if len(tables) > args.max_tables:
+    if not args.v2_stage and len(tables) > args.max_tables:
         raise SystemExit(f"Resolved table list length {len(tables)} > --max-tables={args.max_tables}")
     if len(GOLD_OPTIMIZE_TABLES) > 15:
         raise SystemExit("Internal GOLD_OPTIMIZE_TABLES exceeds trial cap of 15; fix constants.")
-    if len(MOTHERDUCK_V2_STAGE_TABLES) != 15:
-        raise SystemExit("MOTHERDUCK_V2_STAGE_TABLES must contain exactly 15 entries.")
 
     ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M")
     export_dir = args.export_dir or (ROOT / "exports" / f"motherduck_gold_daily_{ts}")
