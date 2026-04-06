@@ -498,3 +498,49 @@ canonical_outputs:
     duckdb_table: note_extraction_runs
     parquet_path: processed/note_extraction_runs.parquet
     materialize_script: llm_extraction/run_extraction.py
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Sub-prompt domains — child extraction keys that map back to a parent domain.
+#
+# The VastAI fleet and run_extraction_split.py run these as independent
+# extraction keys, each producing its own parquet file.  At promotion time,
+# these child parquets roll into the parent domain's canonical target.
+#
+# Every entry here MUST have a valid parent_domain (a key in `domains` above)
+# and a prompt_file that exists on disk under llm_extraction/.
+# ──────────────────────────────────────────────────────────────────────────────
+sub_prompt_domains:
+  recurrence_detailed:
+    parent_domain: recurrence
+    prompt_file: prompts/recurrence_detailed_extraction_v1.txt
+    parquet_stem: note_entities_llm_recurrence_detailed
+
+  complications_rln_laryngoscopy:
+    parent_domain: complications
+    prompt_file: prompts/complications_rln_laryngoscopy_extraction_v1.txt
+    parquet_stem: note_entities_llm_complications_rln_laryngoscopy
+
+  medication_management:
+    parent_domain: medications
+    prompt_file: prompts/medication_management_extraction_v1.txt
+    parquet_stem: note_entities_llm_medication_management
+
+  operative_details:
+    parent_domain: operative_detail
+    prompt_file: prompts/operative_details_extraction_v1.txt
+    parquet_stem: note_entities_llm_operative_details
+
+  operative_v2_enrichment:
+    parent_domain: operative_detail
+    prompt_file: prompts/operative_v2_enrichment_extraction_v1.txt
+    parquet_stem: note_entities_llm_operative_v2_enrichment
+
+  parathyroid_per_gland:
+    parent_domain: parathyroid_detail
+    prompt_file: prompts/parathyroid_per_gland_extraction_v1.txt
+    parquet_stem: note_entities_llm_parathyroid_per_gland
+
+  molecular_thyroseq_afirma:
+    parent_domain: genetics
+    prompt_file: prompts/molecular_thyroseq_afirma_extraction_v1.txt
+    parquet_stem: note_entities_llm_molecular_thyroseq_afirma

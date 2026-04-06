@@ -94,6 +94,34 @@ DOMAIN_PROMPT = {
 
 ALL_DOMAINS = list(DOMAIN_PROMPT.keys())
 
+# Registry parity check — warn at import time if DOMAIN_PROMPT drifts from
+# the SSOT at config/extraction_domain_registry.yaml.
+try:
+    from llm_extraction.registry import load_registry as _load_reg_parity
+    _reg_parity = _load_reg_parity()
+    _expected_fleet = _reg_parity.expected_fleet_prompt_map()
+    _fleet_extra = set(DOMAIN_PROMPT.keys()) - set(_expected_fleet.keys())
+    _fleet_missing = set(_expected_fleet.keys()) - set(DOMAIN_PROMPT.keys())
+    if _fleet_extra:
+        log.warning(
+            "Fleet DOMAIN_PROMPT has keys not in registry: %s",
+            sorted(_fleet_extra),
+        )
+    if _fleet_missing:
+        log.warning(
+            "Fleet DOMAIN_PROMPT missing registry keys: %s",
+            sorted(_fleet_missing),
+        )
+    for _k in sorted(set(DOMAIN_PROMPT) & set(_expected_fleet)):
+        if DOMAIN_PROMPT[_k] != _expected_fleet[_k]:
+            log.warning(
+                "Fleet prompt file mismatch for '%s': fleet=%s registry=%s",
+                _k, DOMAIN_PROMPT[_k], _expected_fleet[_k],
+            )
+    del _reg_parity, _expected_fleet, _fleet_extra, _fleet_missing, _k
+except Exception:
+    pass
+
 RECURRENCE_DETAILED_ALLOWED_ENTITY_TYPES = {
     "recurrence_site",
     "recurrence_type",

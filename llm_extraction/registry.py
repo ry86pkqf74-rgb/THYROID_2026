@@ -89,11 +89,25 @@ class CanonicalOutputSpec:
 
 
 @dataclass(frozen=True)
+class SubPromptSpec:
+    """A child extraction key that maps to a parent registry domain."""
+    name: str
+    parent_domain: str
+    prompt_file: str
+    parquet_stem: str
+
+    @property
+    def prompt_absolute_path(self) -> Path:
+        return _REPO_ROOT / "llm_extraction" / self.prompt_file
+
+
+@dataclass(frozen=True)
 class Registry:
     schema_version: str
     domains: dict[str, DomainSpec]
     canonical_outputs: dict[str, CanonicalOutputSpec]
     llm_extraction_meta: dict[str, str]
+    sub_prompt_domains: dict[str, SubPromptSpec] = field(default_factory=dict)
 
     @property
     def v1_domains(self) -> dict[str, DomainSpec]:
@@ -220,6 +234,71 @@ class Registry:
             )
         return self.domains[name]
 
+    def sub_prompt_parent_map(self) -> dict[str, str]:
+        """Return ``{parquet_stem: parent_domain_name}`` for all sub-prompt domains."""
+        return {
+            sp.parquet_stem: sp.parent_domain
+            for sp in self.sub_prompt_domains.values()
+        }
+
+    def expected_fleet_prompt_map(self) -> dict[str, str]:
+        """Return the canonical ``{fleet_key: prompt_filename}`` map.
+
+        Combines parent domain first-prompts with all sub-prompt entries so
+        the VastAI fleet script can validate its own ``DOMAIN_PROMPT`` dict
+        against the single source of truth.
+
+        Domains whose *entire* prompt set is covered by sub-prompt children
+        are excluded (the fleet runs children directly, not the parent).
+        Audit-only domains (canonical_output=False) are also excluded.
+        """
+        sub_prompt_files = {
+            Path(sp.prompt_file).name
+            for sp in self.sub_prompt_domains.values()
+        }
+        result: dict[str, str] = {}
+        for name, spec in self.domains.items():
+            if not spec.prompts:
+                continue
+            if not spec.canonical_output:
+                continue
+            domain_prompt_files = {Path(p.repo_path).name for p in spec.prompts}
+            if domain_prompt_files <= sub_prompt_files:
+                continue
+            prompt_file = Path(spec.prompts[0].repo_path).name
+            result[name] = prompt_file
+        for sp_name, sp in self.sub_prompt_domains.items():
+            prompt_file = Path(sp.prompt_file).name
+            result[sp_name] = prompt_file
+        return result
+
+    def classify_stem(self, stem: str) -> str:
+        """Classify a parquet stem into a deterministic category.
+
+        Returns one of:
+          - ``"standalone"`` — direct 1:1 domain parquet
+          - ``"child-enrichment"`` — sub-prompt output that rolls into a parent
+          - ``"audit-only"`` — debug/audit artifact (canonical_output=False)
+          - ``"alias"`` — stem not in registry but matches a known pattern
+          - ``"unknown"`` — unrecognised stem
+        """
+        stem_to_domain = self.parquet_stem_to_domain()
+        if stem in stem_to_domain:
+            spec = self.domains[stem_to_domain[stem]]
+            if not spec.canonical_output:
+                return "audit-only"
+            return "standalone"
+        sub_map = self.sub_prompt_parent_map()
+        if stem in sub_map:
+            return "child-enrichment"
+        return "unknown"
+
+    def all_known_stems(self) -> set[str]:
+        """Return every parquet stem the registry knows about (domains + sub-prompts)."""
+        stems = set(self.all_parquet_stems())
+        stems |= {sp.parquet_stem for sp in self.sub_prompt_domains.values()}
+        return stems
+
 
 def _parse_domain(name: str, raw: dict[str, Any]) -> DomainSpec:
     prompts = [
@@ -257,6 +336,15 @@ def _parse_canonical(key: str, raw: dict[str, Any]) -> CanonicalOutputSpec:
     )
 
 
+def _parse_sub_prompt(name: str, raw: dict[str, Any]) -> SubPromptSpec:
+    return SubPromptSpec(
+        name=name,
+        parent_domain=raw["parent_domain"],
+        prompt_file=raw["prompt_file"],
+        parquet_stem=raw["parquet_stem"],
+    )
+
+
 @functools.lru_cache(maxsize=1)
 def load_registry(yaml_path: Path | None = None) -> Registry:
     """Load and cache the extraction domain registry."""
@@ -273,11 +361,17 @@ def load_registry(yaml_path: Path | None = None) -> Registry:
         for key, spec in raw.get("canonical_outputs", {}).items()
     }
 
+    sub_prompts = {
+        name: _parse_sub_prompt(name, spec)
+        for name, spec in raw.get("sub_prompt_domains", {}).items()
+    }
+
     return Registry(
         schema_version=raw.get("schema_version", "unknown"),
         domains=domains,
         canonical_outputs=canonical,
         llm_extraction_meta=raw.get("llm_extraction", {}),
+        sub_prompt_domains=sub_prompts,
     )
 
 
@@ -324,6 +418,23 @@ def validate_registry(reg: Registry | None = None) -> list[str]:
         if "llm" in spec.extractors and not spec.prompts:
             issues.append(
                 f"Domain '{name}': has 'llm' extractor but no prompt files defined"
+            )
+
+    for sp_name, sp in reg.sub_prompt_domains.items():
+        if sp.parent_domain not in reg.domains:
+            issues.append(
+                f"Sub-prompt '{sp_name}': parent_domain '{sp.parent_domain}' "
+                f"not found in registry domains"
+            )
+        if not sp.prompt_absolute_path.exists():
+            issues.append(
+                f"Sub-prompt '{sp_name}': prompt_file '{sp.prompt_file}' "
+                f"not found at {sp.prompt_absolute_path}"
+            )
+        if sp.parquet_stem in stems_seen:
+            issues.append(
+                f"Sub-prompt '{sp_name}': parquet_stem '{sp.parquet_stem}' "
+                f"collides with a domain parquet_stem"
             )
 
     return issues

@@ -106,6 +106,27 @@ DOMAIN_PROMPT = {
 
 ALL_DOMAINS = list(DOMAIN_PROMPT.keys())
 
+# Registry parity check — warn at import time if DOMAIN_PROMPT drifts.
+try:
+    from llm_extraction.registry import load_registry as _load_reg_parity
+    _reg_parity = _load_reg_parity()
+    _expected_fleet = _reg_parity.expected_fleet_prompt_map()
+    _fleet_extra = set(DOMAIN_PROMPT.keys()) - set(_expected_fleet.keys())
+    _fleet_missing = set(_expected_fleet.keys()) - set(DOMAIN_PROMPT.keys())
+    if _fleet_extra:
+        log.warning(
+            "Split DOMAIN_PROMPT has keys not in registry: %s",
+            sorted(_fleet_extra),
+        )
+    if _fleet_missing:
+        log.warning(
+            "Split DOMAIN_PROMPT missing registry keys: %s",
+            sorted(_fleet_missing),
+        )
+    del _reg_parity, _expected_fleet, _fleet_extra, _fleet_missing
+except Exception:
+    pass
+
 
 def _load_prompt(domain: str) -> str:
     fname = DOMAIN_PROMPT.get(domain)

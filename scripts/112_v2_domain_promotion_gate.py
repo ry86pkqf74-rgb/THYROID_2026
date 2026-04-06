@@ -91,17 +91,21 @@ ENTITY_CORE_COLUMNS: set[str] = {
 }
 ENTITY_METADATA_COLUMNS: set[str] = set(ENTITY_SCHEMA_COLUMNS) - ENTITY_CORE_COLUMNS
 
-# Sub-prompt parquets that map back to a parent registry domain.
-# Key: parquet stem suffix; value: canonical domain name.
-SUB_PROMPT_STEM_MAP: dict[str, str] = {
-    "note_entities_llm_recurrence_detailed": "recurrence",
-    "note_entities_llm_complications_rln_laryngoscopy": "complications",
-    "note_entities_llm_medication_management": "medications",
-    "note_entities_llm_operative_details": "operative_detail",
-    "note_entities_llm_operative_v2_enrichment": "operative_detail",
-    "note_entities_llm_parathyroid_per_gland": "parathyroid_detail",
-    "note_entities_llm_molecular_thyroseq_afirma": "genetics",
-}
+# Sub-prompt parquets derived from registry YAML (SSOT).
+try:
+    from llm_extraction.registry import load_registry as _load_reg_for_sub
+    _reg_sub = _load_reg_for_sub()
+    SUB_PROMPT_STEM_MAP: dict[str, str] = _reg_sub.sub_prompt_parent_map()
+except Exception:
+    SUB_PROMPT_STEM_MAP = {
+        "note_entities_llm_recurrence_detailed": "recurrence",
+        "note_entities_llm_complications_rln_laryngoscopy": "complications",
+        "note_entities_llm_medication_management": "medications",
+        "note_entities_llm_operative_details": "operative_detail",
+        "note_entities_llm_operative_v2_enrichment": "operative_detail",
+        "note_entities_llm_parathyroid_per_gland": "parathyroid_detail",
+        "note_entities_llm_molecular_thyroseq_afirma": "genetics",
+    }
 
 # Debug/aggregate parquets that are never treated as domains.
 EXCLUDED_STEMS: frozenset[str] = frozenset({
@@ -205,6 +209,12 @@ def load_registry_domains() -> dict[str, dict]:
                 "canonical_output": spec.canonical_output,
                 "linkage_anchor_family": spec.linkage_anchor_family,
                 "dedupe_key": list(spec.dedupe_key),
+                "note_scope": spec.note_scope,
+                "canonical_target": spec.canonical_target,
+                "prompts": [
+                    {"repo_path": p.repo_path, "scope": p.scope}
+                    for p in spec.prompts
+                ],
             }
         return result
     except Exception as exc:
@@ -226,6 +236,9 @@ def load_registry_domains() -> dict[str, dict]:
                 "canonical_output": True,
                 "linkage_anchor_family": "unknown",
                 "dedupe_key": ["research_id", "note_row_id", "entity_type", "entity_value_norm"],
+                "note_scope": "all",
+                "canonical_target": stem,
+                "prompts": [],
             }
             for name, stem in fallback.items()
         }
@@ -239,22 +252,42 @@ def scan_v2_parquets(v2_dir: Path) -> dict[str, Path]:
     return result
 
 
+def _classify_inventory_row(
+    domain_name: str,
+    spec: dict,
+    parquet_exists: bool,
+    is_sub_prompt: bool,
+) -> str:
+    """Deterministic classification for the inventory artifact."""
+    if is_sub_prompt:
+        return "child-enrichment"
+    if domain_name == "UNCLAIMED":
+        return "unclaimed"
+    if not spec.get("canonical_output", True):
+        return "audit-only"
+    if parquet_exists:
+        return "standalone"
+    return "missing"
+
+
 def build_domain_inventory(
     registry_domains: dict[str, dict],
     on_disk: dict[str, Path],
 ) -> pd.DataFrame:
-    """
-    Cross-reference registry domains against on-disk parquets.
-    Sub-prompt parquets (recurrence_detailed, etc.) are mapped to their parent domain.
+    """Cross-reference registry domains against on-disk parquets.
+
+    Sub-prompt parquets (recurrence_detailed, etc.) are mapped to their
+    parent domain.  Each row carries a ``classification`` column:
+    standalone / child-enrichment / audit-only / missing / unclaimed.
     """
     rows = []
-    # Track which on-disk stems are claimed by a registry domain
-    claimed_stems: dict[str, str] = {}  # stem -> domain_name
+    claimed_stems: dict[str, str] = {}
 
     for domain_name, spec in registry_domains.items():
         stem = spec["parquet_stem"]
         path = on_disk.get(stem)
         exists = path is not None
+        classification = _classify_inventory_row(domain_name, spec, exists, False)
         rows.append({
             "domain_name": domain_name,
             "tier": spec["tier"],
@@ -264,29 +297,34 @@ def build_domain_inventory(
             "parquet_path": str(path) if exists else "",
             "canonical_output": spec["canonical_output"],
             "linkage_anchor_family": spec["linkage_anchor_family"],
+            "note_scope": spec.get("note_scope", "all"),
+            "canonical_target": spec.get("canonical_target", stem),
             "is_sub_prompt": False,
+            "classification": classification,
         })
         if exists:
             claimed_stems[stem] = domain_name
 
-    # Add sub-prompt parquets that are on disk but map to a parent domain
     for stem, parent_domain in SUB_PROMPT_STEM_MAP.items():
         if stem in on_disk and stem not in claimed_stems:
             path = on_disk[stem]
+            parent_spec = registry_domains.get(parent_domain, {})
             rows.append({
                 "domain_name": parent_domain + "__sub",
-                "tier": registry_domains.get(parent_domain, {}).get("tier", "v2"),
-                "qa_tier": registry_domains.get(parent_domain, {}).get("qa_tier", "standard"),
+                "tier": parent_spec.get("tier", "v2"),
+                "qa_tier": parent_spec.get("qa_tier", "standard"),
                 "parquet_stem": stem,
                 "parquet_exists": True,
                 "parquet_path": str(path),
-                "canonical_output": False,  # sub-prompts are merged into parent
-                "linkage_anchor_family": registry_domains.get(parent_domain, {}).get("linkage_anchor_family", "unknown"),
+                "canonical_output": False,
+                "linkage_anchor_family": parent_spec.get("linkage_anchor_family", "unknown"),
+                "note_scope": parent_spec.get("note_scope", "all"),
+                "canonical_target": parent_spec.get("canonical_target", ""),
                 "is_sub_prompt": True,
+                "classification": "child-enrichment",
             })
             claimed_stems[stem] = parent_domain
 
-    # Record any remaining unclaimed on-disk parquets (not in registry, not in sub-map)
     for stem, path in on_disk.items():
         if stem not in claimed_stems and stem not in EXCLUDED_STEMS:
             rows.append({
@@ -298,7 +336,10 @@ def build_domain_inventory(
                 "parquet_path": str(path),
                 "canonical_output": False,
                 "linkage_anchor_family": "unknown",
+                "note_scope": "unknown",
+                "canonical_target": "",
                 "is_sub_prompt": False,
+                "classification": "unclaimed",
             })
 
     return pd.DataFrame(rows)
@@ -643,9 +684,12 @@ def run_promotion_gate(
             "detail": detail,
         })
 
-    # G1: Domain completeness — every v2 canonical_output=True domain must have its parquet.
-    # v1 domains already exist in DuckDB as note_entities_* tables and are not expected
-    # in the v2_parquets directory.
+    # G1: Domain completeness — every v2 canonical_output=True domain must
+    # have its parquet.  v1 domains already exist in DuckDB as note_entities_*
+    # tables and are not expected in the v2_parquets directory.
+    #
+    # Classification-aware: distinguish truly missing, child-absent (rolled
+    # into parent), audit-only (non-blocking), and deferred (no prompt yet).
     missing_canonical = inventory_df[
         (inventory_df["canonical_output"] == True)
         & (inventory_df["parquet_exists"] == False)
@@ -653,18 +697,34 @@ def run_promotion_gate(
         & (~inventory_df["domain_name"].isin(["UNCLAIMED"]))
         & (~inventory_df["is_sub_prompt"])
     ]["domain_name"].tolist()
+
+    # Identify child-enrichment parquets that are absent but whose parent
+    # canonical domain parquet IS present — these are not truly missing.
+    child_absent: list[str] = []
+    for stem, parent in SUB_PROMPT_STEM_MAP.items():
+        parent_spec = registry_domains.get(parent)
+        if parent_spec is None:
+            continue
+        parent_stem = parent_spec.get("parquet_stem", "")
+        parent_present = parent_stem in {
+            r["parquet_stem"]
+            for _, r in inventory_df.iterrows()
+            if r["parquet_exists"]
+        }
+        child_on_disk = stem in {
+            r["parquet_stem"]
+            for _, r in inventory_df.iterrows()
+            if r["parquet_exists"]
+        }
+        if not child_on_disk and parent_present:
+            child_absent.append(f"{stem} (parent={parent})")
+
     if missing_canonical:
-        # Check whether the prompt files for these domains exist yet.
-        # Domains whose prompts don't exist are "planned but not extracted" and
-        # should not block promotion of the domains that ARE ready.
         truly_missing = []
         deferred = []
         for d in missing_canonical:
             prompt_paths = registry_domains.get(d, {}).get("prompts", [])
             has_prompt = any(
-                # repo_path values are relative to llm_extraction/ (per PromptSpec.absolute_path
-                # in llm_extraction/registry.py which prepends _REPO_ROOT/"llm_extraction").
-                # Also accept paths relative to ROOT directly for any future relocations.
                 (ROOT / "llm_extraction" / p.get("repo_path", "")).exists()
                 or (ROOT / p.get("repo_path", "")).exists()
                 for p in prompt_paths
@@ -673,20 +733,23 @@ def run_promotion_gate(
                 truly_missing.append(d)
             else:
                 deferred.append(d)
+        detail_parts = []
         if truly_missing:
-            gate(
-                "G1", "Domain completeness (v2 only)", False,
-                f"Missing v2 canonical parquets (prompts exist): {truly_missing}; "
-                f"deferred (no prompts yet): {deferred}",
-            )
-        else:
-            gate(
-                "G1", "Domain completeness (v2 only)", True,
-                f"CONDITIONAL PASS — all extracted domains present; "
-                f"{len(deferred)} domains deferred (extraction not yet run): {deferred}",
-            )
+            detail_parts.append(f"truly missing (prompts exist): {truly_missing}")
+        if deferred:
+            detail_parts.append(f"deferred (no prompts yet): {deferred}")
+        if child_absent:
+            detail_parts.append(f"child-enrichment absent (parent present, non-blocking): {child_absent}")
+        gate(
+            "G1", "Domain completeness (v2 only)",
+            len(truly_missing) == 0,
+            "; ".join(detail_parts) if detail_parts else "All domains present",
+        )
     else:
-        gate("G1", "Domain completeness (v2 only)", True, "All v2 canonical-output domains have parquets")
+        detail = "All v2 canonical-output domains have parquets"
+        if child_absent:
+            detail += f"; child-enrichment absent (parent present, non-blocking): {child_absent}"
+        gate("G1", "Domain completeness (v2 only)", True, detail)
 
     # G2: Schema compliance — core columns are required; metadata columns are informational.
     # Fleet extraction outputs don't produce extraction-provenance metadata columns
