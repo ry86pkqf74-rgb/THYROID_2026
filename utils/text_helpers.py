@@ -349,9 +349,16 @@ def save_parquet(df: pd.DataFrame, out_path, *, coerce_object: bool = True) -> N
     if coerce_object:
         for col in df.columns:
             if df[col].dtype == object:
-                df[col] = df[col].apply(
-                    lambda x: str(x) if pd.notna(x) and x is not None else None
-                )
+                def _safe_str(x):
+                    if x is None:
+                        return None
+                    try:
+                        if pd.isna(x):
+                            return None
+                    except (TypeError, ValueError):
+                        pass
+                    return str(x)
+                df[col] = df[col].apply(_safe_str)
     out_path = Path(out_path)
     prev_rows: int | None = None
     if out_path.exists():

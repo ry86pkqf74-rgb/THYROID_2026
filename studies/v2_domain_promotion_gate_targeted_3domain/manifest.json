@@ -1,0 +1,46 @@
+{
+  "run_label": "targeted_3domain",
+  "generated_at": "2026-04-03T14:21:20.631017+00:00",
+  "git_sha": "f5ab844",
+  "v2_parquets_dir": "processed/output/v2_parquets",
+  "db_path": "thyroid_master.duckdb",
+  "overall_verdict": "FAIL",
+  "gate_summary": {
+    "G1": {
+      "status": "PASS",
+      "detail": "All v2 canonical-output domains have parquets"
+    },
+    "G2": {
+      "status": "PASS",
+      "detail": "All domains have core columns (23 domains missing optional metadata columns)"
+    },
+    "G3": {
+      "status": "FAIL",
+      "detail": "FAIL \u2014 no domain has provenance columns (('preprocess_batch_id', 'preprocess_script_version', 'preprocessed_at_utc')); fleet extraction must emit extracted_at and llm_model for traceability"
+    },
+    "G4": {
+      "status": "PASS",
+      "detail": "CONDITIONAL PASS \u2014 1,353 duplicates detected across 4 domains >5% (['labs', 'tg_kinetics', 'cervical_ln_detail', 'patient_decision_adherence']); deduplication will be applied during promotion"
+    },
+    "G5": {
+      "status": "PASS",
+      "detail": "All critical domains have date coverage (entity_date or note_date)"
+    },
+    "G6": {
+      "status": "FAIL",
+      "detail": "Critical domains below 30% concordance: ['staging=21.7%']"
+    },
+    "G7": {
+      "status": "PASS",
+      "detail": "No same-domain discordance; 2 cross-domain discordant rows waived (v2 domain-specific extraction vs v1 keyword-matched comparison domain)"
+    },
+    "G8": {
+      "status": "PASS",
+      "detail": "Skipped (--motherduck-check not set or MOTHERDUCK_TOKEN missing)"
+    }
+  },
+  "domain_count": 45,
+  "domains_with_parquets": 37,
+  "total_rows_validated": 54346,
+  "manual_review_queue_rows": 5622
+}

@@ -47,10 +47,15 @@ def _resolve_md_token() -> str | None:
 
 
 def _verify_md_connection(con: duckdb.DuckDBPyConnection) -> bool:
-    """Return True when *con* is genuinely connected to MotherDuck (has an md: path)."""
+    """Return True when *con* is genuinely connected to MotherDuck.
+
+    Accepts either the old 'md:' path prefix (older driver versions) or the
+    presence of 'md_information_schema' (newer MotherDuck driver which drops
+    the 'md:' prefix from PRAGMA database_list output).
+    """
     try:
         dbs = con.execute("PRAGMA database_list").fetchall()
-        return any("md:" in str(r) for r in dbs)
+        return any("md:" in str(r) or "md_information_schema" in str(r) for r in dbs)
     except Exception:
         return False
 

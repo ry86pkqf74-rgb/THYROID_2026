@@ -535,7 +535,11 @@ def _generate_qc_report(
     dedup_cols = ["research_id", "note_row_id", "entity_type", "entity_value_raw", "fact_domain"]
     present = [c for c in dedup_cols if c in clean_v2.columns]
     if len(present) == len(dedup_cols):
-        n_dupes = clean_v2.duplicated(subset=present).sum()
+        dedup_df = clean_v2[present].copy()
+        for _c in present:
+            if dedup_df[_c].apply(lambda x: isinstance(x, (dict, list))).any():
+                dedup_df[_c] = dedup_df[_c].apply(lambda x: str(x) if isinstance(x, (dict, list)) else x)
+        n_dupes = dedup_df.duplicated().sum()
         lines.append(f"Duplicate rows (on dedup key): {n_dupes:,}")
     else:
         lines.append(f"Cannot check duplicates — missing columns: {set(dedup_cols) - set(present)}")

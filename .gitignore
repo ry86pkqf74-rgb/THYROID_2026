@@ -68,6 +68,13 @@ llm_extraction/phase*_preop_molecular_refinement_*.md
 # ── Study outputs with timestamped duplicates ─────────────────
 studies/manuscript_package_*/
 
+# ── LLM extraction validation run artifacts (parquets too large) ──
+studies/llm_extraction_validation/runs/*/
+studies/v2_domain_promotion_gate_*/llm_side_by_side.parquet
+
+# ── Fact lineage QC reports (ephemeral, timestamped) ──────────
+exports/fact_lineage_qc/
+
 # ── Extraction pipeline: PHI-sensitive data (never commit) ────
 processed/remaining/*.parquet
 processed/remaining/*.csv
