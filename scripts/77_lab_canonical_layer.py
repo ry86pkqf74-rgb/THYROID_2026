@@ -95,6 +95,7 @@ SELECT
     TRY_CAST(
         CASE
             WHEN result LIKE '<%' THEN REPLACE(REPLACE(result, '<', ''), ' ', '')
+            WHEN result LIKE '%:%' THEN NULL  -- titer/dilution format (e.g. 1:25600); not a plain numeric
             WHEN regexp_matches(result, '^[0-9]') THEN regexp_extract(result, '([0-9]+\\.?[0-9]*)', 1)
             ELSE NULL
         END AS DOUBLE

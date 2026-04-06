@@ -345,7 +345,7 @@ class TestScript103RegistryIntegration:
         except SystemExit:
             pass
         assert hasattr(mod, "ENTITY_DOMAIN_MAP")
-        stems = {stem for stem, _ in mod.ENTITY_DOMAIN_MAP}
+        stems = {entry[0] for entry in mod.ENTITY_DOMAIN_MAP}
         assert "note_entities_staging" in stems
         assert len(mod.ENTITY_DOMAIN_MAP) >= 20
 

@@ -48,6 +48,7 @@ sys.path.insert(0, str(ROOT))
 from llm_extraction.vocab import CANONICAL_FACT_CONTRACT_DTYPES  # noqa: E402
 from utils.md_connect import connect_md_or_file  # noqa: E402
 from utils.provenance import (  # noqa: E402
+    MULTI_SURGERY_EP_DIST_THRESH_DAYS,
     apply_provenance_contract_columns,
     quarantine_masks,
 )
@@ -462,6 +463,91 @@ def split_quarantine_v2(
     quar["quarantine_date"] = quarantine_date
     clean = uni.loc[~q].copy()
     return clean, quar
+
+
+# ---------------------------------------------------------------------------
+# Public backward-compat API (used by tests and external callers)
+# ---------------------------------------------------------------------------
+def add_contract_columns(
+    uni: pd.DataFrame,
+    multi_surgery_rids: set[int],
+) -> pd.DataFrame:
+    """Attach provenance contract columns to the unified fact frame.
+
+    Adds derived columns expected by split_quarantine and downstream consumers:
+    source_file_id, canonical_domain, canonical_fact_type, date_source_type,
+    linkage_confidence.  Input columns that are already present are preserved.
+    Missing optional columns are skipped gracefully.
+    """
+    out = uni.copy()
+    out["source_file_id"] = (
+        out["clin_source_workbook"] if "clin_source_workbook" in out.columns else None
+    )
+    out["canonical_domain"] = out.get("fact_domain", pd.Series(dtype=str))
+    out["canonical_fact_type"] = out.get("entity_type", pd.Series(dtype=str))
+
+    em = out["extraction_method"].astype(str) if "extraction_method" in out.columns else pd.Series("", index=out.index)
+    dc = pd.to_numeric(out.get("date_confidence"), errors="coerce")
+    dst: list[str] = []
+    for i in range(len(out)):
+        method = em.iloc[i]
+        dcv = dc.iloc[i] if len(dc) else float("nan")
+        if not str(method).startswith("llm"):
+            dst.append("regex_extractor")
+        elif pd.isna(dcv) or float(dcv) <= 0:
+            dst.append("unknown")
+        elif float(dcv) >= 0.99:
+            dst.append("explicit_lab")
+        elif float(dcv) >= 0.5:
+            dst.append("note_body")
+        else:
+            dst.append("encounter_fallback")
+    out["date_source_type"] = dst
+
+    epd = (
+        pd.to_numeric(out["ep_distance_days"], errors="coerce")
+        if "ep_distance_days" in out.columns
+        else pd.Series(pd.NA, index=out.index, dtype="Float64")
+    )
+    rid = pd.to_numeric(out["research_id"], errors="coerce")
+    has_ep = (
+        out["inferred_surgery_episode_id"].notna()
+        if "inferred_surgery_episode_id" in out.columns
+        else pd.Series(False, index=out.index)
+    )
+    lc: list[float] = []
+    for i in range(len(out)):
+        r = int(rid.iloc[i]) if pd.notna(rid.iloc[i]) else -1
+        is_multi = r in multi_surgery_rids
+        he = bool(has_ep.iloc[i])
+        d_raw = epd.iloc[i]
+        d = float(d_raw) if pd.notna(d_raw) else None
+        if not he:
+            lc.append(0.0)
+            continue
+        if d is None:
+            lc.append(round(0.35 if is_multi else 0.55, 4))
+            continue
+        score = max(0.0, 1.0 - min(d, 180.0) / 180.0)
+        if is_multi and d > MULTI_SURGERY_EP_DIST_THRESH_DAYS:
+            score *= 0.65
+        if is_multi and d > 120:
+            score *= 0.85
+        lc.append(round(float(score), 4))
+    out["linkage_confidence"] = lc
+    return out
+
+
+def split_quarantine(
+    uni: pd.DataFrame,
+    multi_surgery_rids: set[int],
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Split the fact frame into clean + quarantined rows.
+
+    Thin public wrapper around split_quarantine_v2 so that tests and external
+    callers that reference the original name continue to work.
+    """
+    return split_quarantine_v2(uni, multi_surgery_rids)
 
 
 # ---------------------------------------------------------------------------
