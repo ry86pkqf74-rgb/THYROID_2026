@@ -36,6 +36,31 @@ export MOTHERDUCK_SESSION_HINT="specimen_genomics_closure_20260407_1235"
 
 Result: **2 FAIL** (molecular governed ingest empty; molecular_testing missing), **1 WARN** (specimen genomic link review burden), exit code **1**. Report: `validation_report.md` in this folder.
 
+## Materialize `main.molecular_testing` from cohort workbook (prod)
+
+Loads long-format **`main.molecular_testing`** from `raw/THYROSEQ_AFIRMA_12_5.xlsx`, then re-derives **`molecular_test_episode_v2`** via **`MOLECULAR_TEST_EPISODE_V2_SQL`** (same logic as `scripts/22_canonical_episodes_v2.py`). Does **not** run `register_parquets`.
+
+```bash
+cd "/Users/ros/THyroid 2026/THYROID_2026"
+export MOTHERDUCK_CUSTOM_USER_AGENT="THYROID_2026_specimen_genomics_closure/1.0"
+export MOTHERDUCK_SESSION_HINT="specimen_genomics_closure_20260407_moltest"
+.venv/bin/python scripts/145_md_materialize_molecular_testing.py --md --md-sa --md-env prod \
+  --input raw/THYROSEQ_AFIRMA_12_5.xlsx --grain patient --max-slot 1
+```
+
+Follow-up (same catalog):
+
+```bash
+.venv/bin/python scripts/49_enhanced_linkage_v3.py --md --md-sa --md-env prod
+.venv/bin/python scripts/140_md_specimen_genomics_binding.py --md --md-sa --md-env prod --skip-snapshot
+.venv/bin/python scripts/119_md_formalization_validate.py --md --md-sa --release-mode \
+  --output-dir studies/20260407_specimen_genomics_closure
+```
+
+**Outcome (approx.):** `molecular_testing` ≈ 10.9k rows; `molecular_test_episode_v2` ≈ 10.9k; many `test_date_native` still NULL where source `DATE_*` cells are placeholders (e.g. `x`). Release check **12b** → **PASS**; **12** still **FAIL** until **`main.molecular_results`** is populated by **41**/**42** (governed ingest).
+
+**ThyroSeq workbook mismatch:** `41_ingest_thyroseq_excel.py` expects columns such as **`Req Patient/Source Name`**; **`THYROSEQ_AFIRMA_12_5.xlsx`** does not (verified via local `--dry-run` → `KeyError`). Use the vendor/export shape **41** was built for, or extend **41** / add a mapper — **145** is **not** a substitute for **41** on **`molecular_results`**.
+
 ## Local tooling
 
 ```bash
