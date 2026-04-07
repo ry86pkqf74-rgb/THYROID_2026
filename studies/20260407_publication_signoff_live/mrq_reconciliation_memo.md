@@ -1,5 +1,7 @@
 # MRQ reconciliation memo — checked-in claims vs live MotherDuck
 
+**Update (2026-04-07, later session):** `119 --release-mode` **no longer FAIL** on specimen/FHIR diagnostics in the **latest** live run — see [`../20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md`](../20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md). Rows in the claim matrix below that cite “119 FAIL” refer to the **earlier** snapshot in [`validation_report.md`](validation_report.md); interpret **Release-mode PASS** in light of that newer report.
+
 ## Live triage
 
 - **Bundle:** `exports/review_queue_triage_20260407_103411/` (`scripts/120_review_queue_triage.py --md --md-sa`, no `run_label` filter).
@@ -25,14 +27,14 @@ Sparse compared to a real promotion package; cannot stand in for org sign-off re
 
 | Claim | Source | Reconciliation |
 |--------|--------|----------------|
-| Release-mode PASS | Checked-in `studies/20260407_formalization_validation_release_mode/validation_report.md` (2026-04-07) | **FAIL** live — current run BLOCKED (specimen/FHIR QA diagnostics FAIL). |
+| Release-mode PASS | Checked-in `studies/20260407_formalization_validation_release_mode/validation_report.md` (2026-04-07) | **PARTIAL** — **earlier** in-folder live run BLOCKED (`broken_fhir_refs=10139`); **later** same-day rerun **PASS WITH WARN** (lineage audit folder). Always cite **timestamped** `119` artifact. |
 | Release-mode BLOCKED (5,622 pending) | Same folder `README.md` | **FAIL** as stated — live shows **0** pending; README is **stale**. |
-| NOT READY FOR FINAL SIGN-OFF | `studies/20260407_signoff_memo/signoff_memo.md` | **PARTIAL** — many early blockers resolved; **governance + QA** issues remain (synthetic MRQ, 119 FAIL). |
+| NOT READY FOR FINAL SIGN-OFF | `studies/20260407_signoff_memo/signoff_memo.md` | **PARTIAL** — many early blockers resolved; **governance** issues remain (synthetic MRQ); **119** specimen gate **passed** in later run with **WARN** (not FAIL). |
 | Manuscript-ready vs MotherDuck gate | Top-level `README.md` | **PARTIAL** — correctly separates local freeze vs cloud; must cite **live** validation report for current PASS/FAIL. |
 | Synthetic MRQ warning | `studies/20260409_final_master_release/EVIDENCE_PACK.md` | **PASS** — **confirmed live** (`SYNTHETIC_…` dominates MRQ). |
 
 **Automation vs humans**
 
-- **Automation:** `119` exercises structural + parity + MRQ null checks + specimen QA hooks; latest run **does not fully pass** (specimen FAIL).  
+- **Automation:** `119` exercises structural + parity + MRQ null checks + specimen QA hooks; **earlier** in-folder run had specimen **FAIL**; **later** run **PASS WITH WARN** (see lineage audit `119_release_validation/`).  
 - **Humans:** Only **2** MRQ rows show `confirmed_correct`; **5,620** are explicitly synthetic-not-for-manuscript. **No** credible human-reviewed adjudication package for manuscript sign-off.  
 - **Pending / waived / source-limited:** No pending MRQ rows; “waived” N/A; source limits remain for non-Tg labs (see lab memo).

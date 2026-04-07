@@ -8,7 +8,7 @@
 
 ## 2026-04-07 — MotherDuck publication truth-sync + operator path
 
-**Live sign-off outcome (MotherDuck, service-account token):** `119 --release-mode` **BLOCKED** — specimen/FHIR QA diagnostics FAIL (`broken_fhir_refs` large); MRQ rows are non-NULL but **5,620 / 5,622** are `SYNTHETIC_AUTOMATION_ONLY_NOT_MANUSCRIPT_SIGNOFF`; longitudinal labs are **Tg-family waves only** (no `final_institutional*` non-Tg panel). Evidence: `studies/20260407_publication_signoff_live/`. Verdict memo: **technically passing but blocked by human review + final lab wave** (with specimen/FHIR automation FAIL noted).
+**Live sign-off outcome (MotherDuck, service-account token):** **Two timestamped `119 --release-mode` outcomes same day:** (1) **BLOCKED** — specimen/FHIR QA diagnostics FAIL (`broken_fhir_refs` large) — `studies/20260407_publication_signoff_live/validation_report.md`. (2) **PASS WITH WARNINGS** — `broken_fhir_refs=0`; genomic review burden WARN — `studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md`. **Unchanged:** MRQ rows non-NULL but **5,620 / 5,622** are `SYNTHETIC_AUTOMATION_ONLY_NOT_MANUSCRIPT_SIGNOFF`; longitudinal labs **Tg-family waves only** (no `final_institutional*` non-Tg panel). Verdict memo: **manuscript blocked by governance + lab wave**; **cite the dated `119` artifact** for automation state.
 
 ### Documentation / ops
 

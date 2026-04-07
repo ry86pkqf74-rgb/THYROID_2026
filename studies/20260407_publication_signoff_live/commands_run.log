@@ -28,3 +28,15 @@ Environment (each MotherDuck invocation):
 5. `scripts/126_final_master_release.py` — **not run** (release-mode blocked; MRQ dominated by synthetic verification; promotion decisions sparse).
 
 6. `scripts/126_release_candidate_motherduck_audit.py` — **not run** (no post-release candidate; gate failed at step 2).
+
+---
+
+## Addendum (same calendar day, later UTC — lineage truth audit)
+
+7. Release-mode formalization validation (repeat; different output dir + user-agent per operator note):
+   `export MOTHERDUCK_CUSTOM_USER_AGENT='THYROID_2026_lineage_truth_audit/1.0'`
+   `export MOTHERDUCK_SESSION_HINT='lineage_truth_audit_<UTC>'`
+   `.venv/bin/python scripts/119_md_formalization_validate.py --md --md-sa --release-mode --output-dir studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation`
+   **Result:** PASS WITH WARNINGS (25 PASS / 2 WARN / 0 FAIL); **broken_fhir_refs=0** (see that folder’s `validation_report.md`).
+
+The original step (2) log line above remains the **first** capture; do not delete — use **timestamp** and addendum to disambiguate.

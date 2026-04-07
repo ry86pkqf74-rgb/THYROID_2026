@@ -1,5 +1,7 @@
 # Live audit memo — MotherDuck publication signoff
 
+**Supersession:** Section §3 below reflects the **first** `119` capture in this folder (**BLOCKED**, `broken_fhir_refs=10139`). **Later same-day** evidence: [`../20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md`](../20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md) (**PASS WITH WARNINGS**, `broken_fhir_refs=0`).
+
 **Captured:** 2026-04-07 (UTC-aligned with validation report timestamp in-folder)  
 **Database (attach target):** `Thyroid 2026` (`md:Thyroid 2026`)
 
@@ -40,15 +42,17 @@ Full sample output: [`md_introspection_snapshot.md`](md_introspection_snapshot.m
 | `main.master_patient_rollup_verified_v1` | 5,574 |
 | `main.master_source_lineage_v1` | 123,577 |
 
-Specimen/FHIR: `119` reports 10 objects present; separate QA diagnostics **FAIL** (see below).
+Specimen/FHIR: `119` reports 10 objects present; **in-folder** first capture had QA diagnostics **FAIL** (see §3); **later** run **WARN** only (`broken_fhir_refs=0`).
 
 ## 3) Release-mode automation (`119 --release-mode`)
 
-- **Verdict:** **BLOCKED** — 25 PASS / 1 WARN / 1 FAIL  
-- **FAIL:** Specimen/FHIR QA diagnostics (`broken_fhir_refs=10139`; plus `high_tier_null_spec=14` in detail string).  
+- **Verdict (in-folder snapshot, `2026-04-07T10:33:51Z`):** **BLOCKED** — 25 PASS / 1 WARN / 1 FAIL  
+- **FAIL (that snapshot):** Specimen/FHIR QA diagnostics (`broken_fhir_refs=10139`; plus `high_tier_null_spec=14` in detail string).  
 - **WARN:** Specimen-adjacent review burden — `genomic_link_review` open/pending ≈ 9,952.
 
-Artifact: [`validation_report.md`](validation_report.md).
+- **Verdict (later same-day rerun — use for current automation):** **PASS WITH WARNINGS** — 25 PASS / 2 WARN / 0 FAIL; **`broken_fhir_refs=0`**. Artifact: [`../20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md`](../20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md).
+
+Historical artifact (unchanged body): [`validation_report.md`](validation_report.md).
 
 ## 4) Traceability (presentation layer)
 

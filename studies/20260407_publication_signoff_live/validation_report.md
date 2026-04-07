@@ -1,5 +1,8 @@
 # MotherDuck Formalization Release Validation Report
 
+> **Historical snapshot — read [`../20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md`](../20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md) for the later live outcome.**  
+> This file is **preserved as-is** (FAIL on specimen/FHIR QA with `broken_fhir_refs=10139`). MotherDuck/catalog drift or diagnostic fixes may yield a **newer** PASS+WARN report in the lineage audit folder (same calendar day, later UTC).
+
 **Generated:** 2026-04-07T10:33:51.423458+00:00
 **Mode:** Release Validation
 **Total checks:** 27
