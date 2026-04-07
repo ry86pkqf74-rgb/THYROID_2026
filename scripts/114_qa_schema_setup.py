@@ -158,7 +158,7 @@ def hydrate_manual_review_queue(con: duckdb.DuckDBPyConnection, gate_dir: Path) 
         return
     df = pd.read_csv(csv_path)
     if df.empty:
-        print(f"  [skip] manual_review_queue.csv is empty")
+        print("  [skip] manual_review_queue.csv is empty")
         return
     run_label = gate_dir.name
 
@@ -169,14 +169,24 @@ def hydrate_manual_review_queue(con: duckdb.DuckDBPyConnection, gate_dir: Path) 
         "comparison_domain": "domain",
         "entity_type": "entity_type",
         "entity_value_norm": "entity_value_norm",
+        "llm_value": "entity_value_norm",
         "algorithm_status": "algorithm_status",
         "algorithm_comparison_status": "algorithm_status",
         "review_reason": "review_reason",
+        "original_source_link": "review_reason",
         "verification_status": "verification_status",
         "reviewer": "reviewer",
+        "reviewer_id": "reviewer",
         "reviewed_at": "reviewed_at",
+        "reviewer_decision_at": "reviewed_at",
+        "promotion_approved": "promotion_approved",
+        "reviewer_evidence_span": "reviewer_evidence_span",
+        "reviewer_comment": "reviewer_comment",
+        "reason_code": "reason_code",
     }
 
+    # Column order must match qa.manual_review_queue physical column order:
+    # base cols ... reviewed_at, loaded_at, then ALTER extension cols.
     insert_data: dict[str, list] = {
         "review_row_id": [],
         "run_label": [],
@@ -190,15 +200,48 @@ def hydrate_manual_review_queue(con: duckdb.DuckDBPyConnection, gate_dir: Path) 
         "reviewer": [],
         "reviewed_at": [],
         "loaded_at": [],
+        "promotion_approved": [],
+        "reviewer_evidence_span": [],
+        "reviewer_comment": [],
+        "reason_code": [],
     }
+
+    target_columns = [
+        "research_id",
+        "domain",
+        "entity_type",
+        "entity_value_norm",
+        "algorithm_status",
+        "review_reason",
+        "verification_status",
+        "reviewer",
+        "reviewed_at",
+    ]
+
+    target_tail_columns = [
+        "promotion_approved",
+        "reviewer_evidence_span",
+        "reviewer_comment",
+        "reason_code",
+    ]
 
     now = datetime.now(timezone.utc).isoformat()
     for idx, row in df.iterrows():
         insert_data["review_row_id"].append(int(idx))
         insert_data["run_label"].append(run_label)
-        for target_col in ["research_id", "domain", "entity_type", "entity_value_norm",
-                           "algorithm_status", "review_reason", "verification_status",
-                           "reviewer", "reviewed_at"]:
+        for target_col in target_columns:
+            val = None
+            for src_col, mapped in col_map.items():
+                if mapped == target_col and src_col in df.columns:
+                    val = row.get(src_col)
+                    if pd.isna(val):
+                        val = None
+                    elif target_col == "reviewed_at" and val not in (None, ""):
+                        val = str(val)
+                    break
+            insert_data[target_col].append(val)
+        insert_data["loaded_at"].append(now)
+        for target_col in target_tail_columns:
             val = None
             for src_col, mapped in col_map.items():
                 if mapped == target_col and src_col in df.columns:
@@ -207,7 +250,6 @@ def hydrate_manual_review_queue(con: duckdb.DuckDBPyConnection, gate_dir: Path) 
                         val = None
                     break
             insert_data[target_col].append(val)
-        insert_data["loaded_at"].append(now)
 
     insert_df = pd.DataFrame(insert_data)
 
