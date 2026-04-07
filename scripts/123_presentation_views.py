@@ -67,7 +67,7 @@ ORDER BY unique_patients DESC
 CREATE OR REPLACE VIEW main.v_entity_type_normalized AS
 SELECT
     f.*,
-    COALESCE(f.entity_type_raw, f.entity_type) AS original_entity_type
+    __ORIGINAL_ENTITY_TYPE_EXPR__
 FROM canonical_extracted_fact_long_v2 f
 WHERE f.entity_type IS NOT NULL
 """,
@@ -118,7 +118,29 @@ def main() -> None:
 
     con = connect_md_or_file(DB_PATH, md=args.md, fail_closed=args.md)
 
-    for name, ddl in VIEWS.items():
+    orig_entity_expr = "f.entity_type AS original_entity_type"
+    try:
+        v2_cols = {
+            str(r[1]).lower()
+            for r in con.execute("PRAGMA table_info('canonical_extracted_fact_long_v2')").fetchall()
+        }
+        if "entity_type_raw" in v2_cols:
+            orig_entity_expr = (
+                "COALESCE(f.entity_type_raw, f.entity_type) AS original_entity_type"
+            )
+    except Exception:
+        pass
+
+    views = {
+        k: (
+            v.replace("__ORIGINAL_ENTITY_TYPE_EXPR__", orig_entity_expr)
+            if k == "v_entity_type_normalized"
+            else v
+        )
+        for k, v in VIEWS.items()
+    }
+
+    for name, ddl in views.items():
         if args.dry_run:
             print(f"  [dry-run] {name}")
             continue

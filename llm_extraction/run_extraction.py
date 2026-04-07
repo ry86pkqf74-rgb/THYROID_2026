@@ -37,6 +37,7 @@ import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import logging
 import sys
+import warnings
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -62,7 +63,7 @@ from llm_extraction.vocab import (
     EXTRACTOR_BUILD_VERSION,
     sort_entities_deterministic,
 )
-from utils.text_helpers import save_parquet
+from utils.text_helpers import make_note_row_id, save_parquet
 
 logging.basicConfig(
     level=logging.INFO,
@@ -407,7 +408,10 @@ def _merge_into_existing(
     for col in kept_existing.columns:
         if col not in new_df.columns:
             new_df[col] = None
-    merged = pd.concat([kept_existing, new_df], ignore_index=True)
+    # Pandas 2.2+ FutureWarning on concat dtype inference with all-NA cols
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", FutureWarning)
+        merged = pd.concat([kept_existing, new_df], ignore_index=True)
     return merged
 
 
@@ -614,6 +618,40 @@ def main() -> None:
 
     notes_df = pd.read_parquet(notes_path)
     log.info(f"  Loaded {len(notes_df):,} notes from {notes_path.name}")
+
+    if "note_row_id" not in notes_df.columns:
+        _need = {"research_id", "source_sheet", "source_column"}
+        if not _need.issubset(notes_df.columns):
+            log.error(
+                "%s has no note_row_id and cannot synthesize keys "
+                "(need columns %s; have %s). Run scripts/build_clinical_notes_long.py.",
+                notes_path.name,
+                sorted(_need),
+                sorted(notes_df.columns),
+            )
+            sys.exit(1)
+        log.info(
+            "  Synthesizing note_row_id from (research_id, source_sheet, source_column) "
+            "(same rule as scripts/build_clinical_notes_long.py)"
+        )
+
+        def _synth_note_row_id(series: pd.Series) -> str:
+            rid = series["research_id"]
+            if rid is None or (isinstance(rid, float) and pd.isna(rid)):
+                return ""
+            try:
+                rid_i = int(rid)
+            except (TypeError, ValueError):
+                return ""
+            return make_note_row_id(
+                rid_i, str(series["source_sheet"]), str(series["source_column"])
+            )
+
+        notes_df = notes_df.copy()
+        notes_df["note_row_id"] = notes_df.apply(_synth_note_row_id, axis=1)
+        if (notes_df["note_row_id"] == "").any():
+            log.error("%s: note_row_id synthesis produced blanks — fix source rows", notes_path.name)
+            sys.exit(1)
 
     # Apply research_id filter
     if research_id_filter:

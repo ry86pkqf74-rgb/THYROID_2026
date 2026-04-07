@@ -54,7 +54,7 @@ from utils.provenance import (  # noqa: E402
     quarantine_masks,
 )
 from utils.extraction_run_id_resolve import backfill_extraction_run_id_column  # noqa: E402
-from utils.text_helpers import save_parquet  # noqa: E402
+from utils.text_helpers import make_note_row_id, save_parquet  # noqa: E402
 
 DB_PATH = ROOT / "thyroid_master.duckdb"
 PROCESSED = ROOT / "processed"
@@ -740,13 +740,60 @@ def main() -> None:
     if notes_path.exists():
         notes = pd.read_parquet(notes_path)
         if "note_row_id" not in notes.columns:
-            print(
-                "  warn: clinical_notes_long has no note_row_id; "
-                "skip provenance merge (clin_* columns unset)"
-            )
-            for c in ("clin_note_date", "clin_source_sheet", "clin_source_column",
-                      "clin_source_workbook", "clin_excel_row_0based"):
-                uni[c] = None
+            _need = {"research_id", "source_sheet", "source_column"}
+            if not _need.issubset(notes.columns):
+                print(
+                    "  warn: clinical_notes_long has no note_row_id and cannot synthesize "
+                    f"(need {sorted(_need)}); skip provenance merge (clin_* columns unset)"
+                )
+                for c in ("clin_note_date", "clin_source_sheet", "clin_source_column",
+                          "clin_source_workbook", "clin_excel_row_0based"):
+                    uni[c] = None
+            else:
+                print(
+                    "  note: clinical_notes_long has no note_row_id — synthesizing "
+                    "(same rule as scripts/build_clinical_notes_long.py)"
+                )
+
+                def _synth_nr_id(row: pd.Series) -> str:
+                    rid = row["research_id"]
+                    if rid is None or (isinstance(rid, float) and pd.isna(rid)):
+                        return ""
+                    try:
+                        rid_i = int(rid)
+                    except (TypeError, ValueError):
+                        return ""
+                    return make_note_row_id(
+                        rid_i, str(row["source_sheet"]), str(row["source_column"])
+                    )
+
+                notes = notes.copy()
+                notes["note_row_id"] = notes.apply(_synth_nr_id, axis=1)
+                if (notes["note_row_id"] == "").any():
+                    print(
+                        "  warn: note_row_id synthesis produced blanks; "
+                        "skip provenance merge (clin_* columns unset)"
+                    )
+                    for c in ("clin_note_date", "clin_source_sheet", "clin_source_column",
+                              "clin_source_workbook", "clin_excel_row_0based"):
+                        uni[c] = None
+                else:
+                    nc = [
+                        c for c in (
+                            "note_row_id", "note_date", "source_sheet",
+                            "source_column", "source_workbook", "excel_row_0based",
+                        ) if c in notes.columns
+                    ]
+                    notes = notes[nc].drop_duplicates(subset=["note_row_id"])
+                    notes = notes.rename(columns={
+                        "note_date": "clin_note_date",
+                        "source_sheet": "clin_source_sheet",
+                        "source_column": "clin_source_column",
+                        "source_workbook": "clin_source_workbook",
+                        "excel_row_0based": "clin_excel_row_0based",
+                    })
+                    uni = uni.merge(notes, on="note_row_id", how="left")
+                    print("  merged clinical_notes_long")
         else:
             nc = [
                 c for c in (
