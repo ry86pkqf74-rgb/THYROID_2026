@@ -33,6 +33,8 @@ Checks:
  12. Molecular normalized contract views (scripts/sql/133_molecular_contract_views_ddl.sql):
      required columns, live-row parity vs main.molecular_results, payload_checksum uniqueness,
      allele_fraction bounds, variant_class enum, provenance columns, assay/panel pairing
+ 12b. Molecular episode upstream spine (release-mode): main.molecular_testing must exist when
+     molecular_test_episode_v2 is non-empty (otherwise dates/linkage/specimen genomics are blocked)
  13. Specimen + analytic FHIR layer (scripts/138_md_specimen_fhir_layer.py): table presence when
      synoptic_tumor_long_v1 exists; fingerprint uniqueness; qa.val_specimen_contract_v1 and
      qa.val_specimen_genomic_binding_v1 FAIL rows; qa.v_diag_* diagnostic views (142) orphan/ref/
@@ -805,11 +807,33 @@ def check_molecular_normalized_contract(
         return
 
     if n_all == 0:
-        results.add(
-            "Molecular row counts",
-            "PASS",
-            "main.molecular_results is empty — contract view checks skipped",
-        )
+        n_ep = 0
+        if _main_object_exists(con, "molecular_test_episode_v2"):
+            try:
+                n_ep = int(
+                    con.execute(
+                        "SELECT COUNT(*) FROM main.molecular_test_episode_v2"
+                    ).fetchone()[0]
+                )
+            except Exception:
+                n_ep = 0
+        if n_ep > 0:
+            results.add(
+                "Molecular row counts",
+                status_fail,
+                "main.molecular_results is empty but molecular_test_episode_v2 has "
+                f"{n_ep:,} rows — governed ThyroSeq/Afirma ingest not deployed on this catalog "
+                "(run scripts/131_molecular_results_layer.py --execute --md, "
+                "scripts/117_md_contract_views.py --md --contract-views-only, then "
+                "41_ingest_thyroseq_excel.py and 42_ingest_afirma.py with approved inputs). "
+                "Contract view checks skipped.",
+            )
+        else:
+            results.add(
+                "Molecular row counts",
+                "PASS",
+                "main.molecular_results is empty — contract view checks skipped",
+            )
         return
 
     # Required contract views + columns
@@ -1113,6 +1137,51 @@ def check_molecular_normalized_contract(
                 )
         except Exception as exc:
             results.add("Molecular assay_name dictionary match", "WARN", str(exc))
+
+
+def check_molecular_episode_upstream_spine(
+    con: duckdb.DuckDBPyConnection,
+    results: ValidationResult,
+    strict: bool = False,
+) -> None:
+    """Release-mode: episode dates for linkage derive from molecular_testing (script 22).
+
+    MotherDuck catalogs promoted without ``main.molecular_testing`` keep
+    ``molecular_test_episode_v2`` rows but lose ``test_date_native``, which blocks
+    ``fna_molecular_linkage_v3`` (script 49) and inflates specimen genomics review queues.
+    """
+    if not strict:
+        return
+    if not _main_object_exists(con, "molecular_test_episode_v2"):
+        return
+    try:
+        n_ep = int(
+            con.execute(
+                "SELECT COUNT(*) FROM main.molecular_test_episode_v2"
+            ).fetchone()[0]
+        )
+    except Exception as exc:
+        results.add("Molecular episode upstream spine", "FAIL", str(exc))
+        return
+    if n_ep == 0:
+        return
+    if _main_object_exists(con, "molecular_testing"):
+        results.add(
+            "Molecular episode upstream spine",
+            "PASS",
+            "main.molecular_testing present alongside molecular_test_episode_v2",
+        )
+        return
+    results.add(
+        "Molecular episode upstream spine",
+        "FAIL",
+        "main.molecular_testing is missing but molecular_test_episode_v2 has "
+        f"{n_ep:,} rows — catalog lacks script-22 source spine; test_date_native is "
+        "mostly NULL, so fna_molecular_linkage_v3 cannot attach genomics to FNA/specimen "
+        "(load molecular_testing, rerun scripts/22_canonical_episodes_v2.py --md for "
+        "molecular episodes, then scripts/49_enhanced_linkage_v3.py --md and "
+        "scripts/140_md_specimen_genomics_binding.py --md).",
+    )
 
 
 SPECIMEN_FHIR_OBJECTS = (
@@ -1495,6 +1564,10 @@ def main() -> None:
 
         print("\n--- Check 12: Molecular normalized contract views ---")
         check_molecular_normalized_contract(con, results, strict=strict)
+
+        if strict:
+            print("\n--- Check 12b: Molecular episode upstream spine ---")
+            check_molecular_episode_upstream_spine(con, results, strict=strict)
 
         print("\n--- Check 13: Specimen + analytic FHIR layer ---")
         check_specimen_fhir_layer(con, results, strict=strict)

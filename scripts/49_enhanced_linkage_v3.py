@@ -55,9 +55,31 @@ def section(title: str) -> None:
 
 
 
-def connect_md() -> duckdb.DuckDBPyConnection:
+def connect_md(
+    *,
+    prefer_service_account: bool = False,
+    md_env: str | None = None,
+    database: str | None = None,
+) -> duckdb.DuckDBPyConnection:
+    import os
+
     from utils.md_connect import connect_md_or_file
-    return connect_md_or_file(DB_PATH, md=True, fail_closed=True)
+
+    if (database or "").strip():
+        os.environ["MOTHERDUCK_DATABASE"] = database.strip()
+    elif md_env and not os.environ.get("MOTHERDUCK_DATABASE") and not os.environ.get(
+        "MOTHERDUCK_DB"
+    ):
+        from motherduck_client import resolve_database_for_env
+
+        os.environ["MOTHERDUCK_DATABASE"] = resolve_database_for_env(md_env.strip())
+    return connect_md_or_file(
+        DB_PATH,
+        md=True,
+        fail_closed=True,
+        env=md_env,
+        prefer_service_account=prefer_service_account,
+    )
 def connect_local() -> duckdb.DuckDBPyConnection:
     return duckdb.connect(str(DB_PATH))
 
@@ -881,14 +903,34 @@ WHERE 1=0
 def main() -> None:
     p = argparse.ArgumentParser(description="49_enhanced_linkage_v3.py")
     g = p.add_mutually_exclusive_group()
-    g.add_argument("--md", action="store_true", help="Connect to local DuckDB")
-    g.add_argument("--local", action="store_true", help="Use local DuckDB (default)")
+    g.add_argument("--md", action="store_true", help="Connect to MotherDuck (see md_connect / secrets)")
+    g.add_argument("--local", action="store_true", help="Use local DuckDB file (default when not --md)")
+    p.add_argument(
+        "--md-sa",
+        dest="md_sa",
+        action="store_true",
+        help="Prefer MD_SA_TOKEN over MOTHERDUCK_TOKEN on MotherDuck.",
+    )
+    p.add_argument(
+        "--md-env",
+        default=None,
+        help="dev|qa|prod — sets MOTHERDUCK_DATABASE via motherduck_environments.yml when unset.",
+    )
+    p.add_argument(
+        "--database",
+        default=None,
+        help="Override MotherDuck database name (sets MOTHERDUCK_DATABASE).",
+    )
     p.add_argument("--dry-run", action="store_true", help="Audit only, no writes")
     args = p.parse_args()
 
     if args.md:
-        section("Connecting to local DuckDB")
-        con = connect_md()
+        section("Connecting to MotherDuck")
+        con = connect_md(
+            prefer_service_account=bool(getattr(args, "md_sa", False)),
+            md_env=args.md_env,
+            database=args.database,
+        )
     else:
         section("Connecting to local DuckDB")
         con = connect_local()
