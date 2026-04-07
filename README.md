@@ -194,7 +194,7 @@ All data encrypted on local drive (PHI compliance).
 │   ├── config.toml           # Server, theme, and browser settings
 │   └── secrets.toml          # (gitignored) local config
 ├── .github/workflows/
-│   └── ci.yml                # CI: syntax check + local DuckDB smoke test
+│   └── ci.yml                # CI: Ruff/Mypy, YAML validation, MotherDuck formalization path, legacy gates
 ├── llm_extraction/           # Regex + LLM entity extraction (package: llm_extraction)
 ├── lakehouse/                # Medallion docs: bronze/ silver/ gold/
 ├── prompts/                  # Shared prompt text (e.g. lab_date_extraction_v1)
@@ -367,9 +367,11 @@ n = ThyroidStatisticalAnalyzer.power_two_proportions(p1=0.15, p2=0.05)
 
 | Component | Detail |
 |-----------|--------|
-| GitHub Actions | `.github/workflows/ci.yml` — syntax check + local validation |
+| GitHub Actions | `.github/workflows/ci.yml` — Ruff (F-rules) + Mypy, workflow YAML parse, offline pytest suites, MotherDuck lint job, **formalization job** (`116_md_stage_loader.py --md --dry-run` → `112_v2_domain_promotion_gate.py --motherduck-check` → `119_md_formalization_validate.py --md`), **live release audit dry-run** on `refs/tags/v*` or manual dispatch (`124_md_live_release_audit.py --md --dry-run`). Legacy jobs (v2-domain-validation shell checks, RO share publication, script `91` promotion gate) are labeled in the workflow. Secrets: `MD_SA_TOKEN` and/or `MOTHERDUCK_TOKEN` only for formalization/live-audit jobs (`LOCAL_DB_PATH` cleared there). Never log token values. |
 | Streamlit Cloud | Auto-deploys from `main` branch on push |
 | Runtime | Python 3.11 (pinned in `runtime.txt`) |
+
+**Make — MotherDuck formalization (env tokens; fail-closed `--md`):** `make md-v2-gate-md-dryrun`, `make md-live-release-dryrun`, `make md-live-release-final`. **Local / legacy:** `make md-v2-gate-local-dryrun` (alias `md-v2-gate-dryrun`), manifest targets `md-release-manifest-*`, `md-promote-dryrun-*` — see `Makefile` header comments.
 
 ## Streamlit Cloud deployment
 

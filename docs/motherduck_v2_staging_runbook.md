@@ -327,6 +327,16 @@ Token resolution is handled internally by `motherduck_client.get_token()`. Do no
 
 ---
 
+## CI and Make — formalization path (2026-04-07)
+
+GitHub Actions (`.github/workflows/ci.yml`) runs a **motherduck-formalization** job after Ruff/Mypy + workflow YAML validation and the main MotherDuck lint job: `116_md_stage_loader.py --md --dry-run`, then `112_v2_domain_promotion_gate.py --motherduck-check` (same `--v2-parquets-dir` / `--db-path` defaults as local), then `119_md_formalization_validate.py --md`. That job sets **`LOCAL_DB_PATH` empty** and uses only **`MD_SA_TOKEN` / `MOTHERDUCK_TOKEN`**; do not print tokens in logs.
+
+For **tag** pushes matching `refs/tags/v*` (and optional **manual** workflow dispatch), job **md-live-release-audit-dryrun** runs `124_md_live_release_audit.py --md --dry-run`.
+
+**Make (fail-closed MotherDuck):** `make md-v2-gate-md-dryrun` (same three steps as CI), `make md-live-release-dryrun`, `make md-live-release-final`. **Local / legacy** gate without cloud: `make md-v2-gate-local-dryrun` (or `make md-v2-gate-dryrun`). Formalization CI needs `processed/output/v2_parquets` on the runner for gate G1/G8; restore via DVC or artifacts if github-hosted checkout has none.
+
+---
+
 ## Formalized promotion runbook (v2 — 2026-04-07)
 
 The full end-to-end promotion sequence, suitable for MotherDuck paid-plan workflows.

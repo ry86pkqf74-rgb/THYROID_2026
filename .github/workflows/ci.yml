@@ -4,11 +4,13 @@ name: Dashboard CI — Hardened
 # THYROID_2026  CI  |  Updated 2026-03-14
 #
 # Job graph (simplified):
-#   Parallel (no secrets): ruff-and-mypy, multimodal-tests, llm-extraction-gold
-#     (offline pytest: LLM goldens + registry + provenance + fleet parity).
+#   Parallel (no secrets): ruff-and-mypy (+ workflow YAML parse), multimodal-tests,
+#     llm-extraction-gold (offline pytest: LLM goldens + registry + provenance + fleet parity).
 #   lint-and-syntax (MotherDuck secrets) → downstream jobs:
-#     v2-domain-validation, benchmark-regression (continue-on-error),
-#     share-publication-check (tags / manual), promotion-gate (tags).
+#     motherduck-formalization (v2 formalization path: 116 dry-run → 112 --motherduck-check → 119),
+#     v2-domain-validation (legacy), benchmark-regression (continue-on-error),
+#     share-publication-check (legacy; tags / manual), promotion-gate (legacy script 91; tags),
+#     md-live-release-audit-dryrun (124 --md --dry-run; tags / manual).
 #
 # Service-account token
 # ─────────────────────
@@ -46,7 +48,13 @@ on:
   workflow_dispatch:
     inputs:
       run_share_check:
-        description: "Run share publication check"
+        description: "Run share publication check (legacy)"
+        required: false
+        default: "false"
+        type: choice
+        options: ["true", "false"]
+      run_md_live_release_dryrun:
+        description: "Run MotherDuck live release audit dry-run (scripts/124 --md --dry-run)"
         required: false
         default: "false"
         type: choice
@@ -74,6 +82,17 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
+          pip install PyYAML
+
+      - name: Validate GitHub Actions workflow YAML
+        run: |
+          python -c "
+          from pathlib import Path
+          import yaml
+          for p in sorted(Path('.github/workflows').glob('*.yml')):
+              yaml.safe_load(p.read_text(encoding='utf-8'))
+              print('OK', p)
+          "
 
       - name: Ruff — pyflakes-equivalent (F)
         run: |
@@ -380,9 +399,54 @@ jobs:
           "
         continue-on-error: true
 
-  # ── Job 3a: V2 Domain Promotion Validation ──────────────────────────────
+  # ── MotherDuck formalization path (116 dry-run → 112 G8 → 119) ────────────
+  # Token resolution: MD_SA_TOKEN / MOTHERDUCK_TOKEN only (LOCAL_DB_PATH cleared).
+  # Runners need processed/output/v2_parquets for G1/G8 (on-disk inventory); restore via DVC/artifact if absent on github-hosted.
+  motherduck-formalization:
+    name: MotherDuck formalization (116 → 112 → 119)
+    runs-on: ubuntu-latest
+    needs: [ruff-and-mypy, lint-and-syntax]
+    env:
+      MD_SA_TOKEN: ${{ secrets.MD_SA_TOKEN }}
+      MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
+      LOCAL_DB_PATH: ""
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Assert read/write MotherDuck token (secrets never echoed)
+        run: |
+          python -c "
+          import os
+          assert (os.environ.get('MD_SA_TOKEN') or os.environ.get('MOTHERDUCK_TOKEN')), (
+              'Configure GitHub secret MD_SA_TOKEN and/or MOTHERDUCK_TOKEN for this job.'
+          )
+          print('MotherDuck token env present (values not printed).')
+          "
+
+      - name: Stage loader dry-run (fail-closed --md)
+        run: python scripts/116_md_stage_loader.py --md --dry-run
+
+      - name: Promotion gate with MotherDuck parity (112 --motherduck-check)
+        run: |
+          python scripts/112_v2_domain_promotion_gate.py \
+            --v2-parquets-dir processed/output/v2_parquets \
+            --db-path thyroid_master.duckdb \
+            --motherduck-check \
+            --run-label "ci_formalization_${{ github.run_id }}"
+
+      - name: Formalization validate (fail-closed --md)
+        run: python scripts/119_md_formalization_validate.py --md
+
+  # ── Job 3a: V2 Domain Promotion Validation (legacy) ─────────────────────
   v2-domain-validation:
-    name: V2 Domain Promotion Validation
+    name: V2 Domain Promotion Validation (legacy)
     runs-on: ubuntu-latest
     needs: lint-and-syntax
     env:
@@ -447,7 +511,7 @@ jobs:
   # ── Job 3b: Global OED vs path-synoptic completion linkage (manual only) ──
   # Uses GitHub secrets; refreshes MotherDuck tables only (no repo commits).
   completion-linkage-motherduck:
-    name: Completion linkage — MotherDuck (script 107)
+    name: Completion linkage — MotherDuck script 107 (legacy / manual ops)
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_completion_linkage == 'true'
     needs: lint-and-syntax
@@ -514,9 +578,9 @@ jobs:
           path: exports/md_benchmark_*/benchmark_results_*.csv
           retention-days: 30
 
-  # ── Job 5: RO Share Publication Check (tagged releases + manual dispatch) ─
+  # ── Job 5: RO Share Publication Check (legacy; tagged releases + manual dispatch) ─
   share-publication-check:
-    name: RO Share Publication Check
+    name: RO Share Publication Check (legacy)
     runs-on: ubuntu-latest
     needs: lint-and-syntax
     if: >
@@ -542,9 +606,9 @@ jobs:
             --sa \
             --no-count-check
 
-  # ── Job 6: Promotion Gate  (tagged releases only; dev→qa→prod guard) ──────
+  # ── Job 6: Promotion Gate — legacy script 91 (tagged releases only) ───────
   promotion-gate:
-    name: Promotion Gate (qa → prod)
+    name: Promotion Gate — legacy script 91 (qa → prod)
     runs-on: ubuntu-latest
     needs: [lint-and-syntax, share-publication-check]
     if: startsWith(github.ref, 'refs/tags/v')
@@ -568,3 +632,38 @@ jobs:
             --from qa \
             --to prod \
             --sa
+
+  # ── Live release audit dry-run (formalization orchestrator; tags + manual) ─
+  md-live-release-audit-dryrun:
+    name: MotherDuck live release audit — dry-run (124)
+    runs-on: ubuntu-latest
+    needs: lint-and-syntax
+    if: >
+      startsWith(github.ref, 'refs/tags/v') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.run_md_live_release_dryrun == 'true')
+    env:
+      MD_SA_TOKEN: ${{ secrets.MD_SA_TOKEN }}
+      MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
+      LOCAL_DB_PATH: ""
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Assert read/write MotherDuck token
+        run: |
+          python -c "
+          import os
+          assert (os.environ.get('MD_SA_TOKEN') or os.environ.get('MOTHERDUCK_TOKEN')), (
+              'Configure GitHub secret MD_SA_TOKEN and/or MOTHERDUCK_TOKEN for this job.'
+          )
+          print('MotherDuck token env present (values not printed).')
+          "
+
+      - name: Live release audit orchestrator (dry-run, fail-closed --md)
+        run: python scripts/124_md_live_release_audit.py --md --dry-run
