@@ -73,6 +73,130 @@ def get_connection(args: argparse.Namespace) -> duckdb.DuckDBPyConnection:
     return duckdb.connect(args.db_path)
 
 
+def run_v2_stage_transaction(
+    con: duckdb.DuckDBPyConnection,
+    domains_to_load: list[tuple[str, str, str, str, Path]],
+    sha: str,
+    reg_ver: str,
+    *,
+    inject_after_n_domain_loads: int | None = None,
+) -> None:
+    """Bulk-load domains into v2_stage under a single transaction (COMMIT or ROLLBACK).
+
+    inject_after_n_domain_loads
+        When set, raises RuntimeError after exactly that many domains have been fully
+        loaded (table created + load_inventory row inserted). Intended for transactional tests.
+    """
+    con.execute("BEGIN TRANSACTION")
+    try:
+        con.execute("CREATE SCHEMA IF NOT EXISTS v2_stage")
+        print("  [schema] v2_stage ensured")
+
+        con.execute(LOAD_INVENTORY_DDL)
+
+        next_id_row = con.execute(
+            "SELECT COALESCE(MAX(load_id), 0) + 1 FROM v2_stage.load_inventory"
+        ).fetchone()
+        next_id = next_id_row[0] if next_id_row else 1
+
+        loaded = 0
+        mismatches = []
+        now = datetime.now(timezone.utc).isoformat()
+
+        for name, stem, tier, qa_tier, pq_path in domains_to_load:
+            local_count = len(pd.read_parquet(pq_path))
+            con.execute(
+                f"CREATE OR REPLACE TABLE v2_stage.{stem} "
+                f"AS SELECT * FROM read_parquet('{pq_path}')"
+            )
+            md_count = con.execute(
+                f"SELECT COUNT(*) FROM v2_stage.{stem}"
+            ).fetchone()[0]
+            match = local_count == md_count
+
+            con.execute(
+                "INSERT INTO v2_stage.load_inventory VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                [
+                    next_id,
+                    name,
+                    stem,
+                    tier,
+                    qa_tier,
+                    str(pq_path),
+                    local_count,
+                    md_count,
+                    match,
+                    now,
+                    sha,
+                    reg_ver,
+                ],
+            )
+            next_id += 1
+
+            status = "OK" if match else "MISMATCH"
+            print(
+                f"  [{status}] v2_stage.{stem}: local={local_count:,}  md={md_count:,}"
+            )
+            if not match:
+                mismatches.append(stem)
+            loaded += 1
+
+            if inject_after_n_domain_loads is not None and (
+                loaded == inject_after_n_domain_loads
+            ):
+                raise RuntimeError("__TEST_INJECT_AFTER_PARTIAL_LOAD__")
+
+        print(f"\n  [summary] {loaded} tables loaded into v2_stage (within transaction)")
+        print(f"  [summary] {len(mismatches)} row-count mismatches (immediate check)")
+
+        if mismatches:
+            con.execute("ROLLBACK")
+            print("  [txn] ROLLBACK: row parity failed during load (MISMATCH rows above).")
+            print(f"  [error] Mismatches in: {mismatches}")
+            sys.exit(1)
+
+        print("\n  [post-write] Re-verifying parquet vs v2_stage row counts before COMMIT…")
+        post_failures: list[str] = []
+        for name, stem, tier, qa_tier, pq_path in domains_to_load:
+            local_count = len(pd.read_parquet(pq_path))
+            md_count = con.execute(
+                f"SELECT COUNT(*) FROM v2_stage.{stem}"
+            ).fetchone()[0]
+            if local_count != md_count:
+                post_failures.append(
+                    f"{stem}: local={local_count:,} md={md_count:,}"
+                )
+                print(
+                    f"  [post-write FAIL] v2_stage.{stem}: "
+                    f"local={local_count:,} md={md_count:,}"
+                )
+
+        if post_failures:
+            con.execute("ROLLBACK")
+            print(
+                "  [txn] ROLLBACK: post-write row parity check failed "
+                f"({len(post_failures)} table(s))."
+            )
+            sys.exit(1)
+
+        con.execute("COMMIT")
+        print("  [txn] COMMIT completed successfully (no rollback).")
+
+        inv_count = con.execute(
+            "SELECT COUNT(*) FROM v2_stage.load_inventory"
+        ).fetchone()[0]
+        print(f"  [inventory] v2_stage.load_inventory: {inv_count:,} total rows")
+    except SystemExit:
+        raise
+    except BaseException as exc:
+        try:
+            con.execute("ROLLBACK")
+            print(f"  [txn] ROLLBACK after unexpected error: {exc}")
+        except Exception as rb_exc:
+            print(f"  [txn] ROLLBACK failed (connection state unclear): {rb_exc}")
+        raise
+
+
 def main() -> None:
     args = parse_args()
     registry = load_registry()
@@ -129,109 +253,13 @@ def main() -> None:
             print(f"    {len(domains_to_load)} inventory rows into v2_stage.load_inventory")
             return
 
-        con.execute("BEGIN TRANSACTION")
-        try:
-            con.execute("CREATE SCHEMA IF NOT EXISTS v2_stage")
-            print("  [schema] v2_stage ensured")
-
-            con.execute(LOAD_INVENTORY_DDL)
-
-            next_id_row = con.execute(
-                "SELECT COALESCE(MAX(load_id), 0) + 1 FROM v2_stage.load_inventory"
-            ).fetchone()
-            next_id = next_id_row[0] if next_id_row else 1
-
-            loaded = 0
-            mismatches = []
-            now = datetime.now(timezone.utc).isoformat()
-
-            for name, stem, tier, qa_tier, pq_path in domains_to_load:
-                local_count = len(pd.read_parquet(pq_path))
-                con.execute(
-                    f"CREATE OR REPLACE TABLE v2_stage.{stem} "
-                    f"AS SELECT * FROM read_parquet('{pq_path}')"
-                )
-                md_count = con.execute(
-                    f"SELECT COUNT(*) FROM v2_stage.{stem}"
-                ).fetchone()[0]
-                match = local_count == md_count
-
-                con.execute(
-                    "INSERT INTO v2_stage.load_inventory VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    [
-                        next_id,
-                        name,
-                        stem,
-                        tier,
-                        qa_tier,
-                        str(pq_path),
-                        local_count,
-                        md_count,
-                        match,
-                        now,
-                        sha,
-                        reg_ver,
-                    ],
-                )
-                next_id += 1
-
-                status = "OK" if match else "MISMATCH"
-                print(
-                    f"  [{status}] v2_stage.{stem}: local={local_count:,}  md={md_count:,}"
-                )
-                if not match:
-                    mismatches.append(stem)
-                loaded += 1
-
-            print(f"\n  [summary] {loaded} tables loaded into v2_stage (within transaction)")
-            print(f"  [summary] {len(mismatches)} row-count mismatches (immediate check)")
-
-            if mismatches:
-                con.execute("ROLLBACK")
-                print("  [txn] ROLLBACK: row parity failed during load (MISMATCH rows above).")
-                print(f"  [error] Mismatches in: {mismatches}")
-                sys.exit(1)
-
-            print("\n  [post-write] Re-verifying parquet vs v2_stage row counts before COMMIT…")
-            post_failures: list[str] = []
-            for name, stem, tier, qa_tier, pq_path in domains_to_load:
-                local_count = len(pd.read_parquet(pq_path))
-                md_count = con.execute(
-                    f"SELECT COUNT(*) FROM v2_stage.{stem}"
-                ).fetchone()[0]
-                if local_count != md_count:
-                    post_failures.append(
-                        f"{stem}: local={local_count:,} md={md_count:,}"
-                    )
-                    print(
-                        f"  [post-write FAIL] v2_stage.{stem}: "
-                        f"local={local_count:,} md={md_count:,}"
-                    )
-
-            if post_failures:
-                con.execute("ROLLBACK")
-                print(
-                    "  [txn] ROLLBACK: post-write row parity check failed "
-                    f"({len(post_failures)} table(s))."
-                )
-                sys.exit(1)
-
-            con.execute("COMMIT")
-            print("  [txn] COMMIT completed successfully (no rollback).")
-
-            inv_count = con.execute(
-                "SELECT COUNT(*) FROM v2_stage.load_inventory"
-            ).fetchone()[0]
-            print(f"  [inventory] v2_stage.load_inventory: {inv_count:,} total rows")
-        except SystemExit:
-            raise
-        except BaseException as exc:
-            try:
-                con.execute("ROLLBACK")
-                print(f"  [txn] ROLLBACK after unexpected error: {exc}")
-            except Exception as rb_exc:
-                print(f"  [txn] ROLLBACK failed (connection state unclear): {rb_exc}")
-            raise
+        run_v2_stage_transaction(
+            con,
+            domains_to_load,
+            sha,
+            reg_ver,
+            inject_after_n_domain_loads=None,
+        )
 
     finally:
         con.close()

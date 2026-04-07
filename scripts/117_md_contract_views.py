@@ -146,8 +146,23 @@ def apply_ddl(
             print(f"         Statement: {stmt[:120]}...")
 
 
-def _run_contract_writes_in_transaction(con: duckdb.DuckDBPyConnection, args: argparse.Namespace) -> None:
+def _run_contract_writes_in_transaction(
+    con: duckdb.DuckDBPyConnection,
+    args: argparse.Namespace,
+    *,
+    inject_after_n_table_loads: int | None = None,
+) -> None:
     """Commit base tables under one transaction; DDL/views afterward (warn-and-continue)."""
+    tables_loaded = 0
+
+    def _bump_after_load() -> None:
+        nonlocal tables_loaded
+        tables_loaded += 1
+        if inject_after_n_table_loads is not None and (
+            tables_loaded == inject_after_n_table_loads
+        ):
+            raise RuntimeError("__TEST_INJECT_AFTER_PARTIAL_LOAD__")
+
     con.execute("BEGIN TRANSACTION")
     try:
         print("\n  [txn] BEGIN (main table loads + parquet parity only)")
@@ -156,6 +171,7 @@ def _run_contract_writes_in_transaction(con: duckdb.DuckDBPyConnection, args: ar
         if not args.skip_canonical:
             for table_name, pq_path in CANONICAL_TABLES.items():
                 load_table_from_parquet(con, table_name, pq_path, dry_run=False)
+                _bump_after_load()
         else:
             print("  [skip] canonical tables (--skip-canonical)")
 
@@ -163,6 +179,7 @@ def _run_contract_writes_in_transaction(con: duckdb.DuckDBPyConnection, args: ar
         for table_name, pq_filename in EPISODE_TABLES.items():
             pq_path = FREEZE_DIR / pq_filename
             load_table_from_parquet(con, table_name, pq_path, dry_run=False)
+            _bump_after_load()
 
         written_tables: list[tuple[str, Path]] = []
         if not args.skip_canonical:
@@ -240,7 +257,9 @@ def main() -> None:
             print("\n=== Contract views (DDL) ===")
             apply_ddl(con, args.dry_run)
         else:
-            _run_contract_writes_in_transaction(con, args)
+            _run_contract_writes_in_transaction(
+                con, args, inject_after_n_table_loads=None
+            )
     finally:
         con.close()
 

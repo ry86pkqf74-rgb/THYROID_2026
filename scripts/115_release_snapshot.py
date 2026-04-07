@@ -88,6 +88,70 @@ def get_connection(args: argparse.Namespace) -> duckdb.DuckDBPyConnection:
     return duckdb.connect(args.db_path)
 
 
+def run_release_snapshot_transaction(
+    con: duckdb.DuckDBPyConnection,
+    schema_name: str,
+    tables: list[str],
+    tag: str,
+    *,
+    inject_after_n_table_copies: int | None = None,
+) -> dict[str, int]:
+    """Copy main.* into release schema under one transaction; COMMIT or ROLLBACK as a unit."""
+    row_counts: dict[str, int] = {}
+    con.execute("BEGIN TRANSACTION")
+    try:
+        con.execute(f"CREATE SCHEMA {schema_name}")
+        print(f"  [schema] created {schema_name}")
+
+        n_copied = 0
+        for t in tables:
+            con.execute(f"""
+                CREATE TABLE {schema_name}.{t} AS
+                SELECT *, '{tag}' AS release_tag
+                FROM main.{t}
+            """)
+            cnt = con.execute(f"SELECT COUNT(*) FROM {schema_name}.{t}").fetchone()[0]
+            row_counts[t] = int(cnt)
+            print(f"  [copy] {schema_name}.{t}: {cnt:,} rows")
+            n_copied += 1
+            if inject_after_n_table_copies is not None and (
+                n_copied == inject_after_n_table_copies
+            ):
+                raise RuntimeError("__TEST_INJECT_AFTER_PARTIAL_COPY__")
+
+        print("\n  [post-write] Row parity vs main (before COMMIT)…")
+        for t in tables:
+            main_cnt = con.execute(f"SELECT COUNT(*) FROM main.{t}").fetchone()[0]
+            rel_cnt = con.execute(
+                f"SELECT COUNT(*) FROM {schema_name}.{t}"
+            ).fetchone()[0]
+            if int(main_cnt) != int(rel_cnt):
+                raise RuntimeError(
+                    f"parity failed for {t}: main={main_cnt:,} "
+                    f"{schema_name}={rel_cnt:,}"
+                )
+            print(
+                f"  [parity OK] {schema_name}.{t}: {rel_cnt:,} rows "
+                f"(matches main.{t})"
+            )
+
+        con.execute("COMMIT")
+        print(
+            "  [txn] COMMIT completed for release snapshot "
+            "(release_* durable; manifest recorded separately)."
+        )
+    except SystemExit:
+        raise
+    except BaseException as exc:
+        try:
+            con.execute("ROLLBACK")
+            print(f"  [txn] ROLLBACK after error: {exc}")
+        except Exception as rb_exc:
+            print(f"  [txn] ROLLBACK failed (connection state unclear): {rb_exc}")
+        raise
+    return row_counts
+
+
 def main() -> None:
     args = parse_args()
     tag = args.tag.strip()
@@ -125,52 +189,9 @@ def main() -> None:
             print("  [dry-run] INSERT INTO qa.release_manifest ... (after release COMMIT)")
             return
 
-        row_counts: dict[str, int] = {}
-        con.execute("BEGIN TRANSACTION")
-        try:
-            con.execute(f"CREATE SCHEMA {schema_name}")
-            print(f"  [schema] created {schema_name}")
-
-            for t in tables:
-                con.execute(f"""
-                    CREATE TABLE {schema_name}.{t} AS
-                    SELECT *, '{tag}' AS release_tag
-                    FROM main.{t}
-                """)
-                cnt = con.execute(f"SELECT COUNT(*) FROM {schema_name}.{t}").fetchone()[0]
-                row_counts[t] = int(cnt)
-                print(f"  [copy] {schema_name}.{t}: {cnt:,} rows")
-
-            print("\n  [post-write] Row parity vs main (before COMMIT)…")
-            for t in tables:
-                main_cnt = con.execute(f"SELECT COUNT(*) FROM main.{t}").fetchone()[0]
-                rel_cnt = con.execute(
-                    f"SELECT COUNT(*) FROM {schema_name}.{t}"
-                ).fetchone()[0]
-                if int(main_cnt) != int(rel_cnt):
-                    raise RuntimeError(
-                        f"parity failed for {t}: main={main_cnt:,} "
-                        f"{schema_name}={rel_cnt:,}"
-                    )
-                print(
-                    f"  [parity OK] {schema_name}.{t}: {rel_cnt:,} rows "
-                    f"(matches main.{t})"
-                )
-
-            con.execute("COMMIT")
-            print(
-                "  [txn] COMMIT completed for release snapshot "
-                "(release_* durable; manifest recorded separately)."
-            )
-        except SystemExit:
-            raise
-        except BaseException as exc:
-            try:
-                con.execute("ROLLBACK")
-                print(f"  [txn] ROLLBACK after error: {exc}")
-            except Exception as rb_exc:
-                print(f"  [txn] ROLLBACK failed (connection state unclear): {rb_exc}")
-            raise
+        row_counts = run_release_snapshot_transaction(
+            con, schema_name, tables, tag, inject_after_n_table_copies=None
+        )
 
         print(
             f"\n  Release {tag} created with {len(row_counts)} tables in {schema_name}"
