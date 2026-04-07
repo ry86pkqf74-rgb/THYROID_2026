@@ -1,0 +1,12 @@
+# Session: 2026-04-07 (UTC)
+
+MOTHERDUCK_CUSTOM_USER_AGENT=THYROID_2026_real_mrq_signoff/1.0
+MOTHERDUCK_SESSION_HINT=real_mrq_signoff_20260407_151758
+
+.venv/bin/python scripts/120_review_queue_triage.py --md --md-sa
+# Wrote exports/review_queue_triage_20260407_151758/ (gitignored path pattern exports/review_queue_triage_*/)
+
+# Ad hoc SELECTs: qa.manual_review_queue verification_status histogram;
+# qa.promotion_review_decisions counts for decision_batch_id / evidence_ref / reviewer nulls.
+
+# NOT RUN (blocked): scripts/126_final_master_release.py, scripts/119_md_formalization_validate.py --release-mode

@@ -115,10 +115,17 @@ def parse_args() -> argparse.Namespace:
 
 
 def connect_md(db_path: Path, *, prefer_service_account: bool = False) -> duckdb.DuckDBPyConnection:
+    import os
+
     from utils.md_connect import connect_md_or_file
 
     return connect_md_or_file(
-        db_path, md=True, fail_closed=True, prefer_service_account=prefer_service_account
+        db_path,
+        md=True,
+        fail_closed=True,
+        prefer_service_account=prefer_service_account,
+        custom_user_agent=os.environ.get("MOTHERDUCK_CUSTOM_USER_AGENT"),
+        motherduck_session_hint=os.environ.get("MOTHERDUCK_SESSION_HINT"),
     )
 
 
