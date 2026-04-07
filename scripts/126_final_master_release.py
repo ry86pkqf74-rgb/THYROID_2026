@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -91,6 +92,20 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--skip-117", action="store_true", help="Skip contract parquet load.")
     p.add_argument("--skip-snapshot", action="store_true", help="Skip 115/118.")
     p.add_argument("--dry-run", action="store_true", help="Print plan only.")
+    p.add_argument(
+        "--release-mode",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Pass --release-mode to 119 (strict). Use --no-release-mode for structural-only validation.",
+    )
+    p.add_argument(
+        "--synthetic-fill-mrq-verification",
+        metavar="STATUS",
+        default=None,
+        help="NON-PUBLICATION: copy --hydrate-mrq-from into the study folder, set blank "
+        "verification_status to STATUS, then hydrate from that copy. Real releases require "
+        "human-reviewed CSVs without this flag.",
+    )
     return p.parse_args()
 
 
@@ -118,6 +133,65 @@ def apply_qa_ddl(con: duckdb.DuckDBPyConnection) -> None:
             if "already exists" in str(exc).lower():
                 continue
             print(f"  [warn] DDL: {exc}")
+
+
+def assert_mrq_csv_fully_reviewed(mrq_path: Path) -> None:
+    """Exit if any row lacks non-empty verification_status."""
+    if not mrq_path.is_file():
+        print(f"  FATAL: manual_review_queue.csv not found: {mrq_path}")
+        sys.exit(1)
+    df = pd.read_csv(mrq_path)
+    if "verification_status" not in df.columns:
+        print("  FATAL: manual_review_queue.csv missing verification_status column")
+        sys.exit(1)
+    ser = df["verification_status"].astype(str)
+    blank = df["verification_status"].isna() | ser.str.strip().eq("") | ser.str.lower().eq("nan")
+    n_bad = int(blank.sum())
+    if n_bad > 0:
+        print(
+            f"  FATAL: {n_bad:,} manual_review_queue row(s) lack verification_status. "
+            f"Fully review the CSV or use --synthetic-fill-mrq-verification for non-production tests only."
+        )
+        sys.exit(1)
+    print(f"  [preflight] manual_review_queue fully reviewed: {len(df):,} row(s) at {mrq_path}")
+
+
+def build_mrq_hydrate_gate_dir(
+    src_gate: Path,
+    dest_gate: Path,
+    synthetic_status: str | None,
+) -> Path:
+    """Copy gate CSVs into dest_gate; optionally fill blank verification_status."""
+    dest_gate.mkdir(parents=True, exist_ok=True)
+    for fname in (
+        "promotion_scorecard.csv",
+        "schema_validation.csv",
+        "concordance_summary.csv",
+        "manual_review_queue.csv",
+    ):
+        p = src_gate / fname
+        if p.is_file():
+            shutil.copy2(p, dest_gate / fname)
+    mrq = dest_gate / "manual_review_queue.csv"
+    if not mrq.is_file():
+        print(f"  FATAL: source gate missing manual_review_queue.csv: {src_gate}")
+        sys.exit(1)
+    df = pd.read_csv(mrq)
+    if synthetic_status:
+        if "verification_status" not in df.columns:
+            df["verification_status"] = None
+        ser = df["verification_status"].astype(str)
+        mask = df["verification_status"].isna() | ser.str.strip().eq("") | ser.str.lower().eq("nan")
+        n = int(mask.sum())
+        df.loc[mask, "verification_status"] = synthetic_status
+        if "reviewer" in df.columns:
+            rmask = mask & df["reviewer"].isna()
+            df.loc[rmask, "reviewer"] = "synthetic_fill_scripts126"
+        df.to_csv(mrq, index=False)
+        print(
+            f"  [126] NON-PUBLICATION: synthetic MRQ fill applied to {n:,} row(s) → {synthetic_status!r}"
+        )
+    return dest_gate
 
 
 def append_promotion_decisions(
@@ -254,9 +328,19 @@ def write_evidence_pack(study_dir: Path, ev: dict[str, Any], export_dir: Path) -
         f"- **Captured (UTC):** {ev['captured_at_utc']}",
         f"- **Parquet bundle:** `{export_dir}` (no raw note text in this profile)",
         f"",
+    ]
+    if ev.get("mrq_synthetic_fill"):
+        lines.extend([
+            "## MRQ warning",
+            "",
+            f"**`--synthetic-fill-mrq-verification`** was used with status `{ev['mrq_synthetic_fill']}`. "
+            f"This is **not** human manuscript sign-off. Replace with a truly reviewed CSV for publication.",
+            "",
+        ])
+    lines.extend([
         f"## Row counts",
         "",
-    ]
+    ])
     for k, v in ev["row_counts"].items():
         lines.append(f"| {k} | {v} |")
     lines.extend([
@@ -329,6 +413,7 @@ def main() -> None:
     print(f"  Study dir : {study_dir}")
     print(f"  Export dir: {export_dir}")
     print(f"  Dry run   : {args.dry_run}")
+    print(f"  119 mode  : {'release (strict)' if args.release_mode else 'structural'}")
     print("=" * 70)
 
     if args.dry_run:
@@ -356,14 +441,37 @@ def main() -> None:
     log_root = study_dir / "logs"
     log_root.mkdir(parents=True, exist_ok=True)
 
+    hydrate_dir: Path | None = None
+    if args.hydrate_mrq_from:
+        if not args.hydrate_mrq_from.is_dir():
+            print(f"  FATAL: --hydrate-mrq-from not a directory: {args.hydrate_mrq_from}")
+            sys.exit(1)
+        if args.synthetic_fill_mrq_verification:
+            hydrate_dir = build_mrq_hydrate_gate_dir(
+                args.hydrate_mrq_from.resolve(),
+                (study_dir / "mrq_hydrate_gate").resolve(),
+                args.synthetic_fill_mrq_verification.strip(),
+            )
+        else:
+            hydrate_dir = args.hydrate_mrq_from.resolve()
+        if args.release_mode:
+            assert_mrq_csv_fully_reviewed(hydrate_dir / "manual_review_queue.csv")
+
+    # 114 only deletes rows matching the hydrate folder name; stale run_labels would remain.
+    # Final release expects a single coherent MRQ snapshot.
+    if hydrate_dir is not None:
+        _con = connect_md(db_path)
+        try:
+            _con.execute("DELETE FROM qa.manual_review_queue")
+            print("  [126] cleared qa.manual_review_queue (replace with single hydrate snapshot)")
+        finally:
+            _con.close()
+
     # 114 hydrate first so qa.manual_review_queue matches reviewed CSV before gates run.
-    if args.hydrate_mrq_from and args.hydrate_mrq_from.is_dir():
-        cmd = [_py(), str(SCRIPTS / "114_qa_schema_setup.py"), "--md", "--hydrate-from", str(args.hydrate_mrq_from)]
+    if hydrate_dir is not None:
+        cmd = [_py(), str(SCRIPTS / "114_qa_schema_setup.py"), "--md", "--hydrate-from", str(hydrate_dir)]
         if not run_subprocess("114_qa_schema_setup", cmd, log_root / "114_qa_setup.log"):
             sys.exit(1)
-    elif args.hydrate_mrq_from:
-        print(f"  FATAL: --hydrate-mrq-from not a directory: {args.hydrate_mrq_from}")
-        sys.exit(1)
 
     if not args.skip_103:
         cmd = [_py(), str(SCRIPTS / "103_fact_lineage_materialize.py"), "--md"]
@@ -417,10 +525,11 @@ def main() -> None:
         _py(),
         str(SCRIPTS / "119_md_formalization_validate.py"),
         "--md",
-        "--release-mode",
         "--output-dir",
         str(val_dir),
     ]
+    if args.release_mode:
+        cmd.append("--release-mode")
     if not run_subprocess("119_validate_release_mode", cmd, log_root / "119.log"):
         sys.exit(1)
 
@@ -428,6 +537,8 @@ def main() -> None:
     try:
         ev = gather_evidence(con, tag, git_sha)
         ev["export_dir"] = str(export_dir)
+        if args.synthetic_fill_mrq_verification:
+            ev["mrq_synthetic_fill"] = args.synthetic_fill_mrq_verification.strip()
         write_evidence_pack(study_dir, ev, export_dir)
     finally:
         con.close()
