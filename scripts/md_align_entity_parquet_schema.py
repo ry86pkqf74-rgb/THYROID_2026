@@ -12,6 +12,13 @@ Usage:
   python3 scripts/md_align_entity_parquet_schema.py --md
   python3 scripts/md_align_entity_parquet_schema.py --md --apply
 """
+#
+# Shaped v2 entity parquets (full ``ENTITY_SCHEMA_COLUMNS``) belong in MotherDuck via
+# ``116_md_stage_loader.py`` and the normal promotion path. This script's
+# provenance-only ALTER branch (``MINIMAL_LLM_PROVENANCE_COLUMNS``) only backfills a
+# few LLM metadata columns on legacy / non-shaped ``note_entities*`` tables — it does
+# not create entity_value_norm / entity_type parity or a substitute for a full reload.
+#
 from __future__ import annotations
 
 import argparse

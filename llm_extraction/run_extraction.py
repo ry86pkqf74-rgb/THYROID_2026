@@ -542,7 +542,8 @@ def main() -> None:
         help=(
             "How to fingerprint clinical_notes_long.parquet for telemetry: "
             "'full' (default) = size, mtime, sha256; "
-            "'stat' = size and mtime only (input_sha256 left null — faster on huge files, weaker reproducibility)."
+            "'stat' = size and mtime only (input_sha256 left null — faster on huge files, weaker reproducibility). "
+            "Use default 'full' for release-style / reproducible runs."
         ),
     )
     args = parser.parse_args()
@@ -822,6 +823,8 @@ def main() -> None:
         "target_is_v2_llm": target_is_v2_llm,
         "partial_run_target": target_domain,
         "registry_version": reg.schema_version,
+        # Explicit so downstream can filter runs without input_sha256 (stat mode).
+        "input_fingerprint_mode": args.input_fingerprint,
     }
 
     append_note_extraction_run(

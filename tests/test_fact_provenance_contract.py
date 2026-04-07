@@ -255,6 +255,8 @@ def test_sort_entities_deterministic_unifies_mixed_entity_date_types():
 
 
 def test_note_extraction_run_input_fingerprint_and_registry(tmp_path):
+    import json
+
     from llm_extraction.run_telemetry import append_note_extraction_run
 
     append_note_extraction_run(
@@ -266,7 +268,7 @@ def test_note_extraction_run_input_fingerprint_and_registry(tmp_path):
         failure_stage="none",
         retry_count=0,
         output_record_count=1,
-        warnings={},
+        warnings={"input_fingerprint_mode": "full"},
         domains_requested="staging",
         research_id_filter_note=None,
         target_domain=None,
@@ -285,6 +287,8 @@ def test_note_extraction_run_input_fingerprint_and_registry(tmp_path):
     assert row["input_sha256"] == "a" * 64
     assert row["registry_schema_version"] == "entity_schema_v3_x"
     assert row["registry_digest"] == "b" * 64
+    warn = json.loads(row["warnings"])
+    assert warn["input_fingerprint_mode"] == "full"
 
 
 def test_note_extraction_runs_backward_compat_old_rows(tmp_path):

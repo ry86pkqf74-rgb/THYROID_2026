@@ -270,14 +270,16 @@ class LLMExtractor(BaseExtractor):
 
             sys_fp = getattr(response, "system_fingerprint", None)
 
+            # Avoid model_dump() (can be expensive on large responses) unless both
+            # fields are still missing after direct / choice-level getattr checks.
             md = getattr(response, "model_dump", None)
-            if (provider_model is None or sys_fp is None) and callable(md):
+            if provider_model is None and sys_fp is None and callable(md):
                 try:
                     payload = md()
                     if isinstance(payload, dict):
-                        if provider_model is None and payload.get("model"):
+                        if payload.get("model"):
                             provider_model = str(payload["model"])
-                        if sys_fp is None and payload.get("system_fingerprint"):
+                        if payload.get("system_fingerprint"):
                             sys_fp = str(payload["system_fingerprint"])
                 except Exception:
                     pass
