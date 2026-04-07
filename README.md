@@ -4,15 +4,21 @@
 
 **Layout (2026-04-02):** LLM extraction lives in [`llm_extraction/`](llm_extraction/) (merged legacy `notes_extraction` + `notes_extraction_new`). Staging checkpoints sit under [`processed/output/`](processed/output/); study/manuscript artifact trees under [`processed/outputs/`](processed/outputs/). Medallion tiers are documented in [`docs/REPO_ARCHITECTURE_V2.md`](docs/REPO_ARCHITECTURE_V2.md).
 
+**Read this first — three layers of “ready”:**
+
+1. **2026-03-13 local manuscript-ready freeze** — Point-in-time **local DuckDB** hardening, 7/7 readiness gates, publication bundle, and Zenodo snapshot ([`v2026.03.10-publication-ready`](../../releases/tag/v2026.03.10-publication-ready)). This is **not** the same artifact as the live MotherDuck formalization below; GitHub `main` and Zenodo can diverge until a new Zenodo version is cut.
+2. **2026-04-06 — 07 MotherDuck formalization / release candidate** — Cloud **MotherDuck** `v2_stage` → `main` promotion, `qa.*` governance, immutable `release_YYYYMMDD` snapshots, analyst presentation views from [`scripts/125_master_verified_views.py`](scripts/125_master_verified_views.py), and strict release checks in [`scripts/119_md_formalization_validate.py`](scripts/119_md_formalization_validate.py) (`--release-mode`). **Domain SSOT:** [`config/extraction_domain_registry.yaml`](config/extraction_domain_registry.yaml); reconciled inventory snapshot: [`studies/20260406_domain_inventory_current/`](studies/20260406_domain_inventory_current/) (**23** promoted v2 domains, **31** parent domains = 8 v1 + 23 v2, **0** unclaimed on-disk parquets per regenerated inventory).
+3. **What still blocks a signed release** — **`119 --release-mode` fails** if `qa.manual_review_queue` has any row with NULL `verification_status` (pending human review). That is the **release gate** for promotion sign-off. Separately, **longitudinal lab coverage** still depends on a pending **institutional non-Tg lab** extract (TSH, PTH, calcium, vitamin D), independent of the review queue. Latest MotherDuck validation artifact: [`studies/20260407_formalization_validation_release_mode/validation_report.md`](studies/20260407_formalization_validation_release_mode/validation_report.md).
+
 **Status (2026-04-07):**
 
 | Phase | Status |
 |-------|--------|
-| V2 extraction | **Complete** — 31 parent domains (8 v1 + 23 v2), 7 sub-prompt domains, 6 concordance-audit stems |
-| MotherDuck structure | **Formalized** — v2_stage loaded (23 domains, parity verified), promoted to main, `release_20260406` + earlier snapshots present |
-| Repo consistency | **Hardened** — 0 unclaimed parquets, domain counts reconciled, release-mode validator deployed |
-| Final review queue | **Cleared for release 20260406** — tier bulk adjudication + 2-row discordant sign-off; `studies/md_live_release_20260406/MANUAL_QUEUE_RESOLUTION.md` |
-| Final lab pull | **Pending** — institutional lab extract not yet received |
+| V2 extraction | **Complete** — 31 parent domains (8 v1 + 23 v2), 7 sub-prompt domains, 6 concordance-audit stems (not staged; registry `legacy-concordance`) |
+| MotherDuck structure | **Formalized** — v2_stage ↔ main parity for **23** `canonical_output` domains; multiple `release_*` snapshots; latest tag in checked-in validation: **20260409** (see validation report) |
+| Repo / inventory consistency | **Aligned** — registry is SSOT; 0 unclaimed parquets in latest inventory run; [`scripts/119_md_formalization_validate.py --md --release-mode`](scripts/119_md_formalization_validate.py) enforces queue, manifest, canonical provenance, and **presentation views** |
+| Manual review queue | **Release gate** — must be fully reviewed (`verification_status` non-null for all queue rows) for `--release-mode` PASS; see validation report for counts at last run |
+| Non-Tg lab pull | **Pending** — institutional extract for TSH/PTH/Ca/vitD not yet in pipeline |
 
 A final manuscript-readiness hardening pass on 2026-03-13 audited 578 local DuckDB
 tables, 16 `val_*` validation tables, and all prior audit documents. Subsequent
@@ -128,14 +134,23 @@ Thread-local clients with 5-retry exponential backoff and `--workers` concurrenc
 
 ### Current repo status
 
-**Formalization (Apr 6-7 2026):** MotherDuck structure is formalized — v2_stage
-loader, promotion gate, QA schema, contract views, release snapshot, and
-validation suite are all in place. The release-mode validator
-(`scripts/119_md_formalization_validate.py --release-mode`) enforces strict
-sign-off criteria including live MotherDuck attachment, `v2_stage.load_inventory`
-completeness, resolved review queue, and named release snapshot. Structural
-validation passes; release validation for tag `20260406` passes with zero pending `verification_status` rows (see `studies/md_live_release_20260406/validation_report_release_mode.md`).
-Domain inventory is fully reconciled (0 unclaimed parquets, 31 parent domains).
+**Formalization (2026-04-06 — 07):** MotherDuck has a full promotion path: v2_stage
+loader, eight-gate promotion, QA schema hydrate, canonical materialization (103),
+contract views (117), **analyst presentation views** (125:
+`main.master_fact_long_verified_v1`, `main.master_patient_rollup_verified_v1`,
+`main.master_source_lineage_v1`), release snapshots (115), and parquet bundle (118).
+
+**Release-mode validator** — `scripts/119_md_formalization_validate.py --md --release-mode`
+fail-closes on: live MotherDuck attach, row parity for **23** promoted v2 domains,
+`v2_stage.load_inventory` row_match, **empty pending manual review queue**,
+presence of `release_*` schema + `qa.release_manifest`, non-blank
+`extraction_run_id` on `main.canonical_extracted_fact_long_v2`, and **traceability
+columns / non-null core fields** on the three `master_*_verified_v1` presentation
+views. Evidence: `studies/20260407_formalization_validation_release_mode/validation_report.md`.
+
+Domain inventory (registry SSOT, on-disk parity): regenerate with
+`studies/20260406_domain_inventory_current/generate_inventory.py` — latest summary
+shows **0** unclaimed parquets and **23** v2 fleet domains with `canonical_output`.
 
 See [`docs/FINAL_REPO_STATUS_20260313.md`](docs/FINAL_REPO_STATUS_20260313.md) for the
 definitive single source of truth (readiness, maturity, safe/unsafe claims).

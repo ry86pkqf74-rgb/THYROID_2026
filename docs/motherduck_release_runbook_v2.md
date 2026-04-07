@@ -523,6 +523,7 @@ LIMIT 5;
 
 - [ ] `VERDICT: PASS`
 - [ ] Zero FAILs (WARNs are informational)
+- [ ] Release-mode rows for **Presentation** `master_fact_long_verified_v1`, `master_source_lineage_v1`, and `master_patient_rollup_verified_v1` — all PASS (views exist, traceability columns present, core fields non-null per `119_md_formalization_validate.py`)
 
 ---
 

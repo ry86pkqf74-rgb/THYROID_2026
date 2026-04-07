@@ -27,6 +27,9 @@ Checks:
   8. Release schema existence check
   9. qa.release_manifest (release-mode)
  10. Non-null extraction_run_id on main.canonical_extracted_fact_long_v2 (release-mode, contract §3)
+ 11. Analyst presentation views (release-mode): main.master_fact_long_verified_v1,
+     main.master_patient_rollup_verified_v1, main.master_source_lineage_v1 — existence,
+     required traceability columns, and non-null core fields (see check_presentation_layer)
 
 Usage:
   .venv/bin/python scripts/119_md_formalization_validate.py --md
@@ -65,6 +68,30 @@ DESIRED_PROVENANCE_COLUMNS = [
     "entity_date", "note_date", "extraction_run_id",
     "extracted_at", "source_file_id",
 ]
+
+# Analyst presentation layer (scripts/125_master_verified_views.py, runbook §5).
+PRESENTATION_LONG_VIEWS = (
+    "master_fact_long_verified_v1",
+    "master_source_lineage_v1",
+)
+PRESENTATION_ROLLUP_VIEW = "master_patient_rollup_verified_v1"
+# Long-form rows: identity + run + release; reviewer_status column required (may be NULL when no queue match).
+PRESENTATION_LONG_TRACE_COLS = (
+    "research_id",
+    "source_domain",
+    "extraction_run_id",
+    "reviewer_status",
+    "release_tag",
+)
+# Exactly one of these identifies the source note row.
+PRESENTATION_SOURCE_ID_COLS = ("source_object_id", "note_row_id")
+# Rollup is aggregated: no per-fact source_domain; traceability via patient + release + review metrics.
+PRESENTATION_ROLLUP_TRACE_COLS = (
+    "research_id",
+    "release_tag",
+    "reviewed_facts",
+    "pct_reviewed",
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -476,6 +503,142 @@ def check_canonical_extraction_run_id(
         results.add("Canonical extraction_run_id", status, str(exc))
 
 
+def _main_view_columns(con: duckdb.DuckDBPyConnection, view_name: str) -> set[str]:
+    rows = con.execute(
+        """
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_schema = 'main' AND table_name = ?
+        """,
+        [view_name],
+    ).fetchall()
+    return {r[0] for r in rows}
+
+
+def check_presentation_layer(
+    con: duckdb.DuckDBPyConnection,
+    results: ValidationResult,
+    strict: bool = False,
+) -> None:
+    """Release / structural: analyst-facing verified views exist with traceability columns.
+
+    Long-form views must expose research_id, source_domain, source_object_id or note_row_id,
+    extraction_run_id, reviewer_status (column present; values may be NULL), and release_tag.
+    Rollup view exposes patient-level release_tag and review-coverage metrics instead of per-note ids.
+    """
+    status_fail = "FAIL" if strict else "WARN"
+    for view in PRESENTATION_LONG_VIEWS:
+        try:
+            n = con.execute(f"SELECT COUNT(*) FROM main.{view}").fetchone()[0]
+        except Exception as exc:
+            results.add(f"Presentation {view}", status_fail, f"not queryable: {exc}")
+            continue
+        if n == 0:
+            results.add(f"Presentation {view}", status_fail, "0 rows (run 125 after 103/114)")
+            continue
+        cols = _main_view_columns(con, view)
+        missing = [c for c in PRESENTATION_LONG_TRACE_COLS if c not in cols]
+        sid_ok = any(c in cols for c in PRESENTATION_SOURCE_ID_COLS)
+        detail_parts: list[str] = []
+        if missing:
+            detail_parts.append(f"missing columns: {missing}")
+        if not sid_ok:
+            detail_parts.append(
+                f"need one of {PRESENTATION_SOURCE_ID_COLS} for note-level traceability"
+            )
+        if detail_parts:
+            results.add(f"Presentation {view}", status_fail, "; ".join(detail_parts))
+            continue
+
+        id_col = "source_object_id" if "source_object_id" in cols else "note_row_id"
+        row = con.execute(
+            f"""
+            SELECT
+                COUNT(*) AS n,
+                COUNT(*) FILTER (WHERE research_id IS NULL) AS n_rid,
+                COUNT(*) FILTER (
+                    WHERE source_domain IS NULL
+                    OR trim(cast(source_domain AS VARCHAR)) = ''
+                ) AS n_dom,
+                COUNT(*) FILTER (WHERE "{id_col}" IS NULL) AS n_sid,
+                COUNT(*) FILTER (
+                    WHERE extraction_run_id IS NULL
+                    OR trim(cast(extraction_run_id AS VARCHAR)) = ''
+                ) AS n_run,
+                COUNT(*) FILTER (
+                    WHERE release_tag IS NULL
+                    OR trim(cast(release_tag AS VARCHAR)) = ''
+                ) AS n_tag
+            FROM main.{view}
+            """
+        ).fetchone()
+        ntot = int(row[0])
+        n_rid, n_dom, n_sid, n_run, n_tag = (int(row[i]) for i in range(1, 6))
+        problems: list[str] = []
+        if n_rid:
+            problems.append(f"research_id NULL: {n_rid:,}")
+        if n_dom:
+            problems.append(f"source_domain blank: {n_dom:,}")
+        if n_sid:
+            problems.append(f"{id_col} NULL: {n_sid:,}")
+        if n_run:
+            problems.append(f"extraction_run_id blank: {n_run:,}")
+        if n_tag:
+            problems.append(f"release_tag blank: {n_tag:,}")
+        if problems:
+            results.add(
+                f"Presentation {view}",
+                status_fail,
+                f"{ntot:,} rows; " + "; ".join(problems),
+            )
+        else:
+            results.add(
+                f"Presentation {view}",
+                "PASS",
+                f"{ntot:,} rows; core traceability non-null (reviewer_status may be NULL)",
+            )
+
+    view = PRESENTATION_ROLLUP_VIEW
+    try:
+        n = con.execute(f"SELECT COUNT(*) FROM main.{view}").fetchone()[0]
+    except Exception as exc:
+        results.add(f"Presentation {view}", status_fail, f"not queryable: {exc}")
+        return
+    if n == 0:
+        results.add(f"Presentation {view}", status_fail, "0 rows (run 125 after 103/114)")
+        return
+    cols = _main_view_columns(con, view)
+    missing = [c for c in PRESENTATION_ROLLUP_TRACE_COLS if c not in cols]
+    if missing:
+        results.add(f"Presentation {view}", status_fail, f"missing columns: {missing}")
+        return
+    row = con.execute(
+        f"""
+        SELECT
+            COUNT(*) AS n,
+            COUNT(*) FILTER (WHERE research_id IS NULL) AS n_rid,
+            COUNT(*) FILTER (
+                WHERE release_tag IS NULL
+                OR trim(cast(release_tag AS VARCHAR)) = ''
+            ) AS n_tag
+        FROM main.{view}
+        """
+    ).fetchone()
+    ntot, n_rid, n_tag = int(row[0]), int(row[1]), int(row[2])
+    if n_rid or n_tag:
+        results.add(
+            f"Presentation {view}",
+            status_fail,
+            f"{ntot:,} rows; research_id NULL={n_rid:,}, release_tag blank={n_tag:,}",
+        )
+    else:
+        results.add(
+            f"Presentation {view}",
+            "PASS",
+            f"{ntot:,} patient rows; research_id + release_tag + review metrics present",
+        )
+
+
 def check_release_manifest(
     con: duckdb.DuckDBPyConnection,
     results: ValidationResult,
@@ -621,6 +784,9 @@ def main() -> None:
 
             print("\n--- Check 10: Canonical extraction_run_id (contract) ---")
             check_canonical_extraction_run_id(con, results, strict=strict)
+
+        print("\n--- Check 11: Analyst presentation layer (master_*_verified_v1) ---")
+        check_presentation_layer(con, results, strict=strict)
 
     finally:
         con.close()
