@@ -1,0 +1,9 @@
+## Credential-separation proof (read-scaling-only vs read/write)
+
+**Precondition (this machine):** `read_scaling_token_mode()` = `none` (no `MD_READ_SCALING_TOKEN` / `MOTHERDUCK_READ_SCALING_TOKEN` in env or `.streamlit/secrets.toml` per `motherduck_client.read_scaling_token_mode()`).
+
+**Result:** Step 6 from the audit charter is **NOT APPLICABLE** here — there is no read-scaling credential configured, so we cannot execute the “read-scaling-only subprocess + expect `connect_rw` / validators to fail closed” proof in a meaningful way.
+
+**What the repo guarantees (by code review + smoke path):** `MotherDuckClient.connect_rw()` raises `ReadScalingTokenForbiddenError` when `is_read_scaling_only_environment()` is true (`motherduck_client.py`). `utils/md_connect.connect_md_or_file(..., fail_closed=True)` maps that to exit code 1 with a clear message.
+
+**To run step 6 later:** Configure a read-scaling token (env or secrets), then in a subprocess: unset `MOTHERDUCK_TOKEN`, `MD_SA_TOKEN`, `motherduck_token`, and run from a cwd without RW in `secrets.toml` (or use an isolated env) while keeping only the read-scaling secret; invoke `connect_md_fail_closed` or `MotherDuckClient.for_env('prod').connect_rw()` and expect refusal (PASS).
