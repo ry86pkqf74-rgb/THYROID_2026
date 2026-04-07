@@ -1,10 +1,12 @@
   Connected to MotherDuck (md:Thyroid 2026)
   MotherDuck connection verified (fail-closed gate passed)
-  [dry-run] CREATE SCHEMA release_20260406
-  [dry-run] CREATE TABLE release_20260406.canonical_extracted_fact_long_v1 AS SELECT *, '20260406' AS release_tag FROM main.canonical_extracted_fact_long_v1
-  [dry-run] CREATE TABLE release_20260406.canonical_extracted_fact_long_v2 AS SELECT *, '20260406' AS release_tag FROM main.canonical_extracted_fact_long_v2
-  [dry-run] CREATE TABLE release_20260406.canonical_fact_quarantine_v1 AS SELECT *, '20260406' AS release_tag FROM main.canonical_fact_quarantine_v1
-  [dry-run] CREATE TABLE release_20260406.canonical_fact_quarantine_v2 AS SELECT *, '20260406' AS release_tag FROM main.canonical_fact_quarantine_v2
-  [dry-run] CREATE TABLE release_20260406.thyroglobulin_lab_canonical_v1 AS SELECT *, '20260406' AS release_tag FROM main.thyroglobulin_lab_canonical_v1
-  [dry-run] CREATE TABLE release_20260406.note_extraction_runs AS SELECT *, '20260406' AS release_tag FROM main.note_extraction_runs
-  [dry-run] INSERT INTO qa.release_manifest ...
+  [schema] created release_20260406
+  [copy] release_20260406.canonical_extracted_fact_long_v1: 68,077 rows
+  [copy] release_20260406.canonical_extracted_fact_long_v2: 123,577 rows
+  [copy] release_20260406.canonical_fact_quarantine_v1: 0 rows
+  [copy] release_20260406.canonical_fact_quarantine_v2: 199 rows
+  [copy] release_20260406.thyroglobulin_lab_canonical_v1: 76,971 rows
+  [copy] release_20260406.note_extraction_runs: 3 rows
+  [manifest] recorded in qa.release_manifest
+
+  Release 20260406 created with 6 tables in release_20260406

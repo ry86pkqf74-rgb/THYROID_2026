@@ -1,6 +1,8 @@
 # Final-release blocker — 2026-04-07
 
-## Status
+> **Update (same day):** Queue adjudication + release-mode re-validation completed. See **`MANUAL_QUEUE_RESOLUTION.md`**, **`validation_report_release_mode.md`**, and refreshed **`release_validation_strict.json`**. The narrative below documents the **original** first-attempt halt.
+
+## Status (original attempt)
 
 - **Dry-run** (`--md --dry-run --tag 20260406`): **PASS** (see `dry_run_console.log` and `audit_summary.md`).
 - **Final-release** (`--md --final-release --tag 20260406`): **BLOCKED** after promotion gate.

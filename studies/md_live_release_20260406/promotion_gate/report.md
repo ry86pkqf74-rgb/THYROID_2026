@@ -1,7 +1,7 @@
 # V2 Domain Promotion Gate — Validation Report
 
-- Run: `promote_20260407_0001`
-- Generated: `2026-04-07T04:03:00.398409+00:00`
+- Run: `promote_20260407_0005`
+- Generated: `2026-04-07T04:06:48.467398+00:00`
 - Domains in registry: `44`
 - Domains with parquets on disk: `36`
 - Total rows validated: `54,346`

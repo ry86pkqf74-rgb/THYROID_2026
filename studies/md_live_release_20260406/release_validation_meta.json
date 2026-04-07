@@ -1,0 +1,3 @@
+{
+  "release_validation_note": "Formalization validation (119) re-executed with --release-mode after qa.manual_review_queue adjudication for run_label promotion_gate; see validation_run_release/validation_report.md (16 PASS / 0 FAIL)."
+}

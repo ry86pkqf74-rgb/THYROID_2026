@@ -1,7 +1,7 @@
 # V2 Domain Promotion Gate — PASS
 
-**Run label:** `promote_20260407_0001`  
-**Generated at:** `2026-04-07T04:03:00.392948+00:00`  
+**Run label:** `promote_20260407_0005`  
+**Generated at:** `2026-04-07T04:06:48.463906+00:00`  
 **Overall verdict:** `PASS` (0 of 8 gates failed)
 
 ---
@@ -146,10 +146,10 @@ Complete only after **all 8 gates PASS** and manual review is resolved.
 
 ```bash
 # 1. Verify gate scorecard
-cat studies/v2_domain_promotion_gate_promote_20260407_0001/promotion_scorecard.csv
+cat studies/v2_domain_promotion_gate_promote_20260407_0005/promotion_scorecard.csv
 
 # 2. (MotherDuck) Promote v2_stage -> main
-# Review and paste: studies/v2_domain_promotion_gate_promote_20260407_0001/motherduck_promote.sql
+# Review and paste: studies/v2_domain_promotion_gate_promote_20260407_0005/motherduck_promote.sql
 
 # 3. Copy validated parquets to dated canonical export bundle
 BUNDLE=exports/v2_llm_parquet_bundle_$(date +%Y%m%d_%H%M)

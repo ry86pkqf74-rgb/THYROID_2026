@@ -601,8 +601,13 @@ def main() -> None:
                 import shutil
                 shutil.copy2(src, audit_dir / fname)
 
-        # Pending-review check (only meaningful after gate writes qa tables)
+        # Pending-review check (only meaningful after gate writes qa tables).
+        # Re-open MD: the gate runs in another process; a long-lived con may not
+        # see new qa.manual_review_queue rows immediately on MotherDuck.
         if not args.dry_run:
+            if args.md:
+                con.close()
+                con = connect_md_or_file(db_path, md=args.md, fail_closed=args.md)
             ok = check_pending_reviews(con, args.final_release)
             if not ok:
                 con.close()

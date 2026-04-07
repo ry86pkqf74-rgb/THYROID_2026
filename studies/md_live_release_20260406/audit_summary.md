@@ -1,9 +1,9 @@
 # MotherDuck Live Release Audit Summary
 
 **Release tag:** `20260406`
-**Generated:** 2026-04-07T04:01:42.149173+00:00
-**Mode:** Dry-run
-**Verdict:** **PASS**
+**Generated:** 2026-04-07T04:08:59.253908+00:00
+**Mode:** Final-release
+**Verdict:** **BLOCKED**
 
 ---
 
@@ -11,16 +11,16 @@
 
 | Step | Status | Started | Finished | Log |
 |------|--------|---------|----------|-----|
-| Preflight | PASS | 2026-04-07T04:00:32.924389+00:00 | 2026-04-07T04:00:33.439954+00:00 | `preflight_db_list.json` |
-| Stage refresh (116) | PASS | 2026-04-07T04:00:33.440302+00:00 | 2026-04-07T04:00:35.734752+00:00 | `stage_refresh_output.log` |
-| Promotion gate (112) | PASS | 2026-04-07T04:00:35.734965+00:00 | 2026-04-07T04:00:57.669217+00:00 | `promotion_gate_output.log` |
-| Canonical materialization (103) | PASS | 2026-04-07T04:00:57.670616+00:00 | 2026-04-07T04:01:10.680558+00:00 | `canonical_output.log` |
-| QA schema setup (114) | PASS | 2026-04-07T04:01:10.680707+00:00 | 2026-04-07T04:01:15.826288+00:00 | `qa_setup_output.log` |
-| Contract views (117) | PASS | 2026-04-07T04:01:15.826417+00:00 | 2026-04-07T04:01:17.731913+00:00 | `contract_views_output.log` |
-| Presentation views (125) | PASS | 2026-04-07T04:01:17.732065+00:00 | 2026-04-07T04:01:19.189001+00:00 | `presentation_views_output.log` |
-| Release snapshot (115) | PASS | 2026-04-07T04:01:19.189249+00:00 | 2026-04-07T04:01:21.253783+00:00 | `release_snapshot_output.log` |
-| Parquet release bundle (118) | PASS | 2026-04-07T04:01:21.253968+00:00 | 2026-04-07T04:01:34.609563+00:00 | `parquet_bundle_output.log` |
-| Formalization validation (119) | PASS | 2026-04-07T04:01:34.609921+00:00 | 2026-04-07T04:01:42.148472+00:00 | `validation_output.log` |
+| Preflight | PASS | 2026-04-07T04:05:41.631052+00:00 | 2026-04-07T04:05:42.212909+00:00 | `preflight_db_list.json` |
+| Stage refresh (116) | PASS | 2026-04-07T04:05:42.213324+00:00 | 2026-04-07T04:06:22.229939+00:00 | `stage_refresh_output.log` |
+| Promotion gate (112) | PASS | 2026-04-07T04:06:22.346531+00:00 | 2026-04-07T04:06:48.624630+00:00 | `promotion_gate_output.log` |
+| Canonical materialization (103) | PASS | 2026-04-07T04:06:48.886902+00:00 | 2026-04-07T04:07:15.097826+00:00 | `canonical_output.log` |
+| QA schema setup (114) | PASS | 2026-04-07T04:07:15.098078+00:00 | 2026-04-07T04:07:21.362439+00:00 | `qa_setup_output.log` |
+| Contract views (117) | PASS | 2026-04-07T04:07:21.362557+00:00 | 2026-04-07T04:07:36.537597+00:00 | `contract_views_output.log` |
+| Presentation views (125) | PASS | 2026-04-07T04:07:36.537771+00:00 | 2026-04-07T04:07:41.314788+00:00 | `presentation_views_output.log` |
+| Release snapshot (115) | PASS | 2026-04-07T04:07:41.314932+00:00 | 2026-04-07T04:07:52.772164+00:00 | `release_snapshot_output.log` |
+| Parquet release bundle (118) | PASS | 2026-04-07T04:07:53.174894+00:00 | 2026-04-07T04:08:02.763868+00:00 | `parquet_bundle_output.log` |
+| Formalization validation (119) | FAIL | 2026-04-07T04:08:02.764538+00:00 | 2026-04-07T04:08:11.187794+00:00 | `validation_output.log` |
 
 ---
 

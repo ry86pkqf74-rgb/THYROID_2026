@@ -19,7 +19,7 @@
   [PASS] Canonical dist (canonical_fact_quarantine_v2): 69 domains, 199 total rows
 
 --- Check 5: Review Queue ---
-  [FAIL] Review queue: 16,866 total, 11,244 reviewed, 5,622 PENDING — must be resolved before release
+  [PASS] Review queue: 16,866 total, 16,866 reviewed, 0 pending
 
 --- Check 6: QA Views ---
   [PASS] QA view promotion_scorecard_summary_v: 6 rows
@@ -36,8 +36,6 @@
 --- Check 9: Release Manifest ---
   [PASS] Release manifest: 4 release(s); latest: 20260406 (2026-04-07 04:07:52.519215)
 
-=== Summary: 15 PASS / 0 WARN / 1 FAIL ===
+=== Summary: 16 PASS / 0 WARN / 0 FAIL ===
 
-  [report] studies/md_live_release_20260406/validation_run/validation_report.md
-
-  RELEASE BLOCKED: 1 check(s) failed.
+  [report] studies/md_live_release_20260406/validation_run_release/validation_report.md

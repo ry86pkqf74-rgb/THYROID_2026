@@ -1,0 +1,1918 @@
+{
+  "release_tag": "20260406",
+  "git_sha": "4b2d076",
+  "captured_at": "2026-04-07T04:09:55.400726+00:00",
+  "pragma_database_list": [
+    {
+      "seq": 1027,
+      "name": "md_information_schema",
+      "file": null
+    },
+    {
+      "seq": 1090,
+      "name": "thyroid_research_ro_v2",
+      "file": "_share/thyroid_research_ro_v2/2558f066-1c5d-46a5-afbc-800fd5f7568d"
+    },
+    {
+      "seq": 1092,
+      "name": "sample_data",
+      "file": "_share/sample_data/23b0d623-1361-421d-ae77-62d701d471e6"
+    },
+    {
+      "seq": 1094,
+      "name": "Thyroid 2026",
+      "file": "Thyroid 2026"
+    },
+    {
+      "seq": 1096,
+      "name": "rosflow",
+      "file": "rosflow"
+    },
+    {
+      "seq": 1098,
+      "name": "my_db",
+      "file": "my_db"
+    }
+  ],
+  "md_information_schema_databases": [
+    {
+      "name": "my_db",
+      "uuid": "e0db7fdc-5cb6-4f57-9944-6baadccd82c1",
+      "created_ts": "2026-03-07 02:53:36-05:00",
+      "transient": false,
+      "historical_snapshot_retention": "7 days 00:00:00",
+      "type": "DEFAULT"
+    },
+    {
+      "name": "rosflow",
+      "uuid": "c8f55a3a-ab80-4f93-8bb1-74b55770ad39",
+      "created_ts": "2026-03-15 13:16:55-04:00",
+      "transient": false,
+      "historical_snapshot_retention": "7 days 00:00:00",
+      "type": "DEFAULT"
+    },
+    {
+      "name": "Thyroid 2026",
+      "uuid": "b64d4ec9-aafb-49cc-bf39-d1dfd85e68dc",
+      "created_ts": "2026-04-02 04:31:53-04:00",
+      "transient": false,
+      "historical_snapshot_retention": "7 days 00:00:00",
+      "type": "DUCKLAKE"
+    }
+  ],
+  "recent_query_log_note": "Not accessible: Catalog Error: Table with name query_log does not exist!\nDid you mean \"query_history\"?\n\nLINE 1: SELECT * FROM md_information_schema.query_log ORDER BY start_time DESC...\n                      ^",
+  "schema_row_counts": {
+    "hn": [
+      {
+        "table": "hacker_news",
+        "rows": null
+      }
+    ],
+    "kaggle": [
+      {
+        "table": "movies",
+        "rows": null
+      }
+    ],
+    "main": [
+      {
+        "table": "note_entities_medications",
+        "rows": 7501
+      },
+      {
+        "table": "fna_history",
+        "rows": 8119
+      },
+      {
+        "table": "note_entities_operative_detail",
+        "rows": 12151
+      },
+      {
+        "table": "note_entities_procedures",
+        "rows": 21942
+      },
+      {
+        "table": "note_entities_llm_airway_invasion",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_presenting_symptoms",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_cervical_ln_detail",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_recurrence",
+        "rows": 11037
+      },
+      {
+        "table": "extracted_ras_patient_summary_v1",
+        "rows": 321
+      },
+      {
+        "table": "note_entities_llm_labs",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_patient_decision_adherence",
+        "rows": 11037
+      },
+      {
+        "table": "val_imaging_fna_linkage_audit_v1",
+        "rows": 1
+      },
+      {
+        "table": "note_entities_llm_synoptic_pathology_enrichment",
+        "rows": 11037
+      },
+      {
+        "table": "tumor_pathology",
+        "rows": 4290
+      },
+      {
+        "table": "extracted_complications_refined_v5",
+        "rows": 358
+      },
+      {
+        "table": "manuscript_cohort_v1",
+        "rows": 10871
+      },
+      {
+        "table": "note_entities_llm_physical_exam",
+        "rows": 11037
+      },
+      {
+        "table": "episode_analysis_resolved_v1_dedup",
+        "rows": 9368
+      },
+      {
+        "table": "note_entities_problem_list",
+        "rows": 11579
+      },
+      {
+        "table": "note_entities_llm_past_medical_hx",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_parathyroid_detail",
+        "rows": 11037
+      },
+      {
+        "table": "patient_analysis_resolved_v1",
+        "rows": 10871
+      },
+      {
+        "table": "note_entities_llm_rai_detailed",
+        "rows": 11037
+      },
+      {
+        "table": "ultrasound_reports",
+        "rows": 6793
+      },
+      {
+        "table": "imaging_nodule_master_v1",
+        "rows": 19891
+      },
+      {
+        "table": "rai_treatment_episode_v2",
+        "rows": 1857
+      },
+      {
+        "table": "note_entities_genetics",
+        "rows": 1738
+      },
+      {
+        "table": "thyroid_scoring_py_v1",
+        "rows": 10871
+      },
+      {
+        "table": "recurrence_event_clean_v1",
+        "rows": 1946
+      },
+      {
+        "table": "patient_refined_master_clinical_v12",
+        "rows": 12886
+      },
+      {
+        "table": "note_entities_llm_frozen_section_detail",
+        "rows": 11037
+      },
+      {
+        "table": "complication_phenotype_v1",
+        "rows": 5928
+      },
+      {
+        "table": "tumor_episode_master_v2",
+        "rows": 11691
+      },
+      {
+        "table": "note_entities_llm_us_nodule_dynamics",
+        "rows": 11037
+      },
+      {
+        "table": "ct_imaging",
+        "rows": 7701
+      },
+      {
+        "table": "extracted_postop_labs_expanded_v1",
+        "rows": 1395
+      },
+      {
+        "table": "note_entities_llm_functional_outcomes",
+        "rows": 11037
+      },
+      {
+        "table": "analysis_cancer_cohort_v1",
+        "rows": 4136
+      },
+      {
+        "table": "note_entities_llm_rad_treatment",
+        "rows": 11037
+      },
+      {
+        "table": "nuclear_med",
+        "rows": 2220
+      },
+      {
+        "table": "survival_cohort_enriched",
+        "rows": 61134
+      },
+      {
+        "table": "extracted_braf_recovery_v1",
+        "rows": 730
+      },
+      {
+        "table": "thyroglobulin_lab_canonical_v1",
+        "rows": 76971
+      },
+      {
+        "table": "extracted_tirads_validated_v1",
+        "rows": 3474
+      },
+      {
+        "table": "analysis_recurrence_subset_v1",
+        "rows": 1946
+      },
+      {
+        "table": "extracted_rln_injury_refined_v2",
+        "rows": 92
+      },
+      {
+        "table": "note_entities_complications",
+        "rows": 9359
+      },
+      {
+        "table": "gold_llm_verified_facts",
+        "rows": 178
+      },
+      {
+        "table": "note_entities_llm_survival_followup",
+        "rows": 11037
+      },
+      {
+        "table": "note_extraction_runs",
+        "rows": 3
+      },
+      {
+        "table": "operative_episode_detail_v2",
+        "rows": 9371
+      },
+      {
+        "table": "note_entities_llm_pathology",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_tirads_granular",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_staging",
+        "rows": 3807
+      },
+      {
+        "table": "analysis_tirads_subset_v1",
+        "rows": 3474
+      },
+      {
+        "table": "extracted_ete_subgraded_v1",
+        "rows": 3558
+      },
+      {
+        "table": "note_entities_llm_tg_kinetics",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_past_surgical_hx",
+        "rows": 11037
+      },
+      {
+        "table": "us_nodules_tirads",
+        "rows": 10862
+      },
+      {
+        "table": "fna_episode_master_v2",
+        "rows": 8119
+      },
+      {
+        "table": "analysis_molecular_subset_v1",
+        "rows": 10025
+      },
+      {
+        "table": "complication_patient_summary_v1",
+        "rows": 2892
+      },
+      {
+        "table": "imaging_fna_linkage_mm_v1",
+        "rows": 2804
+      },
+      {
+        "table": "fna_cytology",
+        "rows": 8063
+      },
+      {
+        "table": "clinical_notes_long",
+        "rows": 11050
+      },
+      {
+        "table": "review_queue_imaging_fna_mm_v1",
+        "rows": 3093
+      },
+      {
+        "table": "note_entities_llm_dynamic_risk_response",
+        "rows": 11037
+      },
+      {
+        "table": "canonical_fact_quarantine_v1",
+        "rows": 0
+      },
+      {
+        "table": "canonical_extracted_fact_long_v1",
+        "rows": 68077
+      },
+      {
+        "table": "canonical_extracted_fact_long_v2",
+        "rows": 123577
+      },
+      {
+        "table": "lesion_analysis_resolved_v1",
+        "rows": 11851
+      },
+      {
+        "table": "canonical_fact_quarantine_v2",
+        "rows": 199
+      },
+      {
+        "table": "longitudinal_lab_canonical_v1",
+        "rows": 76971
+      },
+      {
+        "table": "note_entities_llm_vascular_invasion",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_imaging",
+        "rows": 11037
+      },
+      {
+        "table": "molecular_test_episode_v2",
+        "rows": 10126
+      },
+      {
+        "table": "val_llm_concordance_summary",
+        "rows": null
+      },
+      {
+        "table": "rosflow_training_scores",
+        "rows": null
+      },
+      {
+        "table": "rosflow_training_failures",
+        "rows": null
+      },
+      {
+        "table": "rosflow_memory_events",
+        "rows": null
+      },
+      {
+        "table": "rosflow_training_runs",
+        "rows": null
+      },
+      {
+        "table": "rosflow_training_iterations",
+        "rows": null
+      },
+      {
+        "table": "rosflow_dpo_exports",
+        "rows": null
+      },
+      {
+        "table": "note_entities_medications",
+        "rows": 7501
+      },
+      {
+        "table": "fna_history",
+        "rows": 8119
+      },
+      {
+        "table": "note_entities_operative_detail",
+        "rows": 12151
+      },
+      {
+        "table": "note_entities_procedures",
+        "rows": 21942
+      },
+      {
+        "table": "note_entities_llm_airway_invasion",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_presenting_symptoms",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_cervical_ln_detail",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_recurrence",
+        "rows": 11037
+      },
+      {
+        "table": "extracted_ras_patient_summary_v1",
+        "rows": 321
+      },
+      {
+        "table": "note_entities_llm_labs",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_patient_decision_adherence",
+        "rows": 11037
+      },
+      {
+        "table": "val_imaging_fna_linkage_audit_v1",
+        "rows": 1
+      },
+      {
+        "table": "note_entities_llm_synoptic_pathology_enrichment",
+        "rows": 11037
+      },
+      {
+        "table": "tumor_pathology",
+        "rows": 4290
+      },
+      {
+        "table": "extracted_complications_refined_v5",
+        "rows": 358
+      },
+      {
+        "table": "manuscript_cohort_v1",
+        "rows": 10871
+      },
+      {
+        "table": "note_entities_llm_physical_exam",
+        "rows": 11037
+      },
+      {
+        "table": "episode_analysis_resolved_v1_dedup",
+        "rows": 9368
+      },
+      {
+        "table": "note_entities_problem_list",
+        "rows": 11579
+      },
+      {
+        "table": "note_entities_llm_past_medical_hx",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_parathyroid_detail",
+        "rows": 11037
+      },
+      {
+        "table": "patient_analysis_resolved_v1",
+        "rows": 10871
+      },
+      {
+        "table": "note_entities_llm_rai_detailed",
+        "rows": 11037
+      },
+      {
+        "table": "ultrasound_reports",
+        "rows": 6793
+      },
+      {
+        "table": "imaging_nodule_master_v1",
+        "rows": 19891
+      },
+      {
+        "table": "rai_treatment_episode_v2",
+        "rows": 1857
+      },
+      {
+        "table": "note_entities_genetics",
+        "rows": 1738
+      },
+      {
+        "table": "thyroid_scoring_py_v1",
+        "rows": 10871
+      },
+      {
+        "table": "recurrence_event_clean_v1",
+        "rows": 1946
+      },
+      {
+        "table": "patient_refined_master_clinical_v12",
+        "rows": 12886
+      },
+      {
+        "table": "note_entities_llm_frozen_section_detail",
+        "rows": 11037
+      },
+      {
+        "table": "complication_phenotype_v1",
+        "rows": 5928
+      },
+      {
+        "table": "tumor_episode_master_v2",
+        "rows": 11691
+      },
+      {
+        "table": "note_entities_llm_us_nodule_dynamics",
+        "rows": 11037
+      },
+      {
+        "table": "ct_imaging",
+        "rows": 7701
+      },
+      {
+        "table": "extracted_postop_labs_expanded_v1",
+        "rows": 1395
+      },
+      {
+        "table": "note_entities_llm_functional_outcomes",
+        "rows": 11037
+      },
+      {
+        "table": "analysis_cancer_cohort_v1",
+        "rows": 4136
+      },
+      {
+        "table": "note_entities_llm_rad_treatment",
+        "rows": 11037
+      },
+      {
+        "table": "nuclear_med",
+        "rows": 2220
+      },
+      {
+        "table": "survival_cohort_enriched",
+        "rows": 61134
+      },
+      {
+        "table": "extracted_braf_recovery_v1",
+        "rows": 730
+      },
+      {
+        "table": "thyroglobulin_lab_canonical_v1",
+        "rows": 76971
+      },
+      {
+        "table": "extracted_tirads_validated_v1",
+        "rows": 3474
+      },
+      {
+        "table": "analysis_recurrence_subset_v1",
+        "rows": 1946
+      },
+      {
+        "table": "extracted_rln_injury_refined_v2",
+        "rows": 92
+      },
+      {
+        "table": "note_entities_complications",
+        "rows": 9359
+      },
+      {
+        "table": "gold_llm_verified_facts",
+        "rows": 178
+      },
+      {
+        "table": "note_entities_llm_survival_followup",
+        "rows": 11037
+      },
+      {
+        "table": "note_extraction_runs",
+        "rows": 3
+      },
+      {
+        "table": "operative_episode_detail_v2",
+        "rows": 9371
+      },
+      {
+        "table": "note_entities_llm_pathology",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_tirads_granular",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_staging",
+        "rows": 3807
+      },
+      {
+        "table": "analysis_tirads_subset_v1",
+        "rows": 3474
+      },
+      {
+        "table": "extracted_ete_subgraded_v1",
+        "rows": 3558
+      },
+      {
+        "table": "note_entities_llm_tg_kinetics",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_past_surgical_hx",
+        "rows": 11037
+      },
+      {
+        "table": "us_nodules_tirads",
+        "rows": 10862
+      },
+      {
+        "table": "fna_episode_master_v2",
+        "rows": 8119
+      },
+      {
+        "table": "analysis_molecular_subset_v1",
+        "rows": 10025
+      },
+      {
+        "table": "complication_patient_summary_v1",
+        "rows": 2892
+      },
+      {
+        "table": "imaging_fna_linkage_mm_v1",
+        "rows": 2804
+      },
+      {
+        "table": "fna_cytology",
+        "rows": 8063
+      },
+      {
+        "table": "clinical_notes_long",
+        "rows": 11050
+      },
+      {
+        "table": "review_queue_imaging_fna_mm_v1",
+        "rows": 3093
+      },
+      {
+        "table": "note_entities_llm_dynamic_risk_response",
+        "rows": 11037
+      },
+      {
+        "table": "canonical_fact_quarantine_v1",
+        "rows": 0
+      },
+      {
+        "table": "canonical_extracted_fact_long_v1",
+        "rows": 68077
+      },
+      {
+        "table": "canonical_extracted_fact_long_v2",
+        "rows": 123577
+      },
+      {
+        "table": "lesion_analysis_resolved_v1",
+        "rows": 11851
+      },
+      {
+        "table": "canonical_fact_quarantine_v2",
+        "rows": 199
+      },
+      {
+        "table": "longitudinal_lab_canonical_v1",
+        "rows": 76971
+      },
+      {
+        "table": "note_entities_llm_vascular_invasion",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_imaging",
+        "rows": 11037
+      },
+      {
+        "table": "molecular_test_episode_v2",
+        "rows": 10126
+      },
+      {
+        "table": "master_patient_rollup_verified_v1",
+        "rows": 5574
+      },
+      {
+        "table": "notes_entity_summary",
+        "rows": 5272
+      },
+      {
+        "table": "gold_master_episode_events_v1",
+        "rows": 9368
+      },
+      {
+        "table": "longitudinal_lab_deduped_v",
+        "rows": 55210
+      },
+      {
+        "table": "linkage_summary_v",
+        "rows": 10871
+      },
+      {
+        "table": "episode_completeness_summary_v",
+        "rows": 4
+      },
+      {
+        "table": "gold_master_patient_facts_v1",
+        "rows": 10871
+      },
+      {
+        "table": "master_fact_long_verified_v1",
+        "rows": 123577
+      },
+      {
+        "table": "master_source_lineage_v1",
+        "rows": 123577
+      },
+      {
+        "table": "databases",
+        "rows": null
+      },
+      {
+        "table": "database_snapshots",
+        "rows": null
+      },
+      {
+        "table": "owned_shares",
+        "rows": null
+      },
+      {
+        "table": "query_history",
+        "rows": null
+      },
+      {
+        "table": "recent_queries",
+        "rows": null
+      },
+      {
+        "table": "shared_with_me",
+        "rows": null
+      },
+      {
+        "table": "storage_info",
+        "rows": null
+      },
+      {
+        "table": "storage_info_history",
+        "rows": null
+      },
+      {
+        "table": "v_rosflow_golden_rate",
+        "rows": null
+      },
+      {
+        "table": "v_rosflow_failure_hotspots",
+        "rows": null
+      },
+      {
+        "table": "v_rosflow_dpo_export_rate",
+        "rows": null
+      },
+      {
+        "table": "v_rosflow_score_trends",
+        "rows": null
+      },
+      {
+        "table": "v_rosflow_domain_performance",
+        "rows": null
+      },
+      {
+        "table": "v_rosflow_fallback_usage",
+        "rows": null
+      },
+      {
+        "table": "v_rosflow_dimension_averages",
+        "rows": null
+      },
+      {
+        "table": "master_patient_rollup_verified_v1",
+        "rows": 5574
+      },
+      {
+        "table": "notes_entity_summary",
+        "rows": 5272
+      },
+      {
+        "table": "gold_master_episode_events_v1",
+        "rows": 9368
+      },
+      {
+        "table": "longitudinal_lab_deduped_v",
+        "rows": 55210
+      },
+      {
+        "table": "linkage_summary_v",
+        "rows": 10871
+      },
+      {
+        "table": "episode_completeness_summary_v",
+        "rows": 4
+      },
+      {
+        "table": "gold_master_patient_facts_v1",
+        "rows": 10871
+      },
+      {
+        "table": "master_fact_long_verified_v1",
+        "rows": 123577
+      },
+      {
+        "table": "master_source_lineage_v1",
+        "rows": 123577
+      }
+    ],
+    "mm_contract_dev": [
+      {
+        "table": "fact_surgery_mm_v1",
+        "rows": 9371
+      },
+      {
+        "table": "val_ambiguous_multimodal_linkage_mm_v1",
+        "rows": 3989
+      },
+      {
+        "table": "dim_patient_mm_v1",
+        "rows": 11506
+      },
+      {
+        "table": "_bootstrap_fna_molecular_linkage_v3",
+        "rows": 838
+      },
+      {
+        "table": "_bootstrap_preop_surgery_linkage_v3",
+        "rows": 3517
+      },
+      {
+        "table": "fact_path_report_mm_v1",
+        "rows": 11688
+      },
+      {
+        "table": "_bootstrap_surgery_pathology_linkage_v3",
+        "rows": 9409
+      },
+      {
+        "table": "_bootstrap_fna_episode_master_v2",
+        "rows": 0
+      },
+      {
+        "table": "dim_nodule_mm_v1",
+        "rows": 19891
+      },
+      {
+        "table": "_bootstrap_patient_cross_domain_timeline_v2",
+        "rows": 59385
+      },
+      {
+        "table": "_bootstrap_mrn_crosswalk_v1",
+        "rows": 0
+      },
+      {
+        "table": "fact_fna_mm_v1",
+        "rows": 8119
+      },
+      {
+        "table": "_bootstrap_event_date_audit_v2",
+        "rows": 50014
+      },
+      {
+        "table": "_bootstrap_linkage_master_v1",
+        "rows": 11506
+      },
+      {
+        "table": "map_patient_identifier_mm_v1",
+        "rows": 11506
+      },
+      {
+        "table": "_bootstrap_pathology_rai_linkage_v3",
+        "rows": 23
+      },
+      {
+        "table": "fact_genetics_mm_v1",
+        "rows": 10126
+      },
+      {
+        "table": "fact_imaging_mm_v1",
+        "rows": 19891
+      },
+      {
+        "table": "link_surgery_path_mm_v1",
+        "rows": 9417
+      },
+      {
+        "table": "val_side_lobe_mismatch_mm_v1",
+        "rows": 36
+      },
+      {
+        "table": "fact_tumor_mm_v1",
+        "rows": 11691
+      },
+      {
+        "table": "link_surgery_context_mm_v1",
+        "rows": 9371
+      },
+      {
+        "table": "val_nodes_invariant_mm_v1",
+        "rows": 2957
+      },
+      {
+        "table": "val_preop_temporal_order_mm_v1",
+        "rows": 3
+      },
+      {
+        "table": "val_multitumor_expansion_mm_v1",
+        "rows": 0
+      },
+      {
+        "table": "fact_surgery_mm_v1",
+        "rows": 9371
+      },
+      {
+        "table": "val_ambiguous_multimodal_linkage_mm_v1",
+        "rows": 3989
+      },
+      {
+        "table": "dim_patient_mm_v1",
+        "rows": 11506
+      },
+      {
+        "table": "_bootstrap_fna_molecular_linkage_v3",
+        "rows": 838
+      },
+      {
+        "table": "_bootstrap_preop_surgery_linkage_v3",
+        "rows": 3517
+      },
+      {
+        "table": "fact_path_report_mm_v1",
+        "rows": 11688
+      },
+      {
+        "table": "_bootstrap_surgery_pathology_linkage_v3",
+        "rows": 9409
+      },
+      {
+        "table": "_bootstrap_fna_episode_master_v2",
+        "rows": 0
+      },
+      {
+        "table": "dim_nodule_mm_v1",
+        "rows": 19891
+      },
+      {
+        "table": "_bootstrap_patient_cross_domain_timeline_v2",
+        "rows": 59385
+      },
+      {
+        "table": "_bootstrap_mrn_crosswalk_v1",
+        "rows": 0
+      },
+      {
+        "table": "fact_fna_mm_v1",
+        "rows": 8119
+      },
+      {
+        "table": "_bootstrap_event_date_audit_v2",
+        "rows": 50014
+      },
+      {
+        "table": "_bootstrap_linkage_master_v1",
+        "rows": 11506
+      },
+      {
+        "table": "map_patient_identifier_mm_v1",
+        "rows": 11506
+      },
+      {
+        "table": "_bootstrap_pathology_rai_linkage_v3",
+        "rows": 23
+      },
+      {
+        "table": "fact_genetics_mm_v1",
+        "rows": 10126
+      },
+      {
+        "table": "fact_imaging_mm_v1",
+        "rows": 19891
+      },
+      {
+        "table": "link_surgery_path_mm_v1",
+        "rows": 9417
+      },
+      {
+        "table": "val_side_lobe_mismatch_mm_v1",
+        "rows": 36
+      },
+      {
+        "table": "fact_tumor_mm_v1",
+        "rows": 11691
+      },
+      {
+        "table": "link_surgery_context_mm_v1",
+        "rows": 9371
+      },
+      {
+        "table": "val_nodes_invariant_mm_v1",
+        "rows": 2957
+      },
+      {
+        "table": "val_preop_temporal_order_mm_v1",
+        "rows": 3
+      },
+      {
+        "table": "val_multitumor_expansion_mm_v1",
+        "rows": 0
+      },
+      {
+        "table": "val_multi_tumor_report_mm_v1",
+        "rows": 0
+      },
+      {
+        "table": "val_multi_tumor_report_mm_v1",
+        "rows": 0
+      }
+    ],
+    "nyc": [
+      {
+        "table": "taxi",
+        "rows": null
+      },
+      {
+        "table": "service_requests",
+        "rows": null
+      },
+      {
+        "table": "rideshare",
+        "rows": null
+      }
+    ],
+    "qa": [
+      {
+        "table": "promotion_review_decisions",
+        "rows": 2
+      },
+      {
+        "table": "concordance_summary",
+        "rows": 114
+      },
+      {
+        "table": "promotion_scorecard",
+        "rows": 48
+      },
+      {
+        "table": "release_manifest",
+        "rows": 4
+      },
+      {
+        "table": "manual_review_queue",
+        "rows": 16866
+      },
+      {
+        "table": "domain_validation",
+        "rows": 138
+      },
+      {
+        "table": "tg_lab_ingestion_qc",
+        "rows": 0
+      },
+      {
+        "table": "promotion_review_decisions",
+        "rows": 2
+      },
+      {
+        "table": "concordance_summary",
+        "rows": 114
+      },
+      {
+        "table": "promotion_scorecard",
+        "rows": 48
+      },
+      {
+        "table": "release_manifest",
+        "rows": 4
+      },
+      {
+        "table": "manual_review_queue",
+        "rows": 16866
+      },
+      {
+        "table": "domain_validation",
+        "rows": 138
+      },
+      {
+        "table": "tg_lab_ingestion_qc",
+        "rows": 0
+      },
+      {
+        "table": "promotion_scorecard_summary_v",
+        "rows": 6
+      },
+      {
+        "table": "domain_validation_summary_v",
+        "rows": 6
+      },
+      {
+        "table": "date_provenance_completeness_v",
+        "rows": 23
+      },
+      {
+        "table": "manual_review_queue_summary_v",
+        "rows": 48
+      },
+      {
+        "table": "promotion_scorecard_summary_v",
+        "rows": 6
+      },
+      {
+        "table": "domain_validation_summary_v",
+        "rows": 6
+      },
+      {
+        "table": "date_provenance_completeness_v",
+        "rows": 23
+      },
+      {
+        "table": "manual_review_queue_summary_v",
+        "rows": 48
+      }
+    ],
+    "release_20260406": [
+      {
+        "table": "canonical_extracted_fact_long_v2",
+        "rows": 123577
+      },
+      {
+        "table": "canonical_fact_quarantine_v1",
+        "rows": 0
+      },
+      {
+        "table": "thyroglobulin_lab_canonical_v1",
+        "rows": 76971
+      },
+      {
+        "table": "canonical_fact_quarantine_v2",
+        "rows": 199
+      },
+      {
+        "table": "canonical_extracted_fact_long_v1",
+        "rows": 68077
+      },
+      {
+        "table": "note_extraction_runs",
+        "rows": 3
+      },
+      {
+        "table": "canonical_extracted_fact_long_v2",
+        "rows": 123577
+      },
+      {
+        "table": "canonical_fact_quarantine_v1",
+        "rows": 0
+      },
+      {
+        "table": "thyroglobulin_lab_canonical_v1",
+        "rows": 76971
+      },
+      {
+        "table": "canonical_fact_quarantine_v2",
+        "rows": 199
+      },
+      {
+        "table": "canonical_extracted_fact_long_v1",
+        "rows": 68077
+      },
+      {
+        "table": "note_extraction_runs",
+        "rows": 3
+      }
+    ],
+    "release_20260407": [
+      {
+        "table": "canonical_fact_quarantine_v1",
+        "rows": 0
+      },
+      {
+        "table": "canonical_fact_quarantine_v2",
+        "rows": 199
+      },
+      {
+        "table": "canonical_extracted_fact_long_v1",
+        "rows": 68077
+      },
+      {
+        "table": "canonical_extracted_fact_long_v2",
+        "rows": 123577
+      },
+      {
+        "table": "note_extraction_runs",
+        "rows": 3
+      },
+      {
+        "table": "canonical_fact_quarantine_v1",
+        "rows": 0
+      },
+      {
+        "table": "canonical_fact_quarantine_v2",
+        "rows": 199
+      },
+      {
+        "table": "canonical_extracted_fact_long_v1",
+        "rows": 68077
+      },
+      {
+        "table": "canonical_extracted_fact_long_v2",
+        "rows": 123577
+      },
+      {
+        "table": "note_extraction_runs",
+        "rows": 3
+      }
+    ],
+    "release_20260408": [
+      {
+        "table": "canonical_fact_quarantine_v1",
+        "rows": 0
+      },
+      {
+        "table": "thyroglobulin_lab_canonical_v1",
+        "rows": 76971
+      },
+      {
+        "table": "canonical_fact_quarantine_v2",
+        "rows": 199
+      },
+      {
+        "table": "note_extraction_runs",
+        "rows": 3
+      },
+      {
+        "table": "longitudinal_lab_canonical_v1",
+        "rows": 76971
+      },
+      {
+        "table": "master_fact_long_verified_v1",
+        "rows": 123577
+      },
+      {
+        "table": "canonical_extracted_fact_long_v1",
+        "rows": 68077
+      },
+      {
+        "table": "canonical_extracted_fact_long_v2",
+        "rows": 123577
+      },
+      {
+        "table": "master_patient_rollup_verified_v1",
+        "rows": 5574
+      },
+      {
+        "table": "master_source_lineage_v1",
+        "rows": 123577
+      },
+      {
+        "table": "canonical_fact_quarantine_v1",
+        "rows": 0
+      },
+      {
+        "table": "thyroglobulin_lab_canonical_v1",
+        "rows": 76971
+      },
+      {
+        "table": "canonical_fact_quarantine_v2",
+        "rows": 199
+      },
+      {
+        "table": "note_extraction_runs",
+        "rows": 3
+      },
+      {
+        "table": "longitudinal_lab_canonical_v1",
+        "rows": 76971
+      },
+      {
+        "table": "master_fact_long_verified_v1",
+        "rows": 123577
+      },
+      {
+        "table": "canonical_extracted_fact_long_v1",
+        "rows": 68077
+      },
+      {
+        "table": "canonical_extracted_fact_long_v2",
+        "rows": 123577
+      },
+      {
+        "table": "master_patient_rollup_verified_v1",
+        "rows": 5574
+      },
+      {
+        "table": "master_source_lineage_v1",
+        "rows": 123577
+      }
+    ],
+    "release_20260409": [
+      {
+        "table": "canonical_fact_quarantine_v1",
+        "rows": 0
+      },
+      {
+        "table": "thyroglobulin_lab_canonical_v1",
+        "rows": 76971
+      },
+      {
+        "table": "canonical_fact_quarantine_v2",
+        "rows": 199
+      },
+      {
+        "table": "note_extraction_runs",
+        "rows": 3
+      },
+      {
+        "table": "longitudinal_lab_canonical_v1",
+        "rows": 76971
+      },
+      {
+        "table": "master_fact_long_verified_v1",
+        "rows": 123577
+      },
+      {
+        "table": "canonical_extracted_fact_long_v1",
+        "rows": 68077
+      },
+      {
+        "table": "canonical_extracted_fact_long_v2",
+        "rows": 123577
+      },
+      {
+        "table": "master_patient_rollup_verified_v1",
+        "rows": 5574
+      },
+      {
+        "table": "master_source_lineage_v1",
+        "rows": 123577
+      },
+      {
+        "table": "canonical_fact_quarantine_v1",
+        "rows": 0
+      },
+      {
+        "table": "thyroglobulin_lab_canonical_v1",
+        "rows": 76971
+      },
+      {
+        "table": "canonical_fact_quarantine_v2",
+        "rows": 199
+      },
+      {
+        "table": "note_extraction_runs",
+        "rows": 3
+      },
+      {
+        "table": "longitudinal_lab_canonical_v1",
+        "rows": 76971
+      },
+      {
+        "table": "master_fact_long_verified_v1",
+        "rows": 123577
+      },
+      {
+        "table": "canonical_extracted_fact_long_v1",
+        "rows": 68077
+      },
+      {
+        "table": "canonical_extracted_fact_long_v2",
+        "rows": 123577
+      },
+      {
+        "table": "master_patient_rollup_verified_v1",
+        "rows": 5574
+      },
+      {
+        "table": "master_source_lineage_v1",
+        "rows": 123577
+      }
+    ],
+    "stackoverflow_survey": [
+      {
+        "table": "survey_schemas",
+        "rows": null
+      },
+      {
+        "table": "survey_results",
+        "rows": null
+      }
+    ],
+    "v2_stage": [
+      {
+        "table": "note_entities_llm_frozen_section_detail",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_parathyroid_detail",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_pathology",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_past_medical_hx",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_rai_detailed",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_cervical_ln_detail",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_genetics",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_complications",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_problem_list",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_synoptic_pathology_enrichment",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_operative_v2_enrichment",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_procedures",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_staging",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_combined",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_tirads_granular",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_us_nodule_dynamics",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_recurrence",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_labs",
+        "rows": 11037
+      },
+      {
+        "table": "load_inventory",
+        "rows": 150
+      },
+      {
+        "table": "note_entities_llm_presenting_symptoms",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_airway_invasion",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_tg_kinetics",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_imaging",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_dynamic_risk_response",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_patient_decision_adherence",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_rad_treatment",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_medications",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_complications_rln_laryngoscopy",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_past_surgical_hx",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_recurrence_detailed",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_physical_exam",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_vascular_invasion",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_medication_management",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_survival_followup",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_functional_outcomes",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_operative_details",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_parathyroid_per_gland",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_molecular_thyroseq_afirma",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_frozen_section_detail",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_parathyroid_detail",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_pathology",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_past_medical_hx",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_rai_detailed",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_cervical_ln_detail",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_genetics",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_complications",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_problem_list",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_synoptic_pathology_enrichment",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_operative_v2_enrichment",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_procedures",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_staging",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_combined",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_tirads_granular",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_us_nodule_dynamics",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_recurrence",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_labs",
+        "rows": 11037
+      },
+      {
+        "table": "load_inventory",
+        "rows": 150
+      },
+      {
+        "table": "note_entities_llm_presenting_symptoms",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_airway_invasion",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_tg_kinetics",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_imaging",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_dynamic_risk_response",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_patient_decision_adherence",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_rad_treatment",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_medications",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_complications_rln_laryngoscopy",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_past_surgical_hx",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_recurrence_detailed",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_physical_exam",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_vascular_invasion",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_medication_management",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_survival_followup",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_functional_outcomes",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_operative_details",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_parathyroid_per_gland",
+        "rows": 11037
+      },
+      {
+        "table": "note_entities_llm_molecular_thyroseq_afirma",
+        "rows": 11037
+      }
+    ],
+    "who": [
+      {
+        "table": "ambient_air_quality",
+        "rows": null
+      }
+    ]
+  },
+  "qa_release_manifest": [
+    {
+      "release_tag": "20260406",
+      "git_sha": "4b2d076",
+      "registry_version": "entity_schema_v3_2026-04-03",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"thyroglobulin_lab_canonical_v1\", \"note_extraction_runs\"]",
+      "row_counts": "{\"canonical_extracted_fact_long_v1\": 68077, \"canonical_extracted_fact_long_v2\": 123577, \"canonical_fact_quarantine_v1\": 0, \"canonical_fact_quarantine_v2\": 199, \"thyroglobulin_lab_canonical_v1\": 76971, \"note_extraction_runs\": 3}",
+      "created_at": "2026-04-07 04:07:52.519215",
+      "created_by": "scripts/115_release_snapshot.py"
+    },
+    {
+      "release_tag": "20260409",
+      "git_sha": "b77b4be",
+      "registry_version": "entity_schema_v3_2026-04-03",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"thyroglobulin_lab_canonical_v1\", \"note_extraction_runs\", \"longitudinal_lab_canonical_v1\", \"master_fact_long_verified_v1\", \"master_patient_rollup_verified_v1\", \"master_source_lineage_v1\"]",
+      "row_counts": "{\"canonical_extracted_fact_long_v1\": 68077, \"canonical_extracted_fact_long_v2\": 123577, \"canonical_fact_quarantine_v1\": 0, \"canonical_fact_quarantine_v2\": 199, \"thyroglobulin_lab_canonical_v1\": 76971, \"note_extraction_runs\": 3, \"longitudinal_lab_canonical_v1\": 76971, \"master_fact_long_verified_v1\": 123577, \"master_patient_rollup_verified_v1\": 5574, \"master_source_lineage_v1\": 123577}",
+      "created_at": "2026-04-07 02:05:07.189573",
+      "created_by": "scripts/126_final_master_release.py"
+    },
+    {
+      "release_tag": "20260408",
+      "git_sha": "b77b4be",
+      "registry_version": "entity_schema_v3_2026-04-03",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"thyroglobulin_lab_canonical_v1\", \"note_extraction_runs\", \"longitudinal_lab_canonical_v1\", \"master_fact_long_verified_v1\", \"master_patient_rollup_verified_v1\", \"master_source_lineage_v1\"]",
+      "row_counts": "{\"canonical_extracted_fact_long_v1\": 68077, \"canonical_extracted_fact_long_v2\": 123577, \"canonical_fact_quarantine_v1\": 0, \"canonical_fact_quarantine_v2\": 199, \"thyroglobulin_lab_canonical_v1\": 76971, \"note_extraction_runs\": 3, \"longitudinal_lab_canonical_v1\": 76971, \"master_fact_long_verified_v1\": 123577, \"master_patient_rollup_verified_v1\": 5574, \"master_source_lineage_v1\": 123577}",
+      "created_at": "2026-04-07 02:03:20.732093",
+      "created_by": "scripts/126_final_master_release.py"
+    },
+    {
+      "release_tag": "20260407",
+      "git_sha": "83f64ee",
+      "registry_version": "entity_schema_v3_2026-04-03",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"note_extraction_runs\"]",
+      "row_counts": "{\"canonical_extracted_fact_long_v1\": 68077, \"canonical_extracted_fact_long_v2\": 123577, \"canonical_fact_quarantine_v1\": 0, \"canonical_fact_quarantine_v2\": 199, \"note_extraction_runs\": 3}",
+      "created_at": "2026-04-07 01:09:57.717289",
+      "created_by": "scripts/115_release_snapshot.py"
+    }
+  ],
+  "pipeline_steps": [
+    {
+      "step": "Preflight",
+      "started": "2026-04-07T04:05:41.631052+00:00",
+      "finished": "2026-04-07T04:05:42.212909+00:00",
+      "returncode": 0,
+      "success": true,
+      "log": "preflight_db_list.json"
+    },
+    {
+      "step": "Stage refresh (116)",
+      "cmd": [
+        "/Users/ros/THyroid 2026/THYROID_2026/.venv/bin/python",
+        "/Users/ros/THyroid 2026/THYROID_2026/scripts/116_md_stage_loader.py",
+        "--md"
+      ],
+      "started": "2026-04-07T04:05:42.213324+00:00",
+      "finished": "2026-04-07T04:06:22.229939+00:00",
+      "returncode": 0,
+      "success": true,
+      "log": "stage_refresh_output.log"
+    },
+    {
+      "step": "Promotion gate (112)",
+      "cmd": [
+        "/Users/ros/THyroid 2026/THYROID_2026/.venv/bin/python",
+        "/Users/ros/THyroid 2026/THYROID_2026/scripts/112_v2_domain_promotion_gate.py",
+        "--run-label",
+        "promote_20260407_0005",
+        "--output-dir",
+        "studies/md_live_release_20260406/promotion_gate",
+        "--motherduck-check"
+      ],
+      "started": "2026-04-07T04:06:22.346531+00:00",
+      "finished": "2026-04-07T04:06:48.624630+00:00",
+      "returncode": 0,
+      "success": true,
+      "log": "promotion_gate_output.log"
+    },
+    {
+      "step": "Canonical materialization (103)",
+      "cmd": [
+        "/Users/ros/THyroid 2026/THYROID_2026/.venv/bin/python",
+        "/Users/ros/THyroid 2026/THYROID_2026/scripts/103_fact_lineage_materialize.py",
+        "--md"
+      ],
+      "started": "2026-04-07T04:06:48.886902+00:00",
+      "finished": "2026-04-07T04:07:15.097826+00:00",
+      "returncode": 0,
+      "success": true,
+      "log": "canonical_output.log"
+    },
+    {
+      "step": "QA schema setup (114)",
+      "cmd": [
+        "/Users/ros/THyroid 2026/THYROID_2026/.venv/bin/python",
+        "/Users/ros/THyroid 2026/THYROID_2026/scripts/114_qa_schema_setup.py",
+        "--md",
+        "--hydrate-from",
+        "studies/md_live_release_20260406/promotion_gate"
+      ],
+      "started": "2026-04-07T04:07:15.098078+00:00",
+      "finished": "2026-04-07T04:07:21.362439+00:00",
+      "returncode": 0,
+      "success": true,
+      "log": "qa_setup_output.log"
+    },
+    {
+      "step": "Contract views (117)",
+      "cmd": [
+        "/Users/ros/THyroid 2026/THYROID_2026/.venv/bin/python",
+        "/Users/ros/THyroid 2026/THYROID_2026/scripts/117_md_contract_views.py",
+        "--md"
+      ],
+      "started": "2026-04-07T04:07:21.362557+00:00",
+      "finished": "2026-04-07T04:07:36.537597+00:00",
+      "returncode": 0,
+      "success": true,
+      "log": "contract_views_output.log"
+    },
+    {
+      "step": "Presentation views (125)",
+      "cmd": [
+        "/Users/ros/THyroid 2026/THYROID_2026/.venv/bin/python",
+        "/Users/ros/THyroid 2026/THYROID_2026/scripts/125_master_verified_views.py",
+        "--md"
+      ],
+      "started": "2026-04-07T04:07:36.537771+00:00",
+      "finished": "2026-04-07T04:07:41.314788+00:00",
+      "returncode": 0,
+      "success": true,
+      "log": "presentation_views_output.log"
+    },
+    {
+      "step": "Release snapshot (115)",
+      "cmd": [
+        "/Users/ros/THyroid 2026/THYROID_2026/.venv/bin/python",
+        "/Users/ros/THyroid 2026/THYROID_2026/scripts/115_release_snapshot.py",
+        "--tag",
+        "20260406",
+        "--md"
+      ],
+      "started": "2026-04-07T04:07:41.314932+00:00",
+      "finished": "2026-04-07T04:07:52.772164+00:00",
+      "returncode": 0,
+      "success": true,
+      "log": "release_snapshot_output.log"
+    },
+    {
+      "step": "Parquet release bundle (118)",
+      "cmd": [
+        "/Users/ros/THyroid 2026/THYROID_2026/.venv/bin/python",
+        "/Users/ros/THyroid 2026/THYROID_2026/scripts/118_parquet_release_bundle.py",
+        "--tag",
+        "20260406",
+        "--md"
+      ],
+      "started": "2026-04-07T04:07:53.174894+00:00",
+      "finished": "2026-04-07T04:08:02.763868+00:00",
+      "returncode": 0,
+      "success": true,
+      "log": "parquet_bundle_output.log"
+    },
+    {
+      "step": "Formalization validation (119)",
+      "cmd": [
+        "/Users/ros/THyroid 2026/THYROID_2026/.venv/bin/python",
+        "/Users/ros/THyroid 2026/THYROID_2026/scripts/119_md_formalization_validate.py",
+        "--output-dir",
+        "studies/md_live_release_20260406/validation_run",
+        "--md",
+        "--release-mode"
+      ],
+      "started": "2026-04-07T04:08:02.764538+00:00",
+      "finished": "2026-04-07T04:08:11.187794+00:00",
+      "returncode": 0,
+      "success": true,
+      "log": "validation_output.log"
+    }
+  ]
+}

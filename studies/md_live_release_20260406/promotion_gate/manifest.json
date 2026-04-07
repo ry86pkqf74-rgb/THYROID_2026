@@ -1,7 +1,7 @@
 {
-  "run_label": "promote_20260407_0001",
-  "generated_at": "2026-04-07T04:03:00.398791+00:00",
-  "git_sha": "0314d20",
+  "run_label": "promote_20260407_0005",
+  "generated_at": "2026-04-07T04:06:48.467691+00:00",
+  "git_sha": "4b2d076",
   "v2_parquets_dir": "/Users/ros/THyroid 2026/THYROID_2026/processed/output/v2_parquets",
   "db_path": "/Users/ros/THyroid 2026/THYROID_2026/thyroid_master.duckdb",
   "overall_verdict": "PASS",

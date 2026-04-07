@@ -63,81 +63,14 @@
   inferred episode linkage (family-specific)
   v1 split: clean=68,077  quarantined=0
   v2 split: clean=123,577  quarantined=199
-  dry-run: v1 clean=68,077 → canonical_extracted_fact_long_v1.parquet
-  dry-run: v1 quarantine=0 → canonical_fact_quarantine_v1.parquet
-  dry-run: v2 clean=123,577 → canonical_extracted_fact_long_v2.parquet
-  dry-run: v2 quarantine=199 → canonical_fact_quarantine_v2.parquet
-
-# Fact Lineage QC Report
-
-Generated: 2026-04-07 04:01 UTC
-
-## Row Counts
-
-| Output | Rows |
-|--------|------|
-| canonical_extracted_fact_long_v1 | 68,077 |
-| canonical_fact_quarantine_v1 | 0 |
-| canonical_extracted_fact_long_v2 | 123,577 |
-| canonical_fact_quarantine_v2 | 199 |
-
-## V2 Clean Facts by Domain
-
-| Domain | Rows | Linked % |
-|--------|------|----------|
-| airway_invasion | 3,076 | 0.0% |
-| cervical_ln_detail | 104 | 0.0% |
-| complications | 9,359 | 0.0% |
-| dynamic_risk_response | 52 | 0.0% |
-| frozen_section_detail | 375 | 0.0% |
-| functional_outcomes | 3,289 | 0.0% |
-| genetics | 1,738 | 0.0% |
-| imaging | 8,403 | 0.0% |
-| labs | 2,447 | 0.0% |
-| medications | 7,501 | 0.0% |
-| operative_detail | 12,151 | 0.0% |
-| parathyroid_detail | 248 | 0.0% |
-| past_medical_hx | 865 | 0.0% |
-| past_surgical_hx | 3,918 | 0.0% |
-| pathology | 10,867 | 0.0% |
-| patient_decision_adherence | 640 | 0.0% |
-| physical_exam | 1,919 | 0.0% |
-| presenting_symptoms | 279 | 0.0% |
-| problem_list | 11,579 | 0.0% |
-| procedures | 21,942 | 0.0% |
-| rad_treatment | 518 | 0.0% |
-| rai_detailed | 3,744 | 0.0% |
-| recurrence | 281 | 0.0% |
-| staging | 3,807 | 0.0% |
-| survival_followup | 9,806 | 0.0% |
-| synoptic_pathology_enrichment | 38 | 0.0% |
-| tg_kinetics | 167 | 0.0% |
-| tirads_granular | 176 | 0.0% |
-| us_nodule_dynamics | 47 | 0.0% |
-| vascular_invasion | 4,241 | 0.0% |
-
-## V2 Quarantine Reasons
-
-| Reason | Count |
-|--------|-------|
-| low_confidence_llm_date | 199 |
-
-## V2 Unresolved Episode Linkage
-
-Unlinked rows in clean v2: 123,577
-
-## Duplicate Facts
-
-Duplicate rows (on dedup key): 14,778
-
-## Linkage Family Distribution (V2 clean)
-
-| Family | Domains | Rows |
-|--------|---------|------|
-| demographics | 5 | 18,560 |
-| followup | 8 | 24,183 |
-| imaging | 3 | 8,626 |
-| molecular | 1 | 1,738 |
-| operative | 6 | 47,151 |
-| pathology | 5 | 19,057 |
-| rai | 2 | 4,262 |
+  QC report: /Users/ros/THyroid 2026/THYROID_2026/exports/fact_lineage_qc/qc_report_20260407_0407.md
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+  DuckDB canonical_extracted_fact_long_v1: 68,077 rows
+  DuckDB canonical_fact_quarantine_v1: 0 rows
+  DuckDB canonical_extracted_fact_long_v2: 123,577 rows
+  DuckDB canonical_fact_quarantine_v2: 199 rows
+  DuckDB note_extraction_runs: 3
+======================================================================
+  DONE
+======================================================================

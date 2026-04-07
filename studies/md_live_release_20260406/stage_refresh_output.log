@@ -35,5 +35,5 @@
 
   [summary] 30 tables loaded into v2_stage
   [summary] 0 row-count mismatches
-  [inventory] v2_stage.load_inventory: 120 total rows
+  [inventory] v2_stage.load_inventory: 150 total rows
   [done] v2_stage loading complete
