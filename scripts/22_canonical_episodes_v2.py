@@ -1231,15 +1231,21 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--md", action="store_true",
                         help="Deploy to local DuckDB instead of local DuckDB")
+    parser.add_argument(
+        "--skip-enrich",
+        action="store_true",
+        help="Skip V2 clinical-notes extractors (faster for MotherDuck / SQL-only rebuilds).",
+    )
     args = parser.parse_args()
 
     section("22 — Canonical Episode Tables v2")
 
-    con = connect_md_or_file(DB_PATH, md=args.md)
+    con = connect_md_or_file(DB_PATH, md=args.md, fail_closed=args.md)
 
     register_parquets(con)
     build_all(con)
-    enrich_from_v2_extractors(con)
+    if not args.skip_enrich:
+        enrich_from_v2_extractors(con)
     write_sql_file()
 
     section("Summary — Row counts")
