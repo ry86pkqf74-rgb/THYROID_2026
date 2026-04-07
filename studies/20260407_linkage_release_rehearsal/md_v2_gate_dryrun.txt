@@ -1,0 +1,203 @@
+.venv/bin/python scripts/116_md_stage_loader.py --md --dry-run
+  [inventory] 30 parquets to load
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+  [dry-run] Would execute:
+    CREATE SCHEMA IF NOT EXISTS v2_stage
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_imaging  (11,037 rows from note_entities_llm_imaging.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_tirads_granular  (11,037 rows from note_entities_llm_tirads_granular.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_us_nodule_dynamics  (11,037 rows from note_entities_llm_us_nodule_dynamics.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_labs  (11,037 rows from note_entities_llm_labs.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_tg_kinetics  (11,037 rows from note_entities_llm_tg_kinetics.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_pathology  (11,037 rows from note_entities_llm_pathology.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_synoptic_pathology_enrichment  (11,037 rows from note_entities_llm_synoptic_pathology_enrichment.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_rai_detailed  (11,037 rows from note_entities_llm_rai_detailed.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_rad_treatment  (11,037 rows from note_entities_llm_rad_treatment.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_parathyroid_detail  (11,037 rows from note_entities_llm_parathyroid_detail.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_recurrence  (11,037 rows from note_entities_llm_recurrence.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_survival_followup  (11,037 rows from note_entities_llm_survival_followup.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_cervical_ln_detail  (11,037 rows from note_entities_llm_cervical_ln_detail.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_functional_outcomes  (11,037 rows from note_entities_llm_functional_outcomes.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_past_medical_hx  (11,037 rows from note_entities_llm_past_medical_hx.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_past_surgical_hx  (11,037 rows from note_entities_llm_past_surgical_hx.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_presenting_symptoms  (11,037 rows from note_entities_llm_presenting_symptoms.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_physical_exam  (11,037 rows from note_entities_llm_physical_exam.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_vascular_invasion  (11,037 rows from note_entities_llm_vascular_invasion.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_airway_invasion  (11,037 rows from note_entities_llm_airway_invasion.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_frozen_section_detail  (11,037 rows from note_entities_llm_frozen_section_detail.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_dynamic_risk_response  (11,037 rows from note_entities_llm_dynamic_risk_response.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_patient_decision_adherence  (11,037 rows from note_entities_llm_patient_decision_adherence.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_recurrence_detailed  (11,037 rows from note_entities_llm_recurrence_detailed.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_complications_rln_laryngoscopy  (11,037 rows from note_entities_llm_complications_rln_laryngoscopy.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_medication_management  (11,037 rows from note_entities_llm_medication_management.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_operative_details  (11,037 rows from note_entities_llm_operative_details.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_operative_v2_enrichment  (11,037 rows from note_entities_llm_operative_v2_enrichment.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_parathyroid_per_gland  (11,037 rows from note_entities_llm_parathyroid_per_gland.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_molecular_thyroseq_afirma  (11,037 rows from note_entities_llm_molecular_thyroseq_afirma.parquet)
+    30 inventory rows into v2_stage.load_inventory
+.venv/bin/python scripts/112_v2_domain_promotion_gate.py \
+		--v2-parquets-dir processed/output/v2_parquets \
+		--db-path thyroid_master.duckdb \
+		--motherduck-check \
+		--run-label make_md_formalization_dryrun
+09:52:52  INFO      Output directory: /Users/ros/THyroid 2026/THYROID_2026/studies/v2_domain_promotion_gate_make_md_formalization_dryrun
+09:52:52  INFO      Phase 1: Domain Inventory
+09:52:52  INFO      Registry domains: 31
+09:52:52  INFO      On-disk v2 parquets: 37
+09:52:52  INFO      Domain inventory: 44 rows (36 with parquets)
+09:52:52  INFO      Phase 2: Per-Domain Validation
+09:52:52  INFO        Validating imaging                                   (? rows expected)
+09:52:52  INFO      Expanded v2 combined input: 11037 note rows -> 8428 entity rows
+09:52:52  INFO        Validating tirads_granular                           (? rows expected)
+09:52:52  INFO      Expanded v2 combined input: 11037 note rows -> 179 entity rows
+09:52:52  INFO        Validating us_nodule_dynamics                        (? rows expected)
+09:52:53  INFO      Expanded v2 combined input: 11037 note rows -> 49 entity rows
+09:52:53  INFO        Validating labs                                      (? rows expected)
+09:52:53  INFO      Expanded v2 combined input: 11037 note rows -> 2460 entity rows
+09:52:53  INFO        Validating tg_kinetics                               (? rows expected)
+09:52:53  INFO      Expanded v2 combined input: 11037 note rows -> 173 entity rows
+09:52:53  INFO        Validating pathology                                 (? rows expected)
+09:52:53  INFO      Expanded v2 combined input: 11037 note rows -> 10894 entity rows
+09:52:53  INFO        Validating synoptic_pathology_enrichment             (? rows expected)
+09:52:53  INFO      Expanded v2 combined input: 11037 note rows -> 38 entity rows
+09:52:53  INFO        Validating rai_detailed                              (? rows expected)
+09:52:53  INFO      Expanded v2 combined input: 11037 note rows -> 3747 entity rows
+09:52:53  INFO        Validating rad_treatment                             (? rows expected)
+09:52:54  INFO      Expanded v2 combined input: 11037 note rows -> 519 entity rows
+09:52:54  INFO        Validating parathyroid_detail                        (? rows expected)
+09:52:54  INFO      Expanded v2 combined input: 11037 note rows -> 255 entity rows
+09:52:54  INFO        Validating recurrence                                (? rows expected)
+09:52:54  INFO      Expanded v2 combined input: 11037 note rows -> 303 entity rows
+09:52:54  INFO        Validating survival_followup                         (? rows expected)
+09:52:54  INFO      Expanded v2 combined input: 11037 note rows -> 9809 entity rows
+09:52:54  INFO        Validating cervical_ln_detail                        (? rows expected)
+09:52:54  INFO      Expanded v2 combined input: 11037 note rows -> 104 entity rows
+09:52:54  INFO        Validating functional_outcomes                       (? rows expected)
+09:52:55  INFO      Expanded v2 combined input: 11037 note rows -> 3322 entity rows
+09:52:55  INFO        Validating past_medical_hx                           (? rows expected)
+09:52:55  INFO      Expanded v2 combined input: 11037 note rows -> 865 entity rows
+09:52:55  INFO        Validating past_surgical_hx                          (? rows expected)
+09:52:55  INFO      Expanded v2 combined input: 11037 note rows -> 3919 entity rows
+09:52:55  INFO        Validating presenting_symptoms                       (? rows expected)
+09:52:55  INFO      Expanded v2 combined input: 11037 note rows -> 280 entity rows
+09:52:55  INFO        Validating physical_exam                             (? rows expected)
+09:52:55  INFO      Expanded v2 combined input: 11037 note rows -> 1924 entity rows
+09:52:55  INFO        Validating vascular_invasion                         (? rows expected)
+09:52:56  INFO      Expanded v2 combined input: 11037 note rows -> 4241 entity rows
+09:52:56  INFO        Validating airway_invasion                           (? rows expected)
+09:52:56  INFO      Expanded v2 combined input: 11037 note rows -> 3116 entity rows
+09:52:56  INFO        Validating frozen_section_detail                     (? rows expected)
+09:52:56  INFO      Expanded v2 combined input: 11037 note rows -> 380 entity rows
+09:52:56  INFO        Validating dynamic_risk_response                     (? rows expected)
+09:52:56  INFO      Expanded v2 combined input: 11037 note rows -> 53 entity rows
+09:52:56  INFO        Validating patient_decision_adherence                (? rows expected)
+09:52:56  INFO      Expanded v2 combined input: 11037 note rows -> 641 entity rows
+09:52:56  INFO      Phase 3: Cross-Domain Concordance
+09:52:56  INFO      Expanded v2 combined input: 11037 note rows -> 8428 entity rows
+09:52:56  INFO      Expanded v2 combined input: 11037 note rows -> 179 entity rows
+09:52:57  INFO      Expanded v2 combined input: 11037 note rows -> 49 entity rows
+09:52:57  INFO      Expanded v2 combined input: 11037 note rows -> 2460 entity rows
+09:52:57  INFO      Expanded v2 combined input: 11037 note rows -> 173 entity rows
+09:52:58  INFO      Expanded v2 combined input: 11037 note rows -> 10894 entity rows
+09:52:58  INFO      Expanded v2 combined input: 11037 note rows -> 38 entity rows
+09:52:58  INFO      Expanded v2 combined input: 11037 note rows -> 3747 entity rows
+09:52:58  INFO      Expanded v2 combined input: 11037 note rows -> 519 entity rows
+09:52:58  INFO      Expanded v2 combined input: 11037 note rows -> 255 entity rows
+09:52:59  INFO      Expanded v2 combined input: 11037 note rows -> 303 entity rows
+09:52:59  INFO      Expanded v2 combined input: 11037 note rows -> 9809 entity rows
+09:52:59  INFO      Expanded v2 combined input: 11037 note rows -> 104 entity rows
+09:53:00  INFO      Expanded v2 combined input: 11037 note rows -> 3322 entity rows
+09:53:00  INFO      Expanded v2 combined input: 11037 note rows -> 865 entity rows
+09:53:00  INFO      Expanded v2 combined input: 11037 note rows -> 3919 entity rows
+09:53:00  INFO      Expanded v2 combined input: 11037 note rows -> 280 entity rows
+09:53:00  INFO      Expanded v2 combined input: 11037 note rows -> 1924 entity rows
+09:53:01  INFO      Expanded v2 combined input: 11037 note rows -> 4241 entity rows
+09:53:01  INFO      Expanded v2 combined input: 11037 note rows -> 3116 entity rows
+09:53:01  INFO      Expanded v2 combined input: 11037 note rows -> 380 entity rows
+09:53:01  INFO      Expanded v2 combined input: 11037 note rows -> 53 entity rows
+09:53:01  INFO      Expanded v2 combined input: 11037 note rows -> 641 entity rows
+09:53:01  INFO      Combined entity DataFrame: 55699 rows from 23 domain files
+09:53:01  INFO      Classifying 55699 entity rows into comparison domains
+09:53:04  INFO      Comparison domains: complications, genetics, medications, operative_detail, problem_list, procedures, staging
+09:53:04  INFO      Building baseline (note_entities_*) comparators
+09:53:07  INFO      Building structured (canonical tables) comparators
+09:53:07  INFO      Building side-by-side concordance
+09:53:10  INFO        => llm_side_by_side.parquet    55,699 rows x  78 cols  (4.55 MB)
+09:53:11  INFO      Phase 4: Manual Review Queue (strict)
+09:53:11  INFO      Manual review queue: 5622 rows
+09:53:11  INFO      Phase 5: Promotion Gate
+09:53:11  INFO        Running G8 MotherDuck parity check
+09:53:20  INFO      Phase 6: Reports & MotherDuck Artifacts
+
+======================================================================
+  V2 DOMAIN PROMOTION GATE — PASS
+======================================================================
+  [PASS]  G1: Domain completeness (v2 only)
+  [PASS]  G2: Schema compliance (core columns)
+  [PASS]  G3: Provenance columns
+  [PASS]  G4: Duplicate rate
+  [PASS]  G5: Date coverage (critical domains)
+  [PASS]  G6: Concordance floor (critical domains)
+  [PASS]  G7: Unresolved discordance
+  [PASS]  G8: MotherDuck v2_stage parity
+======================================================================
+  Artifacts: /Users/ros/THyroid 2026/THYROID_2026/studies/v2_domain_promotion_gate_make_md_formalization_dryrun
+  Verdict:   PASS
+======================================================================
+
+.venv/bin/python scripts/119_md_formalization_validate.py --md
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+=== MotherDuck Formalization Validation (STRUCTURAL) ===
+
+--- Check 1: MD Attachment ---
+  [PASS] MD attachment: 9 databases attached
+
+--- Check 2: Row Count Parity ---
+  [PASS] Row count parity: 23 domains checked, all match
+  [PASS] Canonical canonical_extracted_fact_long_v2: local=123,577  md=123,577
+  [PASS] Canonical canonical_fact_quarantine_v2: local=199  md=199
+  [FAIL] Canonical note_extraction_runs: local=5  md=3
+
+--- Check 3: Schema Completeness ---
+  [PASS] Schema completeness: Wide note-level v2 contract on 23 promoted table(s); entity_type/entity_value_* in main.canonical_extracted_fact_long_v2 (see docs/domain_mapping_rules.md). Example stems: note_entities_llm_imaging, note_entities_llm_tirads_granular, note_entities_llm_us_nodule_dynamics…
+
+--- Check 4: Canonical Distribution ---
+  [PASS] Canonical dist (canonical_extracted_fact_long_v2): 594 domains, 123,577 total rows
+  [PASS] Canonical dist (canonical_fact_quarantine_v2): 69 domains, 199 total rows
+
+--- Check 5: Review Queue ---
+  [PASS] Review queue: 5,622 total, 5,622 reviewed, 0 pending
+
+--- Check 6: QA Views ---
+  [PASS] QA view promotion_scorecard_summary_v: 6 rows
+  [PASS] QA view domain_validation_summary_v: 6 rows
+  [PASS] QA view date_provenance_completeness_v: 23 rows
+  [PASS] QA view manual_review_queue_summary_v: 21 rows
+
+--- Check 7: Load Inventory ---
+  [PASS] Load inventory: 180 entries, all match
+
+--- Check 8: Release Schemas ---
+  [PASS] Release schemas: 6 found: release_20260406, release_20260407, release_20260407_final, release_20260407_final2, release_20260408, release_20260409
+
+--- Check 11: Analyst presentation layer (master_*_verified_v1) ---
+  [PASS] Presentation master_fact_long_verified_v1: 123,577 rows; core traceability non-null (reviewer_status may be NULL)
+  [PASS] Presentation master_source_lineage_v1: 123,577 rows; core traceability non-null (reviewer_status may be NULL)
+  [PASS] Presentation master_patient_rollup_verified_v1: 5,574 patient rows; research_id + release_tag + review metrics present
+
+--- Check 12: Molecular normalized contract views ---
+  [PASS] Molecular row counts: main.molecular_results is empty — contract view checks skipped
+
+--- Check 13: Specimen + analytic FHIR layer ---
+  [PASS] Specimen/FHIR tables present: 10 objects found
+  [PASS] Specimen master fingerprint uniqueness: distinct fingerprints
+  [PASS] qa.val_specimen_contract_v1: no FAIL rows recorded
+  [PASS] qa.val_specimen_genomic_binding_v1: no FAIL rows recorded
+  [WARN] Specimen/FHIR QA diagnostics (142 views + focus checks): dup_master_fp=0, dup_focus_fp=None, orphan_focus=None, orphan_genomic(master/focus)=0/n/a, broken_fhir_refs=0, prov_gaps(master/focus/high_tier_null_spec)=0/n/a/0 | NOTE: some focus-table scans unavailable on this catalog
+  [WARN] Specimen-adjacent review burden (open/pending): genomic_link_review open/pending=9966; merge queue: direct COUNT unavailable (MotherDuck/catalog — audit manually)
+
+=== Summary: 22 PASS / 2 WARN / 1 FAIL ===
+
+  [report] /Users/ros/THyroid 2026/THYROID_2026/studies/20260407_motherduck_formalization/validation_report.md
+MAKE_EXIT:0

@@ -1,0 +1,8 @@
+=== ruff check (F rules) ===
+All checks passed!
+EXIT:0
+
+=== mypy (pyproject files) ===
+tests/test_registry_and_md_connect.py:317: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+Success: no issues found in 54 source files
+EXIT:0

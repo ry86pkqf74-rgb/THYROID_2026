@@ -80,7 +80,7 @@ def cmd_try_named_snapshot(args: argparse.Namespace) -> int:
     if args.execute:
         cmd.append("--execute")
     cmd += ["snapshot", "--name", args.snapshot_name]
-    if args.force_native_snapshot:
+    if getattr(args, "force_native_snapshot", False):
         cmd.append("--force-native-snapshot")
     return _run(cmd, label="130 snapshot (named, native-only)")
 
@@ -98,9 +98,8 @@ def cmd_writer_snapshot(args: argparse.Namespace) -> int:
 
 def cmd_qa_validate(args: argparse.Namespace) -> int:
     tag = args.tag or datetime.now(timezone.utc).strftime("%Y%m%d")
-    out = Path(args.validation_output_dir) if args.validation_output_dir else (
-        ROOT / "studies" / f"{tag}_molecular_qa_release_mode"
-    )
+    vod = getattr(args, "validation_output_dir", None)
+    out = Path(vod) if vod else (ROOT / "studies" / f"{tag}_molecular_qa_release_mode")
     out.mkdir(parents=True, exist_ok=True)
     cmd = [
         _python(),
@@ -125,20 +124,20 @@ def cmd_prod_audit(args: argparse.Namespace) -> int:
         "--tag",
         args.tag or datetime.now(timezone.utc).strftime("%Y%m%d"),
     ]
-    if not args.relaxed:
+    if not getattr(args, "relaxed", False):
         cmd.append("--final-release")
     if args.dry_run:
         cmd.append("--dry-run")
-    if args.skip_stage:
+    if getattr(args, "skip_stage", False):
         cmd.append("--skip-stage")
-    if args.skip_gate:
+    if getattr(args, "skip_gate", False):
         cmd.append("--skip-gate")
     return _run(cmd, label="124 live prod release audit")
 
 
 def cmd_refresh_readers(args: argparse.Namespace) -> int:
     cmd = [_python(), str(SCRIPTS / "136_md_read_scaling_snapshot_refresh.py"), "reader", "--md-env", "prod"]
-    if args.refresh_all:
+    if getattr(args, "refresh_all", False):
         cmd.append("--all")
     if args.dry_run:
         cmd.append("--dry-run")
@@ -297,6 +296,17 @@ def build_parser() -> argparse.ArgumentParser:
     prm = sub.add_parser(
         "promote",
         help="backup → named snapshot try → writer snapshot → QA 119 → 124 prod → reader refresh",
+    )
+    # Allow natural `promote --tag …` (runbook); parent-parser --tag must otherwise precede `promote`.
+    prm.add_argument(
+        "--tag",
+        default=None,
+        help="Release tag YYYYMMDD (same as global --tag / 124 --tag).",
+    )
+    prm.add_argument(
+        "--output-dir",
+        default=None,
+        help="Studies base dir for workflow_manifest.json (same as global --output-dir).",
     )
     prm.add_argument(
         "--label",

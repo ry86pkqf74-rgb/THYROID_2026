@@ -1,0 +1,9 @@
+=== 136 writer --dry-run (RW token via secrets.toml) ===
+CREATE SNAPSHOT OF "Thyroid 2026"
+WRITER_EXIT:0
+
+=== 136 reader --dry-run ===
+MD_READ_SCALING_TOKEN / MOTHERDUCK_READ_SCALING_TOKEN: not present in .streamlit/secrets.toml (key check via toml).
+Reader dry-run skipped: no read-scaling token configured locally.
+
+Dashboard freshness: see docs/motherduck_read_scaling_dashboard.md; requires writer snapshot + reader REFRESH after prod writes.

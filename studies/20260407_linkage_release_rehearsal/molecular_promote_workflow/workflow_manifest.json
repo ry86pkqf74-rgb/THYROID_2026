@@ -1,0 +1,38 @@
+{
+  "steps": [
+    {
+      "step": "backup-prod",
+      "returncode": 0,
+      "skipped": false
+    },
+    {
+      "step": "try-named-snapshot",
+      "returncode": 0,
+      "skipped": false
+    },
+    {
+      "step": "writer-snapshot",
+      "returncode": 0,
+      "skipped": false
+    },
+    {
+      "step": "qa-validate",
+      "returncode": 1,
+      "skipped": false
+    },
+    {
+      "step": "prod-audit",
+      "returncode": 1,
+      "skipped": false
+    },
+    {
+      "step": "refresh-readers",
+      "returncode": 0,
+      "skipped": false
+    }
+  ],
+  "tag": "20260407",
+  "started": "2026-04-07T13:58:00.285005+00:00",
+  "finished": "2026-04-07T13:59:12.775121+00:00",
+  "overall_returncode": 1
+}

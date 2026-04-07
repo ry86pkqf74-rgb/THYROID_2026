@@ -30,13 +30,15 @@
 
 PYTHON := .venv/bin/python
 
-# ── MotherDuck token guard (secrets.toml not visible to Make) ─────────
+# ── MotherDuck token guard (env vars and/or .streamlit/secrets.toml via get_token) ─
 define check_md_rw_token
-	@if [ -z "$$MOTHERDUCK_TOKEN" ] && [ -z "$$MD_SA_TOKEN" ]; then \
-		echo "ERROR: Set MOTHERDUCK_TOKEN and/or MD_SA_TOKEN for MotherDuck targets."; \
-		echo "  See docs/motherduck_database_contract_v1.md (Connection Reference) and .env.motherduck.example"; \
-		exit 1; \
-	fi
+	@$(PYTHON) -c "import sys; from pathlib import Path; sys.path.insert(0, str(Path('.').resolve())); \
+from motherduck_client import get_token; \
+t = get_token(); \
+print('ERROR: No MotherDuck read/write token for Make targets.') if not t else None; \
+print('  Set MOTHERDUCK_TOKEN and/or MD_SA_TOKEN in the environment, or add them to .streamlit/secrets.toml .') if not t else None; \
+print('  See docs/motherduck_database_contract_v1.md (Connection Reference) and .env.motherduck.example') if not t else None; \
+sys.exit(1 if not t else 0)"
 endef
 
 # ── SA flag helper (scripts/96 still accept --sa for legacy paths) ────

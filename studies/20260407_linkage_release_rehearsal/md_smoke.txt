@@ -1,0 +1,8 @@
+.venv/bin/python scripts/smoke_test_md_connection.py --md
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+DuckDB version : v1.4.4
+Catalog / DB    : 'Thyroid 2026' / 'Thyroid 2026'
+Connection type : MotherDuck (cloud)
+PASS
+MAKE_EXIT:0
