@@ -1280,6 +1280,110 @@ Only auto-fill when: target field is NULL, source match confidence >= 0.7, sourc
 
 ---
 
+## Normalized molecular results layer (governed; script 131)
+
+**Purpose:** Store vendor-neutral, longitudinal molecular **assay** and **variant** facts alongside — not instead of — `molecular_testing`, ThyroSeq enrichment tables, and `molecular_test_episode_v2`. Ingestion is **append-only**; corrections use `superseded_by_molecular_result_id` on new rows. **Linkage to patients is exact** (`research_id` only after deterministic resolution elsewhere); native IDs are kept as provenance columns.
+
+**DDL:** `scripts/sql/131_molecular_results_layer_ddl.sql`  
+**Runner:** `scripts/131_molecular_results_layer.py` (`--execute`, optional `--md`)
+
+### Design notes
+
+| Principle | How it is expressed |
+|-----------|----------------------|
+| Canonical patient key | `research_id` (INTEGER), matching `molecular_testing` / episode tables |
+| Source-native identity | `source_patient_id`, `source_specimen_id`, `source_accession` (optional VARCHAR) |
+| No source overwrite | New tables only; loaders must INSERT, not UPDATE source tables |
+| Exact-match linkage | No fuzzy joins inside this schema; ambiguous rows get `normalization_status = 'quarantine'` or `pending_review` and appear in `molecular_normalization_review_v1` |
+| Append-only batches | `ingestion_run_id`, `ingestion_ts`, `lineage_id` (UUID VARCHAR per batch/line) tie rows to a load |
+| DuckLake (MotherDuck) | Tables have **no PRIMARY KEY or secondary indexes** (platform limitation); logical uniqueness is `molecular_result_id` / `(domain, source_code)` in `molecular_code_crosswalk`, enforced by loaders |
+
+### `molecular_results`
+
+One row per **assay result envelope** (specimen + order + panel instance). Aligns naming with existing domains where possible: `test_date_native` (VARCHAR, same spirit as `molecular_test_episode_v2.test_date_native`), `platform`, optional `molecular_episode_id` link.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `molecular_result_id` | VARCHAR | Surrogate UUID for the result row (loader-generated) |
+| `research_id` | INTEGER | Canonical patient key |
+| `source_patient_id` | VARCHAR | Vendor/file patient id (e.g. MRN string) |
+| `source_specimen_id` | VARCHAR | Accession / specimen id from source |
+| `source_accession` | VARCHAR | Alternate accession label when split from specimen id |
+| `assay_name` | VARCHAR | Human-readable assay / panel name |
+| `panel_version` | VARCHAR | Panel or software version |
+| `platform` | VARCHAR | e.g. ThyroSeq, Afirma — consistent with `molecular_test_episode_v2.platform` |
+| `vendor` | VARCHAR | Laboratory / vendor when distinct from platform |
+| `loinc_code` | VARCHAR | LOINC when known |
+| `test_date_native` | VARCHAR | Raw date string from source |
+| `test_date_parsed` | DATE | Parsed test date when available |
+| `interpretation_summary` | VARCHAR | Report-level interpretation |
+| `risk_call` | VARCHAR | Structured risk / tier if provided |
+| `canonical_hgvs` | VARCHAR | Single “header” HGVS when report is one-variant |
+| `raw_payload_json` | JSON | Full normalized or raw structured payload |
+| `payload_checksum` | VARCHAR | SHA-256 hex over canonical serialized payload (loader) |
+| `parse_status` | VARCHAR | `pending` / `ok` / `partial` / `failed` (ThyroSeq-style) |
+| `normalization_status` | VARCHAR | `raw` / `mapped` / `verified` / `quarantine` / `pending_review` |
+| `qc_flags` | JSON | Array or object of QC codes |
+| `lineage_id` | VARCHAR | Batch or transformation lineage UUID |
+| `ingestion_ts` | TIMESTAMP | Row insert time |
+| `ingestion_run_id` | VARCHAR | FK-style reference to `molecular_ingestion_runs` |
+| `source_table` | VARCHAR | Origin table name e.g. `thyroseq_molecular_enrichment` |
+| `source_row_fingerprint` | VARCHAR | e.g. `source_row_hash` from ThyroSeq staging |
+| `molecular_episode_id` | INTEGER | Optional join to `molecular_test_episode_v2` |
+| `superseded_by_molecular_result_id` | VARCHAR | New row id that replaces this assertion (append-only corrections) |
+
+### `molecular_variant_long`
+
+One row per **variant call** (SNV, indel, fusion partner set, CNV, etc.).
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `molecular_variant_id` | VARCHAR | Surrogate UUID |
+| `molecular_result_id` | VARCHAR | Parent result |
+| `research_id` | INTEGER | Denormalized patient key for simple filters |
+| `gene_symbol` | VARCHAR | Gene (partner A for fusions) |
+| `transcript_id` | VARCHAR | RefSeq transcript e.g. NM_… |
+| `genomic_hgvs` | VARCHAR | g. notation when available |
+| `cdna_hgvs` | VARCHAR | c. notation |
+| `protein_hgvs` | VARCHAR | p. notation |
+| `canonical_hgvs` | VARCHAR | Preferred single HGVS for the call |
+| `variant_class` | VARCHAR | `SNV` / `INDEL` / `FUSION` / `CNV` / `OTHER` |
+| `allele_fraction` | DOUBLE | VAF or copy-ratio surrogate |
+| `zygosity` | VARCHAR | e.g. het / hom / unknown |
+| `interpretation_text` | VARCHAR | Variant-level text |
+| `risk_call` | VARCHAR | Tier / ACMG bucket when encoded |
+| `parse_status` | VARCHAR | Per-variant parse state |
+| `normalization_status` | VARCHAR | Mapping / review state |
+| `qc_flags` | JSON | Per-variant QC |
+| `lineage_id` | VARCHAR | Shared with parent batch |
+| `ingestion_ts` | TIMESTAMP | Insert time |
+| `partner_gene_symbol` | VARCHAR | Fusion / rearrangement partner |
+| `fusion_partner` | VARCHAR | Free-text fusion descriptor |
+| `raw_variant_token` | VARCHAR | Opaque source fragment for audit |
+
+### `molecular_assay_dictionary`
+
+Curated reference: `assay_key` (stable string), `assay_name`, `panel_version`, `platform`, `vendor`, `loinc_code`, `loinc_long_name`, validity window, `source_reference`.
+
+### `molecular_code_crosswalk`
+
+Exact **source_code → target_code** map by `domain` (seed includes `variant_class` → SNV/INDEL/FUSION/CNV/OTHER). Idempotent seed via `NOT EXISTS` anti-join.
+
+### `molecular_ingestion_runs` (optional)
+
+`ingestion_run_id`, `started_at`, `completed_at`, `source_system`, `runner_script`, `status`, `notes`.
+
+### Contract views (Streamlit / notebooks)
+
+| View | Role |
+|------|------|
+| `molecular_results_contract_v1` | Stable column projection over `molecular_results` |
+| `molecular_variant_long_contract_v1` | Stable projection over `molecular_variant_long` |
+| `molecular_results_enriched_v1` | Results + `n_variants_long` scalar subquery |
+| `molecular_normalization_review_v1` | `normalization_status` / `parse_status` review funnel |
+
+---
+
 ## V2 LLM Extraction Entity Tables
 
 Registry-driven extraction domains from `config/extraction_domain_registry.yaml` (schema version `entity_schema_v3_2026-04-03`). Each domain produces a `note_entities_llm_<domain>.parquet` in the v2 fleet directory, staged to `v2_stage` schema in MotherDuck and promoted to `main` after passing the 8-gate promotion pipeline.
