@@ -2,7 +2,7 @@
 
 **Audit date:** 2026-04-07  
 **Repo HEAD:** `2d18dd2aa668b0211c69de9792084747f365d84a` (branch `main`, tracking `origin/main`).  
-**Scope:** Code and config only; live MotherDuck row counts require tokens (this session: all MotherDuck env vars **MISSING** per `MD_SA_TOKEN` / `MOTHERDUCK_TOKEN` / `motherduck_token` length-only probe).
+**Scope:** Code and config only; live MotherDuck row counts need auth. Agents often store RW keys in **gitignored** `.streamlit/secrets.toml` (`MOTHERDUCK_TOKEN`, `MD_SA_TOKEN`); `motherduck_client.get_token()` loads them when env vars are unset. The audit run used a shell with no env tokens and did not load TOML for queries.
 
 ## End-to-end flow (conceptual)
 

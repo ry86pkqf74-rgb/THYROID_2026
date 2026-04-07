@@ -1,6 +1,6 @@
 # THYROID_2026 — current-state repo audit (2026-04-07)
 
-**Method:** Static review of named files + workflows. No live MotherDuck queries (session env: `MD_SA_TOKEN` / `MOTHERDUCK_TOKEN` / `motherduck_token` all **MISSING**, length 0).  
+**Method:** Static review of named files + workflows. No live MotherDuck queries in the audit shell (env vars for `MD_SA_TOKEN` / `MOTHERDUCK_TOKEN` / `motherduck_token` were **MISSING** there). **Local dev:** the project keeps MotherDuck credentials in **gitignored** `.streamlit/secrets.toml`; `motherduck_client.get_token()` reads `MOTHERDUCK_TOKEN` / `MD_SA_TOKEN` from that file when env is empty (see `motherduck_client.py` Streamlit secrets block — lines ~189–199 in the audited revision). Run `--md` scripts from repo root so that path resolves.  
 /git: `main` @ `2d18dd2aa668b0211c69de9792084747f365d84a`, `origin/main`.
 
 ---
