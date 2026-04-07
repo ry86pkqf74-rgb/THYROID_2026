@@ -1,11 +1,12 @@
 # Specimen + FHIR hardening — machine audit memo
-Generated: 2026-04-07T07:02:40.866365+00:00Z
-Git SHA: a9e1e0692a02b7721e7c8f29bd41f8aebcea11c2
+Generated: 2026-04-07T07:20:45.655294+00:00Z
+Git SHA: 27ec05fe96a675028dbc40e7c75deb6c5af0e27a
+Identity build_run_id: specimen_identity_build_v1_bc70f4461a36
 custom_user_agent: specimen_fhir_hardening_v1
 
 ## MotherDuck snapshot
-- Attempt: `specimen_fhir_pre_20260407_070214`
-- Result detail: InvalidInputException('Invalid Input Error: Database is not a native duckdb database so it does not have snapshots') — CREATE SNAPSHOT "specimen_fhir_pre_20260407_070214" OF "Thyroid 2026";
+- Attempt: `specimen_fhir_pre_20260407_071955`
+- Result detail: InvalidInputException('Invalid Input Error: Database is not a native duckdb database so it does not have snapshots') — CREATE SNAPSHOT "specimen_fhir_pre_20260407_071955" OF "Thyroid 2026";
 
 ## README vs sign-off vs live
 - README (2026-04-07): states MotherDuck formalized; release-mode may still fail on manual_review_queue.
@@ -20,5 +21,7 @@ custom_user_agent: specimen_fhir_hardening_v1
 - specimen_master_fingerprint_unique: **PASS** (True,)
 - specimen_master_id_unique: **PASS** (True,)
 - specimen_focus_fingerprint_unique: **PASS** (True,)
+- specimen_focus_orphan_guard: **PASS** (True,)
+- multi_synoptic_fp_isolation: **PASS** (True,)
 - genomic_assay_id_unique: **PASS** (True,)
 - fhir_specimen_subject_ref: **PASS** (True,)

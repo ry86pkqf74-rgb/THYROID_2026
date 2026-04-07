@@ -101,7 +101,7 @@ FROM sp
 WHERE _rk = 1;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- Physical tables (PK for ON CONFLICT; create if missing)
+-- Physical tables (DuckLake: no indexes; idempotent via delete-then-insert)
 -- ═══════════════════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS main.specimen_master_v1 (
   specimen_id VARCHAR NOT NULL,
@@ -192,14 +192,37 @@ CREATE TABLE IF NOT EXISTS qa.val_specimen_contract_v1 (
   measured_at TIMESTAMP NOT NULL
 );
 
+-- Legacy catalogs: tables may predate newer columns / constraints
+ALTER TABLE main.specimen_master_v1 ADD COLUMN IF NOT EXISTS fingerprint_input_canonical VARCHAR;
+ALTER TABLE main.specimen_master_v1 ADD COLUMN IF NOT EXISTS synoptic_row_ix BIGINT;
+ALTER TABLE main.specimen_master_v1 ADD COLUMN IF NOT EXISTS source_candidate_kind VARCHAR;
+ALTER TABLE main.specimen_master_v1 ADD COLUMN IF NOT EXISTS identity_build_run_id VARCHAR;
+ALTER TABLE main.specimen_master_v1 ADD COLUMN IF NOT EXISTS identity_built_at TIMESTAMP;
+
+ALTER TABLE main.specimen_tumor_focus_v1 ADD COLUMN IF NOT EXISTS fingerprint_input_focus_canonical VARCHAR;
+ALTER TABLE main.specimen_tumor_focus_v1 ADD COLUMN IF NOT EXISTS identity_build_run_id VARCHAR;
+ALTER TABLE main.specimen_tumor_focus_v1 ADD COLUMN IF NOT EXISTS identity_built_at TIMESTAMP;
+
+ALTER TABLE main.specimen_source_xref_v1 ADD COLUMN IF NOT EXISTS linkage_confidence_tier VARCHAR;
+ALTER TABLE main.specimen_source_xref_v1 ADD COLUMN IF NOT EXISTS identity_build_run_id VARCHAR;
+
+ALTER TABLE qa.specimen_merge_review_queue_v1 ADD COLUMN IF NOT EXISTS compared_fields VARCHAR;
+ALTER TABLE qa.specimen_merge_review_queue_v1 ADD COLUMN IF NOT EXISTS similarity_score DOUBLE;
+ALTER TABLE qa.specimen_merge_review_queue_v1 ADD COLUMN IF NOT EXISTS secondary_score DOUBLE;
+ALTER TABLE qa.specimen_merge_review_queue_v1 ADD COLUMN IF NOT EXISTS conflict_summary VARCHAR;
+ALTER TABLE qa.specimen_merge_review_queue_v1 ADD COLUMN IF NOT EXISTS evidence_context VARCHAR;
+ALTER TABLE qa.specimen_merge_review_queue_v1 ADD COLUMN IF NOT EXISTS review_priority INTEGER;
+ALTER TABLE qa.specimen_merge_review_queue_v1 ADD COLUMN IF NOT EXISTS review_status VARCHAR;
+ALTER TABLE qa.specimen_merge_review_queue_v1 ADD COLUMN IF NOT EXISTS identity_build_run_id VARCHAR;
+
 -- Full-refresh pathology + molecular xrefs (specimen_detail and other kinds preserved)
 DELETE FROM main.specimen_source_xref_v1 WHERE domain IN ('pathology', 'molecular');
 DELETE FROM main.specimen_tumor_focus_v1
 WHERE specimen_id IN (
   SELECT specimen_id FROM main.specimen_master_v1
-  WHERE source_candidate_kind = 'pathology_synoptic'
+  WHERE source_system = 'pathology_synoptic_encounter'
 );
-DELETE FROM main.specimen_master_v1 WHERE source_candidate_kind = 'pathology_synoptic';
+DELETE FROM main.specimen_master_v1 WHERE source_system = 'pathology_synoptic_encounter';
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Staging: pathology-backed master rows
@@ -274,26 +297,9 @@ SELECT
   current_timestamp AS materialized_at
 FROM fp;
 
--- Upsert pathology masters
+-- Reload pathology masters (DuckLake: plain INSERT after delete above)
 INSERT INTO main.specimen_master_v1 BY NAME
-SELECT * FROM _specimen_master_path_staging s
-ON CONFLICT (specimen_id) DO UPDATE SET
-  specimen_fingerprint_sha256 = EXCLUDED.specimen_fingerprint_sha256,
-  fingerprint_input_canonical = EXCLUDED.fingerprint_input_canonical,
-  research_id = EXCLUDED.research_id,
-  source_system = EXCLUDED.source_system,
-  procedure_date_day = EXCLUDED.procedure_date_day,
-  accession_or_source_id = EXCLUDED.accession_or_source_id,
-  specimen_role = EXCLUDED.specimen_role,
-  anatomic_site = EXCLUDED.anatomic_site,
-  laterality = EXCLUDED.laterality,
-  surgery_episode_id = EXCLUDED.surgery_episode_id,
-  encounter_synoptic_row_ix = EXCLUDED.encounter_synoptic_row_ix,
-  synoptic_row_ix = EXCLUDED.synoptic_row_ix,
-  source_candidate_kind = EXCLUDED.source_candidate_kind,
-  identity_build_run_id = EXCLUDED.identity_build_run_id,
-  identity_built_at = EXCLUDED.identity_built_at,
-  materialized_at = EXCLUDED.materialized_at;
+SELECT * FROM _specimen_master_path_staging s;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Tumor focus rows (one per synoptic tumor slot)
@@ -377,28 +383,7 @@ SELECT
 FROM fp;
 
 INSERT INTO main.specimen_tumor_focus_v1 BY NAME
-SELECT * FROM _specimen_focus_staging s
-ON CONFLICT (specimen_focus_id) DO UPDATE SET
-  focus_fingerprint_sha256 = EXCLUDED.focus_fingerprint_sha256,
-  fingerprint_input_focus_canonical = EXCLUDED.fingerprint_input_focus_canonical,
-  specimen_id = EXCLUDED.specimen_id,
-  master_fingerprint_sha256 = EXCLUDED.master_fingerprint_sha256,
-  synoptic_row_ix = EXCLUDED.synoptic_row_ix,
-  research_id = EXCLUDED.research_id,
-  surg_date = EXCLUDED.surg_date,
-  surg_date_canonical = EXCLUDED.surg_date_canonical,
-  encounter_synoptic_row_ix = EXCLUDED.encounter_synoptic_row_ix,
-  tumor_index = EXCLUDED.tumor_index,
-  site_text = EXCLUDED.site_text,
-  histologic_type = EXCLUDED.histologic_type,
-  surgery_episode_id = EXCLUDED.surgery_episode_id,
-  path_surgery_id = EXCLUDED.path_surgery_id,
-  tumor_ordinal = EXCLUDED.tumor_ordinal,
-  linkage_confidence_tier = EXCLUDED.linkage_confidence_tier,
-  linkage_score = EXCLUDED.linkage_score,
-  identity_build_run_id = EXCLUDED.identity_build_run_id,
-  identity_built_at = EXCLUDED.identity_built_at,
-  materialized_at = EXCLUDED.materialized_at;
+SELECT * FROM _specimen_focus_staging s;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Source xrefs: pathology + molecular (deterministic linkage tiers only)
@@ -507,22 +492,10 @@ SELECT
 FROM bound;
 
 INSERT INTO main.specimen_source_xref_v1 BY NAME
-SELECT * FROM _specimen_xref_path
-ON CONFLICT (domain, source_table, source_row_key) DO UPDATE SET
-  specimen_id = EXCLUDED.specimen_id,
-  specimen_focus_id = EXCLUDED.specimen_focus_id,
-  linkage_confidence_tier = EXCLUDED.linkage_confidence_tier,
-  identity_build_run_id = EXCLUDED.identity_build_run_id,
-  created_at = EXCLUDED.created_at;
+SELECT * FROM _specimen_xref_path;
 
 INSERT INTO main.specimen_source_xref_v1 BY NAME
-SELECT * FROM _specimen_xref_mol
-ON CONFLICT (domain, source_table, source_row_key) DO UPDATE SET
-  specimen_id = EXCLUDED.specimen_id,
-  specimen_focus_id = EXCLUDED.specimen_focus_id,
-  linkage_confidence_tier = EXCLUDED.linkage_confidence_tier,
-  identity_build_run_id = EXCLUDED.identity_build_run_id,
-  created_at = EXCLUDED.created_at;
+SELECT * FROM _specimen_xref_mol;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Review queue: structural ambiguity + fuzzy accession (no auto-merge)

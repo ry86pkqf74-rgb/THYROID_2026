@@ -181,6 +181,12 @@ def maybe_specimen_detail_seed(con, run_id: str) -> None:
         return
     if not _table_exists(con, "main", "master_cohort"):
         return
+    try:
+        con.execute(
+            "DELETE FROM main.specimen_master_v1 WHERE source_system = 'specimen_detail_aggregate'"
+        )
+    except Exception as exc:
+        print(f"  [warn] specimen_detail pre-delete: {exc}")
     sql = """
 INSERT INTO main.specimen_master_v1 BY NAME
 WITH sd0 AS (
@@ -256,24 +262,7 @@ SELECT
   CAST(? AS VARCHAR) AS identity_build_run_id,
   current_timestamp AS identity_built_at,
   current_timestamp AS materialized_at
-FROM fp
-ON CONFLICT (specimen_id) DO UPDATE SET
-  specimen_fingerprint_sha256 = EXCLUDED.specimen_fingerprint_sha256,
-  fingerprint_input_canonical = EXCLUDED.fingerprint_input_canonical,
-  research_id = EXCLUDED.research_id,
-  source_system = EXCLUDED.source_system,
-  procedure_date_day = EXCLUDED.procedure_date_day,
-  accession_or_source_id = EXCLUDED.accession_or_source_id,
-  specimen_role = EXCLUDED.specimen_role,
-  anatomic_site = EXCLUDED.anatomic_site,
-  laterality = EXCLUDED.laterality,
-  surgery_episode_id = EXCLUDED.surgery_episode_id,
-  encounter_synoptic_row_ix = EXCLUDED.encounter_synoptic_row_ix,
-  synoptic_row_ix = EXCLUDED.synoptic_row_ix,
-  source_candidate_kind = EXCLUDED.source_candidate_kind,
-  identity_build_run_id = EXCLUDED.identity_build_run_id,
-  identity_built_at = EXCLUDED.identity_built_at,
-  materialized_at = EXCLUDED.materialized_at;
+FROM fp;
 """
     try:
         con.execute(sql, [run_id])
