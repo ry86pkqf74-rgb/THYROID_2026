@@ -1,0 +1,32 @@
+[
+  {
+    "entity_type": "thyroglobulin",
+    "entity_value_raw": "thyroglobulin below assay sensitivity",
+    "entity_value_norm": "thyroglobulin below assay sensitivity",
+    "evidence_span": "Specimen for thyroglobulin collected on 2019-10-02",
+    "evidence_start": 54,
+    "evidence_end": 104,
+    "evidence_global_start": 54,
+    "evidence_global_end": 104,
+    "entity_date": "2019-10-02",
+    "note_date": "2019-11-20",
+    "present_or_negated": "present",
+    "confidence": 0.92,
+    "date_confidence": 1.0,
+    "verification_status": "verified_substring",
+    "verification_step": "substring_ok",
+    "extraction_method": "llm_github_models",
+    "raw_response_sha256": "54a36b67e0848cf8faec5d81fa3ba24b1b6db2f0151de4950aa7e0970f44bdbc",
+    "verifier_name": "evidence_substring_verifier",
+    "verifier_version": "1.0",
+    "model_name": "openai/gpt-4o-mini",
+    "llm_provider": "github_models",
+    "provider_returned_model": "openai/gpt-4o-mini",
+    "provider_system_fingerprint": "fp_test_gold",
+    "llm_sdk": "openai",
+    "llm_sdk_version": "9.9.9",
+    "llm_base_url": "https://models.github.ai/inference/",
+    "source_line": 1,
+    "chunk_index": 0
+  }
+]

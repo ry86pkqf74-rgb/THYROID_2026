@@ -1,0 +1,56 @@
+[
+  {
+    "case_id": "pathology_path_report",
+    "domain": "pathology",
+    "note_row_id": "reg-path-001",
+    "research_id": 90001,
+    "note_type": "path_report",
+    "note_date": "2020-05-01",
+    "note_text": "FINAL PATHOLOGY: Papillary thyroid carcinoma, classical type. Primary tumor 1.2 cm. Lymph nodes 0 of 3 positive. Margins negative for carcinoma."
+  },
+  {
+    "case_id": "imaging_us",
+    "domain": "imaging",
+    "note_row_id": "reg-img-001",
+    "research_id": 90002,
+    "note_type": "endocrine_note",
+    "note_date": "2021-08-10",
+    "note_text": "THYROID US: Right lobe solid hypoechoic nodule measuring 1.1 cm with microcalcifications. TI-RADS category 5 assigned."
+  },
+  {
+    "case_id": "labs_tsh",
+    "domain": "labs",
+    "note_row_id": "reg-lab-001",
+    "research_id": 90003,
+    "note_type": "history_summary",
+    "note_date": "2019-11-20",
+    "note_text": "Laboratory review. TSH 0.45 mIU/L. Free T4 1.0 ng/dL. Specimen for thyroglobulin collected on 2019-10-02; result reported 2019-10-05. Thyroglobulin below assay sensitivity."
+  },
+  {
+    "case_id": "survival_followup_visit",
+    "domain": "survival_followup",
+    "note_row_id": "reg-surv-001",
+    "research_id": 90004,
+    "note_type": "dc_sum",
+    "note_date": "2023-03-01",
+    "note_text": "Oncology surveillance visit. Patient alive without structural evidence of disease at thirty-six months after initial therapy. Continue routine follow-up."
+  },
+  {
+    "case_id": "airway_op_note",
+    "domain": "airway_invasion",
+    "note_row_id": "reg-air-001",
+    "research_id": 90005,
+    "note_type": "op_note",
+    "note_date": "2022-01-14",
+    "note_text": "OPERATIVE NOTE: Thyroidectomy performed. Tumor closely applied to tracheal cartilage without full-thickness airway invasion. Trachea intact."
+  },
+  {
+    "case_id": "labs_bad_evidence",
+    "domain": "labs",
+    "note_row_id": "reg-rej-001",
+    "research_id": 90006,
+    "note_type": "history_summary",
+    "note_date": "2024-01-10",
+    "note_text": "Labs today: TSH 2.5 mIU/L. No other abnormalities."
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "entity_type": "survival_status",
+    "entity_value_raw": "alive NED at 36 months",
+    "entity_value_norm": "alive ned at 36 months",
+    "evidence_span": "Patient alive without structural evidence of disease at thirty-six months after initial therapy",
+    "evidence_start": 29,
+    "evidence_end": 124,
+    "evidence_global_start": 29,
+    "evidence_global_end": 124,
+    "entity_date": "2023-03-01",
+    "note_date": "2023-03-01",
+    "present_or_negated": "present",
+    "confidence": 0.88,
+    "date_confidence": 0.7,
+    "verification_status": "verified_substring",
+    "verification_step": "substring_ok",
+    "extraction_method": "llm_github_models",
+    "raw_response_sha256": "00a703e6d7c2fff1c39f1a1c720d68baf4b7098a8e7d904d03966c2d0b9208be",
+    "verifier_name": "evidence_substring_verifier",
+    "verifier_version": "1.0",
+    "model_name": "openai/gpt-4o-mini",
+    "llm_provider": "github_models",
+    "provider_returned_model": "openai/gpt-4o-mini",
+    "provider_system_fingerprint": "fp_test_gold",
+    "llm_sdk": "openai",
+    "llm_sdk_version": "9.9.9",
+    "llm_base_url": "https://models.github.ai/inference/",
+    "source_line": 1,
+    "chunk_index": 0
+  }
+]

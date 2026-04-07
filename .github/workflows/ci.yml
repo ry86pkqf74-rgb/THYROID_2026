@@ -51,6 +51,26 @@ on:
         options: ["true", "false"]
 
 jobs:
+  # ── Job 0: LLM parser + schema gold (offline, no API keys) ────────────────
+  llm-extraction-gold:
+    name: LLM extraction gold (offline)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: pytest — LLM regression fixtures
+        env:
+          GITHUB_TOKEN: ""
+          OPENAI_API_KEY: ""
+        run: python -m pytest tests/test_llm_extraction_regression.py -v --tb=short
+
   # ── Job 1: Static Analysis ─────────────────────────────────────────────────
   lint-and-syntax:
     name: Syntax / Lint

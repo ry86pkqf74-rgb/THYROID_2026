@@ -1,0 +1,32 @@
+[
+  {
+    "entity_type": "invasion",
+    "entity_value_raw": "no full-thickness airway invasion",
+    "entity_value_norm": "no full-thickness airway invasion",
+    "evidence_span": "without full-thickness airway invasion",
+    "evidence_start": 85,
+    "evidence_end": 123,
+    "evidence_global_start": 85,
+    "evidence_global_end": 123,
+    "entity_date": "2022-01-14",
+    "note_date": "2022-01-14",
+    "present_or_negated": "present",
+    "confidence": 0.9,
+    "date_confidence": 0.7,
+    "verification_status": "verified_substring",
+    "verification_step": "substring_ok",
+    "extraction_method": "llm_github_models_operative",
+    "raw_response_sha256": "a18a2fc5f3e02d264ea28933ca5301463c0de509ac9656353383356b44378c34",
+    "verifier_name": "evidence_substring_verifier",
+    "verifier_version": "1.0",
+    "model_name": "openai/gpt-4o-mini",
+    "llm_provider": "github_models",
+    "provider_returned_model": "openai/gpt-4o-mini",
+    "provider_system_fingerprint": "fp_test_gold",
+    "llm_sdk": "openai",
+    "llm_sdk_version": "9.9.9",
+    "llm_base_url": "https://models.github.ai/inference/",
+    "source_line": 1,
+    "chunk_index": 0
+  }
+]

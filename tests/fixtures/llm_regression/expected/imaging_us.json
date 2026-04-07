@@ -1,0 +1,32 @@
+[
+  {
+    "entity_type": "tirads",
+    "entity_value_raw": "TI-RADS category 5",
+    "entity_value_norm": "ti-rads category 5",
+    "evidence_span": "TI-RADS category 5 assigned",
+    "evidence_start": 90,
+    "evidence_end": 117,
+    "evidence_global_start": 90,
+    "evidence_global_end": 117,
+    "entity_date": null,
+    "note_date": "2021-08-10",
+    "present_or_negated": "present",
+    "confidence": 0.9,
+    "date_confidence": 0.0,
+    "verification_status": "verified_substring",
+    "verification_step": "substring_ok",
+    "extraction_method": "llm_github_models",
+    "raw_response_sha256": "739d8fc74e5d90ef9ac625a7b773c1988200145c58fe11420d990465fe229aa8",
+    "verifier_name": "evidence_substring_verifier",
+    "verifier_version": "1.0",
+    "model_name": "openai/gpt-4o-mini",
+    "llm_provider": "github_models",
+    "provider_returned_model": "openai/gpt-4o-mini",
+    "provider_system_fingerprint": "fp_test_gold",
+    "llm_sdk": "openai",
+    "llm_sdk_version": "9.9.9",
+    "llm_base_url": "https://models.github.ai/inference/",
+    "source_line": 1,
+    "chunk_index": 0
+  }
+]
