@@ -9,7 +9,8 @@ fills only missing canonical values, and generates QA/review outputs.
 Usage:
     .venv/bin/python scripts/41_ingest_thyroseq_excel.py \\
         --input '/path/to/Thyroseq Data Complete.xlsx' \\
-        [--md]    # target local DuckDB instead of local DuckDB
+        [--input-profile thyroseq_complete|cohort_thyroseq_afirma_12_5] \\
+        [--md] [--md-sa] [--md-env prod] \\
         [--local] # force local DuckDB
         [--dry-run] # parse + match only, no DB writes
 
@@ -42,7 +43,7 @@ import json
 import logging
 import sys
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 
 import duckdb
@@ -110,6 +111,12 @@ THYROSEQ_ASSAY_NAME = "ThyroSeq"
 THYROSEQ_VENDOR = "ThyroSeq"
 THYROSEQ_PLATFORM = "ThyroSeq"
 
+# --input-profile: ``thyroseq_complete`` = vendor "Thyroseq Data Complete.xlsx" layout.
+# ``cohort_thyroseq_afirma_12_5`` = wide cohort workbook (e.g. raw/THYROSEQ_AFIRMA_12_5.xlsx).
+INPUT_PROFILE_COMPLETE = "thyroseq_complete"
+INPUT_PROFILE_COHORT_THYSEQ_AFIRMA = "cohort_thyroseq_afirma_12_5"
+INPUT_PROFILE_CHOICES = (INPUT_PROFILE_COMPLETE, INPUT_PROFILE_COHORT_THYSEQ_AFIRMA)
+
 _MR_COLS = [
     "molecular_result_id",
     "research_id",
@@ -174,6 +181,8 @@ def connect(
     use_md: bool = False,
     use_local: bool = False,
     md_env: str | None = None,
+    *,
+    prefer_service_account: bool = False,
 ) -> duckdb.DuckDBPyConnection:
     import os as _os
     if use_local or _os.environ.get("USE_LOCAL_DUCKDB"):
@@ -189,14 +198,149 @@ def connect(
         md=use_md,
         fail_closed=False,
         env=md_env,
+        prefer_service_account=prefer_service_account,
         custom_user_agent=ua,
         motherduck_session_hint=hint,
     )
 
-def ingest_raw(excel_path: str) -> pd.DataFrame:
+
+def _cohort_join_text_parts(*vals) -> str | None:
+    parts: list[str] = []
+    for v in vals:
+        if v is None or (isinstance(v, float) and pd.isna(v)):
+            continue
+        s = str(v).strip().replace("\xa0", " ")
+        if not s or s.lower() in ("nan", "none", "nat", "x", "-", "n/a", "na"):
+            continue
+        parts.append(s)
+    if not parts:
+        return None
+    return "; ".join(parts)
+
+
+def _cohort_parse_date_cell(val) -> date | None:
+    if val is None or pd.isna(val):
+        return None
+    if isinstance(val, date) and not isinstance(val, datetime):
+        return val
+    if isinstance(val, (datetime, pd.Timestamp)):
+        return val.date()
+    s = str(val).strip()
+    if not s or s.lower() in ("x", "-", "n/a", "na", "none", "nat"):
+        return None
+    try:
+        n = float(s)
+        if 1 < n < 100_000:
+            dt = pd.Timestamp("1899-12-30") + pd.to_timedelta(int(n), unit="D")
+            if 1900 <= dt.year <= 2100:
+                return dt.date()
+    except (ValueError, OverflowError):
+        pass
+    dt = pd.to_datetime(s, errors="coerce", dayfirst=False)
+    if pd.notna(dt):
+        return dt.date()
+    return None
+
+
+def _cohort_earliest_date(row: pd.Series, cols: list[str]) -> date | None:
+    found: list[date] = []
+    for c in cols:
+        if c not in row.index:
+            continue
+        d = _cohort_parse_date_cell(row.get(c))
+        if isinstance(d, date):
+            found.append(d)
+    if not found:
+        return None
+    return min(found)
+
+
+def augment_cohort_thyroseq_afirma_workbook(df: pd.DataFrame) -> pd.DataFrame:
+    """Add ThyroSeq-complete-style columns from wide THYROSEQ_AFIRMA / slot layout."""
+    log.info(
+        "  Mapping cohort workbook columns → Req Patient/Source Name, Pt. MRN, "
+        "Thyroseq Mutation, Pathology, etc."
+    )
+    out = df.copy().reset_index(drop=True)
+    n = len(out)
+    out["Req Patient/Source Name"] = [
+        f"COHORT_U{i},R{out.iloc[i].get('Research ID number')}" for i in range(n)
+    ]
+    out["Pt. MRN"] = [900_000_000 + i for i in range(n)]
+    out["Date of Birth"] = pd.Series([pd.NA] * n, dtype=object)
+
+    mut_cols = ["MUTATION_1", "MUTATION-2", "MUTATION_3"]
+    out["Thyroseq Mutation"] = out.apply(
+        lambda r: _cohort_join_text_parts(*[r.get(c) for c in mut_cols if c in r.index]),
+        axis=1,
+    )
+
+    detail_cols = [
+        c for c in ("Detailed findings_1", "Detailed findings_2", "Detailed findings_3")
+        if c in out.columns
+    ]
+    out["Gene Fusions"] = (
+        out.apply(lambda r: _cohort_join_text_parts(*[r.get(c) for c in detail_cols]), axis=1)
+        if detail_cols
+        else pd.Series([None] * n)
+    )
+
+    gep_cols = [
+        c for c in (
+            "Genetic Test Performed_1",
+            "Genetic_test_2",
+            "Genetic_Test_3",
+            "Other Thyroid Genetic testing -1",
+            "other genetic testing -2",
+        )
+        if c in out.columns
+    ]
+    out["Gene Expression Profile"] = out.apply(
+        lambda r: _cohort_join_text_parts(*[r.get(c) for c in gep_cols]),
+        axis=1,
+    )
+
+    path_cols = [
+        c for c in (
+            "Thyroseq/Afirma_1",
+            "Thyroseq/Afirma_2",
+            "Thyroseq/Afirma_3",
+            "Nodule_info_1",
+            "Nodule_info_2",
+            "Nodule_info_3",
+            "FNA_bethesda_1",
+            "FNA Bethesda_2",
+            "FNA_Bethesda_3",
+            "RESULT_1",
+            "RESULT_2",
+            "RESULT_3",
+        )
+        if c in out.columns
+    ]
+    out["Pathology"] = out.apply(
+        lambda r: _cohort_join_text_parts(*[r.get(c) for c in path_cols]),
+        axis=1,
+    )
+    out["Copy Number Alterations"] = pd.Series([pd.NA] * n, dtype=object)
+    date_slot_cols = [c for c in ("DATE_1", "DATE_2", "DATE_3") if c in out.columns]
+    out["ThyroSeq Test Date"] = (
+        out.apply(lambda r: _cohort_earliest_date(r, date_slot_cols), axis=1)
+        if date_slot_cols
+        else pd.Series([pd.NA] * n, dtype=object)
+    )
+    out["_input_profile"] = INPUT_PROFILE_COHORT_THYSEQ_AFIRMA
+    return out
+
+
+def ingest_raw(excel_path: str, *, input_profile: str = INPUT_PROFILE_COMPLETE) -> pd.DataFrame:
     log.info(f"Phase 1: Loading {excel_path}")
     df = pd.read_excel(excel_path, sheet_name=0)
     log.info(f"  {len(df)} rows, {len(df.columns)} columns")
+
+    if input_profile == INPUT_PROFILE_COHORT_THYSEQ_AFIRMA:
+        df = augment_cohort_thyroseq_afirma_workbook(df)
+    elif input_profile != INPUT_PROFILE_COMPLETE:
+        raise ValueError(f"Unknown input_profile: {input_profile!r}")
 
     df["source_file"] = Path(excel_path).name
     df["source_sheet"] = "Sheet1"
@@ -798,6 +942,22 @@ def build_normalized_molecular_layers(
         }
         checksum = _checksum_payload(raw_payload)
 
+        td_cell = r.get("ThyroSeq Test Date")
+        test_date_native = None
+        test_date_parsed = None
+        if td_cell is not None and not (isinstance(td_cell, float) and pd.isna(td_cell)):
+            if isinstance(td_cell, date) and not isinstance(td_cell, datetime):
+                test_date_parsed = td_cell
+                test_date_native = str(td_cell)
+            elif isinstance(td_cell, (datetime, pd.Timestamp)):
+                test_date_parsed = td_cell.date()
+                test_date_native = str(td_cell)[:120]
+            else:
+                dt = pd.to_datetime(td_cell, errors="coerce")
+                if pd.notna(dt):
+                    test_date_parsed = dt.date()
+                    test_date_native = str(td_cell).strip()[:120]
+
         mr_rows.append({
             "molecular_result_id": molecular_result_id,
             "research_id": rid,
@@ -809,8 +969,8 @@ def build_normalized_molecular_layers(
             "platform": THYROSEQ_PLATFORM,
             "vendor": THYROSEQ_VENDOR,
             "loinc_code": None,
-            "test_date_native": None,
-            "test_date_parsed": None,
+            "test_date_native": test_date_native,
+            "test_date_parsed": test_date_parsed,
             "interpretation_summary": interpretation,
             "risk_call": risk_call,
             "canonical_hgvs": None,
@@ -1571,7 +1731,17 @@ def write_integration_report(out_dir: Path, manifest: dict, matches: pd.DataFram
 def main():
     ap = argparse.ArgumentParser(description="ThyroSeq workbook integration pipeline")
     ap.add_argument("--input", required=True, help="Path to Thyroseq Data Complete.xlsx")
+    ap.add_argument(
+        "--input-profile",
+        choices=INPUT_PROFILE_CHOICES,
+        default=INPUT_PROFILE_COMPLETE,
+        help=(
+            "Workbook layout: thyroseq_complete (vendor export) or "
+            "cohort_thyroseq_afirma_12_5 (wide cohort xlsx with Research ID number + slot columns)."
+        ),
+    )
     ap.add_argument("--md", action="store_true", help="Connect to MotherDuck (see md_connect / secrets)")
+    ap.add_argument("--md-sa", action="store_true", help="Prefer MD_SA_TOKEN over MOTHERDUCK_TOKEN.")
     ap.add_argument(
         "--md-env",
         default=None,
@@ -1586,10 +1756,15 @@ def main():
         log.error(f"Input file not found: {input_path}")
         sys.exit(1)
 
-    con = connect(use_md=args.md, use_local=args.local, md_env=args.md_env)
+    con = connect(
+        use_md=args.md,
+        use_local=args.local,
+        md_env=args.md_env,
+        prefer_service_account=args.md_sa,
+    )
 
     # Phase 1: Raw ingest
-    raw = ingest_raw(str(input_path))
+    raw = ingest_raw(str(input_path), input_profile=args.input_profile)
 
     # Phase 2: Build crosswalk
     xw = build_crosswalk(con)
