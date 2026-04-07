@@ -118,16 +118,20 @@ def main() -> None:
         if args.dry_run:
             print(f"  [dry-run] CREATE SCHEMA {schema_name}")
             for t in tables:
-                print(f"  [dry-run] CREATE TABLE {schema_name}.{t} AS SELECT *, '{tag}' AS release_tag FROM main.{t}")
+                print(
+                    f"  [dry-run] CREATE TABLE {schema_name}.{t} AS "
+                    f"SELECT *, '{tag}' AS release_tag FROM main.{t}"
+                )
             print("  [dry-run] INSERT INTO qa.release_manifest ...")
             return
 
-        con.execute(f"CREATE SCHEMA {schema_name}")
-        print(f"  [schema] created {schema_name}")
+        con.execute("BEGIN TRANSACTION")
+        try:
+            con.execute(f"CREATE SCHEMA {schema_name}")
+            print(f"  [schema] created {schema_name}")
 
-        row_counts: dict[str, int] = {}
-        for t in tables:
-            try:
+            row_counts: dict[str, int] = {}
+            for t in tables:
                 con.execute(f"""
                     CREATE TABLE {schema_name}.{t} AS
                     SELECT *, '{tag}' AS release_tag
@@ -136,29 +140,56 @@ def main() -> None:
                 cnt = con.execute(f"SELECT COUNT(*) FROM {schema_name}.{t}").fetchone()[0]
                 row_counts[t] = int(cnt)
                 print(f"  [copy] {schema_name}.{t}: {cnt:,} rows")
-            except Exception as exc:
-                print(f"  [skip] {t}: {exc}")
 
-        try:
-            con.execute("""
+            print("\n  [post-write] Row parity vs main (before COMMIT)…")
+            for t in tables:
+                main_cnt = con.execute(f"SELECT COUNT(*) FROM main.{t}").fetchone()[0]
+                rel_cnt = con.execute(
+                    f"SELECT COUNT(*) FROM {schema_name}.{t}"
+                ).fetchone()[0]
+                if int(main_cnt) != int(rel_cnt):
+                    raise RuntimeError(
+                        f"parity failed for {t}: main={main_cnt:,} "
+                        f"{schema_name}={rel_cnt:,}"
+                    )
+                print(
+                    f"  [parity OK] {schema_name}.{t}: {rel_cnt:,} rows "
+                    f"(matches main.{t})"
+                )
+
+            con.execute(
+                """
                 INSERT INTO qa.release_manifest
                 (release_tag, git_sha, registry_version, tables_included, row_counts, created_at, created_by)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
-            """, [
-                tag,
-                sha,
-                reg_ver,
-                json.dumps(list(row_counts.keys())),
-                json.dumps(row_counts),
-                datetime.now(timezone.utc).isoformat(),
-                args.created_by,
-            ])
+                """,
+                [
+                    tag,
+                    sha,
+                    reg_ver,
+                    json.dumps(list(row_counts.keys())),
+                    json.dumps(row_counts),
+                    datetime.now(timezone.utc).isoformat(),
+                    args.created_by,
+                ],
+            )
             print("  [manifest] recorded in qa.release_manifest")
-        except Exception as exc:
-            print(f"  [warn] Could not write to qa.release_manifest: {exc}")
-            print("         Run scripts/114_qa_schema_setup.py first to create the qa schema.")
 
-        print(f"\n  Release {tag} created with {len(row_counts)} tables in {schema_name}")
+            con.execute("COMMIT")
+            print("  [txn] COMMIT completed successfully (no rollback).")
+
+            print(
+                f"\n  Release {tag} created with {len(row_counts)} tables in {schema_name}"
+            )
+        except SystemExit:
+            raise
+        except BaseException as exc:
+            try:
+                con.execute("ROLLBACK")
+                print(f"  [txn] ROLLBACK after error: {exc}")
+            except Exception as rb_exc:
+                print(f"  [txn] ROLLBACK failed (connection state unclear): {rb_exc}")
+            raise
     finally:
         con.close()
 

@@ -75,7 +75,7 @@ def load_table_from_parquet(
     pq_path: Path,
     dry_run: bool = False,
 ) -> int:
-    """Load a single parquet file into main.<table_name>. Returns row count."""
+    """Load a single parquet file into main.<table_name>. Returns remote row count (or 0 if skipped)."""
     if not pq_path.exists():
         print(f"  [skip] {pq_path.name} not found")
         return 0
@@ -90,11 +90,18 @@ def load_table_from_parquet(
         f"CREATE OR REPLACE TABLE main.{table_name} "
         f"AS SELECT * FROM read_parquet('{pq_path}')"
     )
-    md_count = con.execute(f"SELECT COUNT(*) FROM main.{table_name}").fetchone()[0]
+    md_count = con.execute(
+        f"SELECT COUNT(*) FROM main.{table_name}"
+    ).fetchone()[0]
 
     status = "OK" if local_count == md_count else "MISMATCH"
     print(f"  [{status}] main.{table_name}: local={local_count:,}  remote={md_count:,}")
-    return md_count
+    if local_count != md_count:
+        raise RuntimeError(
+            f"row parity failed for main.{table_name}: "
+            f"local={local_count:,} remote={md_count:,}"
+        )
+    return int(md_count)
 
 
 def apply_ddl(con: duckdb.DuckDBPyConnection, dry_run: bool = False) -> None:
@@ -120,11 +127,74 @@ def apply_ddl(con: duckdb.DuckDBPyConnection, dry_run: bool = False) -> None:
             label = stmt[:80].replace("\n", " ")
             print(f"  [dry-run] {label}...")
             continue
+        con.execute(stmt)
+
+
+def _run_contract_writes_in_transaction(con: duckdb.DuckDBPyConnection, args: argparse.Namespace) -> None:
+    """Materialize tables, apply DDL, and verify views inside one transaction."""
+    con.execute("BEGIN TRANSACTION")
+    try:
+        print("\n  [txn] BEGIN (write phase: main tables + DDL + verify)")
+
+        print("=== Phase 2: Canonical table materialization ===")
+        if not args.skip_canonical:
+            for table_name, pq_path in CANONICAL_TABLES.items():
+                load_table_from_parquet(con, table_name, pq_path, dry_run=False)
+        else:
+            print("  [skip] canonical tables (--skip-canonical)")
+
+        print("\n=== Phase 3: Episode/linkage contract tables ===")
+        for table_name, pq_filename in EPISODE_TABLES.items():
+            pq_path = FREEZE_DIR / pq_filename
+            load_table_from_parquet(con, table_name, pq_path, dry_run=False)
+
+        print("\n=== Contract views (DDL) ===")
+        apply_ddl(con, dry_run=False)
+        print("  [ddl] contract views created/refreshed")
+
+        written_tables: list[tuple[str, Path]] = []
+        if not args.skip_canonical:
+            written_tables.extend(CANONICAL_TABLES.items())
+        for table_name, pq_filename in EPISODE_TABLES.items():
+            written_tables.append((table_name, FREEZE_DIR / pq_filename))
+
+        print("\n=== Post-write row parity (parquet vs main, before COMMIT) ===")
+        for table_name, pq_path in written_tables:
+            if not pq_path.exists():
+                continue
+            local_count = len(pd.read_parquet(pq_path))
+            md_count = con.execute(
+                f"SELECT COUNT(*) FROM main.{table_name}"
+            ).fetchone()[0]
+            if local_count != md_count:
+                raise RuntimeError(
+                    f"post-write parity failed for main.{table_name}: "
+                    f"local={local_count:,} remote={md_count:,}"
+                )
+            print(f"  [parity OK] main.{table_name}: {md_count:,} rows")
+
+        print("\n=== Verification (views, before COMMIT) ===")
+        for view_name in [
+            "longitudinal_lab_deduped_v",
+            "linkage_summary_v",
+            "episode_completeness_summary_v",
+        ]:
+            cnt = con.execute(
+                f"SELECT COUNT(*) FROM main.{view_name}"
+            ).fetchone()[0]
+            print(f"  [verify] main.{view_name}: {cnt:,} rows")
+
+        con.execute("COMMIT")
+        print("  [txn] COMMIT completed successfully (no rollback).")
+    except SystemExit:
+        raise
+    except BaseException as exc:
         try:
-            con.execute(stmt)
-        except Exception as exc:
-            print(f"  [warn] DDL failed: {exc}")
-            print(f"         Statement: {stmt[:120]}...")
+            con.execute("ROLLBACK")
+            print(f"  [txn] ROLLBACK after error: {exc}")
+        except Exception as rb_exc:
+            print(f"  [txn] ROLLBACK failed (connection state unclear): {rb_exc}")
+        raise
 
 
 def main() -> None:
@@ -132,36 +202,23 @@ def main() -> None:
     con = get_connection(args)
 
     try:
-        print("=== Phase 2: Canonical table materialization ===")
-        if not args.skip_canonical:
-            for table_name, pq_path in CANONICAL_TABLES.items():
+        if args.dry_run:
+            print("=== Phase 2: Canonical table materialization ===")
+            if not args.skip_canonical:
+                for table_name, pq_path in CANONICAL_TABLES.items():
+                    load_table_from_parquet(con, table_name, pq_path, args.dry_run)
+            else:
+                print("  [skip] canonical tables (--skip-canonical)")
+
+            print("\n=== Phase 3: Episode/linkage contract tables ===")
+            for table_name, pq_filename in EPISODE_TABLES.items():
+                pq_path = FREEZE_DIR / pq_filename
                 load_table_from_parquet(con, table_name, pq_path, args.dry_run)
+
+            print("\n=== Contract views (DDL) ===")
+            apply_ddl(con, args.dry_run)
         else:
-            print("  [skip] canonical tables (--skip-canonical)")
-
-        print("\n=== Phase 3: Episode/linkage contract tables ===")
-        for table_name, pq_filename in EPISODE_TABLES.items():
-            pq_path = FREEZE_DIR / pq_filename
-            load_table_from_parquet(con, table_name, pq_path, args.dry_run)
-
-        print("\n=== Contract views (DDL) ===")
-        apply_ddl(con, args.dry_run)
-        if not args.dry_run:
-            print("  [ddl] contract views created/refreshed")
-
-        if not args.dry_run:
-            print("\n=== Verification ===")
-            try:
-                for view_name in [
-                    "longitudinal_lab_deduped_v",
-                    "linkage_summary_v",
-                    "episode_completeness_summary_v",
-                ]:
-                    cnt = con.execute(f"SELECT COUNT(*) FROM main.{view_name}").fetchone()[0]
-                    print(f"  [verify] main.{view_name}: {cnt:,} rows")
-            except Exception as exc:
-                print(f"  [warn] view verification failed: {exc}")
-
+            _run_contract_writes_in_transaction(con, args)
     finally:
         con.close()
 
