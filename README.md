@@ -2,7 +2,7 @@
 
 ## Source of truth — live MotherDuck publication gate (2026-04-07)
 
-**Current live-audit package (rerun before trusting any older checked-in report):** [`studies/20260407_publication_signoff_live/`](studies/20260407_publication_signoff_live/) — verdict memo, MRQ/lab reconciliation, and latest `119 --release-mode` log from the same session. Checked-in historical validation under [`studies/20260407_formalization_validation_release_mode/`](studies/20260407_formalization_validation_release_mode/) may be **stale** relative to live catalog state; prefer the signoff folder or rerun `scripts/119_md_formalization_validate.py --md --release-mode`.
+**Current live-audit package (rerun before trusting any older checked-in report):** [`studies/20260407_live_truth_and_lineage_contract_audit/`](studies/20260407_live_truth_and_lineage_contract_audit/) — latest committed **`119 --release-mode`** (27 checks), catalog/lineage narrative, and reconciliation. For manuscript governance memos + dual-timestamp `119` history, see [`studies/20260407_publication_signoff_live/`](studies/20260407_publication_signoff_live/). [`studies/20260407_formalization_validation_release_mode/`](studies/20260407_formalization_validation_release_mode/) holds an **early** PASS snapshot (**20 checks**, 04:47Z); treat as **history only**.
 
 **Single-sentence release posture:** **Automation can be PASS WITH WARN while manuscript release remains blocked** — live `qa.manual_review_queue` is almost entirely `SYNTHETIC_AUTOMATION_ONLY_NOT_MANUSCRIPT_SIGNOFF`, and the **non-Tg institutional lab wave** is still absent. Latest timestamped `119 --release-mode` in [`studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md`](studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md) is **PASS WITH WARNINGS** (specimen/FHIR diagnostics no longer FAIL; WARN on genomic review burden). An **earlier** same-day capture in [`studies/20260407_publication_signoff_live/validation_report.md`](studies/20260407_publication_signoff_live/validation_report.md) showed **BLOCKED** — cite the report you mean. This is **not** final human-reviewed manuscript sign-off.
 
@@ -16,7 +16,7 @@
 
 1. **2026-03-13 local manuscript-ready freeze** — Point-in-time **local DuckDB** hardening, 7/7 readiness gates, publication bundle, and Zenodo snapshot ([`v2026.03.10-publication-ready`](../../releases/tag/v2026.03.10-publication-ready)). This is **not** the same artifact as the live MotherDuck formalization below; GitHub `main` and Zenodo can diverge until a new Zenodo version is cut.
 2. **2026-04-06 — 07 MotherDuck formalization / release candidate** — Cloud **MotherDuck** `v2_stage` → `main` promotion, `qa.*` governance, immutable `release_YYYYMMDD` snapshots, analyst presentation views from [`scripts/125_master_verified_views.py`](scripts/125_master_verified_views.py), and strict release checks in [`scripts/119_md_formalization_validate.py`](scripts/119_md_formalization_validate.py) (`--release-mode`). **Domain SSOT:** [`config/extraction_domain_registry.yaml`](config/extraction_domain_registry.yaml); reconciled inventory snapshot: [`studies/20260406_domain_inventory_current/`](studies/20260406_domain_inventory_current/) (**23** promoted v2 domains, **31** parent domains = 8 v1 + 23 v2, **0** unclaimed on-disk parquets per regenerated inventory).
-3. **What blocks a signed *MotherDuck* release today** — Structural **MRQ** gate: no NULL `verification_status`. **Manuscript** gate: non-synthetic human adjudication plus institutional lab panel where required. **Automation** gate: operator-acceptable `119 --release-mode` (latest lineage-audit run **PASS WITH WARN** on specimen/FHIR diagnostics; still **WARN** on review burden — see live truth audit folder). Formalization snapshot folder: [`studies/20260407_formalization_validation_release_mode/`](studies/20260407_formalization_validation_release_mode/) (may be stale; see **Source of truth** above).
+3. **What blocks a signed *MotherDuck* release today** — Structural **MRQ** gate: no NULL `verification_status`. **Manuscript** gate: non-synthetic human adjudication plus institutional lab panel where required. **Automation** gate: operator-acceptable `119 --release-mode` (latest lineage-audit run **PASS WITH WARN** on specimen/FHIR diagnostics; still **WARN** on review burden — see live truth audit folder). Historical formalization snapshot (20-check era): [`studies/20260407_formalization_validation_release_mode/`](studies/20260407_formalization_validation_release_mode/) — see folder README; prefer **live truth audit** for current `119` evidence.
 
 **Status (2026-04-07, narrative aligned to live audit):**
 
@@ -71,7 +71,8 @@ documented source limitations, not data quality failures.
 | Review queue triage export (script 120) | [`docs/review_queue_triage_export.md`](docs/review_queue_triage_export.md) |
 | Domain mapping rules | [`docs/domain_mapping_rules.md`](docs/domain_mapping_rules.md) |
 | Domain inventory (current) | [`studies/20260406_domain_inventory_current/`](studies/20260406_domain_inventory_current/) |
-| Release-mode validation | [`studies/20260407_formalization_validation_release_mode/`](studies/20260407_formalization_validation_release_mode/) |
+| Release-mode validation (current committed run) | [`studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation/`](studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation/) |
+| Release-mode validation (historical 20-check PASS) | [`studies/20260407_formalization_validation_release_mode/`](studies/20260407_formalization_validation_release_mode/) |
 | Git tag | [`v2026.03.10-publication-ready`](../../releases/tag/v2026.03.10-publication-ready) |
 
 ### What "manuscript-ready" means
@@ -162,7 +163,7 @@ fail-closes on: live MotherDuck attach, row parity for **23** promoted v2 domain
 presence of `release_*` schema + `qa.release_manifest`, non-blank
 `extraction_run_id` on `main.canonical_extracted_fact_long_v2`, and **traceability
 columns / non-null core fields** on the three `master_*_verified_v1` presentation
-views. Evidence: `studies/20260407_formalization_validation_release_mode/validation_report.md`.
+views. Evidence: `studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md` (27-check `119`); early snapshot: `studies/20260407_formalization_validation_release_mode/validation_report.md`.
 
 Domain inventory (registry SSOT, on-disk parity): regenerate with
 `studies/20260406_domain_inventory_current/generate_inventory.py` — latest summary

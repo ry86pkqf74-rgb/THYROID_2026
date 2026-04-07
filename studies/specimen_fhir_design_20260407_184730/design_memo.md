@@ -33,7 +33,7 @@ This memo **documents and tightens design intent**; it does not replace those fi
 
 See [`artifact_reconciliation.md`](artifact_reconciliation.md).
 
-**Headline:** [`studies/20260407_signoff_memo/signoff_memo.md`](../20260407_signoff_memo/signoff_memo.md) is **superseded-without-cleanup** for operational truth by the checked-in [`validation_report.md`](../20260407_formalization_validation_release_mode/validation_report.md) (release-mode PASS) and by **live** MotherDuck counts showing populated specimen + FHIR tables. README status is **current** for navigation but mixes March-13 local freeze history with April formalization — readers should use the “three layers of ready” section as the guide.
+**Headline:** [`studies/20260407_signoff_memo/signoff_memo.md`](../20260407_signoff_memo/signoff_memo.md) is **superseded-without-cleanup** for operational truth by **timestamped** `119 --release-mode` artifacts and **live** MotherDuck counts (specimen + FHIR populated). Prefer [`studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md`](../20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md) for the **current committed** 27-check run; [`studies/20260407_formalization_validation_release_mode/validation_report.md`](../20260407_formalization_validation_release_mode/validation_report.md) is an **early** 20-check PASS snapshot. README status is **current** for navigation but mixes March-13 local freeze history with April formalization — readers should use the “three layers of ready” section as the guide.
 
 ---
 

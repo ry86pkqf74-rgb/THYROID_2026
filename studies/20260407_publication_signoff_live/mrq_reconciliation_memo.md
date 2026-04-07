@@ -27,7 +27,7 @@ Sparse compared to a real promotion package; cannot stand in for org sign-off re
 
 | Claim | Source | Reconciliation |
 |--------|--------|----------------|
-| Release-mode PASS | Checked-in `studies/20260407_formalization_validation_release_mode/validation_report.md` (2026-04-07) | **PARTIAL** — **earlier** in-folder live run BLOCKED (`broken_fhir_refs=10139`); **later** same-day rerun **PASS WITH WARN** (lineage audit folder). Always cite **timestamped** `119` artifact. |
+| Release-mode PASS | Checked-in `studies/20260407_formalization_validation_release_mode/validation_report.md` (2026-04-07) | **Historical** — that file is **04:47Z**, **20 checks**, **PASS** (predates 27-check suite). **Not** the same artifact as **signoff_live** BLOCKED or **lineage** PASS+WARN. |
 | Release-mode BLOCKED (5,622 pending) | Same folder `README.md` | **FAIL** as stated — live shows **0** pending; README is **stale**. |
 | NOT READY FOR FINAL SIGN-OFF | `studies/20260407_signoff_memo/signoff_memo.md` | **PARTIAL** — many early blockers resolved; **governance** issues remain (synthetic MRQ); **119** specimen gate **passed** in later run with **WARN** (not FAIL). |
 | Manuscript-ready vs MotherDuck gate | Top-level `README.md` | **PARTIAL** — correctly separates local freeze vs cloud; must cite **live** validation report for current PASS/FAIL. |

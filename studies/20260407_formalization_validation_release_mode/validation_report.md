@@ -1,5 +1,9 @@
 # MotherDuck Formalization Release Validation Report
 
+> **Historical snapshot — not current.** This run (`2026-04-07T04:47:39Z`) reports **20 checks** **all PASS** and an MRQ count of **16,866** (different from later catalog hydrates).  
+> **Current operator truth (same repo, later):** **[`../20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md`](../20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md)** — **27 checks**, **PASS WITH WARNINGS** (`broken_fhir_refs=0`).  
+> **Also:** [`../20260407_publication_signoff_live/validation_report.md`](../20260407_publication_signoff_live/validation_report.md) — **27 checks**, **BLOCKED** at `2026-04-07T10:33:51Z` (`broken_fhir_refs=10139`). **Always cite timestamp + path.**
+
 **Generated:** 2026-04-07T04:47:39.009465+00:00
 **Mode:** Release Validation
 **Total checks:** 20
