@@ -44,10 +44,10 @@ SELECT
   'specimen_subject'::VARCHAR AS issue,
   specimen_id AS anchor_id,
   json_extract_string(resource_json, '$.subject.reference') AS ref_value,
-  ('Patient/' || patient_fhir_id) AS expected_ref
+  ('Patient/' || regexp_replace(trim(coalesce(fs.patient_fhir_id, '')), '^(Patient/)+', '')) AS expected_ref
 FROM main.fhir_specimen_v1 fs
-WHERE json_extract_string(resource_json, '$.subject.reference') IS DISTINCT FROM ('Patient/' || fs.patient_fhir_id)
-   OR json_extract_string(resource_json, '$.subject.reference') LIKE 'Patient/Patient/%'
+WHERE regexp_replace(coalesce(json_extract_string(resource_json, '$.subject.reference'), ''), '^(Patient/)+', '')
+  IS DISTINCT FROM regexp_replace(trim(coalesce(fs.patient_fhir_id, '')), '^(Patient/)+', '')
 UNION ALL
 SELECT
   'specimen_collection_procedure'::VARCHAR,
