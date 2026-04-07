@@ -37,9 +37,9 @@ operative_detail__sub:operative_details,note_entities_llm_operative_details,note
 operative_detail__sub:operative_v2_enrichment,note_entities_llm_operative_v2_enrichment,note_entities_operative_detail,op_note,operative,standard,v1,True,/Users/ros/THyroid 2026/THYROID_2026/processed/output/v2_parquets/note_entities_llm_operative_v2_enrichment.parquet,,child-enrichment
 parathyroid_detail__sub:parathyroid_per_gland,note_entities_llm_parathyroid_per_gland,note_entities_llm_parathyroid_detail,op_note,operative,standard,v2,True,/Users/ros/THyroid 2026/THYROID_2026/processed/output/v2_parquets/note_entities_llm_parathyroid_per_gland.parquet,,child-enrichment
 genetics__sub:molecular_thyroseq_afirma,note_entities_llm_molecular_thyroseq_afirma,note_entities_genetics,all,molecular,critical,v1,True,/Users/ros/THyroid 2026/THYROID_2026/processed/output/v2_parquets/note_entities_llm_molecular_thyroseq_afirma.parquet,,child-enrichment
-UNCLAIMED,note_entities_llm_complications,,,,,,True,/Users/ros/THyroid 2026/THYROID_2026/processed/output/v2_parquets/note_entities_llm_complications.parquet,,unclaimed
-UNCLAIMED,note_entities_llm_genetics,,,,,,True,/Users/ros/THyroid 2026/THYROID_2026/processed/output/v2_parquets/note_entities_llm_genetics.parquet,,unclaimed
-UNCLAIMED,note_entities_llm_medications,,,,,,True,/Users/ros/THyroid 2026/THYROID_2026/processed/output/v2_parquets/note_entities_llm_medications.parquet,,unclaimed
-UNCLAIMED,note_entities_llm_problem_list,,,,,,True,/Users/ros/THyroid 2026/THYROID_2026/processed/output/v2_parquets/note_entities_llm_problem_list.parquet,,unclaimed
-UNCLAIMED,note_entities_llm_procedures,,,,,,True,/Users/ros/THyroid 2026/THYROID_2026/processed/output/v2_parquets/note_entities_llm_procedures.parquet,,unclaimed
-UNCLAIMED,note_entities_llm_staging,,,,,,True,/Users/ros/THyroid 2026/THYROID_2026/processed/output/v2_parquets/note_entities_llm_staging.parquet,,unclaimed
+concordance_audit:complications,note_entities_llm_complications,,,,,,True,/Users/ros/THyroid 2026/THYROID_2026/processed/output/v2_parquets/note_entities_llm_complications.parquet,,legacy-concordance
+concordance_audit:genetics,note_entities_llm_genetics,,,,,,True,/Users/ros/THyroid 2026/THYROID_2026/processed/output/v2_parquets/note_entities_llm_genetics.parquet,,legacy-concordance
+concordance_audit:medications,note_entities_llm_medications,,,,,,True,/Users/ros/THyroid 2026/THYROID_2026/processed/output/v2_parquets/note_entities_llm_medications.parquet,,legacy-concordance
+concordance_audit:problem_list,note_entities_llm_problem_list,,,,,,True,/Users/ros/THyroid 2026/THYROID_2026/processed/output/v2_parquets/note_entities_llm_problem_list.parquet,,legacy-concordance
+concordance_audit:procedures,note_entities_llm_procedures,,,,,,True,/Users/ros/THyroid 2026/THYROID_2026/processed/output/v2_parquets/note_entities_llm_procedures.parquet,,legacy-concordance
+concordance_audit:staging,note_entities_llm_staging,,,,,,True,/Users/ros/THyroid 2026/THYROID_2026/processed/output/v2_parquets/note_entities_llm_staging.parquet,,legacy-concordance

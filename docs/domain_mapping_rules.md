@@ -21,7 +21,7 @@ Domains are classified by tier:
 |------|-------|-------------|
 | v1   | 8     | Established domains with regex + LLM extractors. Parquets live in `processed/`. |
 | v1_debug | 1 | The `llm` merged audit artifact. Not a canonical output. |
-| v2   | 22    | New LLM-only domains. Parquets live in `processed/output/v2_parquets/`. |
+| v2   | 23    | New LLM-only domains. Parquets live in `processed/output/v2_parquets/`. |
 
 ### Sub-Prompt Domains (7 entries in `sub_prompt_domains:`)
 
@@ -67,6 +67,7 @@ Every parquet stem is classified into one of these categories:
 | `standalone` | Direct 1:1 domain parquet. Canonical extraction output. |
 | `child-enrichment` | Sub-prompt parquet that rolls into a parent domain. |
 | `audit-only` | Debug/audit artifact. Not a promotion target. |
+| `legacy-concordance` | V1-vs-V2 concordance audit artifact. Registered but never promoted. |
 | `missing` | Registry domain with no parquet on disk. |
 | `unclaimed` | On-disk parquet not referenced by any registry entry. |
 
@@ -141,8 +142,10 @@ opportunities, not conflicts.
 
 ### Concordance Audit Parquets
 
-The 6 unclaimed parquet stems (listed in Section 3 of the sign-off memo) are
-v2 LLM re-extractions of v1 domains used for concordance auditing only:
+The 6 concordance audit parquet stems are v2 LLM re-extractions of v1
+domains used for concordance auditing only.  They are registered in
+`concordance_audit_stems:` in the registry YAML and classified as
+`legacy-concordance` in the inventory:
 
 | Stem | Parent v1 Domain | Classification |
 |------|-----------------|----------------|

@@ -5,9 +5,20 @@ Runs a comprehensive set of checks against the MotherDuck database to verify
 that the formalization pass completed successfully.  Produces a Markdown report
 in the studies/ directory.
 
+Two modes:
+  structural (default) — informational WARNs for missing infrastructure.
+      Suitable for dry runs and local development.
+  release (--release-mode) — strict FAILs when infrastructure required for
+      a signed-off release is absent.  Blocks sign-off when:
+        * MotherDuck is not actually attached
+        * v2_stage.load_inventory is missing or has row mismatches
+        * any promotable row in qa.manual_review_queue is still pending
+        * no release_YYYYMMDD schema exists
+        * no named snapshot in qa.release_manifest for the target run
+
 Checks:
   1. MotherDuck attachment verification (PRAGMA database_list)
-  2. Row counts: local parquet vs v2_stage vs main (all 22 domains + canonical)
+  2. Row counts: local parquet vs v2_stage vs main (all 23 v2 domains + canonical)
   3. Schema/provenance completeness: required columns in every main table
   4. Canonical/quarantine row counts and domain distribution
   5. Review queue population counts in qa.manual_review_queue
@@ -17,6 +28,7 @@ Checks:
 
 Usage:
   .venv/bin/python scripts/119_md_formalization_validate.py --md
+  .venv/bin/python scripts/119_md_formalization_validate.py --md --release-mode
   .venv/bin/python scripts/119_md_formalization_validate.py --db-path thyroid_master.duckdb
   .venv/bin/python scripts/119_md_formalization_validate.py --md --output-dir studies/20260407_motherduck_formalization
 """
@@ -53,6 +65,8 @@ DESIRED_PROVENANCE_COLUMNS = [
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Validate MotherDuck formalization.")
     p.add_argument("--md", action="store_true", help="Target MotherDuck (fail-closed).")
+    p.add_argument("--release-mode", action="store_true",
+                    help="Strict release validation: FAIL on missing infrastructure.")
     p.add_argument("--db-path", default=str(DEFAULT_DB_PATH))
     p.add_argument("--v2-parquets-dir", default=str(DEFAULT_V2_DIR))
     p.add_argument("--output-dir", default=None, help="Output directory for report.")
@@ -73,8 +87,7 @@ class ValidationResult:
 
     def add(self, check: str, status: str, detail: str = ""):
         self.checks.append({"check": check, "status": status, "detail": detail})
-        icon = "PASS" if status == "PASS" else "FAIL" if status == "FAIL" else "WARN"
-        print(f"  [{icon}] {check}: {detail}")
+        print(f"  [{status}] {check}: {detail}")
 
     @property
     def passed(self) -> int:
@@ -89,7 +102,11 @@ class ValidationResult:
         return sum(1 for c in self.checks if c["status"] == "WARN")
 
 
-def check_md_attachment(con: duckdb.DuckDBPyConnection, results: ValidationResult) -> None:
+def check_md_attachment(
+    con: duckdb.DuckDBPyConnection,
+    results: ValidationResult,
+    strict: bool = False,
+) -> None:
     """Check 1: Verify MotherDuck attachment."""
     try:
         dbs = con.execute("PRAGMA database_list").fetchall()
@@ -97,7 +114,8 @@ def check_md_attachment(con: duckdb.DuckDBPyConnection, results: ValidationResul
         if md_found:
             results.add("MD attachment", "PASS", f"{len(dbs)} databases attached")
         else:
-            results.add("MD attachment", "WARN",
+            status = "FAIL" if strict else "WARN"
+            results.add("MD attachment", status,
                          "No md: path in database_list (may be local-only)")
     except Exception as exc:
         results.add("MD attachment", "FAIL", str(exc))
@@ -229,8 +247,13 @@ def check_canonical_distribution(
 def check_review_queue(
     con: duckdb.DuckDBPyConnection,
     results: ValidationResult,
+    strict: bool = False,
 ) -> None:
-    """Check 5: Review queue population."""
+    """Check 5: Review queue population.
+
+    In release mode, any pending (unreviewed) promotable rows cause FAIL.
+    In structural mode, report counts as PASS for observability.
+    """
     try:
         total = con.execute("SELECT COUNT(*) FROM qa.manual_review_queue").fetchone()[0]
         reviewed = con.execute(
@@ -238,10 +261,17 @@ def check_review_queue(
             "WHERE verification_status IS NOT NULL"
         ).fetchone()[0]
         pending = total - reviewed
-        results.add("Review queue", "PASS",
-                     f"{total:,} total, {reviewed:,} reviewed, {pending:,} pending")
+
+        if strict and pending > 0:
+            results.add("Review queue", "FAIL",
+                         f"{total:,} total, {reviewed:,} reviewed, "
+                         f"{pending:,} PENDING — must be resolved before release")
+        else:
+            results.add("Review queue", "PASS",
+                         f"{total:,} total, {reviewed:,} reviewed, {pending:,} pending")
     except Exception as exc:
-        results.add("Review queue", "WARN", f"qa.manual_review_queue not found: {exc}")
+        status = "FAIL" if strict else "WARN"
+        results.add("Review queue", status, f"qa.manual_review_queue not found: {exc}")
 
 
 def check_qa_views(
@@ -266,27 +296,37 @@ def check_qa_views(
 def check_load_inventory(
     con: duckdb.DuckDBPyConnection,
     results: ValidationResult,
+    strict: bool = False,
 ) -> None:
-    """Check 7: load_inventory completeness."""
+    """Check 7: load_inventory completeness.
+
+    In release mode, missing table or row mismatches cause FAIL.
+    """
     try:
         total = con.execute("SELECT COUNT(*) FROM v2_stage.load_inventory").fetchone()[0]
         mismatches = con.execute(
             "SELECT COUNT(*) FROM v2_stage.load_inventory WHERE NOT row_match"
         ).fetchone()[0]
         if mismatches > 0:
-            results.add("Load inventory", "WARN",
+            status = "FAIL" if strict else "WARN"
+            results.add("Load inventory", status,
                          f"{total:,} entries, {mismatches:,} row-count mismatches")
         else:
             results.add("Load inventory", "PASS", f"{total:,} entries, all match")
     except Exception as exc:
-        results.add("Load inventory", "WARN", f"Not found: {exc}")
+        status = "FAIL" if strict else "WARN"
+        results.add("Load inventory", status, f"Not found: {exc}")
 
 
 def check_release_schemas(
     con: duckdb.DuckDBPyConnection,
     results: ValidationResult,
+    strict: bool = False,
 ) -> None:
-    """Check 8: Release schema existence."""
+    """Check 8: Release schema existence.
+
+    In release mode, absence of any release_YYYYMMDD schema causes FAIL.
+    """
     try:
         schemas = [r[0] for r in con.execute(
             "SELECT DISTINCT table_schema FROM information_schema.tables ORDER BY 1"
@@ -296,26 +336,64 @@ def check_release_schemas(
             results.add("Release schemas", "PASS",
                          f"{len(release_schemas)} found: {', '.join(sorted(release_schemas))}")
         else:
-            results.add("Release schemas", "WARN",
+            status = "FAIL" if strict else "WARN"
+            results.add("Release schemas", status,
                          f"No release_YYYYMMDD schemas found (run 115 to create). "
                          f"Current schemas: {', '.join(schemas)}")
     except Exception as exc:
-        results.add("Release schemas", "WARN", str(exc))
+        status = "FAIL" if strict else "WARN"
+        results.add("Release schemas", status, str(exc))
+
+
+def check_release_manifest(
+    con: duckdb.DuckDBPyConnection,
+    results: ValidationResult,
+    strict: bool = False,
+) -> None:
+    """Check 9 (release-mode only): Named snapshot in qa.release_manifest."""
+    try:
+        total = con.execute("SELECT COUNT(*) FROM qa.release_manifest").fetchone()[0]
+        if total > 0:
+            latest = con.execute(
+                "SELECT release_tag, created_at FROM qa.release_manifest "
+                "ORDER BY created_at DESC LIMIT 1"
+            ).fetchone()
+            results.add("Release manifest", "PASS",
+                         f"{total} release(s); latest: {latest[0]} ({latest[1]})")
+        else:
+            status = "FAIL" if strict else "WARN"
+            results.add("Release manifest", status,
+                         "qa.release_manifest is empty — no snapshots recorded")
+    except Exception as exc:
+        status = "FAIL" if strict else "WARN"
+        results.add("Release manifest", status, f"Not found: {exc}")
 
 
 def generate_report(
     results: ValidationResult,
     rows_data: list[dict],
     dist_data: list[dict],
+    mode: str = "structural",
 ) -> str:
     """Generate a Markdown validation report."""
     now = datetime.now(timezone.utc).isoformat()
+    mode_label = "Release Validation" if mode == "release" else "Structural Validation"
     lines = [
-        "# MotherDuck Formalization Validation Report",
+        f"# MotherDuck Formalization {mode_label} Report",
         "",
         f"**Generated:** {now}",
+        f"**Mode:** {mode_label}",
         f"**Total checks:** {len(results.checks)}",
         f"**Passed:** {results.passed}  |  **Warned:** {results.warned}  |  **Failed:** {results.failed}",
+        "",
+    ]
+
+    if results.failed > 0:
+        lines.append(f"**VERDICT: BLOCKED** — {results.failed} check(s) failed.")
+    else:
+        lines.append("**VERDICT: PASS** — all checks passed.")
+
+    lines.extend([
         "",
         "---",
         "",
@@ -323,10 +401,9 @@ def generate_report(
         "",
         "| Check | Status | Detail |",
         "|-------|--------|--------|",
-    ]
+    ])
     for c in results.checks:
-        icon = {"PASS": "PASS", "FAIL": "FAIL", "WARN": "WARN"}.get(c["status"], "?")
-        lines.append(f"| {c['check']} | {icon} | {c['detail']} |")
+        lines.append(f"| {c['check']} | {c['status']} | {c['detail']} |")
 
     if rows_data:
         lines.extend([
@@ -369,14 +446,17 @@ def main() -> None:
     args = parse_args()
     con = get_connection(args)
     v2_dir = Path(args.v2_parquets_dir)
+    strict = args.release_mode
+    mode = "release" if strict else "structural"
 
     results = ValidationResult("MotherDuck Formalization")
 
     try:
-        print("=== MotherDuck Formalization Validation ===\n")
+        mode_label = "RELEASE" if strict else "STRUCTURAL"
+        print(f"=== MotherDuck Formalization Validation ({mode_label}) ===\n")
 
         print("--- Check 1: MD Attachment ---")
-        check_md_attachment(con, results)
+        check_md_attachment(con, results, strict=strict)
 
         print("\n--- Check 2: Row Count Parity ---")
         rows_data = check_row_counts(con, v2_dir, results)
@@ -388,23 +468,27 @@ def main() -> None:
         dist_data = check_canonical_distribution(con, results)
 
         print("\n--- Check 5: Review Queue ---")
-        check_review_queue(con, results)
+        check_review_queue(con, results, strict=strict)
 
         print("\n--- Check 6: QA Views ---")
         check_qa_views(con, results)
 
         print("\n--- Check 7: Load Inventory ---")
-        check_load_inventory(con, results)
+        check_load_inventory(con, results, strict=strict)
 
         print("\n--- Check 8: Release Schemas ---")
-        check_release_schemas(con, results)
+        check_release_schemas(con, results, strict=strict)
+
+        if strict:
+            print("\n--- Check 9: Release Manifest ---")
+            check_release_manifest(con, results, strict=strict)
 
     finally:
         con.close()
 
     print(f"\n=== Summary: {results.passed} PASS / {results.warned} WARN / {results.failed} FAIL ===")
 
-    report = generate_report(results, rows_data, dist_data)
+    report = generate_report(results, rows_data, dist_data, mode=mode)
 
     if args.output_dir:
         out_dir = Path(args.output_dir)
@@ -415,6 +499,10 @@ def main() -> None:
     report_path = out_dir / "validation_report.md"
     report_path.write_text(report)
     print(f"\n  [report] {report_path}")
+
+    if strict and results.failed > 0:
+        print(f"\n  RELEASE BLOCKED: {results.failed} check(s) failed.")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

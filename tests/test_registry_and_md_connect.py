@@ -21,12 +21,12 @@ class TestRegistryLoad:
         reg = load_registry()
         assert reg.schema_version.startswith("entity_schema_v3")
 
-    def test_28_domains_present(self):
+    def test_31_domains_present(self):
         from llm_extraction.registry import load_registry
 
         reg = load_registry()
-        assert len(reg.domains) >= 28, (
-            f"Expected ≥28 domains, got {len(reg.domains)}: "
+        assert len(reg.domains) >= 31, (
+            f"Expected ≥31 domains (8 v1 + 23 v2), got {len(reg.domains)}: "
             f"{sorted(reg.domains.keys())}"
         )
 
@@ -43,11 +43,13 @@ class TestRegistryLoad:
             f"v1 mismatch: got {set(v1.keys())}"
         )
 
-    def test_v2_domains_non_empty(self):
+    def test_v2_domains_count(self):
         from llm_extraction.registry import load_registry
 
         reg = load_registry()
-        assert len(reg.v2_domains) >= 20
+        assert len(reg.v2_domains) >= 23, (
+            f"Expected ≥23 v2 domains, got {len(reg.v2_domains)}"
+        )
 
     def test_all_prompts_have_repo_path(self):
         from llm_extraction.registry import load_registry
@@ -287,7 +289,7 @@ class TestRunExtractionRegistryIntegration:
     def test_domain_to_file_populated(self):
         from llm_extraction.run_extraction import DOMAIN_TO_FILE
 
-        assert len(DOMAIN_TO_FILE) >= 28
+        assert len(DOMAIN_TO_FILE) >= 31
         assert "staging" in DOMAIN_TO_FILE
         assert "imaging" in DOMAIN_TO_FILE
 
@@ -331,7 +333,7 @@ class TestScript02bRegistryIntegration:
         except SystemExit:
             pass
         assert hasattr(mod, "ENTITY_TABLES")
-        assert len(mod.ENTITY_TABLES) >= 28
+        assert len(mod.ENTITY_TABLES) >= 31
 
 
 class TestScript103RegistryIntegration:

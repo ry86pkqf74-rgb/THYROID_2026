@@ -4,7 +4,15 @@
 
 **Layout (2026-04-02):** LLM extraction lives in [`llm_extraction/`](llm_extraction/) (merged legacy `notes_extraction` + `notes_extraction_new`). Staging checkpoints sit under [`processed/output/`](processed/output/); study/manuscript artifact trees under [`processed/outputs/`](processed/outputs/). Medallion tiers are documented in [`docs/REPO_ARCHITECTURE_V2.md`](docs/REPO_ARCHITECTURE_V2.md).
 
-**Status:** Manuscript-ready (with scoped caveats) | V2 extraction complete; promotion to MotherDuck main complete (release_20260407) | 626 local DuckDB tables
+**Status (2026-04-07):**
+
+| Phase | Status |
+|-------|--------|
+| V2 extraction | **Complete** — 31 parent domains (8 v1 + 23 v2), 7 sub-prompt domains, 6 concordance-audit stems |
+| MotherDuck structure | **Formalized** — v2_stage loaded (23 domains, parity verified), promoted to main, release_20260407 snapshot created |
+| Repo consistency | **Hardened** — 0 unclaimed parquets, domain counts reconciled, release-mode validator deployed |
+| Final review queue | **Pending** — 5,622 items in `qa.manual_review_queue` (release-mode validation blocks until resolved) |
+| Final lab pull | **Pending** — institutional lab extract not yet received |
 
 A final manuscript-readiness hardening pass on 2026-03-13 audited 578 local DuckDB
 tables, 16 `val_*` validation tables, and all prior audit documents. Subsequent
@@ -40,6 +48,8 @@ documented source limitations, not data quality failures.
 | Architecture sign-off memo | [`studies/20260407_signoff_memo/signoff_memo.md`](studies/20260407_signoff_memo/signoff_memo.md) |
 | MotherDuck DB contract | [`docs/motherduck_database_contract_v1.md`](docs/motherduck_database_contract_v1.md) |
 | Domain mapping rules | [`docs/domain_mapping_rules.md`](docs/domain_mapping_rules.md) |
+| Domain inventory (current) | [`studies/20260406_domain_inventory_current/`](studies/20260406_domain_inventory_current/) |
+| Release-mode validation | [`studies/20260407_formalization_validation_release_mode/`](studies/20260407_formalization_validation_release_mode/) |
 | Git tag | [`v2026.03.10-publication-ready`](../../releases/tag/v2026.03.10-publication-ready) |
 
 ### What "manuscript-ready" means
@@ -117,6 +127,15 @@ export GITHUB_TOKEN='ghp_...'
 Thread-local clients with 5-retry exponential backoff and `--workers` concurrency.
 
 ### Current repo status
+
+**Formalization (Apr 6-7 2026):** MotherDuck structure is formalized — v2_stage
+loader, promotion gate, QA schema, contract views, release snapshot, and
+validation suite are all in place. The release-mode validator
+(`scripts/119_md_formalization_validate.py --release-mode`) enforces strict
+sign-off criteria including live MotherDuck attachment, `v2_stage.load_inventory`
+completeness, resolved review queue, and named release snapshot. Structural
+validation passes; release validation blocks on 5,622 pending review queue items.
+Domain inventory is fully reconciled (0 unclaimed parquets, 31 parent domains).
 
 See [`docs/FINAL_REPO_STATUS_20260313.md`](docs/FINAL_REPO_STATUS_20260313.md) for the
 definitive single source of truth (readiness, maturity, safe/unsafe claims).

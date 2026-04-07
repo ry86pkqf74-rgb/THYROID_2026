@@ -109,6 +109,23 @@ def main() -> None:
             "classification": "child-enrichment",
         })
 
+    for cas in reg.concordance_audit_stems:
+        stem = cas.parquet_stem
+        pq_path = on_disk.get(stem)
+        rows.append({
+            "registry_domain": f"concordance_audit:{cas.parent_v1_domain}",
+            "parquet_stem": stem,
+            "canonical_target": "",
+            "note_scope": "",
+            "linkage_anchor_family": "",
+            "qa_tier": "",
+            "tier": "",
+            "parquet_on_disk": pq_path is not None,
+            "parquet_path": str(pq_path) if pq_path else "",
+            "md_stage_table": "",
+            "classification": "legacy-concordance",
+        })
+
     unclaimed = set(on_disk.keys()) - reg.all_known_stems()
     for stem in sorted(unclaimed):
         if stem == "note_entities_llm_combined":
@@ -229,7 +246,7 @@ def main() -> None:
     ]
     from collections import Counter
     class_counts = Counter(r["classification"] for r in rows)
-    for cls in ["standalone", "child-enrichment", "audit-only", "missing", "unclaimed"]:
+    for cls in ["standalone", "child-enrichment", "audit-only", "legacy-concordance", "missing", "unclaimed"]:
         lines.append(f"| {cls} | {class_counts.get(cls, 0)} |")
     lines.append("")
 

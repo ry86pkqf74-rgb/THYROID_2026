@@ -102,12 +102,21 @@ class SubPromptSpec:
 
 
 @dataclass(frozen=True)
+class ConcordanceAuditStem:
+    """On-disk parquet from V1-vs-V2 concordance auditing. Never promoted."""
+    parquet_stem: str
+    parent_v1_domain: str
+    classification: str = "legacy-concordance"
+
+
+@dataclass(frozen=True)
 class Registry:
     schema_version: str
     domains: dict[str, DomainSpec]
     canonical_outputs: dict[str, CanonicalOutputSpec]
     llm_extraction_meta: dict[str, str]
     sub_prompt_domains: dict[str, SubPromptSpec] = field(default_factory=dict)
+    concordance_audit_stems: list[ConcordanceAuditStem] = field(default_factory=list)
 
     @property
     def v1_domains(self) -> dict[str, DomainSpec]:
@@ -279,7 +288,7 @@ class Registry:
           - ``"standalone"`` — direct 1:1 domain parquet
           - ``"child-enrichment"`` — sub-prompt output that rolls into a parent
           - ``"audit-only"`` — debug/audit artifact (canonical_output=False)
-          - ``"alias"`` — stem not in registry but matches a known pattern
+          - ``"legacy-concordance"`` — V1-vs-V2 concordance audit artifact
           - ``"unknown"`` — unrecognised stem
         """
         stem_to_domain = self.parquet_stem_to_domain()
@@ -291,12 +300,16 @@ class Registry:
         sub_map = self.sub_prompt_parent_map()
         if stem in sub_map:
             return "child-enrichment"
+        concordance_stems = {c.parquet_stem for c in self.concordance_audit_stems}
+        if stem in concordance_stems:
+            return "legacy-concordance"
         return "unknown"
 
     def all_known_stems(self) -> set[str]:
-        """Return every parquet stem the registry knows about (domains + sub-prompts)."""
+        """Return every parquet stem the registry knows about."""
         stems = set(self.all_parquet_stems())
         stems |= {sp.parquet_stem for sp in self.sub_prompt_domains.values()}
+        stems |= {c.parquet_stem for c in self.concordance_audit_stems}
         return stems
 
 
@@ -366,12 +379,22 @@ def load_registry(yaml_path: Path | None = None) -> Registry:
         for name, spec in raw.get("sub_prompt_domains", {}).items()
     }
 
+    concordance = [
+        ConcordanceAuditStem(
+            parquet_stem=entry["parquet_stem"],
+            parent_v1_domain=entry.get("parent_v1_domain", ""),
+            classification=entry.get("classification", "legacy-concordance"),
+        )
+        for entry in raw.get("concordance_audit_stems", [])
+    ]
+
     return Registry(
         schema_version=raw.get("schema_version", "unknown"),
         domains=domains,
         canonical_outputs=canonical,
         llm_extraction_meta=raw.get("llm_extraction", {}),
         sub_prompt_domains=sub_prompts,
+        concordance_audit_stems=concordance,
     )
 
 

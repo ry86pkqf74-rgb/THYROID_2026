@@ -86,9 +86,11 @@ parquet (local)
 |------|-----------|---------|
 | `longitudinal_lab_deduped_v` | Deduped over `thyroglobulin_lab_canonical_v1` | Clean lab query surface |
 
-#### Promoted v2 domain tables (22 tables)
+#### Promoted v2 domain tables (23 tables)
 
 Same names as v2_stage tables, promoted by `motherduck_promote.sql` after all 8 gate criteria pass.
+
+> **Note:** 6 concordance-audit parquets (`note_entities_llm_{complications,genetics,medications,problem_list,procedures,staging}`) exist on disk for V1-vs-V2 comparison but are classified `legacy-concordance` in the registry and are **never** staged or promoted.
 
 #### Episode contract tables
 
