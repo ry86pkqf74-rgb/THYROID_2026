@@ -9,6 +9,10 @@ Linkage & Episodes, Outcomes & Analytics, Manuscript & Export.
 Run locally:
     export MOTHERDUCK_TOKEN='your_token'
     streamlit run dashboard.py
+
+Read-scaling (optional): set ``MD_READ_SCALING_TOKEN`` and see
+``docs/motherduck_read_scaling_dashboard.md``. Primary-catalog attach is **off**
+unless ``MOTHERDUCK_DASHBOARD_ALLOW_READ_SCALING_ATTACH=1``.
 """
 from __future__ import annotations
 import io
@@ -36,6 +40,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from motherduck_client import (
     MotherDuckClient,
     MotherDuckConfig,
+    dashboard_allow_read_scaling_attach,
+    dashboard_prefer_read_scaling_token_for_share,
     get_read_scaling_token,
     get_token,
 )
@@ -170,25 +176,51 @@ def _get_con():
     Connection mode is stored in _CONNECTION_META for UI display.
     """
     global _ACTIVE_CATALOG, _CONNECTION_META
-    cfg = MotherDuckConfig(database=DATABASE, share_path=SHARE_PATH)
-    cli = MotherDuckClient(cfg)
-    share_candidates: list[tuple[str, str]] = []
     rw_tok = get_token(prefer_service_account=False) or get_token(prefer_service_account=True)
     rs_tok = get_read_scaling_token()
-    if rw_tok:
-        share_candidates.append((rw_tok, "rw"))
-    if rs_tok and rs_tok != rw_tok:
-        share_candidates.append((rs_tok, "read_scaling"))
+
+    def _share_session_hint(origin: str) -> str | None:
+        if origin == "read_scaling":
+            h = (
+                (os.getenv("MD_READ_SCALING_SESSION_HINT") or "").strip()
+                or (os.getenv("MOTHERDUCK_READ_SCALING_SESSION_HINT") or "").strip()
+            )
+            return h or None
+        h = (os.getenv("MOTHERDUCK_SESSION_HINT") or "").strip()
+        return h or None
+
+    share_candidates: list[tuple[str, str]] = []
+    seen_tok: set[str] = set()
+
+    def _add_share(tok: str | None, origin: str) -> None:
+        if not tok or tok in seen_tok:
+            return
+        seen_tok.add(tok)
+        share_candidates.append((tok, origin))
+
+    if dashboard_prefer_read_scaling_token_for_share():
+        _add_share(rs_tok, "read_scaling")
+        _add_share(rw_tok, "rw")
+    else:
+        _add_share(rw_tok, "rw")
+        _add_share(rs_tok, "read_scaling")
 
     ro_err: Exception | None = None
-    for tok, _origin in share_candidates:
+    for tok, origin in share_candidates:
         try:
-            con = cli.connect_ro_share(token=tok)
+            hint = _share_session_hint(origin)
+            cfg_share = MotherDuckConfig(
+                database=DATABASE,
+                share_path=SHARE_PATH,
+                motherduck_session_hint=hint,
+            )
+            cli_share = MotherDuckClient(cfg_share)
+            con = cli_share.connect_ro_share(token=tok)
             con.execute(f'USE "{SHARE_CATALOG}";')
             _ACTIVE_CATALOG = SHARE_CATALOG
             _CONNECTION_META = {
                 "mode": "ro_share",
-                "detail": f"RO share: {SHARE_CATALOG}",
+                "detail": f"RO share: {SHARE_CATALOG} ({origin}, session_hint={hint or 'none'})",
                 "connected_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             }
             return con
@@ -196,8 +228,8 @@ def _get_con():
             ro_err = e
             continue
 
-    # Read-scaling attach to primary catalog (Business tier — query-scale reads, no writes)
-    if rs_tok:
+    # Read-scaling attach to primary catalog (Business tier) — opt-in only
+    if rs_tok and dashboard_allow_read_scaling_attach():
         try:
             md_env = (os.getenv("MOTHERDUCK_ENV") or "prod").lower().strip()
             hint = (
@@ -222,7 +254,13 @@ def _get_con():
             pass
 
     try:
-        con = cli.connect_rw()
+        rw_hint = _share_session_hint("rw")
+        cfg_rw = MotherDuckConfig(
+            database=DATABASE,
+            share_path=SHARE_PATH,
+            motherduck_session_hint=rw_hint,
+        )
+        con = MotherDuckClient(cfg_rw).connect_rw()
         try:
             con.execute(f'USE "{DATABASE}";')
         except Exception:

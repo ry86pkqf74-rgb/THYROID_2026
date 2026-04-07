@@ -18,6 +18,15 @@ or promotion scripts — those paths require a read/write token above.
 Optional: ``MD_READ_SCALING_SESSION_HINT`` (or per-call ``session_hint``) for stable
 MotherDuck user-duckling affinity on read-scaling connections.
 
+Streamlit dashboard (opt-in, **default off** for attach):
+
+* ``MOTHERDUCK_DASHBOARD_PREFER_READ_SCALING_TOKEN`` / ``THYROID_DASHBOARD_PREFER_READ_SCALING_TOKEN``
+  — try read-scaling token before RW for the RO share.
+* ``MOTHERDUCK_DASHBOARD_ALLOW_READ_SCALING_ATTACH`` / ``THYROID_DASHBOARD_ALLOW_READ_SCALING_ATTACH``
+  — allow ``connect_read_scaling()`` to the primary DB when share paths fail.
+
+See ``docs/motherduck_read_scaling_dashboard.md``.
+
 Environment selection
 ─────────────────────
 Set MOTHERDUCK_ENV to "dev", "qa", or "prod" (default: "prod").
@@ -60,6 +69,37 @@ _ENV_DATABASES: dict[str, str] = {
 _SHARE_PATH_PROD = "md:_share/thyroid_research_ro_v2/2558f066-1c5d-46a5-afbc-800fd5f7568d"
 
 _READ_SCALING_SECRET_KEYS = ("MD_READ_SCALING_TOKEN", "MOTHERDUCK_READ_SCALING_TOKEN")
+
+
+def _env_truthy(*names: str) -> bool:
+    for n in names:
+        v = (os.getenv(n) or "").strip().lower()
+        if v in ("1", "true", "yes", "on"):
+            return True
+    return False
+
+
+def dashboard_prefer_read_scaling_token_for_share() -> bool:
+    """Opt-in: try read-scaling token before RW token when attaching the RO share (Streamlit).
+
+    Default False — existing dashboards that rely on the RW token for share ACL keep behavior.
+    """
+    return _env_truthy(
+        "MOTHERDUCK_DASHBOARD_PREFER_READ_SCALING_TOKEN",
+        "THYROID_DASHBOARD_PREFER_READ_SCALING_TOKEN",
+    )
+
+
+def dashboard_allow_read_scaling_attach() -> bool:
+    """Opt-in: allow ``connect_read_scaling()`` fallback to the primary database catalog.
+
+    Default False — avoids silently attaching readers to the primary DB replica when only
+    RO share + RW paths are intended. Enable for Business read-scaling attach workflows.
+    """
+    return _env_truthy(
+        "MOTHERDUCK_DASHBOARD_ALLOW_READ_SCALING_ATTACH",
+        "THYROID_DASHBOARD_ALLOW_READ_SCALING_ATTACH",
+    )
 
 
 class ReadScalingTokenForbiddenError(RuntimeError):
