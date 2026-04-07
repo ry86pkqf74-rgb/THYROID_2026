@@ -473,6 +473,14 @@ llm_extraction:
 # ──────────────────────────────────────────────────────────────────────────────
 # Canonical outputs — v1 preserved, v2 adds new domains
 # ──────────────────────────────────────────────────────────────────────────────
+# Molecular assay union + precedence (note genetics vs structured ThyroSeq/Afirma):
+#   SQL: scripts/sql/132_molecular_fact_lineage_views.sql
+#   Runner: scripts/132_molecular_fact_lineage_views.py
+#   Views: main.molecular_fact_long_v, main.molecular_results_unified_v (alias),
+#          main.molecular_fact_lineage_qa_duplicate_candidates_v
+# Note extractions remain fact_provenance_category=note_derived in canonical_extracted_fact_long_*;
+# governed imports use assay_structured_import in the unified view.
+
 canonical_outputs:
   fact_long_table_v1:
     duckdb_table: canonical_extracted_fact_long_v1

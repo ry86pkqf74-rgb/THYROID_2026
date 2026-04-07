@@ -219,6 +219,7 @@ CANONICAL_FACT_CONTRACT_DTYPES: dict[str, str] = {
     "source_file_id": "string",
     "canonical_domain": "string",
     "canonical_fact_type": "string",
+    "fact_provenance_category": "string",
 }
 
 # Aligned with config/extraction_domain_registry.yaml schema_version

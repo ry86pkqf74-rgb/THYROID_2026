@@ -17,6 +17,7 @@ Applies to:
 | `fact_domain` | Source entity table domain (`staging`, `genetics`, …, `llm`) |
 | `canonical_domain` | Frozen alias of `fact_domain` for external contracts |
 | `canonical_fact_type` | Frozen alias of `entity_type` |
+| `fact_provenance_category` | Origin of the extracted row for note pipelines: always `note_derived` in `canonical_extracted_fact_long_*`. Structured ThyroSeq/Afirma assay rows use `assay_structured_import` in `main.molecular_fact_long_v` / `molecular_results_unified_v` (see `docs/MOLECULAR_FACT_LINEAGE.md`). Human review overlay is `human_review_overlay` / `manual_adjudicated_effective` on that view when `qa.manual_review_queue` has a genetics decision. |
 | `inferred_surgery_episode_id` | Nearest `operative_episode_detail_v2.surgery_episode_id` by date distance |
 | `inferred_surgery_date` | Surgery date for that episode |
 | `ep_distance_days` | Absolute day distance between reference date (`entity_date` else `clin_note_date`) and inferred surgery date |

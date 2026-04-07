@@ -6,6 +6,7 @@ This pipeline loads **vendor-neutral, tabular** Afirma extracts into the governe
 
 | Location | Role |
 |----------|------|
+| `docs/MOLECULAR_FACT_LINEAGE.md` | Unified `main.molecular_fact_long_v` (and `molecular_results_unified_v`): note genetics + structured `molecular_results` with assay-first precedence. |
 | `llm_extraction/prompts/molecular_thyroseq_afirma_extraction_v1.txt` | LLM entity schema (`afirma_result`, `afirma_version`, `afirma_xpression_atlas`, Bethesda, FNA) |
 | `data_dictionary.md` | Legacy wide table `molecular_testing` from `THYROSEQ_AFIRMA_12_5.xlsx` (`thyroseq_afirma`, `result`, `mutation`, …) |
 | `scripts/sql/131_molecular_results_layer_ddl.sql` | `molecular_assay_dictionary` + `molecular_code_crosswalk` seeds for Afirma assay keys and classifier buckets |

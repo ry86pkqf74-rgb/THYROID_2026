@@ -715,6 +715,9 @@ def main() -> None:
 
     uni = pd.concat(aligned, ignore_index=True)
     uni["_fact_rn"] = range(len(uni))
+    # Note-entity rows are always note-derived at ingest; structured assay rows
+    # live in molecular_results (see molecular_fact_long_v / 132 SQL).
+    uni["fact_provenance_category"] = "note_derived"
 
     # ── extraction_run_id from telemetry registry ───────────────────────
     runs_pq_early = PROCESSED / "note_extraction_runs.parquet"

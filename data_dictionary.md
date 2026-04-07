@@ -1381,6 +1381,10 @@ Exact **source_code → target_code** map by `domain` (seed includes `variant_cl
 | `molecular_variant_long_contract_v1` | Stable projection over `molecular_variant_long` |
 | `molecular_results_enriched_v1` | Results + `n_variants_long` scalar subquery |
 | `molecular_normalization_review_v1` | `normalization_status` / `parse_status` review funnel |
+| `molecular_fact_long_base_v` | Internal: stacked note genetics + assay envelope + variant rows with precedence flags |
+| `molecular_fact_long_v` | Analyst union: note-derived vs `assay_structured_import`, `record_role`, `included_in_primary_analytics`, genetics review overlay |
+| `molecular_results_unified_v` | Synonym of `molecular_fact_long_v` |
+| `molecular_fact_lineage_qa_duplicate_candidates_v` | QA: note vs structured assay pairs within ±21 days (same patient + `molecular_family`) |
 
 ---
 
