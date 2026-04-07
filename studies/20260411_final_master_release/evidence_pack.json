@@ -1,6 +1,6 @@
 {
   "release_tag": "20260411",
-  "git_sha": "de13c3365341c5025fc9fbbfd38df163475f4c60",
+  "git_sha": "559da67d0afcc27dcff6fea0a2fbb196b161cce4",
   "captured_at_utc": "2026-04-07T19:16:06.987268+00:00",
   "row_counts": {
     "main.canonical_extracted_fact_long_v2": 123577,
@@ -24,7 +24,7 @@
     "Operative NLP enrichment (berry ligament, frozen section, EBL) may remain sparse by design.",
     "Recurrence dates: large unresolved fraction is documented as source-limited.",
     "RAI dose recovery ceiling unless nuclear medicine notes / structured feeds improve.",
-    "Non-Tg lab panel (TSH, PTH, Ca, vit D) depends on institutional lab extract coverage."
+    "Non-Tg lab panel (TSH, PTH, Ca, vit D): final_institutional_20260407 wave present in longitudinal layers; residual gaps are source-limited / dedup edge cases."
   ],
   "export_dir": "/Users/ros/THyroid 2026/THYROID_2026/exports/final_master_release_20260411"
 }

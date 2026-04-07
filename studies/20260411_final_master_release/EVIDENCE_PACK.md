@@ -1,7 +1,7 @@
 # Final master release — manuscript readiness evidence
 
 - **Release tag:** `20260411`
-- **Git SHA:** `de13c3365341c5025fc9fbbfd38df163475f4c60`
+- **Git SHA:** `559da67d0afcc27dcff6fea0a2fbb196b161cce4` (commit containing this evidence pack)
 - **Captured (UTC):** 2026-04-07T19:16:06.987268+00:00
 - **Parquet bundle:** `/Users/ros/THyroid 2026/THYROID_2026/exports/final_master_release_20260411` (no raw note text in this profile)
 
