@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -119,12 +120,13 @@ def main() -> None:
         sys.path.insert(0, str(ROOT))
         from utils.md_connect import connect_md_or_file
 
-        hint = f"thyroid2026:current_state:{short}"
+        hint = (os.environ.get("MOTHERDUCK_SESSION_HINT") or "").strip() or f"thyroid2026:current_state:{short}"
+        ua = (os.environ.get("MOTHERDUCK_CUSTOM_USER_AGENT") or "").strip() or UA
         con = connect_md_or_file(
             Path(args.db_path),
             md=True,
             fail_closed=True,
-            custom_user_agent=UA,
+            custom_user_agent=ua,
             motherduck_session_hint=hint,
         )
         try:

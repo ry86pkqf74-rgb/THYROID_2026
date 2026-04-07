@@ -23,7 +23,7 @@
 | Phase | Status |
 |-------|--------|
 | V2 extraction | **Complete** — 31 parent domains (8 v1 + 23 v2), 7 sub-prompt domains, 6 concordance-audit stems (not staged; registry `legacy-concordance`) |
-| MotherDuck structure | **Formalized** — v2_stage ↔ main parity for **23** `canonical_output` domains; multiple `release_*` snapshots; manifest tag **20260409** (see live signoff folder) |
+| MotherDuck structure | **Formalized** — v2_stage ↔ main parity for **23** `canonical_output` domains; multiple `release_*` snapshots; latest manifest tag **20260410** (prior **20260409** retained in `qa.release_manifest`; confirm live with `119` / [`studies/20260407_live_publication_signoff_reaudit/`](studies/20260407_live_publication_signoff_reaudit/)) |
 | Repo / inventory consistency | **Aligned** — registry is SSOT; 0 unclaimed parquets in latest inventory run; [`scripts/119_md_formalization_validate.py --md --release-mode`](scripts/119_md_formalization_validate.py) enforces queue, manifest, canonical provenance, **presentation views**, and specimen/FHIR QA checks |
 | Manual review queue | **Non-NULL but not manuscript-approved** — live queue dominated by **synthetic** verification status; only **human-reviewed** CSV + hydrate path qualifies for publication (`studies/20260407_publication_blocker_assessment/`) |
 | Non-Tg lab pull | **Pending** — no `final_institutional*` wave; Tg-family waves only (`studies/20260407_lab_blocker_assessment/`) |

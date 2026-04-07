@@ -1,0 +1,41 @@
+# Exact commands run — live publication signoff reaudit (2026-04-07 UTC)
+
+Repository root: `/Users/ros/THyroid 2026/THYROID_2026`
+
+Environment (values not logged; tokens never printed):
+
+```bash
+export MOTHERDUCK_CUSTOM_USER_AGENT=THYROID_2026_live_publication_signoff_reaudit/1.0
+export MOTHERDUCK_SESSION_HINT=live_publication_signoff_reaudit_<UTC_YYYYMMDD_HHMM>
+export MD_READ_SCALING_SESSION_HINT=live_publication_signoff_reaudit_<UTC_YYYYMMDD_HHMM>
+# Read/write: MD_SA_TOKEN preferred (--md-sa on scripts); MOTHERDUCK_TOKEN fallback per motherduck_client.get_token
+```
+
+Primary execution chain (first full pass; `HINT` expanded at shell runtime):
+
+```bash
+cd "/Users/ros/THyroid 2026/THYROID_2026"
+HINT="live_publication_signoff_reaudit_$(date -u +%Y%m%d_%H%M)"
+export MOTHERDUCK_CUSTOM_USER_AGENT=THYROID_2026_live_publication_signoff_reaudit/1.0
+export MOTHERDUCK_SESSION_HINT="$HINT"
+export MD_READ_SCALING_SESSION_HINT="$HINT"
+STUDY="studies/20260407_live_publication_signoff_reaudit"
+mkdir -p "$STUDY/119_release_validation" "$STUDY/review_queue_triage_parent"
+.venv/bin/python "$STUDY/collect_live_evidence.py"
+.venv/bin/python scripts/144_md_repo_current_state_summary.py --md
+.venv/bin/python scripts/120_review_queue_triage.py --md --md-sa --output-root "$STUDY/review_queue_triage_parent"
+.venv/bin/python scripts/119_md_formalization_validate.py --md --md-sa --release-mode --output-dir "$STUDY/119_release_validation"
+```
+
+Observed runtime artifacts (first pass):
+
+- Triage bundle: `studies/20260407_live_publication_signoff_reaudit/review_queue_triage_parent/review_queue_triage_20260407_190119/`
+- First-pass `HINT`: `live_publication_signoff_reaudit_20260407_1900` (collector) / `190119` window for downstream scripts in the same compound invocation.
+
+Follow-up: `collect_live_evidence.py` re-run after fixing `md_information_schema.query_history` columns (`query`→`query_text`, `epoch_ms`→`end_time`/`execution_time`).
+
+Token probe (no secret values):
+
+```bash
+.venv/bin/python -c "from motherduck_client import get_token; t=get_token(prefer_service_account=True); print('TOKEN', 'SET' if t else 'MISSING', 'len', len(t or ''))"
+```

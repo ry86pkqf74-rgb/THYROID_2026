@@ -4,8 +4,8 @@
 
 > **Stale guard:** If **`Commit SHA`** below ≠ `git rev-parse HEAD` on your machine, treat **Live MotherDuck** bullets as **historical** until you re-run this generator with `--md`.
 
-**Machine-generated:** 2026-04-07T18:26:10.637479+00:00
-**Commit SHA:** `01485882f352947969ff0a8b04f38c85a73abab7`
+**Machine-generated:** 2026-04-07T19:01:14.518098+00:00
+**Commit SHA:** `5f12da7eb7d22d13fe84327506a30190d41ab99d`
 
 > Regenerate after promotion or specimen/FHIR deploy: `python scripts/144_md_repo_current_state_summary.py --md`
 
@@ -15,9 +15,15 @@ For dashboards or ad hoc read-after-snapshot review, use **only** `MD_READ_SCALI
 
 ## Live MotherDuck status (`--md` runs only)
 
-- _(This run did **not** pass `--md` — no live MotherDuck session.)_
-- _(Any **previously committed** row counts in this file are not refreshed here; operators must not treat them as live.)_
-
+- **current_database():** `Thyroid 2026`
+- **specimen_master_v1:** 10,139 rows
+- **fhir_bundle_export:** 10,139 rows
+- **specimen_genomic_assay_v1:** 10,126 rows
+- **qa.release_manifest (latest 3):**
+  - tag `20260410` | sha `618086b` | 2026-04-07 16:22:53.465299
+  - tag `20260407_tier` | sha `7793059` | 2026-04-07 15:25:17.363482
+  - tag `20260407_final2` | sha `4ad9052` | 2026-04-07 05:11:41.171561
+- **qa.manual_review_queue (NULL verification_status):** 0
 
 ## Checked-in release manifest (exports/)
 
@@ -39,7 +45,9 @@ _Validation reports under `studies/` older than **14** days (by local mtime — 
 
 ## Query-history telemetry (MotherDuck)
 
-(run with `--md` to populate)
+| user_agent | approx_queries |
+|---|---:|
+
 
 ## Reviewer RO share (manual)
 

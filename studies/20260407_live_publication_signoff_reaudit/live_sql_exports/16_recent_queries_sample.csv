@@ -1,0 +1,264 @@
+query_id,query_text,start_time,end_time,execution_time,wait_time,total_elapsed_time,error_message,error_type,user_agent,user_name,query_nr,transaction_nr,connection_id,duckdb_id,duckdb_version,instance_type,query_type,bytes_uploaded,bytes_downloaded,bytes_spilled_to_disk,duckling_id,session_name
+819d6953-3901-49ee-a03e-719685060082,"
+            SELECT *
+            FROM md_information_schema.recent_queries
+            LIMIT 100
+            ",2026-04-07 15:02:35.009000-04:00,,0 days 00:00:00.003059,0 days 00:00:00.000397,0 days 00:00:00.003456,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,21,95c22729-0a51-4c03-a740-9a334a8025d2,819d6953-197b-46e4-9e27-e9a42cb5335a,v1.4.4,Jumbo,QUERY,0,0,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6953-384d-4b7f-8b0c-9651973d40a0,"
+            SELECT query_id, user_agent, session_name, query_text, end_time, execution_time
+            FROM md_information_schema.query_history
+            ORDER BY end_time DESC NULLS LAST
+            LIMIT 100
+            ",2026-04-07 15:02:34.829000-04:00,2026-04-07 15:02:34.978000-04:00,0 days 00:00:00.146673,0 days 00:00:00.002015,0 days 00:00:00.148688,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,20,95c22729-0a51-4c03-a740-9a334a8025d2,819d6953-197b-46e4-9e27-e9a42cb5335a,v1.4.4,Jumbo,QUERY,0,5526,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6953-37f4-4d14-9360-a72dcc375e4d,"
+            SELECT review_status, COUNT(*) AS n
+            FROM qa.specimen_merge_review_queue_v1
+            GROUP BY 1
+            ORDER BY n DESC
+            ",2026-04-07 15:02:34.740000-04:00,2026-04-07 15:02:34.801000-04:00,0 days 00:00:00.057090,0 days 00:00:00.004001,0 days 00:00:00.061091,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,19,95c22729-0a51-4c03-a740-9a334a8025d2,819d6953-197b-46e4-9e27-e9a42cb5335a,v1.4.4,Jumbo,QUERY,0,67,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6953-379d-420b-85d7-d1929adfa6bc,SELECT * FROM qa.v_diag_specimen_review_burden_v1 ORDER BY queue_key,2026-04-07 15:02:34.653000-04:00,2026-04-07 15:02:34.714000-04:00,0 days 00:00:00.055813,0 days 00:00:00.004613,0 days 00:00:00.060426,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,18,95c22729-0a51-4c03-a740-9a334a8025d2,819d6953-197b-46e4-9e27-e9a42cb5335a,v1.4.4,Jumbo,QUERY,0,99,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6953-3743-4a34-8e56-8558632845fc,SELECT COUNT(*) AS n FROM main.molecular_results,2026-04-07 15:02:34.563000-04:00,2026-04-07 15:02:34.624000-04:00,0 days 00:00:00.056510,0 days 00:00:00.004557,0 days 00:00:00.061067,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,17,95c22729-0a51-4c03-a740-9a334a8025d2,819d6953-197b-46e4-9e27-e9a42cb5335a,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6953-36bb-40af-abcb-61a81534f8fd,"
+                SELECT COALESCE(analyte_group, '(null)') AS analyte_group, COUNT(*) AS n
+                FROM main.longitudinal_lab_deduped_v
+                GROUP BY 1
+                ORDER BY n DESC
+                ",2026-04-07 15:02:34.428000-04:00,2026-04-07 15:02:34.536000-04:00,0 days 00:00:00.098653,0 days 00:00:00.009536,0 days 00:00:00.108190,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,16,95c22729-0a51-4c03-a740-9a334a8025d2,819d6953-197b-46e4-9e27-e9a42cb5335a,v1.4.4,Jumbo,QUERY,0,84,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6953-3661-4241-97ce-11b058440bbd,"
+                SELECT COALESCE(analyte_group, '(null)') AS analyte_group, COUNT(*) AS n
+                FROM main.longitudinal_lab_canonical_v1
+                GROUP BY 1
+                ORDER BY n DESC
+                ",2026-04-07 15:02:34.337000-04:00,2026-04-07 15:02:34.397000-04:00,0 days 00:00:00.056739,0 days 00:00:00.003539,0 days 00:00:00.060278,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,15,95c22729-0a51-4c03-a740-9a334a8025d2,819d6953-197b-46e4-9e27-e9a42cb5335a,v1.4.4,Jumbo,QUERY,0,84,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6953-35ff-41fc-b7f7-3627814c93ba,"
+                SELECT *
+                FROM qa.promotion_review_decisions
+                LIMIT 50
+                ",2026-04-07 15:02:34.239000-04:00,2026-04-07 15:02:34.305000-04:00,0 days 00:00:00.059676,0 days 00:00:00.005779,0 days 00:00:00.065455,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,14,95c22729-0a51-4c03-a740-9a334a8025d2,819d6953-197b-46e4-9e27-e9a42cb5335a,v1.4.4,Jumbo,QUERY,0,781,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6953-35a4-40bf-a5d6-81f0bf52498b,"
+                SELECT COUNT(*) AS total_rows FROM qa.promotion_review_decisions
+                ",2026-04-07 15:02:34.149000-04:00,2026-04-07 15:02:34.210000-04:00,0 days 00:00:00.056813,0 days 00:00:00.004900,0 days 00:00:00.061713,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,13,95c22729-0a51-4c03-a740-9a334a8025d2,819d6953-197b-46e4-9e27-e9a42cb5335a,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6953-3532-4eea-b094-b890e5894d0f,"
+                SELECT verification_status, COUNT(*) AS n
+                FROM qa.manual_review_queue
+                GROUP BY 1
+                ORDER BY n DESC
+                ",2026-04-07 15:02:34.034000-04:00,2026-04-07 15:02:34.120000-04:00,0 days 00:00:00.078953,0 days 00:00:00.007246,0 days 00:00:00.086199,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,12,95c22729-0a51-4c03-a740-9a334a8025d2,819d6953-197b-46e4-9e27-e9a42cb5335a,v1.4.4,Jumbo,QUERY,0,162,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6953-34c2-43b7-b3e7-6d0d1a701825,"
+                SELECT
+                  COUNT(*) AS total_rows,
+                  COUNT(*) FILTER (WHERE verification_status IS NULL) AS pending_null_status,
+                  COUNT(*) FILTER (WHERE verification_status IS NOT NULL) AS reviewed_non_null_status
+                FROM qa.manual_review_queue
+                ",2026-04-07 15:02:33.923000-04:00,2026-04-07 15:02:34.006000-04:00,0 days 00:00:00.076048,0 days 00:00:00.006817,0 days 00:00:00.082865,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,11,95c22729-0a51-4c03-a740-9a334a8025d2,819d6953-197b-46e4-9e27-e9a42cb5335a,v1.4.4,Jumbo,QUERY,0,76,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6953-3437-49c7-b205-b8a0b069563d,"
+                SELECT *
+                FROM qa.release_manifest
+                ORDER BY created_at DESC NULLS LAST
+                LIMIT 20
+                ",2026-04-07 15:02:33.783000-04:00,2026-04-07 15:02:33.898000-04:00,0 days 00:00:00.110791,0 days 00:00:00.003901,0 days 00:00:00.114691,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,10,95c22729-0a51-4c03-a740-9a334a8025d2,819d6953-197b-46e4-9e27-e9a42cb5335a,v1.4.4,Jumbo,QUERY,0,884,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6953-261b-44f2-bbee-337e5eaf4e82,SELECT * FROM md_information_schema.database_snapshots ORDER BY 1,2026-04-07 15:02:30.171000-04:00,2026-04-07 15:02:33.585000-04:00,0 days 00:00:03.411961,0 days 00:00:00.001747,0 days 00:00:03.413708,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,7,95c22729-0a51-4c03-a740-9a334a8025d2,819d6953-197b-46e4-9e27-e9a42cb5335a,v1.4.4,Jumbo,QUERY,0,6461,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6953-25ed-45c0-ab89-d3d90c3bf71e,SELECT * FROM md_information_schema.databases ORDER BY 1,2026-04-07 15:02:30.126000-04:00,2026-04-07 15:02:30.135000-04:00,0 days 00:00:00.008095,0 days 00:00:00.001292,0 days 00:00:00.009387,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,6,95c22729-0a51-4c03-a740-9a334a8025d2,819d6953-197b-46e4-9e27-e9a42cb5335a,v1.4.4,Jumbo,QUERY,0,480,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6952-fdf5-4d12-ba3e-51e91144877b,"
+            SELECT *
+            FROM md_information_schema.recent_queries
+            LIMIT 100
+            ",2026-04-07 15:02:19.893000-04:00,2026-04-07 15:02:19.923000-04:00,0 days 00:00:00.026992,0 days 00:00:00.003054,0 days 00:00:00.030046,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,21,4045ead4-8b3f-48fe-89d2-3d46c0a8e662,819d6952-d2ea-4787-b12c-6e11f4e90570,v1.4.4,Jumbo,QUERY,0,9133,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6952-fd63-4fa7-9124-726a0f841dad,"
+            SELECT review_status, COUNT(*) AS n
+            FROM qa.specimen_merge_review_queue_v1
+            GROUP BY 1
+            ORDER BY n DESC
+            ",2026-04-07 15:02:19.747000-04:00,2026-04-07 15:02:19.808000-04:00,0 days 00:00:00.055353,0 days 00:00:00.004873,0 days 00:00:00.060226,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,19,4045ead4-8b3f-48fe-89d2-3d46c0a8e662,819d6952-d2ea-4787-b12c-6e11f4e90570,v1.4.4,Jumbo,QUERY,0,67,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6952-fd0c-41bf-9d8a-c11fdaf1d55d,SELECT * FROM qa.v_diag_specimen_review_burden_v1 ORDER BY queue_key,2026-04-07 15:02:19.660000-04:00,2026-04-07 15:02:19.721000-04:00,0 days 00:00:00.057952,0 days 00:00:00.003133,0 days 00:00:00.061085,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,18,4045ead4-8b3f-48fe-89d2-3d46c0a8e662,819d6952-d2ea-4787-b12c-6e11f4e90570,v1.4.4,Jumbo,QUERY,0,99,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6952-fcb2-49c1-9e76-50fd38fb7241,SELECT COUNT(*) AS n FROM main.molecular_results,2026-04-07 15:02:19.570000-04:00,2026-04-07 15:02:19.630000-04:00,0 days 00:00:00.054648,0 days 00:00:00.005335,0 days 00:00:00.059982,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,17,4045ead4-8b3f-48fe-89d2-3d46c0a8e662,819d6952-d2ea-4787-b12c-6e11f4e90570,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6952-fc0f-4fff-9d1c-d0fa9be35976,"
+                SELECT COALESCE(analyte_group, '(null)') AS analyte_group, COUNT(*) AS n
+                FROM main.longitudinal_lab_deduped_v
+                GROUP BY 1
+                ORDER BY n DESC
+                ",2026-04-07 15:02:19.407000-04:00,2026-04-07 15:02:19.516000-04:00,0 days 00:00:00.098676,0 days 00:00:00.010185,0 days 00:00:00.108861,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,16,4045ead4-8b3f-48fe-89d2-3d46c0a8e662,819d6952-d2ea-4787-b12c-6e11f4e90570,v1.4.4,Jumbo,QUERY,0,84,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6952-fba8-40d7-9839-a9910c458d14,"
+                SELECT COALESCE(analyte_group, '(null)') AS analyte_group, COUNT(*) AS n
+                FROM main.longitudinal_lab_canonical_v1
+                GROUP BY 1
+                ORDER BY n DESC
+                ",2026-04-07 15:02:19.305000-04:00,2026-04-07 15:02:19.366000-04:00,0 days 00:00:00.059140,0 days 00:00:00.002219,0 days 00:00:00.061359,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,15,4045ead4-8b3f-48fe-89d2-3d46c0a8e662,819d6952-d2ea-4787-b12c-6e11f4e90570,v1.4.4,Jumbo,QUERY,0,84,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6952-fb42-4082-8986-516fde98d60b,"
+                SELECT *
+                FROM qa.promotion_review_decisions
+                LIMIT 50
+                ",2026-04-07 15:02:19.203000-04:00,2026-04-07 15:02:19.269000-04:00,0 days 00:00:00.065749,0 days 00:00:00.001056,0 days 00:00:00.066805,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,14,4045ead4-8b3f-48fe-89d2-3d46c0a8e662,819d6952-d2ea-4787-b12c-6e11f4e90570,v1.4.4,Jumbo,QUERY,0,781,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6952-fad9-4c8f-84e6-010db8d11cf1,"
+                SELECT COUNT(*) AS total_rows FROM qa.promotion_review_decisions
+                ",2026-04-07 15:02:19.097000-04:00,2026-04-07 15:02:19.158000-04:00,0 days 00:00:00.059101,0 days 00:00:00.001740,0 days 00:00:00.060842,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,13,4045ead4-8b3f-48fe-89d2-3d46c0a8e662,819d6952-d2ea-4787-b12c-6e11f4e90570,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6952-fa71-4109-9697-6e34d03b6d43,"
+                SELECT verification_status, COUNT(*) AS n
+                FROM qa.manual_review_queue
+                GROUP BY 1
+                ORDER BY n DESC
+                ",2026-04-07 15:02:18.993000-04:00,2026-04-07 15:02:19.068000-04:00,0 days 00:00:00.069555,0 days 00:00:00.005864,0 days 00:00:00.075419,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,12,4045ead4-8b3f-48fe-89d2-3d46c0a8e662,819d6952-d2ea-4787-b12c-6e11f4e90570,v1.4.4,Jumbo,QUERY,0,162,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6952-f9f7-488e-b0a8-06bab5c9210b,"
+                SELECT
+                  COUNT(*) AS total_rows,
+                  COUNT(*) FILTER (WHERE verification_status IS NULL) AS pending_null_status,
+                  COUNT(*) FILTER (WHERE verification_status IS NOT NULL) AS reviewed_non_null_status
+                FROM qa.manual_review_queue
+                ",2026-04-07 15:02:18.871000-04:00,2026-04-07 15:02:18.964000-04:00,0 days 00:00:00.083900,0 days 00:00:00.008764,0 days 00:00:00.092664,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,11,4045ead4-8b3f-48fe-89d2-3d46c0a8e662,819d6952-d2ea-4787-b12c-6e11f4e90570,v1.4.4,Jumbo,QUERY,0,76,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6952-f96c-4a07-99b2-ed39e866cdb9,"
+                SELECT *
+                FROM qa.release_manifest
+                ORDER BY created_at DESC NULLS LAST
+                LIMIT 20
+                ",2026-04-07 15:02:18.733000-04:00,2026-04-07 15:02:18.845000-04:00,0 days 00:00:00.108666,0 days 00:00:00.003874,0 days 00:00:00.112540,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,10,4045ead4-8b3f-48fe-89d2-3d46c0a8e662,819d6952-d2ea-4787-b12c-6e11f4e90570,v1.4.4,Jumbo,QUERY,0,884,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6952-e00e-48f3-9cd2-3b39b291aacc,SELECT * FROM md_information_schema.database_snapshots ORDER BY 1,2026-04-07 15:02:12.238000-04:00,2026-04-07 15:02:18.540000-04:00,0 days 00:00:06.290814,0 days 00:00:00.010701,0 days 00:00:06.301515,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,7,4045ead4-8b3f-48fe-89d2-3d46c0a8e662,819d6952-d2ea-4787-b12c-6e11f4e90570,v1.4.4,Jumbo,QUERY,0,6461,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6952-dfc2-4ff4-a13d-2d4eb0c455c0,SELECT * FROM md_information_schema.databases ORDER BY 1,2026-04-07 15:02:12.162000-04:00,2026-04-07 15:02:12.172000-04:00,0 days 00:00:00.009089,0 days 00:00:00.001272,0 days 00:00:00.010361,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,6,4045ead4-8b3f-48fe-89d2-3d46c0a8e662,819d6952-d2ea-4787-b12c-6e11f4e90570,v1.4.4,Jumbo,QUERY,0,480,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1902
+819d6952-a664-4dc9-add1-c07d682b8bbb,"
+                        SELECT COUNT(*)
+                        FROM qa.specimen_merge_review_queue_v1
+                        WHERE LOWER(COALESCE(review_status, '')) IN ('open', 'pending', '')
+                        ",2026-04-07 15:01:57.477000-04:00,2026-04-07 15:01:57.538000-04:00,0 days 00:00:00.057045,0 days 00:00:00.004407,0 days 00:00:00.061452,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,161,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-a607-4e2b-9c21-85fb0b526f4b,"
+                    SELECT COALESCE(SUM(n_rows), 0)
+                    FROM qa.v_diag_specimen_review_burden_v1
+                    WHERE queue_key = 'specimen_genomic_link_review'
+                      AND LOWER(COALESCE(review_status, '')) IN ('open', 'pending', '')
+                    ",2026-04-07 15:01:57.383000-04:00,2026-04-07 15:01:57.445000-04:00,0 days 00:00:00.060161,0 days 00:00:00.001947,0 days 00:00:00.062109,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,160,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,53,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-a528-4e79-bf17-d4c4e1a9f60c,"SELECT COUNT(*) FILTER (WHERE TRIM(COALESCE(identity_build_run_id, '')) = '') FROM main.specimen_tumor_focus_v1",2026-04-07 15:01:57.161000-04:00,2026-04-07 15:01:57.354000-04:00,0 days 00:00:00.188637,0 days 00:00:00.004482,0 days 00:00:00.193119,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,159,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-a481-407f-9ff0-546a2a4a1ef9,SELECT n_high_tier_null_specimen FROM qa.v_diag_specimen_provenance_genomic_v1,2026-04-07 15:01:56.993000-04:00,2026-04-07 15:01:57.137000-04:00,0 days 00:00:00.133324,0 days 00:00:00.009960,0 days 00:00:00.143284,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,158,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-a43c-4dfc-a497-6b121c8bc5a3,SELECT n_missing_identity_run FROM qa.v_diag_specimen_provenance_master_v1,2026-04-07 15:01:56.924000-04:00,2026-04-07 15:01:56.963000-04:00,0 days 00:00:00.036042,0 days 00:00:00.002230,0 days 00:00:00.038272,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,157,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-a2a4-4bf2-a988-f5aa28a28507,SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_broken_refs_v1,2026-04-07 15:01:56.517000-04:00,2026-04-07 15:01:56.899000-04:00,0 days 00:00:00.372919,0 days 00:00:00.009472,0 days 00:00:00.382391,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,156,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-a14d-45e1-864e-321c7df67a53,SELECT COUNT(*) FROM main.specimen_genomic_assay_v1 g LEFT JOIN main.specimen_tumor_focus_v1 f ON g.specimen_focus_id = f.specimen_focus_id WHERE g.specimen_focus_id IS NOT NULL AND f.specimen_focus_id IS NULL,2026-04-07 15:01:56.173000-04:00,2026-04-07 15:01:56.485000-04:00,0 days 00:00:00.302803,0 days 00:00:00.008659,0 days 00:00:00.311462,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,155,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-a0bd-491e-aea0-1ffebe6d52e3,SELECT COUNT(*) FROM qa.v_diag_specimen_orphan_genomic_master_v1,2026-04-07 15:01:56.029000-04:00,2026-04-07 15:01:56.148000-04:00,0 days 00:00:00.108649,0 days 00:00:00.010368,0 days 00:00:00.119017,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,154,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-9fd3-4f11-9d1b-50ad2f26b223,SELECT COUNT(*) FROM main.specimen_tumor_focus_v1 f LEFT JOIN main.specimen_master_v1 m ON f.specimen_id = m.specimen_id WHERE m.specimen_id IS NULL,2026-04-07 15:01:55.796000-04:00,2026-04-07 15:01:56.003000-04:00,0 days 00:00:00.198579,0 days 00:00:00.008891,0 days 00:00:00.207470,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,153,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-9eff-423d-97cc-c07b871f5b65,SELECT COUNT(*) FROM ( SELECT focus_fingerprint_sha256 FROM main.specimen_tumor_focus_v1  GROUP BY 1 HAVING COUNT(*) > 1) _t,2026-04-07 15:01:55.583000-04:00,2026-04-07 15:01:55.769000-04:00,0 days 00:00:00.180445,0 days 00:00:00.005428,0 days 00:00:00.185872,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,152,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-9ea2-43b9-9dd1-283cc29a1c4a,SELECT COUNT(*) FROM qa.v_diag_specimen_duplicate_master_fp_v1,2026-04-07 15:01:55.490000-04:00,2026-04-07 15:01:55.557000-04:00,0 days 00:00:00.061300,0 days 00:00:00.006056,0 days 00:00:00.067356,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,151,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-9e4c-40cd-8e6e-c979e284721b,"SELECT 1 FROM ""qa"".""v_diag_specimen_review_burden_v1"" LIMIT 1",2026-04-07 15:01:55.404000-04:00,2026-04-07 15:01:55.466000-04:00,0 days 00:00:00.057609,0 days 00:00:00.004136,0 days 00:00:00.061744,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,150,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,48,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-9df6-440b-ae35-d40efc73a55d,"SELECT 1 FROM ""qa"".""v_diag_specimen_provenance_genomic_v1"" LIMIT 1",2026-04-07 15:01:55.318000-04:00,2026-04-07 15:01:55.380000-04:00,0 days 00:00:00.057175,0 days 00:00:00.004623,0 days 00:00:00.061798,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,149,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,48,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-9db5-4185-9552-0b681616abd8,"SELECT 1 FROM ""qa"".""v_diag_specimen_provenance_master_v1"" LIMIT 1",2026-04-07 15:01:55.254000-04:00,2026-04-07 15:01:55.292000-04:00,0 days 00:00:00.035684,0 days 00:00:00.002997,0 days 00:00:00.038681,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,148,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,48,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-9965-48d8-bad0-ed96edfd1833,"SELECT 1 FROM ""qa"".""v_diag_specimen_fhir_broken_refs_v1"" LIMIT 1",2026-04-07 15:01:54.149000-04:00,2026-04-07 15:01:55.226000-04:00,0 days 00:00:01.069714,0 days 00:00:00.007437,0 days 00:00:01.077151,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,147,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,0,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-9824-4d65-aed6-2667a1c03d43,"SELECT 1 FROM ""qa"".""v_diag_specimen_orphan_genomic_master_v1"" LIMIT 1",2026-04-07 15:01:53.828000-04:00,2026-04-07 15:01:54.117000-04:00,0 days 00:00:00.286266,0 days 00:00:00.002153,0 days 00:00:00.288419,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,146,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,0,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-97e4-49f8-97af-e83489ed9c7e,"SELECT 1 FROM ""qa"".""v_diag_specimen_duplicate_master_fp_v1"" LIMIT 1",2026-04-07 15:01:53.764000-04:00,2026-04-07 15:01:53.800000-04:00,0 days 00:00:00.034448,0 days 00:00:00.001905,0 days 00:00:00.036353,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,145,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,0,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-978d-45f3-95bb-518b0009cc87,SELECT COUNT(*) FROM qa.val_specimen_genomic_binding_v1 WHERE UPPER(status) = 'FAIL',2026-04-07 15:01:53.678000-04:00,2026-04-07 15:01:53.738000-04:00,0 days 00:00:00.054838,0 days 00:00:00.005800,0 days 00:00:00.060638,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,144,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-96f0-410a-bf6f-b6fa5bdae1c3,"SELECT 1 FROM ""qa"".""val_specimen_genomic_binding_v1"" LIMIT 1",2026-04-07 15:01:53.520000-04:00,2026-04-07 15:01:53.653000-04:00,0 days 00:00:00.130477,0 days 00:00:00.002855,0 days 00:00:00.133332,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,143,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,48,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-969b-4ddd-acc0-b21a28651a6d,SELECT COUNT(*) FROM qa.val_specimen_contract_v1 WHERE UPPER(status) = 'FAIL',2026-04-07 15:01:53.435000-04:00,2026-04-07 15:01:53.494000-04:00,0 days 00:00:00.054744,0 days 00:00:00.004553,0 days 00:00:00.059298,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,142,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-95ee-4e05-9daf-dc033aaba7ba,"SELECT 1 FROM ""qa"".""val_specimen_contract_v1"" LIMIT 1",2026-04-07 15:01:53.263000-04:00,2026-04-07 15:01:53.409000-04:00,0 days 00:00:00.135022,0 days 00:00:00.011125,0 days 00:00:00.146147,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,141,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,48,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-94ee-4946-8eed-9a354b3033a5,SELECT COUNT(*) = COUNT(DISTINCT specimen_fingerprint_sha256) FROM main.specimen_master_v1,2026-04-07 15:01:53.006000-04:00,2026-04-07 15:01:53.237000-04:00,0 days 00:00:00.221812,0 days 00:00:00.009082,0 days 00:00:00.230895,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,140,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,45,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-946f-4942-93c6-f1e6621cf344,"SELECT 1 FROM main.""specimen_master_v1"" LIMIT 1",2026-04-07 15:01:52.879000-04:00,2026-04-07 15:01:52.980000-04:00,0 days 00:00:00.090715,0 days 00:00:00.010374,0 days 00:00:00.101089,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,139,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,48,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-940d-4bbf-9e5f-7f4f1ad9c65d,"SELECT 1 FROM main.""fhir_bundle_specimen_export_v1"" LIMIT 1",2026-04-07 15:01:52.781000-04:00,2026-04-07 15:01:52.849000-04:00,0 days 00:00:00.060717,0 days 00:00:00.006999,0 days 00:00:00.067716,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,138,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,48,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-92ed-47bb-aaca-3df7f68b8413,"SELECT 1 FROM main.""fhir_episode_of_care_v1"" LIMIT 1",2026-04-07 15:01:52.493000-04:00,2026-04-07 15:01:52.731000-04:00,0 days 00:00:00.225094,0 days 00:00:00.012661,0 days 00:00:00.237755,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,137,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,48,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-91d1-4595-9d7c-e9e5377cdefc,"SELECT 1 FROM main.""fhir_encounter_v1"" LIMIT 1",2026-04-07 15:01:52.210000-04:00,2026-04-07 15:01:52.468000-04:00,0 days 00:00:00.248292,0 days 00:00:00.009743,0 days 00:00:00.258035,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,136,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,48,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-9098-4bde-a8b7-ab82466a9b81,"SELECT 1 FROM main.""fhir_procedure_collection_v1"" LIMIT 1",2026-04-07 15:01:51.896000-04:00,2026-04-07 15:01:52.174000-04:00,0 days 00:00:00.265658,0 days 00:00:00.012700,0 days 00:00:00.278358,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,135,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,48,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-8f73-4748-8ba7-e2a304ce0833,"SELECT 1 FROM main.""fhir_specimen_v1"" LIMIT 1",2026-04-07 15:01:51.603000-04:00,2026-04-07 15:01:51.870000-04:00,0 days 00:00:00.260069,0 days 00:00:00.006358,0 days 00:00:00.266427,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,134,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,48,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-8e96-4984-8714-e8d192bc7c35,"SELECT 1 FROM main.""fhir_patient_deid_map_v1"" LIMIT 1",2026-04-07 15:01:51.382000-04:00,2026-04-07 15:01:51.577000-04:00,0 days 00:00:00.189151,0 days 00:00:00.006089,0 days 00:00:00.195240,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,133,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,48,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-8d77-428a-bdd9-a9b247924532,"SELECT 1 FROM main.""specimen_source_xref_v1"" LIMIT 1",2026-04-07 15:01:51.095000-04:00,2026-04-07 15:01:51.359000-04:00,0 days 00:00:00.251440,0 days 00:00:00.012525,0 days 00:00:00.263966,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,132,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,48,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-8d24-437b-b47f-15d90696113a,"SELECT 1 FROM main.""specimen_genomic_assay_v1"" LIMIT 1",2026-04-07 15:01:51.013000-04:00,2026-04-07 15:01:51.073000-04:00,0 days 00:00:00.054952,0 days 00:00:00.005580,0 days 00:00:00.060531,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,131,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,48,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-8bfb-4783-b85a-a30ea2db1159,"SELECT 1 FROM main.""specimen_tumor_focus_v1"" LIMIT 1",2026-04-07 15:01:50.715000-04:00,2026-04-07 15:01:50.991000-04:00,0 days 00:00:00.273226,0 days 00:00:00.002777,0 days 00:00:00.276003,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,130,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,48,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-8b95-4a9a-942d-2c804e88ef29,"SELECT 1 FROM main.""specimen_master_v1"" LIMIT 1",2026-04-07 15:01:50.614000-04:00,2026-04-07 15:01:50.690000-04:00,0 days 00:00:00.069380,0 days 00:00:00.007118,0 days 00:00:00.076498,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,129,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,48,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-8aa5-4d08-9b17-4d22a1e84d4e,"SELECT 1 FROM main.""synoptic_tumor_long_v1"" LIMIT 1",2026-04-07 15:01:50.373000-04:00,2026-04-07 15:01:50.589000-04:00,0 days 00:00:00.206838,0 days 00:00:00.008850,0 days 00:00:00.215688,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,128,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,48,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-8a1d-4436-b420-488c36c50753,SELECT COUNT(*) FROM main.molecular_results WHERE superseded_by_molecular_result_id IS NULL,2026-04-07 15:01:50.237000-04:00,2026-04-07 15:01:50.342000-04:00,0 days 00:00:00.102695,0 days 00:00:00.002111,0 days 00:00:00.104806,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,127,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-899f-4872-805d-827198350085,SELECT COUNT(*) FROM main.molecular_results,2026-04-07 15:01:50.111000-04:00,2026-04-07 15:01:50.172000-04:00,0 days 00:00:00.056521,0 days 00:00:00.004605,0 days 00:00:00.061127,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,126,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-8949-4ef2-8a8b-0574ab0771d7,"SELECT 1 FROM main.""molecular_results"" LIMIT 1",2026-04-07 15:01:50.025000-04:00,2026-04-07 15:01:50.085000-04:00,0 days 00:00:00.055567,0 days 00:00:00.004793,0 days 00:00:00.060360,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,125,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,0,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-8789-417f-bc28-df9ce1f579d8,"
+        SELECT
+            COUNT(*) AS n,
+            COUNT(*) FILTER (WHERE research_id IS NULL) AS n_rid,
+            COUNT(*) FILTER (
+                WHERE release_tag IS NULL
+                OR trim(cast(release_tag AS VARCHAR)) = ''
+            ) AS n_tag
+        FROM main.master_patient_rollup_verified_v1
+        ",2026-04-07 15:01:49.577000-04:00,2026-04-07 15:01:49.999000-04:00,0 days 00:00:00.409811,0 days 00:00:00.011607,0 days 00:00:00.421418,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,124,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,66,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-85cb-473c-9e52-a7018227a7a9,SELECT COUNT(*) FROM main.master_patient_rollup_verified_v1,2026-04-07 15:01:49.131000-04:00,2026-04-07 15:01:49.496000-04:00,0 days 00:00:00.350639,0 days 00:00:00.014058,0 days 00:00:00.364697,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,122,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-8390-4f89-9971-5bffe8377cef,"
+            SELECT
+                COUNT(*) AS n,
+                COUNT(*) FILTER (WHERE research_id IS NULL) AS n_rid,
+                COUNT(*) FILTER (
+                    WHERE source_domain IS NULL
+                    OR trim(cast(source_domain AS VARCHAR)) = ''
+                ) AS n_dom,
+                COUNT(*) FILTER (WHERE ""source_object_id"" IS NULL) AS n_sid,
+                COUNT(*) FILTER (
+                    WHERE extraction_run_id IS NULL
+                    OR trim(cast(extraction_run_id AS VARCHAR)) = ''
+                ) AS n_run,
+                COUNT(*) FILTER (
+                    WHERE release_tag IS NULL
+                    OR trim(cast(release_tag AS VARCHAR)) = ''
+                ) AS n_tag
+            FROM main.master_source_lineage_v1
+            ",2026-04-07 15:01:48.560000-04:00,2026-04-07 15:01:49.071000-04:00,0 days 00:00:00.505341,0 days 00:00:00.005293,0 days 00:00:00.510634,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,121,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,71,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-8180-46d5-ac47-b2065d36c16f,SELECT COUNT(*) FROM main.master_source_lineage_v1,2026-04-07 15:01:48.032000-04:00,2026-04-07 15:01:48.476000-04:00,0 days 00:00:00.430340,0 days 00:00:00.013413,0 days 00:00:00.443754,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,119,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-7fb7-4338-8058-87ba1ac08b1f,"
+            SELECT
+                COUNT(*) AS n,
+                COUNT(*) FILTER (WHERE research_id IS NULL) AS n_rid,
+                COUNT(*) FILTER (
+                    WHERE source_domain IS NULL
+                    OR trim(cast(source_domain AS VARCHAR)) = ''
+                ) AS n_dom,
+                COUNT(*) FILTER (WHERE ""source_object_id"" IS NULL) AS n_sid,
+                COUNT(*) FILTER (
+                    WHERE extraction_run_id IS NULL
+                    OR trim(cast(extraction_run_id AS VARCHAR)) = ''
+                ) AS n_run,
+                COUNT(*) FILTER (
+                    WHERE release_tag IS NULL
+                    OR trim(cast(release_tag AS VARCHAR)) = ''
+                ) AS n_tag
+            FROM main.master_fact_long_verified_v1
+            ",2026-04-07 15:01:47.576000-04:00,2026-04-07 15:01:47.991000-04:00,0 days 00:00:00.402387,0 days 00:00:00.013093,0 days 00:00:00.415480,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,118,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,71,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-7dc6-474c-9b5a-7d55a021d0d1,SELECT COUNT(*) FROM main.master_fact_long_verified_v1,2026-04-07 15:01:47.078000-04:00,2026-04-07 15:01:47.492000-04:00,0 days 00:00:00.408738,0 days 00:00:00.005072,0 days 00:00:00.413810,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,116,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-7d10-4eec-8083-28f070e6e4bb,"
+            SELECT
+                COUNT(*) AS total,
+                COUNT(*) FILTER (
+                    WHERE extraction_run_id IS NULL
+                    OR trim(cast(extraction_run_id AS VARCHAR)) = ''
+                ) AS blank
+            FROM main.canonical_extracted_fact_long_v2
+            ",2026-04-07 15:01:46.896000-04:00,2026-04-07 15:01:47.041000-04:00,0 days 00:00:00.139413,0 days 00:00:00.006043,0 days 00:00:00.145456,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,115,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,68,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-7cb8-4735-b054-90f2b9b170ec,"SELECT release_tag, created_at FROM qa.release_manifest ORDER BY TRY_CAST(release_tag AS BIGINT) DESC NULLS LAST, created_at DESC LIMIT 1",2026-04-07 15:01:46.809000-04:00,2026-04-07 15:01:46.870000-04:00,0 days 00:00:00.057205,0 days 00:00:00.004548,0 days 00:00:00.061753,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,114,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,71,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-7c61-40bb-affc-9c33ec27652a,SELECT COUNT(*) FROM qa.release_manifest,2026-04-07 15:01:46.721000-04:00,2026-04-07 15:01:46.783000-04:00,0 days 00:00:00.056857,0 days 00:00:00.004606,0 days 00:00:00.061463,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,113,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-7bda-4574-a500-14ed7cdefdca,SELECT COUNT(*) FROM v2_stage.load_inventory WHERE NOT row_match,2026-04-07 15:01:46.587000-04:00,2026-04-07 15:01:46.648000-04:00,0 days 00:00:00.057956,0 days 00:00:00.003453,0 days 00:00:00.061409,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,111,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-7b4e-4083-8173-dfc846ab35cb,SELECT COUNT(*) FROM v2_stage.load_inventory,2026-04-07 15:01:46.447000-04:00,2026-04-07 15:01:46.558000-04:00,0 days 00:00:00.101082,0 days 00:00:00.010535,0 days 00:00:00.111618,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,110,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-7ae2-453a-91bf-5ba4bf36e3ea,SELECT COUNT(*) FROM qa.manual_review_queue_summary_v,2026-04-07 15:01:46.338000-04:00,2026-04-07 15:01:46.422000-04:00,0 days 00:00:00.076284,0 days 00:00:00.007231,0 days 00:00:00.083515,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,109,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-79e5-40c0-adc0-5c5974619f0f,SELECT COUNT(*) FROM qa.date_provenance_completeness_v,2026-04-07 15:01:46.085000-04:00,2026-04-07 15:01:46.311000-04:00,0 days 00:00:00.219255,0 days 00:00:00.006607,0 days 00:00:00.225862,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,108,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-788a-434d-8f1d-6e2dff0125b7,SELECT COUNT(*) FROM qa.domain_validation_summary_v,2026-04-07 15:01:45.738000-04:00,2026-04-07 15:01:46.058000-04:00,0 days 00:00:00.311333,0 days 00:00:00.008083,0 days 00:00:00.319416,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,107,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-77fd-496c-b8c8-8f9e9361224b,SELECT COUNT(*) FROM qa.promotion_scorecard_summary_v,2026-04-07 15:01:45.597000-04:00,2026-04-07 15:01:45.713000-04:00,0 days 00:00:00.107501,0 days 00:00:00.008864,0 days 00:00:00.116365,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,106,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-7789-49e9-9995-dd5780867c28,SELECT COUNT(*) FROM qa.manual_review_queue WHERE verification_status IS NOT NULL,2026-04-07 15:01:45.482000-04:00,2026-04-07 15:01:45.569000-04:00,0 days 00:00:00.079858,0 days 00:00:00.007652,0 days 00:00:00.087510,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,105,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-76e1-4145-8bdb-118bac7fc1da,SELECT COUNT(*) FROM qa.manual_review_queue,2026-04-07 15:01:45.313000-04:00,2026-04-07 15:01:45.452000-04:00,0 days 00:00:00.129033,0 days 00:00:00.009537,0 days 00:00:00.138572,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,104,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-7621-486d-9dec-86e5c2b2efb4,"
+                SELECT COALESCE(entity_type, 'UNKNOWN') AS domain,
+                       COUNT(*) AS n_rows,
+                       COUNT(DISTINCT research_id) AS n_patients
+                FROM main.canonical_fact_quarantine_v2
+                GROUP BY 1
+                ORDER BY 2 DESC
+            ",2026-04-07 15:01:45.121000-04:00,2026-04-07 15:01:45.285000-04:00,0 days 00:00:00.155937,0 days 00:00:00.007589,0 days 00:00:00.163526,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,103,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,1163,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-7476-4118-9852-33de5c5fa6dd,"
+                SELECT COALESCE(entity_type, 'UNKNOWN') AS domain,
+                       COUNT(*) AS n_rows,
+                       COUNT(DISTINCT research_id) AS n_patients
+                FROM main.canonical_extracted_fact_long_v2
+                GROUP BY 1
+                ORDER BY 2 DESC
+            ",2026-04-07 15:01:44.694000-04:00,2026-04-07 15:01:45.090000-04:00,0 days 00:00:00.384434,0 days 00:00:00.011124,0 days 00:00:00.395557,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,102,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,8412,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-6e8a-42ad-9128-ab959d18dde4,SELECT COUNT(*) FROM main.note_extraction_runs,2026-04-07 15:01:43.178000-04:00,2026-04-07 15:01:43.242000-04:00,0 days 00:00:00.058335,0 days 00:00:00.005697,0 days 00:00:00.064031,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,55,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-6d83-4fdb-9bae-6df8fe902c64,SELECT COUNT(*) FROM main.canonical_fact_quarantine_v2,2026-04-07 15:01:42.915000-04:00,2026-04-07 15:01:43.144000-04:00,0 days 00:00:00.219973,0 days 00:00:00.009191,0 days 00:00:00.229163,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,54,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-6c5a-4a17-b6a3-e844457a5c1c,SELECT COUNT(*) FROM main.canonical_extracted_fact_long_v2,2026-04-07 15:01:42.618000-04:00,2026-04-07 15:01:42.882000-04:00,0 days 00:00:00.253873,0 days 00:00:00.009968,0 days 00:00:00.263841,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,53,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-6a5d-46da-82f6-0649ba2b5117,SELECT COUNT(*) FROM main.note_entities_llm_patient_decision_adherence,2026-04-07 15:01:42.109000-04:00,2026-04-07 15:01:42.454000-04:00,0 days 00:00:00.334818,0 days 00:00:00.009914,0 days 00:00:00.344732,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,52,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-6918-4652-92cf-13831507e645,SELECT COUNT(*) FROM v2_stage.note_entities_llm_patient_decision_adherence,2026-04-07 15:01:41.784000-04:00,2026-04-07 15:01:42.069000-04:00,0 days 00:00:00.276352,0 days 00:00:00.008657,0 days 00:00:00.285009,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,51,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-6771-489e-b693-54a667511f13,SELECT COUNT(*) FROM main.note_entities_llm_dynamic_risk_response,2026-04-07 15:01:41.362000-04:00,2026-04-07 15:01:41.734000-04:00,0 days 00:00:00.370298,0 days 00:00:00.001733,0 days 00:00:00.372031,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,50,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-6613-476a-a90b-349f97a18c3a,SELECT COUNT(*) FROM v2_stage.note_entities_llm_dynamic_risk_response,2026-04-07 15:01:41.011000-04:00,2026-04-07 15:01:41.336000-04:00,0 days 00:00:00.314403,0 days 00:00:00.010502,0 days 00:00:00.324905,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,49,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-646f-42ea-8ef3-c22977a806cc,SELECT COUNT(*) FROM main.note_entities_llm_frozen_section_detail,2026-04-07 15:01:40.591000-04:00,2026-04-07 15:01:40.968000-04:00,0 days 00:00:00.370139,0 days 00:00:00.007050,0 days 00:00:00.377190,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,48,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-637c-447a-b740-6d098465130e,SELECT COUNT(*) FROM v2_stage.note_entities_llm_frozen_section_detail,2026-04-07 15:01:40.348000-04:00,2026-04-07 15:01:40.564000-04:00,0 days 00:00:00.204345,0 days 00:00:00.010962,0 days 00:00:00.215307,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,47,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-61fc-41b1-a035-acd8fc99f2fb,SELECT COUNT(*) FROM main.note_entities_llm_airway_invasion,2026-04-07 15:01:39.964000-04:00,2026-04-07 15:01:40.307000-04:00,0 days 00:00:00.332337,0 days 00:00:00.010924,0 days 00:00:00.343261,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,46,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-60f8-4906-a33a-fe55857598fa,SELECT COUNT(*) FROM v2_stage.note_entities_llm_airway_invasion,2026-04-07 15:01:39.704000-04:00,2026-04-07 15:01:39.940000-04:00,0 days 00:00:00.233688,0 days 00:00:00.001713,0 days 00:00:00.235402,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,45,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-5f75-4b09-ba60-70ef1678dd89,SELECT COUNT(*) FROM main.note_entities_llm_vascular_invasion,2026-04-07 15:01:39.318000-04:00,2026-04-07 15:01:39.660000-04:00,0 days 00:00:00.331779,0 days 00:00:00.010650,0 days 00:00:00.342431,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,44,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-5e7a-4fbd-b240-da3e3e4e6a22,SELECT COUNT(*) FROM v2_stage.note_entities_llm_vascular_invasion,2026-04-07 15:01:39.066000-04:00,2026-04-07 15:01:39.292000-04:00,0 days 00:00:00.216329,0 days 00:00:00.010210,0 days 00:00:00.226539,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,43,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-5cc9-4f34-814a-b1c9be3c7fad,SELECT COUNT(*) FROM main.note_entities_llm_physical_exam,2026-04-07 15:01:38.634000-04:00,2026-04-07 15:01:39.020000-04:00,0 days 00:00:00.376546,0 days 00:00:00.009831,0 days 00:00:00.386377,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,42,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-5b8e-4634-8533-a15bcf83443e,SELECT COUNT(*) FROM v2_stage.note_entities_llm_physical_exam,2026-04-07 15:01:38.319000-04:00,2026-04-07 15:01:38.605000-04:00,0 days 00:00:00.275606,0 days 00:00:00.010919,0 days 00:00:00.286525,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,41,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-5a10-42c7-95e6-1d3377d92ac4,SELECT COUNT(*) FROM main.note_entities_llm_presenting_symptoms,2026-04-07 15:01:37.937000-04:00,2026-04-07 15:01:38.277000-04:00,0 days 00:00:00.330201,0 days 00:00:00.010034,0 days 00:00:00.340235,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,40,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
+819d6952-5941-4219-9d9b-5f064c0611d4,SELECT COUNT(*) FROM v2_stage.note_entities_llm_presenting_symptoms,2026-04-07 15:01:37.729000-04:00,2026-04-07 15:01:37.913000-04:00,0 days 00:00:00.172685,0 days 00:00:00.010672,0 days 00:00:00.183357,,,duckdb/v1.4.4(osx_arm64) python/3.14,logan_glosser,1,39,3561ce9e-3cd3-4a08-bd03-8db7f0e62391,819d6952-24be-48ee-bfe6-3ed84a4a8561,v1.4.4,Jumbo,QUERY,0,52,0,logan_glosser.rw,live_publication_signoff_reaudit_20260407_1901
