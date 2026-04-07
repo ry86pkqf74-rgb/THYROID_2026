@@ -27,6 +27,7 @@ Usage:
   .venv/bin/python scripts/103_fact_lineage_materialize.py
   .venv/bin/python scripts/103_fact_lineage_materialize.py --dry-run
   .venv/bin/python scripts/103_fact_lineage_materialize.py --md
+  .venv/bin/python scripts/103_fact_lineage_materialize.py --md --md-schema v2_stage
 """
 
 from __future__ import annotations
@@ -655,6 +656,13 @@ def main() -> None:
         "--md", action="store_true",
         help="Open DuckDB via MotherDuck when token/env is available",
     )
+    parser.add_argument(
+        "--md-schema",
+        default="main",
+        choices=("main", "v2_stage"),
+        help="Schema for --md table writes (default main). Use v2_stage to land canonical "
+        "facts + quarantine in staging only (no main promotion).",
+    )
     args = parser.parse_args()
 
     print("=" * 70)
@@ -885,27 +893,35 @@ def main() -> None:
         custom_user_agent=ua,
         motherduck_session_hint=hint,
     )
+    md_prefix = ""
+    if args.md and args.md_schema == "v2_stage":
+        con.execute("CREATE SCHEMA IF NOT EXISTS v2_stage")
+        md_prefix = "v2_stage."
+        print(f"  MotherDuck write target: {md_prefix.rstrip('.')} (staging)")
+
     for tbl, pq in [
         ("canonical_extracted_fact_long_v1", out_v1),
         ("canonical_fact_quarantine_v1", outq_v1),
         ("canonical_extracted_fact_long_v2", out_v2),
         ("canonical_fact_quarantine_v2", outq_v2),
     ]:
+        fq = f"{md_prefix}{tbl}"
         con.execute(
-            f"CREATE OR REPLACE TABLE {tbl} AS "
+            f"CREATE OR REPLACE TABLE {fq} AS "
             f"SELECT * FROM read_parquet('{pq}')"
         )
-        cnt = con.execute(f"SELECT COUNT(*) FROM {tbl}").fetchone()[0]
-        print(f"  DuckDB {tbl}: {cnt:,} rows")
+        cnt = con.execute(f"SELECT COUNT(*) FROM {fq}").fetchone()[0]
+        print(f"  DuckDB {fq}: {cnt:,} rows")
 
     runs_pq = PROCESSED / "note_extraction_runs.parquet"
     if runs_pq.exists():
+        rn_tbl = f"{md_prefix}note_extraction_runs"
         con.execute(
-            f"CREATE OR REPLACE TABLE note_extraction_runs AS "
+            f"CREATE OR REPLACE TABLE {rn_tbl} AS "
             f"SELECT * FROM read_parquet('{runs_pq}')"
         )
-        rn = con.execute("SELECT COUNT(*) FROM note_extraction_runs").fetchone()[0]
-        print(f"  DuckDB note_extraction_runs: {rn:,}")
+        rn = con.execute(f"SELECT COUNT(*) FROM {rn_tbl}").fetchone()[0]
+        print(f"  DuckDB {rn_tbl}: {rn:,}")
 
     con.close()
     print("=" * 70)
