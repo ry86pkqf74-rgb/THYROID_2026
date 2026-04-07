@@ -293,6 +293,8 @@ To add a new lab data source (e.g., a new hospital or lab panel):
 
 ## 8. Connection Reference
 
+**Requirement — read/write for operational paths:** Any flow that **writes** to MotherDuck or **attaches for promotion-style work** must authenticate with a **read/write** MotherDuck API token (`MOTHERDUCK_TOKEN` or `MD_SA_TOKEN`). That explicitly includes: **`116_md_stage_loader.py`** (attach + load into `v2_stage`), **promotion gate and `motherduck_promote.sql`**, **`103_fact_lineage_materialize.py`**, **`114_qa_schema_setup.py`**, **`115_release_snapshot.py`**, **`118_parquet_release_bundle.py`**, **`119_md_formalization_validate.py`** (especially `--release-mode`), and any script using `connect_rw()` / `connect_md_fail_closed()` with intent to mutate or gate canonical data. **Do not** configure CI or promotion jobs with only `MD_READ_SCALING_TOKEN` / `MOTHERDUCK_READ_SCALING_TOKEN`; those tokens are for **`connect_read_scaling()`** and read replicas only.
+
 All scripts must use `utils.md_connect`:
 
 ```python

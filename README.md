@@ -257,6 +257,8 @@ GitHub Actions runs the Ruff and Mypy commands above in the `ruff-and-mypy` job 
 
 MotherDuck holds **no raw PHI**; tokens authenticate the cloud DuckDB attach. Use env vars (not CLI flags) for secrets.
 
+**Read/write vs read-scaling:** Staging loaders (`116_md_stage_loader.py`), promotion gate (`112_*`), generated promote SQL, materializers (`103_*`), QA hydration (`114_*`), release snapshots (`115_*`), parquet bundle (`118_*`), and **release-mode validation** (`119_* --release-mode`) **must** use a **read/write** MotherDuck API token (`MOTHERDUCK_TOKEN` or `MD_SA_TOKEN`). A **read-scaling** dashboard token (`MD_READ_SCALING_TOKEN` / `MOTHERDUCK_READ_SCALING_TOKEN`) is **only** for `MotherDuckClient.connect_read_scaling()` / analyst read load; `connect_rw()` refuses environments where that is the only credential (see [`docs/motherduck_database_contract_v1.md`](docs/motherduck_database_contract_v1.md) §8).
+
 1. Copy [`.env.motherduck.example`](.env.motherduck.example) to `.env.motherduck` (gitignored) and set **`MOTHERDUCK_TOKEN`** (personal) or **`MD_SA_TOKEN`** (CI). Same keys may live in `.streamlit/secrets.toml`.
 2. Confirm a token resolves:  
    `.venv/bin/python -c "from motherduck_client import token_mode; m=token_mode(); print(m); assert m != 'none'"`
@@ -264,6 +266,37 @@ MotherDuck holds **no raw PHI**; tokens authenticate the cloud DuckDB attach. Us
    `.venv/bin/python scripts/smoke_test_md_connection.py --md`  
    or `make md-smoke`
 4. **Staging** for new v2 parquets is schema **`v2_stage`**; **`main`** is the promoted canonical surface after the gate and promotion steps (see [`docs/motherduck_v2_staging_runbook.md`](docs/motherduck_v2_staging_runbook.md), [`docs/motherduck_database_contract_v1.md`](docs/motherduck_database_contract_v1.md)).
+
+#### MotherDuck API token examples (env vars)
+
+Use real values from the MotherDuck dashboard (tokens typically start with `md_`). Resolution details: [`motherduck_client.py`](motherduck_client.py) module docstring and contract §8.
+
+**1) Personal read/write** — interactive development, ad-hoc SQL, notebooks when you are the human operator:
+
+```bash
+export MOTHERDUCK_TOKEN='md_…'   # read/write MotherDuck API token
+.venv/bin/python motherduck_client.py --env prod
+```
+
+**2) CI / service-account read/write** — GitHub Actions or automation; prefer this over personal tokens in CI:
+
+```bash
+export MD_SA_TOKEN='md_…'
+.venv/bin/python motherduck_client.py --env prod --sa
+```
+
+**3) Business read-scaling (dashboard read-only)** — scaled read replicas / analyst dashboards **only**; never for promotion or validators. `MD_READ_SCALING_TOKEN` wins if both scaling env vars are set. Optional session affinity:
+
+```bash
+export MD_READ_SCALING_TOKEN='md_…'
+export MD_READ_SCALING_SESSION_HINT='streamlit_prod_dashboard'
+.venv/bin/python -c "
+from motherduck_client import MotherDuckClient
+con = MotherDuckClient.for_env('prod').connect_read_scaling()
+print(con.execute('SELECT current_database()').fetchone())
+con.close()
+"
+```
 
 ## Data architecture
 

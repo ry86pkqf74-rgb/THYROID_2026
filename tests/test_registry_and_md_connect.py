@@ -251,6 +251,101 @@ class TestRegistryValidation:
 # MotherDuck connector
 # ═══════════════════════════════════════════════════════════════════════════════
 
+class TestMotherDuckReadScaling:
+    """Unit tests for read-scaling tokens and session hints (no live MotherDuck)."""
+
+    def test_get_read_scaling_token_prefers_md_read_scaling_token(
+        self, monkeypatch, tmp_path
+    ):
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setenv("MD_READ_SCALING_TOKEN", "md_primary")
+        monkeypatch.setenv("MOTHERDUCK_READ_SCALING_TOKEN", "md_alias_fallback")
+        from motherduck_client import get_read_scaling_token
+
+        assert get_read_scaling_token() == "md_primary"
+
+    def test_get_read_scaling_token_falls_back_to_motherduck_alias(
+        self, monkeypatch, tmp_path
+    ):
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.delenv("MD_READ_SCALING_TOKEN", raising=False)
+        monkeypatch.setenv("MOTHERDUCK_READ_SCALING_TOKEN", "md_alias_only")
+        from motherduck_client import get_read_scaling_token
+
+        assert get_read_scaling_token() == "md_alias_only"
+
+    def test_read_scaling_token_mode_prefers_primary_env_var(
+        self, monkeypatch, tmp_path
+    ):
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setenv("MD_READ_SCALING_TOKEN", "md_a")
+        monkeypatch.setenv("MOTHERDUCK_READ_SCALING_TOKEN", "md_b")
+        from motherduck_client import read_scaling_token_mode
+
+        assert read_scaling_token_mode() == "env:MD_READ_SCALING_TOKEN"
+
+    def test_connect_rw_refuses_read_scaling_only_environment(
+        self, monkeypatch, tmp_path
+    ):
+        monkeypatch.chdir(tmp_path)
+        for key in (
+            "MOTHERDUCK_TOKEN",
+            "motherduck_token",
+            "MD_SA_TOKEN",
+            "LOCAL_DB_PATH",
+            "USE_LOCAL_DUCKDB",
+        ):
+            monkeypatch.delenv(key, raising=False)
+        monkeypatch.setenv("MD_READ_SCALING_TOKEN", "md_read_scale_only")
+        from motherduck_client import MotherDuckClient, ReadScalingTokenForbiddenError
+
+        client = MotherDuckClient()
+        with pytest.raises(ReadScalingTokenForbiddenError, match="read-scaling"):
+            client.connect_rw()
+
+    def test_connect_read_scaling_uses_session_hint_precedence(
+        self, monkeypatch, tmp_path
+    ):
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.delenv("MOTHERDUCK_TOKEN", raising=False)
+        monkeypatch.delenv("MD_SA_TOKEN", raising=False)
+        monkeypatch.delenv("USE_LOCAL_DUCKDB", raising=False)
+        monkeypatch.setenv("MD_READ_SCALING_TOKEN", "md_rs")
+        monkeypatch.setenv("MD_READ_SCALING_SESSION_HINT", "env_rs_hint")
+        monkeypatch.setenv("MOTHERDUCK_SESSION_HINT", "generic_hint")
+
+        executed: list[str] = []
+
+        class FakeCon:
+            def execute(self, sql: str):
+                executed.append(sql)
+                return self
+
+            def close(self) -> None:
+                pass
+
+        monkeypatch.setattr(
+            "motherduck_client.duckdb.connect", lambda *_a, **_k: FakeCon()
+        )
+
+        from motherduck_client import MotherDuckClient, MotherDuckConfig
+
+        cfg = MotherDuckConfig(database="Thyroid 2026")
+        client = MotherDuckClient(cfg)
+        client.connect_read_scaling(session_hint="per_call_wins")
+        set_hints = [s for s in executed if "motherduck_session_hint" in s]
+        assert set_hints, f"expected SET motherduck_session_hint, got {executed}"
+        assert "per_call_wins" in set_hints[0]
+        assert "env_rs_hint" not in set_hints[0]
+
+        executed.clear()
+        client.connect_read_scaling()
+        set_hints2 = [s for s in executed if "motherduck_session_hint" in s]
+        assert set_hints2, executed
+        assert "env_rs_hint" in set_hints2[0]
+        assert "generic_hint" not in set_hints2[0]
+
+
 class TestMDConnect:
     def test_connect_local_file(self, tmp_path):
         from utils.md_connect import connect_md_or_file
