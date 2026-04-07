@@ -329,6 +329,50 @@ def check_pending_reviews(con: Any, final_release: bool) -> bool:
             return False
     except Exception as exc:
         print(f"  [WARN] Could not check qa.manual_review_queue: {exc}")
+
+    if not final_release:
+        return True
+
+    from utils.publication_governance import (
+        MRQ_SYNTHETIC_PLACEHOLDER_EXACT,
+        sql_count_mrq_synthetic_rows,
+        sql_count_promotion_decisions_missing_batch,
+    )
+
+    try:
+        n_syn = int(con.execute(sql_count_mrq_synthetic_rows()).fetchone()[0])
+        print(f"  [review queue] synthetic-placeholder rows={n_syn:,}")
+        if n_syn > 0:
+            print(
+                "  HALT: --final-release blocks publication-placeholder verification_status "
+                f"(e.g. {MRQ_SYNTHETIC_PLACEHOLDER_EXACT!r}). "
+                "See docs/publication_governance_gate.md."
+            )
+            return False
+    except Exception as exc:
+        print(f"  [WARN] Could not check synthetic MRQ placeholders: {exc}")
+
+    try:
+        tot = int(
+            con.execute("SELECT COUNT(*) FROM qa.promotion_review_decisions").fetchone()[0]
+        )
+        if tot == 0:
+            return True
+        n_bad = int(
+            con.execute(sql_count_promotion_decisions_missing_batch()).fetchone()[0]
+        )
+        print(
+            f"  [promotion_review_decisions] rows={tot:,} missing decision_batch_id={n_bad:,}"
+        )
+        if n_bad > 0:
+            print(
+                "  HALT: --final-release requires non-empty decision_batch_id on all "
+                "qa.promotion_review_decisions rows when that table is non-empty."
+            )
+            return False
+    except Exception as exc:
+        print(f"  [WARN] Could not check qa.promotion_review_decisions: {exc}")
+
     return True
 
 

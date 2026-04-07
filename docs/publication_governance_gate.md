@@ -23,7 +23,7 @@ Publication-mode checks reject rows whose `verification_status` matches any of t
 
 Legitimate reviewer outcomes such as `confirmed_correct`, `confirmed_incorrect`, or tier-policy `auto_accepted_*` values from **128** are **not** in this list.
 
-**Implementation:** `utils/publication_governance.py` (Python helpers + SQL fragments), `scripts/119_md_formalization_validate.py` CHECK **5b** (strict only), `scripts/126_final_master_release.py` CSV preflight when `--release-mode` hydrates MRQ.
+**Implementation:** `utils/publication_governance.py` (Python helpers + SQL fragments), `scripts/119_md_formalization_validate.py` CHECK **5b** (strict only), `scripts/126_final_master_release.py` CSV preflight when `--release-mode` hydrates MRQ, `scripts/124_md_live_release_audit.py` when `--final-release` is set.
 
 **Historical note:** CHECK 5 previously treated any non-NULL `verification_status` as “reviewed,” so automation placeholders could pass. CHECK 5b closes that gap for `--release-mode`.
 
@@ -31,7 +31,7 @@ Legitimate reviewer outcomes such as `confirmed_correct`, `confirmed_incorrect`,
 
 When `qa.promotion_review_decisions` has **at least one row**, release-mode validation **fails** if any row has NULL or blank `decision_batch_id`.
 
-**Implementation:** CHECK 5b in `119_md_formalization_validate.py`. **126** sets `decision_batch_id` when appending from CSV (`append_promotion_decisions`); operators should use `--decision-batch-id` or rely on the default (release date).
+**Implementation:** CHECK 5b in `119_md_formalization_validate.py`; same SQL in `124_md_live_release_audit.py --final-release`. **126** sets `decision_batch_id` when appending from CSV (`append_promotion_decisions`); operators should use `--decision-batch-id` or rely on the default (release date).
 
 ## Operator quick reference
 
