@@ -1,44 +1,74 @@
 # THYROID_2026 — Current Repo Status
 
-**As of:** 2026-03-13 (truth-sync pass)
-**Overall verdict:** Manuscript-ready (with scoped caveats) | Approaching dataset-mature | Extraction pipeline complete
-
-**Live MotherDuck vs checked-in artifacts:** Regenerate [`studies/CURRENT_MOTHERDUCK_REPO_STATE.md`](../studies/CURRENT_MOTHERDUCK_REPO_STATE.md) with `python scripts/144_md_repo_current_state_summary.py --md` (query-history attribution: `specimen_fhir_release_ops_v1`). Specimen/FHIR release QA: [`docs/specimen_fhir_contract_review.md`](specimen_fhir_contract_review.md).
+**As of:** 2026-04-07 (MotherDuck live rerun + evidence refresh; narrative synced April 2026)  
+**MotherDuck vs repo introspection:** [`studies/CURRENT_MOTHERDUCK_REPO_STATE.md`](../studies/CURRENT_MOTHERDUCK_REPO_STATE.md) — regenerate with `python scripts/144_md_repo_current_state_summary.py --md` (token via `.streamlit/secrets.toml` / env per [`motherduck_client.py`](../motherduck_client.py)).
 
 ---
 
-## What is verified
+## Top-level posture (exactly one formulation)
+
+**Technically passing but blocked by synthetic MRQ.**
+
+| Layer | Meaning | Evidence |
+|-------|---------|----------|
+| **Automation / validation** | `119 --release-mode` **PASS WITH WARN** (no FAIL on specimen/FHIR diagnostics in latest committed lineage audit; WARN on review burden) | [`studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md`](../studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md) |
+| **Governance / human review** | Manuscript sign-off **not** complete until MRQ + promotion posture reflects **human-reviewed** governance (not automation-only / synthetic-fill history) | [`studies/20260407_publication_signoff_live/final_verdict_memo.md`](../studies/20260407_publication_signoff_live/final_verdict_memo.md) |
+| **Source-limited enrichment backlog** | Operative NLP materialization, recurrence date sparsity, RAI dose ceiling, **residual** non-Tg lab edge cases — **not** “missing institutional lab wave” | [`studies/20260411_final_master_release/EVIDENCE_PACK.md`](../studies/20260411_final_master_release/EVIDENCE_PACK.md); March freeze docs below |
+
+**Not current:** “Blocked by synthetic MRQ **and** missing final lab wave” — the **`final_institutional_20260407`** ingest **closed** the wave-level blocker; cite **20260411** evidence for row counts and lab posture.
+
+**Not claimed:** “Final human-reviewed manuscript signoff complete.”
+
+---
+
+## What was verified (local DuckDB / manuscript freeze — March 13 baseline)
+
+> **Historical snapshot.** The table below is the **2026-03-13** truth-sync baseline (local `thyroid_master` / freeze package). It remains valid for **that artifact**; **MotherDuck cloud** promotion, MRQ histograms, and `119` checks evolved in **April 2026** — use the sections above + live audit folders for cloud narrative.
 
 | Dimension | Status | Evidence |
 |-----------|--------|----------|
-| Manuscript readiness | **VERIFIED** | Resolved layer populated; 7/7 readiness gates PASS |
+| Manuscript readiness | **VERIFIED** (freeze-era) | Resolved layer populated; 7/7 readiness gates PASS at freeze |
 | Source/date traceability | **MOSTLY VERIFIED** | `provenance_enriched_events_v1` + `lineage_audit_v1` deployed; 0 error-severity issues |
 | Extraction pipeline | **COMPLETE** | 13 phases, 11 engine versions, data quality 98/100 |
-| Manuscript metrics | **VERIFIED** | 11 metrics, 0 cross-source mismatches |
+| Manuscript metrics | **VERIFIED** | 11 metrics, 0 cross-source mismatches at freeze |
 | Database hardening | **VERIFIED** | 0 critical blocking, 0 row multiplication, 0 identity failures |
 | Complication refinement | **VERIFIED** | 7 entities refined (3.3% raw NLP precision → confirmed/probable tiers) |
 | Scoring systems | **VERIFIED** | AJCC8, ATA, MACIS, AGES, AMES all calculable for eligible patients |
 
-## What remains to backfill
+---
 
-These are propagation gaps, not extraction gaps. Some were resolved during
-the maturation/hardening pass; others remain as documented limitations.
+## What remains to backfill (freeze-era index; cloud may differ)
 
 | Gap | Status | Detail |
 |-----|--------|--------|
 | Operative NLP enrichment | **OPEN** — pipeline architecture gap | Extractor exists; COALESCE guards prevent UPDATE; 8 fields at 0% |
-| RAI dose | **PARTIALLY CLOSED** — 41% coverage | 371/1,857 episodes via `scripts/76_canonical_gap_closure.py` |
+| RAI dose | **PARTIALLY CLOSED** — ~41% coverage ceiling | Source-limited without NM feeds |
 | RAS flag | **CLOSED** — 325 episodes backfilled | Via `extracted_ras_patient_summary_v1` |
 | Linkage IDs | **CLOSED** — 6 tables propagated | Via `scripts/76_canonical_gap_closure.py` Phase D |
 | Imaging nodule master | **CLOSED** — 19,891 rows | `imaging_nodule_master_v1` populated via `scripts/75_dataset_maturation.py` |
 | Recurrence dates | **OPEN** — structural sparsity | 1,764 unresolved; prioritized review queue deployed |
 
-Items that **cannot** be resolved without new institutional data:
-- Structured PTH/calcium/TSH lab table
-- Nuclear medicine report text (0 notes in corpus)
-- IHC BRAF (VE1) pathology addendums (not in `clinical_notes_long`)
+Items that **cannot** be resolved without new institutional data (still true as **classes** of limitation):
 
-## Audit document index (March 13)
+- Nuclear medicine report text (0 notes in corpus — RAI dose ceiling)
+- IHC BRAF (VE1) addendums not in `clinical_notes_long`
+- Fine-grained non-Tg lab **temporal** truth where structured collection dates are absent
+
+---
+
+## Audit document index
+
+### April 2026 — MotherDuck / publication gate
+
+| Document | Path |
+|----------|------|
+| Live lineage + `119` (27-check) | [`studies/20260407_live_truth_and_lineage_contract_audit/`](../studies/20260407_live_truth_and_lineage_contract_audit/) |
+| Publication signoff memos | [`studies/20260407_publication_signoff_live/`](../studies/20260407_publication_signoff_live/) |
+| Final master evidence (20260411 tag) | [`studies/20260411_final_master_release/EVIDENCE_PACK.md`](../studies/20260411_final_master_release/EVIDENCE_PACK.md) |
+| Historical master snapshot (20260409) | [`studies/20260409_final_master_release/EVIDENCE_PACK.md`](../studies/20260409_final_master_release/EVIDENCE_PACK.md) — **superseded** for row counts by 20260411 |
+| Specimen/FHIR contract | [`docs/specimen_fhir_contract_review.md`](specimen_fhir_contract_review.md) |
+
+### March 13, 2026 — local freeze / verification
 
 | Document | Path |
 |----------|------|
@@ -53,6 +83,8 @@ Items that **cannot** be resolved without new institutional data:
 | H&P / discharge note audit | [`docs/hp_discharge_note_audit_20260313.md`](hp_discharge_note_audit_20260313.md) |
 | Imaging nodule materialization | [`docs/imaging_nodule_materialization_20260313.md`](imaging_nodule_materialization_20260313.md) |
 
+---
+
 ## Export bundles
 
 | Bundle | Path | Contents |
@@ -61,7 +93,9 @@ Items that **cannot** be resolved without new institutional data:
 | Hardening audit results | `exports/hardening_audit_20260313_0751/` | `check_results.json`, provenance coverage/gaps CSVs |
 | Manuscript reconciliation | `exports/manuscript_reconciliation_20260313_0708/` | Metric definitions, SQL registry, review queues, patient cohort |
 
-## Key tables on local DuckDB
+---
+
+## Key tables on local DuckDB (freeze-era snapshot)
 
 | Table | Rows | Role |
 |-------|------|------|

@@ -1,4 +1,6 @@
-# Truth-sync summary — 2026-04-07
+# Truth-sync summary — 2026-04-07 (checkpoint)
+
+> **Superseded narrative:** See repo-root [`truth_sync_summary.md`](../truth_sync_summary.md) for the **April 2026** single-headline reconciliation (**Technically passing but blocked by synthetic MRQ**) and the automation / governance / source-limited split.
 
 - **Live SSOT (automation + catalog lineage):** [`studies/20260407_live_truth_and_lineage_contract_audit/`](20260407_live_truth_and_lineage_contract_audit/) — latest committed **27-check** `119` under `119_release_validation/`.
 - **Governance / MRQ / lab memos:** [`studies/20260407_publication_signoff_live/`](20260407_publication_signoff_live/README.md) — dual-timestamp `119` notes (early BLOCKED vs later PASS+WARN).

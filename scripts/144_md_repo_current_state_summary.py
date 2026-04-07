@@ -93,6 +93,16 @@ def main() -> None:
         "> **Stale guard:** If **`Commit SHA`** below ≠ `git rev-parse HEAD` on your machine, treat "
         "**Live MotherDuck** bullets as **historical** until you re-run this generator with `--md`.",
         "",
+        "> **April 2026 repo posture (human-maintained, sync with README / `docs/REPO_STATUS.md`):** "
+        "**Technically passing but blocked by synthetic MRQ** — i.e. latest committed "
+        "`119 --release-mode` is **PASS WITH WARN** (see "
+        "`studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md`), "
+        "while **manuscript** sign-off is not complete until MRQ/promotion reflects **human-reviewed** governance "
+        "(not automation-only / `--synthetic-fill-mrq-verification` posture). The **final institutional non-Tg lab "
+        "wave** (`final_institutional_20260407`) is **ingested**; residual lab issues are **source-limited "
+        "enrichment**, not a missing-wave blocker. Operator snapshot: "
+        "`studies/20260411_final_master_release/EVIDENCE_PACK.md`.",
+        "",
         f"**Machine-generated:** {now}",
         f"**Commit SHA:** `{sha}`",
         "",

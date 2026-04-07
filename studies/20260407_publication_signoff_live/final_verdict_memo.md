@@ -2,7 +2,7 @@
 
 **Update (2026-04-07 UTC):** The **final institutional non-Tg lab wave** (`final_institutional_20260407`) was ingested via `scripts/127_analyst_institutional_lab_append.py`; see [`../20260407_institutional_lab_wave_closeout/`](../20260407_institutional_lab_wave_closeout/) and refreshed master evidence [`../20260411_final_master_release/EVIDENCE_PACK.md`](../20260411_final_master_release/EVIDENCE_PACK.md). The **lab-wave** manuscript caveat in the executive summary below is **superseded** for that deliverable; **MRQ / human sign-off** posture must still be verified on live MotherDuck for your promotion.
 
-**Supersession:** Specimen/FHIR **`119` outcome changed later the same day** — see [`../20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md`](../20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md) (**`25 PASS / 2 WARN / 0 FAIL`**, `broken_fhir_refs=0`). This memo’s **governance** blockers (synthetic MRQ, lab wave) are unchanged; **automation** wording below reflects the **earlier** in-folder `validation_report.md` snapshot.
+**Supersession:** Specimen/FHIR **`119` outcome changed later the same day** — see [`../20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md`](../20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md) (**`25 PASS / 2 WARN / 0 FAIL`**, `broken_fhir_refs=0`). **Lab-wave** blocker: **superseded** by `final_institutional_20260407` ingest (see banner above). **Governance** blocker (**MRQ / human sign-off**): still **active** — repo-wide headline remains **Technically passing but blocked by synthetic MRQ**. Executive summary below mixes **historical** capture language with later deltas; prefer the banner + [`../../docs/REPO_STATUS.md`](../../docs/REPO_STATUS.md) for the current trichotomy (automation vs governance vs source-limited).
 
 ## Executive summary
 
@@ -10,11 +10,13 @@
 
 **Live delta (2026-04-07 UTC operator run):** `final_institutional_20260407` is ingested; MRQ on production showed **no** synthetic placeholder slice in verification-status rollup (see closeout traceability memo). Reconcile promo decisions and MRQ counts against MotherDuck before manuscript language.
 
-## Exactly one verdict (plan trichotomy)
+## Exactly one verdict (April 2026, post–live rerun)
 
-**At memo capture: technically passing but blocked by human review + final lab wave.**
+**Technically passing but blocked by synthetic MRQ.**
 
-**Footnote (literal “technical pass” nuance):** For the **timestamped** report in [`validation_report.md`](validation_report.md), **full** `--release-mode` did **not** pass because of the specimen/FHIR **FAIL**. A **later** rerun (lineage audit folder) **passed** that check with **WARN** only. The historical label above reflected **synthetic MRQ + missing institutional chem panel**; **lab panel ingest is now closed** (see banner update). Continue to treat **WARN** / review burden and **MRQ / promotion** governance as blocking **manuscript** sign-off until you accept live MotherDuck posture.
+**Meaning:** **Automation** — later same-day `119 --release-mode` = **PASS WITH WARN** (lineage audit folder; specimen/FHIR diagnostics not FAIL). **Governance** — manuscript sign-off **not** complete until MRQ/promotion reflects **human-reviewed** posture; historical `--synthetic-fill-mrq-verification` / automation-only rows **do not** satisfy publication governance. **Lab wave** — **not** the current blocker; `final_institutional_20260407` is ingested (see banner + [`../20260411_final_master_release/EVIDENCE_PACK.md`](../20260411_final_master_release/EVIDENCE_PACK.md)).
+
+**Historical (memo capture-time trichotomy):** “Technically passing but blocked by human review + final lab wave” applied **before** lab ingest closed; preserved in executive summary for audit trail only.
 
 ## What would unlock branch C (high level)
 

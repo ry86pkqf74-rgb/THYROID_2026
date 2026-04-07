@@ -1,5 +1,7 @@
 # Final master release — manuscript readiness evidence
 
+> **Status: superseded operator snapshot.** Prefer [`../20260411_final_master_release/EVIDENCE_PACK.md`](../20260411_final_master_release/EVIDENCE_PACK.md) for **current** MotherDuck row counts, `release_20260411`, and post–lab-wave posture. **Repo headline:** **Technically passing but blocked by synthetic MRQ** — see [`../../docs/REPO_STATUS.md`](../../docs/REPO_STATUS.md).
+
 > **Evidence refresh (2026-04-07 UTC):** Prefer [`../20260411_final_master_release/EVIDENCE_PACK.md`](../20260411_final_master_release/EVIDENCE_PACK.md) for row counts and `release_20260411` after **`final_institutional_20260407`** lab ingest and non-synthetic MRQ validation (`119` **PASS**, WARN only on specimen-adjacent review burden). The table below is a **historical** capture.
 
 > **Supersession pointer:** Live MotherDuck reconciliation (2026-04-07) supersedes static row-count claims here for **governance**: [`studies/20260407_publication_signoff_live/final_verdict_memo.md`](../20260407_publication_signoff_live/final_verdict_memo.md). The synthetic MRQ warning below applied to the **20260409** point-in-time capture; live MotherDuck MRQ may differ — see **20260411** pack.

@@ -4,8 +4,10 @@
 
 > **Stale guard:** If **`Commit SHA`** below ≠ `git rev-parse HEAD` on your machine, treat **Live MotherDuck** bullets as **historical** until you re-run this generator with `--md`.
 
-**Machine-generated:** 2026-04-07T19:01:14.518098+00:00
-**Commit SHA:** `5f12da7eb7d22d13fe84327506a30190d41ab99d`
+> **April 2026 repo posture (human-maintained, sync with README / `docs/REPO_STATUS.md`):** **Technically passing but blocked by synthetic MRQ** — i.e. latest committed `119 --release-mode` is **PASS WITH WARN** (see `studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md`), while **manuscript** sign-off is not complete until MRQ/promotion reflects **human-reviewed** governance (not automation-only / `--synthetic-fill-mrq-verification` posture). The **final institutional non-Tg lab wave** (`final_institutional_20260407`) is **ingested**; residual lab issues are **source-limited enrichment**, not a missing-wave blocker. Operator snapshot: `studies/20260411_final_master_release/EVIDENCE_PACK.md`.
+
+**Machine-generated:** 2026-04-07T20:44:29.017031+00:00
+**Commit SHA:** `70b0137119c3cc50cbda95452537bf2fd7fc49f2`
 
 > Regenerate after promotion or specimen/FHIR deploy: `python scripts/144_md_repo_current_state_summary.py --md`
 
@@ -18,11 +20,11 @@ For dashboards or ad hoc read-after-snapshot review, use **only** `MD_READ_SCALI
 - **current_database():** `Thyroid 2026`
 - **specimen_master_v1:** 10,139 rows
 - **fhir_bundle_export:** 10,139 rows
-- **specimen_genomic_assay_v1:** 10,126 rows
+- **specimen_genomic_assay_v1:** 10,862 rows
 - **qa.release_manifest (latest 3):**
+  - tag `20260411` | sha `de13c33` | 2026-04-07 19:15:39.106720
   - tag `20260410` | sha `618086b` | 2026-04-07 16:22:53.465299
   - tag `20260407_tier` | sha `7793059` | 2026-04-07 15:25:17.363482
-  - tag `20260407_final2` | sha `4ad9052` | 2026-04-07 05:11:41.171561
 - **qa.manual_review_queue (NULL verification_status):** 0
 
 ## Checked-in release manifest (exports/)
