@@ -9,9 +9,9 @@
 | Phase | Status |
 |-------|--------|
 | V2 extraction | **Complete** — 31 parent domains (8 v1 + 23 v2), 7 sub-prompt domains, 6 concordance-audit stems |
-| MotherDuck structure | **Formalized** — v2_stage loaded (23 domains, parity verified), promoted to main, release_20260407 snapshot created |
+| MotherDuck structure | **Formalized** — v2_stage loaded (23 domains, parity verified), promoted to main, `release_20260406` + earlier snapshots present |
 | Repo consistency | **Hardened** — 0 unclaimed parquets, domain counts reconciled, release-mode validator deployed |
-| Final review queue | **Pending** — 5,622 items in `qa.manual_review_queue` (release-mode validation blocks until resolved) |
+| Final review queue | **Cleared for release 20260406** — tier bulk adjudication + 2-row discordant sign-off; `studies/md_live_release_20260406/MANUAL_QUEUE_RESOLUTION.md` |
 | Final lab pull | **Pending** — institutional lab extract not yet received |
 
 A final manuscript-readiness hardening pass on 2026-03-13 audited 578 local DuckDB
@@ -134,7 +134,7 @@ validation suite are all in place. The release-mode validator
 (`scripts/119_md_formalization_validate.py --release-mode`) enforces strict
 sign-off criteria including live MotherDuck attachment, `v2_stage.load_inventory`
 completeness, resolved review queue, and named release snapshot. Structural
-validation passes; release validation blocks on 5,622 pending review queue items.
+validation passes; release validation for tag `20260406` passes with zero pending `verification_status` rows (see `studies/md_live_release_20260406/validation_report_release_mode.md`).
 Domain inventory is fully reconciled (0 unclaimed parquets, 31 parent domains).
 
 See [`docs/FINAL_REPO_STATUS_20260313.md`](docs/FINAL_REPO_STATUS_20260313.md) for the
