@@ -60,3 +60,17 @@ See `_MANUAL_REVIEW_PREDICATE` in `utils/canonical_nodule_linkage.py`. In summar
 | `manual_review_queue.*` | Policy-triggered review contexts (JSON, no note text) |
 | `discordance_summary.*` | Aggregate discordance + NIFTP row counts |
 | `linkage_qc_summary.*` | Raw table / v3 yields |
+
+## MotherDuck VIEW (optional)
+
+Analysts may query ``main.canonical_nodule_linkage_study_v1`` when materialized on a catalog that
+contains all prerequisite tables (prod, or dev/qa after a full refresh from prod). Materialization
+is **CREATE OR REPLACE VIEW** only (no overwrite of base extraction tables):
+
+```bash
+.venv/bin/python scripts/149_md_canonical_nodule_linkage_study.py --md --md-env prod \\
+  --materialize-view --confirm-prod-view
+```
+
+Sandbox databases must include v3 linkage tables; otherwise materialization fails fast until
+``scripts/130_md_env_bootstrap.py`` (or equivalent) refreshes the clone.

@@ -1,15 +1,20 @@
 #!/usr/bin/env python3
 """149_md_canonical_nodule_linkage_study.py — TI-RADS / FNA / molecular / pathology linkage study.
 
-Read-only against MotherDuck (or local DuckDB): inventories candidate tables, runs the
-deterministic linkage pipeline in :mod:`utils.canonical_nodule_linkage`, and writes
+Read-only against MotherDuck prod (or local DuckDB) by default: inventories candidate tables,
+runs the deterministic linkage pipeline in :mod:`utils.canonical_nodule_linkage`, and writes
 CSV/Parquet artifacts plus validation markdown under ``studies/``.
 
-Does **not** create or replace remote views/tables. Safe for prod attach with SELECT-only.
+Optional **catalog materialization:** ``--materialize-view`` creates
+``main.canonical_nodule_linkage_study_v1`` (CREATE OR REPLACE VIEW). Use ``--md-env dev`` or ``qa``
+when those databases have the full linkage DDL (often after a prod refresh). For **prod**, you must
+pass ``--md-env prod`` **and** ``--confirm-prod-view`` (explicit opt-in; VIEW only — no base rewrites).
 
 Example:
   .venv/bin/python scripts/149_md_canonical_nodule_linkage_study.py --md
   .venv/bin/python scripts/149_md_canonical_nodule_linkage_study.py --db-path thyroid_master.duckdb
+  .venv/bin/python scripts/149_md_canonical_nodule_linkage_study.py --md --md-env dev --materialize-view
+  .venv/bin/python scripts/149_md_canonical_nodule_linkage_study.py --md --md-env prod --materialize-view --confirm-prod-view
 """
 from __future__ import annotations
 
@@ -167,7 +172,21 @@ def main() -> int:
         default=ROOT / "studies" / "20260407_tirads_fna_molecular_path_linkage",
         help="Output directory for artifacts",
     )
-    ap.add_argument("--dry-run", action="store_true", help="Inventory only; skip linkage queries")
+    ap.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Inventory only; skip linkage queries (if combined with --materialize-view, print VIEW DDL only)",
+    )
+    ap.add_argument(
+        "--materialize-view",
+        action="store_true",
+        help="After linkage export: CREATE OR REPLACE VIEW main.canonical_nodule_linkage_study_v1",
+    )
+    ap.add_argument(
+        "--confirm-prod-view",
+        action="store_true",
+        help="Required with --materialize-view when --md-env prod (CREATE VIEW only)",
+    )
     ap.add_argument(
         "--compare-parquet",
         type=Path,
@@ -178,6 +197,24 @@ def main() -> int:
 
     print("token_mode()               :", token_mode())
     print("read_scaling_token_mode() :", read_scaling_token_mode())
+
+    if args.materialize_view:
+        env_norm = str(args.md_env or "").lower().strip()
+        if env_norm not in ("dev", "qa", "prod"):
+            print(
+                "FATAL: --materialize-view requires explicit --md-env dev, qa, or prod.",
+                file=sys.stderr,
+            )
+            return 1
+        if env_norm == "prod" and not args.confirm_prod_view:
+            print(
+                "FATAL: prod VIEW materialization requires --confirm-prod-view (CREATE VIEW only).",
+                file=sys.stderr,
+            )
+            return 1
+    if args.materialize_view and not args.md:
+        print("FATAL: --materialize-view requires --md.", file=sys.stderr)
+        return 1
 
     study_dir: Path = args.study_dir
     study_dir.mkdir(parents=True, exist_ok=True)
@@ -203,10 +240,20 @@ def main() -> int:
         _write_schema_inventory_md(study_dir, profiles)
         _write_existing_linkage_assets_md(study_dir)
 
-        if args.dry_run:
+        if args.dry_run and not args.materialize_view:
             _section("Dry-run: inventory only")
             print(f"  Wrote: {study_dir / 'source_profile.csv'}")
             print(f"  Wrote: {study_dir / 'schema_inventory.md'}")
+            return 0
+
+        if args.dry_run and args.materialize_view:
+            from utils.canonical_nodule_linkage import canonical_nodule_linkage_sql
+
+            _section("Dry-run: VIEW DDL preview (not executed)")
+            print(
+                "CREATE OR REPLACE VIEW main.canonical_nodule_linkage_study_v1 AS\n"
+                + canonical_nodule_linkage_sql().strip()
+            )
             return 0
 
         if not _table_exists(con, "imaging_nodule_master_v1"):
@@ -332,6 +379,21 @@ def main() -> int:
         ]
         (study_dir / "validation_report.md").write_text("\n".join(vlines), encoding="utf-8")
         print(f"  Artifacts under: {study_dir}")
+
+        if args.materialize_view:
+            env_norm = str(args.md_env or "").lower().strip()
+            assert env_norm in ("dev", "qa", "prod")  # guarded above
+            _section(f"Materialize VIEW (env={env_norm})")
+            view_body = canonical_sql.strip()
+            ddl = (
+                "CREATE OR REPLACE VIEW main.canonical_nodule_linkage_study_v1 AS\n" + view_body
+            )
+            con.execute(ddl)
+            cnt_row = con.execute(
+                "SELECT COUNT(*) FROM main.canonical_nodule_linkage_study_v1"
+            ).fetchone()
+            n_view = int(cnt_row[0]) if cnt_row is not None else 0
+            print(f"  main.canonical_nodule_linkage_study_v1 rows: {n_view:,} (catalog env={env_norm})")
     finally:
         con.close()
 

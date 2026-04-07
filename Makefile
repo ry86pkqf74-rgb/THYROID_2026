@@ -69,15 +69,18 @@ md-v2-gate-md-dryrun:
 		--run-label make_md_formalization_dryrun
 	$(PYTHON) scripts/119_md_formalization_validate.py --md
 
+# Override when release_${MD_RELEASE_TAG} already exists on MotherDuck (e.g. export MD_RELEASE_TAG=20260410)
+MD_RELEASE_TAG ?= $(shell date -u +%Y%m%d)
+
 .PHONY: md-live-release-dryrun
 md-live-release-dryrun:
 	$(check_md_rw_token)
-	$(PYTHON) scripts/124_md_live_release_audit.py --md --dry-run
+	$(PYTHON) scripts/124_md_live_release_audit.py --md --dry-run --tag $(MD_RELEASE_TAG)
 
 .PHONY: md-live-release-final
 md-live-release-final:
 	$(check_md_rw_token)
-	$(PYTHON) scripts/124_md_live_release_audit.py --md --final-release
+	$(PYTHON) scripts/124_md_live_release_audit.py --md --final-release --tag $(MD_RELEASE_TAG)
 
 # ── Final-master orchestration (126) + lab append dry-run (127) ────────────
 # Legacy path: md-live-release-* uses scripts/124 (tagged release / molecular promote).

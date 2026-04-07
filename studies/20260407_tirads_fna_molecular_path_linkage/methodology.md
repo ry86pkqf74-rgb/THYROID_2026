@@ -17,8 +17,16 @@ Produce an auditable, **deterministic** patient-nodule longitudinal trail from s
 
 ## MotherDuck safety
 
-- Default operator path: **SELECT-only** on prod (or local file DB). No DDL/DML is issued by script 149.
-- Staging or view materialization, if desired, must follow `docs/motherduck_database_contract_v1.md` on **dev/qa** only.
+- Default operator path: **SELECT-only** exports under `studies/`; no base-table writes.
+- **VIEW materialization** (optional): `149 --materialize-view` issues `CREATE OR REPLACE VIEW main.canonical_nodule_linkage_study_v1` only.
+  - **Prod:** requires `--md-env prod` **and** `--confirm-prod-view` (explicit opt-in).
+  - **Dev/QA:** use `--md-env dev|qa` when the clone has full linkage DDL (often after `130` refresh); otherwise the script fails fast on missing v3 tables.
+- Follow `docs/motherduck_database_contract_v1.md` for promotion and immutable `release_*` snapshots.
+
+## Makefile release tag
+
+`make md-live-release-dryrun` / `md-live-release-final` pass `--tag $(MD_RELEASE_TAG)` (default: UTC date).
+If `release_${MD_RELEASE_TAG}` already exists, set e.g. `export MD_RELEASE_TAG=20260410` before `make`.
 
 ## Sensitivity analyses
 
