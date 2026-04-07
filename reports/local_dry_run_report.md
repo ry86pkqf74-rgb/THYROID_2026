@@ -122,6 +122,8 @@ Local `thyroid_master.duckdb` on this machine **does not** define (non-exhaustiv
 
 **Next step (operator):** materialize canonical episode tables (e.g. script 22 chain + imaging master) into local DuckDB, or attach MotherDuck read-only for verification only (still no writes).
 
+**Investigation prompt (MotherDuck vs local):** [`reports/prompt_investigate_multimodal_holds.md`](prompt_investigate_multimodal_holds.md).
+
 ---
 
 ## 10. Deliverables

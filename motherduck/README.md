@@ -35,3 +35,7 @@ locally, run `22_canonical_episodes_v2.py --md`, and replace the seeded table.
 
 Authentication uses `.streamlit/secrets.toml` (`MOTHERDUCK_TOKEN` / `MD_SA_TOKEN`) or
 the same vars in the environment; run from the repo root so TOML resolves.
+
+## Unblocking local HOLDs (129 / 128)
+
+If local `thyroid_master.duckdb` lacks episode/imaging/FNA tables, use the reusable agent prompt and command cheatsheet in [`reports/prompt_investigate_multimodal_holds.md`](../reports/prompt_investigate_multimodal_holds.md).
