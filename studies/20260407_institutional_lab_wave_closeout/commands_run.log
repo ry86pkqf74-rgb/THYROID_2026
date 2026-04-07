@@ -1,0 +1,76 @@
+# Exact commands — institutional lab wave + final master evidence refresh
+
+Repository root: `THYROID_2026/`. Shell: `zsh`. Token via `MD_SA_TOKEN` or `MOTHERDUCK_TOKEN` from `.streamlit/secrets.toml` / environment (values not recorded).
+
+Common exports for all MotherDuck writes in this session:
+
+```bash
+export MOTHERDUCK_CUSTOM_USER_AGENT="THYROID_2026_final_lab_wave_ingest/1.0"
+export MOTHERDUCK_SESSION_HINT="final_lab_wave_ingest_<UTC_YYYYMMDD_HHMM>"
+```
+
+(Replace `<UTC_YYYYMMDD_HHMM>` with the actual UTC timestamp used per run, e.g. `final_lab_wave_ingest_20260407_1911`.)
+
+## 1) Read-only — pre-append lab + MRQ metrics
+
+```bash
+cd "/Users/ros/THyroid 2026/THYROID_2026"
+export MOTHERDUCK_CUSTOM_USER_AGENT="THYROID_2026_final_lab_wave_ingest/1.0"
+export MOTHERDUCK_SESSION_HINT="final_lab_wave_ingest_$(date -u +%Y%m%d_%H%M)"
+.venv/bin/python - <<'PY'
+# inline Python: connect_md_or_file(...); SELECT counts / MRQ breakdown — see transcript
+PY
+```
+
+## 2) 127 dry-run
+
+```bash
+cd "/Users/ros/THyroid 2026/THYROID_2026"
+export MOTHERDUCK_CUSTOM_USER_AGENT="THYROID_2026_final_lab_wave_ingest/1.0"
+export MOTHERDUCK_SESSION_HINT="final_lab_wave_ingest_$(date -u +%Y%m%d_%H%M)"
+.venv/bin/python scripts/127_analyst_institutional_lab_append.py --md --md-sa \
+  --input exports/incoming/final_institutional_chemistry_20260407.csv \
+  --ingestion-wave final_institutional_20260407 \
+  --dry-run
+```
+
+## 3) 127 production append (governed path)
+
+```bash
+cd "/Users/ros/THyroid 2026/THYROID_2026"
+export MOTHERDUCK_CUSTOM_USER_AGENT="THYROID_2026_final_lab_wave_ingest/1.0"
+export MOTHERDUCK_SESSION_HINT="final_lab_wave_ingest_$(date -u +%Y%m%d_%H%M)"
+.venv/bin/python scripts/127_analyst_institutional_lab_append.py --md --md-sa \
+  --input exports/incoming/final_institutional_chemistry_20260407.csv \
+  --ingestion-wave final_institutional_20260407
+```
+
+Observed: `longitudinal_lab_canonical_v1` **76,971 → 77,960**; `longitudinal_lab_deduped_v` refreshed to **56,198** rows.
+
+## 4) Final master refresh (MRQ real + lab closure)
+
+`release_20260409` already existed on MotherDuck; used new tag **20260411**. Skipped **103** and **117** so local parquets do not overwrite live promoted `main` tables; **127** still runs after skipped 117 to keep lab wave idempotent.
+
+```bash
+cd "/Users/ros/THyroid 2026/THYROID_2026"
+export MOTHERDUCK_CUSTOM_USER_AGENT="THYROID_2026_final_lab_wave_ingest/1.0"
+export MOTHERDUCK_SESSION_HINT="final_lab_wave_ingest_$(date -u +%Y%m%d_%H%M)"
+.venv/bin/python scripts/126_final_master_release.py --md --md-sa \
+  --release-date 20260411 \
+  --skip-103 \
+  --skip-117 \
+  --lab-csv exports/incoming/final_institutional_chemistry_20260407.csv \
+  --ingestion-wave final_institutional_20260407
+```
+
+Artifacts:
+
+- Evidence: `studies/20260411_final_master_release/EVIDENCE_PACK.md`
+- Validation: `studies/20260411_final_master_release/validation_run/validation_report.md`
+- Logs: `studies/20260411_final_master_release/logs/*.log`
+- Parquet bundle (gitignored): `exports/final_master_release_20260411/`
+
+
+## 5) Failed rehearsal (documented)
+
+Attempt with `--release-date 20260409` failed at `115_release_snapshot.py` because `release_20260409` already exists. Attempt with `20260407` failed for the same reason.

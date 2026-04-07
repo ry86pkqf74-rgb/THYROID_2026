@@ -22,6 +22,11 @@ Constraints:
   - Cloud parquet bundle excludes raw note text (118 --final-master profile)
   - promotion_review_decisions inserts are append-only
 
+When ``main`` on MotherDuck is already the promoted truth and local ``processed/*.parquet``
+would regress cloud row counts, use ``--skip-103`` and ``--skip-117`` so ``117`` does not
+``CREATE OR REPLACE`` cloud tables from disk; still pass ``--lab-csv`` / ``--ingestion-wave``
+if you want ``127`` to refresh ``final_institutional*`` and the dedup view in the same run.
+
 Usage:
   .venv/bin/python scripts/126_final_master_release.py --md --release-date 20260407 \\
       --hydrate-mrq-from studies/v2_domain_promotion_gate_formalization_20260406_v3 \\

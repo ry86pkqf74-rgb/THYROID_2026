@@ -1,6 +1,8 @@
 # Final master release — manuscript readiness evidence
 
-> **Supersession pointer:** Live MotherDuck reconciliation (2026-04-07) supersedes static row-count claims here for **governance**: [`studies/20260407_publication_signoff_live/final_verdict_memo.md`](../20260407_publication_signoff_live/final_verdict_memo.md). The synthetic MRQ warning below remains material.
+> **Evidence refresh (2026-04-07 UTC):** Prefer [`../20260411_final_master_release/EVIDENCE_PACK.md`](../20260411_final_master_release/EVIDENCE_PACK.md) for row counts and `release_20260411` after **`final_institutional_20260407`** lab ingest and non-synthetic MRQ validation (`119` **PASS**, WARN only on specimen-adjacent review burden). The table below is a **historical** capture.
+
+> **Supersession pointer:** Live MotherDuck reconciliation (2026-04-07) supersedes static row-count claims here for **governance**: [`studies/20260407_publication_signoff_live/final_verdict_memo.md`](../20260407_publication_signoff_live/final_verdict_memo.md). The synthetic MRQ warning below applied to the **20260409** point-in-time capture; live MotherDuck MRQ may differ — see **20260411** pack.
 
 - **Release tag:** `20260409`
 - **Git SHA:** `b77b4be8a3a4f194d0e2556828073afdf7dda962`

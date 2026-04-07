@@ -26,7 +26,7 @@
 | MotherDuck structure | **Formalized** — v2_stage ↔ main parity for **23** `canonical_output` domains; multiple `release_*` snapshots; latest manifest tag **20260410** (prior **20260409** retained in `qa.release_manifest`; confirm live with `119` / [`studies/20260407_live_publication_signoff_reaudit/`](studies/20260407_live_publication_signoff_reaudit/)) |
 | Repo / inventory consistency | **Aligned** — registry is SSOT; 0 unclaimed parquets in latest inventory run; [`scripts/119_md_formalization_validate.py --md --release-mode`](scripts/119_md_formalization_validate.py) enforces queue, manifest, canonical provenance, **presentation views**, and specimen/FHIR QA checks |
 | Manual review queue | **Non-NULL but not manuscript-approved** — live queue dominated by **synthetic** verification status; only **human-reviewed** CSV + hydrate path qualifies for publication (`studies/20260407_publication_blocker_assessment/`) |
-| Non-Tg lab pull | **Pending** — no `final_institutional*` wave; Tg-family waves only (`studies/20260407_lab_blocker_assessment/`) |
+| Non-Tg lab pull | **Closed (2026-04-07 UTC)** — `final_institutional_20260407` ingested via `127` (`exports/incoming/final_institutional_chemistry_20260407.csv`); closeout memos under `studies/20260407_institutional_lab_wave_closeout/`; latest master evidence `studies/20260411_final_master_release/EVIDENCE_PACK.md` |
 | Final-master operator path | **Make targets** — `make md-final-master-dryrun` / `md-final-master-final` (see [Makefile](Makefile)); orchestrator [`scripts/126_final_master_release.py`](scripts/126_final_master_release.py) |
 
 A final manuscript-readiness hardening pass on 2026-03-13 audited 578 local DuckDB
