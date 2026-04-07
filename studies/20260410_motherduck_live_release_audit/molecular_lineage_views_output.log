@@ -1,0 +1,52 @@
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+
+── Molecular lineage view counts ──
+  main.molecular_fact_long_base_v: ERROR Catalog Error: Table with name molecular_fact_long_base_v does not exist!
+Did you mean "molecular_variant_long"?
+
+LINE 1: SELECT COUNT(*) FROM main.molecular_fact_long_base_v
+                             ^
+  main.molecular_fact_long_v: ERROR Catalog Error: Table with name molecular_fact_long_v does not exist!
+Did you mean "molecular_variant_long"?
+
+LINE 1: SELECT COUNT(*) FROM main.molecular_fact_long_v
+                             ^
+  main.molecular_results_unified_v: ERROR Catalog Error: Table with name molecular_results_unified_v does not exist!
+Did you mean "molecular_results_enriched_v1"?
+
+LINE 1: SELECT COUNT(*) FROM main.molecular_results_unified_v
+                             ^
+  main.molecular_fact_lineage_qa_duplicate_candidates_v: ERROR Catalog Error: Table with name molecular_fact_lineage_qa_duplicate_candidates_v does not exist!
+Did you mean "molecular_variant_long_contract_v1"?
+
+LINE 1: SELECT COUNT(*) FROM main.molecular_fact_lineage_qa_duplicate_candidates_v
+                             ^
+
+── Primary vs supporting (precedence) ──
+  ERROR Catalog Error: Table with name molecular_fact_long_v does not exist!
+Did you mean "molecular_variant_long"?
+
+LINE 1: SELECT COUNT(*) FROM main.molecular_fact_long_v
+                             ^
+
+── Duplicate assay-event candidates (note vs structured, ±21d) ──
+  ERROR Catalog Error: Table with name molecular_fact_lineage_qa_duplicate_candidates_v does not exist!
+Did you mean "molecular_variant_long_contract_v1"?
+
+LINE 1: SELECT COUNT(*) FROM main.molecular_fact_lineage_qa_duplicate_candidates_v
+                             ^
+
+── Sample rows: primary assay with note support ──
+  ERROR Catalog Error: Table with name molecular_fact_long_v does not exist!
+Did you mean "molecular_variant_long"?
+
+LINE 5:             FROM main.molecular_fact_long_v
+                         ^
+
+── Sample rows: supporting note (suppressed from primary analytics) ──
+  ERROR Catalog Error: Table with name molecular_fact_long_v does not exist!
+Did you mean "molecular_variant_long"?
+
+LINE 5:             FROM main.molecular_fact_long_v
+                         ^

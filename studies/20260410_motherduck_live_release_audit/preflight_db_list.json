@@ -1,0 +1,121 @@
+{
+  "started": "2026-04-07T13:34:25.260268+00:00",
+  "pragma_database_list": [
+    {
+      "seq": 1027,
+      "name": "md_information_schema",
+      "file": null
+    },
+    {
+      "seq": 1090,
+      "name": "thyroid_research_ro_v2",
+      "file": "_share/thyroid_research_ro_v2/2558f066-1c5d-46a5-afbc-800fd5f7568d"
+    },
+    {
+      "seq": 1092,
+      "name": "sample_data",
+      "file": "_share/sample_data/23b0d623-1361-421d-ae77-62d701d471e6"
+    },
+    {
+      "seq": 1094,
+      "name": "Thyroid 2026 Molecular Dev 20260407",
+      "file": "Thyroid 2026 Molecular Dev 20260407"
+    },
+    {
+      "seq": 1096,
+      "name": "Thyroid 2026 Molecular PrePromote agent_20260407_workflow",
+      "file": "Thyroid 2026 Molecular PrePromote agent_20260407_workflow"
+    },
+    {
+      "seq": 1098,
+      "name": "Thyroid 2026 Molecular QA 20260407",
+      "file": "Thyroid 2026 Molecular QA 20260407"
+    },
+    {
+      "seq": 1100,
+      "name": "Thyroid 2026",
+      "file": "Thyroid 2026"
+    },
+    {
+      "seq": 1102,
+      "name": "rosflow",
+      "file": "rosflow"
+    },
+    {
+      "seq": 1104,
+      "name": "my_db",
+      "file": "my_db"
+    }
+  ],
+  "md_confirmed": true,
+  "md_information_schema_databases": [
+    {
+      "name": "my_db",
+      "uuid": "e0db7fdc-5cb6-4f57-9944-6baadccd82c1",
+      "created_ts": "2026-03-07 02:53:36-05:00",
+      "transient": false,
+      "historical_snapshot_retention": "7 days 00:00:00",
+      "type": "DEFAULT"
+    },
+    {
+      "name": "rosflow",
+      "uuid": "c8f55a3a-ab80-4f93-8bb1-74b55770ad39",
+      "created_ts": "2026-03-15 13:16:55-04:00",
+      "transient": false,
+      "historical_snapshot_retention": "7 days 00:00:00",
+      "type": "DEFAULT"
+    },
+    {
+      "name": "Thyroid 2026",
+      "uuid": "b64d4ec9-aafb-49cc-bf39-d1dfd85e68dc",
+      "created_ts": "2026-04-02 04:31:53-04:00",
+      "transient": false,
+      "historical_snapshot_retention": "7 days 00:00:00",
+      "type": "DUCKLAKE"
+    },
+    {
+      "name": "Thyroid 2026 Molecular Dev 20260407",
+      "uuid": "02fdc556-f9e6-4fdd-9f8d-84377f055e96",
+      "created_ts": "2026-04-07 02:39:51-04:00",
+      "transient": false,
+      "historical_snapshot_retention": "7 days 00:00:00",
+      "type": "DEFAULT"
+    },
+    {
+      "name": "Thyroid 2026 Molecular PrePromote agent_20260407_workflow",
+      "uuid": "9b6d3949-4698-4be7-95b1-3b4e7c30d9e4",
+      "created_ts": "2026-04-07 02:39:05-04:00",
+      "transient": false,
+      "historical_snapshot_retention": "7 days 00:00:00",
+      "type": "DEFAULT"
+    },
+    {
+      "name": "Thyroid 2026 Molecular QA 20260407",
+      "uuid": "f05500b0-2eea-41bf-b5d4-35e677f6ebc5",
+      "created_ts": "2026-04-07 01:44:43-04:00",
+      "transient": false,
+      "historical_snapshot_retention": "7 days 00:00:00",
+      "type": "DEFAULT"
+    }
+  ],
+  "schemas_present": [
+    "hn",
+    "kaggle",
+    "main",
+    "mm_contract_dev",
+    "nyc",
+    "qa",
+    "release_20260406",
+    "release_20260407",
+    "release_20260407_final",
+    "release_20260407_final2",
+    "release_20260408",
+    "release_20260409",
+    "stackoverflow_survey",
+    "v2_stage",
+    "who"
+  ],
+  "md_snapshots_note": "Not accessible or no snapshots: Catalog Error: Table with name snapshots does not exist!\nDid you mean \"storage_info_history\"?\n\nLINE 1: SELECT * FROM md_information_schema.snapshots\n                      ^",
+  "finished": "2026-04-07T13:34:26.099086+00:00",
+  "success": true
+}

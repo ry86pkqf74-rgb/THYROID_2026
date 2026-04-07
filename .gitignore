@@ -83,6 +83,12 @@ studies/md_gate_dryrun_*/llm_side_by_side.csv
 studies/md_stage_refresh_*/gate/llm_side_by_side.parquet
 studies/md_stage_refresh_*/gate/llm_side_by_side.csv
 
+# MotherDuck live release audit — large gate exports (reproducible via 112/124)
+studies/*_motherduck_live_release_audit/promotion_gate/llm_side_by_side.parquet
+studies/*_motherduck_live_release_audit/promotion_gate/llm_side_by_side.csv
+studies/*_motherduck_live_release_audit/promotion_gate/manual_review_queue.csv
+studies/*_motherduck_live_release_audit/manual_review_queue.csv
+
 # ── Fact lineage QC reports (ephemeral, timestamped) ──────────
 exports/fact_lineage_qc/
 exports/review_queue_triage_*/
