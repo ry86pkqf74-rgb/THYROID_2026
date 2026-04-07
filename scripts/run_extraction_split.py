@@ -49,6 +49,8 @@ try:
 except ImportError:
     pass
 
+from llm_extraction.fleet_domain_prompt import get_fleet_domain_prompt
+
 PROCESSED_REMAINING = ROOT / "processed" / "remaining"
 PROCESSED_OUTPUT = ROOT / "processed" / "output"
 PROMPTS_DIR = ROOT / "llm_extraction" / "prompts"
@@ -62,69 +64,8 @@ log = logging.getLogger("split_extraction")
 
 LLM_TIMEOUT_SECONDS = int(os.environ.get("LLM_TIMEOUT_SECONDS", "120"))
 
-# -- Domain -> prompt file mapping ----------------------------------------
-DOMAIN_PROMPT = {
-    "complications":  "complications_extraction_v1.txt",
-    "staging":        "staging_extraction_v1.txt",
-    "genetics":       "genetics_extraction_v1.txt",
-    "recurrence":     "recurrence_extraction_v1.txt",
-    "medications":    "medications_extraction_v1.txt",
-    "procedures":     "procedures_extraction_v1.txt",
-    "problem_list":   "problem_list_extraction_v1.txt",
-    "imaging":        "imaging_extraction_v1.txt",
-    "pathology":      "pathology_extraction_v1.txt",
-    "labs":           "labs_extraction_v1.txt",
-    "physical_exam":  "physical_exam_extraction_v1.txt",
-    "rad_treatment":  "rad_treatment_extraction_v1.txt",
-    "past_medical_hx": "past_medical_hx_extraction_v1.txt",
-    "past_surgical_hx": "past_surgical_hx_extraction_v1.txt",
-    "operative_details": "operative_details_extraction_v1.txt",
-    "presenting_symptoms": "presenting_symptoms_extraction_v1.txt",
-    "dynamic_risk_response": "dynamic_risk_response_extraction_v1.txt",
-    "survival_followup": "survival_followup_extraction_v1.txt",
-    "vascular_invasion": "vascular_invasion_extraction_v1.txt",
-    "rai_detailed": "rai_detailed_extraction_v1.txt",
-    "recurrence_detailed": "recurrence_detailed_extraction_v1.txt",
-    "medication_management": "medication_management_extraction_v1.txt",
-    "functional_outcomes": "functional_outcomes_extraction_v1.txt",
-    "tg_kinetics": "tg_kinetics_extraction_v1.txt",
-    "parathyroid_detail": "parathyroid_detail_extraction_v1.txt",
-    "airway_invasion": "airway_invasion_extraction_v1.txt",
-    "frozen_section_detail": "frozen_section_detail_extraction_v1.txt",
-    "us_nodule_dynamics": "us_nodule_dynamics_extraction_v1.txt",
-    "cervical_ln_detail": "cervical_ln_detail_extraction_v1.txt",
-    "patient_decision_adherence": "patient_decision_adherence_extraction_v1.txt",
-    # ── Phase 2: 6 targeted enrichment domains (100% coverage) ──
-    "operative_v2_enrichment": "operative_v2_enrichment_extraction_v1.txt",
-    "complications_rln_laryngoscopy": "complications_rln_laryngoscopy_extraction_v1.txt",
-    "molecular_thyroseq_afirma": "molecular_thyroseq_afirma_extraction_v1.txt",
-    "synoptic_pathology_enrichment": "synoptic_pathology_enrichment_extraction_v1.txt",
-    "tirads_granular": "tirads_granular_extraction_v1.txt",
-    "parathyroid_per_gland": "parathyroid_per_gland_extraction_v1.txt",
-}
-
+DOMAIN_PROMPT = get_fleet_domain_prompt()
 ALL_DOMAINS = list(DOMAIN_PROMPT.keys())
-
-# Registry parity check — warn at import time if DOMAIN_PROMPT drifts.
-try:
-    from llm_extraction.registry import load_registry as _load_reg_parity
-    _reg_parity = _load_reg_parity()
-    _expected_fleet = _reg_parity.expected_fleet_prompt_map()
-    _fleet_extra = set(DOMAIN_PROMPT.keys()) - set(_expected_fleet.keys())
-    _fleet_missing = set(_expected_fleet.keys()) - set(DOMAIN_PROMPT.keys())
-    if _fleet_extra:
-        log.warning(
-            "Split DOMAIN_PROMPT has keys not in registry: %s",
-            sorted(_fleet_extra),
-        )
-    if _fleet_missing:
-        log.warning(
-            "Split DOMAIN_PROMPT missing registry keys: %s",
-            sorted(_fleet_missing),
-        )
-    del _reg_parity, _expected_fleet, _fleet_extra, _fleet_missing
-except Exception:
-    pass
 
 
 def _load_prompt(domain: str) -> str:

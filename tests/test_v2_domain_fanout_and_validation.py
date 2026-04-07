@@ -202,6 +202,43 @@ def test_111_argparse_accepts_all_llm_domains_flag() -> None:
         sys.argv = old
 
 
+def test_baseline_expands_result_json_staging_table() -> None:
+    """Script 111 baseline path must flatten fleet-style result_json tables."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "llm_val_111",
+        ROOT / "scripts" / "111_llm_extraction_validation.py",
+    )
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    import duckdb
+
+    con = duckdb.connect(database=":memory:")
+    try:
+        con.execute(
+            """
+            CREATE TABLE note_entities_llm_imaging (
+              research_id BIGINT,
+              result_json VARCHAR
+            )
+            """
+        )
+        payload = '{"entities": [{"entity_type": "imaging", "entity_value": "nodule 2cm", "present_or_negated": "present"}]}'
+        con.execute(
+            "INSERT INTO note_entities_llm_imaging VALUES (1, ?)",
+            [payload],
+        )
+        df = mod._baseline_entities_from_staging_result_json(con, "note_entities_llm_imaging")
+        assert len(df) == 1
+        assert int(df.iloc[0]["research_id"]) == 1
+        assert df.iloc[0]["entity_type"] == "imaging"
+        assert "nodule" in str(df.iloc[0]["entity_value_raw"]).lower()
+    finally:
+        con.close()
+
+
 def test_domain_to_file_includes_per_domain_llm_stems_not_only_legacy_llm() -> None:
     """Registry map must expose per-domain v2 stems; legacy `llm` bucket remains for v1 audit path."""
     from llm_extraction.run_extraction import DOMAIN_TO_FILE

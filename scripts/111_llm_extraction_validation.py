@@ -43,7 +43,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from llm_extraction.vocab import ENTITY_SCHEMA_COLUMNS
-from utils.text_helpers import save_parquet
+from utils.text_helpers import make_note_row_id, save_parquet
 
 LOG = logging.getLogger("llm_validation")
 logging.basicConfig(
@@ -571,6 +571,76 @@ def build_lineage(llm_df: pd.DataFrame, notes_df: pd.DataFrame) -> pd.DataFrame:
     return lineage
 
 
+def _baseline_entities_from_staging_result_json(
+    con: duckdb.DuckDBPyConnection, table_name: str
+) -> pd.DataFrame:
+    """Expand fleet/staging rows (per-note ``result_json``) to entity-shaped baseline rows."""
+    df = con.execute(
+        f"""
+        SELECT CAST(research_id AS BIGINT) AS research_id, result_json
+        FROM {table_name}
+        WHERE result_json IS NOT NULL
+          AND CAST(result_json AS VARCHAR) NOT IN ('', '{{}}')
+        """
+    ).fetchdf()
+    if df.empty:
+        return pd.DataFrame(
+            columns=[
+                "research_id",
+                "entity_type",
+                "entity_value_raw",
+                "entity_value_norm",
+                "present_or_negated",
+            ]
+        )
+    records: list[dict] = []
+    for _, row in df.iterrows():
+        rid = row.get("research_id")
+        if rid is None or (isinstance(rid, float) and pd.isna(rid)):
+            continue
+        try:
+            rid_i = int(rid)
+        except (TypeError, ValueError):
+            continue
+        raw = row.get("result_json")
+        if raw is None or (isinstance(raw, float) and pd.isna(raw)):
+            continue
+        try:
+            payload = json.loads(str(raw))
+        except (json.JSONDecodeError, TypeError):
+            continue
+        entities = payload.get("entities") if isinstance(payload, dict) else None
+        if not isinstance(entities, list):
+            continue
+        for ent in entities:
+            if not isinstance(ent, dict):
+                continue
+            ev = ent.get("entity_value") or ent.get("entity_value_raw") or ""
+            ev_norm = ent.get("entity_value_norm")
+            if ev_norm is None or (isinstance(ev_norm, float) and pd.isna(ev_norm)):
+                ev_norm = str(ev).lower().strip()
+            records.append(
+                {
+                    "research_id": rid_i,
+                    "entity_type": str(ent.get("entity_type") or "unknown"),
+                    "entity_value_raw": str(ev),
+                    "entity_value_norm": str(ev_norm),
+                    "present_or_negated": str(ent.get("present_or_negated") or "present"),
+                }
+            )
+    if not records:
+        return pd.DataFrame(
+            columns=[
+                "research_id",
+                "entity_type",
+                "entity_value_raw",
+                "entity_value_norm",
+                "present_or_negated",
+            ]
+        )
+    return pd.DataFrame.from_records(records)
+
+
 def load_source_notes(
     con: duckdb.DuckDBPyConnection,
     llm_df: pd.DataFrame,
@@ -611,7 +681,45 @@ def load_source_notes(
         finally:
             con.unregister("llm_note_keys")
 
-    notes_df = pd.read_parquet(notes_path, columns=note_columns)
+    notes_df = pd.read_parquet(notes_path)
+    if "note_row_id" not in notes_df.columns:
+        _need = {"research_id", "source_sheet", "source_column"}
+        if not _need.issubset(notes_df.columns):
+            raise SystemExit(
+                f"{notes_path} has no note_row_id and cannot synthesize "
+                f"{sorted(_need)} from columns {sorted(notes_df.columns)}"
+            )
+        LOG.info(
+            "Synthesizing note_row_id from (research_id, source_sheet, source_column) "
+            "to match scripts/build_clinical_notes_long.py"
+        )
+
+        def _synth_id(series: pd.Series) -> str:
+            rid = series["research_id"]
+            if rid is None or (isinstance(rid, float) and pd.isna(rid)):
+                return ""
+            try:
+                rid_i = int(rid)
+            except (TypeError, ValueError):
+                return ""
+            return make_note_row_id(rid_i, str(series["source_sheet"]), str(series["source_column"]))
+
+        notes_df = notes_df.copy()
+        notes_df["note_row_id"] = notes_df.apply(_synth_id, axis=1)
+        if (notes_df["note_row_id"] == "").any():
+            raise SystemExit(f"{notes_path}: note_row_id synthesis failed for some rows (research_id?)")
+    if "char_count" not in notes_df.columns:
+        if "note_text" not in notes_df.columns:
+            raise SystemExit(f"{notes_path} missing char_count and note_text")
+        notes_df = notes_df.copy()
+        notes_df["char_count"] = notes_df["note_text"].astype(str).str.len()
+    if "note_index" not in notes_df.columns:
+        notes_df = notes_df.copy()
+        notes_df["note_index"] = pd.NA
+    _missing_note = [c for c in note_columns if c not in notes_df.columns]
+    if _missing_note:
+        raise SystemExit(f"{notes_path} missing columns after repair: {_missing_note}")
+    notes_df = notes_df[note_columns].copy()
     notes_df["research_id"] = notes_df["research_id"].astype(int)
     return notes_df.merge(key_df, on=["note_row_id", "research_id"], how="inner")
 
@@ -656,21 +764,33 @@ def existing_note_entities(
             continue
         available = table_columns(con, table_name)
         if not _baseline_cols.issubset(available):
-            LOG.warning(
-                "Skipping baseline table %s — missing entity columns (have %s)",
-                table_name,
-                ",".join(sorted(available))[:200],
-            )
-            continue
-        df = con.execute(
-            f"""
-            SELECT research_id, entity_type, entity_value_raw, entity_value_norm, present_or_negated
-            FROM {table_name}
-            WHERE present_or_negated = 'present'
-            """
-        ).fetchdf()
-        if df.empty:
-            continue
+            if "result_json" in available and "research_id" in available:
+                df = _baseline_entities_from_staging_result_json(con, table_name)
+                df = df[df["present_or_negated"] == "present"].copy()
+                if df.empty:
+                    continue
+                LOG.info(
+                    "Using result_json-expanded baseline for %s (%s entity rows)",
+                    table_name,
+                    f"{len(df):,}",
+                )
+            else:
+                LOG.warning(
+                    "Skipping baseline table %s — missing entity columns (have %s)",
+                    table_name,
+                    ",".join(sorted(available))[:200],
+                )
+                continue
+        else:
+            df = con.execute(
+                f"""
+                SELECT research_id, entity_type, entity_value_raw, entity_value_norm, present_or_negated
+                FROM {table_name}
+                WHERE present_or_negated = 'present'
+                """
+            ).fetchdf()
+            if df.empty:
+                continue
         df["comparison_domain"], df["comparison_token"], _ = zip(
             *df.apply(
                 lambda row: classify_value(row["entity_type"], row["entity_value_raw"], row["entity_value_norm"]),

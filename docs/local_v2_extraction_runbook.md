@@ -5,6 +5,8 @@ This runbook describes how to run **registry-driven v2 LLM extraction** locally,
 ## Session norms
 
 - **Repo root**: project directory containing `llm_extraction/`, `processed/`, `config/extraction_domain_registry.yaml`.
+- **`clinical_notes_long.parquet`**: if an older file has no `note_row_id` but has `research_id`, `source_sheet`, and `source_column`, script **111** synthesizes IDs with the same rule as `scripts/build_clinical_notes_long.py` (`make_note_row_id`). Rebuilding the parquet with the build script is still preferred.
+- **Fleet / split workers**: `DOMAIN_PROMPT` is loaded from the registry via `llm_extraction.fleet_domain_prompt.get_fleet_domain_prompt()` (no duplicated dicts in `run_extraction_split.py` / `vastai/run_extraction_concurrent.py`).
 - **Canonical runner**: `llm_extraction/run_extraction.py` (not a repo-root `run_extraction.py`).
 - **Inputs**: `processed/clinical_notes_long.parquet` (build via `scripts/build_clinical_notes_long.py` if missing).
 - **LLM enablement**: set `GITHUB_TOKEN` (GitHub Models) or `OPENAI_API_KEY`. Without either, v2 domains produce empty outputs; registry validation still runs.

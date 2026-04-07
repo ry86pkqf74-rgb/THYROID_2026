@@ -10,7 +10,6 @@ Usage:
 from __future__ import annotations
 
 import importlib.util
-import re
 import sys
 from pathlib import Path
 
@@ -22,34 +21,15 @@ sys.path.insert(0, str(ROOT))
 PROMPTS_DIR = ROOT / "llm_extraction" / "prompts"
 
 
-# ── Helpers ──────────────────────────────────────────────────────────────────
-
-def _extract_domain_prompt_dict(script_path: Path) -> dict[str, str]:
-    """Parse DOMAIN_PROMPT = {...} from a Python script without executing it."""
-    src = script_path.read_text(encoding="utf-8")
-    match = re.search(r"DOMAIN_PROMPT\s*=\s*\{", src)
-    assert match, f"DOMAIN_PROMPT not found in {script_path.name}"
-    start = match.start()
-    depth = 0
-    brace_start = src.index("{", start)
-    for i, ch in enumerate(src[brace_start:], brace_start):
-        if ch == "{":
-            depth += 1
-        elif ch == "}":
-            depth -= 1
-            if depth == 0:
-                block = src[brace_start : i + 1]
-                break
-    pairs = re.findall(r'"([^"]+)"\s*:\s*"([^"]+)"', block)
-    return dict(pairs)
-
-
 # ── Fixtures ─────────────────────────────────────────────────────────────────
 
 @pytest.fixture(scope="module")
 def registry():
+    from llm_extraction.fleet_domain_prompt import clear_fleet_domain_prompt_cache
     from llm_extraction.registry import load_registry
+
     load_registry.cache_clear()
+    clear_fleet_domain_prompt_cache()
     return load_registry()
 
 
@@ -59,17 +39,17 @@ def expected_fleet_map(registry):
 
 
 @pytest.fixture(scope="module")
-def vastai_domain_prompt():
-    return _extract_domain_prompt_dict(
-        ROOT / "scripts" / "vastai" / "run_extraction_concurrent.py"
-    )
+def vastai_domain_prompt(registry):
+    from llm_extraction.fleet_domain_prompt import get_fleet_domain_prompt
+
+    return get_fleet_domain_prompt()
 
 
 @pytest.fixture(scope="module")
-def split_domain_prompt():
-    return _extract_domain_prompt_dict(
-        ROOT / "scripts" / "run_extraction_split.py"
-    )
+def split_domain_prompt(registry):
+    from llm_extraction.fleet_domain_prompt import get_fleet_domain_prompt
+
+    return get_fleet_domain_prompt()
 
 
 # ── Fleet DOMAIN_PROMPT parity ───────────────────────────────────────────────
