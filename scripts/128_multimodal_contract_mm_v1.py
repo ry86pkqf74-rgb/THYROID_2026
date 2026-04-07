@@ -1,0 +1,885 @@
+#!/usr/bin/env python3
+"""
+128_multimodal_contract_mm_v1.py — Verified multimodal release layer (contract v1)
+
+Creates schema mm_contract_dev with star-schema style tables mapping legacy episode
+and linkage objects to deterministic surrogate IDs. Does not modify upstream tables.
+
+Local:
+  .venv/bin/python scripts/128_multimodal_contract_mm_v1.py
+MotherDuck (writes ONLY to schema mm_contract_dev):
+  .venv/bin/python scripts/128_multimodal_contract_mm_v1.py --md
+
+Environment:
+  MM_CONTRACT_SCHEMA — override schema name (default mm_contract_dev). For --md,
+  the schema is forced to mm_contract_dev unless MM_CONTRACT_MD_SCHEMA_OVERRIDE=1.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+import duckdb
+
+ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
+EXPORT_DIR = ROOT / "exports"
+
+sys.path.insert(0, str(ROOT))
+
+from utils.md_connect import connect_md_or_file  # noqa: E402
+
+from scripts.mm_contract_upstream import ensure_upstream_sources  # noqa: E402
+
+CONTRACT_VERSION = "mm_contract_v1.0.0"
+SCRIPT_NAME = "128_multimodal_contract_mm_v1.py"
+
+# Hash namespace — must remain stable for deterministic IDs
+H_NS = "THYROID_MM_CONTRACT_V1"
+
+
+def section(title: str) -> None:
+    print(f"\n{'=' * 72}\n  {title}\n{'=' * 72}\n")
+
+
+def table_available(con: duckdb.DuckDBPyConnection, tbl: str) -> bool:
+    try:
+        con.execute(f"SELECT 1 FROM {tbl} LIMIT 1")
+        return True
+    except Exception:
+        return False
+
+
+def resolve_schema(*, md: bool) -> str:
+    default = "mm_contract_dev"
+    if md:
+        if os.environ.get("MM_CONTRACT_MD_SCHEMA_OVERRIDE") == "1":
+            return os.environ.get("MM_CONTRACT_SCHEMA", default).strip() or default
+        return default
+    return os.environ.get("MM_CONTRACT_SCHEMA", default).strip() or default
+
+
+def person_id_sql(canonical_col: str) -> str:
+    return (
+        f"lower(md5(concat('{H_NS}|person|', cast({canonical_col} AS VARCHAR))))"
+    )
+
+
+def sql_dim_patient(schema: str, built_ts: str, src: dict[str, str]) -> str:
+    lm = src["linkage_master_v1"]
+    pid = person_id_sql("canonical_research_id")
+    return f"""
+CREATE OR REPLACE TABLE {schema}.dim_patient_mm_v1 AS
+SELECT
+    'mmv1_p_' || {pid} AS person_id,
+    CAST(canonical_research_id AS BIGINT) AS canonical_research_id,
+    ANY_VALUE(euh_mrn) AS euh_mrn,
+    ANY_VALUE(linkage_method) AS linkage_method,
+    MAX(confidence) AS linkage_confidence,
+    '{CONTRACT_VERSION}'::VARCHAR AS mm_contract_version,
+    '{SCRIPT_NAME}'::VARCHAR AS mm_source_script,
+    CAST('{built_ts}' AS TIMESTAMP) AS mm_built_at,
+    '{lm}'::VARCHAR AS mm_upstream_tables,
+    'One row per canonical_research_id (person spine).'::VARCHAR AS mm_lineage_note
+FROM {lm}
+GROUP BY canonical_research_id;
+""".strip()
+
+
+def sql_map_identifiers(schema: str, built_ts: str, src: dict[str, str]) -> str:
+    lm = src["linkage_master_v1"]
+    xc = src["mrn_crosswalk_v1"]
+    pid = person_id_sql("lm.canonical_research_id")
+    return f"""
+CREATE OR REPLACE TABLE {schema}.map_patient_identifier_mm_v1 AS
+WITH rid_map AS (
+    SELECT
+        lm.research_id,
+        lm.canonical_research_id,
+        'mmv1_p_' || {pid} AS person_id
+    FROM {lm} lm
+)
+SELECT
+    person_id,
+    'research_id'::VARCHAR AS identifier_type,
+    CAST(r.research_id AS VARCHAR) AS identifier_value,
+    r.canonical_research_id AS resolved_canonical_research_id,
+    TRUE::BOOLEAN AS is_spine_row,
+    '{CONTRACT_VERSION}'::VARCHAR AS mm_contract_version,
+    '{SCRIPT_NAME}'::VARCHAR AS mm_source_script,
+    CAST('{built_ts}' AS TIMESTAMP) AS mm_built_at,
+    '{lm}'::VARCHAR AS mm_upstream_tables,
+    NULL::VARCHAR AS mm_lineage_note
+FROM rid_map r
+UNION ALL
+SELECT DISTINCT
+    'mmv1_p_' || lower(md5(concat('{H_NS}|person|', CAST(x.canonical_research_id AS VARCHAR)))) AS person_id,
+    'euh_mrn'::VARCHAR,
+    CAST(x.euh_mrn AS VARCHAR),
+    x.canonical_research_id,
+    FALSE,
+    '{CONTRACT_VERSION}'::VARCHAR,
+    '{SCRIPT_NAME}'::VARCHAR,
+    CAST('{built_ts}' AS TIMESTAMP),
+    '{xc}'::VARCHAR,
+    NULL::VARCHAR
+FROM {xc} x
+WHERE x.euh_mrn IS NOT NULL AND CAST(x.euh_mrn AS VARCHAR) <> '';
+""".strip()
+
+
+def sql_fact_surgery(schema: str, built_ts: str, src: dict[str, str]) -> str:
+    oed = src["operative_episode_detail_v2"]
+    lm = src["linkage_master_v1"]
+    pid = "lower(md5(concat('{H_NS}|person|', cast(lm.canonical_research_id AS VARCHAR))))".format(H_NS=H_NS)
+    return f"""
+CREATE OR REPLACE TABLE {schema}.fact_surgery_mm_v1 AS
+SELECT
+    'mmv1_s_' || lower(md5(concat('{H_NS}|surgery|', cast(o.research_id AS VARCHAR), '|',
+        cast(o.surgery_episode_id AS VARCHAR)))) AS surgery_id,
+    'mmv1_p_' || {pid} AS person_id,
+    CAST(o.research_id AS BIGINT) AS research_id,
+    CAST(lm.canonical_research_id AS BIGINT) AS canonical_research_id,
+    CAST(o.surgery_episode_id AS BIGINT) AS surgery_episode_id,
+    o.surgery_date_native AS event_time,
+    CASE
+        WHEN o.surgery_date_native IS NOT NULL THEN 'operative_surgery_date_native'
+        ELSE 'missing_native_date'
+    END::VARCHAR AS event_time_src,
+    o.procedure_raw,
+    o.procedure_normalized,
+    o.laterality AS surgery_laterality,
+    o.central_neck_dissection_flag,
+    o.lateral_neck_dissection_flag,
+    '{CONTRACT_VERSION}'::VARCHAR AS mm_contract_version,
+    '{SCRIPT_NAME}'::VARCHAR AS mm_source_script,
+    CAST('{built_ts}' AS TIMESTAMP) AS mm_built_at,
+    '{oed},{lm}'::VARCHAR AS mm_upstream_tables,
+    NULL::VARCHAR AS mm_lineage_note
+FROM {oed} o
+INNER JOIN {lm} lm ON o.research_id = lm.research_id;
+""".strip()
+
+
+def sql_dim_nodule(schema: str, built_ts: str, src: dict[str, str]) -> str:
+    img = src["imaging_nodule_master_v1"]
+    return f"""
+CREATE OR REPLACE TABLE {schema}.dim_nodule_mm_v1 AS
+SELECT DISTINCT
+    'mmv1_n_' || lower(md5(concat(
+        '{H_NS}|nodule|', cast(i.research_id AS VARCHAR), '|',
+        cast(i.exam_id AS VARCHAR), '|', cast(i.nodule_id AS VARCHAR)
+    ))) AS nodule_id,
+    CAST(i.research_id AS BIGINT) AS research_id,
+    i.exam_id AS legacy_exam_id,
+    i.nodule_id AS legacy_nodule_id_key,
+    i.exam_date,
+    i.laterality AS nodule_laterality,
+    i.max_dimension_cm,
+    i.tirads_reported,
+    i.suspicious_flag,
+    '{CONTRACT_VERSION}'::VARCHAR AS mm_contract_version,
+    '{SCRIPT_NAME}'::VARCHAR AS mm_source_script,
+    CAST('{built_ts}' AS TIMESTAMP) AS mm_built_at,
+    '{img}'::VARCHAR AS mm_upstream_tables,
+    NULL::VARCHAR AS mm_lineage_note
+FROM {img} i;
+""".strip()
+
+
+def sql_fact_imaging(schema: str, built_ts: str, src: dict[str, str]) -> str:
+    img = src["imaging_nodule_master_v1"]
+    lm = src["linkage_master_v1"]
+    eda = src["event_date_audit_v2"]
+    pid = "lower(md5(concat('{H_NS}|person|', cast(lm.canonical_research_id AS VARCHAR))))".format(H_NS=H_NS)
+    return f"""
+CREATE OR REPLACE TABLE {schema}.fact_imaging_mm_v1 AS
+SELECT
+    'mmv1_i_' || lower(md5(concat(
+        '{H_NS}|imaging|', cast(i.research_id AS VARCHAR), '|',
+        cast(i.exam_id AS VARCHAR), '|', cast(i.nodule_id AS VARCHAR)
+    ))) AS imaging_fact_id,
+    'mmv1_p_' || {pid} AS person_id,
+    'mmv1_n_' || lower(md5(concat(
+        '{H_NS}|nodule|', cast(i.research_id AS VARCHAR), '|',
+        cast(i.exam_id AS VARCHAR), '|', cast(i.nodule_id AS VARCHAR)
+    ))) AS nodule_id,
+    CAST(i.research_id AS BIGINT) AS research_id,
+    CAST(lm.canonical_research_id AS BIGINT) AS canonical_research_id,
+    CAST(i.nodule_number AS INTEGER) AS nodule_number_within_exam,
+    COALESCE(i.exam_date,
+        (SELECT MAX(TRY_CAST(resolved_date AS DATE)) FROM {eda} e
+         WHERE e.research_id = i.research_id AND e.domain = 'imaging')) AS event_time,
+    CASE
+        WHEN i.exam_date IS NOT NULL THEN 'imaging_exam_date_native'
+        ELSE 'event_date_audit_v2_fallback'
+    END::VARCHAR AS event_time_src,
+    i.composition,
+    i.echogenicity,
+    i.shape,
+    i.margins,
+    i.calcifications,
+    i.tirads_category,
+    '{CONTRACT_VERSION}'::VARCHAR AS mm_contract_version,
+    '{SCRIPT_NAME}'::VARCHAR AS mm_source_script,
+    CAST('{built_ts}' AS TIMESTAMP) AS mm_built_at,
+    '{img},{lm},{eda}'::VARCHAR AS mm_upstream_tables,
+    NULL::VARCHAR AS mm_lineage_note
+FROM {img} i
+INNER JOIN {lm} lm ON i.research_id = lm.research_id;
+""".strip()
+
+
+def sql_fact_fna(schema: str, built_ts: str, src: dict[str, str]) -> str:
+    fna = src["fna_episode_master_v2"]
+    lm = src["linkage_master_v1"]
+    eda = src["event_date_audit_v2"]
+    pid = "lower(md5(concat('{H_NS}|person|', cast(lm.canonical_research_id AS VARCHAR))))".format(H_NS=H_NS)
+    return f"""
+CREATE OR REPLACE TABLE {schema}.fact_fna_mm_v1 AS
+SELECT
+    'mmv1_fn_' || lower(md5(concat(
+        '{H_NS}|fna|', cast(f.research_id AS VARCHAR), '|', cast(f.fna_episode_id AS VARCHAR)
+    ))) AS fna_fact_id,
+    'mmv1_p_' || {pid} AS person_id,
+    CAST(f.research_id AS BIGINT) AS research_id,
+    CAST(lm.canonical_research_id AS BIGINT) AS canonical_research_id,
+    CAST(f.fna_episode_id AS BIGINT) AS fna_episode_id,
+    COALESCE(f.fna_date_native,
+        TRY_CAST(f.resolved_fna_date AS DATE)) AS event_time,
+    CASE
+        WHEN f.fna_date_native IS NOT NULL THEN 'fna_date_native'
+        WHEN f.resolved_fna_date IS NOT NULL THEN 'fna_resolved_date'
+        ELSE 'event_date_audit_v2_fallback'
+    END::VARCHAR AS event_time_src,
+    f.bethesda_category,
+    f.specimen_site_raw,
+    f.laterality AS fna_laterality,
+    f.pathology_diagnosis,
+    '{CONTRACT_VERSION}'::VARCHAR AS mm_contract_version,
+    '{SCRIPT_NAME}'::VARCHAR AS mm_source_script,
+    CAST('{built_ts}' AS TIMESTAMP) AS mm_built_at,
+    '{fna},{lm}'::VARCHAR AS mm_upstream_tables,
+    NULL::VARCHAR AS mm_lineage_note
+FROM {fna} f
+INNER JOIN {lm} lm ON f.research_id = lm.research_id;
+
+UPDATE {schema}.fact_fna_mm_v1 AS t
+SET event_time = ed.audit_date,
+    event_time_src = 'event_date_audit_v2_fallback',
+    mm_lineage_note = COALESCE(t.mm_lineage_note, '') || 'date_from_event_date_audit_v2;'
+FROM (
+    SELECT research_id,
+           MAX(TRY_CAST(resolved_date AS DATE)) AS audit_date
+    FROM {eda}
+    WHERE domain = 'fna'
+    GROUP BY research_id
+) ed
+WHERE t.event_time IS NULL
+  AND t.research_id = ed.research_id;
+""".strip()
+
+
+def sql_fact_genetics(schema: str, built_ts: str, src: dict[str, str]) -> str:
+    mol = src["molecular_test_episode_v2"]
+    lm = src["linkage_master_v1"]
+    eda = src["event_date_audit_v2"]
+    pid = "lower(md5(concat('{H_NS}|person|', cast(lm.canonical_research_id AS VARCHAR))))".format(H_NS=H_NS)
+    return f"""
+CREATE OR REPLACE TABLE {schema}.fact_genetics_mm_v1 AS
+SELECT
+    'mmv1_g_' || lower(md5(concat(
+        '{H_NS}|mol|', cast(m.research_id AS VARCHAR), '|', cast(m.molecular_episode_id AS VARCHAR)
+    ))) AS genetics_fact_id,
+    'mmv1_p_' || {pid} AS person_id,
+    CAST(m.research_id AS BIGINT) AS research_id,
+    CAST(lm.canonical_research_id AS BIGINT) AS canonical_research_id,
+    CAST(m.molecular_episode_id AS BIGINT) AS molecular_episode_id,
+    COALESCE(m.test_date_native, TRY_CAST(m.resolved_test_date AS DATE)) AS event_time,
+    CASE
+        WHEN m.test_date_native IS NOT NULL THEN 'molecular_test_date_native'
+        WHEN m.resolved_test_date IS NOT NULL THEN 'molecular_resolved_date'
+        ELSE 'event_date_audit_v2_fallback'
+    END::VARCHAR AS event_time_src,
+    m.platform,
+    m.overall_result_class,
+    m.braf_flag,
+    m.ras_flag,
+    '{CONTRACT_VERSION}'::VARCHAR AS mm_contract_version,
+    '{SCRIPT_NAME}'::VARCHAR AS mm_source_script,
+    CAST('{built_ts}' AS TIMESTAMP) AS mm_built_at,
+    '{mol},{lm}'::VARCHAR AS mm_upstream_tables,
+    NULL::VARCHAR AS mm_lineage_note
+FROM {mol} m
+INNER JOIN {lm} lm ON m.research_id = lm.research_id;
+
+UPDATE {schema}.fact_genetics_mm_v1 AS t
+SET event_time = ed.audit_date,
+    event_time_src = 'event_date_audit_v2_fallback',
+    mm_lineage_note = COALESCE(t.mm_lineage_note, '') || 'date_from_event_date_audit_v2;'
+FROM (
+    SELECT research_id,
+           MAX(TRY_CAST(resolved_date AS DATE)) AS audit_date
+    FROM {eda}
+    WHERE domain = 'molecular'
+    GROUP BY research_id
+) ed
+WHERE t.event_time IS NULL
+  AND t.research_id = ed.research_id;
+""".strip()
+
+
+def sql_fact_tumor(schema: str, built_ts: str, src: dict[str, str]) -> str:
+    tum = src["tumor_episode_master_v2"]
+    lm = src["linkage_master_v1"]
+    pid = "lower(md5(concat('{H_NS}|person|', cast(lm.canonical_research_id AS VARCHAR))))".format(H_NS=H_NS)
+    return f"""
+CREATE OR REPLACE TABLE {schema}.fact_tumor_mm_v1 AS
+SELECT
+    'mmv1_t_' || lower(md5(concat(
+        '{H_NS}|tumor|', cast(t.research_id AS VARCHAR), '|',
+        cast(t.surgery_episode_id AS VARCHAR), '|', cast(t.tumor_ordinal AS VARCHAR), '|',
+        coalesce(cast(t.surgery_date AS VARCHAR), '')
+    ))) AS tumor_instance_id,
+    'mmv1_p_' || {pid} AS person_id,
+    'mmv1_s_' || lower(md5(concat(
+        '{H_NS}|surgery|', cast(t.research_id AS VARCHAR), '|', cast(t.surgery_episode_id AS VARCHAR)
+    ))) AS surgery_id,
+    CAST(t.research_id AS BIGINT) AS research_id,
+    CAST(lm.canonical_research_id AS BIGINT) AS canonical_research_id,
+    CAST(t.surgery_episode_id AS BIGINT) AS surgery_episode_id,
+    CAST(t.tumor_ordinal AS INTEGER) AS tumor_ordinal,
+    TRY_CAST(t.surgery_date AS DATE) AS event_time,
+    CASE
+        WHEN t.surgery_date IS NOT NULL AND TRY_CAST(t.surgery_date AS DATE) IS NOT NULL
+            THEN 'pathology_surgery_date'
+        WHEN t.date_status = 'exact_source_date' THEN 'pathology_date_exact'
+        ELSE 'pathology_episode_resolved'
+    END::VARCHAR AS event_time_src,
+    t.primary_histology,
+    t.tumor_size_cm,
+    t.t_stage,
+    t.n_stage,
+    t.overall_stage,
+    t.laterality AS tumor_laterality,
+    t.multifocality_flag,
+    '{CONTRACT_VERSION}'::VARCHAR AS mm_contract_version,
+    '{SCRIPT_NAME}'::VARCHAR AS mm_source_script,
+    CAST('{built_ts}' AS TIMESTAMP) AS mm_built_at,
+    '{tum},{lm}'::VARCHAR AS mm_upstream_tables,
+    'One row per tumor per surgery; never collapsed.'::VARCHAR AS mm_lineage_note
+FROM {tum} t
+INNER JOIN {lm} lm ON t.research_id = lm.research_id;
+""".strip()
+
+
+def sql_fact_path_report(schema: str, built_ts: str, src: dict[str, str]) -> str:
+    tum = src["tumor_episode_master_v2"]
+    lm = src["linkage_master_v1"]
+    return f"""
+CREATE OR REPLACE TABLE {schema}.fact_path_report_mm_v1 AS
+SELECT
+    'mmv1_pr_' || lower(md5(concat(
+        '{H_NS}|pathrep|', cast(t.research_id AS VARCHAR), '|', cast(t.surgery_episode_id AS VARCHAR), '|',
+        coalesce(cast(min(t.surgery_date) AS VARCHAR), '')
+    ))) AS path_report_id,
+    'mmv1_p_' || lower(md5(concat(
+        '{H_NS}|person|', cast(MAX(lm.canonical_research_id) AS VARCHAR)
+    ))) AS person_id,
+    'mmv1_s_' || lower(md5(concat(
+        '{H_NS}|surgery|', cast(t.research_id AS VARCHAR), '|', cast(t.surgery_episode_id AS VARCHAR)
+    ))) AS surgery_id,
+    CAST(t.research_id AS BIGINT) AS research_id,
+    CAST(MAX(lm.canonical_research_id) AS BIGINT) AS canonical_research_id,
+    CAST(t.surgery_episode_id AS BIGINT) AS surgery_episode_id,
+    MIN(TRY_CAST(t.surgery_date AS DATE)) AS event_time,
+    'pathology_synoptic_aggregated_per_surgery'::VARCHAR AS event_time_src,
+    COUNT(*)::BIGINT AS tumor_row_count_in_source,
+    STRING_AGG(CAST(t.tumor_ordinal AS VARCHAR), ',' ORDER BY t.tumor_ordinal) AS tumor_ordinals_in_report,
+    '{CONTRACT_VERSION}'::VARCHAR AS mm_contract_version,
+    '{SCRIPT_NAME}'::VARCHAR AS mm_source_script,
+    CAST('{built_ts}' AS TIMESTAMP) AS mm_built_at,
+    '{tum},{lm}'::VARCHAR AS mm_upstream_tables,
+    'Report grain = surgery episode; tumors enumerated in tumor_ordinals_in_report.'::VARCHAR AS mm_lineage_note
+FROM {tum} t
+INNER JOIN {lm} lm ON t.research_id = lm.research_id
+GROUP BY t.research_id, t.surgery_episode_id;
+""".strip()
+
+
+def sql_link_surgery_path(schema: str, built_ts: str, src: dict[str, str]) -> str:
+    spv3 = src["surgery_pathology_linkage_v3"]
+    return f"""
+CREATE OR REPLACE TABLE {schema}.link_surgery_path_mm_v1 AS
+SELECT
+    'mmv1_lsp_' || lower(md5(concat(
+        '{H_NS}|lsp|', cast(sp.research_id AS VARCHAR), '|', cast(sp.surgery_episode_id AS VARCHAR), '|',
+        cast(sp.path_surgery_id AS VARCHAR), '|', cast(sp.tumor_ordinal AS VARCHAR)
+    ))) AS link_row_id,
+    'mmv1_s_' || lower(md5(concat(
+        '{H_NS}|surgery|', cast(sp.research_id AS VARCHAR), '|', cast(sp.surgery_episode_id AS VARCHAR)
+    ))) AS surgery_id,
+    ft.tumor_instance_id AS tumor_instance_id,
+    CAST(sp.research_id AS BIGINT) AS research_id,
+    CAST(sp.surgery_episode_id AS BIGINT) AS surgery_episode_id,
+    CAST(sp.path_surgery_id AS BIGINT) AS path_surgery_episode_id,
+    CAST(sp.tumor_ordinal AS INTEGER) AS tumor_ordinal,
+    sp.linkage_score,
+    sp.linkage_confidence_tier,
+    sp.score_rank,
+    sp.n_candidates,
+    sp.analysis_eligible_link_flag,
+    (sp.score_rank = 1
+        AND sp.analysis_eligible_link_flag
+        AND sp.linkage_confidence_tier IN ('exact_match', 'high_confidence', 'plausible')
+        AND sp.n_candidates = 1
+        AND ft.tumor_instance_id IS NOT NULL
+    ) AS is_primary_link,
+    sp.day_gap,
+    sp.surg_lat,
+    sp.path_lat,
+    sp.linkage_reason_summary,
+    '{CONTRACT_VERSION}'::VARCHAR AS mm_contract_version,
+    '{SCRIPT_NAME}'::VARCHAR AS mm_source_script,
+    CAST('{built_ts}' AS TIMESTAMP) AS mm_built_at,
+    '{spv3},{schema}.fact_tumor_mm_v1'::VARCHAR AS mm_upstream_tables,
+    CASE WHEN sp.n_candidates > 1 OR sp.linkage_confidence_tier IN ('weak', 'unlinked')
+         THEN 'ambiguous_or_weak_excluded_from_primary'
+         WHEN ft.tumor_instance_id IS NULL THEN 'no_matching_fact_tumor_row'
+         ELSE NULL
+    END::VARCHAR AS context_flags
+FROM {spv3} sp
+LEFT JOIN {schema}.fact_tumor_mm_v1 ft
+  ON sp.research_id = ft.research_id
+ AND sp.path_surgery_id = ft.surgery_episode_id
+ AND sp.tumor_ordinal = ft.tumor_ordinal;
+""".strip()
+
+
+def sql_link_surgery_context(schema: str, built_ts: str, src: dict[str, str]) -> str:
+    spv3 = src["surgery_pathology_linkage_v3"]
+    psv3 = src["preop_surgery_linkage_v3"]
+    fmv3 = src["fna_molecular_linkage_v3"]
+    tl_v2 = src["patient_cross_domain_timeline_v2"]
+    rai_v3 = src["pathology_rai_linkage_v3"]
+    oed = src["operative_episode_detail_v2"]
+    lm = src["linkage_master_v1"]
+    up = f"{spv3},{psv3},{fmv3},{rai_v3},{tl_v2},{oed},{lm}"
+    return f"""
+CREATE OR REPLACE TABLE {schema}.link_surgery_context_mm_v1 AS
+WITH sp AS (
+    SELECT research_id, surgery_episode_id,
+           MAX(CASE WHEN score_rank = 1 THEN linkage_score END) AS best_path_score,
+           MAX(CASE WHEN score_rank = 1 THEN linkage_confidence_tier END) AS best_path_tier,
+           MAX(n_candidates) AS max_path_candidates
+    FROM {spv3}
+    GROUP BY research_id, surgery_episode_id
+),
+preop AS (
+    SELECT research_id, surgery_episode_id,
+           MAX(CASE WHEN score_rank = 1 THEN linkage_score END) AS best_preop_score,
+           MAX(CASE WHEN score_rank = 1 THEN linkage_confidence_tier END) AS best_preop_tier,
+           MAX(n_candidates) AS max_preop_candidates,
+           MAX(preop_type) AS sample_preop_type
+    FROM {psv3}
+    GROUP BY research_id, surgery_episode_id
+),
+fm AS (
+    SELECT research_id,
+           MAX(CASE WHEN score_rank = 1 THEN linkage_score END) AS best_fm_score,
+           MAX(n_candidates) AS max_fm_candidates
+    FROM {fmv3}
+    GROUP BY research_id
+),
+tl AS (
+    SELECT research_id, COUNT(*) AS timeline_event_cnt
+    FROM {tl_v2}
+    GROUP BY research_id
+),
+prai AS (
+    SELECT research_id, surgery_episode_id,
+           MAX(CASE WHEN score_rank = 1 THEN linkage_score END) AS best_rai_score,
+           MAX(n_candidates) AS max_rai_candidates
+    FROM {rai_v3}
+    GROUP BY research_id, surgery_episode_id
+)
+SELECT
+    'mmv1_ctx_' || lower(md5(concat(
+        '{H_NS}|ctx|', cast(o.research_id AS VARCHAR), '|', cast(o.surgery_episode_id AS VARCHAR)
+    ))) AS context_id,
+    'mmv1_s_' || lower(md5(concat(
+        '{H_NS}|surgery|', cast(o.research_id AS VARCHAR), '|', cast(o.surgery_episode_id AS VARCHAR)
+    ))) AS surgery_id,
+    CAST(o.research_id AS BIGINT) AS research_id,
+    CAST(lm.canonical_research_id AS BIGINT) AS canonical_research_id,
+    sp.best_path_score,
+    sp.best_path_tier,
+    sp.max_path_candidates,
+    pr.best_preop_score,
+    pr.best_preop_tier,
+    pr.max_preop_candidates,
+    pr.sample_preop_type,
+    fm.best_fm_score,
+    fm.max_fm_candidates,
+    rai.best_rai_score,
+    rai.max_rai_candidates,
+    tl.timeline_event_cnt,
+    '{CONTRACT_VERSION}'::VARCHAR AS mm_contract_version,
+    '{SCRIPT_NAME}'::VARCHAR AS mm_source_script,
+    CAST('{built_ts}' AS TIMESTAMP) AS mm_built_at,
+    '{up}'::VARCHAR AS mm_upstream_tables,
+    NULL::VARCHAR AS mm_lineage_note
+FROM {oed} o
+INNER JOIN {lm} lm ON o.research_id = lm.research_id
+LEFT JOIN sp ON sp.research_id = o.research_id AND sp.surgery_episode_id = o.surgery_episode_id
+LEFT JOIN preop pr ON pr.research_id = o.research_id AND pr.surgery_episode_id = o.surgery_episode_id
+LEFT JOIN fm ON fm.research_id = o.research_id
+LEFT JOIN prai rai ON rai.research_id = o.research_id AND rai.surgery_episode_id = o.surgery_episode_id
+LEFT JOIN tl ON tl.research_id = o.research_id;
+""".strip()
+
+
+def sql_validations(schema: str, src: dict[str, str]) -> str:
+    psv3 = src["preop_surgery_linkage_v3"]
+    fmv3 = src["fna_molecular_linkage_v3"]
+    tum = src["tumor_episode_master_v2"]
+    return f"""
+CREATE OR REPLACE TABLE {schema}.val_nodes_invariant_mm_v1 AS
+SELECT 'orphan_fact_surgery_person'::VARCHAR AS violation_type,
+       CAST(fs.research_id AS VARCHAR) AS entity_a,
+       fs.surgery_id::VARCHAR AS entity_b,
+       fs.person_id::VARCHAR AS entity_c,
+       NULL::VARCHAR AS detail
+FROM {schema}.fact_surgery_mm_v1 fs
+LEFT JOIN {schema}.dim_patient_mm_v1 dp ON fs.person_id = dp.person_id
+WHERE dp.person_id IS NULL
+UNION ALL
+SELECT 'orphan_fact_tumor_person',
+       CAST(ft.research_id AS VARCHAR), ft.surgery_id, ft.person_id, NULL
+FROM {schema}.fact_tumor_mm_v1 ft
+LEFT JOIN {schema}.dim_patient_mm_v1 dp ON ft.person_id = dp.person_id
+WHERE dp.person_id IS NULL
+UNION ALL
+SELECT 'orphan_fact_tumor_surgery',
+       CAST(ft.research_id AS VARCHAR), ft.surgery_id, ft.tumor_instance_id,
+       'surgery_id not in fact_surgery'::VARCHAR
+FROM {schema}.fact_tumor_mm_v1 ft
+LEFT JOIN {schema}.fact_surgery_mm_v1 fs ON ft.surgery_id = fs.surgery_id
+WHERE fs.surgery_id IS NULL
+UNION ALL
+SELECT 'orphan_link_surgery_path_tumor',
+       CAST(sp.research_id AS VARCHAR), sp.surgery_id,
+       COALESCE(sp.tumor_instance_id::VARCHAR, 'NULL'),
+       'primary_requires_resolved_tumor'::VARCHAR
+FROM {schema}.link_surgery_path_mm_v1 sp
+WHERE sp.is_primary_link
+  AND sp.tumor_instance_id IS NULL
+UNION ALL
+SELECT 'primary_link_tumor_surgery_mismatch',
+       CAST(sp.research_id AS VARCHAR), sp.surgery_id, sp.tumor_instance_id,
+       'path_surgery_episode_id != fact_tumor.surgery_episode_id'::VARCHAR
+FROM {schema}.link_surgery_path_mm_v1 sp
+INNER JOIN {schema}.fact_tumor_mm_v1 ft ON sp.tumor_instance_id = ft.tumor_instance_id
+WHERE sp.is_primary_link
+  AND ft.surgery_episode_id IS DISTINCT FROM sp.path_surgery_episode_id;
+
+CREATE OR REPLACE TABLE {schema}.val_side_lobe_mismatch_mm_v1 AS
+SELECT 'surgery_pathology_lat_mismatch'::VARCHAR AS issue_type,
+       sp.research_id,
+       sp.surgery_episode_id,
+       sp.surg_lat AS lat_a,
+       sp.path_lat AS lat_b,
+       sp.linkage_confidence_tier AS tier,
+       sp.is_primary_link AS is_primary_bridge
+FROM {schema}.link_surgery_path_mm_v1 sp
+WHERE sp.is_primary_link
+  AND sp.surg_lat IS NOT NULL AND sp.path_lat IS NOT NULL
+  AND lower(sp.surg_lat) <> lower(sp.path_lat)
+  AND lower(sp.surg_lat) NOT IN ('isthmus')
+  AND lower(sp.path_lat) NOT IN ('isthmus')
+UNION ALL
+SELECT 'preop_surgery_lat_mismatch'::VARCHAR,
+       ps.research_id,
+       ps.surgery_episode_id,
+       ps.preop_lat,
+       ps.surg_lat,
+       ps.linkage_confidence_tier,
+       (ps.score_rank = 1 AND ps.analysis_eligible_link_flag
+        AND ps.linkage_confidence_tier IN ('exact_match', 'high_confidence', 'plausible')
+        AND ps.n_candidates = 1)
+FROM {psv3} ps
+WHERE ps.score_rank = 1
+  AND ps.analysis_eligible_link_flag
+  AND ps.preop_lat IS NOT NULL AND ps.surg_lat IS NOT NULL
+  AND lower(ps.preop_lat) <> lower(ps.surg_lat)
+  AND lower(ps.preop_lat) NOT IN ('isthmus')
+  AND lower(ps.surg_lat) NOT IN ('isthmus');
+
+CREATE OR REPLACE TABLE {schema}.val_preop_temporal_order_mm_v1 AS
+SELECT 'preop_after_surgery_calendar'::VARCHAR AS issue_type,
+       CAST(research_id AS BIGINT) AS research_id,
+       CAST(preop_episode_id AS VARCHAR) AS ref_a,
+       CAST(surgery_episode_id AS VARCHAR) AS ref_b,
+       CAST(preop_date AS VARCHAR) AS time_a,
+       CAST(surgery_date AS VARCHAR) AS time_b,
+       CAST(day_gap AS VARCHAR) AS metric
+FROM {psv3}
+WHERE preop_date > surgery_date
+UNION ALL
+SELECT 'molecular_before_fna_excess'::VARCHAR,
+       CAST(research_id AS BIGINT),
+       CAST(fna_episode_id AS VARCHAR),
+       CAST(molecular_episode_id AS VARCHAR),
+       CAST(fna_date_native AS VARCHAR),
+       CAST(test_date_native AS VARCHAR),
+       CAST(day_gap AS VARCHAR)
+FROM {fmv3}
+WHERE score_rank = 1
+  AND analysis_eligible_link_flag
+  AND day_gap < -8;
+
+CREATE OR REPLACE TABLE {schema}.val_ambiguous_multimodal_linkage_mm_v1 AS
+SELECT 'surgery_pathology'::VARCHAR AS domain,
+       CAST(sp.research_id AS VARCHAR) AS research_id,
+       CAST(sp.surgery_episode_id AS VARCHAR) AS surgery_episode_id,
+       sp.linkage_confidence_tier,
+       sp.n_candidates,
+       sp.score_rank,
+       sp.analysis_eligible_link_flag,
+       sp.is_primary_link,
+       sp.linkage_reason_summary AS detail
+FROM {schema}.link_surgery_path_mm_v1 sp
+WHERE NOT sp.is_primary_link
+   OR sp.n_candidates > 1
+   OR sp.linkage_confidence_tier IN ('weak', 'unlinked')
+UNION ALL
+SELECT 'preop_surgery'::VARCHAR,
+       CAST(ps.research_id AS VARCHAR),
+       CAST(ps.surgery_episode_id AS VARCHAR),
+       ps.linkage_confidence_tier,
+       ps.n_candidates,
+       ps.score_rank,
+       ps.analysis_eligible_link_flag,
+       (ps.score_rank = 1 AND ps.analysis_eligible_link_flag
+        AND ps.linkage_confidence_tier IN ('exact_match', 'high_confidence', 'plausible')
+        AND ps.n_candidates = 1),
+       ps.linkage_reason_summary
+FROM {psv3} ps
+WHERE ps.score_rank = 1
+  AND (
+    NOT ps.analysis_eligible_link_flag
+    OR ps.linkage_confidence_tier IN ('weak', 'unlinked')
+    OR ps.n_candidates > 1
+  );
+
+CREATE OR REPLACE TABLE {schema}.val_multitumor_expansion_mm_v1 AS
+WITH src AS (
+    SELECT research_id, surgery_episode_id, COUNT(*)::BIGINT AS n_src
+    FROM {tum}
+    GROUP BY research_id, surgery_episode_id
+),
+dst AS (
+    SELECT research_id, surgery_episode_id, COUNT(*)::BIGINT AS n_contract
+    FROM {schema}.fact_tumor_mm_v1
+    GROUP BY research_id, surgery_episode_id
+)
+SELECT s.research_id,
+       s.surgery_episode_id,
+       s.n_src,
+       COALESCE(d.n_contract, 0::BIGINT) AS n_contract,
+       'tumor_row_count_mismatch'::VARCHAR AS issue
+FROM src s
+LEFT JOIN dst d ON s.research_id = d.research_id AND s.surgery_episode_id = d.surgery_episode_id
+WHERE s.n_src <> COALESCE(d.n_contract, 0::BIGINT);
+""".strip()
+
+
+def apply_comments(con: duckdb.DuckDBPyConnection, schema: str) -> None:
+    comments: list[tuple[str, str | None]] = []
+
+    def tbl(name: str, text: str) -> None:
+        comments.append((f"COMMENT ON TABLE {schema}.{name} IS '{text.replace(chr(39), chr(39)+chr(39))}';", None))
+
+    def col(table: str, column: str, text: str) -> None:
+        q = text.replace("'", "''")
+        comments.append(
+            (f"COMMENT ON COLUMN {schema}.{table}.{column} IS '{q}';", None),
+        )
+
+    tbl("dim_patient_mm_v1", "Person dimension; one row per canonical_research_id (MRN-resolved spine).")
+    col("dim_patient_mm_v1", "person_id", "Deterministic surrogate; stable hash of canonical_research_id.")
+    col("dim_patient_mm_v1", "canonical_research_id", "MRN-linked canonical patient key from linkage_master_v1.")
+
+    tbl("map_patient_identifier_mm_v1", "Maps institutional identifiers and research_id to person_id.")
+    col("map_patient_identifier_mm_v1", "identifier_type", "research_id | euh_mrn | ...")
+    col("map_patient_identifier_mm_v1", "person_id", "FK logical to dim_patient_mm_v1.")
+
+    tbl("fact_surgery_mm_v1", "Surgical episode facts from operative_episode_detail_v2 + person linkage.")
+    col("fact_surgery_mm_v1", "surgery_id", "Deterministic surrogate per (research_id, surgery_episode_id).")
+    col("fact_surgery_mm_v1", "event_time", "Surgery date (native).")
+    col("fact_surgery_mm_v1", "event_time_src", "Provenance of event_time.")
+
+    tbl("dim_nodule_mm_v1", "Imaging nodule dimension from imaging_nodule_master_v1.")
+    col("dim_nodule_mm_v1", "nodule_id", "Contract nodule key; hash of legacy keys.")
+
+    tbl("fact_imaging_mm_v1", "Per-nodule imaging facts.")
+    col("fact_imaging_mm_v1", "imaging_fact_id", "Surrogate per imaging/nodule row.")
+    col("fact_imaging_mm_v1", "event_time", "Exam date with audit fallback.")
+
+    tbl("fact_fna_mm_v1", "FNA episode facts.")
+    col("fact_fna_mm_v1", "fna_fact_id", "Surrogate per FNA episode.")
+
+    tbl("fact_genetics_mm_v1", "Molecular / genomics test facts.")
+    col("fact_genetics_mm_v1", "genetics_fact_id", "Surrogate per molecular episode.")
+
+    tbl("fact_path_report_mm_v1", "Pathology report header grain per surgery episode.")
+    col("fact_path_report_mm_v1", "path_report_id", "Surrogate per surgery episode pathology encounter.")
+
+    tbl("fact_tumor_mm_v1", "Tumor-level pathology; one row per tumor row in tumor_episode_master_v2.")
+    col("fact_tumor_mm_v1", "tumor_instance_id", "Deterministic surrogate per tumor ordinal within surgery.")
+
+    tbl("link_surgery_path_mm_v1", "Surgery-to-pathology tumor linkage with primary flag.")
+    col("link_surgery_path_mm_v1", "is_primary_link", "TRUE only for unambiguous, non-weak eligible best rank.")
+
+    tbl("link_surgery_context_mm_v1", "Per-surgery multimodal linkage context and timeline density.")
+    col("link_surgery_context_mm_v1", "best_rai_score", "Best rank-1 pathology–RAI linkage score from pathology_rai_linkage_v3.")
+    col("link_surgery_context_mm_v1", "max_rai_candidates", "Ambiguity count for pathology–RAI candidates.")
+
+    tbl("val_nodes_invariant_mm_v1", "Fail-closed graph invariant violations (empty = pass).")
+    tbl("val_side_lobe_mismatch_mm_v1", "Laterality mismatches on primary bridges.")
+    tbl("val_preop_temporal_order_mm_v1", "Temporal ordering issues in preop/molecular chains.")
+    tbl("val_ambiguous_multimodal_linkage_mm_v1", "Ambiguous or weak links excluded from primary.")
+    tbl("val_multitumor_expansion_mm_v1", "Tumor row count parity vs tumor_episode_master_v2 per surgery.")
+
+    for stmt in comments:
+        if stmt[0]:
+            try:
+                con.execute(stmt[0])
+            except Exception as e:
+                print(f"  [WARN] COMMENT skipped: {e}")
+
+
+def build_all(con: duckdb.DuckDBPyConnection, schema: str) -> list[str]:
+    built_ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+    section(f"CREATE SCHEMA {schema}")
+    con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema};")
+    src = ensure_upstream_sources(con, schema, section=section)
+    bootstrapped = sorted(k for k, v in src.items() if v != k)
+
+    steps = [
+        ("dim_patient_mm_v1", sql_dim_patient(schema, built_ts, src)),
+        ("map_patient_identifier_mm_v1", sql_map_identifiers(schema, built_ts, src)),
+        ("fact_surgery_mm_v1", sql_fact_surgery(schema, built_ts, src)),
+        ("dim_nodule_mm_v1", sql_dim_nodule(schema, built_ts, src)),
+        ("fact_imaging_mm_v1", sql_fact_imaging(schema, built_ts, src)),
+        ("fact_fna_mm_v1", sql_fact_fna(schema, built_ts, src)),
+        ("fact_genetics_mm_v1", sql_fact_genetics(schema, built_ts, src)),
+        ("fact_tumor_mm_v1", sql_fact_tumor(schema, built_ts, src)),
+        ("fact_path_report_mm_v1", sql_fact_path_report(schema, built_ts, src)),
+        ("link_surgery_path_mm_v1", sql_link_surgery_path(schema, built_ts, src)),
+        ("link_surgery_context_mm_v1", sql_link_surgery_context(schema, built_ts, src)),
+    ]
+
+    for label, sql in steps:
+        section(label)
+        con.execute(sql)
+        n = con.execute(f"SELECT COUNT(*) FROM {schema}.{label}").fetchone()[0]
+        print(f"  rows: {n:,}")
+
+    section("validation tables")
+    con.execute(sql_validations(schema, src))
+    for v in (
+        "val_nodes_invariant_mm_v1",
+        "val_side_lobe_mismatch_mm_v1",
+        "val_preop_temporal_order_mm_v1",
+        "val_ambiguous_multimodal_linkage_mm_v1",
+        "val_multitumor_expansion_mm_v1",
+    ):
+        n = con.execute(f"SELECT COUNT(*) FROM {schema}.{v}").fetchone()[0]
+        print(f"  {v}: {n:,} rows")
+
+    section("COMMENT ON metadata")
+    apply_comments(con, schema)
+    return bootstrapped
+
+
+def summarize(con: duckdb.DuckDBPyConnection, schema: str) -> dict:
+    tables = [
+        "dim_patient_mm_v1",
+        "map_patient_identifier_mm_v1",
+        "fact_surgery_mm_v1",
+        "dim_nodule_mm_v1",
+        "fact_imaging_mm_v1",
+        "fact_fna_mm_v1",
+        "fact_genetics_mm_v1",
+        "fact_path_report_mm_v1",
+        "fact_tumor_mm_v1",
+        "link_surgery_path_mm_v1",
+        "link_surgery_context_mm_v1",
+        "val_nodes_invariant_mm_v1",
+        "val_side_lobe_mismatch_mm_v1",
+        "val_preop_temporal_order_mm_v1",
+        "val_ambiguous_multimodal_linkage_mm_v1",
+        "val_multitumor_expansion_mm_v1",
+    ]
+    out: dict = {"schema": schema, "contract_version": CONTRACT_VERSION, "row_counts": {}, "validation_fail_rows": {}}
+    for t in tables:
+        cnt = con.execute(f"SELECT COUNT(*) FROM {schema}.{t}").fetchone()[0]
+        out["row_counts"][t] = cnt
+        if t.startswith("val_"):
+            out["validation_fail_rows"][t] = cnt
+    return out
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--md", action="store_true", help="Write to MotherDuck (schema mm_contract_dev only)")
+    ap.add_argument("--dry-run", action="store_true", help="Print schema and exit")
+    args = ap.parse_args()
+    schema = resolve_schema(md=args.md)
+
+    if args.dry_run:
+        print(f"Schema: {schema} (md={args.md})")
+        return
+
+    if args.md:
+        con = connect_md_or_file(DB_PATH, md=True, fail_closed=True)
+    else:
+        con = duckdb.connect(str(DB_PATH))
+
+    try:
+        bootstrapped = build_all(con, schema)
+        summary = summarize(con, schema)
+        section("ROW COUNT SUMMARY")
+        print(json.dumps(summary["row_counts"], indent=2))
+        section("VALIDATION TABLE COUNTS (non-zero = investigate)")
+        print(json.dumps(summary["validation_fail_rows"], indent=2))
+        if bootstrapped:
+            section("BOOTSTRAPPED UPSTREAM (native table missing; used schema stubs)")
+            print(json.dumps(bootstrapped, indent=2))
+
+        EXPORT_DIR.mkdir(parents=True, exist_ok=True)
+        ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+        summary_path = EXPORT_DIR / f"mm_contract_summary_{ts}.json"
+        gaps: dict = {
+            "missing_upstream": [],
+            "bootstrapped_upstream": bootstrapped,
+            "notes": [
+                "val_* tables are audit outputs; some ambiguity rows are expected.",
+                "is_primary_link requires unique non-weak candidate.",
+            ],
+        }
+        summary["gaps"] = gaps
+        summary_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+        print(f"\n  Wrote {summary_path}")
+    finally:
+        con.close()
+
+
+if __name__ == "__main__":
+    main()
