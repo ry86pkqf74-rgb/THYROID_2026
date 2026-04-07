@@ -21,6 +21,8 @@ Usage (place ``--execute`` / ``--date-tag`` **before** the subcommand)::
   .venv/bin/python scripts/130_md_env_bootstrap.py --execute clone --dev [--md-sa]
   .venv/bin/python scripts/130_md_env_bootstrap.py --execute refresh-dev --latest
   .venv/bin/python scripts/130_md_env_bootstrap.py validate --database \"Thyroid 2026 Molecular Dev 20260407\"
+  .venv/bin/python scripts/130_md_env_bootstrap.py prepromote-backup --label 20260407_1530
+  .venv/bin/python scripts/130_md_env_bootstrap.py --execute prepromote-backup --label release_20260409 --md-sa
 """
 
 from __future__ import annotations
@@ -58,6 +60,14 @@ def dev_database_name(tag: str) -> str:
 
 def qa_database_name(tag: str) -> str:
     return f"Thyroid 2026 Molecular QA {tag}"
+
+
+def prepromote_database_name(label: str) -> str:
+    """Deterministic long-lived rollback clone name (label must be filesystem-safe)."""
+    safe = "".join(c for c in label if c.isalnum() or c in " _-").strip()
+    if not safe:
+        raise ValueError("prepromote --label must contain at least one alphanumeric character")
+    return f"Thyroid 2026 Molecular PrePromote {safe}"
 
 
 def connect_rw(*, prefer_service_account: bool) -> duckdb.DuckDBPyConnection:
@@ -301,6 +311,29 @@ def cmd_validate(con: duckdb.DuckDBPyConnection, database: str) -> None:
     print(f"current_database={cur[0]!r} main_table_count={n_main[0] if n_main else '?'}")
 
 
+def cmd_prepromote_backup(
+    con: duckdb.DuckDBPyConnection,
+    prod: str,
+    label: str,
+    *,
+    execute: bool,
+) -> str:
+    """Create (or replace) a zero-copy clone of prod for rollback / audit."""
+    db = prepromote_database_name(label)
+    or_rep = execute
+    sql = sql_clone_latest(db, prod, or_replace=or_rep)
+    print(f"-- prepromote rollback handle -> {db!r}")
+    print(sql)
+    if execute:
+        con.execute(sql)
+        print("[ok] prepromote backup catalog created")
+    print(
+        "\nRollback: swap traffic to this database, or recreate prod from it; "
+        "see docs/release_runbook.md (Rollback procedure)."
+    )
+    return db
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         description=__doc__,
@@ -356,6 +389,18 @@ def build_parser() -> argparse.ArgumentParser:
     s_val.add_argument("--database", required=True, help="MotherDuck database name to validate.")
     s_val.set_defaults(_handler="validate")
 
+    s_pre = sub.add_parser(
+        "prepromote-backup",
+        help="CREATE [OR REPLACE] DATABASE … FROM prod — DuckLake-safe rollback handle before promotion.",
+    )
+    s_pre.add_argument(
+        "--label",
+        required=True,
+        metavar="LABEL",
+        help="Unique suffix e.g. 20260407_1530 or release_20260409 (alphanumeric, space, _, -).",
+    )
+    s_pre.set_defaults(_handler="prepromote_backup")
+
     s_print = sub.add_parser("print-env", help="Print suggested dev/qa names for a date tag (no connection).")
     s_print.set_defaults(_handler="print_env")
 
@@ -404,6 +449,8 @@ def main() -> int:
             )
         elif args._handler == "validate":
             cmd_validate(con, args.database)
+        elif args._handler == "prepromote_backup":
+            cmd_prepromote_backup(con, prod, args.label, execute=args.execute)
         else:
             raise SystemExit("unknown command")
     finally:

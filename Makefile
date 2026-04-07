@@ -14,6 +14,8 @@
 #   make md-v2-gate-md-dryrun            # formalization path: 116 --md --dry-run → 112 --motherduck-check → 119 --md (all fail-closed on --md)
 #   make md-live-release-dryrun          # scripts/124_md_live_release_audit.py --md --dry-run (fail-closed)
 #   make md-live-release-final           # scripts/124_md_live_release_audit.py --md --final-release (fail-closed; strict release)
+#   make md-molecular-promote-rehearsal  # 137 promote (rehearsal: no --execute; 124/136 dry-run)
+#   make md-molecular-promote           # 137 promote --execute (prod-safe chain; see docs/release_runbook.md)
 #   make md-v2-gate-local-dryrun         # legacy / local-only: 112 against local DuckDB + parquets (no --md)
 #   make md-release-manifest-qa-dryrun   # legacy / local-only: manifest dry-run (script 96, local DB)
 #   make md-release-manifest-prod        # legacy / local-only: write release manifest (script 96, local DB)
@@ -35,6 +37,9 @@ endef
 
 # ── SA flag helper (scripts/96 still accept --sa for legacy paths) ────
 SA_FLAG := $(if $(MD_SA_TOKEN),--sa,)
+
+# Prefer service account when MD_SA_TOKEN is set (137 matches 119/124 --md-sa pattern).
+MD_MOL_SA := $(if $(MD_SA_TOKEN),--md-sa,)
 
 # 96_release_manifest.py gates on LOCAL_DB_PATH even when opening a local file.
 define run96
@@ -69,6 +74,16 @@ md-live-release-dryrun:
 md-live-release-final:
 	$(check_md_rw_token)
 	$(PYTHON) scripts/124_md_live_release_audit.py --md --final-release
+
+.PHONY: md-molecular-promote-rehearsal
+md-molecular-promote-rehearsal:
+	$(check_md_rw_token)
+	$(PYTHON) scripts/137_md_molecular_release_workflow.py promote --tag $$(date -u +%Y%m%d) $(MD_MOL_SA)
+
+.PHONY: md-molecular-promote
+md-molecular-promote:
+	$(check_md_rw_token)
+	$(PYTHON) scripts/137_md_molecular_release_workflow.py promote --tag $$(date -u +%Y%m%d) --execute $(MD_MOL_SA)
 
 # ── v2 promotion gate dry-run — local / legacy (local DuckDB + parquets only) ─
 .PHONY: md-v2-gate-local-dryrun

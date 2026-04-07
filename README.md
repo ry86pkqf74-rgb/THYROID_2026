@@ -53,6 +53,7 @@ documented source limitations, not data quality failures.
 | LLM validation workspace | [`studies/llm_extraction_validation/README.md`](studies/llm_extraction_validation/README.md) |
 | Architecture sign-off memo | [`studies/20260407_signoff_memo/signoff_memo.md`](studies/20260407_signoff_memo/signoff_memo.md) |
 | MotherDuck DB contract | [`docs/motherduck_database_contract_v1.md`](docs/motherduck_database_contract_v1.md) |
+| Molecular prod release (dev/qa/prod, 137) | [`docs/release_runbook.md`](docs/release_runbook.md) |
 | Review queue triage export (script 120) | [`docs/review_queue_triage_export.md`](docs/review_queue_triage_export.md) |
 | Domain mapping rules | [`docs/domain_mapping_rules.md`](docs/domain_mapping_rules.md) |
 | Domain inventory (current) | [`studies/20260406_domain_inventory_current/`](studies/20260406_domain_inventory_current/) |
@@ -373,7 +374,7 @@ n = ThyroidStatisticalAnalyzer.power_two_proportions(p1=0.15, p2=0.05)
 | Streamlit Cloud | Auto-deploys from `main` branch on push |
 | Runtime | Python 3.11 (pinned in `runtime.txt`) |
 
-**Make — MotherDuck formalization (env tokens; fail-closed `--md`):** `make md-v2-gate-md-dryrun`, `make md-live-release-dryrun`, `make md-live-release-final`. **Local / legacy:** `make md-v2-gate-local-dryrun` (alias `md-v2-gate-dryrun`), manifest targets `md-release-manifest-*`, `md-promote-dryrun-*` — see `Makefile` header comments.
+**Make — MotherDuck formalization (env tokens; fail-closed `--md`):** `make md-v2-gate-md-dryrun`, `make md-live-release-dryrun`, `make md-live-release-final`, `make md-molecular-promote-rehearsal`, `make md-molecular-promote` (see [`docs/release_runbook.md`](docs/release_runbook.md)). **Local / legacy:** `make md-v2-gate-local-dryrun` (alias `md-v2-gate-dryrun`), manifest targets `md-release-manifest-*`, `md-promote-dryrun-*` — see `Makefile` header comments.
 
 ## Streamlit Cloud deployment
 
