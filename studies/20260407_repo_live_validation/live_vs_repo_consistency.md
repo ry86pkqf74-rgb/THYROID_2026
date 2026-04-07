@@ -1,6 +1,6 @@
 # Live vs repository consistency
 
-- Audit UTC: 2026-04-07T22:08:41Z
+- Audit UTC: 2026-04-07T22:12:25Z
 - Credential: **read_write** (class `read_write`)
 
 ## README / signoff claims checked

@@ -1,6 +1,6 @@
 # Live MotherDuck audit (read-only)
 
-- **UTC timestamp:** 2026-04-07T22:08:41Z
+- **UTC timestamp:** 2026-04-07T22:12:25Z
 - **Connection mode:** `read_write` (preflight credential class: `read_write`)
 - **User agent:** `THYROID_2026_live_audit`
 - **Session hint:** `live_publication_validation_20260407`
@@ -27,7 +27,7 @@ _No read-scaling token in env; checking read/write env vars (then secrets file).
 - Read-only **SELECT** only; no DDL/DML; no `ATTACH 'md:'` workspace mode.
 - md_information_schema.databases (8 rows)
 - MD snapshots metadata (database_snapshots, 186 rows)
-- Query history / query_history (count=120475)
+- Query history / query_history (count=120515)
 - **Read/write** token path via `MotherDuckClient.connect_rw()` (queries were SELECT-only).
 
 ## Key metrics
@@ -40,7 +40,7 @@ _No read-scaling token in env; checking read/write env vars (then secrets file).
 | release_schemas_count | 9 | release_20260406,release_20260407,release_20260407_final,release_20260407_final2,release_20260407_tier,release_20260408,release_20260409,release_20260410,release_20260411 |
 | accessible:md_information_schema.databases | yes | row_count=8 |
 | accessible:database_snapshots | yes | row_count=186 |
-| accessible:query_history | yes | row_count=120475 |
+| accessible:query_history | yes | row_count=120515 |
 | mrq_total_rows | 11244 |  |
 | mrq_status:auto_accepted_standard | 6162 |  |
 | mrq_status:auto_accepted_critical_sample_ok | 3292 |  |
