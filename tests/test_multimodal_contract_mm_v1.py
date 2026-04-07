@@ -321,13 +321,16 @@ class TestImagingFnaContractIntegration:
         con = duckdb.connect(":memory:")
         _seed_minimal_upstream(con)
         mod.build_all(con, self.SCHEMA)
-        expect_img = con.execute(
+        ei = con.execute(
             f"SELECT imaging_fact_id FROM {self.SCHEMA}.fact_imaging_mm_v1 "
             "WHERE research_id = 100"
-        ).fetchone()[0]
-        expect_fna = con.execute(
+        ).fetchone()
+        ef = con.execute(
             f"SELECT fna_fact_id FROM {self.SCHEMA}.fact_fna_mm_v1 WHERE research_id = 100"
-        ).fetchone()[0]
+        ).fetchone()
+        assert ei is not None and ef is not None
+        expect_img = ei[0]
+        expect_fna = ef[0]
         row = con.execute(
             f"SELECT imaging_id, fna_id, is_primary_link, link_confidence FROM {self.SCHEMA}.link_imaging_fna_mm_v1"
         ).fetchone()
@@ -349,17 +352,21 @@ class TestImagingFnaContractIntegration:
             """
         )
         mod.build_all(con, self.SCHEMA)
-        prim = con.execute(
+        pr = con.execute(
             f"SELECT BOOL_OR(is_primary_link) FROM {self.SCHEMA}.link_imaging_fna_mm_v1"
-        ).fetchone()[0]
-        assert prim is False
-        amb = con.execute(
+        ).fetchone()
+        am = con.execute(
             f"SELECT BOOL_OR(flag_ambiguous_linkage) FROM {self.SCHEMA}.link_imaging_fna_mm_v1"
-        ).fetchone()[0]
-        assert amb is True
-        multi = con.execute(
+        ).fetchone()
+        mu = con.execute(
             f"SELECT BOOL_OR(flag_multi_fna_nodule) FROM {self.SCHEMA}.link_imaging_fna_mm_v1"
-        ).fetchone()[0]
+        ).fetchone()
+        assert pr is not None and am is not None and mu is not None
+        prim = pr[0]
+        amb = am[0]
+        multi = mu[0]
+        assert prim is False
+        assert amb is True
         assert multi is True
 
     def test_discordant_laterality_surfaces_in_blockers_not_in_link(self) -> None:
@@ -368,14 +375,17 @@ class TestImagingFnaContractIntegration:
         _seed_minimal_upstream(con)
         con.execute("UPDATE fna_episode_master_v2 SET laterality = 'left' WHERE research_id = 100")
         mod.build_all(con, self.SCHEMA)
-        n_link = con.execute(
+        nl = con.execute(
             f"SELECT COUNT(*) FROM {self.SCHEMA}.link_imaging_fna_mm_v1"
-        ).fetchone()[0]
-        assert n_link == 0
-        n_blk = con.execute(
+        ).fetchone()
+        nb = con.execute(
             f"SELECT COUNT(*) FROM {self.SCHEMA}.val_imaging_fna_contract_blockers_mm_v1 "
             "WHERE review_reason = 'discordant_laterality'"
-        ).fetchone()[0]
+        ).fetchone()
+        assert nl is not None and nb is not None
+        n_link = nl[0]
+        n_blk = nb[0]
+        assert n_link == 0
         assert n_blk >= 1
 
     def test_size_drift_gt_20pct_surfaces_in_review(self) -> None:
@@ -392,14 +402,17 @@ class TestImagingFnaContractIntegration:
             """
         )
         mod.build_all(con, self.SCHEMA)
-        n_link = con.execute(
+        nl2 = con.execute(
             f"SELECT COUNT(*) FROM {self.SCHEMA}.link_imaging_fna_mm_v1"
-        ).fetchone()[0]
-        assert n_link == 0
-        n_rev = con.execute(
+        ).fetchone()
+        nr = con.execute(
             f"SELECT COUNT(*) FROM {self.SCHEMA}.review_queue_imaging_fna_mm_v1 "
             "WHERE review_reason = 'size_drift_gt_20pct'"
-        ).fetchone()[0]
+        ).fetchone()
+        assert nl2 is not None and nr is not None
+        n_link = nl2[0]
+        n_rev = nr[0]
+        assert n_link == 0
         assert n_rev >= 1
 
     def test_same_day_fna_ordinals_preserved(self) -> None:

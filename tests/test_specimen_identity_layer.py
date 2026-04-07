@@ -44,7 +44,7 @@ def test_multi_synoptic_same_day_distinct_master_fingerprints() -> None:
 
 
 def test_duckdb_sql_matches_python_fingerprint_with_synoptic_ix() -> None:
-    parts_sql = duckdb.connect(":memory:").execute(
+    row = duckdb.connect(":memory:").execute(
         """
         SELECT sha256(concat_ws('|',
           LOWER(TRIM(CAST(12 AS VARCHAR))),
@@ -59,7 +59,9 @@ def test_duckdb_sql_matches_python_fingerprint_with_synoptic_ix() -> None:
           LOWER(TRIM(CAST(7 AS VARCHAR)))
         )) AS h
         """
-    ).fetchone()[0]
+    ).fetchone()
+    assert row is not None
+    parts_sql = row[0]
     parts_py = specimen_master_fingerprint_sha256(
         research_id=12,
         source_system="pathology_synoptic_encounter",
@@ -119,9 +121,11 @@ def test_identity_ddl_two_surgery_dates_two_focus_rows() -> None:
     ddl_path = Path(__file__).resolve().parent.parent / "scripts/sql/139_specimen_identity_layer_ddl.sql"
     sql = ddl_path.read_text(encoding="utf-8").replace("__BUILD_RUN_ID__", "pytest_run")
     con.execute(sql)
-    n = con.execute(
+    cnt = con.execute(
         "SELECT COUNT(DISTINCT specimen_focus_id) FROM main.specimen_tumor_focus_v1"
-    ).fetchone()[0]
+    ).fetchone()
+    assert cnt is not None
+    n = cnt[0]
     assert n == 2
 
 

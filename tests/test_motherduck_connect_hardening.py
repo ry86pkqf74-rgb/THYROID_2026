@@ -173,8 +173,11 @@ class TestMdConnectBehavior:
                 pass
 
         class FakeClient:
+            config: object | None
+
             def __init__(self) -> None:
                 self.connect_rw_called = False
+                self.config = None
 
             def connect_rw(self) -> FakeCon:
                 self.connect_rw_called = True

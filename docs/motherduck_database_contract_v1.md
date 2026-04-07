@@ -401,9 +401,9 @@ c.close()
 "
 ```
 
-### Environment / catalog limitation
+### Environment / catalog mapping
 
-`MOTHERDUCK_ENV` values `dev`, `qa`, and `prod` all resolve to the **same** MotherDuck database name in `config/motherduck_environments.yml` (`Thyroid 2026`). Environment isolation is **not** separate MotherDuck catalogs in this repo today — isolation is by **schema** (`main`, `v2_stage`, `qa`, `release_*`) as described in §1–2.
+`MOTHERDUCK_ENV` (`dev` \| `qa` \| `prod`) selects the database name from [`config/motherduck_environments.yml`](../config/motherduck_environments.yml). **Dev** and **QA** use dedicated sandbox catalogs (zero-copy clones from prod per [`docs/motherduck_sandbox_clone_runbook.md`](motherduck_sandbox_clone_runbook.md)); **prod** uses `Thyroid 2026`. Override any mapping with `MOTHERDUCK_DATABASE` / `MOTHERDUCK_DB`. Within a single catalog, promoted data still lives under **`main`**, staging under **`v2_stage`**, governance under **`qa`**, and immutables under **`release_*`** (§1–2).
 
 ### Environment variables
 

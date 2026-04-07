@@ -90,33 +90,34 @@ def test_qa_diagnostic_views_empty_on_happy_path() -> None:
     mod140.apply_specimen_genomics_binding(con)
     con.execute(diag_sql)
 
-    assert con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_duplicate_master_fp_v1").fetchone()[0] == 0
-    assert (
-        con.execute(
-            "SELECT COUNT(*) FROM ( SELECT focus_fingerprint_sha256 FROM "
-            "main.specimen_tumor_focus_v1 GROUP BY 1 HAVING COUNT(*) > 1) _t"
-        ).fetchone()[0]
-        == 0
-    )
-    assert (
-        con.execute(
-            "SELECT COUNT(*) FROM main.specimen_tumor_focus_v1 f "
-            "LEFT JOIN main.specimen_master_v1 m ON f.specimen_id = m.specimen_id "
-            "WHERE m.specimen_id IS NULL"
-        ).fetchone()[0]
-        == 0
-    )
-    assert (
-        con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_orphan_genomic_master_v1").fetchone()[0] == 0
-    )
-    assert con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_broken_refs_v1").fetchone()[0] == 0
+    d0 = con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_duplicate_master_fp_v1").fetchone()
+    assert d0 is not None and d0[0] == 0
+    d1 = con.execute(
+        "SELECT COUNT(*) FROM ( SELECT focus_fingerprint_sha256 FROM "
+        "main.specimen_tumor_focus_v1 GROUP BY 1 HAVING COUNT(*) > 1) _t"
+    ).fetchone()
+    assert d1 is not None and d1[0] == 0
+    d2 = con.execute(
+        "SELECT COUNT(*) FROM main.specimen_tumor_focus_v1 f "
+        "LEFT JOIN main.specimen_master_v1 m ON f.specimen_id = m.specimen_id "
+        "WHERE m.specimen_id IS NULL"
+    ).fetchone()
+    assert d2 is not None and d2[0] == 0
+    d3 = con.execute(
+        "SELECT COUNT(*) FROM qa.v_diag_specimen_orphan_genomic_master_v1"
+    ).fetchone()
+    assert d3 is not None and d3[0] == 0
+    d4 = con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_broken_refs_v1").fetchone()
+    assert d4 is not None and d4[0] == 0
     m = con.execute(
         "SELECT n_missing_identity_run FROM qa.v_diag_specimen_provenance_master_v1"
     ).fetchone()
-    nmiss_f = con.execute(
+    nrf = con.execute(
         "SELECT COUNT(*) FILTER (WHERE TRIM(COALESCE(identity_build_run_id, '')) = '') "
         "FROM main.specimen_tumor_focus_v1"
-    ).fetchone()[0]
+    ).fetchone()
+    assert nrf is not None
+    nmiss_f = nrf[0]
     assert m is not None and int(m[0] or 0) == 0
     assert int(nmiss_f or 0) == 0
     g = con.execute(
@@ -133,8 +134,8 @@ def test_contract_view_column_sets_documented() -> None:
     spec = importlib.util.spec_from_file_location(
         "md119", ROOT / "scripts" / "119_md_formalization_validate.py"
     )
+    assert spec is not None and spec.loader is not None
     mod = importlib.util.module_from_spec(spec)
-    assert spec.loader
     spec.loader.exec_module(mod)
     names = set(mod.SPECIMEN_FHIR_DIAG_VIEWS)
     assert "v_diag_specimen_fhir_broken_refs_v1" in names

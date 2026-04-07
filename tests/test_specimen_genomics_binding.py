@@ -146,13 +146,17 @@ def test_exploded_json_row_counts_stable() -> None:
       3, 'stable_hash', '["a","b","c"]', '[]');
     """)
     mod140.apply_specimen_genomics_binding(con, has_genetic=False, has_thyroseq=True)
-    c1 = con.execute(
+    r1 = con.execute(
         "SELECT COUNT(*) FROM main.specimen_genomic_assay_v1 WHERE payload_field = 'fusion_genes_json'"
-    ).fetchone()[0]
+    ).fetchone()
+    assert r1 is not None
+    c1 = r1[0]
     mod140.apply_specimen_genomics_binding(con, has_genetic=False, has_thyroseq=True)
-    c2 = con.execute(
+    r2 = con.execute(
         "SELECT COUNT(*) FROM main.specimen_genomic_assay_v1 WHERE payload_field = 'fusion_genes_json'"
-    ).fetchone()[0]
+    ).fetchone()
+    assert r2 is not None
+    c2 = r2[0]
     assert c1 == c2 == 3
     ordinals = con.execute(
         """SELECT payload_explode_ord FROM main.specimen_genomic_assay_v1
@@ -193,7 +197,10 @@ def test_multifocal_clears_focus_goes_to_qa() -> None:
         """SELECT specimen_focus_id, linkage_confidence_tier
            FROM main.specimen_genomic_assay_v1 WHERE research_id = 5"""
     ).fetchone()
+    assert row is not None
     assert row[0] is None
     assert row[1] == "plausible_review"
-    nq = con.execute("SELECT COUNT(*) FROM qa.specimen_genomic_link_review_v1").fetchone()[0]
+    rq = con.execute("SELECT COUNT(*) FROM qa.specimen_genomic_link_review_v1").fetchone()
+    assert rq is not None
+    nq = rq[0]
     assert nq >= 1

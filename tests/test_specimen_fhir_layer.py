@@ -15,7 +15,7 @@ from utils.specimen_fingerprint import (
 
 
 def test_specimen_master_fingerprint_stable_normalization() -> None:
-    kwargs = dict(
+    payload = specimen_master_fingerprint_input(
         research_id=" 12 ",
         source_system="PATHOLOGY_SYNOPTIC_ENCOUNTER",
         procedure_date_day="2020-01-15",
@@ -27,8 +27,18 @@ def test_specimen_master_fingerprint_stable_normalization() -> None:
         encounter_synoptic_row_ix=1,
         synoptic_row_ix=9,
     )
-    payload = specimen_master_fingerprint_input(**kwargs)
-    h1 = specimen_master_fingerprint_sha256(**kwargs)
+    h1 = specimen_master_fingerprint_sha256(
+        research_id=" 12 ",
+        source_system="PATHOLOGY_SYNOPTIC_ENCOUNTER",
+        procedure_date_day="2020-01-15",
+        accession_or_source_id=" ACC-1 ",
+        specimen_role="Surgical_resection",
+        anatomic_site="thyroid",
+        laterality="",
+        surgery_episode_id=100,
+        encounter_synoptic_row_ix=1,
+        synoptic_row_ix=9,
+    )
     h2 = hashlib.sha256(payload.encode("utf-8")).hexdigest()
     assert h1 == h2
 
@@ -65,7 +75,7 @@ def test_tumor_focus_includes_master_fp_and_slot() -> None:
 
 def test_sql_fingerprint_matches_python_case() -> None:
     """DuckDB sha256(concat_ws(...)) matches Python helper for a fixed row."""
-    parts_sql = duckdb.connect(":memory:").execute(
+    sql_row = duckdb.connect(":memory:").execute(
         """
         SELECT sha256(concat_ws('|',
           LOWER(TRIM(CAST(12 AS VARCHAR))),
@@ -80,7 +90,9 @@ def test_sql_fingerprint_matches_python_case() -> None:
           LOWER(TRIM(CAST(1 AS VARCHAR)))
         )) AS h
         """
-    ).fetchone()[0]
+    ).fetchone()
+    assert sql_row is not None
+    parts_sql = sql_row[0]
     parts_py = specimen_master_fingerprint_sha256(
         research_id=12,
         source_system="pathology_synoptic_encounter",
@@ -152,23 +164,31 @@ def test_distinct_surgery_dates_two_focus_rows() -> None:
     tail = (root / "scripts/sql/138_specimen_fhir_tail_ddl.sql").read_text(encoding="utf-8")
     con.execute(ident)
     con.execute(tail)
-    n = con.execute(
+    nf = con.execute(
         "SELECT COUNT(DISTINCT specimen_focus_id) FROM main.specimen_tumor_focus_v1"
-    ).fetchone()[0]
+    ).fetchone()
+    assert nf is not None
+    n = nf[0]
     assert n == 2
 
-    n_eoc = con.execute("SELECT COUNT(*) FROM main.fhir_episode_of_care_v1").fetchone()[0]
+    ne = con.execute("SELECT COUNT(*) FROM main.fhir_episode_of_care_v1").fetchone()
+    assert ne is not None
+    n_eoc = ne[0]
     assert n_eoc == 2
 
-    subj = con.execute(
+    sr = con.execute(
         "SELECT json_extract_string(resource_json, '$.subject.reference') FROM main.fhir_specimen_v1 LIMIT 1"
-    ).fetchone()[0]
+    ).fetchone()
+    assert sr is not None
+    subj = sr[0]
     assert subj.startswith("Patient/")
     assert "Patient/Patient/" not in subj
 
-    raw = con.execute(
+    br = con.execute(
         "SELECT cast(bundle_json AS VARCHAR) FROM main.fhir_bundle_specimen_export_v1 ORDER BY specimen_id LIMIT 1"
-    ).fetchone()[0]
+    ).fetchone()
+    assert br is not None
+    raw = br[0]
     bundle = json.loads(raw)
     assert bundle["resourceType"] == "Bundle"
     assert len(bundle["entry"]) == 4
