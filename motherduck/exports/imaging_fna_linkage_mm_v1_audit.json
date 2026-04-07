@@ -1,0 +1,16 @@
+{
+  "script": "129_imaging_fna_linkage_mm_v1.py",
+  "target": "motherduck",
+  "token_mode": "secrets.toml:MOTHERDUCK_TOKEN",
+  "exported_at_utc": "2026-04-07T03:08:13.026065+00:00",
+  "status": "blocked_missing_fna_episode_master_v2",
+  "reason": "fna_episode_master_v2 not found in this database. Materialize script 22 into MotherDuck main (or use a local file DB) before linkage.",
+  "before": {
+    "imaging_nodule_master_dated_rows": 19891,
+    "fna_episode_dated_rows": null,
+    "imaging_fna_linkage_v3_rows": null,
+    "imaging_fna_linkage_mm_v1_rows": null
+  },
+  "after": null,
+  "audit": null
+}

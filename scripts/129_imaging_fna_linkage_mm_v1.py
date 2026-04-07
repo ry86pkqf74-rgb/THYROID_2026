@@ -24,12 +24,16 @@ Run:
 from __future__ import annotations
 
 import argparse
+import json
+import os
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import duckdb
 
 ROOT = Path(__file__).resolve().parent.parent
+MOTHERDUCK_EXPORT_DIR = ROOT / "motherduck" / "exports"
 DB_PATH = ROOT / "thyroid_master.duckdb"
 
 sys.path.insert(0, str(ROOT))
@@ -415,9 +419,41 @@ SELECT
 """
 
 
-def run(con: duckdb.DuckDBPyConnection, *, dry_run: bool) -> None:
-    if not table_exists(con, "fna_episode_master_v2"):
+def run(con: duckdb.DuckDBPyConnection, *, dry_run: bool, motherduck: bool = False) -> dict:
+    has_fna = table_exists(con, "fna_episode_master_v2")
+    has_img = table_exists(con, "imaging_nodule_master_v1")
+    if not has_fna:
+        reason = (
+            "fna_episode_master_v2 not found in this database. "
+            "Materialize script 22 into MotherDuck main (or use a local file DB) before linkage."
+        )
+        if motherduck:
+            section("MotherDuck precheck — blocked")
+            print(f"  {reason}")
+            n_img = 0
+            if has_img:
+                n_img = con.execute(
+                    "SELECT COUNT(*) FROM imaging_nodule_master_v1 WHERE exam_date IS NOT NULL"
+                ).fetchone()[0]
+            print(f"  imaging_nodule_master_v1 (dated rows): {n_img:,}")
+            v3 = None
+            if table_exists(con, "imaging_fna_linkage_v3"):
+                v3 = con.execute("SELECT COUNT(*) FROM imaging_fna_linkage_v3").fetchone()[0]
+            return {
+                "status": "blocked_missing_fna_episode_master_v2",
+                "reason": reason,
+                "before": {
+                    "imaging_nodule_master_dated_rows": n_img,
+                    "fna_episode_dated_rows": None,
+                    "imaging_fna_linkage_v3_rows": v3,
+                    "imaging_fna_linkage_mm_v1_rows": None,
+                },
+                "after": None,
+                "audit": None,
+            }
         raise RuntimeError("fna_episode_master_v2 is required (run script 22)")
+
+    out: dict = {"status": "ok"}
 
     section("Counts before")
     n_img = con.execute(
@@ -429,50 +465,110 @@ def run(con: duckdb.DuckDBPyConnection, *, dry_run: bool) -> None:
     v3 = None
     if table_exists(con, "imaging_fna_linkage_v3"):
         v3 = con.execute("SELECT COUNT(*) FROM imaging_fna_linkage_v3").fetchone()[0]
+    mm_before = None
+    if table_exists(con, "imaging_fna_linkage_mm_v1"):
+        mm_before = con.execute("SELECT COUNT(*) FROM imaging_fna_linkage_mm_v1").fetchone()[0]
     print(f"  imaging_nodule_master_v1 (dated): {n_img:,}")
     print(f"  fna_episode_master_v2 (dated):    {n_fna:,}")
     print(f"  imaging_fna_linkage_v3 rows:       {v3 if v3 is not None else 'N/A (missing)'}")
+    print(f"  imaging_fna_linkage_mm_v1 (prior): {mm_before if mm_before is not None else 'N/A (missing)'}")
+    out["before"] = {
+        "imaging_nodule_master_dated_rows": n_img,
+        "fna_episode_dated_rows": n_fna,
+        "imaging_fna_linkage_v3_rows": v3,
+        "imaging_fna_linkage_mm_v1_rows": mm_before,
+    }
 
     wide_sql = build_temp_wide_sql(con)
     if dry_run:
         print("\n[DRY-RUN] Wide pre SQL:\n", wide_sql[:500], "...\n")
-        return
+        return out
 
     con.execute(wide_sql)
     wide_n = con.execute("SELECT COUNT(*) FROM tt_ifna_mm_wide_pre_v1").fetchone()[0]
     print(f"\n  tt_ifna_mm_wide_pre_v1 candidate pairs: {wide_n:,}")
+    out["wide_pre_candidate_pairs"] = wide_n
 
     con.execute(LINK_TABLE_SQL)
     con.execute(REVIEW_SQL)
     con.execute(AUDIT_SQL)
 
     section("Counts after")
-    for label, qry in [
-        ("imaging_fna_linkage_mm_v1", "SELECT COUNT(*) FROM imaging_fna_linkage_mm_v1"),
-        ("  primary links", "SELECT COUNT(*) FROM imaging_fna_linkage_mm_v1 WHERE is_primary_link"),
-        ("review_queue_imaging_fna_mm_v1", "SELECT COUNT(*) FROM review_queue_imaging_fna_mm_v1"),
+    after_mm = con.execute("SELECT COUNT(*) FROM imaging_fna_linkage_mm_v1").fetchone()[0]
+    after_primary = con.execute(
+        "SELECT COUNT(*) FROM imaging_fna_linkage_mm_v1 WHERE is_primary_link"
+    ).fetchone()[0]
+    after_rev = con.execute("SELECT COUNT(*) FROM review_queue_imaging_fna_mm_v1").fetchone()[0]
+    for label, val in [
+        ("imaging_fna_linkage_mm_v1", after_mm),
+        ("  primary links", after_primary),
+        ("review_queue_imaging_fna_mm_v1", after_rev),
     ]:
-        print(f"  {label}: {con.execute(qry).fetchone()[0]:,}")
+        print(f"  {label}: {val:,}")
 
     print("\n  val_imaging_fna_linkage_audit_v1:")
-    print(con.execute("SELECT * FROM val_imaging_fna_linkage_audit_v1").fetchdf().to_string(index=False))
+    audit_df = con.execute("SELECT * FROM val_imaging_fna_linkage_audit_v1").fetchdf()
+    print(audit_df.to_string(index=False))
+    audit_row = audit_df.iloc[0].to_dict() if len(audit_df) else {}
+    # JSON-serialize timestamps
+    for k, v in list(audit_row.items()):
+        if hasattr(v, "isoformat"):
+            audit_row[k] = v.isoformat()
+    out["after"] = {
+        "imaging_fna_linkage_mm_v1_rows": after_mm,
+        "primary_link_rows": after_primary,
+        "review_queue_rows": after_rev,
+    }
+    out["audit"] = audit_row
+    return out
+
+
+def _export_motherduck_audit(payload: dict, *, token_mode_label: str) -> Path:
+    MOTHERDUCK_EXPORT_DIR.mkdir(parents=True, exist_ok=True)
+    path = MOTHERDUCK_EXPORT_DIR / "imaging_fna_linkage_mm_v1_audit.json"
+    body = {
+        "script": "129_imaging_fna_linkage_mm_v1.py",
+        "target": "motherduck",
+        "token_mode": token_mode_label,
+        "exported_at_utc": datetime.now(timezone.utc).isoformat(),
+        **payload,
+    }
+    path.write_text(json.dumps(body, indent=2), encoding="utf-8")
+    print(f"\n  Wrote aggregate audit export: {path.relative_to(ROOT)}")
+    return path
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--md", action="store_true", help="Use MotherDuck / connect_md_or_file")
-    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Print wide-pre SQL only; do not write tables or export",
+    )
+    parser.add_argument(
+        "--no-export",
+        action="store_true",
+        help="With --md, skip writing motherduck/exports/imaging_fna_linkage_mm_v1_audit.json",
+    )
     args = parser.parse_args()
 
+    os.chdir(ROOT)
     if args.md:
+        from motherduck_client import token_mode as md_token_mode
         from utils.md_connect import connect_md_or_file
 
-        con = connect_md_or_file(DB_PATH, md=True, fail_closed=False)
+        print(f"  MotherDuck token source: {md_token_mode()}")
+        con = connect_md_or_file(DB_PATH, md=True, fail_closed=True)
     else:
         con = duckdb.connect(str(DB_PATH))
 
     try:
-        run(con, dry_run=args.dry_run)
+        result = run(con, dry_run=args.dry_run, motherduck=args.md)
+        if args.md and not args.dry_run and not args.no_export:
+            from motherduck_client import token_mode as md_token_mode
+
+            _export_motherduck_audit(result, token_mode_label=md_token_mode())
     finally:
         con.close()
 
