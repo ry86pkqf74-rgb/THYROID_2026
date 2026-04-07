@@ -1,5 +1,9 @@
 # THYROID_2026 Final Sign-Off Memo
 
+> **Supersession (2026-04-07):** This memo captured an early audit before live MotherDuck reconciliation. **Current publication truth** (live DB, MRQ status distribution, lab waves, and latest `119 --release-mode` outcome) lives in [`studies/20260407_publication_signoff_live/`](../20260407_publication_signoff_live/README.md). Verdict: **not** final manuscript sign-off; synthetic MRQ + lab + specimen/FHIR gate — see `final_verdict_memo.md` there. The body below is **preserved as history** (do not delete).
+
+---
+
 **Auditor role:** Claude Coworker -- architecture / sign-off auditor  
 **Scope:** Commits cac1351, 2bbde53, 125cf88  
 **Artifacts reconciled:** 7 (listed below)  

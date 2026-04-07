@@ -1,6 +1,26 @@
 # THYROID_2026 Release Notes
 
-## v2026.03.14-final-engineering-pass (Latest)
+## 2026-04-07 — MotherDuck publication truth-sync + operator path
+
+**Live sign-off outcome (MotherDuck, service-account token):** `119 --release-mode` **BLOCKED** — specimen/FHIR QA diagnostics FAIL (`broken_fhir_refs` large); MRQ rows are non-NULL but **5,620 / 5,622** are `SYNTHETIC_AUTOMATION_ONLY_NOT_MANUSCRIPT_SIGNOFF`; longitudinal labs are **Tg-family waves only** (no `final_institutional*` non-Tg panel). Evidence: `studies/20260407_publication_signoff_live/`. Verdict memo: **technically passing but blocked by human review + final lab wave** (with specimen/FHIR automation FAIL noted).
+
+### Documentation / ops
+
+- README **source-of-truth** pointer at top; reconciled stale PASS vs BLOCKED narratives across study READMEs.
+- **Supersession banner** on `studies/20260407_signoff_memo/signoff_memo.md` (history preserved).
+- **Makefile:** `md-review-queue-triage-md`, `md-final-master-dryrun`, `md-final-master-final`, `md-analyst-lab-append-dryrun` (final-master targets require env-supplied gate paths — see Makefile).
+- **CI:** manual `workflow_dispatch` job for `126 --md --dry-run` with required path inputs (fail-closed if unset).
+- **Token / observability:** `docs/motherduck_database_contract_v1.md` — publication user-agent, `MD_INFORMATION_SCHEMA`, read-scaling vs SA, DuckLake snapshot caveat.
+- **Guard:** `scripts/check_doc_paths.py` — validates `studies/` / `docs/` links in key markdown files.
+
+### Multimodal / molecular / specimen
+
+- **Specimen + FHIR** layer is present in catalog; **release-mode** diagnostics can still FAIL until QA thresholds clear.
+- **Molecular:** `main.molecular_results` empty in live check — contract view checks skipped in `119` (unchanged behavior).
+
+---
+
+## v2026.03.14-final-engineering-pass
 **Date:** 2026-03-14
 
 ### Final Engineering Pass — Operative NLP, Provenance Hardening, MD Business Optimization
@@ -377,7 +397,7 @@ and 18 prior audit documents. Definitive report:
 |----------|-------|
 | [`docs/canonical_backfill_report_20260313.md`](docs/canonical_backfill_report_20260313.md) | 1,988 cells backfilled (RAI dose, RAS flag, linkage IDs) |
 | [`docs/provenance_date_audit_20260313.md`](docs/provenance_date_audit_20260313.md) | Provenance + date accuracy audit |
-| [`docs/operative_nlp_local DuckDB_propagation_20260313.md`](docs/operative_nlp_local DuckDB_propagation_20260313.md) | Operative NLP gap analysis |
+| [`docs/operative_nlp_propagation_audit_20260315.md`](docs/operative_nlp_propagation_audit_20260315.md) | Operative NLP propagation audit |
 | [`docs/operative_note_path_linkage_audit_20260313.md`](docs/operative_note_path_linkage_audit_20260313.md) | Op-note ↔ pathology linkage |
 | [`docs/hp_discharge_note_audit_20260313.md`](docs/hp_discharge_note_audit_20260313.md) | H&P / discharge note coverage |
 | [`docs/imaging_nodule_materialization_20260313.md`](docs/imaging_nodule_materialization_20260313.md) | Imaging nodule master gap |

@@ -14,6 +14,10 @@
 #   make md-v2-gate-md-dryrun            # formalization path: 116 --md --dry-run → 112 --motherduck-check → 119 --md (all fail-closed on --md)
 #   make md-live-release-dryrun          # scripts/124_md_live_release_audit.py --md --dry-run (fail-closed)
 #   make md-live-release-final           # scripts/124_md_live_release_audit.py --md --final-release (fail-closed; strict release)
+#   make md-review-queue-triage-md       # scripts/120_review_queue_triage.py --md
+#   make md-final-master-dryrun          # 120 triage + 126 --dry-run (needs FINAL_MASTER_* env; see below)
+#   make md-final-master-final          # 126 final (mutates MotherDuck; same env as dry-run)
+#   make md-analyst-lab-append-dryrun    # 127 --dry-run (needs FINAL_MASTER_LAB_CSV + FINAL_MASTER_INGESTION_WAVE)
 #   make md-molecular-promote-rehearsal  # 137 promote (rehearsal: no --execute; 124/136 dry-run)
 #   make md-molecular-promote           # 137 promote --execute (prod-safe chain; see docs/release_runbook.md)
 #   make md-v2-gate-local-dryrun         # legacy / local-only: 112 against local DuckDB + parquets (no --md)
@@ -74,6 +78,74 @@ md-live-release-dryrun:
 md-live-release-final:
 	$(check_md_rw_token)
 	$(PYTHON) scripts/124_md_live_release_audit.py --md --final-release
+
+# ── Final-master orchestration (126) + lab append dry-run (127) ────────────
+# Legacy path: md-live-release-* uses scripts/124 (tagged release / molecular promote).
+# Final-master path: populate env vars then run:
+#   FINAL_MASTER_HYDRATE_DIR   — directory with reviewed manual_review_queue.csv (+ gate CSVs)
+#   FINAL_MASTER_DECISIONS_CSV — promotion_review_decisions.csv
+#   FINAL_MASTER_LAB_CSV / FINAL_MASTER_INGESTION_WAVE — optional; required together for lab wave
+#   RELEASE_DATE               — optional YYYYMMDD (default: today's UTC date)
+MD_SA_FLAG := $(if $(MD_SA_TOKEN),--md-sa,)
+
+.PHONY: md-review-queue-triage-md
+md-review-queue-triage-md:
+	$(check_md_rw_token)
+	$(PYTHON) scripts/120_review_queue_triage.py --md $(MD_SA_FLAG)
+
+.PHONY: md-final-master-dryrun
+md-final-master-dryrun: md-review-queue-triage-md
+	$(check_md_rw_token)
+	@if [ -z "$$FINAL_MASTER_HYDRATE_DIR" ] || [ ! -d "$$FINAL_MASTER_HYDRATE_DIR" ]; then \
+		echo "ERROR: Set FINAL_MASTER_HYDRATE_DIR to a gate directory containing manual_review_queue.csv"; exit 1; \
+	fi
+	@if [ -z "$$FINAL_MASTER_DECISIONS_CSV" ] || [ ! -f "$$FINAL_MASTER_DECISIONS_CSV" ]; then \
+		echo "ERROR: Set FINAL_MASTER_DECISIONS_CSV to promotion_review_decisions.csv"; exit 1; \
+	fi
+	@REL=$${RELEASE_DATE:-$$(date -u +%Y%m%d)}; \
+	EXTRA=""; \
+	if [ -n "$$FINAL_MASTER_LAB_CSV" ]; then \
+		if [ -z "$$FINAL_MASTER_INGESTION_WAVE" ]; then echo "ERROR: FINAL_MASTER_INGESTION_WAVE required with FINAL_MASTER_LAB_CSV"; exit 1; fi; \
+		EXTRA="$$EXTRA --lab-csv $$FINAL_MASTER_LAB_CSV --ingestion-wave $$FINAL_MASTER_INGESTION_WAVE"; \
+	fi; \
+	$(PYTHON) scripts/126_final_master_release.py --md $(MD_SA_FLAG) --dry-run \
+		--release-date $$REL \
+		--hydrate-mrq-from "$$FINAL_MASTER_HYDRATE_DIR" \
+		--decisions-csv "$$FINAL_MASTER_DECISIONS_CSV" $$EXTRA
+
+.PHONY: md-final-master-final
+md-final-master-final:
+	$(check_md_rw_token)
+	@if [ -z "$$FINAL_MASTER_HYDRATE_DIR" ] || [ ! -d "$$FINAL_MASTER_HYDRATE_DIR" ]; then \
+		echo "ERROR: Set FINAL_MASTER_HYDRATE_DIR to a gate directory containing manual_review_queue.csv"; exit 1; \
+	fi
+	@if [ -z "$$FINAL_MASTER_DECISIONS_CSV" ] || [ ! -f "$$FINAL_MASTER_DECISIONS_CSV" ]; then \
+		echo "ERROR: Set FINAL_MASTER_DECISIONS_CSV to promotion_review_decisions.csv"; exit 1; \
+	fi
+	@REL=$${RELEASE_DATE:-$$(date -u +%Y%m%d)}; \
+	EXTRA=""; \
+	if [ -n "$$FINAL_MASTER_LAB_CSV" ]; then \
+		if [ -z "$$FINAL_MASTER_INGESTION_WAVE" ]; then echo "ERROR: FINAL_MASTER_INGESTION_WAVE required with FINAL_MASTER_LAB_CSV"; exit 1; fi; \
+		EXTRA="$$EXTRA --lab-csv $$FINAL_MASTER_LAB_CSV --ingestion-wave $$FINAL_MASTER_INGESTION_WAVE"; \
+	fi; \
+	$(PYTHON) scripts/126_final_master_release.py --md $(MD_SA_FLAG) \
+		--release-date $$REL \
+		--hydrate-mrq-from "$$FINAL_MASTER_HYDRATE_DIR" \
+		--decisions-csv "$$FINAL_MASTER_DECISIONS_CSV" $$EXTRA
+
+.PHONY: md-analyst-lab-append-dryrun
+md-analyst-lab-append-dryrun:
+	$(check_md_rw_token)
+	@if [ -z "$$FINAL_MASTER_LAB_CSV" ] || [ ! -f "$$FINAL_MASTER_LAB_CSV" ]; then \
+		echo "ERROR: Set FINAL_MASTER_LAB_CSV to the analyst lab CSV path"; exit 1; \
+	fi
+	@if [ -z "$$FINAL_MASTER_INGESTION_WAVE" ]; then \
+		echo "ERROR: Set FINAL_MASTER_INGESTION_WAVE (e.g. final_institutional_YYYYMMDD)"; exit 1; \
+	fi
+	$(PYTHON) scripts/127_analyst_institutional_lab_append.py --md $(MD_SA_FLAG) \
+		--input "$$FINAL_MASTER_LAB_CSV" \
+		--ingestion-wave "$$FINAL_MASTER_INGESTION_WAVE" \
+		--dry-run
 
 .PHONY: md-molecular-promote-rehearsal
 md-molecular-promote-rehearsal:

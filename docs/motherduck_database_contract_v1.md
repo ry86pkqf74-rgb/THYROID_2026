@@ -420,6 +420,25 @@ c.close()
 | `MOTHERDUCK_CUSTOM_USER_AGENT` | DuckDB `custom_user_agent` (MotherDuck query history) |
 | `MOTHERDUCK_SESSION_HINT` | `SET motherduck_session_hint` after connect (read/write and generic) |
 
+### Publication / audit hygiene (recommended)
+
+- Set **`MOTHERDUCK_CUSTOM_USER_AGENT`** to a stable value (e.g. `THYROID_2026_publication_signoff/1.0`) and **`MOTHERDUCK_SESSION_HINT`** to a run label (e.g. `publication_signoff_YYYYMMDD_HHMM`) so `md_information_schema.query_history` / `recent_queries` correlate automation with MotherDuck support.
+- **Write paths** (126, 116, 114, 127, snapshots): always use **RW** tokens — `MD_SA_TOKEN` (preferred in CI via `--md-sa` where supported) or `MOTHERDUCK_TOKEN`. **Never** use read-scaling / business read-only tokens for writes.
+- **Read-only audits** (120 triage, `119` validators, RC audit): RW token or read-scaling is acceptable for SELECT-only workloads; promotion and hydrates must stay on RW.
+
+### MD_INFORMATION_SCHEMA (evidence)
+
+When the service account / org policy allows, these views support audits (availability varies by org; fail gracefully if denied):
+
+| View | Typical use |
+|------|-------------|
+| `md_information_schema.databases` | Database name, **type** (e.g. `DUCKLAKE` vs `DEFAULT`), **transient** flag, **historical_snapshot_retention** |
+| `md_information_schema.database_snapshots` | Snapshot lineage / bytes (interpret per DuckLake vs native policy) |
+| `md_information_schema.query_history` | Query text and timing (often **org-admin** or elevated visibility — do not assume every token sees all org traffic) |
+| `md_information_schema.recent_queries` | Shorter retention slice for the current identity |
+
+**DuckLake caveat:** Databases typed **`DUCKLAKE`** in `databases.type` do **not** follow native-only snapshot / clone / PITR assumptions. Use MotherDuck UI + org runbook for immutable evidence; keep **`release_YYYYMMDD`** schema copies as repo-contract artifacts.
+
 ---
 
 ## 9. Script Inventory
@@ -437,7 +456,9 @@ c.close()
 | `119_md_formalization_validate.py` | Validation suite — structural or `--release-mode` (strict): MD attach, v2 parity, schema/wide-note exceptions, canonical dist, **manual review queue**, load_inventory, release schemas, **release_manifest**, **canonical extraction_run_id**, **analyst presentation views** (`main.master_fact_long_verified_v1`, `main.master_patient_rollup_verified_v1`, `main.master_source_lineage_v1` + traceability columns) | all (read) |
 | `120_review_queue_triage.py` | Read-only triage export for `qa.manual_review_queue` (CSVs + `summary.md`; operator usage: [`review_queue_triage_export.md`](review_queue_triage_export.md)) | qa (read) |
 | `125_master_verified_views.py` | Analyst-facing `main.master_*_verified_v1` views | main (views) |
+| `126_final_master_release.py` | Post-review final-master orchestration (114 → 103 → 117 → optional 127 → 125 → 115/118 → 119); MotherDuck only | qa, main, release_* |
 | `126_release_candidate_motherduck_audit.py` | RC evidence pack (MD_INFORMATION_SCHEMA, row counts) | read (+ optional `CREATE SNAPSHOT`) |
+| `127_analyst_institutional_lab_append.py` | Idempotent institutional lab append by `ingestion_wave` | main (write) |
 | `127_qa_tier_batch_adjudicate.py` | Tier bulk acceptance for fill-candidates on `qa.manual_review_queue` | qa (write) |
 
 ---

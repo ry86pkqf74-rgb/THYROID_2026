@@ -1,0 +1,30 @@
+# Commands run — publication signoff audit (2026-04-07 UTC)
+
+Environment (each MotherDuck invocation):
+- `unset LOCAL_DB_PATH`
+- `MOTHERDUCK_CUSTOM_USER_AGENT=THYROID_2026_publication_signoff/1.0`
+- `MOTHERDUCK_SESSION_HINT=publication_signoff_<UTC_YYYYMMDD_HHMM>`
+- Token: `MD_SA_TOKEN` preferred (`--md-sa` on scripts)
+
+1. Review queue triage (incorrect first pass — accidental `--run-label publication_signoff_p1` → empty bundle):
+   `.venv/bin/python scripts/120_review_queue_triage.py --md --md-sa --run-label publication_signoff_p1`
+
+2. Release-mode formalization validation:
+   `.venv/bin/python scripts/119_md_formalization_validate.py --md --md-sa --release-mode --output-dir studies/20260407_publication_signoff_live`
+   Result: BLOCKED (1 FAIL: Specimen/FHIR QA diagnostics — broken_fhir_refs=10139).
+
+3. Review queue triage (full MRQ, no run_label filter):
+   `.venv/bin/python scripts/120_review_queue_triage.py --md --md-sa`
+   Bundle: `exports/review_queue_triage_20260407_103411/`
+
+4. Ad hoc introspection + counts (inline `python` heredocs):
+   - `md_information_schema.databases` / `database_snapshots` / `query_history` / `recent_queries`
+   - Row counts for canonical, lab, master presentation tables
+   - `qa.promotion_review_decisions` summary
+   - Lab `ingestion_wave` and `analyte_group` distributions
+   - `qa.manual_review_queue` `verification_status` distribution
+   Output snapshot: `studies/20260407_publication_signoff_live/md_introspection_snapshot.md`
+
+5. `scripts/126_final_master_release.py` — **not run** (release-mode blocked; MRQ dominated by synthetic verification; promotion decisions sparse).
+
+6. `scripts/126_release_candidate_motherduck_audit.py` — **not run** (no post-release candidate; gate failed at step 2).

@@ -48,7 +48,7 @@ Items that **cannot** be resolved without new institutional data:
 | Freeze alignment report | [`docs/manuscript_freeze_alignment_20260313.md`](manuscript_freeze_alignment_20260313.md) |
 | Canonical backfill report | [`docs/canonical_backfill_report_20260313.md`](canonical_backfill_report_20260313.md) |
 | Provenance date audit | [`docs/provenance_date_audit_20260313.md`](provenance_date_audit_20260313.md) |
-| Operative NLP propagation | [`docs/operative_nlp_local DuckDB_propagation_20260313.md`](operative_nlp_local DuckDB_propagation_20260313.md) |
+| Operative NLP propagation | [`docs/operative_nlp_propagation_audit_20260315.md`](operative_nlp_propagation_audit_20260315.md) |
 | Operative-path linkage audit | [`docs/operative_note_path_linkage_audit_20260313.md`](operative_note_path_linkage_audit_20260313.md) |
 | H&P / discharge note audit | [`docs/hp_discharge_note_audit_20260313.md`](hp_discharge_note_audit_20260313.md) |
 | Imaging nodule materialization | [`docs/imaging_nodule_materialization_20260313.md`](imaging_nodule_materialization_20260313.md) |

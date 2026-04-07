@@ -59,6 +59,11 @@ def _py() -> str:
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--md", action="store_true", help="Required. MotherDuck only (fail-closed).")
+    p.add_argument(
+        "--md-sa",
+        action="store_true",
+        help="Prefer MD_SA_TOKEN over MOTHERDUCK_TOKEN for this process and subprocesses that support --md-sa.",
+    )
     p.add_argument("--db-path", default=str(ROOT / "thyroid_master.duckdb"), help="Token path anchor.")
     p.add_argument(
         "--release-date",
@@ -109,10 +114,12 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
-def connect_md(db_path: Path) -> duckdb.DuckDBPyConnection:
+def connect_md(db_path: Path, *, prefer_service_account: bool = False) -> duckdb.DuckDBPyConnection:
     from utils.md_connect import connect_md_or_file
 
-    return connect_md_or_file(db_path, md=True, fail_closed=True)
+    return connect_md_or_file(
+        db_path, md=True, fail_closed=True, prefer_service_account=prefer_service_account
+    )
 
 
 def apply_qa_ddl(con: duckdb.DuckDBPyConnection) -> None:
@@ -393,6 +400,26 @@ def write_evidence_pack(study_dir: Path, ev: dict[str, Any], export_dir: Path) -
     (study_dir / "SAFE_TO_START_STATS_MEMO.md").write_text(memo, encoding="utf-8")
 
 
+def preflight_inputs(args: argparse.Namespace) -> None:
+    """Validate paths before any MotherDuck mutation or dry-run hand-off."""
+    if args.hydrate_mrq_from is not None:
+        if not args.hydrate_mrq_from.is_dir():
+            print(f"  FATAL: --hydrate-mrq-from is not a directory: {args.hydrate_mrq_from}")
+            sys.exit(1)
+        mrq = args.hydrate_mrq_from / "manual_review_queue.csv"
+        if not mrq.is_file():
+            print(f"  FATAL: reviewed gate missing manual_review_queue.csv under {args.hydrate_mrq_from}")
+            sys.exit(1)
+    if args.decisions_csv is not None:
+        if not args.decisions_csv.is_file():
+            print(f"  FATAL: --decisions-csv not found: {args.decisions_csv}")
+            sys.exit(1)
+    if args.lab_csv is not None:
+        if not args.lab_csv.is_file():
+            print(f"  FATAL: --lab-csv not found: {args.lab_csv}")
+            sys.exit(1)
+
+
 def main() -> None:
     args = parse_args()
     if not args.md:
@@ -416,8 +443,14 @@ def main() -> None:
     print(f"  119 mode  : {'release (strict)' if args.release_mode else 'structural'}")
     print("=" * 70)
 
+    preflight_inputs(args)
+    sa_tail: list[str] = ["--md-sa"] if args.md_sa else []
+
     if args.dry_run:
-        print("  [dry-run] no database changes")
+        print("  [dry-run] preflight OK — no database changes")
+        print("  [dry-run] planned chain: (when executed) 114 → 103 → 117 → [127 if lab] → 125 → 115/118 → 119")
+        if args.hydrate_mrq_from is None:
+            print("  [dry-run] note: --hydrate-mrq-from not set (final release normally requires a reviewed gate dir).")
         return
 
     try:
@@ -428,7 +461,7 @@ def main() -> None:
         git_sha = "unknown"
 
     db_path = Path(args.db_path)
-    con = connect_md(db_path)
+    con = connect_md(db_path, prefer_service_account=args.md_sa)
     try:
         apply_qa_ddl(con)
         if args.decisions_csv and args.decisions_csv.is_file():
@@ -455,12 +488,13 @@ def main() -> None:
         else:
             hydrate_dir = args.hydrate_mrq_from.resolve()
         if args.release_mode:
+            assert hydrate_dir is not None
             assert_mrq_csv_fully_reviewed(hydrate_dir / "manual_review_queue.csv")
 
     # 114 only deletes rows matching the hydrate folder name; stale run_labels would remain.
     # Final release expects a single coherent MRQ snapshot.
     if hydrate_dir is not None:
-        _con = connect_md(db_path)
+        _con = connect_md(db_path, prefer_service_account=args.md_sa)
         try:
             _con.execute("DELETE FROM qa.manual_review_queue")
             print("  [126] cleared qa.manual_review_queue (replace with single hydrate snapshot)")
@@ -469,7 +503,7 @@ def main() -> None:
 
     # 114 hydrate first so qa.manual_review_queue matches reviewed CSV before gates run.
     if hydrate_dir is not None:
-        cmd = [_py(), str(SCRIPTS / "114_qa_schema_setup.py"), "--md", "--hydrate-from", str(hydrate_dir)]
+        cmd = [_py(), str(SCRIPTS / "114_qa_schema_setup.py"), "--md", *sa_tail, "--hydrate-from", str(hydrate_dir)]
         if not run_subprocess("114_qa_schema_setup", cmd, log_root / "114_qa_setup.log"):
             sys.exit(1)
 
@@ -490,6 +524,7 @@ def main() -> None:
             _py(),
             str(SCRIPTS / "127_analyst_institutional_lab_append.py"),
             "--md",
+            *sa_tail,
             "--input",
             str(args.lab_csv),
             "--ingestion-wave",
@@ -498,7 +533,7 @@ def main() -> None:
         if not run_subprocess("127_lab_append", cmd, log_root / "127_lab_append.log"):
             sys.exit(1)
 
-    cmd = [_py(), str(SCRIPTS / "125_master_verified_views.py"), "--md"]
+    cmd = [_py(), str(SCRIPTS / "125_master_verified_views.py"), "--md", *sa_tail]
     if not run_subprocess("125_master_views", cmd, log_root / "125.log"):
         sys.exit(1)
 
@@ -525,6 +560,7 @@ def main() -> None:
         _py(),
         str(SCRIPTS / "119_md_formalization_validate.py"),
         "--md",
+        *sa_tail,
         "--output-dir",
         str(val_dir),
     ]
@@ -533,7 +569,7 @@ def main() -> None:
     if not run_subprocess("119_validate_release_mode", cmd, log_root / "119.log"):
         sys.exit(1)
 
-    con = connect_md(db_path)
+    con = connect_md(db_path, prefer_service_account=args.md_sa)
     try:
         ev = gather_evidence(con, tag, git_sha)
         ev["export_dir"] = str(export_dir)

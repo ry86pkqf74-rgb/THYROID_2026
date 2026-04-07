@@ -26,6 +26,7 @@ Expected CSV columns (headers):
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -39,6 +40,23 @@ sys.path.insert(0, str(ROOT))
 DEFAULT_DB = ROOT / "thyroid_master.duckdb"
 SCRIPT_TAG = "127_analyst_institutional_lab_append.py"
 
+# Test / failure injection: set to "after_delete" or "after_insert" to force rollback path.
+LAB_APPEND_FAIL_AFTER_ENV = "LAB_APPEND_FAIL_AFTER"
+
+def _scalar_int(con: duckdb.DuckDBPyConnection, sql: str, params: list[object] | None = None) -> int:
+    row = con.execute(sql, params or []).fetchone()
+    if row is None:
+        raise RuntimeError(f"unexpected empty result: {sql!r}")
+    return int(row[0])
+
+
+INSERT_COLS = (
+    "research_id, lab_date, lab_date_status, lab_name_raw, lab_name_standardized, "
+    "analyte_group, value_raw, value_numeric, unit_raw, unit_standardized, "
+    "reference_range, abnormal_flag, is_censored, source_table, source_script, "
+    "ingestion_wave, data_completeness_tier, provenance_note"
+)
+
 
 REQUIRED_COLS = {"research_id", "lab_date", "value_raw", "source_lineage_key"}
 
@@ -46,6 +64,11 @@ REQUIRED_COLS = {"research_id", "lab_date", "value_raw", "source_lineage_key"}
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--md", action="store_true", help="Target MotherDuck (fail-closed).")
+    p.add_argument(
+        "--md-sa",
+        action="store_true",
+        help="Prefer MD_SA_TOKEN over MOTHERDUCK_TOKEN when connecting.",
+    )
     p.add_argument("--db-path", default=str(DEFAULT_DB), help="Local DuckDB path (unused when --md).")
     p.add_argument("--input", type=Path, required=True, help="Analyst lab CSV path.")
     p.add_argument(
@@ -61,7 +84,12 @@ def connect(args: argparse.Namespace) -> duckdb.DuckDBPyConnection:
     if args.md:
         from utils.md_connect import connect_md_or_file
 
-        return connect_md_or_file(Path(args.db_path), md=True, fail_closed=True)
+        return connect_md_or_file(
+            Path(args.db_path),
+            md=True,
+            fail_closed=True,
+            prefer_service_account=args.md_sa,
+        )
     print("  FATAL: This script requires --md (no silent local fallback for institutional append).")
     sys.exit(1)
 
@@ -153,6 +181,66 @@ SELECT * EXCLUDE (_rn) FROM ranked WHERE _rn = 1
 """
 
 
+def _injected_fail(stage: str) -> None:
+    if os.environ.get(LAB_APPEND_FAIL_AFTER_ENV) == stage:
+        raise RuntimeError(f"injected failure ({LAB_APPEND_FAIL_AFTER_ENV}={stage})")
+
+
+def replace_lab_wave_in_transaction(
+    con: duckdb.DuckDBPyConnection,
+    frame: pd.DataFrame,
+    wave: str,
+) -> tuple[int, int]:
+    """Delete rows for *wave*, insert *frame*, refresh dedup view — single transaction.
+
+    Returns (table_row_count_before_delete, table_row_count_after_commit).
+    """
+    pre_total = _scalar_int(con, "SELECT COUNT(*) FROM main.longitudinal_lab_canonical_v1")
+    con.execute("BEGIN TRANSACTION")
+    try:
+        con.execute(
+            "DELETE FROM main.longitudinal_lab_canonical_v1 WHERE ingestion_wave = ?",
+            [wave],
+        )
+        _injected_fail("after_delete")
+
+        con.register("_lab_append", frame)
+        try:
+            con.execute(
+                f"""
+                INSERT INTO main.longitudinal_lab_canonical_v1 ({INSERT_COLS})
+                SELECT {INSERT_COLS} FROM _lab_append
+                """
+            )
+        finally:
+            con.unregister("_lab_append")
+
+        _injected_fail("after_insert")
+
+        wave_n = _scalar_int(
+            con,
+            "SELECT COUNT(*) FROM main.longitudinal_lab_canonical_v1 WHERE ingestion_wave = ?",
+            [wave],
+        )
+        if int(wave_n) != len(frame):
+            raise RuntimeError(
+                f"post-insert parity FAIL: wave {wave!r} has {wave_n} row(s), expected {len(frame)}"
+            )
+
+        con.execute(DEDUP_VIEW_SQL)
+        con.execute("SELECT COUNT(*) FROM main.longitudinal_lab_deduped_v").fetchone()
+
+        post_total = _scalar_int(con, "SELECT COUNT(*) FROM main.longitudinal_lab_canonical_v1")
+        con.execute("COMMIT")
+        return int(pre_total), int(post_total)
+    except Exception:
+        try:
+            con.execute("ROLLBACK")
+        except Exception:
+            pass
+        raise
+
+
 def main() -> None:
     args = parse_args()
     if not args.input.is_file():
@@ -169,37 +257,18 @@ def main() -> None:
 
     con = connect(args)
     try:
-        if not con.execute(
+        if not _scalar_int(
+            con,
             "SELECT COUNT(*) FROM information_schema.tables "
-            "WHERE table_schema = 'main' AND table_name = 'longitudinal_lab_canonical_v1'"
-        ).fetchone()[0]:
+            "WHERE table_schema = 'main' AND table_name = 'longitudinal_lab_canonical_v1'",
+        ):
             print("  FATAL: main.longitudinal_lab_canonical_v1 does not exist")
             sys.exit(1)
 
-        pre = con.execute("SELECT COUNT(*) FROM main.longitudinal_lab_canonical_v1").fetchone()[0]
-        con.execute(
-            "DELETE FROM main.longitudinal_lab_canonical_v1 WHERE ingestion_wave = ?",
-            [wave],
-        )
-        con.register("_lab_append", frame)
-        cols = (
-            "research_id, lab_date, lab_date_status, lab_name_raw, lab_name_standardized, "
-            "analyte_group, value_raw, value_numeric, unit_raw, unit_standardized, "
-            "reference_range, abnormal_flag, is_censored, source_table, source_script, "
-            "ingestion_wave, data_completeness_tier, provenance_note"
-        )
-        con.execute(
-            f"""
-            INSERT INTO main.longitudinal_lab_canonical_v1 ({cols})
-            SELECT {cols} FROM _lab_append
-            """
-        )
-        con.unregister("_lab_append")
-        post = con.execute("SELECT COUNT(*) FROM main.longitudinal_lab_canonical_v1").fetchone()[0]
+        pre, post = replace_lab_wave_in_transaction(con, frame, wave)
         print(f"  [lab] longitudinal_lab_canonical_v1: {pre:,} → {post:,} rows (replaced wave '{wave}')")
 
-        con.execute(DEDUP_VIEW_SQL)
-        ded = con.execute("SELECT COUNT(*) FROM main.longitudinal_lab_deduped_v").fetchone()[0]
+        ded = _scalar_int(con, "SELECT COUNT(*) FROM main.longitudinal_lab_deduped_v")
         print(f"  [lab] main.longitudinal_lab_deduped_v refreshed: {ded:,} rows")
 
         qc_path = Path(

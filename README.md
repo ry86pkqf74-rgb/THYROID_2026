@@ -1,5 +1,13 @@
 # THYROID_2026
 
+## Source of truth — live MotherDuck publication gate (2026-04-07)
+
+**Current live-audit package (rerun before trusting any older checked-in report):** [`studies/20260407_publication_signoff_live/`](studies/20260407_publication_signoff_live/) — verdict memo, MRQ/lab reconciliation, and latest `119 --release-mode` log from the same session. Checked-in historical validation under [`studies/20260407_formalization_validation_release_mode/`](studies/20260407_formalization_validation_release_mode/) may be **stale** relative to live catalog state; prefer the signoff folder or rerun `scripts/119_md_formalization_validate.py --md --release-mode`.
+
+**Single-sentence release posture:** **Technically passing but blocked by synthetic MRQ-only “verification” plus missing institutional non-Tg lab wave** — live `qa.manual_review_queue` is almost entirely `SYNTHETIC_AUTOMATION_ONLY_NOT_MANUSCRIPT_SIGNOFF`, and `119 --release-mode` latest run also **failed** specimen/FHIR QA diagnostics (see signoff memos). This is **not** final human-reviewed manuscript sign-off.
+
+---
+
 ## Dataset Maturation Layer (v2026.03.13)
 
 **Layout (2026-04-02):** LLM extraction lives in [`llm_extraction/`](llm_extraction/) (merged legacy `notes_extraction` + `notes_extraction_new`). Staging checkpoints sit under [`processed/output/`](processed/output/); study/manuscript artifact trees under [`processed/outputs/`](processed/outputs/). Medallion tiers are documented in [`docs/REPO_ARCHITECTURE_V2.md`](docs/REPO_ARCHITECTURE_V2.md).
@@ -8,17 +16,18 @@
 
 1. **2026-03-13 local manuscript-ready freeze** — Point-in-time **local DuckDB** hardening, 7/7 readiness gates, publication bundle, and Zenodo snapshot ([`v2026.03.10-publication-ready`](../../releases/tag/v2026.03.10-publication-ready)). This is **not** the same artifact as the live MotherDuck formalization below; GitHub `main` and Zenodo can diverge until a new Zenodo version is cut.
 2. **2026-04-06 — 07 MotherDuck formalization / release candidate** — Cloud **MotherDuck** `v2_stage` → `main` promotion, `qa.*` governance, immutable `release_YYYYMMDD` snapshots, analyst presentation views from [`scripts/125_master_verified_views.py`](scripts/125_master_verified_views.py), and strict release checks in [`scripts/119_md_formalization_validate.py`](scripts/119_md_formalization_validate.py) (`--release-mode`). **Domain SSOT:** [`config/extraction_domain_registry.yaml`](config/extraction_domain_registry.yaml); reconciled inventory snapshot: [`studies/20260406_domain_inventory_current/`](studies/20260406_domain_inventory_current/) (**23** promoted v2 domains, **31** parent domains = 8 v1 + 23 v2, **0** unclaimed on-disk parquets per regenerated inventory).
-3. **What still blocks a signed release** — **`119 --release-mode` fails** if `qa.manual_review_queue` has any row with NULL `verification_status` (pending human review). That is the **release gate** for promotion sign-off. Separately, **longitudinal lab coverage** still depends on a pending **institutional non-Tg lab** extract (TSH, PTH, calcium, vitamin D), independent of the review queue. Latest MotherDuck validation artifact: [`studies/20260407_formalization_validation_release_mode/validation_report.md`](studies/20260407_formalization_validation_release_mode/validation_report.md).
+3. **What blocks a signed *MotherDuck* release today** — Structural **MRQ** gate: no NULL `verification_status`. **Manuscript** gate: non-synthetic human adjudication plus institutional lab panel where required. **Automation** gate: full `119 --release-mode` PASS (latest live run failed specimen/FHIR QA diagnostics). Formalization snapshot folder: [`studies/20260407_formalization_validation_release_mode/`](studies/20260407_formalization_validation_release_mode/) (may be stale; see **Source of truth** above).
 
-**Status (2026-04-07):**
+**Status (2026-04-07, narrative aligned to live audit):**
 
 | Phase | Status |
 |-------|--------|
 | V2 extraction | **Complete** — 31 parent domains (8 v1 + 23 v2), 7 sub-prompt domains, 6 concordance-audit stems (not staged; registry `legacy-concordance`) |
-| MotherDuck structure | **Formalized** — v2_stage ↔ main parity for **23** `canonical_output` domains; multiple `release_*` snapshots; latest tag in checked-in validation: **20260409** (see validation report) |
-| Repo / inventory consistency | **Aligned** — registry is SSOT; 0 unclaimed parquets in latest inventory run; [`scripts/119_md_formalization_validate.py --md --release-mode`](scripts/119_md_formalization_validate.py) enforces queue, manifest, canonical provenance, and **presentation views** |
-| Manual review queue | **Release gate** — must be fully reviewed (`verification_status` non-null for all queue rows) for `--release-mode` PASS; see validation report for counts at last run |
-| Non-Tg lab pull | **Pending** — institutional extract for TSH/PTH/Ca/vitD not yet in pipeline |
+| MotherDuck structure | **Formalized** — v2_stage ↔ main parity for **23** `canonical_output` domains; multiple `release_*` snapshots; manifest tag **20260409** (see live signoff folder) |
+| Repo / inventory consistency | **Aligned** — registry is SSOT; 0 unclaimed parquets in latest inventory run; [`scripts/119_md_formalization_validate.py --md --release-mode`](scripts/119_md_formalization_validate.py) enforces queue, manifest, canonical provenance, **presentation views**, and specimen/FHIR QA checks |
+| Manual review queue | **Non-NULL but not manuscript-approved** — live queue dominated by **synthetic** verification status; only **human-reviewed** CSV + hydrate path qualifies for publication (`studies/20260407_publication_blocker_assessment/`) |
+| Non-Tg lab pull | **Pending** — no `final_institutional*` wave; Tg-family waves only (`studies/20260407_lab_blocker_assessment/`) |
+| Final-master operator path | **Make targets** — `make md-final-master-dryrun` / `md-final-master-final` (see [Makefile](Makefile)); orchestrator [`scripts/126_final_master_release.py`](scripts/126_final_master_release.py) |
 
 A final manuscript-readiness hardening pass on 2026-03-13 audited 578 local DuckDB
 tables, 16 `val_*` validation tables, and all prior audit documents. Subsequent

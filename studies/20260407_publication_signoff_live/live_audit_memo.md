@@ -1,0 +1,64 @@
+# Live audit memo — MotherDuck publication signoff
+
+**Captured:** 2026-04-07 (UTC-aligned with validation report timestamp in-folder)  
+**Database (attach target):** `Thyroid 2026` (`md:Thyroid 2026`)
+
+## 1) Database inventory
+
+| Field | Live value |
+|--------|------------|
+| Current database name | Thyroid 2026 |
+| Type (MD_INFORMATION_SCHEMA.DATABASES) | DUCKLAKE |
+| Transient flag | False (catalog sample row) |
+| Historical snapshot retention | 7 days (sample row) |
+| `release_*` schemas | 6 present: `release_20260406`, `release_20260407`, `release_20260407_final`, `release_20260407_final2`, `release_20260408`, `release_20260409` |
+| Latest `qa.release_manifest` tag | **20260409** (timestamp 2026-04-07 02:05:07 per `119` report) |
+
+### MD_INFORMATION_SCHEMA access (this token)
+
+| View | Accessible |
+|------|------------|
+| DATABASES | Yes |
+| DATABASE_SNAPSHOTS | Yes |
+| QUERY_HISTORY | Yes |
+| RECENT_QUERIES | Yes |
+
+Full sample output: [`md_introspection_snapshot.md`](md_introspection_snapshot.md).
+
+**DuckLake note:** Snapshot semantics differ from native-only assumptions; use MotherDuck UI / org runbook for point-in-time evidence beyond `release_*` schema copies.
+
+## 2) Analyst / canonical row counts (live)
+
+| Object | Rows |
+|--------|-----:|
+| `main.canonical_extracted_fact_long_v2` | 123,577 |
+| `main.canonical_fact_quarantine_v2` | 199 |
+| `main.note_extraction_runs` | 3 |
+| `main.longitudinal_lab_canonical_v1` | 76,971 |
+| `main.longitudinal_lab_deduped_v` | 55,210 |
+| `main.master_fact_long_verified_v1` | 123,577 |
+| `main.master_patient_rollup_verified_v1` | 5,574 |
+| `main.master_source_lineage_v1` | 123,577 |
+
+Specimen/FHIR: `119` reports 10 objects present; separate QA diagnostics **FAIL** (see below).
+
+## 3) Release-mode automation (`119 --release-mode`)
+
+- **Verdict:** **BLOCKED** — 25 PASS / 1 WARN / 1 FAIL  
+- **FAIL:** Specimen/FHIR QA diagnostics (`broken_fhir_refs=10139`; plus `high_tier_null_spec=14` in detail string).  
+- **WARN:** Specimen-adjacent review burden — `genomic_link_review` open/pending ≈ 9,952.
+
+Artifact: [`validation_report.md`](validation_report.md).
+
+## 4) Traceability (presentation layer)
+
+`main.master_fact_long_verified_v1` includes (among others): `research_id`, `source_domain`, `source_object_id`, `extraction_run_id`, `reviewer_status`, `release_tag`. (`note_row_id` not asserted here; lineage uses `source_object_id` per contract.)
+
+## 5) Branch decision (plan §6)
+
+- **Not branch C** — do not run `126_final_master_release.py` for publication until gates clear.
+- Dual blockers documented under:
+  - [`../20260407_publication_blocker_assessment/README.md`](../20260407_publication_blocker_assessment/README.md) (governance / synthetic MRQ)
+  - [`../20260407_lab_blocker_assessment/README.md`](../20260407_lab_blocker_assessment/README.md) (non-Tg lab coverage)
+
+No raw clinical note text stored in this folder.

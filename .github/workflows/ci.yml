@@ -10,7 +10,8 @@ name: Dashboard CI — Hardened
 #     motherduck-formalization (v2 formalization path: 116 dry-run → 112 --motherduck-check → 119),
 #     v2-domain-validation (legacy), benchmark-regression (continue-on-error),
 #     share-publication-check (legacy; tags / manual), promotion-gate (legacy script 91; tags),
-#     md-live-release-audit-dryrun (124 --md --dry-run; tags / manual).
+#     md-live-release-audit-dryrun (124 --md --dry-run; tags / manual),
+#     md-final-master-dryrun (126 --md --dry-run; workflow_dispatch only).
 #
 # Service-account token
 # ─────────────────────
@@ -65,6 +66,22 @@ on:
         default: "false"
         type: choice
         options: ["true", "false"]
+      run_md_final_master_dryrun:
+        description: "Run final-master orchestrator dry-run (120 triage + 126 --md --dry-run)"
+        required: false
+        default: "false"
+        type: choice
+        options: ["true", "false"]
+      final_master_hydrate_from:
+        description: "Repo-relative path to gate dir with manual_review_queue.csv (required for 126 dry-run)"
+        required: false
+        default: ""
+        type: string
+      final_master_decisions_csv:
+        description: "Repo-relative path to promotion_review_decisions.csv (required for 126 dry-run)"
+        required: false
+        default: ""
+        type: string
 
 jobs:
   # ── Static Python: Ruff (pyflakes F) + Mypy (pyproject.toml); no secrets ───
@@ -100,6 +117,9 @@ jobs:
 
       - name: Mypy (scoped in pyproject.toml)
         run: mypy
+
+      - name: Doc path integrity (studies/ + docs/ links)
+        run: python scripts/check_doc_paths.py
 
   # ── Job 0: Offline extraction contracts (blocking; no MD / no LLM APIs) ──
   # Runs golden LLM parser tests plus registry, provenance, and fleet parity.
@@ -670,3 +690,65 @@ jobs:
 
       - name: Live release audit orchestrator (dry-run, fail-closed --md)
         run: python scripts/124_md_live_release_audit.py --md --dry-run
+
+  # ── Final-master dry-run (126; workflow_dispatch only — does not replace 124) ─
+  md-final-master-dryrun:
+    name: Final master orchestrator — dry-run (126)
+    runs-on: ubuntu-latest
+    needs: lint-and-syntax
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_md_final_master_dryrun == 'true'
+    env:
+      MD_SA_TOKEN: ${{ secrets.MD_SA_TOKEN }}
+      MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
+      LOCAL_DB_PATH: ""
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Assert read/write MotherDuck token
+        run: |
+          python -c "
+          import os
+          assert (os.environ.get('MD_SA_TOKEN') or os.environ.get('MOTHERDUCK_TOKEN')), (
+              'Configure GitHub secret MD_SA_TOKEN and/or MOTHERDUCK_TOKEN for this job.'
+          )
+          print('MotherDuck token env present (values not printed).')
+          "
+
+      - name: Require gate + decisions paths (fail-closed)
+        env:
+          HY: ${{ github.event.inputs.final_master_hydrate_from }}
+          DC: ${{ github.event.inputs.final_master_decisions_csv }}
+        run: |
+          if [ -z "$HY" ] || [ -z "$DC" ]; then
+            echo "::error::BLOCKER: Set workflow_dispatch inputs final_master_hydrate_from and final_master_decisions_csv (repo-relative paths)."
+            exit 1
+          fi
+          if [ ! -d "$HY" ]; then
+            echo "::error::BLOCKER: final_master_hydrate_from is not a directory: $HY"
+            exit 1
+          fi
+          if [ ! -f "$HY/manual_review_queue.csv" ]; then
+            echo "::error::BLOCKER: missing manual_review_queue.csv under $HY"
+            exit 1
+          fi
+          if [ ! -f "$DC" ]; then
+            echo "::error::BLOCKER: final_master_decisions_csv not found: $DC"
+            exit 1
+          fi
+
+      - name: Review queue triage + final-master dry-run
+        env:
+          HY: ${{ github.event.inputs.final_master_hydrate_from }}
+          DC: ${{ github.event.inputs.final_master_decisions_csv }}
+        run: |
+          python scripts/120_review_queue_triage.py --md --md-sa
+          python scripts/126_final_master_release.py --md --md-sa --dry-run \
+            --hydrate-mrq-from "$HY" \
+            --decisions-csv "$DC"
