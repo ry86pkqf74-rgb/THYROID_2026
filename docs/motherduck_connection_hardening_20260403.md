@@ -103,10 +103,11 @@ Scripts fixed by `_patch_md_connections.py` (9 files) and
 ## Smoke Test
 
 ```bash
-# Local connection
+# Local file (thyroid_master.duckdb path in repo)
 .venv/bin/python scripts/smoke_test_md_connection.py
 
-# MotherDuck connection (requires MOTHERDUCK_TOKEN or LOCAL_DB_PATH)
+# MotherDuck (fail-closed: `connect_md_fail_closed` / shared `PRAGMA database_list` check;
+# requires read/write token via env or secrets — MOTHERDUCK_TOKEN or MD_SA_TOKEN; exits 1 if not on MotherDuck)
 .venv/bin/python scripts/smoke_test_md_connection.py --md
 ```
 

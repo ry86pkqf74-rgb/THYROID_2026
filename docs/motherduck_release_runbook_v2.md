@@ -91,6 +91,8 @@ ls exports/manuscript_freeze_v1/data/*.parquet | head -5
 
 ### 2.3 Smoke test
 
+Fail-closed MotherDuck attach (`connect_md_fail_closed`, same `PRAGMA database_list` verification as `utils/md_connect.py`). Requires a read/write token in the environment (`MOTHERDUCK_TOKEN` or `MD_SA_TOKEN`); `make md-smoke` runs this target with Make’s token guard.
+
 ```bash
 .venv/bin/python scripts/smoke_test_md_connection.py --md
 ```
