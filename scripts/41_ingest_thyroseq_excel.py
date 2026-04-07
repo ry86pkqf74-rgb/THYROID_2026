@@ -103,7 +103,7 @@ def connect(use_md: bool = False, use_local: bool = False) -> duckdb.DuckDBPyCon
         path = _os.environ.get('LOCAL_DUCKDB_PATH', str(ROOT / 'thyroid_master_local.duckdb'))
         return duckdb.connect(path)
     from utils.md_connect import connect_md_or_file
-    return connect_md_or_file(DB_PATH, md=use_md)
+    return connect_md_or_file(DB_PATH, md=use_md, fail_closed=use_md)
 
 def ingest_raw(excel_path: str) -> pd.DataFrame:
     log.info(f"Phase 1: Loading {excel_path}")
