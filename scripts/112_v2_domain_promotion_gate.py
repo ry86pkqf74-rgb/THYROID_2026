@@ -59,7 +59,7 @@ if _env_md.exists():
                 os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
 
 from llm_extraction.vocab import ENTITY_SCHEMA_COLUMNS
-from motherduck_client import get_token as _md_get_token
+from motherduck_client import MotherDuckClient, get_token as _md_get_token
 from utils.text_helpers import save_parquet
 
 LOG = logging.getLogger("promotion_gate")
@@ -174,7 +174,12 @@ def parse_args() -> argparse.Namespace:
     p.add_argument(
         "--motherduck-check",
         action="store_true",
-        help="If MOTHERDUCK_TOKEN is set, compare v2_stage row counts against local parquets (G8).",
+        help=(
+            "If a RW MotherDuck token resolves (env / .env.motherduck / secrets.toml), "
+            "compare v2_stage row counts to local parquets (G8). Uses MotherDuckClient.for_env("
+            "MOTHERDUCK_ENV or prod), MOTHERDUCK_SESSION_HINT=THYROID_2026 when unset, and the "
+            "same PRAGMA attach verification as utils/md_connect."
+        ),
     )
     return p.parse_args()
 
@@ -972,6 +977,15 @@ def run_promotion_gate(
 # ---------------------------------------------------------------------------
 # MotherDuck parity check (G8)
 # ---------------------------------------------------------------------------
+def _md_verify_cloud_attach(con: duckdb.DuckDBPyConnection) -> bool:
+    """Match utils/md_connect: true when PRAGMA database_list shows MotherDuck."""
+    try:
+        dbs = con.execute("PRAGMA database_list").fetchall()
+        return any("md:" in str(r) or "md_information_schema" in str(r) for r in dbs)
+    except Exception:
+        return False
+
+
 def check_md_parity(
     inventory_df: pd.DataFrame,
 ) -> list[dict] | None:
@@ -979,12 +993,29 @@ def check_md_parity(
     if not token:
         LOG.warning("No MotherDuck token found (env, .env.motherduck, secrets.toml); skipping G8 parity check")
         return None
-    db_name = (os.environ.get("MOTHERDUCK_DATABASE") or "Thyroid 2026").strip()
-    uri = f"md:{db_name}?motherduck_token={token}"
+    os.environ.setdefault("MOTHERDUCK_SESSION_HINT", "THYROID_2026")
+    os.environ.setdefault(
+        "MOTHERDUCK_CUSTOM_USER_AGENT",
+        "THYROID_2026_molecular/112_v2_domain_promotion_gate;kind=parity",
+    )
+    env_name = (os.environ.get("MOTHERDUCK_ENV") or "prod").strip().lower() or "prod"
     try:
-        con_md = duckdb.connect(uri)
+        client = MotherDuckClient.for_env(
+            env_name,
+            use_service_account=False,
+            motherduck_session_hint=os.environ.get("MOTHERDUCK_SESSION_HINT"),
+            custom_user_agent=os.environ.get("MOTHERDUCK_CUSTOM_USER_AGENT"),
+        )
+        con_md = client.connect_rw()
     except Exception as exc:
         LOG.warning("MotherDuck connect failed: %s", exc)
+        return None
+    if not _md_verify_cloud_attach(con_md):
+        con_md.close()
+        LOG.warning(
+            "MotherDuck G8: connection did not verify as cloud catalog "
+            "(PRAGMA database_list has no md: / md_information_schema). Skipping parity."
+        )
         return None
 
     results = []
