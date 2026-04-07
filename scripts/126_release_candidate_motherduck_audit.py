@@ -171,6 +171,57 @@ def main() -> None:
             f"# Row count reconciliation\n\n{counts_md}\n\n## Interpretation\n\n{root_cause}\n",
         )
 
+        # Grain: COUNT(*) vs COUNT(DISTINCT note_row_id) per v2 stem (fail-closed on MD)
+        grain_rows: list[dict] = []
+        grain_mismatch = 0
+        for name, spec in registry.v2_domains.items():
+            if not spec.canonical_output:
+                continue
+            stem = spec.parquet_stem
+            for schema in ("v2_stage", "main"):
+                try:
+                    cnt, dcnt = con.execute(
+                        f'SELECT COUNT(*), COUNT(DISTINCT note_row_id) FROM "{schema}"."{stem}"'
+                    ).fetchone()
+                    ok = cnt == dcnt
+                    if not ok:
+                        grain_mismatch += 1
+                    grain_rows.append({
+                        "domain": name,
+                        "stem": stem,
+                        "schema": schema,
+                        "count_star": int(cnt),
+                        "distinct_note_row_id": int(dcnt),
+                        "one_row_per_note": ok,
+                    })
+                except Exception as e:
+                    grain_mismatch += 1
+                    grain_rows.append({
+                        "domain": name,
+                        "stem": stem,
+                        "schema": schema,
+                        "count_star": -1,
+                        "distinct_note_row_id": -1,
+                        "one_row_per_note": False,
+                        "error": str(e),
+                    })
+        grain_df = pd.DataFrame(grain_rows)
+        grain_md = grain_df.to_markdown(index=False)
+        valid_n = grain_df.loc[grain_df["count_star"] > 0, "count_star"]
+        cohort_n = int(valid_n.max()) if len(valid_n) else 0
+        grain_interpret = (
+            "For every v2 stem on **v2_stage** and **main**, `COUNT(*)` equals "
+            "`COUNT(DISTINCT note_row_id)` → **one row per note** across domains "
+            f"({cohort_n:,} notes in current RC). "
+            "This is not entity-level duplication inside those tables."
+            if grain_mismatch == 0
+            else f"**MISMATCH** or query errors: {grain_mismatch} row(s) in grain matrix — investigate."
+        )
+        _safe_write(
+            out / "grain_note_row_id.md",
+            f"# Grain check (note_row_id)\n\n{grain_md}\n\n## Interpretation\n\n{grain_interpret}\n",
+        )
+
         snap(
             "SELECT run_label, domain, COUNT(*) AS n, "
             "COUNT(*) FILTER (WHERE verification_status IS NOT NULL) AS reviewed, "

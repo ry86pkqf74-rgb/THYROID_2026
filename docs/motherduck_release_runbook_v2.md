@@ -433,6 +433,24 @@ exports/parquet_release_YYYYMMDD/
 
 The `manifest.json` contains file-level metadata: row counts, SHA-256 checksums, release tag, and git SHA.
 
+### 6.3 DuckLake storage, snapshots, and retention
+
+**Storage type:** Databases created with `TYPE DUCKLAKE` are managed DuckLake instances on MotherDuck. They **do not** support native MotherDuck features that apply only to standard (native storage) databases.
+
+Per [MotherDuck `ALTER DATABASE`](https://motherduck.com/docs/sql-reference/motherduck-sql-reference/alter-database/): options such as `SNAPSHOT_RETENTION_DAYS` apply to **native** databases only; **DuckLake databases do not support these options.**
+
+Per [MotherDuck `CREATE SNAPSHOT`](https://motherduck.com/docs/sql-reference/motherduck-sql-reference/create-snapshot/) and [ALTER DATABASE SET SNAPSHOT](https://motherduck.com/docs/sql-reference/motherduck-sql-reference/alter-database-snapshot/): **`CREATE SNAPSHOT` / named snapshots and point-in-time restore from `MD_INFORMATION_SCHEMA.DATABASE_SNAPSHOTS` apply to native databases.** DuckLake databases return errors such as *database is not a native duckdb database* for snapshot/create-restore flows.
+
+**Official mitigation for RC / legal hold on DuckLake:**
+
+1. Keep **append-only** `release_YYYYMMDD` schemas via `115_release_snapshot.py` (never overwrite an existing tag).
+2. Record each release in **`qa.release_manifest`** (tag, tables, timestamps).
+3. Treat **`MD_INFORMATION_SCHEMA.DATABASE_SNAPSHOTS`** as **best-effort automatic history** for native DBs only; on DuckLake, rely on steps (1)–(2) plus optional external export (`118` parquet bundle).
+
+**Retention window:** For native databases, Business tier allows `SNAPSHOT_RETENTION_DAYS` up to **90 days**. On DuckLake, automatic snapshot retention settings from `MD_INFORMATION_SCHEMA.DATABASES` may still show a value (e.g. **7 days**) that governs **native** snapshot semantics elsewhere — **do not assume** it extends DuckLake PITR.
+
+**If longer than platform-default retention is required for RC or legal hold:** open a **MotherDuck Business / support** request to confirm account-level options (export schedules, contractual retention, or migration path to native storage if snapshots are mandatory). Log the ticket ID and decision in this runbook under your release notes.
+
 ---
 
 ## 7. Validation checklist

@@ -5,7 +5,7 @@ SELECT current_database() AS current_database, current_timestamp AS ts
 ```
 | current_database   | ts                               |
 |:-------------------|:---------------------------------|
-| Thyroid 2026       | 2026-04-06 22:39:38.415071-04:00 |
+| Thyroid 2026       | 2026-04-06 22:45:44.294886-04:00 |
 - **custom_user_agent (connection):** `THYROID_2026_rc_audit/1.0`
 - **motherduck_session_hint:** `rc_release_candidate_audit_20260407`
 - **current_database:** `Thyroid 2026`

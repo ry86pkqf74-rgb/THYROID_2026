@@ -56,6 +56,9 @@ REQUIRED_ENTITY_COLUMNS = [
     "entity_value_raw", "entity_value_norm",
 ]
 
+# Wide JSON note-level v2 parquets keep ids on the row but encode entities in JSON.
+WIDE_JSON_MISSING_COLUMNS = ["entity_type", "entity_value_raw", "entity_value_norm"]
+
 DESIRED_PROVENANCE_COLUMNS = [
     "entity_date", "note_date", "extraction_run_id",
     "extracted_at", "source_file_id",
@@ -215,13 +218,45 @@ def check_row_counts(
     return rows_data
 
 
+def _is_wide_note_level_contract(
+    con: duckdb.DuckDBPyConnection,
+    stem: str,
+    missing: list[str],
+) -> bool:
+    """True when main and v2_stage both omit typed entity columns (wide JSON note-level shape).
+
+    Ids (`research_id`, `note_row_id`) are still present; `entity_type` / `entity_value_*` live in JSON
+    until promotion to `canonical_extracted_fact_long_v2`.
+    """
+    if set(missing) != set(WIDE_JSON_MISSING_COLUMNS):
+        return False
+    try:
+        stg_cols = [r[0] for r in con.execute(
+            f"SELECT column_name FROM information_schema.columns "
+            f"WHERE table_schema='v2_stage' AND table_name='{stem}'"
+        ).fetchall()]
+    except Exception:
+        return False
+    if not stg_cols:
+        return False
+    return all(c not in stg_cols for c in WIDE_JSON_MISSING_COLUMNS)
+
+
 def check_schema_completeness(
     con: duckdb.DuckDBPyConnection,
     results: ValidationResult,
 ) -> None:
-    """Check 3: Required columns present in main entity tables."""
+    """Check 3: Required columns present in main entity tables.
+
+    Promoted v2 domain tables may use a **wide JSON note-level** contract:
+    `entity_type` / `entity_value_raw` / `entity_value_norm` absent on both v2_stage and main
+    (ids present). That is PASS with a documented exception — analytic long-form remains
+    ``main.canonical_extracted_fact_long_v2`` and presentation views.
+    Any other missing-column pattern stays WARN (e.g. missing `research_id` or promotion drift).
+    """
     registry = load_registry()
-    issues = []
+    issues: list[str] = []
+    wide_stems: list[str] = []
 
     for name, spec in registry.v2_domains.items():
         if not spec.canonical_output:
@@ -237,27 +272,36 @@ def check_schema_completeness(
             continue
 
         missing = [c for c in REQUIRED_ENTITY_COLUMNS if c not in cols]
-        if missing:
-            stg_note = ""
-            try:
-                stg_cols = [r[0] for r in con.execute(
-                    f"SELECT column_name FROM information_schema.columns "
-                    f"WHERE table_schema='v2_stage' AND table_name='{stem}'"
-                ).fetchall()]
-                if stg_cols and all(c not in stg_cols for c in missing):
-                    stg_note = (
-                        " (v2_stage also lacks these — wide/JSON v2 parquet shape on MD; "
-                        "long-form entities are in main.canonical_extracted_fact_long_v2; "
-                        "see docs/domain_mapping_rules.md and promotion gate JSON expansion)"
-                    )
-                elif stg_cols and all(c in stg_cols for c in missing):
-                    stg_note = " (present on v2_stage but not main — promotion/main drift)"
-            except Exception:
-                pass
-            issues.append(f"{stem}: missing {missing}{stg_note}")
+        if not missing:
+            continue
+
+        if _is_wide_note_level_contract(con, stem, missing):
+            wide_stems.append(stem)
+            continue
+
+        stg_note = ""
+        try:
+            stg_cols = [r[0] for r in con.execute(
+                f"SELECT column_name FROM information_schema.columns "
+                f"WHERE table_schema='v2_stage' AND table_name='{stem}'"
+            ).fetchall()]
+            if stg_cols and all(c in stg_cols for c in missing):
+                stg_note = " (present on v2_stage but not main — promotion/main drift)"
+        except Exception:
+            pass
+        issues.append(f"{stem}: missing {missing}{stg_note}")
 
     if issues:
         results.add("Schema completeness", "WARN", f"{len(issues)} issues: {'; '.join(issues[:5])}")
+    elif wide_stems:
+        results.add(
+            "Schema completeness",
+            "PASS",
+            f"Wide note-level v2 contract on {len(wide_stems)} promoted table(s); "
+            f"entity_type/entity_value_* in main.canonical_extracted_fact_long_v2 "
+            f"(see docs/domain_mapping_rules.md). Example stems: {', '.join(wide_stems[:3])}"
+            f"{'…' if len(wide_stems) > 3 else ''}",
+        )
     else:
         results.add("Schema completeness", "PASS", "All entity tables have required columns")
 
