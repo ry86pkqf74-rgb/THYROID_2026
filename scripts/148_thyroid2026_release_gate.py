@@ -909,7 +909,7 @@ def _write_artifacts(
             "",
             "### Evidence (JSON)",
             "",
-            f"Full structured evidence: [`release_gate_manifest.json`](release_gate_manifest.json).",
+            "Full structured evidence: [`release_gate_manifest.json`](release_gate_manifest.json).",
             "",
             "### Operator next commands",
             "",

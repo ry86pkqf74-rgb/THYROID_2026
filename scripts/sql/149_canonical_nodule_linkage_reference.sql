@@ -1,0 +1,7 @@
+-- Reference: canonical nodule linkage (study layer)
+--
+-- Authoritative SQL is generated in Python: utils/canonical_nodule_linkage.py
+-- Run (read-only export):
+--   .venv/bin/python scripts/149_md_canonical_nodule_linkage_study.py --md
+--
+-- This file is documentation-only; do not execute blindly against prod without review.
