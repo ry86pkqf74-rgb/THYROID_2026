@@ -193,6 +193,14 @@ def main() -> None:
     print(f"  [128] MRQ rows rewritten: {int(mask_syn.sum()):,}")
     print(f"  [128] Tier counts: {dict(tier_counts)}")
     print(f"  [128] Memo: {memo_path}")
+    crit_n = int(tier_counts.get("critical", 0))
+    if crit_n:
+        print(
+            "  [128] POLICY NOTE: docs/domain_mapping_rules.md (critical QA tier) expects a manual "
+            f"spot-check sample (10% min 20 rows) for {crit_n:,} critical fill rows, documented in "
+            "qa.promotion_review_decisions — a single summary row in promotion_review_decisions.csv is "
+            "not sufficient for manuscript sign-off on its own."
+        )
 
 
 if __name__ == "__main__":

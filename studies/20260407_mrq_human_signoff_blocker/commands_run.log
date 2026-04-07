@@ -1,0 +1,30 @@
+# Commands executed — real MRQ signoff preflight (2026-04-07 UTC)
+
+Attribution (per operator policy):
+  export MOTHERDUCK_CUSTOM_USER_AGENT=THYROID_2026_real_mrq_signoff/1.0
+  export MOTHERDUCK_SESSION_HINT=real_mrq_signoff_20260407_0000
+  (session hints incremented per Python probe: _0001, _0002, _0003 on subsequent connects)
+
+Repo root:
+  cd "/Users/ros/THyroid 2026/THYROID_2026"
+
+1) Discover candidate gates (targeted glob / pandas summaries; no repo-wide scan):
+   - studies/20260407_tier_policy_review_gate/manual_review_queue.csv
+   - studies/20260407_tier_policy_review_gate/promotion_review_decisions.csv
+   - studies/v2_domain_promotion_gate_formalization_20260406_v3/manual_review_queue.csv (blank verification_status)
+
+2) Analyze tier-policy MRQ (local CSV):
+   .venv/bin/python - <<'PY'
+   import pandas as pd
+   df = pd.read_csv("studies/20260407_tier_policy_review_gate/manual_review_queue.csv")
+   # verification_status / algorithm_comparison_status / reviewer_id counts
+   PY
+
+3) MotherDuck live probes (token via get_token(); MD_SA_TOKEN preferred when set in .streamlit/secrets.toml):
+   .venv/bin/python - <<'PY'
+   # qa.promotion_review_decisions aggregates + latest rows
+   # qa.manual_review_queue synthetic/auto_accepted/pending_null
+   # qa.manual_review_queue GROUP BY run_label
+   PY
+
+Note: Initial probe without loading .env.motherduck showed no RW token in process env; get_token() still resolved RW token from .streamlit/secrets.toml (secrets not logged).
