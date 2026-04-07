@@ -156,6 +156,15 @@ def build_long_frame(ps: pd.DataFrame) -> pd.DataFrame:
             chunk["research_id"] = pd.to_numeric(chunk["research_id"], errors="coerce").astype(
                 "Int64"
             )
+        # Mixed str/float in wide synoptic Excel → object dtype; normalize for Parquet/pyarrow.
+        for num_key in (
+            "size_greatest_dimension_cm",
+            "ln_involved",
+            "ln_examined",
+            "angioinvasion_quantify",
+        ):
+            if num_key in chunk.columns:
+                chunk[num_key] = pd.to_numeric(chunk[num_key], errors="coerce")
         parts.append(chunk)
 
     if not parts:

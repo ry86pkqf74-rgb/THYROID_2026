@@ -1,24 +1,24 @@
-# Specimen + FHIR hardening — blocked (prerequisites)
-Generated: 2026-04-07T06:50:04.998235+00:00Z
-Git SHA: 57d449bf5e247c30747aa8100c0c0edf0a259503
+# Specimen + FHIR hardening — machine audit memo
+Generated: 2026-04-07T07:02:40.866365+00:00Z
+Git SHA: a9e1e0692a02b7721e7c8f29bd41f8aebcea11c2
 custom_user_agent: specimen_fhir_hardening_v1
 
 ## MotherDuck snapshot
-- Attempt: `specimen_fhir_pre_20260407_065004`
-- Result detail: InvalidInputException('Invalid Input Error: Database is not a native duckdb database so it does not have snapshots') — CREATE SNAPSHOT "specimen_fhir_pre_20260407_065004" OF "Thyroid 2026";
+- Attempt: `specimen_fhir_pre_20260407_070214`
+- Result detail: InvalidInputException('Invalid Input Error: Database is not a native duckdb database so it does not have snapshots') — CREATE SNAPSHOT "specimen_fhir_pre_20260407_070214" OF "Thyroid 2026";
 
-## Prerequisite tables missing on catalog
-The following `main.*` objects must exist before DDL:
-- `main.synoptic_tumor_long_v1`
-- `main.path_synoptics_encounter_qc_v1`
-- `main.surgery_pathology_linkage_v3`
-- `main.fna_molecular_linkage_v3`
-- `main.preop_surgery_linkage_v3`
+## README vs sign-off vs live
+- README (2026-04-07): states MotherDuck formalized; release-mode may still fail on manual_review_queue.
+- studies/20260407_signoff_memo/signoff_memo.md: NOT READY (v2_stage/provenance blockers per that memo).
+- Checked-in validation artifacts may be stale vs live catalog; this run reflects DB state at execution time.
 
-## Remediation (typical)
-- `synoptic_tumor_long_v1`: run `scripts/108_synoptic_tumor_long_v1.py --md` (needs `processed/path_synoptics.parquet`).
-- `path_synoptics_encounter_qc_v1`: run `scripts/109_synoptic_encounter_qc.py --md` (needs `path_synoptics`).
-- `surgery_pathology_linkage_v3`, `fna_molecular_linkage_v3`, `preop_surgery_linkage_v3`, `molecular_test_episode_v2`:
-  load analysis/episode contract assets (e.g. `scripts/117_md_contract_views.py --md` + manuscript freeze parquets, or your org’s linkage materialization).
+## Stale vs current artifacts
+- Any checked-in `studies/*/validation_report.md` older than this run's DB time is potentially stale.
+- `docs/motherduck_database_contract_v1.md` documents specimen/FHIR surfaces (commit with this change).
 
-No DDL was applied; fix prerequisites and re-run.
+## Validation rows (qa.val_specimen_contract_v1)
+- specimen_master_fingerprint_unique: **PASS** (True,)
+- specimen_master_id_unique: **PASS** (True,)
+- specimen_focus_fingerprint_unique: **PASS** (True,)
+- genomic_assay_id_unique: **PASS** (True,)
+- fhir_specimen_subject_ref: **PASS** (True,)

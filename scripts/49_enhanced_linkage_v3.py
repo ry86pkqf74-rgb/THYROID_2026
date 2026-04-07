@@ -156,7 +156,20 @@ def confidence_tier_from_score_sql(score_expr: str) -> str:
 # ─────────────────────────────────────────────────────────────────────────────
 # A. Imaging nodule -> FNA episode
 # ─────────────────────────────────────────────────────────────────────────────
-LINK_IMAGING_FNA_V3_SQL = """
+def _fna_nodule_size_cm_expr(con: duckdb.DuckDBPyConnection) -> str:
+    """MotherDuck `fna_episode_master_v2` may omit nodule_size_cm; avoid binder errors."""
+    row = con.execute(
+        "SELECT 1 FROM information_schema.columns "
+        "WHERE table_schema = 'main' AND table_name = 'fna_episode_master_v2' "
+        "AND column_name = 'nodule_size_cm'"
+    ).fetchone()
+    return "TRY_CAST(nodule_size_cm AS DOUBLE)" if row else "NULL::DOUBLE"
+
+
+def link_imaging_fna_v3_sql(con: duckdb.DuckDBPyConnection) -> str:
+    """Full DDL for imaging_fna_linkage_v3 (adapts to catalog column set)."""
+    fna_size = _fna_nodule_size_cm_expr(con)
+    return """
 CREATE OR REPLACE TABLE imaging_fna_linkage_v3 AS
 WITH img AS (
     SELECT research_id, nodule_id, imaging_exam_id,
@@ -178,7 +191,7 @@ WITH img AS (
 fna AS (
     SELECT research_id, fna_episode_id, fna_date_native,
            laterality AS fna_lat, bethesda_category, specimen_site_raw,
-           TRY_CAST(nodule_size_cm AS DOUBLE) AS fna_nodule_size_cm
+           {fna_size} AS fna_nodule_size_cm
     FROM fna_episode_master_v2
     WHERE fna_date_native IS NOT NULL
 ),
@@ -262,6 +275,7 @@ SELECT
     (linkage_score >= 0.50)  AS analysis_eligible_link_flag
 FROM scored
 """.format(
+    fna_size=fna_size,
     temporal=temporal_score_sql("ABS(DATEDIFF('day', img.exam_date_native, fna.fna_date_native))"),
     laterality=laterality_score_sql("img.laterality", "fna.fna_lat"),
     size=size_compat_score_sql("img.size_cm_max", "fna.fna_nodule_size_cm"),
@@ -774,7 +788,7 @@ WHERE n_candidates > 1
 
 
 LINKAGE_TASKS = [
-    ("imaging_fna_linkage_v3",         LINK_IMAGING_FNA_V3_SQL,      "imaging_nodule_long_v2"),
+    ("imaging_fna_linkage_v3",         link_imaging_fna_v3_sql,       "imaging_nodule_long_v2"),
     ("fna_molecular_linkage_v3",       LINK_FNA_MOLECULAR_V3_SQL,    "fna_episode_master_v2"),
     ("preop_surgery_linkage_v3",       LINK_PREOP_SURGERY_V3_SQL,    "fna_episode_master_v2"),
     ("surgery_pathology_linkage_v3",   LINK_SURGERY_PATHOLOGY_V3_SQL,"operative_episode_detail_v2"),
@@ -834,7 +848,8 @@ WHERE 1=0
             continue
         print(f"  Building {tbl_name}...")
         try:
-            con.execute(sql)
+            stmt = sql(con) if callable(sql) else sql
+            con.execute(stmt)
             r = con.execute(f"SELECT COUNT(*) FROM {tbl_name}").fetchone()
             print(f"    {tbl_name}: {r[0]:,} rows")
         except Exception as exc:

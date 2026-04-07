@@ -1,25 +1,28 @@
-# Implementation report — specimen + FHIR hardening (pre-run template)
+# Implementation report — specimen + FHIR hardening
+Timestamp (UTC): 2026-04-07T07:02:40.942101+00:00
+**Commit SHA:** `a9e1e0692a02b7721e7c8f29bd41f8aebcea11c2`
 
-**Delivered in commit:** `16eec8f` (push `main`).
+## Source inventory
+- `scripts/sql/138_specimen_fhir_layer_ddl.sql` — DDL
+- `scripts/138_md_specimen_fhir_layer.py` — orchestrator
+- `utils/specimen_fingerprint.py` — fingerprint test helpers
 
-This file is **overwritten** when `scripts/138_md_specimen_fhir_layer.py` executes successfully (replacing this template with `materialized_at` and the then-current git SHA).
+## Table contract
+- `main.specimen_master_v1`, `specimen_tumor_focus_v1`, `specimen_genomic_assay_v1`, `specimen_source_xref_v1`
+- `qa.specimen_merge_review_queue_v1`, `qa.val_specimen_contract_v1`
+- `main.fhir_*_v1` + `main.fhir_bundle_specimen_export_v1`
 
-**Source inventory**
+## Matching policy
+- Auto-merge: exact `specimen_fingerprint_sha256` only (full rebuild replaces derived tables).
+- Near-duplicate pairs → `qa.specimen_merge_review_queue_v1` (same patient/day/surgery_episode, distinct FP).
+- Genomics: molecular episodes via v3 linkage chain; genetic_testing append requires exact platform string match.
 
-- `scripts/sql/138_specimen_fhir_layer_ddl.sql` — views/tables/FHIR bundle
-- `scripts/138_md_specimen_fhir_layer.py` — MotherDuck orchestration, snapshot preamble, validation rows
-- `utils/specimen_fingerprint.py` — fingerprint parity with SQL (`sha256` over normalized `concat_ws`)
+## Unresolved review burden
+- See row count `SELECT COUNT(*) FROM qa.specimen_merge_review_queue_v1` on target DB.
 
-**Table contract** — see `docs/motherduck_database_contract_v1.md` § Specimen identity + analytic FHIR.
+## Test / lint
+- Run `pytest tests/test_specimen_fhir_layer.py` and `ruff` / `mypy` per CI.
 
-**Matching policy**
-
-- Encounter specimen: deterministic fingerprint; full-table rebuild is idempotent.
-- Merge review queue: same patient / `procedure_date_day` / `surgery_episode_id`, distinct fingerprint (no auto-merge).
-- Genomics: `molecular_test_episode_v2` + v3 linkage chain; optional `genetic_testing` rows via **exact** platform string match to a molecular episode, then same chain.
-
-**Tests:** `pytest tests/test_specimen_fhir_layer.py`
-
-**Validation:** `scripts/119_md_formalization_validate.py` Check 13.
-
-Run `138` with `--md` once to populate `audit_memo.md`, `query_history_telemetry.md`, and refresh this report with live counts.
+## MotherDuck snapshot / share
+- Snapshot attempt recorded in audit_memo.md for this run (`specimen_fhir_pre_20260407_070214`).
+- Optional read-only share: attach promoted DB in MotherDuck UI; document token path per org policy.
