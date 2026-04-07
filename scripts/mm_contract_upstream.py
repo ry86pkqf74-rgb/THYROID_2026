@@ -42,6 +42,155 @@ UPSTREAM_KEYS = [
     "pathology_rai_linkage_v3",
 ]
 
+# Strict release: these columns must exist on each resolved upstream relation (DESCRIBE).
+UPSTREAM_REQUIRED_COLUMNS: dict[str, list[str]] = {
+    "linkage_master_v1": ["research_id", "canonical_research_id"],
+    "mrn_crosswalk_v1": ["research_id", "euh_mrn", "canonical_research_id"],
+    "operative_episode_detail_v2": [
+        "research_id",
+        "surgery_episode_id",
+        "surgery_date_native",
+        "procedure_raw",
+        "procedure_normalized",
+        "laterality",
+        "central_neck_dissection_flag",
+        "lateral_neck_dissection_flag",
+    ],
+    "tumor_episode_master_v2": [
+        "research_id",
+        "surgery_episode_id",
+        "tumor_ordinal",
+        "surgery_date",
+        "date_status",
+        "primary_histology",
+        "tumor_size_cm",
+        "t_stage",
+        "n_stage",
+        "overall_stage",
+        "laterality",
+        "multifocality_flag",
+    ],
+    "fna_episode_master_v2": [
+        "research_id",
+        "fna_episode_id",
+        "fna_date_native",
+        "resolved_fna_date",
+        "bethesda_category",
+        "specimen_site_raw",
+        "laterality",
+        "pathology_diagnosis",
+    ],
+    "molecular_test_episode_v2": [
+        "research_id",
+        "molecular_episode_id",
+        "test_date_native",
+        "resolved_test_date",
+        "platform",
+        "overall_result_class",
+        "braf_flag",
+        "ras_flag",
+    ],
+    "imaging_nodule_master_v1": [
+        "research_id",
+        "nodule_number",
+        "exam_id",
+        "nodule_id",
+        "exam_date",
+        "laterality",
+        "max_dimension_cm",
+        "tirads_reported",
+        "suspicious_flag",
+        "composition",
+        "echogenicity",
+        "shape",
+        "margins",
+        "calcifications",
+        "tirads_category",
+    ],
+    "event_date_audit_v2": [
+        "domain",
+        "research_id",
+        "resolved_date",
+        "native_date",
+        "date_status",
+        "date_confidence",
+        "anchor_source",
+        "source_table",
+    ],
+    "patient_cross_domain_timeline_v2": [
+        "research_id",
+        "event_type",
+        "domain",
+        "event_date",
+        "episode_id",
+        "event_detail",
+    ],
+    "preop_surgery_linkage_v3": [
+        "research_id",
+        "preop_episode_id",
+        "preop_type",
+        "surgery_episode_id",
+        "preop_date",
+        "surgery_date",
+        "day_gap",
+        "score_rank",
+        "n_candidates",
+        "linkage_confidence_tier",
+        "linkage_reason_summary",
+        "analysis_eligible_link_flag",
+        "preop_lat",
+        "surg_lat",
+    ],
+    "surgery_pathology_linkage_v3": [
+        "research_id",
+        "surgery_episode_id",
+        "path_surgery_id",
+        "tumor_ordinal",
+        "day_gap",
+        "surg_lat",
+        "path_lat",
+        "n_candidates",
+        "linkage_score",
+        "score_rank",
+        "linkage_confidence_tier",
+        "linkage_reason_summary",
+        "analysis_eligible_link_flag",
+    ],
+    "fna_molecular_linkage_v3": [
+        "research_id",
+        "fna_episode_id",
+        "molecular_episode_id",
+        "fna_date_native",
+        "test_date_native",
+        "day_gap",
+        "laterality",
+        "platform",
+        "n_candidates",
+        "linkage_score",
+        "score_rank",
+        "linkage_confidence_tier",
+        "linkage_reason_summary",
+        "analysis_eligible_link_flag",
+    ],
+    "pathology_rai_linkage_v3": [
+        "research_id",
+        "surgery_episode_id",
+        "rai_episode_id",
+        "surgery_date",
+        "rai_date",
+        "days_post_surgery",
+        "abs_days",
+        "rai_assertion_status",
+        "dose_mci",
+        "n_candidates",
+        "linkage_score",
+        "score_rank",
+        "linkage_confidence_tier",
+        "linkage_reason_summary",
+        "analysis_eligible_link_flag",
+    ],
+}
+
 
 def _load_script49():
     path = ROOT / "scripts" / "49_enhanced_linkage_v3.py"
@@ -230,16 +379,47 @@ WHERE FALSE;
 """)
 
 
+def validate_upstream_schema_for_strict(con: duckdb.DuckDBPyConnection, src: dict[str, str]) -> None:
+    """Verify join-critical columns exist (strict / CI release gate)."""
+    for logical, cols in UPSTREAM_REQUIRED_COLUMNS.items():
+        fq = src[logical]
+        try:
+            rows = con.execute(f"DESCRIBE {fq}").fetchall()
+        except Exception as e:
+            raise RuntimeError(
+                f"Strict mode: cannot DESCRIBE upstream {logical!r} ({fq!r}): {e}"
+            ) from e
+        have = {str(r[0]).lower() for r in rows}
+        for c in cols:
+            if c.lower() not in have:
+                raise RuntimeError(
+                    f"Strict mode: upstream {logical!r} ({fq!r}) missing required column {c!r}"
+                )
+
+
 def ensure_upstream_sources(
-    con: duckdb.DuckDBPyConnection, schema: str, *, section: Callable[[str], None]
+    con: duckdb.DuckDBPyConnection,
+    schema: str,
+    *,
+    section: Callable[[str], None],
+    allow_bootstrap: bool = False,
 ) -> dict[str, str]:
     for t in CORE_TABLES:
         if not table_available(con, t):
             raise RuntimeError(
-                f"Missing core table {t!r} — cannot bootstrap contract upstreams."
+                f"Missing core table {t!r} — cannot build multimodal contract upstreams."
             )
 
     src: dict[str, str] = {k: k for k in UPSTREAM_KEYS}
+
+    if not allow_bootstrap:
+        missing = [k for k in UPSTREAM_KEYS if not table_available(con, k)]
+        if missing:
+            raise RuntimeError(
+                "Missing required upstream table(s) (fail-closed; for stubs use --allow-bootstrap-dev): "
+                + ", ".join(sorted(missing))
+            )
+        return src
 
     if not table_available(con, "linkage_master_v1"):
         section("bootstrap linkage_master_v1 (identity spine)")

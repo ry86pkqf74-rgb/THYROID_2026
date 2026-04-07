@@ -5,6 +5,7 @@ import importlib.util
 from pathlib import Path
 
 import duckdb
+import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -251,3 +252,201 @@ class TestMultimodalContractViolations:
             f"SELECT COUNT(*) FROM {self.SCHEMA}.val_preop_temporal_order_mm_v1"
         ).fetchone()[0]
         assert n >= 1
+
+
+class TestStrictReleaseGate:
+    SCHEMA = "mm_contract_dev"
+
+    def test_missing_upstream_raises_without_bootstrap(self) -> None:
+        con = duckdb.connect(":memory:")
+        for t in (
+            "operative_episode_detail_v2",
+            "tumor_episode_master_v2",
+            "molecular_test_episode_v2",
+            "imaging_nodule_master_v1",
+        ):
+            con.execute(f"CREATE TABLE {t} (research_id INTEGER)")
+            con.execute(f"INSERT INTO {t} VALUES (1)")
+        from scripts.mm_contract_upstream import ensure_upstream_sources
+
+        with pytest.raises(RuntimeError, match="Missing required upstream"):
+            ensure_upstream_sources(
+                con, self.SCHEMA, section=lambda _m: None, allow_bootstrap=False
+            )
+
+    def test_strict_release_passes_on_clean_seed(self) -> None:
+        mod = _load_mm128()
+        con = duckdb.connect(":memory:")
+        _seed_minimal_upstream(con)
+        mod.build_all(con, self.SCHEMA, strict_release=True)
+
+    def test_strict_release_fails_on_blocking_validation(self) -> None:
+        mod = _load_mm128()
+        con = duckdb.connect(":memory:")
+        _seed_minimal_upstream(con)
+        con.execute("DELETE FROM surgery_pathology_linkage_v3 WHERE research_id = 100")
+        con.execute(
+            """
+            INSERT INTO surgery_pathology_linkage_v3 VALUES
+                (100, 1, 1, 1, DATE '2020-06-01', DATE '2020-06-01', 0,
+                 'right', 'left', 1.2, 1, 0.9, 1, 'exact_match', 'lat_bad', TRUE);
+            """
+        )
+        with pytest.raises(RuntimeError, match="Strict release failed"):
+            mod.build_all(con, self.SCHEMA, strict_release=True)
+
+    def test_strict_gate_rejects_bootstrapped_upstream_metadata(self) -> None:
+        mod = _load_mm128()
+        con = duckdb.connect(":memory:")
+        con.execute(f"CREATE SCHEMA IF NOT EXISTS {self.SCHEMA};")
+        with pytest.raises(RuntimeError, match="Strict release failed"):
+            mod.assert_strict_release_passes(
+                con,
+                self.SCHEMA,
+                bootstrapped_upstream=["linkage_master_v1"],
+            )
+
+
+class TestImagingFnaContractIntegration:
+    SCHEMA = "mm_contract_dev"
+
+    def test_temporal_link_matches_fact_surrogate_ids(self) -> None:
+        mod = _load_mm128()
+        con = duckdb.connect(":memory:")
+        _seed_minimal_upstream(con)
+        mod.build_all(con, self.SCHEMA)
+        expect_img = con.execute(
+            f"SELECT imaging_fact_id FROM {self.SCHEMA}.fact_imaging_mm_v1 "
+            "WHERE research_id = 100"
+        ).fetchone()[0]
+        expect_fna = con.execute(
+            f"SELECT fna_fact_id FROM {self.SCHEMA}.fact_fna_mm_v1 WHERE research_id = 100"
+        ).fetchone()[0]
+        row = con.execute(
+            f"SELECT imaging_id, fna_id, is_primary_link, link_confidence FROM {self.SCHEMA}.link_imaging_fna_mm_v1"
+        ).fetchone()
+        assert row is not None
+        assert row[0] == expect_img
+        assert row[1] == expect_fna
+        assert row[2] is True
+        assert row[3] == pytest.approx(0.85)
+
+    def test_ambiguous_multi_fna_flags_on_contract_link(self) -> None:
+        mod = _load_mm128()
+        con = duckdb.connect(":memory:")
+        _seed_minimal_upstream(con)
+        con.execute(
+            """
+            INSERT INTO fna_episode_master_v2 VALUES
+                (100, 2, DATE '2020-05-15', DATE '2020-05-15', 4,
+                 'thyroid', 'right', NULL::VARCHAR, NULL::VARCHAR)
+            """
+        )
+        mod.build_all(con, self.SCHEMA)
+        prim = con.execute(
+            f"SELECT BOOL_OR(is_primary_link) FROM {self.SCHEMA}.link_imaging_fna_mm_v1"
+        ).fetchone()[0]
+        assert prim is False
+        amb = con.execute(
+            f"SELECT BOOL_OR(flag_ambiguous_linkage) FROM {self.SCHEMA}.link_imaging_fna_mm_v1"
+        ).fetchone()[0]
+        assert amb is True
+        multi = con.execute(
+            f"SELECT BOOL_OR(flag_multi_fna_nodule) FROM {self.SCHEMA}.link_imaging_fna_mm_v1"
+        ).fetchone()[0]
+        assert multi is True
+
+    def test_discordant_laterality_surfaces_in_blockers_not_in_link(self) -> None:
+        mod = _load_mm128()
+        con = duckdb.connect(":memory:")
+        _seed_minimal_upstream(con)
+        con.execute("UPDATE fna_episode_master_v2 SET laterality = 'left' WHERE research_id = 100")
+        mod.build_all(con, self.SCHEMA)
+        n_link = con.execute(
+            f"SELECT COUNT(*) FROM {self.SCHEMA}.link_imaging_fna_mm_v1"
+        ).fetchone()[0]
+        assert n_link == 0
+        n_blk = con.execute(
+            f"SELECT COUNT(*) FROM {self.SCHEMA}.val_imaging_fna_contract_blockers_mm_v1 "
+            "WHERE review_reason = 'discordant_laterality'"
+        ).fetchone()[0]
+        assert n_blk >= 1
+
+    def test_size_drift_gt_20pct_surfaces_in_review(self) -> None:
+        mod = _load_mm128()
+        con = duckdb.connect(":memory:")
+        _seed_minimal_upstream(con)
+        con.execute(
+            """
+            CREATE TABLE fna_history AS
+            SELECT * FROM (
+                SELECT 100::BIGINT AS research_id, 1::INTEGER AS fna_index,
+                       NULL::VARCHAR AS specimen_received, 0.5::DOUBLE AS nodule_size_cm
+            ) t
+            """
+        )
+        mod.build_all(con, self.SCHEMA)
+        n_link = con.execute(
+            f"SELECT COUNT(*) FROM {self.SCHEMA}.link_imaging_fna_mm_v1"
+        ).fetchone()[0]
+        assert n_link == 0
+        n_rev = con.execute(
+            f"SELECT COUNT(*) FROM {self.SCHEMA}.review_queue_imaging_fna_mm_v1 "
+            "WHERE review_reason = 'size_drift_gt_20pct'"
+        ).fetchone()[0]
+        assert n_rev >= 1
+
+    def test_same_day_fna_ordinals_preserved(self) -> None:
+        mod = _load_mm128()
+        con = duckdb.connect(":memory:")
+        _seed_minimal_upstream(con)
+        con.execute("DELETE FROM fna_episode_master_v2")
+        con.execute(
+            """
+            INSERT INTO fna_episode_master_v2 VALUES
+                (100, 1, DATE '2020-05-01', DATE '2020-05-01', 5,
+                 'thyroid', 'right', NULL::VARCHAR, NULL::VARCHAR),
+                (100, 2, DATE '2020-05-01', DATE '2020-05-01', 5,
+                 'thyroid', 'right', NULL::VARCHAR, NULL::VARCHAR)
+            """
+        )
+        mod.build_all(con, self.SCHEMA)
+        ords = con.execute(
+            f"SELECT ordinal_in_nodule FROM {self.SCHEMA}.link_imaging_fna_mm_v1 ORDER BY fna_episode_id"
+        ).fetchall()
+        assert [r[0] for r in ords] == sorted([r[0] for r in ords])
+        assert sorted([r[0] for r in ords]) == [1, 2]
+
+    def test_exact_specimen_match_primary_in_contract(self) -> None:
+        mod = _load_mm128()
+        con = duckdb.connect(":memory:")
+        _seed_minimal_upstream(con)
+        con.execute(
+            """
+            CREATE TABLE fna_history AS
+            SELECT * FROM (
+                SELECT 100::BIGINT AS research_id, 1::INTEGER AS fna_index,
+                       'accx'::VARCHAR AS specimen_received, 1.0::DOUBLE AS nodule_size_cm
+            ) t
+            """
+        )
+        con.execute(
+            """
+            UPDATE imaging_nodule_master_v1
+            SET max_dimension_cm = 1.0
+            WHERE research_id = 100
+            """
+        )
+        con.execute("ALTER TABLE imaging_nodule_master_v1 ADD COLUMN accession_number VARCHAR")
+        con.execute(
+            "UPDATE imaging_nodule_master_v1 SET accession_number = 'ACCX' WHERE research_id = 100"
+        )
+        mod.build_all(con, self.SCHEMA)
+        row = con.execute(
+            f"SELECT is_primary_link, specimen_match_flag, match_path, link_confidence FROM {self.SCHEMA}.link_imaging_fna_mm_v1"
+        ).fetchone()
+        assert row is not None
+        assert row[0] is True
+        assert row[1] is True
+        assert row[2] == "specimen_key"
+        assert row[3] == pytest.approx(1.0)

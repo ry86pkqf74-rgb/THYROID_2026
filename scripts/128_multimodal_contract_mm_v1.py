@@ -10,6 +10,12 @@ Local:
 MotherDuck (writes ONLY to schema mm_contract_dev):
   .venv/bin/python scripts/128_multimodal_contract_mm_v1.py --md
 
+CI / release (fail-closed upstream + blocking validation gates):
+  .venv/bin/python scripts/128_multimodal_contract_mm_v1.py --md --strict-release
+
+Local dev without full upstream (stubs in mm_contract_dev — not for release):
+  .venv/bin/python scripts/128_multimodal_contract_mm_v1.py --allow-bootstrap-dev
+
 Environment:
   MM_CONTRACT_SCHEMA — override schema name (default mm_contract_dev). For --md,
   the schema is forced to mm_contract_dev unless MM_CONTRACT_MD_SCHEMA_OVERRIDE=1.
@@ -18,11 +24,14 @@ Environment:
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import os
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Callable
 
 import duckdb
 
@@ -34,13 +43,243 @@ sys.path.insert(0, str(ROOT))
 
 from utils.md_connect import connect_md_or_file  # noqa: E402
 
-from scripts.mm_contract_upstream import ensure_upstream_sources  # noqa: E402
+from scripts.mm_contract_upstream import (  # noqa: E402
+    ensure_upstream_sources,
+    validate_upstream_schema_for_strict,
+)
 
 CONTRACT_VERSION = "mm_contract_v1.0.0"
 SCRIPT_NAME = "128_multimodal_contract_mm_v1.py"
 
+# In --strict-release, every listed validation table must have row count 0.
+STRICT_BLOCKING_VALIDATION_TABLES: tuple[str, ...] = (
+    "val_contract_required_join_keys_mm_v1",
+    "val_nodes_invariant_mm_v1",
+    "val_multitumor_expansion_mm_v1",
+    "val_side_lobe_mismatch_mm_v1",
+    "val_preop_temporal_order_mm_v1",
+    "val_ambiguous_multimodal_linkage_mm_v1",
+    "val_imaging_fna_contract_blockers_mm_v1",
+)
+
+_IFNA_TABLES_TO_QUALIFY: tuple[str, ...] = (
+    "val_imaging_fna_linkage_audit_v1",
+    "review_queue_imaging_fna_mm_v1",
+    "imaging_fna_linkage_mm_v1",
+)
+
 # Hash namespace — must remain stable for deterministic IDs
 H_NS = "THYROID_MM_CONTRACT_V1"
+
+
+def _load_ifna129():
+    path = ROOT / "scripts" / "129_imaging_fna_linkage_mm_v1.py"
+    spec = importlib.util.spec_from_file_location("mm_ifna129", path)
+    mod = importlib.util.module_from_spec(spec)
+    assert spec.loader
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _ifna_schema_qualify(sql: str, sch: str) -> str:
+    out = sql
+    for base in _IFNA_TABLES_TO_QUALIFY:
+        out = re.sub(rf"(?<!\.)\b{re.escape(base)}\b", f"{sch}.{base}", out)
+    return out
+
+
+def sql_val_contract_required_join_keys(schema: str, src: dict[str, str]) -> str:
+    """NULLs in primary join keys used by the contract (strict blocking when non-empty)."""
+    lm = src["linkage_master_v1"]
+    oed = src["operative_episode_detail_v2"]
+    tum = src["tumor_episode_master_v2"]
+    fna = src["fna_episode_master_v2"]
+    mol = src["molecular_test_episode_v2"]
+    img = src["imaging_nodule_master_v1"]
+    eda = src["event_date_audit_v2"]
+    return f"""
+CREATE OR REPLACE TABLE {schema}.val_contract_required_join_keys_mm_v1 AS
+SELECT 'linkage_master_v1'::VARCHAR AS upstream_table,
+       'null_research_id'::VARCHAR AS violation_kind,
+       CAST(research_id AS VARCHAR) AS bad_key
+FROM {lm} WHERE research_id IS NULL
+UNION ALL
+SELECT 'linkage_master_v1', 'null_canonical_research_id',
+       CAST(canonical_research_id AS VARCHAR)
+FROM {lm} WHERE canonical_research_id IS NULL
+UNION ALL
+SELECT 'operative_episode_detail_v2', 'null_research_id', CAST(research_id AS VARCHAR)
+FROM {oed} WHERE research_id IS NULL
+UNION ALL
+SELECT 'operative_episode_detail_v2', 'null_surgery_episode_id',
+       CAST(surgery_episode_id AS VARCHAR)
+FROM {oed} WHERE surgery_episode_id IS NULL
+UNION ALL
+SELECT 'tumor_episode_master_v2', 'null_tumor_keys',
+       CAST(research_id AS VARCHAR) || '|' || CAST(surgery_episode_id AS VARCHAR) || '|' ||
+       CAST(tumor_ordinal AS VARCHAR)
+FROM {tum}
+WHERE research_id IS NULL OR surgery_episode_id IS NULL OR tumor_ordinal IS NULL
+UNION ALL
+SELECT 'fna_episode_master_v2', 'null_fna_keys',
+       CAST(research_id AS VARCHAR) || '|' || CAST(fna_episode_id AS VARCHAR)
+FROM {fna} WHERE research_id IS NULL OR fna_episode_id IS NULL
+UNION ALL
+SELECT 'molecular_test_episode_v2', 'null_molecular_keys',
+       CAST(research_id AS VARCHAR) || '|' || CAST(molecular_episode_id AS VARCHAR)
+FROM {mol} WHERE research_id IS NULL OR molecular_episode_id IS NULL
+UNION ALL
+SELECT 'imaging_nodule_master_v1', 'null_imaging_nodule_keys',
+       CAST(img_core.research_id AS VARCHAR) || '|' || CAST(img_core.exam_id AS VARCHAR) || '|' ||
+       CAST(img_core.nodule_id AS VARCHAR)
+FROM {img} AS img_core
+WHERE img_core.research_id IS NULL OR img_core.exam_id IS NULL OR img_core.nodule_id IS NULL OR (
+    img_core.exam_date IS NULL AND NOT EXISTS (
+        SELECT 1 FROM {eda} e
+        WHERE e.research_id = img_core.research_id AND e.domain = 'imaging'
+    )
+);
+""".strip()
+
+
+def sql_link_imaging_fna_mm_v1(schema: str, built_ts: str, src: dict[str, str]) -> str:
+    lm = src["linkage_master_v1"]
+    pid = person_id_sql("lm.canonical_research_id")
+    up_note = f"{schema}.imaging_fna_linkage_mm_v1+{schema}.fact_imaging_mm_v1+{schema}.fact_fna_mm_v1"
+    return f"""
+CREATE OR REPLACE TABLE {schema}.link_imaging_fna_mm_v1 AS
+SELECT
+    'mmv1_ifna_' || lower(md5(concat(
+        '{H_NS}|ifna|', cast(l.research_id AS VARCHAR), '|',
+        cast(l.nodule_id AS VARCHAR), '|',
+        cast(l.imaging_exam_id AS VARCHAR), '|',
+        cast(l.fna_episode_id AS VARCHAR)
+    ))) AS link_imaging_fna_id,
+    fi.imaging_fact_id AS imaging_id,
+    ff.fna_fact_id AS fna_id,
+    'mmv1_p_' || {pid} AS person_id,
+    CAST(l.research_id AS BIGINT) AS research_id,
+    CAST(lm.canonical_research_id AS BIGINT) AS canonical_research_id,
+    CAST(l.nodule_id AS VARCHAR) AS legacy_nodule_id,
+    CAST(l.imaging_exam_id AS VARCHAR) AS legacy_imaging_exam_id,
+    CAST(l.fna_episode_id AS BIGINT) AS fna_episode_id,
+    CASE l.match_path
+        WHEN 'specimen_key' THEN 1.0::DOUBLE
+        WHEN 'temporal_us_90d_pre_fna' THEN 0.85::DOUBLE
+        ELSE 0.75::DOUBLE
+    END AS link_confidence,
+    l.is_primary_link AS is_primary_link,
+    rq.review_reason AS review_reason,
+    (l.n_candidates_for_nodule > 1) AS flag_multi_fna_nodule,
+    ((l.n_candidates_for_nodule > 1 AND NOT l.is_primary_link)
+        OR (COALESCE(l.n_specimen_matches_on_nodule, 0) > 1)) AS flag_ambiguous_linkage,
+    (rq.review_reason = 'discordant_laterality') AS flag_discordant_side,
+    ((l.size_drift_ratio IS NOT NULL AND l.size_drift_ratio > 0.20)
+        OR rq.review_reason = 'size_drift_gt_20pct') AS flag_size_drift,
+    l.match_path AS match_path,
+    l.specimen_match_flag AS specimen_match_flag,
+    CAST(l.ordinal_in_nodule AS INTEGER) AS ordinal_in_nodule,
+    CAST(l.n_candidates_for_nodule AS INTEGER) AS n_candidates_for_nodule,
+    CAST(l.n_specimen_matches_on_nodule AS INTEGER) AS n_specimen_matches_on_nodule,
+    l.size_drift_ratio AS size_drift_ratio,
+    CAST(l.day_gap_us_before_fna AS INTEGER) AS day_gap_us_before_fna,
+    '{CONTRACT_VERSION}'::VARCHAR AS mm_contract_version,
+    '{SCRIPT_NAME}'::VARCHAR AS mm_source_script,
+    CAST('{built_ts}' AS TIMESTAMP) AS mm_built_at,
+    '{up_note}'::VARCHAR AS mm_upstream_tables,
+    'Imaging↔FNA linkage (script 129 rules) joined to contract fact IDs.'::VARCHAR AS mm_lineage_note
+FROM {schema}.imaging_fna_linkage_mm_v1 l
+INNER JOIN {lm} lm ON l.research_id = lm.research_id
+INNER JOIN {schema}.fact_imaging_mm_v1 fi
+  ON fi.research_id = l.research_id
+ AND fi.nodule_id = ('mmv1_n_' || lower(md5(concat(
+     '{H_NS}|nodule|', cast(l.research_id AS VARCHAR), '|',
+     cast(l.imaging_exam_id AS VARCHAR), '|', cast(l.nodule_id AS VARCHAR)
+ ))))
+INNER JOIN {schema}.fact_fna_mm_v1 ff
+  ON ff.research_id = l.research_id
+ AND ff.fna_episode_id = l.fna_episode_id
+LEFT JOIN (
+    SELECT research_id,
+           nodule_id,
+           imaging_exam_id,
+           CAST(fna_episode_id AS BIGINT) AS fna_episode_id,
+           MAX(review_reason) AS review_reason,
+           MAX(detail) AS detail
+    FROM {schema}.review_queue_imaging_fna_mm_v1
+    GROUP BY 1, 2, 3, 4
+) rq
+  ON rq.research_id = l.research_id
+ AND CAST(rq.nodule_id AS VARCHAR) = CAST(l.nodule_id AS VARCHAR)
+ AND rq.imaging_exam_id = l.imaging_exam_id
+ AND rq.fna_episode_id = l.fna_episode_id;
+""".strip()
+
+
+def sql_val_imaging_fna_contract_blockers(schema: str) -> str:
+    return f"""
+CREATE OR REPLACE TABLE {schema}.val_imaging_fna_contract_blockers_mm_v1 AS
+SELECT
+    CAST(research_id AS VARCHAR) AS research_id,
+    CAST(nodule_id AS VARCHAR) AS nodule_id,
+    imaging_exam_id,
+    CAST(fna_episode_id AS VARCHAR) AS fna_episode_id,
+    review_reason,
+    detail,
+    queued_at
+FROM {schema}.review_queue_imaging_fna_mm_v1;
+""".strip()
+
+
+def _build_imaging_fna_contract_tables(
+    con: duckdb.DuckDBPyConnection,
+    schema: str,
+    *,
+    built_ts: str,
+    section_fn: Callable[[str], None],
+    src: dict[str, str],
+) -> None:
+    ifna = _load_ifna129()
+    section_fn("imaging_fna_linkage — wide candidates (129 logic)")
+    con.execute(ifna.build_temp_wide_sql(con))
+    wide_n = con.execute("SELECT COUNT(*) FROM tt_ifna_mm_wide_pre_v1").fetchone()[0]
+    print(f"  tt_ifna_mm_wide_pre_v1 candidate pairs: {wide_n:,}")
+    con.execute(_ifna_schema_qualify(ifna.LINK_TABLE_SQL, schema))
+    con.execute(_ifna_schema_qualify(ifna.REVIEW_SQL, schema))
+    con.execute(_ifna_schema_qualify(ifna.AUDIT_SQL, schema))
+    section_fn("link_imaging_fna_mm_v1 (contract fact IDs + flags)")
+    con.execute(sql_link_imaging_fna_mm_v1(schema, built_ts, src))
+    con.execute(sql_val_imaging_fna_contract_blockers(schema))
+    n_link = con.execute(f"SELECT COUNT(*) FROM {schema}.link_imaging_fna_mm_v1").fetchone()[0]
+    print(f"  link_imaging_fna_mm_v1 rows: {n_link:,}")
+    n_blk = con.execute(
+        f"SELECT COUNT(*) FROM {schema}.val_imaging_fna_contract_blockers_mm_v1"
+    ).fetchone()[0]
+    print(f"  val_imaging_fna_contract_blockers_mm_v1 rows: {n_blk:,}")
+
+
+def assert_strict_release_passes(
+    con: duckdb.DuckDBPyConnection,
+    schema: str,
+    *,
+    bootstrapped_upstream: list[str],
+) -> None:
+    if bootstrapped_upstream:
+        raise RuntimeError(
+            "Strict release failed: dev bootstrap was used (or upstream pointed at stubs). "
+            f"Bootstrapped keys: {bootstrapped_upstream}. "
+            "Run with native upstream tables only."
+        )
+    failures: list[str] = []
+    for v in STRICT_BLOCKING_VALIDATION_TABLES:
+        n = con.execute(f"SELECT COUNT(*) FROM {schema}.{v}").fetchone()[0]
+        if n:
+            failures.append(f"{schema}.{v}={n}")
+    if failures:
+        raise RuntimeError(
+            "Strict release failed: blocking validation tables must be empty. "
+            + "; ".join(failures)
+        )
 
 
 def section(title: str) -> None:
@@ -758,6 +997,16 @@ def apply_comments(con: duckdb.DuckDBPyConnection, schema: str) -> None:
     tbl("val_preop_temporal_order_mm_v1", "Temporal ordering issues in preop/molecular chains.")
     tbl("val_ambiguous_multimodal_linkage_mm_v1", "Ambiguous or weak links excluded from primary.")
     tbl("val_multitumor_expansion_mm_v1", "Tumor row count parity vs tumor_episode_master_v2 per surgery.")
+    tbl("link_imaging_fna_mm_v1", "Imaging nodule ↔ FNA episode linkage with contract surrogate IDs and review flags.")
+    col("link_imaging_fna_mm_v1", "imaging_id", "FK to fact_imaging_mm_v1.imaging_fact_id.")
+    col("link_imaging_fna_mm_v1", "fna_id", "FK to fact_fna_mm_v1.fna_fact_id.")
+    col("link_imaging_fna_mm_v1", "link_confidence", "Numeric confidence; 1.0 specimen key, 0.85 temporal 90d path.")
+    col("link_imaging_fna_mm_v1", "flag_ambiguous_linkage", "True when multi-match or no primary under 129 rules.")
+    tbl("imaging_fna_linkage_mm_v1", "Raw imaging–FNA pairs from script 129 rules (contract schema copy).")
+    tbl("review_queue_imaging_fna_mm_v1", "Imaging–FNA pairs requiring manual review (blocker source in strict mode).")
+    tbl("val_imaging_fna_linkage_audit_v1", "Aggregate audit metrics for imaging–FNA linkage build.")
+    tbl("val_contract_required_join_keys_mm_v1", "NULL or missing-date imaging rows violating required join keys.")
+    tbl("val_imaging_fna_contract_blockers_mm_v1", "Mirrors review queue; strict mode requires empty.")
     # val_multi_tumor_report_mm_v1 is a VIEW; DuckDB COMMENT ON TABLE does not apply.
 
     for stmt in comments:
@@ -768,11 +1017,23 @@ def apply_comments(con: duckdb.DuckDBPyConnection, schema: str) -> None:
                 print(f"  [WARN] COMMENT skipped: {e}")
 
 
-def build_all(con: duckdb.DuckDBPyConnection, schema: str) -> list[str]:
+def build_all(
+    con: duckdb.DuckDBPyConnection,
+    schema: str,
+    *,
+    allow_bootstrap_dev: bool = False,
+    strict_release: bool = False,
+) -> list[str]:
+    if strict_release and allow_bootstrap_dev:
+        raise ValueError("--strict-release cannot be combined with --allow-bootstrap-dev")
     built_ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
     section(f"CREATE SCHEMA {schema}")
     con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema};")
-    src = ensure_upstream_sources(con, schema, section=section)
+    src = ensure_upstream_sources(
+        con, schema, section=section, allow_bootstrap=allow_bootstrap_dev
+    )
+    if strict_release:
+        validate_upstream_schema_for_strict(con, src)
     bootstrapped = sorted(k for k, v in src.items() if v != k)
 
     steps = [
@@ -795,14 +1056,27 @@ def build_all(con: duckdb.DuckDBPyConnection, schema: str) -> list[str]:
         n = con.execute(f"SELECT COUNT(*) FROM {schema}.{label}").fetchone()[0]
         print(f"  rows: {n:,}")
 
-    section("validation tables")
+    _build_imaging_fna_contract_tables(
+        con, schema, built_ts=built_ts, section_fn=section, src=src
+    )
+
+    section("val_contract_required_join_keys_mm_v1")
+    con.execute(sql_val_contract_required_join_keys(schema, src))
+    n_jk = con.execute(
+        f"SELECT COUNT(*) FROM {schema}.val_contract_required_join_keys_mm_v1"
+    ).fetchone()[0]
+    print(f"  val_contract_required_join_keys_mm_v1: {n_jk:,} rows")
+
+    section("validation tables (legacy multimodal audits)")
     con.execute(sql_validations(schema, src))
     for v in (
+        "val_contract_required_join_keys_mm_v1",
         "val_nodes_invariant_mm_v1",
         "val_side_lobe_mismatch_mm_v1",
         "val_preop_temporal_order_mm_v1",
         "val_ambiguous_multimodal_linkage_mm_v1",
         "val_multitumor_expansion_mm_v1",
+        "val_imaging_fna_contract_blockers_mm_v1",
     ):
         n = con.execute(f"SELECT COUNT(*) FROM {schema}.{v}").fetchone()[0]
         print(f"  {v}: {n:,} rows")
@@ -814,6 +1088,8 @@ def build_all(con: duckdb.DuckDBPyConnection, schema: str) -> list[str]:
 
     section("COMMENT ON metadata")
     apply_comments(con, schema)
+    if strict_release:
+        assert_strict_release_passes(con, schema, bootstrapped_upstream=bootstrapped)
     return bootstrapped
 
 
@@ -830,6 +1106,12 @@ def summarize(con: duckdb.DuckDBPyConnection, schema: str) -> dict:
         "fact_tumor_mm_v1",
         "link_surgery_path_mm_v1",
         "link_surgery_context_mm_v1",
+        "imaging_fna_linkage_mm_v1",
+        "link_imaging_fna_mm_v1",
+        "review_queue_imaging_fna_mm_v1",
+        "val_imaging_fna_linkage_audit_v1",
+        "val_contract_required_join_keys_mm_v1",
+        "val_imaging_fna_contract_blockers_mm_v1",
         "val_nodes_invariant_mm_v1",
         "val_side_lobe_mismatch_mm_v1",
         "val_preop_temporal_order_mm_v1",
@@ -841,7 +1123,10 @@ def summarize(con: duckdb.DuckDBPyConnection, schema: str) -> dict:
     for t in tables:
         cnt = con.execute(f"SELECT COUNT(*) FROM {schema}.{t}").fetchone()[0]
         out["row_counts"][t] = cnt
-        if t.startswith("val_") and t != "val_multi_tumor_report_mm_v1":
+        if t.startswith("val_") and t not in (
+            "val_multi_tumor_report_mm_v1",
+            "val_imaging_fna_linkage_audit_v1",
+        ):
             out["validation_fail_rows"][t] = cnt
     return out
 
@@ -850,7 +1135,25 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--md", action="store_true", help="Write to MotherDuck (schema mm_contract_dev only)")
     ap.add_argument("--dry-run", action="store_true", help="Print schema and exit")
+    ap.add_argument(
+        "--strict-release",
+        action="store_true",
+        help=(
+            "Fail closed: required column schema + no bootstrap, zero-row blocking val_* tables "
+            "(see docs/multimodal_contract_v1.md)."
+        ),
+    )
+    ap.add_argument(
+        "--allow-bootstrap-dev",
+        action="store_true",
+        help=(
+            "Allow dev-only upstream stubs in mm_contract_dev (script 49 fragments, empty FNA, etc.). "
+            "Do not use for CI/release."
+        ),
+    )
     args = ap.parse_args()
+    if args.strict_release and args.allow_bootstrap_dev:
+        ap.error("--strict-release cannot be combined with --allow-bootstrap-dev")
     schema = resolve_schema(md=args.md)
 
     if args.dry_run:
@@ -863,7 +1166,12 @@ def main() -> None:
         con = duckdb.connect(str(DB_PATH))
 
     try:
-        bootstrapped = build_all(con, schema)
+        bootstrapped = build_all(
+            con,
+            schema,
+            allow_bootstrap_dev=args.allow_bootstrap_dev,
+            strict_release=args.strict_release,
+        )
         summary = summarize(con, schema)
         section("ROW COUNT SUMMARY")
         print(json.dumps(summary["row_counts"], indent=2))
@@ -879,9 +1187,10 @@ def main() -> None:
         gaps: dict = {
             "missing_upstream": [],
             "bootstrapped_upstream": bootstrapped,
+            "strict_release": args.strict_release,
             "notes": [
-                "val_* tables are audit outputs; some ambiguity rows are expected.",
-                "is_primary_link requires unique non-weak candidate.",
+                "With --strict-release, all blocking val_* tables in the contract doc must be empty.",
+                "Without --allow-bootstrap-dev, native upstream tables must exist (fail-closed).",
             ],
         }
         summary["gaps"] = gaps
