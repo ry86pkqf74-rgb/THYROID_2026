@@ -150,7 +150,7 @@ def parse_args() -> argparse.Namespace:
         "--md-user-agent",
         default=None,
         help="custom_user_agent for MotherDuck connection (query history). "
-        "Default: MOTHERDUCK_CUSTOM_USER_AGENT or THYROID_2026_formalization_validate/1.0",
+        "Default: MOTHERDUCK_CUSTOM_USER_AGENT or THYROID_2026_molecular/119_md_formalization_validate;kind=validate",
     )
     p.add_argument(
         "--md-session-hint",
@@ -182,17 +182,25 @@ def get_connection(args: argparse.Namespace) -> duckdb.DuckDBPyConnection:
 
             os.environ["MOTHERDUCK_DATABASE"] = resolve_database_for_env(args.md_env)
 
-        ua = args.md_user_agent or os.environ.get(
-            "MOTHERDUCK_CUSTOM_USER_AGENT",
-            "THYROID_2026_formalization_validate/1.0",
+        from utils.md_pipeline_attribution import (
+            molecular_custom_user_agent,
+            molecular_session_hint,
         )
+
+        ua = args.md_user_agent or molecular_custom_user_agent(
+            "119_md_formalization_validate", "validate"
+        )
+        if args.md_session_hint is not None and str(args.md_session_hint).strip():
+            hint = str(args.md_session_hint).strip()
+        else:
+            hint = molecular_session_hint("validate")
         return connect_md_or_file(
             Path(args.db_path),
             md=True,
             fail_closed=True,
             prefer_service_account=args.md_sa,
             custom_user_agent=ua,
-            motherduck_session_hint=args.md_session_hint,
+            motherduck_session_hint=hint,
             env=args.md_env,
         )
     return duckdb.connect(args.db_path)

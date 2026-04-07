@@ -135,16 +135,17 @@ def connect(
         path = _os.environ.get("LOCAL_DUCKDB_PATH", str(ROOT / "thyroid_master_local.duckdb"))
         return duckdb.connect(path)
     from utils.md_connect import connect_md_or_file
+    from utils.md_pipeline_attribution import connect_attribution
+
+    ua, hint = connect_attribution(component="42_ingest_afirma", run_kind="ingest")
 
     return connect_md_or_file(
         DB_PATH,
         md=use_md,
         fail_closed=False,
         env=md_env,
-        custom_user_agent=_os.getenv(
-            "MOTHERDUCK_CUSTOM_USER_AGENT",
-            "THYROID_2026_scripts/42_ingest_afirma",
-        ),
+        custom_user_agent=ua,
+        motherduck_session_hint=hint,
     )
 
 

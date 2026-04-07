@@ -41,6 +41,8 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
+from utils.md_pipeline_attribution import connect_attribution  # noqa: E402
+
 VENV_PYTHON = ROOT / ".venv" / "bin" / "python"
 SCRIPTS = ROOT / "scripts"
 
@@ -562,8 +564,14 @@ def main() -> None:
     from utils.md_connect import connect_md_or_file
 
     db_path = Path(args.db_path)
+    ua, hint = connect_attribution(component="124_md_live_release_audit", run_kind="release")
     con = connect_md_or_file(
-        db_path, md=args.md, fail_closed=args.md, env=args.md_env
+        db_path,
+        md=args.md,
+        fail_closed=args.md,
+        env=args.md_env,
+        custom_user_agent=ua,
+        motherduck_session_hint=hint,
     )
 
     # ------------------------------------------------------------------
@@ -641,7 +649,12 @@ def main() -> None:
             if args.md:
                 con.close()
                 con = connect_md_or_file(
-                    db_path, md=args.md, fail_closed=args.md, env=args.md_env
+                    db_path,
+                    md=args.md,
+                    fail_closed=args.md,
+                    env=args.md_env,
+                    custom_user_agent=ua,
+                    motherduck_session_hint=hint,
                 )
             ok = check_pending_reviews(con, args.final_release)
             if not ok:

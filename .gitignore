@@ -71,6 +71,8 @@ llm_extraction/phase*_preop_molecular_refinement_*.md
 
 # ── Study outputs with timestamped duplicates ─────────────────
 studies/manuscript_package_*/
+# Append-only MotherDuck pipeline audit (generated locally; no secrets)
+studies/molecular_pipeline_audit_log.md
 
 # ── LLM extraction validation run artifacts (parquets too large) ──
 studies/llm_extraction_validation/runs/*/

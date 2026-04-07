@@ -85,8 +85,16 @@ def get_connection(args: argparse.Namespace) -> duckdb.DuckDBPyConnection:
             from motherduck_client import resolve_database_for_env
 
             os.environ["MOTHERDUCK_DATABASE"] = resolve_database_for_env(args.md_env)
+        from utils.md_pipeline_attribution import connect_attribution
+
+        ua, hint = connect_attribution(component="117_md_contract_views", run_kind="contract")
         return connect_md_or_file(
-            Path(args.db_path), md=True, fail_closed=True, env=args.md_env
+            Path(args.db_path),
+            md=True,
+            fail_closed=True,
+            env=args.md_env,
+            custom_user_agent=ua,
+            motherduck_session_hint=hint,
         )
     return duckdb.connect(args.db_path)
 

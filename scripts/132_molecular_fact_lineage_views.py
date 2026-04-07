@@ -61,16 +61,19 @@ def connect(args: argparse.Namespace):
 
             env_name = (args.md_env or os.getenv("MOTHERDUCK_ENV") or "prod").strip()
             os.environ["MOTHERDUCK_DATABASE"] = resolve_database_for_env(env_name)
+        from utils.md_pipeline_attribution import connect_attribution
+
+        ua, hint = connect_attribution(
+            component="132_molecular_fact_lineage_views", run_kind="lineage"
+        )
         return connect_md_or_file(
             DB_PATH,
             md=True,
             fail_closed=True,
             prefer_service_account=bool(getattr(args, "md_sa", False)),
             env=args.md_env,
-            custom_user_agent=os.getenv(
-                "MOTHERDUCK_CUSTOM_USER_AGENT",
-                "THYROID_2026_scripts/132_molecular_fact_lineage_views",
-            ),
+            custom_user_agent=ua,
+            motherduck_session_hint=hint,
         )
     return __import__("duckdb").connect(str(DB_PATH))
 

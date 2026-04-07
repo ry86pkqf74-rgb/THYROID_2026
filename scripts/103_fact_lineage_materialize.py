@@ -47,6 +47,7 @@ sys.path.insert(0, str(ROOT))
 
 from llm_extraction.vocab import CANONICAL_FACT_CONTRACT_DTYPES  # noqa: E402
 from utils.md_connect import connect_md_or_file  # noqa: E402
+from utils.md_pipeline_attribution import connect_attribution  # noqa: E402
 from utils.provenance import (  # noqa: E402
     MULTI_SURGERY_EP_DIST_THRESH_DAYS,
     apply_provenance_contract_columns,
@@ -827,7 +828,16 @@ def main() -> None:
     print(f"  QC report: {qc_path}")
 
     # ── DuckDB ────────────────────────────────────────────────────────────
-    con = connect_md_or_file(DB_PATH, md=args.md, fail_closed=args.md)
+    ua, hint = connect_attribution(
+        component="103_fact_lineage_materialize", run_kind="materialize"
+    )
+    con = connect_md_or_file(
+        DB_PATH,
+        md=args.md,
+        fail_closed=args.md,
+        custom_user_agent=ua,
+        motherduck_session_hint=hint,
+    )
     for tbl, pq in [
         ("canonical_extracted_fact_long_v1", out_v1),
         ("canonical_fact_quarantine_v1", outq_v1),
