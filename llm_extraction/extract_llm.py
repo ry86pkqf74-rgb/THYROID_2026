@@ -261,9 +261,27 @@ class LLMExtractor(BaseExtractor):
         sys_fp: str | None = None
         if response is not None:
             provider_model = getattr(response, "model", None)
+            if provider_model is None:
+                choices = getattr(response, "choices", None) or ()
+                if choices:
+                    provider_model = getattr(choices[0], "model", None)
             if provider_model is not None:
                 provider_model = str(provider_model)
+
             sys_fp = getattr(response, "system_fingerprint", None)
+
+            md = getattr(response, "model_dump", None)
+            if (provider_model is None or sys_fp is None) and callable(md):
+                try:
+                    payload = md()
+                    if isinstance(payload, dict):
+                        if provider_model is None and payload.get("model"):
+                            provider_model = str(payload["model"])
+                        if sys_fp is None and payload.get("system_fingerprint"):
+                            sys_fp = str(payload["system_fingerprint"])
+                except Exception:
+                    pass
+
             if sys_fp is not None:
                 sys_fp = str(sys_fp)
         base = self._base_url

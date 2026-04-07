@@ -25,8 +25,16 @@ def new_extraction_run_id() -> str:
     return str(uuid4())
 
 
-def hash_file_sha256(path: Path, *, chunk_size: int = 1 << 20) -> str:
-    """Stream a file into SHA-256 without loading it whole (binary chunks only; no text decode)."""
+def hash_file_sha256(path: Path, *, chunk_size: int = 8 * (1 << 20)) -> str:
+    """Stream a file into SHA-256 without loading it whole (binary chunks only; no text decode).
+
+    Uses ``hashlib.file_digest`` on Python 3.11+ when available; otherwise 8 MiB read chunks
+    to limit syscall overhead on large inputs.
+    """
+    fd = getattr(hashlib, "file_digest", None)
+    if callable(fd):
+        with path.open("rb") as fh:
+            return fd(fh, "sha256").hexdigest()
     digest = hashlib.sha256()
     with path.open("rb") as fh:
         while True:
@@ -83,6 +91,58 @@ class RunTelemetryContext:
         if self.parse_failures > 0:
             return "llm_parse_error"
         return "none"
+
+
+# Columns emitted by append_note_extraction_run (MotherDuck / local parity checks).
+NOTE_EXTRACTION_RUNS_EXPECTED_COLUMNS: frozenset[str] = frozenset({
+    "run_id",
+    "started_at",
+    "completed_at",
+    "success",
+    "failure_stage",
+    "retry_count",
+    "output_record_count",
+    "warnings",
+    "domains_requested",
+    "research_id_filter",
+    "target_domain",
+    "extractor_build_version",
+    "hostname",
+    "git_commit",
+    "input_path",
+    "input_file_size_bytes",
+    "input_mtime_utc",
+    "input_sha256",
+    "registry_schema_version",
+    "registry_digest",
+})
+
+_NOTE_EXTRACTION_RUNS_SQL_TYPES: dict[str, str] = {
+    "run_id": "VARCHAR",
+    "started_at": "VARCHAR",
+    "completed_at": "VARCHAR",
+    "success": "BOOLEAN",
+    "failure_stage": "VARCHAR",
+    "retry_count": "BIGINT",
+    "output_record_count": "BIGINT",
+    "warnings": "VARCHAR",
+    "domains_requested": "VARCHAR",
+    "research_id_filter": "VARCHAR",
+    "target_domain": "VARCHAR",
+    "extractor_build_version": "VARCHAR",
+    "hostname": "VARCHAR",
+    "git_commit": "VARCHAR",
+    "input_path": "VARCHAR",
+    "input_file_size_bytes": "BIGINT",
+    "input_mtime_utc": "VARCHAR",
+    "input_sha256": "VARCHAR",
+    "registry_schema_version": "VARCHAR",
+    "registry_digest": "VARCHAR",
+}
+
+
+def note_extraction_runs_sql_type(column: str) -> str:
+    return _NOTE_EXTRACTION_RUNS_SQL_TYPES.get(column, "VARCHAR")
 
 
 def append_note_extraction_run(

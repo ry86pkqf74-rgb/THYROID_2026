@@ -535,6 +535,16 @@ def main() -> None:
         default=False,
         help="Validate the registry and exit without running extraction.",
     )
+    parser.add_argument(
+        "--input-fingerprint",
+        choices=("full", "stat"),
+        default="full",
+        help=(
+            "How to fingerprint clinical_notes_long.parquet for telemetry: "
+            "'full' (default) = size, mtime, sha256; "
+            "'stat' = size and mtime only (input_sha256 left null — faster on huge files, weaker reproducibility)."
+        ),
+    )
     args = parser.parse_args()
 
     # Always validate registry first
@@ -557,7 +567,13 @@ def main() -> None:
     st = notes_path.stat()
     input_file_size_bytes = int(st.st_size)
     input_mtime_utc = datetime.fromtimestamp(st.st_mtime, tz=timezone.utc).isoformat()
-    input_sha256 = hash_file_sha256(notes_path)
+    if args.input_fingerprint == "full":
+        input_sha256 = hash_file_sha256(notes_path)
+    else:
+        input_sha256 = None
+        log.info(
+            "  input_fingerprint=stat (skipping input sha256 — telemetry input_sha256 will be null)"
+        )
     input_path_str = str(notes_path.resolve())
 
     # Validate --target against registry (fail loudly for unknown domains)

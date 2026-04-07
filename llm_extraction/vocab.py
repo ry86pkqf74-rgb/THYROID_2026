@@ -183,13 +183,29 @@ def sort_entities_deterministic(df: pd.DataFrame) -> pd.DataFrame:
     """Return *df* sorted deterministically for reproducible parquet row order.
 
     Uses stable mergesort. Only columns present in *df* participate; others are ignored.
+    ``entity_date`` / ``note_date`` are ordered via temporary UTC-normalized timestamps so
+    ISO strings and ``datetime``/``Timestamp`` cells sort consistently.
     """
     if df.empty:
         return df.copy()
     keys = [c for c in ENTITY_SORT_KEY_ORDER if c in df.columns]
     if not keys:
         return df.copy()
-    out = df.sort_values(by=keys, kind="mergesort", na_position="last")
+    work = df.copy()
+    helpers: list[str] = []
+    sort_keys: list[str] = []
+    for k in keys:
+        if k in ("entity_date", "note_date"):
+            h = f"__sort_ts__{k}"
+            # UTC-naive ok: keys are date-only strings; mixed tz in cells is coerced best-effort
+            work[h] = pd.to_datetime(work[k], errors="coerce", utc=True)
+            sort_keys.append(h)
+            helpers.append(h)
+        else:
+            sort_keys.append(k)
+    out = work.sort_values(by=sort_keys, kind="mergesort", na_position="last")
+    if helpers:
+        out = out.drop(columns=helpers)
     return out.reset_index(drop=True)
 
 

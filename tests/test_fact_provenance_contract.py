@@ -227,6 +227,33 @@ def test_sort_entities_deterministic_stable_under_shuffle():
     pd.testing.assert_frame_equal(merged_a, merged_b)
 
 
+def test_sort_entities_deterministic_unifies_mixed_entity_date_types():
+    """ISO strings and timestamps sort in chronological order for entity_date."""
+    from llm_extraction.vocab import sort_entities_deterministic
+
+    df = pd.DataFrame(
+        [
+            {
+                "research_id": 1,
+                "note_row_id": "n1",
+                "entity_type": "t",
+                "entity_date": "2020-01-15",
+                "entity_value_norm": "later",
+            },
+            {
+                "research_id": 1,
+                "note_row_id": "n1",
+                "entity_type": "t",
+                "entity_date": pd.Timestamp("2020-01-02"),
+                "entity_value_norm": "earlier",
+            },
+        ]
+    )
+    out = sort_entities_deterministic(df)
+    assert out.iloc[0]["entity_value_norm"] == "earlier"
+    assert out.iloc[1]["entity_value_norm"] == "later"
+
+
 def test_note_extraction_run_input_fingerprint_and_registry(tmp_path):
     from llm_extraction.run_telemetry import append_note_extraction_run
 
