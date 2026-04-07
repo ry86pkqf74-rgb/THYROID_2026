@@ -23,8 +23,9 @@ Environment selection
 Set MOTHERDUCK_ENV to "dev", "qa", or "prod" (default: "prod").
 The matching database name is loaded from config/motherduck_environments.yml.
 
-**Catalog note:** dev / qa / prod map to a single MotherDuck database name today; logical
-isolation is by schema (see ``docs/motherduck_database_contract_v1.md``).
+**Catalog note:** dev / qa / prod map to separate MotherDuck database names by default
+(see ``config/motherduck_environments.yml`` and ``docs/motherduck_sandbox_clone_runbook.md``).
+Scoped schemas (``main``, ``v2_stage``, ``qa``, ``release_*``) still apply within each DB.
 
 Security
 ────────
@@ -51,8 +52,8 @@ LOCAL_DUCKDB_PATH = os.getenv(
 
 # Default environment databases (overridden by environments.yml when present)
 _ENV_DATABASES: dict[str, str] = {
-    "dev":  "Thyroid 2026",
-    "qa":   "Thyroid 2026",
+    "dev":  "Thyroid 2026 Molecular Dev 20260407",
+    "qa":   "Thyroid 2026 Molecular QA 20260407",
     "prod": "Thyroid 2026",
 }
 
