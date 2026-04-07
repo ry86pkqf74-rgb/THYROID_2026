@@ -7,7 +7,7 @@ Wires existing scripts in promotion order:
   130 snapshot           — optional named snapshot (native catalog only; skipped for DUCKLAKE)
   136 writer             — CREATE SNAPSHOT OF prod for read-scaling visibility
   119 --release-mode     — formal QA validation (qa catalog)
-  124 --final-release    — live prod release audit (116→…→119)
+  124 --final-release    — live prod release audit (116→…→119); optional specimen/FHIR gate (**138**/ **143**)
   136 reader             — REFRESH DATABASE for share-backed dashboards
 
 Usage::
@@ -132,6 +132,10 @@ def cmd_prod_audit(args: argparse.Namespace) -> int:
         cmd.append("--skip-stage")
     if getattr(args, "skip_gate", False):
         cmd.append("--skip-gate")
+    if getattr(args, "materialize_specimen_fhir", False):
+        cmd.append("--materialize-specimen-fhir")
+    if getattr(args, "skip_specimen_fhir_gate", False):
+        cmd.append("--skip-specimen-fhir-gate")
     return _run(cmd, label="124 live prod release audit")
 
 
@@ -250,6 +254,16 @@ def build_parser() -> argparse.ArgumentParser:
         "--dry-run",
         action="store_true",
         help="Forward to 124 / 136 (writer + reader) where supported.",
+    )
+    p.add_argument(
+        "--materialize-specimen-fhir",
+        action="store_true",
+        help="Forward to 124 prod-audit: auto-run 138/143 when Check 13 applies (--final-release).",
+    )
+    p.add_argument(
+        "--skip-specimen-fhir-gate",
+        action="store_true",
+        help="Forward to 124 prod-audit: skip specimen preflight.",
     )
 
     sub = p.add_subparsers(dest="command", required=True)

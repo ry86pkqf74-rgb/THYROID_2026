@@ -11,8 +11,11 @@ This orchestrator:
   3. Re-hydrates qa.manual_review_queue from a gate folder with reviewed CSV
   4. Optionally runs 127 lab append (--lab-csv + --ingestion-wave)
   5. Re-materializes canonical facts (103), contract tables/views (117), master views (125)
+  5b. Specimen/FHIR gate — when ``--release-mode`` (default) and ``main.synoptic_tumor_long_v1``
+      exists, requires Check 13 surface unless ``--skip-specimen-fhir-gate``; optional
+      ``--materialize-specimen-fhir`` runs **138** / **143** (see docs/specimen_fhir_release_integration.md)
   6. Creates release_YYYYMMDD snapshot (115 --final-master) and parquet bundle (118 --final-master);
-     both steps copy/export the manuscript analytic subset only — not specimen/FHIR (see
+     both steps copy/export the manuscript analytic subset only — not specimen/FHIR tables (see
      docs/specimen_fhir_contract_review.md)
   7. Runs formalization validator in --release-mode (119)
   8. Writes manuscript-readiness evidence under studies/<date>_final_master_release/
@@ -117,6 +120,16 @@ def parse_args() -> argparse.Namespace:
         help="NON-PUBLICATION: copy --hydrate-mrq-from into the study folder, set blank "
         "verification_status to STATUS, then hydrate from that copy. Real releases require "
         "human-reviewed CSVs without this flag.",
+    )
+    p.add_argument(
+        "--materialize-specimen-fhir",
+        action="store_true",
+        help="When --release-mode and Check 13 applies, run 138 or 143 before 119.",
+    )
+    p.add_argument(
+        "--skip-specimen-fhir-gate",
+        action="store_true",
+        help="Skip preflight; 119 --release-mode may still FAIL on Check 13.",
     )
     return p.parse_args()
 
@@ -474,7 +487,8 @@ def main() -> None:
 
     if args.dry_run:
         print("  [dry-run] preflight OK — no database changes")
-        print("  [dry-run] planned chain: (when executed) 114 → 103 → 117 → [127 if lab] → 125 → 115/118 → 119")
+        print("  [dry-run] planned chain: (when executed) 114 → 103 → 117 → [127 if lab] → 125 → "
+              "[specimen gate] → 115/118 → 119")
         if args.hydrate_mrq_from is None:
             print("  [dry-run] note: --hydrate-mrq-from not set (final release normally requires a reviewed gate dir).")
         return
@@ -562,6 +576,35 @@ def main() -> None:
     cmd = [_py(), str(SCRIPTS / "125_master_verified_views.py"), "--md", *sa_tail]
     if not run_subprocess("125_master_views", cmd, log_root / "125.log"):
         sys.exit(1)
+
+    if args.release_mode:
+        gate_dir = study_dir / "specimen_fhir_gate"
+        gate_dir.mkdir(parents=True, exist_ok=True)
+        gate_steps: list[dict] = []
+        from utils.specimen_fhir_release_gate import run_specimen_fhir_release_gate as _spec_gate
+
+        def _gate_run(step_name: str, cmd: list[str], log_path: Path) -> bool:
+            return run_subprocess(step_name, cmd, log_path)
+
+        _gcon = connect_md(db_path, prefer_service_account=args.md_sa)
+        try:
+            if not _spec_gate(
+                _gcon,
+                enforce=True,
+                materialize=bool(args.materialize_specimen_fhir),
+                skip_gate=bool(args.skip_specimen_fhir_gate),
+                dry_run=False,
+                materialize_target_md=True,
+                audit_dir=gate_dir,
+                step_results=gate_steps,
+                py=_py(),
+                scripts_dir=SCRIPTS,
+                runner=_gate_run,
+                now_iso=lambda: datetime.now(timezone.utc).isoformat(),
+            ):
+                sys.exit(1)
+        finally:
+            _gcon.close()
 
     if not args.skip_snapshot:
         cmd = [

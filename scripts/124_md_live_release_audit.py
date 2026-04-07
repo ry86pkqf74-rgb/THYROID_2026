@@ -11,6 +11,10 @@ Steps executed (in order):
   3. Promotion gate — 112_v2_domain_promotion_gate.py --motherduck-check
   4. Canonical + QA — 103 --md, 114 --md (hydrate), 117 --md (episode + molecular contract views)
   4b. Molecular lineage — 132_molecular_fact_lineage_views.py --execute --md (unified facts)
+  4c. Specimen/FHIR — when ``main.synoptic_tumor_long_v1`` exists, ``--final-release`` fails
+     closed unless the specimen layer + qa.v_diag_* views match ``119`` Check 13; use
+     ``--materialize-specimen-fhir`` to run **138** / **143** automatically, or
+     ``--skip-specimen-fhir-gate`` to defer to **119** (may still FAIL).
   5. Presentation views — 125_master_verified_views.py --md
   6. Release       — 115_release_snapshot.py --md, 118_parquet_release_bundle.py --md
   7. Validation    — 119_md_formalization_validate.py --md --release-mode
@@ -92,6 +96,17 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="dev|qa|prod — passed to 117/119/132 when --md (MotherDuck catalog).",
     )
+    p.add_argument(
+        "--materialize-specimen-fhir",
+        action="store_true",
+        help="When --final-release and Check 13 applies, run 138 (full layer) or 143 "
+        "(diagnostics only) before validation.",
+    )
+    p.add_argument(
+        "--skip-specimen-fhir-gate",
+        action="store_true",
+        help="Do not fail early or auto-materialize; 119 --release-mode still enforces Check 13.",
+    )
     return p.parse_args()
 
 
@@ -108,6 +123,22 @@ def _python() -> str:
 
 def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+def _motherduck_snapshots_try(con: Any) -> tuple[Any, str | None, str | None]:
+    """Return (dataframe, source_label, combined_error_note). First successful query wins."""
+    errors: list[str] = []
+    for label, sql in (
+        ("md_information_schema.database_snapshots", "SELECT * FROM md_information_schema.database_snapshots"),
+        ("MD_INFORMATION_SCHEMA.DATABASE_SNAPSHOTS", "SELECT * FROM MD_INFORMATION_SCHEMA.DATABASE_SNAPSHOTS"),
+        ("md_information_schema.snapshots", "SELECT * FROM md_information_schema.snapshots"),
+    ):
+        try:
+            df = con.execute(sql).fetchdf()
+            return df, label, None
+        except Exception as exc:
+            errors.append(f"{label}: {exc}")
+    return None, None, "; ".join(errors)
 
 
 def _run(
@@ -231,24 +262,15 @@ def run_preflight(
     except Exception as exc:
         evidence["schemas_present_error"] = str(exc)
 
-    # --- Snapshot retention (DuckLake: DATABASE_SNAPSHOTS; legacy alias: snapshots) ---
-    try:
-        snaps = con.execute(
-            "SELECT * FROM MD_INFORMATION_SCHEMA.DATABASE_SNAPSHOTS"
-        ).fetchdf()
+    # --- Snapshot retention (MotherDuck: try database_snapshots then legacy names) ---
+    snaps, snap_src, snap_err = _motherduck_snapshots_try(con)
+    if snaps is not None and snap_src:
         evidence["md_database_snapshots"] = snaps.to_dict(orient="records")
-        print(f"  [INFO] MD_INFORMATION_SCHEMA.DATABASE_SNAPSHOTS: {len(snaps)} row(s)")
-    except Exception as exc:
-        evidence["md_database_snapshots_note"] = str(exc)
-        try:
-            snaps = con.execute("SELECT * FROM md_information_schema.snapshots").fetchdf()
-            evidence["md_snapshots"] = snaps.to_dict(orient="records")
-            print(f"  [INFO] md_information_schema.snapshots: {len(snaps)} snapshot(s)")
-        except Exception as exc2:
-            evidence["md_snapshots_note"] = f"DATABASE_SNAPSHOTS: {exc}; snapshots: {exc2}"
-            print(
-                f"  [INFO] Snapshot retention: no DATABASE_SNAPSHOTS or snapshots view ({exc2})"
-            )
+        evidence["md_database_snapshots_source"] = snap_src
+        print(f"  [INFO] {snap_src}: {len(snaps)} row(s)")
+    else:
+        evidence["md_database_snapshots_note"] = snap_err or "unknown"
+        print(f"  [INFO] Snapshot retention: no MotherDuck snapshot catalog query succeeded ({snap_err})")
 
     evidence["finished"] = _now_iso()
     evidence["success"] = True
@@ -308,6 +330,39 @@ def check_pending_reviews(con: Any, final_release: bool) -> bool:
     except Exception as exc:
         print(f"  [WARN] Could not check qa.manual_review_queue: {exc}")
     return True
+
+
+# ---------------------------------------------------------------------------
+# Step 4c: Specimen / FHIR gate (119 Check 13 alignment)
+# ---------------------------------------------------------------------------
+
+def run_specimen_fhir_release_gate(
+    con: Any,
+    args: argparse.Namespace,
+    audit_dir: Path,
+    step_results: list[dict],
+    py: str,
+) -> bool:
+    """Enforce or materialize specimen/FHIR layer before presentation/release when strict."""
+    from utils.specimen_fhir_release_gate import run_specimen_fhir_release_gate as _gate
+
+    def _runner(step_name: str, cmd: list[str], log_path: Path) -> bool:
+        return _run(step_name, cmd, log_path, step_results, dry_run=False)
+
+    return _gate(
+        con,
+        enforce=bool(args.final_release),
+        materialize=bool(args.materialize_specimen_fhir),
+        skip_gate=bool(args.skip_specimen_fhir_gate),
+        dry_run=bool(args.dry_run),
+        materialize_target_md=bool(args.md),
+        audit_dir=audit_dir,
+        step_results=step_results,
+        py=py,
+        scripts_dir=SCRIPTS,
+        runner=_runner,
+        now_iso=_now_iso,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -521,7 +576,7 @@ def write_audit_summary(
         "| `validation_report.md` | 119 structural + release-mode validation (includes molecular contract) |",
         "| `molecular_lineage_views_output.log` | 132 unified molecular fact views |",
         "| `release_validation_strict.json` | Full MD evidence: query_history, schema counts, manifest |",
-        "| `snapshot_metadata.json` | MD_INFORMATION_SCHEMA.DATABASE_SNAPSHOTS (or legacy snapshots view) |",
+        "| `snapshot_metadata.json` | MotherDuck snapshot catalog (database_snapshots / DATABASE_SNAPSHOTS / snapshots) |",
         "| `audit_summary.md` | This file |",
         "",
     ]
@@ -774,6 +829,14 @@ def main() -> None:
         sys.exit(1)
 
     # ------------------------------------------------------------------
+    # Step 4c: Specimen / FHIR (119 Check 13)
+    # ------------------------------------------------------------------
+    if not run_specimen_fhir_release_gate(con, args, audit_dir, step_results, py):
+        print("\n  ABORT: Specimen/FHIR gate failed.")
+        con.close()
+        sys.exit(1)
+
+    # ------------------------------------------------------------------
     # Step 5: Presentation views (125)
     # ------------------------------------------------------------------
     views_script = SCRIPTS / "125_master_verified_views.py"
@@ -894,41 +957,24 @@ def main() -> None:
     if not args.dry_run:
         capture_validation_evidence(con, tag, audit_dir, git_sha, step_results)
 
-        # snapshot_metadata.json -- DATABASE_SNAPSHOTS (DuckLake); fallback legacy snapshots view
+        # snapshot_metadata.json — prefer database_snapshots table name when available
         snap_path = audit_dir / "snapshot_metadata.json"
         if not snap_path.exists():
-            try:
-                snaps = con.execute(
-                    "SELECT * FROM MD_INFORMATION_SCHEMA.DATABASE_SNAPSHOTS"
-                ).fetchdf()
+            s_df, s_src, s_err = _motherduck_snapshots_try(con)
+            if s_df is not None and s_src:
                 snap_path.write_text(
                     json.dumps({
                         "captured_at": _now_iso(),
-                        "source": "MD_INFORMATION_SCHEMA.DATABASE_SNAPSHOTS",
-                        "snapshots": snaps.to_dict(orient="records"),
+                        "source": s_src,
+                        "snapshots": s_df.to_dict(orient="records"),
                     }, indent=2, default=str),
                     encoding="utf-8",
                 )
-            except Exception as exc:
-                try:
-                    snaps = con.execute(
-                        "SELECT * FROM md_information_schema.snapshots"
-                    ).fetchdf()
-                    snap_path.write_text(
-                        json.dumps({
-                            "captured_at": _now_iso(),
-                            "source": "md_information_schema.snapshots",
-                            "snapshots": snaps.to_dict(orient="records"),
-                        }, indent=2, default=str),
-                        encoding="utf-8",
-                    )
-                except Exception as exc2:
-                    snap_path.write_text(
-                        json.dumps({
-                            "note": f"DATABASE_SNAPSHOTS: {exc}; snapshots: {exc2}",
-                        }),
-                        encoding="utf-8",
-                    )
+            else:
+                snap_path.write_text(
+                    json.dumps({"note": s_err or "no snapshot catalog"}),
+                    encoding="utf-8",
+                )
             print("  [write] snapshot_metadata.json")
 
     con.close()

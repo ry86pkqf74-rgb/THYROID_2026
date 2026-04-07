@@ -81,6 +81,8 @@ After QA is green, re-confirm on the **target** you will promote (typically prod
 
 - **Live release audit (full chain):** **124** with `--md-env prod` and `--final-release` for signed release.
 - **Formal validation:** **119** `--release-mode` is already invoked at the end of **124**; for a standalone prod check, run 119 with `--md-env prod --release-mode`.
+- **Specimen / FHIR (Check 13):** When `main.synoptic_tumor_long_v1` exists, **124** `--final-release` fails *before* presentation views unless the specimen/FHIR layer and `qa.v_diag_*` views are present — unless you pass **`--skip-specimen-fhir-gate`** or **`--materialize-specimen-fhir`** (runs **138** or **143**). Same pattern for **126** default `--release-mode`. See [`specimen_fhir_release_integration.md`](specimen_fhir_release_integration.md).
+- **Snapshot preflight:** **124** records MotherDuck snapshots using `md_information_schema.database_snapshots` when available, with fallbacks documented in that integration note.
 
 ## 4. Deterministic promotion strategies
 
@@ -163,10 +165,11 @@ Manifest output: `studies/<tag>_molecular_release_workflow/workflow_manifest.jso
 | Contract / molecular views | **117**, **132** | In **124** |
 | Release snapshot | **115** | `release_*` schema |
 | Formal validate | **119** | `--release-mode` for sign-off |
-| Live audit | **124** | `--md-env prod --final-release` |
+| Live audit | **124** | `--md-env prod --final-release`; optional `--materialize-specimen-fhir` |
+| Specimen/FHIR materialize | **138**, **143** | See [`specimen_fhir_release_integration.md`](specimen_fhir_release_integration.md) |
 | Reader freshness | **136** | writer + reader |
 | Sandbox / backup DDL | **130** | `prepromote-backup`, `clone`, `snapshot` |
-| Workflow orchestration | **137** | `promote` and single-step wrappers |
+| Workflow orchestration | **137** | `promote` and single-step wrappers; forwards specimen/FHIR flags to **124** |
 
 ---
 

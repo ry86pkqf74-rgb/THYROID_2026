@@ -38,7 +38,10 @@ Checks:
  13. Specimen + analytic FHIR layer (scripts/138_md_specimen_fhir_layer.py): table presence when
      synoptic_tumor_long_v1 exists; fingerprint uniqueness; qa.val_specimen_contract_v1 and
      qa.val_specimen_genomic_binding_v1 FAIL rows; qa.v_diag_* diagnostic views (142) orphan/ref/
-     duplicate/provenance checks; specimen-adjacent review burden (informational)
+     duplicate/provenance checks; specimen-adjacent review burden (informational). Release
+     orchestration (**124** ``--final-release``, **126** ``--release-mode``) can fail closed *before*
+     this check via ``utils/specimen_fhir_release_gate`` — use ``--materialize-specimen-fhir`` or
+     run **138** / **143** manually; ``--skip-specimen-fhir-gate`` defers to this validator only.
 
 Usage:
   .venv/bin/python scripts/119_md_formalization_validate.py --md
