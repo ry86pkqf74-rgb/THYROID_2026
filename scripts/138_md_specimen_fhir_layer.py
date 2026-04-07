@@ -11,6 +11,8 @@ scripts/140_md_specimen_genomics_binding.apply_specimen_genomics_binding (genomi
 
 Operational rules (MotherDuck):
   * connect_md_or_file(..., fail_closed=True, custom_user_agent='specimen_fhir_export_v1')
+  * Second connection after build deploys `scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql` with
+    custom_user_agent='specimen_fhir_release_ops_v1'
   * RW token only (MOTHERDUCK_TOKEN / MD_SA_TOKEN)
   * Attempt named CREATE SNAPSHOT before DDL; on DuckLake, logs skip and continues
 
@@ -21,6 +23,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+from typing import Any
 import importlib.util
 import os
 import subprocess
@@ -35,7 +38,9 @@ sys.path.insert(0, str(ROOT))
 DEFAULT_DB = ROOT / "thyroid_master.duckdb"
 DDL_IDENTITY_PATH = ROOT / "scripts" / "sql" / "139_specimen_identity_layer_ddl.sql"
 DDL_FHIR_TAIL_PATH = ROOT / "scripts" / "sql" / "138_specimen_fhir_tail_ddl.sql"
+DDL_QA_DIAG_PATH = ROOT / "scripts" / "sql" / "142_specimen_fhir_qa_diagnostics_ddl.sql"
 UA = "specimen_fhir_export_v1"
+UA_QA_DEPLOY = "specimen_fhir_release_ops_v1"
 
 # Required on the target catalog before DDL (see docs/motherduck_database_contract_v1.md).
 PREREQ_MAIN_TABLES: tuple[str, ...] = (
@@ -227,6 +232,35 @@ def persist_validation(con, rows: list[tuple[str, str, str]]) -> None:
     )
 
 
+def deploy_specimen_fhir_qa_diagnostics(
+    con_primary: Any,
+    args: argparse.Namespace,
+) -> str:
+    """Apply qa.v_diag_* views. MotherDuck uses fail-closed UA ``specimen_fhir_release_ops_v1``."""
+    ddl = DDL_QA_DIAG_PATH.read_text(encoding="utf-8")
+    if args.md:
+        hint = (
+            os.environ.get("MOTHERDUCK_SESSION_HINT")
+            or f"thyroid2026:specimen_fhir_qa_deploy:{_git_sha()[:7]}"
+        )
+        from utils.md_connect import connect_md_or_file
+
+        con2 = connect_md_or_file(
+            Path(args.db_path),
+            md=True,
+            fail_closed=True,
+            custom_user_agent=UA_QA_DEPLOY,
+            motherduck_session_hint=hint,
+        )
+        try:
+            con2.execute(ddl)
+        finally:
+            con2.close()
+        return f"qa diagnostics deployed (UA={UA_QA_DEPLOY})"
+    con_primary.execute(ddl)
+    return "qa diagnostics deployed (local)"
+
+
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Specimen + FHIR layer on MotherDuck.")
     p.add_argument("--md", action="store_true", help="MotherDuck fail-closed.")
@@ -347,13 +381,17 @@ def main() -> None:
     for name, st, det in val_rows:
         print(f"  [{st}] {name}: {det[:120]}")
 
+    qa_deploy_msg = deploy_specimen_fhir_qa_diagnostics(con, args)
+    print(f"  {qa_deploy_msg}")
+
     sha = _git_sha()
     memo = [
         "# Specimen + FHIR hardening — machine audit memo",
         f"Generated: {datetime.now(timezone.utc).isoformat()}Z",
         f"Git SHA: {sha}",
         f"Identity build_run_id: {identity_run_id}",
-        f"custom_user_agent: {UA}",
+        f"custom_user_agent (pipeline): {UA}",
+        f"QA diagnostics deploy UA: `{UA_QA_DEPLOY}` (see `scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql`)",
         "",
         "## MotherDuck snapshot",
         f"- Attempt: `{snap_name}`",

@@ -137,9 +137,11 @@ Materialized by [`scripts/138_md_specimen_fhir_layer.py`](../scripts/138_md_spec
 
 **Governance:** `qa.specimen_merge_review_queue_v1` — non-auto-merged near-duplicate encounter pairs (same patient / day / `surgery_episode_id`, distinct fingerprint). `qa.val_specimen_contract_v1` — validator output from script 138. `qa.specimen_genomic_link_review_v1` / `qa.val_specimen_genomic_binding_v1` — genomics binding QA + checks from script 140.
 
+**QA diagnostics (`142`):** [`scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql`](../scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql) defines `qa.v_diag_specimen_*` views (duplicate fingerprints, orphan focus/genomic rows, broken FHIR refs, provenance summary, review-burden rollup). Deploy runs automatically at end of [`scripts/138_md_specimen_fhir_layer.py`](../scripts/138_md_specimen_fhir_layer.py) on MotherDuck using `custom_user_agent='specimen_fhir_release_ops_v1'` (dedicated connection), or standalone [`scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py`](../scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py). Reviewer-facing contract note: [`docs/specimen_fhir_contract_review.md`](specimen_fhir_contract_review.md).
+
 **FHIR disclaimer:** analytic, de-identified export for research workflows — **not** asserted as US Core–complete or production clinical interoperability.
 
-**Formalization:** [`scripts/119_md_formalization_validate.py`](../scripts/119_md_formalization_validate.py) Check 13 (`check_specimen_fhir_layer`).
+**Formalization:** [`scripts/119_md_formalization_validate.py`](../scripts/119_md_formalization_validate.py) Check 13 (`check_specimen_fhir_layer`) — includes `val_specimen_*`, all `v_diag_*` views when present, and specimen-adjacent review burden.
 
 #### V1 entity tables (8, in main, never mutated by v2)
 
@@ -173,6 +175,7 @@ Materialized by [`scripts/138_md_specimen_fhir_layer.py`](../scripts/138_md_spec
 | `val_specimen_contract_v1` | Table | Specimen/FHIR contract checks (script 138 + Check 13) |
 | `specimen_genomic_link_review_v1` | Table | Genomics–specimen binding conflicts / weak tiers (script 140) |
 | `val_specimen_genomic_binding_v1` | Table | Genomics binding validation rows (script 140) |
+| `v_diag_specimen_*_v1` | View | Specimen/FHIR release diagnostics (duplicate FP, orphans, broken refs, provenance splits, genomic review burden); see §Specimen identity + analytic FHIR |
 
 ### 2.4 release_YYYYMMDD schemas
 

@@ -34,7 +34,9 @@ Checks:
      required columns, live-row parity vs main.molecular_results, payload_checksum uniqueness,
      allele_fraction bounds, variant_class enum, provenance columns, assay/panel pairing
  13. Specimen + analytic FHIR layer (scripts/138_md_specimen_fhir_layer.py): table presence when
-     synoptic_tumor_long_v1 exists; fingerprint uniqueness; qa.val_specimen_contract_v1 FAIL rows
+     synoptic_tumor_long_v1 exists; fingerprint uniqueness; qa.val_specimen_contract_v1 and
+     qa.val_specimen_genomic_binding_v1 FAIL rows; qa.v_diag_* diagnostic views (142) orphan/ref/
+     duplicate/provenance checks; specimen-adjacent review burden (informational)
 
 Usage:
   .venv/bin/python scripts/119_md_formalization_validate.py --md
@@ -725,6 +727,47 @@ def _main_object_exists(
         return False
 
 
+def _qa_object_exists(
+    con: duckdb.DuckDBPyConnection,
+    object_name: str,
+    *,
+    schema: str = "qa",
+) -> bool:
+    try:
+        row = con.execute(
+            """
+            SELECT 1
+            FROM information_schema.tables
+            WHERE table_schema = ? AND table_name = ?
+            LIMIT 1
+            """,
+            [schema, object_name],
+        ).fetchone()
+        return row is not None
+    except Exception:
+        return False
+
+
+SPECIMEN_FHIR_DIAG_VIEWS: tuple[str, ...] = (
+    "v_diag_specimen_duplicate_master_fp_v1",
+    "v_diag_specimen_orphan_genomic_master_v1",
+    "v_diag_specimen_fhir_broken_refs_v1",
+    "v_diag_specimen_provenance_master_v1",
+    "v_diag_specimen_provenance_genomic_v1",
+    "v_diag_specimen_review_burden_v1",
+)
+
+
+def _safe_scalar_int(con: duckdb.DuckDBPyConnection, sql: str) -> int | None:
+    try:
+        row = con.execute(sql).fetchone()
+        if row is None or row[0] is None:
+            return None
+        return int(row[0])
+    except Exception:
+        return None
+
+
 def _view_or_table_columns(con: duckdb.DuckDBPyConnection, name: str) -> set[str]:
     rows = con.execute(
         """
@@ -1141,7 +1184,7 @@ def check_specimen_fhir_layer(
     except Exception as exc:
         results.add("Specimen master fingerprint uniqueness", status_skip, str(exc))
 
-    if _main_object_exists(con, "qa.val_specimen_contract_v1"):
+    if _qa_object_exists(con, "val_specimen_contract_v1"):
         try:
             nfail = int(
                 con.execute(
@@ -1158,6 +1201,155 @@ def check_specimen_fhir_layer(
                 results.add("qa.val_specimen_contract_v1", "PASS", "no FAIL rows recorded")
         except Exception as exc:
             results.add("qa.val_specimen_contract_v1", status_skip, str(exc))
+
+    if _qa_object_exists(con, "val_specimen_genomic_binding_v1"):
+        try:
+            nfail_g = int(
+                con.execute(
+                    "SELECT COUNT(*) FROM qa.val_specimen_genomic_binding_v1 "
+                    "WHERE UPPER(status) = 'FAIL'"
+                ).fetchone()[0]
+            )
+            if nfail_g > 0:
+                results.add(
+                    "qa.val_specimen_genomic_binding_v1",
+                    status_skip,
+                    f"{nfail_g} failing row(s) — inspect script 140 output",
+                )
+            else:
+                results.add(
+                    "qa.val_specimen_genomic_binding_v1",
+                    "PASS",
+                    "no FAIL rows recorded",
+                )
+        except Exception as exc:
+            results.add("qa.val_specimen_genomic_binding_v1", status_skip, str(exc))
+
+    missing_diag = [v for v in SPECIMEN_FHIR_DIAG_VIEWS if not _qa_object_exists(con, v)]
+    if missing_diag and not missing:
+        results.add(
+            "Specimen/FHIR QA diagnostic views (142)",
+            status_skip,
+            f"missing: {', '.join(missing_diag)} — run scripts/138_md_specimen_fhir_layer.py "
+            "or scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py",
+        )
+    elif not missing:
+        try:
+            n_dup_m = int(
+                con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_duplicate_master_fp_v1").fetchone()[0]
+            )
+            n_dup_f = _safe_scalar_int(
+                con,
+                "SELECT COUNT(*) FROM ("
+                " SELECT focus_fingerprint_sha256 FROM main.specimen_tumor_focus_v1 "
+                " GROUP BY 1 HAVING COUNT(*) > 1"
+                ") _t",
+            )
+            n_of = _safe_scalar_int(
+                con,
+                "SELECT COUNT(*) FROM main.specimen_tumor_focus_v1 f "
+                "LEFT JOIN main.specimen_master_v1 m ON f.specimen_id = m.specimen_id "
+                "WHERE m.specimen_id IS NULL",
+            )
+            n_og_m = int(
+                con.execute(
+                    "SELECT COUNT(*) FROM qa.v_diag_specimen_orphan_genomic_master_v1"
+                ).fetchone()[0]
+            )
+            n_og_f = _safe_scalar_int(
+                con,
+                "SELECT COUNT(*) FROM main.specimen_genomic_assay_v1 g "
+                "LEFT JOIN main.specimen_tumor_focus_v1 f "
+                "ON g.specimen_focus_id = f.specimen_focus_id "
+                "WHERE g.specimen_focus_id IS NOT NULL AND f.specimen_focus_id IS NULL",
+            )
+            n_br = int(
+                con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_broken_refs_v1").fetchone()[0]
+            )
+            pm = con.execute(
+                "SELECT n_missing_identity_run FROM qa.v_diag_specimen_provenance_master_v1"
+            ).fetchone()
+            pg = con.execute(
+                "SELECT n_high_tier_null_specimen FROM qa.v_diag_specimen_provenance_genomic_v1"
+            ).fetchone()
+            n_mis_m = int(pm[0] or 0) if pm else 0
+            n_mis_f = _safe_scalar_int(
+                con,
+                "SELECT COUNT(*) FILTER (WHERE TRIM(COALESCE(identity_build_run_id, '')) = '') "
+                "FROM main.specimen_tumor_focus_v1",
+            )
+            n_hi_ns = int(pg[0] or 0) if pg else 0
+            focus_unavailable = n_dup_f is None or n_of is None or n_mis_f is None
+            n_og = n_og_m + (n_og_f or 0)
+            bad_diag = (
+                n_dup_m
+                + (n_dup_f or 0)
+                + (n_of or 0)
+                + n_og
+                + n_br
+                + n_mis_m
+                + (n_mis_f or 0)
+                + n_hi_ns
+            )
+            detail = (
+                f"dup_master_fp={n_dup_m}, dup_focus_fp={n_dup_f}, orphan_focus={n_of}, "
+                f"orphan_genomic(master/focus)={n_og_m}/"
+                f"{n_og_f if n_og_f is not None else 'n/a'}, broken_fhir_refs={n_br}, "
+                f"prov_gaps(master/focus/high_tier_null_spec)={n_mis_m}/"
+                f"{n_mis_f if n_mis_f is not None else 'n/a'}/{n_hi_ns}"
+            )
+            if focus_unavailable:
+                detail += " | NOTE: some focus-table scans unavailable on this catalog"
+            if bad_diag > 0:
+                diag_status = status_skip
+            elif focus_unavailable:
+                diag_status = "WARN"
+            else:
+                diag_status = "PASS"
+            results.add(
+                "Specimen/FHIR QA diagnostics (142 views + focus checks)",
+                diag_status,
+                "clean" if (bad_diag == 0 and not focus_unavailable) else detail,
+            )
+            open_gen = int(
+                con.execute(
+                    """
+                    SELECT COALESCE(SUM(n_rows), 0)
+                    FROM qa.v_diag_specimen_review_burden_v1
+                    WHERE queue_key = 'specimen_genomic_link_review'
+                      AND LOWER(COALESCE(review_status, '')) IN ('open', 'pending', '')
+                    """
+                ).fetchone()[0]
+            )
+            open_merge = None
+            try:
+                open_merge = int(
+                    con.execute(
+                        """
+                        SELECT COUNT(*)
+                        FROM qa.specimen_merge_review_queue_v1
+                        WHERE LOWER(COALESCE(review_status, '')) IN ('open', 'pending', '')
+                        """
+                    ).fetchone()[0]
+                )
+            except Exception:
+                open_merge = None
+            detail_gen = f"genomic_link_review open/pending={open_gen}"
+            if open_merge is None:
+                detail = detail_gen + "; merge queue: direct COUNT unavailable (MotherDuck/catalog — audit manually)"
+                merge_warn = False
+            else:
+                detail = (
+                    detail_gen + f"; specimen_merge_review open/pending={open_merge}"
+                )
+                merge_warn = open_merge > 0
+            results.add(
+                "Specimen-adjacent review burden (open/pending)",
+                "WARN" if (open_gen > 0 or merge_warn) else "PASS",
+                detail,
+            )
+        except Exception as exc:
+            results.add("Specimen/FHIR QA diagnostics (142 views)", status_skip, str(exc))
 
 
 def check_release_manifest(

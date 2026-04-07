@@ -420,6 +420,14 @@ Review the generated `motherduck_promote.sql` carefully, then execute it against
 .venv/bin/python scripts/119_md_formalization_validate.py --md
 ```
 
+### Specimen + FHIR promotion (snapshot + QA views)
+
+1. **Pre-materialization snapshot** — `scripts/138_md_specimen_fhir_layer.py --md` attempts `CREATE SNAPSHOT specimen_fhir_pre_<UTCtimestamp> OF "<catalog>"` before DDL (same pattern as other release scripts; DuckLake may report skip — see study audit memo).
+2. **Scratch / clone validation** — When your org supports database fork from a named snapshot, validate contract views (`qa.v_diag_*`, `119_md_formalization_validate.py`) on the fork before pointing reviewers at `main`. See [`motherduck_sandbox_clone_runbook.md`](motherduck_sandbox_clone_runbook.md).
+3. **QA view-only redeploy** — `scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py --md` reapplies `142_specimen_fhir_qa_diagnostics_ddl.sql` with `custom_user_agent='specimen_fhir_release_ops_v1'` if tables already exist.
+4. **Reviewer read-only share** — Create restricted shares in the MotherDuck UI; attach steps and token handling are org-specific (do not commit secrets). After snapshot cut, read-scaling reviewers run `REFRESH DATABASE` per [`motherduck_read_scaling_dashboard.md`](motherduck_read_scaling_dashboard.md).
+5. **Repo state artifact** — `scripts/144_md_repo_current_state_summary.py --md` refreshes [`studies/CURRENT_MOTHERDUCK_REPO_STATE.md`](../studies/CURRENT_MOTHERDUCK_REPO_STATE.md).
+
 ### MotherDuck paid-plan snapshot verification
 
 ```sql

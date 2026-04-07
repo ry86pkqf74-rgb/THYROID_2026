@@ -156,6 +156,9 @@ jobs:
           python -m pytest \
             tests/test_multimodal_contract_mm_v1.py \
             tests/test_imaging_fna_linkage_mm_v1.py \
+            tests/test_specimen_fhir_layer.py \
+            tests/test_specimen_fhir_qa_diagnostics.py \
+            tests/test_specimen_genomics_binding.py \
             -v --tb=short
 
   # ── Job 1: Static Analysis ─────────────────────────────────────────────────

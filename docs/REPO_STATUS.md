@@ -3,6 +3,8 @@
 **As of:** 2026-03-13 (truth-sync pass)
 **Overall verdict:** Manuscript-ready (with scoped caveats) | Approaching dataset-mature | Extraction pipeline complete
 
+**Live MotherDuck vs checked-in artifacts:** Regenerate [`studies/CURRENT_MOTHERDUCK_REPO_STATE.md`](../studies/CURRENT_MOTHERDUCK_REPO_STATE.md) with `python scripts/144_md_repo_current_state_summary.py --md` (query-history attribution: `specimen_fhir_release_ops_v1`). Specimen/FHIR release QA: [`docs/specimen_fhir_contract_review.md`](specimen_fhir_contract_review.md).
+
 ---
 
 ## What is verified
