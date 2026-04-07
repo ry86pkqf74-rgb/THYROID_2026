@@ -1,6 +1,6 @@
 # Safe to start stats / manuscripts
 
-Release tag **20260411** (git `559da67d0afcc27dcff6fea0a2fbb196b161cce4`) passed scripted gates when this memo was generated.
+Release tag **20260411** (git `559da67d0afcc27dcff6fea0a2fbb196b161cce4` for evidence bundle commit) passed scripted gates when this memo was generated.
 
 ** Preconditions verified by automation:**
 
