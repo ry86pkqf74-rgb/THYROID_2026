@@ -184,6 +184,8 @@ tier_adj AS (
       WHEN chain_reason <> 'CHAIN_OK' THEN 'unresolved_review'
       WHEN fm_norm IN ('exact', 'high_confidence') AND focus_ambiguity_reason IS NOT NULL
         THEN 'plausible_review'
+      WHEN fm_norm IN ('exact', 'high_confidence') AND specimen_id IS NULL
+        THEN 'plausible_review'
       ELSE fm_norm
     END AS linkage_confidence_tier,
     concat_ws('|',
@@ -354,6 +356,8 @@ genetic_adj AS (
     CASE
       WHEN chain_reason <> 'CHAIN_OK' THEN 'unresolved_review'
       WHEN fm_norm IN ('exact', 'high_confidence') AND focus_ambiguity_reason IS NOT NULL
+        THEN 'plausible_review'
+      WHEN fm_norm IN ('exact', 'high_confidence') AND specimen_id IS NULL
         THEN 'plausible_review'
       ELSE fm_norm
     END AS linkage_confidence_tier
@@ -550,6 +554,8 @@ thy_adj AS (
     CASE
       WHEN chain_reason <> 'CHAIN_OK' THEN 'unresolved_review'
       WHEN fm_norm IN ('exact', 'high_confidence') AND focus_ambiguity_reason IS NOT NULL
+        THEN 'plausible_review'
+      WHEN fm_norm IN ('exact', 'high_confidence') AND specimen_id IS NULL
         THEN 'plausible_review'
       WHEN n_episode_candidates > 1 THEN 'plausible_review'
       ELSE fm_norm

@@ -33,75 +33,50 @@ WHERE g.specimen_id IS NOT NULL AND m.specimen_id IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Broken internal FHIR references (analytic export consistency)
--- Expected ref ids derived from specimen_id / research_id / surgery_episode_id
--- (same hash recipe as 138_specimen_fhir_tail_ddl.sql) so views work if legacy FHIR
--- tables omitted helper columns like procedure_fhir_id.
+-- Compare resource_json pointers to the denormalized id columns materialized by
+-- scripts/sql/138_specimen_fhir_tail_ddl.sql (same row = same build). Recomputing
+-- hashes via specimen_master joins can false-positive when catalog drift/stale
+-- joins disagree with the JSON that 138 wrote.
 -- ═══════════════════════════════════════════════════════════════════════════
 CREATE OR REPLACE VIEW qa.v_diag_specimen_fhir_broken_refs_v1 AS
-WITH fsx AS (
-  SELECT
-    fs.specimen_id,
-    fs.resource_json,
-    pm.patient_fhir_id AS _pid,
-    substring(sha256(concat('proc|', fs.specimen_id)), 1, 16) AS _proc_short,
-    substring(sha256(concat('enc|', fs.specimen_id)), 1, 16) AS _enc_short,
-    substring(sha256(concat(
-      'eoc|', CAST(s.research_id AS VARCHAR), '|',
-      COALESCE(CAST(s.surgery_episode_id AS VARCHAR), 'none')
-    )), 1, 16) AS _eoc_short
-  FROM main.fhir_specimen_v1 fs
-  INNER JOIN main.specimen_master_v1 s USING (specimen_id)
-  INNER JOIN main.fhir_patient_deid_map_v1 pm USING (research_id)
-)
 SELECT
   'specimen_subject'::VARCHAR AS issue,
   specimen_id AS anchor_id,
   json_extract_string(resource_json, '$.subject.reference') AS ref_value,
-  ('Patient/' || _pid) AS expected_ref
-FROM fsx
-WHERE json_extract_string(resource_json, '$.subject.reference') IS DISTINCT FROM ('Patient/' || _pid)
+  ('Patient/' || patient_fhir_id) AS expected_ref
+FROM main.fhir_specimen_v1 fs
+WHERE json_extract_string(resource_json, '$.subject.reference') IS DISTINCT FROM ('Patient/' || fs.patient_fhir_id)
    OR json_extract_string(resource_json, '$.subject.reference') LIKE 'Patient/Patient/%'
 UNION ALL
 SELECT
   'specimen_collection_procedure'::VARCHAR,
   specimen_id,
   json_extract_string(resource_json, '$.collection.procedure.reference'),
-  'Procedure/' || _proc_short
-FROM fsx
+  'Procedure/' || procedure_fhir_id
+FROM main.fhir_specimen_v1 fs
 WHERE json_extract_string(resource_json, '$.collection.procedure.reference') IS NOT NULL
   AND json_extract_string(resource_json, '$.collection.procedure.reference')
-    IS DISTINCT FROM ('Procedure/' || _proc_short)
+    IS DISTINCT FROM ('Procedure/' || fs.procedure_fhir_id)
 UNION ALL
 SELECT
   'procedure_encounter'::VARCHAR,
   fp.specimen_id,
   json_extract_string(fp.resource_json, '$.encounter.reference'),
-  'Encounter/' || substring(sha256(concat('enc|', fp.specimen_id)), 1, 16)
+  'Encounter/' || fp.encounter_fhir_id
 FROM main.fhir_procedure_collection_v1 fp
 WHERE json_extract_string(fp.resource_json, '$.encounter.reference') IS NOT NULL
   AND json_extract_string(fp.resource_json, '$.encounter.reference')
-    IS DISTINCT FROM (
-    'Encounter/' || substring(sha256(concat('enc|', fp.specimen_id)), 1, 16)
-  )
+    IS DISTINCT FROM ('Encounter/' || fp.encounter_fhir_id)
 UNION ALL
 SELECT
   'encounter_episode'::VARCHAR,
   fe.specimen_id,
   json_extract_string(fe.resource_json, '$.episodeOfCare[0].reference'),
-  'EpisodeOfCare/' || substring(sha256(concat(
-    'eoc|', CAST(s.research_id AS VARCHAR), '|',
-    COALESCE(CAST(s.surgery_episode_id AS VARCHAR), 'none')
-  )), 1, 16)
+  'EpisodeOfCare/' || fe.episode_fhir_id
 FROM main.fhir_encounter_v1 fe
-INNER JOIN main.specimen_master_v1 s ON fe.specimen_id = s.specimen_id
 WHERE json_extract_string(fe.resource_json, '$.episodeOfCare[0].reference') IS NOT NULL
   AND json_extract_string(fe.resource_json, '$.episodeOfCare[0].reference')
-    IS DISTINCT FROM (
-    'EpisodeOfCare/' || substring(sha256(concat(
-      'eoc|', CAST(s.research_id AS VARCHAR), '|',
-      COALESCE(CAST(s.surgery_episode_id AS VARCHAR), 'none')
-    )), 1, 16)
-  );
+    IS DISTINCT FROM ('EpisodeOfCare/' || fe.episode_fhir_id);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Provenance completeness — one view per table (avoids multi-table CROSS JOIN
