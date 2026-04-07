@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 
 import duckdb
 
@@ -113,7 +114,7 @@ def test_distinct_surgery_dates_two_focus_rows() -> None:
     ) t(research_id, surg_date, tumor_1_histologic_type, surg_date_canonical, encounter_synoptic_row_ix, surg_date_parse_tier);
     INSERT INTO main.synoptic_tumor_long_v1 VALUES
       (1, 1, '2020-01-15', 'thyroidectomy', 1, 'R', 'PTC'),
-      (2, 1, '2020-02-01', 'thyroidectomy', 1, 'L', 'PTC');
+      (2, 1, '2020-02-01', 'thyroidectomy', 2, 'L', 'PTC');
     CREATE TABLE main.surgery_pathology_linkage_v3 (
       research_id BIGINT, surgery_episode_id BIGINT, path_surgery_id VARCHAR, tumor_ordinal BIGINT,
       day_gap BIGINT, surg_lat VARCHAR, path_lat VARCHAR, n_candidates BIGINT,
@@ -122,7 +123,7 @@ def test_distinct_surgery_dates_two_focus_rows() -> None:
     );
     INSERT INTO main.surgery_pathology_linkage_v3 VALUES
       (1, 100, 'A', 1, 0, 'R', 'R', 1, 0.9, 1, 'high_confidence', '', TRUE),
-      (1, 200, 'B', 1, 0, 'L', 'L', 1, 0.9, 1, 'high_confidence', '', TRUE);
+      (1, 200, 'B', 2, 0, 'L', 'L', 1, 0.9, 1, 'high_confidence', '', TRUE);
     CREATE TABLE main.fna_molecular_linkage_v3 (
       research_id BIGINT, fna_episode_id BIGINT, molecular_episode_id BIGINT,
       fna_date_native DATE, test_date_native DATE, day_gap BIGINT, laterality VARCHAR, platform VARCHAR,
@@ -137,6 +138,12 @@ def test_distinct_surgery_dates_two_focus_rows() -> None:
     );
     CREATE TABLE main.molecular_test_episode_v2 (research_id BIGINT, molecular_episode_id BIGINT,
       platform VARCHAR, test_date_native DATE);
+    CREATE TABLE main.tumor_episode_master_v2 (
+      research_id BIGINT, surgery_episode_id BIGINT, surgery_date VARCHAR
+    );
+    INSERT INTO main.tumor_episode_master_v2 VALUES
+      (1, 100, '2020-01-15'),
+      (1, 200, '2020-02-01');
     """)
     root = Path(__file__).resolve().parent.parent
     ident = (
@@ -149,3 +156,31 @@ def test_distinct_surgery_dates_two_focus_rows() -> None:
         "SELECT COUNT(DISTINCT specimen_focus_id) FROM main.specimen_tumor_focus_v1"
     ).fetchone()[0]
     assert n == 2
+
+    n_eoc = con.execute("SELECT COUNT(*) FROM main.fhir_episode_of_care_v1").fetchone()[0]
+    assert n_eoc == 2
+
+    subj = con.execute(
+        "SELECT json_extract_string(resource_json, '$.subject.reference') FROM main.fhir_specimen_v1 LIMIT 1"
+    ).fetchone()[0]
+    assert subj.startswith("Patient/")
+    assert "Patient/Patient/" not in subj
+
+    raw = con.execute(
+        "SELECT cast(bundle_json AS VARCHAR) FROM main.fhir_bundle_specimen_export_v1 ORDER BY specimen_id LIMIT 1"
+    ).fetchone()[0]
+    bundle = json.loads(raw)
+    assert bundle["resourceType"] == "Bundle"
+    assert len(bundle["entry"]) == 4
+    types = [e["resource"]["resourceType"] for e in bundle["entry"]]
+    assert types == ["Specimen", "Procedure", "Encounter", "EpisodeOfCare"]
+    spec_id = bundle["entry"][0]["resource"]["id"]
+    proc_coll = bundle["entry"][0]["resource"]["collection"]["procedure"]["reference"]
+    proc_id = bundle["entry"][1]["resource"]["id"]
+    assert proc_coll == f"Procedure/{proc_id}"
+    enc_ref = bundle["entry"][1]["resource"]["encounter"]["reference"]
+    enc_id = bundle["entry"][2]["resource"]["id"]
+    assert enc_ref == f"Encounter/{enc_id}"
+    eoc_ref = bundle["entry"][2]["resource"]["episodeOfCare"][0]["reference"]
+    eoc_id = bundle["entry"][3]["resource"]["id"]
+    assert eoc_ref == f"EpisodeOfCare/{eoc_id}"

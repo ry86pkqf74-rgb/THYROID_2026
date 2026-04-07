@@ -1085,6 +1085,7 @@ SPECIMEN_FHIR_OBJECTS = (
     "specimen_tumor_focus_v1",
     "specimen_genomic_assay_v1",
     "specimen_source_xref_v1",
+    "fhir_patient_deid_map_v1",
     "fhir_specimen_v1",
     "fhir_procedure_collection_v1",
     "fhir_encounter_v1",

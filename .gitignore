@@ -53,6 +53,7 @@ exports/motherduck_provenance_*/
 exports/final_master_release_*/
 exports/parquet_release_*/
 exports/mm_contract_summary_*.json
+exports/fhir_specimen_*/
 
 # ── Root-level manuscript/freeze ZIPs (reproducible) ──────────
 THYROID_2026_MANUSCRIPT_PACKAGE_*.zip

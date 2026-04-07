@@ -10,7 +10,7 @@ scripts/sql/138_specimen_fhir_tail_ddl.sql (FHIR), then
 scripts/140_md_specimen_genomics_binding.apply_specimen_genomics_binding (genomics).
 
 Operational rules (MotherDuck):
-  * connect_md_or_file(..., fail_closed=True, custom_user_agent='specimen_fhir_hardening_v1')
+  * connect_md_or_file(..., fail_closed=True, custom_user_agent='specimen_fhir_export_v1')
   * RW token only (MOTHERDUCK_TOKEN / MD_SA_TOKEN)
   * Attempt named CREATE SNAPSHOT before DDL; on DuckLake, logs skip and continues
 
@@ -35,8 +35,7 @@ sys.path.insert(0, str(ROOT))
 DEFAULT_DB = ROOT / "thyroid_master.duckdb"
 DDL_IDENTITY_PATH = ROOT / "scripts" / "sql" / "139_specimen_identity_layer_ddl.sql"
 DDL_FHIR_TAIL_PATH = ROOT / "scripts" / "sql" / "138_specimen_fhir_tail_ddl.sql"
-UA = "specimen_fhir_hardening_v1"
-STUDY_TAG = "specimen_fhir_hardening_20260407_180000"
+UA = "specimen_fhir_export_v1"
 
 # Required on the target catalog before DDL (see docs/motherduck_database_contract_v1.md).
 PREREQ_MAIN_TABLES: tuple[str, ...] = (
@@ -46,6 +45,7 @@ PREREQ_MAIN_TABLES: tuple[str, ...] = (
     "fna_molecular_linkage_v3",
     "preop_surgery_linkage_v3",
     "molecular_test_episode_v2",
+    "tumor_episode_master_v2",
 )
 
 
@@ -171,7 +171,48 @@ def run_validation(con) -> list[tuple[str, str, str]]:
         """SELECT COALESCE(BOOL_AND(
           json_extract_string(resource_json, '$.subject.reference') IS NOT NULL
           AND starts_with(json_extract_string(resource_json, '$.subject.reference'), 'Patient/')
+          AND json_extract_string(resource_json, '$.subject.reference') NOT LIKE 'Patient/Patient/%'
         ), TRUE) FROM main.fhir_specimen_v1""",
+        True,
+    )
+    run(
+        "fhir_specimen_collection_procedure_ref",
+        """SELECT COALESCE(BOOL_AND(
+          json_extract_string(resource_json, '$.collection.procedure.reference')
+            = 'Procedure/' || procedure_fhir_id
+        ), TRUE) FROM main.fhir_specimen_v1""",
+        True,
+    )
+    run(
+        "fhir_procedure_encounter_ref",
+        """SELECT COALESCE(BOOL_AND(
+          json_extract_string(resource_json, '$.encounter.reference')
+            = 'Encounter/' || encounter_fhir_id
+        ), TRUE) FROM main.fhir_procedure_collection_v1""",
+        True,
+    )
+    run(
+        "fhir_encounter_episode_ref",
+        """SELECT COALESCE(BOOL_AND(
+          json_extract_string(resource_json, '$.episodeOfCare[0].reference')
+            = 'EpisodeOfCare/' || episode_fhir_id
+        ), TRUE) FROM main.fhir_encounter_v1""",
+        True,
+    )
+    run(
+        "fhir_episode_id_unique",
+        "SELECT COALESCE(COUNT(*) = COUNT(DISTINCT episode_fhir_id), FALSE)"
+        " FROM main.fhir_episode_of_care_v1",
+        True,
+    )
+    run(
+        "fhir_procedure_orphan_guard",
+        """SELECT NOT EXISTS (
+          SELECT 1 FROM main.fhir_procedure_collection_v1 p
+          LEFT JOIN main.fhir_encounter_v1 e
+            ON p.specimen_id = e.specimen_id
+          WHERE e.specimen_id IS NULL
+        )""",
         True,
     )
     return out
@@ -195,14 +236,17 @@ def parse_args() -> argparse.Namespace:
     p.add_argument(
         "--study-dir",
         default=None,
-        help="Write audit memo here (default: studies/<STUDY_TAG>/)",
+        help="Write audit memo here (default: studies/specimen_fhir_export_<UTCtimestamp>/)",
     )
     return p.parse_args()
 
 
 def main() -> None:
     args = parse_args()
-    study_dir = Path(args.study_dir) if args.study_dir else ROOT / "studies" / STUDY_TAG
+    study_slug = os.environ.get("SPECIMEN_FHIR_STUDY_TAG") or (
+        f"specimen_fhir_export_{datetime.now(timezone.utc):%Y%m%d_%H%M%S}"
+    )
+    study_dir = Path(args.study_dir) if args.study_dir else ROOT / "studies" / study_slug
     study_dir.mkdir(parents=True, exist_ok=True)
 
     if args.dry_run:
@@ -271,6 +315,7 @@ def main() -> None:
             "- `path_synoptics_encounter_qc_v1`: run `scripts/109_synoptic_encounter_qc.py --md` (needs `path_synoptics`).",
             "- `surgery_pathology_linkage_v3`, `fna_molecular_linkage_v3`, `preop_surgery_linkage_v3`, `molecular_test_episode_v2`:",
             "  load analysis/episode contract assets (e.g. `scripts/117_md_contract_views.py --md` + manuscript freeze parquets, or your org’s linkage materialization).",
+            "- `tumor_episode_master_v2`: episode contract parquet / `117_md_contract_views.py` (FHIR EpisodeOfCare period enrichment).",
             "",
             "No DDL was applied; fix prerequisites and re-run.",
             "",
@@ -337,7 +382,7 @@ FROM (
     coalesce(session_name, '') AS session_name,
     COUNT(*) AS count_star
   FROM md_information_schema.query_history
-  WHERE user_agent = 'specimen_fhir_hardening_v1'
+  WHERE user_agent = 'specimen_fhir_export_v1'
   GROUP BY 1, 2
 ) q
 LIMIT 20

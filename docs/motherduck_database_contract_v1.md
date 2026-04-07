@@ -131,6 +131,10 @@ Materialized by [`scripts/138_md_specimen_fhir_layer.py`](../scripts/138_md_spec
 | `fhir_episode_of_care_v1` | Analytic `EpisodeOfCare` stub (ties to `surgery_episode_id` when present) |
 | `fhir_bundle_specimen_export_v1` | Per-specimen `Bundle` JSON (`type=collection`) |
 
+**Local JSON export (optional):** [`scripts/141_fhir_specimen_json_export.py`](../scripts/141_fhir_specimen_json_export.py) attaches with `custom_user_agent='specimen_fhir_export_v1'` (fail-closed), reads `main.fhir_bundle_specimen_export_v1`, and writes `exports/fhir_specimen_<UTCtimestamp>/specimen_bundles.ndjson` plus `manifest.json` (row counts, git SHA, source table list). Run after `138_md_specimen_fhir_layer.py --md` has populated the FHIR tables.
+
+**Resource shape (v1):** Specimens carry `status`, `collection.collectedDateTime`, optional `collection.bodySite`, `collection.procedure` → Procedure; Procedures include `identifier`, `status`, `code`, `performedDateTime`, analytic `extension` for specimen crosswalk and occurrence datetime; Encounters include `identifier`, `status`, `class` (IMP when `specimen_role` is surgical resection, else AMB), `type`, `period`, `episodeOfCare`; EpisodeOfCare rows are **deduped** per `(research_id, surgery_episode_id)` with `identifier` tied to `tumor_episode_master_v2` and `period` from episode surgery dates when present. Bundles join Encounter → Episode via `episode_fhir_id` (no duplicate Episode resources per specimen).
+
 **Governance:** `qa.specimen_merge_review_queue_v1` — non-auto-merged near-duplicate encounter pairs (same patient / day / `surgery_episode_id`, distinct fingerprint). `qa.val_specimen_contract_v1` — validator output from script 138. `qa.specimen_genomic_link_review_v1` / `qa.val_specimen_genomic_binding_v1` — genomics binding QA + checks from script 140.
 
 **FHIR disclaimer:** analytic, de-identified export for research workflows — **not** asserted as US Core–complete or production clinical interoperability.
