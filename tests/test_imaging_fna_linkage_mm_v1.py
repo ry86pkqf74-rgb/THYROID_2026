@@ -1,0 +1,234 @@
+"""Synthetic scenarios for imaging_fna_linkage_mm_v1 (script 129)."""
+
+from __future__ import annotations
+
+import importlib.util
+import sys
+from pathlib import Path
+
+import duckdb
+import pytest
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def _load_129():
+    p = ROOT / "scripts" / "129_imaging_fna_linkage_mm_v1.py"
+    spec = importlib.util.spec_from_file_location("link129", p)
+    mod = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(mod)
+    return mod
+
+
+@pytest.fixture
+def link129():
+    sys.path.insert(0, str(ROOT))
+    return _load_129()
+
+
+def _materialize(con: duckdb.DuckDBPyConnection, link129) -> None:
+    con.execute(link129.build_temp_wide_sql(con))
+    con.execute(link129.LINK_TABLE_SQL)
+    con.execute(link129.REVIEW_SQL)
+
+
+def test_exact_specimen_match_primary(link129) -> None:
+    con = duckdb.connect(":memory:")
+    con.execute(
+        """
+        CREATE TABLE imaging_nodule_master_v1 AS SELECT * FROM (
+            SELECT 9001::INTEGER AS research_id,
+                   'n1'::VARCHAR AS nodule_id,
+                   'ex1'::VARCHAR AS exam_id,
+                   DATE '2024-01-01' AS exam_date,
+                   'left'::VARCHAR AS laterality,
+                   1.0::DOUBLE AS max_dimension_cm,
+                   'A1'::VARCHAR AS accession_number
+        ) t
+        """
+    )
+    con.execute(
+        """
+        CREATE TABLE fna_episode_master_v2 AS SELECT * FROM (
+            SELECT 9001::INTEGER AS research_id,
+                   1::INTEGER AS fna_episode_id,
+                   DATE '2024-01-05' AS fna_date_native,
+                   'left'::VARCHAR AS laterality,
+                   NULL::VARCHAR AS specimen_site_raw
+        ) t
+        """
+    )
+    con.execute(
+        """
+        CREATE TABLE fna_history AS SELECT * FROM (
+            SELECT 9001::BIGINT AS research_id,
+                   1::INTEGER AS fna_index,
+                   'a1'::VARCHAR AS specimen_received,
+                   1.0::DOUBLE AS nodule_size_cm
+        ) t
+        """
+    )
+    con.execute(
+        """
+        CREATE TABLE tumor_episode_master_v2 AS SELECT * FROM (
+            SELECT 9001::INTEGER AS research_id, DATE '2024-06-01'::DATE AS surgery_date
+        ) t
+        """
+    )
+    _materialize(con, link129)
+    row = con.execute(
+        "SELECT is_primary_link, specimen_match_flag FROM imaging_fna_linkage_mm_v1"
+    ).fetchone()
+    assert row is not None
+    assert row[0] is True
+    assert row[1] is True
+
+
+def test_ambiguous_dual_fna_no_primary(link129) -> None:
+    con = duckdb.connect(":memory:")
+    con.execute(
+        """
+        CREATE TABLE imaging_nodule_master_v1 AS SELECT * FROM (
+            SELECT 9002::INTEGER AS research_id,
+                   'n1'::VARCHAR AS nodule_id,
+                   'ex1'::VARCHAR AS exam_id,
+                   DATE '2024-01-01' AS exam_date,
+                   'right'::VARCHAR AS laterality,
+                   1.0::DOUBLE AS max_dimension_cm,
+                   NULL::VARCHAR AS accession_number
+        ) t
+        """
+    )
+    con.execute(
+        """
+        CREATE TABLE fna_episode_master_v2 AS
+        SELECT * FROM (VALUES
+            (9002::INTEGER, 1::INTEGER, DATE '2024-01-10', 'right'::VARCHAR, NULL::VARCHAR),
+            (9002::INTEGER, 2::INTEGER, DATE '2024-01-12', 'right'::VARCHAR, NULL::VARCHAR)
+        ) AS v(research_id, fna_episode_id, fna_date_native, laterality, specimen_site_raw)
+        """
+    )
+    _materialize(con, link129)
+    prim = con.execute(
+        "SELECT BOOL_OR(is_primary_link) FROM imaging_fna_linkage_mm_v1"
+    ).fetchone()[0]
+    assert prim is False
+    amb = con.execute(
+        "SELECT COUNT(*) FROM review_queue_imaging_fna_mm_v1 WHERE review_reason = 'ambiguous_multimatch'"
+    ).fetchone()[0]
+    assert amb >= 1
+
+
+def test_discordant_side_in_review_not_linked(link129) -> None:
+    con = duckdb.connect(":memory:")
+    con.execute(
+        """
+        CREATE TABLE imaging_nodule_master_v1 AS SELECT * FROM (
+            SELECT 9003::INTEGER AS research_id,
+                   'n1'::VARCHAR AS nodule_id,
+                   'ex1'::VARCHAR AS exam_id,
+                   DATE '2024-02-01' AS exam_date,
+                   'left'::VARCHAR AS laterality,
+                   1.0::DOUBLE AS max_dimension_cm,
+                   NULL::VARCHAR AS accession_number
+        ) t
+        """
+    )
+    con.execute(
+        """
+        CREATE TABLE fna_episode_master_v2 AS SELECT * FROM (
+            SELECT 9003::INTEGER AS research_id,
+                   1::INTEGER AS fna_episode_id,
+                   DATE '2024-02-05' AS fna_date_native,
+                   'right'::VARCHAR AS laterality,
+                   NULL::VARCHAR AS specimen_site_raw
+        ) t
+        """
+    )
+    _materialize(con, link129)
+    n_link = con.execute("SELECT COUNT(*) FROM imaging_fna_linkage_mm_v1").fetchone()[0]
+    assert n_link == 0
+    n_rev = con.execute(
+        "SELECT COUNT(*) FROM review_queue_imaging_fna_mm_v1 "
+        "WHERE review_reason = 'discordant_laterality'"
+    ).fetchone()[0]
+    assert n_rev >= 1
+
+
+def test_size_drift_gt_20pct_excluded(link129) -> None:
+    con = duckdb.connect(":memory:")
+    con.execute(
+        """
+        CREATE TABLE imaging_nodule_master_v1 AS SELECT * FROM (
+            SELECT 9004::INTEGER AS research_id,
+                   'n1'::VARCHAR AS nodule_id,
+                   'ex1'::VARCHAR AS exam_id,
+                   DATE '2024-03-01' AS exam_date,
+                   'left'::VARCHAR AS laterality,
+                   2.0::DOUBLE AS max_dimension_cm,
+                   NULL::VARCHAR AS accession_number
+        ) t
+        """
+    )
+    con.execute(
+        """
+        CREATE TABLE fna_episode_master_v2 AS SELECT * FROM (
+            SELECT 9004::INTEGER AS research_id,
+                   1::INTEGER AS fna_episode_id,
+                   DATE '2024-03-08' AS fna_date_native,
+                   'left'::VARCHAR AS laterality,
+                   NULL::VARCHAR AS specimen_site_raw
+        ) t
+        """
+    )
+    con.execute(
+        """
+        CREATE TABLE fna_history AS SELECT * FROM (
+            SELECT 9004::BIGINT AS research_id,
+                   1::INTEGER AS fna_index,
+                   NULL::VARCHAR AS specimen_received,
+                   1.5::DOUBLE AS nodule_size_cm
+        ) t
+        """
+    )
+    _materialize(con, link129)
+    assert con.execute("SELECT COUNT(*) FROM imaging_fna_linkage_mm_v1").fetchone()[0] == 0
+    assert con.execute(
+        "SELECT COUNT(*) FROM review_queue_imaging_fna_mm_v1 "
+        "WHERE review_reason = 'size_drift_gt_20pct'"
+    ).fetchone()[0] >= 1
+
+
+def test_same_day_multi_fna_ordinals(link129) -> None:
+    con = duckdb.connect(":memory:")
+    con.execute(
+        """
+        CREATE TABLE imaging_nodule_master_v1 AS SELECT * FROM (
+            SELECT 9005::INTEGER AS research_id,
+                   'n1'::VARCHAR AS nodule_id,
+                   'ex1'::VARCHAR AS exam_id,
+                   DATE '2024-04-01' AS exam_date,
+                   'isthmus'::VARCHAR AS laterality,
+                   0.9::DOUBLE AS max_dimension_cm,
+                   NULL::VARCHAR AS accession_number
+        ) t
+        """
+    )
+    con.execute(
+        """
+        CREATE TABLE fna_episode_master_v2 AS
+        SELECT * FROM (VALUES
+            (9005::INTEGER, 1::INTEGER, DATE '2024-04-01', 'isthmus'::VARCHAR, NULL::VARCHAR),
+            (9005::INTEGER, 2::INTEGER, DATE '2024-04-01', 'isthmus'::VARCHAR, NULL::VARCHAR)
+        ) AS v(research_id, fna_episode_id, fna_date_native, laterality, specimen_site_raw)
+        """
+    )
+    _materialize(con, link129)
+    ords = con.execute(
+        "SELECT ordinal_in_nodule FROM imaging_fna_linkage_mm_v1 ORDER BY fna_episode_id"
+    ).fetchall()
+    assert [r[0] for r in ords] == [1, 2]
+    assert con.execute(
+        "SELECT BOOL_OR(is_primary_link) FROM imaging_fna_linkage_mm_v1"
+    ).fetchone()[0] is False
