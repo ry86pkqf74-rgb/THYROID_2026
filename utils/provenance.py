@@ -55,7 +55,8 @@ def infer_linkage_confidence(
     if not has_episode:
         return 0.0
     d_raw = ep_distance_days
-    d = float(d_raw) if pd.notna(d_raw) else None
+    d_num = pd.to_numeric(d_raw, errors="coerce")
+    d = float(d_num) if pd.notna(d_num) else None
     if d is None:
         return round(0.35 if multi else 0.55, 4)
     score = max(0.0, 1.0 - min(d, 180.0) / 180.0)

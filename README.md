@@ -207,6 +207,28 @@ streamlit run dashboard.py
 
 Open **http://localhost:8501** in your browser.
 
+### Lint / types
+
+Install tooling (pinned in [`requirements-dev.txt`](requirements-dev.txt)):
+
+```bash
+pip install -r requirements.txt -r requirements-dev.txt
+```
+
+**Pyflakes-style correctness (Ruff F-rules only)** — same scope as CI:
+
+```bash
+ruff check scripts app utils llm_extraction motherduck_client.py dashboard.py --select F
+```
+
+**Mypy** reads `[tool.mypy]` in [`pyproject.toml`](pyproject.toml) (`files = [...]`). Only those paths are checked in CI; expanding the list toward full-repo strict typing is intentional and incremental.
+
+```bash
+mypy
+```
+
+GitHub Actions runs the Ruff and Mypy commands above in the `ruff-and-mypy` job (no database secrets required).
+
 ### MotherDuck quickstart (staging / QC only)
 
 MotherDuck holds **no raw PHI**; tokens authenticate the cloud DuckDB attach. Use env vars (not CLI flags) for secrets.

@@ -167,6 +167,7 @@ def _assert_row_subset(actual: dict[str, Any], expected: dict[str, Any]) -> None
             if exp_val is None:
                 assert act_val is None
             else:
+                assert act_val is not None
                 assert float(act_val) == pytest.approx(float(exp_val))
         else:
             assert act_val == exp_val, f"{key!r}: got {act_val!r}, expected {exp_val!r}"
@@ -239,7 +240,9 @@ def test_duckdb_register_roundtrip(monkeypatch: pytest.MonkeyPatch) -> None:
     con = duckdb.connect(database=":memory:")
     try:
         con.register("entities", df)
-        n = con.execute("SELECT COUNT(*) FROM entities").fetchone()[0]
+        row_n = con.execute("SELECT COUNT(*) FROM entities").fetchone()
+        assert row_n is not None
+        n = row_n[0]
         assert int(n) == len(df)
     finally:
         con.close()

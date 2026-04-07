@@ -14,6 +14,20 @@ exclude = [
     "^archive/",
 ]
 
-# Incremental typing: only these entry points are type-checked today. Expanding this list is
-# encouraged; the rest of the repo is enforced by Ruff pyflakes rules (F) + pyflakes in CI.
-files = ["motherduck_client.py", "utils/md_connect.py"]
+# Incremental typing: expand this list over time. Full-repo strict mypy is not CI-gated yet.
+# Ruff F-rules cover pyflakes-style issues on scripts/app/utils/llm_extraction and entrypoints.
+files = [
+    "motherduck_client.py",
+    "tests",
+    "app/helpers.py",
+    "utils/__init__.py",
+    "utils/date_utils.py",
+    "utils/imaging_fna_linkage_mm_v1.py",
+    "utils/md_connect.py",
+    "utils/pathology_ln_narrative_extract.py",
+    "utils/provenance.py",
+    "utils/statistical_analysis.py",
+    "utils/surg_date_canonical.py",
+    "utils/text_helpers.py",
+    "utils/thyroseq_helpers.py",
+]

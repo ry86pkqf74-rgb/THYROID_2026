@@ -1,0 +1,3 @@
+# Dev-only pins for CI lint/type jobs. Install alongside requirements.txt when importing project modules.
+ruff==0.9.10
+mypy==1.15.0

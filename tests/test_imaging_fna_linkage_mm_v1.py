@@ -110,13 +110,17 @@ def test_ambiguous_dual_fna_no_primary(link129) -> None:
         """
     )
     _materialize(con, link129)
-    prim = con.execute(
+    row_prim = con.execute(
         "SELECT BOOL_OR(is_primary_link) FROM imaging_fna_linkage_mm_v1"
-    ).fetchone()[0]
+    ).fetchone()
+    assert row_prim is not None
+    prim = row_prim[0]
     assert prim is False
-    amb = con.execute(
+    row_amb = con.execute(
         "SELECT COUNT(*) FROM review_queue_imaging_fna_mm_v1 WHERE review_reason = 'ambiguous_multimatch'"
-    ).fetchone()[0]
+    ).fetchone()
+    assert row_amb is not None
+    amb = row_amb[0]
     assert amb >= 1
 
 
@@ -147,12 +151,16 @@ def test_discordant_side_in_review_not_linked(link129) -> None:
         """
     )
     _materialize(con, link129)
-    n_link = con.execute("SELECT COUNT(*) FROM imaging_fna_linkage_mm_v1").fetchone()[0]
+    row_link = con.execute("SELECT COUNT(*) FROM imaging_fna_linkage_mm_v1").fetchone()
+    assert row_link is not None
+    n_link = row_link[0]
     assert n_link == 0
-    n_rev = con.execute(
+    row_rev = con.execute(
         "SELECT COUNT(*) FROM review_queue_imaging_fna_mm_v1 "
         "WHERE review_reason = 'discordant_laterality'"
-    ).fetchone()[0]
+    ).fetchone()
+    assert row_rev is not None
+    n_rev = row_rev[0]
     assert n_rev >= 1
 
 
@@ -193,11 +201,15 @@ def test_size_drift_gt_20pct_excluded(link129) -> None:
         """
     )
     _materialize(con, link129)
-    assert con.execute("SELECT COUNT(*) FROM imaging_fna_linkage_mm_v1").fetchone()[0] == 0
-    assert con.execute(
+    row_n0 = con.execute("SELECT COUNT(*) FROM imaging_fna_linkage_mm_v1").fetchone()
+    assert row_n0 is not None
+    assert row_n0[0] == 0
+    row_sz = con.execute(
         "SELECT COUNT(*) FROM review_queue_imaging_fna_mm_v1 "
         "WHERE review_reason = 'size_drift_gt_20pct'"
-    ).fetchone()[0] >= 1
+    ).fetchone()
+    assert row_sz is not None
+    assert row_sz[0] >= 1
 
 
 def test_same_day_multi_fna_ordinals(link129) -> None:
@@ -229,6 +241,8 @@ def test_same_day_multi_fna_ordinals(link129) -> None:
         "SELECT ordinal_in_nodule FROM imaging_fna_linkage_mm_v1 ORDER BY fna_episode_id"
     ).fetchall()
     assert [r[0] for r in ords] == [1, 2]
-    assert con.execute(
+    row_prim2 = con.execute(
         "SELECT BOOL_OR(is_primary_link) FROM imaging_fna_linkage_mm_v1"
-    ).fetchone()[0] is False
+    ).fetchone()
+    assert row_prim2 is not None
+    assert row_prim2[0] is False
