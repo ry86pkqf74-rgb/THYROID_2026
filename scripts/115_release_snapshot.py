@@ -34,6 +34,14 @@ CANONICAL_TABLES = (
     "note_extraction_runs",
 )
 
+# Final manuscript master: core facts + labs + analyst presentation layer (views materialized as tables).
+FINAL_MASTER_TABLES = CANONICAL_TABLES + (
+    "longitudinal_lab_canonical_v1",
+    "master_fact_long_verified_v1",
+    "master_patient_rollup_verified_v1",
+    "master_source_lineage_v1",
+)
+
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Create immutable release snapshot schema.")
@@ -48,6 +56,11 @@ def parse_args() -> argparse.Namespace:
         help="Override table list (default: canonical tables).",
     )
     p.add_argument("--created-by", default="scripts/115_release_snapshot.py")
+    p.add_argument(
+        "--final-master",
+        action="store_true",
+        help="Snapshot FINAL_MASTER_TABLES (includes lab canonical + master_* verified views).",
+    )
     return p.parse_args()
 
 
@@ -79,7 +92,12 @@ def main() -> None:
     args = parse_args()
     tag = args.tag.strip()
     schema_name = f"release_{tag}"
-    tables = args.tables or list(CANONICAL_TABLES)
+    if args.tables:
+        tables = args.tables
+    elif args.final_master:
+        tables = list(FINAL_MASTER_TABLES)
+    else:
+        tables = list(CANONICAL_TABLES)
     sha = git_sha()
     reg_ver = registry_version()
 

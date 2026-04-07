@@ -54,12 +54,31 @@ WITH latest_release AS (
 review_lookup AS (
     SELECT
         research_id,
-        domain_name                         AS reviewer_domain,
-        verification_status                 AS reviewer_status,
-        verified_by                         AS reviewer_verified_by,
-        verified_at                         AS reviewer_decision_at,
-        notes                               AS reviewer_notes
-    FROM qa.manual_review_queue
+        reviewer_domain,
+        reviewer_status,
+        reviewer_verified_by,
+        reviewer_decision_at,
+        reviewer_notes
+    FROM (
+        SELECT
+            research_id,
+            domain                                AS reviewer_domain,
+            verification_status                   AS reviewer_status,
+            reviewer                              AS reviewer_verified_by,
+            reviewed_at                           AS reviewer_decision_at,
+            trim(both ' ' FROM concat_ws(
+                ' | ',
+                NULLIF(trim(COALESCE(reviewer_comment, '')), ''),
+                NULLIF(trim(COALESCE(reason_code, '')), ''),
+                NULLIF(trim(COALESCE(promotion_approved, '')), '')
+            ))                                    AS reviewer_notes,
+            ROW_NUMBER() OVER (
+                PARTITION BY research_id, domain
+                ORDER BY reviewed_at DESC NULLS LAST, loaded_at DESC
+            )                                     AS _rn
+        FROM qa.manual_review_queue
+    ) _mrq
+    WHERE _rn = 1
 )
 SELECT
     f.research_id,
@@ -71,7 +90,7 @@ SELECT
     -- extraction run linkage
     r.run_id                                AS extraction_run_id,
     r.extractor_build_version,
-    r.llm_model,
+    CAST(NULL AS VARCHAR)                  AS llm_model,
     r.started_at                            AS extraction_started_at,
     -- entity fields
     f.entity_type,

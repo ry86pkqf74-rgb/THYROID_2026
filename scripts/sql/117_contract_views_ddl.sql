@@ -6,17 +6,30 @@
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Longitudinal lab consumption view (deduped over thyroglobulin_lab_canonical_v1)
 -- ═══════════════════════════════════════════════════════════════════════════
+-- Aligned with scripts/113_tg_lab_ingestion.py DEDUP_VIEW_SQL (longitudinal_lab_canonical_v1).
 CREATE OR REPLACE VIEW main.longitudinal_lab_deduped_v AS
-SELECT *
-FROM (
-    SELECT *,
-           ROW_NUMBER() OVER (
-               PARTITION BY research_id, lab_date, lab_type, lab_value
-               ORDER BY research_id
-           ) AS _rn
-    FROM main.thyroglobulin_lab_canonical_v1
-) sub
-WHERE _rn = 1;
+WITH ranked AS (
+    SELECT
+        *,
+        ROW_NUMBER() OVER (
+            PARTITION BY research_id,
+                         lab_date,
+                         lab_name_standardized,
+                         COALESCE(CAST(value_numeric AS VARCHAR), value_raw)
+            ORDER BY
+                CASE
+                    WHEN ingestion_wave LIKE 'final_institutional%' THEN 0
+                    WHEN ingestion_wave LIKE 'wave_tg%'
+                      OR ingestion_wave LIKE 'wave_tgab%' THEN 1
+                    WHEN ingestion_wave LIKE 'wave_1%'
+                      OR ingestion_wave LIKE 'wave_2%' THEN 2
+                    ELSE 3
+                END,
+                source_script DESC
+        ) AS _rn
+    FROM main.longitudinal_lab_canonical_v1
+)
+SELECT * EXCLUDE (_rn) FROM ranked WHERE _rn = 1;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Episode contract tables

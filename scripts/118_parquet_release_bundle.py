@@ -63,6 +63,26 @@ QA_TABLES = [
     "manual_review_queue",
 ]
 
+# Curated bundle for manuscript stats (no raw note bodies; facts + lineage + labs).
+FINAL_MASTER_MAIN = [
+    "canonical_extracted_fact_long_v2",
+    "canonical_fact_quarantine_v2",
+    "note_extraction_runs",
+    "longitudinal_lab_canonical_v1",
+    "longitudinal_lab_deduped_v",
+    "master_fact_long_verified_v1",
+    "master_patient_rollup_verified_v1",
+    "master_source_lineage_v1",
+]
+
+FINAL_MASTER_QA = [
+    "promotion_scorecard",
+    "domain_validation",
+    "manual_review_queue",
+    "promotion_review_decisions",
+    "release_manifest",
+]
+
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Export Parquet release bundle from MotherDuck.")
@@ -71,6 +91,11 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--dry-run", action="store_true", help="Show what would be exported.")
     p.add_argument("--tag", default=None, help="Release tag (default: YYYYMMDD).")
     p.add_argument("--output-dir", default=None, help="Override output directory.")
+    p.add_argument(
+        "--final-master",
+        action="store_true",
+        help="Export FINAL_MASTER_MAIN + FINAL_MASTER_QA to exports/final_master_release_<tag>/",
+    )
     return p.parse_args()
 
 
@@ -140,6 +165,8 @@ def main() -> None:
 
     if args.output_dir:
         bundle_dir = Path(args.output_dir)
+    elif args.final_master:
+        bundle_dir = EXPORTS_DIR / f"final_master_release_{tag}"
     else:
         bundle_dir = EXPORTS_DIR / f"parquet_release_{tag}"
 
@@ -156,24 +183,29 @@ def main() -> None:
     try:
         print(f"=== Parquet Release Bundle: {tag} ===")
         print(f"  Output: {bundle_dir}")
+        if args.final_master:
+            print("  Mode: final-master (curated facts + labs + lineage; no note text)")
 
         print("\n--- main schema ---")
-        for table in MAIN_TABLES:
+        main_list = FINAL_MASTER_MAIN if args.final_master else MAIN_TABLES
+        for table in main_list:
             entry = export_table(con, "main", table, main_dir, args.dry_run)
             if entry:
                 manifest_entries.append(entry)
 
-        v2_domains = {
-            name: spec for name, spec in registry.v2_domains.items()
-            if spec.canonical_output
-        }
-        for name, spec in v2_domains.items():
-            entry = export_table(con, "main", spec.parquet_stem, main_dir, args.dry_run)
-            if entry:
-                manifest_entries.append(entry)
+        if not args.final_master:
+            v2_domains = {
+                name: spec for name, spec in registry.v2_domains.items()
+                if spec.canonical_output
+            }
+            for name, spec in v2_domains.items():
+                entry = export_table(con, "main", spec.parquet_stem, main_dir, args.dry_run)
+                if entry:
+                    manifest_entries.append(entry)
 
         print("\n--- qa schema ---")
-        for table in QA_TABLES:
+        qa_list = FINAL_MASTER_QA if args.final_master else QA_TABLES
+        for table in qa_list:
             entry = export_table(con, "qa", table, qa_dir, args.dry_run)
             if entry:
                 manifest_entries.append(entry)

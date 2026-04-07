@@ -32,6 +32,11 @@ CREATE TABLE IF NOT EXISTS qa.promotion_review_decisions (
     created_at          TIMESTAMP NOT NULL DEFAULT current_timestamp
 );
 
+-- Append-only batching + source traceability (final master release)
+ALTER TABLE qa.promotion_review_decisions ADD COLUMN IF NOT EXISTS decision_batch_id VARCHAR;
+ALTER TABLE qa.promotion_review_decisions ADD COLUMN IF NOT EXISTS source_object_id VARCHAR;
+ALTER TABLE qa.promotion_review_decisions ADD COLUMN IF NOT EXISTS evidence_ref VARCHAR;
+
 -- Concordance summary: per-domain concordance metrics by gate run
 CREATE TABLE IF NOT EXISTS qa.concordance_summary (
     run_label               VARCHAR NOT NULL,
