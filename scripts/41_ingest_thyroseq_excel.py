@@ -21,15 +21,23 @@ Outputs:
         fill_actions.csv
         parse_failures.csv
         molecular_enrichment.csv
+        molecular_results.csv
+        molecular_variant_long.csv
         followup_labs.csv
         followup_events.csv
+        review_queue.csv
         manifest.json
     docs/THYROSEQ_INTEGRATION_REPORT.md
+
+MotherDuck:
+    Use ``--md``; optional ``--md-env dev|qa|prod`` (database names from
+    ``config/motherduck_environments.yml`` / ``motherduck_client``).
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import logging
 import sys
@@ -46,6 +54,10 @@ sys.path.insert(0, str(ROOT))
 
 from utils.thyroseq_helpers import (
     compute_row_hash,
+    expand_cna_rows,
+    expand_fusion_variants,
+    expand_mutation_variants,
+    infer_thyroseq_panel_version,
     normalize_angioinvasion,
     normalize_dob,
     normalize_ete,
@@ -92,18 +104,93 @@ CROSSWALK_FILES = [
     "Thyroid all_Complications 12_1_25.xlsx",
 ]
 
+# Normalized layer: provenance + idempotent deletes per ingest batch
+MOLECULAR_SOURCE_TABLE = "41_thyroseq_excel_workbook"
+THYROSEQ_ASSAY_NAME = "ThyroSeq"
+THYROSEQ_VENDOR = "ThyroSeq"
+THYROSEQ_PLATFORM = "ThyroSeq"
+
+_MR_COLS = [
+    "molecular_result_id",
+    "research_id",
+    "source_patient_id",
+    "source_specimen_id",
+    "source_accession",
+    "assay_name",
+    "panel_version",
+    "platform",
+    "vendor",
+    "loinc_code",
+    "test_date_native",
+    "test_date_parsed",
+    "interpretation_summary",
+    "risk_call",
+    "canonical_hgvs",
+    "raw_payload_json",
+    "payload_checksum",
+    "parse_status",
+    "normalization_status",
+    "qc_flags",
+    "lineage_id",
+    "ingestion_ts",
+    "ingestion_run_id",
+    "source_table",
+    "source_row_fingerprint",
+    "molecular_episode_id",
+    "superseded_by_molecular_result_id",
+]
+
+_MVL_COLS = [
+    "molecular_variant_id",
+    "molecular_result_id",
+    "research_id",
+    "gene_symbol",
+    "transcript_id",
+    "genomic_hgvs",
+    "cdna_hgvs",
+    "protein_hgvs",
+    "canonical_hgvs",
+    "variant_class",
+    "allele_fraction",
+    "zygosity",
+    "interpretation_text",
+    "risk_call",
+    "parse_status",
+    "normalization_status",
+    "qc_flags",
+    "lineage_id",
+    "ingestion_ts",
+    "partner_gene_symbol",
+    "fusion_partner",
+    "raw_variant_token",
+]
+
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Database connection
 # ═══════════════════════════════════════════════════════════════════════════
 
-def connect(use_md: bool = False, use_local: bool = False) -> duckdb.DuckDBPyConnection:
+def connect(
+    use_md: bool = False,
+    use_local: bool = False,
+    md_env: str | None = None,
+) -> duckdb.DuckDBPyConnection:
     import os as _os
-    if use_local or _os.environ.get('USE_LOCAL_DUCKDB'):
-        path = _os.environ.get('LOCAL_DUCKDB_PATH', str(ROOT / 'thyroid_master_local.duckdb'))
+    if use_local or _os.environ.get("USE_LOCAL_DUCKDB"):
+        path = _os.environ.get("LOCAL_DUCKDB_PATH", str(ROOT / "thyroid_master_local.duckdb"))
         return duckdb.connect(path)
     from utils.md_connect import connect_md_or_file
-    return connect_md_or_file(DB_PATH, md=use_md, fail_closed=use_md)
+
+    return connect_md_or_file(
+        DB_PATH,
+        md=use_md,
+        fail_closed=False,
+        env=md_env,
+        custom_user_agent=_os.getenv(
+            "MOTHERDUCK_CUSTOM_USER_AGENT",
+            "THYROID_2026_scripts/41_ingest_thyroseq_excel",
+        ),
+    )
 
 def ingest_raw(excel_path: str) -> pd.DataFrame:
     log.info(f"Phase 1: Loading {excel_path}")
@@ -516,6 +603,328 @@ def build_molecular_table(raw: pd.DataFrame, matches: pd.DataFrame) -> pd.DataFr
     return df
 
 
+def _json_friendly(x):
+    if pd.isna(x) or x is None:
+        return None
+    if hasattr(x, "item"):
+        try:
+            return x.item()
+        except Exception:
+            pass
+    return x
+
+
+def _checksum_payload(obj: dict) -> str:
+    return hashlib.sha256(
+        json.dumps(obj, sort_keys=True, default=str).encode("utf-8")
+    ).hexdigest()
+
+
+def _variant_row_id(molecular_result_id: str, idx: int, spec: dict) -> str:
+    key = "|".join([
+        molecular_result_id,
+        str(idx),
+        str(spec.get("variant_class") or ""),
+        str(spec.get("raw_variant_token") or ""),
+        str(spec.get("gene_symbol") or ""),
+    ])
+    return hashlib.sha256(key.encode("utf-8")).hexdigest()[:32]
+
+
+def build_normalized_molecular_layers(
+    raw: pd.DataFrame,
+    matches: pd.DataFrame,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Build ``molecular_results`` and ``molecular_variant_long`` frames (governed layer)."""
+    log.info("Phase 5b: Building normalized molecular_results + molecular_variant_long")
+    mr_rows: list[dict] = []
+    mvl_rows: list[dict] = []
+    ing_ts = datetime.now()
+
+    for _, r in raw.iterrows():
+        mrow = matches.loc[matches["row_hash"] == r["row_hash"]]
+        if mrow.empty:
+            continue
+        rid = mrow["matched_research_id"].values[0]
+        if rid is None or pd.isna(rid):
+            continue
+        rid = int(rid)
+        match_review = bool(mrow["review_required"].values[0])
+        match_method = mrow["match_method"].values[0]
+
+        mut = parse_mutation_text(r.get("Thyroseq Mutation"))
+        fus = parse_fusion_text(r.get("Gene Fusions"))
+        cna_norm = parse_cna(r.get("Copy Number Alterations"))
+        gep_norm = parse_gep(r.get("Gene Expression Profile"))
+        panel_ver = infer_thyroseq_panel_version(
+            mut.get("mutation_raw"),
+            fus.get("fusion_raw"),
+            str(r.get("Pathology") or ""),
+        )
+
+        variant_specs: list[dict] = []
+        variant_specs.extend(expand_mutation_variants(mut))
+        variant_specs.extend(expand_fusion_variants(fus))
+        variant_specs.extend(expand_cna_rows(r.get("Copy Number Alterations"), cna_norm))
+
+        molecular_result_id = hashlib.sha256(
+            f"thyroseq_excel|{r['row_hash']}|{THYROSEQ_ASSAY_NAME}".encode(),
+        ).hexdigest()[:32]
+
+        qc_mr: list[str] = []
+        if match_review:
+            qc_mr.append("ambiguous_patient_match")
+        if fus.get("parse_status") == "test_failed":
+            qc_mr.append("fusion_assay_failed")
+        if mut.get("parse_status") not in ("ok", "null_input"):
+            qc_mr.append("mutation_parse_issue")
+        if fus.get("parse_status") not in ("ok", "null_input", "test_failed"):
+            qc_mr.append("fusion_parse_issue")
+
+        for spec in variant_specs:
+            for f in spec.get("af_qc_flags") or []:
+                if f not in qc_mr:
+                    qc_mr.append(f)
+            if spec.get("normalization_status") == "pending_review":
+                if "variant_normalization_pending" not in qc_mr:
+                    qc_mr.append("variant_normalization_pending")
+            if spec.get("parse_status") == "partial" and spec.get("variant_class") == "OTHER":
+                if "missing_variant_normalization" not in qc_mr:
+                    qc_mr.append("missing_variant_normalization")
+
+        if mut.get("negative_flag") and fus.get("fusion_flag"):
+            qc_mr.append("mutations_negative_with_reported_fusion")
+
+        parse_status_mr = "ok"
+        if fus.get("parse_status") == "test_failed":
+            parse_status_mr = "failed"
+        elif mut.get("parse_status") not in ("ok", "null_input"):
+            parse_status_mr = "partial"
+        elif fus.get("parse_status") not in ("ok", "null_input", "test_failed"):
+            parse_status_mr = "partial"
+        elif any(v.get("parse_status") == "partial" for v in variant_specs):
+            parse_status_mr = "partial"
+
+        if match_review or parse_status_mr == "failed":
+            norm_status_mr = "pending_review"
+        elif any(v.get("normalization_status") == "pending_review" for v in variant_specs):
+            norm_status_mr = "pending_review"
+        elif "af_out_of_bounds" in qc_mr or "af_unparseable" in qc_mr:
+            norm_status_mr = "quarantine"
+        else:
+            norm_status_mr = "normalized"
+
+        iparts = []
+        if gep_norm:
+            iparts.append(f"GEP:{gep_norm}")
+        path_val = r.get("Pathology")
+        if pd.notna(path_val) and str(path_val).strip():
+            iparts.append(str(path_val).strip()[:280])
+        interpretation = " | ".join(iparts) if iparts else None
+        risk_call = gep_norm if gep_norm in ("positive", "negative", "failed") else None
+
+        raw_payload = {
+            "workbook": {
+                "source_file": _json_friendly(r.get("source_file")),
+                "source_sheet": _json_friendly(r.get("source_sheet")),
+                "source_row_number": _json_friendly(r.get("source_row_number")),
+                "ingestion_batch_id": _json_friendly(r.get("ingestion_batch_id")),
+                "imported_at": _json_friendly(r.get("imported_at")),
+                "row_hash": _json_friendly(r.get("row_hash")),
+            },
+            "patient_keys": {
+                "mrn_norm": _json_friendly(r.get("mrn_norm")),
+                "dob_norm": str(r.get("dob_norm")) if r.get("dob_norm") is not None else None,
+                "name_norm": _json_friendly(r.get("name_norm")),
+            },
+            "match": {
+                "match_method": _json_friendly(match_method),
+                "match_confidence": float(mrow["match_confidence"].values[0])
+                if pd.notna(mrow["match_confidence"].values[0])
+                else None,
+                "review_required": match_review,
+            },
+            "molecular_raw": {
+                "Thyroseq Mutation": _json_friendly(r.get("Thyroseq Mutation")),
+                "Gene Fusions": _json_friendly(r.get("Gene Fusions")),
+                "Gene Expression Profile": _json_friendly(r.get("Gene Expression Profile")),
+                "Copy Number Alterations": _json_friendly(r.get("Copy Number Alterations")),
+            },
+            "molecular_parsed_summary": {
+                "mutation": {k: mut[k] for k in mut if k != "mutation_raw"},
+                "fusion": {k: fus[k] for k in fus if k != "fusion_raw"},
+                "gep_norm": gep_norm,
+                "cna_norm": cna_norm,
+            },
+        }
+        checksum = _checksum_payload(raw_payload)
+
+        mr_rows.append({
+            "molecular_result_id": molecular_result_id,
+            "research_id": rid,
+            "source_patient_id": str(r["mrn_norm"]) if r.get("mrn_norm") else None,
+            "source_specimen_id": None,
+            "source_accession": None,
+            "assay_name": THYROSEQ_ASSAY_NAME,
+            "panel_version": panel_ver,
+            "platform": THYROSEQ_PLATFORM,
+            "vendor": THYROSEQ_VENDOR,
+            "loinc_code": None,
+            "test_date_native": None,
+            "test_date_parsed": None,
+            "interpretation_summary": interpretation,
+            "risk_call": risk_call,
+            "canonical_hgvs": None,
+            "raw_payload_json": json.dumps(raw_payload, default=str),
+            "payload_checksum": checksum,
+            "parse_status": parse_status_mr,
+            "normalization_status": norm_status_mr,
+            "qc_flags": json.dumps(sorted(set(qc_mr))),
+            "lineage_id": str(rid),
+            "ingestion_ts": ing_ts,
+            "ingestion_run_id": BATCH_ID,
+            "source_table": MOLECULAR_SOURCE_TABLE,
+            "source_row_fingerprint": r["row_hash"],
+            "molecular_episode_id": None,
+            "superseded_by_molecular_result_id": None,
+        })
+
+        for i, spec in enumerate(variant_specs):
+            v_qc = list(spec.get("af_qc_flags") or [])
+            if spec.get("parse_status") == "failed":
+                v_qc.append("variant_parse_failed")
+            vid = _variant_row_id(molecular_result_id, i, spec)
+            mvl_rows.append({
+                "molecular_variant_id": vid,
+                "molecular_result_id": molecular_result_id,
+                "research_id": rid,
+                "gene_symbol": spec.get("gene_symbol"),
+                "transcript_id": None,
+                "genomic_hgvs": None,
+                "cdna_hgvs": None,
+                "protein_hgvs": None,
+                "canonical_hgvs": None,
+                "variant_class": spec.get("variant_class"),
+                "allele_fraction": spec.get("allele_fraction"),
+                "zygosity": None,
+                "interpretation_text": spec.get("interpretation_text"),
+                "risk_call": None,
+                "parse_status": spec.get("parse_status") or "ok",
+                "normalization_status": spec.get("normalization_status") or "normalized",
+                "qc_flags": json.dumps(sorted(set(v_qc))),
+                "lineage_id": str(rid),
+                "ingestion_ts": ing_ts,
+                "partner_gene_symbol": spec.get("partner_gene_symbol"),
+                "fusion_partner": spec.get("fusion_partner"),
+                "raw_variant_token": spec.get("raw_variant_token"),
+            })
+
+    mr_df = pd.DataFrame(mr_rows, columns=_MR_COLS) if mr_rows else pd.DataFrame(columns=_MR_COLS)
+    mvl_df = pd.DataFrame(mvl_rows, columns=_MVL_COLS) if mvl_rows else pd.DataFrame(columns=_MVL_COLS)
+    log.info(f"  molecular_results: {len(mr_df)} rows; molecular_variant_long: {len(mvl_df)} rows")
+    return mr_df, mvl_df
+
+
+def _molecular_layer_tables_present(con: duckdb.DuckDBPyConnection) -> bool:
+    """MotherDuck may duplicate information_schema rows across attached catalogs — probe tables directly."""
+    try:
+        con.execute("SELECT 1 FROM main.molecular_results LIMIT 1")
+        con.execute("SELECT 1 FROM main.molecular_variant_long LIMIT 1")
+        return True
+    except Exception:
+        return False
+
+
+def write_normalized_molecular_layer(
+    con: duckdb.DuckDBPyConnection,
+    mr_df: pd.DataFrame,
+    mvl_df: pd.DataFrame,
+    *,
+    dry_run: bool,
+):
+    """Append governed molecular layer rows (delete prior rows for same batch + source_table)."""
+    if dry_run:
+        log.info("Phase 10b: Normalized molecular layer — dry-run (no DB writes)")
+        return
+    if mr_df.empty:
+        log.info("Phase 10b: Normalized molecular layer skipped (no matched molecular rows)")
+        return
+    if not _molecular_layer_tables_present(con):
+        log.warning(
+            "Phase 10b: main.molecular_results / molecular_variant_long not found — "
+            "run scripts/131_molecular_results_layer.py --execute first. Skipping layer write.",
+        )
+        return
+
+    log.info("Phase 10b: Writing governed molecular_results + molecular_variant_long")
+    started = datetime.now()
+    con.execute(
+        """
+        INSERT INTO main.molecular_ingestion_runs (
+            ingestion_run_id, started_at, completed_at, source_system, runner_script, status, notes
+        ) VALUES (?, ?, NULL, ?, ?, 'running', NULL)
+        """,
+        [
+            BATCH_ID,
+            started,
+            "ThyroSeq_excel",
+            "41_ingest_thyroseq_excel.py",
+        ],
+    )
+
+    con.execute(
+        """
+        DELETE FROM main.molecular_variant_long WHERE molecular_result_id IN (
+            SELECT molecular_result_id FROM main.molecular_results WHERE source_table = ?
+        )
+        """,
+        [MOLECULAR_SOURCE_TABLE],
+    )
+    con.execute(
+        "DELETE FROM main.molecular_results WHERE source_table = ?",
+        [MOLECULAR_SOURCE_TABLE],
+    )
+
+    con.register("_mr_ins", mr_df)
+    cols_csv = ", ".join(_MR_COLS)
+    con.execute(
+        f"INSERT INTO main.molecular_results ({cols_csv}) SELECT {cols_csv} FROM _mr_ins",
+    )
+    con.unregister("_mr_ins")
+
+    if not mvl_df.empty:
+        con.register("_mvl_ins", mvl_df)
+        cols_m = ", ".join(_MVL_COLS)
+        con.execute(
+            f"INSERT INTO main.molecular_variant_long ({cols_m}) SELECT {cols_m} FROM _mvl_ins",
+        )
+        con.unregister("_mvl_ins")
+
+    completed = datetime.now()
+    con.execute(
+        """
+        UPDATE main.molecular_ingestion_runs
+        SET completed_at = ?, status = 'completed'
+        WHERE ingestion_run_id = ?
+        """,
+        [completed, BATCH_ID],
+    )
+
+    n_mr = con.execute(
+        "SELECT COUNT(*) FROM main.molecular_results WHERE source_table = ?",
+        [MOLECULAR_SOURCE_TABLE],
+    ).fetchone()[0]
+    n_v = con.execute(
+        """
+        SELECT COUNT(*) FROM main.molecular_variant_long v
+        INNER JOIN main.molecular_results r ON v.molecular_result_id = r.molecular_result_id
+        WHERE r.source_table = ?
+        """,
+        [MOLECULAR_SOURCE_TABLE],
+    ).fetchone()[0]
+    log.info(f"  Layer write complete: molecular_results batch rows={n_mr}, variant_long batch rows={n_v}")
+
+
 # ═══════════════════════════════════════════════════════════════════════════
 # Phase 6: Build follow-up labs long table
 # ═══════════════════════════════════════════════════════════════════════════
@@ -751,6 +1160,8 @@ def build_review_queue(
     matches: pd.DataFrame,
     parsed: pd.DataFrame,
     fill_actions: pd.DataFrame,
+    molecular_variant_long: pd.DataFrame | None = None,
+    molecular_results: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     log.info("Phase 9: Building review queue")
     rows = []
@@ -790,6 +1201,67 @@ def build_review_queue(
                 "created_at": now,
             })
 
+    mrid_to_row_hash: dict[str, str] = {}
+    if molecular_results is not None and len(molecular_results) and "source_row_fingerprint" in molecular_results.columns:
+        mrid_to_row_hash = dict(
+            zip(
+                molecular_results["molecular_result_id"].astype(str),
+                molecular_results["source_row_fingerprint"].astype(str),
+            ),
+        )
+
+    if molecular_variant_long is not None and len(molecular_variant_long):
+        for _, vr in molecular_variant_long.iterrows():
+            flags: list[str] = []
+            qcf = vr.get("qc_flags")
+            if isinstance(qcf, str) and qcf.strip():
+                try:
+                    flags = json.loads(qcf)
+                except json.JSONDecodeError:
+                    flags = []
+            elif isinstance(qcf, list):
+                flags = list(qcf)
+
+            detail_parts = []
+            if "af_out_of_bounds" in flags:
+                detail_parts.append("allele_fraction_out_of_bounds")
+            if "af_unparseable" in flags:
+                detail_parts.append("allele_fraction_unparseable")
+            if vr.get("parse_status") == "failed":
+                detail_parts.append("variant_parse_failed")
+            if (
+                vr.get("variant_class") == "OTHER"
+                and vr.get("parse_status") == "partial"
+            ):
+                detail_parts.append("missing_variant_normalization")
+
+            if not detail_parts:
+                continue
+
+            mrid = str(vr.get("molecular_result_id") or "")
+            source_hash = mrid_to_row_hash.get(mrid)
+
+            rows.append({
+                "source_row_hash": source_hash,
+                "suspected_research_ids": str(int(vr["research_id"]))
+                if pd.notna(vr.get("research_id"))
+                else None,
+                "issue_type": "molecular_qc",
+                "issue_detail": f"{','.join(detail_parts)}; variant_id={vr.get('molecular_variant_id')}",
+                "recommended_action": "review_molecular_variant_long",
+                "created_at": now,
+            })
+
+    cols = [
+        "source_row_hash",
+        "suspected_research_ids",
+        "issue_type",
+        "issue_detail",
+        "recommended_action",
+        "created_at",
+    ]
+    if not rows:
+        return pd.DataFrame(columns=cols)
     df = pd.DataFrame(rows)
     if len(df):
         log.info(f"  Review queue: {len(df)} items")
@@ -865,6 +1337,8 @@ def export_outputs(
     matches: pd.DataFrame,
     parsed: pd.DataFrame,
     molecular: pd.DataFrame,
+    molecular_results_norm: pd.DataFrame,
+    molecular_variant_long: pd.DataFrame,
     labs: pd.DataFrame,
     events: pd.DataFrame,
     fill_actions: pd.DataFrame,
@@ -891,6 +1365,8 @@ def export_outputs(
         "fill_actions.csv": fill_actions,
         "parse_failures.csv": parse_fail,
         "molecular_enrichment.csv": molecular,
+        "molecular_results.csv": molecular_results_norm,
+        "molecular_variant_long.csv": molecular_variant_long,
         "followup_labs.csv": labs,
         "followup_events.csv": events,
         "review_queue.csv": review_queue,
@@ -910,6 +1386,8 @@ def export_outputs(
         "review_required": int(matches["review_required"].sum()),
         "unmatched_rows": int(matches["matched_research_id"].isna().sum()),
         "molecular_rows": len(molecular),
+        "molecular_results_rows": len(molecular_results_norm),
+        "molecular_variant_long_rows": len(molecular_variant_long),
         "lab_rows": len(labs),
         "event_rows": len(events),
         "fill_actions": len(fill_actions),
@@ -952,6 +1430,19 @@ def write_integration_report(out_dir: Path, manifest: dict, matches: pd.DataFram
         f"**Batch ID:** `{BATCH_ID}`  ",
         f"**Git SHA:** `{manifest.get('git_sha', 'unknown')}`  ",
         "",
+        "## Prerequisites (normalized layer)",
+        "",
+        "Governed tables `molecular_results` and `molecular_variant_long` must exist on the "
+        "target database. Apply DDL once per environment:",
+        "",
+        "```text",
+        ".venv/bin/python scripts/131_molecular_results_layer.py --execute",
+        ".venv/bin/python scripts/131_molecular_results_layer.py --execute --md --md-env dev",
+        "```",
+        "",
+        "Local `--local` runs use `thyroid_master_local.duckdb` by default unless "
+        "`LOCAL_DUCKDB_PATH` points at the file where 131 was applied (often `thyroid_master.duckdb`).",
+        "",
         "## Summary Metrics",
         "",
         "| Metric | Count |",
@@ -961,6 +1452,8 @@ def write_integration_report(out_dir: Path, manifest: dict, matches: pd.DataFram
         f"| Manual review required | {manifest['review_required']} |",
         f"| Unmatched rows | {manifest['unmatched_rows']} |",
         f"| Molecular enrichment rows | {manifest['molecular_rows']} |",
+        f"| Normalized molecular_results | {manifest.get('molecular_results_rows', 0)} |",
+        f"| Normalized molecular_variant_long | {manifest.get('molecular_variant_long_rows', 0)} |",
         f"| Follow-up lab rows | {manifest['lab_rows']} |",
         f"| Follow-up event rows | {manifest['event_rows']} |",
         f"| Fill actions | {manifest['fill_actions']} |",
@@ -1007,11 +1500,20 @@ def write_integration_report(out_dir: Path, manifest: dict, matches: pd.DataFram
         "| `stg_thyroseq_excel_raw` | Raw staging with all original columns + identifiers |",
         "| `stg_thyroseq_match_results` | Patient matching results |",
         "| `stg_thyroseq_parsed` | Parsed/normalized fields |",
-        "| `thyroseq_molecular_enrichment` | Molecular findings (long format) |",
+        "| `thyroseq_molecular_enrichment` | Molecular findings (staging / legacy wide flags) |",
+        "| `molecular_results` | Governed assay envelope (one row per ThyroSeq test; normalized layer) |",
+        "| `molecular_variant_long` | Governed atomic variants (SNV / FUSION / CNV per call) |",
         "| `thyroseq_followup_labs` | Serial Tg/TgAb/TSH values (long format) |",
         "| `thyroseq_followup_events` | Surgery/RAI/imaging events (long format) |",
         "| `thyroseq_fill_actions` | Audit log of field fills |",
         "| `thyroseq_review_queue` | Items requiring manual review |",
+        "",
+        "## Normalized export artifacts",
+        "",
+        "CSV mirrors of the governed layer (same ingest batch):",
+        "",
+        "- `molecular_results.csv` — assay envelope + `payload_checksum` + workbook provenance in JSON",
+        "- `molecular_variant_long.csv` — long variants with allele fractions (0..1) and QC flags",
         "",
         "## Export Directory",
         "",
@@ -1030,8 +1532,13 @@ def write_integration_report(out_dir: Path, manifest: dict, matches: pd.DataFram
 def main():
     ap = argparse.ArgumentParser(description="ThyroSeq workbook integration pipeline")
     ap.add_argument("--input", required=True, help="Path to Thyroseq Data Complete.xlsx")
-    ap.add_argument("--md", action="store_true", help="Use local DuckDB")
-    ap.add_argument("--local", action="store_true", help="Force local DuckDB")
+    ap.add_argument("--md", action="store_true", help="Connect to MotherDuck (see md_connect / secrets)")
+    ap.add_argument(
+        "--md-env",
+        default=None,
+        help="MotherDuck environment selector (dev|qa|prod) passed to connect_md_or_file",
+    )
+    ap.add_argument("--local", action="store_true", help="Force local DuckDB file")
     ap.add_argument("--dry-run", action="store_true", help="Parse/match only, no DB writes")
     args = ap.parse_args()
 
@@ -1040,7 +1547,7 @@ def main():
         log.error(f"Input file not found: {input_path}")
         sys.exit(1)
 
-    con = connect(use_md=args.md, use_local=args.local)
+    con = connect(use_md=args.md, use_local=args.local, md_env=args.md_env)
 
     # Phase 1: Raw ingest
     raw = ingest_raw(str(input_path))
@@ -1054,8 +1561,11 @@ def main():
     # Phase 4: Parse
     parsed = parse_all_fields(raw, matches)
 
-    # Phase 5: Molecular table
+    # Phase 5: Molecular table (legacy staging)
     molecular = build_molecular_table(raw, matches)
+
+    # Phase 5b: Governed molecular layer (molecular_results + molecular_variant_long)
+    mr_df, mvl_df = build_normalized_molecular_layers(raw, matches)
 
     # Phase 6: Follow-up labs
     labs = build_followup_labs(raw, matches)
@@ -1067,17 +1577,36 @@ def main():
     fill_actions = fill_missing_values(parsed, matches, con, dry_run=args.dry_run)
 
     # Phase 9: Review queue
-    review_queue = build_review_queue(raw, matches, parsed, fill_actions)
+    review_queue = build_review_queue(
+        raw,
+        matches,
+        parsed,
+        fill_actions,
+        molecular_variant_long=mvl_df,
+        molecular_results=mr_df,
+    )
 
     # Phase 10: Write to DB
     if not args.dry_run:
         write_to_duckdb(con, raw, matches, parsed, molecular, labs, events,
                         fill_actions, review_queue)
+        write_normalized_molecular_layer(con, mr_df, mvl_df, dry_run=False)
 
     # Phase 11: Export
     out_dir = ROOT / "exports" / f"thyroseq_integration_{TIMESTAMP}"
-    manifest = export_outputs(out_dir, raw, matches, parsed, molecular, labs,
-                              events, fill_actions, review_queue)
+    manifest = export_outputs(
+        out_dir,
+        raw,
+        matches,
+        parsed,
+        molecular,
+        mr_df,
+        mvl_df,
+        labs,
+        events,
+        fill_actions,
+        review_queue,
+    )
 
     # Phase 12: Report
     write_integration_report(out_dir, manifest, matches, review_queue, fill_actions)

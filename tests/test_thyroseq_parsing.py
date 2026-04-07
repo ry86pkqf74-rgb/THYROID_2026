@@ -12,6 +12,11 @@ import pytest
 
 from utils.thyroseq_helpers import (
     compute_row_hash,
+    expand_cna_rows,
+    expand_fusion_variants,
+    expand_mutation_variants,
+    infer_thyroseq_panel_version,
+    normalize_allele_fraction_value,
     normalize_angioinvasion,
     normalize_dob,
     normalize_ete,
@@ -350,6 +355,54 @@ class TestParseImaging:
 
 
 # ─── Mutation parser ────────────────────────────────────────────────────
+
+class TestNormalizeAlleleFraction:
+    def test_percent_to_fraction(self):
+        v, flags = normalize_allele_fraction_value(5.0)
+        assert v == pytest.approx(0.05)
+        assert flags == []
+
+    def test_already_fraction(self):
+        v, flags = normalize_allele_fraction_value(0.05)
+        assert v == pytest.approx(0.05)
+
+    def test_oob(self):
+        v, flags = normalize_allele_fraction_value(101.0)
+        assert v is None
+        assert "af_out_of_bounds" in flags
+
+
+class TestInferThyroseqPanelVersion:
+    def test_v3_snippet(self):
+        assert infer_thyroseq_panel_version("ThyroSeq v3 panel run") == "v3"
+
+
+class TestExpandMutationVariants:
+    def test_multi_gene(self):
+        p = parse_mutation_text(
+            "TERT (positive, AF44%), PIK3CA (positive 42%), BRAF (positive, 36%)",
+        )
+        rows = expand_mutation_variants(p)
+        genes = {r["gene_symbol"] for r in rows}
+        assert genes == {"TERT", "PIK3CA", "BRAF"}
+
+
+class TestExpandFusionVariants:
+    def test_ret_fusion(self):
+        p = parse_fusion_text("CCDC6/RET")
+        rows = expand_fusion_variants(p)
+        assert len(rows) == 1
+        assert rows[0]["variant_class"] == "FUSION"
+        assert rows[0]["gene_symbol"] == "CCDC6"
+        assert rows[0]["partner_gene_symbol"] == "RET"
+
+
+class TestExpandCnaRows:
+    def test_positive_high(self):
+        rows = expand_cna_rows("positive (high)", parse_cna("positive (high)"))
+        assert len(rows) == 1
+        assert rows[0]["variant_class"] == "CNV"
+
 
 class TestParseMutation:
     def test_braf(self):

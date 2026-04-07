@@ -714,3 +714,200 @@ def parse_days_to_tg(x: Any) -> int | None:
         v = int(m.group(1))
         return v if 0 <= v <= 10000 else None
     return None
+
+
+# ---------------------------------------------------------------------------
+# Normalized molecular layer (molecular_results / molecular_variant_long)
+# ---------------------------------------------------------------------------
+
+_panel_ver = re.compile(r"(?i)thyroseq[^\n]{0,40}?v\s*([23])(?:\b|\.0)|\bv\s*([23])\s*panel\b")
+
+
+def infer_thyroseq_panel_version(*texts: str | None) -> str | None:
+    """Infer a simple panel version token (e.g. 'v3') from free text if present."""
+    blob = " ".join(t for t in texts if t) if texts else ""
+    if not blob.strip():
+        return None
+    m = _panel_ver.search(blob)
+    if not m:
+        return None
+    v = m.group(1) or m.group(2)
+    return f"v{v}" if v else None
+
+
+def normalize_allele_fraction_value(raw: float | None) -> tuple[float | None, list[str]]:
+    """Map allele fraction to 0..1 for storage; ThyroSeq text often uses percent (e.g. 5 for 5%)."""
+    flags: list[str] = []
+    if raw is None:
+        return None, flags
+    try:
+        v = float(raw)
+    except (TypeError, ValueError):
+        return None, ["af_unparseable"]
+    if v < 0:
+        return None, ["af_out_of_bounds"]
+    if v <= 1.0:
+        return v, flags
+    if v <= 100.0:
+        return v / 100.0, flags
+    return None, ["af_out_of_bounds"]
+
+
+def _gene_context_fragment(raw: str, gene: str) -> str | None:
+    if not raw:
+        return None
+    pat = re.compile(rf"(\b{re.escape(gene)}\b[^,;]{{0,160}})", re.IGNORECASE)
+    m = pat.search(raw)
+    if m:
+        return m.group(1).strip()
+    return gene
+
+
+def expand_mutation_variants(mut_parsed: dict[str, Any]) -> list[dict[str, Any]]:
+    """SNV-style atomic rows from ``parse_mutation_text`` output."""
+    rows: list[dict[str, Any]] = []
+    if mut_parsed.get("negative_flag") or mut_parsed.get("parse_status") == "null_input":
+        return rows
+    raw = mut_parsed.get("mutation_raw") or ""
+    af_map: dict[str, float] = mut_parsed.get("allele_fractions") or {}
+
+    genes: list[str] = []
+    if mut_parsed.get("braf_flag"):
+        genes.append("BRAF")
+    if mut_parsed.get("ras_flag"):
+        st = mut_parsed.get("ras_subtype") or ""
+        genes.extend([x.strip() for x in st.split(",") if x.strip()])
+    if mut_parsed.get("tert_flag"):
+        genes.append("TERT")
+    if mut_parsed.get("tp53_flag"):
+        genes.append("TP53")
+    if mut_parsed.get("pik3ca_flag"):
+        genes.append("PIK3CA")
+    if mut_parsed.get("tshr_flag"):
+        genes.append("TSHR")
+    if mut_parsed.get("eif1ax_flag"):
+        genes.append("EIF1AX")
+    if mut_parsed.get("dicer1_flag"):
+        genes.append("DICER1")
+
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for g in genes:
+        u = g.upper()
+        if u not in seen:
+            seen.add(u)
+            ordered.append(u)
+
+    for g in ordered:
+        af_raw = af_map.get(g)
+        if af_raw is None and len(ordered) == 1:
+            af_raw = af_map.get("unknown")
+        af_norm, af_flags = normalize_allele_fraction_value(af_raw)
+        norm_status = "normalized"
+        if af_flags:
+            norm_status = "pending_review"
+        rows.append({
+            "gene_symbol": g,
+            "partner_gene_symbol": None,
+            "fusion_partner": None,
+            "variant_class": "SNV",
+            "allele_fraction_raw": af_raw,
+            "allele_fraction": af_norm,
+            "af_qc_flags": af_flags,
+            "raw_variant_token": _gene_context_fragment(raw, g) or g,
+            "interpretation_text": None,
+            "parse_status": mut_parsed.get("parse_status") or "ok",
+            "normalization_status": norm_status,
+        })
+
+    if not rows and raw.strip() and mut_parsed.get("parse_status") == "ok":
+        rows.append({
+            "gene_symbol": None,
+            "partner_gene_symbol": None,
+            "fusion_partner": None,
+            "variant_class": "OTHER",
+            "allele_fraction_raw": None,
+            "allele_fraction": None,
+            "af_qc_flags": [],
+            "raw_variant_token": raw.strip()[:500],
+            "interpretation_text": None,
+            "parse_status": "partial",
+            "normalization_status": "pending_review",
+        })
+
+    return rows
+
+
+def expand_fusion_variants(fus_parsed: dict[str, Any]) -> list[dict[str, Any]]:
+    """FUSION rows from ``parse_fusion_text`` output (one per fusion token)."""
+    rows: list[dict[str, Any]] = []
+    status = fus_parsed.get("parse_status") or "ok"
+    raw = fus_parsed.get("fusion_raw") or ""
+
+    if status == "null_input":
+        return rows
+    if status == "test_failed":
+        rows.append({
+            "gene_symbol": None,
+            "partner_gene_symbol": None,
+            "fusion_partner": None,
+            "variant_class": "OTHER",
+            "allele_fraction_raw": None,
+            "allele_fraction": None,
+            "af_qc_flags": [],
+            "raw_variant_token": raw.strip()[:500] if raw else None,
+            "interpretation_text": "ThyroSeq fusion assay failed",
+            "parse_status": "failed",
+            "normalization_status": "pending_review",
+        })
+        return rows
+
+    if not fus_parsed.get("fusion_flag"):
+        return rows
+
+    tokens = fus_parsed.get("fusion_genes") or []
+    for tok in tokens:
+        t = tok.strip()
+        if not t:
+            continue
+        gene = None
+        partner = None
+        m = re.match(r"^(\w+)\s*[/\-]\s*(\w+)$", t)
+        if m:
+            gene, partner = m.group(1).upper(), m.group(2).upper()
+        else:
+            gene, partner = None, None
+        rows.append({
+            "gene_symbol": gene,
+            "partner_gene_symbol": partner,
+            "fusion_partner": t[:500],
+            "variant_class": "FUSION",
+            "allele_fraction_raw": None,
+            "allele_fraction": None,
+            "af_qc_flags": [],
+            "raw_variant_token": t[:500],
+            "interpretation_text": None,
+            "parse_status": status,
+            "normalization_status": "normalized",
+        })
+    return rows
+
+
+def expand_cna_rows(cna_raw: Any, cna_norm: str | None) -> list[dict[str, Any]]:
+    """At most one CNV summary row when copy-number text exists."""
+    s = _clean(cna_raw)
+    if s is None:
+        return []
+    return [{
+        "gene_symbol": None,
+        "partner_gene_symbol": None,
+        "fusion_partner": None,
+        "variant_class": "CNV",
+        "allele_fraction_raw": None,
+        "allele_fraction": None,
+        "af_qc_flags": [],
+        "raw_variant_token": s[:500],
+        "interpretation_text": cna_norm,
+        "parse_status": "ok",
+        "normalization_status": "normalized",
+    }]
