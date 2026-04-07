@@ -309,3 +309,124 @@ con = connect_md_fail_closed(DB_PATH)
 ```
 
 Token resolution is handled internally by `motherduck_client.get_token()`. Do not pass tokens as function arguments.
+
+---
+
+## Formalized promotion runbook (v2 — 2026-04-07)
+
+The full end-to-end promotion sequence, suitable for MotherDuck paid-plan workflows.
+See also: `docs/motherduck_database_contract_v1.md` for the full schema and table catalog.
+
+### Step 0: Preflight
+
+```bash
+# Verify token is resolvable
+.venv/bin/python -c "
+from motherduck_client import token_mode
+mode = token_mode()
+print(f'Token source: {mode}')
+assert mode != 'none', 'ERROR: no token found'
+"
+
+# Smoke-test MD connection
+.venv/bin/python scripts/smoke_test_md_connection.py --md
+```
+
+### Step 1: Stage refresh
+
+```bash
+.venv/bin/python scripts/116_md_stage_loader.py --md
+```
+
+Loads all v2 domain parquets into `v2_stage`, verifies row counts, writes to `v2_stage.load_inventory`.
+
+### Step 2: Promotion gate
+
+```bash
+RUN_LABEL=promote_$(date +%Y%m%d_%H%M)
+.venv/bin/python scripts/112_v2_domain_promotion_gate.py \
+    --v2-parquets-dir processed/output/v2_parquets \
+    --db-path thyroid_master.duckdb \
+    --motherduck-check \
+    --run-label "${RUN_LABEL}" \
+    --output-dir "studies/v2_domain_promotion_gate_${RUN_LABEL}"
+```
+
+All 8 gates must be PASS. Review `promotion_scorecard.csv` and `manual_review_queue.csv`.
+
+### Step 3: Hydrate QA tables
+
+```bash
+.venv/bin/python scripts/114_qa_schema_setup.py --md \
+    --hydrate-from "studies/v2_domain_promotion_gate_${RUN_LABEL}"
+```
+
+### Step 4: Execute promotion SQL
+
+Review the generated `motherduck_promote.sql` carefully, then execute it against MotherDuck.
+
+### Step 5: Canonical materialization
+
+```bash
+.venv/bin/python scripts/103_fact_lineage_materialize.py --md
+```
+
+### Step 6: Contract views
+
+```bash
+.venv/bin/python scripts/117_md_contract_views.py --md --skip-canonical
+```
+
+### Step 7: Release snapshot
+
+```bash
+.venv/bin/python scripts/115_release_snapshot.py --md --tag $(date +%Y%m%d)
+```
+
+### Step 8: Parquet release bundle
+
+```bash
+.venv/bin/python scripts/118_parquet_release_bundle.py --md
+```
+
+### Step 9: Validation
+
+```bash
+.venv/bin/python scripts/119_md_formalization_validate.py --md
+```
+
+### MotherDuck paid-plan snapshot verification
+
+```sql
+-- Verify databases attached
+SELECT * FROM duckdb_databases();
+
+-- List schemas with table counts
+SELECT table_schema, COUNT(*) AS n_tables
+FROM information_schema.tables
+GROUP BY table_schema
+ORDER BY 1;
+
+-- Check release schemas exist
+SHOW SCHEMAS;
+
+-- Verify release manifest
+SELECT * FROM qa.release_manifest ORDER BY created_at DESC LIMIT 5;
+
+-- Check query history (available in MD UI for audit)
+-- MotherDuck paid plans retain 90-day query history
+```
+
+### Fail-closed script inventory (updated)
+
+| Script | Behavior when MotherDuck unreachable |
+|--------|--------------------------------------|
+| `116_md_stage_loader.py --md` | Exits 1, no local write |
+| `02b_register_notes_entities.py --md` | Exits 1, no local write |
+| `103_fact_lineage_materialize.py --md` | Exits 1, no local write |
+| `113_tg_lab_ingestion.py --md` | Exits 1, no local write |
+| `117_md_contract_views.py --md` | Exits 1, no local write |
+| `114_qa_schema_setup.py --md` | Exits 1, no local write |
+| `115_release_snapshot.py --md` | Exits 1, no local write |
+| `118_parquet_release_bundle.py --md` | Exits 1, no local write |
+| `119_md_formalization_validate.py --md` | Exits 1, no local write |

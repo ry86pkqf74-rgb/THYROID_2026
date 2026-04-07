@@ -151,6 +151,73 @@ def hydrate_concordance(con: duckdb.DuckDBPyConnection, gate_dir: Path) -> None:
     print(f"  [hydrate] qa.concordance_summary: {len(insert_df)} rows from {run_label}")
 
 
+def hydrate_manual_review_queue(con: duckdb.DuckDBPyConnection, gate_dir: Path) -> None:
+    csv_path = gate_dir / "manual_review_queue.csv"
+    if not csv_path.exists():
+        print(f"  [skip] {csv_path} not found")
+        return
+    df = pd.read_csv(csv_path)
+    if df.empty:
+        print(f"  [skip] manual_review_queue.csv is empty")
+        return
+    run_label = gate_dir.name
+
+    col_map = {
+        "review_row_id": "review_row_id",
+        "research_id": "research_id",
+        "domain": "domain",
+        "comparison_domain": "domain",
+        "entity_type": "entity_type",
+        "entity_value_norm": "entity_value_norm",
+        "algorithm_status": "algorithm_status",
+        "algorithm_comparison_status": "algorithm_status",
+        "review_reason": "review_reason",
+        "verification_status": "verification_status",
+        "reviewer": "reviewer",
+        "reviewed_at": "reviewed_at",
+    }
+
+    insert_data: dict[str, list] = {
+        "review_row_id": [],
+        "run_label": [],
+        "research_id": [],
+        "domain": [],
+        "entity_type": [],
+        "entity_value_norm": [],
+        "algorithm_status": [],
+        "review_reason": [],
+        "verification_status": [],
+        "reviewer": [],
+        "reviewed_at": [],
+        "loaded_at": [],
+    }
+
+    now = datetime.now(timezone.utc).isoformat()
+    for idx, row in df.iterrows():
+        insert_data["review_row_id"].append(int(idx))
+        insert_data["run_label"].append(run_label)
+        for target_col in ["research_id", "domain", "entity_type", "entity_value_norm",
+                           "algorithm_status", "review_reason", "verification_status",
+                           "reviewer", "reviewed_at"]:
+            val = None
+            for src_col, mapped in col_map.items():
+                if mapped == target_col and src_col in df.columns:
+                    val = row.get(src_col)
+                    if pd.isna(val):
+                        val = None
+                    break
+            insert_data[target_col].append(val)
+        insert_data["loaded_at"].append(now)
+
+    insert_df = pd.DataFrame(insert_data)
+
+    con.execute(f"DELETE FROM qa.manual_review_queue WHERE run_label = '{run_label}'")
+    con.register("_mrq_tmp", insert_df)
+    con.execute("INSERT INTO qa.manual_review_queue SELECT * FROM _mrq_tmp")
+    con.unregister("_mrq_tmp")
+    print(f"  [hydrate] qa.manual_review_queue: {len(insert_df)} rows from {run_label}")
+
+
 def main() -> None:
     args = parse_args()
     con = get_connection(args)
@@ -162,6 +229,7 @@ def main() -> None:
             hydrate_scorecard(con, args.hydrate_from)
             hydrate_domain_validation(con, args.hydrate_from)
             hydrate_concordance(con, args.hydrate_from)
+            hydrate_manual_review_queue(con, args.hydrate_from)
         elif args.hydrate_from:
             print(f"  [warn] --hydrate-from path not found: {args.hydrate_from}")
 

@@ -85,3 +85,77 @@ CREATE TABLE IF NOT EXISTS qa.release_manifest (
     created_at          TIMESTAMP NOT NULL DEFAULT current_timestamp,
     created_by          VARCHAR
 );
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Manual review queue: rows flagged for human review during promotion gate
+-- ═══════════════════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS qa.manual_review_queue (
+    review_row_id       INTEGER,
+    run_label           VARCHAR NOT NULL,
+    research_id         BIGINT,
+    domain              VARCHAR NOT NULL,
+    entity_type         VARCHAR,
+    entity_value_norm   VARCHAR,
+    algorithm_status    VARCHAR,
+    review_reason       VARCHAR,
+    verification_status VARCHAR,
+    reviewer            VARCHAR,
+    reviewed_at         TIMESTAMP,
+    loaded_at           TIMESTAMP NOT NULL DEFAULT current_timestamp
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Summary views for QA dashboards
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE VIEW qa.promotion_scorecard_summary_v AS
+SELECT run_label,
+       COUNT(*) AS total_gates,
+       COUNT(*) FILTER (WHERE status = 'PASS') AS passed,
+       COUNT(*) FILTER (WHERE status = 'FAIL') AS failed,
+       COUNT(*) FILTER (WHERE status NOT IN ('PASS', 'FAIL')) AS conditional,
+       MAX(generated_at) AS last_run
+FROM qa.promotion_scorecard
+GROUP BY run_label;
+
+CREATE OR REPLACE VIEW qa.domain_validation_summary_v AS
+SELECT run_label,
+       COUNT(*) AS domains_checked,
+       COUNT(*) FILTER (WHERE schema_ok) AS schema_ok_count,
+       SUM(total_rows) AS total_rows_all_domains,
+       SUM(unique_patients) AS total_patients_all_domains,
+       AVG(dup_rate) AS avg_dup_rate,
+       MAX(dup_rate) AS max_dup_rate,
+       AVG(entity_date_fill_pct) AS avg_entity_date_fill,
+       MIN(entity_date_fill_pct) AS min_entity_date_fill,
+       AVG(note_date_fill_pct) AS avg_note_date_fill,
+       MAX(generated_at) AS last_run
+FROM qa.domain_validation
+GROUP BY run_label;
+
+CREATE OR REPLACE VIEW qa.date_provenance_completeness_v AS
+SELECT domain_name,
+       total_rows,
+       unique_patients,
+       entity_date_fill_pct,
+       note_date_fill_pct,
+       provenance_cols_present,
+       CASE WHEN entity_date_fill_pct >= 50 AND note_date_fill_pct >= 50
+            THEN 'adequate'
+            WHEN entity_date_fill_pct >= 30 OR note_date_fill_pct >= 30
+            THEN 'marginal'
+            ELSE 'insufficient'
+       END AS completeness_tier,
+       run_label
+FROM qa.domain_validation
+WHERE run_label = (SELECT MAX(run_label) FROM qa.domain_validation);
+
+CREATE OR REPLACE VIEW qa.manual_review_queue_summary_v AS
+SELECT run_label,
+       domain,
+       COUNT(*) AS total_items,
+       COUNT(*) FILTER (WHERE verification_status IS NOT NULL) AS reviewed,
+       COUNT(*) FILTER (WHERE verification_status IS NULL) AS pending,
+       COUNT(DISTINCT research_id) AS unique_patients
+FROM qa.manual_review_queue
+GROUP BY run_label, domain;
