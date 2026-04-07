@@ -37,6 +37,12 @@ Deploy with **`138 --md`** (recommended) or **`143_md_specimen_fhir_qa_diagnosti
 
 Before promoting specimen/FHIR changes, **`138`** attempts `CREATE SNAPSHOT <name> OF "<database>"` (see script; DuckLake may skip). For scratch validation from a snapshot, use org-specific clone/runbook steps in [`motherduck_sandbox_clone_runbook.md`](motherduck_sandbox_clone_runbook.md) when your token role permits.
 
+### Scope vs `115` / `118` final-master artifacts
+
+[`scripts/115_release_snapshot.py`](115_release_snapshot.py) with `--final-master` copies **`FINAL_MASTER_TABLES`** into `release_<tag>`: canonical cores, `longitudinal_lab_canonical_v1`, and the three `master_*_verified_v1` presentation tables. It does **not** copy `specimen_*`, `fhir_*`, genomic binding tables, or `qa.v_diag_*` diagnostics — those remain authoritative in **`main`** / **`qa`** on the live catalog.
+
+[`scripts/118_parquet_release_bundle.py`](118_parquet_release_bundle.py) with `--final-master` exports the same **manuscript analytic** subset via **`FINAL_MASTER_MAIN`** + **`FINAL_MASTER_QA`**. Consumers needing specimen, FHIR bundles, or genomics binding for interoperability should read **`main`** on MotherDuck or run [`scripts/138_md_specimen_fhir_layer.py`](138_md_specimen_fhir_layer.py) / [`scripts/140_md_specimen_genomics_binding.py`](140_md_specimen_genomics_binding.py) as documented; **Check 13** in [`scripts/119_md_formalization_validate.py`](119_md_formalization_validate.py) is the release gate for that surface, not the `115`/`118` table lists.
+
 ## Read scaling for reviewers
 
 After a release snapshot on the writer catalog, readers using **`MD_READ_SCALING_TOKEN`** should:

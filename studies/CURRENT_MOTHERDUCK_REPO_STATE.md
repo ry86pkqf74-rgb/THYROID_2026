@@ -1,5 +1,7 @@
 # THYROID_2026 — current MotherDuck vs repo state
 
+> **Point-in-time snapshot — not auto-refreshed on every commit.** Regenerate after promotions or specimen/FHIR deploys: `python scripts/144_md_repo_current_state_summary.py --md`. If the **Commit SHA** below differs from `git rev-parse HEAD`, treat live sections as **historical** until regenerated.
+
 **Machine-generated:** 2026-04-07T07:50:34.618080+00:00
 **Commit SHA:** `6b74741b2f5e4402ee2c4a936e12e68250824927`
 
