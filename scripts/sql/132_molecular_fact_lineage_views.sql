@@ -33,9 +33,9 @@ note_molecular AS (
         f.entity_type,
         f.entity_value_raw,
         f.entity_value_norm,
+        -- Prod canonical rows may omit clin_note_date until full 103 merge; entity_date + note_date suffice.
         COALESCE(
             TRY_CAST(f.entity_date AS DATE),
-            TRY_CAST(f.clin_note_date AS DATE),
             TRY_CAST(f.note_date AS DATE)
         ) AS event_date,
         f.evidence_span,
