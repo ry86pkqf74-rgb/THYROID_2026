@@ -1,0 +1,38 @@
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+=== MotherDuck Formalization Validation (STRUCTURAL) ===
+
+--- Check 1: MD Attachment ---
+  [PASS] MD attachment: 6 databases attached
+
+--- Check 2: Row Count Parity ---
+  [PASS] Row count parity: 23 domains checked, all match
+  [PASS] Canonical canonical_extracted_fact_long_v2: local=123,577  md=123,577
+  [PASS] Canonical canonical_fact_quarantine_v2: local=199  md=199
+  [PASS] Canonical note_extraction_runs: local=3  md=3
+
+--- Check 3: Schema Completeness ---
+  [PASS] Schema completeness: Wide note-level v2 contract on 23 promoted table(s); entity_type/entity_value_* in main.canonical_extracted_fact_long_v2 (see docs/domain_mapping_rules.md). Example stems: note_entities_llm_imaging, note_entities_llm_tirads_granular, note_entities_llm_us_nodule_dynamics…
+
+--- Check 4: Canonical Distribution ---
+  [PASS] Canonical dist (canonical_extracted_fact_long_v2): 594 domains, 123,577 total rows
+  [PASS] Canonical dist (canonical_fact_quarantine_v2): 69 domains, 199 total rows
+
+--- Check 5: Review Queue ---
+  [PASS] Review queue: 11,244 total, 5,622 reviewed, 5,622 pending
+
+--- Check 6: QA Views ---
+  [PASS] QA view promotion_scorecard_summary_v: 5 rows
+  [PASS] QA view domain_validation_summary_v: 5 rows
+  [PASS] QA view date_provenance_completeness_v: 23 rows
+  [PASS] QA view manual_review_queue_summary_v: 27 rows
+
+--- Check 7: Load Inventory ---
+  [PASS] Load inventory: 90 entries, all match
+
+--- Check 8: Release Schemas ---
+  [PASS] Release schemas: 3 found: release_20260407, release_20260408, release_20260409
+
+=== Summary: 15 PASS / 0 WARN / 0 FAIL ===
+
+  [report] studies/md_live_release_20260406/validation_run/validation_report.md
