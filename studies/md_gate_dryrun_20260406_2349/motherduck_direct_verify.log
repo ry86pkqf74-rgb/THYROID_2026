@@ -1,0 +1,44 @@
+=== 2026-04-07T03:51:05Z motherduck_direct_verify ===
+
+### token_mode + fail-closed connect + v2_stage spot check
+token_mode: secrets.toml:MOTHERDUCK_TOKEN
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+current_database: Thyroid 2026
+pragma_shows_motherduck: True
+v2_stage.note_entities_llm_imaging row count: 11037
+OK: connected to MotherDuck catalog and read v2_stage
+
+### 116_md_stage_loader.py --md --dry-run (tail)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_recurrence_detailed  (11,037 rows from note_entities_llm_recurrence_detailed.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_complications_rln_laryngoscopy  (11,037 rows from note_entities_llm_complications_rln_laryngoscopy.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_medication_management  (11,037 rows from note_entities_llm_medication_management.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_operative_details  (11,037 rows from note_entities_llm_operative_details.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_operative_v2_enrichment  (11,037 rows from note_entities_llm_operative_v2_enrichment.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_parathyroid_per_gland  (11,037 rows from note_entities_llm_parathyroid_per_gland.parquet)
+    CREATE OR REPLACE TABLE v2_stage.note_entities_llm_molecular_thyroseq_afirma  (11,037 rows from note_entities_llm_molecular_thyroseq_afirma.parquet)
+    30 inventory rows into v2_stage.load_inventory
+
+### 112_v2_domain_promotion_gate.py --motherduck-check (banner only)
+23:51:26  INFO      Phase 4: Manual Review Queue (strict)
+23:51:26  INFO      Manual review queue: 5622 rows
+23:51:26  INFO      Phase 5: Promotion Gate
+23:51:26  INFO        Running G8 MotherDuck parity check
+23:51:30  INFO      Phase 6: Reports & MotherDuck Artifacts
+
+======================================================================
+  V2 DOMAIN PROMOTION GATE — PASS
+======================================================================
+  [PASS]  G1: Domain completeness (v2 only)
+  [PASS]  G2: Schema compliance (core columns)
+  [PASS]  G3: Provenance columns
+  [PASS]  G4: Duplicate rate
+  [PASS]  G5: Date coverage (critical domains)
+  [PASS]  G6: Concordance floor (critical domains)
+  [PASS]  G7: Unresolved discordance
+  [PASS]  G8: MotherDuck v2_stage parity
+======================================================================
+  Artifacts: studies/md_gate_dryrun_20260406_2349
+  Verdict:   PASS
+======================================================================
+
