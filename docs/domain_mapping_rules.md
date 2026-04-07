@@ -108,6 +108,54 @@ MotherDuck stage tables.
 5. Run `pytest tests/test_fleet_registry_parity.py` to verify parity
 6. Run `.venv/bin/python llm_extraction/run_extraction.py --validate-only`
 
+## Fill-Candidate Triage Policy
+
+The promotion gate generates a `manual_review_queue.csv` containing rows where
+the v2 LLM extraction found entities that do not exist in v1 structured data
+(`existing_missing_fill_candidate`). These represent potential data enrichment
+opportunities, not conflicts.
+
+### Policy (approved 2026-04-07)
+
+1. **Discordant rows (same entity type, different value):** Must be individually
+   reviewed and marked `confirmed_correct` or `confirmed_incorrect` before
+   promotion. Zero tolerance for unresolved discordance.
+
+2. **Fill candidates by QA tier:**
+
+   | QA Tier | Policy | Rationale |
+   |---------|--------|-----------|
+   | critical | Sample 10% (min 20 rows) for manual spot-check. If >90% pass, accept batch. Document sample in `qa.promotion_review_decisions`. | Critical domains (pathology, staging, genetics, vascular_invasion, rai_detailed, recurrence, complications) directly affect manuscript statistics. |
+   | standard | Accept in bulk with `verification_status = auto_accepted_standard`. No individual review required. | Standard domains (labs, imaging, operative detail, etc.) are enrichment; errors are tolerable in aggregate. |
+   | informational | Accept in bulk with `verification_status = auto_accepted_informational`. | Informational domains (past medical history, presenting symptoms, physical exam, etc.) do not affect primary analyses. |
+
+3. **Batch acceptance:** Fill candidates accepted via this policy are promoted
+   with `promotion_approved = True` and a `verification_status` that records the
+   acceptance tier. The original `algorithm_comparison_status` is preserved for
+   audit trail.
+
+4. **Rejection criteria:** A fill candidate is rejected only when:
+   - The LLM value is clinically nonsensical (e.g., lab value outside physiologic range)
+   - The entity_type is a known garbage type (handled by entity_type normalization)
+   - The evidence_span does not support the extracted value
+
+### Concordance Audit Parquets
+
+The 6 unclaimed parquet stems (listed in Section 3 of the sign-off memo) are
+v2 LLM re-extractions of v1 domains used for concordance auditing only:
+
+| Stem | Parent v1 Domain | Classification |
+|------|-----------------|----------------|
+| `note_entities_llm_complications` | `complications` | concordance-audit |
+| `note_entities_llm_genetics` | `genetics` | concordance-audit |
+| `note_entities_llm_medications` | `medications` | concordance-audit |
+| `note_entities_llm_problem_list` | `problem_list` | concordance-audit |
+| `note_entities_llm_procedures` | `procedures` | concordance-audit |
+| `note_entities_llm_staging` | `staging` | concordance-audit |
+
+These are never promoted to `main`. They exist to support the "LLM vs regex"
+comparison documented in `studies/llm_extraction_validation/`.
+
 ## CI Enforcement
 
 The test suite `tests/test_fleet_registry_parity.py` enforces:

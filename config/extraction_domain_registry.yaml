@@ -544,3 +544,27 @@ sub_prompt_domains:
     parent_domain: genetics
     prompt_file: prompts/molecular_thyroseq_afirma_extraction_v1.txt
     parquet_stem: note_entities_llm_molecular_thyroseq_afirma
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Concordance audit artifacts: v2 LLM re-extractions of v1 domains.
+# These exist for concordance analysis only and are NEVER promoted to main.
+# ──────────────────────────────────────────────────────────────────────────────
+concordance_audit_stems:
+  - parquet_stem: note_entities_llm_complications
+    parent_v1_domain: complications
+    classification: concordance-audit
+  - parquet_stem: note_entities_llm_genetics
+    parent_v1_domain: genetics
+    classification: concordance-audit
+  - parquet_stem: note_entities_llm_medications
+    parent_v1_domain: medications
+    classification: concordance-audit
+  - parquet_stem: note_entities_llm_problem_list
+    parent_v1_domain: problem_list
+    classification: concordance-audit
+  - parquet_stem: note_entities_llm_procedures
+    parent_v1_domain: procedures
+    classification: concordance-audit
+  - parquet_stem: note_entities_llm_staging
+    parent_v1_domain: staging
+    classification: concordance-audit

@@ -85,7 +85,14 @@ def main() -> None:
 
     con = get_connection(args)
     try:
-        existing = [r[0] for r in con.execute("SHOW SCHEMAS").fetchall()]
+        try:
+            existing = [r[0] for r in con.execute("SHOW SCHEMAS").fetchall()]
+        except Exception:
+            existing = [
+                r[0] for r in con.execute(
+                    "SELECT DISTINCT schema_name FROM information_schema.schemata"
+                ).fetchall()
+            ]
         if schema_name in existing:
             print(f"  [error] Schema {schema_name} already exists. Use a different tag.")
             sys.exit(1)

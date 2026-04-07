@@ -4,7 +4,7 @@
 
 **Layout (2026-04-02):** LLM extraction lives in [`llm_extraction/`](llm_extraction/) (merged legacy `notes_extraction` + `notes_extraction_new`). Staging checkpoints sit under [`processed/output/`](processed/output/); study/manuscript artifact trees under [`processed/outputs/`](processed/outputs/). Medallion tiers are documented in [`docs/REPO_ARCHITECTURE_V2.md`](docs/REPO_ARCHITECTURE_V2.md).
 
-**Status:** Manuscript-ready (with scoped caveats) | Extraction pipeline complete | 626 local DuckDB tables
+**Status:** Manuscript-ready (with scoped caveats) | V2 extraction complete; promotion to MotherDuck main complete (release_20260407) | 626 local DuckDB tables
 
 A final manuscript-readiness hardening pass on 2026-03-13 audited 578 local DuckDB
 tables, 16 `val_*` validation tables, and all prior audit documents. Subsequent
@@ -37,6 +37,9 @@ documented source limitations, not data quality failures.
 | LLM extraction handoff | [`docs/llm_extraction_handoff_20260327.md`](docs/llm_extraction_handoff_20260327.md) |
 | Repo architecture (medallion) | [`docs/REPO_ARCHITECTURE_V2.md`](docs/REPO_ARCHITECTURE_V2.md) |
 | LLM validation workspace | [`studies/llm_extraction_validation/README.md`](studies/llm_extraction_validation/README.md) |
+| Architecture sign-off memo | [`studies/20260407_signoff_memo/signoff_memo.md`](studies/20260407_signoff_memo/signoff_memo.md) |
+| MotherDuck DB contract | [`docs/motherduck_database_contract_v1.md`](docs/motherduck_database_contract_v1.md) |
+| Domain mapping rules | [`docs/domain_mapping_rules.md`](docs/domain_mapping_rules.md) |
 | Git tag | [`v2026.03.10-publication-ready`](../../releases/tag/v2026.03.10-publication-ready) |
 
 ### What "manuscript-ready" means
