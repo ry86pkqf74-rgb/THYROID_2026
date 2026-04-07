@@ -33,11 +33,12 @@ WHERE g.specimen_id IS NOT NULL AND m.specimen_id IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Broken internal FHIR references (analytic export consistency)
--- Expectations must work on **legacy** MotherDuck catalogs whose fhir_* tables only
--- expose fhir_id, patient_fhir_id, specimen_id, resource_json, built_at (no helper
--- *_fhir_id columns from newer 138 builds). Subject uses patient_fhir_id; Procedure
--- / Encounter use the same sha256 short-id recipe as 138_specimen_fhir_tail_ddl.sql;
--- EpisodeOfCare matches main.fhir_episode_of_care_v1 for the specimen's surgery episode.
+-- Expectations work on **legacy** MotherDuck catalogs whose fhir_* tables only
+-- expose fhir_id, patient_fhir_id, specimen_id, resource_json. Subject lines use
+-- patient_fhir_id; Procedure/Specimen procedure refs use the sha256 short-id recipe from
+-- 138_specimen_fhir_tail_ddl.sql. Encounter→Episode matches `fhir_episode_of_care_v1`
+-- by **full** `fhir_id` + `patient_fhir_id` (same as bundle assembly), not via
+-- `(patient, surgery_episode_id)` rollups that can false-positive across rebuilds.
 -- ═══════════════════════════════════════════════════════════════════════════
 CREATE OR REPLACE VIEW qa.v_diag_specimen_fhir_broken_refs_v1 AS
 SELECT
@@ -62,6 +63,15 @@ WHERE json_extract_string(resource_json, '$.collection.procedure.reference') IS 
     )
 UNION ALL
 SELECT
+  'procedure_subject'::VARCHAR,
+  fp.specimen_id,
+  json_extract_string(fp.resource_json, '$.subject.reference'),
+  ('Patient/' || regexp_replace(trim(coalesce(fp.patient_fhir_id, '')), '^(Patient/)+', '')) AS expected_ref
+FROM main.fhir_procedure_collection_v1 fp
+WHERE regexp_replace(coalesce(json_extract_string(fp.resource_json, '$.subject.reference'), ''), '^(Patient/)+', '')
+  IS DISTINCT FROM regexp_replace(trim(coalesce(fp.patient_fhir_id, '')), '^(Patient/)+', '')
+UNION ALL
+SELECT
   'procedure_encounter'::VARCHAR,
   fp.specimen_id,
   json_extract_string(fp.resource_json, '$.encounter.reference'),
@@ -74,27 +84,25 @@ WHERE json_extract_string(fp.resource_json, '$.encounter.reference') IS NOT NULL
     )
 UNION ALL
 SELECT
+  'encounter_subject'::VARCHAR,
+  fe.specimen_id,
+  json_extract_string(fe.resource_json, '$.subject.reference'),
+  ('Patient/' || regexp_replace(trim(coalesce(fe.patient_fhir_id, '')), '^(Patient/)+', '')) AS expected_ref
+FROM main.fhir_encounter_v1 fe
+WHERE regexp_replace(coalesce(json_extract_string(fe.resource_json, '$.subject.reference'), ''), '^(Patient/)+', '')
+  IS DISTINCT FROM regexp_replace(trim(coalesce(fe.patient_fhir_id, '')), '^(Patient/)+', '')
+UNION ALL
+SELECT
   'encounter_episode'::VARCHAR,
   fe.specimen_id,
   json_extract_string(fe.resource_json, '$.episodeOfCare[0].reference'),
   fo.fhir_id AS expected_ref
 FROM main.fhir_encounter_v1 fe
-INNER JOIN main.specimen_master_v1 s ON fe.specimen_id = s.specimen_id
-LEFT JOIN (
-  SELECT
-    patient_fhir_id,
-    surgery_episode_id,
-    max(fhir_id) AS fhir_id
-  FROM main.fhir_episode_of_care_v1
-  GROUP BY patient_fhir_id, surgery_episode_id
-) fo
+LEFT JOIN main.fhir_episode_of_care_v1 fo
   ON fo.patient_fhir_id = fe.patient_fhir_id
- AND fo.surgery_episode_id IS NOT DISTINCT FROM s.surgery_episode_id
+ AND fo.fhir_id = json_extract_string(fe.resource_json, '$.episodeOfCare[0].reference')
 WHERE json_extract_string(fe.resource_json, '$.episodeOfCare[0].reference') IS NOT NULL
-  AND (
-    fo.fhir_id IS NULL
-    OR json_extract_string(fe.resource_json, '$.episodeOfCare[0].reference') IS DISTINCT FROM fo.fhir_id
-  );
+  AND fo.fhir_id IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Provenance completeness — one view per table (avoids multi-table CROSS JOIN

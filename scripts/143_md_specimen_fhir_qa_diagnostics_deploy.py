@@ -40,6 +40,7 @@ def main() -> None:
             Path(args.db_path),
             md=True,
             fail_closed=True,
+            prefer_service_account=True,
             custom_user_agent=UA,
             motherduck_session_hint=hint,
         )

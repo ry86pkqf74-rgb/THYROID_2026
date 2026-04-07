@@ -222,6 +222,7 @@ def main() -> None:
         Path(args.db_path),
         md=args.md,
         fail_closed=args.md,
+        prefer_service_account=True,
         custom_user_agent=UA,
         motherduck_session_hint=hint,
     )

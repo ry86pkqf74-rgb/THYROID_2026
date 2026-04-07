@@ -249,6 +249,7 @@ def deploy_specimen_fhir_qa_diagnostics(
             Path(args.db_path),
             md=True,
             fail_closed=True,
+            prefer_service_account=True,
             custom_user_agent=UA_QA_DEPLOY,
             motherduck_session_hint=hint,
         )
@@ -311,6 +312,7 @@ def main() -> None:
         Path(args.db_path),
         md=args.md,
         fail_closed=args.md,
+        prefer_service_account=True,
         custom_user_agent=UA,
         motherduck_session_hint=hint,
     )

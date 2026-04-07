@@ -200,53 +200,62 @@ molecular_rows AS (
       '|', CAST(research_id AS VARCHAR), CAST(molecular_episode_id AS VARCHAR),
       'molecular_test_episode_v2', CAST(payload_explode_ord AS VARCHAR), COALESCE(payload_field, '')
     ))) AS genomic_assay_id,
-    research_id,
-    molecular_episode_id,
-    platform,
-    test_date_native,
-    fna_episode_id,
-    surgery_episode_id,
-    path_surgery_id,
-    tumor_ordinal,
-    specimen_id,
-    specimen_focus_id,
-    CAST(fm_tier_raw AS VARCHAR) AS fm_tier,
-    CAST(preop_tier_raw AS VARCHAR) AS preop_tier,
-    CAST(pathology_tier_raw AS VARCHAR) AS pathology_linkage_tier_raw,
-    linkage_confidence_tier,
+    mx.research_id,
+    mx.molecular_episode_id,
+    mx.platform,
+    mx.test_date_native,
+    mx.fna_episode_id,
+    mx.surgery_episode_id,
+    mx.path_surgery_id,
+    mx.tumor_ordinal,
+    mx.specimen_id,
+    mx.specimen_focus_id,
+    CAST(mx.fm_tier_raw AS VARCHAR) AS fm_tier,
+    CAST(mx.preop_tier_raw AS VARCHAR) AS preop_tier,
+    CAST(mx.pathology_tier_raw AS VARCHAR) AS pathology_linkage_tier_raw,
+    mx.guarded_linkage_tier AS linkage_confidence_tier,
     TRIM('|' FROM replace(
       concat_ws('|',
-        NULLIF(chain_reason, 'CHAIN_OK'),
-        focus_ambiguity_reason,
-        CASE WHEN pathology_tier_raw IS NOT NULL AND pathology_tier_raw NOT IN ('exact_match', 'high_confidence')
+        NULLIF(mx.chain_reason, 'CHAIN_OK'),
+        mx.focus_ambiguity_reason,
+        CASE WHEN mx.pathology_tier_raw IS NOT NULL AND mx.pathology_tier_raw NOT IN ('exact_match', 'high_confidence')
           THEN 'PATHOLOGY_LINK_NON_STRONG' END
       ),
       '||', '|'
     )) AS linkage_reason_codes,
     CASE
-      WHEN linkage_confidence_tier IN ('exact', 'high_confidence')
-           AND focus_ambiguity_reason IS NULL
-           AND chain_reason = 'CHAIN_OK'
+      WHEN mx.guarded_linkage_tier IN ('exact', 'high_confidence')
+           AND mx.focus_ambiguity_reason IS NULL
+           AND mx.chain_reason = 'CHAIN_OK'
         THEN 'A_exact_high'
-      WHEN specimen_id IS NOT NULL AND chain_reason = 'CHAIN_OK'
+      WHEN mx.specimen_id IS NOT NULL AND mx.chain_reason = 'CHAIN_OK'
         THEN 'B_specimen_only'
-      WHEN chain_reason <> 'CHAIN_OK' OR fm_tier_raw IS NULL
+      WHEN mx.chain_reason <> 'CHAIN_OK' OR mx.fm_tier_raw IS NULL
         THEN 'D_unlinked'
       ELSE 'C_review'
     END AS binding_confidence_tier,
     (
-      linkage_confidence_tier NOT IN ('exact', 'high_confidence')
-      OR focus_ambiguity_reason IS NOT NULL
-      OR chain_reason <> 'CHAIN_OK'
-      OR (pathology_tier_raw IS NOT NULL AND pathology_tier_raw NOT IN ('exact_match', 'high_confidence'))
+      mx.guarded_linkage_tier NOT IN ('exact', 'high_confidence')
+      OR mx.focus_ambiguity_reason IS NOT NULL
+      OR mx.chain_reason <> 'CHAIN_OK'
+      OR (mx.pathology_tier_raw IS NOT NULL AND mx.pathology_tier_raw NOT IN ('exact_match', 'high_confidence'))
     ) AS review_flag,
-    source_table,
-    source_row_key,
-    payload_explode_ord,
-    payload_field,
+    mx.source_table,
+    mx.source_row_key,
+    mx.payload_explode_ord,
+    mx.payload_field,
     'molecular_test_episode_v2+fna_molecular_linkage_v3+preop_surgery_linkage_v3' AS binding_chain,
     current_timestamp AS materialized_at
-  FROM tier_adj
+  FROM (
+    SELECT
+      *,
+      CASE
+        WHEN linkage_confidence_tier IN ('exact', 'high_confidence') AND specimen_id IS NULL
+          THEN 'plausible_review'
+        ELSE linkage_confidence_tier
+      END AS guarded_linkage_tier
+    FROM tier_adj
+  ) mx
 )
 -- @OPTIONAL_GENETIC_BODY_START
 , gtx AS (
@@ -369,54 +378,63 @@ genetic_rows AS (
       '|', CAST(research_id AS VARCHAR), CAST(gt_rn AS VARCHAR),
       CAST(molecular_episode_id AS VARCHAR), 'genetic_testing', '0', ''
     ))) AS genomic_assay_id,
-    research_id,
-    molecular_episode_id,
-    platform,
-    test_date_native,
-    fna_episode_id,
-    surgery_episode_id,
-    path_surgery_id,
-    tumor_ordinal,
-    specimen_id,
-    specimen_focus_id,
-    CAST(fm_tier_raw AS VARCHAR) AS fm_tier,
-    CAST(preop_tier_raw AS VARCHAR) AS preop_tier,
-    CAST(pathology_tier_raw AS VARCHAR) AS pathology_linkage_tier_raw,
-    linkage_confidence_tier,
+    gx.research_id,
+    gx.molecular_episode_id,
+    gx.platform,
+    gx.test_date_native,
+    gx.fna_episode_id,
+    gx.surgery_episode_id,
+    gx.path_surgery_id,
+    gx.tumor_ordinal,
+    gx.specimen_id,
+    gx.specimen_focus_id,
+    CAST(gx.fm_tier_raw AS VARCHAR) AS fm_tier,
+    CAST(gx.preop_tier_raw AS VARCHAR) AS preop_tier,
+    CAST(gx.pathology_tier_raw AS VARCHAR) AS pathology_linkage_tier_raw,
+    gx.guarded_linkage_tier AS linkage_confidence_tier,
     TRIM('|' FROM replace(
       concat_ws('|',
-        NULLIF(chain_reason, 'CHAIN_OK'),
-        focus_ambiguity_reason,
+        NULLIF(gx.chain_reason, 'CHAIN_OK'),
+        gx.focus_ambiguity_reason,
         'GENETIC_TESTING_EXCEL_ROW',
-        CASE WHEN pathology_tier_raw IS NOT NULL AND pathology_tier_raw NOT IN ('exact_match', 'high_confidence')
+        CASE WHEN gx.pathology_tier_raw IS NOT NULL AND gx.pathology_tier_raw NOT IN ('exact_match', 'high_confidence')
           THEN 'PATHOLOGY_LINK_NON_STRONG' END
       ),
       '||', '|'
     )) AS linkage_reason_codes,
     CASE
-      WHEN linkage_confidence_tier IN ('exact', 'high_confidence')
-           AND focus_ambiguity_reason IS NULL
-           AND chain_reason = 'CHAIN_OK'
+      WHEN gx.guarded_linkage_tier IN ('exact', 'high_confidence')
+           AND gx.focus_ambiguity_reason IS NULL
+           AND gx.chain_reason = 'CHAIN_OK'
         THEN 'A_exact_high'
-      WHEN specimen_id IS NOT NULL AND chain_reason = 'CHAIN_OK'
+      WHEN gx.specimen_id IS NOT NULL AND gx.chain_reason = 'CHAIN_OK'
         THEN 'B_specimen_only'
-      WHEN chain_reason <> 'CHAIN_OK' OR fm_tier_raw IS NULL
+      WHEN gx.chain_reason <> 'CHAIN_OK' OR gx.fm_tier_raw IS NULL
         THEN 'D_unlinked'
       ELSE 'C_review'
     END AS binding_confidence_tier,
     (
-      linkage_confidence_tier NOT IN ('exact', 'high_confidence')
-      OR focus_ambiguity_reason IS NOT NULL
-      OR chain_reason <> 'CHAIN_OK'
-      OR (pathology_tier_raw IS NOT NULL AND pathology_tier_raw NOT IN ('exact_match', 'high_confidence'))
+      gx.guarded_linkage_tier NOT IN ('exact', 'high_confidence')
+      OR gx.focus_ambiguity_reason IS NOT NULL
+      OR gx.chain_reason <> 'CHAIN_OK'
+      OR (gx.pathology_tier_raw IS NOT NULL AND gx.pathology_tier_raw NOT IN ('exact_match', 'high_confidence'))
     ) AS review_flag,
-    source_table,
-    source_row_key,
-    payload_explode_ord,
-    payload_field,
+    gx.source_table,
+    gx.source_row_key,
+    gx.payload_explode_ord,
+    gx.payload_field,
     'genetic_testing+molecular_test_episode_v2+fna_molecular_linkage_v3+preop_surgery_linkage_v3' AS binding_chain,
     current_timestamp AS materialized_at
-  FROM genetic_adj
+  FROM (
+    SELECT
+      *,
+      CASE
+        WHEN linkage_confidence_tier IN ('exact', 'high_confidence') AND specimen_id IS NULL
+          THEN 'plausible_review'
+        ELSE linkage_confidence_tier
+      END AS guarded_linkage_tier
+    FROM genetic_adj
+  ) gx
 )
 -- @OPTIONAL_GENETIC_BODY_END
 -- @OPTIONAL_THYROSEQ_BODY_START
@@ -569,58 +587,67 @@ thy_rows AS (
       'thyroseq_json', source_row_hash, payload_field, CAST(payload_explode_ord AS VARCHAR),
       CAST(payload_json_fragment AS VARCHAR)
     ))) AS genomic_assay_id,
-    research_id,
-    molecular_episode_id,
-    platform,
-    test_date_native,
-    fna_episode_id,
-    surgery_episode_id,
-    path_surgery_id,
-    tumor_ordinal,
-    specimen_id,
-    specimen_focus_id,
-    CAST(fm_tier_raw AS VARCHAR) AS fm_tier,
-    CAST(preop_tier_raw AS VARCHAR) AS preop_tier,
-    CAST(pathology_tier_raw AS VARCHAR) AS pathology_linkage_tier_raw,
-    linkage_confidence_tier,
+    tx.research_id,
+    tx.molecular_episode_id,
+    tx.platform,
+    tx.test_date_native,
+    tx.fna_episode_id,
+    tx.surgery_episode_id,
+    tx.path_surgery_id,
+    tx.tumor_ordinal,
+    tx.specimen_id,
+    tx.specimen_focus_id,
+    CAST(tx.fm_tier_raw AS VARCHAR) AS fm_tier,
+    CAST(tx.preop_tier_raw AS VARCHAR) AS preop_tier,
+    CAST(tx.pathology_tier_raw AS VARCHAR) AS pathology_linkage_tier_raw,
+    tx.guarded_linkage_tier AS linkage_confidence_tier,
     TRIM('|' FROM replace(
       concat_ws('|',
-        NULLIF(chain_reason, 'CHAIN_OK'),
-        focus_ambiguity_reason,
+        NULLIF(tx.chain_reason, 'CHAIN_OK'),
+        tx.focus_ambiguity_reason,
         'THYROSEQ_JSON_EXPLODE',
-        payload_field,
-        CASE WHEN n_episode_candidates > 1 THEN 'THYROSEQ_MOLECULAR_EPISODE_AMBIGUOUS' END,
-        CASE WHEN pathology_tier_raw IS NOT NULL AND pathology_tier_raw NOT IN ('exact_match', 'high_confidence')
+        tx.payload_field,
+        CASE WHEN tx.n_episode_candidates > 1 THEN 'THYROSEQ_MOLECULAR_EPISODE_AMBIGUOUS' END,
+        CASE WHEN tx.pathology_tier_raw IS NOT NULL AND tx.pathology_tier_raw NOT IN ('exact_match', 'high_confidence')
           THEN 'PATHOLOGY_LINK_NON_STRONG' END
       ),
       '||', '|'
     )) AS linkage_reason_codes,
     CASE
-      WHEN linkage_confidence_tier IN ('exact', 'high_confidence')
-           AND focus_ambiguity_reason IS NULL
-           AND chain_reason = 'CHAIN_OK'
-           AND n_episode_candidates <= 1
+      WHEN tx.guarded_linkage_tier IN ('exact', 'high_confidence')
+           AND tx.focus_ambiguity_reason IS NULL
+           AND tx.chain_reason = 'CHAIN_OK'
+           AND tx.n_episode_candidates <= 1
         THEN 'A_exact_high'
-      WHEN specimen_id IS NOT NULL AND chain_reason = 'CHAIN_OK'
+      WHEN tx.specimen_id IS NOT NULL AND tx.chain_reason = 'CHAIN_OK'
         THEN 'B_specimen_only'
-      WHEN chain_reason <> 'CHAIN_OK' OR fm_tier_raw IS NULL
+      WHEN tx.chain_reason <> 'CHAIN_OK' OR tx.fm_tier_raw IS NULL
         THEN 'D_unlinked'
       ELSE 'C_review'
     END AS binding_confidence_tier,
     (
-      linkage_confidence_tier NOT IN ('exact', 'high_confidence')
-      OR focus_ambiguity_reason IS NOT NULL
-      OR chain_reason <> 'CHAIN_OK'
-      OR n_episode_candidates > 1
-      OR (pathology_tier_raw IS NOT NULL AND pathology_tier_raw NOT IN ('exact_match', 'high_confidence'))
+      tx.guarded_linkage_tier NOT IN ('exact', 'high_confidence')
+      OR tx.focus_ambiguity_reason IS NOT NULL
+      OR tx.chain_reason <> 'CHAIN_OK'
+      OR tx.n_episode_candidates > 1
+      OR (tx.pathology_tier_raw IS NOT NULL AND tx.pathology_tier_raw NOT IN ('exact_match', 'high_confidence'))
     ) AS review_flag,
     'thyroseq_molecular_enrichment+json_each' AS source_table,
-    concat_ws(':', CAST(research_id AS VARCHAR), source_row_hash, payload_field, CAST(payload_explode_ord AS VARCHAR)) AS source_row_key,
-    payload_explode_ord,
-    payload_field,
+    concat_ws(':', CAST(tx.research_id AS VARCHAR), tx.source_row_hash, tx.payload_field, CAST(tx.payload_explode_ord AS VARCHAR)) AS source_row_key,
+    tx.payload_explode_ord,
+    tx.payload_field,
     'thyroseq_molecular_enrichment+json_each+molecular_test_episode_v2+fna_molecular_linkage_v3+preop_surgery_linkage_v3' AS binding_chain,
     current_timestamp AS materialized_at
-  FROM thy_adj
+  FROM (
+    SELECT
+      *,
+      CASE
+        WHEN linkage_confidence_tier IN ('exact', 'high_confidence') AND specimen_id IS NULL
+          THEN 'plausible_review'
+        ELSE linkage_confidence_tier
+      END AS guarded_linkage_tier
+    FROM thy_adj
+  ) tx
 )
 -- @OPTIONAL_THYROSEQ_BODY_END
 SELECT * FROM molecular_rows
