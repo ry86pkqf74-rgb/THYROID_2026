@@ -278,7 +278,10 @@ class TestStrictReleaseGate:
         mod = _load_mm128()
         con = duckdb.connect(":memory:")
         _seed_minimal_upstream(con)
-        mod.build_all(con, self.SCHEMA, strict_release=True)
+        boot = mod.build_all(con, self.SCHEMA, strict_release=True)
+        mod.assert_strict_release_passes(
+            con, self.SCHEMA, bootstrapped_upstream=boot
+        )
 
     def test_strict_release_fails_on_blocking_validation(self) -> None:
         mod = _load_mm128()
@@ -292,8 +295,11 @@ class TestStrictReleaseGate:
                  'right', 'left', 1.2, 1, 0.9, 1, 'exact_match', 'lat_bad', TRUE);
             """
         )
+        boot = mod.build_all(con, self.SCHEMA, strict_release=True)
         with pytest.raises(RuntimeError, match="Strict release failed"):
-            mod.build_all(con, self.SCHEMA, strict_release=True)
+            mod.assert_strict_release_passes(
+                con, self.SCHEMA, bootstrapped_upstream=boot
+            )
 
     def test_strict_gate_rejects_bootstrapped_upstream_metadata(self) -> None:
         mod = _load_mm128()

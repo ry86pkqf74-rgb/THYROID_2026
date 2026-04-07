@@ -1,22 +1,45 @@
 # Manual run: canonical episodes v2 + linkage + reconciliation + QA on MotherDuck.
-# Uses repository secrets (not readable locally). Trigger: Actions → this workflow → Run workflow.
+# Multimodal: script 129 (imaging↔FNA) then 128 (contract); dev runs keep writes in mm_contract_dev.
+# Uses repository secrets. Trigger: Actions → this workflow → Run workflow.
 name: MotherDuck — episodes v2 pipeline
 
 on:
   workflow_dispatch:
+    inputs:
+      multimodal_enabled:
+        description: "After scripts 22–29, run multimodal 129 → 128 on MotherDuck"
+        type: boolean
+        default: true
+      multimodal_strict_release:
+        description: "128 --strict-release (fail job if any blocking val_* row count > 0)"
+        type: boolean
+        default: false
+      multimodal_promotion:
+        description: "Allow MM_CONTRACT_SCHEMA override (not forced to dev isolation)"
+        type: boolean
+        default: false
+      mm_contract_schema:
+        description: "Target schema when promotion mode is on (129 output + 128 MM_CONTRACT_SCHEMA)"
+        type: string
+        default: "mm_contract_dev"
 
 concurrency:
   group: motherduck-episode-pipeline
   cancel-in-progress: false
 
+env:
+  MOTHERDUCK_CUSTOM_USER_AGENT: THYROID_2026_motherduck_episode_pipeline
+  MOTHERDUCK_SESSION_HINT: motherduck_episode_pipeline-${{ github.run_id }}
+
 jobs:
   v2-pipeline:
-    name: Scripts 22–25 + validation (MotherDuck)
+    name: Scripts 22–25 + validation + optional multimodal (MotherDuck)
     runs-on: ubuntu-latest
     timeout-minutes: 360
     env:
-      # Primary secret name in repo; fall back to MOTHERDUCK if TOKEN variant unset.
+      MD_SA_TOKEN: ${{ secrets.MD_SA_TOKEN }}
       MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN || secrets.MOTHERDUCK }}
+      LOCAL_DB_PATH: ${{ secrets.LOCAL_DB_PATH }}
     steps:
       - uses: actions/checkout@v4
 
@@ -27,9 +50,14 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Assert MotherDuck token
+      - name: Assert MotherDuck token (service-account precedence)
         run: |
-          python -c "import os; t=os.environ.get('MOTHERDUCK_TOKEN','').strip(); assert t, 'Set repo secret MOTHERDUCK_TOKEN (or MOTHERDUCK)'; print('MOTHERDUCK_TOKEN: set')"
+          python -c "
+          from motherduck_client import get_token, token_mode
+          t = get_token(prefer_service_account=True)
+          assert t, 'Set secret MD_SA_TOKEN or MOTHERDUCK_TOKEN (or MOTHERDUCK)'
+          print('MotherDuck token:', token_mode())
+          "
 
       - name: "22 — canonical_episodes_v2"
         run: python scripts/22_canonical_episodes_v2.py --md
@@ -45,3 +73,57 @@ jobs:
 
       - name: "29 — validation_engine"
         run: python scripts/29_validation_engine.py --md
+
+      - name: Prepare multimodal env
+        if: ${{ inputs.multimodal_enabled }}
+        id: mm_env
+        run: |
+          PROM="${{ inputs.multimodal_promotion }}"
+          SCHEMA="${{ inputs.mm_contract_schema }}"
+          STRICT="${{ inputs.multimodal_strict_release }}"
+          if [ "$PROM" != "true" ]; then
+            echo "Isolation: forcing mm_contract_dev (129 outputs + default 128 schema)."
+            echo "ifna_schema=mm_contract_dev" >> "$GITHUB_OUTPUT"
+            echo "mm_override=" >> "$GITHUB_OUTPUT"
+            echo "mm_schema=" >> "$GITHUB_OUTPUT"
+          else
+            echo "Promotion mode: schema=$SCHEMA"
+            echo "ifna_schema=$SCHEMA" >> "$GITHUB_OUTPUT"
+            echo "mm_override=1" >> "$GITHUB_OUTPUT"
+            echo "mm_schema=$SCHEMA" >> "$GITHUB_OUTPUT"
+          fi
+          if [ "$STRICT" = "true" ]; then
+            echo "strict_flags=--strict-release" >> "$GITHUB_OUTPUT"
+          else
+            echo "strict_flags=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: "129 — imaging_fna_linkage_mm_v1 (contract schema)"
+        if: ${{ inputs.multimodal_enabled }}
+        env:
+          MM_IFNA_OUTPUT_SCHEMA: ${{ steps.mm_env.outputs.ifna_schema }}
+        run: |
+          python scripts/129_imaging_fna_linkage_mm_v1.py --md --sa \
+            --contract-schema "${{ steps.mm_env.outputs.ifna_schema }}"
+
+      - name: "128 — multimodal_contract_mm_v1"
+        if: ${{ inputs.multimodal_enabled }}
+        env:
+          MM_CONTRACT_MD_SCHEMA_OVERRIDE: ${{ steps.mm_env.outputs.mm_override }}
+          MM_CONTRACT_SCHEMA: ${{ steps.mm_env.outputs.mm_schema }}
+        run: |
+          mkdir -p artifacts
+          set -e
+          EXTRA_STRICT="${{ steps.mm_env.outputs.strict_flags }}"
+          python scripts/128_multimodal_contract_mm_v1.py --md --sa \
+            $EXTRA_STRICT \
+            --emit-ci-artifact artifacts/multimodal_release_gate.json
+
+      - name: Upload multimodal release gate artifact
+        if: ${{ inputs.multimodal_enabled && (success() || failure()) }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: multimodal-release-gate-${{ github.run_id }}
+          path: artifacts/multimodal_release_gate.json
+          if-no-files-found: warn
+          retention-days: 90

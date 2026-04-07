@@ -31,6 +31,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -71,6 +72,24 @@ def pick_first(cols: dict[str, str], candidates: list[str]) -> str | None:
         if c.lower() in cols:
             return cols[c.lower()]
     return None
+
+
+_IFNA_OUTPUT_TABLES: tuple[str, ...] = (
+    "imaging_fna_linkage_mm_v1",
+    "review_queue_imaging_fna_mm_v1",
+    "val_imaging_fna_linkage_audit_v1",
+)
+
+
+def qualify_ifna_output_sql(sql: str, schema: str | None) -> str:
+    """Prefix script-129 output tables with *schema* so writes stay off main during automation."""
+    if not schema or not str(schema).strip():
+        return sql
+    sch = str(schema).strip()
+    out = sql
+    for base in _IFNA_OUTPUT_TABLES:
+        out = re.sub(rf"(?<!\.)\b{re.escape(base)}\b", f"{sch}.{base}", out)
+    return out
 
 
 def build_temp_wide_sql(con: duckdb.DuckDBPyConnection) -> str:
@@ -424,7 +443,19 @@ SELECT
 """
 
 
-def run(con: duckdb.DuckDBPyConnection, *, dry_run: bool, motherduck: bool = False) -> dict:
+def _fq_table(name: str, output_schema: str | None) -> str:
+    if not output_schema or not str(output_schema).strip():
+        return name
+    return f"{str(output_schema).strip()}.{name}"
+
+
+def run(
+    con: duckdb.DuckDBPyConnection,
+    *,
+    dry_run: bool,
+    motherduck: bool = False,
+    output_schema: str | None = None,
+) -> dict:
     has_fna = table_exists(con, "fna_episode_master_v2")
     has_img = table_exists(con, "imaging_nodule_master_v1")
     if not has_fna:
@@ -470,9 +501,10 @@ def run(con: duckdb.DuckDBPyConnection, *, dry_run: bool, motherduck: bool = Fal
     v3 = None
     if table_exists(con, "imaging_fna_linkage_v3"):
         v3 = con.execute("SELECT COUNT(*) FROM imaging_fna_linkage_v3").fetchone()[0]
+    link_tbl = _fq_table("imaging_fna_linkage_mm_v1", output_schema)
     mm_before = None
-    if table_exists(con, "imaging_fna_linkage_mm_v1"):
-        mm_before = con.execute("SELECT COUNT(*) FROM imaging_fna_linkage_mm_v1").fetchone()[0]
+    if table_exists(con, link_tbl):
+        mm_before = con.execute(f"SELECT COUNT(*) FROM {link_tbl}").fetchone()[0]
     print(f"  imaging_nodule_master_v1 (dated): {n_img:,}")
     print(f"  fna_episode_master_v2 (dated):    {n_fna:,}")
     print(f"  imaging_fna_linkage_v3 rows:       {v3 if v3 is not None else 'N/A (missing)'}")
@@ -494,16 +526,20 @@ def run(con: duckdb.DuckDBPyConnection, *, dry_run: bool, motherduck: bool = Fal
     print(f"\n  tt_ifna_mm_wide_pre_v1 candidate pairs: {wide_n:,}")
     out["wide_pre_candidate_pairs"] = wide_n
 
-    con.execute(LINK_TABLE_SQL)
-    con.execute(REVIEW_SQL)
-    con.execute(AUDIT_SQL)
+    link_sql = qualify_ifna_output_sql(LINK_TABLE_SQL, output_schema)
+    review_sql = qualify_ifna_output_sql(REVIEW_SQL, output_schema)
+    audit_sql = qualify_ifna_output_sql(AUDIT_SQL, output_schema)
+    con.execute(link_sql)
+    con.execute(review_sql)
+    con.execute(audit_sql)
 
     section("Counts after")
-    after_mm = con.execute("SELECT COUNT(*) FROM imaging_fna_linkage_mm_v1").fetchone()[0]
+    after_mm = con.execute(f"SELECT COUNT(*) FROM {link_tbl}").fetchone()[0]
     after_primary = con.execute(
-        "SELECT COUNT(*) FROM imaging_fna_linkage_mm_v1 WHERE is_primary_link"
+        f"SELECT COUNT(*) FROM {link_tbl} WHERE is_primary_link"
     ).fetchone()[0]
-    after_rev = con.execute("SELECT COUNT(*) FROM review_queue_imaging_fna_mm_v1").fetchone()[0]
+    rev_tbl = _fq_table("review_queue_imaging_fna_mm_v1", output_schema)
+    after_rev = con.execute(f"SELECT COUNT(*) FROM {rev_tbl}").fetchone()[0]
     for label, val in [
         ("imaging_fna_linkage_mm_v1", after_mm),
         ("  primary links", after_primary),
@@ -511,8 +547,9 @@ def run(con: duckdb.DuckDBPyConnection, *, dry_run: bool, motherduck: bool = Fal
     ]:
         print(f"  {label}: {val:,}")
 
-    print("\n  val_imaging_fna_linkage_audit_v1:")
-    audit_df = con.execute("SELECT * FROM val_imaging_fna_linkage_audit_v1").fetchdf()
+    audit_tbl = _fq_table("val_imaging_fna_linkage_audit_v1", output_schema)
+    print(f"\n  {audit_tbl}:")
+    audit_df = con.execute(f"SELECT * FROM {audit_tbl}").fetchdf()
     print(audit_df.to_string(index=False))
     audit_row = audit_df.iloc[0].to_dict() if len(audit_df) else {}
     # JSON-serialize timestamps
@@ -525,6 +562,8 @@ def run(con: duckdb.DuckDBPyConnection, *, dry_run: bool, motherduck: bool = Fal
         "review_queue_rows": after_rev,
     }
     out["audit"] = audit_row
+    if output_schema:
+        out["output_schema"] = str(output_schema).strip()
     return out
 
 
@@ -547,6 +586,22 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--md", action="store_true", help="Use MotherDuck / connect_md_or_file")
     parser.add_argument(
+        "--sa",
+        action="store_true",
+        help="Prefer MD_SA_TOKEN over MOTHERDUCK_TOKEN (CI / release automation)",
+    )
+    parser.add_argument(
+        "--contract-schema",
+        metavar="SCHEMA",
+        default=None,
+        help=(
+            "Write imaging–FNA linkage outputs to this schema (e.g. mm_contract_dev). "
+            "Avoids creating tables in main during automated dev runs. "
+            "If omitted, MM_IFNA_OUTPUT_SCHEMA is used when set. "
+            "Default: unqualified (main catalog)."
+        ),
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Print wide-pre SQL only; do not write tables or export",
@@ -557,6 +612,11 @@ def main() -> None:
         help="With --md, skip writing motherduck/exports/imaging_fna_linkage_mm_v1_audit.json",
     )
     args = parser.parse_args()
+    out_schema = (
+        (args.contract_schema or "").strip()
+        or os.environ.get("MM_IFNA_OUTPUT_SCHEMA", "").strip()
+        or None
+    )
 
     os.chdir(ROOT)
     if args.md:
@@ -564,12 +624,22 @@ def main() -> None:
         from utils.md_connect import connect_md_or_file
 
         print(f"  MotherDuck token source: {md_token_mode()}")
-        con = connect_md_or_file(DB_PATH, md=True, fail_closed=True)
+        con = connect_md_or_file(
+            DB_PATH,
+            md=True,
+            fail_closed=True,
+            prefer_service_account=args.sa,
+        )
     else:
         con = duckdb.connect(str(DB_PATH))
 
     try:
-        result = run(con, dry_run=args.dry_run, motherduck=args.md)
+        result = run(
+            con,
+            dry_run=args.dry_run,
+            motherduck=args.md,
+            output_schema=out_schema,
+        )
         if args.md and not args.dry_run and not args.no_export:
             from motherduck_client import token_mode as md_token_mode
 

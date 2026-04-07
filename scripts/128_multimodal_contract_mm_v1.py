@@ -1088,9 +1088,64 @@ def build_all(
 
     section("COMMENT ON metadata")
     apply_comments(con, schema)
-    if strict_release:
-        assert_strict_release_passes(con, schema, bootstrapped_upstream=bootstrapped)
     return bootstrapped
+
+
+def build_workflow_gate_artifact(
+    summary: dict,
+    *,
+    strict_release_requested: bool,
+    bootstrapped_upstream: list[str],
+) -> dict:
+    """Single JSON shape for GitHub Actions upload (multimodal release gate)."""
+    rc = summary["row_counts"]
+    multimodal_tables = {
+        k: int(v)
+        for k, v in rc.items()
+        if not k.startswith("val_") and not k.startswith("review_queue")
+    }
+    validation_tables = {k: int(v) for k, v in rc.items() if k.startswith("val_")}
+    review_queues = {k: int(v) for k, v in rc.items() if k.startswith("review_queue")}
+    blockers = {t: int(rc.get(t, 0)) for t in STRICT_BLOCKING_VALIDATION_TABLES}
+    blocker_total = int(sum(blockers.values()))
+    if strict_release_requested:
+        strict_pass = blocker_total == 0 and not bootstrapped_upstream
+    else:
+        strict_pass = None
+    return {
+        "artifact_version": "multimodal_release_gate_v1",
+        "github_sha": os.environ.get("GITHUB_SHA", ""),
+        "github_run_id": os.environ.get("GITHUB_RUN_ID", ""),
+        "schema": summary["schema"],
+        "contract_version": summary["contract_version"],
+        "multimodal_tables": multimodal_tables,
+        "validation_tables": validation_tables,
+        "review_queues": review_queues,
+        "strict_release": {
+            "requested": strict_release_requested,
+            "pass": strict_pass,
+            "blocking_row_counts": blockers,
+            "blocker_total": blocker_total,
+            "bootstrapped_upstream": list(bootstrapped_upstream),
+        },
+    }
+
+
+def emit_workflow_gate_artifact(
+    path: Path,
+    summary: dict,
+    *,
+    strict_release_requested: bool,
+    bootstrapped_upstream: list[str],
+) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    body = build_workflow_gate_artifact(
+        summary,
+        strict_release_requested=strict_release_requested,
+        bootstrapped_upstream=bootstrapped_upstream,
+    )
+    path.write_text(json.dumps(body, indent=2), encoding="utf-8")
+    print(f"\n  Wrote workflow gate artifact: {path}")
 
 
 def summarize(con: duckdb.DuckDBPyConnection, schema: str) -> dict:
@@ -1134,6 +1189,11 @@ def summarize(con: duckdb.DuckDBPyConnection, schema: str) -> dict:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--md", action="store_true", help="Write to MotherDuck (schema mm_contract_dev only)")
+    ap.add_argument(
+        "--sa",
+        action="store_true",
+        help="Prefer MD_SA_TOKEN over MOTHERDUCK_TOKEN when using --md (CI / release automation)",
+    )
     ap.add_argument("--dry-run", action="store_true", help="Print schema and exit")
     ap.add_argument(
         "--strict-release",
@@ -1151,6 +1211,15 @@ def main() -> None:
             "Do not use for CI/release."
         ),
     )
+    ap.add_argument(
+        "--emit-ci-artifact",
+        type=Path,
+        metavar="PATH",
+        default=None,
+        help=(
+            "Write multimodal_release_gate_v1 JSON for workflow upload (row counts + strict-release summary)."
+        ),
+    )
     args = ap.parse_args()
     if args.strict_release and args.allow_bootstrap_dev:
         ap.error("--strict-release cannot be combined with --allow-bootstrap-dev")
@@ -1161,7 +1230,12 @@ def main() -> None:
         return
 
     if args.md:
-        con = connect_md_or_file(DB_PATH, md=True, fail_closed=True)
+        con = connect_md_or_file(
+            DB_PATH,
+            md=True,
+            fail_closed=True,
+            prefer_service_account=args.sa,
+        )
     else:
         con = duckdb.connect(str(DB_PATH))
 
@@ -1196,6 +1270,15 @@ def main() -> None:
         summary["gaps"] = gaps
         summary_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
         print(f"\n  Wrote {summary_path}")
+        if args.emit_ci_artifact:
+            emit_workflow_gate_artifact(
+                args.emit_ci_artifact,
+                summary,
+                strict_release_requested=args.strict_release,
+                bootstrapped_upstream=bootstrapped,
+            )
+        if args.strict_release:
+            assert_strict_release_passes(con, schema, bootstrapped_upstream=bootstrapped)
     finally:
         con.close()
 

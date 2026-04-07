@@ -102,6 +102,30 @@ jobs:
           OPENAI_API_KEY: ""
         run: python -m pytest tests/test_llm_extraction_regression.py -v --tb=short
 
+  # ── Multimodal contract + imaging↔FNA linkage (offline DuckDB, no secrets) ─
+  multimodal-tests:
+    name: Multimodal contract tests (offline)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: pytest — multimodal contract + IFNA linkage
+        env:
+          GITHUB_TOKEN: ""
+          OPENAI_API_KEY: ""
+        run: |
+          python -m pytest \
+            tests/test_multimodal_contract_mm_v1.py \
+            tests/test_imaging_fna_linkage_mm_v1.py \
+            -v --tb=short
+
   # ── Job 1: Static Analysis ─────────────────────────────────────────────────
   lint-and-syntax:
     name: Syntax / Lint
