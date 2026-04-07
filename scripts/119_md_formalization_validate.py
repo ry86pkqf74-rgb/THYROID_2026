@@ -712,17 +712,15 @@ def _main_object_exists(
     con: duckdb.DuckDBPyConnection,
     table_name: str,
 ) -> bool:
+    """True only when ``main.<name>`` resolves on this connection (not another attached catalog).
+
+    MotherDuck may attach prod/read-only DBs alongside the primary database; ``information_schema``
+    can then list homonymous ``main.*`` objects that are not reachable as unqualified ``main.*``.
+    """
+    ident = table_name.replace('"', '""')
     try:
-        row = con.execute(
-            """
-            SELECT 1
-            FROM information_schema.tables
-            WHERE table_schema = 'main' AND table_name = ?
-            LIMIT 1
-            """,
-            [table_name],
-        ).fetchone()
-        return row is not None
+        con.execute(f'SELECT 1 FROM main."{ident}" LIMIT 1')
+        return True
     except Exception:
         return False
 
@@ -733,17 +731,11 @@ def _qa_object_exists(
     *,
     schema: str = "qa",
 ) -> bool:
+    ident = object_name.replace('"', '""')
+    sch = schema.replace('"', '""')
     try:
-        row = con.execute(
-            """
-            SELECT 1
-            FROM information_schema.tables
-            WHERE table_schema = ? AND table_name = ?
-            LIMIT 1
-            """,
-            [schema, object_name],
-        ).fetchone()
-        return row is not None
+        con.execute(f'SELECT 1 FROM "{sch}"."{ident}" LIMIT 1')
+        return True
     except Exception:
         return False
 

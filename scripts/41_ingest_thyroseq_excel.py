@@ -337,6 +337,44 @@ def _build_demographic_index(con: duckdb.DuckDBPyConnection) -> pd.DataFrame | N
     return None
 
 
+def _thyroseq_source_research_id_column(df: pd.DataFrame) -> str | None:
+    """Return workbook column name that carries explicit cohort research_id, if any."""
+    for c in df.columns:
+        cl = str(c).strip().lower().replace("#", "")
+        if cl in (
+            "research_id",
+            "research id",
+            "research id number",
+            "researchid",
+        ):
+            return str(c)
+    return None
+
+
+def apply_thyroseq_research_id_overrides(raw: pd.DataFrame, matches: pd.DataFrame) -> pd.DataFrame:
+    """When the workbook includes explicit ``research_id``, trust it (mirrors ``42_ingest_afirma``)."""
+    col = _thyroseq_source_research_id_column(raw)
+    if col is None:
+        return matches
+    m = matches.copy()
+    for _, r in raw.iterrows():
+        rid_src = r.get(col)
+        if rid_src is None or (isinstance(rid_src, float) and pd.isna(rid_src)):
+            continue
+        try:
+            rid = int(float(str(rid_src).strip().replace(".0", "")))
+        except (ValueError, TypeError):
+            continue
+        sel = m["row_hash"] == r["row_hash"]
+        m.loc[sel, "matched_research_id"] = rid
+        m.loc[sel, "match_method"] = "source_research_id"
+        m.loc[sel, "match_confidence"] = 1.0
+        m.loc[sel, "review_required"] = False
+        m.loc[sel, "review_reason"] = ""
+        m.loc[sel, "conflict_flags"] = ""
+    return m
+
+
 def match_patients(raw: pd.DataFrame, xw: pd.DataFrame,
                    con: duckdb.DuckDBPyConnection | None = None) -> pd.DataFrame:
     log.info("Phase 3: Matching patients to existing research_id")
@@ -1558,6 +1596,7 @@ def main():
 
     # Phase 3: Match
     matches = match_patients(raw, xw, con=con)
+    matches = apply_thyroseq_research_id_overrides(raw, matches)
 
     # Phase 4: Parse
     parsed = parse_all_fields(raw, matches)

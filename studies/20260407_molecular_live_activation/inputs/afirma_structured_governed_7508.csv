@@ -1,0 +1,2 @@
+research_id,mrn,dob,last_name,first_name,specimen_id,accession,test_date,bethesda,gec_call,gsc_call,panel_type,xpression_variants
+7508,,1975-03-22,TEST,Synthetic,SYN-DEV-7508,ACC-DEV-7508,2024-07-15,IV,Benign,Suspicious,GEC+GSC,"[{""gene_symbol"":""BRAF"",""variant_class"":""SNV"",""protein_hgvs"":""p.V600E""}]"
