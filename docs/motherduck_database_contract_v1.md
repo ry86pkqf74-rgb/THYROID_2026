@@ -131,7 +131,7 @@ Same names as v2_stage tables, promoted by `motherduck_promote.sql` after all 8 
 | `domain_validation` | Table | Schema, dup, date, provenance metrics per domain per run |
 | `tg_lab_ingestion_qc` | Table | Tg lab pipeline QC results |
 | `release_manifest` | Table | Immutable release snapshot metadata |
-| `manual_review_queue` | Table | Rows flagged for human review during gate runs |
+| `manual_review_queue` | Table | Rows flagged for human review during gate runs; extended with `promotion_approved`, `reviewer_evidence_span`, `reviewer_comment`, `reason_code` (see `114_qa_schema_ddl.sql` + study `MANUAL_REVIEW_PLAYBOOK.md`) |
 | `promotion_scorecard_summary_v` | View | Aggregate pass/fail/conditional per run |
 | `domain_validation_summary_v` | View | Aggregate validation metrics per run |
 | `date_provenance_completeness_v` | View | Per-domain date/provenance completeness tier |

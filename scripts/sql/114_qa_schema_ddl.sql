@@ -104,6 +104,12 @@ CREATE TABLE IF NOT EXISTS qa.manual_review_queue (
     loaded_at           TIMESTAMP NOT NULL DEFAULT current_timestamp
 );
 
+-- Idempotent extension for v2 promotion gate CSV hydration (2026-04)
+ALTER TABLE qa.manual_review_queue ADD COLUMN IF NOT EXISTS promotion_approved VARCHAR;
+ALTER TABLE qa.manual_review_queue ADD COLUMN IF NOT EXISTS reviewer_evidence_span VARCHAR;
+ALTER TABLE qa.manual_review_queue ADD COLUMN IF NOT EXISTS reviewer_comment VARCHAR;
+ALTER TABLE qa.manual_review_queue ADD COLUMN IF NOT EXISTS reason_code VARCHAR;
+
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Summary views for QA dashboards
 -- ═══════════════════════════════════════════════════════════════════════════

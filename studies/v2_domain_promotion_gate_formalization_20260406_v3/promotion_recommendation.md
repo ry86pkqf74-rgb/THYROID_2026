@@ -138,6 +138,8 @@
 > `verification_status` = `confirmed_correct` or `confirmed_incorrect` set by a reviewer
 > in `manual_review_queue.csv` before re-running the gate.
 
+**Human review SOP:** [`MANUAL_REVIEW_PLAYBOOK.md`](MANUAL_REVIEW_PLAYBOOK.md) (rubric, prioritization, pilot steps, QA hydration, release criteria). Presignoff snapshot: [`manual_review_queue__presignoff_snapshot_20260406.csv`](manual_review_queue__presignoff_snapshot_20260406.csv).
+
 ---
 
 ## Promotion Command Sequence
