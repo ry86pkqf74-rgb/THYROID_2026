@@ -1,0 +1,46 @@
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+=== Parquet Release Bundle: 20260407_final ===
+  Output: /Users/ros/THyroid 2026/THYROID_2026/exports/parquet_release_20260407_final
+
+--- main schema ---
+  [export] main.canonical_extracted_fact_long_v2: 123,577 rows -> canonical_extracted_fact_long_v2.parquet (c5273280272814c1)
+  [export] main.canonical_fact_quarantine_v2: 199 rows -> canonical_fact_quarantine_v2.parquet (511cb89777807306)
+  [export] main.note_extraction_runs: 3 rows -> note_extraction_runs.parquet (2a5a48fce85071ab)
+  [export] main.tumor_episode_master_v2: 11,691 rows -> tumor_episode_master_v2.parquet (98189f467e3eb8a3)
+  [export] main.molecular_test_episode_v2: 10,126 rows -> molecular_test_episode_v2.parquet (8688208f3bd35f0f)
+  [export] main.rai_treatment_episode_v2: 1,857 rows -> rai_treatment_episode_v2.parquet (8ae6f0524faf2334)
+  [export] main.operative_episode_detail_v2: 9,371 rows -> operative_episode_detail_v2.parquet (62c1cbdaaa8e0262)
+  [export] main.note_entities_llm_imaging: 11,037 rows -> note_entities_llm_imaging.parquet (e79ffd3a699ae84a)
+  [export] main.note_entities_llm_tirads_granular: 11,037 rows -> note_entities_llm_tirads_granular.parquet (1716e1cef4509eed)
+  [export] main.note_entities_llm_us_nodule_dynamics: 11,037 rows -> note_entities_llm_us_nodule_dynamics.parquet (e3102639942eed9d)
+  [export] main.note_entities_llm_labs: 11,037 rows -> note_entities_llm_labs.parquet (2a1ec3d87823ebdf)
+  [export] main.note_entities_llm_tg_kinetics: 11,037 rows -> note_entities_llm_tg_kinetics.parquet (a127640a5d610c55)
+  [export] main.note_entities_llm_pathology: 11,037 rows -> note_entities_llm_pathology.parquet (b155ccf238b8d610)
+  [export] main.note_entities_llm_synoptic_pathology_enrichment: 11,037 rows -> note_entities_llm_synoptic_pathology_enrichment.parquet (c2082c2a957a5445)
+  [export] main.note_entities_llm_rai_detailed: 11,037 rows -> note_entities_llm_rai_detailed.parquet (64d7aa14310a195a)
+  [export] main.note_entities_llm_rad_treatment: 11,037 rows -> note_entities_llm_rad_treatment.parquet (58f9913dfb4d5559)
+  [export] main.note_entities_llm_parathyroid_detail: 11,037 rows -> note_entities_llm_parathyroid_detail.parquet (3fe9ef654a088133)
+  [export] main.note_entities_llm_recurrence: 11,037 rows -> note_entities_llm_recurrence.parquet (d1dc7c76c47e185a)
+  [export] main.note_entities_llm_survival_followup: 11,037 rows -> note_entities_llm_survival_followup.parquet (c2fc5ff1d16ff7b0)
+  [export] main.note_entities_llm_cervical_ln_detail: 11,037 rows -> note_entities_llm_cervical_ln_detail.parquet (b695dc6e5865fceb)
+  [export] main.note_entities_llm_functional_outcomes: 11,037 rows -> note_entities_llm_functional_outcomes.parquet (4acb27cab5387ca7)
+  [export] main.note_entities_llm_past_medical_hx: 11,037 rows -> note_entities_llm_past_medical_hx.parquet (76117057fdf37338)
+  [export] main.note_entities_llm_past_surgical_hx: 11,037 rows -> note_entities_llm_past_surgical_hx.parquet (c8577ccaaf1cc63a)
+  [export] main.note_entities_llm_presenting_symptoms: 11,037 rows -> note_entities_llm_presenting_symptoms.parquet (756410e3db70dadd)
+  [export] main.note_entities_llm_physical_exam: 11,037 rows -> note_entities_llm_physical_exam.parquet (0ab40320575d8342)
+  [export] main.note_entities_llm_vascular_invasion: 11,037 rows -> note_entities_llm_vascular_invasion.parquet (1fb36ae854ef3153)
+  [export] main.note_entities_llm_airway_invasion: 11,037 rows -> note_entities_llm_airway_invasion.parquet (71b41b306469bac7)
+  [export] main.note_entities_llm_frozen_section_detail: 11,037 rows -> note_entities_llm_frozen_section_detail.parquet (6974268c4bbd357a)
+  [export] main.note_entities_llm_dynamic_risk_response: 11,037 rows -> note_entities_llm_dynamic_risk_response.parquet (2226e0c81a51ab05)
+  [export] main.note_entities_llm_patient_decision_adherence: 11,037 rows -> note_entities_llm_patient_decision_adherence.parquet (17cd53a24f3c620b)
+
+--- qa schema ---
+  [export] qa.promotion_scorecard: 48 rows -> promotion_scorecard.parquet (b5f3fa1a88ced39c)
+  [export] qa.domain_validation: 138 rows -> domain_validation.parquet (6c068c23302568b9)
+  [export] qa.manual_review_queue: 16,866 rows -> manual_review_queue.parquet (6d559344f456ffd6)
+
+  [manifest] /Users/ros/THyroid 2026/THYROID_2026/exports/parquet_release_20260407_final/manifest.json
+
+  [summary] 33 files, 427,727 total rows
+  [done] Release bundle created at /Users/ros/THyroid 2026/THYROID_2026/exports/parquet_release_20260407_final

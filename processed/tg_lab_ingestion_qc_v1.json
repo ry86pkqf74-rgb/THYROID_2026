@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "script": "scripts/113_tg_lab_ingestion.py",
-  "run_timestamp": "20260406",
+  "run_timestamp": "20260407",
   "source_file": "Thyroid_Thyroglobulin_Lab_20251120.csv",
   "ingestion_waves": [
     "wave_tg_structured_ehr",
@@ -61,14 +61,14 @@
   },
   "cross_wave_reconciliation": {
     "total_canonical_rows": 76971,
-    "deduped_rows": 0,
+    "deduped_rows": 55210,
     "superseded_exact_duplicates": 21761,
     "cross_wave_value_mismatches": 0
   },
   "derived_views": {
-    "tg_timeline_patients": 0,
-    "rising_tg_patients": 0,
-    "tgab_interference_patients": 0,
+    "tg_timeline_patients": 3258,
+    "rising_tg_patients": 474,
+    "tgab_interference_patients": 548,
     "postop_surveillance_rows": 16184,
     "postop_surveillance_patients": 3250,
     "recurrence_linkage_rows": 0,

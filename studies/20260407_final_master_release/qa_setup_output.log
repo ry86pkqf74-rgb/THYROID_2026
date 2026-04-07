@@ -1,0 +1,11 @@
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+  [ddl] qa schema and tables created/verified
+  [hydrate] from studies/20260407_final_master_release/promotion_gate
+  [hydrate] qa.promotion_scorecard: 8 rows from promotion_gate
+  [hydrate] qa.domain_validation: 23 rows from promotion_gate
+  [hydrate] qa.concordance_summary: 19 rows from promotion_gate
+  [hydrate] qa.manual_review_queue: 5622 rows from promotion_gate
+  [verify] schemas with tables: ['hn', 'kaggle', 'main', 'mm_contract_dev', 'nyc', 'qa', 'release_20260406', 'release_20260407', 'release_20260408', 'release_20260409', 'stackoverflow_survey', 'v2_stage', 'who']
+  [verify] qa tables: ['concordance_summary', 'concordance_summary', 'date_provenance_completeness_v', 'date_provenance_completeness_v', 'domain_validation', 'domain_validation', 'domain_validation_summary_v', 'domain_validation_summary_v', 'manual_review_queue', 'manual_review_queue', 'manual_review_queue_summary_v', 'manual_review_queue_summary_v', 'promotion_review_decisions', 'promotion_review_decisions', 'promotion_scorecard', 'promotion_scorecard', 'promotion_scorecard_summary_v', 'promotion_scorecard_summary_v', 'release_manifest', 'release_manifest', 'tg_lab_ingestion_qc', 'tg_lab_ingestion_qc']
+  [done] qa schema setup complete

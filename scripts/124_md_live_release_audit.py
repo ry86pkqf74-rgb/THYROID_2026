@@ -699,6 +699,9 @@ def main() -> None:
         py, str(SCRIPTS / "115_release_snapshot.py"),
         "--tag", tag,
     ]
+    if args.final_release:
+        # Manuscript-safe bundle: labs + master_* verified tables alongside core canonicals.
+        cmd_115.append("--final-master")
     if args.md:
         cmd_115.append("--md")
     if args.dry_run:

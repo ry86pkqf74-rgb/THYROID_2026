@@ -1,0 +1,29 @@
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+  [schema] created release_20260407_final
+  [copy] release_20260407_final.canonical_extracted_fact_long_v1: 68,077 rows
+  [copy] release_20260407_final.canonical_extracted_fact_long_v2: 123,577 rows
+  [copy] release_20260407_final.canonical_fact_quarantine_v1: 0 rows
+  [copy] release_20260407_final.canonical_fact_quarantine_v2: 199 rows
+  [copy] release_20260407_final.thyroglobulin_lab_canonical_v1: 76,971 rows
+  [copy] release_20260407_final.note_extraction_runs: 3 rows
+  [copy] release_20260407_final.longitudinal_lab_canonical_v1: 76,971 rows
+  [copy] release_20260407_final.master_fact_long_verified_v1: 123,577 rows
+  [copy] release_20260407_final.master_patient_rollup_verified_v1: 5,574 rows
+  [copy] release_20260407_final.master_source_lineage_v1: 123,577 rows
+
+  [post-write] Row parity vs main (before COMMIT)…
+  [parity OK] release_20260407_final.canonical_extracted_fact_long_v1: 68,077 rows (matches main.canonical_extracted_fact_long_v1)
+  [parity OK] release_20260407_final.canonical_extracted_fact_long_v2: 123,577 rows (matches main.canonical_extracted_fact_long_v2)
+  [parity OK] release_20260407_final.canonical_fact_quarantine_v1: 0 rows (matches main.canonical_fact_quarantine_v1)
+  [parity OK] release_20260407_final.canonical_fact_quarantine_v2: 199 rows (matches main.canonical_fact_quarantine_v2)
+  [parity OK] release_20260407_final.thyroglobulin_lab_canonical_v1: 76,971 rows (matches main.thyroglobulin_lab_canonical_v1)
+  [parity OK] release_20260407_final.note_extraction_runs: 3 rows (matches main.note_extraction_runs)
+  [parity OK] release_20260407_final.longitudinal_lab_canonical_v1: 76,971 rows (matches main.longitudinal_lab_canonical_v1)
+  [parity OK] release_20260407_final.master_fact_long_verified_v1: 123,577 rows (matches main.master_fact_long_verified_v1)
+  [parity OK] release_20260407_final.master_patient_rollup_verified_v1: 5,574 rows (matches main.master_patient_rollup_verified_v1)
+  [parity OK] release_20260407_final.master_source_lineage_v1: 123,577 rows (matches main.master_source_lineage_v1)
+  [txn] COMMIT completed for release snapshot (release_* durable; manifest recorded separately).
+
+  Release 20260407_final created with 10 tables in release_20260407_final
+  [manifest] recorded in qa.release_manifest

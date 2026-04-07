@@ -1,0 +1,241 @@
+{
+  "release_tag": "20260407_final2",
+  "git_sha": "4ad9052",
+  "registry_version": "entity_schema_v3_2026-04-03",
+  "created_at": "2026-04-07T05:11:41.621033+00:00",
+  "tables": [
+    {
+      "table": "main.canonical_extracted_fact_long_v2",
+      "rows": 123577,
+      "file": "canonical_extracted_fact_long_v2.parquet",
+      "size_bytes": 14524811,
+      "sha256_16": "c5273280272814c1"
+    },
+    {
+      "table": "main.canonical_fact_quarantine_v2",
+      "rows": 199,
+      "file": "canonical_fact_quarantine_v2.parquet",
+      "size_bytes": 88962,
+      "sha256_16": "511cb89777807306"
+    },
+    {
+      "table": "main.note_extraction_runs",
+      "rows": 3,
+      "file": "note_extraction_runs.parquet",
+      "size_bytes": 11041,
+      "sha256_16": "2a5a48fce85071ab"
+    },
+    {
+      "table": "main.tumor_episode_master_v2",
+      "rows": 11691,
+      "file": "tumor_episode_master_v2.parquet",
+      "size_bytes": 209479,
+      "sha256_16": "98189f467e3eb8a3"
+    },
+    {
+      "table": "main.molecular_test_episode_v2",
+      "rows": 10126,
+      "file": "molecular_test_episode_v2.parquet",
+      "size_bytes": 446699,
+      "sha256_16": "8688208f3bd35f0f"
+    },
+    {
+      "table": "main.rai_treatment_episode_v2",
+      "rows": 1857,
+      "file": "rai_treatment_episode_v2.parquet",
+      "size_bytes": 93225,
+      "sha256_16": "8ae6f0524faf2334"
+    },
+    {
+      "table": "main.operative_episode_detail_v2",
+      "rows": 9371,
+      "file": "operative_episode_detail_v2.parquet",
+      "size_bytes": 227312,
+      "sha256_16": "62c1cbdaaa8e0262"
+    },
+    {
+      "table": "main.note_entities_llm_imaging",
+      "rows": 11037,
+      "file": "note_entities_llm_imaging.parquet",
+      "size_bytes": 1497965,
+      "sha256_16": "e79ffd3a699ae84a"
+    },
+    {
+      "table": "main.note_entities_llm_tirads_granular",
+      "rows": 11037,
+      "file": "note_entities_llm_tirads_granular.parquet",
+      "size_bytes": 831472,
+      "sha256_16": "1716e1cef4509eed"
+    },
+    {
+      "table": "main.note_entities_llm_us_nodule_dynamics",
+      "rows": 11037,
+      "file": "note_entities_llm_us_nodule_dynamics.parquet",
+      "size_bytes": 957408,
+      "sha256_16": "e3102639942eed9d"
+    },
+    {
+      "table": "main.note_entities_llm_labs",
+      "rows": 11037,
+      "file": "note_entities_llm_labs.parquet",
+      "size_bytes": 1097647,
+      "sha256_16": "2a1ec3d87823ebdf"
+    },
+    {
+      "table": "main.note_entities_llm_tg_kinetics",
+      "rows": 11037,
+      "file": "note_entities_llm_tg_kinetics.parquet",
+      "size_bytes": 756773,
+      "sha256_16": "a127640a5d610c55"
+    },
+    {
+      "table": "main.note_entities_llm_pathology",
+      "rows": 11037,
+      "file": "note_entities_llm_pathology.parquet",
+      "size_bytes": 1456948,
+      "sha256_16": "b155ccf238b8d610"
+    },
+    {
+      "table": "main.note_entities_llm_synoptic_pathology_enrichment",
+      "rows": 11037,
+      "file": "note_entities_llm_synoptic_pathology_enrichment.parquet",
+      "size_bytes": 954964,
+      "sha256_16": "c2082c2a957a5445"
+    },
+    {
+      "table": "main.note_entities_llm_rai_detailed",
+      "rows": 11037,
+      "file": "note_entities_llm_rai_detailed.parquet",
+      "size_bytes": 816294,
+      "sha256_16": "64d7aa14310a195a"
+    },
+    {
+      "table": "main.note_entities_llm_rad_treatment",
+      "rows": 11037,
+      "file": "note_entities_llm_rad_treatment.parquet",
+      "size_bytes": 829912,
+      "sha256_16": "58f9913dfb4d5559"
+    },
+    {
+      "table": "main.note_entities_llm_parathyroid_detail",
+      "rows": 11037,
+      "file": "note_entities_llm_parathyroid_detail.parquet",
+      "size_bytes": 900857,
+      "sha256_16": "3fe9ef654a088133"
+    },
+    {
+      "table": "main.note_entities_llm_recurrence",
+      "rows": 11037,
+      "file": "note_entities_llm_recurrence.parquet",
+      "size_bytes": 863621,
+      "sha256_16": "d1dc7c76c47e185a"
+    },
+    {
+      "table": "main.note_entities_llm_survival_followup",
+      "rows": 11037,
+      "file": "note_entities_llm_survival_followup.parquet",
+      "size_bytes": 1296823,
+      "sha256_16": "c2fc5ff1d16ff7b0"
+    },
+    {
+      "table": "main.note_entities_llm_cervical_ln_detail",
+      "rows": 11037,
+      "file": "note_entities_llm_cervical_ln_detail.parquet",
+      "size_bytes": 897690,
+      "sha256_16": "b695dc6e5865fceb"
+    },
+    {
+      "table": "main.note_entities_llm_functional_outcomes",
+      "rows": 11037,
+      "file": "note_entities_llm_functional_outcomes.parquet",
+      "size_bytes": 956317,
+      "sha256_16": "4acb27cab5387ca7"
+    },
+    {
+      "table": "main.note_entities_llm_past_medical_hx",
+      "rows": 11037,
+      "file": "note_entities_llm_past_medical_hx.parquet",
+      "size_bytes": 1090288,
+      "sha256_16": "76117057fdf37338"
+    },
+    {
+      "table": "main.note_entities_llm_past_surgical_hx",
+      "rows": 11037,
+      "file": "note_entities_llm_past_surgical_hx.parquet",
+      "size_bytes": 1248803,
+      "sha256_16": "c8577ccaaf1cc63a"
+    },
+    {
+      "table": "main.note_entities_llm_presenting_symptoms",
+      "rows": 11037,
+      "file": "note_entities_llm_presenting_symptoms.parquet",
+      "size_bytes": 1015597,
+      "sha256_16": "756410e3db70dadd"
+    },
+    {
+      "table": "main.note_entities_llm_physical_exam",
+      "rows": 11037,
+      "file": "note_entities_llm_physical_exam.parquet",
+      "size_bytes": 1115593,
+      "sha256_16": "0ab40320575d8342"
+    },
+    {
+      "table": "main.note_entities_llm_vascular_invasion",
+      "rows": 11037,
+      "file": "note_entities_llm_vascular_invasion.parquet",
+      "size_bytes": 841566,
+      "sha256_16": "1fb36ae854ef3153"
+    },
+    {
+      "table": "main.note_entities_llm_airway_invasion",
+      "rows": 11037,
+      "file": "note_entities_llm_airway_invasion.parquet",
+      "size_bytes": 976671,
+      "sha256_16": "71b41b306469bac7"
+    },
+    {
+      "table": "main.note_entities_llm_frozen_section_detail",
+      "rows": 11037,
+      "file": "note_entities_llm_frozen_section_detail.parquet",
+      "size_bytes": 808434,
+      "sha256_16": "6974268c4bbd357a"
+    },
+    {
+      "table": "main.note_entities_llm_dynamic_risk_response",
+      "rows": 11037,
+      "file": "note_entities_llm_dynamic_risk_response.parquet",
+      "size_bytes": 729987,
+      "sha256_16": "2226e0c81a51ab05"
+    },
+    {
+      "table": "main.note_entities_llm_patient_decision_adherence",
+      "rows": 11037,
+      "file": "note_entities_llm_patient_decision_adherence.parquet",
+      "size_bytes": 897310,
+      "sha256_16": "17cd53a24f3c620b"
+    },
+    {
+      "table": "qa.promotion_scorecard",
+      "rows": 48,
+      "file": "promotion_scorecard.parquet",
+      "size_bytes": 6785,
+      "sha256_16": "4e4c1e3b3b4f7de7"
+    },
+    {
+      "table": "qa.domain_validation",
+      "rows": 138,
+      "file": "domain_validation.parquet",
+      "size_bytes": 10222,
+      "sha256_16": "e11a64f5c56d4195"
+    },
+    {
+      "table": "qa.manual_review_queue",
+      "rows": 5622,
+      "file": "manual_review_queue.parquet",
+      "size_bytes": 156001,
+      "sha256_16": "f03ac77f24fe0ccf"
+    }
+  ],
+  "total_files": 33,
+  "total_rows": 416483
+}
