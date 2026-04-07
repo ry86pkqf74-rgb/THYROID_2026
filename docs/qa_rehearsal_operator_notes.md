@@ -58,3 +58,14 @@ Store rehearsal summaries under `studies/<YYYYMMDD>_release_rehearsal_qa/` (repo
 ## 2026-04-07 rehearsal index
 
 See `studies/20260407_release_rehearsal_qa/rehearsal_report.md` and `rehearsal_metrics.csv`.
+
+## 2026-04-07 follow-up execution (next steps)
+
+Executed on **QA** after the structural dry-run:
+
+| Step | Command | Outcome |
+|------|---------|--------|
+| Molecular lineage deploy | `132_molecular_fact_lineage_views.py --execute --md --md-env qa` | **FAIL** — `main.molecular_results` missing on QA |
+| Release-mode validation | `119_md_formalization_validate.py --md --md-env qa --release-mode` | **FAIL** — 5b governance (MRQ synthetic placeholders + `decision_batch_id`) + Check **12b** (`molecular_testing` spine missing) |
+
+Evidence: `studies/20260407_release_rehearsal_qa/next_steps/` (`EXECUTION_SUMMARY.md`, logs, `119_release_mode/validation_report.md`).

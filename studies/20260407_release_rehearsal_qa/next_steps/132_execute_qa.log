@@ -1,0 +1,17 @@
+  Connected to MotherDuck (md:Thyroid 2026 Molecular QA 20260407)
+  MotherDuck connection verified (fail-closed gate passed)
+Traceback (most recent call last):
+  File "/Users/ros/THyroid 2026/THYROID_2026/scripts/132_molecular_fact_lineage_views.py", line 225, in <module>
+    main()
+    ~~~~^^
+  File "/Users/ros/THyroid 2026/THYROID_2026/scripts/132_molecular_fact_lineage_views.py", line 217, in main
+    apply_ddl(con, dry_run=dry_run)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/ros/THyroid 2026/THYROID_2026/scripts/132_molecular_fact_lineage_views.py", line 91, in apply_ddl
+    con.execute(stmt)
+    ~~~~~~~~~~~^^^^^^
+_duckdb.CatalogException: Catalog Error: Table with name molecular_results does not exist!
+Did you mean "Thyroid 2026 Molecular Dev 20260407.molecular_results, Thyroid 2026 Molecular PrePromote 20260407_cursor_prod_release.molecular_results, Thyroid 2026 Molecular PrePromote 20260410_20260407_161831_promote.molecular_results, Thyroid 2026 Molecular PrePromote agent_20260407_workflow.molecular_results, Thyroid 2026.molecular_results, or thyroid_research_ro_v2.molecular_results"?
+
+LINE 4:     FROM main.molecular_results
+                 ^
