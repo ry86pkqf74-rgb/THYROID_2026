@@ -3208,7 +3208,7 @@ def main():
     # ── Section 4: Cross-Domain Linkage & Episodes ─────────────────────
     with sec_linkage:
         _l1, _l2, _l3, _l4, _l5, _l6, _l7, _l8, _l9 = st.tabs([
-            "Extraction Completeness", "Molecular Episodes", "RAI Episodes",
+            "Extraction Completeness", "Molecular", "RAI Episodes",
             "Imaging & Nodules", "Operative Detail", "QA & Adjudication",
             "Features v3", "Timeline & Events", "Episode Linkage QA",
         ])
