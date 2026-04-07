@@ -4,10 +4,11 @@ MotherDuck client for thyroid research data.
 
 Read/write tokens (staging, attach, promotion, validators)
 ──────────────────────────────────────────────────────────
-1. Service-account token  MD_SA_TOKEN         ← CI / automation (``prefer_service_account=True``)
+1. Service-account token  MD_SA_TOKEN         ← CI / automation (wins when both SA and personal are set)
 2. Personal token         MOTHERDUCK_TOKEN    ← interactive development
-3. Official alias         motherduck_token   ← same as MOTHERDUCK_TOKEN where supported
-4. Secrets file           .streamlit/secrets.toml — ``MD_SA_TOKEN`` / ``MOTHERDUCK_TOKEN``
+3. Official alias         motherduck_token    ← same family as MOTHERDUCK_TOKEN
+4. Legacy guard           LOCAL_DB_PATH       ← only when value looks like a JWT / ``md_`` PAT
+5. Secrets file           .streamlit/secrets.toml — same key order as above
 
 Read-scaling token (dashboard read-only / Business scale-out)
 ─────────────────────────────────────────────────────────────
@@ -150,51 +151,41 @@ def resolve_database_for_env(env: str | None = None) -> str:
 
 
 def get_token(prefer_service_account: bool = False) -> str | None:
-    """Resolve a MotherDuck token.
+    """Resolve a MotherDuck read/write token.
 
-    Priority (when *prefer_service_account* is True):
-      1. MD_SA_TOKEN              – service-account / team token
-      2. MOTHERDUCK_TOKEN         – personal developer token
-      3. .streamlit/secrets.toml  – MD_SA_TOKEN key, then MOTHERDUCK_TOKEN key
+    Fixed precedence (env, then fallbacks) — matches ``docs/motherduck_database_contract_v1.md`` §8:
 
-    Priority (when *prefer_service_account* is False — the default):
-      1. MOTHERDUCK_TOKEN         – personal developer token
-      2. MD_SA_TOKEN              – service-account fallback
-      3. .streamlit/secrets.toml  – MOTHERDUCK_TOKEN key, then MD_SA_TOKEN key
+      1. ``MD_SA_TOKEN``
+      2. ``MOTHERDUCK_TOKEN``
+      3. ``motherduck_token`` (env alias)
+      4. ``LOCAL_DB_PATH`` when it looks like a JWT / ``md_`` PAT (misconfig guard)
+      5. ``.streamlit/secrets.toml`` — ``MD_SA_TOKEN``, then ``MOTHERDUCK_TOKEN``, then ``motherduck_token``
 
-    Set prefer_service_account=True in CI / automated scripts; leave False
-    for interactive development that should use the personal token.
+    *prefer_service_account* is ignored (kept for backward-compatible call sites).
     """
-    if prefer_service_account:
-        sa = os.getenv("MD_SA_TOKEN")
-        if sa:
-            return sa
-        lp = _jwt_like(os.getenv("LOCAL_DB_PATH"))
-        if lp:
-            return lp
-        personal = os.getenv("MOTHERDUCK_TOKEN") or os.getenv("motherduck_token")
-        if personal:
-            return personal
-    else:
-        personal = os.getenv("MOTHERDUCK_TOKEN") or os.getenv("motherduck_token")
-        if personal:
-            return personal
-        sa = os.getenv("MD_SA_TOKEN")
-        if sa:
-            return sa
-        lp = _jwt_like(os.getenv("LOCAL_DB_PATH"))
-        if lp:
-            return lp
+    _ = prefer_service_account  # API compatibility only; ordering is always SA → personal → alias.
+    sa = (os.getenv("MD_SA_TOKEN") or "").strip()
+    if sa:
+        return sa
+    personal = (os.getenv("MOTHERDUCK_TOKEN") or "").strip()
+    if personal:
+        return personal
+    alias = (os.getenv("motherduck_token") or "").strip()
+    if alias:
+        return alias
+    lp = _jwt_like(os.getenv("LOCAL_DB_PATH"))
+    if lp:
+        return lp
 
-    # Streamlit secrets fallback (dashboard / Streamlit Cloud)
     secrets_path = Path(".streamlit") / "secrets.toml"
     if secrets_path.exists():
         try:
             import toml  # type: ignore
             data = toml.load(str(secrets_path))
-            if prefer_service_account:
-                return data.get("MD_SA_TOKEN") or data.get("MOTHERDUCK_TOKEN")
-            return data.get("MOTHERDUCK_TOKEN") or data.get("MD_SA_TOKEN")
+            for key in ("MD_SA_TOKEN", "MOTHERDUCK_TOKEN", "motherduck_token"):
+                val = data.get(key)
+                if val and str(val).strip():
+                    return str(val).strip()
         except Exception:
             pass
     return None
@@ -253,7 +244,7 @@ def is_read_scaling_only_environment() -> bool:
     """True when a read-scaling token is configured but no read/write token is available."""
     if _jwt_like(os.getenv("LOCAL_DB_PATH")):
         return False
-    if get_token(prefer_service_account=False) or get_token(prefer_service_account=True):
+    if get_token():
         return False
     return get_read_scaling_token() is not None
 

@@ -367,8 +367,8 @@ Never call `duckdb.connect("md:...")` directly. Token resolution is handled inte
 
 | Mode | Variables | Typical use | Used by `get_token()` / `connect_rw()` |
 |------|-----------|-------------|----------------------------------------|
-| **Personal developer (RW)** | `MOTHERDUCK_TOKEN`, alias `motherduck_token` | Local notebooks, ad-hoc SQL, Streamlit with review mode | Yes |
-| **CI / service account (RW)** | `MD_SA_TOKEN` (preferred when `prefer_service_account=True`) | GitHub Actions, automation, promotion gates | Yes |
+| **CI / service account (RW)** | `MD_SA_TOKEN` | GitHub Actions, automation, promotion gates | Yes — **first** in RW resolution when set |
+| **Personal developer (RW)** | `MOTHERDUCK_TOKEN`, then env alias `motherduck_token` | Local notebooks, ad-hoc SQL, Streamlit with review mode | Yes — after `MD_SA_TOKEN` if both are set |
 | **Business read-scaling (read-only)** | `MD_READ_SCALING_TOKEN`, alias `MOTHERDUCK_READ_SCALING_TOKEN` | Dashboards, analyst query load, read replicas | **No** — use `get_read_scaling_token()` / `MotherDuckClient.connect_read_scaling()` only |
 
 **Session hints (read-scaling):** optional `MD_READ_SCALING_SESSION_HINT` or `MOTHERDUCK_READ_SCALING_SESSION_HINT` (or per-call `session_hint=`) sets `motherduck_session_hint` for stable user-duckling affinity on scaled reads. Read/write flows continue to use `MOTHERDUCK_SESSION_HINT` / config only (read-scaling env vars are not consulted on `connect_rw()`).

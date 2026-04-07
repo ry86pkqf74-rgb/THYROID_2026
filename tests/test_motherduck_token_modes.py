@@ -11,21 +11,23 @@ sys.path.insert(0, str(ROOT))
 
 
 class TestGetTokenPrecedence:
-    def test_personal_wins_over_sa_by_default(self, monkeypatch):
+    def test_sa_wins_over_personal_when_both_set(self, monkeypatch):
         from motherduck_client import get_token
 
         monkeypatch.setenv("MOTHERDUCK_TOKEN", "md_personal")
         monkeypatch.setenv("MD_SA_TOKEN", "md_sa")
-        assert get_token(prefer_service_account=False) == "md_personal"
-
-    def test_sa_wins_when_prefer_service_account(self, monkeypatch):
-        from motherduck_client import get_token
-
-        monkeypatch.setenv("MOTHERDUCK_TOKEN", "md_personal")
-        monkeypatch.setenv("MD_SA_TOKEN", "md_sa")
+        assert get_token(prefer_service_account=False) == "md_sa"
         assert get_token(prefer_service_account=True) == "md_sa"
 
-    def test_motherduck_token_env_alias(self, monkeypatch):
+    def test_personal_wins_over_motherduck_token_alias(self, monkeypatch):
+        from motherduck_client import get_token
+
+        monkeypatch.delenv("MD_SA_TOKEN", raising=False)
+        monkeypatch.setenv("MOTHERDUCK_TOKEN", "md_personal")
+        monkeypatch.setenv("motherduck_token", "md_alias")
+        assert get_token() == "md_personal"
+
+    def test_motherduck_token_env_alias_when_only_alias_set(self, monkeypatch):
         from motherduck_client import get_token
 
         monkeypatch.delenv("MOTHERDUCK_TOKEN", raising=False)

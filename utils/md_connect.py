@@ -42,11 +42,9 @@ from motherduck_client import (
 
 
 def _resolve_md_token(*, prefer_service_account: bool = False) -> str | None:
-    """Resolve a MotherDuck token; try preferred mode first, then the other."""
-    token = get_token(prefer_service_account=prefer_service_account)
-    if token:
-        return token
-    return get_token(prefer_service_account=not prefer_service_account)
+    """Resolve a MotherDuck read/write token (single precedence; see ``get_token``)."""
+    _ = prefer_service_account  # passed through for API compatibility with callers
+    return get_token()
 
 
 def _verify_md_connection(con: duckdb.DuckDBPyConnection) -> bool:
@@ -132,7 +130,7 @@ def connect_md_or_file(
                 if fail_closed:
                     print(f"  FATAL: MotherDuck connection failed: {e}")
                     print("  --md with fail_closed=True: refusing to fall back to local file.")
-                    print("  Ensure MOTHERDUCK_TOKEN or MD_SA_TOKEN is set and the service is reachable.")
+                    print("  Ensure MD_SA_TOKEN or MOTHERDUCK_TOKEN is set and the service is reachable.")
                     sys.exit(1)
                 print(f"  MotherDuck unavailable: {e} — using file {db_path}")
                 print(
@@ -146,11 +144,11 @@ def connect_md_or_file(
                         "  FATAL: --md requested but only MD_READ_SCALING_TOKEN (read-only) is set."
                     )
                     print(
-                        "  Staging, promotion, and validators require MOTHERDUCK_TOKEN or MD_SA_TOKEN."
+                        "  Staging, promotion, and validators require MD_SA_TOKEN or MOTHERDUCK_TOKEN."
                     )
                 else:
                     print("  FATAL: --md requested but no MotherDuck token found in environment.")
-                    print("  Set MOTHERDUCK_TOKEN (interactive) or MD_SA_TOKEN (CI) before running.")
+                    print("  Set MD_SA_TOKEN (CI) or MOTHERDUCK_TOKEN (personal) before running.")
                 sys.exit(1)
             print(f"  Using file DB (--md, no MotherDuck token in env): {db_path}")
         return duckdb.connect(str(db_path))
