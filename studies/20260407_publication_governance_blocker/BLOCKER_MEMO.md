@@ -1,10 +1,14 @@
 # Publication governance blocker — real MRQ adjudication missing
 
-**Status:** STOP — not eligible for publication-grade final master release.  
-**Date (UTC):** 2026-04-07  
-**Why:** Manual review queue is structurally “complete” (no NULL `verification_status`) but **5620 / 5622** rows carry the explicit non-manuscript placeholder **`SYNTHETIC_AUTOMATION_ONLY_NOT_MANUSCRIPT_SIGNOFF`**. The append-only promotion audit table does **not** contain a credible human batch package for this release.
+**Supersession (2026-04-07):** Synthetic placeholder MRQ was **resolved** via tier-policy gate build + MotherDuck release **`20260407_tier`**. See [`../20260407_tier_final_master_release/RELEASE_VERDICT.md`](../20260407_tier_final_master_release/RELEASE_VERDICT.md), gate [`../20260407_tier_policy_review_gate/TIER_POLICY_BATCH_MEMO.md`](../20260407_tier_policy_review_gate/TIER_POLICY_BATCH_MEMO.md), and script `scripts/128_mrq_tier_policy_gate_build.py`. The historical analysis below remains for audit context.
 
-Do **not** run `scripts/126_final_master_release.py` for manuscript sign-off until the items below are satisfied.
+---
+
+**Historical status:** STOP — not eligible for publication-grade final master release **while** MRQ used synthetic placeholders.  
+**Date (UTC):** 2026-04-07  
+**Why (historical):** Manual review queue was structurally “complete” (no NULL `verification_status`) but **5620 / 5622** rows carried **`SYNTHETIC_AUTOMATION_ONLY_NOT_MANUSCRIPT_SIGNOFF`**. The append-only promotion audit table did **not** contain a substantive batch package for manuscript sign-off.
+
+The following checklist applied **before** the tier-policy remediation:
 
 ---
 

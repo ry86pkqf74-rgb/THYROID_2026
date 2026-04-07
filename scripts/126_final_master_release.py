@@ -247,12 +247,24 @@ def append_promotion_decisions(
     for c in base_cols:
         if c not in df.columns:
             df[c] = None
-    insert_df = df[base_cols]
-    con.register("_decisions_in", insert_df)
+    insert_df = df[base_cols].replace({float("nan"): None})
+
+    def _cell(val: object) -> object:
+        if val is None:
+            return None
+        if isinstance(val, float) and pd.isna(val):
+            return None
+        if pd.isna(val):
+            return None
+        return val
+
     col_list = ", ".join(insert_df.columns)
-    con.execute(f"INSERT INTO qa.promotion_review_decisions ({col_list}) SELECT {col_list} FROM _decisions_in")
-    con.unregister("_decisions_in")
-    n = len(insert_df)
+    placeholders = ", ".join(["?"] * len(insert_df.columns))
+    sql = f"INSERT INTO qa.promotion_review_decisions ({col_list}) VALUES ({placeholders})"
+    n = 0
+    for row in insert_df.itertuples(index=False, name=None):
+        con.execute(sql, [_cell(v) for v in row])
+        n += 1
     print(f"  [qa] appended qa.promotion_review_decisions: {n:,} row(s), batch={batch_id}")
     return n
 
