@@ -1,6 +1,8 @@
 # Implementation report — specimen + FHIR hardening (pre-run template)
 
-This file is **overwritten** when `scripts/138_md_specimen_fhir_layer.py` executes successfully (see generated `implementation_report.md` with `materialized_at` and git SHA).
+**Delivered in commit:** `16eec8f` (push `main`).
+
+This file is **overwritten** when `scripts/138_md_specimen_fhir_layer.py` executes successfully (replacing this template with `materialized_at` and the then-current git SHA).
 
 **Source inventory**
 
