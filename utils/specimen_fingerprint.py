@@ -1,7 +1,8 @@
-"""Canonical specimen fingerprint helpers (must stay aligned with SQL in 138 DDL).
+"""Canonical specimen fingerprint helpers (must stay aligned with SQL in 139 DDL).
 
 Used for tests and documentation of the exact keying policy. Production materialization
-computes the same SHA-256 over normalized pipe-separated fields in DuckDB.
+computes the same SHA-256 over normalized pipe-separated fields in DuckDB
+(``scripts/sql/139_specimen_identity_layer_ddl.sql``).
 """
 
 from __future__ import annotations
@@ -54,10 +55,12 @@ def specimen_master_fingerprint_input(
     laterality: Any = "",
     surgery_episode_id: Any,
     encounter_synoptic_row_ix: Any,
+    synoptic_row_ix: Any,
 ) -> str:
     """Return pipe-separated normalized payload (before SHA-256).
 
     Encounter-level masters use laterality="" (tumor site lives on focus rows).
+    synoptic_row_ix isolates same-day multi-synoptic pathology rows (0 for non-synoptic seeds).
     """
     rid = _norm_empty(research_id)
     parts = [
@@ -70,6 +73,7 @@ def specimen_master_fingerprint_input(
         _norm_empty(laterality),
         _norm_empty(surgery_episode_id),
         _norm_empty(encounter_synoptic_row_ix),
+        _norm_empty(synoptic_row_ix),
     ]
     return "|".join(parts)
 

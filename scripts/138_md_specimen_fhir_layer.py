@@ -5,6 +5,9 @@ Prereqs (main schema): synoptic_tumor_long_v1, path_synoptics_encounter_qc_v1,
 surgery_pathology_linkage_v3, fna_molecular_linkage_v3, preop_surgery_linkage_v3,
 molecular_test_episode_v2
 
+Pipeline: scripts/sql/139_specimen_identity_layer_ddl.sql (identity) then
+scripts/sql/138_specimen_fhir_tail_ddl.sql (genomic + FHIR).
+
 Operational rules (MotherDuck):
   * connect_md_or_file(..., fail_closed=True, custom_user_agent='specimen_fhir_hardening_v1')
   * RW token only (MOTHERDUCK_TOKEN / MD_SA_TOKEN)
@@ -17,9 +20,11 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import os
 import subprocess
 import sys
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -27,7 +32,8 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 DEFAULT_DB = ROOT / "thyroid_master.duckdb"
-DDL_PATH = ROOT / "scripts" / "sql" / "138_specimen_fhir_layer_ddl.sql"
+DDL_IDENTITY_PATH = ROOT / "scripts" / "sql" / "139_specimen_identity_layer_ddl.sql"
+DDL_FHIR_TAIL_PATH = ROOT / "scripts" / "sql" / "138_specimen_fhir_tail_ddl.sql"
 UA = "specimen_fhir_hardening_v1"
 STUDY_TAG = "specimen_fhir_hardening_20260407_180000"
 
@@ -127,6 +133,30 @@ def run_validation(con) -> list[tuple[str, str, str]]:
         "specimen_focus_fingerprint_unique",
         "SELECT COALESCE(COUNT(*) = COUNT(DISTINCT focus_fingerprint_sha256), FALSE)"
         " FROM main.specimen_tumor_focus_v1",
+        True,
+    )
+    run(
+        "specimen_focus_orphan_guard",
+        "SELECT NOT EXISTS ("
+        " SELECT 1 FROM main.specimen_tumor_focus_v1 f"
+        " LEFT JOIN main.specimen_master_v1 m ON f.specimen_id = m.specimen_id"
+        " WHERE m.specimen_id IS NULL)",
+        True,
+    )
+    run(
+        "multi_synoptic_fp_isolation",
+        "SELECT NOT EXISTS ("
+        " SELECT 1 FROM main.specimen_master_v1 a"
+        " JOIN main.specimen_master_v1 b"
+        " ON a.research_id = b.research_id"
+        " AND COALESCE(a.procedure_date_day, '') = COALESCE(b.procedure_date_day, '')"
+        " AND COALESCE(CAST(a.surgery_episode_id AS VARCHAR), '')"
+        "   = COALESCE(CAST(b.surgery_episode_id AS VARCHAR), '')"
+        " AND COALESCE(CAST(a.synoptic_row_ix AS VARCHAR), '')"
+        "   <> COALESCE(CAST(b.synoptic_row_ix AS VARCHAR), '')"
+        " AND a.source_system = 'pathology_synoptic_encounter'"
+        " AND b.source_system = 'pathology_synoptic_encounter'"
+        " AND a.specimen_fingerprint_sha256 = b.specimen_fingerprint_sha256)",
         True,
     )
     run(
@@ -293,11 +323,20 @@ def main() -> None:
     study_dir.mkdir(parents=True, exist_ok=True)
 
     if args.dry_run:
-        print(f"[dry-run] Would apply {DDL_PATH} via MotherDuck={args.md}")
+        print(
+            f"[dry-run] Would apply {DDL_IDENTITY_PATH} + {DDL_FHIR_TAIL_PATH} via MotherDuck={args.md}"
+        )
         print(f"[dry-run] Study dir {study_dir}")
         return
 
     from utils.md_connect import connect_md_or_file
+
+    spec139 = importlib.util.spec_from_file_location(
+        "_specimen_identity139", ROOT / "scripts" / "139_md_specimen_identity_layer.py"
+    )
+    mod139 = importlib.util.module_from_spec(spec139)
+    assert spec139.loader
+    spec139.loader.exec_module(mod139)
 
     hint = os.environ.get("MOTHERDUCK_SESSION_HINT") or "thyroid2026:specimen_fhir:" + _git_sha()[:7]
     con = connect_md_or_file(
@@ -307,6 +346,8 @@ def main() -> None:
         custom_user_agent=UA,
         motherduck_session_hint=hint,
     )
+
+    identity_run_id = f"specimen_identity_build_v1_{uuid.uuid4().hex[:12]}"
 
     snap_name = f"specimen_fhir_pre_{datetime.now(timezone.utc):%Y%m%d_%H%M%S}"
     snap_detail = "not_attempted"
@@ -355,8 +396,14 @@ def main() -> None:
         con.close()
         sys.exit(1)
 
-    sql_text = DDL_PATH.read_text(encoding="utf-8")
-    con.execute(sql_text)
+    try:
+        con.execute("BEGIN TRANSACTION")
+        mod139.apply_specimen_identity_layer(con, identity_run_id, include_specimen_detail=True)
+        con.execute(DDL_FHIR_TAIL_PATH.read_text(encoding="utf-8"))
+        con.execute("COMMIT")
+    except Exception:
+        con.execute("ROLLBACK")
+        raise
 
     append_genetic_testing_rows(con)
 
@@ -370,6 +417,7 @@ def main() -> None:
         "# Specimen + FHIR hardening — machine audit memo",
         f"Generated: {datetime.now(timezone.utc).isoformat()}Z",
         f"Git SHA: {sha}",
+        f"Identity build_run_id: {identity_run_id}",
         f"custom_user_agent: {UA}",
         "",
         "## MotherDuck snapshot",
@@ -421,7 +469,9 @@ LIMIT 20
         f"**Commit SHA:** `{sha}`",
         "",
         "## Source inventory",
-        "- `scripts/sql/138_specimen_fhir_layer_ddl.sql` — DDL",
+        "- `scripts/sql/139_specimen_identity_layer_ddl.sql` — identity DDL",
+        "- `scripts/sql/138_specimen_fhir_tail_ddl.sql` — genomic + FHIR DDL",
+        "- `scripts/139_md_specimen_identity_layer.py` — standalone identity runner",
         "- `scripts/138_md_specimen_fhir_layer.py` — orchestrator",
         "- `utils/specimen_fingerprint.py` — fingerprint test helpers",
         "",

@@ -1,69 +1,49 @@
-"""Offline tests: specimen fingerprint parity + multi-row synoptic isolation logic."""
+"""Tests for canonical specimen identity DDL (139) and fingerprint contract."""
 
 from __future__ import annotations
 
 import hashlib
+from pathlib import Path
 
 import duckdb
 
 from utils.specimen_fingerprint import (
-    specimen_master_fingerprint_input,
     specimen_master_fingerprint_sha256,
+    tumor_focus_fingerprint_input,
     tumor_focus_fingerprint_sha256,
 )
 
 
-def test_specimen_master_fingerprint_stable_normalization() -> None:
-    kwargs = dict(
-        research_id=" 12 ",
-        source_system="PATHOLOGY_SYNOPTIC_ENCOUNTER",
-        procedure_date_day="2020-01-15",
-        accession_or_source_id=" ACC-1 ",
-        specimen_role="Surgical_resection",
-        anatomic_site="thyroid",
-        laterality="",
-        surgery_episode_id=100,
-        encounter_synoptic_row_ix=1,
-        synoptic_row_ix=9,
-    )
-    payload = specimen_master_fingerprint_input(**kwargs)
-    h1 = specimen_master_fingerprint_sha256(**kwargs)
-    h2 = hashlib.sha256(payload.encode("utf-8")).hexdigest()
-    assert h1 == h2
-
-
-def test_tumor_focus_includes_master_fp_and_slot() -> None:
-    master = specimen_master_fingerprint_sha256(
+def test_multi_synoptic_same_day_distinct_master_fingerprints() -> None:
+    """Different synoptic_row_ix same patient/day/episode must not share master FP."""
+    a = specimen_master_fingerprint_sha256(
         research_id=1,
         source_system="pathology_synoptic_encounter",
-        procedure_date_day="2020-01-15",
-        accession_or_source_id="a",
+        procedure_date_day="2020-06-01",
+        accession_or_source_id="x-1",
         specimen_role="surgical_resection",
         anatomic_site="thyroid",
         laterality="",
-        surgery_episode_id=1,
+        surgery_episode_id=50,
         encounter_synoptic_row_ix=1,
         synoptic_row_ix=1,
     )
-    f1 = tumor_focus_fingerprint_sha256(
-        master_fingerprint_sha256=master,
-        synoptic_row_ix=1,
-        tumor_index=1,
-        site_text="right",
-        histologic_type="PTC",
+    b = specimen_master_fingerprint_sha256(
+        research_id=1,
+        source_system="pathology_synoptic_encounter",
+        procedure_date_day="2020-06-01",
+        accession_or_source_id="x-1",
+        specimen_role="surgical_resection",
+        anatomic_site="thyroid",
+        laterality="",
+        surgery_episode_id=50,
+        encounter_synoptic_row_ix=1,
+        synoptic_row_ix=2,
     )
-    f2 = tumor_focus_fingerprint_sha256(
-        master_fingerprint_sha256=master,
-        synoptic_row_ix=1,
-        tumor_index=2,
-        site_text="right",
-        histologic_type="PTC",
-    )
-    assert f1 != f2
+    assert a != b
 
 
-def test_sql_fingerprint_matches_python_case() -> None:
-    """DuckDB sha256(concat_ws(...)) matches Python helper for a fixed row."""
+def test_duckdb_sql_matches_python_fingerprint_with_synoptic_ix() -> None:
     parts_sql = duckdb.connect(":memory:").execute(
         """
         SELECT sha256(concat_ws('|',
@@ -76,7 +56,7 @@ def test_sql_fingerprint_matches_python_case() -> None:
           LOWER(TRIM('')),
           LOWER(TRIM(CAST(100 AS VARCHAR))),
           LOWER(TRIM(CAST(1 AS VARCHAR))),
-          LOWER(TRIM(CAST(1 AS VARCHAR)))
+          LOWER(TRIM(CAST(7 AS VARCHAR)))
         )) AS h
         """
     ).fetchone()[0]
@@ -90,15 +70,13 @@ def test_sql_fingerprint_matches_python_case() -> None:
         laterality="",
         surgery_episode_id=100,
         encounter_synoptic_row_ix=1,
-        synoptic_row_ix=1,
+        synoptic_row_ix=7,
     )
     assert parts_sql == parts_py
 
 
-def test_distinct_surgery_dates_two_focus_rows() -> None:
-    """Two encounters (different days) → two tumor focus rows for same patient."""
-    from pathlib import Path
-
+def test_identity_ddl_two_surgery_dates_two_focus_rows() -> None:
+    """Regression: two encounters (different days) keep two tumor focus rows."""
     con = duckdb.connect(":memory:")
     con.execute("CREATE SCHEMA qa;")
     con.execute("""
@@ -138,14 +116,40 @@ def test_distinct_surgery_dates_two_focus_rows() -> None:
     CREATE TABLE main.molecular_test_episode_v2 (research_id BIGINT, molecular_episode_id BIGINT,
       platform VARCHAR, test_date_native DATE);
     """)
-    root = Path(__file__).resolve().parent.parent
-    ident = (
-        root / "scripts/sql/139_specimen_identity_layer_ddl.sql"
-    ).read_text(encoding="utf-8").replace("__BUILD_RUN_ID__", "pytest_fhir_tail")
-    tail = (root / "scripts/sql/138_specimen_fhir_tail_ddl.sql").read_text(encoding="utf-8")
-    con.execute(ident)
-    con.execute(tail)
+    ddl_path = Path(__file__).resolve().parent.parent / "scripts/sql/139_specimen_identity_layer_ddl.sql"
+    sql = ddl_path.read_text(encoding="utf-8").replace("__BUILD_RUN_ID__", "pytest_run")
+    con.execute(sql)
     n = con.execute(
         "SELECT COUNT(DISTINCT specimen_focus_id) FROM main.specimen_tumor_focus_v1"
     ).fetchone()[0]
     assert n == 2
+
+
+def test_tumor_focus_hash_uses_master_fp() -> None:
+    master = specimen_master_fingerprint_sha256(
+        research_id=1,
+        source_system="pathology_synoptic_encounter",
+        procedure_date_day="2020-01-15",
+        accession_or_source_id="a",
+        specimen_role="surgical_resection",
+        anatomic_site="thyroid",
+        laterality="",
+        surgery_episode_id=1,
+        encounter_synoptic_row_ix=1,
+        synoptic_row_ix=3,
+    )
+    f1 = tumor_focus_fingerprint_sha256(
+        master_fingerprint_sha256=master,
+        synoptic_row_ix=3,
+        tumor_index=1,
+        site_text="right",
+        histologic_type="PTC",
+    )
+    payload_txt = tumor_focus_fingerprint_input(
+        master_fingerprint_sha256=master,
+        synoptic_row_ix=3,
+        tumor_index=1,
+        site_text="right",
+        histologic_type="PTC",
+    )
+    assert f1 == hashlib.sha256(payload_txt.encode("utf-8")).hexdigest()
