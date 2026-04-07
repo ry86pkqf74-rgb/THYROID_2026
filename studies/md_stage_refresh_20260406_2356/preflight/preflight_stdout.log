@@ -1,0 +1,2 @@
+BLOCKER: Neither MOTHERDUCK_TOKEN nor MD_SA_TOKEN is set in the environment.
+This task requires env-sourced credentials only.

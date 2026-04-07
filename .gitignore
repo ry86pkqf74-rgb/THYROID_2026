@@ -74,6 +74,8 @@ studies/llm_extraction_validation/runs/*/
 studies/v2_domain_promotion_gate_*/llm_side_by_side.parquet
 studies/md_gate_dryrun_*/llm_side_by_side.parquet
 studies/md_gate_dryrun_*/llm_side_by_side.csv
+studies/md_stage_refresh_*/gate/llm_side_by_side.parquet
+studies/md_stage_refresh_*/gate/llm_side_by_side.csv
 
 # ── Fact lineage QC reports (ephemeral, timestamped) ──────────
 exports/fact_lineage_qc/
