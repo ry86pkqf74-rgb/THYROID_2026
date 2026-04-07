@@ -29,12 +29,30 @@ def main() -> int:
         action="store_true",
         help="Connect via MotherDuck (fail-closed; shared verification in utils/md_connect.py)",
     )
+    ap.add_argument(
+        "--custom-user-agent",
+        dest="custom_user_agent",
+        default=None,
+        metavar="STRING",
+        help="Optional MotherDuck custom_user_agent for query attribution (--md only)",
+    )
+    ap.add_argument(
+        "--session-hint",
+        dest="motherduck_session_hint",
+        default=None,
+        metavar="STRING",
+        help="Optional session_hint / affinity string (--md only; also see MOTHERDUCK_SESSION_HINT)",
+    )
     args = ap.parse_args()
 
     from utils.md_connect import connect_md_fail_closed, connect_md_or_file
 
     if args.md:
-        con = connect_md_fail_closed(DB_PATH)
+        con = connect_md_fail_closed(
+            DB_PATH,
+            custom_user_agent=args.custom_user_agent,
+            motherduck_session_hint=args.motherduck_session_hint,
+        )
     else:
         con = connect_md_or_file(DB_PATH, md=False)
 

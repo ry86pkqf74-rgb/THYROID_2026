@@ -23,6 +23,14 @@ import os
 import sys
 from pathlib import Path
 
+# Repo-safe import: ensure repository root (parent of ``utils/``) is on ``sys.path``
+# so ``motherduck_client`` resolves when this module is imported without a prior
+# ``sys.path`` tweak (e.g. some pytest entrypoints or ``python -c`` one-liners).
+_ROOT = Path(__file__).resolve().parent.parent
+_root_s = str(_ROOT)
+if _root_s not in sys.path:
+    sys.path.insert(0, _root_s)
+
 import duckdb
 
 from motherduck_client import (

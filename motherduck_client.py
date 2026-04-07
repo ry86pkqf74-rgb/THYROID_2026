@@ -279,6 +279,38 @@ class MotherDuckClient:
             )
         return token
 
+    def _resolve_session_hint(
+        self,
+        *,
+        session_hint: str | None = None,
+        hint_profile: str = "rw",
+    ) -> str | None:
+        """Pick the first non-empty session hint (routing / duckling affinity).
+
+        Precedence matches :meth:`_apply_session_hint`:
+
+        - explicit *session_hint* argument (per-call wins)
+        - for *read_scaling* profile: ``MD_READ_SCALING_SESSION_HINT``,
+          ``MOTHERDUCK_READ_SCALING_SESSION_HINT``
+        - :attr:`MotherDuckConfig.motherduck_session_hint`
+        - ``MOTHERDUCK_SESSION_HINT``
+
+        MotherDuck documents ``session_hint`` as a **connection-string** query
+        parameter; we also ``SET motherduck_session_hint`` after connect for
+        drivers that only honor the pragma.
+        """
+        hints: list[str] = []
+        if session_hint and str(session_hint).strip():
+            hints.append(str(session_hint).strip())
+        if hint_profile == "read_scaling":
+            hints.append((os.getenv("MD_READ_SCALING_SESSION_HINT") or "").strip())
+            hints.append((os.getenv("MOTHERDUCK_READ_SCALING_SESSION_HINT") or "").strip())
+        if self.config.motherduck_session_hint:
+            hints.append(str(self.config.motherduck_session_hint).strip())
+        hints.append((os.getenv("MOTHERDUCK_SESSION_HINT") or "").strip())
+        hint = next((h for h in hints if h), "")
+        return hint or None
+
     def _apply_session_hint(
         self,
         con: duckdb.DuckDBPyConnection,
@@ -291,16 +323,9 @@ class MotherDuckClient:
         *hint_profile* ``read_scaling`` inserts ``MD_READ_SCALING_SESSION_HINT`` /
         ``MOTHERDUCK_READ_SCALING_SESSION_HINT`` before the generic ``MOTHERDUCK_SESSION_HINT``.
         """
-        hints: list[str] = []
-        if session_hint and str(session_hint).strip():
-            hints.append(str(session_hint).strip())
-        if hint_profile == "read_scaling":
-            hints.append((os.getenv("MD_READ_SCALING_SESSION_HINT") or "").strip())
-            hints.append((os.getenv("MOTHERDUCK_READ_SCALING_SESSION_HINT") or "").strip())
-        if self.config.motherduck_session_hint:
-            hints.append(str(self.config.motherduck_session_hint).strip())
-        hints.append((os.getenv("MOTHERDUCK_SESSION_HINT") or "").strip())
-        hint = next((h for h in hints if h), "")
+        hint = self._resolve_session_hint(
+            session_hint=session_hint, hint_profile=hint_profile
+        )
         if not hint:
             return
         safe = hint.replace("'", "''")
@@ -324,6 +349,11 @@ class MotherDuckClient:
         ua = self.config.custom_user_agent or os.getenv("MOTHERDUCK_CUSTOM_USER_AGENT")
         if ua:
             extra.append(f"custom_user_agent={quote_plus(ua)}")
+        hint_for_url = self._resolve_session_hint(
+            session_hint=session_hint, hint_profile=hint_profile
+        )
+        if hint_for_url:
+            extra.append(f"session_hint={quote_plus(hint_for_url)}")
         qs = "&".join(extra)
         if " " in attach:
             con = duckdb.connect(f"md:?{qs}")
@@ -347,11 +377,7 @@ class MotherDuckClient:
                 "attach/write paths. For dashboard-only reads, use connect_read_scaling()."
             )
         token = self._require_token()
-        return self._connect_md_attached(
-            token,
-            session_hint=self.config.motherduck_session_hint,
-            hint_profile="rw",
-        )
+        return self._connect_md_attached(token, session_hint=None, hint_profile="rw")
 
     def connect_read_scaling(
         self,
@@ -385,10 +411,18 @@ class MotherDuckClient:
                 "share_path is not configured. Set MotherDuckConfig.share_path "
                 "to your read-only share URL path."
             )
-        q_tok = quote_plus(tok)
-        con = duckdb.connect(f"{self.config.share_path}?motherduck_token={q_tok}")
         profile = "read_scaling" if token is not None and tok == get_read_scaling_token() else "rw"
-        self._apply_session_hint(con, session_hint=self.config.motherduck_session_hint, hint_profile=profile)
+        q_tok = quote_plus(tok)
+        extra = [f"motherduck_token={q_tok}"]
+        ua = self.config.custom_user_agent or os.getenv("MOTHERDUCK_CUSTOM_USER_AGENT")
+        if ua:
+            extra.append(f"custom_user_agent={quote_plus(ua)}")
+        hint_for_url = self._resolve_session_hint(session_hint=None, hint_profile=profile)
+        if hint_for_url:
+            extra.append(f"session_hint={quote_plus(hint_for_url)}")
+        qs = "&".join(extra)
+        con = duckdb.connect(f"{self.config.share_path}?{qs}")
+        self._apply_session_hint(con, session_hint=None, hint_profile=profile)
         return con
 
     # ── Environment-aware factory ─────────────────────────────────────────
