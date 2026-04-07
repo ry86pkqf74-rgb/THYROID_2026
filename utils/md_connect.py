@@ -25,7 +25,12 @@ from pathlib import Path
 
 import duckdb
 
-from motherduck_client import MotherDuckClient, get_token
+from motherduck_client import (
+    MotherDuckClient,
+    ReadScalingTokenForbiddenError,
+    get_token,
+    is_read_scaling_only_environment,
+)
 
 
 def _resolve_md_token(*, prefer_service_account: bool = False) -> str | None:
@@ -108,6 +113,11 @@ def connect_md_or_file(
                         sys.exit(1)
                     print("  MotherDuck connection verified (fail-closed gate passed)")
                 return con
+            except ReadScalingTokenForbiddenError as e:
+                if fail_closed:
+                    print(f"  FATAL: {e}")
+                    sys.exit(1)
+                raise
             except SystemExit:
                 raise
             except Exception as e:
@@ -123,8 +133,16 @@ def connect_md_or_file(
                 )
         else:
             if fail_closed:
-                print("  FATAL: --md requested but no MotherDuck token found in environment.")
-                print("  Set MOTHERDUCK_TOKEN (interactive) or MD_SA_TOKEN (CI) before running.")
+                if is_read_scaling_only_environment():
+                    print(
+                        "  FATAL: --md requested but only MD_READ_SCALING_TOKEN (read-only) is set."
+                    )
+                    print(
+                        "  Staging, promotion, and validators require MOTHERDUCK_TOKEN or MD_SA_TOKEN."
+                    )
+                else:
+                    print("  FATAL: --md requested but no MotherDuck token found in environment.")
+                    print("  Set MOTHERDUCK_TOKEN (interactive) or MD_SA_TOKEN (CI) before running.")
                 sys.exit(1)
             print(f"  Using file DB (--md, no MotherDuck token in env): {db_path}")
         return duckdb.connect(str(db_path))

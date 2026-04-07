@@ -216,6 +216,7 @@ def render_runtime_status_panel() -> None:
     mode = info["connection_mode"]
     mode_labels = {
         "ro_share": ("Read-Only Share", "green"),
+        "read_scaling": ("Read-scaling (read-only)", "sky"),
         "rw_fallback": ("Read-Write (fallback)", "amber"),
         "rw_review": ("Read-Write (review)", "sky"),
         "local": ("Local DuckDB", "violet"),

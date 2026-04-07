@@ -33,7 +33,12 @@ except ImportError:
 HAS_OPENPYXL = importlib.util.find_spec("openpyxl") is not None
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from motherduck_client import MotherDuckClient, MotherDuckConfig
+from motherduck_client import (
+    MotherDuckClient,
+    MotherDuckConfig,
+    get_read_scaling_token,
+    get_token,
+)
 
 from app.cohort_qc import render_cohort_qc
 from app.patient_audit import render_patient_audit
@@ -125,10 +130,29 @@ def qual(table: str) -> str:
 # CONNECTION
 # ─────────────────────────────────────────────────────────────────────────
 def _ensure_token():
-    if os.getenv("MOTHERDUCK_TOKEN"): return True
+    """Hydrate os.environ from Streamlit secrets then verify any MotherDuck credential exists."""
     try:
-        os.environ["MOTHERDUCK_TOKEN"] = st.secrets["MOTHERDUCK_TOKEN"]; return True
-    except (KeyError,FileNotFoundError): return False
+        sec = st.secrets
+        for key in (
+            "MOTHERDUCK_TOKEN",
+            "MD_SA_TOKEN",
+            "motherduck_token",
+            "MD_READ_SCALING_TOKEN",
+            "MOTHERDUCK_READ_SCALING_TOKEN",
+        ):
+            try:
+                val = sec[key]
+                if val and key not in os.environ:
+                    os.environ[key] = str(val).strip()
+            except (KeyError, TypeError):
+                continue
+    except (FileNotFoundError, RuntimeError):
+        pass
+    if get_token(prefer_service_account=False) or get_token(prefer_service_account=True):
+        return True
+    if get_read_scaling_token():
+        return True
+    return False
 
 @st.cache_resource(show_spinner="Connecting to MotherDuck…")
 def _get_con():
@@ -149,39 +173,82 @@ def _get_con():
     global _ACTIVE_CATALOG, _CONNECTION_META
     cfg = MotherDuckConfig(database=DATABASE, share_path=SHARE_PATH)
     cli = MotherDuckClient(cfg)
-    try:
-        con = cli.connect_ro_share()
-        con.execute(f'USE "{SHARE_CATALOG}";')
-        _ACTIVE_CATALOG = SHARE_CATALOG
-        _CONNECTION_META = {
-            "mode": "ro_share",
-            "detail": f"RO share: {SHARE_CATALOG}",
-            "connected_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        }
-        return con
-    except Exception as ro_err:
+    share_candidates: list[tuple[str, str]] = []
+    rw_tok = get_token(prefer_service_account=False) or get_token(prefer_service_account=True)
+    rs_tok = get_read_scaling_token()
+    if rw_tok:
+        share_candidates.append((rw_tok, "rw"))
+    if rs_tok and rs_tok != rw_tok:
+        share_candidates.append((rs_tok, "read_scaling"))
+
+    ro_err: Exception | None = None
+    for tok, _origin in share_candidates:
         try:
-            con = cli.connect_rw()
+            con = cli.connect_ro_share(token=tok)
+            con.execute(f'USE "{SHARE_CATALOG}";')
+            _ACTIVE_CATALOG = SHARE_CATALOG
+            _CONNECTION_META = {
+                "mode": "ro_share",
+                "detail": f"RO share: {SHARE_CATALOG}",
+                "connected_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            }
+            return con
+        except Exception as e:
+            ro_err = e
+            continue
+
+    # Read-scaling attach to primary catalog (Business tier — query-scale reads, no writes)
+    if rs_tok:
+        try:
+            md_env = (os.getenv("MOTHERDUCK_ENV") or "prod").lower().strip()
+            hint = (
+                (os.getenv("MD_READ_SCALING_SESSION_HINT") or "").strip()
+                or (os.getenv("MOTHERDUCK_READ_SCALING_SESSION_HINT") or "").strip()
+                or None
+            )
+            rcli = MotherDuckClient.for_env(md_env, motherduck_session_hint=hint)
+            con = rcli.connect_read_scaling(session_hint=hint)
             try:
                 con.execute(f'USE "{DATABASE}";')
             except Exception:
                 pass
             _ACTIVE_CATALOG = DATABASE
             _CONNECTION_META = {
-                "mode": "rw_fallback",
-                "detail": f"RO share failed ({ro_err!r:.80s}…), using RW: {DATABASE}",
+                "mode": "read_scaling",
+                "detail": f"Read-scaling token → {DATABASE} (session_hint={hint or 'none'})",
                 "connected_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             }
             return con
         except Exception:
-            _ACTIVE_CATALOG = DATABASE
-            _CONNECTION_META = {
-                "mode": "local",
-                "detail": "Both MotherDuck paths failed; using local DuckDB",
-                "connected_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            }
-            con = duckdb.connect(os.getenv("LOCAL_DUCKDB_PATH", "thyroid_master_local.duckdb"))
-            return con
+            pass
+
+    try:
+        con = cli.connect_rw()
+        try:
+            con.execute(f'USE "{DATABASE}";')
+        except Exception:
+            pass
+        _ACTIVE_CATALOG = DATABASE
+        detail = (
+            f"RO share failed ({ro_err!r:.80s}…), using RW: {DATABASE}"
+            if ro_err is not None
+            else f"RW direct: {DATABASE}"
+        )
+        _CONNECTION_META = {
+            "mode": "rw_fallback",
+            "detail": detail,
+            "connected_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        }
+        return con
+    except Exception:
+        _ACTIVE_CATALOG = DATABASE
+        _CONNECTION_META = {
+            "mode": "local",
+            "detail": "Both MotherDuck paths failed; using local DuckDB",
+            "connected_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        }
+        con = duckdb.connect(os.getenv("LOCAL_DUCKDB_PATH", "thyroid_master_local.duckdb"))
+        return con
 
 @st.cache_data(ttl=300, show_spinner=False)
 def qdf(_con, sql):  return _con.execute(sql).fetchdf()
@@ -2749,13 +2816,15 @@ def main():
         st.title("🔬 Thyroid Cohort Explorer")
         st.error(
             "**MotherDuck token not found.**\n\n"
-            "Set `MOTHERDUCK_TOKEN` in `.streamlit/secrets.toml` or as an environment variable.\n\n"
+            "Set a **read/write** token (`MOTHERDUCK_TOKEN` / `MD_SA_TOKEN`) or a **read-scaling** "
+            "token (`MD_READ_SCALING_TOKEN`) in `.streamlit/secrets.toml` or the environment.\n\n"
             "```bash\n"
-            "# Option A: environment variable\n"
-            "export MOTHERDUCK_TOKEN='your_token'\n\n"
-            "# Option B: Streamlit secrets\n"
-            "mkdir -p .streamlit\n"
-            "echo 'MOTHERDUCK_TOKEN = \"your_token\"' > .streamlit/secrets.toml\n"
+            "# Developer / ORG RW (local)\n"
+            "export MOTHERDUCK_TOKEN='md_…'\n\n"
+            "# Business dashboard read-scale (read-only; no promotion scripts)\n"
+            "export MD_READ_SCALING_TOKEN='md_…'\n\n"
+            "# Streamlit secrets — any of the above keys\n"
+            "mkdir -p .streamlit && editor .streamlit/secrets.toml\n"
             "```"
         )
         st.stop()
@@ -2776,6 +2845,12 @@ def main():
             "Data is live but writes are possible. Review sidebar Connection Help for details.",
             icon="⚡",
         )
+    elif _CONNECTION_META["mode"] == "read_scaling":
+        st.info(
+            "**Read-scaling connection** — Business read-only token. "
+            "Safe for dashboard queries; do not use this token for staging or promotion scripts.",
+            icon="📖",
+        )
     elif _CONNECTION_META["mode"] == "local":
         st.error(
             "**MotherDuck unreachable** — using local DuckDB file. "
@@ -2786,6 +2861,7 @@ def main():
     # --- Compact status banner ---
     _mode_badge = {
         "ro_share": ("RO SHARE", "#34d399"),
+        "read_scaling": ("READ SCALE", "#38bdf8"),
         "rw_fallback": ("RW FALLBACK", "#f59e0b"),
         "local": ("LOCAL", "#a78bfa"),
     }.get(_CONNECTION_META["mode"], ("UNKNOWN", "#8892a4"))

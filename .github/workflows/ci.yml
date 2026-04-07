@@ -15,7 +15,13 @@ name: Dashboard CI — Hardened
 # ─────────────────────
 # Store automation token as GitHub secret MD_SA_TOKEN (preferred in CI).
 # Interactive / fallback: MOTHERDUCK_TOKEN. Optional: JWT-shaped value in LOCAL_DB_PATH.
+# Official env alias: motherduck_token (same precedence as MOTHERDUCK_TOKEN in get_token).
 # Scripts use get_token(prefer_service_account=True) which prefers MD_SA_TOKEN.
+#
+# Read-scaling / Business read-only token (NOT used in this workflow):
+#   MD_READ_SCALING_TOKEN / MOTHERDUCK_READ_SCALING_TOKEN — dashboard read replicas only.
+#   CI jobs must remain on read/write tokens; connect_rw / promotion / validators reject
+#   read-scaling-only environments (see motherduck_client.ReadScalingTokenForbiddenError).
 # ─────────────────────────────────────────────────────────────────────────────
 on:
   push:

@@ -321,15 +321,62 @@ con = connect_md_or_file(
 
 Never call `duckdb.connect("md:...")` directly. Token resolution is handled internally.
 
+### Token modes (three supported identities)
+
+| Mode | Variables | Typical use | Used by `get_token()` / `connect_rw()` |
+|------|-----------|-------------|----------------------------------------|
+| **Personal developer (RW)** | `MOTHERDUCK_TOKEN`, alias `motherduck_token` | Local notebooks, ad-hoc SQL, Streamlit with review mode | Yes |
+| **CI / service account (RW)** | `MD_SA_TOKEN` (preferred when `prefer_service_account=True`) | GitHub Actions, automation, promotion gates | Yes |
+| **Business read-scaling (read-only)** | `MD_READ_SCALING_TOKEN`, alias `MOTHERDUCK_READ_SCALING_TOKEN` | Dashboards, analyst query load, read replicas | **No** — use `get_read_scaling_token()` / `MotherDuckClient.connect_read_scaling()` only |
+
+**Session hints (read-scaling):** optional `MD_READ_SCALING_SESSION_HINT` or `MOTHERDUCK_READ_SCALING_SESSION_HINT` (or per-call `session_hint=`) sets `motherduck_session_hint` for stable user-duckling affinity on scaled reads. Read/write flows continue to use `MOTHERDUCK_SESSION_HINT` / config only (read-scaling env vars are not consulted on `connect_rw()`).
+
+**Guardrails:** Read-scaling tokens are excluded from `get_token()`. If only read-scaling credentials are configured, `connect_rw()` and `connect_md_or_file(..., fail_closed=True)` **fail fast** with a clear error. Promotion scripts, staging loaders, and formalization validators must keep using read/write tokens.
+
+#### Examples
+
+```bash
+# 1) Personal developer (read/write) — local shell
+export MOTHERDUCK_TOKEN='md_…'
+.venv/bin/python motherduck_client.py --env prod
+```
+
+```bash
+# 2) CI / service account (read/write) — GitHub Actions secrets: MD_SA_TOKEN
+export MD_SA_TOKEN='md_…'
+.venv/bin/python motherduck_client.py --env prod --sa
+```
+
+```bash
+# 3) Business read-scaling (dashboard / read-only attach — never for 116/112/promote SQL)
+export MD_READ_SCALING_TOKEN='md_…'
+export MD_READ_SCALING_SESSION_HINT='streamlit_prod_dashboard'
+.venv/bin/python -c "
+from motherduck_client import MotherDuckClient
+c = MotherDuckClient.for_env('prod').connect_read_scaling()
+print(c.execute('SELECT current_database()').fetchone())
+c.close()
+"
+```
+
+### Environment / catalog limitation
+
+`MOTHERDUCK_ENV` values `dev`, `qa`, and `prod` all resolve to the **same** MotherDuck database name in `config/motherduck_environments.yml` (`Thyroid 2026`). Environment isolation is **not** separate MotherDuck catalogs in this repo today — isolation is by **schema** (`main`, `v2_stage`, `qa`, `release_*`) as described in §1–2.
+
 ### Environment variables
 
 | Variable | Purpose |
 |----------|---------|
 | `MOTHERDUCK_TOKEN` | Personal developer token |
+| `motherduck_token` | Alias for personal token (env) |
 | `MD_SA_TOKEN` | Service-account / CI token |
+| `MD_READ_SCALING_TOKEN` | Business read-scaling token (read-only path) |
+| `MOTHERDUCK_READ_SCALING_TOKEN` | Alias for read-scaling token |
+| `MD_READ_SCALING_SESSION_HINT` | Session hint for read-scaling connections |
+| `MOTHERDUCK_READ_SCALING_SESSION_HINT` | Alias for read-scaling session hint |
 | `MOTHERDUCK_DATABASE` | Override DB name (default: `Thyroid 2026`) |
 | `MOTHERDUCK_CUSTOM_USER_AGENT` | DuckDB `custom_user_agent` (MotherDuck query history) |
-| `MOTHERDUCK_SESSION_HINT` | `SET motherduck_session_hint` after connect |
+| `MOTHERDUCK_SESSION_HINT` | `SET motherduck_session_hint` after connect (read/write and generic) |
 
 ---
 

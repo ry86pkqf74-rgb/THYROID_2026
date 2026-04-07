@@ -2,6 +2,13 @@
 # Loaded by motherduck_client.py::_load_env_databases().
 # Override at runtime: MOTHERDUCK_DATABASE="other_db" or MOTHERDUCK_ENV="dev".
 #
+# Token modes (see docs/motherduck_database_contract_v1.md §8):
+#   - Read/write: MOTHERDUCK_TOKEN, MD_SA_TOKEN (staging, promotion, validators)
+#   - Read-only scaling: MD_READ_SCALING_TOKEN (dashboard / analyst reads only)
+#
+# LIMIT: dev / qa / prod all use the SAME database name below. Isolation is by
+# SCHEMA (main, v2_stage, qa, release_*), not by separate MotherDuck catalogs.
+#
 # The "Thyroid 2026" catalog is the single MotherDuck database for all envs.
 # Schemas provide isolation: main (canonical), v2_stage (LLM entities).
 
