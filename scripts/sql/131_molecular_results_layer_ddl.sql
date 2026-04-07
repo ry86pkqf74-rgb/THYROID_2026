@@ -141,6 +141,76 @@ WHERE NOT EXISTS (
 );
 
 -- ═══════════════════════════════════════════════════════════════════════════
+-- Seed: Afirma assay dictionary + exact string crosswalks (42_ingest_afirma)
+-- ═══════════════════════════════════════════════════════════════════════════
+INSERT INTO main.molecular_assay_dictionary (
+    assay_key, assay_name, panel_version, platform, vendor, loinc_code, loinc_long_name,
+    effective_from, effective_to, source_reference
+)
+SELECT
+    t.assay_key, t.assay_name, t.panel_version, t.platform, t.vendor,
+    t.loinc_code, t.loinc_long_name, t.effective_from, t.effective_to, t.source_reference
+FROM (
+    VALUES
+        ('afirma_gec', 'Afirma Gene Expression Classifier', 'GEC', 'Afirma', 'Veracyte',
+            CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS DATE), CAST(NULL AS DATE),
+            'THYROID_2026 molecular layer seed'),
+        ('afirma_gsc', 'Afirma Genomic Sequencing Classifier', 'GSC', 'Afirma', 'Veracyte',
+            CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS DATE), CAST(NULL AS DATE),
+            'THYROID_2026 molecular layer seed'),
+        ('afirma_xpression_atlas', 'Afirma Xpression Atlas', 'Xpression Atlas', 'Afirma', 'Veracyte',
+            CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS DATE), CAST(NULL AS DATE),
+            'THYROID_2026 molecular layer seed'),
+        ('afirma_combined', 'Afirma GEC+GSC', 'GEC+GSC', 'Afirma', 'Veracyte',
+            CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS DATE), CAST(NULL AS DATE),
+            'THYROID_2026 molecular layer seed')
+) AS t(
+    assay_key, assay_name, panel_version, platform, vendor,
+    loinc_code, loinc_long_name, effective_from, effective_to, source_reference
+)
+WHERE NOT EXISTS (
+    SELECT 1 FROM main.molecular_assay_dictionary e WHERE e.assay_key = t.assay_key
+);
+
+INSERT INTO main.molecular_code_crosswalk (domain, source_code, target_code, mapping_status, notes)
+SELECT t.domain, t.source_code, t.target_code, t.mapping_status, t.notes
+FROM (
+    VALUES
+        ('afirma_assay_key', 'GEC', 'afirma_gec', 'approved', 'panel hint token'),
+        ('afirma_assay_key', 'gec', 'afirma_gec', 'approved', 'case fold alias'),
+        ('afirma_assay_key', 'GSC', 'afirma_gsc', 'approved', 'panel hint token'),
+        ('afirma_assay_key', 'gsc', 'afirma_gsc', 'approved', 'case fold alias'),
+        ('afirma_assay_key', 'GEC+GSC', 'afirma_combined', 'approved', 'combined classifier run'),
+        ('afirma_assay_key', 'BOTH', 'afirma_combined', 'approved', 'synonym'),
+        ('afirma_assay_key', 'Xpression Atlas', 'afirma_xpression_atlas', 'approved', 'XA panel'),
+        ('afirma_assay_key', 'XA', 'afirma_xpression_atlas', 'approved', 'abbrev'),
+        ('afirma_assay_key', 'XPRESSION_ATLAS', 'afirma_xpression_atlas', 'approved', 'abbrev'),
+        ('afirma_call', 'Benign', 'benign', 'approved', 'GEC/GSC bucket'),
+        ('afirma_call', 'benign', 'benign', 'approved', 'case variant'),
+        ('afirma_call', 'BENIGN', 'benign', 'approved', 'case variant'),
+        ('afirma_call', 'Suspicious', 'suspicious', 'approved', 'GEC/GSC bucket'),
+        ('afirma_call', 'suspicious', 'suspicious', 'approved', 'case variant'),
+        ('afirma_call', 'SUSPICIOUS', 'suspicious', 'approved', 'case variant'),
+        ('afirma_call', 'Suspicious for malignancy', 'suspicious', 'approved', 'long form'),
+        ('afirma_call', 'Indeterminate', 'indeterminate', 'approved', 'GEC/GSC bucket'),
+        ('afirma_call', 'indeterminate', 'indeterminate', 'approved', 'case variant'),
+        ('afirma_call', 'No result', 'no_result', 'approved', 'explicit none'),
+        ('afirma_call', 'QNS', 'no_result', 'approved', 'quantity not sufficient'),
+        ('afirma_call', 'Failed', 'failed', 'approved', 'assay failure'),
+        ('afirma_call', 'Invalid', 'failed', 'approved', 'specimen/assay invalid'),
+        ('afirma_risk_call', 'benign', 'benign', 'approved', 'harmonized risk_call'),
+        ('afirma_risk_call', 'suspicious', 'suspicious', 'approved', 'harmonized risk_call'),
+        ('afirma_risk_call', 'indeterminate', 'indeterminate', 'approved', 'harmonized risk_call'),
+        ('afirma_risk_call', 'no_result', 'no_result', 'approved', 'harmonized risk_call'),
+        ('afirma_risk_call', 'failed', 'failed', 'approved', 'harmonized risk_call')
+) AS t(domain, source_code, target_code, mapping_status, notes)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM main.molecular_code_crosswalk e
+    WHERE e.domain = t.domain AND e.source_code = t.source_code
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
 -- Contract / presentation views (stable names for Streamlit consumers)
 -- ═══════════════════════════════════════════════════════════════════════════
 CREATE OR REPLACE VIEW main.molecular_results_contract_v1 AS

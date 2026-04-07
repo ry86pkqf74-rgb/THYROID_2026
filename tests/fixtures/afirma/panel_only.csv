@@ -1,0 +1,2 @@
+research_id,mrn,dob,last_name,first_name,specimen_id,accession,test_date,bethesda,fna_cytology,gec_call,gsc_call,panel_type,xpression_variants
+999001,800001,1980-01-15,DOE,Pat,SYN-SPEC-01,SYN-ACC-1001,2024-06-01,III,AUS,Suspicious,,GEC,
