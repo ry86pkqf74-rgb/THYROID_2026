@@ -1,0 +1,48 @@
+{
+  "schema_version": "publication_signoff_manifest_v1",
+  "run_timestamp_utc": "2026-04-07T22:27:57.183652+00:00",
+  "operator_verdict": "HOLD",
+  "operator_verdict_rationale": "MotherDuck prod 119 release-mode: PASS WITH WARNINGS (0 FAIL). Repo MRQ CSV gates checked are not safe for a publication 126 hydrate (blank or synthetic placeholders). Final institutional lab CSV passed 127 dry-run only; no append executed.",
+  "motherduck": {
+    "md_env_used": "prod",
+    "database_resolved": "Thyroid 2026",
+    "connection": "fail_closed",
+    "token_metadata": {
+      "present": true,
+      "resolution_mode": "secrets.toml:MOTHERDUCK_TOKEN",
+      "length_chars": 467
+    }
+  },
+  "commands_executed": [
+    "scripts/127_analyst_institutional_lab_append.py --md --input exports/incoming/final_institutional_chemistry_20260407.csv --ingestion-wave final_institutional_chemistry_20260407 --dry-run",
+    "scripts/119_md_formalization_validate.py --md --md-env prod --release-mode --output-dir studies/20260407_publication_signoff_final/validation_run",
+    "scripts/126_final_master_release.py --md --release-date 20260407 --dry-run --lab-csv exports/incoming/final_institutional_chemistry_20260407.csv --ingestion-wave final_institutional_chemistry_20260407",
+    "scripts/144_md_repo_current_state_summary.py --md"
+  ],
+  "artifact_paths": {
+    "validation_report_md": "studies/20260407_publication_signoff_final/validation_run/validation_report.md",
+    "119_console_log": "studies/20260407_publication_signoff_final/119_release_mode_console.log",
+    "metrics_csv": "studies/20260407_publication_signoff_final/metrics.csv",
+    "operator_memo_md": "studies/20260407_publication_signoff_final/operator_memo.md",
+    "repo_current_state_refreshed": "studies/CURRENT_MOTHERDUCK_REPO_STATE.md"
+  },
+  "preflight_paths": {
+    "institutional_lab_csv": "exports/incoming/final_institutional_chemistry_20260407.csv",
+    "institutional_lab_row_count_source_csv": 989,
+    "mrq_csv_audit": {
+      "v2_domain_promotion_gate_post_signoff_20260407/manual_review_queue.csv": {
+        "rows": 5622,
+        "blank_verification_status": 5622,
+        "synthetic_placeholder_rows": 0
+      },
+      "20260409_final_master_release/mrq_hydrate_gate/manual_review_queue.csv": {
+        "rows": 5622,
+        "blank_verification_status": 0,
+        "synthetic_placeholder_rows": 5620
+      }
+    }
+  },
+  "notes": {
+    "phi_policy": "No PHI values logged; counts and token length/mode only."
+  }
+}

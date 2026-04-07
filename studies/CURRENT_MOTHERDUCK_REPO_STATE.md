@@ -6,8 +6,8 @@
 
 > **April 2026 repo posture (human-maintained, sync with README / `docs/REPO_STATUS.md`):** **Technically passing but blocked by synthetic MRQ** — i.e. latest committed `119 --release-mode` is **PASS WITH WARN** (see `studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md`), while **manuscript** sign-off is not complete until MRQ/promotion reflects **human-reviewed** governance (not automation-only / `--synthetic-fill-mrq-verification` posture). The **final institutional non-Tg lab wave** (`final_institutional_20260407`) is **ingested**; residual lab issues are **source-limited enrichment**, not a missing-wave blocker. Operator snapshot: `studies/20260411_final_master_release/EVIDENCE_PACK.md`.
 
-**Machine-generated:** 2026-04-07T20:44:29.017031+00:00
-**Commit SHA:** `70b0137119c3cc50cbda95452537bf2fd7fc49f2`
+**Machine-generated:** 2026-04-07T22:28:17.106606+00:00
+**Commit SHA:** `1de0832f92c1a0767b66255697f8f9be0328362b`
 
 > Regenerate after promotion or specimen/FHIR deploy: `python scripts/144_md_repo_current_state_summary.py --md`
 

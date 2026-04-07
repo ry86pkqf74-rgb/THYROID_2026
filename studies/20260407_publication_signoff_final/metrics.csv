@@ -1,0 +1,14 @@
+metric_id,category,status,numerator,denominator,detail
+preflight_token,motherduck,PASS,1,1,token_present;resolution_mode=secrets.toml:MOTHERDUCK_TOKEN;length_chars=467
+preflight_lab_csv_contract,ingestion,PASS,989,989,final_institutional_chemistry_20260407.csv;127 dry-run prepared rows;required columns present;no write
+preflight_mrq_repo_post_signoff,governance,HOLD,0,5622,manual_review_queue.csv blank verification_status=5622 (not human-reviewed for publication hydrate)
+preflight_mrq_repo_20260409_gate,governance,FAIL,2,5622,mrq_hydrate_gate synthetic_placeholder verification_status=5620;distinct_nonempty_status=2
+md_overall_119_release,validation,PASS_WITH_WARNINGS,36,39,119 --md-env prod --release-mode;36 PASS;3 WARN;0 FAIL
+md_check_5b_mrq_synthetic,validation,PASS,0,11244,no synthetic-placeholder verification_status in qa.manual_review_queue (live prod)
+md_check_5b_promotion_batch,validation,PASS,3,3,promotion_review_decisions rows all non-empty decision_batch_id
+md_check_13_specimen_fhir_core,validation,PASS,0,0,val_specimen_contract_v1 and val_specimen_genomic_binding_v1 no FAIL rows;diagnostics clean
+md_warn_genomic_link_review,specimen_adjacent,WARN,10705,10705,genomic_link_review open/pending count (119 Check 13 adjunct)
+md_warn_panel_version,molecular,WARN,10597,10862,assay_name set but panel_version empty (non-blocking per 119)
+md_warn_assay_dictionary,molecular,WARN,1,1,distinct assay_name not in molecular_assay_dictionary (expected for some panels)
+repo_summary_refresh,artifacts,PASS,1,1,CURRENT_MOTHERDUCK_REPO_STATE.md regenerated via scripts/144_md_repo_current_state_summary.py --md
+126_chain_preflight,workflow,PASS,1,1,126 --dry-run with lab args;preflight OK;hydrate-mrq-from not set
