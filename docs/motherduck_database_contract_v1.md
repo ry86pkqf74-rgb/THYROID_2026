@@ -346,6 +346,7 @@ Never call `duckdb.connect("md:...")` directly. Token resolution is handled inte
 | `115_release_snapshot.py` | Create immutable release snapshots | release_YYYYMMDD, qa |
 | `118_parquet_release_bundle.py` | Export Parquet bundle from MD main | main (read), qa (read) |
 | `119_md_formalization_validate.py` | Validation suite | all (read) |
+| `120_review_queue_triage.py` | Read-only triage export for `qa.manual_review_queue` (CSVs + `summary.md`) | qa (read) |
 | `125_master_verified_views.py` | Analyst-facing `main.master_*_verified_v1` views | main (views) |
 | `126_release_candidate_motherduck_audit.py` | RC evidence pack (MD_INFORMATION_SCHEMA, row counts) | read (+ optional `CREATE SNAPSHOT`) |
 | `127_qa_tier_batch_adjudicate.py` | Tier bulk acceptance for fill-candidates on `qa.manual_review_queue` | qa (write) |

@@ -65,6 +65,7 @@ Two-pass workflow:
 
 MotherDuck:
 
+- Live promotion gate review queue (shared QA table): run `scripts/120_review_queue_triage.py --md` for a read-only export bundle under `exports/review_queue_triage_*` (counts, oldest pending, per-domain/tier worklists; no raw note text).
 - Open `motherduck_setup.sql` from the run directory; replace `YOUR_DATABASE` and attach with your token per DuckDB docs.
 - After attach: `SELECT * FROM md.val_llm_concordance_summary;` (once the table is created from the generated Parquet).
 - Optional: `--motherduck-attach` with `MOTHERDUCK_TOKEN` and `MOTHERDUCK_DATABASE` set creates/replaces `val_llm_concordance_summary` remotely.

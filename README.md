@@ -142,6 +142,17 @@ definitive single source of truth (readiness, maturity, safe/unsafe claims).
 See [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md) for the navigable index of all
 audit documents, export bundles, and open backfill items.
 
+#### Manual review queue triage (read-only export)
+
+Reproducible CSVs and `summary.md` for `qa.manual_review_queue` (no promotion writes; `review_reason` / raw note text is not exported; other text fields truncated). Uses the same token resolution as other `--md` scripts (`MOTHERDUCK_TOKEN`, `MD_SA_TOKEN`, or `.streamlit/secrets.toml`).
+
+```bash
+.venv/bin/python scripts/120_review_queue_triage.py --md
+.venv/bin/python scripts/120_review_queue_triage.py --md --md-sa --run-label formalization_20260406_v3
+```
+
+Writes `exports/review_queue_triage_<UTC_YYYYMMDD_HHMMSS>/`. For a local file database, omit `--md` and pass `--db-path`.
+
 ---
 
 Thyroid cancer research lakehouse — 11,673 patients across 13 base tables,

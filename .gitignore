@@ -75,6 +75,7 @@ studies/v2_domain_promotion_gate_*/llm_side_by_side.parquet
 
 # ── Fact lineage QC reports (ephemeral, timestamped) ──────────
 exports/fact_lineage_qc/
+exports/review_queue_triage_*/
 
 # ── Extraction pipeline: PHI-sensitive data (never commit) ────
 processed/remaining/*.parquet
