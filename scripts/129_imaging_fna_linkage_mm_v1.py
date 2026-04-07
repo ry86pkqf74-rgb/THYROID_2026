@@ -455,9 +455,25 @@ def run(
     dry_run: bool,
     motherduck: bool = False,
     output_schema: str | None = None,
+    strict_release: bool = False,
 ) -> dict:
     has_fna = table_exists(con, "fna_episode_master_v2")
     has_img = table_exists(con, "imaging_nodule_master_v1")
+    if strict_release:
+        if not has_img:
+            raise RuntimeError(
+                "Strict release: imaging_nodule_master_v1 is required (refusing relaxed build)."
+            )
+        if not has_fna:
+            raise RuntimeError(
+                "Strict release: fna_episode_master_v2 is required (refusing relaxed build)."
+            )
+        if not table_exists(con, "tumor_episode_master_v2"):
+            raise RuntimeError(
+                "Strict release: tumor_episode_master_v2 is required for first-surgery temporal "
+                "guards in imaging↔FNA matching. Without it, script 129 would silently skip "
+                "preoperative window filtering (fail-closed for release)."
+            )
     if not has_fna:
         reason = (
             "fna_episode_master_v2 not found in this database. "
@@ -478,6 +494,8 @@ def run(
             return {
                 "status": "blocked_missing_fna_episode_master_v2",
                 "reason": reason,
+                "strict_release": strict_release,
+                "review_queue_by_reason": {},
                 "before": {
                     "imaging_nodule_master_dated_rows": n_img,
                     "fna_episode_dated_rows": None,
@@ -564,7 +582,27 @@ def run(
     out["audit"] = audit_row
     if output_schema:
         out["output_schema"] = str(output_schema).strip()
+    out["strict_release"] = strict_release
+    rr = con.execute(
+        f"""
+        SELECT COALESCE(review_reason::VARCHAR, ''), COUNT(*)::BIGINT
+        FROM {_fq_table('review_queue_imaging_fna_mm_v1', output_schema)}
+        GROUP BY 1 ORDER BY 2 DESC
+        """
+    ).fetchall()
+    out["review_queue_by_reason"] = {str(r[0]): int(r[1]) for r in rr}
     return out
+
+
+def emit_ifna_ci_artifact(path: Path, payload: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    body = {
+        "artifact_version": "imaging_fna_linkage_mm_v1_gate_v1",
+        "script": "129_imaging_fna_linkage_mm_v1.py",
+        **payload,
+    }
+    path.write_text(json.dumps(body, indent=2), encoding="utf-8")
+    print(f"\n  Wrote IFNA gate artifact: {path}")
 
 
 def _export_motherduck_audit(payload: dict, *, token_mode_label: str) -> Path:
@@ -611,6 +649,21 @@ def main() -> None:
         action="store_true",
         help="With --md, skip writing motherduck/exports/imaging_fna_linkage_mm_v1_audit.json",
     )
+    parser.add_argument(
+        "--strict-release",
+        action="store_true",
+        help=(
+            "Fail closed: require imaging_nodule_master_v1, fna_episode_master_v2, and "
+            "tumor_episode_master_v2 (no silent omission of first-surgery preop filters)."
+        ),
+    )
+    parser.add_argument(
+        "--emit-ci-artifact",
+        type=Path,
+        metavar="PATH",
+        default=None,
+        help="Write imaging_fna_linkage_mm_v1_gate_v1 JSON (status, counts, review_queue_by_reason).",
+    )
     args = parser.parse_args()
     out_schema = (
         (args.contract_schema or "").strip()
@@ -620,6 +673,11 @@ def main() -> None:
 
     os.chdir(ROOT)
     if args.md:
+        os.environ.setdefault("MOTHERDUCK_SESSION_HINT", "THYROID_2026")
+        os.environ.setdefault(
+            "MOTHERDUCK_CUSTOM_USER_AGENT",
+            "THYROID_2026_molecular/129_imaging_fna_linkage_mm_v1;kind=contract",
+        )
         from motherduck_client import token_mode as md_token_mode
         from utils.md_connect import connect_md_or_file
 
@@ -639,7 +697,15 @@ def main() -> None:
             dry_run=args.dry_run,
             motherduck=args.md,
             output_schema=out_schema,
+            strict_release=args.strict_release,
         )
+        if args.strict_release and isinstance(result, dict) and result.get("status") != "ok":
+            raise RuntimeError(
+                "Strict release: imaging→FNA linkage did not complete successfully "
+                f"(status={result.get('status')!r})."
+            )
+        if args.emit_ci_artifact and not args.dry_run:
+            emit_ifna_ci_artifact(args.emit_ci_artifact, result)
         if args.md and not args.dry_run and not args.no_export:
             from motherduck_client import token_mode as md_token_mode
 

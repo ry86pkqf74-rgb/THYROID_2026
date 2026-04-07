@@ -1,4 +1,10 @@
-"""Resolve multimodal contract upstream tables; bootstrap gaps in mm_contract_dev."""
+"""Resolve multimodal contract upstream tables.
+
+Bootstrap (synthetic stubs / script-49 fragments) runs **only** when
+``ensure_upstream_sources(..., allow_bootstrap=True)`` — i.e. ``--allow-bootstrap-dev``
+on script 128. Default / release / ``--strict-release`` paths are **fail-closed**:
+missing native upstream tables raise ``RuntimeError``.
+"""
 
 from __future__ import annotations
 

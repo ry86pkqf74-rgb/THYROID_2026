@@ -82,6 +82,12 @@ on:
         required: false
         default: ""
         type: string
+      run_multimodal_md_contract_gate:
+        description: "MotherDuck: run 129→128 with --strict-release (writes mm_contract_dev; requires MD_SA_TOKEN)"
+        required: false
+        default: "false"
+        type: choice
+        options: ["true", "false"]
 
 jobs:
   # ── Static Python: Ruff (pyflakes F) + Mypy (pyproject.toml); no secrets ───
@@ -752,3 +758,57 @@ jobs:
           python scripts/126_final_master_release.py --md --md-sa --dry-run \
             --hydrate-mrq-from "$HY" \
             --decisions-csv "$DC"
+
+  # ── Multimodal contract strict gate (MotherDuck; manual dispatch only) ────
+  multimodal-md-contract-gate:
+    name: Multimodal contract — MotherDuck strict gate (129→128)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_multimodal_md_contract_gate == 'true'
+    needs: [multimodal-tests, ruff-and-mypy]
+    env:
+      MD_SA_TOKEN: ${{ secrets.MD_SA_TOKEN }}
+      MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
+      LOCAL_DB_PATH: ""
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Assert MotherDuck write token
+        run: |
+          python -c "
+          import os
+          assert os.environ.get('MD_SA_TOKEN') or os.environ.get('MOTHERDUCK_TOKEN'), (
+              'Configure MD_SA_TOKEN or MOTHERDUCK_TOKEN for this job.'
+          )
+          print('MotherDuck token env present (values not printed).')
+          "
+
+      - name: 129 → 128 strict release (mm_contract_dev)
+        run: |
+          mkdir -p artifacts
+          set -euo pipefail
+          export MM_IFNA_OUTPUT_SCHEMA=mm_contract_dev
+          python scripts/129_imaging_fna_linkage_mm_v1.py --md --sa \
+            --contract-schema mm_contract_dev \
+            --strict-release \
+            --emit-ci-artifact artifacts/imaging_fna_linkage_gate.json
+          python scripts/128_multimodal_contract_mm_v1.py --md --sa \
+            --strict-release \
+            --emit-ci-artifact artifacts/multimodal_release_gate.json
+
+      - name: Upload gate artifacts
+        if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: multimodal-md-strict-gate-${{ github.run_id }}
+          path: |
+            artifacts/imaging_fna_linkage_gate.json
+            artifacts/multimodal_release_gate.json
+          if-no-files-found: warn
+          retention-days: 90

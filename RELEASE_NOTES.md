@@ -1,5 +1,11 @@
 # THYROID_2026 Release Notes
 
+## 2026-04-07 — Multimodal contract release hardening (128 / 129)
+
+- **Fail-closed release:** Script **129** adds `--strict-release` (requires `tumor_episode_master_v2` so first-surgery preop guards are not silently skipped; fails on non-ok MotherDuck status). Script **128** summary/CI artifact adds **`release_validation_metrics`** (ambiguous linkage, laterality, node invariants, temporal breakdowns, review queue by reason, imaging–FNA audit) and optional **`--prior-gate-artifact`** for review-queue deltas.
+- **Docs:** [`docs/multimodal_contract_runbook.md`](docs/multimodal_contract_runbook.md), [`docs/multimodal_release_gate.md`](docs/multimodal_release_gate.md). **CI:** manual `workflow_dispatch` job `multimodal-md-contract-gate` in `.github/workflows/ci.yml`; episode pipeline uploads `imaging_fna_linkage_gate.json` + `multimodal_release_gate.json`.
+- **MotherDuck:** `MOTHERDUCK_SESSION_HINT` defaults to **THYROID_2026** in 128/129 when `--md` (still overridable via env).
+
 ## 2026-04-07 — MotherDuck publication truth-sync + operator path
 
 **Live sign-off outcome (MotherDuck, service-account token):** `119 --release-mode` **BLOCKED** — specimen/FHIR QA diagnostics FAIL (`broken_fhir_refs` large); MRQ rows are non-NULL but **5,620 / 5,622** are `SYNTHETIC_AUTOMATION_ONLY_NOT_MANUSCRIPT_SIGNOFF`; longitudinal labs are **Tg-family waves only** (no `final_institutional*` non-Tg panel). Evidence: `studies/20260407_publication_signoff_live/`. Verdict memo: **technically passing but blocked by human review + final lab wave** (with specimen/FHIR automation FAIL noted).

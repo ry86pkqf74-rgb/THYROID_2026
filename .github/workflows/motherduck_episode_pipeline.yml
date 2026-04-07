@@ -29,7 +29,8 @@ concurrency:
 
 env:
   MOTHERDUCK_CUSTOM_USER_AGENT: THYROID_2026_motherduck_episode_pipeline
-  MOTHERDUCK_SESSION_HINT: motherduck_episode_pipeline-${{ github.run_id }}
+  # Per docs/motherduck_operator_runbook.md; scripts 128/129 also setdefault THYROID_2026.
+  MOTHERDUCK_SESSION_HINT: THYROID_2026
 
 jobs:
   v2-pipeline:
@@ -103,8 +104,17 @@ jobs:
         env:
           MM_IFNA_OUTPUT_SCHEMA: ${{ steps.mm_env.outputs.ifna_schema }}
         run: |
+          mkdir -p artifacts
+          set -euo pipefail
+          EXTRA129=""
+          if [ "${{ inputs.multimodal_strict_release }}" = "true" ]; then
+            EXTRA129="--strict-release"
+          fi
           python scripts/129_imaging_fna_linkage_mm_v1.py --md --sa \
-            --contract-schema "${{ steps.mm_env.outputs.ifna_schema }}"
+            --contract-schema "${{ steps.mm_env.outputs.ifna_schema }}" \
+            $EXTRA129 \
+            --emit-ci-artifact artifacts/imaging_fna_linkage_gate.json
+          # Fail-closed: strict release must finish with status ok (script exits non-zero otherwise).
 
       - name: "128 — multimodal_contract_mm_v1"
         if: ${{ inputs.multimodal_enabled }}
@@ -113,17 +123,19 @@ jobs:
           MM_CONTRACT_SCHEMA: ${{ steps.mm_env.outputs.mm_schema }}
         run: |
           mkdir -p artifacts
-          set -e
+          set -euo pipefail
           EXTRA_STRICT="${{ steps.mm_env.outputs.strict_flags }}"
           python scripts/128_multimodal_contract_mm_v1.py --md --sa \
             $EXTRA_STRICT \
             --emit-ci-artifact artifacts/multimodal_release_gate.json
 
-      - name: Upload multimodal release gate artifact
+      - name: Upload multimodal + IFNA gate artifacts
         if: ${{ inputs.multimodal_enabled && (success() || failure()) }}
         uses: actions/upload-artifact@v4
         with:
           name: multimodal-release-gate-${{ github.run_id }}
-          path: artifacts/multimodal_release_gate.json
+          path: |
+            artifacts/multimodal_release_gate.json
+            artifacts/imaging_fna_linkage_gate.json
           if-no-files-found: warn
           retention-days: 90

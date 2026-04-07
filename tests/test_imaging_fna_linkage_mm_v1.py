@@ -33,6 +33,30 @@ def _materialize(con: duckdb.DuckDBPyConnection, link129) -> None:
     con.execute(link129.REVIEW_SQL)
 
 
+def test_strict_release_requires_tumor_episode_master_v2(link129) -> None:
+    """Release mode must not run without tumor_episode_master_v2 (preop window semantics)."""
+    con = duckdb.connect(":memory:")
+    con.execute(
+        """
+        CREATE TABLE imaging_nodule_master_v1 (
+            research_id INTEGER, nodule_id VARCHAR, exam_id VARCHAR, exam_date DATE,
+            laterality VARCHAR, max_dimension_cm DOUBLE
+        );
+        INSERT INTO imaging_nodule_master_v1 VALUES
+            (1, 'n1', 'e1', DATE '2024-01-01', 'right', 1.0);
+        CREATE TABLE fna_episode_master_v2 (
+            research_id INTEGER, fna_episode_id INTEGER, fna_date_native DATE,
+            resolved_fna_date DATE, bethesda_category INTEGER, specimen_site_raw VARCHAR,
+            laterality VARCHAR, pathology_diagnosis VARCHAR
+        );
+        INSERT INTO fna_episode_master_v2 VALUES
+            (1, 1, DATE '2024-02-01', DATE '2024-02-01', 3, 'thyroid', 'right', NULL);
+        """
+    )
+    with pytest.raises(RuntimeError, match="tumor_episode_master_v2"):
+        link129.run(con, dry_run=False, motherduck=False, output_schema=None, strict_release=True)
+
+
 def test_exact_specimen_match_primary(link129) -> None:
     con = duckdb.connect(":memory:")
     con.execute(

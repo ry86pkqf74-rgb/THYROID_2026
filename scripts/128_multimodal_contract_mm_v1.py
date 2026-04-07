@@ -1091,6 +1091,133 @@ def build_all(
     return bootstrapped
 
 
+def collect_release_validation_metrics(
+    con: duckdb.DuckDBPyConnection,
+    schema: str,
+) -> dict:
+    """Structured counts for operators and CI artifacts (blocking tables + interpretive breakdowns)."""
+    blocking = {}
+    for v in STRICT_BLOCKING_VALIDATION_TABLES:
+        blocking[v] = int(
+            con.execute(f"SELECT COUNT(*) FROM {schema}.{v}").fetchone()[0]
+        )
+    amb = con.execute(
+        f"""
+        SELECT
+          COUNT(*) FILTER (WHERE flag_ambiguous_linkage)::BIGINT,
+          COUNT(*) FILTER (WHERE flag_multi_fna_nodule)::BIGINT,
+          COUNT(*) FILTER (WHERE flag_discordant_side)::BIGINT,
+          COUNT(*)::BIGINT
+        FROM {schema}.link_imaging_fna_mm_v1
+        """
+    ).fetchone()
+    by_dom = con.execute(
+        f"""
+        SELECT domain::VARCHAR, COUNT(*)::BIGINT
+        FROM {schema}.val_ambiguous_multimodal_linkage_mm_v1
+        GROUP BY 1 ORDER BY 2 DESC
+        """
+    ).fetchall()
+    lat = con.execute(
+        f"""
+        SELECT COALESCE(issue_type::VARCHAR, '') AS issue_type, COUNT(*)::BIGINT
+        FROM {schema}.val_side_lobe_mismatch_mm_v1
+        GROUP BY 1 ORDER BY 2 DESC
+        """
+    ).fetchall()
+    tmp = con.execute(
+        f"""
+        SELECT COALESCE(issue_type::VARCHAR, '') AS issue_type, COUNT(*)::BIGINT
+        FROM {schema}.val_preop_temporal_order_mm_v1
+        GROUP BY 1 ORDER BY 2 DESC
+        """
+    ).fetchall()
+    node = con.execute(
+        f"""
+        SELECT COALESCE(violation_type::VARCHAR, '') AS violation_type, COUNT(*)::BIGINT
+        FROM {schema}.val_nodes_invariant_mm_v1
+        GROUP BY 1 ORDER BY 2 DESC
+        """
+    ).fetchall()
+    rq = con.execute(
+        f"""
+        SELECT COALESCE(review_reason::VARCHAR, ''), COUNT(*)::BIGINT
+        FROM {schema}.review_queue_imaging_fna_mm_v1
+        GROUP BY 1 ORDER BY 2 DESC
+        """
+    ).fetchall()
+    imaging_fna_audit: dict = {}
+    try:
+        audit_df = con.execute(
+            f"SELECT * FROM {schema}.val_imaging_fna_linkage_audit_v1"
+        ).fetchdf()
+        if len(audit_df):
+            imaging_fna_audit = audit_df.iloc[0].to_dict()
+            for k, v in list(imaging_fna_audit.items()):
+                if hasattr(v, "isoformat"):
+                    imaging_fna_audit[k] = v.isoformat()
+    except Exception:
+        pass
+    return {
+        "blocking_validation_row_counts": blocking,
+        "imaging_fna_link_flags": {
+            "ambiguous_link_rows": int(amb[0] or 0),
+            "multi_fna_nodule_rows": int(amb[1] or 0),
+            "discordant_side_rows": int(amb[2] or 0),
+            "total_link_rows": int(amb[3] or 0),
+        },
+        "ambiguous_multimodal_by_domain": {str(r[0]): int(r[1]) for r in by_dom},
+        "laterality_mismatch_by_issue_type": {str(r[0]): int(r[1]) for r in lat},
+        "temporal_violation_by_issue_type": {str(r[0]): int(r[1]) for r in tmp},
+        "node_invariant_by_violation_type": {str(r[0]): int(r[1]) for r in node},
+        "review_queue_by_reason": {str(r[0]): int(r[1]) for r in rq},
+        "imaging_fna_audit": imaging_fna_audit,
+    }
+
+
+def load_prior_gate_artifact(path: Path) -> dict | None:
+    """Load a prior multimodal_release_gate_v1 JSON for review-queue deltas."""
+    if not path.is_file():
+        return None
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+
+
+def compute_review_queue_deltas(
+    current_by_reason: dict[str, int],
+    prior_body: dict | None,
+) -> dict:
+    """Delta = current_count - prior_count per review_reason (prior may be missing)."""
+    prior_reason: dict[str, int] | None = None
+    if prior_body:
+        metrics = prior_body.get("release_validation_metrics")
+        if isinstance(metrics, dict):
+            pr = metrics.get("review_queue_by_reason")
+            if isinstance(pr, dict):
+                prior_reason = {str(k): int(v) for k, v in pr.items()}
+        if prior_reason is None:
+            legacy = prior_body.get("review_queue_breakdown")
+            if isinstance(legacy, dict):
+                prior_reason = {str(k): int(v) for k, v in legacy.items()}
+    if not prior_reason:
+        return {
+            "available": False,
+            "note": "No prior release_validation_metrics.review_queue_by_reason in artifact",
+            "by_reason": {},
+        }
+    keys = set(current_by_reason) | set(prior_reason)
+    by_reason = {k: int(current_by_reason.get(k, 0)) - int(prior_reason.get(k, 0)) for k in keys}
+    return {
+        "available": True,
+        "prior_review_queue_total": int(sum(prior_reason.values())),
+        "current_review_queue_total": int(sum(current_by_reason.values())),
+        "net_change_review_queue": int(sum(current_by_reason.values()) - sum(prior_reason.values())),
+        "by_reason": dict(sorted(by_reason.items(), key=lambda kv: (-abs(kv[1]), kv[0]))),
+    }
+
+
 def build_workflow_gate_artifact(
     summary: dict,
     *,
@@ -1112,7 +1239,7 @@ def build_workflow_gate_artifact(
         strict_pass = blocker_total == 0 and not bootstrapped_upstream
     else:
         strict_pass = None
-    return {
+    body: dict = {
         "artifact_version": "multimodal_release_gate_v1",
         "github_sha": os.environ.get("GITHUB_SHA", ""),
         "github_run_id": os.environ.get("GITHUB_RUN_ID", ""),
@@ -1129,6 +1256,13 @@ def build_workflow_gate_artifact(
             "bootstrapped_upstream": list(bootstrapped_upstream),
         },
     }
+    rvm = summary.get("release_validation_metrics")
+    if isinstance(rvm, dict):
+        body["release_validation_metrics"] = rvm
+    rqd = summary.get("review_queue_deltas")
+    if isinstance(rqd, dict):
+        body["review_queue_deltas"] = rqd
+    return body
 
 
 def emit_workflow_gate_artifact(
@@ -1183,6 +1317,7 @@ def summarize(con: duckdb.DuckDBPyConnection, schema: str) -> dict:
             "val_imaging_fna_linkage_audit_v1",
         ):
             out["validation_fail_rows"][t] = cnt
+    out["release_validation_metrics"] = collect_release_validation_metrics(con, schema)
     return out
 
 
@@ -1200,7 +1335,7 @@ def main() -> None:
         action="store_true",
         help=(
             "Fail closed: required column schema + no bootstrap, zero-row blocking val_* tables "
-            "(see docs/multimodal_contract_v1.md)."
+            "(see docs/multimodal_release_gate.md)."
         ),
     )
     ap.add_argument(
@@ -1220,6 +1355,16 @@ def main() -> None:
             "Write multimodal_release_gate_v1 JSON for workflow upload (row counts + strict-release summary)."
         ),
     )
+    ap.add_argument(
+        "--prior-gate-artifact",
+        type=Path,
+        metavar="PATH",
+        default=None,
+        help=(
+            "Optional prior multimodal_release_gate_v1 JSON; emits review_queue_deltas vs "
+            "release_validation_metrics.review_queue_by_reason."
+        ),
+    )
     args = ap.parse_args()
     if args.strict_release and args.allow_bootstrap_dev:
         ap.error("--strict-release cannot be combined with --allow-bootstrap-dev")
@@ -1230,6 +1375,11 @@ def main() -> None:
         return
 
     if args.md:
+        os.environ.setdefault("MOTHERDUCK_SESSION_HINT", "THYROID_2026")
+        os.environ.setdefault(
+            "MOTHERDUCK_CUSTOM_USER_AGENT",
+            "THYROID_2026_molecular/128_multimodal_contract_mm_v1;kind=contract",
+        )
         con = connect_md_or_file(
             DB_PATH,
             md=True,
@@ -1251,6 +1401,22 @@ def main() -> None:
         print(json.dumps(summary["row_counts"], indent=2))
         section("VALIDATION TABLE COUNTS (non-zero = investigate)")
         print(json.dumps(summary["validation_fail_rows"], indent=2))
+        section("RELEASE VALIDATION METRICS (interpretive breakdowns)")
+        print(json.dumps(summary.get("release_validation_metrics", {}), indent=2))
+        prior_body = (
+            load_prior_gate_artifact(args.prior_gate_artifact)
+            if args.prior_gate_artifact
+            else None
+        )
+        rvm = summary.get("release_validation_metrics") or {}
+        rq_map = rvm.get("review_queue_by_reason") if isinstance(rvm, dict) else None
+        if isinstance(rq_map, dict):
+            summary["review_queue_deltas"] = compute_review_queue_deltas(
+                {str(k): int(v) for k, v in rq_map.items()},
+                prior_body,
+            )
+            section("REVIEW QUEUE DELTAS (vs --prior-gate-artifact when provided)")
+            print(json.dumps(summary["review_queue_deltas"], indent=2))
         if bootstrapped:
             section("BOOTSTRAPPED UPSTREAM (native table missing; used schema stubs)")
             print(json.dumps(bootstrapped, indent=2))

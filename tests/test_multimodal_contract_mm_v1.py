@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 
 import duckdb
@@ -252,6 +253,38 @@ class TestMultimodalContractViolations:
             f"SELECT COUNT(*) FROM {self.SCHEMA}.val_preop_temporal_order_mm_v1"
         ).fetchone()[0]
         assert n >= 1
+
+
+class TestReleaseValidationMetrics:
+    SCHEMA = "mm_contract_dev"
+
+    def test_release_validation_metrics_populated(self) -> None:
+        mod = _load_mm128()
+        con = duckdb.connect(":memory:")
+        _seed_minimal_upstream(con)
+        mod.build_all(con, self.SCHEMA)
+        m = mod.collect_release_validation_metrics(con, self.SCHEMA)
+        assert "blocking_validation_row_counts" in m
+        assert "imaging_fna_link_flags" in m
+        assert "ambiguous_multimodal_by_domain" in m
+        assert "review_queue_by_reason" in m
+        assert m["blocking_validation_row_counts"]["val_nodes_invariant_mm_v1"] == 0
+
+    def test_review_queue_deltas_vs_prior_artifact(self, tmp_path: Path) -> None:
+        mod = _load_mm128()
+        prior = {
+            "release_validation_metrics": {
+                "review_queue_by_reason": {"ambiguous_multimatch": 10, "discordant_laterality": 2},
+            }
+        }
+        pp = tmp_path / "prior.json"
+        pp.write_text(json.dumps(prior), encoding="utf-8")
+        cur = {"ambiguous_multimatch": 8, "discordant_laterality": 5, "size_drift_gt_20pct": 1}
+        delta = mod.compute_review_queue_deltas(cur, mod.load_prior_gate_artifact(pp))
+        assert delta["available"] is True
+        assert delta["by_reason"]["ambiguous_multimatch"] == -2
+        assert delta["by_reason"]["discordant_laterality"] == 3
+        assert delta["net_change_review_queue"] == 2
 
 
 class TestStrictReleaseGate:

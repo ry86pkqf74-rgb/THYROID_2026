@@ -89,7 +89,7 @@ flowchart LR
 
 ## 8. CI vs release
 
-- **`.github/workflows/ci.yml`** runs `multimodal-tests` with **pytest** on `tests/test_multimodal_contract_mm_v1.py` and `tests/test_imaging_fna_linkage_mm_v1.py` (lines 157–181) — **offline**, not executing scripts 128/129 against MotherDuck.
+- **`.github/workflows/ci.yml`** runs `multimodal-tests` with **pytest** on `tests/test_multimodal_contract_mm_v1.py` and `tests/test_imaging_fna_linkage_mm_v1.py` — **offline**. Optional **manual** `workflow_dispatch` job `multimodal-md-contract-gate` runs **129→128** with `--strict-release` on MotherDuck and uploads gate JSON artifacts.
 
 - **Formalization / MotherDuck** jobs in `ci.yml` reference scripts 116/112/119 in header comments (lines 9–14); multimodal **deployment** to cloud is separate (episode pipeline workflow).
 
