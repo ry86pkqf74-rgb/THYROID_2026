@@ -9,7 +9,8 @@ Steps executed (in order):
   1. Preflight     — MD attachment, md_information_schema.databases, retention check
   2. Stage refresh — 116_md_stage_loader.py --md  →  v2_stage + load_inventory
   3. Promotion gate — 112_v2_domain_promotion_gate.py --motherduck-check
-  4. Canonical + QA — 103 --md, 114 --md (hydrate), 117 --md
+  4. Canonical + QA — 103 --md, 114 --md (hydrate), 117 --md (episode + molecular contract views)
+  4b. Molecular lineage — 132_molecular_fact_lineage_views.py --execute --md (unified facts)
   5. Presentation views — 125_master_verified_views.py --md
   6. Release       — 115_release_snapshot.py --md, 118_parquet_release_bundle.py --md
   7. Validation    — 119_md_formalization_validate.py --md --release-mode
@@ -83,6 +84,11 @@ def parse_args() -> argparse.Namespace:
     p.add_argument(
         "--db-path", default=str(ROOT / "thyroid_master.duckdb"),
         help="Local DuckDB fallback path (used only when --md is not set).",
+    )
+    p.add_argument(
+        "--md-env",
+        default=None,
+        help="dev|qa|prod — passed to 117/119/132 when --md (MotherDuck catalog).",
     )
     return p.parse_args()
 
@@ -411,6 +417,24 @@ def capture_validation_evidence(
     except Exception as exc:
         evidence["qa_release_manifest_error"] = str(exc)
 
+    # Molecular normalized contract views (133 + lineage 132)
+    mol_views = [
+        "molecular_results_contract_v",
+        "molecular_variant_contract_v",
+        "molecular_qc_summary_v",
+        "molecular_patient_rollup_v",
+        "molecular_fact_long_v",
+    ]
+    mol_counts: dict[str, Any] = {}
+    for vn in mol_views:
+        try:
+            mol_counts[vn] = int(
+                con.execute(f"SELECT COUNT(*) FROM main.{vn}").fetchone()[0]
+            )
+        except Exception as exc:
+            mol_counts[vn] = f"error: {exc}"
+    evidence["molecular_contract_view_row_counts"] = mol_counts
+
     # Step execution summary
     evidence["pipeline_steps"] = step_results
 
@@ -471,7 +495,8 @@ def write_audit_summary(
         "| `manual_review_queue.csv` | Pending review rows at gate time |",
         "| `release_schema_manifest.json` | Release schema + qa.release_manifest dump |",
         "| `parquet_bundle_manifest.json` | Parquet bundle file list with SHA-256 checksums |",
-        "| `validation_report.md` | 119 structural + release-mode validation |",
+        "| `validation_report.md` | 119 structural + release-mode validation (includes molecular contract) |",
+        "| `molecular_lineage_views_output.log` | 132 unified molecular fact views |",
         "| `release_validation_strict.json` | Full MD evidence: query log, schema counts, manifest |",
         "| `snapshot_metadata.json` | md_information_schema.snapshots (if accessible) |",
         "| `audit_summary.md` | This file |",
@@ -489,6 +514,14 @@ def write_audit_summary(
 
 def main() -> None:
     args = parse_args()
+
+    if args.md and args.md_env:
+        import os
+
+        if not os.environ.get("MOTHERDUCK_DATABASE") and not os.environ.get("MOTHERDUCK_DB"):
+            from motherduck_client import resolve_database_for_env
+
+            os.environ["MOTHERDUCK_DATABASE"] = resolve_database_for_env(args.md_env)
 
     tag = args.tag or datetime.now().strftime("%Y%m%d")
     run_ts = datetime.now().strftime("%Y%m%d_%H%M")
@@ -529,7 +562,9 @@ def main() -> None:
     from utils.md_connect import connect_md_or_file
 
     db_path = Path(args.db_path)
-    con = connect_md_or_file(db_path, md=args.md, fail_closed=args.md)
+    con = connect_md_or_file(
+        db_path, md=args.md, fail_closed=args.md, env=args.md_env
+    )
 
     # ------------------------------------------------------------------
     # Step 1: Preflight
@@ -605,7 +640,9 @@ def main() -> None:
         if not args.dry_run:
             if args.md:
                 con.close()
-                con = connect_md_or_file(db_path, md=args.md, fail_closed=args.md)
+                con = connect_md_or_file(
+                    db_path, md=args.md, fail_closed=args.md, env=args.md_env
+                )
             ok = check_pending_reviews(con, args.final_release)
             if not ok:
                 con.close()
@@ -658,6 +695,8 @@ def main() -> None:
     cmd_117 = [py, str(SCRIPTS / "117_md_contract_views.py")]
     if args.md:
         cmd_117.append("--md")
+        if args.md_env:
+            cmd_117.extend(["--md-env", args.md_env])
     if args.dry_run:
         cmd_117.append("--dry-run")
     ok = _run(
@@ -668,6 +707,35 @@ def main() -> None:
     )
     if not ok:
         print("\n  ABORT: Contract views setup failed.")
+        con.close()
+        sys.exit(1)
+
+    # ------------------------------------------------------------------
+    # Step 4d: Molecular lineage views (132)
+    # ------------------------------------------------------------------
+    cmd_132 = [py, str(SCRIPTS / "132_molecular_fact_lineage_views.py"), "--execute"]
+    if args.md:
+        cmd_132.append("--md")
+        if args.md_env:
+            cmd_132.extend(["--md-env", args.md_env])
+    if args.dry_run:
+        cmd_132 = [
+            py,
+            str(SCRIPTS / "132_molecular_fact_lineage_views.py"),
+            "--validate-only",
+        ]
+        if args.md:
+            cmd_132.append("--md")
+            if args.md_env:
+                cmd_132.extend(["--md-env", args.md_env])
+    ok = _run(
+        "Molecular lineage views (132)",
+        cmd_132,
+        audit_dir / "molecular_lineage_views_output.log",
+        step_results,
+    )
+    if not ok:
+        print("\n  ABORT: Molecular lineage views failed.")
         con.close()
         sys.exit(1)
 
@@ -759,6 +827,8 @@ def main() -> None:
     ]
     if args.md:
         cmd_119.append("--md")
+        if args.md_env:
+            cmd_119.extend(["--md-env", args.md_env])
     if args.final_release:
         cmd_119.append("--release-mode")
     ok = _run(

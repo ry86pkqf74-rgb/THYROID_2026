@@ -30,6 +30,9 @@ Checks:
  11. Analyst presentation views (release-mode): main.master_fact_long_verified_v1,
      main.master_patient_rollup_verified_v1, main.master_source_lineage_v1 — existence,
      required traceability columns, and non-null core fields (see check_presentation_layer)
+ 12. Molecular normalized contract views (scripts/sql/133_molecular_contract_views_ddl.sql):
+     required columns, live-row parity vs main.molecular_results, payload_checksum uniqueness,
+     allele_fraction bounds, variant_class enum, provenance columns, assay/panel pairing
 
 Usage:
   .venv/bin/python scripts/119_md_formalization_validate.py --md
@@ -93,6 +96,47 @@ PRESENTATION_ROLLUP_TRACE_COLS = (
     "pct_reviewed",
 )
 
+# Molecular normalized layer (scripts/sql/133_molecular_contract_views_ddl.sql)
+MOLECULAR_RESULTS_TABLE = "molecular_results"
+MOLECULAR_CONTRACT_VIEWS: dict[str, tuple[str, ...]] = {
+    "molecular_results_contract_v": (
+        "molecular_result_id",
+        "research_id",
+        "assay_name",
+        "panel_version",
+        "payload_checksum",
+        "parse_status",
+        "normalization_status",
+        "lineage_id",
+        "ingestion_ts",
+        "ingestion_run_id",
+        "source_table",
+        "source_row_fingerprint",
+    ),
+    "molecular_variant_contract_v": (
+        "molecular_variant_id",
+        "molecular_result_id",
+        "research_id",
+        "variant_class",
+        "allele_fraction",
+        "lineage_id",
+        "ingestion_ts",
+    ),
+    "molecular_qc_summary_v": (
+        "source_table",
+        "parse_status",
+        "normalization_status",
+        "n_results",
+        "n_patients",
+    ),
+    "molecular_patient_rollup_v": (
+        "research_id",
+        "n_molecular_results",
+        "n_variant_calls",
+        "latest_test_date_parsed",
+    ),
+}
+
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Validate MotherDuck formalization.")
@@ -115,6 +159,11 @@ def parse_args() -> argparse.Namespace:
     )
     p.add_argument("--release-mode", action="store_true",
                     help="Strict release validation: FAIL on missing infrastructure.")
+    p.add_argument(
+        "--md-env",
+        default=None,
+        help="MotherDuck environment (dev|qa|prod) when using --md.",
+    )
     p.add_argument("--db-path", default=str(DEFAULT_DB_PATH))
     p.add_argument("--v2-parquets-dir", default=str(DEFAULT_V2_DIR))
     p.add_argument("--output-dir", default=None, help="Output directory for report.")
@@ -125,6 +174,13 @@ def get_connection(args: argparse.Namespace) -> duckdb.DuckDBPyConnection:
     if args.md:
         import os
         from utils.md_connect import connect_md_or_file
+
+        if args.md_env and not os.environ.get("MOTHERDUCK_DATABASE") and not os.environ.get(
+            "MOTHERDUCK_DB"
+        ):
+            from motherduck_client import resolve_database_for_env
+
+            os.environ["MOTHERDUCK_DATABASE"] = resolve_database_for_env(args.md_env)
 
         ua = args.md_user_agent or os.environ.get(
             "MOTHERDUCK_CUSTOM_USER_AGENT",
@@ -137,6 +193,7 @@ def get_connection(args: argparse.Namespace) -> duckdb.DuckDBPyConnection:
             prefer_service_account=args.md_sa,
             custom_user_agent=ua,
             motherduck_session_hint=args.md_session_hint,
+            env=args.md_env,
         )
     return duckdb.connect(args.db_path)
 
@@ -639,6 +696,380 @@ def check_presentation_layer(
         )
 
 
+def _main_object_exists(
+    con: duckdb.DuckDBPyConnection,
+    table_name: str,
+) -> bool:
+    try:
+        row = con.execute(
+            """
+            SELECT 1
+            FROM information_schema.tables
+            WHERE table_schema = 'main' AND table_name = ?
+            LIMIT 1
+            """,
+            [table_name],
+        ).fetchone()
+        return row is not None
+    except Exception:
+        return False
+
+
+def _view_or_table_columns(con: duckdb.DuckDBPyConnection, name: str) -> set[str]:
+    rows = con.execute(
+        """
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_schema = 'main' AND table_name = ?
+        """,
+        [name],
+    ).fetchall()
+    return {r[0] for r in rows}
+
+
+def check_molecular_normalized_contract(
+    con: duckdb.DuckDBPyConnection,
+    results: ValidationResult,
+    strict: bool = False,
+) -> None:
+    """Validate molecular normalized tables + 133 contract views (checksums, enums, provenance)."""
+    status_fail = "FAIL" if strict else "WARN"
+
+    if not _main_object_exists(con, MOLECULAR_RESULTS_TABLE):
+        results.add(
+            "Molecular layer present",
+            "PASS",
+            "main.molecular_results not found — molecular contract checks skipped",
+        )
+        return
+
+    try:
+        n_all = int(
+            con.execute(
+                f"SELECT COUNT(*) FROM main.{MOLECULAR_RESULTS_TABLE}"
+            ).fetchone()[0]
+        )
+        n_live = int(
+            con.execute(
+                f"SELECT COUNT(*) FROM main.{MOLECULAR_RESULTS_TABLE} "
+                f"WHERE superseded_by_molecular_result_id IS NULL"
+            ).fetchone()[0]
+        )
+    except Exception as exc:
+        results.add("Molecular base table", status_fail, str(exc))
+        return
+
+    if n_all == 0:
+        results.add(
+            "Molecular row counts",
+            "PASS",
+            "main.molecular_results is empty — contract view checks skipped",
+        )
+        return
+
+    # Required contract views + columns
+    col_failures = 0
+    for view_name, required in MOLECULAR_CONTRACT_VIEWS.items():
+        if not _main_object_exists(con, view_name):
+            results.add(
+                f"Molecular view {view_name}",
+                status_fail,
+                "view/table missing — run scripts/117_md_contract_views.py",
+            )
+            col_failures += 1
+            continue
+        cols = _view_or_table_columns(con, view_name)
+        missing = [c for c in required if c not in cols]
+        if missing:
+            col_failures += 1
+            results.add(
+                f"Molecular view {view_name}",
+                status_fail,
+                f"missing columns: {missing}",
+            )
+    if col_failures == 0:
+        results.add(
+            "Molecular contract required columns",
+            "PASS",
+            f"all {len(MOLECULAR_CONTRACT_VIEWS)} views expose required fields",
+        )
+
+    # Row counts: live results must match contract slice when views exist
+    if _main_object_exists(con, "molecular_results_contract_v"):
+        try:
+            n_contract = int(
+                con.execute(
+                    "SELECT COUNT(*) FROM main.molecular_results_contract_v"
+                ).fetchone()[0]
+            )
+            if n_contract != n_live:
+                results.add(
+                    "Molecular results contract row parity",
+                    status_fail,
+                    f"molecular_results live={n_live:,} vs "
+                    f"molecular_results_contract_v={n_contract:,}",
+                )
+            else:
+                results.add(
+                    "Molecular results contract row parity",
+                    "PASS",
+                    f"{n_contract:,} live rows in contract view",
+                )
+        except Exception as exc:
+            results.add("Molecular results contract row parity", status_fail, str(exc))
+
+        # Primary key uniqueness on result id in contract slice
+        try:
+            row = con.execute(
+                """
+                SELECT COUNT(*) AS n,
+                       COUNT(DISTINCT molecular_result_id) AS n_id
+                FROM main.molecular_results_contract_v
+                """
+            ).fetchone()
+            ntot, nid = int(row[0]), int(row[1])
+            if ntot != nid:
+                results.add(
+                    "Molecular result_id uniqueness",
+                    status_fail,
+                    f"{ntot:,} rows but {nid:,} distinct molecular_result_id",
+                )
+            else:
+                results.add(
+                    "Molecular result_id uniqueness",
+                    "PASS",
+                    f"{ntot:,} rows; distinct molecular_result_id",
+                )
+        except Exception as exc:
+            results.add("Molecular result_id uniqueness", status_fail, str(exc))
+
+    # Non-zero contract when source has live rows (release signal)
+    if n_live > 0 and _main_object_exists(con, "molecular_results_contract_v"):
+        try:
+            nc = int(
+                con.execute(
+                    "SELECT COUNT(*) FROM main.molecular_results_contract_v"
+                ).fetchone()[0]
+            )
+            if nc == 0:
+                results.add(
+                    "Molecular contract non-empty",
+                    status_fail,
+                    "molecular_results has live rows but contract view is empty",
+                )
+            else:
+                results.add(
+                    "Molecular contract non-empty",
+                    "PASS",
+                    f"{nc:,} contract rows",
+                )
+        except Exception as exc:
+            results.add("Molecular contract non-empty", status_fail, str(exc))
+
+    # Payload checksum uniqueness (non-null only)
+    if _main_object_exists(con, "molecular_results_contract_v"):
+        try:
+            row = con.execute(
+                """
+                SELECT
+                    COUNT(*) FILTER (WHERE payload_checksum IS NOT NULL) AS nn,
+                    COUNT(DISTINCT payload_checksum) FILTER (
+                        WHERE payload_checksum IS NOT NULL
+                    ) AS nd
+                FROM main.molecular_results_contract_v
+                """
+            ).fetchone()
+            nn, nd = int(row[0]), int(row[1])
+            if nn > 0 and nn != nd:
+                results.add(
+                    "Molecular payload_checksum uniqueness",
+                    status_fail,
+                    f"{nn:,} non-null checksums but {nd:,} distinct (duplicate fingerprints)",
+                )
+            elif nn == 0:
+                results.add(
+                    "Molecular payload_checksum uniqueness",
+                    "WARN" if strict else "PASS",
+                    "no non-null payload_checksum rows to verify uniqueness",
+                )
+            else:
+                results.add(
+                    "Molecular payload_checksum uniqueness",
+                    "PASS",
+                    f"{nn:,} non-null checksums; all distinct",
+                )
+        except Exception as exc:
+            results.add("Molecular payload_checksum uniqueness", status_fail, str(exc))
+
+    # Provenance: lineage + ingestion on results contract
+    if _main_object_exists(con, "molecular_results_contract_v"):
+        try:
+            row = con.execute(
+                """
+                SELECT
+                    COUNT(*) AS n,
+                    COUNT(*) FILTER (
+                        WHERE lineage_id IS NULL
+                        OR trim(cast(lineage_id AS VARCHAR)) = ''
+                    ) AS n_bad_lineage,
+                    COUNT(*) FILTER (WHERE ingestion_ts IS NULL) AS n_bad_ts
+                FROM main.molecular_results_contract_v
+                """
+            ).fetchone()
+            n, bad_l, bad_t = int(row[0]), int(row[1]), int(row[2])
+            if bad_l or bad_t:
+                results.add(
+                    "Molecular provenance (results)",
+                    status_fail,
+                    f"{n:,} rows; blank lineage={bad_l:,}; null ingestion_ts={bad_t:,}",
+                )
+            else:
+                results.add(
+                    "Molecular provenance (results)",
+                    "PASS",
+                    f"{n:,} rows; lineage_id + ingestion_ts present",
+                )
+        except Exception as exc:
+            results.add("Molecular provenance (results)", status_fail, str(exc))
+
+    # Allele fraction bounds on variant contract
+    if _main_object_exists(con, "molecular_variant_contract_v"):
+        try:
+            bad_af = int(
+                con.execute(
+                    """
+                    SELECT COUNT(*)
+                    FROM main.molecular_variant_contract_v
+                    WHERE allele_fraction IS NOT NULL
+                      AND (
+                          allele_fraction < 0
+                          OR allele_fraction > 1
+                          OR allele_fraction != allele_fraction
+                      )
+                    """
+                ).fetchone()[0]
+            )
+            n_var = int(
+                con.execute(
+                    "SELECT COUNT(*) FROM main.molecular_variant_contract_v"
+                ).fetchone()[0]
+            )
+            if bad_af:
+                results.add(
+                    "Molecular allele_fraction bounds",
+                    status_fail,
+                    f"{bad_af:,} / {n_var:,} rows outside [0,1] or non-finite",
+                )
+            else:
+                results.add(
+                    "Molecular allele_fraction bounds",
+                    "PASS",
+                    f"{n_var:,} variant rows; AF in [0,1] or NULL",
+                )
+        except Exception as exc:
+            results.add("Molecular allele_fraction bounds", status_fail, str(exc))
+
+    # Variant class enum (canonical bucket set)
+    if _main_object_exists(con, "molecular_variant_contract_v"):
+        try:
+            bad_vc = int(
+                con.execute(
+                    """
+                    SELECT COUNT(*)
+                    FROM main.molecular_variant_contract_v
+                    WHERE upper(trim(cast(variant_class AS VARCHAR))) NOT IN (
+                        'SNV', 'INDEL', 'FUSION', 'CNV', 'OTHER'
+                    )
+                    OR variant_class IS NULL
+                    OR trim(cast(variant_class AS VARCHAR)) = ''
+                    """
+                ).fetchone()[0]
+            )
+            if bad_vc:
+                results.add(
+                    "Molecular variant_class enum",
+                    status_fail,
+                    f"{bad_vc:,} rows with NULL/blank/non-canonical variant_class",
+                )
+            else:
+                results.add(
+                    "Molecular variant_class enum",
+                    "PASS",
+                    "all variant_class values in {SNV,INDEL,FUSION,CNV,OTHER}",
+                )
+        except Exception as exc:
+            results.add("Molecular variant_class enum", status_fail, str(exc))
+
+    # Assay / panel_version: panel should not be blank when assay_name is populated
+    if _main_object_exists(con, "molecular_results_contract_v"):
+        try:
+            bad_panel = int(
+                con.execute(
+                    """
+                    SELECT COUNT(*)
+                    FROM main.molecular_results_contract_v
+                    WHERE assay_name IS NOT NULL
+                      AND trim(cast(assay_name AS VARCHAR)) != ''
+                      AND (
+                          panel_version IS NULL
+                          OR trim(cast(panel_version AS VARCHAR)) = ''
+                      )
+                    """
+                ).fetchone()[0]
+            )
+            if bad_panel:
+                results.add(
+                    "Molecular assay/panel_version pairing",
+                    "WARN",
+                    f"{bad_panel:,} rows with assay_name but empty panel_version",
+                )
+            else:
+                results.add(
+                    "Molecular assay/panel_version pairing",
+                    "PASS",
+                    "no assay rows with blank panel_version",
+                )
+        except Exception as exc:
+            results.add("Molecular assay/panel_version pairing", status_fail, str(exc))
+
+    # Optional: cross-check assay_key targets from dictionary for known Afirma assay_name tokens
+    if (
+        _main_object_exists(con, "molecular_assay_dictionary")
+        and _main_object_exists(con, "molecular_results_contract_v")
+    ):
+        try:
+            outsiders = int(
+                con.execute(
+                    """
+                    SELECT COUNT(DISTINCT r.assay_name)
+                    FROM main.molecular_results_contract_v r
+                    WHERE r.assay_name IS NOT NULL
+                      AND trim(cast(r.assay_name AS VARCHAR)) != ''
+                      AND NOT EXISTS (
+                          SELECT 1
+                          FROM main.molecular_assay_dictionary d
+                          WHERE d.assay_name = r.assay_name
+                      )
+                    """
+                ).fetchone()[0]
+            )
+            if outsiders:
+                results.add(
+                    "Molecular assay_name dictionary match",
+                    "WARN",
+                    f"{outsiders} distinct assay_name value(s) not in molecular_assay_dictionary "
+                    f"(expected for non-afirma panels such as ThyroSeq)",
+                )
+            else:
+                results.add(
+                    "Molecular assay_name dictionary match",
+                    "PASS",
+                    "all assay_name values appear in molecular_assay_dictionary",
+                )
+        except Exception as exc:
+            results.add("Molecular assay_name dictionary match", "WARN", str(exc))
+
+
 def check_release_manifest(
     con: duckdb.DuckDBPyConnection,
     results: ValidationResult,
@@ -787,6 +1218,9 @@ def main() -> None:
 
         print("\n--- Check 11: Analyst presentation layer (master_*_verified_v1) ---")
         check_presentation_layer(con, results, strict=strict)
+
+        print("\n--- Check 12: Molecular normalized contract views ---")
+        check_molecular_normalized_contract(con, results, strict=strict)
 
     finally:
         con.close()

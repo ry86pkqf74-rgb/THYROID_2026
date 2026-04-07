@@ -2,7 +2,8 @@
 """Load episode/linkage/analysis contract tables into MotherDuck main schema.
 
 Reads validated parquets from exports/manuscript_freeze_v1/data/ and materializes
-them as tables in main, then creates contract views from the companion DDL file.
+them as tables in main, then creates contract views from the companion DDL files
+(117_contract_views_ddl.sql + 133_molecular_contract_views_ddl.sql).
 Also creates the longitudinal_lab_deduped_v consumption view.
 
 Usage:
@@ -13,6 +14,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -26,6 +28,7 @@ sys.path.insert(0, str(ROOT))
 DEFAULT_DB_PATH = ROOT / "thyroid_master.duckdb"
 FREEZE_DIR = ROOT / "exports" / "manuscript_freeze_v1" / "data"
 DDL_PATH = ROOT / "scripts" / "sql" / "117_contract_views_ddl.sql"
+MOLECULAR_CONTRACT_DDL_PATH = ROOT / "scripts" / "sql" / "133_molecular_contract_views_ddl.sql"
 
 EPISODE_TABLES = {
     "tumor_episode_master_v2": "tumor_episode_master_v2.parquet",
@@ -46,10 +49,20 @@ CANONICAL_TABLES = {
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Load episode/linkage contract tables into MotherDuck.")
     p.add_argument("--md", action="store_true", help="Target MotherDuck (fail-closed).")
+    p.add_argument(
+        "--md-env",
+        default=None,
+        help="MotherDuck environment (dev|qa|prod). Sets catalog via motherduck_environments.yml.",
+    )
     p.add_argument("--db-path", default=str(DEFAULT_DB_PATH), help="Local DuckDB path.")
     p.add_argument("--dry-run", action="store_true", help="Show what would be done.")
     p.add_argument("--skip-canonical", action="store_true",
                    help="Skip canonical fact tables (already loaded by 103).")
+    p.add_argument(
+        "--contract-views-only",
+        action="store_true",
+        help="Skip all parquet loads; apply 117+133 view DDL only (base tables must exist).",
+    )
     return p.parse_args()
 
 
@@ -65,7 +78,16 @@ def git_sha() -> str:
 def get_connection(args: argparse.Namespace) -> duckdb.DuckDBPyConnection:
     if args.md:
         from utils.md_connect import connect_md_or_file
-        return connect_md_or_file(Path(args.db_path), md=True, fail_closed=True)
+
+        if args.md_env and not os.environ.get("MOTHERDUCK_DATABASE") and not os.environ.get(
+            "MOTHERDUCK_DB"
+        ):
+            from motherduck_client import resolve_database_for_env
+
+            os.environ["MOTHERDUCK_DATABASE"] = resolve_database_for_env(args.md_env)
+        return connect_md_or_file(
+            Path(args.db_path), md=True, fail_closed=True, env=args.md_env
+        )
     return duckdb.connect(args.db_path)
 
 
@@ -104,23 +126,21 @@ def load_table_from_parquet(
     return int(md_count)
 
 
-def apply_ddl(
+def apply_ddl_file(
     con: duckdb.DuckDBPyConnection,
+    ddl_path: Path,
     dry_run: bool = False,
     *,
     on_error: str = "raise",
+    label: str | None = None,
 ) -> None:
-    """Execute the companion DDL file for contract views.
-
-    on_error
-        "raise" — propagate failures.
-        "warn" — log statement failures and continue.
-    """
-    if not DDL_PATH.exists():
-        print(f"  [warn] DDL file not found: {DDL_PATH}")
+    """Execute a DDL file (-- full-line comments stripped; statements split on ';')."""
+    tag = label or ddl_path.name
+    if not ddl_path.exists():
+        print(f"  [warn] DDL file not found: {ddl_path}")
         return
 
-    ddl = DDL_PATH.read_text(encoding="utf-8")
+    ddl = ddl_path.read_text(encoding="utf-8")
     stmts = []
     for line in ddl.splitlines():
         stripped = line.strip()
@@ -134,16 +154,33 @@ def apply_ddl(
         if not stmt:
             continue
         if dry_run:
-            label = stmt[:80].replace("\n", " ")
-            print(f"  [dry-run] {label}...")
+            lbl = stmt[:80].replace("\n", " ")
+            print(f"  [dry-run] [{tag}] {lbl}...")
             continue
         try:
             con.execute(stmt)
         except Exception as exc:
             if on_error == "raise":
                 raise
-            print(f"  [warn] DDL failed: {exc}")
+            print(f"  [warn] [{tag}] DDL failed: {exc}")
             print(f"         Statement: {stmt[:120]}...")
+
+
+def apply_ddl(
+    con: duckdb.DuckDBPyConnection,
+    dry_run: bool = False,
+    *,
+    on_error: str = "raise",
+) -> None:
+    """Execute episode/linkage contract DDL, then molecular normalized contract views."""
+    apply_ddl_file(con, DDL_PATH, dry_run=dry_run, on_error=on_error, label="117_contract")
+    apply_ddl_file(
+        con,
+        MOLECULAR_CONTRACT_DDL_PATH,
+        dry_run=dry_run,
+        on_error=on_error,
+        label="133_molecular_contract",
+    )
 
 
 def _run_contract_writes_in_transaction(
@@ -227,6 +264,10 @@ def _run_contract_writes_in_transaction(
             "longitudinal_lab_deduped_v",
             "linkage_summary_v",
             "episode_completeness_summary_v",
+            "molecular_results_contract_v",
+            "molecular_variant_contract_v",
+            "molecular_qc_summary_v",
+            "molecular_patient_rollup_v",
         ]:
             cnt = con.execute(
                 f"SELECT COUNT(*) FROM main.{view_name}"
@@ -241,6 +282,31 @@ def main() -> None:
     con = get_connection(args)
 
     try:
+        if args.contract_views_only:
+            ddl_on_error = "raise" if args.md else "warn"
+            print("=== Contract views only (117 + 133 DDL) ===")
+            apply_ddl(con, dry_run=args.dry_run, on_error=ddl_on_error)
+            if not args.dry_run:
+                print("\n=== Verification (views) ===")
+                try:
+                    for view_name in [
+                        "longitudinal_lab_deduped_v",
+                        "linkage_summary_v",
+                        "episode_completeness_summary_v",
+                        "molecular_results_contract_v",
+                        "molecular_variant_contract_v",
+                        "molecular_qc_summary_v",
+                        "molecular_patient_rollup_v",
+                    ]:
+                        cnt = con.execute(
+                            f"SELECT COUNT(*) FROM main.{view_name}"
+                        ).fetchone()[0]
+                        print(f"  [verify] main.{view_name}: {cnt:,} rows")
+                except Exception as exc:
+                    print(f"  [warn] view verification failed: {exc}")
+            print("\n  [done] contract views only complete")
+            return
+
         if args.dry_run:
             print("=== Phase 2: Canonical table materialization ===")
             if not args.skip_canonical:
