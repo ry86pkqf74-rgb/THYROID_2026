@@ -124,7 +124,7 @@ def run(args: argparse.Namespace) -> int:
     if args.no_publish:
         print()
         print(f"   DRAFT CREATED — review at: {dep['links']['html']}")
-        print(f"   To publish later: visit the URL above and click 'Publish'")
+        print("   To publish later: visit the URL above and click 'Publish'")
     else:
         print("4. Publishing...")
         r = requests.post(
@@ -139,7 +139,7 @@ def run(args: argparse.Namespace) -> int:
         pub = r.json()
         doi = pub.get("doi", "")
         record_url = pub["links"].get("record_html", pub["links"].get("html", ""))
-        print(f"   PUBLISHED!")
+        print("   PUBLISHED!")
         print(f"   DOI: {doi}")
         print(f"   URL: {record_url}")
         print()

@@ -30,7 +30,6 @@ Pip: langchain-core langchain-ollama pandas pyarrow pydantic tenacity
 from __future__ import annotations
 
 import argparse
-import asyncio
 import json
 import logging
 import os
@@ -38,7 +37,7 @@ import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Optional
+from typing import Optional
 
 import pandas as pd
 from pydantic import BaseModel, Field, field_validator
@@ -231,7 +230,6 @@ def extract_single_note(
     max_retries: int = 3,
 ) -> dict:
     """Extract entities from a single note with retry logic and schema validation."""
-    import re
 
     for attempt in range(max_retries):
         try:

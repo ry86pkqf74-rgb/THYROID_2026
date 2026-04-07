@@ -24,7 +24,6 @@ from __future__ import annotations
 import argparse
 import re
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -170,7 +169,6 @@ CANONICAL_ALIAS_MAP: dict[str, str] = {
     "lymphadenopathy": "lymph_node_palpation",
     "positive_lymph_nodes": "lymph_node_pathology",
     "regional_lymph_nodes": "lymph_node_pathology",
-    "Cervical lymph nodes": "cervical_ln_detail",
     "Supraclavicular lymph nodes": "lymph_node_palpation",
     "benign_lymph_nodes": "lymph_node_pathology",
     "ln_laterality": "lymph_node_level",
@@ -369,7 +367,6 @@ CANONICAL_ALIAS_MAP: dict[str, str] = {
     "focal_location": "nodule_location",
     "us_visit_number": "ultrasound_thyroid",
     "etr_on_imaging": "ete_on_imaging",
-    "thyroid_ultrasound": "ultrasound_thyroid",
     "imaging": "ultrasound_thyroid",
     "imaging_findings": "ultrasound_thyroid",
     "paired_tsh": "tsh",
@@ -409,7 +406,6 @@ CANONICAL_ALIAS_MAP: dict[str, str] = {
     "symptoms": "presenting_symptoms",
     "symptom_duration": "presenting_symptoms",
     "physical_exam_findings": "physical_exam",
-    "trachea_exam": "tracheal_deviation",
     "acanthosis_nigricans": "skin",
     "comorbidity": "past_medical_hx",
     "allergy": "allergies",
@@ -544,7 +540,7 @@ def main() -> None:
     save_parquet(clean, clean_path)
     if not quar.empty:
         save_parquet(quar, quar_path)
-    print(f"  parquets updated")
+    print("  parquets updated")
 
     con = connect_md_or_file(DB_PATH, md=args.md, fail_closed=args.md)
     con.execute(

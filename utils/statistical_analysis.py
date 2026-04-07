@@ -1337,7 +1337,7 @@ class ThyroidStatisticalAnalyzer:
             try:
                 coeffs = np.polyfit(x, y, 1)
                 slope = float(coeffs[0])
-                intercept = float(coeffs[1])
+                float(coeffs[1])
                 first_val = float(y[0]) if not log_transform else float(np.exp(y[0]))
                 last_val = float(y[-1]) if not log_transform else float(np.exp(y[-1]))
             except Exception:
@@ -1615,7 +1615,6 @@ class ThyroidStatisticalAnalyzer:
         str — formatted Markdown text suitable for ``st.info()`` or manuscript draft.
         """
         estimate_col = "HR" if model_type == "HR" else "OR"
-        label_col = "covariate" if model_type == "HR" else "predictor"
 
         if estimate_col not in model_results.get(
             "hr_table" if model_type == "HR" else "or_table",
@@ -1714,7 +1713,9 @@ class ThyroidStatisticalAnalyzer:
         -------
         list of m completed DataFrames (same shape as *data*).
         """
-        from sklearn.experimental import enable_iterative_imputer  # noqa: F401
+        import importlib
+
+        importlib.import_module("sklearn.experimental.enable_iterative_imputer")
         from sklearn.impute import IterativeImputer
 
         all_vars = list(dict.fromkeys(vars_to_impute + predictor_vars))

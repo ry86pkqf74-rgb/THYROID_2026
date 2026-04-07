@@ -1130,8 +1130,8 @@ def main() -> None:
 
     # ── Files changed summary ──
     section("FILES CHANGED")
-    print(f"  scripts/15_date_association_audit.py  (this script)")
-    print(f"  scripts/15_date_association_views.sql (generated SQL)")
+    print("  scripts/15_date_association_audit.py  (this script)")
+    print("  scripts/15_date_association_views.sql (generated SQL)")
     if not args.md:
         print(f"  {DB_PATH.name}  (local DuckDB with views)")
 

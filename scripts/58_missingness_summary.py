@@ -15,10 +15,13 @@ from __future__ import annotations
 
 import argparse
 import os
-import sys
 from datetime import datetime
+from pathlib import Path
 
 import pandas as pd
+
+ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M")
 OUT_DIR = os.path.join("exports", "manuscript_analysis")
@@ -155,7 +158,7 @@ def main():
     print(f"\n  {'Domain':<14} {'Column':<42} {'Fill%':>6}  {'NULL':>6}")
     print(f"  {'-'*14} {'-'*42} {'-'*6}  {'-'*6}")
     for _, r in df.iterrows():
-        bar = "#" * int(r["fill_pct"] / 5) + "." * (20 - int(r["fill_pct"] / 5))
+        "#" * int(r["fill_pct"] / 5) + "." * (20 - int(r["fill_pct"] / 5))
         print(f"  {r['domain']:<14} {r['column']:<42} {r['fill_pct']:>5.1f}%  {r['null_count']:>6,}")
 
     # ── Domain summary ───────────────────────────────────────────────
@@ -165,7 +168,7 @@ def main():
             avg_fill_pct=("fill_pct", "mean"),
             min_fill_pct=("fill_pct", "min"),
         ).round(1)
-        print(f"\n  Domain summary:")
+        print("\n  Domain summary:")
         print(f"  {'Domain':<14} {'Cols':>5} {'Avg Fill%':>10} {'Min Fill%':>10}")
         for dom, r in domain_summary.iterrows():
             print(f"  {dom:<14} {int(r['columns']):>5} {r['avg_fill_pct']:>9.1f}% {r['min_fill_pct']:>9.1f}%")
@@ -178,21 +181,21 @@ def main():
 
         md_path = os.path.join(OUT_DIR, "missingness_report.md")
         with open(md_path, "w") as f:
-            f.write(f"# Missingness Report\n\n")
+            f.write("# Missingness Report\n\n")
             f.write(f"**Source:** `{src}` | **N:** {total:,} | **Generated:** {TIMESTAMP}\n\n")
             for domain in df["domain"].unique():
                 sub = df[df["domain"] == domain]
                 f.write(f"## {domain.title()}\n\n")
-                f.write(f"| Column | Fill % | NULL Count |\n")
-                f.write(f"|--------|-------:|-----------:|\n")
+                f.write("| Column | Fill % | NULL Count |\n")
+                f.write("|--------|-------:|-----------:|\n")
                 for _, r in sub.iterrows():
                     f.write(f"| {r['column']} | {r['fill_pct']:.1f}% | {r['null_count']:,} |\n")
-                f.write(f"\n")
+                f.write("\n")
 
             if len(df) > 0:
-                f.write(f"## Domain Summary\n\n")
-                f.write(f"| Domain | Columns | Avg Fill % | Min Fill % |\n")
-                f.write(f"|--------|--------:|-----------:|-----------:|\n")
+                f.write("## Domain Summary\n\n")
+                f.write("| Domain | Columns | Avg Fill % | Min Fill % |\n")
+                f.write("|--------|--------:|-----------:|-----------:|\n")
                 for dom, r in domain_summary.iterrows():
                     f.write(f"| {dom} | {int(r['columns'])} | {r['avg_fill_pct']:.1f}% | {r['min_fill_pct']:.1f}% |\n")
 

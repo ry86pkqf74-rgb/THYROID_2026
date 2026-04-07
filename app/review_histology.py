@@ -6,7 +6,7 @@ import streamlit as st
 import pandas as pd
 
 from app.helpers import (
-    sqdf, mc, sl, badge, multi_export, require_view, tbl_exists, write_decision,
+    sqdf, mc, sl, multi_export, require_view, tbl_exists, write_decision,
 )
 
 

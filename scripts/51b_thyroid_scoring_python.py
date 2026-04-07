@@ -10,9 +10,14 @@ Usage:
     .venv/bin/python scripts/51b_thyroid_scoring_python.py --local
 """
 from __future__ import annotations
-import argparse, os, sys, time
-import pandas as pd
+import argparse
+from pathlib import Path
+
 import numpy as np
+import pandas as pd
+
+ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 
 # ---------------------------------------------------------------------------
 # Connection helpers
@@ -146,7 +151,7 @@ def compute_ata_risk(row) -> str | None:
     ln_pos = row.get("ln_positive")
     vasc = str(row.get("vasc_grade", "") or "").lower()
     aggressive_variant = row.get("aggressive_variant_flag") is True
-    age = row.get("age_at_surgery")
+    row.get("age_at_surgery")
     ln_max_cm = row.get("ln_max_deposit_cm")
 
     if histology in ("", "unknown", "nan", None):
@@ -618,7 +623,7 @@ def build_scoring_table(con, dry_run: bool = False) -> None:
         return
 
     # Write to DuckDB via parquet — use a versioned staging name to avoid lock conflicts
-    import tempfile, pathlib, time as _time
+    import tempfile, pathlib
     print("  Writing scoring data to local DuckDB...")
     tmp = pathlib.Path(tempfile.mktemp(suffix=".parquet"))
     out.to_parquet(tmp, index=False)

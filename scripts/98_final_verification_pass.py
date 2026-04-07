@@ -25,9 +25,9 @@ import os
 import pathlib
 import re
 import sys
-import textwrap
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
 try:
@@ -710,8 +710,8 @@ def write_truth_snapshot(metrics, op_audit, rec_info, linkage, mismatches):
         f"# Dataset Truth Snapshot — {DATESTAMP}",
         "",
         f"Generated: {NOW.isoformat()}",
-        f"Source: local DuckDB `thyroid_master.duckdb` (prod)",
-        f"Script: `scripts/98_final_verification_pass.py`",
+        "Source: local DuckDB `thyroid_master.duckdb` (prod)",
+        "Script: `scripts/98_final_verification_pass.py`",
         "",
         "## 1. Core Dataset Metrics",
         "",
@@ -759,7 +759,7 @@ def write_truth_snapshot(metrics, op_audit, rec_info, linkage, mismatches):
     ]
     for t, c in sorted(rec_info.get("tiers", {}).items(), key=lambda x: -x[1]):
         lines.append(f"| {t} | {c} |")
-    lines.append(f"")
+    lines.append("")
     lines.append(f"Multi-surgery recurrence patients: {rec_info.get('ms_recurrence', 0)}")
     lines.append(f"Recurrence review packets: {rec_info.get('total', 0)} cases → `exports/recurrence_review_packets/`")
 
@@ -866,7 +866,7 @@ def write_linkage_audit(linkage):
         f"# Multi-Surgery Episode Linkage Audit — {DATESTAMP}",
         "",
         f"Generated: {NOW.isoformat()}",
-        f"Source: local DuckDB `thyroid_master.duckdb` (prod)",
+        "Source: local DuckDB `thyroid_master.duckdb` (prod)",
         "",
         "## Summary",
         "",
@@ -1018,13 +1018,13 @@ def write_operative_audit(op_audit):
     ]
     for r in ok:
         lines.append(f"- `{r['field']}`")
-    lines += [f"", f"### Pipeline Gap ({len(gaps)})", ""]
+    lines += ["", f"### Pipeline Gap ({len(gaps)})", ""]
     for r in gaps:
         lines.append(f"- `{r['field']}`: present in operative_episode_detail_v2 but missing from episode tables")
-    lines += [f"", f"### Source-Limited ({len(src_lim)})", ""]
+    lines += ["", f"### Source-Limited ({len(src_lim)})", ""]
     for r in src_lim:
         lines.append(f"- `{r['field']}`: 0% in upstream extraction")
-    lines += [f"", f"### Not Propagated ({len(not_prop)})", ""]
+    lines += ["", f"### Not Propagated ({len(not_prop)})", ""]
     for r in not_prop:
         lines.append(f"- `{r['field']}`: no downstream table column exists")
 
@@ -1065,9 +1065,9 @@ def write_recurrence_status(rec_info):
         "",
         "## Export Location",
         "",
-        f"- Directory: `exports/recurrence_review_packets/`",
-        f"- Format: CSV batches of 100, priority-sorted",
-        f"- Priority: unresolved > biochemical > exact; multi-surgery patients first within tier",
+        "- Directory: `exports/recurrence_review_packets/`",
+        "- Format: CSV batches of 100, priority-sorted",
+        "- Priority: unresolved > biochemical > exact; multi-surgery patients first within tier",
         "",
         "## Multi-Surgery Context",
         "",
@@ -1232,7 +1232,7 @@ def main():
     print(f"  Operative fields:       {len(op_audit)}")
     print(f"  Recurrence cases:       {rec_info.get('total', 'N/A')}")
     print(f"  Doc mismatches:         {len(mismatches)}")
-    print(f"  local DuckDB tables created: val_multi_surgery_cohort_v2, val_multi_surgery_review_queue_v2")
+    print("  local DuckDB tables created: val_multi_surgery_cohort_v2, val_multi_surgery_review_queue_v2")
 
     con.close()
     return 0 if len(mismatches) == 0 else 1

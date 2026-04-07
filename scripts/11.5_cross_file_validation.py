@@ -293,7 +293,7 @@ def _get_connection():
         raise RuntimeError(
             "LOCAL_DB_PATH not set. Export it before running this script."
         )
-    return duckdb.connect(f"thyroid_master.duckdb")
+    return duckdb.connect("thyroid_master.duckdb")
 
 
 def _table_exists(con, name: str) -> bool:
@@ -920,7 +920,7 @@ def phase5_summary(con, results: list[dict]) -> None:
              f"(cross-file: {xfile_issues:,})")
 
     total_time = sum(PHASE_TIMES.values())
-    log.info(f"\n  Phase compute times:")
+    log.info("\n  Phase compute times:")
     for phase, elapsed in PHASE_TIMES.items():
         log.info(f"    {phase}: {elapsed:.1f}s")
     log.info(f"    Total: {total_time:.1f}s")

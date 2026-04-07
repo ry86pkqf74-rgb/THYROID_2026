@@ -11,7 +11,6 @@ Phase 3 publication exports:
 from __future__ import annotations
 
 import argparse
-import os
 from pathlib import Path
 import duckdb
 import pandas as pd

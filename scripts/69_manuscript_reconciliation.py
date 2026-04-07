@@ -29,7 +29,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-import duckdb
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -154,7 +153,7 @@ def build_metric_definitions(con) -> pd.DataFrame:
         "denominator": n,
         "denominator_population_label": "full_surgical_cohort",
         "source_table": rec_tbl,
-        "sql_object_name": f"detection_category IN ('structural_confirmed','structural_date_unknown')",
+        "sql_object_name": "detection_category IN ('structural_confirmed','structural_date_unknown')",
         "definition_notes": f"Structural recurrence only. confirmed={n_rec_structural}, date_unknown={n_rec_struct_unk}. Matches recurrence_risk_features_mv.recurrence_flag count ({n_rec_risk_mv}).",
         "manuscript_safe_label": f"{n_rec_structural + n_rec_struct_unk:,} patients experienced structural recurrence",
         "alternate_definition_exists": "N",
@@ -226,7 +225,7 @@ def build_metric_definitions(con) -> pd.DataFrame:
 
     # --- 7. RAI treated ---
     rai_tbl = resolve(con, "rai_treatment_episode_v2", "md_rai_treatment_episode_v2")
-    n_rai_likely = safe_int(con, f"""
+    safe_int(con, f"""
         SELECT COUNT(DISTINCT research_id) FROM {rai_tbl}
         WHERE LOWER(CAST(rai_assertion_status AS VARCHAR)) IN ('definite_received','likely_received')
     """)

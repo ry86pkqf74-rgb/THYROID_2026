@@ -28,7 +28,6 @@ Supports --md, --local, --dry-run.
 from __future__ import annotations
 
 import argparse
-import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -36,6 +35,7 @@ from pathlib import Path
 import duckdb
 
 ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 EXPORTS = ROOT / "exports" / "verification_reports"
 EXPORTS.mkdir(parents=True, exist_ok=True)
 

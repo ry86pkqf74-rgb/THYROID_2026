@@ -329,7 +329,7 @@ def main():
     ok_count = sum(1 for v in verification if v["match"])
     fail_count = len(verification) - ok_count
     print(f"\n{'='*60}")
-    print(f"  EXPORT COMPLETE")
+    print("  EXPORT COMPLETE")
     print(f"  Output:       {output_dir}")
     print(f"  Tables:       {n_tables}")
     print(f"  Views:        {n_views}")

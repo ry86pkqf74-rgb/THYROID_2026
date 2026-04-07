@@ -30,6 +30,7 @@ from pathlib import Path
 import duckdb
 
 ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
 DOCS = ROOT / "docs"
@@ -538,7 +539,7 @@ def insert_qa_issues(con: duckdb.DuckDBPyConnection) -> int:
     """
     try:
         con.execute(insert_sql)
-        n = safe_count(con, "qa_issues") 
+        safe_count(con, "qa_issues") 
         # Just count the new ones
         n_new = con.execute(
             "SELECT COUNT(*) FROM qa_issues WHERE check_id = 'provenance_lab_note_date_fallback'"
@@ -574,13 +575,13 @@ def write_coverage_report(
 
     lines: list[str] = [
         "# Provenance Coverage Report",
-        f"",
+        "",
         f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-        f"",
+        "",
         "## Summary",
-        f"",
-        f"| Metric | Value |",
-        f"|--------|-------|",
+        "",
+        "| Metric | Value |",
+        "|--------|-------|",
         f"| Total tables audited | {len(schema_audit)} |",
         f"| Avg provenance coverage | {avg_pct:.1f}% |",
         f"| Tables fully covered (100%) | {len(fully_covered)} |",
@@ -588,19 +589,19 @@ def write_coverage_report(
         f"| Tables with no provenance | {len(not_covered)} |",
         f"| `provenance_enriched_events_v1` rows | {prov_enriched_n:,} |",
         f"| `lineage_audit_v1` rows | {lineage_n:,} |",
-        f"",
+        "",
         "## Provenance Columns Checked",
-        f"",
+        "",
     ]
     for c in PROVENANCE_COLUMNS:
         lines.append(f"- `{c}`")
 
     lines += [
-        f"",
+        "",
         "## Tables — Missing Provenance Columns",
-        f"",
-        f"| Table | Coverage % | Missing Columns |",
-        f"|-------|-----------|----------------|",
+        "",
+        "| Table | Coverage % | Missing Columns |",
+        "|-------|-----------|----------------|",
     ]
     for r in sorted(schema_audit, key=lambda x: x["coverage_pct"]):
         if r["cols_missing"]:
@@ -608,24 +609,24 @@ def write_coverage_report(
             lines.append(f"| {r['table']} | {r['coverage_pct']:.0f}% | {missing_str} |")
 
     lines += [
-        f"",
+        "",
         "## Core NLP Provenance Tables (note_entities_*)",
-        f"",
-        f"These 6 tables have the richest provenance via scripts 15/17/27:",
-        f"- `note_entities_staging`, `note_entities_genetics`, `note_entities_procedures`",
-        f"- `note_entities_complications`, `note_entities_medications`, `note_entities_problem_list`",
-        f"",
-        f"Provenance columns present: `inferred_event_date`, `date_source`, `date_granularity`, `date_confidence`",
-        f"Enriched views add: `date_status`, `date_anchor_type`, `date_anchor_table`",
-        f"",
+        "",
+        "These 6 tables have the richest provenance via scripts 15/17/27:",
+        "- `note_entities_staging`, `note_entities_genetics`, `note_entities_procedures`",
+        "- `note_entities_complications`, `note_entities_medications`, `note_entities_problem_list`",
+        "",
+        "Provenance columns present: `inferred_event_date`, `date_source`, `date_granularity`, `date_confidence`",
+        "Enriched views add: `date_status`, `date_anchor_type`, `date_anchor_table`",
+        "",
         "## Lab Date Accuracy Audit",
-        f"",
+        "",
     ]
 
     if lab_audit:
         lines += [
-            f"| Lab Type | Total | Has Lab Date | Note-Date Fallback | No Date | Correct % | Fallback % |",
-            f"|----------|-------|-------------|-------------------|---------|-----------|------------|",
+            "| Lab Type | Total | Has Lab Date | Note-Date Fallback | No Date | Correct % | Fallback % |",
+            "|----------|-------|-------------|-------------------|---------|-----------|------------|",
         ]
         for r in lab_audit:
             lines.append(
@@ -635,7 +636,7 @@ def write_coverage_report(
             )
         if overall_lab:
             lines += [
-                f"",
+                "",
                 f"**Overall:** {overall_lab.get('correct_pct', 0):.1f}% use lab-specific date; "
                 f"{overall_lab.get('fallback_pct', 0):.1f}% fall back to note_date.",
             ]
@@ -643,9 +644,9 @@ def write_coverage_report(
         lines.append("_Lab date audit unavailable (extracted_clinical_events_v4 or thyroglobulin_labs missing)._")
 
     lines += [
-        f"",
+        "",
         "## Strict Date Precedence Rule",
-        f"",
+        "",
         "```sql",
         "-- Enforced in provenance_enriched_events_v1",
         "COALESCE(",
@@ -654,18 +655,18 @@ def write_coverage_report(
         "    followup_date                             -- 3. Note encounter date (fallback)",
         ") AS event_date_correct",
         "```",
-        f"",
+        "",
         "## Remediation Guidance",
-        f"",
+        "",
         "Tables missing `source_table` / `source_column` should have these added via ALTER TABLE",
         "in `scripts/27_date_provenance_formalization.sql`.",
-        f"",
+        "",
         "Tables missing `extraction_method` / `evidence_span` are non-NLP tables (structured Excel).",
         "For structured tables, use `source_table = 'table_name'` and `source_column = 'column_name'`",
         "as the provenance link in downstream analytic views.",
-        f"",
+        "",
         "---",
-        f"",
+        "",
         "_Generated by `scripts/46_provenance_audit.py`_",
     ]
 
@@ -712,17 +713,17 @@ def write_date_verification_report(
 
     lines: list[str] = [
         "# Date Accuracy Verification Report",
-        f"",
+        "",
         f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-        f"",
+        "",
         "## Lab Date Accuracy — Summary",
-        f"",
+        "",
     ]
 
     if lab_audit:
         lines += [
-            f"| Lab Type | Total Events | Correct Date % | Note-Date Fallback % |",
-            f"|----------|-------------|----------------|---------------------|",
+            "| Lab Type | Total Events | Correct Date % | Note-Date Fallback % |",
+            "|----------|-------------|----------------|---------------------|",
         ]
         for r in lab_audit:
             status = "OK" if r.get("correct_pct", 0) >= 80 else "NEEDS ATTENTION"
@@ -733,7 +734,7 @@ def write_date_verification_report(
             )
         if overall_lab:
             lines += [
-                f"",
+                "",
                 f"**Overall correct date coverage: {overall_lab.get('correct_pct', 0):.1f}%**",
                 f"**Overall note-date fallback rate: {overall_lab.get('fallback_pct', 0):.1f}%**",
             ]
@@ -742,36 +743,36 @@ def write_date_verification_report(
 
     if status_rows:
         lines += [
-            f"",
+            "",
             "## provenance_enriched_events_v1 — Date Status Distribution",
-            f"",
-            f"| date_status_final | Count | % |",
-            f"|-------------------|-------|---|",
+            "",
+            "| date_status_final | Count | % |",
+            "|-------------------|-------|---|",
         ]
         for r in status_rows:
             lines.append(f"| {r[0]} | {r[1]:,} | {r[2]:.1f}% |")
 
     if lineage_rows:
         lines += [
-            f"",
+            "",
             "## lineage_audit_v1 — Date Traceability Distribution",
-            f"",
-            f"| date_traceability_status | Patients |",
-            f"|--------------------------|---------|",
+            "",
+            "| date_traceability_status | Patients |",
+            "|--------------------------|---------|",
         ]
         for r in lineage_rows:
             lines.append(f"| {r[0]} | {r[1]:,} |")
 
     lines += [
-        f"",
+        "",
         "## QA Issues Inserted",
-        f"",
+        "",
         f"- `provenance_lab_note_date_fallback`: **{qa_issues_inserted:,}** error-severity issues inserted into `qa_issues`",
-        f"",
+        "",
         "## Remediation SQL",
-        f"",
+        "",
         "To fix remaining NOTE_DATE_FALLBACK lab events, link thyroglobulin_labs.specimen_collect_dt:",
-        f"",
+        "",
         "```sql",
         "-- Find patients with lab events needing date correction",
         "SELECT research_id, event_subtype, event_date, direct_source_link",
@@ -788,9 +789,9 @@ def write_date_verification_report(
         "    AND e.event_type = 'lab'",
         "WHERE e.date_status_final = 'NOTE_DATE_FALLBACK';",
         "```",
-        f"",
+        "",
         "---",
-        f"",
+        "",
         "_Generated by `scripts/46_provenance_audit.py`_",
     ]
 
@@ -834,7 +835,7 @@ def main() -> None:
             con = connect_local()
     else:
         con = connect_local()
-        print(f"  Using local DuckDB")
+        print("  Using local DuckDB")
 
     # ── Phase 1: Schema audit ───────────────────────────────────────────────
     section("Phase 1: Schema Provenance Audit")
@@ -892,10 +893,10 @@ def main() -> None:
 
     con.close()
     section("Done")
-    print(f"  provenance_coverage_report.md -> docs/")
+    print("  provenance_coverage_report.md -> docs/")
     print(f"  date_accuracy_verification_report_{TODAY}.md -> docs/")
     if not args.dry_run:
-        print(f"  Tables created: provenance_enriched_events_v1, lineage_audit_v1")
+        print("  Tables created: provenance_enriched_events_v1, lineage_audit_v1")
         print(f"  QA issues inserted: {qa_issues_inserted:,}")
 
 

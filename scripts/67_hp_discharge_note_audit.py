@@ -8,13 +8,13 @@ Outputs: local DuckDB tables + exports/hp_discharge_note_audit_YYYYMMDD/
 
 import argparse
 import json
-import os
-import sys
 from datetime import datetime
 from pathlib import Path
 
-import duckdb
 import pandas as pd
+
+ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M")
 EXPORT_DIR = Path(f"exports/hp_discharge_note_audit_{TIMESTAMP}")
@@ -607,7 +607,7 @@ source linkage (note_row_id, evidence_span) but poor date coverage (27-30% note_
     for _, row in hp_high_easy.iterrows():
         report += f"| {row['variable_name']} | {row['notes_with_content']:,} | {row['coverage_pct']}% | {row['rationale']} |\n"
 
-    report += f"""
+    report += """
 ### H&P — HIGH VALUE / MODERATE
 | Variable | Patients | Coverage | Rationale |
 |----------|----------|----------|-----------|
@@ -615,7 +615,7 @@ source linkage (note_row_id, evidence_span) but poor date coverage (27-30% note_
     for _, row in hp_high_mod.iterrows():
         report += f"| {row['variable_name']} | {row['notes_with_content']:,} | {row['coverage_pct']}% | {row['rationale']} |\n"
 
-    report += f"""
+    report += """
 ### Discharge — HIGH VALUE / EASY
 | Variable | Patients | Coverage | Rationale |
 |----------|----------|----------|-----------|
@@ -623,7 +623,7 @@ source linkage (note_row_id, evidence_span) but poor date coverage (27-30% note_
     for _, row in dc_high_easy.iterrows():
         report += f"| {row['variable_name']} | {row['notes_with_content']:,} | {row['coverage_pct']}% | {row['rationale']} |\n"
 
-    report += f"""
+    report += """
 ### Discharge — HIGH VALUE / MODERATE
 | Variable | Patients | Coverage | Rationale |
 |----------|----------|----------|-----------|
@@ -631,7 +631,7 @@ source linkage (note_row_id, evidence_span) but poor date coverage (27-30% note_
     for _, row in dc_high_mod.iterrows():
         report += f"| {row['variable_name']} | {row['notes_with_content']:,} | {row['coverage_pct']}% | {row['rationale']} |\n"
 
-    report += f"""
+    report += """
 ---
 
 ## Phase 5: Provenance & Date Linkage
@@ -644,7 +644,7 @@ source linkage (note_row_id, evidence_span) but poor date coverage (27-30% note_
     for _, row in prov_hp.iterrows():
         report += f"| {row['entity_domain']} | {row['total_entities']:,} | {row['note_row_id_pct']}% | {row['evidence_span_pct']}% | {row['entity_date_pct']}% | {row['note_date_pct']}% | {row['confidence_pct']}% |\n"
 
-    report += f"""
+    report += """
 ### Discharge Entities
 
 | Domain | Total | Note ID | Evidence | Entity Date | Note Date | Confidence |

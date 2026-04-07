@@ -81,7 +81,6 @@ def patch_file(path: Path) -> tuple[str | None, str]:
     lines = text.split("\n")
     db_path = infer_db_path(text)
     changes = []
-    func_to_remove = []
 
     for i, line in enumerate(lines):
         stripped = line.strip()
@@ -90,8 +89,8 @@ def patch_file(path: Path) -> tuple[str | None, str]:
         if stripped.startswith("def connect_md(") and "connect_md_or_file" not in stripped:
             end = find_func_block(lines, i)
             replacement = [
-                f"def connect_md() -> duckdb.DuckDBPyConnection:",
-                f"    from utils.md_connect import connect_md_or_file",
+                "def connect_md() -> duckdb.DuckDBPyConnection:",
+                "    from utils.md_connect import connect_md_or_file",
                 f"    return connect_md_or_file({db_path}, md=True)",
             ]
             lines[i:end] = replacement
@@ -102,8 +101,8 @@ def patch_file(path: Path) -> tuple[str | None, str]:
         if stripped.startswith("def get_connection(md:"):
             end = find_func_block(lines, i)
             replacement = [
-                f"def get_connection(md: bool):",
-                f"    from utils.md_connect import connect_md_or_file",
+                "def get_connection(md: bool):",
+                "    from utils.md_connect import connect_md_or_file",
                 f"    return connect_md_or_file({db_path}, md=md)",
             ]
             lines[i:end] = replacement
@@ -114,8 +113,8 @@ def patch_file(path: Path) -> tuple[str | None, str]:
         if stripped.startswith("def get_connection(use_md"):
             end = find_func_block(lines, i)
             replacement = [
-                f"def get_connection(use_md):",
-                f"    from utils.md_connect import connect_md_or_file",
+                "def get_connection(use_md):",
+                "    from utils.md_connect import connect_md_or_file",
                 f"    return connect_md_or_file({db_path}, md=use_md)",
             ]
             lines[i:end] = replacement
@@ -127,8 +126,8 @@ def patch_file(path: Path) -> tuple[str | None, str]:
                 "connect_md_or_file" not in stripped):
             end = find_func_block(lines, i)
             replacement = [
-                f"def connect(args) -> duckdb.DuckDBPyConnection:",
-                f"    from utils.md_connect import connect_md_or_file",
+                "def connect(args) -> duckdb.DuckDBPyConnection:",
+                "    from utils.md_connect import connect_md_or_file",
                 f"    return connect_md_or_file({db_path}, md=getattr(args, 'md', False))",
             ]
             lines[i:end] = replacement
@@ -139,12 +138,12 @@ def patch_file(path: Path) -> tuple[str | None, str]:
         if stripped.startswith("def connect(use_md:"):
             end = find_func_block(lines, i)
             replacement = [
-                f"def connect(use_md: bool = False, use_local: bool = False) -> duckdb.DuckDBPyConnection:",
-                f"    import os as _os",
-                f"    if use_local or _os.environ.get('USE_LOCAL_DUCKDB'):",
-                f"        path = _os.environ.get('LOCAL_DUCKDB_PATH', str(ROOT / 'thyroid_master_local.duckdb'))",
-                f"        return duckdb.connect(path)",
-                f"    from utils.md_connect import connect_md_or_file",
+                "def connect(use_md: bool = False, use_local: bool = False) -> duckdb.DuckDBPyConnection:",
+                "    import os as _os",
+                "    if use_local or _os.environ.get('USE_LOCAL_DUCKDB'):",
+                "        path = _os.environ.get('LOCAL_DUCKDB_PATH', str(ROOT / 'thyroid_master_local.duckdb'))",
+                "        return duckdb.connect(path)",
+                "    from utils.md_connect import connect_md_or_file",
                 f"    return connect_md_or_file({db_path}, md=use_md)",
             ]
             lines[i:end] = replacement
@@ -155,8 +154,8 @@ def patch_file(path: Path) -> tuple[str | None, str]:
         if stripped.startswith("def _get_con(args"):
             end = find_func_block(lines, i)
             replacement = [
-                f"def _get_con(args) -> duckdb.DuckDBPyConnection:",
-                f"    from utils.md_connect import connect_md_or_file",
+                "def _get_con(args) -> duckdb.DuckDBPyConnection:",
+                "    from utils.md_connect import connect_md_or_file",
                 f"    return connect_md_or_file({db_path}, md=getattr(args, 'md', False))",
             ]
             lines[i:end] = replacement
@@ -167,8 +166,8 @@ def patch_file(path: Path) -> tuple[str | None, str]:
         if stripped.startswith("def connect_duckdb(") and "connect_md_or_file" not in stripped:
             end = find_func_block(lines, i)
             replacement = [
-                f"def connect_duckdb(use_md: bool = False):",
-                f"    from utils.md_connect import connect_md_or_file",
+                "def connect_duckdb(use_md: bool = False):",
+                "    from utils.md_connect import connect_md_or_file",
                 f"    return connect_md_or_file({db_path}, md=use_md)",
             ]
             lines[i:end] = replacement

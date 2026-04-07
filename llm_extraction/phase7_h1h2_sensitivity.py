@@ -15,14 +15,12 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import sys
 from datetime import datetime
 from pathlib import Path
 
 import duckdb
 import numpy as np
 import pandas as pd
-from scipy import stats
 import statsmodels.api as sm
 
 STUDY_DIR = Path(__file__).resolve().parent.parent / "studies" / "phase7_sensitivity"
@@ -52,10 +50,10 @@ def get_connection(use_md: bool) -> duckdb.DuckDBPyConnection:
     if use_md:
         try:
             import toml
-            token = toml.load(".streamlit/secrets.toml")["LOCAL_DB_PATH"]
+            toml.load(".streamlit/secrets.toml")["LOCAL_DB_PATH"]
         except Exception:
-            token = os.getenv("LOCAL_DB_PATH", "")
-        return duckdb.connect(f"thyroid_master.duckdb")
+            os.getenv("LOCAL_DB_PATH", "")
+        return duckdb.connect("thyroid_master.duckdb")
     return duckdb.connect("thyroid_master_local.duckdb")
 
 
@@ -249,7 +247,7 @@ def h2_sensitivity(df: pd.DataFrame) -> dict:
     from sklearn.preprocessing import StandardScaler
 
     results: dict = {"cohort_n": len(df)}
-    scaler = StandardScaler()
+    StandardScaler()
 
     df = df.copy()
     df["log_weight"] = np.log1p(df["specimen_weight_g"])

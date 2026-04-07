@@ -41,7 +41,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
 import subprocess
 import sys
@@ -50,12 +49,14 @@ import zipfile
 from datetime import datetime
 from pathlib import Path
 
+import duckdb
 import numpy as np
 import pandas as pd
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
 # Color-blind-friendly palette (Wong 2011)

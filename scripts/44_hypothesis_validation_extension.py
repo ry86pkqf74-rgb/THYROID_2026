@@ -15,14 +15,9 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
-import os
-import sys
-import warnings
 from datetime import datetime
 from pathlib import Path
 
-import duckdb
 import numpy as np
 import pandas as pd
 from scipy import stats
@@ -32,11 +27,11 @@ from statsmodels.stats.multitest import multipletests
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
 
 np.random.seed(42)
 
 ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 H1_DIR = ROOT / "studies" / "hypothesis1_cln_lobectomy"
 H2_DIR = ROOT / "studies" / "hypothesis2_goiter_sdoh"
 H1_EXT = H1_DIR / "validation_extension_20260312"
@@ -268,7 +263,6 @@ def propensity_score_match(df, treatment_col, covariates, caliper=0.2, ratio=1):
     """1:1 nearest-neighbor PSM with caliper. Returns matched DataFrame."""
     from sklearn.linear_model import LogisticRegression
     model_df = df[[treatment_col] + covariates].dropna().copy()
-    idx = model_df.index
     X = model_df[covariates].values.astype(float)
     y = model_df[treatment_col].values.astype(float)
     lr = LogisticRegression(max_iter=1000, random_state=42)
@@ -609,7 +603,7 @@ def step3_sensitivity(h1, h2):
         matched, balance, n_pairs = propensity_score_match(
             h1_psm_input, "central_lnd_flag", psm_covariates_avail, caliper=0.25)
         rpt(f"  Matched pairs: {n_pairs}")
-        rpt(f"  Balance assessment:")
+        rpt("  Balance assessment:")
         rpt(balance.to_string(index=False))
         balance.to_csv(H1_EXT / "psm_balance.csv", index=False)
 

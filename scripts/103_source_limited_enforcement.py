@@ -31,13 +31,15 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import os
 import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 
+import duckdb
+
 ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
 # ── Registry CSV location ──────────────────────────────────────────────────

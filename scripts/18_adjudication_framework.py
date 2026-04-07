@@ -1055,7 +1055,7 @@ def print_qa_metrics(con: duckdb.DuckDBPyConnection) -> None:
         try:
             cnt = con.execute(sql).fetchone()[0]
             print(f"  {label:<65} {cnt:>6,}")
-        except Exception as e:
+        except Exception:
             print(f"  {label:<65} ERROR")
 
 

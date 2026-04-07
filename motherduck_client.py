@@ -103,8 +103,9 @@ def resolve_database_for_env(env: str | None = None) -> str:
     override = (os.environ.get("MOTHERDUCK_DATABASE") or os.environ.get("MOTHERDUCK_DB") or "").strip()
     if override:
         return override
-    env = (env or os.getenv("MOTHERDUCK_ENV", "prod")).lower().strip()
-    return _load_env_databases().get(env, _ENV_DATABASES["prod"])
+    env_name = env if env is not None else os.getenv("MOTHERDUCK_ENV", "prod")
+    env_key = str(env_name or "prod").lower().strip()
+    return _load_env_databases().get(env_key, _ENV_DATABASES["prod"])
 
 
 def get_token(prefer_service_account: bool = False) -> str | None:

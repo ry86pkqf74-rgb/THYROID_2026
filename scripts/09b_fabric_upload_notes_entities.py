@@ -106,7 +106,7 @@ except Exception:
 
 def _credential():
     """Return a token credential (service principal → DeviceCodeCredential fallback)."""
-    from azure.identity import ClientSecretCredential, DeviceCodeCredential, DefaultAzureCredential
+    from azure.identity import ClientSecretCredential, DeviceCodeCredential
 
     tenant    = os.environ.get("AZURE_TENANT_ID")
     client_id = os.environ.get("AZURE_CLIENT_ID")
@@ -128,7 +128,7 @@ def _credential():
         print("="*60)
         print(f"  1. Open: {verification_uri}")
         print(f"  2. Enter code: {user_code}")
-        print(f"  3. Sign in with LGLOSSE@emory.edu")
+        print("  3. Sign in with LGLOSSE@emory.edu")
         print(f"  (Expires: {expires_on})")
         print("="*60 + "\n", flush=True)
 

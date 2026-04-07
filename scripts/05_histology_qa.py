@@ -9,7 +9,6 @@
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
 
 import duckdb
@@ -177,7 +176,7 @@ def generate_report(manual: dict[str, int], db: dict[str, int]) -> str:
     lines = [
         "# QA Reconciliation Report",
         "",
-        f"Generated against `thyroid_master.duckdb`",
+        "Generated against `thyroid_master.duckdb`",
         "",
         "| Category | Manual | DB | Diff | % Diff | Status |",
         "|---|---:|---:|---:|---:|---|",

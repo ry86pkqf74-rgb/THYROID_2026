@@ -21,10 +21,8 @@ from __future__ import annotations
 import argparse
 import re
 import sys
-from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional
 
 import pandas as pd
 
@@ -33,14 +31,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from llm_extraction.extraction_audit_engine_v2 import (
-    SourceClassifier,
-    SourceWeightedClassifier,
     CrossSourceReconciler,
-    SourcedAuditResult,
-    SourcedMentionResult,
-    PatientSourceProfile,
-    VARIABLE_CONFIGS,
-    SOURCE_RELIABILITY,
 )
 from llm_extraction.extraction_audit_engine import CONSENT_BOILERPLATE_PATTERNS
 
@@ -308,7 +299,6 @@ class LabIngestionPipeline:
             days_postop = None
             if lab_date and surgery_date:
                 try:
-                    from datetime import datetime as dt
                     ld = pd.to_datetime(lab_date, errors="coerce")
                     sd = pd.to_datetime(surgery_date, errors="coerce")
                     if pd.notna(ld) and pd.notna(sd):
@@ -1043,7 +1033,7 @@ def audit_and_refine_top5(
     """
     all_vars = variables or ["ete_subgrade", "tert", "postop_labs", "rai_validation", "ene"]
     results = {}
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+    datetime.now().strftime("%Y%m%d_%H%M")
 
     for var in all_vars:
         if verbose:
@@ -1067,7 +1057,7 @@ def audit_and_refine_top5(
 
     if verbose:
         print(f"\n{'='*70}")
-        print(f"  Building master clinical table v4")
+        print("  Building master clinical table v4")
         print(f"{'='*70}")
     try:
         con.execute(build_master_clinical_v4_sql())
@@ -1153,7 +1143,7 @@ def _refine_postop_labs(con, verbose: bool, sample_size: int = 250) -> dict:
 
     pipeline = LabIngestionPipeline()
 
-    notes_df = con.execute(f"""
+    notes_df = con.execute("""
         WITH surgery_dates AS (
             SELECT research_id, MIN(TRY_CAST(surg_date AS DATE)) AS first_surgery_date
             FROM path_synoptics WHERE surg_date IS NOT NULL
@@ -1311,11 +1301,11 @@ def _get_connection(use_md: bool, local_path: str = "thyroid_master.duckdb"):
         try:
             import toml
             secrets = toml.load(PROJECT_ROOT / ".streamlit/secrets.toml")
-            token = secrets["LOCAL_DB_PATH"]
+            secrets["LOCAL_DB_PATH"]
         except Exception:
             import os
-            token = os.environ.get("LOCAL_DB_PATH", "")
-        return duckdb.connect(f"thyroid_master.duckdb")
+            os.environ.get("LOCAL_DB_PATH", "")
+        return duckdb.connect("thyroid_master.duckdb")
     return duckdb.connect(str(PROJECT_ROOT / local_path))
 
 

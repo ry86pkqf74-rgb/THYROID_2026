@@ -22,11 +22,10 @@ Deliverables:
     final_metric_crosswalk.csv
     repro_run_manifest.json
 """
-import os, sys, json, hashlib, datetime, zipfile, warnings
+import json, hashlib, datetime, zipfile, warnings
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from collections import OrderedDict
 
 warnings.filterwarnings("ignore")
 SEED = 42
@@ -650,7 +649,7 @@ print(f"  Master cohort rows:     {n_total}")
 print(f"  Distinct research_id:   {n_unique}")
 print(f"  Duplicates:             {n_dup}")
 print(f"  Null research_id:       {n_null}")
-print(f"  ETE distribution:")
+print("  ETE distribution:")
 for g in ["No ETE", "Microscopic ETE", "Gross ETE"]:
     n = (df_export["ete_category_final"] == g).sum()
     print(f"    {g}: {n} ({100*n/len(df_export):.1f}%)")
@@ -682,12 +681,12 @@ print(f"2. Row count:             {n_total}")
 print(f"3. Distinct research_id:  {n_unique}")
 print(f"4. All linked:            {'YES' if n_null == 0 and n_dup == 0 else 'NO'}")
 print(f"5. Subset flags exported: {sum(1 for c in export_cols if 'patient_in_' in c)}")
-print(f"6. Authoritative scripts:")
+print("6. Authoritative scripts:")
 for s in provenance["manuscript_scripts"]:
     print(f"     • {s}")
-print(f"7. Unresolved: CT timing interval flags (ct_within_30d etc.) not separately")
-print(f"   derivable from source — structural endpoint is patient-level binary only.")
-print(f"8. PSM caliper=0.05, 1:1 nearest-neighbor, seed=42; Fisher exact p=0.030")
+print("7. Unresolved: CT timing interval flags (ct_within_30d etc.) not separately")
+print("   derivable from source — structural endpoint is patient-level binary only.")
+print("8. PSM caliper=0.05, 1:1 nearest-neighbor, seed=42; Fisher exact p=0.030")
 print()
 print("This deliverable identifies the exact manuscript-linked analytic dataset")
 print("keyed by Research ID and documents the actual executed statistical workflow")

@@ -35,13 +35,6 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from llm_extraction.extraction_audit_engine_v4 import _extract_table_name
 from llm_extraction.extraction_audit_engine_v3 import _get_connection
-from llm_extraction.vocab import (  # noqa: F401 — re-exported for downstream
-    RECURRENCE_SITE_NORM,
-    RECURRENCE_DETECTION_NORM,
-    RAI_RESPONSE_NORM,
-    VOICE_OUTCOME_NORM,
-    COMPLETION_REASON_NORM,
-)
 
 # ---------------------------------------------------------------------------
 # Source hierarchy constants — Phase 8

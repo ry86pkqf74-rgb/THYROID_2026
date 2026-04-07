@@ -62,8 +62,8 @@ def _get_connection():
     import duckdb
     token = os.getenv("LOCAL_DB_PATH")
     if token:
-        return duckdb.connect(f"thyroid_master.duckdb")
-    return duckdb.connect(f"thyroid_master.duckdb")
+        return duckdb.connect("thyroid_master.duckdb")
+    return duckdb.connect("thyroid_master.duckdb")
 
 
 def _table_exists(con, name: str) -> bool:
@@ -758,7 +758,7 @@ def main() -> None:
     db = con.execute("SELECT current_database()").fetchone()[0]
     ver = con.execute("SELECT version()").fetchone()[0]
     log.info(f"  Connected to local DuckDB: {db} (DuckDB {ver})")
-    log.info(f"  Business tier active — ~18 days remaining\n")
+    log.info("  Business tier active — ~18 days remaining\n")
 
     try:
         all_reports: list[str] = []

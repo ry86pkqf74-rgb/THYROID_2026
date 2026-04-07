@@ -11,8 +11,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
-import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -25,7 +23,9 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 
-STUDY_DIR = Path(__file__).resolve().parent.parent / "studies" / "hypothesis1_cln_lobectomy"
+ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
+STUDY_DIR = ROOT / "studies" / "hypothesis1_cln_lobectomy"
 STUDY_DIR.mkdir(parents=True, exist_ok=True)
 
 np.random.seed(42)
@@ -253,7 +253,6 @@ def logistic_regression_recurrence(df: pd.DataFrame,
     When include_ete=True, adds ete_path_confirmed as a source-aware covariate
     (Phase 4 sensitivity analysis).
     """
-    from sklearn.linear_model import LogisticRegression
     from sklearn.preprocessing import StandardScaler
 
     base_cols = ["recurrence", "central_lnd_flag", "age", "tumor_size_cm",

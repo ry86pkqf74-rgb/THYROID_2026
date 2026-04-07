@@ -23,7 +23,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import os
 import sys
 from pathlib import Path
 
@@ -32,9 +31,7 @@ DB_PATH = ROOT / "thyroid_master.duckdb"
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-import duckdb  # noqa: E402
 
-from motherduck_client import get_token, MotherDuckClient, MotherDuckConfig  # noqa: E402
 from utils.surg_date_canonical import (  # noqa: E402
     surgery_date_canonical_sql,
     surgery_date_parse_tier_sql,

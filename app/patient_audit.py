@@ -4,7 +4,7 @@ from __future__ import annotations
 import plotly.graph_objects as go
 import streamlit as st
 
-from app.helpers import sqdf, sqs, mc, sl, badge, PL, require_view, tbl_exists, qual
+from app.helpers import sqdf, mc, sl, badge, PL, tbl_exists, qual
 
 
 def render_patient_audit(con, rw_con=None) -> None:
@@ -125,7 +125,7 @@ def render_patient_audit(con, rw_con=None) -> None:
             etype = str(ev.get("event_type", ""))
             detail = str(ev.get("event_detail", ""))
             color = color_map.get(etype, "#8892a4")
-            dash = "dash" if str(ev.get("resolution_status", "")) == "unresolved" else None
+            "dash" if str(ev.get("resolution_status", "")) == "unresolved" else None
             if edate is not None:
                 fig.add_trace(go.Scatter(
                     x=[edate], y=[etype.replace("_", " ").title()],
@@ -192,7 +192,6 @@ def render_patient_audit(con, rw_con=None) -> None:
             st.success("No validation issues.")
         else:
             cols = st.columns(len(val_df))
-            sev_colors = {"error": "rose", "warning": "amber", "info": "sky"}
             for i, (_, v) in enumerate(val_df.iterrows()):
                 with cols[i]:
                     sev = str(v["severity"])

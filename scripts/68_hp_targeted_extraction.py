@@ -24,7 +24,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import random
 import sys
 from datetime import datetime
@@ -34,6 +33,7 @@ import duckdb
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
 from llm_extraction.base import EntityMatch

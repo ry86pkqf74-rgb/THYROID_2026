@@ -26,10 +26,8 @@ Usage (dashboard)::
 """
 from __future__ import annotations
 
-import io
 import json
 import logging
-import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Literal
@@ -85,8 +83,8 @@ except ImportError:
 
 try:
     from sksurv.ensemble import RandomSurvivalForest
-    from sksurv.metrics import concordance_index_censored, brier_score as sksurv_brier
-    from sksurv.linear_model import CoxPHSurvivalAnalysis, CoxnetSurvivalAnalysis
+    from sksurv.metrics import concordance_index_censored
+    from sksurv.linear_model import CoxnetSurvivalAnalysis
     HAS_SKSURV = True
 except ImportError:
     HAS_SKSURV = False
@@ -99,7 +97,7 @@ except ImportError:
 
 try:
     from docx import Document
-    from docx.shared import Pt, Inches
+    from docx.shared import Pt
     HAS_DOCX = True
 except ImportError:
     HAS_DOCX = False
@@ -109,7 +107,6 @@ from itertools import combinations as _combinations
 from utils.statistical_analysis import (
     ThyroidStatisticalAnalyzer,
     THYROID_PREDICTORS,
-    THYROID_SURVIVAL,
     PL,
 )
 

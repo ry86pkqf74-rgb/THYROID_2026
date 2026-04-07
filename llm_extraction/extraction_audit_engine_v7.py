@@ -1636,7 +1636,7 @@ def main():
             lines.append(f"- **{k}:** {v}")
         lines.append("")
 
-    report_path = out_dir / f"master_refinement_report_phase9.md"
+    report_path = out_dir / "master_refinement_report_phase9.md"
     report_path.write_text("\n".join(lines), encoding="utf-8")
     print(f"\n[phase9] Report saved: {report_path}")
 

@@ -30,11 +30,10 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 import subprocess
 import sys
 import time
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -42,7 +41,6 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from motherduck_client import MotherDuckClient  # noqa: E402
 
 NOW = datetime.now(timezone.utc)
 DATESTAMP = NOW.strftime("%Y%m%d")
@@ -657,7 +655,7 @@ def main() -> None:
     args = parser.parse_args()
 
     print(f"\n{'='*70}")
-    print(f"  Canonical Metrics Registry — Phase 1 Governance Lock")
+    print("  Canonical Metrics Registry — Phase 1 Governance Lock")
     print(f"  Environment: {args.env.upper()}")
     print(f"  Git SHA: {get_git_sha()}")
     print(f"  Timestamp: {NOW.isoformat()}")
@@ -702,7 +700,7 @@ def main() -> None:
         drifts = check_metric_drift(con, tolerance_pct=0.0)
         drift_count = sum(1 for d in drifts if d["status"] == "DRIFT")
         if drift_count == 0:
-            print(f"  ✓ Self-drift check: 0 drifted metrics (table matches live values)")
+            print("  ✓ Self-drift check: 0 drifted metrics (table matches live values)")
         else:
             print(f"  ✗ Self-drift check: {drift_count} drifted (stale immediately after write?)")
 
@@ -718,7 +716,7 @@ def main() -> None:
 
     # ── Summary ───────────────────────────────────────────────────────────
     print(f"\n{'='*70}")
-    print(f"  SUMMARY")
+    print("  SUMMARY")
     print(f"  Metrics queried:   {len(METRIC_DEFS)}")
     print(f"  Errors:            {errors}")
     if args.write and not args.dry_run:

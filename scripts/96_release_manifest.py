@@ -126,7 +126,7 @@ BENCHMARK_RUNS = 2
 
 def get_connection(env: str, sa: bool = False):
     import duckdb
-    db_name = ENV_DATABASES[env]
+    ENV_DATABASES[env]
     if sa:
         token = os.environ.get("LOCAL_DB_PATH") or os.environ.get("LOCAL_DB_PATH")
     else:
@@ -140,7 +140,7 @@ def get_connection(env: str, sa: bool = False):
     if not token:
         print(f"ERROR: No local DuckDB token for env={env}")
         sys.exit(2)
-    return duckdb.connect(f"thyroid_master.duckdb")
+    return duckdb.connect("thyroid_master.duckdb")
 
 
 # ── Git helpers ────────────────────────────────────────────────────────────
@@ -414,7 +414,7 @@ def main() -> None:
         print("\n  [dry-run] manifest not written; showing summary:")
         for k in ("git_sha_short", "git_branch", "tagged_version", "overall_status"):
             print(f"  {k:<25s}: {manifest[k]}")
-        print(f"  Row count sample:")
+        print("  Row count sample:")
         for tbl, v in list(row_counts.items())[:5]:
             print(f"    {tbl}: {v.get('rows','?')}")
 

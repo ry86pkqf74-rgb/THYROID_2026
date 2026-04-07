@@ -13,11 +13,13 @@ from __future__ import annotations
 
 import argparse
 import os
-import sys
 from datetime import datetime
+from pathlib import Path
 
-import numpy as np
 import pandas as pd
+
+ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M")
 OUT_DIR = os.path.join("exports", "manuscript_analysis")
@@ -219,7 +221,7 @@ def main():
 
         md_path = os.path.join(OUT_DIR, "table1_preview.md")
         with open(md_path, "w") as f:
-            f.write(f"# Table 1 Preview\n\n")
+            f.write("# Table 1 Preview\n\n")
             f.write(f"**Source:** `{src}` | **N:** {N:,} | **Generated:** {TIMESTAMP}\n\n")
 
             pivot_rows: dict[str, dict[str, str]] = {}

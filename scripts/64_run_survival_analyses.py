@@ -17,7 +17,6 @@ Supports --md, --local, --dry-run.
 from __future__ import annotations
 
 import argparse
-import os
 import sys
 import warnings
 from datetime import datetime
@@ -27,6 +26,7 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
 ANALYSIS_DIR = ROOT / "exports" / "manuscript_analysis"
@@ -186,8 +186,7 @@ def run_km_analysis(surv: pd.DataFrame, strat_col: str, strat_name: str) -> pd.D
 def build_km_summary(surv: pd.DataFrame) -> pd.DataFrame:
     """Summary statistics for each KM stratification."""
     try:
-        from lifelines import KaplanMeierFitter  # noqa: F401
-        from lifelines.statistics import logrank_test  # noqa: F401
+        __import__("lifelines")
     except ImportError:
         return pd.DataFrame()
 
@@ -334,7 +333,7 @@ def main():
         return
 
     try:
-        from lifelines import KaplanMeierFitter  # noqa: F401,F811
+        __import__("lifelines")
     except ImportError:
         print("[ERROR] lifelines is required for survival analyses.")
         print("  Install: pip install lifelines")

@@ -10,7 +10,6 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from motherduck_client import MotherDuckClient, MotherDuckConfig
 
 TUMOR_SQL = """
 CREATE OR REPLACE TABLE tumor_episode_master_v2 AS

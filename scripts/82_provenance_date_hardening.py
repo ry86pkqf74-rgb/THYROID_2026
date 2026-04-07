@@ -32,13 +32,10 @@ Supports --md (local DuckDB), --local, --dry-run.
 from __future__ import annotations
 
 import argparse
-import json
-import os
 import sys
 import tempfile
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 import duckdb
 import pandas as pd
@@ -317,7 +314,6 @@ LEFT JOIN braf_rec b ON p.research_id = b.research_id
 # ── Summary tabulation SQL ────────────────────────────────────────────────────
 def domain_summary_sql(table: str, domain: str) -> str:
     date_field = f"{domain}_date_status"
-    tier_field = f"{domain}_completeness_tier"
     return f"""
     SELECT
         '{domain}' AS domain,

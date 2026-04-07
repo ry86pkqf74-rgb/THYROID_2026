@@ -18,12 +18,6 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from llm_extraction.base import BaseExtractor, EntityMatch
-from llm_extraction.vocab import (
-    COMPLICATION_NORM,
-    GENE_NORM,
-    MEDICATION_NORM,
-    PROCEDURE_NORM,
-)
 from utils.text_helpers import extract_nearby_date
 
 

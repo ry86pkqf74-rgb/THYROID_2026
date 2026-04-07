@@ -8,7 +8,7 @@ propagation, exports recurrence review packets, and reconciles documentation.
 Usage:
     .venv/bin/python scripts/94_dataset_truth_snapshot.py --md
 """
-import argparse, csv, datetime, json, os, pathlib, sys, textwrap
+import argparse, csv, datetime, json, os, pathlib, sys
 
 try:
     import toml
@@ -27,6 +27,8 @@ TIMESTAMP = NOW.strftime("%Y%m%d_%H%M")
 EXPORT_DIR = pathlib.Path(f"exports/dataset_truth_snapshot_{DATESTAMP}")
 RECURRENCE_DIR = pathlib.Path("exports/recurrence_review_packets")
 DOCS_DIR = pathlib.Path("docs")
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 
 # ── helpers ────────────────────────────────────────────────────────────────────
 
@@ -378,7 +380,7 @@ def write_truth_snapshot_md(metrics, op_audit, rec_count, mismatches):
         f"# Dataset Truth Snapshot — {DATESTAMP}",
         "",
         f"Generated: {NOW.isoformat()}",
-        f"Source: local DuckDB `thyroid_master.duckdb`",
+        "Source: local DuckDB `thyroid_master.duckdb`",
         "",
         "## 1. Core Dataset Metrics",
         "",
@@ -536,11 +538,11 @@ def write_operative_nlp_audit_md(op_audit):
     for r in ok_fields:
         lines.append(f"- `{r['field']}`")
 
-    lines += [f"", f"### Source-Limited ({len(source_limited)})", ""]
+    lines += ["", f"### Source-Limited ({len(source_limited)})", ""]
     for r in source_limited:
         lines.append(f"- `{r['field']}`: {r['status']}")
 
-    lines += [f"", f"### Pipeline-Limited ({len(pipeline_limited)})", ""]
+    lines += ["", f"### Pipeline-Limited ({len(pipeline_limited)})", ""]
     for r in pipeline_limited:
         lines.append(f"- `{r['field']}`: {r['status']}")
 

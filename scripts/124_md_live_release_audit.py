@@ -33,7 +33,6 @@ import argparse
 import json
 import subprocess
 import sys
-import textwrap
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -502,7 +501,7 @@ def main() -> None:
     audit_dir.mkdir(parents=True, exist_ok=True)
 
     print("=" * 70)
-    print(f"  124 — MotherDuck Live Release Audit")
+    print("  124 — MotherDuck Live Release Audit")
     print(f"  Tag  : {tag}")
     print(f"  Dir  : {audit_dir}")
     print(f"  MD   : {'YES (fail-closed)' if args.md else 'NO (local file)'}")
@@ -528,7 +527,6 @@ def main() -> None:
     # (individual subscripts open their own connections)
     # ------------------------------------------------------------------
     from utils.md_connect import connect_md_or_file
-    import duckdb
 
     db_path = Path(args.db_path)
     con = connect_md_or_file(db_path, md=args.md, fail_closed=args.md)
@@ -772,7 +770,7 @@ def main() -> None:
     if val_report.exists():
         import shutil
         shutil.copy2(val_report, audit_dir / "validation_report.md")
-        print(f"  [copy] validation_report.md")
+        print("  [copy] validation_report.md")
 
     if not ok and args.final_release:
         print("\n  ABORT: Validation failed in final-release mode.")
@@ -806,7 +804,7 @@ def main() -> None:
                     json.dumps({"note": f"Not accessible: {exc}"}),
                     encoding="utf-8",
                 )
-            print(f"  [write] snapshot_metadata.json")
+            print("  [write] snapshot_metadata.json")
 
     con.close()
 
@@ -817,7 +815,7 @@ def main() -> None:
 
     all_ok = all(r["success"] for r in step_results)
     print(f"\n{'='*70}")
-    print(f"  124 — DONE")
+    print("  124 — DONE")
     print(f"  Verdict : {'PASS' if all_ok else 'BLOCKED'}")
     print(f"  Audit dir: {audit_dir}")
     print(f"{'='*70}")

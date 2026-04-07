@@ -4,7 +4,7 @@ from __future__ import annotations
 import plotly.graph_objects as go
 import streamlit as st
 
-from app.helpers import sqdf, mc, sl, badge, PL, require_view, tbl_exists, qual
+from app.helpers import sqdf, mc, sl, PL, tbl_exists, qual
 
 
 def render_cohort_qc(con) -> None:

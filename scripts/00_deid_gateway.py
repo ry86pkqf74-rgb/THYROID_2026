@@ -31,11 +31,10 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 import re
 import sys
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
@@ -601,14 +600,14 @@ def write_audit_log(results: list[dict], phi_violations: list[dict]) -> Path:
     total_rows_in  = sum(r.get("rows_in", 0) for r in results)
     total_rows_out = sum(r.get("rows_out", 0) for r in results)
     md_lines = [
-        f"# Phase 4B De-Identification Audit",
+        "# Phase 4B De-Identification Audit",
         f"**Run:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}  ",
-        f"**Script:** scripts/00_deid_gateway.py  ",
+        "**Script:** scripts/00_deid_gateway.py  ",
         f"**Salt hash (first 16):** `{audit_data['date_shift_salt_hash']}`  ",
         "",
         "## Summary",
-        f"| Metric | Value |",
-        f"|---|---|",
+        "| Metric | Value |",
+        "|---|---|",
         f"| Tables processed | {audit_data['tables_processed']} |",
         f"| Tables OK | {audit_data['tables_ok']} |",
         f"| Tables skipped | {audit_data['tables_skipped']} |",
@@ -713,7 +712,7 @@ def main():
     print(f"COMPLETE: {ok} OK | {skip} skipped | {error} errors")
     print(f"PHI violations: {len(phi_violations)}")
     if not args.dry_run:
-        audit_path = write_audit_log(results, phi_violations)
+        write_audit_log(results, phi_violations)
         print(f"{'='*60}\n")
         if phi_violations or error > 0:
             print("⚠  ISSUES FOUND — review audit log before proceeding to Phase 4C")

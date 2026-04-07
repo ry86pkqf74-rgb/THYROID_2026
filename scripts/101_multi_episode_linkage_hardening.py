@@ -41,11 +41,11 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
 import duckdb
 import pandas as pd
-import numpy as np
 
 # ── CLI ────────────────────────────────────────────────────────────────────
 

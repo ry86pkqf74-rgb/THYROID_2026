@@ -1,0 +1,19 @@
+[tool.mypy]
+python_version = "3.11"
+explicit_package_bases = true
+ignore_missing_imports = true
+follow_imports = "silent"
+disable_error_code = ["import-untyped"]
+exclude = [
+    "(^|/)build/",
+    "(^|/)dist/",
+    "(^|/)\\.venv/",
+    "^exports/",
+    "^studies/",
+    "^notebooks/",
+    "^archive/",
+]
+
+# Incremental typing: only these entry points are type-checked today. Expanding this list is
+# encouraged; the rest of the repo is enforced by Ruff pyflakes rules (F) + pyflakes in CI.
+files = ["motherduck_client.py", "utils/md_connect.py"]

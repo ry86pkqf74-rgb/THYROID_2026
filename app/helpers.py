@@ -16,7 +16,7 @@ SHARE_CATALOG = "thyroid_share"
 DATABASE = "thyroid_master.duckdb"
 
 try:
-    import openpyxl  # noqa: F401
+    __import__("openpyxl")
     HAS_OPENPYXL = True
 except ImportError:
     HAS_OPENPYXL = False

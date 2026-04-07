@@ -14,10 +14,13 @@ from __future__ import annotations
 
 import argparse
 import os
-import sys
 from datetime import datetime
+from pathlib import Path
 
 import pandas as pd
+
+ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M")
 OUT_DIR = os.path.join("exports", "manuscript_analysis")
@@ -268,7 +271,7 @@ def main():
 
         md_path = os.path.join(OUT_DIR, "outlier_report.md")
         with open(md_path, "w") as f:
-            f.write(f"# Outlier Scan Report\n\n")
+            f.write("# Outlier Scan Report\n\n")
             f.write(f"**Generated:** {TIMESTAMP} | **Total flags:** {len(flag_df)}\n\n")
 
             f.write("## Bounds Checked\n\n")

@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -27,7 +26,6 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from motherduck_client import MotherDuckClient, MotherDuckConfig
 
 OUT_DIR = ROOT / "exports" / "FINAL_RELEASE"
 

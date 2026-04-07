@@ -11,23 +11,23 @@ Wires interactive controls around ``ThyroidPredictiveAnalyzer`` for:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pandas as pd
+
+if TYPE_CHECKING:
+    from utils.predictive_analytics import ThyroidPredictiveAnalyzer
 import streamlit as st
 
 from app.helpers import (
     COLORS,
-    PL,
     mc,
     multi_export,
     sl,
-    sqdf,
-    tbl_exists,
 )
 
 try:
-    import plotly.graph_objects as go
+    __import__("plotly.graph_objects")
     HAS_PLOTLY = True
 except ImportError:
     HAS_PLOTLY = False
@@ -46,12 +46,7 @@ def render_predictive_analytics(con: Any) -> None:
     )
 
     try:
-        from utils.predictive_analytics import (
-            ThyroidPredictiveAnalyzer,
-            PREDICTIVE_PRESETS,
-            CURE_CALCULATOR_FEATURES,
-            CLINICAL_INTERPRETATIONS,
-        )
+        from utils.predictive_analytics import ThyroidPredictiveAnalyzer
     except ImportError as exc:
         st.error(f"Predictive analytics module not available: {exc}", icon="🚫")
         return
@@ -84,7 +79,7 @@ def render_predictive_analytics(con: Any) -> None:
 
 # ── Sub-tab 1: Model Comparison Hub ──────────────────────────────────────
 
-def _render_model_comparison(con: Any, analyzer: "ThyroidPredictiveAnalyzer") -> None:
+def _render_model_comparison(con: Any, analyzer: ThyroidPredictiveAnalyzer) -> None:
     st.markdown(sl("Model Comparison Hub"), unsafe_allow_html=True)
     st.caption(
         "Side-by-side comparison of KM, Cox PH, Weibull PTCM, and Random "
@@ -138,7 +133,7 @@ def _render_model_comparison(con: Any, analyzer: "ThyroidPredictiveAnalyzer") ->
                 st.warning(w, icon="⚠️")
 
 
-def _render_ptcm_kpi_cards(analyzer: "ThyroidPredictiveAnalyzer") -> None:
+def _render_ptcm_kpi_cards(analyzer: ThyroidPredictiveAnalyzer) -> None:
     """Show PTCM summary KPIs if available."""
     if not analyzer.ptcm_available:
         return
@@ -158,7 +153,7 @@ def _render_ptcm_kpi_cards(analyzer: "ThyroidPredictiveAnalyzer") -> None:
 
 # ── Sub-tab 2: Competing Risks ──────────────────────────────────────────
 
-def _render_competing_risks(con: Any, analyzer: "ThyroidPredictiveAnalyzer") -> None:
+def _render_competing_risks(con: Any, analyzer: ThyroidPredictiveAnalyzer) -> None:
     st.markdown(sl("Competing Risks Analysis"), unsafe_allow_html=True)
     st.caption(
         "Aalen-Johansen cumulative incidence functions accounting for "
@@ -290,7 +285,7 @@ def _render_competing_risks(con: Any, analyzer: "ThyroidPredictiveAnalyzer") -> 
 
 # ── Sub-tab 3: ML Nomograms & SHAP ──────────────────────────────────────
 
-def _render_nomograms(con: Any, analyzer: "ThyroidPredictiveAnalyzer") -> None:
+def _render_nomograms(con: Any, analyzer: ThyroidPredictiveAnalyzer) -> None:
     st.markdown(sl("Explainable ML Nomograms"), unsafe_allow_html=True)
     st.caption(
         "Cross-validated XGBoost or Random Forest with SHAP feature "
@@ -403,7 +398,7 @@ def _render_nomograms(con: Any, analyzer: "ThyroidPredictiveAnalyzer") -> None:
 
 # ── Sub-tab 4: Personalized Cure Calculator ──────────────────────────────
 
-def _render_cure_calculator(con: Any, analyzer: "ThyroidPredictiveAnalyzer") -> None:
+def _render_cure_calculator(con: Any, analyzer: ThyroidPredictiveAnalyzer) -> None:
     st.markdown(sl("Personalized Cure Calculator"), unsafe_allow_html=True)
     st.caption(
         "PTCM-powered cure probability estimation. Enter patient characteristics "
@@ -417,7 +412,7 @@ def _render_cure_calculator(con: Any, analyzer: "ThyroidPredictiveAnalyzer") -> 
         )
         return
 
-    from utils.predictive_analytics import CURE_CALCULATOR_FEATURES, CLINICAL_INTERPRETATIONS
+    from utils.predictive_analytics import CURE_CALCULATOR_FEATURES
 
     calc_spec = analyzer.create_interactive_cure_calculator()
     ref = calc_spec.get("reference_population", {})
@@ -637,7 +632,7 @@ def _render_input_widget(key: str, spec: dict[str, Any]) -> Any:
 
 # ── Sub-tab 5: Manuscript Export ─────────────────────────────────────────
 
-def _render_manuscript_export(con: Any, analyzer: "ThyroidPredictiveAnalyzer") -> None:
+def _render_manuscript_export(con: Any, analyzer: ThyroidPredictiveAnalyzer) -> None:
     st.markdown(sl("One-Click Manuscript Report"), unsafe_allow_html=True)
     st.caption(
         "Generate a formatted Word document (.docx) with selected "

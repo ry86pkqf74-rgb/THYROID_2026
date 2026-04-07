@@ -22,7 +22,6 @@ from __future__ import annotations
 
 import argparse
 import logging
-import os
 import sys
 import textwrap
 import time
@@ -36,6 +35,7 @@ logging.basicConfig(
 log = logging.getLogger("mrn_crosswalk_v3")
 
 ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 MD_DATABASE = "thyroid_master.duckdb"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -962,7 +962,7 @@ def main() -> None:
         timed_execute(con, QA_MISSING_V3_SQL, "qa_missing_demographics_v3")
 
         log.info("\n  Phase 5: Verification")
-        results = run_verification(con)
+        run_verification(con)
 
         log.info("\n" + "=" * 72)
         log.info("  MRN CROSSWALK + DEMOGRAPHICS v3 COMPLETE")

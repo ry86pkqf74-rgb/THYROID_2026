@@ -23,11 +23,7 @@ from utils.statistical_analysis import (
     THYROID_OUTCOMES,
     THYROID_PREDICTORS,
     THYROID_SURVIVAL,
-    THYROID_NSQIP_OUTCOMES,
-    THYROID_NSQIP_PREDICTORS,
-    NSQIP_COMPLICATION_COLUMNS,
     LONGITUDINAL_MARKERS,
-    ETE_SUBTYPES,
     HAS_STATSMODELS,
     HAS_SCIPY,
     HAS_LIFELINES,
@@ -880,7 +876,7 @@ def _render_publication_export(con, analyzer: ThyroidStatisticalAnalyzer) -> Non
                 "% Values are median [IQR] for non-normal continuous variables and n (%) for categorical.\n"
                 "% p-values from Mann-Whitney U / chi-squared / Fisher exact as appropriate.\n"
                 f"% N={meta['n_total']:,} patients; missing data excluded per variable.\n"
-                + (f"% Standardized mean differences (SMD) included for balance assessment.\n"
+                + ("% Standardized mean differences (SMD) included for balance assessment.\n"
                    if meta.get("smd_computed") else ""),
                 language="latex",
             )

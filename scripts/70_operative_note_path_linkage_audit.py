@@ -14,7 +14,10 @@ import argparse
 import datetime
 import json
 import os
-import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 
 TS = datetime.datetime.now().strftime("%Y%m%d_%H%M")
 TODAY = datetime.datetime.now().strftime("%Y%m%d")
@@ -723,7 +726,7 @@ Total discordance/review items: {results.get('discordance_count', '?'):,}
     for var, d in sorted(results.get("variable_coverage", {}).items()):
         md += f"| {var} | {d['extracted']:,} | {d['total']:,} | {d['pct_extracted']}% |\n"
 
-    md += f"""
+    md += """
 ---
 
 ## Op Note Coverage by Surgery Year (2010+)
@@ -734,7 +737,7 @@ Total discordance/review items: {results.get('discordance_count', '?'):,}
     for yr, d in sorted(results.get("coverage_by_year", {}).items()):
         md += f"| {yr} | {d['total']:,} | {d['with_opnote']:,} | {d['pct']}% |\n"
 
-    md += f"""
+    md += """
 ---
 
 ## Surgery-Pathology v3 Linkage Tiers

@@ -925,8 +925,8 @@ def _get_connection(use_md: bool, local_path: str = "thyroid_master.duckdb"):
     import duckdb
     import toml
     if use_md:
-        token = toml.load(".streamlit/secrets.toml")["LOCAL_DB_PATH"]
-        return duckdb.connect(f"thyroid_master.duckdb")
+        toml.load(".streamlit/secrets.toml")["LOCAL_DB_PATH"]
+        return duckdb.connect("thyroid_master.duckdb")
     return duckdb.connect(local_path)
 
 

@@ -39,13 +39,15 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 
+import duckdb
+
 ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
 # ── Source table registry ───────────────────────────────────────────────────
@@ -517,7 +519,7 @@ def build_kpi_table(con, dry_run: bool = False) -> int:
     """
     cnt = safe_exec(con, sql, "review_ops_kpi_v1", dry_run)
     if cnt >= 0:
-        print(f"  ✓ review_ops_kpi_v1: 1 row")
+        print("  ✓ review_ops_kpi_v1: 1 row")
     return cnt
 
 

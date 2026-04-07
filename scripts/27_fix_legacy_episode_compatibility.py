@@ -24,7 +24,6 @@ from __future__ import annotations
 
 import argparse
 import logging
-import os
 import sys
 import textwrap
 from datetime import datetime
@@ -33,7 +32,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from motherduck_client import MotherDuckClient, MotherDuckConfig
 
 logging.basicConfig(
     level=logging.INFO,

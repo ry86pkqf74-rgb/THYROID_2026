@@ -25,16 +25,15 @@ import argparse
 import csv
 import datetime
 import json
-import os
 import sys
 from pathlib import Path
 
 # ── resolve workspace root ───────────────────────────────────────────────────
 SCRIPT_DIR = Path(__file__).resolve().parent
 ROOT = SCRIPT_DIR.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
-import duckdb  # noqa: E402
 
 # ── timestamp ────────────────────────────────────────────────────────────────
 TS = datetime.datetime.now().strftime("%Y%m%d_%H%M")
@@ -614,7 +613,7 @@ def run_workstream_c(con, dry_run: bool) -> dict:
     """
     if not dry_run:
         safe_exec(con, tier_summary_sql, "create recurrence_date_tier_summary_v1")
-        print(f"  Created recurrence_date_tier_summary_v1")
+        print("  Created recurrence_date_tier_summary_v1")
 
     # ── Step C3: Review yield tracker ────────────────────────────────────
     # Track progress: completed manual reviews feed back into the date fields
@@ -918,7 +917,7 @@ def main():
     dry_run = args.dry_run
     phases = args.phase.upper().split(",") if args.phase.lower() != "all" else ["A","B","C","D"]
 
-    print(f"Script 94: Pipeline Gap Closure Sprint")
+    print("Script 94: Pipeline Gap Closure Sprint")
     print(f"  Target: {'local DuckDB' if use_md else 'local DuckDB'}")
     print(f"  Dry-run: {dry_run}")
     print(f"  Phases: {phases}")

@@ -47,8 +47,8 @@ def get_md_token() -> str:
 
 def connect_md():
     import duckdb
-    token = get_md_token()
-    con = duckdb.connect(f"thyroid_master.duckdb")
+    get_md_token()
+    con = duckdb.connect("thyroid_master.duckdb")
     print("✅ Connected to local DuckDB")
     return con
 

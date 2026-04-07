@@ -44,14 +44,10 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
-import sys
-import time
 from datetime import datetime
 from pathlib import Path
 
 import duckdb
-import pandas as pd
 
 # ---------------------------------------------------------------------------
 # Config
@@ -991,7 +987,7 @@ def run_phase_c(con, dry_run: bool):
 
     if not dry_run:
         con.execute(CHAIN_LINKAGE_SQL)
-        r = fetchone_safe(con, """
+        fetchone_safe(con, """
             SELECT chain_type, COUNT(*),
                 SUM(CASE WHEN is_multi_surgery THEN 1 ELSE 0 END),
                 SUM(CASE WHEN linkage_confidence IN ('exact_match','high_confidence') THEN 1 ELSE 0 END),
@@ -1128,7 +1124,7 @@ def run_phase_g(con, dry_run: bool):
     }
     with open(EXPORT_DIR / f"manifest_{TIMESTAMP}.json", "w") as f:
         json.dump(manifest, f, indent=2)
-    print(f"  Manifest written")
+    print("  Manifest written")
 
 
 def run_phase_h(con, dry_run: bool):
@@ -1224,7 +1220,7 @@ multi-surgery patients across 5 domains.
     for r in ms_dist:
         report += f"| {r[0]} | {r[1]} |\n"
 
-    report += f"""
+    report += """
 ## Repair Summary
 
 | Domain | Total Linked | Multi-Surg | Exact | Anchored | Ambiguous | No Date |

@@ -201,10 +201,9 @@ LEFT JOIN fna_primary fna ON CAST(e.research_id AS BIGINT) = fna.research_id AND
         surg_anchor_cases = """
             WHEN ps.surg_date_parsed IS NOT NULL THEN 'surgical'
             WHEN fna.fna_date IS NOT NULL THEN 'cytology'"""
-        surg_table_cases = f"""
+        surg_table_cases = """
             WHEN ps.surg_date_parsed IS NOT NULL THEN 'path_synoptics'
             WHEN fna.fna_date IS NOT NULL THEN 'fna_history'"""
-        surg_status_check = "OR ps.surg_date_parsed IS NOT NULL OR fna.fna_date IS NOT NULL"
         surg_review_check = """
         WHEN ps.surg_date_parsed IS NOT NULL
              AND e.entity_date IS NULL AND TRY_CAST(e.note_date AS DATE) IS NULL
@@ -231,9 +230,8 @@ LEFT JOIN ps_primary ps ON CAST(e.research_id AS BIGINT) = ps.research_id AND ps
             WHEN ps.surg_date_parsed IS NOT NULL THEN 60"""
         surg_anchor_cases = """
             WHEN ps.surg_date_parsed IS NOT NULL THEN 'surgical'"""
-        surg_table_cases = f"""
+        surg_table_cases = """
             WHEN ps.surg_date_parsed IS NOT NULL THEN 'path_synoptics'"""
-        surg_status_check = "OR ps.surg_date_parsed IS NOT NULL"
         surg_review_check = """
         WHEN ps.surg_date_parsed IS NOT NULL
              AND e.entity_date IS NULL AND TRY_CAST(e.note_date AS DATE) IS NULL
@@ -1033,7 +1031,7 @@ def main() -> None:
         try:
             cnt = con.execute(sql).fetchone()[0]
             print(f"  {label:<65} {cnt:>6,}")
-        except Exception as e:
+        except Exception:
             print(f"  {label:<65} ERROR")
 
     con.close()

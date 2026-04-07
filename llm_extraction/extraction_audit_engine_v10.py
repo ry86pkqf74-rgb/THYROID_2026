@@ -248,8 +248,8 @@ def ingest_complete_us_excel(excel_path: str | Path) -> pd.DataFrame:
         us_date = report.get("Ultrasound_Date")
         us_num = report.get("US_Report_Number")
         sheet = report.get("Sheet_Name", "")
-        n_nodules = report.get("Number_of_Nodules")
-        impression = report.get("Source_US_Impression", "")
+        report.get("Number_of_Nodules")
+        report.get("Source_US_Impression", "")
         ln_assessment = report.get("Lymph_Node_Assessment", "")
         recommendation = report.get("Recommendation", "")
 

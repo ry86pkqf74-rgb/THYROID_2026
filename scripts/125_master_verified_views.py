@@ -260,7 +260,7 @@ def main() -> None:
         if args.dry_run:
             print(f"\n  [dry-run] {name}")
             print(f"            {desc}")
-            print(f"  DDL preview (first 4 lines):")
+            print("  DDL preview (first 4 lines):")
             for line in ddl.strip().splitlines()[:4]:
                 print(f"    {line}")
             print("    ...")
@@ -272,8 +272,8 @@ def main() -> None:
             print(f"  [OK] {name}: {cnt:,} rows — {desc}")
         except Exception as exc:
             print(f"  [WARN] {name}: {exc}")
-            print(f"         This view may require prerequisite tables to exist first.")
-            print(f"         Re-run after 103 (canonical facts) and 114 (qa schema) complete.")
+            print("         This view may require prerequisite tables to exist first.")
+            print("         Re-run after 103 (canonical facts) and 114 (qa schema) complete.")
             failed += 1
 
     con.close()

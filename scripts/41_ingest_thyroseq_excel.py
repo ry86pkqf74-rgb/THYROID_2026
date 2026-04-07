@@ -32,17 +32,16 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import os
 import sys
 import uuid
 from datetime import datetime
 from pathlib import Path
 
 import duckdb
-import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
 from utils.thyroseq_helpers import (
@@ -278,7 +277,7 @@ def match_patients(raw: pd.DataFrame, xw: pd.DataFrame,
         mrn = row["mrn_norm"]
         dob = row["dob_norm"]
         last = row["last_name_norm"]
-        first = row["first_name_norm"]
+        row["first_name_norm"]
 
         match = {
             "row_hash": rh,
@@ -955,8 +954,8 @@ def write_integration_report(out_dir: Path, manifest: dict, matches: pd.DataFram
         "",
         "## Summary Metrics",
         "",
-        f"| Metric | Count |",
-        f"|--------|-------|",
+        "| Metric | Count |",
+        "|--------|-------|",
         f"| Source rows ingested | {manifest['source_rows_ingested']} |",
         f"| High-confidence matches | {manifest['high_confidence_matches']} |",
         f"| Manual review required | {manifest['review_required']} |",
@@ -1014,7 +1013,7 @@ def write_integration_report(out_dir: Path, manifest: dict, matches: pd.DataFram
         "| `thyroseq_fill_actions` | Audit log of field fills |",
         "| `thyroseq_review_queue` | Items requiring manual review |",
         "",
-        f"## Export Directory",
+        "## Export Directory",
         "",
         f"`{out_dir.relative_to(ROOT)}/`",
         "",

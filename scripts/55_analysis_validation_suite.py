@@ -25,7 +25,6 @@ Supports --md, --local, --strict (fail on any test failure) flags.
 from __future__ import annotations
 
 import argparse
-import os
 import sys
 from datetime import datetime
 from pathlib import Path

@@ -15,7 +15,6 @@ Supports --md, --local, --dry-run.
 from __future__ import annotations
 
 import argparse
-import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -24,6 +23,7 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
 TABLES_DIR = ROOT / "exports" / "manuscript_tables"

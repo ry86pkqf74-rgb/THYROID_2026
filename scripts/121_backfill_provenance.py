@@ -76,7 +76,7 @@ def main() -> None:
         sys.exit(1)
 
     parquets = sorted(V2_DIR.glob("note_entities_llm_*.parquet"))
-    combined = [p for p in V2_DIR.glob("*.parquet") if "combined" in p.name]
+    [p for p in V2_DIR.glob("*.parquet") if "combined" in p.name]
     parquets = [p for p in parquets if "combined" not in p.name]
 
     print(f"  found {len(parquets)} v2 domain parquets")

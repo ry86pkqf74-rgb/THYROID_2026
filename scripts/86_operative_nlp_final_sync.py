@@ -55,12 +55,12 @@ import tempfile
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
 
 import duckdb
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
 DATE_TAG = "20260314"
@@ -372,7 +372,7 @@ def rebuild_mirror(con: duckdb.DuckDBPyConnection,
     if dry_run:
         print(f"    [DRY-RUN] Would rebuild {mirror} FROM {source}")
         return 0
-    n = safe_exec(
+    safe_exec(
         con,
         f"CREATE OR REPLACE TABLE {mirror} AS SELECT * FROM {source}"
     )
@@ -774,7 +774,7 @@ def main() -> None:
             print("  [DRY-RUN] Would run UPDATE from operative_episode_detail_v2")
         else:
             t0 = time.time()
-            rc = safe_exec(con, UPDATE_EPISODE_SQL)
+            safe_exec(con, UPDATE_EPISODE_SQL)
             print(f"  UPDATE completed in {time.time()-t0:.1f}s\n")
 
     # ── Phase D ───────────────────────────────────────────────────────────────
@@ -811,7 +811,7 @@ def main() -> None:
         else:
             t0 = time.time()
             sql = build_patient_update_sql("patient_analysis_resolved_v1")
-            rc = safe_exec(con, sql)
+            safe_exec(con, sql)
             print(f"  UPDATE completed in {time.time()-t0:.1f}s\n")
 
     # ── Phase G ───────────────────────────────────────────────────────────────
@@ -822,7 +822,7 @@ def main() -> None:
         if not dry_run and added:
             t0 = time.time()
             sql = build_patient_update_sql("manuscript_cohort_v1")
-            rc = safe_exec(con, sql)
+            safe_exec(con, sql)
             print(f"  UPDATE completed in {time.time()-t0:.1f}s")
         print()
 

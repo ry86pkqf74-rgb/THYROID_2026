@@ -21,27 +21,16 @@ from __future__ import annotations
 import argparse
 import re
 import sys
-from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional
 
-import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from llm_extraction.extraction_audit_engine_v3 import (
-    GradingParser,
-    CrossSourceReconciler_v2,
-    ExtranodaParser,
     _get_connection,
-    build_master_clinical_v4_sql,
-)
-from llm_extraction.extraction_audit_engine_v2 import (
-    SOURCE_RELIABILITY,
-    VARIABLE_CONFIGS,
 )
 from llm_extraction.extraction_audit_engine import CONSENT_BOILERPLATE_PATTERNS
 
@@ -727,7 +716,7 @@ normalized AS (
                 AND TRY_CAST(TRIM(raw_vasc_quant) AS INTEGER) >= 4 THEN 'extensive'
             ELSE NULL
         END AS vasc_who_grade,
-        TRY_CAST(regexp_extract(COALESCE(raw_vasc_quant,''), '(\d+)', 1) AS INTEGER) AS vessel_count,
+        TRY_CAST(regexp_extract(COALESCE(raw_vasc_quant,''), '(\\d+)', 1) AS INTEGER) AS vessel_count,
         -- LVI normalization
         CASE
             WHEN LOWER(COALESCE(raw_lvi,'')) IN ('','null') THEN NULL

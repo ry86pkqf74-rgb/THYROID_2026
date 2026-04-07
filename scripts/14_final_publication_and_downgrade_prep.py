@@ -38,7 +38,7 @@ def _get_connection() -> duckdb.DuckDBPyConnection:
         raise RuntimeError(
             "Missing LOCAL_DB_PATH. Export your local DuckDB token before connecting."
         )
-    return duckdb.connect(f"thyroid_master.duckdb")
+    return duckdb.connect("thyroid_master.duckdb")
 
 
 def _safe_count(con: duckdb.DuckDBPyConnection, table: str) -> int:
@@ -224,7 +224,7 @@ def phase6_documentation() -> None:
     else:
         qa_path.write_text("# QA Report - THYROID_2026\n" + section, encoding="utf-8")
 
-    print(f"  QA_report.md updated with Script 14 entry")
+    print("  QA_report.md updated with Script 14 entry")
 
 
 def phase7_checklist() -> None:

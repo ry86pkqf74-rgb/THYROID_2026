@@ -347,15 +347,15 @@ def ingest_preop_imaging_summary(con: duckdb.DuckDBPyConnection) -> pl.DataFrame
     us_cols_available = {r[0] for r in con.execute("DESCRIBE ultrasound_reports").fetchall()}
 
     # Pick nodule size columns dynamically
-    nodule_dim_cols = [
+    [
         c for c in us_cols_available
         if re.match(r"nodule_[1-5]_(length|width|height|size|largest_dim|cm)", c)
     ]
     nodule_tirads_cols = [c for c in us_cols_available if "ti_rads" in c or "tirads" in c]
-    nodule_comp_cols = [c for c in us_cols_available if "composition" in c]
-    nodule_echo_cols = [c for c in us_cols_available if "echogenicity" in c]
-    nodule_calc_cols = [c for c in us_cols_available if "calcif" in c]
-    nodule_margin_cols = [c for c in us_cols_available if "margin" in c]
+    [c for c in us_cols_available if "composition" in c]
+    [c for c in us_cols_available if "echogenicity" in c]
+    [c for c in us_cols_available if "calcif" in c]
+    [c for c in us_cols_available if "margin" in c]
 
     # Build max TI-RADS expression
     if nodule_tirads_cols:
@@ -894,7 +894,7 @@ def main() -> None:
     if df_spec is not None:
         pq_path = PROCESSED / "specimen_detail.parquet"
         df_spec.write_parquet(pq_path)
-        print(f"  ✅  specimen_detail.parquet written")
+        print("  ✅  specimen_detail.parquet written")
     else:
         print("  ⏭  specimen_detail skipped")
 
@@ -904,7 +904,7 @@ def main() -> None:
     if df_img is not None:
         pq_path = PROCESSED / "preop_imaging_summary.parquet"
         df_img.write_parquet(pq_path)
-        print(f"  ✅  preop_imaging_summary.parquet written")
+        print("  ✅  preop_imaging_summary.parquet written")
 
     # ── 4. Create views ───────────────────────────────────────────
     print("\n[4/4] Creating analytic views …")

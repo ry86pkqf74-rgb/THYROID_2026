@@ -22,15 +22,12 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
-import warnings
 from datetime import datetime
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from scipy import stats
 import statsmodels.api as sm
 
 import matplotlib
@@ -40,6 +37,7 @@ import matplotlib.pyplot as plt
 np.random.seed(42)
 
 ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
 from utils.statistical_analysis import ThyroidStatisticalAnalyzer
@@ -612,7 +610,6 @@ def step4_competing_risks(h1, con):
     rpt("=" * 70)
 
     from lifelines import AalenJohansenFitter, CoxPHFitter, KaplanMeierFitter
-    from lifelines.statistics import logrank_test
 
     # ── Build competing-risks dataset ─────────────────────────────────
     surv_sql = """
@@ -853,7 +850,7 @@ def step4_competing_risks(h1, con):
 
     cr_df_out = pd.DataFrame(cr_results)
     cr_df_out.to_csv(OUT_DIR / "competing_risks_models.csv", index=False)
-    rpt(f"\n  Model comparison table:")
+    rpt("\n  Model comparison table:")
     rpt(cr_df_out.to_string(index=False))
 
     return cr_df_out, cr_df
@@ -1181,7 +1178,7 @@ def main():
     report_path.write_text("\n".join(REPORT))
 
     rpt(f"\n{'=' * 70}")
-    rpt(f"ANALYSIS COMPLETE")
+    rpt("ANALYSIS COMPLETE")
     rpt(f"Output directory: {OUT_DIR}")
     rpt(f"Files: {len(list(OUT_DIR.rglob('*')))}")
     rpt(f"{'=' * 70}")

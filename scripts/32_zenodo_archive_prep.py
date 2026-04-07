@@ -291,7 +291,7 @@ def run(args: argparse.Namespace) -> int:
                 f.write(f"{entry['sha256'][:12]}  {sz:>10,}  {entry['path']}\n")
             f.write(f"\n# Total size: {total_size:,} bytes ({total_size / 1024 / 1024:.1f} MB)\n")
 
-    print(f"\n── Summary ─────────────────────────────────────────────────────")
+    print("\n── Summary ─────────────────────────────────────────────────────")
     print(f"  Total files: {total_files}")
     if not args.dry_run and manifest:
         total_mb = sum(e["size_bytes"] for e in manifest) / 1024 / 1024

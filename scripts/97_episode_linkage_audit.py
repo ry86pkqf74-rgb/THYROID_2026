@@ -87,12 +87,12 @@ def src_prefix(env: str) -> str:
 
 
 def connect(env: str) -> duckdb.DuckDBPyConnection:
-    tok = get_token()
+    get_token()
     db = resolve_db(env)
-    con = duckdb.connect(f"thyroid_master.duckdb")
+    con = duckdb.connect("thyroid_master.duckdb")
     print(f"  ✓ Connected to md:{db}")
     if env in ("dev", "qa"):
-        print(f"  ℹ Source tables read from thyroid_master.duckdb.* (workspace mode)")
+        print("  ℹ Source tables read from thyroid_master.duckdb.* (workspace mode)")
     return con
 
 
@@ -833,7 +833,7 @@ TABLE_NAMES = [
 def run_audit(con: duckdb.DuckDBPyConnection, env: str, dry_run: bool) -> dict:
     """Execute the full audit pipeline and return summary dict."""
     results = {}
-    ts = datetime.datetime.now().strftime("%Y%m%d_%H%M")
+    datetime.datetime.now().strftime("%Y%m%d_%H%M")
 
     S = src_prefix(env)
     steps = [

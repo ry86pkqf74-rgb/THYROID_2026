@@ -27,14 +27,11 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-import numpy as np
-import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from llm_extraction.extraction_audit_engine_v4 import _extract_table_name
 from llm_extraction.extraction_audit_engine_v3 import _get_connection
 
 PHASE11_SOURCE_HIERARCHY = {
@@ -1095,7 +1092,7 @@ def audit_and_refine_phase11(
 def generate_report(results: dict, output_path: Path) -> str:
     ts = datetime.now().strftime("%Y-%m-%d %H:%M")
     lines = [
-        f"# Phase 11 — Final Sweep: Imaging, RAS, BRAF, Pre-op Excel",
+        "# Phase 11 — Final Sweep: Imaging, RAS, BRAF, Pre-op Excel",
         f"Generated: {ts}",
         "",
         "## Summary",
@@ -1199,7 +1196,7 @@ def main():
     output_dir.mkdir(exist_ok=True)
 
     report_path = output_dir / "master_refinement_report_phase11.md"
-    report = generate_report(results, report_path)
+    generate_report(results, report_path)
     print(f"\nReport: {report_path}")
 
     results_path = output_dir / f"phase11_results_{ts}.json"

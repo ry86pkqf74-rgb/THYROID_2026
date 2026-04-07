@@ -34,7 +34,6 @@ from __future__ import annotations
 import argparse
 import logging
 import os
-import re
 import sys
 import textwrap
 from datetime import datetime
@@ -101,7 +100,7 @@ def _get_connection():
         raise RuntimeError(
             "LOCAL_DB_PATH not set. Export it before running."
         )
-    return duckdb.connect(f"thyroid_master.duckdb")
+    return duckdb.connect("thyroid_master.duckdb")
 
 
 def verify_tables(con) -> list[str]:

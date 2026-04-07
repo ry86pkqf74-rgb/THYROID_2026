@@ -35,7 +35,7 @@ if not tok:
 if not tok:
     sys.exit("ERROR: LOCAL_DB_PATH not found")
 
-con = duckdb.connect(f"thyroid_master.duckdb")
+con = duckdb.connect("thyroid_master.duckdb")
 print("Connected to local DuckDB thyroid_master.duckdb")
 
 

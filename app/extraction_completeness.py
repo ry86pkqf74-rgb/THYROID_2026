@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-from app.helpers import sqdf, sqs, tbl_exists, mc, sl, badge, multi_export, PL, COLORS
+from app.helpers import sqdf, sqs, tbl_exists, mc, sl, multi_export, PL, COLORS
 
 DOMAIN_TABLES: list[tuple[str, str, str]] = [
     ("tumor",      "tumor_episode_master_v2",    "md_tumor_episode_master_v2"),

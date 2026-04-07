@@ -408,7 +408,9 @@ class MICEImputer:
 
     def impute(self, df: pd.DataFrame, target_cols: list[str],
                covariate_cols: list[str]) -> tuple[pd.DataFrame, dict]:
-        from sklearn.experimental import enable_iterative_imputer  # noqa: F401
+        import importlib
+
+        importlib.import_module("sklearn.experimental.enable_iterative_imputer")
         from sklearn.impute import IterativeImputer
 
         all_cols = list(set(target_cols + covariate_cols))

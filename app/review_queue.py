@@ -5,7 +5,7 @@ from datetime import datetime
 
 import streamlit as st
 
-from app.helpers import sqdf, mc, sl, badge, multi_export, require_view, tbl_exists
+from app.helpers import sqdf, mc, sl, multi_export, require_view, tbl_exists
 
 
 def render_review_queue(con) -> None:

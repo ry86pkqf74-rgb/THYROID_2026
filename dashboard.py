@@ -45,7 +45,6 @@ from app.patient_audit import render_patient_audit
 from app.review_histology import render_review_histology
 from app.review_molecular import render_review_molecular
 from app.review_rai import render_review_rai
-from app.review_timeline import render_review_timeline
 from app.review_queue import render_review_queue
 from app.diagnostics import render_diagnostics
 from app.extraction_completeness import render_extraction_completeness
@@ -2253,7 +2252,6 @@ def render_survival(con):
     _mcm_has = _mcm_summary_path.exists()
     _comp_has = _comp_csv_path.exists()
     _mcm_tbl = "mixture_cure_cohort" if tbl_exists(con, "mixture_cure_cohort") else None
-    _mcm_kpi_tbl = "mixture_cure_kpis" if tbl_exists(con, "mixture_cure_kpis") else None
 
     _ucm_tab_mix, _ucm_tab_ptcm, _ucm_tab_h2h = st.tabs([
         "🔮 Mixture Cure", "🧬 Promotion Time Cure", "⚔️ Head-to-Head Comparison",

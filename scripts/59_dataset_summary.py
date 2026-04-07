@@ -14,11 +14,13 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import sys
 from datetime import datetime
+from pathlib import Path
 
 import pandas as pd
-import numpy as np
+
+ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M")
 OUT_DIR = os.path.join("exports", "manuscript_analysis")
@@ -137,7 +139,7 @@ def main():
         result["cross_tabs"]["bethesda_vs_molecular"] = ct
         print(f"    bethesda_vs_molecular: {len(ct)} rows")
     else:
-        print(f"    bethesda_vs_molecular: skipped")
+        print("    bethesda_vs_molecular: skipped")
 
     # ── 3. Scoring calculability ─────────────────────────────────────
     print("\n  Scoring calculability ...")
@@ -187,13 +189,13 @@ def main():
 
         md_path = os.path.join(OUT_DIR, "dataset_summary.md")
         with open(md_path, "w") as f:
-            f.write(f"# Dataset Summary\n\n")
+            f.write("# Dataset Summary\n\n")
             f.write(f"**Source:** `{src}` | **N:** {N:,} | **Generated:** {TIMESTAMP}\n\n")
 
             f.write("## Distributions\n\n")
             for label, d in result["distributions"].items():
                 f.write(f"### {label.replace('_', ' ').title()}\n\n")
-                f.write(f"| Value | N | % |\n|-------|--:|---:|\n")
+                f.write("| Value | N | % |\n|-------|--:|---:|\n")
                 for k, v in sorted(d.items(), key=lambda x: -x[1]):
                     f.write(f"| {k} | {v:,} | {100*v/N:.1f}% |\n")
                 f.write("\n")
@@ -207,8 +209,8 @@ def main():
                         for row_vals in ct.values():
                             all_cols_set.update(row_vals.keys())
                         all_cols = sorted(all_cols_set)
-                        f.write(f"| | " + " | ".join(all_cols) + " |\n")
-                        f.write(f"|---" + "|---:" * len(all_cols) + "|\n")
+                        f.write("| | " + " | ".join(all_cols) + " |\n")
+                        f.write("|---" + "|---:" * len(all_cols) + "|\n")
                         for rk, rv in sorted(ct.items()):
                             vals = " | ".join(str(rv.get(c, 0)) for c in all_cols)
                             f.write(f"| {rk} | {vals} |\n")

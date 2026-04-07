@@ -25,7 +25,7 @@ import pandas as pd
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from llm_extraction.intrinsic_evaluator import IntrinsicEvaluator, refine_extraction  # noqa: E402
+from llm_extraction.intrinsic_evaluator import refine_extraction  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # SQL: Refined RLN view with context-based classification
@@ -411,8 +411,8 @@ def _get_connection(use_md: bool) -> duckdb.DuckDBPyConnection:
     if use_md:
         import toml
         secrets = toml.load(str(PROJECT_ROOT / ".streamlit" / "secrets.toml"))
-        token = secrets["LOCAL_DB_PATH"]
-        return duckdb.connect(f"thyroid_master.duckdb")
+        secrets["LOCAL_DB_PATH"]
+        return duckdb.connect("thyroid_master.duckdb")
     return duckdb.connect(str(PROJECT_ROOT / "thyroid_master.duckdb"))
 
 
@@ -472,7 +472,7 @@ def main():
         return
 
     print("\n=== Deploying refined RLN views ===")
-    results = deploy(con, dry_run=args.dry_run)
+    deploy(con, dry_run=args.dry_run)
 
     if not args.dry_run:
         print("\n=== Summary ===")

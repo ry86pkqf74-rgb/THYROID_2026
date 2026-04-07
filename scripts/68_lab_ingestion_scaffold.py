@@ -19,7 +19,6 @@ import argparse
 import sys
 from pathlib import Path
 
-import duckdb
 
 ROOT = Path(__file__).resolve().parent.parent
 DB_PATH = ROOT / "thyroid_master.duckdb"
@@ -282,7 +281,7 @@ def main() -> None:
                 stmt = stmt.strip()
                 if stmt:
                     con.execute(stmt)
-            print(f"    [OK]")
+            print("    [OK]")
         except Exception as e:
             print(f"    [ERROR] {e}")
 

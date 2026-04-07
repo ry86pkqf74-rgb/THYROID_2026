@@ -856,7 +856,7 @@ def phase_e_validation(con, args):
     sql_exec(con, scorecard_sql, "val_episode_linkage_v2_scorecard", args.dry_run)
 
     # Review queue: ambiguous multi-surgery rows
-    review_sql = f"""
+    review_sql = """
     CREATE OR REPLACE TABLE val_episode_linkage_v2_review_queue AS
     SELECT
         r.research_id,
@@ -1011,7 +1011,7 @@ def phase_f_nonregression(con, args):
 def phase_g_delta_report(con, args):
     """Build before/after delta report from v2 rescoring tables."""
     section("Phase G: Before/After Delta Report")
-    src = tbl_prefix(args)
+    tbl_prefix(args)
 
     # SP linkage delta
     sp_delta_sql = """

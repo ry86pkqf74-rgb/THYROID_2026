@@ -36,7 +36,6 @@ STUDY_PATIENT_CSV = STUDY / "patient_level_dataset.csv"
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(STUDY))
 
-from motherduck_client import MotherDuckClient, MotherDuckConfig  # noqa: E402
 
 import cohort_logic as cl  # noqa: E402
 

@@ -1,9 +1,7 @@
 """ThyroSeq Integration tab — match status, molecular enrichment, labs, events, review queue."""
 from __future__ import annotations
 
-import json
 
-import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st

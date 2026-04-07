@@ -34,17 +34,16 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M")
-EXPORTS_DIR = ROOT / "exports" / f"final_md_optimization_20260314"
+EXPORTS_DIR = ROOT / "exports" / "final_md_optimization_20260314"
 EXPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
 # ── Field definitions ────────────────────────────────────────────────────────
@@ -125,7 +124,7 @@ def run_validation(con, table: str) -> list[dict]:
     for fname, cat, note in OPERATIVE_FIELDS:
         try:
             cov = field_coverage(con, table, fname)
-        except Exception as e:
+        except Exception:
             cov = {"total": 0, "filled": -1, "pct": 0.0}
         rows.append({
             "field": fname,
@@ -174,7 +173,7 @@ def main() -> None:
 
     # ── 2. Validate mirror table ─────────────────────────────────────────
     print(f"  Validating mirror {mirror}...")
-    mirror_results = run_validation(con, mirror)
+    run_validation(con, mirror)
 
     # ── 3. Local vs local DuckDB comparison ────────────────────────────────
     sync_status: dict = {}
@@ -190,7 +189,6 @@ def main() -> None:
 
     # ── 4. Print summary ─────────────────────────────────────────────────
     print(f"\n  ── Coverage Report: {target} ──")
-    import textwrap
     fmt = "  {:<30s} {:>4s} {:>8s} {:>8s}  {}"
     print(fmt.format("Field", "Cat", "Filled", "Pct%", "Status"))
     print("  " + "-" * 70)

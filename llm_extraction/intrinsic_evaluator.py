@@ -14,7 +14,7 @@ Usage:
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Optional
 
 import pandas as pd
@@ -300,21 +300,21 @@ class IntrinsicEvaluator:
 
         lines = [
             f"# Intrinsic Evaluation Report: {self.entity_name}",
-            f"",
+            "",
             f"**Date:** {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M')}",
             f"**Entity family:** {', '.join(sorted(self._entity_family))}",
             f"**Total mentions evaluated:** {total}",
-            f"",
-            f"## Estimated Precision (Current Tier 3)",
-            f"",
-            f"| Metric | Value |",
-            f"|--------|-------|",
+            "",
+            "## Estimated Precision (Current Tier 3)",
+            "",
+            "| Metric | Value |",
+            "|--------|-------|",
             f"| True injuries (heuristic) | {n_true} |",
             f"| False positives (heuristic) | {n_false} |",
             f"| **Estimated precision** | **{precision_est:.1%}** |",
-            f"",
-            f"## Classification Breakdown",
-            f"",
+            "",
+            "## Classification Breakdown",
+            "",
         ]
 
         cls_counts = eval_df["classification"].value_counts()
@@ -355,8 +355,8 @@ class IntrinsicEvaluator:
 
         lines.extend([
             "", "## Suggested New Entity Values", "",
-            f"| Current | Suggested Replacement |",
-            f"|---------|----------------------|",
+            "| Current | Suggested Replacement |",
+            "|---------|----------------------|",
             f"| rln_injury (in risk discussion) | {self.entity_name}_risk_mentioned |",
             f"| rln_injury (nerve preserved) | {self.entity_name}_identified_preserved |",
             f"| rln_injury (historical) | {self.entity_name}_historical |",

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import streamlit as st
 
-from app.helpers import sqdf, mc, sl, badge, multi_export, require_view, write_decision, tbl_exists
+from app.helpers import sqdf, mc, sl, multi_export, require_view, write_decision, tbl_exists
 
 
 def render_review_rai(con, rw_con=None) -> None:

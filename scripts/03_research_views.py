@@ -6,7 +6,6 @@ Phase 2 research-facing analytic views for thyroid cancer studies.
 """
 
 import argparse
-import os
 from pathlib import Path
 import duckdb
 

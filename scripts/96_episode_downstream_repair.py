@@ -31,7 +31,6 @@ from __future__ import annotations
 import argparse
 import datetime
 import json
-import os
 import pathlib
 import sys
 
@@ -39,7 +38,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 try:
-    import duckdb
+    __import__("duckdb")
 except ImportError:
     sys.exit("duckdb not installed")
 
@@ -580,8 +579,8 @@ def generate_report(before, after, fix_stats, provenance, nonreg) -> str:
     a(f"# Episode Downstream Repair Report — {DATE_TAG}")
     a("")
     a(f"**Generated**: {TIMESTAMP}")
-    a(f"**Script**: `scripts/96_episode_downstream_repair.py`")
-    a(f"**Target**: local DuckDB `thyroid_master.duckdb` (prod)")
+    a("**Script**: `scripts/96_episode_downstream_repair.py`")
+    a("**Target**: local DuckDB `thyroid_master.duckdb` (prod)")
     a("")
 
     a("## Problem")

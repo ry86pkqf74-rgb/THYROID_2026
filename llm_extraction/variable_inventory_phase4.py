@@ -304,11 +304,11 @@ def _get_connection(use_md: bool = True, local_path: str = "thyroid_master.duckd
         try:
             import toml
             secrets = toml.load(PROJECT_ROOT / ".streamlit/secrets.toml")
-            token = secrets["LOCAL_DB_PATH"]
+            secrets["LOCAL_DB_PATH"]
         except Exception:
             import os
-            token = os.environ.get("LOCAL_DB_PATH", "")
-        return duckdb.connect(f"thyroid_master.duckdb")
+            os.environ.get("LOCAL_DB_PATH", "")
+        return duckdb.connect("thyroid_master.duckdb")
     return duckdb.connect(str(PROJECT_ROOT / local_path))
 
 

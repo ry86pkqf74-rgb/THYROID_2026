@@ -24,7 +24,6 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import os
 import sys
 import time
 from datetime import datetime
@@ -39,13 +38,10 @@ np.random.seed(42)
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from motherduck_client import MotherDuckClient, MotherDuckConfig
 from utils.statistical_analysis import (
     ThyroidStatisticalAnalyzer,
     THYROID_PREDICTORS,
     THYROID_SURVIVAL,
-    THYROID_NSQIP_OUTCOMES,
-    THYROID_NSQIP_PREDICTORS,
     LONGITUDINAL_MARKERS,
 )
 

@@ -17,7 +17,6 @@ import argparse
 import sys
 from pathlib import Path
 
-import duckdb
 
 ROOT = Path(__file__).resolve().parent.parent
 PROCESSED = ROOT / "processed"

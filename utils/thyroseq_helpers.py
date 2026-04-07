@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import re
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from typing import Any
 
 import pandas as pd

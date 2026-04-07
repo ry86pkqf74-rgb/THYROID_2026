@@ -119,7 +119,7 @@ def main() -> None:
             print(f"  [dry-run] CREATE SCHEMA {schema_name}")
             for t in tables:
                 print(f"  [dry-run] CREATE TABLE {schema_name}.{t} AS SELECT *, '{tag}' AS release_tag FROM main.{t}")
-            print(f"  [dry-run] INSERT INTO qa.release_manifest ...")
+            print("  [dry-run] INSERT INTO qa.release_manifest ...")
             return
 
         con.execute(f"CREATE SCHEMA {schema_name}")
@@ -153,10 +153,10 @@ def main() -> None:
                 datetime.now(timezone.utc).isoformat(),
                 args.created_by,
             ])
-            print(f"  [manifest] recorded in qa.release_manifest")
+            print("  [manifest] recorded in qa.release_manifest")
         except Exception as exc:
             print(f"  [warn] Could not write to qa.release_manifest: {exc}")
-            print(f"         Run scripts/114_qa_schema_setup.py first to create the qa schema.")
+            print("         Run scripts/114_qa_schema_setup.py first to create the qa schema.")
 
         print(f"\n  Release {tag} created with {len(row_counts)} tables in {schema_name}")
     finally:

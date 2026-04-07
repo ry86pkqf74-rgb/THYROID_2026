@@ -121,7 +121,7 @@ def commit(dry_run: bool) -> bool:
         print("  Nothing staged — skipping commit.")
         return False
 
-    print(f"\n── Committing ────────────────────────────────────────────────")
+    print("\n── Committing ────────────────────────────────────────────────")
     run_cmd(["git", "commit", "-m", COMMIT_MESSAGE], dry_run=dry_run)
     return True
 

@@ -643,7 +643,7 @@ def _get_connection():
         raise RuntimeError(
             "LOCAL_DB_PATH not set. Export it before running this script."
         )
-    return duckdb.connect(f"thyroid_master.duckdb")
+    return duckdb.connect("thyroid_master.duckdb")
 
 
 def _table_exists(con, name: str) -> bool:

@@ -207,7 +207,7 @@ def render_qa_workbench(con) -> None:
     st.subheader("Lab Canonical Layer")
     lab_val = _safe_query(con, "SELECT lab_name_standardized, n_total, n_exact_dupes, validation_status FROM val_lab_canonical_v1")
     if lab_val is not None and len(lab_val) > 0:
-        all_pass = all(lab_val["validation_status"].isin(["PASS", "WARN"]))
+        all(lab_val["validation_status"].isin(["PASS", "WARN"]))
         n_dupes = int(lab_val["n_exact_dupes"].sum()) if "n_exact_dupes" in lab_val.columns else -1
         lab_total = int(lab_val["n_total"].sum()) if "n_total" in lab_val.columns else 0
         if n_dupes == 0:

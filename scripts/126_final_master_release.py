@@ -321,13 +321,13 @@ def write_evidence_pack(study_dir: Path, ev: dict[str, Any], export_dir: Path) -
     (study_dir / "evidence_pack.json").write_text(json.dumps(ev, indent=2, default=str), encoding="utf-8")
 
     lines = [
-        f"# Final master release — manuscript readiness evidence",
-        f"",
+        "# Final master release — manuscript readiness evidence",
+        "",
         f"- **Release tag:** `{ev['release_tag']}`",
         f"- **Git SHA:** `{ev['git_sha']}`",
         f"- **Captured (UTC):** {ev['captured_at_utc']}",
         f"- **Parquet bundle:** `{export_dir}` (no raw note text in this profile)",
-        f"",
+        "",
     ]
     if ev.get("mrq_synthetic_fill"):
         lines.extend([
@@ -338,7 +338,7 @@ def write_evidence_pack(study_dir: Path, ev: dict[str, Any], export_dir: Path) -
             "",
         ])
     lines.extend([
-        f"## Row counts",
+        "## Row counts",
         "",
     ])
     for k, v in ev["row_counts"].items():
@@ -347,15 +347,15 @@ def write_evidence_pack(study_dir: Path, ev: dict[str, Any], export_dir: Path) -
         "",
         "## Lineage completeness (master facts)",
         "",
-        f"```json",
+        "```json",
         json.dumps(ev.get("lineage", {}), indent=2),
-        f"```",
+        "```",
         "",
         "## Review queue",
         "",
-        f"```json",
+        "```json",
         json.dumps(ev.get("review_queue", {}), indent=2),
-        f"```",
+        "```",
         "",
         "## Documented source-limited burdens",
         "",
@@ -544,7 +544,7 @@ def main() -> None:
         con.close()
 
     print("\n" + "=" * 70)
-    print(f"  126 — COMPLETE")
+    print("  126 — COMPLETE")
     print(f"  Evidence: {study_dir / 'EVIDENCE_PACK.md'}")
     print(f"  Memo    : {study_dir / 'SAFE_TO_START_STATS_MEMO.md'}")
     print("=" * 70)

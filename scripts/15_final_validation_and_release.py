@@ -24,7 +24,6 @@ from datetime import datetime
 from pathlib import Path
 
 import duckdb
-import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 EXPORT_DATE = datetime.now().strftime("%Y%m%d_%H%M")
@@ -37,7 +36,7 @@ def _get_connection() -> duckdb.DuckDBPyConnection:
         raise RuntimeError(
             "Missing LOCAL_DB_PATH. Export your local DuckDB token before connecting."
         )
-    return duckdb.connect(f"thyroid_master.duckdb")
+    return duckdb.connect("thyroid_master.duckdb")
 
 
 def _safe_count(con: duckdb.DuckDBPyConnection, table: str) -> int:
@@ -179,7 +178,7 @@ All derived objects are materialized and backed up locally.
     notes_path = ROOT / "RELEASE_NOTES.md"
     notes_path.write_text(release_notes, encoding="utf-8")
     shutil.copy(notes_path, RELEASE_DIR / "RELEASE_NOTES.md")
-    print(f"  RELEASE_NOTES.md created")
+    print("  RELEASE_NOTES.md created")
 
     readme_path = ROOT / "README.md"
     if readme_path.exists():

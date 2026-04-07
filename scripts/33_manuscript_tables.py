@@ -168,8 +168,8 @@ def _to_latex(tables: dict[str, pd.DataFrame], out_path: Path) -> None:
     ]
     for title, df in tables.items():
         safe_title = title.replace("_", r"\_")
-        lines.append(f"\\begin{{table}}[htbp]")
-        lines.append(f"\\centering")
+        lines.append("\\begin{table}[htbp]")
+        lines.append("\\centering")
         lines.append(f"\\caption{{{safe_title}}}")
         cols = "l" + "r" * (len(df.columns) - 1)
         lines.append(f"\\begin{{tabular}}{{{cols}}}")
@@ -179,8 +179,8 @@ def _to_latex(tables: dict[str, pd.DataFrame], out_path: Path) -> None:
         for _, row in df.iterrows():
             lines.append(" & ".join(str(v) for v in row.values) + " \\\\")
         lines.append("\\bottomrule")
-        lines.append(f"\\end{{tabular}}")
-        lines.append(f"\\end{{table}}")
+        lines.append("\\end{tabular}")
+        lines.append("\\end{table}")
         lines.append("")
 
     out_path.write_text("\n".join(lines))
@@ -212,7 +212,7 @@ def main() -> int:
 
     if tables:
         _to_latex(tables, OUTPUT_DIR / "all_tables.tex")
-        print(f"\n  LaTeX → all_tables.tex")
+        print("\n  LaTeX → all_tables.tex")
 
     print()
     print("=" * 68)

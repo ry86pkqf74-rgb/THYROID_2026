@@ -22,9 +22,9 @@ import os
 import pathlib
 import re
 import sys
-import textwrap
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
 try:
@@ -817,8 +817,8 @@ def write_truth_snapshot(metrics, op_audit, rec_info, linkage, mismatches):
         f"# Dataset Truth Snapshot — {DATESTAMP}",
         "",
         f"Generated: {NOW.isoformat()}",
-        f"Source: local DuckDB `thyroid_master.duckdb` (prod)",
-        f"Script: `scripts/99_comprehensive_final_verification.py`",
+        "Source: local DuckDB `thyroid_master.duckdb` (prod)",
+        "Script: `scripts/99_comprehensive_final_verification.py`",
         "",
         "## 1. Core Dataset Metrics",
         "",
@@ -908,7 +908,7 @@ def write_truth_snapshot(metrics, op_audit, rec_info, linkage, mismatches):
         f"- Episodes: {rai_t}",
         f"- With dose: {rai_d}",
         f"- Coverage: **{sp(rai_d, rai_t)}%**",
-        f"- Source limitation: nuclear medicine notes absent from clinical_notes_long",
+        "- Source limitation: nuclear medicine notes absent from clinical_notes_long",
     ]
 
     # Operative NLP
@@ -1016,8 +1016,8 @@ def write_linkage_audit(linkage):
         f"# Multi-Surgery Episode Linkage Audit — {DATESTAMP}",
         "",
         f"Generated: {NOW.isoformat()}",
-        f"Source: local DuckDB `thyroid_master.duckdb` (prod)",
-        f"Script: `scripts/99_comprehensive_final_verification.py`",
+        "Source: local DuckDB `thyroid_master.duckdb` (prod)",
+        "Script: `scripts/99_comprehensive_final_verification.py`",
         "",
         "## Summary",
         "",
@@ -1190,7 +1190,7 @@ def write_operative_audit(op_audit):
         f"# Operative NLP Propagation Audit — {DATESTAMP}",
         "",
         f"Generated: {NOW.isoformat()}",
-        f"Source: local DuckDB `thyroid_master.duckdb` (prod)",
+        "Source: local DuckDB `thyroid_master.duckdb` (prod)",
         "",
         "## Summary",
         "",
@@ -1275,9 +1275,9 @@ def write_recurrence_status(rec_info):
         "",
         "## Export Details",
         "",
-        f"- Directory: `exports/recurrence_review_packets/`",
-        f"- Format: CSV batches of 100, priority-sorted",
-        f"- Priority: unresolved > biochemical > exact; multi-surgery first within tier",
+        "- Directory: `exports/recurrence_review_packets/`",
+        "- Format: CSV batches of 100, priority-sorted",
+        "- Priority: unresolved > biochemical > exact; multi-surgery first within tier",
         "",
         "## Multi-Surgery Context",
         "",
@@ -1442,7 +1442,7 @@ def main():
     print(f"  Patient agg fields:       {len([r for r in op_audit if r.get('status') == 'patient_agg'])}")
     print(f"  Recurrence cases:         {rec_info.get('total', 'N/A')}")
     print(f"  Doc mismatches:           {len(mismatches)}")
-    print(f"  local DuckDB tables created: val_multi_surgery_cohort_v3, val_multi_surgery_review_queue_v3")
+    print("  local DuckDB tables created: val_multi_surgery_cohort_v3, val_multi_surgery_review_queue_v3")
 
     con.close()
     return 0 if len(mismatches) == 0 else 1

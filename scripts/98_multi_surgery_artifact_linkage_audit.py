@@ -30,7 +30,6 @@ from __future__ import annotations
 import argparse
 import datetime
 import json
-import os
 import pathlib
 import sys
 import time
@@ -39,8 +38,8 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 try:
-    import duckdb
-    import pandas as pd
+    __import__("duckdb")
+    __import__("pandas")
 except ImportError:
     sys.exit("duckdb and pandas required — run from .venv/bin/python")
 
@@ -849,7 +848,7 @@ def export_csvs(con) -> list[str]:
     mf = EXPORT_DIR / "manifest.json"
     mf.write_text(json.dumps(manifest, indent=2))
     exported.append(str(mf))
-    print(f"  manifest.json written")
+    print("  manifest.json written")
     return exported
 
 

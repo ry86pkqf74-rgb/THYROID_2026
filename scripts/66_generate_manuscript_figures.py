@@ -16,7 +16,6 @@ Supports --md, --local, --dry-run.
 from __future__ import annotations
 
 import argparse
-import os
 import sys
 import warnings
 from datetime import datetime
@@ -26,6 +25,7 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
 FIGURES_DIR = ROOT / "exports" / "manuscript_figures"

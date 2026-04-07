@@ -186,7 +186,7 @@ def phase_b_strip_pii(df: pd.DataFrame) -> pd.DataFrame:
     assert len(remaining_pii) == 0, f"PII leak: {remaining_pii}"
 
     df = df.rename(columns={"research_id_number": "research_id"})
-    print(f"  Renamed research_id_number → research_id")
+    print("  Renamed research_id_number → research_id")
     print(f"  Remaining columns: {df.columns.tolist()}")
     return df
 
@@ -232,7 +232,7 @@ def phase_d_normalize(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
         df = df[df["analyte"].notna()].copy()
 
     vc = df["analyte"].value_counts()
-    print(f"  Analyte distribution:")
+    print("  Analyte distribution:")
     for a, c in vc.items():
         print(f"    {a}: {c:,}")
 
@@ -274,10 +274,10 @@ def phase_e_disambiguate_combos(
     n_ambiguous = 0
     ambiguous_indices = []
 
-    tg_known = set(
+    set(
         non_combo.loc[non_combo["analyte"] == "Tg", "research_id"].unique()
     )
-    tgab_known = set(
+    set(
         non_combo.loc[non_combo["analyte"] == "TgAb", "research_id"].unique()
     )
 
@@ -433,7 +433,7 @@ def phase_f_parse_results(df: pd.DataFrame) -> pd.DataFrame:
         _parse_single_result(df, idx, raw)
 
     flag_vc = df["result_flag"].value_counts()
-    print(f"  Result flag distribution:")
+    print("  Result flag distribution:")
     for f, c in flag_vc.items():
         print(f"    {f}: {c:,}")
 
@@ -519,7 +519,7 @@ def phase_g_temporal_linkage(df: pd.DataFrame) -> pd.DataFrame:
     print(f"  days_from_surgery computed: {has_both.sum():,}")
 
     tw_vc = df["temporal_window"].value_counts()
-    print(f"  Temporal window distribution:")
+    print("  Temporal window distribution:")
     for w, c in tw_vc.items():
         print(f"    {w}: {c:,}")
 
@@ -622,7 +622,6 @@ def _build_review_output(review: pd.DataFrame) -> pd.DataFrame:
 def _write_to_duckdb(
     canonical: pd.DataFrame, review: pd.DataFrame, use_md: bool
 ) -> None:
-    import duckdb
     con = connect_duckdb(use_md)
     target = "MotherDuck" if use_md else "local"
     print(f"  Loading into DuckDB ({target})...")
@@ -829,7 +828,7 @@ def phase_k_validate(
         vals = pts["result_raw"].tolist()[:5]
         spot_checks.append({"research_id": int(rid), "tg_trajectory_sample": vals})
     v["spot_checks"] = spot_checks
-    print(f"  Spot checks (10 patients, first 5 Tg values):")
+    print("  Spot checks (10 patients, first 5 Tg values):")
     for sc in spot_checks:
         print(f"    RID {sc['research_id']}: {sc['tg_trajectory_sample']}")
 
@@ -1740,9 +1739,9 @@ def main():
         sys.exit(1)
 
     print(f"{'=' * 76}")
-    print(f"  Thyroglobulin Lab Ingestion Pipeline")
+    print("  Thyroglobulin Lab Ingestion Pipeline")
     print(f"  Input: {input_path}")
-    print(f"  Targets: parquet" +
+    print("  Targets: parquet" +
           (" + DuckDB" if args.duckdb else "") +
           (" + MotherDuck" if args.md else ""))
     print(f"  Dry run: {args.dry_run}")
@@ -1822,7 +1821,7 @@ def main():
     if recon_stats:
         print(f"  Deduped view: {recon_stats.get('deduped_rows', '?'):,} rows")
         print(f"  Cross-wave review: {recon_stats.get('cross_wave_review_rows', 0):,} items")
-    print(f"  QC artifact: processed/tg_lab_ingestion_qc_v1.json")
+    print("  QC artifact: processed/tg_lab_ingestion_qc_v1.json")
 
 
 if __name__ == "__main__":

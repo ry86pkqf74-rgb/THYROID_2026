@@ -11,8 +11,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
-import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -23,9 +21,10 @@ from scipy import stats
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
 
-STUDY_DIR = Path(__file__).resolve().parent.parent / "studies" / "hypothesis2_goiter_sdoh"
+ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
+STUDY_DIR = ROOT / "studies" / "hypothesis2_goiter_sdoh"
 STUDY_DIR.mkdir(parents=True, exist_ok=True)
 
 np.random.seed(42)
@@ -266,9 +265,9 @@ def statistical_tests_complications(df: pd.DataFrame) -> pd.DataFrame:
 
         ct_race = pd.crosstab(analytic_races["race_group"], analytic_races[comp].astype(int))
         if ct_race.shape[0] >= 2 and ct_race.shape[1] == 2:
-            chi2, p_race, _, _ = stats.chi2_contingency(ct_race)
+            _, p_race, _, _ = stats.chi2_contingency(ct_race)
         else:
-            chi2, p_race = np.nan, np.nan
+            p_race = np.nan
 
         ct_sex = pd.crosstab(df["sex"], df[comp].astype(int))
         if ct_sex.shape[0] >= 2 and ct_sex.shape[1] == 2:

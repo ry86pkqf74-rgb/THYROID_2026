@@ -57,16 +57,15 @@ import argparse
 import csv
 import hashlib
 import json
-import os
 import platform
 import subprocess
 import sys
-import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
 PROD_DB = "thyroid_master.duckdb"
@@ -274,7 +273,6 @@ CSV_ROW_THRESHOLD = 50_000  # also export CSV for tables under this many rows
 
 def export_tables(con, inventory: list[dict], data_dir: Path) -> list[dict]:
     log("Phase C: Export table data to Parquet (+CSV for small tables)")
-    import pandas as pd
 
     data_dir.mkdir(parents=True, exist_ok=True)
     export_records: list[dict] = []
@@ -601,7 +599,7 @@ def main() -> None:
                         help="Skip Parquet/CSV export; manifest + inventory only")
     args = parser.parse_args()
 
-    ts_tag = datetime.now().strftime(TIMESTAMP_FMT)
+    datetime.now().strftime(TIMESTAMP_FMT)
     version = args.version
     out_dir = ROOT / "exports" / f"manuscript_freeze_{version}"
 

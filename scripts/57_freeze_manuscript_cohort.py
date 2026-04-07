@@ -19,8 +19,12 @@ import os
 import subprocess
 import sys
 from datetime import datetime
+from pathlib import Path
 
 import pandas as pd
+
+ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M")
 OUT_DIR = os.path.join("exports", "manuscript_cohort_freeze")

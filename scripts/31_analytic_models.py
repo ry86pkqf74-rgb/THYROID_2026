@@ -33,7 +33,6 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import os
 import sys
 import time
 from datetime import datetime
@@ -47,7 +46,6 @@ np.random.seed(42)
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from motherduck_client import MotherDuckClient, MotherDuckConfig
 
 logging.basicConfig(
     level=logging.INFO,
@@ -60,15 +58,13 @@ OUT_DIR = ROOT / "studies" / "analytic_models"
 
 try:
     from lifelines import KaplanMeierFitter, CoxPHFitter
-    from lifelines.statistics import logrank_test
 
     HAS_LIFELINES = True
 except ImportError:
     HAS_LIFELINES = False
 
 try:
-    from scipy import stats as sp_stats
-
+    __import__("scipy.stats")
     HAS_SCIPY = True
 except ImportError:
     HAS_SCIPY = False

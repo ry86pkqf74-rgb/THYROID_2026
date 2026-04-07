@@ -1963,8 +1963,8 @@ def main() -> None:
 
     # ── Files changed ──
     section("FILES CREATED/MODIFIED")
-    print(f"  scripts/16_reconciliation_v2.py       (this script)")
-    print(f"  scripts/16_reconciliation_v2_views.sql (generated SQL)")
+    print("  scripts/16_reconciliation_v2.py       (this script)")
+    print("  scripts/16_reconciliation_v2_views.sql (generated SQL)")
 
     con.close()
     print(f"\n{'=' * 80}")

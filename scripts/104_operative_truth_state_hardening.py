@@ -58,15 +58,14 @@ import json
 import os
 import sys
 import tempfile
-import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
 
 import duckdb
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
 DATE_TAG = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M")
@@ -734,12 +733,12 @@ def main() -> None:
     dry = args.dry_run
     phase = args.phase.upper()
 
-    print(f"╔══════════════════════════════════════════════════════════════╗")
-    print(f"║  104 — Operative NLP Truth-State Hardening                  ║")
+    print("╔══════════════════════════════════════════════════════════════╗")
+    print("║  104 — Operative NLP Truth-State Hardening                  ║")
     print(f"║  Target: {'local DuckDB' if args.md else 'local DuckDB':50s} ║")
     print(f"║  Mode:   {'DRY-RUN' if dry else 'LIVE':50s} ║")
     print(f"║  Phase:  {phase:50s} ║")
-    print(f"╚══════════════════════════════════════════════════════════════╝")
+    print("╚══════════════════════════════════════════════════════════════╝")
 
     before_snapshots: dict = {}
     recoded: dict = {}

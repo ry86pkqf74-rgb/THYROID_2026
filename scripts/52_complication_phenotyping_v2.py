@@ -36,7 +36,6 @@ Supports --md, --local, --dry-run flags.
 from __future__ import annotations
 
 import argparse
-import os
 import sys
 from datetime import datetime
 from pathlib import Path
