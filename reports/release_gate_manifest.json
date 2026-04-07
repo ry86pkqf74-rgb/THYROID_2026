@@ -1,0 +1,232 @@
+{
+  "schema_version": 1,
+  "project": "THYROID_2026",
+  "generated_at_utc": "2026-04-07T12:46:41Z",
+  "git_sha": "97c8503345c8ad292a1006e3223cc6a930d0ee12",
+  "motherduck_session_hint": "THYROID_2026",
+  "motherduck_custom_user_agent": "THYROID_2026_release_gate/148;kind=release_gate",
+  "environment": "prod",
+  "decision": "FAIL",
+  "summary": {
+    "pass": 12,
+    "hold": 5,
+    "fail": 5
+  },
+  "checks": [
+    {
+      "id": "registry.integrity",
+      "title": "Registry + fleet parity",
+      "severity": "pass",
+      "detail": "YAML load OK; prompt files exist; fleet DOMAIN_PROMPT matches registry.",
+      "evidence": {
+        "v2_canonical_domains": 23
+      }
+    },
+    {
+      "id": "extraction.domain_completion",
+      "title": "Per-domain v2 staging completion",
+      "severity": "pass",
+      "detail": "All canonical v2 domains have non-empty v2_stage tables and load_inventory row_match.",
+      "evidence": {
+        "n_domains": 23,
+        "load_inventory_used": true
+      }
+    },
+    {
+      "id": "staging.inventory_all_match",
+      "title": "v2_stage.load_inventory all row_match",
+      "severity": "pass",
+      "detail": "BOOL_AND(row_match) is true.",
+      "evidence": {
+        "n_rows": 180,
+        "max_load_id": "180"
+      }
+    },
+    {
+      "id": "canonical.keys.main",
+      "title": "Canonical key integrity (main)",
+      "severity": "pass",
+      "detail": "No NULL research_id; no duplicate fact_id groups.",
+      "evidence": {
+        "n_rows": 123577
+      }
+    },
+    {
+      "id": "canonical.presence.v2_stage",
+      "title": "v2_stage.canonical_extracted_fact_long_v2 exists",
+      "severity": "hold",
+      "detail": "v2_stage canonical long not materialized \u2014 common when only domain tables and main promotion surface are retained; verify main integrity.",
+      "evidence": {
+        "schema": "v2_stage"
+      }
+    },
+    {
+      "id": "quarantine.main",
+      "title": "main quarantine row count",
+      "severity": "hold",
+      "detail": "Quarantine has rows \u2014 review before promote.",
+      "evidence": {
+        "n_rows": 199
+      }
+    },
+    {
+      "id": "quarantine.v2_stage",
+      "title": "v2_stage quarantine table",
+      "severity": "hold",
+      "detail": "v2_stage.canonical_fact_quarantine_v2 missing.",
+      "evidence": {}
+    },
+    {
+      "id": "qa.manual_review_queue",
+      "title": "Manual review backlog (NULL verification_status)",
+      "severity": "pass",
+      "detail": "No pending verification rows.",
+      "evidence": {
+        "pending": 0,
+        "total_rows": 5622
+      }
+    },
+    {
+      "id": "qa.val_specimen_contract_v1",
+      "title": "qa.val_specimen_contract_v1 FAIL rows",
+      "severity": "pass",
+      "detail": "No FAIL rows.",
+      "evidence": {
+        "fail_rows": 0
+      }
+    },
+    {
+      "id": "qa.val_specimen_genomic_binding_v1",
+      "title": "qa.val_specimen_genomic_binding_v1 FAIL rows",
+      "severity": "pass",
+      "detail": "No FAIL rows.",
+      "evidence": {
+        "fail_rows": 0
+      }
+    },
+    {
+      "id": "qa.promotion_scorecard",
+      "title": "promotion_scorecard_summary_v",
+      "severity": "hold",
+      "detail": "View missing.",
+      "evidence": {}
+    },
+    {
+      "id": "canonical.extraction_run_id",
+      "title": "main canonical rows with NULL extraction_run_id",
+      "severity": "pass",
+      "detail": "All rows carry extraction_run_id.",
+      "evidence": {
+        "null_run_id_rows": 0,
+        "total_rows": 123577
+      }
+    },
+    {
+      "id": "tg.thyroglobulin_lab_canonical_v1",
+      "title": "thyroglobulin_lab_canonical_v1 row count",
+      "severity": "pass",
+      "detail": "Canonical lab table has 76971 rows.",
+      "evidence": {
+        "n_rows": 76971
+      }
+    },
+    {
+      "id": "tg.tg_lab_review_queue_v1",
+      "title": "tg_lab_review_queue_v1 backlog",
+      "severity": "hold",
+      "detail": "1035 review rows pending.",
+      "evidence": {
+        "n_rows": 1035
+      }
+    },
+    {
+      "id": "mm.val_contract_required_join_keys_mm_v1",
+      "title": "mm_contract_dev.val_contract_required_join_keys_mm_v1 (strict empty)",
+      "severity": "pass",
+      "detail": "Empty (strict-release OK).",
+      "evidence": {
+        "n_rows": 0,
+        "mm_schema": "mm_contract_dev"
+      }
+    },
+    {
+      "id": "mm.val_nodes_invariant_mm_v1",
+      "title": "mm_contract_dev.val_nodes_invariant_mm_v1 (strict empty)",
+      "severity": "fail",
+      "detail": "2957 blocker rows \u2014 multimodal gate fails.",
+      "evidence": {
+        "n_rows": 2957,
+        "mm_schema": "mm_contract_dev"
+      }
+    },
+    {
+      "id": "mm.val_multitumor_expansion_mm_v1",
+      "title": "mm_contract_dev.val_multitumor_expansion_mm_v1 (strict empty)",
+      "severity": "pass",
+      "detail": "Empty (strict-release OK).",
+      "evidence": {
+        "n_rows": 0,
+        "mm_schema": "mm_contract_dev"
+      }
+    },
+    {
+      "id": "mm.val_side_lobe_mismatch_mm_v1",
+      "title": "mm_contract_dev.val_side_lobe_mismatch_mm_v1 (strict empty)",
+      "severity": "fail",
+      "detail": "36 blocker rows \u2014 multimodal gate fails.",
+      "evidence": {
+        "n_rows": 36,
+        "mm_schema": "mm_contract_dev"
+      }
+    },
+    {
+      "id": "mm.val_preop_temporal_order_mm_v1",
+      "title": "mm_contract_dev.val_preop_temporal_order_mm_v1 (strict empty)",
+      "severity": "fail",
+      "detail": "3 blocker rows \u2014 multimodal gate fails.",
+      "evidence": {
+        "n_rows": 3,
+        "mm_schema": "mm_contract_dev"
+      }
+    },
+    {
+      "id": "mm.val_ambiguous_multimodal_linkage_mm_v1",
+      "title": "mm_contract_dev.val_ambiguous_multimodal_linkage_mm_v1 (strict empty)",
+      "severity": "fail",
+      "detail": "3989 blocker rows \u2014 multimodal gate fails.",
+      "evidence": {
+        "n_rows": 3989,
+        "mm_schema": "mm_contract_dev"
+      }
+    },
+    {
+      "id": "mm.val_imaging_fna_contract_blockers_mm_v1",
+      "title": "mm_contract_dev.val_imaging_fna_contract_blockers_mm_v1 (strict empty)",
+      "severity": "fail",
+      "detail": "3093 blocker rows \u2014 multimodal gate fails.",
+      "evidence": {
+        "n_rows": 3093,
+        "mm_schema": "mm_contract_dev"
+      }
+    },
+    {
+      "id": "labs.institutional_backlog",
+      "title": "Rows awaiting institutional lab extract",
+      "severity": "pass",
+      "detail": "No future_institutional_required rows.",
+      "evidence": {
+        "n_rows": 0
+      }
+    }
+  ],
+  "next_commands": [
+    "cd \"/Users/ros/THyroid 2026/THYROID_2026\" && export MOTHERDUCK_SESSION_HINT=THYROID_2026 && .venv/bin/python scripts/148_thyroid2026_release_gate.py --md --env prod",
+    "cd \"/Users/ros/THyroid 2026/THYROID_2026\" && .venv/bin/python scripts/116_md_stage_loader.py --md",
+    "cd \"/Users/ros/THyroid 2026/THYROID_2026\" && .venv/bin/python scripts/112_v2_domain_promotion_gate.py --motherduck-check",
+    "cd \"/Users/ros/THyroid 2026/THYROID_2026\" && .venv/bin/python scripts/119_md_formalization_validate.py --md",
+    "Fix FAIL evidence (duplicate keys, load_inventory mismatch, specimen FAIL rows, multimodal blockers) before any promotion."
+  ],
+  "connection_note": {
+    "closed": true
+  }
+}
