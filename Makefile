@@ -10,7 +10,7 @@
 # harmless default (.) when unset so the target runs without extra setup.
 #
 # Usage:
-#   make md-smoke                         # fail-closed MotherDuck connection check
+#   make md-smoke                         # MOTHERDUCK_TOKEN or MD_SA_TOKEN required; runs scripts/smoke_test_md_connection.py --md (fail-closed: connect_md_fail_closed + PRAGMA database_list verification in utils/md_connect.py; exits 1 if not actually on MotherDuck; no silent local fallback)
 #   make md-v2-gate-dryrun               # v2 promotion gate, local-only (no MD writes)
 #   make md-release-manifest-qa-dryrun   # manifest dry-run against local DB (QA profile)
 #   make md-release-manifest-prod       # write release manifest (prod profile)
@@ -39,7 +39,7 @@ define run96
 	$(PYTHON) $(1)
 endef
 
-# ── MotherDuck smoke (fail-closed) ────────────────────────────────────
+# ── MotherDuck smoke (fail-closed: same gate as connect_md_fail_closed) ─
 .PHONY: md-smoke
 md-smoke:
 	$(check_md_rw_token)

@@ -11,9 +11,8 @@
 1. **Set a read/write token** (never commit real values): copy `.env.motherduck.example` → `.env.motherduck` at repo root, or export `MOTHERDUCK_TOKEN` (personal) and/or `MD_SA_TOKEN` (CI). Optional: add the same keys to `.streamlit/secrets.toml` (gitignored).
 2. **Verify token resolution**:  
    `.venv/bin/python -c "from motherduck_client import token_mode; m=token_mode(); print(m); assert m != 'none'"`
-3. **Smoke-test MotherDuck** (exits 1 if the cloud attach fails):  
-   `.venv/bin/python scripts/smoke_test_md_connection.py --md`  
-   Or: `make md-smoke`
+3. **Smoke-test MotherDuck** (fail-closed): `scripts/smoke_test_md_connection.py --md` uses `connect_md_fail_closed` and the same `PRAGMA database_list` verification as `utils/md_connect.py`. Exits 1 if there is no read/write token, the cloud connection fails, or the session is not actually attached to MotherDuck (no silent local fallback). Local-file behavior is unchanged when `--md` is omitted.  
+   Run: `.venv/bin/python scripts/smoke_test_md_connection.py --md` or `make md-smoke` (Make pre-checks for `MOTHERDUCK_TOKEN` / `MD_SA_TOKEN`).
 4. **Stage vs canonical**: **New v2 domain parquets land in schema `v2_stage`** (`116_md_stage_loader.py --md`). **`main` holds promoted canonical / entity tables only after** gate pass + `motherduck_promote.sql` (and downstream materialization). Do not assume fresh extraction appears in `main` until promotion completes.
 5. **Prefer fail-closed writes**: pass `--md` to in-scope scripts and use `connect_md_or_file(..., fail_closed=True)` (or `connect_md_fail_closed`) so unreachable MotherDuck exits 1 instead of silently using local `thyroid_master.duckdb`.
 

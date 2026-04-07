@@ -262,9 +262,8 @@ MotherDuck holds **no raw PHI**; tokens authenticate the cloud DuckDB attach. Us
 1. Copy [`.env.motherduck.example`](.env.motherduck.example) to `.env.motherduck` (gitignored) and set **`MOTHERDUCK_TOKEN`** (personal) or **`MD_SA_TOKEN`** (CI). Same keys may live in `.streamlit/secrets.toml`.
 2. Confirm a token resolves:  
    `.venv/bin/python -c "from motherduck_client import token_mode; m=token_mode(); print(m); assert m != 'none'"`
-3. Fail-closed connection check:  
-   `.venv/bin/python scripts/smoke_test_md_connection.py --md`  
-   or `make md-smoke`
+3. Fail-closed MotherDuck smoke check: `scripts/smoke_test_md_connection.py --md` calls `connect_md_fail_closed` and reuses the shared `PRAGMA database_list` verification in `utils/md_connect.py` (not `SHOW DATABASES` / heuristics). The process exits 1 if `--md` was requested but the attach is not MotherDuck, if no read/write token is available, or if the cloud connection fails — there is no silent fallback to `thyroid_master.duckdb`. Without `--md`, the script opens the local file as before.  
+   Run: `.venv/bin/python scripts/smoke_test_md_connection.py --md` or `make md-smoke` (the Make target requires `MOTHERDUCK_TOKEN` or `MD_SA_TOKEN` in the environment before invoking Python).
 4. **Staging** for new v2 parquets is schema **`v2_stage`**; **`main`** is the promoted canonical surface after the gate and promotion steps (see [`docs/motherduck_v2_staging_runbook.md`](docs/motherduck_v2_staging_runbook.md), [`docs/motherduck_database_contract_v1.md`](docs/motherduck_database_contract_v1.md)).
 
 #### MotherDuck API token examples (env vars)
