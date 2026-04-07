@@ -1,0 +1,24 @@
+metric,value,unit,source
+motherduck_env,qa,string,operator
+motherduck_database,Thyroid 2026 Molecular QA 20260407,string,config/motherduck_environments.yml + connect
+custom_user_agent,THYROID_2026_release_rehearsal,string,env MOTHERDUCK_CUSTOM_USER_AGENT
+session_hint,qa_release_rehearsal_20260407,string,env MOTHERDUCK_SESSION_HINT
+124_orchestrator_exit_code,0,count,124_md_live_release_audit.py --md --dry-run
+119_structural_checks_total,20,count,validation_report.md
+119_structural_checks_pass,20,count,validation_report.md
+119_structural_checks_warn,0,count,validation_report.md
+119_structural_checks_fail,0,count,validation_report.md
+canonical_extracted_fact_long_v2_rows,123577,count,live MotherDuck QA + 118 dry-run
+canonical_fact_quarantine_v2_rows,199,count,119 validation report
+qa_manual_review_queue_total,5622,count,live MotherDuck QA + 118 dry-run
+qa_manual_review_queue_pending_null_verification,0,count,live MotherDuck QA
+canonical_null_research_id,0,count,live SQL rehearsal_metrics
+canonical_distinct_research_id,5574,count,live SQL rehearsal_metrics
+master_patient_rollup_verified_v1_distinct_research_id,5574,count,live SQL rehearsal_metrics
+promotion_gate_g1_g8,PASS,string,promotion_gate_output.log
+promotion_manual_review_queue_rows,5622,count,promotion_gate Phase 4 log line
+md_information_schema_database_snapshots_rows,186,count,preflight_db_list.json
+md_information_schema_query_history_rows,120677,count,live SQL count (full table)
+specimen_fhir_gate_applies,false,boolean,assess_specimen_fhir_gate (synoptic_tumor_long_v1 absent)
+molecular_lineage_views_on_qa_main,0_deployed,count,132 --validate-only SKIP all four views
+132_validate_only_error_spam_fixed,true,boolean,code change scripts/132_molecular_fact_lineage_views.py

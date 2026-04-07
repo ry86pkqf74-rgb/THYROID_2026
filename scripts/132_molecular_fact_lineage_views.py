@@ -92,6 +92,16 @@ def apply_ddl(con, *, dry_run: bool) -> None:
     print(f"  Applied {len(statements)} view DDL statement(s).")
 
 
+def _main_object_exists(con, name: str) -> bool:
+    """True if a table or view exists in schema main (current MotherDuck catalog)."""
+    ident = name.replace("'", "''")
+    try:
+        con.execute(f'SELECT 1 FROM main."{ident}" LIMIT 1')
+        return True
+    except Exception:
+        return False
+
+
 def run_validation(con) -> None:
     print("\n── Molecular lineage view counts ──")
     for v in (
@@ -100,67 +110,85 @@ def run_validation(con) -> None:
         "molecular_results_unified_v",
         "molecular_fact_lineage_qa_duplicate_candidates_v",
     ):
+        if not _main_object_exists(con, v):
+            print(
+                f"  main.{v}: SKIP (not in this catalog — deploy with "
+                f"`scripts/132_molecular_fact_lineage_views.py --execute --md`)"
+            )
+            continue
         try:
-            n = con.execute(f"SELECT COUNT(*) FROM main.{v}").fetchone()[0]
+            n = con.execute(f'SELECT COUNT(*) FROM main."{v}"').fetchone()[0]
             print(f"  main.{v}: {n:,}")
         except Exception as e:
             print(f"  main.{v}: ERROR {e}")
 
     print("\n── Primary vs supporting (precedence) ──")
-    try:
-        total = con.execute("SELECT COUNT(*) FROM main.molecular_fact_long_v").fetchone()[0]
-        primary = con.execute(
-            "SELECT COUNT(*) FROM main.molecular_fact_long_v WHERE included_in_primary_analytics"
-        ).fetchone()[0]
-        supporting = total - primary
-        print(f"  Total unified rows: {total:,}")
-        print(f"  included_in_primary_analytics TRUE:  {primary:,}")
-        print(f"  included_in_primary_analytics FALSE: {supporting:,} (note rows superseded by assay)")
-    except Exception as e:
-        print(f"  ERROR {e}")
+    if not _main_object_exists(con, "molecular_fact_long_v"):
+        print("  SKIP — main.molecular_fact_long_v not deployed")
+    else:
+        try:
+            total = con.execute("SELECT COUNT(*) FROM main.molecular_fact_long_v").fetchone()[0]
+            primary = con.execute(
+                "SELECT COUNT(*) FROM main.molecular_fact_long_v WHERE included_in_primary_analytics"
+            ).fetchone()[0]
+            supporting = total - primary
+            print(f"  Total unified rows: {total:,}")
+            print(f"  included_in_primary_analytics TRUE:  {primary:,}")
+            print(f"  included_in_primary_analytics FALSE: {supporting:,} (note rows superseded by assay)")
+        except Exception as e:
+            print(f"  ERROR {e}")
 
     print("\n── Duplicate assay-event candidates (note vs structured, ±21d) ──")
-    try:
-        d = con.execute(
-            "SELECT COUNT(*) FROM main.molecular_fact_lineage_qa_duplicate_candidates_v"
-        ).fetchone()[0]
-        print(f"  Pair rows in QA view: {d:,}")
-    except Exception as e:
-        print(f"  ERROR {e}")
+    if not _main_object_exists(con, "molecular_fact_lineage_qa_duplicate_candidates_v"):
+        print("  SKIP — qa duplicate-candidates view not deployed")
+    else:
+        try:
+            d = con.execute(
+                "SELECT COUNT(*) FROM main.molecular_fact_lineage_qa_duplicate_candidates_v"
+            ).fetchone()[0]
+            print(f"  Pair rows in QA view: {d:,}")
+        except Exception as e:
+            print(f"  ERROR {e}")
 
     print("\n── Sample rows: primary assay with note support ──")
-    try:
-        rows = con.execute(
-            """
-            SELECT research_id, entity_type, fact_provenance_category, record_role,
-                   included_in_primary_analytics, event_date, source_stream,
-                   substring(COALESCE(entity_value_raw, ''), 1, 120) AS excerpt
-            FROM main.molecular_fact_long_v
-            WHERE assay_has_note_support AND source_stream IN ('molecular_results', 'molecular_variant_long')
-            ORDER BY research_id
-            LIMIT 5
-            """
-        ).fetchdf()
-        print(rows.to_string(index=False))
-    except Exception as e:
-        print(f"  ERROR {e}")
+    if not _main_object_exists(con, "molecular_fact_long_v"):
+        print("  SKIP — main.molecular_fact_long_v not deployed")
+    else:
+        try:
+            rows = con.execute(
+                """
+                SELECT research_id, entity_type, fact_provenance_category, record_role,
+                       included_in_primary_analytics, event_date, source_stream,
+                       substring(COALESCE(entity_value_raw, ''), 1, 120) AS excerpt
+                FROM main.molecular_fact_long_v
+                WHERE assay_has_note_support AND source_stream IN ('molecular_results', 'molecular_variant_long')
+                ORDER BY research_id
+                LIMIT 5
+                """
+            ).fetchdf()
+            print(rows.to_string(index=False))
+        except Exception as e:
+            print(f"  ERROR {e}")
 
     print("\n── Sample rows: supporting note (suppressed from primary analytics) ──")
-    try:
-        rows = con.execute(
-            """
-            SELECT research_id, entity_type, fact_provenance_category, record_role,
-                   included_in_primary_analytics, event_date, matched_molecular_result_id,
-                   substring(COALESCE(entity_value_raw, ''), 1, 120) AS excerpt
-            FROM main.molecular_fact_long_v
-            WHERE source_stream = 'note_genetics' AND NOT included_in_primary_analytics
-            ORDER BY research_id
-            LIMIT 5
-            """
-        ).fetchdf()
-        print(rows.to_string(index=False))
-    except Exception as e:
-        print(f"  ERROR {e}")
+    if not _main_object_exists(con, "molecular_fact_long_v"):
+        print("  SKIP — main.molecular_fact_long_v not deployed")
+    else:
+        try:
+            rows = con.execute(
+                """
+                SELECT research_id, entity_type, fact_provenance_category, record_role,
+                       included_in_primary_analytics, event_date, matched_molecular_result_id,
+                       substring(COALESCE(entity_value_raw, ''), 1, 120) AS excerpt
+                FROM main.molecular_fact_long_v
+                WHERE source_stream = 'note_genetics' AND NOT included_in_primary_analytics
+                ORDER BY research_id
+                LIMIT 5
+                """
+            ).fetchdf()
+            print(rows.to_string(index=False))
+        except Exception as e:
+            print(f"  ERROR {e}")
 
 
 def parse_args() -> argparse.Namespace:
