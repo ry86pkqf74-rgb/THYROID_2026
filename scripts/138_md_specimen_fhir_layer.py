@@ -6,7 +6,8 @@ surgery_pathology_linkage_v3, fna_molecular_linkage_v3, preop_surgery_linkage_v3
 molecular_test_episode_v2
 
 Pipeline: scripts/sql/139_specimen_identity_layer_ddl.sql (identity) then
-scripts/sql/138_specimen_fhir_tail_ddl.sql (genomic + FHIR).
+scripts/sql/138_specimen_fhir_tail_ddl.sql (FHIR), then
+scripts/140_md_specimen_genomics_binding.apply_specimen_genomics_binding (genomics).
 
 Operational rules (MotherDuck):
   * connect_md_or_file(..., fail_closed=True, custom_user_agent='specimen_fhir_hardening_v1')
@@ -185,124 +186,6 @@ def persist_validation(con, rows: list[tuple[str, str, str]]) -> None:
     )
 
 
-_APPEND_GENETIC_SQL = """
-INSERT INTO main.specimen_genomic_assay_v1 (
-  genomic_assay_id, research_id, molecular_episode_id, platform, test_date_native,
-  fna_episode_id, surgery_episode_id, specimen_id, specimen_focus_id,
-  fm_tier, preop_tier, binding_confidence_tier, review_flag, binding_chain, materialized_at
-)
-WITH gtx AS (
-  SELECT *, row_number() OVER (ORDER BY research_id, test_platform) AS gt_rn
-  FROM main.genetic_testing
-),
-gt0 AS (
-  SELECT
-    CAST(gt.research_id AS BIGINT) AS research_id,
-    CAST(gt.gt_rn AS BIGINT) AS gt_rn,
-    CAST(m.molecular_episode_id AS BIGINT) AS molecular_episode_id,
-    CAST(gt.test_platform AS VARCHAR) AS platform,
-    m.test_date_native,
-    ROW_NUMBER() OVER (
-      PARTITION BY gt.research_id, gt.gt_rn,
-        LOWER(TRIM(COALESCE(CAST(gt.test_platform AS VARCHAR), '')))
-      ORDER BY m.test_date_native NULLS LAST
-    ) AS _rk
-  FROM gtx gt
-  INNER JOIN main.molecular_test_episode_v2 m
-    ON gt.research_id = m.research_id
-   AND LOWER(TRIM(COALESCE(CAST(gt.test_platform AS VARCHAR), '')))
-       = LOWER(TRIM(COALESCE(CAST(m.platform AS VARCHAR), '')))
-),
-gt1 AS (SELECT * FROM gt0 WHERE _rk = 1),
-fm AS (
-  SELECT *, ROW_NUMBER() OVER (
-      PARTITION BY research_id, molecular_episode_id
-      ORDER BY score_rank NULLS LAST, linkage_score DESC NULLS LAST
-    ) AS _fr
-  FROM main.fna_molecular_linkage_v3
-),
-fm1 AS (SELECT * FROM fm WHERE _fr = 1),
-ps AS (
-  SELECT *, ROW_NUMBER() OVER (
-      PARTITION BY research_id, preop_episode_id ORDER BY score_rank NULLS LAST
-    ) AS _pr
-  FROM main.preop_surgery_linkage_v3
-),
-ps1 AS (SELECT * FROM ps WHERE _pr = 1),
-sp_agg AS (
-  SELECT research_id, surgery_episode_id,
-         min(specimen_id) AS specimen_id, min(specimen_focus_id) AS specimen_focus_id
-  FROM main.specimen_tumor_focus_v1
-  GROUP BY 1, 2
-),
-x AS (
-  SELECT
-    gt1.research_id,
-    gt1.gt_rn,
-    gt1.molecular_episode_id,
-    gt1.platform,
-    gt1.test_date_native,
-    fm1.fna_episode_id,
-    fm1.linkage_confidence_tier AS fm_tier,
-    ps1.surgery_episode_id,
-    ps1.linkage_confidence_tier AS preop_tier,
-    sp.specimen_id,
-    sp.specimen_focus_id,
-    CASE
-      WHEN sp.specimen_focus_id IS NOT NULL
-           AND fm1.linkage_confidence_tier IN ('exact_match', 'high_confidence')
-        THEN 'A_excel_exact_platform'
-      WHEN sp.specimen_id IS NOT NULL THEN 'B_excel_specimen'
-      ELSE 'C_excel_review'
-    END AS binding_confidence_tier,
-    TRUE AS review_flag
-  FROM gt1
-  LEFT JOIN fm1 ON gt1.research_id = fm1.research_id
-               AND gt1.molecular_episode_id = fm1.molecular_episode_id
-  LEFT JOIN ps1 ON fm1.research_id = ps1.research_id
-               AND fm1.fna_episode_id = ps1.preop_episode_id
-  LEFT JOIN sp_agg sp ON sp.research_id = ps1.research_id
-       AND COALESCE(CAST(sp.surgery_episode_id AS VARCHAR), '')
-         = COALESCE(CAST(ps1.surgery_episode_id AS VARCHAR), '')
-)
-SELECT
-  ('sga_' || sha256(concat_ws('|', CAST(research_id AS VARCHAR),
-      CAST(gt_rn AS VARCHAR), CAST(molecular_episode_id AS VARCHAR), 'genetic_testing'))) AS genomic_assay_id,
-  research_id,
-  molecular_episode_id,
-  platform,
-  test_date_native,
-  fna_episode_id,
-  surgery_episode_id,
-  specimen_id,
-  specimen_focus_id,
-  fm_tier,
-  preop_tier,
-  binding_confidence_tier,
-  review_flag,
-  'genetic_testing+molecular_episode+fna_molecular+preop_surgery'::VARCHAR,
-  current_timestamp
-FROM x
-WHERE NOT EXISTS (
-  SELECT 1 FROM main.specimen_genomic_assay_v1 e
-  WHERE e.genomic_assay_id = (
-    'sga_' || sha256(concat_ws('|', CAST(x.research_id AS VARCHAR),
-      CAST(x.gt_rn AS VARCHAR), CAST(x.molecular_episode_id AS VARCHAR), 'genetic_testing'))
-  )
-);
-"""
-
-
-def append_genetic_testing_rows(con) -> None:
-    """genetic_testing rows bound via exact platform equality to molecular_test_episode_v2."""
-    if not _table_exists(con, "main", "genetic_testing"):
-        return
-    try:
-        con.execute(_APPEND_GENETIC_SQL)
-    except Exception as exc:
-        print(f"  [warn] genetic_testing append skipped: {exc}")
-
-
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Specimen + FHIR layer on MotherDuck.")
     p.add_argument("--md", action="store_true", help="MotherDuck fail-closed.")
@@ -337,6 +220,13 @@ def main() -> None:
     mod139 = importlib.util.module_from_spec(spec139)
     assert spec139.loader
     spec139.loader.exec_module(mod139)
+
+    spec140 = importlib.util.spec_from_file_location(
+        "_specimen_genomics140", ROOT / "scripts" / "140_md_specimen_genomics_binding.py"
+    )
+    mod140 = importlib.util.module_from_spec(spec140)
+    assert spec140.loader
+    spec140.loader.exec_module(mod140)
 
     hint = os.environ.get("MOTHERDUCK_SESSION_HINT") or "thyroid2026:specimen_fhir:" + _git_sha()[:7]
     con = connect_md_or_file(
@@ -405,7 +295,7 @@ def main() -> None:
         con.execute("ROLLBACK")
         raise
 
-    append_genetic_testing_rows(con)
+    mod140.apply_specimen_genomics_binding(con)
 
     val_rows = run_validation(con)
     persist_validation(con, val_rows)
@@ -483,7 +373,7 @@ LIMIT 20
         "## Matching policy",
         "- Auto-merge: exact `specimen_fingerprint_sha256` only (full rebuild replaces derived tables).",
         "- Near-duplicate pairs → `qa.specimen_merge_review_queue_v1` (same patient/day/surgery_episode, distinct FP).",
-        "- Genomics: molecular episodes via v3 linkage chain; genetic_testing append requires exact platform string match.",
+        "- Genomics: scripts/140 — v3 linkage chain, optional genetic_testing + ThyroSeq JSON explosion.",
         "",
         "## Unresolved review burden",
         "- See row count `SELECT COUNT(*) FROM qa.specimen_merge_review_queue_v1` on target DB.",

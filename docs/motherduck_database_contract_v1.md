@@ -112,7 +112,7 @@ Same names as v2_stage tables, promoted by `motherduck_promote.sql` after all 8 
 
 #### Specimen identity + analytic FHIR export (v1)
 
-Materialized by [`scripts/138_md_specimen_fhir_layer.py`](../scripts/138_md_specimen_fhir_layer.py) + [`scripts/sql/138_specimen_fhir_layer_ddl.sql`](../scripts/sql/138_specimen_fhir_layer_ddl.sql). **Additive, derived-only:** full rebuild (`CREATE OR REPLACE`) is safe; upstream wide/pathology fields are not overwritten.
+Materialized by [`scripts/138_md_specimen_fhir_layer.py`](../scripts/138_md_specimen_fhir_layer.py) (identity + FHIR tail) + [`scripts/140_md_specimen_genomics_binding.py`](../scripts/140_md_specimen_genomics_binding.py) (`custom_user_agent='specimen_genomics_binding_v1'`). **Additive, derived-only:** full rebuild (`CREATE OR REPLACE`) is safe; upstream wide/pathology fields are not overwritten.
 
 **Prereqs:** `synoptic_tumor_long_v1`, `path_synoptics_encounter_qc_v1`, `surgery_pathology_linkage_v3`, `fna_molecular_linkage_v3`, `preop_surgery_linkage_v3`, `molecular_test_episode_v2`.
 
@@ -123,7 +123,7 @@ Materialized by [`scripts/138_md_specimen_fhir_layer.py`](../scripts/138_md_spec
 | `specimen_master_v1` | Encounter-level specimen; `specimen_fingerprint_sha256` natural key |
 | `specimen_tumor_focus_v1` | One row per populated tumor slot; carries `synoptic_row_ix`, `encounter_synoptic_row_ix`, `tumor_index` |
 | `specimen_source_xref_v1` | Provenance xref from synoptic long rows to `specimen_id` / `specimen_focus_id` |
-| `specimen_genomic_assay_v1` | Molecular episode + optional `genetic_testing` rows bound via v3 linkage (and exact platform match for Excel genetics) |
+| `specimen_genomic_assay_v1` | Molecular episode rows + optional `genetic_testing` + ThyroSeq JSON explosions; v3 linkage spine; normalized `linkage_confidence_tier` (`exact` / `high_confidence` / `plausible_review` / `unresolved_review`); `path_surgery_id` / `tumor_ordinal` from rank-1 `surgery_pathology_linkage_v3` |
 | `fhir_patient_deid_map_v1` | Deterministic de-identified `Patient/` id (hash of `research_id` + salt) |
 | `fhir_specimen_v1` | Analytic `Specimen` JSON resources |
 | `fhir_procedure_collection_v1` | Analytic `Procedure` (collection context) |
@@ -131,7 +131,7 @@ Materialized by [`scripts/138_md_specimen_fhir_layer.py`](../scripts/138_md_spec
 | `fhir_episode_of_care_v1` | Analytic `EpisodeOfCare` stub (ties to `surgery_episode_id` when present) |
 | `fhir_bundle_specimen_export_v1` | Per-specimen `Bundle` JSON (`type=collection`) |
 
-**Governance:** `qa.specimen_merge_review_queue_v1` — non-auto-merged near-duplicate encounter pairs (same patient / day / `surgery_episode_id`, distinct fingerprint). `qa.val_specimen_contract_v1` — validator output from script 138.
+**Governance:** `qa.specimen_merge_review_queue_v1` — non-auto-merged near-duplicate encounter pairs (same patient / day / `surgery_episode_id`, distinct fingerprint). `qa.val_specimen_contract_v1` — validator output from script 138. `qa.specimen_genomic_link_review_v1` / `qa.val_specimen_genomic_binding_v1` — genomics binding QA + checks from script 140.
 
 **FHIR disclaimer:** analytic, de-identified export for research workflows — **not** asserted as US Core–complete or production clinical interoperability.
 
@@ -167,6 +167,8 @@ Materialized by [`scripts/138_md_specimen_fhir_layer.py`](../scripts/138_md_spec
 | `manual_review_queue_summary_v` | View | Review queue counts by domain and status |
 | `specimen_merge_review_queue_v1` | Table | Candidate specimen fingerprint collisions for manual review |
 | `val_specimen_contract_v1` | Table | Specimen/FHIR contract checks (script 138 + Check 13) |
+| `specimen_genomic_link_review_v1` | Table | Genomics–specimen binding conflicts / weak tiers (script 140) |
+| `val_specimen_genomic_binding_v1` | Table | Genomics binding validation rows (script 140) |
 
 ### 2.4 release_YYYYMMDD schemas
 
