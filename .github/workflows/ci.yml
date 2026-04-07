@@ -112,6 +112,7 @@ jobs:
             tests/test_fact_provenance_contract.py \
             tests/test_registry_and_md_connect.py \
             tests/test_fleet_registry_parity.py \
+            tests/test_120_review_queue_triage.py \
             -v --tb=short
 
   # ── Multimodal contract + imaging↔FNA linkage (offline DuckDB, no secrets) ─

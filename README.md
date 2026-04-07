@@ -53,6 +53,7 @@ documented source limitations, not data quality failures.
 | LLM validation workspace | [`studies/llm_extraction_validation/README.md`](studies/llm_extraction_validation/README.md) |
 | Architecture sign-off memo | [`studies/20260407_signoff_memo/signoff_memo.md`](studies/20260407_signoff_memo/signoff_memo.md) |
 | MotherDuck DB contract | [`docs/motherduck_database_contract_v1.md`](docs/motherduck_database_contract_v1.md) |
+| Review queue triage export (script 120) | [`docs/review_queue_triage_export.md`](docs/review_queue_triage_export.md) |
 | Domain mapping rules | [`docs/domain_mapping_rules.md`](docs/domain_mapping_rules.md) |
 | Domain inventory (current) | [`studies/20260406_domain_inventory_current/`](studies/20260406_domain_inventory_current/) |
 | Release-mode validation | [`studies/20260407_formalization_validation_release_mode/`](studies/20260407_formalization_validation_release_mode/) |
@@ -159,14 +160,22 @@ audit documents, export bundles, and open backfill items.
 
 #### Manual review queue triage (read-only export)
 
-Reproducible CSVs and `summary.md` for `qa.manual_review_queue` (no promotion writes; `review_reason` / raw note text is not exported; other text fields truncated). Uses the same token resolution as other `--md` scripts (`MOTHERDUCK_TOKEN`, `MD_SA_TOKEN`, or `.streamlit/secrets.toml`).
+CSVs + `summary.md` under a timestamped `exports/review_queue_triage_<UTC_YYYYMMDD_HHMMSS>/` folder; **SELECT-only** on `qa.manual_review_queue`. **Full usage, artifact list, and token notes:** [`docs/review_queue_triage_export.md`](docs/review_queue_triage_export.md).
+
+**MotherDuck:**
 
 ```bash
+export MOTHERDUCK_TOKEN='md_…'   # or MD_SA_TOKEN with --md-sa
 .venv/bin/python scripts/120_review_queue_triage.py --md
-.venv/bin/python scripts/120_review_queue_triage.py --md --md-sa --run-label formalization_20260406_v3
 ```
 
-Writes `exports/review_queue_triage_<UTC_YYYYMMDD_HHMMSS>/`. For a local file database, omit `--md` and pass `--db-path`.
+**Local DuckDB file:**
+
+```bash
+.venv/bin/python scripts/120_review_queue_triage.py --db-path thyroid_master.duckdb
+```
+
+Optional: `--md-sa`, `--run-label …`, `--output-root exports/offline`. Offline smoke: `python -m pytest tests/test_120_review_queue_triage.py`.
 
 ---
 
