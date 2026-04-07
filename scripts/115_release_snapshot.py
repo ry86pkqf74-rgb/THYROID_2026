@@ -122,15 +122,15 @@ def main() -> None:
                     f"  [dry-run] CREATE TABLE {schema_name}.{t} AS "
                     f"SELECT *, '{tag}' AS release_tag FROM main.{t}"
                 )
-            print("  [dry-run] INSERT INTO qa.release_manifest ...")
+            print("  [dry-run] INSERT INTO qa.release_manifest ... (after release COMMIT)")
             return
 
+        row_counts: dict[str, int] = {}
         con.execute("BEGIN TRANSACTION")
         try:
             con.execute(f"CREATE SCHEMA {schema_name}")
             print(f"  [schema] created {schema_name}")
 
-            row_counts: dict[str, int] = {}
             for t in tables:
                 con.execute(f"""
                     CREATE TABLE {schema_name}.{t} AS
@@ -157,6 +157,26 @@ def main() -> None:
                     f"(matches main.{t})"
                 )
 
+            con.execute("COMMIT")
+            print(
+                "  [txn] COMMIT completed for release snapshot "
+                "(release_* durable; manifest recorded separately)."
+            )
+        except SystemExit:
+            raise
+        except BaseException as exc:
+            try:
+                con.execute("ROLLBACK")
+                print(f"  [txn] ROLLBACK after error: {exc}")
+            except Exception as rb_exc:
+                print(f"  [txn] ROLLBACK failed (connection state unclear): {rb_exc}")
+            raise
+
+        print(
+            f"\n  Release {tag} created with {len(row_counts)} tables in {schema_name}"
+        )
+
+        try:
             con.execute(
                 """
                 INSERT INTO qa.release_manifest
@@ -174,22 +194,12 @@ def main() -> None:
                 ],
             )
             print("  [manifest] recorded in qa.release_manifest")
-
-            con.execute("COMMIT")
-            print("  [txn] COMMIT completed successfully (no rollback).")
-
+        except Exception as exc:
+            print(f"  [warn] Could not write to qa.release_manifest: {exc}")
             print(
-                f"\n  Release {tag} created with {len(row_counts)} tables in {schema_name}"
+                "         Release schema is already committed; run "
+                "scripts/114_qa_schema_setup.py then re-insert manifest or use a follow-up job."
             )
-        except SystemExit:
-            raise
-        except BaseException as exc:
-            try:
-                con.execute("ROLLBACK")
-                print(f"  [txn] ROLLBACK after error: {exc}")
-            except Exception as rb_exc:
-                print(f"  [txn] ROLLBACK failed (connection state unclear): {rb_exc}")
-            raise
     finally:
         con.close()
 

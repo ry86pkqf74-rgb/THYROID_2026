@@ -104,8 +104,18 @@ def load_table_from_parquet(
     return int(md_count)
 
 
-def apply_ddl(con: duckdb.DuckDBPyConnection, dry_run: bool = False) -> None:
-    """Execute the companion DDL file for contract views."""
+def apply_ddl(
+    con: duckdb.DuckDBPyConnection,
+    dry_run: bool = False,
+    *,
+    on_error: str = "raise",
+) -> None:
+    """Execute the companion DDL file for contract views.
+
+    on_error
+        "raise" — propagate failures.
+        "warn" — log statement failures and continue.
+    """
     if not DDL_PATH.exists():
         print(f"  [warn] DDL file not found: {DDL_PATH}")
         return
@@ -127,14 +137,20 @@ def apply_ddl(con: duckdb.DuckDBPyConnection, dry_run: bool = False) -> None:
             label = stmt[:80].replace("\n", " ")
             print(f"  [dry-run] {label}...")
             continue
-        con.execute(stmt)
+        try:
+            con.execute(stmt)
+        except Exception as exc:
+            if on_error == "raise":
+                raise
+            print(f"  [warn] DDL failed: {exc}")
+            print(f"         Statement: {stmt[:120]}...")
 
 
 def _run_contract_writes_in_transaction(con: duckdb.DuckDBPyConnection, args: argparse.Namespace) -> None:
-    """Materialize tables, apply DDL, and verify views inside one transaction."""
+    """Commit base tables under one transaction; DDL/views afterward (warn-and-continue)."""
     con.execute("BEGIN TRANSACTION")
     try:
-        print("\n  [txn] BEGIN (write phase: main tables + DDL + verify)")
+        print("\n  [txn] BEGIN (main table loads + parquet parity only)")
 
         print("=== Phase 2: Canonical table materialization ===")
         if not args.skip_canonical:
@@ -147,10 +163,6 @@ def _run_contract_writes_in_transaction(con: duckdb.DuckDBPyConnection, args: ar
         for table_name, pq_filename in EPISODE_TABLES.items():
             pq_path = FREEZE_DIR / pq_filename
             load_table_from_parquet(con, table_name, pq_path, dry_run=False)
-
-        print("\n=== Contract views (DDL) ===")
-        apply_ddl(con, dry_run=False)
-        print("  [ddl] contract views created/refreshed")
 
         written_tables: list[tuple[str, Path]] = []
         if not args.skip_canonical:
@@ -173,19 +185,11 @@ def _run_contract_writes_in_transaction(con: duckdb.DuckDBPyConnection, args: ar
                 )
             print(f"  [parity OK] main.{table_name}: {md_count:,} rows")
 
-        print("\n=== Verification (views, before COMMIT) ===")
-        for view_name in [
-            "longitudinal_lab_deduped_v",
-            "linkage_summary_v",
-            "episode_completeness_summary_v",
-        ]:
-            cnt = con.execute(
-                f"SELECT COUNT(*) FROM main.{view_name}"
-            ).fetchone()[0]
-            print(f"  [verify] main.{view_name}: {cnt:,} rows")
-
         con.execute("COMMIT")
-        print("  [txn] COMMIT completed successfully (no rollback).")
+        print(
+            "  [txn] COMMIT: main table loads persisted "
+            "(views/DDL afterward; failures there do not roll back tables)."
+        )
     except SystemExit:
         raise
     except BaseException as exc:
@@ -195,6 +199,24 @@ def _run_contract_writes_in_transaction(con: duckdb.DuckDBPyConnection, args: ar
         except Exception as rb_exc:
             print(f"  [txn] ROLLBACK failed (connection state unclear): {rb_exc}")
         raise
+
+    print("\n=== Contract views (DDL) ===")
+    apply_ddl(con, dry_run=False, on_error="warn")
+    print("  [ddl] contract views pass finished (review warnings for any partial failures)")
+
+    print("\n=== Verification (views) ===")
+    try:
+        for view_name in [
+            "longitudinal_lab_deduped_v",
+            "linkage_summary_v",
+            "episode_completeness_summary_v",
+        ]:
+            cnt = con.execute(
+                f"SELECT COUNT(*) FROM main.{view_name}"
+            ).fetchone()[0]
+            print(f"  [verify] main.{view_name}: {cnt:,} rows")
+    except Exception as exc:
+        print(f"  [warn] view verification failed: {exc}")
 
 
 def main() -> None:
