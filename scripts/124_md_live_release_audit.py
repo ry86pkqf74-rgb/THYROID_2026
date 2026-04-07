@@ -231,14 +231,24 @@ def run_preflight(
     except Exception as exc:
         evidence["schemas_present_error"] = str(exc)
 
-    # --- Snapshot retention (query md_information_schema.snapshots if available) ---
+    # --- Snapshot retention (DuckLake: DATABASE_SNAPSHOTS; legacy alias: snapshots) ---
     try:
-        snaps = con.execute("SELECT * FROM md_information_schema.snapshots").fetchdf()
-        evidence["md_snapshots"] = snaps.to_dict(orient="records")
-        print(f"  [INFO] md_information_schema.snapshots: {len(snaps)} snapshot(s)")
+        snaps = con.execute(
+            "SELECT * FROM MD_INFORMATION_SCHEMA.DATABASE_SNAPSHOTS"
+        ).fetchdf()
+        evidence["md_database_snapshots"] = snaps.to_dict(orient="records")
+        print(f"  [INFO] MD_INFORMATION_SCHEMA.DATABASE_SNAPSHOTS: {len(snaps)} row(s)")
     except Exception as exc:
-        evidence["md_snapshots_note"] = f"Not accessible or no snapshots: {exc}"
-        print(f"  [INFO] Snapshot retention query: {exc} (may be unavailable on this plan tier)")
+        evidence["md_database_snapshots_note"] = str(exc)
+        try:
+            snaps = con.execute("SELECT * FROM md_information_schema.snapshots").fetchdf()
+            evidence["md_snapshots"] = snaps.to_dict(orient="records")
+            print(f"  [INFO] md_information_schema.snapshots: {len(snaps)} snapshot(s)")
+        except Exception as exc2:
+            evidence["md_snapshots_note"] = f"DATABASE_SNAPSHOTS: {exc}; snapshots: {exc2}"
+            print(
+                f"  [INFO] Snapshot retention: no DATABASE_SNAPSHOTS or snapshots view ({exc2})"
+            )
 
     evidence["finished"] = _now_iso()
     evidence["success"] = True
@@ -319,12 +329,23 @@ def capture_release_manifest(con: Any, tag: str, audit_dir: Path) -> None:
 
         for schema in release_schemas:
             try:
-                tables = con.execute(
-                    f"SELECT table_name, "
-                    f"(SELECT COUNT(*) FROM {schema}.\"{{}}\".format(table_name)) AS rows "
-                    f"FROM information_schema.tables WHERE table_schema = '{schema}'"
-                ).fetchdf()
-                manifest[f"tables_{schema}"] = tables.to_dict(orient="records")
+                tbl_names = [
+                    r[0]
+                    for r in con.execute(
+                        "SELECT table_name FROM information_schema.tables "
+                        f"WHERE table_schema = '{schema}' ORDER BY 1"
+                    ).fetchall()
+                ]
+                rows_for_schema: list[dict[str, Any]] = []
+                for tbl in tbl_names:
+                    try:
+                        cnt = con.execute(
+                            f'SELECT COUNT(*) FROM "{schema}"."{tbl}"'
+                        ).fetchone()[0]
+                        rows_for_schema.append({"table_name": tbl, "rows": int(cnt)})
+                    except Exception:
+                        rows_for_schema.append({"table_name": tbl, "rows": None})
+                manifest[f"tables_{schema}"] = rows_for_schema
             except Exception:
                 pass
 
@@ -376,15 +397,15 @@ def capture_validation_evidence(
     except Exception as exc:
         evidence["md_information_schema_databases_error"] = str(exc)
 
-    # Query log (Business/Pro plans only)
+    # Query history (MotherDuck telemetry; query_log name is not present on current catalogs)
     try:
-        qlog = con.execute(
-            "SELECT * FROM md_information_schema.query_log "
+        qh = con.execute(
+            "SELECT * FROM md_information_schema.query_history "
             "ORDER BY start_time DESC LIMIT 50"
         ).fetchdf()
-        evidence["recent_query_log"] = qlog.to_dict(orient="records")
+        evidence["recent_query_history"] = qh.to_dict(orient="records")
     except Exception as exc:
-        evidence["recent_query_log_note"] = f"Not accessible: {exc}"
+        evidence["recent_query_history_note"] = f"Not accessible: {exc}"
 
     # Per-schema row counts
     schema_counts: dict[str, list[dict]] = {}
@@ -499,8 +520,8 @@ def write_audit_summary(
         "| `parquet_bundle_manifest.json` | Parquet bundle file list with SHA-256 checksums |",
         "| `validation_report.md` | 119 structural + release-mode validation (includes molecular contract) |",
         "| `molecular_lineage_views_output.log` | 132 unified molecular fact views |",
-        "| `release_validation_strict.json` | Full MD evidence: query log, schema counts, manifest |",
-        "| `snapshot_metadata.json` | md_information_schema.snapshots (if accessible) |",
+        "| `release_validation_strict.json` | Full MD evidence: query_history, schema counts, manifest |",
+        "| `snapshot_metadata.json` | MD_INFORMATION_SCHEMA.DATABASE_SNAPSHOTS (or legacy snapshots view) |",
         "| `audit_summary.md` | This file |",
         "",
     ]
@@ -873,23 +894,41 @@ def main() -> None:
     if not args.dry_run:
         capture_validation_evidence(con, tag, audit_dir, git_sha, step_results)
 
-        # snapshot_metadata.json -- alias of preflight md_information_schema.snapshots
+        # snapshot_metadata.json -- DATABASE_SNAPSHOTS (DuckLake); fallback legacy snapshots view
         snap_path = audit_dir / "snapshot_metadata.json"
         if not snap_path.exists():
             try:
-                snaps = con.execute("SELECT * FROM md_information_schema.snapshots").fetchdf()
+                snaps = con.execute(
+                    "SELECT * FROM MD_INFORMATION_SCHEMA.DATABASE_SNAPSHOTS"
+                ).fetchdf()
                 snap_path.write_text(
                     json.dumps({
                         "captured_at": _now_iso(),
+                        "source": "MD_INFORMATION_SCHEMA.DATABASE_SNAPSHOTS",
                         "snapshots": snaps.to_dict(orient="records"),
                     }, indent=2, default=str),
                     encoding="utf-8",
                 )
             except Exception as exc:
-                snap_path.write_text(
-                    json.dumps({"note": f"Not accessible: {exc}"}),
-                    encoding="utf-8",
-                )
+                try:
+                    snaps = con.execute(
+                        "SELECT * FROM md_information_schema.snapshots"
+                    ).fetchdf()
+                    snap_path.write_text(
+                        json.dumps({
+                            "captured_at": _now_iso(),
+                            "source": "md_information_schema.snapshots",
+                            "snapshots": snaps.to_dict(orient="records"),
+                        }, indent=2, default=str),
+                        encoding="utf-8",
+                    )
+                except Exception as exc2:
+                    snap_path.write_text(
+                        json.dumps({
+                            "note": f"DATABASE_SNAPSHOTS: {exc}; snapshots: {exc2}",
+                        }),
+                        encoding="utf-8",
+                    )
             print("  [write] snapshot_metadata.json")
 
     con.close()
