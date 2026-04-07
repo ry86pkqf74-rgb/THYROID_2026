@@ -1,0 +1,47 @@
+{
+  "schema": "mm_contract_dev",
+  "contract_version": "mm_contract_v1.0.0",
+  "row_counts": {
+    "dim_patient_mm_v1": 11506,
+    "map_patient_identifier_mm_v1": 11506,
+    "fact_surgery_mm_v1": 9371,
+    "dim_nodule_mm_v1": 19891,
+    "fact_imaging_mm_v1": 19891,
+    "fact_fna_mm_v1": 8119,
+    "fact_genetics_mm_v1": 10126,
+    "fact_path_report_mm_v1": 11688,
+    "fact_tumor_mm_v1": 11691,
+    "link_surgery_path_mm_v1": 9417,
+    "link_surgery_context_mm_v1": 9371,
+    "val_nodes_invariant_mm_v1": 2957,
+    "val_side_lobe_mismatch_mm_v1": 36,
+    "val_preop_temporal_order_mm_v1": 3,
+    "val_ambiguous_multimodal_linkage_mm_v1": 3989,
+    "val_multitumor_expansion_mm_v1": 0,
+    "val_multi_tumor_report_mm_v1": 0
+  },
+  "validation_fail_rows": {
+    "val_nodes_invariant_mm_v1": 2957,
+    "val_side_lobe_mismatch_mm_v1": 36,
+    "val_preop_temporal_order_mm_v1": 3,
+    "val_ambiguous_multimodal_linkage_mm_v1": 3989,
+    "val_multitumor_expansion_mm_v1": 0
+  },
+  "gaps": {
+    "missing_upstream": [],
+    "bootstrapped_upstream": [
+      "event_date_audit_v2",
+      "fna_molecular_linkage_v3",
+      "linkage_master_v1",
+      "mrn_crosswalk_v1",
+      "pathology_rai_linkage_v3",
+      "patient_cross_domain_timeline_v2",
+      "preop_surgery_linkage_v3",
+      "surgery_pathology_linkage_v3"
+    ],
+    "notes": [
+      "val_* tables are audit outputs; some ambiguity rows are expected.",
+      "is_primary_link requires unique non-weak candidate."
+    ]
+  }
+}

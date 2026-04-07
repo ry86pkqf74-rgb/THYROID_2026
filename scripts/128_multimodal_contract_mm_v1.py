@@ -696,6 +696,9 @@ SELECT s.research_id,
 FROM src s
 LEFT JOIN dst d ON s.research_id = d.research_id AND s.surgery_episode_id = d.surgery_episode_id
 WHERE s.n_src <> COALESCE(d.n_contract, 0::BIGINT);
+
+CREATE OR REPLACE VIEW {schema}.val_multi_tumor_report_mm_v1 AS
+SELECT * FROM {schema}.val_multitumor_expansion_mm_v1;
 """.strip()
 
 
@@ -755,6 +758,7 @@ def apply_comments(con: duckdb.DuckDBPyConnection, schema: str) -> None:
     tbl("val_preop_temporal_order_mm_v1", "Temporal ordering issues in preop/molecular chains.")
     tbl("val_ambiguous_multimodal_linkage_mm_v1", "Ambiguous or weak links excluded from primary.")
     tbl("val_multitumor_expansion_mm_v1", "Tumor row count parity vs tumor_episode_master_v2 per surgery.")
+    # val_multi_tumor_report_mm_v1 is a VIEW; DuckDB COMMENT ON TABLE does not apply.
 
     for stmt in comments:
         if stmt[0]:
@@ -802,6 +806,11 @@ def build_all(con: duckdb.DuckDBPyConnection, schema: str) -> list[str]:
     ):
         n = con.execute(f"SELECT COUNT(*) FROM {schema}.{v}").fetchone()[0]
         print(f"  {v}: {n:,} rows")
+    try:
+        nrep = con.execute(f"SELECT COUNT(*) FROM {schema}.val_multi_tumor_report_mm_v1").fetchone()[0]
+        print(f"  val_multi_tumor_report_mm_v1 (view): {nrep:,} rows")
+    except Exception as e:
+        print(f"  [WARN] val_multi_tumor_report_mm_v1: {e}")
 
     section("COMMENT ON metadata")
     apply_comments(con, schema)
@@ -826,12 +835,13 @@ def summarize(con: duckdb.DuckDBPyConnection, schema: str) -> dict:
         "val_preop_temporal_order_mm_v1",
         "val_ambiguous_multimodal_linkage_mm_v1",
         "val_multitumor_expansion_mm_v1",
+        "val_multi_tumor_report_mm_v1",
     ]
     out: dict = {"schema": schema, "contract_version": CONTRACT_VERSION, "row_counts": {}, "validation_fail_rows": {}}
     for t in tables:
         cnt = con.execute(f"SELECT COUNT(*) FROM {schema}.{t}").fetchone()[0]
         out["row_counts"][t] = cnt
-        if t.startswith("val_"):
+        if t.startswith("val_") and t != "val_multi_tumor_report_mm_v1":
             out["validation_fail_rows"][t] = cnt
     return out
 

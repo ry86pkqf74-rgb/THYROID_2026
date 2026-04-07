@@ -1,0 +1,1186 @@
+{
+  "database": "Thyroid 2026",
+  "keyword_filtered_objects": [
+    {
+      "schema": "main",
+      "name": "analysis_molecular_subset_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "complication_patient_summary_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "ct_imaging",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "extracted_ras_patient_summary_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "fna_cytology",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "fna_episode_master_v2",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "fna_history",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "gold_master_patient_facts_v1",
+      "type": "VIEW"
+    },
+    {
+      "schema": "main",
+      "name": "imaging_fna_linkage_mm_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "imaging_nodule_master_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "linkage_summary_v",
+      "type": "VIEW"
+    },
+    {
+      "schema": "main",
+      "name": "master_patient_rollup_verified_v1",
+      "type": "VIEW"
+    },
+    {
+      "schema": "main",
+      "name": "molecular_test_episode_v2",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "note_entities_llm_imaging",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "note_entities_llm_pathology",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "note_entities_llm_patient_decision_adherence",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "note_entities_llm_rai_detailed",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "note_entities_llm_synoptic_pathology_enrichment",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "note_entities_llm_us_nodule_dynamics",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "note_entities_operative_detail",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "operative_episode_detail_v2",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "patient_analysis_resolved_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "patient_refined_master_clinical_v12",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "rai_treatment_episode_v2",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "review_queue_imaging_fna_mm_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "tumor_episode_master_v2",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "tumor_pathology",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "us_nodules_tirads",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "main",
+      "name": "val_imaging_fna_linkage_audit_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "_bootstrap_event_date_audit_v2",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "_bootstrap_fna_episode_master_v2",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "_bootstrap_fna_molecular_linkage_v3",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "_bootstrap_linkage_master_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "_bootstrap_mrn_crosswalk_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "_bootstrap_pathology_rai_linkage_v3",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "_bootstrap_patient_cross_domain_timeline_v2",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "_bootstrap_preop_surgery_linkage_v3",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "_bootstrap_surgery_pathology_linkage_v3",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "dim_nodule_mm_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "dim_patient_mm_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "fact_fna_mm_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "fact_imaging_mm_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "fact_path_report_mm_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "fact_surgery_mm_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "fact_tumor_mm_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "link_surgery_context_mm_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "link_surgery_path_mm_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "map_patient_identifier_mm_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "val_ambiguous_multimodal_linkage_mm_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "mm_contract_dev",
+      "name": "val_multitumor_expansion_mm_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "qa",
+      "name": "domain_validation",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "qa",
+      "name": "domain_validation_summary_v",
+      "type": "VIEW"
+    },
+    {
+      "schema": "release_20260408",
+      "name": "master_patient_rollup_verified_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "release_20260409",
+      "name": "master_patient_rollup_verified_v1",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "v2_stage",
+      "name": "note_entities_llm_imaging",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "v2_stage",
+      "name": "note_entities_llm_molecular_thyroseq_afirma",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "v2_stage",
+      "name": "note_entities_llm_operative_details",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "v2_stage",
+      "name": "note_entities_llm_operative_v2_enrichment",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "v2_stage",
+      "name": "note_entities_llm_pathology",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "v2_stage",
+      "name": "note_entities_llm_patient_decision_adherence",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "v2_stage",
+      "name": "note_entities_llm_rai_detailed",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "v2_stage",
+      "name": "note_entities_llm_synoptic_pathology_enrichment",
+      "type": "BASE TABLE"
+    },
+    {
+      "schema": "v2_stage",
+      "name": "note_entities_llm_us_nodule_dynamics",
+      "type": "BASE TABLE"
+    }
+  ],
+  "audit_tables": {
+    "mrn_crosswalk_v1": {
+      "exists": false
+    },
+    "linkage_master_v1": {
+      "exists": false
+    },
+    "operative_episode_detail_v2": {
+      "exists": true,
+      "qualified": "main.operative_episode_detail_v2",
+      "table_type": "BASE TABLE",
+      "row_count": 9371,
+      "columns": [
+        {
+          "name": "research_id",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "surgery_episode_id",
+          "type": "BIGINT",
+          "nullable": "YES"
+        },
+        {
+          "name": "surgery_date_native",
+          "type": "TIMESTAMP",
+          "nullable": "YES"
+        },
+        {
+          "name": "resolved_surgery_date",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "date_status",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "procedure_raw",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "procedure_normalized",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "laterality",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "central_neck_dissection_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "lateral_neck_dissection_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "rln_monitoring_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "rln_finding_raw",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "parathyroid_autograft_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "parathyroid_autograft_count",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "parathyroid_autograft_site",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "parathyroid_resection_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "gross_ete_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "local_invasion_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "tracheal_involvement_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "esophageal_involvement_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "strap_muscle_involvement_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "reoperative_field_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "ebl_ml",
+          "type": "DOUBLE",
+          "nullable": "YES"
+        },
+        {
+          "name": "drain_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "operative_findings_raw",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "source_tables",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "op_confidence",
+          "type": "DOUBLE",
+          "nullable": "YES"
+        },
+        {
+          "name": "note_date_resolved",
+          "type": "TIMESTAMP",
+          "nullable": "YES"
+        },
+        {
+          "name": "note_date_source",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "note_date_confidence",
+          "type": "DOUBLE",
+          "nullable": "YES"
+        },
+        {
+          "name": "parathyroid_identified_count",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "frozen_section_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "berry_ligament_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "ebl_ml_nlp",
+          "type": "DOUBLE",
+          "nullable": "YES"
+        },
+        {
+          "name": "op_enrichment_source",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "linked_pathology_episode_id",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "path_link_score_v3",
+          "type": "DOUBLE",
+          "nullable": "YES"
+        },
+        {
+          "name": "linked_fna_episode_id",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "fna_link_score_v3",
+          "type": "DOUBLE",
+          "nullable": "YES"
+        }
+      ]
+    },
+    "tumor_episode_master_v2": {
+      "exists": true,
+      "qualified": "main.tumor_episode_master_v2",
+      "table_type": "BASE TABLE",
+      "row_count": 11691,
+      "columns": [
+        {
+          "name": "research_id",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "surgery_episode_id",
+          "type": "BIGINT",
+          "nullable": "YES"
+        },
+        {
+          "name": "tumor_ordinal",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "surgery_date",
+          "type": "TIMESTAMP",
+          "nullable": "YES"
+        },
+        {
+          "name": "date_status",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "date_confidence",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "primary_histology",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "histology_variant",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "histology_source",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "t_stage",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "n_stage",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "m_stage",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "overall_stage",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "tumor_size_cm",
+          "type": "DOUBLE",
+          "nullable": "YES"
+        },
+        {
+          "name": "extrathyroidal_extension",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "gross_ete",
+          "type": "BIGINT",
+          "nullable": "YES"
+        },
+        {
+          "name": "vascular_invasion",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "lymphatic_invasion",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "perineural_invasion",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "capsular_invasion",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "margin_status",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "nodal_disease_positive_count",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "nodal_disease_total_count",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "extranodal_extension",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "laterality",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "number_of_tumors",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "multifocality_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "consult_diagnosis",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "consult_precedence_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "histology_discordance_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "t_stage_discordance_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "confidence_rank",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "source_tables",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "procedure_raw",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "linked_surgery_episode_id",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "surgery_link_score_v3",
+          "type": "DOUBLE",
+          "nullable": "YES"
+        },
+        {
+          "name": "surgery_link_tier",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        }
+      ]
+    },
+    "fna_episode_master_v2": {
+      "exists": true,
+      "qualified": "main.fna_episode_master_v2",
+      "table_type": "BASE TABLE",
+      "row_count": 8119,
+      "columns": [
+        {
+          "name": "research_id",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "fna_episode_id",
+          "type": "BIGINT",
+          "nullable": "YES"
+        },
+        {
+          "name": "fna_date_native",
+          "type": "DATE",
+          "nullable": "YES"
+        },
+        {
+          "name": "resolved_fna_date",
+          "type": "DATE",
+          "nullable": "YES"
+        },
+        {
+          "name": "date_status",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "date_confidence",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "bethesda_raw",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "bethesda_category",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "pathology_diagnosis",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "pathology_extended",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "specimen_site_raw",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "laterality",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "linked_molecular_episode_id",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "linked_imaging_nodule_id",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "linked_surgery_episode_id",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "source_table",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "fna_confidence",
+          "type": "DOUBLE",
+          "nullable": "YES"
+        }
+      ]
+    },
+    "molecular_test_episode_v2": {
+      "exists": true,
+      "qualified": "main.molecular_test_episode_v2",
+      "table_type": "BASE TABLE",
+      "row_count": 10126,
+      "columns": [
+        {
+          "name": "research_id",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "molecular_episode_id",
+          "type": "BIGINT",
+          "nullable": "YES"
+        },
+        {
+          "name": "platform_raw",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "platform",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "result",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "mutation",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "detailed_findings_raw",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "test_date_native",
+          "type": "TIMESTAMP",
+          "nullable": "YES"
+        },
+        {
+          "name": "date_status",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "date_confidence",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "overall_result_class",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "braf_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "braf_variant",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "ras_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "ras_subtype",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "ret_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "ret_fusion_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "tert_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "ntrk_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "eif1ax_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "tp53_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "pax8_pparg_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "cna_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "fusion_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "loh_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "alk_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "high_risk_marker_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "inadequate_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "cancelled_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "source_table",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "resolved_test_date",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "linked_fna_episode_id",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "linked_nodule_id",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "linked_surgery_episode_id",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "specimen_site_raw",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "specimen_site_normalized",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "bethesda_category",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "platform_version",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "risk_language_raw",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "molecular_confidence",
+          "type": "DOUBLE",
+          "nullable": "YES"
+        },
+        {
+          "name": "adjudication_status",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "fna_link_score_v3",
+          "type": "DOUBLE",
+          "nullable": "YES"
+        }
+      ]
+    },
+    "imaging_nodule_master_v1": {
+      "exists": true,
+      "qualified": "main.imaging_nodule_master_v1",
+      "table_type": "BASE TABLE",
+      "row_count": 19891,
+      "columns": [
+        {
+          "name": "research_id",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "exam_date",
+          "type": "TIMESTAMP",
+          "nullable": "YES"
+        },
+        {
+          "name": "nodule_number",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "exam_id",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "nodule_id",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "tirads_reported",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "tirads_acr_recalculated",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "composition",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "echogenicity",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "shape",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "margins",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "calcifications",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "length_mm",
+          "type": "DOUBLE",
+          "nullable": "YES"
+        },
+        {
+          "name": "width_mm",
+          "type": "DOUBLE",
+          "nullable": "YES"
+        },
+        {
+          "name": "height_mm",
+          "type": "DOUBLE",
+          "nullable": "YES"
+        },
+        {
+          "name": "volume_ml",
+          "type": "DOUBLE",
+          "nullable": "YES"
+        },
+        {
+          "name": "location_raw",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "laterality",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "source_table",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "tirads_concordant_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "max_dimension_cm",
+          "type": "DOUBLE",
+          "nullable": "YES"
+        },
+        {
+          "name": "tirads_category",
+          "type": "VARCHAR",
+          "nullable": "YES"
+        },
+        {
+          "name": "suspicious_flag",
+          "type": "BOOLEAN",
+          "nullable": "YES"
+        },
+        {
+          "name": "linked_fna_episode_id",
+          "type": "INTEGER",
+          "nullable": "YES"
+        },
+        {
+          "name": "fna_link_score_v3",
+          "type": "DOUBLE",
+          "nullable": "YES"
+        }
+      ]
+    },
+    "event_date_audit_v2": {
+      "exists": false
+    },
+    "patient_cross_domain_timeline_v2": {
+      "exists": false
+    },
+    "preop_surgery_linkage_v3": {
+      "exists": false
+    },
+    "surgery_pathology_linkage_v3": {
+      "exists": false
+    },
+    "fna_molecular_linkage_v3": {
+      "exists": false
+    },
+    "pathology_rai_linkage_v3": {
+      "exists": false
+    }
+  }
+}
