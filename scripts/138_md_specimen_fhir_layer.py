@@ -31,6 +31,16 @@ DDL_PATH = ROOT / "scripts" / "sql" / "138_specimen_fhir_layer_ddl.sql"
 UA = "specimen_fhir_hardening_v1"
 STUDY_TAG = "specimen_fhir_hardening_20260407_180000"
 
+# Required on the target catalog before DDL (see docs/motherduck_database_contract_v1.md).
+PREREQ_MAIN_TABLES: tuple[str, ...] = (
+    "synoptic_tumor_long_v1",
+    "path_synoptics_encounter_qc_v1",
+    "surgery_pathology_linkage_v3",
+    "fna_molecular_linkage_v3",
+    "preop_surgery_linkage_v3",
+    "molecular_test_episode_v2",
+)
+
 
 def _git_sha() -> str:
     try:
@@ -61,9 +71,19 @@ def try_named_snapshot(con, *, snapshot_name: str, prod: str) -> tuple[str, str]
         return ("ok", sql)
     except Exception as e:
         msg = str(e).lower()
-        if "ducklake" in msg or ("snapshot" in msg and "not supported" in msg):
+        if (
+            "ducklake" in msg
+            or ("snapshot" in msg and "not supported" in msg)
+            or "does not have snapshots" in msg
+            or "not a native duckdb" in msg
+        ):
             return ("skipped", f"{e!r} — {sql}")
         return ("failed", f"{e!r} — {sql}")
+
+
+def missing_prereq_tables(con) -> list[str]:
+    """Return main.* table names that are required but absent."""
+    return [t for t in PREREQ_MAIN_TABLES if not _table_exists(con, "main", t)]
 
 
 def _table_exists(con, schema: str, name: str) -> bool:
@@ -297,6 +317,43 @@ def main() -> None:
         snap_detail = detail
     elif args.skip_snapshot:
         snap_detail = "skipped_flag"
+
+    missing = missing_prereq_tables(con)
+    if missing:
+        sha = _git_sha()
+        fail_lines = [
+            "# Specimen + FHIR hardening — blocked (prerequisites)",
+            f"Generated: {datetime.now(timezone.utc).isoformat()}Z",
+            f"Git SHA: {sha}",
+            f"custom_user_agent: {UA}",
+            "",
+            "## MotherDuck snapshot",
+            f"- Attempt: `{snap_name}`",
+            f"- Result detail: {snap_detail}",
+            "",
+            "## Prerequisite tables missing on catalog",
+            "The following `main.*` objects must exist before DDL:",
+            *(f"- `main.{t}`" for t in missing),
+            "",
+            "## Remediation (typical)",
+            "- `synoptic_tumor_long_v1`: run `scripts/108_synoptic_tumor_long_v1.py --md` (needs `processed/path_synoptics.parquet`).",
+            "- `path_synoptics_encounter_qc_v1`: run `scripts/109_synoptic_encounter_qc.py --md` (needs `path_synoptics`).",
+            "- `surgery_pathology_linkage_v3`, `fna_molecular_linkage_v3`, `preop_surgery_linkage_v3`, `molecular_test_episode_v2`:",
+            "  load analysis/episode contract assets (e.g. `scripts/117_md_contract_views.py --md` + manuscript freeze parquets, or your org’s linkage materialization).",
+            "",
+            "No DDL was applied; fix prerequisites and re-run.",
+            "",
+        ]
+        study_dir.mkdir(parents=True, exist_ok=True)
+        (study_dir / "audit_memo.md").write_text("\n".join(fail_lines), encoding="utf-8")
+        (study_dir / "prereq_failure.txt").write_text("\n".join(missing), encoding="utf-8")
+        print(
+            "FATAL: missing prerequisite tables on MotherDuck:\n  - "
+            + "\n  - ".join(missing)
+            + "\nSee study audit_memo.md for remediation."
+        )
+        con.close()
+        sys.exit(1)
 
     sql_text = DDL_PATH.read_text(encoding="utf-8")
     con.execute(sql_text)
