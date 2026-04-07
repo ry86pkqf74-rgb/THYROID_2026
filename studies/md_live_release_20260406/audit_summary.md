@@ -3,7 +3,9 @@
 **Release tag:** `20260406`
 **Generated:** 2026-04-07T04:08:59.253908+00:00
 **Mode:** Final-release
-**Verdict:** **BLOCKED**
+**Verdict:** **BLOCKED** (orchestrator exit: validation 119 failed while `promotion_gate` rows were still pending).
+
+**Follow-up:** After queue adjudication (see `MANUAL_QUEUE_RESOLUTION.md`), **`validation_report_release_mode.md`** records **16 PASS / 0 FAIL** for `--release-mode`. **`release_validation_strict.json`** was refreshed to match.
 
 ---
 
