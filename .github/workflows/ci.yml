@@ -4,12 +4,11 @@ name: Dashboard CI — Hardened
 # THYROID_2026  CI  |  Updated 2026-03-14
 #
 # Job graph (simplified):
-#   lint-and-syntax
-#       └─ unit-tests
-#       └─ MotherDuck checks (needs MD_SA_TOKEN and/or MOTHERDUCK_TOKEN)
-#               ├─ canonical tables / metric bounds / null checks / smoke
-#               ├─ benchmark-regression  (new)
-#               └─ share-publication-check  (new, on tagged releases)
+#   Parallel (no secrets): ruff-and-mypy, multimodal-tests, llm-extraction-gold
+#     (offline pytest: LLM goldens + registry + provenance + fleet parity).
+#   lint-and-syntax (MotherDuck secrets) → downstream jobs:
+#     v2-domain-validation, benchmark-regression (continue-on-error),
+#     share-publication-check (tags / manual), promotion-gate (tags).
 #
 # Service-account token
 # ─────────────────────
@@ -27,19 +26,20 @@ on:
   push:
     branches: [main]
     paths:
-      - "dashboard.py"
-      - "motherduck_client.py"
-      - "requirements.txt"
-      - "scripts/**"
+      # Core app + data path; also prompt/config/CI/test changes (blocking offline suite)
+      - ".github/**"
       - "app/**"
-      - "utils/**"
-      - "llm_extraction/**"
       - "config/**"
+      - "dashboard.py"
+      - "llm_extraction/**"
+      - "motherduck_client.py"
       - "prompts/**"
-      - "tests/**"
       - "pyproject.toml"
       - "requirements-dev.txt"
-      - ".github/**"
+      - "requirements.txt"
+      - "scripts/**"
+      - "tests/**"
+      - "utils/**"
   pull_request:
     branches: [main]
   # Allow manual triggering for release promotion checks
@@ -82,10 +82,19 @@ jobs:
       - name: Mypy (scoped in pyproject.toml)
         run: mypy
 
-  # ── Job 0: LLM parser + schema gold (offline, no API keys) ────────────────
+  # ── Job 0: Offline extraction contracts (blocking; no MD / no LLM APIs) ──
+  # Runs golden LLM parser tests plus registry, provenance, and fleet parity.
+  # See tests/fixtures/llm_regression/README.md — no MotherDuck or live model calls.
   llm-extraction-gold:
-    name: LLM extraction gold (offline)
+    name: LLM extraction gold + offline contracts (blocking)
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ""
+      OPENAI_API_KEY: ""
+      OPENAI_API_KEY_ID: ""
+      MD_SA_TOKEN: ""
+      MOTHERDUCK_TOKEN: ""
+      LOCAL_DB_PATH: ""
     steps:
       - uses: actions/checkout@v4
 
@@ -96,11 +105,14 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: pytest — LLM regression fixtures
-        env:
-          GITHUB_TOKEN: ""
-          OPENAI_API_KEY: ""
-        run: python -m pytest tests/test_llm_extraction_regression.py -v --tb=short
+      - name: pytest — offline extraction suite
+        run: |
+          python -m pytest \
+            tests/test_llm_extraction_regression.py \
+            tests/test_fact_provenance_contract.py \
+            tests/test_registry_and_md_connect.py \
+            tests/test_fleet_registry_parity.py \
+            -v --tb=short
 
   # ── Multimodal contract + imaging↔FNA linkage (offline DuckDB, no secrets) ─
   multimodal-tests:
