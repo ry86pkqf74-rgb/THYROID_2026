@@ -7,8 +7,9 @@
 -- Optional blocks (@OPTIONAL_GENETIC_BODY / @OPTIONAL_THYROSEQ_BODY / unions) are stripped
 -- by scripts/140_md_specimen_genomics_binding.py when source tables are absent.
 
+-- DuckLake (MotherDuck): no PRIMARY KEY — logical key is review_queue_id.
 CREATE TABLE IF NOT EXISTS qa.specimen_genomic_link_review_v1 (
-  review_queue_id VARCHAR PRIMARY KEY,
+  review_queue_id VARCHAR NOT NULL,
   genomic_assay_id VARCHAR NOT NULL,
   research_id BIGINT NOT NULL,
   molecular_episode_id BIGINT,

@@ -29,17 +29,29 @@
 
 ## 4) MotherDuck execution
 
-This study folder was generated in an environment **without** `MOTHERDUCK_TOKEN` / `MD_SA_TOKEN` in the shell. To materialize on MotherDuck:
+**Credential:** RW token resolved from [`.streamlit/secrets.toml`](../../.streamlit/secrets.toml) (`MOTHERDUCK_TOKEN`) per `motherduck_client` — do not commit that file.
+
+**Run (2026-04-07):** `scripts/140_md_specimen_genomics_binding.py --md --skip-snapshot` with `custom_user_agent='specimen_genomics_binding_v1'`.
+
+**Catalog note:** DuckLake does not allow `PRIMARY KEY` on `CREATE TABLE`; `qa.specimen_genomic_link_review_v1` uses `review_queue_id VARCHAR NOT NULL` only (logical uniqueness).
+
+**Post-run counts** (database `Thyroid 2026`):
+
+| Object | Rows |
+|--------|------|
+| `main.specimen_genomic_assay_v1` | 10,126 |
+| `qa.specimen_genomic_link_review_v1` | 9,952 |
+| `qa.val_specimen_genomic_binding_v1` | 3 |
+
+**`linkage_confidence_tier` distribution:** `unresolved_review` 9,908; `exact` 157; `plausible_review` 44; `high_confidence` 17.
+
+**Optional sources on this catalog:** `genetic_testing` absent, `thyroseq_molecular_enrichment` absent (SQL optional blocks stripped automatically).
 
 ```bash
 cd THYROID_2026
 .venv/bin/python scripts/140_md_specimen_genomics_binding.py --md
-```
-
-Or run full specimen + FHIR orchestrator (identity → FHIR tail → 140):
-
-```bash
-.venv/bin/python scripts/138_md_specimen_fhir_layer.py --md
+# or full specimen + FHIR orchestrator:
+# .venv/bin/python scripts/138_md_specimen_fhir_layer.py --md
 ```
 
 ## 5) Integration
