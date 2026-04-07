@@ -52,7 +52,8 @@ documented source limitations, not data quality failures.
 | Repo architecture (medallion) | [`docs/REPO_ARCHITECTURE_V2.md`](docs/REPO_ARCHITECTURE_V2.md) |
 | LLM validation workspace | [`studies/llm_extraction_validation/README.md`](studies/llm_extraction_validation/README.md) |
 | Architecture sign-off memo | [`studies/20260407_signoff_memo/signoff_memo.md`](studies/20260407_signoff_memo/signoff_memo.md) |
-| MotherDuck DB contract | [`docs/motherduck_database_contract_v1.md`](docs/motherduck_database_contract_v1.md) |
+| MotherDuck DB contract | [`docs/motherduck_database_contract_v1.md`](docs/motherduck_database_contract_v1.md) (includes specimen + analytic FHIR v1) |
+| Specimen + FHIR materialization | [`scripts/138_md_specimen_fhir_layer.py`](scripts/138_md_specimen_fhir_layer.py), [`scripts/sql/138_specimen_fhir_layer_ddl.sql`](scripts/sql/138_specimen_fhir_layer_ddl.sql) |
 | Molecular prod release (dev/qa/prod, 137) | [`docs/release_runbook.md`](docs/release_runbook.md) |
 | Review queue triage export (script 120) | [`docs/review_queue_triage_export.md`](docs/review_queue_triage_export.md) |
 | Domain mapping rules | [`docs/domain_mapping_rules.md`](docs/domain_mapping_rules.md) |

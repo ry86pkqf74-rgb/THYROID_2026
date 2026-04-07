@@ -58,3 +58,8 @@ make verify-provenance
 
 - [`data_dictionary.md`](../data_dictionary.md) — schema and provenance policy
 - [`docs/analysis_resolved_layer.md`](analysis_resolved_layer.md) — manuscript-ready resolved layer
+- [`docs/motherduck_database_contract_v1.md`](motherduck_database_contract_v1.md) — includes **specimen identity** (`specimen_*_v1`) and **analytic FHIR export** (`fhir_*_v1`) materialized by `scripts/138_md_specimen_fhir_layer.py`
+
+### Specimen + analytic FHIR (v1)
+
+Canonical specimen rows key off `synoptic_tumor_long_v1` + `path_synoptics_encounter_qc_v1` (multi-synoptic isolation) and `surgery_pathology_linkage_v3`. Genomics bind via `fna_molecular_linkage_v3` → `preop_surgery_linkage_v3` → specimen focus (plus deterministic `genetic_testing` → `molecular_test_episode_v2` platform match in script 138). FHIR tables are **de-identified JSON stubs** for research exports, not a full clinical exchange gate.

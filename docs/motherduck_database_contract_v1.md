@@ -110,6 +110,33 @@ Same names as v2_stage tables, promoted by `motherduck_promote.sql` after all 8 
 | `linkage_summary_v` | Patient-level linkage counts across episode types |
 | `episode_completeness_summary_v` | Row/patient counts per episode table |
 
+#### Specimen identity + analytic FHIR export (v1)
+
+Materialized by [`scripts/138_md_specimen_fhir_layer.py`](../scripts/138_md_specimen_fhir_layer.py) + [`scripts/sql/138_specimen_fhir_layer_ddl.sql`](../scripts/sql/138_specimen_fhir_layer_ddl.sql). **Additive, derived-only:** full rebuild (`CREATE OR REPLACE`) is safe; upstream wide/pathology fields are not overwritten.
+
+**Prereqs:** `synoptic_tumor_long_v1`, `path_synoptics_encounter_qc_v1`, `surgery_pathology_linkage_v3`, `fna_molecular_linkage_v3`, `preop_surgery_linkage_v3`, `molecular_test_episode_v2`.
+
+| Table / view | Purpose |
+|--------------|---------|
+| `_specimen_synoptic_spine_v1` | Internal: synoptic tumor long ↔ encounter QC join (deterministic tie-break) |
+| `_specimen_path_surgery_link_v1` | Internal: spine + best `surgery_pathology_linkage_v3` rank per tumor focus |
+| `specimen_master_v1` | Encounter-level specimen; `specimen_fingerprint_sha256` natural key |
+| `specimen_tumor_focus_v1` | One row per populated tumor slot; carries `synoptic_row_ix`, `encounter_synoptic_row_ix`, `tumor_index` |
+| `specimen_source_xref_v1` | Provenance xref from synoptic long rows to `specimen_id` / `specimen_focus_id` |
+| `specimen_genomic_assay_v1` | Molecular episode + optional `genetic_testing` rows bound via v3 linkage (and exact platform match for Excel genetics) |
+| `fhir_patient_deid_map_v1` | Deterministic de-identified `Patient/` id (hash of `research_id` + salt) |
+| `fhir_specimen_v1` | Analytic `Specimen` JSON resources |
+| `fhir_procedure_collection_v1` | Analytic `Procedure` (collection context) |
+| `fhir_encounter_v1` | Analytic `Encounter` stub |
+| `fhir_episode_of_care_v1` | Analytic `EpisodeOfCare` stub (ties to `surgery_episode_id` when present) |
+| `fhir_bundle_specimen_export_v1` | Per-specimen `Bundle` JSON (`type=collection`) |
+
+**Governance:** `qa.specimen_merge_review_queue_v1` — non-auto-merged near-duplicate encounter pairs (same patient / day / `surgery_episode_id`, distinct fingerprint). `qa.val_specimen_contract_v1` — validator output from script 138.
+
+**FHIR disclaimer:** analytic, de-identified export for research workflows — **not** asserted as US Core–complete or production clinical interoperability.
+
+**Formalization:** [`scripts/119_md_formalization_validate.py`](../scripts/119_md_formalization_validate.py) Check 13 (`check_specimen_fhir_layer`).
+
 #### V1 entity tables (8, in main, never mutated by v2)
 
 | Table | Purpose |
@@ -138,6 +165,8 @@ Same names as v2_stage tables, promoted by `motherduck_promote.sql` after all 8 
 | `domain_validation_summary_v` | View | Aggregate validation metrics per run |
 | `date_provenance_completeness_v` | View | Per-domain date/provenance completeness tier |
 | `manual_review_queue_summary_v` | View | Review queue counts by domain and status |
+| `specimen_merge_review_queue_v1` | Table | Candidate specimen fingerprint collisions for manual review |
+| `val_specimen_contract_v1` | Table | Specimen/FHIR contract checks (script 138 + Check 13) |
 
 ### 2.4 release_YYYYMMDD schemas
 

@@ -33,6 +33,8 @@ Checks:
  12. Molecular normalized contract views (scripts/sql/133_molecular_contract_views_ddl.sql):
      required columns, live-row parity vs main.molecular_results, payload_checksum uniqueness,
      allele_fraction bounds, variant_class enum, provenance columns, assay/panel pairing
+ 13. Specimen + analytic FHIR layer (scripts/138_md_specimen_fhir_layer.py): table presence when
+     synoptic_tumor_long_v1 exists; fingerprint uniqueness; qa.val_specimen_contract_v1 FAIL rows
 
 Usage:
   .venv/bin/python scripts/119_md_formalization_validate.py --md
@@ -1078,6 +1080,85 @@ def check_molecular_normalized_contract(
             results.add("Molecular assay_name dictionary match", "WARN", str(exc))
 
 
+SPECIMEN_FHIR_OBJECTS = (
+    "specimen_master_v1",
+    "specimen_tumor_focus_v1",
+    "specimen_genomic_assay_v1",
+    "specimen_source_xref_v1",
+    "fhir_specimen_v1",
+    "fhir_procedure_collection_v1",
+    "fhir_encounter_v1",
+    "fhir_episode_of_care_v1",
+    "fhir_bundle_specimen_export_v1",
+)
+
+
+def check_specimen_fhir_layer(
+    con: duckdb.DuckDBPyConnection,
+    results: ValidationResult,
+    strict: bool = False,
+) -> None:
+    """Validate specimen identity + analytic FHIR tables when materialized (Check 13)."""
+    status_skip = "WARN" if not strict else "FAIL"
+    anchor = "synoptic_tumor_long_v1"
+    if not _main_object_exists(con, anchor):
+        results.add(
+            "Specimen layer prerequisites",
+            "PASS",
+            f"main.{anchor} absent — specimen/FHIR checks skipped (run 108 + 109 + 138)",
+        )
+        return
+    missing = [t for t in SPECIMEN_FHIR_OBJECTS if not _main_object_exists(con, t)]
+    if missing:
+        results.add(
+            "Specimen/FHIR tables present",
+            status_skip,
+            f"missing: {', '.join(missing)} — run scripts/138_md_specimen_fhir_layer.py",
+        )
+        if strict:
+            return
+    else:
+        results.add(
+            "Specimen/FHIR tables present",
+            "PASS",
+            f"{len(SPECIMEN_FHIR_OBJECTS)} objects found",
+        )
+
+    if not _main_object_exists(con, "specimen_master_v1"):
+        return
+
+    try:
+        ok_fp = con.execute(
+            "SELECT COUNT(*) = COUNT(DISTINCT specimen_fingerprint_sha256) "
+            "FROM main.specimen_master_v1"
+        ).fetchone()[0]
+        results.add(
+            "Specimen master fingerprint uniqueness",
+            "PASS" if ok_fp else status_skip,
+            "distinct fingerprints" if ok_fp else "duplicate specimen_fingerprint_sha256",
+        )
+    except Exception as exc:
+        results.add("Specimen master fingerprint uniqueness", status_skip, str(exc))
+
+    if _main_object_exists(con, "qa.val_specimen_contract_v1"):
+        try:
+            nfail = int(
+                con.execute(
+                    "SELECT COUNT(*) FROM qa.val_specimen_contract_v1 WHERE UPPER(status) = 'FAIL'"
+                ).fetchone()[0]
+            )
+            if nfail > 0:
+                results.add(
+                    "qa.val_specimen_contract_v1",
+                    status_skip,
+                    f"{nfail} failing row(s) — inspect after scripts/138",
+                )
+            else:
+                results.add("qa.val_specimen_contract_v1", "PASS", "no FAIL rows recorded")
+        except Exception as exc:
+            results.add("qa.val_specimen_contract_v1", status_skip, str(exc))
+
+
 def check_release_manifest(
     con: duckdb.DuckDBPyConnection,
     results: ValidationResult,
@@ -1229,6 +1310,9 @@ def main() -> None:
 
         print("\n--- Check 12: Molecular normalized contract views ---")
         check_molecular_normalized_contract(con, results, strict=strict)
+
+        print("\n--- Check 13: Specimen + analytic FHIR layer ---")
+        check_specimen_fhir_layer(con, results, strict=strict)
 
     finally:
         con.close()
