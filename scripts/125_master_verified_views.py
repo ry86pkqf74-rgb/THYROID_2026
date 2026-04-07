@@ -1,0 +1,254 @@
+#!/usr/bin/env python3
+"""125_master_verified_views.py — Analyst-facing verified presentation layer.
+
+Creates three views in the main schema that serve as the canonical analyst
+surface for release-signed data.  Every row exposes the six required provenance
+fields: research_id, source domain, source object id, extraction_run_id,
+reviewer_status, and release_tag.
+
+Views created:
+  main.master_fact_long_verified_v1
+      One row per extracted entity fact.  Joins canonical facts with reviewer
+      status from qa.manual_review_queue and the latest release tag from
+      qa.release_manifest.
+
+  main.master_patient_rollup_verified_v1
+      Per-patient summary over master_fact_long_verified_v1.  Counts by
+      linkage family, review coverage percentage, and release tag.
+
+  main.master_source_lineage_v1
+      Full provenance chain: extraction run → fact → reviewer decision →
+      release tag.  Source object identity is preserved as note_row_id.
+
+Usage:
+  .venv/bin/python scripts/125_master_verified_views.py
+  .venv/bin/python scripts/125_master_verified_views.py --md
+  .venv/bin/python scripts/125_master_verified_views.py --md --dry-run
+"""
+
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+
+from utils.md_connect import connect_md_or_file  # noqa: E402
+
+DB_PATH = ROOT / "thyroid_master.duckdb"
+
+# ---------------------------------------------------------------------------
+# View DDL
+# ---------------------------------------------------------------------------
+
+MASTER_FACT_LONG_DDL = """\
+CREATE OR REPLACE VIEW main.master_fact_long_verified_v1 AS
+WITH latest_release AS (
+    SELECT release_tag
+    FROM   qa.release_manifest
+    ORDER  BY created_at DESC
+    LIMIT  1
+),
+review_lookup AS (
+    SELECT
+        research_id,
+        domain_name                         AS reviewer_domain,
+        verification_status                 AS reviewer_status,
+        verified_by                         AS reviewer_verified_by,
+        verified_at                         AS reviewer_decision_at,
+        notes                               AS reviewer_notes
+    FROM qa.manual_review_queue
+)
+SELECT
+    f.research_id,
+    f.fact_id,
+    -- source domain
+    f.fact_domain                           AS source_domain,
+    -- source object id
+    f.note_row_id                           AS source_object_id,
+    -- extraction run linkage
+    r.run_id                                AS extraction_run_id,
+    r.extractor_build_version,
+    r.llm_model,
+    r.started_at                            AS extraction_started_at,
+    -- entity fields
+    f.entity_type,
+    f.entity_value_norm,
+    f.entity_value_raw,
+    f.entity_date,
+    f.present_or_negated,
+    f.confidence,
+    -- episode linkage
+    f.linkage_anchor_family,
+    f.inferred_surgery_episode_id,
+    f.ep_source_table,
+    f.ep_distance_days,
+    f.linkage_confidence,
+    -- provenance
+    f.extraction_method,
+    f.extracted_at,
+    f.source_file_id,
+    f.date_source_type,
+    -- reviewer status
+    rv.reviewer_status,
+    rv.reviewer_verified_by,
+    rv.reviewer_decision_at,
+    rv.reviewer_notes,
+    -- release tag (scalar from latest release)
+    (SELECT release_tag FROM latest_release) AS release_tag
+FROM  main.canonical_extracted_fact_long_v2  f
+LEFT  JOIN main.note_extraction_runs          r
+      ON  r.run_id = (
+              SELECT run_id FROM main.note_extraction_runs
+              WHERE  started_at <= f.extracted_at
+              ORDER  BY started_at DESC
+              LIMIT  1
+          )
+LEFT  JOIN review_lookup rv
+      ON  rv.research_id  = f.research_id
+      AND rv.reviewer_domain = f.fact_domain
+"""
+
+MASTER_PATIENT_ROLLUP_DDL = """\
+CREATE OR REPLACE VIEW main.master_patient_rollup_verified_v1 AS
+SELECT
+    f.research_id,
+    COUNT(*)                                                    AS total_facts,
+    COUNT(DISTINCT f.source_domain)                             AS domains_covered,
+    COUNT(DISTINCT f.entity_type)                               AS unique_entity_types,
+    SUM(CASE WHEN f.linkage_anchor_family = 'pathology'    THEN 1 ELSE 0 END) AS pathology_facts,
+    SUM(CASE WHEN f.linkage_anchor_family = 'operative'    THEN 1 ELSE 0 END) AS operative_facts,
+    SUM(CASE WHEN f.linkage_anchor_family = 'imaging'      THEN 1 ELSE 0 END) AS imaging_facts,
+    SUM(CASE WHEN f.linkage_anchor_family = 'molecular'    THEN 1 ELSE 0 END) AS molecular_facts,
+    SUM(CASE WHEN f.linkage_anchor_family = 'followup'     THEN 1 ELSE 0 END) AS followup_facts,
+    SUM(CASE WHEN f.linkage_anchor_family = 'rai'          THEN 1 ELSE 0 END) AS rai_facts,
+    SUM(CASE WHEN f.linkage_anchor_family = 'demographics' THEN 1 ELSE 0 END) AS demographics_facts,
+    COUNT(f.inferred_surgery_episode_id)                        AS episode_linked_facts,
+    ROUND(
+        100.0 * COUNT(f.inferred_surgery_episode_id) / NULLIF(COUNT(*), 0),
+        1
+    )                                                           AS pct_episode_linked,
+    COUNT(f.reviewer_status)                                    AS reviewed_facts,
+    ROUND(
+        100.0 * COUNT(f.reviewer_status) / NULLIF(COUNT(*), 0),
+        1
+    )                                                           AS pct_reviewed,
+    f.release_tag
+FROM  main.master_fact_long_verified_v1 f
+GROUP BY f.research_id, f.release_tag
+ORDER BY f.research_id
+"""
+
+MASTER_SOURCE_LINEAGE_DDL = """\
+CREATE OR REPLACE VIEW main.master_source_lineage_v1 AS
+SELECT
+    f.research_id,
+    -- source domain and object identity
+    f.source_domain,
+    f.source_object_id,
+    f.entity_type,
+    f.entity_date,
+    -- extraction run provenance
+    f.extraction_run_id,
+    f.extractor_build_version,
+    f.llm_model,
+    f.extraction_started_at,
+    f.extraction_method,
+    f.extracted_at,
+    -- episode linkage
+    f.linkage_anchor_family,
+    f.inferred_surgery_episode_id,
+    f.ep_source_table,
+    -- reviewer chain
+    f.reviewer_status,
+    f.reviewer_verified_by,
+    f.reviewer_decision_at,
+    f.reviewer_notes,
+    -- release provenance
+    f.release_tag
+FROM  main.master_fact_long_verified_v1 f
+ORDER BY f.research_id, f.source_domain, f.extracted_at
+"""
+
+VIEWS: list[tuple[str, str]] = [
+    ("master_fact_long_verified_v1", MASTER_FACT_LONG_DDL),
+    ("master_patient_rollup_verified_v1", MASTER_PATIENT_ROLLUP_DDL),
+    ("master_source_lineage_v1", MASTER_SOURCE_LINEAGE_DDL),
+]
+
+VIEW_DESCRIPTIONS = {
+    "master_fact_long_verified_v1": (
+        "One row per extracted entity fact; joins canonical_extracted_fact_long_v2 "
+        "with reviewer status and latest release tag."
+    ),
+    "master_patient_rollup_verified_v1": (
+        "Per-patient summary: fact counts by linkage family, review coverage, release tag."
+    ),
+    "master_source_lineage_v1": (
+        "Full provenance chain from extraction run to reviewer decision to release tag."
+    ),
+}
+
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+def parse_args() -> argparse.Namespace:
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("--md", action="store_true", help="Target MotherDuck (fail-closed).")
+    p.add_argument("--dry-run", action="store_true", help="Show DDL without executing.")
+    p.add_argument("--db-path", default=str(DB_PATH), help="Local DuckDB path.")
+    return p.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+
+    print("=" * 70)
+    print("  125 — master verified views (analyst presentation layer)")
+    print("=" * 70)
+
+    con = connect_md_or_file(Path(args.db_path), md=args.md, fail_closed=args.md)
+
+    failed = 0
+    for name, ddl in VIEWS:
+        desc = VIEW_DESCRIPTIONS.get(name, "")
+        if args.dry_run:
+            print(f"\n  [dry-run] {name}")
+            print(f"            {desc}")
+            print(f"  DDL preview (first 4 lines):")
+            for line in ddl.strip().splitlines()[:4]:
+                print(f"    {line}")
+            print("    ...")
+            continue
+
+        try:
+            con.execute(ddl)
+            cnt = con.execute(f"SELECT COUNT(*) FROM main.{name}").fetchone()[0]
+            print(f"  [OK] {name}: {cnt:,} rows — {desc}")
+        except Exception as exc:
+            print(f"  [WARN] {name}: {exc}")
+            print(f"         This view may require prerequisite tables to exist first.")
+            print(f"         Re-run after 103 (canonical facts) and 114 (qa schema) complete.")
+            failed += 1
+
+    con.close()
+
+    print("=" * 70)
+    if args.dry_run:
+        print("  DONE (dry-run — no views created)")
+    elif failed:
+        print(f"  DONE with {failed} warning(s). Re-run after prerequisites are in place.")
+    else:
+        print("  DONE — all 3 master verified views created")
+    print("=" * 70)
+
+    if failed and not args.dry_run:
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
