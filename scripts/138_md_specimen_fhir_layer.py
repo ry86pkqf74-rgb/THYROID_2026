@@ -368,12 +368,22 @@ def main() -> None:
         sys.exit(1)
 
     try:
-        con.execute("BEGIN TRANSACTION")
-        mod139.apply_specimen_identity_layer(con, identity_run_id, include_specimen_detail=True)
-        con.execute(DDL_FHIR_TAIL_PATH.read_text(encoding="utf-8"))
-        con.execute("COMMIT")
+        if args.md:
+            # MotherDuck DuckLake: wrapping the full identity + FHIR DDL in BEGIN/COMMIT has
+            # triggered internal IO errors; run as autocommit steps (still one orchestrated run).
+            mod139.apply_specimen_identity_layer(con, identity_run_id, include_specimen_detail=True)
+            con.execute(DDL_FHIR_TAIL_PATH.read_text(encoding="utf-8"))
+        else:
+            con.execute("BEGIN TRANSACTION")
+            mod139.apply_specimen_identity_layer(con, identity_run_id, include_specimen_detail=True)
+            con.execute(DDL_FHIR_TAIL_PATH.read_text(encoding="utf-8"))
+            con.execute("COMMIT")
     except Exception:
-        con.execute("ROLLBACK")
+        if not args.md:
+            try:
+                con.execute("ROLLBACK")
+            except Exception:
+                pass
         raise
 
     mod140.apply_specimen_genomics_binding(con)

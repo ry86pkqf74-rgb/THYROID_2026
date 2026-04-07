@@ -215,13 +215,15 @@ ALTER TABLE qa.specimen_merge_review_queue_v1 ADD COLUMN IF NOT EXISTS review_pr
 ALTER TABLE qa.specimen_merge_review_queue_v1 ADD COLUMN IF NOT EXISTS review_status VARCHAR;
 ALTER TABLE qa.specimen_merge_review_queue_v1 ADD COLUMN IF NOT EXISTS identity_build_run_id VARCHAR;
 
--- Full-refresh pathology + molecular xrefs (specimen_detail and other kinds preserved)
-DELETE FROM main.specimen_source_xref_v1 WHERE domain IN ('pathology', 'molecular');
-DELETE FROM main.specimen_tumor_focus_v1
-WHERE specimen_id IN (
-  SELECT specimen_id FROM main.specimen_master_v1
-  WHERE source_system = 'pathology_synoptic_encounter'
-);
+-- Full-refresh pathology + molecular xrefs (specimen_detail and other kinds preserved).
+-- DuckLake/MotherDuck: DELETE .. WHERE domain IN (...) on this table can raise internal
+-- IO errors on some catalogs; schema-preserving empty replace, then INSERTs below refill.
+CREATE OR REPLACE TABLE main.specimen_source_xref_v1 AS
+SELECT * FROM main.specimen_source_xref_v1 WHERE 1=0;
+-- DuckLake/MotherDuck: DELETE from specimen_tumor_focus_v1 can raise internal IO errors;
+-- pathology-only rows are fully reinserted from _specimen_focus_staging below.
+CREATE OR REPLACE TABLE main.specimen_tumor_focus_v1 AS
+SELECT * FROM main.specimen_tumor_focus_v1 WHERE 1=0;
 DELETE FROM main.specimen_master_v1 WHERE source_system = 'pathology_synoptic_encounter';
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -500,7 +502,9 @@ SELECT * FROM _specimen_xref_mol;
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Review queue: structural ambiguity + fuzzy accession (no auto-merge)
 -- ═══════════════════════════════════════════════════════════════════════════
-DELETE FROM qa.specimen_merge_review_queue_v1;
+-- DuckLake/MotherDuck: DELETE can hit internal IO errors; empty + INSERT below.
+CREATE OR REPLACE TABLE qa.specimen_merge_review_queue_v1 AS
+SELECT * FROM qa.specimen_merge_review_queue_v1 WHERE 1=0;
 
 INSERT INTO qa.specimen_merge_review_queue_v1 (
   queue_ix, specimen_id_a, specimen_id_b, fp_a, fp_b, research_id,

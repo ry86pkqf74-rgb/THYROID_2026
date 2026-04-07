@@ -96,6 +96,65 @@ def load_identity_sql(run_id: str) -> str:
     return DDL_PATH.read_text(encoding="utf-8").replace("__BUILD_RUN_ID__", run_id)
 
 
+def _split_sql_statements(sql: str) -> list[str]:
+    """Split on ``;`` outside single-quoted strings and outside ``--`` line comments.
+
+    ``139_specimen_identity_layer_ddl.sql`` embeds semicolons inside string literals
+    (e.g. concat-based evidence fields) and inside ``-- ...`` comment lines
+    (e.g. ``DuckLake: no indexes; idempotent ...``). MotherDuck may also fail a
+    single giant multi-statement execute; running one statement at a time is reliable.
+    """
+    parts: list[str] = []
+    buf: list[str] = []
+    i = 0
+    n = len(sql)
+    in_single = False
+    in_line_comment = False
+    while i < n:
+        c = sql[i]
+        if in_line_comment:
+            buf.append(c)
+            if c in "\n":
+                in_line_comment = False
+            i += 1
+            continue
+        if in_single:
+            buf.append(c)
+            if c == "'":
+                if i + 1 < n and sql[i + 1] == "'":
+                    buf.append(sql[i + 1])
+                    i += 2
+                    continue
+                in_single = False
+            i += 1
+            continue
+        if c == "-" and i + 1 < n and sql[i + 1] == "-":
+            in_line_comment = True
+            buf.append(c)
+            buf.append(sql[i + 1])
+            i += 2
+            continue
+        if c == "'":
+            in_single = True
+            buf.append(c)
+            i += 1
+            continue
+        if c == ";":
+            buf.append(c)
+            stmt = "".join(buf).strip()
+            if stmt:
+                parts.append(stmt)
+            buf = []
+            i += 1
+            continue
+        buf.append(c)
+        i += 1
+    tail = "".join(buf).strip()
+    if tail:
+        parts.append(tail)
+    return parts
+
+
 def run_identity_validation(con) -> list[tuple[str, str, str]]:
     out: list[tuple[str, str, str]] = []
 
@@ -271,7 +330,21 @@ FROM fp;
 
 
 def apply_specimen_identity_layer(con, run_id: str, *, include_specimen_detail: bool = True) -> None:
-    con.execute(load_identity_sql(run_id))
+    sql = load_identity_sql(run_id)
+    for idx, stmt in enumerate(_split_sql_statements(sql)):
+        if not stmt.strip():
+            continue
+        try:
+            con.execute(stmt)
+        except Exception as exc:
+            head = stmt[:480].replace("\n", " ")
+            tail = stmt[-120:].replace("\n", " ") if len(stmt) > 480 else ""
+            raise RuntimeError(
+                f"specimen identity DDL failed at batched statement index {idx} "
+                f"(len={len(stmt)} chars): {exc}\n"
+                f"statement_head: {head!s}\n"
+                f"statement_tail: {tail!s}"
+            ) from exc
     if include_specimen_detail:
         maybe_specimen_detail_seed(con, run_id)
 

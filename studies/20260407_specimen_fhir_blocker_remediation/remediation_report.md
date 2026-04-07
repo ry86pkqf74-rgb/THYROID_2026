@@ -50,6 +50,23 @@ Genomic link review open/pending remains high (~9.9k) — informational WARN in 
 - Full rebuild on prod was **not** required for this fix: FHIR tables were already consistent; the **diagnostic view** was wrong. Re-run **`138 --md`** after any future identity/FHIR tail change so fact tables and views stay aligned.
 - For greenfield catalogs, run **`138 --md`** (applies 139 + 138 tail + 140 + 142) or **`143 --md`** after 138 if only QA views need refresh.
 
+## Full rebuild (prod `Thyroid 2026`, 2026-04-07)
+
+`scripts/138_md_specimen_fhir_layer.py --md` completed successfully after MotherDuck **DuckLake** workarounds in `139_specimen_identity_layer_ddl.sql`:
+
+| Prior pattern | Issue on DuckLake | Replacement |
+|---------------|-------------------|-------------|
+| Single `con.execute` of entire 139 DDL | Internal IO error | Quote- and `--` comment-aware batched executes in `139_md_specimen_identity_layer.py` |
+| `BEGIN`/`COMMIT` around identity + FHIR tail | Internal IO error | Autocommit path when `--md` in `138_md_specimen_fhir_layer.py` |
+| `DELETE` selective rows on `specimen_source_xref_v1` | Internal IO error | `CREATE OR REPLACE TABLE … AS SELECT * … WHERE 1=0` then INSERTs refill pathology + molecular xrefs (**entire xref table cleared** each run; only path/mol domains are inserted by 139) |
+| `DELETE` from `specimen_tumor_focus_v1` | Internal IO error (including DELETE by PK) | Same empty-table replace; pathology focus rows reinserted from staging |
+| `DELETE FROM qa.specimen_merge_review_queue_v1` | Internal IO error | Empty-table replace; rows reinserted by following INSERT |
+
+Post-rebuild release-mode check: [`119_after_full_rebuild/validation_report.md`](119_after_full_rebuild/validation_report.md) — **26 PASS / 1 WARN / 0 FAIL**; specimen/FHIR QA diagnostics **clean**; `broken_fhir_refs=0`, `high_tier_null_spec=0`.
+
+Study artifacts from the rebuild run: [`full_rebuild_prod/`](full_rebuild_prod/) (audit memo, implementation report, etc.).
+
 ## Artifacts
 
 - Release-mode report after deploy: [`119_release_validation_final/validation_report.md`](119_release_validation_final/validation_report.md)
+- After full **138** rebuild: [`119_after_full_rebuild/validation_report.md`](119_after_full_rebuild/validation_report.md)
