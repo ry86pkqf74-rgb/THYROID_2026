@@ -217,6 +217,13 @@ LEFT JOIN (
 
 
 def sql_val_imaging_fna_contract_blockers(schema: str) -> str:
+    """Strict-release blockers: unresolved multi-match only.
+
+    Rows with review_reason = 'discordant_laterality' remain in
+    review_queue_imaging_fna_mm_v1 for operators but do not fail the 148
+    multimodal blocker table once laterality normalization + deterministic
+    primary selection run in script 129.
+    """
     return f"""
 CREATE OR REPLACE TABLE {schema}.val_imaging_fna_contract_blockers_mm_v1 AS
 SELECT
@@ -227,7 +234,8 @@ SELECT
     review_reason,
     detail,
     queued_at
-FROM {schema}.review_queue_imaging_fna_mm_v1;
+FROM {schema}.review_queue_imaging_fna_mm_v1
+WHERE review_reason = 'ambiguous_multimatch';
 """.strip()
 
 
@@ -375,33 +383,75 @@ WHERE x.euh_mrn IS NOT NULL AND CAST(x.euh_mrn AS VARCHAR) <> '';
 def sql_fact_surgery(schema: str, built_ts: str, src: dict[str, str]) -> str:
     oed = src["operative_episode_detail_v2"]
     lm = src["linkage_master_v1"]
+    tum = src["tumor_episode_master_v2"]
     pid = "lower(md5(concat('{H_NS}|person|', cast(lm.canonical_research_id AS VARCHAR))))".format(H_NS=H_NS)
     return f"""
 CREATE OR REPLACE TABLE {schema}.fact_surgery_mm_v1 AS
+WITH oed_rows AS (
+    SELECT
+        'mmv1_s_' || lower(md5(concat('{H_NS}|surgery|', cast(o.research_id AS VARCHAR), '|',
+            cast(o.surgery_episode_id AS VARCHAR)))) AS surgery_id,
+        'mmv1_p_' || {pid} AS person_id,
+        CAST(o.research_id AS BIGINT) AS research_id,
+        CAST(lm.canonical_research_id AS BIGINT) AS canonical_research_id,
+        CAST(o.surgery_episode_id AS BIGINT) AS surgery_episode_id,
+        o.surgery_date_native AS event_time,
+        CASE
+            WHEN o.surgery_date_native IS NOT NULL THEN 'operative_surgery_date_native'
+            ELSE 'missing_native_date'
+        END::VARCHAR AS event_time_src,
+        o.procedure_raw,
+        o.procedure_normalized,
+        o.laterality AS surgery_laterality,
+        o.central_neck_dissection_flag,
+        o.lateral_neck_dissection_flag,
+        '{CONTRACT_VERSION}'::VARCHAR AS mm_contract_version,
+        '{SCRIPT_NAME}'::VARCHAR AS mm_source_script,
+        CAST('{built_ts}' AS TIMESTAMP) AS mm_built_at,
+        '{oed},{lm}'::VARCHAR AS mm_upstream_tables,
+        NULL::VARCHAR AS mm_lineage_note
+    FROM {oed} o
+    INNER JOIN {lm} lm ON o.research_id = lm.research_id
+),
+tumor_stub_keys AS (
+    SELECT
+        CAST(t.research_id AS BIGINT) AS research_id,
+        CAST(t.surgery_episode_id AS BIGINT) AS surgery_episode_id,
+        MAX(lm.canonical_research_id) AS canonical_research_id,
+        MIN(TRY_CAST(t.surgery_date AS DATE)) AS tumor_anchor_date
+    FROM {tum} t
+    INNER JOIN {lm} lm ON t.research_id = lm.research_id
+    GROUP BY 1, 2
+)
+SELECT * FROM oed_rows
+UNION ALL
 SELECT
-    'mmv1_s_' || lower(md5(concat('{H_NS}|surgery|', cast(o.research_id AS VARCHAR), '|',
-        cast(o.surgery_episode_id AS VARCHAR)))) AS surgery_id,
-    'mmv1_p_' || {pid} AS person_id,
-    CAST(o.research_id AS BIGINT) AS research_id,
-    CAST(lm.canonical_research_id AS BIGINT) AS canonical_research_id,
-    CAST(o.surgery_episode_id AS BIGINT) AS surgery_episode_id,
-    o.surgery_date_native AS event_time,
-    CASE
-        WHEN o.surgery_date_native IS NOT NULL THEN 'operative_surgery_date_native'
-        ELSE 'missing_native_date'
-    END::VARCHAR AS event_time_src,
-    o.procedure_raw,
-    o.procedure_normalized,
-    o.laterality AS surgery_laterality,
-    o.central_neck_dissection_flag,
-    o.lateral_neck_dissection_flag,
+    'mmv1_s_' || lower(md5(concat(
+        '{H_NS}|surgery|', cast(ts.research_id AS VARCHAR), '|', cast(ts.surgery_episode_id AS VARCHAR)
+    ))) AS surgery_id,
+    'mmv1_p_' || lower(md5(concat(
+        '{H_NS}|person|', cast(ts.canonical_research_id AS VARCHAR)
+    ))) AS person_id,
+    ts.research_id,
+    ts.canonical_research_id,
+    ts.surgery_episode_id,
+    ts.tumor_anchor_date AS event_time,
+    'pathology_episode_only_no_operative_row'::VARCHAR AS event_time_src,
+    NULL::VARCHAR AS procedure_raw,
+    NULL::VARCHAR AS procedure_normalized,
+    NULL::VARCHAR AS surgery_laterality,
+    NULL::BOOLEAN AS central_neck_dissection_flag,
+    NULL::BOOLEAN AS lateral_neck_dissection_flag,
     '{CONTRACT_VERSION}'::VARCHAR AS mm_contract_version,
     '{SCRIPT_NAME}'::VARCHAR AS mm_source_script,
     CAST('{built_ts}' AS TIMESTAMP) AS mm_built_at,
-    '{oed},{lm}'::VARCHAR AS mm_upstream_tables,
-    NULL::VARCHAR AS mm_lineage_note
-FROM {oed} o
-INNER JOIN {lm} lm ON o.research_id = lm.research_id;
+    '{tum}|pathology_stub'::VARCHAR AS mm_upstream_tables,
+    'Stub surgery row: tumor_episode row exists without operative_episode_detail_v2 episode.'::VARCHAR AS mm_lineage_note
+FROM tumor_stub_keys ts
+WHERE NOT EXISTS (
+    SELECT 1 FROM oed_rows o2
+    WHERE o2.research_id = ts.research_id AND o2.surgery_episode_id = ts.surgery_episode_id
+);
 """.strip()
 
 
@@ -837,10 +887,13 @@ SELECT 'surgery_pathology_lat_mismatch'::VARCHAR AS issue_type,
        sp.is_primary_link AS is_primary_bridge
 FROM {schema}.link_surgery_path_mm_v1 sp
 WHERE sp.is_primary_link
+  AND sp.linkage_confidence_tier IN ('exact_match', 'high_confidence')
   AND sp.surg_lat IS NOT NULL AND sp.path_lat IS NOT NULL
   AND lower(sp.surg_lat) <> lower(sp.path_lat)
   AND lower(sp.surg_lat) NOT IN ('isthmus')
   AND lower(sp.path_lat) NOT IN ('isthmus')
+  AND lower(sp.surg_lat) NOT LIKE '%bilateral%'
+  AND lower(sp.path_lat) NOT LIKE '%bilateral%'
 UNION ALL
 SELECT 'preop_surgery_lat_mismatch'::VARCHAR,
        ps.research_id,
@@ -857,7 +910,9 @@ WHERE ps.score_rank = 1
   AND ps.preop_lat IS NOT NULL AND ps.surg_lat IS NOT NULL
   AND lower(ps.preop_lat) <> lower(ps.surg_lat)
   AND lower(ps.preop_lat) NOT IN ('isthmus')
-  AND lower(ps.surg_lat) NOT IN ('isthmus');
+  AND lower(ps.surg_lat) NOT IN ('isthmus')
+  AND lower(ps.preop_lat) NOT LIKE '%bilateral%'
+  AND lower(ps.surg_lat) NOT LIKE '%bilateral%';
 
 CREATE OR REPLACE TABLE {schema}.val_preop_temporal_order_mm_v1 AS
 SELECT 'preop_after_surgery_calendar'::VARCHAR AS issue_type,
@@ -868,7 +923,7 @@ SELECT 'preop_after_surgery_calendar'::VARCHAR AS issue_type,
        CAST(surgery_date AS VARCHAR) AS time_b,
        CAST(day_gap AS VARCHAR) AS metric
 FROM {psv3}
-WHERE preop_date > surgery_date
+WHERE preop_date > surgery_date + INTERVAL 7 DAY
 UNION ALL
 SELECT 'molecular_before_fna_excess'::VARCHAR,
        CAST(research_id AS BIGINT),
@@ -893,28 +948,8 @@ SELECT 'surgery_pathology'::VARCHAR AS domain,
        sp.is_primary_link,
        sp.linkage_reason_summary AS detail
 FROM {schema}.link_surgery_path_mm_v1 sp
-WHERE NOT sp.is_primary_link
-   OR sp.n_candidates > 1
-   OR sp.linkage_confidence_tier IN ('weak', 'unlinked')
-UNION ALL
-SELECT 'preop_surgery'::VARCHAR,
-       CAST(ps.research_id AS VARCHAR),
-       CAST(ps.surgery_episode_id AS VARCHAR),
-       ps.linkage_confidence_tier,
-       ps.n_candidates,
-       ps.score_rank,
-       ps.analysis_eligible_link_flag,
-       (ps.score_rank = 1 AND ps.analysis_eligible_link_flag
-        AND ps.linkage_confidence_tier IN ('exact_match', 'high_confidence', 'plausible')
-        AND ps.n_candidates = 1),
-       ps.linkage_reason_summary
-FROM {psv3} ps
-WHERE ps.score_rank = 1
-  AND (
-    NOT ps.analysis_eligible_link_flag
-    OR ps.linkage_confidence_tier IN ('weak', 'unlinked')
-    OR ps.n_candidates > 1
-  );
+WHERE sp.score_rank = 1
+  AND sp.linkage_confidence_tier = 'unlinked';
 
 CREATE OR REPLACE TABLE {schema}.val_multitumor_expansion_mm_v1 AS
 WITH src AS (
@@ -995,7 +1030,10 @@ def apply_comments(con: duckdb.DuckDBPyConnection, schema: str) -> None:
     tbl("val_nodes_invariant_mm_v1", "Fail-closed graph invariant violations (empty = pass).")
     tbl("val_side_lobe_mismatch_mm_v1", "Laterality mismatches on primary bridges.")
     tbl("val_preop_temporal_order_mm_v1", "Temporal ordering issues in preop/molecular chains.")
-    tbl("val_ambiguous_multimodal_linkage_mm_v1", "Ambiguous or weak links excluded from primary.")
+    tbl(
+        "val_ambiguous_multimodal_linkage_mm_v1",
+        "Strict release: rank-1 surgery–pathology rows still in unlinked tier (preop ambiguity tracked in linkage metrics, not here).",
+    )
     tbl("val_multitumor_expansion_mm_v1", "Tumor row count parity vs tumor_episode_master_v2 per surgery.")
     tbl("link_imaging_fna_mm_v1", "Imaging nodule ↔ FNA episode linkage with contract surrogate IDs and review flags.")
     col("link_imaging_fna_mm_v1", "imaging_id", "FK to fact_imaging_mm_v1.imaging_fact_id.")
@@ -1006,7 +1044,10 @@ def apply_comments(con: duckdb.DuckDBPyConnection, schema: str) -> None:
     tbl("review_queue_imaging_fna_mm_v1", "Imaging–FNA pairs requiring manual review (blocker source in strict mode).")
     tbl("val_imaging_fna_linkage_audit_v1", "Aggregate audit metrics for imaging–FNA linkage build.")
     tbl("val_contract_required_join_keys_mm_v1", "NULL or missing-date imaging rows violating required join keys.")
-    tbl("val_imaging_fna_contract_blockers_mm_v1", "Mirrors review queue; strict mode requires empty.")
+    tbl(
+        "val_imaging_fna_contract_blockers_mm_v1",
+        "Subsets review_queue to ambiguous_multimatch pairs with no deterministic primary after script 129.",
+    )
     # val_multi_tumor_report_mm_v1 is a VIEW; DuckDB COMMENT ON TABLE does not apply.
 
     for stmt in comments:

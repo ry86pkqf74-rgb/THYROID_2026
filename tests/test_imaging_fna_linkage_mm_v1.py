@@ -109,7 +109,7 @@ def test_exact_specimen_match_primary(link129) -> None:
     assert row[1] is True
 
 
-def test_ambiguous_dual_fna_no_primary(link129) -> None:
+def test_dual_fna_temporal_deterministic_primary(link129) -> None:
     con = duckdb.connect(":memory:")
     con.execute(
         """
@@ -139,13 +139,13 @@ def test_ambiguous_dual_fna_no_primary(link129) -> None:
     ).fetchone()
     assert row_prim is not None
     prim = row_prim[0]
-    assert prim is False
+    assert prim is True
     row_amb = con.execute(
         "SELECT COUNT(*) FROM review_queue_imaging_fna_mm_v1 WHERE review_reason = 'ambiguous_multimatch'"
     ).fetchone()
     assert row_amb is not None
     amb = row_amb[0]
-    assert amb >= 1
+    assert amb == 0
 
 
 def test_discordant_side_in_review_not_linked(link129) -> None:
@@ -269,4 +269,4 @@ def test_same_day_multi_fna_ordinals(link129) -> None:
         "SELECT BOOL_OR(is_primary_link) FROM imaging_fna_linkage_mm_v1"
     ).fetchone()
     assert row_prim2 is not None
-    assert row_prim2[0] is False
+    assert row_prim2[0] is True

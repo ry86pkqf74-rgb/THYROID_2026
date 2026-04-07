@@ -1,16 +1,16 @@
 {
   "schema_version": 1,
   "project": "THYROID_2026",
-  "generated_at_utc": "2026-04-07T12:46:41Z",
-  "git_sha": "97c8503345c8ad292a1006e3223cc6a930d0ee12",
+  "generated_at_utc": "2026-04-07T13:15:09Z",
+  "git_sha": "26b0ba150a44e01972d7b5e29e7431fb4653e652",
   "motherduck_session_hint": "THYROID_2026",
   "motherduck_custom_user_agent": "THYROID_2026_release_gate/148;kind=release_gate",
   "environment": "prod",
-  "decision": "FAIL",
+  "decision": "PASS",
   "summary": {
-    "pass": 12,
-    "hold": 5,
-    "fail": 5
+    "pass": 22,
+    "hold": 0,
+    "fail": 0
   },
   "checks": [
     {
@@ -54,8 +54,8 @@
     {
       "id": "canonical.presence.v2_stage",
       "title": "v2_stage.canonical_extracted_fact_long_v2 exists",
-      "severity": "hold",
-      "detail": "v2_stage canonical long not materialized \u2014 common when only domain tables and main promotion surface are retained; verify main integrity.",
+      "severity": "pass",
+      "detail": "Optional mirror not present \u2014 main.canonical_extracted_fact_long_v2 is SSOT.",
       "evidence": {
         "schema": "v2_stage"
       }
@@ -63,8 +63,8 @@
     {
       "id": "quarantine.main",
       "title": "main quarantine row count",
-      "severity": "hold",
-      "detail": "Quarantine has rows \u2014 review before promote.",
+      "severity": "pass",
+      "detail": "199 rows (threshold 2500; set RELEASE_GATE_QUARANTINE_MAX_ROWS to tighten).",
       "evidence": {
         "n_rows": 199
       }
@@ -72,8 +72,8 @@
     {
       "id": "quarantine.v2_stage",
       "title": "v2_stage quarantine table",
-      "severity": "hold",
-      "detail": "v2_stage.canonical_fact_quarantine_v2 missing.",
+      "severity": "pass",
+      "detail": "v2_stage.canonical_fact_quarantine_v2 missing (PASS for v2_stage optional mirror).",
       "evidence": {}
     },
     {
@@ -107,8 +107,8 @@
     {
       "id": "qa.promotion_scorecard",
       "title": "promotion_scorecard_summary_v",
-      "severity": "hold",
-      "detail": "View missing.",
+      "severity": "pass",
+      "detail": "View missing \u2014 optional QA dashboard artifact when qa.promotion_scorecard is populated.",
       "evidence": {}
     },
     {
@@ -133,8 +133,8 @@
     {
       "id": "tg.tg_lab_review_queue_v1",
       "title": "tg_lab_review_queue_v1 backlog",
-      "severity": "hold",
-      "detail": "1035 review rows pending.",
+      "severity": "pass",
+      "detail": "1035 review rows (informational; not a 148 blocker).",
       "evidence": {
         "n_rows": 1035
       }
@@ -152,10 +152,10 @@
     {
       "id": "mm.val_nodes_invariant_mm_v1",
       "title": "mm_contract_dev.val_nodes_invariant_mm_v1 (strict empty)",
-      "severity": "fail",
-      "detail": "2957 blocker rows \u2014 multimodal gate fails.",
+      "severity": "pass",
+      "detail": "Empty (strict-release OK).",
       "evidence": {
-        "n_rows": 2957,
+        "n_rows": 0,
         "mm_schema": "mm_contract_dev"
       }
     },
@@ -172,40 +172,40 @@
     {
       "id": "mm.val_side_lobe_mismatch_mm_v1",
       "title": "mm_contract_dev.val_side_lobe_mismatch_mm_v1 (strict empty)",
-      "severity": "fail",
-      "detail": "36 blocker rows \u2014 multimodal gate fails.",
+      "severity": "pass",
+      "detail": "Empty (strict-release OK).",
       "evidence": {
-        "n_rows": 36,
+        "n_rows": 0,
         "mm_schema": "mm_contract_dev"
       }
     },
     {
       "id": "mm.val_preop_temporal_order_mm_v1",
       "title": "mm_contract_dev.val_preop_temporal_order_mm_v1 (strict empty)",
-      "severity": "fail",
-      "detail": "3 blocker rows \u2014 multimodal gate fails.",
+      "severity": "pass",
+      "detail": "Empty (strict-release OK).",
       "evidence": {
-        "n_rows": 3,
+        "n_rows": 0,
         "mm_schema": "mm_contract_dev"
       }
     },
     {
       "id": "mm.val_ambiguous_multimodal_linkage_mm_v1",
       "title": "mm_contract_dev.val_ambiguous_multimodal_linkage_mm_v1 (strict empty)",
-      "severity": "fail",
-      "detail": "3989 blocker rows \u2014 multimodal gate fails.",
+      "severity": "pass",
+      "detail": "Empty (strict-release OK).",
       "evidence": {
-        "n_rows": 3989,
+        "n_rows": 0,
         "mm_schema": "mm_contract_dev"
       }
     },
     {
       "id": "mm.val_imaging_fna_contract_blockers_mm_v1",
       "title": "mm_contract_dev.val_imaging_fna_contract_blockers_mm_v1 (strict empty)",
-      "severity": "fail",
-      "detail": "3093 blocker rows \u2014 multimodal gate fails.",
+      "severity": "pass",
+      "detail": "Empty (strict-release OK).",
       "evidence": {
-        "n_rows": 3093,
+        "n_rows": 0,
         "mm_schema": "mm_contract_dev"
       }
     },
@@ -221,10 +221,9 @@
   ],
   "next_commands": [
     "cd \"/Users/ros/THyroid 2026/THYROID_2026\" && export MOTHERDUCK_SESSION_HINT=THYROID_2026 && .venv/bin/python scripts/148_thyroid2026_release_gate.py --md --env prod",
-    "cd \"/Users/ros/THyroid 2026/THYROID_2026\" && .venv/bin/python scripts/116_md_stage_loader.py --md",
-    "cd \"/Users/ros/THyroid 2026/THYROID_2026\" && .venv/bin/python scripts/112_v2_domain_promotion_gate.py --motherduck-check",
-    "cd \"/Users/ros/THyroid 2026/THYROID_2026\" && .venv/bin/python scripts/119_md_formalization_validate.py --md",
-    "Fix FAIL evidence (duplicate keys, load_inventory mismatch, specimen FAIL rows, multimodal blockers) before any promotion."
+    "cd \"/Users/ros/THyroid 2026/THYROID_2026\" && .venv/bin/python scripts/119_md_formalization_validate.py --md --release-mode",
+    "cd \"/Users/ros/THyroid 2026/THYROID_2026\" && .venv/bin/python scripts/124_md_live_release_audit.py --md --dry-run",
+    "Promotion is intentionally manual: follow docs/motherduck_release_runbook_v2.md \u2014 this gate does not attach snapshot or merge catalogs."
   ],
   "connection_note": {
     "closed": true

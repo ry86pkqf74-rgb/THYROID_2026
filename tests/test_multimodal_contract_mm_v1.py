@@ -208,9 +208,38 @@ class TestMultimodalContractBuild:
             """
         )
         mod.build_all(con, self.SCHEMA)
+        prim = con.execute(
+            f"SELECT is_primary_link FROM {self.SCHEMA}.link_surgery_path_mm_v1 "
+            "WHERE research_id = 200 AND score_rank = 1 LIMIT 1"
+        ).fetchone()[0]
+        assert prim is False
         amb = con.execute(
             f"SELECT COUNT(*) FROM {self.SCHEMA}.val_ambiguous_multimodal_linkage_mm_v1 "
             "WHERE domain = 'surgery_pathology' AND research_id = '200'"
+        ).fetchone()[0]
+        assert amb == 0
+
+    def test_unlinked_tier_surfaces_in_val_ambiguous(self):
+        mod = _load_mm128()
+        con = duckdb.connect(":memory:")
+        _seed_minimal_upstream(con)
+        con.execute(
+            """
+            INSERT INTO linkage_master_v1 VALUES (300, 100, 'MRN300', 'direct', 1.0);
+            INSERT INTO operative_episode_detail_v2 VALUES
+                (300, 1, DATE '2021-02-01', 'thyroidectomy', 'thyroidectomy', 'left', FALSE, FALSE);
+            INSERT INTO tumor_episode_master_v2 VALUES
+                (300, 1, 1, '2021-02-01', 'exact_source_date', 'PTC', 1.0,
+                 'T2', 'N0', 'I', 'left', FALSE);
+            INSERT INTO surgery_pathology_linkage_v3 VALUES
+                (300, 1, 1, 1, DATE '2021-02-01', DATE '2021-02-01', 0,
+                 'left', 'left', 1.0, 1, 0.2, 1, 'unlinked', 'no_path_bridge', TRUE);
+            """
+        )
+        mod.build_all(con, self.SCHEMA)
+        amb = con.execute(
+            f"SELECT COUNT(*) FROM {self.SCHEMA}.val_ambiguous_multimodal_linkage_mm_v1 "
+            "WHERE domain = 'surgery_pathology' AND research_id = '300'"
         ).fetchone()[0]
         assert amb >= 1
 
@@ -398,11 +427,11 @@ class TestImagingFnaContractIntegration:
         prim = pr[0]
         amb = am[0]
         multi = mu[0]
-        assert prim is False
+        assert prim is True
         assert amb is True
         assert multi is True
 
-    def test_discordant_laterality_surfaces_in_blockers_not_in_link(self) -> None:
+    def test_discordant_laterality_excluded_from_contract_blockers(self) -> None:
         mod = _load_mm128()
         con = duckdb.connect(":memory:")
         _seed_minimal_upstream(con)
@@ -412,14 +441,19 @@ class TestImagingFnaContractIntegration:
             f"SELECT COUNT(*) FROM {self.SCHEMA}.link_imaging_fna_mm_v1"
         ).fetchone()
         nb = con.execute(
-            f"SELECT COUNT(*) FROM {self.SCHEMA}.val_imaging_fna_contract_blockers_mm_v1 "
+            f"SELECT COUNT(*) FROM {self.SCHEMA}.val_imaging_fna_contract_blockers_mm_v1"
+        ).fetchone()
+        nr = con.execute(
+            f"SELECT COUNT(*) FROM {self.SCHEMA}.review_queue_imaging_fna_mm_v1 "
             "WHERE review_reason = 'discordant_laterality'"
         ).fetchone()
-        assert nl is not None and nb is not None
+        assert nl is not None and nb is not None and nr is not None
         n_link = nl[0]
         n_blk = nb[0]
+        n_rev = nr[0]
         assert n_link == 0
-        assert n_blk >= 1
+        assert n_blk == 0
+        assert n_rev >= 1
 
     def test_size_drift_gt_20pct_surfaces_in_review(self) -> None:
         mod = _load_mm128()

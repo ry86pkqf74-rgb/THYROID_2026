@@ -219,8 +219,11 @@ SELECT
     END AS specimen_match_raw,
     CASE
         WHEN i.img_laterality IS NULL OR fe.fna_laterality IS NULL THEN TRUE
-        WHEN LOWER(CAST(i.img_laterality AS VARCHAR))
-             = LOWER(CAST(fe.fna_laterality AS VARCHAR)) THEN TRUE
+        WHEN LOWER(TRIM(CAST(i.img_laterality AS VARCHAR)))
+             = LOWER(TRIM(CAST(fe.fna_laterality AS VARCHAR))) THEN TRUE
+        WHEN LOWER(TRIM(CAST(i.img_laterality AS VARCHAR))) IN ('isthmus', 'isthmus only')
+          OR LOWER(TRIM(CAST(fe.fna_laterality AS VARCHAR))) IN ('isthmus', 'isthmus only')
+          THEN TRUE
         ELSE FALSE
     END AS side_ok,
     CASE
@@ -316,6 +319,10 @@ prim AS (
             WHEN n_specimen_matches_on_nodule >= 2 THEN FALSE
             WHEN specimen_match_flag AND n_specimen_matches_on_nodule = 1 THEN TRUE
             WHEN n_candidates_for_nodule = 1 THEN TRUE
+            WHEN n_candidates_for_nodule > 1
+                 AND n_specimen_matches_on_nodule <= 1
+                 AND ordinal_in_nodule = 1
+                THEN TRUE
             ELSE FALSE
         END AS is_primary_link
     FROM ord
