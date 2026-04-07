@@ -1,0 +1,2 @@
+rw_token_mode= secrets.toml:MOTHERDUCK_TOKEN
+read_scaling_token_mode= none

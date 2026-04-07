@@ -1,0 +1,3 @@
+DROP DATABASE IF EXISTS "Thyroid 2026 Molecular Dev 20260407";
+CREATE DATABASE "Thyroid 2026 Molecular Dev 20260407" FROM "Thyroid 2026";
+[ok] dev DB replaced from latest prod

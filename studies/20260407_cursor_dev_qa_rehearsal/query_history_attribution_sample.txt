@@ -1,0 +1,28 @@
+100% ▕██████████████████████████████████████▏ (00:00:02.60 elapsed)     
+matching_rows 0
+100% ▕██████████████████████████████████████▏ (00:00:02.57 elapsed)     
+%cursor-agent% 0
+%thyroid_2026% 0
+%dev_qa_rehearsal% 0
+recent_head:
+duckdb/v1.4.4(osx_arm64) python/3.14 | cursor_dev_qa_rehearsal | 2026-04-07 12:11:04.921386-04:00
+duckdb/v1.4.4(osx_arm64) python/3.14 | cursor_dev_qa_rehearsal | 2026-04-07 12:11:04.827114-04:00
+duckdb/v1.4.4(osx_arm64) python/3.14 | cursor_dev_qa_rehearsal | 2026-04-07 12:11:04.523170-04:00
+duckdb/v1.4.4(osx_arm64) python/3.14 | cursor_dev_qa_rehearsal | 2026-04-07 12:11:04.377925-04:00
+duckdb/v1.4.4(osx_arm64) python/3.14 | cursor_dev_qa_rehearsal | 2026-04-07 12:11:04.343176-04:00
+100% ▕██████████████████████████████████████▏ (00:00:02.61 elapsed)     
+user_agent: duckdb/v1.4.4(osx_arm64) python/3.14
+duckling_id: logan_glosser.rw
+session_name: cursor_dev_qa_rehearsal
+start_time: 2026-04-07 12:11:04.921386-04:00
+---
+user_agent: duckdb/v1.4.4(osx_arm64) python/3.14
+duckling_id: logan_glosser.rw
+session_name: cursor_dev_qa_rehearsal
+start_time: 2026-04-07 12:11:04.827114-04:00
+---
+user_agent: duckdb/v1.4.4(osx_arm64) python/3.14
+duckling_id: logan_glosser.rw
+session_name: cursor_dev_qa_rehearsal
+start_time: 2026-04-07 12:11:04.523170-04:00
+---

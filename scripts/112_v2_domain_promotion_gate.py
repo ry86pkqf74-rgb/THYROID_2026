@@ -989,7 +989,8 @@ def _md_verify_cloud_attach(con: duckdb.DuckDBPyConnection) -> bool:
 def check_md_parity(
     inventory_df: pd.DataFrame,
 ) -> list[dict] | None:
-    token = _md_get_token()
+    # Prefer MD_SA_TOKEN over MOTHERDUCK_TOKEN when both exist (automation / --md-sa alignment).
+    token = _md_get_token(prefer_service_account=True)
     if not token:
         LOG.warning("No MotherDuck token found (env, .env.motherduck, secrets.toml); skipping G8 parity check")
         return None
@@ -1002,7 +1003,7 @@ def check_md_parity(
     try:
         client = MotherDuckClient.for_env(
             env_name,
-            use_service_account=False,
+            use_service_account=True,
             motherduck_session_hint=os.environ.get("MOTHERDUCK_SESSION_HINT"),
             custom_user_agent=os.environ.get("MOTHERDUCK_CUSTOM_USER_AGENT"),
         )
