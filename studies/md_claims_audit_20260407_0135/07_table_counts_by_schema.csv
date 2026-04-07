@@ -1,0 +1,6 @@
+schema_name,table_type,n_objects
+main,BASE TABLE,171
+main,VIEW,33
+qa,BASE TABLE,14
+qa,VIEW,8
+v2_stage,BASE TABLE,76
