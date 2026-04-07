@@ -1,0 +1,17 @@
+[
+  {
+    "ingestion_wave":"wave_tgab_structured_ehr",
+    "n":39005,
+    "pts":3170
+  },
+  {
+    "ingestion_wave":"wave_tg_structured_ehr",
+    "n":37966,
+    "pts":3057
+  },
+  {
+    "ingestion_wave":"final_institutional_20260407",
+    "n":989,
+    "pts":629
+  }
+]

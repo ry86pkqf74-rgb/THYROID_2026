@@ -82,6 +82,8 @@ def parse_args() -> argparse.Namespace:
 
 def connect(args: argparse.Namespace) -> duckdb.DuckDBPyConnection:
     if args.md:
+        import os
+
         from utils.md_connect import connect_md_or_file
 
         return connect_md_or_file(
@@ -89,6 +91,8 @@ def connect(args: argparse.Namespace) -> duckdb.DuckDBPyConnection:
             md=True,
             fail_closed=True,
             prefer_service_account=args.md_sa,
+            custom_user_agent=os.environ.get("MOTHERDUCK_CUSTOM_USER_AGENT"),
+            motherduck_session_hint=os.environ.get("MOTHERDUCK_SESSION_HINT"),
         )
     print("  FATAL: This script requires --md (no silent local fallback for institutional append).")
     sys.exit(1)
@@ -140,6 +144,17 @@ def build_frame(path: Path, ingestion_wave: str) -> pd.DataFrame:
     out["data_completeness_tier"] = "current_structured"
     note = df["provenance_note"] if "provenance_note" in df.columns else None
     key = df["source_lineage_key"].astype(str)
+    blank_key = key.str.strip().eq("") | key.str.lower().isin(("nan", "none"))
+    if blank_key.any():
+        raise SystemExit(
+            f"  FATAL: {int(blank_key.sum())} row(s) have empty/invalid source_lineage_key"
+        )
+    dup = key.str.strip().duplicated(keep=False)
+    if dup.any():
+        raise SystemExit(
+            f"  FATAL: duplicate source_lineage_key in CSV ({int(dup.sum())} row(s)); "
+            "keys must be unique for deterministic lineage"
+        )
     if note is not None:
         out["provenance_note"] = (
             "lineage_key=" + key + " | " + note.fillna("").astype(str)
@@ -184,6 +199,46 @@ SELECT * EXCLUDE (_rn) FROM ranked WHERE _rn = 1
 def _injected_fail(stage: str) -> None:
     if os.environ.get(LAB_APPEND_FAIL_AFTER_ENV) == stage:
         raise RuntimeError(f"injected failure ({LAB_APPEND_FAIL_AFTER_ENV}={stage})")
+
+
+def _adapt_lab_frame_to_remote_schema(
+    con: duckdb.DuckDBPyConnection, frame: pd.DataFrame
+) -> pd.DataFrame:
+    """MotherDuck may lag local DDL (e.g. unit_raw INTEGER). Coerce without losing unit text."""
+    rows = con.execute(
+        """
+        SELECT column_name, data_type
+        FROM information_schema.columns
+        WHERE table_catalog = current_database()
+          AND table_schema = 'main'
+          AND table_name = 'longitudinal_lab_canonical_v1'
+        """
+    ).fetchdf()
+    if rows.empty:
+        return frame
+    cmap = {str(r["column_name"]).lower(): str(r["data_type"]).upper() for _, r in rows.iterrows()}
+    out = frame.copy()
+    ut = cmap.get("unit_raw", "")
+    if "INT" in ut and "unit_raw" in out.columns:
+        mask = out["unit_raw"].notna() & out["unit_raw"].astype(str).str.strip().ne("")
+        if mask.any():
+            out.loc[mask, "provenance_note"] = (
+                out.loc[mask, "provenance_note"].astype(str)
+                + " | unit_raw="
+                + out.loc[mask, "unit_raw"].astype(str).str.strip()
+            )
+        out["unit_raw"] = None
+    ust = cmap.get("unit_standardized", "")
+    if "INT" in ust and "unit_standardized" in out.columns:
+        mask = out["unit_standardized"].notna() & out["unit_standardized"].astype(str).str.strip().ne("")
+        if mask.any():
+            out.loc[mask, "provenance_note"] = (
+                out.loc[mask, "provenance_note"].astype(str)
+                + " | unit_std="
+                + out.loc[mask, "unit_standardized"].astype(str).str.strip()
+            )
+        out["unit_standardized"] = None
+    return out
 
 
 def replace_lab_wave_in_transaction(
@@ -265,7 +320,8 @@ def main() -> None:
             print("  FATAL: main.longitudinal_lab_canonical_v1 does not exist")
             sys.exit(1)
 
-        pre, post = replace_lab_wave_in_transaction(con, frame, wave)
+        frame_adapted = _adapt_lab_frame_to_remote_schema(con, frame)
+        pre, post = replace_lab_wave_in_transaction(con, frame_adapted, wave)
         print(f"  [lab] longitudinal_lab_canonical_v1: {pre:,} → {post:,} rows (replaced wave '{wave}')")
 
         ded = _scalar_int(con, "SELECT COUNT(*) FROM main.longitudinal_lab_deduped_v")
