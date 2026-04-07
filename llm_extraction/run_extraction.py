@@ -54,9 +54,14 @@ from llm_extraction.registry import DomainSpec, load_registry, validate_registry
 from llm_extraction.run_telemetry import (
     RunTelemetryContext,
     append_note_extraction_run,
+    hash_file_sha256,
     new_extraction_run_id,
 )
-from llm_extraction.vocab import ENTITY_SCHEMA_COLUMNS, EXTRACTOR_BUILD_VERSION
+from llm_extraction.vocab import (
+    ENTITY_SCHEMA_COLUMNS,
+    EXTRACTOR_BUILD_VERSION,
+    sort_entities_deterministic,
+)
 from utils.text_helpers import save_parquet
 
 logging.basicConfig(
@@ -154,6 +159,9 @@ def _stamp_row(
     *,
     is_llm: bool | None = None,
 ) -> dict:
+    if rec.get("entity_domain") is None:
+        dom = getattr(ext, "entity_domain", None)
+        rec["entity_domain"] = dom if dom else None
     rec["extraction_run_id"] = extraction_run_id
     rec["extractor_name"] = ext.__class__.__name__
     rec["extractor_version"] = EXTRACTOR_BUILD_VERSION
@@ -179,6 +187,12 @@ def _stamp_row(
         rec["llm_prompt_version"] = "regex_only"
         rec["verifier_name"] = None
         rec["verifier_version"] = None
+        rec["llm_provider"] = None
+        rec["llm_base_url"] = None
+        rec["llm_sdk"] = None
+        rec["llm_sdk_version"] = None
+        rec["provider_returned_model"] = None
+        rec["provider_system_fingerprint"] = None
     else:
         rec["llm_model"] = rec.get("model_name")
         rec["llm_prompt_version"] = rec.get("prompt_version")
@@ -459,7 +473,9 @@ def _write_domain_parquet(
     """Merge-into-existing and write; returns the output path."""
     file_stem = DOMAIN_TO_FILE.get(domain, f"note_entities_{domain}")
     out_path = PROCESSED / f"{file_stem}.parquet"
-    final_df = _merge_into_existing(domain, df, research_id_filter)
+    final_df = sort_entities_deterministic(
+        _merge_into_existing(domain, df, research_id_filter)
+    )
     save_parquet(final_df, out_path)
     return out_path
 
@@ -528,6 +544,22 @@ def main() -> None:
     if args.validate_only:
         sys.exit(0 if clean else 1)
 
+    notes_path = PROCESSED / "clinical_notes_long.parquet"
+    if not notes_path.exists():
+        log.error(f"Input not found: {notes_path}")
+        log.error("Run scripts/build_clinical_notes_long.py first.")
+        sys.exit(1)
+
+    reg_yaml = ROOT / "config" / "extraction_domain_registry.yaml"
+    registry_digest: str | None = None
+    if reg_yaml.is_file():
+        registry_digest = hash_file_sha256(reg_yaml)
+    st = notes_path.stat()
+    input_file_size_bytes = int(st.st_size)
+    input_mtime_utc = datetime.fromtimestamp(st.st_mtime, tz=timezone.utc).isoformat()
+    input_sha256 = hash_file_sha256(notes_path)
+    input_path_str = str(notes_path.resolve())
+
     # Validate --target against registry (fail loudly for unknown domains)
     target_domain: str | None = args.target
     target_spec: DomainSpec | None = None
@@ -562,12 +594,6 @@ def main() -> None:
     log.info("=" * 70)
     log.info("  ENTITY EXTRACTION PIPELINE  (registry v3 — %d domains)", len(reg.domains))
     log.info("=" * 70)
-
-    notes_path = PROCESSED / "clinical_notes_long.parquet"
-    if not notes_path.exists():
-        log.error(f"Input not found: {notes_path}")
-        log.error("Run scripts/build_clinical_notes_long.py first.")
-        sys.exit(1)
 
     notes_df = pd.read_parquet(notes_path)
     log.info(f"  Loaded {len(notes_df):,} notes from {notes_path.name}")
@@ -738,7 +764,9 @@ def main() -> None:
     # ── Merged audit artifact (optional) ────────────────────────────────────
     if args.merge_audit:
         if llm_domain_dfs:
-            merged = pd.concat(llm_domain_dfs, ignore_index=True)
+            merged = sort_entities_deterministic(
+                pd.concat(llm_domain_dfs, ignore_index=True)
+            )
             audit_path = PROCESSED / "note_entities_llm.parquet"
             save_parquet(merged, audit_path)
             log.info(
@@ -793,6 +821,12 @@ def main() -> None:
         domains_requested=",".join(sorted(domains_written)),
         research_id_filter_note=args.research_ids,
         target_domain=target_domain,
+        input_path=input_path_str,
+        input_file_size_bytes=input_file_size_bytes,
+        input_mtime_utc=input_mtime_utc,
+        input_sha256=input_sha256,
+        registry_schema_version=reg.schema_version,
+        registry_digest=registry_digest,
     )
     log.info(
         "  note_extraction_runs updated (success=%s, failure_stage=%s, entities=%s)",

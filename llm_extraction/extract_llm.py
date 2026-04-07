@@ -24,6 +24,7 @@ Lab date precedence rule enforced in prompts:
 from __future__ import annotations
 
 import hashlib
+import importlib.metadata
 import json
 import logging
 import os
@@ -248,6 +249,33 @@ class LLMExtractor(BaseExtractor):
         self._thread_local.client = client
         return client
 
+    def _openai_sdk_version(self) -> str | None:
+        try:
+            return importlib.metadata.version("openai")
+        except importlib.metadata.PackageNotFoundError:
+            return None
+
+    def _llm_transport_meta(self, response: object | None) -> dict[str, str | None]:
+        """Provider / SDK metadata for provenance (all nullable when unavailable)."""
+        provider_model: str | None = None
+        sys_fp: str | None = None
+        if response is not None:
+            provider_model = getattr(response, "model", None)
+            if provider_model is not None:
+                provider_model = str(provider_model)
+            sys_fp = getattr(response, "system_fingerprint", None)
+            if sys_fp is not None:
+                sys_fp = str(sys_fp)
+        base = self._base_url
+        return {
+            "llm_provider": self._provider,
+            "llm_base_url": str(base) if base else None,
+            "llm_sdk": "openai",
+            "llm_sdk_version": self._openai_sdk_version(),
+            "provider_returned_model": provider_model,
+            "provider_system_fingerprint": sys_fp,
+        }
+
     def _call_llm(
         self,
         note_row_id: str,
@@ -316,6 +344,7 @@ class LLMExtractor(BaseExtractor):
             return []
 
         raw_json = response.choices[0].message.content or "{}"
+        transport = self._llm_transport_meta(response)
         return self._parse_llm_response(
             raw_json,
             note_row_id,
@@ -329,6 +358,7 @@ class LLMExtractor(BaseExtractor):
             chunk_index=chunk_index,
             llm_operative=operative,
             domain=domain,
+            llm_transport=transport,
         )
 
     # ── Response parsing ─────────────────────────────────────────────────────
@@ -348,6 +378,7 @@ class LLMExtractor(BaseExtractor):
         chunk_index: int,
         llm_operative: bool = False,
         domain: str | None = None,
+        llm_transport: dict[str, str | None] | None = None,
     ) -> list[EntityMatch]:
         """Parse LLM JSON output into EntityMatch objects."""
         response_hash = hashlib.sha256(raw_json.encode("utf-8")).hexdigest()
@@ -376,6 +407,7 @@ class LLMExtractor(BaseExtractor):
             return []
 
         prompt_ver = self._prompt_version(operative=llm_operative, domain=domain)
+        transport = llm_transport or {}
         results: list[EntityMatch] = []
         for item in entities:
             if not isinstance(item, dict):
@@ -471,6 +503,12 @@ class LLMExtractor(BaseExtractor):
                 prompt_version=prompt_ver,
                 verifier_name=v_name,
                 verifier_version=v_ver,
+                llm_provider=transport.get("llm_provider"),
+                llm_base_url=transport.get("llm_base_url"),
+                llm_sdk=transport.get("llm_sdk"),
+                llm_sdk_version=transport.get("llm_sdk_version"),
+                provider_returned_model=transport.get("provider_returned_model"),
+                provider_system_fingerprint=transport.get("provider_system_fingerprint"),
             )
             results.append(match)
 

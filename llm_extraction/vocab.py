@@ -4,6 +4,8 @@ Controlled vocabularies and normalisation maps for entity extraction.
 
 from __future__ import annotations
 
+import pandas as pd
+
 NOTE_TYPES: set[str] = {
     "h_p",
     "op_note",
@@ -18,6 +20,7 @@ NOTE_TYPES: set[str] = {
 ENTITY_SCHEMA_COLUMNS: list[str] = [
     "research_id",
     "note_row_id",
+    "entity_domain",
     "episode_id",
     "note_type",
     "note_index",
@@ -59,12 +62,20 @@ ENTITY_SCHEMA_COLUMNS: list[str] = [
     "prompt_version",
     "verifier_name",
     "verifier_version",
+    # Nullable LLM transport / provider metadata (older rows omit these)
+    "llm_provider",
+    "llm_base_url",
+    "llm_sdk",
+    "llm_sdk_version",
+    "provider_returned_model",
+    "provider_system_fingerprint",
 ]
 
 # Nullable pandas dtypes for round-tripped entity DataFrames (explicit, backward-compatible).
 ENTITY_SCHEMA_DTYPES: dict[str, str] = {
     "research_id": "Int64",
     "note_row_id": "string",
+    "entity_domain": "string",
     "episode_id": "string",
     "note_type": "string",
     "note_index": "Int64",
@@ -104,6 +115,12 @@ ENTITY_SCHEMA_DTYPES: dict[str, str] = {
     "prompt_version": "string",
     "verifier_name": "string",
     "verifier_version": "string",
+    "llm_provider": "string",
+    "llm_base_url": "string",
+    "llm_sdk": "string",
+    "llm_sdk_version": "string",
+    "provider_returned_model": "string",
+    "provider_system_fingerprint": "string",
 }
 
 # Defaults for new provenance fields when absent (legacy rows, regex-only paths).
@@ -134,7 +151,47 @@ PROVENANCE_FIELD_DEFAULTS: dict[str, object | None] = {
     "prompt_version": None,
     "verifier_name": None,
     "verifier_version": None,
+    "entity_domain": None,
+    "llm_provider": None,
+    "llm_base_url": None,
+    "llm_sdk": None,
+    "llm_sdk_version": None,
+    "provider_returned_model": None,
+    "provider_system_fingerprint": None,
 }
+
+# Canonical row order before every entity parquet write (stable mergesort; skip missing columns).
+ENTITY_SORT_KEY_ORDER: tuple[str, ...] = (
+    "research_id",
+    "note_row_id",
+    "entity_domain",
+    "entity_type",
+    "entity_date",
+    "note_date",
+    "entity_value_norm",
+    "present_or_negated",
+    "chunk_index",
+    "source_line",
+    "evidence_global_start",
+    "evidence_global_end",
+    "extraction_method",
+    "raw_response_sha256",
+)
+
+
+def sort_entities_deterministic(df: pd.DataFrame) -> pd.DataFrame:
+    """Return *df* sorted deterministically for reproducible parquet row order.
+
+    Uses stable mergesort. Only columns present in *df* participate; others are ignored.
+    """
+    if df.empty:
+        return df.copy()
+    keys = [c for c in ENTITY_SORT_KEY_ORDER if c in df.columns]
+    if not keys:
+        return df.copy()
+    out = df.sort_values(by=keys, kind="mergesort", na_position="last")
+    return out.reset_index(drop=True)
+
 
 # Optional casts on canonical long output (post-contract) for stable parquet types.
 CANONICAL_FACT_CONTRACT_DTYPES: dict[str, str] = {

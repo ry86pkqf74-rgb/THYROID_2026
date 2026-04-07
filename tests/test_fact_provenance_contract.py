@@ -150,9 +150,168 @@ def test_entity_schema_includes_provenance_columns():
         "extractor_version",
         "model_name",
         "prompt_version",
+        "entity_domain",
+        "llm_provider",
+        "provider_returned_model",
     ):
         assert col in ENTITY_SCHEMA_COLUMNS
     assert PROVENANCE_FIELD_DEFAULTS.get("verification_status") == "unverified"
+
+
+def test_sort_entities_deterministic_stable_under_shuffle():
+    """Row order from threaded completion order should not affect final parquet order."""
+    from llm_extraction.vocab import sort_entities_deterministic
+
+    df = pd.DataFrame(
+        [
+            {
+                "research_id": 2,
+                "note_row_id": "n2",
+                "entity_domain": "imaging",
+                "entity_type": "size",
+                "entity_date": None,
+                "note_date": "2020-01-01",
+                "entity_value_norm": "a",
+                "present_or_negated": "present",
+                "chunk_index": 0,
+                "source_line": 2,
+                "evidence_global_start": 10,
+                "evidence_global_end": 20,
+                "extraction_method": "llm_github_models",
+                "raw_response_sha256": "aa",
+            },
+            {
+                "research_id": 1,
+                "note_row_id": "n1",
+                "entity_domain": "imaging",
+                "entity_type": "size",
+                "entity_date": None,
+                "note_date": "2020-01-02",
+                "entity_value_norm": "b",
+                "present_or_negated": "present",
+                "chunk_index": 0,
+                "source_line": 1,
+                "evidence_global_start": 5,
+                "evidence_global_end": 15,
+                "extraction_method": "llm_github_models",
+                "raw_response_sha256": "bb",
+            },
+            {
+                "research_id": 1,
+                "note_row_id": "n1",
+                "entity_domain": "imaging",
+                "entity_type": "size",
+                "entity_date": None,
+                "note_date": "2020-01-02",
+                "entity_value_norm": "a",
+                "present_or_negated": "present",
+                "chunk_index": 0,
+                "source_line": 1,
+                "evidence_global_start": 1,
+                "evidence_global_end": 2,
+                "extraction_method": "llm_github_models",
+                "raw_response_sha256": "cc",
+            },
+        ]
+    )
+    s1 = sort_entities_deterministic(df.sample(frac=1, random_state=7).reset_index(drop=True))
+    s2 = sort_entities_deterministic(df.sample(frac=1, random_state=42).reset_index(drop=True))
+    pd.testing.assert_frame_equal(s1, s2)
+
+    merged_a = sort_entities_deterministic(
+        pd.concat([df.iloc[[0, 1]], df.iloc[[2]]], ignore_index=True)
+    )
+    merged_b = sort_entities_deterministic(
+        pd.concat([df.iloc[[2]], df.iloc[[1, 0]]], ignore_index=True)
+    )
+    pd.testing.assert_frame_equal(merged_a, merged_b)
+
+
+def test_note_extraction_run_input_fingerprint_and_registry(tmp_path):
+    from llm_extraction.run_telemetry import append_note_extraction_run
+
+    append_note_extraction_run(
+        tmp_path,
+        run_id="run-fp",
+        started_at="2026-04-06T00:00:00Z",
+        completed_at="2026-04-06T00:01:00Z",
+        success=True,
+        failure_stage="none",
+        retry_count=0,
+        output_record_count=1,
+        warnings={},
+        domains_requested="staging",
+        research_id_filter_note=None,
+        target_domain=None,
+        input_path="/processed/clinical_notes_long.parquet",
+        input_file_size_bytes=1024,
+        input_mtime_utc="2026-04-06T12:00:00+00:00",
+        input_sha256="a" * 64,
+        registry_schema_version="entity_schema_v3_x",
+        registry_digest="b" * 64,
+    )
+    df = pd.read_parquet(tmp_path / "note_extraction_runs.parquet")
+    row = df.iloc[0]
+    assert row["input_path"].endswith("clinical_notes_long.parquet")
+    assert int(row["input_file_size_bytes"]) == 1024
+    assert "2026-04-06" in str(row["input_mtime_utc"])
+    assert row["input_sha256"] == "a" * 64
+    assert row["registry_schema_version"] == "entity_schema_v3_x"
+    assert row["registry_digest"] == "b" * 64
+
+
+def test_note_extraction_runs_backward_compat_old_rows(tmp_path):
+    """Older parquet rows without fingerprint columns survive append with null new fields."""
+    from llm_extraction.run_telemetry import append_note_extraction_run
+
+    legacy = pd.DataFrame(
+        [
+            {
+                "run_id": "legacy-1",
+                "started_at": "2025-01-01T00:00:00Z",
+                "completed_at": "2025-01-01T01:00:00Z",
+                "success": True,
+                "failure_stage": "none",
+                "retry_count": 0,
+                "output_record_count": 0,
+                "warnings": "{}",
+                "domains_requested": "staging",
+                "research_id_filter": None,
+                "target_domain": None,
+                "extractor_build_version": "entity_schema_v2_2026-04-01",
+                "hostname": "h",
+                "git_commit": None,
+            }
+        ]
+    )
+    legacy.to_parquet(tmp_path / "note_extraction_runs.parquet", index=False)
+
+    append_note_extraction_run(
+        tmp_path,
+        run_id="new-1",
+        started_at="2026-04-06T00:00:00Z",
+        completed_at="2026-04-06T00:01:00Z",
+        success=True,
+        failure_stage="none",
+        retry_count=0,
+        output_record_count=1,
+        warnings={"k": "v"},
+        domains_requested="genetics",
+        research_id_filter_note=None,
+        target_domain=None,
+        input_path=str(tmp_path / "clinical_notes_long.parquet"),
+        input_file_size_bytes=99,
+        input_mtime_utc="2026-04-06T00:00:00+00:00",
+        input_sha256="c" * 64,
+        registry_schema_version="entity_schema_v3",
+        registry_digest="d" * 64,
+    )
+
+    df = pd.read_parquet(tmp_path / "note_extraction_runs.parquet")
+    assert len(df) == 2
+    assert pd.isna(df.iloc[0]["input_sha256"])
+    assert df.iloc[1]["input_sha256"] == "c" * 64
+    assert df.iloc[1]["registry_digest"] == "d" * 64
 
 
 def test_md_connect_uses_local_file_when_md_false(tmp_path):
@@ -275,6 +434,13 @@ def test_stamp_row_sets_regex_prompt_version():
         "prompt_version": None,
         "verifier_name": None,
         "verifier_version": None,
+        "entity_domain": None,
+        "llm_provider": None,
+        "llm_base_url": None,
+        "llm_sdk": None,
+        "llm_sdk_version": None,
+        "provider_returned_model": None,
+        "provider_system_fingerprint": None,
     }
     out = _stamp_row(ext, rec, "run-uuid", {})
     assert out["extraction_run_id"] == "run-uuid"

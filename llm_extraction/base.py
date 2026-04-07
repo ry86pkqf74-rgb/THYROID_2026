@@ -52,6 +52,12 @@ class EntityMatch:
     prompt_version: str | None = None
     verifier_name: str | None = None
     verifier_version: str | None = None
+    llm_provider: str | None = None
+    llm_base_url: str | None = None
+    llm_sdk: str | None = None
+    llm_sdk_version: str | None = None
+    provider_returned_model: str | None = None
+    provider_system_fingerprint: str | None = None
 
     def to_dict(self) -> dict:
         return {
@@ -88,6 +94,12 @@ class EntityMatch:
             "prompt_version": self.prompt_version,
             "verifier_name": self.verifier_name,
             "verifier_version": self.verifier_version,
+            "llm_provider": self.llm_provider,
+            "llm_base_url": self.llm_base_url,
+            "llm_sdk": self.llm_sdk,
+            "llm_sdk_version": self.llm_sdk_version,
+            "provider_returned_model": self.provider_returned_model,
+            "provider_system_fingerprint": self.provider_system_fingerprint,
         }
 
 

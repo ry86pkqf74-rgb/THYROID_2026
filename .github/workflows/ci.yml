@@ -28,7 +28,10 @@ on:
       - "app/**"
       - "utils/**"
       - "llm_extraction/**"
-      - ".github/workflows/ci.yml"
+      - "config/**"
+      - "prompts/**"
+      - "tests/**"
+      - ".github/**"
   pull_request:
     branches: [main]
   # Allow manual triggering for release promotion checks

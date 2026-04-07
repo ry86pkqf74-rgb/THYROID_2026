@@ -4,6 +4,7 @@ Per-extraction-run telemetry: LLM counters and persistence to note_extraction_ru
 
 from __future__ import annotations
 
+import hashlib
 import json
 import socket
 import subprocess
@@ -22,6 +23,18 @@ from utils.text_helpers import save_parquet
 
 def new_extraction_run_id() -> str:
     return str(uuid4())
+
+
+def hash_file_sha256(path: Path, *, chunk_size: int = 1 << 20) -> str:
+    """Stream a file into SHA-256 without loading it whole (binary chunks only; no text decode)."""
+    digest = hashlib.sha256()
+    with path.open("rb") as fh:
+        while True:
+            chunk = fh.read(chunk_size)
+            if not chunk:
+                break
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def _git_head() -> str | None:
@@ -86,6 +99,12 @@ def append_note_extraction_run(
     domains_requested: str | None = None,
     research_id_filter_note: str | None = None,
     target_domain: str | None = None,
+    input_path: str | None = None,
+    input_file_size_bytes: int | None = None,
+    input_mtime_utc: str | None = None,
+    input_sha256: str | None = None,
+    registry_schema_version: str | None = None,
+    registry_digest: str | None = None,
 ) -> Path:
     """Append one run row to processed/note_extraction_runs.parquet.
 
@@ -113,9 +132,18 @@ def append_note_extraction_run(
         "extractor_build_version": EXTRACTOR_BUILD_VERSION,
         "hostname": socket.gethostname(),
         "git_commit": _git_head(),
+        "input_path": input_path,
+        "input_file_size_bytes": input_file_size_bytes,
+        "input_mtime_utc": input_mtime_utc,
+        "input_sha256": input_sha256,
+        "registry_schema_version": registry_schema_version,
+        "registry_digest": registry_digest,
     }
     if path.exists():
         prev = pd.read_parquet(path)
+        for col, val in row.items():
+            if col not in prev.columns:
+                prev[col] = None
         out = pd.concat([prev, pd.DataFrame([row])], ignore_index=True)
     else:
         out = pd.DataFrame([row])
