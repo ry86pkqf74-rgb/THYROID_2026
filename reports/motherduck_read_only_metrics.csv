@@ -1,0 +1,76 @@
+database,detail,env,metric,metric_group,object,status,value
+Thyroid 2026 Molecular Dev 20260407,,dev,n_tables_views,schema_object_count,main,ok,100
+Thyroid 2026 Molecular Dev 20260407,,dev,n_tables_views,schema_object_count,qa,ok,12
+Thyroid 2026 Molecular Dev 20260407,,dev,n_tables_views,schema_object_count,v2_stage,ok,43
+Thyroid 2026 Molecular Dev 20260407,,dev,canonical_clean_rows,row_count,main.canonical_extracted_fact_long_v2,ok,123577
+Thyroid 2026 Molecular Dev 20260407,,dev,canonical_quarantine_rows,row_count,main.canonical_fact_quarantine_v2,ok,199
+Thyroid 2026 Molecular Dev 20260407,,dev,staging_clean_rows,row_count,v2_stage.canonical_extracted_fact_long_v2,ok,123577
+Thyroid 2026 Molecular Dev 20260407,,dev,staging_quarantine_rows,row_count,v2_stage.canonical_fact_quarantine_v2,ok,199
+Thyroid 2026 Molecular Dev 20260407,,dev,pending_verification_null,review_queue,qa.manual_review_queue,ok,0
+Thyroid 2026 Molecular Dev 20260407,,dev,total_rows,review_queue,qa.manual_review_queue,ok,5622
+Thyroid 2026 Molecular Dev 20260407,,dev,n_objects,release_schema,release_20260406,ok,6
+Thyroid 2026 Molecular Dev 20260407,,dev,n_objects,release_schema,release_20260407,ok,5
+Thyroid 2026 Molecular Dev 20260407,,dev,n_objects,release_schema,release_20260407_final,ok,10
+Thyroid 2026 Molecular Dev 20260407,,dev,n_objects,release_schema,release_20260407_final2,ok,10
+Thyroid 2026 Molecular Dev 20260407,,dev,n_objects,release_schema,release_20260408,ok,10
+Thyroid 2026 Molecular Dev 20260407,,dev,n_objects,release_schema,release_20260409,ok,10
+Thyroid 2026 Molecular Dev 20260407,,dev,all_row_match,staging_consistency,v2_stage.load_inventory,PASS,True
+Thyroid 2026 Molecular Dev 20260407,,dev,n_inventory_rows,staging_consistency,v2_stage.load_inventory,ok,210
+Thyroid 2026 Molecular Dev 20260407,,dev,max_load_id,staging_consistency,v2_stage.load_inventory,ok,210
+Thyroid 2026 Molecular Dev 20260407,,dev,row_count,mm_validation,mm_contract_dev.val_contract_required_join_keys_mm_v1,missing,
+Thyroid 2026 Molecular Dev 20260407,,dev,row_count,mm_validation,mm_contract_dev.val_nodes_invariant_mm_v1,RED,2957
+Thyroid 2026 Molecular Dev 20260407,,dev,row_count,mm_validation,mm_contract_dev.val_multitumor_expansion_mm_v1,GREEN,0
+Thyroid 2026 Molecular Dev 20260407,,dev,row_count,mm_validation,mm_contract_dev.val_side_lobe_mismatch_mm_v1,RED,36
+Thyroid 2026 Molecular Dev 20260407,,dev,row_count,mm_validation,mm_contract_dev.val_preop_temporal_order_mm_v1,RED,3
+Thyroid 2026 Molecular Dev 20260407,,dev,row_count,mm_validation,mm_contract_dev.val_ambiguous_multimodal_linkage_mm_v1,RED,3989
+Thyroid 2026 Molecular Dev 20260407,,dev,row_count,mm_validation,mm_contract_dev.val_imaging_fna_contract_blockers_mm_v1,missing,
+Thyroid 2026 Molecular QA 20260407,,qa,n_tables_views,schema_object_count,main,ok,91
+Thyroid 2026 Molecular QA 20260407,,qa,n_tables_views,schema_object_count,qa,ok,11
+Thyroid 2026 Molecular QA 20260407,,qa,n_tables_views,schema_object_count,v2_stage,ok,38
+Thyroid 2026 Molecular QA 20260407,,qa,canonical_clean_rows,row_count,main.canonical_extracted_fact_long_v2,ok,123577
+Thyroid 2026 Molecular QA 20260407,,qa,canonical_quarantine_rows,row_count,main.canonical_fact_quarantine_v2,ok,199
+Thyroid 2026 Molecular QA 20260407,,qa,staging_clean_rows,row_count,v2_stage.canonical_extracted_fact_long_v2,missing,
+Thyroid 2026 Molecular QA 20260407,,qa,staging_quarantine_rows,row_count,v2_stage.canonical_fact_quarantine_v2,missing,
+Thyroid 2026 Molecular QA 20260407,,qa,pending_verification_null,review_queue,qa.manual_review_queue,ok,0
+Thyroid 2026 Molecular QA 20260407,,qa,total_rows,review_queue,qa.manual_review_queue,ok,5622
+Thyroid 2026 Molecular QA 20260407,,qa,n_objects,release_schema,release_20260406,ok,6
+Thyroid 2026 Molecular QA 20260407,,qa,n_objects,release_schema,release_20260407,ok,5
+Thyroid 2026 Molecular QA 20260407,,qa,n_objects,release_schema,release_20260407_final,ok,10
+Thyroid 2026 Molecular QA 20260407,,qa,n_objects,release_schema,release_20260407_final2,ok,10
+Thyroid 2026 Molecular QA 20260407,,qa,n_objects,release_schema,release_20260408,ok,10
+Thyroid 2026 Molecular QA 20260407,,qa,n_objects,release_schema,release_20260409,ok,10
+Thyroid 2026 Molecular QA 20260407,,qa,all_row_match,staging_consistency,v2_stage.load_inventory,PASS,True
+Thyroid 2026 Molecular QA 20260407,,qa,n_inventory_rows,staging_consistency,v2_stage.load_inventory,ok,180
+Thyroid 2026 Molecular QA 20260407,,qa,max_load_id,staging_consistency,v2_stage.load_inventory,ok,180
+Thyroid 2026 Molecular QA 20260407,,qa,row_count,mm_validation,mm_contract_dev.val_contract_required_join_keys_mm_v1,missing,
+Thyroid 2026 Molecular QA 20260407,,qa,row_count,mm_validation,mm_contract_dev.val_nodes_invariant_mm_v1,RED,2957
+Thyroid 2026 Molecular QA 20260407,,qa,row_count,mm_validation,mm_contract_dev.val_multitumor_expansion_mm_v1,GREEN,0
+Thyroid 2026 Molecular QA 20260407,,qa,row_count,mm_validation,mm_contract_dev.val_side_lobe_mismatch_mm_v1,RED,36
+Thyroid 2026 Molecular QA 20260407,,qa,row_count,mm_validation,mm_contract_dev.val_preop_temporal_order_mm_v1,RED,3
+Thyroid 2026 Molecular QA 20260407,,qa,row_count,mm_validation,mm_contract_dev.val_ambiguous_multimodal_linkage_mm_v1,RED,3989
+Thyroid 2026 Molecular QA 20260407,,qa,row_count,mm_validation,mm_contract_dev.val_imaging_fna_contract_blockers_mm_v1,missing,
+Thyroid 2026,,prod,n_tables_views,schema_object_count,main,ok,131
+Thyroid 2026,,prod,n_tables_views,schema_object_count,qa,ok,27
+Thyroid 2026,,prod,n_tables_views,schema_object_count,v2_stage,ok,38
+Thyroid 2026,,prod,canonical_clean_rows,row_count,main.canonical_extracted_fact_long_v2,ok,123577
+Thyroid 2026,,prod,canonical_quarantine_rows,row_count,main.canonical_fact_quarantine_v2,ok,199
+Thyroid 2026,,prod,staging_clean_rows,row_count,v2_stage.canonical_extracted_fact_long_v2,missing,
+Thyroid 2026,,prod,staging_quarantine_rows,row_count,v2_stage.canonical_fact_quarantine_v2,missing,
+Thyroid 2026,,prod,pending_verification_null,review_queue,qa.manual_review_queue,ok,0
+Thyroid 2026,,prod,total_rows,review_queue,qa.manual_review_queue,ok,5622
+Thyroid 2026,,prod,n_objects,release_schema,release_20260406,ok,6
+Thyroid 2026,,prod,n_objects,release_schema,release_20260407,ok,5
+Thyroid 2026,,prod,n_objects,release_schema,release_20260407_final,ok,10
+Thyroid 2026,,prod,n_objects,release_schema,release_20260407_final2,ok,10
+Thyroid 2026,,prod,n_objects,release_schema,release_20260408,ok,10
+Thyroid 2026,,prod,n_objects,release_schema,release_20260409,ok,10
+Thyroid 2026,,prod,all_row_match,staging_consistency,v2_stage.load_inventory,PASS,True
+Thyroid 2026,,prod,n_inventory_rows,staging_consistency,v2_stage.load_inventory,ok,180
+Thyroid 2026,,prod,max_load_id,staging_consistency,v2_stage.load_inventory,ok,180
+Thyroid 2026,,prod,row_count,mm_validation,mm_contract_dev.val_contract_required_join_keys_mm_v1,GREEN,0
+Thyroid 2026,,prod,row_count,mm_validation,mm_contract_dev.val_nodes_invariant_mm_v1,RED,2957
+Thyroid 2026,,prod,row_count,mm_validation,mm_contract_dev.val_multitumor_expansion_mm_v1,GREEN,0
+Thyroid 2026,,prod,row_count,mm_validation,mm_contract_dev.val_side_lobe_mismatch_mm_v1,RED,36
+Thyroid 2026,,prod,row_count,mm_validation,mm_contract_dev.val_preop_temporal_order_mm_v1,RED,3
+Thyroid 2026,,prod,row_count,mm_validation,mm_contract_dev.val_ambiguous_multimodal_linkage_mm_v1,RED,3989
+Thyroid 2026,,prod,row_count,mm_validation,mm_contract_dev.val_imaging_fna_contract_blockers_mm_v1,RED,3093

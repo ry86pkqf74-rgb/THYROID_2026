@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -11,6 +12,13 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from utils.md_connect import connect_md_fail_closed  # noqa: E402
+
+# Align with operator runbook / audit attribution (read-only inventory).
+os.environ.setdefault("MOTHERDUCK_SESSION_HINT", "THYROID_2026")
+os.environ.setdefault(
+    "MOTHERDUCK_CUSTOM_USER_AGENT",
+    "THYROID_2026_molecular/129_readonly_audit;kind=inventory",
+)
 
 KEYWORDS = [
     "patient",
