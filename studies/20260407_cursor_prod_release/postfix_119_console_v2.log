@@ -1,0 +1,60 @@
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+=== MotherDuck Formalization Validation (RELEASE) ===
+
+--- Check 1: MD Attachment ---
+  [PASS] MD attachment: 11 databases attached
+
+--- Check 2: Row Count Parity ---
+  [PASS] Row count parity: 23 domains checked, all match
+  [PASS] Canonical canonical_extracted_fact_long_v2: local=123,577  md=123,577
+  [PASS] Canonical canonical_fact_quarantine_v2: local=199  md=199
+  [PASS] Canonical note_extraction_runs: local=3  md=3
+
+--- Check 3: Schema Completeness ---
+  [PASS] Schema completeness: Wide note-level v2 contract on 23 promoted table(s); entity_type/entity_value_* in main.canonical_extracted_fact_long_v2 (see docs/domain_mapping_rules.md). Example stems: note_entities_llm_imaging, note_entities_llm_tirads_granular, note_entities_llm_us_nodule_dynamics…
+
+--- Check 4: Canonical Distribution ---
+  [PASS] Canonical dist (canonical_extracted_fact_long_v2): 594 domains, 123,577 total rows
+  [PASS] Canonical dist (canonical_fact_quarantine_v2): 69 domains, 199 total rows
+
+--- Check 5: Review Queue ---
+  [PASS] Review queue: 11,244 total, 11,244 reviewed, 0 pending
+
+--- Check 6: QA Views ---
+  [PASS] QA view promotion_scorecard_summary_v: 7 rows
+  [PASS] QA view domain_validation_summary_v: 7 rows
+  [PASS] QA view date_provenance_completeness_v: 23 rows
+  [PASS] QA view manual_review_queue_summary_v: 42 rows
+
+--- Check 7: Load Inventory ---
+  [PASS] Load inventory: 210 entries, all match
+
+--- Check 8: Release Schemas ---
+  [PASS] Release schemas: 8 found: release_20260406, release_20260407, release_20260407_final, release_20260407_final2, release_20260407_tier, release_20260408, release_20260409, release_20260410
+
+--- Check 9: Release Manifest ---
+  [PASS] Release manifest: 8 release(s); latest: 20260410 (2026-04-07 16:22:53.465299)
+
+--- Check 10: Canonical extraction_run_id (contract) ---
+  [PASS] Canonical extraction_run_id: 123,577 rows; 0 blank (contract §3)
+
+--- Check 11: Analyst presentation layer (master_*_verified_v1) ---
+  [PASS] Presentation master_fact_long_verified_v1: 123,577 rows; core traceability non-null (reviewer_status may be NULL)
+  [PASS] Presentation master_source_lineage_v1: 123,577 rows; core traceability non-null (reviewer_status may be NULL)
+  [PASS] Presentation master_patient_rollup_verified_v1: 5,574 patient rows; research_id + release_tag + review metrics present
+
+--- Check 12: Molecular normalized contract views ---
+  [PASS] Molecular row counts: main.molecular_results is empty — contract view checks skipped
+
+--- Check 13: Specimen + analytic FHIR layer ---
+  [PASS] Specimen/FHIR tables present: 10 objects found
+  [PASS] Specimen master fingerprint uniqueness: distinct fingerprints
+  [PASS] qa.val_specimen_contract_v1: no FAIL rows recorded
+  [PASS] qa.val_specimen_genomic_binding_v1: no FAIL rows recorded
+  [PASS] Specimen/FHIR QA diagnostics (142 views + focus checks): clean
+  [WARN] Specimen-adjacent review burden (open/pending): genomic_link_review open/pending=9966; specimen_merge_review open/pending=1
+
+=== Summary: 26 PASS / 1 WARN / 0 FAIL ===
+
+  [report] studies/20260407_cursor_prod_release/postfix_119_prod_release_mode/validation_report.md

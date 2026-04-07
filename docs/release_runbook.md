@@ -122,8 +122,10 @@ Streamlit / `dashboard.py` paths are documented in [`motherduck_read_scaling_das
 
 **Production promotion (mutating backup + snapshots + full 124):**
 
+Global flags such as ``--execute`` and ``--md-sa`` must appear **before** the ``promote`` subcommand:
+
 ```bash
-.venv/bin/python scripts/137_md_molecular_release_workflow.py promote --tag 20260409 --execute --md-sa
+.venv/bin/python scripts/137_md_molecular_release_workflow.py --execute promote --tag 20260409 --md-sa
 ```
 
 Individual steps:

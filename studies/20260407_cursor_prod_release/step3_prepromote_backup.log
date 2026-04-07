@@ -1,0 +1,5 @@
+-- prepromote rollback handle -> 'Thyroid 2026 Molecular PrePromote 20260407_cursor_prod_release'
+CREATE OR REPLACE DATABASE "Thyroid 2026 Molecular PrePromote 20260407_cursor_prod_release" FROM "Thyroid 2026";
+[ok] prepromote backup catalog created
+
+Rollback: swap traffic to this database, or recreate prod from it; see docs/release_runbook.md (Rollback procedure).

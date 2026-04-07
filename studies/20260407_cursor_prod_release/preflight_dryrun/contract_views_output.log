@@ -1,0 +1,25 @@
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+=== Phase 2: Canonical table materialization ===
+  [dry-run] main.canonical_extracted_fact_long_v2: 123,577 rows from canonical_extracted_fact_long_v2.parquet
+  [dry-run] main.canonical_fact_quarantine_v2: 199 rows from canonical_fact_quarantine_v2.parquet
+  [dry-run] main.note_extraction_runs: 3 rows from note_extraction_runs.parquet
+  [dry-run] main.longitudinal_lab_canonical_v1: 76,971 rows from longitudinal_lab_canonical_v1.parquet
+  [dry-run] main.thyroglobulin_lab_canonical_v1: 76,971 rows from thyroglobulin_lab_canonical_v1.parquet
+
+=== Phase 3: Episode/linkage contract tables ===
+  [dry-run] main.tumor_episode_master_v2: 11,691 rows from tumor_episode_master_v2.parquet
+  [dry-run] main.molecular_test_episode_v2: 10,126 rows from molecular_test_episode_v2.parquet
+  [dry-run] main.rai_treatment_episode_v2: 1,857 rows from rai_treatment_episode_v2.parquet
+  [dry-run] main.operative_episode_detail_v2: 9,371 rows from operative_episode_detail_v2.parquet
+
+=== Contract views (DDL) ===
+  [dry-run] [117_contract] CREATE OR REPLACE VIEW main.longitudinal_lab_deduped_v AS WITH ranked AS (     S...
+  [dry-run] [117_contract] CREATE OR REPLACE VIEW main.linkage_summary_v AS SELECT     t.research_id,     C...
+  [dry-run] [117_contract] CREATE OR REPLACE VIEW main.episode_completeness_summary_v AS SELECT     'tumor_...
+  [dry-run] [133_molecular_contract] CREATE OR REPLACE VIEW main.molecular_results_contract_v AS SELECT     molecular...
+  [dry-run] [133_molecular_contract] CREATE OR REPLACE VIEW main.molecular_variant_contract_v AS SELECT     v.molecul...
+  [dry-run] [133_molecular_contract] CREATE OR REPLACE VIEW main.molecular_qc_summary_v AS SELECT     COALESCE(source...
+  [dry-run] [133_molecular_contract] CREATE OR REPLACE VIEW main.molecular_patient_rollup_v AS SELECT     r.research_...
+
+  [done] contract views setup complete

@@ -110,7 +110,10 @@ def run_release_snapshot_transaction(
                 SELECT *, '{tag}' AS release_tag
                 FROM main.{t}
             """)
-            cnt = con.execute(f"SELECT COUNT(*) FROM {schema_name}.{t}").fetchone()[0]
+            _cnt = con.execute(f"SELECT COUNT(*) FROM {schema_name}.{t}").fetchone()
+            if _cnt is None:
+                raise RuntimeError(f"COUNT {schema_name}.{t} returned no row")
+            cnt = _cnt[0]
             row_counts[t] = int(cnt)
             print(f"  [copy] {schema_name}.{t}: {cnt:,} rows")
             n_copied += 1
@@ -121,10 +124,12 @@ def run_release_snapshot_transaction(
 
         print("\n  [post-write] Row parity vs main (before COMMIT)…")
         for t in tables:
-            main_cnt = con.execute(f"SELECT COUNT(*) FROM main.{t}").fetchone()[0]
-            rel_cnt = con.execute(
-                f"SELECT COUNT(*) FROM {schema_name}.{t}"
-            ).fetchone()[0]
+            _mc = con.execute(f"SELECT COUNT(*) FROM main.{t}").fetchone()
+            _rc = con.execute(f"SELECT COUNT(*) FROM {schema_name}.{t}").fetchone()
+            if _mc is None or _rc is None:
+                raise RuntimeError(f"parity COUNT missing for {t}")
+            main_cnt = _mc[0]
+            rel_cnt = _rc[0]
             if int(main_cnt) != int(rel_cnt):
                 raise RuntimeError(
                     f"parity failed for {t}: main={main_cnt:,} "
@@ -176,6 +181,12 @@ def main() -> None:
                 ).fetchall()
             ]
         if schema_name in existing:
+            if args.dry_run:
+                print(
+                    f"  [warn] Schema {schema_name} already exists — dry-run preflight skip "
+                    f"(use a fresh --tag for a new release slice; rehearsal only)."
+                )
+                return
             print(f"  [error] Schema {schema_name} already exists. Use a different tag.")
             sys.exit(1)
 

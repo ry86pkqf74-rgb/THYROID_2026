@@ -1,0 +1,159 @@
+-- prepromote rollback handle -> 'Thyroid 2026 Molecular PrePromote 20260410_20260407_161831_promote'
+CREATE OR REPLACE DATABASE "Thyroid 2026 Molecular PrePromote 20260410_20260407_161831_promote" FROM "Thyroid 2026";
+[ok] prepromote backup catalog created
+
+Rollback: swap traffic to this database, or recreate prod from it; see docs/release_runbook.md (Rollback procedure).
+[skip] 'Thyroid 2026' is DUCKLAKE — named CREATE SNAPSHOT is not supported (use zero-copy clone from latest; automatic history still listed in MD_INFORMATION_SCHEMA.DATABASE_SNAPSHOTS). Re-run with --force-native-snapshot to attempt anyway.
+-- would run (dry-run unless --execute):
+CREATE SNAPSHOT "pre_promote_20260410" OF "Thyroid 2026";
+OK writer: CREATE SNAPSHOT OF "Thyroid 2026"
+  Connected to MotherDuck (md:Thyroid 2026 Molecular QA 20260407)
+  MotherDuck connection verified (fail-closed gate passed)
+=== MotherDuck Formalization Validation (RELEASE) ===
+
+--- Check 1: MD Attachment ---
+  [PASS] MD attachment: 11 databases attached
+
+--- Check 2: Row Count Parity ---
+  [PASS] Row count parity: 23 domains checked, all match
+  [PASS] Canonical canonical_extracted_fact_long_v2: local=123,577  md=123,577
+  [PASS] Canonical canonical_fact_quarantine_v2: local=199  md=199
+  [PASS] Canonical note_extraction_runs: local=3  md=3
+
+--- Check 3: Schema Completeness ---
+  [PASS] Schema completeness: Wide note-level v2 contract on 23 promoted table(s); entity_type/entity_value_* in main.canonical_extracted_fact_long_v2 (see docs/domain_mapping_rules.md). Example stems: note_entities_llm_imaging, note_entities_llm_tirads_granular, note_entities_llm_us_nodule_dynamics…
+
+--- Check 4: Canonical Distribution ---
+  [PASS] Canonical dist (canonical_extracted_fact_long_v2): 594 domains, 123,577 total rows
+  [PASS] Canonical dist (canonical_fact_quarantine_v2): 69 domains, 199 total rows
+
+--- Check 5: Review Queue ---
+  [PASS] Review queue: 5,622 total, 5,622 reviewed, 0 pending
+
+--- Check 6: QA Views ---
+  [PASS] QA view promotion_scorecard_summary_v: 6 rows
+  [PASS] QA view domain_validation_summary_v: 6 rows
+  [PASS] QA view date_provenance_completeness_v: 23 rows
+  [PASS] QA view manual_review_queue_summary_v: 21 rows
+
+--- Check 7: Load Inventory ---
+  [PASS] Load inventory: 180 entries, all match
+
+--- Check 8: Release Schemas ---
+  [PASS] Release schemas: 7 found: release_20260406, release_20260407, release_20260407_final, release_20260407_final2, release_20260407_tier, release_20260408, release_20260409
+
+--- Check 9: Release Manifest ---
+  [PASS] Release manifest: 6 release(s); latest: 20260409 (2026-04-07 02:05:07.189573)
+
+--- Check 10: Canonical extraction_run_id (contract) ---
+  [PASS] Canonical extraction_run_id: 123,577 rows; 0 blank (contract §3)
+
+--- Check 11: Analyst presentation layer (master_*_verified_v1) ---
+  [PASS] Presentation master_fact_long_verified_v1: 123,577 rows; core traceability non-null (reviewer_status may be NULL)
+  [PASS] Presentation master_source_lineage_v1: 123,577 rows; core traceability non-null (reviewer_status may be NULL)
+  [PASS] Presentation master_patient_rollup_verified_v1: 5,574 patient rows; research_id + release_tag + review metrics present
+
+--- Check 12: Molecular normalized contract views ---
+  [PASS] Molecular layer present: main.molecular_results not found — molecular contract checks skipped
+
+--- Check 13: Specimen + analytic FHIR layer ---
+  [PASS] Specimen layer prerequisites: main.synoptic_tumor_long_v1 absent — specimen/FHIR checks skipped (run 108 + 109 + 138)
+
+=== Summary: 22 PASS / 0 WARN / 0 FAIL ===
+
+  [report] /Users/ros/THyroid 2026/THYROID_2026/studies/20260410_molecular_qa_release_mode/validation_report.md
+======================================================================
+  124 — MotherDuck Live Release Audit
+  Tag  : 20260410
+  Dir  : /Users/ros/THyroid 2026/THYROID_2026/studies/20260410_motherduck_live_release_audit
+  MD   : YES (fail-closed)
+  Mode : FINAL-RELEASE
+======================================================================
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+
+======================================================================
+  STEP: Preflight (MD attachment + database inventory)
+======================================================================
+  [PASS] MD attachment: 11 database(s) attached, md_confirmed=True
+         1027  md_information_schema           None
+         1090  thyroid_research_ro_v2          _share/thyroid_research_ro_v2/2558f066-1c5d-46a5-afbc-800fd5f7568d
+         1092  sample_data                     _share/sample_data/23b0d623-1361-421d-ae77-62d701d471e6
+         1094  Thyroid 2026 Molecular PrePromote 20260407_cursor_prod_release  Thyroid 2026 Molecular PrePromote 20260407_cursor_prod_release
+         1096  Thyroid 2026 Molecular PrePromote 20260410_20260407_161831_promote  Thyroid 2026 Molecular PrePromote 20260410_20260407_161831_promote
+         1098  Thyroid 2026 Molecular Dev 20260407  Thyroid 2026 Molecular Dev 20260407
+         1100  Thyroid 2026 Molecular PrePromote agent_20260407_workflow  Thyroid 2026 Molecular PrePromote agent_20260407_workflow
+         1102  Thyroid 2026 Molecular QA 20260407  Thyroid 2026 Molecular QA 20260407
+         1104  Thyroid 2026                    Thyroid 2026
+         1106  rosflow                         rosflow
+         1108  my_db                           my_db
+  [PASS] md_information_schema.databases: 8 row(s)
+         {'name': 'my_db', 'uuid': UUID('e0db7fdc-5cb6-4f57-9944-6baadccd82c1'), 'created_ts': Timestamp('2026-03-07 02:53:36-0500', tz='America/New_York'), 'transient': False, 'historical_snapshot_retention': Timedelta('7 days 00:00:00'), 'type': 'DEFAULT'}
+         {'name': 'rosflow', 'uuid': UUID('c8f55a3a-ab80-4f93-8bb1-74b55770ad39'), 'created_ts': Timestamp('2026-03-15 13:16:55-0400', tz='America/New_York'), 'transient': False, 'historical_snapshot_retention': Timedelta('7 days 00:00:00'), 'type': 'DEFAULT'}
+         {'name': 'Thyroid 2026', 'uuid': UUID('b64d4ec9-aafb-49cc-bf39-d1dfd85e68dc'), 'created_ts': Timestamp('2026-04-02 04:31:53-0400', tz='America/New_York'), 'transient': False, 'historical_snapshot_retention': Timedelta('7 days 00:00:00'), 'type': 'DUCKLAKE'}
+         {'name': 'Thyroid 2026 Molecular Dev 20260407', 'uuid': UUID('92bc15f0-1dcd-42bb-b548-74e5cc24aedd'), 'created_ts': Timestamp('2026-04-07 12:10:18-0400', tz='America/New_York'), 'transient': False, 'historical_snapshot_retention': Timedelta('7 days 00:00:00'), 'type': 'DEFAULT'}
+         {'name': 'Thyroid 2026 Molecular PrePromote 20260407_cursor_prod_release', 'uuid': UUID('6011a8ad-92a8-497e-ad99-43fdefa5d23e'), 'created_ts': Timestamp('2026-04-07 12:14:06-0400', tz='America/New_York'), 'transient': False, 'historical_snapshot_retention': Timedelta('7 days 00:00:00'), 'type': 'DEFAULT'}
+         {'name': 'Thyroid 2026 Molecular PrePromote 20260410_20260407_161831_promote', 'uuid': UUID('fd1af03b-a3d3-4170-910c-c61a173dfedd'), 'created_ts': Timestamp('2026-04-07 12:18:34-0400', tz='America/New_York'), 'transient': False, 'historical_snapshot_retention': Timedelta('7 days 00:00:00'), 'type': 'DEFAULT'}
+         {'name': 'Thyroid 2026 Molecular PrePromote agent_20260407_workflow', 'uuid': UUID('9b6d3949-4698-4be7-95b1-3b4e7c30d9e4'), 'created_ts': Timestamp('2026-04-07 02:39:05-0400', tz='America/New_York'), 'transient': False, 'historical_snapshot_retention': Timedelta('7 days 00:00:00'), 'type': 'DEFAULT'}
+         {'name': 'Thyroid 2026 Molecular QA 20260407', 'uuid': UUID('f05500b0-2eea-41bf-b5d4-35e677f6ebc5'), 'created_ts': Timestamp('2026-04-07 01:44:43-0400', tz='America/New_York'), 'transient': False, 'historical_snapshot_retention': Timedelta('7 days 00:00:00'), 'type': 'DEFAULT'}
+  [INFO] Schemas present: hn, kaggle, main, mm_contract_dev, nyc, qa, release_20260406, release_20260407, release_20260407_final, release_20260407_final2, release_20260407_tier, release_20260408, release_20260409, stackoverflow_survey, v2_stage, who
+  [INFO] Snapshot retention query: Catalog Error: Table with name snapshots does not exist!
+Did you mean "storage_info_history"?
+
+LINE 1: SELECT * FROM md_information_schema.snapshots
+                      ^ (may be unavailable on this plan tier)
+  [write] preflight_db_list.json
+
+======================================================================
+  STEP: Stage refresh (116)
+  CMD : /Users/ros/THyroid 2026/THYROID_2026/.venv/bin/python /Users/ros/THyroid 2026/THYROID_2026/scripts/116_md_stage_loader.py --md
+  LOG : stage_refresh_output.log
+======================================================================
+  [inventory] 30 parquets to load
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+  [schema] v2_stage ensured
+  [OK] v2_stage.note_entities_llm_imaging: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_tirads_granular: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_us_nodule_dynamics: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_labs: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_tg_kinetics: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_pathology: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_synoptic_pathology_enrichment: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_rai_detailed: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_rad_treatment: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_parathyroid_detail: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_recurrence: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_survival_followup: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_cervical_ln_detail: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_functional_outcomes: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_past_medical_hx: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_past_surgical_hx: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_presenting_symptoms: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_physical_exam: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_vascular_invasion: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_airway_invasion: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_frozen_section_detail: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_dynamic_risk_response: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_patient_decision_adherence: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_recurrence_detailed: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_complications_rln_laryngoscopy: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_medication_management: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_operative_details: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_operative_v2_enrichment: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_parathyroid_per_gland: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_molecular_thyroseq_afirma: local=11,037  md=11,037
+
+  [summary] 30 tables loaded into v2_stage (within transaction)
+  [summary] 0 row-count mismatches (immediate check)
+
+  [post-write] Re-verifying parquet vs v2_stage row counts before COMMIT…
+  [txn] COMMIT completed successfully (no rollback).
+  [inventory] v2_stage.load_inventory: 210 total rows
+  [done] v2_stage loading complete
+  [Stage refresh (116)] OK (exit 0)
+  [parity] 210 domains; 0 mismatch(es) → stage_parity_report.csv
+
+======================================================================
+  STEP: Promotion gate (112)
+  CMD : /Users/ros/THyroid 2026/THYROID_2026/.venv/bin/python /Users/ros/THyroid 2026/THYROID_2026/scripts/112_v2_domain_promotion_gate.py --run-label promote_20260407_1219 --output-dir /Use

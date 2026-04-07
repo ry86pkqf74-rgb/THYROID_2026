@@ -168,6 +168,84 @@ def hydrate_concordance(con: duckdb.DuckDBPyConnection, gate_dir: Path) -> None:
     print(f"  [hydrate] qa.concordance_summary: {len(insert_df)} rows from {run_label}")
 
 
+def backfill_mrq_verification_from_prior_rows(
+    con: duckdb.DuckDBPyConnection,
+    run_label: str,
+) -> int:
+    """Copy verification fields from the latest matching reviewed row per (patient, domain, entity).
+
+    Fresh gate CSV rows often have blank ``verification_status`` while an older ``run_label`` batch
+    already recorded adjudication for the same logical keys. Without this step, accumulated history
+    in ``qa.manual_review_queue`` makes release-mode 119 count the new batch as all PENDING.
+    """
+    _pb = con.execute(
+        """
+        SELECT COUNT(*) FROM qa.manual_review_queue
+        WHERE run_label = ? AND verification_status IS NULL
+        """,
+        [run_label],
+    ).fetchone()
+    if _pb is None:
+        raise RuntimeError("manual_review_queue backfill: COUNT returned no row")
+    pending_before = int(_pb[0])
+    con.execute(
+        """
+        WITH best AS (
+            SELECT
+                research_id,
+                domain,
+                entity_type,
+                entity_value_norm,
+                verification_status,
+                reviewer,
+                reviewed_at,
+                promotion_approved,
+                ROW_NUMBER() OVER (
+                    PARTITION BY research_id, domain, entity_type, entity_value_norm
+                    ORDER BY loaded_at DESC
+                ) AS rn
+            FROM qa.manual_review_queue
+            WHERE verification_status IS NOT NULL
+              AND LENGTH(TRIM(CAST(verification_status AS VARCHAR))) > 0
+              AND LOWER(TRIM(CAST(verification_status AS VARCHAR))) NOT IN ('nan', 'none')
+        )
+        UPDATE qa.manual_review_queue AS child
+        SET verification_status = best.verification_status,
+            reviewer = COALESCE(child.reviewer, best.reviewer),
+            reviewed_at = COALESCE(child.reviewed_at, best.reviewed_at),
+            promotion_approved = COALESCE(
+                NULLIF(TRIM(CAST(child.promotion_approved AS VARCHAR)), ''),
+                best.promotion_approved
+            )
+        FROM best
+        WHERE child.run_label = ?
+          AND child.verification_status IS NULL
+          AND child.research_id = best.research_id
+          AND child.domain = best.domain
+          AND child.entity_type IS NOT DISTINCT FROM best.entity_type
+          AND child.entity_value_norm IS NOT DISTINCT FROM best.entity_value_norm
+          AND best.rn = 1
+        """,
+        [run_label],
+    )
+    _pa = con.execute(
+        """
+        SELECT COUNT(*) FROM qa.manual_review_queue
+        WHERE run_label = ? AND verification_status IS NULL
+        """,
+        [run_label],
+    ).fetchone()
+    if _pa is None:
+        raise RuntimeError("manual_review_queue backfill: post-COUNT returned no row")
+    pending_after = int(_pa[0])
+    filled = pending_before - pending_after
+    print(
+        f"  [hydrate] manual_review_queue backfill: run_label={run_label!r} "
+        f"filled {filled} row(s); {int(pending_after)} still NULL"
+    )
+    return int(pending_after)
+
+
 def hydrate_manual_review_queue(con: duckdb.DuckDBPyConnection, gate_dir: Path) -> None:
     csv_path = gate_dir / "manual_review_queue.csv"
     if not csv_path.exists():
@@ -277,6 +355,7 @@ def hydrate_manual_review_queue(con: duckdb.DuckDBPyConnection, gate_dir: Path) 
     con.execute("INSERT INTO qa.manual_review_queue SELECT * FROM _mrq_tmp")
     con.unregister("_mrq_tmp")
     print(f"  [hydrate] qa.manual_review_queue: {len(insert_df)} rows from {run_label}")
+    backfill_mrq_verification_from_prior_rows(con, run_label)
 
 
 def main() -> None:
