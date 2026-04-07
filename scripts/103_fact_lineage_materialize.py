@@ -52,6 +52,7 @@ from utils.provenance import (  # noqa: E402
     apply_provenance_contract_columns,
     quarantine_masks,
 )
+from utils.extraction_run_id_resolve import backfill_extraction_run_id_column  # noqa: E402
 from utils.text_helpers import save_parquet  # noqa: E402
 
 DB_PATH = ROOT / "thyroid_master.duckdb"
@@ -146,6 +147,7 @@ def _expand_v2_fleet_parquet(df: pd.DataFrame) -> pd.DataFrame:
                     "date_confidence": ent.get("date_confidence"),
                     "llm_model": row.get("llm_model"),
                     "preprocessed_at_utc": row.get("preprocessed_at_utc"),
+                    "extraction_run_id": row.get("extraction_run_id"),
                 }
             )
 
@@ -713,6 +715,21 @@ def main() -> None:
 
     uni = pd.concat(aligned, ignore_index=True)
     uni["_fact_rn"] = range(len(uni))
+
+    # ── extraction_run_id from telemetry registry ───────────────────────
+    runs_pq_early = PROCESSED / "note_extraction_runs.parquet"
+    if runs_pq_early.exists():
+        runs_early = pd.read_parquet(runs_pq_early)
+        n_blank = 0
+        if "extraction_run_id" in uni.columns:
+            er = uni["extraction_run_id"].astype(str).str.strip()
+            n_blank = int(((uni["extraction_run_id"].isna()) | (er == "") | (er.str.lower() == "nan")).sum())
+        uni = backfill_extraction_run_id_column(uni, runs_early)
+        if n_blank:
+            print(
+                f"  backfilled extraction_run_id from note_extraction_runs "
+                f"({n_blank:,} rows were blank before timeline resolution)"
+            )
 
     # ── Merge clinical note provenance ────────────────────────────────────
     notes_path = PROCESSED / "clinical_notes_long.parquet"

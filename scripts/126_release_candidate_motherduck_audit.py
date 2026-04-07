@@ -39,6 +39,13 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--v2-parquets-dir", default=str(V2_DIR))
     p.add_argument("--out-root", type=Path, default=ROOT / "studies")
     p.add_argument(
+        "--out-dir",
+        type=Path,
+        default=None,
+        metavar="PATH",
+        help="Exact output directory (avoids overwriting same-day default folder).",
+    )
+    p.add_argument(
         "--create-named-snapshot",
         default=None,
         metavar="NAME",
@@ -61,7 +68,11 @@ def _safe_write(path: Path, text: str) -> None:
 def main() -> None:
     args = parse_args()
     audit_day = datetime.now(timezone.utc).strftime("%Y%m%d")
-    out = args.out_root / f"{audit_day}_release_candidate_audit"
+    out = (
+        args.out_dir.resolve()
+        if args.out_dir is not None
+        else (args.out_root / f"{audit_day}_release_candidate_audit")
+    )
     out.mkdir(parents=True, exist_ok=True)
 
     hint = args.session_hint or os.environ.get(

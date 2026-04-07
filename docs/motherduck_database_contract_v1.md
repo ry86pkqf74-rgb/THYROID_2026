@@ -156,7 +156,7 @@ All tables in `main` that contain extracted entity data must include:
 | `entity_type` | VARCHAR | Yes | Domain-specific entity type |
 | `entity_date` | VARCHAR | Conditional | Normalised YYYY-MM-DD when available |
 | `note_date` | VARCHAR | Conditional | Encounter/note header date |
-| `extraction_run_id` | VARCHAR | Yes | UUID for extraction invocation |
+| `extraction_run_id` | VARCHAR | Yes | UUID for extraction invocation; when blank in domain parquet, `103_fact_lineage_materialize.py` resolves from `note_extraction_runs` (latest successful `started_at <= extracted_at`, else earliest successful run for pre-telemetry timestamps) |
 | `extracted_at` | VARCHAR | Yes | UTC ISO timestamp |
 | `source_file_id` | VARCHAR | Conditional | Workbook file id for metrics |
 | `entity_value_raw` | VARCHAR | Yes | Raw extracted value |

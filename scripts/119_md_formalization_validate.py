@@ -25,6 +25,8 @@ Checks:
   6. QA view smoke tests
   7. load_inventory completeness
   8. Release schema existence check
+  9. qa.release_manifest (release-mode)
+ 10. Non-null extraction_run_id on main.canonical_extracted_fact_long_v2 (release-mode, contract §3)
 
 Usage:
   .venv/bin/python scripts/119_md_formalization_validate.py --md
@@ -434,6 +436,46 @@ def check_release_schemas(
         results.add("Release schemas", status, str(exc))
 
 
+def check_canonical_extraction_run_id(
+    con: duckdb.DuckDBPyConnection,
+    results: ValidationResult,
+    strict: bool = False,
+) -> None:
+    """Release-mode check: main.canonical_extracted_fact_long_v2 must carry extraction_run_id.
+
+    Matches docs/motherduck_database_contract_v1.md §3 (required for entity provenance).
+    """
+    try:
+        row = con.execute(
+            """
+            SELECT
+                COUNT(*) AS total,
+                COUNT(*) FILTER (
+                    WHERE extraction_run_id IS NULL
+                    OR trim(cast(extraction_run_id AS VARCHAR)) = ''
+                ) AS blank
+            FROM main.canonical_extracted_fact_long_v2
+            """
+        ).fetchone()
+        total, blank = int(row[0]), int(row[1])
+        if blank == 0:
+            results.add(
+                "Canonical extraction_run_id",
+                "PASS",
+                f"{total:,} rows; 0 blank (contract §3)",
+            )
+        else:
+            status = "FAIL" if strict else "WARN"
+            results.add(
+                "Canonical extraction_run_id",
+                status,
+                f"{blank:,} / {total:,} rows have NULL/blank extraction_run_id",
+            )
+    except Exception as exc:
+        status = "FAIL" if strict else "WARN"
+        results.add("Canonical extraction_run_id", status, str(exc))
+
+
 def check_release_manifest(
     con: duckdb.DuckDBPyConnection,
     results: ValidationResult,
@@ -445,7 +487,8 @@ def check_release_manifest(
         if total > 0:
             latest = con.execute(
                 "SELECT release_tag, created_at FROM qa.release_manifest "
-                "ORDER BY created_at DESC LIMIT 1"
+                "ORDER BY TRY_CAST(release_tag AS BIGINT) DESC NULLS LAST, "
+                "created_at DESC LIMIT 1"
             ).fetchone()
             results.add("Release manifest", "PASS",
                          f"{total} release(s); latest: {latest[0]} ({latest[1]})")
@@ -575,6 +618,9 @@ def main() -> None:
         if strict:
             print("\n--- Check 9: Release Manifest ---")
             check_release_manifest(con, results, strict=strict)
+
+            print("\n--- Check 10: Canonical extraction_run_id (contract) ---")
+            check_canonical_extraction_run_id(con, results, strict=strict)
 
     finally:
         con.close()

@@ -48,7 +48,7 @@ CREATE OR REPLACE VIEW main.master_fact_long_verified_v1 AS
 WITH latest_release AS (
     SELECT release_tag
     FROM   qa.release_manifest
-    ORDER  BY created_at DESC
+    ORDER  BY TRY_CAST(release_tag AS BIGINT) DESC NULLS LAST, created_at DESC
     LIMIT  1
 ),
 review_lookup AS (
@@ -79,6 +79,24 @@ review_lookup AS (
         FROM qa.manual_review_queue
     ) _mrq
     WHERE _rn = 1
+),
+fact_core AS (
+    SELECT
+        f.*,
+        COALESCE(
+            NULLIF(trim(CAST(f.extraction_run_id AS VARCHAR)), ''),
+            (SELECT run_id FROM main.note_extraction_runs r1
+             WHERE r1.success = true
+               AND try_cast(r1.started_at AS TIMESTAMPTZ)
+                   <= try_cast(f.extracted_at AS TIMESTAMPTZ)
+             ORDER BY try_cast(r1.started_at AS TIMESTAMPTZ) DESC
+             LIMIT 1),
+            (SELECT run_id FROM main.note_extraction_runs r2
+             WHERE r2.success = true
+             ORDER BY try_cast(r2.started_at AS TIMESTAMPTZ) ASC
+             LIMIT 1)
+        ) AS _resolved_extraction_run_id
+    FROM main.canonical_extracted_fact_long_v2 f
 )
 SELECT
     f.research_id,
@@ -87,8 +105,9 @@ SELECT
     f.fact_domain                           AS source_domain,
     -- source object id
     f.note_row_id                           AS source_object_id,
-    -- extraction run linkage (prefer row-level fact provenance; fallback to temporal match)
-    COALESCE(NULLIF(trim(CAST(f.extraction_run_id AS VARCHAR)), ''), r.run_id) AS extraction_run_id,
+    -- extraction run linkage (row id; else latest successful run <= extracted_at;
+    -- else earliest successful run for pre-telemetry timestamps)
+    f._resolved_extraction_run_id            AS extraction_run_id,
     r.extractor_build_version,
     CAST(NULL AS VARCHAR)                  AS llm_model,
     r.started_at                            AS extraction_started_at,
@@ -115,17 +134,11 @@ SELECT
     rv.reviewer_verified_by,
     rv.reviewer_decision_at,
     rv.reviewer_notes,
-    -- release tag (scalar from latest release)
+    -- release tag (largest numeric tag in manifest; tie-break created_at)
     (SELECT release_tag FROM latest_release) AS release_tag
-FROM  main.canonical_extracted_fact_long_v2  f
-LEFT  JOIN main.note_extraction_runs          r
-      ON  r.run_id = COALESCE(
-              NULLIF(trim(CAST(f.extraction_run_id AS VARCHAR)), ''),
-              (SELECT run_id FROM main.note_extraction_runs
-               WHERE  started_at <= f.extracted_at
-               ORDER  BY started_at DESC
-               LIMIT  1)
-          )
+FROM  fact_core f
+LEFT  JOIN main.note_extraction_runs r
+      ON  r.run_id = f._resolved_extraction_run_id
 LEFT  JOIN review_lookup rv
       ON  rv.research_id  = f.research_id
       AND rv.reviewer_domain = f.fact_domain
