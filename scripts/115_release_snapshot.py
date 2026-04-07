@@ -5,6 +5,12 @@ Copies canonical tables from main to a dated release_YYYYMMDD schema and
 records the release in qa.release_manifest. Release schemas are read-only
 after creation -- corrections require a new release tag.
 
+``--final-master`` copies the manuscript analytic / presentation subset only
+(``FINAL_MASTER_TABLES``). Specimen, FHIR bundle/export, and genomics binding
+tables live in ``main``/``qa`` and are gated by ``119 --release-mode`` (Check 13);
+they are **not** included in ``release_*`` snapshot copies. See
+``docs/specimen_fhir_contract_review.md``.
+
 Usage:
   .venv/bin/python scripts/115_release_snapshot.py --md --tag 20260410
   .venv/bin/python scripts/115_release_snapshot.py --md --tag 20260410 --dry-run

@@ -11,7 +11,9 @@ This orchestrator:
   3. Re-hydrates qa.manual_review_queue from a gate folder with reviewed CSV
   4. Optionally runs 127 lab append (--lab-csv + --ingestion-wave)
   5. Re-materializes canonical facts (103), contract tables/views (117), master views (125)
-  6. Creates release_YYYYMMDD snapshot (115 --final-master) and parquet bundle (118 --final-master)
+  6. Creates release_YYYYMMDD snapshot (115 --final-master) and parquet bundle (118 --final-master);
+     both steps copy/export the manuscript analytic subset only — not specimen/FHIR (see
+     docs/specimen_fhir_contract_review.md)
   7. Runs formalization validator in --release-mode (119)
   8. Writes manuscript-readiness evidence under studies/<date>_final_master_release/
 

@@ -85,6 +85,13 @@ def main() -> None:
     lines: list[str] = [
         "# THYROID_2026 — current MotherDuck vs repo state",
         "",
+        "> **Not automation SSOT.** Prefer a fresh `119_md_formalization_validate.py --md --release-mode` "
+        "output (e.g. under `studies/`) for release verdicts. This file reconciles **checked-in** "
+        "repo artifacts with optional live introspection.",
+        "",
+        "> **Stale guard:** If **`Commit SHA`** below ≠ `git rev-parse HEAD` on your machine, treat "
+        "**Live MotherDuck** bullets as **historical** until you re-run this generator with `--md`.",
+        "",
         f"**Machine-generated:** {now}",
         f"**Commit SHA:** `{sha}`",
         "",
@@ -176,7 +183,17 @@ def main() -> None:
                 telemetry_note = f"_(query_history not available: {e})_"
         finally:
             con.close()
-    lines.extend(md_lines if md_lines else ["- _(no --md flag — not attached)_", ""])
+    if md_lines:
+        lines.extend(md_lines)
+    else:
+        lines.extend(
+            [
+                "- _(This run did **not** pass `--md` — no live MotherDuck session.)_",
+                "- _(Any **previously committed** row counts in this file are not refreshed here; "
+                "operators must not treat them as live.)_",
+                "",
+            ]
+        )
     lines.extend(
         [
             "",

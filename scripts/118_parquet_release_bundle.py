@@ -21,6 +21,11 @@ Output structure:
       manual_review_queue.parquet
     manifest.json
 
+``--final-master`` exports only ``FINAL_MASTER_MAIN`` + ``FINAL_MASTER_QA``
+(manuscript analytic surfaces; no ``specimen_*`` / ``fhir_*`` parquet exports).
+Interoperability consumers attach to ``main`` on MotherDuck or run scripts 138/140;
+see ``docs/specimen_fhir_contract_review.md``.
+
 Usage:
   .venv/bin/python scripts/118_parquet_release_bundle.py --md
   .venv/bin/python scripts/118_parquet_release_bundle.py --md --dry-run
