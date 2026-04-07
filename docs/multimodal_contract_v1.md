@@ -95,7 +95,7 @@ With `--strict-release`, this table must be **empty**.
 | `link_imaging_fna_mm_v1` | `imaging_fna_linkage_mm_v1` joined to `fact_imaging_mm_v1` / `fact_fna_mm_v1` for `imaging_id` / `fna_id` + contract flags. |
 | `review_queue_imaging_fna_mm_v1` | Built with 129 review logic (ambiguous / discordant side / size drift). |
 | `val_imaging_fna_linkage_audit_v1` | Aggregate audit counts for the imaging–FNA step. |
-| `val_imaging_fna_contract_blockers_mm_v1` | Copy of `review_queue_imaging_fna_mm_v1` rows (strict blocking when non-empty). |
+| `val_imaging_fna_contract_blockers_mm_v1` | **Subset** of `review_queue_imaging_fna_mm_v1`: rows with `review_reason = 'ambiguous_multimatch'` only. Empty under strict-release when every multimatch nodule has a deterministic primary link after script 129 rules. Discordant laterality and size drift stay in the review queue for operators but do **not** populate this blocker table. |
 
 Running script **129** alone is optional for exploration or MotherDuck exports; the contract build does **not** depend on a pre-existing `imaging_fna_linkage_mm_v1` in the default catalog — it writes `{schema}.imaging_fna_linkage_mm_v1` as part of 128.
 
@@ -106,16 +106,18 @@ Running script **129** alone is optional for exploration or MotherDuck exports; 
 | `imaging_id` | `fact_imaging_mm_v1.imaging_fact_id` |
 | `fna_id` | `fact_fna_mm_v1.fna_fact_id` |
 | `link_confidence` | `1.0` specimen key match; `0.85` temporal (0–90d US before FNA) path; else `0.75` |
-| `is_primary_link` | Primary under 129 ranking (unique specimen or single candidate, etc.) |
+| `is_primary_link` | Primary under 129: unique specimen match when unambiguous; else single candidate; else (when `n_specimen_matches_on_nodule <= 1`) deterministic choice = first row per nodule by `fna_date`, `fna_episode_id`. Suppressed when two or more specimen-key ties exist on the nodule. |
 | `review_reason` | Joined from `review_queue_imaging_fna_mm_v1` when present |
 | `flag_multi_fna_nodule` | `n_candidates_for_nodule > 1` |
-| `flag_ambiguous_linkage` | multi-candidate without primary OR multiple specimen hits on the nodule |
+| `flag_ambiguous_linkage` | True on a row when that row is not primary while the nodule has multiple candidates, or when multiple specimen matches exist on the nodule (per-row; a nodule may still have exactly one primary link). |
 | `flag_discordant_side` | Review reason `discordant_laterality` |
 | `flag_size_drift` | `size_drift_ratio > 0.20` or review `size_drift_gt_20pct` |
 
 ## Primary linkage rule
 
-In `link_surgery_path_mm_v1`, `is_primary_link` is **TRUE** only when the v3 row is rank 1, analysis-eligible, tier ∈ {`exact_match`, `high_confidence`, `plausible`}, **`n_candidates = 1`**, and a matching `fact_tumor_mm_v1` row exists. Weak tiers, ambiguity, or missing tumor rows are excluded from primary (and surface in `val_ambiguous_multimodal_linkage_mm_v1` or context flags).
+In `link_surgery_path_mm_v1`, `is_primary_link` is **TRUE** only when the v3 row is rank 1, analysis-eligible, tier ∈ {`exact_match`, `high_confidence`, `plausible`}, **`n_candidates = 1`**, and a matching `fact_tumor_mm_v1` row exists. Weak tiers, multi-candidate rank-1 rows, or missing tumor rows are excluded from primary; use `context_flags` on the link row (e.g. `ambiguous_or_weak_excluded_from_primary`, `no_matching_fact_tumor_row`) for explanation. **`val_ambiguous_multimodal_linkage_mm_v1`** does not list those cases; it is reserved for **rank-1 edges still in the `unlinked` tier** (hard pathology–surgery linkage gaps).
+
+Script 129 uses **TRIM** on imaging/FNA laterality and treats **`isthmus` / `isthmus only`** as side-compatible for eligibility (`side_ok`).
 
 ## Fail-closed validation tables
 
@@ -123,11 +125,11 @@ In `link_surgery_path_mm_v1`, `is_primary_link` is **TRUE** only when the v3 row
 |-------|---------|
 | `val_contract_required_join_keys_mm_v1` | NULL / unresolved join keys (see above) |
 | `val_nodes_invariant_mm_v1` | Orphan person/surgery/tumor or primary link without tumor / episode mismatch |
-| `val_side_lobe_mismatch_mm_v1` | Primary surgery–path or preop–surgery laterality conflict (isthmus excluded from mismatch) |
-| `val_preop_temporal_order_mm_v1` | Preop after surgery on calendar; molecular ≫8d before FNA on scored primary rows |
-| `val_ambiguous_multimodal_linkage_mm_v1` | Non-primary or ambiguous surgery–path and preop–surgery edges (review queue) |
+| `val_side_lobe_mismatch_mm_v1` | Primary surgery–path or preop–surgery laterality conflict (**isthmus** and **bilateral** wording on either side excluded — bilateral is treated as compatible with lobe-specific preop/path labels) |
+| `val_preop_temporal_order_mm_v1` | Preop **more than 7 days after** surgery on calendar; molecular ≫8d before FNA on scored primary rows |
+| `val_ambiguous_multimodal_linkage_mm_v1` | **Strict:** rank-1 `link_surgery_path_mm_v1` rows with `linkage_confidence_tier = 'unlinked'` only. Preop ambiguity is not duplicated here (see linkage metrics / `link_surgery_context_mm_v1`). |
 | `val_multitumor_expansion_mm_v1` | Tumor counts per surgery: `tumor_episode_master_v2` vs `fact_tumor_mm_v1` |
-| `val_imaging_fna_contract_blockers_mm_v1` | Imaging–FNA manual review queue (copy of `review_queue_imaging_fna_mm_v1`) |
+| `val_imaging_fna_contract_blockers_mm_v1` | **Strict:** `ambiguous_multimatch` review pairs only (see mapping table above). |
 
 ### Strict-release acceptance criteria
 
@@ -146,7 +148,7 @@ In `link_surgery_path_mm_v1`, `is_primary_link` is **TRUE** only when the v3 row
    - `val_ambiguous_multimodal_linkage_mm_v1`
    - `val_imaging_fna_contract_blockers_mm_v1`
 
-**Operational note:** real-world data often produces ambiguity or imaging–FNA review rows until curation is complete; such databases will not pass `--strict-release` until those tables are cleared through fixes or accepted remediation.
+**Operational note:** `review_queue_imaging_fna_mm_v1` may still carry discordant laterality, size drift, etc., while strict-release passes — only the seven `val_*` tables above must be empty. Residual **`unlinked`** rank-1 surgery–path rows or **true** multimatch-without-primary imaging–FNA cases will still fail `val_ambiguous_multimodal_linkage_mm_v1` or `val_imaging_fna_contract_blockers_mm_v1`.
 
 **Non-strict promotion example (legacy):**
 
@@ -180,4 +182,4 @@ No legacy tables are altered.
 ## Unresolved / operational gaps
 
 - Local or MotherDuck runs without `--allow-bootstrap-dev` **fail fast** if any upstream table is missing — run scripts 22+ and 49 (and linkage repair stack) first.
-- Until data quality gates pass, expect `--strict-release` to fail on `val_ambiguous_multimodal_linkage_mm_v1` and/or `val_imaging_fna_contract_blockers_mm_v1` with real data.
+- If upstream linkage leaves **rank-1 surgery–path** rows in **`unlinked`** or imaging–FNA pairs in **`ambiguous_multimatch`** with no deterministic primary, `--strict-release` will still fail until those upstream rules or data are fixed.
