@@ -11,6 +11,13 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 
 
+def test_makefile_md_smoke_invokes_fail_closed_smoke_script() -> None:
+    """Guardrail: README documents `make md-smoke` — keep the target wired to this script."""
+    text = (ROOT / "Makefile").read_text(encoding="utf-8")
+    assert "md-smoke:" in text
+    assert "scripts/smoke_test_md_connection.py --md" in text
+
+
 def _load_smoke_module() -> ModuleType:
     spec = importlib.util.spec_from_file_location(
         "smoke_test_md_connection",
@@ -45,6 +52,34 @@ class TestSmokeMdConnectionScript:
             "USE_LOCAL_DUCKDB",
         ):
             monkeypatch.delenv(key, raising=False)
+        monkeypatch.setattr(mod, "DB_PATH", tmp_path / "unused.duckdb")
+        monkeypatch.setattr(sys, "argv", ["smoke_test_md_connection.py", "--md"])
+
+        with pytest.raises(SystemExit) as excinfo:
+            mod.main()
+        assert excinfo.value.code == 1
+
+    @pytest.mark.parametrize(
+        "scaling_var",
+        ("MD_READ_SCALING_TOKEN", "MOTHERDUCK_READ_SCALING_TOKEN"),
+    )
+    def test_md_mode_only_read_scaling_token_exits_1(
+        self, monkeypatch, tmp_path, scaling_var: str
+    ) -> None:
+        """--md must fail closed when the only configured secret is read-scaling (not RW)."""
+        mod = _load_smoke_module()
+        monkeypatch.chdir(tmp_path)
+        for key in (
+            "MOTHERDUCK_TOKEN",
+            "motherduck_token",
+            "MD_SA_TOKEN",
+            "MD_READ_SCALING_TOKEN",
+            "MOTHERDUCK_READ_SCALING_TOKEN",
+            "LOCAL_DB_PATH",
+            "USE_LOCAL_DUCKDB",
+        ):
+            monkeypatch.delenv(key, raising=False)
+        monkeypatch.setenv(scaling_var, "md_read_scaling_only_unit_test")
         monkeypatch.setattr(mod, "DB_PATH", tmp_path / "unused.duckdb")
         monkeypatch.setattr(sys, "argv", ["smoke_test_md_connection.py", "--md"])
 

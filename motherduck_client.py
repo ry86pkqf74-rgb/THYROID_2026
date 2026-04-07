@@ -259,14 +259,21 @@ def is_read_scaling_only_environment() -> bool:
 
 
 def token_mode() -> str:
-    """Return a human-readable label describing the active token source.
+    """Return a human-readable label describing the active **read/write** token source.
+
+    Read-scaling dashboard tokens (``MD_READ_SCALING_TOKEN`` /
+    ``MOTHERDUCK_READ_SCALING_TOKEN``) are **not** considered here — use
+    :func:`read_scaling_token_mode` for those. Staging, promotion, validators, and
+    :func:`connect_md_fail_closed` require a credential from this RW resolution path.
 
     Returns one of:
       'env:MD_SA_TOKEN'                – service-account env var
       'env:MOTHERDUCK_TOKEN'           – personal env var
+      'env:motherduck_token'           – legacy personal env alias
+      'env:LOCAL_DB_PATH'              – JWT-like token carried in LOCAL_DB_PATH
       'secrets.toml:MD_SA_TOKEN'       – service-account in Streamlit secrets
       'secrets.toml:MOTHERDUCK_TOKEN'  – personal in Streamlit secrets
-      'none'                           – no token found
+      'none'                           – no read/write token found
 
     Never exposes the token value itself.
     """

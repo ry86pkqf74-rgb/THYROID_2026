@@ -45,6 +45,36 @@ class TestGetTokenPrecedence:
         assert get_token(prefer_service_account=False) is None
         assert get_token(prefer_service_account=True) is None
 
+    def test_token_mode_none_when_only_read_scaling(self, monkeypatch, tmp_path):
+        from motherduck_client import token_mode
+
+        monkeypatch.chdir(tmp_path)
+        for key in (
+            "MOTHERDUCK_TOKEN",
+            "motherduck_token",
+            "MD_SA_TOKEN",
+            "LOCAL_DB_PATH",
+        ):
+            monkeypatch.delenv(key, raising=False)
+        monkeypatch.setenv("MD_READ_SCALING_TOKEN", "md_rs_only")
+        monkeypatch.delenv("MOTHERDUCK_READ_SCALING_TOKEN", raising=False)
+        assert token_mode() == "none"
+
+    def test_token_mode_none_when_only_read_scaling_alias(self, monkeypatch, tmp_path):
+        from motherduck_client import token_mode
+
+        monkeypatch.chdir(tmp_path)
+        for key in (
+            "MOTHERDUCK_TOKEN",
+            "motherduck_token",
+            "MD_SA_TOKEN",
+            "LOCAL_DB_PATH",
+            "MD_READ_SCALING_TOKEN",
+        ):
+            monkeypatch.delenv(key, raising=False)
+        monkeypatch.setenv("MOTHERDUCK_READ_SCALING_TOKEN", "md_rs_alias_only")
+        assert token_mode() == "none"
+
 
 class TestReadScalingHelpers:
     def test_get_read_scaling_token_env_primary(self, monkeypatch):
