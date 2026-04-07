@@ -20,6 +20,11 @@ Root cause (legacy imaging_fna_linkage_v3 empty / incomplete):
 Run:
   .venv/bin/python scripts/129_imaging_fna_linkage_mm_v1.py
   .venv/bin/python scripts/129_imaging_fna_linkage_mm_v1.py --md
+
+MotherDuck (--md): token via motherduck_client.get_token (env or .streamlit/secrets.toml).
+The script changes cwd to the repo root before connecting. connect_md_or_file uses
+fail_closed=True. Writes motherduck/exports/imaging_fna_linkage_mm_v1_audit.json.
+If fna_episode_master_v2 is missing in the cloud catalog, status=blocked in that JSON.
 """
 from __future__ import annotations
 
