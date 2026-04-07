@@ -1,51 +1,80 @@
-# THYROID_2026 — local DuckDB promotion & release helpers
-# ──────────────────────────────────────────────────────
-# Token resolution (in priority order):
-#   1. LOCAL_DB_PATH  – service-account token for CI / shared environments
-#   2. LOCAL_DB_PATH – personal token (fallback to .streamlit/secrets.toml inside scripts)
+# THYROID_2026 — MotherDuck operator helpers + local release manifest
+# ───────────────────────────────────────────────────────────────────
+# MotherDuck read/write tokens (see motherduck_client.get_token):
+#   MOTHERDUCK_TOKEN — personal developer (preferred for interactive use)
+#   MD_SA_TOKEN      — CI / service account (use with scripts that support --sa)
+# Optional: gitignored .env.motherduck — copy from .env.motherduck.example
+#
+# Release manifest (scripts/96_release_manifest.py) opens local thyroid_master.duckdb only.
+# That script still requires LOCAL_DB_PATH to be non-empty internally; Make exports a
+# harmless default (.) when unset so the target runs without extra setup.
 #
 # Usage:
-#   make md-promote-dryrun-dev-qa       # dry-run DEV → QA gate
-#   make md-promote-dryrun-qa-prod      # dry-run QA → PROD gate
-#   make md-release-manifest-prod       # generate release manifest against PROD
+#   make md-smoke                         # fail-closed MotherDuck connection check
+#   make md-v2-gate-dryrun               # v2 promotion gate, local-only (no MD writes)
+#   make md-release-manifest-qa-dryrun   # manifest dry-run against local DB (QA profile)
+#   make md-release-manifest-prod       # write release manifest (prod profile)
+#   make md-manifest-status              # compare LATEST_MANIFEST.json to HEAD
+#
+# Staging plane: new v2 parquets load into MotherDuck schema v2_stage; canonical tables
+# live in main only after promotion. See docs/motherduck_v2_staging_runbook.md
 
 PYTHON := .venv/bin/python
 
-# ── token guard ────────────────────────────────────────
-define check_token
-	@if [ -z "$$LOCAL_DB_PATH" ] && [ -z "$$LOCAL_DB_PATH" ]; then \
-		echo "ERROR: Neither LOCAL_DB_PATH nor LOCAL_DB_PATH is set."; \
-		echo "  export LOCAL_DB_PATH=<token>   (personal)"; \
-		echo "  export LOCAL_DB_PATH=<token>         (service account)"; \
+# ── MotherDuck token guard (secrets.toml not visible to Make) ─────────
+define check_md_rw_token
+	@if [ -z "$$MOTHERDUCK_TOKEN" ] && [ -z "$$MD_SA_TOKEN" ]; then \
+		echo "ERROR: Set MOTHERDUCK_TOKEN and/or MD_SA_TOKEN for MotherDuck targets."; \
+		echo "  See docs/motherduck_database_contract_v1.md (Connection Reference) and .env.motherduck.example"; \
 		exit 1; \
 	fi
 endef
 
-# ── SA flag helper ─────────────────────────────────────
-# Appends --sa when LOCAL_DB_PATH is set so scripts use the SA path.
-SA_FLAG := $(if $(LOCAL_DB_PATH),--sa,)
+# ── SA flag helper (scripts/96 still accept --sa for legacy paths) ────
+SA_FLAG := $(if $(MD_SA_TOKEN),--sa,)
 
-# ── promotion dry-runs ─────────────────────────────────
-.PHONY: md-promote-dryrun-dev-qa
-md-promote-dryrun-dev-qa:
-	$(check_token)
-	$(PYTHON) scripts/95_environment_promotion.py --from dev --to qa --dry-run $(SA_FLAG)
+# 96_release_manifest.py gates on LOCAL_DB_PATH even when opening a local file.
+define run96
+	@LOCAL_DB_PATH="$${LOCAL_DB_PATH:-.}"; export LOCAL_DB_PATH; \
+	$(PYTHON) $(1)
+endef
 
-.PHONY: md-promote-dryrun-qa-prod
-md-promote-dryrun-qa-prod:
-	$(check_token)
-	$(PYTHON) scripts/96_release_manifest.py --env qa --dry-run $(SA_FLAG)
-	$(PYTHON) scripts/95_environment_promotion.py --from qa --to prod --dry-run $(SA_FLAG)
+# ── MotherDuck smoke (fail-closed) ────────────────────────────────────
+.PHONY: md-smoke
+md-smoke:
+	$(check_md_rw_token)
+	$(PYTHON) scripts/smoke_test_md_connection.py --md
 
-# ── release manifest ───────────────────────────────────
+# ── v2 promotion gate dry-run (local DB + parquets; no script 95) ─────
+.PHONY: md-v2-gate-dryrun
+md-v2-gate-dryrun:
+	$(PYTHON) scripts/112_v2_domain_promotion_gate.py \
+		--v2-parquets-dir processed/output/v2_parquets \
+		--db-path thyroid_master.duckdb \
+		--run-label make_dryrun
+
+# ── release manifest (local thyroid_master.duckdb) ───────────────────
+.PHONY: md-release-manifest-qa-dryrun
+md-release-manifest-qa-dryrun:
+	$(call run96,scripts/96_release_manifest.py --env qa --dry-run $(SA_FLAG))
+
 .PHONY: md-release-manifest-prod
 md-release-manifest-prod:
-	$(check_token)
-	$(PYTHON) scripts/96_release_manifest.py --env prod $(SA_FLAG)
+	$(call run96,scripts/96_release_manifest.py --env prod $(SA_FLAG))
 
-# ── convenience: full dry-run sweep ────────────────────
+# ── backward-compatible aliases (script 95 removed from repo) ───────
+.PHONY: md-promote-dryrun-dev-qa md-promote-dryrun-qa-prod
+md-promote-dryrun-dev-qa:
+	@echo "NOTE: scripts/95_environment_promotion.py is not in this repo; running v2 gate dry-run."
+	@$(MAKE) md-v2-gate-dryrun
+
+md-promote-dryrun-qa-prod:
+	@echo "NOTE: scripts/95_environment_promotion.py is not in this repo; running manifest QA dry-run only."
+	@$(MAKE) md-release-manifest-qa-dryrun
+
+# ── convenience: gate dry-run + manifest dry-run ────────────────────
 .PHONY: md-promote-dryrun-all
-md-promote-dryrun-all: md-promote-dryrun-dev-qa md-promote-dryrun-qa-prod
+md-promote-dryrun-all: md-v2-gate-dryrun md-release-manifest-qa-dryrun
 
 # ── manifest status quick-check (no local DuckDB needed) ─
 .PHONY: md-manifest-status
@@ -77,5 +106,5 @@ clean:
 #   $(PYTHON) scripts/46_provenance_audit.py --md
 .PHONY: verify-provenance
 verify-provenance:
-	$(check_token)
+	$(check_md_rw_token)
 	$(PYTHON) scripts/46_provenance_audit.py --md --dry-run

@@ -7,13 +7,15 @@
 **Contract version:** 1.0  
 **Created:** 2026-04-07  
 
+**Staging vs canonical (operator rule):** Fresh v2 extraction parquets are loaded into **`v2_stage`** (via `116_md_stage_loader.py`). **`main`** is the promoted canonical surface — data appears there only after the promotion gate passes and promoted DDL / materialization steps run. Do not treat `main` as the live staging target for new v2 parquet drops.
+
 ---
 
 ## 1. Schema Map
 
 | Schema | Purpose | Mutability |
 |--------|---------|------------|
-| `v2_stage` | Landing zone for v2 LLM extraction parquets before promotion | Append/replace per domain |
+| `v2_stage` | **Current staging plane** — landing zone for v2 LLM extraction parquets before promotion | Append/replace per domain |
 | `main` | Canonical query surface for all promoted tables | Append-only; corrections via quarantine |
 | `qa` | Promotion governance, validation, and review tracking | Append per gate run |
 | `release_YYYYMMDD` | Immutable point-in-time snapshots of main tables | Read-only after creation |

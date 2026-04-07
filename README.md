@@ -207,6 +207,18 @@ streamlit run dashboard.py
 
 Open **http://localhost:8501** in your browser.
 
+### MotherDuck quickstart (staging / QC only)
+
+MotherDuck holds **no raw PHI**; tokens authenticate the cloud DuckDB attach. Use env vars (not CLI flags) for secrets.
+
+1. Copy [`.env.motherduck.example`](.env.motherduck.example) to `.env.motherduck` (gitignored) and set **`MOTHERDUCK_TOKEN`** (personal) or **`MD_SA_TOKEN`** (CI). Same keys may live in `.streamlit/secrets.toml`.
+2. Confirm a token resolves:  
+   `.venv/bin/python -c "from motherduck_client import token_mode; m=token_mode(); print(m); assert m != 'none'"`
+3. Fail-closed connection check:  
+   `.venv/bin/python scripts/smoke_test_md_connection.py --md`  
+   or `make md-smoke`
+4. **Staging** for new v2 parquets is schema **`v2_stage`**; **`main`** is the promoted canonical surface after the gate and promotion steps (see [`docs/motherduck_v2_staging_runbook.md`](docs/motherduck_v2_staging_runbook.md), [`docs/motherduck_database_contract_v1.md`](docs/motherduck_database_contract_v1.md)).
+
 ## Data architecture
 
 | Property           | Value |
@@ -311,10 +323,10 @@ Private research data — do not redistribute without permission.
 ### Materialize to local DuckDB
 
 ```bash
-python scripts/26_local DuckDB_materialize_v2.py --md   # 131+ tables
-python scripts/29_validation_engine.py --md            # val_* tables
-python scripts/78_final_hardening.py --md              # hardening pass
-python scripts/30_readiness_check.py --md              # readiness audit
+.venv/bin/python scripts/75_dataset_maturation.py --all --md   # dataset maturation phases
+.venv/bin/python scripts/29_validation_engine.py --md           # val_* tables
+.venv/bin/python scripts/78_final_hardening.py --md             # hardening pass
+.venv/bin/python scripts/30_readiness_check.py --md             # readiness audit
 ```
 
 ### Daily refresh

@@ -6,21 +6,37 @@
 
 ---
 
+## MotherDuck quickstart (env tokens, fail-closed)
+
+1. **Set a read/write token** (never commit real values): copy `.env.motherduck.example` → `.env.motherduck` at repo root, or export `MOTHERDUCK_TOKEN` (personal) and/or `MD_SA_TOKEN` (CI). Optional: add the same keys to `.streamlit/secrets.toml` (gitignored).
+2. **Verify token resolution**:  
+   `.venv/bin/python -c "from motherduck_client import token_mode; m=token_mode(); print(m); assert m != 'none'"`
+3. **Smoke-test MotherDuck** (exits 1 if the cloud attach fails):  
+   `.venv/bin/python scripts/smoke_test_md_connection.py --md`  
+   Or: `make md-smoke`
+4. **Stage vs canonical**: **New v2 domain parquets land in schema `v2_stage`** (`116_md_stage_loader.py --md`). **`main` holds promoted canonical / entity tables only after** gate pass + `motherduck_promote.sql` (and downstream materialization). Do not assume fresh extraction appears in `main` until promotion completes.
+5. **Prefer fail-closed writes**: pass `--md` to in-scope scripts and use `connect_md_or_file(..., fail_closed=True)` (or `connect_md_fail_closed`) so unreachable MotherDuck exits 1 instead of silently using local `thyroid_master.duckdb`.
+
+Full token matrix: `docs/motherduck_database_contract_v1.md` (Connection Reference).
+
+---
+
 ## Architecture
 
 | Layer | Location | Description |
 |-------|----------|-------------|
 | Extraction | Local (CPU/GPU) | LLM/regex extractors write `processed/output/v2_parquets/*.parquet` |
 | Canonical materialization | Local → `processed/` | `scripts/103_fact_lineage_materialize.py` merges domains, writes `canonical_extracted_fact_long_v2.parquet` + `canonical_fact_quarantine_v2.parquet` |
-| MotherDuck staging | `"Thyroid 2026".main` | `scripts/02b_register_notes_entities.py --md` loads parquets into MD tables |
-| QC / promotion gate | MotherDuck + local | `scripts/112_v2_domain_promotion_gate.py --motherduck-check` validates parity |
+| MotherDuck staging (current v2 landing zone) | `"Thyroid 2026".v2_stage` | `116_md_stage_loader.py --md` loads v2 domain parquets + `load_inventory`; optional `02b_register_notes_entities.py --md` registers additional entity tables per ops |
+| MotherDuck canonical surface (post-promotion) | `"Thyroid 2026".main` | Promoted domains + `canonical_*` fact tables after gate + promotion SQL + materialization |
+| QC / promotion gate | MotherDuck + local | `scripts/112_v2_domain_promotion_gate.py --motherduck-check` validates parity (`v2_stage` vs local parquets, etc.) |
 
 MotherDuck is the **staging and QC plane only** — it is not the LLM compute engine.
 
 ### Schema isolation
 
-- **`main` schema** — canonical tables; `_v1` and `_v2` suffixes prevent collision
-- **`v2_stage` schema** — raw LLM entity parquets (15 `note_entities_llm_*` tables)
+- **`v2_stage` schema** — **default landing zone** for v2 LLM entity parquets from disk (`note_entities_llm_*`, `load_inventory`); this is where current staging lands before promotion
+- **`main` schema** — promoted canonical tables; `_v1` and `_v2` suffixes prevent collision
 - v1 tables in `main` are **never overwritten** by any v2 operation
 
 ---
