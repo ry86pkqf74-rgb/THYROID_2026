@@ -22,6 +22,9 @@ Checks:
   3. Schema/provenance completeness: required columns in every main table
   4. Canonical/quarantine row counts and domain distribution
   5. Review queue population counts in qa.manual_review_queue
+  5b. Publication governance (release-mode): no synthetic-placeholder ``verification_status``
+       values in ``qa.manual_review_queue``; non-empty ``decision_batch_id`` on
+       ``qa.promotion_review_decisions`` when that table is non-empty
   6. QA view smoke tests
   7. load_inventory completeness
   8. Release schema existence check
@@ -464,6 +467,81 @@ def check_review_queue(
     except Exception as exc:
         status = "FAIL" if strict else "WARN"
         results.add("Review queue", status, f"qa.manual_review_queue not found: {exc}")
+
+
+def check_publication_review_governance(
+    con: duckdb.DuckDBPyConnection,
+    results: ValidationResult,
+    strict: bool = False,
+) -> None:
+    """Release-mode: synthetic MRQ placeholders forbidden; PRD rows need decision_batch_id."""
+    if not strict:
+        return
+    from utils.publication_governance import (
+        MRQ_SYNTHETIC_PLACEHOLDER_EXACT,
+        sql_count_mrq_synthetic_rows,
+        sql_count_promotion_decisions_missing_batch,
+    )
+
+    try:
+        n_syn = int(con.execute(sql_count_mrq_synthetic_rows()).fetchone()[0])
+        if n_syn > 0:
+            results.add(
+                "Review queue (synthetic placeholder)",
+                "FAIL",
+                f"{n_syn:,} row(s) have publication-blocked synthetic placeholder "
+                f"verification_status (canonical: {MRQ_SYNTHETIC_PLACEHOLDER_EXACT!r}; "
+                f"see docs/publication_governance_gate.md). Replace via human-reviewed CSV or "
+                f"scripts/128_mrq_tier_policy_gate_build.py. For rehearsal only, run 119 without "
+                f"--release-mode.",
+            )
+        else:
+            results.add(
+                "Review queue (synthetic placeholder)",
+                "PASS",
+                "no synthetic-placeholder verification_status in qa.manual_review_queue",
+            )
+    except Exception as exc:
+        results.add("Review queue (synthetic placeholder)", "FAIL", str(exc))
+
+    try:
+        tot = int(
+            con.execute("SELECT COUNT(*) FROM qa.promotion_review_decisions").fetchone()[0]
+        )
+    except Exception as exc:
+        results.add(
+            "Promotion decision provenance",
+            "FAIL",
+            f"qa.promotion_review_decisions not readable: {exc}",
+        )
+        return
+    if tot == 0:
+        results.add(
+            "Promotion decision provenance",
+            "PASS",
+            "qa.promotion_review_decisions empty — batch id not required",
+        )
+        return
+    try:
+        n_bad = int(
+            con.execute(sql_count_promotion_decisions_missing_batch()).fetchone()[0]
+        )
+    except Exception as exc:
+        results.add("Promotion decision provenance", "FAIL", str(exc))
+        return
+    if n_bad > 0:
+        results.add(
+            "Promotion decision provenance",
+            "FAIL",
+            f"{n_bad:,} / {tot:,} rows have NULL/blank decision_batch_id — publication releases "
+            f"must record batch provenance (126 --decision-batch-id / append path).",
+        )
+    else:
+        results.add(
+            "Promotion decision provenance",
+            "PASS",
+            f"{tot:,} row(s); all have non-empty decision_batch_id",
+        )
 
 
 def check_qa_views(
@@ -1545,6 +1623,9 @@ def main() -> None:
 
         print("\n--- Check 5: Review Queue ---")
         check_review_queue(con, results, strict=strict)
+
+        print("\n--- Check 5b: Publication review governance ---")
+        check_publication_review_governance(con, results, strict=strict)
 
         print("\n--- Check 6: QA Views ---")
         check_qa_views(con, results)

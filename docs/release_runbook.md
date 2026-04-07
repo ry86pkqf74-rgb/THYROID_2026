@@ -48,6 +48,8 @@ Ensure QA matches the candidate lineage (re-clone from prod or promote from dev 
 
 Resolve **119** failures before prod promotion. Release-mode requires presentation views, molecular contract views, release schema/manifest expectations, and an empty pending slice of `qa.manual_review_queue` where applicable — see 119 docstring.
 
+**Governance:** Release-mode 119 also rejects **synthetic** `verification_status` placeholders and requires **`decision_batch_id`** on non-empty `qa.promotion_review_decisions`. Rehearsal vs publication modes are documented in [`publication_governance_gate.md`](publication_governance_gate.md).
+
 ## 3. Before prod promotion (safety net + audits)
 
 ### 3.1 Named snapshot / rollback handle

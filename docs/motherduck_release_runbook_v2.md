@@ -473,6 +473,8 @@ After a complete orchestrator run, confirm the following against the audit direc
 
 - [ ] All 8 gates (G1–G8) show PASS
 - [ ] `manual_review_queue.csv` — zero unverified promotable rows (in final-release mode)
+- [ ] `manual_review_queue.csv` / DB — **no synthetic-placeholder** `verification_status` values for publication (see [`publication_governance_gate.md`](publication_governance_gate.md))
+- [ ] `qa.promotion_review_decisions` — if non-empty, all rows have non-blank `decision_batch_id` (119 release-mode CHECK 5b)
 
 ### 7.4 Canonical tables
 

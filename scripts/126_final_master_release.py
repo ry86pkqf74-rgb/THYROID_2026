@@ -30,6 +30,12 @@ would regress cloud row counts, use ``--skip-103`` and ``--skip-117`` so ``117``
 ``CREATE OR REPLACE`` cloud tables from disk; still pass ``--lab-csv`` / ``--ingestion-wave``
 if you want ``127`` to refresh ``final_institutional*`` and the dedup view in the same run.
 
+**Rehearsal vs publication:** ``--synthetic-fill-mrq-verification`` is only for non-publication
+rehearsal and is **incompatible** with ``--release-mode`` (use ``--no-release-mode`` so 119
+runs structurally). Publication path requires human-reviewed ``manual_review_queue.csv`` and
+real ``decision_batch_id`` on appended promotion decisions — see
+``docs/publication_governance_gate.md``.
+
 Usage:
   .venv/bin/python scripts/126_final_master_release.py --md --release-date 20260407 \\
       --hydrate-mrq-from studies/v2_domain_promotion_gate_formalization_20260406_v3 \\
@@ -170,7 +176,9 @@ def apply_qa_ddl(con: duckdb.DuckDBPyConnection) -> None:
 
 
 def assert_mrq_csv_fully_reviewed(mrq_path: Path) -> None:
-    """Exit if any row lacks non-empty verification_status."""
+    """Exit if any row lacks non-empty verification_status or uses synthetic placeholders."""
+    from utils.publication_governance import is_mrq_synthetic_placeholder_verification_status
+
     if not mrq_path.is_file():
         print(f"  FATAL: manual_review_queue.csv not found: {mrq_path}")
         sys.exit(1)
@@ -185,6 +193,14 @@ def assert_mrq_csv_fully_reviewed(mrq_path: Path) -> None:
         print(
             f"  FATAL: {n_bad:,} manual_review_queue row(s) lack verification_status. "
             f"Fully review the CSV or use --synthetic-fill-mrq-verification for non-production tests only."
+        )
+        sys.exit(1)
+    n_syn = int(df["verification_status"].map(is_mrq_synthetic_placeholder_verification_status).sum())
+    if n_syn > 0:
+        print(
+            f"  FATAL: {n_syn:,} manual_review_queue row(s) use publication-blocked synthetic "
+            f"verification_status (see docs/publication_governance_gate.md). "
+            f"Run scripts/128_mrq_tier_policy_gate_build.py or replace with real reviewer statuses."
         )
         sys.exit(1)
     print(f"  [preflight] manual_review_queue fully reviewed: {len(df):,} row(s) at {mrq_path}")
@@ -425,7 +441,9 @@ def write_evidence_pack(study_dir: Path, ev: dict[str, Any], export_dir: Path) -
         "",
         "** Preconditions verified by automation:**",
         "",
-        "- `qa.manual_review_queue` has zero pending `verification_status` when `--release-mode` validation completed.",
+        "- `qa.manual_review_queue` has zero pending `verification_status` and no synthetic-placeholder "
+        "statuses when `--release-mode` validation completed (see `docs/publication_governance_gate.md`).",
+        "- `qa.promotion_review_decisions` rows, when present, carry non-empty `decision_batch_id`.",
         "- `main.master_fact_long_verified_v1` exposes `research_id`, `source_object_id` (note row id), and extraction run id per fact.",
         "- Curated parquet under `exports/final_master_release_<tag>/` excludes raw note bodies.",
         "",
@@ -466,6 +484,14 @@ def main() -> None:
         sys.exit(1)
     if args.lab_csv and not args.ingestion_wave:
         print("  FATAL: --ingestion-wave is required when --lab-csv is set.")
+        sys.exit(1)
+    if args.synthetic_fill_mrq_verification and args.release_mode:
+        print(
+            "  FATAL: --synthetic-fill-mrq-verification cannot be combined with --release-mode. "
+            "For rehearsal with synthetic MRQ fill, pass --no-release-mode (119 structural only). "
+            "For publication, omit synthetic fill and use a human-reviewed gate CSV "
+            "(docs/publication_governance_gate.md)."
+        )
         sys.exit(1)
 
     tag = args.release_date.strip()
