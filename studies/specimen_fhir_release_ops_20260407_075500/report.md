@@ -1,7 +1,7 @@
 # Specimen + FHIR — release / reviewer ops report
 
 **Timestamp (UTC):** 2026-04-07T07:55:00+00:00  
-**Commit SHA:** `6968264dbeda88effe111d669be0844f9dead35b`  
+**Commit SHA:** `29adcd06ddc3e831441b0f500f44f0990a882817`  
 **Scope:** QA views (`142`), validation hooks (`119`), CI pytest, current-state summary (`144`), documentation, MotherDuck deploy with `custom_user_agent=specimen_fhir_release_ops_v1`.
 
 ---
@@ -74,4 +74,4 @@ Validator now **WARN**s when focus scans or merge-queue counts are unavailable i
 
 ## Commit reference
 
-Authoritative SHA for this bundle: `6968264dbeda88effe111d669be0844f9dead35b` (short `6968264`).
+Authoritative SHA for this bundle: `29adcd06ddc3e831441b0f500f44f0990a882817` (short `29adcd0`).
