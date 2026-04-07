@@ -5,6 +5,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -254,10 +255,18 @@ def test_sort_entities_deterministic_unifies_mixed_entity_date_types():
     assert out.iloc[1]["entity_value_norm"] == "later"
 
 
-def test_note_extraction_run_input_fingerprint_and_registry(tmp_path):
-    import json
-
+def test_append_note_extraction_run_persists_input_and_registry_fingerprint_fields(tmp_path):
+    """Telemetry row must store input path/stat/hash and registry version/digest verbatim."""
     from llm_extraction.run_telemetry import append_note_extraction_run
+
+    in_path = tmp_path / "subdir" / "clinical_notes_long.parquet"
+    in_path.parent.mkdir(parents=True, exist_ok=True)
+    resolved_input = str(in_path.resolve())
+    want_size = 1024
+    want_mtime = "2026-04-06T12:00:00+00:00"
+    want_sha = "a" * 64
+    want_schema = "entity_schema_v3_x"
+    want_reg_digest = "b" * 64
 
     append_note_extraction_run(
         tmp_path,
@@ -272,21 +281,21 @@ def test_note_extraction_run_input_fingerprint_and_registry(tmp_path):
         domains_requested="staging",
         research_id_filter_note=None,
         target_domain=None,
-        input_path="/processed/clinical_notes_long.parquet",
-        input_file_size_bytes=1024,
-        input_mtime_utc="2026-04-06T12:00:00+00:00",
-        input_sha256="a" * 64,
-        registry_schema_version="entity_schema_v3_x",
-        registry_digest="b" * 64,
+        input_path=resolved_input,
+        input_file_size_bytes=want_size,
+        input_mtime_utc=want_mtime,
+        input_sha256=want_sha,
+        registry_schema_version=want_schema,
+        registry_digest=want_reg_digest,
     )
     df = pd.read_parquet(tmp_path / "note_extraction_runs.parquet")
     row = df.iloc[0]
-    assert row["input_path"].endswith("clinical_notes_long.parquet")
-    assert int(row["input_file_size_bytes"]) == 1024
-    assert "2026-04-06" in str(row["input_mtime_utc"])
-    assert row["input_sha256"] == "a" * 64
-    assert row["registry_schema_version"] == "entity_schema_v3_x"
-    assert row["registry_digest"] == "b" * 64
+    assert row["input_path"] == resolved_input
+    assert int(row["input_file_size_bytes"]) == want_size
+    assert str(row["input_mtime_utc"]) == want_mtime
+    assert row["input_sha256"] == want_sha
+    assert row["registry_schema_version"] == want_schema
+    assert row["registry_digest"] == want_reg_digest
     warn = json.loads(row["warnings"])
     assert warn["input_fingerprint_mode"] == "full"
 
@@ -295,7 +304,7 @@ def test_note_extraction_runs_backward_compat_old_rows(tmp_path):
     """Older parquet rows without fingerprint columns survive append with null new fields."""
     from llm_extraction.run_telemetry import append_note_extraction_run
 
-    legacy = pd.DataFrame(
+    legacy_df = pd.DataFrame(
         [
             {
                 "run_id": "legacy-1",
@@ -315,7 +324,7 @@ def test_note_extraction_runs_backward_compat_old_rows(tmp_path):
             }
         ]
     )
-    legacy.to_parquet(tmp_path / "note_extraction_runs.parquet", index=False)
+    legacy_df.to_parquet(tmp_path / "note_extraction_runs.parquet", index=False)
 
     append_note_extraction_run(
         tmp_path,
@@ -340,9 +349,105 @@ def test_note_extraction_runs_backward_compat_old_rows(tmp_path):
 
     df = pd.read_parquet(tmp_path / "note_extraction_runs.parquet")
     assert len(df) == 2
-    assert pd.isna(df.iloc[0]["input_sha256"])
-    assert df.iloc[1]["input_sha256"] == "c" * 64
-    assert df.iloc[1]["registry_digest"] == "d" * 64
+    legacy_row = df.iloc[0]
+    for col in (
+        "input_path",
+        "input_file_size_bytes",
+        "input_mtime_utc",
+        "input_sha256",
+        "registry_schema_version",
+        "registry_digest",
+    ):
+        assert col in df.columns
+        assert pd.isna(legacy_row[col]), f"legacy row expected null {col}, got {legacy_row[col]!r}"
+    newest = df.iloc[1]
+    assert newest["input_path"] == str((tmp_path / "clinical_notes_long.parquet").resolve())
+    assert int(newest["input_file_size_bytes"]) == 99
+    assert newest["input_sha256"] == "c" * 64
+    assert newest["registry_digest"] == "d" * 64
+    assert newest["registry_schema_version"] == "entity_schema_v3"
+    assert str(newest["input_mtime_utc"]) == "2026-04-06T00:00:00+00:00"
+
+
+def test_run_extraction_main_passes_fingerprint_to_append_note_extraction_run(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """Runner must forward input fingerprint + registry metadata into telemetry append (offline)."""
+    import llm_extraction.run_extraction as re_mod
+    from llm_extraction.registry import load_registry
+    from llm_extraction.run_telemetry import hash_file_sha256
+
+    reg = load_registry()
+    reg_yaml = re_mod.ROOT / "config" / "extraction_domain_registry.yaml"
+    assert reg_yaml.is_file()
+    want_digest = hash_file_sha256(reg_yaml)
+
+    monkeypatch.setattr(re_mod, "PROCESSED", tmp_path)
+    for key in ("GITHUB_TOKEN", "OPENAI_API_KEY", "OPENAI_API_KEY_ID"):
+        monkeypatch.delenv(key, raising=False)
+
+    notes = pd.DataFrame(
+        [
+            {
+                "note_row_id": "telemetry_runner_nr1",
+                "research_id": 424242,
+                "note_type": "other",
+                "note_text": "Offline synthetic note text for telemetry runner test.",
+            }
+        ]
+    )
+    notes_path = tmp_path / "clinical_notes_long.parquet"
+    notes.to_parquet(notes_path, index=False)
+    st = notes_path.stat()
+    want_size = int(st.st_size)
+    want_mtime = datetime.fromtimestamp(st.st_mtime, tz=timezone.utc).isoformat()
+    want_sha256 = hash_file_sha256(notes_path)
+
+    captured: dict[str, object] = {}
+
+    def capture_append(
+        processed_dir: Path,
+        *,
+        run_id: str,
+        started_at: str,
+        completed_at: str,
+        success: bool,
+        failure_stage: str,
+        retry_count: int,
+        output_record_count: int,
+        warnings: object,
+        domains_requested: str | None,
+        research_id_filter_note: str | None,
+        target_domain: str | None,
+        input_path: str | None = None,
+        input_file_size_bytes: int | None = None,
+        input_mtime_utc: str | None = None,
+        input_sha256: str | None = None,
+        registry_schema_version: str | None = None,
+        registry_digest: str | None = None,
+    ) -> Path:
+        captured["processed_dir"] = processed_dir
+        captured["run_id"] = run_id
+        captured["input_path"] = input_path
+        captured["input_file_size_bytes"] = input_file_size_bytes
+        captured["input_mtime_utc"] = input_mtime_utc
+        captured["input_sha256"] = input_sha256
+        captured["registry_schema_version"] = registry_schema_version
+        captured["registry_digest"] = registry_digest
+        return processed_dir / "note_extraction_runs.parquet"
+
+    monkeypatch.setattr(re_mod, "append_note_extraction_run", capture_append)
+    monkeypatch.setattr(sys, "argv", ["run_extraction.py", "--workers", "1"])
+
+    re_mod.main()
+
+    assert captured["processed_dir"] == tmp_path
+    assert captured["input_path"] == str(notes_path.resolve())
+    assert captured["input_file_size_bytes"] == want_size
+    assert captured["input_mtime_utc"] == want_mtime
+    assert captured["input_sha256"] == want_sha256
+    assert captured["registry_schema_version"] == reg.schema_version
+    assert captured["registry_digest"] == want_digest
 
 
 def test_md_connect_uses_local_file_when_md_false(tmp_path):
