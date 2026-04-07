@@ -1,0 +1,48 @@
+{
+  "catalog": "Thyroid 2026",
+  "database_md_info": [
+    "Thyroid 2026",
+    "DUCKLAKE",
+    false,
+    "7 days"
+  ],
+  "latest_release_manifest_top": [
+    {
+      "release_tag": "20260409",
+      "created_at": "2026-04-07 02:05:07.189573",
+      "created_by": "scripts/126_final_master_release.py",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"thyroglobulin_lab_canonical_v1\", \"note_extraction_runs\", \"longitudinal_lab_canonical_v1\", \"master_fact_long_verified_v1\", \"master_patient_rollup_verified_v1\", \"master_source_lineage_v1\"]",
+      "registry_version": "entity_schema_v3_2026-04-03"
+    },
+    {
+      "release_tag": "20260408",
+      "created_at": "2026-04-07 02:03:20.732093",
+      "created_by": "scripts/126_final_master_release.py",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"thyroglobulin_lab_canonical_v1\", \"note_extraction_runs\", \"longitudinal_lab_canonical_v1\", \"master_fact_long_verified_v1\", \"master_patient_rollup_verified_v1\", \"master_source_lineage_v1\"]",
+      "registry_version": "entity_schema_v3_2026-04-03"
+    },
+    {
+      "release_tag": "20260407",
+      "created_at": "2026-04-07 01:09:57.717289",
+      "created_by": "scripts/115_release_snapshot.py",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"note_extraction_runs\"]",
+      "registry_version": "entity_schema_v3_2026-04-03"
+    },
+    {
+      "release_tag": "20260406",
+      "created_at": "2026-04-07 04:07:52.519215",
+      "created_by": "scripts/115_release_snapshot.py",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"thyroglobulin_lab_canonical_v1\", \"note_extraction_runs\"]",
+      "registry_version": "entity_schema_v3_2026-04-03"
+    },
+    {
+      "release_tag": "20260407_final2",
+      "created_at": "2026-04-07 05:11:41.171561",
+      "created_by": "scripts/115_release_snapshot.py",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"thyroglobulin_lab_canonical_v1\", \"note_extraction_runs\", \"longitudinal_lab_canonical_v1\", \"master_fact_long_verified_v1\", \"master_patient_rollup_verified_v1\", \"master_source_lineage_v1\"]",
+      "registry_version": "entity_schema_v3_2026-04-03"
+    }
+  ],
+  "generated_utc": "2026-04-07T14:44:19.434399+00:00",
+  "objects_scanned": 207
+}
