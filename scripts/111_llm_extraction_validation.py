@@ -648,8 +648,19 @@ def existing_note_entities(
         if d in _domain_to_tbl and d != "llm"
     ]
 
+    _baseline_cols = frozenset({
+        "research_id", "entity_type", "entity_value_raw", "entity_value_norm", "present_or_negated",
+    })
     for table_name in tables:
         if not table_exists(con, table_name):
+            continue
+        available = table_columns(con, table_name)
+        if not _baseline_cols.issubset(available):
+            LOG.warning(
+                "Skipping baseline table %s — missing entity columns (have %s)",
+                table_name,
+                ",".join(sorted(available))[:200],
+            )
             continue
         df = con.execute(
             f"""
