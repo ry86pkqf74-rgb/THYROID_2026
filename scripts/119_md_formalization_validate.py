@@ -65,6 +65,22 @@ DESIRED_PROVENANCE_COLUMNS = [
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Validate MotherDuck formalization.")
     p.add_argument("--md", action="store_true", help="Target MotherDuck (fail-closed).")
+    p.add_argument(
+        "--md-sa",
+        action="store_true",
+        help="Prefer MD_SA_TOKEN over MOTHERDUCK_TOKEN (release / CI).",
+    )
+    p.add_argument(
+        "--md-user-agent",
+        default=None,
+        help="custom_user_agent for MotherDuck connection (query history). "
+        "Default: MOTHERDUCK_CUSTOM_USER_AGENT or THYROID_2026_formalization_validate/1.0",
+    )
+    p.add_argument(
+        "--md-session-hint",
+        default=None,
+        help="SET motherduck_session_hint after connect. Default: MOTHERDUCK_SESSION_HINT.",
+    )
     p.add_argument("--release-mode", action="store_true",
                     help="Strict release validation: FAIL on missing infrastructure.")
     p.add_argument("--db-path", default=str(DEFAULT_DB_PATH))
@@ -75,8 +91,21 @@ def parse_args() -> argparse.Namespace:
 
 def get_connection(args: argparse.Namespace) -> duckdb.DuckDBPyConnection:
     if args.md:
+        import os
         from utils.md_connect import connect_md_or_file
-        return connect_md_or_file(Path(args.db_path), md=True, fail_closed=True)
+
+        ua = args.md_user_agent or os.environ.get(
+            "MOTHERDUCK_CUSTOM_USER_AGENT",
+            "THYROID_2026_formalization_validate/1.0",
+        )
+        return connect_md_or_file(
+            Path(args.db_path),
+            md=True,
+            fail_closed=True,
+            prefer_service_account=args.md_sa,
+            custom_user_agent=ua,
+            motherduck_session_hint=args.md_session_hint,
+        )
     return duckdb.connect(args.db_path)
 
 
@@ -209,7 +238,23 @@ def check_schema_completeness(
 
         missing = [c for c in REQUIRED_ENTITY_COLUMNS if c not in cols]
         if missing:
-            issues.append(f"{stem}: missing {missing}")
+            stg_note = ""
+            try:
+                stg_cols = [r[0] for r in con.execute(
+                    f"SELECT column_name FROM information_schema.columns "
+                    f"WHERE table_schema='v2_stage' AND table_name='{stem}'"
+                ).fetchall()]
+                if stg_cols and all(c not in stg_cols for c in missing):
+                    stg_note = (
+                        " (v2_stage also lacks these — wide/JSON v2 parquet shape on MD; "
+                        "long-form entities are in main.canonical_extracted_fact_long_v2; "
+                        "see docs/domain_mapping_rules.md and promotion gate JSON expansion)"
+                    )
+                elif stg_cols and all(c in stg_cols for c in missing):
+                    stg_note = " (present on v2_stage but not main — promotion/main drift)"
+            except Exception:
+                pass
+            issues.append(f"{stem}: missing {missing}{stg_note}")
 
     if issues:
         results.add("Schema completeness", "WARN", f"{len(issues)} issues: {'; '.join(issues[:5])}")
@@ -390,6 +435,10 @@ def generate_report(
 
     if results.failed > 0:
         lines.append(f"**VERDICT: BLOCKED** — {results.failed} check(s) failed.")
+    elif results.warned > 0:
+        lines.append(
+            f"**VERDICT: PASS WITH WARNINGS** — {results.warned} check(s) warned; no failures."
+        )
     else:
         lines.append("**VERDICT: PASS** — all checks passed.")
 

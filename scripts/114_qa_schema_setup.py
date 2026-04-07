@@ -27,6 +27,11 @@ DDL_PATH = ROOT / "scripts" / "sql" / "114_qa_schema_ddl.sql"
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Create qa schema and optionally hydrate from gate artifacts.")
     p.add_argument("--md", action="store_true", help="Target MotherDuck (fail-closed).")
+    p.add_argument(
+        "--md-sa",
+        action="store_true",
+        help="Prefer MD_SA_TOKEN over MOTHERDUCK_TOKEN.",
+    )
     p.add_argument("--db-path", default=str(ROOT / "thyroid_master.duckdb"), help="Local DuckDB path.")
     p.add_argument(
         "--hydrate-from",
@@ -39,8 +44,20 @@ def parse_args() -> argparse.Namespace:
 
 def get_connection(args: argparse.Namespace) -> duckdb.DuckDBPyConnection:
     if args.md:
+        import os
         from utils.md_connect import connect_md_or_file
-        return connect_md_or_file(Path(args.db_path), md=True, fail_closed=True)
+
+        return connect_md_or_file(
+            Path(args.db_path),
+            md=True,
+            fail_closed=True,
+            prefer_service_account=args.md_sa,
+            custom_user_agent=os.environ.get(
+                "MOTHERDUCK_CUSTOM_USER_AGENT",
+                "THYROID_2026_qa_schema_setup/1.0",
+            ),
+            motherduck_session_hint=os.environ.get("MOTHERDUCK_SESSION_HINT"),
+        )
     return duckdb.connect(args.db_path)
 
 
@@ -166,6 +183,8 @@ def hydrate_manual_review_queue(con: duckdb.DuckDBPyConnection, gate_dir: Path) 
         "review_row_id": "review_row_id",
         "research_id": "research_id",
         "domain": "domain",
+        # v2 gate CSV uses source_domain as the promotable v2 domain key
+        "source_domain": "domain",
         "comparison_domain": "domain",
         "entity_type": "entity_type",
         "entity_value_norm": "entity_value_norm",

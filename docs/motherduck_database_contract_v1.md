@@ -210,11 +210,15 @@ Episode and linkage tables have their own required columns:
 
 ### Promotion rules
 
-1. **No auto-promotion.** Every discordant or fill-candidate row must be manually reviewed.
+1. **Review policy (single source of truth):** [`docs/domain_mapping_rules.md`](domain_mapping_rules.md) § *Fill-Candidate Triage Policy* (approved 2026-04-07). In summary:
+   - **Discordant rows** (`discordant_existing`, same-entity conflict): **zero tolerance** — each row must be individually adjudicated (`confirmed_correct` / `confirmed_incorrect`) before release; no bulk acceptance.
+   - **Fill candidates** (`existing_missing_fill_candidate`): tiered acceptance — **critical** domains use sample-based batch acceptance (10% min 20 rows, >90% pass to accept remainder per policy); **standard** and **informational** tiers may be bulk-accepted with documented `verification_status` (`auto_accepted_standard`, `auto_accepted_informational`) and audit rows in `qa.promotion_review_decisions`.
 2. **Gate G8 requires `--motherduck-check`.** Local-only runs set G8 to PASS by default.
 3. **Append-only in main.** Corrections go to quarantine; original rows are never deleted.
 4. **V1 tables are immutable.** No v2 operation touches `_v1` suffixed tables.
 5. **Release schemas are immutable.** Use a new tag for corrections.
+
+Operational detail for tiered fill acceptance, reviewer SOP, and MotherDuck hydration: [`studies/v2_domain_promotion_gate_formalization_20260406_v3/MANUAL_REVIEW_PLAYBOOK.md`](../studies/v2_domain_promotion_gate_formalization_20260406_v3/MANUAL_REVIEW_PLAYBOOK.md).
 
 ---
 
@@ -303,6 +307,16 @@ con = connect_md_or_file(DB_PATH, md=args.md, fail_closed=args.md)
 
 # Convenience alias: always MD, always fail-closed
 con = connect_md_fail_closed(DB_PATH)
+
+# Automation: prefer service account + query-history attribution
+con = connect_md_or_file(
+    DB_PATH,
+    md=True,
+    fail_closed=True,
+    prefer_service_account=True,
+    custom_user_agent="THYROID_2026_orchestrator/1.0",
+    motherduck_session_hint="rc_promotion_20260407",
+)
 ```
 
 Never call `duckdb.connect("md:...")` directly. Token resolution is handled internally.
@@ -314,6 +328,8 @@ Never call `duckdb.connect("md:...")` directly. Token resolution is handled inte
 | `MOTHERDUCK_TOKEN` | Personal developer token |
 | `MD_SA_TOKEN` | Service-account / CI token |
 | `MOTHERDUCK_DATABASE` | Override DB name (default: `Thyroid 2026`) |
+| `MOTHERDUCK_CUSTOM_USER_AGENT` | DuckDB `custom_user_agent` (MotherDuck query history) |
+| `MOTHERDUCK_SESSION_HINT` | `SET motherduck_session_hint` after connect |
 
 ---
 
@@ -330,6 +346,9 @@ Never call `duckdb.connect("md:...")` directly. Token resolution is handled inte
 | `115_release_snapshot.py` | Create immutable release snapshots | release_YYYYMMDD, qa |
 | `118_parquet_release_bundle.py` | Export Parquet bundle from MD main | main (read), qa (read) |
 | `119_md_formalization_validate.py` | Validation suite | all (read) |
+| `125_master_verified_views.py` | Analyst-facing `main.master_*_verified_v1` views | main (views) |
+| `126_release_candidate_motherduck_audit.py` | RC evidence pack (MD_INFORMATION_SCHEMA, row counts) | read (+ optional `CREATE SNAPSHOT`) |
+| `127_qa_tier_batch_adjudicate.py` | Tier bulk acceptance for fill-candidates on `qa.manual_review_queue` | qa (write) |
 
 ---
 

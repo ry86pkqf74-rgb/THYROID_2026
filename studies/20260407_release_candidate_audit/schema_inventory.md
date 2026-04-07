@@ -1,0 +1,882 @@
+# Schema inventory (main promoted v2 stems)
+## main.note_entities_llm_imaging
+
+| column_name         | data_type   |
+|:--------------------|:------------|
+| note_row_id         | VARCHAR     |
+| note_row_id         | VARCHAR     |
+| research_id         | VARCHAR     |
+| research_id         | VARCHAR     |
+| note_type           | VARCHAR     |
+| note_type           | VARCHAR     |
+| note_date           | VARCHAR     |
+| note_date           | VARCHAR     |
+| domain              | VARCHAR     |
+| domain              | VARCHAR     |
+| llm_model           | VARCHAR     |
+| llm_model           | VARCHAR     |
+| llm_base_url        | VARCHAR     |
+| llm_base_url        | VARCHAR     |
+| extracted_at        | VARCHAR     |
+| extracted_at        | VARCHAR     |
+| result_json         | VARCHAR     |
+| result_json         | VARCHAR     |
+| linkage_date        | VARCHAR     |
+| linkage_date        | VARCHAR     |
+| source_workbook     | VARCHAR     |
+| source_workbook     | VARCHAR     |
+| source_sheet        | VARCHAR     |
+| source_sheet        | VARCHAR     |
+| source_column       | VARCHAR     |
+| source_column       | VARCHAR     |
+| note_index          | VARCHAR     |
+| note_index          | VARCHAR     |
+| preprocessed_at_utc | VARCHAR     |
+| preprocessed_at_utc | VARCHAR     |
+
+## main.note_entities_llm_tirads_granular
+
+| column_name               | data_type   |
+|:--------------------------|:------------|
+| note_row_id               | VARCHAR     |
+| note_row_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| domain                    | VARCHAR     |
+| domain                    | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| result_json               | VARCHAR     |
+| result_json               | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_column             | VARCHAR     |
+| source_column             | VARCHAR     |
+| note_index                | VARCHAR     |
+| note_index                | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+
+## main.note_entities_llm_us_nodule_dynamics
+
+| column_name               | data_type   |
+|:--------------------------|:------------|
+| note_row_id               | VARCHAR     |
+| note_row_id               | VARCHAR     |
+| domain                    | VARCHAR     |
+| domain                    | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| result_json               | VARCHAR     |
+| result_json               | VARCHAR     |
+| research_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_column             | VARCHAR     |
+| source_column             | VARCHAR     |
+| note_index                | VARCHAR     |
+| note_index                | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+
+## main.note_entities_llm_labs
+
+| column_name         | data_type   |
+|:--------------------|:------------|
+| note_row_id         | VARCHAR     |
+| note_row_id         | VARCHAR     |
+| research_id         | VARCHAR     |
+| research_id         | VARCHAR     |
+| note_type           | VARCHAR     |
+| note_type           | VARCHAR     |
+| note_date           | VARCHAR     |
+| note_date           | VARCHAR     |
+| domain              | VARCHAR     |
+| domain              | VARCHAR     |
+| llm_model           | VARCHAR     |
+| llm_model           | VARCHAR     |
+| llm_base_url        | VARCHAR     |
+| llm_base_url        | VARCHAR     |
+| extracted_at        | VARCHAR     |
+| extracted_at        | VARCHAR     |
+| result_json         | VARCHAR     |
+| result_json         | VARCHAR     |
+| linkage_date        | VARCHAR     |
+| linkage_date        | VARCHAR     |
+| source_workbook     | VARCHAR     |
+| source_workbook     | VARCHAR     |
+| source_sheet        | VARCHAR     |
+| source_sheet        | VARCHAR     |
+| source_column       | VARCHAR     |
+| source_column       | VARCHAR     |
+| note_index          | VARCHAR     |
+| note_index          | VARCHAR     |
+| preprocessed_at_utc | VARCHAR     |
+| preprocessed_at_utc | VARCHAR     |
+
+## main.note_entities_llm_tg_kinetics
+
+| column_name               | data_type   |
+|:--------------------------|:------------|
+| note_row_id               | VARCHAR     |
+| note_row_id               | VARCHAR     |
+| domain                    | VARCHAR     |
+| domain                    | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| result_json               | VARCHAR     |
+| result_json               | VARCHAR     |
+| research_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_column             | VARCHAR     |
+| source_column             | VARCHAR     |
+| note_index                | VARCHAR     |
+| note_index                | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+
+## main.note_entities_llm_pathology
+
+| column_name         | data_type   |
+|:--------------------|:------------|
+| note_row_id         | VARCHAR     |
+| note_row_id         | VARCHAR     |
+| research_id         | VARCHAR     |
+| research_id         | VARCHAR     |
+| note_type           | VARCHAR     |
+| note_type           | VARCHAR     |
+| note_date           | VARCHAR     |
+| note_date           | VARCHAR     |
+| domain              | VARCHAR     |
+| domain              | VARCHAR     |
+| llm_model           | VARCHAR     |
+| llm_model           | VARCHAR     |
+| llm_base_url        | VARCHAR     |
+| llm_base_url        | VARCHAR     |
+| extracted_at        | VARCHAR     |
+| extracted_at        | VARCHAR     |
+| result_json         | VARCHAR     |
+| result_json         | VARCHAR     |
+| linkage_date        | VARCHAR     |
+| linkage_date        | VARCHAR     |
+| source_workbook     | VARCHAR     |
+| source_workbook     | VARCHAR     |
+| source_sheet        | VARCHAR     |
+| source_sheet        | VARCHAR     |
+| source_column       | VARCHAR     |
+| source_column       | VARCHAR     |
+| note_index          | VARCHAR     |
+| note_index          | VARCHAR     |
+| preprocessed_at_utc | VARCHAR     |
+| preprocessed_at_utc | VARCHAR     |
+
+## main.note_entities_llm_synoptic_pathology_enrichment
+
+| column_name               | data_type   |
+|:--------------------------|:------------|
+| note_row_id               | VARCHAR     |
+| note_row_id               | VARCHAR     |
+| domain                    | VARCHAR     |
+| domain                    | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| result_json               | VARCHAR     |
+| result_json               | VARCHAR     |
+| research_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_column             | VARCHAR     |
+| source_column             | VARCHAR     |
+| note_index                | VARCHAR     |
+| note_index                | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+
+## main.note_entities_llm_rai_detailed
+
+| column_name               | data_type   |
+|:--------------------------|:------------|
+| note_row_id               | VARCHAR     |
+| note_row_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| domain                    | VARCHAR     |
+| domain                    | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| result_json               | VARCHAR     |
+| result_json               | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_column             | VARCHAR     |
+| source_column             | VARCHAR     |
+| note_index                | VARCHAR     |
+| note_index                | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+
+## main.note_entities_llm_rad_treatment
+
+| column_name               | data_type   |
+|:--------------------------|:------------|
+| note_row_id               | VARCHAR     |
+| note_row_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| domain                    | VARCHAR     |
+| domain                    | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| result_json               | VARCHAR     |
+| result_json               | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_column             | VARCHAR     |
+| source_column             | VARCHAR     |
+| note_index                | VARCHAR     |
+| note_index                | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+
+## main.note_entities_llm_parathyroid_detail
+
+| column_name               | data_type   |
+|:--------------------------|:------------|
+| note_row_id               | VARCHAR     |
+| note_row_id               | VARCHAR     |
+| domain                    | VARCHAR     |
+| domain                    | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| result_json               | VARCHAR     |
+| result_json               | VARCHAR     |
+| research_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_column             | VARCHAR     |
+| source_column             | VARCHAR     |
+| note_index                | VARCHAR     |
+| note_index                | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+
+## main.note_entities_llm_recurrence
+
+| column_name               | data_type   |
+|:--------------------------|:------------|
+| note_row_id               | VARCHAR     |
+| note_row_id               | VARCHAR     |
+| domain                    | VARCHAR     |
+| domain                    | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| result_json               | VARCHAR     |
+| result_json               | VARCHAR     |
+| research_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_column             | VARCHAR     |
+| source_column             | VARCHAR     |
+| note_index                | VARCHAR     |
+| note_index                | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+
+## main.note_entities_llm_survival_followup
+
+| column_name               | data_type   |
+|:--------------------------|:------------|
+| note_row_id               | VARCHAR     |
+| note_row_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| domain                    | VARCHAR     |
+| domain                    | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| result_json               | VARCHAR     |
+| result_json               | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_column             | VARCHAR     |
+| source_column             | VARCHAR     |
+| note_index                | VARCHAR     |
+| note_index                | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+
+## main.note_entities_llm_cervical_ln_detail
+
+| column_name               | data_type   |
+|:--------------------------|:------------|
+| note_row_id               | VARCHAR     |
+| note_row_id               | VARCHAR     |
+| domain                    | VARCHAR     |
+| domain                    | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| result_json               | VARCHAR     |
+| result_json               | VARCHAR     |
+| research_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_column             | VARCHAR     |
+| source_column             | VARCHAR     |
+| note_index                | VARCHAR     |
+| note_index                | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+
+## main.note_entities_llm_functional_outcomes
+
+| column_name               | data_type   |
+|:--------------------------|:------------|
+| note_row_id               | VARCHAR     |
+| note_row_id               | VARCHAR     |
+| domain                    | VARCHAR     |
+| domain                    | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| result_json               | VARCHAR     |
+| result_json               | VARCHAR     |
+| research_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_column             | VARCHAR     |
+| source_column             | VARCHAR     |
+| note_index                | VARCHAR     |
+| note_index                | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+
+## main.note_entities_llm_past_medical_hx
+
+| column_name               | data_type   |
+|:--------------------------|:------------|
+| note_row_id               | VARCHAR     |
+| note_row_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| domain                    | VARCHAR     |
+| domain                    | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| result_json               | VARCHAR     |
+| result_json               | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_column             | VARCHAR     |
+| source_column             | VARCHAR     |
+| note_index                | VARCHAR     |
+| note_index                | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+
+## main.note_entities_llm_past_surgical_hx
+
+| column_name               | data_type   |
+|:--------------------------|:------------|
+| note_row_id               | VARCHAR     |
+| note_row_id               | VARCHAR     |
+| domain                    | VARCHAR     |
+| domain                    | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| result_json               | VARCHAR     |
+| result_json               | VARCHAR     |
+| research_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_column             | VARCHAR     |
+| source_column             | VARCHAR     |
+| note_index                | VARCHAR     |
+| note_index                | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+
+## main.note_entities_llm_presenting_symptoms
+
+| column_name               | data_type   |
+|:--------------------------|:------------|
+| note_row_id               | VARCHAR     |
+| note_row_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| domain                    | VARCHAR     |
+| domain                    | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| result_json               | VARCHAR     |
+| result_json               | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_column             | VARCHAR     |
+| source_column             | VARCHAR     |
+| note_index                | VARCHAR     |
+| note_index                | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+
+## main.note_entities_llm_physical_exam
+
+| column_name         | data_type   |
+|:--------------------|:------------|
+| note_row_id         | VARCHAR     |
+| note_row_id         | VARCHAR     |
+| research_id         | VARCHAR     |
+| research_id         | VARCHAR     |
+| note_type           | VARCHAR     |
+| note_type           | VARCHAR     |
+| note_date           | VARCHAR     |
+| note_date           | VARCHAR     |
+| domain              | VARCHAR     |
+| domain              | VARCHAR     |
+| llm_model           | VARCHAR     |
+| llm_model           | VARCHAR     |
+| llm_base_url        | VARCHAR     |
+| llm_base_url        | VARCHAR     |
+| extracted_at        | VARCHAR     |
+| extracted_at        | VARCHAR     |
+| result_json         | VARCHAR     |
+| result_json         | VARCHAR     |
+| linkage_date        | VARCHAR     |
+| linkage_date        | VARCHAR     |
+| source_workbook     | VARCHAR     |
+| source_workbook     | VARCHAR     |
+| source_sheet        | VARCHAR     |
+| source_sheet        | VARCHAR     |
+| source_column       | VARCHAR     |
+| source_column       | VARCHAR     |
+| note_index          | VARCHAR     |
+| note_index          | VARCHAR     |
+| preprocessed_at_utc | VARCHAR     |
+| preprocessed_at_utc | VARCHAR     |
+
+## main.note_entities_llm_vascular_invasion
+
+| column_name               | data_type   |
+|:--------------------------|:------------|
+| note_row_id               | VARCHAR     |
+| note_row_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| domain                    | VARCHAR     |
+| domain                    | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| result_json               | VARCHAR     |
+| result_json               | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_column             | VARCHAR     |
+| source_column             | VARCHAR     |
+| note_index                | VARCHAR     |
+| note_index                | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+
+## main.note_entities_llm_airway_invasion
+
+| column_name               | data_type   |
+|:--------------------------|:------------|
+| note_row_id               | VARCHAR     |
+| note_row_id               | VARCHAR     |
+| domain                    | VARCHAR     |
+| domain                    | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| result_json               | VARCHAR     |
+| result_json               | VARCHAR     |
+| research_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_column             | VARCHAR     |
+| source_column             | VARCHAR     |
+| note_index                | VARCHAR     |
+| note_index                | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+
+## main.note_entities_llm_frozen_section_detail
+
+| column_name               | data_type   |
+|:--------------------------|:------------|
+| note_row_id               | VARCHAR     |
+| note_row_id               | VARCHAR     |
+| domain                    | VARCHAR     |
+| domain                    | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| result_json               | VARCHAR     |
+| result_json               | VARCHAR     |
+| research_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_column             | VARCHAR     |
+| source_column             | VARCHAR     |
+| note_index                | VARCHAR     |
+| note_index                | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+
+## main.note_entities_llm_dynamic_risk_response
+
+| column_name               | data_type   |
+|:--------------------------|:------------|
+| note_row_id               | VARCHAR     |
+| note_row_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| domain                    | VARCHAR     |
+| domain                    | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| result_json               | VARCHAR     |
+| result_json               | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_column             | VARCHAR     |
+| source_column             | VARCHAR     |
+| note_index                | VARCHAR     |
+| note_index                | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+
+## main.note_entities_llm_patient_decision_adherence
+
+| column_name               | data_type   |
+|:--------------------------|:------------|
+| note_row_id               | VARCHAR     |
+| note_row_id               | VARCHAR     |
+| domain                    | VARCHAR     |
+| domain                    | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_model                 | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| llm_base_url              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| extracted_at              | VARCHAR     |
+| result_json               | VARCHAR     |
+| result_json               | VARCHAR     |
+| research_id               | VARCHAR     |
+| research_id               | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_type                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| note_date                 | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| linkage_date              | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_workbook           | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_sheet              | VARCHAR     |
+| source_column             | VARCHAR     |
+| source_column             | VARCHAR     |
+| note_index                | VARCHAR     |
+| note_index                | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocess_batch_id       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocessed_at_utc       | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+| preprocess_script_version | VARCHAR     |
+

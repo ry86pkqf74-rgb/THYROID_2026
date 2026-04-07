@@ -27,6 +27,7 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote_plus
 
 import duckdb
 
@@ -180,6 +181,9 @@ class MotherDuckConfig:
     use_local: bool = False
     # When True, prefer MD_SA_TOKEN over MOTHERDUCK_TOKEN (for CI/automation)
     use_service_account: bool = False
+    # MotherDuck / DuckDB connection attribution (query history, integrations)
+    custom_user_agent: str | None = None
+    motherduck_session_hint: str | None = None
 
 
 class MotherDuckClient:
@@ -205,11 +209,34 @@ class MotherDuckClient:
         token = self._require_token()
         db = (os.environ.get("MOTHERDUCK_DATABASE") or os.environ.get("MOTHERDUCK_DB") or "").strip()
         attach = db or self.config.database
+        # Connection string query (MotherDuck: motherduck_token, custom_user_agent)
+        q_tok = quote_plus(token)
+        extra = [f"motherduck_token={q_tok}"]
+        ua = self.config.custom_user_agent or os.getenv("MOTHERDUCK_CUSTOM_USER_AGENT")
+        if ua:
+            extra.append(f"custom_user_agent={quote_plus(ua)}")
+        qs = "&".join(extra)
+
+        def _apply_session_hint(con: duckdb.DuckDBPyConnection) -> None:
+            hint = self.config.motherduck_session_hint or (
+                os.getenv("MOTHERDUCK_SESSION_HINT") or ""
+            ).strip()
+            if not hint:
+                return
+            safe = hint.replace("'", "''")
+            try:
+                con.execute(f"SET motherduck_session_hint='{safe}'")
+            except Exception:
+                pass  # Older drivers may not support; attribution still has custom_user_agent
+
         if " " in attach:
-            con = duckdb.connect(f"md:?motherduck_token={token}")
+            con = duckdb.connect(f"md:?{qs}")
             con.execute(f'USE "{attach}"')
+            _apply_session_hint(con)
             return con
-        return duckdb.connect(f"md:{attach}?motherduck_token={token}")
+        con = duckdb.connect(f"md:{attach}?{qs}")
+        _apply_session_hint(con)
+        return con
 
     def connect_ro_share(self) -> duckdb.DuckDBPyConnection:
         token = self._require_token()
@@ -228,6 +255,8 @@ class MotherDuckClient:
         env: str | None = None,
         *,
         use_service_account: bool = False,
+        custom_user_agent: str | None = None,
+        motherduck_session_hint: str | None = None,
     ) -> "MotherDuckClient":
         """Return a client configured for the target environment.
 
@@ -245,6 +274,8 @@ class MotherDuckClient:
             database=db,
             share_path=share,
             use_service_account=use_service_account,
+            custom_user_agent=custom_user_agent,
+            motherduck_session_hint=motherduck_session_hint,
         )
         return cls(cfg)
 

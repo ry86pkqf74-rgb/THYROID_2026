@@ -2,7 +2,19 @@
 
 **Run label:** `formalization_20260406_v3`  
 **Scope:** Human adjudication for [`manual_review_queue.csv`](manual_review_queue.csv) before final data release.  
-**Related:** [`promotion_recommendation.md`](promotion_recommendation.md), [`docs/motherduck_database_contract_v1.md`](../../docs/motherduck_database_contract_v1.md), [`AGENTS.md`](../../AGENTS.md).
+**Related:** [`promotion_recommendation.md`](promotion_recommendation.md), [`docs/motherduck_database_contract_v1.md`](../../docs/motherduck_database_contract_v1.md), [`docs/domain_mapping_rules.md`](../../docs/domain_mapping_rules.md) (**fill-candidate tier policy**), [`AGENTS.md`](../../AGENTS.md).
+
+### Tier policy (authoritative)
+
+[`docs/domain_mapping_rules.md`](../../docs/domain_mapping_rules.md) § *Fill-Candidate Triage Policy* is the operational source of truth for **fill candidates**:
+
+| QA tier | Fill-candidate handling |
+|---------|-------------------------|
+| **critical** | Sample 10% (min 20); if &gt;90% pass, batch-accept remainder; document sample in `qa.promotion_review_decisions`. |
+| **standard** | Bulk accept with `verification_status = auto_accepted_standard` when policy preconditions hold. |
+| **informational** | Bulk accept with `verification_status = auto_accepted_informational`. |
+
+**Discordant rows** are **never** bulk-accepted — always use the rubric below with required second review where stated.
 
 ---
 
@@ -100,6 +112,9 @@ Scorecard flags **>5%** duplicate rate for `labs`, `tg_kinetics`, `cervical_ln_d
 
 | `verification_status` | When to use | `promotion_approved` |
 |------------------------|-------------|----------------------|
+| `auto_accepted_standard` | Fill candidate; **standard** QA tier; bulk acceptance under tier policy with governance sign-off. | `true` |
+| `auto_accepted_informational` | Fill candidate; **informational** QA tier; bulk acceptance under tier policy. | `true` |
+| `auto_accepted_critical_sample_ok` | Fill candidate; **critical** QA tier only after documented sample gate (>90% pass); remainder bulk via script `127_qa_tier_batch_adjudicate.py --include-critical-after-sample`. | `true` |
 | `confirmed_correct` | Context + span **unambiguously** support `llm_value` as `entity_type` in `source_domain`; tension with `comparison_domain` / `original_value` is **explainable overlap**. | `true` |
 | `confirmed_incorrect` | Wrong extraction (negation, laterality, hallucination, **wrong drug vs RAI**, wrong organ) or **domain mis-assignment**. | `false` |
 | `source_limited` | Ambiguous wording, insufficient span, or note lacks support at clinical standard; do not promote. | `false` |
@@ -193,9 +208,9 @@ From [`promotion_recommendation.md`](promotion_recommendation.md) and [`motherdu
 ### “Good enough” for final release
 
 1. **Discordant:** Zero rows left without `confirmed_correct` or `confirmed_incorrect` (with mandated second review).
-2. **Fill candidates:** For each `source_domain` with ≥100 queued rows, either **100%** reviewed or a **pre-specified stratified sample** by `entity_type` (minimum **n ≥ 200** or **≥5%** of domain queue, whichever is larger) with **zero** critical-tier errors in sample; expand if any found.
+2. **Fill candidates:** Meet [`docs/domain_mapping_rules.md`](../../docs/domain_mapping_rules.md) tier rules — critical = sample gate + documented batch acceptance; standard/informational = tiered bulk acceptance with audit trail in `qa.promotion_review_decisions` and non-null `verification_status` on all promotable queue rows for strict release validation.
 3. **Residual `defer`:** None for **critical** `source_domain`s; informational domains ≤2 `defer` or PI waiver in release notes.
-4. **Artifacts:** Frozen reviewed CSV + calibration memo (top 3 failure modes) + **8/8 PASS** scorecard on the promoting run + `release_manifest` reference ([contract §2.3 / §10](../../docs/motherduck_database_contract_v1.md)).
+4. **Artifacts:** Frozen reviewed CSV (where used) + calibration memo for critical samples + **8/8 PASS** scorecard on the promoting run + `release_manifest` reference ([contract §2.3 / §10](../../docs/motherduck_database_contract_v1.md)).
 
 ---
 

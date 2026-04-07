@@ -134,9 +134,13 @@
   - Discordant (conflict): 2
   - Fill candidates: 5,620
 
-> **Strict policy:** No row may be auto-promoted. Every discordant row must have
-> `verification_status` = `confirmed_correct` or `confirmed_incorrect` set by a reviewer
-> in `manual_review_queue.csv` before re-running the gate.
+> **Governing policy** (aligned with [`docs/domain_mapping_rules.md`](../../docs/domain_mapping_rules.md)):
+> - **Discordant rows:** Every discordant row must have `verification_status` = `confirmed_correct`
+>   or `confirmed_incorrect` (individual review; second reviewer per playbook). No bulk acceptance.
+> - **Fill candidates:** Tiered policy applies — bulk/sample acceptance per QA tier as documented
+>   in domain_mapping_rules; record batch decisions in `qa.promotion_review_decisions` and use
+>   `auto_accepted_standard` / `auto_accepted_informational` (or critical-tier sample sign-off)
+>   on `manual_review_queue` / hydrated QA as appropriate.
 
 **Human review SOP:** [`MANUAL_REVIEW_PLAYBOOK.md`](MANUAL_REVIEW_PLAYBOOK.md) (rubric, prioritization, pilot steps, QA hydration, release criteria). Presignoff snapshot: [`manual_review_queue__presignoff_snapshot_20260406.csv`](manual_review_queue__presignoff_snapshot_20260406.csv).
 

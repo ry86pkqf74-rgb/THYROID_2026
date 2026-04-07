@@ -87,8 +87,8 @@ SELECT
     f.fact_domain                           AS source_domain,
     -- source object id
     f.note_row_id                           AS source_object_id,
-    -- extraction run linkage
-    r.run_id                                AS extraction_run_id,
+    -- extraction run linkage (prefer row-level fact provenance; fallback to temporal match)
+    COALESCE(NULLIF(trim(CAST(f.extraction_run_id AS VARCHAR)), ''), r.run_id) AS extraction_run_id,
     r.extractor_build_version,
     CAST(NULL AS VARCHAR)                  AS llm_model,
     r.started_at                            AS extraction_started_at,
@@ -119,11 +119,12 @@ SELECT
     (SELECT release_tag FROM latest_release) AS release_tag
 FROM  main.canonical_extracted_fact_long_v2  f
 LEFT  JOIN main.note_extraction_runs          r
-      ON  r.run_id = (
-              SELECT run_id FROM main.note_extraction_runs
-              WHERE  started_at <= f.extracted_at
-              ORDER  BY started_at DESC
-              LIMIT  1
+      ON  r.run_id = COALESCE(
+              NULLIF(trim(CAST(f.extraction_run_id AS VARCHAR)), ''),
+              (SELECT run_id FROM main.note_extraction_runs
+               WHERE  started_at <= f.extracted_at
+               ORDER  BY started_at DESC
+               LIMIT  1)
           )
 LEFT  JOIN review_lookup rv
       ON  rv.research_id  = f.research_id
@@ -218,19 +219,40 @@ VIEW_DESCRIPTIONS = {
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--md", action="store_true", help="Target MotherDuck (fail-closed).")
+    p.add_argument(
+        "--md-sa",
+        action="store_true",
+        help="Prefer MD_SA_TOKEN over MOTHERDUCK_TOKEN.",
+    )
+    p.add_argument("--md-user-agent", default=None, help="MotherDuck custom_user_agent.")
+    p.add_argument("--md-session-hint", default=None, help="SET motherduck_session_hint.")
     p.add_argument("--dry-run", action="store_true", help="Show DDL without executing.")
     p.add_argument("--db-path", default=str(DB_PATH), help="Local DuckDB path.")
     return p.parse_args()
 
 
 def main() -> None:
+    import os
+
     args = parse_args()
 
     print("=" * 70)
     print("  125 — master verified views (analyst presentation layer)")
     print("=" * 70)
 
-    con = connect_md_or_file(Path(args.db_path), md=args.md, fail_closed=args.md)
+    ua = (
+        args.md_user_agent
+        or os.environ.get("MOTHERDUCK_CUSTOM_USER_AGENT")
+        or "THYROID_2026_master_verified_views/1.0"
+    )
+    con = connect_md_or_file(
+        Path(args.db_path),
+        md=args.md,
+        fail_closed=args.md,
+        prefer_service_account=args.md_sa,
+        custom_user_agent=ua,
+        motherduck_session_hint=args.md_session_hint,
+    )
 
     failed = 0
     for name, ddl in VIEWS:

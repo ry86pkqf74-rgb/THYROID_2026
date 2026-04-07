@@ -28,22 +28,12 @@ import duckdb
 from motherduck_client import MotherDuckClient, get_token
 
 
-def _resolve_md_token() -> str | None:
-    """Unified MotherDuck token resolution — single source of truth.
-
-    Priority:
-      1. MOTHERDUCK_TOKEN env var
-      2. MD_SA_TOKEN env var (service-account / CI)
-      3. LOCAL_DB_PATH env var (when it looks like a JWT / md_ PAT)
-      4. .streamlit/secrets.toml keys (MOTHERDUCK_TOKEN → MD_SA_TOKEN → LOCAL_DB_PATH)
-    """
-    token = get_token(prefer_service_account=False)
+def _resolve_md_token(*, prefer_service_account: bool = False) -> str | None:
+    """Resolve a MotherDuck token; try preferred mode first, then the other."""
+    token = get_token(prefer_service_account=prefer_service_account)
     if token:
         return token
-    token = get_token(prefer_service_account=True)
-    if token:
-        return token
-    return None
+    return get_token(prefer_service_account=not prefer_service_account)
 
 
 def _verify_md_connection(con: duckdb.DuckDBPyConnection) -> bool:
@@ -66,6 +56,9 @@ def connect_md_or_file(
     md: bool,
     env: str | None = None,
     fail_closed: bool = False,
+    prefer_service_account: bool = False,
+    custom_user_agent: str | None = None,
+    motherduck_session_hint: str | None = None,
 ) -> duckdb.DuckDBPyConnection:
     """Return a DuckDB connection — MotherDuck when *md* is True, else local file.
 
@@ -83,12 +76,22 @@ def connect_md_or_file(
         helper closes the connection and exits with code 1.  Use this for scripts
         that must write to MotherDuck and must never silently fall back to a local
         file.  Has no effect when ``md`` is False.
+    prefer_service_account : bool
+        When True, ``MD_SA_TOKEN`` wins over ``MOTHERDUCK_TOKEN`` (release automation).
+    custom_user_agent / motherduck_session_hint :
+        Passed to ``MotherDuckClient`` for query-history attribution.  When None,
+        ``MOTHERDUCK_CUSTOM_USER_AGENT`` / ``MOTHERDUCK_SESSION_HINT`` env vars apply.
     """
     if md:
-        token = _resolve_md_token()
+        token = _resolve_md_token(prefer_service_account=prefer_service_account)
         if token:
             try:
-                client = MotherDuckClient.for_env(env, use_service_account=False)
+                client = MotherDuckClient.for_env(
+                    env,
+                    use_service_account=prefer_service_account,
+                    custom_user_agent=custom_user_agent,
+                    motherduck_session_hint=motherduck_session_hint,
+                )
                 con = client.connect_rw()
                 attach = (
                     os.environ.get("MOTHERDUCK_DATABASE")
@@ -135,6 +138,9 @@ def connect_md_fail_closed(
     db_path: Path,
     *,
     env: str | None = None,
+    prefer_service_account: bool = False,
+    custom_user_agent: str | None = None,
+    motherduck_session_hint: str | None = None,
 ) -> duckdb.DuckDBPyConnection:
     """Convenience alias: always attempt MotherDuck and exit 1 if unreachable.
 
@@ -142,4 +148,12 @@ def connect_md_fail_closed(
     Use in scripts where landing on a local file when ``--md`` was requested
     would be a silent data-routing error.
     """
-    return connect_md_or_file(db_path, md=True, env=env, fail_closed=True)
+    return connect_md_or_file(
+        db_path,
+        md=True,
+        env=env,
+        fail_closed=True,
+        prefer_service_account=prefer_service_account,
+        custom_user_agent=custom_user_agent,
+        motherduck_session_hint=motherduck_session_hint,
+    )

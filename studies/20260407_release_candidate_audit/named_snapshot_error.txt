@@ -1,0 +1,3 @@
+CREATE SNAPSHOT "rc_thyroid_2026_20260407" OF "Thyroid 2026";
+
+Invalid Input Error: Database is not a native duckdb database so it does not have snapshots

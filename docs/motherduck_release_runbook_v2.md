@@ -38,6 +38,10 @@ exports/manuscript_freeze_v1/    ──► main.<episode tables>     (117)
 ```
 
 All writes use `connect_md_or_file(..., fail_closed=True)`.  
+Service-account–oriented runs should pass `prefer_service_account=True` or use CLI `--md-sa` on scripts that support it (`114`, `119`, `125`, `127`). Set `MOTHERDUCK_CUSTOM_USER_AGENT` and `MOTHERDUCK_SESSION_HINT` (or `--md-user-agent` / `--md-session-hint` on `119`) so MotherDuck query history attributes the run.
+
+**Release-candidate audit:** `scripts/126_release_candidate_motherduck_audit.py --md --md-sa` writes evidence under `studies/<YYYYMMDD>_release_candidate_audit/`. **Tier bulk acceptance** (after discordant review + critical sample per policy): `scripts/127_qa_tier_batch_adjudicate.py --md --md-sa --apply`.
+
 No raw note text leaves local disk.  
 v1 canonical tables are never touched by v2 operations.
 
