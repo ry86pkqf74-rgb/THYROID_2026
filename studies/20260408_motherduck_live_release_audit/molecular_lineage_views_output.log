@@ -1,0 +1,26 @@
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+
+── Molecular lineage view counts ──
+  main.molecular_fact_long_base_v: 12,502
+  main.molecular_fact_long_v: 12,502
+  main.molecular_results_unified_v: 12,502
+  main.molecular_fact_lineage_qa_duplicate_candidates_v: 0
+
+── Primary vs supporting (precedence) ──
+  Total unified rows: 12,502
+  included_in_primary_analytics TRUE:  12,502
+  included_in_primary_analytics FALSE: 0 (note rows superseded by assay)
+
+── Duplicate assay-event candidates (note vs structured, ±21d) ──
+  Pair rows in QA view: 0
+
+── Sample rows: primary assay with note support ──
+Empty DataFrame
+Columns: [research_id, entity_type, fact_provenance_category, record_role, included_in_primary_analytics, event_date, source_stream, excerpt]
+Index: []
+
+── Sample rows: supporting note (suppressed from primary analytics) ──
+Empty DataFrame
+Columns: [research_id, entity_type, fact_provenance_category, record_role, included_in_primary_analytics, event_date, matched_molecular_result_id, excerpt]
+Index: []

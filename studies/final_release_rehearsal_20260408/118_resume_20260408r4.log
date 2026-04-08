@@ -1,0 +1,27 @@
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+=== Parquet Release Bundle: 20260408r4 ===
+  Output: /Users/loganglosser/THYROID_2026/exports/final_master_release_20260408r4
+  Mode: final-master (curated facts + labs + lineage; no note text)
+
+--- main schema ---
+  [export] main.canonical_extracted_fact_long_v2: 20,188 rows -> canonical_extracted_fact_long_v2.parquet (de6c6e6ea2db17af)
+  [export] main.canonical_fact_quarantine_v2: 103,588 rows -> canonical_fact_quarantine_v2.parquet (1cf7c53c47d90f0d)
+  [export] main.note_extraction_runs: 3 rows -> note_extraction_runs.parquet (2a5a48fce85071ab)
+  [export] main.longitudinal_lab_canonical_v1: 77,960 rows -> longitudinal_lab_canonical_v1.parquet (85aa4d9c276c9423)
+  [export] main.longitudinal_lab_deduped_v: 56,198 rows -> longitudinal_lab_deduped_v.parquet (2aa340765362dda1)
+  [export] main.master_fact_long_verified_v1: 20,188 rows -> master_fact_long_verified_v1.parquet (1f829291ce852063)
+  [export] main.master_patient_rollup_verified_v1: 2,702 rows -> master_patient_rollup_verified_v1.parquet (72bc12e7654ed30a)
+  [export] main.master_source_lineage_v1: 20,188 rows -> master_source_lineage_v1.parquet (f3a6e44d0d279c3a)
+
+--- qa schema ---
+  [export] qa.promotion_scorecard: 56 rows -> promotion_scorecard.parquet (d3d774405e665c92)
+  [export] qa.domain_validation: 161 rows -> domain_validation.parquet (a63075fa978e3d0c)
+  [export] qa.manual_review_queue: 5,622 rows -> manual_review_queue.parquet (9209a7a33b296b33)
+  [export] qa.promotion_review_decisions: 5 rows -> promotion_review_decisions.parquet (505a8f03cf70ede1)
+  [export] qa.release_manifest: 12 rows -> release_manifest.parquet (8188f8efc2f622a0)
+
+  [manifest] /Users/loganglosser/THYROID_2026/exports/final_master_release_20260408r4/manifest.json
+
+  [summary] 13 files, 306,871 total rows
+  [done] Release bundle created at /Users/loganglosser/THYROID_2026/exports/final_master_release_20260408r4

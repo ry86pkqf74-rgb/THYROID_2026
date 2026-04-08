@@ -1,0 +1,35 @@
+======================================================================
+  125 — master verified views (analyst presentation layer)
+======================================================================
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+
+  [dry-run] master_fact_long_verified_v1
+            One row per extracted entity fact; joins canonical_extracted_fact_long_v2 with reviewer status and latest release tag.
+  DDL preview (first 4 lines):
+    CREATE OR REPLACE VIEW main.master_fact_long_verified_v1 AS
+    WITH latest_release AS (
+        SELECT release_tag
+        FROM   qa.release_manifest
+    ...
+
+  [dry-run] master_patient_rollup_verified_v1
+            Per-patient summary: fact counts by linkage family, review coverage, release tag.
+  DDL preview (first 4 lines):
+    CREATE OR REPLACE VIEW main.master_patient_rollup_verified_v1 AS
+    SELECT
+        f.research_id,
+        COUNT(*)                                                    AS total_facts,
+    ...
+
+  [dry-run] master_source_lineage_v1
+            Full provenance chain from extraction run to reviewer decision to release tag.
+  DDL preview (first 4 lines):
+    CREATE OR REPLACE VIEW main.master_source_lineage_v1 AS
+    SELECT
+        f.research_id,
+        -- source domain and object identity
+    ...
+======================================================================
+  DONE (dry-run — no views created)
+======================================================================

@@ -1,0 +1,197 @@
+======================================================================
+  126 — Final master release (MotherDuck)
+  Tag       : 20260408
+  Study dir : /Users/loganglosser/THYROID_2026/studies/20260408_final_master_release
+  Export dir: /Users/loganglosser/THYROID_2026/exports/final_master_release_20260408
+  Dry run   : False
+  119 mode  : release (strict)
+======================================================================
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+  [qa] appended qa.promotion_review_decisions: 1 row(s), batch=20260408
+  [preflight] manual_review_queue fully reviewed: 5,622 row(s) at /Users/loganglosser/THYROID_2026/studies/20260407_tier_policy_review_gate/manual_review_queue.csv
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+  [126] cleared qa.manual_review_queue (replace with single hydrate snapshot)
+
+======================================================================
+  SUBPROCESS: 114_qa_schema_setup
+  CMD: /Users/loganglosser/THYROID_2026/.venv/bin/python /Users/loganglosser/THYROID_2026/scripts/114_qa_schema_setup.py --md --hydrate-from /Users/loganglosser/THYROID_2026/studies/20260407_tier_policy_review_gate
+======================================================================
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+  [ddl] qa schema and tables created/verified
+  [hydrate] from /Users/loganglosser/THYROID_2026/studies/20260407_tier_policy_review_gate
+  [hydrate] qa.promotion_scorecard: 8 rows from 20260407_tier_policy_review_gate
+  [hydrate] qa.domain_validation: 23 rows from 20260407_tier_policy_review_gate
+  [hydrate] qa.concordance_summary: 19 rows from 20260407_tier_policy_review_gate
+  [hydrate] qa.manual_review_queue: 5622 rows from 20260407_tier_policy_review_gate
+  [hydrate] manual_review_queue backfill: run_label='20260407_tier_policy_review_gate' filled 0 row(s); 0 still NULL
+  [verify] schemas with tables: ['hn', 'kaggle', 'main', 'mm_contract_dev', 'nyc', 'qa', 'release_20260406', 'release_20260407', 'release_20260407_final', 'release_20260407_final2', 'release_20260407_tier', 'release_20260408', 'release_20260408r2', 'release_20260408r3', 'release_20260409', 'release_20260410', 'release_20260411', 'stackoverflow_survey', 'v2_stage', 'who']
+  [verify] qa tables: ['concordance_summary', 'concordance_summary', 'concordance_summary', 'concordance_summary', 'concordance_summary', 'concordance_summary', 'concordance_summary', 'concordance_summary', 'date_provenance_completeness_v', 'date_provenance_completeness_v', 'date_provenance_completeness_v', 'date_provenance_completeness_v', 'date_provenance_completeness_v', 'date_provenance_completeness_v', 'date_provenance_completeness_v', 'date_provenance_completeness_v', 'domain_validation', 'domain_validation', 'domain_validation', 'domain_validation', 'domain_validation', 'domain_validation', 'domain_validation', 'domain_validation', 'domain_validation_summary_v', 'domain_validation_summary_v', 'domain_validation_summary_v', 'domain_validation_summary_v', 'domain_validation_summary_v', 'domain_validation_summary_v', 'domain_validation_summary_v', 'domain_validation_summary_v', 'manual_review_queue', 'manual_review_queue', 'manual_review_queue', 'manual_review_queue', 'manual_review_queue', 'manual_review_queue', 'manual_review_queue', 'manual_review_queue', 'manual_review_queue_summary_v', 'manual_review_queue_summary_v', 'manual_review_queue_summary_v', 'manual_review_queue_summary_v', 'manual_review_queue_summary_v', 'manual_review_queue_summary_v', 'manual_review_queue_summary_v', 'manual_review_queue_summary_v', 'molecular_pipeline_run_audit', 'molecular_pipeline_run_audit', 'molecular_pipeline_run_audit', 'molecular_pipeline_run_audit', 'molecular_pipeline_run_audit', 'molecular_pipeline_run_audit', 'molecular_pipeline_run_audit', 'promotion_review_decisions', 'promotion_review_decisions', 'promotion_review_decisions', 'promotion_review_decisions', 'promotion_review_decisions', 'promotion_review_decisions', 'promotion_review_decisions', 'promotion_review_decisions', 'promotion_scorecard', 'promotion_scorecard', 'promotion_scorecard', 'promotion_scorecard', 'promotion_scorecard', 'promotion_scorecard', 'promotion_scorecard', 'promotion_scorecard', 'promotion_scorecard_summary_v', 'promotion_scorecard_summary_v', 'promotion_scorecard_summary_v', 'promotion_scorecard_summary_v', 'promotion_scorecard_summary_v', 'promotion_scorecard_summary_v', 'promotion_scorecard_summary_v', 'promotion_scorecard_summary_v', 'release_manifest', 'release_manifest', 'release_manifest', 'release_manifest', 'release_manifest', 'release_manifest', 'release_manifest', 'release_manifest', 'specimen_genomic_link_review_v1', 'specimen_genomic_link_review_v1', 'specimen_genomic_link_review_v1', 'specimen_genomic_link_review_v1', 'specimen_genomic_link_review_v1', 'specimen_genomic_link_review_v1', 'specimen_merge_review_queue_v1', 'specimen_merge_review_queue_v1', 'specimen_merge_review_queue_v1', 'specimen_merge_review_queue_v1', 'specimen_merge_review_queue_v1', 'specimen_merge_review_queue_v1', 't_diag_specimen_focus_qa_metrics_v1', 't_diag_specimen_focus_qa_metrics_v1', 't_diag_specimen_focus_qa_metrics_v1', 'tg_lab_ingestion_qc', 'tg_lab_ingestion_qc', 'tg_lab_ingestion_qc', 'tg_lab_ingestion_qc', 'tg_lab_ingestion_qc', 'tg_lab_ingestion_qc', 'tg_lab_ingestion_qc', 'tg_lab_ingestion_qc', 'v_diag_specimen_duplicate_focus_fp_v1', 'v_diag_specimen_duplicate_focus_fp_v1', 'v_diag_specimen_duplicate_focus_fp_v1', 'v_diag_specimen_duplicate_focus_fp_v1', 'v_diag_specimen_duplicate_focus_fp_v1', 'v_diag_specimen_duplicate_focus_fp_v1', 'v_diag_specimen_duplicate_master_fp_v1', 'v_diag_specimen_duplicate_master_fp_v1', 'v_diag_specimen_duplicate_master_fp_v1', 'v_diag_specimen_duplicate_master_fp_v1', 'v_diag_specimen_duplicate_master_fp_v1', 'v_diag_specimen_duplicate_master_fp_v1', 'v_diag_specimen_fhir_broken_refs_v1', 'v_diag_specimen_fhir_broken_refs_v1', 'v_diag_specimen_fhir_broken_refs_v1', 'v_diag_specimen_fhir_broken_refs_v1', 'v_diag_specimen_fhir_broken_refs_v1', 'v_diag_specimen_fhir_broken_refs_v1', 'v_diag_specimen_orphan_focus_master_v1', 'v_diag_specimen_orphan_focus_master_v1', 'v_diag_specimen_orphan_focus_master_v1', 'v_diag_specimen_orphan_focus_v1', 'v_diag_specimen_orphan_focus_v1', 'v_diag_specimen_orphan_focus_v1', 'v_diag_specimen_orphan_focus_v1', 'v_diag_specimen_orphan_focus_v1', 'v_diag_specimen_orphan_focus_v1', 'v_diag_specimen_orphan_genomic_focus_v1', 'v_diag_specimen_orphan_genomic_focus_v1', 'v_diag_specimen_orphan_genomic_focus_v1', 'v_diag_specimen_orphan_genomic_master_v1', 'v_diag_specimen_orphan_genomic_master_v1', 'v_diag_specimen_orphan_genomic_master_v1', 'v_diag_specimen_orphan_genomic_master_v1', 'v_diag_specimen_orphan_genomic_master_v1', 'v_diag_specimen_orphan_genomic_master_v1', 'v_diag_specimen_orphan_genomic_v1', 'v_diag_specimen_orphan_genomic_v1', 'v_diag_specimen_orphan_genomic_v1', 'v_diag_specimen_orphan_genomic_v1', 'v_diag_specimen_orphan_genomic_v1', 'v_diag_specimen_orphan_genomic_v1', 'v_diag_specimen_provenance_focus_v1', 'v_diag_specimen_provenance_focus_v1', 'v_diag_specimen_provenance_focus_v1', 'v_diag_specimen_provenance_focus_v1', 'v_diag_specimen_provenance_focus_v1', 'v_diag_specimen_provenance_focus_v1', 'v_diag_specimen_provenance_genomic_v1', 'v_diag_specimen_provenance_genomic_v1', 'v_diag_specimen_provenance_genomic_v1', 'v_diag_specimen_provenance_genomic_v1', 'v_diag_specimen_provenance_genomic_v1', 'v_diag_specimen_provenance_genomic_v1', 'v_diag_specimen_provenance_master_v1', 'v_diag_specimen_provenance_master_v1', 'v_diag_specimen_provenance_master_v1', 'v_diag_specimen_provenance_master_v1', 'v_diag_specimen_provenance_master_v1', 'v_diag_specimen_provenance_master_v1', 'v_diag_specimen_provenance_summary_v1', 'v_diag_specimen_provenance_summary_v1', 'v_diag_specimen_provenance_summary_v1', 'v_diag_specimen_provenance_summary_v1', 'v_diag_specimen_provenance_summary_v1', 'v_diag_specimen_provenance_summary_v1', 'v_diag_specimen_review_burden_v1', 'v_diag_specimen_review_burden_v1', 'v_diag_specimen_review_burden_v1', 'v_diag_specimen_review_burden_v1', 'v_diag_specimen_review_burden_v1', 'v_diag_specimen_review_burden_v1', 'val_specimen_contract_v1', 'val_specimen_contract_v1', 'val_specimen_contract_v1', 'val_specimen_contract_v1', 'val_specimen_contract_v1', 'val_specimen_contract_v1', 'val_specimen_genomic_binding_v1', 'val_specimen_genomic_binding_v1', 'val_specimen_genomic_binding_v1', 'val_specimen_genomic_binding_v1', 'val_specimen_genomic_binding_v1', 'val_specimen_genomic_binding_v1']
+  [done] qa schema setup complete
+
+  [OK] 114_qa_schema_setup
+
+======================================================================
+  SUBPROCESS: 103_fact_lineage
+  CMD: /Users/loganglosser/THYROID_2026/.venv/bin/python /Users/loganglosser/THYROID_2026/scripts/103_fact_lineage_materialize.py --md
+======================================================================
+======================================================================
+  103 — canonical_extracted_fact_long (v1 + v2) + quarantine
+  Registry: YAML-driven
+  Domains: 30
+======================================================================
+  loaded note_entities_staging: 3,807 rows  [family=pathology]
+  loaded note_entities_genetics: 1,738 rows  [family=molecular]
+  loaded note_entities_procedures: 21,942 rows  [family=operative]
+  loaded note_entities_operative_detail: 12,151 rows  [family=operative]
+  loaded note_entities_complications: 9,359 rows  [family=operative]
+  loaded note_entities_medications: 7,501 rows  [family=followup]
+  loaded note_entities_problem_list: 11,579 rows  [family=demographics]
+    expanded fleet format: 11,037 note rows → 8,428 entity rows
+  loaded note_entities_llm_imaging: 8,428 rows  [family=imaging]
+    expanded fleet format: 11,037 note rows → 179 entity rows
+  loaded note_entities_llm_tirads_granular: 179 rows  [family=imaging]
+    expanded fleet format: 11,037 note rows → 49 entity rows
+  loaded note_entities_llm_us_nodule_dynamics: 49 rows  [family=imaging]
+    expanded fleet format: 11,037 note rows → 2,460 entity rows
+  loaded note_entities_llm_labs: 2,460 rows  [family=followup]
+    expanded fleet format: 11,037 note rows → 173 entity rows
+  loaded note_entities_llm_tg_kinetics: 173 rows  [family=followup]
+    expanded fleet format: 11,037 note rows → 10,894 entity rows
+  loaded note_entities_llm_pathology: 10,894 rows  [family=pathology]
+    expanded fleet format: 11,037 note rows → 38 entity rows
+  loaded note_entities_llm_synoptic_pathology_enrichment: 38 rows  [family=pathology]
+    expanded fleet format: 11,037 note rows → 3,747 entity rows
+  loaded note_entities_llm_rai_detailed: 3,747 rows  [family=rai]
+    expanded fleet format: 11,037 note rows → 519 entity rows
+  loaded note_entities_llm_rad_treatment: 519 rows  [family=rai]
+    expanded fleet format: 11,037 note rows → 255 entity rows
+  loaded note_entities_llm_parathyroid_detail: 255 rows  [family=operative]
+    expanded fleet format: 11,037 note rows → 303 entity rows
+  loaded note_entities_llm_recurrence: 303 rows  [family=followup]
+    expanded fleet format: 11,037 note rows → 9,809 entity rows
+  loaded note_entities_llm_survival_followup: 9,809 rows  [family=followup]
+    expanded fleet format: 11,037 note rows → 104 entity rows
+  loaded note_entities_llm_cervical_ln_detail: 104 rows  [family=pathology]
+    expanded fleet format: 11,037 note rows → 3,322 entity rows
+  loaded note_entities_llm_functional_outcomes: 3,322 rows  [family=followup]
+    expanded fleet format: 11,037 note rows → 865 entity rows
+  loaded note_entities_llm_past_medical_hx: 865 rows  [family=demographics]
+    expanded fleet format: 11,037 note rows → 3,919 entity rows
+  loaded note_entities_llm_past_surgical_hx: 3,919 rows  [family=demographics]
+    expanded fleet format: 11,037 note rows → 280 entity rows
+  loaded note_entities_llm_presenting_symptoms: 280 rows  [family=demographics]
+    expanded fleet format: 11,037 note rows → 1,924 entity rows
+  loaded note_entities_llm_physical_exam: 1,924 rows  [family=demographics]
+    expanded fleet format: 11,037 note rows → 4,241 entity rows
+  loaded note_entities_llm_vascular_invasion: 4,241 rows  [family=pathology]
+    expanded fleet format: 11,037 note rows → 3,116 entity rows
+  loaded note_entities_llm_airway_invasion: 3,116 rows  [family=operative]
+    expanded fleet format: 11,037 note rows → 380 entity rows
+  loaded note_entities_llm_frozen_section_detail: 380 rows  [family=operative]
+    expanded fleet format: 11,037 note rows → 53 entity rows
+  loaded note_entities_llm_dynamic_risk_response: 53 rows  [family=followup]
+    expanded fleet format: 11,037 note rows → 641 entity rows
+  loaded note_entities_llm_patient_decision_adherence: 641 rows  [family=followup]
+  backfilled extraction_run_id from note_extraction_runs (68,077 rows were blank before timeline resolution)
+  merged clinical_notes_long
+  multi-surgery patients: 3
+  inferred episode linkage (family-specific)
+  v1 split: clean=68,063  quarantined=14
+  v2 split: clean=20,188  quarantined=103,588
+  QC report: /Users/loganglosser/THYROID_2026/exports/fact_lineage_qc/qc_report_20260408_0851.md
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+  DuckDB canonical_extracted_fact_long_v1: 68,063 rows
+  DuckDB canonical_fact_quarantine_v1: 14 rows
+  DuckDB canonical_extracted_fact_long_v2: 20,188 rows
+  DuckDB canonical_fact_quarantine_v2: 103,588 rows
+  DuckDB note_extraction_runs: 3
+======================================================================
+  DONE
+======================================================================
+
+/Users/loganglosser/THYROID_2026/scripts/103_fact_lineage_materialize.py:725: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
+  uni = pd.concat(aligned, ignore_index=True)
+
+  [OK] 103_fact_lineage
+
+======================================================================
+  SUBPROCESS: 117_contract_views
+  CMD: /Users/loganglosser/THYROID_2026/.venv/bin/python /Users/loganglosser/THYROID_2026/scripts/117_md_contract_views.py --md
+======================================================================
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+
+  [txn] BEGIN (main table loads + parquet parity only)
+=== Phase 2: Canonical table materialization ===
+  [OK] main.canonical_extracted_fact_long_v2: local=20,188  remote=20,188
+  [OK] main.canonical_fact_quarantine_v2: local=103,588  remote=103,588
+  [OK] main.note_extraction_runs: local=3  remote=3
+  [skip] longitudinal_lab_canonical_v1.parquet not found
+  [skip] thyroglobulin_lab_canonical_v1.parquet not found
+
+=== Phase 3: Episode/linkage contract tables ===
+  [OK] main.tumor_episode_master_v2: local=11,691  remote=11,691
+  [OK] main.molecular_test_episode_v2: local=10,126  remote=10,126
+  [OK] main.rai_treatment_episode_v2: local=1,857  remote=1,857
+  [OK] main.operative_episode_detail_v2: local=9,371  remote=9,371
+
+=== Post-write row parity (parquet vs main, before COMMIT) ===
+  [parity OK] main.canonical_extracted_fact_long_v2: 20,188 rows
+  [parity OK] main.canonical_fact_quarantine_v2: 103,588 rows
+  [parity OK] main.note_extraction_runs: 3 rows
+  [parity OK] main.tumor_episode_master_v2: 11,691 rows
+  [parity OK] main.molecular_test_episode_v2: 10,126 rows
+  [parity OK] main.rai_treatment_episode_v2: 1,857 rows
+  [parity OK] main.operative_episode_detail_v2: 9,371 rows
+  [txn] COMMIT: main table loads persisted (views/DDL afterward; failures there do not roll back tables).
+
+=== Contract views (DDL) ===
+  [ddl] contract views pass finished (review warnings for any partial failures)
+
+=== Verification (views) ===
+  [verify] main.longitudinal_lab_deduped_v: 56,198 rows
+  [verify] main.linkage_summary_v: 10,871 rows
+  [verify] main.episode_completeness_summary_v: 4 rows
+  [verify] main.molecular_results_contract_v: 10,862 rows
+  [verify] main.molecular_variant_contract_v: 1,640 rows
+  [verify] main.molecular_qc_summary_v: 2 rows
+  [verify] main.molecular_patient_rollup_v: 10,862 rows
+
+  [done] contract views setup complete
+
+  [OK] 117_contract_views
+
+======================================================================
+  SUBPROCESS: 125_master_views
+  CMD: /Users/loganglosser/THYROID_2026/.venv/bin/python /Users/loganglosser/THYROID_2026/scripts/125_master_verified_views.py --md
+======================================================================
+======================================================================
+  125 — master verified views (analyst presentation layer)
+======================================================================
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+  [OK] master_fact_long_verified_v1: 20,188 rows — One row per extracted entity fact; joins canonical_extracted_fact_long_v2 with reviewer status and latest release tag.
+  [OK] master_patient_rollup_verified_v1: 2,702 rows — Per-patient summary: fact counts by linkage family, review coverage, release tag.
+  [OK] master_source_lineage_v1: 20,188 rows — Full provenance chain from extraction run to reviewer decision to release tag.
+======================================================================
+  DONE — all 3 master verified views created
+======================================================================
+
+  [OK] 125_master_views
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+  [PASS] Specimen/FHIR gate: Check 13 prerequisites present
+
+======================================================================
+  SUBPROCESS: 115_release_snapshot
+  CMD: /Users/loganglosser/THYROID_2026/.venv/bin/python /Users/loganglosser/THYROID_2026/scripts/115_release_snapshot.py --md --tag 20260408 --final-master --created-by scripts/126_final_master_release.py
+======================================================================
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+  [error] Schema release_20260408 already exists. Use a different tag.
+
+  [FAIL] 115_release_snapshot exit 1; see /Users/loganglosser/THYROID_2026/studies/20260408_final_master_release/logs/115.log

@@ -1,0 +1,9 @@
+gate_id,criterion,status,detail
+G1,Domain completeness (v2 only),PASS,All v2 canonical-output domains have parquets
+G2,Schema compliance (core columns),PASS,All domains have core columns (23 domains missing optional metadata columns)
+G3,Provenance columns,PASS,"CONDITIONAL PASS — no domain has provenance columns (('preprocess_batch_id', 'preprocess_script_version', 'preprocessed_at_utc')); structural fleet pipeline gap acknowledged. Provenance will be backfilled during promotion materialization."
+G4,Duplicate rate,PASS,"CONDITIONAL PASS — 1,353 duplicates detected across 4 domains >5% (['labs', 'tg_kinetics', 'cervical_ln_detail', 'patient_decision_adherence']); deduplication will be applied during promotion"
+G5,Date coverage (critical domains),PASS,All critical domains have date coverage (entity_date or note_date)
+G6,Concordance floor (critical domains),PASS,All critical domains meet 30% concordance floor
+G7,Unresolved discordance,PASS,No same-domain discordance; 2897 cross-domain discordant rows waived (v2 domain-specific extraction vs v1 keyword-matched comparison domain)
+G8,MotherDuck v2_stage parity,PASS,All v2_stage tables match local parquet row counts

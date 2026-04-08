@@ -1,0 +1,44 @@
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+=== Parquet Release Bundle: 20260408 ===
+  Output: /Users/loganglosser/THYROID_2026/exports/parquet_release_20260408
+
+--- main schema ---
+  [dry-run] main.canonical_extracted_fact_long_v2: 20,188 rows -> canonical_extracted_fact_long_v2.parquet
+  [dry-run] main.canonical_fact_quarantine_v2: 103,588 rows -> canonical_fact_quarantine_v2.parquet
+  [dry-run] main.note_extraction_runs: 3 rows -> note_extraction_runs.parquet
+  [dry-run] main.tumor_episode_master_v2: 11,691 rows -> tumor_episode_master_v2.parquet
+  [dry-run] main.molecular_test_episode_v2: 10,126 rows -> molecular_test_episode_v2.parquet
+  [dry-run] main.rai_treatment_episode_v2: 1,857 rows -> rai_treatment_episode_v2.parquet
+  [dry-run] main.operative_episode_detail_v2: 9,371 rows -> operative_episode_detail_v2.parquet
+  [dry-run] main.note_entities_llm_imaging: 11,037 rows -> note_entities_llm_imaging.parquet
+  [dry-run] main.note_entities_llm_tirads_granular: 11,037 rows -> note_entities_llm_tirads_granular.parquet
+  [dry-run] main.note_entities_llm_us_nodule_dynamics: 11,037 rows -> note_entities_llm_us_nodule_dynamics.parquet
+  [dry-run] main.note_entities_llm_labs: 11,037 rows -> note_entities_llm_labs.parquet
+  [dry-run] main.note_entities_llm_tg_kinetics: 11,037 rows -> note_entities_llm_tg_kinetics.parquet
+  [dry-run] main.note_entities_llm_pathology: 11,037 rows -> note_entities_llm_pathology.parquet
+  [dry-run] main.note_entities_llm_synoptic_pathology_enrichment: 11,037 rows -> note_entities_llm_synoptic_pathology_enrichment.parquet
+  [dry-run] main.note_entities_llm_rai_detailed: 11,037 rows -> note_entities_llm_rai_detailed.parquet
+  [dry-run] main.note_entities_llm_rad_treatment: 11,037 rows -> note_entities_llm_rad_treatment.parquet
+  [dry-run] main.note_entities_llm_parathyroid_detail: 11,037 rows -> note_entities_llm_parathyroid_detail.parquet
+  [dry-run] main.note_entities_llm_recurrence: 11,037 rows -> note_entities_llm_recurrence.parquet
+  [dry-run] main.note_entities_llm_survival_followup: 11,037 rows -> note_entities_llm_survival_followup.parquet
+  [dry-run] main.note_entities_llm_cervical_ln_detail: 11,037 rows -> note_entities_llm_cervical_ln_detail.parquet
+  [dry-run] main.note_entities_llm_functional_outcomes: 11,037 rows -> note_entities_llm_functional_outcomes.parquet
+  [dry-run] main.note_entities_llm_past_medical_hx: 11,037 rows -> note_entities_llm_past_medical_hx.parquet
+  [dry-run] main.note_entities_llm_past_surgical_hx: 11,037 rows -> note_entities_llm_past_surgical_hx.parquet
+  [dry-run] main.note_entities_llm_presenting_symptoms: 11,037 rows -> note_entities_llm_presenting_symptoms.parquet
+  [dry-run] main.note_entities_llm_physical_exam: 11,037 rows -> note_entities_llm_physical_exam.parquet
+  [dry-run] main.note_entities_llm_vascular_invasion: 11,037 rows -> note_entities_llm_vascular_invasion.parquet
+  [dry-run] main.note_entities_llm_airway_invasion: 11,037 rows -> note_entities_llm_airway_invasion.parquet
+  [dry-run] main.note_entities_llm_frozen_section_detail: 11,037 rows -> note_entities_llm_frozen_section_detail.parquet
+  [dry-run] main.note_entities_llm_dynamic_risk_response: 11,037 rows -> note_entities_llm_dynamic_risk_response.parquet
+  [dry-run] main.note_entities_llm_patient_decision_adherence: 11,037 rows -> note_entities_llm_patient_decision_adherence.parquet
+
+--- qa schema ---
+  [dry-run] qa.promotion_scorecard: 56 rows -> promotion_scorecard.parquet
+  [dry-run] qa.domain_validation: 161 rows -> domain_validation.parquet
+  [dry-run] qa.manual_review_queue: 5,622 rows -> manual_review_queue.parquet
+
+  [summary] 33 files, 416,514 total rows
+  [done] Release bundle (dry-run) created at /Users/loganglosser/THYROID_2026/exports/parquet_release_20260408

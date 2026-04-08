@@ -1,0 +1,42 @@
+  [inventory] 30 parquets to load
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+  [schema] v2_stage ensured
+  [OK] v2_stage.note_entities_llm_imaging: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_tirads_granular: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_us_nodule_dynamics: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_labs: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_tg_kinetics: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_pathology: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_synoptic_pathology_enrichment: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_rai_detailed: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_rad_treatment: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_parathyroid_detail: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_recurrence: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_survival_followup: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_cervical_ln_detail: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_functional_outcomes: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_past_medical_hx: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_past_surgical_hx: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_presenting_symptoms: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_physical_exam: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_vascular_invasion: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_airway_invasion: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_frozen_section_detail: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_dynamic_risk_response: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_patient_decision_adherence: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_recurrence_detailed: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_complications_rln_laryngoscopy: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_medication_management: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_operative_details: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_operative_v2_enrichment: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_parathyroid_per_gland: local=11,037  md=11,037
+  [OK] v2_stage.note_entities_llm_molecular_thyroseq_afirma: local=11,037  md=11,037
+
+  [summary] 30 tables loaded into v2_stage (within transaction)
+  [summary] 0 row-count mismatches (immediate check)
+
+  [post-write] Re-verifying parquet vs v2_stage row counts before COMMIT…
+  [txn] COMMIT completed successfully (no rollback).
+  [inventory] v2_stage.load_inventory: 270 total rows
+  [done] v2_stage loading complete

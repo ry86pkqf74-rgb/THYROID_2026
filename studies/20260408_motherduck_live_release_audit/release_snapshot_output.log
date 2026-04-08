@@ -1,0 +1,3 @@
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+  [warn] Schema release_20260408 already exists — dry-run preflight skip (use a fresh --tag for a new release slice; rehearsal only).
