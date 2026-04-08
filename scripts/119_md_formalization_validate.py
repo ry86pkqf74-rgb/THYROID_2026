@@ -72,6 +72,14 @@ DEFAULT_DB_PATH = ROOT / "thyroid_master.duckdb"
 DEFAULT_V2_DIR = ROOT / "processed" / "output" / "v2_parquets"
 PROCESSED = ROOT / "processed"
 
+
+def _repo_rel(p: Path) -> str:
+    try:
+        return str(p.relative_to(ROOT))
+    except ValueError:
+        return str(p)
+
+
 REQUIRED_ENTITY_COLUMNS = [
     "research_id", "note_row_id", "entity_type",
     "entity_value_raw", "entity_value_norm",
@@ -203,6 +211,7 @@ def get_connection(args: argparse.Namespace) -> duckdb.DuckDBPyConnection:
         ua = args.md_user_agent or molecular_custom_user_agent(
             "119_md_formalization_validate", "validate"
         )
+        hint: str | None
         if args.md_session_hint is not None and str(args.md_session_hint).strip():
             hint = str(args.md_session_hint).strip()
         else:
@@ -303,7 +312,7 @@ def check_row_counts(
 
     mismatches = [r for r in rows_data if not r["stage_match"] or not r["main_match"]]
     if mismatches:
-        detail = ", ".join(r["stem"] for r in mismatches)
+        detail = ", ".join(str(r["stem"]) for r in mismatches)
         results.add("Row count parity", "WARN", f"{len(mismatches)} mismatches: {detail}")
     else:
         results.add("Row count parity", "PASS",
@@ -317,6 +326,13 @@ def check_row_counts(
             md_count = con.execute(f"SELECT COUNT(*) FROM main.{tbl_name}").fetchone()[0]
         except Exception:
             md_count = -1
+        if local_count < 0 and md_count >= 0:
+            results.add(
+                f"Canonical {tbl_name}",
+                "WARN",
+                f"local parquet absent ({_repo_rel(pq_path)}); md={md_count:,} — export parity not checked",
+            )
+            continue
         match = local_count == md_count if (local_count >= 0 and md_count >= 0) else False
         status = "PASS" if match else ("WARN" if md_count < 0 else "FAIL")
         results.add(f"Canonical {tbl_name}", status,
