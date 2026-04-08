@@ -7,13 +7,18 @@ name: Dashboard CI — Hardened
 #   Parallel (no secrets): ruff-and-mypy (+ workflow YAML parse),
 #     llm-extraction-gold (LLM goldens + registry/provenance/fleet + specimen/FHIR offline suite +
 #       scripts 141/143/144 via tests/test_specimen_fhir_scripts_offline.py),
-#     multimodal-tests (mm contract + imaging↔FNA + specimen_fhir_release_gate only).
+#     multimodal-tests (mm contract + imaging↔FNA + specimen_fhir_release_gate only),
+#     validation-contracts-offline (script 29 VAL_LAB SQL + ALL_VALIDATION_SQL registry surface +
+#       lab canonical in-memory contract + linkage-confidence fixture tests — no MotherDuck writes).
 #   lint-and-syntax (MotherDuck secrets) → downstream jobs:
-#     motherduck-formalization (v2 formalization path: 116 dry-run → 112 --motherduck-check → 119),
+#     motherduck-formalization (needs validation-contracts-offline; 116 dry-run → 112 --motherduck-check → 119),
 #     v2-domain-validation (legacy), benchmark-regression (continue-on-error),
 #     share-publication-check (legacy; tags / manual), promotion-gate (legacy script 91; tags),
 #     md-live-release-audit-dryrun (124 --md --dry-run; tags / manual),
 #     md-final-master-dryrun (126 --md --dry-run; workflow_dispatch only).
+#   Manual workflow_dispatch (secrets):
+#     md-formalization-strict-release — scripts/119 --md --md-sa --release-mode (read-only DB checks; report on disk).
+#     validation-engine-motherduck — scripts/29 --md (materializes val_*; WRITES to MotherDuck).
 #
 # Service-account token
 # ─────────────────────
@@ -87,6 +92,18 @@ on:
         type: string
       run_multimodal_md_contract_gate:
         description: "MotherDuck: run 129→128 with --strict-release (writes mm_contract_dev; requires MD_SA_TOKEN)"
+        required: false
+        default: "false"
+        type: choice
+        options: ["true", "false"]
+      run_md_release_validation:
+        description: "Strict release validation only: 119 --md --md-sa --release-mode (read-only checks; writes markdown report under studies/)"
+        required: false
+        default: "false"
+        type: choice
+        options: ["true", "false"]
+      run_validation_engine_md:
+        description: "Materialize val_* validation tables on MotherDuck: 29_validation_engine.py --md (database WRITES)"
         required: false
         default: "false"
         type: choice
@@ -194,6 +211,35 @@ jobs:
             tests/test_multimodal_contract_mm_v1.py \
             tests/test_imaging_fna_linkage_mm_v1.py \
             tests/test_specimen_fhir_release_gate.py \
+            -v --tb=short
+
+  # ── Offline validation contracts (script 29 SQL + lab + linkage tiers; blocking) ─
+  validation-contracts-offline:
+    name: Validation contracts offline (29 lab SQL + linkage + registry)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: pytest — validation engine lab SQL + import registry + lab stub + linkage confidence
+        env:
+          GITHUB_TOKEN: ""
+          OPENAI_API_KEY: ""
+          MD_SA_TOKEN: ""
+          MOTHERDUCK_TOKEN: ""
+          LOCAL_DB_PATH: ""
+        run: |
+          python -m pytest \
+            tests/test_validation_engine_lab_sql_offline.py \
+            tests/test_validation_engine_import_contracts_offline.py \
+            tests/test_lab_canonical_contract_offline.py \
+            tests/test_linkage_confidence.py \
             -v --tb=short
 
   # ── Job 1: Static Analysis ─────────────────────────────────────────────────
@@ -443,7 +489,7 @@ jobs:
   motherduck-formalization:
     name: MotherDuck formalization (116 → 112 → 119)
     runs-on: ubuntu-latest
-    needs: [ruff-and-mypy, lint-and-syntax]
+    needs: [ruff-and-mypy, lint-and-syntax, validation-contracts-offline]
     env:
       MD_SA_TOKEN: ${{ secrets.MD_SA_TOKEN }}
       MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
@@ -821,3 +867,81 @@ jobs:
             artifacts/multimodal_release_gate.json
           if-no-files-found: warn
           retention-days: 90
+
+  # ── Strict formalization release-mode (manual; read-only against MotherDuck data) ─
+  md-formalization-strict-release:
+    name: MotherDuck formalization — strict release-mode (119 read-only)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_md_release_validation == 'true'
+    env:
+      MD_SA_TOKEN: ${{ secrets.MD_SA_TOKEN }}
+      MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
+      LOCAL_DB_PATH: ""
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Assert MotherDuck token (never print values)
+        run: |
+          python -c "
+          import os
+          assert os.environ.get('MD_SA_TOKEN') or os.environ.get('MOTHERDUCK_TOKEN'), (
+              'Configure MD_SA_TOKEN or MOTHERDUCK_TOKEN for strict release validation.'
+          )
+          print('Token env present.')
+          "
+
+      - name: 119 — formalization validate release-mode (fail-closed)
+        run: |
+          OUT="studies/20260408_validation_execution_upgrade/release_mode_${{ github.run_id }}"
+          mkdir -p "$OUT"
+          python scripts/119_md_formalization_validate.py \
+            --md --md-sa --release-mode \
+            --output-dir "$OUT"
+
+      - name: Upload release validation report artifact
+        if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: md-formalization-release-mode-${{ github.run_id }}
+          path: studies/20260408_validation_execution_upgrade/release_mode_${{ github.run_id }}
+          if-no-files-found: warn
+          retention-days: 90
+
+  # ── Full validation engine on MotherDuck (manual; creates/replaces val_* tables) ─
+  validation-engine-motherduck:
+    name: MotherDuck validation engine — script 29 (writes val_*)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_validation_engine_md == 'true'
+    env:
+      MD_SA_TOKEN: ${{ secrets.MD_SA_TOKEN }}
+      MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
+      LOCAL_DB_PATH: ""
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Assert MotherDuck token
+        run: |
+          python -c "
+          import os
+          assert os.environ.get('MD_SA_TOKEN') or os.environ.get('MOTHERDUCK_TOKEN'), (
+              'Configure MD_SA_TOKEN or MOTHERDUCK_TOKEN.'
+          )
+          print('Token env present.')
+          "
+
+      - name: 29 — validation_engine (materialize val_* on MotherDuck)
+        run: python scripts/29_validation_engine.py --md

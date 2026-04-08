@@ -1,3 +1,8 @@
+[tool.pytest.ini_options]
+markers = [
+    "local_db: requires repo-root thyroid_master.duckdb with lab canonical table; run locally or in DB-backed workflows",
+]
+
 [tool.mypy]
 python_version = "3.11"
 explicit_package_bases = true
