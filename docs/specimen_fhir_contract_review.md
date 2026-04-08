@@ -4,13 +4,13 @@
 
 ## Operational user-agents (MotherDuck query history)
 
-Default RW attribution: **`specimen_fhir_release_truth_v1`** with stable session hint (see `utils/md_pipeline_attribution.specimen_fhir_release_writer_attribution`). `MOTHERDUCK_CUSTOM_USER_AGENT` / `MOTHERDUCK_SESSION_HINT` override when set.
+Default RW attribution: **`specimen_fhir_release_truth_v2`** with stable session hint (see `utils/md_pipeline_attribution.specimen_fhir_release_writer_attribution`). `MOTHERDUCK_CUSTOM_USER_AGENT` / `MOTHERDUCK_SESSION_HINT` override when set. Historical runs may show **`specimen_fhir_release_truth_v1`** in query logs.
 
 | Step | `custom_user_agent` |
 |------|---------------------|
-| Identity + FHIR orchestration + QA DDL deploy (`--md`) | `specimen_fhir_release_truth_v1` (`scripts/138_md_specimen_fhir_layer.py`, second connection share same UA) |
-| Standalone QA diagnostic deploy | `specimen_fhir_release_truth_v1` (`scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py`) |
-| Identity-only / genomics standalone (`139` / `140`) | `specimen_fhir_release_truth_v1` |
+| Identity + FHIR orchestration + QA DDL deploy (`--md`) | `specimen_fhir_release_truth_v2` (`scripts/138_md_specimen_fhir_layer.py`, second connection share same UA) |
+| Standalone QA diagnostic deploy | `specimen_fhir_release_truth_v2` (`scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py`) |
+| Identity-only / genomics standalone (`139` / `140`) | `specimen_fhir_release_truth_v2` |
 | Local FHIR NDJSON export — RW attach (`--md`) | `specimen_fhir_export_v1` (`scripts/141_fhir_specimen_json_export.py`) |
 | Local FHIR NDJSON export — read-scaling (`--read-scaling`) | `specimen_fhir_export_v1` (same UA; use after `REFRESH DATABASE` on the reader) |
 
@@ -91,7 +91,7 @@ This repo does **not** issue MotherDuck tokens or call Admin REST APIs. **Build 
 
 ## Query history / telemetry
 
-Operational connection strings set `custom_user_agent` (e.g. `specimen_fhir_export_v1`, `specimen_fhir_release_truth_v1`) for governance. On catalogs where `md_information_schema.recent_queries` is available, the `user_agent` column may still show the DuckDB client string (e.g. `duckdb/v1.4.x …`) rather than the custom UA — filter by **`query_text`** (e.g. `main.fhir_bundle_specimen_export_v1`) or use org-level MotherDuck query logs if your plan exposes custom UA there. If `RECENT_QUERIES` / `QUERY_HISTORY` are blocked by role or tier, say so in the reviewer ops report.
+Operational connection strings set `custom_user_agent` (e.g. `specimen_fhir_export_v1`, `specimen_fhir_release_truth_v2`) for governance. On catalogs where `md_information_schema.recent_queries` is available, the `user_agent` column may still show the DuckDB client string (e.g. `duckdb/v1.4.x …`) rather than the custom UA — filter by **`query_text`** (e.g. `main.fhir_bundle_specimen_export_v1`) or use org-level MotherDuck query logs if your plan exposes custom UA there. If `RECENT_QUERIES` / `QUERY_HISTORY` are blocked by role or tier, say so in the reviewer ops report.
 
 Details: [`motherduck_read_scaling_dashboard.md`](motherduck_read_scaling_dashboard.md).
 

@@ -1,5 +1,5 @@
 -- Specimen + analytic FHIR — QA diagnostic views (reviewer / release ops)
--- Deploy: appended by scripts/138_md_specimen_fhir_layer.py (MotherDuck UA specimen_fhir_release_truth_v1)
+-- Deploy: appended by scripts/138_md_specimen_fhir_layer.py (MotherDuck UA specimen_fhir_release_truth_v2)
 --         or scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py
 -- Prereqs: main.specimen_* , main.fhir_* , qa.specimen_merge_review_queue_v1 ,
 --          qa.specimen_genomic_link_review_v1 (after 139 + 138 tail + 140)

@@ -2,7 +2,7 @@
 """Write studies/CURRENT_MOTHERDUCK_REPO_STATE.md — live DB + repo artifact reconciliation.
 
 Read-only against MotherDuck unless views are deployed (no DDL). Uses
-``specimen_fhir_release_writer_attribution`` (default UA ``specimen_fhir_release_truth_v1``) on ``--md``.
+``specimen_fhir_release_writer_attribution`` (default UA ``specimen_fhir_release_truth_v2``) on ``--md``.
 
 Usage:
   .venv/bin/python scripts/144_md_repo_current_state_summary.py
@@ -58,6 +58,17 @@ def parse_args() -> argparse.Namespace:
         default=STALE_DAYS,
         help="Flag checked-in validation_report.md older than this many days",
     )
+    p.add_argument(
+        "--md-env",
+        default=None,
+        help="MotherDuck environment (dev|qa|prod) when using --md; sets MOTHERDUCK_DATABASE if unset.",
+    )
+    p.add_argument(
+        "--also-write",
+        type=Path,
+        default=None,
+        help="Write the same markdown to a second path (e.g. studies/CURRENT_MOTHERDUCK_REPO_STATE.md).",
+    )
     return p.parse_args()
 
 
@@ -76,12 +87,45 @@ def _stale_validation_reports(max_age_days: int) -> list[tuple[str, int]]:
     return out[:40]
 
 
+def collect_catalog_probe(con: Any) -> list[str]:
+    """Preflight: current catalog type from md_information_schema (read-only; no DDL)."""
+    db = con.execute("SELECT current_database()").fetchone()[0]
+    lines: list[str] = [
+        "### Catalog probe (read-only)",
+        f"- **current_database():** `{db}`",
+    ]
+    try:
+        row = con.execute(
+            "SELECT name, type FROM md_information_schema.databases WHERE name = ?",
+            [db],
+        ).fetchone()
+        if row:
+            typ = str(row[1]) if row[1] is not None else "NULL"
+            ducklake = typ.upper() == "DUCKLAKE"
+            lines.append(f"- **md_information_schema.databases.type:** `{typ}`")
+            lines.append(
+                "- **Named CREATE SNAPSHOT (policy):** "
+                + (
+                    "DUCKLAKE — do not assume native named snapshot semantics; "
+                    "use dev/qa/prepromote-backup runbook patterns."
+                    if ducklake
+                    else "Non-DUCKLAKE — native named CREATE SNAPSHOT typically available "
+                    "(not executed here)."
+                )
+            )
+        else:
+            lines.append("- **md_information_schema.databases:** _(no row for current catalog)_")
+    except Exception as e:
+        lines.append(f"- **catalog probe:** _(error: {e})_")
+    return lines
+
+
 def collect_live_introspection(con: Any) -> tuple[list[str], str]:
     """Run MotherDuck-style bullets for ``## Live MotherDuck status``; works on file DB too."""
     md_lines: list[str] = []
     telemetry_note = "(run with `--md` to populate)"
-    db = con.execute("SELECT current_database()").fetchone()[0]
-    md_lines.append(f"- **current_database():** `{db}`")
+    md_lines.extend(collect_catalog_probe(con))
+    md_lines.append("### Specimen / FHIR layer row counts")
     for label, sql in (
         ("specimen_master_v1", "SELECT COUNT(*) FROM main.specimen_master_v1"),
         ("specimen_tumor_focus_v1", "SELECT COUNT(*) FROM main.specimen_tumor_focus_v1"),
@@ -122,6 +166,7 @@ def collect_live_introspection(con: Any) -> tuple[list[str], str]:
             SELECT coalesce(user_agent, ''), COUNT(*) AS n
             FROM md_information_schema.query_history
             WHERE user_agent IN (
+              'specimen_fhir_release_truth_v2',
               'specimen_fhir_release_truth_v1',
               'specimen_fhir_release_ops_v1',
               'specimen_fhir_export_v1',
@@ -136,6 +181,30 @@ def collect_live_introspection(con: Any) -> tuple[list[str], str]:
         )
     except Exception as e:
         telemetry_note = f"_(query_history not available: {e})_"
+    if "not available" in telemetry_note or telemetry_note.startswith("_("):
+        try:
+            hist2 = con.execute(
+                """
+                SELECT coalesce(user_agent, ''), COUNT(*) AS n
+                FROM md_information_schema.recent_queries
+                WHERE user_agent IN (
+                  'specimen_fhir_release_truth_v2',
+                  'specimen_fhir_release_truth_v1',
+                  'specimen_fhir_release_ops_v1',
+                  'specimen_fhir_export_v1',
+                  'specimen_genomics_binding_v1',
+                  'specimen_identity_build_v1'
+                )
+                GROUP BY 1 ORDER BY 2 DESC LIMIT 15
+                """
+            ).fetchall()
+            telemetry_note = (
+                "| user_agent | approx_queries |\n|---|---:|\n"
+                + "\n".join(f"| `{r[0]}` | {r[1]} |" for r in hist2)
+                + "\n\n_(source: md_information_schema.recent_queries)_"
+            )
+        except Exception:
+            pass
     return md_lines, telemetry_note
 
 
@@ -278,11 +347,19 @@ def main() -> None:
     telemetry_note = "(run with `--md` to populate)"
 
     if args.md:
+        import os
         import sys
 
         sys.path.insert(0, str(ROOT))
         from utils.md_connect import connect_md_or_file
         from utils.md_pipeline_attribution import specimen_fhir_release_writer_attribution
+
+        if args.md_env and not os.environ.get("MOTHERDUCK_DATABASE") and not os.environ.get(
+            "MOTHERDUCK_DB"
+        ):
+            from motherduck_client import resolve_database_for_env
+
+            os.environ["MOTHERDUCK_DATABASE"] = resolve_database_for_env(args.md_env)
 
         ua, hint = specimen_fhir_release_writer_attribution()
         con = connect_md_or_file(
@@ -291,6 +368,7 @@ def main() -> None:
             fail_closed=True,
             custom_user_agent=ua,
             motherduck_session_hint=hint,
+            env=args.md_env,
         )
         try:
             md_lines, telemetry_note = collect_live_introspection(con)
@@ -314,6 +392,10 @@ def main() -> None:
     )
     args.output.write_text(text, encoding="utf-8")
     print(f"Wrote {_rel(args.output)}")
+    if args.also_write:
+        args.also_write.parent.mkdir(parents=True, exist_ok=True)
+        args.also_write.write_text(text, encoding="utf-8")
+        print(f"Wrote {_rel(args.also_write)}")
 
 
 if __name__ == "__main__":
