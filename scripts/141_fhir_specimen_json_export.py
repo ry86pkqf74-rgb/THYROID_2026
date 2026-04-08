@@ -6,10 +6,16 @@ with custom_user_agent='specimen_fhir_export_v1' per governance.
 
 Usage:
   .venv/bin/python scripts/141_fhir_specimen_json_export.py --md [--limit N]
+  .venv/bin/python scripts/141_fhir_specimen_json_export.py --read-scaling [--limit N]
   .venv/bin/python scripts/141_fhir_specimen_json_export.py --md --output-root exports
   .venv/bin/python scripts/141_fhir_specimen_json_export.py --local-duckdb /path/to.db  # CI/offline only
 
-Environment: MOTHERDUCK_TOKEN or MD_SA_TOKEN; optional MOTHERDUCK_DATABASE.
+Tokens (see ``motherduck_client.get_token`` / ``get_read_scaling_token``):
+  --md              RW: ``MD_SA_TOKEN`` / ``MOTHERDUCK_TOKEN`` / ``.streamlit/secrets.toml``
+  --read-scaling    Reader: ``MD_READ_SCALING_TOKEN`` (+ ``MD_READ_SCALING_SESSION_HINT`` optional)
+  After writer snapshots, reviewers should ``REFRESH DATABASE`` on read-scaling before export.
+
+Environment: optional MOTHERDUCK_DATABASE / MOTHERDUCK_DB for catalog selection.
 """
 from __future__ import annotations
 
@@ -26,6 +32,16 @@ sys.path.insert(0, str(ROOT))
 
 DEFAULT_DB = ROOT / "thyroid_master.duckdb"
 UA = "specimen_fhir_export_v1"
+
+def _verify_motherduck_attached(con: Any) -> bool:
+    try:
+        dbs = con.execute("PRAGMA database_list").fetchall()
+        return any(
+            "md:" in str(r) or "md_information_schema" in str(r) for r in dbs
+        )
+    except Exception:
+        return False
+
 
 FHIR_TABLES = (
     "fhir_patient_deid_map_v1",
@@ -95,6 +111,27 @@ def run_export(
     }
     (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 
+    readme = "\n".join(
+        [
+            "# FHIR specimen bundle export (analytic, de-identified)",
+            "",
+            f"- **Build (UTC):** {manifest['build_timestamp_utc']}",
+            f"- **Git SHA:** {manifest['git_sha']}",
+            f"- **Query user-agent:** `{manifest['custom_user_agent']}`",
+            f"- **Bundle rows (NDJSON lines):** {manifest['bundle_row_count']}",
+            "",
+            "## Source tables (`main`)",
+            "",
+        ]
+        + [f"- `{tbl}`: {counts.get(tbl)}" for tbl in FHIR_TABLES]
+        + [
+            "",
+            "Machine-readable metadata: `manifest.json`. One FHIR Bundle JSON object per line: `specimen_bundles.ndjson`.",
+            "",
+        ]
+    )
+    (out_dir / "README.md").write_text(readme, encoding="utf-8")
+
     sample = ndjson_path.read_text(encoding="utf-8").splitlines()[0] if rows else ""
     if sample:
         first = json.loads(sample)
@@ -106,7 +143,12 @@ def run_export(
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Export FHIR specimen bundles to NDJSON + manifest.")
-    p.add_argument("--md", action="store_true", help="MotherDuck fail-closed (production export).")
+    p.add_argument("--md", action="store_true", help="MotherDuck fail-closed with RW token (operator/export).")
+    p.add_argument(
+        "--read-scaling",
+        action="store_true",
+        help="MotherDuck read-scaling token only (reviewer). Run REFRESH DATABASE on this connection first for freshness.",
+    )
     p.add_argument(
         "--local-duckdb",
         type=Path,
@@ -125,17 +167,39 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    if args.md and args.local_duckdb is not None:
-        print("FATAL: pass only one of --md or --local-duckdb.")
-        sys.exit(1)
-    if not args.md and args.local_duckdb is None:
-        print("FATAL: --md or --local-duckdb required.")
+    modes = sum([bool(args.md), bool(args.read_scaling), args.local_duckdb is not None])
+    if modes != 1:
+        print("FATAL: pass exactly one of --md, --read-scaling, or --local-duckdb.")
         sys.exit(1)
 
     if args.local_duckdb is not None:
         import duckdb
 
         con = duckdb.connect(str(args.local_duckdb))
+    elif args.read_scaling:
+        import os
+
+        from motherduck_client import MotherDuckClient
+
+        hint = os.environ.get("MOTHERDUCK_SESSION_HINT") or (
+            "thyroid2026:fhir_export_reader:" + _git_sha()[:7]
+        )
+        client = MotherDuckClient.for_env(
+            custom_user_agent=UA,
+            motherduck_session_hint=hint,
+        )
+        try:
+            con = client.connect_read_scaling()
+        except Exception as e:
+            print(f"FATAL: read-scaling MotherDuck connection failed: {e}")
+            sys.exit(1)
+        if not _verify_motherduck_attached(con):
+            con.close()
+            print(
+                "FATAL: --read-scaling connected but PRAGMA database_list shows no MotherDuck attach."
+            )
+            sys.exit(1)
+        print("  MotherDuck read-scaling connection verified (fail-closed gate passed)")
     else:
         from utils.md_connect import connect_md_fail_closed
 

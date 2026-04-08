@@ -11,9 +11,10 @@ Default RW attribution: **`specimen_fhir_release_truth_v1`** with stable session
 | Identity + FHIR orchestration + QA DDL deploy (`--md`) | `specimen_fhir_release_truth_v1` (`scripts/138_md_specimen_fhir_layer.py`, second connection share same UA) |
 | Standalone QA diagnostic deploy | `specimen_fhir_release_truth_v1` (`scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py`) |
 | Identity-only / genomics standalone (`139` / `140`) | `specimen_fhir_release_truth_v1` |
-| Local FHIR NDJSON export reader (`--md`) | `specimen_fhir_export_v1` (`scripts/141_fhir_specimen_json_export.py` — read-mostly export helper) |
+| Local FHIR NDJSON export — RW attach (`--md`) | `specimen_fhir_export_v1` (`scripts/141_fhir_specimen_json_export.py`) |
+| Local FHIR NDJSON export — read-scaling (`--read-scaling`) | `specimen_fhir_export_v1` (same UA; use after `REFRESH DATABASE` on the reader) |
 
-Do **not** use `MD_READ_SCALING_TOKEN` for these writers — read scaling is attach-only for reviewer dashboards.
+Do **not** use `MD_READ_SCALING_TOKEN` for **138** / **139** / **140** / **143** writers — those require RW tokens. Read scaling is valid for **141** when you want least-privilege export after a writer snapshot boundary.
 
 ## CI (offline)
 
@@ -61,9 +62,34 @@ Before promoting specimen/FHIR changes, **`138`** attempts `CREATE SNAPSHOT <nam
 
 After a release snapshot on the writer catalog, readers using **`MD_READ_SCALING_TOKEN`** should:
 
-1. Connect via `MotherDuckClient.for_env(...).connect_read_scaling()` (or RO share when configured).
-2. Set **`MD_READ_SCALING_SESSION_HINT`** (or equivalent `session_hint`) for stable routing.
-3. Run **`REFRESH DATABASE`** (or `utils/md_read_scaling_refresh.py` helpers) so read replicas observe the new snapshot boundary.
+1. Export `MD_READ_SCALING_TOKEN` (and optionally **`MD_READ_SCALING_SESSION_HINT`**) — same keys supported in `.streamlit/secrets.toml` as documented in [`motherduck_database_contract_v1.md`](motherduck_database_contract_v1.md) §8.
+2. Connect via `MotherDuckClient.for_env(...).connect_read_scaling()` (or RO share when configured). For a **restricted manual hidden** share, attach with the **reviewer** or read-scaling identity only; grant **READ** on the reviewer-facing database or share — never commit share URLs that embed secrets.
+3. Run **`REFRESH DATABASE`** (or `scripts/136_md_read_scaling_snapshot_refresh.py reader`, or `utils/md_read_scaling_refresh.py`) **on the read-scaling connection** after the operator’s writer snapshot so replicas honor the export/review snapshot boundary.
+4. Optional NDJSON export for offline review (no PHI in bundle payloads — analytic de-identified resources only):
+
+   ```bash
+   # Operator (RW token from env or .streamlit/secrets.toml)
+   .venv/bin/python scripts/141_fhir_specimen_json_export.py --md
+
+   # Reviewer (read-scaling token only; refresh first)
+   MD_READ_SCALING_TOKEN=… MD_READ_SCALING_SESSION_HINT=thy_review_01 \
+     .venv/bin/python scripts/136_md_read_scaling_snapshot_refresh.py reader --md-env prod
+   MD_READ_SCALING_TOKEN=… MD_READ_SCALING_SESSION_HINT=thy_review_01 \
+     .venv/bin/python scripts/141_fhir_specimen_json_export.py --read-scaling
+   ```
+
+   Output directory pattern: `exports/fhir_specimen_<UTC_timestamp>/` with `specimen_bundles.ndjson`, `manifest.json`, and `README.md`. That tree is **gitignored**; keep manifests or study notes under `studies/` if you need provenance in git.
+
+### Service account / org admin (reviewer identity)
+
+This repo does **not** issue MotherDuck tokens or call Admin REST APIs. **Build operators** should use **`MD_SA_TOKEN`** or **`MOTHERDUCK_TOKEN`** (RW) from a secret manager or `.streamlit/secrets.toml` (gitignored). **Reviewers** should receive a **read-scaling** token or an invitation to a **restricted** share with read-only access. Typical MotherDuck UI paths (wording may vary by product version):
+
+- **Service account:** Organization settings → Service accounts → create → copy token once → store in reviewer-bound secret channel; scope to read-only / target share.
+- **Share:** Shares → Create share → visibility **Restricted**, update policy **Manual** if you must pin snapshots; grant **Read** to the reviewer’s user or service account only.
+
+## Query history / telemetry
+
+Operational connection strings set `custom_user_agent` (e.g. `specimen_fhir_export_v1`, `specimen_fhir_release_truth_v1`) for governance. On catalogs where `md_information_schema.recent_queries` is available, the `user_agent` column may still show the DuckDB client string (e.g. `duckdb/v1.4.x …`) rather than the custom UA — filter by **`query_text`** (e.g. `main.fhir_bundle_specimen_export_v1`) or use org-level MotherDuck query logs if your plan exposes custom UA there. If `RECENT_QUERIES` / `QUERY_HISTORY` are blocked by role or tier, say so in the reviewer ops report.
 
 Details: [`motherduck_read_scaling_dashboard.md`](motherduck_read_scaling_dashboard.md).
 

@@ -114,6 +114,23 @@ MD_READ_SCALING_TOKEN=… .venv/bin/python scripts/136_md_read_scaling_snapshot_
 
 Streamlit / `dashboard.py` paths are documented in [`motherduck_read_scaling_dashboard.md`](motherduck_read_scaling_dashboard.md).
 
+### 5.1 Specimen / FHIR reviewer NDJSON export (optional)
+
+After **138** / **143** have populated `main.fhir_*_v1` and **`main.fhir_bundle_specimen_export_v1`** on the target catalog, operators can export analytic (de-identified) bundle collections for external reviewers:
+
+```bash
+# RW token — fail-closed attach; see motherduck_client.get_token()
+.venv/bin/python scripts/141_fhir_specimen_json_export.py --md --output-root exports
+```
+
+Reviewers with **only** `MD_READ_SCALING_TOKEN` should run **`136` `reader`** (or `REFRESH DATABASE`) first, then:
+
+```bash
+.venv/bin/python scripts/141_fhir_specimen_json_export.py --read-scaling --output-root exports
+```
+
+Artifacts land in **gitignored** `exports/fhir_specimen_<UTC>/` (`specimen_bundles.ndjson`, `manifest.json`, `README.md`). Record row counts and git SHA in a dated `studies/` note if you need repository provenance without committing large NDJSON. Full reviewer contract: [`specimen_fhir_contract_review.md`](specimen_fhir_contract_review.md).
+
 ## 6. Orchestrator (137)
 
 **`scripts/137_md_molecular_release_workflow.py`** chains: backup → optional named snapshot attempt → writer snapshot → **119** (qa, release-mode) → **124** (prod) → reader refresh.
@@ -169,6 +186,7 @@ Manifest output: `studies/<tag>_molecular_release_workflow/workflow_manifest.jso
 | Formal validate | **119** | `--release-mode` for sign-off |
 | Live audit | **124** | `--md-env prod --final-release`; optional `--materialize-specimen-fhir` |
 | Specimen/FHIR materialize | **138**, **143** | See [`specimen_fhir_release_integration.md`](specimen_fhir_release_integration.md) |
+| Specimen/FHIR NDJSON export | **141** | `--md` (RW) or `--read-scaling` after refresh; see [`specimen_fhir_contract_review.md`](specimen_fhir_contract_review.md) |
 | Reader freshness | **136** | writer + reader |
 | Sandbox / backup DDL | **130** | `prepromote-backup`, `clone`, `snapshot` |
 | Workflow orchestration | **137** | `promote` and single-step wrappers; forwards specimen/FHIR flags to **124** |

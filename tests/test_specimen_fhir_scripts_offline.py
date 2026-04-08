@@ -97,6 +97,9 @@ def test_141_export_offline_minimal_db(tmp_path: Path) -> None:
     for tbl in mod.FHIR_TABLES:
         assert tbl in stm
     assert all(stm[t] == 0 for t in mod.FHIR_TABLES if t != "fhir_bundle_specimen_export_v1")
+    readme = (out_dir / "README.md").read_text(encoding="utf-8")
+    assert "specimen_fhir_export_v1" in readme
+    assert "fhir_bundle_specimen_export_v1" in readme
 
 
 def test_141_unknown_git_sha_manifest(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
