@@ -3,7 +3,7 @@
 ## Git SHA (export run)
 
 - **Manifest / export git SHA:** `bbf91484f1cd087cf9cef8c22940ea9ab2e3accc` (repo `HEAD` at time of MotherDuck export).
-- **Docs / script commits (this deliverable):** `b5065ee23777838f45740c46924718317288c309` (operationalize 141 + runbooks); follow-up commits on `main` through **`bdb0f61`** (see `git log` from repo root).
+- **Docs / script commits (this deliverable):** `b5065ee23777838f45740c46924718317288c309` (operationalize 141 + runbooks); follow-up commits on `main` through the current `origin/main` tip at pull time (see `git log`).
 
 ## NDJSON export (reviewer-ready bundle)
 
