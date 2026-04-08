@@ -1,8 +1,5 @@
-```
-token_mode() secrets.toml:MOTHERDUCK_TOKEN
-read_scaling_token_mode() none
-resolve_database_for_env(dev) Thyroid 2026 Molecular Dev 20260407
-resolve_database_for_env(qa) Thyroid 2026 Molecular QA 20260407
-resolve_database_for_env(prod) Thyroid 2026
-EXIT:0
-```
+token_mode(): secrets.toml:MOTHERDUCK_TOKEN
+read_scaling_token_mode(): none
+resolve_database_for_env("dev"): 'Thyroid 2026 Molecular Dev 20260407'
+resolve_database_for_env("qa"): 'Thyroid 2026 Molecular QA 20260407'
+resolve_database_for_env("prod"): 'Thyroid 2026'

@@ -1,22 +1,9 @@
-### Session-hint-related env keys present (names only; sourced .env.motherduck if exists)
-
-After `source .env.motherduck` (if present): **no** `MOTHERDUCK_*`, `MD_*`, or `THYROID_DASHBOARD_*` variables appeared in `printenv` — RW + scaling secrets for this workspace are resolved from `.streamlit/secrets.toml`, not exported shell vars.
-
-Documented keys (for read-scaling affinity; **not set** in this session’s environment): `MD_READ_SCALING_SESSION_HINT`, `MOTHERDUCK_READ_SCALING_SESSION_HINT`, and generic `MOTHERDUCK_SESSION_HINT` (`motherduck_client.MotherDuckClient._resolve_session_hint`). Connection code applies read-scaling hints only on `connect_read_scaling()` / read-scaling profile, not on `connect_rw()`.
-
-### 136 reader --md-env prod --dry-run
-```
 REFRESH DATABASE "Thyroid 2026"
-EXIT:0
-```
-### 136 writer --md-env prod --dry-run
-```
+reader_dryrun_exit=0
 CREATE SNAPSHOT OF "Thyroid 2026"
-EXIT:0
-```
-### connect_read_scaling() live attempt
-```
-read_scaling_token_mode: none
-RuntimeError: No read-scaling MotherDuck token. Set MD_READ_SCALING_TOKEN (or MOTHERDUCK_READ_SCALING_TOKEN), optionally with MD_READ_SCALING_SESSION_HINT.
-EXIT:0
-```
+writer_dryrun_exit=0
+MD_READ_SCALING_SESSION_HINT: set_in_process_env=False (value not printed)
+MOTHERDUCK_READ_SCALING_SESSION_HINT: set_in_process_env=False (value not printed)
+=== connect_read_scaling live probe ===
+read_scaling_token_mode(): none
+connect_read_scaling_error: RuntimeError No read-scaling MotherDuck token. Set MD_READ_SCALING_TOKEN (or MOTHERDUCK_READ_SCALING_TOKEN), optionally with MD_READ_SCALING_SESSION_HINT.
