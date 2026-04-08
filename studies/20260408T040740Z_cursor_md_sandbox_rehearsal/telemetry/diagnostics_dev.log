@@ -1,0 +1,75 @@
+Token source (read/write): secrets.toml:MOTHERDUCK_TOKEN
+Read-scaling token source: none
+  Connected to MotherDuck (md:Thyroid 2026 Molecular Dev 20260407)
+  MotherDuck connection verified (fail-closed gate passed)
+
+Diagnostics (connected in 2.51s)
+
+=== current_context ===
+                      database_name schema_name
+Thyroid 2026 Molecular Dev 20260407        main
+
+=== md_information_schema.databases ===
+                                                              name                                 uuid                created_ts  transient historical_snapshot_retention     type
+                                                      Thyroid 2026 b64d4ec9-aafb-49cc-bf39-d1dfd85e68dc 2026-04-02 04:31:53-04:00      False                        7 days DUCKLAKE
+                               Thyroid 2026 Molecular Dev 20260407 92bc15f0-1dcd-42bb-b548-74e5cc24aedd 2026-04-07 12:10:18-04:00      False                        7 days  DEFAULT
+    Thyroid 2026 Molecular PrePromote 20260407_cursor_prod_release 6011a8ad-92a8-497e-ad99-43fdefa5d23e 2026-04-07 12:14:06-04:00      False                        7 days  DEFAULT
+Thyroid 2026 Molecular PrePromote 20260410_20260407_161831_promote fd1af03b-a3d3-4170-910c-c61a173dfedd 2026-04-07 12:18:34-04:00      False                        7 days  DEFAULT
+         Thyroid 2026 Molecular PrePromote agent_20260407_workflow 9b6d3949-4698-4be7-95b1-3b4e7c30d9e4 2026-04-07 02:39:05-04:00      False                        7 days  DEFAULT
+                                Thyroid 2026 Molecular QA 20260407 f05500b0-2eea-41bf-b5d4-35e677f6ebc5 2026-04-07 01:44:43-04:00      False                        7 days  DEFAULT
+                                                             my_db e0db7fdc-5cb6-4f57-9944-6baadccd82c1 2026-03-07 02:53:36-05:00      False                        7 days  DEFAULT
+                                                           rosflow c8f55a3a-ab80-4f93-8bb1-74b55770ad39 2026-03-15 13:16:55-04:00      False                        7 days  DEFAULT
+
+=== database_snapshots (this database) ===
+                         snapshot_id snapshot_name                       database_name              created_ts  active_bytes  bytes_written
+473766d3-5387-4088-9fa5-9551a14cd130          None Thyroid 2026 Molecular Dev 20260407 2026-04-08 04:16:51.044     530329600              0
+1c0ceda3-bf44-4281-8a41-0ae60b3faadb          None Thyroid 2026 Molecular Dev 20260407 2026-04-08 04:08:34.835     570961920           4096
+a64587c3-1645-475e-84c2-18b2e70c1b3d          None Thyroid 2026 Molecular Dev 20260407 2026-04-08 04:08:34.698     570961920       40632320
+ec2aeee2-79b4-45ba-9dfb-7197fc8f1596          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 16:37:43.237     530853888              0
+f1013300-fe4f-47ee-abe0-10a79a3cff33          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 16:11:16.125     571224064           4096
+e3ede0d0-2237-4032-9d0a-b8de2748b01d          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 16:11:15.984     571224064       42205184
+5207fa80-b7c9-457f-bfef-95d300b04110          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 16:10:59.541     529018880      529010688
+118e9182-f46b-4d25-be3a-a5ccfb1756a7          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 16:10:18.362         12288          12288
+a5debd7a-2bb1-4b3d-bf9e-6128bac251b0          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 16:08:11.155     391131136        1052672
+99aff958-e9b4-4960-acc0-65b72ef01d98          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 15:56:07.097     392179712        4984832
+997d60e4-8921-4d84-8096-f988b46fbd1a          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 12:20:00.144     387985408       16257024
+477799f3-ad36-4412-b11a-23184f1ab29a          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 12:19:51.317     372781056           4096
+cbf6e572-a86b-4255-ac0f-c53599cadd52          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 12:19:51.206     372781056        6815744
+fe0bde20-764d-4748-a882-aee0521d72b4          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 12:19:28.181     406597632           4096
+74f733a8-37b0-4fbd-8746-5c78d1ae841b          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 12:19:28.062     406597632       40108032
+582cc9ed-44b8-4fbc-ac8d-7ff0fc6d21d6          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 06:40:23.834     367013888        3149824
+3171b1bc-969f-44d0-9842-b204a5b1efa3          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 06:40:13.328     364916736      364908544
+bddfdfea-2c8e-49aa-a6a5-f8a2182e5dec          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 06:39:51.221         12288          12288
+3f84722a-65c1-4cf2-a1b8-3f0a30a62f5e          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 06:22:21.772     369111040        1052672
+77311116-a571-4952-accc-9c941cc0c4d3          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 06:16:21.264     368586752        1314816
+52671871-f982-40e2-bc69-47a9578edfd6          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 06:12:20.370     368848896        1839104
+1e8b60e6-3a78-4e8a-88f3-0e613b51c59c          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 06:09:19.739     368586752        2101248
+4f48b3e9-3ba1-4d3a-b6b0-d5ccbfa9507a          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 05:59:20.249     367538176        4722688
+ce63ec02-2a5a-47e1-bb26-8f34822d2655          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 05:57:19.599     368062464        4198400
+8b0c7f6a-0919-4d5e-bcf4-aec174b7eae8          None Thyroid 2026 Molecular Dev 20260407 2026-04-07 05:44:43.719     364654592      364646400
+
+=== query_history_sample ===
+                            query_id                       start_time                         end_time     total_elapsed_time error_type error_message                           user_agent                      session_name query_type instance_type                                                           query_text_preview
+819d6b49-ffe1-4362-8c55-b0ec6bb2bc01 2026-04-08 00:11:44.994186-04:00 2026-04-08 00:11:45.055058-04:00 0 days 00:00:00.060872       None          None duckdb/v1.4.4(osx_amd64) python/3.14 cursor_dev_stage_20260408T040740Z      QUERY         Jumbo SELECT COUNT(*) FROM v2_stage."note_entities_llm_patient_decision_adherence"
+819d6b49-ff2d-43f7-b291-b516bbb6c868 2026-04-08 00:11:44.813919-04:00 2026-04-08 00:11:44.872896-04:00 0 days 00:00:00.058976       None          None duckdb/v1.4.4(osx_amd64) python/3.14 cursor_dev_stage_20260408T040740Z      QUERY         Jumbo      SELECT COUNT(*) FROM v2_stage."note_entities_llm_dynamic_risk_response"
+819d6b49-fea5-4cd8-bdb8-bfc09a789154 2026-04-08 00:11:44.677552-04:00 2026-04-08 00:11:44.736783-04:00 0 days 00:00:00.059231       None          None duckdb/v1.4.4(osx_amd64) python/3.14 cursor_dev_stage_20260408T040740Z      QUERY         Jumbo      SELECT COUNT(*) FROM v2_stage."note_entities_llm_frozen_section_detail"
+819d6b49-fe30-4460-aa20-372991385015 2026-04-08 00:11:44.561215-04:00 2026-04-08 00:11:44.622297-04:00 0 days 00:00:00.061082       None          None duckdb/v1.4.4(osx_amd64) python/3.14 cursor_dev_stage_20260408T040740Z      QUERY         Jumbo            SELECT COUNT(*) FROM v2_stage."note_entities_llm_airway_invasion"
+819d6b49-fdc9-4c09-b90b-5b51bc4fbbce 2026-04-08 00:11:44.457468-04:00 2026-04-08 00:11:44.516686-04:00 0 days 00:00:00.059218       None          None duckdb/v1.4.4(osx_amd64) python/3.14 cursor_dev_stage_20260408T040740Z      QUERY         Jumbo          SELECT COUNT(*) FROM v2_stage."note_entities_llm_vascular_invasion"
+819d6b49-fd30-4d66-86a3-4f964ca749b3 2026-04-08 00:11:44.304420-04:00 2026-04-08 00:11:44.365038-04:00 0 days 00:00:00.060618       None          None duckdb/v1.4.4(osx_amd64) python/3.14 cursor_dev_stage_20260408T040740Z      QUERY         Jumbo              SELECT COUNT(*) FROM v2_stage."note_entities_llm_physical_exam"
+819d6b49-fc83-4095-bb85-ef1e1b336e90 2026-04-08 00:11:44.131581-04:00 2026-04-08 00:11:44.191097-04:00 0 days 00:00:00.059515       None          None duckdb/v1.4.4(osx_amd64) python/3.14 cursor_dev_stage_20260408T040740Z      QUERY         Jumbo        SELECT COUNT(*) FROM v2_stage."note_entities_llm_presenting_symptoms"
+819d6b49-fc13-49ac-83f4-ed44058d44f0 2026-04-08 00:11:44.020201-04:00 2026-04-08 00:11:44.081340-04:00 0 days 00:00:00.061138       None          None duckdb/v1.4.4(osx_amd64) python/3.14 cursor_dev_stage_20260408T040740Z      QUERY         Jumbo           SELECT COUNT(*) FROM v2_stage."note_entities_llm_past_surgical_hx"
+819d6b49-fbac-443f-a368-451dc2e9c826 2026-04-08 00:11:43.916435-04:00 2026-04-08 00:11:43.976661-04:00 0 days 00:00:00.060226       None          None duckdb/v1.4.4(osx_amd64) python/3.14 cursor_dev_stage_20260408T040740Z      QUERY         Jumbo            SELECT COUNT(*) FROM v2_stage."note_entities_llm_past_medical_hx"
+819d6b49-faed-4b65-80e1-4919f31fd24b 2026-04-08 00:11:43.726082-04:00 2026-04-08 00:11:43.786165-04:00 0 days 00:00:00.060083       None          None duckdb/v1.4.4(osx_amd64) python/3.14 cursor_dev_stage_20260408T040740Z      QUERY         Jumbo        SELECT COUNT(*) FROM v2_stage."note_entities_llm_functional_outcomes"
+819d6b49-fa7e-4a90-9f1a-b988a37e7d37 2026-04-08 00:11:43.615283-04:00 2026-04-08 00:11:43.674235-04:00 0 days 00:00:00.058952       None          None duckdb/v1.4.4(osx_amd64) python/3.14 cursor_dev_stage_20260408T040740Z      QUERY         Jumbo         SELECT COUNT(*) FROM v2_stage."note_entities_llm_cervical_ln_detail"
+819d6b49-fa1a-4849-89c7-59949a5950ce 2026-04-08 00:11:43.514653-04:00 2026-04-08 00:11:43.573871-04:00 0 days 00:00:00.059218       None          None duckdb/v1.4.4(osx_amd64) python/3.14 cursor_dev_stage_20260408T040740Z      QUERY         Jumbo          SELECT COUNT(*) FROM v2_stage."note_entities_llm_survival_followup"
+819d6b49-f9b0-4adb-835c-1af27e171d00 2026-04-08 00:11:43.409150-04:00 2026-04-08 00:11:43.470060-04:00 0 days 00:00:00.060909       None          None duckdb/v1.4.4(osx_amd64) python/3.14 cursor_dev_stage_20260408T040740Z      QUERY         Jumbo                 SELECT COUNT(*) FROM v2_stage."note_entities_llm_recurrence"
+819d6b49-f92b-405c-9a7c-45ee58da26d4 2026-04-08 00:11:43.275401-04:00 2026-04-08 00:11:43.335152-04:00 0 days 00:00:00.059750       None          None duckdb/v1.4.4(osx_amd64) python/3.14 cursor_dev_stage_20260408T040740Z      QUERY         Jumbo         SELECT COUNT(*) FROM v2_stage."note_entities_llm_parathyroid_detail"
+819d6b49-f8a4-4cec-b0cd-63c8234b36dc 2026-04-08 00:11:43.141136-04:00 2026-04-08 00:11:43.201754-04:00 0 days 00:00:00.060617       None          None duckdb/v1.4.4(osx_amd64) python/3.14 cursor_dev_stage_20260408T040740Z      QUERY         Jumbo              SELECT COUNT(*) FROM v2_stage."note_entities_llm_rad_treatment"
+
+=== recent_queries_sample ===
+                            query_id                       start_time                         end_time     total_elapsed_time error_type                           user_agent                      session_name query_type                                                                                                                                                                                                                                    query_text_preview
+819d6b58-1615-4c7a-b62f-8fa518a7ad98 2026-04-08 00:27:08.181000-04:00                              NaT 0 days 00:00:00.002185       None duckdb/v1.4.4(osx_amd64) python/3.14 cursor_dev_stage_20260408T040740Z      QUERY \nSELECT query_id, start_time, end_time, total_elapsed_time, error_type,\n       user_agent, session_name, query_type,\n       substring(query_text, 1, 240) AS query_text_preview\nFROM MD_INFORMATION_SCHEMA.RECENT_QUERIES\nORDER BY start_time DE
+819d6b58-14f8-4a82-8390-01b87f2d6c23 2026-04-08 00:27:07.896000-04:00 2026-04-08 00:27:08.085000-04:00 0 days 00:00:00.188802       None duckdb/v1.4.4(osx_amd64) python/3.14 cursor_dev_stage_20260408T040740Z      QUERY  \nSELECT query_id, start_time, end_time, total_elapsed_time, error_type, error_message,\n       user_agent, session_name, query_type, instance_type,\n       substring(query_text, 1, 240) AS query_text_preview\nFROM MD_INFORMATION_SCHEMA.QUERY_H
+819d6b58-0d78-4ff3-96b9-dbb78d2c246a 2026-04-08 00:27:06.676000-04:00 2026-04-08 00:27:07.840000-04:00 0 days 00:00:01.163980       None duckdb/v1.4.4(osx_amd64) python/3.14 cursor_dev_stage_20260408T040740Z      QUERY                           \nSELECT snapshot_id, snapshot_name, database_name, created_ts, active_bytes, bytes_written\nFROM MD_INFORMATION_SCHEMA.DATABASE_SNAPSHOTS\nWHERE database_name = current_database()\nORDER BY created_ts DESC\nLIMIT 25;\n
+819d6b58-0aa6-4961-a8b3-9181b7a4f594 2026-04-08 00:27:05.360000-04:00 2026-04-08 00:27:05.834000-04:00 0 days 00:00:00.473879       None duckdb/v1.4.4(osx_amd64) python/3.14 cursor_dev_stage_20260408T040740Z      QUERY                                                                                                               \nSELECT name, uuid, created_ts, transient, historical_snapshot_retention, type\nFROM MD_INFORMATION_SCHEMA.DATABASES\nORDER BY name;\n
+

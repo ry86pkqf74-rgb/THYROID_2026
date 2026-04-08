@@ -1,0 +1,4 @@
+token_mode(): secrets.toml:MOTHERDUCK_TOKEN
+read_scaling_token_mode(): none
+rw_token_len: 467
+rs_token_len: 0

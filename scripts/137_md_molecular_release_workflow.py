@@ -158,6 +158,12 @@ def cmd_promote(args: argparse.Namespace) -> int:
     tag = args.tag or datetime.now(timezone.utc).strftime("%Y%m%d")
     label = args.label or f"{tag}_{_utc_stamp()}_promote"
 
+    # When promote is scoped to a rehearsal studies/ folder, keep 119 output alongside manifest.
+    if getattr(args, "output_dir", None) and not getattr(args, "validation_output_dir", None):
+        qa_out = Path(args.output_dir) / "qa_release_mode"
+        qa_out.mkdir(parents=True, exist_ok=True)
+        args.validation_output_dir = str(qa_out)
+
     if not args.execute and not args.dry_run:
         print(
             "\n[INFO] promote: no --execute — rehearsal mode: 130 prints SQL only; "

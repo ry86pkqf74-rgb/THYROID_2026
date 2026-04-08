@@ -1,0 +1,105 @@
+00:08:38  INFO      Output directory: studies/20260408T040740Z_cursor_md_sandbox_rehearsal/dev_gate
+00:08:38  INFO      Phase 1: Domain Inventory
+00:08:38  INFO      Registry domains: 31
+00:08:38  INFO      On-disk v2 parquets: 37
+00:08:38  INFO      Domain inventory: 44 rows (36 with parquets)
+00:08:38  INFO      Phase 2: Per-Domain Validation
+00:08:38  INFO        Validating imaging                                   (? rows expected)
+00:08:39  INFO      Expanded v2 combined input: 11037 note rows -> 8428 entity rows
+00:08:39  INFO        Validating tirads_granular                           (? rows expected)
+00:08:40  INFO      Expanded v2 combined input: 11037 note rows -> 179 entity rows
+00:08:40  INFO        Validating us_nodule_dynamics                        (? rows expected)
+00:08:41  INFO      Expanded v2 combined input: 11037 note rows -> 49 entity rows
+00:08:41  INFO        Validating labs                                      (? rows expected)
+00:08:42  INFO      Expanded v2 combined input: 11037 note rows -> 2460 entity rows
+00:08:42  INFO        Validating tg_kinetics                               (? rows expected)
+00:08:42  INFO      Expanded v2 combined input: 11037 note rows -> 173 entity rows
+00:08:42  INFO        Validating pathology                                 (? rows expected)
+00:08:43  INFO      Expanded v2 combined input: 11037 note rows -> 10894 entity rows
+00:08:43  INFO        Validating synoptic_pathology_enrichment             (? rows expected)
+00:08:44  INFO      Expanded v2 combined input: 11037 note rows -> 38 entity rows
+00:08:44  INFO        Validating rai_detailed                              (? rows expected)
+00:08:45  INFO      Expanded v2 combined input: 11037 note rows -> 3747 entity rows
+00:08:45  INFO        Validating rad_treatment                             (? rows expected)
+00:08:46  INFO      Expanded v2 combined input: 11037 note rows -> 519 entity rows
+00:08:46  INFO        Validating parathyroid_detail                        (? rows expected)
+00:08:46  INFO      Expanded v2 combined input: 11037 note rows -> 255 entity rows
+00:08:46  INFO        Validating recurrence                                (? rows expected)
+00:08:47  INFO      Expanded v2 combined input: 11037 note rows -> 303 entity rows
+00:08:47  INFO        Validating survival_followup                         (? rows expected)
+00:08:48  INFO      Expanded v2 combined input: 11037 note rows -> 9809 entity rows
+00:08:48  INFO        Validating cervical_ln_detail                        (? rows expected)
+00:08:49  INFO      Expanded v2 combined input: 11037 note rows -> 104 entity rows
+00:08:49  INFO        Validating functional_outcomes                       (? rows expected)
+00:08:49  INFO      Expanded v2 combined input: 11037 note rows -> 3322 entity rows
+00:08:49  INFO        Validating past_medical_hx                           (? rows expected)
+00:08:50  INFO      Expanded v2 combined input: 11037 note rows -> 865 entity rows
+00:08:50  INFO        Validating past_surgical_hx                          (? rows expected)
+00:08:51  INFO      Expanded v2 combined input: 11037 note rows -> 3919 entity rows
+00:08:51  INFO        Validating presenting_symptoms                       (? rows expected)
+00:08:52  INFO      Expanded v2 combined input: 11037 note rows -> 280 entity rows
+00:08:52  INFO        Validating physical_exam                             (? rows expected)
+00:08:53  INFO      Expanded v2 combined input: 11037 note rows -> 1924 entity rows
+00:08:53  INFO        Validating vascular_invasion                         (? rows expected)
+00:08:53  INFO      Expanded v2 combined input: 11037 note rows -> 4241 entity rows
+00:08:53  INFO        Validating airway_invasion                           (? rows expected)
+00:08:54  INFO      Expanded v2 combined input: 11037 note rows -> 3116 entity rows
+00:08:54  INFO        Validating frozen_section_detail                     (? rows expected)
+00:08:55  INFO      Expanded v2 combined input: 11037 note rows -> 380 entity rows
+00:08:55  INFO        Validating dynamic_risk_response                     (? rows expected)
+00:08:56  INFO      Expanded v2 combined input: 11037 note rows -> 53 entity rows
+00:08:56  INFO        Validating patient_decision_adherence                (? rows expected)
+00:08:57  INFO      Expanded v2 combined input: 11037 note rows -> 641 entity rows
+00:08:57  INFO      Phase 3: Cross-Domain Concordance
+00:08:58  INFO      Expanded v2 combined input: 11037 note rows -> 8428 entity rows
+00:08:58  INFO      Expanded v2 combined input: 11037 note rows -> 179 entity rows
+00:08:59  INFO      Expanded v2 combined input: 11037 note rows -> 49 entity rows
+00:09:00  INFO      Expanded v2 combined input: 11037 note rows -> 2460 entity rows
+00:09:00  INFO      Expanded v2 combined input: 11037 note rows -> 173 entity rows
+00:09:02  INFO      Expanded v2 combined input: 11037 note rows -> 10894 entity rows
+00:09:02  INFO      Expanded v2 combined input: 11037 note rows -> 38 entity rows
+00:09:03  INFO      Expanded v2 combined input: 11037 note rows -> 3747 entity rows
+00:09:04  INFO      Expanded v2 combined input: 11037 note rows -> 519 entity rows
+00:09:05  INFO      Expanded v2 combined input: 11037 note rows -> 255 entity rows
+00:09:05  INFO      Expanded v2 combined input: 11037 note rows -> 303 entity rows
+00:09:06  INFO      Expanded v2 combined input: 11037 note rows -> 9809 entity rows
+00:09:07  INFO      Expanded v2 combined input: 11037 note rows -> 104 entity rows
+00:09:08  INFO      Expanded v2 combined input: 11037 note rows -> 3322 entity rows
+00:09:08  INFO      Expanded v2 combined input: 11037 note rows -> 865 entity rows
+00:09:09  INFO      Expanded v2 combined input: 11037 note rows -> 3919 entity rows
+00:09:10  INFO      Expanded v2 combined input: 11037 note rows -> 280 entity rows
+00:09:11  INFO      Expanded v2 combined input: 11037 note rows -> 1924 entity rows
+00:09:12  INFO      Expanded v2 combined input: 11037 note rows -> 4241 entity rows
+00:09:12  INFO      Expanded v2 combined input: 11037 note rows -> 3116 entity rows
+00:09:13  INFO      Expanded v2 combined input: 11037 note rows -> 380 entity rows
+00:09:14  INFO      Expanded v2 combined input: 11037 note rows -> 53 entity rows
+00:09:14  INFO      Expanded v2 combined input: 11037 note rows -> 641 entity rows
+00:09:14  INFO      Combined entity DataFrame: 55699 rows from 23 domain files
+00:09:15  INFO      Classifying 55699 entity rows into comparison domains
+00:09:23  INFO      Comparison domains: complications, genetics, medications, operative_detail, problem_list, procedures, staging
+00:09:23  INFO      Building baseline (note_entities_*) comparators
+00:09:27  INFO      Building structured (canonical tables) comparators
+00:09:31  INFO      Building side-by-side concordance
+00:09:38  INFO        => llm_side_by_side.parquet    55,699 rows x  78 cols  (4.59 MB)
+00:09:40  INFO      Phase 4: Manual Review Queue (strict)
+00:09:40  INFO      Manual review queue: 5326 rows
+00:09:40  INFO      Phase 5: Promotion Gate
+00:09:40  INFO        Running G8 MotherDuck parity check
+00:09:43  INFO      Phase 6: Reports & MotherDuck Artifacts
+
+======================================================================
+  V2 DOMAIN PROMOTION GATE — PASS
+======================================================================
+  [PASS]  G1: Domain completeness (v2 only)
+  [PASS]  G2: Schema compliance (core columns)
+  [PASS]  G3: Provenance columns
+  [PASS]  G4: Duplicate rate
+  [PASS]  G5: Date coverage (critical domains)
+  [PASS]  G6: Concordance floor (critical domains)
+  [PASS]  G7: Unresolved discordance
+  [PASS]  G8: MotherDuck v2_stage parity
+======================================================================
+  Artifacts: studies/20260408T040740Z_cursor_md_sandbox_rehearsal/dev_gate
+  Verdict:   PASS
+======================================================================
+

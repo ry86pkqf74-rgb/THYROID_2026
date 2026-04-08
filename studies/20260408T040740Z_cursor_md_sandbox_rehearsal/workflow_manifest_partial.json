@@ -1,0 +1,44 @@
+{
+  "note": "Partial manifest: full promote was interrupted after QA 119 because 124 prod --final-release --dry-run exceeded session time budget (~15+ minutes). Steps 1–4 captured in 137_promote_rehearsal.log; 124/136 not finished in this run.",
+  "tag": "20260408",
+  "started": "2026-04-08T04:10:06Z",
+  "steps": [
+    {
+      "step": "backup-prod",
+      "returncode": 0,
+      "skipped": false,
+      "detail": "Printed CREATE DATABASE PrePromote SQL only (no --execute)"
+    },
+    {
+      "step": "try-named-snapshot",
+      "returncode": 0,
+      "skipped": false,
+      "detail": "DUCKLAKE prod: named snapshot skipped as expected"
+    },
+    {
+      "step": "writer-snapshot",
+      "returncode": 0,
+      "skipped": false,
+      "detail": "136 writer invoked with --dry-run (rehearsal)"
+    },
+    {
+      "step": "qa-validate (119)",
+      "returncode": 1,
+      "skipped": false,
+      "detail": "RELEASE BLOCKED: 6 failures — see qa_release_mode/validation_report.md and summary.md"
+    },
+    {
+      "step": "prod-audit (124)",
+      "returncode": null,
+      "skipped": false,
+      "detail": "Started --final-release --dry-run; process stopped after long runtime (no prod writes)"
+    },
+    {
+      "step": "refresh-readers (136)",
+      "returncode": null,
+      "skipped": false,
+      "detail": "Not reached in this session"
+    }
+  ],
+  "overall_returncode": null
+}
