@@ -9,6 +9,8 @@ Read/write tokens (staging, attach, promotion, validators)
 3. Official alias         motherduck_token    ← same family as MOTHERDUCK_TOKEN
 4. Legacy guard           LOCAL_DB_PATH       ← only when value looks like a JWT / ``md_`` PAT
 5. Secrets file           .streamlit/secrets.toml — same key order as above
+6. Repo-root ``.env``     Optional; loaded at import via ``python-dotenv`` (``override=False``) so
+   ``MD_READ_SCALING_TOKEN`` / ``MOTHERDUCK_TOKEN`` / etc. can live next to other local env (see ``.env.motherduck.example``).
 
 Read-scaling token (dashboard read-only / Business scale-out)
 ─────────────────────────────────────────────────────────────
@@ -55,6 +57,26 @@ from urllib.parse import quote_plus
 
 import duckdb
 
+_REPO_ROOT = Path(__file__).resolve().parent
+
+
+def _load_repo_dotenv() -> None:
+    """Load repo-root env files when ``python-dotenv`` is available.
+
+    Loads ``.env`` then ``.env.motherduck`` (both optional) with ``override=False`` so
+    shell/CI-injected variables and earlier keys stay authoritative.
+    """
+    try:
+        from dotenv import load_dotenv
+    except ImportError:
+        return
+    for name in (".env", ".env.motherduck"):
+        env_path = _REPO_ROOT / name
+        if env_path.is_file():
+            load_dotenv(env_path, override=False)
+
+
+_load_repo_dotenv()
 
 LOCAL_DUCKDB_PATH = os.getenv(
     "LOCAL_DUCKDB_PATH", "thyroid_master_local.duckdb"
