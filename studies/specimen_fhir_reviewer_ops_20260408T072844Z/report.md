@@ -3,7 +3,7 @@
 ## Git SHA (export run)
 
 - **Manifest / export git SHA:** `bbf91484f1cd087cf9cef8c22940ea9ab2e3accc` (repo `HEAD` at time of MotherDuck export).
-- **Post-ops docs/code:** commit this report and script/doc updates reference the SHA on `main` after push (run `git rev-parse HEAD` locally).
+- **Docs / script commit (this deliverable):** `b5065ee9` — operationalized `141`, reviewer runbooks, and this report.
 
 ## NDJSON export (reviewer-ready bundle)
 
