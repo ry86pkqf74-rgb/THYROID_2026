@@ -28,7 +28,8 @@
 # Staging plane: new v2 parquets load into MotherDuck schema v2_stage; canonical tables
 # live in main only after promotion. See docs/motherduck_v2_staging_runbook.md
 
-PYTHON := .venv/bin/python
+# Prefer project venv when present; else system python3 (DuckDB required in env).
+PYTHON := $(shell if test -x .venv/bin/python; then echo .venv/bin/python; else command -v python3; fi)
 
 # ── MotherDuck token guard (env vars and/or .streamlit/secrets.toml via get_token) ─
 define check_md_rw_token

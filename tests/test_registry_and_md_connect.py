@@ -287,6 +287,13 @@ class TestMotherDuckReadScaling:
     def test_connect_rw_refuses_read_scaling_only_environment(
         self, monkeypatch, tmp_path
     ):
+        import motherduck_client as mc
+
+        monkeypatch.setattr(
+            mc,
+            "LOCAL_MOTHERDUCK_TOML_PATH",
+            tmp_path / "__test_no_motherduck_local__.toml",
+        )
         monkeypatch.chdir(tmp_path)
         for key in (
             "MOTHERDUCK_TOKEN",

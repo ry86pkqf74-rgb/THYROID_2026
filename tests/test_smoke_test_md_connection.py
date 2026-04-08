@@ -11,6 +11,15 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 
 
+def _isolate_motherduck_toml(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """Prevent real repo ``motherduck.local.toml`` from satisfying get_token in unit tests."""
+    import motherduck_client as mc
+
+    monkeypatch.setattr(
+        mc, "LOCAL_MOTHERDUCK_TOML_PATH", tmp_path / "__test_no_motherduck_local__.toml"
+    )
+
+
 def test_makefile_md_smoke_invokes_fail_closed_smoke_script() -> None:
     """Guardrail: README documents `make md-smoke` — keep the target wired to this script."""
     text = (ROOT / "Makefile").read_text(encoding="utf-8")
@@ -41,6 +50,7 @@ class TestSmokeMdConnectionScript:
 
     def test_md_mode_no_token_exits_1(self, monkeypatch, tmp_path) -> None:
         mod = _load_smoke_module()
+        _isolate_motherduck_toml(monkeypatch, tmp_path)
         monkeypatch.chdir(tmp_path)
         for key in (
             "MOTHERDUCK_TOKEN",
@@ -68,6 +78,7 @@ class TestSmokeMdConnectionScript:
     ) -> None:
         """--md must fail closed when the only configured secret is read-scaling (not RW)."""
         mod = _load_smoke_module()
+        _isolate_motherduck_toml(monkeypatch, tmp_path)
         monkeypatch.chdir(tmp_path)
         for key in (
             "MOTHERDUCK_TOKEN",
