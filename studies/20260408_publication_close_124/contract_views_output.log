@@ -1,0 +1,39 @@
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+
+  [txn] BEGIN (main table loads + parquet parity only)
+=== Phase 2: Canonical table materialization ===
+  [OK] main.canonical_extracted_fact_long_v2: local=55,500  remote=55,500
+  [OK] main.canonical_fact_quarantine_v2: local=199  remote=199
+  [skip] note_extraction_runs.parquet not found
+  [skip] longitudinal_lab_canonical_v1.parquet not found
+  [skip] thyroglobulin_lab_canonical_v1.parquet not found
+
+=== Phase 3: Episode/linkage contract tables ===
+  [OK] main.tumor_episode_master_v2: local=11,691  remote=11,691
+  [OK] main.molecular_test_episode_v2: local=10,126  remote=10,126
+  [OK] main.rai_treatment_episode_v2: local=1,857  remote=1,857
+  [OK] main.operative_episode_detail_v2: local=9,371  remote=9,371
+
+=== Post-write row parity (parquet vs main, before COMMIT) ===
+  [parity OK] main.canonical_extracted_fact_long_v2: 55,500 rows
+  [parity OK] main.canonical_fact_quarantine_v2: 199 rows
+  [parity OK] main.tumor_episode_master_v2: 11,691 rows
+  [parity OK] main.molecular_test_episode_v2: 10,126 rows
+  [parity OK] main.rai_treatment_episode_v2: 1,857 rows
+  [parity OK] main.operative_episode_detail_v2: 9,371 rows
+  [txn] COMMIT: main table loads persisted (views/DDL afterward; failures there do not roll back tables).
+
+=== Contract views (DDL) ===
+  [ddl] contract views pass finished (review warnings for any partial failures)
+
+=== Verification (views) ===
+  [verify] main.longitudinal_lab_deduped_v: 56,198 rows
+  [verify] main.linkage_summary_v: 10,871 rows
+  [verify] main.episode_completeness_summary_v: 4 rows
+  [verify] main.molecular_results_contract_v: 10,862 rows
+  [verify] main.molecular_variant_contract_v: 1,640 rows
+  [verify] main.molecular_qc_summary_v: 2 rows
+  [verify] main.molecular_patient_rollup_v: 10,862 rows
+
+  [done] contract views setup complete

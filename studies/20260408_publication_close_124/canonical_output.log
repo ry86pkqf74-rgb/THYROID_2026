@@ -1,0 +1,72 @@
+======================================================================
+  103 — canonical_extracted_fact_long (v1 + v2) + quarantine
+  Registry: YAML-driven
+  Domains: 30
+======================================================================
+  skip (no parquet): note_entities_staging
+  skip (no parquet): note_entities_genetics
+  skip (no parquet): note_entities_procedures
+  skip (no parquet): note_entities_operative_detail
+  skip (no parquet): note_entities_complications
+  skip (no parquet): note_entities_medications
+  skip (no parquet): note_entities_problem_list
+    expanded fleet format: 11,037 note rows → 8,428 entity rows
+  loaded note_entities_llm_imaging: 8,428 rows  [family=imaging]
+    expanded fleet format: 11,037 note rows → 179 entity rows
+  loaded note_entities_llm_tirads_granular: 179 rows  [family=imaging]
+    expanded fleet format: 11,037 note rows → 49 entity rows
+  loaded note_entities_llm_us_nodule_dynamics: 49 rows  [family=imaging]
+    expanded fleet format: 11,037 note rows → 2,460 entity rows
+  loaded note_entities_llm_labs: 2,460 rows  [family=followup]
+    expanded fleet format: 11,037 note rows → 173 entity rows
+  loaded note_entities_llm_tg_kinetics: 173 rows  [family=followup]
+    expanded fleet format: 11,037 note rows → 10,894 entity rows
+  loaded note_entities_llm_pathology: 10,894 rows  [family=pathology]
+    expanded fleet format: 11,037 note rows → 38 entity rows
+  loaded note_entities_llm_synoptic_pathology_enrichment: 38 rows  [family=pathology]
+    expanded fleet format: 11,037 note rows → 3,747 entity rows
+  loaded note_entities_llm_rai_detailed: 3,747 rows  [family=rai]
+    expanded fleet format: 11,037 note rows → 519 entity rows
+  loaded note_entities_llm_rad_treatment: 519 rows  [family=rai]
+    expanded fleet format: 11,037 note rows → 255 entity rows
+  loaded note_entities_llm_parathyroid_detail: 255 rows  [family=operative]
+    expanded fleet format: 11,037 note rows → 303 entity rows
+  loaded note_entities_llm_recurrence: 303 rows  [family=followup]
+    expanded fleet format: 11,037 note rows → 9,809 entity rows
+  loaded note_entities_llm_survival_followup: 9,809 rows  [family=followup]
+    expanded fleet format: 11,037 note rows → 104 entity rows
+  loaded note_entities_llm_cervical_ln_detail: 104 rows  [family=pathology]
+    expanded fleet format: 11,037 note rows → 3,322 entity rows
+  loaded note_entities_llm_functional_outcomes: 3,322 rows  [family=followup]
+    expanded fleet format: 11,037 note rows → 865 entity rows
+  loaded note_entities_llm_past_medical_hx: 865 rows  [family=demographics]
+    expanded fleet format: 11,037 note rows → 3,919 entity rows
+  loaded note_entities_llm_past_surgical_hx: 3,919 rows  [family=demographics]
+    expanded fleet format: 11,037 note rows → 280 entity rows
+  loaded note_entities_llm_presenting_symptoms: 280 rows  [family=demographics]
+    expanded fleet format: 11,037 note rows → 1,924 entity rows
+  loaded note_entities_llm_physical_exam: 1,924 rows  [family=demographics]
+    expanded fleet format: 11,037 note rows → 4,241 entity rows
+  loaded note_entities_llm_vascular_invasion: 4,241 rows  [family=pathology]
+    expanded fleet format: 11,037 note rows → 3,116 entity rows
+  loaded note_entities_llm_airway_invasion: 3,116 rows  [family=operative]
+    expanded fleet format: 11,037 note rows → 380 entity rows
+  loaded note_entities_llm_frozen_section_detail: 380 rows  [family=operative]
+    expanded fleet format: 11,037 note rows → 53 entity rows
+  loaded note_entities_llm_dynamic_risk_response: 53 rows  [family=followup]
+    expanded fleet format: 11,037 note rows → 641 entity rows
+  loaded note_entities_llm_patient_decision_adherence: 641 rows  [family=followup]
+  multi-surgery patients: 0
+  inferred episode linkage (family-specific)
+  v1 split: clean=0  quarantined=0
+  v2 split: clean=55,500  quarantined=199
+  QC report: /Users/ros/THyroid 2026/exports/fact_lineage_qc/qc_report_20260408_1618.md
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+  DuckDB canonical_extracted_fact_long_v1: 0 rows
+  DuckDB canonical_fact_quarantine_v1: 0 rows
+  DuckDB canonical_extracted_fact_long_v2: 55,500 rows
+  DuckDB canonical_fact_quarantine_v2: 199 rows
+======================================================================
+  DONE
+======================================================================
