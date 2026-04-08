@@ -58,7 +58,7 @@ make verify-provenance
 
 - [`data_dictionary.md`](../data_dictionary.md) — schema and provenance policy
 - [`docs/analysis_resolved_layer.md`](analysis_resolved_layer.md) — manuscript-ready resolved layer
-- [`docs/motherduck_database_contract_v1.md`](motherduck_database_contract_v1.md) — includes **specimen identity** (`specimen_*_v1`) and **analytic FHIR export** (`fhir_*_v1`) materialized by `scripts/138_md_specimen_fhir_layer.py`; **NDJSON bundle export** to `exports/fhir_specimen_<ts>/` via [`scripts/141_fhir_specimen_json_export.py`](../scripts/141_fhir_specimen_json_export.py) (`specimen_fhir_export_restore_v1` UA, bundle table preferred + resource-table reconstruction fallback)
+- [`docs/motherduck_database_contract_v1.md`](motherduck_database_contract_v1.md) — includes **specimen identity** (`specimen_*_v1`) and **analytic FHIR export** (`fhir_*_v1`) materialized by `scripts/138_md_specimen_fhir_layer.py`; **NDJSON bundle export** to `exports/fhir_specimen_<ts>/` via [`scripts/141_fhir_specimen_json_export.py`](../scripts/141_fhir_specimen_json_export.py) (`specimen_fhir_export_restore_v1` UA, bundle table preferred + resource-table reconstruction fallback; `manifest.json` lists `source_catalog`, `source_views`, `from_prebuilt_bundle_view`; `--local-duckdb` for offline runs)
 
 ### Specimen + analytic FHIR (v1)
 

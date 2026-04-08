@@ -94,6 +94,25 @@ After a release snapshot on the writer catalog, readers using **`MD_READ_SCALING
 
    Output directory pattern: `exports/fhir_specimen_<UTC_timestamp>/` with `specimen_bundles.ndjson`, `manifest.json`, and `README.md`. That tree is **gitignored**; keep manifests or study notes under `studies/` if you need provenance in git.
 
+### Export `manifest.json` (script 141)
+
+Machine-readable provenance for each run:
+
+| Field | Meaning |
+|-------|---------|
+| `git_sha` | `git rev-parse HEAD` (or `unknown`) |
+| `timestamp` / `build_timestamp_utc` | UTC build time |
+| `source_catalog` | Resolved catalog name (`current_database()`), or `MOTHERDUCK_DATABASE` / `MOTHERDUCK_DB` when set |
+| `source_views` | Objects read for bundle rows: `[main.fhir_bundle_specimen_export_v1]` **or** the four reconstructed `main.fhir_*_v1` resource tables |
+| `from_prebuilt_bundle_view` | `true` when rows came from `fhir_bundle_specimen_export_v1`; `false` when reconstructed |
+| `export_route` | `bundle_table` \| `reconstructed_from_resources` |
+| `custom_user_agent` | Default `specimen_fhir_export_restore_v1` |
+| `export_source_row_count` | Rows returned by the SQL path before dropping blank JSON |
+| `bundle_row_count` | Lines written to `specimen_bundles.ndjson` |
+| `source_tables_main` | Row counts (or `missing`) for the FHIR-related `main.*` tables enumerated by the exporter |
+
+Offline tests: `pytest tests/test_specimen_fhir_scripts_offline.py -k 141` (temp DuckDB; no secrets).
+
 ### Service account / org admin (reviewer identity)
 
 This repo does **not** issue MotherDuck tokens or call Admin REST APIs. **Build operators** should use **`MD_SA_TOKEN`** or **`MOTHERDUCK_TOKEN`** (RW) from a secret manager, **`motherduck.local.toml`** (gitignored), or `.streamlit/secrets.toml`. **Reviewers** should receive a **read-scaling** token or an invitation to a **restricted** share with read-only access. Typical MotherDuck UI paths (wording may vary by product version):

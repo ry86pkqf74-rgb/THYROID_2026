@@ -78,6 +78,23 @@ JOIN main.fhir_episode_of_care_v1 fo
 ORDER BY fs.specimen_id
 """
 
+BUNDLE_SOURCE_OBJECT = "main.fhir_bundle_specimen_export_v1"
+RECONSTRUCT_SOURCE_OBJECTS = (
+    "main.fhir_specimen_v1",
+    "main.fhir_procedure_collection_v1",
+    "main.fhir_encounter_v1",
+    "main.fhir_episode_of_care_v1",
+)
+
+
+def _source_views_for_route(export_route: str) -> list[str]:
+    """Tables/views read to produce bundle JSON for this export (manifest provenance)."""
+    if export_route == "bundle_table":
+        return [BUNDLE_SOURCE_OBJECT]
+    if export_route == "reconstructed_from_resources":
+        return list(RECONSTRUCT_SOURCE_OBJECTS)
+    return []
+
 
 def _ua_resolved() -> str:
     return (os.environ.get("MOTHERDUCK_CUSTOM_USER_AGENT") or "").strip() or (
@@ -266,29 +283,32 @@ def run_export(
     md_attach = (
         os.environ.get("MOTHERDUCK_DATABASE") or os.environ.get("MOTHERDUCK_DB") or ""
     ).strip()
+    source_catalog = catalog.get("current_database")
+    if not source_catalog and md_attach:
+        source_catalog = md_attach
 
     manifest: dict[str, Any] = {
         "export_kind": "specimen_fhir_analytic_v1",
         "build_timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "git_sha": git_sha,
         "custom_user_agent": UA,
         "motherduck_session_hint": motherduck_session_hint or DEFAULT_SESSION_HINT,
+        "source_catalog": source_catalog,
         "source_catalog_env": md_attach or None,
+        "source_views": _source_views_for_route(export_route),
+        "from_prebuilt_bundle_view": export_route == "bundle_table",
         "source_database_probe": catalog,
         "export_route": export_route,
         "export_route_detail": route_err,
         "reconstructed_from_tables": (
-            [
-                "main.fhir_specimen_v1",
-                "main.fhir_procedure_collection_v1",
-                "main.fhir_encounter_v1",
-                "main.fhir_episode_of_care_v1",
-            ]
+            list(RECONSTRUCT_SOURCE_OBJECTS)
             if export_route == "reconstructed_from_resources"
             else None
         ),
-        "preferred_source": "main.fhir_bundle_specimen_export_v1",
+        "preferred_source": BUNDLE_SOURCE_OBJECT,
         "output_dir": str(out_dir),
+        "export_source_row_count": len(rows),
         "bundle_row_count": written,
         "source_tables_main": {k: counts.get(k) for k in FHIR_TABLES},
     }
@@ -301,6 +321,9 @@ def run_export(
             f"- **Build (UTC):** {manifest['build_timestamp_utc']}",
             f"- **Git SHA:** {manifest['git_sha']}",
             f"- **Export route:** `{export_route}`",
+            f"- **From pre-built bundle view:** {manifest['from_prebuilt_bundle_view']}",
+            f"- **Source catalog (resolved):** `{manifest.get('source_catalog')}`",
+            f"- **Source views:** {', '.join(manifest.get('source_views') or [])}",
             f"- **Query user-agent:** `{manifest['custom_user_agent']}`",
             f"- **MotherDuck session hint:** `{manifest['motherduck_session_hint']}`",
             f"- **Bundle rows (NDJSON lines):** {manifest['bundle_row_count']}",

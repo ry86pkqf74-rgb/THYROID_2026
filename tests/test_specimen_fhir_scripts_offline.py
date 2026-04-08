@@ -108,6 +108,12 @@ def test_141_export_offline_minimal_db(tmp_path: Path) -> None:
     assert loaded["export_kind"] == "specimen_fhir_analytic_v1"
     assert loaded["custom_user_agent"] == mod.UA
     assert loaded["export_route"] == "bundle_table"
+    assert loaded["from_prebuilt_bundle_view"] is True
+    assert loaded["source_views"] == [mod.BUNDLE_SOURCE_OBJECT]
+    assert loaded["export_source_row_count"] == 1
+    assert "timestamp" in loaded and loaded["timestamp"].endswith("Z")
+    assert isinstance(loaded.get("source_database_probe"), dict)
+    assert loaded.get("source_catalog") is not None
     assert loaded["motherduck_session_hint"] == mod.DEFAULT_SESSION_HINT
     stm = loaded["source_tables_main"]
     assert stm["fhir_bundle_specimen_export_v1"] == 1
@@ -177,8 +183,11 @@ def test_141_reconstruct_path_without_bundle_table(tmp_path: Path) -> None:
         con.close()
 
     assert manifest["export_route"] == "reconstructed_from_resources"
+    assert manifest["from_prebuilt_bundle_view"] is False
+    assert manifest["source_views"] == list(mod.RECONSTRUCT_SOURCE_OBJECTS)
     assert manifest["bundle_row_count"] == 1
     assert manifest["reconstructed_from_tables"] is not None
+    assert manifest["export_source_row_count"] == 1
     nd_dirs = list(out_root.glob("fhir_specimen_*"))
     assert len(nd_dirs) == 1
     line = (nd_dirs[0] / "specimen_bundles.ndjson").read_text(encoding="utf-8").strip()
@@ -225,6 +234,96 @@ def test_141_skips_empty_bundle_json_rows(tmp_path: Path) -> None:
     lines = (out / "specimen_bundles.ndjson").read_text(encoding="utf-8").strip()
     assert lines == ""
     assert manifest["bundle_row_count"] == 0
+    assert manifest["export_source_row_count"] == 2
+    assert manifest["from_prebuilt_bundle_view"] is True
+
+
+def test_141_force_reconstruct_skips_bundle_table(tmp_path: Path) -> None:
+    """``force_reconstruct`` ignores a populated bundle table and joins resource rows."""
+    mod = _load_script_141()
+    db_path = tmp_path / "force.duckdb"
+    out_root = tmp_path / "out_force"
+    spec_j = json.dumps({"resourceType": "Specimen", "id": "sfx"}, separators=(",", ":"))
+    proc_j = json.dumps({"resourceType": "Procedure", "id": "pfx"}, separators=(",", ":"))
+    enc_j = json.dumps({"resourceType": "Encounter", "id": "efx"}, separators=(",", ":"))
+    eoc_j = json.dumps({"resourceType": "EpisodeOfCare", "id": "ofx"}, separators=(",", ":"))
+    bogus_bundle = json.dumps(
+        {"resourceType": "Bundle", "type": "collection", "id": "should-not-export"},
+        separators=(",", ":"),
+    )
+    con = duckdb.connect(str(db_path))
+    try:
+        con.execute(
+            "CREATE TABLE main.fhir_bundle_specimen_export_v1 "
+            "(specimen_id VARCHAR, bundle_json VARCHAR)"
+        )
+        con.execute(
+            "INSERT INTO main.fhir_bundle_specimen_export_v1 VALUES ('sp-decoy', ?)",
+            [bogus_bundle],
+        )
+        con.execute(
+            "CREATE TABLE main.fhir_specimen_v1 (specimen_id VARCHAR, resource_json JSON)"
+        )
+        con.execute(
+            "CREATE TABLE main.fhir_procedure_collection_v1 "
+            "(specimen_id VARCHAR, resource_json JSON)"
+        )
+        con.execute(
+            "CREATE TABLE main.fhir_encounter_v1 "
+            "(specimen_id VARCHAR, patient_fhir_id VARCHAR, episode_fhir_id VARCHAR, resource_json JSON)"
+        )
+        con.execute(
+            "CREATE TABLE main.fhir_episode_of_care_v1 "
+            "(episode_fhir_id VARCHAR, patient_fhir_id VARCHAR, resource_json JSON)"
+        )
+        for name in mod.FHIR_TABLES:
+            if name in (
+                "fhir_bundle_specimen_export_v1",
+                "fhir_specimen_v1",
+                "fhir_procedure_collection_v1",
+                "fhir_encounter_v1",
+                "fhir_episode_of_care_v1",
+            ):
+                continue
+            con.execute(f"CREATE TABLE main.{name} (stub INT)")
+        con.execute(
+            "INSERT INTO main.fhir_specimen_v1 VALUES ('sp-real', CAST(? AS JSON))",
+            [spec_j],
+        )
+        con.execute(
+            "INSERT INTO main.fhir_procedure_collection_v1 VALUES ('sp-real', CAST(? AS JSON))",
+            [proc_j],
+        )
+        con.execute(
+            "INSERT INTO main.fhir_encounter_v1 VALUES ('sp-real', 'p1', 'e1', CAST(? AS JSON))",
+            [enc_j],
+        )
+        con.execute(
+            "INSERT INTO main.fhir_episode_of_care_v1 VALUES ('e1', 'p1', CAST(? AS JSON))",
+            [eoc_j],
+        )
+    finally:
+        con.close()
+
+    con = duckdb.connect(str(db_path))
+    try:
+        _, manifest = mod.run_export(
+            con,
+            output_root=out_root,
+            limit=0,
+            git_sha="force-recon",
+            force_reconstruct=True,
+        )
+    finally:
+        con.close()
+
+    assert manifest["export_route"] == "reconstructed_from_resources"
+    assert manifest["from_prebuilt_bundle_view"] is False
+    out_dir = list(out_root.glob("fhir_specimen_*"))[0]
+    line = (out_dir / "specimen_bundles.ndjson").read_text(encoding="utf-8").strip()
+    obj = json.loads(line)
+    assert obj["resourceType"] == "Bundle"
+    assert obj["entry"][0]["resource"]["id"] == "sfx"
 
 
 def test_141_unknown_git_sha_manifest(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
