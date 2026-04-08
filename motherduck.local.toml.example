@@ -1,0 +1,9 @@
+# Copy to motherduck.local.toml at repo root (gitignored).
+# Loaded by motherduck_client.get_token() / get_read_scaling_token() after env vars
+# and LOCAL_DB_PATH JWT guard, before .streamlit/secrets.toml.
+#
+# MD_SA_TOKEN = "md_…"
+# MOTHERDUCK_TOKEN = "md_…"
+# MD_READ_SCALING_TOKEN = "md_…"
+# MOTHERDUCK_READ_SCALING_TOKEN = "md_…"
+# MD_READ_SCALING_SESSION_HINT = "optional_reader_hint"

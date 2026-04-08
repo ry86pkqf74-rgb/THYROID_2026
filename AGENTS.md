@@ -14,7 +14,7 @@
 - When user says "leave X alone," do not stage/commit/push those files — respect work-in-progress boundaries
 - Commit only files directly related to the current task scope; leave unrelated modified files uncommitted unless explicitly asked
 - Always verify actual file/git state before assuming code is missing (user may provide prompts from stale context)
-- MotherDuck RW token for local `--md` runs: **saved locally in `.toml`** (primary user convention: **gitignored** `.streamlit/secrets.toml`) under `MOTHERDUCK_TOKEN` and/or `MD_SA_TOKEN`, not only shell env. `motherduck_client.get_token()` falls back to that file when env vars are unset; use it for MotherDuck whenever appropriate; never print or commit token values — logs: SET/MISSING/length only
+- MotherDuck RW token for local `--md` runs: **saved locally in TOML** — **gitignored** repo-root `motherduck.local.toml` (see `motherduck.local.toml.example`) or `.streamlit/secrets.toml` under `MOTHERDUCK_TOKEN` and/or `MD_SA_TOKEN`, not only shell env. `motherduck_client.get_token()` loads those files when env vars are unset; never print or commit token values — logs: SET/MISSING/length only
 - When integrating external data sources, never auto-merge uncertain patient matches; route all ambiguous linkages to review queues with full context for manual resolution
 - Prefer append-only long-format event/lab tables over stuffing serial data into wide patient rows
 - When fixing a bug pattern, find and fix all instances across the entire codebase, not just the single file from the traceback

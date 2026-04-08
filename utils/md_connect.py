@@ -147,8 +147,10 @@ def connect_md_or_file(
                         "  Staging, promotion, and validators require MD_SA_TOKEN or MOTHERDUCK_TOKEN."
                     )
                 else:
-                    print("  FATAL: --md requested but no MotherDuck token found in environment.")
-                    print("  Set MD_SA_TOKEN (CI) or MOTHERDUCK_TOKEN (personal) before running.")
+                    print("  FATAL: --md requested but no MotherDuck RW token resolved.")
+                    print(
+                        "  Set MD_SA_TOKEN / MOTHERDUCK_TOKEN in env, or motherduck.local.toml / .streamlit/secrets.toml."
+                    )
                 sys.exit(1)
             print(f"  Using file DB (--md, no MotherDuck token in env): {db_path}")
         return duckdb.connect(str(db_path))

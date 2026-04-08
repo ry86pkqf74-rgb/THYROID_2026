@@ -8,8 +8,9 @@ Read/write tokens (staging, attach, promotion, validators)
 2. Personal token         MOTHERDUCK_TOKEN    ← interactive development
 3. Official alias         motherduck_token    ← same family as MOTHERDUCK_TOKEN
 4. Legacy guard           LOCAL_DB_PATH       ← only when value looks like a JWT / ``md_`` PAT
-5. Secrets file           .streamlit/secrets.toml — same key order as above
-6. Repo-root ``.env``     Optional; loaded at import via ``python-dotenv`` (``override=False``) so
+5. Repo-root TOML         ``motherduck.local.toml`` (gitignored) — same RW key order as secrets
+6. Secrets file           .streamlit/secrets.toml — same key order as above
+7. Repo-root ``.env``     Optional; loaded at import via ``python-dotenv`` (``override=False``) so
    ``MD_READ_SCALING_TOKEN`` / ``MOTHERDUCK_TOKEN`` / etc. can live next to other local env (see ``.env.motherduck.example``).
 
 Read-scaling token (dashboard read-only / Business scale-out)
@@ -57,7 +58,13 @@ from urllib.parse import quote_plus
 
 import duckdb
 
-_REPO_ROOT = Path(__file__).resolve().parent
+REPO_ROOT = Path(__file__).resolve().parent
+# Back-compat alias — some imports expect ``_REPO_ROOT``.
+_REPO_ROOT = REPO_ROOT
+
+# Optional repo-root TOML for MotherDuck tokens (same keys as ``.streamlit/secrets.toml``).
+# Tests may monkeypatch this path. Not committed — see ``motherduck.local.toml.example``.
+LOCAL_MOTHERDUCK_TOML_PATH = REPO_ROOT / "motherduck.local.toml"
 
 
 def _load_repo_dotenv() -> None:
@@ -172,6 +179,20 @@ def resolve_database_for_env(env: str | None = None) -> str:
     return _load_env_databases().get(env_key, _ENV_DATABASES["prod"])
 
 
+def _local_motherduck_toml_dict() -> dict[str, Any]:
+    """Parse ``LOCAL_MOTHERDUCK_TOML_PATH`` when present; ignore parse errors."""
+    path = LOCAL_MOTHERDUCK_TOML_PATH
+    if not path.is_file():
+        return {}
+    try:
+        import toml  # type: ignore
+
+        raw = toml.load(str(path))
+    except Exception:
+        return {}
+    return raw if isinstance(raw, dict) else {}
+
+
 def get_token(prefer_service_account: bool = False) -> str | None:
     """Resolve a MotherDuck read/write token.
 
@@ -181,7 +202,8 @@ def get_token(prefer_service_account: bool = False) -> str | None:
       2. ``MOTHERDUCK_TOKEN``
       3. ``motherduck_token`` (env alias)
       4. ``LOCAL_DB_PATH`` when it looks like a JWT / ``md_`` PAT (misconfig guard)
-      5. ``.streamlit/secrets.toml`` — ``MD_SA_TOKEN``, then ``MOTHERDUCK_TOKEN``, then ``motherduck_token``
+      5. Repo-root ``motherduck.local.toml`` — ``MD_SA_TOKEN``, then ``MOTHERDUCK_TOKEN``, then ``motherduck_token``
+      6. ``.streamlit/secrets.toml`` — same key order as (5)
 
     *prefer_service_account* is ignored (kept for backward-compatible call sites).
     """
@@ -198,6 +220,12 @@ def get_token(prefer_service_account: bool = False) -> str | None:
     lp = _jwt_like(os.getenv("LOCAL_DB_PATH"))
     if lp:
         return lp
+
+    local = _local_motherduck_toml_dict()
+    for key in ("MD_SA_TOKEN", "MOTHERDUCK_TOKEN", "motherduck_token"):
+        val = local.get(key)
+        if val and str(val).strip():
+            return str(val).strip()
 
     secrets_path = Path(".streamlit") / "secrets.toml"
     if secrets_path.exists():
@@ -219,7 +247,8 @@ def get_read_scaling_token() -> str | None:
     Resolution order:
       1. ``MD_READ_SCALING_TOKEN``
       2. ``MOTHERDUCK_READ_SCALING_TOKEN``
-      3. ``.streamlit/secrets.toml`` — same keys
+      3. Repo-root ``motherduck.local.toml`` — same keys
+      4. ``.streamlit/secrets.toml`` — same keys
 
     This token is intentionally **not** part of :func:`get_token` so that CI and
     promotion flows never pick it up as a read/write credential.
@@ -228,6 +257,11 @@ def get_read_scaling_token() -> str | None:
         v = os.getenv(key)
         if v and str(v).strip():
             return str(v).strip()
+    local = _local_motherduck_toml_dict()
+    for key in _READ_SCALING_SECRET_KEYS:
+        val = local.get(key)
+        if val and str(val).strip():
+            return str(val).strip()
     secrets_path = Path(".streamlit") / "secrets.toml"
     if secrets_path.exists():
         try:
@@ -248,6 +282,11 @@ def read_scaling_token_mode() -> str:
         return "env:MD_READ_SCALING_TOKEN"
     if os.getenv("MOTHERDUCK_READ_SCALING_TOKEN"):
         return "env:MOTHERDUCK_READ_SCALING_TOKEN"
+    loc = _local_motherduck_toml_dict()
+    if loc.get("MD_READ_SCALING_TOKEN"):
+        return "motherduck.local.toml:MD_READ_SCALING_TOKEN"
+    if loc.get("MOTHERDUCK_READ_SCALING_TOKEN"):
+        return "motherduck.local.toml:MOTHERDUCK_READ_SCALING_TOKEN"
     secrets_path = Path(".streamlit") / "secrets.toml"
     if secrets_path.exists():
         try:
@@ -284,6 +323,7 @@ def token_mode() -> str:
       'env:MOTHERDUCK_TOKEN'           – personal env var
       'env:motherduck_token'           – legacy personal env alias
       'env:LOCAL_DB_PATH'              – JWT-like token carried in LOCAL_DB_PATH
+      'motherduck.local.toml:MD_SA_TOKEN' / 'motherduck.local.toml:MOTHERDUCK_TOKEN' – repo-root TOML
       'secrets.toml:MD_SA_TOKEN'       – service-account in Streamlit secrets
       'secrets.toml:MOTHERDUCK_TOKEN'  – personal in Streamlit secrets
       'none'                           – no read/write token found
@@ -298,6 +338,13 @@ def token_mode() -> str:
         return "env:motherduck_token"
     if _jwt_like(os.getenv("LOCAL_DB_PATH")):
         return "env:LOCAL_DB_PATH"
+    loc = _local_motherduck_toml_dict()
+    if loc.get("MD_SA_TOKEN"):
+        return "motherduck.local.toml:MD_SA_TOKEN"
+    if loc.get("MOTHERDUCK_TOKEN"):
+        return "motherduck.local.toml:MOTHERDUCK_TOKEN"
+    if loc.get("motherduck_token"):
+        return "motherduck.local.toml:motherduck_token"
     secrets_path = Path(".streamlit") / "secrets.toml"
     if secrets_path.exists():
         try:

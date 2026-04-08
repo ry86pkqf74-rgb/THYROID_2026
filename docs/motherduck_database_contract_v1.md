@@ -376,6 +376,8 @@ Never call `duckdb.connect("md:...")` directly. Token resolution is handled inte
 
 **Guardrails:** Read-scaling tokens are excluded from `get_token()`. If only read-scaling credentials are configured, `connect_rw()` and `connect_md_or_file(..., fail_closed=True)` **fail fast** with a clear error. Promotion scripts, staging loaders, and formalization validators must keep using read/write tokens.
 
+**File fallbacks (when env vars are unset):** `motherduck.local.toml` at the repository root (copy from `motherduck.local.toml.example`, gitignored), then `.streamlit/secrets.toml`. Precedence within files matches the table: `MD_SA_TOKEN` before `MOTHERDUCK_TOKEN` before `motherduck_token` for RW; read-scaling keys in `get_read_scaling_token()` follow env order then local TOML then Streamlit secrets.
+
 #### Examples
 
 ```bash

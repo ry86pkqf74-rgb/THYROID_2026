@@ -62,13 +62,13 @@ Before promoting specimen/FHIR changes, **`138`** attempts `CREATE SNAPSHOT <nam
 
 After a release snapshot on the writer catalog, readers using **`MD_READ_SCALING_TOKEN`** should:
 
-1. Export `MD_READ_SCALING_TOKEN` (and optionally **`MD_READ_SCALING_SESSION_HINT`**) — same keys supported in `.streamlit/secrets.toml` as documented in [`motherduck_database_contract_v1.md`](motherduck_database_contract_v1.md) §8.
+1. Export `MD_READ_SCALING_TOKEN` (and optionally **`MD_READ_SCALING_SESSION_HINT`**) — same keys supported in repo-root **`motherduck.local.toml`** or `.streamlit/secrets.toml` (see [`motherduck_database_contract_v1.md`](motherduck_database_contract_v1.md) §8).
 2. Connect via `MotherDuckClient.for_env(...).connect_read_scaling()` (or RO share when configured). For a **restricted manual hidden** share, attach with the **reviewer** or read-scaling identity only; grant **READ** on the reviewer-facing database or share — never commit share URLs that embed secrets.
 3. Run **`REFRESH DATABASE`** (or `scripts/136_md_read_scaling_snapshot_refresh.py reader`, or `utils/md_read_scaling_refresh.py`) **on the read-scaling connection** after the operator’s writer snapshot so replicas honor the export/review snapshot boundary.
 4. Optional NDJSON export for offline review (no PHI in bundle payloads — analytic de-identified resources only):
 
    ```bash
-   # Operator (RW token from env or .streamlit/secrets.toml)
+   # Operator (RW token from env, motherduck.local.toml, or .streamlit/secrets.toml)
    .venv/bin/python scripts/141_fhir_specimen_json_export.py --md
 
    # Reviewer (read-scaling token only; refresh first)
@@ -82,7 +82,7 @@ After a release snapshot on the writer catalog, readers using **`MD_READ_SCALING
 
 ### Service account / org admin (reviewer identity)
 
-This repo does **not** issue MotherDuck tokens or call Admin REST APIs. **Build operators** should use **`MD_SA_TOKEN`** or **`MOTHERDUCK_TOKEN`** (RW) from a secret manager or `.streamlit/secrets.toml` (gitignored). **Reviewers** should receive a **read-scaling** token or an invitation to a **restricted** share with read-only access. Typical MotherDuck UI paths (wording may vary by product version):
+This repo does **not** issue MotherDuck tokens or call Admin REST APIs. **Build operators** should use **`MD_SA_TOKEN`** or **`MOTHERDUCK_TOKEN`** (RW) from a secret manager, **`motherduck.local.toml`** (gitignored), or `.streamlit/secrets.toml`. **Reviewers** should receive a **read-scaling** token or an invitation to a **restricted** share with read-only access. Typical MotherDuck UI paths (wording may vary by product version):
 
 - **Service account:** Organization settings → Service accounts → create → copy token once → store in reviewer-bound secret channel; scope to read-only / target share.
 - **Share:** Shares → Create share → visibility **Restricted**, update policy **Manual** if you must pin snapshots; grant **Read** to the reviewer’s user or service account only.
