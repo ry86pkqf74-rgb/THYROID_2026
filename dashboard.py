@@ -144,6 +144,10 @@ def _ensure_token():
             "motherduck_token",
             "MD_READ_SCALING_TOKEN",
             "MOTHERDUCK_READ_SCALING_TOKEN",
+            "MOTHERDUCK_CUSTOM_USER_AGENT",
+            "MOTHERDUCK_SESSION_HINT",
+            "MD_READ_SCALING_SESSION_HINT",
+            "MOTHERDUCK_READ_SCALING_SESSION_HINT",
         ):
             try:
                 val = sec[key]
@@ -178,6 +182,7 @@ def _get_con():
     global _ACTIVE_CATALOG, _CONNECTION_META
     rw_tok = get_token(prefer_service_account=False) or get_token(prefer_service_account=True)
     rs_tok = get_read_scaling_token()
+    md_ua = (os.getenv("MOTHERDUCK_CUSTOM_USER_AGENT") or "").strip() or None
 
     def _share_session_hint(origin: str) -> str | None:
         if origin == "read_scaling":
@@ -212,6 +217,7 @@ def _get_con():
             cfg_share = MotherDuckConfig(
                 database=DATABASE,
                 share_path=SHARE_PATH,
+                custom_user_agent=md_ua,
                 motherduck_session_hint=hint,
             )
             cli_share = MotherDuckClient(cfg_share)
@@ -237,7 +243,11 @@ def _get_con():
                 or (os.getenv("MOTHERDUCK_READ_SCALING_SESSION_HINT") or "").strip()
                 or None
             )
-            rcli = MotherDuckClient.for_env(md_env, motherduck_session_hint=hint)
+            rcli = MotherDuckClient.for_env(
+                md_env,
+                custom_user_agent=md_ua,
+                motherduck_session_hint=hint,
+            )
             con = rcli.connect_read_scaling(session_hint=hint)
             try:
                 con.execute(f'USE "{DATABASE}";')
@@ -258,6 +268,7 @@ def _get_con():
         cfg_rw = MotherDuckConfig(
             database=DATABASE,
             share_path=SHARE_PATH,
+            custom_user_agent=md_ua,
             motherduck_session_hint=rw_hint,
         )
         con = MotherDuckClient(cfg_rw).connect_rw()
