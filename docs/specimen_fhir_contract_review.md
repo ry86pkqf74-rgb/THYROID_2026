@@ -18,7 +18,16 @@ Do **not** use `MD_READ_SCALING_TOKEN` for **138** / **139** / **140** / **143**
 
 ## CI (offline)
 
-GitHub Actions `multimodal-tests` job runs pytest for identity (`tests/test_specimen_identity_layer.py`), FHIR layer/QA/genomics contracts, and temp-DuckDB coverage for **`141`** export (`--local-duckdb`), **`143`** + `142` diagnostic views, and **`144`** (`--introspect-local`) — no MotherDuck token required.
+GitHub Actions `multimodal-tests` job runs pytest (blocking, no secrets) for:
+
+- `tests/test_specimen_identity_layer.py`
+- `tests/test_specimen_fhir_layer.py`
+- `tests/test_specimen_fhir_qa_diagnostics.py`
+- `tests/test_specimen_genomics_binding.py`
+- `tests/test_specimen_fhir_release_gate.py` (119 Check 13 / gate orchestration helpers)
+- `tests/test_specimen_fhir_scripts_offline.py` — temp-DuckDB coverage for **`141`** export, **`143`** + `142` diagnostic DDL, **`144`** (`--introspect-local`), and **`138 --dry-run`** orchestrator smoke
+
+No MotherDuck token is required for this job.
 
 ## Validation surfaces
 

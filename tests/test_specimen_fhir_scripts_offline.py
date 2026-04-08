@@ -421,3 +421,102 @@ def test_143_deploy_qa_diag_views_offline(tmp_path: Path) -> None:
             con.execute(f"SELECT * FROM {fq} LIMIT 1")
     finally:
         con.close()
+
+
+def test_142_ddl_applies_directly_matches_143_path(tmp_path: Path) -> None:
+    """Smoke: same SQL file 143 executes applies cleanly on the offline stub DB."""
+    ddl_path = ROOT / "scripts" / "sql" / "142_specimen_fhir_qa_diagnostics_ddl.sql"
+    assert ddl_path.is_file() and ddl_path.stat().st_size > 100
+    db_path = tmp_path / "ddl_direct.duckdb"
+    _create_stub_db_for_142(db_path)
+    con = duckdb.connect(str(db_path))
+    try:
+        con.execute(ddl_path.read_text(encoding="utf-8"))
+    finally:
+        con.close()
+    ro = duckdb.connect(str(db_path), read_only=True)
+    try:
+        ro.execute("SELECT 1 FROM qa.v_diag_specimen_review_burden_v1 LIMIT 1")
+    finally:
+        ro.close()
+
+
+def test_144_collect_live_introspection_graceful_without_md_information_schema(
+    tmp_path: Path,
+) -> None:
+    """`md_information_schema.query_history` / `recent_queries` unavailable → non-fatal note."""
+    mod = _load_script_144()
+    db_path = tmp_path / "no_md_schema.duckdb"
+    con = duckdb.connect(str(db_path))
+    try:
+        con.execute("CREATE SCHEMA IF NOT EXISTS qa")
+        con.execute("CREATE TABLE main.specimen_master_v1 (id INT)")
+        con.execute("INSERT INTO main.specimen_master_v1 VALUES (1)")
+        con.execute(
+            "CREATE TABLE qa.release_manifest ("
+            "release_tag VARCHAR, git_sha VARCHAR, created_at TIMESTAMP)"
+        )
+        con.execute(
+            "INSERT INTO qa.release_manifest VALUES ('v0.0.1', 'deadbeef', CURRENT_TIMESTAMP)"
+        )
+        con.execute("CREATE TABLE qa.manual_review_queue (verification_status VARCHAR)")
+        con.execute("INSERT INTO qa.manual_review_queue VALUES (NULL)")
+        for tbl, ddl in (
+            ("specimen_tumor_focus_v1", "CREATE TABLE main.specimen_tumor_focus_v1 (id INT)"),
+            ("specimen_genomic_assay_v1", "CREATE TABLE main.specimen_genomic_assay_v1 (id INT)"),
+            (
+                "fhir_bundle_specimen_export_v1",
+                "CREATE TABLE main.fhir_bundle_specimen_export_v1 (id INT)",
+            ),
+        ):
+            con.execute(ddl)
+            con.execute(f"INSERT INTO main.{tbl} VALUES (1)")
+    finally:
+        con.close()
+
+    con = duckdb.connect(str(db_path))
+    try:
+        md_lines, telemetry_note = mod.collect_live_introspection(con)
+    finally:
+        con.close()
+
+    body = "\n".join(md_lines)
+    assert "**current_database():**" in body
+    assert "### Specimen / FHIR layer row counts" in body
+    assert "**specimen_master_v1:**" in body and "rows" in body
+    assert "**qa.release_manifest (latest 3):**" in body
+    assert "v0.0.1" in body
+    assert "query_history not available" in telemetry_note or "not available" in telemetry_note
+
+
+def test_144_build_markdown_includes_release_manifest_heading() -> None:
+    mod = _load_script_144()
+    text = mod.build_markdown(
+        now_iso="2026-04-08T00:00:00+00:00",
+        sha="abc",
+        stale_days=9999,
+        md_lines=["- **current_database():** `ci_stub`"],
+        telemetry_note="_(query_history not available: no md_information_schema)_",
+    )
+    assert "## Checked-in release manifest (exports/)" in text
+    assert "## Query-history telemetry (MotherDuck)" in text
+    assert "query_history not available" in text
+
+
+def test_138_orchestrator_dry_run_smoke(tmp_path: Path) -> None:
+    """Orchestrator exits 0 on --dry-run without opening MotherDuck (plan only)."""
+    study = tmp_path / "study138"
+    rc = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPTS / "138_md_specimen_fhir_layer.py"),
+            "--dry-run",
+            "--study-dir",
+            str(study),
+        ],
+        cwd=str(ROOT),
+        capture_output=True,
+        text=True,
+    )
+    assert rc.returncode == 0
+    assert "dry-run" in (rc.stdout + rc.stderr).lower()
