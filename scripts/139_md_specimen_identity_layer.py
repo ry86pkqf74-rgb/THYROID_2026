@@ -155,6 +155,12 @@ def _split_sql_statements(sql: str) -> list[str]:
 
 
 def run_identity_validation(con) -> list[tuple[str, str, str]]:
+    """Identity-only checks after ``139`` DDL.
+
+    Focus-grain duplicate / orphan / provenance predicates mirror ``142`` list views
+    but are expressed inline here because standalone ``139`` runs do not deploy
+    ``142`` (genomic + FHIR tables required for full QA DDL).
+    """
     out: list[tuple[str, str, str]] = []
 
     def run(name: str, sql: str, expect_true: bool) -> None:

@@ -141,15 +141,20 @@ def test_qa_diagnostic_views_empty_on_happy_path() -> None:
 
     met = con.execute(
         """
-        SELECT n_focus_rows, n_duplicate_fp_groups, n_orphan_focus_master,
-               n_orphan_genomic_focus, n_missing_focus_provenance
+        SELECT n_focus_rows, n_duplicate_fp_groups, n_rows_in_duplicate_fp_groups,
+               n_orphan_focus_master, n_orphan_genomic_focus, n_missing_focus_provenance
         FROM qa.t_diag_specimen_focus_qa_metrics_v1
         """
     ).fetchone()
     assert met is not None
     assert int(met[0] or 0) > 0
-    for i in range(1, 5):
+    for i in (1, 2, 3, 4, 5):
         assert int(met[i] or 0) == 0
+    assert (
+        con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_provenance_focus_gaps_v1")
+        .fetchone()[0]
+        == 0
+    )
 
 
 def test_focus_metrics_table_matches_view_counts() -> None:
@@ -168,10 +173,22 @@ def test_focus_metrics_table_matches_view_counts() -> None:
     )
     met = con.execute("SELECT * FROM qa.t_diag_specimen_focus_qa_metrics_v1").fetchone()
     assert met is not None
+    n_dup_sum = int(
+        con.execute(
+            "SELECT COALESCE(CAST(SUM(row_count) AS BIGINT), 0) "
+            "FROM qa.v_diag_specimen_duplicate_focus_fp_v1"
+        ).fetchone()[0]
+        or 0
+    )
     assert int(met[1]) == n_dup_v
+    assert int(met[2]) == n_dup_sum
     assert int(met[3]) == n_orph_v
     assert int(met[4]) == n_ogf_v
     assert int(met[5]) == n_pf_v
+    assert int(met[5]) == int(
+        con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_provenance_focus_gaps_v1")
+        .fetchone()[0]
+    )
 
 
 def test_v_diag_orphan_genomic_focus_detects_bad_reference() -> None:
@@ -262,6 +279,14 @@ def test_v_diag_provenance_focus_detects_blank_build_run() -> None:
         "SELECT n_missing_identity_run FROM qa.v_diag_specimen_provenance_focus_v1"
     ).fetchone()
     assert row_pr is not None and int(row_pr[0]) >= 1
+    ng = con.execute(
+        "SELECT COUNT(*) FROM qa.v_diag_specimen_provenance_focus_gaps_v1"
+    ).fetchone()[0]
+    assert int(ng) >= 1
+    met_p = con.execute(
+        "SELECT n_missing_focus_provenance FROM qa.t_diag_specimen_focus_qa_metrics_v1"
+    ).fetchone()
+    assert met_p is not None and int(met_p[0]) == int(ng)
 
 
 def test_check_13_fails_on_focus_diagnostic_defect_when_layer_complete() -> None:
@@ -309,6 +334,55 @@ def test_check_13_fails_on_metrics_mismatch_when_layer_complete() -> None:
         UPDATE qa.t_diag_specimen_focus_qa_metrics_v1
         SET n_orphan_genomic_focus = 0
         """
+    )
+    mod119 = _load_mod119()
+    results = mod119.ValidationResult("pytest")
+    mod119.check_specimen_fhir_layer(con, results, strict=False)
+    fail_names = {c["check"] for c in results.checks if c["status"] == "FAIL"}
+    assert "Specimen/FHIR QA diagnostics (142 surfaces + focus metrics)" in fail_names
+
+
+def test_check_13_fails_on_duplicate_fp_row_sum_mismatch_when_layer_complete() -> None:
+    """n_rows_in_duplicate_fp_groups must equal SUM(row_count) from duplicate-focus view."""
+    con = _happy_path_db()
+    con.execute(
+        """
+        CREATE OR REPLACE TABLE main.specimen_tumor_focus_v1 AS
+        SELECT * FROM main.specimen_tumor_focus_v1
+        UNION ALL
+        (
+          SELECT * REPLACE ('spf_dup_rowsum'::VARCHAR AS specimen_focus_id)
+          FROM main.specimen_tumor_focus_v1
+          LIMIT 1
+        )
+        """
+    )
+    con.execute((ROOT / "scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql").read_text(encoding="utf-8"))
+    con.execute(
+        "UPDATE qa.t_diag_specimen_focus_qa_metrics_v1 SET n_rows_in_duplicate_fp_groups = 0"
+    )
+    mod119 = _load_mod119()
+    results = mod119.ValidationResult("pytest")
+    mod119.check_specimen_fhir_layer(con, results, strict=False)
+    fail_names = {c["check"] for c in results.checks if c["status"] == "FAIL"}
+    assert "Specimen/FHIR QA diagnostics (142 surfaces + focus metrics)" in fail_names
+
+
+def test_check_13_fails_on_provenance_gap_count_mismatch_when_layer_complete() -> None:
+    """n_missing_focus_provenance must match COUNT(provenance_focus_gaps)."""
+    con = _happy_path_db()
+    con.execute(
+        """
+        UPDATE main.specimen_tumor_focus_v1
+        SET identity_build_run_id = ''
+        WHERE specimen_focus_id = (
+          SELECT specimen_focus_id FROM main.specimen_tumor_focus_v1 LIMIT 1
+        )
+        """
+    )
+    con.execute((ROOT / "scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql").read_text(encoding="utf-8"))
+    con.execute(
+        "UPDATE qa.t_diag_specimen_focus_qa_metrics_v1 SET n_missing_focus_provenance = 0"
     )
     mod119 = _load_mod119()
     results = mod119.ValidationResult("pytest")
@@ -376,4 +450,5 @@ def test_contract_view_column_sets_documented() -> None:
     assert "v_diag_specimen_duplicate_focus_fp_v1" in names
     assert "v_diag_specimen_orphan_genomic_focus_v1" in names
     assert "v_diag_specimen_provenance_focus_v1" in names
+    assert "v_diag_specimen_provenance_focus_gaps_v1" in names
     assert mod119.SPECIMEN_FHIR_DIAG_TABLES == ("t_diag_specimen_focus_qa_metrics_v1",)

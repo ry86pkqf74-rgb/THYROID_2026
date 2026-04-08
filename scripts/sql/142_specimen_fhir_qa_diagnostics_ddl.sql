@@ -59,6 +59,17 @@ SELECT
   COUNT(*)::BIGINT AS n_rows
 FROM main.specimen_tumor_focus_v1;
 
+-- Row-level drill-down; COUNT(*) must match n_missing_identity_run above and
+-- qa.t_diag_specimen_focus_qa_metrics_v1.n_missing_focus_provenance (Check 13 cross-check).
+CREATE OR REPLACE VIEW qa.v_diag_specimen_provenance_focus_gaps_v1 AS
+SELECT
+  specimen_focus_id,
+  specimen_id,
+  research_id,
+  'missing_identity_run'::VARCHAR AS reason
+FROM main.specimen_tumor_focus_v1
+WHERE TRIM(COALESCE(identity_build_run_id, '')) = '';
+
 CREATE OR REPLACE TABLE qa.t_diag_specimen_focus_qa_metrics_v1 AS
 WITH fp_counts AS (
   SELECT

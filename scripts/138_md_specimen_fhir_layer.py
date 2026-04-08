@@ -134,16 +134,12 @@ def run_validation(con) -> list[tuple[str, str, str]]:
     )
     run(
         "specimen_focus_fingerprint_unique",
-        "SELECT COALESCE(COUNT(*) = COUNT(DISTINCT focus_fingerprint_sha256), FALSE)"
-        " FROM main.specimen_tumor_focus_v1",
+        "SELECT NOT EXISTS (SELECT 1 FROM qa.v_diag_specimen_duplicate_focus_fp_v1)",
         True,
     )
     run(
         "specimen_focus_orphan_guard",
-        "SELECT NOT EXISTS ("
-        " SELECT 1 FROM main.specimen_tumor_focus_v1 f"
-        " LEFT JOIN main.specimen_master_v1 m ON f.specimen_id = m.specimen_id"
-        " WHERE m.specimen_id IS NULL)",
+        "SELECT NOT EXISTS (SELECT 1 FROM qa.v_diag_specimen_orphan_focus_master_v1)",
         True,
     )
     run(
@@ -391,13 +387,13 @@ def main() -> None:
     for name, st, det in genomics_val_rows:
         print(f"  [genomics {st}] {name}: {det[:120]}")
 
+    qa_deploy_msg = deploy_specimen_fhir_qa_diagnostics(con, args)
+    print(f"  {qa_deploy_msg}")
+
     val_rows = run_validation(con)
     persist_validation(con, val_rows)
     for name, st, det in val_rows:
         print(f"  [{st}] {name}: {det[:120]}")
-
-    qa_deploy_msg = deploy_specimen_fhir_qa_diagnostics(con, args)
-    print(f"  {qa_deploy_msg}")
 
     sha = _git_sha()
     memo = [

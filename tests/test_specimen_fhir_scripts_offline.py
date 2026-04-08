@@ -14,11 +14,17 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS = ROOT / "scripts"
 
+# Aligned with scripts/119_md_formalization_validate.py SPECIMEN_FHIR_DIAG_VIEWS (143 deploy).
 EXPECTED_QA_DIAG_VIEWS = (
     "v_diag_specimen_duplicate_master_fp_v1",
+    "v_diag_specimen_duplicate_focus_fp_v1",
+    "v_diag_specimen_orphan_focus_master_v1",
+    "v_diag_specimen_orphan_genomic_focus_v1",
     "v_diag_specimen_orphan_genomic_master_v1",
     "v_diag_specimen_fhir_broken_refs_v1",
     "v_diag_specimen_provenance_master_v1",
+    "v_diag_specimen_provenance_focus_v1",
+    "v_diag_specimen_provenance_focus_gaps_v1",
     "v_diag_specimen_provenance_genomic_v1",
     "v_diag_specimen_review_burden_v1",
 )

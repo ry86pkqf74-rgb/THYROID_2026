@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 """Deploy qa.v_diag_* specimen/FHIR diagnostic views only (no full 138 rebuild).
 
+Applies ``scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql`` in full, including
+focus-grain surfaces used as the sole authority for Check 13 when the specimen/FHIR
+layer is complete: duplicate focus fingerprints, orphan focus→master, genomic→focus
+orphans, provenance summary + ``v_diag_specimen_provenance_focus_gaps_v1``, broken
+FHIR refs, review burden, and ``qa.t_diag_specimen_focus_qa_metrics_v1``.
+
 Uses fail-closed MotherDuck RW token with :func:`specimen_fhir_release_writer_attribution`.
 Attempts CREATE SNAPSHOT before DDL when ``--md`` (skipped on DuckLake / unsupported — logged).
 

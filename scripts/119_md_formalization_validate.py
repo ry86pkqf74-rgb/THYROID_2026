@@ -850,6 +850,7 @@ SPECIMEN_FHIR_DIAG_VIEWS: tuple[str, ...] = (
     "v_diag_specimen_fhir_broken_refs_v1",
     "v_diag_specimen_provenance_master_v1",
     "v_diag_specimen_provenance_focus_v1",
+    "v_diag_specimen_provenance_focus_gaps_v1",
     "v_diag_specimen_provenance_genomic_v1",
     "v_diag_specimen_review_burden_v1",
 )
@@ -1442,6 +1443,7 @@ def check_specimen_fhir_layer(
                 """
                 SELECT
                   n_duplicate_fp_groups,
+                  n_rows_in_duplicate_fp_groups,
                   n_orphan_focus_master,
                   n_orphan_genomic_focus,
                   n_missing_focus_provenance
@@ -1449,13 +1451,31 @@ def check_specimen_fhir_layer(
                 """
             ).fetchone()
             metrics_mismatch = False
+            n_dup_rows_sum = int(
+                con.execute(
+                    """
+                    SELECT COALESCE(CAST(SUM(row_count) AS BIGINT), 0)
+                    FROM qa.v_diag_specimen_duplicate_focus_fp_v1
+                    """
+                ).fetchone()[0]
+                or 0
+            )
+            n_prov_gap_rows = int(
+                con.execute(
+                    "SELECT COUNT(*) FROM qa.v_diag_specimen_provenance_focus_gaps_v1"
+                ).fetchone()[0]
+                or 0
+            )
             if met is not None:
-                md0, md1, md2, md3 = (int(met[i] or 0) for i in range(4))
+                md0, md_dup_rows, md1, md2, md3 = (int(met[i] or 0) for i in range(5))
                 if (
                     md0 != n_dup_f
+                    or md_dup_rows != n_dup_rows_sum
                     or md1 != n_of
                     or md2 != n_og_f
                     or md3 != n_mis_f
+                    or md3 != n_prov_gap_rows
+                    or n_mis_f != n_prov_gap_rows
                 ):
                     metrics_mismatch = True
             n_og = n_og_m + n_og_f
@@ -1477,8 +1497,8 @@ def check_specimen_fhir_layer(
             if metrics_mismatch:
                 detail += (
                     " | qa.t_diag_specimen_focus_qa_metrics_v1 disagrees with v_diag_* "
-                    "focus surfaces — rerun scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py "
-                    "or 138 tail deploy"
+                    "focus surfaces (incl. duplicate row_count sum + provenance gap rows) — "
+                    "rerun scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py or full 138 --md"
                 )
             if bad_diag > 0:
                 diag_status = status_integrity
@@ -1529,7 +1549,11 @@ def check_specimen_fhir_layer(
                 detail,
             )
         except Exception as exc:
-            results.add("Specimen/FHIR QA diagnostics (142 views)", status_integrity, str(exc))
+            results.add(
+                "Specimen/FHIR QA diagnostics (142 surfaces + focus metrics)",
+                status_integrity,
+                str(exc),
+            )
 
 
 def check_release_manifest(

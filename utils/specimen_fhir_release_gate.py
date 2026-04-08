@@ -39,6 +39,7 @@ SPECIMEN_FHIR_DIAG_VIEWS: tuple[str, ...] = (
     "v_diag_specimen_fhir_broken_refs_v1",
     "v_diag_specimen_provenance_master_v1",
     "v_diag_specimen_provenance_focus_v1",
+    "v_diag_specimen_provenance_focus_gaps_v1",
     "v_diag_specimen_provenance_genomic_v1",
     "v_diag_specimen_review_burden_v1",
 )
