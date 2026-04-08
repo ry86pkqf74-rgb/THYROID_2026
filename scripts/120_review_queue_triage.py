@@ -2,11 +2,16 @@
 """Export read-only triage bundle for qa.manual_review_queue (MotherDuck or local).
 
 Produces timestamped artifacts under exports/review_queue_triage_<UTC_YYYYMMDDHHMMSS>/
-for burning down pending manual review without touching promotion logic.
+(or ``--output-root``/study folder) for burning down pending manual review without
+touching promotion logic.
 
 Read-only: SELECT only against qa.manual_review_queue.
 Does not export raw clinical note text: review_reason is omitted; other text fields
 are truncated.
+
+Adds ``counts_manuscript_quality_tiers.csv`` to separate structural queue completion
+(non-NULL ``verification_status``) from manuscript sign-off posture (synthetic
+placeholders, automation-only tier policy, human reviewer identity present).
 
 Usage:
   .venv/bin/python scripts/120_review_queue_triage.py --md
@@ -29,6 +34,7 @@ sys.path.insert(0, str(ROOT))
 
 from llm_extraction.registry import load_registry  # noqa: E402
 from utils.md_connect import connect_md_or_file  # noqa: E402
+from utils.publication_governance import mrq_synthetic_placeholder_where_sql  # noqa: E402
 
 DEFAULT_DB_PATH = ROOT / "thyroid_master.duckdb"
 EXPORTS = ROOT / "exports"
@@ -189,6 +195,31 @@ def run_triage(
     ver_df = con.execute(ver_sql).df()
     ver_df.to_csv(out_dir / "counts_by_verification_status.csv", index=False)
 
+    # ── counts_manuscript_quality_tiers.csv — separates structural completion vs sign-off quality
+    syn_pred = mrq_synthetic_placeholder_where_sql("verification_status")
+    tier_sql = f"""
+        SELECT manuscript_quality_tier, COUNT(*) AS n_rows
+        FROM (
+            SELECT CASE
+                WHEN verification_status IS NULL THEN 'A_pending_blocks_structural_release'
+                WHEN {syn_pred} THEN 'B_synthetic_placeholder_not_manuscript_signoff'
+                WHEN LOWER(TRIM(CAST(verification_status AS VARCHAR))) LIKE 'auto_accepted%'
+                    THEN 'C_automation_tier_policy_only'
+                WHEN reviewer IS NOT NULL
+                     AND TRIM(CAST(reviewer AS VARCHAR)) <> ''
+                     AND reviewed_at IS NOT NULL
+                    THEN 'D_human_review_identity_present'
+                ELSE 'E_reviewed_status_without_reviewer_timestamp'
+            END AS manuscript_quality_tier
+            FROM qa.manual_review_queue
+            WHERE 1=1 {rf}
+        ) t
+        GROUP BY 1
+        ORDER BY 1
+    """
+    tier_df = con.execute(tier_sql).df()
+    tier_df.to_csv(out_dir / "counts_manuscript_quality_tiers.csv", index=False)
+
     # ── counts_promotable_blocking.csv — aligned with scripts/119 strict G7:
     #    rows with verification_status IS NULL are "pending" and block release-mode validation.
     block_sql = f"""
@@ -306,6 +337,7 @@ def run_triage(
             "|------|---------|",
             "| `counts_by_domain.csv` | Rows / pending / reviewed by `domain` |",
             "| `counts_by_verification_status.csv` | Histogram of `verification_status` |",
+            "| `counts_manuscript_quality_tiers.csv` | Pending vs synthetic vs automation vs human identity (sign-off posture) |",
             "| `counts_promotable_blocking.csv` | Blocking vs cleared + pending algorithm breakdown |",
             "| `domains_highest_pending_volume.csv` | Domains ranked by pending count |",
             "| `oldest_pending_rows.csv` | Stale pending rows by `loaded_at` |",
@@ -325,6 +357,23 @@ def run_triage(
             f"- **{row.get('domain')}**: pending {row.get('n_pending', 0):,} "
             f"(total {row.get('n_rows', 0):,})"
         )
+    lines.extend(
+        [
+            "",
+            "## Manuscript sign-off quality tiers",
+            "",
+            "Counts are **mutually exclusive** (first matching branch wins). "
+            "`119 --release-mode` still **fails** on tier **B** (synthetic placeholders) "
+            "even when the queue is structurally non-NULL. Tier **D** is the conservative "
+            "\"human reviewer identity\" bucket (non-empty `reviewer` + `reviewed_at`); "
+            "policy may still require additional evidence beyond automation tier **C**.",
+            "",
+            "| Tier | n_rows |",
+            "|------|--------:|",
+        ]
+    )
+    for _, tr in tier_df.iterrows():
+        lines.append(f"| `{tr['manuscript_quality_tier']}` | {int(tr['n_rows']):,} |")
     lines.append("")
 
     (out_dir / "summary.md").write_text("\n".join(lines), encoding="utf-8")
@@ -334,6 +383,7 @@ def run_triage(
         "pending": n_pending,
         "reviewed": n_rev,
         "worklist_files": len(list(work_root.glob("worklist__*.csv"))) if work_root.exists() else 0,
+        "manuscript_tier_rows": len(tier_df),
     }
 
 
