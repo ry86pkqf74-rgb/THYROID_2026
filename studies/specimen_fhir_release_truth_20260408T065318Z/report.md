@@ -4,8 +4,9 @@
 
 | Field | Value |
 |-------|-------|
-| **git SHA (MotherDuck query + `119` run; pre-doc commit)** | `c6ef439583320aebbff811d1865e4b38a0075aa4` |
-| **git commit (artifacts + attribution changes)** | `4370e3d6eda2dc565df75ceacb8a8128f8fbe727` |
+| **git SHA (MotherDuck query + `119` run)** | `c6ef439583320aebbff811d1865e4b38a0075aa4` |
+
+_Recording commit for this folder: use `git log -1 -- studies/specimen_fhir_release_truth_20260408T065318Z` after pull._
 | **current_database()** | `Thyroid 2026` |
 | **Writer UA / session** | `specimen_fhir_release_truth_v1` (see `utils/md_pipeline_attribution.specimen_fhir_release_writer_attribution`) |
 
