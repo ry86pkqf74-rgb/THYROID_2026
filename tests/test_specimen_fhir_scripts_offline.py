@@ -326,6 +326,55 @@ def test_141_force_reconstruct_skips_bundle_table(tmp_path: Path) -> None:
     assert obj["entry"][0]["resource"]["id"] == "sfx"
 
 
+def test_141_cli_local_duckdb_subprocess(tmp_path: Path) -> None:
+    """``141_fhir_specimen_json_export.py --local-duckdb`` end-to-end (no MotherDuck)."""
+    mod = _load_script_141()
+    db_path = tmp_path / "cli141.duckdb"
+    out_root = tmp_path / "cli141_out"
+    con = duckdb.connect(str(db_path))
+    try:
+        for name in mod.FHIR_TABLES:
+            con.execute(f"CREATE TABLE main.{name} (stub INT)")
+        con.execute("DROP TABLE main.fhir_bundle_specimen_export_v1")
+        con.execute(
+            "CREATE TABLE main.fhir_bundle_specimen_export_v1 "
+            "(specimen_id VARCHAR, bundle_json VARCHAR)"
+        )
+        bundle = json.dumps(
+            {"resourceType": "Bundle", "type": "collection", "entry": []},
+            separators=(",", ":"),
+        )
+        con.execute(
+            "INSERT INTO main.fhir_bundle_specimen_export_v1 VALUES (?, ?)",
+            ["cli-specimen", bundle],
+        )
+    finally:
+        con.close()
+
+    rc = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPTS / "141_fhir_specimen_json_export.py"),
+            "--local-duckdb",
+            str(db_path),
+            "--output-root",
+            str(out_root),
+        ],
+        cwd=str(ROOT),
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    assert rc.returncode == 0
+    out = rc.stdout + rc.stderr
+    assert "Wrote 1 bundles" in out
+    dirs = list(out_root.glob("fhir_specimen_*"))
+    assert len(dirs) == 1
+    nd = dirs[0] / "specimen_bundles.ndjson"
+    assert nd.is_file()
+    assert json.loads(nd.read_text(encoding="utf-8").strip())["resourceType"] == "Bundle"
+
+
 def test_141_unknown_git_sha_manifest(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """When absent, manifest still records unknown git SHA like the CLI helper."""
     mod = _load_script_141()

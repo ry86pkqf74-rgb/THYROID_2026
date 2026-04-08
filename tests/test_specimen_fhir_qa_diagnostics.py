@@ -125,19 +125,18 @@ def test_qa_diagnostic_views_empty_on_happy_path() -> None:
     assert d3 is not None and d3[0] == 0
     d4 = con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_broken_refs_v1").fetchone()
     assert d4 is not None and d4[0] == 0
-    assert (
-        con.execute(
-            "SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_bundle_entry_drift_v1"
-        ).fetchone()[0]
-        == 0
-    )
+    _drift = con.execute(
+        "SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_bundle_entry_drift_v1"
+    ).fetchone()
+    assert _drift is not None and _drift[0] == 0
     for _v in (
         "v_diag_specimen_genomics_dupe_thyroseq_slice_v1",
         "v_diag_specimen_genomics_tier_enum_v1",
         "v_diag_specimen_genomics_A_tier_requires_specimen_v1",
         "v_diag_specimen_genomics_thyroseq_ordinality_v1",
     ):
-        assert con.execute(f"SELECT COUNT(*) FROM qa.{_v}").fetchone()[0] == 0
+        _g = con.execute(f"SELECT COUNT(*) FROM qa.{_v}").fetchone()
+        assert _g is not None and _g[0] == 0
     m = con.execute(
         "SELECT n_missing_identity_run FROM qa.v_diag_specimen_provenance_master_v1"
     ).fetchone()
@@ -163,11 +162,10 @@ def test_qa_diagnostic_views_empty_on_happy_path() -> None:
     assert int(met[0] or 0) > 0
     for i in (1, 2, 3, 4, 5):
         assert int(met[i] or 0) == 0
-    assert (
-        con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_provenance_focus_gaps_v1")
-        .fetchone()[0]
-        == 0
-    )
+    _gaps = con.execute(
+        "SELECT COUNT(*) FROM qa.v_diag_specimen_provenance_focus_gaps_v1"
+    ).fetchone()
+    assert _gaps is not None and _gaps[0] == 0
 
 
 def test_focus_metrics_table_matches_view_counts() -> None:
@@ -186,22 +184,22 @@ def test_focus_metrics_table_matches_view_counts() -> None:
     )
     met = con.execute("SELECT * FROM qa.t_diag_specimen_focus_qa_metrics_v1").fetchone()
     assert met is not None
-    n_dup_sum = int(
-        con.execute(
-            "SELECT COALESCE(CAST(SUM(row_count) AS BIGINT), 0) "
-            "FROM qa.v_diag_specimen_duplicate_focus_fp_v1"
-        ).fetchone()[0]
-        or 0
-    )
+    _sum_row = con.execute(
+        "SELECT COALESCE(CAST(SUM(row_count) AS BIGINT), 0) "
+        "FROM qa.v_diag_specimen_duplicate_focus_fp_v1"
+    ).fetchone()
+    assert _sum_row is not None
+    n_dup_sum = int(_sum_row[0] or 0)
     assert int(met[1]) == n_dup_v
     assert int(met[2]) == n_dup_sum
     assert int(met[3]) == n_orph_v
     assert int(met[4]) == n_ogf_v
     assert int(met[5]) == n_pf_v
-    assert int(met[5]) == int(
-        con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_provenance_focus_gaps_v1")
-        .fetchone()[0]
-    )
+    _gaps2 = con.execute(
+        "SELECT COUNT(*) FROM qa.v_diag_specimen_provenance_focus_gaps_v1"
+    ).fetchone()
+    assert _gaps2 is not None
+    assert int(met[5]) == int(_gaps2[0])
 
 
 def test_v_diag_orphan_genomic_focus_detects_bad_reference() -> None:
@@ -292,9 +290,11 @@ def test_v_diag_provenance_focus_detects_blank_build_run() -> None:
         "SELECT n_missing_identity_run FROM qa.v_diag_specimen_provenance_focus_v1"
     ).fetchone()
     assert row_pr is not None and int(row_pr[0]) >= 1
-    ng = con.execute(
+    _ng = con.execute(
         "SELECT COUNT(*) FROM qa.v_diag_specimen_provenance_focus_gaps_v1"
-    ).fetchone()[0]
+    ).fetchone()
+    assert _ng is not None
+    ng = _ng[0]
     assert int(ng) >= 1
     met_p = con.execute(
         "SELECT n_missing_focus_provenance FROM qa.t_diag_specimen_focus_qa_metrics_v1"
@@ -440,8 +440,11 @@ def test_v_diag_bundle_entry_drift_detects_url_mismatch() -> None:
         [json.dumps(b), bix],
     )
     con.execute((ROOT / "scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql").read_text(encoding="utf-8"))
-    n = con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_bundle_entry_drift_v1").fetchone()[0]
-    assert int(n) >= 1
+    _n = con.execute(
+        "SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_bundle_entry_drift_v1"
+    ).fetchone()
+    assert _n is not None
+    assert int(_n[0]) >= 1
 
 
 def test_140_run_validation_rejects_bad_binding_tier() -> None:

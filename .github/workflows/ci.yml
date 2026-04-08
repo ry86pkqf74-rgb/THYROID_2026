@@ -4,8 +4,10 @@ name: Dashboard CI — Hardened
 # THYROID_2026  CI  |  Updated 2026-03-14
 #
 # Job graph (simplified):
-#   Parallel (no secrets): ruff-and-mypy (+ workflow YAML parse), multimodal-tests,
-#     llm-extraction-gold (offline pytest: LLM goldens + registry + provenance + fleet parity).
+#   Parallel (no secrets): ruff-and-mypy (+ workflow YAML parse),
+#     llm-extraction-gold (LLM goldens + registry/provenance/fleet + specimen/FHIR offline suite +
+#       scripts 141/143/144 via tests/test_specimen_fhir_scripts_offline.py),
+#     multimodal-tests (mm contract + imaging↔FNA + specimen_fhir_release_gate only).
 #   lint-and-syntax (MotherDuck secrets) → downstream jobs:
 #     motherduck-formalization (v2 formalization path: 116 dry-run → 112 --motherduck-check → 119),
 #     v2-domain-validation (legacy), benchmark-regression (continue-on-error),
@@ -41,6 +43,7 @@ on:
       - "requirements-dev.txt"
       - "requirements.txt"
       - "scripts/**"
+      - "studies/**"
       - "tests/**"
       - "utils/**"
   pull_request:
@@ -150,7 +153,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: pytest — offline extraction suite
+      - name: pytest — offline extraction suite + specimen/FHIR (no MotherDuck)
         run: |
           python -m pytest \
             tests/test_llm_extraction_regression.py \
@@ -158,6 +161,11 @@ jobs:
             tests/test_registry_and_md_connect.py \
             tests/test_fleet_registry_parity.py \
             tests/test_120_review_queue_triage.py \
+            tests/test_specimen_identity_layer.py \
+            tests/test_specimen_fhir_layer.py \
+            tests/test_specimen_fhir_qa_diagnostics.py \
+            tests/test_specimen_genomics_binding.py \
+            tests/test_specimen_fhir_scripts_offline.py \
             -v --tb=short
 
   # ── Multimodal contract + imaging↔FNA linkage (offline DuckDB, no secrets) ─
@@ -174,7 +182,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: pytest — multimodal + specimen/FHIR offline (no MotherDuck)
+      - name: pytest — multimodal contract + imaging↔FNA + specimen release gate (offline)
         env:
           GITHUB_TOKEN: ""
           OPENAI_API_KEY: ""
@@ -185,12 +193,7 @@ jobs:
           python -m pytest \
             tests/test_multimodal_contract_mm_v1.py \
             tests/test_imaging_fna_linkage_mm_v1.py \
-            tests/test_specimen_identity_layer.py \
-            tests/test_specimen_fhir_layer.py \
-            tests/test_specimen_fhir_qa_diagnostics.py \
-            tests/test_specimen_genomics_binding.py \
             tests/test_specimen_fhir_release_gate.py \
-            tests/test_specimen_fhir_scripts_offline.py \
             -v --tb=short
 
   # ── Job 1: Static Analysis ─────────────────────────────────────────────────
