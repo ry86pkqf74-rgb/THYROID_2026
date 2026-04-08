@@ -1,0 +1,29 @@
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+  [schema] created release_20260408r2
+  [copy] release_20260408r2.canonical_extracted_fact_long_v1: 68,063 rows
+  [copy] release_20260408r2.canonical_extracted_fact_long_v2: 20,188 rows
+  [copy] release_20260408r2.canonical_fact_quarantine_v1: 14 rows
+  [copy] release_20260408r2.canonical_fact_quarantine_v2: 103,588 rows
+  [copy] release_20260408r2.thyroglobulin_lab_canonical_v1: 76,971 rows
+  [copy] release_20260408r2.note_extraction_runs: 3 rows
+  [copy] release_20260408r2.longitudinal_lab_canonical_v1: 77,960 rows
+  [copy] release_20260408r2.master_fact_long_verified_v1: 20,188 rows
+  [copy] release_20260408r2.master_patient_rollup_verified_v1: 2,702 rows
+  [copy] release_20260408r2.master_source_lineage_v1: 20,188 rows
+
+  [post-write] Row parity vs main (before COMMIT)…
+  [parity OK] release_20260408r2.canonical_extracted_fact_long_v1: 68,063 rows (matches main.canonical_extracted_fact_long_v1)
+  [parity OK] release_20260408r2.canonical_extracted_fact_long_v2: 20,188 rows (matches main.canonical_extracted_fact_long_v2)
+  [parity OK] release_20260408r2.canonical_fact_quarantine_v1: 14 rows (matches main.canonical_fact_quarantine_v1)
+  [parity OK] release_20260408r2.canonical_fact_quarantine_v2: 103,588 rows (matches main.canonical_fact_quarantine_v2)
+  [parity OK] release_20260408r2.thyroglobulin_lab_canonical_v1: 76,971 rows (matches main.thyroglobulin_lab_canonical_v1)
+  [parity OK] release_20260408r2.note_extraction_runs: 3 rows (matches main.note_extraction_runs)
+  [parity OK] release_20260408r2.longitudinal_lab_canonical_v1: 77,960 rows (matches main.longitudinal_lab_canonical_v1)
+  [parity OK] release_20260408r2.master_fact_long_verified_v1: 20,188 rows (matches main.master_fact_long_verified_v1)
+  [parity OK] release_20260408r2.master_patient_rollup_verified_v1: 2,702 rows (matches main.master_patient_rollup_verified_v1)
+  [parity OK] release_20260408r2.master_source_lineage_v1: 20,188 rows (matches main.master_source_lineage_v1)
+  [txn] COMMIT completed for release snapshot (release_* durable; manifest recorded separately).
+
+  Release 20260408r2 created with 10 tables in release_20260408r2
+  [manifest] recorded in qa.release_manifest

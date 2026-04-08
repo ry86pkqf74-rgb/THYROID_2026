@@ -1,0 +1,77 @@
+======================================================================
+  103 — canonical_extracted_fact_long (v1 + v2) + quarantine
+  Registry: YAML-driven
+  Domains: 30
+======================================================================
+  loaded note_entities_staging: 3,807 rows  [family=pathology]
+  loaded note_entities_genetics: 1,738 rows  [family=molecular]
+  loaded note_entities_procedures: 21,942 rows  [family=operative]
+  loaded note_entities_operative_detail: 12,151 rows  [family=operative]
+  loaded note_entities_complications: 9,359 rows  [family=operative]
+  loaded note_entities_medications: 7,501 rows  [family=followup]
+  loaded note_entities_problem_list: 11,579 rows  [family=demographics]
+    expanded fleet format: 11,037 note rows → 8,428 entity rows
+  loaded note_entities_llm_imaging: 8,428 rows  [family=imaging]
+    expanded fleet format: 11,037 note rows → 179 entity rows
+  loaded note_entities_llm_tirads_granular: 179 rows  [family=imaging]
+    expanded fleet format: 11,037 note rows → 49 entity rows
+  loaded note_entities_llm_us_nodule_dynamics: 49 rows  [family=imaging]
+    expanded fleet format: 11,037 note rows → 2,460 entity rows
+  loaded note_entities_llm_labs: 2,460 rows  [family=followup]
+    expanded fleet format: 11,037 note rows → 173 entity rows
+  loaded note_entities_llm_tg_kinetics: 173 rows  [family=followup]
+    expanded fleet format: 11,037 note rows → 10,894 entity rows
+  loaded note_entities_llm_pathology: 10,894 rows  [family=pathology]
+    expanded fleet format: 11,037 note rows → 38 entity rows
+  loaded note_entities_llm_synoptic_pathology_enrichment: 38 rows  [family=pathology]
+    expanded fleet format: 11,037 note rows → 3,747 entity rows
+  loaded note_entities_llm_rai_detailed: 3,747 rows  [family=rai]
+    expanded fleet format: 11,037 note rows → 519 entity rows
+  loaded note_entities_llm_rad_treatment: 519 rows  [family=rai]
+    expanded fleet format: 11,037 note rows → 255 entity rows
+  loaded note_entities_llm_parathyroid_detail: 255 rows  [family=operative]
+    expanded fleet format: 11,037 note rows → 303 entity rows
+  loaded note_entities_llm_recurrence: 303 rows  [family=followup]
+    expanded fleet format: 11,037 note rows → 9,809 entity rows
+  loaded note_entities_llm_survival_followup: 9,809 rows  [family=followup]
+    expanded fleet format: 11,037 note rows → 104 entity rows
+  loaded note_entities_llm_cervical_ln_detail: 104 rows  [family=pathology]
+    expanded fleet format: 11,037 note rows → 3,322 entity rows
+  loaded note_entities_llm_functional_outcomes: 3,322 rows  [family=followup]
+    expanded fleet format: 11,037 note rows → 865 entity rows
+  loaded note_entities_llm_past_medical_hx: 865 rows  [family=demographics]
+    expanded fleet format: 11,037 note rows → 3,919 entity rows
+  loaded note_entities_llm_past_surgical_hx: 3,919 rows  [family=demographics]
+    expanded fleet format: 11,037 note rows → 280 entity rows
+  loaded note_entities_llm_presenting_symptoms: 280 rows  [family=demographics]
+    expanded fleet format: 11,037 note rows → 1,924 entity rows
+  loaded note_entities_llm_physical_exam: 1,924 rows  [family=demographics]
+    expanded fleet format: 11,037 note rows → 4,241 entity rows
+  loaded note_entities_llm_vascular_invasion: 4,241 rows  [family=pathology]
+    expanded fleet format: 11,037 note rows → 3,116 entity rows
+  loaded note_entities_llm_airway_invasion: 3,116 rows  [family=operative]
+    expanded fleet format: 11,037 note rows → 380 entity rows
+  loaded note_entities_llm_frozen_section_detail: 380 rows  [family=operative]
+    expanded fleet format: 11,037 note rows → 53 entity rows
+  loaded note_entities_llm_dynamic_risk_response: 53 rows  [family=followup]
+    expanded fleet format: 11,037 note rows → 641 entity rows
+  loaded note_entities_llm_patient_decision_adherence: 641 rows  [family=followup]
+  merged clinical_notes_long
+  multi-surgery patients: 3
+  inferred episode linkage (family-specific)
+  v1 split: clean=68,063  quarantined=14
+  v2 split: clean=20,188  quarantined=103,588
+  QC report: /Users/loganglosser/THYROID_2026/exports/fact_lineage_qc/qc_report_20260408_0515.md
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+  DuckDB canonical_extracted_fact_long_v1: 68,063 rows
+  DuckDB canonical_fact_quarantine_v1: 14 rows
+  DuckDB canonical_extracted_fact_long_v2: 20,188 rows
+  DuckDB canonical_fact_quarantine_v2: 103,588 rows
+======================================================================
+  DONE
+======================================================================
+
+/Users/loganglosser/THYROID_2026/scripts/103_fact_lineage_materialize.py:725: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
+  uni = pd.concat(aligned, ignore_index=True)
+  ⚠ REGRESSION: canonical_fact_quarantine_v1.parquet shrank from 1,383 to 14 rows (99.0% drop)

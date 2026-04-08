@@ -1,0 +1,12 @@
+======================================================================
+  126 — Final master release (MotherDuck)
+  Tag       : 20260408
+  Study dir : /Users/loganglosser/THYROID_2026/studies/20260408_final_master_release
+  Export dir: /Users/loganglosser/THYROID_2026/exports/final_master_release_20260408
+  Dry run   : True
+  119 mode  : release (strict)
+======================================================================
+  [dry-run] preflight OK — no database changes
+  [dry-run] planned chain: (when executed) 114 → 103 → 117 → [127 if lab] → 125 → [specimen gate] → 115/118 → 119
+  [preflight] manual_review_queue fully reviewed: 5,622 row(s) at /Users/loganglosser/THYROID_2026/studies/20260407_tier_policy_review_gate/manual_review_queue.csv
+  [dry-run] MRQ CSV (release-mode) preflight: OK (non-blank, no synthetic placeholders)

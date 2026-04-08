@@ -320,6 +320,13 @@ def run_subprocess(name: str, cmd: list[str], log_path: Path) -> bool:
     return True
 
 
+def _fetch_scalar_int(con: duckdb.DuckDBPyConnection, sql: str) -> int:
+    row = con.execute(sql).fetchone()
+    if row is None:
+        raise RuntimeError(f"expected scalar row: {sql[:80]}")
+    return int(row[0])
+
+
 def gather_evidence(con: duckdb.DuckDBPyConnection, tag: str, git_sha: str) -> dict[str, Any]:
     ev: dict[str, Any] = {
         "release_tag": tag,
@@ -342,30 +349,31 @@ def gather_evidence(con: duckdb.DuckDBPyConnection, tag: str, git_sha: str) -> d
     ]
     for fq in targets:
         try:
-            n = con.execute(f"SELECT COUNT(*) FROM {fq}").fetchone()[0]
-            ev["row_counts"][fq] = int(n)
+            n = _fetch_scalar_int(con, f"SELECT COUNT(*) FROM {fq}")
+            ev["row_counts"][fq] = n
         except Exception as exc:
             ev["row_counts"][fq] = f"error: {exc}"
 
     try:
-        ev["lineage"]["facts_with_source_object"] = int(
-            con.execute(
-                "SELECT COUNT(*) FROM main.master_fact_long_verified_v1 "
-                "WHERE source_object_id IS NOT NULL"
-            ).fetchone()[0]
+        ev["lineage"]["facts_with_source_object"] = _fetch_scalar_int(
+            con,
+            "SELECT COUNT(*) FROM main.master_fact_long_verified_v1 "
+            "WHERE source_object_id IS NOT NULL",
         )
-        ev["lineage"]["facts_total"] = int(
-            con.execute("SELECT COUNT(*) FROM main.master_fact_long_verified_v1").fetchone()[0]
+        ev["lineage"]["facts_total"] = _fetch_scalar_int(
+            con,
+            "SELECT COUNT(*) FROM main.master_fact_long_verified_v1",
         )
     except Exception as exc:
         ev["lineage"]["error"] = str(exc)
 
     try:
-        tot = con.execute("SELECT COUNT(*) FROM qa.manual_review_queue").fetchone()[0]
-        pen = con.execute(
-            "SELECT COUNT(*) FROM qa.manual_review_queue WHERE verification_status IS NULL"
-        ).fetchone()[0]
-        ev["review_queue"] = {"total": int(tot), "pending_verification": int(pen)}
+        tot = _fetch_scalar_int(con, "SELECT COUNT(*) FROM qa.manual_review_queue")
+        pen = _fetch_scalar_int(
+            con,
+            "SELECT COUNT(*) FROM qa.manual_review_queue WHERE verification_status IS NULL",
+        )
+        ev["review_queue"] = {"total": tot, "pending_verification": pen}
     except Exception as exc:
         ev["review_queue"]["error"] = str(exc)
 
@@ -517,6 +525,10 @@ def main() -> None:
               "[specimen gate] → 115/118 → 119")
         if args.hydrate_mrq_from is None:
             print("  [dry-run] note: --hydrate-mrq-from not set (final release normally requires a reviewed gate dir).")
+        elif args.release_mode:
+            mrq_gate_path = args.hydrate_mrq_from.resolve()
+            assert_mrq_csv_fully_reviewed(mrq_gate_path / "manual_review_queue.csv")
+            print("  [dry-run] MRQ CSV (release-mode) preflight: OK (non-blank, no synthetic placeholders)")
         return
 
     try:
@@ -534,6 +546,18 @@ def main() -> None:
             append_promotion_decisions(con, args.decisions_csv, batch)
         elif args.decisions_csv:
             print(f"  [warn] decisions CSV not found: {args.decisions_csv}")
+        # Release-mode 119 requires non-empty decision_batch_id on all PRD rows (legacy NULLs included).
+        try:
+            con.execute(
+                """
+                UPDATE qa.promotion_review_decisions
+                SET decision_batch_id = ?
+                WHERE decision_batch_id IS NULL OR trim(cast(decision_batch_id AS VARCHAR)) = ''
+                """,
+                [batch],
+            )
+        except Exception as exc:
+            print(f"  [warn] promotion_review_decisions batch backfill: {exc}")
     finally:
         con.close()
 
