@@ -6,7 +6,7 @@
 
 > **Repo posture (sync with README):** Latest **live** `119 --release-mode` + specimen/FHIR truth baselines live under `studies/specimen_fhir_release_truth_*` (regenerate with this script + `119_md_formalization_validate.py --md --release-mode`). **Governance:** operator `119` may **PASS WITH WARN** while **manuscript** sign-off still requires **human-reviewed** MRQ/promotion paths (not automation-only verification). **Institutional non-Tg lab wave** (`final_institutional_20260407`) is **ingested**; residual lab gaps are **source-limited**, not a missing-wave blocker. Operator evidence pack: `studies/20260411_final_master_release/EVIDENCE_PACK.md`.
 
-**Machine-generated:** 2026-04-08T07:46:43.466176+00:00
+**Machine-generated:** 2026-04-08T07:43:47.436764+00:00
 **Commit SHA:** `3f54a52e14a2c8d9d957285a9897c348371e54d0`
 
 > Regenerate after promotion or specimen/FHIR deploy: `python scripts/144_md_repo_current_state_summary.py --md`

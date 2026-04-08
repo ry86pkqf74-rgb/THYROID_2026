@@ -1,0 +1,9 @@
+name,uuid,created_ts,transient,historical_snapshot_retention,type
+Thyroid 2026,b64d4ec9-aafb-49cc-bf39-d1dfd85e68dc,2026-04-02 04:31:53-04:00,False,7 days,DUCKLAKE
+Thyroid 2026 Molecular Dev 20260407,92bc15f0-1dcd-42bb-b548-74e5cc24aedd,2026-04-07 12:10:18-04:00,False,7 days,DEFAULT
+Thyroid 2026 Molecular PrePromote 20260407_cursor_prod_release,6011a8ad-92a8-497e-ad99-43fdefa5d23e,2026-04-07 12:14:06-04:00,False,7 days,DEFAULT
+Thyroid 2026 Molecular PrePromote 20260410_20260407_161831_promote,fd1af03b-a3d3-4170-910c-c61a173dfedd,2026-04-07 12:18:34-04:00,False,7 days,DEFAULT
+Thyroid 2026 Molecular PrePromote agent_20260407_workflow,9b6d3949-4698-4be7-95b1-3b4e7c30d9e4,2026-04-07 02:39:05-04:00,False,7 days,DEFAULT
+Thyroid 2026 Molecular QA 20260407,f05500b0-2eea-41bf-b5d4-35e677f6ebc5,2026-04-07 01:44:43-04:00,False,7 days,DEFAULT
+my_db,e0db7fdc-5cb6-4f57-9944-6baadccd82c1,2026-03-07 02:53:36-05:00,False,7 days,DEFAULT
+rosflow,c8f55a3a-ab80-4f93-8bb1-74b55770ad39,2026-03-15 13:16:55-04:00,False,7 days,DEFAULT

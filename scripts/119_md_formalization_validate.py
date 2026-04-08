@@ -1519,10 +1519,11 @@ def check_release_manifest(
     try:
         total = con.execute("SELECT COUNT(*) FROM qa.release_manifest").fetchone()[0]
         if total > 0:
+            # Chronological "latest" for operator messaging (suffix tags like 20260408r3
+            # do not cast to BIGINT; numeric-only sort hid newer resnapshot rows).
             latest = con.execute(
                 "SELECT release_tag, created_at FROM qa.release_manifest "
-                "ORDER BY TRY_CAST(release_tag AS BIGINT) DESC NULLS LAST, "
-                "created_at DESC LIMIT 1"
+                "ORDER BY created_at DESC NULLS LAST, release_tag DESC LIMIT 1"
             ).fetchone()
             results.add("Release manifest", "PASS",
                          f"{total} release(s); latest: {latest[0]} ({latest[1]})")

@@ -1,0 +1,4 @@
+# Source before MotherDuck CLI runs (UTC session thyroid_live_state_refresh_20260408T074310Z)
+export MOTHERDUCK_CUSTOM_USER_AGENT="thyroid_live_state_refresh/20260408T074310Z"
+export MOTHERDUCK_SESSION_HINT="thyroid_live_state_refresh_20260408T074310Z"
+export MD_READ_SCALING_SESSION_HINT="thyroid_live_state_refresh_ro_20260408T074310Z"

@@ -1,0 +1,2 @@
+query_id,start_time,end_time,total_elapsed_time,error_type,user_agent,session_name,query_type,query_text_preview
+,,,,permission_or_tier,,,,MDExternalException: Query history is only available to organization admins

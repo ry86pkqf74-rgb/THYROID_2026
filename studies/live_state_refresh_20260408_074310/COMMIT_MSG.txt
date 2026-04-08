@@ -1,0 +1,5 @@
+Live MotherDuck state refresh (20260408 UTC) and release-manifest ordering fix
+
+- Add studies/live_state_refresh_20260408_074310 with read-only evidence (119/120/144/smoke, CSV exports, LIVE_STATE_REFRESH.md).
+- Fix 119 Check 9 qa.release_manifest latest row to sort by created_at DESC so resnapshot tags (e.g. 20260408r3) are not hidden behind numeric release_tag ordering.
+- Regenerate studies/CURRENT_MOTHERDUCK_REPO_STATE.md from live prod attach.

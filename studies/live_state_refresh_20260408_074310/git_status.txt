@@ -1,0 +1,16 @@
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   studies/20260407_motherduck_formalization/validation_report.md
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	studies/20260408_motherduck_formalization/
+	studies/20260408_motherduck_live_release_audit/
+	studies/live_state_refresh_20260408_074310/
+	studies/v2_domain_promotion_gate_make_md_formalization_dryrun/
+
+no changes added to commit (use "git add" and/or "git commit -a")

@@ -1,0 +1,14 @@
+metric,value
+connection_mode,read_scaling
+current_database,Thyroid 2026
+current_catalog,Thyroid 2026
+mrq_total_rows,5622
+promotion_review_decisions_count,4
+mrq_null_verification_status,0
+specimen_diag_broken_fhir_refs,0
+specimen_diag_high_tier_null_spec,0
+specimen_diag_dup_master_fp,0
+specimen_diag_dup_focus_fp_groups,0
+specimen_diag_orphan_focus_master,0
+specimen_diag_orphan_genomic_master,0
+specimen_diag_orphan_genomic_focus,0

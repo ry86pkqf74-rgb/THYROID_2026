@@ -1,0 +1,6 @@
+token_mode (RW): env:MOTHERDUCK_TOKEN
+read_scaling_token_mode: secrets.toml:MD_READ_SCALING_TOKEN
+RW resolved: SET len=444
+RS resolved: SET len=445
+is_read_scaling_only_environment: False
+resolve_database_for_env dev/qa/prod: {'dev': 'Thyroid 2026 Molecular Dev 20260407', 'qa': 'Thyroid 2026 Molecular QA 20260407', 'prod': 'Thyroid 2026'}
