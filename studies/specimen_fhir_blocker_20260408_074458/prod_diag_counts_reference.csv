@@ -1,0 +1,13 @@
+environment,metric,value,current_database
+prod,anchor_synoptic_tumor_long,11103,Thyroid 2026
+prod,specimen_master_rows,10139,Thyroid 2026
+prod,diag_dup_master_fp,0,Thyroid 2026
+prod,diag_dup_focus_fp,0,Thyroid 2026
+prod,diag_orphan_focus_master,0,Thyroid 2026
+prod,diag_orphan_genomic_focus,0,Thyroid 2026
+prod,diag_orphan_genomic_master,0,Thyroid 2026
+prod,diag_broken_fhir_refs,0,Thyroid 2026
+prod,diag_prov_master_missing_run,0,Thyroid 2026
+prod,diag_prov_focus_missing_run,0,Thyroid 2026
+prod,diag_prov_genomic_high_tier_null,0,Thyroid 2026
+prod,review_burden_genomic_open,10705,Thyroid 2026

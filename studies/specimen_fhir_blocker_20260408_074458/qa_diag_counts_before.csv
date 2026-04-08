@@ -1,0 +1,5 @@
+environment,metric,value,notes
+qa,synoptic_tumor_long_v1_rows_in_current_db,0,"information_schema.tables WHERE table_catalog = current_database() AND table_schema = 'main' — object absent on QA catalog"
+qa,specimen_fhir_validator_check13,skipped,"scripts/119_md_formalization_validate.py skips specimen/FHIR when main.synoptic_tumor_long_v1 missing (run 108+109+138 after QA bootstrap)"
+qa,broken_fhir_refs_live_count,N/A,"qa.v_diag_specimen_fhir_broken_refs_v1 not meaningful until 138/142 deployed on QA"
+qa,119_release_mode_specimen_failure,none,"Check 13 PASS-with-skip; release FAILs on QA are from other checks (see 119_qa_release_mode_console.log)"

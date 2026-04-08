@@ -1,0 +1,7 @@
+THYROID_2026 — specimen_fhir_blocker token/source probe
+motherduck.local.toml exists: False
+get_token(prefer_sa=False): SET, length=444
+get_token(prefer_sa=True): SET, length=444
+resolve_database_for_env(qa)='Thyroid 2026 Molecular QA 20260407'
+resolve_database_for_env(prod)='Thyroid 2026'
+MOTHERDUCK_DATABASE env: unset

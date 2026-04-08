@@ -1,0 +1,2 @@
+status,note
+N/A,"No QA catalog mutation in this session (per instructions: prod read-only; QA deploy only if remediation required). Redeploy specimen pipeline on QA only after synoptic_tumor_long_v1 exists (108/109), then rerun 138 / 140 / 143 and re-query v_diag_* counts."
