@@ -1,0 +1,62 @@
+# Data contract: main.canonical_extracted_fact_long_v2 (fact lineage)
+# Provenance columns from docs/motherduck_database_contract_v1.md §3 and scripts/119_md_formalization_validate.py
+contract_version: "1.0"
+dataset_name: canonical_extracted_fact_long_v2
+description: >
+  Canonical extracted fact long rows — required identity/provenance columns aligned with
+  DESIRED_PROVENANCE_COLUMNS and REQUIRED_ENTITY_COLUMNS in script 119 (not exhaustive fact payload).
+
+row_locator_columns:
+  - research_id
+  - note_row_id
+  - entity_type
+
+columns:
+  - name: research_id
+    dtype: int
+    nullable: false
+  - name: note_row_id
+    dtype: int
+    nullable: false
+  - name: entity_type
+    dtype: string
+    nullable: false
+  - name: entity_value_raw
+    dtype: string
+    nullable: true
+  - name: entity_value_norm
+    dtype: string
+    nullable: true
+  - name: entity_date
+    dtype: string
+    nullable: true
+    no_future_date: true
+  - name: note_date
+    dtype: string
+    nullable: true
+    no_future_date: true
+  - name: extraction_run_id
+    dtype: string
+    nullable: false
+    provenance_required: true
+  - name: extracted_at
+    dtype: string
+    nullable: false
+    provenance_required: true
+  - name: source_file_id
+    dtype: string
+    nullable: true
+    provenance_required: false
+
+composite_unique: []
+
+conditional_numeric_bounds: []
+
+cross_field_rules: []
+
+builtin_rules: []
+
+foreign_keys: []
+
+# Formalization release-mode (119) additionally requires non-null extraction_run_id on live rows;
+# YAML provenance_required covers blanks for extraction_run_id / extracted_at.

@@ -23,6 +23,7 @@ exclude = [
 # Ruff F-rules cover pyflakes-style issues on scripts/app/utils/llm_extraction and entrypoints.
 files = [
     "motherduck_client.py",
+    "scripts/145_data_contract_gate.py",
     "tests",
     "app/helpers.py",
     "utils/__init__.py",

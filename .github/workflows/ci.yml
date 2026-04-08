@@ -10,6 +10,7 @@ name: Dashboard CI — Hardened
 #     multimodal-tests (mm contract + imaging↔FNA + specimen_fhir_release_gate only),
 #     validation-contracts-offline (script 29 VAL_LAB SQL + ALL_VALIDATION_SQL registry surface +
 #       lab canonical in-memory contract + linkage-confidence fixture tests — no MotherDuck writes).
+#     data-contract-gate-offline (script 145 YAML contracts + hash-chain ledger — fixture parquet only).
 #   lint-and-syntax (MotherDuck secrets) → downstream jobs:
 #     motherduck-formalization (needs validation-contracts-offline; 116 dry-run → 112 --motherduck-check → 119),
 #     v2-domain-validation (legacy), benchmark-regression (continue-on-error),
@@ -241,6 +242,30 @@ jobs:
             tests/test_lab_canonical_contract_offline.py \
             tests/test_linkage_confidence.py \
             -v --tb=short
+
+  # ── Data contract gate (145) — offline fixtures only; no MotherDuck ───────
+  data-contract-gate-offline:
+    name: Data contract gate offline (145 fixtures)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: pytest — data contract gate
+        env:
+          GITHUB_TOKEN: ""
+          OPENAI_API_KEY: ""
+          MD_SA_TOKEN: ""
+          MOTHERDUCK_TOKEN: ""
+          LOCAL_DB_PATH: ""
+        run: |
+          python -m pytest tests/test_data_contract_gate.py -v --tb=short
 
   # ── Job 1: Static Analysis ─────────────────────────────────────────────────
   lint-and-syntax:

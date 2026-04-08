@@ -1,0 +1,102 @@
+# Data contract: longitudinal_lab_canonical_v1 (script 77 / 113)
+# Seeds enums, tiers, and plausibility bounds from tests/lab_canonical_contract.py
+contract_version: "1.0"
+dataset_name: longitudinal_lab_canonical_v1
+description: >
+  Canonical longitudinal lab layer — schema, tier/date enums, composite uniqueness,
+  analyte-specific plausibility (aligned with test_lab_canonical.py).
+
+row_locator_columns:
+  - research_id
+  - lab_date
+  - lab_name_standardized
+
+columns:
+  - name: research_id
+    dtype: int
+    nullable: false
+  - name: lab_date
+    dtype: date
+    nullable: false
+    no_future_date: true
+  - name: lab_date_status
+    dtype: string
+    nullable: true
+    allowed_values:
+      - exact_collection_date
+      - extracted_date
+      - unresolved_date
+  - name: lab_name_standardized
+    dtype: string
+    nullable: false
+  - name: value_numeric
+    dtype: float
+    nullable: true
+  - name: data_completeness_tier
+    dtype: string
+    nullable: false
+    allowed_values:
+      - current_structured
+      - current_nlp_partial
+      - future_institutional_required
+  - name: source_table
+    dtype: string
+    nullable: true
+  - name: source_script
+    dtype: string
+    nullable: true
+  - name: ingestion_wave
+    dtype: string
+    nullable: true
+
+# Optional columns — presence checked if listed with required: true in extended contract;
+# kept minimal here; full REQUIRED_COLUMNS from lab_canonical_contract.py for strict installs.
+optional_columns_from_source:
+  - lab_name_raw
+  - analyte_group
+  - value_raw
+  - unit_raw
+  - unit_standardized
+  - reference_range
+  - abnormal_flag
+  - is_censored
+  - provenance_note
+
+composite_unique:
+  - columns: [research_id, lab_date, lab_name_standardized, value_numeric]
+    name: lab_measurement_key
+    only_when_value_numeric_not_null: true
+
+conditional_numeric_bounds:
+  - when_column: lab_name_standardized
+    when_value: thyroglobulin
+    column: value_numeric
+    min: 0
+    max: 100000
+  - when_column: lab_name_standardized
+    when_value: anti_thyroglobulin
+    column: value_numeric
+    min: 0
+    max: 10000
+  - when_column: lab_name_standardized
+    when_value: pth
+    column: value_numeric
+    min: 0.5
+    max: 500
+  - when_column: lab_name_standardized
+    when_value: calcium_total
+    column: value_numeric
+    min: 4
+    max: 15
+  - when_column: lab_name_standardized
+    when_value: calcium_ionized
+    column: value_numeric
+    min: 0.5
+    max: 2.0
+
+cross_field_rules: []
+
+# Exists-in checks: ref CSV/parquet must expose ref_columns (paths repo-relative).
+foreign_keys: []
+
+builtin_rules: []

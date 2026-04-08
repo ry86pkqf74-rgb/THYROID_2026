@@ -1,0 +1,75 @@
+# Data contract: denormalized imaging ↔ FNA linkage-prep staging rows
+# Rule ideas from tests/test_imaging_fna_linkage_mm_v1.py (discordant laterality, chronology)
+contract_version: "1.0"
+dataset_name: imaging_fna_linkage_prep_v1
+description: >
+  One row per candidate imaging exam + FNA pair (staging). Validates laterality concordance
+  and basic pre-surgery temporal ordering when surgery_date is present — linkage-prep only,
+  not a replacement for scripts 129/128.
+
+row_locator_columns:
+  - research_id
+  - imaging_exam_id
+  - fna_episode_id
+
+columns:
+  - name: research_id
+    dtype: int
+    nullable: false
+  - name: imaging_exam_id
+    dtype: string
+    nullable: false
+  - name: fna_episode_id
+    dtype: int
+    nullable: false
+  - name: imaging_laterality
+    dtype: string
+    nullable: true
+    allowed_values:
+      - left
+      - right
+      - isthmus
+      - bilateral
+      - midline
+  - name: fna_laterality
+    dtype: string
+    nullable: true
+    allowed_values:
+      - left
+      - right
+      - isthmus
+      - bilateral
+      - midline
+  - name: imaging_exam_date
+    dtype: date
+    nullable: false
+    no_future_date: true
+  - name: fna_date
+    dtype: date
+    nullable: false
+    no_future_date: true
+  - name: surgery_date
+    dtype: date
+    nullable: true
+    no_future_date: true
+  - name: source_file_id
+    dtype: string
+    nullable: true
+  - name: extraction_run_id
+    dtype: string
+    nullable: true
+    provenance_required: false
+
+composite_unique:
+  - columns: [research_id, imaging_exam_id, fna_episode_id]
+    name: imaging_fna_pair_key
+
+conditional_numeric_bounds: []
+
+cross_field_rules: []
+
+builtin_rules:
+  - id: linkage_discordant_laterality
+    severity: error
+  - id: linkage_fna_after_surgery
+    severity: error
