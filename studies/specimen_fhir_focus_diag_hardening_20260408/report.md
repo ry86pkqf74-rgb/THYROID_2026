@@ -1,7 +1,7 @@
 # Specimen / FHIR focus QA — deterministic diagnostics & Check 13 hardening
 
 **Date:** 2026-04-08  
-**Git commit:** `git log -1 --format=%H -- studies/specimen_fhir_focus_diag_hardening_20260408/report.md` (resolves to the revising commit that added this report)
+**Git commit (validator + tests + docs + this report, `main`):** `bd4370de063010db7fb7a374a7efc3c9aa6f04c0`
 
 ## Objective
 
