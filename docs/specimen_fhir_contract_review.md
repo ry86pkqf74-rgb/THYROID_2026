@@ -23,20 +23,27 @@ GitHub Actions `multimodal-tests` job runs pytest for identity (`tests/test_spec
 
 1. **Row-level contract table** — `qa.val_specimen_contract_v1` (checks embedded in `138_md_specimen_fhir_layer.run_validation`).
 2. **Genomics binding** — `qa.val_specimen_genomic_binding_v1` (script 140).
-3. **Formalization gate** — `scripts/119_md_formalization_validate.py` Check 13: table presence, uniqueness, FAIL rows in both `val_*` tables, **`qa.v_diag_*`** aggregates (duplicates, orphans, broken FHIR refs, provenance gaps), and specimen-adjacent review burden.
+3. **Formalization gate** — `scripts/119_md_formalization_validate.py` Check 13: table presence, uniqueness, FAIL rows in both `val_*` tables, **`qa.v_diag_*`** plus **`qa.t_diag_specimen_focus_qa_metrics_v1`** (duplicates at master and focus grain, orphans, broken FHIR refs, provenance gaps), and specimen-adjacent review burden.
 
 ## Diagnostic views (`142`)
 
-| View | Purpose |
-|------|---------|
+| View / table | Purpose |
+|--------------|---------|
 | `qa.v_diag_specimen_duplicate_master_fp_v1` | Master fingerprints with row_count &gt; 1 |
+| `qa.v_diag_specimen_duplicate_focus_fp_v1` | Focus fingerprints with row_count &gt; 1 (deterministic aggregate on `specimen_tumor_focus_v1`) |
+| `qa.v_diag_specimen_orphan_focus_master_v1` | Focus rows whose `specimen_id` is missing from `specimen_master_v1` |
 | `qa.v_diag_specimen_orphan_genomic_master_v1` | Genomic rows referencing missing `specimen_master_v1` |
+| `qa.v_diag_specimen_orphan_genomic_focus_v1` | Genomic rows whose `specimen_focus_id` is set but missing from `specimen_tumor_focus_v1` |
 | `qa.v_diag_specimen_fhir_broken_refs_v1` | Subject / Procedure / Encounter / Episode reference mismatches (optional refs only when JSON path present) |
 | `qa.v_diag_specimen_provenance_master_v1` | `identity_build_run_id` gaps on `specimen_master_v1` |
+| `qa.v_diag_specimen_provenance_focus_v1` | `identity_build_run_id` / blank-run gaps on `specimen_tumor_focus_v1` |
 | `qa.v_diag_specimen_provenance_genomic_v1` | High-tier genomics rows with null `specimen_id` |
 | `qa.v_diag_specimen_review_burden_v1` | Row counts by status for **genomic link** review queue |
+| `qa.t_diag_specimen_focus_qa_metrics_v1` | **Table** (full rebuild per deploy): scalar rollup of focus duplicate groups, orphan focus→master, genomic→focus orphans, and focus provenance gaps — used alongside list views so `scripts/119_md_formalization_validate.py` Check 13 does not depend on ad hoc Python-issued scans of `main.specimen_tumor_focus_v1`. If this deploy step fails on a catalog, treat it as a **blocking QA DDL failure** (fix or document the engine limitation); do not silently downgrade to WARN. |
 
-**Also (script 119, best-effort):** duplicate / orphan **focus** fingerprints, genomic→focus orphans, and focus provenance gaps — SQL issued directly against `main.specimen_tumor_focus_v1` when the catalog allows full scans (some MotherDuck builds error on aggregates over that table; validator then **WARN**s with `focus-table scans unavailable`).
+**Check 13 (`119`):** when the specimen/FHIR layer is present, focus duplicate / orphan / provenance signals are read **only** from the `qa.v_diag_*` focus views and `qa.t_diag_specimen_focus_qa_metrics_v1`, matching `142`. A mismatch between the metrics table and the views triggers WARN with a rerun-143 hint.
+
+**PK / UNIQUE on catalogs:** `139` DDL declares `PRIMARY KEY` / `UNIQUE` on identity tables where supported; DuckLake-backed or legacy catalogs may not enforce them. **Release uniqueness** remains governed by these QA surfaces (and `val_specimen_*`), not by assuming engine-enforced constraints.
 
 Deploy with **`138 --md`** (recommended) or **`143_md_specimen_fhir_qa_diagnostics_deploy.py --md`** if tables already exist and only views need refresh.
 

@@ -137,11 +137,11 @@ Materialized by [`scripts/138_md_specimen_fhir_layer.py`](../scripts/138_md_spec
 
 **Governance:** `qa.specimen_merge_review_queue_v1` — non-auto-merged near-duplicate encounter pairs (same patient / day / `surgery_episode_id`, distinct fingerprint). `qa.val_specimen_contract_v1` — validator output from script 138. `qa.specimen_genomic_link_review_v1` / `qa.val_specimen_genomic_binding_v1` — genomics binding QA + checks from script 140.
 
-**QA diagnostics (`142`):** [`scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql`](../scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql) defines `qa.v_diag_specimen_*` views (duplicate fingerprints, orphan focus/genomic rows, broken FHIR refs, provenance summary, review-burden rollup). Deploy runs automatically at end of [`scripts/138_md_specimen_fhir_layer.py`](../scripts/138_md_specimen_fhir_layer.py) on MotherDuck (dedicated connection, same **`specimen_fhir_release_truth_v1`** UA), or standalone [`scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py`](../scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py) (**CREATE SNAPSHOT** attempted first; skipped when catalog is non-native). Reviewer-facing contract note: [`docs/specimen_fhir_contract_review.md`](specimen_fhir_contract_review.md).
+**QA diagnostics (`142`):** [`scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql`](../scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql) defines `qa.v_diag_specimen_*` **views** (master and **focus** duplicate fingerprints; orphan focus→master; orphan genomic→master and genomic→focus; broken FHIR refs; master/focus/genomic provenance summaries; genomic review-burden rollup) and the **`qa.t_diag_specimen_focus_qa_metrics_v1` table** rebuilt each deploy (single-pass scalar rollup of focus integrity — stable input for Check 13 without ad hoc Python scans of `main.specimen_tumor_focus_v1`). Deploy runs automatically at end of [`scripts/138_md_specimen_fhir_layer.py`](../scripts/138_md_specimen_fhir_layer.py) on MotherDuck (dedicated connection, same **`specimen_fhir_release_truth_v1`** UA), or standalone [`scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py`](../scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py) (**CREATE SNAPSHOT** attempted first; skipped when catalog is non-native). Reviewer-facing contract note: [`docs/specimen_fhir_contract_review.md`](specimen_fhir_contract_review.md).
 
 **FHIR disclaimer:** analytic, de-identified export for research workflows — **not** asserted as US Core–complete or production clinical interoperability.
 
-**Formalization:** [`scripts/119_md_formalization_validate.py`](../scripts/119_md_formalization_validate.py) Check 13 (`check_specimen_fhir_layer`) — includes `val_specimen_*`, all `v_diag_*` views when present, and specimen-adjacent review burden.
+**Formalization:** [`scripts/119_md_formalization_validate.py`](../scripts/119_md_formalization_validate.py) Check 13 (`check_specimen_fhir_layer`) — includes `val_specimen_*`, all required `142` **views and** `qa.t_diag_specimen_focus_qa_metrics_v1`, cross-checks metrics vs focus list views, and specimen-adjacent review burden.
 
 #### V1 entity tables (8, in main, never mutated by v2)
 
@@ -175,7 +175,8 @@ Materialized by [`scripts/138_md_specimen_fhir_layer.py`](../scripts/138_md_spec
 | `val_specimen_contract_v1` | Table | Specimen/FHIR contract checks (script 138 + Check 13) |
 | `specimen_genomic_link_review_v1` | Table | Genomics–specimen binding conflicts / weak tiers (script 140) |
 | `val_specimen_genomic_binding_v1` | Table | Genomics binding validation rows (script 140) |
-| `v_diag_specimen_*_v1` | View | Specimen/FHIR release diagnostics (duplicate FP, orphans, broken refs, provenance splits, genomic review burden); see §Specimen identity + analytic FHIR |
+| `v_diag_specimen_*_v1` | View | Specimen/FHIR release diagnostics (duplicate master/focus FP, orphan focus/master/genomic rows, broken FHIR refs, provenance splits, genomic review burden); see §Specimen identity + analytic FHIR |
+| `t_diag_specimen_focus_qa_metrics_v1` | Table | Per-deploy focus QA scalar rollup (`142`); required for authoritative Check 13 focus checks |
 
 ### 2.4 release_YYYYMMDD schemas
 

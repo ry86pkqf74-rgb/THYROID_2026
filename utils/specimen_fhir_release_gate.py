@@ -29,13 +29,22 @@ SPECIMEN_FHIR_TABLES: tuple[str, ...] = (
     "fhir_bundle_specimen_export_v1",
 )
 
+# Kept aligned with scripts/119_md_formalization_validate.py SPECIMEN_FHIR_DIAG_* .
 SPECIMEN_FHIR_DIAG_VIEWS: tuple[str, ...] = (
     "v_diag_specimen_duplicate_master_fp_v1",
+    "v_diag_specimen_duplicate_focus_fp_v1",
+    "v_diag_specimen_orphan_focus_master_v1",
+    "v_diag_specimen_orphan_genomic_focus_v1",
     "v_diag_specimen_orphan_genomic_master_v1",
     "v_diag_specimen_fhir_broken_refs_v1",
     "v_diag_specimen_provenance_master_v1",
+    "v_diag_specimen_provenance_focus_v1",
     "v_diag_specimen_provenance_genomic_v1",
     "v_diag_specimen_review_burden_v1",
+)
+
+SPECIMEN_FHIR_DIAG_TABLES: tuple[str, ...] = (
+    "t_diag_specimen_focus_qa_metrics_v1",
 )
 
 
@@ -64,6 +73,7 @@ class SpecimenFhirGateAssessment:
     anchor_present: bool
     missing_tables: tuple[str, ...]
     missing_diag_views: tuple[str, ...]
+    missing_diag_tables: tuple[str, ...]
 
     @property
     def gate_applies(self) -> bool:
@@ -72,8 +82,13 @@ class SpecimenFhirGateAssessment:
 
     @property
     def is_satisfied(self) -> bool:
-        """Layer + diagnostic views present (119 can run structural diagnostics)."""
-        return self.anchor_present and not self.missing_tables and not self.missing_diag_views
+        """Layer + 142 views + focus metrics table present (119 can run authoritative focus checks)."""
+        return (
+            self.anchor_present
+            and not self.missing_tables
+            and not self.missing_diag_views
+            and not self.missing_diag_tables
+        )
 
     @property
     def needs_full_materialization(self) -> bool:
@@ -84,7 +99,7 @@ class SpecimenFhirGateAssessment:
         return (
             self.anchor_present
             and not self.missing_tables
-            and bool(self.missing_diag_views)
+            and (bool(self.missing_diag_views) or bool(self.missing_diag_tables))
         )
 
 
@@ -95,13 +110,16 @@ def assess_specimen_fhir_gate(con: duckdb.DuckDBPyConnection) -> SpecimenFhirGat
             anchor_present=False,
             missing_tables=(),
             missing_diag_views=(),
+            missing_diag_tables=(),
         )
     missing_tables = tuple(t for t in SPECIMEN_FHIR_TABLES if not _main_rel_exists(con, t))
     missing_diag = tuple(v for v in SPECIMEN_FHIR_DIAG_VIEWS if not _qa_rel_exists(con, v))
+    missing_dtbl = tuple(t for t in SPECIMEN_FHIR_DIAG_TABLES if not _qa_rel_exists(con, t))
     return SpecimenFhirGateAssessment(
         anchor_present=True,
         missing_tables=missing_tables,
         missing_diag_views=missing_diag,
+        missing_diag_tables=missing_dtbl,
     )
 
 
@@ -125,6 +143,11 @@ def format_gate_failure_detail(assessment: SpecimenFhirGateAssessment) -> str:
         parts.append(
             f"missing qa diagnostic views ({len(assessment.missing_diag_views)}): "
             f"{', '.join(assessment.missing_diag_views)}"
+        )
+    if assessment.missing_diag_tables:
+        parts.append(
+            f"missing qa diagnostic tables ({len(assessment.missing_diag_tables)}): "
+            f"{', '.join(assessment.missing_diag_tables)}"
         )
     return "; ".join(parts) if parts else "unknown"
 

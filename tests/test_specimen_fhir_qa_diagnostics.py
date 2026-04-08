@@ -21,8 +21,19 @@ def _load_mod140():
     return mod
 
 
-def test_qa_diagnostic_views_empty_on_happy_path() -> None:
-    """142 views: no duplicate FP, orphans, broken refs, or provenance gaps (in-memory spine)."""
+def _load_mod119():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "md119", ROOT / "scripts" / "119_md_formalization_validate.py"
+    )
+    assert spec is not None and spec.loader is not None
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _happy_path_db() -> duckdb.DuckDBPyConnection:
     con = duckdb.connect(":memory:")
     con.execute("CREATE SCHEMA qa;")
     con.execute("""
@@ -83,26 +94,31 @@ def test_qa_diagnostic_views_empty_on_happy_path() -> None:
         .replace("__BUILD_RUN_ID__", "pytest_qa_diag")
     )
     tail = (ROOT / "scripts/sql/138_specimen_fhir_tail_ddl.sql").read_text(encoding="utf-8")
-    diag_sql = (ROOT / "scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql").read_text(encoding="utf-8")
     con.execute(ident)
     con.execute(tail)
     mod140 = _load_mod140()
     mod140.apply_specimen_genomics_binding(con)
+    diag_sql = (ROOT / "scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql").read_text(encoding="utf-8")
     con.execute(diag_sql)
+    return con
+
+
+def test_qa_diagnostic_views_empty_on_happy_path() -> None:
+    """142 views: no duplicate FP, orphans, broken refs, or provenance gaps (in-memory spine)."""
+    con = _happy_path_db()
 
     d0 = con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_duplicate_master_fp_v1").fetchone()
     assert d0 is not None and d0[0] == 0
-    d1 = con.execute(
-        "SELECT COUNT(*) FROM ( SELECT focus_fingerprint_sha256 FROM "
-        "main.specimen_tumor_focus_v1 GROUP BY 1 HAVING COUNT(*) > 1) _t"
-    ).fetchone()
-    assert d1 is not None and d1[0] == 0
+    d0f = con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_duplicate_focus_fp_v1").fetchone()
+    assert d0f is not None and d0f[0] == 0
     d2 = con.execute(
-        "SELECT COUNT(*) FROM main.specimen_tumor_focus_v1 f "
-        "LEFT JOIN main.specimen_master_v1 m ON f.specimen_id = m.specimen_id "
-        "WHERE m.specimen_id IS NULL"
+        "SELECT COUNT(*) FROM qa.v_diag_specimen_orphan_focus_master_v1"
     ).fetchone()
     assert d2 is not None and d2[0] == 0
+    d2gf = con.execute(
+        "SELECT COUNT(*) FROM qa.v_diag_specimen_orphan_genomic_focus_v1"
+    ).fetchone()
+    assert d2gf is not None and d2gf[0] == 0
     d3 = con.execute(
         "SELECT COUNT(*) FROM qa.v_diag_specimen_orphan_genomic_master_v1"
     ).fetchone()
@@ -112,38 +128,179 @@ def test_qa_diagnostic_views_empty_on_happy_path() -> None:
     m = con.execute(
         "SELECT n_missing_identity_run FROM qa.v_diag_specimen_provenance_master_v1"
     ).fetchone()
-    nrf = con.execute(
-        "SELECT COUNT(*) FILTER (WHERE TRIM(COALESCE(identity_build_run_id, '')) = '') "
-        "FROM main.specimen_tumor_focus_v1"
+    pf = con.execute(
+        "SELECT n_missing_identity_run, n_rows FROM qa.v_diag_specimen_provenance_focus_v1"
     ).fetchone()
-    assert nrf is not None
-    nmiss_f = nrf[0]
+    assert pf is not None and int(pf[0] or 0) == 0 and int(pf[1] or 0) > 0
     assert m is not None and int(m[0] or 0) == 0
-    assert int(nmiss_f or 0) == 0
     g = con.execute(
         "SELECT n_high_tier_null_specimen FROM qa.v_diag_specimen_provenance_genomic_v1"
     ).fetchone()
     assert g is not None and int(g[0] or 0) == 0
     con.execute("SELECT * FROM qa.v_diag_specimen_review_burden_v1 LIMIT 5").fetchall()
 
+    met = con.execute(
+        """
+        SELECT n_focus_rows, n_duplicate_fp_groups, n_orphan_focus_master,
+               n_orphan_genomic_focus, n_missing_focus_provenance
+        FROM qa.t_diag_specimen_focus_qa_metrics_v1
+        """
+    ).fetchone()
+    assert met is not None
+    assert int(met[0] or 0) > 0
+    for i in range(1, 5):
+        assert int(met[i] or 0) == 0
+
+
+def test_focus_metrics_table_matches_view_counts() -> None:
+    con = _happy_path_db()
+
+    def _cnt(sql: str) -> int:
+        row = con.execute(sql).fetchone()
+        assert row is not None and row[0] is not None
+        return int(row[0])
+
+    n_dup_v = _cnt("SELECT COUNT(*) FROM qa.v_diag_specimen_duplicate_focus_fp_v1")
+    n_orph_v = _cnt("SELECT COUNT(*) FROM qa.v_diag_specimen_orphan_focus_master_v1")
+    n_ogf_v = _cnt("SELECT COUNT(*) FROM qa.v_diag_specimen_orphan_genomic_focus_v1")
+    n_pf_v = _cnt(
+        "SELECT n_missing_identity_run FROM qa.v_diag_specimen_provenance_focus_v1"
+    )
+    met = con.execute("SELECT * FROM qa.t_diag_specimen_focus_qa_metrics_v1").fetchone()
+    assert met is not None
+    assert int(met[1]) == n_dup_v
+    assert int(met[3]) == n_orph_v
+    assert int(met[4]) == n_ogf_v
+    assert int(met[5]) == n_pf_v
+
+
+def test_v_diag_orphan_genomic_focus_detects_bad_reference() -> None:
+    con = _happy_path_db()
+    con.execute(
+        """
+        UPDATE main.specimen_genomic_assay_v1
+        SET specimen_focus_id = 'spf_definitely_missing'
+        WHERE genomic_assay_id = (
+          SELECT genomic_assay_id FROM main.specimen_genomic_assay_v1
+          WHERE specimen_focus_id IS NOT NULL
+          LIMIT 1
+        )
+        """
+    )
+    diag_sql = (ROOT / "scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql").read_text(encoding="utf-8")
+    con.execute(diag_sql)
+    row_n = con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_orphan_genomic_focus_v1").fetchone()
+    assert row_n is not None and int(row_n[0]) >= 1
+    met = con.execute("SELECT n_orphan_genomic_focus FROM qa.t_diag_specimen_focus_qa_metrics_v1").fetchone()
+    assert met is not None and int(met[0] or 0) >= 1
+
+
+def test_v_diag_duplicate_focus_fingerprint_detected() -> None:
+    con = _happy_path_db()
+    con.execute(
+        """
+        CREATE OR REPLACE TABLE main.specimen_tumor_focus_v1 AS
+        SELECT * FROM main.specimen_tumor_focus_v1
+        UNION ALL
+        (
+          SELECT * REPLACE ('spf_dup_pytest'::VARCHAR AS specimen_focus_id)
+          FROM main.specimen_tumor_focus_v1
+          LIMIT 1
+        )
+        """
+    )
+    diag_sql = (ROOT / "scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql").read_text(encoding="utf-8")
+    con.execute(diag_sql)
+    row_nd = con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_duplicate_focus_fp_v1").fetchone()
+    assert row_nd is not None and int(row_nd[0]) >= 1
+    row_mg = con.execute(
+        "SELECT n_duplicate_fp_groups FROM qa.t_diag_specimen_focus_qa_metrics_v1"
+    ).fetchone()
+    assert row_mg is not None and int(row_mg[0]) >= 1
+
+
+def test_v_diag_orphan_focus_master_detected() -> None:
+    con = _happy_path_db()
+    con.execute(
+        """
+        INSERT INTO main.specimen_tumor_focus_v1
+        SELECT * REPLACE (
+          'spf_orphan_master'::VARCHAR AS specimen_focus_id,
+          'sm_not_in_master'::VARCHAR AS specimen_id
+        )
+        FROM main.specimen_tumor_focus_v1
+        LIMIT 1
+        """
+    )
+    con.execute(
+        """
+        UPDATE main.specimen_tumor_focus_v1 SET focus_fingerprint_sha256 = sha256(
+          concat('orph_focus_fp|', specimen_focus_id)
+        ) WHERE specimen_focus_id = 'spf_orphan_master'
+        """
+    )
+    diag_sql = (ROOT / "scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql").read_text(encoding="utf-8")
+    con.execute(diag_sql)
+    row_of = con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_orphan_focus_master_v1").fetchone()
+    assert row_of is not None and int(row_of[0]) >= 1
+
+
+def test_v_diag_provenance_focus_detects_blank_build_run() -> None:
+    con = _happy_path_db()
+    con.execute(
+        """
+        UPDATE main.specimen_tumor_focus_v1
+        SET identity_build_run_id = ''
+        WHERE specimen_focus_id = (
+          SELECT specimen_focus_id FROM main.specimen_tumor_focus_v1 LIMIT 1
+        )
+        """
+    )
+    diag_sql = (ROOT / "scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql").read_text(encoding="utf-8")
+    con.execute(diag_sql)
+    row_pr = con.execute(
+        "SELECT n_missing_identity_run FROM qa.v_diag_specimen_provenance_focus_v1"
+    ).fetchone()
+    assert row_pr is not None and int(row_pr[0]) >= 1
+
+
+def test_check_13_strict_fails_on_focus_diagnostic_defect() -> None:
+    con = _happy_path_db()
+    con.execute(
+        """
+        UPDATE main.specimen_genomic_assay_v1
+        SET specimen_focus_id = 'spf_missing_for_check13'
+        WHERE genomic_assay_id = (
+          SELECT genomic_assay_id FROM main.specimen_genomic_assay_v1
+          WHERE specimen_focus_id IS NOT NULL
+          LIMIT 1
+        )
+        """
+    )
+    con.execute((ROOT / "scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql").read_text(encoding="utf-8"))
+
+    mod119 = _load_mod119()
+    results = mod119.ValidationResult("pytest")
+    mod119.check_specimen_fhir_layer(con, results, strict=True)
+    fail_names = {c["check"] for c in results.checks if c["status"] == "FAIL"}
+    assert any("Specimen/FHIR QA diagnostics" in name for name in fail_names)
+
 
 def test_contract_view_column_sets_documented() -> None:
-    """Guardrail: diagnostic view names stay stable for 119_md_formalization_validate.py."""
-    import importlib.util
+    """Guardrail: diagnostic view/table names stay stable for 119 Check 13 and release gate."""
+    import sys
 
-    spec = importlib.util.spec_from_file_location(
-        "md119", ROOT / "scripts" / "119_md_formalization_validate.py"
+    sys.path.insert(0, str(ROOT))
+    from utils.specimen_fhir_release_gate import (
+        SPECIMEN_FHIR_DIAG_TABLES as gate_tables,
+        SPECIMEN_FHIR_DIAG_VIEWS as gate_views,
     )
-    assert spec is not None and spec.loader is not None
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    names = set(mod.SPECIMEN_FHIR_DIAG_VIEWS)
-    assert "v_diag_specimen_fhir_broken_refs_v1" in names
-    assert names == {
-        "v_diag_specimen_duplicate_master_fp_v1",
-        "v_diag_specimen_orphan_genomic_master_v1",
-        "v_diag_specimen_fhir_broken_refs_v1",
-        "v_diag_specimen_provenance_master_v1",
-        "v_diag_specimen_provenance_genomic_v1",
-        "v_diag_specimen_review_burden_v1",
-    }
+
+    mod119 = _load_mod119()
+    names = set(mod119.SPECIMEN_FHIR_DIAG_VIEWS)
+    assert names == set(gate_views)
+    assert mod119.SPECIMEN_FHIR_DIAG_TABLES == gate_tables
+    assert "v_diag_specimen_duplicate_focus_fp_v1" in names
+    assert "v_diag_specimen_orphan_genomic_focus_v1" in names
+    assert "v_diag_specimen_provenance_focus_v1" in names
+    assert mod119.SPECIMEN_FHIR_DIAG_TABLES == ("t_diag_specimen_focus_qa_metrics_v1",)

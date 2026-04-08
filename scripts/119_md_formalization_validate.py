@@ -40,8 +40,9 @@ Checks:
      molecular_test_episode_v2 is non-empty (otherwise dates/linkage/specimen genomics are blocked)
  13. Specimen + analytic FHIR layer (scripts/138_md_specimen_fhir_layer.py): table presence when
      synoptic_tumor_long_v1 exists; fingerprint uniqueness; qa.val_specimen_contract_v1 and
-     qa.val_specimen_genomic_binding_v1 FAIL rows; qa.v_diag_* diagnostic views (142) orphan/ref/
-     duplicate/provenance checks; specimen-adjacent review burden (informational). Release
+     qa.val_specimen_genomic_binding_v1 FAIL rows; qa.v_diag_* + qa.t_diag_specimen_focus_qa_metrics_v1
+     (142) for master/focus duplicate fingerprints, genomic orphan(master/focus), focus–master orphans,
+     FHIR ref integrity, provenance gaps, and specimen-adjacent review burden (informational). Release
      orchestration (**124** ``--final-release``, **126** ``--release-mode``) can fail closed *before*
      this check via ``utils/specimen_fhir_release_gate`` — use ``--materialize-specimen-fhir`` or
      run **138** / **143** manually; ``--skip-specimen-fhir-gate`` defers to this validator only.
@@ -825,22 +826,21 @@ def _qa_object_exists(
 
 SPECIMEN_FHIR_DIAG_VIEWS: tuple[str, ...] = (
     "v_diag_specimen_duplicate_master_fp_v1",
+    "v_diag_specimen_duplicate_focus_fp_v1",
+    "v_diag_specimen_orphan_focus_master_v1",
+    "v_diag_specimen_orphan_genomic_focus_v1",
     "v_diag_specimen_orphan_genomic_master_v1",
     "v_diag_specimen_fhir_broken_refs_v1",
     "v_diag_specimen_provenance_master_v1",
+    "v_diag_specimen_provenance_focus_v1",
     "v_diag_specimen_provenance_genomic_v1",
     "v_diag_specimen_review_burden_v1",
 )
 
-
-def _safe_scalar_int(con: duckdb.DuckDBPyConnection, sql: str) -> int | None:
-    try:
-        row = con.execute(sql).fetchone()
-        if row is None or row[0] is None:
-            return None
-        return int(row[0])
-    except Exception:
-        return None
+# Materialized once per 142 deploy; aggregates match v_diag_* focus predicates (release-stable).
+SPECIMEN_FHIR_DIAG_TABLES: tuple[str, ...] = (
+    "t_diag_specimen_focus_qa_metrics_v1",
+)
 
 
 def _view_or_table_columns(con: duckdb.DuckDBPyConnection, name: str) -> set[str]:
@@ -1368,11 +1368,13 @@ def check_specimen_fhir_layer(
             results.add("qa.val_specimen_genomic_binding_v1", status_skip, str(exc))
 
     missing_diag = [v for v in SPECIMEN_FHIR_DIAG_VIEWS if not _qa_object_exists(con, v)]
-    if missing_diag and not missing:
+    missing_tbl = [t for t in SPECIMEN_FHIR_DIAG_TABLES if not _qa_object_exists(con, t)]
+    missing_142 = missing_diag + missing_tbl
+    if missing_142 and not missing:
         results.add(
-            "Specimen/FHIR QA diagnostic views (142)",
+            "Specimen/FHIR QA diagnostics (142)",
             status_skip,
-            f"missing: {', '.join(missing_diag)} — run scripts/138_md_specimen_fhir_layer.py "
+            f"missing: {', '.join(missing_142)} — run scripts/138_md_specimen_fhir_layer.py "
             "or scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py",
         )
     elif not missing:
@@ -1380,30 +1382,25 @@ def check_specimen_fhir_layer(
             n_dup_m = int(
                 con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_duplicate_master_fp_v1").fetchone()[0]
             )
-            n_dup_f = _safe_scalar_int(
-                con,
-                "SELECT COUNT(*) FROM ("
-                " SELECT focus_fingerprint_sha256 FROM main.specimen_tumor_focus_v1 "
-                " GROUP BY 1 HAVING COUNT(*) > 1"
-                ") _t",
+            n_dup_f = int(
+                con.execute(
+                    "SELECT COUNT(*) FROM qa.v_diag_specimen_duplicate_focus_fp_v1"
+                ).fetchone()[0]
             )
-            n_of = _safe_scalar_int(
-                con,
-                "SELECT COUNT(*) FROM main.specimen_tumor_focus_v1 f "
-                "LEFT JOIN main.specimen_master_v1 m ON f.specimen_id = m.specimen_id "
-                "WHERE m.specimen_id IS NULL",
+            n_of = int(
+                con.execute(
+                    "SELECT COUNT(*) FROM qa.v_diag_specimen_orphan_focus_master_v1"
+                ).fetchone()[0]
             )
             n_og_m = int(
                 con.execute(
                     "SELECT COUNT(*) FROM qa.v_diag_specimen_orphan_genomic_master_v1"
                 ).fetchone()[0]
             )
-            n_og_f = _safe_scalar_int(
-                con,
-                "SELECT COUNT(*) FROM main.specimen_genomic_assay_v1 g "
-                "LEFT JOIN main.specimen_tumor_focus_v1 f "
-                "ON g.specimen_focus_id = f.specimen_focus_id "
-                "WHERE g.specimen_focus_id IS NOT NULL AND f.specimen_focus_id IS NULL",
+            n_og_f = int(
+                con.execute(
+                    "SELECT COUNT(*) FROM qa.v_diag_specimen_orphan_genomic_focus_v1"
+                ).fetchone()[0]
             )
             n_br = int(
                 con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_broken_refs_v1").fetchone()[0]
@@ -1414,44 +1411,63 @@ def check_specimen_fhir_layer(
             pg = con.execute(
                 "SELECT n_high_tier_null_specimen FROM qa.v_diag_specimen_provenance_genomic_v1"
             ).fetchone()
+            pf = con.execute(
+                "SELECT n_missing_identity_run FROM qa.v_diag_specimen_provenance_focus_v1"
+            ).fetchone()
             n_mis_m = int(pm[0] or 0) if pm else 0
-            n_mis_f = _safe_scalar_int(
-                con,
-                "SELECT COUNT(*) FILTER (WHERE TRIM(COALESCE(identity_build_run_id, '')) = '') "
-                "FROM main.specimen_tumor_focus_v1",
-            )
+            n_mis_f = int(pf[0] or 0) if pf else 0
             n_hi_ns = int(pg[0] or 0) if pg else 0
-            focus_unavailable = n_dup_f is None or n_of is None or n_mis_f is None
-            n_og = n_og_m + (n_og_f or 0)
+            met = con.execute(
+                """
+                SELECT
+                  n_duplicate_fp_groups,
+                  n_orphan_focus_master,
+                  n_orphan_genomic_focus,
+                  n_missing_focus_provenance
+                FROM qa.t_diag_specimen_focus_qa_metrics_v1
+                """
+            ).fetchone()
+            metrics_mismatch = False
+            if met is not None:
+                md0, md1, md2, md3 = (int(met[i] or 0) for i in range(4))
+                if (
+                    md0 != n_dup_f
+                    or md1 != n_of
+                    or md2 != n_og_f
+                    or md3 != n_mis_f
+                ):
+                    metrics_mismatch = True
+            n_og = n_og_m + n_og_f
             bad_diag = (
                 n_dup_m
-                + (n_dup_f or 0)
-                + (n_of or 0)
+                + n_dup_f
+                + n_of
                 + n_og
                 + n_br
                 + n_mis_m
-                + (n_mis_f or 0)
+                + n_mis_f
                 + n_hi_ns
             )
             detail = (
-                f"dup_master_fp={n_dup_m}, dup_focus_fp={n_dup_f}, orphan_focus={n_of}, "
-                f"orphan_genomic(master/focus)={n_og_m}/"
-                f"{n_og_f if n_og_f is not None else 'n/a'}, broken_fhir_refs={n_br}, "
-                f"prov_gaps(master/focus/high_tier_null_spec)={n_mis_m}/"
-                f"{n_mis_f if n_mis_f is not None else 'n/a'}/{n_hi_ns}"
+                f"dup_master_fp={n_dup_m}, dup_focus_fp_groups={n_dup_f}, orphan_focus={n_of}, "
+                f"orphan_genomic(master/focus)={n_og_m}/{n_og_f}, broken_fhir_refs={n_br}, "
+                f"prov_gaps(master/focus/high_tier_null_spec)={n_mis_m}/{n_mis_f}/{n_hi_ns}"
             )
-            if focus_unavailable:
-                detail += " | NOTE: some focus-table scans unavailable on this catalog"
+            if metrics_mismatch:
+                detail += (
+                    " | WARN: qa.t_diag_specimen_focus_qa_metrics_v1 disagrees with v_diag_* "
+                    "focus surfaces — rerun 143/138 QA DDL"
+                )
             if bad_diag > 0:
                 diag_status = status_skip
-            elif focus_unavailable:
+            elif metrics_mismatch:
                 diag_status = "WARN"
             else:
                 diag_status = "PASS"
             results.add(
-                "Specimen/FHIR QA diagnostics (142 views + focus checks)",
+                "Specimen/FHIR QA diagnostics (142 surfaces + focus metrics)",
                 diag_status,
-                "clean" if (bad_diag == 0 and not focus_unavailable) else detail,
+                "clean" if (bad_diag == 0 and not metrics_mismatch) else detail,
             )
             open_gen = int(
                 con.execute(

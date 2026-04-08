@@ -1,5 +1,5 @@
 -- Specimen + analytic FHIR — QA diagnostic views (reviewer / release ops)
--- Deploy: appended by scripts/138_md_specimen_fhir_layer.py (MotherDuck UA specimen_fhir_release_ops_v1)
+-- Deploy: appended by scripts/138_md_specimen_fhir_layer.py (MotherDuck UA specimen_fhir_release_truth_v1)
 --         or scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py
 -- Prereqs: main.specimen_* , main.fhir_* , qa.specimen_merge_review_queue_v1 ,
 --          qa.specimen_genomic_link_review_v1 (after 139 + 138 tail + 140)
@@ -15,10 +15,70 @@ FROM main.specimen_master_v1
 GROUP BY 1
 HAVING COUNT(*) > 1;
 
--- Note: full-table aggregates on main.specimen_tumor_focus_v1 have intermittently
--- raised internal errors on some MotherDuck catalogs. Focus-level duplicates / orphan
--- focus / genomic→focus orphans are checked in scripts/119_md_formalization_validate.py
--- via best-effort SQL (WARN if the scan is unavailable).
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Focus-level diagnostics (deterministic QA surfaces for Check 13 / release ops)
+--
+-- List views: reviewer drill-down. Scalar rollups for the same predicates live in
+-- qa.t_diag_specimen_focus_qa_metrics_v1 (single CREATE TABLE AS per deploy) so release
+-- validation can read stable aggregates without re-issuing ad hoc full scans from Python.
+-- Full rebuild on each 142 deploy (138 tail or 143) keeps metrics in sync with list views.
+-- ═══════════════════════════════════════════════════════════════════════════
+CREATE OR REPLACE VIEW qa.v_diag_specimen_duplicate_focus_fp_v1 AS
+SELECT
+  focus_fingerprint_sha256 AS fingerprint,
+  COUNT(*)::BIGINT AS row_count
+FROM main.specimen_tumor_focus_v1
+GROUP BY 1
+HAVING COUNT(*) > 1;
+
+CREATE OR REPLACE VIEW qa.v_diag_specimen_orphan_focus_master_v1 AS
+SELECT
+  f.specimen_focus_id,
+  f.specimen_id,
+  f.research_id,
+  'missing_master'::VARCHAR AS reason
+FROM main.specimen_tumor_focus_v1 f
+LEFT JOIN main.specimen_master_v1 m ON f.specimen_id = m.specimen_id
+WHERE m.specimen_id IS NULL;
+
+CREATE OR REPLACE VIEW qa.v_diag_specimen_orphan_genomic_focus_v1 AS
+SELECT
+  g.genomic_assay_id,
+  g.specimen_id,
+  g.specimen_focus_id,
+  g.research_id,
+  'missing_focus'::VARCHAR AS reason
+FROM main.specimen_genomic_assay_v1 g
+LEFT JOIN main.specimen_tumor_focus_v1 f ON g.specimen_focus_id = f.specimen_focus_id
+WHERE g.specimen_focus_id IS NOT NULL AND f.specimen_focus_id IS NULL;
+
+CREATE OR REPLACE VIEW qa.v_diag_specimen_provenance_focus_v1 AS
+SELECT
+  COUNT(*) FILTER (WHERE TRIM(COALESCE(identity_build_run_id, '')) = '')::BIGINT
+    AS n_missing_identity_run,
+  COUNT(*)::BIGINT AS n_rows
+FROM main.specimen_tumor_focus_v1;
+
+CREATE OR REPLACE TABLE qa.t_diag_specimen_focus_qa_metrics_v1 AS
+WITH fp_counts AS (
+  SELECT
+    focus_fingerprint_sha256,
+    COUNT(*)::BIGINT AS c
+  FROM main.specimen_tumor_focus_v1
+  GROUP BY 1
+)
+SELECT
+  (SELECT COUNT(*)::BIGINT FROM main.specimen_tumor_focus_v1) AS n_focus_rows,
+  (SELECT COUNT(*)::BIGINT FROM fp_counts WHERE c > 1) AS n_duplicate_fp_groups,
+  (SELECT COALESCE(SUM(c), 0::BIGINT) FROM fp_counts WHERE c > 1) AS n_rows_in_duplicate_fp_groups,
+  (SELECT COUNT(*)::BIGINT FROM main.specimen_tumor_focus_v1 f
+   LEFT JOIN main.specimen_master_v1 m ON f.specimen_id = m.specimen_id
+   WHERE m.specimen_id IS NULL) AS n_orphan_focus_master,
+  (SELECT COUNT(*)::BIGINT FROM main.specimen_genomic_assay_v1 g
+   LEFT JOIN main.specimen_tumor_focus_v1 f2 ON g.specimen_focus_id = f2.specimen_focus_id
+   WHERE g.specimen_focus_id IS NOT NULL AND f2.specimen_focus_id IS NULL) AS n_orphan_genomic_focus,
+  (SELECT COUNT(*)::BIGINT FROM main.specimen_tumor_focus_v1
+   WHERE TRIM(COALESCE(identity_build_run_id, '')) = '') AS n_missing_focus_provenance;
 
 CREATE OR REPLACE VIEW qa.v_diag_specimen_orphan_genomic_master_v1 AS
 SELECT
