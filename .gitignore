@@ -15,7 +15,10 @@ __pycache__/
 .env.motherduck
 
 # MotherDuck tokens (TOML — same keys as .streamlit/secrets.toml; see motherduck.local.toml.example)
+# Canonical local store for PAT / SA token (reference for scripts --md); never commit.
 motherduck.local.toml
+motherduck.local.toml.backup
+motherduck.local.secrets.toml
 
 # Raw source data — PHI-sensitive, must not be committed
 raw/
