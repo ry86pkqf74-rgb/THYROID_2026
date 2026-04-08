@@ -1,0 +1,22 @@
+=== Separation: unset RW env vars after sourcing .env.motherduck (stderr only for source errors) ===
+after_unset_rw_env token_mode: env:MOTHERDUCK_TOKEN
+read_scaling_token_mode: secrets.toml:MD_READ_SCALING_TOKEN
+get_token_resolved: yes
+is_read_scaling_only_environment: False
+--- smoke_test_md_connection.py --md (same subshell) ---
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+DuckDB version : v1.4.4
+Catalog / DB    : 'Thyroid 2026' / 'Thyroid 2026'
+Connection type : MotherDuck (cloud)
+PASS
+smoke_exit=0
+--- connect_rw probe (expect success if RW from secrets) ---
+100% ▕██████████████████████████████████████▏ (00:00:02.54 elapsed)     
+connect_rw: OK
+probe_done=1
+
+--- Interpretation ---
+- Intended RS-only subprocess with `unset MOTHERDUCK_TOKEN MD_SA_TOKEN motherduck_token` after `source .env.motherduck` did NOT yield RS-only resolution: `token_mode` still reported `env:MOTHERDUCK_TOKEN` because `motherduck_client._load_repo_dotenv()` repopulates RW keys from repo-root `.env` / `.env.motherduck` when those variables are missing (`load_dotenv(..., override=False)` still sets keys not present in os.environ).
+- Therefore smoke_test `--md` and `connect_rw` correctly stayed on the RW path; this does **not** validate `ReadScalingTokenForbiddenError` for promotion scripts.
+- True RS-only fail-closed validation requires an environment with no RW in env files or secrets (or a dedicated test fixture), without pasting tokens on the command line.

@@ -1,0 +1,33 @@
+-- session
+current_database()                current_timestamp
+      Thyroid 2026 2026-04-08 02:06:05.835022-04:00
+
+-- MD_INFORMATION_SCHEMA.DATABASES (Thyroid*)
+                                                              name     type                created_ts
+                                                      Thyroid 2026 DUCKLAKE 2026-04-02 04:31:53-04:00
+                               Thyroid 2026 Molecular Dev 20260407  DEFAULT 2026-04-07 12:10:18-04:00
+    Thyroid 2026 Molecular PrePromote 20260407_cursor_prod_release  DEFAULT 2026-04-07 12:14:06-04:00
+Thyroid 2026 Molecular PrePromote 20260410_20260407_161831_promote  DEFAULT 2026-04-07 12:18:34-04:00
+         Thyroid 2026 Molecular PrePromote agent_20260407_workflow  DEFAULT 2026-04-07 02:39:05-04:00
+                                Thyroid 2026 Molecular QA 20260407  DEFAULT 2026-04-07 01:44:43-04:00
+
+-- catalog 'Thyroid 2026' type='DUCKLAKE' ducklake=True
+
+-- recent DATABASE_SNAPSHOTS (prod)
+database_name                          snapshot_id snapshot_name              created_ts
+ Thyroid 2026 6b2befb8-6dab-41b5-8082-ae3def224c09          None 2026-04-08 05:20:54.872
+ Thyroid 2026 0ca21f65-b28c-475a-b82e-b4dacdb62e9b          None 2026-04-08 05:19:54.148
+ Thyroid 2026 39bb8224-79a8-497c-b714-8f8a4c97db06          None 2026-04-08 05:18:53.514
+ Thyroid 2026 1b92f44d-41cb-4029-ae87-4a7b4c1bba82          None 2026-04-08 05:17:52.881
+ Thyroid 2026 c9aa9c2a-09ec-46c4-a3e6-ee513e524a3d          None 2026-04-08 05:16:52.292
+ Thyroid 2026 c9466e33-ccc2-46ee-afca-780d71def3d4          None 2026-04-08 04:47:10.495
+ Thyroid 2026 2c8836f0-806c-4dea-8101-b71afca699f1          None 2026-04-08 03:38:08.615
+ Thyroid 2026 b7883f67-0ec2-4c70-805c-66278aab996b          None 2026-04-08 01:53:38.412
+ Thyroid 2026 eb4b8db9-d8d3-4aa4-8c64-ba1d117c3289          None 2026-04-07 20:05:11.506
+ Thyroid 2026 0980cff3-dd7d-4977-b44a-3c5ab97d5640          None 2026-04-07 20:04:10.656
+ Thyroid 2026 45f52055-f5e3-4ab3-a6ce-261e0ec9ed8c          None 2026-04-07 19:53:52.555
+ Thyroid 2026 51d86838-4076-4d16-8ee7-ff212ff01291          None 2026-04-07 19:52:51.726
+ Thyroid 2026 48055060-f78f-459b-929f-3d4478b14b48          None 2026-04-07 19:51:50.996
+ Thyroid 2026 93b6f161-11f3-43d0-8337-69a52c5178cd          None 2026-04-07 19:50:50.274
+ Thyroid 2026 844ccba0-8adf-4567-a5b1-424f46af795a          None 2026-04-07 19:22:05.713
+exit_code=0

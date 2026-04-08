@@ -1,0 +1,19 @@
+MotherDuck token source labels (no secret values)
+
+Read/write (staging, promotion, fail-closed --md paths)
+- Observed mode: env:MOTHERDUCK_TOKEN
+- Alternate paths per motherduck_client.get_token(): MD_SA_TOKEN → MOTHERDUCK_TOKEN → motherduck_token → JWT-like LOCAL_DB_PATH → .streamlit/secrets.toml keys
+
+Read-scaling (dashboard / reader refresh only)
+- Observed mode: secrets.toml:MD_READ_SCALING_TOKEN
+- Alternate: env MD_READ_SCALING_TOKEN or MOTHERDUCK_READ_SCALING_TOKEN
+
+Credential mix on this machine (resolver view)
+- Both RW and read-scaling tokens resolvable (not RS-only, not RW-only)
+
+Session hint env vars (names only; empty = not set at audit time)
+- MD_READ_SCALING_SESSION_HINT: not set
+- MOTHERDUCK_READ_SCALING_SESSION_HINT: not set
+- MOTHERDUCK_SESSION_HINT: not set
+
+Repo honors session_hint for read-scaling connections in motherduck_client.MotherDuckClient._resolve_session_hint(hint_profile="read_scaling") (connection string + SET motherduck_session_hint when supported).

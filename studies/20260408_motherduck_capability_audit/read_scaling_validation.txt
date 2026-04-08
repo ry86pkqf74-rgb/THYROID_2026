@@ -1,0 +1,16 @@
+REFRESH DATABASE "Thyroid 2026"
+exit=0
+=== connect_read_scaling live probe (non-dry-run) ===
+get_read_scaling_token present: True
+RESULT: connect_read_scaling FAILED: TransactionException TransactionContext Error: Catalog write-write conflict on create with "__ducklake_s3_readonly_secret__MD_DB_B64D4EC9_AAFB_49CC_BF39_D1DFD85E68DC"
+probe_exit=0
+
+=== 136 writer --dry-run --md-env prod ===
+CREATE SNAPSHOT OF "Thyroid 2026"
+writer_dryrun_exit=0
+OK reader: REFRESH DATABASE "Thyroid 2026"
+reader_live_exit=0
+100% ▕██████████████████████████████████████▏ (00:00:03.56 elapsed)     
+current_database: Thyroid 2026
+current_timestamp: 2026-04-08 02:39:10.427591-04:00
+connect_read_scaling validated: yes
