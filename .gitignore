@@ -3,6 +3,7 @@
 __pycache__/
 *.pyc
 .streamlit/secrets.toml
+.streamlit/_token_import.oneoff
 .cursor/
 .venv/
 .vscode/

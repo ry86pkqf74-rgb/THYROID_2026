@@ -1,5 +1,7 @@
 # Lab coverage memo — manuscript panel vs live `longitudinal_lab_canonical_v1`
 
+> **Historical capture (2026-04-07):** The wave table below reflects a **point-in-time** export **before** `final_institutional_20260407` appeared in MotherDuck. **Current** catalog includes that wave (see [`../20260407_repo_delta_gap_audit/blockers_matrix.md`](../20260407_repo_delta_gap_audit/blockers_matrix.md) and top-level `README.md`). Do **not** use this file alone to argue “missing institutional wave.”
+
 ## Ingestion waves (live)
 
 | ingestion_wave | rows | distinct patients |

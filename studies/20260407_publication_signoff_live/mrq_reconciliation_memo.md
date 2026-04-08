@@ -1,5 +1,7 @@
 # MRQ reconciliation memo — checked-in claims vs live MotherDuck
 
+**Update (2026-04-08):** A fresh `119 --release-mode` run (see [`../20260407_repo_delta_gap_audit/119_release_mode_rerun/validation_report.md`](../20260407_repo_delta_gap_audit/119_release_mode_rerun/validation_report.md)) reports **no** synthetic-placeholder rows in `qa.manual_review_queue` and **11,244** reviewed / **0** pending. The **triage table** in §2 below is a **2026-04-07** snapshot — keep for audit trail only; reconcile publication language against **live** MotherDuck or the repo-delta study.
+
 **Update (2026-04-07, later session):** `119 --release-mode` **no longer FAIL** on specimen/FHIR diagnostics in the **latest** live run — see [`../20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md`](../20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md). Rows in the claim matrix below that cite “119 FAIL” refer to the **earlier** snapshot in [`validation_report.md`](validation_report.md); interpret **Release-mode PASS** in light of that newer report.
 
 ## Live triage

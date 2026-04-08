@@ -1,5 +1,7 @@
 # Thyroid Master DuckDB Data Dictionary
 
+> **MotherDuck / cloud canonical contract:** For **MotherDuck** schema maps, promotion planes (`main`, `v2_stage`, `qa`, `release_*`), and analyst views, use [`docs/motherduck_database_contract_v1.md`](docs/motherduck_database_contract_v1.md) — not this file alone. This dictionary remains oriented to **local file** `thyroid_master.duckdb` and historical pipeline tables.
+
 This document describes the production thyroid cancer research lakehouse in:
 
 - `thyroid_master.duckdb`
