@@ -1,0 +1,19 @@
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+=== columns_QUERY_HISTORY ===
+Empty DataFrame
+Columns: [column_name, data_type]
+Index: []
+=== columns_RECENT ===
+Empty DataFrame
+Columns: [table_name]
+Index: []
+=== SAMPLE QUERY_HISTORY (filtered UA) ===
+query_history filtered ERROR: BinderException Binder Error: Referenced column "sql_text" not found in FROM clause!
+Candidate bindings: "query_text", "start_time", "instance_type", "end_time", "bytes_spilled_to_disk"
+
+LINE 3: WHERE CAST(sql_text AS VARCHAR) ILIKE '%cursor_repo_audit%' OR user_agent...
+                   ^
+=== recent_queries sample columns ===
+['query_id', 'query_text', 'start_time', 'end_time', 'execution_time', 'wait_time', 'total_elapsed_time', 'error_message', 'error_type', 'user_agent', 'user_name', 'query_nr', 'transaction_nr', 'connection_id', 'duckdb_id', 'duckdb_version', 'instance_type', 'query_type', 'bytes_uploaded', 'bytes_downloaded', 'bytes_spilled_to_disk', 'duckling_id', 'session_name']
+obs_exit=0

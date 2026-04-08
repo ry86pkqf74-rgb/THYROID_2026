@@ -1,0 +1,5 @@
+100% ▕██████████████████████████████████████▏ (00:00:02.64 elapsed)     
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+                          user_agent  n
+duckdb/v1.4.4(osx_amd64) python/3.14 76

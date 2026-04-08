@@ -13,9 +13,9 @@ DuckLake constraint: production ``Thyroid 2026`` is type ``DUCKLAKE`` — named
 ``CREATE SNAPSHOT`` and snapshot selectors on ``CREATE DATABASE ... FROM`` are
 **not** supported for DuckLake sources; use a bare zero-copy clone from latest.
 
-Usage (place ``--execute`` / ``--date-tag`` **before** the subcommand)::
+Usage (place global flags like ``--execute``, ``--md-sa``, and ``--date-tag`` **before** the subcommand)::
 
-  .venv/bin/python scripts/130_md_env_bootstrap.py inspect [--md-sa]
+  .venv/bin/python scripts/130_md_env_bootstrap.py [--md-sa] inspect
   .venv/bin/python scripts/130_md_env_bootstrap.py snapshot --name pre_schema_20260407
   .venv/bin/python scripts/130_md_env_bootstrap.py clone --dev --qa
   .venv/bin/python scripts/130_md_env_bootstrap.py --execute clone --dev [--md-sa]
@@ -308,7 +308,9 @@ def cmd_validate(con: duckdb.DuckDBPyConnection, database: str) -> None:
         "SELECT COUNT(*) FROM information_schema.tables "
         "WHERE table_catalog = current_database() AND table_schema = 'main'"
     ).fetchone()
-    print(f"current_database={cur[0]!r} main_table_count={n_main[0] if n_main else '?'}")
+    cur_db = cur[0] if cur else "?"
+    main_cnt = n_main[0] if n_main else "?"
+    print(f"current_database={cur_db!r} main_table_count={main_cnt}")
 
 
 def cmd_prepromote_backup(
