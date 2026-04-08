@@ -7,7 +7,9 @@
 
 ## Purpose
 
-Ingest **flattened** DICOM header exports (CSV, XLSX, JSON array, or Parquet) into governed, repo-native tables with **deterministic** linkage to existing imaging/specimen/FNA structures. This layer is **additive**: it does not change `imaging_nodule_master_v1`, `scripts/128_multimodal_contract_mm_v1.py`, or `scripts/129_imaging_fna_linkage_mm_v1.py`. Optional `optional_attach_dicom_to_imaging_nodule_frame()` is a **no-op** unless `dicom_study_header_v1` exists.
+Ingest **flattened** DICOM header exports (CSV, XLSX, JSON array, or Parquet) **or raw DICOM files (`.dcm`)** into governed, repo-native tables with **deterministic** linkage to existing imaging/specimen/FNA structures. The **`.dcm` path is metadata-only**: the pipeline uses `pydicom.dcmread(..., stop_before_pixels=True)` and never decodes pixel data or builds image pipelines. Canonical outputs (`dicom_study_header_v1`, `dicom_series_header_v1`, provenance, exact-link tables, review queue) are the same as for flattened exports.
+
+This layer is **additive**: it does not change `imaging_nodule_master_v1`, `scripts/128_multimodal_contract_mm_v1.py`, or `scripts/129_imaging_fna_linkage_mm_v1.py`. Optional `optional_attach_dicom_to_imaging_nodule_frame()` is a **no-op** unless `dicom_study_header_v1` exists.
 
 ## Default: export-only (no database writes)
 
@@ -19,6 +21,10 @@ python3 scripts/150_ingest_dicom_headers.py \
 # Multiple files, explicit format
 python3 scripts/150_ingest_dicom_headers.py \
   --input a.csv --input b.json --format csv
+
+# One or more raw DICOM files (same export tables as flattened ingest)
+python3 scripts/150_ingest_dicom_headers.py \
+  --input /path/to/study_image.dcm --input /path/to/second_series.dcm --format auto
 ```
 
 **Outputs** (under `exports/dicom_header_ingest_<UTC_ts>/`, gitignored):
@@ -84,15 +90,18 @@ python3 scripts/150_ingest_dicom_headers.py --input headers.csv \
 ## Validation (CI / local)
 
 ```bash
-python3 -m py_compile scripts/150_ingest_dicom_headers.py utils/dicom_header_helpers.py
-python3 -m mypy --ignore-missing-imports scripts/150_ingest_dicom_headers.py utils/dicom_header_helpers.py
+python3 -m py_compile scripts/150_ingest_dicom_headers.py utils/dicom_header_helpers.py tests/test_dicom_header_ingest.py
+python3 -m mypy --ignore-missing-imports scripts/150_ingest_dicom_headers.py utils/dicom_header_helpers.py tests/test_dicom_header_ingest.py
+python3 -m pyflakes scripts/150_ingest_dicom_headers.py utils/dicom_header_helpers.py tests/test_dicom_header_ingest.py
 ruff check scripts/150_ingest_dicom_headers.py utils/dicom_header_helpers.py tests/test_dicom_header_ingest.py
 python3 -m pytest tests/test_dicom_header_ingest.py -q
 ```
 
 ## Tests and fixtures
 
-Synthetic-only fixtures live under `tests/fixtures/dicom_headers/`. They contain no real PHI.
+Synthetic-only fixtures live under `tests/fixtures/dicom_headers/` (flattened formats). They contain no real PHI. **Raw `.dcm` coverage** uses programmatic minimal DICOM files created during tests (not committed).
+
+**Dependency:** `pydicom` (see `requirements.txt`) is required only when ingesting `.dcm` files.
 
 ## Related documentation
 

@@ -15,6 +15,11 @@ from typing import Any, Mapping, Sequence
 import pandas as pd
 import yaml
 
+try:
+    import pydicom
+except ImportError:  # pragma: no cover
+    pydicom = None  # type: ignore[misc, assignment]
+
 _UID_RE = re.compile(r"^[0-9.]+$")
 _NON_ALNUM = re.compile(r"[^a-z0-9]+")
 
@@ -53,6 +58,92 @@ def build_column_lookup(
 
 def normalize_column_name(name: str) -> str:
     return str(name).strip().lower()
+
+
+# CSV / flattened-export column names (must match config/dicom_header_aliases.yml DICOM tags).
+_DICOM_FLAT_HEADER_COLUMNS: tuple[str, ...] = (
+    "StudyInstanceUID",
+    "SeriesInstanceUID",
+    "AccessionNumber",
+    "StudyDate",
+    "SeriesDate",
+    "Modality",
+    "BodyPartExamined",
+    "StudyDescription",
+    "SeriesDescription",
+    "PatientID",
+    "InstitutionName",
+)
+
+
+def require_pydicom() -> None:
+    if pydicom is None:
+        raise ImportError(
+            "Reading .dcm files requires pydicom; install with `pip install pydicom`.",
+        )
+
+
+def _format_dicom_scalar(v: Any) -> str:
+    if v is None or (isinstance(v, float) and pd.isna(v)):
+        return ""
+    return str(v).strip()
+
+
+def _format_dicom_element(elem: Any) -> str:
+    """Stringify a pydicom DataElement without decoding pixel or other bulk data."""
+    from pydicom.dataelem import DataElement as _DE
+
+    if isinstance(elem, _DE):
+        if getattr(elem, "keyword", None) == "PixelData":
+            return ""
+        v = elem.value
+    else:
+        v = elem
+    if v is None:
+        return ""
+    if isinstance(v, bytes):
+        return v.decode(errors="replace").strip()
+    if isinstance(v, (list, tuple)):
+        return "\\".join(_format_dicom_scalar(x) for x in v)
+    return _format_dicom_scalar(v)
+
+
+def read_dicom_metadata_flat_row(path: Path) -> dict[str, str]:
+    """Read DICOM metadata only (no pixel decode). Keys match flattened CSV export columns.
+
+    On read failure or missing tags, returns empty strings for affected fields so downstream
+    QC/review routing matches the flattened path.
+    """
+    require_pydicom()
+    empty = {c: "" for c in _DICOM_FLAT_HEADER_COLUMNS}
+    try:
+        ds = pydicom.dcmread(  # type: ignore[union-attr]
+            str(path),
+            stop_before_pixels=True,
+            force=True,
+        )
+    except Exception:
+        return dict(empty)
+    out = dict(empty)
+    for name in _DICOM_FLAT_HEADER_COLUMNS:
+        elem = ds.get(name)
+        if elem is None:
+            continue
+        try:
+            out[name] = _format_dicom_element(elem)
+        except Exception:
+            out[name] = ""
+    return out
+
+
+def read_dicom_files(paths: Sequence[Path]) -> pd.DataFrame:
+    """Load one row per file, same logical columns as flattened CSV/XLSX (all string dtype)."""
+    rows: list[dict[str, str]] = []
+    for p in paths:
+        row = read_dicom_metadata_flat_row(p)
+        row["_source_file"] = str(p.resolve())
+        rows.append(row)
+    return pd.DataFrame(rows)
 
 
 def normalize_accession_key(val: Any) -> str | None:
@@ -155,8 +246,19 @@ def read_input_files(
                 f = "json"
             elif suf == ".parquet":
                 f = "parquet"
+            elif suf == ".dcm":
+                f = "dcm"
             else:
                 raise ValueError(f"Cannot infer format for {p}")
+        if f == "dcm" and p.suffix.lower() != ".dcm":
+            raise ValueError(f"--format dcm expects .dcm files; got {p}")
+        if f != "dcm" and p.suffix.lower() == ".dcm":
+            raise ValueError(
+                f"{p} is a DICOM file; use --format auto or dcm (not {f!r}).",
+            )
+        if f == "dcm":
+            frames.append(read_dicom_files([p]))
+            continue
         if f == "csv":
             df = pd.read_csv(p, dtype=str, keep_default_na=False)
         elif f == "xlsx":
@@ -180,7 +282,7 @@ def read_input_files(
 def build_enriched_rows(df: pd.DataFrame, col_lookup: Mapping[str, str]) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for pos, (_, rec) in enumerate(df.iterrows(), start=1):
-        raw = rec.to_dict()
+        raw: dict[str, Any] = {str(k): v for k, v in rec.to_dict().items()}
         src = raw.pop("_source_file", None)
         c = canonicalize_row(raw, col_lookup)
         extra = c.pop("_extra_columns", {})

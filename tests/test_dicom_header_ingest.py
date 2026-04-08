@@ -2,10 +2,14 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 
 import duckdb
 import pandas as pd
+import pydicom
+from pydicom.dataset import FileDataset, FileMetaDataset
+from pydicom.uid import ExplicitVRLittleEndian, SecondaryCaptureImageStorage, generate_uid
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -16,6 +20,7 @@ from utils.dicom_header_helpers import (  # noqa: E402
     load_alias_config,
     normalize_accession_key,
     optional_attach_dicom_to_imaging_nodule_frame,
+    read_dicom_metadata_flat_row,
     read_input_files,
     resolve_exact_links,
     row_fingerprint_sha256,
@@ -23,6 +28,49 @@ from utils.dicom_header_helpers import (  # noqa: E402
 )
 
 FIXTURES = ROOT / "tests" / "fixtures" / "dicom_headers"
+FIX_TS = datetime(2026, 4, 8, 12, 0, 0, tzinfo=timezone.utc)
+
+
+def _write_minimal_synthetic_dicom(path: Path, **kwargs: str) -> None:
+    """Minimal Secondary Capture instance (single placeholder pixel) for tests only."""
+    attrs: dict[str, str] = dict(kwargs)
+    sop_raw = attrs.pop("sop_instance_uid", None)
+    sop_uid = generate_uid() if not sop_raw else pydicom.uid.UID(sop_raw)
+    file_meta = FileMetaDataset()
+    file_meta.MediaStorageSOPClassUID = SecondaryCaptureImageStorage
+    file_meta.MediaStorageSOPInstanceUID = sop_uid
+    file_meta.TransferSyntaxUID = ExplicitVRLittleEndian
+    file_meta.ImplementationClassUID = pydicom.uid.PYDICOM_IMPLEMENTATION_UID
+
+    ds = FileDataset(str(path), {}, file_meta=file_meta, preamble=b"\x00" * 128)
+    ds.SOPClassUID = SecondaryCaptureImageStorage
+    ds.SOPInstanceUID = sop_uid
+    mapping = {
+        "StudyInstanceUID": "study_instance_uid",
+        "SeriesInstanceUID": "series_instance_uid",
+        "AccessionNumber": "accession_number",
+        "StudyDate": "study_date",
+        "SeriesDate": "series_date",
+        "Modality": "modality",
+        "BodyPartExamined": "body_part_examined",
+        "StudyDescription": "study_description",
+        "SeriesDescription": "series_description",
+        "PatientID": "patient_id",
+        "InstitutionName": "institution_name",
+    }
+    for elem_keyword, attr in mapping.items():
+        if attr in attrs and attrs[attr]:
+            setattr(ds, elem_keyword, attrs[attr])
+    ds.Rows = 1
+    ds.Columns = 1
+    ds.BitsAllocated = 8
+    ds.BitsStored = 8
+    ds.HighBit = 7
+    ds.SamplesPerPixel = 1
+    ds.PhotometricInterpretation = "MONOCHROME2"
+    ds.PixelRepresentation = 0
+    ds.PixelData = bytes([0])
+    ds.save_as(str(path), enforce_file_format=True)
 
 
 def test_alias_load_and_column_lookup() -> None:
@@ -241,3 +289,165 @@ def test_optional_attach_is_noop_without_dicom_table() -> None:
     out = optional_attach_dicom_to_imaging_nodule_frame(img, con)
     pd.testing.assert_frame_equal(out, img)
     con.close()
+
+
+def test_synthetic_dcm_extracts_uids_and_accession(tmp_path: Path) -> None:
+    path = tmp_path / "one.dcm"
+    _write_minimal_synthetic_dicom(
+        path,
+        study_instance_uid="1.2.840.10008.1.1.1.1",
+        series_instance_uid="1.2.840.10008.1.1.1.2",
+        accession_number="SYN-ACC-1001",
+        study_date="20240115",
+    )
+    flat = read_dicom_metadata_flat_row(path)
+    assert flat["StudyInstanceUID"] == "1.2.840.10008.1.1.1.1"
+    assert flat["SeriesInstanceUID"] == "1.2.840.10008.1.1.1.2"
+    assert flat["AccessionNumber"] == "SYN-ACC-1001"
+
+
+def test_parity_csv_vs_raw_dcm_study_series(tmp_path: Path) -> None:
+    cfg = load_alias_config()
+    lu = build_column_lookup(cfg["canonical_fields"])
+    df_csv = read_input_files([FIXTURES / "study_series_synthetic.csv"], "csv")
+    p1 = tmp_path / "s1.dcm"
+    p2 = tmp_path / "s2.dcm"
+    _write_minimal_synthetic_dicom(
+        p1,
+        study_instance_uid="1.2.840.10008.1.1.1.1",
+        series_instance_uid="1.2.840.10008.1.1.1.2",
+        accession_number="SYN-ACC-1001",
+        study_date="20240115",
+        series_date="20240115",
+        modality="US",
+        body_part_examined="NECK",
+        study_description="Thyroid US",
+        series_description="Right lobe nodule",
+        patient_id="M00001",
+        institution_name="TestOrg",
+    )
+    _write_minimal_synthetic_dicom(
+        p2,
+        study_instance_uid="1.2.840.10008.1.1.1.1",
+        series_instance_uid="1.2.840.10008.1.1.1.3",
+        accession_number="SYN-ACC-1001",
+        study_date="20240115",
+        series_date="20240115",
+        modality="US",
+        body_part_examined="NECK",
+        study_description="Thyroid US",
+        series_description="Left lobe survey",
+        patient_id="M00001",
+        institution_name="TestOrg",
+    )
+    df_dcm = read_input_files([p1, p2], "auto")
+    enc_c = build_enriched_rows(df_csv, lu)
+    enc_d = build_enriched_rows(df_dcm, lu)
+    _, study_c, series_c = rows_to_study_series(enc_c, ingestion_run_id="parity", ingestion_ts=FIX_TS)
+    _, study_d, series_d = rows_to_study_series(enc_d, ingestion_run_id="parity", ingestion_ts=FIX_TS)
+    pd.testing.assert_frame_equal(
+        study_c.sort_values("study_instance_uid").reset_index(drop=True),
+        study_d.sort_values("study_instance_uid").reset_index(drop=True),
+        check_like=True,
+    )
+    sc = series_c.sort_values("series_instance_uid").reset_index(drop=True)
+    sd = series_d.sort_values("series_instance_uid").reset_index(drop=True)
+    pd.testing.assert_frame_equal(sc, sd, check_like=True)
+
+
+def test_dcm_exact_accession_single_candidate_matches_csv_behavior(tmp_path: Path) -> None:
+    cfg = load_alias_config()
+    lu = build_column_lookup(cfg["canonical_fields"])
+    path = tmp_path / "link.dcm"
+    _write_minimal_synthetic_dicom(
+        path,
+        study_instance_uid="1.2.840.10008.1.1.1.1",
+        series_instance_uid="1.2.840.10008.1.1.1.2",
+        accession_number="SYN-ACC-1001",
+        study_date="20240115",
+    )
+    df = read_input_files([path], "auto")
+    enriched = build_enriched_rows(df, lu)
+    _, study, _ = rows_to_study_series(enriched, ingestion_run_id="r")
+    acc = normalize_accession_key("SYN-ACC-1001")
+    cand = pd.DataFrame(
+        [
+            {
+                "research_id": 77,
+                "accession_norm": acc,
+                "imaging_exam_id": "examA",
+                "imaging_nodule_id": "nodA",
+                "specimen_id": None,
+                "source_table": "imaging",
+                "exam_date_yyyymmdd": "20240115",
+            },
+        ],
+    )
+    links, reviews = resolve_exact_links(study, cand, ingestion_run_id="r")
+    assert len(links) == 1
+    assert links.iloc[0]["linkage_tier"] == "exact_accession"
+    assert int(links.iloc[0]["research_id"]) == 77
+    assert reviews.empty
+
+
+def test_dcm_malformed_file_routes_to_provenance_qc_not_auto_link(tmp_path: Path) -> None:
+    cfg = load_alias_config()
+    lu = build_column_lookup(cfg["canonical_fields"])
+    bad = tmp_path / "bad.dcm"
+    bad.write_bytes(b"not valid dicom")
+    df = read_input_files([bad], "dcm")
+    enriched = build_enriched_rows(df, lu)
+    prov, study, _ = rows_to_study_series(enriched, ingestion_run_id="qc")
+    assert study.empty
+    assert len(prov) == 1
+    assert prov.iloc[0]["parse_status"] == "error"
+    qc = json.loads(prov.iloc[0]["qc_flags_json"])
+    assert "MISSING_STUDY_INSTANCE_UID" in qc
+    links, reviews = resolve_exact_links(study, pd.DataFrame(), ingestion_run_id="qc")
+    assert links.empty
+    assert reviews.empty
+
+
+def test_dcm_missing_accession_no_auto_link_to_review(tmp_path: Path) -> None:
+    cfg = load_alias_config()
+    lu = build_column_lookup(cfg["canonical_fields"])
+    path = tmp_path / "nacc.dcm"
+    _write_minimal_synthetic_dicom(
+        path,
+        study_instance_uid="1.2.840.10008.1.1.1.9",
+        series_instance_uid="1.2.840.10008.1.1.1.99",
+        accession_number="",
+    )
+    df = read_input_files([path], "auto")
+    enriched = build_enriched_rows(df, lu)
+    _, study, _ = rows_to_study_series(enriched, ingestion_run_id="r")
+    cand = pd.DataFrame(
+        [
+            {
+                "research_id": 1,
+                "accession_norm": normalize_accession_key("X"),
+                "imaging_exam_id": "e",
+                "imaging_nodule_id": "n",
+                "specimen_id": None,
+                "source_table": "imaging",
+                "exam_date_yyyymmdd": "20240101",
+            },
+        ],
+    )
+    links, reviews = resolve_exact_links(study, cand, ingestion_run_id="r")
+    assert links.empty
+    assert not reviews.empty
+    assert reviews.iloc[0]["reason_code"] == "MISSING_ACCESSION_NO_RESEARCH_ID"
+
+
+def test_flattened_formats_still_run_after_dcm_support() -> None:
+    cfg = load_alias_config()
+    lu = build_column_lookup(cfg["canonical_fields"])
+    df = read_input_files(
+        [FIXTURES / "study_series_synthetic.csv", FIXTURES / "rows.json"],
+        "auto",
+    )
+    assert len(df) == 3
+    enc = build_enriched_rows(df, lu)
+    _, study, series = rows_to_study_series(enc, ingestion_run_id="mix")
+    assert len(study) == 2

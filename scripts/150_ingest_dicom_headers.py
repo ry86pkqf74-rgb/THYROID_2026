@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-150_ingest_dicom_headers.py — Flattened DICOM header export ingest (CSV/XLSX/JSON/Parquet).
+150_ingest_dicom_headers.py — DICOM header ingest (flattened CSV/XLSX/JSON/Parquet or raw .dcm metadata-only).
 
 Additive layer: does not modify imaging_nodule_master_v1, script 128, or 129 outputs.
 Optional ``optional_attach_dicom_to_imaging_nodule_frame`` in utils/dicom_header_helpers.py
@@ -18,6 +18,9 @@ Candidate spine (read-only UNION): see ``fetch_linkage_candidates_union`` in uti
 Usage:
   .venv/bin/python scripts/150_ingest_dicom_headers.py \\
       --input tests/fixtures/dicom_headers/study_series_synthetic.csv
+
+  # Raw DICOM files (metadata only; pixels are not decoded)
+  .venv/bin/python scripts/150_ingest_dicom_headers.py --input /path/to/file.dcm --format auto
 
   .venv/bin/python scripts/150_ingest_dicom_headers.py --input ./headers.csv \\
       --md --link-candidates-from-db
@@ -148,8 +151,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument(
         "--format",
         default="auto",
-        choices=("auto", "csv", "xlsx", "json", "parquet"),
-        help="Input format (default: infer from extension).",
+        choices=("auto", "csv", "xlsx", "json", "parquet", "dcm"),
+        help="Input format (default: infer from extension). Use dcm for raw .dcm (pydicom metadata-only).",
     )
     p.add_argument(
         "--output-dir",
