@@ -27,4 +27,5 @@ No edit required: it already documents distinct dev/qa/prod databases consistent
 
 ## Git record
 
-- **Commits:** `6f08da6` (reconciliation patch), `ad687d7` (study summary git record); **tip** on `origin/main`: `ad687d7`.
+- **Primary reconciliation commit:** `6f08da6` (docs, `CURRENT_*` relabel, tests, initial study deliverables).
+- **Branch tip after follow-up edits to this summary:** `f701cb0` on `origin/main` (see `git log -1`).
