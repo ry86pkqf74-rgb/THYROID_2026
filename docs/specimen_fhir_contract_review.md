@@ -15,6 +15,10 @@ Default RW attribution: **`specimen_fhir_release_truth_v1`** with stable session
 
 Do **not** use `MD_READ_SCALING_TOKEN` for these writers — read scaling is attach-only for reviewer dashboards.
 
+## CI (offline)
+
+GitHub Actions `multimodal-tests` job runs pytest for identity (`tests/test_specimen_identity_layer.py`), FHIR layer/QA/genomics contracts, and temp-DuckDB coverage for **`141`** export (`--local-duckdb`), **`143`** + `142` diagnostic views, and **`144`** (`--introspect-local`) — no MotherDuck token required.
+
 ## Validation surfaces
 
 1. **Row-level contract table** — `qa.val_specimen_contract_v1` (checks embedded in `138_md_specimen_fhir_layer.run_validation`).

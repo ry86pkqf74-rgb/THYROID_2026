@@ -8,6 +8,7 @@ Usage:
   .venv/bin/python scripts/144_md_repo_current_state_summary.py
   .venv/bin/python scripts/144_md_repo_current_state_summary.py --md
   .venv/bin/python scripts/144_md_repo_current_state_summary.py --md --output studies/CURRENT_MOTHERDUCK_REPO_STATE.md
+  .venv/bin/python scripts/144_md_repo_current_state_summary.py --introspect-local --db-path /tmp/ci.duckdb
 """
 from __future__ import annotations
 
@@ -16,6 +17,7 @@ import json
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 STUDIES = ROOT / "studies"
@@ -43,6 +45,11 @@ def _rel(p: Path) -> str:
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Generate CURRENT_MOTHERDUCK_REPO_STATE.md")
     p.add_argument("--md", action="store_true", help="Attach MotherDuck (fail-closed).")
+    p.add_argument(
+        "--introspect-local",
+        action="store_true",
+        help="Offline/CI: run live-introspection queries against --db-path (file DuckDB only).",
+    )
     p.add_argument("--db-path", default=str(ROOT / "thyroid_master.duckdb"))
     p.add_argument("--output", type=Path, default=DEFAULT_OUT)
     p.add_argument(
@@ -69,12 +76,78 @@ def _stale_validation_reports(max_age_days: int) -> list[tuple[str, int]]:
     return out[:40]
 
 
-def main() -> None:
-    args = parse_args()
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    now = datetime.now(timezone.utc).isoformat()
-    sha = _git_head()
+def collect_live_introspection(con: Any) -> tuple[list[str], str]:
+    """Run MotherDuck-style bullets for ``## Live MotherDuck status``; works on file DB too."""
+    md_lines: list[str] = []
+    telemetry_note = "(run with `--md` to populate)"
+    db = con.execute("SELECT current_database()").fetchone()[0]
+    md_lines.append(f"- **current_database():** `{db}`")
+    for label, sql in (
+        ("specimen_master_v1", "SELECT COUNT(*) FROM main.specimen_master_v1"),
+        ("specimen_tumor_focus_v1", "SELECT COUNT(*) FROM main.specimen_tumor_focus_v1"),
+        ("specimen_genomic_assay_v1", "SELECT COUNT(*) FROM main.specimen_genomic_assay_v1"),
+        ("fhir_bundle_specimen_export_v1", "SELECT COUNT(*) FROM main.fhir_bundle_specimen_export_v1"),
+    ):
+        try:
+            n = con.execute(sql).fetchone()[0]
+            md_lines.append(f"- **{label}:** {int(n):,} rows")
+        except Exception as e:
+            md_lines.append(f"- **{label}:** _(unavailable: {e})_")
+    try:
+        rm = con.execute(
+            "SELECT release_tag, git_sha, created_at FROM qa.release_manifest "
+            "ORDER BY created_at DESC NULLS LAST LIMIT 3"
+        ).fetchall()
+        if rm:
+            md_lines.append("- **qa.release_manifest (latest 3):**")
+            for row in rm:
+                md_lines.append(f"  - tag `{row[0]}` | sha `{row[1]}` | {row[2]}")
+        else:
+            md_lines.append("- **qa.release_manifest:** _(empty)_")
+    except Exception as e:
+        md_lines.append(f"- **qa.release_manifest:** _(error: {e})_")
+    try:
+        pending = con.execute(
+            "SELECT COUNT(*) FROM qa.manual_review_queue "
+            "WHERE verification_status IS NULL"
+        ).fetchone()[0]
+        md_lines.append(
+            f"- **qa.manual_review_queue (NULL verification_status):** {int(pending):,}"
+        )
+    except Exception as e:
+        md_lines.append(f"- **manual_review_queue pending:** _(error: {e})_")
+    try:
+        hist = con.execute(
+            """
+            SELECT coalesce(user_agent, ''), COUNT(*) AS n
+            FROM md_information_schema.query_history
+            WHERE user_agent IN (
+              'specimen_fhir_release_truth_v1',
+              'specimen_fhir_release_ops_v1',
+              'specimen_fhir_export_v1',
+              'specimen_genomics_binding_v1',
+              'specimen_identity_build_v1'
+            )
+            GROUP BY 1 ORDER BY 2 DESC LIMIT 15
+            """
+        ).fetchall()
+        telemetry_note = "| user_agent | approx_queries |\n|---|---:|\n" + "\n".join(
+            f"| `{r[0]}` | {r[1]} |" for r in hist
+        )
+    except Exception as e:
+        telemetry_note = f"_(query_history not available: {e})_"
+    return md_lines, telemetry_note
 
+
+def build_markdown(
+    *,
+    now_iso: str,
+    sha: str,
+    stale_days: int,
+    md_lines: list[str] | None,
+    telemetry_note: str,
+) -> str:
+    """Assemble full document (static + optional live bullets)."""
     lines: list[str] = [
         "# THYROID_2026 — current MotherDuck vs repo state",
         "",
@@ -93,7 +166,7 @@ def main() -> None:
         "lab gaps are **source-limited**, not a missing-wave blocker. Operator evidence pack: "
         "`studies/20260411_final_master_release/EVIDENCE_PACK.md`.",
         "",
-        f"**Machine-generated:** {now}",
+        f"**Machine-generated:** {now_iso}",
         f"**Commit SHA:** `{sha}`",
         "",
         "> Regenerate after promotion or specimen/FHIR deploy: "
@@ -111,83 +184,6 @@ def main() -> None:
         "## Live MotherDuck status (`--md` runs only)",
         "",
     ]
-
-    md_lines: list[str] = []
-    telemetry_note = "(run with `--md` to populate)"
-    if args.md:
-        import sys
-
-        sys.path.insert(0, str(ROOT))
-        from utils.md_connect import connect_md_or_file
-        from utils.md_pipeline_attribution import specimen_fhir_release_writer_attribution
-
-        ua, hint = specimen_fhir_release_writer_attribution()
-        con = connect_md_or_file(
-            Path(args.db_path),
-            md=True,
-            fail_closed=True,
-            custom_user_agent=ua,
-            motherduck_session_hint=hint,
-        )
-        try:
-            db = con.execute("SELECT current_database()").fetchone()[0]
-            md_lines.append(f"- **current_database():** `{db}`")
-            for label, sql in (
-                ("specimen_master_v1", "SELECT COUNT(*) FROM main.specimen_master_v1"),
-                ("specimen_tumor_focus_v1", "SELECT COUNT(*) FROM main.specimen_tumor_focus_v1"),
-                ("specimen_genomic_assay_v1", "SELECT COUNT(*) FROM main.specimen_genomic_assay_v1"),
-                ("fhir_bundle_specimen_export_v1", "SELECT COUNT(*) FROM main.fhir_bundle_specimen_export_v1"),
-            ):
-                try:
-                    n = con.execute(sql).fetchone()[0]
-                    md_lines.append(f"- **{label}:** {int(n):,} rows")
-                except Exception as e:
-                    md_lines.append(f"- **{label}:** _(unavailable: {e})_")
-            try:
-                rm = con.execute(
-                    "SELECT release_tag, git_sha, created_at FROM qa.release_manifest "
-                    "ORDER BY created_at DESC NULLS LAST LIMIT 3"
-                ).fetchall()
-                if rm:
-                    md_lines.append("- **qa.release_manifest (latest 3):**")
-                    for row in rm:
-                        md_lines.append(f"  - tag `{row[0]}` | sha `{row[1]}` | {row[2]}")
-                else:
-                    md_lines.append("- **qa.release_manifest:** _(empty)_")
-            except Exception as e:
-                md_lines.append(f"- **qa.release_manifest:** _(error: {e})_")
-            try:
-                pending = con.execute(
-                    "SELECT COUNT(*) FROM qa.manual_review_queue "
-                    "WHERE verification_status IS NULL"
-                ).fetchone()[0]
-                md_lines.append(
-                    f"- **qa.manual_review_queue (NULL verification_status):** {int(pending):,}"
-                )
-            except Exception as e:
-                md_lines.append(f"- **manual_review_queue pending:** _(error: {e})_")
-            try:
-                hist = con.execute(
-                    """
-                    SELECT coalesce(user_agent, ''), COUNT(*) AS n
-                    FROM md_information_schema.query_history
-                    WHERE user_agent IN (
-                      'specimen_fhir_release_truth_v1',
-                      'specimen_fhir_release_ops_v1',
-                      'specimen_fhir_export_v1',
-                      'specimen_genomics_binding_v1',
-                      'specimen_identity_build_v1'
-                    )
-                    GROUP BY 1 ORDER BY 2 DESC LIMIT 15
-                    """
-                ).fetchall()
-                telemetry_note = "| user_agent | approx_queries |\n|---|---:|\n" + "\n".join(
-                    f"| `{r[0]}` | {r[1]} |" for r in hist
-                )
-            except Exception as e:
-                telemetry_note = f"_(query_history not available: {e})_"
-        finally:
-            con.close()
     if md_lines:
         lines.extend(md_lines)
     else:
@@ -226,12 +222,12 @@ def main() -> None:
             "",
             "## Stale checked-in validation artifacts",
             "",
-            f"_Validation reports under `studies/` older than **{args.stale_days}** days "
+            f"_Validation reports under `studies/` older than **{stale_days}** days "
             "(by local mtime — regenerate with `119_md_formalization_validate.py --md`):_",
             "",
         ]
     )
-    stale = _stale_validation_reports(args.stale_days)
+    stale = _stale_validation_reports(stale_days)
     if stale:
         for path, days in stale:
             lines.append(f"- `{path}` (~{days}d old)")
@@ -258,7 +254,58 @@ def main() -> None:
             "",
         ]
     )
-    args.output.write_text("\n".join(lines), encoding="utf-8")
+    return "\n".join(lines)
+
+
+def main() -> None:
+    args = parse_args()
+    if args.md and args.introspect_local:
+        print("FATAL: pass only one of --md or --introspect-local.")
+        raise SystemExit(1)
+
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    now = datetime.now(timezone.utc).isoformat()
+    sha = _git_head()
+
+    md_lines: list[str] | None = None
+    telemetry_note = "(run with `--md` to populate)"
+
+    if args.md:
+        import sys
+
+        sys.path.insert(0, str(ROOT))
+        from utils.md_connect import connect_md_or_file
+        from utils.md_pipeline_attribution import specimen_fhir_release_writer_attribution
+
+        ua, hint = specimen_fhir_release_writer_attribution()
+        con = connect_md_or_file(
+            Path(args.db_path),
+            md=True,
+            fail_closed=True,
+            custom_user_agent=ua,
+            motherduck_session_hint=hint,
+        )
+        try:
+            md_lines, telemetry_note = collect_live_introspection(con)
+        finally:
+            con.close()
+    elif args.introspect_local:
+        import duckdb
+
+        con = duckdb.connect(str(args.db_path))
+        try:
+            md_lines, telemetry_note = collect_live_introspection(con)
+        finally:
+            con.close()
+
+    text = build_markdown(
+        now_iso=now,
+        sha=sha,
+        stale_days=args.stale_days,
+        md_lines=md_lines,
+        telemetry_note=telemetry_note,
+    )
+    args.output.write_text(text, encoding="utf-8")
     print(f"Wrote {_rel(args.output)}")
 
 
