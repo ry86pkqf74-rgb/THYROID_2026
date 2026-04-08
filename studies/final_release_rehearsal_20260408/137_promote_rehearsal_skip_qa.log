@@ -1,0 +1,8 @@
+-- prepromote rollback handle -> 'Thyroid 2026 Molecular PrePromote 20260408_20260408_080657_promote'
+CREATE DATABASE "Thyroid 2026 Molecular PrePromote 20260408_20260408_080657_promote" FROM "Thyroid 2026";
+
+Rollback: swap traffic to this database, or recreate prod from it; see docs/release_runbook.md (Rollback procedure).
+[skip] 'Thyroid 2026' is DUCKLAKE — named CREATE SNAPSHOT is not supported (use zero-copy clone from latest; automatic history still listed in MD_INFORMATION_SCHEMA.DATABASE_SNAPSHOTS). Re-run with --force-native-snapshot to attempt anyway.
+-- would run (dry-run unless --execute):
+CREATE SNAPSHOT "pre_promote_20260408" OF "Thyroid 2026";
+CREATE SNAPSHOT OF "Thyroid 2026"

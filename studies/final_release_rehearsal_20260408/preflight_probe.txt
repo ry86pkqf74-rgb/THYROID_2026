@@ -1,0 +1,14 @@
+# Token / source probe (no secret values)
+
+read_write_token: SET len=444
+read_write_mode: env:MOTHERDUCK_TOKEN
+read_scaling_token: SET len=445
+read_scaling_mode: motherduck.local.toml:MD_READ_SCALING_TOKEN
+
+resolved_db_names: {'dev': 'Thyroid 2026 Molecular Dev 20260407', 'qa': 'Thyroid 2026 Molecular QA 20260407', 'prod': 'Thyroid 2026'}
+
+MOTHERDUCK_CUSTOM_USER_AGENT='thyroid_final_release/20260408/20260408T080019Z'
+MOTHERDUCK_SESSION_HINT='thyroid_final_release_20260408'
+MD_READ_SCALING_SESSION_HINT='thyroid_final_release_ro_20260408'
+
+git_sha=5dd905f88f17296261365be632a3b767e0750041
