@@ -5,9 +5,13 @@ Applies ``scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql`` in full, includ
 focus-grain surfaces used as the sole authority for Check 13 when the specimen/FHIR
 layer is complete: duplicate focus fingerprints, orphan focus→master, genomic→focus
 orphans, provenance summary + ``v_diag_specimen_provenance_focus_gaps_v1``, broken
-FHIR refs, review burden, and ``qa.t_diag_specimen_focus_qa_metrics_v1``.
+FHIR refs, **bundle entry.url drift** (``v_diag_specimen_fhir_bundle_entry_drift_v1``),
+**genomics contract list views** (tier / Thyroseq slice / ordinality), review burden,
+and ``qa.t_diag_specimen_focus_qa_metrics_v1``.
 
-Uses fail-closed MotherDuck RW token with :func:`specimen_fhir_release_writer_attribution`.
+Uses fail-closed MotherDuck RW token; default ``custom_user_agent`` is
+``specimen_fhir_ref_integrity_v2`` (override via ``MOTHERDUCK_CUSTOM_USER_AGENT``).
+Session hint still comes from :func:`specimen_fhir_release_writer_attribution`.
 Attempts CREATE SNAPSHOT before DDL when ``--md`` (skipped on DuckLake / unsupported — logged).
 
 Usage:
@@ -71,7 +75,10 @@ def main() -> None:
         from utils.md_connect import connect_md_or_file
         from utils.md_pipeline_attribution import specimen_fhir_release_writer_attribution
 
-        ua, hint = specimen_fhir_release_writer_attribution()
+        _, hint = specimen_fhir_release_writer_attribution()
+        ua = os.environ.get(
+            "MOTHERDUCK_CUSTOM_USER_AGENT", "specimen_fhir_ref_integrity_v2"
+        )
         con = connect_md_or_file(
             Path(args.db_path),
             md=True,

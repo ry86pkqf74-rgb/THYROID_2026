@@ -184,6 +184,99 @@ INNER JOIN main.fhir_episode_of_care_v1 fo
 WHERE json_extract_string(fe.resource_json, '$.episodeOfCare[0].reference') IS NOT NULL
   AND fo.patient_fhir_id IS DISTINCT FROM fe.patient_fhir_id;
 
+-- Bundle ``entry[].url`` must equal ``resourceType + '/' + resource.id`` (internal consistency).
+-- Flags strip/rebuild drift separate from resource-table JOIN integrity.
+CREATE OR REPLACE VIEW qa.v_diag_specimen_fhir_bundle_entry_drift_v1 AS
+SELECT
+  b.bundle_ix,
+  b.specimen_id,
+  r.idx AS entry_idx,
+  json_extract_string(b.bundle_json, '$.entry[' || CAST(r.idx AS VARCHAR) || '].url') AS entry_url,
+  concat(
+    json_extract_string(b.bundle_json, '$.entry[' || CAST(r.idx AS VARCHAR) || '].resource.resourceType'),
+    '/',
+    json_extract_string(b.bundle_json, '$.entry[' || CAST(r.idx AS VARCHAR) || '].resource.id')
+  ) AS expected_url
+FROM main.fhir_bundle_specimen_export_v1 b
+CROSS JOIN (VALUES (0::BIGINT), (1::BIGINT), (2::BIGINT), (3::BIGINT)) AS r(idx)
+WHERE
+  json_extract_string(b.bundle_json, '$.entry[' || CAST(r.idx AS VARCHAR) || '].url')
+    IS DISTINCT FROM concat(
+      json_extract_string(b.bundle_json, '$.entry[' || CAST(r.idx AS VARCHAR) || '].resource.resourceType'),
+      '/',
+      json_extract_string(b.bundle_json, '$.entry[' || CAST(r.idx AS VARCHAR) || '].resource.id')
+    )
+   OR (
+     json_extract_string(b.bundle_json, '$.entry[' || CAST(r.idx AS VARCHAR) || '].url') IS NULL
+     AND (
+       json_extract_string(b.bundle_json, '$.entry[' || CAST(r.idx AS VARCHAR) || '].resource.id') IS NOT NULL
+       OR json_extract_string(b.bundle_json, '$.entry[' || CAST(r.idx AS VARCHAR) || '].resource.resourceType') IS NOT NULL
+     )
+   );
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Genomics binding — row-level contract violations (complements script 140 gates)
+-- ═══════════════════════════════════════════════════════════════════════════
+CREATE OR REPLACE VIEW qa.v_diag_specimen_genomics_dupe_thyroseq_slice_v1 AS
+SELECT
+  research_id,
+  molecular_episode_id,
+  payload_field,
+  payload_explode_ord,
+  COUNT(*)::BIGINT AS row_count
+FROM main.specimen_genomic_assay_v1
+WHERE source_table = 'thyroseq_molecular_enrichment+json_each'
+GROUP BY 1, 2, 3, 4
+HAVING COUNT(*) > 1;
+
+CREATE OR REPLACE VIEW qa.v_diag_specimen_genomics_tier_enum_v1 AS
+SELECT
+  genomic_assay_id,
+  research_id,
+  linkage_confidence_tier,
+  binding_confidence_tier,
+  'bad_linkage_tier'::VARCHAR AS violation
+FROM main.specimen_genomic_assay_v1
+WHERE linkage_confidence_tier IS NULL
+   OR linkage_confidence_tier NOT IN (
+        'exact', 'high_confidence', 'plausible_review', 'unresolved_review'
+      )
+UNION ALL
+SELECT
+  genomic_assay_id,
+  research_id,
+  linkage_confidence_tier,
+  binding_confidence_tier,
+  'bad_binding_tier'::VARCHAR
+FROM main.specimen_genomic_assay_v1
+WHERE binding_confidence_tier IS NULL
+   OR binding_confidence_tier NOT IN (
+        'A_exact_high', 'B_specimen_only', 'C_review', 'D_unlinked'
+      );
+
+CREATE OR REPLACE VIEW qa.v_diag_specimen_genomics_A_tier_requires_specimen_v1 AS
+SELECT
+  genomic_assay_id,
+  research_id,
+  specimen_id,
+  specimen_focus_id,
+  binding_confidence_tier
+FROM main.specimen_genomic_assay_v1
+WHERE binding_confidence_tier = 'A_exact_high'
+  AND (specimen_id IS NULL OR specimen_focus_id IS NULL);
+
+CREATE OR REPLACE VIEW qa.v_diag_specimen_genomics_thyroseq_ordinality_v1 AS
+SELECT
+  genomic_assay_id,
+  research_id,
+  payload_field,
+  payload_explode_ord
+FROM main.specimen_genomic_assay_v1
+WHERE source_table = 'thyroseq_molecular_enrichment+json_each'
+  AND payload_field IS NOT NULL
+  AND TRIM(CAST(payload_field AS VARCHAR)) <> ''
+  AND (payload_explode_ord IS NULL OR payload_explode_ord < 1);
+
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Provenance completeness — one view per table (avoids multi-table CROSS JOIN
 -- issues on some MotherDuck builds)

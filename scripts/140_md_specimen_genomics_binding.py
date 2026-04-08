@@ -325,6 +325,48 @@ def run_validation(con) -> list[tuple[str, str, str]]:
             ), FALSE)""",
         True,
     )
+    run(
+        "linkage_confidence_tier_enum",
+        """SELECT COALESCE(NOT EXISTS (
+              SELECT 1 FROM main.specimen_genomic_assay_v1
+              WHERE linkage_confidence_tier IS NULL
+                 OR linkage_confidence_tier NOT IN (
+                   'exact', 'high_confidence', 'plausible_review', 'unresolved_review'
+                 )
+            ), FALSE)""",
+        True,
+    )
+    run(
+        "binding_confidence_tier_enum",
+        """SELECT COALESCE(NOT EXISTS (
+              SELECT 1 FROM main.specimen_genomic_assay_v1
+              WHERE binding_confidence_tier IS NULL
+                 OR binding_confidence_tier NOT IN (
+                   'A_exact_high', 'B_specimen_only', 'C_review', 'D_unlinked'
+                 )
+            ), FALSE)""",
+        True,
+    )
+    run(
+        "A_exact_high_requires_specimen_ids",
+        """SELECT COALESCE(NOT EXISTS (
+              SELECT 1 FROM main.specimen_genomic_assay_v1
+              WHERE binding_confidence_tier = 'A_exact_high'
+                AND (specimen_id IS NULL OR specimen_focus_id IS NULL)
+            ), FALSE)""",
+        True,
+    )
+    run(
+        "thyroseq_exploded_rows_strict_positive_ord",
+        """SELECT COALESCE(NOT EXISTS (
+              SELECT 1 FROM main.specimen_genomic_assay_v1
+              WHERE source_table = 'thyroseq_molecular_enrichment+json_each'
+                AND payload_field IS NOT NULL
+                AND TRIM(CAST(payload_field AS VARCHAR)) <> ''
+                AND (payload_explode_ord IS NULL OR payload_explode_ord < 1)
+            ), FALSE)""",
+        True,
+    )
     return out
 
 
@@ -362,7 +404,12 @@ def main() -> None:
     from utils.md_connect import connect_md_or_file
     from utils.md_pipeline_attribution import specimen_fhir_release_writer_attribution
 
-    ua, hint = specimen_fhir_release_writer_attribution()
+    _ua, hint = specimen_fhir_release_writer_attribution()
+    ua = _ua
+    if args.md:
+        ua = os.environ.get(
+            "MOTHERDUCK_CUSTOM_USER_AGENT", "specimen_fhir_ref_integrity_v2"
+        )
     con = connect_md_or_file(
         Path(args.db_path),
         md=args.md,

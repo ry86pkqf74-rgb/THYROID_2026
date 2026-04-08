@@ -204,14 +204,11 @@ def get_connection(args: argparse.Namespace) -> duckdb.DuckDBPyConnection:
 
             os.environ["MOTHERDUCK_DATABASE"] = resolve_database_for_env(args.md_env)
 
-        from utils.md_pipeline_attribution import (
-            molecular_custom_user_agent,
-            molecular_session_hint,
-        )
+        from utils.md_pipeline_attribution import molecular_session_hint
 
-        ua = args.md_user_agent or molecular_custom_user_agent(
-            "119_md_formalization_validate", "validate"
-        )
+        ua = args.md_user_agent or os.environ.get("MOTHERDUCK_CUSTOM_USER_AGENT")
+        if not ua:
+            ua = "specimen_fhir_ref_integrity_v2"
         hint: str | None
         if args.md_session_hint is not None and str(args.md_session_hint).strip():
             hint = str(args.md_session_hint).strip()
@@ -848,6 +845,11 @@ SPECIMEN_FHIR_DIAG_VIEWS: tuple[str, ...] = (
     "v_diag_specimen_orphan_genomic_focus_v1",
     "v_diag_specimen_orphan_genomic_master_v1",
     "v_diag_specimen_fhir_broken_refs_v1",
+    "v_diag_specimen_fhir_bundle_entry_drift_v1",
+    "v_diag_specimen_genomics_dupe_thyroseq_slice_v1",
+    "v_diag_specimen_genomics_tier_enum_v1",
+    "v_diag_specimen_genomics_A_tier_requires_specimen_v1",
+    "v_diag_specimen_genomics_thyroseq_ordinality_v1",
     "v_diag_specimen_provenance_master_v1",
     "v_diag_specimen_provenance_focus_v1",
     "v_diag_specimen_provenance_focus_gaps_v1",
@@ -1427,6 +1429,31 @@ def check_specimen_fhir_layer(
             n_br = int(
                 con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_broken_refs_v1").fetchone()[0]
             )
+            n_bnd = int(
+                con.execute(
+                    "SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_bundle_entry_drift_v1"
+                ).fetchone()[0]
+            )
+            n_gdup = int(
+                con.execute(
+                    "SELECT COUNT(*) FROM qa.v_diag_specimen_genomics_dupe_thyroseq_slice_v1"
+                ).fetchone()[0]
+            )
+            n_genum = int(
+                con.execute(
+                    "SELECT COUNT(*) FROM qa.v_diag_specimen_genomics_tier_enum_v1"
+                ).fetchone()[0]
+            )
+            n_g_a = int(
+                con.execute(
+                    "SELECT COUNT(*) FROM qa.v_diag_specimen_genomics_A_tier_requires_specimen_v1"
+                ).fetchone()[0]
+            )
+            n_gord = int(
+                con.execute(
+                    "SELECT COUNT(*) FROM qa.v_diag_specimen_genomics_thyroseq_ordinality_v1"
+                ).fetchone()[0]
+            )
             pm = con.execute(
                 "SELECT n_missing_identity_run FROM qa.v_diag_specimen_provenance_master_v1"
             ).fetchone()
@@ -1485,6 +1512,11 @@ def check_specimen_fhir_layer(
                 + n_of
                 + n_og
                 + n_br
+                + n_bnd
+                + n_gdup
+                + n_genum
+                + n_g_a
+                + n_gord
                 + n_mis_m
                 + n_mis_f
                 + n_hi_ns
@@ -1492,6 +1524,8 @@ def check_specimen_fhir_layer(
             detail = (
                 f"dup_master_fp={n_dup_m}, dup_focus_fp_groups={n_dup_f}, orphan_focus={n_of}, "
                 f"orphan_genomic(master/focus)={n_og_m}/{n_og_f}, broken_fhir_refs={n_br}, "
+                f"bundle_entry_drift={n_bnd}, genomics_dupe_slice={n_gdup}, genomics_bad_tier={n_genum}, "
+                f"genomics_A_tier_missing_spec={n_g_a}, genomics_thyroseq_bad_ord={n_gord}, "
                 f"prov_gaps(master/focus/high_tier_null_spec)={n_mis_m}/{n_mis_f}/{n_hi_ns}"
             )
             if metrics_mismatch:

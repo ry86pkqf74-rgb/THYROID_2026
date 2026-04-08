@@ -271,6 +271,12 @@ SELECT
   current_timestamp AS built_at
 FROM base;
 
+-- EpisodeOfCare spine is **encounter-driven** (join fhir_encounter_v1 → specimen_master_v1).
+-- Root-cause fix for historical release FAILs (~10k× ``encounter_episode`` broken refs): partial
+-- redeploys or spine drift left ``fhir_encounter_v1`` pointing at EpisodeOfCare ids that did not
+-- exist in ``fhir_episode_of_care_v1`` when EoC was rebuilt only from a specimen GROUP BY that
+-- diverged from per-specimen encounter hashes. Every encounter row implies exactly one EoC key
+-- (research_id, surgery_episode_id, patient_fhir_id, eoc_id_short) — materialized here.
 CREATE OR REPLACE TABLE main.fhir_episode_of_care_v1 AS
 WITH tep AS (
   SELECT
@@ -281,32 +287,30 @@ WITH tep AS (
   FROM main.tumor_episode_master_v2
   GROUP BY research_id, surgery_episode_id
 ),
-spine AS (
+enc_spine AS (
   SELECT
     s.research_id,
     s.surgery_episode_id,
-    max(pm.patient_fhir_id) AS patient_fhir_id,
+    fe.patient_fhir_id,
+    fe.episode_fhir_id AS eoc_id_short,
     max(s.procedure_date_day) AS procedure_date_day_any
-  FROM main.specimen_master_v1 s
-  INNER JOIN main.fhir_patient_deid_map_v1 pm USING (research_id)
-  GROUP BY s.research_id, s.surgery_episode_id
+  FROM main.fhir_encounter_v1 fe
+  INNER JOIN main.specimen_master_v1 s ON fe.specimen_id = s.specimen_id
+  GROUP BY s.research_id, s.surgery_episode_id, fe.patient_fhir_id, fe.episode_fhir_id
 ),
 base AS (
   SELECT
-    spine.research_id,
-    spine.surgery_episode_id,
-    spine.patient_fhir_id,
-    spine.procedure_date_day_any AS procedure_date_day,
+    es.research_id,
+    es.surgery_episode_id,
+    es.patient_fhir_id,
+    es.procedure_date_day_any AS procedure_date_day,
     tep.ep_period_start,
     tep.ep_period_end,
-    substring(sha256(concat(
-      'eoc|', cast(spine.research_id AS VARCHAR), '|',
-      coalesce(cast(spine.surgery_episode_id AS VARCHAR), 'none')
-    )), 1, 16) AS eoc_id_short
-  FROM spine
+    es.eoc_id_short
+  FROM enc_spine es
   LEFT JOIN tep
-    ON spine.research_id = tep.research_id
-   AND spine.surgery_episode_id IS NOT DISTINCT FROM tep.surgery_episode_id
+    ON es.research_id = tep.research_id
+   AND es.surgery_episode_id IS NOT DISTINCT FROM tep.surgery_episode_id
 )
 SELECT
   ('EpisodeOfCare/' || eoc_id_short) AS fhir_id,

@@ -22,6 +22,11 @@ EXPECTED_QA_DIAG_VIEWS = (
     "v_diag_specimen_orphan_genomic_focus_v1",
     "v_diag_specimen_orphan_genomic_master_v1",
     "v_diag_specimen_fhir_broken_refs_v1",
+    "v_diag_specimen_fhir_bundle_entry_drift_v1",
+    "v_diag_specimen_genomics_dupe_thyroseq_slice_v1",
+    "v_diag_specimen_genomics_tier_enum_v1",
+    "v_diag_specimen_genomics_A_tier_requires_specimen_v1",
+    "v_diag_specimen_genomics_thyroseq_ordinality_v1",
     "v_diag_specimen_provenance_master_v1",
     "v_diag_specimen_provenance_focus_v1",
     "v_diag_specimen_provenance_focus_gaps_v1",
@@ -359,7 +364,12 @@ def _create_stub_db_for_142(db_path: Path) -> None:
               specimen_id VARCHAR,
               specimen_focus_id VARCHAR,
               research_id INT,
-              linkage_confidence_tier VARCHAR
+              linkage_confidence_tier VARCHAR,
+              binding_confidence_tier VARCHAR,
+              molecular_episode_id BIGINT,
+              source_table VARCHAR,
+              payload_field VARCHAR,
+              payload_explode_ord BIGINT
             )
             """
         )
@@ -387,6 +397,23 @@ def _create_stub_db_for_142(db_path: Path) -> None:
               specimen_id VARCHAR,
               patient_fhir_id VARCHAR,
               resource_json VARCHAR
+            )
+            """
+        )
+        con.execute(
+            """
+            CREATE TABLE main.fhir_bundle_specimen_export_v1 (
+              bundle_ix BIGINT,
+              specimen_id VARCHAR,
+              bundle_json JSON
+            )
+            """
+        )
+        con.execute(
+            """
+            INSERT INTO main.fhir_bundle_specimen_export_v1 VALUES (
+              1, 'stub',
+              '{"resourceType":"Bundle","type":"collection","entry":[]}'::JSON
             )
             """
         )

@@ -125,6 +125,19 @@ def test_qa_diagnostic_views_empty_on_happy_path() -> None:
     assert d3 is not None and d3[0] == 0
     d4 = con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_broken_refs_v1").fetchone()
     assert d4 is not None and d4[0] == 0
+    assert (
+        con.execute(
+            "SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_bundle_entry_drift_v1"
+        ).fetchone()[0]
+        == 0
+    )
+    for _v in (
+        "v_diag_specimen_genomics_dupe_thyroseq_slice_v1",
+        "v_diag_specimen_genomics_tier_enum_v1",
+        "v_diag_specimen_genomics_A_tier_requires_specimen_v1",
+        "v_diag_specimen_genomics_thyroseq_ordinality_v1",
+    ):
+        assert con.execute(f"SELECT COUNT(*) FROM qa.{_v}").fetchone()[0] == 0
     m = con.execute(
         "SELECT n_missing_identity_run FROM qa.v_diag_specimen_provenance_master_v1"
     ).fetchone()
@@ -408,6 +421,44 @@ def test_v_diag_encounter_episode_flags_missing_episode_row() -> None:
            WHERE issue = 'encounter_episode'"""
     ).fetchone()
     assert row is not None and int(row[0]) >= 1
+
+
+def test_v_diag_bundle_entry_drift_detects_url_mismatch() -> None:
+    """Bundle entry.url must match resourceType/id inside the same entry."""
+    import json
+
+    con = _happy_path_db()
+    row = con.execute(
+        "SELECT bundle_ix, bundle_json FROM main.fhir_bundle_specimen_export_v1 ORDER BY bundle_ix LIMIT 1"
+    ).fetchone()
+    assert row is not None
+    bix, raw_b = row[0], row[1]
+    b = json.loads(str(raw_b))
+    b["entry"][0]["url"] = "Specimen/DEADBEEF"
+    con.execute(
+        "UPDATE main.fhir_bundle_specimen_export_v1 SET bundle_json = ?::JSON WHERE bundle_ix = ?",
+        [json.dumps(b), bix],
+    )
+    con.execute((ROOT / "scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql").read_text(encoding="utf-8"))
+    n = con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_bundle_entry_drift_v1").fetchone()[0]
+    assert int(n) >= 1
+
+
+def test_140_run_validation_rejects_bad_binding_tier() -> None:
+    mod140 = _load_mod140()
+    con = _happy_path_db()
+    con.execute(
+        """
+        UPDATE main.specimen_genomic_assay_v1
+        SET binding_confidence_tier = '__invalid_tier__'
+        WHERE genomic_assay_id = (
+          SELECT genomic_assay_id FROM main.specimen_genomic_assay_v1 LIMIT 1
+        )
+        """
+    )
+    rows = mod140.run_validation(con)
+    failed = {a: b for a, b, c in rows if b == "FAIL"}
+    assert "binding_confidence_tier_enum" in failed
 
 
 def test_v_diag_encounter_episode_patient_mismatch_detected() -> None:
