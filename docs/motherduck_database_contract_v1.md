@@ -141,7 +141,7 @@ Materialized by [`scripts/138_md_specimen_fhir_layer.py`](../scripts/138_md_spec
 
 **FHIR disclaimer:** analytic, de-identified export for research workflows — **not** asserted as US Core–complete or production clinical interoperability.
 
-**Formalization:** [`scripts/119_md_formalization_validate.py`](../scripts/119_md_formalization_validate.py) Check 13 (`check_specimen_fhir_layer`) — includes `val_specimen_*`, all required `142` **views and** `qa.t_diag_specimen_focus_qa_metrics_v1`, cross-checks metrics vs focus list views, and specimen-adjacent review burden.
+**Formalization:** [`scripts/119_md_formalization_validate.py`](../scripts/119_md_formalization_validate.py) Check 13 (`check_specimen_fhir_layer`) — includes `val_specimen_*`, all required `142` **views and** `qa.t_diag_specimen_focus_qa_metrics_v1`, cross-checks metrics vs focus list views, and specimen-adjacent review burden. When the full specimen/FHIR layer is present, duplicate/orphan/provenance/broken-FHIR signals **FAIL** the check (not WARN-only); partial deploys (anchor without all objects) remain WARN-skipped.
 
 #### V1 entity tables (8, in main, never mutated by v2)
 

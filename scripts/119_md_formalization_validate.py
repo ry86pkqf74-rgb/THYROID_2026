@@ -38,14 +38,15 @@ Checks:
      allele_fraction bounds, variant_class enum, provenance columns, assay/panel pairing
  12b. Molecular episode upstream spine (release-mode): main.molecular_testing must exist when
      molecular_test_episode_v2 is non-empty (otherwise dates/linkage/specimen genomics are blocked)
- 13. Specimen + analytic FHIR layer (scripts/138_md_specimen_fhir_layer.py): table presence when
-     synoptic_tumor_long_v1 exists; fingerprint uniqueness; qa.val_specimen_contract_v1 and
-     qa.val_specimen_genomic_binding_v1 FAIL rows; qa.v_diag_* + qa.t_diag_specimen_focus_qa_metrics_v1
-     (142) for master/focus duplicate fingerprints, genomic orphan(master/focus), focus–master orphans,
-     FHIR ref integrity, provenance gaps, and specimen-adjacent review burden (informational). Release
-     orchestration (**124** ``--final-release``, **126** ``--release-mode``) can fail closed *before*
-     this check via ``utils/specimen_fhir_release_gate`` — use ``--materialize-specimen-fhir`` or
-     run **138** / **143** manually; ``--skip-specimen-fhir-gate`` defers to this validator only.
+ 13. Specimen + analytic FHIR layer (scripts/138_md_specimen_fhir_layer.py): when
+     synoptic_tumor_long_v1 exists, validate deployed tables; with a **complete** layer (all
+     specimen/FHIR objects present), **FAIL** on fingerprint collisions, val_specimen_* FAIL rows,
+     missing 142 diagnostics, non-zero counts from qa.v_diag_* (incl. focus grain), disagreement
+     between qa.t_diag_specimen_focus_qa_metrics_v1 and focus list views, or errors reading those
+     surfaces — no ad hoc Python scans of specimen_tumor_focus_v1. Partial materialization stays
+     WARN-skipped. Specimen-adjacent review-queue open counts remain **WARN** when non-zero.
+     Release orchestration (**124** / **126**) can fail closed earlier via
+     ``utils/specimen_fhir_release_gate``; use **138** / **143** to materialize diagnostics.
 
 Usage:
   .venv/bin/python scripts/119_md_formalization_validate.py --md
@@ -1311,6 +1312,10 @@ def check_specimen_fhir_layer(
         )
         return
     missing = [t for t in SPECIMEN_FHIR_OBJECTS if not _main_object_exists(con, t)]
+    # When every specimen/FHIR object is deployed, integrity violations must FAIL the gate
+    # (not WARN-only), matching deterministic qa.v_diag_* + t_diag focus metrics from 142.
+    layer_complete = not bool(missing)
+    status_integrity = "FAIL" if layer_complete else status_skip
     if missing:
         results.add(
             "Specimen/FHIR tables present",
@@ -1336,11 +1341,11 @@ def check_specimen_fhir_layer(
         ).fetchone()[0]
         results.add(
             "Specimen master fingerprint uniqueness",
-            "PASS" if ok_fp else status_skip,
+            "PASS" if ok_fp else status_integrity,
             "distinct fingerprints" if ok_fp else "duplicate specimen_fingerprint_sha256",
         )
     except Exception as exc:
-        results.add("Specimen master fingerprint uniqueness", status_skip, str(exc))
+        results.add("Specimen master fingerprint uniqueness", status_integrity, str(exc))
 
     if _qa_object_exists(con, "val_specimen_contract_v1"):
         try:
@@ -1352,13 +1357,13 @@ def check_specimen_fhir_layer(
             if nfail > 0:
                 results.add(
                     "qa.val_specimen_contract_v1",
-                    status_skip,
+                    status_integrity,
                     f"{nfail} failing row(s) — inspect after scripts/138",
                 )
             else:
                 results.add("qa.val_specimen_contract_v1", "PASS", "no FAIL rows recorded")
         except Exception as exc:
-            results.add("qa.val_specimen_contract_v1", status_skip, str(exc))
+            results.add("qa.val_specimen_contract_v1", status_integrity, str(exc))
 
     if _qa_object_exists(con, "val_specimen_genomic_binding_v1"):
         try:
@@ -1371,7 +1376,7 @@ def check_specimen_fhir_layer(
             if nfail_g > 0:
                 results.add(
                     "qa.val_specimen_genomic_binding_v1",
-                    status_skip,
+                    status_integrity,
                     f"{nfail_g} failing row(s) — inspect script 140 output",
                 )
             else:
@@ -1381,7 +1386,7 @@ def check_specimen_fhir_layer(
                     "no FAIL rows recorded",
                 )
         except Exception as exc:
-            results.add("qa.val_specimen_genomic_binding_v1", status_skip, str(exc))
+            results.add("qa.val_specimen_genomic_binding_v1", status_integrity, str(exc))
 
     missing_diag = [v for v in SPECIMEN_FHIR_DIAG_VIEWS if not _qa_object_exists(con, v)]
     missing_tbl = [t for t in SPECIMEN_FHIR_DIAG_TABLES if not _qa_object_exists(con, t)]
@@ -1389,7 +1394,7 @@ def check_specimen_fhir_layer(
     if missing_142 and not missing:
         results.add(
             "Specimen/FHIR QA diagnostics (142)",
-            status_skip,
+            status_integrity,
             f"missing: {', '.join(missing_142)} — run scripts/138_md_specimen_fhir_layer.py "
             "or scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py",
         )
@@ -1471,13 +1476,14 @@ def check_specimen_fhir_layer(
             )
             if metrics_mismatch:
                 detail += (
-                    " | WARN: qa.t_diag_specimen_focus_qa_metrics_v1 disagrees with v_diag_* "
-                    "focus surfaces — rerun 143/138 QA DDL"
+                    " | qa.t_diag_specimen_focus_qa_metrics_v1 disagrees with v_diag_* "
+                    "focus surfaces — rerun scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py "
+                    "or 138 tail deploy"
                 )
             if bad_diag > 0:
-                diag_status = status_skip
+                diag_status = status_integrity
             elif metrics_mismatch:
-                diag_status = "WARN"
+                diag_status = status_integrity
             else:
                 diag_status = "PASS"
             results.add(
@@ -1523,7 +1529,7 @@ def check_specimen_fhir_layer(
                 detail,
             )
         except Exception as exc:
-            results.add("Specimen/FHIR QA diagnostics (142 views)", status_skip, str(exc))
+            results.add("Specimen/FHIR QA diagnostics (142 views)", status_integrity, str(exc))
 
 
 def check_release_manifest(

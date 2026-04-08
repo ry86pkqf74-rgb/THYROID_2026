@@ -264,7 +264,8 @@ def test_v_diag_provenance_focus_detects_blank_build_run() -> None:
     assert row_pr is not None and int(row_pr[0]) >= 1
 
 
-def test_check_13_strict_fails_on_focus_diagnostic_defect() -> None:
+def test_check_13_fails_on_focus_diagnostic_defect_when_layer_complete() -> None:
+    """Integrity defects must FAIL even when strict=False if all specimen/FHIR objects exist."""
     con = _happy_path_db()
     con.execute(
         """
@@ -280,10 +281,40 @@ def test_check_13_strict_fails_on_focus_diagnostic_defect() -> None:
     con.execute((ROOT / "scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql").read_text(encoding="utf-8"))
 
     mod119 = _load_mod119()
+    for strict in (False, True):
+        results = mod119.ValidationResult("pytest")
+        mod119.check_specimen_fhir_layer(con, results, strict=strict)
+        fail_names = {c["check"] for c in results.checks if c["status"] == "FAIL"}
+        assert any(
+            "Specimen/FHIR QA diagnostics (142 surfaces + focus metrics)" == name for name in fail_names
+        ), f"expected FAIL for focus orphan when strict={strict!r}"
+
+
+def test_check_13_fails_on_metrics_mismatch_when_layer_complete() -> None:
+    """Stale or broken t_diag rollups must FAIL (authoritative cross-check vs list views)."""
+    con = _happy_path_db()
+    con.execute(
+        """
+        UPDATE main.specimen_genomic_assay_v1
+        SET specimen_focus_id = 'spf_metrics_mismatch_check13'
+        WHERE genomic_assay_id = (
+          SELECT genomic_assay_id FROM main.specimen_genomic_assay_v1
+          WHERE specimen_focus_id IS NOT NULL
+          LIMIT 1
+        )
+        """
+    )
+    con.execute(
+        """
+        UPDATE qa.t_diag_specimen_focus_qa_metrics_v1
+        SET n_orphan_genomic_focus = 0
+        """
+    )
+    mod119 = _load_mod119()
     results = mod119.ValidationResult("pytest")
-    mod119.check_specimen_fhir_layer(con, results, strict=True)
+    mod119.check_specimen_fhir_layer(con, results, strict=False)
     fail_names = {c["check"] for c in results.checks if c["status"] == "FAIL"}
-    assert any("Specimen/FHIR QA diagnostics" in name for name in fail_names)
+    assert "Specimen/FHIR QA diagnostics (142 surfaces + focus metrics)" in fail_names
 
 
 def test_contract_view_column_sets_documented() -> None:
