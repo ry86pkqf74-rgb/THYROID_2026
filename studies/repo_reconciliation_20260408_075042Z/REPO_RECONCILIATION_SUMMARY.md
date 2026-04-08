@@ -27,5 +27,4 @@ No edit required: it already documents distinct dev/qa/prod databases consistent
 
 ## Git record
 
-- **Primary reconciliation commit:** `6f08da6` (docs, `CURRENT_*` relabel, tests, initial study deliverables).
-- **Branch tip after follow-up edits to this summary:** `f701cb0` on `origin/main` (see `git log -1`).
+- **Task-scoped content commit:** `6f08da6` on `main` (docs, `CURRENT_*` relabel, new tests, study deliverables). Additional commits may exist on `main` for follow-up edits to this summary only — use `git log --oneline -5`.
