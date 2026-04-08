@@ -151,12 +151,19 @@ def build_markdown(
     lines: list[str] = [
         "# THYROID_2026 — current MotherDuck vs repo state",
         "",
+        "> **Naming:** This file is the default **output path** for this script. It is **not** guaranteed "
+        "fresh unless **`Commit SHA`** matches `git rev-parse HEAD` **and** you trust the timestamp.",
+        "",
+        "> **Publication narratives:** Signoff context and superseding validation pointers: "
+        "[`20260407_publication_signoff_live/README.md`](20260407_publication_signoff_live/README.md).",
+        "",
         "> **Not automation SSOT.** Prefer a fresh `119_md_formalization_validate.py --md --release-mode` "
         "output (e.g. under `studies/`) for release verdicts. This file reconciles **checked-in** "
         "repo artifacts with optional live introspection.",
         "",
-        "> **Stale guard:** If **`Commit SHA`** below ≠ `git rev-parse HEAD` on your machine, treat "
-        "**Live MotherDuck** bullets as **historical** until you re-run this generator with `--md`.",
+        "> **Stale guard:** If **`Commit SHA`** below ≠ `git rev-parse HEAD`, treat **Live MotherDuck** "
+        "bullets as **point-in-time** until you re-run: `.venv/bin/python scripts/144_md_repo_current_state_summary.py --md` "
+        "(RW token: `motherduck.local.toml` or env / `.streamlit/secrets.toml` per `motherduck_client.py`).",
         "",
         "> **Repo posture (sync with README):** Latest **live** `119 --release-mode` + specimen/FHIR truth baselines "
         "live under `studies/specimen_fhir_release_truth_*` (regenerate with this script + "

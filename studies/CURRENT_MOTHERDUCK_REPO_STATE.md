@@ -1,19 +1,17 @@
-# THYROID_2026 — MotherDuck vs repo state (default path for script 144)
+# THYROID_2026 — current MotherDuck vs repo state
 
-> **Naming:** This file is the default **output path** for `scripts/144_md_repo_current_state_summary.py`. It is **not** guaranteed fresh relative to your checkout unless **`Commit SHA`** matches `git rev-parse HEAD` **and** you trust the timestamp.
+> **Naming:** This file is the default **output path** for this script. It is **not** guaranteed fresh unless **`Commit SHA`** matches `git rev-parse HEAD` **and** you trust the timestamp.
 
-> **Publication narratives:** Human-facing signoff context and superseding validation paths are indexed in [`20260407_publication_signoff_live/README.md`](20260407_publication_signoff_live/README.md). Use that README when reconciling “live signoff” stories vs this machine summary.
+> **Publication narratives:** Signoff context and superseding validation pointers: [`20260407_publication_signoff_live/README.md`](20260407_publication_signoff_live/README.md).
 
 > **Not automation SSOT.** Prefer a fresh `119_md_formalization_validate.py --md --release-mode` output (e.g. under `studies/`) for release verdicts. This file reconciles **checked-in** repo artifacts with optional live introspection.
 
-> **Stale guard:** If **`Commit SHA`** below ≠ `git rev-parse HEAD`, treat **Live MotherDuck** bullets as a **point-in-time catalog snapshot** until you re-run: `.venv/bin/python scripts/144_md_repo_current_state_summary.py --md` (RW token via `motherduck.local.toml` / env; see `motherduck_client.py`).
-
-> **Reconciliation note (2026-04-08):** repo HEAD was `78d0edfc29c36182e7be439a40c4315b8e814a41` while the embedded SHA below remained from an **earlier** generator run — **do not** assume live row counts or release tags match prod today without re-running **144 --md**.
+> **Stale guard:** If **`Commit SHA`** below ≠ `git rev-parse HEAD`, treat **Live MotherDuck** bullets as **point-in-time** until you re-run: `.venv/bin/python scripts/144_md_repo_current_state_summary.py --md` (RW token: `motherduck.local.toml` or env / `.streamlit/secrets.toml` per `motherduck_client.py`).
 
 > **Repo posture (sync with README):** Latest **live** `119 --release-mode` + specimen/FHIR truth baselines live under `studies/specimen_fhir_release_truth_*` (regenerate with this script + `119_md_formalization_validate.py --md --release-mode`). **Governance:** operator `119` may **PASS WITH WARN** while **manuscript** sign-off still requires **human-reviewed** MRQ/promotion paths (not automation-only verification). **Institutional non-Tg lab wave** (`final_institutional_20260407`) is **ingested**; residual lab gaps are **source-limited**, not a missing-wave blocker. Operator evidence pack: `studies/20260411_final_master_release/EVIDENCE_PACK.md`.
 
-**Machine-generated:** 2026-04-08T07:46:43.466176+00:00
-**Commit SHA:** `3f54a52e14a2c8d9d957285a9897c348371e54d0`
+**Machine-generated:** 2026-04-08T07:53:34.957086+00:00
+**Commit SHA:** `c0364439791de299062c40c1b549e672f6c1f5d0`
 
 > Regenerate after promotion or specimen/FHIR deploy: `python scripts/144_md_repo_current_state_summary.py --md`
 
