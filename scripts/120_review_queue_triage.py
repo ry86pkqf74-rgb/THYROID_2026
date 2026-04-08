@@ -220,6 +220,32 @@ def run_triage(
     tier_df = con.execute(tier_sql).df()
     tier_df.to_csv(out_dir / "counts_manuscript_quality_tiers.csv", index=False)
 
+    # ── counts_mrq_three_bucket_signoff.csv — manuscript governance lens (3 buckets)
+    # Order matches counts_manuscript_quality_tiers: auto_accepted* must precede
+    # reviewer+reviewed_at so tier-policy service identities are not counted as human-reviewed.
+    three_sql = f"""
+        SELECT signoff_bucket, COUNT(*) AS n_rows
+        FROM (
+            SELECT CASE
+                WHEN verification_status IS NULL THEN 'unresolved_pending'
+                WHEN {syn_pred} THEN 'synthetic_automation_only'
+                WHEN LOWER(TRIM(CAST(verification_status AS VARCHAR))) LIKE 'auto_accepted%'
+                    THEN 'automation_tier_or_incomplete_non_human'
+                WHEN reviewer IS NOT NULL
+                     AND TRIM(CAST(reviewer AS VARCHAR)) <> ''
+                     AND reviewed_at IS NOT NULL
+                    THEN 'true_human_reviewed'
+                ELSE 'automation_tier_or_incomplete_non_human'
+            END AS signoff_bucket
+            FROM qa.manual_review_queue
+            WHERE 1=1 {rf}
+        ) t
+        GROUP BY 1
+        ORDER BY 1
+    """
+    three_df = con.execute(three_sql).df()
+    three_df.to_csv(out_dir / "counts_mrq_three_bucket_signoff.csv", index=False)
+
     # ── counts_promotable_blocking.csv — aligned with scripts/119 strict G7:
     #    rows with verification_status IS NULL are "pending" and block release-mode validation.
     block_sql = f"""
@@ -338,6 +364,7 @@ def run_triage(
             "| `counts_by_domain.csv` | Rows / pending / reviewed by `domain` |",
             "| `counts_by_verification_status.csv` | Histogram of `verification_status` |",
             "| `counts_manuscript_quality_tiers.csv` | Pending vs synthetic vs automation vs human identity (sign-off posture) |",
+            "| `counts_mrq_three_bucket_signoff.csv` | **Governance:** `unresolved_pending` / `synthetic_automation_only` / `true_human_reviewed` / `automation_tier_or_incomplete_non_human` |",
             "| `counts_promotable_blocking.csv` | Blocking vs cleared + pending algorithm breakdown |",
             "| `domains_highest_pending_volume.csv` | Domains ranked by pending count |",
             "| `oldest_pending_rows.csv` | Stale pending rows by `loaded_at` |",
@@ -363,10 +390,10 @@ def run_triage(
             "## Manuscript sign-off quality tiers",
             "",
             "Counts are **mutually exclusive** (first matching branch wins). "
-            "`119 --release-mode` still **fails** on tier **B** (synthetic placeholders) "
-            "even when the queue is structurally non-NULL. Tier **D** is the conservative "
-            "\"human reviewer identity\" bucket (non-empty `reviewer` + `reviewed_at`); "
-            "policy may still require additional evidence beyond automation tier **C**.",
+            "`119 --release-mode` **fails** CHECK **5b** when tier **B** (synthetic placeholders) "
+            "has **any** rows. When B is empty, automation tier **C** can still be "
+            "**non-manuscript** from a governance lens (see `counts_mrq_three_bucket_signoff.csv`). "
+            "Tier **D** is the conservative \"human reviewer identity\" bucket (non-empty `reviewer` + `reviewed_at`).",
             "",
             "| Tier | n_rows |",
             "|------|--------:|",
@@ -374,6 +401,17 @@ def run_triage(
     )
     for _, tr in tier_df.iterrows():
         lines.append(f"| `{tr['manuscript_quality_tier']}` | {int(tr['n_rows']):,} |")
+    lines.append("")
+    lines.extend(
+        [
+            "## Three-bucket manuscript sign-off (governance)",
+            "",
+            "| Bucket | n_rows |",
+            "|--------|--------:|",
+        ]
+    )
+    for _, tr in three_df.iterrows():
+        lines.append(f"| `{tr['signoff_bucket']}` | {int(tr['n_rows']):,} |")
     lines.append("")
 
     (out_dir / "summary.md").write_text("\n".join(lines), encoding="utf-8")
@@ -384,6 +422,7 @@ def run_triage(
         "reviewed": n_rev,
         "worklist_files": len(list(work_root.glob("worklist__*.csv"))) if work_root.exists() else 0,
         "manuscript_tier_rows": len(tier_df),
+        "three_bucket_rows": len(three_df),
     }
 
 

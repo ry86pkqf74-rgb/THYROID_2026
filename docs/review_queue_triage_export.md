@@ -13,6 +13,7 @@ Read-only bundle for **`qa.manual_review_queue`**: CSVs plus **`summary.md`**, u
 | `summary.md` | Headline counts, file manifest, top domains |
 | `counts_*.csv` | Domain / verification / blocking breakdown |
 | `counts_manuscript_quality_tiers.csv` | Pending vs **synthetic placeholder** vs `auto_accepted*` vs human reviewer identity vs other reviewed |
+| `counts_mrq_three_bucket_signoff.csv` | **Governance rollup:** `unresolved_pending` / `synthetic_automation_only` / `true_human_reviewed` / `automation_tier_or_incomplete_non_human` |
 | `oldest_pending_rows.csv` | Stale pending rows (no free-text note fields) |
 | `worklists/worklist__<domain>__tier_<tier>.csv` | Pending rows only, split for reviewers |
 

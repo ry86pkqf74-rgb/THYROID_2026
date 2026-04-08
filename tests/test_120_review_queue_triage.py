@@ -182,6 +182,12 @@ def test_run_triage_writes_bundle(tmp_path, memory_mrq_con):
     by_tier = dict(zip(tiers["manuscript_quality_tier"], tiers["n_rows"]))
     assert by_tier.get("A_pending_blocks_structural_release") == 2
     assert by_tier.get("D_human_review_identity_present") == 1
+    assert (out / "counts_mrq_three_bucket_signoff.csv").is_file()
+    buck = pd.read_csv(out / "counts_mrq_three_bucket_signoff.csv")
+    by_b = dict(zip(buck["signoff_bucket"], buck["n_rows"]))
+    assert by_b.get("unresolved_pending") == 2
+    assert by_b.get("true_human_reviewed") == 1
+    assert stats.get("three_bucket_rows") == len(buck)
     assert (out / "counts_promotable_blocking.csv").is_file()
     assert (out / "domains_highest_pending_volume.csv").is_file()
     assert (out / "oldest_pending_rows.csv").is_file()
