@@ -72,8 +72,8 @@ def connect_attribution(
 
 
 # Specimen / FHIR release writers (138/139/140/143) — single UA for query-history filtering.
-SPECIMEN_FHIR_RELEASE_TRUTH_UA = "specimen_fhir_release_truth_v2"
-SPECIMEN_FHIR_RELEASE_TRUTH_SESSION_HINT_DEFAULT = "specimen_fhir_release_truth_v2"
+SPECIMEN_FHIR_RELEASE_TRUTH_UA = "specimen_fhir_ref_integrity_v2"
+SPECIMEN_FHIR_RELEASE_TRUTH_SESSION_HINT_DEFAULT = "specimen_fhir_ref_integrity_v2"
 
 
 def specimen_fhir_release_writer_attribution() -> tuple[str, str]:

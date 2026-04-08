@@ -128,11 +128,11 @@ def test_141_reconstruct_path_without_bundle_table(tmp_path: Path) -> None:
         )
         con.execute(
             "CREATE TABLE main.fhir_encounter_v1 "
-            "(specimen_id VARCHAR, episode_fhir_id VARCHAR, resource_json JSON)"
+            "(specimen_id VARCHAR, patient_fhir_id VARCHAR, episode_fhir_id VARCHAR, resource_json JSON)"
         )
         con.execute(
             "CREATE TABLE main.fhir_episode_of_care_v1 "
-            "(episode_fhir_id VARCHAR, resource_json JSON)"
+            "(episode_fhir_id VARCHAR, patient_fhir_id VARCHAR, resource_json JSON)"
         )
         con.execute(
             "INSERT INTO main.fhir_specimen_v1 VALUES ('sp-recon', CAST(? AS JSON))",
@@ -143,11 +143,11 @@ def test_141_reconstruct_path_without_bundle_table(tmp_path: Path) -> None:
             [proc_j],
         )
         con.execute(
-            "INSERT INTO main.fhir_encounter_v1 VALUES ('sp-recon', 'eocA', CAST(? AS JSON))",
+            "INSERT INTO main.fhir_encounter_v1 VALUES ('sp-recon', 'pat01', 'eocA', CAST(? AS JSON))",
             [enc_j],
         )
         con.execute(
-            "INSERT INTO main.fhir_episode_of_care_v1 VALUES ('eocA', CAST(? AS JSON))",
+            "INSERT INTO main.fhir_episode_of_care_v1 VALUES ('eocA', 'pat01', CAST(? AS JSON))",
             [eoc_j],
         )
     finally:

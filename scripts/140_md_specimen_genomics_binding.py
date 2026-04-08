@@ -171,10 +171,131 @@ def run_validation(con) -> list[tuple[str, str, str]]:
         )
     else:
         out.append(("specimen_master_fk_when_present", "SKIP", "specimen_master_v1 absent"))
+
     run(
-        "thyroseq_explode_audit_nonempty",
-        """SELECT COALESCE(COUNT(*) >= 0, TRUE) FROM main.specimen_genomic_assay_v1
-           WHERE source_table LIKE 'thyroseq%'""",
+        "high_tier_null_specimen_guard",
+        """SELECT COALESCE(NOT EXISTS (
+              SELECT 1 FROM main.specimen_genomic_assay_v1
+              WHERE linkage_confidence_tier IN ('exact', 'high_confidence')
+                AND specimen_id IS NULL
+            ), FALSE)""",
+        True,
+    )
+    run(
+        "specimen_focus_fk_when_populated",
+        """SELECT COALESCE(NOT EXISTS (
+              SELECT 1 FROM main.specimen_genomic_assay_v1 g
+              LEFT JOIN main.specimen_tumor_focus_v1 f
+                ON g.specimen_focus_id = f.specimen_focus_id
+              WHERE g.specimen_focus_id IS NOT NULL
+                AND f.specimen_focus_id IS NULL
+            ), FALSE)""",
+        True,
+    )
+    run(
+        "thyroseq_explode_ordinality_dense",
+        r"""SELECT COALESCE(NOT EXISTS (
+              SELECT 1 FROM (
+                SELECT
+                  research_id,
+                  regexp_replace(source_row_key, ':\d+$', '') AS explode_group,
+                  payload_field,
+                  COUNT(*)::BIGINT AS c,
+                  MIN(payload_explode_ord)::BIGINT AS lo,
+                  MAX(payload_explode_ord)::BIGINT AS hi
+                FROM main.specimen_genomic_assay_v1
+                WHERE source_table = 'thyroseq_molecular_enrichment+json_each'
+                  AND payload_field IN ('fusion_genes_json', 'allele_fractions_json')
+                GROUP BY 1, 2, 3
+                HAVING COUNT(*) > 0 AND (MIN(payload_explode_ord) <> 1
+                  OR MAX(payload_explode_ord) <> COUNT(*))
+              ) bad
+            ), FALSE)""",
+        True,
+    )
+    if _table_exists(con, "main", "thyroseq_molecular_enrichment"):
+        run(
+            "thyroseq_fusion_array_parity",
+            """SELECT COALESCE(NOT EXISTS (
+              SELECT 1 FROM (
+                SELECT
+                  t.research_id,
+                  CAST(t.source_row_hash AS VARCHAR) AS source_row_hash,
+                  CASE
+                    WHEN json_valid(CAST(t.fusion_genes_json AS VARCHAR))
+                      AND LENGTH(TRIM(CAST(t.fusion_genes_json AS VARCHAR))) > 2
+                    THEN json_array_length(CAST(t.fusion_genes_json AS VARCHAR))::BIGINT
+                    ELSE 0::BIGINT
+                  END AS expected_n,
+                  (
+                    SELECT COUNT(*)::BIGINT
+                    FROM main.specimen_genomic_assay_v1 g
+                    WHERE g.source_table = 'thyroseq_molecular_enrichment+json_each'
+                      AND g.payload_field = 'fusion_genes_json'
+                      AND g.research_id = t.research_id
+                      AND starts_with(
+                        g.source_row_key,
+                        CAST(t.research_id AS VARCHAR) || ':'
+                          || CAST(t.source_row_hash AS VARCHAR) || ':fusion_genes_json:'
+                      )
+                  ) AS actual_n
+                FROM main.thyroseq_molecular_enrichment t
+              ) x
+              WHERE x.expected_n > 0 AND x.actual_n IS DISTINCT FROM x.expected_n
+            ), FALSE)""",
+            True,
+        )
+        run(
+            "thyroseq_allele_array_parity",
+            """SELECT COALESCE(NOT EXISTS (
+              SELECT 1 FROM (
+                SELECT
+                  t.research_id,
+                  CAST(t.source_row_hash AS VARCHAR) AS source_row_hash,
+                  CASE
+                    WHEN json_valid(CAST(t.allele_fractions_json AS VARCHAR))
+                      AND LENGTH(TRIM(CAST(t.allele_fractions_json AS VARCHAR))) > 2
+                    THEN json_array_length(CAST(t.allele_fractions_json AS VARCHAR))::BIGINT
+                    ELSE 0::BIGINT
+                  END AS expected_n,
+                  (
+                    SELECT COUNT(*)::BIGINT
+                    FROM main.specimen_genomic_assay_v1 g
+                    WHERE g.source_table = 'thyroseq_molecular_enrichment+json_each'
+                      AND g.payload_field = 'allele_fractions_json'
+                      AND g.research_id = t.research_id
+                      AND starts_with(
+                        g.source_row_key,
+                        CAST(t.research_id AS VARCHAR) || ':'
+                          || CAST(t.source_row_hash AS VARCHAR) || ':allele_fractions_json:'
+                      )
+                  ) AS actual_n
+                FROM main.thyroseq_molecular_enrichment t
+              ) y
+              WHERE y.expected_n > 0 AND y.actual_n IS DISTINCT FROM y.expected_n
+            ), FALSE)""",
+            True,
+        )
+    else:
+        out.append(("thyroseq_fusion_array_parity", "SKIP", "thyroseq_molecular_enrichment absent"))
+        out.append(("thyroseq_allele_array_parity", "SKIP", "thyroseq_molecular_enrichment absent"))
+
+    run(
+        "thyroseq_payload_fingerprint_unique_per_slice",
+        """SELECT COALESCE(NOT EXISTS (
+              SELECT 1 FROM (
+                SELECT
+                  research_id,
+                  molecular_episode_id,
+                  payload_field,
+                  payload_explode_ord,
+                  COUNT(*)::BIGINT AS c
+                FROM main.specimen_genomic_assay_v1
+                WHERE source_table = 'thyroseq_molecular_enrichment+json_each'
+                GROUP BY 1, 2, 3, 4
+                HAVING COUNT(*) > 1
+              ) d
+            ), FALSE)""",
         True,
     )
     return out

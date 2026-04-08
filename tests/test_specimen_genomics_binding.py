@@ -165,6 +165,133 @@ def test_exploded_json_row_counts_stable() -> None:
     assert [r[0] for r in ordinals] == [1, 2, 3]
 
 
+def test_run_validation_fails_when_thyroseq_ordinals_not_dense() -> None:
+    mod140 = _load_mod140()
+    con = duckdb.connect(":memory:")
+    con.execute("CREATE SCHEMA qa")
+    con.execute("""
+    CREATE TABLE main.molecular_test_episode_v2 (research_id BIGINT, molecular_episode_id BIGINT,
+      platform VARCHAR, test_date_native DATE);
+    CREATE TABLE main.fna_molecular_linkage_v3 (
+      research_id BIGINT, molecular_episode_id BIGINT, fna_episode_id BIGINT,
+      linkage_confidence_tier VARCHAR, linkage_score DOUBLE, score_rank BIGINT);
+    CREATE TABLE main.preop_surgery_linkage_v3 (
+      research_id BIGINT, preop_episode_id BIGINT, surgery_episode_id BIGINT,
+      linkage_confidence_tier VARCHAR, score_rank BIGINT);
+    CREATE TABLE main.surgery_pathology_linkage_v3 (
+      research_id BIGINT, surgery_episode_id BIGINT, path_surgery_id BIGINT, tumor_ordinal BIGINT,
+      linkage_confidence_tier VARCHAR, linkage_score DOUBLE, score_rank BIGINT);
+    CREATE TABLE main.specimen_tumor_focus_v1 (
+      research_id BIGINT, surgery_episode_id BIGINT, specimen_id VARCHAR, specimen_focus_id VARCHAR);
+    CREATE TABLE main.specimen_master_v1 (
+      specimen_id VARCHAR, research_id BIGINT, specimen_fingerprint_sha256 VARCHAR);
+    CREATE TABLE main.thyroseq_molecular_enrichment (
+      research_id BIGINT, source_row_hash VARCHAR, fusion_genes_json VARCHAR, allele_fractions_json VARCHAR);
+
+    INSERT INTO main.specimen_master_v1 VALUES ('SM', 3, 'fp');
+    INSERT INTO main.molecular_test_episode_v2 VALUES (3, 30, 'ThyroSeq panel', DATE '2019-01-01');
+    INSERT INTO main.fna_molecular_linkage_v3 VALUES (3, 30, 300, 'exact_match', 1.0, 1);
+    INSERT INTO main.preop_surgery_linkage_v3 VALUES (3, 300, 3000, 'high_confidence', 1);
+    INSERT INTO main.surgery_pathology_linkage_v3 VALUES (3, 3000, 3000, 1, 'high_confidence', 1.0, 1);
+    INSERT INTO main.specimen_tumor_focus_v1 VALUES (3, 3000, 'SX', 'FX');
+    INSERT INTO main.thyroseq_molecular_enrichment VALUES (
+      3, 'stable_hash', '["a","b","c"]', '[]');
+    """)
+    mod140.apply_specimen_genomics_binding(con, has_genetic=False, has_thyroseq=True)
+    con.execute(
+        """
+        UPDATE main.specimen_genomic_assay_v1
+        SET payload_explode_ord = 9
+        WHERE payload_field = 'fusion_genes_json' AND payload_explode_ord = 1
+        """
+    )
+    rows = mod140.run_validation(con)
+    failed = [r for r in rows if r[0] == "thyroseq_explode_ordinality_dense" and r[1] == "FAIL"]
+    assert failed, "expected ordinality gate to FAIL after corrupting explode_ord"
+
+
+def test_run_validation_fails_when_fusion_parity_breaks() -> None:
+    mod140 = _load_mod140()
+    con = duckdb.connect(":memory:")
+    con.execute("CREATE SCHEMA qa")
+    con.execute("""
+    CREATE TABLE main.molecular_test_episode_v2 (research_id BIGINT, molecular_episode_id BIGINT,
+      platform VARCHAR, test_date_native DATE);
+    CREATE TABLE main.fna_molecular_linkage_v3 (
+      research_id BIGINT, molecular_episode_id BIGINT, fna_episode_id BIGINT,
+      linkage_confidence_tier VARCHAR, linkage_score DOUBLE, score_rank BIGINT);
+    CREATE TABLE main.preop_surgery_linkage_v3 (
+      research_id BIGINT, preop_episode_id BIGINT, surgery_episode_id BIGINT,
+      linkage_confidence_tier VARCHAR, score_rank BIGINT);
+    CREATE TABLE main.surgery_pathology_linkage_v3 (
+      research_id BIGINT, surgery_episode_id BIGINT, path_surgery_id BIGINT, tumor_ordinal BIGINT,
+      linkage_confidence_tier VARCHAR, linkage_score DOUBLE, score_rank BIGINT);
+    CREATE TABLE main.specimen_tumor_focus_v1 (
+      research_id BIGINT, surgery_episode_id BIGINT, specimen_id VARCHAR, specimen_focus_id VARCHAR);
+    CREATE TABLE main.specimen_master_v1 (
+      specimen_id VARCHAR, research_id BIGINT, specimen_fingerprint_sha256 VARCHAR);
+    CREATE TABLE main.thyroseq_molecular_enrichment (
+      research_id BIGINT, source_row_hash VARCHAR, fusion_genes_json VARCHAR, allele_fractions_json VARCHAR);
+
+    INSERT INTO main.specimen_master_v1 VALUES ('SM', 3, 'fp');
+    INSERT INTO main.molecular_test_episode_v2 VALUES (3, 30, 'ThyroSeq panel', DATE '2019-01-01');
+    INSERT INTO main.fna_molecular_linkage_v3 VALUES (3, 30, 300, 'exact_match', 1.0, 1);
+    INSERT INTO main.preop_surgery_linkage_v3 VALUES (3, 300, 3000, 'high_confidence', 1);
+    INSERT INTO main.surgery_pathology_linkage_v3 VALUES (3, 3000, 3000, 1, 'high_confidence', 1.0, 1);
+    INSERT INTO main.specimen_tumor_focus_v1 VALUES (3, 3000, 'SX', 'FX');
+    INSERT INTO main.thyroseq_molecular_enrichment VALUES (
+      3, 'stable_hash', '["a","b","c"]', '[]');
+    """)
+    mod140.apply_specimen_genomics_binding(con, has_genetic=False, has_thyroseq=True)
+    con.execute(
+        "DELETE FROM main.specimen_genomic_assay_v1 WHERE payload_explode_ord = 3 AND payload_field = 'fusion_genes_json'"
+    )
+    rows = mod140.run_validation(con)
+    failed = [r for r in rows if r[0] == "thyroseq_fusion_array_parity" and r[1] == "FAIL"]
+    assert failed, "expected fusion parity gate to FAIL after deleting one exploded row"
+
+
+def test_run_validation_fails_on_orphan_specimen_focus_fk() -> None:
+    mod140 = _load_mod140()
+    con = duckdb.connect(":memory:")
+    con.execute("CREATE SCHEMA qa")
+    con.execute("""
+    CREATE TABLE main.molecular_test_episode_v2 (research_id BIGINT, molecular_episode_id BIGINT,
+      platform VARCHAR, test_date_native DATE);
+    CREATE TABLE main.fna_molecular_linkage_v3 (
+      research_id BIGINT, molecular_episode_id BIGINT, fna_episode_id BIGINT,
+      linkage_confidence_tier VARCHAR, linkage_score DOUBLE, score_rank BIGINT);
+    CREATE TABLE main.preop_surgery_linkage_v3 (
+      research_id BIGINT, preop_episode_id BIGINT, surgery_episode_id BIGINT,
+      linkage_confidence_tier VARCHAR, score_rank BIGINT);
+    CREATE TABLE main.surgery_pathology_linkage_v3 (
+      research_id BIGINT, surgery_episode_id BIGINT, path_surgery_id BIGINT, tumor_ordinal BIGINT,
+      linkage_confidence_tier VARCHAR, linkage_score DOUBLE, score_rank BIGINT);
+    CREATE TABLE main.specimen_tumor_focus_v1 (
+      research_id BIGINT, surgery_episode_id BIGINT, specimen_id VARCHAR, specimen_focus_id VARCHAR);
+    CREATE TABLE main.specimen_master_v1 (
+      specimen_id VARCHAR, research_id BIGINT, specimen_fingerprint_sha256 VARCHAR);
+
+    INSERT INTO main.specimen_master_v1 VALUES ('SM', 1, 'fp');
+    INSERT INTO main.molecular_test_episode_v2 VALUES (1, 10, 'ThyroSeq v3', DATE '2020-06-01');
+    INSERT INTO main.fna_molecular_linkage_v3 VALUES (1, 10, 100, 'exact_match', 1.0, 1);
+    INSERT INTO main.preop_surgery_linkage_v3 VALUES (1, 100, 1000, 'high_confidence', 1);
+    INSERT INTO main.surgery_pathology_linkage_v3 VALUES (1, 1000, 1000, 1, 'high_confidence', 1.0, 1);
+    INSERT INTO main.specimen_tumor_focus_v1 VALUES (1, 1000, 'SPEC_A', 'FOC_A');
+    """)
+    mod140.apply_specimen_genomics_binding(con, has_genetic=False, has_thyroseq=False)
+    con.execute(
+        """
+        UPDATE main.specimen_genomic_assay_v1
+        SET specimen_focus_id = 'missing_focus_xyz'
+        WHERE research_id = 1 AND payload_explode_ord = 0
+        """
+    )
+    rows = mod140.run_validation(con)
+    failed = [r for r in rows if r[0] == "specimen_focus_fk_when_populated" and r[1] == "FAIL"]
+    assert failed
+
+
 def test_multifocal_clears_focus_goes_to_qa() -> None:
     mod140 = _load_mod140()
     con = duckdb.connect(":memory:")

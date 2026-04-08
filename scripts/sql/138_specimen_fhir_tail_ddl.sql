@@ -383,4 +383,6 @@ SELECT
 FROM main.fhir_specimen_v1 fs
 JOIN main.fhir_procedure_collection_v1 fp ON fs.specimen_id = fp.specimen_id
 JOIN main.fhir_encounter_v1 fe ON fs.specimen_id = fe.specimen_id
-JOIN main.fhir_episode_of_care_v1 fo ON fe.episode_fhir_id = fo.episode_fhir_id;
+JOIN main.fhir_episode_of_care_v1 fo
+  ON fe.episode_fhir_id = fo.episode_fhir_id
+ AND fe.patient_fhir_id = fo.patient_fhir_id;

@@ -93,12 +93,11 @@ WHERE g.specimen_id IS NOT NULL AND m.specimen_id IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Broken internal FHIR references (analytic export consistency)
--- Expectations work on **legacy** MotherDuck catalogs whose fhir_* tables only
--- expose fhir_id, patient_fhir_id, specimen_id, resource_json. Subject lines use
--- patient_fhir_id; Procedure/Specimen procedure refs use the sha256 short-id recipe from
--- 138_specimen_fhir_tail_ddl.sql. Encounter→Episode matches `fhir_episode_of_care_v1`
--- by **full** `fhir_id` + `patient_fhir_id` (same as bundle assembly), not via
--- `(patient, surgery_episode_id)` rollups that can false-positive across rebuilds.
+-- Expectations: subject refs normalize `Patient/` repetition; procedure/encounter
+-- resource ids match 138_specimen_fhir_tail_ddl.sql recipes. Encounter→Episode
+-- resolves `fhir_episode_of_care_v1` by **full** `fhir_id` equal to the JSON reference
+-- (episode id embeds research_id in the hash — globally unique). A separate branch
+-- flags `patient_fhir_id` discordance when the id matches but subjects differ.
 -- ═══════════════════════════════════════════════════════════════════════════
 CREATE OR REPLACE VIEW qa.v_diag_specimen_fhir_broken_refs_v1 AS
 SELECT
@@ -159,10 +158,20 @@ SELECT
   fo.fhir_id AS expected_ref
 FROM main.fhir_encounter_v1 fe
 LEFT JOIN main.fhir_episode_of_care_v1 fo
-  ON fo.patient_fhir_id = fe.patient_fhir_id
- AND fo.fhir_id = json_extract_string(fe.resource_json, '$.episodeOfCare[0].reference')
+  ON fo.fhir_id = json_extract_string(fe.resource_json, '$.episodeOfCare[0].reference')
 WHERE json_extract_string(fe.resource_json, '$.episodeOfCare[0].reference') IS NOT NULL
-  AND fo.fhir_id IS NULL;
+  AND fo.fhir_id IS NULL
+UNION ALL
+SELECT
+  'encounter_episode_patient_mismatch'::VARCHAR,
+  fe.specimen_id,
+  fe.patient_fhir_id::VARCHAR,
+  fo.patient_fhir_id::VARCHAR
+FROM main.fhir_encounter_v1 fe
+INNER JOIN main.fhir_episode_of_care_v1 fo
+  ON fo.fhir_id = json_extract_string(fe.resource_json, '$.episodeOfCare[0].reference')
+WHERE json_extract_string(fe.resource_json, '$.episodeOfCare[0].reference') IS NOT NULL
+  AND fo.patient_fhir_id IS DISTINCT FROM fe.patient_fhir_id;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Provenance completeness — one view per table (avoids multi-table CROSS JOIN

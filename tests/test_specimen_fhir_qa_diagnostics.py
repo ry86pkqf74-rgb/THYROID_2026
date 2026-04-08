@@ -317,6 +317,48 @@ def test_check_13_fails_on_metrics_mismatch_when_layer_complete() -> None:
     assert "Specimen/FHIR QA diagnostics (142 surfaces + focus metrics)" in fail_names
 
 
+def test_v_diag_encounter_episode_flags_missing_episode_row() -> None:
+    """If EpisodeOfCare row is removed, encounter JSON ref must surface as encounter_episode."""
+    con = _happy_path_db()
+    eid = con.execute(
+        "SELECT episode_fhir_id FROM main.fhir_encounter_v1 LIMIT 1"
+    ).fetchone()
+    assert eid is not None
+    con.execute(
+        "DELETE FROM main.fhir_episode_of_care_v1 WHERE episode_fhir_id = ?",
+        [eid[0]],
+    )
+    con.execute((ROOT / "scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql").read_text(encoding="utf-8"))
+    row = con.execute(
+        """SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_broken_refs_v1
+           WHERE issue = 'encounter_episode'"""
+    ).fetchone()
+    assert row is not None and int(row[0]) >= 1
+
+
+def test_v_diag_encounter_episode_patient_mismatch_detected() -> None:
+    con = _happy_path_db()
+    ref = con.execute(
+        """SELECT json_extract_string(resource_json, '$.episodeOfCare[0].reference')
+           FROM main.fhir_encounter_v1 LIMIT 1"""
+    ).fetchone()
+    assert ref is not None and ref[0]
+    con.execute(
+        """
+        UPDATE main.fhir_episode_of_care_v1
+        SET patient_fhir_id = 'ffffffffffffffff'
+        WHERE fhir_id = ?
+        """,
+        [ref[0]],
+    )
+    con.execute((ROOT / "scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql").read_text(encoding="utf-8"))
+    row = con.execute(
+        """SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_broken_refs_v1
+           WHERE issue = 'encounter_episode_patient_mismatch'"""
+    ).fetchone()
+    assert row is not None and int(row[0]) >= 1
+
+
 def test_contract_view_column_sets_documented() -> None:
     """Guardrail: diagnostic view/table names stay stable for 119 Check 13 and release gate."""
     import sys
