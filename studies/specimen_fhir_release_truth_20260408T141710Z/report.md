@@ -3,6 +3,8 @@
 **Generated (UTC):** 2026-04-08T14:17–14:18  
 **Repo commit SHA:** `git log -1 --format=%H -- studies/specimen_fhir_release_truth_20260408T141710Z/report.md`
 
+**Reconciliation bundle commit (this push, 40-char):** `b80ace799288ccfc166a7839134b4e36134843a7` *(tip-of-`main` after a follow-up doc commit may differ; prefer the* `git log` *line above for the blob you have checked out).*
+
 **MotherDuck `current_database()`:** `Thyroid 2026`  
 **Catalog type (preflight):** `DUCKLAKE` — native named `CREATE SNAPSHOT` semantics are not assumed; promotion/backups follow org runbook (`docs/motherduck_database_contract_v1.md`, `docs/specimen_fhir_contract_review.md`).
 
