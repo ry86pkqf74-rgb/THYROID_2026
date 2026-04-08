@@ -78,6 +78,13 @@
 4. **Full `137 promote --execute`:** Only after 119 `--release-mode` is green on **qa**, with explicit ops approval; keep using Duck Lake–safe clone + prepromote backup pattern (no named prod snapshot).  
 5. **`124` timing:** Plan a long window or CI job for `--final-release` dry-run / live audit; optionally use `prod-audit --relaxed` only for faster smoke (not equivalent to final release).
 
+## Related: full 124 dry-run (prod rehearsal, 2026-04-08)
+
+A separate run produced **119 PASS** on the full release-audit pipeline (dry-run). High-signal exports retained here (large duplicate gate CSVs/parquets from that run were **not** kept in git):
+
+- `motherduck_live_release_audit_dryrun_20260408_summary.md` — step table + verdict  
+- `live_release_audit_119_validation_report_20260408.md` — 119 report from that run (contrasts with QA **release-mode** failures in `qa_release_mode/`)
+
 ## References
 
 - `docs/motherduck_sandbox_clone_runbook.md`  
