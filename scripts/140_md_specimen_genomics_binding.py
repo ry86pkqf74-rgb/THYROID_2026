@@ -214,13 +214,40 @@ def run_validation(con) -> list[tuple[str, str, str]]:
         True,
     )
     if _table_exists(con, "main", "thyroseq_molecular_enrichment"):
+        # Parity only for rows that thy_pick would ingest (ThyroSeq molecular episode match);
+        # orphan enrichment rows without a platform match are intentionally absent from sga_v1.
+        _thy_eligible = """
+            SELECT
+              te.research_id,
+              te.source_row_hash,
+              te.fusion_genes_json,
+              te.allele_fractions_json
+            FROM (
+              SELECT
+                t.research_id,
+                CAST(t.source_row_hash AS VARCHAR) AS source_row_hash,
+                t.fusion_genes_json,
+                t.allele_fractions_json
+              FROM main.thyroseq_molecular_enrichment t
+              INNER JOIN main.molecular_test_episode_v2 m
+                ON t.research_id = m.research_id
+               AND (
+                 LOWER(COALESCE(m.platform, '')) LIKE '%thyroseq%'
+                 OR LOWER(COALESCE(m.platform, '')) = 'thyroseq'
+               )
+              QUALIFY ROW_NUMBER() OVER (
+                PARTITION BY t.research_id, t.source_row_hash
+                ORDER BY m.test_date_native DESC NULLS LAST, m.molecular_episode_id DESC
+              ) = 1
+            ) te
+        """
         run(
             "thyroseq_fusion_array_parity",
-            """SELECT COALESCE(NOT EXISTS (
+            f"""SELECT COALESCE(NOT EXISTS (
               SELECT 1 FROM (
                 SELECT
                   t.research_id,
-                  CAST(t.source_row_hash AS VARCHAR) AS source_row_hash,
+                  t.source_row_hash,
                   CASE
                     WHEN json_valid(CAST(t.fusion_genes_json AS VARCHAR))
                       AND LENGTH(TRIM(CAST(t.fusion_genes_json AS VARCHAR))) > 2
@@ -239,7 +266,7 @@ def run_validation(con) -> list[tuple[str, str, str]]:
                           || CAST(t.source_row_hash AS VARCHAR) || ':fusion_genes_json:'
                       )
                   ) AS actual_n
-                FROM main.thyroseq_molecular_enrichment t
+                FROM ({_thy_eligible.strip()}) t
               ) x
               WHERE x.expected_n > 0 AND x.actual_n IS DISTINCT FROM x.expected_n
             ), FALSE)""",
@@ -247,11 +274,11 @@ def run_validation(con) -> list[tuple[str, str, str]]:
         )
         run(
             "thyroseq_allele_array_parity",
-            """SELECT COALESCE(NOT EXISTS (
+            f"""SELECT COALESCE(NOT EXISTS (
               SELECT 1 FROM (
                 SELECT
                   t.research_id,
-                  CAST(t.source_row_hash AS VARCHAR) AS source_row_hash,
+                  t.source_row_hash,
                   CASE
                     WHEN json_valid(CAST(t.allele_fractions_json AS VARCHAR))
                       AND LENGTH(TRIM(CAST(t.allele_fractions_json AS VARCHAR))) > 2
@@ -270,7 +297,7 @@ def run_validation(con) -> list[tuple[str, str, str]]:
                           || CAST(t.source_row_hash AS VARCHAR) || ':allele_fractions_json:'
                       )
                   ) AS actual_n
-                FROM main.thyroseq_molecular_enrichment t
+                FROM ({_thy_eligible.strip()}) t
               ) y
               WHERE y.expected_n > 0 AND y.actual_n IS DISTINCT FROM y.expected_n
             ), FALSE)""",

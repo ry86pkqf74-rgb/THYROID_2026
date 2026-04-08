@@ -386,6 +386,11 @@ def main() -> None:
 
     mod140.apply_specimen_genomics_binding(con)
 
+    genomics_val_rows = mod140.run_validation(con)
+    mod140.persist_validation(con, genomics_val_rows)
+    for name, st, det in genomics_val_rows:
+        print(f"  [genomics {st}] {name}: {det[:120]}")
+
     val_rows = run_validation(con)
     persist_validation(con, val_rows)
     for name, st, det in val_rows:
