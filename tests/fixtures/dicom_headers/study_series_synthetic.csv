@@ -1,0 +1,3 @@
+StudyInstanceUID,SeriesInstanceUID,AccessionNumber,StudyDate,SeriesDate,Modality,BodyPartExamined,StudyDescription,SeriesDescription,PatientID,InstitutionName
+1.2.840.10008.1.1.1.1,1.2.840.10008.1.1.1.2,SYN-ACC-1001,20240115,20240115,US,NECK,Thyroid US,Right lobe nodule,M00001,TestOrg
+1.2.840.10008.1.1.1.1,1.2.840.10008.1.1.1.3,SYN-ACC-1001,20240115,20240115,US,NECK,Thyroid US,Left lobe survey,M00001,TestOrg

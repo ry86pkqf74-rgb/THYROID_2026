@@ -1,0 +1,2 @@
+StudyInstanceUID,SeriesInstanceUID,AccessionNumber,StudyDate,Modality,PatientID
+not-a-valid-uid!!,1.2.840.10008.1.1.9.1,MAL-001,20240201,CT,M00002

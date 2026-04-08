@@ -1,0 +1,9 @@
+[
+  {
+    "StudyInstanceUID": "1.2.840.10008.1.4.1.1",
+    "SeriesInstanceUID": "1.2.840.10008.1.4.1.2",
+    "AccessionNumber": "JS-1",
+    "StudyDate": "20240501",
+    "Modality": "US"
+  }
+]

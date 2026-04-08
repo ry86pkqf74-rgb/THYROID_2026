@@ -1,0 +1,60 @@
+# Column alias → canonical DICOM header field names (lowercase canonical keys).
+# Ingest uses case-insensitive header matching after strip.
+version: 1
+canonical_fields:
+  study_instance_uid:
+    - StudyInstanceUID
+    - studyinstanceuid
+    - study_instance_uid
+    - Study UID
+  series_instance_uid:
+    - SeriesInstanceUID
+    - seriesinstanceuid
+    - series_instance_uid
+  sop_instance_uid:
+    - SOPInstanceUID
+    - sopinstanceuid
+    - sop_instance_uid
+    - sopuid
+  accession_number:
+    - AccessionNumber
+    - accession_number
+    - Accession #
+    - accession
+    - accession_no
+    - AccessionNo
+  study_date:
+    - StudyDate
+    - study_date
+    - studydate
+  series_date:
+    - SeriesDate
+    - series_date
+    - seriesdate
+  modality:
+    - Modality
+    - modality
+  body_part_examined:
+    - BodyPartExamined
+    - bodypartexamined
+    - body_part_examined
+  study_description:
+    - StudyDescription
+    - study_description
+  series_description:
+    - SeriesDescription
+    - series_description
+  patient_id:
+    - PatientID
+    - patient_id
+    - Patient ID
+    - MRN
+    - mrn
+  institution_name:
+    - InstitutionName
+    - institution_name
+  research_id:
+    - research_id
+    - Research ID number
+    - Research_ID
+    - researchid

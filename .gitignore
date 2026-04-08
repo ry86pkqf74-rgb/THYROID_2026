@@ -42,6 +42,7 @@ exports/hardening_audit_*/
 exports/operative_notes_full_history_*/
 exports/thyroseq_integration_*/
 exports/afirma_integration_*/
+exports/dicom_header_ingest_*/
 exports/ata_primary_source_scan_*/
 exports/publication_figures_300dpi/
 exports/latex_tables/
