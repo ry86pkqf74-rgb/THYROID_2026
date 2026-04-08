@@ -27,4 +27,4 @@ No edit required: it already documents distinct dev/qa/prod databases consistent
 
 ## Git record
 
-- **Commit:** `6f08da6` (on `main`; pushed to `origin/main`).
+- **Commits:** `6f08da6` (reconciliation patch), `ad687d7` (study summary git record); **tip** on `origin/main`: `ad687d7`.
