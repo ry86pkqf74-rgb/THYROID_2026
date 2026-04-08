@@ -24,3 +24,7 @@ Run before commit (from repo root):
 ## `.env.motherduck.example`
 
 No edit required: it already documents distinct dev/qa/prod databases consistent with `config/motherduck_environments.yml`.
+
+## Git record
+
+- **Commit:** `6f08da6` (on `main`; pushed to `origin/main`).
