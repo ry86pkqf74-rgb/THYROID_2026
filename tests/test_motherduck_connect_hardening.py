@@ -13,6 +13,13 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 
+def _isolate_motherduck_toml(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """Avoid picking up the developer's repo-root ``motherduck.local.toml`` during no-token tests."""
+    import motherduck_client as mc
+
+    monkeypatch.setattr(mc, "LOCAL_MOTHERDUCK_TOML_PATH", tmp_path / "__missing_motherduck_local__.toml")
+
+
 def test_md_connect_inserts_repo_root_on_import() -> None:
     """``utils.md_connect`` must be importable without pre-loading ``sys.path`` hacks."""
     import utils.md_connect as mc
@@ -115,6 +122,7 @@ class TestMdConnectBehavior:
     def test_md_without_token_non_fail_closed_uses_local_file(self, monkeypatch, tmp_path) -> None:
         from utils.md_connect import connect_md_or_file
 
+        _isolate_motherduck_toml(monkeypatch, tmp_path)
         monkeypatch.chdir(tmp_path)
         for key in (
             "MOTHERDUCK_TOKEN",
@@ -134,6 +142,7 @@ class TestMdConnectBehavior:
     def test_md_fail_closed_no_token_exits(self, monkeypatch, tmp_path) -> None:
         import utils.md_connect as md_mod
 
+        _isolate_motherduck_toml(monkeypatch, tmp_path)
         monkeypatch.chdir(tmp_path)
         for key in (
             "MOTHERDUCK_TOKEN",

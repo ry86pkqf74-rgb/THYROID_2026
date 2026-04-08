@@ -43,7 +43,16 @@ def main() -> int:
         metavar="STRING",
         help="Optional session_hint / affinity string (--md only; also see MOTHERDUCK_SESSION_HINT)",
     )
+    ap.add_argument(
+        "--catalog-probe",
+        action="store_true",
+        help="After attach (--md only), run PRAGMA database_list + MotherDuck info-schema probes "
+        "(best-effort; no token output).",
+    )
     args = ap.parse_args()
+    if args.catalog_probe and not args.md:
+        print("FAIL: --catalog-probe requires --md")
+        return 1
 
     from utils.md_connect import connect_md_fail_closed, connect_md_or_file
 
@@ -65,6 +74,8 @@ def main() -> int:
                 "SELECT current_catalog(), current_database()"
             ).fetchone()
             md_extra = row
+            if args.catalog_probe:
+                _run_catalog_probe(con)
     except Exception as exc:
         print(f"FAIL: query error — {exc}")
         return 1
@@ -78,6 +89,44 @@ def main() -> int:
     print(f"Connection type : {'MotherDuck (cloud)' if args.md else 'Local file'}")
     print("PASS")
     return 0
+
+
+def _run_catalog_probe(con) -> None:
+    """Read-only introspection for operator proof matrix (never logs secrets)."""
+
+    def _q(label: str, sql: str) -> None:
+        try:
+            rows = con.execute(sql).fetchall()
+            print(f"  [probe:{label}] ok row_count={len(rows)}")
+        except Exception as exc:
+            print(f"  [probe:{label}] unavailable — {exc}")
+
+    print("  --- MotherDuck catalog probe (read-only) ---")
+    try:
+        dbl = con.execute("PRAGMA database_list").fetchall()
+        print(f"  [probe:PRAGMA database_list] ok entries={len(dbl)}")
+    except Exception as exc:
+        print(f"  [probe:PRAGMA database_list] fail — {exc}")
+    _q("md_information_schema.databases", "FROM md_information_schema.databases LIMIT 20")
+    _q("md_information_schema.database_snapshots", "FROM md_information_schema.database_snapshots LIMIT 20")
+    _q("md_information_schema.query_history", "FROM md_information_schema.query_history LIMIT 20")
+    _q("md_information_schema.recent_queries", "FROM md_information_schema.recent_queries LIMIT 20")
+    try:
+        ua = con.execute("SELECT current_setting('custom_user_agent')").fetchone()
+        if ua and str(ua[0] or "").strip():
+            print("  [probe:custom_user_agent] ok non-empty")
+        else:
+            print("  [probe:custom_user_agent] empty")
+    except Exception as exc:
+        print(f"  [probe:custom_user_agent] unavailable — {exc}")
+    try:
+        hint = con.execute("SELECT current_setting('motherduck_session_hint')").fetchone()
+        if hint and str(hint[0] or "").strip():
+            print("  [probe:motherduck_session_hint] ok non-empty")
+        else:
+            print("  [probe:motherduck_session_hint] empty")
+    except Exception as exc:
+        print(f"  [probe:motherduck_session_hint] unavailable — {exc}")
 
 
 if __name__ == "__main__":

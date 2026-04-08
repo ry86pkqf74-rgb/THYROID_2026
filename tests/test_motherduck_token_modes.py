@@ -57,6 +57,20 @@ class TestGetTokenPrecedence:
         assert mc.get_token() == "md_from_toml"
         assert mc.token_mode() == "motherduck.local.toml:MOTHERDUCK_TOKEN"
 
+    def test_sa_wins_in_motherduck_local_toml_when_both_keys_present(self, monkeypatch, tmp_path):
+        import motherduck_client as mc
+
+        toml_path = tmp_path / "motherduck.local.toml"
+        toml_path.write_text(
+            'MOTHERDUCK_TOKEN = "md_personal_toml"\nMD_SA_TOKEN = "md_sa_toml"\n',
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(mc, "LOCAL_MOTHERDUCK_TOML_PATH", toml_path)
+        for key in ("MD_SA_TOKEN", "MOTHERDUCK_TOKEN", "motherduck_token", "LOCAL_DB_PATH"):
+            monkeypatch.delenv(key, raising=False)
+        assert mc.get_token() == "md_sa_toml"
+        assert mc.token_mode() == "motherduck.local.toml:MD_SA_TOKEN"
+
     def test_env_wins_over_motherduck_local_toml(self, monkeypatch, tmp_path):
         import motherduck_client as mc
 

@@ -245,7 +245,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Mutating steps: pass --execute to 130; run 136 writer without --dry-run.",
     )
-    p.add_argument("--md-sa", action="store_true", help="Prefer MD_SA_TOKEN on subprocesses that support it.")
+    p.add_argument(
+        "--md-sa",
+        action="store_true",
+        help="Forward service-account mode to child scripts; get_token() already prefers MD_SA_TOKEN when set.",
+    )
     p.add_argument(
         "--tag",
         default=None,

@@ -47,6 +47,12 @@ Checks:
      WARN-skipped. Specimen-adjacent review-queue open counts remain **WARN** when non-zero.
      Release orchestration (**124** / **126**) can fail closed earlier via
      ``utils/specimen_fhir_release_gate``; use **138** / **143** to materialize diagnostics.
+     **Explicit final-master snapshot scope:** ``115_release_snapshot --final-master`` and
+     ``118_parquet_release_bundle --final-master`` materialize **only** the manuscript-analytic
+     ``FINAL_MASTER_*`` table lists (canonical cores, lab canonical, ``master_*_verified_v1``).
+     They **do not** copy or export ``specimen_*``, ``fhir_*``, genomics binding, or ``qa.v_diag_*``
+     into ``release_*`` or Parquet bundles. Check **13** is still a **hard release gate** for that
+     layer on **main**; absence from 115/118 is by design — see ``docs/specimen_fhir_contract_review.md``.
 
 Usage:
   .venv/bin/python scripts/119_md_formalization_validate.py --md

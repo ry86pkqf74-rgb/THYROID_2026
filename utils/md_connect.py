@@ -88,7 +88,9 @@ def connect_md_or_file(
         that must write to MotherDuck and must never silently fall back to a local
         file.  Has no effect when ``md`` is False.
     prefer_service_account : bool
-        When True, ``MD_SA_TOKEN`` wins over ``MOTHERDUCK_TOKEN`` (release automation).
+        Kept for API compatibility with older call sites. Token order is fixed in
+        :func:`motherduck_client.get_token` (``MD_SA_TOKEN`` before ``MOTHERDUCK_TOKEN``);
+        this flag does not change resolution.
     custom_user_agent / motherduck_session_hint :
         Passed to ``MotherDuckClient`` for query-history attribution.  When None,
         ``MOTHERDUCK_CUSTOM_USER_AGENT`` / ``MOTHERDUCK_SESSION_HINT`` env vars apply.

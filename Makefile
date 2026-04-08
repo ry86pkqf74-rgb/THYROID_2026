@@ -36,7 +36,7 @@ define check_md_rw_token
 from motherduck_client import get_token; \
 t = get_token(); \
 print('ERROR: No MotherDuck read/write token for Make targets.') if not t else None; \
-print('  Set MOTHERDUCK_TOKEN and/or MD_SA_TOKEN in the environment, or add them to .streamlit/secrets.toml .') if not t else None; \
+print('  Set MD_SA_TOKEN and/or MOTHERDUCK_TOKEN (SA wins when both set), or use motherduck.local.toml / .streamlit/secrets.toml .') if not t else None; \
 print('  See docs/motherduck_database_contract_v1.md (Connection Reference) and .env.motherduck.example') if not t else None; \
 sys.exit(1 if not t else 0)"
 endef

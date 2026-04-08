@@ -351,7 +351,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Run DDL (snapshot, clone, refresh). Without this flag, only print SQL.",
     )
-    p.add_argument("--md-sa", action="store_true", help="Prefer MD_SA_TOKEN over MOTHERDUCK_TOKEN.")
+    p.add_argument(
+        "--md-sa",
+        action="store_true",
+        help="Automation flag for subprocesses; RW token order is fixed (MD_SA_TOKEN wins when set).",
+    )
     p.add_argument("--prod-database", default=DEFAULT_PROD, help="Production catalog name (default: Thyroid 2026).")
     p.add_argument(
         "--date-tag",
