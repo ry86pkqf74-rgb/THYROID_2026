@@ -6,12 +6,13 @@ Used by scripts/41_ingest_thyroseq_excel.py.
 
 from __future__ import annotations
 
-import hashlib
 import re
 from datetime import date, datetime
 from typing import Any
 
 import pandas as pd
+
+from utils.molecular_ingest_common import compute_keyed_row_hash, get_thyroseq_row_hash_fields
 
 
 # ---------------------------------------------------------------------------
@@ -83,15 +84,7 @@ def normalize_name(x: Any) -> dict[str, str | None]:
 
 def compute_row_hash(rec: dict) -> str:
     """Deterministic SHA-256 hash (24-char prefix) from identifying fields."""
-    payload = "|".join([
-        str(rec.get("Req Patient/Source Name", "")),
-        str(rec.get("Pt. MRN", "")),
-        str(rec.get("Date of Birth", "")),
-        str(rec.get("Pathology", "")),
-        str(rec.get("Thyroseq Mutation", "")),
-        str(rec.get("Gene Fusions", "")),
-    ])
-    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:24]
+    return compute_keyed_row_hash(rec, get_thyroseq_row_hash_fields())
 
 
 # ---------------------------------------------------------------------------

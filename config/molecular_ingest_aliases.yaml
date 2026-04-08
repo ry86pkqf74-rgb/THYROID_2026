@@ -1,0 +1,49 @@
+# Molecular ingest field aliases (deterministic matching only; no fuzzy logic).
+# Loaded by utils/molecular_ingest_common.py; embedded fallbacks exist if file is missing.
+
+version: 1
+
+# Column headers (after normalize_header_snake) → canonical internal name
+afirma_column_aliases:
+  research_id: [research_id, rid, study_id]
+  mrn: [mrn, patient_mrn, euh_mrn, pt_mrn]
+  dob: [dob, date_of_birth, birth_date]
+  patient_name: [patient_name, patient_full_name, full_name]
+  last_name: [last_name, patient_last_name, last_nm]
+  first_name: [first_name, patient_first_name, first_nm]
+  specimen_id: [specimen_id, sample_id, specimen_key]
+  accession: [accession, accession_number, accession_id, case_accession]
+  test_date: [test_date, result_date, collection_date, specimen_date]
+  bethesda: [bethesda, bethesda_category, bethesda_class, fna_bethesda]
+  fna_cytology: [fna_cytology, cytology, cytology_summary]
+  gec_call: [gec_call, gec_result, afirma_gec, gene_expression_call]
+  gsc_call: [gsc_call, gsc_result, afirma_gsc, genomic_sequencing_call]
+  panel_type: [panel_type, assay_panel, afirma_panel, assay_version]
+  xpression_variants:
+    - xpression_variants
+    - xa_variants
+    - xpression_atlas_json
+    - variant_findings_json
+
+# Ordered keys for SHA-256 row fingerprint (values from record dict)
+afirma_row_hash_keys:
+  - research_id
+  - mrn
+  - dob
+  - specimen_id
+  - accession
+  - test_date
+  - gec_call
+  - gsc_call
+  - panel_type
+  - bethesda
+  - xpression_variants
+
+# ThyroSeq workbook row-hash inputs (Excel column names as ingested)
+thyroseq_row_hash_fields:
+  - Req Patient/Source Name
+  - Pt. MRN
+  - Date of Birth
+  - Pathology
+  - Thyroseq Mutation
+  - Gene Fusions

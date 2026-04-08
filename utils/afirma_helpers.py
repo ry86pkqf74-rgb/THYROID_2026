@@ -7,99 +7,41 @@ Used by scripts/42_ingest_afirma.py.
 
 from __future__ import annotations
 
-import hashlib
 import json
-import re
 from typing import Any
 
 import duckdb
 import pandas as pd
 
+from utils.molecular_ingest_common import (
+    canonicalize_columns_from_map,
+    compute_keyed_row_hash,
+    get_afirma_column_alias_map,
+    get_afirma_row_hash_keys,
+    parse_test_date_iso_and_native,
+)
 
-# --- Column normalization (headers after lower + snake_case) ----------------------------
+# --- Column normalization (config/molecular_ingest_aliases.yaml + embedded fallback) ----
 
 HEADER_ALIASES: dict[str, tuple[str, ...]] = {
-    "research_id": ("research_id", "rid", "study_id"),
-    "mrn": ("mrn", "patient_mrn", "euh_mrn", "pt_mrn", "mrn_norm"),
-    "dob": ("dob", "date_of_birth", "birth_date"),
-    "patient_name": ("patient_name", "patient_full_name", "full_name"),
-    "last_name": ("last_name", "patient_last_name", "last_nm"),
-    "first_name": ("first_name", "patient_first_name", "first_nm"),
-    "specimen_id": ("specimen_id", "sample_id", "specimen_key"),
-    "accession": ("accession", "accession_number", "accession_id", "case_accession"),
-    "test_date": ("test_date", "result_date", "collection_date", "specimen_date"),
-    "bethesda": ("bethesda", "bethesda_category", "bethesda_class", "fna_bethesda"),
-    "fna_cytology": ("fna_cytology", "cytology", "cytology_summary"),
-    "gec_call": ("gec_call", "gec_result", "afirma_gec", "gene_expression_call"),
-    "gsc_call": ("gsc_call", "gsc_result", "afirma_gsc", "genomic_sequencing_call"),
-    "panel_type": ("panel_type", "assay_panel", "afirma_panel", "assay_version"),
-    "xpression_variants": (
-        "xpression_variants",
-        "xa_variants",
-        "xpression_atlas_json",
-        "variant_findings_json",
-    ),
+    k: tuple(v) for k, v in get_afirma_column_alias_map().items()
 }
-
-
-def _snake_header(h: str) -> str:
-    s = str(h).strip().replace("\xa0", " ")
-    s = re.sub(r"[\s\-]+", "_", s)
-    s = re.sub(r"[^a-zA-Z0-9_]", "", s)
-    return s.lower().strip("_")
 
 
 def canonicalize_afirma_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Rename recognized aliases to canonical internal names. Unknown columns preserved."""
-    inv: dict[str, str] = {}
-    for canon, aliases in HEADER_ALIASES.items():
-        for a in aliases:
-            inv[_snake_header(a)] = canon
-    rename: dict[str, str] = {}
-    for c in df.columns:
-        sk = _snake_header(c)
-        if sk in inv:
-            rename[c] = inv[sk]
-    out = df.rename(columns=rename)
-    return out
+    amap = dict(get_afirma_column_alias_map())
+    return canonicalize_columns_from_map(df.copy(), amap)
 
 
 def compute_afirma_row_hash(rec: dict[str, Any]) -> str:
     """Deterministic fingerprint for idempotency (no PHI beyond what source already encodes)."""
-    keys = [
-        "research_id",
-        "mrn",
-        "dob",
-        "specimen_id",
-        "accession",
-        "test_date",
-        "gec_call",
-        "gsc_call",
-        "panel_type",
-        "bethesda",
-        "xpression_variants",
-    ]
-    payload = "|".join(str(rec.get(k) or "") for k in keys)
-    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:24]
+    return compute_keyed_row_hash(rec, get_afirma_row_hash_keys())
 
 
 def parse_test_date(val: Any) -> tuple[str | None, Any]:
     """Return (iso_date_string_or_None, native_scalar_for_test_date_native)."""
-    if val is None or (isinstance(val, float) and pd.isna(val)):
-        return None, None
-    if hasattr(val, "strftime"):
-        try:
-            d = val.date() if hasattr(val, "date") else val
-            return d.isoformat() if hasattr(d, "isoformat") else str(val), str(val)
-        except Exception:
-            pass
-    s = str(val).strip()
-    if not s or s.lower() in ("nan", "nat", "none"):
-        return None, s or None
-    dt = pd.to_datetime(s, errors="coerce", dayfirst=False)
-    if pd.notna(dt):
-        return dt.strftime("%Y-%m-%d"), s
-    return None, s
+    return parse_test_date_iso_and_native(val)
 
 
 def fetch_code_crosswalk_maps(con: duckdb.DuckDBPyConnection | None) -> dict[str, dict[str, str]]:
@@ -140,7 +82,10 @@ def fetch_assay_dictionary_by_key(con: duckdb.DuckDBPyConnection | None) -> dict
         ).fetchdf()
     except Exception:
         return {}
-    return {str(r["assay_key"]): r.to_dict() for _, r in df.iterrows()}
+    out: dict[str, dict[str, Any]] = {}
+    for _, r in df.iterrows():
+        out[str(r["assay_key"])] = {str(k): r[k] for k in r.index}
+    return out
 
 
 def exact_crosswalk_lookup(maps: dict[str, dict[str, str]], domain: str, key: str | None) -> str | None:

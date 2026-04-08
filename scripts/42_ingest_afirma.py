@@ -20,7 +20,6 @@ MotherDuck: use ``--md``; token via motherduck_client / .streamlit/secrets.toml.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import importlib.util
 import json
 import logging
@@ -36,6 +35,15 @@ ROOT = Path(__file__).resolve().parent.parent
 DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
+from utils.molecular_ingest_common import (
+    GOVERNED_MOLECULAR_RESULT_COLUMNS,
+    GOVERNED_MOLECULAR_VARIANT_LONG_COLUMNS,
+    checksum_sorted_json_payload,
+    json_friendly_scalar,
+    molecular_result_id_from_parts,
+    molecular_variant_id_afirma,
+    stamp_afirma_ingestion_metadata,
+)
 from utils.afirma_helpers import (
     canonicalize_afirma_columns,
     compute_afirma_row_hash,
@@ -59,60 +67,8 @@ MOLECULAR_SOURCE_TABLE = "42_afirma_structured_file"
 AFIRMA_PLATFORM = "Afirma"
 AFIRMA_VENDOR = "Veracyte"
 
-_MR_COLS = [
-    "molecular_result_id",
-    "research_id",
-    "source_patient_id",
-    "source_specimen_id",
-    "source_accession",
-    "assay_name",
-    "panel_version",
-    "platform",
-    "vendor",
-    "loinc_code",
-    "test_date_native",
-    "test_date_parsed",
-    "interpretation_summary",
-    "risk_call",
-    "canonical_hgvs",
-    "raw_payload_json",
-    "payload_checksum",
-    "parse_status",
-    "normalization_status",
-    "qc_flags",
-    "lineage_id",
-    "ingestion_ts",
-    "ingestion_run_id",
-    "source_table",
-    "source_row_fingerprint",
-    "molecular_episode_id",
-    "superseded_by_molecular_result_id",
-]
-
-_MVL_COLS = [
-    "molecular_variant_id",
-    "molecular_result_id",
-    "research_id",
-    "gene_symbol",
-    "transcript_id",
-    "genomic_hgvs",
-    "cdna_hgvs",
-    "protein_hgvs",
-    "canonical_hgvs",
-    "variant_class",
-    "allele_fraction",
-    "zygosity",
-    "interpretation_text",
-    "risk_call",
-    "parse_status",
-    "normalization_status",
-    "qc_flags",
-    "lineage_id",
-    "ingestion_ts",
-    "partner_gene_symbol",
-    "fusion_partner",
-    "raw_variant_token",
-]
+_MR_COLS = list(GOVERNED_MOLECULAR_RESULT_COLUMNS)
+_MVL_COLS = list(GOVERNED_MOLECULAR_VARIANT_LONG_COLUMNS)
 
 
 def _load_thyroseq_module():
@@ -167,10 +123,12 @@ def load_source_table(path: Path) -> pd.DataFrame:
 
 def ingest_afirma_frame(df: pd.DataFrame, source_name: str) -> pd.DataFrame:
     df = canonicalize_afirma_columns(df.copy())
-    df["source_file"] = source_name
-    df["source_row_number"] = range(2, len(df) + 2)
-    df["ingestion_batch_id"] = BATCH_ID
-    df["imported_at"] = datetime.now().isoformat()
+    stamp_afirma_ingestion_metadata(
+        df,
+        source_file=source_name,
+        batch_id=BATCH_ID,
+        row_number_start=2,
+    )
 
     if "patient_name" in df.columns and df["patient_name"].notna().any():
         pname = df["patient_name"].astype(str)
@@ -258,23 +216,6 @@ def apply_research_id_overrides(raw: pd.DataFrame, matches: pd.DataFrame) -> pd.
     return m
 
 
-def _json_friendly(x):
-    if pd.isna(x) or x is None:
-        return None
-    if hasattr(x, "item"):
-        try:
-            return x.item()
-        except Exception:
-            pass
-    return x
-
-
-def _checksum_payload(obj: dict) -> str:
-    import hashlib as _h
-
-    return _h.sha256(json.dumps(obj, sort_keys=True, default=str).encode("utf-8")).hexdigest()
-
-
 def _field_present(x) -> bool:
     """True when a source field carries a non-empty value (NaN / None / blank → False)."""
     if x is None:
@@ -284,20 +225,6 @@ def _field_present(x) -> bool:
     if pd.isna(x):
         return False
     return bool(str(x).strip())
-
-
-def _variant_row_id(molecular_result_id: str, idx: int, spec: dict) -> str:
-    import hashlib as _h
-
-    key = "|".join([
-        molecular_result_id,
-        str(idx),
-        str(spec.get("variant_class") or ""),
-        str(spec.get("raw_variant_token") or ""),
-        str(spec.get("gene_symbol") or ""),
-        str(spec.get("cdna_hgvs") or ""),
-    ])
-    return _h.sha256(key.encode("utf-8")).hexdigest()[:32]
 
 
 def build_normalized_molecular_layers(
@@ -379,38 +306,38 @@ def build_normalized_molecular_layers(
         else:
             norm_status = "normalized"
 
-        molecular_result_id = hashlib.sha256(
-            f"afirma|{r['row_hash']}|{assay_key or 'NA'}".encode(),
-        ).hexdigest()[:32]
+        molecular_result_id = molecular_result_id_from_parts(
+            "afirma", str(r["row_hash"]), assay_key or "NA",
+        )
 
         raw_payload = {
             "source": {
-                "file": _json_friendly(r.get("source_file")),
-                "row": _json_friendly(r.get("source_row_number")),
-                "batch": _json_friendly(r.get("ingestion_batch_id")),
+                "file": json_friendly_scalar(r.get("source_file")),
+                "row": json_friendly_scalar(r.get("source_row_number")),
+                "batch": json_friendly_scalar(r.get("ingestion_batch_id")),
             },
             "identifiers": {
-                "specimen_id": _json_friendly(r.get("specimen_id")),
-                "accession": _json_friendly(r.get("accession")),
-                "test_date_native": _json_friendly(r.get("test_date")),
+                "specimen_id": json_friendly_scalar(r.get("specimen_id")),
+                "accession": json_friendly_scalar(r.get("accession")),
+                "test_date_native": json_friendly_scalar(r.get("test_date")),
                 "test_date_parsed": test_iso,
             },
-            "classifier_raw": {"gec": _json_friendly(gec_raw), "gsc": _json_friendly(gsc_raw)},
+            "classifier_raw": {"gec": json_friendly_scalar(gec_raw), "gsc": json_friendly_scalar(gsc_raw)},
             "classifier_harmonized": {"gec": gec_h, "gsc": gsc_h},
-            "bethesda": _json_friendly(r.get("bethesda")),
-            "fna_cytology": _json_friendly(r.get("fna_cytology")),
-            "panel_type": _json_friendly(r.get("panel_type")),
+            "bethesda": json_friendly_scalar(r.get("bethesda")),
+            "fna_cytology": json_friendly_scalar(r.get("fna_cytology")),
+            "panel_type": json_friendly_scalar(r.get("panel_type")),
             "assay_key_resolved": assay_key,
             "match": {
-                "method": _json_friendly(match_method),
+                "method": json_friendly_scalar(match_method),
                 "confidence": float(mrow["match_confidence"].values[0])
                 if pd.notna(mrow["match_confidence"].values[0])
                 else None,
                 "review_required": match_review,
             },
-            "xpression_variants_raw": _json_friendly(r.get("xpression_variants")),
+            "xpression_variants_raw": json_friendly_scalar(r.get("xpression_variants")),
         }
-        checksum = _checksum_payload(raw_payload)
+        checksum = checksum_sorted_json_payload(raw_payload)
 
         mr_rows.append({
             "molecular_result_id": molecular_result_id,
@@ -448,7 +375,7 @@ def build_normalized_molecular_layers(
             v_qc = list(spec.get("af_qc_flags") or [])
             if spec.get("parse_status") == "failed":
                 v_qc.append("variant_parse_failed")
-            vid = _variant_row_id(molecular_result_id, i, spec)
+            vid = molecular_variant_id_afirma(molecular_result_id, i, spec)
             af = spec.get("allele_fraction")
             if af is not None and not isinstance(af, (int, float)):
                 af = None

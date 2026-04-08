@@ -38,7 +38,6 @@ MotherDuck:
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import logging
 import sys
@@ -53,6 +52,16 @@ ROOT = Path(__file__).resolve().parent.parent
 DB_PATH = ROOT / "thyroid_master.duckdb"
 sys.path.insert(0, str(ROOT))
 
+from utils.molecular_ingest_common import (
+    GOVERNED_MOLECULAR_RESULT_COLUMNS,
+    GOVERNED_MOLECULAR_VARIANT_LONG_COLUMNS,
+    checksum_sorted_json_payload,
+    json_friendly_scalar,
+    molecular_result_id_from_parts,
+    molecular_variant_id_thyroseq,
+    parse_thyroseq_workbook_test_date_cell,
+    stamp_thyroseq_ingestion_metadata,
+)
 from utils.thyroseq_helpers import (
     compute_row_hash,
     expand_cna_rows,
@@ -117,60 +126,8 @@ INPUT_PROFILE_COMPLETE = "thyroseq_complete"
 INPUT_PROFILE_COHORT_THYSEQ_AFIRMA = "cohort_thyroseq_afirma_12_5"
 INPUT_PROFILE_CHOICES = (INPUT_PROFILE_COMPLETE, INPUT_PROFILE_COHORT_THYSEQ_AFIRMA)
 
-_MR_COLS = [
-    "molecular_result_id",
-    "research_id",
-    "source_patient_id",
-    "source_specimen_id",
-    "source_accession",
-    "assay_name",
-    "panel_version",
-    "platform",
-    "vendor",
-    "loinc_code",
-    "test_date_native",
-    "test_date_parsed",
-    "interpretation_summary",
-    "risk_call",
-    "canonical_hgvs",
-    "raw_payload_json",
-    "payload_checksum",
-    "parse_status",
-    "normalization_status",
-    "qc_flags",
-    "lineage_id",
-    "ingestion_ts",
-    "ingestion_run_id",
-    "source_table",
-    "source_row_fingerprint",
-    "molecular_episode_id",
-    "superseded_by_molecular_result_id",
-]
-
-_MVL_COLS = [
-    "molecular_variant_id",
-    "molecular_result_id",
-    "research_id",
-    "gene_symbol",
-    "transcript_id",
-    "genomic_hgvs",
-    "cdna_hgvs",
-    "protein_hgvs",
-    "canonical_hgvs",
-    "variant_class",
-    "allele_fraction",
-    "zygosity",
-    "interpretation_text",
-    "risk_call",
-    "parse_status",
-    "normalization_status",
-    "qc_flags",
-    "lineage_id",
-    "ingestion_ts",
-    "partner_gene_symbol",
-    "fusion_partner",
-    "raw_variant_token",
-]
+_MR_COLS = list(GOVERNED_MOLECULAR_RESULT_COLUMNS)
+_MVL_COLS = list(GOVERNED_MOLECULAR_VARIANT_LONG_COLUMNS)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -342,11 +299,13 @@ def ingest_raw(excel_path: str, *, input_profile: str = INPUT_PROFILE_COMPLETE) 
     elif input_profile != INPUT_PROFILE_COMPLETE:
         raise ValueError(f"Unknown input_profile: {input_profile!r}")
 
-    df["source_file"] = Path(excel_path).name
-    df["source_sheet"] = "Sheet1"
-    df["source_row_number"] = range(2, len(df) + 2)  # 1-indexed, skip header
-    df["ingestion_batch_id"] = BATCH_ID
-    df["imported_at"] = datetime.now().isoformat()
+    stamp_thyroseq_ingestion_metadata(
+        df,
+        source_file=Path(excel_path).name,
+        batch_id=BATCH_ID,
+        source_sheet="Sheet1",
+        row_number_start=2,
+    )
 
     name_parts = df["Req Patient/Source Name"].apply(normalize_name)
     df["mrn_norm"] = df["Pt. MRN"].apply(normalize_mrn)
@@ -786,34 +745,6 @@ def build_molecular_table(raw: pd.DataFrame, matches: pd.DataFrame) -> pd.DataFr
     return df
 
 
-def _json_friendly(x):
-    if pd.isna(x) or x is None:
-        return None
-    if hasattr(x, "item"):
-        try:
-            return x.item()
-        except Exception:
-            pass
-    return x
-
-
-def _checksum_payload(obj: dict) -> str:
-    return hashlib.sha256(
-        json.dumps(obj, sort_keys=True, default=str).encode("utf-8")
-    ).hexdigest()
-
-
-def _variant_row_id(molecular_result_id: str, idx: int, spec: dict) -> str:
-    key = "|".join([
-        molecular_result_id,
-        str(idx),
-        str(spec.get("variant_class") or ""),
-        str(spec.get("raw_variant_token") or ""),
-        str(spec.get("gene_symbol") or ""),
-    ])
-    return hashlib.sha256(key.encode("utf-8")).hexdigest()[:32]
-
-
 def build_normalized_molecular_layers(
     raw: pd.DataFrame,
     matches: pd.DataFrame,
@@ -850,9 +781,9 @@ def build_normalized_molecular_layers(
         variant_specs.extend(expand_fusion_variants(fus))
         variant_specs.extend(expand_cna_rows(r.get("Copy Number Alterations"), cna_norm))
 
-        molecular_result_id = hashlib.sha256(
-            f"thyroseq_excel|{r['row_hash']}|{THYROSEQ_ASSAY_NAME}".encode(),
-        ).hexdigest()[:32]
+        molecular_result_id = molecular_result_id_from_parts(
+            "thyroseq_excel", str(r["row_hash"]), THYROSEQ_ASSAY_NAME,
+        )
 
         qc_mr: list[str] = []
         if match_review:
@@ -908,30 +839,30 @@ def build_normalized_molecular_layers(
 
         raw_payload = {
             "workbook": {
-                "source_file": _json_friendly(r.get("source_file")),
-                "source_sheet": _json_friendly(r.get("source_sheet")),
-                "source_row_number": _json_friendly(r.get("source_row_number")),
-                "ingestion_batch_id": _json_friendly(r.get("ingestion_batch_id")),
-                "imported_at": _json_friendly(r.get("imported_at")),
-                "row_hash": _json_friendly(r.get("row_hash")),
+                "source_file": json_friendly_scalar(r.get("source_file")),
+                "source_sheet": json_friendly_scalar(r.get("source_sheet")),
+                "source_row_number": json_friendly_scalar(r.get("source_row_number")),
+                "ingestion_batch_id": json_friendly_scalar(r.get("ingestion_batch_id")),
+                "imported_at": json_friendly_scalar(r.get("imported_at")),
+                "row_hash": json_friendly_scalar(r.get("row_hash")),
             },
             "patient_keys": {
-                "mrn_norm": _json_friendly(r.get("mrn_norm")),
+                "mrn_norm": json_friendly_scalar(r.get("mrn_norm")),
                 "dob_norm": str(r.get("dob_norm")) if r.get("dob_norm") is not None else None,
-                "name_norm": _json_friendly(r.get("name_norm")),
+                "name_norm": json_friendly_scalar(r.get("name_norm")),
             },
             "match": {
-                "match_method": _json_friendly(match_method),
+                "match_method": json_friendly_scalar(match_method),
                 "match_confidence": float(mrow["match_confidence"].values[0])
                 if pd.notna(mrow["match_confidence"].values[0])
                 else None,
                 "review_required": match_review,
             },
             "molecular_raw": {
-                "Thyroseq Mutation": _json_friendly(r.get("Thyroseq Mutation")),
-                "Gene Fusions": _json_friendly(r.get("Gene Fusions")),
-                "Gene Expression Profile": _json_friendly(r.get("Gene Expression Profile")),
-                "Copy Number Alterations": _json_friendly(r.get("Copy Number Alterations")),
+                "Thyroseq Mutation": json_friendly_scalar(r.get("Thyroseq Mutation")),
+                "Gene Fusions": json_friendly_scalar(r.get("Gene Fusions")),
+                "Gene Expression Profile": json_friendly_scalar(r.get("Gene Expression Profile")),
+                "Copy Number Alterations": json_friendly_scalar(r.get("Copy Number Alterations")),
             },
             "molecular_parsed_summary": {
                 "mutation": {k: mut[k] for k in mut if k != "mutation_raw"},
@@ -940,23 +871,10 @@ def build_normalized_molecular_layers(
                 "cna_norm": cna_norm,
             },
         }
-        checksum = _checksum_payload(raw_payload)
+        checksum = checksum_sorted_json_payload(raw_payload)
 
         td_cell = r.get("ThyroSeq Test Date")
-        test_date_native = None
-        test_date_parsed = None
-        if td_cell is not None and not (isinstance(td_cell, float) and pd.isna(td_cell)):
-            if isinstance(td_cell, date) and not isinstance(td_cell, datetime):
-                test_date_parsed = td_cell
-                test_date_native = str(td_cell)
-            elif isinstance(td_cell, (datetime, pd.Timestamp)):
-                test_date_parsed = td_cell.date()
-                test_date_native = str(td_cell)[:120]
-            else:
-                dt = pd.to_datetime(td_cell, errors="coerce")
-                if pd.notna(dt):
-                    test_date_parsed = dt.date()
-                    test_date_native = str(td_cell).strip()[:120]
+        test_date_native, test_date_parsed = parse_thyroseq_workbook_test_date_cell(td_cell)
 
         mr_rows.append({
             "molecular_result_id": molecular_result_id,
@@ -992,7 +910,7 @@ def build_normalized_molecular_layers(
             v_qc = list(spec.get("af_qc_flags") or [])
             if spec.get("parse_status") == "failed":
                 v_qc.append("variant_parse_failed")
-            vid = _variant_row_id(molecular_result_id, i, spec)
+            vid = molecular_variant_id_thyroseq(molecular_result_id, i, spec)
             mvl_rows.append({
                 "molecular_variant_id": vid,
                 "molecular_result_id": molecular_result_id,
