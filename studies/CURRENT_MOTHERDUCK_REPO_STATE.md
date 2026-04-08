@@ -10,8 +10,8 @@
 
 > **Repo posture (sync with README):** Latest **live** `119 --release-mode` + specimen/FHIR truth baselines live under `studies/specimen_fhir_release_truth_*` (regenerate with this script + `119_md_formalization_validate.py --md --release-mode`). **Governance:** operator `119` may **PASS WITH WARN** while **manuscript** sign-off still requires **human-reviewed** MRQ/promotion paths (not automation-only verification). **Institutional non-Tg lab wave** (`final_institutional_20260407`) is **ingested**; residual lab gaps are **source-limited**, not a missing-wave blocker. Operator evidence pack: `studies/20260411_final_master_release/EVIDENCE_PACK.md`.
 
-**Machine-generated:** 2026-04-08T13:12:50.491471+00:00
-**Commit SHA:** `4cfb46d39e72c516be39605fb0abcf1656c44fc2`
+**Machine-generated:** 2026-04-08T14:18:47.759471+00:00
+**Commit SHA:** `8d6eef4831057635135020aa7107aa27dc390f07`
 
 > Regenerate after promotion or specimen/FHIR deploy: `python scripts/144_md_repo_current_state_summary.py --md`
 
@@ -28,7 +28,7 @@ For dashboards or ad hoc read-after-snapshot review, use **only** `MD_READ_SCALI
 ### Specimen / FHIR layer row counts
 - **specimen_master_v1:** 10,139 rows
 - **specimen_tumor_focus_v1:** 11,103 rows
-- **specimen_genomic_assay_v1:** 10,862 rows
+- **specimen_genomic_assay_v1:** 10,370 rows
 - **fhir_bundle_specimen_export_v1:** 10,139 rows
 - **qa.release_manifest (latest 3):**
   - tag `20260408r4` | sha `d9b9dc9` | 2026-04-08 08:56:49.086697

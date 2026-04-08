@@ -194,7 +194,6 @@ def test_distinct_surgery_dates_two_focus_rows() -> None:
     assert len(bundle["entry"]) == 4
     types = [e["resource"]["resourceType"] for e in bundle["entry"]]
     assert types == ["Specimen", "Procedure", "Encounter", "EpisodeOfCare"]
-    spec_id = bundle["entry"][0]["resource"]["id"]
     proc_coll = bundle["entry"][0]["resource"]["collection"]["procedure"]["reference"]
     proc_id = bundle["entry"][1]["resource"]["id"]
     assert proc_coll == f"Procedure/{proc_id}"

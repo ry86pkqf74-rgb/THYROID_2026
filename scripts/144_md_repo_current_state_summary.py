@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Write studies/CURRENT_MOTHERDUCK_REPO_STATE.md — live DB + repo artifact reconciliation.
 
-Read-only against MotherDuck unless views are deployed (no DDL). Uses
-``specimen_fhir_release_writer_attribution`` (default UA ``specimen_fhir_release_truth_v2``) on ``--md``.
+Read-only against MotherDuck unless views are deployed (no DDL). On ``--md``,
+uses ``specimen_fhir_release_writer_attribution`` (default UA
+``specimen_fhir_ref_integrity_v2``; override with ``MOTHERDUCK_CUSTOM_USER_AGENT``,
+e.g. ``specimen_fhir_release_truth_v2`` for release-truth runs).
 
 Usage:
   .venv/bin/python scripts/144_md_repo_current_state_summary.py
