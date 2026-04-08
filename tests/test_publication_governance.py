@@ -56,7 +56,9 @@ def test_sql_count_mrq_synthetic_rows_integration() -> None:
             ('SYNTHETIC_AUTOMATION_ONLY_NOT_MANUSCRIPT_SIGNOFF');
         """
     )
-    n = int(con.execute(sql_count_mrq_synthetic_rows()).fetchone()[0])
+    row = con.execute(sql_count_mrq_synthetic_rows()).fetchone()
+    assert row is not None
+    n = int(row[0])
     assert n == 1
 
 
@@ -71,7 +73,9 @@ def test_sql_count_promotion_decisions_missing_batch() -> None:
         INSERT INTO qa.promotion_review_decisions VALUES ('b1'), (NULL), ('  ');
         """
     )
-    n_bad = int(con.execute(sql_count_promotion_decisions_missing_batch()).fetchone()[0])
+    row = con.execute(sql_count_promotion_decisions_missing_batch()).fetchone()
+    assert row is not None
+    n_bad = int(row[0])
     assert n_bad == 2
 
 
