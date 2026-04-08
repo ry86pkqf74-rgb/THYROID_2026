@@ -70,7 +70,11 @@ def test_141_export_offline_minimal_db(tmp_path: Path) -> None:
     con = duckdb.connect(str(db_path))
     try:
         _, manifest = mod.run_export(
-            con, output_root=out_root, limit=0, git_sha="test-sha-abc"
+            con,
+            output_root=out_root,
+            limit=0,
+            git_sha="test-sha-abc",
+            force_reconstruct=False,
         )
     finally:
         con.close()
@@ -92,14 +96,124 @@ def test_141_export_offline_minimal_db(tmp_path: Path) -> None:
     assert loaded["git_sha"] == "test-sha-abc"
     assert loaded["export_kind"] == "specimen_fhir_analytic_v1"
     assert loaded["custom_user_agent"] == mod.UA
+    assert loaded["export_route"] == "bundle_table"
+    assert loaded["motherduck_session_hint"] == mod.DEFAULT_SESSION_HINT
     stm = loaded["source_tables_main"]
     assert stm["fhir_bundle_specimen_export_v1"] == 1
     for tbl in mod.FHIR_TABLES:
         assert tbl in stm
     assert all(stm[t] == 0 for t in mod.FHIR_TABLES if t != "fhir_bundle_specimen_export_v1")
     readme = (out_dir / "README.md").read_text(encoding="utf-8")
-    assert "specimen_fhir_export_v1" in readme
+    assert "specimen_fhir_export_restore_v1" in readme
     assert "fhir_bundle_specimen_export_v1" in readme
+
+
+def test_141_reconstruct_path_without_bundle_table(tmp_path: Path) -> None:
+    """Reconstruct NDJSON from resource tables when ``fhir_bundle_specimen_export_v1`` absent."""
+    mod = _load_script_141()
+    db_path = tmp_path / "recon.duckdb"
+    out_root = tmp_path / "out2"
+    spec_j = json.dumps({"resourceType": "Specimen", "id": "spec01"}, separators=(",", ":"))
+    proc_j = json.dumps({"resourceType": "Procedure", "id": "proc01"}, separators=(",", ":"))
+    enc_j = json.dumps({"resourceType": "Encounter", "id": "enc01"}, separators=(",", ":"))
+    eoc_j = json.dumps({"resourceType": "EpisodeOfCare", "id": "eoc01"}, separators=(",", ":"))
+    con = duckdb.connect(str(db_path))
+    try:
+        con.execute(
+            "CREATE TABLE main.fhir_specimen_v1 (specimen_id VARCHAR, resource_json JSON)"
+        )
+        con.execute(
+            "CREATE TABLE main.fhir_procedure_collection_v1 "
+            "(specimen_id VARCHAR, resource_json JSON)"
+        )
+        con.execute(
+            "CREATE TABLE main.fhir_encounter_v1 "
+            "(specimen_id VARCHAR, episode_fhir_id VARCHAR, resource_json JSON)"
+        )
+        con.execute(
+            "CREATE TABLE main.fhir_episode_of_care_v1 "
+            "(episode_fhir_id VARCHAR, resource_json JSON)"
+        )
+        con.execute(
+            "INSERT INTO main.fhir_specimen_v1 VALUES ('sp-recon', CAST(? AS JSON))",
+            [spec_j],
+        )
+        con.execute(
+            "INSERT INTO main.fhir_procedure_collection_v1 VALUES ('sp-recon', CAST(? AS JSON))",
+            [proc_j],
+        )
+        con.execute(
+            "INSERT INTO main.fhir_encounter_v1 VALUES ('sp-recon', 'eocA', CAST(? AS JSON))",
+            [enc_j],
+        )
+        con.execute(
+            "INSERT INTO main.fhir_episode_of_care_v1 VALUES ('eocA', CAST(? AS JSON))",
+            [eoc_j],
+        )
+    finally:
+        con.close()
+
+    con = duckdb.connect(str(db_path))
+    try:
+        _, manifest = mod.run_export(
+            con,
+            output_root=out_root,
+            limit=0,
+            git_sha="recon-sha",
+            force_reconstruct=False,
+        )
+    finally:
+        con.close()
+
+    assert manifest["export_route"] == "reconstructed_from_resources"
+    assert manifest["bundle_row_count"] == 1
+    assert manifest["reconstructed_from_tables"] is not None
+    nd_dirs = list(out_root.glob("fhir_specimen_*"))
+    assert len(nd_dirs) == 1
+    line = (nd_dirs[0] / "specimen_bundles.ndjson").read_text(encoding="utf-8").strip()
+    obj = json.loads(line)
+    assert obj["resourceType"] == "Bundle"
+    assert obj["type"] == "collection"
+    assert len(obj["entry"]) == 4
+
+
+def test_141_skips_empty_bundle_json_rows(tmp_path: Path) -> None:
+    """Null/blank bundle_json lines are omitted from NDJSON; manifest count matches file."""
+    mod = _load_script_141()
+    db_path = tmp_path / "emptyrow.duckdb"
+    out_root = tmp_path / "out3"
+    con = duckdb.connect(str(db_path))
+    try:
+        for name in mod.FHIR_TABLES:
+            con.execute(f"CREATE TABLE main.{name} (stub INT)")
+        con.execute("DROP TABLE main.fhir_bundle_specimen_export_v1")
+        con.execute(
+            "CREATE TABLE main.fhir_bundle_specimen_export_v1 "
+            "(specimen_id VARCHAR, bundle_json VARCHAR)"
+        )
+        con.execute(
+            "INSERT INTO main.fhir_bundle_specimen_export_v1 VALUES ('b1', '')"
+        )
+        con.execute(
+            "INSERT INTO main.fhir_bundle_specimen_export_v1 VALUES ('b2', NULL)"
+        )
+    finally:
+        con.close()
+    con = duckdb.connect(str(db_path))
+    try:
+        _, manifest = mod.run_export(
+            con,
+            output_root=out_root,
+            limit=0,
+            git_sha="x",
+            force_reconstruct=False,
+        )
+    finally:
+        con.close()
+    out = list(out_root.glob("fhir_specimen_*"))[0]
+    lines = (out / "specimen_bundles.ndjson").read_text(encoding="utf-8").strip()
+    assert lines == ""
+    assert manifest["bundle_row_count"] == 0
 
 
 def test_141_unknown_git_sha_manifest(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -127,7 +241,11 @@ def test_141_unknown_git_sha_manifest(tmp_path: Path, monkeypatch: pytest.Monkey
     con = duckdb.connect(str(db_path))
     try:
         _, manifest = mod.run_export(
-            con, output_root=tmp_path / "o", limit=0, git_sha=mod._git_sha()
+            con,
+            output_root=tmp_path / "o",
+            limit=0,
+            git_sha=mod._git_sha(),
+            force_reconstruct=False,
         )
     finally:
         con.close()
@@ -213,6 +331,17 @@ def _create_stub_db_for_142(db_path: Path) -> None:
             CREATE TABLE main.specimen_master_v1 (
               specimen_fingerprint_sha256 VARCHAR,
               specimen_id VARCHAR,
+              identity_build_run_id VARCHAR
+            )
+            """
+        )
+        con.execute(
+            """
+            CREATE TABLE main.specimen_tumor_focus_v1 (
+              focus_fingerprint_sha256 VARCHAR,
+              specimen_focus_id VARCHAR,
+              specimen_id VARCHAR,
+              research_id BIGINT,
               identity_build_run_id VARCHAR
             )
             """

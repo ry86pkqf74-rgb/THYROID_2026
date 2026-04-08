@@ -169,6 +169,7 @@ def collect_live_introspection(con: Any) -> tuple[list[str], str]:
               'specimen_fhir_release_truth_v2',
               'specimen_fhir_release_truth_v1',
               'specimen_fhir_release_ops_v1',
+              'specimen_fhir_export_restore_v1',
               'specimen_fhir_export_v1',
               'specimen_genomics_binding_v1',
               'specimen_identity_build_v1'
@@ -191,6 +192,7 @@ def collect_live_introspection(con: Any) -> tuple[list[str], str]:
                   'specimen_fhir_release_truth_v2',
                   'specimen_fhir_release_truth_v1',
                   'specimen_fhir_release_ops_v1',
+                  'specimen_fhir_export_restore_v1',
                   'specimen_fhir_export_v1',
                   'specimen_genomics_binding_v1',
                   'specimen_identity_build_v1'
