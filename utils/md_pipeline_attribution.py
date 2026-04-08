@@ -69,3 +69,18 @@ def connect_attribution(
 ) -> tuple[str, str | None]:
     """Tuple of (custom_user_agent, session_hint) for ``connect_md_or_file``."""
     return (molecular_custom_user_agent(component, run_kind), molecular_session_hint(run_kind))
+
+
+# Specimen / FHIR release writers (138/139/140/143) — single UA for query-history filtering.
+SPECIMEN_FHIR_RELEASE_TRUTH_UA = "specimen_fhir_release_truth_v1"
+SPECIMEN_FHIR_RELEASE_TRUTH_SESSION_HINT_DEFAULT = "specimen_fhir_release_truth_v1"
+
+
+def specimen_fhir_release_writer_attribution() -> tuple[str, str]:
+    """Return (custom_user_agent, motherduck_session_hint) for specimen/FHIR MD writes.
+
+    ``MOTHERDUCK_CUSTOM_USER_AGENT`` / ``MOTHERDUCK_SESSION_HINT`` override defaults when set.
+    """
+    ua = (os.environ.get("MOTHERDUCK_CUSTOM_USER_AGENT") or "").strip() or SPECIMEN_FHIR_RELEASE_TRUTH_UA
+    hint = (os.environ.get("MOTHERDUCK_SESSION_HINT") or "").strip() or SPECIMEN_FHIR_RELEASE_TRUTH_SESSION_HINT_DEFAULT
+    return ua, hint

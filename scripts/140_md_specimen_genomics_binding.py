@@ -6,7 +6,7 @@ Uses existing v3 linkage only (no direct molecular→surgery). Optional ``geneti
 
 Rules:
   * connect_md_or_file(..., fail_closed=True) when --md
-  * custom_user_agent='specimen_genomics_binding_v1'
+  * :func:`specimen_fhir_release_writer_attribution` for UA / session hint
   * RW token (see motherduck_client / .env.motherduck)
 
 Usage:
@@ -28,7 +28,6 @@ sys.path.insert(0, str(ROOT))
 
 DEFAULT_DB = ROOT / "thyroid_master.duckdb"
 DDL_PATH = ROOT / "scripts" / "sql" / "140_specimen_genomics_binding_ddl.sql"
-UA = "specimen_genomics_binding_v1"
 
 PREREQ_MAIN_TABLES: tuple[str, ...] = (
     "molecular_test_episode_v2",
@@ -209,21 +208,19 @@ def main() -> None:
     if args.dry_run:
         has_g = "[check genetic_testing on target]"
         has_t = "[check thyroseq_molecular_enrichment on target]"
-        print(f"[dry-run] Would apply {DDL_PATH} (UA={UA}) optional genetic={has_g} thyroseq={has_t}")
+        print(f"[dry-run] Would apply {DDL_PATH} optional genetic={has_g} thyroseq={has_t}")
         return
 
     from utils.md_connect import connect_md_or_file
+    from utils.md_pipeline_attribution import specimen_fhir_release_writer_attribution
 
-    hint = (
-        os.environ.get("MOTHERDUCK_SESSION_HINT")
-        or f"thyroid2026:specimen_genomics_binding:{_git_sha()[:7]}"
-    )
+    ua, hint = specimen_fhir_release_writer_attribution()
     con = connect_md_or_file(
         Path(args.db_path),
         md=args.md,
         fail_closed=args.md,
         prefer_service_account=True,
-        custom_user_agent=UA,
+        custom_user_agent=ua,
         motherduck_session_hint=hint,
     )
 
@@ -259,7 +256,7 @@ def main() -> None:
         print(f"  [{st}] {name}: {det[:200]}")
 
     con.close()
-    print(f"Done. UA={UA} snapshot_detail={snap_detail[:120]}")
+    print(f"Done. UA={ua} snapshot_detail={snap_detail[:120]}")
 
 
 if __name__ == "__main__":

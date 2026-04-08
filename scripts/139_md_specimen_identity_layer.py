@@ -3,7 +3,7 @@
 
 Rules:
   * fail_closed MotherDuck, RW token only (MOTHERDUCK_TOKEN / MD_SA_TOKEN)
-  * custom_user_agent='specimen_identity_build_v1'
+  * :func:`specimen_fhir_release_writer_attribution` for query-history UA / session hint
   * CREATE SNAPSHOT before DDL when --md (same pattern as 138)
   * Optional main.specimen_detail seed — identifiers only (no note text)
 
@@ -26,7 +26,6 @@ sys.path.insert(0, str(ROOT))
 
 DEFAULT_DB = ROOT / "thyroid_master.duckdb"
 DDL_PATH = ROOT / "scripts" / "sql" / "139_specimen_identity_layer_ddl.sql"
-UA = "specimen_identity_build_v1"
 
 PREREQ_MAIN_TABLES: tuple[str, ...] = (
     "synoptic_tumor_long_v1",
@@ -384,14 +383,16 @@ def main() -> None:
         return
 
     from utils.md_connect import connect_md_or_file
+    from utils.md_pipeline_attribution import specimen_fhir_release_writer_attribution
 
-    run_id = f"{UA}_{uuid.uuid4().hex[:12]}"
-    hint = os.environ.get("MOTHERDUCK_SESSION_HINT") or "thyroid2026:specimen_identity:" + _git_sha()[:7]
+    ua, hint = specimen_fhir_release_writer_attribution()
+    run_id = f"specimen_identity_{uuid.uuid4().hex[:12]}"
     con = connect_md_or_file(
         Path(args.db_path),
         md=args.md,
         fail_closed=args.md,
-        custom_user_agent=UA,
+        prefer_service_account=True,
+        custom_user_agent=ua,
         motherduck_session_hint=hint,
     )
 
@@ -412,7 +413,7 @@ def main() -> None:
             "# Specimen identity — blocked (prerequisites)",
             f"Generated: {datetime.now(timezone.utc).isoformat()}Z",
             f"Git SHA: {sha}",
-            f"custom_user_agent: {UA}",
+            f"custom_user_agent: {ua}",
             "",
             "## MotherDuck snapshot",
             f"- Attempt: `{snap_name}`",
@@ -454,7 +455,7 @@ def main() -> None:
         "# Specimen identity — validation report",
         f"Generated (UTC): {datetime.now(timezone.utc).isoformat()}",
         f"Git SHA: `{sha}`",
-        f"custom_user_agent: `{UA}`",
+        f"custom_user_agent: `{ua}`",
         f"identity_build_run_id: `{run_id}`",
         "",
         "## Snapshot",

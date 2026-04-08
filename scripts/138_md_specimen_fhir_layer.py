@@ -10,9 +10,8 @@ scripts/sql/138_specimen_fhir_tail_ddl.sql (FHIR), then
 scripts/140_md_specimen_genomics_binding.apply_specimen_genomics_binding (genomics).
 
 Operational rules (MotherDuck):
-  * connect_md_or_file(..., fail_closed=True, custom_user_agent='specimen_fhir_export_v1')
-  * Second connection after build deploys `scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql` with
-    custom_user_agent='specimen_fhir_release_ops_v1'
+  * connect_md_or_file(..., fail_closed=True) with :func:`specimen_fhir_release_writer_attribution`
+  * Second connection for QA diagnostics uses the same UA/hint pair
   * RW token only (MOTHERDUCK_TOKEN / MD_SA_TOKEN)
   * Attempt named CREATE SNAPSHOT before DDL; on DuckLake, logs skip and continues
 
@@ -39,8 +38,6 @@ DEFAULT_DB = ROOT / "thyroid_master.duckdb"
 DDL_IDENTITY_PATH = ROOT / "scripts" / "sql" / "139_specimen_identity_layer_ddl.sql"
 DDL_FHIR_TAIL_PATH = ROOT / "scripts" / "sql" / "138_specimen_fhir_tail_ddl.sql"
 DDL_QA_DIAG_PATH = ROOT / "scripts" / "sql" / "142_specimen_fhir_qa_diagnostics_ddl.sql"
-UA = "specimen_fhir_export_v1"
-UA_QA_DEPLOY = "specimen_fhir_release_ops_v1"
 
 # Required on the target catalog before DDL (see docs/motherduck_database_contract_v1.md).
 PREREQ_MAIN_TABLES: tuple[str, ...] = (
@@ -236,13 +233,12 @@ def deploy_specimen_fhir_qa_diagnostics(
     con_primary: Any,
     args: argparse.Namespace,
 ) -> str:
-    """Apply qa.v_diag_* views. MotherDuck uses fail-closed UA ``specimen_fhir_release_ops_v1``."""
+    """Apply qa.v_diag_* views on a second MotherDuck connection (same writer attribution)."""
+    from utils.md_pipeline_attribution import specimen_fhir_release_writer_attribution
+
     ddl = DDL_QA_DIAG_PATH.read_text(encoding="utf-8")
     if args.md:
-        hint = (
-            os.environ.get("MOTHERDUCK_SESSION_HINT")
-            or f"thyroid2026:specimen_fhir_qa_deploy:{_git_sha()[:7]}"
-        )
+        ua, hint = specimen_fhir_release_writer_attribution()
         from utils.md_connect import connect_md_or_file
 
         con2 = connect_md_or_file(
@@ -250,14 +246,14 @@ def deploy_specimen_fhir_qa_diagnostics(
             md=True,
             fail_closed=True,
             prefer_service_account=True,
-            custom_user_agent=UA_QA_DEPLOY,
+            custom_user_agent=ua,
             motherduck_session_hint=hint,
         )
         try:
             con2.execute(ddl)
         finally:
             con2.close()
-        return f"qa diagnostics deployed (UA={UA_QA_DEPLOY})"
+        return f"qa diagnostics deployed (UA={ua})"
     con_primary.execute(ddl)
     return "qa diagnostics deployed (local)"
 
@@ -292,6 +288,9 @@ def main() -> None:
         return
 
     from utils.md_connect import connect_md_or_file
+    from utils.md_pipeline_attribution import specimen_fhir_release_writer_attribution
+
+    ua, hint = specimen_fhir_release_writer_attribution()
 
     spec139 = importlib.util.spec_from_file_location(
         "_specimen_identity139", ROOT / "scripts" / "139_md_specimen_identity_layer.py"
@@ -307,13 +306,12 @@ def main() -> None:
     assert spec140.loader
     spec140.loader.exec_module(mod140)
 
-    hint = os.environ.get("MOTHERDUCK_SESSION_HINT") or "thyroid2026:specimen_fhir:" + _git_sha()[:7]
     con = connect_md_or_file(
         Path(args.db_path),
         md=args.md,
         fail_closed=args.md,
         prefer_service_account=True,
-        custom_user_agent=UA,
+        custom_user_agent=ua,
         motherduck_session_hint=hint,
     )
 
@@ -336,7 +334,7 @@ def main() -> None:
             "# Specimen + FHIR hardening — blocked (prerequisites)",
             f"Generated: {datetime.now(timezone.utc).isoformat()}Z",
             f"Git SHA: {sha}",
-            f"custom_user_agent: {UA}",
+            f"custom_user_agent: {ua}",
             "",
             "## MotherDuck snapshot",
             f"- Attempt: `{snap_name}`",
@@ -402,8 +400,8 @@ def main() -> None:
         f"Generated: {datetime.now(timezone.utc).isoformat()}Z",
         f"Git SHA: {sha}",
         f"Identity build_run_id: {identity_run_id}",
-        f"custom_user_agent (pipeline): {UA}",
-        f"QA diagnostics deploy UA: `{UA_QA_DEPLOY}` (see `scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql`)",
+        f"custom_user_agent (pipeline + QA deploy): `{ua}`",
+        "- QA diagnostics DDL: `scripts/sql/142_specimen_fhir_qa_diagnostics_ddl.sql`",
         "",
         "## MotherDuck snapshot",
         f"- Attempt: `{snap_name}`",
@@ -424,7 +422,7 @@ def main() -> None:
     ]
     (study_dir / "audit_memo.md").write_text("\n".join(memo), encoding="utf-8")
 
-    telemetry_sql = """
+    telemetry_sql = f"""
 SELECT user_agent, session_name, count_star AS approx_queries
 FROM (
   SELECT
@@ -432,13 +430,13 @@ FROM (
     coalesce(session_name, '') AS session_name,
     COUNT(*) AS count_star
   FROM md_information_schema.query_history
-  WHERE user_agent = 'specimen_fhir_export_v1'
+  WHERE user_agent = '{ua.replace("'", "''")}'
   GROUP BY 1, 2
 ) q
 LIMIT 20
 """
     tele_lines = [
-        f"MD_INFORMATION_SCHEMA.QUERY_HISTORY filter user_agent={UA} (if permission denied, empty)."
+        f"MD_INFORMATION_SCHEMA.QUERY_HISTORY filter user_agent=`{ua}` (if permission denied, empty)."
     ]
     if args.md:
         try:

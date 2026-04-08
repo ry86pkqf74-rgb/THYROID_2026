@@ -24,6 +24,7 @@ files = [
     "utils/date_utils.py",
     "utils/imaging_fna_linkage_mm_v1.py",
     "utils/md_connect.py",
+    "utils/md_pipeline_attribution.py",
     "utils/pathology_ln_narrative_extract.py",
     "utils/provenance.py",
     "utils/statistical_analysis.py",

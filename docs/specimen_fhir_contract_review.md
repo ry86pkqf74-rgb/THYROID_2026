@@ -4,11 +4,14 @@
 
 ## Operational user-agents (MotherDuck query history)
 
+Default RW attribution: **`specimen_fhir_release_truth_v1`** with stable session hint (see `utils/md_pipeline_attribution.specimen_fhir_release_writer_attribution`). `MOTHERDUCK_CUSTOM_USER_AGENT` / `MOTHERDUCK_SESSION_HINT` override when set.
+
 | Step | `custom_user_agent` |
 |------|---------------------|
-| Full identity + FHIR + genomics pipeline | `specimen_fhir_export_v1` (`scripts/138_md_specimen_fhir_layer.py`) |
-| QA diagnostic view deploy (second connection on `--md`) | `specimen_fhir_release_ops_v1` (same script + `scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py`) |
-| Genomics binding body | `specimen_genomics_binding_v1` (`140_md_specimen_genomics_binding.py`) |
+| Identity + FHIR orchestration + QA DDL deploy (`--md`) | `specimen_fhir_release_truth_v1` (`scripts/138_md_specimen_fhir_layer.py`, second connection share same UA) |
+| Standalone QA diagnostic deploy | `specimen_fhir_release_truth_v1` (`scripts/143_md_specimen_fhir_qa_diagnostics_deploy.py`) |
+| Identity-only / genomics standalone (`139` / `140`) | `specimen_fhir_release_truth_v1` |
+| Local FHIR NDJSON export reader (`--md`) | `specimen_fhir_export_v1` (`scripts/141_fhir_specimen_json_export.py` — read-mostly export helper) |
 
 Do **not** use `MD_READ_SCALING_TOKEN` for these writers — read scaling is attach-only for reviewer dashboards.
 

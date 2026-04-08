@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Write studies/CURRENT_MOTHERDUCK_REPO_STATE.md — live DB + repo artifact reconciliation.
 
-Read-only against MotherDuck unless views are deployed (no DDL). Uses custom_user_agent
-``specimen_fhir_release_ops_v1`` on ``--md`` for query-history attribution (not a read-scaling token).
+Read-only against MotherDuck unless views are deployed (no DDL). Uses
+``specimen_fhir_release_writer_attribution`` (default UA ``specimen_fhir_release_truth_v1``) on ``--md``.
 
 Usage:
   .venv/bin/python scripts/144_md_repo_current_state_summary.py
@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -21,7 +20,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 STUDIES = ROOT / "studies"
 DEFAULT_OUT = STUDIES / "CURRENT_MOTHERDUCK_REPO_STATE.md"
-UA = "specimen_fhir_release_ops_v1"
 STALE_DAYS = 14
 
 
@@ -33,11 +31,6 @@ def _git_head() -> str:
         ).strip()
     except (subprocess.CalledProcessError, OSError):
         return "unknown"
-
-
-def _git_short() -> str:
-    h = _git_head()
-    return h[:12] if len(h) >= 12 else h
 
 
 def _rel(p: Path) -> str:
@@ -81,7 +74,6 @@ def main() -> None:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     now = datetime.now(timezone.utc).isoformat()
     sha = _git_head()
-    short = _git_short()
 
     lines: list[str] = [
         "# THYROID_2026 — current MotherDuck vs repo state",
@@ -93,14 +85,12 @@ def main() -> None:
         "> **Stale guard:** If **`Commit SHA`** below ≠ `git rev-parse HEAD` on your machine, treat "
         "**Live MotherDuck** bullets as **historical** until you re-run this generator with `--md`.",
         "",
-        "> **April 2026 repo posture (human-maintained, sync with README / `docs/REPO_STATUS.md`):** "
-        "**Technically passing but blocked by synthetic MRQ** — i.e. latest committed "
-        "`119 --release-mode` is **PASS WITH WARN** (see "
-        "`studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md`), "
-        "while **manuscript** sign-off is not complete until MRQ/promotion reflects **human-reviewed** governance "
-        "(not automation-only / `--synthetic-fill-mrq-verification` posture). The **final institutional non-Tg lab "
-        "wave** (`final_institutional_20260407`) is **ingested**; residual lab issues are **source-limited "
-        "enrichment**, not a missing-wave blocker. Operator snapshot: "
+        "> **Repo posture (sync with README):** Latest **live** `119 --release-mode` + specimen/FHIR truth baselines "
+        "live under `studies/specimen_fhir_release_truth_*` (regenerate with this script + "
+        "`119_md_formalization_validate.py --md --release-mode`). **Governance:** operator `119` may **PASS WITH WARN** "
+        "while **manuscript** sign-off still requires **human-reviewed** MRQ/promotion paths (not automation-only "
+        "verification). **Institutional non-Tg lab wave** (`final_institutional_20260407`) is **ingested**; residual "
+        "lab gaps are **source-limited**, not a missing-wave blocker. Operator evidence pack: "
         "`studies/20260411_final_master_release/EVIDENCE_PACK.md`.",
         "",
         f"**Machine-generated:** {now}",
@@ -129,9 +119,9 @@ def main() -> None:
 
         sys.path.insert(0, str(ROOT))
         from utils.md_connect import connect_md_or_file
+        from utils.md_pipeline_attribution import specimen_fhir_release_writer_attribution
 
-        hint = (os.environ.get("MOTHERDUCK_SESSION_HINT") or "").strip() or f"thyroid2026:current_state:{short}"
-        ua = (os.environ.get("MOTHERDUCK_CUSTOM_USER_AGENT") or "").strip() or UA
+        ua, hint = specimen_fhir_release_writer_attribution()
         con = connect_md_or_file(
             Path(args.db_path),
             md=True,
@@ -144,8 +134,9 @@ def main() -> None:
             md_lines.append(f"- **current_database():** `{db}`")
             for label, sql in (
                 ("specimen_master_v1", "SELECT COUNT(*) FROM main.specimen_master_v1"),
-                ("fhir_bundle_export", "SELECT COUNT(*) FROM main.fhir_bundle_specimen_export_v1"),
+                ("specimen_tumor_focus_v1", "SELECT COUNT(*) FROM main.specimen_tumor_focus_v1"),
                 ("specimen_genomic_assay_v1", "SELECT COUNT(*) FROM main.specimen_genomic_assay_v1"),
+                ("fhir_bundle_specimen_export_v1", "SELECT COUNT(*) FROM main.fhir_bundle_specimen_export_v1"),
             ):
                 try:
                     n = con.execute(sql).fetchone()[0]
@@ -181,9 +172,11 @@ def main() -> None:
                     SELECT coalesce(user_agent, ''), COUNT(*) AS n
                     FROM md_information_schema.query_history
                     WHERE user_agent IN (
+                      'specimen_fhir_release_truth_v1',
                       'specimen_fhir_release_ops_v1',
                       'specimen_fhir_export_v1',
-                      'specimen_genomics_binding_v1'
+                      'specimen_genomics_binding_v1',
+                      'specimen_identity_build_v1'
                     )
                     GROUP BY 1 ORDER BY 2 DESC LIMIT 15
                     """
