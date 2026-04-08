@@ -46,8 +46,8 @@ MotherDuck is the **staging and QC plane only** — it is not the LLM compute en
 |----------|---------|--------|
 | `MOTHERDUCK_TOKEN` | Personal developer token | MotherDuck UI → Settings → Tokens |
 | `MD_SA_TOKEN` | Service-account / CI token | GitHub Actions secret or team vault |
-| `MOTHERDUCK_DATABASE` | Override DB name (default: `Thyroid 2026`) | Set only when targeting a non-default catalog |
-| `MOTHERDUCK_ENV` | Target environment: `dev`, `qa`, `prod` (default: `prod`) | Optional; all envs currently map to `Thyroid 2026` |
+| `MOTHERDUCK_DATABASE` / `MOTHERDUCK_DB` | Override DB name (wins over `MOTHERDUCK_ENV`) | Optional single-catalog pin; omit for normal dev/qa/prod mapping |
+| `MOTHERDUCK_ENV` | `dev`, `qa`, or `prod` (default: `prod`) | Selects catalog via [`config/motherduck_environments.yml`](../config/motherduck_environments.yml): **prod** → `Thyroid 2026`; **dev** / **qa** → separate Molecular sandbox DBs (same date suffix in YAML). See [`motherduck_sandbox_clone_runbook.md`](motherduck_sandbox_clone_runbook.md). |
 
 Token resolution order (see `motherduck_client.py::get_token`):
 

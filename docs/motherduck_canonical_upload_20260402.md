@@ -1,5 +1,7 @@
 # MotherDuck Canonical Upload — 2026-04-02
 
+> **Post-2026-04-02 config:** `config/motherduck_environments.yml` now maps **dev** and **qa** to dedicated sandbox databases (see [`motherduck_sandbox_clone_runbook.md`](motherduck_sandbox_clone_runbook.md)). The historical note below (“all envs point to `Thyroid 2026`”) reflects **only** the state of this upload session, not the current default env mapping.
+
 ## Summary
 
 Uploaded all 27 Tier 1 + Tier 2 manuscript freeze v1 tables from local parquet

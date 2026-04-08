@@ -58,6 +58,8 @@ Before promoting specimen/FHIR changes, **`138`** attempts `CREATE SNAPSHOT <nam
 
 [`scripts/118_parquet_release_bundle.py`](118_parquet_release_bundle.py) with `--final-master` exports the same **manuscript analytic** subset via **`FINAL_MASTER_MAIN`** + **`FINAL_MASTER_QA`**. Consumers needing specimen, FHIR bundles, or genomics binding for interoperability should read **`main`** on MotherDuck or run [`scripts/138_md_specimen_fhir_layer.py`](138_md_specimen_fhir_layer.py) / [`scripts/140_md_specimen_genomics_binding.py`](140_md_specimen_genomics_binding.py) as documented; **Check 13** in [`scripts/119_md_formalization_validate.py`](119_md_formalization_validate.py) is the release gate for that surface, not the `115`/`118` table lists.
 
+[`scripts/126_final_master_release.py`](126_final_master_release.py) (default `--release-mode`) calls the same [`utils/specimen_fhir_release_gate.py`](utils/specimen_fhir_release_gate.py) pathway as **124** before **`115 --final-master`** / **`118 --final-master`** — use **`--materialize-specimen-fhir`** to run **138** or **143** when the gate would otherwise block; snapshot/parquet steps remain manuscript-only by design.
+
 ## Read scaling for reviewers
 
 After a release snapshot on the writer catalog, readers using **`MD_READ_SCALING_TOKEN`** should:

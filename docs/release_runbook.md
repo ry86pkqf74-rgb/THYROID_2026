@@ -83,7 +83,7 @@ After QA is green, re-confirm on the **target** you will promote (typically prod
 
 - **Live release audit (full chain):** **124** with `--md-env prod` and `--final-release` for signed release.
 - **Formal validation:** **119** `--release-mode` is already invoked at the end of **124**; for a standalone prod check, run 119 with `--md-env prod --release-mode`.
-- **Specimen / FHIR (Check 13):** When `main.synoptic_tumor_long_v1` exists, **124** `--final-release` fails *before* presentation views unless the specimen/FHIR layer and `qa.v_diag_*` views are present — unless you pass **`--skip-specimen-fhir-gate`** or **`--materialize-specimen-fhir`** (runs **138** or **143**). Same pattern for **126** default `--release-mode`. See [`specimen_fhir_release_integration.md`](specimen_fhir_release_integration.md).
+- **Specimen / FHIR (Check 13):** When `main.synoptic_tumor_long_v1` exists, **124** `--final-release` fails *before* presentation views unless the specimen/FHIR layer and `qa.v_diag_*` views are present — unless you pass **`--skip-specimen-fhir-gate`** or **`--materialize-specimen-fhir`** (runs **138** or **143**). **126** (default `--release-mode`) enforces the same gate **before** **`115 --final-master`** / **`118 --final-master`**; those steps still copy/export only the manuscript analytic lists in **115**/**118**, not `specimen_*` / `fhir_*`. See [`specimen_fhir_release_integration.md`](specimen_fhir_release_integration.md) and [`specimen_fhir_contract_review.md`](specimen_fhir_contract_review.md) §*Scope vs `115` / `118`*.
 - **Snapshot preflight:** **124** records MotherDuck snapshots using `md_information_schema.database_snapshots` when available, with fallbacks documented in that integration note.
 
 ## 4. Deterministic promotion strategies

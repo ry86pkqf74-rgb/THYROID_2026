@@ -1,8 +1,14 @@
-# THYROID_2026 — current MotherDuck vs repo state
+# THYROID_2026 — MotherDuck vs repo state (default path for script 144)
+
+> **Naming:** This file is the default **output path** for `scripts/144_md_repo_current_state_summary.py`. It is **not** guaranteed fresh relative to your checkout unless **`Commit SHA`** matches `git rev-parse HEAD` **and** you trust the timestamp.
+
+> **Publication narratives:** Human-facing signoff context and superseding validation paths are indexed in [`20260407_publication_signoff_live/README.md`](20260407_publication_signoff_live/README.md). Use that README when reconciling “live signoff” stories vs this machine summary.
 
 > **Not automation SSOT.** Prefer a fresh `119_md_formalization_validate.py --md --release-mode` output (e.g. under `studies/`) for release verdicts. This file reconciles **checked-in** repo artifacts with optional live introspection.
 
-> **Stale guard:** If **`Commit SHA`** below ≠ `git rev-parse HEAD` on your machine, treat **Live MotherDuck** bullets as **historical** until you re-run this generator with `--md`.
+> **Stale guard:** If **`Commit SHA`** below ≠ `git rev-parse HEAD`, treat **Live MotherDuck** bullets as a **point-in-time catalog snapshot** until you re-run: `.venv/bin/python scripts/144_md_repo_current_state_summary.py --md` (RW token via `motherduck.local.toml` / env; see `motherduck_client.py`).
+
+> **Reconciliation note (2026-04-08):** repo HEAD was `78d0edfc29c36182e7be439a40c4315b8e814a41` while the embedded SHA below remained from an **earlier** generator run — **do not** assume live row counts or release tags match prod today without re-running **144 --md**.
 
 > **Repo posture (sync with README):** Latest **live** `119 --release-mode` + specimen/FHIR truth baselines live under `studies/specimen_fhir_release_truth_*` (regenerate with this script + `119_md_formalization_validate.py --md --release-mode`). **Governance:** operator `119` may **PASS WITH WARN** while **manuscript** sign-off still requires **human-reviewed** MRQ/promotion paths (not automation-only verification). **Institutional non-Tg lab wave** (`final_institutional_20260407`) is **ingested**; residual lab gaps are **source-limited**, not a missing-wave blocker. Operator evidence pack: `studies/20260411_final_master_release/EVIDENCE_PACK.md`.
 
