@@ -179,18 +179,30 @@ def resolve_database_for_env(env: str | None = None) -> str:
     return _load_env_databases().get(env_key, _ENV_DATABASES["prod"])
 
 
-def _local_motherduck_toml_dict() -> dict[str, Any]:
-    """Parse ``LOCAL_MOTHERDUCK_TOML_PATH`` when present; ignore parse errors."""
-    path = LOCAL_MOTHERDUCK_TOML_PATH
+def _load_toml_path(path: Path) -> dict[str, Any]:
+    """Load a TOML file. Prefer stdlib ``tomllib`` (Py 3.11+); fall back to PyPI ``toml`` if installed."""
     if not path.is_file():
         return {}
+    raw_bytes = path.read_bytes()
+    try:
+        import tomllib
+
+        data = tomllib.loads(raw_bytes.decode())
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        pass
     try:
         import toml  # type: ignore
 
-        raw = toml.load(str(path))
+        data = toml.loads(raw_bytes.decode())
+        return data if isinstance(data, dict) else {}
     except Exception:
         return {}
-    return raw if isinstance(raw, dict) else {}
+
+
+def _local_motherduck_toml_dict() -> dict[str, Any]:
+    """Parse ``LOCAL_MOTHERDUCK_TOML_PATH`` when present; ignore parse errors."""
+    return _load_toml_path(LOCAL_MOTHERDUCK_TOML_PATH)
 
 
 def get_token(prefer_service_account: bool = False) -> str | None:
@@ -228,16 +240,11 @@ def get_token(prefer_service_account: bool = False) -> str | None:
             return str(val).strip()
 
     secrets_path = Path(".streamlit") / "secrets.toml"
-    if secrets_path.exists():
-        try:
-            import toml  # type: ignore
-            data = toml.load(str(secrets_path))
-            for key in ("MD_SA_TOKEN", "MOTHERDUCK_TOKEN", "motherduck_token"):
-                val = data.get(key)
-                if val and str(val).strip():
-                    return str(val).strip()
-        except Exception:
-            pass
+    data = _load_toml_path(secrets_path)
+    for key in ("MD_SA_TOKEN", "MOTHERDUCK_TOKEN", "motherduck_token"):
+        val = data.get(key)
+        if val and str(val).strip():
+            return str(val).strip()
     return None
 
 
@@ -263,16 +270,11 @@ def get_read_scaling_token() -> str | None:
         if val and str(val).strip():
             return str(val).strip()
     secrets_path = Path(".streamlit") / "secrets.toml"
-    if secrets_path.exists():
-        try:
-            import toml  # type: ignore
-            data = toml.load(str(secrets_path))
-            for key in _READ_SCALING_SECRET_KEYS:
-                val = data.get(key)
-                if val and str(val).strip():
-                    return str(val).strip()
-        except Exception:
-            pass
+    data = _load_toml_path(secrets_path)
+    for key in _READ_SCALING_SECRET_KEYS:
+        val = data.get(key)
+        if val and str(val).strip():
+            return str(val).strip()
     return None
 
 
@@ -288,16 +290,11 @@ def read_scaling_token_mode() -> str:
     if loc.get("MOTHERDUCK_READ_SCALING_TOKEN"):
         return "motherduck.local.toml:MOTHERDUCK_READ_SCALING_TOKEN"
     secrets_path = Path(".streamlit") / "secrets.toml"
-    if secrets_path.exists():
-        try:
-            import toml  # type: ignore
-            data = toml.load(str(secrets_path))
-            if data.get("MD_READ_SCALING_TOKEN"):
-                return "secrets.toml:MD_READ_SCALING_TOKEN"
-            if data.get("MOTHERDUCK_READ_SCALING_TOKEN"):
-                return "secrets.toml:MOTHERDUCK_READ_SCALING_TOKEN"
-        except Exception:
-            pass
+    data = _load_toml_path(secrets_path)
+    if data.get("MD_READ_SCALING_TOKEN"):
+        return "secrets.toml:MD_READ_SCALING_TOKEN"
+    if data.get("MOTHERDUCK_READ_SCALING_TOKEN"):
+        return "secrets.toml:MOTHERDUCK_READ_SCALING_TOKEN"
     return "none"
 
 
@@ -346,16 +343,11 @@ def token_mode() -> str:
     if loc.get("motherduck_token"):
         return "motherduck.local.toml:motherduck_token"
     secrets_path = Path(".streamlit") / "secrets.toml"
-    if secrets_path.exists():
-        try:
-            import toml  # type: ignore
-            data = toml.load(str(secrets_path))
-            if data.get("MD_SA_TOKEN"):
-                return "secrets.toml:MD_SA_TOKEN"
-            if data.get("MOTHERDUCK_TOKEN"):
-                return "secrets.toml:MOTHERDUCK_TOKEN"
-        except Exception:
-            pass
+    data = _load_toml_path(secrets_path)
+    if data.get("MD_SA_TOKEN"):
+        return "secrets.toml:MD_SA_TOKEN"
+    if data.get("MOTHERDUCK_TOKEN"):
+        return "secrets.toml:MOTHERDUCK_TOKEN"
     return "none"
 
 

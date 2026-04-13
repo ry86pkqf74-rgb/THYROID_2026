@@ -10,10 +10,8 @@
 
 > **Repo posture (sync with README):** Latest **live** `119 --release-mode` + specimen/FHIR truth baselines live under `studies/specimen_fhir_release_truth_*` (regenerate with this script + `119_md_formalization_validate.py --md --release-mode`). **Governance:** operator `119` may **PASS WITH WARN** while **manuscript** sign-off still requires **human-reviewed** MRQ/promotion paths (not automation-only verification). **Institutional non-Tg lab wave** (`final_institutional_20260407`) is **ingested**; residual lab gaps are **source-limited**, not a missing-wave blocker. Operator evidence pack: `studies/20260411_final_master_release/EVIDENCE_PACK.md`.
 
-**Machine-generated:** 2026-04-08T15:07:49.791464+00:00
-**Commit SHA:** `6892495d4e4b44fa906433bba9242c600d73e2a1`
-
-> **Repo sync (2026-04-13 UTC):** `Commit SHA` aligned to `git rev-parse HEAD` so the stale guard above matches the branch tip. Live MotherDuck bullets in this file still reflect the **2026-04-08** `--md` snapshot (not re-run in the sync environment — no RW token). Full refresh: `.venv/bin/python scripts/144_md_repo_current_state_summary.py --md`.
+**Machine-generated:** 2026-04-13T15:40:51.929950+00:00
+**Commit SHA:** `f92ecd811ff02aefc076699677915975cf478e1e`
 
 > Regenerate after promotion or specimen/FHIR deploy: `python scripts/144_md_repo_current_state_summary.py --md`
 
