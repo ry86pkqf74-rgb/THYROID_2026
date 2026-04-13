@@ -1,0 +1,4 @@
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+  Snapshot specimen_fhir_qa_diag_pre_20260413_162650: skipped: InvalidInputException('Invalid Input Error: Database is not a native duckdb database so it does not have snapshots') — CREATE SNAPSHOT "specimen_fhir_qa_diag_pre_20260413_162650" OF "Thyroid 2026";
+OK — applied 142_specimen_fhir_qa_diagnostics_ddl.sql (UA=specimen_fhir_live_parity_v1)
