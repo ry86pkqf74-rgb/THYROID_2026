@@ -52,6 +52,19 @@ Commands (run from repo root, `.venv`):
 - To claim **canonical-live** `dicom_*_v1` in MotherDuck `main`, run read-only inventory (e.g. `information_schema` / table list) or `144`/operator checklist and cite row evidence in a study note.
 - Optional future work: thin CI doc check that README and contract DICOM subsection stay in sync (not part of this pass).
 
-## Git
+## Git proof (post-push)
 
-Final commit SHA and GitHub blob URLs: see end of session (`git rev-parse HEAD` after push; `main` blob URLs below).
+- **Branch:** `main`
+- **Commit:** `b76b22fb92f6d8b3e419b2d6edc74061b03f7ddd`
+- **Remote:** `origin/main` matches `HEAD` (`git ls-remote origin main` = same SHA)
+
+**Blob URLs (`main` on origin — same content as reconciliation commit above for the five source files; this report may advance in a follow-up commit):**
+
+| File | URL |
+|------|-----|
+| `README.md` | https://github.com/ry86pkqf74-rgb/THYROID_2026/blob/main/README.md |
+| `docs/motherduck_database_contract_v1.md` | https://github.com/ry86pkqf74-rgb/THYROID_2026/blob/main/docs/motherduck_database_contract_v1.md |
+| `docs/dicom_header_ingest_runbook.md` | https://github.com/ry86pkqf74-rgb/THYROID_2026/blob/main/docs/dicom_header_ingest_runbook.md |
+| `studies/20260408_dicom_header_ingest/design_memo.md` | https://github.com/ry86pkqf74-rgb/THYROID_2026/blob/main/studies/20260408_dicom_header_ingest/design_memo.md |
+| `scripts/129_imaging_fna_linkage_mm_v1.py` | https://github.com/ry86pkqf74-rgb/THYROID_2026/blob/main/scripts/129_imaging_fna_linkage_mm_v1.py |
+| `studies/20260413_dicom_promotion_reconciliation/report.md` | https://github.com/ry86pkqf74-rgb/THYROID_2026/blob/main/studies/20260413_dicom_promotion_reconciliation/report.md |
