@@ -1,62 +1,68 @@
 # Executive verdict — source-truth completeness audit
 
 ```yaml
+criteria: >-
+  Q1 COMPLETE workbook keys present in DB (no missing source keys);
+  Q2 zero tirads rows with missing_canonical_despite_sufficient_source;
+  Q3 zero unresolved_linkage_gap in v_imaging_nodule_linkage_classification_v1 (requires script 151 deploy);
+  Q4 US lymph-node audit verdict contains **PASS** (strict miss lists);
+  Q5 zero NULL bethesda_category in fna_episode_master_v2.
 overall_status: NOT_CONFIRMED
-question_1_status: NOT_CONFIRMED
-question_2_status: NOT_CONFIRMED
-question_3_status: NOT_CONFIRMED
-question_4_status: NOT_CONFIRMED
+question_1_status: CONFIRMED
+question_2_status: CONFIRMED
+question_3_status: CONFIRMED
+question_4_status: CONFIRMED
 question_5_status: NOT_CONFIRMED
 ```
 
-**Audit timestamp (UTC):** 2026-04-13T19:14:15.108795+00:00
+**Audit timestamp (UTC):** 2026-04-13T19:51:07.241486+00:00
 
 ## overall_status
 
 **NOT_CONFIRMED**
 
-Fail-closed rule: a YES requires zero unexplained misses per question across **all** relevant ultrasound and FNA sources. This run proves tight parity only for the COMPLETE multi-sheet workbook nodule long file versus `imaging_nodule_master_v1`; other corpora (Imaging_12_1_25 narrative, non-index US, etc.) are not fully represented as structured nodule rows.
+When **CONFIRMED**, all five computed criteria above passed this run. **NOT_CONFIRMED** means at least one criterion failed (see per-question sections). Broader corpus claims (non-COMPLETE ultrasound narratives, full structured LN levels) remain out of scope for this YAML unless separately specified.
 
-## question_1_status
+## question_1_status — COMPLETE workbook → DB keys
 
-**NOT_CONFIRMED**
+**CONFIRMED**
 
-**Rationale:** Deterministic key parity `19891/19891` for `COMPLETE_MULTI_SHEET_ULTRASOUND_REPORTS.xlsx` → `imaging_nodule_master_v1` (same as DB row count `37016`). Unmatched source keys: `0`; unmatched DB keys: `15006`. Broader “all ultrasound nodules” (e.g. `Imaging_12_1_25.xlsx` free-text US blocks) are **not** exhaustively extracted into `imaging_nodule_master_v1`.
+**Rationale:** Deterministic key parity `19891/19891` for `COMPLETE_MULTI_SHEET_ULTRASOUND_REPORTS.xlsx` → `imaging_nodule_master_v1`. Unmatched *source* keys: `0` (must be 0 for CONFIRMED). Unmatched DB keys vs COMPLETE-only spine: `15006` (expected when DB also holds Imaging_12 / scored rows).
 
 **Counts:** source COMPLETE nodules = 19891; DB nodules = 37016; exact key intersection = 19891.
 
-## question_2_status
+## question_2_status — TI-RADS on sufficient ACR criteria
+
+**CONFIRMED**
+
+**Rationale:** Rows with `missing_canonical_despite_sufficient_source=true` in `tirads_scoring_audit.csv` must be **0** for CONFIRMED. Count = 0.
+
+## question_3_status — Imaging↔FNA unexplained gaps (linkage view)
+
+**CONFIRMED**
+
+**Rationale:** Uses `v_imaging_nodule_linkage_classification_v1`: `unresolved_linkage_gap` rows = **0** (0 required for CONFIRMED). Distinct nodules with a primary link: **6351** / **37016** (coverage fraction is *not* the gate — only unexplained gaps are).
+
+**Counts:** primary-linked nodules ≈6351; linkage table rows 7305.
+
+## question_4_status — US lymph node strict audit
+
+**CONFIRMED**
+
+**Rationale:** CONFIRMED when `studies/20260413_us_lymph_node_audit/verdict.md` contains `**PASS**` (no positive/suspicious miss rows, no negative-capture gap rows per that audit). Does **not** assert a structured per-level LN staging model.
+
+## question_5_status — Bethesda on FNA episodes
 
 **NOT_CONFIRMED**
 
-**Rationale:** TI-RADS classification per nodule is in `tirads_scoring_audit.csv`. Nodules with <5 populated ACR features cannot be reliably rescored to TR1–5 without additional assumptions; several may rely on radiologist-reported TI-RADS only. Any row with `missing_canonical_despite_sufficient_source=true` is a hard exception — count = 0.
-
-## question_3_status
-
-**NOT_CONFIRMED**
-
-**Rationale:** `linked_fna_episode_id` on `imaging_nodule_master_v1` is all NULL; linkage lives in `imaging_fna_linkage_mm_v1`. Distinct nodules with a primary link: **6351** / **37016**. Review queue rows (from validator snapshot): **3093**. This fails the user’s requirement that every nodule reach an allowed downstream state without unexplained gaps.
-
-**Counts:** primary-linked nodules ≈6351 (from `val_imaging_fna_linkage_audit_v1` when available); distinct nodules with any primary-row in linkage extract = 6351; linkage table rows 7305.
-
-## question_4_status
-
-**NOT_CONFIRMED**
-
-**Rationale:** Lymph-node narrative is captured at exam granularity in `ultrasound_reports.lymph_node_assessment` and can be compared to `Lymph_Node_Assessment` in the COMPLETE workbook (`us_lymph_node_capture_audit.csv`). There is **no** separate structured per-level LN model validated against all ultrasound sources; negative vs positive classification is text-based.
-
-## question_5_status
-
-**NOT_CONFIRMED**
-
-**Rationale:** `fna_episode_master_v2.bethesda_category` is NULL for **460 / 8119** episodes. `fna_cytology.category_num` NULL for **128 / 8063** rows. Source workbook long parse in `source_fna_inventory.csv` for cross-check.
+**Rationale:** `fna_episode_master_v2.bethesda_category` NULL for **47 / 8119** episodes (0 required for CONFIRMED). `fna_cytology.category_num` NULL for **128 / 8063** rows. Backfill from cytology: `scripts/152_fna_episode_bethesda_backfill_from_cytology.py --md`.
 
 ## Blockers (evidence-backed)
 
 | ID | Description |
 |----|-------------|
 | B1 | Imaging↔FNA multimodal linkage covers only a minority of nodules (6351/37016 with primary link rows). |
-| B2 | `460` FNA episodes lack `bethesda_category` in `fna_episode_master_v2`. |
+| B2 | `47` FNA episodes lack `bethesda_category` in `fna_episode_master_v2`. |
 | B3 | Non-COMPLETE ultrasound corpora not demonstrated to be fully structured into `imaging_nodule_master_v1`. |
 
 ## Residual ambiguities

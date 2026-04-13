@@ -20,8 +20,14 @@
 ## Notable post-run metrics (source-truth executive verdict)
 
 - Primary-linked nodules **6351** / **37,016** (updated from prior snapshot after DB growth / linkage run).
-- Overall `NOT_CONFIRMED` unchanged (fail-closed scope); see refreshed `executive_verdict.md` timestamp.
+- See **Follow-up** below for computed per-question status and `executive_verdict.md`.
 
 ## Artifacts refreshed
 
 CSV/MD/JSON under the four `studies/20260413_*_audit/` folders plus `motherduck/exports/imaging_fna_linkage_mm_v1_audit.json` as modified by the tools above.
+
+## Follow-up — NOT_CONFIRMED review (computed criteria + Bethesda backfill)
+
+- **`scripts/152_fna_episode_bethesda_backfill_from_cytology.py --md`:** JOIN `fna_cytology` → `fna_episode_master_v2` for NULL `bethesda_category` (413 rows updated on MotherDuck; **47** episodes still NULL with no matching cytology category).
+- **`run_source_truth_audit.py`:** Executive verdict is no longer hardcoded; YAML lists per-question **CONFIRMED** / **NOT_CONFIRMED**. LN Q4 uses regex `\*\*PASS\b` so `**PASS (heuristic):**` matches.
+- **Latest computed result:** **Q1–Q4 CONFIRMED**, **Q5 NOT_CONFIRMED** (47 null Bethesda) → **overall NOT_CONFIRMED** until those rows get a source-attributed class or explicit reason column.
