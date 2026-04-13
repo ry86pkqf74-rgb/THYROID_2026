@@ -2,9 +2,12 @@
 
 **Generated:** 2026-04-13 (local audit; no database writes; no secrets in this file)
 
+**Audit baseline (pre–reconciliation commit):** short SHA **`ad06752`** (full `ad06752ebf4f4df390c057e20a3a5652c35b2939`). **Current `origin/main` tip after publishing this study folder:** short SHA **`762847b`** (includes only the three files under `studies/20260408_repo_state_reconciliation/`).
+
 ## Executive summary
 
-- **Local `main`**, **`origin/main`**, and the **reachable remote tip** for `https://github.com/ry86pkqf74-rgb/THYROID_2026.git` are **identical** at short SHA **`ad06752`** (full SHA `ad06752ebf4f4df390c057e20a3a5652c35b2939`) after `git fetch --all --tags --prune` and `git pull --ff-only`.
+- **At audit time**, **local `main`** and **`origin/main`** were **identical** at **`ad06752`** after `git fetch --all --tags --prune` and `git pull --ff-only`.
+- **2026-04-08 deliverables** below were **already present** on **`origin/main` at `ad06752`** (no missing files vs remote for that scope).
 - Short SHAs **`4b65186`** and **`28005b5`** are **real commits**, **reachable from current `HEAD`**, and **present on `origin/main`** (same ancestry as local).
 - All listed **2026-04-08 artifact paths** exist **both** on disk and **tracked on `origin/main`** — there is **no drift** between local clone and remote for this scope.
 - **Public CI** (`.github/workflows/ci.yml` on `main`) includes the **offline validation execution expansion** associated with `28005b5` (`validation-contracts-offline` pytest bundle) and the **data contract gate** job for script **145** (`data-contract-gate-offline`).
@@ -14,8 +17,10 @@
 
 | Reference | Short SHA | Full SHA |
 |-----------|-----------|----------|
-| `HEAD` (local `main`) | `ad06752` | `ad06752ebf4f4df390c057e20a3a5652c35b2939` |
-| `origin/main` | `ad06752` | `ad06752ebf4f4df390c057e20a3a5652c35b2939` |
+| `origin/main` @ audit start | `ad06752` | `ad06752ebf4f4df390c057e20a3a5652c35b2939` |
+| `origin/main` after reconciliation push | `762847b` | `762847b956e298877f77fa4ab3687717826347e2` |
+
+After `git pull`, **`HEAD`** and **`origin/main`** should both match **`762847b`** (unless newer commits exist).
 
 **Remote**
 
