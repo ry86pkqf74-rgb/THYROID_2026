@@ -4,7 +4,8 @@
 
 Ingests the wide-format per-nodule data from raw_us_tirads_excel_v1 into
 a proper long-format structure, then **supplements** with nodule rows from
-raw_us_tirads_scored_v1 (US Nodules TIRADS workbook) when there is no
+raw_us_tirads_scored_v1 (US Nodules TIRADS workbook) and **Imaging_12_1_25.xlsx**
+(inferred exam-slot nodules; ``utils/imaging_12_slots.py``) when there is no
 existing master row for the same (research_id, nodule_number) within ±30 days,
 matching the audit linkage rule. Enables nodule-level linkage to FNA and pathology.
 
@@ -12,6 +13,7 @@ Tables created:
   imaging_nodule_master_v1    -- one row per nodule per exam (long-format)
   imaging_exam_master_v1      -- one row per imaging exam
   imaging_patient_summary_v1  -- one row per patient
+  raw_imaging_12_slots_v1     -- optional: full parse of Imaging_12_1_25.xlsx
 
 Also creates nodule identity tracking across serial exams when possible.
 
@@ -500,6 +502,166 @@ def supplement_imaging_nodule_master_from_scored(
 
 
 # ---------------------------------------------------------------------------
+# Supplement: Imaging_12_1_25 inferred nodules (exam-slot text splits)
+# ---------------------------------------------------------------------------
+IMAGING12_NODULE_SUPPLEMENT_SQL = """
+INSERT INTO imaging_nodule_master_v1 (
+    research_id, exam_date, nodule_number, exam_id, nodule_id,
+    tirads_reported, tirads_acr_recalculated,
+    composition, echogenicity, shape, margins, calcifications,
+    length_mm, width_mm, height_mm, volume_ml, location_raw, laterality,
+    source_table, tirads_concordant_flag, max_dimension_cm, tirads_category, suspicious_flag
+)
+SELECT
+    CAST(s.research_id AS INTEGER) AS research_id,
+    CAST(s.exam_date AS DATE) AS exam_date,
+    CAST(s.nodule_number AS INTEGER) AS nodule_number,
+    MD5(CONCAT(
+        CAST(s.research_id AS VARCHAR), '_',
+        CAST(COALESCE(CAST(s.exam_date AS DATE), DATE '1900-01-01') AS VARCHAR)
+    )) AS exam_id,
+    MD5(CONCAT(
+        CAST(s.research_id AS VARCHAR), '_',
+        CAST(COALESCE(CAST(s.exam_date AS DATE), DATE '1900-01-01') AS VARCHAR), '_',
+        CAST(s.nodule_number AS VARCHAR)
+    )) AS nodule_id,
+    CAST(NULL AS INTEGER) AS tirads_reported,
+    CAST(NULL AS INTEGER) AS tirads_acr_recalculated,
+    CAST(NULL AS VARCHAR) AS composition,
+    CAST(NULL AS VARCHAR) AS echogenicity,
+    CAST(NULL AS VARCHAR) AS shape,
+    CAST(NULL AS VARCHAR) AS margins,
+    CAST(NULL AS VARCHAR) AS calcifications,
+    CAST(NULL AS DOUBLE) AS length_mm,
+    CAST(NULL AS DOUBLE) AS width_mm,
+    CAST(NULL AS DOUBLE) AS height_mm,
+    CAST(NULL AS DOUBLE) AS volume_ml,
+    NULLIF(TRIM(CAST(s.location_raw AS VARCHAR)), '') AS location_raw,
+    CAST(NULL AS VARCHAR) AS laterality,
+    'raw_imaging_12_slots_v1' AS source_table,
+    CAST(NULL AS BOOLEAN) AS tirads_concordant_flag,
+    CAST(NULL AS DOUBLE) AS max_dimension_cm,
+    CAST(NULL AS VARCHAR) AS tirads_category,
+    CAST(FALSE AS BOOLEAN) AS suspicious_flag
+FROM tmp_imaging12 s
+WHERE CAST(s.exam_date AS DATE) IS NOT NULL
+  AND s.research_id IS NOT NULL
+  AND s.nodule_number IS NOT NULL
+  AND NOT EXISTS (
+    SELECT 1
+    FROM imaging_nodule_master_v1 m
+    WHERE CAST(m.research_id AS INTEGER) = CAST(s.research_id AS INTEGER)
+      AND CAST(m.nodule_number AS INTEGER) = CAST(s.nodule_number AS INTEGER)
+      AND m.exam_date IS NOT NULL
+      AND ABS(date_diff('day', m.exam_date, CAST(s.exam_date AS DATE))) <= 30
+  )
+"""
+
+# Imaging_12 rows with unparseable US dates: audit keys are ``rid||nod`` (stable_key with empty date).
+IMAGING12_NODULE_SUPPLEMENT_UNDATED_SQL = """
+INSERT INTO imaging_nodule_master_v1 (
+    research_id, exam_date, nodule_number, exam_id, nodule_id,
+    tirads_reported, tirads_acr_recalculated,
+    composition, echogenicity, shape, margins, calcifications,
+    length_mm, width_mm, height_mm, volume_ml, location_raw, laterality,
+    source_table, tirads_concordant_flag, max_dimension_cm, tirads_category, suspicious_flag
+)
+SELECT
+    CAST(s.research_id AS INTEGER) AS research_id,
+    CAST(NULL AS DATE) AS exam_date,
+    CAST(s.nodule_number AS INTEGER) AS nodule_number,
+    MD5(CONCAT(CAST(s.research_id AS VARCHAR), '|undated')) AS exam_id,
+    MD5(CONCAT(
+        CAST(s.research_id AS VARCHAR), '||',
+        CAST(s.nodule_number AS VARCHAR)
+    )) AS nodule_id,
+    CAST(NULL AS INTEGER) AS tirads_reported,
+    CAST(NULL AS INTEGER) AS tirads_acr_recalculated,
+    CAST(NULL AS VARCHAR) AS composition,
+    CAST(NULL AS VARCHAR) AS echogenicity,
+    CAST(NULL AS VARCHAR) AS shape,
+    CAST(NULL AS VARCHAR) AS margins,
+    CAST(NULL AS VARCHAR) AS calcifications,
+    CAST(NULL AS DOUBLE) AS length_mm,
+    CAST(NULL AS DOUBLE) AS width_mm,
+    CAST(NULL AS DOUBLE) AS height_mm,
+    CAST(NULL AS DOUBLE) AS volume_ml,
+    NULLIF(TRIM(CAST(s.location_raw AS VARCHAR)), '') AS location_raw,
+    CAST(NULL AS VARCHAR) AS laterality,
+    'raw_imaging_12_slots_v1' AS source_table,
+    CAST(NULL AS BOOLEAN) AS tirads_concordant_flag,
+    CAST(NULL AS DOUBLE) AS max_dimension_cm,
+    CAST(NULL AS VARCHAR) AS tirads_category,
+    CAST(FALSE AS BOOLEAN) AS suspicious_flag
+FROM tmp_imaging12_nd s
+WHERE s.research_id IS NOT NULL
+  AND s.nodule_number IS NOT NULL
+  AND NOT EXISTS (
+    SELECT 1
+    FROM imaging_nodule_master_v1 m
+    WHERE CAST(m.research_id AS INTEGER) = CAST(s.research_id AS INTEGER)
+      AND CAST(m.nodule_number AS INTEGER) = CAST(s.nodule_number AS INTEGER)
+      AND m.exam_date IS NULL
+  )
+"""
+
+
+def supplement_imaging_nodule_master_from_imaging12(
+    con: duckdb.DuckDBPyConnection,
+    excel_path: Path,
+) -> int:
+    """Append Imaging_12 inferred nodules (same keys as linkage audit). Returns rows added."""
+    from utils.imaging_12_slots import (
+        imaging_12_supplement_for_master_from_parsed,
+        parse_imaging_12_exam_slots,
+    )
+
+    if not excel_path.is_file():
+        return 0
+    full = parse_imaging_12_exam_slots(excel_path)
+    if not full.empty:
+        con.execute("DROP TABLE IF EXISTS raw_imaging_12_slots_v1")
+        con.register("_tmp_i12full", full)
+        con.execute("CREATE TABLE raw_imaging_12_slots_v1 AS SELECT * FROM _tmp_i12full")
+        con.unregister("_tmp_i12full")
+    slim_dated, slim_undated = imaging_12_supplement_for_master_from_parsed(full)
+    if slim_dated.empty and slim_undated.empty:
+        return 0
+    if not slim_dated.empty:
+        slim_dated = slim_dated.drop_duplicates(
+            subset=["research_id", "exam_date", "nodule_number"], keep="first"
+        )
+    if not slim_undated.empty:
+        slim_undated = slim_undated.drop_duplicates(
+            subset=["research_id", "nodule_number"], keep="first"
+        )
+    try:
+        before = int(
+            _require_row(
+                con.execute("SELECT COUNT(*) FROM imaging_nodule_master_v1").fetchone()
+            )[0]
+        )
+        if not slim_dated.empty:
+            con.register("tmp_imaging12", slim_dated)
+            con.execute(IMAGING12_NODULE_SUPPLEMENT_SQL)
+        if not slim_undated.empty:
+            con.register("tmp_imaging12_nd", slim_undated)
+            con.execute(IMAGING12_NODULE_SUPPLEMENT_UNDATED_SQL)
+        after = int(
+            _require_row(
+                con.execute("SELECT COUNT(*) FROM imaging_nodule_master_v1").fetchone()
+            )[0]
+        )
+        return after - before
+    finally:
+        for name in ("tmp_imaging12", "tmp_imaging12_nd"):
+            try:
+                con.unregister(name)
+            except Exception:
+                pass
+
+
+# ---------------------------------------------------------------------------
 # imaging_exam_master_v1 -- one row per exam
 # ---------------------------------------------------------------------------
 IMAGING_EXAM_MASTER_SQL = """
@@ -643,6 +805,21 @@ def build_multinodule_tables(con: duckdb.DuckDBPyConnection,
                     ).fetchone()
                 )
                 print(f"    imaging_nodule_master_v1 (after supplement): "
+                      f"{r[0]:,} nodule rows, {r[1]:,} patients")
+
+            p12 = RAW / "Imaging_12_1_25.xlsx"
+            if p12.is_file():
+                print("  Supplementing imaging_nodule_master_v1 from "
+                      "Imaging_12_1_25.xlsx (inferred exam-slot nodules, ±30d dedup)...")
+                n_i12 = supplement_imaging_nodule_master_from_imaging12(con, p12)
+                print(f"    Imaging_12 inferred nodule rows appended: {n_i12:,}")
+                r = _require_row(
+                    con.execute(
+                        "SELECT COUNT(*), COUNT(DISTINCT research_id) "
+                        "FROM imaging_nodule_master_v1"
+                    ).fetchone()
+                )
+                print(f"    imaging_nodule_master_v1 (after Imaging_12 supplement): "
                       f"{r[0]:,} nodule rows, {r[1]:,} patients")
 
             print("  Building imaging_exam_master_v1...")
