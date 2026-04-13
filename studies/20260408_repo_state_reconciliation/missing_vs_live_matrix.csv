@@ -1,0 +1,12 @@
+artifact_path,local_present,origin_main_tracked,match_notes
+studies/20260408_validation_gap_assessment/,yes,yes,Tracked files include assessment.md recommendation.md coverage_matrix.csv
+studies/20260408_validation_execution_upgrade/,yes,yes,Tracked files include before_after.md coverage_matrix.md
+studies/20260408_data_contract_gate/,yes,yes,README.md on origin/main
+scripts/145_data_contract_gate.py,yes,yes,Same path at origin/main tip
+config/data_contracts/,yes,yes,Multiple yaml contracts tracked
+tests/test_data_contract_gate.py,yes,yes,Same path at origin/main tip
+docs/data_contract_gate.md,yes,yes,Same path at origin/main tip
+tests/test_lab_canonical_contract_offline.py,yes,yes,Same path at origin/main tip
+tests/test_validation_engine_lab_sql_offline.py,yes,yes,Same path at origin/main tip
+commit_short_sha_4b65186,reachable,reachable,Commit 4b65186c3183141f8bfadefb7ffcd77e4161e675 on origin/main ancestry
+commit_short_sha_28005b5,reachable,reachable,Commit 28005b52210702fa01990f657b0318384468a594 on origin/main ancestry
