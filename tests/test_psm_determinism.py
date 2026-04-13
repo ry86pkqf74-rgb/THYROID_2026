@@ -20,48 +20,54 @@ if str(PSM_MOD_DIR) not in sys.path:
     sys.path.insert(0, str(PSM_MOD_DIR))
 
 
+def _make_stub(name: str, attrs: dict) -> types.ModuleType:
+    mod = types.ModuleType(name)
+    for key, value in attrs.items():
+        setattr(mod, key, value)
+    return mod
+
+
 def _stub_optional_deps() -> None:
     """Avoid importing heavy optional plotting/stats deps for the pure PSM test.
 
-    The PSM module imports seaborn / lifelines / statsmodels / yaml at the
-    top level, but `propensity_match` uses only sklearn, numpy, pandas,
+    The PSM module imports seaborn / lifelines / statsmodels / yaml / matplotlib
+    at the top level, but `propensity_match` uses only sklearn, numpy, pandas,
     scipy.stats.fisher_exact. We stub the heavy ones out so the test can
     run in minimal environments (CI, slim container).
     """
-    # lifelines exposes KaplanMeierFitter and statistics.logrank_test
     if "lifelines" not in sys.modules:
-        m_life = types.ModuleType("lifelines")
-        m_life.KaplanMeierFitter = type("KaplanMeierFitter", (), {})
-        sys.modules["lifelines"] = m_life
-        m_life_stats = types.ModuleType("lifelines.statistics")
-        m_life_stats.logrank_test = lambda *a, **k: None
-        sys.modules["lifelines.statistics"] = m_life_stats
-    for name in ("seaborn", "yaml"):
-        if name not in sys.modules:
-            sys.modules[name] = types.ModuleType(name)
-            if name == "seaborn":
-                sys.modules[name].set_theme = lambda *a, **k: None
-            if name == "yaml":
-                sys.modules[name].safe_load = lambda *a, **k: {}
-                sys.modules[name].dump = lambda *a, **k: ""
+        sys.modules["lifelines"] = _make_stub(
+            "lifelines", {"KaplanMeierFitter": type("KaplanMeierFitter", (), {})}
+        )
+        sys.modules["lifelines.statistics"] = _make_stub(
+            "lifelines.statistics", {"logrank_test": lambda *a, **k: None}
+        )
+    if "seaborn" not in sys.modules:
+        sys.modules["seaborn"] = _make_stub("seaborn", {"set_theme": lambda *a, **k: None})
+    if "yaml" not in sys.modules:
+        sys.modules["yaml"] = _make_stub(
+            "yaml",
+            {"safe_load": lambda *a, **k: {}, "dump": lambda *a, **k: ""},
+        )
     if "matplotlib" not in sys.modules:
-        m_mpl = types.ModuleType("matplotlib")
-        m_mpl.use = lambda *a, **k: None
-        m_mpl.rcParams = {}
-        sys.modules["matplotlib"] = m_mpl
-        m_plt = types.ModuleType("matplotlib.pyplot")
-        m_plt.subplots = lambda *a, **k: (None, None)
-        m_plt.tight_layout = lambda *a, **k: None
-        m_plt.close = lambda *a, **k: None
-        m_plt.rcParams = {}
-        sys.modules["matplotlib.pyplot"] = m_plt
+        sys.modules["matplotlib"] = _make_stub(
+            "matplotlib", {"use": lambda *a, **k: None, "rcParams": {}}
+        )
+        sys.modules["matplotlib.pyplot"] = _make_stub(
+            "matplotlib.pyplot",
+            {
+                "subplots": lambda *a, **k: (None, None),
+                "tight_layout": lambda *a, **k: None,
+                "close": lambda *a, **k: None,
+                "rcParams": {},
+            },
+        )
     if "statsmodels" not in sys.modules:
-        m_sm = types.ModuleType("statsmodels")
-        sys.modules["statsmodels"] = m_sm
-        m_sm_api = types.ModuleType("statsmodels.api")
-        m_sm_api.add_constant = lambda x, **k: x
-        m_sm_api.Logit = type("Logit", (), {})
-        sys.modules["statsmodels.api"] = m_sm_api
+        sys.modules["statsmodels"] = _make_stub("statsmodels", {})
+        sys.modules["statsmodels.api"] = _make_stub(
+            "statsmodels.api",
+            {"add_constant": lambda x, **k: x, "Logit": type("Logit", (), {})},
+        )
 
 
 _stub_optional_deps()
