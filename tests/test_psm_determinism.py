@@ -44,6 +44,17 @@ def _stub_optional_deps() -> None:
             if name == "yaml":
                 sys.modules[name].safe_load = lambda *a, **k: {}
                 sys.modules[name].dump = lambda *a, **k: ""
+    if "matplotlib" not in sys.modules:
+        m_mpl = types.ModuleType("matplotlib")
+        m_mpl.use = lambda *a, **k: None
+        m_mpl.rcParams = {}
+        sys.modules["matplotlib"] = m_mpl
+        m_plt = types.ModuleType("matplotlib.pyplot")
+        m_plt.subplots = lambda *a, **k: (None, None)
+        m_plt.tight_layout = lambda *a, **k: None
+        m_plt.close = lambda *a, **k: None
+        m_plt.rcParams = {}
+        sys.modules["matplotlib.pyplot"] = m_plt
     if "statsmodels" not in sys.modules:
         m_sm = types.ModuleType("statsmodels")
         sys.modules["statsmodels"] = m_sm
