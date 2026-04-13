@@ -100,6 +100,7 @@ studies/*_motherduck_live_release_audit/manual_review_queue.csv
 # ── Fact lineage QC reports (ephemeral, timestamped) ──────────
 exports/fact_lineage_qc/
 exports/review_queue_triage_*/
+exports/fna_bethesda_residual_worklist_*/
 
 # ── Extraction pipeline: PHI-sensitive data (never commit) ────
 processed/remaining/*.parquet

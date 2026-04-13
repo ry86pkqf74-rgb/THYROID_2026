@@ -53,6 +53,10 @@ For `fna_episode_id = 1` (and `10637` / ep 3), spot checks on **`FNAs 12_5_2025.
 - The **8× episode-4** cases are blocked by **missing `fna_index = 4` in `fna_cytology`** (and empty FNA4 Bethesda/path in the wide sheet).  
 - **`8330`** needs **human correction** of misfiled path text or chart-sourced Bethesda.
 
+## Update — script 154 (path_text parse + worklist)
+
+`scripts/154_fna_cytology_bethesda_from_path_text.py` applies the same **deterministic** “Bethesda Category … / cytopathology category …” rules to **`fna_cytology.path_text`** (deduped per `research_id`, `fna_index`), then re-runs the script **152**-style join into `fna_episode_master_v2`, and writes a timestamped **`exports/fna_bethesda_residual_worklist_*/`** CSV + manifest for manual review. On the current MotherDuck snapshot, **Phase A updated 0** cytology rows (no `category_num` NULL row had extractable Bethesda text—consistent with §Summary). **23** episodes remain on the worklist until ingest or adjudication.
+
 ---
 
 _Generated 2026-04-13; sources: MotherDuck `fna_episode_master_v2`, `fna_history`, `fna_cytology`, `raw/FNAs 12_5_2025.xlsx`._
