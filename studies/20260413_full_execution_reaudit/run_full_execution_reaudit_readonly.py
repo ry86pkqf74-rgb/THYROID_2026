@@ -36,6 +36,68 @@ def _safe_q(con, sql: str) -> pd.DataFrame:
         return pd.DataFrame({"error": [str(ex)[:500]]})
 
 
+def _parse_triple_key(k: str) -> tuple[int, str | None, int] | None:
+    parts = k.split("|")
+    if len(parts) != 3:
+        return None
+    try:
+        return int(parts[0]), (parts[1] or None), int(parts[2])
+    except ValueError:
+        return None
+
+
+def _covered_by_script50_dedup_policy(
+    img: pd.DataFrame, rid: int, nod: int, date_s: str | None
+) -> bool:
+    """Match ``scripts/50_multinodule_imaging.py`` supplement NOT EXISTS rule (±30d)."""
+    sub = img[
+        (img["research_id"].astype(int) == rid)
+        & (img["nodule_number"].astype(int) == nod)
+    ]
+    if sub.empty:
+        return False
+    if not date_s:
+        undated = sub["exam_date"].isna() | sub["exam_date"].isnull()
+        return bool(undated.any())
+    try:
+        src = pd.Timestamp(date_s)
+    except (ValueError, TypeError):
+        return False
+    for ed in sub["exam_date"]:
+        if ed is None or (isinstance(ed, float) and np.isnan(ed)):
+            continue
+        try:
+            ex = pd.Timestamp(ed)
+        except (ValueError, TypeError):
+            continue
+        if abs(int((src - ex).days)) <= 30:
+            return True
+    return False
+
+
+def _policy_alignment_counts(
+    img: pd.DataFrame, strict_miss: set[str], corpus_label: str
+) -> dict[str, Any]:
+    aligned = 0
+    true_gap = 0
+    for k in strict_miss:
+        p = _parse_triple_key(k)
+        if not p:
+            true_gap += 1
+            continue
+        rid, ds, nod = p
+        if _covered_by_script50_dedup_policy(img, rid, nod, ds):
+            aligned += 1
+        else:
+            true_gap += 1
+    return {
+        "corpus": corpus_label,
+        "strict_unmatched_keys": len(strict_miss),
+        "aligned_with_script50_30d_dedup_rule": aligned,
+        "true_gap_after_30d_policy": true_gap,
+    }
+
+
 def main() -> int:
     meta = {
         "utc": datetime.now(timezone.utc).isoformat(),
@@ -243,6 +305,18 @@ def main() -> int:
             }
         )
     pd.DataFrame(rows_cov).to_csv(OUT / "us_nodule_coverage_audit.csv", index=False)
+
+    # Script 50 uses ±30d dedup: strict key misses are expected when COMPLETE date
+    # differs from scored/Imaging_12 date within the window (same rid+nodule).
+    miss_scored = src_scored - db_keys
+    miss_i12 = src_i12 - db_keys
+    pol = pd.DataFrame(
+        [
+            _policy_alignment_counts(img, miss_scored, "scored_TIRADS_excel"),
+            _policy_alignment_counts(img, miss_i12, "Imaging_12_inferred_slots"),
+        ]
+    )
+    pol.to_csv(OUT / "us_nodule_coverage_audit_policy_aligned.csv", index=False)
 
     # Per-source-key detail for unmatched (capped)
     unmatched_rows = []

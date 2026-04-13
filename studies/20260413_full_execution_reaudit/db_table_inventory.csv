@@ -15,8 +15,4 @@ imaging_fna_linkage_v3,9911.0,
 fna_episode_master_v2,8119.0,
 fna_cytology,8063.0,
 extracted_tirads_validated_v1,3439.0,
-serial_imaging_us,,"Catalog Error: Table with name serial_imaging_us does not exist!
-Did you mean ""imaging_patient_summary_v1""?
-
-LINE 1: SELECT COUNT(*) AS n FROM serial_imaging_us
-                                  ^"
+serial_imaging_us,0.0,
