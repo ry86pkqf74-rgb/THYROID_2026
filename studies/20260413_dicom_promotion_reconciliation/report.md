@@ -55,17 +55,17 @@ Commands (run from repo root, `.venv`):
 ## Git proof (post-push)
 
 - **Branch:** `main`
-- **Tip commit (includes doc + git-proof report):** `513bdcb2c8f766c1723687c14293212d0ee442b9`
+- **Tip commit (`main` / `origin/main`):** `1b53276c5f2bc3c67a45c041361e2500f963e8d5`
 - **Reconciliation commit (docs + 129 note, first push):** `b76b22fb92f6d8b3e419b2d6edc74061b03f7ddd`
-- **Remote:** `origin/main` matches `HEAD` after push (`git ls-remote origin main` = tip SHA).
+- **Remote:** `git ls-remote origin main` matches `HEAD` at tip.
 
-**Pinned blob URLs (tip commit `513bdcb`):**
+**Pinned blob URLs (tip commit `1b53276`):**
 
 | File | URL |
 |------|-----|
-| `README.md` | https://github.com/ry86pkqf74-rgb/THYROID_2026/blob/513bdcb2c8f766c1723687c14293212d0ee442b9/README.md |
-| `docs/motherduck_database_contract_v1.md` | https://github.com/ry86pkqf74-rgb/THYROID_2026/blob/513bdcb2c8f766c1723687c14293212d0ee442b9/docs/motherduck_database_contract_v1.md |
-| `docs/dicom_header_ingest_runbook.md` | https://github.com/ry86pkqf74-rgb/THYROID_2026/blob/513bdcb2c8f766c1723687c14293212d0ee442b9/docs/dicom_header_ingest_runbook.md |
-| `studies/20260408_dicom_header_ingest/design_memo.md` | https://github.com/ry86pkqf74-rgb/THYROID_2026/blob/513bdcb2c8f766c1723687c14293212d0ee442b9/studies/20260408_dicom_header_ingest/design_memo.md |
-| `scripts/129_imaging_fna_linkage_mm_v1.py` | https://github.com/ry86pkqf74-rgb/THYROID_2026/blob/513bdcb2c8f766c1723687c14293212d0ee442b9/scripts/129_imaging_fna_linkage_mm_v1.py |
-| `studies/20260413_dicom_promotion_reconciliation/report.md` | https://github.com/ry86pkqf74-rgb/THYROID_2026/blob/513bdcb2c8f766c1723687c14293212d0ee442b9/studies/20260413_dicom_promotion_reconciliation/report.md |
+| `README.md` | https://github.com/ry86pkqf74-rgb/THYROID_2026/blob/1b53276c5f2bc3c67a45c041361e2500f963e8d5/README.md |
+| `docs/motherduck_database_contract_v1.md` | https://github.com/ry86pkqf74-rgb/THYROID_2026/blob/1b53276c5f2bc3c67a45c041361e2500f963e8d5/docs/motherduck_database_contract_v1.md |
+| `docs/dicom_header_ingest_runbook.md` | https://github.com/ry86pkqf74-rgb/THYROID_2026/blob/1b53276c5f2bc3c67a45c041361e2500f963e8d5/docs/dicom_header_ingest_runbook.md |
+| `studies/20260408_dicom_header_ingest/design_memo.md` | https://github.com/ry86pkqf74-rgb/THYROID_2026/blob/1b53276c5f2bc3c67a45c041361e2500f963e8d5/studies/20260408_dicom_header_ingest/design_memo.md |
+| `scripts/129_imaging_fna_linkage_mm_v1.py` | https://github.com/ry86pkqf74-rgb/THYROID_2026/blob/1b53276c5f2bc3c67a45c041361e2500f963e8d5/scripts/129_imaging_fna_linkage_mm_v1.py |
+| `studies/20260413_dicom_promotion_reconciliation/report.md` | https://github.com/ry86pkqf74-rgb/THYROID_2026/blob/1b53276c5f2bc3c67a45c041361e2500f963e8d5/studies/20260413_dicom_promotion_reconciliation/report.md |
