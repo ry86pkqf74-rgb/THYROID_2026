@@ -1,0 +1,53 @@
+{
+  "scratch_database": {
+    "name": "thyroid_ete_fix_20260413",
+    "database_id": "289206ed-81fd-4135-af44-2e5d1fe137e4",
+    "created_ts_utc": "2026-04-13T22:29:15Z",
+    "cloned_from": "Thyroid 2026 (DUCKLAKE)",
+    "snapshot_retention_days": 30,
+    "initial_active_bytes": 689975296
+  },
+  "named_snapshots": [
+    {
+      "snapshot_name": "ete_pre_export_decision",
+      "snapshot_id": "14d0067b-d924-4dc0-a776-53d8d7dc1e18",
+      "created_ts_utc": "2026-04-13T22:30:21Z",
+      "phase": "Phase 2 / pre Phase 3",
+      "purpose": "Baseline immediately after zero-copy clone, before any export-source decision work."
+    },
+    {
+      "snapshot_name": "ete_pre_ajcc7_unification",
+      "snapshot_id": null,
+      "created_ts_utc": null,
+      "phase": "Phase 4 pre-transition",
+      "purpose": "Pending — created immediately before AJCC7 refactor."
+    },
+    {
+      "snapshot_name": "ete_pre_psm_policy",
+      "snapshot_id": null,
+      "created_ts_utc": null,
+      "phase": "Phase 5 pre-transition",
+      "purpose": "Pending — created immediately before PSM determinism changes."
+    },
+    {
+      "snapshot_name": "ete_pre_manuscript_packaging",
+      "snapshot_id": null,
+      "created_ts_utc": null,
+      "phase": "Phase 6 pre-transition",
+      "purpose": "Pending — created immediately before manuscript-numeric propagation."
+    }
+  ],
+  "canonical_ete_tables_row_counts": {
+    "manuscript_cohort_v1": 10871,
+    "analysis_cancer_cohort_v1": 4136,
+    "analysis_recurrence_subset_v1": 1946,
+    "extracted_ete_subgraded_v1": 3558,
+    "imaging_patient_summary_v1": 6126,
+    "patient_refined_master_clinical_v12": 12886
+  },
+  "service_account": {
+    "status": "not_created",
+    "reason": "SQL-level service account provisioning not supported by MCP surface; requires MotherDuck org admin UI.",
+    "phase_7_followup": true
+  }
+}

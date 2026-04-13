@@ -1,0 +1,65 @@
+{
+  "session": {
+    "branch": "ete-remediation-20260413",
+    "base_sha": "4795d42df5f7b63b1c94a69395a4db8300657a9d",
+    "generated_ts_utc": "2026-04-13T21:49Z"
+  },
+  "ajcc7_derivation": {
+    "canonical_corrected": {
+      "file": "studies/proposal2_ete_staging/audit_reproduce.py",
+      "function": "derive_ajcc7_corrected",
+      "t3b_maps_to": "T3"
+    },
+    "stale_executable": [
+      {
+        "file": "studies/proposal2_ete_staging/proposal2_ete_analysis.py",
+        "function": "derive_ajcc7_t_stage",
+        "t3b_line": 117,
+        "t3b_maps_to": "T4a"
+      },
+      {
+        "file": "studies/proposal2_ete_staging/proposal2_expanded_cohort.py",
+        "function": "derive_ajcc7",
+        "t3b_line": 149,
+        "t3b_maps_to": "T4a"
+      }
+    ],
+    "reference_original": {
+      "file": "studies/proposal2_ete_staging/audit_reproduce.py",
+      "function": "derive_ajcc7_original",
+      "note": "audit comparator — retain"
+    }
+  },
+  "export_readers": [
+    "studies/proposal2_ete_staging/proposal2_ete_analysis.py",
+    "studies/proposal2_ete_staging/proposal2_expanded_cohort.py",
+    "studies/proposal2_ete_staging/proposal2_endpoint_psm_strata.py",
+    "studies/proposal2_ete_staging/proposal2_recommendations.py",
+    "studies/proposal2_ete_staging/audit_reproduce.py",
+    "manuscripts/ete_ajcc8_202603/revision_rerun_20260326/run_psm_reproduction.py"
+  ],
+  "psm": {
+    "primary": "studies/proposal2_ete_staging/proposal2_endpoint_psm_strata.py",
+    "function": "propensity_match",
+    "seed": 42,
+    "caliper": 0.05,
+    "covariates": ["age_at_surgery", "female", "largest_tumor_cm", "n_positive_flag"],
+    "declared_anchor_pairs": 711,
+    "rerun_variants_seen": [711, 712, 1006]
+  },
+  "manuscript": {
+    "packet": "manuscripts/ete_ajcc8_202603/MANUSCRIPT_REVISION_PACKET_20260326.md",
+    "do_not_source_without_proof": ["manuscript_v1.md"]
+  },
+  "governance_scripts": [
+    "scripts/90_manuscript_freeze_rebuild.py",
+    "scripts/94_map_dedup_validator.py",
+    "scripts/95_environment_promotion.py",
+    "scripts/96_release_manifest.py"
+  ],
+  "frozen_exports_sha256": {
+    "exports/ptc_full.csv": "8583a6456cdec0734f7f069292e65e66eca830742d2db5fe95b4a1768e3906e0",
+    "exports/recurrence_full.csv": "bb3ebf6f536100037afb87dd2ab0aca70e46ecd28f4b38ab86a27c0c0d7e38f7",
+    "exports/imaging_correlation.csv": "fe337f98da394244066dbabd7de6149fa05979d3feb9971b1066739fe424ac42"
+  }
+}
