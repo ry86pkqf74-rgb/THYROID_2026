@@ -1,0 +1,245 @@
+{
+  "schema_version": "1.0",
+  "generated_ts_utc": "2026-04-13T22:48:21Z",
+  "branch": "ete-remediation-20260413",
+  "manuscript_master": {
+    "path": "manuscripts/ete_ajcc8_202603/manuscript_ete_master.md",
+    "sha256": "5128ecdf60ed3edeebc1262ddaf7ddf5b7cc47dc45240d04a5a29303682b044e"
+  },
+  "frozen_source_artifacts": {
+    "analysis_metadata_yaml": {
+      "path": "studies/proposal2_ete_staging/analysis_metadata.yaml",
+      "sha256": "36a8dfa2e4e30ad824822c88593bd7dfc6a422446088301072ff3a1429be3366"
+    },
+    "analysis_report_md": {
+      "path": "studies/proposal2_ete_staging/analysis_report.md",
+      "sha256": "96e48c532a8886d9a0386b81857c9d9405f69c8a380b12125c6e0665d7af59fe"
+    },
+    "audit_report_md": {
+      "path": "studies/proposal2_ete_staging/audit_report.md",
+      "sha256": "f2bf3e5e04c179791649e32db2fa04180916bc6844b10188579cefb1d60dff1a"
+    },
+    "table3_ordinal_regression_csv": {
+      "path": "studies/proposal2_ete_staging/audit_tables/table3_ordinal_regression.csv",
+      "sha256": "785877684baaa17d9d99832d1fc5c01e6c592db4f986aa4fee9ae8387d86b767"
+    },
+    "table6_psm_effect_csv": {
+      "path": "studies/proposal2_ete_staging/audit_tables/table6_propensity_matching_effect.csv",
+      "sha256": "20146220320206fa3ecfdffc6d024e47d24b62a03addf778134bf0c1750f7469"
+    },
+    "table6_psm_balance_csv": {
+      "path": "studies/proposal2_ete_staging/audit_tables/table6_propensity_matching_balance.csv",
+      "sha256": "af4ab38ae6987b716b4b3698cf87bb6d758894f5675ced58581ee193e88df434"
+    },
+    "table8_interaction_tests_csv": {
+      "path": "studies/proposal2_ete_staging/audit_tables/table8_interaction_tests.csv",
+      "sha256": "730924259085714f564c90adc2d7511d434427a01dd3f59d65d6c295f28d9ed9"
+    },
+    "ajcc7_diff_md": {
+      "path": "artifacts/ete_ajcc7_diff.md",
+      "sha256": "4e0a3f746b1904496003a59239d92d627db22e601a864ca2369021ff92b123d8"
+    },
+    "export_freeze_manifest_json": {
+      "path": "artifacts/ete_export_freeze_manifest.json",
+      "sha256": "c76239b3e038949832e59cc9c22edba6d213f7f23cb0dff0cc512e1f2d5f0875"
+    },
+    "psm_stability_report_md": {
+      "path": "artifacts/ete_psm_stability_report.md",
+      "sha256": "63b401afb4010b2f2e0111d2e5e0c52f60aa990730fe7d938ca50f835d7c456c"
+    }
+  },
+  "numeric_claims": [
+    {
+      "claim_id": "cohort.expanded_n",
+      "value": 3278,
+      "units": "patients",
+      "source_ref": "analysis_metadata_yaml:cohort"
+    },
+    {
+      "claim_id": "cohort.classic_n",
+      "value": 596,
+      "units": "patients",
+      "source_ref": "tables/analytic_cohort.csv"
+    },
+    {
+      "claim_id": "ordinal.complete_case_n",
+      "value": 3269,
+      "units": "patients",
+      "source_ref": "table3_ordinal_regression_csv"
+    },
+    {
+      "claim_id": "ordinal.mete_or_cc",
+      "value": 0.603,
+      "units": "OR",
+      "source_ref": "table3_ordinal_regression_csv"
+    },
+    {
+      "claim_id": "ordinal.mete_or_ci_low",
+      "value": 0.505,
+      "units": "OR",
+      "source_ref": "table3_ordinal_regression_csv"
+    },
+    {
+      "claim_id": "ordinal.mete_or_ci_high",
+      "value": 0.72,
+      "units": "OR",
+      "source_ref": "table3_ordinal_regression_csv"
+    },
+    {
+      "claim_id": "ordinal.age_or",
+      "value": 1.05,
+      "units": "OR per year",
+      "source_ref": "table3_ordinal_regression_csv"
+    },
+    {
+      "claim_id": "ordinal.ln_ratio_or",
+      "value": 1.309,
+      "units": "OR",
+      "source_ref": "table3_ordinal_regression_csv"
+    },
+    {
+      "claim_id": "mi.mete_or",
+      "value": 0.602,
+      "units": "OR",
+      "source_ref": "analysis_metadata_yaml:mi"
+    },
+    {
+      "claim_id": "auc.base_cv_mean",
+      "value": 0.851,
+      "units": "AUC",
+      "source_ref": "analysis_metadata_yaml:auc"
+    },
+    {
+      "claim_id": "auc.full",
+      "value": 0.876,
+      "units": "AUC",
+      "source_ref": "analysis_metadata_yaml:auc"
+    },
+    {
+      "claim_id": "psm.pairs_frozen",
+      "value": 711,
+      "units": "pairs",
+      "source_ref": "table6_psm_effect_csv",
+      "policy": "anchor"
+    },
+    {
+      "claim_id": "psm.noete_structural_pct",
+      "value": 10.55,
+      "units": "percent",
+      "source_ref": "table6_psm_effect_csv"
+    },
+    {
+      "claim_id": "psm.mete_structural_pct",
+      "value": 14.49,
+      "units": "percent",
+      "source_ref": "table6_psm_effect_csv"
+    },
+    {
+      "claim_id": "psm.risk_difference_pct",
+      "value": 3.94,
+      "units": "percentage points",
+      "source_ref": "table6_psm_effect_csv"
+    },
+    {
+      "claim_id": "psm.or_frozen",
+      "value": 1.434,
+      "units": "OR",
+      "source_ref": "table6_psm_effect_csv",
+      "policy": "anchor"
+    },
+    {
+      "claim_id": "psm.fisher_p_frozen",
+      "value": 0.03,
+      "units": "p-value",
+      "source_ref": "table6_psm_effect_csv",
+      "policy": "anchor"
+    },
+    {
+      "claim_id": "psm.smd_n1_after",
+      "value": -0.576,
+      "units": "SMD",
+      "source_ref": "table6_psm_balance_csv"
+    },
+    {
+      "claim_id": "interaction.mete_x_age_p",
+      "value": 0.258,
+      "units": "p-value",
+      "source_ref": "table8_interaction_tests_csv"
+    },
+    {
+      "claim_id": "interaction.mete_x_n1_p",
+      "value": 0.006,
+      "units": "p-value",
+      "source_ref": "table8_interaction_tests_csv"
+    },
+    {
+      "claim_id": "interaction.mete_x_n1_or",
+      "value": 0.36,
+      "units": "OR",
+      "source_ref": "table8_interaction_tests_csv"
+    },
+    {
+      "claim_id": "ajcc7.t3b_to_t3_tumor1_n",
+      "value": 276,
+      "units": "rows",
+      "source_ref": "ajcc7_diff_md"
+    },
+    {
+      "claim_id": "ajcc7.t3b_to_t3_audit_n",
+      "value": 346,
+      "units": "rows",
+      "source_ref": "audit_report_md"
+    },
+    {
+      "claim_id": "ete.n1_prevalence_no_ete_pct",
+      "value": 56.9,
+      "units": "percent",
+      "source_ref": "audit_report_md:table1"
+    },
+    {
+      "claim_id": "ete.n1_prevalence_mete_pct",
+      "value": 67.2,
+      "units": "percent",
+      "source_ref": "audit_report_md:table1"
+    },
+    {
+      "claim_id": "ete.n1_prevalence_gross_pct",
+      "value": 74.7,
+      "units": "percent",
+      "source_ref": "audit_report_md:table1"
+    },
+    {
+      "claim_id": "age_sensitivity.ge55_mete_or",
+      "value": 0.87,
+      "units": "OR",
+      "source_ref": "audit_report_md:sensitivity"
+    },
+    {
+      "claim_id": "age_sensitivity.lt55_mete_or",
+      "value": 0.44,
+      "units": "OR",
+      "source_ref": "audit_report_md:sensitivity"
+    }
+  ],
+  "excluded_from_claims": [
+    {
+      "ref": "ct_exam_count_7701",
+      "reason": "Not reported in this manuscript; manuscript uses qualitative CT-timing wording only per MANUSCRIPT_REVISION_PACKET guidance."
+    },
+    {
+      "ref": "manuscript_v1_hr_1.84",
+      "reason": "Belongs to a different analysis (pool_malignancy_202603); not an ETE-package claim."
+    }
+  ],
+  "policy": {
+    "export_source": "Branch A (frozen)",
+    "psm_anchor": "711 pairs (frozen); reruns = sensitivity only",
+    "ajcc7_mapping": "T3b -> T3 (canonical)",
+    "live_reanalysis_claim_allowed": false,
+    "live_reanalysis_blockers": [
+      "No export refresh/lock has been performed on this branch.",
+      "No PSM rerun has been promoted to anchor (none intended).",
+      "Release governance (Phase 7) has not yet fully green-gated."
+    ]
+  }
+}

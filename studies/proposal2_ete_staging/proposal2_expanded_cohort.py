@@ -132,69 +132,22 @@ def classify_ete(df):
     return df
 
 
-# ── 2. AJCC7 DERIVATION ─────────────────────────────────────────────────
+# ── 2. AJCC7 DERIVATION (delegates to canonical ajcc7_mapping) ──────────
 
 def derive_ajcc7(df):
-    df = df.copy()
-    size = df["largest_tumor_cm"].fillna(0)
-    ete_g = df["ete_group"].astype(str)
-    t8 = df["t_stage_ajcc8"].fillna("")
+    """Delegate AJCC 7th derivation to the canonical shared helper.
 
-    ajcc7_t = []
-    for i in range(len(df)):
-        s, eg, t = size.iloc[i], ete_g.iloc[i], t8.iloc[i]
-        if t in ("T4a", "T4b"):
-            ajcc7_t.append(t)
-        elif t == "T3b":
-            ajcc7_t.append("T4a")
-        elif eg == "Microscopic ETE" and s <= 4:
-            ajcc7_t.append("T3")
-        elif eg == "Microscopic ETE" and s > 4:
-            ajcc7_t.append("T3")
-        elif s > 4:
-            ajcc7_t.append("T3")
-        elif s > 2:
-            ajcc7_t.append("T2")
-        elif s > 1:
-            ajcc7_t.append("T1b")
-        elif s > 0:
-            ajcc7_t.append("T1a")
-        else:
-            ajcc7_t.append("Unknown")
-
-    df["t_stage_ajcc7"] = ajcc7_t
-
-    age = df["age_at_surgery"].fillna(45)
-    n = df["n_stage_ajcc8"].fillna("NX")
-    m = df.get("m_stage_ajcc8", pd.Series("M0", index=df.index)).fillna("M0")
-
-    stage7 = []
-    for i in range(len(df)):
-        a = age.iloc[i]
-        t7 = ajcc7_t[i]
-        ni = n.iloc[i]
-        mi = m.iloc[i] if isinstance(m.iloc[i], str) else "M0"
-
-        if a < 45:
-            stage7.append("II" if mi == "M1" else "I")
-        elif t7 in ("T4a", "T4b"):
-            if mi == "M1":
-                stage7.append("IVC")
-            else:
-                stage7.append("IVA")
-        elif t7 == "T3":
-            stage7.append("IVA" if ni.startswith("N1") else "III")
-        elif ni.startswith("N1"):
-            stage7.append("III")
-        elif t7 in ("T1a", "T1b"):
-            stage7.append("I")
-        elif t7 == "T2":
-            stage7.append("II")
-        else:
-            stage7.append("I")
-
-    df["overall_stage_ajcc7"] = stage7
-    return df
+    Previously inlined a T3b -> T4a mapping that disagreed with the audit
+    workflow (see studies/proposal2_ete_staging/audit_report.md:14). Now
+    calls :func:`ajcc7_mapping.add_ajcc7_columns`, which uses T3b -> T3.
+    """
+    import sys
+    from pathlib import Path as _Path
+    _here = _Path(__file__).resolve().parent
+    if str(_here) not in sys.path:
+        sys.path.insert(0, str(_here))
+    from ajcc7_mapping import add_ajcc7_columns
+    return add_ajcc7_columns(df)
 
 
 # ── 3. MULTIPLE IMPUTATION ──────────────────────────────────────────────

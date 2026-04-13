@@ -1,0 +1,49 @@
+name: ETE remediation gates
+
+on:
+  push:
+    branches:
+      - ete-remediation-**
+      - main
+    paths:
+      - studies/proposal2_ete_staging/**
+      - tests/test_ajcc7_mapping.py
+      - tests/test_psm_determinism.py
+      - tests/test_ete_manifest_integrity.py
+      - artifacts/ete_manuscript_numeric_manifest.json
+      - .github/workflows/ete_remediation.yml
+  pull_request:
+    paths:
+      - studies/proposal2_ete_staging/**
+      - tests/test_ajcc7_mapping.py
+      - tests/test_psm_determinism.py
+      - tests/test_ete_manifest_integrity.py
+      - artifacts/ete_manuscript_numeric_manifest.json
+      - .github/workflows/ete_remediation.yml
+  workflow_dispatch:
+
+jobs:
+  ete-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install minimal deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install --quiet pandas numpy scikit-learn scipy pytest tabulate
+
+      - name: AJCC7 mapping regression tests
+        run: pytest tests/test_ajcc7_mapping.py -v --tb=short
+
+      - name: PSM determinism regression tests
+        run: pytest tests/test_psm_determinism.py -v --tb=short
+
+      - name: Manuscript numeric-manifest integrity
+        run: pytest tests/test_ete_manifest_integrity.py -v --tb=short

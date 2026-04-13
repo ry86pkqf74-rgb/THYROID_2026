@@ -1,0 +1,31 @@
+{
+  "ro_share": {
+    "name": "thyroid_research_ro_v2",
+    "url": "md:_share/thyroid_research_ro_v2/2558f066-1c5d-46a5-afbc-800fd5f7568d",
+    "object_count": 376
+  },
+  "candidate_canonical_ete_sources": {
+    "cohort_primary": "thyroid_research_ro_v2.main.manuscript_cohort_v1",
+    "cohort_cancer": "thyroid_research_ro_v2.main.analysis_cancer_cohort_v1",
+    "cohort_recurrence": "thyroid_research_ro_v2.main.analysis_recurrence_subset_v1",
+    "ete_subgraded": "thyroid_research_ro_v2.main.extracted_ete_subgraded_v1",
+    "imaging_patient_summary": "thyroid_research_ro_v2.main.imaging_patient_summary_v1",
+    "imaging_fna_linkage_mm": "thyroid_research_ro_v2.main.imaging_fna_linkage_mm_v1",
+    "clinical_master": "thyroid_research_ro_v2.main.patient_refined_master_clinical_v12"
+  },
+  "prod_lake": {
+    "name": "Thyroid 2026",
+    "type": "ducklake",
+    "created_ts_utc": "2026-04-02T08:31:53Z",
+    "snapshot_retention": "7 days (default)"
+  },
+  "latest_prepromote": "Thyroid 2026 Molecular PrePromote specimen_fhir_replay_20260413_1625",
+  "latest_qa": "Thyroid 2026 Molecular QA 20260407",
+  "scratch_db_plan": {
+    "name": "thyroid_ete_fix_20260413",
+    "source": "thyroid_research_ro_v2 (RO share — cannot be direct clone source; we clone an attached DB instead)",
+    "actual_clone_source": "Thyroid 2026",
+    "target_snapshot_retention": "30 days"
+  },
+  "session_generated_ts_utc": "2026-04-13T21:50Z"
+}

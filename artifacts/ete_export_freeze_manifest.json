@@ -1,0 +1,43 @@
+{
+  "declared_branch": "A_FROZEN",
+  "freeze_timestamp_utc": "2026-04-13T22:35Z",
+  "frozen_exports": [
+    {
+      "path": "exports/ptc_full.csv",
+      "rows": 2844,
+      "columns": 18,
+      "mtime": "2026-03-10T20:30",
+      "size_bytes": 5573899,
+      "sha256": "8583a6456cdec0734f7f069292e65e66eca830742d2db5fe95b4a1768e3906e0"
+    },
+    {
+      "path": "exports/recurrence_full.csv",
+      "rows": 4290,
+      "columns": 24,
+      "mtime": "2026-03-10T20:30",
+      "size_bytes": 623400,
+      "sha256": "bb3ebf6f536100037afb87dd2ab0aca70e46ecd28f4b38ab86a27c0c0d7e38f7"
+    },
+    {
+      "path": "exports/imaging_correlation.csv",
+      "rows": 4290,
+      "columns": 12,
+      "mtime": "2026-03-10T20:30",
+      "size_bytes": 141113,
+      "sha256": "fe337f98da394244066dbabd7de6149fa05979d3feb9971b1066739fe424ac42"
+    }
+  ],
+  "consumers": [
+    "studies/proposal2_ete_staging/proposal2_ete_analysis.py",
+    "studies/proposal2_ete_staging/proposal2_expanded_cohort.py",
+    "studies/proposal2_ete_staging/proposal2_endpoint_psm_strata.py",
+    "studies/proposal2_ete_staging/proposal2_recommendations.py",
+    "studies/proposal2_ete_staging/audit_reproduce.py",
+    "manuscripts/ete_ajcc8_202603/revision_rerun_20260326/run_psm_reproduction.py"
+  ],
+  "label_for_downstream_rerun": "frozen export rerun (not live-database reanalysis)",
+  "forbidden_claims": [
+    "latest live-database reanalysis",
+    "fresh MotherDuck-backed rerun"
+  ]
+}
