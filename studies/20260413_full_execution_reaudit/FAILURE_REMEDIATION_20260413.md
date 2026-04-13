@@ -20,13 +20,25 @@ Follow-up to the read-only full execution re-audit. This documents what was **ad
 
 **Resolved:** Differences between strict keys and canonical rows are **explained** by the script 50 ±30d dedup rule and asymmetric corpus design (`imaging_nodule_long_v2` COMPLETE-only row count vs supplement corpora), not by an undiagnosed ingestion bug in this pass.
 
-## Still open (unchanged)
+## Addressed as documentation / analyst VIEW (not silent data fixes)
+
+### B3 — NULL `bethesda_category` in episode master
+
+- **Use** `v_fna_episode_bethesda_resolved_v1` for numeric Bethesda completeness (`COALESCE` episode + `fna_cytology`).
+- **Deploy** `v_fna_bethesda_episode_vs_resolved_v1` via `scripts/156_md_bethesda_episode_vs_resolved_view.py --md` (pairs episode column vs resolved; requires `151` deployed first).
+- Details: `open_items_b3_b5.md`.
+
+### B5 — No per-level US LN table
+
+- Documented in **`open_items_b3_b5.md`** — exam-level fields only; future work needs a governed extraction feed.
+
+## Still open (unchanged at “strong standard” level)
 
 | ID | Item | Notes |
 |----|------|--------|
-| B3 | 23 `fna_episode_master_v2` rows with NULL `bethesda_category` | Resolved view shows **0 fixable** gaps; remainder need new rules or source data, not silent backfill. |
-| B5 | Structured per-level US lymph-node table | No repo table; exam-level/heuristic only. |
-| Strong standard | Cross-corpus TI-RADS sufficiency, pathology linkage in view, universal numeric Bethesda | See `executive_verdict.md` — **strong** standard remains **FAIL** for these reasons. |
+| B3 (strong wording) | “Every episode row has numeric Bethesda in `fna_episode_master_v2` alone” | Still **false**; analysis should use resolved view + buckets above. |
+| B5 (strong wording) | Full structured LN level/laterality/size | Still **not in repo**; see `open_items_b3_b5.md`. |
+| Strong standard | Cross-corpus TI-RADS sufficiency, pathology linkage in view, etc. | See `executive_verdict.md` — **strong** standard remains **FAIL** for these reasons. |
 
 ## Artifacts
 
