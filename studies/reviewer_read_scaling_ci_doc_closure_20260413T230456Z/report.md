@@ -2,8 +2,11 @@
 
 ## Git SHA
 
-- **Implementation (code, tests, docs, initial report):** `276bbac836d295faad7d9e9797c4a8abadb19a51`
-- **Current `main` tip (report SHA line correction):** `54967a90c9b2095dc3be3b3a229cce2f769d83d9`
+**Primary deliverable (code, tests, docs, initial report):** `276bbac836d295faad7d9e9797c4a8abadb19a51`
+
+Follow-up commits on `main` may only edit this report’s metadata; full history:  
+`git log --oneline -- studies/reviewer_read_scaling_ci_doc_closure_20260413T230456Z/report.md`
+
 
 ## Scope (this deliverable)
 
