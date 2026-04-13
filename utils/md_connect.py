@@ -36,8 +36,10 @@ import duckdb
 from motherduck_client import (
     MotherDuckClient,
     ReadScalingTokenForbiddenError,
+    get_read_scaling_token,
     get_token,
     is_read_scaling_only_environment,
+    read_scaling_token_mode,
 )
 
 
@@ -185,3 +187,59 @@ def connect_md_fail_closed(
         custom_user_agent=custom_user_agent,
         motherduck_session_hint=motherduck_session_hint,
     )
+
+
+def connect_read_scaling_fail_closed(
+    *,
+    md_env: str | None = None,
+    custom_user_agent: str | None = None,
+    motherduck_session_hint: str | None = None,
+    session_hint: str | None = None,
+) -> duckdb.DuckDBPyConnection:
+    """MotherDuck read-scaling token only — least-privilege attach for SELECT exporters.
+
+    Exits with code 1 when ``MD_READ_SCALING_TOKEN`` / ``MOTHERDUCK_READ_SCALING_TOKEN``
+    is missing (clear message; no generic stack trace). Verifies ``PRAGMA database_list``
+    shows a MotherDuck attach (same gate as ``--md`` fail-closed).
+
+    Never use for DDL, promotion, or staging writes — RW paths require
+    :func:`connect_md_fail_closed` or :func:`connect_md_or_file` with ``md=True``.
+    """
+    if not get_read_scaling_token():
+        checked = read_scaling_token_mode()
+        print(
+            "  FATAL: --read-scaling requires a MotherDuck read-scaling token.\n"
+            "  Set MD_READ_SCALING_TOKEN or MOTHERDUCK_READ_SCALING_TOKEN in the environment,\n"
+            "  or add it to motherduck.local.toml / .streamlit/secrets.toml (both gitignored).\n"
+            f"  Resolution audit (no secrets printed): checked={checked}\n"
+            "  Read/write tokens (MOTHERDUCK_TOKEN / MD_SA_TOKEN) do NOT satisfy --read-scaling; "
+            "use --md for RW attach after an operator snapshot.\n"
+            "  Optional: MD_READ_SCALING_SESSION_HINT for stable reader affinity; "
+            "refresh readers via scripts/136_md_read_scaling_snapshot_refresh.py reader after writer snapshot."
+        )
+        sys.exit(1)
+
+    env_name = (md_env or os.getenv("MOTHERDUCK_ENV") or "prod").strip().lower()
+    if env_name not in ("dev", "qa", "prod"):
+        env_name = "prod"
+
+    try:
+        client = MotherDuckClient.for_env(
+            env_name,
+            custom_user_agent=custom_user_agent or os.getenv("MOTHERDUCK_CUSTOM_USER_AGENT"),
+            motherduck_session_hint=motherduck_session_hint,
+        )
+        con = client.connect_read_scaling(session_hint=session_hint)
+    except Exception as e:
+        print(f"  FATAL: read-scaling MotherDuck connection failed: {e}")
+        sys.exit(1)
+
+    if not _verify_md_connection(con):
+        con.close()
+        print(
+            "  FATAL: --read-scaling connected but PRAGMA database_list shows no MotherDuck attach.\n"
+            "  Check MOTHERDUCK_DATABASE / MOTHERDUCK_DB if your catalog name differs."
+        )
+        sys.exit(1)
+    print("  MotherDuck read-scaling connection verified (fail-closed gate passed)")
+    return con

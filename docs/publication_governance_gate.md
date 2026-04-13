@@ -39,6 +39,14 @@ When `qa.promotion_review_decisions` has **at least one row**, release-mode vali
 - **Rehearsal:** `126 --synthetic-fill-mrq-verification '<status>' --no-release-mode` or structural-only `119` without `--release-mode`.
 - **Dry-run:** `126 --dry-run` does not mutate MotherDuck; the synthetic/release incompatibility is enforced before dry-run completes — fix flags and re-run.
 
+## External governance blockers (repo state)
+
+Publication and manuscript **release-mode** sign-off require a **non-empty `true_human_reviewed`** bucket in `qa.manual_review_queue` exports (see `scripts/120_review_queue_triage.py` → `counts_mrq_three_bucket_signoff.csv`) **or** an **explicit publication-policy waiver** recorded out-of-band. **`auto_accepted_*`** and other **automation-only** `verification_status` values are **not** treated as human manuscript sign-off.
+
+Separately, **open** rows on **`qa.specimen_genomic_link_review_v1`** (see `scripts/151_specimen_genomic_review_queue_export.py` and `qa.v_diag_specimen_review_burden_v1`) still impose **specimen–genomic linkage review burden** until burned down or **documented as waived** under org policy.
+
+Historical reviewed CSVs may exist under `studies/**/manual_review_queue.csv`; **additive hydration** into MotherDuck remains an **operator action** (`114` / `126`) with RW credentials — not implied by files living in git alone.
+
 ## Related docs
 
 - [`motherduck_release_runbook_v2.md`](motherduck_release_runbook_v2.md) — validation checklist.

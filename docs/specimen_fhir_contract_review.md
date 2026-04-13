@@ -18,16 +18,13 @@ Do **not** use `MD_READ_SCALING_TOKEN` for **138** / **139** / **140** / **143**
 
 ## CI (offline)
 
-GitHub Actions `multimodal-tests` job runs pytest (blocking, no secrets) for:
+Workflow split:
 
-- `tests/test_specimen_identity_layer.py`
-- `tests/test_specimen_fhir_layer.py`
-- `tests/test_specimen_fhir_qa_diagnostics.py`
-- `tests/test_specimen_genomics_binding.py`
-- `tests/test_specimen_fhir_release_gate.py` (119 Check 13 / gate orchestration helpers)
-- `tests/test_specimen_fhir_scripts_offline.py` — temp-DuckDB coverage for **`141`** export, **`143`** + `142` diagnostic DDL, **`144`** (`--introspect-local`), and **`138 --dry-run`** orchestrator smoke
+1. **`llm-extraction-gold`** (blocking, no secrets): full offline extraction regressions **plus** the specimen / FHIR script suite — including `tests/test_specimen_identity_layer.py`, `tests/test_specimen_fhir_layer.py`, `tests/test_specimen_fhir_qa_diagnostics.py`, `tests/test_specimen_genomics_binding.py`, `tests/test_specimen_fhir_scripts_offline.py`, **`tests/test_120_review_queue_triage.py`**, **`tests/test_151_specimen_genomic_review_export.py`**, and related triage exports. Covers **`141`** NDJSON export smoke, **`143`** + `142` DDL paths, **`144`** (`--introspect-local`), **`138 --dry-run`** orchestrator smoke, and **read-scaling CLI wiring** for `120` / `151` via monkeypatch (no live MotherDuck).
 
-No MotherDuck token is required for this job.
+2. **`multimodal-tests`** (blocking, no secrets): multimodal imaging↔FNA contracts **plus** `tests/test_specimen_fhir_release_gate.py` (119 Check 13 / release-gate helpers only — not the full specimen/FHIR offline script suite).
+
+No MotherDuck token is required for either job.
 
 ## Validation surfaces
 
@@ -90,9 +87,15 @@ After a release snapshot on the writer catalog, readers using **`MD_READ_SCALING
      .venv/bin/python scripts/136_md_read_scaling_snapshot_refresh.py reader --md-env prod
    MD_READ_SCALING_TOKEN=… MD_READ_SCALING_SESSION_HINT=thy_review_01 \
      .venv/bin/python scripts/141_fhir_specimen_json_export.py --read-scaling
+   MD_READ_SCALING_TOKEN=… \
+     .venv/bin/python scripts/120_review_queue_triage.py --read-scaling --output-root exports
+   MD_READ_SCALING_TOKEN=… \
+     .venv/bin/python scripts/151_specimen_genomic_review_queue_export.py --read-scaling --output-root exports
    ```
 
    Output directory pattern: `exports/fhir_specimen_<UTC_timestamp>/` with `specimen_bundles.ndjson`, `manifest.json`, and `README.md`. That tree is **gitignored**; keep manifests or study notes under `studies/` if you need provenance in git.
+
+   The same **least-privilege** read-scaling path applies to **governance exports** (`120` MRQ triage, `151` specimen–genomic review burden) as to **`141`**: use `MD_READ_SCALING_TOKEN` only, run **`136 … reader`** (or `REFRESH DATABASE`) after the writer snapshot boundary, then `--read-scaling` on those scripts. RW tokens belong with `--md` on those exporters when an operator must attach with the same identity as promotion jobs.
 
 ### Export `manifest.json` (script 141)
 

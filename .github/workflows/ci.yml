@@ -7,7 +7,8 @@ name: Dashboard CI — Hardened
 #   Parallel (no secrets): ruff-and-mypy (+ workflow YAML parse),
 #     llm-extraction-gold (LLM goldens + registry/provenance/fleet + specimen/FHIR offline suite +
 #       scripts 141/143/144 via tests/test_specimen_fhir_scripts_offline.py),
-#     multimodal-tests (mm contract + imaging↔FNA + specimen_fhir_release_gate only),
+#     multimodal-tests (mm contract + imaging↔FNA + specimen_fhir_release_gate only;
+#       full specimen/FHIR offline suite lives in llm-extraction-gold incl. test_151),
 #     validation-contracts-offline (script 29 VAL_LAB SQL + ALL_VALIDATION_SQL registry surface +
 #       lab canonical in-memory contract + linkage-confidence fixture tests — no MotherDuck writes).
 #     data-contract-gate-offline (script 145 YAML contracts + hash-chain ledger — fixture parquet only).
@@ -184,6 +185,7 @@ jobs:
             tests/test_specimen_fhir_qa_diagnostics.py \
             tests/test_specimen_genomics_binding.py \
             tests/test_specimen_fhir_scripts_offline.py \
+            tests/test_151_specimen_genomic_review_export.py \
             -v --tb=short
 
   # ── Multimodal contract + imaging↔FNA linkage (offline DuckDB, no secrets) ─

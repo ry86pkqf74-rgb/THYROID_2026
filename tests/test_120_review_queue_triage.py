@@ -240,3 +240,50 @@ def test_main_writes_timestamped_bundle(monkeypatch, tmp_path):
     assert len(wl_files) >= 1
 
     _assert_bundle_exports_no_raw_notes(bundle, forbidden=MRQ_FORBIDDEN_SNAPSHOT)
+
+
+def test_connect_read_scaling_fail_closed_exits_without_token(monkeypatch):
+    """No MD_READ_SCALING_TOKEN: fail-closed helper must exit 1 with an actionable message."""
+    import utils.md_connect as mdc
+
+    monkeypatch.setattr(mdc, "get_read_scaling_token", lambda: None)
+    monkeypatch.setattr(mdc, "read_scaling_token_mode", lambda: "none")
+    with pytest.raises(SystemExit) as exc:
+        mdc.connect_read_scaling_fail_closed(md_env="prod")
+    assert exc.value.code == 1
+
+
+def test_main_read_scaling_uses_patched_connection(monkeypatch, tmp_path):
+    """--read-scaling routes through connect_read_scaling_fail_closed (monkeypatched to local seed DB)."""
+    db_file = tmp_path / "triage_rs.duckdb"
+    con = duckdb.connect(str(db_file))
+    _seed_manual_review_queue(con)
+    con.close()
+
+    captured: dict = {}
+
+    def _fake_rs(**_kwargs):
+        captured["called"] = True
+        return duckdb.connect(str(db_file))
+
+    monkeypatch.setattr(triage, "connect_read_scaling_fail_closed", _fake_rs)
+
+    out_root = tmp_path / "exports"
+    monkeypatch.chdir(ROOT)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "120_review_queue_triage.py",
+            "--read-scaling",
+            "--output-root",
+            str(out_root),
+            "--oldest-limit",
+            "50",
+        ],
+    )
+    triage.main()
+    assert captured.get("called") is True
+    bundles = sorted(out_root.glob("review_queue_triage_*"))
+    assert len(bundles) == 1
+    assert (bundles[0] / "summary.md").is_file()

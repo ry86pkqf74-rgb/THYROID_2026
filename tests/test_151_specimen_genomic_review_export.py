@@ -66,3 +66,42 @@ def test_run_export_writes_files(tmp_path: Path, mem_con: duckdb.DuckDBPyConnect
     assert (out / "v_diag_specimen_review_burden_v1.csv").is_file()
     wl = list((out / "worklists").glob("*.csv"))
     assert len(wl) >= 1
+
+
+def test_connect_read_scaling_fail_closed_exits_without_token(monkeypatch: pytest.MonkeyPatch) -> None:
+    import utils.md_connect as mdc
+
+    monkeypatch.setattr(mdc, "get_read_scaling_token", lambda: None)
+    monkeypatch.setattr(mdc, "read_scaling_token_mode", lambda: "none")
+    with pytest.raises(SystemExit) as exc:
+        mdc.connect_read_scaling_fail_closed(md_env="prod")
+    assert exc.value.code == 1
+
+
+def test_main_read_scaling_uses_patched_connection(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, mem_con: duckdb.DuckDBPyConnection
+) -> None:
+    captured: dict[str, bool] = {}
+
+    def _fake_rs(**_kwargs: object) -> duckdb.DuckDBPyConnection:
+        captured["called"] = True
+        return mem_con
+
+    monkeypatch.setattr(sg151, "connect_read_scaling_fail_closed", _fake_rs)
+    out_root = tmp_path / "exports"
+    monkeypatch.chdir(ROOT)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "151_specimen_genomic_review_queue_export.py",
+            "--read-scaling",
+            "--output-root",
+            str(out_root),
+        ],
+    )
+    sg151.main()
+    assert captured.get("called") is True
+    bundles = sorted(out_root.glob("specimen_genomic_review_*"))
+    assert len(bundles) == 1
+    assert (bundles[0] / "summary.md").is_file()

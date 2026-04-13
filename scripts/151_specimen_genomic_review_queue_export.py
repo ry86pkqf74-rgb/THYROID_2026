@@ -13,6 +13,7 @@ Safety:
 
 Usage:
   .venv/bin/python scripts/151_specimen_genomic_review_queue_export.py --md --output-root exports
+  .venv/bin/python scripts/151_specimen_genomic_review_queue_export.py --read-scaling --output-root exports
 """
 
 from __future__ import annotations
@@ -28,10 +29,13 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from utils.md_connect import connect_md_or_file  # noqa: E402
+from utils.md_connect import connect_md_or_file, connect_read_scaling_fail_closed  # noqa: E402
 
 DEFAULT_DB_PATH = ROOT / "thyroid_master.duckdb"
 EXPORTS = ROOT / "exports"
+
+DEFAULT_READ_SCALING_UA = "THYROID_2026_specimen_genomic_review_export_rs/1.0"
+DEFAULT_READ_SCALING_SESSION_HINT = "THYROID_2026_specimen_genomic_review_export_rs_v1"
 
 TRUNC_CONFLICT = 160
 TRUNC_REASON = 120
@@ -41,8 +45,28 @@ TRUNC_ROW_KEY = 96
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--md", action="store_true", help="Query MotherDuck (fail-closed; requires RW token).")
-    p.add_argument("--md-sa", action="store_true", help="Prefer MD_SA_TOKEN over MOTHERDUCK_TOKEN.")
-    p.add_argument("--db-path", default=str(DEFAULT_DB_PATH), help="Local DuckDB path (when not using --md).")
+    p.add_argument(
+        "--read-scaling",
+        action="store_true",
+        help="MotherDuck read-scaling token only (MD_READ_SCALING_TOKEN); least-privilege after REFRESH DATABASE.",
+    )
+    p.add_argument("--md-sa", action="store_true", help="Prefer MD_SA_TOKEN over MOTHERDUCK_TOKEN (with --md only).")
+    p.add_argument(
+        "--md-env",
+        default=None,
+        choices=["dev", "qa", "prod"],
+        help="MotherDuck catalog for --read-scaling (default: MOTHERDUCK_ENV or prod).",
+    )
+    p.add_argument(
+        "--session-hint",
+        default=None,
+        help="Override MOTHERDUCK_SESSION_HINT for MotherDuck query attribution.",
+    )
+    p.add_argument(
+        "--db-path",
+        default=str(DEFAULT_DB_PATH),
+        help="Local DuckDB path (when not using --md or --read-scaling).",
+    )
     p.add_argument(
         "--output-root",
         default=str(EXPORTS),
@@ -51,20 +75,42 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
-def get_connection(args: argparse.Namespace) -> duckdb.DuckDBPyConnection:
-    if args.md:
-        import os
+def _resolved_session_hint(cli: str | None, *, read_scaling: bool) -> str | None:
+    import os
 
+    if cli and str(cli).strip():
+        return str(cli).strip()
+    env = (os.environ.get("MOTHERDUCK_SESSION_HINT") or "").strip()
+    if env:
+        return env
+    if read_scaling:
+        return DEFAULT_READ_SCALING_SESSION_HINT
+    return None
+
+
+def get_connection(args: argparse.Namespace) -> duckdb.DuckDBPyConnection:
+    import os
+
+    if args.md:
+        ua = os.environ.get("MOTHERDUCK_CUSTOM_USER_AGENT") or "THYROID_2026_specimen_genomic_review_export/1.0"
+        cli = args.session_hint.strip() if args.session_hint and str(args.session_hint).strip() else None
+        hint = _resolved_session_hint(cli, read_scaling=False)
         return connect_md_or_file(
             Path(args.db_path),
             md=True,
             fail_closed=True,
             prefer_service_account=args.md_sa,
-            custom_user_agent=os.environ.get(
-                "MOTHERDUCK_CUSTOM_USER_AGENT",
-                "THYROID_2026_specimen_genomic_review_export/1.0",
-            ),
-            motherduck_session_hint=os.environ.get("MOTHERDUCK_SESSION_HINT"),
+            custom_user_agent=ua,
+            motherduck_session_hint=hint,
+        )
+    if args.read_scaling:
+        ua = os.environ.get("MOTHERDUCK_CUSTOM_USER_AGENT") or DEFAULT_READ_SCALING_UA
+        cli = args.session_hint.strip() if args.session_hint and str(args.session_hint).strip() else None
+        hint = _resolved_session_hint(cli, read_scaling=True)
+        return connect_read_scaling_fail_closed(
+            md_env=args.md_env,
+            custom_user_agent=ua,
+            motherduck_session_hint=hint,
         )
     return duckdb.connect(str(args.db_path))
 
@@ -196,6 +242,9 @@ def run_export(con: duckdb.DuckDBPyConnection, out_dir: Path) -> dict[str, int |
 
 def main() -> None:
     args = parse_args()
+    if args.md and args.read_scaling:
+        print("FATAL: pass at most one of --md and --read-scaling.")
+        sys.exit(1)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     out_root = Path(args.output_root)
     out_dir = out_root / f"specimen_genomic_review_{stamp}"

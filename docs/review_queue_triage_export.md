@@ -19,11 +19,19 @@ Read-only bundle for **`qa.manual_review_queue`**: CSVs plus **`summary.md`**, u
 
 ## Commands
 
-**MotherDuck (requires read/write attach token — not read-scaling-only):**
+**MotherDuck (read/write attach — promotion/staging identity; not read-scaling-only):**
 
 ```bash
 export MOTHERDUCK_TOKEN='md_…'   # or use MD_SA_TOKEN with --md-sa
 .venv/bin/python scripts/120_review_queue_triage.py --md
+```
+
+**MotherDuck read-scaling (least privilege — `MD_READ_SCALING_TOKEN` only; run `136 … reader` after writer snapshot):**
+
+```bash
+export MD_READ_SCALING_TOKEN='md_…'
+# optional: MD_READ_SCALING_SESSION_HINT=reviewer_bundle_01
+.venv/bin/python scripts/120_review_queue_triage.py --read-scaling --output-root exports
 ```
 
 **MotherDuck + service-account token precedence:**
@@ -75,6 +83,7 @@ Read-only export for **`qa.specimen_genomic_link_review_v1`** and **`qa.v_diag_s
 
 ```bash
 .venv/bin/python scripts/151_specimen_genomic_review_queue_export.py --md --output-root exports
+.venv/bin/python scripts/151_specimen_genomic_review_queue_export.py --read-scaling --output-root exports
 ```
 
 Output: `exports/specimen_genomic_review_<UTC_YYYYMMDD_HHMMSS>/` with `summary.md`, burden CSV, full detail CSV, and `worklists/*.csv`. Tests: `tests/test_151_specimen_genomic_review_export.py`.
