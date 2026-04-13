@@ -1,0 +1,9 @@
+2026-04-13T17:22:12.911151+00:00 run_source_truth_audit.py start
+2026-04-13T17:22:12.912821+00:00 token_mode=motherduck.local.toml:MOTHERDUCK_TOKEN token=SET
+2026-04-13T17:22:14.826086+00:00 preflight COMPLETE_MULTI_SHEET_ULTRASOUND_REPORTS.xlsx present=True
+2026-04-13T17:22:14.826245+00:00 preflight US Nodules TIRADS 12_1_25.xlsx present=True
+2026-04-13T17:22:14.826302+00:00 preflight Imaging_12_1_25.xlsx present=True
+2026-04-13T17:22:14.826348+00:00 preflight FNAs 12_5_2025.xlsx present=True
+2026-04-13T17:22:33.628776+00:00 connected MotherDuck fail-closed
+2026-04-13T17:22:40.305278+00:00 run_source_truth_audit.py done
+2026-04-13T17:00:00+00:00 git fetch origin && git pull --rebase origin main (already up to date)
