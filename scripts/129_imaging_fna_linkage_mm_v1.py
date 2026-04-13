@@ -5,7 +5,7 @@
 Canonical imaging nodule rows: imaging_nodule_master_v1 (see README / AGENTS).
 
 Builds:
-  imaging_fna_linkage_mm_v1
+  imaging_fna_linkage_mm_v1 (columns relaxed_eligibility_flag, relaxed_tier when staged rules apply)
   val_imaging_fna_linkage_audit_v1
   review_queue_imaging_fna_mm_v1
 
@@ -258,10 +258,79 @@ LINK_TABLE_SQL = """
 CREATE OR REPLACE TABLE imaging_fna_linkage_mm_v1 AS
 WITH
 eligible AS (
-    SELECT *
+    SELECT
+        wp.*,
+        FALSE AS relaxed_eligibility_flag,
+        CAST(NULL AS VARCHAR) AS relaxed_tier
     FROM tt_ifna_mm_wide_pre_v1 wp
     WHERE wp.side_ok
       AND (wp.specimen_match_raw OR wp.size_ok)
+
+    UNION ALL
+
+    SELECT
+        wp.*,
+        TRUE AS relaxed_eligibility_flag,
+        CASE
+            WHEN NOT wp.side_ok
+                 AND wp.specimen_match_raw
+                 AND wp.day_gap_us_before_fna BETWEEN 0 AND 90
+                THEN 'lateral_discord_specimen_match'
+            WHEN wp.side_ok
+                 AND NOT wp.specimen_match_raw
+                 AND NOT wp.size_ok
+                 AND wp.img_size_cm IS NOT NULL
+                 AND wp.fna_size_cm IS NOT NULL
+                 AND ABS(wp.img_size_cm - wp.fna_size_cm)
+                     / GREATEST(wp.img_size_cm, wp.fna_size_cm, 1e-9) > 0.20
+                 AND ABS(wp.img_size_cm - wp.fna_size_cm)
+                     / GREATEST(wp.img_size_cm, wp.fna_size_cm, 1e-9) <= 0.40
+                 AND wp.day_gap_us_before_fna BETWEEN 0 AND 90
+                THEN 'size_drift_20_40pct_temporal'
+            ELSE NULL
+        END AS relaxed_tier
+    FROM tt_ifna_mm_wide_pre_v1 wp
+    WHERE NOT (wp.side_ok AND (wp.specimen_match_raw OR wp.size_ok))
+      AND (
+            (
+                NOT wp.side_ok
+                AND wp.specimen_match_raw
+                AND wp.day_gap_us_before_fna BETWEEN 0 AND 90
+            )
+            OR (
+                wp.side_ok
+                AND NOT wp.specimen_match_raw
+                AND NOT wp.size_ok
+                AND wp.img_size_cm IS NOT NULL
+                AND wp.fna_size_cm IS NOT NULL
+                AND ABS(wp.img_size_cm - wp.fna_size_cm)
+                    / GREATEST(wp.img_size_cm, wp.fna_size_cm, 1e-9) > 0.20
+                AND ABS(wp.img_size_cm - wp.fna_size_cm)
+                    / GREATEST(wp.img_size_cm, wp.fna_size_cm, 1e-9) <= 0.40
+                AND wp.day_gap_us_before_fna BETWEEN 0 AND 90
+            )
+      )
+
+    UNION ALL
+
+    SELECT
+        wp.*,
+        TRUE AS relaxed_eligibility_flag,
+        'singleton_lateral_temporal_only'::VARCHAR AS relaxed_tier
+    FROM tt_ifna_mm_wide_pre_v1 wp
+    INNER JOIN (
+        SELECT research_id, nodule_id
+        FROM tt_ifna_mm_wide_pre_v1
+        WHERE day_gap_us_before_fna BETWEEN 0 AND 90
+        GROUP BY 1, 2
+        HAVING COUNT(*) = 1
+    ) sing
+        ON wp.research_id = sing.research_id
+       AND wp.nodule_id = sing.nodule_id
+    WHERE wp.day_gap_us_before_fna BETWEEN 0 AND 90
+      AND NOT wp.side_ok
+      AND NOT wp.specimen_match_raw
+      AND NOT (wp.side_ok AND (wp.specimen_match_raw OR wp.size_ok))
 )
 ,
 tagged AS (
@@ -281,9 +350,21 @@ tagged AS (
         specimen_site_raw,
         first_surgery_date,
         day_gap_us_before_fna,
+        relaxed_eligibility_flag,
+        relaxed_tier,
         specimen_match_raw AS specimen_match_flag,
-        CASE specimen_match_raw
-            WHEN TRUE THEN 'specimen_key'::VARCHAR
+        CASE
+            WHEN COALESCE(relaxed_eligibility_flag, FALSE)
+                 AND relaxed_tier = 'lateral_discord_specimen_match'
+                THEN 'relaxed_lateral_specimen'::VARCHAR
+            WHEN COALESCE(relaxed_eligibility_flag, FALSE)
+                 AND relaxed_tier = 'size_drift_20_40pct_temporal'
+                THEN 'relaxed_size_drift_40pct'::VARCHAR
+            WHEN COALESCE(relaxed_eligibility_flag, FALSE)
+                 AND relaxed_tier = 'singleton_lateral_temporal_only'
+                THEN 'relaxed_singleton_temporal'::VARCHAR
+            WHEN specimen_match_raw
+                THEN 'specimen_key'::VARCHAR
             ELSE 'temporal_us_90d_pre_fna'::VARCHAR
         END AS match_path,
         CASE
@@ -352,6 +433,8 @@ SELECT
     n_specimen_matches_on_nodule,
     specimen_site_raw,
     first_surgery_date,
+    COALESCE(relaxed_eligibility_flag, FALSE) AS relaxed_eligibility_flag,
+    relaxed_tier,
     CURRENT_TIMESTAMP AS built_at
 FROM prim
 """
@@ -390,17 +473,25 @@ SELECT * FROM (
     UNION ALL
 
     SELECT
-        research_id,
-        nodule_id,
-        CAST(imaging_exam_id AS VARCHAR),
-        CAST(exam_date AS DATE),
-        CAST(fna_episode_id AS INTEGER),
-        CAST(fna_date AS DATE),
+        w.research_id,
+        w.nodule_id,
+        CAST(w.imaging_exam_id AS VARCHAR),
+        CAST(w.exam_date AS DATE),
+        CAST(w.fna_episode_id AS INTEGER),
+        CAST(w.fna_date AS DATE),
         'discordant_laterality'::VARCHAR,
-        CONCAT('gap=', CAST(day_gap_us_before_fna AS VARCHAR)),
+        CONCAT('gap=', CAST(w.day_gap_us_before_fna AS VARCHAR)),
         CURRENT_TIMESTAMP
-    FROM tt_ifna_mm_wide_pre_v1
-    WHERE NOT side_ok
+    FROM tt_ifna_mm_wide_pre_v1 w
+    WHERE NOT w.side_ok
+      AND NOT w.specimen_match_raw
+      AND NOT EXISTS (
+        SELECT 1
+        FROM imaging_fna_linkage_mm_v1 mm
+        WHERE mm.research_id = w.research_id
+          AND mm.nodule_id = w.nodule_id
+          AND mm.fna_episode_id = w.fna_episode_id
+      )
 
     UNION ALL
 
@@ -418,6 +509,15 @@ SELECT * FROM (
     WHERE side_ok
       AND NOT size_ok
       AND NOT specimen_match_raw
+      AND NOT (
+          img_size_cm IS NOT NULL
+          AND fna_size_cm IS NOT NULL
+          AND ABS(img_size_cm - fna_size_cm)
+              / GREATEST(img_size_cm, fna_size_cm, 1e-9) > 0.20
+          AND ABS(img_size_cm - fna_size_cm)
+              / GREATEST(img_size_cm, fna_size_cm, 1e-9) <= 0.40
+          AND day_gap_us_before_fna BETWEEN 0 AND 90
+      )
 ) z
 """
 

@@ -149,6 +149,46 @@ def test_dual_fna_temporal_deterministic_primary(link129) -> None:
 
 
 def test_discordant_side_in_review_not_linked(link129) -> None:
+    """Two FNAs in 0–90d window: not singleton → lateral discord stays review-only, no link."""
+    con = duckdb.connect(":memory:")
+    con.execute(
+        """
+        CREATE TABLE imaging_nodule_master_v1 AS SELECT * FROM (
+            SELECT 9003::INTEGER AS research_id,
+                   'n1'::VARCHAR AS nodule_id,
+                   'ex1'::VARCHAR AS exam_id,
+                   DATE '2024-02-01' AS exam_date,
+                   'left'::VARCHAR AS laterality,
+                   1.0::DOUBLE AS max_dimension_cm,
+                   NULL::VARCHAR AS accession_number
+        ) t
+        """
+    )
+    con.execute(
+        """
+        CREATE TABLE fna_episode_master_v2 AS
+        SELECT * FROM (VALUES
+            (9003::INTEGER, 1::INTEGER, DATE '2024-02-05', 'right'::VARCHAR, NULL::VARCHAR),
+            (9003::INTEGER, 2::INTEGER, DATE '2024-02-12', 'right'::VARCHAR, NULL::VARCHAR)
+        ) AS v(research_id, fna_episode_id, fna_date_native, laterality, specimen_site_raw)
+        """
+    )
+    _materialize(con, link129)
+    row_link = con.execute("SELECT COUNT(*) FROM imaging_fna_linkage_mm_v1").fetchone()
+    assert row_link is not None
+    n_link = row_link[0]
+    assert n_link == 0
+    row_rev = con.execute(
+        "SELECT COUNT(*) FROM review_queue_imaging_fna_mm_v1 "
+        "WHERE review_reason = 'discordant_laterality'"
+    ).fetchone()
+    assert row_rev is not None
+    n_rev = row_rev[0]
+    assert n_rev >= 1
+
+
+def test_singleton_discordant_lateral_links_relaxed(link129) -> None:
+    """Single FNA candidate in window, lateral discord, no specimen → relaxed_singleton_temporal."""
     con = duckdb.connect(":memory:")
     con.execute(
         """
@@ -175,20 +215,77 @@ def test_discordant_side_in_review_not_linked(link129) -> None:
         """
     )
     _materialize(con, link129)
-    row_link = con.execute("SELECT COUNT(*) FROM imaging_fna_linkage_mm_v1").fetchone()
-    assert row_link is not None
-    n_link = row_link[0]
-    assert n_link == 0
-    row_rev = con.execute(
-        "SELECT COUNT(*) FROM review_queue_imaging_fna_mm_v1 "
-        "WHERE review_reason = 'discordant_laterality'"
+    row = con.execute(
+        """
+        SELECT match_path, relaxed_eligibility_flag, is_primary_link
+        FROM imaging_fna_linkage_mm_v1
+        """
     ).fetchone()
-    assert row_rev is not None
-    n_rev = row_rev[0]
-    assert n_rev >= 1
+    assert row is not None
+    assert row[0] == "relaxed_singleton_temporal"
+    assert row[1] is True
+    assert row[2] is True
+    n_rev = con.execute(
+        """
+        SELECT COUNT(*) FROM review_queue_imaging_fna_mm_v1
+        WHERE review_reason = 'discordant_laterality'
+        """
+    ).fetchone()
+    assert n_rev is not None
+    assert n_rev[0] == 0
 
 
 def test_size_drift_gt_20pct_excluded(link129) -> None:
+    """Sizes differ by >40% so row stays out of linkage and remains review-only."""
+    con = duckdb.connect(":memory:")
+    con.execute(
+        """
+        CREATE TABLE imaging_nodule_master_v1 AS SELECT * FROM (
+            SELECT 9004::INTEGER AS research_id,
+                   'n1'::VARCHAR AS nodule_id,
+                   'ex1'::VARCHAR AS exam_id,
+                   DATE '2024-03-01' AS exam_date,
+                   'left'::VARCHAR AS laterality,
+                   2.0::DOUBLE AS max_dimension_cm,
+                   NULL::VARCHAR AS accession_number
+        ) t
+        """
+    )
+    con.execute(
+        """
+        CREATE TABLE fna_episode_master_v2 AS SELECT * FROM (
+            SELECT 9004::INTEGER AS research_id,
+                   1::INTEGER AS fna_episode_id,
+                   DATE '2024-03-08' AS fna_date_native,
+                   'left'::VARCHAR AS laterality,
+                   NULL::VARCHAR AS specimen_site_raw
+        ) t
+        """
+    )
+    con.execute(
+        """
+        CREATE TABLE fna_history AS SELECT * FROM (
+            SELECT 9004::BIGINT AS research_id,
+                   1::INTEGER AS fna_index,
+                   NULL::VARCHAR AS specimen_received,
+                   1.0::DOUBLE AS nodule_size_cm
+        ) t
+        """
+    )
+    _materialize(con, link129)
+    row_n0 = con.execute("SELECT COUNT(*) FROM imaging_fna_linkage_mm_v1").fetchone()
+    assert row_n0 is not None
+    assert row_n0[0] == 0
+    row_sz = con.execute(
+        "SELECT COUNT(*) FROM review_queue_imaging_fna_mm_v1 "
+        "WHERE review_reason = 'size_drift_gt_20pct'"
+    ).fetchone()
+    assert row_sz is not None
+    assert row_sz[0] >= 1
+
+
+def test_relaxed_size_drift_25pct_links_with_flag(link129) -> None:
+    """20–40% drift in 0–90d window is eligible via relaxed tier (not >40%)."""
     con = duckdb.connect(":memory:")
     con.execute(
         """
@@ -224,16 +321,89 @@ def test_size_drift_gt_20pct_excluded(link129) -> None:
         ) t
         """
     )
+    con.execute(
+        """
+        CREATE TABLE tumor_episode_master_v2 AS SELECT * FROM (
+            SELECT 9004::INTEGER AS research_id, DATE '2024-06-01'::DATE AS surgery_date
+        ) t
+        """
+    )
     _materialize(con, link129)
-    row_n0 = con.execute("SELECT COUNT(*) FROM imaging_fna_linkage_mm_v1").fetchone()
-    assert row_n0 is not None
-    assert row_n0[0] == 0
-    row_sz = con.execute(
-        "SELECT COUNT(*) FROM review_queue_imaging_fna_mm_v1 "
-        "WHERE review_reason = 'size_drift_gt_20pct'"
+    row = con.execute(
+        """
+        SELECT is_primary_link, match_path, relaxed_eligibility_flag
+        FROM imaging_fna_linkage_mm_v1
+        """
     ).fetchone()
-    assert row_sz is not None
-    assert row_sz[0] >= 1
+    assert row is not None
+    assert row[0] is True
+    assert row[1] == "relaxed_size_drift_40pct"
+    assert row[2] is True
+
+
+def test_relaxed_lateral_specimen_links_with_flag(link129) -> None:
+    """Laterality discord but matching specimen accession in 0–90d → relaxed primary."""
+    con = duckdb.connect(":memory:")
+    con.execute(
+        """
+        CREATE TABLE imaging_nodule_master_v1 AS SELECT * FROM (
+            SELECT 9006::INTEGER AS research_id,
+                   'n1'::VARCHAR AS nodule_id,
+                   'ex1'::VARCHAR AS exam_id,
+                   DATE '2024-02-01' AS exam_date,
+                   'left'::VARCHAR AS laterality,
+                   1.0::DOUBLE AS max_dimension_cm,
+                   'S99'::VARCHAR AS accession_number
+        ) t
+        """
+    )
+    con.execute(
+        """
+        CREATE TABLE fna_episode_master_v2 AS SELECT * FROM (
+            SELECT 9006::INTEGER AS research_id,
+                   1::INTEGER AS fna_episode_id,
+                   DATE '2024-02-05' AS fna_date_native,
+                   'right'::VARCHAR AS laterality,
+                   NULL::VARCHAR AS specimen_site_raw
+        ) t
+        """
+    )
+    con.execute(
+        """
+        CREATE TABLE fna_history AS SELECT * FROM (
+            SELECT 9006::BIGINT AS research_id,
+                   1::INTEGER AS fna_index,
+                   's99'::VARCHAR AS specimen_received,
+                   1.0::DOUBLE AS nodule_size_cm
+        ) t
+        """
+    )
+    con.execute(
+        """
+        CREATE TABLE tumor_episode_master_v2 AS SELECT * FROM (
+            SELECT 9006::INTEGER AS research_id, DATE '2024-06-01'::DATE AS surgery_date
+        ) t
+        """
+    )
+    _materialize(con, link129)
+    row = con.execute(
+        """
+        SELECT COUNT(*) FROM review_queue_imaging_fna_mm_v1
+        WHERE review_reason = 'discordant_laterality'
+        """
+    ).fetchone()
+    assert row is not None
+    assert row[0] == 0
+    prim = con.execute(
+        """
+        SELECT match_path, relaxed_eligibility_flag, is_primary_link
+        FROM imaging_fna_linkage_mm_v1
+        """
+    ).fetchone()
+    assert prim is not None
+    assert prim[0] == "relaxed_lateral_specimen"
+    assert prim[1] is True
+    assert prim[2] is True
 
 
 def test_same_day_multi_fna_ordinals(link129) -> None:
