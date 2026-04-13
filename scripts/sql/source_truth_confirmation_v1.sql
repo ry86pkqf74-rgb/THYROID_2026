@@ -1,6 +1,9 @@
 -- source_truth_confirmation_v1.sql
 -- Non-destructive views for fail-closed completeness classification.
 -- Deploy: scripts/151_source_truth_confirmation_v1.py --md
+-- Linkage classification: first_surgery from tumor_episode_master_v2 (aligns with script 129);
+--   FNA dates use COALESCE(fna_date_native, resolved_fna_date); unresolved_gap requires preop
+--   0–90d window (exam and FNA on/before first surgery when surgery exists).
 
 -- 1) Bethesda: COALESCE(episode, fna_cytology) + explicit unscorable reason for remainder
 CREATE OR REPLACE VIEW v_fna_episode_bethesda_resolved_v1 AS
@@ -58,16 +61,15 @@ prim AS (
 pfna AS (
     SELECT research_id, COUNT(*) AS n_fna
     FROM fna_episode_master_v2
-    WHERE resolved_fna_date IS NOT NULL
+    WHERE COALESCE(fna_date_native, TRY_CAST(resolved_fna_date AS DATE)) IS NOT NULL
     GROUP BY 1
 ),
 fs AS (
     SELECT
-        research_id,
-        MIN(TRY_CAST(surg_date AS DATE)) AS first_surg
-    FROM path_synoptics
-    WHERE surg_date IS NOT NULL
-      AND TRIM(CAST(surg_date AS VARCHAR)) <> ''
+        CAST(research_id AS BIGINT) AS research_id,
+        MIN(TRY_CAST(surgery_date AS DATE)) AS first_surg
+    FROM tumor_episode_master_v2
+    WHERE research_id IS NOT NULL
     GROUP BY 1
 ),
 img AS (
@@ -91,27 +93,56 @@ enriched AS (
             SELECT 1
             FROM fna_episode_master_v2 f
             WHERE CAST(f.research_id AS BIGINT) = CAST(i.research_id AS BIGINT)
-              AND f.resolved_fna_date IS NOT NULL
+              AND COALESCE(f.fna_date_native, TRY_CAST(f.resolved_fna_date AS DATE)) IS NOT NULL
               AND i.exam_d IS NOT NULL
-              AND f.resolved_fna_date >= i.exam_d
-              AND DATEDIFF('day', i.exam_d, f.resolved_fna_date) BETWEEN 0 AND 90
+              AND COALESCE(f.fna_date_native, TRY_CAST(f.resolved_fna_date AS DATE)) >= i.exam_d
+              AND DATEDIFF(
+                  'day',
+                  i.exam_d,
+                  COALESCE(f.fna_date_native, TRY_CAST(f.resolved_fna_date AS DATE))
+              ) BETWEEN 0 AND 90
+        ) AS has_fna_calendar_0_90d_after_exam,
+        EXISTS (
+            SELECT 1
+            FROM fna_episode_master_v2 f
+            WHERE CAST(f.research_id AS BIGINT) = CAST(i.research_id AS BIGINT)
+              AND COALESCE(f.fna_date_native, TRY_CAST(f.resolved_fna_date AS DATE)) IS NOT NULL
+              AND i.exam_d IS NOT NULL
+              AND COALESCE(f.fna_date_native, TRY_CAST(f.resolved_fna_date AS DATE)) >= i.exam_d
+              AND DATEDIFF(
+                  'day',
+                  i.exam_d,
+                  COALESCE(f.fna_date_native, TRY_CAST(f.resolved_fna_date AS DATE))
+              ) BETWEEN 0 AND 90
+              AND (
+                  fs.first_surg IS NULL
+                  OR (
+                      i.exam_d <= fs.first_surg
+                      AND COALESCE(f.fna_date_native, TRY_CAST(f.resolved_fna_date AS DATE))
+                          <= fs.first_surg
+                  )
+              )
         ) AS has_fna_0_90d_after_exam,
         NOT EXISTS (
             SELECT 1
             FROM fna_episode_master_v2 f
             WHERE CAST(f.research_id AS BIGINT) = CAST(i.research_id AS BIGINT)
-              AND f.resolved_fna_date IS NOT NULL
+              AND COALESCE(f.fna_date_native, TRY_CAST(f.resolved_fna_date AS DATE)) IS NOT NULL
               AND i.exam_d IS NOT NULL
-              AND f.resolved_fna_date >= i.exam_d
+              AND COALESCE(f.fna_date_native, TRY_CAST(f.resolved_fna_date AS DATE)) >= i.exam_d
         ) AS all_fna_strictly_before_exam,
         EXISTS (
             SELECT 1
             FROM fna_episode_master_v2 f
             WHERE CAST(f.research_id AS BIGINT) = CAST(i.research_id AS BIGINT)
-              AND f.resolved_fna_date IS NOT NULL
+              AND COALESCE(f.fna_date_native, TRY_CAST(f.resolved_fna_date AS DATE)) IS NOT NULL
               AND i.exam_d IS NOT NULL
-              AND f.resolved_fna_date >= i.exam_d
-              AND DATEDIFF('day', i.exam_d, f.resolved_fna_date) > 90
+              AND COALESCE(f.fna_date_native, TRY_CAST(f.resolved_fna_date AS DATE)) >= i.exam_d
+              AND DATEDIFF(
+                  'day',
+                  i.exam_d,
+                  COALESCE(f.fna_date_native, TRY_CAST(f.resolved_fna_date AS DATE))
+              ) > 90
         ) AS has_fna_after_exam_beyond_90d
     FROM img i
     LEFT JOIN prim p ON i.nodule_id = p.nodule_id
@@ -132,6 +163,9 @@ SELECT
             THEN 'no_eligible_fna'
         WHEN all_fna_strictly_before_exam
             THEN 'no_eligible_fna'
+        WHEN COALESCE(has_fna_calendar_0_90d_after_exam, FALSE)
+             AND NOT COALESCE(has_fna_0_90d_after_exam, FALSE)
+            THEN 'no_eligible_fna'
         WHEN has_fna_0_90d_after_exam
             THEN 'unresolved_linkage_gap'
         WHEN has_fna_after_exam_beyond_90d AND NOT COALESCE(has_fna_0_90d_after_exam, FALSE)
@@ -143,7 +177,10 @@ SELECT
         WHEN COALESCE(n_fna_episodes_patient, 0) = 0 THEN 'patient_has_no_dated_fna_episode'
         WHEN exam_d IS NOT NULL AND first_surg IS NOT NULL AND exam_d > first_surg THEN 'index_us_after_first_surgery'
         WHEN all_fna_strictly_before_exam THEN 'all_fna_before_index_us_exam'
-        WHEN has_fna_0_90d_after_exam THEN 'candidate_fna_in_90d_window_but_no_mm_link'
+        WHEN COALESCE(has_fna_calendar_0_90d_after_exam, FALSE)
+             AND NOT COALESCE(has_fna_0_90d_after_exam, FALSE)
+            THEN 'fna_calendar_in_window_but_not_preop'
+        WHEN has_fna_0_90d_after_exam THEN 'candidate_fna_in_90d_preop_window_but_no_mm_link'
         WHEN has_fna_after_exam_beyond_90d AND NOT COALESCE(has_fna_0_90d_after_exam, FALSE)
             THEN 'only_fna_beyond_90d_after_index_us'
         ELSE 'ambiguous_requires_manual_review'

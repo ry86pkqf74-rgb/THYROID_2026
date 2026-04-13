@@ -9,6 +9,10 @@ Builds:
   val_imaging_fna_linkage_audit_v1
   review_queue_imaging_fna_mm_v1
 
+FNA event date uses COALESCE(fna_date_native, resolved_fna_date) when resolved_fna_date
+exists on fna_episode_master_v2 — aligns temporal windows with
+scripts/sql/source_truth_confirmation_v1.sql (has_fna_0_90d_after_exam).
+
 Root cause (legacy imaging_fna_linkage_v3 empty / incomplete):
   - Script 23 imaging_fna_linkage_v2 reads only imaging_nodule_long_v2; an empty
     or undated long table yields no rows.
@@ -57,6 +61,13 @@ def table_exists(con: duckdb.DuckDBPyConnection, name: str) -> bool:
         return True
     except Exception:
         return False
+
+
+def _scalar_count(con: duckdb.DuckDBPyConnection, sql: str) -> int:
+    row = con.execute(sql).fetchone()
+    if row is None:
+        raise RuntimeError(f"Expected scalar row from: {sql[:200]!r}")
+    return int(row[0])
 
 
 def pragma_cols(con: duckdb.DuckDBPyConnection, table: str) -> dict[str, str]:
@@ -139,6 +150,18 @@ def build_temp_wide_sql(con: duckdb.DuckDBPyConnection) -> str:
         if specimen_col:
             fna_spec_expr = normalize_specimen_key_sql(f"h.{specimen_col}")
 
+    fna_tbl_cols = pragma_cols(con, "fna_episode_master_v2")
+    fna_native_col = pick_first(fna_tbl_cols, ["fna_date_native"])
+    fna_resolved_col = pick_first(fna_tbl_cols, ["resolved_fna_date"])
+    if not fna_native_col:
+        raise RuntimeError("fna_episode_master_v2 must include fna_date_native")
+    if fna_resolved_col:
+        fna_date_sql = (
+            f"COALESCE(f.{fna_native_col}, TRY_CAST(f.{fna_resolved_col} AS DATE))"
+        )
+    else:
+        fna_date_sql = f"f.{fna_native_col}"
+
     has_tumor = table_exists(con, "tumor_episode_master_v2")
     surg_sql = ""
     surg_join = "LEFT JOIN surg sg ON CAST(i.research_id AS BIGINT) = CAST(sg.research_id AS BIGINT)"
@@ -188,14 +211,14 @@ fna_enriched AS (
     SELECT
         CAST(f.research_id AS INTEGER) AS research_id,
         CAST(f.fna_episode_id AS INTEGER) AS fna_episode_id,
-        f.fna_date_native AS fna_date,
+        {fna_date_sql} AS fna_date,
         f.laterality AS fna_laterality,
         f.specimen_site_raw,
         {fna_size_expr} AS fna_size_cm,
         {fna_spec_expr} AS fna_specimen_key
     FROM fna_episode_master_v2 f
     {fh_join}
-    WHERE f.fna_date_native IS NOT NULL
+    WHERE {fna_date_sql} IS NOT NULL
 )
 SELECT
     i.research_id,
@@ -589,13 +612,14 @@ def run(
             print(f"  {reason}")
             n_img = 0
             if has_img:
-                n_img = con.execute(
-                    "SELECT COUNT(*) FROM imaging_nodule_master_v1 WHERE exam_date IS NOT NULL"
-                ).fetchone()[0]
+                n_img = _scalar_count(
+                    con,
+                    "SELECT COUNT(*) FROM imaging_nodule_master_v1 WHERE exam_date IS NOT NULL",
+                )
             print(f"  imaging_nodule_master_v1 (dated rows): {n_img:,}")
             v3 = None
             if table_exists(con, "imaging_fna_linkage_v3"):
-                v3 = con.execute("SELECT COUNT(*) FROM imaging_fna_linkage_v3").fetchone()[0]
+                v3 = _scalar_count(con, "SELECT COUNT(*) FROM imaging_fna_linkage_v3")
             return {
                 "status": "blocked_missing_fna_episode_master_v2",
                 "reason": reason,
@@ -615,19 +639,19 @@ def run(
     out: dict = {"status": "ok"}
 
     section("Counts before")
-    n_img = con.execute(
-        "SELECT COUNT(*) FROM imaging_nodule_master_v1 WHERE exam_date IS NOT NULL"
-    ).fetchone()[0]
-    n_fna = con.execute(
-        "SELECT COUNT(*) FROM fna_episode_master_v2 WHERE fna_date_native IS NOT NULL"
-    ).fetchone()[0]
+    n_img = _scalar_count(
+        con, "SELECT COUNT(*) FROM imaging_nodule_master_v1 WHERE exam_date IS NOT NULL"
+    )
+    n_fna = _scalar_count(
+        con, "SELECT COUNT(*) FROM fna_episode_master_v2 WHERE fna_date_native IS NOT NULL"
+    )
     v3 = None
     if table_exists(con, "imaging_fna_linkage_v3"):
-        v3 = con.execute("SELECT COUNT(*) FROM imaging_fna_linkage_v3").fetchone()[0]
+        v3 = _scalar_count(con, "SELECT COUNT(*) FROM imaging_fna_linkage_v3")
     link_tbl = _fq_table("imaging_fna_linkage_mm_v1", output_schema)
     mm_before = None
     if table_exists(con, link_tbl):
-        mm_before = con.execute(f"SELECT COUNT(*) FROM {link_tbl}").fetchone()[0]
+        mm_before = _scalar_count(con, f"SELECT COUNT(*) FROM {link_tbl}")
     print(f"  imaging_nodule_master_v1 (dated): {n_img:,}")
     print(f"  fna_episode_master_v2 (dated):    {n_fna:,}")
     print(f"  imaging_fna_linkage_v3 rows:       {v3 if v3 is not None else 'N/A (missing)'}")
@@ -645,7 +669,7 @@ def run(
         return out
 
     con.execute(wide_sql)
-    wide_n = con.execute("SELECT COUNT(*) FROM tt_ifna_mm_wide_pre_v1").fetchone()[0]
+    wide_n = _scalar_count(con, "SELECT COUNT(*) FROM tt_ifna_mm_wide_pre_v1")
     print(f"\n  tt_ifna_mm_wide_pre_v1 candidate pairs: {wide_n:,}")
     out["wide_pre_candidate_pairs"] = wide_n
 
@@ -657,12 +681,12 @@ def run(
     con.execute(audit_sql)
 
     section("Counts after")
-    after_mm = con.execute(f"SELECT COUNT(*) FROM {link_tbl}").fetchone()[0]
-    after_primary = con.execute(
-        f"SELECT COUNT(*) FROM {link_tbl} WHERE is_primary_link"
-    ).fetchone()[0]
+    after_mm = _scalar_count(con, f"SELECT COUNT(*) FROM {link_tbl}")
+    after_primary = _scalar_count(
+        con, f"SELECT COUNT(*) FROM {link_tbl} WHERE is_primary_link"
+    )
     rev_tbl = _fq_table("review_queue_imaging_fna_mm_v1", output_schema)
-    after_rev = con.execute(f"SELECT COUNT(*) FROM {rev_tbl}").fetchone()[0]
+    after_rev = _scalar_count(con, f"SELECT COUNT(*) FROM {rev_tbl}")
     for label, val in [
         ("imaging_fna_linkage_mm_v1", after_mm),
         ("  primary links", after_primary),

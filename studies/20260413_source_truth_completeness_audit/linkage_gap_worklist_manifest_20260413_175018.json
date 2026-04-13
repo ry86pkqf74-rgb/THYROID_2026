@@ -1,0 +1,7 @@
+{
+  "exported_at_utc": "2026-04-13T17:50:18.222737+00:00",
+  "source_view": "v_imaging_nodule_linkage_classification_v1",
+  "filter": "linkage_state = 'unresolved_linkage_gap'",
+  "row_count": 123,
+  "csv": "studies/20260413_source_truth_completeness_audit/linkage_gap_worklist_unresolved_20260413_175018.csv"
+}

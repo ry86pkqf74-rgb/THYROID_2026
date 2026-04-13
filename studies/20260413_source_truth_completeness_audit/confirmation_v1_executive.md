@@ -1,6 +1,6 @@
 # Confirmation v1 (deterministic joins + exhaustive linkage classification)
 
-- Deployed (UTC): `2026-04-13T17:46:32.121492+00:00`
+- Deployed (UTC): `2026-04-13T17:50:09.929800+00:00`
 
 ## Scoped answers (fail-closed global YES still blocked if any `unresolved_linkage_gap` is unacceptable)
 
@@ -18,10 +18,10 @@
 Every `imaging_nodule_master_v1` row appears in `v_imaging_nodule_linkage_classification_v1` with:
 
 - `linked_to_fna` — primary multimodal link exists
-- `no_eligible_fna` — documented reason (no patient FNA, US after surgery, all FNA before index US, or only FNA beyond 90d window)
-- `unresolved_linkage_gap` — candidate FNA in 0–90d after index US but **no** `imaging_fna_linkage_mm_v1` primary row (requires algorithm/review follow-up)
+- `no_eligible_fna` — documented reason (no patient FNA, US after surgery, all FNA before index US, only FNA beyond 90d window, or calendar 0–90d FNA that fails script 129 preop/surgery guard)
+- `unresolved_linkage_gap` — candidate FNA in **preop-aligned** 0–90d window (same as script 129) but **no** `imaging_fna_linkage_mm_v1` primary row
 
-- **Unresolved linkage gap total: 128**
+- **Unresolved linkage gap total: 123**
 
 ### Q4 — Lymph node (exam-level text)
 

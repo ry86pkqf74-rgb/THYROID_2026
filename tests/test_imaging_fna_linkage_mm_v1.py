@@ -440,3 +440,49 @@ def test_same_day_multi_fna_ordinals(link129) -> None:
     ).fetchone()
     assert row_prim2 is not None
     assert row_prim2[0] is True
+
+
+def test_coalesce_resolved_fna_when_native_null(link129) -> None:
+    """Use COALESCE(fna_date_native, resolved_fna_date) to match confirmation v1 EXISTS logic."""
+    con = duckdb.connect(":memory:")
+    con.execute(
+        """
+        CREATE TABLE imaging_nodule_master_v1 AS SELECT * FROM (
+            SELECT 9010::INTEGER AS research_id,
+                   'n1'::VARCHAR AS nodule_id,
+                   'ex1'::VARCHAR AS exam_id,
+                   DATE '2024-01-01' AS exam_date,
+                   'left'::VARCHAR AS laterality,
+                   1.0::DOUBLE AS max_dimension_cm,
+                   NULL::VARCHAR AS accession_number
+        ) t
+        """
+    )
+    con.execute(
+        """
+        CREATE TABLE fna_episode_master_v2 (
+            research_id INTEGER,
+            fna_episode_id INTEGER,
+            fna_date_native DATE,
+            resolved_fna_date DATE,
+            laterality VARCHAR,
+            specimen_site_raw VARCHAR
+        );
+        INSERT INTO fna_episode_master_v2 VALUES
+            (9010, 1, NULL, DATE '2024-01-10', 'left', NULL);
+        """
+    )
+    con.execute(
+        """
+        CREATE TABLE tumor_episode_master_v2 AS SELECT * FROM (
+            SELECT 9010::INTEGER AS research_id, DATE '2024-06-01'::DATE AS surgery_date
+        ) t
+        """
+    )
+    _materialize(con, link129)
+    row = con.execute(
+        "SELECT COUNT(*) FROM imaging_fna_linkage_mm_v1 WHERE is_primary_link"
+    ).fetchone()
+    assert row is not None
+    n = int(row[0])
+    assert n == 1
