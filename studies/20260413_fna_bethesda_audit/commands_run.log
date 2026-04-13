@@ -1,4 +1,4 @@
-2026-04-13T18:59:49.978137+00:00 run_fna_bethesda_audit.py start
-2026-04-13T18:59:49.979112+00:00 token_mode=motherduck.local.toml:MOTHERDUCK_TOKEN token=SET
-2026-04-13T18:59:54.302695+00:00 fna_history rows 8119
-2026-04-13T18:59:54.858791+00:00 done ok
+2026-04-13T19:15:24.279814+00:00 run_fna_bethesda_audit.py start
+2026-04-13T19:15:24.280914+00:00 token_mode=motherduck.local.toml:MOTHERDUCK_TOKEN token=SET
+2026-04-13T19:15:28.175210+00:00 fna_history rows 8119
+2026-04-13T19:15:28.854301+00:00 done ok

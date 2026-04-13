@@ -1,6 +1,6 @@
 # FNA Bethesda completeness verdict
 
-**Run:** 2026-04-13T18:59:54.858609+00:00Z  
+**Run:** 2026-04-13T19:15:28.853783+00:00Z  
 **Database:** `MotherDuck (Thyroid 2026)`  
 **Token mode:** `motherduck.local.toml:MOTHERDUCK_TOKEN`
 
@@ -40,12 +40,8 @@
 
 ## Notes
 
-- **`extracted_fna_bethesda_v1` is deployed** on MotherDuck (`Thyroid 2026`): **5249** per-patient rows (Phase 7 union
-  of `fna_cytology`, `fna_episode_master_v2`, `molecular_testing`). Mirror: `md_extracted_fna_bethesda_v1`.
-  Deploy script: `scripts/153_md_fna_bethesda_deploy.py --md`.
-- This audit still uses `fna_episode_master_v2`, `fna_history`, `fna_cytology` for **episode-level** crosswalks;
-  `extracted_fna_bethesda_v1` is **patient-aggregated** (worst Bethesda / gold source), not one row per FNA episode.
-- See view `v_fna_episode_bethesda_resolved_v1` for episode–cytology resolution.
+- `extracted_fna_bethesda_v1` is not deployed on this MotherDuck database; audit uses `fna_episode_master_v2`,
+  `fna_history`, `fna_cytology`. See view `v_fna_episode_bethesda_resolved_v1` for episode–cytology resolution.
 
 ## Conflict list (exact)
 

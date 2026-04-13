@@ -42,5 +42,5 @@
 **PASS (heuristic):** No source-derived positive/suspicious LN statements lacked structured representation; no explicit-negative gap detected in `ultrasound_reports` combined text vs source layers.
 
 ---
-Generated UTC: 2026-04-13T18:48:07.349366+00:00
+Generated UTC: 2026-04-13T19:15:50.524916+00:00
 Database: `MotherDuck (md:Thyroid 2026)`

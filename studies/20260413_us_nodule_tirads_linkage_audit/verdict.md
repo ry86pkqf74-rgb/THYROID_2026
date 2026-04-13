@@ -1,6 +1,6 @@
 # US nodule / TI-RADS / linkage audit verdict
 
-**Generated (UTC):** 2026-04-13T18:25:19.953804+00:00
+**Generated (UTC):** 2026-04-13T19:15:21.436349+00:00
 **MotherDuck token:** `motherduck.local.toml:MOTHERDUCK_TOKEN` (secret not printed)
 **Connection:** `MotherDuck fail-closed`
 

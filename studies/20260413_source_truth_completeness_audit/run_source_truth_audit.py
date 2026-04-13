@@ -45,8 +45,13 @@ def _fingerprint_row(d: dict) -> str:
 def norm_date_str(v) -> str | None:
     if v is None or (isinstance(v, float) and np.isnan(v)):
         return None
+    if pd.isna(v):
+        return None
     if hasattr(v, "strftime"):
-        return v.strftime("%Y-%m-%d")
+        try:
+            return v.strftime("%Y-%m-%d")
+        except (ValueError, OSError):
+            return None
     return str(v)[:10]
 
 

@@ -2,7 +2,7 @@
   "script": "129_imaging_fna_linkage_mm_v1.py",
   "target": "motherduck",
   "token_mode": "motherduck.local.toml:MOTHERDUCK_TOKEN",
-  "exported_at_utc": "2026-04-13T18:21:46.996134+00:00",
+  "exported_at_utc": "2026-04-13T19:13:00.886496+00:00",
   "status": "ok",
   "before": {
     "imaging_nodule_master_dated_rows": 34955,
@@ -25,7 +25,7 @@
     "rows_in_ambiguous_nodules": 1739,
     "specimen_key_rows": 0,
     "review_queue_rows": 742,
-    "built_at": "2026-04-13T14:21:43.479243-04:00"
+    "built_at": "2026-04-13T15:12:57.867022-04:00"
   },
   "strict_release": false,
   "review_queue_by_reason": {

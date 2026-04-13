@@ -1,12 +1,12 @@
 # Confirmation v1 (deterministic joins + exhaustive linkage classification)
 
-- Deployed (UTC): `2026-04-13T17:53:46.749530+00:00`
+- Deployed (UTC): `2026-04-13T19:12:44.143724+00:00`
 
 ## Scoped answers (fail-closed global YES still blocked if any `unresolved_linkage_gap` is unacceptable)
 
 ### Q1 — COMPLETE corpus → `imaging_nodule_master_v1`
 
-- `v_canonical_us_nodule_scope_v1`: **19891** rows; source_table = `raw_us_tirads_excel_v1`.
+- `v_canonical_us_nodule_scope_v1`: **37016** rows; source_table = `raw_imaging_12_slots_v1`.
 - Deterministic parity was already **19891/19891** in the 20260413 audit.
 
 ### Q2 — TI-RADS when ≥5 ACR fields populated

@@ -9,7 +9,7 @@ question_4_status: NOT_CONFIRMED
 question_5_status: NOT_CONFIRMED
 ```
 
-**Audit timestamp (UTC):** 2026-04-13T17:22:40.305124+00:00
+**Audit timestamp (UTC):** 2026-04-13T19:14:15.108795+00:00
 
 ## overall_status
 
@@ -21,9 +21,9 @@ Fail-closed rule: a YES requires zero unexplained misses per question across **a
 
 **NOT_CONFIRMED**
 
-**Rationale:** Deterministic key parity `19891/19891` for `COMPLETE_MULTI_SHEET_ULTRASOUND_REPORTS.xlsx` → `imaging_nodule_master_v1` (same as DB row count `19891`). Unmatched source keys: `0`; unmatched DB keys: `0`. Broader “all ultrasound nodules” (e.g. `Imaging_12_1_25.xlsx` free-text US blocks) are **not** exhaustively extracted into `imaging_nodule_master_v1`.
+**Rationale:** Deterministic key parity `19891/19891` for `COMPLETE_MULTI_SHEET_ULTRASOUND_REPORTS.xlsx` → `imaging_nodule_master_v1` (same as DB row count `37016`). Unmatched source keys: `0`; unmatched DB keys: `15006`. Broader “all ultrasound nodules” (e.g. `Imaging_12_1_25.xlsx` free-text US blocks) are **not** exhaustively extracted into `imaging_nodule_master_v1`.
 
-**Counts:** source COMPLETE nodules = 19891; DB nodules = 19891; exact key intersection = 19891.
+**Counts:** source COMPLETE nodules = 19891; DB nodules = 37016; exact key intersection = 19891.
 
 ## question_2_status
 
@@ -35,9 +35,9 @@ Fail-closed rule: a YES requires zero unexplained misses per question across **a
 
 **NOT_CONFIRMED**
 
-**Rationale:** `linked_fna_episode_id` on `imaging_nodule_master_v1` is all NULL; linkage lives in `imaging_fna_linkage_mm_v1`. Distinct nodules with a primary link: **2380** / **19891**. Review queue rows (from validator snapshot): **3093**. This fails the user’s requirement that every nodule reach an allowed downstream state without unexplained gaps.
+**Rationale:** `linked_fna_episode_id` on `imaging_nodule_master_v1` is all NULL; linkage lives in `imaging_fna_linkage_mm_v1`. Distinct nodules with a primary link: **6351** / **37016**. Review queue rows (from validator snapshot): **3093**. This fails the user’s requirement that every nodule reach an allowed downstream state without unexplained gaps.
 
-**Counts:** primary-linked nodules ≈2380 (from `val_imaging_fna_linkage_audit_v1` when available); distinct nodules with any primary-row in linkage extract = 2380; linkage table rows 2804.
+**Counts:** primary-linked nodules ≈6351 (from `val_imaging_fna_linkage_audit_v1` when available); distinct nodules with any primary-row in linkage extract = 6351; linkage table rows 7305.
 
 ## question_4_status
 
@@ -55,7 +55,7 @@ Fail-closed rule: a YES requires zero unexplained misses per question across **a
 
 | ID | Description |
 |----|-------------|
-| B1 | Imaging↔FNA multimodal linkage covers only a minority of nodules (2380/19891 with primary link rows). |
+| B1 | Imaging↔FNA multimodal linkage covers only a minority of nodules (6351/37016 with primary link rows). |
 | B2 | `460` FNA episodes lack `bethesda_category` in `fna_episode_master_v2`. |
 | B3 | Non-COMPLETE ultrasound corpora not demonstrated to be fully structured into `imaging_nodule_master_v1`. |
 
