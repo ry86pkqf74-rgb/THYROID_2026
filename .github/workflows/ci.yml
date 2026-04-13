@@ -1,7 +1,11 @@
 name: Dashboard CI — Hardened
 
+env:
+  # Silence GitHub deprecation warnings for actions still bundling Node 20 (safe opt-in).
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 # ─────────────────────────────────────────────────────────────────────────────
-# THYROID_2026  CI  |  Updated 2026-03-14
+# THYROID_2026  CI  |  Updated 2026-04-13
 #
 # Job graph (simplified):
 #   Parallel (no secrets): ruff-and-mypy (+ workflow YAML parse),
@@ -11,9 +15,10 @@ name: Dashboard CI — Hardened
 #       full specimen/FHIR offline suite lives in llm-extraction-gold incl. test_151),
 #     validation-contracts-offline (script 29 VAL_LAB SQL + ALL_VALIDATION_SQL registry surface +
 #       lab canonical in-memory contract + linkage-confidence fixture tests — no MotherDuck writes).
-#     data-contract-gate-offline (script 145 YAML contracts + hash-chain ledger — fixture parquet only).
+#     data-contract-gate-offline (script 145 YAML contracts + hash-chain ledger — fixture parquet only;
+#       plus offline CLI smoke for scripts/145_data_contract_gate.py).
 #   lint-and-syntax (MotherDuck secrets) → downstream jobs:
-#     motherduck-formalization (needs validation-contracts-offline; 116 dry-run → 112 --motherduck-check → 119),
+#     motherduck-formalization (needs validation-contracts-offline + data-contract-gate-offline; 116 → 112 → 119),
 #     v2-domain-validation (legacy), benchmark-regression (continue-on-error),
 #     share-publication-check (legacy; tags / manual), promotion-gate (legacy script 91; tags),
 #     md-live-release-audit-dryrun (124 --md --dry-run; tags / manual),
@@ -269,6 +274,65 @@ jobs:
         run: |
           python -m pytest tests/test_data_contract_gate.py -v --tb=short
 
+      - name: Script 145 — CLI smoke (offline parquet, secret-free)
+        env:
+          GITHUB_TOKEN: ""
+          OPENAI_API_KEY: ""
+          MD_SA_TOKEN: ""
+          MOTHERDUCK_TOKEN: ""
+          LOCAL_DB_PATH: ""
+        run: |
+          python - <<'PY'
+          import subprocess
+          import sys
+          import tempfile
+          from datetime import date
+          from pathlib import Path
+
+          import pandas as pd
+
+          row = {
+              "research_id": 1,
+              "lab_date": date(2020, 1, 1),
+              "lab_date_status": "exact_collection_date",
+              "lab_name_standardized": "thyroglobulin",
+              "value_numeric": 1.0,
+              "data_completeness_tier": "current_structured",
+              "source_table": "t",
+              "source_script": "s",
+              "ingestion_wave": "w",
+          }
+          with tempfile.TemporaryDirectory() as td:
+              base = Path(td)
+              inp = base / "in.parquet"
+              out = base / "out145"
+              pd.DataFrame([row]).to_parquet(inp)
+              out.mkdir()
+              r = subprocess.run(
+                  [
+                      sys.executable,
+                      "scripts/145_data_contract_gate.py",
+                      "--contract-name",
+                      "longitudinal_lab_canonical_v1",
+                      "--input-path",
+                      str(inp),
+                      "--output-dir",
+                      str(out),
+                  ],
+                  cwd=".",
+                  capture_output=True,
+                  text=True,
+                  check=False,
+              )
+              if r.returncode != 0:
+                  print(r.stderr, file=sys.stderr)
+                  raise SystemExit(r.returncode)
+              for name in ("violations.parquet", "audit_events.jsonl", "run_metrics.json", "summary.md"):
+                  p = out / name
+                  assert p.exists(), f"missing artifact: {p}"
+          print("145 CLI smoke OK")
+          PY
+
   # ── Job 1: Static Analysis ─────────────────────────────────────────────────
   lint-and-syntax:
     name: Syntax / Lint
@@ -307,9 +371,13 @@ jobs:
           from motherduck_client import MotherDuckClient
           client = MotherDuckClient.for_env('prod', use_service_account=True)
           con = client.connect_ro_share()
-          n = con.execute('SELECT COUNT(DISTINCT research_id) FROM master_cohort').fetchone()[0]
+          # RO share thyroid_research_ro_v2 does not publish master_cohort; manuscript_cohort_v1 is the
+          # cohort spine verified on this share (see docs/motherduck_canonical_upload_20260402.md).
+          n = con.execute(
+              'SELECT COUNT(DISTINCT research_id) FROM manuscript_cohort_v1'
+          ).fetchone()[0]
           assert n > 10000, f'Expected 11k+ patients, got {n}'
-          print(f'RO share OK: {n:,} patients')
+          print(f'RO share OK: {n:,} distinct patients (manuscript_cohort_v1)')
           con.close()
           "
 
@@ -516,7 +584,11 @@ jobs:
   motherduck-formalization:
     name: MotherDuck formalization (116 → 112 → 119)
     runs-on: ubuntu-latest
-    needs: [ruff-and-mypy, lint-and-syntax, validation-contracts-offline]
+    needs:
+      - ruff-and-mypy
+      - lint-and-syntax
+      - validation-contracts-offline
+      - data-contract-gate-offline
     env:
       MD_SA_TOKEN: ${{ secrets.MD_SA_TOKEN }}
       MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}

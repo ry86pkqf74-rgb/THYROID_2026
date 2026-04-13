@@ -61,7 +61,12 @@ No raw note text is written to artifacts.
 
 ## CI
 
-Workflow job **data-contract-gate-offline** runs `pytest tests/test_data_contract_gate.py` only — **no secrets**, no MotherDuck.
+Workflow job **data-contract-gate-offline** (`.github/workflows/ci.yml`) runs:
+
+1. `pytest tests/test_data_contract_gate.py` — **no secrets**, no MotherDuck.
+2. A **CLI smoke** that writes a minimal parquet, runs `scripts/145_data_contract_gate.py --contract-name longitudinal_lab_canonical_v1 --input-path … --output-dir …`, and asserts expected artifacts (`violations.parquet`, `audit_events.jsonl`, `run_metrics.json`, `summary.md`). Same offline contract as `test_main_cli_offline_writes_artifacts`.
+
+Downstream job **motherduck-formalization** lists **data-contract-gate-offline** in `needs:` so formalization does not run until both pytest and the 145 CLI path succeed.
 
 ## Integration note
 
