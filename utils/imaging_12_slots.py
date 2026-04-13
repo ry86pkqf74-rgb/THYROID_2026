@@ -16,8 +16,16 @@ import pandas as pd
 
 
 def stable_key(rid: int, d: str | None, nod: int) -> str:
-    """Same as audit: ``research_id|YYYY-MM-DD|nodule_number``."""
-    return f"{rid}|{d or ''}|{nod}"
+    """Same as audit: ``research_id|YYYY-MM-DD|nodule_number`` (empty segment if no date)."""
+    # DuckDB NULL dates → pandas NaT; map(norm_date_str) may yield float nan — must not
+    # use ``d or ''`` alone (np.nan is truthy and stringifies to "nan").
+    if d is None or pd.isna(d):
+        ds = ""
+    else:
+        ds = str(d).strip()
+        if not ds or ds.lower() == "nan":
+            ds = ""
+    return f"{rid}|{ds}|{nod}"
 
 
 def norm_date_str(v) -> str | None:
