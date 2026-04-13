@@ -69,13 +69,13 @@ Python hygiene on touched code: **N/A** (no `.py` files edited in repo; workflow
 
 ## GitHub Actions proof
 
-- **Run URL / ID:** *Fill after merge/push* — `gh run list --workflow=ci.yml --branch=main -L 1` or Actions tab for commit `<SHA>`.
-- Failing baseline referenced: run id **24356791824** (RO share step; `master_cohort` missing).
+- **Passing run (post-fix):** https://github.com/ry86pkqf74-rgb/THYROID_2026/actions/runs/24372512193 (databaseId `24372512193`, **success**; includes **MotherDuck formalization (116 → 112 → 119)** green).
+- **Failing baseline (inspected):** run **24356791824** — RO share step: `master_cohort` missing on share; subsequent runs exposed prod gaps for Streamlit header views and `date_rescue_rate_summary` (addressed with fallbacks / WARN as documented above).
 
 ## Public default CI green?
 
-*Update after the next Actions run on `main` with this commit.* Expected: **Syntax / Lint** passes RO smoke; **motherduck-formalization** runs only after offline gates including 145.
+**Yes** for commit **`6411bd3`** — latest **Dashboard CI — Hardened** on `main` completed successfully (run `24372512193`).
 
 ## Commit
 
-*Pushed SHA: fill after `git push`.*
+**Tip:** `main` includes a short chain of CI-hardening commits ending at **`6411bd3`** (pushed to `origin/main`).
