@@ -20,12 +20,19 @@ import sys
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 DEFAULT_DB = ROOT / "thyroid_master.duckdb"
 DDL_PATH = ROOT / "scripts" / "sql" / "139_specimen_identity_layer_ddl.sql"
+
+
+def _require_row(row: tuple[Any, ...] | None) -> tuple[Any, ...]:
+    assert row is not None
+    return row
+
 
 PREREQ_MAIN_TABLES: tuple[str, ...] = (
     "synoptic_tumor_long_v1",
@@ -474,10 +481,18 @@ def main() -> None:
         "## Row counts (informational)",
     ]
     try:
-        mc = con.execute("SELECT COUNT(*) FROM main.specimen_master_v1").fetchone()[0]
-        fc = con.execute("SELECT COUNT(*) FROM main.specimen_tumor_focus_v1").fetchone()[0]
-        xc = con.execute("SELECT COUNT(*) FROM main.specimen_source_xref_v1").fetchone()[0]
-        qc = con.execute("SELECT COUNT(*) FROM qa.specimen_merge_review_queue_v1").fetchone()[0]
+        mc = _require_row(
+            con.execute("SELECT COUNT(*) FROM main.specimen_master_v1").fetchone()
+        )[0]
+        fc = _require_row(
+            con.execute("SELECT COUNT(*) FROM main.specimen_tumor_focus_v1").fetchone()
+        )[0]
+        xc = _require_row(
+            con.execute("SELECT COUNT(*) FROM main.specimen_source_xref_v1").fetchone()
+        )[0]
+        qc = _require_row(
+            con.execute("SELECT COUNT(*) FROM qa.specimen_merge_review_queue_v1").fetchone()
+        )[0]
         report.extend(
             [
                 f"- specimen_master_v1: {mc}",

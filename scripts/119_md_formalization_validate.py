@@ -66,6 +66,7 @@ import argparse
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 import duckdb
 import pandas as pd
@@ -73,11 +74,17 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from llm_extraction.registry import load_registry
+from llm_extraction.registry import load_registry  # noqa: E402
 
 DEFAULT_DB_PATH = ROOT / "thyroid_master.duckdb"
 DEFAULT_V2_DIR = ROOT / "processed" / "output" / "v2_parquets"
 PROCESSED = ROOT / "processed"
+
+
+def _require_row(row: tuple[Any, ...] | None) -> tuple[Any, ...]:
+    """DuckDB ``fetchone()`` may be None; narrow for mypy and fail fast if empty."""
+    assert row is not None
+    return row
 
 
 def _repo_rel(p: Path) -> str:
@@ -294,13 +301,13 @@ def check_row_counts(
 
         stage_count = -1
         try:
-            stage_count = con.execute(f"SELECT COUNT(*) FROM v2_stage.{stem}").fetchone()[0]
+            stage_count = _require_row(con.execute(f"SELECT COUNT(*) FROM v2_stage.{stem}").fetchone())[0]
         except Exception:
             pass
 
         main_count = -1
         try:
-            main_count = con.execute(f"SELECT COUNT(*) FROM main.{stem}").fetchone()[0]
+            main_count = _require_row(con.execute(f"SELECT COUNT(*) FROM main.{stem}").fetchone())[0]
         except Exception:
             pass
 
@@ -327,7 +334,7 @@ def check_row_counts(
         pq_path = PROCESSED / f"{tbl_name}.parquet"
         local_count = len(pd.read_parquet(pq_path)) if pq_path.exists() else -1
         try:
-            md_count = con.execute(f"SELECT COUNT(*) FROM main.{tbl_name}").fetchone()[0]
+            md_count = _require_row(con.execute(f"SELECT COUNT(*) FROM main.{tbl_name}").fetchone())[0]
         except Exception:
             md_count = -1
         if local_count < 0 and md_count >= 0:
@@ -471,11 +478,13 @@ def check_review_queue(
     In structural mode, report counts as PASS for observability.
     """
     try:
-        total = con.execute("SELECT COUNT(*) FROM qa.manual_review_queue").fetchone()[0]
-        reviewed = con.execute(
-            "SELECT COUNT(*) FROM qa.manual_review_queue "
-            "WHERE verification_status IS NOT NULL"
-        ).fetchone()[0]
+        total = _require_row(con.execute("SELECT COUNT(*) FROM qa.manual_review_queue").fetchone())[0]
+        reviewed = _require_row(
+            con.execute(
+                "SELECT COUNT(*) FROM qa.manual_review_queue "
+                "WHERE verification_status IS NOT NULL"
+            ).fetchone()
+        )[0]
         pending = total - reviewed
 
         if strict and pending > 0:
@@ -505,7 +514,7 @@ def check_publication_review_governance(
     )
 
     try:
-        n_syn = int(con.execute(sql_count_mrq_synthetic_rows()).fetchone()[0])
+        n_syn = int(_require_row(con.execute(sql_count_mrq_synthetic_rows()).fetchone())[0])
         if n_syn > 0:
             results.add(
                 "Review queue (synthetic placeholder)",
@@ -527,7 +536,7 @@ def check_publication_review_governance(
 
     try:
         tot = int(
-            con.execute("SELECT COUNT(*) FROM qa.promotion_review_decisions").fetchone()[0]
+            _require_row(con.execute("SELECT COUNT(*) FROM qa.promotion_review_decisions").fetchone())[0]
         )
     except Exception as exc:
         results.add(
@@ -545,7 +554,7 @@ def check_publication_review_governance(
         return
     try:
         n_bad = int(
-            con.execute(sql_count_promotion_decisions_missing_batch()).fetchone()[0]
+            _require_row(con.execute(sql_count_promotion_decisions_missing_batch()).fetchone())[0]
         )
     except Exception as exc:
         results.add("Promotion decision provenance", "FAIL", str(exc))
@@ -578,7 +587,7 @@ def check_qa_views(
     ]
     for view in views:
         try:
-            cnt = con.execute(f"SELECT COUNT(*) FROM {view}").fetchone()[0]
+            cnt = _require_row(con.execute(f"SELECT COUNT(*) FROM {view}").fetchone())[0]
             results.add(f"QA view {view.split('.')[-1]}", "PASS", f"{cnt:,} rows")
         except Exception as exc:
             results.add(f"QA view {view.split('.')[-1]}", "WARN", str(exc))
@@ -594,10 +603,12 @@ def check_load_inventory(
     In release mode, missing table or row mismatches cause FAIL.
     """
     try:
-        total = con.execute("SELECT COUNT(*) FROM v2_stage.load_inventory").fetchone()[0]
-        mismatches = con.execute(
-            "SELECT COUNT(*) FROM v2_stage.load_inventory WHERE NOT row_match"
-        ).fetchone()[0]
+        total = _require_row(con.execute("SELECT COUNT(*) FROM v2_stage.load_inventory").fetchone())[0]
+        mismatches = _require_row(
+            con.execute(
+                "SELECT COUNT(*) FROM v2_stage.load_inventory WHERE NOT row_match"
+            ).fetchone()
+        )[0]
         if mismatches > 0:
             status = "FAIL" if strict else "WARN"
             results.add("Load inventory", status,
@@ -646,8 +657,9 @@ def check_canonical_extraction_run_id(
     Matches docs/motherduck_database_contract_v1.md §3 (required for entity provenance).
     """
     try:
-        row = con.execute(
-            """
+        row = _require_row(
+            con.execute(
+                """
             SELECT
                 COUNT(*) AS total,
                 COUNT(*) FILTER (
@@ -656,7 +668,8 @@ def check_canonical_extraction_run_id(
                 ) AS blank
             FROM main.canonical_extracted_fact_long_v2
             """
-        ).fetchone()
+            ).fetchone()
+        )
         total, blank = int(row[0]), int(row[1])
         if blank == 0:
             results.add(
@@ -702,7 +715,7 @@ def check_presentation_layer(
     status_fail = "FAIL" if strict else "WARN"
     for view in PRESENTATION_LONG_VIEWS:
         try:
-            n = con.execute(f"SELECT COUNT(*) FROM main.{view}").fetchone()[0]
+            n = _require_row(con.execute(f"SELECT COUNT(*) FROM main.{view}").fetchone())[0]
         except Exception as exc:
             results.add(f"Presentation {view}", status_fail, f"not queryable: {exc}")
             continue
@@ -724,8 +737,9 @@ def check_presentation_layer(
             continue
 
         id_col = "source_object_id" if "source_object_id" in cols else "note_row_id"
-        row = con.execute(
-            f"""
+        row = _require_row(
+            con.execute(
+                f"""
             SELECT
                 COUNT(*) AS n,
                 COUNT(*) FILTER (WHERE research_id IS NULL) AS n_rid,
@@ -744,7 +758,8 @@ def check_presentation_layer(
                 ) AS n_tag
             FROM main.{view}
             """
-        ).fetchone()
+            ).fetchone()
+        )
         ntot = int(row[0])
         n_rid, n_dom, n_sid, n_run, n_tag = (int(row[i]) for i in range(1, 6))
         problems: list[str] = []
@@ -773,7 +788,7 @@ def check_presentation_layer(
 
     view = PRESENTATION_ROLLUP_VIEW
     try:
-        n = con.execute(f"SELECT COUNT(*) FROM main.{view}").fetchone()[0]
+        n = _require_row(con.execute(f"SELECT COUNT(*) FROM main.{view}").fetchone())[0]
     except Exception as exc:
         results.add(f"Presentation {view}", status_fail, f"not queryable: {exc}")
         return
@@ -785,8 +800,9 @@ def check_presentation_layer(
     if missing:
         results.add(f"Presentation {view}", status_fail, f"missing columns: {missing}")
         return
-    row = con.execute(
-        f"""
+    row = _require_row(
+        con.execute(
+            f"""
         SELECT
             COUNT(*) AS n,
             COUNT(*) FILTER (WHERE research_id IS NULL) AS n_rid,
@@ -796,7 +812,8 @@ def check_presentation_layer(
             ) AS n_tag
         FROM main.{view}
         """
-    ).fetchone()
+        ).fetchone()
+    )
     ntot, n_rid, n_tag = int(row[0]), int(row[1]), int(row[2])
     if n_rid or n_tag:
         results.add(
@@ -899,15 +916,15 @@ def check_molecular_normalized_contract(
 
     try:
         n_all = int(
-            con.execute(
+            _require_row(con.execute(
                 f"SELECT COUNT(*) FROM main.{MOLECULAR_RESULTS_TABLE}"
-            ).fetchone()[0]
+            ).fetchone())[0]
         )
         n_live = int(
-            con.execute(
+            _require_row(con.execute(
                 f"SELECT COUNT(*) FROM main.{MOLECULAR_RESULTS_TABLE} "
                 f"WHERE superseded_by_molecular_result_id IS NULL"
-            ).fetchone()[0]
+            ).fetchone())[0]
         )
     except Exception as exc:
         results.add("Molecular base table", status_fail, str(exc))
@@ -918,9 +935,9 @@ def check_molecular_normalized_contract(
         if _main_object_exists(con, "molecular_test_episode_v2"):
             try:
                 n_ep = int(
-                    con.execute(
+                    _require_row(con.execute(
                         "SELECT COUNT(*) FROM main.molecular_test_episode_v2"
-                    ).fetchone()[0]
+                    ).fetchone())[0]
                 )
             except Exception:
                 n_ep = 0
@@ -974,9 +991,9 @@ def check_molecular_normalized_contract(
     if _main_object_exists(con, "molecular_results_contract_v"):
         try:
             n_contract = int(
-                con.execute(
+                _require_row(con.execute(
                     "SELECT COUNT(*) FROM main.molecular_results_contract_v"
-                ).fetchone()[0]
+                ).fetchone())[0]
             )
             if n_contract != n_live:
                 results.add(
@@ -996,13 +1013,15 @@ def check_molecular_normalized_contract(
 
         # Primary key uniqueness on result id in contract slice
         try:
-            row = con.execute(
-                """
+            row = _require_row(
+                con.execute(
+                    """
                 SELECT COUNT(*) AS n,
                        COUNT(DISTINCT molecular_result_id) AS n_id
                 FROM main.molecular_results_contract_v
                 """
-            ).fetchone()
+                ).fetchone()
+            )
             ntot, nid = int(row[0]), int(row[1])
             if ntot != nid:
                 results.add(
@@ -1023,9 +1042,9 @@ def check_molecular_normalized_contract(
     if n_live > 0 and _main_object_exists(con, "molecular_results_contract_v"):
         try:
             nc = int(
-                con.execute(
+                _require_row(con.execute(
                     "SELECT COUNT(*) FROM main.molecular_results_contract_v"
-                ).fetchone()[0]
+                ).fetchone())[0]
             )
             if nc == 0:
                 results.add(
@@ -1045,8 +1064,9 @@ def check_molecular_normalized_contract(
     # Payload checksum uniqueness (non-null only)
     if _main_object_exists(con, "molecular_results_contract_v"):
         try:
-            row = con.execute(
-                """
+            row = _require_row(
+                con.execute(
+                    """
                 SELECT
                     COUNT(*) FILTER (WHERE payload_checksum IS NOT NULL) AS nn,
                     COUNT(DISTINCT payload_checksum) FILTER (
@@ -1054,7 +1074,8 @@ def check_molecular_normalized_contract(
                     ) AS nd
                 FROM main.molecular_results_contract_v
                 """
-            ).fetchone()
+                ).fetchone()
+            )
             nn, nd = int(row[0]), int(row[1])
             if nn > 0 and nn != nd:
                 results.add(
@@ -1080,8 +1101,9 @@ def check_molecular_normalized_contract(
     # Provenance: lineage + ingestion on results contract
     if _main_object_exists(con, "molecular_results_contract_v"):
         try:
-            row = con.execute(
-                """
+            row = _require_row(
+                con.execute(
+                    """
                 SELECT
                     COUNT(*) AS n,
                     COUNT(*) FILTER (
@@ -1091,7 +1113,8 @@ def check_molecular_normalized_contract(
                     COUNT(*) FILTER (WHERE ingestion_ts IS NULL) AS n_bad_ts
                 FROM main.molecular_results_contract_v
                 """
-            ).fetchone()
+                ).fetchone()
+            )
             n, bad_l, bad_t = int(row[0]), int(row[1]), int(row[2])
             if bad_l or bad_t:
                 results.add(
@@ -1112,7 +1135,7 @@ def check_molecular_normalized_contract(
     if _main_object_exists(con, "molecular_variant_contract_v"):
         try:
             bad_af = int(
-                con.execute(
+                _require_row(con.execute(
                     """
                     SELECT COUNT(*)
                     FROM main.molecular_variant_contract_v
@@ -1123,12 +1146,12 @@ def check_molecular_normalized_contract(
                           OR allele_fraction != allele_fraction
                       )
                     """
-                ).fetchone()[0]
+                ).fetchone())[0]
             )
             n_var = int(
-                con.execute(
+                _require_row(con.execute(
                     "SELECT COUNT(*) FROM main.molecular_variant_contract_v"
-                ).fetchone()[0]
+                ).fetchone())[0]
             )
             if bad_af:
                 results.add(
@@ -1149,7 +1172,7 @@ def check_molecular_normalized_contract(
     if _main_object_exists(con, "molecular_variant_contract_v"):
         try:
             bad_vc = int(
-                con.execute(
+                _require_row(con.execute(
                     """
                     SELECT COUNT(*)
                     FROM main.molecular_variant_contract_v
@@ -1159,7 +1182,7 @@ def check_molecular_normalized_contract(
                     OR variant_class IS NULL
                     OR trim(cast(variant_class AS VARCHAR)) = ''
                     """
-                ).fetchone()[0]
+                ).fetchone())[0]
             )
             if bad_vc:
                 results.add(
@@ -1180,7 +1203,7 @@ def check_molecular_normalized_contract(
     if _main_object_exists(con, "molecular_results_contract_v"):
         try:
             bad_panel = int(
-                con.execute(
+                _require_row(con.execute(
                     """
                     SELECT COUNT(*)
                     FROM main.molecular_results_contract_v
@@ -1191,7 +1214,7 @@ def check_molecular_normalized_contract(
                           OR trim(cast(panel_version AS VARCHAR)) = ''
                       )
                     """
-                ).fetchone()[0]
+                ).fetchone())[0]
             )
             if bad_panel:
                 results.add(
@@ -1215,7 +1238,7 @@ def check_molecular_normalized_contract(
     ):
         try:
             outsiders = int(
-                con.execute(
+                _require_row(con.execute(
                     """
                     SELECT COUNT(DISTINCT r.assay_name)
                     FROM main.molecular_results_contract_v r
@@ -1227,7 +1250,7 @@ def check_molecular_normalized_contract(
                           WHERE d.assay_name = r.assay_name
                       )
                     """
-                ).fetchone()[0]
+                ).fetchone())[0]
             )
             if outsiders:
                 results.add(
@@ -1263,9 +1286,9 @@ def check_molecular_episode_upstream_spine(
         return
     try:
         n_ep = int(
-            con.execute(
+            _require_row(con.execute(
                 "SELECT COUNT(*) FROM main.molecular_test_episode_v2"
-            ).fetchone()[0]
+            ).fetchone())[0]
         )
     except Exception as exc:
         results.add("Molecular episode upstream spine", "FAIL", str(exc))
@@ -1344,10 +1367,10 @@ def check_specimen_fhir_layer(
         return
 
     try:
-        ok_fp = con.execute(
+        ok_fp = _require_row(con.execute(
             "SELECT COUNT(*) = COUNT(DISTINCT specimen_fingerprint_sha256) "
             "FROM main.specimen_master_v1"
-        ).fetchone()[0]
+        ).fetchone())[0]
         results.add(
             "Specimen master fingerprint uniqueness",
             "PASS" if ok_fp else status_integrity,
@@ -1359,9 +1382,9 @@ def check_specimen_fhir_layer(
     if _qa_object_exists(con, "val_specimen_contract_v1"):
         try:
             nfail = int(
-                con.execute(
+                _require_row(con.execute(
                     "SELECT COUNT(*) FROM qa.val_specimen_contract_v1 WHERE UPPER(status) = 'FAIL'"
-                ).fetchone()[0]
+                ).fetchone())[0]
             )
             if nfail > 0:
                 results.add(
@@ -1377,10 +1400,10 @@ def check_specimen_fhir_layer(
     if _qa_object_exists(con, "val_specimen_genomic_binding_v1"):
         try:
             nfail_g = int(
-                con.execute(
+                _require_row(con.execute(
                     "SELECT COUNT(*) FROM qa.val_specimen_genomic_binding_v1 "
                     "WHERE UPPER(status) = 'FAIL'"
-                ).fetchone()[0]
+                ).fetchone())[0]
             )
             if nfail_g > 0:
                 results.add(
@@ -1410,55 +1433,55 @@ def check_specimen_fhir_layer(
     elif not missing:
         try:
             n_dup_m = int(
-                con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_duplicate_master_fp_v1").fetchone()[0]
+                _require_row(con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_duplicate_master_fp_v1").fetchone())[0]
             )
             n_dup_f = int(
-                con.execute(
+                _require_row(con.execute(
                     "SELECT COUNT(*) FROM qa.v_diag_specimen_duplicate_focus_fp_v1"
-                ).fetchone()[0]
+                ).fetchone())[0]
             )
             n_of = int(
-                con.execute(
+                _require_row(con.execute(
                     "SELECT COUNT(*) FROM qa.v_diag_specimen_orphan_focus_master_v1"
-                ).fetchone()[0]
+                ).fetchone())[0]
             )
             n_og_m = int(
-                con.execute(
+                _require_row(con.execute(
                     "SELECT COUNT(*) FROM qa.v_diag_specimen_orphan_genomic_master_v1"
-                ).fetchone()[0]
+                ).fetchone())[0]
             )
             n_og_f = int(
-                con.execute(
+                _require_row(con.execute(
                     "SELECT COUNT(*) FROM qa.v_diag_specimen_orphan_genomic_focus_v1"
-                ).fetchone()[0]
+                ).fetchone())[0]
             )
             n_br = int(
-                con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_broken_refs_v1").fetchone()[0]
+                _require_row(con.execute("SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_broken_refs_v1").fetchone())[0]
             )
             n_bnd = int(
-                con.execute(
+                _require_row(con.execute(
                     "SELECT COUNT(*) FROM qa.v_diag_specimen_fhir_bundle_entry_drift_v1"
-                ).fetchone()[0]
+                ).fetchone())[0]
             )
             n_gdup = int(
-                con.execute(
+                _require_row(con.execute(
                     "SELECT COUNT(*) FROM qa.v_diag_specimen_genomics_dupe_thyroseq_slice_v1"
-                ).fetchone()[0]
+                ).fetchone())[0]
             )
             n_genum = int(
-                con.execute(
+                _require_row(con.execute(
                     "SELECT COUNT(*) FROM qa.v_diag_specimen_genomics_tier_enum_v1"
-                ).fetchone()[0]
+                ).fetchone())[0]
             )
             n_g_a = int(
-                con.execute(
+                _require_row(con.execute(
                     "SELECT COUNT(*) FROM qa.v_diag_specimen_genomics_A_tier_requires_specimen_v1"
-                ).fetchone()[0]
+                ).fetchone())[0]
             )
             n_gord = int(
-                con.execute(
+                _require_row(con.execute(
                     "SELECT COUNT(*) FROM qa.v_diag_specimen_genomics_thyroseq_ordinality_v1"
-                ).fetchone()[0]
+                ).fetchone())[0]
             )
             pm = con.execute(
                 "SELECT n_missing_identity_run FROM qa.v_diag_specimen_provenance_master_v1"
@@ -1485,18 +1508,18 @@ def check_specimen_fhir_layer(
             ).fetchone()
             metrics_mismatch = False
             n_dup_rows_sum = int(
-                con.execute(
+                _require_row(con.execute(
                     """
                     SELECT COALESCE(CAST(SUM(row_count) AS BIGINT), 0)
                     FROM qa.v_diag_specimen_duplicate_focus_fp_v1
                     """
-                ).fetchone()[0]
+                ).fetchone())[0]
                 or 0
             )
             n_prov_gap_rows = int(
-                con.execute(
+                _require_row(con.execute(
                     "SELECT COUNT(*) FROM qa.v_diag_specimen_provenance_focus_gaps_v1"
-                ).fetchone()[0]
+                ).fetchone())[0]
                 or 0
             )
             if met is not None:
@@ -1552,25 +1575,25 @@ def check_specimen_fhir_layer(
                 "clean" if (bad_diag == 0 and not metrics_mismatch) else detail,
             )
             open_gen = int(
-                con.execute(
+                _require_row(con.execute(
                     """
                     SELECT COALESCE(SUM(n_rows), 0)
                     FROM qa.v_diag_specimen_review_burden_v1
                     WHERE queue_key = 'specimen_genomic_link_review'
                       AND LOWER(COALESCE(review_status, '')) IN ('open', 'pending', '')
                     """
-                ).fetchone()[0]
+                ).fetchone())[0]
             )
             open_merge = None
             try:
                 open_merge = int(
-                    con.execute(
+                    _require_row(con.execute(
                         """
                         SELECT COUNT(*)
                         FROM qa.specimen_merge_review_queue_v1
                         WHERE LOWER(COALESCE(review_status, '')) IN ('open', 'pending', '')
                         """
-                    ).fetchone()[0]
+                    ).fetchone())[0]
                 )
             except Exception:
                 open_merge = None
@@ -1603,14 +1626,16 @@ def check_release_manifest(
 ) -> None:
     """Check 9 (release-mode only): Named snapshot in qa.release_manifest."""
     try:
-        total = con.execute("SELECT COUNT(*) FROM qa.release_manifest").fetchone()[0]
+        total = _require_row(con.execute("SELECT COUNT(*) FROM qa.release_manifest").fetchone())[0]
         if total > 0:
             # Chronological "latest" for operator messaging (suffix tags like 20260408r3
             # do not cast to BIGINT; numeric-only sort hid newer resnapshot rows).
-            latest = con.execute(
-                "SELECT release_tag, created_at FROM qa.release_manifest "
-                "ORDER BY created_at DESC NULLS LAST, release_tag DESC LIMIT 1"
-            ).fetchone()
+            latest = _require_row(
+                con.execute(
+                    "SELECT release_tag, created_at FROM qa.release_manifest "
+                    "ORDER BY created_at DESC NULLS LAST, release_tag DESC LIMIT 1"
+                ).fetchone()
+            )
             results.add("Release manifest", "PASS",
                          f"{total} release(s); latest: {latest[0]} ({latest[1]})")
         else:

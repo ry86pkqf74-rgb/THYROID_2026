@@ -22,7 +22,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-from typing import Any
 import importlib.util
 import os
 import subprocess
@@ -30,6 +29,7 @@ import sys
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -291,15 +291,15 @@ def main() -> None:
     spec139 = importlib.util.spec_from_file_location(
         "_specimen_identity139", ROOT / "scripts" / "139_md_specimen_identity_layer.py"
     )
+    assert spec139 is not None and spec139.loader is not None
     mod139 = importlib.util.module_from_spec(spec139)
-    assert spec139.loader
     spec139.loader.exec_module(mod139)
 
     spec140 = importlib.util.spec_from_file_location(
         "_specimen_genomics140", ROOT / "scripts" / "140_md_specimen_genomics_binding.py"
     )
+    assert spec140 is not None and spec140.loader is not None
     mod140 = importlib.util.module_from_spec(spec140)
-    assert spec140.loader
     spec140.loader.exec_module(mod140)
 
     con = connect_md_or_file(
