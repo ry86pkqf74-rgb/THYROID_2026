@@ -12,7 +12,9 @@ The RO share does not expose `master_cohort`; the blocking step assumed prod-cat
 
 On live **prod** `connect_rw()`, `master_cohort` was missing. **Fix:** require `manuscript_cohort_v1` (not `master_cohort`); **surgical_cohort** metric SQL counts from `manuscript_cohort_v1`.
 
-Neither `streamlit_patient_header_v` nor `md_streamlit_patient_header_v` exists on the current prod catalog (Streamlit views not materialized there). **Fix:** drop Streamlit from the **required table list**; **Dashboard critical path** prints a **WARN** and continues if no header view, while still enforcing `date_rescue_rate_summary` and `thyroid_scoring_py_v1` thresholds.
+Neither `streamlit_patient_header_v` nor `md_streamlit_patient_header_v` exists on the current prod catalog (Streamlit views not materialized there). **Fix:** drop Streamlit from the **required table list**; **Dashboard critical path** prints a **WARN** and continues if no header view.
+
+`date_rescue_rate_summary` may be absent; dashboard code also checks `md_date_rescue_rate_summary`. **Fix:** try both names; **WARN** if neither exists; keep **thyroid_scoring_py_v1** ajcc8 row floor.
 
 ### 3) Multimodal offline test (CI + local)
 

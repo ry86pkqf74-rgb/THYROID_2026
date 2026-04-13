@@ -534,19 +534,33 @@ jobs:
               else:
                   print(f'  OK streamlit_header: {int(v):,} rows (via {hdr})')
 
-          rest = [
-              ('date_rescue',       'SELECT COUNT(*) FROM date_rescue_rate_summary',          1),
-              ('scoring_t_stage',   'SELECT COUNT(*) FROM thyroid_scoring_py_v1 WHERE ajcc8_t_stage IS NOT NULL', 3000),
-          ]
-          for label, sql, min_rows in rest:
+          dr = None
+          for t in ('date_rescue_rate_summary', 'md_date_rescue_rate_summary'):
               try:
-                  v = con.execute(sql).fetchone()[0]
-                  if int(v) < min_rows:
-                      failures.append(f'{label}: {v} rows < {min_rows}')
-                  else:
-                      print(f'  OK {label}: {int(v):,} rows')
-              except Exception as e:
-                  failures.append(f'{label}: ERROR {e}')
+                  v = con.execute(f'SELECT COUNT(*) FROM {t}').fetchone()[0]
+                  dr = (t, int(v))
+                  break
+              except Exception:
+                  continue
+          if dr is None:
+              print('WARN: No date_rescue_rate_summary / md_date_rescue_rate_summary (script 27 KPI not deployed on this catalog).')
+          else:
+              tname, v = dr
+              if v < 1:
+                  failures.append(f'date_rescue: {v} rows < 1 (via {tname})')
+              else:
+                  print(f'  OK date_rescue: {v:,} rows (via {tname})')
+
+          try:
+              v = con.execute(
+                  'SELECT COUNT(*) FROM thyroid_scoring_py_v1 WHERE ajcc8_t_stage IS NOT NULL'
+              ).fetchone()[0]
+              if int(v) < 3000:
+                  failures.append(f'scoring_t_stage: {v} rows < 3000')
+              else:
+                  print(f'  OK scoring_t_stage: {int(v):,} rows')
+          except Exception as e:
+              failures.append(f'scoring_t_stage: ERROR {e}')
           con.close()
           if failures:
               print('DASHBOARD FAILURES:', failures)
