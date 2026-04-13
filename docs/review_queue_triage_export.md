@@ -81,12 +81,20 @@ Provenance: `reviewer`, `reviewed_at`, `verification_status` columns on `qa.manu
 
 Read-only export for **`qa.specimen_genomic_link_review_v1`** and **`qa.v_diag_specimen_review_burden_v1`** (no raw note text; truncates long text fields). Batched CSVs by linkage tier × `review_status` × `source_table` × age bucket.
 
+**Connection modes:** same three-way split as script **120** and **141**: `--md` (RW token, fail-closed), `--read-scaling` (`MD_READ_SCALING_TOKEN` only), or neither (local `--db-path`). **Do not** pass `--md` and `--read-scaling` together.
+
+**Env (read-scaling):** `MD_READ_SCALING_TOKEN` (required); optional `MD_READ_SCALING_SESSION_HINT` or `MOTHERDUCK_SESSION_HINT` / `--session-hint`; `MOTHERDUCK_CUSTOM_USER_AGENT` overrides the default exporter UA. Tokens resolve via `motherduck_client.get_read_scaling_token()` and gitignored `motherduck.local.toml` / `.streamlit/secrets.toml` per [`docs/motherduck_database_contract_v1.md`](motherduck_database_contract_v1.md) §8.
+
+**After a writer snapshot:** reviewers must run **`REFRESH DATABASE`** on the read-scaling connection (or `scripts/136_md_read_scaling_snapshot_refresh.py reader --md-env prod`) before `--read-scaling` exports see fresh data.
+
 ```bash
 .venv/bin/python scripts/151_specimen_genomic_review_queue_export.py --md --output-root exports
+export MD_READ_SCALING_TOKEN='md_…'   # read-scaling only
+.venv/bin/python scripts/136_md_read_scaling_snapshot_refresh.py reader --md-env prod
 .venv/bin/python scripts/151_specimen_genomic_review_queue_export.py --read-scaling --output-root exports
 ```
 
-Output: `exports/specimen_genomic_review_<UTC_YYYYMMDD_HHMMSS>/` with `summary.md`, burden CSV, full detail CSV, and `worklists/*.csv`. Tests: `tests/test_151_specimen_genomic_review_export.py`.
+Output: `exports/specimen_genomic_review_<UTC_YYYYMMDD_HHMMSS>/` with `summary.md`, burden CSV, full detail CSV, and `worklists/*.csv`. Tests: `tests/test_151_specimen_genomic_review_export.py` (offline; CI job **`llm-extraction-gold`**).
 
 ## Related
 

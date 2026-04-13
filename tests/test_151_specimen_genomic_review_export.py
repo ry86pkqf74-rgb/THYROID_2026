@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -76,6 +77,46 @@ def test_connect_read_scaling_fail_closed_exits_without_token(monkeypatch: pytes
     with pytest.raises(SystemExit) as exc:
         mdc.connect_read_scaling_fail_closed(md_env="prod")
     assert exc.value.code == 1
+
+
+def test_validate_connection_args_rejects_md_with_read_scaling() -> None:
+    ns = argparse.Namespace(md=True, read_scaling=True, md_sa=False)
+    with pytest.raises(SystemExit) as exc:
+        sg151.validate_connection_args(ns)
+    assert exc.value.code == 1
+
+
+def test_validate_connection_args_rejects_md_sa_without_md() -> None:
+    ns = argparse.Namespace(md=False, read_scaling=False, md_sa=True)
+    with pytest.raises(SystemExit) as exc:
+        sg151.validate_connection_args(ns)
+    assert exc.value.code == 1
+
+
+def test_read_scaling_passes_kwargs_to_connect(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, mem_con: duckdb.DuckDBPyConnection
+) -> None:
+    captured: dict[str, object] = {}
+
+    def _fake_rs(**kwargs: object) -> duckdb.DuckDBPyConnection:
+        captured.update(kwargs)
+        return mem_con
+
+    monkeypatch.setattr(sg151, "connect_read_scaling_fail_closed", _fake_rs)
+    monkeypatch.setenv("MOTHERDUCK_CUSTOM_USER_AGENT", "ua_151_rs")
+    args = argparse.Namespace(
+        md=False,
+        read_scaling=True,
+        md_sa=False,
+        md_env="qa",
+        session_hint="cli_hint",
+        db_path=str(tmp_path / "x.duckdb"),
+    )
+    sg151.validate_connection_args(args)
+    sg151.get_connection(args)
+    assert captured.get("md_env") == "qa"
+    assert captured.get("custom_user_agent") == "ua_151_rs"
+    assert captured.get("motherduck_session_hint") == "cli_hint"
 
 
 def test_main_read_scaling_uses_patched_connection(

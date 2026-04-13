@@ -13,6 +13,13 @@ Adds ``counts_manuscript_quality_tiers.csv`` to separate structural queue comple
 (non-NULL ``verification_status``) from manuscript sign-off posture (synthetic
 placeholders, automation-only tier policy, human reviewer identity present).
 
+Connection modes (exactly one — same pattern as ``scripts/141_fhir_specimen_json_export.py``):
+
+* ``--md`` — fail-closed MotherDuck attach with RW token (``MOTHERDUCK_TOKEN`` / ``MD_SA_TOKEN``).
+* ``--read-scaling`` — least-privilege read-scaling token only (``MD_READ_SCALING_TOKEN``); run
+  ``scripts/136_md_read_scaling_snapshot_refresh.py reader`` (or ``REFRESH DATABASE``) after a writer snapshot.
+* Neither flag — local file DuckDB (``--db-path``, default ``thyroid_master.duckdb``).
+
 Usage:
   .venv/bin/python scripts/120_review_queue_triage.py --md
   .venv/bin/python scripts/120_review_queue_triage.py --read-scaling --output-root exports
@@ -106,11 +113,25 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
+def validate_connection_args(args: argparse.Namespace) -> None:
+    """Fail fast on incompatible flags (fail-closed UX)."""
+    if args.md and args.read_scaling:
+        print("FATAL: pass at most one of --md and --read-scaling (or neither for local --db-path).")
+        sys.exit(1)
+    if getattr(args, "md_sa", False) and not args.md:
+        print("FATAL: --md-sa is only valid with --md.")
+        sys.exit(1)
+
+
 def _resolved_session_hint(cli: str | None, *, read_scaling: bool) -> str | None:
     import os
 
     if cli and str(cli).strip():
         return str(cli).strip()
+    if read_scaling:
+        rs = (os.environ.get("MD_READ_SCALING_SESSION_HINT") or "").strip()
+        if rs:
+            return rs
     env = (os.environ.get("MOTHERDUCK_SESSION_HINT") or "").strip()
     if env:
         return env
@@ -470,9 +491,7 @@ def run_triage(
 
 def main() -> None:
     args = parse_args()
-    if args.md and args.read_scaling:
-        print("FATAL: pass at most one of --md and --read-scaling.")
-        sys.exit(1)
+    validate_connection_args(args)
     reg = load_registry()
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     out_root = Path(args.output_root)

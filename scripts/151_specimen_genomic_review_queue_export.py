@@ -11,6 +11,13 @@ Safety:
   - Batched CSVs by ``linkage_confidence_tier`` (when join succeeds) × ``review_status`` ×
     ``source_table`` × age bucket (queued_at).
 
+Connection modes (exactly one — same pattern as ``scripts/141_fhir_specimen_json_export.py``):
+
+* ``--md`` — fail-closed MotherDuck with RW token.
+* ``--read-scaling`` — ``MD_READ_SCALING_TOKEN`` only; refresh readers after writer snapshot
+  (``scripts/136_md_read_scaling_snapshot_refresh.py reader`` or ``REFRESH DATABASE``).
+* Neither flag — local ``--db-path`` file DuckDB.
+
 Usage:
   .venv/bin/python scripts/151_specimen_genomic_review_queue_export.py --md --output-root exports
   .venv/bin/python scripts/151_specimen_genomic_review_queue_export.py --read-scaling --output-root exports
@@ -75,11 +82,24 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
+def validate_connection_args(args: argparse.Namespace) -> None:
+    if args.md and args.read_scaling:
+        print("FATAL: pass at most one of --md and --read-scaling (or neither for local --db-path).")
+        sys.exit(1)
+    if getattr(args, "md_sa", False) and not args.md:
+        print("FATAL: --md-sa is only valid with --md.")
+        sys.exit(1)
+
+
 def _resolved_session_hint(cli: str | None, *, read_scaling: bool) -> str | None:
     import os
 
     if cli and str(cli).strip():
         return str(cli).strip()
+    if read_scaling:
+        rs = (os.environ.get("MD_READ_SCALING_SESSION_HINT") or "").strip()
+        if rs:
+            return rs
     env = (os.environ.get("MOTHERDUCK_SESSION_HINT") or "").strip()
     if env:
         return env
@@ -242,9 +262,7 @@ def run_export(con: duckdb.DuckDBPyConnection, out_dir: Path) -> dict[str, int |
 
 def main() -> None:
     args = parse_args()
-    if args.md and args.read_scaling:
-        print("FATAL: pass at most one of --md and --read-scaling.")
-        sys.exit(1)
+    validate_connection_args(args)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     out_root = Path(args.output_root)
     out_dir = out_root / f"specimen_genomic_review_{stamp}"

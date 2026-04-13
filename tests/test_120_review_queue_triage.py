@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import csv
 import importlib.util
 import re
@@ -251,6 +252,55 @@ def test_connect_read_scaling_fail_closed_exits_without_token(monkeypatch):
     with pytest.raises(SystemExit) as exc:
         mdc.connect_read_scaling_fail_closed(md_env="prod")
     assert exc.value.code == 1
+
+
+def test_validate_connection_args_rejects_md_with_read_scaling():
+    """Cannot combine --md and --read-scaling."""
+    ns = argparse.Namespace(md=True, read_scaling=True, md_sa=False)
+    with pytest.raises(SystemExit) as exc:
+        triage.validate_connection_args(ns)
+    assert exc.value.code == 1
+
+
+def test_validate_connection_args_rejects_md_sa_without_md(monkeypatch):
+    ns = argparse.Namespace(md=False, read_scaling=False, md_sa=True)
+    with pytest.raises(SystemExit) as exc:
+        triage.validate_connection_args(ns)
+    assert exc.value.code == 1
+
+
+def test_read_scaling_connection_passes_md_env(monkeypatch, tmp_path):
+    """--read-scaling forwards md_env and UA to connect_read_scaling_fail_closed."""
+    db_file = tmp_path / "triage_rs_env.duckdb"
+    con = duckdb.connect(str(db_file))
+    _seed_manual_review_queue(con)
+    con.close()
+    captured: dict = {}
+
+    def _fake_rs(*, md_env=None, custom_user_agent=None, motherduck_session_hint=None, session_hint=None):
+        captured["md_env"] = md_env
+        captured["ua"] = custom_user_agent
+        captured["hint"] = motherduck_session_hint
+        return duckdb.connect(str(db_file))
+
+    monkeypatch.setattr(triage, "connect_read_scaling_fail_closed", _fake_rs)
+    monkeypatch.setenv("MOTHERDUCK_CUSTOM_USER_AGENT", "ua_test_rs")
+    args = argparse.Namespace(
+        md=False,
+        read_scaling=True,
+        md_sa=False,
+        md_env="qa",
+        session_hint="hint_cli",
+        db_path=str(triage.DEFAULT_DB_PATH),
+        output_root=str(triage.EXPORTS),
+        oldest_limit=200,
+        run_label=None,
+    )
+    triage.validate_connection_args(args)
+    triage.get_connection(args)
+    assert captured.get("md_env") == "qa"
+    assert captured.get("ua") == "ua_test_rs"
+    assert captured.get("hint") == "hint_cli"
 
 
 def test_main_read_scaling_uses_patched_connection(monkeypatch, tmp_path):

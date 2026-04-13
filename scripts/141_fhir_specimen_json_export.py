@@ -402,25 +402,14 @@ def main() -> None:
 
         con = duckdb.connect(str(args.local_duckdb))
     elif args.read_scaling:
-        from motherduck_client import MotherDuckClient
+        from utils.md_connect import connect_read_scaling_fail_closed
 
         hint = _session_hint_cli()
-        client = MotherDuckClient.for_env(
+        con = connect_read_scaling_fail_closed(
+            md_env=None,
             custom_user_agent=UA,
             motherduck_session_hint=hint,
         )
-        try:
-            con = client.connect_read_scaling()
-        except Exception as e:
-            print(f"FATAL: read-scaling MotherDuck connection failed: {e}")
-            sys.exit(1)
-        if not _verify_motherduck_attached(con):
-            con.close()
-            print(
-                "FATAL: --read-scaling connected but PRAGMA database_list shows no MotherDuck attach."
-            )
-            sys.exit(1)
-        print("  MotherDuck read-scaling connection verified (fail-closed gate passed)")
     else:
         from utils.md_connect import connect_md_fail_closed
 

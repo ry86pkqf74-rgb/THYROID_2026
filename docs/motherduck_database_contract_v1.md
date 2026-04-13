@@ -126,7 +126,9 @@ Script **150** creates/replaces these when `--write-db` is used against a target
 
 #### Specimen identity + analytic FHIR export (v1)
 
-Materialized by [`scripts/138_md_specimen_fhir_layer.py`](../scripts/138_md_specimen_fhir_layer.py) (identity + FHIR tail) + [`scripts/140_md_specimen_genomics_binding.py`](../scripts/140_md_specimen_genomics_binding.py), using **`specimen_fhir_ref_integrity_v2`** writer attribution by default (`utils/md_pipeline_attribution.specimen_fhir_release_writer_attribution`; same string as `SPECIMEN_FHIR_RELEASE_TRUTH_UA`). **Legacy / history:** older query logs may show **`specimen_fhir_release_truth_v2`** or **`specimen_fhir_release_truth_v1`** before the ref-integrity rename; treat those as superseded user-agent labels, not the current default. **Additive, derived-only:** full rebuild (`CREATE OR REPLACE`) is safe; upstream wide/pathology fields are not overwritten.
+**Default writer user-agent (MotherDuck query history):** **`specimen_fhir_ref_integrity_v2`** — this is the current default for **`138`** / **`140`** / **`143`** orchestration and QA DDL deploys (`utils/md_pipeline_attribution.specimen_fhir_release_writer_attribution`; `SPECIMEN_FHIR_RELEASE_TRUTH_UA` in code is the same string). **Historical / legacy labels (do not treat as current default):** query logs from older runs may show **`specimen_fhir_release_truth_v2`** or **`specimen_fhir_release_truth_v1`**; those names are **superseded** by the ref-integrity rename.
+
+Materialized by [`scripts/138_md_specimen_fhir_layer.py`](../scripts/138_md_specimen_fhir_layer.py) (identity + FHIR tail) + [`scripts/140_md_specimen_genomics_binding.py`](../scripts/140_md_specimen_genomics_binding.py), using that default attribution unless overridden via `MOTHERDUCK_CUSTOM_USER_AGENT`. **Additive, derived-only:** full rebuild (`CREATE OR REPLACE`) is safe; upstream wide/pathology fields are not overwritten.
 
 **Prereqs:** `synoptic_tumor_long_v1`, `path_synoptics_encounter_qc_v1`, `surgery_pathology_linkage_v3`, `fna_molecular_linkage_v3`, `preop_surgery_linkage_v3`, `molecular_test_episode_v2`.
 
