@@ -1,0 +1,4 @@
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+[152] fna_episode_master_v2 bethesda_category IS NULL before: 23
+[152] rows matchable from fna_cytology (preview): 0

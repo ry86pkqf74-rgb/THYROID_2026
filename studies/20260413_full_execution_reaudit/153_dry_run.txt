@@ -1,0 +1,5 @@
+  Connected to MotherDuck (md:Thyroid 2026)
+  MotherDuck connection verified (fail-closed gate passed)
+[153] bethesda_category IS NULL before: 23
+[153] dry-run Phase A match rows: 0
+[153] dry-run Phase B match rows: 0

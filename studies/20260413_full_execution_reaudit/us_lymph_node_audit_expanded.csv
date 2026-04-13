@@ -1,0 +1,6 @@
+layer,status,count_or_note,evidence
+mention_preservation_in_source_excel,"COMPLETE All_Ultrasound_Reports lymph_node_assessment text present when applicable",see April inventory,studies/20260413_us_lymph_node_audit/source_us_ln_inventory.csv
+structured_exam_level_ultrasound_reports,"lymph_node_assessment + combined text classification (April audit)",6793 ultrasound_reports rows on MD; April audit 34553 deduped exam inventory across layers,db_inventory_summary.md; studies/20260413_us_lymph_node_audit/verdict.md
+structured_per_level_laterality_size,"NOT DEMONSTRATED — no US per-level LN staging table in DB inventory",0,No table such as us_ln_level_detail_v1 found in this reaudit; April verdict explicitly heuristic PASS not per-level
+April_heuristic_strict_misses_positive,0 rows,0,studies/20260413_us_lymph_node_audit/positive_ln_misses.csv
+April_heuristic_strict_misses_negative,0 rows,0,studies/20260413_us_lymph_node_audit/negative_ln_capture_gaps.csv

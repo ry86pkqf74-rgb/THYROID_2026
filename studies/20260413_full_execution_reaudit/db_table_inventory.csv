@@ -1,0 +1,22 @@
+table,row_count,error
+imaging_nodule_master_v1,37016.0,
+imaging_nodule_long_v2,19891.0,
+raw_us_tirads_excel_v1,19891.0,
+raw_us_tirads_scored_v1,19549.0,
+raw_imaging_12_slots_v1,21079.0,
+ultrasound_reports,6793.0,
+imaging_fna_linkage_mm_v1,7305.0,
+imaging_fna_linkage_v2,,"Catalog Error: Table with name imaging_fna_linkage_v2 does not exist!
+Did you mean ""imaging_fna_linkage_v3""?
+
+LINE 1: SELECT COUNT(*) AS n FROM imaging_fna_linkage_v2
+                                  ^"
+imaging_fna_linkage_v3,9911.0,
+fna_episode_master_v2,8119.0,
+fna_cytology,8063.0,
+extracted_tirads_validated_v1,3439.0,
+serial_imaging_us,,"Catalog Error: Table with name serial_imaging_us does not exist!
+Did you mean ""imaging_patient_summary_v1""?
+
+LINE 1: SELECT COUNT(*) AS n FROM serial_imaging_us
+                                  ^"
