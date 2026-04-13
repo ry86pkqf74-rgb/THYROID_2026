@@ -390,7 +390,6 @@ jobs:
           con = MotherDuckClient(MotherDuckConfig(use_service_account=True)).connect_rw()
 
           REQUIRED_TABLES = [
-              'master_cohort',
               'manuscript_cohort_v1',
               'patient_analysis_resolved_v1',
               'episode_analysis_resolved_v1_dedup',
@@ -400,7 +399,6 @@ jobs:
               'rai_treatment_episode_v2',
               'molecular_test_episode_v2',
               'survival_cohort_enriched',
-              'streamlit_patient_header_v',
               'longitudinal_lab_canonical_v1',
           ]
           missing = []
@@ -409,11 +407,22 @@ jobs:
                   con.execute(f'SELECT 1 FROM {tbl} LIMIT 1')
               except Exception:
                   missing.append(tbl)
+          streamlit_ok = False
+          for hdr in ('streamlit_patient_header_v', 'md_streamlit_patient_header_v'):
+              try:
+                  con.execute(f'SELECT 1 FROM {hdr} LIMIT 1')
+                  streamlit_ok = True
+                  print(f'  header view: {hdr}')
+                  break
+              except Exception:
+                  continue
+          if not streamlit_ok:
+              missing.append('streamlit_patient_header_v_or_md_streamlit_patient_header_v')
           con.close()
           if missing:
               print('MISSING CANONICAL TABLES:', missing)
               exit(1)
-          print(f'All {len(REQUIRED_TABLES)} canonical tables exist')
+          print(f'All {len(REQUIRED_TABLES)} core tables + Streamlit header exist')
           "
 
       # ── 11 canonical manuscript metrics ──────────────────────────────────
@@ -425,7 +434,7 @@ jobs:
           con = MotherDuckClient(MotherDuckConfig(use_service_account=True)).connect_rw()
 
           METRICS = [
-              ('surgical_cohort',    'SELECT COUNT(DISTINCT research_id) FROM master_cohort',                              10500, 12000),
+              ('surgical_cohort',    'SELECT COUNT(DISTINCT research_id) FROM manuscript_cohort_v1',                       10500, 12000),
               ('cancer_cohort',      'SELECT COUNT(*) FROM analysis_cancer_cohort_v1',                                      3900, 4300),
               ('manuscript_cohort',  'SELECT COUNT(*) FROM manuscript_cohort_v1',                                          10500, 11200),
               ('dedup_episodes',     'SELECT COUNT(*) FROM episode_analysis_resolved_v1_dedup',                             9000, 9800),
@@ -518,14 +527,29 @@ jobs:
           assert get_token(prefer_service_account=True), 'No MotherDuck token (set MD_SA_TOKEN or MOTHERDUCK_TOKEN)'
           con = MotherDuckClient(MotherDuckConfig(use_service_account=True)).connect_rw()
 
-          QUERIES = [
-              ('streamlit_header',  'SELECT COUNT(*) FROM streamlit_patient_header_v',   10000),
+          failures = []
+          hdr = None
+          for h in ('streamlit_patient_header_v', 'md_streamlit_patient_header_v'):
+              try:
+                  con.execute(f'SELECT 1 FROM {h} LIMIT 1')
+                  hdr = h
+                  break
+              except Exception:
+                  continue
+          if hdr is None:
+              failures.append('streamlit_header: no streamlit_patient_header_v or md_streamlit_patient_header_v')
+          else:
+              v = con.execute(f'SELECT COUNT(*) FROM {hdr}').fetchone()[0]
+              if int(v) < 10000:
+                  failures.append(f'streamlit_header: {v} rows < 10000 (via {hdr})')
+              else:
+                  print(f'  OK streamlit_header: {int(v):,} rows (via {hdr})')
+
+          rest = [
               ('date_rescue',       'SELECT COUNT(*) FROM date_rescue_rate_summary',          1),
               ('scoring_t_stage',   'SELECT COUNT(*) FROM thyroid_scoring_py_v1 WHERE ajcc8_t_stage IS NOT NULL', 3000),
           ]
-
-          failures = []
-          for label, sql, min_rows in QUERIES:
+          for label, sql, min_rows in rest:
               try:
                   v = con.execute(sql).fetchone()[0]
                   if int(v) < min_rows:

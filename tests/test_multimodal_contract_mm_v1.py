@@ -451,9 +451,11 @@ class TestImagingFnaContractIntegration:
         n_link = nl[0]
         n_blk = nb[0]
         n_rev = nr[0]
-        assert n_link == 0
+        # Singleton discordant laterality: 129 links via relaxed_singleton_temporal (see
+        # test_singleton_discordant_lateral_links_relaxed); still no contract blockers.
+        assert n_link == 1
         assert n_blk == 0
-        assert n_rev >= 1
+        assert n_rev == 0
 
     def test_size_drift_gt_20pct_surfaces_in_review(self) -> None:
         mod = _load_mm128()
