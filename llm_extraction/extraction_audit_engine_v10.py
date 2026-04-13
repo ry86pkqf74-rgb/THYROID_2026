@@ -41,6 +41,15 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from llm_extraction.extraction_audit_engine_v3 import _get_connection
 
+
+def _table_exists(con, name: str) -> bool:
+    try:
+        con.execute(f"SELECT 1 FROM {name} LIMIT 1")
+        return True
+    except Exception:
+        return False
+
+
 PHASE12_SOURCE_HIERARCHY = {
     "excel_complete_structured": 1.0,
     "excel_tirads_scored": 0.90,
@@ -647,31 +656,47 @@ def audit_and_refine_phase12(con, dry_run: bool = False) -> dict:
     print(f"\n  → vw_us_nodule_tirads_validated:\n{vw.to_string(index=False)}")
     results["tables_deployed"].append(("vw_us_nodule_tirads_validated", len(vw)))
 
-    # --- 8. Build patient_refined_master_clinical_v11 ---
-    print("\n[Phase 12] Building patient_refined_master_clinical_v11 ...")
-    _build_master_v11(con)
-    n = con.execute("SELECT COUNT(*) FROM patient_refined_master_clinical_v11").fetchone()[0]
-    print(f"  → patient_refined_master_clinical_v11: {n} rows")
-    results["tables_deployed"].append(("patient_refined_master_clinical_v11", n))
+    # --- 8–10. Master v11 / advanced_features_v5 (optional on MotherDuck) ---
+    if _table_exists(con, "patient_refined_master_clinical_v10"):
+        print("\n[Phase 12] Building patient_refined_master_clinical_v11 ...")
+        _build_master_v11(con)
+        n = con.execute(
+            "SELECT COUNT(*) FROM patient_refined_master_clinical_v11"
+        ).fetchone()
+        assert n is not None
+        print(f"  → patient_refined_master_clinical_v11: {n[0]} rows")
+        results["tables_deployed"].append(("patient_refined_master_clinical_v11", int(n[0])))
 
-    # --- 9. Build advanced_features_v5 ---
-    print("\n[Phase 12] Building advanced_features_v5 ...")
-    _build_advanced_features_v5(con)
-    n = con.execute("SELECT COUNT(*) FROM advanced_features_v5").fetchone()[0]
-    print(f"  → advanced_features_v5: {n} rows")
-    results["tables_deployed"].append(("advanced_features_v5", n))
+        print("\n[Phase 12] Building advanced_features_v5 ...")
+        _build_advanced_features_v5(con)
+        n_af = con.execute("SELECT COUNT(*) FROM advanced_features_v5").fetchone()
+        assert n_af is not None
+        print(f"  → advanced_features_v5: {n_af[0]} rows")
+        results["tables_deployed"].append(("advanced_features_v5", int(n_af[0])))
 
-    # --- 10. New fill rate ---
-    new_fill = con.execute("""
-        SELECT
-            COUNT(*) as total,
-            COUNT(CASE WHEN tirads_best_score_v12 IS NOT NULL THEN 1 END) as has_tirads,
-            ROUND(COUNT(CASE WHEN tirads_best_score_v12 IS NOT NULL THEN 1 END)*100.0/COUNT(*), 2) as pct
-        FROM patient_refined_master_clinical_v11
-    """).fetchone()
-    results["new_fill_rate"] = float(new_fill[2])
-    results["new_tirads_count"] = int(new_fill[1])
-    print(f"\n[Phase 12] NEW TIRADS fill rate: {new_fill[2]}% ({new_fill[1]}/{new_fill[0]})")
+        new_fill = con.execute("""
+            SELECT
+                COUNT(*) as total,
+                COUNT(CASE WHEN tirads_best_score_v12 IS NOT NULL THEN 1 END) as has_tirads,
+                ROUND(COUNT(CASE WHEN tirads_best_score_v12 IS NOT NULL THEN 1 END)*100.0/COUNT(*), 2) as pct
+            FROM patient_refined_master_clinical_v11
+        """).fetchone()
+        assert new_fill is not None
+        results["new_fill_rate"] = float(new_fill[2])
+        results["new_tirads_count"] = int(new_fill[1])
+        print(
+            f"\n[Phase 12] NEW TIRADS fill rate: {new_fill[2]}% "
+            f"({new_fill[1]}/{new_fill[0]})"
+        )
+    else:
+        print(
+            "\n[Phase 12] SKIP patient_refined_master_clinical_v11 / advanced_features_v5: "
+            "patient_refined_master_clinical_v10 not in catalog "
+            "(raw TIRADS tables and extracted_tirads_validated_v1 were deployed)."
+        )
+        results["skipped_master_v11"] = True
+        results["new_fill_rate"] = None
+        results["new_tirads_count"] = None
 
     # --- 11. Save results JSON ---
     out_dir = PROJECT_ROOT / "llm_extraction"
@@ -749,7 +774,32 @@ def _build_advanced_features_v5(con):
 # ---------------------------------------------------------------------------
 def deploy_validation_view(con):
     """Create val_phase12_tirads_validation table."""
-    con.execute("""
+    nlp_in = 0
+    nlp_ref = 0
+    if _table_exists(con, "extracted_us_tirads_v1"):
+        nlp_in = int(
+            con.execute("SELECT COUNT(*) FROM extracted_us_tirads_v1").fetchone()[0]
+        )
+        nlp_ref = int(
+            con.execute(
+                "SELECT COUNT(*) FROM extracted_tirads_validated_v1 WHERE has_nlp"
+            ).fetchone()[0]
+        )
+    total_refined = 0
+    if _table_exists(con, "patient_refined_master_clinical_v11"):
+        row = con.execute(
+            "SELECT COUNT(*) FROM patient_refined_master_clinical_v11 "
+            "WHERE tirads_best_score_v12 IS NOT NULL"
+        ).fetchone()
+        total_refined = int(row[0]) if row is not None else 0
+    else:
+        row = con.execute(
+            "SELECT COUNT(*) FROM extracted_tirads_validated_v1 "
+            "WHERE tirads_best_score IS NOT NULL"
+        ).fetchone()
+        total_refined = int(row[0]) if row is not None else 0
+
+    con.execute(f"""
         DROP TABLE IF EXISTS val_phase12_tirads_validation;
         CREATE TABLE val_phase12_tirads_validation AS
         SELECT
@@ -771,16 +821,14 @@ def deploy_validation_view(con):
         UNION ALL
         SELECT
             'tirads_nlp_notes',
-            (SELECT COUNT(*) FROM extracted_us_tirads_v1),
-            (SELECT COUNT(*) FROM extracted_tirads_validated_v1
-             WHERE has_nlp),
+            {nlp_in}::BIGINT,
+            {nlp_ref}::BIGINT,
             NULL, NULL
         UNION ALL
         SELECT
             'tirads_total_patients',
             (SELECT COUNT(*) FROM extracted_tirads_validated_v1),
-            (SELECT COUNT(*) FROM patient_refined_master_clinical_v11
-             WHERE tirads_best_score_v12 IS NOT NULL),
+            {total_refined}::BIGINT,
             NULL, NULL
     """)
     print("  → val_phase12_tirads_validation deployed")

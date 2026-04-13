@@ -2,9 +2,11 @@
 """
 50_multinodule_imaging.py -- Multi-nodule thyroid ultrasound support
 
-Ingests the wide-format per-nodule data from raw_us_tirads_excel_v1 and
-raw_us_tirads_scored_v1 into a proper long-format structure, enabling
-nodule-level linkage to FNA and pathology.
+Ingests the wide-format per-nodule data from raw_us_tirads_excel_v1 into
+a proper long-format structure, then **supplements** with nodule rows from
+raw_us_tirads_scored_v1 (US Nodules TIRADS workbook) when there is no
+existing master row for the same (research_id, nodule_number) within ±30 days,
+matching the audit linkage rule. Enables nodule-level linkage to FNA and pathology.
 
 Tables created:
   imaging_nodule_master_v1    -- one row per nodule per exam (long-format)
@@ -21,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from typing import Any
 from datetime import datetime
 from pathlib import Path
 
@@ -56,6 +59,11 @@ def table_available(con: duckdb.DuckDBPyConnection, tbl: str) -> bool:
         return True
     except Exception:
         return False
+
+
+def _require_row(row: tuple[Any, ...] | None) -> tuple[Any, ...]:
+    assert row is not None
+    return row
 
 
 # ---------------------------------------------------------------------------
@@ -409,6 +417,89 @@ SELECT * FROM with_concordance
 
 
 # ---------------------------------------------------------------------------
+# Supplement: scored-only nodules (raw_us_tirads_scored_v1) not in COMPLETE unpivot
+# ---------------------------------------------------------------------------
+SCORED_NODULE_SUPPLEMENT_SQL = """
+INSERT INTO imaging_nodule_master_v1 (
+    research_id, exam_date, nodule_number, exam_id, nodule_id,
+    tirads_reported, tirads_acr_recalculated,
+    composition, echogenicity, shape, margins, calcifications,
+    length_mm, width_mm, height_mm, volume_ml, location_raw, laterality,
+    source_table, tirads_concordant_flag, max_dimension_cm, tirads_category, suspicious_flag
+)
+SELECT
+    CAST(s.research_id AS INTEGER) AS research_id,
+    TRY_CAST(s.us_date AS DATE) AS exam_date,
+    CAST(s.nodule_number AS INTEGER) AS nodule_number,
+    MD5(CONCAT(
+        CAST(s.research_id AS VARCHAR), '_',
+        CAST(COALESCE(TRY_CAST(s.us_date AS DATE), DATE '1900-01-01') AS VARCHAR)
+    )) AS exam_id,
+    MD5(CONCAT(
+        CAST(s.research_id AS VARCHAR), '_',
+        CAST(COALESCE(TRY_CAST(s.us_date AS DATE), DATE '1900-01-01') AS VARCHAR), '_',
+        CAST(s.nodule_number AS VARCHAR)
+    )) AS nodule_id,
+    TRY_CAST(s.tirads_reported AS INTEGER) AS tirads_reported,
+    CAST(NULL AS INTEGER) AS tirads_acr_recalculated,
+    CAST(NULL AS VARCHAR) AS composition,
+    CAST(NULL AS VARCHAR) AS echogenicity,
+    CAST(NULL AS VARCHAR) AS shape,
+    CAST(NULL AS VARCHAR) AS margins,
+    CAST(NULL AS VARCHAR) AS calcifications,
+    CAST(NULL AS DOUBLE) AS length_mm,
+    CAST(NULL AS DOUBLE) AS width_mm,
+    CAST(NULL AS DOUBLE) AS height_mm,
+    CAST(NULL AS DOUBLE) AS volume_ml,
+    NULLIF(TRIM(CAST(s.nodule_description AS VARCHAR)), '') AS location_raw,
+    CAST(NULL AS VARCHAR) AS laterality,
+    'raw_us_tirads_scored_v1' AS source_table,
+    CAST(NULL AS BOOLEAN) AS tirads_concordant_flag,
+    CAST(NULL AS DOUBLE) AS max_dimension_cm,
+    COALESCE(
+        CAST(s.tirads_category AS VARCHAR),
+        CASE TRY_CAST(s.tirads_reported AS INTEGER)
+            WHEN 1 THEN 'TR1' WHEN 2 THEN 'TR2' WHEN 3 THEN 'TR3'
+            WHEN 4 THEN 'TR4' WHEN 5 THEN 'TR5' WHEN 6 THEN 'TR5' ELSE NULL
+        END
+    ) AS tirads_category,
+    COALESCE(TRY_CAST(s.tirads_reported AS INTEGER), 0) >= 4 AS suspicious_flag
+FROM raw_us_tirads_scored_v1 s
+WHERE TRY_CAST(s.us_date AS DATE) IS NOT NULL
+  AND s.research_id IS NOT NULL
+  AND s.nodule_number IS NOT NULL
+  AND NOT EXISTS (
+    SELECT 1
+    FROM imaging_nodule_master_v1 m
+    WHERE CAST(m.research_id AS INTEGER) = CAST(s.research_id AS INTEGER)
+      AND CAST(m.nodule_number AS INTEGER) = CAST(s.nodule_number AS INTEGER)
+      AND m.exam_date IS NOT NULL
+      AND ABS(date_diff('day', m.exam_date, TRY_CAST(s.us_date AS DATE))) <= 30
+  )
+"""
+
+
+def supplement_imaging_nodule_master_from_scored(
+    con: duckdb.DuckDBPyConnection,
+) -> int:
+    """Append scored-workbook nodules missing from COMPLETE unpivot. Returns rows added."""
+    if not table_available(con, "raw_us_tirads_scored_v1"):
+        return 0
+    before = int(
+        _require_row(
+            con.execute("SELECT COUNT(*) FROM imaging_nodule_master_v1").fetchone()
+        )[0]
+    )
+    con.execute(SCORED_NODULE_SUPPLEMENT_SQL)
+    after = int(
+        _require_row(
+            con.execute("SELECT COUNT(*) FROM imaging_nodule_master_v1").fetchone()
+        )[0]
+    )
+    return after - before
+
+
+# ---------------------------------------------------------------------------
 # imaging_exam_master_v1 -- one row per exam
 # ---------------------------------------------------------------------------
 IMAGING_EXAM_MASTER_SQL = """
@@ -432,7 +523,7 @@ SELECT
           COALESCE(tirads_reported, tirads_acr_recalculated) DESC NULLS LAST,
           max_dimension_cm DESC NULLS LAST)
                                     AS dominant_nodule_id,
-    'raw_us_tirads_excel_v1'        AS source
+    MAX(source_table)               AS source
 FROM imaging_nodule_master_v1
 GROUP BY research_id, exam_date, exam_id
 """
@@ -513,9 +604,11 @@ def build_multinodule_tables(con: duckdb.DuckDBPyConnection,
 
     has_excel = table_available(con, "raw_us_tirads_excel_v1")
     has_scored = table_available(con, "extracted_tirads_validated_v1")
+    has_raw_scored = table_available(con, "raw_us_tirads_scored_v1")
     has_us_tirads = table_available(con, "us_nodules_tirads")
 
     print(f"  raw_us_tirads_excel_v1:       {'present' if has_excel else 'missing'}")
+    print(f"  raw_us_tirads_scored_v1:      {'present' if has_raw_scored else 'missing'}")
     print(f"  extracted_tirads_validated_v1: {'present' if has_scored else 'missing'}")
     print(f"  us_nodules_tirads:             {'present' if has_us_tirads else 'missing'}")
 
@@ -529,28 +622,48 @@ def build_multinodule_tables(con: duckdb.DuckDBPyConnection,
         nodule_sql = build_nodule_long_sql(con)
         if nodule_sql:
             con.execute(nodule_sql)
-            r = con.execute(
-                "SELECT COUNT(*), COUNT(DISTINCT research_id) "
-                "FROM imaging_nodule_master_v1"
-            ).fetchone()
+            r = _require_row(
+                con.execute(
+                    "SELECT COUNT(*), COUNT(DISTINCT research_id) "
+                    "FROM imaging_nodule_master_v1"
+                ).fetchone()
+            )
             print(f"    imaging_nodule_master_v1: {r[0]:,} nodule rows, "
                   f"{r[1]:,} patients")
 
+            if has_raw_scored:
+                print("  Supplementing imaging_nodule_master_v1 from "
+                      "raw_us_tirads_scored_v1 (±30d dedup vs existing rows)...")
+                n_added = supplement_imaging_nodule_master_from_scored(con)
+                print(f"    scored-only nodule rows appended: {n_added:,}")
+                r = _require_row(
+                    con.execute(
+                        "SELECT COUNT(*), COUNT(DISTINCT research_id) "
+                        "FROM imaging_nodule_master_v1"
+                    ).fetchone()
+                )
+                print(f"    imaging_nodule_master_v1 (after supplement): "
+                      f"{r[0]:,} nodule rows, {r[1]:,} patients")
+
             print("  Building imaging_exam_master_v1...")
             con.execute(IMAGING_EXAM_MASTER_SQL)
-            r = con.execute(
-                "SELECT COUNT(*), COUNT(DISTINCT research_id) "
-                "FROM imaging_exam_master_v1"
-            ).fetchone()
+            r = _require_row(
+                con.execute(
+                    "SELECT COUNT(*), COUNT(DISTINCT research_id) "
+                    "FROM imaging_exam_master_v1"
+                ).fetchone()
+            )
             print(f"    imaging_exam_master_v1: {r[0]:,} exams, "
                   f"{r[1]:,} patients")
 
             print("  Building imaging_patient_summary_v1...")
             con.execute(IMAGING_PATIENT_SUMMARY_SQL)
-            r = con.execute(
-                "SELECT COUNT(*), SUM(n_total_nodules), AVG(n_total_nodules) "
-                "FROM imaging_patient_summary_v1"
-            ).fetchone()
+            r = _require_row(
+                con.execute(
+                    "SELECT COUNT(*), SUM(n_total_nodules), AVG(n_total_nodules) "
+                    "FROM imaging_patient_summary_v1"
+                ).fetchone()
+            )
             print(f"    imaging_patient_summary_v1: {r[0]:,} patients, "
                   f"{int(r[1]) if r[1] else 0:,} total nodules, "
                   f"{(float(r[2]) if r[2] is not None else 0.0):.1f} avg nodules/patient")
@@ -559,9 +672,11 @@ def build_multinodule_tables(con: duckdb.DuckDBPyConnection,
             if has_scored:
                 print("  Supplementing with scored workbook patients...")
                 con.execute(SCORED_SUPPLEMENT_SQL)
-                r = con.execute(
-                    "SELECT COUNT(*) FROM imaging_patient_summary_v1"
-                ).fetchone()
+                r = _require_row(
+                    con.execute(
+                        "SELECT COUNT(*) FROM imaging_patient_summary_v1"
+                    ).fetchone()
+                )
                 print(f"    After supplement: {r[0]:,} patients")
         else:
             print("  [WARN] Could not detect nodule column groups in "
@@ -589,7 +704,9 @@ SELECT
     CURRENT_TIMESTAMP               AS created_at
 FROM extracted_tirads_validated_v1
 """)
-        r = con.execute("SELECT COUNT(*) FROM imaging_patient_summary_v1").fetchone()
+        r = _require_row(
+            con.execute("SELECT COUNT(*) FROM imaging_patient_summary_v1").fetchone()
+        )
         print(f"    imaging_patient_summary_v1 (TIRADS-only): {r[0]:,} patients")
 
         # Create minimal nodule master stub

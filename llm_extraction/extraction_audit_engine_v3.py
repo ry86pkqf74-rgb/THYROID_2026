@@ -1296,17 +1296,18 @@ def _refine_ene(con, verbose: bool) -> dict:
 # CLI
 # ---------------------------------------------------------------------------
 def _get_connection(use_md: bool, local_path: str = "thyroid_master.duckdb"):
+    """MotherDuck when *use_md* is True; local file otherwise.
+
+    Historically this mistakenly opened the local file even for ``--md``; callers
+    expecting MotherDuck (Phase 12, etc.) must use ``connect_md_or_file``.
+    """
     import duckdb
+    from utils.md_connect import connect_md_or_file
+
+    db_path = PROJECT_ROOT / local_path
     if use_md:
-        try:
-            import toml
-            secrets = toml.load(PROJECT_ROOT / ".streamlit/secrets.toml")
-            secrets["LOCAL_DB_PATH"]
-        except Exception:
-            import os
-            os.environ.get("LOCAL_DB_PATH", "")
-        return duckdb.connect("thyroid_master.duckdb")
-    return duckdb.connect(str(PROJECT_ROOT / local_path))
+        return connect_md_or_file(db_path, md=True, fail_closed=True)
+    return duckdb.connect(str(db_path))
 
 
 def main():
