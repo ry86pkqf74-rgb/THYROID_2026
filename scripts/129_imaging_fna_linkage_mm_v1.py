@@ -4,6 +4,11 @@
 
 Canonical imaging nodule rows: imaging_nodule_master_v1 (see README / AGENTS).
 
+DICOM: This script is intentionally **DICOM-blind**. The additive DICOM header layer
+(``scripts/150_ingest_dicom_headers.py`` / ``dicom_*_v1``) does not feed linkage here;
+``optional_attach_dicom_to_imaging_nodule_frame()`` in ``utils/dicom_header_helpers``
+is for optional future joins and is a no-op unless ``dicom_study_header_v1`` exists.
+
 Builds:
   imaging_fna_linkage_mm_v1 (columns relaxed_eligibility_flag, relaxed_tier when staged rules apply)
   val_imaging_fna_linkage_audit_v1

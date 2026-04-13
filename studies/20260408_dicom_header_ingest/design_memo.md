@@ -6,7 +6,11 @@
 
 ## Objective
 
-Close the gap between **radiology PACS/RIS flattened exports** (no raw `.dcm` in scope) and existing **canonical imaging / specimen / FNA** structures without doing any of the following:
+**Initial design focus (v1 memo draft):** flattened radiology PACS/RIS **header exports** aligned to existing **canonical imaging / specimen / FNA** structures.
+
+**Shipped scope evolution:** **Raw `.dcm` ingestion was added after the first pass** — same logical columns as flattened exports, using `pydicom` with **`stop_before_pixels=True`** so **pixel data are never decoded** and no image pipeline is introduced. The layer remains **additive** and **deterministic** (explicit `research_id` or exact normalized accession against the candidate spine; no fuzzy matching).
+
+**Non-goals (unchanged):**
 
 - Rebuilding molecular ingestion (`41`, `42`, `131`), multimodal contract (`128`), imaging↔FNA linkage (`129`), or specimen/FHIR (`138`–`140`).
 - Using fuzzy patient matching, MRN+date fallbacks, or auto-merge of ambiguous identities.
@@ -75,4 +79,4 @@ python3 scripts/150_ingest_dicom_headers.py \
 ## Promotion notes
 
 - Treat `exports/dicom_header_ingest_*` as **reproducible artifacts** (gitignored pattern `exports/dicom_header_ingest_*/`).
-- Add table entries to `docs/motherduck_database_contract_v1.md` when the layer is promoted to MotherDuck `main`.
+- **MotherDuck `main` contract:** `dicom_*_v1` tables are **repo-defined** and become **canonical-live** only after operator `--write-db` materialization and promotion; see `docs/motherduck_database_contract_v1.md` (DICOM subsection) and `studies/20260413_dicom_promotion_reconciliation/report.md`.

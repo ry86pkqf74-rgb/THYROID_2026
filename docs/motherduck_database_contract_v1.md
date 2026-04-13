@@ -110,6 +110,20 @@ Same names as v2_stage tables, promoted by `motherduck_promote.sql` after all 8 
 | `linkage_summary_v` | Patient-level linkage counts across episode types |
 | `episode_completeness_summary_v` | Row/patient counts per episode table |
 
+#### DICOM header ingest layer (v1) — **additive / operator-materializable**
+
+**Contract status (repo, 2026-04-13):** The DICOM objects below are **implemented in-repo** ([`scripts/150_ingest_dicom_headers.py`](../scripts/150_ingest_dicom_headers.py) + [`scripts/sql/150_dicom_header_layer_ddl.sql`](../scripts/sql/150_dicom_header_layer_ddl.sql)). They are **not asserted here as canonical-live in MotherDuck `main`** until an operator run has applied DDL and merged data (`--write-db`) and promotion has been recorded; default runs are **export-only** to `exports/dicom_header_ingest_*`. Distinction: **repo code + DDL** vs **optional materialization** vs **canonical contract surface** (same staging rule as other promoted tables).
+
+| Table | Role |
+|-------|------|
+| `dicom_header_ingestion_provenance_v1` | Per-source-row provenance, fingerprints, parse status |
+| `dicom_study_header_v1` | One row per `StudyInstanceUID` |
+| `dicom_series_header_v1` | One row per `SeriesInstanceUID` |
+| `dicom_imaging_link_exact_v1` | Deterministic exact links only (`explicit_research_id` / `exact_accession` against candidate spine) |
+| `dicom_link_review_queue_v1` | Ambiguous, discordant, or missing matches for review |
+
+Script **150** creates/replaces these when `--write-db` is used against a target database; otherwise artifacts are Parquet exports only. The layer is **additive** relative to `imaging_nodule_master_v1` and scripts **128** / **129** (no mandatory consumption in those scripts).
+
 #### Specimen identity + analytic FHIR export (v1)
 
 Materialized by [`scripts/138_md_specimen_fhir_layer.py`](../scripts/138_md_specimen_fhir_layer.py) (identity + FHIR tail) + [`scripts/140_md_specimen_genomics_binding.py`](../scripts/140_md_specimen_genomics_binding.py), using **`specimen_fhir_release_truth_v2`** writer attribution by default (see `utils/md_pipeline_attribution.py`). **Additive, derived-only:** full rebuild (`CREATE OR REPLACE`) is safe; upstream wide/pathology fields are not overwritten.

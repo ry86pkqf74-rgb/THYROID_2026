@@ -5,6 +5,8 @@
 **Aliases:** `config/dicom_header_aliases.yml`  
 **DDL:** `scripts/sql/150_dicom_header_layer_ddl.sql`
 
+**Status vs canonical contract:** The ingest layer is **fully implemented in this repository** (script, DDL, tests, export path). **Canonical-live presence in MotherDuck `main`** is **not** implied by this runbook; treating `dicom_*_v1` as part of the promoted contract requires an explicit operator materialization/promotion step and verification. Default runs remain **export-only** (no DB writes). See `docs/motherduck_database_contract_v1.md` (DICOM subsection) and `studies/20260413_dicom_promotion_reconciliation/report.md`.
+
 ## Purpose
 
 Ingest **flattened** DICOM header exports (CSV, XLSX, JSON array, or Parquet) **or raw DICOM files (`.dcm`)** into governed, repo-native tables with **deterministic** linkage to existing imaging/specimen/FNA structures. The **`.dcm` path is metadata-only**: the pipeline uses `pydicom.dcmread(..., stop_before_pixels=True)` and never decodes pixel data or builds image pipelines. Canonical outputs (`dicom_study_header_v1`, `dicom_series_header_v1`, provenance, exact-link tables, review queue) are the same as for flattened exports.

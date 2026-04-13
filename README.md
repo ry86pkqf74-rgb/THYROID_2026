@@ -90,6 +90,7 @@ documented source limitations, not data quality failures.
 | Molecular prod release (dev/qa/prod, 137) | [`docs/release_runbook.md`](docs/release_runbook.md) |
 | Multimodal contract (128/129) — operator runbook | [`docs/multimodal_contract_runbook.md`](docs/multimodal_contract_runbook.md) |
 | Multimodal strict release gate (fail conditions) | [`docs/multimodal_release_gate.md`](docs/multimodal_release_gate.md) |
+| DICOM header ingest (150) — operator runbook | [`docs/dicom_header_ingest_runbook.md`](docs/dicom_header_ingest_runbook.md) · design memo [`studies/20260408_dicom_header_ingest/design_memo.md`](studies/20260408_dicom_header_ingest/design_memo.md) |
 | Review queue triage export (script 120) | [`docs/review_queue_triage_export.md`](docs/review_queue_triage_export.md) |
 | Domain mapping rules | [`docs/domain_mapping_rules.md`](docs/domain_mapping_rules.md) |
 | Domain inventory (current) | [`studies/20260406_domain_inventory_current/`](studies/20260406_domain_inventory_current/) |
@@ -97,6 +98,15 @@ documented source limitations, not data quality failures.
 | Release-mode validation (April 2026 lineage audit snapshot) | [`studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation/`](studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation/) |
 | Release-mode validation (historical 20-check PASS) | [`studies/20260407_formalization_validation_release_mode/`](studies/20260407_formalization_validation_release_mode/) |
 | Git tag | [`v2026.03.10-publication-ready`](../../releases/tag/v2026.03.10-publication-ready) |
+
+### DICOM header ingest layer (additive, v1)
+
+- **Script:** [`scripts/150_ingest_dicom_headers.py`](scripts/150_ingest_dicom_headers.py) with DDL [`scripts/sql/150_dicom_header_layer_ddl.sql`](scripts/sql/150_dicom_header_layer_ddl.sql) and helpers [`utils/dicom_header_helpers.py`](utils/dicom_header_helpers.py).
+- **Supported inputs:** flattened radiology header exports (CSV, XLSX, JSON, Parquet) **and** raw `.dcm` files with **metadata-only** reads (`stop_before_pixels=True`; pixel data are never decoded).
+- **Default behavior:** export-only Parquet + `manifest.json` under `exports/dicom_header_ingest_<UTC>/` — **no database writes** unless the operator runs with `--write-db` (see runbook).
+- **Relationship to imaging / multimodal:** **additive** alongside `imaging_nodule_master_v1`, [`scripts/128_multimodal_contract_mm_v1.py`](scripts/128_multimodal_contract_mm_v1.py), and [`scripts/129_imaging_fna_linkage_mm_v1.py`](scripts/129_imaging_fna_linkage_mm_v1.py); it does not replace or mutate those pipelines. Optional joins live in helpers only; linkage scripts stay unchanged unless you opt in later.
+- **Canonical MotherDuck `main`:** tables are **repo-defined** and become **contract/canonical-live** only after operator materialization and promotion — do not assume they exist in prod without verification; see [`docs/motherduck_database_contract_v1.md`](docs/motherduck_database_contract_v1.md) (DICOM subsection) and [`studies/20260413_dicom_promotion_reconciliation/report.md`](studies/20260413_dicom_promotion_reconciliation/report.md).
+- **Docs:** runbook [`docs/dicom_header_ingest_runbook.md`](docs/dicom_header_ingest_runbook.md), design memo [`studies/20260408_dicom_header_ingest/design_memo.md`](studies/20260408_dicom_header_ingest/design_memo.md).
 
 ### What "manuscript-ready" means
 
