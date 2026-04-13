@@ -95,8 +95,9 @@ gh api "repos/ry86pkqf74-rgb/THYROID_2026/contents/README.md?ref=main" --jq '{na
 
 ## Post-push `origin/main` (this task)
 
-Pushed commit `1a47910` (docs-only: this report + `CURRENT_MOTHERDUCK_REPO_STATE.md` SHA alignment). After push:
+Docs-only commits pushed to `origin/main`:
 
-| | SHA |
-|---|-----|
-| `origin/main` | `1a4791086d100ce2197d99f599a9dca5e458f8e1` |
+1. `1a4791086d100ce2197d99f599a9dca5e458f8e1` — `studies/github_public_sync_20260413T153214Z/report.md` (initial) + `CURRENT_MOTHERDUCK_REPO_STATE.md` SHA alignment.
+2. `c1323e9be7fa25220c9a6224ccd3b56b836e646c` — report correction (accurate full SHA for item 1).
+
+**Verify tip:** `git fetch origin && git rev-parse origin/main` (must equal local `main` after a successful push).
