@@ -24,17 +24,17 @@
     },
     {
       "snapshot_name": "ete_pre_psm_policy",
-      "snapshot_id": null,
-      "created_ts_utc": null,
+      "snapshot_id": "created_server_side_id_not_retrievable_via_mcp",
+      "created_ts_utc": "2026-04-13T22:40:11Z",
       "phase": "Phase 5 pre-transition",
-      "purpose": "Pending — created immediately before PSM determinism changes."
+      "purpose": "Captured immediately before PSM determinism hardening + policy decision."
     },
     {
       "snapshot_name": "ete_pre_manuscript_packaging",
       "snapshot_id": null,
       "created_ts_utc": null,
       "phase": "Phase 6 pre-transition",
-      "purpose": "Pending — created immediately before manuscript-numeric propagation."
+      "purpose": "Pending \u2014 created immediately before manuscript-numeric propagation."
     }
   ],
   "canonical_ete_tables_row_counts": {

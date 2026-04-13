@@ -8,6 +8,24 @@ Proposal 2 extension analyses:
 
 Uses expanded cohort (all PTC, N~3,278).
 Deterministic seed: 42.
+
+PSM ANCHOR POLICY (ete-remediation-20260413, Phase 5)
+-----------------------------------------------------
+The frozen manuscript PSM result (N = 711 matched pairs) is the
+structural anchor for the manuscript.  Any rerun of this script is
+treated as a SENSITIVITY analysis, not as a replacement of the anchor,
+unless and until a rerun explicitly passes all Phase 5 gates:
+
+  * Deterministic execution on identical frozen inputs (this module
+    now enforces stable ordering — see `propensity_match`).
+  * SHA-256-locked input exports (see `artifacts/ete_export_freeze_manifest.json`).
+  * AJCC7 canonical mapping (T3b -> T3; see `ajcc7_mapping.py`).
+  * Explicit provenance block written to `analysis_metadata.yaml`.
+
+If a rerun produces a pair count different from 711, that difference is
+a *sensitivity signal* — inspect, document in
+`artifacts/ete_psm_stability_report.md`, and only then consider whether
+to promote a new anchor via a governance cycle.
 """
 
 from pathlib import Path
@@ -147,33 +165,67 @@ def structural_table(df: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def propensity_match(df: pd.DataFrame):
+def propensity_match(df: pd.DataFrame, caliper: float = 0.05):
+    """Greedy 1:1 nearest-neighbour PSM, mETE vs No ETE, caliper on propensity.
+
+    Determinism contract (Phase 5):
+      * Input is stably sorted by research_id BEFORE dropna() and fit.
+      * Both treated and control frames are sorted by (propensity, research_id)
+        so that propensity ties are broken deterministically.
+      * Nearest-neighbour selection uses a composite (abs_distance, research_id)
+        key; when multiple controls are equidistant, the one with the
+        lexicographically smallest research_id is picked.
+      * LogisticRegression uses lbfgs (default) + random_state=SEED; lbfgs
+        on this problem size is numerically stable across sklearn minor
+        versions observed to date (1.4, 1.5, 1.6).
+      * No dependence on DataFrame positional index values — everything
+        joins on research_id.
+    """
     # Isolate mETE effect by comparing mETE vs No ETE only
     sub = df[df["ete_group"].isin(["No ETE", "Microscopic ETE"])].copy()
+    # Stable input ordering: sort by research_id so downstream dropna /
+    # fit / pairing receive a canonical row order independent of the
+    # caller's upstream merge/shuffle history.
+    if "research_id" in sub.columns:
+        sub = sub.sort_values("research_id", kind="mergesort").reset_index(drop=True)
     sub["treat"] = sub["ete_micro"].astype(int)
     covars = ["age_at_surgery", "female", "largest_tumor_cm", "n_positive_flag"]
     sub = sub.dropna(subset=covars + ["structural_recurrence", "dfs_years"])
 
     X = sub[covars].astype(float).values
     y = sub["treat"].values
-    lr = LogisticRegression(max_iter=1000, random_state=SEED)
+    lr = LogisticRegression(max_iter=1000, random_state=SEED, solver="lbfgs")
     lr.fit(X, y)
     ps = lr.predict_proba(X)[:, 1]
     sub["propensity"] = ps
 
-    treated = sub[sub["treat"] == 1].copy().sort_values("propensity")
-    control = sub[sub["treat"] == 0].copy().sort_values("propensity")
+    # Deterministic ordering: propensity, then research_id (mergesort = stable).
+    sort_keys = ["propensity", "research_id"] if "research_id" in sub.columns else ["propensity"]
+    treated = sub[sub["treat"] == 1].copy().sort_values(sort_keys, kind="mergesort")
+    control = sub[sub["treat"] == 0].copy().sort_values(sort_keys, kind="mergesort")
     available_controls = control.index.tolist()
 
-    caliper = 0.05
     pairs = []
     for tidx, trow in treated.iterrows():
         if not available_controls:
             break
         cands = control.loc[available_controls]
         dist = (cands["propensity"] - trow["propensity"]).abs()
-        cidx = dist.idxmin()
-        if dist.loc[cidx] <= caliper:
+        # Deterministic tie-breaking: sort by (distance, research_id) and pick
+        # first within caliper. Falls back to idxmin() if research_id missing.
+        if "research_id" in cands.columns:
+            order = pd.DataFrame({
+                "dist": dist.values,
+                "rid": cands["research_id"].astype(str).values,
+                "idx": cands.index.values,
+            }).sort_values(["dist", "rid"], kind="mergesort")
+            best = order.iloc[0]
+            cidx = best["idx"]
+            best_dist = float(best["dist"])
+        else:
+            cidx = dist.idxmin()
+            best_dist = float(dist.loc[cidx])
+        if best_dist <= caliper:
             pairs.append((tidx, cidx))
             available_controls.remove(cidx)
 
