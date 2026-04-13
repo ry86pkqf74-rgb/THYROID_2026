@@ -486,11 +486,38 @@ def rows_to_study_series(
     return prov_df, study_df, series_df
 
 
-def _exams_for_candidate_group(g: pd.DataFrame) -> list[str]:
-    if "imaging_exam_id" not in g.columns:
+def _norm_id_cell(v: Any) -> str | None:
+    """Normalize a candidate ID cell: None/NaN/blank/whitespace-only → None."""
+    if v is None or (isinstance(v, float) and pd.isna(v)):
+        return None
+    s = str(v).strip()
+    return s if s else None
+
+
+def _distinct_non_null_string_ids(series: pd.Series | None) -> list[str]:
+    """Sorted distinct non-null, non-blank string IDs (de-duplicated)."""
+    if series is None:
         return []
-    ex = g["imaging_exam_id"].dropna().astype(str).unique().tolist()
-    return sorted(ex)
+    out: set[str] = set()
+    for v in series:
+        n = _norm_id_cell(v)
+        if n is not None:
+            out.add(n)
+    return sorted(out)
+
+
+def _distinct_imaging_exam_ids(img_sub: pd.DataFrame) -> list[str]:
+    """Distinct imaging_exam_id values from imaging candidate rows; blanks ignored."""
+    if img_sub.empty or "imaging_exam_id" not in img_sub.columns:
+        return []
+    return _distinct_non_null_string_ids(img_sub["imaging_exam_id"])
+
+
+def _distinct_specimen_ids(sub: pd.DataFrame) -> list[str]:
+    """Distinct specimen_id values across all candidate rows; blanks ignored."""
+    if sub.empty or "specimen_id" not in sub.columns:
+        return []
+    return _distinct_non_null_string_ids(sub["specimen_id"])
 
 
 def _link_id_hash(parts: Sequence[str]) -> str:
@@ -534,6 +561,9 @@ def resolve_exact_links(
     Never invent links from MRN/date alone. candidates columns expected:
     research_id, accession_norm, imaging_exam_id (nullable), imaging_nodule_id (nullable),
     specimen_id (nullable), source_table (imaging|specimen), exam_date_yyyymmdd (optional).
+
+    Review reasons include AMBIGUOUS_ACCESSION_MULTI_SPECIMEN when accession resolves to one
+    research_id and at most one distinct imaging exam but >1 distinct non-blank specimen_id.
     """
     ts = ingestion_ts or datetime.now(timezone.utc)
     links: list[dict[str, Any]] = []
@@ -689,10 +719,9 @@ def resolve_exact_links(
 
         rids = sorted({int(x) for x in sub["research_id"].dropna().unique().tolist()})
         if len(rids) > 1:
-            exams = _exams_for_candidate_group(sub)
-            specs = sorted(
-                {str(x) for x in sub["specimen_id"].dropna().astype(str).unique().tolist()},
-            )
+            img_for_ex = sub[sub["source_table"].astype(str).eq("imaging")]
+            exams = _distinct_imaging_exam_ids(img_for_ex)
+            specs = _distinct_specimen_ids(sub)
             reviews.append(
                 {
                     "review_id": _review_id_hash(
@@ -719,8 +748,14 @@ def resolve_exact_links(
 
         rid = rids[0]
         img_sub = sub[sub["source_table"].astype(str).eq("imaging")]
-        exams = _exams_for_candidate_group(img_sub)
+        exams = _distinct_imaging_exam_ids(img_sub)
+        specimen_ids_all = _distinct_specimen_ids(sub)
         if len(exams) > 1:
+            spec_note = (
+                " Multiple distinct specimen_id candidates present."
+                if len(specimen_ids_all) > 1
+                else ""
+            )
             reviews.append(
                 {
                     "review_id": _review_id_hash(
@@ -737,8 +772,10 @@ def resolve_exact_links(
                     "modality_raw": st.get("modality_summary"),
                     "candidate_research_ids_json": json.dumps([rid]),
                     "candidate_imaging_exam_ids_json": json.dumps(exams),
-                    "candidate_specimen_ids_json": None,
-                    "conflict_note": "One research_id but multiple imaging exam_ids for accession.",
+                    "candidate_specimen_ids_json": json.dumps(specimen_ids_all),
+                    "conflict_note": (
+                        "One research_id but multiple imaging exam_ids for accession." + spec_note
+                    ),
                     "ingestion_run_id": ingestion_run_id,
                     "created_ts": ts,
                 },
@@ -779,14 +816,7 @@ def resolve_exact_links(
                     "modality_raw": st.get("modality_summary"),
                     "candidate_research_ids_json": json.dumps([rid]),
                     "candidate_imaging_exam_ids_json": json.dumps(exams),
-                    "candidate_specimen_ids_json": json.dumps(
-                        sorted(
-                            {
-                                str(x)
-                                for x in sub["specimen_id"].dropna().astype(str).unique().tolist()
-                            },
-                        ),
-                    ),
+                    "candidate_specimen_ids_json": json.dumps(specimen_ids_all),
                     "conflict_note": "; ".join(conflict_note_parts),
                     "ingestion_run_id": ingestion_run_id,
                     "created_ts": ts,
@@ -794,16 +824,54 @@ def resolve_exact_links(
             )
             continue
 
-        img_row = img_sub.head(1)
+        if len(specimen_ids_all) > 1:
+            reviews.append(
+                {
+                    "review_id": _review_id_hash(
+                        [ingestion_run_id, str(su), str(accn), "MULTI_SPEC"],
+                    ),
+                    "reason_code": "AMBIGUOUS_ACCESSION_MULTI_SPECIMEN",
+                    "source_file": None,
+                    "study_instance_uid": su,
+                    "series_instance_uid": None,
+                    "accession_raw": st.get("accession_number_raw"),
+                    "accession_norm": accn,
+                    "study_date_normalized": sd_n,
+                    "series_date_normalized": None,
+                    "modality_raw": st.get("modality_summary"),
+                    "candidate_research_ids_json": json.dumps([rid]),
+                    "candidate_imaging_exam_ids_json": json.dumps(exams),
+                    "candidate_specimen_ids_json": json.dumps(specimen_ids_all),
+                    "conflict_note": (
+                        "Exact accession maps to one research_id and ≤1 distinct imaging exam, "
+                        "but multiple distinct specimen_id values in candidate spine."
+                    ),
+                    "ingestion_run_id": ingestion_run_id,
+                    "created_ts": ts,
+                },
+            )
+            continue
+
         exam_id = None
         nodule_id = None
-        if not img_row.empty and "imaging_exam_id" in img_row.columns:
-            exam_id = img_row.iloc[0].get("imaging_exam_id")
-            nodule_id = img_row.iloc[0].get("imaging_nodule_id")
-        spec_sub = sub[sub["source_table"].astype(str).eq("specimen")]
-        specimen_id = None
-        if not spec_sub.empty and "specimen_id" in spec_sub.columns:
-            specimen_id = spec_sub.iloc[0].get("specimen_id")
+        if not img_sub.empty and "imaging_exam_id" in img_sub.columns:
+            if len(exams) == 1:
+                eid = exams[0]
+                mask = img_sub["imaging_exam_id"].map(_norm_id_cell) == eid
+                img_pick = img_sub[mask].sort_index()
+                if img_pick.empty:
+                    img_pick = img_sub.sort_index().head(1)
+                else:
+                    img_pick = img_pick.head(1)
+            else:
+                img_pick = img_sub.sort_index().head(1)
+            if not img_pick.empty:
+                exam_id = img_pick.iloc[0].get("imaging_exam_id")
+                nodule_id = img_pick.iloc[0].get("imaging_nodule_id")
+
+        specimen_id: str | None = None
+        if len(specimen_ids_all) == 1:
+            specimen_id = specimen_ids_all[0]
 
         cand_blob = json.dumps(
             sorted([tuple(str(x) for x in r) for r in sub.astype(str).values.tolist()]),

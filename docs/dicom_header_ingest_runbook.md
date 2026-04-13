@@ -40,6 +40,20 @@ python3 scripts/150_ingest_dicom_headers.py \
 | `dicom_link_review_queue_v1.parquet` | Ambiguous / discordant / missing matches |
 | `manifest.json` | Row counts, git SHA, run metadata |
 
+### Exact-accession ambiguity (specimen vs imaging)
+
+After accession matches exactly one `research_id` and imaging-exam ambiguity is ruled out (`≤1` distinct non-blank `imaging_exam_id` on imaging candidate rows), the resolver counts **distinct non-blank** `specimen_id` values across **all** candidate rows for that accession.
+
+- **`AMBIGUOUS_ACCESSION_MULTI_SPECIMEN`** — More than one distinct non-blank `specimen_id` for the same normalized accession under a single `research_id`. No auto-link; `candidate_specimen_ids_json` lists all distinct IDs (sorted). Previously, the first specimen row could be taken silently; that behavior is removed.
+- **Precedence with `AMBIGUOUS_ACCESSION_MULTI_IMAGING_EXAM`** — If there are `>1` distinct imaging exam IDs, the review reason remains **`AMBIGUOUS_ACCESSION_MULTI_IMAGING_EXAM`** (unchanged). The review row still includes `candidate_specimen_ids_json` when specimen IDs exist; if there are multiple distinct specimen IDs as well, `conflict_note` also notes specimen multiplicity.
+- **Non-ambiguous** — `0` distinct specimen IDs → `specimen_id` on the link stays null. Exactly `1` distinct specimen ID (including when many rows repeat the same ID) → that ID may be attached to the `exact_accession` link.
+
+Blank / whitespace-only `imaging_exam_id` and `specimen_id` values are ignored when forming distinct-ID sets.
+
+### Malformed raw `.dcm` files (QC vs linkage)
+
+If `pydicom` cannot read a file (or `StudyInstanceUID` is missing after read), the row is recorded in **`dicom_header_ingestion_provenance_v1`** with `parse_status` **`error`** and QC flags such as **`MISSING_STUDY_INSTANCE_UID`**. No **`dicom_study_header_v1`** row is emitted for that study. **`resolve_exact_links`** only iterates study-level rows, so **no** `dicom_link_review_queue_v1` row is produced for that failure mode when the study frame is empty for that case. (Study-level QC blockers such as malformed UIDs on rows that *do* produce a study row still route to review via **`STUDY_HEADER_QC_BLOCKER`**.)
+
 ### Dry-run expectations
 
 - `manifest.json` → `write_db: false`, non-zero provenance/study counts when input is valid.

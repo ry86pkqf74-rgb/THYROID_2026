@@ -57,7 +57,10 @@ Minimum canonicalized fields when present:
 | `ACCESSION_NO_DB_MATCH` | Normalized accession absent from candidate spine |
 | `AMBIGUOUS_ACCESSION_MULTI_RESEARCH_ID` | Same accession maps to >1 `research_id` |
 | `AMBIGUOUS_ACCESSION_MULTI_IMAGING_EXAM` | Same accession and one `research_id` but >1 imaging `exam_id` |
+| `AMBIGUOUS_ACCESSION_MULTI_SPECIMEN` | Same accession and one `research_id`, ≤1 distinct imaging exam, but >1 distinct `specimen_id` |
 | `DATE_DISCORDANT_ACCESSION_MATCH` | Accession matched but study vs exam date skew over threshold |
+
+Linkage hardening note (2026-04-13): see `studies/20260413_dicom_linkage_hardening/note.md` for specimen ambiguity precedence and prior silent-first-specimen behavior.
 
 Review rows include JSON arrays of candidate IDs, modalities, and a free-text `conflict_note`.
 

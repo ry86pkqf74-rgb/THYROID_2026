@@ -440,6 +440,202 @@ def test_dcm_missing_accession_no_auto_link_to_review(tmp_path: Path) -> None:
     assert reviews.iloc[0]["reason_code"] == "MISSING_ACCESSION_NO_RESEARCH_ID"
 
 
+def test_ambiguous_accession_multi_specimen_no_auto_link() -> None:
+    """One research_id, one imaging exam id, multiple distinct specimen_id → review, no link."""
+    cfg = load_alias_config()
+    lu = build_column_lookup(cfg["canonical_fields"])
+    df = read_input_files([FIXTURES / "study_series_synthetic.csv"], "csv")
+    enriched = build_enriched_rows(df, lu)
+    _, study, _ = rows_to_study_series(enriched, ingestion_run_id="r")
+    acc = normalize_accession_key("SYN-ACC-1001")
+    cand = pd.DataFrame(
+        [
+            {
+                "research_id": 77,
+                "accession_norm": acc,
+                "imaging_exam_id": "examA",
+                "imaging_nodule_id": "nodA",
+                "specimen_id": None,
+                "source_table": "imaging",
+                "exam_date_yyyymmdd": "20240115",
+            },
+            {
+                "research_id": 77,
+                "accession_norm": acc,
+                "imaging_exam_id": None,
+                "imaging_nodule_id": None,
+                "specimen_id": "sp1",
+                "source_table": "specimen",
+                "exam_date_yyyymmdd": None,
+            },
+            {
+                "research_id": 77,
+                "accession_norm": acc,
+                "imaging_exam_id": None,
+                "imaging_nodule_id": None,
+                "specimen_id": "sp2",
+                "source_table": "specimen",
+                "exam_date_yyyymmdd": None,
+            },
+        ],
+    )
+    links, reviews = resolve_exact_links(study, cand, ingestion_run_id="r")
+    assert links.empty
+    assert reviews.iloc[0]["reason_code"] == "AMBIGUOUS_ACCESSION_MULTI_SPECIMEN"
+    spec_json = json.loads(reviews.iloc[0]["candidate_specimen_ids_json"])
+    assert set(spec_json) == {"sp1", "sp2"}
+
+
+def test_repeated_rows_single_distinct_specimen_still_links() -> None:
+    cfg = load_alias_config()
+    lu = build_column_lookup(cfg["canonical_fields"])
+    df = read_input_files([FIXTURES / "study_series_synthetic.csv"], "csv")
+    enriched = build_enriched_rows(df, lu)
+    _, study, _ = rows_to_study_series(enriched, ingestion_run_id="r")
+    acc = normalize_accession_key("SYN-ACC-1001")
+    cand = pd.DataFrame(
+        [
+            {
+                "research_id": 77,
+                "accession_norm": acc,
+                "imaging_exam_id": "examA",
+                "imaging_nodule_id": "nodA",
+                "specimen_id": None,
+                "source_table": "imaging",
+                "exam_date_yyyymmdd": "20240115",
+            },
+            {
+                "research_id": 77,
+                "accession_norm": acc,
+                "imaging_exam_id": None,
+                "imaging_nodule_id": None,
+                "specimen_id": "spx",
+                "source_table": "specimen",
+                "exam_date_yyyymmdd": None,
+            },
+            {
+                "research_id": 77,
+                "accession_norm": acc,
+                "imaging_exam_id": None,
+                "imaging_nodule_id": None,
+                "specimen_id": "spx",
+                "source_table": "specimen",
+                "exam_date_yyyymmdd": None,
+            },
+        ],
+    )
+    links, reviews = resolve_exact_links(study, cand, ingestion_run_id="r")
+    assert len(links) == 1
+    assert links.iloc[0]["specimen_id"] == "spx"
+    assert reviews.empty
+
+
+def test_multi_imaging_exam_includes_specimen_candidates_and_no_link() -> None:
+    cfg = load_alias_config()
+    lu = build_column_lookup(cfg["canonical_fields"])
+    df = read_input_files([FIXTURES / "study_series_synthetic.csv"], "csv")
+    enriched = build_enriched_rows(df, lu)
+    _, study, _ = rows_to_study_series(enriched, ingestion_run_id="r")
+    acc = normalize_accession_key("SYN-ACC-1001")
+    cand = pd.DataFrame(
+        [
+            {
+                "research_id": 77,
+                "accession_norm": acc,
+                "imaging_exam_id": "e1",
+                "imaging_nodule_id": "n1",
+                "specimen_id": None,
+                "source_table": "imaging",
+                "exam_date_yyyymmdd": "20240115",
+            },
+            {
+                "research_id": 77,
+                "accession_norm": acc,
+                "imaging_exam_id": "e2",
+                "imaging_nodule_id": "n2",
+                "specimen_id": None,
+                "source_table": "imaging",
+                "exam_date_yyyymmdd": "20240115",
+            },
+            {
+                "research_id": 77,
+                "accession_norm": acc,
+                "imaging_exam_id": None,
+                "imaging_nodule_id": None,
+                "specimen_id": "s1",
+                "source_table": "specimen",
+                "exam_date_yyyymmdd": None,
+            },
+            {
+                "research_id": 77,
+                "accession_norm": acc,
+                "imaging_exam_id": None,
+                "imaging_nodule_id": None,
+                "specimen_id": "s2",
+                "source_table": "specimen",
+                "exam_date_yyyymmdd": None,
+            },
+        ],
+    )
+    links, reviews = resolve_exact_links(study, cand, ingestion_run_id="r")
+    assert links.empty
+    assert reviews.iloc[0]["reason_code"] == "AMBIGUOUS_ACCESSION_MULTI_IMAGING_EXAM"
+    assert set(json.loads(reviews.iloc[0]["candidate_specimen_ids_json"])) == {"s1", "s2"}
+    assert "specimen" in (reviews.iloc[0]["conflict_note"] or "").lower()
+
+
+def test_blank_ids_ignored_for_distinct_counts() -> None:
+    cfg = load_alias_config()
+    lu = build_column_lookup(cfg["canonical_fields"])
+    df = read_input_files([FIXTURES / "study_series_synthetic.csv"], "csv")
+    enriched = build_enriched_rows(df, lu)
+    _, study, _ = rows_to_study_series(enriched, ingestion_run_id="r")
+    acc = normalize_accession_key("SYN-ACC-1001")
+    cand = pd.DataFrame(
+        [
+            {
+                "research_id": 77,
+                "accession_norm": acc,
+                "imaging_exam_id": "examA",
+                "imaging_nodule_id": "nodA",
+                "specimen_id": None,
+                "source_table": "imaging",
+                "exam_date_yyyymmdd": "20240115",
+            },
+            {
+                "research_id": 77,
+                "accession_norm": acc,
+                "imaging_exam_id": "   ",
+                "imaging_nodule_id": None,
+                "specimen_id": None,
+                "source_table": "imaging",
+                "exam_date_yyyymmdd": "20240115",
+            },
+            {
+                "research_id": 77,
+                "accession_norm": acc,
+                "imaging_exam_id": None,
+                "imaging_nodule_id": None,
+                "specimen_id": " ",
+                "source_table": "specimen",
+                "exam_date_yyyymmdd": None,
+            },
+            {
+                "research_id": 77,
+                "accession_norm": acc,
+                "imaging_exam_id": None,
+                "imaging_nodule_id": None,
+                "specimen_id": "sp1",
+                "source_table": "specimen",
+                "exam_date_yyyymmdd": None,
+            },
+        ],
+    )
+    links, reviews = resolve_exact_links(study, cand, ingestion_run_id="r")
+    assert len(links) == 1
+    assert links.iloc[0]["specimen_id"] == "sp1"
+
+
 def test_flattened_formats_still_run_after_dcm_support() -> None:
     cfg = load_alias_config()
     lu = build_column_lookup(cfg["canonical_fields"])
