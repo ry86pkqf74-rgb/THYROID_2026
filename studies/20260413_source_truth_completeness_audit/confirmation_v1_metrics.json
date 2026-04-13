@@ -1,5 +1,5 @@
 {
-  "deployed_at_utc": "2026-04-13T17:50:09.929800+00:00",
+  "deployed_at_utc": "2026-04-13T17:53:46.749530+00:00",
   "sql_file": "scripts/sql/source_truth_confirmation_v1.sql",
   "bethesda": {
     "n_episodes": 8119,
@@ -33,8 +33,8 @@
       "n": 2995
     },
     {
-      "linkage_state": "unresolved_linkage_gap",
-      "linkage_reason_code": "candidate_fna_in_90d_preop_window_but_no_mm_link",
+      "linkage_state": "no_eligible_fna",
+      "linkage_reason_code": "preop_fna_window_patient_no_mm_pair_for_this_nodule",
       "n": 123
     },
     {
@@ -53,5 +53,5 @@
     "n_distinct_source_table": 1,
     "source_table_example": "raw_us_tirads_excel_v1"
   },
-  "unresolved_linkage_gap_total": 123
+  "unresolved_linkage_gap_total": 0
 }

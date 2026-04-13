@@ -2,8 +2,9 @@
 -- Non-destructive views for fail-closed completeness classification.
 -- Deploy: scripts/151_source_truth_confirmation_v1.py --md
 -- Linkage classification: first_surgery from tumor_episode_master_v2 (aligns with script 129);
---   FNA dates use COALESCE(fna_date_native, resolved_fna_date); unresolved_gap requires preop
---   0–90d window (exam and FNA on/before first surgery when surgery exists).
+--   FNA dates use COALESCE(fna_date_native, resolved_fna_date).
+-- unresolved_linkage_gap only when has_mm_pair_0_90d_for_nodule (same nodule as script 129)
+--   but no primary — not when patient-level EXISTS finds an FNA in a different nodule.
 
 -- 1) Bethesda: COALESCE(episode, fna_cytology) + explicit unscorable reason for remainder
 CREATE OR REPLACE VIEW v_fna_episode_bethesda_resolved_v1 AS
@@ -143,7 +144,13 @@ enriched AS (
                   i.exam_d,
                   COALESCE(f.fna_date_native, TRY_CAST(f.resolved_fna_date AS DATE))
               ) > 90
-        ) AS has_fna_after_exam_beyond_90d
+        ) AS has_fna_after_exam_beyond_90d,
+        EXISTS (
+            SELECT 1
+            FROM imaging_fna_linkage_mm_v1 mm
+            WHERE mm.nodule_id = i.nodule_id
+              AND mm.day_gap_us_before_fna BETWEEN 0 AND 90
+        ) AS has_mm_pair_0_90d_for_nodule
     FROM img i
     LEFT JOIN prim p ON i.nodule_id = p.nodule_id
     LEFT JOIN pfna pf ON CAST(i.research_id AS BIGINT) = CAST(pf.research_id AS BIGINT)
@@ -166,8 +173,11 @@ SELECT
         WHEN COALESCE(has_fna_calendar_0_90d_after_exam, FALSE)
              AND NOT COALESCE(has_fna_0_90d_after_exam, FALSE)
             THEN 'no_eligible_fna'
-        WHEN has_fna_0_90d_after_exam
+        WHEN COALESCE(has_fna_0_90d_after_exam, FALSE)
+             AND COALESCE(has_mm_pair_0_90d_for_nodule, FALSE)
             THEN 'unresolved_linkage_gap'
+        WHEN COALESCE(has_fna_0_90d_after_exam, FALSE)
+            THEN 'no_eligible_fna'
         WHEN has_fna_after_exam_beyond_90d AND NOT COALESCE(has_fna_0_90d_after_exam, FALSE)
             THEN 'no_eligible_fna'
         ELSE 'unresolved_linkage_gap'
@@ -180,7 +190,11 @@ SELECT
         WHEN COALESCE(has_fna_calendar_0_90d_after_exam, FALSE)
              AND NOT COALESCE(has_fna_0_90d_after_exam, FALSE)
             THEN 'fna_calendar_in_window_but_not_preop'
-        WHEN has_fna_0_90d_after_exam THEN 'candidate_fna_in_90d_preop_window_but_no_mm_link'
+        WHEN COALESCE(has_fna_0_90d_after_exam, FALSE)
+             AND COALESCE(has_mm_pair_0_90d_for_nodule, FALSE)
+            THEN 'mm_pair_0_90d_no_primary_ambiguous_or_all_false_primary'
+        WHEN COALESCE(has_fna_0_90d_after_exam, FALSE)
+            THEN 'preop_fna_window_patient_no_mm_pair_for_this_nodule'
         WHEN has_fna_after_exam_beyond_90d AND NOT COALESCE(has_fna_0_90d_after_exam, FALSE)
             THEN 'only_fna_beyond_90d_after_index_us'
         ELSE 'ambiguous_requires_manual_review'

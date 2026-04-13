@@ -414,10 +414,21 @@ ord AS (
     FROM tagged
 )
 ,
+ord2 AS (
+    SELECT
+        *,
+        ROW_NUMBER() OVER (
+            PARTITION BY research_id, nodule_id
+            ORDER BY specimen_match_flag DESC, fna_date ASC, fna_episode_id ASC
+        ) AS preference_rank
+    FROM ord
+)
+,
 prim AS (
     SELECT
         *,
         CASE
+            WHEN n_specimen_matches_on_nodule >= 2 AND preference_rank = 1 THEN TRUE
             WHEN n_specimen_matches_on_nodule >= 2 THEN FALSE
             WHEN specimen_match_flag AND n_specimen_matches_on_nodule = 1 THEN TRUE
             WHEN n_candidates_for_nodule = 1 THEN TRUE
@@ -427,7 +438,7 @@ prim AS (
                 THEN TRUE
             ELSE FALSE
         END AS is_primary_link
-    FROM ord
+    FROM ord2
 )
 SELECT
     lower(md5(concat(
