@@ -1,7 +1,7 @@
-2026-04-13T18:09:04.719319+00:00 start run_us_nodule_tirads_linkage_audit
-2026-04-13T18:09:04.720340+00:00 token_mode=motherduck.local.toml:MOTHERDUCK_TOKEN token=SET local=False
-2026-04-13T18:09:48.103679+00:00 complete_prov=19891 complete_legacy=19891
-2026-04-13T18:09:48.103957+00:00 scored_prov=19549 scored_legacy=19549
-2026-04-13T18:09:48.104003+00:00 imaging12_slots=21079
-2026-04-13T18:09:52.712875+00:00 connected
-2026-04-13T18:10:07.351014+00:00 done
+2026-04-13T18:24:15.898114+00:00 start run_us_nodule_tirads_linkage_audit
+2026-04-13T18:24:15.899406+00:00 token_mode=motherduck.local.toml:MOTHERDUCK_TOKEN token=SET local=False
+2026-04-13T18:24:58.037131+00:00 complete_prov=19891 complete_legacy=19891
+2026-04-13T18:24:58.037433+00:00 scored_prov=19549 scored_legacy=19549
+2026-04-13T18:24:58.037482+00:00 imaging12_slots=21079
+2026-04-13T18:25:02.928338+00:00 connected
+2026-04-13T18:25:19.954091+00:00 done

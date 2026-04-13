@@ -2,30 +2,30 @@
   "script": "129_imaging_fna_linkage_mm_v1.py",
   "target": "motherduck",
   "token_mode": "motherduck.local.toml:MOTHERDUCK_TOKEN",
-  "exported_at_utc": "2026-04-13T18:08:06.040344+00:00",
+  "exported_at_utc": "2026-04-13T18:21:46.996134+00:00",
   "status": "ok",
   "before": {
-    "imaging_nodule_master_dated_rows": 28222,
+    "imaging_nodule_master_dated_rows": 34955,
     "fna_episode_dated_rows": 6449,
     "imaging_fna_linkage_v3_rows": 9911,
-    "imaging_fna_linkage_mm_v1_rows": 4731
+    "imaging_fna_linkage_mm_v1_rows": 7305
   },
-  "wide_pre_candidate_pairs": 7264,
+  "wide_pre_candidate_pairs": 8047,
   "after": {
-    "imaging_fna_linkage_mm_v1_rows": 6522,
-    "primary_link_rows": 5722,
+    "imaging_fna_linkage_mm_v1_rows": 7305,
+    "primary_link_rows": 6351,
     "review_queue_rows": 742
   },
   "audit": {
-    "imaging_nodule_rows_with_exam_date": 28222,
-    "distinct_imaging_nodules": 28163,
-    "linkage_mm_rows": 6522,
-    "primary_link_rows": 5722,
-    "nodules_with_primary": 5722,
-    "rows_in_ambiguous_nodules": 1458,
+    "imaging_nodule_rows_with_exam_date": 34955,
+    "distinct_imaging_nodules": 34896,
+    "linkage_mm_rows": 7305,
+    "primary_link_rows": 6351,
+    "nodules_with_primary": 6351,
+    "rows_in_ambiguous_nodules": 1739,
     "specimen_key_rows": 0,
     "review_queue_rows": 742,
-    "built_at": "2026-04-13T14:08:02.652013-04:00"
+    "built_at": "2026-04-13T14:21:43.479243-04:00"
   },
   "strict_release": false,
   "review_queue_by_reason": {

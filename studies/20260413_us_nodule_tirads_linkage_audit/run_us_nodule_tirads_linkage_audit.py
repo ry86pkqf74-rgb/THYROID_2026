@@ -34,6 +34,11 @@ from llm_extraction.extraction_audit_engine_v10 import (  # noqa: E402
 )
 from motherduck_client import get_token, token_mode  # noqa: E402
 from utils.md_connect import connect_md_or_file  # noqa: E402
+from utils.imaging_12_slots import (  # noqa: E402
+    norm_date_str,
+    parse_imaging_12_exam_slots,
+    stable_key,
+)
 
 LOCAL_DB = ROOT / "thyroid_master.duckdb"
 CMD_LOG = OUT / "commands_run.log"
@@ -50,25 +55,6 @@ def _excel_row_ix(ix: object) -> int:
     if isinstance(ix, (int, np.integer)):
         return int(ix)
     return int(str(ix))
-
-
-def norm_date_str(v) -> str | None:
-    if v is None or (isinstance(v, float) and np.isnan(v)):
-        return None
-    if pd.isna(v):
-        return None
-    if hasattr(v, "strftime"):
-        return v.strftime("%Y-%m-%d")
-    s = str(v).strip()
-    if not s or s.lower() == "nan":
-        return None
-    return s[:10]
-
-
-def stable_key(rid: int, d: str | None, nod: int) -> str:
-    """Match imaging_nodule_master_v1 grain: research_id + exam_date + nodule_number (see script 50)."""
-    dd = d or ""
-    return f"{rid}|{dd}|{nod}"
 
 
 def parse_complete_with_provenance(path: Path) -> pd.DataFrame:
@@ -223,71 +209,6 @@ def parse_scored_with_provenance(path: Path) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def _imaging12_slot_columns(df: pd.DataFrame, k: int) -> tuple[str | None, str | None]:
-    date_c = None
-    nod_c = None
-    for c in df.columns:
-        cs = str(c)
-        if re.search(rf"US[_\s-]*{k}[_\s-]*Date", cs, re.I):
-            date_c = c
-        if re.search(rf"US[_\s-]*{k}.*nodule", cs, re.I):
-            nod_c = c
-    return date_c, nod_c
-
-
-def parse_imaging_12_exam_slots(path: Path) -> pd.DataFrame:
-    """Imaging_12_1_25: one aggregate row per (patient, US slot) with a date (no structured nodule list)."""
-    df = pd.read_excel(str(path), sheet_name=0)
-    rid_col = "Research ID number"
-    if rid_col not in df.columns:
-        return pd.DataFrame()
-    rows = []
-    for row_ix, r in df.iterrows():
-        rxi = _excel_row_ix(row_ix)
-        rid = r.get(rid_col)
-        if pd.isna(rid):
-            continue
-        rid = int(rid)
-        for k in range(1, 15):
-            dc, nc = _imaging12_slot_columns(df, k)
-            if not dc:
-                continue
-            raw_d = r.get(dc)
-            if pd.isna(raw_d) or raw_d is None:
-                continue
-            dnorm = norm_date_str(raw_d)
-            nod_txt = str(r.get(nc))[:2000] if nc and not pd.isna(r.get(nc)) else ""
-            n_sub = max(
-                1,
-                len(re.findall(r"\b\d+\.?\d*\s*(?:cm|mm)\b", nod_txt, flags=re.I)),
-            )
-            for sub in range(1, n_sub + 1):
-                src_uid = hashlib.sha256(
-                    f"IMAGING12|{path.name}|row{rxi}|US{k}|sub{sub}|{rid}".encode()
-                ).hexdigest()[:20]
-                rows.append(
-                    {
-                        "source_system": "IMAGING_12_1_25",
-                        "source_workbook": path.name,
-                        "source_sheet": "Sheet1",
-                        "excel_row_index": rxi,
-                        "source_cell_region": f"row {rxi + 2} / US-{k} / inferred nodule {sub} of {n_sub}",
-                        "source_nodule_uid": src_uid,
-                        "research_id": rid,
-                        "us_report_number": k,
-                        "exam_date_norm": dnorm,
-                        "nodule_number": sub,
-                        "tirads_reported": None,
-                        "tirads_recalculated": None,
-                        "n_criteria_available": 0,
-                        "aggregate_exam_text_excerpt": nod_txt[:300],
-                        "inferred_nodule_split_from_measurements": n_sub > 1,
-                        "deterministic_key": stable_key(rid, dnorm, sub),
-                    }
-                )
-    return pd.DataFrame(rows)
-
-
 def try_fetch(con, sql: str) -> pd.DataFrame | None:
     try:
         return con.execute(sql).fetchdf()
@@ -400,6 +321,15 @@ def main() -> int:
     if raw_excel is not None and len(raw_excel):
         m = raw_excel.copy()
         m["origin_table"] = "raw_us_tirads_excel_v1"
+        canon_frames.append(m)
+    raw_i12 = (
+        q("SELECT * FROM raw_imaging_12_slots_v1")
+        if table_exists(con, "raw_imaging_12_slots_v1")
+        else None
+    )
+    if raw_i12 is not None and len(raw_i12):
+        m = raw_i12.copy()
+        m["origin_table"] = "raw_imaging_12_slots_v1"
         canon_frames.append(m)
 
     canonical_nodule_inventory = pd.concat(canon_frames, ignore_index=True) if canon_frames else pd.DataFrame()
@@ -639,8 +569,8 @@ def main() -> int:
                 )
             elif src_sys == "IMAGING_12_1_25":
                 inv_note = (
-                    "Inferred from Imaging_12 exam-slot text; not expected in imaging_nodule_master_v1 "
-                    "(master built from COMPLETE / raw_us_tirads_excel unpivot only)."
+                    "Inferred from Imaging_12 exam-slot text; no canonical row after script 50 "
+                    "(COMPLETE + scored + Imaging_12 supplements) and ±30d match."
                 )
 
         match_rows.append(
@@ -820,9 +750,9 @@ def main() -> int:
 |---------------|-------:|------:|----------:|--------:|
 {ss_lines}
 
-**Interpretation:** `imaging_nodule_master_v1` is built from the COMPLETE workbook / `raw_us_tirads_excel_v1` unpivot (see script 50).  
+**Interpretation:** `imaging_nodule_master_v1` is built from `raw_us_tirads_excel_v1` unpivot, then supplemented from `raw_us_tirads_scored_v1` and `Imaging_12_1_25.xlsx` (``utils/imaging_12_slots.py``) via ``scripts/50_multinodule_imaging.py`` (±30d dedup vs existing rows).  
 - **COMPLETE_MULTI_SHEET** missing count **{comp_missing}** — if 0, claim (1) holds for the structured COMPLETE corpus.  
-- **US_NODULES_TIRADS_SCORED** / **IMAGING_12_1_25** rows may remain unmatched where dates differ beyond ±30d or where Imaging_12 uses inferred exam-slot nodules not present in the Phase 12 long file.
+- Remaining gaps are usually dates beyond ±30d vs any canonical row with the same `research_id` + `nodule_number`, or Excel/audit parser drift.
 
 ## Recomputed source counts (this run)
 
