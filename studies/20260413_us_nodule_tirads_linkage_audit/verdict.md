@@ -1,6 +1,6 @@
 # US nodule / TI-RADS / linkage audit verdict
 
-**Generated (UTC):** 2026-04-13T18:01:54.915594+00:00
+**Generated (UTC):** 2026-04-13T18:10:07.350774+00:00
 **MotherDuck token:** `motherduck.local.toml:MOTHERDUCK_TOKEN` (secret not printed)
 **Connection:** `MotherDuck fail-closed`
 
@@ -8,7 +8,7 @@
 
 1. **Every source ultrasound nodule was extracted into canonical tables**  
    - Deterministic + heuristic match rates are in `nodule_match_matrix.csv`.  
-   - `unmatched_source_nodules.csv` row count: **25374** (must be 0 for “complete”).
+   - `unmatched_source_nodules.csv` row count: **8849** (must be 0 for “complete”).
 
 2. **Every source nodule with enough detail received TI-RADS (explicit or ACR-recomputable)**  
    - Source-side explicit TR: **39121** rows with `tirads_reported` not null.  
@@ -17,15 +17,15 @@
 
 3. **Provenance + downstream linkage**  
    - `provenance_status` is exact/heuristic/missing per matched row.  
-   - Downstream states: linked_to_fna **9909**, no_eligible_fna **8066**, unresolved **42544** (source-aligned rows in match matrix).
+   - Downstream states: linked_to_fna **12660**, no_eligible_fna **10594**, unresolved **37265** (source-aligned rows in match matrix).
 
 ## Per-source extraction vs `imaging_nodule_master_v1`
 
 | source_system | n_rows | exact | heuristic | missing |
 |---------------|-------:|------:|----------:|--------:|
 | COMPLETE_MULTI_SHEET | 19891 | 19891 | 0 | 0 |
-| IMAGING_12_1_25 | 21079 | 3430 | 606 | 17043 |
-| US_NODULES_TIRADS_SCORED | 19549 | 10686 | 532 | 8331 |
+| IMAGING_12_1_25 | 21079 | 11603 | 627 | 8849 |
+| US_NODULES_TIRADS_SCORED | 19549 | 19017 | 532 | 0 |
 
 **Interpretation:** `imaging_nodule_master_v1` is built from the COMPLETE workbook / `raw_us_tirads_excel_v1` unpivot (see script 50).  
 - **COMPLETE_MULTI_SHEET** missing count **0** — if 0, claim (1) holds for the structured COMPLETE corpus.  
@@ -43,28 +43,28 @@
 | **Total source_nodule_inventory rows** | **60519** |
 | serial_imaging_us rows (if queried) | N/A |
 | ultrasound_reports rows | 6793 |
-| raw_us_tirads_excel_v1 rows | N/A |
-| imaging_nodule_master_v1 rows | 19891 |
+| raw_us_tirads_excel_v1 rows | 19891 |
+| imaging_nodule_master_v1 rows | 28163 |
 | imaging_nodule_long_v2 rows | 19891 |
-| extracted_tirads_validated_v1 rows (patient-level) | 3474 |
-| imaging_fna_linkage_mm_v1 rows | 4731 |
+| extracted_tirads_validated_v1 rows (patient-level) | 3439 |
+| imaging_fna_linkage_mm_v1 rows | 6522 |
 
 ## Verdict counts (required)
 
 | Metric | Count |
 |--------|------:|
 | Total source nodules | 60519 |
-| Exact extracted | 34007 |
-| Heuristic extracted | 1138 |
-| Missing | 25374 |
+| Exact extracted | 50511 |
+| Heuristic extracted | 1159 |
+| Missing | 8849 |
 | Explicit TI-RADS in source (non-null tirads_reported) | 39121 |
 | Recomputable TI-RADS from source (≥5 criteria or source recalc) | 19891 |
-| Canonical TI-RADS present (master: reported OR ACR not null) | 19891 |
+| Canonical TI-RADS present (master: reported OR ACR not null) | 28163 |
 | Missing canonical TI-RADS despite sufficient source detail | 0 |
-| Nodules with exact provenance (match matrix) | 34007 |
-| Nodules with downstream linked_to_fna (match matrix) | 9909 |
-| Nodules with no_eligible_fna | 8066 |
-| Nodules unresolved | 42544 |
+| Nodules with exact provenance (match matrix) | 50511 |
+| Nodules with downstream linked_to_fna (match matrix) | 12660 |
+| Nodules with no_eligible_fna | 10594 |
+| Nodules unresolved | 37265 |
 
 ## Overall completeness rule
 

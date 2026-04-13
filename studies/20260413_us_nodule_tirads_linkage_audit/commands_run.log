@@ -1,12 +1,7 @@
-2026-04-13T18:00:58.887957+00:00 start run_us_nodule_tirads_linkage_audit
-2026-04-13T18:00:58.890349+00:00 token_mode=motherduck.local.toml:MOTHERDUCK_TOKEN token=SET local=False
-2026-04-13T18:01:38.868241+00:00 complete_prov=19891 complete_legacy=19891
-2026-04-13T18:01:38.868468+00:00 scored_prov=19549 scored_legacy=19549
-2026-04-13T18:01:38.868516+00:00 imaging12_slots=21079
-2026-04-13T18:01:43.415477+00:00 connected
-2026-04-13T18:01:44.259635+00:00 skip query: Catalog Error: Table with name raw_us_tirads_excel_v1 does not exist!
-Did you mean "master_source_lineage_v1"?
-
-LINE 1: SELECT * FROM raw_us_tirads_excel_v1
-                      ^
-2026-04-13T18:01:54.915979+00:00 done
+2026-04-13T18:09:04.719319+00:00 start run_us_nodule_tirads_linkage_audit
+2026-04-13T18:09:04.720340+00:00 token_mode=motherduck.local.toml:MOTHERDUCK_TOKEN token=SET local=False
+2026-04-13T18:09:48.103679+00:00 complete_prov=19891 complete_legacy=19891
+2026-04-13T18:09:48.103957+00:00 scored_prov=19549 scored_legacy=19549
+2026-04-13T18:09:48.104003+00:00 imaging12_slots=21079
+2026-04-13T18:09:52.712875+00:00 connected
+2026-04-13T18:10:07.351014+00:00 done
