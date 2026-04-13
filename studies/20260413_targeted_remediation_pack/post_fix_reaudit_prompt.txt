@@ -1,0 +1,29 @@
+You are re-verifying the THYROID_2026 MotherDuck pipeline after applying the minimal remediation in studies/20260413_targeted_remediation_pack/ (views deploy, optional imaging_fna_linkage_mm_v1 rebuild, manual Bethesda adjudication as documented).
+
+TOKEN / DB
+- Use motherduck_client.get_token() (motherduck.local.toml); database per config (e.g. "Thyroid 2026").
+- Do not print token values.
+
+RUN THESE AUDITS ONLY (same folders, new timestamps OK)
+1) studies/20260413_source_truth_completeness_audit/run_source_truth_audit.py
+2) studies/20260413_us_nodule_tirads_linkage_audit/run_us_nodule_tirads_linkage_audit.py
+3) studies/20260413_us_lymph_node_audit/run_us_lymph_node_audit.py
+4) studies/20260413_fna_bethesda_audit/run_fna_bethesda_audit.py
+
+DELTA / PASS-FAIL SUMMARY (required output)
+Compare to baseline 2026-04-13 artifacts:
+
+| Check | Baseline | Pass criterion |
+|-------|----------|----------------|
+| unmatched_source_nodules.csv row count | 0 | Must stay 0 |
+| missing_canonical_despite_sufficient_source (US nodule audit) | 0 | Must stay 0 |
+| linkage_gap_worklist_unresolved_* data rows | 128 (see studies/.../linkage_gap_worklist_unresolved_20260413_174900.csv) | Expect 0 OR list remaining nodule_ids with reason |
+| fna_bethesda_conflicts.csv row count | 1899 | Expect decrease only after documented adjudication imports; if no adjudication, unchanged is PASS |
+| US LN positive_ln_misses / negative_ln_capture_gaps | 0 each | Must stay 0 |
+| executive_verdict.md overall_status | NOT_CONFIRMED | CONFIRMED only if all five questions pass per that script’s rules |
+
+OUTPUT FORMAT
+- One table: metric name | baseline | new | delta | PASS/FAIL
+- If any FAIL, attach first 20 failing row IDs and file paths.
+
+Do not re-run broader pipeline (scripts 36, 90, etc.) unless a FAIL requires it.
