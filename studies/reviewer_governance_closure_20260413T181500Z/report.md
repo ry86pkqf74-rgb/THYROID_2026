@@ -2,7 +2,7 @@
 
 ## Git revision
 
-- **Closure commit:** `4dcf67b90df72e6659e6a28f65e0234e008a6daa` (short: `4dcf67b`).
+- **Closure commit:** `a8a8d41becb94006626d7f53c59857bec76930f0` (short: `a8a8d41`).
 
 ## Scope (files touched)
 
