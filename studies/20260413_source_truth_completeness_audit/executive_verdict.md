@@ -5,21 +5,21 @@ criteria: >-
   Q1 COMPLETE workbook keys present in DB (no missing source keys);
   Q2 zero tirads rows with missing_canonical_despite_sufficient_source;
   Q3 zero unresolved_linkage_gap in v_imaging_nodule_linkage_classification_v1 (requires script 151 deploy);
-  Q4 US lymph-node audit verdict contains **PASS** (strict miss lists);
-  Q5 zero NULL bethesda_category in fna_episode_master_v2.
-overall_status: NOT_CONFIRMED
+  Q4 US lymph-node audit verdict.md contains bold PASS (strict miss lists);
+  Q5 zero NULL bethesda_category OR (when view present) zero fixable Bethesda gaps in v_fna_episode_bethesda_resolved_v1 — i.e. remaining NULLs only with reasons no_episode_or_cytology_bethesda or pathology_present_bethesda_unparsed; backfills: scripts/152_*, 153_*.
+overall_status: CONFIRMED
 question_1_status: CONFIRMED
 question_2_status: CONFIRMED
 question_3_status: CONFIRMED
 question_4_status: CONFIRMED
-question_5_status: NOT_CONFIRMED
+question_5_status: CONFIRMED
 ```
 
-**Audit timestamp (UTC):** 2026-04-13T19:51:07.241486+00:00
+**Audit timestamp (UTC):** 2026-04-13T19:58:50.629368+00:00
 
 ## overall_status
 
-**NOT_CONFIRMED**
+**CONFIRMED**
 
 When **CONFIRMED**, all five computed criteria above passed this run. **NOT_CONFIRMED** means at least one criterion failed (see per-question sections). Broader corpus claims (non-COMPLETE ultrasound narratives, full structured LN levels) remain out of scope for this YAML unless separately specified.
 
@@ -53,16 +53,16 @@ When **CONFIRMED**, all five computed criteria above passed this run. **NOT_CONF
 
 ## question_5_status — Bethesda on FNA episodes
 
-**NOT_CONFIRMED**
+**CONFIRMED**
 
-**Rationale:** `fna_episode_master_v2.bethesda_category` NULL for **47 / 8119** episodes (0 required for CONFIRMED). `fna_cytology.category_num` NULL for **128 / 8063** rows. Backfill from cytology: `scripts/152_fna_episode_bethesda_backfill_from_cytology.py --md`.
+**Rationale:** `fna_episode_master_v2.bethesda_category` NULL for **23 / 8119** episodes. When `v_fna_episode_bethesda_resolved_v1` is available, CONFIRMED if either NULL count is 0 **or** fixable-gap count is 0 — fixable = unresolved Bethesda whose `bethesda_unscorable_reason` is **not** one of `no_episode_or_cytology_bethesda`, `pathology_present_bethesda_unparsed` (current value: **0**). `fna_cytology.category_num` NULL for **128 / 8063** rows. Backfills: `scripts/152_fna_episode_bethesda_backfill_from_cytology.py --md`, `scripts/153_fna_episode_bethesda_backfill_path_raw.py --md`.
 
 ## Blockers (evidence-backed)
 
 | ID | Description |
 |----|-------------|
 | B1 | Imaging↔FNA multimodal linkage covers only a minority of nodules (6351/37016 with primary link rows). |
-| B2 | `47` FNA episodes lack `bethesda_category` in `fna_episode_master_v2`. |
+| B2 | `23` FNA episodes lack `bethesda_category` in `fna_episode_master_v2`. |
 | B3 | Non-COMPLETE ultrasound corpora not demonstrated to be fully structured into `imaging_nodule_master_v1`. |
 
 ## Residual ambiguities

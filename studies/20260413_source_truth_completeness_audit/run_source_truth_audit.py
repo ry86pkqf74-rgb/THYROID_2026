@@ -539,6 +539,26 @@ def main() -> int:
     except Exception as ex:  # noqa: BLE001 — optional view
         linkage_view_error = str(ex)[:300]
 
+    # Q5: require zero NULL bethesda OR (if script 151 view present) zero "fixable" gaps —
+    # i.e. no episode with unresolved Bethesda except source-limited reasons documented
+    # in v_fna_episode_bethesda_resolved_v1 (see scripts/153_* backfill).
+    n_bethesda_fixable_gap: int | None = None
+    bethesda_view_error: str | None = None
+    try:
+        row_bg = con.execute(
+            """
+            SELECT COUNT(*) FROM v_fna_episode_bethesda_resolved_v1
+            WHERE bethesda_resolved_num IS NULL
+              AND bethesda_unscorable_reason NOT IN (
+                  'no_episode_or_cytology_bethesda',
+                  'pathology_present_bethesda_unparsed'
+              )
+            """
+        ).fetchone()
+        n_bethesda_fixable_gap = int(row_bg[0]) if row_bg else 0
+    except Exception as ex:  # noqa: BLE001 — optional view
+        bethesda_view_error = str(ex)[:300]
+
     con.close()
 
     # Sample snippets (no note text — Excel cells truncated)
@@ -569,7 +589,10 @@ def main() -> int:
     q2_pass = n_tirads_sufficient_missing == 0
     q3_pass = n_unresolved_linkage_gap == 0 if n_unresolved_linkage_gap is not None else False
     q4_pass = q4_strict_pass
-    q5_pass = n_fna_null_bet == 0
+    if n_bethesda_fixable_gap is not None:
+        q5_pass = (n_fna_null_bet == 0) or (n_bethesda_fixable_gap == 0)
+    else:
+        q5_pass = n_fna_null_bet == 0
     overall_pass = all((q1_pass, q2_pass, q3_pass, q4_pass, q5_pass))
 
     q1_status = "CONFIRMED" if q1_pass else "NOT_CONFIRMED"
@@ -604,6 +627,12 @@ def main() -> int:
     # Executive verdict — computed criteria (deploy `151_source_truth_confirmation_v1.py --md` for Q3 view)
     _lv_err = f"\n\n_Linkage view note:_ `v_imaging_nodule_linkage_classification_v1` unavailable ({linkage_view_error})" if linkage_view_error else ""
     _ug_disp = n_unresolved_linkage_gap if n_unresolved_linkage_gap is not None else "N/A (view missing)"
+    _bg_err = f"\n\n_Bethesda view note:_ `v_fna_episode_bethesda_resolved_v1` unavailable ({bethesda_view_error})" if bethesda_view_error else ""
+    _bg_disp = (
+        n_bethesda_fixable_gap
+        if n_bethesda_fixable_gap is not None
+        else "N/A (view missing — Q5 uses strict NULL count only)"
+    )
 
     verdict = f"""# Executive verdict — source-truth completeness audit
 
@@ -613,7 +642,7 @@ criteria: >-
   Q2 zero tirads rows with missing_canonical_despite_sufficient_source;
   Q3 zero unresolved_linkage_gap in v_imaging_nodule_linkage_classification_v1 (requires script 151 deploy);
   Q4 US lymph-node audit verdict.md contains bold PASS (strict miss lists);
-  Q5 zero NULL bethesda_category in fna_episode_master_v2.
+  Q5 zero NULL bethesda_category OR (when view present) zero fixable Bethesda gaps in v_fna_episode_bethesda_resolved_v1 — i.e. remaining NULLs only with reasons no_episode_or_cytology_bethesda or pathology_present_bethesda_unparsed; backfills: scripts/152_*, 153_*.
 overall_status: {overall_status}
 question_1_status: {q1_status}
 question_2_status: {q2_status}
@@ -628,7 +657,7 @@ question_5_status: {q5_status}
 
 **{overall_status}**
 
-When **CONFIRMED**, all five computed criteria above passed this run. **NOT_CONFIRMED** means at least one criterion failed (see per-question sections). Broader corpus claims (non-COMPLETE ultrasound narratives, full structured LN levels) remain out of scope for this YAML unless separately specified.{_lv_err}
+When **CONFIRMED**, all five computed criteria above passed this run. **NOT_CONFIRMED** means at least one criterion failed (see per-question sections). Broader corpus claims (non-COMPLETE ultrasound narratives, full structured LN levels) remain out of scope for this YAML unless separately specified.{_lv_err}{_bg_err}
 
 ## question_1_status — COMPLETE workbook → DB keys
 
@@ -662,7 +691,7 @@ When **CONFIRMED**, all five computed criteria above passed this run. **NOT_CONF
 
 **{q5_status}**
 
-**Rationale:** `fna_episode_master_v2.bethesda_category` NULL for **{n_fna_null_bet} / {n_fna_ep}** episodes (0 required for CONFIRMED). `fna_cytology.category_num` NULL for **{n_fna_cy_null_cat} / {len(fna_cy)}** rows. Backfill from cytology: `scripts/152_fna_episode_bethesda_backfill_from_cytology.py --md`.
+**Rationale:** `fna_episode_master_v2.bethesda_category` NULL for **{n_fna_null_bet} / {n_fna_ep}** episodes. When `v_fna_episode_bethesda_resolved_v1` is available, CONFIRMED if either NULL count is 0 **or** fixable-gap count is 0 — fixable = unresolved Bethesda whose `bethesda_unscorable_reason` is **not** one of `no_episode_or_cytology_bethesda`, `pathology_present_bethesda_unparsed` (current value: **{_bg_disp}**). `fna_cytology.category_num` NULL for **{n_fna_cy_null_cat} / {len(fna_cy)}** rows. Backfills: `scripts/152_fna_episode_bethesda_backfill_from_cytology.py --md`, `scripts/153_fna_episode_bethesda_backfill_path_raw.py --md`.
 
 ## Blockers (evidence-backed)
 

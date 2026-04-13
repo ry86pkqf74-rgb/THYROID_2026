@@ -3907,7 +3907,6 @@ ordered and may be informative in this case.
      Abundant watery colloid, benign follicular cells consistent with a benign thyroid (colloid) nodule. 
 ","Thyroid, Right, Fine Needle Aspiration
 ",right,,,,fna_history,
-11820,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 11830,1,2023-12-19,2023-12-19,exact_source_date,100,3,3,"Nontoxic goiter, unspecified (E04.9); Nontoxic single thyroid nodule (E04.1)
 ","
        Atypia of undetermined significance (Bethesda category III). 
@@ -4436,8 +4435,6 @@ Scant colloid.  Portions of bland follicular epithelium",,RL FNA   ,,,,,fna_his
 Abundant colloid, benign follicular epithelium showing focal Hurthle cell 
  change, and histiocytes present, consistent with cystic degeneration in a 
  colloid nodule. ",LL FNA ,,,,,fna_history,
-1198,1,2017-06-12,2017-06-12,exact_source_date,100,2*,,,"
-   negative",Left neck LN,left,,,,fna_history,
 1265,1,2011-01-25,2011-01-25,exact_source_date,100,2,2,," negative
 Abundant colloid, benign follicular cells, hemosiderin laden macrophages and 
  rare multinucleated giant cells, consistent with a benign thyroid (colloid) nodule
@@ -7329,7 +7326,6 @@ Comment
 Slides show numerous groups of follicular epithelial cells, Hurthle cells, macrophages, and colloid.  The findings are most consistent with a benign thyroid nodule.
 
 ","Thyroid, fine-needle aspiration:",,,,,fna_history,
-10807,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 10815,1,2023-03-08,2023-03-08,exact_source_date,100,2,2,,"Thyroid, left lobe, needle core biopsy (Outside Case # S23-3101; 3/8/23):
 	Nodular follicular disease on the representative material.
 	See comment. 
@@ -11810,7 +11806,6 @@ The evaluable material is seen in the Thin prep slides. Scattered benign appeari
 
 ","Thyroid, right, fine-needle aspiration:
 ",right,,,,fna_history,
-10818,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 10833,2,2023-04-26,2023-04-26,exact_source_date,100,5,5,"
 2. Right thyroid mass, 6cm","
 
@@ -12205,7 +12200,6 @@ Abundant colloid and benign follicular cells present, consistent with a benign t
 
 ","Thyroid Nodule, Right Lobe, Fine Needle Aspiration - 
 ",right,,,,fna_history,
-11720,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 11844,1,2022-09-13,2022-09-13,exact_source_date,100,2,2,"Right thyroid nodule
 "," DIAGNOSIS COPATH CONVERSIONS	THYROID, RIGHT LOBE, NODULE, FINE NEEDLE ASPIRATE (CYTOLOGY, THIN PREP SLIDE, SMEAR SLIDES AND CELL BLOCK):
 Thin prep slides and smear slides:
@@ -15298,7 +15292,6 @@ A - B.  All smears are examined from both aspirations.  Several smears from both
 present.  A few pigmented histiocytes are present in specimen B. 
 DDJ/tr 
 ","A, B.  Left thyroid nodule (fine-needle aspiration cytology with smears and ThinPrep): ",left,,,,fna_history,
-11581,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 11626,1,2023-12-14,2023-12-14,exact_source_date,100,2,2,"Left Inferior Thyroid 3.2 x 2.0 x 2.5 cm
 ","Cytologic Diagnosis
 Negative for malignant cells.
@@ -15422,7 +15415,6 @@ Colloid, benign follicular cells, Hürthle cells, and hemosiderin-laden macropha
 
 ","Thyroid, Right Inferior 2.1 cm Nodule, Fine Needle Aspiration - 
 ",right,,,,fna_history,
-11716,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 11733,1,2024-01-19,2024-01-19,exact_source_date,100,3,3,"Comment		
 The history of a 5.5 cm mass located posterior/inferior to the left thyroid lobe with associated tracheal deviation is noted.
  
@@ -20128,7 +20120,6 @@ Atypical follicular cells with predominantly crowded microfollicular arrangement
 
 ","Thyroid, Right, Fine Needle Aspiration -
 ",right,,,,fna_history,
-11713,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 11768,1,2018-08-17,2018-08-17,exact_source_date,100,2,2,,"A: Thyroid, Left, Fine Needle Aspiration: 
      Negative for malignant cells. 
      Abundant watery colloid, benign follicular and HÜRTHLE cells consistent with a benign thyroid (colloid) nodule with HÜRTHLE cell change. 
@@ -24491,7 +24482,6 @@ The Afirma Genomic Sequence classifier (GSC) has been ordered to assist in furth
 
 ","Specimen:    Thyroid, Left, ultrasound guided left thyroid biopsy                                
 ",left,,,,fna_history,
-11670,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 11725,1,2023-06-12,2023-06-12,exact_source_date,100,2,2,"9mm right isthmic nodule
 ","Negative for malignant cells.
 
@@ -27924,7 +27914,6 @@ COMMENT:
 This sparsely cellular sample contains follicular cells arranged in sheets and singly dispersed, and a moderate amount of colloid.  These findings are consistent with a benign thyroid nodule.  The cellblock contains benign follicular epithelium.
 ","Specimen:    Thyroid, Right, Rt thyroid nodule 3.4 cm mid                                        
 ",right,,,,fna_history,
-10498,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 10506,1,2021-07-22,2021-07-22,exact_source_date,100,2,2,"Non-toxic single thyroid nodule
 ","
 Flat sheets of thyroid epithelium admixed with scant colloid and macrophages, consistent with a benign follicular nodule. 
@@ -36328,7 +36317,6 @@ THYROID, LEFT, FINE NEEDLE ASPIRATION:
 - MACROFOLLICLES, MACROPHAGES, AND COLLOID, CONSISTENT WITH A BENIGN 
 FOLLICULAR NODULE 
 ","Fine needle aspirate, thyroid  - Left",left,,,,fna_history,
-10592,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 10633,1,2023-06-02,2023-06-02,exact_source_date,100,3,3,"Right thyroid nodule
 ","Right thyroid nodule, 3.3 cm, fine needle aspiration:
  - Follicular lesion of uncertain significance with oncocytic features.
@@ -44841,7 +44829,6 @@ DIAGNOSIS COMMENT	The smears and cell block show colloid, benign follicular cell
 
 ","Thyroid, Nodule, Right, Fine Needle Aspiration
 ",right,,,,fna_history,
-9861,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 9911,1,2018-06-12,2018-06-12,exact_source_date,100,2,2,"Large thyroid goiter 
 E049 - Nontoxic goiter, unspecified 
 ","MICROSCOPIC DESCRIPTION: 
@@ -44966,7 +44953,6 @@ Benign colloid nodule with cystic degeneration.
 
 ","Thyroid, fine needle aspiration - Left
 ",left,,,,fna_history,
-10042,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 10047,1,2023-01-26,2023-01-26,exact_source_date,100,2,2,,"Cytologic Diagnosis
 Negative for malignant cells.
 
@@ -46069,7 +46055,6 @@ A portion of the specimen will be submitted for ThyroSeq molecular analysis and 
 
 ","Thyroid Nodule, Left Lobe, Fine Needle Aspiration 
 ",left,,,,fna_history,
-11017,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 11069,1,2023-08-16,2023-08-16,exact_source_date,100,3,3,"A.Right thyroid nodule, fine-needle aspiration:
 - Clusters and sheets of  follicular cells with a significant microfollicular architecture and colloid.
 - Bethesda III: Atypia of undetermined significance.  
@@ -46792,7 +46777,6 @@ DLS/ds
 
 ","Left Thyroid, US-guided fine needle aspiration
 ",left,,,,fna_history,
-11708,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 11709,1,2023-09-12,2023-09-12,exact_source_date,100,5,5,"Thyroid Nodule 2.5 x 1.2 x 1.7 cm.
 ","Cytologic Diagnosis
 Suspicious cells present; suspect papillary thyroid carcinoma..
@@ -49966,7 +49950,6 @@ R22.1	Localized swelling, mass and lump, neck [ICD-10-CM]
 10081,1,2023-07-17,2023-07-17,exact_source_date,100,2,2,Left thyroid nodule,"
 Bethesda Category II: Benign, consistent with colloid nodule. 
 ","Left middle thyroid nodule 4.1 cm, fine-needle aspiration: ",left,,,,fna_history,
-10081,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 10100,1,2024-03-26,2024-03-26,exact_source_date,100,1,1,"1. Right Thyroid Nodule 5 x 3.3 x 3.6 cm
 
 ","1. Cytologic Diagnosis
@@ -50449,7 +50432,6 @@ Atypical follicular cells of undetermined significance (FLUS/AUS). These cells s
 
 ","Thyroid, Right, Fine Needle Aspiration
 ",right,,,,fna_history,
-10414,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 10440,1,2024-03-27,2024-03-27,exact_source_date,100,6,6," Patient presents with left thyroid nodule measuring 1.5 x 1.3 x 1.3 cm requiring fine-needle aspiration
 ","Cytologic Diagnosis
 Malignant cells present: Papillary thyroid carcinoma.
@@ -55140,7 +55122,6 @@ B. Thyroid, left, 2.2 cm nodule, fine needle aspiration (Outside Case # VC24-290
 -Groups of benign appearing follicular cells in mixed patterns are present in a background of abundant thick & watery colloid, macrophages, and blood.
 ","Specimen:    Thyroid, Left                                                                        
 ",left,,,,fna_history,
-10552,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 10580,1,2021-10-12,2021-10-12,exact_source_date,100,2,2,"Bilateral thyroid nodules
 
 ""Specimen:    Slides for Consultation, 14 slides; outside case # RF21-203                          
@@ -59834,7 +59815,6 @@ In summary, the findings are consistent with atypia of undetermined significance
 
 ","Right Thyroid, US-guided fine needle aspiration
 ",right,,,,fna_history,
-10897,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 10899,1,2023-08-01,2023-08-01,exact_source_date,100,6,6,,"Lymph node"", left neck, core biopsy:
 	Follicular thyroid carcinoma with insular growth pattern and focal necrosis, compatible with poorly differentiated thyroid carcinoma.
 	No definitive lymph node stroma is identified.
@@ -59954,7 +59934,6 @@ In summary, the findings appear most consistent with a benign colloid or adenoma
 
 ","Thyroid, Left, Fine needle aspiration 
 ",left,,,,fna_history,
-11277,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 11289,1,2021-11-02,2021-11-02,exact_source_date,100,2,2,"Multinodular thyroid goiter 
 Thyroid enlargement 
 E042 - Nontoxic multinodular goiter 
@@ -60222,7 +60201,6 @@ In summary, the cell population consists predominantly of benign appearing folli
 
 ","Thyroid, left, ultrasound-guided fine needle aspiration:
 ",left,,,,fna_history,
-11483,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 11563,1,2023-08-01,2023-08-01,exact_source_date,100,4,4,"Metastasis from thyroid cancer (HC) [C79.9, C73] Pathologic fracture of sternum, initial encounter [M84.48XA] Multiple lung nodules on CT [R91.8] D-dimer, elevated [R79.89] 
 ","Final Diagnosis	
 THYROID, RIGHT, FINE-NEEDLE ASPIRATION:
@@ -69414,7 +69392,6 @@ addendum. The expected turn around time is 3 weeks.
 ","Source of Specimen: 
 Thyroid, fine needle aspiration/right lower pole 4.1 cm 
 ",right,,,,fna_history,
-11148,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 11175,1,2024-11-25,2024-11-25,exact_source_date,100,2,2,"Per EMR, Graves' disease, bilateral thyroid nodules.
 ","Negative for malignant cells.
 
@@ -69513,7 +69490,6 @@ Comments:
 
 ","Specimens:   A) - Thyroid, fine needle aspiration, Isthmus 2.5x1.4x2.7 cm                        
 ",isthmus,,,,fna_history,
-11266,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 11309,1,2022-11-10,2022-11-10,exact_source_date,100,4,4,"Multinodular non-toxic goiter [E04.2]
 ","Addendum	
 The molecular testing report is scanned.  Briefly, the result is suspicious and a BRAF mutation has been identified.
@@ -69791,7 +69767,6 @@ A portion of the specimen will be submitted for ThyroSeq molecular analysis and 
 
 ","Thyroid Nodule (2.9 cm), Right Lobe, Fine Needle Aspiration 
 ",right,,,,fna_history,
-11484,2,,,unresolved_date,0,,,2,,,,,,,fna_history,
 11607,1,2012-12-14,2012-12-14,exact_source_date,100,1,1,"DIAGNOSIS:............... UNSATISFACTORY. ONLY BLOOD PRESENT AND ONE 
                            CLUSTER OF FOLLICULAR CELLS 
  RECOMMENDATION:.......... CLINICAL CORRELATION SUGGESTED RECOMMEND REPEAT 
@@ -74311,3 +74286,28 @@ Note: In context with a concurrent thyroid cytology specimen demonstrating papil
 
 ","Lymph Node, Right Neck, Fine Needle Aspiration 
 ",right,,,,fna_history,
+11820,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+10807,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+10818,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+11720,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+11581,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+11716,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+11713,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+11670,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+10498,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+10592,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+9861,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+10042,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+11017,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+11708,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+10081,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+10414,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+10552,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+10897,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+11277,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+11483,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+11148,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+11266,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+11484,2,,,unresolved_date,0,,2,2,,,,,,,fna_history,
+1198,1,2017-06-12,2017-06-12,exact_source_date,100,2*,2,,"
+   negative",Left neck LN,left,,,,fna_history,
