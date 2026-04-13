@@ -2,7 +2,7 @@
 
 **Generated:** 2026-04-13 (local audit; no database writes; no secrets in this file)
 
-**Audit baseline (pre–reconciliation commit):** short SHA **`ad06752`** (full `ad06752ebf4f4df390c057e20a3a5652c35b2939`). **Current `origin/main` tip after publishing this study folder:** short SHA **`762847b`** (includes only the three files under `studies/20260408_repo_state_reconciliation/`).
+**Audit baseline (pre–reconciliation commit):** short SHA **`ad06752`** (full `ad06752ebf4f4df390c057e20a3a5652c35b2939`). **Current `origin/main` tip after publishing this study folder:** short SHA **`0457224`** (full `0457224d7264f5b865737af568144fdb2bc635af`) — adds reconciliation artifacts in **`762847b`**, then amends this report for tip accuracy.
 
 ## Executive summary
 
@@ -18,9 +18,9 @@
 | Reference | Short SHA | Full SHA |
 |-----------|-----------|----------|
 | `origin/main` @ audit start | `ad06752` | `ad06752ebf4f4df390c057e20a3a5652c35b2939` |
-| `origin/main` after reconciliation push | `762847b` | `762847b956e298877f77fa4ab3687717826347e2` |
+| `origin/main` after reconciliation + report tip fix | `0457224` | `0457224d7264f5b865737af568144fdb2bc635af` |
 
-After `git pull`, **`HEAD`** and **`origin/main`** should both match **`762847b`** (unless newer commits exist).
+Intermediate commit **`762847b`** introduced the three reconciliation files; **`0457224`** updates this report’s post-push wording only.
 
 **Remote**
 
