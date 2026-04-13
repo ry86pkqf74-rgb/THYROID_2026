@@ -69,6 +69,16 @@ Offline smoke: `python -m pytest tests/test_120_review_queue_triage.py` (in-memo
 
 Provenance: `reviewer`, `reviewed_at`, `verification_status` columns on `qa.manual_review_queue` are loaded from CSV; `114` does not overwrite unrelated columns. Full-catalog **126** replace clears the table before hydrate — see `126` docstring.
 
+## Specimen / genomic review burden (script 151)
+
+Read-only export for **`qa.specimen_genomic_link_review_v1`** and **`qa.v_diag_specimen_review_burden_v1`** (no raw note text; truncates long text fields). Batched CSVs by linkage tier × `review_status` × `source_table` × age bucket.
+
+```bash
+.venv/bin/python scripts/151_specimen_genomic_review_queue_export.py --md --output-root exports
+```
+
+Output: `exports/specimen_genomic_review_<UTC_YYYYMMDD_HHMMSS>/` with `summary.md`, burden CSV, full detail CSV, and `worklists/*.csv`. Tests: `tests/test_151_specimen_genomic_review_export.py`.
+
 ## Related
 
 - Release gate: pending rows (`verification_status` NULL) block `scripts/119_md_formalization_validate.py --release-mode`.
