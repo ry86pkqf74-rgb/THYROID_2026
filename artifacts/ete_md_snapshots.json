@@ -31,10 +31,10 @@
     },
     {
       "snapshot_name": "ete_pre_manuscript_packaging",
-      "snapshot_id": null,
-      "created_ts_utc": null,
+      "snapshot_id": "created_server_side_id_not_retrievable_via_mcp",
+      "created_ts_utc": "2026-04-13T22:45:38Z",
       "phase": "Phase 6 pre-transition",
-      "purpose": "Pending \u2014 created immediately before manuscript-numeric propagation."
+      "purpose": "Captured immediately before manuscript packaging begins."
     }
   ],
   "canonical_ete_tables_row_counts": {
