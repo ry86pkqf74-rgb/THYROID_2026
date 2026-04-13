@@ -2,7 +2,8 @@
 
 ## Git SHA
 
-**Commit:** `276bbac836d295faad7d9e9797c4a8abadb19a51`
+- **Implementation (code, tests, docs, initial report):** `276bbac836d295faad7d9e9797c4a8abadb19a51`
+- **Current `main` tip (report SHA line correction):** `54967a90c9b2095dc3be3b3a229cce2f769d83d9`
 
 ## Scope (this deliverable)
 
