@@ -74,7 +74,8 @@ Resolve **119** failures before prod promotion. Release-mode requires presentati
 Read-scaling and share-backed dashboards consume **snapshot** state. Before large writes, optional **unnamed** `CREATE SNAPSHOT OF` on the writer pins visibility for readers (see **136** and [`motherduck_read_scaling_dashboard.md`](motherduck_read_scaling_dashboard.md)):
 
 ```bash
-.venv/bin/python scripts/136_md_read_scaling_snapshot_refresh.py writer --md-env prod --md-sa
+# Script 136 uses --prefer-sa (service-account token preference), not --md-sa
+.venv/bin/python scripts/136_md_read_scaling_snapshot_refresh.py writer --md-env prod --prefer-sa
 ```
 
 ### 3.3 Formal validation + live release audit
