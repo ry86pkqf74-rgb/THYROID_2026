@@ -1,5 +1,5 @@
 {
-  "deployed_at_utc": "2026-04-13T17:31:30.898061+00:00",
+  "deployed_at_utc": "2026-04-13T17:42:38.695847+00:00",
   "sql_file": "scripts/sql/source_truth_confirmation_v1.sql",
   "bethesda": {
     "n_episodes": 8119,
@@ -18,6 +18,11 @@
       "n": 4257
     },
     {
+      "linkage_state": "linked_to_fna",
+      "linkage_reason_code": "primary_row_in_imaging_fna_linkage_mm_v1",
+      "n": 3173
+    },
+    {
       "linkage_state": "no_eligible_fna",
       "linkage_reason_code": "all_fna_before_index_us_exam",
       "n": 3021
@@ -28,14 +33,9 @@
       "n": 2995
     },
     {
-      "linkage_state": "linked_to_fna",
-      "linkage_reason_code": "primary_row_in_imaging_fna_linkage_mm_v1",
-      "n": 2380
-    },
-    {
       "linkage_state": "unresolved_linkage_gap",
       "linkage_reason_code": "candidate_fna_in_90d_window_but_no_mm_link",
-      "n": 2094
+      "n": 1301
     }
   ],
   "tirads_gaps": {
@@ -48,5 +48,5 @@
     "n_distinct_source_table": 1,
     "source_table_example": "raw_us_tirads_excel_v1"
   },
-  "unresolved_linkage_gap_total": 2094
+  "unresolved_linkage_gap_total": 1301
 }

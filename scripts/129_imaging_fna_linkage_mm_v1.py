@@ -164,6 +164,9 @@ surg AS (
         preop_filter = "TRUE"
         first_surg_col = "NULL::DATE"
 
+    # Wide candidates: allow discordant specimen keys when the temporal 0–90d US→FNA
+    # window matches. Pairs are still gated downstream by eligible (side_ok and
+    # specimen_match OR size_ok) and specimen_match_flag stays false when keys differ.
     return f"""
 CREATE OR REPLACE TEMP TABLE tt_ifna_mm_wide_pre_v1 AS
 WITH
@@ -239,11 +242,6 @@ INNER JOIN fna_enriched fe
 {surg_join}
 WHERE
     {preop_filter}
-    AND NOT (
-        i.img_specimen_key IS NOT NULL
-        AND fe.fna_specimen_key IS NOT NULL
-        AND i.img_specimen_key <> fe.fna_specimen_key
-    )
     AND (
         (i.img_specimen_key IS NOT NULL
             AND fe.fna_specimen_key IS NOT NULL
