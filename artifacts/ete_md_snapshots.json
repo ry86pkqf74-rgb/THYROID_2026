@@ -17,10 +17,10 @@
     },
     {
       "snapshot_name": "ete_pre_ajcc7_unification",
-      "snapshot_id": null,
-      "created_ts_utc": null,
+      "snapshot_id": "a51f6090-9900-4386-b91e-a671107817b5",
+      "created_ts_utc": "2026-04-13T22:33:22Z",
       "phase": "Phase 4 pre-transition",
-      "purpose": "Pending — created immediately before AJCC7 refactor."
+      "purpose": "Taken immediately before AJCC7 refactor / helper module introduction."
     },
     {
       "snapshot_name": "ete_pre_psm_policy",
