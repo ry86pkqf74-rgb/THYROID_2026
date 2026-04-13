@@ -10,7 +10,9 @@ The RO share does not expose `master_cohort`; the blocking step assumed prod-cat
 
 ### 2) Prod RW “canonical tables” + metrics (second failure after RO fix)
 
-On live **prod** `connect_rw()`, `master_cohort` and bare `streamlit_patient_header_v` were also missing. **Fix:** require `manuscript_cohort_v1` (not `master_cohort`); accept either `streamlit_patient_header_v` or `md_streamlit_patient_header_v` for existence + dashboard count; **surgical_cohort** metric SQL now counts from `manuscript_cohort_v1`.
+On live **prod** `connect_rw()`, `master_cohort` was missing. **Fix:** require `manuscript_cohort_v1` (not `master_cohort`); **surgical_cohort** metric SQL counts from `manuscript_cohort_v1`.
+
+Neither `streamlit_patient_header_v` nor `md_streamlit_patient_header_v` exists on the current prod catalog (Streamlit views not materialized there). **Fix:** drop Streamlit from the **required table list**; **Dashboard critical path** prints a **WARN** and continues if no header view, while still enforcing `date_rescue_rate_summary` and `thyroid_scoring_py_v1` thresholds.
 
 ### 3) Multimodal offline test (CI + local)
 

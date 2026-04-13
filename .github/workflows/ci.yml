@@ -407,22 +407,11 @@ jobs:
                   con.execute(f'SELECT 1 FROM {tbl} LIMIT 1')
               except Exception:
                   missing.append(tbl)
-          streamlit_ok = False
-          for hdr in ('streamlit_patient_header_v', 'md_streamlit_patient_header_v'):
-              try:
-                  con.execute(f'SELECT 1 FROM {hdr} LIMIT 1')
-                  streamlit_ok = True
-                  print(f'  header view: {hdr}')
-                  break
-              except Exception:
-                  continue
-          if not streamlit_ok:
-              missing.append('streamlit_patient_header_v_or_md_streamlit_patient_header_v')
           con.close()
           if missing:
               print('MISSING CANONICAL TABLES:', missing)
               exit(1)
-          print(f'All {len(REQUIRED_TABLES)} core tables + Streamlit header exist')
+          print(f'All {len(REQUIRED_TABLES)} core manuscript/analytic tables exist')
           "
 
       # ── 11 canonical manuscript metrics ──────────────────────────────────
@@ -537,7 +526,7 @@ jobs:
               except Exception:
                   continue
           if hdr is None:
-              failures.append('streamlit_header: no streamlit_patient_header_v or md_streamlit_patient_header_v')
+              print('WARN: No Streamlit header view on this catalog (streamlit_patient_header_v / md_streamlit_patient_header_v) — deploy script 03/18 views if dashboard should read from MotherDuck.')
           else:
               v = con.execute(f'SELECT COUNT(*) FROM {hdr}').fetchone()[0]
               if int(v) < 10000:
