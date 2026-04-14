@@ -1,6 +1,6 @@
 # Manuscript data — start here
 
-> **Last verified:** 2026-04-14 (canonical lakehouse finalization pass).
+> **Last verified:** 2026-04-14T03:30Z (canonical lakehouse finalization pass — 55,500 facts, 100% lineage, 0 duplicates, 0 pending MRQ).
 > **Full contract:** [`docs/final_source_of_truth_contract.md`](docs/final_source_of_truth_contract.md).
 
 ## Live source of truth

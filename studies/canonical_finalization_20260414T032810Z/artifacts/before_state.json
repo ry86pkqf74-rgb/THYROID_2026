@@ -1,0 +1,104 @@
+{
+  "audit_timestamp": "2026-04-14T03:30:55.396681+00:00",
+  "sections": {
+    "release_manifest": {
+      "rows": 12,
+      "latest_tag": "20260408r4"
+    },
+    "release_manifest_distinct_sha": [
+      "618086b",
+      "de13c33",
+      "a593544",
+      "b77b4be",
+      "d9b9dc9",
+      "4ad9052",
+      "7793059",
+      "83f64ee",
+      "4b2d076"
+    ],
+    "duplicate_release_tags": [],
+    "canonical_counts": {
+      "canonical_extracted_fact_long_v2": 55500,
+      "canonical_fact_quarantine_v2": 199,
+      "note_extraction_runs": 3,
+      "master_fact_long_verified_v1": 55500,
+      "master_patient_rollup_verified_v1": 5141,
+      "master_source_lineage_v1": 55500,
+      "longitudinal_lab_canonical_v1": 77960,
+      "longitudinal_lab_deduped_v": 56198,
+      "imaging_nodule_master_v1": 37016,
+      "fna_episode_master_v2": 8119,
+      "v_fna_episode_bethesda_resolved_v1": 8119,
+      "specimen_master_v1": 10139,
+      "specimen_tumor_focus_v1": 11103,
+      "specimen_genomic_assay_v1": 10370,
+      "fhir_bundle_specimen_export_v1": 10139
+    },
+    "parity": {
+      "canonical_facts": 55500,
+      "master_facts": 55500,
+      "lineage_rows": 55500,
+      "distinct_patients": 5141,
+      "patient_rollup_rows": 5141
+    },
+    "extraction_runs": 0,
+    "null_extraction_run_id_facts": 0,
+    "orphan_runs": 3,
+    "total_tables_views": 378,
+    "lineage_facts": {
+      "facts_total": 55500,
+      "facts_with_source_object": 55500,
+      "facts_with_source_domain": 55500,
+      "facts_with_extraction_run_id": 55500
+    },
+    "lineage_source": {
+      "lineage_total": 55500,
+      "lineage_with_source_object": 55500,
+      "lineage_with_source_domain": 55500,
+      "lineage_with_extraction_run_id": 55500
+    },
+    "fact_lineage_1to1": {
+      "fact_rows": 55500,
+      "lineage_rows": 55500,
+      "match": true
+    },
+    "duplicate_fact_ids": 0,
+    "duplicate_natural_key_groups": 200,
+    "duplicate_lineage_groups": 200,
+    "review": {
+      "mrq_total": 5622,
+      "mrq_pending": 0,
+      "status_histogram": {
+        "auto_accepted_standard": 3081,
+        "auto_accepted_critical_sample_ok": 1646,
+        "auto_accepted_informational": 893,
+        "confirmed_correct": 2
+      },
+      "run_labels": {
+        "20260407_tier_policy_review_gate": 5622
+      },
+      "promotion_batches": {
+        "legacy_rc_tier_20260407": 2,
+        "20260407_tier_policy": 1,
+        "20260407_tier_policy_legacy": 1,
+        "20260408": 1,
+        "20260411": 1
+      }
+    },
+    "review_grain": [
+      {
+        "grain": "research_id_domain",
+        "source": "qa.manual_review_queue",
+        "n": 55500
+      }
+    ],
+    "imaging_linkage_total": 37016,
+    "fna_bethesda_total": 8119,
+    "specimen_broken_fhir_refs": 0,
+    "specimen_review_burden": 1,
+    "specimen_genomic_link_review": 10155,
+    "specimen_focus_qa_metrics": 1,
+    "query_history_agents": "not_available",
+    "reconciliation_drift": []
+  }
+}

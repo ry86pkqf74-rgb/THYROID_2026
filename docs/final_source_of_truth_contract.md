@@ -115,10 +115,31 @@ Multiple fact rows may share the same natural key `(research_id, source_domain, 
 
 See [`MANUSCRIPT_DATA_START_HERE.md`](../MANUSCRIPT_DATA_START_HERE.md) for the condensed analyst guide.
 
+## LLM extraction coverage
+
+All 23 canonical extraction domains are represented in `canonical_extracted_fact_long_v2` with 100% `source_file_id` and `fact_domain` coverage. Domain-run audit: `studies/canonical_finalization_20260414T032810Z/artifacts/llm_extraction_lineage_audit.md`.
+
+## Latest live audit (2026-04-14T03:30Z)
+
+| Metric | Value |
+|--------|-------|
+| Canonical facts | 55,500 |
+| Master verified facts | 55,500 |
+| Source lineage rows | 55,500 |
+| Parity (canonical = master = lineage) | **PASS** |
+| Lineage completeness | 100% |
+| Duplicate fact_ids | 0 |
+| MRQ total | 5,622 |
+| MRQ pending | 0 |
+| MRQ true human-reviewed | 0 |
+| Broken FHIR refs | 0 |
+
+Full audit artifacts: `studies/canonical_finalization_20260414T032810Z/artifacts/` and `exports/full_canonical_release_20260414/`.
+
 ## Related documents
 
 - **This file:** `docs/final_source_of_truth_contract.md` (SSOT narrative anchor for CI phrase checks)
 
 - `docs/motherduck_database_contract_v1.md` — broader DB contract
 - `docs/specimen_fhir_contract_review.md` — specimen/FHIR scope
-- `studies/ssot_cleanup_audit_20260414T013901Z/report.md` — read-only audit motivating this contract
+- `studies/canonical_finalization_20260414T032810Z/` — canonical finalization audit artifacts

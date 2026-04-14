@@ -1,0 +1,69 @@
+{
+  "finalization_timestamp": "2026-04-14T03:30:55Z",
+  "git_branch": "canonical-finalization-20260414T032810Z",
+  "git_head_before": "133f0a8b51f1819d9b9408b86ea27e38d6742a6b",
+  "motherduck_connection": "SUCCESS",
+  "canonical_source_of_truth": "MotherDuck database 'Thyroid 2026' (main + qa schemas)",
+  "final_status": "single SSOT achieved with documented governance blocker",
+  "parity": {
+    "canonical_facts": 55500,
+    "master_facts": 55500,
+    "lineage_rows": 55500,
+    "distinct_patients": 5141,
+    "patient_rollup": 5141,
+    "parity_pass": true
+  },
+  "lineage_completeness": {
+    "source_object_pct": 100.0,
+    "source_domain_pct": 100.0,
+    "extraction_run_pct": 100.0
+  },
+  "duplicates": {
+    "fact_id_duplicates": 0,
+    "natural_key_groups": 200,
+    "natural_key_note": "expected for multi-analyte rows"
+  },
+  "review_governance": {
+    "mrq_total": 5622,
+    "mrq_pending": 0,
+    "true_human_reviewed": 0,
+    "auto_accepted_standard": 3081,
+    "auto_accepted_critical_sample_ok": 1646,
+    "auto_accepted_informational": 893,
+    "confirmed_correct": 2,
+    "run_labels": ["20260407_tier_policy_review_gate"],
+    "governance_blocker": "0 of 5622 MRQ rows are true human-reviewed"
+  },
+  "extraction_runs": {
+    "total_runs": 3,
+    "orphan_runs": 3,
+    "canonical_domains": 23,
+    "null_extraction_run_facts": 0
+  },
+  "specimen_fhir": {
+    "broken_refs": 0,
+    "specimen_master": 10139,
+    "specimen_tumor_focus": 11103,
+    "specimen_genomic_assay": 10370,
+    "fhir_bundle_export": 10139
+  },
+  "adjunct_surfaces": {
+    "imaging_nodule_master": 37016,
+    "fna_episode_master": 8119,
+    "fna_bethesda_resolved": 8119
+  },
+  "release_ledger": {
+    "total_entries": 12,
+    "latest_tag": "20260408r4",
+    "distinct_shas": 9,
+    "duplicate_tags": 0
+  },
+  "checked_in_manifest": {
+    "status": "historical_checkpoint",
+    "sha": "8c18892",
+    "era": "2026-03-15"
+  },
+  "reconciliation_drift": 0,
+  "export_bundle": "exports/full_canonical_release_20260414/",
+  "study_artifacts": "studies/canonical_finalization_20260414T032810Z/artifacts/"
+}

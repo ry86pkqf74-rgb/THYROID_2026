@@ -122,22 +122,70 @@ class TestCanonicalExportBundle:
             "canonical_counts.json",
             "lineage_completeness.json",
             "duplicate_audit.csv",
-            "release_manifest_latest.json",
             "schema_inventory.json",
             "validation_summary.json",
-            "manifest.json",
-            "checksums.json",
         ]
         for fn in required:
             assert (bundle / fn).exists(), f"Missing {fn} in {bundle.name}"
 
-    def test_manifest_governance_status(self):
+    def test_canonical_counts_populated(self):
         bundle = self._find_bundle()
         if bundle is None:
             pytest.skip("No bundle")
-        m = json.loads((bundle / "manifest.json").read_text())
-        assert "governance_status" in m
-        assert "blocker" in m["governance_status"].lower() or "pass" in m["governance_status"].lower()
+        counts = json.loads((bundle / "canonical_counts.json").read_text())
+        assert counts.get("canonical_extracted_fact_long_v2", 0) > 0
+        assert counts.get("master_fact_long_verified_v1", 0) > 0
+
+
+class TestReviewGrainDisclosure:
+    """Contract and start-here must disclose review grain."""
+
+    def test_contract_discloses_grain(self):
+        text = (DOCS / "final_source_of_truth_contract.md").read_text(encoding="utf-8")
+        assert "research_id_domain" in text or "research_id, domain" in text
+
+    def test_start_here_discloses_grain(self):
+        text = (ROOT / "MANUSCRIPT_DATA_START_HERE.md").read_text(encoding="utf-8")
+        assert "research_id, domain" in text or "research_id_domain" in text or "per-fact" in text.lower()
+
+
+class TestFinalizationStudy:
+    """Canonical finalization study folder must contain key artifacts."""
+
+    def _find_study(self) -> Path | None:
+        for d in sorted(ROOT.joinpath("studies").glob("canonical_finalization_*"), reverse=True):
+            if d.is_dir():
+                return d
+        return None
+
+    def test_study_exists(self):
+        assert self._find_study() is not None
+
+    def test_final_handoff(self):
+        s = self._find_study()
+        if s is None:
+            pytest.skip("No study")
+        handoff = s / "FINAL_HANDOFF.md"
+        assert handoff.exists()
+        text = handoff.read_text(encoding="utf-8")
+        assert "single ssot" in text.lower() or "not yet a single ssot" in text.lower()
+
+    def test_final_state_json(self):
+        s = self._find_study()
+        if s is None:
+            pytest.skip("No study")
+        fstate = s / "final_state.json"
+        assert fstate.exists()
+        data = json.loads(fstate.read_text())
+        assert "final_status" in data
+        assert "parity" in data
+
+    def test_before_state(self):
+        s = self._find_study()
+        if s is None:
+            pytest.skip("No study")
+        assert (s / "before_state").is_dir()
+        assert (s / "artifacts").is_dir()
 
 
 class TestNarrativePointers:

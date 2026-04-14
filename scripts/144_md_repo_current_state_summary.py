@@ -147,6 +147,17 @@ def collect_live_introspection(con: Any) -> tuple[list[str], str, dict[str, Any]
             md_lines.append(f"- **{label}:** {int(n):,} rows")
         except Exception as e:
             md_lines.append(f"- **{label}:** _(unavailable: {e})_")
+    md_lines.append("### Adjunct linkage surfaces (row counts)")
+    for label, sql in (
+        ("imaging_nodule_master_v1", "SELECT COUNT(*) FROM main.imaging_nodule_master_v1"),
+        ("fna_episode_master_v2", "SELECT COUNT(*) FROM main.fna_episode_master_v2"),
+        ("v_fna_episode_bethesda_resolved_v1", "SELECT COUNT(*) FROM main.v_fna_episode_bethesda_resolved_v1"),
+    ):
+        try:
+            n = con.execute(sql).fetchone()[0]
+            md_lines.append(f"- **{label}:** {int(n):,} rows")
+        except Exception as e:
+            md_lines.append(f"- **{label}:** _(unavailable: {e})_")
     md_lines.append("### Specimen / FHIR layer row counts")
     for label, sql in (
         ("specimen_master_v1", "SELECT COUNT(*) FROM main.specimen_master_v1"),

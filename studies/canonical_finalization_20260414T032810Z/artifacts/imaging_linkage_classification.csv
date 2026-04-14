@@ -1,0 +1,8 @@
+linkage_reason_code,count
+patient_has_no_dated_fna_episode,8395
+only_fna_beyond_90d_after_index_us,8107
+all_fna_before_index_us_exam,7709
+primary_row_in_imaging_fna_linkage_mm_v1,6359
+index_us_after_first_surgery,6318
+preop_fna_window_patient_no_mm_pair_for_this_nodule,123
+fna_calendar_in_window_but_not_preop,5

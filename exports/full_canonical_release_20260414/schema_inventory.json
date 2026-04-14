@@ -1,0 +1,1892 @@
+[
+  {
+    "schema": "main",
+    "name": "_specimen_path_surgery_link_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "_specimen_synoptic_spine_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "analysis_cancer_cohort_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "analysis_molecular_subset_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "analysis_recurrence_subset_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "analysis_tirads_subset_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "canonical_extracted_fact_long_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "canonical_extracted_fact_long_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "canonical_fact_quarantine_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "canonical_fact_quarantine_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "canonical_nodule_linkage_study_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "clinical_notes_long",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "complication_patient_summary_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "complication_phenotype_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "ct_imaging",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "episode_analysis_resolved_v1_dedup",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "episode_completeness_summary_v",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "event_date_audit_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "extracted_braf_recovery_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "extracted_complications_refined_v5",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "extracted_ete_subgraded_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "extracted_fna_bethesda_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "extracted_postop_labs_expanded_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "extracted_ras_patient_summary_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "extracted_rln_injury_refined_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "extracted_tirads_validated_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "fhir_bundle_specimen_export_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "fhir_encounter_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "fhir_episode_of_care_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "fhir_patient_deid_map_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "fhir_procedure_collection_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "fhir_specimen_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "fna_cytology",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "fna_episode_master_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "fna_history",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "fna_molecular_linkage_v3",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "gold_llm_verified_facts",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "gold_master_episode_events_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "gold_master_patient_facts_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "imaging_exam_master_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "imaging_fna_linkage_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "imaging_fna_linkage_v3",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "imaging_nodule_long_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "imaging_nodule_master_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "imaging_patient_summary_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "lab_cross_wave_dedup_map_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "lab_cross_wave_review_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "lab_same_day_value_review_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "lesion_analysis_resolved_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "linkage_ambiguity_review_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "linkage_master_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "linkage_summary_v",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "linkage_summary_v3",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "longitudinal_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "longitudinal_lab_deduped_v",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "manuscript_cohort_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "master_fact_long_verified_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "master_patient_rollup_verified_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "master_source_lineage_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "md_extracted_fna_bethesda_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "md_path_synoptics_encounter_qc_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "md_synoptic_tumor_long_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "md_val_path_synoptic_encounter_isolation_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "molecular_assay_dictionary",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "molecular_code_crosswalk",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "molecular_fact_lineage_qa_duplicate_candidates_v",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "molecular_fact_long_base_v",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "molecular_fact_long_v",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "molecular_ingestion_runs",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "molecular_normalization_review_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "molecular_patient_rollup_v",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "molecular_qc_summary_v",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "molecular_results",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "molecular_results_contract_v",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "molecular_results_contract_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "molecular_results_enriched_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "molecular_results_unified_v",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "molecular_test_episode_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "molecular_testing",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "molecular_variant_contract_v",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "molecular_variant_long",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "molecular_variant_long_contract_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "mrn_crosswalk_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_complications",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_genetics",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_airway_invasion",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_cervical_ln_detail",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_dynamic_risk_response",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_frozen_section_detail",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_functional_outcomes",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_imaging",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_labs",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_parathyroid_detail",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_past_medical_hx",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_past_surgical_hx",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_pathology",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_patient_decision_adherence",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_physical_exam",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_presenting_symptoms",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_rad_treatment",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_rai_detailed",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_recurrence",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_survival_followup",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_synoptic_pathology_enrichment",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_tg_kinetics",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_tirads_granular",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_us_nodule_dynamics",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_llm_vascular_invasion",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_medications",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_operative_detail",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_problem_list",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_procedures",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_entities_staging",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "note_extraction_runs",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "notes_entity_summary",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "nuclear_med",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "operative_episode_detail_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "path_synoptics",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "path_synoptics_encounter_qc_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "pathology_rai_linkage_v3",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "patient_analysis_resolved_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "patient_cross_domain_timeline_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "patient_refined_master_clinical_v12",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "preop_surgery_linkage_v3",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "rai_treatment_episode_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "raw_imaging_12_slots_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "raw_us_tirads_excel_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "raw_us_tirads_scored_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "recurrence_event_clean_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "review_queue_imaging_fna_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "serial_imaging_us",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "specimen_genomic_assay_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "specimen_master_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "specimen_source_xref_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "specimen_tumor_focus_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "stg_thyroseq_excel_raw",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "stg_thyroseq_match_results",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "stg_thyroseq_parsed",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "surgery_pathology_linkage_v3",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "survival_cohort_enriched",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "synoptic_tumor_long_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "tg_lab_review_queue_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "tg_postop_surveillance_windows_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "tg_timeline_patient_summary_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "thyroglobulin_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "thyroid_scoring_py_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "thyroseq_molecular_enrichment",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "thyroseq_review_queue",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "tumor_episode_master_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "tumor_pathology",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "ultrasound_reports",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "us_nodules_tirads",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "v_canonical_us_nodule_scope_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "v_fna_bethesda_episode_vs_resolved_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "v_fna_episode_bethesda_resolved_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "v_imaging_nodule_linkage_classification_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "v_imaging_nodule_tirads_gap_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "main",
+    "name": "val_imaging_fna_linkage_audit_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "val_path_synoptic_encounter_isolation_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "val_phase12_tirads_validation",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "main",
+    "name": "vw_us_nodule_tirads_validated",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "_bootstrap_event_date_audit_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "_bootstrap_fna_episode_master_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "_bootstrap_fna_molecular_linkage_v3",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "_bootstrap_linkage_master_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "_bootstrap_mrn_crosswalk_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "_bootstrap_pathology_rai_linkage_v3",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "_bootstrap_patient_cross_domain_timeline_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "_bootstrap_preop_surgery_linkage_v3",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "_bootstrap_surgery_pathology_linkage_v3",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "dim_nodule_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "dim_patient_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "fact_fna_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "fact_genetics_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "fact_imaging_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "fact_path_report_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "fact_surgery_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "fact_tumor_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "imaging_fna_linkage_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "link_imaging_fna_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "link_surgery_context_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "link_surgery_path_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "map_patient_identifier_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "review_queue_imaging_fna_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "val_ambiguous_multimodal_linkage_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "val_contract_required_join_keys_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "val_imaging_fna_contract_blockers_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "val_imaging_fna_linkage_audit_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "val_multi_tumor_report_mm_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "val_multitumor_expansion_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "val_nodes_invariant_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "val_preop_temporal_order_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "mm_contract_dev",
+    "name": "val_side_lobe_mismatch_mm_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "qa",
+    "name": "concordance_summary",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "qa",
+    "name": "date_provenance_completeness_v",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "domain_validation",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "qa",
+    "name": "domain_validation_summary_v",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "manual_review_queue",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "qa",
+    "name": "manual_review_queue_summary_v",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "molecular_pipeline_run_audit",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "qa",
+    "name": "promotion_review_decisions",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "qa",
+    "name": "promotion_scorecard",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "qa",
+    "name": "promotion_scorecard_summary_v",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "release_manifest",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "qa",
+    "name": "specimen_genomic_link_review_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "qa",
+    "name": "specimen_merge_review_queue_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "qa",
+    "name": "t_diag_specimen_focus_qa_metrics_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "qa",
+    "name": "tg_lab_ingestion_qc",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "qa",
+    "name": "v_diag_specimen_duplicate_focus_fp_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "v_diag_specimen_duplicate_master_fp_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "v_diag_specimen_fhir_broken_refs_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "v_diag_specimen_fhir_bundle_entry_drift_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "v_diag_specimen_genomics_A_tier_requires_specimen_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "v_diag_specimen_genomics_dupe_thyroseq_slice_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "v_diag_specimen_genomics_thyroseq_ordinality_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "v_diag_specimen_genomics_tier_enum_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "v_diag_specimen_orphan_focus_master_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "v_diag_specimen_orphan_focus_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "v_diag_specimen_orphan_genomic_focus_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "v_diag_specimen_orphan_genomic_master_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "v_diag_specimen_orphan_genomic_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "v_diag_specimen_provenance_focus_gaps_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "v_diag_specimen_provenance_focus_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "v_diag_specimen_provenance_genomic_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "v_diag_specimen_provenance_master_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "v_diag_specimen_provenance_summary_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "v_diag_specimen_review_burden_v1",
+    "type": "VIEW"
+  },
+  {
+    "schema": "qa",
+    "name": "val_specimen_contract_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "qa",
+    "name": "val_specimen_genomic_binding_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260406",
+    "name": "canonical_extracted_fact_long_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260406",
+    "name": "canonical_extracted_fact_long_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260406",
+    "name": "canonical_fact_quarantine_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260406",
+    "name": "canonical_fact_quarantine_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260406",
+    "name": "note_extraction_runs",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260406",
+    "name": "thyroglobulin_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407",
+    "name": "canonical_extracted_fact_long_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407",
+    "name": "canonical_extracted_fact_long_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407",
+    "name": "canonical_fact_quarantine_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407",
+    "name": "canonical_fact_quarantine_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407",
+    "name": "note_extraction_runs",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final",
+    "name": "canonical_extracted_fact_long_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final",
+    "name": "canonical_extracted_fact_long_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final",
+    "name": "canonical_fact_quarantine_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final",
+    "name": "canonical_fact_quarantine_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final",
+    "name": "longitudinal_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final",
+    "name": "master_fact_long_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final",
+    "name": "master_patient_rollup_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final",
+    "name": "master_source_lineage_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final",
+    "name": "note_extraction_runs",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final",
+    "name": "thyroglobulin_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final2",
+    "name": "canonical_extracted_fact_long_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final2",
+    "name": "canonical_extracted_fact_long_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final2",
+    "name": "canonical_fact_quarantine_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final2",
+    "name": "canonical_fact_quarantine_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final2",
+    "name": "longitudinal_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final2",
+    "name": "master_fact_long_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final2",
+    "name": "master_patient_rollup_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final2",
+    "name": "master_source_lineage_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final2",
+    "name": "note_extraction_runs",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_final2",
+    "name": "thyroglobulin_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_tier",
+    "name": "canonical_extracted_fact_long_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_tier",
+    "name": "canonical_extracted_fact_long_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_tier",
+    "name": "canonical_fact_quarantine_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_tier",
+    "name": "canonical_fact_quarantine_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_tier",
+    "name": "longitudinal_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_tier",
+    "name": "master_fact_long_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_tier",
+    "name": "master_patient_rollup_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_tier",
+    "name": "master_source_lineage_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_tier",
+    "name": "note_extraction_runs",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260407_tier",
+    "name": "thyroglobulin_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408",
+    "name": "canonical_extracted_fact_long_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408",
+    "name": "canonical_extracted_fact_long_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408",
+    "name": "canonical_fact_quarantine_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408",
+    "name": "canonical_fact_quarantine_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408",
+    "name": "longitudinal_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408",
+    "name": "master_fact_long_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408",
+    "name": "master_patient_rollup_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408",
+    "name": "master_source_lineage_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408",
+    "name": "note_extraction_runs",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408",
+    "name": "thyroglobulin_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r2",
+    "name": "canonical_extracted_fact_long_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r2",
+    "name": "canonical_extracted_fact_long_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r2",
+    "name": "canonical_fact_quarantine_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r2",
+    "name": "canonical_fact_quarantine_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r2",
+    "name": "longitudinal_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r2",
+    "name": "master_fact_long_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r2",
+    "name": "master_patient_rollup_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r2",
+    "name": "master_source_lineage_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r2",
+    "name": "note_extraction_runs",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r2",
+    "name": "thyroglobulin_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r3",
+    "name": "canonical_extracted_fact_long_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r3",
+    "name": "canonical_extracted_fact_long_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r3",
+    "name": "canonical_fact_quarantine_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r3",
+    "name": "canonical_fact_quarantine_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r3",
+    "name": "longitudinal_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r3",
+    "name": "master_fact_long_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r3",
+    "name": "master_patient_rollup_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r3",
+    "name": "master_source_lineage_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r3",
+    "name": "note_extraction_runs",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r3",
+    "name": "thyroglobulin_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r4",
+    "name": "canonical_extracted_fact_long_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r4",
+    "name": "canonical_extracted_fact_long_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r4",
+    "name": "canonical_fact_quarantine_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r4",
+    "name": "canonical_fact_quarantine_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r4",
+    "name": "longitudinal_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r4",
+    "name": "master_fact_long_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r4",
+    "name": "master_patient_rollup_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r4",
+    "name": "master_source_lineage_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r4",
+    "name": "note_extraction_runs",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260408r4",
+    "name": "thyroglobulin_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260409",
+    "name": "canonical_extracted_fact_long_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260409",
+    "name": "canonical_extracted_fact_long_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260409",
+    "name": "canonical_fact_quarantine_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260409",
+    "name": "canonical_fact_quarantine_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260409",
+    "name": "longitudinal_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260409",
+    "name": "master_fact_long_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260409",
+    "name": "master_patient_rollup_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260409",
+    "name": "master_source_lineage_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260409",
+    "name": "note_extraction_runs",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260409",
+    "name": "thyroglobulin_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260410",
+    "name": "canonical_extracted_fact_long_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260410",
+    "name": "canonical_extracted_fact_long_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260410",
+    "name": "canonical_fact_quarantine_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260410",
+    "name": "canonical_fact_quarantine_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260410",
+    "name": "longitudinal_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260410",
+    "name": "master_fact_long_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260410",
+    "name": "master_patient_rollup_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260410",
+    "name": "master_source_lineage_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260410",
+    "name": "note_extraction_runs",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260410",
+    "name": "thyroglobulin_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260411",
+    "name": "canonical_extracted_fact_long_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260411",
+    "name": "canonical_extracted_fact_long_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260411",
+    "name": "canonical_fact_quarantine_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260411",
+    "name": "canonical_fact_quarantine_v2",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260411",
+    "name": "longitudinal_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260411",
+    "name": "master_fact_long_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260411",
+    "name": "master_patient_rollup_verified_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260411",
+    "name": "master_source_lineage_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260411",
+    "name": "note_extraction_runs",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "release_20260411",
+    "name": "thyroglobulin_lab_canonical_v1",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "load_inventory",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_airway_invasion",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_cervical_ln_detail",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_combined",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_complications",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_complications_rln_laryngoscopy",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_dynamic_risk_response",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_frozen_section_detail",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_functional_outcomes",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_genetics",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_imaging",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_labs",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_medication_management",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_medications",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_molecular_thyroseq_afirma",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_operative_details",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_operative_v2_enrichment",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_parathyroid_detail",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_parathyroid_per_gland",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_past_medical_hx",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_past_surgical_hx",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_pathology",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_patient_decision_adherence",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_physical_exam",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_presenting_symptoms",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_problem_list",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_procedures",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_rad_treatment",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_rai_detailed",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_recurrence",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_recurrence_detailed",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_staging",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_survival_followup",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_synoptic_pathology_enrichment",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_tg_kinetics",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_tirads_granular",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_us_nodule_dynamics",
+    "type": "BASE TABLE"
+  },
+  {
+    "schema": "v2_stage",
+    "name": "note_entities_llm_vascular_invasion",
+    "type": "BASE TABLE"
+  }
+]

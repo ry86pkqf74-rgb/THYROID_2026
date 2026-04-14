@@ -1,0 +1,4 @@
+audit_type,groups_found
+fact_id_dups,0
+natural_key_dups,200
+lineage_dups,200
