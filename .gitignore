@@ -114,3 +114,4 @@ processed/output/*.parquet
 # processed/output/*.ckpt.jsonl — may be committed
 # processed/output/server_checkpoints/ — committed
 # processed/output/v2_backup/ — committed
+output/parquet_backup/
