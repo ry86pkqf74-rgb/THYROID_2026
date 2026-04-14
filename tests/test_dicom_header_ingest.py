@@ -249,6 +249,47 @@ def test_date_discordant_blocks_auto_link() -> None:
     assert reviews.iloc[0]["reason_code"] == "DATE_DISCORDANT_ACCESSION_MATCH"
 
 
+def test_date_discordance_max_skew_across_multiple_exam_dates() -> None:
+    """Do not compare only the first distinct exam_date; worst skew vs study wins."""
+    cfg = load_alias_config()
+    lu = build_column_lookup(cfg["canonical_fields"])
+    df = read_input_files([FIXTURES / "study_series_synthetic.csv"], "csv")
+    enriched = build_enriched_rows(df, lu)
+    _, study, _ = rows_to_study_series(enriched, ingestion_run_id="r")
+    acc = normalize_accession_key("SYN-ACC-1001")
+    cand = pd.DataFrame(
+        [
+            {
+                "research_id": 77,
+                "accession_norm": acc,
+                "imaging_exam_id": "examA",
+                "imaging_nodule_id": "nodA",
+                "specimen_id": None,
+                "source_table": "imaging",
+                "exam_date_yyyymmdd": "20240115",
+            },
+            {
+                "research_id": 77,
+                "accession_norm": acc,
+                "imaging_exam_id": "examA",
+                "imaging_nodule_id": "nodB",
+                "specimen_id": None,
+                "source_table": "imaging",
+                "exam_date_yyyymmdd": "20240601",
+            },
+        ],
+    )
+    links, reviews = resolve_exact_links(
+        study,
+        cand,
+        ingestion_run_id="r",
+        date_skew_days_max=14,
+    )
+    assert links.empty
+    assert reviews.iloc[0]["reason_code"] == "DATE_DISCORDANT_ACCESSION_MATCH"
+    assert "max delta" in (reviews.iloc[0]["conflict_note"] or "").lower()
+
+
 def test_no_fuzzy_no_mrn_date_auto_link() -> None:
     """MRN + study date alone must never create a link; accession must match exactly."""
     cfg = load_alias_config()

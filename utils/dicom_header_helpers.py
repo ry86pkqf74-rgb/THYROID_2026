@@ -520,6 +520,20 @@ def _distinct_specimen_ids(sub: pd.DataFrame) -> list[str]:
     return _distinct_non_null_string_ids(sub["specimen_id"])
 
 
+def _distinct_exam_dates_yyyymmdd(sub: pd.DataFrame) -> list[str]:
+    """Distinct 8-char YYYYMMDD strings from exam_date_yyyymmdd; blanks/invalid ignored."""
+    if sub.empty or "exam_date_yyyymmdd" not in sub.columns:
+        return []
+    out: set[str] = set()
+    for v in sub["exam_date_yyyymmdd"].dropna().astype(str).unique().tolist():
+        digits = re.sub(r"\D", "", str(v).strip())
+        if len(digits) >= 8:
+            ymd = digits[:8]
+            if len(ymd) == 8 and ymd.isdigit():
+                out.add(ymd)
+    return sorted(out)
+
+
 def _link_id_hash(parts: Sequence[str]) -> str:
     h = hashlib.sha256("|".join(parts).encode("utf-8")).hexdigest()
     return f"dicom_link_{h[:40]}"
@@ -784,20 +798,28 @@ def resolve_exact_links(
 
         date_ok: bool | None = True
         if sd_n and isinstance(sd_n, str) and len(sd_n) == 8 and "exam_date_yyyymmdd" in sub.columns:
-            ex_dates = sub["exam_date_yyyymmdd"].dropna().astype(str).unique().tolist()
-            if ex_dates:
-                ex0 = str(ex_dates[0])
-                if len(ex0) == 8:
+            ex_ymds = _distinct_exam_dates_yyyymmdd(sub)
+            if ex_ymds:
+                worst_skew = 0
+                worst_ex: str | None = None
+                had_parse = False
+                for ymd in ex_ymds:
                     try:
-                        skew = _ymd_delta_days(sd_n, ex0)
-                        if skew > int(date_skew_days_max):
-                            date_ok = False
-                            conflict_note_parts.append(
-                                f"study_date {sd_n} vs exam_date {ex0} delta {skew}d "
-                                f"> {date_skew_days_max}d",
-                            )
+                        skew = _ymd_delta_days(sd_n, ymd)
+                        had_parse = True
+                        if skew > worst_skew:
+                            worst_skew = skew
+                            worst_ex = ymd
                     except (ValueError, TypeError):
-                        date_ok = None
+                        continue
+                if not had_parse:
+                    date_ok = None
+                elif worst_ex is not None and worst_skew > int(date_skew_days_max):
+                    date_ok = False
+                    conflict_note_parts.append(
+                        f"study_date {sd_n} vs exam_date(s) max delta {worst_skew}d "
+                        f"(worst vs {worst_ex}) > {date_skew_days_max}d",
+                    )
 
         if date_ok is False:
             reviews.append(

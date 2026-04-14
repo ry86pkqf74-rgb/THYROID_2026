@@ -20,6 +20,10 @@ After resolving to exactly one `research_id` and **not** triggering multi–imag
 2. **`AMBIGUOUS_ACCESSION_MULTI_SPECIMEN`** — Only when multi-imaging-exam is **not** triggered and specimen multiplicity is.
 3. **`DATE_DISCORDANT_ACCESSION_MATCH`** — Unchanged ordering (runs before the multi-specimen branch when dates are comparable).
 
+## Exam-date discordance (follow-up)
+
+Earlier logic compared DICOM study date only to the **first** distinct `exam_date_yyyymmdd` in the candidate group, which could miss discordance when multiple exam dates were present. The resolver now evaluates **all distinct parsed 8-digit exam dates** and uses the **maximum** absolute skew vs study date against `date_skew_days_max`.
+
 ## Non-regression expectations
 
 - Explicit **`research_id`** in the file still wins without candidate spine joins.

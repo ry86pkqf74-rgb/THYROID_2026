@@ -45,7 +45,7 @@ Minimum canonicalized fields when present:
 
 1. **explicit_research_id** — Source column maps to `research_id` and parses as integer. **Does not** consult the candidate spine first. Conflicting explicit IDs on the same study produce QC / review (`DISCORDANT_EXPLICIT_RESEARCH_ID`, `INVALID_EXPLICIT_RESEARCH_ID`).
 2. **exact_accession** — Normalize accession identically to imaging↔FNA helpers (`LOWER` + strip non-alphanumeric). Match only against the **candidate UNION** (imaging nodule master, FNA history, specimen master).  
-   - **Date concordance:** if both DICOM `study_date` and candidate `exam_date_yyyymmdd` exist, `|delta| > date_skew_days_max` (default **14**) sends the row to review (`DATE_DISCORDANT_ACCESSION_MATCH`). **Date alone never creates a link.**
+   - **Date concordance:** if both DICOM `study_date` and candidate `exam_date_yyyymmdd` exist, compare **all distinct parsed exam dates** in the candidate group; if the **maximum** absolute day skew vs study date exceeds `date_skew_days_max` (default **14**), send to review (`DATE_DISCORDANT_ACCESSION_MATCH`). **Date alone never creates a link.**
 3. No MRN, name, or “close enough” accession logic exists in code paths.
 
 ## Review queue reason codes (non-exhaustive)

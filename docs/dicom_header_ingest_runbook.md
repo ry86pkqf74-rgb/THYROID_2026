@@ -50,6 +50,10 @@ After accession matches exactly one `research_id` and imaging-exam ambiguity is 
 
 Blank / whitespace-only `imaging_exam_id` and `specimen_id` values are ignored when forming distinct-ID sets.
 
+### Date concordance (multiple candidate exam dates)
+
+When several candidate rows include different `exam_date_yyyymmdd` values, the resolver parses **all distinct 8-digit YYYYMMDD values** and compares each to the DICOM study date. The **maximum** absolute day skew must be ≤ `date_skew_days_max` (default 14); otherwise the row is reviewed as **`DATE_DISCORDANT_ACCESSION_MATCH`**. A single “helpful” exam date among several cannot mask a discordant one.
+
 ### Malformed raw `.dcm` files (QC vs linkage)
 
 If `pydicom` cannot read a file (or `StudyInstanceUID` is missing after read), the row is recorded in **`dicom_header_ingestion_provenance_v1`** with `parse_status` **`error`** and QC flags such as **`MISSING_STUDY_INSTANCE_UID`**. No **`dicom_study_header_v1`** row is emitted for that study. **`resolve_exact_links`** only iterates study-level rows, so **no** `dicom_link_review_queue_v1` row is produced for that failure mode when the study frame is empty for that case. (Study-level QC blockers such as malformed UIDs on rows that *do* produce a study row still route to review via **`STUDY_HEADER_QC_BLOCKER`**.)
