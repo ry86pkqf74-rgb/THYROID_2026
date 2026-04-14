@@ -4,7 +4,10 @@ __pycache__/
 *.pyc
 .streamlit/secrets.toml
 .streamlit/_token_import.oneoff
-.cursor/
+# Cursor IDE — ignore local IDE state; track `.cursor/skills/**` only (no secrets in skills)
+.cursor/*
+!.cursor/skills/
+!.cursor/skills/**
 .venv/
 .vscode/
 
