@@ -1,5 +1,7 @@
 # Final master release — manuscript readiness evidence
 
+> **Historical evidence pack (2026-04-07 capture):** Row counts and MRQ posture here are **point-in-time** and may **differ materially** from live MotherDuck today. **Live SSOT:** [`docs/final_source_of_truth_contract.md`](../../docs/final_source_of_truth_contract.md); current repo mirror: [`studies/CURRENT_MOTHERDUCK_REPO_STATE.md`](../CURRENT_MOTHERDUCK_REPO_STATE.md) after `scripts/144_md_repo_current_state_summary.py --md`. Do not cite this table as live prod without reconciliation.
+
 - **Release tag:** `20260411`
 - **Git SHA:** `559da67d0afcc27dcff6fea0a2fbb196b161cce4` (commit introducing this evidence folder; row snapshot from run at 2026-04-07T19:16Z UTC)
 - **Captured (UTC):** 2026-04-07T19:16:06.987268+00:00

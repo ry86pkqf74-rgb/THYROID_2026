@@ -6,6 +6,11 @@ surface for release-signed data.  Every row exposes the six required provenance
 fields: research_id, source domain, source object id, extraction_run_id,
 reviewer_status, and release_tag.
 
+Reviewer columns are **not** per-fact human validation unless policy says so:
+``reviewer_status`` is joined from ``qa.manual_review_queue`` at
+**(research_id, domain)** grain only. See ``review_grain``, ``review_status_source``,
+and ``review_join_key`` on ``master_fact_long_verified_v1``.
+
 Views created:
   main.master_fact_long_verified_v1
       One row per extracted entity fact.  Joins canonical facts with reviewer
@@ -44,6 +49,7 @@ DB_PATH = ROOT / "thyroid_master.duckdb"
 # ---------------------------------------------------------------------------
 
 MASTER_FACT_LONG_DDL = """\
+-- Reviewer fields: propagated from qa.manual_review_queue at (research_id, domain) grain — not per-fact adjudication unless queue stores finer grain.
 CREATE OR REPLACE VIEW main.master_fact_long_verified_v1 AS
 WITH latest_release AS (
     SELECT release_tag
@@ -134,6 +140,13 @@ SELECT
     rv.reviewer_verified_by,
     rv.reviewer_decision_at,
     rv.reviewer_notes,
+    CAST('research_id_domain' AS VARCHAR)              AS review_grain,
+    CAST('qa.manual_review_queue' AS VARCHAR)          AS review_status_source,
+    concat(
+        cast(f.research_id AS VARCHAR),
+        '|',
+        cast(f.fact_domain AS VARCHAR)
+    )                                                  AS review_join_key,
     -- release tag (largest numeric tag in manifest; tie-break created_at)
     (SELECT release_tag FROM latest_release) AS release_tag
 FROM  fact_core f
@@ -199,6 +212,9 @@ SELECT
     f.reviewer_verified_by,
     f.reviewer_decision_at,
     f.reviewer_notes,
+    f.review_grain,
+    f.review_status_source,
+    f.review_join_key,
     -- release provenance
     f.release_tag
 FROM  main.master_fact_long_verified_v1 f
@@ -214,7 +230,7 @@ VIEWS: list[tuple[str, str]] = [
 VIEW_DESCRIPTIONS = {
     "master_fact_long_verified_v1": (
         "One row per extracted entity fact; joins canonical_extracted_fact_long_v2 "
-        "with reviewer status and latest release tag."
+        "with reviewer status (MRQ grain: research_id+domain) and latest release tag."
     ),
     "master_patient_rollup_verified_v1": (
         "Per-patient summary: fact counts by linkage family, review coverage, release tag."

@@ -122,11 +122,30 @@ def collect_catalog_probe(con: Any) -> list[str]:
     return lines
 
 
-def collect_live_introspection(con: Any) -> tuple[list[str], str]:
-    """Run MotherDuck-style bullets for ``## Live MotherDuck status``; works on file DB too."""
+def collect_live_introspection(con: Any) -> tuple[list[str], str, dict[str, Any]]:
+    """Run MotherDuck-style bullets for ``## Live MotherDuck status``; works on file DB too.
+
+    Returns ``live_meta`` for comparing live ``qa.release_manifest`` to checked-in JSON.
+    """
     md_lines: list[str] = []
     telemetry_note = "(run with `--md` to populate)"
+    live_meta: dict[str, Any] = {}
     md_lines.extend(collect_catalog_probe(con))
+    md_lines.append("### Core analytic surfaces (row counts)")
+    for label, sql in (
+        ("canonical_extracted_fact_long_v2", "SELECT COUNT(*) FROM main.canonical_extracted_fact_long_v2"),
+        ("canonical_fact_quarantine_v2", "SELECT COUNT(*) FROM main.canonical_fact_quarantine_v2"),
+        ("master_fact_long_verified_v1", "SELECT COUNT(*) FROM main.master_fact_long_verified_v1"),
+        ("master_patient_rollup_verified_v1", "SELECT COUNT(*) FROM main.master_patient_rollup_verified_v1"),
+        ("master_source_lineage_v1", "SELECT COUNT(*) FROM main.master_source_lineage_v1"),
+        ("longitudinal_lab_canonical_v1", "SELECT COUNT(*) FROM main.longitudinal_lab_canonical_v1"),
+        ("longitudinal_lab_deduped_v", "SELECT COUNT(*) FROM main.longitudinal_lab_deduped_v"),
+    ):
+        try:
+            n = con.execute(sql).fetchone()[0]
+            md_lines.append(f"- **{label}:** {int(n):,} rows")
+        except Exception as e:
+            md_lines.append(f"- **{label}:** _(unavailable: {e})_")
     md_lines.append("### Specimen / FHIR layer row counts")
     for label, sql in (
         ("specimen_master_v1", "SELECT COUNT(*) FROM main.specimen_master_v1"),
@@ -140,28 +159,48 @@ def collect_live_introspection(con: Any) -> tuple[list[str], str]:
         except Exception as e:
             md_lines.append(f"- **{label}:** _(unavailable: {e})_")
     try:
+        rm_one = con.execute(
+            """
+            SELECT release_tag, git_sha, created_at FROM qa.release_manifest
+            ORDER BY TRY_CAST(release_tag AS BIGINT) DESC NULLS LAST, created_at DESC
+            LIMIT 1
+            """
+        ).fetchone()
+        if rm_one:
+            live_meta["latest_release_tag"] = rm_one[0]
+            live_meta["latest_git_sha"] = rm_one[1]
+            live_meta["latest_created_at"] = rm_one[2]
+            md_lines.append(
+                "- **qa.release_manifest (latest tag; ordering aligned with script 125):** "
+                f"`{rm_one[0]}` | sha `{rm_one[1]}` | {rm_one[2]}"
+            )
         rm = con.execute(
             "SELECT release_tag, git_sha, created_at FROM qa.release_manifest "
             "ORDER BY created_at DESC NULLS LAST LIMIT 3"
         ).fetchall()
         if rm:
-            md_lines.append("- **qa.release_manifest (latest 3):**")
+            md_lines.append("- **qa.release_manifest (latest 3 by created_at):**")
             for row in rm:
                 md_lines.append(f"  - tag `{row[0]}` | sha `{row[1]}` | {row[2]}")
-        else:
+        elif not rm_one:
             md_lines.append("- **qa.release_manifest:** _(empty)_")
     except Exception as e:
         md_lines.append(f"- **qa.release_manifest:** _(error: {e})_")
+        live_meta["release_manifest_error"] = str(e)
     try:
+        total_mrq = con.execute("SELECT COUNT(*) FROM qa.manual_review_queue").fetchone()[0]
         pending = con.execute(
             "SELECT COUNT(*) FROM qa.manual_review_queue "
             "WHERE verification_status IS NULL"
         ).fetchone()[0]
+        md_lines.append(f"- **qa.manual_review_queue (total rows):** {int(total_mrq):,}")
         md_lines.append(
-            f"- **qa.manual_review_queue (NULL verification_status):** {int(pending):,}"
+            f"- **qa.manual_review_queue (pending NULL verification_status):** {int(pending):,}"
         )
+        live_meta["mrq_total"] = int(total_mrq)
+        live_meta["mrq_pending_null_status"] = int(pending)
     except Exception as e:
-        md_lines.append(f"- **manual_review_queue pending:** _(error: {e})_")
+        md_lines.append(f"- **manual_review_queue:** _(error: {e})_")
     try:
         hist = con.execute(
             """
@@ -209,7 +248,7 @@ def collect_live_introspection(con: Any) -> tuple[list[str], str]:
             )
         except Exception:
             pass
-    return md_lines, telemetry_note
+    return md_lines, telemetry_note, live_meta
 
 
 def build_markdown(
@@ -219,13 +258,20 @@ def build_markdown(
     stale_days: int,
     md_lines: list[str] | None,
     telemetry_note: str,
+    live_meta: dict[str, Any] | None = None,
 ) -> str:
     """Assemble full document (static + optional live bullets)."""
     lines: list[str] = [
         "# THYROID_2026 — current MotherDuck vs repo state",
         "",
+        "> **Canonical contract:** [`docs/final_source_of_truth_contract.md`](../docs/final_source_of_truth_contract.md) "
+        "defines live SSOT (`main` / `qa` on MotherDuck), analyst surfaces, and what is historical only.",
+        "",
         "> **Naming:** This file is the default **output path** for this script. It is **not** guaranteed "
         "fresh unless **`Commit SHA`** matches `git rev-parse HEAD` **and** you trust the timestamp.",
+        "",
+        "> **Live catalog:** MotherDuck **`main`** (analytics) and **`qa`** (governance) — not local `thyroid_master.duckdb` "
+        "unless you explicitly reconcile.",
         "",
         "> **Publication narratives:** Signoff context and superseding validation pointers: "
         "[`20260407_publication_signoff_live/README.md`](20260407_publication_signoff_live/README.md).",
@@ -236,15 +282,13 @@ def build_markdown(
         "",
         "> **Stale guard:** If **`Commit SHA`** below ≠ `git rev-parse HEAD`, treat **Live MotherDuck** "
         "bullets as **point-in-time** until you re-run: `.venv/bin/python scripts/144_md_repo_current_state_summary.py --md` "
-        "(RW token: `motherduck.local.toml` or env / `.streamlit/secrets.toml` per `motherduck_client.py`).",
+        "(RW token via `motherduck_client.get_token()` / `motherduck.local.toml` or env — do not log secrets).",
         "",
-        "> **Repo posture (sync with README):** Latest **live** `119 --release-mode` + specimen/FHIR truth baselines "
-        "live under `studies/specimen_fhir_release_truth_*` (regenerate with this script + "
-        "`119_md_formalization_validate.py --md --release-mode`). **Governance:** operator `119` may **PASS WITH WARN** "
-        "while **manuscript** sign-off still requires **human-reviewed** MRQ/promotion paths (not automation-only "
-        "verification). **Institutional non-Tg lab wave** (`final_institutional_20260407`) is **ingested**; residual "
-        "lab gaps are **source-limited**, not a missing-wave blocker. Operator evidence pack: "
-        "`studies/20260411_final_master_release/EVIDENCE_PACK.md`.",
+        "> **Repo posture (sync with README / `truth_sync_summary.md`):** Technical validation (`119 --release-mode`) "
+        "can be green while **governance** (human-reviewed MRQ / promotion where policy requires) remains a separate "
+        "concern — do not conflate them. Specimen/FHIR baselines: `studies/specimen_fhir_release_truth_*`. "
+        "**Institutional non-Tg lab wave** (`final_institutional_20260407`) is **ingested**; residual lab gaps are "
+        "**source-limited**. Evidence pack (may lag live row counts): `studies/20260411_final_master_release/EVIDENCE_PACK.md`.",
         "",
         f"**Machine-generated:** {now_iso}",
         f"**Commit SHA:** `{sha}`",
@@ -286,13 +330,42 @@ def build_markdown(
     if latest_m.exists():
         try:
             m = json.loads(latest_m.read_text(encoding="utf-8"))
+            gen_at = m.get("generated_at")
+            mtime_age = ""
+            try:
+                age_sec = max(0.0, datetime.now(timezone.utc).timestamp() - latest_m.stat().st_mtime)
+                mtime_age = f" — file mtime ~{int(age_sec // 86400)}d old"
+            except OSError:
+                pass
             lines.extend(
                 [
                     f"- **manifest_id:** `{m.get('manifest_id')}`",
                     f"- **overall_status:** {m.get('overall_status')}",
                     f"- **git_sha (at generation):** `{m.get('git_sha')}`",
+                    f"- **generated_at (checked-in):** `{gen_at}`{mtime_age}",
+                    f"- **role:** {m.get('role', '_(see exports/release_manifests/README.md)_')}",
                 ]
             )
+            if live_meta and "latest_release_tag" in live_meta:
+                lt = live_meta.get("latest_release_tag")
+                ls = live_meta.get("latest_git_sha")
+                gt = m.get("git_sha")
+                mid = m.get("manifest_id")
+                warn_bits: list[str] = []
+                if gt and ls and str(gt).strip() != str(ls).strip():
+                    warn_bits.append(
+                        f"checked-in `git_sha` (`{gt}`) ≠ live latest manifest sha (`{ls}`) — "
+                        "**treat checked-in JSON as historical**; live SSOT is `qa.release_manifest`."
+                    )
+                if lt and mid and str(lt) not in str(mid):
+                    warn_bits.append(
+                        f"live tag `{lt}` may not match checked-in manifest_id era (`{mid}`) — "
+                        "see `exports/release_manifests/README.md`."
+                    )
+                if warn_bits:
+                    lines.append("- **WARNING (historical vs live):**")
+                    for w in warn_bits:
+                        lines.append(f"  - {w}")
         except Exception as e:
             lines.append(f"- _(could not parse LATEST_MANIFEST.json: {e})_")
     else:
@@ -350,6 +423,7 @@ def main() -> None:
     md_lines: list[str] | None = None
     telemetry_note = "(run with `--md` to populate)"
 
+    live_meta: dict[str, Any] | None = None
     if args.md:
         import os
         import sys
@@ -375,7 +449,7 @@ def main() -> None:
             env=args.md_env,
         )
         try:
-            md_lines, telemetry_note = collect_live_introspection(con)
+            md_lines, telemetry_note, live_meta = collect_live_introspection(con)
         finally:
             con.close()
     elif args.introspect_local:
@@ -383,7 +457,7 @@ def main() -> None:
 
         con = duckdb.connect(str(args.db_path))
         try:
-            md_lines, telemetry_note = collect_live_introspection(con)
+            md_lines, telemetry_note, live_meta = collect_live_introspection(con)
         finally:
             con.close()
 
@@ -393,6 +467,7 @@ def main() -> None:
         stale_days=args.stale_days,
         md_lines=md_lines,
         telemetry_note=telemetry_note,
+        live_meta=live_meta,
     )
     args.output.write_text(text, encoding="utf-8")
     print(f"Wrote {_rel(args.output)}")

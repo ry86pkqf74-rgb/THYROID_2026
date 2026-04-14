@@ -17,11 +17,13 @@ ROOT = Path(__file__).resolve().parent.parent
 DOC_SOURCES = [
     ROOT / "README.md",
     ROOT / "RELEASE_NOTES.md",
+    ROOT / "truth_sync_summary.md",
     ROOT / "docs" / "motherduck_database_contract_v1.md",
     ROOT / "docs" / "motherduck_release_runbook_v2.md",
     ROOT / "docs" / "release_runbook.md",
     ROOT / "docs" / "REPO_STATUS.md",
     ROOT / "docs" / "final_master_database_contract.md",
+    ROOT / "docs" / "final_source_of_truth_contract.md",
 ]
 
 # Match (studies/...) or (docs/...) in markdown links; optional anchor after #

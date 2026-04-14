@@ -1,5 +1,7 @@
 # THYROID_2026 — current MotherDuck vs repo state
 
+> **Superseded copy:** This path is a **frozen study export**. For the default generator output, use [`../CURRENT_MOTHERDUCK_REPO_STATE.md`](../CURRENT_MOTHERDUCK_REPO_STATE.md) and [`docs/final_source_of_truth_contract.md`](../../docs/final_source_of_truth_contract.md).
+
 > **Not automation SSOT.** Prefer a fresh `119_md_formalization_validate.py --md --release-mode` output (e.g. under `studies/`) for release verdicts. This file reconciles **checked-in** repo artifacts with optional live introspection.
 
 > **Stale guard:** If **`Commit SHA`** below ≠ `git rev-parse HEAD` on your machine, treat **Live MotherDuck** bullets as **historical** until you re-run this generator with `--md`.

@@ -1,21 +1,22 @@
 # THYROID_2026 — Current Repo Status
 
-**As of:** 2026-04-07 (MotherDuck live rerun + evidence refresh; narrative synced April 2026)  
-**MotherDuck vs repo introspection:** [`studies/CURRENT_MOTHERDUCK_REPO_STATE.md`](../studies/CURRENT_MOTHERDUCK_REPO_STATE.md) — regenerate with `python scripts/144_md_repo_current_state_summary.py --md` (token via `.streamlit/secrets.toml` / env per [`motherduck_client.py`](../motherduck_client.py)).
+> **Historical / narrative note:** This file mixes **April 2026** cloud posture with **March 13** freeze-era tables. **Canonical contract** for live vs historical: [`final_source_of_truth_contract.md`](final_source_of_truth_contract.md). **Short headline** (keep in sync with README and [`truth_sync_summary.md`](../truth_sync_summary.md)): **Live MotherDuck `main` / `qa` are canonical; `119 --release-mode` can pass while governance (human-reviewed MRQ where policy requires) remains a separate concern.**
+
+**As of:** 2026-04-14 (SSOT canonicalization); prior MotherDuck reruns remain cited in linked studies.  
+**MotherDuck vs repo introspection:** [`studies/CURRENT_MOTHERDUCK_REPO_STATE.md`](../studies/CURRENT_MOTHERDUCK_REPO_STATE.md) — regenerate with `python scripts/144_md_repo_current_state_summary.py --md` (token via `motherduck_client.get_token()` / `motherduck.local.toml` / env per [`motherduck_client.py`](../motherduck_client.py)).
 
 ---
 
 ## Top-level posture (exactly one formulation)
 
-**Technically passing but blocked by synthetic MRQ.**
-
 | Layer | Meaning | Evidence |
 |-------|---------|----------|
-| **Automation / validation** | `119 --release-mode` **PASS WITH WARN** (no FAIL on specimen/FHIR diagnostics in latest committed lineage audit; WARN on review burden) | [`studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md`](../studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md) |
-| **Governance / human review** | Manuscript sign-off **not** complete until MRQ + promotion posture reflects **human-reviewed** governance (not automation-only / synthetic-fill history) | [`studies/20260407_publication_signoff_live/final_verdict_memo.md`](../studies/20260407_publication_signoff_live/final_verdict_memo.md) |
+| **Live catalog SSOT** | MotherDuck **`main`** + **`qa`**; release ledger **`qa.release_manifest`**; analyst views e.g. **`main.master_fact_long_verified_v1`** | [`final_source_of_truth_contract.md`](final_source_of_truth_contract.md) |
+| **Automation / validation** | Fresh `119 --release-mode` — PASS / WARN / FAIL per run; cite **timestamped** report under `studies/` | Example lineage audit: [`studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md`](../studies/20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md) |
+| **Governance / human review** | Manuscript sign-off **not** implied by automation alone; policy may require human-reviewed MRQ / promotion | [`studies/20260407_publication_signoff_live/final_verdict_memo.md`](../studies/20260407_publication_signoff_live/final_verdict_memo.md) |
 | **Source-limited enrichment backlog** | Operative NLP materialization, recurrence date sparsity, RAI dose ceiling, **residual** non-Tg lab edge cases — **not** “missing institutional lab wave” | [`studies/20260411_final_master_release/EVIDENCE_PACK.md`](../studies/20260411_final_master_release/EVIDENCE_PACK.md); March freeze docs below |
 
-**Not current:** “Blocked by synthetic MRQ **and** missing final lab wave” — the **`final_institutional_20260407`** ingest **closed** the wave-level blocker; cite **20260411** evidence for row counts and lab posture.
+**Not current:** “Blocked by synthetic MRQ **and** missing final lab wave” — the **`final_institutional_20260407`** ingest **closed** the wave-level blocker; cite **20260411** evidence for row counts and lab posture (counts may still **lag** live prod).
 
 **Not claimed:** “Final human-reviewed manuscript signoff complete.”
 

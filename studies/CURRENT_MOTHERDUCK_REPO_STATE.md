@@ -1,5 +1,7 @@
 # THYROID_2026 — current MotherDuck vs repo state
 
+> **Canonical contract:** [`docs/final_source_of_truth_contract.md`](../docs/final_source_of_truth_contract.md). Nested copies under `studies/*/` are **historical** unless labeled otherwise.
+
 > **Naming:** This file is the default **output path** for this script. It is **not** guaranteed fresh unless **`Commit SHA`** matches `git rev-parse HEAD` **and** you trust the timestamp.
 
 > **Publication narratives:** Signoff context and superseding validation pointers: [`20260407_publication_signoff_live/README.md`](20260407_publication_signoff_live/README.md).

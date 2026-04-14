@@ -33,6 +33,8 @@ Checks:
  11. Analyst presentation views (release-mode): main.master_fact_long_verified_v1,
      main.master_patient_rollup_verified_v1, main.master_source_lineage_v1 — existence,
      required traceability columns, and non-null core fields (see check_presentation_layer)
+ 11b. Verified layer release integrity (release-mode only): row parity canonical vs master_*,
+     fact_id uniqueness, duplicate natural-key WARN, release_tag vs latest qa.release_manifest
  12. Molecular normalized contract views (scripts/sql/133_molecular_contract_views_ddl.sql):
      required columns, live-row parity vs main.molecular_results, payload_checksum uniqueness,
      allele_fraction bounds, variant_class enum, provenance columns, assay/panel pairing
@@ -120,6 +122,9 @@ PRESENTATION_LONG_TRACE_COLS = (
     "extraction_run_id",
     "reviewer_status",
     "release_tag",
+    "review_grain",
+    "review_status_source",
+    "review_join_key",
 )
 # Exactly one of these identifies the source note row.
 PRESENTATION_SOURCE_ID_COLS = ("source_object_id", "note_row_id")
@@ -826,6 +831,234 @@ def check_presentation_layer(
             f"Presentation {view}",
             "PASS",
             f"{ntot:,} patient rows; research_id + release_tag + review metrics present",
+        )
+
+
+def check_verified_layer_release_integrity(
+    con: duckdb.DuckDBPyConnection,
+    results: ValidationResult,
+    strict: bool = False,
+) -> None:
+    """Release-mode only: canonical vs master_* parity, fact_id uniqueness, release_tag, natural-key WARN."""
+    if not strict:
+        return
+    status_fail = "FAIL"
+    need = (
+        "canonical_extracted_fact_long_v2",
+        "master_fact_long_verified_v1",
+        "master_source_lineage_v1",
+        "master_patient_rollup_verified_v1",
+    )
+    for t in need:
+        if not _main_object_exists(con, t):
+            results.add(
+                f"Verified layer integrity ({t})",
+                status_fail,
+                "missing — run 103/114/125",
+            )
+            return
+
+    try:
+        n_canon = int(
+            _require_row(
+                con.execute(
+                    "SELECT COUNT(*) FROM main.canonical_extracted_fact_long_v2"
+                ).fetchone()
+            )[0]
+        )
+        n_long = int(
+            _require_row(
+                con.execute(
+                    "SELECT COUNT(*) FROM main.master_fact_long_verified_v1"
+                ).fetchone()
+            )[0]
+        )
+        n_lin = int(
+            _require_row(
+                con.execute(
+                    "SELECT COUNT(*) FROM main.master_source_lineage_v1"
+                ).fetchone()
+            )[0]
+        )
+        n_roll = int(
+            _require_row(
+                con.execute(
+                    "SELECT COUNT(*) FROM main.master_patient_rollup_verified_v1"
+                ).fetchone()
+            )[0]
+        )
+        n_distinct_rid = int(
+            _require_row(
+                con.execute(
+                    "SELECT COUNT(DISTINCT research_id) FROM main.master_fact_long_verified_v1"
+                ).fetchone()
+            )[0]
+        )
+    except Exception as exc:
+        results.add("Verified layer integrity (counts)", status_fail, str(exc))
+        return
+
+    if n_canon != n_long:
+        results.add(
+            "Verified layer: canonical vs master_fact row count",
+            status_fail,
+            f"canonical_extracted_fact_long_v2={n_canon:,} != master_fact_long_verified_v1={n_long:,}",
+        )
+    else:
+        results.add(
+            "Verified layer: canonical vs master_fact row count",
+            "PASS",
+            f"{n_long:,} rows",
+        )
+
+    if n_lin != n_long:
+        results.add(
+            "Verified layer: lineage vs master_fact row count",
+            status_fail,
+            f"master_source_lineage_v1={n_lin:,} != master_fact_long_verified_v1={n_long:,}",
+        )
+    else:
+        results.add(
+            "Verified layer: lineage vs master_fact row count",
+            "PASS",
+            f"{n_lin:,} rows",
+        )
+
+    if n_roll != n_distinct_rid:
+        results.add(
+            "Verified layer: rollup vs distinct research_id",
+            status_fail,
+            f"master_patient_rollup_verified_v1={n_roll:,} != "
+            f"COUNT(DISTINCT research_id) on master_fact={n_distinct_rid:,}",
+        )
+    else:
+        results.add(
+            "Verified layer: rollup vs distinct research_id",
+            "PASS",
+            f"{n_roll:,} patient rows",
+        )
+
+    try:
+        row = _require_row(
+            con.execute(
+                """
+                SELECT
+                    COUNT(*) AS n,
+                    COUNT(DISTINCT fact_id) AS n_fid
+                FROM main.master_fact_long_verified_v1
+                """
+            ).fetchone()
+        )
+        n_all, n_fid = int(row[0]), int(row[1])
+        if "fact_id" not in _main_view_columns(con, "master_fact_long_verified_v1"):
+            results.add(
+                "Verified layer: fact_id uniqueness",
+                status_fail,
+                "master_fact_long_verified_v1 has no fact_id column",
+            )
+        elif n_all != n_fid:
+            results.add(
+                "Verified layer: fact_id uniqueness",
+                status_fail,
+                f"{n_all - n_fid:,} duplicate fact_id values",
+            )
+        else:
+            results.add(
+                "Verified layer: fact_id uniqueness",
+                "PASS",
+                f"{n_fid:,} distinct fact_id",
+            )
+    except Exception as exc:
+        results.add("Verified layer: fact_id uniqueness", status_fail, str(exc))
+
+    try:
+        nk_dupes = int(
+            _require_row(
+                con.execute(
+                    """
+                    SELECT COUNT(*) FROM (
+                        SELECT research_id, source_domain, source_object_id, entity_type,
+                               entity_value_norm, entity_date
+                        FROM main.master_fact_long_verified_v1
+                        GROUP BY 1, 2, 3, 4, 5, 6
+                        HAVING COUNT(*) > 1
+                    ) t
+                    """
+                ).fetchone()
+            )[0]
+        )
+        if nk_dupes > 0:
+            results.add(
+                "Verified layer: duplicate natural-key groups",
+                "WARN",
+                f"{nk_dupes:,} groups with >1 row — see docs/final_source_of_truth_contract.md "
+                "(may be legitimate multi-entity/lab grain)",
+            )
+        else:
+            results.add(
+                "Verified layer: duplicate natural-key groups",
+                "PASS",
+                "no duplicate natural-key groups",
+            )
+    except Exception as exc:
+        results.add(
+            "Verified layer: duplicate natural-key groups",
+            "WARN",
+            str(exc),
+        )
+
+    try:
+        tag_row = _require_row(
+            con.execute(
+                """
+                SELECT COUNT(DISTINCT release_tag), MIN(release_tag), MAX(release_tag)
+                FROM main.master_fact_long_verified_v1
+                """
+            ).fetchone()
+        )
+        n_tags = int(tag_row[0])
+        if n_tags != 1:
+            results.add(
+                "Verified layer: single release_tag on master_fact",
+                status_fail,
+                f"expected 1 distinct release_tag, got {n_tags}",
+            )
+        else:
+            mf_tag = con.execute(
+                "SELECT DISTINCT release_tag FROM main.master_fact_long_verified_v1 LIMIT 1"
+            ).fetchone()
+            mf_tag_v = mf_tag[0] if mf_tag else None
+            rm = con.execute(
+                """
+                SELECT release_tag FROM qa.release_manifest
+                ORDER BY TRY_CAST(release_tag AS BIGINT) DESC NULLS LAST, created_at DESC
+                LIMIT 1
+                """
+            ).fetchone()
+            latest = rm[0] if rm else None
+            if mf_tag_v is None or str(mf_tag_v).strip() == "":
+                results.add(
+                    "Verified layer: release_tag vs qa.release_manifest",
+                    status_fail,
+                    "master_fact_long_verified_v1 release_tag is NULL/blank",
+                )
+            elif latest is not None and str(mf_tag_v) != str(latest):
+                results.add(
+                    "Verified layer: release_tag vs qa.release_manifest",
+                    status_fail,
+                    f"master_fact `{mf_tag_v}` != latest manifest `{latest}`",
+                )
+            else:
+                results.add(
+                    "Verified layer: release_tag vs qa.release_manifest",
+                    "PASS",
+                    f"release_tag `{mf_tag_v}` matches latest qa.release_manifest",
+                )
+    except Exception as exc:
+        results.add(
+            "Verified layer: release_tag vs qa.release_manifest",
+            status_fail,
+            str(exc),
         )
 
 
@@ -1773,6 +2006,10 @@ def main() -> None:
 
         print("\n--- Check 11: Analyst presentation layer (master_*_verified_v1) ---")
         check_presentation_layer(con, results, strict=strict)
+
+        if strict:
+            print("\n--- Check 11b: Verified layer release integrity ---")
+            check_verified_layer_release_integrity(con, results, strict=strict)
 
         print("\n--- Check 12: Molecular normalized contract views ---")
         check_molecular_normalized_contract(con, results, strict=strict)
