@@ -1,0 +1,70 @@
+{
+  "tirads": {
+    "sources": {
+      "US_Nodules_TIRADS": {
+        "rids_with_unscored_nodule": 3438,
+        "per_sheet_hits": {
+          "US-1_Nodules_ TIRADS": 3307,
+          "US-2_Nodules_ TIRADS": 1362,
+          "US-3_Nodules_ TIRADS": 652,
+          "US-4_Nodules_ TIRADS": 317,
+          "US-5_Nodules_ TIRADS": 163,
+          "US-6_Nodules_ TIRADS": 93,
+          "US-7_Nodules_ TIRADS": 51,
+          "US-8_Nodules_ TIRADS": 31,
+          "US-9_Nodules_ TIRADS": 21,
+          "US-10_Nodules_ TIRADS": 17,
+          "US-11_Nodules_ TIRADS": 5,
+          "US-12_Nodules_ TIRADS": 3,
+          "US-13_Nodules_ TIRADS": 3,
+          "US-14_Nodules_ TIRADS": 1
+        }
+      },
+      "COMPLETE_MULTI_SHEET_ULTRASOUND": {
+        "rids_with_unscored_nodule": 191,
+        "rows_flagged": 194
+      }
+    },
+    "final_unique_rids": 3438
+  },
+  "ln": {
+    "sources": {
+      "Imaging_LN_US": {
+        "rids_with_any_ln_text": 61,
+        "ln_columns": [
+          "LN_US1",
+          "LN_US2",
+          "LN_US3",
+          "LN_US4"
+        ]
+      },
+      "Thyroid_US_freetext_LN": {
+        "rids_with_ln_mention": 1716,
+        "text_cols_scanned": 37
+      }
+    },
+    "final_unique_rids": 1760
+  },
+  "fna": {
+    "sources": {
+      "FNA_long_format": {
+        "total_rows": 8063,
+        "null_category_num": 128,
+        "non_empty_error": 110,
+        "flagged_rids": 98
+      },
+      "FNA_wide_missing_from_long": {
+        "wide_rids_with_populated_fna": 10863,
+        "long_unique_rids": 5240,
+        "missing_in_long": 5623
+      }
+    },
+    "final_unique_rids": 5721
+  },
+  "summary": {
+    "ids_tirads": 3438,
+    "ids_ln": 1760,
+    "ids_fna": 5721,
+    "union_all": 8446
+  }
+}
