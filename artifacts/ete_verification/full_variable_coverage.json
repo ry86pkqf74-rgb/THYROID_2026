@@ -1,0 +1,136 @@
+{
+  "cohort_N": 3278,
+  "md_tumor_pathology_coverage": {
+    "n": 3278,
+    "h1_ln_ex": 3260,
+    "h1_ln_ratio": 3113,
+    "h1_ln_ex_ge2": 1499,
+    "p_ln_ex": 3260,
+    "p_ln_ratio": 3113,
+    "ln_ene": 1098,
+    "ln_central": 1988,
+    "t1_ete": 3278,
+    "t1_gross": 873,
+    "t1_mete": 76,
+    "t1_strap": 728,
+    "t1_smusc": 411,
+    "t1_lvi": 2206,
+    "t1_vi": 2663,
+    "t1_pni": 1200,
+    "t1_margin": 2707,
+    "t1_cap": 536,
+    "t1_size": 3272,
+    "t1_variant": 1173,
+    "multifocal": 1178,
+    "focality": 3278,
+    "t_stage": 3272,
+    "n_stage": 3278,
+    "overall_stage": 3272
+  },
+  "delivered_vs_md": {
+    "research_id": {
+      "delivered": 3278,
+      "md_max": 3278
+    },
+    "age_at_surgery": {
+      "delivered": 3278,
+      "md_max": 3278
+    },
+    "sex": {
+      "delivered": 3278,
+      "md_max": 3278
+    },
+    "ete_group (derived)": {
+      "delivered": 3278,
+      "md_max": 3278
+    },
+    "tumor_1_gross_ete": {
+      "delivered": 818,
+      "md_max": 873
+    },
+    "tumor_1_ete_microscopic_only": {
+      "delivered": 253,
+      "md_max": 76
+    },
+    "t_stage_ajcc8": {
+      "delivered": 3269,
+      "md_max": 3272
+    },
+    "n_stage_ajcc8": {
+      "delivered": 3278,
+      "md_max": 3278
+    },
+    "m_stage_ajcc8": {
+      "delivered": 2191,
+      "md_max": "see below"
+    },
+    "overall_stage_ajcc8": {
+      "delivered": 3269,
+      "md_max": 3272
+    },
+    "largest_tumor_cm": {
+      "delivered": 3270,
+      "md_max": 3272
+    },
+    "variant_standardized": {
+      "delivered": 1112,
+      "md_max": 1173
+    },
+    "ln_examined": {
+      "delivered": 2171,
+      "md_max": 3260
+    },
+    "ln_positive": {
+      "delivered": 2074,
+      "md_max": 3260
+    },
+    "ln_ratio": {
+      "delivered": 2076,
+      "md_max": 3113
+    },
+    "ln_extranodal_extension": {
+      "delivered": 0,
+      "md_max": 1098
+    },
+    "ln_central_positive": {
+      "delivered": 0,
+      "md_max": 1988
+    },
+    "lymphatic_invasion": {
+      "delivered": 0,
+      "md_max": 2206
+    },
+    "vascular_invasion": {
+      "delivered": 0,
+      "md_max": 2663
+    },
+    "perineural_invasion": {
+      "delivered": 0,
+      "md_max": 1200
+    },
+    "margin_status": {
+      "delivered": 0,
+      "md_max": 2707
+    },
+    "capsular_invasion": {
+      "delivered": 0,
+      "md_max": 536
+    },
+    "ete_beyond_strap": {
+      "delivered": 0,
+      "md_max": 728
+    },
+    "strap_muscles": {
+      "delivered": 0,
+      "md_max": 411
+    },
+    "multifocal (tumor_2_present)": {
+      "delivered": 0,
+      "md_max": 1178
+    },
+    "tumor_focality_overall": {
+      "delivered": 0,
+      "md_max": 3278
+    }
+  }
+}

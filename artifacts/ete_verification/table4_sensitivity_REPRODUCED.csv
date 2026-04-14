@@ -1,0 +1,37 @@
+Subgroup,Variable,OR,95% CI,p-value,N
+"Primary (CC, expanded)",ete_micro,0.58,(0.49-0.70),<0.001,3270
+"Primary (CC, expanded)",ete_gross,9685560871.88,(0.00-inf),0.985,3270
+"Primary (CC, expanded)",age_at_surgery,1.05,(1.04-1.06),<0.001,3270
+"Primary (CC, expanded)",female,0.84,(0.70-1.01),0.066,3270
+"Primary (CC, expanded)",largest_tumor_cm,1.06,(1.03-1.10),<0.001,3270
+"Primary (CC, expanded)",ln_ratio,1.58,(1.32-1.90),<0.001,3270
+"MI (m=20, Rubin's rules)",ete_micro,0.58,(0.49-0.70),<0.001,3278
+"MI (m=20, Rubin's rules)",ete_gross,2583572389.04,(0.00-inf),0.983,3278
+"MI (m=20, Rubin's rules)",age_at_surgery,1.05,(1.04-1.06),<0.001,3278
+"MI (m=20, Rubin's rules)",female,0.83,(0.69-1.00),0.047,3278
+"MI (m=20, Rubin's rules)",largest_tumor_cm,1.06,(1.02-1.10),<0.001,3278
+"MI (m=20, Rubin's rules)",ln_ratio,1.59,(1.28-1.96),<0.001,3278
+Age >= 55,ete_micro,0.79,(0.58-1.08),0.136,1288
+Age >= 55,ete_gross,119047462.03,(0.00-52676800676657810858540512700524373999272507528186385515059029328960354740999448234784845173805595313536411961706887182162673333168477204913385489275140473950667947480767990072826753187840.00),0.930,1288
+Age >= 55,age_at_surgery,1.01,(1.00-1.03),0.102,1288
+Age >= 55,female,0.85,(0.63-1.14),0.269,1288
+Age >= 55,largest_tumor_cm,1.20,(1.13-1.27),<0.001,1288
+Age >= 55,ln_ratio,3.21,(2.36-4.35),<0.001,1288
+Age < 55,ete_micro,0.44,(0.34-0.56),<0.001,1982
+Age < 55,ete_gross,372213162.87,(0.00-inf),0.965,1982
+Age < 55,age_at_surgery,0.99,(0.98-1.01),0.255,1982
+Age < 55,female,0.77,(0.58-1.02),0.067,1982
+Age < 55,largest_tumor_cm,1.00,(0.95-1.05),0.940,1982
+Age < 55,ln_ratio,1.11,(0.84-1.48),0.451,1982
+Tumor <= 4 cm,ete_micro,0.63,(0.51-0.77),<0.001,2419
+Tumor <= 4 cm,ete_gross,4752510054.24,(0.00-inf),0.984,2419
+Tumor <= 4 cm,age_at_surgery,1.04,(1.03-1.05),<0.001,2419
+Tumor <= 4 cm,female,0.92,(0.74-1.14),0.442,2419
+Tumor <= 4 cm,largest_tumor_cm,1.02,(0.93-1.12),0.627,2419
+Tumor <= 4 cm,ln_ratio,2.00,(1.62-2.48),<0.001,2419
+Original classic (N=596),ete_micro,0.44,(0.36-0.55),<0.001,2183
+Original classic (N=596),ete_gross,22380697.25,(0.00-2340580558801475846183751814723074391521677556495623630465743581463183360.00),0.825,2183
+Original classic (N=596),age_at_surgery,1.05,(1.04-1.06),<0.001,2183
+Original classic (N=596),female,0.87,(0.70-1.09),0.231,2183
+Original classic (N=596),largest_tumor_cm,1.06,(1.01-1.10),0.012,2183
+Original classic (N=596),ln_ratio,2.15,(1.71-2.69),<0.001,2183

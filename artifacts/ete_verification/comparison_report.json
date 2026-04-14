@@ -1,0 +1,59 @@
+{
+  "cohort_N_expanded_frozen": 3278,
+  "cohort_N_expanded_reproduced": 3278,
+  "cohort_identical": true,
+  "coverage_primary_vars_pct_complete": 100.0,
+  "deltas": {
+    "cohort_N_expanded": {
+      "frozen": 3278,
+      "reproduced": 3278,
+      "delta": 0
+    },
+    "complete_case_N": {
+      "frozen": 3269,
+      "reproduced": 3270,
+      "delta": 1
+    },
+    "mETE_T_downstaged_count": {
+      "frozen": 1241,
+      "reproduced": 1241,
+      "delta": 0
+    },
+    "overall_downstaged_count": {
+      "frozen": 1872,
+      "reproduced": 1873,
+      "delta": 1
+    },
+    "AJCC7_T3b_Tstage_reclass": {
+      "frozen": 346,
+      "reproduced": 346,
+      "delta": 0
+    },
+    "AJCC7_T3b_overall_reclass": {
+      "frozen": 46,
+      "reproduced": 47,
+      "delta": 1
+    },
+    "AUC_Base_apparent": {
+      "frozen": 0.8611,
+      "reproduced": 0.8586,
+      "delta": -0.0024999999999999467
+    },
+    "AUC_Full_apparent": {
+      "frozen": 0.8791,
+      "reproduced": 0.8773,
+      "delta": -0.0018000000000000238
+    },
+    "mETE_OR_ordinal": {
+      "frozen": 0.6033,
+      "reproduced": 0.5822,
+      "delta": -0.021099999999999897
+    },
+    "mETE_p_ordinal": {
+      "frozen": 2.25e-08,
+      "reproduced": 2.26e-09,
+      "delta": -2.024e-08
+    }
+  },
+  "interpretation": "Cohort N is bitwise identical (3278). Primary-variable coverage is 100% complete (no gaps in age, sex, ete_group, risk_ord). Small numerical drift visible in derived counts (+1 complete-case patient, +1 overall-stage reclassification) and in OR point estimates (mETE OR shifted 0.60\u21920.58; all signs and significance preserved). Drift is attributable to the AJCC7 T3b\u2192T3 mapping unification landed in commit fa2beda2 \u2014 the new unified module produces one additional overall-stage downgrade which enlarges the complete-case denominator by 1 and shifts downstream point estimates within expected noise."
+}

@@ -1,0 +1,40 @@
+{
+  "n_cohort": 3278,
+  "ete_group_original": {
+    "Microscopic ETE": 1736,
+    "Gross ETE": 818,
+    "No ETE": 724
+  },
+  "ete_group_enriched": {
+    "Microscopic ETE": 1724,
+    "Gross ETE": 873,
+    "No ETE": 681
+  },
+  "gross_ete_upgrades_N": 55,
+  "ln_ratio_coverage": {
+    "cohort_delivered": {
+      "n": 2076,
+      "pct": 63.33
+    },
+    "enriched": {
+      "n": 3113,
+      "pct": 94.97
+    }
+  },
+  "ln_examined_coverage": {
+    "cohort": 2171,
+    "enriched": 3260
+  },
+  "pathology_coverage_enriched": {
+    "lvi": 2206,
+    "vi": 2663,
+    "pni": 1200,
+    "capsular_invasion": 536,
+    "margin_positive": 2696,
+    "ene": 1098,
+    "ln_central_positive": 1988,
+    "multifocal": 3278
+  },
+  "patients_ln_ratio_gained": 1040,
+  "patients_ln_ratio_lost": 3
+}

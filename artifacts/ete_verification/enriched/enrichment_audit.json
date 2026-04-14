@@ -1,0 +1,76 @@
+{
+  "n_cohort": 3278,
+  "variables": {
+    "h1_ln_ex": {
+      "n_nonnull": 3260,
+      "pct": 99.45
+    },
+    "h1_ln_pos": {
+      "n_nonnull": 3115,
+      "pct": 95.03
+    },
+    "h1_ln_ratio": {
+      "n_nonnull": 3113,
+      "pct": 94.97
+    },
+    "ene": {
+      "n_nonnull": 1098,
+      "pct": 33.5
+    },
+    "ln_cent": {
+      "n_nonnull": 1988,
+      "pct": 60.65
+    },
+    "t1_gross": {
+      "n_nonnull": 873,
+      "pct": 26.63
+    },
+    "t1_mete": {
+      "n_nonnull": 76,
+      "pct": 2.32
+    },
+    "t1_strap": {
+      "n_nonnull": 728,
+      "pct": 22.21
+    },
+    "t1_lvi": {
+      "n_nonnull": 2206,
+      "pct": 67.3
+    },
+    "t1_vi": {
+      "n_nonnull": 2663,
+      "pct": 81.24
+    },
+    "t1_pni": {
+      "n_nonnull": 1200,
+      "pct": 36.61
+    },
+    "t1_margin": {
+      "n_nonnull": 2707,
+      "pct": 82.58
+    },
+    "t1_cap": {
+      "n_nonnull": 536,
+      "pct": 16.35
+    },
+    "t2_present": {
+      "n_nonnull": 3278,
+      "pct": 100.0
+    },
+    "focality": {
+      "n_nonnull": 3278,
+      "pct": 100.0
+    }
+  },
+  "ete_group_original_counts": {
+    "1": 1736,
+    "2": 818,
+    "0": 724
+  },
+  "ete_group_enriched_counts": {
+    "NaN": 2405,
+    "2.0": 873
+  },
+  "ln_ratio_coverage_pct": 95.05796217205614,
+  "n_patients_with_ete_mismatch": 2460
+}

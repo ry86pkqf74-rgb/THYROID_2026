@@ -1,0 +1,11 @@
+{
+  "cohort_N": 3278,
+  "ordinal_CC_N": 3269,
+  "ordinal_mete_OR_reproduced": 0.5925904954970175,
+  "ordinal_mete_OR_frozen": 0.6033382692823214,
+  "psm_pairs_reproduced": 713,
+  "psm_OR_HA_reproduced": 0.45518002950114056,
+  "psm_fisher_p_reproduced": 2.234663545184412e-07,
+  "coverage_primary_vars_pct_complete": 100.0,
+  "seed": 42
+}

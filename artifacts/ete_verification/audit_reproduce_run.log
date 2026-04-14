@@ -1,0 +1,88 @@
+/Users/loganglosser/THYROID_2026/.venv/lib/python3.14/site-packages/statsmodels/base/model.py:607: ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check mle_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+/Users/loganglosser/THYROID_2026/.venv/lib/python3.14/site-packages/statsmodels/base/model.py:607: ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check mle_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+========================================================================
+PROPOSAL 2 — STATISTICAL AUDIT & DETERMINISTIC REPRODUCTION
+Expanded Cohort (N=3,278 all PTC)
+========================================================================
+
+[1/12] Loading expanded cohort...
+  Expanded cohort: 3278 patients
+  ETE: {'Microscopic ETE': 1736, 'Gross ETE': 818, 'No ETE': 724}
+
+[2/12] Data quality audit...
+  🟠 [IMPORTANT] OUTCOME_CIRCULARITY: 100.0% of gross ETE patients are classified as high risk. The recurrence_risk_band includes gross ETE in its derivation, inflating the gross ETE OR. The mETE OR is the clinically meaningful coefficient.
+
+[3/12] Deriving AJCC 7th staging (corrected + original)...
+
+[4/12] Auditing AJCC 7th T3b correction...
+  🔴 [CRITICAL] AJCC7_T3b_MAP: T3b→T4a mapping affected 346 patients. Corrected to T3b→T3: 346 T-stage and 47 overall-stage reclassifications.
+
+[5/12] Computing Table 1 demographics...
+  Saved audit_tables/table1_demographics.csv
+
+[6/12] Stage migration analysis (corrected)...
+  mETE T-downstaged: 1241/1736 (71.5%)
+  Overall downstaged: 1873/3269 (57.3%)
+  [cf. original derivation: 57.4% downstaged]
+
+[7/12] Ordinal logistic regression...
+  Complete-case N: 3270
+  Saved audit_tables/table3_ordinal_regression.csv
+  mETE OR = 0.58 (0.49-0.70) p=<0.001
+
+[8/12] Proportional odds diagnostic...
+  🟢 [INFO] PROP_ODDS: Proportional odds check: max coefficient difference across cut-points = 0.92 ('ete_gross'). Assumption appears reasonable.
+
+[9/12] Cross-validated AUC (5-fold)...
+  AUC_Base_apparent: 0.8586
+  AUC_Base_CV_mean: 0.8502
+  AUC_Base_CV_std: 0.0159
+  AUC_Base_optimism: 0.0084
+  AUC_Full_apparent: 0.8773
+  AUC_Full_CV_mean: 0.8715
+  AUC_Full_CV_std: 0.0119
+  AUC_Full_optimism: 0.0058
+  delta_AUC_CV: 0.0213
+  delta_AUC_apparent: 0.0187
+
+[10/12] Sensitivity analyses...
+  Running MI (m=20)...
+  MI mETE OR = 0.58 (0.49-0.70)
+  Age >= 55: mETE OR=0.79 (0.58-1.08) p=0.136 [N=1288]
+  Age < 55: mETE OR=0.44 (0.34-0.56) p=<0.001 [N=1982]
+  Tumor <= 4 cm: mETE OR=0.63 (0.51-0.77) p=<0.001 [N=2419]
+  Original classic (N=596): mETE OR=0.44 (0.36-0.55) p=<0.001 [N=2183]
+  Saved audit_tables/table4_sensitivity.csv
+
+[11/12] Generating figures (deterministic, seed=42)...
+  fig1_ete_distribution
+  fig2_stage_migration
+  fig3_risk_by_ete
+  fig4_roc_curves
+  fig5_tg_trajectory
+  fig6_forest_plot
+  fig7_kaplan_meier (done)
+  fig8_cohort_flow
+  fig9_forest_expanded
+
+[12/12] Writing audit report and metadata...
+  Saved audit_report.md
+  Saved analysis_metadata.yaml
+  Saved audit_tables/analytic_cohort_expanded.csv
+
+========================================================================
+AUDIT COMPLETE (56.6s)
+========================================================================
+
+Findings: 3 total
+  CRITICAL: 1
+  IMPORTANT: 1
+  INFO: 1
+
+Outputs:
+  audit_tables/  — 10 CSV files
+  audit_figures/ — 10 PNG + PDF pairs
+  audit_report.md
+  analysis_metadata.yaml

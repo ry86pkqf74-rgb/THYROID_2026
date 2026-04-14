@@ -1,0 +1,2 @@
+n_pairs,treated_events,control_events,OR_HA,fisher_p
+713,74,145,0.45518002950114056,2.234663545184412e-07

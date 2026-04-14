@@ -1,0 +1,21 @@
+{
+  "cohort_N": 3278,
+  "frozen_ln_ratio_nonnull": 523,
+  "frozen_ln_ratio_pct": 16.0,
+  "postrerun_ln_ratio_nonnull": 2076,
+  "postrerun_ln_ratio_pct": 63.3,
+  "motherduck_max_ln_ratio_nonnull": 3113,
+  "motherduck_max_ln_ratio_pct": 95.0,
+  "motherduck_ln_examined_ge2": 1499,
+  "motherduck_ln_examined_ge2_pct": 45.7,
+  "cc_N_frozen": 3269,
+  "cc_N_postrerun": 3270,
+  "ordinal_mete_OR_frozen": 0.5925904379044207,
+  "ordinal_mete_OR_postrerun": 0.5610767650713193,
+  "ordinal_mete_p_frozen": 7.370822098812601e-09,
+  "ordinal_mete_p_postrerun": 2.306321099898764e-10,
+  "ordinal_lnratio_OR_frozen": 2.846017551730252,
+  "ordinal_lnratio_OR_postrerun": 2.0564218088455353,
+  "ordinal_lnratio_p_frozen": 1.2423750337648747e-05,
+  "ordinal_lnratio_p_postrerun": 9.383116822591472e-10
+}

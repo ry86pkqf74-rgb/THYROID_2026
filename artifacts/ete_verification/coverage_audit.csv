@@ -1,0 +1,16 @@
+variable,non_null,missing,pct_missing
+research_id,3278,0,0.0
+age_at_surgery,3278,0,0.0
+sex,3278,0,0.0
+ete_group,3278,0,0.0
+ete_micro,3278,0,0.0
+ete_gross,3278,0,0.0
+risk_ord,3278,0,0.0
+t_stage_ajcc8,3269,9,0.27
+overall_stage_ajcc8,3269,9,0.27
+female,3278,0,0.0
+t_stage_ajcc7,3278,0,0.0
+overall_stage_ajcc7,3278,0,0.0
+largest_tumor_cm,3269,9,0.27
+ln_ratio,523,2755,84.05
+recurrence_risk_band,3278,0,0.0
