@@ -1,0 +1,33 @@
+{
+  "queues_dir": "/Users/ros/THyroid 2026/queues",
+  "queue_sizes": {
+    "ids_tirads": 3438,
+    "ids_ln": 1760,
+    "ids_fna": 5721,
+    "union_distinct": 8446
+  },
+  "notes_parquet": "/Users/ros/THyroid 2026/processed/remaining/clinical_notes_long.parquet",
+  "notes_parquet_distinct_rids": null,
+  "missing_from_notes_parquet_count": null,
+  "canonical_distinct_rids_with_facts": {
+    "tirads_narrow_tirads_category_derived": 30,
+    "tirads_plus_tirads_score": 342,
+    "ln_ultrasound_lymph_node": 405,
+    "bethesda_bethesda_class": 985
+  },
+  "anti_join_still_needed_after_promoted": {
+    "still_needed_tirads": 3421,
+    "still_needed_tirads_wide": 3176,
+    "still_needed_ln": 1572,
+    "still_needed_fna_bethesda": 5458
+  },
+  "missing_notes_md_clinical_notes_long": null,
+  "md_clinical_notes_long_coverage": {
+    "ids_tirads": 2867,
+    "ids_ln": 1443,
+    "ids_fna": 2696,
+    "union_distinct": 4913,
+    "note": "Counts RIDs in each queue that appear in MotherDuck clinical_notes_long (any note row).",
+    "union_rids_with_no_md_notes_estimate": 3533
+  }
+}
