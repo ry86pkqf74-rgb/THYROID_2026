@@ -1,0 +1,92 @@
+{
+  "timestamp": "2026-04-14T04:30:00Z",
+  "operator": "agent_opus_4.6",
+  "branch": "canonical-lakehouse-finalization-20260414T021944Z",
+  "before_sha": "ac8642e833c7b24327fcef46c338af8e0b88a9d9",
+  "verdict": "single SSOT achieved with documented governance blocker",
+  "success_criteria": {
+    "A_single_canonical_live_source": "PASS",
+    "B_single_manuscript_contract": "PASS",
+    "C_provenance_lineage_complete": "PASS",
+    "D_counts_views_manifest_agree": "PASS",
+    "E_historical_labeled": "PASS",
+    "F_handoff_package": "PASS",
+    "G_governance_status_stated": "PASS (blocker documented)"
+  },
+  "live_motherduck_counts": {
+    "canonical_extracted_fact_long_v2": 55500,
+    "canonical_fact_quarantine_v2": 199,
+    "note_extraction_runs": 3,
+    "master_fact_long_verified_v1": 55500,
+    "master_patient_rollup_verified_v1": 5141,
+    "master_source_lineage_v1": 55500,
+    "longitudinal_lab_canonical_v1": 116932,
+    "longitudinal_lab_deduped_v": 108680,
+    "specimen_master_v1": 10139,
+    "specimen_tumor_focus_v1": 11103,
+    "specimen_genomic_assay_v1": 10370,
+    "fhir_bundle_specimen_export_v1": 10139
+  },
+  "parity": {
+    "canonical_eq_master": true,
+    "canonical_eq_lineage": true,
+    "rollup_patients_eq_master_distinct_rid": true,
+    "duplicate_fact_ids": 0,
+    "duplicate_natural_key_groups": 542,
+    "duplicate_natural_key_note": "legitimate multi-entity and lab grain duplicates"
+  },
+  "lineage_completeness": {
+    "canonical_domain_pct": 100.0,
+    "extraction_run_id_pct": 100.0,
+    "extraction_method_pct": 100.0,
+    "extracted_at_pct": 100.0,
+    "fact_id_pct": 100.0
+  },
+  "governance": {
+    "mrq_total_rows": 5622,
+    "mrq_auto_accepted_standard": 3081,
+    "mrq_auto_accepted_critical_sample_ok": 1646,
+    "mrq_auto_accepted_informational": 893,
+    "mrq_confirmed_correct": 2,
+    "mrq_true_human_reviewed": 0,
+    "promotion_decisions_total": 6,
+    "promotion_decisions_human_reviewed": 0,
+    "governance_blocker": true,
+    "governance_blocker_description": "No named human reviewer has adjudicated any MRQ row. All statuses are automation-tier."
+  },
+  "validation_119": {
+    "pass": 40,
+    "warn": 5,
+    "fail": 0,
+    "warn_details": [
+      "note_extraction_runs local parquet absent",
+      "duplicate natural keys (multi-entity grain)",
+      "molecular panel_version pairing",
+      "molecular assay dictionary match",
+      "specimen-adjacent review burden (10,155 open)"
+    ]
+  },
+  "specimen_fhir": {
+    "status": "validated_adjunct",
+    "genomic_linkage_review_open": 10155,
+    "specimen_merge_review_pending": 1
+  },
+  "deliverables": [
+    "MANUSCRIPT_DATA_START_HERE.md",
+    "docs/final_source_of_truth_contract.md (strengthened)",
+    "studies/CURRENT_MOTHERDUCK_REPO_STATE.md (refreshed)",
+    "scripts/144_md_repo_current_state_summary.py (note_extraction_runs added)",
+    "tests/test_canonical_finalization.py (19 tests)",
+    "exports/full_canonical_release_20260408r4/ (export bundle)",
+    "studies/canonical_lakehouse_finalization_20260414T021944Z/ (working dir)",
+    "21 historical docs bannered as HISTORICAL / SUPERSEDED",
+    "README.md, truth_sync_summary.md, REPO_STATUS.md, RELEASE_NOTES.md (narrative unified)"
+  ],
+  "assumptions": [
+    "542 duplicate natural-key groups are legitimate multi-entity/lab grain",
+    "source_file_id NULL for all facts is expected (not populated for these extraction batches)",
+    "2 confirmed_correct MRQ rows lack reviewer identity => treated as automation-tier",
+    "Specimen/FHIR review burden (10,155 open) is WARN not FAIL",
+    "note_extraction_runs.run_id tracking level differs from canonical fact extraction_run_id"
+  ]
+}

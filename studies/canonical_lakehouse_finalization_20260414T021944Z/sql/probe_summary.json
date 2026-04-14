@@ -1,0 +1,112 @@
+{
+  "timestamp": "2026-04-14T02:25:22.339600Z",
+  "probes": {
+    "01_release_ledger": {
+      "rows": 12,
+      "columns": [
+        "release_tag",
+        "git_sha",
+        "created_at"
+      ]
+    },
+    "02_core_row_counts": {
+      "rows": 12,
+      "columns": [
+        "obj",
+        "n"
+      ]
+    },
+    "03_presentation_parity": {
+      "rows": 1,
+      "columns": [
+        "canonical_facts",
+        "master_facts",
+        "lineage_rows",
+        "distinct_patients_from_master",
+        "patient_rollup_rows"
+      ]
+    },
+    "04_lineage_completeness": {
+      "error": "Binder Error: Referenced column \"note_row_id\" not found in FROM clause!\nCandidate bindings: \"source_object_id\", \"extraction_run_id\", \"extraction_method\", \"review_status_source\", \"source_domain\"\n\nLINE 6:           COUNT(*) FILTER (WHERE note_row_id IS NOT NULL) AS facts_with_note_row_id\n                                         ^"
+    },
+    "05_duplicate_fact_id": {
+      "rows": 0,
+      "columns": [
+        "fact_id",
+        "n"
+      ]
+    },
+    "06_duplicate_natural_key": {
+      "rows": 100,
+      "columns": [
+        "research_id",
+        "source_domain",
+        "source_object_id",
+        "entity_type",
+        "entity_value_norm",
+        "entity_date",
+        "n"
+      ]
+    },
+    "07a_mrq_totals": {
+      "rows": 1,
+      "columns": [
+        "total_rows"
+      ]
+    },
+    "07b_mrq_pending": {
+      "rows": 1,
+      "columns": [
+        "pending_rows"
+      ]
+    },
+    "07c_mrq_by_status": {
+      "rows": 4,
+      "columns": [
+        "verification_status",
+        "n"
+      ]
+    },
+    "07d_mrq_by_run_label": {
+      "rows": 1,
+      "columns": [
+        "run_label",
+        "n"
+      ]
+    },
+    "07e_mrq_by_domain": {
+      "rows": 21,
+      "columns": [
+        "domain",
+        "n"
+      ]
+    },
+    "08_governance_decisions": {
+      "rows": 5,
+      "columns": [
+        "decision_batch_id",
+        "n"
+      ]
+    },
+    "09_extraction_linkage": {
+      "error": "Binder Error: Table \"r\" does not have a column named \"run_label\"\n\nCandidate bindings: : \"run_id\"\n\nLINE 4:           r.run_label,\n                  ^"
+    },
+    "10a_specimen_broken_refs": {
+      "rows": 0,
+      "columns": [
+        "issue",
+        "anchor_id",
+        "ref_value",
+        "expected_ref"
+      ]
+    },
+    "10b_specimen_review_burden": {
+      "rows": 1,
+      "columns": [
+        "queue_key",
+        "review_status",
+        "n_rows"
+      ]
+    }
+  }
+}

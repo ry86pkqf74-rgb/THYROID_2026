@@ -1,6 +1,8 @@
 # THYROID_2026
 
-## Source of truth — live MotherDuck publication gate (2026-04-13)
+**Analyst quick-start:** [`MANUSCRIPT_DATA_START_HERE.md`](MANUSCRIPT_DATA_START_HERE.md) — exact tables, views, and rules for citing data in manuscripts.
+
+## Source of truth — live MotherDuck publication gate (2026-04-14)
 
 **Canonical contract (read first):** [`docs/final_source_of_truth_contract.md`](docs/final_source_of_truth_contract.md) — live MotherDuck **`main`** (analytics) and **`qa`** (governance); **`qa.release_manifest`** is the release ledger; analyst surfaces **`main.master_fact_long_verified_v1`**, **`main.master_patient_rollup_verified_v1`**, **`main.master_source_lineage_v1`**; machine-generated repo mirror [`studies/CURRENT_MOTHERDUCK_REPO_STATE.md`](studies/CURRENT_MOTHERDUCK_REPO_STATE.md) via [`scripts/144_md_repo_current_state_summary.py`](scripts/144_md_repo_current_state_summary.py). **Same top-level story** as [`truth_sync_summary.md`](truth_sync_summary.md) and [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md). **Historical only:** checked-in `exports/release_manifests/` JSON (see [`exports/release_manifests/README.md`](exports/release_manifests/README.md)), March-era evidence packs, local freeze snapshots — **not** interchangeable with live counts without regenerating `144` + `119`.
 

@@ -1,0 +1,22 @@
+{
+  "bundle_id": "full_canonical_release_20260408r4",
+  "generated_at": "2026-04-14T02:31:15.779143+00:00",
+  "release_tag": "20260408r4",
+  "canonical_facts": 55500,
+  "quarantined_facts": 199,
+  "patients": 5141,
+  "lineage_pct_complete": 100.0,
+  "duplicate_fact_ids": 0,
+  "files": [
+    "canonical_counts.csv",
+    "canonical_counts.json",
+    "duplicate_audit.csv",
+    "final_source_of_truth_contract_snapshot.md",
+    "lineage_completeness.json",
+    "release_manifest_latest.json",
+    "schema_inventory.json",
+    "validation_summary.json"
+  ],
+  "governance_status": "blocker \u2014 0 of 5622 MRQ rows are true human-reviewed",
+  "technical_status": "PASS (119 --release-mode after view deployment)"
+}

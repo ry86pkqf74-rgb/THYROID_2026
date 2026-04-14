@@ -1,3 +1,5 @@
+> **HISTORICAL / SUPERSEDED:** This document is a point-in-time snapshot from its generation date. For current canonical state, see [`docs/final_source_of_truth_contract.md`](../../docs/final_source_of_truth_contract.md) and [`studies/CURRENT_MOTHERDUCK_REPO_STATE.md`](../CURRENT_MOTHERDUCK_REPO_STATE.md). Row counts cited here may no longer match live MotherDuck.
+
 # Manuscript blocker rebaseline — post specimen/FHIR structural posture
 
 **Generated (UTC):** 2026-04-08T14:45:00Z (report); **MotherDuck triage run:** `exports/review_queue_triage_20260408_144229/` (gitignored; mirrored under `evidence/` here).

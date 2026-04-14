@@ -4,7 +4,7 @@
 
 **Live MotherDuck `main` / `qa` are canonical; `119 --release-mode` can pass while governance (human-reviewed MRQ where policy requires) remains a separate concern.**
 
-Full contract: [`docs/final_source_of_truth_contract.md`](docs/final_source_of_truth_contract.md). Analyst surfaces include **`main.master_fact_long_verified_v1`**, **`main.master_patient_rollup_verified_v1`**, **`main.master_source_lineage_v1`** (see `scripts/125_master_verified_views.py`).
+Full contract: [`docs/final_source_of_truth_contract.md`](docs/final_source_of_truth_contract.md). Analyst quick-start: [`MANUSCRIPT_DATA_START_HERE.md`](MANUSCRIPT_DATA_START_HERE.md). Analyst surfaces include **`main.master_fact_long_verified_v1`**, **`main.master_patient_rollup_verified_v1`**, **`main.master_source_lineage_v1`** (see `scripts/125_master_verified_views.py`).
 
 ## Three layers (do not collapse)
 

@@ -1,0 +1,25 @@
+# Canonical MotherDuck objects (from docs/final_source_of_truth_contract.md)
+
+## main schema — analytic / promoted
+main.canonical_extracted_fact_long_v2
+main.canonical_fact_quarantine_v2
+main.note_extraction_runs
+main.master_fact_long_verified_v1 (VIEW — from scripts/125)
+main.master_patient_rollup_verified_v1 (VIEW — from scripts/125)
+main.master_source_lineage_v1 (VIEW — from scripts/125)
+main.longitudinal_lab_canonical_v1
+main.longitudinal_lab_deduped_v
+
+## main schema — specimen/FHIR adjunct
+main.specimen_master_v1
+main.specimen_tumor_focus_v1
+main.specimen_genomic_assay_v1
+main.fhir_bundle_specimen_export_v1
+
+## qa schema — governance
+qa.release_manifest
+qa.manual_review_queue
+qa.promotion_review_decisions
+qa.v_diag_specimen_fhir_broken_refs_v1
+qa.v_diag_specimen_review_burden_v1
+qa.specimen_genomic_link_review_v1

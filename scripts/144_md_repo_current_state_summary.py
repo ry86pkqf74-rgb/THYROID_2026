@@ -135,6 +135,7 @@ def collect_live_introspection(con: Any) -> tuple[list[str], str, dict[str, Any]
     for label, sql in (
         ("canonical_extracted_fact_long_v2", "SELECT COUNT(*) FROM main.canonical_extracted_fact_long_v2"),
         ("canonical_fact_quarantine_v2", "SELECT COUNT(*) FROM main.canonical_fact_quarantine_v2"),
+        ("note_extraction_runs", "SELECT COUNT(*) FROM main.note_extraction_runs"),
         ("master_fact_long_verified_v1", "SELECT COUNT(*) FROM main.master_fact_long_verified_v1"),
         ("master_patient_rollup_verified_v1", "SELECT COUNT(*) FROM main.master_patient_rollup_verified_v1"),
         ("master_source_lineage_v1", "SELECT COUNT(*) FROM main.master_source_lineage_v1"),

@@ -1,0 +1,113 @@
+{
+  "generated_at": "2026-04-14T02:31:15.779143+00:00",
+  "rows": [
+    {
+      "release_tag": "20260408r4",
+      "git_sha": "d9b9dc9",
+      "registry_version": "entity_schema_v3_2026-04-03",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"thyroglobulin_lab_canonical_v1\", \"note_extraction_runs\", \"longitudinal_lab_canonical_v1\", \"master_fact_long_verified_v1\", \"master_patient_rollup_verified_v1\", \"master_source_lineage_v1\"]",
+      "row_counts": "{\"canonical_extracted_fact_long_v1\": 68063, \"canonical_extracted_fact_long_v2\": 20188, \"canonical_fact_quarantine_v1\": 14, \"canonical_fact_quarantine_v2\": 103588, \"thyroglobulin_lab_canonical_v1\": 76971, \"note_extraction_runs\": 3, \"longitudinal_lab_canonical_v1\": 77960, \"master_fact_long_verified_v1\": 20188, \"master_patient_rollup_verified_v1\": 2702, \"master_source_lineage_v1\": 20188}",
+      "created_at": "2026-04-08 08:56:49.086697",
+      "created_by": "scripts/126_manual_tail_after_collision.py"
+    },
+    {
+      "release_tag": "20260408r3",
+      "git_sha": "a593544",
+      "registry_version": "entity_schema_v3_2026-04-03",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"thyroglobulin_lab_canonical_v1\", \"note_extraction_runs\", \"longitudinal_lab_canonical_v1\", \"master_fact_long_verified_v1\", \"master_patient_rollup_verified_v1\", \"master_source_lineage_v1\"]",
+      "row_counts": "{\"canonical_extracted_fact_long_v1\": 68063, \"canonical_extracted_fact_long_v2\": 20188, \"canonical_fact_quarantine_v1\": 14, \"canonical_fact_quarantine_v2\": 103588, \"thyroglobulin_lab_canonical_v1\": 76971, \"note_extraction_runs\": 3, \"longitudinal_lab_canonical_v1\": 77960, \"master_fact_long_verified_v1\": 20188, \"master_patient_rollup_verified_v1\": 2702, \"master_source_lineage_v1\": 20188}",
+      "created_at": "2026-04-08 05:20:40.752314",
+      "created_by": "scripts/post_backfill_resnapshot"
+    },
+    {
+      "release_tag": "20260408r2",
+      "git_sha": "a593544",
+      "registry_version": "entity_schema_v3_2026-04-03",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"thyroglobulin_lab_canonical_v1\", \"note_extraction_runs\", \"longitudinal_lab_canonical_v1\", \"master_fact_long_verified_v1\", \"master_patient_rollup_verified_v1\", \"master_source_lineage_v1\"]",
+      "row_counts": "{\"canonical_extracted_fact_long_v1\": 68063, \"canonical_extracted_fact_long_v2\": 20188, \"canonical_fact_quarantine_v1\": 14, \"canonical_fact_quarantine_v2\": 103588, \"thyroglobulin_lab_canonical_v1\": 76971, \"note_extraction_runs\": 3, \"longitudinal_lab_canonical_v1\": 77960, \"master_fact_long_verified_v1\": 20188, \"master_patient_rollup_verified_v1\": 2702, \"master_source_lineage_v1\": 20188}",
+      "created_at": "2026-04-08 05:18:04.189662",
+      "created_by": "scripts/126_completion_after_collision"
+    },
+    {
+      "release_tag": "20260411",
+      "git_sha": "de13c33",
+      "registry_version": "entity_schema_v3_2026-04-03",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"thyroglobulin_lab_canonical_v1\", \"note_extraction_runs\", \"longitudinal_lab_canonical_v1\", \"master_fact_long_verified_v1\", \"master_patient_rollup_verified_v1\", \"master_source_lineage_v1\"]",
+      "row_counts": "{\"canonical_extracted_fact_long_v1\": 68077, \"canonical_extracted_fact_long_v2\": 123577, \"canonical_fact_quarantine_v1\": 0, \"canonical_fact_quarantine_v2\": 199, \"thyroglobulin_lab_canonical_v1\": 76971, \"note_extraction_runs\": 3, \"longitudinal_lab_canonical_v1\": 77960, \"master_fact_long_verified_v1\": 123577, \"master_patient_rollup_verified_v1\": 5574, \"master_source_lineage_v1\": 123577}",
+      "created_at": "2026-04-07 19:15:39.106720",
+      "created_by": "scripts/126_final_master_release.py"
+    },
+    {
+      "release_tag": "20260410",
+      "git_sha": "618086b",
+      "registry_version": "entity_schema_v3_2026-04-03",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"thyroglobulin_lab_canonical_v1\", \"note_extraction_runs\", \"longitudinal_lab_canonical_v1\", \"master_fact_long_verified_v1\", \"master_patient_rollup_verified_v1\", \"master_source_lineage_v1\"]",
+      "row_counts": "{\"canonical_extracted_fact_long_v1\": 68077, \"canonical_extracted_fact_long_v2\": 123577, \"canonical_fact_quarantine_v1\": 0, \"canonical_fact_quarantine_v2\": 199, \"thyroglobulin_lab_canonical_v1\": 76971, \"note_extraction_runs\": 3, \"longitudinal_lab_canonical_v1\": 76971, \"master_fact_long_verified_v1\": 123577, \"master_patient_rollup_verified_v1\": 5574, \"master_source_lineage_v1\": 123577}",
+      "created_at": "2026-04-07 16:22:53.465299",
+      "created_by": "scripts/115_release_snapshot.py"
+    },
+    {
+      "release_tag": "20260407_tier",
+      "git_sha": "7793059",
+      "registry_version": "entity_schema_v3_2026-04-03",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"thyroglobulin_lab_canonical_v1\", \"note_extraction_runs\", \"longitudinal_lab_canonical_v1\", \"master_fact_long_verified_v1\", \"master_patient_rollup_verified_v1\", \"master_source_lineage_v1\"]",
+      "row_counts": "{\"canonical_extracted_fact_long_v1\": 68077, \"canonical_extracted_fact_long_v2\": 123577, \"canonical_fact_quarantine_v1\": 0, \"canonical_fact_quarantine_v2\": 199, \"thyroglobulin_lab_canonical_v1\": 76971, \"note_extraction_runs\": 3, \"longitudinal_lab_canonical_v1\": 76971, \"master_fact_long_verified_v1\": 123577, \"master_patient_rollup_verified_v1\": 5574, \"master_source_lineage_v1\": 123577}",
+      "created_at": "2026-04-07 15:25:17.363482",
+      "created_by": "scripts/126_final_master_release.py"
+    },
+    {
+      "release_tag": "20260407_final2",
+      "git_sha": "4ad9052",
+      "registry_version": "entity_schema_v3_2026-04-03",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"thyroglobulin_lab_canonical_v1\", \"note_extraction_runs\", \"longitudinal_lab_canonical_v1\", \"master_fact_long_verified_v1\", \"master_patient_rollup_verified_v1\", \"master_source_lineage_v1\"]",
+      "row_counts": "{\"canonical_extracted_fact_long_v1\": 68077, \"canonical_extracted_fact_long_v2\": 123577, \"canonical_fact_quarantine_v1\": 0, \"canonical_fact_quarantine_v2\": 199, \"thyroglobulin_lab_canonical_v1\": 76971, \"note_extraction_runs\": 3, \"longitudinal_lab_canonical_v1\": 76971, \"master_fact_long_verified_v1\": 123577, \"master_patient_rollup_verified_v1\": 5574, \"master_source_lineage_v1\": 123577}",
+      "created_at": "2026-04-07 05:11:41.171561",
+      "created_by": "scripts/115_release_snapshot.py"
+    },
+    {
+      "release_tag": "20260407_final",
+      "git_sha": "4ad9052",
+      "registry_version": "entity_schema_v3_2026-04-03",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"thyroglobulin_lab_canonical_v1\", \"note_extraction_runs\", \"longitudinal_lab_canonical_v1\", \"master_fact_long_verified_v1\", \"master_patient_rollup_verified_v1\", \"master_source_lineage_v1\"]",
+      "row_counts": "{\"canonical_extracted_fact_long_v1\": 68077, \"canonical_extracted_fact_long_v2\": 123577, \"canonical_fact_quarantine_v1\": 0, \"canonical_fact_quarantine_v2\": 199, \"thyroglobulin_lab_canonical_v1\": 76971, \"note_extraction_runs\": 3, \"longitudinal_lab_canonical_v1\": 76971, \"master_fact_long_verified_v1\": 123577, \"master_patient_rollup_verified_v1\": 5574, \"master_source_lineage_v1\": 123577}",
+      "created_at": "2026-04-07 05:08:12.328508",
+      "created_by": "scripts/115_release_snapshot.py"
+    },
+    {
+      "release_tag": "20260406",
+      "git_sha": "4b2d076",
+      "registry_version": "entity_schema_v3_2026-04-03",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"thyroglobulin_lab_canonical_v1\", \"note_extraction_runs\"]",
+      "row_counts": "{\"canonical_extracted_fact_long_v1\": 68077, \"canonical_extracted_fact_long_v2\": 123577, \"canonical_fact_quarantine_v1\": 0, \"canonical_fact_quarantine_v2\": 199, \"thyroglobulin_lab_canonical_v1\": 76971, \"note_extraction_runs\": 3}",
+      "created_at": "2026-04-07 04:07:52.519215",
+      "created_by": "scripts/115_release_snapshot.py"
+    },
+    {
+      "release_tag": "20260409",
+      "git_sha": "b77b4be",
+      "registry_version": "entity_schema_v3_2026-04-03",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"thyroglobulin_lab_canonical_v1\", \"note_extraction_runs\", \"longitudinal_lab_canonical_v1\", \"master_fact_long_verified_v1\", \"master_patient_rollup_verified_v1\", \"master_source_lineage_v1\"]",
+      "row_counts": "{\"canonical_extracted_fact_long_v1\": 68077, \"canonical_extracted_fact_long_v2\": 123577, \"canonical_fact_quarantine_v1\": 0, \"canonical_fact_quarantine_v2\": 199, \"thyroglobulin_lab_canonical_v1\": 76971, \"note_extraction_runs\": 3, \"longitudinal_lab_canonical_v1\": 76971, \"master_fact_long_verified_v1\": 123577, \"master_patient_rollup_verified_v1\": 5574, \"master_source_lineage_v1\": 123577}",
+      "created_at": "2026-04-07 02:05:07.189573",
+      "created_by": "scripts/126_final_master_release.py"
+    },
+    {
+      "release_tag": "20260408",
+      "git_sha": "b77b4be",
+      "registry_version": "entity_schema_v3_2026-04-03",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"thyroglobulin_lab_canonical_v1\", \"note_extraction_runs\", \"longitudinal_lab_canonical_v1\", \"master_fact_long_verified_v1\", \"master_patient_rollup_verified_v1\", \"master_source_lineage_v1\"]",
+      "row_counts": "{\"canonical_extracted_fact_long_v1\": 68077, \"canonical_extracted_fact_long_v2\": 123577, \"canonical_fact_quarantine_v1\": 0, \"canonical_fact_quarantine_v2\": 199, \"thyroglobulin_lab_canonical_v1\": 76971, \"note_extraction_runs\": 3, \"longitudinal_lab_canonical_v1\": 76971, \"master_fact_long_verified_v1\": 123577, \"master_patient_rollup_verified_v1\": 5574, \"master_source_lineage_v1\": 123577}",
+      "created_at": "2026-04-07 02:03:20.732093",
+      "created_by": "scripts/126_final_master_release.py"
+    },
+    {
+      "release_tag": "20260407",
+      "git_sha": "83f64ee",
+      "registry_version": "entity_schema_v3_2026-04-03",
+      "tables_included": "[\"canonical_extracted_fact_long_v1\", \"canonical_extracted_fact_long_v2\", \"canonical_fact_quarantine_v1\", \"canonical_fact_quarantine_v2\", \"note_extraction_runs\"]",
+      "row_counts": "{\"canonical_extracted_fact_long_v1\": 68077, \"canonical_extracted_fact_long_v2\": 123577, \"canonical_fact_quarantine_v1\": 0, \"canonical_fact_quarantine_v2\": 199, \"note_extraction_runs\": 3}",
+      "created_at": "2026-04-07 01:09:57.717289",
+      "created_by": "scripts/115_release_snapshot.py"
+    }
+  ]
+}

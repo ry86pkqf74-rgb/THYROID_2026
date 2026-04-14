@@ -1,5 +1,17 @@
 # THYROID_2026 Release Notes
 
+## 2026-04-14 — Canonical lakehouse finalization
+
+- **Verdict:** single SSOT achieved with documented governance blocker.
+- **Analyst quick-start:** [`MANUSCRIPT_DATA_START_HERE.md`](MANUSCRIPT_DATA_START_HERE.md) — exact tables, views, citation rules, and manuscript-readiness answer.
+- **Views deployed:** `scripts/125_master_verified_views.py --md` — all 3 master verified views now include `review_grain`, `review_status_source`, `review_join_key` columns; `119 --release-mode` Check 11 now passes.
+- **Contract strengthened:** [`docs/final_source_of_truth_contract.md`](docs/final_source_of_truth_contract.md) — added canonical scope inventory, allowed/disallowed claims table, validation definitions, analyst quick-start link.
+- **Script 144 extended:** `note_extraction_runs` count added to live introspection.
+- **Live probes:** 10+ SQL probes against live MotherDuck confirming parity (55,500 facts = master = lineage), 0 duplicate fact_ids, 100% lineage completeness.
+- **Historical labeling:** supersession banners on all pre-2026-04-11 evidence packs and study reports.
+- **Regression tests:** `tests/test_canonical_finalization.py` — existence and section checks for contract doc and MANUSCRIPT_DATA_START_HERE.md.
+- **Export bundle:** `exports/full_canonical_release_20260408r4/` — canonical counts, lineage completeness, schema inventory, validation summary, checksums.
+
 ## 2026-04-14 — Canonical source-of-truth contract (repo + MotherDuck tooling)
 
 - **Contract:** [`docs/final_source_of_truth_contract.md`](docs/final_source_of_truth_contract.md) — single definition of live `main` / `qa`, `qa.release_manifest`, analyst `master_*_verified_v1` views, `studies/CURRENT_MOTHERDUCK_REPO_STATE.md`, historical vs adjunct (specimen/FHIR).

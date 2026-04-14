@@ -1,3 +1,5 @@
+> **HISTORICAL / SUPERSEDED:** This document is a point-in-time snapshot from its generation date. For current canonical state, see [`docs/final_source_of_truth_contract.md`](../../docs/final_source_of_truth_contract.md) and [`studies/CURRENT_MOTHERDUCK_REPO_STATE.md`](../CURRENT_MOTHERDUCK_REPO_STATE.md). Row counts cited here may no longer match live MotherDuck.
+
 # Manuscript blocker rebaseline — evidence package
 
 **Generated (UTC):** 2026-04-08T07:35–07:36Z  

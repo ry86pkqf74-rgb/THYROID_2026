@@ -1,3 +1,5 @@
+> **HISTORICAL / SUPERSEDED:** This document is a point-in-time snapshot from its generation date. For current canonical state, see [`docs/final_source_of_truth_contract.md`](../../docs/final_source_of_truth_contract.md) and [`studies/CURRENT_MOTHERDUCK_REPO_STATE.md`](../CURRENT_MOTHERDUCK_REPO_STATE.md). Row counts cited here may no longer match live MotherDuck.
+
 # Final master release — manuscript readiness evidence
 
 > **Status: superseded operator snapshot.** Prefer [`../20260411_final_master_release/EVIDENCE_PACK.md`](../20260411_final_master_release/EVIDENCE_PACK.md) for **current** MotherDuck row counts, `release_20260411`, and post–lab-wave posture. **Repo headline:** **Technically passing but blocked by synthetic MRQ** — see [`../../docs/REPO_STATUS.md`](../../docs/REPO_STATUS.md).

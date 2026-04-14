@@ -1,3 +1,5 @@
+> **HISTORICAL / SUPERSEDED:** This document is a point-in-time snapshot from its generation date. For current canonical state, see [`docs/final_source_of_truth_contract.md`](../../docs/final_source_of_truth_contract.md) and [`studies/CURRENT_MOTHERDUCK_REPO_STATE.md`](../CURRENT_MOTHERDUCK_REPO_STATE.md). Row counts cited here may no longer match live MotherDuck.
+
 # Manuscript human-review & governance release — live run (2026-04-13)
 
 **Generated (UTC):** 2026-04-13T17:03–17:04Z  

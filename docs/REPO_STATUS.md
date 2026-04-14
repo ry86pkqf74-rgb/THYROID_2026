@@ -1,5 +1,7 @@
 # THYROID_2026 — Current Repo Status
 
+> **Analyst quick-start:** [`MANUSCRIPT_DATA_START_HERE.md`](../MANUSCRIPT_DATA_START_HERE.md) — exact tables, views, citation rules.
+
 > **Historical / narrative note:** This file mixes **April 2026** cloud posture with **March 13** freeze-era tables. **Canonical contract** for live vs historical: [`final_source_of_truth_contract.md`](final_source_of_truth_contract.md). **Short headline** (keep in sync with README and [`truth_sync_summary.md`](../truth_sync_summary.md)): **Live MotherDuck `main` / `qa` are canonical; `119 --release-mode` can pass while governance (human-reviewed MRQ where policy requires) remains a separate concern.**
 
 **As of:** 2026-04-14 (SSOT canonicalization); prior MotherDuck reruns remain cited in linked studies.  
