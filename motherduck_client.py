@@ -51,6 +51,7 @@ Security
 from __future__ import annotations
 
 import os
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -434,6 +435,11 @@ class MotherDuckClient:
         except Exception:
             pass  # Older drivers may not support; attribution still has custom_user_agent
 
+    @staticmethod
+    def _is_ducklake_attach_conflict(exc: BaseException) -> bool:
+        msg = str(exc).lower()
+        return "write-write conflict" in msg or "catalog write-write conflict" in msg
+
     def _connect_md_attached(
         self,
         token: str,
@@ -455,14 +461,32 @@ class MotherDuckClient:
         if hint_for_url:
             extra.append(f"session_hint={quote_plus(hint_for_url)}")
         qs = "&".join(extra)
-        if " " in attach:
-            con = duckdb.connect(f"md:?{qs}")
-            con.execute(f'USE "{attach}"')
-            self._apply_session_hint(con, session_hint=session_hint, hint_profile=hint_profile)
-            return con
-        con = duckdb.connect(f"md:{attach}?{qs}")
-        self._apply_session_hint(con, session_hint=session_hint, hint_profile=hint_profile)
-        return con
+        max_attempts = max(
+            1,
+            int((os.getenv("MOTHERDUCK_ATTACH_RETRY_ATTEMPTS") or "3").strip() or "3"),
+        )
+        base_delay = float((os.getenv("MOTHERDUCK_ATTACH_RETRY_DELAY_S") or "0.45").strip() or "0.45")
+        for attempt in range(max_attempts):
+            con: duckdb.DuckDBPyConnection | None = None
+            try:
+                if " " in attach:
+                    con = duckdb.connect(f"md:?{qs}")
+                    con.execute(f'USE "{attach}"')
+                else:
+                    con = duckdb.connect(f"md:{attach}?{qs}")
+                self._apply_session_hint(con, session_hint=session_hint, hint_profile=hint_profile)
+                return con
+            except Exception as e:
+                if con is not None:
+                    try:
+                        con.close()
+                    except Exception:
+                        pass
+                if attempt < max_attempts - 1 and self._is_ducklake_attach_conflict(e):
+                    time.sleep(base_delay * (attempt + 1))
+                    continue
+                raise
+        raise RuntimeError("_connect_md_attached: retry loop exited without connect")
 
     # ── Connection helpers ────────────────────────────────────────────────
 

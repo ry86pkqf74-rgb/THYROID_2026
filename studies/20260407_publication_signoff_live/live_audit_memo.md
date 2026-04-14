@@ -1,5 +1,7 @@
 # Live audit memo — MotherDuck publication signoff
 
+**Update (2026-04-14):** `MD_INFORMATION_SCHEMA.QUERY_HISTORY` may appear **accessible** in a coarse introspection snapshot while **filtered exports** still fail with `MDExternalException` for non–organization-admin identities — see [`../../docs/motherduck_database_contract_v1.md`](../../docs/motherduck_database_contract_v1.md) and [`../live_state_refresh_20260408_074310/LIVE_STATE_REFRESH.md`](../live_state_refresh_20260408_074310/LIVE_STATE_REFRESH.md). Row counts below are **2026-04-07 capture**; prod `longitudinal_lab_canonical_v1` has since grown (e.g. **77,960** rows in [`../live_state_refresh_20260408_074310/env_row_counts_probe.csv`](../live_state_refresh_20260408_074310/env_row_counts_probe.csv)) — cite refresh CSVs for current N.
+
 **Supersession:** Section §3 below reflects the **first** `119` capture in this folder (**BLOCKED**, `broken_fhir_refs=10139`). **Later same-day** evidence: [`../20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md`](../20260407_live_truth_and_lineage_contract_audit/119_release_validation/validation_report.md) (**PASS WITH WARNINGS**, `broken_fhir_refs=0`).
 
 **Captured:** 2026-04-07 (UTC-aligned with validation report timestamp in-folder)  

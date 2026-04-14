@@ -453,8 +453,8 @@ When the service account / org policy allows, these views support audits (availa
 |------|-------------|
 | `md_information_schema.databases` | Database name, **type** (e.g. `DUCKLAKE` vs `DEFAULT`), **transient** flag, **historical_snapshot_retention** |
 | `md_information_schema.database_snapshots` | Snapshot lineage / bytes (interpret per DuckLake vs native policy) |
-| `md_information_schema.query_history` | Query text and timing (often **org-admin** or elevated visibility — do not assume every token sees all org traffic) |
-| `md_information_schema.recent_queries` | Shorter retention slice for the current identity |
+| `md_information_schema.query_history` | Query text and timing — **many orgs return** `MDExternalException: Query history is only available to organization admins` for non-admin tokens; treat as **optional** audit telemetry and fail closed in scripts with a clear CSV/note (see `utils/md_observability.run_safe`) |
+| `md_information_schema.recent_queries` | Shorter retention slice for the current identity (same **admin** caveat as `query_history` on some plans) |
 
 **DuckLake caveat:** Databases typed **`DUCKLAKE`** in `databases.type` do **not** follow native-only snapshot / clone / PITR assumptions. Use MotherDuck UI + org runbook for immutable evidence; keep **`release_YYYYMMDD`** schema copies as repo-contract artifacts.
 

@@ -163,7 +163,10 @@ FROM (
             'THYROID_2026 molecular layer seed'),
         ('afirma_combined', 'Afirma GEC+GSC', 'GEC+GSC', 'Afirma', 'Veracyte',
             CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS DATE), CAST(NULL AS DATE),
-            'THYROID_2026 molecular layer seed')
+            'THYROID_2026 molecular layer seed'),
+        ('thyroseq', 'ThyroSeq', CAST(NULL AS VARCHAR), 'ThyroSeq', 'ThyroSeq / institutional NGS',
+            CAST(NULL AS VARCHAR), CAST(NULL AS VARCHAR), CAST(NULL AS DATE), CAST(NULL AS DATE),
+            'THYROID_2026 molecular layer seed — contract dictionary coverage')
 ) AS t(
     assay_key, assay_name, panel_version, platform, vendor,
     loinc_code, loinc_long_name, effective_from, effective_to, source_reference

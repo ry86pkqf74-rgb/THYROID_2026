@@ -44,10 +44,10 @@
 |----------|--------|--------|
 | `README.md` | **Mostly current** | Describes `auto_accepted_*` MRQ posture, `final_institutional_20260407`, PASS WITH WARN; aligns with this run. Minor: line ~29 “blocked by synthetic MRQ” is shorthand — live **Check 5b** reports **no** synthetic-placeholder `verification_status`; queue is **tier auto-accept**, not clinician review. |
 | `studies/CURRENT_MOTHERDUCK_REPO_STATE.md` | **Partially stale** until regenerated on your HEAD | Machine-generated **2026-04-08** snapshot in repo may predate your latest commit; **live snapshot** in this folder (`CURRENT_MOTHERDUCK_REPO_STATE_live_snapshot.md`) matches this run. |
-| `studies/20260407_publication_signoff_live/final_verdict_memo.md` | **Partially stale** | Banner and supersession links remain **correct** (specimen FAIL superseded; lab wave closed). **Executive snapshot** still describes historical `SYNTHETIC_*` MRQ dominance — **superseded by live**: MRQ is **`auto_accepted_*`** + 2 `confirmed_correct`; `promotion_review_decisions` is **4** rows (not 2). |
-| `studies/20260407_publication_signoff_live/live_audit_memo.md` | **Partially stale** | Historical `broken_fhir_refs=10139` narrative remains for audit trail; **live** diagnostics **clean** (this run + `119`). |
-| `studies/20260407_publication_signoff_live/mrq_reconciliation_memo.md` | **Stale** on §2 table | Live verification_status distribution **does not** show `SYNTHETIC_AUTOMATION_ONLY_*` (see `mrq_status_distribution.csv`). Memo’s **2026-04-08** header update points to newer studies; keep memo for process history but **do not** cite the §2 counts as current. |
-| `studies/20260407_publication_signoff_live/lab_coverage_memo.md` | **Stale** | States no `final_institutional*` wave; **live** has **`final_institutional_20260407`** (989 rows) and expanded analyte groups beyond thyroid_tumor_markers-only. |
+| `studies/20260407_publication_signoff_live/final_verdict_memo.md` | **Current (2026-04-14)** | **2026-04-14** banner: live **`auto_accepted_*`**, **4** `promotion_review_decisions`, governance HOLD wording (not “synthetic” status strings). Executive **historical** paragraph retained for audit trail. |
+| `studies/20260407_publication_signoff_live/live_audit_memo.md` | **Current (2026-04-14)** | **2026-04-14** note: `QUERY_HISTORY` introspection vs org-admin export; lab row-count drift → cite `env_row_counts_probe.csv`. §3 historical vs later `119` unchanged. |
+| `studies/20260407_publication_signoff_live/mrq_reconciliation_memo.md` | **Current** | §2 **Current** table matches `mrq_status_distribution.csv`; **Historical** table labeled; promotion **4** rows documented. |
+| `studies/20260407_publication_signoff_live/lab_coverage_memo.md` | **Current** | **2026-04-14** refresh: `final_institutional_20260407`, analyte groups, panel table aligned to live CSVs (no false “0 rows” for institutional groups). |
 
 ## Strict verdict — release readiness (2026-04-08 UTC)
 
@@ -61,9 +61,9 @@
 
 1. **Governance:** Manuscript-class sign-off still needs explicit policy on whether **`auto_accepted_*`** MRQ tiers satisfy publication (README lens B: **no** by default).  
 2. **Review burden:** Specimen-adjacent **genomic_link_review** open/pending **10,705** (`119` WARN).  
-3. **Molecular data quality WARNs:** `panel_version` sparse; assay dictionary mismatch (`119` WARN).  
+3. **Molecular data quality WARNs:** `panel_version` sparse for **Afirma-like** assays; assay dictionary gaps (**mitigation:** repo `131` seed + `119` case-insensitive dictionary match — **redeploy / INSERT on catalog** to clear live WARN).  
 4. **Telemetry:** **`MD_INFORMATION_SCHEMA.QUERY_HISTORY`** filtered by custom UA **blocked** for non–org-admin tokens (`query_history_filtered.csv`).  
-5. **Read-scaling:** Intermittent DuckLake attach conflict documented — use RW fallback or retry for automation.
+5. **Read-scaling:** Intermittent DuckLake attach conflict — **`motherduck_client` retry** on DuckLake write-write conflict; RW fallback still available for collectors.
 
 ### Exact next prompt to run
 

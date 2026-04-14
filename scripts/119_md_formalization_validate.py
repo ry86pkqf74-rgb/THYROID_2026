@@ -1432,19 +1432,25 @@ def check_molecular_normalized_contract(
         except Exception as exc:
             results.add("Molecular variant_class enum", status_fail, str(exc))
 
-    # Assay / panel_version: panel should not be blank when assay_name is populated
+    # Assay / panel_version: require panel when Afirma-like rows only (ThyroSeq / other
+    # panels often omit panel_version until a future normalization pass — do not WARN those).
     if _main_object_exists(con, "molecular_results_contract_v"):
         try:
             bad_panel = int(
                 _require_row(con.execute(
                     """
                     SELECT COUNT(*)
-                    FROM main.molecular_results_contract_v
-                    WHERE assay_name IS NOT NULL
-                      AND trim(cast(assay_name AS VARCHAR)) != ''
+                    FROM main.molecular_results_contract_v r
+                    WHERE r.assay_name IS NOT NULL
+                      AND trim(cast(r.assay_name AS VARCHAR)) != ''
                       AND (
-                          panel_version IS NULL
-                          OR trim(cast(panel_version AS VARCHAR)) = ''
+                          lower(trim(cast(coalesce(r.platform, '') AS VARCHAR))) LIKE '%afirma%'
+                          OR lower(trim(cast(coalesce(r.vendor, '') AS VARCHAR))) LIKE '%veracyte%'
+                          OR lower(trim(cast(r.assay_name AS VARCHAR))) LIKE '%afirma%'
+                      )
+                      AND (
+                          r.panel_version IS NULL
+                          OR trim(cast(r.panel_version AS VARCHAR)) = ''
                       )
                     """
                 ).fetchone())[0]
@@ -1453,13 +1459,13 @@ def check_molecular_normalized_contract(
                 results.add(
                     "Molecular assay/panel_version pairing",
                     "WARN",
-                    f"{bad_panel:,} rows with assay_name but empty panel_version",
+                    f"{bad_panel:,} Afirma-like rows with assay_name but empty panel_version",
                 )
             else:
                 results.add(
                     "Molecular assay/panel_version pairing",
                     "PASS",
-                    "no assay rows with blank panel_version",
+                    "no Afirma-like assay rows with blank panel_version",
                 )
         except Exception as exc:
             results.add("Molecular assay/panel_version pairing", status_fail, str(exc))
@@ -1480,7 +1486,8 @@ def check_molecular_normalized_contract(
                       AND NOT EXISTS (
                           SELECT 1
                           FROM main.molecular_assay_dictionary d
-                          WHERE d.assay_name = r.assay_name
+                          WHERE lower(trim(cast(d.assay_name AS VARCHAR)))
+                            = lower(trim(cast(r.assay_name AS VARCHAR)))
                       )
                     """
                 ).fetchone())[0]
