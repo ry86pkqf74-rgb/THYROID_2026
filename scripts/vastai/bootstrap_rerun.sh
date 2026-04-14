@@ -39,19 +39,24 @@ else
     git -C "$REPO_DIR" fetch --depth 1 origin main && git -C "$REPO_DIR" reset --hard origin/main
 fi
 
-# 5. Stage filtered notes parquet
+# 5. Stage filtered notes parquet (optional — skip if caller scp's shard directly
+#    to $REPO_DIR/processed/remaining/clinical_notes_shard.parquet)
 mkdir -p "$REPO_DIR/processed/remaining"
 if [ -f "$NOTES_PARQUET_SRC" ]; then
     cp "$NOTES_PARQUET_SRC" "$REPO_DIR/processed/remaining/clinical_notes_long_rerun.parquet"
     ls -la "$REPO_DIR/processed/remaining/clinical_notes_long_rerun.parquet"
+elif [ -f "/root/clinical_notes_shard.parquet" ]; then
+    mv /root/clinical_notes_shard.parquet "$REPO_DIR/processed/remaining/clinical_notes_shard.parquet"
+    ls -la "$REPO_DIR/processed/remaining/clinical_notes_shard.parquet"
 else
-    echo "ERROR: notes parquet not found at $NOTES_PARQUET_SRC" >&2
-    exit 2
+    echo "NOTE: no notes parquet pre-staged; caller must scp one in before run_shard.sh"
 fi
 
-# 6. Python deps
+# 6. Python deps (extractor needs openai+tenacity+tqdm+jsonschema at runtime;
+#    omitting these caused silent ModuleNotFoundError + idle GPU in prior rerun)
 cd "$REPO_DIR"
-pip install --quiet pandas pyarrow openpyxl python-dotenv requests pyyaml
+pip install --quiet pandas pyarrow openpyxl python-dotenv requests pyyaml \
+    openai tenacity tqdm jsonschema
 
 # 7. Smoke test: verify domain prompts load
 python3 - <<'PY'
