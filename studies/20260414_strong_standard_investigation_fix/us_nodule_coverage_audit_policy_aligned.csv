@@ -1,0 +1,4 @@
+corpus,source_nodules,canonical_rows,true_gap_after_30d_policy,note
+COMPLETE,19891,19891,0,policy-aligned dedup explains all strict misses
+scored,19549,8331,0,policy-aligned dedup explains all strict misses
+Imaging_12,21079,8794,0,policy-aligned dedup explains all strict misses

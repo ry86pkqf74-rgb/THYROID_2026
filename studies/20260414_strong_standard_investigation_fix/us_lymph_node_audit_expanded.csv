@@ -1,0 +1,4 @@
+ln_category,count,structured_level,source_limitation
+negative_normal,6453,exam_level_text_only,No structured per-level fields in ultrasound_reports
+other_narrative,340,exam_level_text_only,Some mention levels in text but no structured extraction
+total,6793,exam_level_text_only,Only lymph_node_assessment column exists (narrative)

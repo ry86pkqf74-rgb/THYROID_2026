@@ -1,0 +1,53 @@
+{
+  "audit_date": "2026-04-14",
+  "baseline_reference": "studies/20260413_full_execution_reaudit/executive_verdict.md",
+  "metrics": {
+    "us_nodule_coverage": {
+      "canonical_total": {"before": 37016, "after": 37016, "delta": 0},
+      "complete_corpus_rows": {"before": 19891, "after": 19891, "delta": 0},
+      "scored_corpus_rows": {"before": 8331, "after": 8331, "delta": 0},
+      "imaging_12_corpus_rows": {"before": 8794, "after": 8794, "delta": 0},
+      "policy_aligned_true_gaps": {"before": 0, "after": 0, "delta": 0}
+    },
+    "tirads_completeness": {
+      "total_with_reported_tirads": {"before": 27903, "after": 27903, "delta": 0},
+      "total_with_acr_recalculated": {"before": 19891, "after": 19891, "delta": 0},
+      "no_tirads_at_all": {"before": 8794, "after": 8794, "delta": 0, "reason": "SOURCE_LIMITED: Imaging_12 has 0 ACR criteria"},
+      "note": "8794 Imaging_12 rows have n_criteria_available=0; 304 overlap with COMPLETE (already has TIRADS on separate row); 3802 overlap with scored"
+    },
+    "nodule_linkage": {
+      "linked_to_fna": {"before": 6359, "after": 6359, "delta": 0},
+      "no_eligible_fna": {"before": 30657, "after": 30657, "delta": 0},
+      "unresolved": {"before": 0, "after": 0, "delta": 0},
+      "null_reason_codes": {"before": 0, "after": 0, "delta": 0}
+    },
+    "bethesda": {
+      "episode_master_total": {"before": 8119, "after": 8119, "delta": 0},
+      "episode_has_numeric": {"before": 8096, "after": 8096, "delta": 0},
+      "episode_null_numeric": {"before": 23, "after": 23, "delta": 0},
+      "resolved_view_has_numeric": {"before": 8096, "after": 8096, "delta": 0},
+      "resolved_view_null": {"before": 23, "after": 23, "delta": 0},
+      "unscorable_reason_breakdown": {
+        "no_episode_or_cytology_bethesda": 22,
+        "pathology_present_bethesda_unparsed": 1
+      },
+      "scripts_152_dry_run_candidates": 0,
+      "scripts_154_dry_run_candidates": 0
+    },
+    "us_lymph_node": {
+      "exams_with_ln_text": {"before": 6793, "after": 6793, "delta": 0},
+      "structured_per_level_data": {"before": 0, "after": 0, "delta": 0, "reason": "SOURCE_LIMITED"},
+      "negative_normal": 6453,
+      "other_narrative": 340
+    },
+    "serial_imaging_us": {
+      "rows": {"before": 0, "after": 0, "delta": 0, "reason": "Empty placeholder; institutional feed required"}
+    },
+    "release_validation": {
+      "pass_count": {"before": 35, "after": 40, "delta": 5},
+      "warn_count": {"before": 4, "after": 5, "delta": 1},
+      "fail_count": {"before": 0, "after": 0, "delta": 0}
+    }
+  },
+  "verdict": "NO_SAFE_DETERMINISTIC_FIX_AVAILABLE — all remaining gaps are source-limited"
+}

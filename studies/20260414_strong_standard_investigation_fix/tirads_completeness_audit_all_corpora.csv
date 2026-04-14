@@ -1,0 +1,4 @@
+corpus,nodules,explicit_reported_tirads,recomputable_from_acr,insufficient_source_detail,missing_unexplained
+raw_us_tirads_excel_v1,19891,19572.0,19891.0,0,0
+raw_imaging_12_slots_v1,8794,0.0,0.0,8794,0
+raw_us_tirads_scored_v1,8331,8331.0,0.0,0,0

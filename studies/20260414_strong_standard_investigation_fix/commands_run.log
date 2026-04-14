@@ -1,0 +1,61 @@
+# Commands Run Log — 2026-04-14 Strong Standard Investigation
+
+## Phase 0: Git state
+git fetch --all --prune
+git status --short
+git branch --show-current
+git rev-parse HEAD
+git log --oneline --decorate -n 20
+git log --oneline --decorate -n 40
+
+## Phase 1: Environment
+pwd
+.venv/bin/python --version
+test -d .venv
+test -f motherduck.local.toml
+test -f .streamlit/secrets.toml
+ls raw/*.xlsx
+ls processed/*.dvc
+
+## Phase 1: State refresh
+.venv/bin/python scripts/144_md_repo_current_state_summary.py --md --output studies/20260414_strong_standard_investigation_fix/fresh_state.md
+.venv/bin/python scripts/119_md_formalization_validate.py --md --release-mode --output-dir studies/20260414_strong_standard_investigation_fix
+
+## Phase 1: Schema inspection
+SELECT column_name FROM information_schema.columns WHERE table_name = 'v_fna_episode_bethesda_resolved_v1'
+SELECT column_name FROM information_schema.columns WHERE table_name = 'v_fna_bethesda_episode_vs_resolved_v1'
+SELECT DISTINCT source_table FROM imaging_nodule_master_v1
+
+## Phase 2: Source inventory (MotherDuck queries)
+SELECT COUNT(*), COUNT(DISTINCT research_id), COUNT(DISTINCT research_id || '|' || ...) FROM raw_us_tirads_excel_v1
+SELECT COUNT(*), COUNT(DISTINCT research_id), COUNT(DISTINCT research_id || '|' || ...) FROM raw_us_tirads_scored_v1
+SELECT COUNT(*), COUNT(DISTINCT research_id), COUNT(DISTINCT research_id || '|' || ...) FROM raw_imaging_12_slots_v1
+SELECT COUNT(*), COUNT(DISTINCT research_id), COUNT(DISTINCT research_id || '|' || ...) FROM imaging_nodule_master_v1
+SELECT COUNT(*), COUNT(DISTINCT research_id) FROM fna_history / fna_cytology / fna_episode_master_v2
+SELECT ... bethesda_category ... FROM fna_episode_master_v2
+SELECT ... bethesda_resolved_num ... FROM v_fna_episode_bethesda_resolved_v1
+SELECT ... bethesda_in_episode_master ... FROM v_fna_bethesda_episode_vs_resolved_v1
+SELECT linkage_state, COUNT(*) FROM v_imaging_nodule_linkage_classification_v1 GROUP BY linkage_state
+SELECT linkage_reason_code, COUNT(*) FROM v_imaging_nodule_linkage_classification_v1 WHERE linkage_state = 'no_eligible_fna' ...
+SELECT source_table, COUNT(*), ... tirads_reported ..., ... tirads_acr_recalculated ... FROM imaging_nodule_master_v1 GROUP BY source_table
+SELECT ... lymph_node_assessment ... FROM ultrasound_reports
+
+## Phase 3-4: TI-RADS investigation
+SELECT n_criteria_available, COUNT(*) FROM raw_imaging_12_slots_v1 GROUP BY n_criteria_available
+# Cross-corpus overlap within ±30d
+SELECT COUNT(DISTINCT i.nodule_id) FROM imaging_nodule_master_v1 i INNER JOIN ... WHERE source_table = 'raw_imaging_12_slots_v1' ...
+# ACR feature columns check
+SELECT column_name FROM information_schema.columns WHERE ... ILIKE '%compos%' OR ...
+
+## Phase 6: Bethesda investigation
+SELECT e.research_id, e.fna_episode_id, ... FROM fna_episode_master_v2 e LEFT JOIN v_fna_episode_bethesda_resolved_v1 r WHERE e.bethesda_category IS NULL
+SELECT research_id, fna_index, category_num, LEFT(path_text, 80) FROM fna_cytology WHERE research_id IN (...)
+SELECT * FROM fna_episode_master_v2 WHERE research_id = 8330
+
+## Phase 6: Bethesda backfill dry-runs
+.venv/bin/python scripts/152_fna_episode_bethesda_backfill_from_cytology.py --md --dry-run
+.venv/bin/python scripts/154_fna_cytology_bethesda_from_path_text.py --md --dry-run
+
+## Phase 7: US LN investigation
+SELECT ... lymph_node_assessment ... FROM ultrasound_reports (category analysis)
+SELECT column_name FROM information_schema.columns WHERE table_name = 'ultrasound_reports' AND column_name ILIKE '%lymph%' OR ...

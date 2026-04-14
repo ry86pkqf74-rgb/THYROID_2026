@@ -1,0 +1,7 @@
+domain,count,reason,classification
+tirads_imaging_12,8794,Imaging_12 source has 0 ACR criteria; no TI-RADS possible,SOURCE_LIMITED
+tirads_scored_acr,8331,Scored corpus has reported TI-RADS but no ACR features for recalculation,SOURCE_LIMITED
+bethesda_null_episode,23,22 no_episode_or_cytology_bethesda + 1 pathology_present_bethesda_unparsed (physician name in field),SOURCE_LIMITED
+us_ln_structured_detail,6793,Only narrative text in ultrasound_reports.lymph_node_assessment; no per-level columns,SOURCE_LIMITED
+serial_imaging_us,0,Empty placeholder table; institutional feed required,SOURCE_LIMITED
+imaging_pathology_concordance,0,imaging_pathology_concordance_review_v2 not deployed on MotherDuck,DEPLOYMENT_GAP
