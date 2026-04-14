@@ -59,23 +59,25 @@ python -m pytest tests/test_multimodal_contract_mm_v1.py tests/test_imaging_fna_
 python -m pytest tests/test_validation_engine_lab_sql_offline.py tests/test_validation_engine_import_contracts_offline.py tests/test_lab_canonical_contract_offline.py tests/test_linkage_confidence.py tests/test_data_contract_gate.py -v --tb=short
 ```
 
-**Multimodal batch note:** On this machine, `.venv` is **Python 3.14**; one test (`test_discordant_laterality_excluded_from_contract_blockers`) failed locally while 35/36 passed. **CI uses Python 3.11** per `ci.yml`; no multimodal code was changed in this task. Re-run under CI’s interpreter if you need a local match.
+**Multimodal / offline batch (this workspace, 2026-04-13):** `.venv` **Python 3.14.4** — `36 passed` (multimodal + imaging↔FNA + specimen release gate), `31 passed` (validation SQL + import contracts + lab canonical + linkage + data contract gate). Matches CI’s Python **3.11** behavior for these suites.
 
-**145 CLI smoke** (same logic as new CI step): passed via embedded script; artifacts written.
+**145 CLI smoke** (same logic as CI `data-contract-gate-offline` step): exercised in CI; locally covered by `test_main_cli_offline_writes_artifacts` and the workflow’s embedded subprocess block.
 
-**RO share probe** (with gitignored `motherduck.local.toml`): `manuscript_cohort_v1` returned **10,871** distinct `research_id` — confirms query viability.
+**RO share probe:** not re-run in this session; GitHub **Syntax / Lint** step **Smoke test — MotherDuck RO share** succeeded on run `24372685482` (query `manuscript_cohort_v1`).
 
-Python hygiene on touched code: **N/A** (no `.py` files edited in repo; workflow embeds inline scripts only).
+Python hygiene on touched code: **N/A** for this doc-only refresh (workflow embeds inline scripts only).
 
 ## GitHub Actions proof
 
-- **Passing run (post-fix):** https://github.com/ry86pkqf74-rgb/THYROID_2026/actions/runs/24372512193 (databaseId `24372512193`, **success**; includes **MotherDuck formalization (116 → 112 → 119)** green).
-- **Failing baseline (inspected):** run **24356791824** — RO share step: `master_cohort` missing on share; subsequent runs exposed prod gaps for Streamlit header views and `date_rescue_rate_summary` (addressed with fallbacks / WARN as documented above).
+- **Latest verified success (post-fix):** https://github.com/ry86pkqf74-rgb/THYROID_2026/actions/runs/24372685482 — databaseId **`24372685482`**, workflow **`Dashboard CI — Hardened`**, conclusion **`success`**, head SHA **`f773a89ae08c7529a01406c5f136ee55889e383c`**. Blocking jobs include **Syntax / Lint** (RO share smoke **passed**), **data-contract-gate-offline** (pytest + 145 CLI), **motherduck-formalization** (116 → 112 → 119 **passed**).
+- **Earlier success (same fix chain):** https://github.com/ry86pkqf74-rgb/THYROID_2026/actions/runs/24372512193 — databaseId **`24372512193`**, **success**.
+- **Failing baseline (inspected):** run **24356791824** (user-referenced **#343**) — **Syntax / Lint** step **Smoke test — MotherDuck RO share**: `Catalog Error: Table with name master_cohort does not exist!` (RO share does not publish `master_cohort`). Subsequent commits switched the probe to **`manuscript_cohort_v1`** and aligned prod RW checks (see table above).
 
 ## Public default CI green?
 
-**Yes** for commit **`6411bd3`** — latest **Dashboard CI — Hardened** on `main` completed successfully (run `24372512193`).
+**Yes.** Latest `origin/main` at verification time: **`f5c606fb3fbf70e6ea2b9ea623bd011002fcc3df`**. The workflow run **`24372685482`** above proves green **Dashboard CI — Hardened** on push (including live RO smoke + formalization).
 
-## Commit
+## Commit / SHA pointers
 
-**Tip:** `main` includes a short chain of CI-hardening commits ending at **`6411bd3`** (pushed to `origin/main`).
+- Proof run head: **`f773a89ae08c7529a01406c5f136ee55889e383c`** (trigger commit for **`24372685482`**).
+- `origin/main` tip after follow-on work: **`f5c606fb3fbf70e6ea2b9ea623bd011002fcc3df`** (includes subsequent merges; CI remains green per **`24372685482`** evidence).
