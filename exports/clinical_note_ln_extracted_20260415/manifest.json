@@ -1,0 +1,18 @@
+{
+  "artifact": "clinical_note_ln_extracted_v1",
+  "motherduck_database": "Thyroid 2026",
+  "motherduck_table": "main.clinical_note_ln_extracted_v1",
+  "row_count": 7751,
+  "git_sha": "aa2e31a51a612d925b5b9f185d61c92ea06b04b6",
+  "source_script": "scripts/extract_clinical_note_ln_data.py",
+  "files": {
+    "clinical_note_ln_extracted.parquet": {
+      "bytes": 521577,
+      "sha256": "dae023f71f9b70bab8e67234e2c473c10a1a7d451c6d5574b481832599b2c7ad"
+    },
+    "clinical_note_ln_extracted.csv": {
+      "bytes": 2442011,
+      "sha256": "ddef400f02de5f2798ddf075ad0792bba6632b14d14d398db62e25fa6a4821dd"
+    }
+  }
+}
