@@ -6,11 +6,11 @@ Table: `canonical_patient_master_v1`
 ---
 
 ## Summary
-- **Total columns:** 654
+- **Total columns:** 748
 - **Total rows:** 10,871
-- **Overall mean coverage:** 29.5%
-- **Fully populated columns (≥100%):** 77
-- **Sparse columns (<10%):** 276
+- **Overall mean coverage:** 30.4%
+- **Fully populated columns (≥100%):** 93
+- **Sparse columns (<10%):** 308
 
 ---
 
@@ -30,7 +30,7 @@ Table: `canonical_patient_master_v1`
 
 | Tier | Tables | Description | In canonical? |
 |------|--------|-------------|---------------|
-| 0 | `canonical_patient_master_v1` | Single analytical table — 10,871 patients × 654 columns | **IS the canonical** |
+| 0 | `canonical_patient_master_v1` | Single analytical table — 10,871 patients × 748 columns | **IS the canonical** |
 | 1 | `gold_master_patient_facts_v1`, `patient_refined_master_clinical_v12`, `tumor_pathology`, `path_synoptics`, `ultrasound_reports`, `ct_imaging`, `nuclear_med`, `fna_cytology`, `fna_episode_master_v2`, `operative_episode_detail_v2`, `imaging_patient_summary_v1`, `longitudinal_lab_canonical_v1`, `molecular_results`, `molecular_test_episode_v2`, `specimen_master_v1`, `clinical_notes_long` | Source structured data from clinical databases | YES (scripts 200–211) |
 | 2 | `extracted_tirads_validated_v1`, `extracted_braf_recovery_v1`, `extracted_ras_patient_summary_v1`, `thyroid_scoring_py_v1`, `tg_timeline_patient_summary_v1`, `complication_phenotype_v1`, `recurrence_event_clean_v1`, `survival_cohort_enriched`, `rai_treatment_episode_v2`, `ln_master_rollup_v1`, `extracted_rln_injury_refined_v2`, `extracted_postop_labs_expanded_v1` | LLM or deterministic processing of Tier 1 | YES (scripts 207–211) |
 | 3 | `note_entities_llm_*` (23 tables), `note_entities_*` (7 tables) | NLP entity extraction from clinical notes | YES as `nlp_` columns (script 212) |
@@ -56,7 +56,7 @@ Table: `canonical_patient_master_v1`
 | 209 | ab751b9 | NLP cross-validation report | QC report only — no canonical columns |
 | 210 | d90dcdf (partial) | Database audit + backup | QC artifacts — no canonical columns |
 | 211 | d90dcdf | Gap-fill from 8 extracted/episode tables | ~129 columns: complications, RLN, ETE, postop labs, RAI episodes, recurrence events, survival, molecular variants |
-| 212 | d90dcdf | NLP entity patient-level rollup | ~118 `nlp_*` columns from 26 note_entities tables |
+| 212 | d90dcdf | NLP entity patient-level rollup | ~212 `nlp_*` columns from 26 note_entities tables |
 | 213 | pending | Data dictionary + source truth map | Documentation only — no canonical columns |
 
 ---
@@ -79,9 +79,9 @@ Table: `canonical_patient_master_v1`
 | surgery | 16 | 31.7 | 0.0 | 80.3 | 0 | 9 | first_surgery_date | surg_procedure_type | surg_n_procedures |
 | lymph_nodes | 76 | 29.0 | 0.1 | 100.0 | 1 | 12 | ln_lateral_dissected | ln_total_examined | ln_positive_flag |
 | nlp_other | 14 | 26.2 | 5.6 | 43.4 | 0 | 2 | nlp_ne_procedures_has_data | nlp_ne_procedures_n_rows | nlp_ne_operative_has_data |
+| provenance | 268 | 25.0 | 0.0 | 100.0 | 28 | 123 | hypocalcemia_status | hypoparathyroidism_status | chyle_leak_status |
 | imaging_ct | 8 | 23.6 | 8.5 | 28.4 | 0 | 1 | ct_n_exams | ct_tracheal_deviation_any | ct_tracheal_narrowing_any |
 | lateral_neck | 5 | 20.8 | 0.8 | 100.0 | 1 | 4 | lateral_neck_dissected_v10 | lateral_detection_method | lateral_source_v10 |
-| provenance | 174 | 18.7 | 0.0 | 100.0 | 12 | 91 | hypocalcemia_status | hypoparathyroidism_status | chyle_leak_status |
 | rai | 25 | 16.1 | 0.0 | 100.0 | 3 | 22 | rai_received_flag | rai_max_dose_mci | rai_eligible_flag |
 | labs | 33 | 15.8 | 0.0 | 100.0 | 1 | 16 | calcium_supplement_required | tg_trajectory_class | tgab_interference_flag |
 | imaging_nuclear | 4 | 7.9 | 0.0 | 10.6 | 0 | 1 | nucmed_n_scans | nucmed_has_rai_scan | nucmed_scan_types |

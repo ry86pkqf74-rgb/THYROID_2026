@@ -1,5 +1,5 @@
 column_name,data_type,non_null_count,non_null_pct,n_distinct,sample_values,source_table,source_script,clinical_domain,description
-research_id,VARCHAR,10871,100.0,10871,5471; 5600; 4875; 1586; 713,gold_master_patient_facts_v1,204,demographics,Unique de-identified research identifier for each patient.
+research_id,VARCHAR,10871,100.0,10871,5471; 5600; 4875; 1586; 4410,gold_master_patient_facts_v1,204,demographics,Unique de-identified research identifier for each patient.
 age_at_surgery,BIGINT,10871,100.0,86,min=5.0 | med=52.0 | max=93.0,gold_master_patient_facts_v1,204,demographics,Patient age in years at time of first surgery.
 sex,VARCHAR,10871,100.0,2,female; male,gold_master_patient_facts_v1,204,demographics,Patient biological sex (Male / Female).
 race,VARCHAR,10862,99.9,44,"Caucasian or White; African American  or Black; Black or African American; White; Unknown, Unavailable or Unreported",gold_master_patient_facts_v1,204,demographics,Patient self-reported race/ethnicity category.
@@ -28,7 +28,7 @@ ajcc8_n_stage,VARCHAR,5277,48.5,3,N0; N1a; N1b,thyroid_scoring_py_v1,207,scoring
 ajcc8_m_stage,VARCHAR,10871,100.0,2,M0; M1,thyroid_scoring_py_v1,207,scoring,AJCC 8th Edition staging element computed by thyroid_scoring_py_v1.
 ajcc8_stage_group,VARCHAR,4083,37.6,4,II; I; IVB; III,thyroid_scoring_py_v1,207,scoring,AJCC 8th Edition staging element computed by thyroid_scoring_py_v1.
 ata_risk_category,VARCHAR,3144,28.9,3,high; intermediate; low,thyroid_scoring_py_v1,207,scoring,ATA 2015 initial risk stratification (low/intermediate/high).
-ata_response_category,VARCHAR,35,0.3,5,structural_incomplete; biochemical_incomplete; indeterminate; excellent; insufficient_data,thyroid_scoring_py_v1,207,scoring,ATA response-to-therapy classification.
+ata_response_category,VARCHAR,35,0.3,5,structural_incomplete; biochemical_incomplete; indeterminate; insufficient_data; excellent,thyroid_scoring_py_v1,207,scoring,ATA response-to-therapy classification.
 macis_score,DOUBLE,4082,37.5,3230,min=1.48 | med=37.54 | max=69.23,thyroid_scoring_py_v1,207,scoring,"MACIS score element (Metastasis, Age, Completeness, Invasion, Size)."
 ages_score,DOUBLE,10871,100.0,267,min=0.0 | med=5.7 | max=14.3,thyroid_scoring_py_v1,207,scoring,AGES score component for risk stratification.
 ames_risk_group,VARCHAR,10871,100.0,2,high; low,thyroid_scoring_py_v1,207,scoring,"AMES (Age, Metastasis, Extent, Size) risk classification element."
@@ -95,7 +95,7 @@ hypoparathyroidism_status,VARCHAR,10871,100.0,6,unknown; absent; absent_or_uncon
 chyle_leak_status,VARCHAR,10871,100.0,3,absent; absent_or_unconfirmed; confirmed_duration_unknown,gold_master_patient_facts_v1,204,provenance,Derived attribute: chyle leak status.
 hematoma_status,VARCHAR,10871,100.0,4,absent; absent_or_unconfirmed; confirmed_duration_unknown; probable,gold_master_patient_facts_v1,204,provenance,Derived attribute: hematoma status.
 seroma_status,VARCHAR,10871,100.0,4,absent; absent_or_unconfirmed; confirmed_duration_unknown; probable,gold_master_patient_facts_v1,204,provenance,Derived attribute: seroma status.
-wound_infection_status,VARCHAR,10871,100.0,4,absent; absent_or_unconfirmed; probable; confirmed_duration_unknown,gold_master_patient_facts_v1,204,provenance,Derived attribute: wound infection status.
+wound_infection_status,VARCHAR,10871,100.0,4,absent; absent_or_unconfirmed; confirmed_duration_unknown; probable,gold_master_patient_facts_v1,204,provenance,Derived attribute: wound infection status.
 op_rln_monitoring_any,BOOLEAN,1701,15.6,1,1701 TRUE / 0 FALSE,gold_master_patient_facts_v1 / operative_episode_detail_v2,204/207,surgery,Operative detail flag derived from operative_episode_detail_v2 NLP.
 op_drain_placed_any,BOOLEAN,169,1.6,1,169 TRUE / 0 FALSE,gold_master_patient_facts_v1 / operative_episode_detail_v2,204/207,surgery,Operative detail flag derived from operative_episode_detail_v2 NLP.
 tp_ln_examined,BIGINT,3946,36.3,89,min=0.0 | med=1.0 | max=152.0,gold_master_patient_facts_v1 / tumor_pathology,205/207,lymph_nodes,Attribute sourced directly from tumor_pathology table.
@@ -133,7 +133,7 @@ path_histology_variant_raw,VARCHAR,3317,30.5,167,classical; microcarcinoma; foll
 path_t_stage_raw,VARCHAR,4009,36.9,20,1a; 2; 1b; 3; 1,gold_master_patient_facts_v1 / patient_refined_master_clinical_v12,207/211,pathology,Derived attribute: path t stage raw.
 path_n_stage_raw,VARCHAR,4015,36.9,17,x; 0; 1a; 1b; 0a,gold_master_patient_facts_v1 / patient_refined_master_clinical_v12,207/211,pathology,Derived attribute: path n stage raw.
 path_gross_ete_flag,BIGINT,983,9.0,1,min=1.0 | med=1.0 | max=1.0,gold_master_patient_facts_v1 / patient_refined_master_clinical_v12,207/211,pathology,Boolean indicator for path gross ete.
-path_margin_raw,VARCHAR,3884,35.7,12,x; involved; c/a; indeterminate; Involved,gold_master_patient_facts_v1 / patient_refined_master_clinical_v12,207/211,pathology,Derived attribute: path margin raw.
+path_margin_raw,VARCHAR,3884,35.7,12,x; involved; c/a; indeterminate; present,gold_master_patient_facts_v1 / patient_refined_master_clinical_v12,207/211,pathology,Derived attribute: path margin raw.
 ete_grade_source,VARCHAR,10871,100.0,2,tumor_episode_master_v2; extraction_audit_engine_v7,gold_master_patient_facts_v1 / patient_refined_master_clinical_v12,207/211,pathology,Derived attribute: ete grade source.
 fna_bethesda_confidence,DOUBLE,5249,48.3,2,min=0.9 | med=0.95 | max=0.95,fna_cytology / patient_refined_master_clinical_v12,205/207,fna,Fine needle aspiration attribute.
 fna_bethesda_source,VARCHAR,5249,48.3,4,"fna_episode_master_v2, fna_cytology; fna_cytology, fna_episode_master_v2; fna_cytology; fna_episode_master_v2",fna_cytology / patient_refined_master_clinical_v12,205/207,fna,Fine needle aspiration attribute.
@@ -185,7 +185,7 @@ ene_grade_v9,VARCHAR,1266,11.6,4,present_ungraded; indeterminate; focal; extensi
 ene_levels_v9,VARCHAR,44,0.4,15,level 4; level 3; level 6; Level 3; paratracheal,gold_master_patient_facts_v1 / tumor_pathology,205/207,lymph_nodes,"Extranodal extension attribute (multi-source: path, imaging, NLP)."
 ene_deposit_cm,DOUBLE,9,0.1,9,min=1.0 | med=1.7 | max=6.5,gold_master_patient_facts_v1 / tumor_pathology,205/207,lymph_nodes,"Extranodal extension attribute (multi-source: path, imaging, NLP)."
 ene_path_synoptic,VARCHAR,1266,11.6,4,present_ungraded; indeterminate; focal; extensive,gold_master_patient_facts_v1 / tumor_pathology,205/207,lymph_nodes,"Extranodal extension attribute (multi-source: path, imaging, NLP)."
-ene_path_nlp,VARCHAR,21,0.2,4,present_ungraded; absent; microscopic; focal,gold_master_patient_facts_v1 / tumor_pathology,205/207,lymph_nodes,"Extranodal extension attribute (multi-source: path, imaging, NLP)."
+ene_path_nlp,VARCHAR,21,0.2,4,absent; present_ungraded; microscopic; focal,gold_master_patient_facts_v1 / tumor_pathology,205/207,lymph_nodes,"Extranodal extension attribute (multi-source: path, imaging, NLP)."
 ene_path_levels,VARCHAR,21,0.2,15,; level VI; level 3; level IV; level IIA,gold_master_patient_facts_v1 / tumor_pathology,205/207,lymph_nodes,"Extranodal extension attribute (multi-source: path, imaging, NLP)."
 ene_op_intraop,VARCHAR,12,0.1,3,absent_intraop; gross_intraop; present_intraop,gold_master_patient_facts_v1 / tumor_pathology,205/207,lymph_nodes,"Extranodal extension attribute (multi-source: path, imaging, NLP)."
 ene_ct,VARCHAR,369,3.4,4,suspicious_moderate; indeterminate; suspicious_high; negative,gold_master_patient_facts_v1 / tumor_pathology,205/207,lymph_nodes,"Extranodal extension attribute (multi-source: path, imaging, NLP)."
@@ -574,7 +574,7 @@ nlp_vasc_confidence_tier,VARCHAR,653,6.0,1,below_80pct_concordance,gold_master_p
 nlp_synoptic_has_data,BOOLEAN,8,0.1,1,8 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp synoptic has data.
 nlp_synoptic_n_entities,BIGINT,8,0.1,5,min=1.0 | med=4.5 | max=7.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp synoptic n entities.
 nlp_synoptic_n_notes,BIGINT,8,0.1,1,min=1.0 | med=1.0 | max=1.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp synoptic n notes.
-nlp_synoptic_key_finding,VARCHAR,8,0.1,6,"multifocal; papillary thyroid carcinoma; unifocal; follicular variant; Papillary thyroid carcinoma, classical variant",gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp synoptic key finding.
+nlp_synoptic_key_finding,VARCHAR,8,0.1,6,"multifocal; papillary thyroid carcinoma; unifocal; Papillary thyroid carcinoma, classical variant; conventional type",gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp synoptic key finding.
 nlp_pmhx_has_data,BOOLEAN,290,2.7,1,290 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp pmhx has data.
 nlp_pmhx_n_entities,BIGINT,290,2.7,10,min=1.0 | med=2.0 | max=13.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp pmhx n entities.
 nlp_pmhx_n_notes,BIGINT,290,2.7,2,min=1.0 | med=1.0 | max=2.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp pmhx n notes.
@@ -586,11 +586,11 @@ nlp_pshx_key_finding,VARCHAR,1864,17.1,1282,total thyroidectomy; thyroidectomy; 
 nlp_usnodule_has_data,BOOLEAN,18,0.2,1,18 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp usnodule has data.
 nlp_usnodule_n_entities,BIGINT,18,0.2,7,min=1.0 | med=2.0 | max=8.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp usnodule n entities.
 nlp_usnodule_n_notes,BIGINT,18,0.2,1,min=1.0 | med=1.0 | max=1.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp usnodule n notes.
-nlp_usnodule_key_finding,VARCHAR,18,0.2,18,solid; 3.3 x 2.1 x 3.8 cm; 1.4 cm (TR2 mixed cystic/solid nodule); 3.2 mL (left thyroid nodule); 6 cm,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp usnodule key finding.
+nlp_usnodule_key_finding,VARCHAR,18,0.2,18,solid; 3.3 x 2.1 x 3.8 cm; 0.5 x 0.3 x 0.5 cm (Right mid nodule); 1.4 cm (TR2 mixed cystic/solid nodule); 6 cm,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp usnodule key finding.
 nlp_symptoms_has_data,BOOLEAN,116,1.1,1,116 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp symptoms has data.
 nlp_symptoms_n_entities,BIGINT,116,1.1,7,min=1.0 | med=1.0 | max=7.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp symptoms n entities.
 nlp_symptoms_n_notes,BIGINT,116,1.1,1,min=1.0 | med=1.0 | max=1.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp symptoms n notes.
-nlp_symptoms_key_finding,VARCHAR,116,1.1,110,fatigue; palpable left thyroid nodule; thyroid nodules; right thyroid mass; weight gain,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp symptoms key finding.
+nlp_symptoms_key_finding,VARCHAR,116,1.1,110,fatigue; palpable left thyroid nodule; thyroid nodules; weight gain; right thyroid mass,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp symptoms key finding.
 nlp_labs_has_data,BOOLEAN,791,7.3,1,791 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp labs has data.
 nlp_labs_n_entities,BIGINT,791,7.3,12,min=1.0 | med=2.0 | max=12.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp labs n entities.
 nlp_labs_n_notes,BIGINT,791,7.3,2,min=1.0 | med=1.0 | max=2.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp labs n notes.
@@ -653,3 +653,99 @@ nlp_ne_problemlist_has_data,BOOLEAN,4036,37.1,1,4036 TRUE / 0 FALSE,note_entitie
 nlp_ne_problemlist_n_rows,BIGINT,4036,37.1,16,min=1.0 | med=2.0 | max=18.0,note_entities_* (non-LLM),212,nlp_other,NLP entity metadata from non-LLM note_entities_* tables.
 nlp_ne_staging_has_data,BOOLEAN,1639,15.1,1,1639 TRUE / 0 FALSE,note_entities_* (non-LLM),212,nlp_other,NLP entity metadata from non-LLM note_entities_* tables.
 nlp_ne_staging_n_rows,BIGINT,1639,15.1,30,min=1.0 | med=1.0 | max=37.0,note_entities_* (non-LLM),212,nlp_other,NLP entity metadata from non-LLM note_entities_* tables.
+gm_tg_below_threshold_ever,BOOLEAN,2566,23.6,2,1897 TRUE / 669 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: gm tg below threshold ever.
+gm_lab_completeness_score,INTEGER,10871,100.0,8,min=0.0 | med=0.0 | max=85.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: gm lab completeness score.
+gm_provenance_confidence,INTEGER,10871,100.0,4,min=35.0 | med=35.0 | max=100.0,gold_master_patient_facts_v1,207,provenance,Derived attribute: gm provenance confidence.
+gm_path_ete_raw,VARCHAR,4075,37.5,31,x; false; present; minimal; microscopic,gold_master_patient_facts_v1,204,provenance,Derived attribute: gm path ete raw.
+gm_path_vascular_inv_raw,VARCHAR,3682,33.9,19,x; present; focal; extensive; indeterminate,gold_master_patient_facts_v1,204,provenance,Derived attribute: gm path vascular inv raw.
+gm_path_lvi_raw,VARCHAR,3366,31.0,16,x; present; extensive; indeterminate; c/a,gold_master_patient_facts_v1,204,provenance,Derived attribute: gm path lvi raw.
+gm_path_pni_raw,VARCHAR,1438,13.2,6,x; present; focal; indeterminate; c/a,gold_master_patient_facts_v1,204,provenance,Derived attribute: gm path pni raw.
+gm_path_ene_raw,VARCHAR,1227,11.3,60,x; present; indeterminate; n/s; c/a,gold_master_patient_facts_v1,204,provenance,Derived attribute: gm path ene raw.
+gm_path_stage_raw,VARCHAR,0,0.0,0,,gold_master_patient_facts_v1,204,provenance,Derived attribute: gm path stage raw.
+gm_path_m_stage_raw,VARCHAR,4005,36.8,8,x; M0; 1; M1; m1,gold_master_patient_facts_v1,204,provenance,Derived attribute: gm path m stage raw.
+gm_recurrence_date_source,VARCHAR,182,1.7,2,longitudinal_lab_clean_v1; extracted_recurrence_refined_v1,gold_master_patient_facts_v1,207,provenance,Derived attribute: gm recurrence date source.
+gm_recurrence_type_primary,VARCHAR,1946,17.9,2,structural; biochemical,gold_master_patient_facts_v1,204,provenance,Derived attribute: gm recurrence type primary.
+gm_recurrence_site_primary,VARCHAR,0,0.0,0,,gold_master_patient_facts_v1,204,provenance,Derived attribute: gm recurrence site primary.
+gm_recurrence_source,VARCHAR,1946,17.9,2,extracted_recurrence_refined_v1; longitudinal_lab_clean_v1,gold_master_patient_facts_v1,207,provenance,Derived attribute: gm recurrence source.
+gm_rai_date_confidence,VARCHAR,581,5.3,5,0.5; 0.2; 0.8; 0.6; 0.7,gold_master_patient_facts_v1,207,provenance,Derived attribute: gm rai date confidence.
+gm_rai_date_source,VARCHAR,581,5.3,2,extracted_rai_validated_v1; rai_treatment_episode_v2,gold_master_patient_facts_v1,207,provenance,Derived attribute: gm rai date source.
+prm_ete_imaging_path_concordance,VARCHAR,4030,37.1,1,insufficient_data,gold_master_patient_facts_v1,204,provenance,Derived attribute: prm ete imaging path concordance.
+prm_ete_path_confirmed,BOOLEAN,10871,100.0,2,3850 TRUE / 7021 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: prm ete path confirmed.
+prm_ete_rule_applied,VARCHAR,3548,32.6,2,x_to_microscopic; present_to_microscopic,gold_master_patient_facts_v1,204,provenance,Derived attribute: prm ete rule applied.
+prm_size_concordance,VARCHAR,4030,37.1,1,insufficient_data,gold_master_patient_facts_v1,204,provenance,Derived attribute: prm size concordance.
+prm_first_fna_date,DATE,5077,46.7,3198,min=0001-07-15 | max=2025-01-21,gold_master_patient_facts_v1,204,provenance,Date of prm first fna event.
+prm_last_fna_date,DATE,5077,46.7,3159,min=0106-12-22 | max=2029-11-17,gold_master_patient_facts_v1,204,provenance,Date of prm last fna event.
+prm_fna_n_sources,INTEGER,5249,48.3,2,min=1.0 | med=2.0 | max=2.0,gold_master_patient_facts_v1,207,provenance,Derived attribute: prm fna n sources.
+prm_fna_source_tables,VARCHAR,5249,48.3,4,"fna_episode_master_v2, fna_cytology; fna_cytology, fna_episode_master_v2; fna_cytology; fna_episode_master_v2",gold_master_patient_facts_v1,207,provenance,Derived attribute: prm fna source tables.
+prm_high_risk_marker_any,BOOLEAN,10305,94.8,1,0 TRUE / 10305 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: prm high risk marker any.
+prm_molecular_risk_category,VARCHAR,10024,92.2,3,tested_negative; high_risk_molecular; fusion_positive,gold_master_patient_facts_v1,204,provenance,Derived attribute: prm molecular risk category.
+prm_margin_with_gross_ete,VARCHAR,3957,36.4,2,false; true,gold_master_patient_facts_v1,204,provenance,Derived attribute: prm margin with gross ete.
+prm_margin_confidence,VARCHAR,3957,36.4,3,0.9; 0.95; 0.5,gold_master_patient_facts_v1,207,provenance,Derived attribute: prm margin confidence.
+prm_margin_source,VARCHAR,3957,36.4,1,path_synoptic,gold_master_patient_facts_v1,207,provenance,Derived attribute: prm margin source.
+prm_structural_disease_flag,BOOLEAN,862,7.9,2,380 TRUE / 482 FALSE,gold_master_patient_facts_v1,204,provenance,Boolean indicator for prm structural disease.
+prm_imaging_data_completeness,VARCHAR,4030,37.1,1,path_only,gold_master_patient_facts_v1,204,provenance,Derived attribute: prm imaging data completeness.
+prm_recurrence_detection_category,VARCHAR,10871,100.0,4,no_recurrence; structural_date_unknown; biochemical_only; structural_confirmed,gold_master_patient_facts_v1,204,provenance,Derived attribute: prm recurrence detection category.
+prm_n_recurrence_sources,INTEGER,10871,100.0,4,min=0.0 | med=0.0 | max=3.0,gold_master_patient_facts_v1,207,provenance,Derived attribute: prm n recurrence sources.
+prm_rln_worst_grade,VARCHAR,10871,100.0,4,no_injury; unknown; paralysis; paresis,gold_master_patient_facts_v1,204,provenance,Derived attribute: prm rln worst grade.
+prm_followup_clinical_events,INTEGER,10871,100.0,41,min=0.0 | med=0.0 | max=50.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: prm followup clinical events.
+prm_followup_has_complications,BOOLEAN,10871,100.0,2,10862 TRUE / 9 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: prm followup has complications.
+prm_followup_tg_labs,INTEGER,10871,100.0,74,min=0.0 | med=0.0 | max=153.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: prm followup tg labs.
+prm_tg_adequate_followup,BOOLEAN,10871,100.0,2,1823 TRUE / 9048 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: prm tg adequate followup.
+prm_hypocalcemia_lab_flag,BOOLEAN,1026,9.4,2,5 TRUE / 1021 FALSE,gold_master_patient_facts_v1,204,provenance,Boolean indicator for prm hypocalcemia lab.
+prm_hypoparathyroidism_lab_flag,BOOLEAN,1026,9.4,2,11 TRUE / 1015 FALSE,gold_master_patient_facts_v1,204,provenance,Boolean indicator for prm hypoparathyroidism lab.
+lab_tsh_min,DOUBLE,0,0.0,0,,gold_master_patient_facts_v1,204,provenance,Derived attribute: lab tsh min.
+lab_tsh_max,DOUBLE,0,0.0,0,,gold_master_patient_facts_v1,204,provenance,Derived attribute: lab tsh max.
+lab_tsh_n_measurements,BIGINT,0,0.0,0,,gold_master_patient_facts_v1,204,provenance,Derived attribute: lab tsh n measurements.
+lab_tsh_first_date,DATE,0,0.0,0,,gold_master_patient_facts_v1,204,provenance,Date of lab tsh first event.
+lab_tsh_last_date,DATE,0,0.0,0,,gold_master_patient_facts_v1,204,provenance,Date of lab tsh last event.
+lab_vitd_min,DOUBLE,0,0.0,0,,gold_master_patient_facts_v1,204,provenance,Derived attribute: lab vitd min.
+lab_vitd_max,DOUBLE,0,0.0,0,,gold_master_patient_facts_v1,204,provenance,Derived attribute: lab vitd max.
+lab_vitd_n_measurements,BIGINT,0,0.0,0,,gold_master_patient_facts_v1,204,provenance,Derived attribute: lab vitd n measurements.
+us_left_lobe_volume_ml,VARCHAR,4074,37.5,87,4.4 mL; 4.3 mL; 4.0 mL; 3.5 mL; 3.8 mL,gold_master_patient_facts_v1,204,provenance,Derived attribute: us left lobe volume ml.
+us_right_lobe_volume_ml,VARCHAR,4074,37.5,93,4.8 mL; 5.0 mL; 4.4 mL; 4.9 mL; 5.3 mL,gold_master_patient_facts_v1,204,provenance,Derived attribute: us right lobe volume ml.
+us_total_volume_ml,VARCHAR,4074,37.5,125,9.4 mL; 9.9 mL; 8.9 mL; 8.6 mL; 9.3 mL,gold_master_patient_facts_v1,204,provenance,Derived attribute: us total volume ml.
+us_isthmus_thickness_mm,VARCHAR,4074,37.5,46,3.5 mm; 3.3 mm; 3.8 mm; 3.6 mm; 3.7 mm,gold_master_patient_facts_v1,204,provenance,Derived attribute: us isthmus thickness mm.
+us_n_reports,BIGINT,4074,37.5,12,min=1.0 | med=1.0 | max=13.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: us n reports.
+us_most_recent_date,DATE,4074,37.5,1937,min=2003-01-06 | max=2026-06-19,gold_master_patient_facts_v1,204,provenance,Date of us most recent event.
+syn_frozen_section,BOOLEAN,8612,79.2,2,3696 TRUE / 4916 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn frozen section.
+syn_frozen_section_result,VARCHAR,4062,37.4,3861,LL - MNG; RL - MNG; LL - MNG NOS; RL - MNG NOS; RL and isthmus - MNG,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn frozen section result.
+syn_carcinoma_on_frozen,BOOLEAN,3501,32.2,2,581 TRUE / 2920 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn carcinoma on frozen.
+syn_capsular_invasion_clean,VARCHAR,1126,10.4,4,present; minimally_invasive; absent; widely_invasive,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn capsular invasion clean.
+syn_necrosis_clean,VARCHAR,726,6.7,3,present; extensive; focal,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn necrosis clean.
+syn_lymphatic_invasion_clean,VARCHAR,3432,31.6,5,present; indeterminate; extensive; focal; absent,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn lymphatic invasion clean.
+syn_mitotic_rate_numeric,DOUBLE,691,6.4,17,min=0.0 | med=3.0 | max=38.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn mitotic rate numeric.
+syn_mitotic_rate_qualifier,VARCHAR,407,3.7,4,less_than; greater_than; elevated; extracted,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn mitotic rate qualifier.
+syn_architecture,VARCHAR,10870,100.0,86,"nan; classical; follicular; classical
+follicular; follicular
+classical",gold_master_patient_facts_v1,204,provenance,Derived attribute: syn architecture.
+syn_histologic_grade,BIGINT,355,3.3,4,min=1.0 | med=1.0 | max=4.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn histologic grade.
+syn_ki67_index,VARCHAR,18,0.2,13,1; pending; 1.1; 3; 0.9,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn ki67 index.
+syn_margin_status_synoptic,VARCHAR,3957,36.4,12,x; involved; c/a; indeterminate; Involved,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn margin status synoptic.
+syn_margin_distance_mm,VARCHAR,10869,100.0,53,nan; <1; 1; 0.1; 0.5,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn margin distance mm.
+syn_has_second_tumor,BOOLEAN,10871,100.0,2,1346 TRUE / 9525 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn has second tumor.
+syn_has_third_plus_tumor,BOOLEAN,10871,100.0,2,452 TRUE / 10419 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn has third plus tumor.
+syn_n_tumors_in_synoptic,BIGINT,10871,100.0,5,min=1.0 | med=1.0 | max=5.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn n tumors in synoptic.
+syn_tumor2_histologic_type,VARCHAR,1346,12.4,32,PTC; NIFTP; MTC; follicular carcinoma; FTUMP,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn tumor2 histologic type.
+syn_tumor2_size_cm,VARCHAR,1304,12.0,87,0.1; 0.2; 0.5; 0.3; 0.4,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn tumor2 size cm.
+syn_hashimoto,BOOLEAN,248,2.3,1,248 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn hashimoto.
+syn_graves,BOOLEAN,574,5.3,1,574 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn graves.
+syn_multinodular_goiter,BOOLEAN,6075,55.9,1,6075 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn multinodular goiter.
+syn_chronic_thyroiditis,BOOLEAN,1096,10.1,1,1096 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn chronic thyroiditis.
+syn_follicular_adenoma,BOOLEAN,924,8.5,1,924 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn follicular adenoma.
+syn_hurthle_cell_change,BOOLEAN,643,5.9,1,643 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn hurthle cell change.
+syn_hyperplastic_nodules,BOOLEAN,491,4.5,1,491 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn hyperplastic nodules.
+syn_adenomatoid_nodules,BOOLEAN,1172,10.8,1,1172 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn adenomatoid nodules.
+syn_c_cell_hyperplasia,BOOLEAN,52,0.5,1,52 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn c cell hyperplasia.
+syn_colloid_nodule,BOOLEAN,416,3.8,1,416 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn colloid nodule.
+syn_left_lobe_weight_g,DOUBLE,4202,38.7,1012,min=0.5 | med=19.6 | max=462.2,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn left lobe weight g.
+syn_right_lobe_weight_g,DOUBLE,4064,37.4,964,min=0.4 | med=18.0 | max=492.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn right lobe weight g.
+syn_isthmus_weight_g,DOUBLE,115,1.1,75,min=0.5 | med=4.2 | max=202.7,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn isthmus weight g.
+syn_total_weight_g,DOUBLE,3841,35.3,943,min=1.5 | med=33.0 | max=494.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn total weight g.
+syn_left_lobe_size_cm,VARCHAR,7204,66.3,6715,n/s; 4.5 x 2.5 x 2.0; 5.0 x 3.0 x 2.0; 7.5 x 4.5 x 3.5; 5.0 x 2.5 x 2.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn left lobe size cm.
+syn_right_lobe_size_cm,VARCHAR,7058,64.9,6599,n/s; 4.0 x 2.5 x 1.5; 4.0 x 3.0 x 2.0 ; 4.5 x 2.5 x 1.5 ; 4.5 x 2.5 x 1.5,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn right lobe size cm.
+syn_isthmus_size_cm,VARCHAR,3981,36.6,3500,2.0 x 1.1 x 0.5; 2.5 x 1.5 x 0.5; 1.5 x 1.5 x 0.5; 2.2 x 1.5 x 0.5; 1.5 x 1.0 x 0.5 ,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn isthmus size cm.
+syn_n_parathyroid_identified,BIGINT,10871,100.0,7,min=0.0 | med=0.0 | max=6.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn n parathyroid identified.
+syn_parathyroid_in_specimen,BOOLEAN,5863,53.9,2,1375 TRUE / 4488 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn parathyroid in specimen.
+syn_central_dissection,BOOLEAN,655,6.0,1,655 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn central dissection.
+syn_bilateral_neck_dissection,BOOLEAN,9,0.1,1,9 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn bilateral neck dissection.
+syn_io_rln_monitoring,BOOLEAN,120,1.1,1,120 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn io rln monitoring.
