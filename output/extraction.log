@@ -1,0 +1,17 @@
+2026-04-14 [INFO] TIRADS extraction backfill — complete 12,900-row table
+2026-04-14 [INFO] Source: "Thyroid 2026".main.raw_imaging_12_slots_v1
+2026-04-14 [INFO] Source rows with text: 12,900 | Unique reports: 2,687 | Unique patients: 1,429
+2026-04-14 [INFO] Prior LLM extraction state: ALL 2,687 unique reports already extracted (0 remaining)
+2026-04-14 [INFO]   Prior run uploaded to thyroid_ete_fix_20260413.tirads_llm_extracted_v2 (5,636 rows)
+2026-04-14 [INFO]   5,157 source slots matched by source_nodule_uid
+2026-04-14 [INFO]   7,743 source slots had no matching extracted row (fan-out design: LLM extracted fewer nodules than slots)
+2026-04-14 [INFO] Backfill approach: left-join source → extracted on source_nodule_uid
+2026-04-14 [INFO]   Matched rows (extraction_status=ok): 5,152
+2026-04-14 [INFO]   No-nodule rows: 3
+2026-04-14 [INFO]   JSON error rows: 2
+2026-04-14 [INFO]   Backfilled (slot_not_mapped): 7,743
+2026-04-14 [INFO] Final table: 12,900 rows | 1,429 patients | 28 columns
+2026-04-14 [INFO] TIRADS scored (2017): 2,322 rows
+2026-04-14 [INFO]   TR1: 281 | TR2: 312 | TR3: 997 | TR4: 637 | TR5: 95
+2026-04-14 [INFO] Uploaded to thyroid_ete_fix_20260413.tirads_llm_extracted_v2 (CREATE OR REPLACE)
+2026-04-14 [INFO] Upload verified: 12,900 total, 1,429 RIDs, 5,152 ok, 7,743 slot_not_mapped, 2,322 scored
