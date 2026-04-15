@@ -28,7 +28,7 @@ ajcc8_n_stage,VARCHAR,5277,48.5,3,N0; N1a; N1b,thyroid_scoring_py_v1,207,scoring
 ajcc8_m_stage,VARCHAR,10871,100.0,2,M0; M1,thyroid_scoring_py_v1,207,scoring,AJCC 8th Edition staging element computed by thyroid_scoring_py_v1.
 ajcc8_stage_group,VARCHAR,4083,37.6,4,II; I; IVB; III,thyroid_scoring_py_v1,207,scoring,AJCC 8th Edition staging element computed by thyroid_scoring_py_v1.
 ata_risk_category,VARCHAR,3144,28.9,3,high; intermediate; low,thyroid_scoring_py_v1,207,scoring,ATA 2015 initial risk stratification (low/intermediate/high).
-ata_response_category,VARCHAR,35,0.3,5,structural_incomplete; biochemical_incomplete; indeterminate; insufficient_data; excellent,thyroid_scoring_py_v1,207,scoring,ATA response-to-therapy classification.
+ata_response_category,VARCHAR,35,0.3,5,structural_incomplete; biochemical_incomplete; indeterminate; excellent; insufficient_data,thyroid_scoring_py_v1,207,scoring,ATA response-to-therapy classification.
 macis_score,DOUBLE,4082,37.5,3230,min=1.48 | med=37.54 | max=69.23,thyroid_scoring_py_v1,207,scoring,"MACIS score element (Metastasis, Age, Completeness, Invasion, Size)."
 ages_score,DOUBLE,10871,100.0,267,min=0.0 | med=5.7 | max=14.3,thyroid_scoring_py_v1,207,scoring,AGES score component for risk stratification.
 ames_risk_group,VARCHAR,10871,100.0,2,high; low,thyroid_scoring_py_v1,207,scoring,"AMES (Age, Metastasis, Extent, Size) risk classification element."
@@ -79,7 +79,7 @@ tg_n_measurements,BIGINT,2566,23.6,68,min=1.0 | med=6.0 | max=150.0,tg_timeline_
 recurrence_confirmed,BOOLEAN,10871,100.0,2,82 TRUE / 10789 FALSE,canonical_recurrence_v1 / recurrence_event_clean_v1,203/211,recurrence,Recurrence classification or date attribute.
 recurrence_type,VARCHAR,10871,100.0,6,none; persistent_biochemical_disease; biochemical_tg_rise; imaging_suspicious_unconfirmed; fna_confirmed,canonical_recurrence_v1 / recurrence_event_clean_v1,203/211,recurrence,Recurrence classification or date attribute.
 recurrence_date,TIMESTAMP,802,7.4,722,min=0202-12-30 00:00:00 | max=2025-11-13 00:00:00,canonical_recurrence_v1 / recurrence_event_clean_v1,203/211,recurrence,Recurrence classification or date attribute.
-recurrence_site,VARCHAR,79,0.7,79,"right thyroid nodule suspicious for papillary thyroid carcinoma; right-sided cervical lymphadenopathy positive for recurrent disease; recurrence late 2016 nodal dx; Metastatic oncocytic carcinoma in bone biopsy; left level 4, 3 and may be 2 lymph nodes suspicious for recurrence",canonical_recurrence_v1 / recurrence_event_clean_v1,203/211,recurrence,Recurrence classification or date attribute.
+recurrence_site,VARCHAR,79,0.7,79,"right-sided cervical lymphadenopathy positive for recurrent disease; right thyroid nodule suspicious for papillary thyroid carcinoma; Metastatic oncocytic carcinoma in bone biopsy; recurrence late 2016 nodal dx; left level 4, 3 and may be 2 lymph nodes suspicious for recurrence",canonical_recurrence_v1 / recurrence_event_clean_v1,203/211,recurrence,Recurrence classification or date attribute.
 recurrence_histology,INTEGER,0,0.0,0,,canonical_recurrence_v1 / recurrence_event_clean_v1,203/211,recurrence,Recurrence classification or date attribute.
 recurrence_evidence_source,VARCHAR,827,7.6,4,tg_time_series; imaging_or_clinical_note; fna_cytology; recurrence_event_clean_v1_legacy,canonical_recurrence_v1 / recurrence_event_clean_v1,203/211,recurrence,Recurrence classification or date attribute.
 recurrence_definition,VARCHAR,10871,100.0,7,no_recurrence_evidence; persistent_tg_never_undetectable; rising_tg_after_undetectable; llm_extracted_unconfirmed; fna_bethesda_vi_malignant,canonical_recurrence_v1 / recurrence_event_clean_v1,203/211,recurrence,Recurrence classification or date attribute.
@@ -133,7 +133,7 @@ path_histology_variant_raw,VARCHAR,3317,30.5,167,classical; microcarcinoma; foll
 path_t_stage_raw,VARCHAR,4009,36.9,20,1a; 2; 1b; 3; 1,gold_master_patient_facts_v1 / patient_refined_master_clinical_v12,207/211,pathology,Derived attribute: path t stage raw.
 path_n_stage_raw,VARCHAR,4015,36.9,17,x; 0; 1a; 1b; 0a,gold_master_patient_facts_v1 / patient_refined_master_clinical_v12,207/211,pathology,Derived attribute: path n stage raw.
 path_gross_ete_flag,BIGINT,983,9.0,1,min=1.0 | med=1.0 | max=1.0,gold_master_patient_facts_v1 / patient_refined_master_clinical_v12,207/211,pathology,Boolean indicator for path gross ete.
-path_margin_raw,VARCHAR,3884,35.7,12,x; involved; c/a; indeterminate; present,gold_master_patient_facts_v1 / patient_refined_master_clinical_v12,207/211,pathology,Derived attribute: path margin raw.
+path_margin_raw,VARCHAR,3884,35.7,12,x; involved; c/a; indeterminate; Involved,gold_master_patient_facts_v1 / patient_refined_master_clinical_v12,207/211,pathology,Derived attribute: path margin raw.
 ete_grade_source,VARCHAR,10871,100.0,2,tumor_episode_master_v2; extraction_audit_engine_v7,gold_master_patient_facts_v1 / patient_refined_master_clinical_v12,207/211,pathology,Derived attribute: ete grade source.
 fna_bethesda_confidence,DOUBLE,5249,48.3,2,min=0.9 | med=0.95 | max=0.95,fna_cytology / patient_refined_master_clinical_v12,205/207,fna,Fine needle aspiration attribute.
 fna_bethesda_source,VARCHAR,5249,48.3,4,"fna_episode_master_v2, fna_cytology; fna_cytology, fna_episode_master_v2; fna_cytology; fna_episode_master_v2",fna_cytology / patient_refined_master_clinical_v12,205/207,fna,Fine needle aspiration attribute.
@@ -184,7 +184,7 @@ best_ene_grade,VARCHAR,1596,14.7,12,present_ungraded; suspicious_moderate; indet
 ene_grade_v9,VARCHAR,1266,11.6,4,present_ungraded; indeterminate; focal; extensive,gold_master_patient_facts_v1 / tumor_pathology,205/207,lymph_nodes,"Extranodal extension attribute (multi-source: path, imaging, NLP)."
 ene_levels_v9,VARCHAR,44,0.4,15,level 4; level 3; level 6; Level 3; paratracheal,gold_master_patient_facts_v1 / tumor_pathology,205/207,lymph_nodes,"Extranodal extension attribute (multi-source: path, imaging, NLP)."
 ene_deposit_cm,DOUBLE,9,0.1,9,min=1.0 | med=1.7 | max=6.5,gold_master_patient_facts_v1 / tumor_pathology,205/207,lymph_nodes,"Extranodal extension attribute (multi-source: path, imaging, NLP)."
-ene_path_synoptic,VARCHAR,1266,11.6,4,present_ungraded; indeterminate; focal; extensive,gold_master_patient_facts_v1 / tumor_pathology,205/207,lymph_nodes,"Extranodal extension attribute (multi-source: path, imaging, NLP)."
+ene_path_synoptic,VARCHAR,1266,11.6,4,present_ungraded; focal; indeterminate; extensive,gold_master_patient_facts_v1 / tumor_pathology,205/207,lymph_nodes,"Extranodal extension attribute (multi-source: path, imaging, NLP)."
 ene_path_nlp,VARCHAR,21,0.2,4,absent; present_ungraded; microscopic; focal,gold_master_patient_facts_v1 / tumor_pathology,205/207,lymph_nodes,"Extranodal extension attribute (multi-source: path, imaging, NLP)."
 ene_path_levels,VARCHAR,21,0.2,15,; level VI; level 3; level IV; level IIA,gold_master_patient_facts_v1 / tumor_pathology,205/207,lymph_nodes,"Extranodal extension attribute (multi-source: path, imaging, NLP)."
 ene_op_intraop,VARCHAR,12,0.1,3,absent_intraop; gross_intraop; present_intraop,gold_master_patient_facts_v1 / tumor_pathology,205/207,lymph_nodes,"Extranodal extension attribute (multi-source: path, imaging, NLP)."
@@ -242,7 +242,7 @@ preop_sweep_genes_found_v11,BIGINT,10871,100.0,3,min=0.0 | med=0.0 | max=2.0,gol
 confirmed_rai_episodes,BIGINT,862,7.9,4,min=0.0 | med=0.0 | max=3.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: confirmed rai episodes.
 n_rai_episodes,BIGINT,862,7.9,17,min=1.0 | med=1.0 | max=22.0,gold_master_patient_facts_v1,204,provenance,Count of rai episodes records for patient.
 rai_dose_v9,DOUBLE,276,2.5,140,min=10.1 | med=150.0 | max=450.0,gold_master_patient_facts_v1 / rai_treatment_episode_v2,207/211,rai,Radioactive iodine treatment or scan attribute.
-rai_intent_v9,VARCHAR,276,2.5,5,unknown; ablation; remnant_ablation; therapeutic; adjuvant,gold_master_patient_facts_v1 / rai_treatment_episode_v2,207/211,rai,Radioactive iodine treatment or scan attribute.
+rai_intent_v9,VARCHAR,276,2.5,5,unknown; ablation; remnant_ablation; adjuvant; therapeutic,gold_master_patient_facts_v1 / rai_treatment_episode_v2,207/211,rai,Radioactive iodine treatment or scan attribute.
 rai_avidity,BOOLEAN,862,7.9,1,0 TRUE / 862 FALSE,gold_master_patient_facts_v1 / rai_treatment_episode_v2,207/211,rai,Radioactive iodine treatment or scan attribute.
 rai_avid_flag,BOOLEAN,862,7.9,1,0 TRUE / 862 FALSE,gold_master_patient_facts_v1 / rai_treatment_episode_v2,207/211,rai,Radioactive iodine treatment or scan attribute.
 rai_validation_tier,VARCHAR,862,7.9,3,unconfirmed_no_dose; confirmed_with_dose; unconfirmed_with_dose,gold_master_patient_facts_v1 / rai_treatment_episode_v2,207/211,rai,Radioactive iodine treatment or scan attribute.
@@ -318,7 +318,7 @@ days_to_first_laryngoscopy,BIGINT,24,0.2,24,min=-96.0 | med=4521.0 | max=8207.0,
 days_to_last_laryngoscopy,BIGINT,24,0.2,24,min=-96.0 | med=4521.0 | max=8207.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: days to last laryngoscopy.
 lateral_neck_dissected_v10,BOOLEAN,10871,100.0,2,119 TRUE / 10752 FALSE,patient_refined_master_clinical_v12,207,lateral_neck,Lateral neck dissection attribute.
 lateral_detection_method,VARCHAR,119,1.1,8,level_or_text_match; jugular; level_mention; lateral_neck_dissection; selective_neck,patient_refined_master_clinical_v12,207,lateral_neck,Lateral neck dissection attribute.
-lateral_levels_v10,VARCHAR,88,0.8,22,; level V; II; levels II; level II,patient_refined_master_clinical_v12,207,lateral_neck,Lateral neck dissection attribute.
+lateral_levels_v10,VARCHAR,88,0.8,22,; level V; II; level II; levels II,patient_refined_master_clinical_v12,207,lateral_neck,Lateral neck dissection attribute.
 lateral_side_v10,VARCHAR,94,0.9,2,right; left,patient_refined_master_clinical_v12,207,lateral_neck,Lateral neck dissection attribute.
 lateral_source_v10,VARCHAR,119,1.1,2,nlp_op_note; structured_levels,patient_refined_master_clinical_v12,207,lateral_neck,Lateral neck dissection attribute.
 completion_reason,VARCHAR,685,6.3,5,pathology_upgrade; unclassified; imaging_concern; medical_indication; molecular_result,patient_refined_master_clinical_v12,207,completion,Completion thyroidectomy indicator or reason.
@@ -574,7 +574,7 @@ nlp_vasc_confidence_tier,VARCHAR,653,6.0,1,below_80pct_concordance,gold_master_p
 nlp_synoptic_has_data,BOOLEAN,8,0.1,1,8 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp synoptic has data.
 nlp_synoptic_n_entities,BIGINT,8,0.1,5,min=1.0 | med=4.5 | max=7.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp synoptic n entities.
 nlp_synoptic_n_notes,BIGINT,8,0.1,1,min=1.0 | med=1.0 | max=1.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp synoptic n notes.
-nlp_synoptic_key_finding,VARCHAR,8,0.1,6,"multifocal; papillary thyroid carcinoma; unifocal; Papillary thyroid carcinoma, classical variant; conventional type",gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp synoptic key finding.
+nlp_synoptic_key_finding,VARCHAR,8,0.1,6,"multifocal; papillary thyroid carcinoma; unifocal; follicular variant; Papillary thyroid carcinoma, classical variant",gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp synoptic key finding.
 nlp_pmhx_has_data,BOOLEAN,290,2.7,1,290 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp pmhx has data.
 nlp_pmhx_n_entities,BIGINT,290,2.7,10,min=1.0 | med=2.0 | max=13.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp pmhx n entities.
 nlp_pmhx_n_notes,BIGINT,290,2.7,2,min=1.0 | med=1.0 | max=2.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp pmhx n notes.
@@ -590,7 +590,7 @@ nlp_usnodule_key_finding,VARCHAR,18,0.2,18,solid; 3.3 x 2.1 x 3.8 cm; 0.5 x 0.3 
 nlp_symptoms_has_data,BOOLEAN,116,1.1,1,116 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp symptoms has data.
 nlp_symptoms_n_entities,BIGINT,116,1.1,7,min=1.0 | med=1.0 | max=7.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp symptoms n entities.
 nlp_symptoms_n_notes,BIGINT,116,1.1,1,min=1.0 | med=1.0 | max=1.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp symptoms n notes.
-nlp_symptoms_key_finding,VARCHAR,116,1.1,110,fatigue; palpable left thyroid nodule; thyroid nodules; weight gain; right thyroid mass,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp symptoms key finding.
+nlp_symptoms_key_finding,VARCHAR,116,1.1,110,fatigue; palpable left thyroid nodule; right thyroid mass; thyroid nodules; weight gain,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp symptoms key finding.
 nlp_labs_has_data,BOOLEAN,791,7.3,1,791 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp labs has data.
 nlp_labs_n_entities,BIGINT,791,7.3,12,min=1.0 | med=2.0 | max=12.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp labs n entities.
 nlp_labs_n_notes,BIGINT,791,7.3,2,min=1.0 | med=1.0 | max=2.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp labs n notes.
@@ -626,7 +626,7 @@ nlp_airway_key_finding,VARCHAR,1122,10.3,748,present; tracheal deviation; right;
 nlp_radtx_has_data,BOOLEAN,210,1.9,1,210 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp radtx has data.
 nlp_radtx_n_entities,BIGINT,210,1.9,11,min=1.0 | med=2.0 | max=12.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp radtx n entities.
 nlp_radtx_n_notes,BIGINT,210,1.9,2,min=1.0 | med=1.0 | max=2.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp radtx n notes.
-nlp_radtx_key_finding,VARCHAR,210,1.9,193,RAI; Thyrogen stimulation; thyroid hormone withdrawal; RAI 198 mCi; Total thyroidectomy,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp radtx key finding.
+nlp_radtx_key_finding,VARCHAR,210,1.9,193,RAI; Thyrogen stimulation; thyroid hormone withdrawal; RAI x 2; Total thyroidectomy,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp radtx key finding.
 nlp_frozensec_has_data,BOOLEAN,184,1.7,1,184 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp frozensec has data.
 nlp_frozensec_n_entities,BIGINT,184,1.7,5,min=1.0 | med=1.0 | max=5.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp frozensec n entities.
 nlp_frozensec_n_notes,BIGINT,184,1.7,2,min=1.0 | med=1.0 | max=2.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: nlp frozensec n notes.
@@ -742,10 +742,166 @@ syn_right_lobe_weight_g,DOUBLE,4064,37.4,964,min=0.4 | med=18.0 | max=492.0,gold
 syn_isthmus_weight_g,DOUBLE,115,1.1,75,min=0.5 | med=4.2 | max=202.7,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn isthmus weight g.
 syn_total_weight_g,DOUBLE,3841,35.3,943,min=1.5 | med=33.0 | max=494.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn total weight g.
 syn_left_lobe_size_cm,VARCHAR,7204,66.3,6715,n/s; 4.5 x 2.5 x 2.0; 5.0 x 3.0 x 2.0; 7.5 x 4.5 x 3.5; 5.0 x 2.5 x 2.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn left lobe size cm.
-syn_right_lobe_size_cm,VARCHAR,7058,64.9,6599,n/s; 4.0 x 2.5 x 1.5; 4.0 x 3.0 x 2.0 ; 4.5 x 2.5 x 1.5 ; 4.5 x 2.5 x 1.5,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn right lobe size cm.
+syn_right_lobe_size_cm,VARCHAR,7058,64.9,6599,n/s; 4.0 x 2.5 x 1.5; 4.0 x 3.0 x 2.0 ; 4.5 x 2.5 x 1.5; 4.5 x 2.5 x 1.5 ,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn right lobe size cm.
 syn_isthmus_size_cm,VARCHAR,3981,36.6,3500,2.0 x 1.1 x 0.5; 2.5 x 1.5 x 0.5; 1.5 x 1.5 x 0.5; 2.2 x 1.5 x 0.5; 1.5 x 1.0 x 0.5 ,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn isthmus size cm.
 syn_n_parathyroid_identified,BIGINT,10871,100.0,7,min=0.0 | med=0.0 | max=6.0,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn n parathyroid identified.
 syn_parathyroid_in_specimen,BOOLEAN,5863,53.9,2,1375 TRUE / 4488 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn parathyroid in specimen.
 syn_central_dissection,BOOLEAN,655,6.0,1,655 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn central dissection.
 syn_bilateral_neck_dissection,BOOLEAN,9,0.1,1,9 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn bilateral neck dissection.
 syn_io_rln_monitoring,BOOLEAN,120,1.1,1,120 TRUE / 0 FALSE,gold_master_patient_facts_v1,204,provenance,Derived attribute: syn io rln monitoring.
+op_nlp_ebl_date,DATE,864,7.9,642,min=1990-01-17 | max=2025-11-24,note_entities_operative_detail,215,nlp_operative,Date of operative note that documented EBL.
+op_nlp_ebl_n_mentions,BIGINT,4028,37.1,4,min=0.0 | med=0.0 | max=3.0,note_entities_operative_detail,215,nlp_operative,Number of operative note entities reporting EBL.
+op_nlp_nerve_monitoring_used,BOOLEAN,4028,37.1,2,3493 TRUE / 535 FALSE,note_entities_operative_detail,215,nlp_operative,TRUE if intraoperative nerve monitoring mentioned in operative notes.
+op_nlp_nerve_monitoring_type,VARCHAR,3493,32.1,5,nerve_monitoring_used; nim; nim_device; nerve_stimulator_used; ionm,note_entities_operative_detail,215,nlp_operative,"Type of nerve monitoring device (e.g., NIM, nerve integrity monitor)."
+op_nlp_nerve_monitoring_date,DATE,2611,24.0,992,min=1990-01-17 | max=2025-11-07,note_entities_operative_detail,215,nlp_operative,Date of earliest nerve monitoring mention.
+op_nlp_nerve_monitoring_n_mentions,BIGINT,4028,37.1,9,min=0.0 | med=1.0 | max=10.0,note_entities_operative_detail,215,nlp_operative,Count of nerve monitoring entity mentions.
+op_nlp_berry_ligament_dissected,BOOLEAN,4028,37.1,2,347 TRUE / 3681 FALSE,note_entities_operative_detail,215,nlp_operative,TRUE if Berry ligament dissection explicitly mentioned.
+op_nlp_berry_ligament_mentioned,BOOLEAN,4028,37.1,2,499 TRUE / 3529 FALSE,note_entities_operative_detail,215,nlp_operative,TRUE if Berry ligament mentioned in any context.
+op_nlp_berry_ligament_date,DATE,449,4.1,362,min=1991-04-27 | max=2025-11-24,note_entities_operative_detail,215,nlp_operative,Date of Berry ligament mention.
+op_nlp_berry_ligament_n_mentions,BIGINT,4028,37.1,6,min=0.0 | med=0.0 | max=7.0,note_entities_operative_detail,215,nlp_operative,Count of Berry ligament entity mentions.
+op_nlp_parathyroid_managed,BOOLEAN,4028,37.1,2,921 TRUE / 3107 FALSE,note_entities_operative_detail,215,nlp_operative,TRUE if parathyroid management mentioned in operative note.
+op_nlp_parathyroid_managed_n_mentions,BIGINT,4028,37.1,7,min=0.0 | med=0.0 | max=7.0,note_entities_operative_detail,215,nlp_operative,Count of parathyroid management mentions.
+op_nlp_parathyroid_autograft,BOOLEAN,4028,37.1,2,133 TRUE / 3895 FALSE,note_entities_operative_detail,215,nlp_operative,TRUE if parathyroid autograft mentioned in operative note.
+op_nlp_parathyroid_autograft_n_mentions,BIGINT,4028,37.1,5,min=0.0 | med=0.0 | max=4.0,note_entities_operative_detail,215,nlp_operative,Count of parathyroid autograft mentions.
+op_nlp_parathyroid_date,DATE,767,7.1,500,min=1990-05-18 | max=2025-11-24,note_entities_operative_detail,215,nlp_operative,Date of earliest parathyroid management/autograft mention.
+op_nlp_rln_finding,BOOLEAN,4028,37.1,2,827 TRUE / 3201 FALSE,note_entities_operative_detail,215,nlp_operative,TRUE if recurrent laryngeal nerve finding documented in operative note.
+op_nlp_rln_finding_n_mentions,BIGINT,4028,37.1,6,min=0.0 | med=0.0 | max=5.0,note_entities_operative_detail,215,nlp_operative,Count of RLN finding entity mentions.
+op_nlp_rln_finding_date,DATE,753,6.9,555,min=1990-08-25 | max=2025-04-29,note_entities_operative_detail,215,nlp_operative,Date of earliest RLN finding mention.
+op_nlp_drain_placed,BOOLEAN,4028,37.1,2,389 TRUE / 3639 FALSE,note_entities_operative_detail,215,nlp_operative,TRUE if surgical drain placement documented in operative notes.
+op_nlp_drain_placed_n_mentions,BIGINT,4028,37.1,4,min=0.0 | med=0.0 | max=3.0,note_entities_operative_detail,215,nlp_operative,Count of drain placement entity mentions.
+op_nlp_drain_date,DATE,269,2.5,221,min=1991-03-28 | max=2025-01-30,note_entities_operative_detail,215,nlp_operative,Date of drain placement documentation.
+op_nlp_strap_muscle_involved,BOOLEAN,4028,37.1,2,451 TRUE / 3577 FALSE,note_entities_operative_detail,215,nlp_operative,TRUE if strap muscle involvement mentioned in operative note.
+op_nlp_strap_muscle_n_mentions,BIGINT,4028,37.1,4,min=0.0 | med=0.0 | max=3.0,note_entities_operative_detail,215,nlp_operative,Count of strap muscle entity mentions.
+op_nlp_reoperative_field,BOOLEAN,4028,37.1,2,107 TRUE / 3921 FALSE,note_entities_operative_detail,215,nlp_operative,TRUE if reoperative/scarred operative field documented.
+op_nlp_reoperative_n_mentions,BIGINT,4028,37.1,5,min=0.0 | med=0.0 | max=4.0,note_entities_operative_detail,215,nlp_operative,Count of reoperative field entity mentions.
+op_nlp_intraop_complication,BOOLEAN,4028,37.1,2,14 TRUE / 4014 FALSE,note_entities_operative_detail,215,nlp_operative,TRUE if intraoperative complication documented in operative note.
+op_nlp_intraop_complication_n_mentions,BIGINT,4028,37.1,3,min=0.0 | med=0.0 | max=2.0,note_entities_operative_detail,215,nlp_operative,Count of intraoperative complication entity mentions.
+op_nlp_intraop_complication_date,DATE,9,0.1,9,min=2020-02-27 | max=2024-11-05,note_entities_operative_detail,215,nlp_operative,Date of intraoperative complication documentation.
+op_nlp_gross_invasion,BOOLEAN,4028,37.1,2,7 TRUE / 4021 FALSE,note_entities_operative_detail,215,nlp_operative,TRUE if gross local invasion mentioned in operative note.
+op_nlp_tracheal_involvement,BOOLEAN,4028,37.1,2,9 TRUE / 4019 FALSE,note_entities_operative_detail,215,nlp_operative,TRUE if tracheal involvement mentioned in operative note.
+op_nlp_tracheal_n_mentions,BIGINT,4028,37.1,4,min=0.0 | med=0.0 | max=3.0,note_entities_operative_detail,215,nlp_operative,Count of tracheal involvement entity mentions.
+op_nlp_esophageal_involvement,BOOLEAN,4028,37.1,2,2 TRUE / 4026 FALSE,note_entities_operative_detail,215,nlp_operative,TRUE if esophageal involvement mentioned in operative note.
+op_nlp_esophageal_n_mentions,BIGINT,4028,37.1,2,min=0.0 | med=0.0 | max=1.0,note_entities_operative_detail,215,nlp_operative,Count of esophageal involvement entity mentions.
+op_nlp_n_source_notes,BIGINT,4028,37.1,3,min=1.0 | med=1.0 | max=3.0,note_entities_operative_detail,215,nlp_operative,Number of distinct operative notes contributing to NLP rollup.
+op_nlp_note_types,VARCHAR,4028,37.1,1,op_note,note_entities_operative_detail,215,nlp_operative,Comma-separated note types contributing to operative NLP rollup.
+op_nlp_extraction_method,VARCHAR,4028,37.1,1,regex_operative_v2,note_entities_operative_detail,215,nlp_operative,NLP extraction method for operative entities (regex_operative_v2).
+med_nlp_levothyroxine,BOOLEAN,2014,18.5,2,1491 TRUE / 523 FALSE,note_entities_medications,215,nlp_medications,TRUE if levothyroxine documented in medication entities.
+med_nlp_levothyroxine_date,DATE,910,8.4,647,min=1990-04-19 | max=3021-03-11,note_entities_medications,215,nlp_medications,Date of first levothyroxine medication mention.
+med_nlp_levothyroxine_n_mentions,BIGINT,2014,18.5,20,min=0.0 | med=1.0 | max=35.0,note_entities_medications,215,nlp_medications,Count of levothyroxine medication entity mentions.
+med_nlp_calcium_supplement,BOOLEAN,2014,18.5,2,304 TRUE / 1710 FALSE,note_entities_medications,215,nlp_medications,TRUE if calcium supplement documented in medication entities.
+med_nlp_calcium_supplement_date,DATE,121,1.1,117,min=1990-06-25 | max=2025-08-21,note_entities_medications,215,nlp_medications,Date of first calcium supplement mention.
+med_nlp_calcium_supplement_n_mentions,BIGINT,2014,18.5,10,min=0.0 | med=0.0 | max=11.0,note_entities_medications,215,nlp_medications,Count of calcium supplement entity mentions.
+med_nlp_calcitriol,BOOLEAN,2014,18.5,2,154 TRUE / 1860 FALSE,note_entities_medications,215,nlp_medications,TRUE if calcitriol (active vitamin D) documented — implies hypoparathyroidism.
+med_nlp_calcitriol_date,DATE,81,0.7,76,min=1990-05-26 | max=2025-11-04,note_entities_medications,215,nlp_medications,Date of first calcitriol mention.
+med_nlp_calcitriol_n_mentions,BIGINT,2014,18.5,12,min=0.0 | med=0.0 | max=15.0,note_entities_medications,215,nlp_medications,Count of calcitriol entity mentions.
+med_nlp_n_source_notes,BIGINT,2014,18.5,6,min=1.0 | med=1.0 | max=7.0,note_entities_medications,215,nlp_medications,Number of distinct notes contributing to medication NLP rollup.
+med_nlp_note_types,VARCHAR,2014,18.5,41,"h_p; other_history; history_summary; endocrine_note; h_p,endocrine_note",note_entities_medications,215,nlp_medications,Comma-separated note types for medication NLP rollup.
+med_nlp_extraction_method,VARCHAR,2014,18.5,1,regex_medication_v2,note_entities_medications,215,nlp_medications,NLP extraction method for medication entities (regex_medication_v2).
+pmhx_nlp_hypertension,BOOLEAN,3895,35.8,2,1775 TRUE / 2120 FALSE,note_entities_problem_list,215,nlp_problem_list,TRUE if hypertension documented in problem list NLP.
+pmhx_nlp_hypertension_n_mentions,BIGINT,3895,35.8,5,min=0.0 | med=0.0 | max=4.0,note_entities_problem_list,215,nlp_problem_list,Count of hypertension problem list mentions.
+pmhx_nlp_hypertension_first_date,DATE,680,6.3,509,min=1990-03-19 | max=2025-11-14,note_entities_problem_list,215,nlp_problem_list,Date of first hypertension mention in problem list.
+pmhx_nlp_diabetes,BOOLEAN,3895,35.8,2,1466 TRUE / 2429 FALSE,note_entities_problem_list,215,nlp_problem_list,TRUE if diabetes (type 1 or 2) documented in problem list NLP.
+pmhx_nlp_diabetes_n_mentions,BIGINT,3895,35.8,5,min=0.0 | med=0.0 | max=4.0,note_entities_problem_list,215,nlp_problem_list,Count of diabetes problem list mentions.
+pmhx_nlp_diabetes_first_date,DATE,527,4.8,457,min=1990-01-18 | max=2025-11-14,note_entities_problem_list,215,nlp_problem_list,Date of first diabetes mention in problem list.
+pmhx_nlp_hyperthyroidism,BOOLEAN,3895,35.8,2,1163 TRUE / 2732 FALSE,note_entities_problem_list,215,nlp_problem_list,TRUE if hyperthyroidism documented in problem list NLP.
+pmhx_nlp_hyperthyroidism_n_mentions,BIGINT,3895,35.8,4,min=0.0 | med=0.0 | max=3.0,note_entities_problem_list,215,nlp_problem_list,Count of hyperthyroidism mentions.
+pmhx_nlp_hyperthyroidism_first_date,DATE,665,6.1,487,min=1990-01-23 | max=2025-11-10,note_entities_problem_list,215,nlp_problem_list,Date of first hyperthyroidism mention.
+pmhx_nlp_hypothyroidism,BOOLEAN,3895,35.8,2,1962 TRUE / 1933 FALSE,note_entities_problem_list,215,nlp_problem_list,TRUE if hypothyroidism documented in problem list NLP.
+pmhx_nlp_hypothyroidism_n_mentions,BIGINT,3895,35.8,5,min=0.0 | med=1.0 | max=4.0,note_entities_problem_list,215,nlp_problem_list,Count of hypothyroidism mentions.
+pmhx_nlp_hypothyroidism_first_date,DATE,1066,9.8,706,min=1990-01-17 | max=2025-11-17,note_entities_problem_list,215,nlp_problem_list,Date of first hypothyroidism mention.
+pmhx_nlp_obesity,BOOLEAN,3895,35.8,2,523 TRUE / 3372 FALSE,note_entities_problem_list,215,nlp_problem_list,TRUE if obesity documented in problem list NLP.
+pmhx_nlp_obesity_n_mentions,BIGINT,3895,35.8,4,min=0.0 | med=0.0 | max=3.0,note_entities_problem_list,215,nlp_problem_list,Count of obesity mentions.
+pmhx_nlp_obesity_first_date,DATE,223,2.1,203,min=1990-05-26 | max=2025-11-05,note_entities_problem_list,215,nlp_problem_list,Date of first obesity mention.
+pmhx_nlp_breast_cancer,BOOLEAN,3895,35.8,2,425 TRUE / 3470 FALSE,note_entities_problem_list,215,nlp_problem_list,TRUE if breast cancer documented in problem list NLP.
+pmhx_nlp_breast_cancer_n_mentions,BIGINT,3895,35.8,5,min=0.0 | med=0.0 | max=4.0,note_entities_problem_list,215,nlp_problem_list,Count of breast cancer mentions.
+pmhx_nlp_depression,BOOLEAN,3895,35.8,2,399 TRUE / 3496 FALSE,note_entities_problem_list,215,nlp_problem_list,TRUE if depression documented in problem list NLP.
+pmhx_nlp_depression_n_mentions,BIGINT,3895,35.8,4,min=0.0 | med=0.0 | max=3.0,note_entities_problem_list,215,nlp_problem_list,Count of depression mentions.
+pmhx_nlp_cad,BOOLEAN,3895,35.8,2,224 TRUE / 3671 FALSE,note_entities_problem_list,215,nlp_problem_list,TRUE if coronary artery disease documented in problem list NLP.
+pmhx_nlp_cad_n_mentions,BIGINT,3895,35.8,4,min=0.0 | med=0.0 | max=3.0,note_entities_problem_list,215,nlp_problem_list,Count of CAD mentions.
+pmhx_nlp_ckd,BOOLEAN,3895,35.8,2,221 TRUE / 3674 FALSE,note_entities_problem_list,215,nlp_problem_list,TRUE if chronic kidney disease documented in problem list NLP.
+pmhx_nlp_ckd_n_mentions,BIGINT,3895,35.8,5,min=0.0 | med=0.0 | max=4.0,note_entities_problem_list,215,nlp_problem_list,Count of CKD mentions.
+pmhx_nlp_afib,BOOLEAN,3895,35.8,2,174 TRUE / 3721 FALSE,note_entities_problem_list,215,nlp_problem_list,TRUE if atrial fibrillation documented in problem list NLP.
+pmhx_nlp_afib_n_mentions,BIGINT,3895,35.8,4,min=0.0 | med=0.0 | max=3.0,note_entities_problem_list,215,nlp_problem_list,Count of atrial fibrillation mentions.
+pmhx_nlp_copd,BOOLEAN,3895,35.8,2,107 TRUE / 3788 FALSE,note_entities_problem_list,215,nlp_problem_list,TRUE if COPD documented in problem list NLP.
+pmhx_nlp_copd_n_mentions,BIGINT,3895,35.8,3,min=0.0 | med=0.0 | max=2.0,note_entities_problem_list,215,nlp_problem_list,Count of COPD mentions.
+pmhx_nlp_asthma,BOOLEAN,3895,35.8,2,475 TRUE / 3420 FALSE,note_entities_problem_list,215,nlp_problem_list,TRUE if asthma documented in problem list NLP.
+pmhx_nlp_asthma_n_mentions,BIGINT,3895,35.8,5,min=0.0 | med=0.0 | max=4.0,note_entities_problem_list,215,nlp_problem_list,Count of asthma mentions.
+pmhx_nlp_gerd,BOOLEAN,3895,35.8,2,478 TRUE / 3417 FALSE,note_entities_problem_list,215,nlp_problem_list,TRUE if GERD documented in problem list NLP.
+pmhx_nlp_gerd_n_mentions,BIGINT,3895,35.8,4,min=0.0 | med=0.0 | max=3.0,note_entities_problem_list,215,nlp_problem_list,Count of GERD mentions.
+pmhx_nlp_lung_cancer,BOOLEAN,3895,35.8,2,156 TRUE / 3739 FALSE,note_entities_problem_list,215,nlp_problem_list,TRUE if lung cancer documented in problem list NLP.
+pmhx_nlp_lung_cancer_n_mentions,BIGINT,3895,35.8,4,min=0.0 | med=0.0 | max=3.0,note_entities_problem_list,215,nlp_problem_list,Count of lung cancer mentions.
+pmhx_nlp_n_comorbidities,BIGINT,3895,35.8,10,min=1.0 | med=2.0 | max=10.0,note_entities_problem_list,215,nlp_problem_list,Count of distinct comorbid conditions from problem list NLP.
+pmhx_nlp_comorbidity_list,VARCHAR,3895,35.8,762,hypothyroidism; hyperthyroidism;hypothyroidism; hypertension; hyperthyroidism; diabetes,note_entities_problem_list,215,nlp_problem_list,Semicolon-separated list of all documented comorbidities.
+pmhx_nlp_n_source_notes,BIGINT,3895,35.8,4,min=1.0 | med=1.0 | max=4.0,note_entities_problem_list,215,nlp_problem_list,Number of distinct notes contributing to problem list NLP rollup.
+pmhx_nlp_note_types,VARCHAR,3895,35.8,51,"h_p; other_history; h_p,op_note; op_note,h_p; endocrine_note",note_entities_problem_list,215,nlp_problem_list,Comma-separated note types for problem list NLP rollup.
+pmhx_nlp_extraction_method,VARCHAR,3895,35.8,1,regex_problem_list_v2,note_entities_problem_list,215,nlp_problem_list,NLP extraction method for problem list entities (regex_problem_list_v2).
+pmhx_nlp_radiation_exposure,BOOLEAN,290,2.7,2,33 TRUE / 257 FALSE,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,TRUE if prior radiation exposure documented by LLM (NOVEL — no structured equivalent).
+pmhx_nlp_radiation_exposure_date,DATE,29,0.3,29,min=1981-09-15 | max=2024-08-14,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,Date of radiation exposure event (entity_date when available).
+pmhx_nlp_radiation_exposure_n_mentions,BIGINT,290,2.7,5,min=0.0 | med=0.0 | max=4.0,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,Count of radiation exposure entity mentions.
+pmhx_nlp_radiation_exposure_confidence,DOUBLE,33,0.3,9,min=0.85 | med=0.95 | max=1.0,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,Mean confidence of radiation exposure LLM entities.
+pmhx_nlp_family_hx_thyroid,BOOLEAN,290,2.7,2,31 TRUE / 259 FALSE,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,TRUE if family history of thyroid disease documented by LLM.
+pmhx_nlp_family_hx_thyroid_n_mentions,BIGINT,290,2.7,4,min=0.0 | med=0.0 | max=3.0,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,Count of family thyroid history entity mentions.
+pmhx_nlp_family_hx_cancer,BOOLEAN,290,2.7,2,16 TRUE / 274 FALSE,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,TRUE if family history of any cancer documented by LLM.
+pmhx_nlp_smoking_status,VARCHAR,20,0.2,12,never smoker; former smoker; nonsmoker; tobacco smoking; Smoked in Last 12 Months: Yes,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,Smoking status extracted by LLM (never/former/current).
+pmhx_nlp_men_syndrome,BOOLEAN,290,2.7,2,6 TRUE / 284 FALSE,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,TRUE if MEN syndrome (MEN2) documented — critical for MTC patients.
+pmhx_nlp_autoimmune_thyroid_hx,BOOLEAN,290,2.7,2,80 TRUE / 210 FALSE,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,TRUE if autoimmune thyroid history documented by LLM from patient history.
+pmhx_nlp_autoimmune_thyroid_hx_n_mentions,BIGINT,290,2.7,4,min=0.0 | med=0.0 | max=4.0,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,Count of autoimmune thyroid history mentions.
+pmhx_nlp_prior_cancer_hx,BOOLEAN,290,2.7,2,162 TRUE / 128 FALSE,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,TRUE if prior non-thyroid cancer history documented by LLM.
+pmhx_nlp_prior_cancer_hx_n_mentions,BIGINT,290,2.7,7,min=0.0 | med=1.0 | max=12.0,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,Count of prior cancer history entity mentions.
+pmhx_nlp_coagulopathy,BOOLEAN,290,2.7,2,13 TRUE / 277 FALSE,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,TRUE if coagulopathy/bleeding disorder documented by LLM.
+pmhx_nlp_osteoporosis,BOOLEAN,290,2.7,2,22 TRUE / 268 FALSE,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,TRUE if osteoporosis/osteopenia documented by LLM.
+pmhx_llm_n_source_notes,BIGINT,290,2.7,2,min=1.0 | med=1.0 | max=2.0,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,Number of distinct notes contributing to past medical hx LLM rollup.
+pmhx_llm_note_types,VARCHAR,290,2.7,11,history_summary; other_history; endocrine_note; h_p; op_note,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,Comma-separated note types for past medical hx LLM rollup.
+pmhx_llm_extraction_method,VARCHAR,290,2.7,1,qwen3_32b,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,LLM extraction method for past medical history (qwen3_32b).
+pmhx_llm_min_confidence,DOUBLE,290,2.7,13,min=0.7 | med=0.95 | max=1.0,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,Minimum confidence score among past medical hx LLM entities used.
+pmhx_llm_mean_confidence,DOUBLE,290,2.7,83,min=0.7 | med=0.95 | max=1.0,note_entities_llm_past_medical_hx,215,nlp_pmhx_llm,Mean confidence score among past medical hx LLM entities used.
+pshx_nlp_prior_thyroidectomy,BOOLEAN,1864,17.1,2,859 TRUE / 1005 FALSE,note_entities_llm_past_surgical_hx,215,nlp_surgical_hx,TRUE if prior thyroidectomy documented in surgical history LLM.
+pshx_nlp_prior_thyroidectomy_n_mentions,BIGINT,1864,17.1,6,min=0.0 | med=0.0 | max=5.0,note_entities_llm_past_surgical_hx,215,nlp_surgical_hx,Count of prior thyroidectomy entity mentions.
+pshx_nlp_prior_thyroidectomy_date,DATE,781,7.2,538,min=1960-01-01 | max=2024-12-23,note_entities_llm_past_surgical_hx,215,nlp_surgical_hx,Date of prior thyroidectomy (entity_date when available).
+pshx_nlp_prior_fna,BOOLEAN,1864,17.1,2,773 TRUE / 1091 FALSE,note_entities_llm_past_surgical_hx,215,nlp_surgical_hx,TRUE if prior FNA biopsy documented in surgical history LLM.
+pshx_nlp_prior_fna_n_mentions,BIGINT,1864,17.1,6,min=0.0 | med=0.0 | max=5.0,note_entities_llm_past_surgical_hx,215,nlp_surgical_hx,Count of prior FNA entity mentions.
+pshx_nlp_prior_rai,BOOLEAN,1864,17.1,2,257 TRUE / 1607 FALSE,note_entities_llm_past_surgical_hx,215,nlp_surgical_hx,TRUE if prior RAI treatment documented in surgical history LLM.
+pshx_nlp_prior_rai_n_mentions,BIGINT,1864,17.1,5,min=0.0 | med=0.0 | max=5.0,note_entities_llm_past_surgical_hx,215,nlp_surgical_hx,Count of prior RAI entity mentions.
+pshx_nlp_prior_rai_date,DATE,236,2.2,183,min=1963-01-01 | max=2024-10-03,note_entities_llm_past_surgical_hx,215,nlp_surgical_hx,Date of prior RAI (entity_date when available).
+pshx_nlp_prior_neck_surgery,BOOLEAN,1864,17.1,2,140 TRUE / 1724 FALSE,note_entities_llm_past_surgical_hx,215,nlp_surgical_hx,TRUE if prior neck surgery (non-thyroid) documented by LLM.
+pshx_nlp_prior_neck_surgery_n_mentions,BIGINT,1864,17.1,7,min=0.0 | med=0.0 | max=7.0,note_entities_llm_past_surgical_hx,215,nlp_surgical_hx,Count of prior neck surgery mentions.
+pshx_nlp_prior_neck_dissection,BOOLEAN,1864,17.1,2,118 TRUE / 1746 FALSE,note_entities_llm_past_surgical_hx,215,nlp_surgical_hx,TRUE if prior neck dissection documented by LLM.
+pshx_nlp_prior_parathyroidectomy,BOOLEAN,1864,17.1,2,56 TRUE / 1808 FALSE,note_entities_llm_past_surgical_hx,215,nlp_surgical_hx,TRUE if prior parathyroidectomy documented by LLM.
+pshx_nlp_n_prior_procedures,BIGINT,1864,17.1,7,min=1.0 | med=1.0 | max=8.0,note_entities_llm_past_surgical_hx,215,nlp_surgical_hx,Count of distinct prior surgical procedure types documented.
+pshx_llm_n_source_notes,BIGINT,1864,17.1,2,min=1.0 | med=1.0 | max=2.0,note_entities_llm_past_surgical_hx,215,nlp_surgical_hx,Number of distinct notes contributing to past surgical hx LLM rollup.
+pshx_llm_note_types,VARCHAR,1864,17.1,18,h_p; other_history; history_summary; endocrine_note; other_notes,note_entities_llm_past_surgical_hx,215,nlp_surgical_hx,Comma-separated note types for past surgical hx LLM rollup.
+pshx_llm_extraction_method,VARCHAR,1864,17.1,1,qwen3_32b,note_entities_llm_past_surgical_hx,215,nlp_surgical_hx,LLM extraction method for past surgical history (qwen3_32b).
+pshx_llm_min_confidence,DOUBLE,1864,17.1,12,min=0.7 | med=0.9 | max=1.0,note_entities_llm_past_surgical_hx,215,nlp_surgical_hx,Minimum confidence score among past surgical hx LLM entities.
+pshx_llm_mean_confidence,DOUBLE,1864,17.1,113,min=0.7 | med=0.94 | max=1.0,note_entities_llm_past_surgical_hx,215,nlp_surgical_hx,Mean confidence score among past surgical hx LLM entities.
+proc_nlp_tracheostomy,BOOLEAN,4711,43.3,2,384 TRUE / 4327 FALSE,note_entities_procedures,215,nlp_procedures,TRUE if tracheostomy procedure documented in procedure NLP.
+proc_nlp_tracheostomy_date,DATE,75,0.7,72,min=1993-09-24 | max=2025-04-29,note_entities_procedures,215,nlp_procedures,Date of tracheostomy procedure mention.
+proc_nlp_tracheostomy_n_mentions,BIGINT,4711,43.3,15,min=0.0 | med=0.0 | max=30.0,note_entities_procedures,215,nlp_procedures,Count of tracheostomy mentions.
+proc_nlp_laryngoscopy,BOOLEAN,4711,43.3,2,270 TRUE / 4441 FALSE,note_entities_procedures,215,nlp_procedures,TRUE if laryngoscopy procedure documented in procedure NLP.
+proc_nlp_laryngoscopy_date,DATE,147,1.4,136,min=1990-01-01 | max=2025-10-06,note_entities_procedures,215,nlp_procedures,Date of laryngoscopy procedure mention.
+proc_nlp_laryngoscopy_n_mentions,BIGINT,4711,43.3,11,min=0.0 | med=0.0 | max=12.0,note_entities_procedures,215,nlp_procedures,Count of laryngoscopy mentions.
+proc_nlp_mrnd,BOOLEAN,4711,43.3,2,186 TRUE / 4525 FALSE,note_entities_procedures,215,nlp_procedures,TRUE if modified radical neck dissection documented in procedure NLP.
+proc_nlp_mrnd_n_mentions,BIGINT,4711,43.3,9,min=0.0 | med=0.0 | max=10.0,note_entities_procedures,215,nlp_procedures,Count of MRND mentions.
+proc_nlp_lateral_neck_dissection,BOOLEAN,4711,43.3,2,287 TRUE / 4424 FALSE,note_entities_procedures,215,nlp_procedures,TRUE if lateral neck dissection (any type) documented.
+proc_nlp_parathyroid_autotransplant,BOOLEAN,4711,43.3,2,48 TRUE / 4663 FALSE,note_entities_procedures,215,nlp_procedures,TRUE if parathyroid autotransplant documented in procedure NLP.
+proc_nlp_n_source_notes,BIGINT,4711,43.3,8,min=1.0 | med=2.0 | max=10.0,note_entities_procedures,215,nlp_procedures,Number of distinct notes contributing to procedure NLP rollup.
+proc_nlp_note_types,VARCHAR,4711,43.3,62,"op_note,h_p; h_p,op_note; op_note; h_p; other_history",note_entities_procedures,215,nlp_procedures,Comma-separated note types for procedure NLP rollup.
+proc_nlp_extraction_method,VARCHAR,4711,43.3,1,regex_procedure_v2,note_entities_procedures,215,nlp_procedures,NLP extraction method for procedure entities (regex_procedure_v2).
+sx_nlp_dysphagia,BOOLEAN,116,1.1,2,16 TRUE / 100 FALSE,note_entities_llm_presenting_symptoms,215,nlp_symptoms,TRUE if dysphagia documented in presenting symptoms LLM. ⚠ LOW COVERAGE (<2%).
+sx_nlp_hoarseness,BOOLEAN,116,1.1,2,15 TRUE / 101 FALSE,note_entities_llm_presenting_symptoms,215,nlp_symptoms,TRUE if hoarseness/dysphonia documented in presenting symptoms LLM. ⚠ LOW COVERAGE.
+sx_nlp_neck_mass,BOOLEAN,116,1.1,2,73 TRUE / 43 FALSE,note_entities_llm_presenting_symptoms,215,nlp_symptoms,TRUE if neck mass documented in presenting symptoms LLM. ⚠ LOW COVERAGE.
+sx_nlp_dyspnea,BOOLEAN,116,1.1,2,6 TRUE / 110 FALSE,note_entities_llm_presenting_symptoms,215,nlp_symptoms,TRUE if dyspnea documented in presenting symptoms LLM. ⚠ LOW COVERAGE.
+sx_nlp_any_symptom_data,BOOLEAN,116,1.1,1,116 TRUE / 0 FALSE,note_entities_llm_presenting_symptoms,215,nlp_symptoms,TRUE if any presenting symptom entity extracted by LLM. ⚠ LOW COVERAGE.
+sx_llm_n_source_notes,BIGINT,116,1.1,1,min=1.0 | med=1.0 | max=1.0,note_entities_llm_presenting_symptoms,215,nlp_symptoms,Number of distinct notes contributing to presenting symptoms LLM rollup.
+sx_llm_extraction_method,VARCHAR,116,1.1,1,qwen3_32b,note_entities_llm_presenting_symptoms,215,nlp_symptoms,LLM extraction method for presenting symptoms (qwen3_32b).
+sx_llm_mean_confidence,DOUBLE,116,1.1,33,min=0.85 | med=0.92 | max=0.98,note_entities_llm_presenting_symptoms,215,nlp_symptoms,Mean confidence score among presenting symptom LLM entities.
+radtx_nlp_rai_ablation,BOOLEAN,210,1.9,2,176 TRUE / 34 FALSE,note_entities_llm_rad_treatment,215,nlp_rad_treatment,TRUE if RAI ablation documented in radiation treatment LLM.
+radtx_nlp_rai_ablation_n_mentions,BIGINT,210,1.9,4,min=0.0 | med=1.0 | max=3.0,note_entities_llm_rad_treatment,215,nlp_rad_treatment,Count of RAI ablation entity mentions.
+radtx_nlp_thyrogen_prep,BOOLEAN,210,1.9,1,0 TRUE / 210 FALSE,note_entities_llm_rad_treatment,215,nlp_rad_treatment,TRUE if thyrogen (recombinant TSH) preparation documented.
+radtx_nlp_hormone_withdrawal,BOOLEAN,210,1.9,1,0 TRUE / 210 FALSE,note_entities_llm_rad_treatment,215,nlp_rad_treatment,TRUE if levothyroxine withdrawal for RAI prep documented.
+radtx_nlp_post_tx_scan_negative,BOOLEAN,210,1.9,1,0 TRUE / 210 FALSE,note_entities_llm_rad_treatment,215,nlp_rad_treatment,TRUE if post-treatment whole body scan documented as negative.
+radtx_nlp_external_beam_radiation,BOOLEAN,210,1.9,2,18 TRUE / 192 FALSE,note_entities_llm_rad_treatment,215,nlp_rad_treatment,TRUE if external beam radiation therapy documented (uncommon in thyroid).
+radtx_nlp_has_data,BOOLEAN,210,1.9,1,210 TRUE / 0 FALSE,note_entities_llm_rad_treatment,215,nlp_rad_treatment,TRUE if any radiation treatment LLM entity was extracted.
+radtx_llm_n_source_notes,BIGINT,210,1.9,2,min=1.0 | med=1.0 | max=2.0,note_entities_llm_rad_treatment,215,nlp_rad_treatment,Number of distinct notes contributing to radiation treatment LLM rollup.
+radtx_llm_extraction_method,VARCHAR,210,1.9,1,qwen3_32b,note_entities_llm_rad_treatment,215,nlp_rad_treatment,LLM extraction method for radiation treatment (qwen3_32b).
+radtx_llm_mean_confidence,DOUBLE,210,1.9,45,min=0.7 | med=0.91 | max=0.98,note_entities_llm_rad_treatment,215,nlp_rad_treatment,Mean confidence score among radiation treatment LLM entities.
+op_nlp_ebl_ml,DOUBLE,1613,14.8,39,min=2.0 | med=25.0 | max=1800.0,note_entities_operative_detail,215,nlp_operative,Estimated blood loss (mL) from operative note NLP (SPLIT_PART parse of '10 mL' format).

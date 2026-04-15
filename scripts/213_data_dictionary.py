@@ -14,7 +14,6 @@ Run:
 from __future__ import annotations
 
 import argparse
-import os
 import re
 import sys
 import time
@@ -40,6 +39,25 @@ DOMAIN_RULES: list[tuple[str, str, str, str]] = [
     # (prefix_regex, clinical_domain, source_table, source_script)
     (r"^research_id$|^age_|^sex$|^race$|^demo_",
      "demographics", "gold_master_patient_facts_v1", "204"),
+    # ── Script 215: Deep NLP entity integration (8 sources) ──────────────────
+    (r"^op_nlp_",
+     "nlp_operative", "note_entities_operative_detail", "215"),
+    (r"^med_nlp_",
+     "nlp_medications", "note_entities_medications", "215"),
+    (r"^pmhx_nlp_(hypertension|diabetes|hyperthyroidism|hypothyroidism|obesity|breast_cancer|depression|cad|ckd|afib|copd|asthma|gerd|lung_cancer|n_comorbidities|comorbidity_list|n_source|note_types|extraction)",
+     "nlp_problem_list", "note_entities_problem_list", "215"),
+    (r"^pmhx_nlp_(radiation|family_hx|smoking|men_syndrome|autoimmune|prior_cancer|coagulopathy|osteoporosis)",
+     "nlp_pmhx_llm", "note_entities_llm_past_medical_hx", "215"),
+    (r"^pmhx_llm_",
+     "nlp_pmhx_llm", "note_entities_llm_past_medical_hx", "215"),
+    (r"^pshx_(nlp|llm)_",
+     "nlp_surgical_hx", "note_entities_llm_past_surgical_hx", "215"),
+    (r"^proc_nlp_",
+     "nlp_procedures", "note_entities_procedures", "215"),
+    (r"^sx_(nlp|llm)_",
+     "nlp_symptoms", "note_entities_llm_presenting_symptoms", "215"),
+    (r"^radtx_(nlp|llm)_",
+     "nlp_rad_treatment", "note_entities_llm_rad_treatment", "215"),
     (r"^(first_surgery_date|surg_|op_)",
      "surgery", "gold_master_patient_facts_v1 / operative_episode_detail_v2", "204/207"),
     (r"^(diagnosis_|is_malignant|n_tumors|tumor_size_cm|multifocal_flag|laterality)",
@@ -84,6 +102,7 @@ DOMAIN_RULES: list[tuple[str, str, str, str]] = [
      "survival", "survival_cohort_enriched / canonical_survival_followup_v1", "201/211"),
     (r"^(followup_|last_contact_)",
      "survival", "canonical_survival_followup_v1", "201"),
+    # ── Script 212: LLM entity rollup ─────────────────────────────────────────
     (r"^nlp_llm_(pathology|synoptic_path)",
      "nlp_pathology", "note_entities_llm_pathology / note_entities_llm_synoptic_pathology_enrichment", "212"),
     (r"^nlp_llm_tirads",
@@ -161,6 +180,163 @@ DESCRIPTION_TEMPLATES: dict[str, str] = {
     "completion_": "Completion thyroidectomy indicator or reason.",
     "nlp_llm_": "NLP entity rollup from note_entities_llm_* tables (additive, not override).",
     "nlp_ne_": "NLP entity metadata from non-LLM note_entities_* tables.",
+    # Script 215 NLP prefixes
+    "op_nlp_ebl_ml": "Estimated blood loss (mL) from operative note NLP (SPLIT_PART parse of '10 mL' format).",
+    "op_nlp_ebl_date": "Date of operative note that documented EBL.",
+    "op_nlp_ebl_n_mentions": "Number of operative note entities reporting EBL.",
+    "op_nlp_nerve_monitoring_used": "TRUE if intraoperative nerve monitoring mentioned in operative notes.",
+    "op_nlp_nerve_monitoring_type": "Type of nerve monitoring device (e.g., NIM, nerve integrity monitor).",
+    "op_nlp_nerve_monitoring_date": "Date of earliest nerve monitoring mention.",
+    "op_nlp_nerve_monitoring_n_mentions": "Count of nerve monitoring entity mentions.",
+    "op_nlp_berry_ligament_dissected": "TRUE if Berry ligament dissection explicitly mentioned.",
+    "op_nlp_berry_ligament_mentioned": "TRUE if Berry ligament mentioned in any context.",
+    "op_nlp_berry_ligament_date": "Date of Berry ligament mention.",
+    "op_nlp_berry_ligament_n_mentions": "Count of Berry ligament entity mentions.",
+    "op_nlp_parathyroid_managed": "TRUE if parathyroid management mentioned in operative note.",
+    "op_nlp_parathyroid_managed_n_mentions": "Count of parathyroid management mentions.",
+    "op_nlp_parathyroid_autograft": "TRUE if parathyroid autograft mentioned in operative note.",
+    "op_nlp_parathyroid_autograft_n_mentions": "Count of parathyroid autograft mentions.",
+    "op_nlp_parathyroid_date": "Date of earliest parathyroid management/autograft mention.",
+    "op_nlp_rln_finding": "TRUE if recurrent laryngeal nerve finding documented in operative note.",
+    "op_nlp_rln_finding_n_mentions": "Count of RLN finding entity mentions.",
+    "op_nlp_rln_finding_date": "Date of earliest RLN finding mention.",
+    "op_nlp_drain_placed": "TRUE if surgical drain placement documented in operative notes.",
+    "op_nlp_drain_placed_n_mentions": "Count of drain placement entity mentions.",
+    "op_nlp_drain_date": "Date of drain placement documentation.",
+    "op_nlp_strap_muscle_involved": "TRUE if strap muscle involvement mentioned in operative note.",
+    "op_nlp_strap_muscle_n_mentions": "Count of strap muscle entity mentions.",
+    "op_nlp_reoperative_field": "TRUE if reoperative/scarred operative field documented.",
+    "op_nlp_reoperative_n_mentions": "Count of reoperative field entity mentions.",
+    "op_nlp_intraop_complication": "TRUE if intraoperative complication documented in operative note.",
+    "op_nlp_intraop_complication_n_mentions": "Count of intraoperative complication entity mentions.",
+    "op_nlp_intraop_complication_date": "Date of intraoperative complication documentation.",
+    "op_nlp_gross_invasion": "TRUE if gross local invasion mentioned in operative note.",
+    "op_nlp_tracheal_involvement": "TRUE if tracheal involvement mentioned in operative note.",
+    "op_nlp_tracheal_n_mentions": "Count of tracheal involvement entity mentions.",
+    "op_nlp_esophageal_involvement": "TRUE if esophageal involvement mentioned in operative note.",
+    "op_nlp_esophageal_n_mentions": "Count of esophageal involvement entity mentions.",
+    "op_nlp_n_source_notes": "Number of distinct operative notes contributing to NLP rollup.",
+    "op_nlp_note_types": "Comma-separated note types contributing to operative NLP rollup.",
+    "op_nlp_extraction_method": "NLP extraction method for operative entities (regex_operative_v2).",
+    "med_nlp_levothyroxine": "TRUE if levothyroxine documented in medication entities.",
+    "med_nlp_levothyroxine_date": "Date of first levothyroxine medication mention.",
+    "med_nlp_levothyroxine_n_mentions": "Count of levothyroxine medication entity mentions.",
+    "med_nlp_calcium_supplement": "TRUE if calcium supplement documented in medication entities.",
+    "med_nlp_calcium_supplement_date": "Date of first calcium supplement mention.",
+    "med_nlp_calcium_supplement_n_mentions": "Count of calcium supplement entity mentions.",
+    "med_nlp_calcitriol": "TRUE if calcitriol (active vitamin D) documented — implies hypoparathyroidism.",
+    "med_nlp_calcitriol_date": "Date of first calcitriol mention.",
+    "med_nlp_calcitriol_n_mentions": "Count of calcitriol entity mentions.",
+    "med_nlp_n_source_notes": "Number of distinct notes contributing to medication NLP rollup.",
+    "med_nlp_note_types": "Comma-separated note types for medication NLP rollup.",
+    "med_nlp_extraction_method": "NLP extraction method for medication entities (regex_medication_v2).",
+    "pmhx_nlp_hypertension": "TRUE if hypertension documented in problem list NLP.",
+    "pmhx_nlp_hypertension_n_mentions": "Count of hypertension problem list mentions.",
+    "pmhx_nlp_hypertension_first_date": "Date of first hypertension mention in problem list.",
+    "pmhx_nlp_diabetes": "TRUE if diabetes (type 1 or 2) documented in problem list NLP.",
+    "pmhx_nlp_diabetes_n_mentions": "Count of diabetes problem list mentions.",
+    "pmhx_nlp_diabetes_first_date": "Date of first diabetes mention in problem list.",
+    "pmhx_nlp_hyperthyroidism": "TRUE if hyperthyroidism documented in problem list NLP.",
+    "pmhx_nlp_hyperthyroidism_n_mentions": "Count of hyperthyroidism mentions.",
+    "pmhx_nlp_hyperthyroidism_first_date": "Date of first hyperthyroidism mention.",
+    "pmhx_nlp_hypothyroidism": "TRUE if hypothyroidism documented in problem list NLP.",
+    "pmhx_nlp_hypothyroidism_n_mentions": "Count of hypothyroidism mentions.",
+    "pmhx_nlp_hypothyroidism_first_date": "Date of first hypothyroidism mention.",
+    "pmhx_nlp_obesity": "TRUE if obesity documented in problem list NLP.",
+    "pmhx_nlp_obesity_n_mentions": "Count of obesity mentions.",
+    "pmhx_nlp_obesity_first_date": "Date of first obesity mention.",
+    "pmhx_nlp_breast_cancer": "TRUE if breast cancer documented in problem list NLP.",
+    "pmhx_nlp_breast_cancer_n_mentions": "Count of breast cancer mentions.",
+    "pmhx_nlp_depression": "TRUE if depression documented in problem list NLP.",
+    "pmhx_nlp_depression_n_mentions": "Count of depression mentions.",
+    "pmhx_nlp_cad": "TRUE if coronary artery disease documented in problem list NLP.",
+    "pmhx_nlp_cad_n_mentions": "Count of CAD mentions.",
+    "pmhx_nlp_ckd": "TRUE if chronic kidney disease documented in problem list NLP.",
+    "pmhx_nlp_ckd_n_mentions": "Count of CKD mentions.",
+    "pmhx_nlp_afib": "TRUE if atrial fibrillation documented in problem list NLP.",
+    "pmhx_nlp_afib_n_mentions": "Count of atrial fibrillation mentions.",
+    "pmhx_nlp_copd": "TRUE if COPD documented in problem list NLP.",
+    "pmhx_nlp_copd_n_mentions": "Count of COPD mentions.",
+    "pmhx_nlp_asthma": "TRUE if asthma documented in problem list NLP.",
+    "pmhx_nlp_asthma_n_mentions": "Count of asthma mentions.",
+    "pmhx_nlp_gerd": "TRUE if GERD documented in problem list NLP.",
+    "pmhx_nlp_gerd_n_mentions": "Count of GERD mentions.",
+    "pmhx_nlp_lung_cancer": "TRUE if lung cancer documented in problem list NLP.",
+    "pmhx_nlp_lung_cancer_n_mentions": "Count of lung cancer mentions.",
+    "pmhx_nlp_n_comorbidities": "Count of distinct comorbid conditions from problem list NLP.",
+    "pmhx_nlp_comorbidity_list": "Semicolon-separated list of all documented comorbidities.",
+    "pmhx_nlp_n_source_notes": "Number of distinct notes contributing to problem list NLP rollup.",
+    "pmhx_nlp_note_types": "Comma-separated note types for problem list NLP rollup.",
+    "pmhx_nlp_extraction_method": "NLP extraction method for problem list entities (regex_problem_list_v2).",
+    "pmhx_nlp_radiation_exposure": "TRUE if prior radiation exposure documented by LLM (NOVEL — no structured equivalent).",
+    "pmhx_nlp_radiation_exposure_date": "Date of radiation exposure event (entity_date when available).",
+    "pmhx_nlp_radiation_exposure_n_mentions": "Count of radiation exposure entity mentions.",
+    "pmhx_nlp_radiation_exposure_confidence": "Mean confidence of radiation exposure LLM entities.",
+    "pmhx_nlp_family_hx_thyroid": "TRUE if family history of thyroid disease documented by LLM.",
+    "pmhx_nlp_family_hx_thyroid_n_mentions": "Count of family thyroid history entity mentions.",
+    "pmhx_nlp_family_hx_cancer": "TRUE if family history of any cancer documented by LLM.",
+    "pmhx_nlp_smoking_status": "Smoking status extracted by LLM (never/former/current).",
+    "pmhx_nlp_men_syndrome": "TRUE if MEN syndrome (MEN2) documented — critical for MTC patients.",
+    "pmhx_nlp_autoimmune_thyroid_hx": "TRUE if autoimmune thyroid history documented by LLM from patient history.",
+    "pmhx_nlp_autoimmune_thyroid_hx_n_mentions": "Count of autoimmune thyroid history mentions.",
+    "pmhx_nlp_prior_cancer_hx": "TRUE if prior non-thyroid cancer history documented by LLM.",
+    "pmhx_nlp_prior_cancer_hx_n_mentions": "Count of prior cancer history entity mentions.",
+    "pmhx_nlp_coagulopathy": "TRUE if coagulopathy/bleeding disorder documented by LLM.",
+    "pmhx_nlp_osteoporosis": "TRUE if osteoporosis/osteopenia documented by LLM.",
+    "pmhx_llm_n_source_notes": "Number of distinct notes contributing to past medical hx LLM rollup.",
+    "pmhx_llm_note_types": "Comma-separated note types for past medical hx LLM rollup.",
+    "pmhx_llm_extraction_method": "LLM extraction method for past medical history (qwen3_32b).",
+    "pmhx_llm_min_confidence": "Minimum confidence score among past medical hx LLM entities used.",
+    "pmhx_llm_mean_confidence": "Mean confidence score among past medical hx LLM entities used.",
+    "pshx_nlp_prior_thyroidectomy": "TRUE if prior thyroidectomy documented in surgical history LLM.",
+    "pshx_nlp_prior_thyroidectomy_n_mentions": "Count of prior thyroidectomy entity mentions.",
+    "pshx_nlp_prior_thyroidectomy_date": "Date of prior thyroidectomy (entity_date when available).",
+    "pshx_nlp_prior_fna": "TRUE if prior FNA biopsy documented in surgical history LLM.",
+    "pshx_nlp_prior_fna_n_mentions": "Count of prior FNA entity mentions.",
+    "pshx_nlp_prior_rai": "TRUE if prior RAI treatment documented in surgical history LLM.",
+    "pshx_nlp_prior_rai_n_mentions": "Count of prior RAI entity mentions.",
+    "pshx_nlp_prior_rai_date": "Date of prior RAI (entity_date when available).",
+    "pshx_nlp_prior_neck_surgery": "TRUE if prior neck surgery (non-thyroid) documented by LLM.",
+    "pshx_nlp_prior_neck_surgery_n_mentions": "Count of prior neck surgery mentions.",
+    "pshx_nlp_prior_neck_dissection": "TRUE if prior neck dissection documented by LLM.",
+    "pshx_nlp_prior_parathyroidectomy": "TRUE if prior parathyroidectomy documented by LLM.",
+    "pshx_nlp_n_prior_procedures": "Count of distinct prior surgical procedure types documented.",
+    "pshx_llm_n_source_notes": "Number of distinct notes contributing to past surgical hx LLM rollup.",
+    "pshx_llm_note_types": "Comma-separated note types for past surgical hx LLM rollup.",
+    "pshx_llm_extraction_method": "LLM extraction method for past surgical history (qwen3_32b).",
+    "pshx_llm_min_confidence": "Minimum confidence score among past surgical hx LLM entities.",
+    "pshx_llm_mean_confidence": "Mean confidence score among past surgical hx LLM entities.",
+    "proc_nlp_tracheostomy": "TRUE if tracheostomy procedure documented in procedure NLP.",
+    "proc_nlp_tracheostomy_date": "Date of tracheostomy procedure mention.",
+    "proc_nlp_tracheostomy_n_mentions": "Count of tracheostomy mentions.",
+    "proc_nlp_laryngoscopy": "TRUE if laryngoscopy procedure documented in procedure NLP.",
+    "proc_nlp_laryngoscopy_date": "Date of laryngoscopy procedure mention.",
+    "proc_nlp_laryngoscopy_n_mentions": "Count of laryngoscopy mentions.",
+    "proc_nlp_mrnd": "TRUE if modified radical neck dissection documented in procedure NLP.",
+    "proc_nlp_mrnd_n_mentions": "Count of MRND mentions.",
+    "proc_nlp_lateral_neck_dissection": "TRUE if lateral neck dissection (any type) documented.",
+    "proc_nlp_parathyroid_autotransplant": "TRUE if parathyroid autotransplant documented in procedure NLP.",
+    "proc_nlp_n_source_notes": "Number of distinct notes contributing to procedure NLP rollup.",
+    "proc_nlp_note_types": "Comma-separated note types for procedure NLP rollup.",
+    "proc_nlp_extraction_method": "NLP extraction method for procedure entities (regex_procedure_v2).",
+    "sx_nlp_dysphagia": "TRUE if dysphagia documented in presenting symptoms LLM. ⚠ LOW COVERAGE (<2%).",
+    "sx_nlp_hoarseness": "TRUE if hoarseness/dysphonia documented in presenting symptoms LLM. ⚠ LOW COVERAGE.",
+    "sx_nlp_neck_mass": "TRUE if neck mass documented in presenting symptoms LLM. ⚠ LOW COVERAGE.",
+    "sx_nlp_dyspnea": "TRUE if dyspnea documented in presenting symptoms LLM. ⚠ LOW COVERAGE.",
+    "sx_nlp_any_symptom_data": "TRUE if any presenting symptom entity extracted by LLM. ⚠ LOW COVERAGE.",
+    "sx_llm_n_source_notes": "Number of distinct notes contributing to presenting symptoms LLM rollup.",
+    "sx_llm_extraction_method": "LLM extraction method for presenting symptoms (qwen3_32b).",
+    "sx_llm_mean_confidence": "Mean confidence score among presenting symptom LLM entities.",
+    "radtx_nlp_rai_ablation": "TRUE if RAI ablation documented in radiation treatment LLM.",
+    "radtx_nlp_rai_ablation_n_mentions": "Count of RAI ablation entity mentions.",
+    "radtx_nlp_thyrogen_prep": "TRUE if thyrogen (recombinant TSH) preparation documented.",
+    "radtx_nlp_hormone_withdrawal": "TRUE if levothyroxine withdrawal for RAI prep documented.",
+    "radtx_nlp_post_tx_scan_negative": "TRUE if post-treatment whole body scan documented as negative.",
+    "radtx_nlp_external_beam_radiation": "TRUE if external beam radiation therapy documented (uncommon in thyroid).",
+    "radtx_nlp_has_data": "TRUE if any radiation treatment LLM entity was extracted.",
+    "radtx_llm_n_source_notes": "Number of distinct notes contributing to radiation treatment LLM rollup.",
+    "radtx_llm_extraction_method": "LLM extraction method for radiation treatment (qwen3_32b).",
+    "radtx_llm_mean_confidence": "Mean confidence score among radiation treatment LLM entities.",
     "ln_rollup_": "Lymph node attribute from ln_master_rollup_v1 (x-marker corrected).",
     "ln_level_": "Per-level lymph node detail from ln_master_rollup_v1.",
     "tp_": "Attribute sourced directly from tumor_pathology table.",
@@ -301,7 +477,7 @@ def run(dry_run: bool = False) -> None:
         sys.exit(1)
 
     print(f"[init] Connecting to md:{DB}")
-    con = duckdb.connect(f"md:{DB}")
+    con = duckdb.connect(f"md:{DB}?motherduck_token={token}")
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     # ── 1. Get column schema ─────────────────────────────────────────────────
@@ -348,7 +524,6 @@ def run(dry_run: bool = False) -> None:
 
     # ── 3. Build data dictionary DataFrame ───────────────────────────────────
     print("[3] Building data dictionary …")
-    schema_map = {col: dtype for col, dtype in schema_rows}
     cov_map = {r["column_name"]: r for r in coverage_rows}
 
     records = []
@@ -457,7 +632,7 @@ Table: `{CANONICAL}`
 | 0 | `canonical_patient_master_v1` | Single analytical table — {TOTAL_ROWS:,} patients × {total_cols} columns | **IS the canonical** |
 | 1 | `gold_master_patient_facts_v1`, `patient_refined_master_clinical_v12`, `tumor_pathology`, `path_synoptics`, `ultrasound_reports`, `ct_imaging`, `nuclear_med`, `fna_cytology`, `fna_episode_master_v2`, `operative_episode_detail_v2`, `imaging_patient_summary_v1`, `longitudinal_lab_canonical_v1`, `molecular_results`, `molecular_test_episode_v2`, `specimen_master_v1`, `clinical_notes_long` | Source structured data from clinical databases | YES (scripts 200–211) |
 | 2 | `extracted_tirads_validated_v1`, `extracted_braf_recovery_v1`, `extracted_ras_patient_summary_v1`, `thyroid_scoring_py_v1`, `tg_timeline_patient_summary_v1`, `complication_phenotype_v1`, `recurrence_event_clean_v1`, `survival_cohort_enriched`, `rai_treatment_episode_v2`, `ln_master_rollup_v1`, `extracted_rln_injury_refined_v2`, `extracted_postop_labs_expanded_v1` | LLM or deterministic processing of Tier 1 | YES (scripts 207–211) |
-| 3 | `note_entities_llm_*` (23 tables), `note_entities_*` (7 tables) | NLP entity extraction from clinical notes | YES as `nlp_` columns (script 212) |
+| 3 | `note_entities_llm_*` (23 tables), `note_entities_*` (7 tables) | NLP entity extraction from clinical notes | YES as `nlp_*`, `op_nlp_*`, `med_nlp_*`, `pmhx_*`, `pshx_*`, `proc_nlp_*`, `sx_*`, `radtx_*` columns (scripts 212, 215) |
 | 4 | `linkage_*`, `val_*`, `review_queue_*`, `*_backup_*`, `imaging_fna_linkage_*`, `surgery_pathology_linkage_*`, `fna_molecular_linkage_*` | Internal linkage and QC tables | **NO** — internal plumbing |
 | 5 | `analysis_*`, `manuscript_cohort_*` | Pre-built analysis subsets | **NO** — may be outdated; rebuild from canonical |
 | 6 | `fhir_*`, `stg_thyroseq_*`, `rosflow_*` | Other/deprecated/unrelated | **NO** |
@@ -480,8 +655,10 @@ Table: `{CANONICAL}`
 | 209 | ab751b9 | NLP cross-validation report | QC report only — no canonical columns |
 | 210 | d90dcdf (partial) | Database audit + backup | QC artifacts — no canonical columns |
 | 211 | d90dcdf | Gap-fill from 8 extracted/episode tables | ~129 columns: complications, RLN, ETE, postop labs, RAI episodes, recurrence events, survival, molecular variants |
-| 212 | d90dcdf | NLP entity patient-level rollup | ~{total_cols - 407 - 129} `nlp_*` columns from 26 note_entities tables |
-| 213 | pending | Data dictionary + source truth map | Documentation only — no canonical columns |
+| 212 | d90dcdf | NLP entity patient-level rollup | nlp_* columns from 26 note_entities tables (Tier 1/2/3 LLM + non-LLM) |
+|| 214 | beb3aba | Final structured integration (gold_master, PRM v12, synoptics, labs, US) | gm_*, prm_*, syn_*, lab_tsh_*, us_* columns |
+|| 215 | c1d9992 | Deep NLP entity integration with full provenance (8 sources, 156 cols) | op_nlp_*, med_nlp_*, pmhx_nlp_*, pmhx_llm_*, pshx_*, proc_nlp_*, sx_*, radtx_* |
+| 213 | (current) | Data dictionary + source truth map | Documentation only — no canonical columns added |
 
 ---
 
@@ -527,8 +704,16 @@ Table: `{CANONICAL}`
 | `comp_` | Complications | `comp_rln_status` |
 | `surv_` | Survival | `surv_time_days`, `surv_event` |
 | `rec_` | Recurrence sub | `rec_detection_category` |
-| `nlp_llm_` | LLM NLP rollup | `nlp_llm_pathology_ete_grade` |
-| `nlp_ne_` | Non-LLM NLP metadata | `nlp_ne_complications_n_rows` |
+| `nlp_llm_` | LLM NLP rollup (script 212) | `nlp_llm_pathology_ete_grade` |
+| `nlp_ne_` | Non-LLM NLP metadata (script 212) | `nlp_ne_complications_n_rows` |
+| `op_nlp_` | Operative NLP — regex_operative_v2 (script 215) | `op_nlp_ebl_ml`, `op_nlp_nerve_monitoring_used` |
+| `med_nlp_` | Medication NLP — regex_medication_v2 (script 215) | `med_nlp_levothyroxine`, `med_nlp_calcitriol` |
+| `pmhx_nlp_` | Problem list / PMH NLP — regex + qwen3:32b (script 215) | `pmhx_nlp_hypertension`, `pmhx_nlp_radiation_exposure` |
+| `pmhx_llm_` | Past medical hx LLM provenance (script 215) | `pmhx_llm_mean_confidence`, `pmhx_llm_n_source_notes` |
+| `pshx_nlp_`, `pshx_llm_` | Past surgical hx LLM (script 215) | `pshx_nlp_prior_thyroidectomy`, `pshx_nlp_prior_rai` |
+| `proc_nlp_` | Procedure NLP — regex_procedure_v2 (script 215) | `proc_nlp_tracheostomy`, `proc_nlp_laryngoscopy` |
+| `sx_nlp_`, `sx_llm_` | Presenting symptoms LLM ⚠ LOW COVERAGE (script 215) | `sx_nlp_dysphagia`, `sx_nlp_hoarseness` |
+| `radtx_nlp_`, `radtx_llm_` | Radiation treatment LLM (script 215) | `radtx_nlp_rai_ablation`, `radtx_nlp_thyrogen_prep` |
 | `_flag` suffix | Boolean indicator | `aggressive_variant_flag` |
 | `_source` suffix | Provenance field | `ete_source_of_truth` |
 | `_confidence` suffix | Confidence score | `tirads_reliability` |
@@ -549,7 +734,7 @@ Table: `{CANONICAL}`
     print(f"  Overall coverage: {overall_mean_cov}%  |  100%: {n_100}  |  <10%: {n_below10}")
     print(f"  Domains: {len(domain_summary)}")
     print("=" * 60)
-    print(f"\nOutputs:")
+    print("\nOutputs:")
     print(f"  {out_csv}")
     print(f"  {out_md}")
 
