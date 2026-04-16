@@ -1,0 +1,22 @@
+research_id,adjudicated_grade,adjudicated_confidence,evidence_quote,reasoning,ajcc8_t_adjustment,raw_llm_response,error
+10379,gross,high,Specimen A is received fresh labeled...designated 'left strap muscle mass' and consists of a rubbery tan-gray portion of tissue...The specimen is trisected to reveal a tan-beige nodular portion of tissue abutting the inked outer surface,"Specimen A is explicitly labeled as 'left strap muscle mass' with a nodular tumor portion measuring 0.7 x 0.5 x 0.4 cm. This represents gross/macroscopic invasion into strap muscle (sternothyroid, sternohyoid, omohyoid, or thyrohyoid), which is the definition of T3b gross ETE per AJCC 8. The specimen was received as a separate surgical piece, confirming gross involvement.",T3b,"{
+  ""adjudicated_grade"": ""gross"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""Specimen A is received fresh labeled...designated 'left strap muscle mass' and consists of a rubbery tan-gray portion of tissue...The specimen is trisected to reveal a tan-beige nodular portion of tissue abutting the inked outer surface"",
+  ""reasoning"": ""Specimen A is explicitly labeled as 'left strap muscle mass' with a nodular tumor portion measuring 0.7 x 0.5 x 0.4 cm. This represents gross/macroscopic invasion into strap muscle (sternothyroid, sternohyoid, omohyoid, or thyrohyoid), which is the definition of T3b gross ETE per AJCC 8. The specimen was received as a separate surgical piece, confirming gross involvement."",
+  ""ajcc8_t_adjustment"": ""T3b""
+}",
+10440,gross,high,"This tumor is staged pT3b at least, related to clinical evidence of extrathyroidal extension. The terminology 'at least' reflects the clinical finding of tumor adherent to and around the distal left recurrent laryngeal nerve with additional involvement described toward the region of the cricothyroid joint.","The diagnosis comment explicitly states clinical evidence of extrathyroidal extension with tumor adherent to and around the distal left recurrent laryngeal nerve (RLN), which is a T4a structure per AJCC 8. The pathologist explicitly staged this as pT3b 'at least' based on clinical RLN involvement, indicating gross ETE beyond perithyroidal fat.",T4a (RLN invasion),"{
+  ""adjudicated_grade"": ""gross"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""This tumor is staged pT3b at least, related to clinical evidence of extrathyroidal extension. The terminology 'at least' reflects the clinical finding of tumor adherent to and around the distal left recurrent laryngeal nerve with additional involvement described toward the region of the cricothyroid joint."",
+  ""reasoning"": ""The diagnosis comment explicitly states clinical evidence of extrathyroidal extension with tumor adherent to and around the distal left recurrent laryngeal nerve (RLN), which is a T4a structure per AJCC 8. The pathologist explicitly staged this as pT3b 'at least' based on clinical RLN involvement, indicating gross ETE beyond perithyroidal fat."",
+  ""ajcc8_t_adjustment"": ""T4a (RLN invasion)""
+}",
+11048,microscopic,high,present (perithyroidal fibroadipose tissue involved),"The raw pathology field explicitly states ETE is present in 'perithyroidal fibroadipose tissue,' which is the classic definition of microscopic ETE per AJCC 8. The gross description notes attached adipose tissue but no mention of gross invasion into named structures (strap muscles, RLN, trachea, etc.). The gross_ete_flag is also False, confirming no gross ETE.","no change (remains T2, as microscopic ETE does not upstage in AJCC 8)","{
+  ""adjudicated_grade"": ""microscopic"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""present (perithyroidal fibroadipose tissue involved)"",
+  ""reasoning"": ""The raw pathology field explicitly states ETE is present in 'perithyroidal fibroadipose tissue,' which is the classic definition of microscopic ETE per AJCC 8. The gross description notes attached adipose tissue but no mention of gross invasion into named structures (strap muscles, RLN, trachea, etc.). The gross_ete_flag is also False, confirming no gross ETE."",
+  ""ajcc8_t_adjustment"": ""no change (remains T2, as microscopic ETE does not upstage in AJCC 8)""
+}",

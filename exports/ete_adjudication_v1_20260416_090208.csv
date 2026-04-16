@@ -1,0 +1,316 @@
+research_id,adjudicated_grade,adjudicated_confidence,evidence_quote,reasoning,ajcc8_t_adjustment,raw_llm_response,error
+10379,gross,high,Specimen A is received fresh labeled...designated 'left strap muscle mass' and consists of a rubbery tan-gray portion of tissue with attached adipose tissue measuring 2.5 x 1.0 x 0.6 cm.,"Specimen A is explicitly labeled as 'left strap muscle mass' in the gross description, indicating macroscopic invasion into strap muscle (sternothyroid, sternohyoid, omohyoid, or thyrohyoid). This constitutes gross ETE per AJCC 8 criteria (T3b). The diagnosis comment describes a circumscribed focus of carcinoma in this specimen, confirming tumor involvement of the strap muscle tissue.",T3b,"{
+  ""adjudicated_grade"": ""gross"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""Specimen A is received fresh labeled...designated 'left strap muscle mass' and consists of a rubbery tan-gray portion of tissue with attached adipose tissue measuring 2.5 x 1.0 x 0.6 cm."",
+  ""reasoning"": ""Specimen A is explicitly labeled as 'left strap muscle mass' in the gross description, indicating macroscopic invasion into strap muscle (sternothyroid, sternohyoid, omohyoid, or thyrohyoid). This constitutes gross ETE per AJCC 8 criteria (T3b). The diagnosis comment describes a circumscribed focus of carcinoma in this specimen, confirming tumor involvement of the strap muscle tissue."",
+  ""ajcc8_t_adjustment"": ""T3b""
+}",
+10440,gross,high,"This tumor is staged pT3b at least, related to clinical evidence of extrathyroidal extension. The terminology 'at least' reflects the clinical finding of tumor adherent to and around the distal left recurrent laryngeal nerve with additional involvement described toward the region of the cricothyroid joint.","The diagnosis comment explicitly states clinical evidence of extrathyroidal extension with tumor adherent to and around the distal left recurrent laryngeal nerve (RLN), which is a gross ETE criterion (T4a). The margin comment confirms 'clinical evidence of extrathyroidal extension' despite noting no macroscopic strap muscle invasion in sections examined. The RLN involvement is a clinical/intraoperative finding that constitutes gross ETE.",T4a (RLN involvement is gross ETE),"{
+  ""adjudicated_grade"": ""gross"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""This tumor is staged pT3b at least, related to clinical evidence of extrathyroidal extension. The terminology 'at least' reflects the clinical finding of tumor adherent to and around the distal left recurrent laryngeal nerve with additional involvement described toward the region of the cricothyroid joint."",
+  ""reasoning"": ""The diagnosis comment explicitly states clinical evidence of extrathyroidal extension with tumor adherent to and around the distal left recurrent laryngeal nerve (RLN), which is a gross ETE criterion (T4a). The margin comment confirms 'clinical evidence of extrathyroidal extension' despite noting no macroscopic strap muscle invasion in sections examined. The RLN involvement is a clinical/intraoperative finding that constitutes gross ETE."",
+  ""ajcc8_t_adjustment"": ""T4a (RLN involvement is gross ETE)""
+}",
+11048,microscopic,high,present (perithyroidal fibroadipose tissue involved),"The raw pathology field explicitly states ETE is present in 'perithyroidal fibroadipose tissue,' which is the classic definition of microscopic ETE per AJCC 8. The gross description notes attached adipose tissue but no mention of gross invasion into named structures (strap muscles, RLN, trachea, etc.). The gross_ete_flag is also False, confirming no gross ETE.",no change,"{
+  ""adjudicated_grade"": ""microscopic"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""present (perithyroidal fibroadipose tissue involved)"",
+  ""reasoning"": ""The raw pathology field explicitly states ETE is present in 'perithyroidal fibroadipose tissue,' which is the classic definition of microscopic ETE per AJCC 8. The gross description notes attached adipose tissue but no mention of gross invasion into named structures (strap muscles, RLN, trachea, etc.). The gross_ete_flag is also False, confirming no gross ETE."",
+  ""ajcc8_t_adjustment"": ""no change""
+}",
+11100,unable_to_determine,low,"The capsule is tan-brown, nodular and intact. Obvious capsular involvement by the nodules are not identified.","The gross description explicitly states the thyroid capsule is 'intact' and 'obvious capsular involvement' is not identified. However, the case is flagged as gross_ete_present and currently staged T3b, creating a contradiction. The microscopic description is completely absent, preventing confirmation of any ETE. Without microscopic findings or clear gross invasion beyond the capsule, the ETE grade cannot be reliably determined.",unable to determine - requires complete microscopic description,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""The capsule is tan-brown, nodular and intact. Obvious capsular involvement by the nodules are not identified."",
+  ""reasoning"": ""The gross description explicitly states the thyroid capsule is 'intact' and 'obvious capsular involvement' is not identified. However, the case is flagged as gross_ete_present and currently staged T3b, creating a contradiction. The microscopic description is completely absent, preventing confirmation of any ETE. Without microscopic findings or clear gross invasion beyond the capsule, the ETE grade cannot be reliably determined."",
+  ""ajcc8_t_adjustment"": ""unable to determine - requires complete microscopic description""
+}",
+1115,unable_to_determine,low,An area of focal thickening is palpated in the superior/posterior/lateral aspect of the specimen... The lateral margin is less than 0.1 cm from the mass lesion.,"The gross description documents a 1.4 cm tumor with close lateral margin (< 0.1 cm) and presence at the medial resection margin, but does not explicitly describe invasion into named extrathyroidal structures (strap muscles, RLN, trachea, etc.) or perithyroidal soft tissue. The microscopic description is entirely absent, which is critical for determining ETE grade. Without microscopic confirmation of the nature and extent of any extension, ETE grade cannot be reliably adjudicated.",unable to determine; requires microscopic description,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""An area of focal thickening is palpated in the superior/posterior/lateral aspect of the specimen... The lateral margin is less than 0.1 cm from the mass lesion."",
+  ""reasoning"": ""The gross description documents a 1.4 cm tumor with close lateral margin (< 0.1 cm) and presence at the medial resection margin, but does not explicitly describe invasion into named extrathyroidal structures (strap muscles, RLN, trachea, etc.) or perithyroidal soft tissue. The microscopic description is entirely absent, which is critical for determining ETE grade. Without microscopic confirmation of the nature and extent of any extension, ETE grade cannot be reliably adjudicated."",
+  ""ajcc8_t_adjustment"": ""unable to determine; requires microscopic description""
+}",
+11212,unable_to_determine,low,"As the tumor is present at the inked posterior/isthmic resection interface, it is difficult to ascertain if this tumor was completely confined to the thyroid or if there is extrathyroidal extension (which would upstage the tumor to pT3b), requiring correlation with intraoperative and radiologic data.","The pathology report explicitly states uncertainty about ETE status, noting tumor at the resection margin and requiring correlation with intraoperative/radiologic data. The margin comment denies microscopic strap muscle invasion and macroscopic ETE, but the diagnosis comment indicates the true ETE status cannot be determined from pathology alone.",unable to determine; recommend T1b pending clinical/radiologic correlation,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""As the tumor is present at the inked posterior/isthmic resection interface, it is difficult to ascertain if this tumor was completely confined to the thyroid or if there is extrathyroidal extension (which would upstage the tumor to pT3b), requiring correlation with intraoperative and radiologic data."",
+  ""reasoning"": ""The pathology report explicitly states uncertainty about ETE status, noting tumor at the resection margin and requiring correlation with intraoperative/radiologic data. The margin comment denies microscopic strap muscle invasion and macroscopic ETE, but the diagnosis comment indicates the true ETE status cannot be determined from pathology alone."",
+  ""ajcc8_t_adjustment"": ""unable to determine; recommend T1b pending clinical/radiologic correlation""
+}",
+11414,unable_to_determine,low,Extrathyroidal Extension: Cannot be determined: Tumor extends to anterior edge of specimen,"The margin/angiolymphatic comment explicitly states ETE 'Cannot be determined' because the tumor extends to the specimen edge, preventing full assessment of whether extension is present and, if present, whether it is microscopic or gross. The gross description shows lesion #2 'abuts the anterior capsule' but does not describe invasion beyond the capsule into perithyroidal tissues or named structures.",no change,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""Extrathyroidal Extension: Cannot be determined: Tumor extends to anterior edge of specimen"",
+  ""reasoning"": ""The margin/angiolymphatic comment explicitly states ETE 'Cannot be determined' because the tumor extends to the specimen edge, preventing full assessment of whether extension is present and, if present, whether it is microscopic or gross. The gross description shows lesion #2 'abuts the anterior capsule' but does not describe invasion beyond the capsule into perithyroidal tissues or named structures."",
+  ""ajcc8_t_adjustment"": ""no change""
+}",
+11599,unable_to_determine,low,Microscopy is performed. [No microscopic description provided in report],"The pathology report is incomplete—microscopic description, diagnosis comment, and tumor histology comment sections are all blank. Without microscopic findings, it is impossible to determine whether ETE is present microscopically, grossly, or absent. The gross description mentions only the nodule itself (1.2 cm, calcified) with no mention of invasion into perithyroidal tissues or named structures.",unable to determine—requires complete pathology report,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""Microscopy is performed. [No microscopic description provided in report]"",
+  ""reasoning"": ""The pathology report is incomplete—microscopic description, diagnosis comment, and tumor histology comment sections are all blank. Without microscopic findings, it is impossible to determine whether ETE is present microscopically, grossly, or absent. The gross description mentions only the nodule itself (1.2 cm, calcified) with no mention of invasion into perithyroidal tissues or named structures."",
+  ""ajcc8_t_adjustment"": ""unable to determine—requires complete pathology report""
+}",
+11684,absent,high,"The outer surface is pink to purple with a thin fibrous layer. There is a 1.5 x 0.6 x 0.2 cm portion of soft tissue attached to the posterior aspect of the lobe; however, no additional defects are noted grossly.","Despite the ETE field being marked 'true', the gross description explicitly states 'no additional defects are noted grossly' and describes only a small soft tissue attachment without evidence of invasion into perithyroidal structures or named anatomic sites. The microscopic description is absent/blank, providing no evidence of microscopic ETE. The tumor margins show carcinoma close to but not invading beyond the thyroid capsule.",no change (T1b appropriate if no ETE confirmed),"{
+  ""adjudicated_grade"": ""absent"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""The outer surface is pink to purple with a thin fibrous layer. There is a 1.5 x 0.6 x 0.2 cm portion of soft tissue attached to the posterior aspect of the lobe; however, no additional defects are noted grossly."",
+  ""reasoning"": ""Despite the ETE field being marked 'true', the gross description explicitly states 'no additional defects are noted grossly' and describes only a small soft tissue attachment without evidence of invasion into perithyroidal structures or named anatomic sites. The microscopic description is absent/blank, providing no evidence of microscopic ETE. The tumor margins show carcinoma close to but not invading beyond the thyroid capsule."",
+  ""ajcc8_t_adjustment"": ""no change (T1b appropriate if no ETE confirmed)""
+}",
+1287,unable_to_determine,low,"firm, white lesion measuring 0.8 x 0.6 x 1.0 cm in the left portion of the isthmus, lying within 1.0 mm of the thyroid capsule","The gross description documents a tumor very close to the thyroid capsule (within 1.0 mm) and the margin comment indicates carcinoma <0.1 cm from the inked surface, but the microscopic description is completely absent. Without microscopic detail, it is impossible to determine whether there is actual invasion into perithyroidal soft tissue (microscopic ETE) versus mere proximity to the capsule. The gross_ete_flag is False, suggesting no gross invasion was identified.",no change,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""firm, white lesion measuring 0.8 x 0.6 x 1.0 cm in the left portion of the isthmus, lying within 1.0 mm of the thyroid capsule"",
+  ""reasoning"": ""The gross description documents a tumor very close to the thyroid capsule (within 1.0 mm) and the margin comment indicates carcinoma <0.1 cm from the inked surface, but the microscopic description is completely absent. Without microscopic detail, it is impossible to determine whether there is actual invasion into perithyroidal soft tissue (microscopic ETE) versus mere proximity to the capsule. The gross_ete_flag is False, suggesting no gross invasion was identified."",
+  ""ajcc8_t_adjustment"": ""no change""
+}",
+1718,unable_to_determine,low,"a stitched area is identified by the surgeon to represent a portion of the thyroid adherent to the trachea (area of suspicion). The lesion abuts both the anterior and posterior surfaces of the thyroid, including the area of suspicion","The gross description mentions an 'area of suspicion' where thyroid was adherent to trachea and an inked 'area of suspicion' (yellow ink), but the microscopic description, diagnosis comment, and tumor margin/angiolymphatic comment are all blank. Without microscopic confirmation of actual invasion versus mere adherence, and without histologic detail, ETE grade cannot be reliably determined.",unable to determine - requires microscopic review,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""a stitched area is identified by the surgeon to represent a portion of the thyroid adherent to the trachea (area of suspicion). The lesion abuts both the anterior and posterior surfaces of the thyroid, including the area of suspicion"",
+  ""reasoning"": ""The gross description mentions an 'area of suspicion' where thyroid was adherent to trachea and an inked 'area of suspicion' (yellow ink), but the microscopic description, diagnosis comment, and tumor margin/angiolymphatic comment are all blank. Without microscopic confirmation of actual invasion versus mere adherence, and without histologic detail, ETE grade cannot be reliably determined."",
+  ""ajcc8_t_adjustment"": ""unable to determine - requires microscopic review""
+}",
+1792,unable_to_determine,low,"No microscopic description, diagnosis comment, or tumor histology comment provided in the pathology report.","The gross description details specimen handling and lesion locations but contains no information about extrathyroidal extension. The microscopic description, diagnosis comment, and histology comment sections are all blank, making it impossible to determine whether ETE is present microscopically, grossly, or absent. The raw field value 'c/a' is non-standard and does not clarify the status.",no change (cannot adjudicate without microscopic findings),"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""No microscopic description, diagnosis comment, or tumor histology comment provided in the pathology report."",
+  ""reasoning"": ""The gross description details specimen handling and lesion locations but contains no information about extrathyroidal extension. The microscopic description, diagnosis comment, and histology comment sections are all blank, making it impossible to determine whether ETE is present microscopically, grossly, or absent. The raw field value 'c/a' is non-standard and does not clarify the status."",
+  ""ajcc8_t_adjustment"": ""no change (cannot adjudicate without microscopic findings)""
+}",
+243,unable_to_determine,low,The specimen consists of a thyroid lobe including the isthmus and soft tissue at the inferior pole of the gland containing three lymph nodes.,"The gross description mentions 'soft tissue' adjacent to the thyroid but does not explicitly describe invasion into perithyroidal structures or named anatomic sites. The microscopic description, diagnosis comment, and tumor margin comments are all blank, preventing definitive assessment of ETE type. The gross_ete_flag is False, which contradicts the ETE present designation and suggests possible absence rather than grading.",unable_to_determine,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""The specimen consists of a thyroid lobe including the isthmus and soft tissue at the inferior pole of the gland containing three lymph nodes."",
+  ""reasoning"": ""The gross description mentions 'soft tissue' adjacent to the thyroid but does not explicitly describe invasion into perithyroidal structures or named anatomic sites. The microscopic description, diagnosis comment, and tumor margin comments are all blank, preventing definitive assessment of ETE type. The gross_ete_flag is False, which contradicts the ETE present designation and suggests possible absence rather than grading."",
+  ""ajcc8_t_adjustment"": ""unable_to_determine""
+}",
+3346,absent,high,"There is no soft tissue or muscle adherent to the thyroid gland... This lesion abuts the inked margin of resection, but appears confined to the thyroid lobe.","The gross description explicitly states there is no soft tissue or muscle adherent to the thyroid gland, and the tumor is described as confined to the thyroid lobe despite abutting the inked margin. No microscopic ETE is documented in the available pathology text. Despite the ETE field being marked 'true', the pathology findings do not support extrathyroidal extension.",T1b (no ETE present; tumor 2.0 cm confined to thyroid),"{
+  ""adjudicated_grade"": ""absent"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""There is no soft tissue or muscle adherent to the thyroid gland... This lesion abuts the inked margin of resection, but appears confined to the thyroid lobe."",
+  ""reasoning"": ""The gross description explicitly states there is no soft tissue or muscle adherent to the thyroid gland, and the tumor is described as confined to the thyroid lobe despite abutting the inked margin. No microscopic ETE is documented in the available pathology text. Despite the ETE field being marked 'true', the pathology findings do not support extrathyroidal extension."",
+  ""ajcc8_t_adjustment"": ""T1b (no ETE present; tumor 2.0 cm confined to thyroid)""
+}",
+3430,unable_to_determine,low,"No microscopic description provided; gross description documents thyroid lobes, isthmus, and lymph node specimens but contains no explicit statement regarding extrathyroidal extension.","The pathology report lacks a microscopic description section entirely, which is critical for determining ETE grade. The gross description documents the primary tumor (3.0 cm in right lobe) and multiple lymph node specimens but does not explicitly describe invasion beyond the thyroid capsule or into perithyroidal tissues. Without microscopic detail, ETE grade cannot be reliably adjudicated.",no change,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""No microscopic description provided; gross description documents thyroid lobes, isthmus, and lymph node specimens but contains no explicit statement regarding extrathyroidal extension."",
+  ""reasoning"": ""The pathology report lacks a microscopic description section entirely, which is critical for determining ETE grade. The gross description documents the primary tumor (3.0 cm in right lobe) and multiple lymph node specimens but does not explicitly describe invasion beyond the thyroid capsule or into perithyroidal tissues. Without microscopic detail, ETE grade cannot be reliably adjudicated."",
+  ""ajcc8_t_adjustment"": ""no change""
+}",
+3601,absent,high,This lesion grossly is 0.1 cm from the anterior blue inked capsule of thyroid. This nodule contains focal white firm area measuring 0.4 cm in largest dimension.,"The gross description explicitly documents that the tumor is 0.1 cm away from the thyroid capsule (not invading it) and does not describe any gross invasion into perithyroidal soft tissue, strap muscles, or other structures. The microscopic description is blank, providing no evidence of microscopic ETE. Despite the ETE field being marked 'present', the pathology text shows no actual extension beyond the thyroid capsule.",T1b (no change - tumor 1.2 cm with no ETE),"{
+  ""adjudicated_grade"": ""absent"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""This lesion grossly is 0.1 cm from the anterior blue inked capsule of thyroid. This nodule contains focal white firm area measuring 0.4 cm in largest dimension."",
+  ""reasoning"": ""The gross description explicitly documents that the tumor is 0.1 cm away from the thyroid capsule (not invading it) and does not describe any gross invasion into perithyroidal soft tissue, strap muscles, or other structures. The microscopic description is blank, providing no evidence of microscopic ETE. Despite the ETE field being marked 'present', the pathology text shows no actual extension beyond the thyroid capsule."",
+  ""ajcc8_t_adjustment"": ""T1b (no change - tumor 1.2 cm with no ETE)""
+}",
+3624,unable_to_determine,low,The trachea appears unremarkable. Representative sections are submitted in cassettes 'C1' and 'C2.',"The gross description documents a separate tracheal specimen submitted but provides no microscopic findings, diagnosis comments, or histology details. The raw ETE field shows 'c/a' (unclear notation). Without microscopic examination results or explicit statements about tumor invasion into trachea or other structures, ETE grade cannot be reliably determined.",no change,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""The trachea appears unremarkable. Representative sections are submitted in cassettes 'C1' and 'C2.'"",
+  ""reasoning"": ""The gross description documents a separate tracheal specimen submitted but provides no microscopic findings, diagnosis comments, or histology details. The raw ETE field shows 'c/a' (unclear notation). Without microscopic examination results or explicit statements about tumor invasion into trachea or other structures, ETE grade cannot be reliably determined."",
+  ""ajcc8_t_adjustment"": ""no change""
+}",
+3651,absent,high,The specimen consists of a thyroid gland that is intact... The remainder of the specimen appears grossly unremarkable.,"The gross description documents an intact thyroid gland with no mention of gross invasion into perithyroidal tissues, strap muscles, or other structures. The microscopic description is completely blank, providing no evidence of microscopic ETE. Despite the raw field indicating 'present', the pathology text contains no documentation of extrathyroidal extension.",T1b (no ETE present; tumor size 1.5 cm with minimal capsular invasion only),"{
+  ""adjudicated_grade"": ""absent"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""The specimen consists of a thyroid gland that is intact... The remainder of the specimen appears grossly unremarkable."",
+  ""reasoning"": ""The gross description documents an intact thyroid gland with no mention of gross invasion into perithyroidal tissues, strap muscles, or other structures. The microscopic description is completely blank, providing no evidence of microscopic ETE. Despite the raw field indicating 'present', the pathology text contains no documentation of extrathyroidal extension."",
+  ""ajcc8_t_adjustment"": ""T1b (no ETE present; tumor size 1.5 cm with minimal capsular invasion only)""
+}",
+3711,absent,high,Nodule #1 at the superior portion of the thyroid measures 0.6 x 0.5 x 0.5 cm and is 0.2 cm away from the anterior portion of the thyroid and 0.3 cm away from the posterior portion of the thyroid.,"The gross description explicitly documents that the 0.6 cm nodule (Nodule #1, the tumor of interest) is 0.2-0.3 cm away from both anterior and posterior thyroid capsule, indicating it is well-circumscribed and intrathyroidal with clear margins. No gross invasion into perithyroidal soft tissue, strap muscles, or other structures is described. The microscopic description section is empty, providing no evidence of microscopic ETE.",no change (remains T1a),"{
+  ""adjudicated_grade"": ""absent"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""Nodule #1 at the superior portion of the thyroid measures 0.6 x 0.5 x 0.5 cm and is 0.2 cm away from the anterior portion of the thyroid and 0.3 cm away from the posterior portion of the thyroid."",
+  ""reasoning"": ""The gross description explicitly documents that the 0.6 cm nodule (Nodule #1, the tumor of interest) is 0.2-0.3 cm away from both anterior and posterior thyroid capsule, indicating it is well-circumscribed and intrathyroidal with clear margins. No gross invasion into perithyroidal soft tissue, strap muscles, or other structures is described. The microscopic description section is empty, providing no evidence of microscopic ETE."",
+  ""ajcc8_t_adjustment"": ""no change (remains T1a)""
+}",
+374,unable_to_determine,low,"No microscopic description, diagnosis comment, or tumor histology comment provided in pathology report.","The pathology report contains only gross descriptions of specimens but lacks microscopic findings, diagnosis details, and histology comments necessary to determine whether ETE is microscopic or gross. The gross_ete_flag is False, suggesting no gross ETE was identified, but without microscopic detail, the nature and extent of the ETE cannot be adjudicated.",unable_to_determine,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""No microscopic description, diagnosis comment, or tumor histology comment provided in pathology report."",
+  ""reasoning"": ""The pathology report contains only gross descriptions of specimens but lacks microscopic findings, diagnosis details, and histology comments necessary to determine whether ETE is microscopic or gross. The gross_ete_flag is False, suggesting no gross ETE was identified, but without microscopic detail, the nature and extent of the ETE cannot be adjudicated."",
+  ""ajcc8_t_adjustment"": ""unable_to_determine""
+}",
+4041,unable_to_determine,low,Tumor extends to inked external surface of right lobe in region of thermal artifact,"The margin comment indicates tumor extension to the inked external surface, but the presence of thermal artifact creates ambiguity about whether this represents true extrathyroidal extension or artifact-related distortion. The gross description notes nodules 'closely approach' the inked margin but does not explicitly describe gross invasion beyond the thyroid capsule into perithyroidal soft tissue or named structures. Microscopic description is absent, preventing definitive classification.",no change,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""Tumor extends to inked external surface of right lobe in region of thermal artifact"",
+  ""reasoning"": ""The margin comment indicates tumor extension to the inked external surface, but the presence of thermal artifact creates ambiguity about whether this represents true extrathyroidal extension or artifact-related distortion. The gross description notes nodules 'closely approach' the inked margin but does not explicitly describe gross invasion beyond the thyroid capsule into perithyroidal soft tissue or named structures. Microscopic description is absent, preventing definitive classification."",
+  ""ajcc8_t_adjustment"": ""no change""
+}",
+4085,absent,high,The carcinoma is present 1mm from the inked margin of resection. No evidence of angiolymphatic or perineural invasion is seen.,"The microscopic description explicitly states the carcinoma is 1mm from the inked margin with no angiolymphatic or perineural invasion. The gross description notes the nodule 'extends to the inked outer margin' but the microscopic exam shows it is actually 1mm away from the margin. There is no mention of perithyroidal soft tissue invasion, strap muscle invasion, or any gross/microscopic extrathyroidal extension in the pathology text.",T1a (no ETE present),"{
+  ""adjudicated_grade"": ""absent"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""The carcinoma is present 1mm from the inked margin of resection. No evidence of angiolymphatic or perineural invasion is seen."",
+  ""reasoning"": ""The microscopic description explicitly states the carcinoma is 1mm from the inked margin with no angiolymphatic or perineural invasion. The gross description notes the nodule 'extends to the inked outer margin' but the microscopic exam shows it is actually 1mm away from the margin. There is no mention of perithyroidal soft tissue invasion, strap muscle invasion, or any gross/microscopic extrathyroidal extension in the pathology text."",
+  ""ajcc8_t_adjustment"": ""T1a (no ETE present)""
+}",
+4109,absent,high,"The papillary carcinoma exhibits a follicular architecture and is surrounded by dense fibrosis; however, no true capsule is identified. The lesion is present at one cauterized peripheral margin.","The microscopic description explicitly states the papillary carcinoma has no true capsule and is surrounded by dense fibrosis within the thyroid gland itself. There is no mention of extension into perithyroidal soft tissue, strap muscles, or any structures beyond the thyroid capsule. The tumor is a 0.5 cm microcarcinoma with no documented extrathyroidal extension.",T1a (no ETE present; current staging appropriate),"{
+  ""adjudicated_grade"": ""absent"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""The papillary carcinoma exhibits a follicular architecture and is surrounded by dense fibrosis; however, no true capsule is identified. The lesion is present at one cauterized peripheral margin."",
+  ""reasoning"": ""The microscopic description explicitly states the papillary carcinoma has no true capsule and is surrounded by dense fibrosis within the thyroid gland itself. There is no mention of extension into perithyroidal soft tissue, strap muscles, or any structures beyond the thyroid capsule. The tumor is a 0.5 cm microcarcinoma with no documented extrathyroidal extension."",
+  ""ajcc8_t_adjustment"": ""T1a (no ETE present; current staging appropriate)""
+}",
+4175,unable_to_determine,low,"The thyroid lobe is surfaced by a delicate, intact capsule. The specimen is inked as follows.","The gross description explicitly states the thyroid capsule is 'delicate, intact' with no mention of gross invasion into perithyroidal tissues, strap muscles, or other structures. The microscopic description is completely absent, preventing assessment of microscopic ETE. The synoptic field shows 'c/a' (cannot assess/not applicable), and gross_ete_flag is False, all suggesting no ETE was identified. However, without microscopic findings documented, definitive grading cannot be made.",no change (remains T2 if no ETE confirmed),"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""The thyroid lobe is surfaced by a delicate, intact capsule. The specimen is inked as follows."",
+  ""reasoning"": ""The gross description explicitly states the thyroid capsule is 'delicate, intact' with no mention of gross invasion into perithyroidal tissues, strap muscles, or other structures. The microscopic description is completely absent, preventing assessment of microscopic ETE. The synoptic field shows 'c/a' (cannot assess/not applicable), and gross_ete_flag is False, all suggesting no ETE was identified. However, without microscopic findings documented, definitive grading cannot be made."",
+  ""ajcc8_t_adjustment"": ""no change (remains T2 if no ETE confirmed)""
+}",
+429,unable_to_determine,low,No microscopic description provided; gross description mentions paratracheal mass attached to thyroid by soft tissue but does not specify invasion type or depth.,"The gross description documents a paratracheal mass attached to the thyroid by soft tissue, but the microscopic description section is completely blank. Without microscopic findings, it is impossible to determine whether ETE is microscopic (perithyroidal fat invasion only) or gross (invasion into named structures like strap muscles or trachea). The gross description alone does not clarify the nature of the attachment or invasion.",no change (cannot adjust without clear ETE grading),"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""No microscopic description provided; gross description mentions paratracheal mass attached to thyroid by soft tissue but does not specify invasion type or depth."",
+  ""reasoning"": ""The gross description documents a paratracheal mass attached to the thyroid by soft tissue, but the microscopic description section is completely blank. Without microscopic findings, it is impossible to determine whether ETE is microscopic (perithyroidal fat invasion only) or gross (invasion into named structures like strap muscles or trachea). The gross description alone does not clarify the nature of the attachment or invasion."",
+  ""ajcc8_t_adjustment"": ""no change (cannot adjust without clear ETE grading)""
+}",
+4513,unable_to_determine,low,"The specimen is serially sectioned from superior to inferior to reveal an irregular, well demarcated light, firm mass located in the inferior pole, 1.6 x 1.4 x 0.6 cm. This mass grossly comes to within 0.6 cm of the inked isthmus margin and grossly abuts the posterior surface","The gross description documents a 1.6 cm tumor that abuts the posterior surface and comes close to the anterior surface, but does not explicitly describe invasion into named extrathyroidal structures (strap muscles, RLN, trachea, etc.). The microscopic description, diagnosis comment, and tumor margin/angiolymphatic comment sections are completely absent, preventing definitive assessment of whether microscopic ETE into perithyroidal fat is present. Without microscopic findings, ETE grade cannot be reliably determined.",no change,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""The specimen is serially sectioned from superior to inferior to reveal an irregular, well demarcated light, firm mass located in the inferior pole, 1.6 x 1.4 x 0.6 cm. This mass grossly comes to within 0.6 cm of the inked isthmus margin and grossly abuts the posterior surface"",
+  ""reasoning"": ""The gross description documents a 1.6 cm tumor that abuts the posterior surface and comes close to the anterior surface, but does not explicitly describe invasion into named extrathyroidal structures (strap muscles, RLN, trachea, etc.). The microscopic description, diagnosis comment, and tumor margin/angiolymphatic comment sections are completely absent, preventing definitive assessment of whether microscopic ETE into perithyroidal fat is present. Without microscopic findings, ETE grade cannot be reliably determined."",
+  ""ajcc8_t_adjustment"": ""no change""
+}",
+5106,absent,high,2.4 x 2.0 x 0.8 cm portion of attached adipose tissue to the inferior pole of the right lobe. The... nodular area within the left lobe (0.9 x 0.8 x 0.7 cm) abutting both the anterior and posterior capsular surfaces,The gross description documents a 0.9 cm tumor abutting the thyroid capsule but does not describe invasion beyond the capsule into perithyroidal soft tissue or any named anatomic structures. The attached adipose tissue is described as separate from the tumor. No microscopic description is provided to document any ETE. The raw field value 'c/a' and synoptic field 'c/a' (likely 'cannot assess' or similar) combined with gross_ete_flag=False and current T1a staging all support absence of documented ETE.,no change,"{
+  ""adjudicated_grade"": ""absent"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""2.4 x 2.0 x 0.8 cm portion of attached adipose tissue to the inferior pole of the right lobe. The... nodular area within the left lobe (0.9 x 0.8 x 0.7 cm) abutting both the anterior and posterior capsular surfaces"",
+  ""reasoning"": ""The gross description documents a 0.9 cm tumor abutting the thyroid capsule but does not describe invasion beyond the capsule into perithyroidal soft tissue or any named anatomic structures. The attached adipose tissue is described as separate from the tumor. No microscopic description is provided to document any ETE. The raw field value 'c/a' and synoptic field 'c/a' (likely 'cannot assess' or similar) combined with gross_ete_flag=False and current T1a staging all support absence of documented ETE."",
+  ""ajcc8_t_adjustment"": ""no change""
+}",
+5315,absent,high,"Both nodules in the right lobe appear to be unencapsulated. In the mid to superior portion of the left lobe, there is a pale, firm, unencapsulated nodule (#3) measuring 1.2 x 1.0 x 1.0 cm. It is abutting the posterior surface of the specimen and is 0.2 cm from the anterior surface.","The gross description documents unencapsulated tumors abutting thyroid surfaces but contains no mention of invasion into perithyroidal fat, strap muscles, or any structures beyond the thyroid capsule. The microscopic description is blank, and the diagnosis comment focuses on histologic features and metastatic disease without documenting extrathyroidal extension. Despite the ETE field being marked 'present_ungraded', the pathology text provides no evidence of actual ETE.",T1b (no ETE present; tumor size 1.2 cm with capsular invasion only),"{
+  ""adjudicated_grade"": ""absent"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""Both nodules in the right lobe appear to be unencapsulated. In the mid to superior portion of the left lobe, there is a pale, firm, unencapsulated nodule (#3) measuring 1.2 x 1.0 x 1.0 cm. It is abutting the posterior surface of the specimen and is 0.2 cm from the anterior surface."",
+  ""reasoning"": ""The gross description documents unencapsulated tumors abutting thyroid surfaces but contains no mention of invasion into perithyroidal fat, strap muscles, or any structures beyond the thyroid capsule. The microscopic description is blank, and the diagnosis comment focuses on histologic features and metastatic disease without documenting extrathyroidal extension. Despite the ETE field being marked 'present_ungraded', the pathology text provides no evidence of actual ETE."",
+  ""ajcc8_t_adjustment"": ""T1b (no ETE present; tumor size 1.2 cm with capsular invasion only)""
+}",
+5430,unable_to_determine,low,This carcinoma extends to the inked resection margin and therefore the possibility of extrathyroidal extension cannot be excluded,"The pathology report explicitly states that ETE cannot be determined because the tumor extends to the inked margin, making it impossible to assess whether extension beyond the thyroid capsule is present or absent. The gross description shows no obvious invasion of named structures, but microscopic assessment is compromised by margin involvement.",no change,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""This carcinoma extends to the inked resection margin and therefore the possibility of extrathyroidal extension cannot be excluded"",
+  ""reasoning"": ""The pathology report explicitly states that ETE cannot be determined because the tumor extends to the inked margin, making it impossible to assess whether extension beyond the thyroid capsule is present or absent. The gross description shows no obvious invasion of named structures, but microscopic assessment is compromised by margin involvement."",
+  ""ajcc8_t_adjustment"": ""no change""
+}",
+5488,unable_to_determine,low,"Extrathyroidal Extension: Cannot be determined: Although not definitively identified in these sections, tumor focally extends to inked deep surface, so the true extent is not apparent.","The pathology report explicitly states ETE 'Cannot be determined' because the tumor extends to the inked deep surface, obscuring the true extent of invasion. While the tumor abuts both inked surfaces grossly and extends to the deep inked margin microscopically, the report does not specify whether this represents microscopic perithyroidal fat invasion or gross invasion into named structures (strap muscles, RLN, etc.). The incomplete sampling prevents definitive grading.",no change,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""Extrathyroidal Extension: Cannot be determined: Although not definitively identified in these sections, tumor focally extends to inked deep surface, so the true extent is not apparent."",
+  ""reasoning"": ""The pathology report explicitly states ETE 'Cannot be determined' because the tumor extends to the inked deep surface, obscuring the true extent of invasion. While the tumor abuts both inked surfaces grossly and extends to the deep inked margin microscopically, the report does not specify whether this represents microscopic perithyroidal fat invasion or gross invasion into named structures (strap muscles, RLN, etc.). The incomplete sampling prevents definitive grading."",
+  ""ajcc8_t_adjustment"": ""no change""
+}",
+5518,unable_to_determine,low,"No microscopic description, diagnosis comment, or histology comment provided in the pathology report.","The gross description documents thyroid nodules that are encapsulated with no mention of gross invasion into surrounding structures. However, the microscopic description, diagnosis comment, and histology comment sections are completely absent, making it impossible to assess for microscopic extrathyroidal extension. Without histologic examination details, ETE status cannot be reliably adjudicated.",no change,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""No microscopic description, diagnosis comment, or histology comment provided in the pathology report."",
+  ""reasoning"": ""The gross description documents thyroid nodules that are encapsulated with no mention of gross invasion into surrounding structures. However, the microscopic description, diagnosis comment, and histology comment sections are completely absent, making it impossible to assess for microscopic extrathyroidal extension. Without histologic examination details, ETE status cannot be reliably adjudicated."",
+  ""ajcc8_t_adjustment"": ""no change""
+}",
+5599,absent,high,Extrathyroidal Extension: Cannot be determined: invasion beyand cyst wall not identified,"The pathology report explicitly states that invasion beyond the cyst wall was not identified. Despite the ETE field being marked 'present_ungraded', the microscopic description and margin comment clearly document absence of extrathyroidal extension. The tumor appears confined within a cystic structure.",no change (remains T2 based on 2.3 cm size without ETE),"{
+  ""adjudicated_grade"": ""absent"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""Extrathyroidal Extension: Cannot be determined: invasion beyand cyst wall not identified"",
+  ""reasoning"": ""The pathology report explicitly states that invasion beyond the cyst wall was not identified. Despite the ETE field being marked 'present_ungraded', the microscopic description and margin comment clearly document absence of extrathyroidal extension. The tumor appears confined within a cystic structure."",
+  ""ajcc8_t_adjustment"": ""no change (remains T2 based on 2.3 cm size without ETE)""
+}",
+5649,unable_to_determine,low,No areas of hemorrhage or necrosis are identified with this mass. The lesion is abutting the posterior surface of the capsule.,"The gross description shows a 2.4 cm left thyroid lesion abutting the posterior capsule with attached perithyroid adipose tissue submitted (C14,15), but the microscopic description is completely absent. The raw field says 'extesive' (likely 'extensive') but without microscopic findings, we cannot determine if ETE is present microscopically or if the 'extensive' notation refers only to the tumor size/extent within the thyroid. The gross_ete_flag is False, suggesting no gross invasion of named structures.",no change,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""No areas of hemorrhage or necrosis are identified with this mass. The lesion is abutting the posterior surface of the capsule."",
+  ""reasoning"": ""The gross description shows a 2.4 cm left thyroid lesion abutting the posterior capsule with attached perithyroid adipose tissue submitted (C14,15), but the microscopic description is completely absent. The raw field says 'extesive' (likely 'extensive') but without microscopic findings, we cannot determine if ETE is present microscopically or if the 'extensive' notation refers only to the tumor size/extent within the thyroid. The gross_ete_flag is False, suggesting no gross invasion of named structures."",
+  ""ajcc8_t_adjustment"": ""no change""
+}",
+5917,unable_to_determine,low,Fragment of tan-yellow soft tissue and tan skin; cystic space with minimal brown material; skin appears grossly unremarkable,"The gross description describes soft tissue and skin fragments but does not clearly identify thyroid tissue or describe invasion into named anatomic structures (strap muscles, RLN, trachea, etc.). The microscopic description is entirely absent, preventing assessment of perithyroidal fat invasion. The synoptic field says 'extesive' (likely 'extensive') but lacks anatomic specificity. Current T3b staging suggests gross ETE, but the pathology text does not support this with clear evidence of strap muscle or other gross invasion.",unable to confirm T3b without clearer pathology documentation,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""Fragment of tan-yellow soft tissue and tan skin; cystic space with minimal brown material; skin appears grossly unremarkable"",
+  ""reasoning"": ""The gross description describes soft tissue and skin fragments but does not clearly identify thyroid tissue or describe invasion into named anatomic structures (strap muscles, RLN, trachea, etc.). The microscopic description is entirely absent, preventing assessment of perithyroidal fat invasion. The synoptic field says 'extesive' (likely 'extensive') but lacks anatomic specificity. Current T3b staging suggests gross ETE, but the pathology text does not support this with clear evidence of strap muscle or other gross invasion."",
+  ""ajcc8_t_adjustment"": ""unable to confirm T3b without clearer pathology documentation""
+}",
+5950,absent,high,"Carcinoma is at less than 1 mm from the inked lateral margin of excision, confined to the thyroid","Despite the ETE field being marked 'present_ungraded', the margin/angiolymphatic comment explicitly states the carcinoma is 'confined to the thyroid' with no mention of extension into perithyroidal soft tissue, strap muscles, or other structures. The gross description notes the nodule 'abuts' the inked margins but does not describe invasion beyond the thyroid capsule.",no change (T1a appropriate for 0.5 cm intrathyroidal tumor),"{
+  ""adjudicated_grade"": ""absent"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""Carcinoma is at less than 1 mm from the inked lateral margin of excision, confined to the thyroid"",
+  ""reasoning"": ""Despite the ETE field being marked 'present_ungraded', the margin/angiolymphatic comment explicitly states the carcinoma is 'confined to the thyroid' with no mention of extension into perithyroidal soft tissue, strap muscles, or other structures. The gross description notes the nodule 'abuts' the inked margins but does not describe invasion beyond the thyroid capsule."",
+  ""ajcc8_t_adjustment"": ""no change (T1a appropriate for 0.5 cm intrathyroidal tumor)""
+}",
+6177,absent,high,"No definitive extrathyroidal extension is present but because the carcinoma extends to the inked margin, the possibility of extrathyroidal extension cannot be excluded.","The diagnosis comment explicitly states 'No definitive extrathyroidal extension is present.' While the tumor extends to the inked margin, the pathologist found no evidence of actual ETE on microscopic examination. The uncertainty about ETE is due to margin involvement, not confirmed extension into perithyroidal tissues.",no change (T1a appropriate given 1 cm tumor with no confirmed ETE),"{
+  ""adjudicated_grade"": ""absent"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""No definitive extrathyroidal extension is present but because the carcinoma extends to the inked margin, the possibility of extrathyroidal extension cannot be excluded."",
+  ""reasoning"": ""The diagnosis comment explicitly states 'No definitive extrathyroidal extension is present.' While the tumor extends to the inked margin, the pathologist found no evidence of actual ETE on microscopic examination. The uncertainty about ETE is due to margin involvement, not confirmed extension into perithyroidal tissues."",
+  ""ajcc8_t_adjustment"": ""no change (T1a appropriate given 1 cm tumor with no confirmed ETE)""
+}",
+6229,absent,high,The tumor invades the capsule and is at less than 1 mm from the inked margin of excision. No definitive angiolymphatic invasion is identified.,"The pathology report describes capsular invasion (tumor invading the thyroid capsule itself) but does not describe extrathyroidal extension beyond the capsule into perithyroidal soft tissue, strap muscles, or other structures. Capsular invasion alone does not constitute ETE per AJCC 8 criteria. The tumor is 0.9 cm and confined within/at the capsule margin.",T1a (no ETE present; capsular invasion alone does not upstage),"{
+  ""adjudicated_grade"": ""absent"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""The tumor invades the capsule and is at less than 1 mm from the inked margin of excision. No definitive angiolymphatic invasion is identified."",
+  ""reasoning"": ""The pathology report describes capsular invasion (tumor invading the thyroid capsule itself) but does not describe extrathyroidal extension beyond the capsule into perithyroidal soft tissue, strap muscles, or other structures. Capsular invasion alone does not constitute ETE per AJCC 8 criteria. The tumor is 0.9 cm and confined within/at the capsule margin."",
+  ""ajcc8_t_adjustment"": ""T1a (no ETE present; capsular invasion alone does not upstage)""
+}",
+6352,absent,high,The cut surface reveals a well-circumscribed tan to white nodule (3.2 x 2.9 x 2.4 cm). The nodule is located within the mid to inferior pole of thyroid. It is abutting both the anterior and posterior margins. No other lesions are grossly identified.,"The gross description documents a well-circumscribed nodule abutting resection margins but with no description of gross invasion into perithyroidal soft tissue, strap muscles, or other extrathyroidal structures. The microscopic description is blank, providing no evidence of microscopic ETE. Despite the ETE field being marked 'present_ungraded', the pathology text does not support any ETE.",no change (remains T2),"{
+  ""adjudicated_grade"": ""absent"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""The cut surface reveals a well-circumscribed tan to white nodule (3.2 x 2.9 x 2.4 cm). The nodule is located within the mid to inferior pole of thyroid. It is abutting both the anterior and posterior margins. No other lesions are grossly identified."",
+  ""reasoning"": ""The gross description documents a well-circumscribed nodule abutting resection margins but with no description of gross invasion into perithyroidal soft tissue, strap muscles, or other extrathyroidal structures. The microscopic description is blank, providing no evidence of microscopic ETE. Despite the ETE field being marked 'present_ungraded', the pathology text does not support any ETE."",
+  ""ajcc8_t_adjustment"": ""no change (remains T2)""
+}",
+6543,unable_to_determine,low,"The specimen is markedly roughened and appears incomplete... no discrete nodule or encapsulated lesion appreciated... poorly defined pink-white, firm and fibrotic area that focally abuts both the blue and black ink","The gross description documents a fragmented specimen with poorly defined lesions and surface abutment to inked margins, but lacks explicit microscopic confirmation of extrathyroidal extension. The microscopic description is entirely absent, preventing definitive classification of ETE as microscopic versus gross. The specimen fragmentation and incomplete nature further complicate assessment.",unable to determine - microscopic findings required,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""The specimen is markedly roughened and appears incomplete... no discrete nodule or encapsulated lesion appreciated... poorly defined pink-white, firm and fibrotic area that focally abuts both the blue and black ink"",
+  ""reasoning"": ""The gross description documents a fragmented specimen with poorly defined lesions and surface abutment to inked margins, but lacks explicit microscopic confirmation of extrathyroidal extension. The microscopic description is entirely absent, preventing definitive classification of ETE as microscopic versus gross. The specimen fragmentation and incomplete nature further complicate assessment."",
+  ""ajcc8_t_adjustment"": ""unable to determine - microscopic findings required""
+}",
+7777,unable_to_determine,low,Gross Extrathyroidal Extension: Cannot be determined: Present at anterior margin of right lobe,"The pathology report explicitly states that gross ETE 'Cannot be determined' despite noting tumor presence at the anterior margin. The gross description does not clearly describe invasion into named structures (strap muscles, RLN, trachea, etc.) beyond the thyroid capsule. Without microscopic description or definitive gross invasion language, the grade cannot be reliably determined.",T1b or T3b pending clarification,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""Gross Extrathyroidal Extension: Cannot be determined: Present at anterior margin of right lobe"",
+  ""reasoning"": ""The pathology report explicitly states that gross ETE 'Cannot be determined' despite noting tumor presence at the anterior margin. The gross description does not clearly describe invasion into named structures (strap muscles, RLN, trachea, etc.) beyond the thyroid capsule. Without microscopic description or definitive gross invasion language, the grade cannot be reliably determined."",
+  ""ajcc8_t_adjustment"": ""T1b or T3b pending clarification""
+}",
+8431,unable_to_determine,low,Extrathyroidal Extension: Cannot be determined: Tumor extends to edge of specimen,"The pathology report explicitly states that ETE cannot be determined because the tumor extends to the edge of the specimen, preventing assessment of whether extension beyond the thyroid capsule is present. The gross description shows the tumor abutting capsular surfaces but does not describe gross invasion into perithyroidal tissues or named structures. Without microscopic detail or clear gross invasion description, ETE grade cannot be reliably adjudicated.",no change,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""Extrathyroidal Extension: Cannot be determined: Tumor extends to edge of specimen"",
+  ""reasoning"": ""The pathology report explicitly states that ETE cannot be determined because the tumor extends to the edge of the specimen, preventing assessment of whether extension beyond the thyroid capsule is present. The gross description shows the tumor abutting capsular surfaces but does not describe gross invasion into perithyroidal tissues or named structures. Without microscopic detail or clear gross invasion description, ETE grade cannot be reliably adjudicated."",
+  ""ajcc8_t_adjustment"": ""no change""
+}",
+8848,unable_to_determine,low,"Specimen A received fresh, labeled 'pretracheal soft tissue' is a fragmented portion of yellow fatty tissue measuring 1.0 x 0.7 x 0.4 cm.","The gross description identifies a separate 'pretracheal soft tissue' specimen (Specimen A) but provides no microscopic description or diagnostic interpretation of whether tumor is present within it or whether it represents ETE. The microscopic description section is blank. Without histologic confirmation of tumor invasion into the pretracheal soft tissue, ETE grade cannot be determined.",no change,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""Specimen A received fresh, labeled 'pretracheal soft tissue' is a fragmented portion of yellow fatty tissue measuring 1.0 x 0.7 x 0.4 cm."",
+  ""reasoning"": ""The gross description identifies a separate 'pretracheal soft tissue' specimen (Specimen A) but provides no microscopic description or diagnostic interpretation of whether tumor is present within it or whether it represents ETE. The microscopic description section is blank. Without histologic confirmation of tumor invasion into the pretracheal soft tissue, ETE grade cannot be determined."",
+  ""ajcc8_t_adjustment"": ""no change""
+}",
+913,unable_to_determine,low,"The thyroid capsule contains a surgical disruption measuring 1.0 cm. The largest nodule (0.5 x 0.2 cm), is located less than 1.0 mm from the capsule.","The gross description documents nodules very close to the thyroid capsule and a capsular disruption, but the microscopic description, diagnosis comment, and tumor histology comment are all blank/missing. Without microscopic findings, it is impossible to determine whether ETE is present microscopically, grossly, or absent. The raw ETE field says 'Yes' but lacks supporting pathology detail.",unable_to_determine - requires complete microscopic description,"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""low"",
+  ""evidence_quote"": ""The thyroid capsule contains a surgical disruption measuring 1.0 cm. The largest nodule (0.5 x 0.2 cm), is located less than 1.0 mm from the capsule."",
+  ""reasoning"": ""The gross description documents nodules very close to the thyroid capsule and a capsular disruption, but the microscopic description, diagnosis comment, and tumor histology comment are all blank/missing. Without microscopic findings, it is impossible to determine whether ETE is present microscopically, grossly, or absent. The raw ETE field says 'Yes' but lacks supporting pathology detail."",
+  ""ajcc8_t_adjustment"": ""unable_to_determine - requires complete microscopic description""
+}",
+9424,unable_to_determine,high,No histologic features that would be considered consistent with 'extrathyroidal extension'. Arising in thyroglossal duct cyst,"The diagnosis comment explicitly states that no ETE is present and that the tumor arises in a thyroglossal duct cyst, not the thyroid gland proper. The ETE field marked 'present' appears to be a data entry error, as the pathologist clearly documents absence of ETE features.",T1b (based on tumor size 1.8 cm; no ETE present),"{
+  ""adjudicated_grade"": ""unable_to_determine"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""No histologic features that would be considered consistent with 'extrathyroidal extension'. Arising in thyroglossal duct cyst"",
+  ""reasoning"": ""The diagnosis comment explicitly states that no ETE is present and that the tumor arises in a thyroglossal duct cyst, not the thyroid gland proper. The ETE field marked 'present' appears to be a data entry error, as the pathologist clearly documents absence of ETE features."",
+  ""ajcc8_t_adjustment"": ""T1b (based on tumor size 1.8 cm; no ETE present)""
+}",
+9762,absent,high,The right thyroid lobe is vaguely nodular but otherwise beefy red and without mass or lesions.,"The gross description shows no evidence of extrathyroidal extension. The deep surface is inked and described as normal thyroid tissue without invasion into perithyroidal fat, strap muscles, or other structures. The microscopic description focuses on tumor cytology and follicular architecture with no mention of extension beyond the thyroid capsule.",T1b,"{
+  ""adjudicated_grade"": ""absent"",
+  ""adjudicated_confidence"": ""high"",
+  ""evidence_quote"": ""The right thyroid lobe is vaguely nodular but otherwise beefy red and without mass or lesions."",
+  ""reasoning"": ""The gross description shows no evidence of extrathyroidal extension. The deep surface is inked and described as normal thyroid tissue without invasion into perithyroidal fat, strap muscles, or other structures. The microscopic description focuses on tumor cytology and follicular architecture with no mention of extension beyond the thyroid capsule."",
+  ""ajcc8_t_adjustment"": ""T1b""
+}",
