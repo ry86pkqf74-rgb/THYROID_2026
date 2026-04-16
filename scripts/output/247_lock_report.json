@@ -1,0 +1,126 @@
+{
+  "script": "247",
+  "run_ts": "20260416T233537Z",
+  "run_date": "2026-04-16",
+  "phases": {
+    "baseline": {
+      "cpm_rows": 10871,
+      "cpm_cols": 1505
+    },
+    "catalog_ghosts": {
+      "queryable_count": 114,
+      "ghost_count": 0,
+      "ghosts": []
+    },
+    "readme": {
+      "rows": 114
+    },
+    "registry": {
+      "n_rows": 109,
+      "n_main_rows": 107,
+      "n_ms_rows": 2,
+      "stale_dropped": [],
+      "todos_resolved": [],
+      "added": []
+    },
+    "view_sweep": {
+      "total": 65,
+      "pass": 65,
+      "fail": 0,
+      "failing_views": []
+    },
+    "column_pointer_check": {
+      "checked": 182,
+      "missing": []
+    },
+    "empty_tables": {
+      "count": 0,
+      "tables": []
+    },
+    "conventions": {
+      "rows": 5,
+      "incomplete": 0
+    },
+    "confirmations": {
+      "q1_cpm_shape": {
+        "patients": 10871,
+        "columns": 1505
+      },
+      "q2_lingering_backups": [],
+      "q3_registry_todo_count": 0,
+      "q4_readme_vs_queryable": {
+        "readme": 114,
+        "queryable": 114,
+        "equal": true
+      },
+      "q5_deprecated_dict_coverage": {
+        "cpm_dep_cols": 2,
+        "dict_dep_rows": 2,
+        "equal": true
+      },
+      "q6_ctc_gap": {
+        "cpm": 10871,
+        "ctc": 8422,
+        "gap": 2449
+      },
+      "q7_discordance_sanity": {
+        "rows": 1722,
+        "both_populated": 1722
+      }
+    },
+    "final_assertions": {
+      "checks": [
+        {
+          "label": "canonical_patient_master row count == 10,871 (got 10871)",
+          "pass": true
+        },
+        {
+          "label": "no catalog ghosts (info_schema entries that aren't queryable)",
+          "pass": true
+        },
+        {
+          "label": "view-compile sweep: all 65 views pass (65 passed, 0 failed)",
+          "pass": true
+        },
+        {
+          "label": "registry has 0 TODO markers (got 0)",
+          "pass": true
+        },
+        {
+          "label": "__readme row count == queryable main tables (114 vs 114)",
+          "pass": true
+        },
+        {
+          "label": "lingering backups in main: 0 (got 0)",
+          "pass": true
+        },
+        {
+          "label": "CPM \u2194 registry column-pointer mismatches == 0 (got 0)",
+          "pass": true
+        },
+        {
+          "label": "empty tables in main: 0 (got 0)",
+          "pass": true
+        },
+        {
+          "label": "__conventions has \u22655 complete rows (got 5 rows, 0 incomplete)",
+          "pass": true
+        },
+        {
+          "label": "deprecated__ CPM cols covered by dict (2 vs 2)",
+          "pass": true
+        },
+        {
+          "label": "canonical_tumor_characteristics_v1 gap == 2,449 (got 2449)",
+          "pass": true
+        },
+        {
+          "label": "discordance audit: all rows have both unt_max_tr and inm_max_tr populated",
+          "pass": true
+        }
+      ],
+      "n_pass": 12,
+      "n_fail": 0
+    }
+  }
+}

@@ -1,0 +1,58 @@
+/Users/loganglosser/THYROID_2026/scripts/247_canonical_v1_0_lock.py:96: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  return datetime.utcnow().strftime("%H:%M:%S.") + f"{datetime.utcnow().microsecond // 1000:03d}Z"
+[23:35:36.866Z] === START 247_canonical_v1_0_lock.py
+[23:35:37.975Z] connected to thyroid_canonical_publication_v1_0
+/Users/loganglosser/THYROID_2026/scripts/247_canonical_v1_0_lock.py:456: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  run_ts = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+[23:35:37.975Z] PHASE 0 — baseline capture
+[23:35:38.476Z]   cpm: 10871 × 1505 cols
+[23:35:38.476Z] PHASE 1 — catalog-ghost detection (guarded SELECT sweep)
+[23:35:38.776Z]   queryable main BASE TABLEs: 114
+[23:35:38.776Z]   ghosts (info_schema but not queryable): 0
+[23:35:38.776Z] PHASE 2 — archive pre-lock snapshots
+[23:35:40.930Z]   archived __readme_pre247_backup_20260416T233537Z
+[23:35:40.930Z]   archived detail_table_registry_v1_pre247_backup_20260416T233537Z
+[23:35:40.930Z] PHASE 3 — regenerate __readme from queryable enumeration
+/Users/loganglosser/THYROID_2026/scripts/247_canonical_v1_0_lock.py:96: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  return datetime.utcnow().strftime("%H:%M:%S.") + f"{datetime.utcnow().microsecond // 1000:03d}Z"
+[23:35:58.948Z]   __readme now has 114 rows
+[23:35:58.948Z] PHASE 4 — regenerate detail_table_registry_v1
+[23:36:31.360Z]   registry rows: 109  (main=107, manuscript_workspace=2)
+[23:36:31.360Z]   stale dropped: 0
+[23:36:31.360Z]   TODO markers resolved: 0
+[23:36:31.360Z]   auto-added: 0
+[23:36:31.360Z] PHASE 5 — view-compile sweep (main + manuscript_workspace)
+[23:36:31.795Z]   views: 65/65 pass, 0 fail
+[23:36:31.795Z] PHASE 6 — CPM ↔ registry column pointer verification
+[23:36:31.886Z]   tokens checked: 182  missing in CPM: 0
+[23:36:31.886Z] PHASE 7 — empty-table sweep
+[23:36:36.894Z]   empty queryable tables in main: 0
+[23:36:36.894Z] PHASE 8 — __conventions sanity check
+[23:36:36.953Z]   __conventions rows: 5  incomplete: 0
+[23:36:36.953Z] PHASE 9 — expanded confirmation block (Script 236 + Group C residuals)
+[23:36:37.050Z]   Q1 canonical shape: patients=10871 columns=1505
+[23:36:37.105Z]   Q2 lingering backups/deprecated tables in main: 0 (expect 0)
+[23:36:37.140Z]   Q3 registry TODO markers: 0 (expect 0)
+[23:36:37.252Z]   Q4 __readme rows=114  queryable main tables=114  equal? True
+[23:36:37.414Z]   Q5 deprecated__ in CPM=2 in dict=2 (should be equal)
+[23:36:37.471Z]   Q6 canonical_tumor_characteristics_v1 gap: cpm=10871 ctc=8422 gap=2449 (expect 2449)
+[23:36:37.508Z]   Q7 discordance audit: rows=1722  both_populated=1722 (should be equal)
+[23:36:37.509Z] PHASE 10 — final assertions
+[23:36:37.509Z]   ASSERT [PASS] canonical_patient_master row count == 10,871 (got 10871)
+[23:36:37.509Z]   ASSERT [PASS] no catalog ghosts (info_schema entries that aren't queryable)
+[23:36:37.509Z]   ASSERT [PASS] view-compile sweep: all 65 views pass (65 passed, 0 failed)
+[23:36:37.509Z]   ASSERT [PASS] registry has 0 TODO markers (got 0)
+[23:36:37.509Z]   ASSERT [PASS] __readme row count == queryable main tables (114 vs 114)
+[23:36:37.509Z]   ASSERT [PASS] lingering backups in main: 0 (got 0)
+[23:36:37.509Z]   ASSERT [PASS] CPM ↔ registry column-pointer mismatches == 0 (got 0)
+[23:36:37.509Z]   ASSERT [PASS] empty tables in main: 0 (got 0)
+[23:36:37.509Z]   ASSERT [PASS] __conventions has ≥5 complete rows (got 5 rows, 0 incomplete)
+[23:36:37.509Z]   ASSERT [PASS] deprecated__ CPM cols covered by dict (2 vs 2)
+[23:36:37.509Z]   ASSERT [PASS] canonical_tumor_characteristics_v1 gap == 2,449 (got 2449)
+[23:36:37.509Z]   ASSERT [PASS] discordance audit: all rows have both unt_max_tr and inm_max_tr populated
+[23:36:37.510Z] lock report written: 247_lock_report.json
+[23:36:37.510Z] elapsed: 60.6s
+[23:36:37.510Z] 
+[23:36:37.510Z] ==============================================================================
+[23:36:37.510Z] CANONICAL v1_0 LOCK: READY FOR PUBLICATION
+[23:36:37.510Z] ==============================================================================

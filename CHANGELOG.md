@@ -439,3 +439,81 @@ pre-change backup are explicitly no-ops on data (documentation only).
   change CPM rollup cols; needs validation pass first; same pattern as
   Scripts 245 + 240). NLP extraction from `us_nodules_tirads.nodule_N`
   free-text descriptions to cover the 4,745 placeholder-only patients.
+
+### `manuscript_workspace.__conventions` (non-numbered, pre-Script-247)
+- **Committed** a 5-row reference table documenting engineering
+  conventions discovered during Groups B + C:
+  - `as_aliasing` (column_naming) — source-name leakage breaks the
+    canonical↔manuscript abstraction; use `AS` aliasing explicitly.
+  - `cohort_scoping` (table_design) — canonical detail tables cover
+    only patients where the characterization is meaningful; the set
+    difference from CPM is documented per table in the registry.
+  - `rid_type_consistency` (join_safety) — `research_id` is VARCHAR on
+    CPM, INTEGER/BIGINT on most imaging tables; Python set-comparison
+    silently reports 0% overlap; always use explicit SQL CAST.
+  - `catalog_vs_queryable_drift` (cleanup_safety) — after `DROP TABLE`,
+    `information_schema.tables` may lag; use guarded SELECT probes,
+    not `information_schema` alone, for catalog enumeration.
+  - `pre_flight_decision_log` (audit_trail) — every canonical-building
+    script emits `scripts/output/{NNN}_decision_log.json` with the
+    reviewer-audit trail for each pre-flight discovery that diverged
+    from the prompt's original assertions.
+
+### Script 247 — Canonical v1_0 LOCK
+- **Phases executed:**
+  0. Baseline: CPM 10,871 × 1,505 cols
+  1. Catalog-ghost detection (guarded SELECT sweep): 114 queryable
+     main BASE TABLEs, **0 ghosts** (transient phenomenon per
+     `catalog_vs_queryable_drift` convention didn't manifest at lock
+     time on this run)
+  2. Archived pre-lock snapshots of `__readme` and
+     `detail_table_registry_v1` to `archive_pub_v1_0`
+  3. Regenerated `__readme` from queryable-only enumeration (114 rows)
+  4. Regenerated `detail_table_registry_v1`: 109 rows (107 main +
+     2 manuscript_workspace audit entries)
+     - Stale rows dropped: 0
+     - TODO markers resolved: 1 (`path_size_adjudication_v241`)
+     - Post-rename fixup: replaced 3 stale `tumor_size_cm` references
+       in feeds_master_columns with `path_tumor_size_cm`
+       (`synoptic_tumor_long_v1`, `tumor_episode_master_v2`,
+       `tumor_pathology` — all flowed through the Script 240 rename
+       chain but hadn't had their registry text updated)
+  5. View-compile sweep: **65/65 pass** (main + manuscript_workspace)
+  6. CPM ↔ registry column-pointer verification: 182 tokens checked,
+     **0 missing in CPM** (post-fixup)
+  7. Empty-table sweep: **0 empty queryable tables in main**
+  8. `__conventions` sanity: 5 rows, 0 incomplete
+  9. Expanded confirmation block (Script 236's 5 + 2 Group C residuals):
+     - **Q1** CPM shape: 10,871 × 1,505
+     - **Q2** lingering backups/deprecated tables in main: 0
+     - **Q3** registry TODO markers: 0
+     - **Q4** `__readme` rows = queryable main tables: 114 = 114
+     - **Q5** deprecated__ CPM cols = dictionary rows with
+       status='deprecated': 2 = 2
+     - **Q6** CPM ↔ `canonical_tumor_characteristics_v1` gap: 2,449
+       (the intentional benign tumor-free cohort, matches spec)
+     - **Q7** discordance audit: 1,722 rows, all with both
+       `unt_max_tr` and `inm_max_tr` populated
+  10. **Final line: `CANONICAL v1_0 LOCK: READY FOR PUBLICATION`**
+- **Assertions (12/12 PASS):**
+  - CPM row count = 10,871
+  - no catalog ghosts
+  - all 65 views compile
+  - 0 TODO markers in registry
+  - `__readme` rows = queryable tables
+  - 0 lingering backups in main
+  - 0 CPM ↔ registry column-pointer mismatches
+  - 0 empty tables
+  - `__conventions` has ≥5 complete rows
+  - deprecated__ CPM cols covered by dictionary
+  - CTC gap = 2,449 (exactly the benign tumor-free cohort)
+  - discordance audit internal consistency
+- **Audit artifact:** `scripts/output/247_lock_report.json` — full
+  phase-by-phase JSON trace of the lock run (queryable tables,
+  ghosts, view-compile results, confirmation Q1–Q7, final assertion
+  status). Companion to the 245/246 decision logs for reviewer audit.
+- **Mid-run correction:** first run FAILED the column-pointer check
+  (3 feeds_master_columns referenced `tumor_size_cm` which was renamed
+  to `deprecated__tumor_size_cm` in Script 240). Added a post-rename
+  fixup pass that applies the `{old→new}` mapping cascade to every
+  registry row's feeds text. Idempotent and auditable.
