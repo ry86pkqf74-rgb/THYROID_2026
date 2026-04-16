@@ -1,0 +1,47 @@
+{
+  "generated_at_utc": "2026-04-16T15:06:52.751193+00:00",
+  "reference_baseline_pre_task1_2026_04_16_audit": {
+    "ret_note_adjudicated_positive": {
+      "true": 38,
+      "false": 10833,
+      "null": 0
+    },
+    "note": "CPM before Task 1: DEFAULT FALSE had set 10,805 unreviewed patients to false. Task 1 sets them to NULL; reviewed patients stay 38 true / 28 false."
+  },
+  "before": {
+    "ret_note_adjudicated_positive": {
+      "false": 28,
+      "true": 38,
+      "NULL": 10805
+    },
+    "any_fusion_positive_true": 380,
+    "registry_total": 43,
+    "registry_distinct": 43
+  },
+  "after": {
+    "ret_note_adjudicated_positive": {
+      "false": 28,
+      "true": 38,
+      "NULL": 10805
+    },
+    "any_fusion_positive_true": 380,
+    "registry_total": 43,
+    "registry_distinct": 43
+  },
+  "fusion_recovery_note": "Idempotent short-token/pair UPDATEs matched 0 additional rows on live DB: remaining FUSION+NULL raw_variant_token values are long narrative text, not 2\u201310 char gene tokens or pair patterns. good_fusions=43 is stable.",
+  "final_state": {
+    "cpm_rows": 10871,
+    "cpm_distinct_rid": 10871,
+    "cpm_null_rid": 0,
+    "ret_v7": 4,
+    "ret_note_tp": 38,
+    "ret_note_unreviewed": 10805,
+    "ret_unified": 42,
+    "fusion": 380,
+    "pathway": 10871,
+    "fusion_good": 43,
+    "registry_distinct": 43,
+    "registry_total": 43
+  },
+  "git_commit": "6b78718d1b6d6b30152d9e6e87910b64786acea2"
+}
