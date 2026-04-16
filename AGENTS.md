@@ -59,6 +59,7 @@
 - Commit only files directly related to the current task scope; leave unrelated modified files uncommitted unless explicitly asked
 - Always verify actual file/git state before assuming code is missing (user may provide prompts from stale context)
 - MotherDuck RW token for local `--md` runs: **saved locally in TOML** — **gitignored** repo-root `motherduck.local.toml` (see `motherduck.local.toml.example`) or `.streamlit/secrets.toml` under `MOTHERDUCK_TOKEN` and/or `MD_SA_TOKEN`, not only shell env. `motherduck_client.get_token()` loads those files when env vars are unset; never print or commit token values — logs: SET/MISSING/length only
+- **MotherDuck canonical DB:** finalization and cleanup scripts must land **final** tables and drill-down data in `thyroid_canonical_publication_v1_0` only. Entries in `manuscript_workspace.detail_table_registry_v1` must resolve to tables/views in that database (materialize from the legacy read-only attach when needed; see `scripts/227_finalization_cleanup.py` Task 6b).
 - When integrating external data sources, never auto-merge uncertain patient matches; route all ambiguous linkages to review queues with full context for manual resolution
 - Prefer append-only long-format event/lab tables over stuffing serial data into wide patient rows
 - When fixing a bug pattern, find and fix all instances across the entire codebase, not just the single file from the traceback
