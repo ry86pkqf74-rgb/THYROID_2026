@@ -1,0 +1,54 @@
+/Users/loganglosser/THYROID_2026/scripts/242_rai_view_reconciliation.py:96: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  return datetime.utcnow().strftime("%H:%M:%S.") + f"{datetime.utcnow().microsecond // 1000:03d}Z"
+[21:04:14.508Z] === START 242_rai_view_reconciliation.py
+[21:04:15.491Z] connected to thyroid_canonical_publication_v1_0
+[21:04:15.491Z] PHASE 0 — baseline counts
+[21:04:15.524Z]   CPM rai_received_flag=TRUE:       583
+[21:04:15.525Z]   CPM rai_received_reconciled=TRUE: 862
+[21:04:15.525Z] PHASE 1 — classify affected views
+[21:04:15.763Z]   direct-CPM views (will rewrite): 11
+[21:04:15.763Z]   downstream views (no rewrite):   4
+[21:04:15.763Z]     direct: manuscript_workspace.cohort_descriptive_full_cohort_v1
+[21:04:15.763Z]     direct: manuscript_workspace.cohort_m007_rss_reclassification_v1
+[21:04:15.763Z]     direct: manuscript_workspace.cohort_m016_graves_carcinoma_v1
+[21:04:15.764Z]     direct: manuscript_workspace.cohort_m019_rai_outcomes_v1
+[21:04:15.764Z]     direct: manuscript_workspace.cohort_m031_nuclear_medicine_v1
+[21:04:15.764Z]     direct: manuscript_workspace.cohort_m032_descriptive_25yr_v1
+[21:04:15.764Z]     direct: manuscript_workspace.cohort_m036_ata_risk_comparison_v1
+[21:04:15.764Z]     direct: manuscript_workspace.cohort_m044_ajcc_ete_v1
+[21:04:15.764Z]     direct: manuscript_workspace.cohort_m073_tg_lob_vs_tt_v1
+[21:04:15.764Z]     direct: manuscript_workspace.cohort_m078_graves_survival_v1
+[21:04:15.764Z]     direct: manuscript_workspace.cohort_m081_rai_resistant_v1
+[21:04:15.764Z]     downstream: manuscript_workspace.cohort_m055_recurrence_rai_v1
+[21:04:15.764Z]     downstream: manuscript_workspace.cohort_m057_risk_stratification_v1
+[21:04:15.764Z]     downstream: manuscript_workspace.cohort_m059_prognostic_scoring_v1
+[21:04:15.764Z]     downstream: manuscript_workspace.cohort_m065_frozen_tt_vs_lob_v1
+[21:04:16.512Z]   captured pre-rewrite counts for 15 views
+[21:04:16.512Z] PHASE 2 — snapshot DDLs to archive_pub_v1_0
+/Users/loganglosser/THYROID_2026/scripts/242_rai_view_reconciliation.py:371: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  run_ts = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+[21:04:16.512Z] snapshot view DDLs -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."_view_ddl_snapshot_pre242_20260416T210416Z"
+/Users/loganglosser/THYROID_2026/scripts/242_rai_view_reconciliation.py:96: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  return datetime.utcnow().strftime("%H:%M:%S.") + f"{datetime.utcnow().microsecond // 1000:03d}Z"
+[21:04:18.865Z]   captured 15 view DDLs
+[21:04:18.865Z] PHASE 3 — rewrite + recreate direct-CPM views
+[21:04:19.349Z]   rewrote manuscript_workspace.cohort_descriptive_full_cohort_v1  (1 replacements)
+[21:04:19.732Z]   rewrote manuscript_workspace.cohort_m007_rss_reclassification_v1  (1 replacements)
+[21:04:20.183Z]   rewrote manuscript_workspace.cohort_m016_graves_carcinoma_v1  (1 replacements)
+[21:04:20.689Z]   rewrote manuscript_workspace.cohort_m019_rai_outcomes_v1  (2 replacements)
+[21:04:21.123Z]   rewrote manuscript_workspace.cohort_m031_nuclear_medicine_v1  (1 replacements)
+[21:04:21.538Z]   rewrote manuscript_workspace.cohort_m032_descriptive_25yr_v1  (1 replacements)
+[21:04:21.890Z]   rewrote manuscript_workspace.cohort_m036_ata_risk_comparison_v1  (1 replacements)
+[21:04:22.439Z]   rewrote manuscript_workspace.cohort_m044_ajcc_ete_v1  (1 replacements)
+[21:04:22.876Z]   rewrote manuscript_workspace.cohort_m073_tg_lob_vs_tt_v1  (1 replacements)
+[21:04:23.314Z]   rewrote manuscript_workspace.cohort_m078_graves_survival_v1  (1 replacements)
+[21:04:23.835Z]   rewrote manuscript_workspace.cohort_m081_rai_resistant_v1  (2 replacements)
+[21:04:23.836Z] PHASE 4 — assertions
+[21:04:25.695Z]   ASSERT [PASS] CPM row count unchanged at 10,871 (got 10871)
+[21:04:25.695Z]   ASSERT [PASS] all 11 rewritten views compile (0 failures)
+[21:04:25.695Z]   ASSERT [PASS] full view sweep: 65/65 pass, 0 fail
+[21:04:25.695Z]   ASSERT [PASS] no view lost rows (0 with post < pre)
+[21:04:25.695Z]   ASSERT [PASS] output surface preserved on all 11 rewritten views
+[21:04:25.695Z]   ASSERT [PASS] archive snapshot of pre-rewrite DDLs present
+[21:04:25.695Z]   ASSERT [PASS] CPM superset invariant: reconciled(862) >= legacy(583)
+[21:04:25.695Z] === END 242_rai_view_reconciliation.py  elapsed=11.2s  failures=0

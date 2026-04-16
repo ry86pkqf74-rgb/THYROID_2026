@@ -224,3 +224,40 @@ pre-change backup are explicitly no-ops on data (documentation only).
 - **Follow-up for v1_1:** clinician review → apply adjudicated values
   back to a new CPM column (e.g., `path_tumor_size_cm_adjudicated`) and
   retire `deprecated__tumor_size_cm`.
+
+### Script 242 — Reconcile manuscript views: rai_received_flag → rai_received_reconciled
+- **Invariant (verified pre-run):** `rai_received_reconciled` is a strict
+  superset of `rai_received_flag`:
+  - CPM rai_received_flag = TRUE:       **583** patients
+  - CPM rai_received_reconciled = TRUE: **862** patients
+  - legacy-only (TRUE legacy, FALSE reconciled): **0**
+  - reconciled-only (FALSE legacy, TRUE reconciled): **279**
+  862 also matches `rai_treatment_episode_v2` distinct patients exactly.
+- **View classification (15 views reference `rai_received_flag`):**
+  - **11 direct-CPM views** → rewritten. Replacements: SELECT-list
+    context → `rai_received_reconciled AS rai_received_flag`
+    (preserves output surface). Filter context → `rai_received_reconciled`
+    (bare rename).
+  - **4 downstream views** (FROM another view) → NOT rewritten. Upstream
+    AS alias keeps output stable.
+- **Filter-context views** (2 — bare `rai_received_flag = TRUE` in WHERE):
+  - `cohort_m019_rai_outcomes_v1`: pre-rewrite size = 583-universe →
+    post = **862** rows.
+  - `cohort_m081_rai_resistant_v1`: pre-rewrite size = 583-universe →
+    post = **862** rows.
+  (Strict superset — row counts can only grow, matching spec.)
+- **Backup:** `"Thyroid 2026 UPdated".archive_pub_v1_0._view_ddl_snapshot_pre242_<ts>`
+  (15 rows: pre-rewrite DDL for every affected view).
+- **Assertions (7/7 PASS):**
+  - CPM row count unchanged at 10,871
+  - all 11 rewritten views compile
+  - full sweep: 65/65 manuscript_workspace views compile
+  - no view lost rows (post ≥ pre for every affected view)
+  - output surface preserved (`rai_received_flag` column still present
+    on all 11 rewritten views via AS alias)
+  - archive snapshot present in `archive_pub_v1_0`
+  - CPM superset invariant: reconciled(862) ≥ legacy(583)
+- **Follow-up for v1_1:** consider fully deprecating CPM
+  `rai_received_flag` (parallel to Script 240 pattern). Today the column
+  is kept because downstream `rai_received_flag`-as-output-name
+  consumers still read it via the view surface.
