@@ -51,12 +51,22 @@ def safe_pull(con, sql: str, fallback_cols: list[str]) -> pd.DataFrame:
 # ---------------------------------------------------------------------------
 
 def compute_t_stage(row) -> str | None:
+    # --- Pathologist T4/T3 designation is authoritative (Issue 2 fix, Script 224) ---
+    raw_t = str(row.get("path_t_stage_raw") or "").strip().lower().replace("t", "")
+    if raw_t in ("4a",):
+        return "T4a"
+    if raw_t in ("4b",):
+        return "T4b"
+    if raw_t in ("3a",):
+        return "T3a"
+    if raw_t in ("3b",):
+        return "T3b"
+
     size = row.get("tumor_size_cm")
     ete = str(row.get("ete_grade", "") or "").lower()
     gross_ete = row.get("gross_ete_flag") is True
 
     if pd.isna(size) or size is None:
-        # ETE alone can still help determine T3b
         if gross_ete or "gross" in ete:
             return "T3b"
         return None
@@ -64,7 +74,6 @@ def compute_t_stage(row) -> str | None:
     size = float(size)
     if gross_ete or "gross" in ete:
         return "T3b"
-    # Microscopic ETE does NOT upstage per AJCC8
     if size <= 1.0:
         return "T1a"
     elif size <= 2.0:
@@ -76,34 +85,81 @@ def compute_t_stage(row) -> str | None:
     return None
 
 
-def compute_n_stage(row) -> str | None:
+def compute_n_stage(row) -> tuple[str | None, str | None]:
+    """Returns (n_stage, derivation_note) tuple. Issue 5 fix, Script 224."""
+    is_malig = row.get("is_malignant")
+    if is_malig is not None and not is_malig:
+        return None, None
+
+    # --- Pathologist N-stage takes precedence (Issue 5 fix) ---
+    raw_n = str(row.get("path_n_stage_raw") or "").strip().lower()
+    raw_n = raw_n.replace("n", "").replace("t", "")
+    if raw_n in ("1a",):
+        return "N1a", "pathologist N1a"
+    if raw_n in ("1b",):
+        return "N1b", "pathologist N1b"
+    if raw_n in ("0",):
+        return "N0", "pathologist N0"
+    if raw_n in ("0a",):
+        return "N0", "pathologist N0 (N0a)"
+    if raw_n in ("1",):
+        return "N1a", "pathologist N1 (subcategory unspecified, defaulted N1a)"
+
     ln_pos = row.get("ln_positive")
+    ln_exam = row.get("ln_examined")
     central = row.get("central_dissected") is True
     lateral = row.get("lateral_dissected") is True
     ln_level_raw = str(row.get("ln_level_raw", "") or "").lower()
     ln_loc_raw = str(row.get("ln_loc_raw", "") or "").lower()
 
+    ln_lat_r = row.get("ln_lateral_right_positive") or 0
+    ln_lat_l = row.get("ln_lateral_left_positive") or 0
+
     if pd.isna(ln_pos) or ln_pos is None:
-        return None
+        if ln_exam is not None and not pd.isna(ln_exam) and int(ln_exam) > 0:
+            return "N0", "derived from 0 positive of >=1 examined (ln_positive NULL but ln_examined>0)"
+        if raw_n in ("x", "nx"):
+            return "Nx", "no lymph nodes examined"
+        return "Nx", "N-stage cannot be assessed (no raw N-stage and no LN exam data)"
+
     ln_pos = int(ln_pos) if not pd.isna(ln_pos) else 0
 
     if ln_pos == 0:
-        return "N0"
+        return "N0", "derived from 0 positive of >=1 examined"
 
-    # N1b: lateral neck or level II-V involvement
     if lateral or any(x in ln_level_raw + ln_loc_raw for x in
                       ["level ii", "level iii", "level iv", "level v",
                        "jugular", "lateral", "posterior triangle", "n1b"]):
-        return "N1b"
-    # N1a: central (level VI/VII)
+        return "N1b", "derived from LN laterality (lateral involvement)"
+    if (not pd.isna(ln_lat_r) and int(ln_lat_r) > 0) or (not pd.isna(ln_lat_l) and int(ln_lat_l) > 0):
+        return "N1b", "derived from LN laterality (lateral positive counts)"
     if central or any(x in ln_level_raw + ln_loc_raw for x in
                       ["level vi", "level vii", "central", "paratracheal",
                        "pretracheal", "perithyroidal", "n1a"]):
-        return "N1a"
-    # Default: any positive node → N1a if no other info
+        return "N1a", "derived from LN laterality (central-only)"
     if ln_pos > 0:
-        return "N1a"
-    return "N0"
+        return "N1a", "derived from positive LN count (no laterality info, defaulted N1a)"
+    return "N0", "derived from LN count"
+
+
+def compute_m_stage(row) -> tuple[str | None, bool]:
+    """Returns (m_stage, distant_mets_proxy). Issue 1 fix, Script 224.
+    Derives M-stage from path_m_stage_raw + pet_distant_mets_ever.
+    NEVER from recurrence_flag.
+    """
+    raw_m = str(row.get("path_m_stage_raw") or "").strip().upper()
+    pet_positive = row.get("pet_distant_mets_ever")
+    if isinstance(pet_positive, float) and pd.isna(pet_positive):
+        pet_positive = False
+    pet_positive = bool(pet_positive)
+
+    if raw_m in ("M1", "1"):
+        return "M1", True
+    if pet_positive:
+        return "M1", True
+    if raw_m in ("M0", "0"):
+        return "M0", False
+    return "M0", False
 
 
 def compute_stage_group(row) -> str | None:
@@ -398,7 +454,7 @@ def build_scoring_table(con, dry_run: bool = False) -> None:
         print("  [SKIP] tumor_episode_master_v2 not available")
         return
 
-    # 1. Pull base tumor data
+    # 1. Pull base tumor data (Script 224: also pull t_stage, n_stage, m_stage as raw path staging)
     print("  Pulling tumor_episode_master_v2...")
     pt = safe_pull(con, """
         SELECT DISTINCT ON (research_id)
@@ -413,7 +469,9 @@ def build_scoring_table(con, dry_run: bool = False) -> None:
             COALESCE(multifocality_flag, FALSE) AS multifocal_flag,
             nodal_disease_positive_count AS ln_positive_raw,
             nodal_disease_total_count AS ln_examined_raw,
-            t_stage AS ln_level_raw,
+            t_stage AS path_t_stage_raw,
+            n_stage AS path_n_stage_raw,
+            m_stage AS path_m_stage_raw,
             histology_variant AS ln_loc_raw
         FROM tumor_episode_master_v2
         ORDER BY research_id, surgery_date ASC NULLS LAST
@@ -496,9 +554,21 @@ def build_scoring_table(con, dry_run: bool = False) -> None:
     tg_rising = safe_pull(con, "SELECT research_id, tg_rising_flag FROM extracted_recurrence_refined_v1",
                           ["research_id", "tg_rising_flag"])
 
+    # 9. Script 224: Pull pet_distant_mets_ever, is_malignant, and LN laterality from canonical
+    print("  Pulling canonical staging inputs (Script 224 additions)...")
+    canonical_staging = safe_pull(con, """
+        SELECT research_id,
+               pet_distant_mets_ever,
+               is_malignant,
+               ln_lateral_right_positive,
+               ln_lateral_left_positive
+        FROM canonical_patient_master
+    """, ["research_id", "pet_distant_mets_ever", "is_malignant",
+          "ln_lateral_right_positive", "ln_lateral_left_positive"])
+
     print("  Merging datasets...")
     # Ensure research_id is consistently int64 across all frames
-    for frame in [pt, demo, mcv, beth, rai, rec, tg_labs, tg_rising]:
+    for frame in [pt, demo, mcv, beth, rai, rec, tg_labs, tg_rising, canonical_staging]:
         if "research_id" in frame.columns:
             frame["research_id"] = pd.to_numeric(frame["research_id"], errors="coerce").astype("Int64")
 
@@ -509,6 +579,7 @@ def build_scoring_table(con, dry_run: bool = False) -> None:
     df = df.merge(rec, on="research_id", how="left")
     df = df.merge(tg_labs, on="research_id", how="left")
     df = df.merge(tg_rising, on="research_id", how="left")
+    df = df.merge(canonical_staging, on="research_id", how="left")
 
     # Consolidate ete_grade
     df["ete_grade"] = df["ete_grade"].fillna(df["ete_grade_raw"])
@@ -524,8 +595,8 @@ def build_scoring_table(con, dry_run: bool = False) -> None:
     # Histology
     df["histology"] = df["primary_histology"].fillna("unknown").str.lower()
 
-    # Distant mets proxy
-    df["distant_mets_proxy"] = df["recurrence_flag"].fillna(False)
+    # Distant mets proxy — Script 224 fix: derive from path_m_stage_raw + pet_distant_mets_ever
+    # NEVER from recurrence_flag (that was the critical Issue 1 bug)
     df["rai_received"] = df["rai_received"].fillna(False)
 
     # Aggressive variant flag
@@ -533,15 +604,19 @@ def build_scoring_table(con, dry_run: bool = False) -> None:
     hist_text = (df["primary_histology"].fillna("") + " " + df["histology_variant"].fillna("")).str.lower()
     df["aggressive_variant_flag"] = hist_text.apply(lambda x: any(v in x for v in agg_variants))
 
-    print("  Computing AJCC8 T stage...")
+    print("  Computing AJCC8 T stage (Script 224: path T4 precedence)...")
     df["ajcc8_t_stage"] = df.apply(compute_t_stage, axis=1)
     df["ajcc8_t_stage_calculable_flag"] = df["ajcc8_t_stage"].notna()
 
-    print("  Computing AJCC8 N stage...")
-    df["ajcc8_n_stage"] = df.apply(compute_n_stage, axis=1)
+    print("  Computing AJCC8 N stage (Script 224: path_n_stage_raw cascade)...")
+    n_results = df.apply(compute_n_stage, axis=1, result_type="expand")
+    df["ajcc8_n_stage"] = n_results[0]
+    df["ajcc8_n_stage_note"] = n_results[1]
 
-    print("  Computing AJCC8 M stage (recurrence proxy)...")
-    df["ajcc8_m_stage"] = df["distant_mets_proxy"].apply(lambda x: "M1" if x else "M0")
+    print("  Computing AJCC8 M stage (Script 224: path_m_stage_raw + PET, NOT recurrence)...")
+    m_results = df.apply(compute_m_stage, axis=1, result_type="expand")
+    df["ajcc8_m_stage"] = m_results[0]
+    df["distant_mets_proxy"] = m_results[1]
 
     print("  Computing AJCC8 stage group...")
     df["ajcc8_stage_group"] = df.apply(compute_stage_group, axis=1)
@@ -587,7 +662,8 @@ def build_scoring_table(con, dry_run: bool = False) -> None:
     out_cols = [
         "research_id",
         # AJCC8
-        "ajcc8_t_stage", "ajcc8_n_stage", "ajcc8_m_stage", "ajcc8_stage_group",
+        "ajcc8_t_stage", "ajcc8_n_stage", "ajcc8_n_stage_note", "ajcc8_m_stage",
+        "ajcc8_stage_group",
         "ajcc8_t_stage_calculable_flag", "ajcc8_stage_calculable_flag",
         # ATA
         "ata_initial_risk", "ata_risk_calculable_flag",
@@ -611,6 +687,8 @@ def build_scoring_table(con, dry_run: bool = False) -> None:
         "multifocal_flag", "ln_positive", "ln_examined",
         "rai_received", "max_rai_dose", "tg_nadir", "tg_max",
         "distant_mets_proxy", "recurrence_flag", "first_recurrence_date",
+        "path_t_stage_raw", "path_n_stage_raw", "path_m_stage_raw",
+        "pet_distant_mets_ever", "is_malignant",
     ]
     # Only keep columns that exist
     out_cols = [c for c in out_cols if c in df.columns]
