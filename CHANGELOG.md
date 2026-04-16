@@ -50,3 +50,36 @@
 - US exam dates incomplete: ~4,082 patients missing baseline US date
 - Molecular test dates incomplete: ~809 patients
 - `followup_years = 0` for 6,833 patients (still in active follow-up or very early cohort)
+
+---
+
+## Canonical v1_0 finalization run (Scripts 237–247, started 2026-04-16)
+
+Post-baseline fixup pass driven by coworker data-quality review. See
+`CURSOR_PROMPT_224_CANONICAL_FIXES.md` for the source spec. Every script
+carries a backup to `"Thyroid 2026 UPdated".archive_pub_v1_0` (where a
+destructive op exists) and an assertion block. Scripts without a
+pre-change backup are explicitly no-ops on data (documentation only).
+
+### Script 237 — Document imaging↔FNA size concordance gap (no-op on data)
+- **Type:** documentation-only (no row counts or cell values change).
+- **Why:** `imaging_fna_linkage_v3.fna_size_cm` has no independent source in
+  the canonical DB. The only candidate backfill path
+  (`imaging_nodule_long_v2.size_cm_max` via `nodule_id`) is the same source
+  `img_size_cm` already uses (verified: 9,911/9,911 byte-identical), so any
+  derived `size_score` would be tautologically 1.0. Preserving the flat 0.5
+  fallback is the correct v1_0 behavior until an independent FNA-side size
+  extractor is built.
+- **Changes:**
+  - `COMMENT ON COLUMN imaging_fna_linkage_v3.fna_size_cm` / `.size_score`
+    with v1_0 design intent + v1_1 TODO.
+  - `UPDATE manuscript_workspace.detail_table_registry_v1` description for
+    `imaging_fna_linkage_v3` to surface the gap.
+  - `INSERT` 2 provisional rows into `data_dictionary_v240` (for
+    `fna_size_cm` and `size_score`).
+- **Assertions (10/10 PASS):** row counts unchanged; `canonical_patient_master`
+  at 10,871; comments persisted; registry description updated; dictionary rows
+  exactly 1 each.
+- **Follow-up for v1_1:** build a targeted NLP pass over
+  `note_entities_llm_us_nodule_dynamics` / `note_entities_llm_tirads_granular`
+  to extract FNA-era nodule sizes, then re-run the scoring.
