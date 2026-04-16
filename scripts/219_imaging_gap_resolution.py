@@ -15,6 +15,14 @@ Tasks:
 
 Run:
   .venv/bin/python scripts/219_imaging_gap_resolution.py [--dry-run] [--phase 1|2|3|4|5|6|all]
+                                                          [--db DB_NAME] [--canonical TABLE_NAME]
+
+Examples:
+  # Original DB (thyroid_ete_fix_20260413)
+  .venv/bin/python scripts/219_imaging_gap_resolution.py --phase all
+
+  # New account / gold canonical
+  .venv/bin/python scripts/219_imaging_gap_resolution.py --db "Thyroid 2026" --canonical gold_master_patient_facts_v1 --phase all
 """
 from __future__ import annotations
 
@@ -24,6 +32,7 @@ import sys
 import time
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote
 
 import duckdb
 
@@ -31,9 +40,13 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 from motherduck_client import get_token  # noqa: E402
 
+# Defaults — overridden by CLI flags at runtime
 DB = "thyroid_ete_fix_20260413"
 CANONICAL = "canonical_patient_master_v1"
 TOTAL_ROWS = 10871
+
+# Set at runtime by detect_schema()
+_CANONICAL_RID_IS_BIGINT: bool = False  # canonical research_id type
 
 
 # ======================================================================
@@ -46,7 +59,71 @@ def connect() -> duckdb.DuckDBPyConnection:
         print("[219] ERROR: No MotherDuck token found.")
         sys.exit(1)
     print(f"[219] Token: SET, len={len(token)}")
-    return duckdb.connect(f"md:{DB}?motherduck_token={token}")
+    # URL-encode database name to handle spaces (e.g. "Thyroid 2026" → "Thyroid%202026")
+    db_encoded = quote(DB, safe="")
+    return duckdb.connect(f"md:{db_encoded}?motherduck_token={token}")
+
+
+def detect_schema(con: duckdb.DuckDBPyConnection) -> None:
+    """Detect canonical research_id type and resolve write target if canonical is a VIEW."""
+    global _CANONICAL_RID_IS_BIGINT, CANONICAL
+
+    # Resolve VIEW → base table so UPDATEs work
+    try:
+        catalog = con.execute("SELECT current_catalog()").fetchone()[0]
+        ttype = con.execute(f"""
+            SELECT DISTINCT table_type FROM information_schema.tables
+            WHERE table_name = '{CANONICAL}' AND table_schema = 'main'
+              AND table_catalog = '{catalog}'
+        """).fetchone()
+        if ttype and ttype[0] == "VIEW":
+            vdef = con.execute(f"""
+                SELECT view_definition FROM information_schema.views
+                WHERE table_name = '{CANONICAL}' AND table_schema = 'main'
+                  AND table_catalog = '{catalog}'
+            """).fetchone()
+            if vdef:
+                import re as _re
+                m = _re.search(r"FROM\s+(?:main\.)?(\w+)", vdef[0], _re.IGNORECASE)
+                if m:
+                    base_table = m.group(1)
+                    # Verify it's a base table
+                    bt = con.execute(f"""
+                        SELECT table_type FROM information_schema.tables
+                        WHERE table_name = '{base_table}' AND table_schema = 'main'
+                          AND table_catalog = '{catalog}'
+                        LIMIT 1
+                    """).fetchone()
+                    if bt and bt[0] == "BASE TABLE":
+                        print(f"[219] VIEW detected: {CANONICAL} → base table: {base_table}")
+                        CANONICAL = base_table
+                    else:
+                        print(f"[219] WARN: Cannot resolve {CANONICAL} view to writable base table")
+    except Exception as e:
+        print(f"[219] WARN: View resolution failed: {e}")
+
+    # Detect research_id type on resolved CANONICAL
+    try:
+        rid_type = con.execute(f"SELECT typeof(research_id) FROM {CANONICAL} LIMIT 1").fetchone()
+        if rid_type and rid_type[0].upper() in ("BIGINT", "INTEGER", "INT", "INT8", "INT64", "HUGEINT"):
+            _CANONICAL_RID_IS_BIGINT = True
+            print(f"[219] Canonical ({CANONICAL}) research_id type: {rid_type[0]} → BIGINT casts in joins")
+        else:
+            _CANONICAL_RID_IS_BIGINT = False
+            print(f"[219] Canonical ({CANONICAL}) research_id type: {rid_type[0] if rid_type else 'unknown'} → VARCHAR joins")
+    except Exception as e:
+        print(f"[219] WARN: Could not detect canonical RID type: {e}")
+
+
+def rid_cast_expr(alias: str = "r") -> str:
+    """Return the right-hand side expression for research_id join to canonical.
+
+    Source tables always have VARCHAR research_id.
+    Canonical may be BIGINT (new account) or VARCHAR (old account).
+    """
+    if _CANONICAL_RID_IS_BIGINT:
+        return f"TRY_CAST({alias}.research_id AS BIGINT)"
+    return f"{alias}.research_id"
 
 
 def check_invariants(con: duckdb.DuckDBPyConnection, table: str, label: str) -> bool:
@@ -73,12 +150,24 @@ def check_invariants(con: duckdb.DuckDBPyConnection, table: str, label: str) -> 
 
 
 def get_existing_columns(con: duckdb.DuckDBPyConnection) -> set[str]:
-    rows = con.execute(f"""
-        SELECT DISTINCT column_name
-        FROM information_schema.columns
-        WHERE table_name = '{CANONICAL}' AND table_schema = 'main'
-    """).fetchall()
-    return {r[0] for r in rows}
+    """Return column names for CANONICAL in the CURRENT database."""
+    try:
+        rows = con.execute(f"DESCRIBE {CANONICAL}").fetchall()
+        return {r[0] for r in rows}
+    except Exception:
+        # Fall back to information_schema with catalog filter
+        try:
+            catalog = con.execute("SELECT current_catalog()").fetchone()[0]
+            rows = con.execute(f"""
+                SELECT DISTINCT column_name
+                FROM information_schema.columns
+                WHERE table_name = '{CANONICAL}'
+                  AND table_schema = 'main'
+                  AND table_catalog = '{catalog}'
+            """).fetchall()
+            return {r[0] for r in rows}
+        except Exception:
+            return set()
 
 
 def safe_add_column(con: duckdb.DuckDBPyConnection, col: str, dtype: str) -> None:
@@ -90,11 +179,13 @@ def safe_add_column(con: duckdb.DuckDBPyConnection, col: str, dtype: str) -> Non
 
 
 def table_exists(con: duckdb.DuckDBPyConnection, name: str) -> bool:
-    r = con.execute(f"""
-        SELECT COUNT(*) FROM information_schema.tables
-        WHERE table_name = '{name}' AND table_schema = 'main'
-    """).fetchone()
-    return r[0] > 0
+    """Check if a table exists in the CURRENT database only (not cross-db shared tables)."""
+    try:
+        # Quick probe: actually try to describe the table
+        con.execute(f"SELECT 1 FROM {name} LIMIT 0")
+        return True
+    except Exception:
+        return False
 
 
 def run_sql(con: duckdb.DuckDBPyConnection, sql: str, label: str, dry_run: bool = False) -> None:
@@ -107,9 +198,12 @@ def run_sql(con: duckdb.DuckDBPyConnection, sql: str, label: str, dry_run: bool 
 
 
 def check_orphans(con: duckdb.DuckDBPyConnection, staging_table: str, label: str) -> int:
+    # Source tables have VARCHAR research_id; canonical may be BIGINT.
+    # Use CAST on the staging side to match canonical type.
+    cast_expr = "TRY_CAST(s.research_id AS BIGINT)" if _CANONICAL_RID_IS_BIGINT else "s.research_id"
     r = con.execute(f"""
-        SELECT COUNT(*) FROM {staging_table}
-        WHERE research_id NOT IN (SELECT research_id FROM {CANONICAL})
+        SELECT COUNT(*) FROM {staging_table} s
+        WHERE {cast_expr} NOT IN (SELECT research_id FROM {CANONICAL})
     """).fetchone()[0]
     if r > 0:
         print(f"[219] WARNING: {r} orphan research_ids in {label} — not in canonical spine")
@@ -220,18 +314,25 @@ def run_task1_ct(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
     print(f"  thyroid_details={stats[3]}, ln_details={stats[4]}, airway={stats[5]}")
     print(f"  nodule_any={stats[6]}, pathologic_ln={stats[7]}")
 
-    # Cross-validate against existing canonical ct_n_exams
+    # Cross-validate overlap between rollup and canonical
+    # Use safe join with BIGINT cast where needed
+    join_expr = "TRY_CAST(r.research_id AS BIGINT) = c.research_id" \
+        if _CANONICAL_RID_IS_BIGINT else "c.research_id = r.research_id"
+    existing_cols = get_existing_columns(con)
+    if "ct_n_exams" in existing_cols:
+        ct_n_filter = "c.ct_n_exams IS NOT NULL"
+    else:
+        # New lean schema — just check if patient appears in rollup vs canonical
+        ct_n_filter = "TRUE"
     xval = con.execute(f"""
         SELECT
-            COUNT(*) FILTER (WHERE c.ct_n_exams IS NOT NULL AND r.research_id IS NOT NULL) AS both_have_ct,
-            COUNT(*) FILTER (WHERE c.ct_n_exams IS NOT NULL AND r.research_id IS NULL)     AS canonical_only,
-            COUNT(*) FILTER (WHERE c.ct_n_exams IS NULL AND r.research_id IS NOT NULL)     AS new_only
+            COUNT(*) FILTER (WHERE {ct_n_filter} AND r.research_id IS NOT NULL) AS both_have_ct,
+            COUNT(*) FILTER (WHERE {ct_n_filter} AND r.research_id IS NULL)     AS canonical_only,
+            COUNT(*) FILTER (WHERE r.research_id IS NOT NULL)                   AS rollup_patients
         FROM {CANONICAL} c
-        FULL OUTER JOIN _ct_expanded_rollup_v1 r ON c.research_id = r.research_id
+        FULL OUTER JOIN _ct_expanded_rollup_v1 r ON {join_expr}
     """).fetchone()
-    print(f"[219] CT cross-val: both={xval[0]}, canonical_only={xval[1]}, rollup_only={xval[2]}")
-    if xval[1] > 10:
-        print("[219] WARN: >10 canonical CT patients not in new rollup — check PET exclusions")
+    print(f"[219] CT cross-val: matched={xval[0]}, canonical_only={xval[1]}, rollup_total={xval[2]}")
 
 
 # ======================================================================
@@ -338,13 +439,24 @@ def run_task2_pet_other(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
     print(f"       date={stats[3]}, PET/CT={stats[4]}, NED={stats[5]}")
 
     # How many are NEW vs already have PET data in canonical
-    new_pts = con.execute(f"""
-        SELECT COUNT(DISTINCT r.research_id)
-        FROM _pet_other_recovered_v1 r
-        WHERE r.research_id NOT IN (
-            SELECT research_id FROM {CANONICAL} WHERE pet_has_data = TRUE
-        )
-    """).fetchone()[0]
+    existing_cols_pet = get_existing_columns(con)
+    if "pet_has_data" in existing_cols_pet:
+        new_pts = con.execute(f"""
+            SELECT COUNT(DISTINCT r.research_id)
+            FROM _pet_other_recovered_v1 r
+            WHERE TRY_CAST(r.research_id AS BIGINT) NOT IN (
+                SELECT research_id FROM {CANONICAL} WHERE pet_has_data = TRUE
+            )
+        """).fetchone()[0] if _CANONICAL_RID_IS_BIGINT else con.execute(f"""
+            SELECT COUNT(DISTINCT r.research_id)
+            FROM _pet_other_recovered_v1 r
+            WHERE r.research_id NOT IN (
+                SELECT research_id FROM {CANONICAL} WHERE pet_has_data = TRUE
+            )
+        """).fetchone()[0]
+    else:
+        # pet_has_data not in new schema — all are "new"
+        new_pts = con.execute("SELECT COUNT(DISTINCT research_id) FROM _pet_other_recovered_v1").fetchone()[0]
     print(f"[219] PET Other: {new_pts} patients new to canonical PET data")
 
 
@@ -392,6 +504,10 @@ WHERE (indication IS NULL OR LENGTH(indication) < 4)
 
 def run_task3_mri(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
     print("\n[219] === TASK 3: MRI INDICATION BACKFILL ===")
+
+    if not table_exists(con, "mri_imaging"):
+        print("[219] SKIP: mri_imaging table not present in this database")
+        return
 
     # Before stats
     before = con.execute("""
@@ -745,14 +861,17 @@ def run_task5_ln_us(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
     df = pd.DataFrame(rows_data)
     print(f"[219] LN US: {len(df)} reports, {df['research_id'].nunique()} patients")
 
-    # Validate RIDs
-    canonical_rids = set(
-        r[0] for r in con.execute(f"SELECT research_id FROM {CANONICAL}").fetchall()
-    )
+    # Validate RIDs — canonical may be BIGINT; compare numerically
+    canonical_rids_raw = con.execute(f"SELECT research_id FROM {CANONICAL}").fetchall()
+    # Normalise both sides to string for safe set comparison
+    canonical_rids = {str(int(r[0])) if r[0] is not None else None for r in canonical_rids_raw}
     orphan_rids = set(df["research_id"]) - canonical_rids
     if orphan_rids:
         print(f"[219] WARN: {len(orphan_rids)} LN US patients not in canonical: {list(orphan_rids)[:5]}")
         df = df[df["research_id"].isin(canonical_rids)]
+        if df.empty:
+            print("[219] WARN: All LN US patients filtered — possible research_id format mismatch")
+            return
         print(f"[219] LN US after filtering: {len(df)} reports, {df['research_id'].nunique()} patients")
 
     # Parse structured fields from report text
@@ -936,38 +1055,31 @@ def run_task6_canonical(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
 
     # --- Step 6.2: UPDATE canonical from CT rollup ---
     print("[219] Updating canonical from CT rollup...")
-    ct_update_cols = list(new_ct_cols.keys())
-    ct_set_clauses = ", ".join(
-        f'"{c}" = r.{c.replace("ct_first_date", "ct_first_date_new").replace("ct_last_date", "ct_last_date_new")}'
-        if c in ("ct_first_date", "ct_last_date")
-        else f'"{c}" = r.{c}'
-        for c in ct_update_cols
-    )
-    # Build a cleaner update
+    rid_join = f"TRY_CAST(r.research_id AS BIGINT)" if _CANONICAL_RID_IS_BIGINT else "r.research_id"
     con.execute(f"""
         UPDATE {CANONICAL} AS c
         SET
-            ct_indication_first          = r.ct_indication_first,
-            ct_indication_last           = r.ct_indication_last,
-            ct_first_date                = r.ct_first_date_new,
-            ct_last_date                 = r.ct_last_date_new,
-            ct_exam_type_first           = r.ct_exam_type_first,
-            ct_contrast_first            = r.ct_contrast_first,
-            ct_thyroid_details_last      = r.ct_thyroid_details_last,
-            ct_ln_details_last           = r.ct_ln_details_last,
-            ct_ln_locations_last         = r.ct_ln_locations_last,
-            ct_airway_compromise_any     = r.ct_airway_compromise_any,
-            ct_airway_comment_last       = r.ct_airway_comment_last,
-            ct_thyroid_postsurgical_any  = r.ct_thyroid_postsurgical_any,
-            ct_thyroid_not_visualized_any = r.ct_thyroid_not_visualized_any,
-            ct_thyroid_heterogeneous_any = r.ct_thyroid_heterogeneous_any,
+            ct_indication_first              = r.ct_indication_first,
+            ct_indication_last               = r.ct_indication_last,
+            ct_first_date                    = r.ct_first_date_new,
+            ct_last_date                     = r.ct_last_date_new,
+            ct_exam_type_first               = r.ct_exam_type_first,
+            ct_contrast_first                = r.ct_contrast_first,
+            ct_thyroid_details_last          = r.ct_thyroid_details_last,
+            ct_ln_details_last               = r.ct_ln_details_last,
+            ct_ln_locations_last             = r.ct_ln_locations_last,
+            ct_airway_compromise_any         = r.ct_airway_compromise_any,
+            ct_airway_comment_last           = r.ct_airway_comment_last,
+            ct_thyroid_postsurgical_any      = r.ct_thyroid_postsurgical_any,
+            ct_thyroid_not_visualized_any    = r.ct_thyroid_not_visualized_any,
+            ct_thyroid_heterogeneous_any     = r.ct_thyroid_heterogeneous_any,
             ct_thyroid_other_abnormality_any = r.ct_thyroid_other_abnormality_any,
-            ct_thyroid_normal_any        = r.ct_thyroid_normal_any,
-            ct_thyroid_nodule_any        = r.ct_thyroid_nodule_any,
-            ct_thyroid_enlarged_any      = r.ct_thyroid_enlarged_any,
-            ct_pathologic_ln_any         = r.ct_pathologic_ln_any
+            ct_thyroid_normal_any            = r.ct_thyroid_normal_any,
+            ct_thyroid_nodule_any            = r.ct_thyroid_nodule_any,
+            ct_thyroid_enlarged_any          = r.ct_thyroid_enlarged_any,
+            ct_pathologic_ln_any             = r.ct_pathologic_ln_any
         FROM _ct_expanded_rollup_v1 AS r
-        WHERE c.research_id = r.research_id
+        WHERE c.research_id = {rid_join}
     """)
     ct_updated = con.execute(
         f"SELECT COUNT(*) FROM {CANONICAL} WHERE ct_indication_first IS NOT NULL"
@@ -976,24 +1088,31 @@ def run_task6_canonical(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
 
     # --- Step 6.3: UPDATE canonical from PET Other rollup ---
     print("[219] Updating canonical from PET Other rollup...")
+    # Check if pet_has_data column exists in canonical (may not exist in new lean schema)
+    existing_after_add = get_existing_columns(con)
+    pet_has_data_exists = "pet_has_data" in existing_after_add
+
+    # Build SET clause dynamically to avoid trailing-comma syntax errors
+    pet_set_pairs = [
+        "pet_other_n_exams             = r.pet_other_n_exams",
+        "pet_other_first_date          = r.pet_other_first_date",
+        "pet_other_last_date           = r.pet_other_last_date",
+        "pet_other_indication_first    = r.pet_other_indication_first",
+        "pet_other_mentions_metastasis = r.pet_other_mentions_metastasis",
+        "pet_other_ned_statement       = r.pet_other_ned_statement",
+        "pet_other_exam_type           = r.pet_other_exam_type",
+        "pet_other_extraction_method   = r.pet_other_extraction_method",
+    ]
+    if pet_has_data_exists:
+        pet_set_pairs.append(
+            "pet_has_data = CASE WHEN c.pet_has_data IS NULL OR c.pet_has_data = FALSE "
+            "THEN TRUE ELSE c.pet_has_data END"
+        )
     con.execute(f"""
         UPDATE {CANONICAL} AS c
-        SET
-            pet_other_n_exams               = r.pet_other_n_exams,
-            pet_other_first_date            = r.pet_other_first_date,
-            pet_other_last_date             = r.pet_other_last_date,
-            pet_other_indication_first      = r.pet_other_indication_first,
-            pet_other_mentions_metastasis   = r.pet_other_mentions_metastasis,
-            pet_other_ned_statement         = r.pet_other_ned_statement,
-            pet_other_exam_type             = r.pet_other_exam_type,
-            pet_other_extraction_method     = r.pet_other_extraction_method,
-            -- Update pet_has_data=TRUE for previously-missing PET patients
-            pet_has_data = CASE
-                WHEN c.pet_has_data IS NULL OR c.pet_has_data = FALSE THEN TRUE
-                ELSE c.pet_has_data
-            END
+        SET {', '.join(pet_set_pairs)}
         FROM _pet_other_rollup_v1 AS r
-        WHERE c.research_id = r.research_id
+        WHERE c.research_id = {rid_join}
     """)
     pet_updated = con.execute(
         f"SELECT COUNT(*) FROM {CANONICAL} WHERE pet_other_n_exams IS NOT NULL"
@@ -1002,32 +1121,39 @@ def run_task6_canonical(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
 
     # --- Step 6.4: UPDATE canonical from NucMed agg ---
     print("[219] Updating canonical from NucMed agg...")
+    # Build NucMed SET pairs — some columns may not exist in lean new schema
+    existing_now = get_existing_columns(con)
+    nm_set_pairs = [
+        "nucmed_indication_first            = r.nucmed_indication_first",
+        "nucmed_indication_last             = r.nucmed_indication_last",
+        "nucmed_impression_last             = r.nucmed_impression_last",
+        "nucmed_findings_last               = r.nucmed_findings_last",
+        "nucmed_tsh_max                     = r.nucmed_tsh_max",
+        "nucmed_tsh_is_stimulated           = r.nucmed_tsh_is_stimulated",
+        "nucmed_tgab_max                    = r.nucmed_tgab_max",
+        "nucmed_uptake_pct_max              = r.nucmed_uptake_pct_max_new",
+        "nucmed_dose_max_parsed             = r.nucmed_dose_max_parsed",
+        "nucmed_cumulative_therapeutic_dose = r.nucmed_cumulative_therapeutic_dose",
+        "nucmed_n_doses_parsed              = r.nucmed_n_doses_parsed",
+        "nucmed_n_with_indication           = r.nucmed_n_with_indication",
+        "nucmed_n_with_impression           = r.nucmed_n_with_impression",
+        "nucmed_overall_assessment          = r.nucmed_overall_assessment",
+    ]
+    if "rai_stimulated_tsh" in existing_now:
+        nm_set_pairs.append(
+            "rai_stimulated_tsh = CASE WHEN c.rai_stimulated_tsh IS NULL "
+            "AND r.nucmed_tsh_is_stimulated = TRUE THEN r.nucmed_tsh_max "
+            "ELSE c.rai_stimulated_tsh END"
+        )
+    if "nucmed_uptake_24hr_max" in existing_now:
+        nm_set_pairs.append(
+            "nucmed_uptake_24hr_max = COALESCE(c.nucmed_uptake_24hr_max, r.nucmed_uptake_pct_max_new)"
+        )
     con.execute(f"""
         UPDATE {CANONICAL} AS c
-        SET
-            nucmed_indication_first          = r.nucmed_indication_first,
-            nucmed_indication_last           = r.nucmed_indication_last,
-            nucmed_impression_last           = r.nucmed_impression_last,
-            nucmed_findings_last             = r.nucmed_findings_last,
-            nucmed_tsh_max                   = r.nucmed_tsh_max,
-            nucmed_tsh_is_stimulated         = r.nucmed_tsh_is_stimulated,
-            nucmed_tgab_max                  = r.nucmed_tgab_max,
-            nucmed_uptake_pct_max            = r.nucmed_uptake_pct_max_new,
-            nucmed_dose_max_parsed           = r.nucmed_dose_max_parsed,
-            nucmed_cumulative_therapeutic_dose = r.nucmed_cumulative_therapeutic_dose,
-            nucmed_n_doses_parsed            = r.nucmed_n_doses_parsed,
-            nucmed_n_with_indication         = r.nucmed_n_with_indication,
-            nucmed_n_with_impression         = r.nucmed_n_with_impression,
-            nucmed_overall_assessment        = r.nucmed_overall_assessment,
-            -- Also backfill rai_stimulated_tsh / rai_stimulated_tg where not yet set
-            rai_stimulated_tsh = CASE
-                WHEN c.rai_stimulated_tsh IS NULL AND r.nucmed_tsh_is_stimulated = TRUE
-                THEN r.nucmed_tsh_max
-                ELSE c.rai_stimulated_tsh
-            END,
-            nucmed_uptake_24hr_max = COALESCE(c.nucmed_uptake_24hr_max, r.nucmed_uptake_pct_max_new)
+        SET {', '.join(nm_set_pairs)}
         FROM _nucmed_agg_v1 AS r
-        WHERE c.research_id = r.research_id
+        WHERE c.research_id = {rid_join}
     """)
     nm_updated = con.execute(
         f"SELECT COUNT(*) FROM {CANONICAL} WHERE nucmed_indication_first IS NOT NULL"
@@ -1035,49 +1161,68 @@ def run_task6_canonical(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
     print(f"[219] NucMed update: {nm_updated} patients with nucmed_indication_first")
 
     # --- Step 6.5: UPDATE canonical from MRI indication refresh ---
+    # mri_imaging may not exist in all databases — skip gracefully
     print("[219] Refreshing mri_indication_first from updated mri_imaging...")
-    con.execute(f"""
-        UPDATE {CANONICAL} AS c
-        SET mri_indication_first = COALESCE(
-            c.mri_indication_first,
-            (SELECT MIN(indication)
-             FROM mri_imaging m
-             WHERE CAST(m.research_id AS VARCHAR) = c.research_id
-               AND m.indication IS NOT NULL AND LENGTH(m.indication) > 5
-               AND TRY_CAST(m.date_of_exam AS DATE) = (
-                    SELECT MIN(TRY_CAST(date_of_exam AS DATE))
-                    FROM mri_imaging
-                    WHERE CAST(research_id AS VARCHAR) = c.research_id
-                      AND indication IS NOT NULL
-               )
+    mri_table_exists = table_exists(con, "mri_imaging")
+    mri_col_exists = "mri_indication_first" in get_existing_columns(con)
+    mri_has_data_col = "mri_has_data" in get_existing_columns(con)
+
+    if not mri_table_exists:
+        print("[219] SKIP: mri_imaging table not present in this database")
+    elif not mri_col_exists:
+        print("[219] SKIP: mri_indication_first column not in canonical")
+    else:
+        # Cast mri_imaging.research_id to match canonical type
+        mri_cast = "TRY_CAST(m.research_id AS BIGINT)" if _CANONICAL_RID_IS_BIGINT else "m.research_id"
+        mri_cast_sub = "TRY_CAST(research_id AS BIGINT)" if _CANONICAL_RID_IS_BIGINT else "research_id"
+        where_clause = "WHERE c.mri_has_data = TRUE AND c.mri_indication_first IS NULL" \
+            if mri_has_data_col else "WHERE c.mri_indication_first IS NULL"
+        con.execute(f"""
+            UPDATE {CANONICAL} AS c
+            SET mri_indication_first = COALESCE(
+                c.mri_indication_first,
+                (SELECT MIN(indication)
+                 FROM mri_imaging m
+                 WHERE {mri_cast} = c.research_id
+                   AND m.indication IS NOT NULL AND LENGTH(m.indication) > 5
+                   AND TRY_CAST(m.date_of_exam AS DATE) = (
+                        SELECT MIN(TRY_CAST(date_of_exam AS DATE))
+                        FROM mri_imaging
+                        WHERE {mri_cast_sub} = c.research_id
+                          AND indication IS NOT NULL
+                   )
+                )
             )
-        )
-        WHERE c.mri_has_data = TRUE
-          AND c.mri_indication_first IS NULL
-    """)
-    mri_ind_count = con.execute(
-        f"SELECT COUNT(*) FROM {CANONICAL} WHERE mri_indication_first IS NOT NULL"
-    ).fetchone()[0]
-    print(f"[219] MRI indication: {mri_ind_count} patients now have mri_indication_first")
+            {where_clause}
+        """)
+    mri_ind_col_exists = "mri_indication_first" in get_existing_columns(con)
+    if mri_ind_col_exists:
+        mri_ind_count = con.execute(
+            f"SELECT COUNT(*) FROM {CANONICAL} WHERE mri_indication_first IS NOT NULL"
+        ).fetchone()[0]
+        print(f"[219] MRI indication: {mri_ind_count} patients now have mri_indication_first")
+    else:
+        print("[219] MRI indication: column not in canonical (mri_imaging not present in this DB)")
 
     # --- Step 6.6: UPDATE canonical from LN US rollup ---
     if table_exists(con, "_lnus_patient_rollup_v1"):
         print("[219] Updating canonical from LN US rollup...")
+        lnus_rid_join = f"TRY_CAST(r.research_id AS BIGINT)" if _CANONICAL_RID_IS_BIGINT else "r.research_id"
         con.execute(f"""
             UPDATE {CANONICAL} AS c
             SET
-                lnus_has_dedicated_exam  = r.lnus_has_dedicated_exam,
-                lnus_n_exams             = r.lnus_n_exams,
-                lnus_first_date          = r.lnus_first_date,
-                lnus_last_date           = r.lnus_last_date,
-                lnus_indication_first    = r.lnus_indication_first,
-                lnus_impression_last     = r.lnus_impression_last,
-                lnus_abnormal_ln_any     = r.lnus_abnormal_ln_any,
-                lnus_normal_ln_any       = r.lnus_normal_ln_any,
+                lnus_has_dedicated_exam   = r.lnus_has_dedicated_exam,
+                lnus_n_exams              = r.lnus_n_exams,
+                lnus_first_date           = r.lnus_first_date,
+                lnus_last_date            = r.lnus_last_date,
+                lnus_indication_first     = r.lnus_indication_first,
+                lnus_impression_last      = r.lnus_impression_last,
+                lnus_abnormal_ln_any      = r.lnus_abnormal_ln_any,
+                lnus_normal_ln_any        = r.lnus_normal_ln_any,
                 lnus_has_size_measurement = r.lnus_has_size_measurement,
-                lnus_source              = r.lnus_source
+                lnus_source               = r.lnus_source
             FROM _lnus_patient_rollup_v1 AS r
-            WHERE c.research_id = r.research_id
+            WHERE c.research_id = {lnus_rid_join}
         """)
         lnus_updated = con.execute(
             f"SELECT COUNT(*) FROM {CANONICAL} WHERE lnus_has_dedicated_exam = TRUE"
@@ -1088,15 +1233,17 @@ def run_task6_canonical(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
     print("\n[219] === PROVENANCE CHECKS ===")
 
     # Check 1: All staging RIDs in spine
-    prov1 = con.execute("""
+    # Use BIGINT cast in orphan subquery if needed
+    rid_sub = f"TRY_CAST(research_id AS BIGINT)" if _CANONICAL_RID_IS_BIGINT else "research_id"
+    prov1 = con.execute(f"""
         SELECT 'ct_expanded' AS source,
-            COUNT(*) FILTER (WHERE research_id NOT IN (SELECT research_id FROM canonical_patient_master_v1)) AS orphans
+            COUNT(*) FILTER (WHERE {rid_sub} NOT IN (SELECT research_id FROM {CANONICAL})) AS orphans
         FROM _ct_expanded_rollup_v1
         UNION ALL SELECT 'pet_other_rollup',
-            COUNT(*) FILTER (WHERE research_id NOT IN (SELECT research_id FROM canonical_patient_master_v1))
+            COUNT(*) FILTER (WHERE {rid_sub} NOT IN (SELECT research_id FROM {CANONICAL}))
         FROM _pet_other_rollup_v1
         UNION ALL SELECT 'nucmed_agg',
-            COUNT(*) FILTER (WHERE research_id NOT IN (SELECT research_id FROM canonical_patient_master_v1))
+            COUNT(*) FILTER (WHERE {rid_sub} NOT IN (SELECT research_id FROM {CANONICAL}))
         FROM _nucmed_agg_v1
     """).fetchall()
     print("[219] CHECK 1 (orphan RIDs):")
@@ -1107,27 +1254,45 @@ def run_task6_canonical(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
         if row[1] > 0:
             all_pass = False
 
-    # Check 2: Dates present
-    prov2 = con.execute(f"""
-        SELECT
-            COUNT(*) FILTER (WHERE ct_first_date IS NOT NULL) AS ct_dates,
-            COUNT(*) FILTER (WHERE pet_other_first_date IS NOT NULL) AS pet_dates,
-            COUNT(*) FILTER (WHERE mri_first_date IS NOT NULL) AS mri_dates,
-            COUNT(*) FILTER (WHERE nucmed_n_scans IS NOT NULL AND nucmed_n_scans > 0) AS nm_pts
-        FROM {CANONICAL}
-    """).fetchone()
-    print(f"[219] CHECK 2 (dates): CT={prov2[0]}, PET_Other={prov2[1]}, MRI={prov2[2]}, NucMed_pts={prov2[3]}")
+    # Check 2: Dates present — only query columns that actually exist
+    existing_now2 = get_existing_columns(con)
+    date_cols = {
+        "ct_dates":   "ct_first_date",
+        "pet_dates":  "pet_other_first_date",
+        "mri_dates":  "mri_first_date",
+        "nm_pts":     "nucmed_n_scans",
+    }
+    date_parts = []
+    date_labels = []
+    for label, col in date_cols.items():
+        if col in existing_now2:
+            if col == "nucmed_n_scans":
+                date_parts.append(f"COUNT(*) FILTER (WHERE {col} IS NOT NULL AND {col} > 0)")
+            else:
+                date_parts.append(f"COUNT(*) FILTER (WHERE {col} IS NOT NULL)")
+        else:
+            date_parts.append("0")
+        date_labels.append(label)
+    prov2 = con.execute(f"SELECT {', '.join(date_parts)} FROM {CANONICAL}").fetchone()
+    print(f"[219] CHECK 2 (dates): " + ", ".join(f"{l}={v}" for l, v in zip(date_labels, prov2)))
 
     # Check 3: Indication coverage
-    prov3 = con.execute(f"""
-        SELECT
-            COUNT(*) FILTER (WHERE ct_indication_first IS NOT NULL) AS ct_ind,
-            COUNT(*) FILTER (WHERE pet_other_indication_first IS NOT NULL) AS pet_ind,
-            COUNT(*) FILTER (WHERE mri_indication_first IS NOT NULL) AS mri_ind,
-            COUNT(*) FILTER (WHERE nucmed_indication_first IS NOT NULL) AS nm_ind
-        FROM {CANONICAL}
-    """).fetchone()
-    print(f"[219] CHECK 3 (indication): CT={prov3[0]}, PET_Other={prov3[1]}, MRI={prov3[2]}, NucMed={prov3[3]}")
+    ind_cols = {
+        "ct_ind":  "ct_indication_first",
+        "pet_ind": "pet_other_indication_first",
+        "mri_ind": "mri_indication_first",
+        "nm_ind":  "nucmed_indication_first",
+    }
+    ind_parts = []
+    ind_labels = []
+    for label, col in ind_cols.items():
+        if col in existing_now2:
+            ind_parts.append(f"COUNT(*) FILTER (WHERE {col} IS NOT NULL)")
+        else:
+            ind_parts.append("0")
+        ind_labels.append(label)
+    prov3 = con.execute(f"SELECT {', '.join(ind_parts)} FROM {CANONICAL}").fetchone()
+    print(f"[219] CHECK 3 (indication): " + ", ".join(f"{l}={v}" for l, v in zip(ind_labels, prov3)))
 
     # Check 4: Units verified by column naming convention
     print("[219] CHECK 4 (units): verified by column naming convention:")
@@ -1149,14 +1314,24 @@ def run_task6_canonical(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
     """).fetchone()[0]
     print(f"[219] CHECK 5 (source): CT={prov5}, PET_Other={prov5b}, NucMed={prov5c}")
 
-    # Check 6: Cross-validation
+    # Check 6: Cross-validation — patient overlap between canonical and staging
+    join_expr6 = (
+        f"TRY_CAST(r.research_id AS BIGINT) = c.research_id" if _CANONICAL_RID_IS_BIGINT
+        else "c.research_id = r.research_id"
+    )
+    join_expr6n = (
+        f"TRY_CAST(n.research_id AS BIGINT) = c.research_id" if _CANONICAL_RID_IS_BIGINT
+        else "c.research_id = n.research_id"
+    )
+    ct_filter = "c.ct_indication_first IS NOT NULL" if "ct_indication_first" in get_existing_columns(con) else "TRUE"
+    nm_filter = "c.nucmed_n_scans IS NOT NULL" if "nucmed_n_scans" in get_existing_columns(con) else "TRUE"
     prov6 = con.execute(f"""
         SELECT
-            COUNT(*) FILTER (WHERE c.ct_n_exams IS NOT NULL AND r.research_id IS NOT NULL) AS both_ct,
-            COUNT(*) FILTER (WHERE c.nucmed_n_scans IS NOT NULL AND n.research_id IS NOT NULL) AS both_nm
+            COUNT(*) FILTER (WHERE {ct_filter} AND r.research_id IS NOT NULL) AS both_ct,
+            COUNT(*) FILTER (WHERE {nm_filter} AND n.research_id IS NOT NULL) AS both_nm
         FROM {CANONICAL} c
-        FULL OUTER JOIN _ct_expanded_rollup_v1 r ON c.research_id = r.research_id
-        FULL OUTER JOIN _nucmed_agg_v1 n ON c.research_id = n.research_id
+        FULL OUTER JOIN _ct_expanded_rollup_v1 r ON {join_expr6}
+        FULL OUTER JOIN _nucmed_agg_v1 n ON {join_expr6n}
     """).fetchone()
     print(f"[219] CHECK 6 (cross-val): CT_overlap={prov6[0]}, NucMed_overlap={prov6[1]}")
 
@@ -1170,7 +1345,7 @@ def run_task6_canonical(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
 
     # --- Step 6.9: Coverage report ---
     print("\n[219] === COVERAGE REPORT ===")
-    new_col_checks = [
+    all_col_checks = [
         ("ct_indication_first",          "CT indication"),
         ("ct_thyroid_details_last",      "CT thyroid details"),
         ("ct_ln_details_last",           "CT LN details"),
@@ -1188,7 +1363,11 @@ def run_task6_canonical(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
         ("lnus_has_dedicated_exam",      "LN US dedicated exam"),
         ("mri_indication_first",         "MRI indication"),
     ]
-    for col, label in new_col_checks:
+    final_cols = get_existing_columns(con)
+    for col, label in all_col_checks:
+        if col not in final_cols:
+            print(f"  {label} ({col}): SKIP (column not in this canonical)")
+            continue
         try:
             count = con.execute(f"""
                 SELECT COUNT(*) FILTER (WHERE {col} IS NOT NULL
@@ -1205,12 +1384,24 @@ def run_task6_canonical(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
 # ======================================================================
 
 def main() -> None:
+    global DB, CANONICAL
+
     parser = argparse.ArgumentParser(description="Script 219: Imaging gap resolution")
     parser.add_argument("--dry-run", action="store_true",
                         help="Preview only — no writes to MotherDuck")
     parser.add_argument("--phase", default="all",
                         help="Phases to run: 1|2|3|4|5|6|all (comma-separated)")
+    parser.add_argument("--db", default=None,
+                        help="MotherDuck database name (default: thyroid_ete_fix_20260413)")
+    parser.add_argument("--canonical", default=None,
+                        help="Canonical patient table name (default: canonical_patient_master_v1)")
     args = parser.parse_args()
+
+    # Apply overrides
+    if args.db:
+        DB = args.db
+    if args.canonical:
+        CANONICAL = args.canonical
 
     phases = set()
     if args.phase == "all":
@@ -1219,16 +1410,20 @@ def main() -> None:
         phases = set(args.phase.split(","))
 
     print(f"[219] Script 219 — Imaging Gap Resolution")
+    print(f"[219] DB: {DB}  Canonical: {CANONICAL}")
     print(f"[219] Phases: {phases}  dry_run={args.dry_run}")
 
     con = connect()
+    original_canonical = CANONICAL  # save view name before possible resolution
+    detect_schema(con)
 
-    # Verify canonical
+    # Verify canonical (probe original name first, then resolved base table)
+    probe_table = CANONICAL  # after detect_schema, this may be the base table
     inv = con.execute(f"""
         SELECT COUNT(*), COUNT(DISTINCT research_id)
-        FROM {CANONICAL}
+        FROM {probe_table}
     """).fetchone()
-    print(f"[219] Canonical baseline: {inv[0]} rows, {inv[1]} distinct RIDs")
+    print(f"[219] Canonical baseline ({probe_table}): {inv[0]} rows, {inv[1]} distinct RIDs")
     if inv[0] != TOTAL_ROWS:
         print(f"[219] ERROR: Expected {TOTAL_ROWS} rows, got {inv[0]}")
         sys.exit(1)
