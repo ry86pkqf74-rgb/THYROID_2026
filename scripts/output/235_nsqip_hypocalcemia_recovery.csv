@@ -1,0 +1,83 @@
+research_id,nsqip_hypocalcemia,nsqip_hypocalcemia_event,nsqip_hypocalcemia_event_type,nsqip_iv_calcium,comp_hypocalcemia_confirmed,prior_evidence_tier,has_low_calcium_flag,lab_calcium_min,postop_calcium_min_value,surg_procedure_type,comp_hypoparathyroidism_confirmed,nsqip_recovery_candidate,recovery_source
+10030,Yes,,,No/Unknown,True,,,,,,,False,nsqip_enrichment
+10049,Yes,,,No/Unknown,True,,,,,,,False,nsqip_enrichment
+10059,Yes,,,No/Unknown,True,,,,,,,False,nsqip_enrichment
+10121,Yes,,,Yes- subsequently during patient’s course prior to 30 days,True,,False,9.9,,,,False,nsqip_enrichment
+10179,Yes,,,No/Unknown,True,,,,,,,False,nsqip_enrichment
+10562,Yes,,,Yes- prior to initial discharge,True,,False,9.0,,,,False,nsqip_enrichment
+10567,Yes,,,Yes- subsequently during patient’s course prior to 30 days,True,,,,,,,False,nsqip_enrichment
+10687,Yes,,,Yes- prior to initial discharge,True,,,,,,,False,nsqip_enrichment
+10880,Yes,,,No/Unknown,True,,False,,9.2,,,False,nsqip_enrichment
+11039,Yes,,,Yes- prior to initial discharge,True,,,,,,,False,nsqip_enrichment
+11048,Yes,,,No/Unknown,True,,,,,,,False,nsqip_enrichment
+11052,Yes,,,No/Unknown,True,,,,,,,False,nsqip_enrichment
+11068,Yes,,,No/Unknown,True,,,,,,,False,nsqip_enrichment
+11074,Yes,,,No/Unknown,True,,,,,,False,False,nsqip_enrichment
+11112,Yes,,,No/Unknown,True,,,,,,,False,nsqip_enrichment
+11142,Yes,,,No/Unknown,True,,,,,,,False,nsqip_enrichment
+11365,Yes,Yes,IV calcium supplementation,,True,,,,,,,False,nsqip_enrichment
+11400,Yes,,,Yes- subsequently during patient’s course prior to 30 days,True,,,,,,,False,nsqip_enrichment
+11555,Yes,,,No/Unknown,True,,,,,,False,False,nsqip_enrichment
+11590,Yes,,,Yes- subsequently during patient’s course prior to 30 days,True,,,,,,,False,nsqip_enrichment
+11598,Yes,,,Yes- subsequently during patient’s course prior to 30 days,True,,,,,,,False,nsqip_enrichment
+11603,Yes,,,No/Unknown,True,,,,,,,False,nsqip_enrichment
+11629,Yes,,,No/Unknown,True,,,,,,,False,nsqip_enrichment
+11742,Yes,,,No/Unknown,True,,,,,,,False,nsqip_enrichment
+11874,Yes,,,No/Unknown,True,,False,,8.9,,False,False,nsqip_enrichment
+11891,Yes,,,No/Unknown,True,,,,,,,False,nsqip_enrichment
+12022,Yes,,,Yes- subsequently during patient’s course prior to 30 days,True,,,,,,,False,nsqip_enrichment
+12059,Yes,,,Yes- prior to initial discharge,True,,,,,,,False,nsqip_enrichment
+12065,Yes,,,No/Unknown,True,,,,,,,False,nsqip_enrichment
+12085,Yes,No,,,True,,,,,,False,False,nsqip_enrichment
+12158,Yes,,,No/Unknown,True,,,,,,,False,nsqip_enrichment
+12195,Yes,,,Yes- subsequently during patient’s course prior to 30 days,True,,,,,,,False,nsqip_enrichment
+1707,Yes,No,,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+1718,Yes,Yes,IV calcium supplementation,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+2174,Yes,Yes,Emergent evaluation in clinical office/emergency dept,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+2184,Yes,Yes,IV calcium supplementation,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+4033,Yes,Yes,"IV calcium supplementation,Emergent evaluation in clinical office/emergency dept,Readmitted for low calcium",,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+4068,Yes,No,,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+4134,Yes,No,,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+4160,Yes,Yes,Emergent evaluation in clinical office/emergency dept,,True,,,,,hemithyroidectomy,,False,nsqip_enrichment
+4187,Yes,No,,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+4205,Yes,Yes,"IV calcium supplementation,Emergent evaluation in clinical office/emergency dept,Readmitted for low calcium",,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+4333,Yes,Yes,IV calcium supplementation,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+4339,Yes,No,,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+4355,Yes,Yes,IV calcium supplementation,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+4405,Yes,Yes,IV calcium supplementation,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+4471,Yes,No,,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+4472,Yes,No,,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+4551,Yes,Yes,IV calcium supplementation,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+4657,Yes,Yes,IV calcium supplementation,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+4670,Yes,No,,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+4693,Yes,Yes,"IV calcium supplementation,Emergent evaluation in clinical office/emergency dept",,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+4779,Yes,Yes,IV calcium supplementation,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+5070,Yes,No,,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+5131,Yes,No,,,True,3,True,7.6,7.6,total_thyroidectomy,True,False,nsqip_enrichment
+5134,Yes,No,,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+5155,Yes,No,,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+5180,Yes,Yes,Emergent evaluation in clinical office/emergency dept,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+5218,Yes,No,,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+5298,Yes,Yes,Emergent evaluation in clinical office/emergency dept,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+5357,Yes,No,,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+5386,Yes,Yes,Emergent evaluation in clinical office/emergency dept,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+5650,Yes,No,,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+5723,Yes,No,,,True,,,,,hemithyroidectomy,,False,nsqip_enrichment
+5734,Yes,Yes,Readmitted for low calcium,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+5740,Yes,No,,,True,1,True,7.2,7.2,total_thyroidectomy,,False,nsqip_enrichment
+5963,Yes,Yes,Emergent evaluation in clinical office/emergency dept,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+6091,Yes,Yes,Readmitted for low calcium,,True,,,,,hemithyroidectomy,,False,nsqip_enrichment
+686,Yes,Yes,Emergent evaluation in clinical office/emergency dept,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+690,Yes,Yes,IV calcium supplementation,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+712,Yes,Yes,Emergent evaluation in clinical office/emergency dept,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+727,Yes,Yes,"IV calcium supplementation,Emergent evaluation in clinical office/emergency dept,Readmitted for low calcium",,True,1,,,,total_thyroidectomy,,False,nsqip_enrichment
+7342,Yes,Yes,IV calcium supplementation,,True,,,,,hemithyroidectomy,,False,nsqip_enrichment
+747,Yes,Yes,Emergent evaluation in clinical office/emergency dept,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+7593,Yes,,,No/Unknown,True,,False,,9.4,hemithyroidectomy,False,False,nsqip_enrichment
+763,Yes,Yes,IV calcium supplementation,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+788,Yes,No,,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+8009,Yes,No,,,True,,,,,total_thyroidectomy,False,False,nsqip_enrichment
+817,Yes,Yes,Emergent evaluation in clinical office/emergency dept,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+833,Yes,Yes,IV calcium supplementation,,True,,,,,total_thyroidectomy,,False,nsqip_enrichment
+9849,Yes,,,Yes- subsequently during patient’s course prior to 30 days,True,,False,,9.2,,False,False,nsqip_enrichment
+9870,Yes,,,Yes- subsequently during patient’s course prior to 30 days,True,,False,,9.5,,False,False,nsqip_enrichment
