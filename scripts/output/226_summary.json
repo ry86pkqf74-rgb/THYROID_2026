@@ -1,0 +1,23 @@
+{
+  "script": "226",
+  "timestamp": "2026-04-16T10:58:01.245089",
+  "dry_run": false,
+  "haiku_pass": {
+    "model": "claude-haiku-4-5-20251001",
+    "true_positive": 96,
+    "false_positive": 81,
+    "errors": 0,
+    "total": 177
+  },
+  "sonnet_reconsideration": {
+    "model": "claude-sonnet-4-5",
+    "escalated": 11
+  },
+  "patient_yield": {
+    "notes_adjudicated_positive": 38,
+    "both_signals": 0,
+    "variant_long_only": 4,
+    "notes_only": 38,
+    "ret_positive_unified_total": 42
+  }
+}
