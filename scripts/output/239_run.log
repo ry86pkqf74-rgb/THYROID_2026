@@ -1,0 +1,24 @@
+/Users/loganglosser/THYROID_2026/scripts/239_fix_rai_benign_recovery.py:84: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  return datetime.utcnow().strftime("%H:%M:%S.") + f"{datetime.utcnow().microsecond // 1000:03d}Z"
+[20:46:41.020Z] === START 239_fix_rai_benign_recovery.py
+[20:46:42.034Z] connected to thyroid_canonical_publication_v1_0
+[20:46:42.034Z] PHASE 1 — investigate recovery candidates under three RAI criteria
+[20:46:42.280Z]   pts with malignant path (any tumor 1..5): 3981
+[20:46:42.280Z]   recovery candidates — RAI strict  (assertion in definite_received, likely_received): 0
+[20:46:42.280Z]   recovery candidates — RAI any     (any episode not explicitly negated):                0
+[20:46:42.280Z]   recovery candidates — CPM.rai_received_reconciled=TRUE:                                0
+[20:46:42.280Z] PHASE 2b — delete branch (0 candidates across all three RAI criteria)
+/Users/loganglosser/THYROID_2026/scripts/239_fix_rai_benign_recovery.py:301: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  run_ts = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+[20:46:42.280Z] archive: creating "Thyroid 2026 UPdated"."archive_pub_v1_0"."rai_benign_histology_recovery_v234_pre239_backup_20260416T204642Z"
+[20:46:43.885Z]   archived 0 rows -> rai_benign_histology_recovery_v234_pre239_backup_20260416T204642Z
+[20:46:43.885Z] dropping canonical.main.rai_benign_histology_recovery_v234
+[20:46:44.140Z] removing __readme row
+[20:46:44.175Z] removing detail_table_registry_v1 row
+[20:46:44.211Z] PHASE 3 — assertions
+[20:46:44.592Z]   ASSERT [PASS] canonical.main.rai_benign_histology_recovery_v234 does not exist
+[20:46:44.592Z]   ASSERT [PASS] __readme no longer has a row for this table
+[20:46:44.592Z]   ASSERT [PASS] registry no longer has a row for this table
+[20:46:44.592Z]   ASSERT [PASS] canonical_patient_master = 10,871 rows
+[20:46:44.592Z]   ASSERT [PASS] >=1 archive copy in archive_pub_v1_0
+[20:46:44.592Z] === END 239_fix_rai_benign_recovery.py  elapsed=3.6s  failures=0

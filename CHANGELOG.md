@@ -114,3 +114,35 @@ pre-change backup are explicitly no-ops on data (documentation only).
 - **Follow-up for v1_1:** add TI-RADS trajectory after an independent
   per-exam TI-RADS source is built (imaging_nodule_long_v2 rebuild is
   tentatively part of Script 246).
+
+### Script 239 — Fix `rai_benign_histology_recovery_v234` (decision: DROP)
+- **Investigation:** ran the recovery-candidate query under three RAI
+  criteria against `canonical_benign_diagnosis_v1`, `path_synoptics`
+  (tumor 1..5), and `canonical_malignant_diagnosis_v1`:
+  - RAI strict (`rai_assertion_status` ∈ {definite_received,
+    likely_received}): **0** candidates
+  - RAI any (any non-negated episode): **0** candidates
+  - CPM `rai_received_reconciled=TRUE`: **0** candidates
+- **Root cause:** NOT a Script 234 bug — the canonical benign /
+  malignant diagnosis tables partition patients correctly. Everyone with
+  path_synoptics malignancy who received RAI is already captured in
+  `canonical_malignant_diagnosis_v1`. The 0-row outcome is the truthful
+  state of the data.
+- **Decision gate triggered:** per the finalization spec, an empty
+  recovery table is deleted, not left as a TODO.
+- **Actions:**
+  - Archived empty shell (0 rows, schema preserved) to
+    `"Thyroid 2026 UPdated".archive_pub_v1_0.rai_benign_histology_recovery_v234_pre239_backup_<ts>`
+    for auditability.
+  - Dropped `thyroid_canonical_publication_v1_0.main.rai_benign_histology_recovery_v234`.
+  - Removed row from `__readme` and `manuscript_workspace.detail_table_registry_v1`.
+- **Assertions (5/5 PASS):**
+  - Live table does not exist in canonical
+  - No `__readme` row for the table
+  - No registry row for the table
+  - `canonical_patient_master` unchanged at 10,871
+  - ≥1 archive copy present in `archive_pub_v1_0`
+- **If v1_1 re-classification surfaces new `rai_assertion_status` values
+  (definite_received / planned / historical, which don't exist today),
+  re-enable the populate branch** (`--force-populate`) in the stubbed
+  Phase 2a.
