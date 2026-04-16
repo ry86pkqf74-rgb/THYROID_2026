@@ -1,0 +1,104 @@
+{
+  "script": "246",
+  "run_ts": "20260416T232324Z",
+  "run_date": "2026-04-16",
+  "decisions": [
+    {
+      "category": "preflight_baseline",
+      "imaging_nodule_master_v1": {
+        "rows": 37016,
+        "patients": 6126
+      },
+      "tirads_llm_extracted_v2": {
+        "rows": 5636,
+        "patients": 1429
+      },
+      "imaging_nodule_long_v2": {
+        "rows": 19891
+      },
+      "us_nodules_tirads": {
+        "rows": 10862
+      },
+      "canonical_patient_master": {
+        "rows": 10871
+      }
+    },
+    {
+      "category": "source_grain_finding",
+      "finding": "us_nodules_tirads is per-patient wide (1 row/pt \u00d7 14 nodule slots). Only imaging_nodule_master_v1 is true per-(exam, nodule) grain. The 4,736 patients in us_nodules_tirads but NOT in inm_v1 are confirmed empty placeholder rows (0% n*_tr scores, 0% nodule_N text, 0% us_1_date).",
+      "consequence": "Build canonical_us_nodule_characteristics_v1 from inm_v1 only (6,126 pts / 37,016 rows). The 4,736 placeholder pts are documented as a v1_1 NLP-extraction TODO."
+    },
+    {
+      "category": "inl_v2_decision",
+      "action": "archive + drop",
+      "rationale": "100% NULL TI-RADS components (composition, echogenicity, shape, margins, calcifications) \u2014 its stated purpose. Patient set (3,439) is a strict subset of inm_v1 (6,126). size_cm_max is duplicative with inm_v1.max_dimension_cm. The imaging_exam_id column is a per-patient sequence, not a global ID \u2014 adds no unique value."
+    },
+    {
+      "category": "build_summary_canonical",
+      "rows": 37016,
+      "patients": 6126,
+      "rows_with_llm_overlay": 4837,
+      "rows_with_llm_overlay_pct": 13.1,
+      "avg_data_completeness_pct": 48.6
+    },
+    {
+      "category": "discordance_audit",
+      "rows": 1722,
+      "mean_abs_diff": 1.35,
+      "threshold_expected_around": 1722,
+      "within_threshold": true
+    },
+    {
+      "category": "final_assertions",
+      "n_checks": 11,
+      "n_pass": 11,
+      "n_fail": 0,
+      "details": [
+        {
+          "label": "COUNT(*) >= 35000 (inm_v1 baseline 37,016, expect equal modulo sampling)  got 37016",
+          "pass": true
+        },
+        {
+          "label": "distinct_pts (6126) == inm_v1 distinct_pts (6126) \u2014 lossless",
+          "pass": true
+        },
+        {
+          "label": "all canonical pts are in CPM (got 0 unaligned)",
+          "pass": true
+        },
+        {
+          "label": "inm_v1 pts not in canonical: HARD ZERO (got 0)",
+          "pass": true
+        },
+        {
+          "label": "TI-RADS components NOT all-NULL (comp=19891, echo=19891, shape=19891, margins=19891, foci=1006 of 37016)",
+          "pass": true
+        },
+        {
+          "label": "imaging_nodule_long_v2 absent from canonical.main",
+          "pass": true
+        },
+        {
+          "label": "archive copy of imaging_nodule_long_v2 present",
+          "pass": true
+        },
+        {
+          "label": "discordance audit row count ~1,722 (got 1722)",
+          "pass": true
+        },
+        {
+          "label": "canonical_patient_master unchanged at 10,871 (got 10871)",
+          "pass": true
+        },
+        {
+          "label": "registry has 2 new entries (got 2)",
+          "pass": true
+        },
+        {
+          "label": "registry: imaging_nodule_long_v2 entry removed (got 0)",
+          "pass": true
+        }
+      ]
+    }
+  ]
+}

@@ -374,3 +374,68 @@ pre-change backup are explicitly no-ops on data (documentation only).
   spec) because the JSON decision log + TEM-only patient dump need
   Python file I/O. Build SQL is embedded as a string for readability;
   matches the Script 230/231 paired pattern.
+
+### Script 246 — Build `canonical_us_nodule_characteristics_v1` + audit + drop `imaging_nodule_long_v2`
+- **Pre-flight resolved an apparent 0% CPM-overlap scare** (it was a
+  Python type-coercion artifact: CPM uses VARCHAR `research_id`,
+  imaging tables use INTEGER/BIGINT). With explicit CAST, all 5 sources
+  are 100% CPM-aligned. Real population structure:
+  - `us_nodules_tirads`: 10,862 pts (broadest, **per-patient wide
+    format**, 1 row/pt × 14 nodule slots; no per-exam grain)
+  - `imaging_nodule_master_v1`: 6,126 pts ⊆ us_nodules_tirads — **only
+    true per-(exam × nodule) source**
+  - `imaging_nodule_long_v2`: 3,439 pts ⊆ inm_v1 — broken (TI-RADS
+    components 100% NULL); imaging_exam_id is a per-patient sequence,
+    NOT a global ID; size_cm_max duplicative with inm_v1.max_dimension_cm
+  - `tirads_llm_extracted_v2`: 1,429 pts ⊆ inl_v2 — full ACR
+    per-component scoring
+  - `extracted_tirads_validated_v1`: 3,439 pts (= inl_v2 patient set);
+    patient-level rollup, preserved as-is
+- **Verified:** the 4,736 pts in `us_nodules_tirads` but NOT in inm_v1
+  are 100% empty placeholder rows (0% n*_tr scores, 0% nodule_N text,
+  0% us_1_date). Documented as v1_1 NLP-extraction TODO.
+- **Verified:** TIRADS discordance between us_nodules_tirads and inm_v1
+  on the 3,307 pts with both sources scored = **1,722 patients** (52.1%),
+  mean abs diff = **1.35 TR levels** — matches the planning numbers
+  exactly.
+- **Build summary `canonical_us_nodule_characteristics_v1`:**
+  - 37,016 rows / 6,126 patients (lossless on inm_v1)
+  - 4,837 rows (13.1%) enriched with `tirads_llm_extracted_v2` ACR
+    per-component points via `(research_id, exam_date, nodule_number)`
+    join (parsed from `tirads_llm.deterministic_key`)
+  - Avg `data_completeness_pct` = 48.6%
+  - All 5 TI-RADS components populated (composition, echogenicity,
+    shape, margins all 19,891; echogenic_foci 1,006) — confirms the
+    rebuild meaningfully replaces the all-NULL `inl_v2`
+- **Audit table `us_nodules_tirads_vs_inm_v1_discordance_v1`:**
+  - 1,722 rows / 1,722 patients (one per discordant pair)
+  - Columns: `research_id`, `unt_max_tr`, `inm_max_tr`, `abs_diff`,
+    `direction` (unt_higher / inm_higher), exam-date context columns,
+    `review_priority` (HIGH if abs_diff ≥ 2, MEDIUM otherwise)
+- **Archived + dropped `imaging_nodule_long_v2`:**
+  - Archive: `"Thyroid 2026 UPdated".archive_pub_v1_0.imaging_nodule_long_v2_pre246_backup_<ts>`
+    (19,891 rows, full row copy)
+  - Removed from `manuscript_workspace.detail_table_registry_v1`
+- **Registry updates:** −1 (inl_v2 entry removed), +2 (canonical +
+  discordance entries)
+- **Audit artifact:** `scripts/output/246_decision_log.json`
+  (6 entries: pre-flight baseline, source-grain finding, inl_v2
+  decision, canonical build summary, discordance audit, final
+  assertions)
+- **Assertions (11/11 PASS):**
+  - COUNT(*) ≥ 35,000 → 37,016 (= inm_v1)
+  - distinct_pts == inm_v1 distinct_pts → 6,126 (lossless)
+  - All canonical pts in CPM → 0 unaligned
+  - inm_v1 pts not in canonical: HARD ZERO
+  - TI-RADS components NOT all-NULL (composition / echo / shape /
+    margins / foci all > 0)
+  - imaging_nodule_long_v2 absent from canonical.main
+  - Archive copy present in archive_pub_v1_0
+  - Discordance audit row count = 1,722 (within ±50 of expected)
+  - CPM unchanged at 10,871
+  - Registry: 2 new entries present, inl_v2 entry removed
+- **Deferred to v1_1:** migrating `imaging_patient_summary_v1` source
+  query from inm_v1 to `canonical_us_nodule_characteristics_v1` (would
+  change CPM rollup cols; needs validation pass first; same pattern as
+  Scripts 245 + 240). NLP extraction from `us_nodules_tirads.nodule_N`
+  free-text descriptions to cover the 4,745 placeholder-only patients.
