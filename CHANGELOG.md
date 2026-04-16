@@ -191,3 +191,36 @@ pre-change backup are explicitly no-ops on data (documentation only).
   directly. The registered `canonical_tumor_characteristics_v1` work in
   Script 245 and its CPM-feed path will also help retire
   `deprecated__tumor_size_cm`.
+
+### Script 241 — Build `path_size_adjudication_v241` (review artifact)
+- **Created** `thyroid_canonical_publication_v1_0.main.path_size_adjudication_v241`
+  with 96 rows (union of two criteria):
+  - 68 patients where `ABS(path_tumor_size_cm - tumor_size_cm_max) > 2cm`
+  - 37 patients with `path_tumor_size_cm > 10cm` (anatomically implausible)
+- **Breakdown (rule × priority):**
+  - `outlier_manual_review_required` / HIGH: **37** (path >10cm;
+    proposed value = NULL)
+  - `multifocal_use_rollup_max` / MEDIUM: **45** (`n_foci_path > 1`;
+    proposed value = `tumor_size_cm_max`)
+  - `unifocal_retain_path_size` / MEDIUM: **14** (unifocal with >2cm
+    discrepancy; proposed value = `path_tumor_size_cm`)
+- **Columns:** `research_id`, `path_tumor_size_cm`, `tumor_size_cm_max`,
+  `n_foci_path` (from `specimen_tumor_focus_v1`), `n_tumors_path` (from
+  `patient_tumor_rollup_v1`), `proposed_path_tumor_size_cm_adjudicated`,
+  `adjudication_rule`, `review_priority`.
+- **NOT applied to `canonical_patient_master`** — per spec, this is a
+  review artifact only. Clinician sign-off required before any proposed
+  values flow back.
+- **Registry entry** added in `manuscript_workspace.detail_table_registry_v1`
+  with `domain = Pathology/Adjudication` and `feeds_master_columns =
+  'TODO: clinician sign-off; will feed deprecated__tumor_size_cm /
+  path_tumor_size_cm manual-review queue in v1_1'`. Script 247 will
+  resolve the TODO to a non-TODO description before the lock.
+- **Assertions (9/9 PASS):** source columns present; baseline outlier
+  counts match (68, 37); table row count in bracket [60, 120]; registry
+  has exactly one row for the new table; CPM unchanged at 10,871; no
+  NULL `research_id`; all rows carry a valid rule + priority from the
+  closed sets.
+- **Follow-up for v1_1:** clinician review → apply adjudicated values
+  back to a new CPM column (e.g., `path_tumor_size_cm_adjudicated`) and
+  retire `deprecated__tumor_size_cm`.

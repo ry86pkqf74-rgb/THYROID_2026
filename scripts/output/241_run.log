@@ -1,0 +1,39 @@
+/Users/loganglosser/THYROID_2026/scripts/_run_sql.py:31: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  return datetime.utcnow().strftime("%H:%M:%S.") + f"{datetime.utcnow().microsecond//1000:03d}Z"
+[21:00:46.854Z] === START 241_path_size_adjudication.sql
+[21:00:46.855Z] parsed 17 statements from 241_path_size_adjudication.sql
+[21:00:47.863Z] connected to MotherDuck (publication DB locked)
+[21:00:47.863Z] LOG: PHASE 1 — pre-flight assertions on source data
+[21:00:47.863Z] ASSERT: source columns are present on canonical_patient_master
+[21:00:48.113Z]   [1] ASSERT PASS (250 ms)  row=(True,)
+[21:00:48.113Z] ASSERT: outlier count (>2cm discrepancy) matches pre-flight baseline (68)
+[21:00:48.147Z]   [2] ASSERT PASS (34 ms)  row=(True,)
+[21:00:48.147Z] ASSERT: path sizes >10cm count matches pre-flight baseline (37)
+[21:00:48.182Z]   [3] ASSERT PASS (34 ms)  row=(True,)
+[21:00:48.182Z] LOG: PHASE 2 — build path_size_adjudication_v241 (union of both criteria)
+[21:00:48.373Z]   [4] OK (192 ms)  CREATE OR REPLACE TABLE path_size_adjudication_v241 AS
+[21:00:48.373Z] LOG: PHASE 3 — annotate the table
+[21:00:48.666Z]   [5] OK (293 ms)  COMMENT ON TABLE path_size_adjudication_v241 IS
+[21:00:48.823Z]   [6] OK (157 ms)  COMMENT ON COLUMN path_size_adjudication_v241.proposed_path_tumor_size_cm_adjudicated IS
+[21:00:48.984Z]   [7] OK (160 ms)  COMMENT ON COLUMN path_size_adjudication_v241.adjudication_rule IS
+[21:00:49.178Z]   [8] OK (194 ms)  COMMENT ON COLUMN path_size_adjudication_v241.review_priority IS
+[21:00:49.178Z] LOG: PHASE 4 — register in detail_table_registry_v1 (idempotent: delete-then-insert)
+[21:00:49.342Z]   [9] OK (164 ms)  DELETE FROM manuscript_workspace.detail_table_registry_v1
+[21:00:49.387Z]   [10] OK (45 ms)  INSERT INTO manuscript_workspace.detail_table_registry_v1
+[21:00:49.387Z] LOG: PHASE 5 — post-build assertions
+[21:00:49.387Z] ASSERT: row count is in the expected bracket (60-120)
+[21:00:49.416Z]   [11] ASSERT PASS (28 ms)  row=(True,)
+[21:00:49.416Z] ASSERT: registry has the new entry (exactly one)
+[21:00:49.644Z]   [12] ASSERT PASS (228 ms)  row=(True,)
+[21:00:49.644Z] ASSERT: canonical_patient_master untouched (still 10,871; no columns added)
+[21:00:49.679Z]   [13] ASSERT PASS (35 ms)  row=(True,)
+[21:00:49.679Z] ASSERT: no NULL research_id in the adjudication table
+[21:00:49.711Z]   [14] ASSERT PASS (31 ms)  row=(True,)
+[21:00:49.711Z] ASSERT: every row carries a valid adjudication_rule from the closed set
+[21:00:49.739Z]   [15] ASSERT PASS (28 ms)  row=(True,)
+[21:00:49.739Z] ASSERT: every row carries a valid review_priority from the closed set
+[21:00:49.771Z]   [16] ASSERT PASS (33 ms)  row=(True,)
+[21:00:49.771Z] LOG: PHASE 6 — diagnostic summary (non-blocking)
+[21:00:49.771Z] LOG: priority + rule breakdown
+[21:00:49.803Z]   [17] OK (31 ms)  SELECT adjudication_rule, review_priority, COUNT(*) AS n
+[21:00:49.803Z] === END 241_path_size_adjudication.sql  elapsed=1.9s  failures=0
