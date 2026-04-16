@@ -2,7 +2,10 @@
 """
 THYROID_2026 — Script 227: Finalization & cleanup pass (post-225/226 audit).
 
-Writes to: thyroid_canonical_publication_v1_0 (canonical DB only).
+All final tables and master-facing data are written to **thyroid_canonical_publication_v1_0**
+only. The legacy database ``Thyroid 2026 UPdated`` is read-only for cross-checks; drill-down
+tables registered in ``manuscript_workspace.detail_table_registry_v1`` must resolve in the
+publication catalog (Task 6b promotes any stragglers, e.g. serial_imaging_us).
 
 Usage:
   .venv/bin/python scripts/227_finalization_cleanup.py
@@ -12,7 +15,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -25,6 +27,7 @@ sys.path.insert(0, str(REPO))
 from motherduck_client import get_token  # noqa: E402
 
 PUBLICATION_DB = "thyroid_canonical_publication_v1_0"
+LEGACY_DB = '"Thyroid 2026 UPdated"'
 CPM_EXPECTED = 10871
 OUTPUT_JSON = REPO / "scripts" / "output" / "227_final_state.json"
 
@@ -316,6 +319,24 @@ def main() -> None:
     log("TASK 6 — Drop _molecular_patient_rollup_v225 if exists")
     con.execute("DROP TABLE IF EXISTS _molecular_patient_rollup_v225")
 
+    # TASK 6b — Materialize registry drill-downs in publication (not legacy-only)
+    log("TASK 6b — Ensure serial_imaging_us is canonical in publication DB")
+    con.execute(
+        f"""
+        CREATE OR REPLACE TABLE serial_imaging_us AS
+        SELECT * FROM {LEGACY_DB}.main.serial_imaging_us
+        """
+    )
+    con.execute(
+        """
+        UPDATE manuscript_workspace.detail_table_registry_v1
+        SET total_rows = (SELECT COUNT(*) FROM serial_imaging_us),
+            total_patients = (SELECT COUNT(DISTINCT research_id) FROM serial_imaging_us),
+            description = 'Serial ultrasound imaging for longitudinal tracking. v227: Materialized in thyroid_canonical_publication_v1_0.main (synced from legacy read-only source).'
+        WHERE detail_table_name = 'serial_imaging_us'
+        """
+    )
+
     # TASK 7 — Final verification
     log("TASK 7 — Final assertions")
     final_state = con.execute(
@@ -363,25 +384,27 @@ def main() -> None:
         f"Registry dupes: distinct={final_state[10]}, total={final_state[11]}"
     )
 
-    # Drill-downs may live on any attached DB (e.g. legacy "Thyroid 2026 UPdated").
+    # Registry entries must resolve inside the publication DB (canonical catalog).
     missing = con.execute(
-        """
+        f"""
         SELECT dtr.detail_table_name, dtr.schema_name
         FROM manuscript_workspace.detail_table_registry_v1 dtr
         WHERE NOT EXISTS (
             SELECT 1 FROM duckdb_tables() t
-            WHERE t.schema_name = dtr.schema_name
+            WHERE t.database_name = '{PUBLICATION_DB}'
+              AND t.schema_name = dtr.schema_name
               AND t.table_name = dtr.detail_table_name
         ) AND NOT EXISTS (
             SELECT 1 FROM duckdb_views() v
-            WHERE v.schema_name = dtr.schema_name
+            WHERE v.database_name = '{PUBLICATION_DB}'
+              AND v.schema_name = dtr.schema_name
               AND v.view_name = dtr.detail_table_name
         )
         """
     ).fetchall()
-    assert len(missing) == 0, f"Registry points to missing objects: {missing}"
+    assert len(missing) == 0, f"Registry points to missing objects in {PUBLICATION_DB}: {missing}"
     print(
-        f"✓ All {final_state[10]} drill-down pointers resolve to real tables/views"
+        f"✓ All {final_state[10]} drill-down pointers resolve in {PUBLICATION_DB}"
     )
 
     clutter = con.execute(
