@@ -83,3 +83,34 @@ pre-change backup are explicitly no-ops on data (documentation only).
 - **Follow-up for v1_1:** build a targeted NLP pass over
   `note_entities_llm_us_nodule_dynamics` / `note_entities_llm_tirads_granular`
   to extract FNA-era nodule sizes, then re-run the scoring.
+
+### Script 238 — Populate `serial_imaging_us` (one row per US exam, ≥2-exam pts)
+- **Change:** populated the previously-empty `serial_imaging_us` shell using
+  its existing 6-column schema. No new columns added.
+- **Source:** `ultrasound_reports` (ultrasound_date, source_us_impression,
+  clinical_impression) filtered to patients with ≥2 US exams in
+  `ultrasound_reports`, hydrated with `imaging_nodule_master_v1` (largest
+  `max_dimension_cm` per exam → `dominant_nodule_size_on_us`; its
+  `location_raw` → `dominant_nodule_location`). No `dominant_nodule_flag`
+  exists on `imaging_nodule_master_v1`; largest-dimension is the operational
+  proxy.
+- **Row counts:** 4,162 exams / 1,443 patients. 130 exams without nodule
+  size (~3.1% miss rate — no matching `imaging_nodule_master_v1` row for
+  the (research_id, ultrasound_date) pair).
+- **Deliberate omissions:** TI-RADS trajectory (source broken —
+  `imaging_nodule_long_v2.tirads_score` is 100% NULL; defer to v1_1).
+  Per-patient summary columns (first/last/interval/n_us_exams) —
+  `n_us_exams` already lives in CPM via a broader imaging source.
+- **Assertions (9/9 PASS):**
+  - serial_imaging_us was empty pre-script (0 rows)
+  - `ultrasound_reports` baseline = 6,793 exams / 4,074 pts
+  - 1,443 patients have ≥2 US exams (spec)
+  - populated table: COUNT > 0, distinct pts = 1,443, rows = 4,162
+  - ≥95% of exam rows have `dominant_nodule_size_on_us` (actual: ~96.9%)
+  - for every patient in serial_imaging_us, CPM.n_us_exams ≥ local count
+    (CPM counts the broader imaging source; it's a strict superset)
+  - canonical_patient_master still 10,871 rows
+- **COMMENTs added:** table + two columns with v1_0 design intent.
+- **Follow-up for v1_1:** add TI-RADS trajectory after an independent
+  per-exam TI-RADS source is built (imaging_nodule_long_v2 rebuild is
+  tentatively part of Script 246).

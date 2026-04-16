@@ -1,0 +1,35 @@
+/Users/loganglosser/THYROID_2026/scripts/_run_sql.py:31: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  return datetime.utcnow().strftime("%H:%M:%S.") + f"{datetime.utcnow().microsecond//1000:03d}Z"
+[20:41:33.734Z] === START 238_populate_serial_imaging_us.sql
+[20:41:33.735Z] parsed 14 statements from 238_populate_serial_imaging_us.sql
+[20:41:34.840Z] connected to MotherDuck (publication DB locked)
+[20:41:34.841Z] LOG: PHASE 1 — baseline assertions
+[20:41:34.841Z] ASSERT: serial_imaging_us is currently empty
+[20:41:34.874Z]   [1] ASSERT PASS (34 ms)  row=(True,)
+[20:41:34.874Z] ASSERT: ultrasound_reports has the expected baseline (6793 exams / 4074 patients)
+[20:41:34.912Z]   [2] ASSERT PASS (38 ms)  row=(True,)
+[20:41:34.912Z] ASSERT: exactly 1443 patients have ≥2 US exams
+[20:41:34.947Z]   [3] ASSERT PASS (34 ms)  row=(True,)
+[20:41:34.947Z] LOG: PHASE 2 — build the populated rows
+[20:41:35.188Z]   [4] OK (241 ms)  INSERT INTO serial_imaging_us
+[20:41:35.188Z] LOG: PHASE 3 — annotate the populated table
+[20:41:35.444Z]   [5] OK (256 ms)  COMMENT ON TABLE serial_imaging_us IS
+[20:41:35.672Z]   [6] OK (228 ms)  COMMENT ON COLUMN serial_imaging_us.dominant_nodule_size_on_us IS
+[20:41:35.919Z]   [7] OK (246 ms)  COMMENT ON COLUMN serial_imaging_us.dominant_nodule_location IS
+[20:41:35.919Z] LOG: PHASE 4 — assertions (post-load)
+[20:41:35.919Z] ASSERT: populated table is non-empty
+[20:41:35.946Z]   [8] ASSERT PASS (28 ms)  row=(True,)
+[20:41:35.946Z] ASSERT: distinct patients = 1443 (strict: matches the prompt assertion)
+[20:41:35.978Z]   [9] ASSERT PASS (32 ms)  row=(True,)
+[20:41:35.978Z] ASSERT: total row count equals (us exams for patients with ≥2 exams) — 4162
+[20:41:36.085Z]   [10] ASSERT PASS (107 ms)  row=(True,)
+[20:41:36.085Z] ASSERT: ≥95% of exam rows have a dominant_nodule_size_on_us (nodule_master join coverage)
+[20:41:36.213Z]   [11] ASSERT PASS (128 ms)  row=(True,)
+[20:41:36.213Z] ASSERT: for any patient in serial_imaging_us, CPM.n_us_exams is >= local count
+[20:41:36.254Z]   [12] ASSERT PASS (40 ms)  row=(True,)
+[20:41:36.254Z] ASSERT: canonical_patient_master row count unchanged
+[20:41:36.294Z]   [13] ASSERT PASS (40 ms)  row=(True,)
+[20:41:36.294Z] LOG: PHASE 5 — reconciliation report (non-blocking diagnostics)
+[20:41:36.294Z] LOG: COUNT(DISTINCT research_id) population in the new serial table
+[20:41:36.334Z]   [14] OK (39 ms)  SELECT
+[20:41:36.334Z] === END 238_populate_serial_imaging_us.sql  elapsed=1.5s  failures=0
