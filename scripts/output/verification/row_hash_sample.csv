@@ -1,0 +1,7 @@
+table_name,sampled_n,mismatched_n,sample_pct_mismatch,status,example_mismatched_research_ids
+canonical_patient_master_v221→canonical_patient_master,205,0,0.0,PASS,
+fna_episode_master_v2,152,0,0.0,PASS,
+tumor_episode_master_v2,223,0,0.0,PASS,
+molecular_test_episode_v2,195,0,0.0,PASS,
+longitudinal_lab_canonical_v1,1525,0,0.0,PASS,
+thyroglobulin_lab_canonical_v1,1508,0,0.0,PASS,

@@ -1,0 +1,13 @@
+child_table,src_rows,tgt_rows,src_matched,tgt_matched,src_orphans,tgt_orphans,status
+fna_episode_master_v2,8119,8119,8119,8119,0,0,PASS
+tumor_episode_master_v2,11691,11691,11691,11691,0,0,PASS
+molecular_test_episode_v2,10126,10126,10125,10125,1,1,PASS
+operative_episode_detail_v2,9371,9371,8736,8736,635,635,PASS
+rai_treatment_episode_v2,1857,1857,1857,1857,0,0,PASS
+ultrasound_reports,6793,6793,6793,6793,0,0,PASS
+imaging_nodule_master_v1,37016,37016,37016,37016,0,0,PASS
+longitudinal_lab_canonical_v1,77960,77960,61374,61374,16586,16586,PASS
+thyroglobulin_lab_canonical_v1,76971,76971,60385,60385,16586,16586,PASS
+recurrence_event_clean_v1,1946,1946,1946,1946,0,0,PASS
+ln_master_rollup_v1,4290,4290,4290,4290,0,0,PASS
+patient_cross_domain_timeline_v2,61055,61055,60419,60419,636,636,PASS

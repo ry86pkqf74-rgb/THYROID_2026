@@ -1,0 +1,89 @@
+═════════════════════════════════════════════════════════════════
+PUBLICATION HOUSE VERIFICATION — 2026-04-16 02:00:55
+Source: "Thyroid 2026 UPdated" (169 tables)
+Target: thyroid_canonical_publication_v1 (110 tables)
+═════════════════════════════════════════════════════════════════
+
+Layer 1: Catalog completeness            [PASS]  (115 tables checked, 0 failed)
+Layer 2: Comment retention               [PASS]  (109 tables checked, 0 below threshold)
+Layer 3: Column statistics               [PASS]  (1530 columns checked, 0 drifted)
+Layer 4: Linkage integrity               [PASS]  (12 joins checked, 0 cardinality mismatches)
+Layer 5: Row-hash sampling               [PASS]  (6 tables sampled, 0 mismatched rows out of 3,808)
+Layer 6: Canonical invariants            [PASS]  (8 invariants, 0 deviations)
+
+OVERALL: [PASS]
+
+Detailed CSVs in scripts/output/verification/
+
+──── Layer 6 invariant detail ────
+                                       src         tgt    expected  status
+  total_rows                         10871       10871       10871  pass
+  unique_patients                    10871       10871       10871  pass
+  null_research_id                       0           0           0  pass
+  null_fna_path_outcome                  0           0           0  pass
+  null_diagnosis_primary                 0           0           0  pass
+  followup_pos                        4038        4038        4038  pass
+  fna_dates                           5212        5212        5212  pass
+  tg_dates                            2721        2721        2721  pass
+
+──── Source-only tables (60 listed, NOT failures) ────
+  _followup_all_dates_v2
+  _followup_computed_v2
+  _followup_patient_max_v2
+  _nucmed_labs_parsed_v1
+  _nucmed_labs_rollup_v1
+  _patient_surgery_dates
+  _recurrence_event_sites_v1
+  _recurrence_fna_sites_v1
+  analysis_cancer_cohort_v1
+  analysis_recurrence_subset_v1
+  analysis_tirads_subset_v1
+  canonical_extracted_fact_long_v1
+  canonical_extracted_fact_long_v2
+  canonical_fact_quarantine_v1
+  canonical_fact_quarantine_v2
+  canonical_patient_master_v1
+  canonical_patient_master_v218
+  event_date_audit_v2
+  fhir_bundle_specimen_export_v1
+  fhir_encounter_v1
+  fhir_episode_of_care_v1
+  fhir_patient_deid_map_v1
+  fhir_procedure_collection_v1
+  fhir_specimen_v1
+  fna_episode_master_v2_backup_20260414
+  fna_molecular_linkage_v3
+  gold_llm_verified_facts
+  imaging_fna_linkage_mm_v1
+  lab_cross_wave_review_v1
+  lab_same_day_value_review_v1
+  linkage_ambiguity_review_v1
+  linkage_master_v1
+  linkage_summary_v3
+  ln_x_marker_audit_v1
+  md_path_synoptics_encounter_qc_v1
+  md_val_path_synoptic_encounter_isolation_v1
+  mrn_crosswalk_v1
+  note_extraction_runs
+  pathology_rai_linkage_v3
+  patient_refined_master_clinical_v12
+  patient_refined_master_clinical_v12_ln_backup_20260414
+  patient_refined_master_clinical_v12_outcome_backup_20260415
+  preop_surgery_linkage_v3
+  rai_dose_recovery_v1
+  rai_treatment_episode_v2_backup_20260415
+  raw_imaging_12_slots_v1
+  raw_us_tirads_excel_v1
+  raw_us_tirads_scored_v1
+  review_queue_imaging_fna_mm_v1
+  serial_imaging_us
+  stg_thyroseq_excel_raw
+  stg_thyroseq_match_results
+  stg_thyroseq_parsed
+  surgery_pathology_linkage_v3
+  tg_lab_review_queue_v1
+  thyroseq_review_queue
+  val_imaging_fna_linkage_audit_v1
+  val_path_synoptic_encounter_isolation_v1
+  val_phase12_tirads_validation
+  vw_us_nodule_tirads_validated

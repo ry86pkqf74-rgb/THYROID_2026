@@ -1,0 +1,176 @@
+table_name,status,src_rows,tgt_rows,src_cols,tgt_cols,dtype_mismatches,notes
+analysis_molecular_subset_v1,PASS,10025,10025,126,126,0,
+canonical_benign_diagnosis_v1,PASS,6818,6818,18,18,0,
+canonical_diagnosis_unified_v1,PASS,11259,11259,7,7,0,
+canonical_malignant_diagnosis_v1,PASS,4441,4441,12,12,0,
+canonical_molecular_tested_v1,PASS,1286,1286,17,17,0,
+canonical_recurrence_v1,PASS,10871,10871,12,12,0,
+canonical_survival_followup_v1,PASS,11504,11504,13,13,0,
+clinical_note_ln_extracted_v1,PASS,7751,7751,30,30,0,
+clinical_notes_long,PASS,11050,11050,11,11,0,
+complication_patient_summary_v1,PASS,2892,2892,18,18,0,
+complication_phenotype_v1,PASS,5928,5928,28,28,0,
+ct_imaging,PASS,7701,7701,40,40,0,
+data_dictionary_parquet_v221,PASS,1374,1374,8,8,0,
+data_dictionary_v2,PASS,1374,1374,8,8,0,
+data_dictionary_v221,PASS,1374,1374,8,8,0,
+episode_analysis_resolved_v1_dedup,PASS,9368,9368,46,46,0,
+extracted_braf_recovery_v1,PASS,730,730,7,7,0,
+extracted_complications_refined_v5,PASS,358,358,9,9,0,
+extracted_ete_subgraded_v1,PASS,3558,3558,9,9,0,
+extracted_fna_bethesda_v1,PASS,5249,5249,15,15,0,
+extracted_postop_labs_expanded_v1,PASS,1395,1395,12,12,0,
+extracted_ras_patient_summary_v1,PASS,321,321,7,7,0,
+extracted_rln_injury_refined_v2,PASS,92,92,12,12,0,
+extracted_tirads_validated_v1,PASS,3439,3439,15,15,0,
+fna_cytology,PASS,8063,8063,27,27,0,
+fna_episode_master_v2,PASS,8119,8119,17,17,0,
+fna_history,PASS,8119,8119,10,10,0,
+imaging_exam_master_v1,PASS,13347,13347,10,10,0,
+imaging_fna_linkage_v3,PASS,9911,9911,20,20,0,
+imaging_nodule_long_v2,PASS,19891,19891,33,33,0,
+imaging_nodule_master_v1,PASS,37016,37016,23,23,0,
+imaging_patient_summary_v1,PASS,6126,6126,13,13,0,
+lab_cross_wave_dedup_map_v1,PASS,21761,21761,9,9,0,
+lesion_analysis_resolved_v1,PASS,11851,11851,28,28,0,
+ln_crossval_v1,PASS,4290,4290,19,19,0,
+ln_master_rollup_v1,PASS,4290,4290,78,78,0,
+longitudinal_lab_canonical_v1,PASS,77960,77960,18,18,0,
+manuscript_cohort_v1,PASS,10871,10871,151,151,0,
+md_extracted_fna_bethesda_v1,PASS,5249,5249,15,15,0,
+md_synoptic_tumor_long_v1,PASS,11103,11103,22,22,0,
+molecular_assay_dictionary,PASS,4,4,11,11,0,
+molecular_code_crosswalk,PASS,44,44,6,6,0,
+molecular_ingestion_runs,PASS,1,1,7,7,0,
+molecular_results,PASS,10862,10862,27,27,0,
+molecular_test_episode_v2,PASS,10126,10126,42,42,0,
+molecular_testing,PASS,10862,10862,11,11,0,
+molecular_variant_long,PASS,1640,1640,22,22,0,
+mri_imaging,PASS,715,715,41,41,0,
+note_entities_complications,PASS,9359,9359,48,48,0,
+note_entities_genetics,PASS,1738,1738,48,48,0,
+note_entities_llm_airway_invasion,PASS,11037,11037,23,23,0,
+note_entities_llm_cervical_ln_detail,PASS,11037,11037,23,23,0,
+note_entities_llm_dynamic_risk_response,PASS,11037,11037,23,23,0,
+note_entities_llm_frozen_section_detail,PASS,11037,11037,23,23,0,
+note_entities_llm_functional_outcomes,PASS,11037,11037,23,23,0,
+note_entities_llm_imaging,PASS,11037,11037,21,21,0,
+note_entities_llm_labs,PASS,11037,11037,21,21,0,
+note_entities_llm_parathyroid_detail,PASS,11037,11037,23,23,0,
+note_entities_llm_past_medical_hx,PASS,11037,11037,23,23,0,
+note_entities_llm_past_surgical_hx,PASS,11037,11037,23,23,0,
+note_entities_llm_pathology,PASS,11037,11037,21,21,0,
+note_entities_llm_patient_decision_adherence,PASS,11037,11037,23,23,0,
+note_entities_llm_physical_exam,PASS,11037,11037,21,21,0,
+note_entities_llm_presenting_symptoms,PASS,11037,11037,23,23,0,
+note_entities_llm_rad_treatment,PASS,11037,11037,23,23,0,
+note_entities_llm_rai_detailed,PASS,11037,11037,23,23,0,
+note_entities_llm_recurrence,PASS,11037,11037,23,23,0,
+note_entities_llm_survival_followup,PASS,11037,11037,23,23,0,
+note_entities_llm_synoptic_pathology_enrichment,PASS,11037,11037,23,23,0,
+note_entities_llm_tg_kinetics,PASS,11037,11037,23,23,0,
+note_entities_llm_tirads_granular,PASS,11037,11037,23,23,0,
+note_entities_llm_us_nodule_dynamics,PASS,11037,11037,23,23,0,
+note_entities_llm_vascular_invasion,PASS,11037,11037,23,23,0,
+note_entities_medications,PASS,7501,7501,48,48,0,
+note_entities_operative_detail,PASS,12151,12151,48,48,0,
+note_entities_problem_list,PASS,11579,11579,48,48,0,
+note_entities_procedures,PASS,21942,21942,48,48,0,
+note_entities_staging,PASS,3807,3807,48,48,0,
+nsqip_enrichment,PASS,1275,1275,94,94,0,
+nsqip_patient_summary,PASS,1261,1261,94,94,0,
+nuclear_med,PASS,2220,2220,17,17,0,
+operative_episode_detail_v2,PASS,9371,9371,39,39,0,
+path_outcome_classification_v1,PASS,10871,10871,9,9,0,
+path_synoptics,PASS,11688,11688,271,271,0,
+patient_analysis_resolved_v1,PASS,10871,10871,146,146,0,
+patient_completion_oed_path_linkage_v1,PASS,11506,11506,24,24,0,
+patient_cross_domain_timeline_v2,PASS,61055,61055,6,6,0,
+rai_treatment_episode_v2,PASS,1857,1857,32,32,0,
+recurrence_event_clean_v1,PASS,1946,1946,11,11,0,
+specimen_genomic_assay_v1,PASS,10370,10370,24,24,0,
+specimen_master_v1,PASS,10139,10139,17,17,0,
+specimen_source_xref_v1,PASS,11273,11273,9,9,0,
+specimen_tumor_focus_v1,PASS,11103,11103,21,21,0,
+survival_cohort_enriched,PASS,61134,61134,28,28,0,
+synoptic_tumor_long_v1,PASS,11103,11103,22,22,0,
+tg_postop_surveillance_windows_v1,PASS,16184,16184,12,12,0,
+tg_timeline_patient_summary_v1,PASS,3258,3258,20,20,0,
+thyroglobulin_lab_canonical_v1,PASS,76971,76971,21,21,0,
+thyroid_scoring_py_v1,PASS,10871,10871,51,51,0,
+thyroid_sizes,PASS,11675,11675,16,16,0,
+thyroid_weights,PASS,10001,10001,9,9,0,
+thyroseq_molecular_enrichment,PASS,10862,10862,25,25,0,
+tirads_llm_extracted_v2,PASS,5636,5636,26,26,0,
+tirads_llm_validation_v2,PASS,1225,1225,27,27,0,
+tumor_episode_master_v2,PASS,11691,11691,37,37,0,
+tumor_pathology,PASS,4290,4290,249,249,0,
+ultrasound_reports,PASS,6793,6793,223,223,0,
+us_nodules_tirads,PASS,10862,10862,36,36,0,
+canonical_patient_master_v221 → canonical_patient_master,PASS,10871,10871,1377,1377,0,
+mri_imaging,PASS,,715,,,0,"expected 715 rows; in_src=True, in_tgt=True"
+nsqip_enrichment,PASS,,1275,,,0,"expected 1275 rows; in_src=True, in_tgt=True"
+nsqip_patient_summary,PASS,,1261,,,0,"expected 1261 rows; in_src=True, in_tgt=True"
+patient_completion_oed_path_linkage_v1,PASS,,11506,,,0,"expected 11506 rows; in_src=True, in_tgt=True"
+thyroid_weights,PASS,,10001,,,0,"expected 10001 rows; in_src=True, in_tgt=True"
+thyroid_sizes,PASS,,11675,,,0,"expected 11675 rows; in_src=True, in_tgt=True"
+_followup_all_dates_v2,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+_followup_computed_v2,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+_followup_patient_max_v2,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+_nucmed_labs_parsed_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+_nucmed_labs_rollup_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+_patient_surgery_dates,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+_recurrence_event_sites_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+_recurrence_fna_sites_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+analysis_cancer_cohort_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+analysis_recurrence_subset_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+analysis_tirads_subset_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+canonical_extracted_fact_long_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+canonical_extracted_fact_long_v2,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+canonical_fact_quarantine_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+canonical_fact_quarantine_v2,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+canonical_patient_master_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+canonical_patient_master_v218,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+event_date_audit_v2,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+fhir_bundle_specimen_export_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+fhir_encounter_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+fhir_episode_of_care_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+fhir_patient_deid_map_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+fhir_procedure_collection_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+fhir_specimen_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+fna_episode_master_v2_backup_20260414,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+fna_molecular_linkage_v3,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+gold_llm_verified_facts,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+imaging_fna_linkage_mm_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+lab_cross_wave_review_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+lab_same_day_value_review_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+linkage_ambiguity_review_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+linkage_master_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+linkage_summary_v3,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+ln_x_marker_audit_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+md_path_synoptics_encounter_qc_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+md_val_path_synoptic_encounter_isolation_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+mrn_crosswalk_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+note_extraction_runs,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+pathology_rai_linkage_v3,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+patient_refined_master_clinical_v12,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+patient_refined_master_clinical_v12_ln_backup_20260414,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+patient_refined_master_clinical_v12_outcome_backup_20260415,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+preop_surgery_linkage_v3,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+rai_dose_recovery_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+rai_treatment_episode_v2_backup_20260415,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+raw_imaging_12_slots_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+raw_us_tirads_excel_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+raw_us_tirads_scored_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+review_queue_imaging_fna_mm_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+serial_imaging_us,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+stg_thyroseq_excel_raw,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+stg_thyroseq_match_results,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+stg_thyroseq_parsed,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+surgery_pathology_linkage_v3,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+tg_lab_review_queue_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+thyroseq_review_queue,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+val_imaging_fna_linkage_audit_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+val_path_synoptic_encounter_isolation_v1,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+val_phase12_tirads_validation,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
+vw_us_nodule_tirads_validated,SRC_ONLY,,,,,,staging/QA/backup/superseded — intentionally excluded from publication
