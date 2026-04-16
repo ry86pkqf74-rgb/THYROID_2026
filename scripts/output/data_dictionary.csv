@@ -1,1248 +1,1258 @@
-column_name,data_type,domain,ordinal_position
-age_at_surgery,BIGINT,Core/Other,1
-ages_calculable_flag,BOOLEAN,Core/Other,2
-ages_score,DOUBLE,Core/Other,3
-aggressive_variant_flag,BOOLEAN,Core/Other,4
-ajcc8_calculable_flag,BOOLEAN,Core/Other,5
-ajcc8_m_stage,VARCHAR,Core/Other,6
-ajcc8_missing_components,VARCHAR,Core/Other,7
-ajcc8_n_stage,VARCHAR,Core/Other,8
-ajcc8_stage_calculable_flag,BOOLEAN,Core/Other,9
-ajcc8_stage_group,VARCHAR,Core/Other,10
-ajcc8_t_stage,VARCHAR,Core/Other,11
-ajcc8_t_stage_calculable_flag,BOOLEAN,Core/Other,12
-alk_positive_v7,BOOLEAN,Core/Other,13
-ames_calculable_flag,BOOLEAN,Core/Other,14
-ames_risk,VARCHAR,Core/Other,15
-ames_risk_group,VARCHAR,Core/Other,16
-analysis_eligible_flag,BOOLEAN,Core/Other,17
-anti_tg_nadir,DOUBLE,Core/Other,18
-anti_tg_rising_flag,BOOLEAN,Core/Other,19
-any_analysis_eligible_complication,BOOLEAN,Core/Other,20
-any_confirmed_complication,BOOLEAN,Core/Other,21
-any_confirmed_complication_flag,BOOLEAN,Core/Other,22
-any_fusion_positive,BOOLEAN,Core/Other,23
-any_recurrence_flag,BOOLEAN,Core/Other,24
-ata_calculable_flag,BOOLEAN,Core/Other,25
-ata_initial_risk,VARCHAR,Core/Other,26
-ata_response_calculable_flag,BOOLEAN,Core/Other,27
-ata_response_category,VARCHAR,Core/Other,28
-ata_response_is_provisional,BOOLEAN,Core/Other,29
-ata_risk_calculable_flag,BOOLEAN,Core/Other,30
-ata_risk_category,VARCHAR,Core/Other,31
-best_ene_grade,VARCHAR,Core/Other,32
-bethesda_2010,BIGINT,Core/Other,33
-bethesda_2015,BIGINT,Core/Other,34
-bethesda_2023,BIGINT,Core/Other,35
-bethesda_category,VARCHAR,Core/Other,36
-bethesda_confidence,DOUBLE,Core/Other,37
-bethesda_final,BIGINT,Core/Other,38
-bethesda_final_name,VARCHAR,Core/Other,39
-bethesda_num,DOUBLE,Core/Other,40
-bethesda_source,VARCHAR,Core/Other,41
-bilateral_disease_flag,BOOLEAN,Core/Other,42
-biochemical_recurrence_flag,BOOLEAN,Core/Other,43
-biochemical_tg_at_recurrence,DOUBLE,Core/Other,44
-biochemical_tg_nadir_after_surgery,DOUBLE,Core/Other,45
-bmi_combined,DOUBLE,Core/Other,46
-bmi_note_extracted,DOUBLE,Core/Other,47
-bmi_note_source,VARCHAR,Core/Other,48
-bmi_source,VARCHAR,Core/Other,49
-braf_detection_method,VARCHAR,Core/Other,50
-braf_detection_method_v11,VARCHAR,Core/Other,51
-braf_positive,BOOLEAN,Core/Other,52
-braf_positive_final,BOOLEAN,Core/Other,53
-braf_positive_v7,BOOLEAN,Core/Other,54
-braf_recovered_status_v11,VARCHAR,Core/Other,55
-braf_recovered_variant_v11,VARCHAR,Core/Other,56
-braf_source,VARCHAR,Core/Other,57
-braf_status_v7,VARCHAR,Core/Other,58
-braf_variant,VARCHAR,Core/Other,59
-calcium_nadir,DOUBLE,Core/Other,60
-calcium_nadir_30d,DOUBLE,Core/Other,61
-calcium_nadir_days_postop,INTEGER,Core/Other,62
-calcium_supplement_required,BOOLEAN,Core/Other,63
-capsular_invasion_refined,VARCHAR,Core/Other,64
-capsular_invasion_v6,VARCHAR,Core/Other,65
-chyle_leak_status,VARCHAR,Core/Other,66
-closest_margin_mm,DOUBLE,Core/Other,67
-comp_chyle_leak_confirmed,BOOLEAN,Complications,68
-comp_chyle_leak_days_postop,BIGINT,Complications,69
-comp_chyle_leak_evidence_tier,INTEGER,Complications,70
-comp_chyle_leak_permanent,BOOLEAN,Complications,71
-comp_chyle_leak_suspected,BOOLEAN,Complications,72
-comp_chyle_leak_timing_window,VARCHAR,Complications,73
-comp_chyle_leak_transient,BOOLEAN,Complications,74
-comp_chyle_leak_treatment_req,BOOLEAN,Complications,75
-comp_hematoma_confirmed,BOOLEAN,Complications,76
-comp_hematoma_days_postop,BIGINT,Complications,77
-comp_hematoma_evidence_tier,INTEGER,Complications,78
-comp_hematoma_permanent,BOOLEAN,Complications,79
-comp_hematoma_suspected,BOOLEAN,Complications,80
-comp_hematoma_timing_window,VARCHAR,Complications,81
-comp_hematoma_transient,BOOLEAN,Complications,82
-comp_hematoma_treatment_req,BOOLEAN,Complications,83
-comp_hypocalcemia_confirmed,BOOLEAN,Complications,84
-comp_hypocalcemia_days_postop,BIGINT,Complications,85
-comp_hypocalcemia_evidence_tier,INTEGER,Complications,86
-comp_hypocalcemia_permanent,BOOLEAN,Complications,87
-comp_hypocalcemia_suspected,BOOLEAN,Complications,88
-comp_hypocalcemia_timing_window,VARCHAR,Complications,89
-comp_hypocalcemia_transient,BOOLEAN,Complications,90
-comp_hypocalcemia_treatment_req,BOOLEAN,Complications,91
-comp_hypoparathyroidism_confirmed,BOOLEAN,Complications,92
-comp_hypoparathyroidism_days_postop,BIGINT,Complications,93
-comp_hypoparathyroidism_evidence_tier,INTEGER,Complications,94
-comp_hypoparathyroidism_permanent,BOOLEAN,Complications,95
-comp_hypoparathyroidism_suspected,BOOLEAN,Complications,96
-comp_hypoparathyroidism_timing_window,VARCHAR,Complications,97
-comp_hypoparathyroidism_transient,BOOLEAN,Complications,98
-comp_hypoparathyroidism_treatment_req,BOOLEAN,Complications,99
-comp_rln_injury_confirmed,BOOLEAN,Complications,100
-comp_rln_injury_days_postop,BIGINT,Complications,101
-comp_rln_injury_evidence_tier,INTEGER,Complications,102
-comp_rln_injury_permanent,BOOLEAN,Complications,103
-comp_rln_injury_suspected,BOOLEAN,Complications,104
-comp_rln_injury_timing_window,VARCHAR,Complications,105
-comp_rln_injury_transient,BOOLEAN,Complications,106
-comp_rln_injury_treatment_req,BOOLEAN,Complications,107
-comp_seroma_confirmed,BOOLEAN,Complications,108
-comp_seroma_days_postop,BIGINT,Complications,109
-comp_seroma_evidence_tier,INTEGER,Complications,110
-comp_seroma_permanent,BOOLEAN,Complications,111
-comp_seroma_suspected,BOOLEAN,Complications,112
-comp_seroma_timing_window,VARCHAR,Complications,113
-comp_seroma_transient,BOOLEAN,Complications,114
-comp_seroma_treatment_req,BOOLEAN,Complications,115
-comp_vc_paralysis_confirmed,BOOLEAN,Complications,116
-comp_vc_paralysis_days_postop,BIGINT,Complications,117
-comp_vc_paralysis_evidence_tier,INTEGER,Complications,118
-comp_vc_paralysis_permanent,BOOLEAN,Complications,119
-comp_vc_paralysis_suspected,BOOLEAN,Complications,120
-comp_vc_paralysis_timing_window,VARCHAR,Complications,121
-comp_vc_paralysis_transient,BOOLEAN,Complications,122
-comp_vc_paralysis_treatment_req,BOOLEAN,Complications,123
-comp_vc_paresis_confirmed,BOOLEAN,Complications,124
-comp_vc_paresis_days_postop,BIGINT,Complications,125
-comp_vc_paresis_evidence_tier,INTEGER,Complications,126
-comp_vc_paresis_permanent,BOOLEAN,Complications,127
-comp_vc_paresis_suspected,BOOLEAN,Complications,128
-comp_vc_paresis_timing_window,VARCHAR,Complications,129
-comp_vc_paresis_transient,BOOLEAN,Complications,130
-comp_vc_paresis_treatment_req,BOOLEAN,Complications,131
-comp_voice_permanence_noted,BOOLEAN,Complications,132
-comp_voice_resolution_noted,BOOLEAN,Complications,133
-comp_wound_infection_confirmed,BOOLEAN,Complications,134
-comp_wound_infection_days_postop,BIGINT,Complications,135
-comp_wound_infection_evidence_tier,INTEGER,Complications,136
-comp_wound_infection_permanent,BOOLEAN,Complications,137
-comp_wound_infection_suspected,BOOLEAN,Complications,138
-comp_wound_infection_timing_window,VARCHAR,Complications,139
-comp_wound_infection_transient,BOOLEAN,Complications,140
-comp_wound_infection_treatment_req,BOOLEAN,Complications,141
-completion_braf_positive,BOOLEAN,Complications,142
-completion_histology_type,VARCHAR,Complications,143
-completion_prior_histology,VARCHAR,Complications,144
-completion_reason,VARCHAR,Complications,145
-completion_reason_confidence,DOUBLE,Complications,146
-completion_t_stage,VARCHAR,Complications,147
-completion_tert_positive,BOOLEAN,Complications,148
-confirmed_rai_episodes,BIGINT,Core/Other,149
-cross_fna_concordance,VARCHAR,Core/Other,150
-ct_goiter_present_any,BOOLEAN,CT Imaging,151
-ct_largest_ln_short_axis_mm,DOUBLE,CT Imaging,152
-ct_ln_enlarged_any,BOOLEAN,CT Imaging,153
-ct_ln_suspicious_any,BOOLEAN,CT Imaging,154
-ct_n_exams,BIGINT,CT Imaging,155
-ct_substernal_extension_any,BOOLEAN,CT Imaging,156
-ct_tracheal_deviation_any,BOOLEAN,CT Imaging,157
-ct_tracheal_narrowing_any,BOOLEAN,CT Imaging,158
-date_traceability_status,VARCHAR,Core/Other,159
-days_first_to_last_tg,BIGINT,Core/Other,160
-days_to_first_laryngoscopy,BIGINT,Core/Other,161
-days_to_last_laryngoscopy,BIGINT,Core/Other,162
-demo_confidence,INTEGER,Core/Other,163
-demo_source,VARCHAR,Core/Other,164
-diagnosis_confidence,VARCHAR,Core/Other,165
-diagnosis_full,VARCHAR,Core/Other,166
-diagnosis_primary,VARCHAR,Core/Other,167
-diagnosis_variant,VARCHAR,Core/Other,168
-distant_mets_proxy,BOOLEAN,Core/Other,169
-dominant_nodule_size_cm,DOUBLE,Core/Other,170
-earliest_complication_days,BIGINT,Core/Other,171
-eif1ax_positive,BOOLEAN,Core/Other,172
-ene_ct,VARCHAR,Core/Other,173
-ene_deposit_cm,DOUBLE,Core/Other,174
-ene_grade_v9,VARCHAR,Core/Other,175
-ene_levels_v9,VARCHAR,Core/Other,176
-ene_n_sources,BIGINT,Core/Other,177
-ene_op_intraop,VARCHAR,Core/Other,178
-ene_path_ct_concordance,VARCHAR,Core/Other,179
-ene_path_levels,VARCHAR,Core/Other,180
-ene_path_nlp,VARCHAR,Core/Other,181
-ene_path_synoptic,VARCHAR,Core/Other,182
-ene_pet,VARCHAR,Core/Other,183
-ene_positive,BOOLEAN,Core/Other,184
-ene_rai_scan,VARCHAR,Core/Other,185
-ene_record_count_v9,BIGINT,Core/Other,186
-ene_us,VARCHAR,Core/Other,187
-ete_grade,VARCHAR,ETE,188
-ete_grade_source,VARCHAR,ETE,189
-ete_op_note_confidence,VARCHAR,ETE,190
-ete_op_note_grade,VARCHAR,ETE,191
-ete_original_grade,VARCHAR,ETE,192
-ete_original_source,VARCHAR,ETE,193
-ete_refined_grade,VARCHAR,ETE,194
-ete_subgrade_method,VARCHAR,ETE,195
-ete_subgrade_note,VARCHAR,ETE,196
-first_recurrence_date,TIMESTAMP,Core/Other,197
-first_surgery_date,TIMESTAMP,Core/Other,198
-first_tg_date,DATE,Core/Other,199
-fna_bethesda_confidence,DOUBLE,Core/Other,200
-fna_bethesda_source,VARCHAR,Core/Other,201
-fna_confidence,DOUBLE,Core/Other,202
-fna_path_concordance_category,VARCHAR,Core/Other,203
-fna_path_concordant,BOOLEAN,Core/Other,204
-fna_path_outcome,VARCHAR,Core/Other,205
-followup_category,VARCHAR,Core/Other,206
-followup_completeness_score,INTEGER,Core/Other,207
-followup_days,BIGINT,Core/Other,208
-followup_years,DOUBLE,Core/Other,209
-gland_weight_combined_g,DOUBLE,Core/Other,210
-gland_weight_final_g,DOUBLE,Core/Other,211
-gland_weight_isthmus_g,DOUBLE,Core/Other,212
-gland_weight_left_lobe_g,DOUBLE,Core/Other,213
-gland_weight_right_lobe_g,DOUBLE,Core/Other,214
-gland_weight_source,VARCHAR,Core/Other,215
-gland_weight_total_reported_g,DOUBLE,Core/Other,216
-gm_lab_completeness_score,INTEGER,Core/Other,217
-gm_macis_calculable_flag,BOOLEAN,Core/Other,218
-gm_path_ene_raw,VARCHAR,Core/Other,219
-gm_path_ete_raw,VARCHAR,Core/Other,220
-gm_path_lvi_raw,VARCHAR,Core/Other,221
-gm_path_m_stage_raw,VARCHAR,Core/Other,222
-gm_path_pni_raw,VARCHAR,Core/Other,223
-gm_path_stage_raw,VARCHAR,Core/Other,224
-gm_path_vascular_inv_raw,VARCHAR,Core/Other,225
-gm_provenance_confidence,INTEGER,Core/Other,226
-gm_rai_date_confidence,VARCHAR,Core/Other,227
-gm_rai_date_source,VARCHAR,Core/Other,228
-gm_recurrence_date_source,VARCHAR,Core/Other,229
-gm_recurrence_site_primary,VARCHAR,Core/Other,230
-gm_recurrence_source,VARCHAR,Core/Other,231
-gm_recurrence_type_primary,VARCHAR,Core/Other,232
-gm_tg_below_threshold_ever,BOOLEAN,Core/Other,233
-gross_ete_flag,BOOLEAN,Core/Other,234
-has_low_calcium_flag,BOOLEAN,Core/Other,235
-has_low_pth_flag,BOOLEAN,Core/Other,236
-has_suspicious_candidate,BOOLEAN,Core/Other,237
-has_voice_data,BOOLEAN,Core/Other,238
-hematoma_status,VARCHAR,Core/Other,239
-high_risk_molecular_v7,BOOLEAN,Core/Other,240
-histology_final,VARCHAR,Core/Other,241
-histology_source,VARCHAR,Core/Other,242
-hras_positive_v11,BOOLEAN,Core/Other,243
-hypocalcemia_status,VARCHAR,Core/Other,244
-hypoparathyroidism_status,VARCHAR,Core/Other,245
-ihc_braf_confidence_v13,DOUBLE,Core/Other,246
-ihc_braf_note_type_v13,VARCHAR,Core/Other,247
-ihc_braf_result_v13,VARCHAR,Core/Other,248
-imaging_ln_abnormal,BOOLEAN,Core/Other,249
-imaging_n_nodule_records,BIGINT,Core/Other,250
-imaging_nodule_size_cm_v11,DOUBLE,Core/Other,251
-imaging_suspicious_unconfirmed,BOOLEAN,Core/Other,252
-imaging_tirads_source,VARCHAR,Core/Other,253
-is_malignant,BOOLEAN,Core/Other,254
-kras_positive_v11,BOOLEAN,Core/Other,255
-last_contact_date,TIMESTAMP,Core/Other,256
-last_contact_source,VARCHAR,Core/Other,257
-last_tg_date,DATE,Core/Other,258
-lateral_detection_method,VARCHAR,Core/Other,259
-lateral_levels_v10,VARCHAR,Core/Other,260
-lateral_neck_dissected_v10,BOOLEAN,Core/Other,261
-lateral_side_v10,VARCHAR,Core/Other,262
-lateral_source_v10,VARCHAR,Core/Other,263
-laterality,VARCHAR,Core/Other,264
-ln_burden_band,VARCHAR,LN Pathology,265
-ln_ene_status,VARCHAR,LN Pathology,266
-ln_lateral_dissected,BOOLEAN,LN Pathology,267
-ln_level_i_examined,BIGINT,LN Pathology,268
-ln_level_i_positive,BIGINT,LN Pathology,269
-ln_level_ii_examined,BIGINT,LN Pathology,270
-ln_level_ii_positive,BIGINT,LN Pathology,271
-ln_level_iii_examined,BIGINT,LN Pathology,272
-ln_level_iii_positive,BIGINT,LN Pathology,273
-ln_level_iv_examined,BIGINT,LN Pathology,274
-ln_level_iv_positive,BIGINT,LN Pathology,275
-ln_level_v_examined,BIGINT,LN Pathology,276
-ln_level_v_positive,BIGINT,LN Pathology,277
-ln_level_vi_examined,BIGINT,LN Pathology,278
-ln_level_vi_positive,BIGINT,LN Pathology,279
-ln_level_vii_examined,BIGINT,LN Pathology,280
-ln_level_vii_positive,BIGINT,LN Pathology,281
-ln_mets_atc,BOOLEAN,LN Pathology,282
-ln_mets_ene_count,BOOLEAN,LN Pathology,283
-ln_mets_ftc,BOOLEAN,LN Pathology,284
-ln_mets_hurthle,BOOLEAN,LN Pathology,285
-ln_mets_micrometastasis,BOOLEAN,LN Pathology,286
-ln_mets_mtc,BOOLEAN,LN Pathology,287
-ln_mets_pdtc,BOOLEAN,LN Pathology,288
-ln_mets_ptc,BOOLEAN,LN Pathology,289
-ln_positive_flag,INTEGER,LN Pathology,290
-ln_ratio,DOUBLE,LN Pathology,291
-ln_rollup_any_positive,BOOLEAN,LN Pathology,292
-ln_rollup_bilateral_lateral_examined,BIGINT,LN Pathology,293
-ln_rollup_bilateral_lateral_positive,BIGINT,LN Pathology,294
-ln_rollup_central_examined,BIGINT,LN Pathology,295
-ln_rollup_central_positive,BIGINT,LN Pathology,296
-ln_rollup_crossval_status,VARCHAR,LN Pathology,297
-ln_rollup_ene,BIGINT,LN Pathology,298
-ln_rollup_has_per_level_data,BOOLEAN,LN Pathology,299
-ln_rollup_internal_consistency,VARCHAR,LN Pathology,300
-ln_rollup_largest_deposit_cm,DOUBLE,LN Pathology,301
-ln_rollup_lateral_left_examined,BIGINT,LN Pathology,302
-ln_rollup_lateral_left_positive,BIGINT,LN Pathology,303
-ln_rollup_lateral_right_examined,BIGINT,LN Pathology,304
-ln_rollup_lateral_right_positive,BIGINT,LN Pathology,305
-ln_rollup_mets_atc,BOOLEAN,LN Pathology,306
-ln_rollup_mets_cystic,BOOLEAN,LN Pathology,307
-ln_rollup_mets_ene,BOOLEAN,LN Pathology,308
-ln_rollup_mets_ftc,BOOLEAN,LN Pathology,309
-ln_rollup_mets_hurthle,BOOLEAN,LN Pathology,310
-ln_rollup_mets_micrometastasis,BOOLEAN,LN Pathology,311
-ln_rollup_mets_mtc,BOOLEAN,LN Pathology,312
-ln_rollup_mets_pdtc,BOOLEAN,LN Pathology,313
-ln_rollup_mets_ptc,BOOLEAN,LN Pathology,314
-ln_rollup_mets_ptc_variant,VARCHAR,LN Pathology,315
-ln_rollup_other_examined,BIGINT,LN Pathology,316
-ln_rollup_other_positive,BIGINT,LN Pathology,317
-ln_rollup_ratio,DOUBLE,LN Pathology,318
-ln_rollup_source,VARCHAR,LN Pathology,319
-ln_rollup_total_examined,BIGINT,LN Pathology,320
-ln_rollup_total_levels_involved,BIGINT,LN Pathology,321
-ln_rollup_total_positive,BIGINT,LN Pathology,322
-ln_total_examined,INTEGER,LN Pathology,323
-ln_total_positive,INTEGER,LN Pathology,324
-longitudinal_assessment_available,BOOLEAN,Core/Other,325
-lvi_grade,VARCHAR,Core/Other,326
-lvi_grade_final_v13,VARCHAR,Core/Other,327
-macis_calculable_flag,BOOLEAN,Core/Other,328
-macis_missing_components,VARCHAR,Core/Other,329
-macis_risk_group,VARCHAR,Core/Other,330
-macis_score,DOUBLE,Core/Other,331
-margin_r_class,VARCHAR,Core/Other,332
-margin_r_class_v10,VARCHAR,Core/Other,333
-margin_r_classification,VARCHAR,Core/Other,334
-margin_status,VARCHAR,Core/Other,335
-max_stimulated_tg,DOUBLE,Core/Other,336
-max_tirads_ever,BIGINT,Core/Other,337
-max_tumor_size_cm_v10,DOUBLE,Core/Other,338
-med_nlp_calcitriol,BOOLEAN,Core/Other,339
-med_nlp_calcitriol_date,DATE,Core/Other,340
-med_nlp_calcitriol_n_mentions,BIGINT,Core/Other,341
-med_nlp_calcium_supplement,BOOLEAN,Core/Other,342
-med_nlp_calcium_supplement_date,DATE,Core/Other,343
-med_nlp_calcium_supplement_n_mentions,BIGINT,Core/Other,344
-med_nlp_extraction_method,VARCHAR,Core/Other,345
-med_nlp_levothyroxine,BOOLEAN,Core/Other,346
-med_nlp_levothyroxine_date,DATE,Core/Other,347
-med_nlp_levothyroxine_n_mentions,BIGINT,Core/Other,348
-med_nlp_n_source_notes,BIGINT,Core/Other,349
-med_nlp_note_types,VARCHAR,Core/Other,350
-mol_first_test_date,TIMESTAMP,Core/Other,351
-mol_genes_list,VARCHAR,Core/Other,352
-mol_has_afirma,BOOLEAN,Core/Other,353
-mol_has_dicer1,BOOLEAN,Core/Other,354
-mol_has_fusion,BOOLEAN,Core/Other,355
-mol_has_pik3ca,BOOLEAN,Core/Other,356
-mol_has_snv,BOOLEAN,Core/Other,357
-mol_has_thyroseq,BOOLEAN,Core/Other,358
-mol_has_tshr,BOOLEAN,Core/Other,359
-mol_n_distinct_genes,BIGINT,Core/Other,360
-mol_n_fusions,BIGINT,Core/Other,361
-mol_n_snvs,BIGINT,Core/Other,362
-mol_n_tests,BIGINT,Core/Other,363
-mol_n_variants_total,BIGINT,Core/Other,364
-mol_platform,VARCHAR,Core/Other,365
-mol_test_count,BIGINT,Core/Other,366
-mol_test_date,TIMESTAMP,Core/Other,367
-mol_variant_classes,VARCHAR,Core/Other,368
-molecular_data_confidence,VARCHAR,Core/Other,369
-molecular_eligible_flag,BOOLEAN,Core/Other,370
-molecular_platforms_v7,VARCHAR,Core/Other,371
-molecular_risk_calculable_flag,BOOLEAN,Core/Other,372
-molecular_risk_tier,VARCHAR,Core/Other,373
-molecular_tested_confirmed,BOOLEAN,Core/Other,374
-molecular_tested_v7,BOOLEAN,Core/Other,375
-mri_contrast_used_any,BOOLEAN,MRI,376
-mri_exam_type_first,VARCHAR,MRI,377
-mri_first_date,DATE,MRI,378
-mri_has_data,BOOLEAN,MRI,379
-mri_has_dimensions,BOOLEAN,MRI,380
-mri_has_dominant_nodule,BOOLEAN,MRI,381
-mri_impression_first,VARCHAR,MRI,382
-mri_impression_last,VARCHAR,MRI,383
-mri_indication_first,VARCHAR,MRI,384
-mri_key_findings_last,VARCHAR,MRI,385
-mri_last_date,DATE,MRI,386
-mri_ln_mentioned_any,BOOLEAN,MRI,387
-mri_mass_effect_any,BOOLEAN,MRI,388
-mri_n_exams,BIGINT,MRI,389
-mri_pathologic_ln_any,BOOLEAN,MRI,390
-mri_recommendation_last,VARCHAR,MRI,391
-mri_substernal_any,BOOLEAN,MRI,392
-mri_substernal_extension_any,BOOLEAN,MRI,393
-mri_thyroid_assessment_worst,VARCHAR,MRI,394
-mri_thyroid_enlarged_any,BOOLEAN,MRI,395
-mri_thyroid_nodule_any,BOOLEAN,MRI,396
-mri_vocal_cords_described,BOOLEAN,MRI,397
-mri_vocal_cords_normal,BOOLEAN,MRI,398
-multifocal_flag,BOOLEAN,Core/Other,399
-n_confirmed_complications,BIGINT,Core/Other,400
-n_fna_cytology_records,BIGINT,Core/Other,401
-n_fna_episodes,BIGINT,Core/Other,402
-n_molecular_tests_v7,BIGINT,Core/Other,403
-n_rai_episodes,BIGINT,Core/Other,404
-n_tg_measurements_structured,BIGINT,Core/Other,405
-n_tgab_measurements,BIGINT,Core/Other,406
-n_tumors,INTEGER,Core/Other,407
-n_tumors_v10,INTEGER,Core/Other,408
-n_us_exams,BIGINT,Core/Other,409
-n_us_nodules_total,BIGINT,Core/Other,410
-n_us_with_ln_assessment,BIGINT,Core/Other,411
-nlp_airway_has_data,BOOLEAN,NLP Entities,412
-nlp_airway_key_finding,VARCHAR,NLP Entities,413
-nlp_airway_n_entities,BIGINT,NLP Entities,414
-nlp_airway_n_notes,BIGINT,NLP Entities,415
-nlp_dynrisk_has_data,BOOLEAN,NLP Entities,416
-nlp_dynrisk_key_finding,VARCHAR,NLP Entities,417
-nlp_dynrisk_n_entities,BIGINT,NLP Entities,418
-nlp_dynrisk_n_notes,BIGINT,NLP Entities,419
-nlp_frozensec_has_data,BOOLEAN,NLP Entities,420
-nlp_frozensec_key_finding,VARCHAR,NLP Entities,421
-nlp_frozensec_n_entities,BIGINT,NLP Entities,422
-nlp_frozensec_n_notes,BIGINT,NLP Entities,423
-nlp_funcoutcome_has_data,BOOLEAN,NLP Entities,424
-nlp_funcoutcome_key_finding,VARCHAR,NLP Entities,425
-nlp_funcoutcome_n_entities,BIGINT,NLP Entities,426
-nlp_funcoutcome_n_notes,BIGINT,NLP Entities,427
-nlp_imaging_has_data,BOOLEAN,NLP Entities,428
-nlp_imaging_key_finding,VARCHAR,NLP Entities,429
-nlp_imaging_n_entities,BIGINT,NLP Entities,430
-nlp_imaging_n_notes,BIGINT,NLP Entities,431
-nlp_labs_has_data,BOOLEAN,NLP Entities,432
-nlp_labs_key_finding,VARCHAR,NLP Entities,433
-nlp_labs_n_entities,BIGINT,NLP Entities,434
-nlp_labs_n_notes,BIGINT,NLP Entities,435
-nlp_ln_has_data,BOOLEAN,NLP Entities,436
-nlp_ln_levels_mentioned,VARCHAR,NLP Entities,437
-nlp_ln_n_entities,BIGINT,NLP Entities,438
-nlp_ln_n_notes,BIGINT,NLP Entities,439
-nlp_ln_positive_mentioned,BOOLEAN,NLP Entities,440
-nlp_ne_complications_has_data,BOOLEAN,NLP Entities,441
-nlp_ne_complications_n_rows,BIGINT,NLP Entities,442
-nlp_ne_genetics_has_data,BOOLEAN,NLP Entities,443
-nlp_ne_genetics_n_rows,BIGINT,NLP Entities,444
-nlp_ne_medications_has_data,BOOLEAN,NLP Entities,445
-nlp_ne_medications_n_rows,BIGINT,NLP Entities,446
-nlp_ne_operative_has_data,BOOLEAN,NLP Entities,447
-nlp_ne_operative_n_rows,BIGINT,NLP Entities,448
-nlp_ne_problemlist_has_data,BOOLEAN,NLP Entities,449
-nlp_ne_problemlist_n_rows,BIGINT,NLP Entities,450
-nlp_ne_procedures_has_data,BOOLEAN,NLP Entities,451
-nlp_ne_procedures_n_rows,BIGINT,NLP Entities,452
-nlp_ne_staging_has_data,BOOLEAN,NLP Entities,453
-nlp_ne_staging_n_rows,BIGINT,NLP Entities,454
-nlp_parathyroid_has_data,BOOLEAN,NLP Entities,455
-nlp_parathyroid_key_finding,VARCHAR,NLP Entities,456
-nlp_parathyroid_n_entities,BIGINT,NLP Entities,457
-nlp_parathyroid_n_notes,BIGINT,NLP Entities,458
-nlp_path_ete_mentioned,BOOLEAN,NLP Entities,459
-nlp_path_has_data,BOOLEAN,NLP Entities,460
-nlp_path_histology_mentioned,VARCHAR,NLP Entities,461
-nlp_path_ln_positive_mentioned,BOOLEAN,NLP Entities,462
-nlp_path_margin_mentioned,BOOLEAN,NLP Entities,463
-nlp_path_multifocal_mentioned,BOOLEAN,NLP Entities,464
-nlp_path_n_entities,BIGINT,NLP Entities,465
-nlp_path_n_notes,BIGINT,NLP Entities,466
-nlp_path_vasc_inv_mentioned,BOOLEAN,NLP Entities,467
-nlp_physexam_has_data,BOOLEAN,NLP Entities,468
-nlp_physexam_key_finding,VARCHAR,NLP Entities,469
-nlp_physexam_n_entities,BIGINT,NLP Entities,470
-nlp_physexam_n_notes,BIGINT,NLP Entities,471
-nlp_pmhx_has_data,BOOLEAN,NLP Entities,472
-nlp_pmhx_key_finding,VARCHAR,NLP Entities,473
-nlp_pmhx_n_entities,BIGINT,NLP Entities,474
-nlp_pmhx_n_notes,BIGINT,NLP Entities,475
-nlp_pshx_has_data,BOOLEAN,NLP Entities,476
-nlp_pshx_key_finding,VARCHAR,NLP Entities,477
-nlp_pshx_n_entities,BIGINT,NLP Entities,478
-nlp_pshx_n_notes,BIGINT,NLP Entities,479
-nlp_ptdecision_has_data,BOOLEAN,NLP Entities,480
-nlp_ptdecision_key_finding,VARCHAR,NLP Entities,481
-nlp_ptdecision_n_entities,BIGINT,NLP Entities,482
-nlp_ptdecision_n_notes,BIGINT,NLP Entities,483
-nlp_radtx_has_data,BOOLEAN,NLP Entities,484
-nlp_radtx_key_finding,VARCHAR,NLP Entities,485
-nlp_radtx_n_entities,BIGINT,NLP Entities,486
-nlp_radtx_n_notes,BIGINT,NLP Entities,487
-nlp_raidetail_has_data,BOOLEAN,NLP Entities,488
-nlp_raidetail_key_finding,VARCHAR,NLP Entities,489
-nlp_raidetail_n_entities,BIGINT,NLP Entities,490
-nlp_raidetail_n_notes,BIGINT,NLP Entities,491
-nlp_rec_any_mentioned,BOOLEAN,NLP Entities,492
-nlp_rec_confidence_tier,VARCHAR,NLP Entities,493
-nlp_rec_disease_free_mentioned,BOOLEAN,NLP Entities,494
-nlp_rec_earliest_date,DATE,NLP Entities,495
-nlp_rec_has_data,BOOLEAN,NLP Entities,496
-nlp_rec_n_entities,BIGINT,NLP Entities,497
-nlp_rec_type_worst,VARCHAR,NLP Entities,498
-nlp_survfu_has_data,BOOLEAN,NLP Entities,499
-nlp_survfu_key_finding,VARCHAR,NLP Entities,500
-nlp_survfu_n_entities,BIGINT,NLP Entities,501
-nlp_survfu_n_notes,BIGINT,NLP Entities,502
-nlp_symptoms_has_data,BOOLEAN,NLP Entities,503
-nlp_symptoms_key_finding,VARCHAR,NLP Entities,504
-nlp_symptoms_n_entities,BIGINT,NLP Entities,505
-nlp_symptoms_n_notes,BIGINT,NLP Entities,506
-nlp_synoptic_has_data,BOOLEAN,NLP Entities,507
-nlp_synoptic_key_finding,VARCHAR,NLP Entities,508
-nlp_synoptic_n_entities,BIGINT,NLP Entities,509
-nlp_synoptic_n_notes,BIGINT,NLP Entities,510
-nlp_tg_has_data,BOOLEAN,NLP Entities,511
-nlp_tg_n_entities,BIGINT,NLP Entities,512
-nlp_tg_rising_mentioned,BOOLEAN,NLP Entities,513
-nlp_tg_undetectable_mentioned,BOOLEAN,NLP Entities,514
-nlp_tirads_has_component_detail,BOOLEAN,NLP Entities,515
-nlp_tirads_has_data,BOOLEAN,NLP Entities,516
-nlp_tirads_max_category,VARCHAR,NLP Entities,517
-nlp_tirads_n_entities,BIGINT,NLP Entities,518
-nlp_tirads_n_notes,BIGINT,NLP Entities,519
-nlp_usnodule_has_data,BOOLEAN,NLP Entities,520
-nlp_usnodule_key_finding,VARCHAR,NLP Entities,521
-nlp_usnodule_n_entities,BIGINT,NLP Entities,522
-nlp_usnodule_n_notes,BIGINT,NLP Entities,523
-nlp_vasc_confidence_tier,VARCHAR,NLP Entities,524
-nlp_vasc_has_data,BOOLEAN,NLP Entities,525
-nlp_vasc_n_entities,BIGINT,NLP Entities,526
-nlp_vasc_positive_mentioned,BOOLEAN,NLP Entities,527
-nras_positive_v11,BOOLEAN,Core/Other,528
-nsqip_age_at_surgery,DOUBLE,NSQIP,529
-nsqip_asa_class,VARCHAR,NSQIP,530
-nsqip_bmi,DOUBLE,NSQIP,531
-nsqip_diabetes,VARCHAR,NSQIP,532
-nsqip_functional_status,VARCHAR,NSQIP,533
-nsqip_height_in,DOUBLE,NSQIP,534
-nsqip_hypertension,VARCHAR,NSQIP,535
-nsqip_length_of_stay_days,BIGINT,NSQIP,536
-nsqip_sex,VARCHAR,NSQIP,537
-nsqip_smoker,VARCHAR,NSQIP,538
-nsqip_source,VARCHAR,NSQIP,539
-nsqip_weight_lbs,DOUBLE,NSQIP,540
-ntrk_positive_v7,BOOLEAN,Core/Other,541
-nucmed_has_rai_scan,BOOLEAN,Nuclear Med,542
-nucmed_n_scans,BIGINT,Nuclear Med,543
-nucmed_scan_types,VARCHAR,Nuclear Med,544
-nucmed_uptake_24hr_max,DOUBLE,Nuclear Med,545
-op_drain_placed_any,BOOLEAN,Core/Other,546
-op_esophageal_inv_any,BOOLEAN,Core/Other,547
-op_findings_summary,VARCHAR,Core/Other,548
-op_intraop_gross_ete_any,BOOLEAN,Core/Other,549
-op_local_invasion_any,BOOLEAN,Core/Other,550
-op_n_surgeries_with_findings,INTEGER,Core/Other,551
-op_nlp_berry_ligament_date,DATE,Operative NLP,552
-op_nlp_berry_ligament_dissected,BOOLEAN,Operative NLP,553
-op_nlp_berry_ligament_mentioned,BOOLEAN,Operative NLP,554
-op_nlp_berry_ligament_n_mentions,BIGINT,Operative NLP,555
-op_nlp_drain_date,DATE,Operative NLP,556
-op_nlp_drain_placed,BOOLEAN,Operative NLP,557
-op_nlp_drain_placed_n_mentions,BIGINT,Operative NLP,558
-op_nlp_ebl_date,DATE,Operative NLP,559
-op_nlp_ebl_ml,DOUBLE,Operative NLP,560
-op_nlp_ebl_n_mentions,BIGINT,Operative NLP,561
-op_nlp_esophageal_involvement,BOOLEAN,Operative NLP,562
-op_nlp_esophageal_n_mentions,BIGINT,Operative NLP,563
-op_nlp_extraction_method,VARCHAR,Operative NLP,564
-op_nlp_gross_invasion,BOOLEAN,Operative NLP,565
-op_nlp_intraop_complication,BOOLEAN,Operative NLP,566
-op_nlp_intraop_complication_date,DATE,Operative NLP,567
-op_nlp_intraop_complication_n_mentions,BIGINT,Operative NLP,568
-op_nlp_n_source_notes,BIGINT,Operative NLP,569
-op_nlp_nerve_monitoring_date,DATE,Operative NLP,570
-op_nlp_nerve_monitoring_n_mentions,BIGINT,Operative NLP,571
-op_nlp_nerve_monitoring_type,VARCHAR,Operative NLP,572
-op_nlp_nerve_monitoring_used,BOOLEAN,Operative NLP,573
-op_nlp_note_types,VARCHAR,Operative NLP,574
-op_nlp_parathyroid_autograft,BOOLEAN,Operative NLP,575
-op_nlp_parathyroid_autograft_n_mentions,BIGINT,Operative NLP,576
-op_nlp_parathyroid_date,DATE,Operative NLP,577
-op_nlp_parathyroid_managed,BOOLEAN,Operative NLP,578
-op_nlp_parathyroid_managed_n_mentions,BIGINT,Operative NLP,579
-op_nlp_reoperative_field,BOOLEAN,Operative NLP,580
-op_nlp_reoperative_n_mentions,BIGINT,Operative NLP,581
-op_nlp_rln_finding,BOOLEAN,Operative NLP,582
-op_nlp_rln_finding_date,DATE,Operative NLP,583
-op_nlp_rln_finding_n_mentions,BIGINT,Operative NLP,584
-op_nlp_strap_muscle_involved,BOOLEAN,Operative NLP,585
-op_nlp_strap_muscle_n_mentions,BIGINT,Operative NLP,586
-op_nlp_tracheal_involvement,BOOLEAN,Operative NLP,587
-op_nlp_tracheal_n_mentions,BIGINT,Operative NLP,588
-op_parathyroid_autograft_any,BOOLEAN,Core/Other,589
-op_reoperative_any,BOOLEAN,Core/Other,590
-op_rln_monitoring_any,BOOLEAN,Core/Other,591
-op_strap_muscle_any,BOOLEAN,Core/Other,592
-op_tracheal_inv_any,BOOLEAN,Core/Other,593
-ops_anticoagulation_meds,VARCHAR,OP Sheet,594
-ops_bmi,DOUBLE,OP Sheet,595
-ops_cervical_ln_us_performed,VARCHAR,OP Sheet,596
-ops_difficult_airway,VARCHAR,OP Sheet,597
-ops_dominant_nodule_bethesda,VARCHAR,OP Sheet,598
-ops_dominant_nodule_location,VARCHAR,OP Sheet,599
-ops_dominant_nodule_size_us,VARCHAR,OP Sheet,600
-ops_ebl_ml,VARCHAR,OP Sheet,601
-ops_family_hx_thyroid_ca,VARCHAR,OP Sheet,602
-ops_head_neck_us_findings,VARCHAR,OP Sheet,603
-ops_intraop_appearance,VARCHAR,OP Sheet,604
-ops_intraop_nodule_count,VARCHAR,OP Sheet,605
-ops_io_tumor_appearance,VARCHAR,OP Sheet,606
-ops_ll_ag,DOUBLE,OP Sheet,607
-ops_ll_para_visualized,VARCHAR,OP Sheet,608
-ops_ll_resection,DOUBLE,OP Sheet,609
-ops_lu_ag,DOUBLE,OP Sheet,610
-ops_lu_para_visualized,VARCHAR,OP Sheet,611
-ops_lu_resection,DOUBLE,OP Sheet,612
-ops_max_diameter_cm,VARCHAR,OP Sheet,613
-ops_nerve_stim_final,VARCHAR,OP Sheet,614
-ops_nerve_stim_left,VARCHAR,OP Sheet,615
-ops_nerve_stim_right,VARCHAR,OP Sheet,616
-ops_other_ag,VARCHAR,OP Sheet,617
-ops_palpable_lesion,VARCHAR,OP Sheet,618
-ops_para_ag_performed,VARCHAR,OP Sheet,619
-ops_parathyroid_ag_notes,VARCHAR,OP Sheet,620
-ops_parathyroidectomy,VARCHAR,OP Sheet,621
-ops_periop_complications,VARCHAR,OP Sheet,622
-ops_preop_diagnosis,VARCHAR,OP Sheet,623
-ops_preop_imaging_performed,VARCHAR,OP Sheet,624
-ops_preop_laryngoscopy,VARCHAR,OP Sheet,625
-ops_preop_nodules_count_size,VARCHAR,OP Sheet,626
-ops_preop_symptoms,VARCHAR,OP Sheet,627
-ops_prior_neck_irradiation,VARCHAR,OP Sheet,628
-ops_prior_neck_operation,VARCHAR,OP Sheet,629
-ops_rl_ag,VARCHAR,OP Sheet,630
-ops_rl_para_visualized,DOUBLE,OP Sheet,631
-ops_rl_resection,DOUBLE,OP Sheet,632
-ops_ru_ag,DOUBLE,OP Sheet,633
-ops_ru_para_visualized,VARCHAR,OP Sheet,634
-ops_ru_resection,DOUBLE,OP Sheet,635
-ops_skin_to_skin_min,DOUBLE,OP Sheet,636
-ops_supranumerary_para,VARCHAR,OP Sheet,637
-ops_surg_date,VARCHAR,OP Sheet,638
-ops_surgeon,VARCHAR,OP Sheet,639
-ops_thyroid_scintigraphy,VARCHAR,OP Sheet,640
-ops_tumor_side,VARCHAR,OP Sheet,641
-path_gross_ete_flag,BIGINT,Core/Other,642
-path_histology_raw,VARCHAR,Core/Other,643
-path_histology_variant_raw,VARCHAR,Core/Other,644
-path_margin_raw,VARCHAR,Core/Other,645
-path_n_stage_raw,VARCHAR,Core/Other,646
-path_t_stage_raw,VARCHAR,Core/Other,647
-pax8_pparg_positive,BOOLEAN,Core/Other,648
-perineural_invasion,VARCHAR,Core/Other,649
-pet_distant_met_sites,VARCHAR,PET/CT,650
-pet_distant_mets_ever,BOOLEAN,PET/CT,651
-pet_fdg_avid_cervical_ln_ever,BOOLEAN,PET/CT,652
-pet_fdg_avid_thyroid_bed_ever,BOOLEAN,PET/CT,653
-pet_first_date,VARCHAR,PET/CT,654
-pet_has_data,BOOLEAN,PET/CT,655
-pet_impression_last,VARCHAR,PET/CT,656
-pet_indication_first,VARCHAR,PET/CT,657
-pet_last_date,VARCHAR,PET/CT,658
-pet_n_exams,BIGINT,PET/CT,659
-pet_overall_worst,VARCHAR,PET/CT,660
-pet_radiotracer_primary,VARCHAR,PET/CT,661
-pet_suv_max_cervical_ln,DOUBLE,PET/CT,662
-pet_suv_max_thyroid_bed,DOUBLE,PET/CT,663
-pmhx_llm_extraction_method,VARCHAR,Core/Other,664
-pmhx_llm_mean_confidence,DOUBLE,Core/Other,665
-pmhx_llm_min_confidence,DOUBLE,Core/Other,666
-pmhx_llm_n_source_notes,BIGINT,Core/Other,667
-pmhx_llm_note_types,VARCHAR,Core/Other,668
-pmhx_nlp_afib,BOOLEAN,Core/Other,669
-pmhx_nlp_afib_n_mentions,BIGINT,Core/Other,670
-pmhx_nlp_asthma,BOOLEAN,Core/Other,671
-pmhx_nlp_asthma_n_mentions,BIGINT,Core/Other,672
-pmhx_nlp_autoimmune_thyroid_hx,BOOLEAN,Core/Other,673
-pmhx_nlp_autoimmune_thyroid_hx_n_mentions,BIGINT,Core/Other,674
-pmhx_nlp_breast_cancer,BOOLEAN,Core/Other,675
-pmhx_nlp_breast_cancer_n_mentions,BIGINT,Core/Other,676
-pmhx_nlp_cad,BOOLEAN,Core/Other,677
-pmhx_nlp_cad_n_mentions,BIGINT,Core/Other,678
-pmhx_nlp_ckd,BOOLEAN,Core/Other,679
-pmhx_nlp_ckd_n_mentions,BIGINT,Core/Other,680
-pmhx_nlp_coagulopathy,BOOLEAN,Core/Other,681
-pmhx_nlp_comorbidity_list,VARCHAR,Core/Other,682
-pmhx_nlp_copd,BOOLEAN,Core/Other,683
-pmhx_nlp_copd_n_mentions,BIGINT,Core/Other,684
-pmhx_nlp_depression,BOOLEAN,Core/Other,685
-pmhx_nlp_depression_n_mentions,BIGINT,Core/Other,686
-pmhx_nlp_diabetes,BOOLEAN,Core/Other,687
-pmhx_nlp_diabetes_first_date,DATE,Core/Other,688
-pmhx_nlp_diabetes_n_mentions,BIGINT,Core/Other,689
-pmhx_nlp_extraction_method,VARCHAR,Core/Other,690
-pmhx_nlp_family_hx_cancer,BOOLEAN,Core/Other,691
-pmhx_nlp_family_hx_thyroid,BOOLEAN,Core/Other,692
-pmhx_nlp_family_hx_thyroid_n_mentions,BIGINT,Core/Other,693
-pmhx_nlp_gerd,BOOLEAN,Core/Other,694
-pmhx_nlp_gerd_n_mentions,BIGINT,Core/Other,695
-pmhx_nlp_hypertension,BOOLEAN,Core/Other,696
-pmhx_nlp_hypertension_first_date,DATE,Core/Other,697
-pmhx_nlp_hypertension_n_mentions,BIGINT,Core/Other,698
-pmhx_nlp_hyperthyroidism,BOOLEAN,Core/Other,699
-pmhx_nlp_hyperthyroidism_first_date,DATE,Core/Other,700
-pmhx_nlp_hyperthyroidism_n_mentions,BIGINT,Core/Other,701
-pmhx_nlp_hypothyroidism,BOOLEAN,Core/Other,702
-pmhx_nlp_hypothyroidism_first_date,DATE,Core/Other,703
-pmhx_nlp_hypothyroidism_n_mentions,BIGINT,Core/Other,704
-pmhx_nlp_lung_cancer,BOOLEAN,Core/Other,705
-pmhx_nlp_lung_cancer_n_mentions,BIGINT,Core/Other,706
-pmhx_nlp_men_syndrome,BOOLEAN,Core/Other,707
-pmhx_nlp_n_comorbidities,BIGINT,Core/Other,708
-pmhx_nlp_n_source_notes,BIGINT,Core/Other,709
-pmhx_nlp_note_types,VARCHAR,Core/Other,710
-pmhx_nlp_obesity,BOOLEAN,Core/Other,711
-pmhx_nlp_obesity_first_date,DATE,Core/Other,712
-pmhx_nlp_obesity_n_mentions,BIGINT,Core/Other,713
-pmhx_nlp_osteoporosis,BOOLEAN,Core/Other,714
-pmhx_nlp_prior_cancer_hx,BOOLEAN,Core/Other,715
-pmhx_nlp_prior_cancer_hx_n_mentions,BIGINT,Core/Other,716
-pmhx_nlp_radiation_exposure,BOOLEAN,Core/Other,717
-pmhx_nlp_radiation_exposure_confidence,DOUBLE,Core/Other,718
-pmhx_nlp_radiation_exposure_date,DATE,Core/Other,719
-pmhx_nlp_radiation_exposure_n_mentions,BIGINT,Core/Other,720
-pmhx_nlp_smoking_status,VARCHAR,Core/Other,721
-pni_positive,BOOLEAN,Core/Other,722
-pni_refined_v6,VARCHAR,Core/Other,723
-post_rai_tg_count,BIGINT,Core/Other,724
-post_rai_tg_last,DOUBLE,Core/Other,725
-post_rai_tg_nadir,DOUBLE,Core/Other,726
-postop_calcium_min_days_postop,INTEGER,Core/Other,727
-postop_calcium_min_value,DOUBLE,Core/Other,728
-postop_calcium_n_measurements,BIGINT,Core/Other,729
-postop_calcium_source_reliability,VARCHAR,Core/Other,730
-postop_ionized_cal_min_value,DOUBLE,Core/Other,731
-postop_labs_has_data,BOOLEAN,Core/Other,732
-postop_pth_min_days_postop,INTEGER,Core/Other,733
-postop_pth_min_value,DOUBLE,Core/Other,734
-postop_pth_n_measurements,BIGINT,Core/Other,735
-postop_pth_source_reliability,VARCHAR,Core/Other,736
-preop_imaging_size_cm,DOUBLE,Core/Other,737
-preop_sweep_genes_found_v11,BIGINT,Core/Other,738
-preop_tirads_best,BIGINT,Core/Other,739
-preop_tirads_category,VARCHAR,Core/Other,740
-preop_tirads_worst,BIGINT,Core/Other,741
-prm_ete_imaging_path_concordance,VARCHAR,Core/Other,742
-prm_ete_path_confirmed,BOOLEAN,Core/Other,743
-prm_ete_rule_applied,VARCHAR,Core/Other,744
-prm_first_fna_date,DATE,Core/Other,745
-prm_fna_n_sources,INTEGER,Core/Other,746
-prm_fna_source_tables,VARCHAR,Core/Other,747
-prm_followup_clinical_events,INTEGER,Core/Other,748
-prm_followup_has_complications,BOOLEAN,Core/Other,749
-prm_followup_tg_labs,INTEGER,Core/Other,750
-prm_high_risk_marker_any,BOOLEAN,Core/Other,751
-prm_hypocalcemia_lab_flag,BOOLEAN,Core/Other,752
-prm_hypoparathyroidism_lab_flag,BOOLEAN,Core/Other,753
-prm_imaging_data_completeness,VARCHAR,Core/Other,754
-prm_last_fna_date,DATE,Core/Other,755
-prm_margin_confidence,VARCHAR,Core/Other,756
-prm_margin_source,VARCHAR,Core/Other,757
-prm_margin_with_gross_ete,VARCHAR,Core/Other,758
-prm_molecular_risk_category,VARCHAR,Core/Other,759
-prm_n_recurrence_sources,INTEGER,Core/Other,760
-prm_recurrence_detection_category,VARCHAR,Core/Other,761
-prm_rln_worst_grade,VARCHAR,Core/Other,762
-prm_size_concordance,VARCHAR,Core/Other,763
-prm_structural_disease_flag,BOOLEAN,Core/Other,764
-prm_tg_adequate_followup,BOOLEAN,Core/Other,765
-proc_nlp_extraction_method,VARCHAR,Core/Other,766
-proc_nlp_laryngoscopy,BOOLEAN,Core/Other,767
-proc_nlp_laryngoscopy_date,DATE,Core/Other,768
-proc_nlp_laryngoscopy_n_mentions,BIGINT,Core/Other,769
-proc_nlp_lateral_neck_dissection,BOOLEAN,Core/Other,770
-proc_nlp_mrnd,BOOLEAN,Core/Other,771
-proc_nlp_mrnd_n_mentions,BIGINT,Core/Other,772
-proc_nlp_n_source_notes,BIGINT,Core/Other,773
-proc_nlp_note_types,VARCHAR,Core/Other,774
-proc_nlp_parathyroid_autotransplant,BOOLEAN,Core/Other,775
-proc_nlp_tracheostomy,BOOLEAN,Core/Other,776
-proc_nlp_tracheostomy_date,DATE,Core/Other,777
-proc_nlp_tracheostomy_n_mentions,BIGINT,Core/Other,778
-pshx_llm_extraction_method,VARCHAR,Core/Other,779
-pshx_llm_mean_confidence,DOUBLE,Core/Other,780
-pshx_llm_min_confidence,DOUBLE,Core/Other,781
-pshx_llm_n_source_notes,BIGINT,Core/Other,782
-pshx_llm_note_types,VARCHAR,Core/Other,783
-pshx_nlp_n_prior_procedures,BIGINT,Core/Other,784
-pshx_nlp_prior_fna,BOOLEAN,Core/Other,785
-pshx_nlp_prior_fna_n_mentions,BIGINT,Core/Other,786
-pshx_nlp_prior_neck_dissection,BOOLEAN,Core/Other,787
-pshx_nlp_prior_neck_surgery,BOOLEAN,Core/Other,788
-pshx_nlp_prior_neck_surgery_n_mentions,BIGINT,Core/Other,789
-pshx_nlp_prior_parathyroidectomy,BOOLEAN,Core/Other,790
-pshx_nlp_prior_rai,BOOLEAN,Core/Other,791
-pshx_nlp_prior_rai_date,DATE,Core/Other,792
-pshx_nlp_prior_rai_n_mentions,BIGINT,Core/Other,793
-pshx_nlp_prior_thyroidectomy,BOOLEAN,Core/Other,794
-pshx_nlp_prior_thyroidectomy_date,DATE,Core/Other,795
-pshx_nlp_prior_thyroidectomy_n_mentions,BIGINT,Core/Other,796
-pth_nadir,DOUBLE,Core/Other,797
-pth_nadir_30d,DOUBLE,Core/Other,798
-pth_nadir_days_postop,INTEGER,Core/Other,799
-race,VARCHAR,Core/Other,800
-radtx_llm_extraction_method,VARCHAR,Core/Other,801
-radtx_llm_mean_confidence,DOUBLE,Core/Other,802
-radtx_llm_n_source_notes,BIGINT,Core/Other,803
-radtx_nlp_external_beam_radiation,BOOLEAN,Core/Other,804
-radtx_nlp_has_data,BOOLEAN,Core/Other,805
-radtx_nlp_hormone_withdrawal,BOOLEAN,Core/Other,806
-radtx_nlp_post_tx_scan_negative,BOOLEAN,Core/Other,807
-radtx_nlp_rai_ablation,BOOLEAN,Core/Other,808
-radtx_nlp_rai_ablation_n_mentions,BIGINT,Core/Other,809
-radtx_nlp_thyrogen_prep,BOOLEAN,Core/Other,810
-rai_avid_flag,BOOLEAN,RAI Treatment,811
-rai_avidity,BOOLEAN,RAI Treatment,812
-rai_dose_confidence_worst,VARCHAR,RAI Treatment,813
-rai_dose_linkage,VARCHAR,RAI Treatment,814
-rai_dose_source,VARCHAR,RAI Treatment,815
-rai_dose_v9,DOUBLE,RAI Treatment,816
-rai_eligible_flag,BOOLEAN,RAI Treatment,817
-rai_episode_date_span_days,BIGINT,RAI Treatment,818
-rai_first_date,TIMESTAMP,RAI Treatment,819
-rai_first_episode_date,DATE,RAI Treatment,820
-rai_has_adjudication,BOOLEAN,RAI Treatment,821
-rai_has_completion_status,BOOLEAN,RAI Treatment,822
-rai_intent_list,VARCHAR,RAI Treatment,823
-rai_intent_v9,VARCHAR,RAI Treatment,824
-rai_last_episode_date,DATE,RAI Treatment,825
-rai_max_dose_mci,DOUBLE,RAI Treatment,826
-rai_min_dose_mci,DOUBLE,RAI Treatment,827
-rai_n_distinct_intents,BIGINT,RAI Treatment,828
-rai_n_episodes_with_dose,BIGINT,RAI Treatment,829
-rai_received_flag,BOOLEAN,RAI Treatment,830
-rai_scan_findings_v9,INTEGER,RAI Treatment,831
-rai_stimulated_tg,DOUBLE,RAI Treatment,832
-rai_stimulated_tsh,DOUBLE,RAI Treatment,833
-rai_total_cumulative_dose_mci,DOUBLE,RAI Treatment,834
-rai_validation_tier,VARCHAR,RAI Treatment,835
-ras_allele_freq_v11,DOUBLE,Core/Other,836
-ras_positive,BOOLEAN,Core/Other,837
-ras_positive_v11,BOOLEAN,Core/Other,838
-ras_positive_v7,BOOLEAN,Core/Other,839
-ras_primary_subtype_v11,VARCHAR,Core/Other,840
-ras_protein_change_v11,VARCHAR,Core/Other,841
-ras_resolution_confidence_v13,DOUBLE,Core/Other,842
-ras_resolution_source_v13,VARCHAR,Core/Other,843
-ras_resolved_af_v13,DOUBLE,Core/Other,844
-ras_resolved_gene_v13,VARCHAR,Core/Other,845
-ras_resolved_variant_v13,VARCHAR,Core/Other,846
-ras_subtype,VARCHAR,Core/Other,847
-rec_event_rank,INTEGER,Core/Other,848
-rec_source_priority,INTEGER,Core/Other,849
-rec_source_table,VARCHAR,Core/Other,850
-rec_structural_flag,BOOLEAN,Core/Other,851
-recurrence_confirmed,BOOLEAN,Core/Other,852
-recurrence_data_confidence,VARCHAR,Core/Other,853
-recurrence_date,TIMESTAMP,Core/Other,854
-recurrence_definition,VARCHAR,Core/Other,855
-recurrence_evidence_source,VARCHAR,Core/Other,856
-recurrence_flag_scoring,BOOLEAN,Core/Other,857
-recurrence_histology,INTEGER,Core/Other,858
-recurrence_site,VARCHAR,Core/Other,859
-recurrence_type,VARCHAR,Core/Other,860
-research_id,VARCHAR,Core/Other,861
-ret_positive_v7,BOOLEAN,Core/Other,862
-rln_classification,VARCHAR,Core/Other,863
-rln_injury_days_postop,INTEGER,Core/Other,864
-rln_injury_detection_date,DATE,Core/Other,865
-rln_injury_evidence,VARCHAR,Core/Other,866
-rln_injury_is_confirmed,BOOLEAN,Core/Other,867
-rln_injury_tier,INTEGER,Core/Other,868
-rln_injury_type,VARCHAR,Core/Other,869
-rln_laterality,VARCHAR,Core/Other,870
-rln_permanent_flag,BOOLEAN,Core/Other,871
-rln_status,VARCHAR,Core/Other,872
-rln_temporality,VARCHAR,Core/Other,873
-rln_transient_flag,BOOLEAN,Core/Other,874
-seroma_status,VARCHAR,Core/Other,875
-sex,VARCHAR,Core/Other,876
-surg_hemithyroidectomy,BOOLEAN,Core/Other,877
-surg_n_procedures,BIGINT,Core/Other,878
-surg_procedure_type,VARCHAR,Core/Other,879
-surg_total_thyroidectomy,BOOLEAN,Core/Other,880
-surv_max_time_days,BIGINT,Core/Other,881
-surv_max_time_days_capped,BIGINT,Core/Other,882
-surv_n_events,BIGINT,Core/Other,883
-surv_recurrence_risk_band,VARCHAR,Core/Other,884
-surv_tg_annual_log_slope,DOUBLE,Core/Other,885
-survival_eligible_flag,BOOLEAN,Core/Other,886
-sx_llm_extraction_method,VARCHAR,Core/Other,887
-sx_llm_mean_confidence,DOUBLE,Core/Other,888
-sx_llm_n_source_notes,BIGINT,Core/Other,889
-sx_nlp_any_symptom_data,BOOLEAN,Core/Other,890
-sx_nlp_dysphagia,BOOLEAN,Core/Other,891
-sx_nlp_dyspnea,BOOLEAN,Core/Other,892
-sx_nlp_hoarseness,BOOLEAN,Core/Other,893
-sx_nlp_neck_mass,BOOLEAN,Core/Other,894
-syn_adenomatoid_nodules,BOOLEAN,Core/Other,895
-syn_architecture,VARCHAR,Core/Other,896
-syn_bilateral_neck_dissection,BOOLEAN,Core/Other,897
-syn_c_cell_hyperplasia,BOOLEAN,Core/Other,898
-syn_capsular_invasion_clean,VARCHAR,Core/Other,899
-syn_carcinoma_on_frozen,BOOLEAN,Core/Other,900
-syn_central_dissection,BOOLEAN,Core/Other,901
-syn_chronic_thyroiditis,BOOLEAN,Core/Other,902
-syn_colloid_nodule,BOOLEAN,Core/Other,903
-syn_follicular_adenoma,BOOLEAN,Core/Other,904
-syn_frozen_section,BOOLEAN,Core/Other,905
-syn_frozen_section_result,VARCHAR,Core/Other,906
-syn_graves,BOOLEAN,Core/Other,907
-syn_has_second_tumor,BOOLEAN,Core/Other,908
-syn_has_third_plus_tumor,BOOLEAN,Core/Other,909
-syn_hashimoto,BOOLEAN,Core/Other,910
-syn_histologic_grade,BIGINT,Core/Other,911
-syn_hurthle_cell_change,BOOLEAN,Core/Other,912
-syn_hyperplastic_nodules,BOOLEAN,Core/Other,913
-syn_io_rln_monitoring,BOOLEAN,Core/Other,914
-syn_isthmus_size_cm,VARCHAR,Core/Other,915
-syn_isthmus_weight_g,DOUBLE,Core/Other,916
-syn_ki67_index,VARCHAR,Core/Other,917
-syn_left_lobe_size_cm,VARCHAR,Core/Other,918
-syn_left_lobe_weight_g,DOUBLE,Core/Other,919
-syn_lymphatic_invasion_clean,VARCHAR,Core/Other,920
-syn_margin_distance_mm,VARCHAR,Core/Other,921
-syn_margin_status_synoptic,VARCHAR,Core/Other,922
-syn_mitotic_rate_numeric,DOUBLE,Core/Other,923
-syn_mitotic_rate_qualifier,VARCHAR,Core/Other,924
-syn_multinodular_goiter,BOOLEAN,Core/Other,925
-syn_n_parathyroid_identified,BIGINT,Core/Other,926
-syn_n_tumors_in_synoptic,BIGINT,Core/Other,927
-syn_necrosis_clean,VARCHAR,Core/Other,928
-syn_parathyroid_in_specimen,BOOLEAN,Core/Other,929
-syn_right_lobe_size_cm,VARCHAR,Core/Other,930
-syn_right_lobe_weight_g,DOUBLE,Core/Other,931
-syn_total_weight_g,DOUBLE,Core/Other,932
-syn_tumor2_histologic_type,VARCHAR,Core/Other,933
-syn_tumor2_size_cm,VARCHAR,Core/Other,934
-tert_platforms_v9,VARCHAR,Core/Other,935
-tert_positive,BOOLEAN,Core/Other,936
-tert_positive_v7,BOOLEAN,Core/Other,937
-tert_status_v7,VARCHAR,Core/Other,938
-tert_test_count_v9,BIGINT,Core/Other,939
-tert_tested,BOOLEAN,Core/Other,940
-tert_variant_v9,VARCHAR,Core/Other,941
-tg_last_censored,BOOLEAN,Thyroglobulin,942
-tg_last_value,DOUBLE,Thyroglobulin,943
-tg_mean,DOUBLE,Thyroglobulin,944
-tg_n_measurements,BIGINT,Thyroglobulin,945
-tg_nadir,DOUBLE,Thyroglobulin,946
-tg_peak,DOUBLE,Thyroglobulin,947
-tg_rising_flag,BOOLEAN,Thyroglobulin,948
-tg_trajectory_class,VARCHAR,Thyroglobulin,949
-tgab_interference_flag,BOOLEAN,Thyroglobulin,950
-tgab_last_value,DOUBLE,Thyroglobulin,951
-tgab_nadir,DOUBLE,Thyroglobulin,952
-tgab_peak,DOUBLE,Thyroglobulin,953
-time_to_recurrence_days,DOUBLE,Core/Other,954
-tirads_best_category_v12,VARCHAR,Core/Other,955
-tirads_best_combined,INTEGER,Core/Other,956
-tirads_best_score_v12,BIGINT,Core/Other,957
-tirads_concordant_count_v12,BIGINT,Core/Other,958
-tirads_has_acr_recalc_v12,BOOLEAN,Core/Other,959
-tirads_mismatch_count_v12,BIGINT,Core/Other,960
-tirads_n_nodule_records_v12,BIGINT,Core/Other,961
-tirads_n_sources_v12,BIGINT,Core/Other,962
-tirads_nodule_size_max_mm_v12,DOUBLE,Core/Other,963
-tirads_nodules_scored_combined,BIGINT,Core/Other,964
-tirads_reliability_v12,DOUBLE,Core/Other,965
-tirads_source_v12,VARCHAR,Core/Other,966
-tirads_worst_category_v12,VARCHAR,Core/Other,967
-tirads_worst_combined,INTEGER,Core/Other,968
-tirads_worst_score_v12,BIGINT,Core/Other,969
-total_ln_positive_v10,INTEGER,Core/Other,970
-tp53_positive_v7,BOOLEAN,Core/Other,971
-tp_central_examined,BIGINT,Core/Other,972
-tp_central_positive_total,BIGINT,Core/Other,973
-tp_ln_central_positive,BIGINT,Core/Other,974
-tp_ln_ene,BIGINT,Core/Other,975
-tp_ln_examined,BIGINT,Core/Other,976
-tp_ln_largest_deposit_cm,DOUBLE,Core/Other,977
-tp_ln_lateral_positive,BIGINT,Core/Other,978
-tp_ln_levels_involved,BIGINT,Core/Other,979
-tp_ln_positive,BIGINT,Core/Other,980
-tumor_size_cm,DOUBLE,Core/Other,981
-us_first_exam_date,DATE,Core/Other,982
-us_isthmus_thickness_mm,VARCHAR,Core/Other,983
-us_last_exam_date,DATE,Core/Other,984
-us_left_lobe_volume_ml,VARCHAR,Core/Other,985
-us_most_recent_date,DATE,Core/Other,986
-us_n_reports,BIGINT,Core/Other,987
-us_right_lobe_volume_ml,VARCHAR,Core/Other,988
-us_total_volume_ml,VARCHAR,Core/Other,989
-vasc_confidence_final_v13,DOUBLE,Core/Other,990
-vasc_grade,VARCHAR,Core/Other,991
-vasc_grade_final_v13,VARCHAR,Core/Other,992
-vasc_source_final_v13,VARCHAR,Core/Other,993
-vasc_vessel_count_v13,DOUBLE,Core/Other,994
-vascular_invasion_grade,VARCHAR,Core/Other,995
-vascular_who_2022_grade,VARCHAR,Core/Other,996
-vessel_count,DOUBLE,Core/Other,997
-voice_data_confidence,DOUBLE,Core/Other,998
-voice_followup_completeness,VARCHAR,Core/Other,999
-voice_outcome_category,VARCHAR,Core/Other,1000
-weight_kg_note,DOUBLE,Core/Other,1001
-worst_bethesda_num,BIGINT,Core/Other,1002
-worst_ete_v10,VARCHAR,Core/Other,1003
-worst_tirads_category,VARCHAR,Core/Other,1004
-wound_infection_status,VARCHAR,Core/Other,1005
-lab_tsh_n_measurements,BIGINT,Labs,1006
-lab_tsh_min,DOUBLE,Labs,1007
-lab_tsh_max,DOUBLE,Labs,1008
-lab_tsh_first_date,DATE,Labs,1009
-lab_tsh_last_date,DATE,Labs,1010
-lab_tsh_most_recent,DOUBLE,Labs,1011
-lab_tsh_most_recent_date,DATE,Labs,1012
-lab_tsh_unit,VARCHAR,Labs,1013
-lab_tsh_n_censored,BIGINT,Labs,1014
-lab_tsh_n_parsed_from_raw,BIGINT,Labs,1015
-lab_vitd_n_measurements,BIGINT,Labs,1016
-lab_vitd_min,DOUBLE,Labs,1017
-lab_vitd_max,DOUBLE,Labs,1018
-lab_vitd_first_date,DATE,Labs,1019
-lab_vitd_last_date,DATE,Labs,1020
-lab_vitd_most_recent,DOUBLE,Labs,1021
-lab_vitd_most_recent_date,DATE,Labs,1022
-lab_vitd_unit,VARCHAR,Labs,1023
-lab_vitd_n_censored,BIGINT,Labs,1024
-lab_vitd_n_parsed_from_raw,BIGINT,Labs,1025
-lab_pth_n_measurements,INTEGER,Labs,1026
-lab_pth_min,DOUBLE,Labs,1027
-lab_pth_max,DOUBLE,Labs,1028
-lab_pth_first_date,DATE,Labs,1029
-lab_pth_last_date,DATE,Labs,1030
-lab_pth_most_recent,DOUBLE,Labs,1031
-lab_pth_most_recent_date,DATE,Labs,1032
-lab_pth_unit,VARCHAR,Labs,1033
-lab_pth_n_censored,BIGINT,Labs,1034
-lab_pth_n_parsed_from_raw,BIGINT,Labs,1035
-lab_calcium_n_measurements,INTEGER,Labs,1036
-lab_calcium_min,DOUBLE,Labs,1037
-lab_calcium_max,DOUBLE,Labs,1038
-lab_calcium_first_date,DATE,Labs,1039
-lab_calcium_last_date,DATE,Labs,1040
-lab_calcium_most_recent,DOUBLE,Labs,1041
-lab_calcium_most_recent_date,DATE,Labs,1042
-lab_calcium_unit,VARCHAR,Labs,1043
-lab_calcium_n_censored,BIGINT,Labs,1044
-lab_calcium_n_parsed_from_raw,BIGINT,Labs,1045
-cnln_total_entities,BIGINT,Clinical Note LN,1046
-cnln_n_modalities,INTEGER,Clinical Note LN,1047
-cnln_any_positive_any_modality,BOOLEAN,Clinical Note LN,1048
-cnln_ene_any_modality,BOOLEAN,Clinical Note LN,1049
-cnln_modalities_present,VARCHAR,Clinical Note LN,1050
-cnln_earliest_date,VARCHAR,Clinical Note LN,1051
-cnln_latest_date,VARCHAR,Clinical Note LN,1052
-cnln_surg_n_entities,BIGINT,Clinical Note LN,1053
-cnln_surg_n_notes,BIGINT,Clinical Note LN,1054
-cnln_surg_any_positive,BOOLEAN,Clinical Note LN,1055
-cnln_surg_max_positive_count,DOUBLE,Clinical Note LN,1056
-cnln_surg_max_total_examined,DOUBLE,Clinical Note LN,1057
-cnln_surg_ene_any,BOOLEAN,Clinical Note LN,1058
-cnln_surg_bilateral,BOOLEAN,Clinical Note LN,1059
-cnln_surg_levels_mentioned,VARCHAR,Clinical Note LN,1060
-cnln_surg_first_date,VARCHAR,Clinical Note LN,1061
-cnln_surg_last_date,VARCHAR,Clinical Note LN,1062
-cnln_surg_source_note_types,VARCHAR,Clinical Note LN,1063
-cnln_surg_avg_confidence,DOUBLE,Clinical Note LN,1064
-cnln_img_n_entities,BIGINT,Clinical Note LN,1065
-cnln_img_any_suspicious,BOOLEAN,Clinical Note LN,1066
-cnln_img_max_size_cm,DOUBLE,Clinical Note LN,1067
-cnln_img_laterality,VARCHAR,Clinical Note LN,1068
-cnln_img_levels_mentioned,VARCHAR,Clinical Note LN,1069
-cnln_img_first_date,VARCHAR,Clinical Note LN,1070
-cnln_img_last_date,VARCHAR,Clinical Note LN,1071
-cnln_img_avg_confidence,DOUBLE,Clinical Note LN,1072
-cnln_path_n_entities,BIGINT,Clinical Note LN,1073
-cnln_path_any_positive,BOOLEAN,Clinical Note LN,1074
-cnln_path_max_positive_count,DOUBLE,Clinical Note LN,1075
-cnln_path_ene_any,BOOLEAN,Clinical Note LN,1076
-cnln_clin_n_entities,BIGINT,Clinical Note LN,1077
-cnln_clin_any_positive,BOOLEAN,Clinical Note LN,1078
-cnln_clin_avg_confidence,DOUBLE,Clinical Note LN,1079
-cnln_novel_positive_flag,BOOLEAN,Clinical Note LN,1080
-cnln_source_table,VARCHAR,Clinical Note LN,1081
-recurrence_site_raw,VARCHAR,Core/Other,1082
-recurrence_laterality,VARCHAR,Core/Other,1083
-recurrence_site_source,VARCHAR,Core/Other,1084
-followup_n_contact_sources,INTEGER,Core/Other,1085
-followup_all_sources,VARCHAR,Core/Other,1086
-followup_recovery_method,VARCHAR,Core/Other,1087
-nucmed_tg_max,DOUBLE,Nuclear Med,1088
-nucmed_tg_min,DOUBLE,Nuclear Med,1089
-nucmed_n_tsh_values,INTEGER,Nuclear Med,1090
-nucmed_n_tg_values,INTEGER,Nuclear Med,1091
-nucmed_n_tgab_values,INTEGER,Nuclear Med,1092
-nucmed_first_scan_with_labs,VARCHAR,Nuclear Med,1093
-nucmed_last_scan_with_labs,VARCHAR,Nuclear Med,1094
-nucmed_lab_source,VARCHAR,Nuclear Med,1095
-ct_indication_first,VARCHAR,CT Imaging,1096
-ct_indication_last,VARCHAR,CT Imaging,1097
-ct_first_date,DATE,CT Imaging,1098
-ct_last_date,DATE,CT Imaging,1099
-ct_exam_type_first,VARCHAR,CT Imaging,1100
-ct_contrast_first,VARCHAR,CT Imaging,1101
-ct_thyroid_details_last,VARCHAR,CT Imaging,1102
-ct_ln_details_last,VARCHAR,CT Imaging,1103
-ct_ln_locations_last,VARCHAR,CT Imaging,1104
-ct_airway_compromise_any,BOOLEAN,CT Imaging,1105
-ct_airway_comment_last,VARCHAR,CT Imaging,1106
-ct_thyroid_postsurgical_any,BOOLEAN,CT Imaging,1107
-ct_thyroid_not_visualized_any,BOOLEAN,CT Imaging,1108
-ct_thyroid_heterogeneous_any,BOOLEAN,CT Imaging,1109
-ct_thyroid_other_abnormality_any,BOOLEAN,CT Imaging,1110
-ct_thyroid_normal_any,BOOLEAN,CT Imaging,1111
-ct_thyroid_nodule_any,BOOLEAN,CT Imaging,1112
-ct_thyroid_enlarged_any,BOOLEAN,CT Imaging,1113
-ct_pathologic_ln_any,BOOLEAN,CT Imaging,1114
-pet_other_n_exams,INTEGER,PET/CT,1115
-pet_other_first_date,DATE,PET/CT,1116
-pet_other_last_date,DATE,PET/CT,1117
-pet_other_indication_first,VARCHAR,PET/CT,1118
-pet_other_mentions_metastasis,BOOLEAN,PET/CT,1119
-pet_other_ned_statement,BOOLEAN,PET/CT,1120
-pet_other_exam_type,VARCHAR,PET/CT,1121
-pet_other_extraction_method,VARCHAR,PET/CT,1122
-nucmed_indication_first,VARCHAR,Nuclear Med,1123
-nucmed_indication_last,VARCHAR,Nuclear Med,1124
-nucmed_impression_last,VARCHAR,Nuclear Med,1125
-nucmed_findings_last,VARCHAR,Nuclear Med,1126
-nucmed_tsh_max,DOUBLE,Nuclear Med,1127
-nucmed_tsh_is_stimulated,BOOLEAN,Nuclear Med,1128
-nucmed_tgab_max,DOUBLE,Nuclear Med,1129
-nucmed_uptake_pct_max,DOUBLE,Nuclear Med,1130
-nucmed_dose_max_parsed,DOUBLE,Nuclear Med,1131
-nucmed_cumulative_therapeutic_dose,DOUBLE,Nuclear Med,1132
-nucmed_n_doses_parsed,INTEGER,Nuclear Med,1133
-nucmed_n_with_indication,INTEGER,Nuclear Med,1134
-nucmed_n_with_impression,INTEGER,Nuclear Med,1135
-nucmed_overall_assessment,VARCHAR,Nuclear Med,1136
-lnus_has_dedicated_exam,BOOLEAN,LN Ultrasound,1137
-lnus_n_exams,INTEGER,LN Ultrasound,1138
-lnus_first_date,DATE,LN Ultrasound,1139
-lnus_last_date,DATE,LN Ultrasound,1140
-lnus_indication_first,VARCHAR,LN Ultrasound,1141
-lnus_impression_last,VARCHAR,LN Ultrasound,1142
-lnus_abnormal_ln_any,BOOLEAN,LN Ultrasound,1143
-lnus_normal_ln_any,BOOLEAN,LN Ultrasound,1144
-lnus_has_size_measurement,BOOLEAN,LN Ultrasound,1145
-lnus_source,VARCHAR,LN Ultrasound,1146
-nsqip_operation_date,VARCHAR,NSQIP,1147
-nsqip_match_method,VARCHAR,NSQIP,1148
-nsqip_readmission_count,BIGINT,NSQIP,1149
-nsqip_unplanned_readmission_count,BIGINT,NSQIP,1150
-nsqip_related_readmission_count,BIGINT,NSQIP,1151
-nsqip_first_readmission_date,VARCHAR,NSQIP,1152
-nsqip_hypocalcemia,VARCHAR,NSQIP,1153
-nsqip_hypocalcemia_predischarge,VARCHAR,NSQIP,1154
-nsqip_hypocalcemia_postdischarge,VARCHAR,NSQIP,1155
-nsqip_hypocalcemia_event,VARCHAR,NSQIP,1156
-nsqip_hypocalcemia_event_type,VARCHAR,NSQIP,1157
-nsqip_iv_calcium,VARCHAR,NSQIP,1158
-nsqip_calcium_checked,VARCHAR,NSQIP,1159
-nsqip_pth_checked,VARCHAR,NSQIP,1160
-nsqip_calcium_vitd_replacement,VARCHAR,NSQIP,1161
-nsqip_calcium_vitd_last_check,VARCHAR,NSQIP,1162
-nsqip_hypocalcemia_last_check,VARCHAR,NSQIP,1163
-nsqip_rln_injury,VARCHAR,NSQIP,1164
-nsqip_neck_hematoma,VARCHAR,NSQIP,1165
-nsqip_hospital_los_days,BIGINT,NSQIP,1166
-nsqip_surgical_los_days,BIGINT,NSQIP,1167
-nsqip_discharge_destination,VARCHAR,NSQIP,1168
-nsqip_death_30d,VARCHAR,NSQIP,1169
-nsqip_unplanned_return_or,DOUBLE,NSQIP,1170
-nsqip_operative_duration_min,BIGINT,NSQIP,1171
-nsqip_inpatient_outpatient,VARCHAR,NSQIP,1172
-nsqip_cpt_code,BIGINT,NSQIP,1173
-nsqip_cpt_description,VARCHAR,NSQIP,1174
-nsqip_primary_indication,VARCHAR,NSQIP,1175
-nsqip_operative_approach,VARCHAR,NSQIP,1176
-nsqip_central_neck_dissection,VARCHAR,NSQIP,1177
-nsqip_lateral_neck_dissection,VARCHAR,NSQIP,1178
-nsqip_vessel_sealant,VARCHAR,NSQIP,1179
-nsqip_rln_monitoring,VARCHAR,NSQIP,1180
-nsqip_drain_usage,VARCHAR,NSQIP,1181
-nsqip_tobacco_use,VARCHAR,NSQIP,1182
-nsqip_heart_failure,VARCHAR,NSQIP,1183
-nsqip_copd,VARCHAR,NSQIP,1184
-nsqip_bleeding_disorder,VARCHAR,NSQIP,1185
-nsqip_disseminated_cancer,VARCHAR,NSQIP,1186
-nsqip_sodium,DOUBLE,NSQIP,1187
-nsqip_bun,DOUBLE,NSQIP,1188
-nsqip_creatinine,DOUBLE,NSQIP,1189
-nsqip_albumin,DOUBLE,NSQIP,1190
-nsqip_total_bilirubin,DOUBLE,NSQIP,1191
-nsqip_ast,DOUBLE,NSQIP,1192
-nsqip_alk_phos,DOUBLE,NSQIP,1193
-nsqip_wbc,DOUBLE,NSQIP,1194
-nsqip_hemoglobin,DOUBLE,NSQIP,1195
-nsqip_hematocrit,DOUBLE,NSQIP,1196
-nsqip_platelet_count,DOUBLE,NSQIP,1197
-nsqip_hba1c,DOUBLE,NSQIP,1198
-nsqip_inr,DOUBLE,NSQIP,1199
-nsqip_ptt,DOUBLE,NSQIP,1200
-nsqip_admission_date,VARCHAR,NSQIP,1201
-nsqip_discharge_date,VARCHAR,NSQIP,1202
-nsqip_surgery_start_time,VARCHAR,NSQIP,1203
-nsqip_surgery_finish_time,VARCHAR,NSQIP,1204
-nsqip_superficial_ssi,BIGINT,NSQIP,1205
-nsqip_deep_ssi,BIGINT,NSQIP,1206
-nsqip_organ_space_ssi,BIGINT,NSQIP,1207
-nsqip_dvt,BIGINT,NSQIP,1208
-nsqip_pe,BIGINT,NSQIP,1209
-nsqip_transfusion,BIGINT,NSQIP,1210
-nsqip_sepsis,BIGINT,NSQIP,1211
-nsqip_pneumonia,BIGINT,NSQIP,1212
-nsqip_unplanned_intubation,BIGINT,NSQIP,1213
-nsqip_final_pathology,VARCHAR,NSQIP,1214
-nsqip_t_classification,VARCHAR,NSQIP,1215
-nsqip_multifocal,VARCHAR,NSQIP,1216
-nsqip_n_classification,VARCHAR,NSQIP,1217
-nsqip_nodes_removed,DOUBLE,NSQIP,1218
-nsqip_nodes_positive,DOUBLE,NSQIP,1219
-nsqip_m_classification,VARCHAR,NSQIP,1220
-nsqip_neoplasm,VARCHAR,NSQIP,1221
-nsqip_neoplasm_type,VARCHAR,NSQIP,1222
-nsqip_prior_neck_surgery,VARCHAR,NSQIP,1223
-nsqip_preop_biopsy_result,VARCHAR,NSQIP,1224
-nsqip_molecular_testing,VARCHAR,NSQIP,1225
-nsqip_molecular_result,VARCHAR,NSQIP,1226
-nsqip_same_day_discharge_flag,BIGINT,NSQIP,1227
-nsqip_hypocalcemia_flag,DOUBLE,NSQIP,1228
-nsqip_readmission_30d_flag,BIGINT,NSQIP,1229
-nsqip_rln_injury_flag,DOUBLE,NSQIP,1230
-nsqip_hematoma_flag,DOUBLE,NSQIP,1231
-nsqip_calcium_vitd_category,VARCHAR,NSQIP,1232
-nsqip_thyroidectomy_has_data,BOOLEAN,NSQIP,1233
-nsqip_thyroidectomy_source_script,VARCHAR,NSQIP,1234
-para_specimen_included,BOOLEAN,Parathyroid,1235
-para_removal_intent,VARCHAR,Parathyroid,1236
-para_incidental_status_refined,VARCHAR,Parathyroid,1237
-para_has_pathologic_glands,BOOLEAN,Parathyroid,1238
-para_abnormality_type,VARCHAR,Parathyroid,1239
-para_n_glands_identified,BIGINT,Parathyroid,1240
-para_n_glands_biopsied,BIGINT,Parathyroid,1241
-para_n_glands_excised,BIGINT,Parathyroid,1242
-para_max_cellularity_pct,DOUBLE,Parathyroid,1243
-para_min_cellularity_pct,DOUBLE,Parathyroid,1244
-para_max_gland_weight_g,DOUBLE,Parathyroid,1245
-para_source_workbook,VARCHAR,Parathyroid,1246
-para_source_script,VARCHAR,Parathyroid,1247
+column_name,data_type,ordinal_position,domain
+age_at_surgery,BIGINT,1,Core/Other
+ages_calculable_flag,BOOLEAN,2,Core/Other
+ages_score,DOUBLE,3,Core/Other
+aggressive_variant_flag,BOOLEAN,4,Core/Other
+ajcc8_calculable_flag,BOOLEAN,5,Core/Other
+ajcc8_m_stage,VARCHAR,6,Core/Other
+ajcc8_missing_components,VARCHAR,7,Core/Other
+ajcc8_n_stage,VARCHAR,8,Core/Other
+ajcc8_stage_calculable_flag,BOOLEAN,9,Core/Other
+ajcc8_stage_group,VARCHAR,10,Core/Other
+ajcc8_t_stage,VARCHAR,11,Core/Other
+ajcc8_t_stage_calculable_flag,BOOLEAN,12,Core/Other
+alk_positive_v7,BOOLEAN,13,Core/Other
+ames_calculable_flag,BOOLEAN,14,Core/Other
+ames_risk,VARCHAR,15,Core/Other
+ames_risk_group,VARCHAR,16,Core/Other
+analysis_eligible_flag,BOOLEAN,17,Core/Other
+anti_tg_nadir,DOUBLE,18,Core/Other
+anti_tg_rising_flag,BOOLEAN,19,Core/Other
+any_analysis_eligible_complication,BOOLEAN,20,Core/Other
+any_confirmed_complication,BOOLEAN,21,Core/Other
+any_confirmed_complication_flag,BOOLEAN,22,Core/Other
+any_fusion_positive,BOOLEAN,23,Core/Other
+any_recurrence_flag,BOOLEAN,24,Core/Other
+ata_calculable_flag,BOOLEAN,25,Core/Other
+ata_initial_risk,VARCHAR,26,Core/Other
+ata_response_calculable_flag,BOOLEAN,27,Core/Other
+ata_response_category,VARCHAR,28,Core/Other
+ata_response_is_provisional,BOOLEAN,29,Core/Other
+ata_risk_calculable_flag,BOOLEAN,30,Core/Other
+ata_risk_category,VARCHAR,31,Core/Other
+best_ene_grade,VARCHAR,32,Core/Other
+bethesda_2010,BIGINT,33,Core/Other
+bethesda_2015,BIGINT,34,Core/Other
+bethesda_2023,BIGINT,35,Core/Other
+bethesda_category,VARCHAR,36,Core/Other
+bethesda_confidence,DOUBLE,37,Core/Other
+bethesda_final,BIGINT,38,Core/Other
+bethesda_final_name,VARCHAR,39,Core/Other
+bethesda_num,DOUBLE,40,Core/Other
+bethesda_source,VARCHAR,41,Core/Other
+bilateral_disease_flag,BOOLEAN,42,Core/Other
+biochemical_recurrence_flag,BOOLEAN,43,Core/Other
+biochemical_tg_at_recurrence,DOUBLE,44,Core/Other
+biochemical_tg_nadir_after_surgery,DOUBLE,45,Core/Other
+bmi_combined,DOUBLE,46,Core/Other
+bmi_note_extracted,DOUBLE,47,Core/Other
+bmi_note_source,VARCHAR,48,Core/Other
+bmi_source,VARCHAR,49,Core/Other
+braf_detection_method,VARCHAR,50,Core/Other
+braf_detection_method_v11,VARCHAR,51,Core/Other
+braf_positive,BOOLEAN,52,Core/Other
+braf_positive_final,BOOLEAN,53,Core/Other
+braf_positive_v7,BOOLEAN,54,Core/Other
+braf_recovered_status_v11,VARCHAR,55,Core/Other
+braf_recovered_variant_v11,VARCHAR,56,Core/Other
+braf_source,VARCHAR,57,Core/Other
+braf_status_v7,VARCHAR,58,Core/Other
+braf_variant,VARCHAR,59,Core/Other
+calcium_nadir,DOUBLE,60,Core/Other
+calcium_nadir_30d,DOUBLE,61,Core/Other
+calcium_nadir_days_postop,INTEGER,62,Core/Other
+calcium_supplement_required,BOOLEAN,63,Core/Other
+capsular_invasion_refined,VARCHAR,64,Core/Other
+capsular_invasion_v6,VARCHAR,65,Core/Other
+chyle_leak_status,VARCHAR,66,Core/Other
+closest_margin_mm,DOUBLE,67,Core/Other
+comp_chyle_leak_confirmed,BOOLEAN,68,Complications
+comp_chyle_leak_days_postop,BIGINT,69,Complications
+comp_chyle_leak_evidence_tier,INTEGER,70,Complications
+comp_chyle_leak_permanent,BOOLEAN,71,Complications
+comp_chyle_leak_suspected,BOOLEAN,72,Complications
+comp_chyle_leak_timing_window,VARCHAR,73,Complications
+comp_chyle_leak_transient,BOOLEAN,74,Complications
+comp_chyle_leak_treatment_req,BOOLEAN,75,Complications
+comp_hematoma_confirmed,BOOLEAN,76,Complications
+comp_hematoma_days_postop,BIGINT,77,Complications
+comp_hematoma_evidence_tier,INTEGER,78,Complications
+comp_hematoma_permanent,BOOLEAN,79,Complications
+comp_hematoma_suspected,BOOLEAN,80,Complications
+comp_hematoma_timing_window,VARCHAR,81,Complications
+comp_hematoma_transient,BOOLEAN,82,Complications
+comp_hematoma_treatment_req,BOOLEAN,83,Complications
+comp_hypocalcemia_confirmed,BOOLEAN,84,Complications
+comp_hypocalcemia_days_postop,BIGINT,85,Complications
+comp_hypocalcemia_evidence_tier,INTEGER,86,Complications
+comp_hypocalcemia_permanent,BOOLEAN,87,Complications
+comp_hypocalcemia_suspected,BOOLEAN,88,Complications
+comp_hypocalcemia_timing_window,VARCHAR,89,Complications
+comp_hypocalcemia_transient,BOOLEAN,90,Complications
+comp_hypocalcemia_treatment_req,BOOLEAN,91,Complications
+comp_hypoparathyroidism_confirmed,BOOLEAN,92,Complications
+comp_hypoparathyroidism_days_postop,BIGINT,93,Complications
+comp_hypoparathyroidism_evidence_tier,INTEGER,94,Complications
+comp_hypoparathyroidism_permanent,BOOLEAN,95,Complications
+comp_hypoparathyroidism_suspected,BOOLEAN,96,Complications
+comp_hypoparathyroidism_timing_window,VARCHAR,97,Complications
+comp_hypoparathyroidism_transient,BOOLEAN,98,Complications
+comp_hypoparathyroidism_treatment_req,BOOLEAN,99,Complications
+comp_rln_injury_confirmed,BOOLEAN,100,Complications
+comp_rln_injury_days_postop,BIGINT,101,Complications
+comp_rln_injury_evidence_tier,INTEGER,102,Complications
+comp_rln_injury_permanent,BOOLEAN,103,Complications
+comp_rln_injury_suspected,BOOLEAN,104,Complications
+comp_rln_injury_timing_window,VARCHAR,105,Complications
+comp_rln_injury_transient,BOOLEAN,106,Complications
+comp_rln_injury_treatment_req,BOOLEAN,107,Complications
+comp_seroma_confirmed,BOOLEAN,108,Complications
+comp_seroma_days_postop,BIGINT,109,Complications
+comp_seroma_evidence_tier,INTEGER,110,Complications
+comp_seroma_permanent,BOOLEAN,111,Complications
+comp_seroma_suspected,BOOLEAN,112,Complications
+comp_seroma_timing_window,VARCHAR,113,Complications
+comp_seroma_transient,BOOLEAN,114,Complications
+comp_seroma_treatment_req,BOOLEAN,115,Complications
+comp_vc_paralysis_confirmed,BOOLEAN,116,Complications
+comp_vc_paralysis_days_postop,BIGINT,117,Complications
+comp_vc_paralysis_evidence_tier,INTEGER,118,Complications
+comp_vc_paralysis_permanent,BOOLEAN,119,Complications
+comp_vc_paralysis_suspected,BOOLEAN,120,Complications
+comp_vc_paralysis_timing_window,VARCHAR,121,Complications
+comp_vc_paralysis_transient,BOOLEAN,122,Complications
+comp_vc_paralysis_treatment_req,BOOLEAN,123,Complications
+comp_vc_paresis_confirmed,BOOLEAN,124,Complications
+comp_vc_paresis_days_postop,BIGINT,125,Complications
+comp_vc_paresis_evidence_tier,INTEGER,126,Complications
+comp_vc_paresis_permanent,BOOLEAN,127,Complications
+comp_vc_paresis_suspected,BOOLEAN,128,Complications
+comp_vc_paresis_timing_window,VARCHAR,129,Complications
+comp_vc_paresis_transient,BOOLEAN,130,Complications
+comp_vc_paresis_treatment_req,BOOLEAN,131,Complications
+comp_voice_permanence_noted,BOOLEAN,132,Complications
+comp_voice_resolution_noted,BOOLEAN,133,Complications
+comp_wound_infection_confirmed,BOOLEAN,134,Complications
+comp_wound_infection_days_postop,BIGINT,135,Complications
+comp_wound_infection_evidence_tier,INTEGER,136,Complications
+comp_wound_infection_permanent,BOOLEAN,137,Complications
+comp_wound_infection_suspected,BOOLEAN,138,Complications
+comp_wound_infection_timing_window,VARCHAR,139,Complications
+comp_wound_infection_transient,BOOLEAN,140,Complications
+comp_wound_infection_treatment_req,BOOLEAN,141,Complications
+completion_braf_positive,BOOLEAN,142,Complications
+completion_histology_type,VARCHAR,143,Complications
+completion_prior_histology,VARCHAR,144,Complications
+completion_reason,VARCHAR,145,Complications
+completion_reason_confidence,DOUBLE,146,Complications
+completion_t_stage,VARCHAR,147,Complications
+completion_tert_positive,BOOLEAN,148,Complications
+confirmed_rai_episodes,BIGINT,149,Core/Other
+cross_fna_concordance,VARCHAR,150,Core/Other
+ct_goiter_present_any,BOOLEAN,151,CT Imaging
+ct_largest_ln_short_axis_mm,DOUBLE,152,CT Imaging
+ct_ln_enlarged_any,BOOLEAN,153,CT Imaging
+ct_ln_suspicious_any,BOOLEAN,154,CT Imaging
+ct_n_exams,BIGINT,155,CT Imaging
+ct_substernal_extension_any,BOOLEAN,156,CT Imaging
+ct_tracheal_deviation_any,BOOLEAN,157,CT Imaging
+ct_tracheal_narrowing_any,BOOLEAN,158,CT Imaging
+date_traceability_status,VARCHAR,159,Core/Other
+days_first_to_last_tg,BIGINT,160,Core/Other
+days_to_first_laryngoscopy,BIGINT,161,Core/Other
+days_to_last_laryngoscopy,BIGINT,162,Core/Other
+demo_confidence,INTEGER,163,Core/Other
+demo_source,VARCHAR,164,Core/Other
+diagnosis_confidence,VARCHAR,165,Core/Other
+diagnosis_full,VARCHAR,166,Core/Other
+diagnosis_primary,VARCHAR,167,Core/Other
+diagnosis_variant,VARCHAR,168,Core/Other
+distant_mets_proxy,BOOLEAN,169,Core/Other
+dominant_nodule_size_cm,DOUBLE,170,Core/Other
+earliest_complication_days,BIGINT,171,Core/Other
+eif1ax_positive,BOOLEAN,172,Core/Other
+ene_ct,VARCHAR,173,Core/Other
+ene_deposit_cm,DOUBLE,174,Core/Other
+ene_grade_v9,VARCHAR,175,Core/Other
+ene_levels_v9,VARCHAR,176,Core/Other
+ene_n_sources,BIGINT,177,Core/Other
+ene_op_intraop,VARCHAR,178,Core/Other
+ene_path_ct_concordance,VARCHAR,179,Core/Other
+ene_path_levels,VARCHAR,180,Core/Other
+ene_path_nlp,VARCHAR,181,Core/Other
+ene_path_synoptic,VARCHAR,182,Core/Other
+ene_pet,VARCHAR,183,Core/Other
+ene_positive,BOOLEAN,184,Core/Other
+ene_rai_scan,VARCHAR,185,Core/Other
+ene_record_count_v9,BIGINT,186,Core/Other
+ene_us,VARCHAR,187,Core/Other
+ete_grade,VARCHAR,188,ETE
+ete_grade_source,VARCHAR,189,ETE
+ete_op_note_confidence,VARCHAR,190,ETE
+ete_op_note_grade,VARCHAR,191,ETE
+ete_original_grade,VARCHAR,192,ETE
+ete_original_source,VARCHAR,193,ETE
+ete_refined_grade,VARCHAR,194,ETE
+ete_subgrade_method,VARCHAR,195,ETE
+ete_subgrade_note,VARCHAR,196,ETE
+first_recurrence_date,TIMESTAMP,197,Core/Other
+first_surgery_date,TIMESTAMP,198,Core/Other
+first_tg_date,DATE,199,Core/Other
+fna_bethesda_confidence,DOUBLE,200,Core/Other
+fna_bethesda_source,VARCHAR,201,Core/Other
+fna_confidence,DOUBLE,202,Core/Other
+fna_path_concordance_category,VARCHAR,203,Core/Other
+fna_path_concordant,BOOLEAN,204,Core/Other
+fna_path_outcome,VARCHAR,205,Core/Other
+followup_category,VARCHAR,206,Core/Other
+followup_completeness_score,INTEGER,207,Core/Other
+followup_days,BIGINT,208,Core/Other
+followup_years,DOUBLE,209,Core/Other
+gland_weight_combined_g,DOUBLE,210,Core/Other
+gland_weight_final_g,DOUBLE,211,Core/Other
+gland_weight_isthmus_g,DOUBLE,212,Core/Other
+gland_weight_left_lobe_g,DOUBLE,213,Core/Other
+gland_weight_right_lobe_g,DOUBLE,214,Core/Other
+gland_weight_source,VARCHAR,215,Core/Other
+gland_weight_total_reported_g,DOUBLE,216,Core/Other
+gm_lab_completeness_score,INTEGER,217,Core/Other
+gm_macis_calculable_flag,BOOLEAN,218,Core/Other
+gm_path_ene_raw,VARCHAR,219,Core/Other
+gm_path_ete_raw,VARCHAR,220,Core/Other
+gm_path_lvi_raw,VARCHAR,221,Core/Other
+gm_path_m_stage_raw,VARCHAR,222,Core/Other
+gm_path_pni_raw,VARCHAR,223,Core/Other
+gm_path_stage_raw,VARCHAR,224,Core/Other
+gm_path_vascular_inv_raw,VARCHAR,225,Core/Other
+gm_provenance_confidence,INTEGER,226,Core/Other
+gm_rai_date_confidence,VARCHAR,227,Core/Other
+gm_rai_date_source,VARCHAR,228,Core/Other
+gm_recurrence_date_source,VARCHAR,229,Core/Other
+gm_recurrence_site_primary,VARCHAR,230,Core/Other
+gm_recurrence_source,VARCHAR,231,Core/Other
+gm_recurrence_type_primary,VARCHAR,232,Core/Other
+gm_tg_below_threshold_ever,BOOLEAN,233,Core/Other
+gross_ete_flag,BOOLEAN,234,Core/Other
+has_low_calcium_flag,BOOLEAN,235,Core/Other
+has_low_pth_flag,BOOLEAN,236,Core/Other
+has_suspicious_candidate,BOOLEAN,237,Core/Other
+has_voice_data,BOOLEAN,238,Core/Other
+hematoma_status,VARCHAR,239,Core/Other
+high_risk_molecular_v7,BOOLEAN,240,Core/Other
+histology_final,VARCHAR,241,Core/Other
+histology_source,VARCHAR,242,Core/Other
+hras_positive_v11,BOOLEAN,243,Core/Other
+hypocalcemia_status,VARCHAR,244,Core/Other
+hypoparathyroidism_status,VARCHAR,245,Core/Other
+ihc_braf_confidence_v13,DOUBLE,246,Core/Other
+ihc_braf_note_type_v13,VARCHAR,247,Core/Other
+ihc_braf_result_v13,VARCHAR,248,Core/Other
+imaging_ln_abnormal,BOOLEAN,249,Core/Other
+imaging_n_nodule_records,BIGINT,250,Core/Other
+imaging_nodule_size_cm_v11,DOUBLE,251,Core/Other
+imaging_suspicious_unconfirmed,BOOLEAN,252,Core/Other
+imaging_tirads_source,VARCHAR,253,Core/Other
+is_malignant,BOOLEAN,254,Core/Other
+kras_positive_v11,BOOLEAN,255,Core/Other
+last_contact_date,TIMESTAMP,256,Core/Other
+last_contact_source,VARCHAR,257,Core/Other
+last_tg_date,DATE,258,Core/Other
+lateral_detection_method,VARCHAR,259,Core/Other
+lateral_levels_v10,VARCHAR,260,Core/Other
+lateral_neck_dissected_v10,BOOLEAN,261,Core/Other
+lateral_side_v10,VARCHAR,262,Core/Other
+lateral_source_v10,VARCHAR,263,Core/Other
+laterality,VARCHAR,264,Core/Other
+ln_burden_band,VARCHAR,265,Lymph Node Path
+ln_ene_status,VARCHAR,266,Lymph Node Path
+ln_lateral_dissected,BOOLEAN,267,Lymph Node Path
+ln_level_i_examined,BIGINT,268,Lymph Node Path
+ln_level_i_positive,BIGINT,269,Lymph Node Path
+ln_level_ii_examined,BIGINT,270,Lymph Node Path
+ln_level_ii_positive,BIGINT,271,Lymph Node Path
+ln_level_iii_examined,BIGINT,272,Lymph Node Path
+ln_level_iii_positive,BIGINT,273,Lymph Node Path
+ln_level_iv_examined,BIGINT,274,Lymph Node Path
+ln_level_iv_positive,BIGINT,275,Lymph Node Path
+ln_level_v_examined,BIGINT,276,Lymph Node Path
+ln_level_v_positive,BIGINT,277,Lymph Node Path
+ln_level_vi_examined,BIGINT,278,Lymph Node Path
+ln_level_vi_positive,BIGINT,279,Lymph Node Path
+ln_level_vii_examined,BIGINT,280,Lymph Node Path
+ln_level_vii_positive,BIGINT,281,Lymph Node Path
+ln_mets_atc,BOOLEAN,282,Lymph Node Path
+ln_mets_ene_count,BOOLEAN,283,Lymph Node Path
+ln_mets_ftc,BOOLEAN,284,Lymph Node Path
+ln_mets_hurthle,BOOLEAN,285,Lymph Node Path
+ln_mets_micrometastasis,BOOLEAN,286,Lymph Node Path
+ln_mets_mtc,BOOLEAN,287,Lymph Node Path
+ln_mets_pdtc,BOOLEAN,288,Lymph Node Path
+ln_mets_ptc,BOOLEAN,289,Lymph Node Path
+ln_positive_flag,INTEGER,290,Lymph Node Path
+ln_ratio,DOUBLE,291,Lymph Node Path
+ln_rollup_any_positive,BOOLEAN,292,Lymph Node Path
+ln_rollup_bilateral_lateral_examined,BIGINT,293,Lymph Node Path
+ln_rollup_bilateral_lateral_positive,BIGINT,294,Lymph Node Path
+ln_rollup_central_examined,BIGINT,295,Lymph Node Path
+ln_rollup_central_positive,BIGINT,296,Lymph Node Path
+ln_rollup_crossval_status,VARCHAR,297,Lymph Node Path
+ln_rollup_ene,BIGINT,298,Lymph Node Path
+ln_rollup_has_per_level_data,BOOLEAN,299,Lymph Node Path
+ln_rollup_internal_consistency,VARCHAR,300,Lymph Node Path
+ln_rollup_largest_deposit_cm,DOUBLE,301,Lymph Node Path
+ln_rollup_lateral_left_examined,BIGINT,302,Lymph Node Path
+ln_rollup_lateral_left_positive,BIGINT,303,Lymph Node Path
+ln_rollup_lateral_right_examined,BIGINT,304,Lymph Node Path
+ln_rollup_lateral_right_positive,BIGINT,305,Lymph Node Path
+ln_rollup_mets_atc,BOOLEAN,306,Lymph Node Path
+ln_rollup_mets_cystic,BOOLEAN,307,Lymph Node Path
+ln_rollup_mets_ene,BOOLEAN,308,Lymph Node Path
+ln_rollup_mets_ftc,BOOLEAN,309,Lymph Node Path
+ln_rollup_mets_hurthle,BOOLEAN,310,Lymph Node Path
+ln_rollup_mets_micrometastasis,BOOLEAN,311,Lymph Node Path
+ln_rollup_mets_mtc,BOOLEAN,312,Lymph Node Path
+ln_rollup_mets_pdtc,BOOLEAN,313,Lymph Node Path
+ln_rollup_mets_ptc,BOOLEAN,314,Lymph Node Path
+ln_rollup_mets_ptc_variant,VARCHAR,315,Lymph Node Path
+ln_rollup_other_examined,BIGINT,316,Lymph Node Path
+ln_rollup_other_positive,BIGINT,317,Lymph Node Path
+ln_rollup_ratio,DOUBLE,318,Lymph Node Path
+ln_rollup_source,VARCHAR,319,Lymph Node Path
+ln_rollup_total_examined,BIGINT,320,Lymph Node Path
+ln_rollup_total_levels_involved,BIGINT,321,Lymph Node Path
+ln_rollup_total_positive,BIGINT,322,Lymph Node Path
+ln_total_examined,INTEGER,323,Lymph Node Path
+ln_total_positive,INTEGER,324,Lymph Node Path
+longitudinal_assessment_available,BOOLEAN,325,Core/Other
+lvi_grade,VARCHAR,326,Core/Other
+lvi_grade_final_v13,VARCHAR,327,Core/Other
+macis_calculable_flag,BOOLEAN,328,Core/Other
+macis_missing_components,VARCHAR,329,Core/Other
+macis_risk_group,VARCHAR,330,Core/Other
+macis_score,DOUBLE,331,Core/Other
+margin_r_class,VARCHAR,332,Core/Other
+margin_r_class_v10,VARCHAR,333,Core/Other
+margin_r_classification,VARCHAR,334,Core/Other
+margin_status,VARCHAR,335,Core/Other
+max_stimulated_tg,DOUBLE,336,Core/Other
+max_tirads_ever,BIGINT,337,Core/Other
+max_tumor_size_cm_v10,DOUBLE,338,Core/Other
+med_nlp_calcitriol,BOOLEAN,339,Core/Other
+med_nlp_calcitriol_date,DATE,340,Core/Other
+med_nlp_calcitriol_n_mentions,BIGINT,341,Core/Other
+med_nlp_calcium_supplement,BOOLEAN,342,Core/Other
+med_nlp_calcium_supplement_date,DATE,343,Core/Other
+med_nlp_calcium_supplement_n_mentions,BIGINT,344,Core/Other
+med_nlp_extraction_method,VARCHAR,345,Core/Other
+med_nlp_levothyroxine,BOOLEAN,346,Core/Other
+med_nlp_levothyroxine_date,DATE,347,Core/Other
+med_nlp_levothyroxine_n_mentions,BIGINT,348,Core/Other
+med_nlp_n_source_notes,BIGINT,349,Core/Other
+med_nlp_note_types,VARCHAR,350,Core/Other
+mol_first_test_date,TIMESTAMP,351,Core/Other
+mol_genes_list,VARCHAR,352,Core/Other
+mol_has_afirma,BOOLEAN,353,Core/Other
+mol_has_dicer1,BOOLEAN,354,Core/Other
+mol_has_fusion,BOOLEAN,355,Core/Other
+mol_has_pik3ca,BOOLEAN,356,Core/Other
+mol_has_snv,BOOLEAN,357,Core/Other
+mol_has_thyroseq,BOOLEAN,358,Core/Other
+mol_has_tshr,BOOLEAN,359,Core/Other
+mol_n_distinct_genes,BIGINT,360,Core/Other
+mol_n_fusions,BIGINT,361,Core/Other
+mol_n_snvs,BIGINT,362,Core/Other
+mol_n_tests,BIGINT,363,Core/Other
+mol_n_variants_total,BIGINT,364,Core/Other
+mol_platform,VARCHAR,365,Core/Other
+mol_test_count,BIGINT,366,Core/Other
+mol_test_date,TIMESTAMP,367,Core/Other
+mol_variant_classes,VARCHAR,368,Core/Other
+molecular_data_confidence,VARCHAR,369,Core/Other
+molecular_eligible_flag,BOOLEAN,370,Core/Other
+molecular_platforms_v7,VARCHAR,371,Core/Other
+molecular_risk_calculable_flag,BOOLEAN,372,Core/Other
+molecular_risk_tier,VARCHAR,373,Core/Other
+molecular_tested_confirmed,BOOLEAN,374,Core/Other
+molecular_tested_v7,BOOLEAN,375,Core/Other
+mri_contrast_used_any,BOOLEAN,376,MRI
+mri_exam_type_first,VARCHAR,377,MRI
+mri_first_date,DATE,378,MRI
+mri_has_data,BOOLEAN,379,MRI
+mri_has_dimensions,BOOLEAN,380,MRI
+mri_has_dominant_nodule,BOOLEAN,381,MRI
+mri_impression_first,VARCHAR,382,MRI
+mri_impression_last,VARCHAR,383,MRI
+mri_indication_first,VARCHAR,384,MRI
+mri_key_findings_last,VARCHAR,385,MRI
+mri_last_date,DATE,386,MRI
+mri_ln_mentioned_any,BOOLEAN,387,MRI
+mri_mass_effect_any,BOOLEAN,388,MRI
+mri_n_exams,BIGINT,389,MRI
+mri_pathologic_ln_any,BOOLEAN,390,MRI
+mri_recommendation_last,VARCHAR,391,MRI
+mri_substernal_any,BOOLEAN,392,MRI
+mri_substernal_extension_any,BOOLEAN,393,MRI
+mri_thyroid_assessment_worst,VARCHAR,394,MRI
+mri_thyroid_enlarged_any,BOOLEAN,395,MRI
+mri_thyroid_nodule_any,BOOLEAN,396,MRI
+mri_vocal_cords_described,BOOLEAN,397,MRI
+mri_vocal_cords_normal,BOOLEAN,398,MRI
+multifocal_flag,BOOLEAN,399,Core/Other
+n_confirmed_complications,BIGINT,400,Core/Other
+n_fna_cytology_records,BIGINT,401,Core/Other
+n_fna_episodes,BIGINT,402,Core/Other
+n_molecular_tests_v7,BIGINT,403,Core/Other
+n_rai_episodes,BIGINT,404,Core/Other
+n_tg_measurements_structured,BIGINT,405,Core/Other
+n_tgab_measurements,BIGINT,406,Core/Other
+n_tumors,INTEGER,407,Core/Other
+n_tumors_v10,INTEGER,408,Core/Other
+n_us_exams,BIGINT,409,Core/Other
+n_us_nodules_total,BIGINT,410,Core/Other
+n_us_with_ln_assessment,BIGINT,411,Core/Other
+nlp_airway_has_data,BOOLEAN,412,NLP Entities
+nlp_airway_key_finding,VARCHAR,413,NLP Entities
+nlp_airway_n_entities,BIGINT,414,NLP Entities
+nlp_airway_n_notes,BIGINT,415,NLP Entities
+nlp_dynrisk_has_data,BOOLEAN,416,NLP Entities
+nlp_dynrisk_key_finding,VARCHAR,417,NLP Entities
+nlp_dynrisk_n_entities,BIGINT,418,NLP Entities
+nlp_dynrisk_n_notes,BIGINT,419,NLP Entities
+nlp_frozensec_has_data,BOOLEAN,420,NLP Entities
+nlp_frozensec_key_finding,VARCHAR,421,NLP Entities
+nlp_frozensec_n_entities,BIGINT,422,NLP Entities
+nlp_frozensec_n_notes,BIGINT,423,NLP Entities
+nlp_funcoutcome_has_data,BOOLEAN,424,NLP Entities
+nlp_funcoutcome_key_finding,VARCHAR,425,NLP Entities
+nlp_funcoutcome_n_entities,BIGINT,426,NLP Entities
+nlp_funcoutcome_n_notes,BIGINT,427,NLP Entities
+nlp_imaging_has_data,BOOLEAN,428,NLP Entities
+nlp_imaging_key_finding,VARCHAR,429,NLP Entities
+nlp_imaging_n_entities,BIGINT,430,NLP Entities
+nlp_imaging_n_notes,BIGINT,431,NLP Entities
+nlp_labs_has_data,BOOLEAN,432,NLP Entities
+nlp_labs_key_finding,VARCHAR,433,NLP Entities
+nlp_labs_n_entities,BIGINT,434,NLP Entities
+nlp_labs_n_notes,BIGINT,435,NLP Entities
+nlp_ln_has_data,BOOLEAN,436,NLP Entities
+nlp_ln_levels_mentioned,VARCHAR,437,NLP Entities
+nlp_ln_n_entities,BIGINT,438,NLP Entities
+nlp_ln_n_notes,BIGINT,439,NLP Entities
+nlp_ln_positive_mentioned,BOOLEAN,440,NLP Entities
+nlp_ne_complications_has_data,BOOLEAN,441,NLP Entities
+nlp_ne_complications_n_rows,BIGINT,442,NLP Entities
+nlp_ne_genetics_has_data,BOOLEAN,443,NLP Entities
+nlp_ne_genetics_n_rows,BIGINT,444,NLP Entities
+nlp_ne_medications_has_data,BOOLEAN,445,NLP Entities
+nlp_ne_medications_n_rows,BIGINT,446,NLP Entities
+nlp_ne_operative_has_data,BOOLEAN,447,NLP Entities
+nlp_ne_operative_n_rows,BIGINT,448,NLP Entities
+nlp_ne_problemlist_has_data,BOOLEAN,449,NLP Entities
+nlp_ne_problemlist_n_rows,BIGINT,450,NLP Entities
+nlp_ne_procedures_has_data,BOOLEAN,451,NLP Entities
+nlp_ne_procedures_n_rows,BIGINT,452,NLP Entities
+nlp_ne_staging_has_data,BOOLEAN,453,NLP Entities
+nlp_ne_staging_n_rows,BIGINT,454,NLP Entities
+nlp_parathyroid_has_data,BOOLEAN,455,NLP Entities
+nlp_parathyroid_key_finding,VARCHAR,456,NLP Entities
+nlp_parathyroid_n_entities,BIGINT,457,NLP Entities
+nlp_parathyroid_n_notes,BIGINT,458,NLP Entities
+nlp_path_ete_mentioned,BOOLEAN,459,NLP Entities
+nlp_path_has_data,BOOLEAN,460,NLP Entities
+nlp_path_histology_mentioned,VARCHAR,461,NLP Entities
+nlp_path_ln_positive_mentioned,BOOLEAN,462,NLP Entities
+nlp_path_margin_mentioned,BOOLEAN,463,NLP Entities
+nlp_path_multifocal_mentioned,BOOLEAN,464,NLP Entities
+nlp_path_n_entities,BIGINT,465,NLP Entities
+nlp_path_n_notes,BIGINT,466,NLP Entities
+nlp_path_vasc_inv_mentioned,BOOLEAN,467,NLP Entities
+nlp_physexam_has_data,BOOLEAN,468,NLP Entities
+nlp_physexam_key_finding,VARCHAR,469,NLP Entities
+nlp_physexam_n_entities,BIGINT,470,NLP Entities
+nlp_physexam_n_notes,BIGINT,471,NLP Entities
+nlp_pmhx_has_data,BOOLEAN,472,NLP Entities
+nlp_pmhx_key_finding,VARCHAR,473,NLP Entities
+nlp_pmhx_n_entities,BIGINT,474,NLP Entities
+nlp_pmhx_n_notes,BIGINT,475,NLP Entities
+nlp_pshx_has_data,BOOLEAN,476,NLP Entities
+nlp_pshx_key_finding,VARCHAR,477,NLP Entities
+nlp_pshx_n_entities,BIGINT,478,NLP Entities
+nlp_pshx_n_notes,BIGINT,479,NLP Entities
+nlp_ptdecision_has_data,BOOLEAN,480,NLP Entities
+nlp_ptdecision_key_finding,VARCHAR,481,NLP Entities
+nlp_ptdecision_n_entities,BIGINT,482,NLP Entities
+nlp_ptdecision_n_notes,BIGINT,483,NLP Entities
+nlp_radtx_has_data,BOOLEAN,484,NLP Entities
+nlp_radtx_key_finding,VARCHAR,485,NLP Entities
+nlp_radtx_n_entities,BIGINT,486,NLP Entities
+nlp_radtx_n_notes,BIGINT,487,NLP Entities
+nlp_raidetail_has_data,BOOLEAN,488,NLP Entities
+nlp_raidetail_key_finding,VARCHAR,489,NLP Entities
+nlp_raidetail_n_entities,BIGINT,490,NLP Entities
+nlp_raidetail_n_notes,BIGINT,491,NLP Entities
+nlp_rec_any_mentioned,BOOLEAN,492,NLP Entities
+nlp_rec_confidence_tier,VARCHAR,493,NLP Entities
+nlp_rec_disease_free_mentioned,BOOLEAN,494,NLP Entities
+nlp_rec_earliest_date,DATE,495,NLP Entities
+nlp_rec_has_data,BOOLEAN,496,NLP Entities
+nlp_rec_n_entities,BIGINT,497,NLP Entities
+nlp_rec_type_worst,VARCHAR,498,NLP Entities
+nlp_survfu_has_data,BOOLEAN,499,NLP Entities
+nlp_survfu_key_finding,VARCHAR,500,NLP Entities
+nlp_survfu_n_entities,BIGINT,501,NLP Entities
+nlp_survfu_n_notes,BIGINT,502,NLP Entities
+nlp_symptoms_has_data,BOOLEAN,503,NLP Entities
+nlp_symptoms_key_finding,VARCHAR,504,NLP Entities
+nlp_symptoms_n_entities,BIGINT,505,NLP Entities
+nlp_symptoms_n_notes,BIGINT,506,NLP Entities
+nlp_synoptic_has_data,BOOLEAN,507,NLP Entities
+nlp_synoptic_key_finding,VARCHAR,508,NLP Entities
+nlp_synoptic_n_entities,BIGINT,509,NLP Entities
+nlp_synoptic_n_notes,BIGINT,510,NLP Entities
+nlp_tg_has_data,BOOLEAN,511,NLP Entities
+nlp_tg_n_entities,BIGINT,512,NLP Entities
+nlp_tg_rising_mentioned,BOOLEAN,513,NLP Entities
+nlp_tg_undetectable_mentioned,BOOLEAN,514,NLP Entities
+nlp_tirads_has_component_detail,BOOLEAN,515,NLP Entities
+nlp_tirads_has_data,BOOLEAN,516,NLP Entities
+nlp_tirads_max_category,VARCHAR,517,NLP Entities
+nlp_tirads_n_entities,BIGINT,518,NLP Entities
+nlp_tirads_n_notes,BIGINT,519,NLP Entities
+nlp_usnodule_has_data,BOOLEAN,520,NLP Entities
+nlp_usnodule_key_finding,VARCHAR,521,NLP Entities
+nlp_usnodule_n_entities,BIGINT,522,NLP Entities
+nlp_usnodule_n_notes,BIGINT,523,NLP Entities
+nlp_vasc_confidence_tier,VARCHAR,524,NLP Entities
+nlp_vasc_has_data,BOOLEAN,525,NLP Entities
+nlp_vasc_n_entities,BIGINT,526,NLP Entities
+nlp_vasc_positive_mentioned,BOOLEAN,527,NLP Entities
+nras_positive_v11,BOOLEAN,528,Core/Other
+nsqip_age_at_surgery,DOUBLE,529,NSQIP
+nsqip_asa_class,VARCHAR,530,NSQIP
+nsqip_bmi,DOUBLE,531,NSQIP
+nsqip_diabetes,VARCHAR,532,NSQIP
+nsqip_functional_status,VARCHAR,533,NSQIP
+nsqip_height_in,DOUBLE,534,NSQIP
+nsqip_hypertension,VARCHAR,535,NSQIP
+nsqip_length_of_stay_days,BIGINT,536,NSQIP
+nsqip_sex,VARCHAR,537,NSQIP
+nsqip_smoker,VARCHAR,538,NSQIP
+nsqip_source,VARCHAR,539,NSQIP
+nsqip_weight_lbs,DOUBLE,540,NSQIP
+ntrk_positive_v7,BOOLEAN,541,Core/Other
+nucmed_has_rai_scan,BOOLEAN,542,Nuclear Med
+nucmed_n_scans,BIGINT,543,Nuclear Med
+nucmed_scan_types,VARCHAR,544,Nuclear Med
+nucmed_uptake_24hr_max,DOUBLE,545,Nuclear Med
+op_drain_placed_any,BOOLEAN,546,Core/Other
+op_esophageal_inv_any,BOOLEAN,547,Core/Other
+op_findings_summary,VARCHAR,548,Core/Other
+op_intraop_gross_ete_any,BOOLEAN,549,Core/Other
+op_local_invasion_any,BOOLEAN,550,Core/Other
+op_n_surgeries_with_findings,INTEGER,551,Core/Other
+op_nlp_berry_ligament_date,DATE,552,Operative NLP
+op_nlp_berry_ligament_dissected,BOOLEAN,553,Operative NLP
+op_nlp_berry_ligament_mentioned,BOOLEAN,554,Operative NLP
+op_nlp_berry_ligament_n_mentions,BIGINT,555,Operative NLP
+op_nlp_drain_date,DATE,556,Operative NLP
+op_nlp_drain_placed,BOOLEAN,557,Operative NLP
+op_nlp_drain_placed_n_mentions,BIGINT,558,Operative NLP
+op_nlp_ebl_date,DATE,559,Operative NLP
+op_nlp_ebl_ml,DOUBLE,560,Operative NLP
+op_nlp_ebl_n_mentions,BIGINT,561,Operative NLP
+op_nlp_esophageal_involvement,BOOLEAN,562,Operative NLP
+op_nlp_esophageal_n_mentions,BIGINT,563,Operative NLP
+op_nlp_extraction_method,VARCHAR,564,Operative NLP
+op_nlp_gross_invasion,BOOLEAN,565,Operative NLP
+op_nlp_intraop_complication,BOOLEAN,566,Operative NLP
+op_nlp_intraop_complication_date,DATE,567,Operative NLP
+op_nlp_intraop_complication_n_mentions,BIGINT,568,Operative NLP
+op_nlp_n_source_notes,BIGINT,569,Operative NLP
+op_nlp_nerve_monitoring_date,DATE,570,Operative NLP
+op_nlp_nerve_monitoring_n_mentions,BIGINT,571,Operative NLP
+op_nlp_nerve_monitoring_type,VARCHAR,572,Operative NLP
+op_nlp_nerve_monitoring_used,BOOLEAN,573,Operative NLP
+op_nlp_note_types,VARCHAR,574,Operative NLP
+op_nlp_parathyroid_autograft,BOOLEAN,575,Operative NLP
+op_nlp_parathyroid_autograft_n_mentions,BIGINT,576,Operative NLP
+op_nlp_parathyroid_date,DATE,577,Operative NLP
+op_nlp_parathyroid_managed,BOOLEAN,578,Operative NLP
+op_nlp_parathyroid_managed_n_mentions,BIGINT,579,Operative NLP
+op_nlp_reoperative_field,BOOLEAN,580,Operative NLP
+op_nlp_reoperative_n_mentions,BIGINT,581,Operative NLP
+op_nlp_rln_finding,BOOLEAN,582,Operative NLP
+op_nlp_rln_finding_date,DATE,583,Operative NLP
+op_nlp_rln_finding_n_mentions,BIGINT,584,Operative NLP
+op_nlp_strap_muscle_involved,BOOLEAN,585,Operative NLP
+op_nlp_strap_muscle_n_mentions,BIGINT,586,Operative NLP
+op_nlp_tracheal_involvement,BOOLEAN,587,Operative NLP
+op_nlp_tracheal_n_mentions,BIGINT,588,Operative NLP
+op_parathyroid_autograft_any,BOOLEAN,589,Core/Other
+op_reoperative_any,BOOLEAN,590,Core/Other
+op_rln_monitoring_any,BOOLEAN,591,Core/Other
+op_strap_muscle_any,BOOLEAN,592,Core/Other
+op_tracheal_inv_any,BOOLEAN,593,Core/Other
+ops_anticoagulation_meds,VARCHAR,594,OP Sheet
+ops_bmi,DOUBLE,595,OP Sheet
+ops_cervical_ln_us_performed,VARCHAR,596,OP Sheet
+ops_difficult_airway,VARCHAR,597,OP Sheet
+ops_dominant_nodule_bethesda,VARCHAR,598,OP Sheet
+ops_dominant_nodule_location,VARCHAR,599,OP Sheet
+ops_dominant_nodule_size_us,VARCHAR,600,OP Sheet
+ops_ebl_ml,VARCHAR,601,OP Sheet
+ops_family_hx_thyroid_ca,VARCHAR,602,OP Sheet
+ops_head_neck_us_findings,VARCHAR,603,OP Sheet
+ops_intraop_appearance,VARCHAR,604,OP Sheet
+ops_intraop_nodule_count,VARCHAR,605,OP Sheet
+ops_io_tumor_appearance,VARCHAR,606,OP Sheet
+ops_ll_ag,DOUBLE,607,OP Sheet
+ops_ll_para_visualized,VARCHAR,608,OP Sheet
+ops_ll_resection,DOUBLE,609,OP Sheet
+ops_lu_ag,DOUBLE,610,OP Sheet
+ops_lu_para_visualized,VARCHAR,611,OP Sheet
+ops_lu_resection,DOUBLE,612,OP Sheet
+ops_max_diameter_cm,VARCHAR,613,OP Sheet
+ops_nerve_stim_final,VARCHAR,614,OP Sheet
+ops_nerve_stim_left,VARCHAR,615,OP Sheet
+ops_nerve_stim_right,VARCHAR,616,OP Sheet
+ops_other_ag,VARCHAR,617,OP Sheet
+ops_palpable_lesion,VARCHAR,618,OP Sheet
+ops_para_ag_performed,VARCHAR,619,OP Sheet
+ops_parathyroid_ag_notes,VARCHAR,620,OP Sheet
+ops_parathyroidectomy,VARCHAR,621,OP Sheet
+ops_periop_complications,VARCHAR,622,OP Sheet
+ops_preop_diagnosis,VARCHAR,623,OP Sheet
+ops_preop_imaging_performed,VARCHAR,624,OP Sheet
+ops_preop_laryngoscopy,VARCHAR,625,OP Sheet
+ops_preop_nodules_count_size,VARCHAR,626,OP Sheet
+ops_preop_symptoms,VARCHAR,627,OP Sheet
+ops_prior_neck_irradiation,VARCHAR,628,OP Sheet
+ops_prior_neck_operation,VARCHAR,629,OP Sheet
+ops_rl_ag,VARCHAR,630,OP Sheet
+ops_rl_para_visualized,DOUBLE,631,OP Sheet
+ops_rl_resection,DOUBLE,632,OP Sheet
+ops_ru_ag,DOUBLE,633,OP Sheet
+ops_ru_para_visualized,VARCHAR,634,OP Sheet
+ops_ru_resection,DOUBLE,635,OP Sheet
+ops_skin_to_skin_min,DOUBLE,636,OP Sheet
+ops_supranumerary_para,VARCHAR,637,OP Sheet
+ops_surg_date,VARCHAR,638,OP Sheet
+ops_surgeon,VARCHAR,639,OP Sheet
+ops_thyroid_scintigraphy,VARCHAR,640,OP Sheet
+ops_tumor_side,VARCHAR,641,OP Sheet
+path_gross_ete_flag,BIGINT,642,Core/Other
+path_histology_raw,VARCHAR,643,Core/Other
+path_histology_variant_raw,VARCHAR,644,Core/Other
+path_margin_raw,VARCHAR,645,Core/Other
+path_n_stage_raw,VARCHAR,646,Core/Other
+path_t_stage_raw,VARCHAR,647,Core/Other
+pax8_pparg_positive,BOOLEAN,648,Core/Other
+perineural_invasion,VARCHAR,649,Core/Other
+pet_distant_met_sites,VARCHAR,650,PET/CT
+pet_distant_mets_ever,BOOLEAN,651,PET/CT
+pet_fdg_avid_cervical_ln_ever,BOOLEAN,652,PET/CT
+pet_fdg_avid_thyroid_bed_ever,BOOLEAN,653,PET/CT
+pet_first_date,VARCHAR,654,PET/CT
+pet_has_data,BOOLEAN,655,PET/CT
+pet_impression_last,VARCHAR,656,PET/CT
+pet_indication_first,VARCHAR,657,PET/CT
+pet_last_date,VARCHAR,658,PET/CT
+pet_n_exams,BIGINT,659,PET/CT
+pet_overall_worst,VARCHAR,660,PET/CT
+pet_radiotracer_primary,VARCHAR,661,PET/CT
+pet_suv_max_cervical_ln,DOUBLE,662,PET/CT
+pet_suv_max_thyroid_bed,DOUBLE,663,PET/CT
+pmhx_llm_extraction_method,VARCHAR,664,Core/Other
+pmhx_llm_mean_confidence,DOUBLE,665,Core/Other
+pmhx_llm_min_confidence,DOUBLE,666,Core/Other
+pmhx_llm_n_source_notes,BIGINT,667,Core/Other
+pmhx_llm_note_types,VARCHAR,668,Core/Other
+pmhx_nlp_afib,BOOLEAN,669,Core/Other
+pmhx_nlp_afib_n_mentions,BIGINT,670,Core/Other
+pmhx_nlp_asthma,BOOLEAN,671,Core/Other
+pmhx_nlp_asthma_n_mentions,BIGINT,672,Core/Other
+pmhx_nlp_autoimmune_thyroid_hx,BOOLEAN,673,Core/Other
+pmhx_nlp_autoimmune_thyroid_hx_n_mentions,BIGINT,674,Core/Other
+pmhx_nlp_breast_cancer,BOOLEAN,675,Core/Other
+pmhx_nlp_breast_cancer_n_mentions,BIGINT,676,Core/Other
+pmhx_nlp_cad,BOOLEAN,677,Core/Other
+pmhx_nlp_cad_n_mentions,BIGINT,678,Core/Other
+pmhx_nlp_ckd,BOOLEAN,679,Core/Other
+pmhx_nlp_ckd_n_mentions,BIGINT,680,Core/Other
+pmhx_nlp_coagulopathy,BOOLEAN,681,Core/Other
+pmhx_nlp_comorbidity_list,VARCHAR,682,Core/Other
+pmhx_nlp_copd,BOOLEAN,683,Core/Other
+pmhx_nlp_copd_n_mentions,BIGINT,684,Core/Other
+pmhx_nlp_depression,BOOLEAN,685,Core/Other
+pmhx_nlp_depression_n_mentions,BIGINT,686,Core/Other
+pmhx_nlp_diabetes,BOOLEAN,687,Core/Other
+pmhx_nlp_diabetes_first_date,DATE,688,Core/Other
+pmhx_nlp_diabetes_n_mentions,BIGINT,689,Core/Other
+pmhx_nlp_extraction_method,VARCHAR,690,Core/Other
+pmhx_nlp_family_hx_cancer,BOOLEAN,691,Core/Other
+pmhx_nlp_family_hx_thyroid,BOOLEAN,692,Core/Other
+pmhx_nlp_family_hx_thyroid_n_mentions,BIGINT,693,Core/Other
+pmhx_nlp_gerd,BOOLEAN,694,Core/Other
+pmhx_nlp_gerd_n_mentions,BIGINT,695,Core/Other
+pmhx_nlp_hypertension,BOOLEAN,696,Core/Other
+pmhx_nlp_hypertension_first_date,DATE,697,Core/Other
+pmhx_nlp_hypertension_n_mentions,BIGINT,698,Core/Other
+pmhx_nlp_hyperthyroidism,BOOLEAN,699,Core/Other
+pmhx_nlp_hyperthyroidism_first_date,DATE,700,Core/Other
+pmhx_nlp_hyperthyroidism_n_mentions,BIGINT,701,Core/Other
+pmhx_nlp_hypothyroidism,BOOLEAN,702,Core/Other
+pmhx_nlp_hypothyroidism_first_date,DATE,703,Core/Other
+pmhx_nlp_hypothyroidism_n_mentions,BIGINT,704,Core/Other
+pmhx_nlp_lung_cancer,BOOLEAN,705,Core/Other
+pmhx_nlp_lung_cancer_n_mentions,BIGINT,706,Core/Other
+pmhx_nlp_men_syndrome,BOOLEAN,707,Core/Other
+pmhx_nlp_n_comorbidities,BIGINT,708,Core/Other
+pmhx_nlp_n_source_notes,BIGINT,709,Core/Other
+pmhx_nlp_note_types,VARCHAR,710,Core/Other
+pmhx_nlp_obesity,BOOLEAN,711,Core/Other
+pmhx_nlp_obesity_first_date,DATE,712,Core/Other
+pmhx_nlp_obesity_n_mentions,BIGINT,713,Core/Other
+pmhx_nlp_osteoporosis,BOOLEAN,714,Core/Other
+pmhx_nlp_prior_cancer_hx,BOOLEAN,715,Core/Other
+pmhx_nlp_prior_cancer_hx_n_mentions,BIGINT,716,Core/Other
+pmhx_nlp_radiation_exposure,BOOLEAN,717,Core/Other
+pmhx_nlp_radiation_exposure_confidence,DOUBLE,718,Core/Other
+pmhx_nlp_radiation_exposure_date,DATE,719,Core/Other
+pmhx_nlp_radiation_exposure_n_mentions,BIGINT,720,Core/Other
+pmhx_nlp_smoking_status,VARCHAR,721,Core/Other
+pni_positive,BOOLEAN,722,Core/Other
+pni_refined_v6,VARCHAR,723,Core/Other
+post_rai_tg_count,BIGINT,724,Core/Other
+post_rai_tg_last,DOUBLE,725,Core/Other
+post_rai_tg_nadir,DOUBLE,726,Core/Other
+postop_calcium_min_days_postop,INTEGER,727,Core/Other
+postop_calcium_min_value,DOUBLE,728,Core/Other
+postop_calcium_n_measurements,BIGINT,729,Core/Other
+postop_calcium_source_reliability,VARCHAR,730,Core/Other
+postop_ionized_cal_min_value,DOUBLE,731,Core/Other
+postop_labs_has_data,BOOLEAN,732,Core/Other
+postop_pth_min_days_postop,INTEGER,733,Core/Other
+postop_pth_min_value,DOUBLE,734,Core/Other
+postop_pth_n_measurements,BIGINT,735,Core/Other
+postop_pth_source_reliability,VARCHAR,736,Core/Other
+preop_imaging_size_cm,DOUBLE,737,Core/Other
+preop_sweep_genes_found_v11,BIGINT,738,Core/Other
+preop_tirads_best,BIGINT,739,Core/Other
+preop_tirads_category,VARCHAR,740,Core/Other
+preop_tirads_worst,BIGINT,741,Core/Other
+prm_ete_imaging_path_concordance,VARCHAR,742,Core/Other
+prm_ete_path_confirmed,BOOLEAN,743,Core/Other
+prm_ete_rule_applied,VARCHAR,744,Core/Other
+prm_first_fna_date,DATE,745,Core/Other
+prm_fna_n_sources,INTEGER,746,Core/Other
+prm_fna_source_tables,VARCHAR,747,Core/Other
+prm_followup_clinical_events,INTEGER,748,Core/Other
+prm_followup_has_complications,BOOLEAN,749,Core/Other
+prm_followup_tg_labs,INTEGER,750,Core/Other
+prm_high_risk_marker_any,BOOLEAN,751,Core/Other
+prm_hypocalcemia_lab_flag,BOOLEAN,752,Core/Other
+prm_hypoparathyroidism_lab_flag,BOOLEAN,753,Core/Other
+prm_imaging_data_completeness,VARCHAR,754,Core/Other
+prm_last_fna_date,DATE,755,Core/Other
+prm_margin_confidence,VARCHAR,756,Core/Other
+prm_margin_source,VARCHAR,757,Core/Other
+prm_margin_with_gross_ete,VARCHAR,758,Core/Other
+prm_molecular_risk_category,VARCHAR,759,Core/Other
+prm_n_recurrence_sources,INTEGER,760,Core/Other
+prm_recurrence_detection_category,VARCHAR,761,Core/Other
+prm_rln_worst_grade,VARCHAR,762,Core/Other
+prm_size_concordance,VARCHAR,763,Core/Other
+prm_structural_disease_flag,BOOLEAN,764,Core/Other
+prm_tg_adequate_followup,BOOLEAN,765,Core/Other
+proc_nlp_extraction_method,VARCHAR,766,Core/Other
+proc_nlp_laryngoscopy,BOOLEAN,767,Core/Other
+proc_nlp_laryngoscopy_date,DATE,768,Core/Other
+proc_nlp_laryngoscopy_n_mentions,BIGINT,769,Core/Other
+proc_nlp_lateral_neck_dissection,BOOLEAN,770,Core/Other
+proc_nlp_mrnd,BOOLEAN,771,Core/Other
+proc_nlp_mrnd_n_mentions,BIGINT,772,Core/Other
+proc_nlp_n_source_notes,BIGINT,773,Core/Other
+proc_nlp_note_types,VARCHAR,774,Core/Other
+proc_nlp_parathyroid_autotransplant,BOOLEAN,775,Core/Other
+proc_nlp_tracheostomy,BOOLEAN,776,Core/Other
+proc_nlp_tracheostomy_date,DATE,777,Core/Other
+proc_nlp_tracheostomy_n_mentions,BIGINT,778,Core/Other
+pshx_llm_extraction_method,VARCHAR,779,Core/Other
+pshx_llm_mean_confidence,DOUBLE,780,Core/Other
+pshx_llm_min_confidence,DOUBLE,781,Core/Other
+pshx_llm_n_source_notes,BIGINT,782,Core/Other
+pshx_llm_note_types,VARCHAR,783,Core/Other
+pshx_nlp_n_prior_procedures,BIGINT,784,Core/Other
+pshx_nlp_prior_fna,BOOLEAN,785,Core/Other
+pshx_nlp_prior_fna_n_mentions,BIGINT,786,Core/Other
+pshx_nlp_prior_neck_dissection,BOOLEAN,787,Core/Other
+pshx_nlp_prior_neck_surgery,BOOLEAN,788,Core/Other
+pshx_nlp_prior_neck_surgery_n_mentions,BIGINT,789,Core/Other
+pshx_nlp_prior_parathyroidectomy,BOOLEAN,790,Core/Other
+pshx_nlp_prior_rai,BOOLEAN,791,Core/Other
+pshx_nlp_prior_rai_date,DATE,792,Core/Other
+pshx_nlp_prior_rai_n_mentions,BIGINT,793,Core/Other
+pshx_nlp_prior_thyroidectomy,BOOLEAN,794,Core/Other
+pshx_nlp_prior_thyroidectomy_date,DATE,795,Core/Other
+pshx_nlp_prior_thyroidectomy_n_mentions,BIGINT,796,Core/Other
+pth_nadir,DOUBLE,797,Core/Other
+pth_nadir_30d,DOUBLE,798,Core/Other
+pth_nadir_days_postop,INTEGER,799,Core/Other
+race,VARCHAR,800,Core/Other
+radtx_llm_extraction_method,VARCHAR,801,Core/Other
+radtx_llm_mean_confidence,DOUBLE,802,Core/Other
+radtx_llm_n_source_notes,BIGINT,803,Core/Other
+radtx_nlp_external_beam_radiation,BOOLEAN,804,Core/Other
+radtx_nlp_has_data,BOOLEAN,805,Core/Other
+radtx_nlp_hormone_withdrawal,BOOLEAN,806,Core/Other
+radtx_nlp_post_tx_scan_negative,BOOLEAN,807,Core/Other
+radtx_nlp_rai_ablation,BOOLEAN,808,Core/Other
+radtx_nlp_rai_ablation_n_mentions,BIGINT,809,Core/Other
+radtx_nlp_thyrogen_prep,BOOLEAN,810,Core/Other
+rai_avid_flag,BOOLEAN,811,RAI Treatment
+rai_avidity,BOOLEAN,812,RAI Treatment
+rai_dose_confidence_worst,VARCHAR,813,RAI Treatment
+rai_dose_linkage,VARCHAR,814,RAI Treatment
+rai_dose_source,VARCHAR,815,RAI Treatment
+rai_dose_v9,DOUBLE,816,RAI Treatment
+rai_eligible_flag,BOOLEAN,817,RAI Treatment
+rai_episode_date_span_days,BIGINT,818,RAI Treatment
+rai_first_date,TIMESTAMP,819,RAI Treatment
+rai_first_episode_date,DATE,820,RAI Treatment
+rai_has_adjudication,BOOLEAN,821,RAI Treatment
+rai_has_completion_status,BOOLEAN,822,RAI Treatment
+rai_intent_list,VARCHAR,823,RAI Treatment
+rai_intent_v9,VARCHAR,824,RAI Treatment
+rai_last_episode_date,DATE,825,RAI Treatment
+rai_max_dose_mci,DOUBLE,826,RAI Treatment
+rai_min_dose_mci,DOUBLE,827,RAI Treatment
+rai_n_distinct_intents,BIGINT,828,RAI Treatment
+rai_n_episodes_with_dose,BIGINT,829,RAI Treatment
+rai_received_flag,BOOLEAN,830,RAI Treatment
+rai_scan_findings_v9,INTEGER,831,RAI Treatment
+rai_stimulated_tg,DOUBLE,832,RAI Treatment
+rai_stimulated_tsh,DOUBLE,833,RAI Treatment
+rai_total_cumulative_dose_mci,DOUBLE,834,RAI Treatment
+rai_validation_tier,VARCHAR,835,RAI Treatment
+ras_allele_freq_v11,DOUBLE,836,Core/Other
+ras_positive,BOOLEAN,837,Core/Other
+ras_positive_v11,BOOLEAN,838,Core/Other
+ras_positive_v7,BOOLEAN,839,Core/Other
+ras_primary_subtype_v11,VARCHAR,840,Core/Other
+ras_protein_change_v11,VARCHAR,841,Core/Other
+ras_resolution_confidence_v13,DOUBLE,842,Core/Other
+ras_resolution_source_v13,VARCHAR,843,Core/Other
+ras_resolved_af_v13,DOUBLE,844,Core/Other
+ras_resolved_gene_v13,VARCHAR,845,Core/Other
+ras_resolved_variant_v13,VARCHAR,846,Core/Other
+ras_subtype,VARCHAR,847,Core/Other
+rec_event_rank,INTEGER,848,Core/Other
+rec_source_priority,INTEGER,849,Core/Other
+rec_source_table,VARCHAR,850,Core/Other
+rec_structural_flag,BOOLEAN,851,Core/Other
+recurrence_confirmed,BOOLEAN,852,Core/Other
+recurrence_data_confidence,VARCHAR,853,Core/Other
+recurrence_date,TIMESTAMP,854,Core/Other
+recurrence_definition,VARCHAR,855,Core/Other
+recurrence_evidence_source,VARCHAR,856,Core/Other
+recurrence_flag_scoring,BOOLEAN,857,Core/Other
+recurrence_histology,INTEGER,858,Core/Other
+recurrence_site,VARCHAR,859,Core/Other
+recurrence_type,VARCHAR,860,Core/Other
+research_id,VARCHAR,861,Core/Other
+ret_positive_v7,BOOLEAN,862,Core/Other
+rln_classification,VARCHAR,863,Core/Other
+rln_injury_days_postop,INTEGER,864,Core/Other
+rln_injury_detection_date,DATE,865,Core/Other
+rln_injury_evidence,VARCHAR,866,Core/Other
+rln_injury_is_confirmed,BOOLEAN,867,Core/Other
+rln_injury_tier,INTEGER,868,Core/Other
+rln_injury_type,VARCHAR,869,Core/Other
+rln_laterality,VARCHAR,870,Core/Other
+rln_permanent_flag,BOOLEAN,871,Core/Other
+rln_status,VARCHAR,872,Core/Other
+rln_temporality,VARCHAR,873,Core/Other
+rln_transient_flag,BOOLEAN,874,Core/Other
+seroma_status,VARCHAR,875,Core/Other
+sex,VARCHAR,876,Core/Other
+surg_hemithyroidectomy,BOOLEAN,877,Core/Other
+surg_n_procedures,BIGINT,878,Core/Other
+surg_procedure_type,VARCHAR,879,Core/Other
+surg_total_thyroidectomy,BOOLEAN,880,Core/Other
+surv_max_time_days,BIGINT,881,Core/Other
+surv_max_time_days_capped,BIGINT,882,Core/Other
+surv_n_events,BIGINT,883,Core/Other
+surv_recurrence_risk_band,VARCHAR,884,Core/Other
+surv_tg_annual_log_slope,DOUBLE,885,Core/Other
+survival_eligible_flag,BOOLEAN,886,Core/Other
+sx_llm_extraction_method,VARCHAR,887,Core/Other
+sx_llm_mean_confidence,DOUBLE,888,Core/Other
+sx_llm_n_source_notes,BIGINT,889,Core/Other
+sx_nlp_any_symptom_data,BOOLEAN,890,Core/Other
+sx_nlp_dysphagia,BOOLEAN,891,Core/Other
+sx_nlp_dyspnea,BOOLEAN,892,Core/Other
+sx_nlp_hoarseness,BOOLEAN,893,Core/Other
+sx_nlp_neck_mass,BOOLEAN,894,Core/Other
+syn_adenomatoid_nodules,BOOLEAN,895,Core/Other
+syn_architecture,VARCHAR,896,Core/Other
+syn_bilateral_neck_dissection,BOOLEAN,897,Core/Other
+syn_c_cell_hyperplasia,BOOLEAN,898,Core/Other
+syn_capsular_invasion_clean,VARCHAR,899,Core/Other
+syn_carcinoma_on_frozen,BOOLEAN,900,Core/Other
+syn_central_dissection,BOOLEAN,901,Core/Other
+syn_chronic_thyroiditis,BOOLEAN,902,Core/Other
+syn_colloid_nodule,BOOLEAN,903,Core/Other
+syn_follicular_adenoma,BOOLEAN,904,Core/Other
+syn_frozen_section,BOOLEAN,905,Core/Other
+syn_frozen_section_result,VARCHAR,906,Core/Other
+syn_graves,BOOLEAN,907,Core/Other
+syn_has_second_tumor,BOOLEAN,908,Core/Other
+syn_has_third_plus_tumor,BOOLEAN,909,Core/Other
+syn_hashimoto,BOOLEAN,910,Core/Other
+syn_histologic_grade,BIGINT,911,Core/Other
+syn_hurthle_cell_change,BOOLEAN,912,Core/Other
+syn_hyperplastic_nodules,BOOLEAN,913,Core/Other
+syn_io_rln_monitoring,BOOLEAN,914,Core/Other
+syn_isthmus_size_cm,VARCHAR,915,Core/Other
+syn_isthmus_weight_g,DOUBLE,916,Core/Other
+syn_ki67_index,VARCHAR,917,Core/Other
+syn_left_lobe_size_cm,VARCHAR,918,Core/Other
+syn_left_lobe_weight_g,DOUBLE,919,Core/Other
+syn_lymphatic_invasion_clean,VARCHAR,920,Core/Other
+syn_margin_distance_mm,VARCHAR,921,Core/Other
+syn_margin_status_synoptic,VARCHAR,922,Core/Other
+syn_mitotic_rate_numeric,DOUBLE,923,Core/Other
+syn_mitotic_rate_qualifier,VARCHAR,924,Core/Other
+syn_multinodular_goiter,BOOLEAN,925,Core/Other
+syn_n_parathyroid_identified,BIGINT,926,Core/Other
+syn_n_tumors_in_synoptic,BIGINT,927,Core/Other
+syn_necrosis_clean,VARCHAR,928,Core/Other
+syn_parathyroid_in_specimen,BOOLEAN,929,Core/Other
+syn_right_lobe_size_cm,VARCHAR,930,Core/Other
+syn_right_lobe_weight_g,DOUBLE,931,Core/Other
+syn_total_weight_g,DOUBLE,932,Core/Other
+syn_tumor2_histologic_type,VARCHAR,933,Core/Other
+syn_tumor2_size_cm,VARCHAR,934,Core/Other
+tert_platforms_v9,VARCHAR,935,Core/Other
+tert_positive,BOOLEAN,936,Core/Other
+tert_positive_v7,BOOLEAN,937,Core/Other
+tert_status_v7,VARCHAR,938,Core/Other
+tert_test_count_v9,BIGINT,939,Core/Other
+tert_tested,BOOLEAN,940,Core/Other
+tert_variant_v9,VARCHAR,941,Core/Other
+tg_last_censored,BOOLEAN,942,Thyroglobulin
+tg_last_value,DOUBLE,943,Thyroglobulin
+tg_mean,DOUBLE,944,Thyroglobulin
+tg_n_measurements,BIGINT,945,Thyroglobulin
+tg_nadir,DOUBLE,946,Thyroglobulin
+tg_peak,DOUBLE,947,Thyroglobulin
+tg_rising_flag,BOOLEAN,948,Thyroglobulin
+tg_trajectory_class,VARCHAR,949,Thyroglobulin
+tgab_interference_flag,BOOLEAN,950,Thyroglobulin
+tgab_last_value,DOUBLE,951,Thyroglobulin
+tgab_nadir,DOUBLE,952,Thyroglobulin
+tgab_peak,DOUBLE,953,Thyroglobulin
+time_to_recurrence_days,DOUBLE,954,Core/Other
+tirads_best_category_v12,VARCHAR,955,Core/Other
+tirads_best_combined,INTEGER,956,Core/Other
+tirads_best_score_v12,BIGINT,957,Core/Other
+tirads_concordant_count_v12,BIGINT,958,Core/Other
+tirads_has_acr_recalc_v12,BOOLEAN,959,Core/Other
+tirads_mismatch_count_v12,BIGINT,960,Core/Other
+tirads_n_nodule_records_v12,BIGINT,961,Core/Other
+tirads_n_sources_v12,BIGINT,962,Core/Other
+tirads_nodule_size_max_mm_v12,DOUBLE,963,Core/Other
+tirads_nodules_scored_combined,BIGINT,964,Core/Other
+tirads_reliability_v12,DOUBLE,965,Core/Other
+tirads_source_v12,VARCHAR,966,Core/Other
+tirads_worst_category_v12,VARCHAR,967,Core/Other
+tirads_worst_combined,INTEGER,968,Core/Other
+tirads_worst_score_v12,BIGINT,969,Core/Other
+total_ln_positive_v10,INTEGER,970,Core/Other
+tp53_positive_v7,BOOLEAN,971,Core/Other
+tp_central_examined,BIGINT,972,Core/Other
+tp_central_positive_total,BIGINT,973,Core/Other
+tp_ln_central_positive,BIGINT,974,Core/Other
+tp_ln_ene,BIGINT,975,Core/Other
+tp_ln_examined,BIGINT,976,Core/Other
+tp_ln_largest_deposit_cm,DOUBLE,977,Core/Other
+tp_ln_lateral_positive,BIGINT,978,Core/Other
+tp_ln_levels_involved,BIGINT,979,Core/Other
+tp_ln_positive,BIGINT,980,Core/Other
+tumor_size_cm,DOUBLE,981,Core/Other
+us_first_exam_date,DATE,982,Core/Other
+us_isthmus_thickness_mm,VARCHAR,983,Core/Other
+us_last_exam_date,DATE,984,Core/Other
+us_left_lobe_volume_ml,VARCHAR,985,Core/Other
+us_most_recent_date,DATE,986,Core/Other
+us_n_reports,BIGINT,987,Core/Other
+us_right_lobe_volume_ml,VARCHAR,988,Core/Other
+us_total_volume_ml,VARCHAR,989,Core/Other
+vasc_confidence_final_v13,DOUBLE,990,Core/Other
+vasc_grade,VARCHAR,991,Core/Other
+vasc_grade_final_v13,VARCHAR,992,Core/Other
+vasc_source_final_v13,VARCHAR,993,Core/Other
+vasc_vessel_count_v13,DOUBLE,994,Core/Other
+vascular_invasion_grade,VARCHAR,995,Core/Other
+vascular_who_2022_grade,VARCHAR,996,Core/Other
+vessel_count,DOUBLE,997,Core/Other
+voice_data_confidence,DOUBLE,998,Core/Other
+voice_followup_completeness,VARCHAR,999,Core/Other
+voice_outcome_category,VARCHAR,1000,Core/Other
+weight_kg_note,DOUBLE,1001,Core/Other
+worst_bethesda_num,BIGINT,1002,Core/Other
+worst_ete_v10,VARCHAR,1003,Core/Other
+worst_tirads_category,VARCHAR,1004,Core/Other
+wound_infection_status,VARCHAR,1005,Core/Other
+lab_tsh_n_measurements,BIGINT,1006,Labs
+lab_tsh_min,DOUBLE,1007,Labs
+lab_tsh_max,DOUBLE,1008,Labs
+lab_tsh_first_date,DATE,1009,Labs
+lab_tsh_last_date,DATE,1010,Labs
+lab_tsh_most_recent,DOUBLE,1011,Labs
+lab_tsh_most_recent_date,DATE,1012,Labs
+lab_tsh_unit,VARCHAR,1013,Labs
+lab_tsh_n_censored,BIGINT,1014,Labs
+lab_tsh_n_parsed_from_raw,BIGINT,1015,Labs
+lab_vitd_n_measurements,BIGINT,1016,Labs
+lab_vitd_min,DOUBLE,1017,Labs
+lab_vitd_max,DOUBLE,1018,Labs
+lab_vitd_first_date,DATE,1019,Labs
+lab_vitd_last_date,DATE,1020,Labs
+lab_vitd_most_recent,DOUBLE,1021,Labs
+lab_vitd_most_recent_date,DATE,1022,Labs
+lab_vitd_unit,VARCHAR,1023,Labs
+lab_vitd_n_censored,BIGINT,1024,Labs
+lab_vitd_n_parsed_from_raw,BIGINT,1025,Labs
+lab_pth_n_measurements,INTEGER,1026,Labs
+lab_pth_min,DOUBLE,1027,Labs
+lab_pth_max,DOUBLE,1028,Labs
+lab_pth_first_date,DATE,1029,Labs
+lab_pth_last_date,DATE,1030,Labs
+lab_pth_most_recent,DOUBLE,1031,Labs
+lab_pth_most_recent_date,DATE,1032,Labs
+lab_pth_unit,VARCHAR,1033,Labs
+lab_pth_n_censored,BIGINT,1034,Labs
+lab_pth_n_parsed_from_raw,BIGINT,1035,Labs
+lab_calcium_n_measurements,INTEGER,1036,Labs
+lab_calcium_min,DOUBLE,1037,Labs
+lab_calcium_max,DOUBLE,1038,Labs
+lab_calcium_first_date,DATE,1039,Labs
+lab_calcium_last_date,DATE,1040,Labs
+lab_calcium_most_recent,DOUBLE,1041,Labs
+lab_calcium_most_recent_date,DATE,1042,Labs
+lab_calcium_unit,VARCHAR,1043,Labs
+lab_calcium_n_censored,BIGINT,1044,Labs
+lab_calcium_n_parsed_from_raw,BIGINT,1045,Labs
+cnln_total_entities,BIGINT,1046,Clinical Note LN
+cnln_n_modalities,INTEGER,1047,Clinical Note LN
+cnln_any_positive_any_modality,BOOLEAN,1048,Clinical Note LN
+cnln_ene_any_modality,BOOLEAN,1049,Clinical Note LN
+cnln_modalities_present,VARCHAR,1050,Clinical Note LN
+cnln_earliest_date,VARCHAR,1051,Clinical Note LN
+cnln_latest_date,VARCHAR,1052,Clinical Note LN
+cnln_surg_n_entities,BIGINT,1053,Clinical Note LN
+cnln_surg_n_notes,BIGINT,1054,Clinical Note LN
+cnln_surg_any_positive,BOOLEAN,1055,Clinical Note LN
+cnln_surg_max_positive_count,DOUBLE,1056,Clinical Note LN
+cnln_surg_max_total_examined,DOUBLE,1057,Clinical Note LN
+cnln_surg_ene_any,BOOLEAN,1058,Clinical Note LN
+cnln_surg_bilateral,BOOLEAN,1059,Clinical Note LN
+cnln_surg_levels_mentioned,VARCHAR,1060,Clinical Note LN
+cnln_surg_first_date,VARCHAR,1061,Clinical Note LN
+cnln_surg_last_date,VARCHAR,1062,Clinical Note LN
+cnln_surg_source_note_types,VARCHAR,1063,Clinical Note LN
+cnln_surg_avg_confidence,DOUBLE,1064,Clinical Note LN
+cnln_img_n_entities,BIGINT,1065,Clinical Note LN
+cnln_img_any_suspicious,BOOLEAN,1066,Clinical Note LN
+cnln_img_max_size_cm,DOUBLE,1067,Clinical Note LN
+cnln_img_laterality,VARCHAR,1068,Clinical Note LN
+cnln_img_levels_mentioned,VARCHAR,1069,Clinical Note LN
+cnln_img_first_date,VARCHAR,1070,Clinical Note LN
+cnln_img_last_date,VARCHAR,1071,Clinical Note LN
+cnln_img_avg_confidence,DOUBLE,1072,Clinical Note LN
+cnln_path_n_entities,BIGINT,1073,Clinical Note LN
+cnln_path_any_positive,BOOLEAN,1074,Clinical Note LN
+cnln_path_max_positive_count,DOUBLE,1075,Clinical Note LN
+cnln_path_ene_any,BOOLEAN,1076,Clinical Note LN
+cnln_clin_n_entities,BIGINT,1077,Clinical Note LN
+cnln_clin_any_positive,BOOLEAN,1078,Clinical Note LN
+cnln_clin_avg_confidence,DOUBLE,1079,Clinical Note LN
+cnln_novel_positive_flag,BOOLEAN,1080,Clinical Note LN
+cnln_source_table,VARCHAR,1081,Clinical Note LN
+recurrence_site_raw,VARCHAR,1082,Core/Other
+recurrence_laterality,VARCHAR,1083,Core/Other
+recurrence_site_source,VARCHAR,1084,Core/Other
+followup_n_contact_sources,INTEGER,1085,Core/Other
+followup_all_sources,VARCHAR,1086,Core/Other
+followup_recovery_method,VARCHAR,1087,Core/Other
+nucmed_tg_max,DOUBLE,1088,Nuclear Med
+nucmed_tg_min,DOUBLE,1089,Nuclear Med
+nucmed_n_tsh_values,INTEGER,1090,Nuclear Med
+nucmed_n_tg_values,INTEGER,1091,Nuclear Med
+nucmed_n_tgab_values,INTEGER,1092,Nuclear Med
+nucmed_first_scan_with_labs,VARCHAR,1093,Nuclear Med
+nucmed_last_scan_with_labs,VARCHAR,1094,Nuclear Med
+nucmed_lab_source,VARCHAR,1095,Nuclear Med
+ct_indication_first,VARCHAR,1096,CT Imaging
+ct_indication_last,VARCHAR,1097,CT Imaging
+ct_first_date,DATE,1098,CT Imaging
+ct_last_date,DATE,1099,CT Imaging
+ct_exam_type_first,VARCHAR,1100,CT Imaging
+ct_contrast_first,VARCHAR,1101,CT Imaging
+ct_thyroid_details_last,VARCHAR,1102,CT Imaging
+ct_ln_details_last,VARCHAR,1103,CT Imaging
+ct_ln_locations_last,VARCHAR,1104,CT Imaging
+ct_airway_compromise_any,BOOLEAN,1105,CT Imaging
+ct_airway_comment_last,VARCHAR,1106,CT Imaging
+ct_thyroid_postsurgical_any,BOOLEAN,1107,CT Imaging
+ct_thyroid_not_visualized_any,BOOLEAN,1108,CT Imaging
+ct_thyroid_heterogeneous_any,BOOLEAN,1109,CT Imaging
+ct_thyroid_other_abnormality_any,BOOLEAN,1110,CT Imaging
+ct_thyroid_normal_any,BOOLEAN,1111,CT Imaging
+ct_thyroid_nodule_any,BOOLEAN,1112,CT Imaging
+ct_thyroid_enlarged_any,BOOLEAN,1113,CT Imaging
+ct_pathologic_ln_any,BOOLEAN,1114,CT Imaging
+pet_other_n_exams,INTEGER,1115,PET/CT
+pet_other_first_date,DATE,1116,PET/CT
+pet_other_last_date,DATE,1117,PET/CT
+pet_other_indication_first,VARCHAR,1118,PET/CT
+pet_other_mentions_metastasis,BOOLEAN,1119,PET/CT
+pet_other_ned_statement,BOOLEAN,1120,PET/CT
+pet_other_exam_type,VARCHAR,1121,PET/CT
+pet_other_extraction_method,VARCHAR,1122,PET/CT
+nucmed_indication_first,VARCHAR,1123,Nuclear Med
+nucmed_indication_last,VARCHAR,1124,Nuclear Med
+nucmed_impression_last,VARCHAR,1125,Nuclear Med
+nucmed_findings_last,VARCHAR,1126,Nuclear Med
+nucmed_tsh_max,DOUBLE,1127,Nuclear Med
+nucmed_tsh_is_stimulated,BOOLEAN,1128,Nuclear Med
+nucmed_tgab_max,DOUBLE,1129,Nuclear Med
+nucmed_uptake_pct_max,DOUBLE,1130,Nuclear Med
+nucmed_dose_max_parsed,DOUBLE,1131,Nuclear Med
+nucmed_cumulative_therapeutic_dose,DOUBLE,1132,Nuclear Med
+nucmed_n_doses_parsed,INTEGER,1133,Nuclear Med
+nucmed_n_with_indication,INTEGER,1134,Nuclear Med
+nucmed_n_with_impression,INTEGER,1135,Nuclear Med
+nucmed_overall_assessment,VARCHAR,1136,Nuclear Med
+lnus_has_dedicated_exam,BOOLEAN,1137,LN Ultrasound
+lnus_n_exams,INTEGER,1138,LN Ultrasound
+lnus_first_date,DATE,1139,LN Ultrasound
+lnus_last_date,DATE,1140,LN Ultrasound
+lnus_indication_first,VARCHAR,1141,LN Ultrasound
+lnus_impression_last,VARCHAR,1142,LN Ultrasound
+lnus_abnormal_ln_any,BOOLEAN,1143,LN Ultrasound
+lnus_normal_ln_any,BOOLEAN,1144,LN Ultrasound
+lnus_has_size_measurement,BOOLEAN,1145,LN Ultrasound
+lnus_source,VARCHAR,1146,LN Ultrasound
+nsqip_operation_date,VARCHAR,1147,NSQIP
+nsqip_match_method,VARCHAR,1148,NSQIP
+nsqip_readmission_count,BIGINT,1149,NSQIP
+nsqip_unplanned_readmission_count,BIGINT,1150,NSQIP
+nsqip_related_readmission_count,BIGINT,1151,NSQIP
+nsqip_first_readmission_date,VARCHAR,1152,NSQIP
+nsqip_hypocalcemia,VARCHAR,1153,NSQIP
+nsqip_hypocalcemia_predischarge,VARCHAR,1154,NSQIP
+nsqip_hypocalcemia_postdischarge,VARCHAR,1155,NSQIP
+nsqip_hypocalcemia_event,VARCHAR,1156,NSQIP
+nsqip_hypocalcemia_event_type,VARCHAR,1157,NSQIP
+nsqip_iv_calcium,VARCHAR,1158,NSQIP
+nsqip_calcium_checked,VARCHAR,1159,NSQIP
+nsqip_pth_checked,VARCHAR,1160,NSQIP
+nsqip_calcium_vitd_replacement,VARCHAR,1161,NSQIP
+nsqip_calcium_vitd_last_check,VARCHAR,1162,NSQIP
+nsqip_hypocalcemia_last_check,VARCHAR,1163,NSQIP
+nsqip_rln_injury,VARCHAR,1164,NSQIP
+nsqip_neck_hematoma,VARCHAR,1165,NSQIP
+nsqip_hospital_los_days,BIGINT,1166,NSQIP
+nsqip_surgical_los_days,BIGINT,1167,NSQIP
+nsqip_discharge_destination,VARCHAR,1168,NSQIP
+nsqip_death_30d,VARCHAR,1169,NSQIP
+nsqip_unplanned_return_or,DOUBLE,1170,NSQIP
+nsqip_operative_duration_min,BIGINT,1171,NSQIP
+nsqip_inpatient_outpatient,VARCHAR,1172,NSQIP
+nsqip_cpt_code,BIGINT,1173,NSQIP
+nsqip_cpt_description,VARCHAR,1174,NSQIP
+nsqip_primary_indication,VARCHAR,1175,NSQIP
+nsqip_operative_approach,VARCHAR,1176,NSQIP
+nsqip_central_neck_dissection,VARCHAR,1177,NSQIP
+nsqip_lateral_neck_dissection,VARCHAR,1178,NSQIP
+nsqip_vessel_sealant,VARCHAR,1179,NSQIP
+nsqip_rln_monitoring,VARCHAR,1180,NSQIP
+nsqip_drain_usage,VARCHAR,1181,NSQIP
+nsqip_tobacco_use,VARCHAR,1182,NSQIP
+nsqip_heart_failure,VARCHAR,1183,NSQIP
+nsqip_copd,VARCHAR,1184,NSQIP
+nsqip_bleeding_disorder,VARCHAR,1185,NSQIP
+nsqip_disseminated_cancer,VARCHAR,1186,NSQIP
+nsqip_sodium,DOUBLE,1187,NSQIP
+nsqip_bun,DOUBLE,1188,NSQIP
+nsqip_creatinine,DOUBLE,1189,NSQIP
+nsqip_albumin,DOUBLE,1190,NSQIP
+nsqip_total_bilirubin,DOUBLE,1191,NSQIP
+nsqip_ast,DOUBLE,1192,NSQIP
+nsqip_alk_phos,DOUBLE,1193,NSQIP
+nsqip_wbc,DOUBLE,1194,NSQIP
+nsqip_hemoglobin,DOUBLE,1195,NSQIP
+nsqip_hematocrit,DOUBLE,1196,NSQIP
+nsqip_platelet_count,DOUBLE,1197,NSQIP
+nsqip_hba1c,DOUBLE,1198,NSQIP
+nsqip_inr,DOUBLE,1199,NSQIP
+nsqip_ptt,DOUBLE,1200,NSQIP
+nsqip_admission_date,VARCHAR,1201,NSQIP
+nsqip_discharge_date,VARCHAR,1202,NSQIP
+nsqip_surgery_start_time,VARCHAR,1203,NSQIP
+nsqip_surgery_finish_time,VARCHAR,1204,NSQIP
+nsqip_superficial_ssi,BIGINT,1205,NSQIP
+nsqip_deep_ssi,BIGINT,1206,NSQIP
+nsqip_organ_space_ssi,BIGINT,1207,NSQIP
+nsqip_dvt,BIGINT,1208,NSQIP
+nsqip_pe,BIGINT,1209,NSQIP
+nsqip_transfusion,BIGINT,1210,NSQIP
+nsqip_sepsis,BIGINT,1211,NSQIP
+nsqip_pneumonia,BIGINT,1212,NSQIP
+nsqip_unplanned_intubation,BIGINT,1213,NSQIP
+nsqip_final_pathology,VARCHAR,1214,NSQIP
+nsqip_t_classification,VARCHAR,1215,NSQIP
+nsqip_multifocal,VARCHAR,1216,NSQIP
+nsqip_n_classification,VARCHAR,1217,NSQIP
+nsqip_nodes_removed,DOUBLE,1218,NSQIP
+nsqip_nodes_positive,DOUBLE,1219,NSQIP
+nsqip_m_classification,VARCHAR,1220,NSQIP
+nsqip_neoplasm,VARCHAR,1221,NSQIP
+nsqip_neoplasm_type,VARCHAR,1222,NSQIP
+nsqip_prior_neck_surgery,VARCHAR,1223,NSQIP
+nsqip_preop_biopsy_result,VARCHAR,1224,NSQIP
+nsqip_molecular_testing,VARCHAR,1225,NSQIP
+nsqip_molecular_result,VARCHAR,1226,NSQIP
+nsqip_same_day_discharge_flag,BIGINT,1227,NSQIP
+nsqip_hypocalcemia_flag,DOUBLE,1228,NSQIP
+nsqip_readmission_30d_flag,BIGINT,1229,NSQIP
+nsqip_rln_injury_flag,DOUBLE,1230,NSQIP
+nsqip_hematoma_flag,DOUBLE,1231,NSQIP
+nsqip_calcium_vitd_category,VARCHAR,1232,NSQIP
+para_specimen_included,BOOLEAN,1233,Parathyroid
+para_removal_intent,VARCHAR,1234,Parathyroid
+para_incidental_status_refined,VARCHAR,1235,Parathyroid
+para_has_pathologic_glands,BOOLEAN,1236,Parathyroid
+para_abnormality_type,VARCHAR,1237,Parathyroid
+para_n_glands_identified,BIGINT,1238,Parathyroid
+para_n_glands_biopsied,BIGINT,1239,Parathyroid
+para_n_glands_excised,BIGINT,1240,Parathyroid
+para_max_cellularity_pct,DOUBLE,1241,Parathyroid
+para_min_cellularity_pct,DOUBLE,1242,Parathyroid
+para_max_gland_weight_g,DOUBLE,1243,Parathyroid
+para_source_workbook,VARCHAR,1244,Parathyroid
+para_source_script,VARCHAR,1245,Parathyroid
+death_date,DATE,1246,Core/Other
+vital_status,VARCHAR,1247,Core/Other
+death_occurred,BOOLEAN,1248,Core/Other
+death_source,VARCHAR,1249,Core/Other
+overall_survival_days,BIGINT,1250,Core/Other
+overall_survival_years,DOUBLE,1251,Core/Other
+survival_event,BOOLEAN,1252,Core/Other
+followup_or_death_date,DATE,1253,Core/Other
+followup_or_death_years,DOUBLE,1254,Core/Other
+death_integration_script,VARCHAR,1255,Core/Other
+nsqip_thyroidectomy_has_data,BOOLEAN,1256,NSQIP
+nsqip_thyroidectomy_source_script,VARCHAR,1257,NSQIP
