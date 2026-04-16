@@ -1,0 +1,258 @@
+WARNING: Your client version of DuckDB (v1.1.3) will soon be unsupported with MotherDuck. Please upgrade your DuckDB. We recommend DuckDB v1.5.2. For the installation guide, please refer to https://duckdb.org/docs/installation/.
+
+==============================================================================
+PHASE 0 — Preflight snapshot + inventory
+==============================================================================
+  0.1  snapshot canonical_patient_master -> canonical_patient_master_pre236_backup
+        backup rows: 10871
+  0.2  export canonical_patient_master to parquet
+        canonical_patient_master_pre236.parquet (3.9 MB)
+  0.3  inventory main-schema tables -> scripts/output/236_preflight_inventory.csv
+        wrote 236_preflight_inventory.csv (119 rows)
+  0.4  canonical_patient_master column count
+        columns: 1492
+  0.5  registry vs main diff
+    (a) in MAIN, not in registry (3):
+        - data_dictionary_v235
+        - data_dictionary_v240
+        - rai_benign_histology_recovery_v234
+    (b) in REGISTRY, not in main (0):
+
+Total elapsed: 12.3s
+WARNING: Your client version of DuckDB (v1.1.3) will soon be unsupported with MotherDuck. Please upgrade your DuckDB. We recommend DuckDB v1.5.2. For the installation guide, please refer to https://duckdb.org/docs/installation/.
+
+==============================================================================
+PHASE 1A — Recompute comp_*_days_postop_v2 filtered to surgery_related_flag=TRUE
+==============================================================================
+  comp_timing_surg_v1 rows: 2938
+  comp_rln_injury_days_postop_v2               n=   69  min=0  max=301  out_of_range=0
+  comp_hematoma_days_postop_v2                 n=   51  min=0  max=175  out_of_range=0
+  comp_hypoparathyroidism_days_postop_v2       n=   23  min=0  max=308  out_of_range=0
+  comp_seroma_days_postop_v2                   n=  546  min=0  max=192  out_of_range=0
+  comp_chyle_leak_days_postop_v2               n= 1442  min=0  max=356  out_of_range=0
+  comp_hypocalcemia_days_postop_v2             n=  589  min=0  max=334  out_of_range=0
+  comp_wound_infection_days_postop_v2          n=    6  min=0  max=210  out_of_range=0
+  comp_vc_paralysis_days_postop_v2             n=   20  min=0  max=134  out_of_range=0
+  comp_vc_paresis_days_postop_v2               n=   17  min=0  max=176  out_of_range=0
+
+==============================================================================
+PHASE 1B — VC paralysis/paresis recalibration via extracted_rln_injury_refined_v2
+==============================================================================
+  PRE  vc_paralysis=0  vc_paresis=0  rln_injury=59
+  RLN confirmed candidates: 59
+  audit rows: 59  upgraded-to-confirmed_from_rln_crossref: 32
+  status_v2 upgrades per entity:
+    vocal_cord_paralysis         confirmed_from_rln_crossref      19
+    vocal_cord_paresis           confirmed_from_rln_crossref      13
+  POST vc_paralysis=26 (Δ+26)  vc_paresis=14 (Δ+14)  rln_injury=59 (Δ+0)
+
+==============================================================================
+PHASE 1C — nlp_path_multifocal_concordance_v2 (uses multifocal_flag_path)
+==============================================================================
+  distribution:
+    (null)                           8552
+    concordant_negative              909
+    concordant_positive              559
+    nlp_positive_path_negative       487
+    nlp_negative_path_positive       364
+
+==============================================================================
+PHASE 1D — NLP rollup strictness audit (nlp_rollup_promotion_audit_v1)
+==============================================================================
+  rows inserted: 18
+    airway_invasion          src=  5641 canon=  1123 pct= 19.91%
+    dynamic_risk_response    src=  5641 canon=    25 pct=  0.44%
+    frozen_section           src=  5641 canon=   184 pct=  3.26%
+    functional_outcomes      src=  5641 canon=  1623 pct= 28.77%
+    imaging                  src=  5641 canon=  1728 pct= 30.63%
+    labs                     src=  5641 canon=   791 pct= 14.02%
+    cervical_ln              src=  5641 canon=   868 pct= 15.39%
+    parathyroid              src=  5641 canon=   110 pct=  1.95%
+    pathology                src=  5641 canon=  2794 pct= 49.53%
+    physical_exam            src=  5641 canon=   512 pct=  9.08%
+    past_medical_hx          src=  5641 canon=   290 pct=  5.14%
+    past_surgical_hx         src=  5641 canon=  1864 pct= 33.04%
+    patient_decision         src=  5641 canon=   367 pct=  6.51%
+    rad_treatment            src=  5641 canon=   210 pct=  3.72%
+    rai_detailed             src=  5641 canon=   620 pct= 10.99%
+    survival_followup        src=  5641 canon=  2911 pct= 51.60%
+    synoptic_enrichment      src=  5641 canon=     8 pct=  0.14%
+    tirads                   src=  5641 canon=  1715 pct= 30.40%
+
+Total elapsed: 30.8s
+WARNING: Your client version of DuckDB (v1.1.3) will soon be unsupported with MotherDuck. Please upgrade your DuckDB. We recommend DuckDB v1.5.2. For the installation guide, please refer to https://duckdb.org/docs/installation/.
+
+==============================================================================
+PHASE 2 — Archive deprecated/backup tables -> Thyroid 2026 UPdated.archive_pub_v1_0
+==============================================================================
+  ARCHIVED canonical_patient_master_pre235_backup                  (10871 rows) -> canonical_patient_master_pre235_backup_20260416
+  ARCHIVED complication_patient_summary_v1_pre235_backup           (2892 rows) -> complication_patient_summary_v1_pre235_backup_20260416
+  ARCHIVED complication_phenotype_v1_pre235_backup                 (5928 rows) -> complication_phenotype_v1_pre235_backup_20260416
+  ARCHIVED extracted_postop_labs_expanded_v1_pre235_backup         (1395 rows) -> extracted_postop_labs_expanded_v1_pre235_backup_20260416
+  ARCHIVED longitudinal_lab_canonical_v1_pre235_backup             (77960 rows) -> longitudinal_lab_canonical_v1_pre235_backup_20260416
+  SKIP (not in canonical): data_dictionary_v221
+  ARCHIVED data_dictionary_v235                                    (1492 rows) -> data_dictionary_v235_20260416
+
+Total elapsed: 10.4s
+WARNING: Your client version of DuckDB (v1.1.3) will soon be unsupported with MotherDuck. Please upgrade your DuckDB. We recommend DuckDB v1.5.2. For the installation guide, please refer to https://duckdb.org/docs/installation/.
+
+==============================================================================
+PHASE 3 — Drill-down surface validation
+==============================================================================
+  ete_adjudication_v1                      rows=45     MISSING_CANONICAL_COLS=['ete_adjudicated_flag']
+  rai_benign_histology_recovery_v234       rows=0      OK (no-op)
+  _molecular_patient_rollup_v227           rows=10026  OK (ret_positive_v7, any_fusion_positive)
+  ret_patient_adjudicated_v226             rows=66     MISSING_CANONICAL_COLS=['ret_adjudicated_flag', 'ret_evidence_source']
+  ret_note_entity_adjudication_v226        rows=177    OK (no-op)
+  patient_tumor_rollup_v1                  rows=8422   OK (multifocal_flag_path, r_class_true, margin_status_true)
+
+==============================================================================
+PHASE 4 — Regenerate manuscript_workspace.detail_table_registry_v1
+==============================================================================
+  registered tables: 105
+  ADDED (1):
+    + rai_benign_histology_recovery_v234
+  REMOVED (5):
+    - canonical_patient_master
+    - molecular_assay_dictionary
+    - molecular_code_crosswalk
+    - molecular_ingestion_runs
+    - specimen_source_xref_v1
+  CHANGED-ROW-COUNTS (2):
+    ~ complication_patient_summary_v1: 2892 -> 2938
+    ~ complication_phenotype_v1: 5928 -> 5978
+  SKIPPED (no research_id or excluded): 8
+  + 2 manuscript_workspace audit-feed rows appended
+
+==============================================================================
+PHASE 5 — Rebuild __readme catalog
+==============================================================================
+  __readme rows: 113  TODO rows: 2
+  Tables needing description:
+    - canonical_patient_master_pre236_backup
+    - data_dictionary_v240
+
+==============================================================================
+PHASE 6 — Canonical column pointer verification
+==============================================================================
+  tokens checked: 169  missing: 10
+  wrote 236_missing_canonical_columns.csv
+    canonical_benign_diagnosis_v1            -> has_follicular_adenoma  (Diagnosis)
+    canonical_benign_diagnosis_v1            -> other  (Diagnosis)
+    canonical_molecular_tested_v1            -> braf_positive_canonical  (Molecular)
+    complication_patient_summary_v1          -> n_analysis_eligible_complication  (Complications)
+    imaging_nodule_long_v2                   -> tirads  (Imaging)
+    synoptic_tumor_long_v1                   -> invasion  (Pathology)
+    tirads_llm_validation_v2                 -> TIRADS  (Imaging)
+    tumor_episode_master_v2                  -> ajcc8  (Pathology)
+    tumor_episode_master_v2                  -> invasion  (Pathology)
+    tumor_pathology                          -> path  (Pathology)
+
+==============================================================================
+PHASE 7 — Final invariant checks
+==============================================================================
+  [PASS] canonical_patient_master row count == 10,871
+  [PASS] distinct research_id == 10,871
+  [PASS] no NULL research_id
+  [PASS] fna_path_outcome fully populated
+  [PASS] no _pre235_backup tables in canonical
+  [PASS] exactly one data_dictionary_v* (v240)
+  [PASS] __readme rows (113) == main BASE TABLE count (113)
+  [PASS] registry has no orphans (got 0)
+  [PASS] all archive targets present (6)
+  [PASS] 9 new comp_*_days_postop_v2 columns
+  [PASS] nlp_path_multifocal_concordance_v2 present
+  [PASS] nlp_rollup_promotion_audit_v1 populated (got 18)
+
+==============================================================================
+CANONICAL FINALIZATION COMPLETE — thyroid_canonical_publication_v1_0
+All invariants hold. Registry repointed. Backups archived.
+canonical_patient_master: 10,871 × 1502 cols
+detail_table_registry_v1: 107 drill-down tables, all column pointers verified
+__readme: 113 tables, all described
+Deprecated tables moved to Thyroid 2026 UPdated.archive_pub_v1_0
+Ready for publication.
+==============================================================================
+
+Total elapsed: 51.0s
+WARNING: Your client version of DuckDB (v1.1.3) will soon be unsupported with MotherDuck. Please upgrade your DuckDB. We recommend DuckDB v1.5.2. For the installation guide, please refer to https://duckdb.org/docs/installation/.
+
+==============================================================================
+PHASE 3 — Drill-down surface validation
+==============================================================================
+  ete_adjudication_v1                      rows=45     MISSING_CANONICAL_COLS=['ete_adjudicated_flag']
+  rai_benign_histology_recovery_v234       rows=0      OK (no-op)
+  _molecular_patient_rollup_v227           rows=10026  OK (ret_positive_v7, any_fusion_positive)
+  ret_patient_adjudicated_v226             rows=66     MISSING_CANONICAL_COLS=['ret_adjudicated_flag', 'ret_evidence_source']
+  ret_note_entity_adjudication_v226        rows=177    OK (no-op)
+  patient_tumor_rollup_v1                  rows=8422   OK (multifocal_flag_path, r_class_true, margin_status_true)
+
+==============================================================================
+PHASE 4 — Regenerate manuscript_workspace.detail_table_registry_v1
+==============================================================================
+  registered tables: 105
+  ADDED (0):
+  REMOVED (2):
+    - nlp_rollup_promotion_audit_v1
+    - vc_paralysis_recalibration_v236
+  CHANGED-ROW-COUNTS (0):
+  SKIPPED (no research_id or excluded): 8
+  + 2 manuscript_workspace audit-feed rows appended
+
+==============================================================================
+PHASE 5 — Rebuild __readme catalog
+==============================================================================
+  __readme rows: 113  TODO rows: 0
+
+==============================================================================
+PHASE 6 — Canonical column pointer verification
+==============================================================================
+  tokens checked: 178  missing: 7
+  wrote 236_missing_canonical_columns.csv
+    _molecular_patient_rollup_v227           -> molecular_rollup_version  (Molecular)
+    canonical_benign_diagnosis_v1            -> has_follicular_adenoma  (Diagnosis)
+    canonical_molecular_tested_v1            -> braf_positive_canonical  (Molecular)
+    complication_patient_summary_v1          -> n_analysis_eligible_complication  (Complications)
+    ete_adjudication_v1                      -> ete_adjudicated_flag  (Pathology)
+    ret_patient_adjudicated_v226             -> ret_adjudicated_flag  (Molecular/NLP)
+    ret_patient_adjudicated_v226             -> ret_evidence_source  (Molecular/NLP)
+
+==============================================================================
+PHASE 7 — Final invariant checks
+==============================================================================
+  [PASS] canonical_patient_master row count == 10,871
+  [PASS] distinct research_id == 10,871
+  [PASS] no NULL research_id
+  [PASS] fna_path_outcome fully populated
+  [PASS] no _pre235_backup tables in canonical
+  [PASS] exactly one data_dictionary_v* (v240)
+  [PASS] __readme rows (113) == main BASE TABLE count (113)
+  [PASS] registry has no orphans (got 0)
+  [PASS] all archive targets present (6)
+  [PASS] 9 new comp_*_days_postop_v2 columns
+  [PASS] nlp_path_multifocal_concordance_v2 present
+  [PASS] nlp_rollup_promotion_audit_v1 populated (got 18)
+
+==============================================================================
+CANONICAL FINALIZATION COMPLETE — thyroid_canonical_publication_v1_0
+All invariants hold. Registry repointed. Backups archived.
+canonical_patient_master: 10,871 × 1502 cols
+detail_table_registry_v1: 107 drill-down tables, all column pointers verified
+__readme: 113 tables, all described
+Deprecated tables moved to Thyroid 2026 UPdated.archive_pub_v1_0
+Ready for publication.
+==============================================================================
+
+==============================================================================
+PHASE 8 — Archive canonical_patient_master_pre236_backup
+==============================================================================
+  archived 10871 rows -> canonical_patient_master_pre236_backup_20260416
+  invariant: zero pre*_backup tables in canonical (PASS)
+  rebuilding __readme post-drop...
+
+==============================================================================
+PHASE 5 — Rebuild __readme catalog
+==============================================================================
+  __readme rows: 112  TODO rows: 0
+
+Total elapsed: 67.2s

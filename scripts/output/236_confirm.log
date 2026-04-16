@@ -1,0 +1,25 @@
+WARNING: Your client version of DuckDB (v1.1.3) will soon be unsupported with MotherDuck. Please upgrade your DuckDB. We recommend DuckDB v1.5.2. For the installation guide, please refer to https://duckdb.org/docs/installation/.
+==============================================================================
+CONFIRMATION QUERIES — thyroid_canonical_publication_v1_0
+==============================================================================
+
+-- Q1: Final canonical shape --
+  patients: 10871
+  columns:  1502
+
+-- Q2: No lingering backup/deprecated tables (expect 0 rows) --
+  (0 rows — clean)
+
+-- Q3: Registry completeness --
+  registered_tables: 107
+  unmapped:          0
+
+-- Q4: __readme completeness vs actual tables (must match) --
+  readme_rows:   112
+  actual_tables: 112
+  equal? True
+
+-- Q5: Coworker audit fixes landed --
+  new_timing_cols:    9  (expect 9)
+  new_multifocal_col: 1  (expect 1)
+  nlp_audit_domains:  18  (~25 expected)
