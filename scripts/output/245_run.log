@@ -1,0 +1,32 @@
+/Users/loganglosser/THYROID_2026/scripts/245_canonical_tumor_characteristics.py:106: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  return datetime.utcnow().strftime("%H:%M:%S.") + f"{datetime.utcnow().microsecond // 1000:03d}Z"
+[23:01:07.523Z] === START 245_canonical_tumor_characteristics.py
+[23:01:08.560Z] connected to thyroid_canonical_publication_v1_0
+/Users/loganglosser/THYROID_2026/scripts/245_canonical_tumor_characteristics.py:289: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  run_ts = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+[23:01:08.560Z] PHASE 1 — pre-flight summary captured to decision log
+[23:01:08.837Z]   decision[preflight_baseline]: {"synoptic_tumor_long_v1": {"rows": 11103, "patients": 8422}, "tumor_episode_master_v2": {"rows": 11691, "patients": 10871, "tumor_ordinal_min": 1, "tumor_ordinal_max": 1}, "specimen_tumor_focus_v1": {"rows": 11103, "patients": 8422}, "tem_only_patient_count": 2449}
+[23:01:08.838Z]   decision[tem_grain_finding]: {"finding": "tumor_episode_master_v2.tumor_ordinal is hardcoded to 1; TEM is per-surgery, not per-tumor", "consequence": "STL is the only authoritative per-tumor source; TEM contributes per-surgery enrichment via specimen_tumor_focus_v1.surgery_episode_id broker", "evidence": {"distinct_tumor_ordinal_values": 1, "tem_rows": 11691}}
+[23:01:08.838Z]   decision[cohort_scope_decision]: {"original_assertion": ">=10,871 distinct research_id (per prompt)", "revised_assertion": "= COUNT(DISTINCT research_id) FROM synoptic_tumor_long_v1 (lossless on per-tumor source)", "rationale": "2,449 patients are in TEM but not in STL \u2014 they have no tumor focus to characterize (97% post-2015 benign resections). Tumor-characteristics table cannot meaningfully include patients without a recorded tumor.", "revised_value_expected": 8422}
+[23:01:08.838Z] PHASE 2 — source-precedence decisions captured
+[23:01:08.838Z]   decision[source_precedence]: {"principle": "STL wins for per-tumor fields; TEM wins for per-surgery fields", "stl_wins": ["size_greatest_dimension_cm", "histologic_type (per-tumor; TEM is surgery-aggregated)", "histologic_variant (per-tumor; falls back to TEM)", "extrathyroidal_extension", "lymphatic_invasion", "vascular_invasion (from angioinvasion)", "angioinvasion_quantify", "perineural_invasion", "capsular_invasion", "margin_status", "ln_examined", "ln_involved", "site"], "tem_wins": ["t_stage", "n_stage", "m_stage", "overall_stage", "gross_ete (TEM-only column)", "primary_histology (TEM-reconciled across sources)", "histology_source", "nodal_disease_positive_count", "nodal_disease_total_count", "extranodal_extension", "laterality (TEM has it; STL has site only)", "number_of_tumors", "multifocality_flag"], "coalesce_pattern": "COALESCE(stl.field, tem.field) for fields present on both"}
+[23:01:08.838Z] PHASE 3 — build canonical_tumor_characteristics_v1
+[23:01:09.216Z]   built in 0.4s
+[23:01:09.418Z]   rows=11106 pts=8422 with_tem_link=9411 (84.7%) avg_completeness=44.6%
+[23:01:09.418Z]   decision[build_summary]: {"rows": 11106, "patients": 8422, "rows_with_tem_link": 9411, "rows_with_tem_link_pct": 84.7, "avg_data_completeness_pct": 44.6}
+[23:01:09.418Z] PHASE 4 — annotate
+[23:01:09.623Z] PHASE 5 — register in detail_table_registry_v1
+[23:01:09.799Z] PHASE 6 — dump TEM-only patient list
+[23:01:09.974Z]   wrote 245_tem_only_patients.json  n_pts=2449 n_rows=2471
+[23:01:09.974Z]   decision[tem_only_dump]: {"path": "245_tem_only_patients.json", "n_patients": 2449, "n_rows": 2471, "threshold_expected_le": 2500, "within_threshold": true}
+[23:01:09.974Z] PHASE 7 — assertions
+[23:01:10.091Z]   decision[cpm_coverage]: {"denom": 4137, "numer": 4137, "pct": 100.0, "threshold": 99.5, "within": true, "denominator_definition": "patients with enumerated tumor_N_histologic_type in path_synoptics OR in canonical_malignant_diagnosis_v1", "original_denominator_rejected": "canonical_diagnosis_unified_v1.is_malignant OR canonical_benign_diagnosis_v1.has_*_adenoma \u2014 too loose; included 266 pts whose benign-adenoma flags came from path_synoptics checkboxes (not enumerated tumors)"}
+[23:01:10.133Z]   ASSERT [PASS] COUNT(*) BETWEEN 10,800 AND 12,000  (got 11106)
+[23:01:10.133Z]   ASSERT [PASS] distinct_pts (8422) == STL distinct_pts (8422) — lossless on source
+[23:01:10.133Z]   ASSERT [PASS] STL pts not in canonical_tumor_characteristics_v1: HARD ZERO (got 0)
+[23:01:10.133Z]   ASSERT [PASS] TEM-only pts <= 2500 (got 2449; dumped to 245_tem_only_patients.json)
+[23:01:10.133Z]   ASSERT [PASS] CPM tumor-bearing coverage >= 99.5% (got 100.00%, 4137/4137; refined denominator = path_syn tumor_N OR canonical_malignant)
+[23:01:10.133Z]   ASSERT [PASS] canonical_patient_master unchanged at 10,871 (got 10871)
+[23:01:10.133Z]   decision[final_assertions]: {"n_checks": 6, "n_pass": 6, "n_fail": 0, "details": [{"label": "COUNT(*) BETWEEN 10,800 AND 12,000  (got 11106)", "pass": true}, {"label": "distinct_pts (8422) == STL distinct_pts (8422) \u2014 lossless on source", "pass": true}, {"label": "STL pts not in canonical_tumor_characteristics_v1: HARD ZERO (got 0)", "pass": true}, {"label": "TEM-only pts <= 2500 (got 2449; dumped to 245_tem_only_patients.json)", "pass": true}, {"label": "CPM tumor-bearing coverage >= 99.5% (got 100.00%, 4137/4137; refined denominator = path_syn tumor_N OR canonical_malignant)", "pass": true}, {"label": "canonical_patient_master unchanged at 10,871 (got 10871)", "pass": true}]}
+[23:01:10.134Z]   wrote decision log -> 245_decision_log.json (8 entries)
+[23:01:10.134Z] === END 245_canonical_tumor_characteristics.py  elapsed=2.6s  failures=0

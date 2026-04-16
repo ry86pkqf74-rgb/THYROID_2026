@@ -1,0 +1,134 @@
+{
+  "script": "245",
+  "run_ts": "20260416T230108Z",
+  "run_date": "2026-04-16",
+  "decisions": [
+    {
+      "category": "preflight_baseline",
+      "synoptic_tumor_long_v1": {
+        "rows": 11103,
+        "patients": 8422
+      },
+      "tumor_episode_master_v2": {
+        "rows": 11691,
+        "patients": 10871,
+        "tumor_ordinal_min": 1,
+        "tumor_ordinal_max": 1
+      },
+      "specimen_tumor_focus_v1": {
+        "rows": 11103,
+        "patients": 8422
+      },
+      "tem_only_patient_count": 2449
+    },
+    {
+      "category": "tem_grain_finding",
+      "finding": "tumor_episode_master_v2.tumor_ordinal is hardcoded to 1; TEM is per-surgery, not per-tumor",
+      "consequence": "STL is the only authoritative per-tumor source; TEM contributes per-surgery enrichment via specimen_tumor_focus_v1.surgery_episode_id broker",
+      "evidence": {
+        "distinct_tumor_ordinal_values": 1,
+        "tem_rows": 11691
+      }
+    },
+    {
+      "category": "cohort_scope_decision",
+      "original_assertion": ">=10,871 distinct research_id (per prompt)",
+      "revised_assertion": "= COUNT(DISTINCT research_id) FROM synoptic_tumor_long_v1 (lossless on per-tumor source)",
+      "rationale": "2,449 patients are in TEM but not in STL \u2014 they have no tumor focus to characterize (97% post-2015 benign resections). Tumor-characteristics table cannot meaningfully include patients without a recorded tumor.",
+      "revised_value_expected": 8422
+    },
+    {
+      "category": "source_precedence",
+      "principle": "STL wins for per-tumor fields; TEM wins for per-surgery fields",
+      "stl_wins": [
+        "size_greatest_dimension_cm",
+        "histologic_type (per-tumor; TEM is surgery-aggregated)",
+        "histologic_variant (per-tumor; falls back to TEM)",
+        "extrathyroidal_extension",
+        "lymphatic_invasion",
+        "vascular_invasion (from angioinvasion)",
+        "angioinvasion_quantify",
+        "perineural_invasion",
+        "capsular_invasion",
+        "margin_status",
+        "ln_examined",
+        "ln_involved",
+        "site"
+      ],
+      "tem_wins": [
+        "t_stage",
+        "n_stage",
+        "m_stage",
+        "overall_stage",
+        "gross_ete (TEM-only column)",
+        "primary_histology (TEM-reconciled across sources)",
+        "histology_source",
+        "nodal_disease_positive_count",
+        "nodal_disease_total_count",
+        "extranodal_extension",
+        "laterality (TEM has it; STL has site only)",
+        "number_of_tumors",
+        "multifocality_flag"
+      ],
+      "coalesce_pattern": "COALESCE(stl.field, tem.field) for fields present on both"
+    },
+    {
+      "category": "build_summary",
+      "rows": 11106,
+      "patients": 8422,
+      "rows_with_tem_link": 9411,
+      "rows_with_tem_link_pct": 84.7,
+      "avg_data_completeness_pct": 44.6
+    },
+    {
+      "category": "tem_only_dump",
+      "path": "245_tem_only_patients.json",
+      "n_patients": 2449,
+      "n_rows": 2471,
+      "threshold_expected_le": 2500,
+      "within_threshold": true
+    },
+    {
+      "category": "cpm_coverage",
+      "denom": 4137,
+      "numer": 4137,
+      "pct": 100.0,
+      "threshold": 99.5,
+      "within": true,
+      "denominator_definition": "patients with enumerated tumor_N_histologic_type in path_synoptics OR in canonical_malignant_diagnosis_v1",
+      "original_denominator_rejected": "canonical_diagnosis_unified_v1.is_malignant OR canonical_benign_diagnosis_v1.has_*_adenoma \u2014 too loose; included 266 pts whose benign-adenoma flags came from path_synoptics checkboxes (not enumerated tumors)"
+    },
+    {
+      "category": "final_assertions",
+      "n_checks": 6,
+      "n_pass": 6,
+      "n_fail": 0,
+      "details": [
+        {
+          "label": "COUNT(*) BETWEEN 10,800 AND 12,000  (got 11106)",
+          "pass": true
+        },
+        {
+          "label": "distinct_pts (8422) == STL distinct_pts (8422) \u2014 lossless on source",
+          "pass": true
+        },
+        {
+          "label": "STL pts not in canonical_tumor_characteristics_v1: HARD ZERO (got 0)",
+          "pass": true
+        },
+        {
+          "label": "TEM-only pts <= 2500 (got 2449; dumped to 245_tem_only_patients.json)",
+          "pass": true
+        },
+        {
+          "label": "CPM tumor-bearing coverage >= 99.5% (got 100.00%, 4137/4137; refined denominator = path_syn tumor_N OR canonical_malignant)",
+          "pass": true
+        },
+        {
+          "label": "canonical_patient_master unchanged at 10,871 (got 10871)",
+          "pass": true
+        }
+      ]
+    }
+  ]
+}

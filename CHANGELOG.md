@@ -304,3 +304,73 @@ pre-change backup are explicitly no-ops on data (documentation only).
   - serial_imaging_us.* has exactly 5 authoritative rows
   - archive backup present
   - canonical_patient_master unchanged at 10,871
+
+### Script 245 — Build `canonical_tumor_characteristics_v1` (per-tumor canonical)
+- **Pre-flight surfaced 4 architectural mismatches the prompt didn't anticipate:**
+  - `tumor_episode_master_v2.tumor_ordinal` is hardcoded to 1 (MIN=MAX=1
+    across all 11,691 rows) — TEM is per-`(patient × surgery_episode_id)`,
+    NOT per-tumor. Multi-row TEM patients have multiple separate
+    surgeries (years apart), not multiple tumors at one surgery.
+  - `surg_date` (STL) vs `surgery_date` (TEM) drift: 14.5% of pairs
+    disagree on the surgery date (separate surgeries chosen as "primary"
+    by the two ETL paths) — not TZ drift.
+  - Combined drop rate on the prompt's `(rid, day, tumor_ord)` join key:
+    **20.52%**, well above the 5% pause-trigger.
+  - STL covers 8,422 / 10,871 CPM patients (77.5%); the 2,449 missing
+    are **all benign** and 97% are post-2015. They have no per-tumor
+    pathology to characterize. The original `>=10,871` cohort assertion
+    is incompatible with the actual data shape.
+- **Architecture chosen** (Option A from the checkpoint discussion):
+  - Per-tumor identity from `synoptic_tumor_long_v1` (the only
+    authoritative per-tumor source).
+  - `specimen_tumor_focus_v1` as the broker (1:1 with STL on
+    `(research_id, synoptic_row_ix)`; carries `surgery_episode_id` for
+    84.7% of STL rows).
+  - `tumor_episode_master_v2` enrichment broadcast at the surgery level
+    (T/N/M, nodal counts, ENE, multifocality) via the broker's
+    `surgery_episode_id`.
+  - Source precedence encoded in COALESCE:
+    - **STL wins** (per-tumor): size, histologic_type/variant,
+      ETE, LVI, vascular_invasion, perineural, capsular, margin,
+      ln_examined/involved, site.
+    - **TEM wins** (per-surgery): T/N/M staging, gross_ete,
+      primary_histology (TEM-reconciled), nodal counts, extranodal,
+      laterality, number_of_tumors, multifocality_flag.
+  - `tumor_ordinal` in the new canonical = STL's `tumor_index` (real
+    per-tumor numbering, NOT TEM's hardcoded 1).
+- **Build summary:** 11,106 rows / 8,422 patients; 9,411 rows (84.7%)
+  enriched with TEM via the broker; avg `data_completeness_pct` = 44.6%.
+- **Audit artifacts (manuscript-methods grade):**
+  - `scripts/output/245_decision_log.json` — 8 entries: pre-flight
+    baseline, TEM-grain finding, cohort-scope decision, source-precedence
+    rationale, build summary, TEM-only dump, CPM coverage, final
+    assertions.
+  - `scripts/output/245_tem_only_patients.json` — full list of 2,449
+    patients (2,471 rows) intentionally absent from the per-tumor table.
+- **Registered** in `manuscript_workspace.detail_table_registry_v1` with
+  domain=`Pathology`, grain=`one row per resected tumor focus per surgery`,
+  feeds_master_columns naming the v1_1 `patient_tumor_rollup_v1` migration.
+- **Mid-run correction:** initial 99% coverage assertion failed at 94.7%
+  because the "tumor-bearing" denominator was too loose (266 patients
+  whose benign-adenoma flags came from path_synoptics *checkboxes*, not
+  enumerated tumor records). Refined denominator (path_syn `tumor_N`
+  enumerated OR `canonical_malignant_diagnosis_v1`) gave 100%
+  coverage. Both denominators logged in the decision log so reviewers
+  can trace the choice.
+- **Assertions (6/6 PASS):**
+  - `COUNT(*) BETWEEN 10,800 AND 12,000` → 11,106
+  - `COUNT(DISTINCT research_id) == STL distinct_pts` → 8,422 = 8,422
+  - STL pts not in canonical: hard zero (lossless on source)
+  - TEM-only pts ≤ 2,500 → 2,449 (dumped to JSON)
+  - CPM tumor-bearing coverage ≥ 99.5% → **100.00% (4,137/4,137)**
+  - CPM unchanged at 10,871
+- **Deferred to v1_1:** migrating `patient_tumor_rollup_v1`'s source
+  query from STL to `canonical_tumor_characteristics_v1`. The new table
+  needs clinician validation before the rollup (which feeds CPM)
+  changes its source — mixing the migration with the build introduces
+  too much risk for a single commit. Documented in the script header
+  and registry entry.
+- **File-format deviation:** Script 245 is `.py` (not `.sql` per the
+  spec) because the JSON decision log + TEM-only patient dump need
+  Python file I/O. Build SQL is embedded as a string for readability;
+  matches the Script 230/231 paired pattern.
