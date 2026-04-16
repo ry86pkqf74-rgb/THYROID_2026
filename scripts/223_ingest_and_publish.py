@@ -15,7 +15,7 @@ PHASE 1 — Ingest 4 raw tables that are in the GitHub repo but not on eras:
     - thyroid_weights: drop DOB + duplicated path text columns
     - nsqip_enrichment / nsqip_patient_summary: drop nsqip_dob
 
-PHASE 2 — Build clean publication house thyroid_canonical_publication_v1
+PHASE 2 — Build clean publication house thyroid_canonical_publication_v1_0
           via CTAS (full physical isolation).
 
 PRECONDITION: Script 221c gap fixes already applied (verified 2026-04-16).
@@ -44,8 +44,8 @@ REPO = Path(__file__).resolve().parent.parent
 SCRIPT_TAG = "223_ingest_and_publish"
 SOURCE_DB_NAME = "Thyroid 2026 UPdated"
 SOURCE_DB_SQL = '"Thyroid 2026 UPdated".main'
-TARGET_DB_NAME = "thyroid_canonical_publication_v1"
-TARGET_DB_SQL = "thyroid_canonical_publication_v1.main"
+TARGET_DB_NAME = "thyroid_canonical_publication_v1_0"
+TARGET_DB_SQL = "thyroid_canonical_publication_v1_0.main"
 CANONICAL_SRC = "canonical_patient_master_v221"
 CANONICAL_TGT = "canonical_patient_master"
 EXPECTED_TOTAL_ROWS = 10_871

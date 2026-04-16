@@ -1,7 +1,7 @@
 ═════════════════════════════════════════════════════════════════
 PUBLICATION HOUSE VERIFICATION — 2026-04-16 02:00:55
 Source: "Thyroid 2026 UPdated" (169 tables)
-Target: thyroid_canonical_publication_v1 (110 tables)
+Target: thyroid_canonical_publication_v1_0 (110 tables)
 ═════════════════════════════════════════════════════════════════
 
 Layer 1: Catalog completeness            [PASS]  (115 tables checked, 0 failed)

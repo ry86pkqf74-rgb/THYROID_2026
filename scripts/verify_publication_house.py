@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Publication House Verification Suite (6 layers)
-Verifies that thyroid_canonical_publication_v1 faithfully reproduces every
+Verifies that thyroid_canonical_publication_v1_0 faithfully reproduces every
 cleaned artifact from "Thyroid 2026 UPdated" built by Script 223.
 
 Layers:
@@ -27,7 +27,7 @@ import duckdb, toml
 # ─────────────────────────────────────────────────────────────────────────────
 
 SRC_DB    = "Thyroid 2026 UPdated"
-TGT_DB    = "thyroid_canonical_publication_v1"
+TGT_DB    = "thyroid_canonical_publication_v1_0"
 SRC_CANON = "canonical_patient_master_v221"  # name in source
 TGT_CANON = "canonical_patient_master"        # name in target (only rename)
 
@@ -95,7 +95,7 @@ def src_ref(tbl: str) -> str:
 
 def tgt_ref(tbl: str) -> str:
     """Fully-qualified target table reference."""
-    return f'thyroid_canonical_publication_v1.main."{tbl}"'
+    return f'thyroid_canonical_publication_v1_0.main."{tbl}"'
 
 
 def load_token() -> str:
