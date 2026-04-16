@@ -30,8 +30,10 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 from motherduck_client import get_token  # noqa: E402
 
-DB = "thyroid_ete_fix_20260413"
-CANONICAL = "canonical_patient_master_v1"
+# Retargeted by Script 233 (2026-04-16) from the stale thyroid_ete_fix_20260413
+# to the canonical publication DB so rebuilds always land in the clean master.
+DB = "thyroid_canonical_publication_v1_0"
+CANONICAL = "canonical_patient_master"
 TOTAL_ROWS = 10871
 
 # Overridden by --db / --canonical / --token-from-toml CLI args at runtime
@@ -315,6 +317,10 @@ def task1_followup_recovery(con: duckdb.DuckDBPyConnection, dry_run: bool) -> di
             ("note_entities_llm_past_medical_hx", "note_date", "CAST(research_id AS VARCHAR)"),
             ("note_entities_llm_past_surgical_hx", "note_date", "CAST(research_id AS VARCHAR)"),
             ("clinical_note_ln_extracted_v1", "note_date", "CAST(research_id AS VARCHAR)"),
+            # Sources added by Script 233 (2026-04-16) during follow-up recovery.
+            # Keeping them in 218 guarantees the next rebuild produces the same
+            # last-contact coverage as the in-place 233 fix.
+            ("tg_postop_surveillance_windows_v1", "window_last_date", "CAST(research_id AS VARCHAR)"),
         ]
 
         for tbl, date_col, rid_expr in source_table_checks:

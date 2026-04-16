@@ -32,7 +32,9 @@ from motherduck_client import get_token
 OUTPUT_DIR = REPO / "scripts" / "output"
 OUTPUT_DIR.mkdir(exist_ok=True)
 
-DB = "thyroid_ete_fix_20260413"
+# Retargeted by Script 233 (2026-04-16) from the stale thyroid_ete_fix_20260413
+# to the canonical publication DB so rebuilds always land in the clean master.
+DB = "thyroid_canonical_publication_v1_0"
 
 
 def connect():
@@ -399,17 +401,23 @@ def main():
         if rid in [row["research_id"] for row in rows]:
             continue
         fs = first_surg_map.get(rid)
+        rd = r.get("recurrence_date")
+        # Script 233 (2026-04-16): derive time-to-recurrence from
+        # recurrence_days_from_surg analog; guard against negatives so
+        # the canonical never receives a nonsensical value for Tier 4/5.
+        rds = (rd - fs).days if (fs is not None and pd.notna(rd) and pd.notna(fs)) else None
+        ttr = rds if (rds is not None and rds >= 0) else None
         rows.append({
             "research_id": rid,
             "recurrence_confirmed": False,
             "recurrence_type": "persistent_biochemical_disease",
-            "recurrence_date": r.get("recurrence_date"),
+            "recurrence_date": rd,
             "recurrence_site": None,
             "recurrence_histology": None,
             "recurrence_evidence_source": "tg_time_series",
             "recurrence_definition": "persistent_tg_never_undetectable",
             "first_surgery_date": fs,
-            "time_to_recurrence_days": None,
+            "time_to_recurrence_days": ttr,
             "biochemical_tg_nadir": r.get("tg_min"),
             "biochemical_tg_at_recurrence": r.get("tg_max"),
         })
@@ -421,17 +429,22 @@ def main():
             if rid in [row["research_id"] for row in rows]:
                 continue
             fs = first_surg_map.get(rid)
+            rd = pd.to_datetime(r.get("entity_date"), errors="coerce") if r.get("entity_date") else None
+            # Script 233 (2026-04-16): guard against negatives so Tier 5
+            # never leaks a nonsensical day-count into the canonical.
+            rds = (rd - fs).days if (fs is not None and pd.notna(rd) and pd.notna(fs)) else None
+            ttr = rds if (rds is not None and rds >= 0) else None
             rows.append({
                 "research_id": rid,
                 "recurrence_confirmed": False,
                 "recurrence_type": "imaging_suspicious_unconfirmed",
-                "recurrence_date": pd.to_datetime(r.get("entity_date"), errors="coerce") if r.get("entity_date") else None,
+                "recurrence_date": rd,
                 "recurrence_site": r.get("entity_value", "")[:200] if r.get("entity_value") else None,
                 "recurrence_histology": None,
                 "recurrence_evidence_source": "imaging_or_clinical_note",
                 "recurrence_definition": "llm_extracted_unconfirmed",
                 "first_surgery_date": fs,
-                "time_to_recurrence_days": None,
+                "time_to_recurrence_days": ttr,
                 "biochemical_tg_nadir": None,
                 "biochemical_tg_at_recurrence": None,
             })
@@ -532,6 +545,14 @@ def main():
     edist = recur["recurrence_evidence_source"].value_counts()
     for k, v in edist.items():
         print(f"    {k}: {v}")
+
+    # Script 233 (2026-04-16): validation gate — reject any negative
+    # time_to_recurrence_days before we write the canonical.
+    ttr_series = df_final["time_to_recurrence_days"].dropna()
+    assert (ttr_series >= 0).all(), (
+        f"Negative time_to_recurrence_days found: "
+        f"{ttr_series[ttr_series < 0].tolist()[:10]}"
+    )
 
     # Save and upload
     out_path = OUTPUT_DIR / "canonical_recurrence_v1.parquet"
