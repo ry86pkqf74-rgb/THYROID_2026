@@ -42,9 +42,9 @@ log = logging.getLogger(__name__)
 VERIFIER_NAME = "evidence_substring_verifier"
 VERIFIER_VERSION = "1.0"
 
-MAX_CHUNK_CHARS = 6000
+MAX_CHUNK_CHARS = int(os.getenv("EXTRACT_MAX_CHUNK_CHARS", "6000"))
 # Operative dictation is long; use a larger prefix when OPENAI is enabled (cost/latency tradeoff).
-OP_NOTE_CHUNK_CHARS = 24_000
+OP_NOTE_CHUNK_CHARS = int(os.getenv("EXTRACT_OP_CHUNK_CHARS", "24000"))
 ROOT = Path(__file__).resolve().parent.parent
 PROMPT_DIR = ROOT / "prompts"
 _OP_NOTE_TYPES = frozenset({"op_note", "OPNOTE"})
@@ -75,28 +75,42 @@ class LLMExtractor(BaseExtractor):
         self._provider: str = "none"
         self._thread_local = local()
 
-        # 1. Prefer GitHub Models (free)
-        gh_token = os.getenv("GITHUB_TOKEN")
-        if gh_token:
-            self._api_key = gh_token
-            self._base_url = _GITHUB_MODELS_BASE_URL
-            self._model_id = _GITHUB_MODEL_ID
-            self._provider = "github_models"
-            log.info("LLMExtractor: using GitHub Models (free tier) — model %s", self._model_id)
+        # 0. Highest priority: vLLM / custom OpenAI-compatible endpoint
+        vllm_url = os.getenv("VLLM_BASE_URL")  # e.g. http://localhost:8000/v1
+        vllm_model = os.getenv("VLLM_MODEL_ID")  # e.g. Qwen/Qwen2.5-72B-Instruct-AWQ
+        if vllm_url and vllm_model:
+            self._api_key = os.getenv("VLLM_API_KEY", "dummy")
+            self._base_url = vllm_url
+            self._model_id = vllm_model
+            self._provider = "vllm_local"
+            log.info(
+                "LLMExtractor: using vLLM/custom endpoint — model %s @ %s",
+                self._model_id,
+                self._base_url,
+            )
         else:
-            # 2. Fall back to OpenAI API
-            oai_key = os.getenv("OPENAI_API_KEY")
-            if oai_key:
-                self._api_key = oai_key
-                self._base_url = None  # default openai endpoint
-                self._model_id = _OPENAI_MODEL_ID
-                self._provider = "openai"
-                log.info("LLMExtractor: using OpenAI API — model %s", self._model_id)
+            # 1. Prefer GitHub Models (free)
+            gh_token = os.getenv("GITHUB_TOKEN")
+            if gh_token:
+                self._api_key = gh_token
+                self._base_url = _GITHUB_MODELS_BASE_URL
+                self._model_id = _GITHUB_MODEL_ID
+                self._provider = "github_models"
+                log.info("LLMExtractor: using GitHub Models (free tier) — model %s", self._model_id)
             else:
-                log.warning(
-                    "LLMExtractor: neither GITHUB_TOKEN nor OPENAI_API_KEY set — "
-                    "LLM extraction disabled. Set one to enable."
-                )
+                # 2. Fall back to OpenAI API
+                oai_key = os.getenv("OPENAI_API_KEY")
+                if oai_key:
+                    self._api_key = oai_key
+                    self._base_url = None  # default openai endpoint
+                    self._model_id = _OPENAI_MODEL_ID
+                    self._provider = "openai"
+                    log.info("LLMExtractor: using OpenAI API — model %s", self._model_id)
+                else:
+                    log.warning(
+                        "LLMExtractor: neither VLLM_BASE_URL/VLLM_MODEL_ID, GITHUB_TOKEN, "
+                        "nor OPENAI_API_KEY set — LLM extraction disabled. Set one to enable."
+                    )
 
     @property
     def available(self) -> bool:
