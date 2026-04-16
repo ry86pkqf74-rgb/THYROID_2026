@@ -347,36 +347,48 @@ def phase1_nsqip(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
     print("\n[221] Step 1.4: Cross-validating NSQIP staging vs canonical pathology staging...")
     if not dry_run:
         canonical_cols = get_existing_columns(con)
-        staging_result = con.execute(f"""
-            SELECT
-                COUNT(*) FILTER (WHERE n.nsqip_t_classification IS NOT NULL
-                                 AND c.t_stage_ajcc8 IS NOT NULL) AS both_have_t,
-                COUNT(*) FILTER (WHERE n.nsqip_t_classification IS NOT NULL
-                                 AND c.t_stage_ajcc8 IS NOT NULL
-                                 AND UPPER(CAST(n.nsqip_t_classification AS VARCHAR))
-                                     != UPPER(CAST(c.t_stage_ajcc8 AS VARCHAR))) AS t_discordant,
-                COUNT(*) FILTER (WHERE n.nsqip_n_classification IS NOT NULL
-                                 AND c.n_stage_ajcc8 IS NOT NULL) AS both_have_n,
-                COUNT(*) FILTER (WHERE n.nsqip_n_classification IS NOT NULL
-                                 AND c.n_stage_ajcc8 IS NOT NULL
-                                 AND UPPER(CAST(n.nsqip_n_classification AS VARCHAR))
-                                     != UPPER(CAST(c.n_stage_ajcc8 AS VARCHAR))) AS n_discordant,
-                COUNT(*) FILTER (WHERE n.nsqip_nodes_removed IS NOT NULL
-                                 AND c.ln_total_examined IS NOT NULL) AS both_have_ln,
-                COUNT(*) FILTER (WHERE n.nsqip_nodes_removed IS NOT NULL
-                                 AND c.ln_total_examined IS NOT NULL
-                                 AND ABS(TRY_CAST(n.nsqip_nodes_removed AS INT)
-                                       - TRY_CAST(c.ln_total_examined AS INT)) > 2) AS ln_discordant
-            FROM {CANONICAL} c
-            JOIN {STAGING_NSQIP} n ON c.research_id = n.research_id
-        """).fetchone()
-        t_both, t_disc, n_both, n_disc, ln_both, ln_disc = staging_result
-        print(f"[221]   T-stage: {t_both} comparable, {t_disc} discordant "
-              f"({t_disc/t_both*100:.1f}%)" if t_both else "[221]   T-stage: no overlap")
-        print(f"[221]   N-stage: {n_both} comparable, {n_disc} discordant "
-              f"({n_disc/n_both*100:.1f}%)" if n_both else "[221]   N-stage: no overlap")
-        print(f"[221]   LN count: {ln_both} comparable, {ln_disc} discordant "
-              f"(>2 node diff, {ln_disc/ln_both*100:.1f}%)" if ln_both else "[221]   LN count: no overlap")
+        # Use actual canonical column names (ajcc8_t_stage, ajcc8_n_stage, ln_total_examined)
+        t_col = "ajcc8_t_stage" if "ajcc8_t_stage" in canonical_cols else (
+                "t_stage_ajcc8" if "t_stage_ajcc8" in canonical_cols else None)
+        n_col = "ajcc8_n_stage" if "ajcc8_n_stage" in canonical_cols else (
+                "n_stage_ajcc8" if "n_stage_ajcc8" in canonical_cols else None)
+        ln_col = "ln_total_examined" if "ln_total_examined" in canonical_cols else None
+
+        if t_col and n_col:
+            staging_result = con.execute(f"""
+                SELECT
+                    COUNT(*) FILTER (WHERE n.nsqip_t_classification IS NOT NULL
+                                     AND c.{t_col} IS NOT NULL) AS both_have_t,
+                    COUNT(*) FILTER (WHERE n.nsqip_t_classification IS NOT NULL
+                                     AND c.{t_col} IS NOT NULL
+                                     AND UPPER(CAST(n.nsqip_t_classification AS VARCHAR))
+                                         != UPPER(CAST(c.{t_col} AS VARCHAR))) AS t_discordant,
+                    COUNT(*) FILTER (WHERE n.nsqip_n_classification IS NOT NULL
+                                     AND c.{n_col} IS NOT NULL) AS both_have_n,
+                    COUNT(*) FILTER (WHERE n.nsqip_n_classification IS NOT NULL
+                                     AND c.{n_col} IS NOT NULL
+                                     AND UPPER(CAST(n.nsqip_n_classification AS VARCHAR))
+                                         != UPPER(CAST(c.{n_col} AS VARCHAR))) AS n_discordant,
+                    COUNT(*) FILTER (WHERE n.nsqip_nodes_removed IS NOT NULL
+                                     AND c.{ln_col} IS NOT NULL) AS both_have_ln,
+                    COUNT(*) FILTER (WHERE n.nsqip_nodes_removed IS NOT NULL
+                                     AND c.{ln_col} IS NOT NULL
+                                     AND ABS(TRY_CAST(n.nsqip_nodes_removed AS INT)
+                                           - TRY_CAST(c.{ln_col} AS INT)) > 2) AS ln_discordant
+                FROM {CANONICAL} c
+                JOIN {STAGING_NSQIP} n ON c.research_id = n.research_id
+            """).fetchone()
+            t_both, t_disc, n_both, n_disc, ln_both, ln_disc = staging_result
+            print(f"[221]   T-stage ({t_col}): {t_both} comparable, {t_disc} discordant "
+                  f"({t_disc/t_both*100:.1f}%)" if t_both else f"[221]   T-stage ({t_col}): no overlap")
+            print(f"[221]   N-stage ({n_col}): {n_both} comparable, {n_disc} discordant "
+                  f"({n_disc/n_both*100:.1f}%)" if n_both else f"[221]   N-stage ({n_col}): no overlap")
+            if ln_col:
+                print(f"[221]   LN count ({ln_col}): {ln_both} comparable, {ln_disc} discordant "
+                      f"(>2 node diff, {ln_disc/ln_both*100:.1f}%)" if ln_both
+                      else f"[221]   LN count ({ln_col}): no overlap")
+        else:
+            print("[221]   T/N staging columns not found in canonical — skipping step 1.4")
 
     # ------------------------------------------------------------------
     # Step 1.5: Cross-validate hypocalcemia
@@ -444,24 +456,35 @@ def phase1_nsqip(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
     print("\n[221] Step 1.7: Cross-validating NSQIP surgical indicators vs canonical...")
     if not dry_run:
         canonical_cols = get_existing_columns(con)
-        checks = []
-        if "ln_central_examined" in canonical_cols:
-            checks.append(("CND", "nsqip_central_neck_dissection", "'Yes'",
-                           "TRY_CAST(c.ln_central_examined AS INT) > 0",
-                           "c.ln_central_examined"))
-        if "ln_lateral_examined" in canonical_cols:
-            checks.append(("LND", "nsqip_lateral_neck_dissection", "'Yes'",
-                           "TRY_CAST(c.ln_lateral_examined AS INT) > 0",
-                           "c.ln_lateral_examined"))
-        for check_name, nsqip_col, nsqip_val, canonical_cond, _ in checks:
+        # Map: (label, nsqip_col, nsqip_val, canonical_col_options, canonical_condition_template)
+        indicator_checks = [
+            ("CND", "nsqip_central_neck_dissection", "'Yes'",
+             ["tp_ln_central_positive", "ln_central_examined"],
+             "c.{col} IS NOT NULL AND TRY_CAST(c.{col} AS INT) > 0"),
+            ("LND", "nsqip_lateral_neck_dissection", "'Yes'",
+             ["ln_lateral_dissected", "ln_lateral_examined"],
+             "c.{col} IS NOT NULL AND TRY_CAST(c.{col} AS INT) > 0"),
+            ("Drain", "nsqip_drain_usage", "'Yes'",
+             ["op_drain_placed_any", "ops_drain"],
+             "LOWER(CAST(c.{col} AS VARCHAR)) IN ('true', 'yes', '1')"),
+            ("RLN mon", "nsqip_rln_monitoring", "'Yes'",
+             ["ops_nerve_stim_final", "ops_nerve_stim_left", "op_rln_monitoring_any"],
+             "c.{col} IS NOT NULL AND LOWER(CAST(c.{col} AS VARCHAR)) NOT IN ('', 'none', 'no', 'false')"),
+        ]
+        for label, nsqip_col, nsqip_val, canon_candidates, cond_tmpl in indicator_checks:
+            canon_col = next((c for c in canon_candidates if c in canonical_cols), None)
+            if not canon_col:
+                print(f"[221]   {label}: no matching canonical column in {canon_candidates} — skipped")
+                continue
+            cond = cond_tmpl.format(col=canon_col)
             r = con.execute(f"""
                 SELECT
                     COUNT(*) FILTER (WHERE n.{nsqip_col} = {nsqip_val}) AS nsqip_yes,
-                    COUNT(*) FILTER (WHERE {canonical_cond}) AS canonical_yes
+                    COUNT(*) FILTER (WHERE {cond}) AS canonical_yes
                 FROM {CANONICAL} c
                 JOIN {STAGING_NSQIP} n ON c.research_id = n.research_id
             """).fetchone()
-            print(f"[221]   {check_name}: NSQIP={r[0]}, Canonical={r[1]}")
+            print(f"[221]   {label} (canonical={canon_col}): NSQIP={r[0]}, Canonical={r[1]}")
 
     # ------------------------------------------------------------------
     # Step 1.8: Determine new columns and integrate via ALTER TABLE + UPDATE
@@ -725,21 +748,19 @@ def phase2_parathyroid(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
             if not excel_path.exists():
                 print(f"[221] ERROR: Cannot find {excel_path}")
                 sys.exit(1)
-            pt_df = pd.read_excel(str(excel_path), sheet_name=0)
-            # Normalize column names (keep originals for now, just strip whitespace)
+            pt_df = pd.read_excel(str(excel_path), sheet_name=0, dtype=str)
+            # Normalize column names (strip whitespace)
             pt_df.columns = [str(c).strip() for c in pt_df.columns]
             # Rename research_id column
             rid_col_raw = next(c for c in pt_df.columns if "research" in c.lower() and "id" in c.lower())
             pt_df = pt_df.rename(columns={rid_col_raw: "research_id"})
-            pt_df["research_id"] = pt_df["research_id"].astype(str)
-            tmp = REPO / "scripts" / "output" / "_para_ingest_221.parquet"
-            tmp.parent.mkdir(parents=True, exist_ok=True)
-            pt_df.to_parquet(str(tmp), index=False)
-            con.execute(f"CREATE OR REPLACE TABLE parathyroid_notes_intent_v1 AS SELECT * FROM read_parquet('{tmp}')")
-            try:
-                tmp.unlink()
-            except Exception:
-                pass
+            # Ensure all columns are string to avoid pyarrow mixed-type issues
+            for col in pt_df.columns:
+                pt_df[col] = pt_df[col].astype(str).replace("nan", None)
+            # Register directly with DuckDB (avoids parquet intermediate file)
+            con.register("_para_excel_df", pt_df)
+            con.execute("CREATE OR REPLACE TABLE parathyroid_notes_intent_v1 AS SELECT * FROM _para_excel_df")
+            con.unregister("_para_excel_df")
             source_tbl = "parathyroid_notes_intent_v1"
             n = con.execute(f"SELECT COUNT(*) FROM {source_tbl}").fetchone()[0]
             print(f"[221] ✓ Ingested {source_tbl}: {n} rows")
@@ -982,11 +1003,11 @@ def phase3_report(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
         ("research_id", "IS NOT NULL"),
         ("fna_path_outcome", "= 'malignant'"),
         ("ete_grade", "IS NOT NULL"),
-        ("t_stage_ajcc8", "IS NOT NULL"),
-        ("n_stage_ajcc8", "IS NOT NULL"),
+        ("ajcc8_t_stage", "IS NOT NULL"),
+        ("ajcc8_n_stage", "IS NOT NULL"),
         ("ln_total_examined", "IS NOT NULL"),
         ("followup_years", "> 0"),
-        ("recurrence_confirmed", "= TRUE"),
+        ("recurrence_confirmed", "IS NOT NULL"),
         ("age_at_surgery", "IS NOT NULL"),
         ("diagnosis_primary", "IS NOT NULL"),
         ("nsqip_thyroidectomy_has_data", "= TRUE"),
