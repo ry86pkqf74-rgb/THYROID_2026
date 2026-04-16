@@ -1,0 +1,231 @@
+{
+  "generated_at": "20260416T155414Z",
+  "working_db": "Thyroid 2026 UPdated",
+  "tables": [
+    {
+      "table_name": "fna_episode_master_v2_backup_20260414",
+      "rows": 8119,
+      "status": "existing"
+    },
+    {
+      "table_name": "patient_refined_master_clinical_v12_ln_backup_20260414",
+      "rows": 12886,
+      "status": "existing"
+    },
+    {
+      "table_name": "patient_refined_master_clinical_v12_outcome_backup_20260415",
+      "rows": 12886,
+      "status": "existing"
+    },
+    {
+      "table_name": "rai_treatment_episode_v2_backup_20260415",
+      "rows": 1857,
+      "status": "existing"
+    },
+    {
+      "table_name": "gold_llm_verified_facts",
+      "rows": 178,
+      "status": "existing"
+    },
+    {
+      "table_name": "ARCHIVE___molecular_patient_rollup_v225",
+      "rows": 10026,
+      "status": "existing"
+    },
+    {
+      "table_name": "ARCHIVE___ret_adjudication_input_v226",
+      "rows": 177,
+      "status": "existing"
+    },
+    {
+      "table_name": "ARCHIVE__canonical_patient_master_v225_pre_molecular_fix",
+      "rows": 10871,
+      "status": "existing"
+    },
+    {
+      "table_name": "ARCHIVE__fna_episode_master_v2_pre_v225",
+      "rows": 8119,
+      "status": "existing"
+    },
+    {
+      "table_name": "ARCHIVE__molecular_results_pre_v225",
+      "rows": 10862,
+      "status": "existing"
+    },
+    {
+      "table_name": "ARCHIVE__molecular_test_episode_v2_pre_v225",
+      "rows": 10126,
+      "status": "existing"
+    },
+    {
+      "table_name": "ARCHIVE__molecular_variant_long_pre_v225",
+      "rows": 1640,
+      "status": "existing"
+    },
+    {
+      "table_name": "fhir_bundle_specimen_export_v1",
+      "rows": 10139,
+      "status": "existing"
+    },
+    {
+      "table_name": "fhir_encounter_v1",
+      "rows": 10139,
+      "status": "existing"
+    },
+    {
+      "table_name": "fhir_episode_of_care_v1",
+      "rows": 9486,
+      "status": "existing"
+    },
+    {
+      "table_name": "fhir_patient_deid_map_v1",
+      "rows": 8422,
+      "status": "existing"
+    },
+    {
+      "table_name": "fhir_procedure_collection_v1",
+      "rows": 10139,
+      "status": "existing"
+    },
+    {
+      "table_name": "fhir_specimen_v1",
+      "rows": 10139,
+      "status": "existing"
+    },
+    {
+      "table_name": "stg_thyroseq_excel_raw",
+      "rows": 11374,
+      "status": "existing"
+    },
+    {
+      "table_name": "stg_thyroseq_match_results",
+      "rows": 11374,
+      "status": "existing"
+    },
+    {
+      "table_name": "stg_thyroseq_parsed",
+      "rows": 11374,
+      "status": "existing"
+    },
+    {
+      "table_name": "canonical_patient_master_v218",
+      "rows": 10871,
+      "status": "existing"
+    },
+    {
+      "table_name": "canonical_patient_master_v221",
+      "rows": 10871,
+      "status": "existing"
+    },
+    {
+      "table_name": "data_dictionary_parquet_v221",
+      "rows": 1374,
+      "status": "existing"
+    },
+    {
+      "table_name": "data_dictionary_v2",
+      "rows": 1374,
+      "status": "existing"
+    },
+    {
+      "table_name": "review_queue_imaging_fna_mm_v1",
+      "rows": 742,
+      "status": "existing"
+    },
+    {
+      "table_name": "tg_lab_review_queue_v1",
+      "rows": 1035,
+      "status": "existing"
+    },
+    {
+      "table_name": "thyroseq_review_queue",
+      "rows": 628,
+      "status": "existing"
+    },
+    {
+      "table_name": "lab_cross_wave_review_v1",
+      "rows": 0,
+      "status": "existing"
+    },
+    {
+      "table_name": "lab_same_day_value_review_v1",
+      "rows": 288,
+      "status": "existing"
+    },
+    {
+      "table_name": "val_imaging_fna_linkage_audit_v1",
+      "rows": 1,
+      "status": "existing"
+    },
+    {
+      "table_name": "val_path_synoptic_encounter_isolation_v1",
+      "rows": 3,
+      "status": "existing"
+    },
+    {
+      "table_name": "val_phase12_tirads_validation",
+      "rows": 4,
+      "status": "existing"
+    },
+    {
+      "table_name": "_followup_all_dates_v2",
+      "rows": 77799,
+      "status": "existing"
+    },
+    {
+      "table_name": "_followup_computed_v2",
+      "rows": 7219,
+      "status": "existing"
+    },
+    {
+      "table_name": "_followup_patient_max_v2",
+      "rows": 7757,
+      "status": "existing"
+    },
+    {
+      "table_name": "_patient_surgery_dates",
+      "rows": 9366,
+      "status": "existing"
+    },
+    {
+      "table_name": "_recurrence_event_sites_v1",
+      "rows": 0,
+      "status": "existing"
+    },
+    {
+      "table_name": "_recurrence_fna_sites_v1",
+      "rows": 1273,
+      "status": "existing"
+    },
+    {
+      "table_name": "_nucmed_labs_parsed_v1",
+      "rows": 567,
+      "status": "existing"
+    },
+    {
+      "table_name": "_nucmed_labs_rollup_v1",
+      "rows": 447,
+      "status": "existing"
+    },
+    {
+      "table_name": "canonical_extracted_fact_long_v1",
+      "rows": 0,
+      "status": "existing"
+    },
+    {
+      "table_name": "canonical_extracted_fact_long_v2",
+      "rows": 55500,
+      "status": "existing"
+    },
+    {
+      "table_name": "canonical_fact_quarantine_v1",
+      "rows": 0,
+      "status": "existing"
+    },
+    {
+      "table_name": "canonical_fact_quarantine_v2",
+      "rows": 199,
+      "status": "existing"
+    }
+  ]
+}
