@@ -1,5 +1,49 @@
 # THYROID_2026 — Agent Memory
 
+## MotherDuck Database Governance (MANDATORY — check before every MD session)
+
+### Primary database for all writes
+**`thyroid_canonical_publication_v1_0`** is the ONE canonical publication database.
+- All new tables, fixes, and enrichment scripts write here ONLY.
+- Always connect via `_md_connect.connect_locked()` or an explicit `USE thyroid_canonical_publication_v1_0` to lock the search path.
+
+### Other attached databases — read-only reference only
+| Database | Allowed use |
+|---|---|
+| `Thyroid 2026 UPdated` | Read-only: check for missing data, verify source values, cross-reference only |
+| `my_db` | Scratch/temp experiments only — nothing permanent |
+**Never write to `Thyroid 2026 UPdated` unless the user explicitly directs it.**
+
+### Table naming convention inside `thyroid_canonical_publication_v1_0.main`
+| Prefix | Meaning | Use in analysis? |
+|---|---|---|
+| *(none)* | LIVE canonical — current production version | YES |
+| `ARCHIVE__` | Preserved prior version, not for routine use | Reference only |
+| `DEPRECATED__` | Known bugs / superseded — DO NOT QUERY | Never |
+| `md_` leftover | Likely exact duplicate — audit then drop | Never until audited |
+
+### Deduplication hygiene — run after every multi-table pipeline
+- Invoke the `motherduck-dedup-hygiene` skill after any session that adds/renames tables.
+- Verify content identity (`is_identical()`) before any DROP.
+- Rename old versions to `ARCHIVE__` or `DEPRECATED__` with a COMMENT before swapping the live alias.
+- Check for duplicate column names after any enrichment re-run (`SELECT cpm.*, new_col AS foo` on an already-enriched table creates `foo_1` shadow columns — rebuild from the `ARCHIVE__` base instead).
+
+### Canonical master invariants (assert after every write)
+- `canonical_patient_master` rows = **10,871**
+- `canonical_patient_master` distinct research_id = **10,871**
+- Column `r_class_true` exists (rollup fix applied)
+- Column `ete_grade_final_v2` exists (ETE adjudication applied)
+
+### Deprecated columns — never use in new analyses
+| Deprecated column | Use instead |
+|---|---|
+| `margin_r_class`, `margin_status_final` | `r_class_true`, `margin_status_true`, `margin_involved_any` |
+| `lvi_grade_final_v13` | `lvi_ordinal_worst`, `lvi_any_present_path` |
+| `multifocal_flag`, `path_multifocal_flag`, `path_n_tumors` | `multifocal_flag_path`, `n_tumors_path` |
+| `max_tumor_size_cm_v10` | `tumor_size_cm` or `tumor_size_cm_max` |
+
+---
+
 ## Learned User Preferences
 
 - Always stage, commit, and push changes to GitHub when completing a task; explicitly confirm that all three steps completed successfully
