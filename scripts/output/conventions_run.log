@@ -1,0 +1,17 @@
+/Users/loganglosser/THYROID_2026/scripts/_run_sql.py:31: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  return datetime.utcnow().strftime("%H:%M:%S.") + f"{datetime.utcnow().microsecond//1000:03d}Z"
+[23:30:11.562Z] === START manuscript_workspace_conventions.sql
+[23:30:11.563Z] parsed 6 statements from manuscript_workspace_conventions.sql
+[23:30:12.861Z] connected to MotherDuck (publication DB locked)
+[23:30:13.279Z]   [1] OK (418 ms)  CREATE OR REPLACE TABLE manuscript_workspace.__conventions AS
+[23:30:13.721Z]   [2] OK (442 ms)  COMMENT ON TABLE manuscript_workspace.__conventions IS
+[23:30:13.721Z] LOG: assertions
+[23:30:13.721Z] ASSERT: table created with >= 5 rows
+[23:30:13.752Z]   [3] ASSERT PASS (30 ms)  row=(True,)
+[23:30:13.752Z] ASSERT: every row has all required columns populated
+[23:30:13.781Z]   [4] ASSERT PASS (29 ms)  row=(True,)
+[23:30:13.781Z] ASSERT: convention_id values are unique
+[23:30:13.816Z]   [5] ASSERT PASS (35 ms)  row=(True,)
+[23:30:13.816Z] ASSERT: table COMMENT is set
+[23:30:14.215Z]   [6] ASSERT PASS (399 ms)  row=(True,)
+[23:30:14.215Z] === END manuscript_workspace_conventions.sql  elapsed=1.4s  failures=0
