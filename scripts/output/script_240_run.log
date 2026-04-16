@@ -1,0 +1,109 @@
+WARNING: Your client version of DuckDB (v1.1.3) will soon be unsupported with MotherDuck. Please upgrade your DuckDB. We recommend DuckDB v1.5.2. For the installation guide, please refer to https://duckdb.org/docs/installation/.
+/Users/loganglosser/THYROID_2026/scripts/240_ln_staging_cleanup.py:891: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  Generated: {datetime.utcnow().isoformat(timespec='seconds')}Z
+Connected to thyroid_canonical_publication_v1_0
+
+==============================================================================
+STEP 0 — Pre-flight checks
+==============================================================================
+  database = thyroid_canonical_publication_v1_0
+  [invariants pre-run] total=10871 distinct_rid=10871 null_rid=0 null_fna=0
+  column count = 1479
+  already-present fix columns = ['ajcc8_stage_group_v2', 'ajcc8_t_stage_v2']
+
+==============================================================================
+STEP 1 — Snapshot backup
+==============================================================================
+  canonical_patient_master_pre240_backup rows = 10871
+
+==============================================================================
+STEP 2 — Issue 1: Microscopic ETE T3b correction
+==============================================================================
+  microscopic-ETE + T3b cohort = 949
+  existing ajcc8_t_stage_v2 distribution for cohort: [('T3b', 854), ('T3a', 67), ('T4a', 24), ('T4b', 4)]
+  corrected T-stage distribution: [('T1b', 243), ('T2', 241), ('T3a', 216), ('T1a', 206)]
+  stage group migrations (orig -> corrected): [('II', 'I', 49), ('III', 'II', 6)]
+  microscopic_ete_t3b_corrected = TRUE rows: 906
+  [invariants after-issue1] total=10871 distinct_rid=10871 null_rid=0 null_fna=0
+
+==============================================================================
+STEP 3 — Issue 2: ln_positive_flag reconciliation
+==============================================================================
+  mismatches flag<>total: 51
+  gap-fill candidates (flag set, total NULL): 457
+  binary_filled=5113 true=2637 false=2476 reconciled_filled=5162 raw_filled=4060
+  [invariants after-issue2] total=10871 distinct_rid=10871 null_rid=0 null_fna=0
+
+==============================================================================
+STEP 4 — Issue 3: ENE/LN concordance
+==============================================================================
+  path_ene_missing_ln_count cases: 0
+  ENE-positive concordance distribution: [('concordant', 1109), ('discordant_unresolved', 122), ('ene_positive_ln_unknown', 21)]
+  [invariants after-issue3] total=10871 distinct_rid=10871 null_rid=0 null_fna=0
+
+==============================================================================
+STEP 5 — Issue 4: N1b stage-III discordances
+==============================================================================
+  discordance candidates (8):
+    ('5425', 71, 'FTC', 'T3b', 'N1b', 'M0', 'III')
+    ('6891', 62, 'PTC', 'T3b', 'N1b', 'M0', 'III')
+    ('4560', 68, 'PTC', 'T2', 'N1b', 'M0', 'III')
+    ('5654', 56, 'PTC', 'T3b', 'N1b', 'M0', 'III')
+    ('5959', 63, 'PTC', 'T3b', 'N1b', 'M0', 'III')
+    ('5578', 76, 'PTC', 'T3b', 'N1b', 'M0', 'III')
+    ('5378', 79, 'PTC', 'T3b', 'N1b', 'M0', 'III')
+    ('3268', 70, 'PTC', 'T3b', 'N1b', 'M0', 'III')
+  stage_discordance_note distribution: [('n1b_incorrectly_upstaged_to_III_corrected_to_II', 8)]
+  [invariants after-issue4] total=10871 distinct_rid=10871 null_rid=0 null_fna=0
+
+==============================================================================
+STEP 6 — Issue 5: Level-specific impossible values
+==============================================================================
+  Level II impossible cases: [('8077', 12, 34)]
+  Level II impossible cases after fix: 0
+  ln_data_quality_flag distribution: [('positive_without_exam_count', 20), ('level_ii_transposition_corrected', 1)]
+  [invariants after-issue5] total=10871 distinct_rid=10871 null_rid=0 null_fna=0
+
+==============================================================================
+STEP 7 — Data dictionary v240
+==============================================================================
+  dictionary entries to write: 1488
+  data_dictionary_v240 row count: 1488
+
+==============================================================================
+STEP 8 — Drill-down registry + cohort views verification
+==============================================================================
+  registry rows: 109
+  canonical_detail_pointer_v1 rows: 1488
+  cohort_* views to test: 64
+  cohort views: 64/64 healthy
+
+==============================================================================
+STEP 9 — Stale-object check
+==============================================================================
+  OK: canonical_patient_master_v1 not present in publication DB
+
+==============================================================================
+STEP 10 — Final validation battery
+==============================================================================
+  [invariants final] total=10871 distinct_rid=10871 null_rid=0 null_fna=0
+  mic-ETE still T3b in corrected column (DTC only): 0
+  final column count: 1488
+  ajcc8_t_stage_corrected: 4083 non-null (37.6%)
+  ajcc8_stage_group_corrected: 4083 non-null (37.6%)
+  microscopic_ete_t3b_corrected: 10871 non-null (100.0%)
+  ln_positive_binary: 5113 non-null (47.0%)
+  ln_positive_count_raw: 4060 non-null (37.3%)
+  ln_count_reconciled: 5162 non-null (47.5%)
+  ene_ln_concordance_status: 1252 non-null (11.5%)
+  stage_discordance_note: 8 non-null (0.1%)
+  ln_data_quality_flag: 21 non-null (0.2%)
+
+==============================================================================
+STEP 11 — Summary report
+==============================================================================
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/script_240_report.md
+
+==============================================================================
+SCRIPT 240 COMPLETE
+==============================================================================
