@@ -146,3 +146,48 @@ pre-change backup are explicitly no-ops on data (documentation only).
   (definite_received / planned / historical, which don't exist today),
   re-enable the populate branch** (`--force-populate`) in the stubbed
   Phase 2a.
+
+### Script 240 — Deprecate broken CPM columns (rename + view sweep)
+- **Renamed** on `canonical_patient_master`:
+  - `imaging_nodule_size_cm` → `deprecated__imaging_nodule_size_cm`
+    (broken per-patient aggregation: 44.8% MAX / 31.5% MIN / 15.1% MEAN
+    across 3,439 patients; superseded by `dominant_nodule_size_cm`).
+  - `tumor_size_cm` → `deprecated__tumor_size_cm`
+    (byte-identical duplicate of `path_tumor_size_cm` across 4,130/4,130
+    populated rows; superseded by `path_tumor_size_cm`).
+  Both columns preserved — not dropped. `COMMENT ON COLUMN` carries a
+  `DEPRECATED 2026-04-16 (Script 240): ... Will be removed in v1_1.`
+  marker on each.
+- **View sweep:** 65 views total in `manuscript_workspace`. 55 reference
+  the renamed columns. Pre-flight classified them by FROM source:
+  - **32 views reference CPM directly** → rewritten. Replacement:
+    `deprecated__X AS X` (preserves output column surface for
+    downstream consumers).
+  - **23 views are downstream** (FROM another `manuscript_workspace`
+    view) → NOT rewritten. Their upstream view's `AS X` alias
+    re-exposes the original name, so they continue to work without
+    editing.
+- **Backups** (before any write):
+  - `"Thyroid 2026 UPdated".archive_pub_v1_0.canonical_patient_master_pre240_v2_backup_<ts>`
+    (full row copy, 10,871 rows).
+  - `"Thyroid 2026 UPdated".archive_pub_v1_0._view_ddl_snapshot_pre240_<ts>`
+    (55 rows: the pre-rewrite DDL for every affected view, for rollback).
+- **Mid-run correction:** first attempt rewrote all 55 affected views
+  indiscriminately and failed at the 27th view when a downstream view
+  tried to select `deprecated__tumor_size_cm` from a base view that only
+  exposes `tumor_size_cm` (correctly). Rolled back cleanly from the
+  snapshot, re-ran with the FROM-source split. No residual state.
+- **Assertions (12/12 PASS):**
+  - Both `deprecated__*` columns present in CPM; original names gone.
+  - COMMENT carries DEPRECATED marker for each.
+  - CPM row count unchanged at 10,871.
+  - CPM column count unchanged at 1,505 (rename is metadata-only).
+  - Full view-compile sweep: 65/65 pass.
+  - All 55 affected views preserve their original column surface
+    (original names still in `information_schema.columns`).
+  - Both archive artifacts present in `archive_pub_v1_0`.
+- **Follow-up for v1_1:** DROP the `deprecated__*` columns once all
+  downstream views have been updated to use the replacement columns
+  directly. The registered `canonical_tumor_characteristics_v1` work in
+  Script 245 and its CPM-feed path will also help retire
+  `deprecated__tumor_size_cm`.

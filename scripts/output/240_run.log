@@ -1,0 +1,80 @@
+/Users/loganglosser/THYROID_2026/scripts/240_deprecate_broken_cpm_columns.py:122: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  return datetime.utcnow().strftime("%H:%M:%S.") + f"{datetime.utcnow().microsecond // 1000:03d}Z"
+[20:58:10.229Z] === START 240_deprecate_broken_cpm_columns.py
+[20:58:11.016Z] connected to thyroid_canonical_publication_v1_0
+[20:58:11.016Z] PHASE 0 — baseline capture
+[20:58:11.433Z]   cpm_rows: 10871
+[20:58:11.433Z]   cpm_cols: 1505
+[20:58:11.433Z]   col_present:imaging_nodule_size_cm: True
+[20:58:11.433Z]   col_present:deprecated__imaging_nodule_size_cm: False
+[20:58:11.433Z]   col_present:tumor_size_cm: True
+[20:58:11.433Z]   col_present:deprecated__tumor_size_cm: False
+[20:58:11.433Z] PHASE 1 — enumerate affected views (split by FROM source)
+[20:58:11.451Z]   direct-CPM views (need rewrite):   32
+[20:58:11.451Z]   downstream views (no rewrite):     23
+[20:58:11.451Z]     direct: manuscript_workspace.cohort_descriptive_full_cohort_v1
+[20:58:11.451Z]     direct: manuscript_workspace.cohort_m001_indeterminate_genetics_v1
+[20:58:11.451Z]     direct: manuscript_workspace.cohort_m004_graves_hashimoto_cancer_v1
+[20:58:11.451Z]     direct: manuscript_workspace.cohort_m006_molecular_surg_decision_v1
+[20:58:11.451Z]     direct: manuscript_workspace.cohort_m007_rss_reclassification_v1
+[20:58:11.451Z] PHASE 2 — backups
+/Users/loganglosser/THYROID_2026/scripts/240_deprecate_broken_cpm_columns.py:509: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  run_ts = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+[20:58:11.451Z] archive CPM -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_pre240_v2_backup_20260416T205811Z"
+[20:58:14.721Z]   archived 10871 rows -> canonical_patient_master_pre240_v2_backup_20260416T205811Z
+[20:58:14.721Z] snapshot view DDLs -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."_view_ddl_snapshot_pre240_20260416T205811Z"
+/Users/loganglosser/THYROID_2026/scripts/240_deprecate_broken_cpm_columns.py:122: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  return datetime.utcnow().strftime("%H:%M:%S.") + f"{datetime.utcnow().microsecond // 1000:03d}Z"
+[20:58:18.878Z]   captured 55 view DDLs
+[20:58:18.878Z] PHASE 3 — rename CPM columns + add DEPRECATED comments
+[20:58:18.878Z] ALTER TABLE canonical_patient_master RENAME imaging_nodule_size_cm -> deprecated__imaging_nodule_size_cm
+[20:58:19.348Z] ALTER TABLE canonical_patient_master RENAME tumor_size_cm -> deprecated__tumor_size_cm
+[20:58:19.875Z] PHASE 4 — rewrite + recreate direct-CPM views
+[20:58:19.876Z]   rewrite manuscript_workspace.cohort_descriptive_full_cohort_v1  (1 replacements)
+[20:58:20.386Z]   rewrite manuscript_workspace.cohort_m001_indeterminate_genetics_v1  (1 replacements)
+[20:58:20.830Z]   rewrite manuscript_workspace.cohort_m004_graves_hashimoto_cancer_v1  (1 replacements)
+[20:58:21.939Z]   rewrite manuscript_workspace.cohort_m006_molecular_surg_decision_v1  (1 replacements)
+[20:58:22.373Z]   rewrite manuscript_workspace.cohort_m007_rss_reclassification_v1  (1 replacements)
+[20:58:22.812Z]   rewrite manuscript_workspace.cohort_m011_tirads_fna_genetics_v1  (1 replacements)
+[20:58:23.202Z]   rewrite manuscript_workspace.cohort_m016_graves_carcinoma_v1  (1 replacements)
+[20:58:23.626Z]   rewrite manuscript_workspace.cohort_m018_molecular_beth56_v1  (1 replacements)
+[20:58:24.073Z]   rewrite manuscript_workspace.cohort_m019_rai_outcomes_v1  (1 replacements)
+[20:58:24.511Z]   rewrite manuscript_workspace.cohort_m023_preop_genetics_v1  (1 replacements)
+[20:58:25.019Z]   rewrite manuscript_workspace.cohort_m025_tirads_performance_v1  (2 replacements)
+[20:58:25.380Z]   rewrite manuscript_workspace.cohort_m028_bethesda_iii_iv_v1  (1 replacements)
+[20:58:25.911Z]   rewrite manuscript_workspace.cohort_m029_fna_concordance_v1  (1 replacements)
+[20:58:26.457Z]   rewrite manuscript_workspace.cohort_m030_genetic_predictive_v1  (1 replacements)
+[20:58:26.861Z]   rewrite manuscript_workspace.cohort_m032_descriptive_25yr_v1  (1 replacements)
+[20:58:27.305Z]   rewrite manuscript_workspace.cohort_m033_afirma_thyroseq_v1  (1 replacements)
+[20:58:27.739Z]   rewrite manuscript_workspace.cohort_m035_bethesda_v_v1  (1 replacements)
+[20:58:28.256Z]   rewrite manuscript_workspace.cohort_m036_ata_risk_comparison_v1  (1 replacements)
+[20:58:28.700Z]   rewrite manuscript_workspace.cohort_m037_ln_metastasis_v1  (1 replacements)
+[20:58:29.279Z]   rewrite manuscript_workspace.cohort_m040_reoperative_v1  (1 replacements)
+[20:58:29.760Z]   rewrite manuscript_workspace.cohort_m043_ln_predictors_v1  (1 replacements)
+[20:58:30.277Z]   rewrite manuscript_workspace.cohort_m044_ajcc_ete_v1  (1 replacements)
+[20:58:30.667Z]   rewrite manuscript_workspace.cohort_m045_multimodal_risk_v1  (1 replacements)
+[20:58:31.162Z]   rewrite manuscript_workspace.cohort_m046_niftp_era_bethesda_v1  (1 replacements)
+[20:58:31.649Z]   rewrite manuscript_workspace.cohort_m047_frozen_section_v1  (1 replacements)
+[20:58:32.089Z]   rewrite manuscript_workspace.cohort_m067_tsh_tg_tumorigenesis_v1  (1 replacements)
+[20:58:32.592Z]   rewrite manuscript_workspace.cohort_m072_molecular_surg_impact_v1  (1 replacements)
+[20:58:33.036Z]   rewrite manuscript_workspace.cohort_m073_tg_lob_vs_tt_v1  (1 replacements)
+[20:58:33.504Z]   rewrite manuscript_workspace.cohort_m075_tirads_multi_nodule_v1  (1 replacements)
+[20:58:33.937Z]   rewrite manuscript_workspace.cohort_m078_graves_survival_v1  (1 replacements)
+[20:58:34.464Z]   rewrite manuscript_workspace.cohort_m080_molecular_beth56_v1  (1 replacements)
+[20:58:34.849Z]   rewrite manuscript_workspace.cohort_m081_rai_resistant_v1  (1 replacements)
+[20:58:35.358Z]   rewritten: 32 direct-CPM views (downstream views intentionally untouched)
+[20:58:35.358Z] PHASE 5 — assertions
+[20:58:35.924Z] view-compile sweep: 65/65 pass, 0 fail
+[20:58:37.956Z]   ASSERT [PASS] CPM column 'deprecated__imaging_nodule_size_cm' present
+[20:58:37.956Z]   ASSERT [PASS] CPM column 'imaging_nodule_size_cm' absent (renamed away)
+[20:58:37.956Z]   ASSERT [PASS] CPM column 'deprecated__tumor_size_cm' present
+[20:58:37.956Z]   ASSERT [PASS] CPM column 'tumor_size_cm' absent (renamed away)
+[20:58:37.956Z]   ASSERT [PASS] COMMENT on deprecated__imaging_nodule_size_cm carries DEPRECATED marker
+[20:58:37.956Z]   ASSERT [PASS] COMMENT on deprecated__tumor_size_cm carries DEPRECATED marker
+[20:58:37.956Z]   ASSERT [PASS] CPM row count unchanged at 10871
+[20:58:37.956Z]   ASSERT [PASS] CPM column count unchanged at 1505
+[20:58:37.956Z]   ASSERT [PASS] view-compile sweep: all 65 views pass
+[20:58:37.956Z]   ASSERT [PASS] all 55 rewritten views preserve original column names
+[20:58:37.956Z]   ASSERT [PASS] archive copy of pre-rename CPM present
+[20:58:37.956Z]   ASSERT [PASS] archive copy of pre-rewrite view DDLs present
+[20:58:37.956Z] === END 240_deprecate_broken_cpm_columns.py  elapsed=27.7s  failures=0
