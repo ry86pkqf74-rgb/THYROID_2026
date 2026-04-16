@@ -10,7 +10,7 @@
 
 | Query | Result |
 |---|---|
-| Q1 — canonical shape | **patients = 10,871 × columns = 1,502** |
+| Q1 — canonical shape | **patients = 10,871 × columns = 1,505** |
 | Q2 — lingering backup/deprecated tables in canonical | **0 rows (clean)** |
 | Q3 — registry completeness | **107 registered tables, 0 unmapped** |
 | Q4 — `__readme` vs actual main BASE TABLEs | **112 == 112 (equal)** |
@@ -162,8 +162,40 @@ Copied (10,871 rows) to `"Thyroid 2026 UPdated".archive_pub_v1_0.canonical_patie
 
 ---
 
+## Script 237 — closed the 7 remaining registry→CPM gaps (2026-04-16)
+
+The 7 registry→CPM pointer mismatches surfaced in `236_missing_canonical_columns.csv` have since been fully resolved by `scripts/237_close_registry_gaps.py`.
+
+| Kind | Registry table | Gap | Resolution |
+|---|---|---|---|
+| ADD + DERIVE | `ete_adjudication_v1` | `ete_adjudicated_flag` | Added `ete_adjudicated_flag BOOLEAN` to CPM; TRUE for 45 patients present in `ete_adjudication_v1`. |
+| ADD + DERIVE | `ret_patient_adjudicated_v226` | `ret_adjudicated_flag` | Added `ret_adjudicated_flag BOOLEAN`; TRUE for 66 adjudicated patients (distinct from outcome flag `ret_note_adjudicated_positive`). |
+| ADD + DERIVE | `ret_patient_adjudicated_v226` | `ret_evidence_source` | Added `ret_evidence_source VARCHAR` with 4 provenance values: `note_adjudicated_positive` (38), `note_adjudicated_negative` (28), `molecular_rollup_v227` (4), `molecular_rollup_v7` (0). 10,801 NULL. |
+| registry typo | `_molecular_patient_rollup_v227` | `molecular_rollup_version` | Renamed to `rollup_script_version` in registry `feeds_master_columns`. |
+| registry typo | `canonical_benign_diagnosis_v1` | `has_follicular_adenoma` | Renamed to `syn_follicular_adenoma`. |
+| registry typo | `canonical_molecular_tested_v1` | `braf_positive_canonical` | Renamed to `braf_positive_final`. |
+| registry typo | `complication_patient_summary_v1` | `n_analysis_eligible_complication` | Renamed to `any_analysis_eligible_complication` (BOOLEAN). |
+
+Script 237 re-ran Phase-6-equivalent verification after the fixes:
+
+- **tokens checked: 178, missing: 0** — `scripts/output/237_missing_canonical_columns.csv` is empty.
+- All Script-236 invariants still hold.
+- Pre-run snapshot `canonical_patient_master_pre237_backup` was archived to `"Thyroid 2026 UPdated".archive_pub_v1_0.canonical_patient_master_pre237_backup_20260416`.
+
+### Updated final state
+
+| Query | Result |
+|---|---|
+| canonical shape | **10,871 patients × 1,505 columns** (was 1,502; +3 from Phase 1 of Script 237) |
+| lingering backup/deprecated tables | 0 |
+| registry: registered / unmapped | 107 / 0 |
+| `__readme` vs BASE TABLEs | 112 == 112 |
+| audit fixes landed | 9 timing + 1 multifocal + 18 NLP audit + **3 Script 237 columns** |
+
+---
+
 ## Final confirmation
 
-`canonical_patient_master` in `thyroid_canonical_publication_v1_0` is the authoritative publication dataset (10,871 patients × 1,502 columns). All deprecated / `_pre235_backup` / stale data-dictionary tables have been moved to `"Thyroid 2026 UPdated".archive_pub_v1_0`. The registry at `manuscript_workspace.detail_table_registry_v1` (107 rows) accurately points every drill-down table to its canonical column(s); the 7 known registry→CPM mismatches are surfaced in `236_missing_canonical_columns.csv` for manual fix.
+`canonical_patient_master` in `thyroid_canonical_publication_v1_0` is the authoritative publication dataset (**10,871 patients × 1,505 columns**). All deprecated / `_pre235_backup` / stale data-dictionary tables have been moved to `"Thyroid 2026 UPdated".archive_pub_v1_0`. The registry at `manuscript_workspace.detail_table_registry_v1` (107 rows) accurately points every drill-down table to its canonical column(s), with **zero remaining registry→CPM pointer gaps**.
 
 **No writes were made to `"Thyroid 2026 UPdated".main`.**

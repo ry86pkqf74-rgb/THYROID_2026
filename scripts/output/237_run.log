@@ -1,0 +1,65 @@
+WARNING: Your client version of DuckDB (v1.1.3) will soon be unsupported with MotherDuck. Please upgrade your DuckDB. We recommend DuckDB v1.5.2. For the installation guide, please refer to https://duckdb.org/docs/installation/.
+
+==============================================================================
+PHASE 0 — Snapshot canonical_patient_master -> canonical_patient_master_pre237_backup
+==============================================================================
+  snapshot rows: 10871
+
+==============================================================================
+PHASE 1 — Add + derive 3 missing canonical columns
+==============================================================================
+  ete_adjudicated_flag=TRUE patients: 45  (expect 45)
+  ret_adjudicated_flag=TRUE patients: 66  (expect 66)
+  ret_evidence_source distribution:
+    (null)                         10801
+    note_adjudicated_positive      38
+    note_adjudicated_negative      28
+    molecular_rollup_v227          4
+
+==============================================================================
+PHASE 2 — Update detail_table_registry_v1 feeds_master_columns (4 rows)
+==============================================================================
+  _molecular_patient_rollup_v227
+    - molecular_rollup_version
+    + rollup_script_version
+  canonical_benign_diagnosis_v1
+    - has_follicular_adenoma
+    + syn_follicular_adenoma
+  canonical_molecular_tested_v1
+    - braf_positive_canonical
+    + braf_positive_final
+  complication_patient_summary_v1
+    - n_analysis_eligible_complication
+    + any_analysis_eligible_complication
+
+==============================================================================
+PHASE 3 — Re-verify registry→CPM pointers + canonical invariants
+==============================================================================
+  tokens checked: 178  missing: 0
+  wrote 237_missing_canonical_columns.csv
+  [PASS] 0 registry→CPM pointer gaps
+  [PASS] canonical_patient_master row count == 10,871
+  [PASS] distinct research_id == 10,871
+  [PASS] no NULL research_id
+  [PASS] fna_path_outcome fully populated
+  [PASS] ete_adjudicated_flag present
+  [PASS] ret_adjudicated_flag present
+  [PASS] ret_evidence_source present
+
+==============================================================================
+PHASE 4 — Archive canonical_patient_master_pre237_backup
+==============================================================================
+  archived 10871 rows -> canonical_patient_master_pre237_backup_20260416
+  rebuilding __readme post-drop...
+  __readme rows: 112
+
+==============================================================================
+PHASE 5 — 5 confirmation queries
+==============================================================================
+  1) canonical shape: patients=10871  columns=1505
+  2) lingering backup/deprecated tables: 0  (expect 0)
+  3) registry: registered=107  unmapped=0
+  4) __readme rows=112  BASE TABLEs=112  (equal? True)
+  5) audit fixes: timing=9  multifocal=1  nlp_audit=18  phase237_cols=3 (expect 3)
+
+Total elapsed: 29.3s
