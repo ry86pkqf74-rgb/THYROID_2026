@@ -1,1491 +1,1512 @@
-# Thyroid Master DuckDB Data Dictionary
-
-> **MotherDuck / cloud canonical contract:** For **MotherDuck** schema maps, promotion planes (`main`, `v2_stage`, `qa`, `release_*`), and analyst views, use [`docs/motherduck_database_contract_v1.md`](docs/motherduck_database_contract_v1.md) — not this file alone. This dictionary remains oriented to **local file** `thyroid_master.duckdb` and historical pipeline tables.
-
-This document describes the production thyroid cancer research lakehouse in:
-
-- `thyroid_master.duckdb`
-
-Primary grain:
-
-- Patient key: `research_id`
-- Master cohort size: **11,673** distinct patients
-
-## Database Layout
-
-### Base Tables (13)
-
-1. `thyroid_sizes`
-2. `tumor_pathology`
-3. `benign_pathology`
-4. `thyroid_weights`
-5. `fna_cytology`
-6. `frozen_sections`
-7. `ultrasound_reports`
-8. `ct_imaging`
-9. `mri_imaging`
-10. `nuclear_med`
-11. `thyroglobulin_labs`
-12. `anti_thyroglobulin_labs`
-13. `parathyroid`
-
-### Existing Views (Phase 1)
-
-1. `master_cohort`
-2. `lab_timeline`
-3. `imaging_timeline`
-4. `data_completeness`
-
-### New Research Views (Phase 2)
-
-1. `ptc_cohort`
-2. `recurrence_risk_cohort`
-3. `imaging_pathology_correlation`
-4. `fna_accuracy_view`
-5. `lymph_node_metastasis_view`
-6. `benign_vs_malignant_comparison`
-7. `longitudinal_lab_view`
-8. `data_completeness_by_year`
-
----
-
-## Core Entity and Join Rules
-
-- **Canonical join key:** `research_id` (string-like ID normalized at ingestion)
-- **Recommended cohort anchor:** `master_cohort`
-- **Standard join pattern:**
-  - `master_cohort mc`
-  - `LEFT JOIN tumor_pathology tp ON mc.research_id = tp.research_id`
-  - `LEFT JOIN benign_pathology bp ON mc.research_id = bp.research_id`
-  - `LEFT JOIN fna_cytology f ON mc.research_id = f.research_id`
-  - `LEFT JOIN longitudinal_lab_view llv ON mc.research_id = llv.research_id`
-
----
-
-## Table-Level Dictionary
-
-## `master_cohort` (view, patient-level)
-
-Purpose:
-
-- One row per patient.
-- Demographics and per-domain data availability flags.
-
-Key columns:
-
-- `research_id`: canonical patient identifier
-- `age_at_surgery`, `sex`, `surgery_date`: harmonized demographics (primarily from pathology sources)
-- `has_*` flags:
-  - `has_thyroid_sizes`
-  - `has_tumor_pathology`
-  - `has_benign_pathology`
-  - `has_thyroid_weights`
-  - `has_fna_cytology`
-  - `has_frozen_sections`
-  - `has_ultrasound_reports`
-  - `has_ct_imaging`
-  - `has_mri_imaging`
-  - `has_nuclear_med`
-  - `has_thyroglobulin_labs`
-  - `has_anti_thyroglobulin_labs`
-  - `has_parathyroid`
-
-## `tumor_pathology` (table, malignant pathology)
-
-Purpose:
-
-- Gold-standard malignant disease characterization.
-
-Important variables:
-
-- Histology and staging:
-  - `histology_1_type`
-  - `histology_1_t_stage_ajcc8`
-  - `histology_1_n_stage_ajcc8`
-  - `histology_1_m_stage_ajcc8`
-  - `histology_1_overall_stage_ajcc8`
-- Tumor burden:
-  - `histology_1_largest_tumor_cm`
-  - `num_tumors_identified`
-- Lymph node burden:
-  - `histology_1_ln_examined`
-  - `histology_1_ln_positive`
-  - `histology_1_ln_ratio`
-  - level-specific columns (`ln_level_i_*` through `ln_level_vii_*`)
-- Invasion and ETE:
-  - `tumor_1_extrathyroidal_ext`
-  - `tumor_1_gross_ete`
-  - `tumor_1_ete_microscopic_only`
-  - vascular/lymphatic/perineural invasion columns
-
-## `benign_pathology` (table, benign pathology)
-
-Purpose:
-
-- Benign disease phenotypes and inflammatory/autoimmune findings.
-
-Important variables:
-
-- `multinodular_goiter`
-- `diffuse_hyperplasia`
-- `colloid_nodule`
-- `follicular_adenoma`
-- `hurthle_adenoma`
-- `hashimoto_thyroiditis`
-- `graves_disease`
-- `focal_lymphocytic_thyroiditis`
-
-## `fna_cytology` (table, cytology)
-
-Purpose:
-
-- Fine needle aspiration and Bethesda classification over time.
-
-Important variables:
-
-- `fna_index`, `fna_date`
-- `specimen_location`
-- `bethesda_2010_num`, `bethesda_2010_name`
-- `bethesda_2015_num`, `bethesda_2015_name`
-- `bethesda_2023_num`, `bethesda_2023_name`
-- `confidence`, `reasoning`, `provider`
-
-## `thyroglobulin_labs` / `anti_thyroglobulin_labs` (tables, long-format labs)
-
-Purpose:
-
-- Long-format serum marker trajectories.
-
-Important variables:
-
-- `research_id`
-- `lab_index`
-- `test_name`
-- `specimen_collect_dt`
-- `result`
-- `units`
-
-## `lab_timeline` (view)
-
-Purpose:
-
-- Unified stack of thyroglobulin + anti-thyroglobulin lab measurements.
-
-Columns:
-
-- `research_id`, `lab_type`, `lab_index`, `test_name`, `specimen_collect_dt`, `result`, `units`
-
-## `ultrasound_reports` (table)
-
-Purpose:
-
-- Detailed ultrasound extraction (multi-nodule, TI-RADS features, gland metrics).
-
-Important variables:
-
-- `ultrasound_date`
-- `number_of_nodules`
-- `right_lobe_volume_ml`, `left_lobe_volume_ml`, `total_thyroid_volume_ml`
-- `nodule_1_*` ... `nodule_n_*` feature families, including:
-  - dimensions
-  - location
-  - `ti_rads`
-  - composition
-  - echogenicity
-  - calcifications
-  - margins
-  - shape
-- `lymph_node_assessment`
-
-## `ct_imaging` (table)
-
-Purpose:
-
-- CT-derived thyroid and nodal findings.
-
-Important variables:
-
-- `date_of_exam`, `exam_type_normalized`, `contrast`
-- `thyroid_nodule`, `thyroid_enlarged`, `thyroid_postsurgical`, `goiter_present`
-- `pathologic_lymph_nodes`, `lymph_nodes_suspicious`
-- `largest_lymph_node_short_axis_mm`
-- `lymph_node_locations`
-
-## `mri_imaging` (table)
-
-Purpose:
-
-- MRI-derived thyroid and nodal findings.
-
-Important variables:
-
-- `date_of_exam`, `exam_type_detail`, `contrast`
-- `thyroid_nodule`, `thyroid_enlarged`, `substernal_extension`
-- `pathologic_lymph_nodes`, `lymph_node_locations`
-- nodule location and size fields (`nodule1_*` ... `nodule5_*`)
-
-## `nuclear_med` (table)
-
-Purpose:
-
-- Long-format nuclear medicine studies after wide-to-long melt.
-
-Important variables:
-
-- `research_id`
-- `scan_index`
-- scan metadata and findings columns (e.g., radiotracer, uptake, impression)
-
-## `thyroid_sizes` (table)
-
-Purpose:
-
-- Structured specimen dimensions/volumes from pathology summaries.
-
-Important variables:
-
-- lobe-level formatted dimensions and volume metrics
-- total volume fields
-
-## `thyroid_weights` (table)
-
-Purpose:
-
-- Surgical specimen weights and diagnosis context.
-
-Important variables:
-
-- `date_of_surgery`
-- lobe/isthmus/total weights
-- `specimen_weight_combined`
-- diagnosis text fields
-
-## `frozen_sections` (table)
-
-Purpose:
-
-- Intraoperative frozen section details and concordance with final pathology.
-
-Important variables:
-
-- `frozen_section_obtained`
-- `number_of_frozen_sections`
-- `fs_result_1...fs_result_3`
-- `concordance_with_final`
-
-## `parathyroid` (table)
-
-Purpose:
-
-- Parathyroid tissue involvement and intent annotation.
-
-Important variables:
-
-- `removal_intent`
-- `parathyroid_abnormality`
-- incidental vs intentional removal fields
-- gland-level details (`g1_*`, `g2_*`, etc.)
-
----
-
-## Phase 2 Research Views (Detailed)
-
-## `ptc_cohort`
-
-Purpose:
-- Classic papillary thyroid carcinoma cohort extraction.
-
-Key logic:
-
-- Filters to `histology_1_type = 'PTC'`
-- Keeps classic variant or unspecified-variant PTC rows.
-
-Output highlights:
-
-- AJCC stage fields
-- largest tumor size
-- LN burden
-- ETE fields
-
-## `recurrence_risk_cohort`
-
-Purpose:
-
-- Patient-level recurrence risk feature set combining:
-  - pathology stage
-  - ETE
-  - thyroglobulin trend summary
-
-Output highlights:
-
-- `tg_first_value`, `tg_last_value`, `tg_max`, `tg_mean`
-- `tg_delta_per_measurement`
-- `recurrence_risk_band` (low/intermediate/high)
-
-## `imaging_pathology_correlation`
-
-Purpose:
-
-- Correlates imaging burden/signals with final pathology.
-
-Output highlights:
-
-- modality counts (`us_count`, `ct_count`, `mri_count`)
-- max TI-RADS summary
-- CT/MRI nodule and pathologic LN flags
-- final histology and tumor size
-
-## `fna_accuracy_view`
-
-Purpose:
-
-- Operational diagnostic performance view linking FNA Bethesda to final pathology.
-
-Key logic:
-
-- Test-positive: Bethesda 2023 >= 5
-- Gold standard:
-  - malignant if tumor pathology exists
-  - benign if benign pathology exists and no tumor pathology
-
-Output highlights:
-
-- confusion class per FNA (`TP`, `FP`, `FN`, `TN`)
-
-## `lymph_node_metastasis_view`
-
-Purpose:
-
-- LN metastasis burden and level-wise involvement table.
-
-Output highlights:
-
-- total LN examined/positive
-- level-wise examined/positive (I–VII)
-- LN ratio
-- extranodal extension
-
-## `benign_vs_malignant_comparison`
-
-Purpose:
-
-- Harmonized cohort for comparative analyses.
-
-Output highlights:
-
-- `disease_group` (`benign` vs `malignant`)
-- demographics and surgery date
-- malignancy markers (histology, size, stage)
-- benign phenotypes (Hashimoto, Graves, goiter, adenoma)
-- modality/lab availability flags
-
-## `longitudinal_lab_view`
-
-Purpose:
-
-- Time-indexed thyroglobulin and anti-thyroglobulin series.
-
-Output highlights:
-
-- parsed `numeric_result`
-- `days_from_first_lab` normalization per patient and lab type
-
-## `data_completeness_by_year`
-
-Purpose:
-
-- Grant-ready year-by-year cohort completeness metrics.
-
-Output highlights:
-
-- patient counts per surgery year
-- domain-level counts and percentages (pathology, FNA, imaging, labs)
-
----
-
-## Data Quality Notes
-
-- Many source fields are free text from extraction pipelines.
-- Boolean columns may be represented as string-like values in source.
-- Numeric lab values are parsed from mixed strings (e.g., `<0.4`, `3.1 ng/mL`) using regex.
-- Date fields are cast with `TRY_CAST`; nulls are expected for incomplete records.
-
----
-
-## Recommended Starter Queries
-
-1. Cohort size by stage:
-
-```sql
-SELECT overall_stage_ajcc8, COUNT(*) AS n
-FROM ptc_cohort
-GROUP BY overall_stage_ajcc8
-ORDER BY n DESC;
-```
-
-2. FNA confusion summary:
-
-```sql
-SELECT confusion_class, COUNT(*) AS n
-FROM fna_accuracy_view
-GROUP BY confusion_class
-ORDER BY n DESC;
-```
-
-3. Annual data completeness for grant tables:
-
-```sql
-SELECT *
-FROM data_completeness_by_year
-ORDER BY surgery_year;
-```
-
----
-
-## Phase 6: Integrated Source Tables (8 New Excel Sources)
-
-### `complications` (table)
-
-Source: `Thyroid all_Complications 12_1_25.xlsx`
-
-Surgical complications with NLP-parsed laryngoscopy notes. Key columns:
-`rln_injury_vocal_cord_paralysis`, `seroma`, `hematoma`, `hypocalcemia`,
-`hypoparathyroidism`, `vocal_cord_status` (normal/paresis/paralysis),
-`affected_side`, `laryngoscopy_date`, `_raw_laryngoscopy_note`.
-
-### `molecular_testing` (table, long format)
-
-Source: `THYROSEQ_AFIRMA_12_5.xlsx`
-
-One row per molecular test per patient (up to 3 tests). Key columns:
-`test_index`, `thyroseq_afirma`, `date`, `result`, `mutation`, `detailed_findings`.
-
-### `operative_details` (table)
-
-Source: `Thyroid OP Sheet data.xlsx`
-
-Operative sheet data — BMI, EBL, skin-to-skin time, nerve monitoring,
-parathyroid autograft notes, IO tumor appearance.
-
-### `fna_history` (table, long format)
-
-Source: `FNAs 12_5_2025.xlsx`
-
-One row per FNA per patient (up to 12 FNAs). Key columns:
-`fna_index`, `date`, `bethesda`, `path`, `path_extended`, `specimen_received`.
-
-### `us_nodules_tirads` (table, long format)
-
-Source: `US Nodules TIRADS 12_1_25.xlsx`
-
-One row per US exam per patient (up to 14 exams). Includes per-nodule
-TIRADS scores and nodule descriptions within each exam.
-
-### `serial_imaging_us` (table, long format)
-
-Source: `Imaging_12_1_25.xlsx`
-
-Serial imaging reports across 8 modalities (thyroid_us, ln_us, us_fna,
-ct_petct, nuclear_med, mri, cxr, other). Raw report text and impressions.
-
-### `path_synoptics` (table, wide — 275+ cols)
-
-Source: `All Diagnoses & synoptic 12_1_2025.xlsx`
-
-Full AJCC staging, margins, variants, LN details for up to 5 tumors.
-Includes synoptic diagnosis text, path diagnosis summary, and benign findings.
-Note: contains duplicate research_ids for re-operations.
-
-### `clinical_notes` (table)
-
-Source: `Notes 12_1_25.xlsx`
-
-Combined demographics/summary (Sheet1) + clinical notes (Sheet2).
-H&P notes 1-4, OP notes 1-4, discharge summaries 1-4, last endocrine/FM note,
-ED notes 1-2. Notes may be truncated at 32,767 characters (Excel limit).
-
-### `clinical_notes_long` (table)
-
-Source: `Notes 12_1_25.xlsx` (Sheet2 + Sheet1 summary folded into long format)
-
-Purpose:
-
-- Store *all* available clinical note text verbatim in a long format for NLP/extraction.
-
-Key columns:
-
-- `research_id`
-- `note_type` (HP, OPNOTE, DC_SUM, ED_NOTE, OTHER_HISTORY, OTHER_NOTES, ENDOCRINE_FM, THYROID_CX_HISTORY, DEATH)
-- `note_index` (1-4 when applicable)
-- `note_text`
-- `source_sheet`, `source_column`
-
-### `extracted_clinical_events` (table, long format)
-
-NLP-extracted events from clinical notes. Event types:
-- **lab**: TSH, thyroglobulin, anti-Tg, calcium, PTH, vitamin D (with values and units)
-- **medication**: levothyroxine (with dose), calcium supplements, calcitriol
-- **comorbidity**: hypertension, diabetes, breast/lung cancer, obesity, CAD, etc.
-- **treatment**: RAI, EBRT, recurrence, reoperation (with dates when available)
-- **follow_up**: follow-up visit dates
-
-### `advanced_features_v2` (view)
-
-Comprehensive analytic view joining `master_cohort` with all Phase 6 tables
-plus existing tumor_pathology and benign_pathology. Includes data availability
-flags for every domain.
-
----
-
-## Cross-File Validation Tables (Script 11.5)
-
-Created by `scripts/11.5_cross_file_validation.py`. These tables validate
-consistency across multiple source files and flag discrepancies.
-
-### `qa_laterality_mismatches` (table)
-
-Cross-checks operative laterality (`operative_details.side_of_largest_tumor_or_goiter`)
-against pathology procedure laterality (inferred from `path_synoptics.thyroid_procedure`).
-Joined via `master_timeline` for surgery number.
-
-Key columns:
-
-- `research_id`: patient identifier (INT)
-- `operative_side`: side from operative sheet (lowercase)
-- `path_procedure`: full procedure name from synoptic report
-- `path_side`: inferred laterality (right / left / bilateral / isthmus / NULL)
-- `surgery_date`: date of surgery (DATE)
-- `surgery_number`: from master_timeline
-- `laterality_flag`: MATCH, LATERALITY_MISMATCH, or INCOMPLETE
-
-### `qa_report_matching` (table)
-
-Aggregate match rates for two cross-file linkage checks:
-
-1. **fna_path**: FNA bethesda result ↔ pathology diagnosis (365-day window)
-2. **us_operative**: US nodule size ↔ operative sheet size (180-day window)
-
-Key columns:
-
-- `total_pairs`: number of patient-level joins within date window
-- `matched`: pairs where both fields are non-NULL
-- `match_pct`: percentage of matched pairs
-- `check_type`: 'fna_path' or 'us_operative'
-
-### `demographics_harmonized_v2` (table, added 2026-03-13)
-
-One row per patient. Cross-source harmonized demographics with full provenance.
-Eliminates 715 false-missing age records by backfilling DOB from `stg_dob_excel_recovery`,
-`thyroid_weights`, `thyroglobulin_labs`, and `anti_thyroglobulin_labs`, then computing
-age via `DATE_DIFF('year', dob, surgery_date)` with birthday correction. Annotated
-surgery dates (e.g. "8/11/2014 (MANNUALLY ADDED...)") parsed via `TRY_STRPTIME` +
-regex extraction.
-
-Source priority (highest first):
-- **Age**: benign_pathology > tumor_pathology > path_synoptics.age > stg_dob_excel_recovery.age > MRN crosswalk > Excel DOB-derived > thyroid_weights DOB > lab DOB
-- **Sex**: benign_pathology > tumor_pathology > path_synoptics.gender > stg_dob_excel_recovery.gender > MRN crosswalk > thyroglobulin_labs.gender > anti_tg_labs.gender
-- **Race**: path_synoptics.race > stg_dob_excel_recovery.race > MRN crosswalk > thyroglobulin_labs.race > anti_tg_labs.race
-
-Key columns:
-
-- `research_id`: patient identifier (INT)
-- `age_at_surgery`: harmonized age (INT, NULL if no source)
-- `age_source`: provenance label (benign_pathology|tumor_pathology|path_synoptics|excel_dob_unanimous|excel_dob_derived|thyroid_weights_dob|thyroglobulin_labs_dob|anti_tg_labs_dob)
-- `sex`: harmonized sex ('Male'|'Female', NULL if no source)
-- `sex_source`: provenance label
-- `race`: harmonized race (raw value from best source, NULL if no source)
-- `race_source`: provenance label
-- `best_surgery_date`: DATE used for DOB-based age calculation
-- `best_dob`: DATE from DOB backfill chain (NULL if no DOB in any source)
-
-Coverage (as of 2026-03-13): 11,673 patients; age 99.26% (11,587), sex 98.00% (11,440), race 97.93% (11,431).
-86 truly missing age (orphan research_ids absent from all raw Excel files, concentrated in IDs > 9800).
-233 missing sex, 242 missing race (patients not in any source file with demographics).
-MRN crosswalk recovered 569 sex and 566 race values from patients whose OP Sheet research_id
-differed from their All Diagnoses research_id (same EUH_MRN, different research_id assignment).
-33 DOB conflicts across sources (majority-vote resolved).
-
-### `stg_dob_excel_recovery` (table, added 2026-03-13)
-
-Cross-file DOB resolution from 6 sources (3 Excel + 3 DB). Majority vote resolves
-DOB conflicts; priority tiebreak when no majority: all_diagnoses > op_sheet >
-thyroid_weights > notes > thyroglobulin_labs > anti_tg_labs.
-
-- `dob_resolved`: winning DOB after majority vote
-- `age_at_surgery`: calculated from DOB + surgery date
-- `gender_excel`, `race_excel`: from All Diagnoses Excel
-- `dob_n_sources`: number of sources with DOB for this patient
-- `dob_concordant`: TRUE if all sources agree
-- `dob_resolution`: unanimous | majority_N_of_M | priority_tiebreak_SOURCE
-
-### `stg_mrn_crosswalk_demographics` (table, added 2026-03-13)
-
-MRN-based crosswalk recovering demographics for patients whose OP Sheet `research_id`
-differs from their All Diagnoses `research_id` (same `EUH_MRN`). These 570 patients
-were invisible to the standard join-by-research_id pipeline. Gender, Race, Age, and
-DOB are pulled from All Diagnoses via the matched MRN.
-
-- `research_id`: OP Sheet research_id (INT, used in master_cohort)
-- `ad_research_id`: matching All Diagnoses research_id
-- `mrn`: shared EUH_MRN that links the two records
-- `sex`, `race`, `age_at_surgery`, `dob`: demographics from All Diagnoses
-
-Coverage: 570 patients (569 recoverable sex, 566 recoverable race).
-
-### `us_dominant_nodule_size_v1` (table, added 2026-03-13)
-
-Per-patient dominant (largest) thyroid nodule size from ultrasound, extracted from
-TIRADS structured data (`raw_us_tirads_excel_v1`) and NLP from free-text nodule
-descriptions in `serial_imaging_us`. Fills the gap where
-`serial_imaging_us.dominant_nodule_size_on_us` was entirely NULL.
-
-- `dominant_nodule_size_cm`: largest nodule in cm
-- `size_source`: tirads_structured | nlp_detail_text | imaging_excel
-- `imaging_excel_cm`, `tirads_structured_cm`, `nlp_extracted_cm`: per-source values
-
-Coverage: 3,440 patients (was 0).
-
-### `qa_missing_demographics` (table)
-
-Residual patients with missing demographics **after** cross-source backfill.
-Now reads from `demographics_harmonized_v3`. Includes orphan flagging and linkage method.
-
-Key columns:
-
-- `research_id`: patient identifier (INT)
-- `canonical_research_id`: MRN-linked canonical RID from `linkage_master_v1`
-- `linkage_method`: 'direct' | 'mrn_crosswalk' | 'identity'
-- `is_orphan_flag`: TRUE if patient has no data in any of 21 source tables
-- `age_at_surgery`, `sex`, `race`: best values from `demographics_harmonized_v3`
-- `age_source`, `sex_source`, `race_source`: provenance labels
-- `age_derivation_method`: 'surgery_date' | 'note_date_fallback' | 'lab_specimen_date_fallback' | 'canonical_rid_inheritance'
-- `age_flag`: 'MISSING_AGE' or 'OK'
-- `sex_flag`: 'MISSING_SEX' or 'OK'
-- `race_flag`: 'MISSING_RACE' or 'OK'
-- `source_priority`: combined provenance string
-
-### `mrn_crosswalk_v1` (table, added 2026-03-13)
-
-Permanent MRN ↔ research_id crosswalk from 4 raw Excel sources. 33,433 rows
-covering 10,078 patients and 9,513 distinct EUH_MRNs. Scans `raw_path_synoptics`,
-`raw_clinical_notes`, `raw_complications`, `raw_operative_details`.
-
-Key columns:
-
-- `research_id`, `euh_mrn`, `tec_mrn`: linkage keys
-- `canonical_research_id`: the research_id with highest data volume for this MRN
-- `dob`, `first_name`, `last_name`: PHI-bearing (raw tables only)
-- `gender_raw`, `race_raw`: raw demographics from source
-- `source_tables`: list of source tables where this (RID, MRN) pair appears
-- `linkage_method`: 'direct' (RID = canonical) or 'mrn_crosswalk' (RID differs)
-- `confidence`: 1.0 for direct, 0.95 for crosswalk
-
-### `linkage_master_v1` (table, added 2026-03-13)
-
-Single source of truth mapping every `master_cohort` research_id to its canonical.
-11,673 rows (one per patient). Merges `mrn_crosswalk_v1` with legacy
-`stg_mrn_crosswalk_demographics`.
-
-Key columns:
-
-- `research_id`: patient identifier (same as `master_cohort`)
-- `canonical_research_id`: best-linked RID for this patient
-- `euh_mrn`: MRN if available
-- `linkage_method`: 'direct' | 'mrn_crosswalk' | 'identity'
-- `confidence`: linkage confidence score (1.0 for direct/identity, 0.95 for crosswalk)
-- `has_mrn`: TRUE if this patient has any MRN in any raw source
-
-### `demographics_harmonized_v3` (table, added 2026-03-13)
-
-Supersedes `demographics_harmonized_v2`. Joins 13 source CTEs through the MRN
-crosswalk with orphan flagging. 11,673 rows.
-
-Enhancements over v2:
-- Cross-MRN demographics recovery (P10): sex/race from MRN-linked records
-- Lab specimen date fallback (P12): age from DOB + earliest thyroglobulin lab date
-- Canonical-RID inheritance (P13): demographics from canonical_research_id for split-RID patients
-- Orphan detection: `is_orphan_flag` = TRUE for patients with no data in any source
-- Age derivation method tracking: 'surgery_date' | 'note_date_fallback' | 'lab_specimen_date_fallback' | 'canonical_rid_inheritance'
-
-Coverage (final): age 99.28% (84 missing, all orphans), sex 98.01%, race 97.94%.
-Non-orphan coverage: age 100%, sex 98.72%, race 98.65%.
-
----
-
-## Phase 7: Clinical Notes Long + Entity Extraction
-
-### `clinical_notes_long` (table)
-
-Source: `raw/Notes 12_1_25.xlsx`, unpivoted via `config/notes_column_map.csv`
-
-One row per note per patient (long format). 11,037 rows from 5,641 patients.
-
-Key columns:
-
-- `note_row_id` (VARCHAR): SHA-1 hash primary key
-- `research_id` (INT): patient identifier
-- `note_type` (VARCHAR): h_p, op_note, dc_sum, ed_note, endocrine_note, history_summary, other_history, other_notes
-- `note_index` (INT): sequence within type (1-4)
-- `note_date` (VARCHAR): encounter/service date extracted from note header (YYYY-MM-DD)
-- `note_text` (VARCHAR): full note text
-- `source_sheet` (VARCHAR): Excel sheet name
-- `source_column` (VARCHAR): snake_case column name
-- `char_count` (INT): length of note_text
-
-### `note_entities_staging` (table)
-
-AJCC T/N/M and overall stage mentions extracted via regex. 3,807 rows.
-
-### `note_entities_genetics` (table)
-
-Gene/mutation mentions (BRAF, RAS, RET, TERT, NTRK, ALK). 1,738 rows.
-
-### `note_entities_procedures` (table)
-
-Surgical procedure mentions (thyroidectomy variants, neck dissection, etc.). 21,942 rows.
-
-### `note_entities_complications` (table)
-
-Post-operative complication mentions (RLN injury, hypocalcemia, etc.). 9,359 rows.
-
-### `note_entities_medications` (table)
-
-Medication mentions with optional dose (levothyroxine, calcium, etc.). 7,501 rows.
-
-### `note_entities_problem_list` (table)
-
-Comorbidity/diagnosis mentions (hypertension, diabetes, etc.). 11,579 rows.
-
-All six entity tables share a common schema:
-
-- `research_id` (INT): patient identifier
-- `note_row_id` (VARCHAR): FK to clinical_notes_long
-- `note_type` (VARCHAR): source note category
-- `entity_type` (VARCHAR): domain-specific type
-- `entity_value_raw` (VARCHAR): raw matched string
-- `entity_value_norm` (VARCHAR): normalised value from controlled vocabulary
-- `present_or_negated` (VARCHAR): present or negated
-- `confidence` (FLOAT): 0.0-1.0
-- `evidence_span` (VARCHAR): exact substring from note_text
-- `evidence_start` (INT): character offset start
-- `evidence_end` (INT): character offset end
-- `entity_date` (VARCHAR): date found near entity in note text (YYYY-MM-DD)
-- `note_date` (VARCHAR): encounter/service date from note header (YYYY-MM-DD)
-- `extraction_method` (VARCHAR): regex or llm_model
-- `extracted_at` (VARCHAR): ISO-8601 timestamp
-
-### `notes_entity_summary` (view)
-
-Aggregated entity counts per patient across all domains.
-
-See `docs/llm_extraction_spec.md` for controlled vocabularies and extraction details.
-
----
-
-## Phase 7: v2 Canonical Episode Tables (scripts 22-26)
-
-### `tumor_episode_master_v2` (table)
-
-One row per tumor per surgery per patient. Reconciles path_synoptics, tumor_pathology, and note-derived staging with confidence-ranked precedence.
-
-- `research_id` (INT): patient identifier
-- `surgery_episode_id` (INT): sequential surgery number per patient
-- `tumor_ordinal` (INT): tumor index within surgery
-- `surgery_date` (DATE): surgery date
-- `date_status` (VARCHAR): exact_source_date or unresolved_date
-- `date_confidence` (INT): 0-100
-- `primary_histology` (VARCHAR): best-available histology (synoptic > tumor_path)
-- `histology_variant` (VARCHAR): subtype/variant
-- `histology_source` (VARCHAR): provenance of histology value
-- `t_stage`, `n_stage`, `m_stage`, `overall_stage` (VARCHAR): AJCC staging
-- `tumor_size_cm` (DOUBLE): largest dimension in cm
-- `extrathyroidal_extension`, `gross_ete` (VARCHAR): ETE findings
-- `vascular_invasion`, `lymphatic_invasion`, `perineural_invasion`, `capsular_invasion` (VARCHAR)
-- `margin_status` (VARCHAR)
-- `nodal_disease_positive_count`, `nodal_disease_total_count` (INT)
-- `extranodal_extension` (VARCHAR)
-- `laterality` (VARCHAR): right/left/bilateral/isthmus
-- `number_of_tumors` (INT), `multifocality_flag` (BOOL)
-- `consult_diagnosis` (VARCHAR), `consult_precedence_flag` (BOOL)
-- `histology_discordance_flag`, `t_stage_discordance_flag` (BOOL)
-- `confidence_rank` (INT): 1=synoptic, 2=tumor_path, 3=note
-- `source_tables` (VARCHAR), `procedure_raw` (VARCHAR)
-
-### `molecular_test_episode_v2` (table)
-
-One row per molecular testing event. Deep-parsed mutation flags and quality indicators.
-
-- `research_id` (INT), `molecular_episode_id` (INT)
-- `platform_raw`, `platform` (VARCHAR): ThyroSeq/Afirma/Other
-- `test_date_native` (DATE), `resolved_test_date` (VARCHAR)
-- `date_status` (VARCHAR), `date_confidence` (INT)
-- `overall_result_class` (VARCHAR): positive/negative/suspicious/indeterminate/non_diagnostic/cancelled
-- `detailed_findings_raw` (VARCHAR)
-- Mutation flags: `braf_flag`, `braf_variant`, `ras_flag`, `ras_subtype`, `ret_flag`, `ret_fusion_flag`, `tert_flag`, `ntrk_flag`, `eif1ax_flag`, `tp53_flag`, `pax8_pparg_flag`, `cna_flag`, `fusion_flag`, `loh_flag`, `alk_flag` (BOOL/VARCHAR)
-- `high_risk_marker_flag` (BOOL): composite of BRAF V600E, TERT, TP53, ALK/RET/NTRK fusions
-- `inadequate_flag`, `cancelled_flag` (BOOL)
-- Linkage: `linked_fna_episode_id`, `linked_surgery_episode_id` (VARCHAR)
-- `adjudication_status` (VARCHAR)
-
-### `rai_treatment_episode_v2` (table)
-
-One row per RAI treatment event with assertion status and treatment classification.
-
-- `research_id` (INT), `rai_episode_id` (INT)
-- `rai_date_native` (DATE), `resolved_rai_date` (DATE)
-- `date_status` (VARCHAR), `date_confidence` (INT)
-- `dose_mci` (DOUBLE), `dose_text_raw` (VARCHAR)
-- `rai_assertion_status` (VARCHAR): definite_received/likely_received/planned/historical/negated/ambiguous
-- `rai_intent` (VARCHAR): remnant_ablation/adjuvant/metastatic_disease/recurrence/unknown
-- `completion_status` (VARCHAR): completed/recommended/not_received/uncertain
-- `rai_confidence` (DOUBLE)
-- Linkage: `linked_surgery_episode_id` (VARCHAR)
-- Scan context: `pre_scan_flag`, `post_therapy_scan_flag`, `iodine_avidity_flag` (BOOL)
-- Labs: `stimulated_tg`, `stimulated_tsh` (DOUBLE)
-
-### `imaging_nodule_long_v2` (table)
-
-One row per nodule per imaging exam. Multi-modality (US/CT/MRI).
-
-- `research_id` (INT), `imaging_exam_id` (INT), `nodule_id` (VARCHAR)
-- `modality` (VARCHAR): US/CT/MRI
-- `exam_date_native` (DATE), `resolved_exam_date` (DATE)
-- `date_status` (VARCHAR), `date_confidence` (INT)
-- `nodule_index_within_exam` (INT)
-- `size_cm_max`, `size_cm_x`, `size_cm_y`, `size_cm_z` (DOUBLE)
-- `composition`, `echogenicity`, `shape`, `margins`, `calcifications` (VARCHAR)
-- `tirads_score` (INT), `tirads_category` (VARCHAR)
-- `laterality`, `location_detail` (VARCHAR)
-- `suspicious_node_flag`, `growth_flag`, `dominant_nodule_flag` (BOOL)
-- Linkage: `linked_fna_episode_id`, `linked_molecular_episode_id` (VARCHAR)
-
-### `imaging_exam_summary_v2` (table)
-
-One row per imaging exam. Aggregates nodule-level data.
-
-- `research_id` (INT), `modality` (VARCHAR), `imaging_exam_id` (INT)
-- `exam_date_native` (DATE), `date_status` (VARCHAR)
-- `nodule_count` (INT), `max_nodule_size_cm` (DOUBLE), `max_tirads_score` (INT)
-- `any_suspicious_node` (BOOL), `any_growth_noted` (BOOL)
-
-### `operative_episode_detail_v2` (table)
-
-One row per surgery episode with detailed operative findings.
-
-- `research_id` (INT), `surgery_episode_id` (INT)
-- `surgery_date_native` (DATE), `date_status` (VARCHAR)
-- `procedure_raw`, `procedure_normalized` (VARCHAR)
-- `laterality` (VARCHAR)
-- `central_neck_dissection_flag`, `lateral_neck_dissection_flag` (BOOL)
-- `rln_monitoring_flag` (BOOL), `rln_finding_raw` (VARCHAR)
-- `parathyroid_autograft_flag` (BOOL), `parathyroid_autograft_count` (INT), `parathyroid_autograft_site` (VARCHAR)
-- `parathyroid_resection_flag` (BOOL)
-- `gross_ete_flag`, `local_invasion_flag`, `tracheal_involvement_flag`, `esophageal_involvement_flag`, `strap_muscle_involvement_flag`, `reoperative_field_flag` (BOOL)
-- `ebl_ml` (DOUBLE), `drain_flag` (BOOL)
-- `operative_findings_raw` (VARCHAR)
-
-### `fna_episode_master_v2` (table)
-
-One row per FNA episode with Bethesda and laterality.
-
-- `research_id` (INT), `fna_episode_id` (INT)
-- `fna_date_native` (DATE), `resolved_fna_date` (DATE)
-- `date_status` (VARCHAR), `date_confidence` (INT)
-- `bethesda_raw` (VARCHAR), `bethesda_category` (INT)
-- `pathology_diagnosis`, `pathology_extended` (VARCHAR)
-- `specimen_site_raw` (VARCHAR), `laterality` (VARCHAR)
-- Linkage: `linked_molecular_episode_id`, `linked_surgery_episode_id` (VARCHAR)
-
-### `event_date_audit_v2` (table)
-
-One row per extracted fact across all domains. Used for date quality metrics.
-
-- `domain` (VARCHAR): tumor/molecular/rai/imaging/operative/fna
-- `research_id` (INT)
-- `native_date`, `resolved_date` (VARCHAR)
-- `date_status` (VARCHAR), `date_confidence` (INT)
-- `anchor_source`, `source_table` (VARCHAR)
-
-### `patient_cross_domain_timeline_v2` (table)
-
-Union of all episodes ordered chronologically per patient.
-
-- `research_id` (INT), `event_type` (VARCHAR), `domain` (VARCHAR)
-- `event_date` (DATE), `episode_id` (INT), `event_detail` (VARCHAR)
-
-### Linkage Tables
-
-- `imaging_fna_linkage_v2`: imaging nodule -> FNA with confidence tier
-- `fna_molecular_linkage_v2`: FNA -> molecular test with confidence tier
-- `preop_surgery_linkage_v2`: preop event -> surgery with confidence tier
-- `surgery_pathology_linkage_v2`: surgery -> pathology tumor
-- `pathology_rai_linkage_v2`: pathology -> RAI treatment
-- `linkage_summary_v2`: aggregate linkage counts by tier
-
-### Reconciliation Review Views
-
-- `pathology_reconciliation_review_v2`: histology/staging mismatches
-- `molecular_linkage_review_v2`: unlinked tests, chronology issues
-- `rai_adjudication_review_v2`: dose/chronology/assertion issues
-- `imaging_pathology_concordance_review_v2`: laterality/size discrepancies
-- `operative_pathology_reconciliation_review_v2`: procedure/specimen mismatches
-
-### QA Tables
-
-- `qa_issues_v2`: all detected issues with check_id, severity, description
-- `qa_date_completeness_v2`: date quality metrics per domain
-- `qa_summary_by_domain_v2`: aggregated issue counts
-- `qa_high_priority_review_v2`: error-severity items only
-
-See `docs/pipeline_architecture_v2.md` for full architecture documentation.
-
----
-
-## Date Association & Provenance Policy (added 2026-03-10)
-
-### Problem
-
-Note-derived entity tables (`note_entities_*`) have high `entity_date` null rates (61–98%).
-Without a systematic fallback policy, time-dependent analyses (recurrence endpoints,
-time-to-RAI, genotype–phenotype timelines) lose 30–70% of their data.
-
-### Core Tables Involved
-
-| Table | Date Column | Type | Notes |
-|-------|-------------|------|-------|
-| `clinical_notes_long` | `note_date` | VARCHAR (YYYY-MM-DD) | Encounter-level anchor; highest-volume fallback |
-| `note_entities_*` (6 tables) | `entity_date` | VARCHAR | Native extraction; high null rate |
-| `molecular_testing` | `"date"` | VARCHAR | Quoted (reserved word); may be day-level or year-only |
-| `genetic_testing` | `"date"` | VARCHAR | Same Excel source as `molecular_testing` |
-| `path_synoptics` | `surg_date` | VARCHAR | Surgical anchor; not `surgery_date` |
-| `fna_history` | `fna_date_parsed` | VARCHAR (YYYY-MM-DD) | Parsed FNA date; `fna_date` is a computed alias in views |
-
-### Provenance Columns (added to all `note_entities_*` base tables)
-
-Added by `scripts/27_date_provenance_formalization.sql`:
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `inferred_event_date` | DATE | Best-available date via fallback precedence |
-| `date_source` | VARCHAR | Which table/column provided the date |
-| `date_granularity` | VARCHAR | `day` or `year` (year = YYYY-01-01 placeholder) |
-| `date_confidence` | INTEGER | 0–100 confidence score |
-
-### Precedence Rules
-
-Enforced identically in `scripts/15_date_association_views.sql` (enriched views)
-and `scripts/27_date_provenance_formalization.sql` (base table backfill):
-
-| Priority | Source | Confidence | Granularity |
-|----------|--------|------------|-------------|
-| 1 | `entity_date` (native extraction) | 100 | day |
-| 2 | `clinical_notes_long.note_date` | 70 | day |
-| 3 | `path_synoptics.surg_date` | 60 | day |
-| 4 | `molecular_testing."date"` (day-level) | 60 | day |
-| 4b | `molecular_testing."date"` (year-only) | 50 | year |
-| 5 | `fna_history.fna_date_parsed` | 55 | day |
-| — | No source found | 0 | NULL |
-
-### `date_source` Values
-
-- `entity_date` — extracted directly from note text near entity mention
-- `note_date` — encounter/service date from note header
-- `surg_date` — primary surgery date from synoptic pathology
-- `molecular_testing_date` — test date from ThyroSeq/Afirma records
-- `fna_date_parsed` — FNA procedure date
-- `unrecoverable` — no date source available; flagged for manual review
-
-### Fallback Chain by Entity Domain
-
-| Domain | Fallback sources |
-|--------|-----------------|
-| genetics | entity → note → surg → molecular → fna (full 5-source) |
-| staging | entity → note → surg |
-| procedures | entity → note → surg |
-| complications | entity → note → surg |
-| medications | entity → note |
-| problem_list | entity → note |
-
-### Date Status Taxonomy V3 (Script 17)
-
-Applied to all enriched views via `scripts/17_semantic_cleanup_v3.sql` and `scripts/17_semantic_cleanup_v3_views.sql`:
-
-| Status | Source | Confidence |
-|--------|--------|------------|
-| `exact_source_date` | `entity_date` (native extraction) | 100 |
-| `inferred_day_level_date` | `note_date` fallback | 70 |
-| `coarse_anchor_date` | surgery / FNA / genetics year | 35–60 |
-| `unresolved_date` | no source found | 0 |
-
-**Standardized provenance columns** (present on all enriched views):
-
-| Column | Type |
-|--------|------|
-| `date_status` | VARCHAR |
-| `date_is_source_native_flag` | BOOLEAN |
-| `date_is_inferred_flag` | BOOLEAN |
-| `date_requires_manual_review_flag` | BOOLEAN |
-| `inferred_event_date` | DATE |
-
-### Related Views
-
-| View | Source | Purpose |
-|------|--------|---------|
-| `enriched_note_entities_*` (6) | Script 15 | Enriched views with provenance columns computed at query time |
-| `missing_date_associations_audit` | Script 15 | Union of all enriched views for audit |
-| `date_recovery_summary` | Script 15 | Aggregate rescue stats by domain × source |
-| `timeline_rescue_v2_mv` | Script 17 | Genetics rescue view with V3 taxonomy; extend with UNION ALL for other domains |
-| `timeline_unresolved_summary_v2_mv` | Script 17 | KPI rollup: row/patient count and % by date_status |
-| `validation_failures_v3` | Script 17 | Reclassifies coarse anchor dates from error → info; only truly unresolvable dates remain errors |
-| `enriched_master_timeline` | Script 27 | Filtered audit (excludes unrecoverable) |
-| `date_rescue_rate_summary` | Script 27 | KPI: rescue rate % and avg confidence per domain |
-
-### Deployment
-
-Script 27 depends on script 15 views (`missing_date_associations_audit`) and all
-base tables being present in `thyroid_master.duckdb`. Run after scripts 15–26.
-
----
-
-## Traceability & Date Accuracy Guarantee (added 2026-03-12)
-
-### Strict Lab Date Precedence Rule
-
-Lab collection dates **always** take precedence over note encounter dates.
-This rule is enforced in `provenance_enriched_events_v1`:
-
-```sql
--- Canonical date resolution for all clinical events
-COALESCE(
-    TRY_CAST(specimen_collect_dt AS DATE),  -- 1. Lab collection date   (confidence 1.0)
-    TRY_CAST(event_date AS DATE),           -- 2. Entity-extracted date (confidence 0.7)
-    followup_date                           -- 3. Note encounter date   (last resort)
-) AS event_date_correct
-```
-
-### New Provenance Columns (provenance_enriched_events_v1)
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `specimen_collect_dt` | VARCHAR | Specimen collection date from `thyroglobulin_labs` (NULL for non-lab events) |
-| `event_date_correct` | DATE | Best-available date per strict lab-date precedence rule |
-| `date_status_final` | VARCHAR | `LAB_DATE_USED` / `ENTITY_DATE_USED` / `ENTITY_DATE_EQUALS_NOTE_DATE` / `NOTE_DATE_FALLBACK` / `NO_DATE` |
-| `direct_source_link` | VARCHAR | Pipe-delimited `source_column|research_id|event_subtype|evidence_snippet` |
-| `provenance_created_at` | TIMESTAMP | Audit timestamp |
-
-### date_status_final Values
-
-| Value | Meaning | Confidence |
-|-------|---------|-----------|
-| `LAB_DATE_USED` | `specimen_collect_dt` from structured lab table | 1.0 |
-| `ENTITY_DATE_USED` | `entity_date` differs from encounter date | 0.7 |
-| `ENTITY_DATE_EQUALS_NOTE_DATE` | Entity date present but equals note encounter date | 0.5 |
-| `NOTE_DATE_FALLBACK` | Only note encounter date available (error for labs) | 0.0 |
-| `NO_DATE` | No date source found | 0.0 |
-
-### New Tables / Views
-
-| Table | Script | Purpose |
-|-------|--------|---------|
-| `provenance_enriched_events_v1` | `46_provenance_audit.py` | Clinical events with strict lab-date precedence + `direct_source_link` |
-| `lineage_audit_v1` | `46_provenance_audit.py` | Raw → note → extracted → final cohort traceability (one row per patient) |
-| `val_provenance_traceability` | `29_validation_engine.py` | 4-check validation: `direct_source_link` completeness + zero-tolerance `NOTE_DATE_FALLBACK` for labs |
-
-### Extraction Pipeline Enhancements (v2026-03-12)
-
-**`utils/text_helpers.py` — `extract_nearby_date()` and `extract_nearby_date_with_confidence()`:**
-- Added `_LAB_DATE_KEYWORDS` regex that scans for explicit collection date phrases before any generic date
-- Keywords: "collected on", "drawn on", "specimen date:", "result date:", "received:", "reported on", "accession date:"
-- Returns `(date, 1.0)` when keyword found, `(date, 0.7)` for generic nearby date
-
-**`llm_extraction/extract_llm.py` — Functional LLM extractor:**
-- `_build_prompt()` loads `prompts/lab_date_extraction_v1.txt` system prompt
-- Output JSON schema: `{entity_type, entity_value, entity_date, date_confidence, present_or_negated, evidence_text, source_line}`
-- Explicit instruction: lab dates > note encounter date; `date_confidence=1.0` for keyword-found dates
-
-**`llm_extraction/run_extraction.py` — Selective re-extraction:**
-- `--target DOMAIN` re-extracts only one entity domain (merges with existing parquet)
-- `--research-ids FILE` re-extracts only flagged patients (one research_id per line)
-
-### QA Guarantee
-
-Zero tolerance is enforced: any `date_status_final = 'NOTE_DATE_FALLBACK'` for a lab event
-is classified as **error severity** in `val_provenance_traceability` and inserted into `qa_issues`.
-
-Run the full audit and validation:
-```bash
-.venv/bin/python scripts/46_provenance_audit.py --md
-.venv/bin/python scripts/29_validation_engine.py --md
-```
-
----
-
-## Legacy Compatibility Layer (Script 27_fix_legacy_episode_compatibility)
-
-**Created:** 2026-03-10  
-**Script:** `scripts/27_fix_legacy_episode_compatibility.py`  
-**Purpose:** Bridge legacy episode architecture references (scripts 17/18/22/23/26) to the current
-modern table stack. Run this script if the dashboard shows "Missing critical tables" errors.
-
-### Legacy → Modern Mapping
-
-| Legacy Table | Source Table(s) | Key Mapped Columns |
-|---|---|---|
-| `molecular_episode_v3` | `advanced_features_v3` | `braf/ras/ret/tert_mutation_mentioned`, `overall_linkage_confidence`, `molecular_analysis_eligible_flag` |
-| `rai_episode_v3` | `extracted_clinical_events_v4` | `rai_assertion_status`, `rai_interval_class`, `rai_treatment_certainty` |
-| `validation_failures_v3` | `qa_issues` | `severity` (v3 reclassification: coarse_anchor_date → info), `requires_manual_review_flag` |
-| `tumor_episode_master_v2` | `advanced_features_v3` + `master_timeline` | `surgery_date`, `histology_1_type`, `analysis_eligible_flag`, `adjudication_needed_flag` |
-| `linkage_summary_v2` | `patient_level_summary_mv` | `linkage_confidence_tier`, `linked_domain_count`, per-domain has_* flags |
-
-### Modern Stack (No Legacy Needed)
-
-| Modern Table | Replaces | Notes |
-|---|---|---|
-| `extracted_clinical_events_v4` | legacy episode tables | All clinical event extraction |
-| `advanced_features_v3` | `molecular_episode_v2/v3` | 60+ engineered features including molecular flags |
-| `master_timeline` | `patient_cross_domain_timeline_v2` | Surgery-level timeline, multi-surgery safe |
-| `qa_issues` | `validation_failures_v2/v3` | All QA severity levels |
-| `patient_level_summary_mv` | `linkage_summary_v2` | Patient-level coverage summary |
-| `risk_enriched_mv` | `recurrence_risk_features_mv` | Risk enrichment with PSM-ready features |
-
-### Usage
-
-```bash
-# Fix dashboard "Missing critical tables" error:
-.venv/bin/python scripts/27_fix_legacy_episode_compatibility.py
-
-# Use local DuckDB instead of local DuckDB:
-.venv/bin/python scripts/27_fix_legacy_episode_compatibility.py --local
-
-# Dry-run preview:
-.venv/bin/python scripts/27_fix_legacy_episode_compatibility.py --dry-run
-```
-
-After running, restart the Streamlit dashboard to clear the cached connection.
-
----
-
-## Date Association & Provenance Policy — Quick Reference (added 2026-03-10)
-
-### Core Tables & Date Sources
-- `clinical_notes_long.note_date` (VARCHAR) — canonical note-level anchor
-- `note_entities_*` family (6 tables) — high `entity_date` null rate; now enriched via V3 taxonomy
-- `genetic_testing` — `DATE_1_year`, `DATE_2_year`, `DATE_3_year` (BIGINT, year-level only)
-- `path_synoptics` / `tumor_pathology` — `surg_date` / `surgery_date`
-- `fna_cytology` (or `fna_history`) — `fna_date` / `fna_date_parsed`
-
-### Date Status Taxonomy V3 (applied to all enriched views — created in script 17)
-- `exact_source_date` (entity_date, confidence 100)
-- `inferred_day_level_date` (note_date fallback, confidence 70)
-- `coarse_anchor_date` (surgery/FNA/genetics year, confidence 35–60)
-- `unresolved_date` (confidence 0)
-
-### Standardized Provenance Columns (added to all enriched views)
-- `date_status` VARCHAR
-- `date_is_source_native_flag` BOOLEAN
-- `date_is_inferred_flag` BOOLEAN
-- `date_requires_manual_review_flag` BOOLEAN
-- `inferred_event_date` DATE
-
-### Views (created by `scripts/17_semantic_cleanup_v3.sql`)
-- `timeline_rescue_v2_mv`
-- `timeline_unresolved_summary_v2_mv`
-- `validation_failures_v3` (and `patient_validation_rollup_v2_mv`)
-
----
-
-### Date Association & Provenance Policy (added 2026-03-10)
-
-**Core Tables & Date Sources**
-- `clinical_notes_long.note_date` (VARCHAR) — canonical note-level anchor
-- `note_entities_*` family (6 tables) — high `entity_date` null rate; enriched via V3 taxonomy
-- `genetic_testing` — `DATE_1_year`, `DATE_2_year`, `DATE_3_year` (BIGINT)
-- `path_synoptics` / `tumor_pathology` — `surg_date` / `surgery_date`
-- `fna_cytology` (or `fna_history`) — `fna_date` / `fna_date_parsed`
-
-**Date Status Taxonomy V3** (scripts 17 + 27)
-- `exact_source_date` (confidence 100)
-- `inferred_day_level_date` (confidence 70)
-- `coarse_anchor_date` (confidence 35-60)
-- `unresolved_date` (confidence 0)
-
-**Standardized Provenance Columns**
-- `date_status` VARCHAR
-- `date_is_source_native_flag` BOOLEAN
-- `date_is_inferred_flag` BOOLEAN
-- `date_requires_manual_review_flag` BOOLEAN
-- `inferred_event_date` DATE
-
-**Views** (created by 26/25/29)
-- `timeline_rescue_v2_mv`
-- `timeline_unresolved_summary_v2_mv`
-- `validation_failures_v3`
-- `enriched_patient_timeline_v3_mv` — timeline_rescue_v3_mv joined with patient header, first RAI, and per-patient rescue rate; `genetic_year` is coarsened to YYYY-01-01 when used as a date anchor
-- `date_rescue_rate_summary` — single-row-per-domain KPI table; overall rescue rate, rescued row count, and average confidence across all 6 note_entities_* domains
-- `timeline_rescue_v3_mv` — V3 taxonomy enrichment of all 6 note_entities_* tables; adds date_status, date_is_source_native_flag, date_is_inferred_flag, date_requires_manual_review_flag, inferred_event_date
-- `time_to_rai_v3_mv` — per-patient `time_to_rai_days`, `ajcc_stage_grouped`, and `date_rescue_confidence`; uses inferred timeline anchors from `inferred_event_date`
-- `recurrence_free_survival_v3_mv` — per-patient `time_to_recurrence_days` with `censoring_flag` and surgery-aligned censor dates for recurrence endpoint analysis
-- `genotype_stratified_outcomes_v3_mv` — genotype-stratified (`braf_ras_status`) survival surface combining RAI timing, recurrence-free timing, stage grouping, and rescue-confidence tier
-
----
-
-## ThyroSeq Workbook Integration (script 41)
-
-**Source:** `Thyroseq Data Complete.xlsx` — 83 rows, 34 columns of ThyroSeq molecular testing results, pathology, demographics, serial Tg/TgAb/TSH follow-up, surgery, RAI, and imaging.
-
-### Staging Tables
-
-| Table | Description |
-|-------|-------------|
-| `stg_thyroseq_excel_raw` | Raw workbook rows with source metadata, normalized identifiers (`mrn_norm`, `dob_norm`, `name_norm`), and deterministic `row_hash` |
-| `stg_thyroseq_match_results` | Patient matching results: `matched_research_id`, `match_method`, `match_confidence`, `review_required`, `conflict_flags` |
-| `stg_thyroseq_parsed` | Parsed/normalized fields: mutations, fusions, margins, ETE, lymph nodes, angioinvasion, demographics, surgery, RAI |
-
-### Enrichment Tables (long format)
-
-| Table | Description |
-|-------|-------------|
-| `thyroseq_molecular_enrichment` | One row per molecular test record: mutation/fusion flags, allele fractions, GEP, CNA |
-| `thyroseq_followup_labs` | One row per serial Tg/TgAb/TSH measurement: value, operator, date, stimulated flag |
-| `thyroseq_followup_events` | One row per surgery/RAI/imaging event with dates and parsed attributes |
-
-### Audit Tables
-
-| Table | Description |
-|-------|-------------|
-| `thyroseq_fill_actions` | Field-level audit log of null-fill operations with old/proposed values |
-| `thyroseq_review_queue` | Items requiring manual review: match ambiguity, parse failures, structured conflicts |
-
-### Match Methods
-
-| Method | Confidence | Auto-merge |
-|--------|-----------|------------|
-| `exact_mrn_dob_name` | 1.0 | Yes |
-| `exact_mrn_name` | 0.9 | Yes |
-| `exact_mrn_only` | 0.7 | Yes |
-| `exact_name_dob` | 0.6 | No (review) |
-| `mrn_with_discordance` | 0.3 | No (review) |
-| `mrn_ambiguous_multi` | 0.2 | No (review) |
-| `manual_review_required` | 0.0 | No (review) |
-
-### Fill Policy
-
-Only auto-fill when: target field is NULL, source match confidence >= 0.7, source value is parseable. Conflicts are routed to `thyroseq_review_queue`.
-
-### Run Command
-
-```bash
-.venv/bin/python scripts/41_ingest_thyroseq_excel.py \
-    --input '/path/to/Thyroseq Data Complete.xlsx' \
-    [--md] [--local] [--dry-run]
-```
-
----
-
-## Normalized molecular results layer (governed; script 131)
-
-**Purpose:** Store vendor-neutral, longitudinal molecular **assay** and **variant** facts alongside — not instead of — `molecular_testing`, ThyroSeq enrichment tables, and `molecular_test_episode_v2`. Ingestion is **append-only**; corrections use `superseded_by_molecular_result_id` on new rows. **Linkage to patients is exact** (`research_id` only after deterministic resolution elsewhere); native IDs are kept as provenance columns.
-
-**DDL:** `scripts/sql/131_molecular_results_layer_ddl.sql`  
-**Runner:** `scripts/131_molecular_results_layer.py` (`--execute`, optional `--md`)
-
-### Design notes
-
-| Principle | How it is expressed |
-|-----------|----------------------|
-| Canonical patient key | `research_id` (INTEGER), matching `molecular_testing` / episode tables |
-| Source-native identity | `source_patient_id`, `source_specimen_id`, `source_accession` (optional VARCHAR) |
-| No source overwrite | New tables only; loaders must INSERT, not UPDATE source tables |
-| Exact-match linkage | No fuzzy joins inside this schema; ambiguous rows get `normalization_status = 'quarantine'` or `pending_review` and appear in `molecular_normalization_review_v1` |
-| Append-only batches | `ingestion_run_id`, `ingestion_ts`, `lineage_id` (UUID VARCHAR per batch/line) tie rows to a load |
-| DuckLake (MotherDuck) | Tables have **no PRIMARY KEY or secondary indexes** (platform limitation); logical uniqueness is `molecular_result_id` / `(domain, source_code)` in `molecular_code_crosswalk`, enforced by loaders |
-
-### `molecular_results`
-
-One row per **assay result envelope** (specimen + order + panel instance). Aligns naming with existing domains where possible: `test_date_native` (VARCHAR, same spirit as `molecular_test_episode_v2.test_date_native`), `platform`, optional `molecular_episode_id` link.
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `molecular_result_id` | VARCHAR | Surrogate UUID for the result row (loader-generated) |
-| `research_id` | INTEGER | Canonical patient key |
-| `source_patient_id` | VARCHAR | Vendor/file patient id (e.g. MRN string) |
-| `source_specimen_id` | VARCHAR | Accession / specimen id from source |
-| `source_accession` | VARCHAR | Alternate accession label when split from specimen id |
-| `assay_name` | VARCHAR | Human-readable assay / panel name |
-| `panel_version` | VARCHAR | Panel or software version |
-| `platform` | VARCHAR | e.g. ThyroSeq, Afirma — consistent with `molecular_test_episode_v2.platform` |
-| `vendor` | VARCHAR | Laboratory / vendor when distinct from platform |
-| `loinc_code` | VARCHAR | LOINC when known |
-| `test_date_native` | VARCHAR | Raw date string from source |
-| `test_date_parsed` | DATE | Parsed test date when available |
-| `interpretation_summary` | VARCHAR | Report-level interpretation |
-| `risk_call` | VARCHAR | Structured risk / tier if provided |
-| `canonical_hgvs` | VARCHAR | Single “header” HGVS when report is one-variant |
-| `raw_payload_json` | JSON | Full normalized or raw structured payload |
-| `payload_checksum` | VARCHAR | SHA-256 hex over canonical serialized payload (loader) |
-| `parse_status` | VARCHAR | `pending` / `ok` / `partial` / `failed` (ThyroSeq-style) |
-| `normalization_status` | VARCHAR | `raw` / `mapped` / `verified` / `quarantine` / `pending_review` |
-| `qc_flags` | JSON | Array or object of QC codes |
-| `lineage_id` | VARCHAR | Batch or transformation lineage UUID |
-| `ingestion_ts` | TIMESTAMP | Row insert time |
-| `ingestion_run_id` | VARCHAR | FK-style reference to `molecular_ingestion_runs` |
-| `source_table` | VARCHAR | Origin table name e.g. `thyroseq_molecular_enrichment` |
-| `source_row_fingerprint` | VARCHAR | e.g. `source_row_hash` from ThyroSeq staging |
-| `molecular_episode_id` | INTEGER | Optional join to `molecular_test_episode_v2` |
-| `superseded_by_molecular_result_id` | VARCHAR | New row id that replaces this assertion (append-only corrections) |
-
-### `molecular_variant_long`
-
-One row per **variant call** (SNV, indel, fusion partner set, CNV, etc.).
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `molecular_variant_id` | VARCHAR | Surrogate UUID |
-| `molecular_result_id` | VARCHAR | Parent result |
-| `research_id` | INTEGER | Denormalized patient key for simple filters |
-| `gene_symbol` | VARCHAR | Gene (partner A for fusions) |
-| `transcript_id` | VARCHAR | RefSeq transcript e.g. NM_… |
-| `genomic_hgvs` | VARCHAR | g. notation when available |
-| `cdna_hgvs` | VARCHAR | c. notation |
-| `protein_hgvs` | VARCHAR | p. notation |
-| `canonical_hgvs` | VARCHAR | Preferred single HGVS for the call |
-| `variant_class` | VARCHAR | `SNV` / `INDEL` / `FUSION` / `CNV` / `OTHER` |
-| `allele_fraction` | DOUBLE | VAF or copy-ratio surrogate |
-| `zygosity` | VARCHAR | e.g. het / hom / unknown |
-| `interpretation_text` | VARCHAR | Variant-level text |
-| `risk_call` | VARCHAR | Tier / ACMG bucket when encoded |
-| `parse_status` | VARCHAR | Per-variant parse state |
-| `normalization_status` | VARCHAR | Mapping / review state |
-| `qc_flags` | JSON | Per-variant QC |
-| `lineage_id` | VARCHAR | Shared with parent batch |
-| `ingestion_ts` | TIMESTAMP | Insert time |
-| `partner_gene_symbol` | VARCHAR | Fusion / rearrangement partner |
-| `fusion_partner` | VARCHAR | Free-text fusion descriptor |
-| `raw_variant_token` | VARCHAR | Opaque source fragment for audit |
-
-### `molecular_assay_dictionary`
-
-Curated reference: `assay_key` (stable string), `assay_name`, `panel_version`, `platform`, `vendor`, `loinc_code`, `loinc_long_name`, validity window, `source_reference`.
-
-### `molecular_code_crosswalk`
-
-Exact **source_code → target_code** map by `domain` (seed includes `variant_class` → SNV/INDEL/FUSION/CNV/OTHER). Idempotent seed via `NOT EXISTS` anti-join.
-
-### `molecular_ingestion_runs` (optional)
-
-`ingestion_run_id`, `started_at`, `completed_at`, `source_system`, `runner_script`, `status`, `notes`.
-
-### Contract views (Streamlit / notebooks)
-
-| View | Role |
-|------|------|
-| `molecular_results_contract_v1` | Stable column projection over `molecular_results` |
-| `molecular_variant_long_contract_v1` | Stable projection over `molecular_variant_long` |
-| `molecular_results_enriched_v1` | Results + `n_variants_long` scalar subquery |
-| `molecular_normalization_review_v1` | `normalization_status` / `parse_status` review funnel |
-| `molecular_fact_long_base_v` | Internal: stacked note genetics + assay envelope + variant rows with precedence flags |
-| `molecular_fact_long_v` | Analyst union: note-derived vs `assay_structured_import`, `record_role`, `included_in_primary_analytics`, genetics review overlay |
-| `molecular_results_unified_v` | Synonym of `molecular_fact_long_v` |
-| `molecular_fact_lineage_qa_duplicate_candidates_v` | QA: note vs structured assay pairs within ±21 days (same patient + `molecular_family`) |
-
----
-
-## V2 LLM Extraction Entity Tables
-
-Registry-driven extraction domains from `config/extraction_domain_registry.yaml` (schema version `entity_schema_v3_2026-04-03`). Each domain produces a `note_entities_llm_<domain>.parquet` in the v2 fleet directory, staged to `v2_stage` schema in MotherDuck and promoted to `main` after passing the 8-gate promotion pipeline.
-
-### V2 Domain Tables (23 canonical-output domains)
-
-| Table | QA Tier | Linkage Family | Note Scope |
-|-------|---------|----------------|------------|
-| `note_entities_llm_imaging` | standard | imaging | all |
-| `note_entities_llm_tirads_granular` | standard | imaging | all |
-| `note_entities_llm_us_nodule_dynamics` | standard | imaging | all |
-| `note_entities_llm_labs` | standard | followup | all |
-| `note_entities_llm_tg_kinetics` | standard | followup | all |
-| `note_entities_llm_pathology` | critical | pathology | path_report |
-| `note_entities_llm_synoptic_pathology_enrichment` | critical | pathology | path_report |
-| `note_entities_llm_rai_detailed` | critical | rai | all |
-| `note_entities_llm_rad_treatment` | standard | rai | all |
-| `note_entities_llm_parathyroid_detail` | standard | operative | op_note |
-| `note_entities_llm_recurrence` | critical | followup | all |
-| `note_entities_llm_survival_followup` | standard | followup | all |
-| `note_entities_llm_cervical_ln_detail` | standard | pathology | all |
-| `note_entities_llm_functional_outcomes` | informational | followup | all |
-| `note_entities_llm_past_medical_hx` | informational | demographics | all |
-| `note_entities_llm_past_surgical_hx` | informational | demographics | all |
-| `note_entities_llm_presenting_symptoms` | informational | demographics | all |
-| `note_entities_llm_physical_exam` | informational | demographics | all |
-| `note_entities_llm_vascular_invasion` | critical | pathology | path_report |
-| `note_entities_llm_airway_invasion` | standard | operative | op_note |
-| `note_entities_llm_frozen_section_detail` | standard | operative | op_note |
-| `note_entities_llm_dynamic_risk_response` | standard | followup | all |
-| `note_entities_llm_patient_decision_adherence` | informational | followup | all |
-
-### Canonical Fact Tables (v2)
-
-| Table | Description |
-|-------|-------------|
-| `canonical_extracted_fact_long_v2` | All v1 + v2 domains expanded to entity-level rows. Superset of v1. Columns per `docs/fact_provenance_contract_v1.md`. |
-| `canonical_fact_quarantine_v2` | Rows failing quality gates with `quarantine_reason` and `quarantine_date`. |
-
-### Sub-Prompt Parquets (merged into parent domain)
-
-| Parquet Stem | Parent Domain |
-|-------------|---------------|
-| `note_entities_llm_recurrence_detailed` | recurrence |
-| `note_entities_llm_complications_rln_laryngoscopy` | complications |
-| `note_entities_llm_medication_management` | medications |
-| `note_entities_llm_operative_details` | operative_detail |
-| `note_entities_llm_operative_v2_enrichment` | operative_detail |
-| `note_entities_llm_parathyroid_per_gland` | parathyroid_detail |
-| `note_entities_llm_molecular_thyroseq_afirma` | genetics |
-
----
-
-## Thyroglobulin Lab Tables
-
-Source: `raw/Thyroid_Thyroglobulin_Lab_20251120.csv` (78,112 raw rows). Ingested by `scripts/113_tg_lab_ingestion.py`.
-
-| Table | Description | Rows |
-|-------|-------------|------|
-| `thyroglobulin_lab_canonical_v1` | Canonical Tg/TgAb lab results: `research_id`, `analyte` (Tg/TgAb), `result_numeric`, `result_text`, `result_date`, `lab_units`, `reference_range`, `temporal_window` | ~76,971 |
-| `tg_lab_review_queue_v1` | Ambiguous Tg+TgAb combo pairs requiring manual disambiguation | ~1,035 |
-| `tg_timeline_patient_summary_v1` | Per-patient summary: first/last Tg, nadir Tg, trend direction, surveillance window count | ~3,258 |
-| `tg_postop_surveillance_windows_v1` | Temporal surveillance windows with per-window Tg/TgAb statistics | Derived |
-| `tg_recurrence_surveillance_linkage_v1` | Join of rising-Tg patients to `extracted_recurrence_refined_v1` | Derived |
-
-### Key Columns in `thyroglobulin_lab_canonical_v1`
-
-- `research_id`: patient identifier (exact match to `master_cohort`)
-- `analyte`: `Tg` or `TgAb`
-- `result_numeric`: parsed numeric lab value
-- `result_date`: `YYYY-MM-DD` normalized
-- `temporal_window`: postoperative surveillance window assignment
-- `source_row_hash`: deterministic hash for deduplication
-
----
-
-## QA Schema (MotherDuck)
-
-Schema `qa` in the `Thyroid 2026` catalog. Created by `scripts/114_qa_schema_setup.py`.
-
-| Table | Description |
-|-------|-------------|
-| `qa.promotion_scorecard` | Gate results per run: `run_label`, `gate_id`, `status`, `detail`, `git_sha` |
-| `qa.promotion_review_decisions` | Persisted review decisions: `verification_status`, `reviewer`, `waiver_reason` |
-| `qa.concordance_summary` | Per-domain concordance metrics by gate run |
-| `qa.domain_validation` | Schema compliance, dup rates, date coverage per gate run |
-| `qa.tg_lab_ingestion_qc` | Structured QC from script 113: reconciliation gap, parse rates, patient counts |
-| `qa.release_manifest` | Immutable release snapshot metadata: `release_tag`, `git_sha`, `tables_included` |
-
----
-
-## MotherDuck Schema Layout
-
-| Schema | Purpose |
-|--------|---------|
-| `main` | Canonical/production tables. Stable contract surfaces for analysis, manuscripts, dashboards. |
-| `v2_stage` | Pre-promotion staging. Raw LLM fleet parquets (1 row per note, `result_json`). Not yet gate-validated. |
-| `qa` | Validation artifacts, gate scorecards, review decisions, release manifests. |
-| `release_YYYYMMDD` | Immutable point-in-time snapshots of canonical tables for manuscript reproducibility. |
+# THYROID_2026 — Data Dictionary
+## canonical_patient_master_v1
+- **Rows:** 10,871 (one per patient)
+- **Columns:** 1374
+- **Database:** thyroid_ete_fix_20260413
+
+| Coverage tier | Count |
+|---------------|-------|
+| 100% coverage | 149 |
+| >75% coverage | 198 |
+| >50% coverage | 210 |
+| <10% coverage | 629 |
+
+
+### Source: clinical_note_ln_patient_rollup_v1 (36 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| cnln_total_entities | BIGINT | 100.0 | Clinical note lymph node integration |
+| cnln_n_modalities | INTEGER | 100.0 | Clinical note lymph node integration |
+| cnln_any_positive_any_modality | BOOLEAN | 100.0 | Clinical note lymph node integration |
+| cnln_ene_any_modality | BOOLEAN | 100.0 | Clinical note lymph node integration |
+| cnln_modalities_present | VARCHAR | 13.2 | Clinical note lymph node integration |
+| cnln_earliest_date | VARCHAR | 13.2 | Clinical note lymph node integration |
+| cnln_latest_date | VARCHAR | 13.2 | Clinical note lymph node integration |
+| cnln_surg_n_entities | BIGINT | 100.0 | Clinical note lymph node integration |
+| cnln_surg_n_notes | BIGINT | 100.0 | Clinical note lymph node integration |
+| cnln_surg_any_positive | BOOLEAN | 100.0 | Clinical note lymph node integration |
+| cnln_surg_max_positive_count | DOUBLE | 4.7 | Clinical note lymph node integration |
+| cnln_surg_max_total_examined | DOUBLE | 1.5 | Clinical note lymph node integration |
+| cnln_surg_ene_any | BOOLEAN | 100.0 | Clinical note lymph node integration |
+| cnln_surg_bilateral | BOOLEAN | 100.0 | Clinical note lymph node integration |
+| cnln_surg_levels_mentioned | VARCHAR | 10.2 | Clinical note lymph node integration |
+| cnln_surg_first_date | VARCHAR | 11.4 | Clinical note lymph node integration |
+| cnln_surg_last_date | VARCHAR | 11.4 | Clinical note lymph node integration |
+| cnln_surg_source_note_types | VARCHAR | 11.4 | Clinical note lymph node integration |
+| cnln_surg_avg_confidence | DOUBLE | 11.4 | Clinical note lymph node integration |
+| cnln_img_n_entities | BIGINT | 100.0 | Clinical note lymph node integration |
+| cnln_img_any_suspicious | BOOLEAN | 100.0 | Clinical note lymph node integration |
+| cnln_img_max_size_cm | DOUBLE | 0.5 | Clinical note lymph node integration |
+| cnln_img_laterality | VARCHAR | 2.5 | Clinical note lymph node integration |
+| cnln_img_levels_mentioned | VARCHAR | 2.2 | Clinical note lymph node integration |
+| cnln_img_first_date | VARCHAR | 3.0 | Clinical note lymph node integration |
+| cnln_img_last_date | VARCHAR | 3.0 | Clinical note lymph node integration |
+| cnln_img_avg_confidence | DOUBLE | 3.0 | Clinical note lymph node integration |
+| cnln_path_n_entities | BIGINT | 100.0 | Clinical note lymph node integration |
+| cnln_path_any_positive | BOOLEAN | 100.0 | Clinical note lymph node integration |
+| cnln_path_max_positive_count | DOUBLE | 0.8 | Clinical note lymph node integration |
+| cnln_path_ene_any | BOOLEAN | 0.3 | Clinical note lymph node integration |
+| cnln_clin_n_entities | BIGINT | 100.0 | Clinical note lymph node integration |
+| cnln_clin_any_positive | BOOLEAN | 100.0 | Clinical note lymph node integration |
+| cnln_clin_avg_confidence | DOUBLE | 1.3 | Clinical note lymph node integration |
+| cnln_novel_positive_flag | BOOLEAN | 100.0 | Clinical note lymph node integration |
+| cnln_source_table | VARCHAR | 100.0 | Clinical note lymph node integration |
+
+### Source: clinical_notes_long (NLP PMH) (64 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| pmhx_llm_extraction_method | VARCHAR | 2.7 | Past medical history |
+| pmhx_llm_mean_confidence | DOUBLE | 2.7 | Past medical history |
+| pmhx_llm_min_confidence | DOUBLE | 2.7 | Past medical history |
+| pmhx_llm_n_source_notes | BIGINT | 2.7 | Past medical history |
+| pmhx_llm_note_types | VARCHAR | 2.7 | Past medical history |
+| pmhx_nlp_afib | BOOLEAN | 35.8 | Past medical history |
+| pmhx_nlp_afib_n_mentions | BIGINT | 35.8 | Past medical history |
+| pmhx_nlp_asthma | BOOLEAN | 35.8 | Past medical history |
+| pmhx_nlp_asthma_n_mentions | BIGINT | 35.8 | Past medical history |
+| pmhx_nlp_autoimmune_thyroid_hx | BOOLEAN | 2.7 | Past medical history |
+| pmhx_nlp_autoimmune_thyroid_hx_n_mentions | BIGINT | 2.7 | Past medical history |
+| pmhx_nlp_breast_cancer | BOOLEAN | 35.8 | Past medical history |
+| pmhx_nlp_breast_cancer_n_mentions | BIGINT | 35.8 | Past medical history |
+| pmhx_nlp_cad | BOOLEAN | 35.8 | Past medical history |
+| pmhx_nlp_cad_n_mentions | BIGINT | 35.8 | Past medical history |
+| pmhx_nlp_ckd | BOOLEAN | 35.8 | Past medical history |
+| pmhx_nlp_ckd_n_mentions | BIGINT | 35.8 | Past medical history |
+| pmhx_nlp_coagulopathy | BOOLEAN | 2.7 | Past medical history |
+| pmhx_nlp_comorbidity_list | VARCHAR | 35.8 | Past medical history |
+| pmhx_nlp_copd | BOOLEAN | 35.8 | Past medical history |
+| pmhx_nlp_copd_n_mentions | BIGINT | 35.8 | Past medical history |
+| pmhx_nlp_depression | BOOLEAN | 35.8 | Past medical history |
+| pmhx_nlp_depression_n_mentions | BIGINT | 35.8 | Past medical history |
+| pmhx_nlp_diabetes | BOOLEAN | 35.8 | Past medical history |
+| pmhx_nlp_diabetes_first_date | DATE | 4.8 | Past medical history |
+| pmhx_nlp_diabetes_n_mentions | BIGINT | 35.8 | Past medical history |
+| pmhx_nlp_extraction_method | VARCHAR | 35.8 | Past medical history |
+| pmhx_nlp_family_hx_cancer | BOOLEAN | 2.7 | Past medical history |
+| pmhx_nlp_family_hx_thyroid | BOOLEAN | 2.7 | Past medical history |
+| pmhx_nlp_family_hx_thyroid_n_mentions | BIGINT | 2.7 | Past medical history |
+| pmhx_nlp_gerd | BOOLEAN | 35.8 | Past medical history |
+| pmhx_nlp_gerd_n_mentions | BIGINT | 35.8 | Past medical history |
+| pmhx_nlp_hypertension | BOOLEAN | 35.8 | Past medical history |
+| pmhx_nlp_hypertension_first_date | DATE | 6.3 | Past medical history |
+| pmhx_nlp_hypertension_n_mentions | BIGINT | 35.8 | Past medical history |
+| pmhx_nlp_hyperthyroidism | BOOLEAN | 35.8 | Past medical history |
+| pmhx_nlp_hyperthyroidism_first_date | DATE | 6.1 | Past medical history |
+| pmhx_nlp_hyperthyroidism_n_mentions | BIGINT | 35.8 | Past medical history |
+| pmhx_nlp_hypothyroidism | BOOLEAN | 35.8 | Past medical history |
+| pmhx_nlp_hypothyroidism_first_date | DATE | 9.8 | Past medical history |
+| pmhx_nlp_hypothyroidism_n_mentions | BIGINT | 35.8 | Past medical history |
+| pmhx_nlp_lung_cancer | BOOLEAN | 35.8 | Past medical history |
+| pmhx_nlp_lung_cancer_n_mentions | BIGINT | 35.8 | Past medical history |
+| pmhx_nlp_men_syndrome | BOOLEAN | 2.7 | Past medical history |
+| pmhx_nlp_n_comorbidities | BIGINT | 35.8 | Past medical history |
+| pmhx_nlp_n_source_notes | BIGINT | 35.8 | Past medical history |
+| pmhx_nlp_note_types | VARCHAR | 35.8 | Past medical history |
+| pmhx_nlp_obesity | BOOLEAN | 35.8 | Past medical history |
+| pmhx_nlp_obesity_first_date | DATE | 2.1 | Past medical history |
+| pmhx_nlp_obesity_n_mentions | BIGINT | 35.8 | Past medical history |
+| pmhx_nlp_osteoporosis | BOOLEAN | 2.7 | Past medical history |
+| pmhx_nlp_prior_cancer_hx | BOOLEAN | 2.7 | Past medical history |
+| pmhx_nlp_prior_cancer_hx_n_mentions | BIGINT | 2.7 | Past medical history |
+| pmhx_nlp_radiation_exposure | BOOLEAN | 2.7 | Past medical history |
+| pmhx_nlp_radiation_exposure_confidence | DOUBLE | 0.3 | Past medical history |
+| pmhx_nlp_radiation_exposure_date | DATE | 0.3 | Past medical history |
+| pmhx_nlp_radiation_exposure_n_mentions | BIGINT | 2.7 | Past medical history |
+| pmhx_nlp_smoking_status | VARCHAR | 0.2 | Past medical history |
+| pmhx_nlp_diabetes_first_days_from_surg | INTEGER | 3.6 | Days from first surgery date (negative = before surgery) |
+| pmhx_nlp_hypertension_first_days_from_surg | INTEGER | 3.4 | Days from first surgery date (negative = before surgery) |
+| pmhx_nlp_hyperthyroidism_first_days_from_surg | INTEGER | 2.3 | Days from first surgery date (negative = before surgery) |
+| pmhx_nlp_hypothyroidism_first_days_from_surg | INTEGER | 6.2 | Days from first surgery date (negative = before surgery) |
+| pmhx_nlp_obesity_first_days_from_surg | INTEGER | 1.4 | Days from first surgery date (negative = before surgery) |
+| pmhx_nlp_radiation_exposure_days_from_surg | INTEGER | 0.3 | Days from first surgery date (negative = before surgery) |
+
+### Source: clinical_notes_long (NLP PSH) (20 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| pshx_llm_extraction_method | VARCHAR | 17.1 | Past surgical history |
+| pshx_llm_mean_confidence | DOUBLE | 17.1 | Past surgical history |
+| pshx_llm_min_confidence | DOUBLE | 17.1 | Past surgical history |
+| pshx_llm_n_source_notes | BIGINT | 17.1 | Past surgical history |
+| pshx_llm_note_types | VARCHAR | 17.1 | Past surgical history |
+| pshx_nlp_n_prior_procedures | BIGINT | 17.1 | Past surgical history |
+| pshx_nlp_prior_fna | BOOLEAN | 17.1 | Past surgical history |
+| pshx_nlp_prior_fna_n_mentions | BIGINT | 17.1 | Past surgical history |
+| pshx_nlp_prior_neck_dissection | BOOLEAN | 17.1 | Past surgical history |
+| pshx_nlp_prior_neck_surgery | BOOLEAN | 17.1 | Past surgical history |
+| pshx_nlp_prior_neck_surgery_n_mentions | BIGINT | 17.1 | Past surgical history |
+| pshx_nlp_prior_parathyroidectomy | BOOLEAN | 17.1 | Past surgical history |
+| pshx_nlp_prior_rai | BOOLEAN | 17.1 | Past surgical history |
+| pshx_nlp_prior_rai_date | DATE | 2.2 | Past surgical history |
+| pshx_nlp_prior_rai_n_mentions | BIGINT | 17.1 | Past surgical history |
+| pshx_nlp_prior_thyroidectomy | BOOLEAN | 17.1 | Past surgical history |
+| pshx_nlp_prior_thyroidectomy_date | DATE | 7.2 | Past surgical history |
+| pshx_nlp_prior_thyroidectomy_n_mentions | BIGINT | 17.1 | Past surgical history |
+| pshx_nlp_prior_rai_days_from_surg | INTEGER | 2.1 | Days from first surgery date (negative = before surgery) |
+| pshx_nlp_prior_thyroidectomy_days_from_surg | INTEGER | 6.7 | Days from first surgery date (negative = before surgery) |
+
+### Source: clinical_notes_long (NLP medications) (15 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| med_nlp_calcitriol | BOOLEAN | 18.5 | NLP-extracted medication data |
+| med_nlp_calcitriol_date | DATE | 0.7 | NLP-extracted medication data |
+| med_nlp_calcitriol_n_mentions | BIGINT | 18.5 | NLP-extracted medication data |
+| med_nlp_calcium_supplement | BOOLEAN | 18.5 | NLP-extracted medication data |
+| med_nlp_calcium_supplement_date | DATE | 1.1 | NLP-extracted medication data |
+| med_nlp_calcium_supplement_n_mentions | BIGINT | 18.5 | NLP-extracted medication data |
+| med_nlp_extraction_method | VARCHAR | 18.5 | NLP-extracted medication data |
+| med_nlp_levothyroxine | BOOLEAN | 18.5 | NLP-extracted medication data |
+| med_nlp_levothyroxine_date | DATE | 8.4 | NLP-extracted medication data |
+| med_nlp_levothyroxine_n_mentions | BIGINT | 18.5 | NLP-extracted medication data |
+| med_nlp_n_source_notes | BIGINT | 18.5 | NLP-extracted medication data |
+| med_nlp_note_types | VARCHAR | 18.5 | NLP-extracted medication data |
+| med_nlp_calcitriol_days_from_surg | INTEGER | 0.7 | Days from first surgery date (negative = before surgery) |
+| med_nlp_calcium_supplement_days_from_surg | INTEGER | 1.0 | Days from first surgery date (negative = before surgery) |
+| med_nlp_levothyroxine_days_from_surg | INTEGER | 6.5 | Days from first surgery date (negative = before surgery) |
+
+### Source: clinical_notes_long (NLP operative) (44 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| op_nlp_berry_ligament_date | DATE | 4.1 | NLP-extracted from operative notes |
+| op_nlp_berry_ligament_dissected | BOOLEAN | 37.1 | NLP-extracted from operative notes |
+| op_nlp_berry_ligament_mentioned | BOOLEAN | 37.1 | NLP-extracted from operative notes |
+| op_nlp_berry_ligament_n_mentions | BIGINT | 37.1 | NLP-extracted from operative notes |
+| op_nlp_drain_date | DATE | 2.5 | NLP-extracted from operative notes |
+| op_nlp_drain_placed | BOOLEAN | 37.1 | NLP-extracted from operative notes |
+| op_nlp_drain_placed_n_mentions | BIGINT | 37.1 | NLP-extracted from operative notes |
+| op_nlp_ebl_date | DATE | 7.9 | NLP-extracted from operative notes |
+| op_nlp_ebl_ml | DOUBLE | 14.8 | NLP-extracted from operative notes |
+| op_nlp_ebl_n_mentions | BIGINT | 37.1 | NLP-extracted from operative notes |
+| op_nlp_esophageal_involvement | BOOLEAN | 37.1 | NLP-extracted from operative notes |
+| op_nlp_esophageal_n_mentions | BIGINT | 37.1 | NLP-extracted from operative notes |
+| op_nlp_extraction_method | VARCHAR | 37.1 | NLP-extracted from operative notes |
+| op_nlp_gross_invasion | BOOLEAN | 37.1 | NLP-extracted from operative notes |
+| op_nlp_intraop_complication | BOOLEAN | 37.1 | NLP-extracted from operative notes |
+| op_nlp_intraop_complication_date | DATE | 0.1 | NLP-extracted from operative notes |
+| op_nlp_intraop_complication_n_mentions | BIGINT | 37.1 | NLP-extracted from operative notes |
+| op_nlp_n_source_notes | BIGINT | 37.1 | NLP-extracted from operative notes |
+| op_nlp_nerve_monitoring_date | DATE | 24.0 | NLP-extracted from operative notes |
+| op_nlp_nerve_monitoring_n_mentions | BIGINT | 37.1 | NLP-extracted from operative notes |
+| op_nlp_nerve_monitoring_type | VARCHAR | 32.1 | NLP-extracted from operative notes |
+| op_nlp_nerve_monitoring_used | BOOLEAN | 37.1 | NLP-extracted from operative notes |
+| op_nlp_note_types | VARCHAR | 37.1 | NLP-extracted from operative notes |
+| op_nlp_parathyroid_autograft | BOOLEAN | 37.1 | NLP-extracted from operative notes |
+| op_nlp_parathyroid_autograft_n_mentions | BIGINT | 37.1 | NLP-extracted from operative notes |
+| op_nlp_parathyroid_date | DATE | 7.1 | NLP-extracted from operative notes |
+| op_nlp_parathyroid_managed | BOOLEAN | 37.1 | NLP-extracted from operative notes |
+| op_nlp_parathyroid_managed_n_mentions | BIGINT | 37.1 | NLP-extracted from operative notes |
+| op_nlp_reoperative_field | BOOLEAN | 37.1 | NLP-extracted from operative notes |
+| op_nlp_reoperative_n_mentions | BIGINT | 37.1 | NLP-extracted from operative notes |
+| op_nlp_rln_finding | BOOLEAN | 37.1 | NLP-extracted from operative notes |
+| op_nlp_rln_finding_date | DATE | 6.9 | NLP-extracted from operative notes |
+| op_nlp_rln_finding_n_mentions | BIGINT | 37.1 | NLP-extracted from operative notes |
+| op_nlp_strap_muscle_involved | BOOLEAN | 37.1 | NLP-extracted from operative notes |
+| op_nlp_strap_muscle_n_mentions | BIGINT | 37.1 | NLP-extracted from operative notes |
+| op_nlp_tracheal_involvement | BOOLEAN | 37.1 | NLP-extracted from operative notes |
+| op_nlp_tracheal_n_mentions | BIGINT | 37.1 | NLP-extracted from operative notes |
+| op_nlp_berry_ligament_days_from_surg | INTEGER | 1.5 | Days from first surgery date (negative = before surgery) |
+| op_nlp_drain_days_from_surg | INTEGER | 0.8 | Days from first surgery date (negative = before surgery) |
+| op_nlp_ebl_days_from_surg | INTEGER | 4.0 | Days from first surgery date (negative = before surgery) |
+| op_nlp_intraop_complication_days_from_surg | INTEGER | 0.1 | Days from first surgery date (negative = before surgery) |
+| op_nlp_nerve_monitoring_days_from_surg | INTEGER | 7.9 | Days from first surgery date (negative = before surgery) |
+| op_nlp_parathyroid_days_from_surg | INTEGER | 1.8 | Days from first surgery date (negative = before surgery) |
+| op_nlp_rln_finding_days_from_surg | INTEGER | 2.9 | Days from first surgery date (negative = before surgery) |
+
+### Source: complication_phenotype_v1 (74 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| comp_chyle_leak_confirmed | BOOLEAN | 14.6 | Complication status from complication_phenotype_v1 |
+| comp_chyle_leak_days_postop | BIGINT | 14.2 | Complication status from complication_phenotype_v1 |
+| comp_chyle_leak_evidence_tier | INTEGER | 0.2 | Complication status from complication_phenotype_v1 |
+| comp_chyle_leak_permanent | BOOLEAN | 14.6 | Complication status from complication_phenotype_v1 |
+| comp_chyle_leak_suspected | BOOLEAN | 14.6 | Complication status from complication_phenotype_v1 |
+| comp_chyle_leak_timing_window | VARCHAR | 14.6 | Complication status from complication_phenotype_v1 |
+| comp_chyle_leak_transient | BOOLEAN | 14.6 | Complication status from complication_phenotype_v1 |
+| comp_chyle_leak_treatment_req | BOOLEAN | 14.6 | Complication status from complication_phenotype_v1 |
+| comp_hematoma_confirmed | BOOLEAN | 2.3 | Complication status from complication_phenotype_v1 |
+| comp_hematoma_days_postop | BIGINT | 0.5 | Complication status from complication_phenotype_v1 |
+| comp_hematoma_evidence_tier | INTEGER | 0.5 | Complication status from complication_phenotype_v1 |
+| comp_hematoma_permanent | BOOLEAN | 2.3 | Complication status from complication_phenotype_v1 |
+| comp_hematoma_suspected | BOOLEAN | 2.3 | Complication status from complication_phenotype_v1 |
+| comp_hematoma_timing_window | VARCHAR | 2.3 | Complication status from complication_phenotype_v1 |
+| comp_hematoma_transient | BOOLEAN | 2.3 | Complication status from complication_phenotype_v1 |
+| comp_hematoma_treatment_req | BOOLEAN | 2.3 | Complication status from complication_phenotype_v1 |
+| comp_hypocalcemia_confirmed | BOOLEAN | 17.3 | Complication status from complication_phenotype_v1 |
+| comp_hypocalcemia_days_postop | BIGINT | 6.2 | Complication status from complication_phenotype_v1 |
+| comp_hypocalcemia_evidence_tier | INTEGER | 0.8 | Complication status from complication_phenotype_v1 |
+| comp_hypocalcemia_permanent | BOOLEAN | 17.3 | Complication status from complication_phenotype_v1 |
+| comp_hypocalcemia_suspected | BOOLEAN | 17.3 | Complication status from complication_phenotype_v1 |
+| comp_hypocalcemia_timing_window | VARCHAR | 17.3 | Complication status from complication_phenotype_v1 |
+| comp_hypocalcemia_transient | BOOLEAN | 17.3 | Complication status from complication_phenotype_v1 |
+| comp_hypocalcemia_treatment_req | BOOLEAN | 17.3 | Complication status from complication_phenotype_v1 |
+| comp_hypoparathyroidism_confirmed | BOOLEAN | 4.0 | Complication status from complication_phenotype_v1 |
+| comp_hypoparathyroidism_days_postop | BIGINT | 0.6 | Complication status from complication_phenotype_v1 |
+| comp_hypoparathyroidism_evidence_tier | INTEGER | 0.6 | Complication status from complication_phenotype_v1 |
+| comp_hypoparathyroidism_permanent | BOOLEAN | 4.0 | Complication status from complication_phenotype_v1 |
+| comp_hypoparathyroidism_suspected | BOOLEAN | 4.0 | Complication status from complication_phenotype_v1 |
+| comp_hypoparathyroidism_timing_window | VARCHAR | 4.0 | Complication status from complication_phenotype_v1 |
+| comp_hypoparathyroidism_transient | BOOLEAN | 4.0 | Complication status from complication_phenotype_v1 |
+| comp_hypoparathyroidism_treatment_req | BOOLEAN | 4.0 | Complication status from complication_phenotype_v1 |
+| comp_rln_injury_confirmed | BOOLEAN | 6.7 | Complication status from complication_phenotype_v1 |
+| comp_rln_injury_days_postop | BIGINT | 0.9 | Complication status from complication_phenotype_v1 |
+| comp_rln_injury_evidence_tier | INTEGER | 0.8 | Complication status from complication_phenotype_v1 |
+| comp_rln_injury_permanent | BOOLEAN | 6.7 | Complication status from complication_phenotype_v1 |
+| comp_rln_injury_suspected | BOOLEAN | 6.7 | Complication status from complication_phenotype_v1 |
+| comp_rln_injury_timing_window | VARCHAR | 6.7 | Complication status from complication_phenotype_v1 |
+| comp_rln_injury_transient | BOOLEAN | 6.7 | Complication status from complication_phenotype_v1 |
+| comp_rln_injury_treatment_req | BOOLEAN | 6.7 | Complication status from complication_phenotype_v1 |
+| comp_seroma_confirmed | BOOLEAN | 8.0 | Complication status from complication_phenotype_v1 |
+| comp_seroma_days_postop | BIGINT | 5.5 | Complication status from complication_phenotype_v1 |
+| comp_seroma_evidence_tier | INTEGER | 0.3 | Complication status from complication_phenotype_v1 |
+| comp_seroma_permanent | BOOLEAN | 8.0 | Complication status from complication_phenotype_v1 |
+| comp_seroma_suspected | BOOLEAN | 8.0 | Complication status from complication_phenotype_v1 |
+| comp_seroma_timing_window | VARCHAR | 8.0 | Complication status from complication_phenotype_v1 |
+| comp_seroma_transient | BOOLEAN | 8.0 | Complication status from complication_phenotype_v1 |
+| comp_seroma_treatment_req | BOOLEAN | 8.0 | Complication status from complication_phenotype_v1 |
+| comp_vc_paralysis_confirmed | BOOLEAN | 0.8 | Complication status from complication_phenotype_v1 |
+| comp_vc_paralysis_days_postop | BIGINT | 0.2 | Complication status from complication_phenotype_v1 |
+| comp_vc_paralysis_evidence_tier | INTEGER | 0.0 | Complication status from complication_phenotype_v1 |
+| comp_vc_paralysis_permanent | BOOLEAN | 0.8 | Complication status from complication_phenotype_v1 |
+| comp_vc_paralysis_suspected | BOOLEAN | 0.8 | Complication status from complication_phenotype_v1 |
+| comp_vc_paralysis_timing_window | VARCHAR | 0.8 | Complication status from complication_phenotype_v1 |
+| comp_vc_paralysis_transient | BOOLEAN | 0.8 | Complication status from complication_phenotype_v1 |
+| comp_vc_paralysis_treatment_req | BOOLEAN | 0.8 | Complication status from complication_phenotype_v1 |
+| comp_vc_paresis_confirmed | BOOLEAN | 0.7 | Complication status from complication_phenotype_v1 |
+| comp_vc_paresis_days_postop | BIGINT | 0.2 | Complication status from complication_phenotype_v1 |
+| comp_vc_paresis_evidence_tier | INTEGER | 0.0 | Complication status from complication_phenotype_v1 |
+| comp_vc_paresis_permanent | BOOLEAN | 0.7 | Complication status from complication_phenotype_v1 |
+| comp_vc_paresis_suspected | BOOLEAN | 0.7 | Complication status from complication_phenotype_v1 |
+| comp_vc_paresis_timing_window | VARCHAR | 0.7 | Complication status from complication_phenotype_v1 |
+| comp_vc_paresis_transient | BOOLEAN | 0.7 | Complication status from complication_phenotype_v1 |
+| comp_vc_paresis_treatment_req | BOOLEAN | 0.7 | Complication status from complication_phenotype_v1 |
+| comp_voice_permanence_noted | BOOLEAN | 26.6 | Complication status from complication_phenotype_v1 |
+| comp_voice_resolution_noted | BOOLEAN | 26.6 | Complication status from complication_phenotype_v1 |
+| comp_wound_infection_confirmed | BOOLEAN | 0.1 | Complication status from complication_phenotype_v1 |
+| comp_wound_infection_days_postop | BIGINT | 0.1 | Complication status from complication_phenotype_v1 |
+| comp_wound_infection_evidence_tier | INTEGER | 0.1 | Complication status from complication_phenotype_v1 |
+| comp_wound_infection_permanent | BOOLEAN | 0.1 | Complication status from complication_phenotype_v1 |
+| comp_wound_infection_suspected | BOOLEAN | 0.1 | Complication status from complication_phenotype_v1 |
+| comp_wound_infection_timing_window | VARCHAR | 0.1 | Complication status from complication_phenotype_v1 |
+| comp_wound_infection_transient | BOOLEAN | 0.1 | Complication status from complication_phenotype_v1 |
+| comp_wound_infection_treatment_req | BOOLEAN | 0.1 | Complication status from complication_phenotype_v1 |
+
+### Source: ct_imaging (29 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| ct_goiter_present_any | BOOLEAN | 21.8 | CT imaging data |
+| ct_largest_ln_short_axis_mm | DOUBLE | 8.5 | CT imaging data |
+| ct_ln_enlarged_any | BOOLEAN | 28.3 | CT imaging data |
+| ct_ln_suspicious_any | BOOLEAN | 28.3 | CT imaging data |
+| ct_n_exams | BIGINT | 28.4 | CT imaging data |
+| ct_substernal_extension_any | BOOLEAN | 16.6 | CT imaging data |
+| ct_tracheal_deviation_any | BOOLEAN | 28.4 | CT imaging data |
+| ct_tracheal_narrowing_any | BOOLEAN | 28.4 | CT imaging data |
+| ct_indication_first | VARCHAR | 27.9 | CT imaging data |
+| ct_indication_last | VARCHAR | 27.9 | CT imaging data |
+| ct_first_date | DATE | 27.8 | CT imaging data |
+| ct_last_date | DATE | 27.8 | CT imaging data |
+| ct_exam_type_first | VARCHAR | 27.9 | CT imaging data |
+| ct_contrast_first | VARCHAR | 27.9 | CT imaging data |
+| ct_thyroid_details_last | VARCHAR | 20.7 | CT imaging data |
+| ct_ln_details_last | VARCHAR | 20.9 | CT imaging data |
+| ct_ln_locations_last | VARCHAR | 8.3 | CT imaging data |
+| ct_airway_compromise_any | BOOLEAN | 27.9 | CT imaging data |
+| ct_airway_comment_last | VARCHAR | 9.1 | CT imaging data |
+| ct_thyroid_postsurgical_any | BOOLEAN | 27.9 | CT imaging data |
+| ct_thyroid_not_visualized_any | BOOLEAN | 27.9 | CT imaging data |
+| ct_thyroid_heterogeneous_any | BOOLEAN | 27.9 | CT imaging data |
+| ct_thyroid_other_abnormality_any | BOOLEAN | 27.9 | CT imaging data |
+| ct_thyroid_normal_any | BOOLEAN | 27.9 | CT imaging data |
+| ct_thyroid_nodule_any | BOOLEAN | 27.9 | CT imaging data |
+| ct_thyroid_enlarged_any | BOOLEAN | 27.9 | CT imaging data |
+| ct_pathologic_ln_any | BOOLEAN | 25.9 | CT imaging data |
+| ct_first_days_from_surg | INTEGER | 16.3 | Days from first surgery date (negative = before surgery) |
+| ct_last_days_from_surg | INTEGER | 16.3 | Days from first surgery date (negative = before surgery) |
+
+### Source: ct_imaging (PET subset) (24 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| pet_distant_met_sites | VARCHAR | 1.2 | PET/CT imaging data |
+| pet_distant_mets_ever | BOOLEAN | 2.6 | PET/CT imaging data |
+| pet_fdg_avid_cervical_ln_ever | BOOLEAN | 2.6 | PET/CT imaging data |
+| pet_fdg_avid_thyroid_bed_ever | BOOLEAN | 2.4 | PET/CT imaging data |
+| pet_first_date | VARCHAR | 2.7 | PET/CT imaging data |
+| pet_has_data | BOOLEAN | 3.1 | PET/CT imaging data |
+| pet_impression_last | VARCHAR | 2.6 | PET/CT imaging data |
+| pet_indication_first | VARCHAR | 2.7 | PET/CT imaging data |
+| pet_last_date | VARCHAR | 2.7 | PET/CT imaging data |
+| pet_n_exams | BIGINT | 2.7 | PET/CT imaging data |
+| pet_overall_worst | VARCHAR | 2.7 | PET/CT imaging data |
+| pet_radiotracer_primary | VARCHAR | 2.6 | PET/CT imaging data |
+| pet_suv_max_cervical_ln | DOUBLE | 0.9 | PET/CT imaging data |
+| pet_suv_max_thyroid_bed | DOUBLE | 1.6 | PET/CT imaging data |
+| pet_other_n_exams | INTEGER | 0.7 | PET/CT imaging data |
+| pet_other_first_date | DATE | 0.6 | PET/CT imaging data |
+| pet_other_last_date | DATE | 0.6 | PET/CT imaging data |
+| pet_other_indication_first | VARCHAR | 0.7 | PET/CT imaging data |
+| pet_other_mentions_metastasis | BOOLEAN | 0.7 | PET/CT imaging data |
+| pet_other_ned_statement | BOOLEAN | 0.7 | PET/CT imaging data |
+| pet_other_exam_type | VARCHAR | 0.7 | PET/CT imaging data |
+| pet_other_extraction_method | VARCHAR | 0.7 | PET/CT imaging data |
+| pet_other_first_days_from_surg | INTEGER | 0.3 | Days from first surgery date (negative = before surgery) |
+| pet_other_last_days_from_surg | INTEGER | 0.3 | Days from first surgery date (negative = before surgery) |
+
+### Source: extracted_ete_subgraded_v1 (10 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| ete_grade | VARCHAR | 37.5 | From extracted_ete_subgraded_v1 |
+| ete_grade_source | VARCHAR | 100.0 | From extracted_ete_subgraded_v1 |
+| ete_op_note_confidence | VARCHAR | 1.7 | From extracted_ete_subgraded_v1 |
+| ete_op_note_grade | VARCHAR | 1.7 | From extracted_ete_subgraded_v1 |
+| ete_original_grade | VARCHAR | 32.7 | From extracted_ete_subgraded_v1 |
+| ete_original_source | VARCHAR | 32.7 | From extracted_ete_subgraded_v1 |
+| ete_refined_grade | VARCHAR | 32.7 | From extracted_ete_subgraded_v1 |
+| ete_subgrade_method | VARCHAR | 32.7 | From extracted_ete_subgraded_v1 |
+| ete_subgrade_note | VARCHAR | 1.7 | From extracted_ete_subgraded_v1 |
+| ete_grade_final | VARCHAR | 37.5 | From extracted_ete_subgraded_v1 |
+
+### Source: extracted_tirads_validated_v1 / tirads_llm_extracted_v2 (15 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| tirads_best_category_v12 | VARCHAR | 32.0 | From extracted_tirads_validated_v1 / tirads_llm_extracted_v2 |
+| tirads_best_combined | INTEGER | 31.6 | From extracted_tirads_validated_v1 / tirads_llm_extracted_v2 |
+| tirads_best_score_v12 | BIGINT | 32.0 | From extracted_tirads_validated_v1 / tirads_llm_extracted_v2 |
+| tirads_concordant_count_v12 | BIGINT | 32.0 | From extracted_tirads_validated_v1 / tirads_llm_extracted_v2 |
+| tirads_has_acr_recalc_v12 | BOOLEAN | 32.0 | From extracted_tirads_validated_v1 / tirads_llm_extracted_v2 |
+| tirads_mismatch_count_v12 | BIGINT | 32.0 | From extracted_tirads_validated_v1 / tirads_llm_extracted_v2 |
+| tirads_n_nodule_records_v12 | BIGINT | 32.0 | From extracted_tirads_validated_v1 / tirads_llm_extracted_v2 |
+| tirads_n_sources_v12 | BIGINT | 32.0 | From extracted_tirads_validated_v1 / tirads_llm_extracted_v2 |
+| tirads_nodule_size_max_mm_v12 | DOUBLE | 31.6 | From extracted_tirads_validated_v1 / tirads_llm_extracted_v2 |
+| tirads_nodules_scored_combined | BIGINT | 31.6 | From extracted_tirads_validated_v1 / tirads_llm_extracted_v2 |
+| tirads_reliability_v12 | DOUBLE | 32.0 | From extracted_tirads_validated_v1 / tirads_llm_extracted_v2 |
+| tirads_source_v12 | VARCHAR | 32.0 | From extracted_tirads_validated_v1 / tirads_llm_extracted_v2 |
+| tirads_worst_category_v12 | VARCHAR | 32.0 | From extracted_tirads_validated_v1 / tirads_llm_extracted_v2 |
+| tirads_worst_combined | INTEGER | 31.6 | From extracted_tirads_validated_v1 / tirads_llm_extracted_v2 |
+| tirads_worst_score_v12 | BIGINT | 32.0 | From extracted_tirads_validated_v1 / tirads_llm_extracted_v2 |
+
+### Source: fna_cytology (9 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| bethesda_2010 | BIGINT | 47.9 | From fna_cytology |
+| bethesda_2015 | BIGINT | 47.9 | From fna_cytology |
+| bethesda_2023 | BIGINT | 47.9 | From fna_cytology |
+| bethesda_category | VARCHAR | 48.3 | From fna_cytology |
+| bethesda_confidence | DOUBLE | 48.3 | From fna_cytology |
+| bethesda_final | BIGINT | 48.3 | From fna_cytology |
+| bethesda_final_name | VARCHAR | 48.3 | From fna_cytology |
+| bethesda_num | DOUBLE | 48.3 | From fna_cytology |
+| bethesda_source | VARCHAR | 48.3 | From fna_cytology |
+
+### Source: gold_master_patient_facts_v1 (554 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| age_at_surgery | BIGINT | 100.0 | BIGINT field |
+| ages_calculable_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| ages_score | DOUBLE | 100.0 | DOUBLE field |
+| aggressive_variant_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| ajcc8_calculable_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| ajcc8_m_stage | VARCHAR | 100.0 | VARCHAR field |
+| ajcc8_missing_components | VARCHAR | 62.5 | VARCHAR field |
+| ajcc8_n_stage | VARCHAR | 48.5 | VARCHAR field |
+| ajcc8_stage_calculable_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| ajcc8_stage_group | VARCHAR | 37.6 | VARCHAR field |
+| ajcc8_t_stage | VARCHAR | 37.6 | VARCHAR field |
+| ajcc8_t_stage_calculable_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| alk_positive_v7 | BOOLEAN | 92.2 | BOOLEAN field |
+| ames_calculable_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| ames_risk | VARCHAR | 100.0 | VARCHAR field |
+| ames_risk_group | VARCHAR | 100.0 | VARCHAR field |
+| analysis_eligible_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| anti_tg_nadir | DOUBLE | 12.7 | DOUBLE field |
+| anti_tg_rising_flag | BOOLEAN | 12.7 | BOOLEAN field |
+| any_analysis_eligible_complication | BOOLEAN | 26.6 | BOOLEAN field |
+| any_confirmed_complication | BOOLEAN | 100.0 | BOOLEAN field |
+| any_confirmed_complication_flag | BOOLEAN | 26.6 | BOOLEAN field |
+| any_fusion_positive | BOOLEAN | 92.2 | BOOLEAN field |
+| any_recurrence_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| ata_calculable_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| ata_initial_risk | VARCHAR | 28.9 | VARCHAR field |
+| ata_response_calculable_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| ata_response_category | VARCHAR | 0.3 | VARCHAR field |
+| ata_response_is_provisional | BOOLEAN | 100.0 | BOOLEAN field |
+| ata_risk_calculable_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| ata_risk_category | VARCHAR | 28.9 | VARCHAR field |
+| best_ene_grade | VARCHAR | 14.7 | VARCHAR field |
+| bilateral_disease_flag | BOOLEAN | 31.6 | BOOLEAN field |
+| biochemical_recurrence_flag | BOOLEAN | 17.9 | BOOLEAN field |
+| biochemical_tg_at_recurrence | DOUBLE | 6.1 | DOUBLE field |
+| biochemical_tg_nadir_after_surgery | DOUBLE | 6.1 | DOUBLE field |
+| braf_detection_method | VARCHAR | 3.5 | VARCHAR field |
+| braf_detection_method_v11 | VARCHAR | 3.5 | VARCHAR field |
+| braf_positive | BOOLEAN | 100.0 | BOOLEAN field |
+| braf_positive_final | BOOLEAN | 100.0 | BOOLEAN field |
+| braf_positive_v7 | BOOLEAN | 92.2 | BOOLEAN field |
+| braf_recovered_status_v11 | VARCHAR | 3.5 | VARCHAR field |
+| braf_recovered_variant_v11 | VARCHAR | 2.5 | VARCHAR field |
+| braf_source | VARCHAR | 92.2 | VARCHAR field |
+| braf_status_v7 | VARCHAR | 92.2 | VARCHAR field |
+| braf_variant | VARCHAR | 1.6 | VARCHAR field |
+| calcium_nadir | DOUBLE | 0.0 | DOUBLE field |
+| calcium_nadir_30d | DOUBLE | 0.2 | DOUBLE field |
+| calcium_nadir_days_postop | INTEGER | 0.3 | INTEGER field |
+| calcium_supplement_required | BOOLEAN | 100.0 | BOOLEAN field |
+| capsular_invasion_refined | VARCHAR | 11.0 | VARCHAR field |
+| capsular_invasion_v6 | VARCHAR | 11.3 | VARCHAR field |
+| chyle_leak_status | VARCHAR | 100.0 | VARCHAR field |
+| closest_margin_mm | DOUBLE | 8.1 | DOUBLE field |
+| completion_braf_positive | BOOLEAN | 5.6 | BOOLEAN field |
+| completion_histology_type | VARCHAR | 1.7 | VARCHAR field |
+| completion_prior_histology | VARCHAR | 3.5 | VARCHAR field |
+| completion_reason | VARCHAR | 6.3 | VARCHAR field |
+| completion_reason_confidence | DOUBLE | 6.3 | DOUBLE field |
+| completion_t_stage | VARCHAR | 1.0 | VARCHAR field |
+| completion_tert_positive | BOOLEAN | 5.6 | BOOLEAN field |
+| confirmed_rai_episodes | BIGINT | 7.9 | BIGINT field |
+| cross_fna_concordance | VARCHAR | 48.3 | VARCHAR field |
+| date_traceability_status | VARCHAR | 100.0 | VARCHAR field |
+| days_first_to_last_tg | BIGINT | 23.2 | BIGINT field |
+| days_to_first_laryngoscopy | BIGINT | 0.2 | BIGINT field |
+| days_to_last_laryngoscopy | BIGINT | 0.2 | BIGINT field |
+| demo_confidence | INTEGER | 100.0 | INTEGER field |
+| demo_source | VARCHAR | 100.0 | VARCHAR field |
+| diagnosis_confidence | VARCHAR | 100.0 | VARCHAR field |
+| diagnosis_full | VARCHAR | 100.0 | VARCHAR field |
+| diagnosis_primary | VARCHAR | 100.0 | VARCHAR field |
+| diagnosis_variant | VARCHAR | 13.9 | VARCHAR field |
+| distant_mets_proxy | BOOLEAN | 100.0 | BOOLEAN field |
+| dominant_nodule_size_cm | DOUBLE | 31.6 | DOUBLE field |
+| earliest_complication_days | BIGINT | 0.6 | BIGINT field |
+| eif1ax_positive | BOOLEAN | 92.2 | BOOLEAN field |
+| ene_ct | VARCHAR | 3.4 | VARCHAR field |
+| ene_deposit_cm | DOUBLE | 0.1 | DOUBLE field |
+| ene_grade_v9 | VARCHAR | 11.6 | VARCHAR field |
+| ene_levels_v9 | VARCHAR | 0.4 | VARCHAR field |
+| ene_n_sources | BIGINT | 14.7 | BIGINT field |
+| ene_op_intraop | VARCHAR | 0.1 | VARCHAR field |
+| ene_path_ct_concordance | VARCHAR | 14.7 | VARCHAR field |
+| ene_path_levels | VARCHAR | 0.2 | VARCHAR field |
+| ene_path_nlp | VARCHAR | 0.2 | VARCHAR field |
+| ene_path_synoptic | VARCHAR | 11.6 | VARCHAR field |
+| ene_pet | VARCHAR | 0.6 | VARCHAR field |
+| ene_positive | BOOLEAN | 11.6 | BOOLEAN field |
+| ene_rai_scan | VARCHAR | 1.8 | VARCHAR field |
+| ene_record_count_v9 | BIGINT | 11.6 | BIGINT field |
+| ene_us | VARCHAR | 4.3 | VARCHAR field |
+| first_recurrence_date | TIMESTAMP | 0.5 | TIMESTAMP field |
+| first_surgery_date | TIMESTAMP | 80.3 | TIMESTAMP field |
+| first_tg_date | DATE | 23.2 | DATE field |
+| fna_bethesda_confidence | DOUBLE | 48.3 | DOUBLE field |
+| fna_bethesda_source | VARCHAR | 48.3 | VARCHAR field |
+| fna_confidence | DOUBLE | 48.3 | DOUBLE field |
+| fna_path_concordance_category | VARCHAR | 48.3 | VARCHAR field |
+| fna_path_concordant | BOOLEAN | 48.3 | BOOLEAN field |
+| fna_path_outcome | VARCHAR | 100.0 | VARCHAR field |
+| followup_category | VARCHAR | 100.0 | VARCHAR field |
+| followup_completeness_score | INTEGER | 100.0 | INTEGER field |
+| followup_days | BIGINT | 100.0 | BIGINT field |
+| followup_years | DOUBLE | 100.0 | DOUBLE field |
+| gm_lab_completeness_score | INTEGER | 100.0 | From gold_master_patient_facts_v1 |
+| gm_macis_calculable_flag | BOOLEAN | 100.0 | From gold_master_patient_facts_v1 |
+| gm_path_ene_raw | VARCHAR | 11.3 | From gold_master_patient_facts_v1 |
+| gm_path_ete_raw | VARCHAR | 37.5 | From gold_master_patient_facts_v1 |
+| gm_path_lvi_raw | VARCHAR | 31.0 | From gold_master_patient_facts_v1 |
+| gm_path_m_stage_raw | VARCHAR | 36.8 | From gold_master_patient_facts_v1 |
+| gm_path_pni_raw | VARCHAR | 13.2 | From gold_master_patient_facts_v1 |
+| gm_path_stage_raw | VARCHAR | 0.0 | From gold_master_patient_facts_v1 |
+| gm_path_vascular_inv_raw | VARCHAR | 33.9 | From gold_master_patient_facts_v1 |
+| gm_provenance_confidence | INTEGER | 100.0 | From gold_master_patient_facts_v1 |
+| gm_rai_date_confidence | VARCHAR | 5.3 | From gold_master_patient_facts_v1 |
+| gm_rai_date_source | VARCHAR | 5.3 | From gold_master_patient_facts_v1 |
+| gm_recurrence_date_source | VARCHAR | 1.7 | From gold_master_patient_facts_v1 |
+| gm_recurrence_site_primary | VARCHAR | 0.0 | From gold_master_patient_facts_v1 |
+| gm_recurrence_source | VARCHAR | 17.9 | From gold_master_patient_facts_v1 |
+| gm_recurrence_type_primary | VARCHAR | 17.9 | From gold_master_patient_facts_v1 |
+| gm_tg_below_threshold_ever | BOOLEAN | 23.6 | From gold_master_patient_facts_v1 |
+| gross_ete_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| has_low_calcium_flag | BOOLEAN | 26.6 | BOOLEAN field |
+| has_low_pth_flag | BOOLEAN | 26.6 | BOOLEAN field |
+| has_suspicious_candidate | BOOLEAN | 56.4 | BOOLEAN field |
+| has_voice_data | BOOLEAN | 100.0 | BOOLEAN field |
+| hematoma_status | VARCHAR | 100.0 | VARCHAR field |
+| high_risk_molecular_v7 | BOOLEAN | 92.2 | BOOLEAN field |
+| histology_final | VARCHAR | 38.1 | VARCHAR field |
+| histology_source | VARCHAR | 100.0 | VARCHAR field |
+| hras_positive_v11 | BOOLEAN | 3.2 | BOOLEAN field |
+| hypocalcemia_status | VARCHAR | 100.0 | VARCHAR field |
+| hypoparathyroidism_status | VARCHAR | 100.0 | VARCHAR field |
+| ihc_braf_confidence_v13 | DOUBLE | 0.0 | DOUBLE field |
+| ihc_braf_note_type_v13 | VARCHAR | 0.0 | VARCHAR field |
+| ihc_braf_result_v13 | VARCHAR | 0.0 | VARCHAR field |
+| imaging_ln_abnormal | BOOLEAN | 100.0 | BOOLEAN field |
+| imaging_n_nodule_records | BIGINT | 32.0 | BIGINT field |
+| imaging_nodule_size_cm_v11 | DOUBLE | 28.1 | DOUBLE field |
+| imaging_suspicious_unconfirmed | BOOLEAN | 100.0 | BOOLEAN field |
+| imaging_tirads_source | VARCHAR | 32.0 | VARCHAR field |
+| is_malignant | BOOLEAN | 100.0 | BOOLEAN field |
+| kras_positive_v11 | BOOLEAN | 3.2 | BOOLEAN field |
+| last_contact_date | TIMESTAMP | 100.0 | TIMESTAMP field |
+| last_contact_source | VARCHAR | 100.0 | VARCHAR field |
+| last_tg_date | DATE | 23.2 | DATE field |
+| lateral_detection_method | VARCHAR | 1.1 | VARCHAR field |
+| lateral_levels_v10 | VARCHAR | 0.8 | VARCHAR field |
+| lateral_neck_dissected_v10 | BOOLEAN | 100.0 | BOOLEAN field |
+| lateral_side_v10 | VARCHAR | 0.9 | VARCHAR field |
+| lateral_source_v10 | VARCHAR | 1.1 | VARCHAR field |
+| laterality | VARCHAR | 95.1 | VARCHAR field |
+| ln_burden_band | VARCHAR | 35.1 | VARCHAR field |
+| ln_ene_status | VARCHAR | 11.3 | VARCHAR field |
+| ln_lateral_dissected | BOOLEAN | 100.0 | BOOLEAN field |
+| ln_level_i_examined | BIGINT | 36.7 | BIGINT field |
+| ln_level_i_positive | BIGINT | 36.7 | BIGINT field |
+| ln_level_ii_examined | BIGINT | 36.7 | BIGINT field |
+| ln_level_ii_positive | BIGINT | 36.7 | BIGINT field |
+| ln_level_iii_examined | BIGINT | 36.7 | BIGINT field |
+| ln_level_iii_positive | BIGINT | 36.7 | BIGINT field |
+| ln_level_iv_examined | BIGINT | 36.7 | BIGINT field |
+| ln_level_iv_positive | BIGINT | 36.7 | BIGINT field |
+| ln_level_v_examined | BIGINT | 36.7 | BIGINT field |
+| ln_level_v_positive | BIGINT | 36.7 | BIGINT field |
+| ln_level_vi_examined | BIGINT | 36.7 | BIGINT field |
+| ln_level_vi_positive | BIGINT | 36.7 | BIGINT field |
+| ln_level_vii_examined | BIGINT | 36.7 | BIGINT field |
+| ln_level_vii_positive | BIGINT | 36.7 | BIGINT field |
+| ln_mets_atc | BOOLEAN | 36.7 | BOOLEAN field |
+| ln_mets_ene_count | BOOLEAN | 36.7 | BOOLEAN field |
+| ln_mets_ftc | BOOLEAN | 36.7 | BOOLEAN field |
+| ln_mets_hurthle | BOOLEAN | 36.7 | BOOLEAN field |
+| ln_mets_micrometastasis | BOOLEAN | 36.7 | BOOLEAN field |
+| ln_mets_mtc | BOOLEAN | 36.7 | BOOLEAN field |
+| ln_mets_pdtc | BOOLEAN | 36.7 | BOOLEAN field |
+| ln_mets_ptc | BOOLEAN | 36.7 | BOOLEAN field |
+| ln_positive_flag | INTEGER | 37.3 | INTEGER field |
+| ln_ratio | DOUBLE | 35.1 | DOUBLE field |
+| ln_rollup_any_positive | BOOLEAN | 34.6 | BOOLEAN field |
+| ln_rollup_bilateral_lateral_examined | BIGINT | 36.7 | BIGINT field |
+| ln_rollup_bilateral_lateral_positive | BIGINT | 36.7 | BIGINT field |
+| ln_rollup_central_examined | BIGINT | 36.7 | BIGINT field |
+| ln_rollup_central_positive | BIGINT | 36.7 | BIGINT field |
+| ln_rollup_crossval_status | VARCHAR | 36.7 | VARCHAR field |
+| ln_rollup_ene | BIGINT | 10.9 | BIGINT field |
+| ln_rollup_has_per_level_data | BOOLEAN | 36.7 | BOOLEAN field |
+| ln_rollup_internal_consistency | VARCHAR | 36.7 | VARCHAR field |
+| ln_rollup_largest_deposit_cm | DOUBLE | 7.0 | DOUBLE field |
+| ln_rollup_lateral_left_examined | BIGINT | 36.7 | BIGINT field |
+| ln_rollup_lateral_left_positive | BIGINT | 36.7 | BIGINT field |
+| ln_rollup_lateral_right_examined | BIGINT | 36.7 | BIGINT field |
+| ln_rollup_lateral_right_positive | BIGINT | 36.7 | BIGINT field |
+| ln_rollup_mets_atc | BOOLEAN | 36.7 | BOOLEAN field |
+| ln_rollup_mets_cystic | BOOLEAN | 36.7 | BOOLEAN field |
+| ln_rollup_mets_ene | BOOLEAN | 36.7 | BOOLEAN field |
+| ln_rollup_mets_ftc | BOOLEAN | 36.7 | BOOLEAN field |
+| ln_rollup_mets_hurthle | BOOLEAN | 36.7 | BOOLEAN field |
+| ln_rollup_mets_micrometastasis | BOOLEAN | 36.7 | BOOLEAN field |
+| ln_rollup_mets_mtc | BOOLEAN | 36.7 | BOOLEAN field |
+| ln_rollup_mets_pdtc | BOOLEAN | 36.7 | BOOLEAN field |
+| ln_rollup_mets_ptc | BOOLEAN | 36.7 | BOOLEAN field |
+| ln_rollup_mets_ptc_variant | VARCHAR | 0.4 | VARCHAR field |
+| ln_rollup_other_examined | BIGINT | 36.7 | BIGINT field |
+| ln_rollup_other_positive | BIGINT | 36.7 | BIGINT field |
+| ln_rollup_ratio | DOUBLE | 34.4 | DOUBLE field |
+| ln_rollup_source | VARCHAR | 36.7 | VARCHAR field |
+| ln_rollup_total_examined | BIGINT | 36.3 | BIGINT field |
+| ln_rollup_total_levels_involved | BIGINT | 36.7 | BIGINT field |
+| ln_rollup_total_positive | BIGINT | 34.6 | BIGINT field |
+| ln_total_examined | INTEGER | 71.1 | INTEGER field |
+| ln_total_positive | INTEGER | 33.1 | INTEGER field |
+| longitudinal_assessment_available | BOOLEAN | 56.4 | BOOLEAN field |
+| lvi_grade | VARCHAR | 31.0 | VARCHAR field |
+| lvi_grade_final_v13 | VARCHAR | 34.5 | VARCHAR field |
+| macis_calculable_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| macis_missing_components | VARCHAR | 62.5 | VARCHAR field |
+| macis_risk_group | VARCHAR | 37.5 | VARCHAR field |
+| macis_score | DOUBLE | 37.5 | DOUBLE field |
+| margin_r_class | VARCHAR | 100.0 | VARCHAR field |
+| margin_r_class_v10 | VARCHAR | 36.5 | VARCHAR field |
+| margin_r_classification | VARCHAR | 36.4 | VARCHAR field |
+| margin_status | VARCHAR | 36.4 | VARCHAR field |
+| max_stimulated_tg | DOUBLE | 0.0 | DOUBLE field |
+| max_tirads_ever | BIGINT | 31.6 | BIGINT field |
+| max_tumor_size_cm_v10 | DOUBLE | 12.4 | DOUBLE field |
+| mol_first_test_date | TIMESTAMP | 6.5 | Molecular testing data |
+| mol_genes_list | VARCHAR | 2.9 | Molecular testing data |
+| mol_has_afirma | BOOLEAN | 8.9 | Molecular testing data |
+| mol_has_dicer1 | BOOLEAN | 2.9 | Molecular testing data |
+| mol_has_fusion | BOOLEAN | 6.5 | Molecular testing data |
+| mol_has_pik3ca | BOOLEAN | 2.9 | Molecular testing data |
+| mol_has_snv | BOOLEAN | 6.5 | Molecular testing data |
+| mol_has_thyroseq | BOOLEAN | 8.9 | Molecular testing data |
+| mol_has_tshr | BOOLEAN | 2.9 | Molecular testing data |
+| mol_n_distinct_genes | BIGINT | 6.5 | Molecular testing data |
+| mol_n_fusions | BIGINT | 6.5 | Molecular testing data |
+| mol_n_snvs | BIGINT | 6.5 | Molecular testing data |
+| mol_n_tests | BIGINT | 92.2 | Molecular testing data |
+| mol_n_variants_total | BIGINT | 6.5 | Molecular testing data |
+| mol_platform | VARCHAR | 11.8 | Molecular testing data |
+| mol_test_count | BIGINT | 11.8 | Molecular testing data |
+| mol_test_date | TIMESTAMP | 7.4 | Molecular testing data |
+| mol_variant_classes | VARCHAR | 6.5 | Molecular testing data |
+| molecular_data_confidence | VARCHAR | 100.0 | VARCHAR field |
+| molecular_eligible_flag | BOOLEAN | 92.2 | BOOLEAN field |
+| molecular_platforms_v7 | VARCHAR | 92.2 | VARCHAR field |
+| molecular_risk_calculable_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| molecular_risk_tier | VARCHAR | 39.3 | VARCHAR field |
+| molecular_tested_confirmed | BOOLEAN | 100.0 | BOOLEAN field |
+| molecular_tested_v7 | BOOLEAN | 92.2 | BOOLEAN field |
+| multifocal_flag | BOOLEAN | 0.0 | BOOLEAN field |
+| n_confirmed_complications | BIGINT | 26.6 | BIGINT field |
+| n_fna_cytology_records | BIGINT | 48.2 | BIGINT field |
+| n_fna_episodes | BIGINT | 48.3 | BIGINT field |
+| n_molecular_tests_v7 | BIGINT | 92.2 | BIGINT field |
+| n_rai_episodes | BIGINT | 7.9 | BIGINT field |
+| n_tg_measurements_structured | BIGINT | 23.2 | BIGINT field |
+| n_tgab_measurements | BIGINT | 23.9 | BIGINT field |
+| n_tumors | INTEGER | 38.1 | INTEGER field |
+| n_tumors_v10 | INTEGER | 12.4 | INTEGER field |
+| n_us_exams | BIGINT | 56.4 | BIGINT field |
+| n_us_nodules_total | BIGINT | 56.4 | BIGINT field |
+| n_us_with_ln_assessment | BIGINT | 37.5 | BIGINT field |
+| nras_positive_v11 | BOOLEAN | 3.2 | BOOLEAN field |
+| ntrk_positive_v7 | BOOLEAN | 92.2 | BOOLEAN field |
+| op_drain_placed_any | BOOLEAN | 1.6 | BOOLEAN field |
+| op_esophageal_inv_any | BOOLEAN | 0.0 | BOOLEAN field |
+| op_findings_summary | VARCHAR | 5.4 | VARCHAR field |
+| op_intraop_gross_ete_any | BOOLEAN | 0.2 | BOOLEAN field |
+| op_local_invasion_any | BOOLEAN | 0.2 | BOOLEAN field |
+| op_n_surgeries_with_findings | INTEGER | 80.3 | INTEGER field |
+| op_parathyroid_autograft_any | BOOLEAN | 0.4 | BOOLEAN field |
+| op_reoperative_any | BOOLEAN | 0.4 | BOOLEAN field |
+| op_rln_monitoring_any | BOOLEAN | 15.6 | BOOLEAN field |
+| op_strap_muscle_any | BOOLEAN | 1.7 | BOOLEAN field |
+| op_tracheal_inv_any | BOOLEAN | 0.1 | BOOLEAN field |
+| path_gross_ete_flag | BIGINT | 9.0 | BIGINT field |
+| path_histology_raw | VARCHAR | 38.1 | VARCHAR field |
+| path_histology_variant_raw | VARCHAR | 30.5 | VARCHAR field |
+| path_margin_raw | VARCHAR | 35.7 | VARCHAR field |
+| path_n_stage_raw | VARCHAR | 36.9 | VARCHAR field |
+| path_t_stage_raw | VARCHAR | 36.9 | VARCHAR field |
+| pax8_pparg_positive | BOOLEAN | 92.2 | BOOLEAN field |
+| perineural_invasion | VARCHAR | 13.2 | VARCHAR field |
+| pni_positive | BOOLEAN | 13.7 | BOOLEAN field |
+| pni_refined_v6 | VARCHAR | 13.7 | VARCHAR field |
+| post_rai_tg_count | BIGINT | 2.7 | BIGINT field |
+| post_rai_tg_last | DOUBLE | 2.7 | DOUBLE field |
+| post_rai_tg_nadir | DOUBLE | 2.7 | DOUBLE field |
+| postop_calcium_min_days_postop | INTEGER | 0.7 | INTEGER field |
+| postop_calcium_min_value | DOUBLE | 5.1 | DOUBLE field |
+| postop_calcium_n_measurements | BIGINT | 9.7 | BIGINT field |
+| postop_calcium_source_reliability | VARCHAR | 5.1 | VARCHAR field |
+| postop_ionized_cal_min_value | DOUBLE | 0.0 | DOUBLE field |
+| postop_labs_has_data | BOOLEAN | 9.7 | BOOLEAN field |
+| postop_pth_min_days_postop | INTEGER | 1.1 | INTEGER field |
+| postop_pth_min_value | DOUBLE | 6.2 | DOUBLE field |
+| postop_pth_n_measurements | BIGINT | 9.7 | BIGINT field |
+| postop_pth_source_reliability | VARCHAR | 6.2 | VARCHAR field |
+| preop_imaging_size_cm | DOUBLE | 31.6 | DOUBLE field |
+| preop_sweep_genes_found_v11 | BIGINT | 100.0 | BIGINT field |
+| preop_tirads_best | BIGINT | 32.0 | BIGINT field |
+| preop_tirads_category | VARCHAR | 32.0 | VARCHAR field |
+| preop_tirads_worst | BIGINT | 32.0 | BIGINT field |
+| proc_nlp_extraction_method | VARCHAR | 43.3 | NLP-extracted procedure data |
+| proc_nlp_laryngoscopy | BOOLEAN | 43.3 | NLP-extracted procedure data |
+| proc_nlp_laryngoscopy_date | DATE | 1.4 | NLP-extracted procedure data |
+| proc_nlp_laryngoscopy_n_mentions | BIGINT | 43.3 | NLP-extracted procedure data |
+| proc_nlp_lateral_neck_dissection | BOOLEAN | 43.3 | NLP-extracted procedure data |
+| proc_nlp_mrnd | BOOLEAN | 43.3 | NLP-extracted procedure data |
+| proc_nlp_mrnd_n_mentions | BIGINT | 43.3 | NLP-extracted procedure data |
+| proc_nlp_n_source_notes | BIGINT | 43.3 | NLP-extracted procedure data |
+| proc_nlp_note_types | VARCHAR | 43.3 | NLP-extracted procedure data |
+| proc_nlp_parathyroid_autotransplant | BOOLEAN | 43.3 | NLP-extracted procedure data |
+| proc_nlp_tracheostomy | BOOLEAN | 43.3 | NLP-extracted procedure data |
+| proc_nlp_tracheostomy_date | DATE | 0.7 | NLP-extracted procedure data |
+| proc_nlp_tracheostomy_n_mentions | BIGINT | 43.3 | NLP-extracted procedure data |
+| pth_nadir | DOUBLE | 6.2 | DOUBLE field |
+| pth_nadir_30d | DOUBLE | 0.8 | DOUBLE field |
+| pth_nadir_days_postop | INTEGER | 0.9 | INTEGER field |
+| race | VARCHAR | 99.9 | VARCHAR field |
+| radtx_llm_extraction_method | VARCHAR | 1.9 | VARCHAR field |
+| radtx_llm_mean_confidence | DOUBLE | 1.9 | DOUBLE field |
+| radtx_llm_n_source_notes | BIGINT | 1.9 | BIGINT field |
+| radtx_nlp_external_beam_radiation | BOOLEAN | 1.9 | BOOLEAN field |
+| radtx_nlp_has_data | BOOLEAN | 1.9 | BOOLEAN field |
+| radtx_nlp_hormone_withdrawal | BOOLEAN | 1.9 | BOOLEAN field |
+| radtx_nlp_post_tx_scan_negative | BOOLEAN | 1.9 | BOOLEAN field |
+| radtx_nlp_rai_ablation | BOOLEAN | 1.9 | BOOLEAN field |
+| radtx_nlp_rai_ablation_n_mentions | BIGINT | 1.9 | BIGINT field |
+| radtx_nlp_thyrogen_prep | BOOLEAN | 1.9 | BOOLEAN field |
+| rai_avid_flag | BOOLEAN | 7.9 | BOOLEAN field |
+| rai_avidity | BOOLEAN | 7.9 | BOOLEAN field |
+| rai_dose_confidence_worst | VARCHAR | 2.3 | VARCHAR field |
+| rai_dose_linkage | VARCHAR | 2.5 | VARCHAR field |
+| rai_dose_source | VARCHAR | 2.5 | VARCHAR field |
+| rai_dose_v9 | DOUBLE | 2.5 | DOUBLE field |
+| rai_eligible_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| rai_episode_date_span_days | BIGINT | 5.3 | BIGINT field |
+| rai_first_date | TIMESTAMP | 5.3 | TIMESTAMP field |
+| rai_first_episode_date | DATE | 5.3 | DATE field |
+| rai_has_adjudication | BOOLEAN | 7.9 | BOOLEAN field |
+| rai_has_completion_status | BOOLEAN | 7.9 | BOOLEAN field |
+| rai_intent_list | VARCHAR | 7.9 | VARCHAR field |
+| rai_intent_v9 | VARCHAR | 2.5 | VARCHAR field |
+| rai_last_episode_date | DATE | 5.3 | DATE field |
+| rai_max_dose_mci | DOUBLE | 100.0 | DOUBLE field |
+| rai_min_dose_mci | DOUBLE | 2.3 | DOUBLE field |
+| rai_n_distinct_intents | BIGINT | 7.9 | BIGINT field |
+| rai_n_episodes_with_dose | BIGINT | 7.9 | BIGINT field |
+| rai_received_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| rai_scan_findings_v9 | INTEGER | 0.0 | INTEGER field |
+| rai_stimulated_tg | DOUBLE | 2.5 | DOUBLE field |
+| rai_stimulated_tsh | DOUBLE | 0.6 | DOUBLE field |
+| rai_total_cumulative_dose_mci | DOUBLE | 2.3 | DOUBLE field |
+| rai_validation_tier | VARCHAR | 7.9 | VARCHAR field |
+| ras_allele_freq_v11 | DOUBLE | 0.2 | DOUBLE field |
+| ras_positive | BOOLEAN | 100.0 | BOOLEAN field |
+| ras_positive_v11 | BOOLEAN | 3.2 | BOOLEAN field |
+| ras_positive_v7 | BOOLEAN | 92.2 | BOOLEAN field |
+| ras_primary_subtype_v11 | VARCHAR | 2.9 | VARCHAR field |
+| ras_protein_change_v11 | VARCHAR | 1.0 | VARCHAR field |
+| ras_resolution_confidence_v13 | DOUBLE | 0.3 | DOUBLE field |
+| ras_resolution_source_v13 | VARCHAR | 0.3 | VARCHAR field |
+| ras_resolved_af_v13 | DOUBLE | 0.1 | DOUBLE field |
+| ras_resolved_gene_v13 | VARCHAR | 0.3 | VARCHAR field |
+| ras_resolved_variant_v13 | VARCHAR | 0.2 | VARCHAR field |
+| ras_subtype | VARCHAR | 1.6 | VARCHAR field |
+| rec_event_rank | INTEGER | 17.9 | Recurrence data |
+| rec_source_priority | INTEGER | 17.9 | Recurrence data |
+| rec_source_table | VARCHAR | 17.9 | Recurrence data |
+| rec_structural_flag | BOOLEAN | 17.9 | Recurrence data |
+| recurrence_confirmed | BOOLEAN | 100.0 | BOOLEAN field |
+| recurrence_data_confidence | VARCHAR | 100.0 | VARCHAR field |
+| recurrence_date | TIMESTAMP | 7.4 | TIMESTAMP field |
+| recurrence_definition | VARCHAR | 100.0 | VARCHAR field |
+| recurrence_evidence_source | VARCHAR | 7.6 | VARCHAR field |
+| recurrence_flag_scoring | BOOLEAN | 100.0 | BOOLEAN field |
+| recurrence_histology | INTEGER | 0.0 | INTEGER field |
+| recurrence_site | VARCHAR | 1.4 | VARCHAR field |
+| recurrence_type | VARCHAR | 100.0 | VARCHAR field |
+| research_id | VARCHAR | 100.0 | VARCHAR field |
+| ret_positive_v7 | BOOLEAN | 92.2 | BOOLEAN field |
+| rln_classification | VARCHAR | 0.8 | VARCHAR field |
+| rln_injury_days_postop | INTEGER | 0.8 | INTEGER field |
+| rln_injury_detection_date | DATE | 0.8 | DATE field |
+| rln_injury_evidence | VARCHAR | 0.8 | VARCHAR field |
+| rln_injury_is_confirmed | BOOLEAN | 0.8 | BOOLEAN field |
+| rln_injury_tier | INTEGER | 0.8 | INTEGER field |
+| rln_injury_type | VARCHAR | 0.8 | VARCHAR field |
+| rln_laterality | VARCHAR | 0.1 | VARCHAR field |
+| rln_permanent_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| rln_status | VARCHAR | 100.0 | VARCHAR field |
+| rln_temporality | VARCHAR | 0.8 | VARCHAR field |
+| rln_transient_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| seroma_status | VARCHAR | 100.0 | VARCHAR field |
+| sex | VARCHAR | 100.0 | VARCHAR field |
+| surg_hemithyroidectomy | BOOLEAN | 80.3 | BOOLEAN field |
+| surg_n_procedures | BIGINT | 80.3 | BIGINT field |
+| surg_procedure_type | VARCHAR | 80.3 | VARCHAR field |
+| surg_total_thyroidectomy | BOOLEAN | 80.3 | BOOLEAN field |
+| surv_max_time_days | BIGINT | 96.7 | BIGINT field |
+| surv_max_time_days_capped | BIGINT | 96.7 | BIGINT field |
+| surv_n_events | BIGINT | 96.7 | BIGINT field |
+| surv_recurrence_risk_band | VARCHAR | 34.6 | VARCHAR field |
+| surv_tg_annual_log_slope | DOUBLE | 16.2 | DOUBLE field |
+| survival_eligible_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| sx_llm_extraction_method | VARCHAR | 1.1 | VARCHAR field |
+| sx_llm_mean_confidence | DOUBLE | 1.1 | DOUBLE field |
+| sx_llm_n_source_notes | BIGINT | 1.1 | BIGINT field |
+| sx_nlp_any_symptom_data | BOOLEAN | 1.1 | BOOLEAN field |
+| sx_nlp_dysphagia | BOOLEAN | 1.1 | BOOLEAN field |
+| sx_nlp_dyspnea | BOOLEAN | 1.1 | BOOLEAN field |
+| sx_nlp_hoarseness | BOOLEAN | 1.1 | BOOLEAN field |
+| sx_nlp_neck_mass | BOOLEAN | 1.1 | BOOLEAN field |
+| tert_platforms_v9 | VARCHAR | 0.7 | VARCHAR field |
+| tert_positive | BOOLEAN | 100.0 | BOOLEAN field |
+| tert_positive_v7 | BOOLEAN | 92.2 | BOOLEAN field |
+| tert_status_v7 | VARCHAR | 92.2 | VARCHAR field |
+| tert_test_count_v9 | BIGINT | 0.7 | BIGINT field |
+| tert_tested | BOOLEAN | 94.8 | BOOLEAN field |
+| tert_variant_v9 | VARCHAR | 0.7 | VARCHAR field |
+| tgab_interference_flag | BOOLEAN | 25.0 | BOOLEAN field |
+| tgab_last_value | DOUBLE | 23.9 | DOUBLE field |
+| tgab_nadir | DOUBLE | 23.9 | DOUBLE field |
+| tgab_peak | DOUBLE | 23.9 | DOUBLE field |
+| time_to_recurrence_days | DOUBLE | 1.6 | DOUBLE field |
+| total_ln_positive_v10 | INTEGER | 12.4 | INTEGER field |
+| tp53_positive_v7 | BOOLEAN | 92.2 | BOOLEAN field |
+| tp_central_examined | BIGINT | 36.7 | BIGINT field |
+| tp_central_positive_total | BIGINT | 36.7 | BIGINT field |
+| tp_ln_central_positive | BIGINT | 21.2 | BIGINT field |
+| tp_ln_ene | BIGINT | 11.1 | BIGINT field |
+| tp_ln_examined | BIGINT | 36.3 | BIGINT field |
+| tp_ln_largest_deposit_cm | DOUBLE | 7.1 | DOUBLE field |
+| tp_ln_lateral_positive | BIGINT | 21.2 | BIGINT field |
+| tp_ln_levels_involved | BIGINT | 36.7 | BIGINT field |
+| tp_ln_positive | BIGINT | 34.6 | BIGINT field |
+| tumor_size_cm | DOUBLE | 38.0 | DOUBLE field |
+| us_first_exam_date | DATE | 37.5 | DATE field |
+| us_isthmus_thickness_mm | VARCHAR | 37.5 | VARCHAR field |
+| us_last_exam_date | DATE | 37.5 | DATE field |
+| us_left_lobe_volume_ml | VARCHAR | 37.5 | VARCHAR field |
+| us_most_recent_date | DATE | 37.5 | DATE field |
+| us_n_reports | BIGINT | 37.5 | BIGINT field |
+| us_right_lobe_volume_ml | VARCHAR | 37.5 | VARCHAR field |
+| us_total_volume_ml | VARCHAR | 37.5 | VARCHAR field |
+| vasc_confidence_final_v13 | DOUBLE | 34.5 | DOUBLE field |
+| vasc_grade | VARCHAR | 100.0 | VARCHAR field |
+| vasc_grade_final_v13 | VARCHAR | 34.5 | VARCHAR field |
+| vasc_source_final_v13 | VARCHAR | 34.5 | VARCHAR field |
+| vasc_vessel_count_v13 | DOUBLE | 0.4 | DOUBLE field |
+| vascular_invasion_grade | VARCHAR | 34.5 | VARCHAR field |
+| vascular_who_2022_grade | VARCHAR | 3.7 | VARCHAR field |
+| vessel_count | DOUBLE | 0.4 | DOUBLE field |
+| voice_data_confidence | DOUBLE | 100.0 | DOUBLE field |
+| voice_followup_completeness | VARCHAR | 100.0 | VARCHAR field |
+| voice_outcome_category | VARCHAR | 100.0 | VARCHAR field |
+| weight_kg_note | DOUBLE | 5.3 | DOUBLE field |
+| worst_bethesda_num | BIGINT | 48.3 | BIGINT field |
+| worst_ete_v10 | VARCHAR | 11.0 | VARCHAR field |
+| worst_tirads_category | VARCHAR | 31.6 | VARCHAR field |
+| wound_infection_status | VARCHAR | 100.0 | VARCHAR field |
+| recurrence_site_raw | VARCHAR | 0.7 | VARCHAR field |
+| recurrence_laterality | VARCHAR | 0.5 | VARCHAR field |
+| recurrence_site_source | VARCHAR | 0.7 | VARCHAR field |
+| followup_n_contact_sources | INTEGER | 99.9 | INTEGER field |
+| followup_all_sources | VARCHAR | 99.9 | VARCHAR field |
+| followup_recovery_method | VARCHAR | 99.9 | VARCHAR field |
+| death_date | DATE | 1.8 | DATE field |
+| vital_status | VARCHAR | 100.0 | VARCHAR field |
+| death_occurred | BOOLEAN | 100.0 | BOOLEAN field |
+| death_source | VARCHAR | 1.8 | VARCHAR field |
+| overall_survival_days | BIGINT | 100.0 | BIGINT field |
+| overall_survival_years | DOUBLE | 100.0 | DOUBLE field |
+| survival_event | BOOLEAN | 100.0 | BOOLEAN field |
+| followup_or_death_date | DATE | 100.0 | DATE field |
+| followup_or_death_years | DOUBLE | 100.0 | DOUBLE field |
+| death_integration_script | VARCHAR | 100.0 | VARCHAR field |
+| braf_variant_raw | VARCHAR | 1.6 | VARCHAR field |
+| fna_bethesda_final | BIGINT | 48.3 | BIGINT field |
+| imaging_nodule_size_cm | DOUBLE | 31.6 | DOUBLE field |
+| imaging_tirads_best | BIGINT | 32.0 | BIGINT field |
+| imaging_tirads_category | VARCHAR | 32.0 | VARCHAR field |
+| imaging_tirads_worst | BIGINT | 32.0 | BIGINT field |
+| lateral_neck_dissected | BOOLEAN | 100.0 | BOOLEAN field |
+| ln_positive_final | INTEGER | 37.3 | INTEGER field |
+| margin_status_final | VARCHAR | 36.4 | VARCHAR field |
+| mol_test_date_source | VARCHAR | 7.4 | Molecular testing data |
+| path_ene_raw | VARCHAR | 11.3 | VARCHAR field |
+| path_ete_raw | VARCHAR | 37.5 | VARCHAR field |
+| path_laterality | VARCHAR | 95.1 | VARCHAR field |
+| path_ln_examined_raw | INTEGER | 71.1 | INTEGER field |
+| path_ln_positive_raw | INTEGER | 33.1 | INTEGER field |
+| path_lvi_raw | VARCHAR | 31.0 | VARCHAR field |
+| path_m_stage_raw | VARCHAR | 36.8 | VARCHAR field |
+| path_multifocal_flag | BOOLEAN | 0.0 | BOOLEAN field |
+| path_n_tumors | INTEGER | 0.0 | INTEGER field |
+| path_pni_raw | VARCHAR | 13.2 | VARCHAR field |
+| path_stage_raw | INTEGER | 0.0 | INTEGER field |
+| path_tumor_size_cm | DOUBLE | 38.0 | DOUBLE field |
+| path_vascular_invasion_raw | VARCHAR | 33.9 | VARCHAR field |
+| postop_low_calcium_flag | BOOLEAN | 1.2 | BOOLEAN field |
+| postop_low_pth_flag | BOOLEAN | 1.2 | BOOLEAN field |
+| provenance_confidence | INTEGER | 100.0 | INTEGER field |
+| provenance_note | VARCHAR | 100.0 | VARCHAR field |
+| rai_assertion_statuses | VARCHAR | 0.3 | VARCHAR field |
+| rai_date_confidence | DOUBLE | 5.3 | DOUBLE field |
+| rai_date_source | VARCHAR | 5.3 | VARCHAR field |
+| ras_positive_final | BOOLEAN | 100.0 | BOOLEAN field |
+| ras_subtype_raw | VARCHAR | 1.6 | VARCHAR field |
+| recurrence_date_source | VARCHAR | 1.7 | VARCHAR field |
+| recurrence_site_primary | INTEGER | 0.0 | INTEGER field |
+| recurrence_source | VARCHAR | 17.9 | VARCHAR field |
+| recurrence_type_primary | VARCHAR | 17.9 | VARCHAR field |
+| resolved_at | TIMESTAMP WITH TIME ZONE | 100.0 | TIMESTAMP WITH TIME ZONE field |
+| resolved_layer_version | VARCHAR | 100.0 | VARCHAR field |
+| scoring_ajcc8_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| scoring_ata_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| scoring_macis_flag | BOOLEAN | 100.0 | BOOLEAN field |
+| source_script | VARCHAR | 100.0 | VARCHAR field |
+| source_table | VARCHAR | 100.0 | VARCHAR field |
+| structural_recurrence_flag | BOOLEAN | 17.9 | BOOLEAN field |
+| surg_first_date | TIMESTAMP | 80.3 | TIMESTAMP field |
+| tert_positive_final | BOOLEAN | 100.0 | BOOLEAN field |
+| tsh_suppressed_ever | BOOLEAN | 0.0 | BOOLEAN field |
+| vascular_invasion_final | VARCHAR | 34.5 | VARCHAR field |
+| vascular_vessel_count | DOUBLE | 0.4 | DOUBLE field |
+| first_recurrence_days_from_surg | INTEGER | 0.4 | Days from first surgery date (negative = before surgery) |
+| first_tg_days_from_surg | INTEGER | 18.9 | Days from first surgery date (negative = before surgery) |
+| last_contact_days_from_surg | INTEGER | 80.3 | Days from first surgery date (negative = before surgery) |
+| last_tg_days_from_surg | INTEGER | 18.9 | Days from first surgery date (negative = before surgery) |
+| mol_first_test_days_from_surg | INTEGER | 3.5 | Days from first surgery date (negative = before surgery) |
+| mol_test_days_from_surg | INTEGER | 2.9 | Days from first surgery date (negative = before surgery) |
+| proc_nlp_laryngoscopy_days_from_surg | INTEGER | 0.7 | Days from first surgery date (negative = before surgery) |
+| proc_nlp_tracheostomy_days_from_surg | INTEGER | 0.1 | Days from first surgery date (negative = before surgery) |
+| rai_first_days_from_surg | INTEGER | 4.4 | Days from first surgery date (negative = before surgery) |
+| rai_first_episode_days_from_surg | INTEGER | 4.4 | Days from first surgery date (negative = before surgery) |
+| rai_last_episode_days_from_surg | INTEGER | 4.4 | Days from first surgery date (negative = before surgery) |
+| recurrence_days_from_surg | INTEGER | 7.0 | Days from first surgery date (negative = before surgery) |
+| rln_injury_detection_days_from_surg | INTEGER | 0.6 | Days from first surgery date (negative = before surgery) |
+| us_first_exam_days_from_surg | INTEGER | 23.4 | Days from first surgery date (negative = before surgery) |
+| us_last_exam_days_from_surg | INTEGER | 23.4 | Days from first surgery date (negative = before surgery) |
+| us_most_recent_days_from_surg | INTEGER | 23.3 | Days from first surgery date (negative = before surgery) |
+| death_days_from_surg | INTEGER | 1.8 | Days from first surgery date (negative = before surgery) |
+| followup_or_death_days_from_surg | INTEGER | 80.3 | Days from first surgery date (negative = before surgery) |
+| resolved_days_from_surg | INTEGER | 80.3 | Days from first surgery date (negative = before surgery) |
+| surg_first_days_from_surg | INTEGER | 80.3 | Days from first surgery date (negative = before surgery) |
+| n_surgeries | INTEGER | 80.3 | INTEGER field |
+| second_surgery_date | DATE | 0.0 | DATE field |
+| third_surgery_date | DATE | 0.0 | DATE field |
+| days_between_first_second_surgery | INTEGER | 0.0 | INTEGER field |
+
+### Source: longitudinal_lab_canonical_v1 (53 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| lab_tsh_n_measurements | BIGINT | 100.0 | Laboratory value |
+| lab_tsh_min | DOUBLE | 3.8 | Laboratory value |
+| lab_tsh_max | DOUBLE | 3.8 | Laboratory value |
+| lab_tsh_first_date | DATE | 3.8 | Laboratory value |
+| lab_tsh_last_date | DATE | 3.8 | Laboratory value |
+| lab_tsh_most_recent | DOUBLE | 3.8 | Laboratory value |
+| lab_tsh_most_recent_date | DATE | 3.8 | Laboratory value |
+| lab_tsh_unit | VARCHAR | 100.0 | Laboratory value |
+| lab_tsh_n_censored | BIGINT | 100.0 | Laboratory value |
+| lab_tsh_n_parsed_from_raw | BIGINT | 100.0 | Laboratory value |
+| lab_vitd_n_measurements | BIGINT | 100.0 | Laboratory value |
+| lab_vitd_min | DOUBLE | 0.7 | Laboratory value |
+| lab_vitd_max | DOUBLE | 0.7 | Laboratory value |
+| lab_vitd_first_date | DATE | 0.7 | Laboratory value |
+| lab_vitd_last_date | DATE | 0.7 | Laboratory value |
+| lab_vitd_most_recent | DOUBLE | 0.7 | Laboratory value |
+| lab_vitd_most_recent_date | DATE | 0.7 | Laboratory value |
+| lab_vitd_unit | VARCHAR | 100.0 | Laboratory value |
+| lab_vitd_n_censored | BIGINT | 100.0 | Laboratory value |
+| lab_vitd_n_parsed_from_raw | BIGINT | 100.0 | Laboratory value |
+| lab_pth_n_measurements | INTEGER | 100.0 | Laboratory value |
+| lab_pth_min | DOUBLE | 1.7 | Laboratory value |
+| lab_pth_max | DOUBLE | 1.7 | Laboratory value |
+| lab_pth_first_date | DATE | 1.7 | Laboratory value |
+| lab_pth_last_date | DATE | 1.7 | Laboratory value |
+| lab_pth_most_recent | DOUBLE | 1.7 | Laboratory value |
+| lab_pth_most_recent_date | DATE | 1.7 | Laboratory value |
+| lab_pth_unit | VARCHAR | 100.0 | Laboratory value |
+| lab_pth_n_censored | BIGINT | 100.0 | Laboratory value |
+| lab_pth_n_parsed_from_raw | BIGINT | 100.0 | Laboratory value |
+| lab_calcium_n_measurements | INTEGER | 100.0 | Laboratory value |
+| lab_calcium_min | DOUBLE | 1.5 | Laboratory value |
+| lab_calcium_max | DOUBLE | 1.5 | Laboratory value |
+| lab_calcium_first_date | DATE | 1.5 | Laboratory value |
+| lab_calcium_last_date | DATE | 1.5 | Laboratory value |
+| lab_calcium_most_recent | DOUBLE | 1.5 | Laboratory value |
+| lab_calcium_most_recent_date | DATE | 1.5 | Laboratory value |
+| lab_calcium_unit | VARCHAR | 100.0 | Laboratory value |
+| lab_calcium_n_censored | BIGINT | 100.0 | Laboratory value |
+| lab_calcium_n_parsed_from_raw | BIGINT | 100.0 | Laboratory value |
+| lab_completeness_score | INTEGER | 100.0 | Laboratory value |
+| lab_tsh_first_days_from_surg | INTEGER | 3.0 | Days from first surgery date (negative = before surgery) |
+| lab_tsh_last_days_from_surg | INTEGER | 3.0 | Days from first surgery date (negative = before surgery) |
+| lab_tsh_most_recent_days_from_surg | INTEGER | 3.0 | Days from first surgery date (negative = before surgery) |
+| lab_vitd_first_days_from_surg | INTEGER | 0.5 | Days from first surgery date (negative = before surgery) |
+| lab_vitd_last_days_from_surg | INTEGER | 0.5 | Days from first surgery date (negative = before surgery) |
+| lab_vitd_most_recent_days_from_surg | INTEGER | 0.5 | Days from first surgery date (negative = before surgery) |
+| lab_pth_first_days_from_surg | INTEGER | 1.1 | Days from first surgery date (negative = before surgery) |
+| lab_pth_last_days_from_surg | INTEGER | 1.1 | Days from first surgery date (negative = before surgery) |
+| lab_pth_most_recent_days_from_surg | INTEGER | 1.1 | Days from first surgery date (negative = before surgery) |
+| lab_calcium_first_days_from_surg | INTEGER | 1.2 | Days from first surgery date (negative = before surgery) |
+| lab_calcium_last_days_from_surg | INTEGER | 1.2 | Days from first surgery date (negative = before surgery) |
+| lab_calcium_most_recent_days_from_surg | INTEGER | 1.2 | Days from first surgery date (negative = before surgery) |
+
+### Source: mri_imaging (25 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| mri_contrast_used_any | BOOLEAN | 4.2 | MRI imaging data |
+| mri_exam_type_first | VARCHAR | 3.8 | MRI imaging data |
+| mri_first_date | DATE | 3.7 | MRI imaging data |
+| mri_has_data | BOOLEAN | 4.2 | MRI imaging data |
+| mri_has_dimensions | BOOLEAN | 4.2 | MRI imaging data |
+| mri_has_dominant_nodule | BOOLEAN | 4.2 | MRI imaging data |
+| mri_impression_first | VARCHAR | 4.2 | MRI imaging data |
+| mri_impression_last | VARCHAR | 4.2 | MRI imaging data |
+| mri_indication_first | VARCHAR | 3.7 | MRI imaging data |
+| mri_key_findings_last | VARCHAR | 4.2 | MRI imaging data |
+| mri_last_date | DATE | 3.7 | MRI imaging data |
+| mri_ln_mentioned_any | BOOLEAN | 4.2 | MRI imaging data |
+| mri_mass_effect_any | BOOLEAN | 4.2 | MRI imaging data |
+| mri_n_exams | BIGINT | 4.2 | MRI imaging data |
+| mri_pathologic_ln_any | BOOLEAN | 4.2 | MRI imaging data |
+| mri_recommendation_last | VARCHAR | 1.5 | MRI imaging data |
+| mri_substernal_any | BOOLEAN | 4.2 | MRI imaging data |
+| mri_substernal_extension_any | BOOLEAN | 4.2 | MRI imaging data |
+| mri_thyroid_assessment_worst | VARCHAR | 3.9 | MRI imaging data |
+| mri_thyroid_enlarged_any | BOOLEAN | 4.2 | MRI imaging data |
+| mri_thyroid_nodule_any | BOOLEAN | 4.2 | MRI imaging data |
+| mri_vocal_cords_described | BOOLEAN | 4.2 | MRI imaging data |
+| mri_vocal_cords_normal | BOOLEAN | 4.2 | MRI imaging data |
+| mri_first_days_from_surg | INTEGER | 2.1 | Days from first surgery date (negative = before surgery) |
+| mri_last_days_from_surg | INTEGER | 2.1 | Days from first surgery date (negative = before surgery) |
+
+### Source: note_entities_llm_* (fleet NLP) (117 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| nlp_airway_has_data | BOOLEAN | 10.3 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_airway_key_finding | VARCHAR | 10.3 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_airway_n_entities | BIGINT | 10.3 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_airway_n_notes | BIGINT | 10.3 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_dynrisk_has_data | BOOLEAN | 0.2 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_dynrisk_key_finding | VARCHAR | 0.2 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_dynrisk_n_entities | BIGINT | 0.2 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_dynrisk_n_notes | BIGINT | 0.2 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_frozensec_has_data | BOOLEAN | 1.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_frozensec_key_finding | VARCHAR | 1.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_frozensec_n_entities | BIGINT | 1.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_frozensec_n_notes | BIGINT | 1.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_funcoutcome_has_data | BOOLEAN | 14.9 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_funcoutcome_key_finding | VARCHAR | 14.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_funcoutcome_n_entities | BIGINT | 14.9 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_funcoutcome_n_notes | BIGINT | 14.9 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_imaging_has_data | BOOLEAN | 15.9 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_imaging_key_finding | VARCHAR | 15.9 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_imaging_n_entities | BIGINT | 15.9 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_imaging_n_notes | BIGINT | 15.9 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_labs_has_data | BOOLEAN | 7.3 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_labs_key_finding | VARCHAR | 7.2 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_labs_n_entities | BIGINT | 7.3 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_labs_n_notes | BIGINT | 7.3 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ln_has_data | BOOLEAN | 8.0 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ln_levels_mentioned | VARCHAR | 7.6 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ln_n_entities | BIGINT | 8.0 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ln_n_notes | BIGINT | 8.0 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ln_positive_mentioned | BOOLEAN | 8.0 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ne_complications_has_data | BOOLEAN | 26.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ne_complications_n_rows | BIGINT | 26.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ne_genetics_has_data | BOOLEAN | 5.6 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ne_genetics_n_rows | BIGINT | 5.6 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ne_medications_has_data | BOOLEAN | 19.0 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ne_medications_n_rows | BIGINT | 19.0 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ne_operative_has_data | BOOLEAN | 37.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ne_operative_n_rows | BIGINT | 37.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ne_problemlist_has_data | BOOLEAN | 37.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ne_problemlist_n_rows | BIGINT | 37.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ne_procedures_has_data | BOOLEAN | 43.4 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ne_procedures_n_rows | BIGINT | 43.4 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ne_staging_has_data | BOOLEAN | 15.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ne_staging_n_rows | BIGINT | 15.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_parathyroid_has_data | BOOLEAN | 1.0 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_parathyroid_key_finding | VARCHAR | 1.0 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_parathyroid_n_entities | BIGINT | 1.0 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_parathyroid_n_notes | BIGINT | 1.0 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_path_ete_mentioned | BOOLEAN | 25.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_path_has_data | BOOLEAN | 25.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_path_histology_mentioned | VARCHAR | 18.3 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_path_ln_positive_mentioned | BOOLEAN | 25.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_path_margin_mentioned | BOOLEAN | 25.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_path_multifocal_mentioned | BOOLEAN | 25.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_path_n_entities | BIGINT | 25.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_path_n_notes | BIGINT | 25.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_path_vasc_inv_mentioned | BOOLEAN | 25.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_physexam_has_data | BOOLEAN | 4.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_physexam_key_finding | VARCHAR | 4.6 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_physexam_n_entities | BIGINT | 4.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_physexam_n_notes | BIGINT | 4.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_pmhx_has_data | BOOLEAN | 2.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_pmhx_key_finding | VARCHAR | 2.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_pmhx_n_entities | BIGINT | 2.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_pmhx_n_notes | BIGINT | 2.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_pshx_has_data | BOOLEAN | 17.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_pshx_key_finding | VARCHAR | 17.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_pshx_n_entities | BIGINT | 17.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_pshx_n_notes | BIGINT | 17.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ptdecision_has_data | BOOLEAN | 3.4 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ptdecision_key_finding | VARCHAR | 3.4 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ptdecision_n_entities | BIGINT | 3.4 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_ptdecision_n_notes | BIGINT | 3.4 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_radtx_has_data | BOOLEAN | 1.9 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_radtx_key_finding | VARCHAR | 1.9 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_radtx_n_entities | BIGINT | 1.9 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_radtx_n_notes | BIGINT | 1.9 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_raidetail_has_data | BOOLEAN | 5.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_raidetail_key_finding | VARCHAR | 5.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_raidetail_n_entities | BIGINT | 5.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_raidetail_n_notes | BIGINT | 5.7 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_rec_any_mentioned | BOOLEAN | 1.2 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_rec_confidence_tier | VARCHAR | 1.2 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_rec_disease_free_mentioned | BOOLEAN | 1.2 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_rec_earliest_date | DATE | 0.8 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_rec_has_data | BOOLEAN | 1.2 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_rec_n_entities | BIGINT | 1.2 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_rec_type_worst | VARCHAR | 1.2 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_survfu_has_data | BOOLEAN | 26.8 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_survfu_key_finding | VARCHAR | 26.8 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_survfu_n_entities | BIGINT | 26.8 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_survfu_n_notes | BIGINT | 26.8 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_symptoms_has_data | BOOLEAN | 1.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_symptoms_key_finding | VARCHAR | 1.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_symptoms_n_entities | BIGINT | 1.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_symptoms_n_notes | BIGINT | 1.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_synoptic_has_data | BOOLEAN | 0.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_synoptic_key_finding | VARCHAR | 0.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_synoptic_n_entities | BIGINT | 0.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_synoptic_n_notes | BIGINT | 0.1 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_tg_has_data | BOOLEAN | 0.5 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_tg_n_entities | BIGINT | 0.5 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_tg_rising_mentioned | BOOLEAN | 0.5 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_tg_undetectable_mentioned | BOOLEAN | 0.5 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_tirads_has_component_detail | BOOLEAN | 15.8 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_tirads_has_data | BOOLEAN | 15.8 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_tirads_max_category | VARCHAR | 15.8 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_tirads_n_entities | BIGINT | 15.8 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_tirads_n_notes | BIGINT | 15.8 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_usnodule_has_data | BOOLEAN | 0.2 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_usnodule_key_finding | VARCHAR | 0.2 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_usnodule_n_entities | BIGINT | 0.2 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_usnodule_n_notes | BIGINT | 0.2 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_vasc_confidence_tier | VARCHAR | 6.0 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_vasc_has_data | BOOLEAN | 6.0 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_vasc_n_entities | BIGINT | 6.0 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_vasc_positive_mentioned | BOOLEAN | 6.0 | NLP-extracted from clinical notes (qwen3:32b fleet) |
+| nlp_rec_earliest_days_from_surg | INTEGER | 0.5 | Days from first surgery date (negative = before surgery) |
+
+### Source: nsqip_data (100 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| nsqip_age_at_surgery | DOUBLE | 13.0 | NSQIP perioperative quality data |
+| nsqip_asa_class | VARCHAR | 13.0 | NSQIP perioperative quality data |
+| nsqip_bmi | DOUBLE | 13.0 | NSQIP perioperative quality data |
+| nsqip_diabetes | VARCHAR | 13.0 | NSQIP perioperative quality data |
+| nsqip_functional_status | VARCHAR | 13.0 | NSQIP perioperative quality data |
+| nsqip_height_in | DOUBLE | 13.0 | NSQIP perioperative quality data |
+| nsqip_hypertension | VARCHAR | 13.0 | NSQIP perioperative quality data |
+| nsqip_length_of_stay_days | BIGINT | 13.0 | NSQIP perioperative quality data |
+| nsqip_sex | VARCHAR | 13.0 | NSQIP perioperative quality data |
+| nsqip_smoker | VARCHAR | 13.0 | NSQIP perioperative quality data |
+| nsqip_source | VARCHAR | 13.0 | NSQIP perioperative quality data |
+| nsqip_weight_lbs | DOUBLE | 13.0 | NSQIP perioperative quality data |
+| nsqip_operation_date | VARCHAR | 11.6 | NSQIP perioperative quality data |
+| nsqip_match_method | VARCHAR | 11.6 | NSQIP perioperative quality data |
+| nsqip_readmission_count | BIGINT | 11.6 | NSQIP perioperative quality data |
+| nsqip_unplanned_readmission_count | BIGINT | 11.6 | NSQIP perioperative quality data |
+| nsqip_related_readmission_count | BIGINT | 11.6 | NSQIP perioperative quality data |
+| nsqip_first_readmission_date | VARCHAR | 0.3 | NSQIP perioperative quality data |
+| nsqip_hypocalcemia | VARCHAR | 8.7 | NSQIP perioperative quality data |
+| nsqip_hypocalcemia_predischarge | VARCHAR | 8.7 | NSQIP perioperative quality data |
+| nsqip_hypocalcemia_postdischarge | VARCHAR | 8.7 | NSQIP perioperative quality data |
+| nsqip_hypocalcemia_event | VARCHAR | 6.3 | NSQIP perioperative quality data |
+| nsqip_hypocalcemia_event_type | VARCHAR | 0.3 | NSQIP perioperative quality data |
+| nsqip_iv_calcium | VARCHAR | 2.4 | NSQIP perioperative quality data |
+| nsqip_calcium_checked | VARCHAR | 8.7 | NSQIP perioperative quality data |
+| nsqip_pth_checked | VARCHAR | 8.7 | NSQIP perioperative quality data |
+| nsqip_calcium_vitd_replacement | VARCHAR | 8.7 | NSQIP perioperative quality data |
+| nsqip_calcium_vitd_last_check | VARCHAR | 2.4 | NSQIP perioperative quality data |
+| nsqip_hypocalcemia_last_check | VARCHAR | 2.4 | NSQIP perioperative quality data |
+| nsqip_rln_injury | VARCHAR | 8.7 | NSQIP perioperative quality data |
+| nsqip_neck_hematoma | VARCHAR | 8.7 | NSQIP perioperative quality data |
+| nsqip_hospital_los_days | BIGINT | 11.6 | NSQIP perioperative quality data |
+| nsqip_surgical_los_days | BIGINT | 11.6 | NSQIP perioperative quality data |
+| nsqip_discharge_destination | VARCHAR | 11.5 | NSQIP perioperative quality data |
+| nsqip_death_30d | VARCHAR | 11.5 | NSQIP perioperative quality data |
+| nsqip_unplanned_return_or | DOUBLE | 0.1 | NSQIP perioperative quality data |
+| nsqip_operative_duration_min | BIGINT | 11.6 | NSQIP perioperative quality data |
+| nsqip_inpatient_outpatient | VARCHAR | 11.6 | NSQIP perioperative quality data |
+| nsqip_cpt_code | BIGINT | 11.6 | NSQIP perioperative quality data |
+| nsqip_cpt_description | VARCHAR | 11.6 | NSQIP perioperative quality data |
+| nsqip_primary_indication | VARCHAR | 8.7 | NSQIP perioperative quality data |
+| nsqip_operative_approach | VARCHAR | 4.5 | NSQIP perioperative quality data |
+| nsqip_central_neck_dissection | VARCHAR | 8.7 | NSQIP perioperative quality data |
+| nsqip_lateral_neck_dissection | VARCHAR | 2.4 | NSQIP perioperative quality data |
+| nsqip_vessel_sealant | VARCHAR | 6.3 | NSQIP perioperative quality data |
+| nsqip_rln_monitoring | VARCHAR | 8.7 | NSQIP perioperative quality data |
+| nsqip_drain_usage | VARCHAR | 8.7 | NSQIP perioperative quality data |
+| nsqip_tobacco_use | VARCHAR | 11.6 | NSQIP perioperative quality data |
+| nsqip_heart_failure | VARCHAR | 11.6 | NSQIP perioperative quality data |
+| nsqip_copd | VARCHAR | 11.6 | NSQIP perioperative quality data |
+| nsqip_bleeding_disorder | VARCHAR | 11.6 | NSQIP perioperative quality data |
+| nsqip_disseminated_cancer | VARCHAR | 11.6 | NSQIP perioperative quality data |
+| nsqip_sodium | DOUBLE | 9.9 | NSQIP perioperative quality data |
+| nsqip_bun | DOUBLE | 10.0 | NSQIP perioperative quality data |
+| nsqip_creatinine | DOUBLE | 10.0 | NSQIP perioperative quality data |
+| nsqip_albumin | DOUBLE | 6.5 | NSQIP perioperative quality data |
+| nsqip_total_bilirubin | DOUBLE | 6.3 | NSQIP perioperative quality data |
+| nsqip_ast | DOUBLE | 6.3 | NSQIP perioperative quality data |
+| nsqip_alk_phos | DOUBLE | 6.3 | NSQIP perioperative quality data |
+| nsqip_wbc | DOUBLE | 9.5 | NSQIP perioperative quality data |
+| nsqip_hemoglobin | DOUBLE | 2.0 | NSQIP perioperative quality data |
+| nsqip_hematocrit | DOUBLE | 9.5 | NSQIP perioperative quality data |
+| nsqip_platelet_count | DOUBLE | 9.5 | NSQIP perioperative quality data |
+| nsqip_hba1c | DOUBLE | 0.9 | NSQIP perioperative quality data |
+| nsqip_inr | DOUBLE | 3.4 | NSQIP perioperative quality data |
+| nsqip_ptt | DOUBLE | 3.1 | NSQIP perioperative quality data |
+| nsqip_admission_date | VARCHAR | 11.6 | NSQIP perioperative quality data |
+| nsqip_discharge_date | VARCHAR | 11.6 | NSQIP perioperative quality data |
+| nsqip_surgery_start_time | VARCHAR | 11.6 | NSQIP perioperative quality data |
+| nsqip_surgery_finish_time | VARCHAR | 11.6 | NSQIP perioperative quality data |
+| nsqip_superficial_ssi | BIGINT | 11.6 | NSQIP perioperative quality data |
+| nsqip_deep_ssi | BIGINT | 11.6 | NSQIP perioperative quality data |
+| nsqip_organ_space_ssi | BIGINT | 11.6 | NSQIP perioperative quality data |
+| nsqip_dvt | BIGINT | 11.6 | NSQIP perioperative quality data |
+| nsqip_pe | BIGINT | 11.6 | NSQIP perioperative quality data |
+| nsqip_transfusion | BIGINT | 11.6 | NSQIP perioperative quality data |
+| nsqip_sepsis | BIGINT | 11.6 | NSQIP perioperative quality data |
+| nsqip_pneumonia | BIGINT | 11.6 | NSQIP perioperative quality data |
+| nsqip_unplanned_intubation | BIGINT | 11.6 | NSQIP perioperative quality data |
+| nsqip_final_pathology | VARCHAR | 2.4 | NSQIP perioperative quality data |
+| nsqip_t_classification | VARCHAR | 3.4 | NSQIP perioperative quality data |
+| nsqip_multifocal | VARCHAR | 3.4 | NSQIP perioperative quality data |
+| nsqip_n_classification | VARCHAR | 3.4 | NSQIP perioperative quality data |
+| nsqip_nodes_removed | DOUBLE | 7.6 | NSQIP perioperative quality data |
+| nsqip_nodes_positive | DOUBLE | 0.7 | NSQIP perioperative quality data |
+| nsqip_m_classification | VARCHAR | 3.0 | NSQIP perioperative quality data |
+| nsqip_neoplasm | VARCHAR | 6.4 | NSQIP perioperative quality data |
+| nsqip_neoplasm_type | VARCHAR | 4.1 | NSQIP perioperative quality data |
+| nsqip_prior_neck_surgery | VARCHAR | 8.7 | NSQIP perioperative quality data |
+| nsqip_preop_biopsy_result | VARCHAR | 7.9 | NSQIP perioperative quality data |
+| nsqip_molecular_testing | VARCHAR | 2.3 | NSQIP perioperative quality data |
+| nsqip_molecular_result | VARCHAR | 0.5 | NSQIP perioperative quality data |
+| nsqip_same_day_discharge_flag | BIGINT | 11.6 | NSQIP perioperative quality data |
+| nsqip_hypocalcemia_flag | DOUBLE | 8.6 | NSQIP perioperative quality data |
+| nsqip_readmission_30d_flag | BIGINT | 11.6 | NSQIP perioperative quality data |
+| nsqip_rln_injury_flag | DOUBLE | 8.6 | NSQIP perioperative quality data |
+| nsqip_hematoma_flag | DOUBLE | 8.6 | NSQIP perioperative quality data |
+| nsqip_calcium_vitd_category | VARCHAR | 8.7 | NSQIP perioperative quality data |
+| nsqip_thyroidectomy_has_data | BOOLEAN | 100.0 | NSQIP perioperative quality data |
+| nsqip_thyroidectomy_source_script | VARCHAR | 100.0 | NSQIP perioperative quality data |
+
+### Source: nsqip_data / op_sheet_data / clinical_notes_long (4 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| bmi_combined | DOUBLE | 19.2 | BMI from nsqip_data / op_sheet_data / clinical_notes_long |
+| bmi_note_extracted | DOUBLE | 5.9 | BMI from nsqip_data / op_sheet_data / clinical_notes_long |
+| bmi_note_source | VARCHAR | 5.9 | BMI from nsqip_data / op_sheet_data / clinical_notes_long |
+| bmi_source | VARCHAR | 19.2 | BMI from nsqip_data / op_sheet_data / clinical_notes_long |
+
+### Source: nuclear_med (26 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| nucmed_has_rai_scan | BOOLEAN | 10.6 | Nuclear medicine data |
+| nucmed_n_scans | BIGINT | 10.6 | Nuclear medicine data |
+| nucmed_scan_types | VARCHAR | 10.3 | Nuclear medicine data |
+| nucmed_uptake_24hr_max | DOUBLE | 5.5 | Nuclear medicine data |
+| nucmed_tg_max | DOUBLE | 2.5 | Nuclear medicine data |
+| nucmed_tg_min | DOUBLE | 2.5 | Nuclear medicine data |
+| nucmed_n_tsh_values | INTEGER | 4.1 | Nuclear medicine data |
+| nucmed_n_tg_values | INTEGER | 4.1 | Nuclear medicine data |
+| nucmed_n_tgab_values | INTEGER | 4.1 | Nuclear medicine data |
+| nucmed_first_scan_with_labs | VARCHAR | 4.1 | Nuclear medicine data |
+| nucmed_last_scan_with_labs | VARCHAR | 4.1 | Nuclear medicine data |
+| nucmed_lab_source | VARCHAR | 4.1 | Nuclear medicine data |
+| nucmed_indication_first | VARCHAR | 10.3 | Nuclear medicine data |
+| nucmed_indication_last | VARCHAR | 10.3 | Nuclear medicine data |
+| nucmed_impression_last | VARCHAR | 7.7 | Nuclear medicine data |
+| nucmed_findings_last | VARCHAR | 8.2 | Nuclear medicine data |
+| nucmed_tsh_max | DOUBLE | 4.0 | Nuclear medicine data |
+| nucmed_tsh_is_stimulated | BOOLEAN | 4.0 | Nuclear medicine data |
+| nucmed_tgab_max | DOUBLE | 0.0 | Nuclear medicine data |
+| nucmed_uptake_pct_max | DOUBLE | 5.5 | Nuclear medicine data |
+| nucmed_dose_max_parsed | DOUBLE | 2.8 | Nuclear medicine data |
+| nucmed_cumulative_therapeutic_dose | DOUBLE | 2.6 | Nuclear medicine data |
+| nucmed_n_doses_parsed | INTEGER | 10.6 | Nuclear medicine data |
+| nucmed_n_with_indication | INTEGER | 10.6 | Nuclear medicine data |
+| nucmed_n_with_impression | INTEGER | 10.6 | Nuclear medicine data |
+| nucmed_overall_assessment | VARCHAR | 10.6 | Nuclear medicine data |
+
+### Source: op_sheet_data (48 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| ops_anticoagulation_meds | VARCHAR | 0.1 | From operative sheet data |
+| ops_bmi | DOUBLE | 1.1 | From operative sheet data |
+| ops_cervical_ln_us_performed | VARCHAR | 1.1 | From operative sheet data |
+| ops_difficult_airway | VARCHAR | 1.3 | From operative sheet data |
+| ops_dominant_nodule_bethesda | VARCHAR | 0.9 | From operative sheet data |
+| ops_dominant_nodule_location | VARCHAR | 0.0 | From operative sheet data |
+| ops_dominant_nodule_size_us | VARCHAR | 0.0 | From operative sheet data |
+| ops_ebl_ml | VARCHAR | 1.1 | From operative sheet data |
+| ops_family_hx_thyroid_ca | VARCHAR | 1.3 | From operative sheet data |
+| ops_head_neck_us_findings | VARCHAR | 0.0 | From operative sheet data |
+| ops_intraop_appearance | VARCHAR | 3.1 | From operative sheet data |
+| ops_intraop_nodule_count | VARCHAR | 6.0 | From operative sheet data |
+| ops_io_tumor_appearance | VARCHAR | 18.6 | From operative sheet data |
+| ops_ll_ag | DOUBLE | 2.0 | From operative sheet data |
+| ops_ll_para_visualized | VARCHAR | 13.5 | From operative sheet data |
+| ops_ll_resection | DOUBLE | 0.1 | From operative sheet data |
+| ops_lu_ag | DOUBLE | 1.4 | From operative sheet data |
+| ops_lu_para_visualized | VARCHAR | 13.4 | From operative sheet data |
+| ops_lu_resection | DOUBLE | 0.0 | From operative sheet data |
+| ops_max_diameter_cm | VARCHAR | 17.2 | From operative sheet data |
+| ops_nerve_stim_final | VARCHAR | 1.0 | From operative sheet data |
+| ops_nerve_stim_left | VARCHAR | 0.9 | From operative sheet data |
+| ops_nerve_stim_right | VARCHAR | 0.7 | From operative sheet data |
+| ops_other_ag | VARCHAR | 0.0 | From operative sheet data |
+| ops_palpable_lesion | VARCHAR | 0.0 | From operative sheet data |
+| ops_para_ag_performed | VARCHAR | 19.2 | From operative sheet data |
+| ops_parathyroid_ag_notes | VARCHAR | 4.2 | From operative sheet data |
+| ops_parathyroidectomy | VARCHAR | 0.3 | From operative sheet data |
+| ops_periop_complications | VARCHAR | 12.9 | From operative sheet data |
+| ops_preop_diagnosis | VARCHAR | 19.2 | From operative sheet data |
+| ops_preop_imaging_performed | VARCHAR | 1.3 | From operative sheet data |
+| ops_preop_laryngoscopy | VARCHAR | 1.1 | From operative sheet data |
+| ops_preop_nodules_count_size | VARCHAR | 0.4 | From operative sheet data |
+| ops_preop_symptoms | VARCHAR | 1.5 | From operative sheet data |
+| ops_prior_neck_irradiation | VARCHAR | 1.4 | From operative sheet data |
+| ops_prior_neck_operation | VARCHAR | 4.2 | From operative sheet data |
+| ops_rl_ag | VARCHAR | 2.4 | From operative sheet data |
+| ops_rl_para_visualized | DOUBLE | 13.1 | From operative sheet data |
+| ops_rl_resection | DOUBLE | 0.1 | From operative sheet data |
+| ops_ru_ag | DOUBLE | 1.2 | From operative sheet data |
+| ops_ru_para_visualized | VARCHAR | 13.1 | From operative sheet data |
+| ops_ru_resection | DOUBLE | 0.0 | From operative sheet data |
+| ops_skin_to_skin_min | DOUBLE | 1.1 | From operative sheet data |
+| ops_supranumerary_para | VARCHAR | 0.1 | From operative sheet data |
+| ops_surg_date | VARCHAR | 80.3 | From operative sheet data |
+| ops_surgeon | VARCHAR | 79.0 | From operative sheet data |
+| ops_thyroid_scintigraphy | VARCHAR | 0.0 | From operative sheet data |
+| ops_tumor_side | VARCHAR | 16.9 | From operative sheet data |
+
+### Source: parathyroid_notes_intent_v1 (13 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| para_specimen_included | BOOLEAN | 13.7 | From parathyroid_notes_intent_v1 |
+| para_removal_intent | VARCHAR | 33.7 | From parathyroid_notes_intent_v1 |
+| para_incidental_status_refined | VARCHAR | 33.7 | From parathyroid_notes_intent_v1 |
+| para_has_pathologic_glands | BOOLEAN | 33.7 | From parathyroid_notes_intent_v1 |
+| para_abnormality_type | VARCHAR | 18.0 | From parathyroid_notes_intent_v1 |
+| para_n_glands_identified | BIGINT | 33.7 | From parathyroid_notes_intent_v1 |
+| para_n_glands_biopsied | BIGINT | 33.7 | From parathyroid_notes_intent_v1 |
+| para_n_glands_excised | BIGINT | 33.7 | From parathyroid_notes_intent_v1 |
+| para_max_cellularity_pct | DOUBLE | 3.5 | From parathyroid_notes_intent_v1 |
+| para_min_cellularity_pct | DOUBLE | 3.5 | From parathyroid_notes_intent_v1 |
+| para_max_gland_weight_g | DOUBLE | 4.0 | From parathyroid_notes_intent_v1 |
+| para_source_workbook | VARCHAR | 33.7 | From parathyroid_notes_intent_v1 |
+| para_source_script | VARCHAR | 33.7 | From parathyroid_notes_intent_v1 |
+
+### Source: path_synoptics (40 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| syn_adenomatoid_nodules | BOOLEAN | 10.8 | From synoptic pathology reports |
+| syn_architecture | VARCHAR | 100.0 | From synoptic pathology reports |
+| syn_bilateral_neck_dissection | BOOLEAN | 0.1 | From synoptic pathology reports |
+| syn_c_cell_hyperplasia | BOOLEAN | 0.5 | From synoptic pathology reports |
+| syn_capsular_invasion_clean | VARCHAR | 10.4 | From synoptic pathology reports |
+| syn_carcinoma_on_frozen | BOOLEAN | 32.2 | From synoptic pathology reports |
+| syn_central_dissection | BOOLEAN | 6.0 | From synoptic pathology reports |
+| syn_chronic_thyroiditis | BOOLEAN | 10.1 | From synoptic pathology reports |
+| syn_colloid_nodule | BOOLEAN | 3.8 | From synoptic pathology reports |
+| syn_follicular_adenoma | BOOLEAN | 8.5 | From synoptic pathology reports |
+| syn_frozen_section | BOOLEAN | 79.2 | From synoptic pathology reports |
+| syn_frozen_section_result | VARCHAR | 37.4 | From synoptic pathology reports |
+| syn_graves | BOOLEAN | 5.3 | From synoptic pathology reports |
+| syn_has_second_tumor | BOOLEAN | 100.0 | From synoptic pathology reports |
+| syn_has_third_plus_tumor | BOOLEAN | 100.0 | From synoptic pathology reports |
+| syn_hashimoto | BOOLEAN | 2.3 | From synoptic pathology reports |
+| syn_histologic_grade | BIGINT | 3.3 | From synoptic pathology reports |
+| syn_hurthle_cell_change | BOOLEAN | 5.9 | From synoptic pathology reports |
+| syn_hyperplastic_nodules | BOOLEAN | 4.5 | From synoptic pathology reports |
+| syn_io_rln_monitoring | BOOLEAN | 1.1 | From synoptic pathology reports |
+| syn_isthmus_size_cm | VARCHAR | 36.6 | From synoptic pathology reports |
+| syn_isthmus_weight_g | DOUBLE | 1.1 | From synoptic pathology reports |
+| syn_ki67_index | VARCHAR | 0.2 | From synoptic pathology reports |
+| syn_left_lobe_size_cm | VARCHAR | 66.3 | From synoptic pathology reports |
+| syn_left_lobe_weight_g | DOUBLE | 38.7 | From synoptic pathology reports |
+| syn_lymphatic_invasion_clean | VARCHAR | 31.6 | From synoptic pathology reports |
+| syn_margin_distance_mm | VARCHAR | 100.0 | From synoptic pathology reports |
+| syn_margin_status_synoptic | VARCHAR | 36.4 | From synoptic pathology reports |
+| syn_mitotic_rate_numeric | DOUBLE | 6.4 | From synoptic pathology reports |
+| syn_mitotic_rate_qualifier | VARCHAR | 3.7 | From synoptic pathology reports |
+| syn_multinodular_goiter | BOOLEAN | 55.9 | From synoptic pathology reports |
+| syn_n_parathyroid_identified | BIGINT | 100.0 | From synoptic pathology reports |
+| syn_n_tumors_in_synoptic | BIGINT | 100.0 | From synoptic pathology reports |
+| syn_necrosis_clean | VARCHAR | 6.7 | From synoptic pathology reports |
+| syn_parathyroid_in_specimen | BOOLEAN | 53.9 | From synoptic pathology reports |
+| syn_right_lobe_size_cm | VARCHAR | 64.9 | From synoptic pathology reports |
+| syn_right_lobe_weight_g | DOUBLE | 37.4 | From synoptic pathology reports |
+| syn_total_weight_g | DOUBLE | 35.3 | From synoptic pathology reports |
+| syn_tumor2_histologic_type | VARCHAR | 12.4 | From synoptic pathology reports |
+| syn_tumor2_size_cm | VARCHAR | 12.0 | From synoptic pathology reports |
+
+### Source: patient_refined_master_clinical_v12 (26 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| prm_ete_imaging_path_concordance | VARCHAR | 37.1 | From patient_refined_master_clinical_v12 |
+| prm_ete_path_confirmed | BOOLEAN | 100.0 | From patient_refined_master_clinical_v12 |
+| prm_ete_rule_applied | VARCHAR | 32.6 | From patient_refined_master_clinical_v12 |
+| prm_first_fna_date | DATE | 46.7 | From patient_refined_master_clinical_v12 |
+| prm_fna_n_sources | INTEGER | 48.3 | From patient_refined_master_clinical_v12 |
+| prm_fna_source_tables | VARCHAR | 48.3 | From patient_refined_master_clinical_v12 |
+| prm_followup_clinical_events | INTEGER | 100.0 | From patient_refined_master_clinical_v12 |
+| prm_followup_has_complications | BOOLEAN | 100.0 | From patient_refined_master_clinical_v12 |
+| prm_followup_tg_labs | INTEGER | 100.0 | From patient_refined_master_clinical_v12 |
+| prm_high_risk_marker_any | BOOLEAN | 94.8 | From patient_refined_master_clinical_v12 |
+| prm_hypocalcemia_lab_flag | BOOLEAN | 9.4 | From patient_refined_master_clinical_v12 |
+| prm_hypoparathyroidism_lab_flag | BOOLEAN | 9.4 | From patient_refined_master_clinical_v12 |
+| prm_imaging_data_completeness | VARCHAR | 37.1 | From patient_refined_master_clinical_v12 |
+| prm_last_fna_date | DATE | 46.7 | From patient_refined_master_clinical_v12 |
+| prm_margin_confidence | VARCHAR | 36.4 | From patient_refined_master_clinical_v12 |
+| prm_margin_source | VARCHAR | 36.4 | From patient_refined_master_clinical_v12 |
+| prm_margin_with_gross_ete | VARCHAR | 36.4 | From patient_refined_master_clinical_v12 |
+| prm_molecular_risk_category | VARCHAR | 92.2 | From patient_refined_master_clinical_v12 |
+| prm_n_recurrence_sources | INTEGER | 100.0 | From patient_refined_master_clinical_v12 |
+| prm_recurrence_detection_category | VARCHAR | 100.0 | From patient_refined_master_clinical_v12 |
+| prm_rln_worst_grade | VARCHAR | 100.0 | From patient_refined_master_clinical_v12 |
+| prm_size_concordance | VARCHAR | 37.1 | From patient_refined_master_clinical_v12 |
+| prm_structural_disease_flag | BOOLEAN | 7.9 | From patient_refined_master_clinical_v12 |
+| prm_tg_adequate_followup | BOOLEAN | 100.0 | From patient_refined_master_clinical_v12 |
+| prm_first_fna_days_from_surg | INTEGER | 35.2 | Days from first surgery date (negative = before surgery) |
+| prm_last_fna_days_from_surg | INTEGER | 35.2 | Days from first surgery date (negative = before surgery) |
+
+### Source: tg_timeline_patient_summary_v1 (9 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| tg_last_censored | BOOLEAN | 23.2 | From tg_timeline_patient_summary_v1 |
+| tg_last_value | DOUBLE | 23.3 | From tg_timeline_patient_summary_v1 |
+| tg_mean | DOUBLE | 23.2 | From tg_timeline_patient_summary_v1 |
+| tg_n_measurements | BIGINT | 23.6 | From tg_timeline_patient_summary_v1 |
+| tg_nadir | DOUBLE | 23.5 | From tg_timeline_patient_summary_v1 |
+| tg_peak | DOUBLE | 23.5 | From tg_timeline_patient_summary_v1 |
+| tg_rising_flag | BOOLEAN | 25.3 | From tg_timeline_patient_summary_v1 |
+| tg_trajectory_class | VARCHAR | 25.0 | From tg_timeline_patient_summary_v1 |
+| tg_below_threshold_ever | BOOLEAN | 23.6 | From tg_timeline_patient_summary_v1 |
+
+### Source: thyroid_weight_data (7 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| gland_weight_combined_g | DOUBLE | 83.6 | From thyroid_weight_data |
+| gland_weight_final_g | DOUBLE | 84.0 | From thyroid_weight_data |
+| gland_weight_isthmus_g | DOUBLE | 0.9 | From thyroid_weight_data |
+| gland_weight_left_lobe_g | DOUBLE | 31.5 | From thyroid_weight_data |
+| gland_weight_right_lobe_g | DOUBLE | 31.0 | From thyroid_weight_data |
+| gland_weight_source | VARCHAR | 86.6 | From thyroid_weight_data |
+| gland_weight_total_reported_g | DOUBLE | 49.4 | From thyroid_weight_data |
+
+### Source: ultrasound_reports (LN US subset) (12 columns)
+
+| Column | Type | Coverage% | Description |
+|--------|------|-----------|-------------|
+| lnus_has_dedicated_exam | BOOLEAN | 0.6 | Dedicated lymph node ultrasound data |
+| lnus_n_exams | INTEGER | 0.6 | Dedicated lymph node ultrasound data |
+| lnus_first_date | DATE | 0.1 | Dedicated lymph node ultrasound data |
+| lnus_last_date | DATE | 0.1 | Dedicated lymph node ultrasound data |
+| lnus_indication_first | VARCHAR | 0.6 | Dedicated lymph node ultrasound data |
+| lnus_impression_last | VARCHAR | 0.5 | Dedicated lymph node ultrasound data |
+| lnus_abnormal_ln_any | BOOLEAN | 0.6 | Dedicated lymph node ultrasound data |
+| lnus_normal_ln_any | BOOLEAN | 0.6 | Dedicated lymph node ultrasound data |
+| lnus_has_size_measurement | BOOLEAN | 0.6 | Dedicated lymph node ultrasound data |
+| lnus_source | VARCHAR | 0.6 | Dedicated lymph node ultrasound data |
+| lnus_first_days_from_surg | INTEGER | 0.1 | Days from first surgery date (negative = before surgery) |
+| lnus_last_days_from_surg | INTEGER | 0.1 | Days from first surgery date (negative = before surgery) |

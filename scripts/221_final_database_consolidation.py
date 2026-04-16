@@ -218,26 +218,52 @@ def q(con: duckdb.DuckDBPyConnection, sql: str, label: str = "") -> Any:
         return None
 
 
+def _quoted(db: str) -> str:
+    """Return properly quoted database name for cross-db SQL."""
+    return f'"{db}"' if " " in db else db
+
+
 def table_exists(con: duckdb.DuckDBPyConnection, db: str, table: str) -> bool:
-    row = con.execute(f"""
-        SELECT COUNT(*) FROM {_info_schema(db)}.columns
-        WHERE table_name = '{table}' AND table_schema = 'main'
-        LIMIT 1
-    """).fetchone()
-    return bool(row and row[0] > 0)
+    """Check table existence via direct probe (information_schema unreliable in multi-db mode)."""
+    try:
+        qdb = _quoted(db)
+        con.execute(f"SELECT 1 FROM {qdb}.main.{table} LIMIT 0")
+        return True
+    except Exception:
+        return False
 
 
-def _info_schema(db: str) -> str:
-    """Return correctly quoted information_schema prefix for a given db name."""
-    if " " in db:
-        return f'"{db}".information_schema'
-    return f"{db}.information_schema"
+def col_exists(
+    con: duckdb.DuckDBPyConnection, db: str, table: str, col: str
+) -> bool:
+    """Check column existence via direct probe."""
+    try:
+        qdb = _quoted(db)
+        safe_col = col.replace('"', '""')
+        con.execute(f'SELECT "{safe_col}" FROM {qdb}.main.{table} LIMIT 0')
+        return True
+    except Exception:
+        return False
+
+
+def describe_table(
+    con: duckdb.DuckDBPyConnection, db: str, table: str
+) -> list[tuple[str, str]]:
+    """Return [(column_name, column_type)] via DESCRIBE — works in multi-db mode."""
+    try:
+        qdb = _quoted(db)
+        rows = con.execute(f"DESCRIBE {qdb}.main.{table}").fetchall()
+        # DESCRIBE returns (column_name, column_type, null, key, default, extra)
+        return [(r[0], r[1]) for r in rows]
+    except Exception as e:
+        print(f"[{SCRIPT_TAG}] WARN describe {db}.{table}: {e!s:.120s}")
+        return []
 
 
 def row_count(con: duckdb.DuckDBPyConnection, db: str, table: str) -> int:
     try:
-        quoted_db = f'"{db}"' if " " in db else db
-        r = con.execute(f"SELECT COUNT(*) FROM {quoted_db}.main.{table}").fetchone()
+        qdb = _quoted(db)
+        r = con.execute(f"SELECT COUNT(*) FROM {qdb}.main.{table}").fetchone()
         return r[0] if r else -1
     except Exception as e:
         print(f"[{SCRIPT_TAG}] row_count({table}): {e!s:.120s}")
@@ -246,32 +272,24 @@ def row_count(con: duckdb.DuckDBPyConnection, db: str, table: str) -> int:
 
 def check_invariants(con: duckdb.DuckDBPyConnection, label: str) -> None:
     """
-    Lightweight schema-only check (avoids full table scan on wide canonical).
-    Aborts the process if invariants are violated.
+    Schema-only invariant check: confirms canonical table exists and has required columns.
+    Uses direct probes instead of information_schema (unreliable in MotherDuck multi-db mode).
     """
-    checks: list[tuple[str, str]] = [
-        ("table_exists", f"""
-            SELECT COUNT(*) FROM {DB_ETE}.information_schema.tables
-            WHERE table_name = '{CANONICAL}' AND table_schema = 'main'
-        """),
-        ("has_research_id", f"""
-            SELECT COUNT(*) FROM {DB_ETE}.information_schema.columns
-            WHERE table_name = '{CANONICAL}' AND table_schema = 'main'
-              AND column_name = 'research_id'
-        """),
-        ("has_fna_path_outcome", f"""
-            SELECT COUNT(*) FROM {DB_ETE}.information_schema.columns
-            WHERE table_name = '{CANONICAL}' AND table_schema = 'main'
-              AND column_name = 'fna_path_outcome'
-        """),
-    ]
     all_ok = True
-    for name, sql in checks:
-        val = con.execute(sql).fetchone()[0]
-        ok = val > 0
-        mark = "✓" if ok else "✗"
-        print(f"  [{mark}] {name}={val}")
-        if not ok:
+
+    # 1. Table exists
+    if table_exists(con, DB_ETE, CANONICAL):
+        print("  [✓] table_exists")
+    else:
+        print(f"  [✗] table_exists — {CANONICAL} not found in {DB_ETE}")
+        all_ok = False
+
+    # 2. Required columns exist
+    for col in REQUIRED_NON_NULL:
+        if col_exists(con, DB_ETE, CANONICAL, col):
+            print(f"  [✓] has_{col}")
+        else:
+            print(f"  [✗] has_{col} — column missing from {CANONICAL}")
             all_ok = False
 
     if not all_ok:
@@ -342,68 +360,38 @@ def phase2_sync(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
 
     # 2A — Find new columns in gold_master_patient_facts_v1 (Thyroid 2026)
     #      that are missing from canonical_patient_master_v1 (thyroid_ete_fix)
-    try:
-        new_cols = con.execute(f"""
-            WITH gm_cols AS (
-              SELECT DISTINCT column_name
-              FROM {DB_LAKE_SQL}.information_schema.columns
-              WHERE table_name = 'gold_master_patient_facts_v1'
-                AND table_schema = 'main'
-            ),
-            cm_cols AS (
-              SELECT DISTINCT column_name
-              FROM {DB_ETE}.information_schema.columns
-              WHERE table_name = '{CANONICAL}'
-                AND table_schema = 'main'
-            )
-            SELECT g.column_name
-            FROM gm_cols g
-            LEFT JOIN cm_cols c ON g.column_name = c.column_name
-            WHERE c.column_name IS NULL
-            ORDER BY g.column_name
-        """).fetchall()
-    except Exception as e:
-        print(f"[{SCRIPT_TAG}] Phase 2: could not diff columns — {e!s:.200s}")
+    #      Use DESCRIBE (works in multi-db mode) instead of information_schema
+    if not table_exists(con, DB_LAKE, "gold_master_patient_facts_v1"):
+        print(f"[{SCRIPT_TAG}] Phase 2: gold_master_patient_facts_v1 not in {DB_LAKE} — skip")
         return
 
-    print(f"[{SCRIPT_TAG}] New columns to integrate: {len(new_cols)}")
-    if not new_cols:
+    gm_cols_list = describe_table(con, DB_LAKE, "gold_master_patient_facts_v1")
+    cm_cols_list = describe_table(con, DB_ETE, CANONICAL)
+
+    gm_col_names = {c for c, _ in gm_cols_list}
+    cm_col_names = {c for c, _ in cm_cols_list}
+    gm_col_types = {c: t for c, t in gm_cols_list}
+
+    missing_in_canonical = sorted(gm_col_names - cm_col_names)
+
+    print(f"[{SCRIPT_TAG}] New columns to integrate: {len(missing_in_canonical)}")
+    if not missing_in_canonical:
         print(f"[{SCRIPT_TAG}] ✓ canonical already up-to-date with gold_master")
         return
 
-    # 2B — Get data types from source
-    col_types: dict[str, str] = {}
-    for (col,) in new_cols:
-        row = q(con, f"""
-            SELECT data_type
-            FROM {DB_LAKE_SQL}.information_schema.columns
-            WHERE table_name = 'gold_master_patient_facts_v1'
-              AND table_schema = 'main'
-              AND column_name = '{col}'
-            LIMIT 1
-        """)
-        if row:
-            r = row.fetchone()
-            if r:
-                col_types[col] = r[0]
-
+    # 2B — Data types come from the describe results above
     updated = 0
     skipped = 0
-    for col in [r[0] for r in new_cols]:
-        dtype = col_types.get(col, "VARCHAR")
+    for col in missing_in_canonical:
+        dtype = gm_col_types.get(col, "VARCHAR")
         safe_col = col.replace('"', '""')
 
         if dry_run:
             print(f"  [dry-run] would add {col} ({dtype}) to canonical")
             continue
 
-        # Add column (IF NOT EXISTS is not standard DuckDB ALTER syntax;
-        # check first then add)
-        already = con.execute(f"""
-            SELECT COUNT(*) FROM {DB_ETE}.information_schema.columns
-            WHERE table_name = '{CANONICAL}' AND table_schema = 'main'
-              AND column_name = '{col}'
-        """).fetchone()[0]
+        # Check if column was added since we ran describe (race condition guard)
+        already = col_exists(con, DB_ETE, CANONICAL, col)
 
         if not already:
             try:
@@ -473,6 +461,8 @@ def _phase3a_surgery_recovery(
         print(f"  SKIP: {src_table} not in {DB_LAKE}")
         return
 
+    # Column name in operative_episode_detail_v2 is surgery_date_native (DATE type)
+    date_col = "surgery_date_native"
     try:
         r = con.execute(f"""
             SELECT COUNT(*) as recoverable
@@ -480,7 +470,7 @@ def _phase3a_surgery_recovery(
             JOIN {DB_LAKE_SQL}.main.{src_table} o
               ON c.research_id = CAST(o.research_id AS VARCHAR)
             WHERE c.first_surgery_date IS NULL
-              AND o.surgery_date IS NOT NULL
+              AND o.{date_col} IS NOT NULL
         """).fetchone()
         recoverable = r[0] if r else 0
         print(f"  Recoverable surgery dates: {recoverable:,}")
@@ -495,9 +485,9 @@ def _phase3a_surgery_recovery(
                 SET first_surgery_date = sub.min_date
                 FROM (
                     SELECT CAST(research_id AS VARCHAR) as rid,
-                           MIN(surgery_date) as min_date
+                           MIN({date_col}) as min_date
                     FROM {DB_LAKE_SQL}.main.{src_table}
-                    WHERE surgery_date IS NOT NULL
+                    WHERE {date_col} IS NOT NULL
                     GROUP BY 1
                 ) sub
                 WHERE c.research_id = sub.rid
@@ -513,25 +503,20 @@ def _phase3b_days_from_surg(
 ) -> None:
     print(f"[{SCRIPT_TAG}] 3B: Adding days_from_surgery columns")
 
-    try:
-        date_cols = con.execute(f"""
-            SELECT column_name
-            FROM {DB_ETE}.information_schema.columns
-            WHERE table_name = '{CANONICAL}'
-              AND table_schema = 'main'
-              AND data_type IN ('DATE', 'TIMESTAMP', 'TIMESTAMP WITH TIME ZONE')
-              AND column_name != 'first_surgery_date'
-              AND column_name NOT LIKE '%days%'
-              AND column_name NOT LIKE '%_days_from_surg'
-            ORDER BY column_name
-        """).fetchall()
-    except Exception as e:
-        print(f"  SKIP: could not list date columns: {e!s:.120s}")
-        return
+    # Use DESCRIBE instead of information_schema (multi-db compatible)
+    DATE_TYPES = {"DATE", "TIMESTAMP", "TIMESTAMP WITH TIME ZONE", "TIMESTAMPTZ"}
+    all_cols = describe_table(con, DB_ETE, CANONICAL)
+    date_cols = [
+        col for col, dtype in all_cols
+        if dtype.upper() in DATE_TYPES
+        and col != "first_surgery_date"
+        and "days" not in col
+        and not col.endswith("_days_from_surg")
+    ]
 
     print(f"  Found {len(date_cols)} date columns to process")
     added = 0
-    for (col,) in date_cols:
+    for col in date_cols:
         # Derive the days column name
         if col.endswith("_date"):
             days_col = col[: -len("_date")] + "_days_from_surg"
@@ -543,13 +528,8 @@ def _phase3b_days_from_surg(
         safe_col = col.replace('"', '""')
         safe_days = days_col.replace('"', '""')
 
-        # Check if column already exists
-        exists = con.execute(f"""
-            SELECT COUNT(*) FROM {DB_ETE}.information_schema.columns
-            WHERE table_name = '{CANONICAL}' AND table_schema = 'main'
-              AND column_name = '{days_col}'
-        """).fetchone()[0]
-        if exists:
+        # Check if column already exists (direct probe)
+        if col_exists(con, DB_ETE, CANONICAL, days_col):
             continue
 
         if dry_run:
@@ -593,18 +573,20 @@ def _phase3c_multi_surgery(
         return
 
     # Build surgery date staging table in ete_fix
+    # Column is surgery_date_native (DATE) in operative_episode_detail_v2
+    date_col = "surgery_date_native"
     try:
         con.execute(f"""
             CREATE OR REPLACE TABLE {DB_ETE}.main._patient_surgery_dates AS
             SELECT
                 CAST(research_id AS VARCHAR) as research_id,
-                surgery_date,
+                {date_col} AS surgery_date,
                 ROW_NUMBER() OVER (
-                    PARTITION BY research_id ORDER BY surgery_date
+                    PARTITION BY research_id ORDER BY {date_col}
                 ) as surgery_number,
                 COUNT(*) OVER (PARTITION BY research_id) as total_surgeries
             FROM {DB_LAKE_SQL}.main.{src_table}
-            WHERE surgery_date IS NOT NULL
+            WHERE {date_col} IS NOT NULL
         """)
     except Exception as e:
         print(f"  ✗ Could not build _patient_surgery_dates: {e!s:.120s}")
@@ -624,12 +606,7 @@ def _phase3c_multi_surgery(
         ("days_between_first_second_surgery", "INTEGER"),
     ]
     for col, dtype in new_cols_defs:
-        exists = con.execute(f"""
-            SELECT COUNT(*) FROM {DB_ETE}.information_schema.columns
-            WHERE table_name = '{CANONICAL}' AND table_schema = 'main'
-              AND column_name = '{col}'
-        """).fetchone()[0]
-        if not exists:
+        if not col_exists(con, DB_ETE, CANONICAL, col):
             try:
                 con.execute(f"""
                     ALTER TABLE {DB_ETE}.main.{CANONICAL}
@@ -700,14 +677,8 @@ def _phase3d_report(con: duckdb.DuckDBPyConnection) -> None:
         ("N surgeries",   "n_surgeries"),
     ]
 
-    # Discover which columns actually exist
-    existing_cols: set[str] = set(
-        r[0]
-        for r in con.execute(f"""
-            SELECT DISTINCT column_name FROM {DB_ETE}.information_schema.columns
-            WHERE table_name = '{CANONICAL}' AND table_schema = 'main'
-        """).fetchall()
-    )
+    # Discover which columns actually exist via DESCRIBE (multi-db compatible)
+    existing_cols: set[str] = {c for c, _ in describe_table(con, DB_ETE, CANONICAL)}
 
     print(f"\n  {'Domain':<22} {'Count':>8}  {'Pct':>6}")
     print(f"  {'-'*22} {'-'*8}  {'-'*6}")
@@ -751,16 +722,10 @@ def phase4_optimize(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
     else:
         print("  No data_dictionary.csv found — using auto-generated descriptions")
 
-    # 4B — Get all canonical columns
-    try:
-        all_cols = con.execute(f"""
-            SELECT column_name, data_type
-            FROM {DB_ETE}.information_schema.columns
-            WHERE table_name = '{CANONICAL}' AND table_schema = 'main'
-            ORDER BY ordinal_position
-        """).fetchall()
-    except Exception as e:
-        print(f"  ✗ Could not list canonical columns: {e!s:.120s}")
+    # 4B — Get all canonical columns via DESCRIBE (multi-db compatible)
+    all_cols = describe_table(con, DB_ETE, CANONICAL)
+    if not all_cols:
+        print("  ✗ Could not list canonical columns via DESCRIBE")
         return
 
     print(f"  Adding COMMENT ON COLUMN for {len(all_cols)} columns...")
@@ -845,20 +810,17 @@ def phase5_data_dict(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
         print("  SKIP: pandas not available")
         return
 
-    # Get all columns
-    try:
-        dict_df = pd.DataFrame(
-            con.execute(f"""
-                SELECT column_name, data_type, is_nullable, ordinal_position
-                FROM {DB_ETE}.information_schema.columns
-                WHERE table_name = '{CANONICAL}' AND table_schema = 'main'
-                ORDER BY ordinal_position
-            """).fetchall(),
-            columns=["column_name", "data_type", "is_nullable", "ordinal_position"],
-        )
-    except Exception as e:
-        print(f"  ✗ Could not retrieve column list: {e!s:.120s}")
+    # Get all columns via DESCRIBE (multi-db compatible)
+    raw_cols = describe_table(con, DB_ETE, CANONICAL)
+    if not raw_cols:
+        print("  ✗ Could not retrieve column list via DESCRIBE")
         return
+    # DESCRIBE returns (column_name, column_type, null, key, default, extra)
+    # We only have name + type; add placeholders for backwards compat
+    dict_df = pd.DataFrame(
+        [(name, dtype, "YES", idx + 1) for idx, (name, dtype) in enumerate(raw_cols)],
+        columns=["column_name", "data_type", "is_nullable", "ordinal_position"],
+    )
 
     print(f"  Columns to document: {len(dict_df)}")
 
@@ -1059,22 +1021,15 @@ def phase7_validate(con: duckdb.DuckDBPyConnection) -> None:
     print(f"\n[{SCRIPT_TAG}] ══ PHASE 7: Final validation report ══")
     check_invariants(con, "final")
 
-    # Count columns
-    final_cols = con.execute(f"""
-        SELECT COUNT(DISTINCT column_name)
-        FROM {DB_ETE}.information_schema.columns
-        WHERE table_name = '{CANONICAL}' AND table_schema = 'main'
-    """).fetchone()[0]
+    # Count columns via DESCRIBE (multi-db compatible)
+    all_cols_desc = describe_table(con, DB_ETE, CANONICAL)
+    final_cols = len(all_cols_desc)
+    col_name_set = {c for c, _ in all_cols_desc}
 
     # Check non-null required fields
     null_counts: dict[str, int] = {}
     for col in REQUIRED_NON_NULL:
-        col_exists = con.execute(f"""
-            SELECT COUNT(*) FROM {DB_ETE}.information_schema.columns
-            WHERE table_name = '{CANONICAL}' AND table_schema = 'main'
-              AND column_name = '{col}'
-        """).fetchone()[0]
-        if col_exists:
+        if col in col_name_set:
             try:
                 n = con.execute(f"""
                     SELECT COUNT(*) FROM {DB_ETE}.main.{CANONICAL}
@@ -1093,11 +1048,7 @@ def phase7_validate(con: duckdb.DuckDBPyConnection) -> None:
         total_rows = -1
 
     # Check for n_surgeries column (multi-surgery)
-    has_n_surg = con.execute(f"""
-        SELECT COUNT(*) FROM {DB_ETE}.information_schema.columns
-        WHERE table_name = '{CANONICAL}' AND table_schema = 'main'
-          AND column_name = 'n_surgeries'
-    """).fetchone()[0]
+    has_n_surg = "n_surgeries" in col_name_set
 
     print(f"""
 {'='*60}
