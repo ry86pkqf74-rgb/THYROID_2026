@@ -1,0 +1,13 @@
+{
+  "ts": "2026-04-16T10:45:33.967455",
+  "pre": {
+    "cpm_rows": 10871,
+    "cpm_ret_true": 0,
+    "cpm_fusion_true": 369,
+    "cpm_null_beth": 5622,
+    "mvl_fusion_good": 9,
+    "mvl_fusion_null": 1170,
+    "mte_epoch_errs": 4,
+    "mte_with_site": 0
+  }
+}
