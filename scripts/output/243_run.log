@@ -1,0 +1,54 @@
+/Users/loganglosser/THYROID_2026/scripts/_run_sql.py:31: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  return datetime.utcnow().strftime("%H:%M:%S.") + f"{datetime.utcnow().microsecond//1000:03d}Z"
+[21:06:51.343Z] === START 243_data_dictionary_update.sql
+[21:06:51.345Z] parsed 27 statements from 243_data_dictionary_update.sql
+[21:06:52.461Z] connected to MotherDuck (publication DB locked)
+[21:06:52.461Z] LOG: PHASE 1 — archive pre-script dictionary
+[21:06:53.057Z]   [1] OK (595 ms)  CREATE OR REPLACE TABLE "Thyroid 2026 UPdated".archive_pub_v1_0.data_dictionary_v240_pre24
+[21:06:53.444Z]   [2] OK (388 ms)  COMMENT ON TABLE "Thyroid 2026 UPdated".archive_pub_v1_0.data_dictionary_v240_pre243_backu
+[21:06:53.444Z] ASSERT: archive exists and matches source row count
+[21:06:53.559Z]   [3] ASSERT PASS (114 ms)  row=(True,)
+[21:06:53.559Z] LOG: PHASE 2 — extend schema (idempotent ADD COLUMN)
+[21:06:53.740Z]   [4] OK (181 ms)  ALTER TABLE data_dictionary_v240 ADD COLUMN IF NOT EXISTS status VARCHAR
+[21:06:53.920Z]   [5] OK (180 ms)  ALTER TABLE data_dictionary_v240 ADD COLUMN IF NOT EXISTS replacement_column_name VARCHAR
+[21:06:54.036Z]   [6] OK (116 ms)  UPDATE data_dictionary_v240
+[21:06:54.072Z]   [7] OK (35 ms)  UPDATE data_dictionary_v240
+[21:06:54.072Z] LOG: PHASE 3 — remove rows whose CPM column was renamed in Script 240
+[21:06:54.113Z]   [8] OK (41 ms)  DELETE FROM data_dictionary_v240
+[21:06:54.113Z] LOG: PHASE 4 — remove any rows for rai_benign_histology_recovery_v234 (table dropped in Script 239)
+[21:06:54.146Z]   [9] OK (33 ms)  DELETE FROM data_dictionary_v240
+[21:06:54.146Z] LOG: PHASE 5 — insert deprecated rows for the two renamed CPM columns
+[21:06:54.179Z]   [10] OK (32 ms)  DELETE FROM data_dictionary_v240
+[21:06:54.341Z]   [11] OK (163 ms)  INSERT INTO data_dictionary_v240
+[21:06:54.702Z]   [12] OK (361 ms)  INSERT INTO data_dictionary_v240
+[21:06:54.702Z] LOG: PHASE 6 — insert serial_imaging_us.* rows (authoritative; Script 238 provenance)
+[21:06:54.731Z]   [13] OK (28 ms)  DELETE FROM data_dictionary_v240
+[21:06:54.796Z]   [14] OK (65 ms)  INSERT INTO data_dictionary_v240
+[21:06:54.796Z] LOG: PHASE 7 — insert path_size_adjudication_v241.* rows (provisional; Script 241 provenance)
+[21:06:54.828Z]   [15] OK (32 ms)  DELETE FROM data_dictionary_v240
+[21:06:54.886Z]   [16] OK (58 ms)  INSERT INTO data_dictionary_v240
+[21:06:54.886Z] LOG: PHASE 8 — sanity update: make sure every deprecated__ column in CPM has a dict row
+[21:06:54.886Z] LOG: PHASE 9 — assertions
+[21:06:54.886Z] ASSERT: both new columns exist on data_dictionary_v240
+[21:06:54.927Z]   [17] ASSERT PASS (41 ms)  row=(True,)
+[21:06:54.927Z] ASSERT: every deprecated__ column in CPM has a dict row with status='deprecated' AND non-null replacement
+[21:06:54.998Z]   [18] ASSERT PASS (71 ms)  row=(True,)
+[21:06:54.998Z] ASSERT: no rows with status IS NULL
+[21:06:55.112Z]   [19] ASSERT PASS (114 ms)  row=(True,)
+[21:06:55.112Z] ASSERT: status domain is the allowed set
+[21:06:55.143Z]   [20] ASSERT PASS (31 ms)  row=(True,)
+[21:06:55.143Z] ASSERT: no stale rows for tumor_size_cm / imaging_nodule_size_cm (renamed, must not appear under the old name)
+[21:06:55.174Z]   [21] ASSERT PASS (31 ms)  row=(True,)
+[21:06:55.174Z] ASSERT: no rai_benign_histology_recovery_v234 rows (table dropped in Script 239)
+[21:06:55.207Z]   [22] ASSERT PASS (32 ms)  row=(True,)
+[21:06:55.207Z] ASSERT: path_size_adjudication_v241.* rows all have status='provisional' (exactly 7 columns)
+[21:06:55.247Z]   [23] ASSERT PASS (40 ms)  row=(True,)
+[21:06:55.247Z] ASSERT: serial_imaging_us.* rows all have status='authoritative' (5 non-identity columns)
+[21:06:55.279Z]   [24] ASSERT PASS (32 ms)  row=(True,)
+[21:06:55.279Z] ASSERT: archive backup present
+[21:06:55.316Z]   [25] ASSERT PASS (37 ms)  row=(True,)
+[21:06:55.316Z] ASSERT: canonical_patient_master untouched
+[21:06:55.348Z]   [26] ASSERT PASS (31 ms)  row=(True,)
+[21:06:55.348Z] LOG: PHASE 10 — status breakdown (diagnostic)
+[21:06:55.378Z]   [27] OK (30 ms)  SELECT status, COUNT(*) AS n FROM data_dictionary_v240 GROUP BY status ORDER BY n DESC
+[21:06:55.378Z] === END 243_data_dictionary_update.sql  elapsed=2.9s  failures=0

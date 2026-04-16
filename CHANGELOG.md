@@ -261,3 +261,46 @@ pre-change backup are explicitly no-ops on data (documentation only).
   `rai_received_flag` (parallel to Script 240 pattern). Today the column
   is kept because downstream `rai_received_flag`-as-output-name
   consumers still read it via the view surface.
+
+### Script 243 — Extend `data_dictionary_v240` with status + replacement_column_name
+- **Schema extension:** added two columns to `data_dictionary_v240`:
+  - `status VARCHAR` — domain `{authoritative, deprecated, provisional,
+    recovery_pending}`
+  - `replacement_column_name VARCHAR` — points from deprecated entries
+    to their replacement
+- **Backup:** `"Thyroid 2026 UPdated".archive_pub_v1_0.data_dictionary_v240_pre243_backup_20260416`
+  (copy of pre-script dictionary, pre-schema-extension).
+- **Row updates (folding in 237-242 changes):**
+  - Removed 2 stale rows for `tumor_size_cm` and `imaging_nodule_size_cm`
+    (renamed to `deprecated__*` in Script 240; no longer exist on CPM).
+  - Removed 0 rows for `rai_benign_histology_recovery_v234`
+    (already absent post-Script 239; defensive DELETE).
+  - Added 2 deprecated rows: `deprecated__tumor_size_cm` →
+    `path_tumor_size_cm`; `deprecated__imaging_nodule_size_cm` →
+    `dominant_nodule_size_cm`.
+  - Marked Script 237's 2 provisional rows (`fna_size_cm`, `size_score`)
+    explicitly as `status='provisional'`.
+  - Added 5 authoritative rows for `serial_imaging_us.*` (Script 238).
+  - Added 7 provisional rows for `path_size_adjudication_v241.*`
+    (Script 241).
+- **Final status breakdown:**
+  - `authoritative`: **1,491**
+  - `provisional`:   **9** (`fna_size_cm`, `size_score`, and the 7
+    `path_size_adjudication_v241.*` columns)
+  - `deprecated`:    **2** (`deprecated__tumor_size_cm`,
+    `deprecated__imaging_nodule_size_cm`)
+  - Total: **1,502** rows (was 1,490 pre-script; net +12 after
+    removing 2 stale + adding 14).
+- **Assertions (12/12 PASS):**
+  - archive table row count matches pre-script source
+  - both new columns present on dictionary
+  - every `deprecated__*` CPM column has exactly one dictionary row
+    with `status='deprecated'` and non-null `replacement_column_name`
+  - no rows with `status IS NULL`
+  - status values all in the domain set
+  - no stale rows for the old column names
+  - no `rai_benign_histology_recovery_v234` rows
+  - path_size_adjudication_v241.* has exactly 7 provisional rows
+  - serial_imaging_us.* has exactly 5 authoritative rows
+  - archive backup present
+  - canonical_patient_master unchanged at 10,871
