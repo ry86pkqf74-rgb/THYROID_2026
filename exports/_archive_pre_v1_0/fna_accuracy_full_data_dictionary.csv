@@ -1,0 +1,9 @@
+object_type,object_name,column_name,data_type,description,phase
+view,fna_accuracy_view,bethesda_2023_name,VARCHAR,Bethesda 2023 category label,phase2
+view,fna_accuracy_view,bethesda_2023_num,BIGINT,Bethesda 2023 numeric score,phase2
+view,fna_accuracy_view,confusion_class,VARCHAR,Per-record confusion class (TP/FP/FN/TN),phase2
+view,fna_accuracy_view,final_malignant,INTEGER,Gold-standard malignant indicator from final pathology,phase2
+view,fna_accuracy_view,fna_date,VARCHAR,FNA date,phase2
+view,fna_accuracy_view,fna_index,BIGINT,FNA sequence index,phase2
+view,fna_accuracy_view,fna_test_positive,INTEGER,FNA test-positive definition (Bethesda >= 5),phase2
+view,fna_accuracy_view,research_id,VARCHAR,Patient identifier,phase2

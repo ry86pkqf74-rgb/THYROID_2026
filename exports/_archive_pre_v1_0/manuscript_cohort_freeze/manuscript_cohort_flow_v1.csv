@@ -1,0 +1,9 @@
+step,n,excluded,reason
+total,10871,0,
+analysis_eligible,4136,6735,Not analysis-eligible
+cancer_histology,4137,-1,
+molecular_tested,10025,-5888,
+rai_treated,35,9990,No RAI
+tg_available,2559,-2524,
+tirads_available,3474,-915,
+survival_eligible,10870,-7396,

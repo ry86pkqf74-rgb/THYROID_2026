@@ -1,0 +1,34 @@
+{
+  "Identity Integrity": {
+    "status": "OK",
+    "rows": 1
+  },
+  "Row Multiplication": {
+    "status": "OK",
+    "rows": 3
+  },
+  "Impossible Values": {
+    "status": "OK",
+    "rows": 1
+  },
+  "Cross-Domain Consistency": {
+    "status": "OK",
+    "rows": 1155
+  },
+  "Manuscript Metrics": {
+    "status": "OK",
+    "rows": 10
+  },
+  "Null Rate Regression": {
+    "status": "OK",
+    "rows": 10
+  },
+  "Denominator Checks": {
+    "status": "OK",
+    "rows": 6
+  },
+  "Metric Definition Conflicts": {
+    "status": "OK",
+    "rows": 1
+  }
+}

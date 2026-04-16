@@ -1,0 +1,9 @@
+{
+  "n_pairs": 118,
+  "hr": 0.0,
+  "ci_lower": 0.0,
+  "ci_upper": Infinity,
+  "p_value": 0.9962,
+  "concordance": 0.799,
+  "caliper": 0.0004
+}

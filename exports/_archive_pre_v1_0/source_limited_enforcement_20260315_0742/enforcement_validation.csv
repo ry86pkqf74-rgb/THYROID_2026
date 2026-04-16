@@ -1,0 +1,7 @@
+check_name,violations,total,result,checked_at
+all_fields_have_status,0,0,PASS,2026-03-15 03:42:52.957951-04:00
+all_fields_have_limitation_category,0,0,PASS,2026-03-15 03:42:52.957951-04:00
+manual_review_not_in_table1,0,0,PASS,2026-03-15 03:42:52.957951-04:00
+derived_approx_not_in_regression,0,0,PASS,2026-03-15 03:42:52.957951-04:00
+source_limited_requires_caveat,0,0,PASS,2026-03-15 03:42:52.957951-04:00
+minimum_canonical_count,1,0,FAIL,2026-03-15 03:42:52.957951-04:00

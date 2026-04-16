@@ -1,0 +1,13 @@
+research_id,lab_date,lab_date_parsed,lab_name_standardized,analyte_group,value_numeric,value_raw,source_table,linked_surgery_episode_id,linked_surgery_date,day_offset,is_multi_surgery,episode_window,overlapping_window_flag,linkage_method,linkage_confidence,rank_among_candidates,repaired_at
+183,2001-03-02,2001-03-02,thyroglobulin,thyroid_tumor_markers,637.0,637,thyroglobulin_labs,1,2001-03-02,0,True,periop,True,overlapping_window_nearest,ambiguous,1,2026-03-15 00:56:30.473974-04:00
+326,2002-08-05,2002-08-05,thyroglobulin,thyroid_tumor_markers,1.2,1.2,thyroglobulin_labs,2,2002-08-07,-2,True,preop,True,overlapping_window_nearest,ambiguous,1,2026-03-15 00:56:30.473974-04:00
+550,2005-07-28,2005-07-28,thyroglobulin,thyroid_tumor_markers,1071.0,1071,thyroglobulin_labs,2,2005-08-09,-12,True,preop,True,overlapping_window_nearest,ambiguous,1,2026-03-15 00:56:30.473974-04:00
+593,2004-07-30,2004-07-30,thyroglobulin,thyroid_tumor_markers,484.9,484.9,thyroglobulin_labs,2,2004-08-10,-11,True,preop,True,overlapping_window_nearest,ambiguous,1,2026-03-15 00:56:30.473974-04:00
+5197,2016-02-08,2016-02-08,thyroglobulin,thyroid_tumor_markers,1.4,1.4,thyroglobulin_labs,2,2016-02-25,-17,True,preop,True,overlapping_window_nearest,ambiguous,1,2026-03-15 00:56:30.473974-04:00
+5197,2016-02-08,2016-02-08,thyroglobulin,thyroid_tumor_markers,0.9,<0.9,thyroglobulin_labs,2,2016-02-25,-17,True,preop,True,overlapping_window_nearest,ambiguous,1,2026-03-15 00:56:30.473974-04:00
+5197,2016-02-08,2016-02-08,anti_thyroglobulin,thyroid_tumor_markers,1.4,1.4,anti_thyroglobulin_labs,2,2016-02-25,-17,True,preop,True,overlapping_window_nearest,ambiguous,1,2026-03-15 00:56:30.473974-04:00
+7120,2019-01-09,2019-01-09,thyroglobulin,thyroid_tumor_markers,9.4,9.4,thyroglobulin_labs,2,2019-02-07,-29,True,preop,True,overlapping_window_nearest,ambiguous,1,2026-03-15 00:56:30.473974-04:00
+7120,2019-01-09,2019-01-09,thyroglobulin,thyroid_tumor_markers,0.9,<0.9,thyroglobulin_labs,2,2019-02-07,-29,True,preop,True,overlapping_window_nearest,ambiguous,1,2026-03-15 00:56:30.473974-04:00
+7120,2019-01-09,2019-01-09,anti_thyroglobulin,thyroid_tumor_markers,9.4,9.4,anti_thyroglobulin_labs,2,2019-02-07,-29,True,preop,True,overlapping_window_nearest,ambiguous,1,2026-03-15 00:56:30.473974-04:00
+10017,2024-04-24,2024-04-24,anti_thyroglobulin,thyroid_tumor_markers,2.5,2.5,anti_thyroglobulin_labs,1,2024-04-24,0,True,periop,True,overlapping_window_nearest,ambiguous,1,2026-03-15 00:56:30.473974-04:00
+10017,2024-04-24,2024-04-24,thyroglobulin,thyroid_tumor_markers,0.1,<0.1,thyroglobulin_labs,1,2024-04-24,0,True,periop,True,overlapping_window_nearest,ambiguous,1,2026-03-15 00:56:30.473974-04:00

@@ -1,0 +1,17 @@
+{
+  "generated": "20260315_0202",
+  "source": "local DuckDB thyroid_master.duckdb (prod)",
+  "script": "scripts/99_comprehensive_final_verification.py",
+  "workstreams": [
+    "A_truth_snapshot",
+    "B_multi_surgery_linkage",
+    "C_operative_nlp",
+    "D_recurrence_packets",
+    "E_doc_reconciliation"
+  ],
+  "metrics_count": 41,
+  "operative_fields_audited": 26,
+  "recurrence_cases": 3032,
+  "doc_mismatches": 1,
+  "linkage_domains": 9
+}

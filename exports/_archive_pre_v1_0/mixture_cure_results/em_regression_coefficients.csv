@@ -1,0 +1,13 @@
+term,estimate
+intercept,-1.6814516629984047
+braf_status,0.13509994071725512
+tert_status,0.0006210625834907969
+ajcc_stage_8_II,-1.6465148341041211
+ajcc_stage_8_III,0.963547410395559
+ajcc_stage_8_IVB,-2.8452913530247943
+ete_type_microscopic,2.90593955330398
+ete_type_none,0.4498703114147723
+recurrence_risk_band_intermediate,-0.8735741226420219
+recurrence_risk_band_low,-1.5145695581485796
+weibull_shape,1.484034639698291
+weibull_scale,51089.787834980525

@@ -1,0 +1,73 @@
+{
+  "assessment_date": "2026-03-15",
+  "recommendation": "GO_WITH_CAVEATS",
+  "blocking_findings": 0,
+  "non_blocking_findings": 5,
+  "external_pending_items": 3,
+  "database": "thyroid_master.duckdb",
+  "total_tables": 668,
+  "row_count_checks": {
+    "total": 20,
+    "passed": 20,
+    "failed": 0
+  },
+  "duplicate_checks": {
+    "manuscript_cohort_v1": 0,
+    "patient_analysis_resolved_v1": 0,
+    "episode_analysis_resolved_v1_dedup": 0
+  },
+  "null_checks": {
+    "research_id": 0,
+    "surg_first_date": 2140,
+    "sex": 0,
+    "age_at_surgery": 0
+  },
+  "readiness_gates": {
+    "G1_no_patient_dupes": "PASS",
+    "G2_no_episode_dupes": "PASS",
+    "G3_scoring_calculable": "PASS",
+    "G4_complication_phenotyping": "PASS",
+    "G5_supporting_tables_populated": "PASS",
+    "G6_no_null_pkeys": "PASS",
+    "G7_sap_exists": "PASS"
+  },
+  "canonical_metrics": {
+    "surgical_cohort": 10871,
+    "cancer_subcohort": 4136,
+    "dedup_episodes": 9368,
+    "recurrence_patients": 1946,
+    "braf_positive_curated": 376,
+    "ras_positive_curated": 292,
+    "tert_positive": 108,
+    "molecular_tested": 10025,
+    "rai_episodes": 1857,
+    "rai_dose_coverage_pct": 41.0,
+    "rai_treated_strict": 35,
+    "tirads_patients": 3474,
+    "rln_refined_patients": 92,
+    "notes_coverage_pct": 51.9,
+    "lab_canonical_rows": 39961,
+    "lab_patients": 3349
+  },
+  "scoring_calculability_pct": {
+    "ajcc8": 37.6,
+    "ata": 28.9,
+    "macis": 37.5,
+    "ages": 100.0,
+    "ames": 100.0
+  },
+  "source_limited_gaps": [
+    "SL-01: Recurrence date sparsity (88.8% unresolved)",
+    "SL-02: Nuclear medicine notes absent (RAI dose capped 41%)",
+    "SL-03: Clinical notes partial (51.9%)",
+    "SL-04: Vascular invasion 83.5% ungraded (synoptic template)",
+    "SL-05: Operative boolean defaults (FALSE = unknown, not negative)"
+  ],
+  "external_pending": [
+    "Institutional lab extract (TSH, free T4, T3, vitamin D, etc.)",
+    "Institutional medication extract",
+    "Nuclear medicine structured data"
+  ],
+  "latest_release": "v2026.03.14-final-engineering-pass",
+  "zenodo_doi": "10.5281/zenodo.18945510"
+}

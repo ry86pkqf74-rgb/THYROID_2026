@@ -1,0 +1,8 @@
+metric,value
+overall_cure_fraction_univariate_weibull,0.9939937038686837
+overall_observed_event_rate,0.0033330573037429613
+overall_crude_cure_rate,0.996666942696257
+em_mean_predicted_cure_probability,0.730350473717817
+em_log_likelihood,-2218.243159652179
+em_converged,False
+em_iterations,120

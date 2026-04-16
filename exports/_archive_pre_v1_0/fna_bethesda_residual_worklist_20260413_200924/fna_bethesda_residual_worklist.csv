@@ -1,0 +1,27 @@
+research_id,fna_episode_id,bethesda_raw,pathology_diagnosis,pathology_extended_snip,resolved_fna_date,bethesda_unscorable_reason,bethesda_cytology_num
+1422,1,,,,,no_episode_or_cytology_bethesda,
+1640,1,,,,,no_episode_or_cytology_bethesda,
+1701,1,,,,,no_episode_or_cytology_bethesda,
+1964,1,,,,,no_episode_or_cytology_bethesda,
+2113,1,,,,,no_episode_or_cytology_bethesda,
+2210,1,,,,,no_episode_or_cytology_bethesda,
+2212,1,,,,,no_episode_or_cytology_bethesda,
+2610,1,,,,,no_episode_or_cytology_bethesda,
+2759,1,,,,2006-01-11,no_episode_or_cytology_bethesda,
+2904,1,,,,,no_episode_or_cytology_bethesda,
+6554,1,,,,2018-02-15,no_episode_or_cytology_bethesda,
+7708,1,,,,2019-09-30,no_episode_or_cytology_bethesda,
+8803,1,,,,,no_episode_or_cytology_bethesda,
+9201,1,,,,,no_episode_or_cytology_bethesda,
+10637,3,,,,2023-04-14,no_episode_or_cytology_bethesda,
+10770,1,,,,2023-03-21,no_episode_or_cytology_bethesda,
+11254,4,,,"Specimen:    Thyroid, FNA, Right Lower Thyroid FNA 3.0cm                                          
+",,no_episode_or_cytology_bethesda,
+11739,4,,,"Fine needle aspirate, thyroid  - Left",,no_episode_or_cytology_bethesda,
+11895,4,,,"Specimens:   A) - Thyroid, fine needle aspiration, Left 2.0 x 1.2 x 2.2 cm                        
+",,no_episode_or_cytology_bethesda,
+11896,4,,,"Left Thyroid #1, Fine Needle Aspiration
+",,no_episode_or_cytology_bethesda,
+11902,4,,,"Thyroid, fine needle aspiration, 3.8cm LLP solid",,no_episode_or_cytology_bethesda,
+11958,4,,,"Fine needle aspirate, thyroid  - Left",,no_episode_or_cytology_bethesda,
+8330,1,,"SEBELIK, MERRY E",,,pathology_present_bethesda_unparsed,

@@ -1,0 +1,25 @@
+object_type,object_name,column_name,data_type,description,phase
+view,recurrence_risk_cohort,age_at_surgery,BIGINT,Column `age_at_surgery` from `recurrence_risk_cohort` export,phase3
+view,recurrence_risk_cohort,histology_1_type,VARCHAR,Primary histology type,phase2
+view,recurrence_risk_cohort,n_stage_ajcc8,VARCHAR,AJCC8 N stage,phase2
+view,recurrence_risk_cohort,n_tg_measurements,BIGINT,Column `n_tg_measurements` from `recurrence_risk_cohort` export,phase3
+view,recurrence_risk_cohort,overall_stage_ajcc8,VARCHAR,AJCC8 overall stage,phase2
+view,recurrence_risk_cohort,recurrence_risk_band,VARCHAR,Derived low/intermediate/high recurrence risk band,phase2
+view,recurrence_risk_cohort,research_id,VARCHAR,Patient identifier,phase2
+view,recurrence_risk_cohort,sex,VARCHAR,Column `sex` from `recurrence_risk_cohort` export,phase3
+view,recurrence_risk_cohort,surgery_date,VARCHAR,Column `surgery_date` from `recurrence_risk_cohort` export,phase3
+view,recurrence_risk_cohort,surgery_type_normalized,VARCHAR,Column `surgery_type_normalized` from `recurrence_risk_cohort` export,phase3
+view,recurrence_risk_cohort,t_stage_ajcc8,VARCHAR,AJCC8 T stage,phase2
+view,recurrence_risk_cohort,tg_delta_per_measurement,DOUBLE,Tg slope proxy per measurement interval,phase2
+view,recurrence_risk_cohort,tg_first_date,TIMESTAMP,First thyroglobulin date,phase2
+view,recurrence_risk_cohort,tg_first_original_result,VARCHAR,Column `tg_first_original_result` from `recurrence_risk_cohort` export,phase3
+view,recurrence_risk_cohort,tg_first_value,DOUBLE,First parsed thyroglobulin value,phase2
+view,recurrence_risk_cohort,tg_last_date,TIMESTAMP,Last thyroglobulin date,phase2
+view,recurrence_risk_cohort,tg_last_original_result,VARCHAR,Column `tg_last_original_result` from `recurrence_risk_cohort` export,phase3
+view,recurrence_risk_cohort,tg_last_value,DOUBLE,Last parsed thyroglobulin value,phase2
+view,recurrence_risk_cohort,tg_max,DOUBLE,Maximum parsed thyroglobulin value,phase2
+view,recurrence_risk_cohort,tg_mean,DOUBLE,Mean parsed thyroglobulin value,phase2
+view,recurrence_risk_cohort,tg_min,DOUBLE,Column `tg_min` from `recurrence_risk_cohort` export,phase3
+view,recurrence_risk_cohort,tumor_1_extrathyroidal_ext,BOOLEAN,Column `tumor_1_extrathyroidal_ext` from `recurrence_risk_cohort` export,phase3
+view,recurrence_risk_cohort,tumor_1_gross_ete,BIGINT,Column `tumor_1_gross_ete` from `recurrence_risk_cohort` export,phase3
+view,recurrence_risk_cohort,variant_standardized,VARCHAR,Column `variant_standardized` from `recurrence_risk_cohort` export,phase3

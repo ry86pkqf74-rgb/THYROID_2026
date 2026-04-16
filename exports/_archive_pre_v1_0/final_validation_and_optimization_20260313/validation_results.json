@@ -1,0 +1,113 @@
+{
+  "scoring": {
+    "ajcc8": 37.6,
+    "ata": 28.9,
+    "macis": 37.5,
+    "ages": 100.0,
+    "ames": 100.0
+  },
+  "manuscript": {
+    "n": 10871,
+    "null_surg": 2140,
+    "null_age": 0,
+    "null_sex": 0,
+    "null_race": 9,
+    "eligible": 4136
+  },
+  "operative": {
+    "total": 9371,
+    "rln_mon": 1702,
+    "berry": 0,
+    "frozen": 0,
+    "findings": 588
+  },
+  "imaging": {
+    "total": 19891,
+    "tirads": 19572,
+    "dims": 19891
+  },
+  "rai": {
+    "total": 1857,
+    "with_dose": 761
+  },
+  "recurrence": {
+    "not_applicable": 8885,
+    "unresolved_date": 1764,
+    "biochemical_inflection_inferred": 168,
+    "exact_source_date": 54
+  },
+  "total_tables": 578,
+  "linkage": {
+    "fna_molecular": 100.0,
+    "preop_surgery": 100.0,
+    "surgery_pathology": 100.0,
+    "pathology_rai": 100.0,
+    "imaging_fna": 0.0
+  },
+  "labs": {
+    "patients": 3349,
+    "records": 39961
+  },
+  "complications": {
+    "patients": 2892,
+    "records": 5928
+  },
+  "notes": {
+    "op_note": {
+      "notes": 4680,
+      "patients": 4439
+    },
+    "h_p": {
+      "notes": 4221,
+      "patients": 3999
+    },
+    "other_history": {
+      "notes": 525,
+      "patients": 525
+    },
+    "endocrine_note": {
+      "notes": 519,
+      "patients": 519
+    },
+    "ed_note": {
+      "notes": 498,
+      "patients": 495
+    },
+    "history_summary": {
+      "notes": 249,
+      "patients": 249
+    },
+    "dc_sum": {
+      "notes": 185,
+      "patients": 169
+    },
+    "other_notes": {
+      "notes": 160,
+      "patients": 160
+    }
+  },
+  "entities_staging": {
+    "rows": 3807,
+    "patients": 1639
+  },
+  "entities_genetics": {
+    "rows": 1738,
+    "patients": 605
+  },
+  "entities_procedures": {
+    "rows": 21942,
+    "patients": 4723
+  },
+  "entities_complications": {
+    "rows": 9359,
+    "patients": 2840
+  },
+  "entities_medications": {
+    "rows": 7501,
+    "patients": 2070
+  },
+  "entities_list": {
+    "rows": 11579,
+    "patients": 4037
+  }
+}

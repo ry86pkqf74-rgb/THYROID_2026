@@ -1,0 +1,101 @@
+research_id,recurrence_any,recurrence_flag_structured,recurrence_date_status,recurrence_date_best,recurrence_site_inferred,detection_category,first_surgery_date,histology,tumor_size,ete,n_surgeries,tg_max_value,tg_last_value,tg_measurements,braf_positive,tert_positive,rln_injury_flag,linked_episode_id
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8088,True,True,unresolved_date,,,structural_date_unknown,2020-02-10 00:00:00,metastatic MTC,9.6,x,3,6.4,0.5,4,False,False,1,1
+8482,True,True,unresolved_date,,,structural_date_unknown,2020-11-17 00:00:00,metastatic PTC,1.1,x,3,-1.0,-1.0,0,False,False,,1
+8482,True,True,unresolved_date,,,structural_date_unknown,2020-11-17 00:00:00,metastatic PTC,1.1,x,3,-1.0,-1.0,0,False,False,,1
+8482,True,True,unresolved_date,,,structural_date_unknown,2020-11-17 00:00:00,metastatic PTC,1.1,x,3,-1.0,-1.0,0,False,False,,1
+8482,True,True,unresolved_date,,,structural_date_unknown,2020-11-17 00:00:00,metastatic PTC,1.1,x,3,-1.0,-1.0,0,False,False,,1
+8482,True,True,unresolved_date,,,structural_date_unknown,2020-11-17 00:00:00,metastatic PTC,1.1,x,3,-1.0,-1.0,0,False,False,,1
+8482,True,True,unresolved_date,,,structural_date_unknown,2020-11-17 00:00:00,metastatic PTC,1.1,x,3,-1.0,-1.0,0,False,False,,1
+8482,True,True,unresolved_date,,,structural_date_unknown,2020-11-17 00:00:00,metastatic PTC,1.1,x,3,-1.0,-1.0,0,False,False,,1
+8482,True,True,unresolved_date,,,structural_date_unknown,2020-11-17 00:00:00,metastatic PTC,1.1,x,3,-1.0,-1.0,0,False,False,,1
+8482,True,True,unresolved_date,,,structural_date_unknown,2020-11-17 00:00:00,metastatic PTC,1.1,x,3,-1.0,-1.0,0,False,False,,1
+8661,True,True,unresolved_date,,,structural_date_unknown,2021-02-16 00:00:00,metastatic PTC,1,x,3,2.4,-1.0,11,False,False,,1
+8661,True,True,unresolved_date,,,structural_date_unknown,2021-02-16 00:00:00,metastatic PTC,1,x,3,2.4,-1.0,11,False,False,,1
+8661,True,True,unresolved_date,,,structural_date_unknown,2021-02-16 00:00:00,metastatic PTC,1,x,3,2.4,-1.0,11,False,False,,1
+8661,True,True,unresolved_date,,,structural_date_unknown,2021-02-16 00:00:00,metastatic PTC,1,x,3,2.4,-1.0,11,False,False,,1
+8661,True,True,unresolved_date,,,structural_date_unknown,2021-02-16 00:00:00,metastatic PTC,1,x,3,2.4,-1.0,11,False,False,,1
+8661,True,True,unresolved_date,,,structural_date_unknown,2021-02-16 00:00:00,metastatic PTC,1,x,3,2.4,-1.0,11,False,False,,1
+8661,True,True,unresolved_date,,,structural_date_unknown,2021-02-16 00:00:00,metastatic PTC,1,x,3,2.4,-1.0,11,False,False,,1
+8661,True,True,unresolved_date,,,structural_date_unknown,2021-02-16 00:00:00,metastatic PTC,1,x,3,2.4,-1.0,11,False,False,,1
+10088,True,True,unresolved_date,,,structural_date_unknown,2023-10-23 00:00:00,metastatic PTC,4.3,x,3,-1.0,-1.0,0,False,False,,
+10088,True,True,unresolved_date,,,structural_date_unknown,2023-10-23 00:00:00,metastatic PTC,4.3,x,3,-1.0,-1.0,0,False,False,,
+10088,True,True,unresolved_date,,,structural_date_unknown,2023-10-23 00:00:00,metastatic PTC,4.3,x,3,-1.0,-1.0,0,False,False,,
+10088,True,True,unresolved_date,,,structural_date_unknown,2023-10-23 00:00:00,metastatic PTC,4.3,x,3,-1.0,-1.0,0,False,False,,
+10088,True,True,unresolved_date,,,structural_date_unknown,2023-10-23 00:00:00,metastatic PTC,4.3,x,3,-1.0,-1.0,0,False,False,,
+10088,True,True,unresolved_date,,,structural_date_unknown,2023-10-23 00:00:00,metastatic PTC,4.3,x,3,-1.0,-1.0,0,False,False,,
+10088,True,True,unresolved_date,,,structural_date_unknown,2023-10-23 00:00:00,metastatic PTC,4.3,x,3,-1.0,-1.0,0,False,False,,
+10088,True,True,unresolved_date,,,structural_date_unknown,2023-10-23 00:00:00,metastatic PTC,4.3,x,3,-1.0,-1.0,0,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10157,True,True,unresolved_date,,,structural_date_unknown,2021-10-19 00:00:00,metastatic/recurrent PTC classical,1.6,x,3,0.9,-1.0,8,False,False,,
+10329,True,True,unresolved_date,,,structural_date_unknown,2022-10-19 00:00:00,metastatic PTC,0.7,,3,0.2,0.1,6,True,False,0,
+10329,True,True,unresolved_date,,,structural_date_unknown,2022-10-19 00:00:00,metastatic PTC,0.7,,3,0.2,0.1,6,True,False,0,
+10329,True,True,unresolved_date,,,structural_date_unknown,2022-10-19 00:00:00,metastatic PTC,0.7,,3,0.2,0.1,6,True,False,0,
+10329,True,True,unresolved_date,,,structural_date_unknown,2022-10-19 00:00:00,metastatic PTC,0.7,,3,0.2,0.1,6,True,False,0,
+10329,True,True,unresolved_date,,,structural_date_unknown,2022-10-19 00:00:00,metastatic PTC,0.7,,3,0.2,0.1,6,True,False,0,
+10329,True,True,unresolved_date,,,structural_date_unknown,2022-10-19 00:00:00,metastatic PTC,0.7,,3,0.2,0.1,6,True,False,0,
+10329,True,True,unresolved_date,,,structural_date_unknown,2022-10-19 00:00:00,metastatic PTC,0.7,,3,0.2,0.1,6,True,False,0,
+10329,True,True,unresolved_date,,,structural_date_unknown,2022-10-19 00:00:00,metastatic PTC,0.7,,3,0.2,0.1,6,True,False,0,
+10329,True,True,unresolved_date,,,structural_date_unknown,2022-10-19 00:00:00,metastatic PTC,0.7,,3,0.2,0.1,6,True,False,0,
+10388,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,metastatic PTC,3.8,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),3,-1.0,-1.0,1,False,False,0,
+10388,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,metastatic PTC,3.8,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),3,-1.0,-1.0,1,False,False,0,
+10388,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,metastatic PTC,3.8,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),3,-1.0,-1.0,1,False,False,0,
+10388,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,metastatic PTC,3.8,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),3,-1.0,-1.0,1,False,False,0,
+10388,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,metastatic PTC,3.8,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),3,-1.0,-1.0,1,False,False,0,
+10388,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,metastatic PTC,3.8,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),3,-1.0,-1.0,1,False,False,0,
+10388,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,metastatic PTC,3.8,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),3,-1.0,-1.0,1,False,False,0,
+10388,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,metastatic PTC,3.8,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),3,-1.0,-1.0,1,False,False,0,
+10388,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,metastatic PTC,3.8,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),3,-1.0,-1.0,1,False,False,0,
+10388,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,metastatic PTC,3.8,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),3,-1.0,-1.0,1,False,False,0,
+10388,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,metastatic PTC,3.8,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),3,-1.0,-1.0,1,False,False,0,
+10388,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,metastatic PTC,3.8,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),3,-1.0,-1.0,1,False,False,0,
+10388,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,metastatic PTC,3.8,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),3,-1.0,-1.0,1,False,False,0,
+10388,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,metastatic PTC,3.8,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),3,-1.0,-1.0,1,False,False,0,
+10388,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,metastatic PTC,3.8,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),3,-1.0,-1.0,1,False,False,0,
+10388,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,metastatic PTC,3.8,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),3,-1.0,-1.0,1,False,False,0,
+10388,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,metastatic PTC,3.8,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),3,-1.0,-1.0,1,False,False,0,
+10388,True,True,unresolved_date,,,structural_date_unknown,2020-11-19 00:00:00,metastatic PTC,3.8,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),3,-1.0,-1.0,1,False,False,0,

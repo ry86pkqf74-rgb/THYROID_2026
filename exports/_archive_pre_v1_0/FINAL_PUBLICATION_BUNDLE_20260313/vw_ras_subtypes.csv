@@ -1,0 +1,8 @@
+gene,n_resolved,with_variant,with_af,avg_confidence,resolution_source
+NRAS,10,0,0,0.8499999999999999,nlp_entity_genetics
+NRAS,9,7,4,0.9500000000000001,molecular_testing_text
+HRAS,7,7,5,0.9500000000000001,molecular_testing_text
+KRAS,5,3,3,0.95,molecular_testing_text
+KRAS,1,0,0,0.85,nlp_entity_genetics
+HRAS,1,0,1,0.92,thyroseq_enrichment
+HRAS,1,0,0,0.85,nlp_entity_genetics

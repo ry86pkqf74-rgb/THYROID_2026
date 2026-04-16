@@ -1,0 +1,24 @@
+table_name,col_name,column_exists,checked_at
+patient_analysis_resolved_v1,source_table,True,2026-03-13 10:26:57.190732-04:00
+episode_analysis_resolved_v1_dedup,source_table,True,2026-03-13 10:26:57.190732-04:00
+lesion_analysis_resolved_v1,source_table,True,2026-03-13 10:26:57.190732-04:00
+survival_cohort_enriched,source_table,True,2026-03-13 10:26:57.190732-04:00
+patient_analysis_resolved_v1,source_script,True,2026-03-13 10:26:57.190732-04:00
+episode_analysis_resolved_v1_dedup,source_script,True,2026-03-13 10:26:57.190732-04:00
+lesion_analysis_resolved_v1,source_script,True,2026-03-13 10:26:57.190732-04:00
+survival_cohort_enriched,source_script,True,2026-03-13 10:26:57.190732-04:00
+patient_analysis_resolved_v1,provenance_note,True,2026-03-13 10:26:57.190732-04:00
+episode_analysis_resolved_v1_dedup,provenance_note,True,2026-03-13 10:26:57.190732-04:00
+lesion_analysis_resolved_v1,provenance_note,True,2026-03-13 10:26:57.190732-04:00
+survival_cohort_enriched,provenance_note,True,2026-03-13 10:26:57.190732-04:00
+patient_analysis_resolved_v1,resolved_layer_version,True,2026-03-13 10:26:57.190732-04:00
+episode_analysis_resolved_v1_dedup,resolved_layer_version,True,2026-03-13 10:26:57.190732-04:00
+lesion_analysis_resolved_v1,resolved_layer_version,True,2026-03-13 10:26:57.190732-04:00
+survival_cohort_enriched,resolved_layer_version,True,2026-03-13 10:26:57.190732-04:00
+survival_cohort_enriched,source_table,True,2026-03-13 10:26:57.190732-04:00
+patient_analysis_resolved_v1,source_script,True,2026-03-13 10:26:57.190732-04:00
+survival_cohort_enriched,source_script,True,2026-03-13 10:26:57.190732-04:00
+survival_cohort_enriched,provenance_note,True,2026-03-13 10:26:57.190732-04:00
+patient_analysis_resolved_v1,resolved_layer_version,True,2026-03-13 10:26:57.190732-04:00
+episode_analysis_resolved_v1_dedup,resolved_layer_version,True,2026-03-13 10:26:57.190732-04:00
+lesion_analysis_resolved_v1,resolved_layer_version,True,2026-03-13 10:26:57.190732-04:00

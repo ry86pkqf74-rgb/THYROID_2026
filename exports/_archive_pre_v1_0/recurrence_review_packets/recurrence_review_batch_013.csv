@@ -1,0 +1,101 @@
+research_id,recurrence_any,recurrence_flag_structured,recurrence_date_status,recurrence_date_best,recurrence_site_inferred,detection_category,first_surgery_date,histology,tumor_size,ete,n_surgeries,tg_max_value,tg_last_value,tg_measurements,braf_positive,tert_positive,rln_injury_flag,linked_episode_id
+7525,True,True,unresolved_date,,,structural_date_unknown,2019-08-02 00:00:00,PTC,2.8,x,1,0.3,0.1,16,False,False,,1
+7550,True,True,unresolved_date,,,structural_date_unknown,2019-08-16 00:00:00,metastatic PTC,,,1,13.1,13.1,2,False,False,0,1
+7561,True,True,unresolved_date,,,structural_date_unknown,2019-08-22 00:00:00,PTC,5.9,x,1,2.8,0.1,18,False,False,,1
+7573,True,True,unresolved_date,,,structural_date_unknown,2019-08-27 00:00:00,PTC,2.6,x,1,33.2,-1.0,7,False,False,,1
+7581,True,True,unresolved_date,,,structural_date_unknown,2019-08-30 00:00:00,PTC,0.5,x,1,-1.0,-1.0,0,False,False,,1
+7589,True,True,unresolved_date,,,structural_date_unknown,2019-09-05 00:00:00,PTC,1,x,1,-1.0,-1.0,0,False,False,,1
+7625,True,True,unresolved_date,,,structural_date_unknown,2019-09-18 00:00:00,PTC,1.3,x,1,-1.0,-1.0,0,False,False,,1
+7631,True,True,unresolved_date,,,structural_date_unknown,2019-09-19 00:00:00,PTC,1.2,x,1,-1.0,-1.0,0,False,False,,1
+7639,True,True,unresolved_date,,,structural_date_unknown,2019-09-25 00:00:00,PTC,2.5,x,1,0.1,0.1,2,False,False,,1
+7646,True,True,unresolved_date,,,structural_date_unknown,2019-09-26 00:00:00,PTC,2,x,1,-1.0,-1.0,0,False,False,,1
+7648,True,True,unresolved_date,,,structural_date_unknown,2019-09-27 00:00:00,PTC,2.2,x,1,2.0,-1.0,36,False,False,,1
+7652,True,True,unresolved_date,,,structural_date_unknown,2019-09-30 00:00:00,anaplastic carcinoma,6,present,1,-1.0,-1.0,0,False,False,,1
+7654,True,True,unresolved_date,,,structural_date_unknown,2019-10-01 00:00:00,PTC,2.5,x,1,0.1,-1.0,19,False,False,,1
+7660,True,True,unresolved_date,,,structural_date_unknown,2019-10-01 00:00:00,PTC,2.4,x,1,-1.0,-1.0,0,False,False,,1
+7661,True,True,unresolved_date,,,structural_date_unknown,2019-10-01 00:00:00,PTC,0.8,x,1,-1.0,-1.0,0,False,False,0,1
+7665,True,True,unresolved_date,,,structural_date_unknown,2019-10-03 00:00:00,pooly differentiated thyroid carcinoma,4.5,x,1,8327.0,-1.0,23,False,False,,1
+7667,True,True,unresolved_date,,,structural_date_unknown,2019-10-03 00:00:00,PTC,4.9,x,1,-1.0,-1.0,0,True,False,,1
+7669,True,True,unresolved_date,,,structural_date_unknown,2019-10-04 00:00:00,follicular carcinoma,4.3,x,1,0.1,-1.0,20,False,False,,1
+7675,True,True,unresolved_date,,,structural_date_unknown,2019-10-08 00:00:00,poorly differentiated thyroid carcinoma,6,microscopic,1,-1.0,-1.0,13,True,False,,1
+7680,True,True,unresolved_date,,,structural_date_unknown,2019-10-08 00:00:00,PTC,0.9,x,1,-1.0,-1.0,0,False,False,,1
+7682,True,True,unresolved_date,,,structural_date_unknown,2019-10-09 00:00:00,PTC,3.3,x,1,-1.0,-1.0,0,True,False,0,1
+7687,True,True,unresolved_date,,,structural_date_unknown,2019-10-10 00:00:00,PTC,1.4,x,1,9.9,0.2,11,False,False,,1
+7688,True,True,unresolved_date,,,structural_date_unknown,2019-10-10 00:00:00,PTC,4,x,1,-1.0,-1.0,0,False,False,,1
+7689,True,True,unresolved_date,,,structural_date_unknown,2019-10-11 00:00:00,PTC,0.9,x,1,1.0,0.4,14,False,False,,1
+7693,True,True,unresolved_date,,,structural_date_unknown,2019-10-15 00:00:00,PTC,1.4,x,1,-1.0,-1.0,0,False,False,,1
+7694,True,True,unresolved_date,,,structural_date_unknown,2019-10-15 00:00:00,PTC,0.2,x,1,-1.0,-1.0,0,True,False,,1
+7695,True,True,unresolved_date,,,structural_date_unknown,2019-10-15 00:00:00,PTC,0.2,x,1,-1.0,-1.0,0,False,False,,1
+7696,True,True,unresolved_date,,,structural_date_unknown,2019-10-15 00:00:00,follicular adenoma,6,,1,-1.0,-1.0,0,False,False,,1
+7700,True,True,unresolved_date,,,structural_date_unknown,2019-10-16 00:00:00,PTC,3.6,x,1,-1.0,-1.0,0,False,False,,1
+7701,True,True,unresolved_date,,,structural_date_unknown,2019-10-16 00:00:00,PTC,0.5,x,1,-1.0,-1.0,0,False,False,,1
+7705,True,True,unresolved_date,,,structural_date_unknown,2019-10-17 00:00:00,PTC,1,x,1,-1.0,-1.0,0,False,False,,1
+7706,True,True,unresolved_date,,,structural_date_unknown,2019-10-17 00:00:00,PTC,2.3,x,1,-1.0,-1.0,0,False,False,,1
+7708,True,True,unresolved_date,,,structural_date_unknown,2019-10-18 00:00:00,PTC,0.1,x,1,-1.0,-1.0,0,False,False,,1
+7709,True,True,unresolved_date,,,structural_date_unknown,2019-10-18 00:00:00,PTC,1.2,x,1,4.0,0.1,10,False,False,,1
+7712,True,True,unresolved_date,,,structural_date_unknown,2019-10-22 00:00:00,PTC,3.6,x,1,-1.0,-1.0,3,False,False,,1
+7714,True,True,unresolved_date,,,structural_date_unknown,2019-10-22 00:00:00,PTC,3,x,1,-1.0,-1.0,0,False,False,,1
+7718,True,True,unresolved_date,,,structural_date_unknown,2019-10-23 00:00:00,PTC,0.26,x,1,-1.0,-1.0,0,False,False,,1
+7722,True,True,unresolved_date,,,structural_date_unknown,2019-10-24 00:00:00,PTC,0.2,x,1,-1.0,-1.0,0,False,False,,1
+7723,True,True,unresolved_date,,,structural_date_unknown,2019-10-24 00:00:00,PTC,0.1,x,1,-1.0,-1.0,0,False,False,,1
+7724,True,True,unresolved_date,,,structural_date_unknown,2019-10-25 00:00:00,metastatic PTC classical,,,1,0.2,-1.0,6,False,False,,1
+7730,True,True,unresolved_date,,,structural_date_unknown,2019-10-29 00:00:00,PTC,4.5,present,1,-1.0,-1.0,0,False,False,,1
+7733,True,True,unresolved_date,,,structural_date_unknown,2019-10-30 00:00:00,PTC,1.9,x,1,-1.0,-1.0,14,False,False,,1
+7737,True,True,unresolved_date,,,structural_date_unknown,2019-10-31 00:00:00,PTC,1.4,x,1,-1.0,-1.0,0,False,False,,1
+7738,True,True,unresolved_date,,,structural_date_unknown,2019-10-31 00:00:00,PTC ,2.2,x,1,-1.0,-1.0,0,False,False,,1
+7740,True,True,unresolved_date,,,structural_date_unknown,2019-11-01 00:00:00,PTC,1.9,x,1,0.9,0.5,8,False,False,,1
+7748,True,True,unresolved_date,,,structural_date_unknown,2019-11-05 00:00:00,PTC,1.9,x,1,13.0,-1.0,11,True,False,,1
+7752,True,True,unresolved_date,,,structural_date_unknown,2019-11-05 00:00:00,PTC,2,x,1,-1.0,-1.0,0,False,False,0,1
+7753,True,True,unresolved_date,,,structural_date_unknown,2019-11-05 00:00:00,PTC,0.9,x,1,-1.0,-1.0,0,False,False,,1
+7756,True,True,unresolved_date,,,structural_date_unknown,2019-11-06 00:00:00,MTC,1.2,x,1,-1.0,-1.0,0,False,False,,1
+7767,True,True,unresolved_date,,,structural_date_unknown,2019-11-14 00:00:00,PTC,1.6,x,1,-1.0,-1.0,0,False,False,,1
+7768,True,True,unresolved_date,,,structural_date_unknown,2019-11-14 00:00:00,PTC,6,x,1,0.1,0.1,2,False,False,,1
+7771,True,True,unresolved_date,,,structural_date_unknown,2019-11-14 00:00:00,PTC,1.4,microscopic,1,-1.0,-1.0,0,False,False,,1
+7775,True,True,unresolved_date,,,structural_date_unknown,2019-11-15 00:00:00,PTC,1.2,x,1,59.4,59.4,2,False,False,,1
+7777,True,True,unresolved_date,,,structural_date_unknown,2019-11-15 00:00:00,PTC,1.7,indeterminate,1,-1.0,-1.0,0,False,False,,1
+7783,True,True,unresolved_date,,,structural_date_unknown,2019-11-19 00:00:00,PTC,1.6,x,1,-1.0,-1.0,0,True,False,,1
+7784,True,True,unresolved_date,,,structural_date_unknown,2019-11-19 00:00:00,PTC,2.6,minimal,1,-1.0,-1.0,0,False,False,,1
+7795,True,True,unresolved_date,,,structural_date_unknown,2019-11-22 00:00:00,PTC,0.6,x,1,0.2,0.1,5,True,False,,1
+7798,True,True,unresolved_date,,,structural_date_unknown,2019-11-25 00:00:00,PTC,1.6,x,1,-1.0,-1.0,0,False,False,,1
+7802,True,True,unresolved_date,,,structural_date_unknown,2019-11-26 00:00:00,PTC,1.9,x,1,-1.0,-1.0,0,False,False,,1
+7805,True,True,unresolved_date,,,structural_date_unknown,2019-11-27 00:00:00,PTC,1.9,microscopic,1,1.8,-1.0,26,False,False,,1
+7806,True,True,unresolved_date,,,structural_date_unknown,2019-12-02 00:00:00,PTC,1.6,x,1,-1.0,-1.0,0,False,False,,1
+7809,True,True,unresolved_date,,,structural_date_unknown,2019-12-03 00:00:00,poorly differentiated thyroid carcinoma,8,x,1,0.4,0.1,18,False,False,,1
+7810,True,True,unresolved_date,,,structural_date_unknown,2019-12-03 00:00:00,PTC,2.9,x,1,0.1,-1.0,22,False,False,,1
+7813,True,True,unresolved_date,,,structural_date_unknown,2019-12-03 00:00:00,PTC,2.9,x,1,-1.0,-1.0,0,True,False,,1
+7814,True,True,unresolved_date,,,structural_date_unknown,2019-12-03 00:00:00,PTC ,0.05,x,1,-1.0,-1.0,0,False,False,,1
+7819,True,True,unresolved_date,,,structural_date_unknown,2019-12-04 00:00:00,PTC,2.4,x,1,2.5,-1.0,5,False,False,,1
+7820,True,True,unresolved_date,,,structural_date_unknown,2019-12-04 00:00:00,PTC,1.3,x,1,-1.0,-1.0,0,False,False,,1
+7833,True,True,unresolved_date,,,structural_date_unknown,2019-12-06 00:00:00,PTC,3.7,x,1,1.9,-1.0,16,False,False,,1
+7834,True,True,unresolved_date,,,structural_date_unknown,2019-12-06 00:00:00,PTC,2.3,x,1,118.9,53.0,7,False,False,,1
+7838,True,True,unresolved_date,,,structural_date_unknown,2019-12-10 00:00:00,PTC,0.3,x,1,-1.0,-1.0,0,False,False,,1
+7840,True,True,unresolved_date,,,structural_date_unknown,2019-12-10 00:00:00,PTC,3.2,x,1,0.1,-1.0,14,False,False,,1
+7845,True,True,unresolved_date,,,structural_date_unknown,2019-12-10 00:00:00,PTC ,1.4,x,1,-1.0,-1.0,0,False,False,,1
+7855,True,True,unresolved_date,,,structural_date_unknown,2019-12-12 00:00:00,PTC,1.1,x,1,-1.0,-1.0,0,False,False,,1
+7858,True,True,unresolved_date,,,structural_date_unknown,2019-12-13 00:00:00,PTC,2,extensive,1,8.0,0.2,18,False,False,,1
+7860,True,True,unresolved_date,,,structural_date_unknown,2019-12-16 00:00:00,PTC,3.5,x,1,1.6,-1.0,23,False,False,,1
+7865,True,True,unresolved_date,,,structural_date_unknown,2019-12-17 00:00:00,PTC,1.5,x,1,-1.0,-1.0,0,False,False,,1
+7870,True,True,unresolved_date,,,structural_date_unknown,2019-12-18 00:00:00,PTC,3.3,x,1,-1.0,-1.0,1,False,False,,1
+7872,True,True,unresolved_date,,,structural_date_unknown,2019-12-18 00:00:00,PTC,1.7,x,1,2.3,0.1,15,False,False,,1
+7878,True,True,unresolved_date,,,structural_date_unknown,2019-12-20 00:00:00,PTC,2.6,x,1,-1.0,-1.0,0,False,False,,1
+7879,True,True,unresolved_date,,,structural_date_unknown,2019-12-20 00:00:00,PTC,0.1,x,1,-1.0,-1.0,0,False,False,,1
+7880,True,True,unresolved_date,,,structural_date_unknown,2019-12-20 00:00:00,PTC ,1.4,x,1,6.9,0.4,4,False,False,,1
+7883,True,True,unresolved_date,,,structural_date_unknown,2019-12-23 00:00:00,PTC,6,x,1,30.2,-1.0,7,False,False,,1
+7884,True,True,unresolved_date,,,structural_date_unknown,2019-12-23 00:00:00,PTC,0.4,x,1,2.7,0.3,12,False,False,,1
+7892,True,True,unresolved_date,,,structural_date_unknown,2020-01-03 00:00:00,PTC,2,x,1,52.6,52.6,2,False,False,,1
+7893,True,True,unresolved_date,,,structural_date_unknown,2020-01-03 00:00:00,PTC,0.1,x,1,6.6,-1.0,4,False,False,,1
+7906,True,True,unresolved_date,,,structural_date_unknown,2020-01-10 00:00:00,follicular carcinoma,2.6,x,1,0.7,0.1,14,False,False,,1
+7907,True,True,unresolved_date,,,structural_date_unknown,2020-01-10 00:00:00,PTC,3.7,microscopic,1,14.5,4.8,8,False,False,,1
+7911,True,True,unresolved_date,,,structural_date_unknown,2020-01-13 00:00:00,PTC,0.4,x,1,0.2,0.2,2,False,False,,1
+7912,True,True,unresolved_date,,,structural_date_unknown,2020-01-13 00:00:00,PTC,0.4,x,1,-1.0,-1.0,0,False,False,,1
+7921,True,True,unresolved_date,,,structural_date_unknown,2020-01-15 00:00:00,MTC,1,x,1,-1.0,-1.0,0,False,False,,1
+7922,True,True,unresolved_date,,,structural_date_unknown,2020-01-15 00:00:00,PTC,1.6,x,1,-1.0,-1.0,0,False,False,,1
+7923,True,True,unresolved_date,,,structural_date_unknown,2020-01-16 00:00:00,PTC,4,x,1,-1.0,-1.0,0,False,True,,1
+7925,True,True,unresolved_date,,,structural_date_unknown,2020-01-16 00:00:00,PTC,0.2,microscopic,1,-1.0,-1.0,0,False,False,,1
+7927,True,True,unresolved_date,,,structural_date_unknown,2020-01-17 00:00:00,PTC,0.45,x,1,-1.0,-1.0,0,False,False,,1
+7932,True,True,unresolved_date,,,structural_date_unknown,2020-01-21 00:00:00,PTC,3,x,1,-1.0,-1.0,17,False,False,,1
+7933,True,True,unresolved_date,,,structural_date_unknown,2020-01-21 00:00:00,Poorly differentiated thyroid carcinoma,4.5,present,1,73.5,-1.0,30,False,False,,1
+7939,True,True,unresolved_date,,,structural_date_unknown,2020-01-23 00:00:00,PTC,1.7,microscopic,1,-1.0,-1.0,0,False,False,,1
+7941,True,True,unresolved_date,,,structural_date_unknown,2020-01-23 00:00:00,PTC,2,present,1,-1.0,-1.0,0,False,False,,1
+7948,True,True,unresolved_date,,,structural_date_unknown,2020-01-28 00:00:00,PTC,5.2,x,1,-1.0,-1.0,0,False,False,,1
+7952,True,True,unresolved_date,,,structural_date_unknown,2020-01-29 00:00:00,PTC,1.4,x,1,-1.0,-1.0,0,False,False,,1

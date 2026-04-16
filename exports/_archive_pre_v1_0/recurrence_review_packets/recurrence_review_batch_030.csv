@@ -1,0 +1,109 @@
+research_id,recurrence_any,recurrence_flag_structured,recurrence_date_status,recurrence_date_best,recurrence_site_inferred,detection_category,first_surgery_date,histology,tumor_size,ete,n_surgeries,tg_max_value,tg_last_value,tg_measurements,braf_positive,tert_positive,rln_injury_flag,linked_episode_id
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+10952,True,True,exact_source_date,2023-11-09,,structural_confirmed,2023-08-29 00:00:00,metastatic PTC,1.5,present,3,15.5,-1.0,8,False,False,0,
+4287,True,True,exact_source_date,2021-05-18,,structural_confirmed,2014-02-05 00:00:00,metastatic PTC,9,minimal,2,96.2,-1.0,57,False,False,1,1
+4287,True,True,exact_source_date,2021-05-18,,structural_confirmed,2014-02-05 00:00:00,metastatic PTC,9,minimal,2,96.2,-1.0,57,False,False,1,1
+4287,True,True,exact_source_date,2021-05-18,,structural_confirmed,2014-02-05 00:00:00,metastatic PTC,9,minimal,2,96.2,-1.0,57,False,False,1,1
+4287,True,True,exact_source_date,2021-05-18,,structural_confirmed,2014-02-05 00:00:00,metastatic PTC,9,minimal,2,96.2,-1.0,57,False,False,1,1
+4287,True,True,exact_source_date,2021-05-18,,structural_confirmed,2014-02-05 00:00:00,metastatic PTC,9,minimal,2,96.2,-1.0,57,False,False,1,1
+4287,True,True,exact_source_date,2021-05-18,,structural_confirmed,2014-02-05 00:00:00,metastatic PTC,9,minimal,2,96.2,-1.0,57,False,False,1,1
+4287,True,True,exact_source_date,2021-05-18,,structural_confirmed,2014-02-05 00:00:00,metastatic PTC,9,minimal,2,96.2,-1.0,57,False,False,1,1
+4287,True,True,exact_source_date,2021-05-18,,structural_confirmed,2014-02-05 00:00:00,metastatic PTC,9,minimal,2,96.2,-1.0,57,False,False,1,1
+4649,True,True,exact_source_date,2022-11-01,,structural_confirmed,2014-11-12 00:00:00,PTC,1.6,x,2,-1.0,-1.0,5,False,False,,1
+4788,True,True,exact_source_date,2015-04-08,,structural_confirmed,2015-03-19 00:00:00,PTC,1.2,x,2,41.8,0.3,40,False,False,,1
+4914,True,True,exact_source_date,2019-07-30,,structural_confirmed,2015-06-24 00:00:00,metastatic PTC,2.8,minimal,2,16.2,0.1,7,False,False,,1
+4914,True,True,exact_source_date,2019-07-30,,structural_confirmed,2015-06-24 00:00:00,metastatic PTC,2.8,minimal,2,16.2,0.1,7,False,False,,1
+4914,True,True,exact_source_date,2019-07-30,,structural_confirmed,2015-06-24 00:00:00,metastatic PTC,2.8,minimal,2,16.2,0.1,7,False,False,,1
+4914,True,True,exact_source_date,2019-07-30,,structural_confirmed,2015-06-24 00:00:00,metastatic PTC,2.8,minimal,2,16.2,0.1,7,False,False,,1
+4914,True,True,exact_source_date,2019-07-30,,structural_confirmed,2015-06-24 00:00:00,metastatic PTC,2.8,minimal,2,16.2,0.1,7,False,False,,1
+4914,True,True,exact_source_date,2019-07-30,,structural_confirmed,2015-06-24 00:00:00,metastatic PTC,2.8,minimal,2,16.2,0.1,7,False,False,,1
+4914,True,True,exact_source_date,2019-07-30,,structural_confirmed,2015-06-24 00:00:00,metastatic PTC,2.8,minimal,2,16.2,0.1,7,False,False,,1
+4914,True,True,exact_source_date,2019-07-30,,structural_confirmed,2015-06-24 00:00:00,metastatic PTC,2.8,minimal,2,16.2,0.1,7,False,False,,1
+5859,True,True,exact_source_date,2020-11-25,,structural_confirmed,2017-03-10 00:00:00,PTC,9.3,x,2,0.2,-1.0,26,False,False,,1
+6674,True,True,exact_source_date,2018-07-25,,structural_confirmed,2018-06-21 00:00:00,PTC,1.4,x,2,0.3,0.1,18,False,False,,1
+6814,True,True,exact_source_date,2024-09-16,,structural_confirmed,2018-09-17 00:00:00,PTC,1.5,x,2,62.9,-1.0,46,False,False,,1
+6814,True,True,exact_source_date,2024-09-16,,structural_confirmed,2018-09-17 00:00:00,PTC,1.5,x,2,62.9,-1.0,46,False,False,,1
+6814,True,True,exact_source_date,2024-09-16,,structural_confirmed,2018-09-17 00:00:00,PTC,1.5,x,2,62.9,-1.0,46,False,False,,1
+6814,True,True,exact_source_date,2024-09-16,,structural_confirmed,2018-09-17 00:00:00,PTC,1.5,x,2,62.9,-1.0,46,False,False,,1
+6814,True,True,exact_source_date,2024-09-16,,structural_confirmed,2018-09-17 00:00:00,PTC,1.5,x,2,62.9,-1.0,46,False,False,,1
+6814,True,True,exact_source_date,2024-09-16,,structural_confirmed,2018-09-17 00:00:00,PTC,1.5,x,2,62.9,-1.0,46,False,False,,1
+6814,True,True,exact_source_date,2024-09-16,,structural_confirmed,2018-09-17 00:00:00,PTC,1.5,x,2,62.9,-1.0,46,False,False,,1
+6814,True,True,exact_source_date,2024-09-16,,structural_confirmed,2018-09-17 00:00:00,PTC,1.5,x,2,62.9,-1.0,46,False,False,,1
+7087,True,True,exact_source_date,2022-02-18,,structural_confirmed,2019-01-24 00:00:00,metastatic PTC tall cell variant,4.6,microscopic,2,42.0,-1.0,29,False,False,,1
+7087,True,True,exact_source_date,2022-02-18,,structural_confirmed,2019-01-24 00:00:00,metastatic PTC tall cell variant,4.6,microscopic,2,42.0,-1.0,29,False,False,,1
+7087,True,True,exact_source_date,2022-02-18,,structural_confirmed,2019-01-24 00:00:00,metastatic PTC tall cell variant,4.6,microscopic,2,42.0,-1.0,29,False,False,,1
+7087,True,True,exact_source_date,2022-02-18,,structural_confirmed,2019-01-24 00:00:00,metastatic PTC tall cell variant,4.6,microscopic,2,42.0,-1.0,29,False,False,,1
+7087,True,True,exact_source_date,2022-02-18,,structural_confirmed,2019-01-24 00:00:00,metastatic PTC tall cell variant,4.6,microscopic,2,42.0,-1.0,29,False,False,,1
+7087,True,True,exact_source_date,2022-02-18,,structural_confirmed,2019-01-24 00:00:00,metastatic PTC tall cell variant,4.6,microscopic,2,42.0,-1.0,29,False,False,,1
+7087,True,True,exact_source_date,2022-02-18,,structural_confirmed,2019-01-24 00:00:00,metastatic PTC tall cell variant,4.6,microscopic,2,42.0,-1.0,29,False,False,,1
+7087,True,True,exact_source_date,2022-02-18,,structural_confirmed,2019-01-24 00:00:00,metastatic PTC tall cell variant,4.6,microscopic,2,42.0,-1.0,29,False,False,,1
+8183,True,True,exact_source_date,2020-08-10,,structural_confirmed,2020-06-26 00:00:00,poorly differentiated thyroid carcinoma,5.4,x,2,47.0,0.9,19,False,False,,1
+8183,True,True,exact_source_date,2020-08-10,,structural_confirmed,2020-06-26 00:00:00,poorly differentiated thyroid carcinoma,5.4,x,2,47.0,0.9,19,False,False,,1
+8183,True,True,exact_source_date,2020-08-10,,structural_confirmed,2020-06-26 00:00:00,poorly differentiated thyroid carcinoma,5.4,x,2,47.0,0.9,19,False,False,,1
+8183,True,True,exact_source_date,2020-08-10,,structural_confirmed,2020-06-26 00:00:00,poorly differentiated thyroid carcinoma,5.4,x,2,47.0,0.9,19,False,False,,1
+8183,True,True,exact_source_date,2020-08-10,,structural_confirmed,2020-06-26 00:00:00,poorly differentiated thyroid carcinoma,5.4,x,2,47.0,0.9,19,False,False,,1
+8183,True,True,exact_source_date,2020-08-10,,structural_confirmed,2020-06-26 00:00:00,poorly differentiated thyroid carcinoma,5.4,x,2,47.0,0.9,19,False,False,,1
+8183,True,True,exact_source_date,2020-08-10,,structural_confirmed,2020-06-26 00:00:00,poorly differentiated thyroid carcinoma,5.4,x,2,47.0,0.9,19,False,False,,1
+8183,True,True,exact_source_date,2020-08-10,,structural_confirmed,2020-06-26 00:00:00,poorly differentiated thyroid carcinoma,5.4,x,2,47.0,0.9,19,False,False,,1
+10141,True,True,exact_source_date,1960-09-18,,structural_confirmed,2020-02-05 00:00:00,"metastatic PTC
+classic subtype with tall cell component ~25%",2.8,x,2,-1.0,-1.0,0,False,False,,
+10141,True,True,exact_source_date,1960-09-18,,structural_confirmed,2020-02-05 00:00:00,"metastatic PTC
+classic subtype with tall cell component ~25%",2.8,x,2,-1.0,-1.0,0,False,False,,
+10141,True,True,exact_source_date,1960-09-18,,structural_confirmed,2020-02-05 00:00:00,"metastatic PTC
+classic subtype with tall cell component ~25%",2.8,x,2,-1.0,-1.0,0,False,False,,
+10141,True,True,exact_source_date,1960-09-18,,structural_confirmed,2020-02-05 00:00:00,"metastatic PTC
+classic subtype with tall cell component ~25%",2.8,x,2,-1.0,-1.0,0,False,False,,
+10141,True,True,exact_source_date,1960-09-18,,structural_confirmed,2020-02-05 00:00:00,"metastatic PTC
+classic subtype with tall cell component ~25%",2.8,x,2,-1.0,-1.0,0,False,False,,
+10141,True,True,exact_source_date,1960-09-18,,structural_confirmed,2020-02-05 00:00:00,"metastatic PTC
+classic subtype with tall cell component ~25%",2.8,x,2,-1.0,-1.0,0,False,False,,
+10141,True,True,exact_source_date,1960-09-18,,structural_confirmed,2020-02-05 00:00:00,"metastatic PTC
+classic subtype with tall cell component ~25%",2.8,x,2,-1.0,-1.0,0,False,False,,
+10141,True,True,exact_source_date,1960-09-18,,structural_confirmed,2020-02-05 00:00:00,"metastatic PTC
+classic subtype with tall cell component ~25%",2.8,x,2,-1.0,-1.0,0,False,False,,
+10165,True,True,exact_source_date,2023-12-13,,structural_confirmed,2022-10-10 00:00:00,metastatic PTC,,,2,13.0,4.9,16,False,False,,
+10165,True,True,exact_source_date,2023-12-13,,structural_confirmed,2022-10-10 00:00:00,metastatic PTC,,,2,13.0,4.9,16,False,False,,
+10165,True,True,exact_source_date,2023-12-13,,structural_confirmed,2022-10-10 00:00:00,metastatic PTC,,,2,13.0,4.9,16,False,False,,
+10165,True,True,exact_source_date,2023-12-13,,structural_confirmed,2022-10-10 00:00:00,metastatic PTC,,,2,13.0,4.9,16,False,False,,
+10165,True,True,exact_source_date,2023-12-13,,structural_confirmed,2022-10-10 00:00:00,metastatic PTC,,,2,13.0,4.9,16,False,False,,
+10165,True,True,exact_source_date,2023-12-13,,structural_confirmed,2022-10-10 00:00:00,metastatic PTC,,,2,13.0,4.9,16,False,False,,
+10165,True,True,exact_source_date,2023-12-13,,structural_confirmed,2022-10-10 00:00:00,metastatic PTC,,,2,13.0,4.9,16,False,False,,
+10165,True,True,exact_source_date,2023-12-13,,structural_confirmed,2022-10-10 00:00:00,metastatic PTC,,,2,13.0,4.9,16,False,False,,
+10286,True,True,exact_source_date,2023-09-13,,structural_confirmed,2023-02-02 00:00:00,metastatic PTC classical,3.3,present,2,-1.0,-1.0,2,True,False,,
+10286,True,True,exact_source_date,2023-09-13,,structural_confirmed,2023-02-02 00:00:00,metastatic PTC classical,3.3,present,2,-1.0,-1.0,2,True,False,,
+10286,True,True,exact_source_date,2023-09-13,,structural_confirmed,2023-02-02 00:00:00,metastatic PTC classical,3.3,present,2,-1.0,-1.0,2,True,False,,
+10286,True,True,exact_source_date,2023-09-13,,structural_confirmed,2023-02-02 00:00:00,metastatic PTC classical,3.3,present,2,-1.0,-1.0,2,True,False,,
+10286,True,True,exact_source_date,2023-09-13,,structural_confirmed,2023-02-02 00:00:00,metastatic PTC classical,3.3,present,2,-1.0,-1.0,2,True,False,,
+10286,True,True,exact_source_date,2023-09-13,,structural_confirmed,2023-02-02 00:00:00,metastatic PTC classical,3.3,present,2,-1.0,-1.0,2,True,False,,
+10286,True,True,exact_source_date,2023-09-13,,structural_confirmed,2023-02-02 00:00:00,metastatic PTC classical,3.3,present,2,-1.0,-1.0,2,True,False,,
+10286,True,True,exact_source_date,2023-09-13,,structural_confirmed,2023-02-02 00:00:00,metastatic PTC classical,3.3,present,2,-1.0,-1.0,2,True,False,,
+11075,True,True,exact_source_date,2024-04-12,,structural_confirmed,2024-04-12 00:00:00,metastatic PTC tall cell variant,6.8,x,2,13.5,-1.0,6,False,False,,
+11075,True,True,exact_source_date,2024-04-12,,structural_confirmed,2024-04-12 00:00:00,metastatic PTC tall cell variant,6.8,x,2,13.5,-1.0,6,False,False,,
+11075,True,True,exact_source_date,2024-04-12,,structural_confirmed,2024-04-12 00:00:00,metastatic PTC tall cell variant,6.8,x,2,13.5,-1.0,6,False,False,,
+11075,True,True,exact_source_date,2024-04-12,,structural_confirmed,2024-04-12 00:00:00,metastatic PTC tall cell variant,6.8,x,2,13.5,-1.0,6,False,False,,
+2210,True,True,exact_source_date,2020-10-12,,structural_confirmed,2020-10-12 00:00:00,MTC,2.7,present,1,-1.0,-1.0,2,False,False,,1
+4668,True,True,exact_source_date,2023-07-07,,structural_confirmed,2014-12-05 00:00:00,PTC,3.1,minimal,1,175.9,-1.0,22,False,False,0,1
+5131,True,True,exact_source_date,2018-07-25,,structural_confirmed,2015-11-23 00:00:00,PTC,0.9,x,1,12.4,0.7,9,True,False,0,1
+5490,True,True,exact_source_date,2016-08-10,,structural_confirmed,2016-08-10 00:00:00,follicular carcinoma,3.5,x,1,12.8,3.1,12,False,False,,1
+5624,True,True,exact_source_date,2018-12-17,,structural_confirmed,2016-11-03 00:00:00,PTC,2.5,x,1,30.7,0.1,25,False,False,0,1
+5656,True,True,exact_source_date,2018-10-12,,structural_confirmed,2016-11-17 00:00:00,PTC ,4.1,x,1,0.2,-1.0,32,False,False,,1

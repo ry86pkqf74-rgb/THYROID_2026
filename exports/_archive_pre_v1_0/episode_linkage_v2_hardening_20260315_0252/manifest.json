@@ -1,0 +1,13 @@
+{
+  "script": "100_episode_linkage_v2_hardening.py",
+  "timestamp": "20260315_0252",
+  "env": "prod",
+  "docs": [
+    "/Users/ros/THyroid 2026/THYROID_2026/docs/episode_linkage_v2_hardening_20260315.md",
+    "/Users/ros/THyroid 2026/THYROID_2026/docs/episode_linkage_before_after_20260315.md",
+    "/Users/ros/THyroid 2026/THYROID_2026/docs/episode_linkage_nonregression_v2_20260315.md"
+  ],
+  "exports": [
+    "/Users/ros/THyroid 2026/THYROID_2026/exports/episode_linkage_v2_hardening_20260315_0252/linkage_v2_metrics.json"
+  ]
+}

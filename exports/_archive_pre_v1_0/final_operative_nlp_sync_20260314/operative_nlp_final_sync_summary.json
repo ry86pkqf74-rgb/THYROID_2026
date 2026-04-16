@@ -1,0 +1,53 @@
+{
+  "script": "86",
+  "timestamp": "2026-03-15T00:56:24.093658+00:00",
+  "dry_run": false,
+  "root_cause": "episode_analysis_resolved_v1 copied only 5/12 NLP fields from operative_episode_detail_v2; patient tables had no raw NLP operative fields",
+  "phases_run": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J"
+  ],
+  "episode_total": 9575,
+  "episode_dedup_total": 9368,
+  "patient_total": 10871,
+  "manuscript_total": 10871,
+  "episode_fields_added": {
+    "parathyroid_autograft_flag": 0,
+    "local_invasion_flag": 0,
+    "tracheal_involvement_flag": 0,
+    "esophageal_involvement_flag": 0,
+    "strap_muscle_involvement_flag": 0,
+    "reoperative_field_flag": 0,
+    "operative_findings_raw": 0
+  },
+  "patient_fields_added": {
+    "op_rln_monitoring_any": 0,
+    "op_drain_placed_any": 0,
+    "op_strap_muscle_any": 0,
+    "op_reoperative_any": 0,
+    "op_parathyroid_autograft_any": 0,
+    "op_local_invasion_any": 0,
+    "op_tracheal_inv_any": 0,
+    "op_esophageal_inv_any": 0,
+    "op_intraop_gross_ete_any": 0,
+    "op_n_surgeries_with_findings": 0,
+    "op_findings_summary": 0
+  },
+  "esophageal_investigation": {
+    "conclusion": "SOURCE_LIMITED",
+    "note_entities_procedures_esophag_count": 0,
+    "op_notes_with_esophag_invaded_pattern": 10,
+    "true_invasion_cases": 0,
+    "reason": "All 10 pattern matches are anatomical references (tracheoesophageal groove, dilator placement) not invasion language"
+  },
+  "manuscript_counts_changed": false,
+  "changes_are_additive_only": true
+}

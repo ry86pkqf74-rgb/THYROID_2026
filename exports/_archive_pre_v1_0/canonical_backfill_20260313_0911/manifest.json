@@ -1,0 +1,66 @@
+{
+  "timestamp": "20260313_0911",
+  "steps": [
+    {
+      "name": "RAI dose backfill",
+      "table": "rai_treatment_episode_v2",
+      "column": "dose_mci",
+      "before": 55,
+      "after": 371,
+      "total": 1857,
+      "delta": 316,
+      "status": "ok"
+    },
+    {
+      "name": "RAS flag backfill",
+      "table": "molecular_test_episode_v2",
+      "column": "ras_flag",
+      "before": 0,
+      "after": 325,
+      "total": 10126,
+      "delta": 325,
+      "status": "ok"
+    },
+    {
+      "name": "Molecular -> FNA linkage",
+      "table": "molecular_test_episode_v2",
+      "column": "linked_fna_episode_id",
+      "before": 0,
+      "after": 639,
+      "total": 10126,
+      "delta": 639,
+      "status": "ok"
+    },
+    {
+      "name": "FNA -> Molecular linkage",
+      "table": "fna_episode_master_v2",
+      "column": "linked_molecular_episode_id",
+      "before": 0,
+      "after": 689,
+      "total": 59620,
+      "delta": 689,
+      "status": "ok"
+    },
+    {
+      "name": "RAI -> Surgery linkage",
+      "table": "rai_treatment_episode_v2",
+      "column": "linked_surgery_episode_id",
+      "before": 0,
+      "after": 19,
+      "total": 1857,
+      "delta": 19,
+      "status": "ok"
+    },
+    {
+      "name": "Imaging -> FNA linkage",
+      "table": "imaging_nodule_long_v2",
+      "column": "linked_fna_episode_id",
+      "before": 0,
+      "after": 0,
+      "total": 10866,
+      "delta": 0,
+      "status": "ok"
+    }
+  ],
+  "ambiguity_review_rows": 45
+}

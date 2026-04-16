@@ -1,0 +1,17 @@
+stratifier,group,n,events,median_years,surv_5y,surv_10y
+ETE Type,gross,119,0,,1.0,1.0
+ETE Type,microscopic,18632,117,,0.999,0.988
+ETE Type,none,42383,44,,1.0,0.999
+BRAF Status,False,61054,161,,1.0,0.996
+BRAF Status,True,80,0,,1.0,1.0
+AJCC Stage,I,39080,138,,1.0,0.994
+AJCC Stage,II,14564,12,,0.999,0.999
+AJCC Stage,III,248,4,,0.981,0.981
+AJCC Stage,IVB,58,0,,1.0,1.0
+Histology,ATC,55,0,,1.0,1.0
+Histology,FTC,5097,1,,1.0,1.0
+Histology,HCC,1008,0,,1.0,1.0
+Histology,MTC,9635,0,,1.0,1.0
+Histology,PDTC,210,0,,1.0,1.0
+Histology,PTC,37741,153,,1.0,0.995
+Histology,other,393,0,,1.0,1.0

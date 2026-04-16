@@ -1,0 +1,46 @@
+{
+  "script": "101_multi_episode_linkage_hardening.py",
+  "timestamp": "20260315_1546",
+  "target": "local DuckDB",
+  "dry_run": false,
+  "tables_created": [
+    "val_multi_episode_linkage_v1",
+    "val_cross_episode_contamination_v1",
+    "review_multi_episode_ambiguities_v1"
+  ],
+  "row_counts": {
+    "val_multi_episode_linkage_v1": 4739,
+    "val_cross_episode_contamination_v1": 30,
+    "review_multi_episode_ambiguities_v1": 1351
+  },
+  "metrics": {
+    "multi_surgery_patients": 761,
+    "multi_surgery_episodes": 1576,
+    "linkage_quality_rows": 4739,
+    "domain_pathology_linked_pct": 39.3,
+    "domain_pathology_total": 1576,
+    "domain_preop_fna_molecular_linked_pct": 18.7,
+    "domain_preop_fna_molecular_total": 1587,
+    "domain_rai_linked_pct": 0.2,
+    "domain_rai_total": 1576,
+    "episode_grade_RED": 957,
+    "episode_grade_YELLOW": 617,
+    "episode_grade_GREEN": 2,
+    "total_contaminations": 30,
+    "contam_wrong_episode": 30,
+    "contam_severity_high": 27,
+    "contam_severity_medium": 3,
+    "contam_domain_pathology": 2,
+    "contam_domain_preop": 28,
+    "total_ambiguities": 1351,
+    "ambig_priority_critical": 6,
+    "ambig_priority_high": 299,
+    "ambig_priority_low": 64,
+    "ambig_priority_medium": 982,
+    "ambig_domain_operative": 2,
+    "ambig_domain_pathology": 1284,
+    "ambig_domain_preop": 62,
+    "ambig_domain_rai": 3,
+    "ambig_manuscript_impact": 1289
+  }
+}

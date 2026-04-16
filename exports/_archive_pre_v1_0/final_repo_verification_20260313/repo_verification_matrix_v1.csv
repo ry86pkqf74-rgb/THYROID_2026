@@ -1,0 +1,14 @@
+domain,source_linkage,date_linkage,patient_event_linkage,extraction_completeness,validation_completeness,manuscript_relevance,remaining_risk,verdict,critical_finding
+demographics,95,99,99,99,95,HIGH,LOW,VERIFIED,Age 100% sex 100% race 99.9% from path_synoptics
+surgery,98,100,98,93,95,HIGH,LOW,VERIFIED,surg_date 100% filled; procedure_normalized 93.1%
+pathology,95,98,95,90,90,HIGH,LOW,MOSTLY_VERIFIED,t_stage 36.9% n_stage 37.0% - most cancer patients covered
+fna_cytology,85,80,50,90,85,MEDIUM,MEDIUM,MOSTLY_VERIFIED,bethesda 95.4% filled; linked_molecular_episode_id 0%
+molecular,80,45,40,85,85,HIGH,HIGH,PARTIALLY_VERIFIED,RAS flag 0% on canonical table; test_date 8.4%; BRAF 277 TERT 79
+imaging,30,20,0,35,30,MEDIUM,CRITICAL,NOT_VERIFIED,imaging_nodule_master_v1 = 0 rows; all size/TIRADS NULL in imaging_nodule_long_v2
+rai,60,68,0,40,70,HIGH,HIGH,PARTIALLY_VERIFIED,dose_mci 3.0%; linked_surgery_episode_id 0%; resolved_rai_date 68.5%
+recurrence,75,5,85,85,80,HIGH,HIGH,PARTIALLY_VERIFIED,1986 recurrence_any but only 54 with first_recurrence_date
+complications,90,50,90,95,95,HIGH,LOW,MOSTLY_VERIFIED,7 entities refined; 3.3% raw NLP precision addressed
+operative_notes,70,95,70,0,60,MEDIUM,CRITICAL,NOT_VERIFIED,0% NLP enrichment on 9371 episodes; extractor code exists but never run
+hp_notes,80,35,80,75,70,LOW,MEDIUM,PARTIALLY_VERIFIED,30485 entities extracted; entity_date 1-39% depending on domain
+discharge_notes,60,30,60,40,50,LOW,LOW,PARTIALLY_VERIFIED,1380 total entities; only 126 procedure patients
+manuscript_metrics,95,90,95,95,95,HIGH,LOW,VERIFIED,Cross-table consistent; BRAF 376 recurrence 1818 surgical 10871 RAI 35

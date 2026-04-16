@@ -1,0 +1,25 @@
+{
+  "script": "80_structural_gap_maximization",
+  "timestamp": "20260313_1411",
+  "phases": [
+    "A_rai",
+    "B_recurrence",
+    "C_lab",
+    "D_operative",
+    "E_docs"
+  ],
+  "validation_tables_created": [
+    "val_rai_structural_coverage_v1",
+    "val_rai_source_limitation_v1",
+    "val_recurrence_readiness_v1",
+    "val_lab_temporal_truth_v1",
+    "val_operative_field_semantics_v1"
+  ],
+  "docs_created": [
+    "rai_structural_gap_maximization_20260313.md",
+    "recurrence_structural_gap_maximization_20260313.md",
+    "non_tg_lab_temporal_truth_audit_20260313.md",
+    "operative_semantics_hardening_20260313.md"
+  ],
+  "export_dir": "/Users/loganglosser/THYROID_2026/exports/structural_gap_maximization_20260313_1411"
+}

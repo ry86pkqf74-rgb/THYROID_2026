@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-04-14T02:31:15.779143+00:00",
+  "algorithm": "sha256",
+  "files": {
+    "canonical_counts.csv": "3436cd67aa7a27ff9abb4e9db2c3cd378479311308c838c5dcca6b985d1835c1",
+    "canonical_counts.json": "bad7fd46ee862c4110b9e5cc47ca3b4a11af01733703e50acae3a476c155ea0d",
+    "duplicate_audit.csv": "dc00baba7b4486bbcc03e412a564b1ffd956d2792da31e0929a6ce31dd6a8c6b",
+    "final_source_of_truth_contract_snapshot.md": "790ea4726ff46280182c607f5742a6caf6bf66b6e2a1a0a59ffbb3fef26e18f5",
+    "lineage_completeness.json": "66cb74570548189d6531310ecc92c9fb546bd7a4c06dfc1e81624fff400f18f5",
+    "release_manifest_latest.json": "69a397b6eb1cdbabcf6dddcc59cef893f5dbe4d081a0d3a798cae7c329749448",
+    "schema_inventory.json": "f711f1a8a113ae8315e815e6ffce0aea317f83900f1666df82af5fe100773280",
+    "validation_summary.json": "f0cce1493a6198ddc7d4c6578580285b25e37beb1858a92e2a0d1346158a6d3d"
+  }
+}

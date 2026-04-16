@@ -1,0 +1,37 @@
+{
+  "generated_at": "2026-03-10T06:59:01.610476",
+  "repo_commit_sha": "d744778251fe25c6a502aab6515b8e62184f1b47",
+  "source_scripts": [
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20"
+  ],
+  "export_directory": "/Users/loganglosser/THYROID_2026/exports/manuscript_cohort_20260310_0659",
+  "cohorts": {
+    "manuscript_histology_cohort": {
+      "rows": 3871,
+      "adjudicated": 0
+    },
+    "manuscript_molecular_cohort": {
+      "rows": 762,
+      "adjudicated": 0
+    },
+    "manuscript_rai_cohort": {
+      "rows": 499,
+      "adjudicated": 0
+    },
+    "manuscript_patient_summary": {
+      "rows": 4118,
+      "adjudicated": 0
+    }
+  },
+  "unresolved_burdens": {
+    "histology_needing_review": 7629,
+    "molecular_low_confidence": 4230,
+    "rai_ambiguous": 0,
+    "timeline_errors": 1431
+  }
+}

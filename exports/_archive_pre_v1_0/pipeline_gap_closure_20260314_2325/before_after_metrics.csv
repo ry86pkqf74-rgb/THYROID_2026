@@ -1,0 +1,31 @@
+workstream,table,metric,phase,value,notes
+A,operative_episode_detail_v2,parathyroid_autograft_flag,before,40,
+A,operative_episode_detail_v2,parathyroid_autograft_flag,after,40,"NLP 48 patients: 16 already flagged, 32 have NO op row (source-limited)"
+A,operative_episode_detail_v2,strap_muscle_involvement_flag,after,186,
+A,operative_episode_detail_v2,rln_monitoring_flag,after,1702,
+A,operative_episode_detail_v2,gross_ete_flag,after,22,
+A,operative_episode_detail_v2,drain_flag,after,169,
+A,operative_episode_detail_v2,operative_findings_raw,after,588,
+A,val_operative_coverage_v2,table_created,after,2,2-row field-level coverage table
+B,fna_episode_master_v2,linked_imaging_nodule_id,before,0,Was never populated
+B,fna_episode_master_v2,linked_imaging_nodule_id,after,1454,Backfilled score>=0.45/rank=1 from imaging_fna_linkage_v3
+B,imaging_fna_linkage_v3,total_rows,clarified,9024,"Prior docs claimed 0 rows — table has 9,024 rows"
+B,imaging_fna_linkage_summary_v1,table_created,after,4,Tier distribution summary table
+B,imaging_nodule_long_v2,size_cm_max,confirmed,0,SOURCE-LIMITED: use imaging_nodule_master_v1
+C,extracted_recurrence_refined_v1,tier_biochemical_inflection_inferred,before/after,168,Source-limited — unchanged
+C,extracted_recurrence_refined_v1,tier_not_applicable,before/after,8885,Source-limited — unchanged
+C,extracted_recurrence_refined_v1,tier_exact_source_date,before/after,54,Source-limited — unchanged
+C,extracted_recurrence_refined_v1,tier_unresolved_date,before/after,1764,Source-limited — unchanged
+C,recurrence_review_queue_v1,table_created,after,1986,With review_priority + full clinical context
+C,recurrence_review_yield_tracker_v1,table_created,after,1,Sprint baseline tracker
+C,export_recurrence_review_queue.csv,rows_exported,after,1764,All unresolved cases
+C,recurrence_review_queue_v1,priority_1,after,222,
+C,recurrence_review_queue_v1,priority_2,after,224,
+C,recurrence_review_queue_v1,priority_3,after,791,
+C,recurrence_review_queue_v1,priority_4,after,749,
+D,adjudication_decisions,total_decisions,before/after,0,Empty — awaiting first reviewer entries
+D,adjudication_progress_kpi_v1,table_created,after,3,Queue vs decisions KPI tracking
+D,histology_manual_review_queue_v,queued_cases,after,7552,
+D,export_histology_starter_pack.csv,rows_exported,after,500,Top-500 histology queue
+D,export_conflicts_starter_pack.csv,rows_exported,after,1000,Top-1000 conflict items
+D,export_discordance_cases.csv,rows_exported,after,500,500 multi-domain discordance cases

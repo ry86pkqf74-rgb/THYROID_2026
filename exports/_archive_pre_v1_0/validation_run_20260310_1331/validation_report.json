@@ -1,0 +1,188 @@
+{
+  "run_at": "2026-03-10T13:31:35.395955+00:00",
+  "source": "/Users/loganglosser/THYROID_2026/thyroid_master.duckdb",
+  "repo_commit_sha": "5f16378f9086a480388d00c73e1e05cb46dfa212",
+  "validation": {
+    "passed": 12,
+    "failed": 0,
+    "skipped": 0,
+    "details": {
+      "streamlit_patient_header_v": {
+        "status": "PASS",
+        "rows": 10872
+      },
+      "streamlit_patient_timeline_v": {
+        "status": "PASS",
+        "rows": 23670
+      },
+      "streamlit_patient_conflicts_v": {
+        "status": "PASS",
+        "rows": 12530
+      },
+      "streamlit_patient_manual_review_v": {
+        "status": "PASS",
+        "rows": 10699
+      },
+      "patient_reconciliation_summary_v": {
+        "status": "PASS",
+        "rows": 10872
+      },
+      "adjudication_decisions": {
+        "status": "WARN (empty)",
+        "rows": 0
+      },
+      "adjudication_decision_history": {
+        "status": "WARN (empty)",
+        "rows": 0
+      },
+      "histology_post_review_v": {
+        "status": "PASS",
+        "rows": 11687
+      },
+      "molecular_post_review_v": {
+        "status": "PASS",
+        "rows": 10126
+      },
+      "rai_post_review_v": {
+        "status": "PASS",
+        "rows": 1857
+      },
+      "manuscript_histology_cohort_v": {
+        "status": "PASS",
+        "rows": 3871
+      },
+      "manuscript_molecular_cohort_v": {
+        "status": "PASS",
+        "rows": 762
+      },
+      "manuscript_rai_cohort_v": {
+        "status": "PASS",
+        "rows": 499
+      },
+      "manuscript_patient_summary_v": {
+        "status": "PASS",
+        "rows": 4118
+      }
+    }
+  },
+  "gap_summary": {
+    "histology": {
+      "total": 7629,
+      "errors": 0,
+      "warnings": 0,
+      "patients": 7439
+    },
+    "molecular": {
+      "total": 562,
+      "errors": 0,
+      "warnings": 0,
+      "patients": 530
+    },
+    "rai": {
+      "total": 1077,
+      "errors": 0,
+      "warnings": 0,
+      "patients": 586
+    },
+    "timeline": {
+      "total": 1431,
+      "errors": 0,
+      "warnings": 0,
+      "patients": 531
+    }
+  },
+  "export": {
+    "generated_at": "2026-03-10T13:31:32.234311+00:00",
+    "repo_commit_sha": "5f16378f9086a480388d00c73e1e05cb46dfa212",
+    "source": "/Users/loganglosser/THYROID_2026/thyroid_master.duckdb",
+    "queues": {
+      "histology": {
+        "rows": 7629,
+        "columns": [
+          "queue_row_id",
+          "research_id",
+          "priority_score",
+          "review_domain",
+          "unresolved_reason",
+          "conflict_summary",
+          "source_histology_raw_ps",
+          "source_histology_raw_tp",
+          "t_stage_source_path",
+          "t_stage_source_note",
+          "final_histology_for_analysis",
+          "final_t_stage_for_analysis",
+          "recommended_reviewer_action",
+          "supporting_source_objects",
+          "linked_episode_id"
+        ],
+        "status": "ok"
+      },
+      "molecular": {
+        "rows": 562,
+        "columns": [
+          "queue_row_id",
+          "research_id",
+          "priority_score",
+          "review_domain",
+          "unresolved_reason",
+          "conflict_summary",
+          "specimen_date_raw",
+          "platform_normalized",
+          "test_name_raw",
+          "result_category_normalized",
+          "result_summary_raw",
+          "recommended_reviewer_action",
+          "supporting_source_objects",
+          "linked_episode_id"
+        ],
+        "status": "ok"
+      },
+      "rai": {
+        "rows": 1077,
+        "columns": [
+          "queue_row_id",
+          "research_id",
+          "priority_score",
+          "review_domain",
+          "unresolved_reason",
+          "conflict_summary",
+          "rai_term_normalized",
+          "rai_date",
+          "linked_surgery_date",
+          "days_surgery_to_rai",
+          "dose_mci",
+          "rai_mention_text_short",
+          "recommended_reviewer_action",
+          "supporting_source_objects",
+          "linked_episode_id"
+        ],
+        "status": "ok"
+      },
+      "timeline": {
+        "rows": 1431,
+        "columns": [
+          "queue_row_id",
+          "research_id",
+          "priority_score",
+          "review_domain",
+          "unresolved_reason",
+          "conflict_summary",
+          "detected_value",
+          "source_domain",
+          "recommended_reviewer_action",
+          "supporting_source_objects",
+          "linked_episode_id"
+        ],
+        "status": "ok"
+      },
+      "imaging_path": {
+        "rows": 0,
+        "status": "missing"
+      },
+      "op_path": {
+        "rows": 0,
+        "status": "missing"
+      }
+    }
+  }
+}

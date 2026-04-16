@@ -1,0 +1,4 @@
+research_id,issue_type,severity,detail,action_status,reviewed_at
+68,ln_impossible,error,"Data entry error: ln_examined=0 but ln_involved=1. Likely should be ln_examined=1. Raw data preserved; recommend derived correction to ln_examined=MAX(ln_involved, ln_examined) in manuscript layer.",safe_to_correct_in_derived_layer,2026-03-13 07:08:27.271543-04:00
+5012,bethesda_vi_review,warning,Has cancer histology but not analysis-eligible for another reason (review needed).,REVIEW_FOR_RECLASSIFICATION,2026-03-13 07:08:28.643633-04:00
+5012,bethesda_vi_review,warning,Has cancer histology but not analysis-eligible for another reason (review needed).,REVIEW_FOR_RECLASSIFICATION,2026-03-13 07:08:28.643633-04:00

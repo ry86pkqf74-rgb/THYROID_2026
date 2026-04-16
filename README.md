@@ -1,4 +1,26 @@
-# THYROID_2026
+# THYROID_2026 — Build Repo
+
+> **This is the DATA BUILD repo.** For manuscript work, use the analysis repo:
+> [`../thyroid-2026-analysis/`](../thyroid-2026-analysis/) — pinned canonical versions, backend abstraction, per-manuscript notebooks.
+
+## Current canonical
+
+| Resource | Location |
+|----------|----------|
+| Version registry | [`RELEASE.md`](RELEASE.md) |
+| Build history | [`CHANGELOG.md`](CHANGELOG.md) |
+| Active canonical DB | `thyroid_canonical_publication_v1_0` (MotherDuck, eras account) |
+| Parquet backup | `../thyroid-2026-analysis/data/v1_0/` (109 tables, 61.4 MB) |
+
+**To build the next version:**
+```bash
+# After new data lands in "Thyroid 2026 UPdated"
+python scripts/223_publish_canonical.py --version v1_1 --candidate --skip-ingest
+python scripts/224_compare_canonical_versions.py --from v1_0 --to v1_1_rc
+python scripts/225_promote_canonical_version.py --candidate v1_1_rc --release v1_1
+```
+
+---
 
 **Analyst quick-start:** [`MANUSCRIPT_DATA_START_HERE.md`](MANUSCRIPT_DATA_START_HERE.md) — exact tables, views, and rules for citing data in manuscripts.
 

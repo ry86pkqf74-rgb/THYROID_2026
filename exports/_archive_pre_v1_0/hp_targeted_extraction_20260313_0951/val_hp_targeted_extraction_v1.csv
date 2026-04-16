@@ -1,0 +1,6 @@
+variable,total_mentions,unique_patients,conflicting_patients,review_queue_size
+smoking_status,3241,2775,274,622
+pack_years,83,79,0,0
+packs_per_day,111,97,0,0
+bmi_value,2409,2116,0,3
+bmi_category,166,156,0,0

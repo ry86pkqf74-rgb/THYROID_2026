@@ -1,0 +1,659 @@
+{
+  "freeze_version": "v1",
+  "freeze_type": "manuscript_publication_freeze",
+  "created_at": "2026-03-15T20:29:17.479689+00:00",
+  "created_by": "scripts/105_manuscript_freeze_v1.py",
+  "source": {
+    "type": "local DuckDB_prod",
+    "database": "thyroid_master.duckdb",
+    "is_prod": true
+  },
+  "git": {
+    "sha_full": "975cfa2bb0a29262bb457953d4c5af23ce51d242",
+    "sha_short": "975cfa2",
+    "dirty": true
+  },
+  "python_version": "3.14.0",
+  "duckdb_version": "1.4.4",
+  "table_count": {
+    "total": 33,
+    "tier1": 11,
+    "tier2": 16,
+    "tier3": 6,
+    "present": 33,
+    "missing": 0,
+    "drifted": 0
+  },
+  "stamp_applied": false,
+  "stamp_suffix": null,
+  "refresh_notes": "This freeze captures the current manuscript state. When the pending external lab/medication extract arrives, re-run with --version v2 to create a separate freeze point. Compare v1 vs v2 manifests to quantify data drift.",
+  "exports": [
+    {
+      "table": "manuscript_cohort_v1",
+      "parquet": "manuscript_cohort_v1.parquet",
+      "parquet_sha256": "98326e2216d5742e07afbe05ba0d4b4474872f66cc38d75eb9d292e4181ab0aa",
+      "rows": 10871,
+      "columns": 150,
+      "csv": "manuscript_cohort_v1.csv",
+      "csv_sha256": "9fe79e3ccb5d4585f66d44d68c7c830267d3a52ba816aaaa241f17885df87d85"
+    },
+    {
+      "table": "patient_analysis_resolved_v1",
+      "parquet": "patient_analysis_resolved_v1.parquet",
+      "parquet_sha256": "5ee72f30b15e0bcd6933d6cd3d50af2fa249f640f5da11eabad4e338711be3dc",
+      "rows": 10871,
+      "columns": 145,
+      "csv": "patient_analysis_resolved_v1.csv",
+      "csv_sha256": "d72fe9ca01fcefa09b4700b173209f879d5a67bcec0553f68dd1d7c9c35f5ba9"
+    },
+    {
+      "table": "episode_analysis_resolved_v1_dedup",
+      "parquet": "episode_analysis_resolved_v1_dedup.parquet",
+      "parquet_sha256": "d46efdedea392cfbbb25ee763e51429d24d5ededf6354259d91b83dfa9034ea2",
+      "rows": 9368,
+      "columns": 45,
+      "csv": "episode_analysis_resolved_v1_dedup.csv",
+      "csv_sha256": "29fbf38aa5270dd4f4337062ab97026c1b8e8e57b7ca7185b2a4144d3ea71651"
+    },
+    {
+      "table": "lesion_analysis_resolved_v1",
+      "parquet": "lesion_analysis_resolved_v1.parquet",
+      "parquet_sha256": "e37408426d3757d54178a50d05b0a849d1b5f06ea38036b2ca17483d646147f7",
+      "rows": 11851,
+      "columns": 27,
+      "csv": "lesion_analysis_resolved_v1.csv",
+      "csv_sha256": "b863557c2b8e75893a321c9d57babf9a621287c7635e5117f083433c87403207"
+    },
+    {
+      "table": "thyroid_scoring_py_v1",
+      "parquet": "thyroid_scoring_py_v1.parquet",
+      "parquet_sha256": "281dc0ab5d2290db734986b5396aad625b788a99d0b3012c1c885ffa03ff8c8e",
+      "rows": 10871,
+      "columns": 51,
+      "csv": "thyroid_scoring_py_v1.csv",
+      "csv_sha256": "e2424c7068f06c2650c3a4feeb501d110478a4a9649cf51a6ed7b8608a83fd6e"
+    },
+    {
+      "table": "analysis_cancer_cohort_v1",
+      "parquet": "analysis_cancer_cohort_v1.parquet",
+      "parquet_sha256": "a91a0882f19b2197161df3d65df54492478c9ceefe485236bfc5441b8836060e",
+      "rows": 4136,
+      "columns": 136,
+      "csv": "analysis_cancer_cohort_v1.csv",
+      "csv_sha256": "4dd01d9399bd239ad4fc17551225eefbfe360785a0e3a2ce7def75adf8682a05"
+    },
+    {
+      "table": "complication_phenotype_v1",
+      "parquet": "complication_phenotype_v1.parquet",
+      "parquet_sha256": "1911ce3137b0ccbb2834e7a5419f990c46ffb2b63cec0e2443cd4ba10d1e61ab",
+      "rows": 5928,
+      "columns": 28,
+      "csv": "complication_phenotype_v1.csv",
+      "csv_sha256": "12ea2485c8d547361d5f03e1392321f7b8546fe3dfc24484d235748afcfc3f24"
+    },
+    {
+      "table": "complication_patient_summary_v1",
+      "parquet": "complication_patient_summary_v1.parquet",
+      "parquet_sha256": "5324abdc4b58bc9e320cb492c81481cb0553f5d494f363538337baa5f660d5ea",
+      "rows": 2892,
+      "columns": 18,
+      "csv": "complication_patient_summary_v1.csv",
+      "csv_sha256": "1facad8b22af7d9634ea74a733a3f5632292fd9d9a4a3d2ec2c784d454aade1b"
+    },
+    {
+      "table": "recurrence_event_clean_v1",
+      "parquet": "recurrence_event_clean_v1.parquet",
+      "parquet_sha256": "b101233506c89ff77db5246b3c85fc4cd598b29079e990a61ddeb176405b1a10",
+      "rows": 1946,
+      "columns": 11,
+      "csv": "recurrence_event_clean_v1.csv",
+      "csv_sha256": "18f9ec1a4ac0e88963143a0ef1e92912937f36e5a888f7a69a6622606fa034a7"
+    },
+    {
+      "table": "longitudinal_lab_canonical_v1",
+      "parquet": "longitudinal_lab_canonical_v1.parquet",
+      "parquet_sha256": "f3eb325fd15f30dc3c7cfeebb4768fbab7a85af13c47746860c9cac6868341a1",
+      "rows": 39961,
+      "columns": 18,
+      "csv": "longitudinal_lab_canonical_v1.csv",
+      "csv_sha256": "6e31bd60f326c036aaa0131036cecd6f449bf2bf8645e52774e45ba818e41692"
+    },
+    {
+      "table": "survival_cohort_enriched",
+      "parquet": "survival_cohort_enriched.parquet",
+      "parquet_sha256": "e69e3c4645579353c8de0d87891310e7b63d169c1f82ef82fc141ef9f2757aef",
+      "rows": 61134,
+      "columns": 27
+    },
+    {
+      "table": "analysis_molecular_subset_v1",
+      "parquet": "analysis_molecular_subset_v1.parquet",
+      "parquet_sha256": "7a117909fab73aa94aebaea28146343128777ce76c7be6a2679845ae792ec76a",
+      "rows": 10025,
+      "columns": 126,
+      "csv": "analysis_molecular_subset_v1.csv",
+      "csv_sha256": "f7188dac61608140225035655ec55a0214b0a6d2e5be0e31ae4da530e91b1737"
+    },
+    {
+      "table": "analysis_tirads_subset_v1",
+      "parquet": "analysis_tirads_subset_v1.parquet",
+      "parquet_sha256": "63095aa815e60eca2b50aeb7d323974aec4e8befdef63f432e2d9df1ad9e6949",
+      "rows": 3474,
+      "columns": 131,
+      "csv": "analysis_tirads_subset_v1.csv",
+      "csv_sha256": "71457f3e4c3b1e333b07a2e118202ced18865257f318871e835a633613ac08c3"
+    },
+    {
+      "table": "analysis_recurrence_subset_v1",
+      "parquet": "analysis_recurrence_subset_v1.parquet",
+      "parquet_sha256": "746ab0d6fe49ce9f52ef6a26362f6f43776a14661ab66ac04179b5027855ec04",
+      "rows": 1946,
+      "columns": 133,
+      "csv": "analysis_recurrence_subset_v1.csv",
+      "csv_sha256": "34f07e464562b716d994bb60a215d3562e718eee317adecb6b657624856816e8"
+    },
+    {
+      "table": "patient_refined_master_clinical_v12",
+      "parquet": "patient_refined_master_clinical_v12.parquet",
+      "parquet_sha256": "0019899f4b5cf700c5cccfdf83183ec8a074a7dc925caffe3e5a43b44c801948",
+      "rows": 12886,
+      "columns": 272,
+      "csv": "patient_refined_master_clinical_v12.csv",
+      "csv_sha256": "def535ae962f9759fa8ff833806df2a2baf859457a132e1ce8076fe7d7a7431a"
+    },
+    {
+      "table": "extracted_tirads_validated_v1",
+      "parquet": "extracted_tirads_validated_v1.parquet",
+      "parquet_sha256": "9ecb7352c602bd0b1a447f4fa4d6aed2cb8b27ee4b4eb0cf21341aea0629beda",
+      "rows": 3474,
+      "columns": 15,
+      "csv": "extracted_tirads_validated_v1.csv",
+      "csv_sha256": "eda0d370fb29dec6b434445148cad15783324592b1c13efd194b0093c9ca50ec"
+    },
+    {
+      "table": "extracted_braf_recovery_v1",
+      "parquet": "extracted_braf_recovery_v1.parquet",
+      "parquet_sha256": "2743879684c6ab318023ff6708bcf9c553d116137010fc2ea9c442cb2b5814ab",
+      "rows": 730,
+      "columns": 7,
+      "csv": "extracted_braf_recovery_v1.csv",
+      "csv_sha256": "49bc4b87494c1f26710cee77c4ccc0370c919cc734abe36b7cec4a64cbf01b88"
+    },
+    {
+      "table": "extracted_ras_patient_summary_v1",
+      "parquet": "extracted_ras_patient_summary_v1.parquet",
+      "parquet_sha256": "db3cbde7408ff12e163491bebc9c28c773ae12a30d608a7bf21ad239c280a037",
+      "rows": 321,
+      "columns": 7,
+      "csv": "extracted_ras_patient_summary_v1.csv",
+      "csv_sha256": "ac1320d7b0b7a610bcc4416a5876dfe7574d142018acc66bb30799c856a556ff"
+    },
+    {
+      "table": "extracted_rln_injury_refined_v2",
+      "parquet": "extracted_rln_injury_refined_v2.parquet",
+      "parquet_sha256": "ebbec64f556670f4a2e2cf50fe43cb738f06ced3e66d991cb52cd5358f9ebf59",
+      "rows": 92,
+      "columns": 12,
+      "csv": "extracted_rln_injury_refined_v2.csv",
+      "csv_sha256": "c2cfdbaf9bd8732b3bfd7224902f0110d1981bcf2c115863002e95bf3eb1c61a"
+    },
+    {
+      "table": "extracted_complications_refined_v5",
+      "parquet": "extracted_complications_refined_v5.parquet",
+      "parquet_sha256": "2e456291f488803c4289e2a045fa24735bd4bbaa0eed849eee57a4898eaf44a6",
+      "rows": 358,
+      "columns": 9,
+      "csv": "extracted_complications_refined_v5.csv",
+      "csv_sha256": "3a6f2d6a6b678c23df321e88c8b5972ceb7a4d9d40686c4455e4482c8114a3fc"
+    },
+    {
+      "table": "operative_episode_detail_v2",
+      "parquet": "operative_episode_detail_v2.parquet",
+      "parquet_sha256": "8ea88459fc24586b2ebc9ed8c7e3271eec2581402daf1356cedb7c11a3751162",
+      "rows": 9371,
+      "columns": 39,
+      "csv": "operative_episode_detail_v2.csv",
+      "csv_sha256": "11c8cf9bf4da8c9f6c00c37ca8138dbf4e7836151b2d617e0ebb0302cca12772"
+    },
+    {
+      "table": "rai_treatment_episode_v2",
+      "parquet": "rai_treatment_episode_v2.parquet",
+      "parquet_sha256": "2272839a0486ad47efaff2263e510e5e4333fc29f51072121b00f1470cc2cb79",
+      "rows": 1857,
+      "columns": 32,
+      "csv": "rai_treatment_episode_v2.csv",
+      "csv_sha256": "742bd4e12bd4f74cbc661f3664f3c265eaff5cc0ce48a263342637f50b1d8f41"
+    },
+    {
+      "table": "molecular_test_episode_v2",
+      "parquet": "molecular_test_episode_v2.parquet",
+      "parquet_sha256": "e9d6795ca593d01e505a9605032bb6c0efa01ed627dcf3dce08c3e3c80b8d5d9",
+      "rows": 10126,
+      "columns": 42,
+      "csv": "molecular_test_episode_v2.csv",
+      "csv_sha256": "3dce7cf95ec738aa290b4208fc8c4f86b3f44874d8491138d5ee912a9cef56f5"
+    },
+    {
+      "table": "tumor_episode_master_v2",
+      "parquet": "tumor_episode_master_v2.parquet",
+      "parquet_sha256": "6779dff73a0c498453b1ff012413f0befa4a19bb42d713f8515a93adf712ba6f",
+      "rows": 11691,
+      "columns": 37,
+      "csv": "tumor_episode_master_v2.csv",
+      "csv_sha256": "172082b709ed87f3606b6bd6e48c6e672e5cddc46d13bca1f90504abcdfb5a9e"
+    },
+    {
+      "table": "imaging_nodule_master_v1",
+      "parquet": "imaging_nodule_master_v1.parquet",
+      "parquet_sha256": "4f5999c8e9e9ea4386fde2128b4228bcf3fb808d12c7f7c61bf9e61de0dc2fc2",
+      "rows": 19891,
+      "columns": 25,
+      "csv": "imaging_nodule_master_v1.csv",
+      "csv_sha256": "0947449d3cd20b95d4e4a61a91e5cd2a566c84b4cbe5b00226c30091bd9154dc"
+    },
+    {
+      "table": "extracted_ete_subgraded_v1",
+      "parquet": "extracted_ete_subgraded_v1.parquet",
+      "parquet_sha256": "96b6bbbbe125450dbf4e537e841030a6d39b298c014a5055df091e1039724545",
+      "rows": 3558,
+      "columns": 9,
+      "csv": "extracted_ete_subgraded_v1.csv",
+      "csv_sha256": "6ef8eba1138a57607a73574ce1da4fabd0bca44f45d1aa0502f9c335ba2d3564"
+    },
+    {
+      "table": "extracted_postop_labs_expanded_v1",
+      "parquet": "extracted_postop_labs_expanded_v1.parquet",
+      "parquet_sha256": "7adfccdc98766739db6d1e4e925c3e783f125897e7e0a705a96c408e64c0d149",
+      "rows": 1395,
+      "columns": 12,
+      "csv": "extracted_postop_labs_expanded_v1.csv",
+      "csv_sha256": "d2ed3fc56660fae190e904ad9cab54cc6c23f7144b81c513aa3ade6a16842d0f"
+    },
+    {
+      "table": "val_dataset_integrity_summary_v1",
+      "parquet": "val_dataset_integrity_summary_v1.parquet",
+      "parquet_sha256": "408ac8e371d27311c91b5f76f96052358b71656e966fa9e6c39acf404e03e4b7",
+      "rows": 30,
+      "columns": 5,
+      "csv": "val_dataset_integrity_summary_v1.csv",
+      "csv_sha256": "c22401268442d10804d0ea0fd3a5226b163ae4293aae8bd281296fdf0d3d7eb1"
+    },
+    {
+      "table": "val_episode_linkage_v2_scorecard",
+      "parquet": "val_episode_linkage_v2_scorecard.parquet",
+      "parquet_sha256": "08fb7702fb7cbcb22a7081ec3bd83a5d458fea4569d43d8f8d8536205f5f282c",
+      "rows": 5,
+      "columns": 4,
+      "csv": "val_episode_linkage_v2_scorecard.csv",
+      "csv_sha256": "bbc0615664819626d0ff32228d0f6fee92c8c3e08e1019b0f7a778680102eb75"
+    },
+    {
+      "table": "val_operative_truth_state_v1",
+      "parquet": "val_operative_truth_state_v1.parquet",
+      "parquet_sha256": "ed0e41c641c010e893d96767ce03c111075dbf243b89673cc2a9a9b9c63621df",
+      "rows": 39,
+      "columns": 11,
+      "csv": "val_operative_truth_state_v1.csv",
+      "csv_sha256": "795fdbab759bc034c0438e99ce3d717f904d3e020e06768f03bad9d2964d96c7"
+    },
+    {
+      "table": "val_phase12_tirads_validation",
+      "parquet": "val_phase12_tirads_validation.parquet",
+      "parquet_sha256": "08916a629fecd93fa5321b96aff972a035ef24e7647629e4527b01f6930281e0",
+      "rows": 4,
+      "columns": 5,
+      "csv": "val_phase12_tirads_validation.csv",
+      "csv_sha256": "f393738085340ab0af1bb03787769ec95c14b42c2d0f38ac67cf16a840a6bbc0"
+    },
+    {
+      "table": "val_complication_refinement",
+      "parquet": "val_complication_refinement.parquet",
+      "parquet_sha256": "8e246183133043c03b1c6777b04e015297ef0b87b2d528e3e8b1f4ffa6dda207",
+      "rows": 9,
+      "columns": 13,
+      "csv": "val_complication_refinement.csv",
+      "csv_sha256": "d55163f42b277e792d5764fab5e310194d04472f79fe39fda86181c659a59c82"
+    },
+    {
+      "table": "val_provenance_hardening_summary_v1",
+      "parquet": "val_provenance_hardening_summary_v1.parquet",
+      "parquet_sha256": "370841ea50675b9ac2fe19ea628157960d8c42a02f051432fac1ea0c93d9d381",
+      "rows": 3,
+      "columns": 7,
+      "csv": "val_provenance_hardening_summary_v1.csv",
+      "csv_sha256": "c660130aeb5f3b3e56cf8a2ad76f2bf88e5a7ed94a122c222b53ce18c235086a"
+    }
+  ],
+  "inventory": [
+    {
+      "table": "manuscript_cohort_v1",
+      "tier": "tier1",
+      "description": "Primary manuscript cohort (1 row/patient)",
+      "expected_rows": 10871,
+      "actual_rows": 10871,
+      "status": "OK",
+      "drift_pct": 0.0,
+      "resolved_name": "manuscript_cohort_v1"
+    },
+    {
+      "table": "patient_analysis_resolved_v1",
+      "tier": "tier1",
+      "description": "Resolved patient-level table",
+      "expected_rows": 10871,
+      "actual_rows": 10871,
+      "status": "OK",
+      "drift_pct": 0.0,
+      "resolved_name": "patient_analysis_resolved_v1"
+    },
+    {
+      "table": "episode_analysis_resolved_v1_dedup",
+      "tier": "tier1",
+      "description": "Deduplicated episode-level table",
+      "expected_rows": 9368,
+      "actual_rows": 9368,
+      "status": "OK",
+      "drift_pct": 0.0,
+      "resolved_name": "episode_analysis_resolved_v1_dedup"
+    },
+    {
+      "table": "lesion_analysis_resolved_v1",
+      "tier": "tier1",
+      "description": "Lesion-level resolved table",
+      "expected_rows": null,
+      "actual_rows": 11851,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "lesion_analysis_resolved_v1"
+    },
+    {
+      "table": "thyroid_scoring_py_v1",
+      "tier": "tier1",
+      "description": "AJCC8/ATA/MACIS/AGES/AMES scoring",
+      "expected_rows": 10871,
+      "actual_rows": 10871,
+      "status": "OK",
+      "drift_pct": 0.0,
+      "resolved_name": "thyroid_scoring_py_v1"
+    },
+    {
+      "table": "analysis_cancer_cohort_v1",
+      "tier": "tier1",
+      "description": "Cancer-eligible analytic subset",
+      "expected_rows": 4136,
+      "actual_rows": 4136,
+      "status": "OK",
+      "drift_pct": 0.0,
+      "resolved_name": "analysis_cancer_cohort_v1"
+    },
+    {
+      "table": "complication_phenotype_v1",
+      "tier": "tier1",
+      "description": "Complication phenotyping (long format)",
+      "expected_rows": null,
+      "actual_rows": 5928,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "complication_phenotype_v1"
+    },
+    {
+      "table": "complication_patient_summary_v1",
+      "tier": "tier1",
+      "description": "Wide complication flags per patient",
+      "expected_rows": null,
+      "actual_rows": 2892,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "complication_patient_summary_v1"
+    },
+    {
+      "table": "recurrence_event_clean_v1",
+      "tier": "tier1",
+      "description": "Cleaned recurrence events",
+      "expected_rows": 1946,
+      "actual_rows": 1946,
+      "status": "OK",
+      "drift_pct": 0.0,
+      "resolved_name": "recurrence_event_clean_v1"
+    },
+    {
+      "table": "longitudinal_lab_canonical_v1",
+      "tier": "tier1",
+      "description": "Canonical longitudinal labs",
+      "expected_rows": null,
+      "actual_rows": 39961,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "longitudinal_lab_canonical_v1"
+    },
+    {
+      "table": "survival_cohort_enriched",
+      "tier": "tier1",
+      "description": "Survival analysis cohort",
+      "expected_rows": null,
+      "actual_rows": 61134,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "survival_cohort_enriched"
+    },
+    {
+      "table": "analysis_molecular_subset_v1",
+      "tier": "tier2",
+      "description": "Molecular-tested analytic subset",
+      "expected_rows": 10025,
+      "actual_rows": 10025,
+      "status": "OK",
+      "drift_pct": 0.0,
+      "resolved_name": "analysis_molecular_subset_v1"
+    },
+    {
+      "table": "analysis_tirads_subset_v1",
+      "tier": "tier2",
+      "description": "TIRADS-scored analytic subset",
+      "expected_rows": 3474,
+      "actual_rows": 3474,
+      "status": "OK",
+      "drift_pct": 0.0,
+      "resolved_name": "analysis_tirads_subset_v1"
+    },
+    {
+      "table": "analysis_recurrence_subset_v1",
+      "tier": "tier2",
+      "description": "Recurrence analytic subset",
+      "expected_rows": 1946,
+      "actual_rows": 1946,
+      "status": "OK",
+      "drift_pct": 0.0,
+      "resolved_name": "analysis_recurrence_subset_v1"
+    },
+    {
+      "table": "patient_refined_master_clinical_v12",
+      "tier": "tier2",
+      "description": "Master clinical table (all phases)",
+      "expected_rows": 12886,
+      "actual_rows": 12886,
+      "status": "OK",
+      "drift_pct": 0.0,
+      "resolved_name": "patient_refined_master_clinical_v12"
+    },
+    {
+      "table": "extracted_tirads_validated_v1",
+      "tier": "tier2",
+      "description": "Validated TIRADS scores",
+      "expected_rows": 3474,
+      "actual_rows": 3474,
+      "status": "OK",
+      "drift_pct": 0.0,
+      "resolved_name": "extracted_tirads_validated_v1"
+    },
+    {
+      "table": "extracted_braf_recovery_v1",
+      "tier": "tier2",
+      "description": "BRAF recovery audit",
+      "expected_rows": null,
+      "actual_rows": 730,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "extracted_braf_recovery_v1"
+    },
+    {
+      "table": "extracted_ras_patient_summary_v1",
+      "tier": "tier2",
+      "description": "RAS per-patient summary",
+      "expected_rows": null,
+      "actual_rows": 321,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "extracted_ras_patient_summary_v1"
+    },
+    {
+      "table": "extracted_rln_injury_refined_v2",
+      "tier": "tier2",
+      "description": "Refined RLN injury",
+      "expected_rows": null,
+      "actual_rows": 92,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "extracted_rln_injury_refined_v2"
+    },
+    {
+      "table": "extracted_complications_refined_v5",
+      "tier": "tier2",
+      "description": "Refined complications union",
+      "expected_rows": null,
+      "actual_rows": 358,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "extracted_complications_refined_v5"
+    },
+    {
+      "table": "operative_episode_detail_v2",
+      "tier": "tier2",
+      "description": "Operative episodes",
+      "expected_rows": 9371,
+      "actual_rows": 9371,
+      "status": "OK",
+      "drift_pct": 0.0,
+      "resolved_name": "operative_episode_detail_v2"
+    },
+    {
+      "table": "rai_treatment_episode_v2",
+      "tier": "tier2",
+      "description": "RAI treatment episodes",
+      "expected_rows": 1857,
+      "actual_rows": 1857,
+      "status": "OK",
+      "drift_pct": 0.0,
+      "resolved_name": "rai_treatment_episode_v2"
+    },
+    {
+      "table": "molecular_test_episode_v2",
+      "tier": "tier2",
+      "description": "Molecular test episodes",
+      "expected_rows": null,
+      "actual_rows": 10126,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "molecular_test_episode_v2"
+    },
+    {
+      "table": "tumor_episode_master_v2",
+      "tier": "tier2",
+      "description": "Tumor episode master",
+      "expected_rows": null,
+      "actual_rows": 11691,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "tumor_episode_master_v2"
+    },
+    {
+      "table": "imaging_nodule_master_v1",
+      "tier": "tier2",
+      "description": "Imaging nodule per-exam",
+      "expected_rows": null,
+      "actual_rows": 19891,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "imaging_nodule_master_v1"
+    },
+    {
+      "table": "extracted_ete_subgraded_v1",
+      "tier": "tier2",
+      "description": "ETE sub-grading",
+      "expected_rows": null,
+      "actual_rows": 3558,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "extracted_ete_subgraded_v1"
+    },
+    {
+      "table": "extracted_postop_labs_expanded_v1",
+      "tier": "tier2",
+      "description": "Post-op lab expansion",
+      "expected_rows": null,
+      "actual_rows": 1395,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "extracted_postop_labs_expanded_v1"
+    },
+    {
+      "table": "val_dataset_integrity_summary_v1",
+      "tier": "tier3",
+      "description": "Dataset integrity summary",
+      "expected_rows": null,
+      "actual_rows": 30,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "val_dataset_integrity_summary_v1"
+    },
+    {
+      "table": "val_episode_linkage_v2_scorecard",
+      "tier": "tier3",
+      "description": "Episode linkage scorecard",
+      "expected_rows": null,
+      "actual_rows": 5,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "val_episode_linkage_v2_scorecard"
+    },
+    {
+      "table": "val_operative_truth_state_v1",
+      "tier": "tier3",
+      "description": "Operative truth state",
+      "expected_rows": null,
+      "actual_rows": 39,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "val_operative_truth_state_v1"
+    },
+    {
+      "table": "val_phase12_tirads_validation",
+      "tier": "tier3",
+      "description": "TIRADS validation",
+      "expected_rows": null,
+      "actual_rows": 4,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "val_phase12_tirads_validation"
+    },
+    {
+      "table": "val_complication_refinement",
+      "tier": "tier3",
+      "description": "Complication refinement audit",
+      "expected_rows": null,
+      "actual_rows": 9,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "val_complication_refinement"
+    },
+    {
+      "table": "val_provenance_hardening_summary_v1",
+      "tier": "tier3",
+      "description": "Provenance hardening",
+      "expected_rows": null,
+      "actual_rows": 3,
+      "status": "OK",
+      "drift_pct": null,
+      "resolved_name": "val_provenance_hardening_summary_v1"
+    }
+  ]
+}

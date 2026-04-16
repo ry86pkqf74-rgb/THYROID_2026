@@ -1,0 +1,11 @@
+field,true_count,pct,is_zero
+rln_monitoring_flag,1702,18.2,False
+parathyroid_autograft_flag,40,0.4,False
+gross_ete_flag,22,0.2,False
+local_invasion_flag,25,0.3,False
+tracheal_involvement_flag,9,0.1,False
+esophageal_involvement_flag,0,0.0,True
+strap_muscle_involvement_flag,186,2.0,False
+reoperative_field_flag,46,0.5,False
+drain_flag,169,1.8,False
+parathyroid_resection_flag,0,0.0,True

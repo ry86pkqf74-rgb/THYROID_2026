@@ -1,8 +1,0 @@
-{
-  "generated": "20260314_2357",
-  "source": "local DuckDB thyroid_master.duckdb",
-  "files": [
-    "dataset_metrics.csv",
-    "operative_nlp_audit.csv"
-  ]
-}

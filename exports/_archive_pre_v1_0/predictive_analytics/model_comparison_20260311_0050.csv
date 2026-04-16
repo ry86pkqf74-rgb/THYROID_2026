@@ -1,0 +1,5 @@
+Model,Type,Concordance,AIC,Predictors,N,Events,Notes
+Kaplan-Meier,Non-parametric,—,—,0,5794,36,Median not reached
+Cox PH,Semi-parametric,0.6922,527.8,4,5243,32,Top HR: ln_positive (1.03)
+Weibull PTCM,Parametric (cure),—,4047.23,9,48304,161,"Cure π̄=99.3%, κ=2.881"
+Mixture Cure (Weibull),Parametric (cure),—,590.6,0,5794,36,"Cure π=99.0%, κ=1.473, σ=6.28y"

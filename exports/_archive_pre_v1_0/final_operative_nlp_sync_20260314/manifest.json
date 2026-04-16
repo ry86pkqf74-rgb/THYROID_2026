@@ -1,0 +1,26 @@
+{
+  "export_timestamp": "2026-03-15T01:04:53.539414",
+  "script": "86_operative_nlp_final_sync.py",
+  "summary": {
+    "episode_new_fields": 7,
+    "patient_new_fields": 11,
+    "manuscript_new_fields": 11,
+    "episode_rows": 9575,
+    "dedup_rows": 9368,
+    "total_val_rows": 28
+  },
+  "key_counts": {
+    "strap_muscle_involvement_flag_episode": 186,
+    "parathyroid_autograft_flag_episode": 40,
+    "reoperative_field_flag_episode": 49,
+    "local_invasion_flag_episode": 25,
+    "tracheal_involvement_flag_episode": 9,
+    "esophageal_involvement_flag_episode": 0,
+    "op_rln_monitoring_any_patient": 1701,
+    "op_strap_muscle_any_manuscript": 186
+  },
+  "source_limited_fields": [
+    "esophageal_involvement_flag"
+  ],
+  "root_cause": "script_48_episode_sql_authored_before_script_71_enrichment"
+}

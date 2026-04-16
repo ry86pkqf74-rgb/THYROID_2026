@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>THYROID_2026 — Mixture Cure Model Report</title>
+  <style>
+    body {font-family: 'Helvetica Neue', Arial, sans-serif; background:#07090f; color:#f0f4ff;
+           max-width:900px; margin:40px auto; padding:0 24px;}
+    h1 {color:#a78bfa; border-bottom:1px solid #1e2535; padding-bottom:12px;}
+    h2 {color:#38bdf8; margin-top:32px;}
+    .kpi-grid {display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:20px 0;}
+    .kpi {background:#0e1219; border:1px solid #1e2535; border-radius:8px; padding:16px;}
+    .kpi-label {font-size:.75rem; color:#8892a4; letter-spacing:.06em; text-transform:uppercase;}
+    .kpi-value {font-size:1.4rem; font-weight:700; color:#a78bfa; margin-top:4px;}
+    table {width:100%; border-collapse:collapse; margin-top:16px; font-size:.85rem;}
+    th {background:#141923; color:#8892a4; padding:8px 12px; text-align:left;
+         font-weight:600; border-bottom:1px solid #1e2535;}
+    td {padding:8px 12px; border-bottom:1px solid #1e2535; color:#d4dae8;}
+    tr:hover td {background:#0e1219;}
+    .note {font-size:.8rem; color:#8892a4; margin-top:24px; line-height:1.5;}
+    code {background:#141923; padding:2px 6px; border-radius:4px; font-size:.8rem;}
+  </style>
+</head>
+<body>
+  <h1>Mixture Cure Model (MCM)</h1>
+  <p style="color:#8892a4">THYROID_2026 · generated 2026-03-11 01:47</p>
+
+  <h2>Population Rationale</h2>
+  <p>The Mixture Cure Model partitions the patient population into two latent groups:
+  a <strong>cured</strong> fraction π(x) who will never experience recurrence, and a
+  <strong>susceptible</strong> fraction 1−π(x) whose time to recurrence follows a Weibull
+  distribution (shape=1.484,
+  scale=139.88 y).
+  The logistic incidence model identifies which covariates drive the probability of
+  being in the susceptible (uncured) group.</p>
+
+  <h2>Model KPIs</h2>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">N (cohort)</div>
+      <div class="kpi-value">48,304</div></div>
+    <div class="kpi"><div class="kpi-label">Events</div>
+      <div class="kpi-value">161 (0.3%)</div></div>
+    <div class="kpi"><div class="kpi-label">Overall cure fraction π̄</div>
+      <div class="kpi-value">73.0%</div></div>
+    <div class="kpi"><div class="kpi-label">Univariate cure (Weibull)</div>
+      <div class="kpi-value">99.4%</div></div>
+    <div class="kpi"><div class="kpi-label">AIC (best)</div>
+      <div class="kpi-value">4634.3</div></div>
+    <div class="kpi"><div class="kpi-label">EM converged</div>
+      <div class="kpi-value">No (120 iter)</div></div>
+  </div>
+
+  <h2>Incidence Model — Logistic Odds Ratios</h2>
+  <p style="color:#8892a4">OR &gt; 1 → higher odds of being in the uncured group</p>
+  <table>
+    <tr><th>Term</th><th>γ</th><th>SE</th><th>OR</th><th>95% CI lower</th><th>95% CI upper</th></tr>
+    <tr><td>intercept</td><td style='text-align:right'>-1.6815</td><td style='text-align:right'>0.3017</td><td style='text-align:right'>0.186</td><td style='text-align:right'>0.103</td><td style='text-align:right'>0.336</td></tr><tr><td>braf_status</td><td style='text-align:right'>0.1351</td><td style='text-align:right'>0.7075</td><td style='text-align:right'>1.145</td><td style='text-align:right'>0.286</td><td style='text-align:right'>4.581</td></tr><tr><td>tert_status</td><td style='text-align:right'>0.0006</td><td style='text-align:right'>0.0000</td><td style='text-align:right'>1.001</td><td style='text-align:right'>1.001</td><td style='text-align:right'>1.001</td></tr><tr><td>ajcc_stage_8_II</td><td style='text-align:right'>-1.6465</td><td style='text-align:right'>0.4268</td><td style='text-align:right'>0.193</td><td style='text-align:right'>0.083</td><td style='text-align:right'>0.445</td></tr><tr><td>ajcc_stage_8_III</td><td style='text-align:right'>0.9635</td><td style='text-align:right'>1.2632</td><td style='text-align:right'>2.621</td><td style='text-align:right'>0.220</td><td style='text-align:right'>31.168</td></tr><tr><td>ajcc_stage_8_IVB</td><td style='text-align:right'>-2.8453</td><td style='text-align:right'>0.6104</td><td style='text-align:right'>0.058</td><td style='text-align:right'>0.018</td><td style='text-align:right'>0.192</td></tr><tr><td>ete_type_microscopic</td><td style='text-align:right'>2.9059</td><td style='text-align:right'>0.3784</td><td style='text-align:right'>18.282</td><td style='text-align:right'>8.708</td><td style='text-align:right'>38.385</td></tr><tr><td>ete_type_none</td><td style='text-align:right'>0.4499</td><td style='text-align:right'>0.2410</td><td style='text-align:right'>1.568</td><td style='text-align:right'>0.978</td><td style='text-align:right'>2.515</td></tr><tr><td>recurrence_risk_band_intermediate</td><td style='text-align:right'>-0.8736</td><td style='text-align:right'>0.3728</td><td style='text-align:right'>0.417</td><td style='text-align:right'>0.201</td><td style='text-align:right'>0.867</td></tr><tr><td>recurrence_risk_band_low</td><td style='text-align:right'>-1.5146</td><td style='text-align:right'>0.2336</td><td style='text-align:right'>0.220</td><td style='text-align:right'>0.139</td><td style='text-align:right'>0.348</td></tr>
+  </table>
+
+  <h2>Interpretation</h2>
+  <p>Unlike the PTCM (which models the <em>number</em> of latent cancer cells), the MCM
+  treats cure as a <strong>binary population split</strong>. Covariates with OR &gt; 1 increase
+  the probability that a patient belongs to the susceptible (uncured) group.
+  The Weibull latency component governs <em>when</em> events occur among the uncured.</p>
+
+  <div class="note">
+    Model: EM Logistic-Weibull Mixture Cure (Berkson & Gage 1952; Farewell 1982).
+    Bootstrap SE from 20 resamples (seed=42).
+    Source table: <code>mixture_cure_cohort</code>.
+    Analysis date: 2026-03-11 01:47.
+  </div>
+</body>
+</html>

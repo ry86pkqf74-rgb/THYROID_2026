@@ -1,0 +1,13 @@
+entity_domain,note_type,total_entities,unique_patients,present_count,negated_count,has_source_note,has_evidence,has_entity_date,has_note_date,avg_confidence
+staging,h_p,2375,1308,2352,23,2375,2375,756,763,0.9
+staging,dc_sum,23,10,22,1,23,23,4,4,0.9
+genetics,h_p,1196,446,1081,115,1196,1196,185,607,0.9
+genetics,dc_sum,4,3,4,0,4,4,0,1,0.9
+procedures,h_p,9937,3421,9867,70,9937,9937,1790,3501,0.9
+procedures,dc_sum,401,126,398,3,401,401,114,109,0.9
+complications,h_p,4846,2169,4739,107,4846,4846,49,1275,0.9
+complications,dc_sum,379,90,275,104,379,379,37,141,0.9
+medications,h_p,3345,1260,3228,117,3345,3345,476,1248,0.9
+medications,dc_sum,415,105,408,7,415,415,55,143,0.9
+problem_list,h_p,8786,3301,8078,708,8786,8786,1092,2542,0.9
+problem_list,dc_sum,158,87,154,4,158,158,41,47,0.9

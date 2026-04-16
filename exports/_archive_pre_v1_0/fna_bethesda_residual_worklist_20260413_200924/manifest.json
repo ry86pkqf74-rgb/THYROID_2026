@@ -1,0 +1,10 @@
+{
+  "script": "154_fna_cytology_bethesda_from_path_text.py",
+  "utc": "2026-04-13T20:09:24.697144+00:00",
+  "cytology_null_category_before": 128,
+  "cytology_null_category_after": 128,
+  "episode_null_bethesda_before": 23,
+  "episode_null_bethesda_after": 23,
+  "residual_worklist_rows": 23,
+  "worklist_csv": "exports/fna_bethesda_residual_worklist_20260413_200924/fna_bethesda_residual_worklist.csv"
+}

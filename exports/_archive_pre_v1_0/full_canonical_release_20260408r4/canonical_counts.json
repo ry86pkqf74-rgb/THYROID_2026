@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-04-14T02:31:15.779143+00:00",
+  "release_tag": "20260408r4",
+  "counts": {
+    "canonical_extracted_fact_long_v2": 55500,
+    "canonical_fact_quarantine_v2": 199,
+    "note_extraction_runs": 3,
+    "master_fact_long_verified_v1": 55500,
+    "master_patient_rollup_verified_v1": 5141,
+    "master_source_lineage_v1": 55500,
+    "longitudinal_lab_canonical_v1": 77960,
+    "longitudinal_lab_deduped_v": 56198,
+    "specimen_master_v1": 10139,
+    "specimen_tumor_focus_v1": 11103,
+    "specimen_genomic_assay_v1": 10370,
+    "fhir_bundle_specimen_export_v1": 10139
+  }
+}

@@ -1,0 +1,6 @@
+definition,sql_source,patient_count,includes,recommendation
+total_any_recurrence,extracted_recurrence_refined_v1 WHERE recurrence_any IS TRUE,1986,Includes structural_confirmed + structural_date_unknown + biochemical_only,Use for overall recurrence rate in manuscript. State denominator explicitly.
+structural_recurrence_only,"extracted_recurrence_refined_v1 WHERE detection_category IN (structural_confirmed, structural_date_unknown)",1818,Structural recurrence only (excludes biochemical_only),Use for structural recurrence analyses. Approximately matches recurrence_risk_features_mv.
+recurrence_risk_features_mv,recurrence_risk_features_mv WHERE recurrence_flag = true,1818,"Structural recurrence (same events, different source table)",Legacy source. Prefer extracted_recurrence_refined_v1 for new analyses.
+biochemical_only,extracted_recurrence_refined_v1 WHERE detection_category = biochemical_only,168,Rising Tg > 1.0 ng/mL and > 2x nadir without structural disease,Report separately from structural recurrence in manuscript.
+RECONCILIATION_NOTE,N/A,168,"Difference between refined (1,986) and risk_mv (1,818) = 168 patients = biochemical_only events not tracked in risk_mv.",Both sources are consistent. The 168-patient difference is fully explained by biochemical_only recurrences.

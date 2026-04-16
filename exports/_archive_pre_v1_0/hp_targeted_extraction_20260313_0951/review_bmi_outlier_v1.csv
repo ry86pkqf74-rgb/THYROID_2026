@@ -1,0 +1,4 @@
+research_id,entity_type,entity_value_norm,evidence_span,note_type,confidence,review_reason
+7996,bmi_value,66.4,WT:     186.4 kg         BMI:     66.4                             G,h_p,0.95,bmi_outlier
+7996,bmi_category,obese,al reflux disease)            Morbid obesity            Obstructive sleep,h_p,0.75,bmi_outlier
+11997,bmi_value,72.07,LMP 07/08/2024  | SpO2 97%  | BMI 72.07 kg/m² General: Alert and orie,h_p,0.95,bmi_outlier

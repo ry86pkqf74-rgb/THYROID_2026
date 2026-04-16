@@ -1,0 +1,5 @@
+table,total,weak,has_score
+surgery_pathology_linkage_v3,9409,566,True
+pathology_rai_linkage_v3,23,0,True
+fna_molecular_linkage_v3,708,29,True
+preop_surgery_linkage_v3,3591,2045,True

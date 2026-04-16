@@ -1,0 +1,14 @@
+{
+  "generated": "2026-03-15T13:10:49.013005",
+  "script": "scripts/98_multi_surgery_artifact_linkage_audit.py",
+  "tables": [
+    "val_multi_surgery_artifact_linkage_v1",
+    "multi_surgery_artifact_review_queue_v1",
+    "multi_surgery_oed_coverage_gap_v1"
+  ],
+  "files": [
+    "/Users/ros/THyroid 2026/THYROID_2026/exports/multi_surgery_artifact_linkage_20260315_1310/val_multi_surgery_artifact_linkage_v1.csv",
+    "/Users/ros/THyroid 2026/THYROID_2026/exports/multi_surgery_artifact_linkage_20260315_1310/multi_surgery_artifact_review_queue_v1.csv",
+    "/Users/ros/THyroid 2026/THYROID_2026/exports/multi_surgery_artifact_linkage_20260315_1310/multi_surgery_oed_coverage_gap_v1.csv"
+  ]
+}

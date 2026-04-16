@@ -1,5 +1,0 @@
-variable,input_count,refined_count,concordant_patients,discordant_patients
-tirads_excel_complete,3439,3439,3218,1911
-tirads_excel_scored,3434,3434,,
-tirads_nlp_notes,417,417,,
-tirads_total_patients,3474,4183,,

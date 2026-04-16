@@ -1,0 +1,623 @@
+research_id,entity_type,entity_value_norm,evidence_span,note_type,confidence,review_reason
+1670,smoking_status,never_smoker,rug Use     -     12/10/2019            No                   Tobacco Use / Expos,endocrine_note,0.9,conflicting
+1670,smoking_status,former_smoker,"xposure     -     12/10/2019            Former smoker, No        Former smoker, ",endocrine_note,0.9,conflicting
+1678,smoking_status,former_smoker,atory failure       home o2- 5L NC      former smoker      -continue home 02    ,endocrine_note,0.9,conflicting
+1678,smoking_status,never_smoker,rug Use     -     05/18/2020            No                   Tobacco Use / Expos,endocrine_note,0.9,conflicting
+1678,smoking_status,current_smoker,"x52 years stopped smoking 5/4/20        Current some day smoker, Yes        Curr",endocrine_note,0.9,conflicting
+1678,packs_per_day,1,"ormer smoker, Yes, Cigarettes, 3 daily, 1 pack/day x52 years stopped smoking 5/4",endocrine_note,0.85,conflicting
+1965,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, Chewing tobacco, 1 ppd, 28",endocrine_note,0.9,conflicting
+1965,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                       F,endocrine_note,0.9,conflicting
+1965,packs_per_day,1,"Former smoker, No, Chewing tobacco, 1 ppd, 28 years ago                   Travel",endocrine_note,0.85,conflicting
+2033,smoking_status,current_smoker,Tobacco Use / Exposure (11/12/2019)   Smoking Status: Current every day smoker  ,endocrine_note,0.9,conflicting
+2033,smoking_status,never_smoker,rrent gen: Identifies as female       E-Cigarette Use:: Never       Lives With: ,endocrine_note,0.9,conflicting
+2713,smoking_status,never_smoker,Recreational Drug Use             No                   Tobacco Use / Exposure   ,endocrine_note,0.9,conflicting
+2713,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, 20 years ago              ",endocrine_note,0.9,conflicting
+6996,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+6996,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, 1 pack per da",h_p,0.9,conflicting
+6996,packs_per_day,1,"Former smoker, No, Cigarettes, 1 pack per day, 9/12/2018                    Trav",h_p,0.85,conflicting
+7065,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+7065,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, Yes, February 2017",h_p,0.9,conflicting
+7094,smoking_status,never_smoker,ug Use     -     06/19/2019             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7094,smoking_status,former_smoker,"posure     -     06/19/2019             Former smoker, No, Cigarettes, 7-8 cigs ",h_p,0.9,conflicting
+7107,smoking_status,never_smoker,ase Sister  Social History  Tobacco Use Smoking status: Never Passive exposure: ,endocrine_note,0.9,conflicting
+7107,smoking_status,current_smoker,r Substance Use Topics Alcohol use: Not Currently  Smoking cessation counseling:,endocrine_note,0.9,conflicting
+7107,smoking_status,never_smoker,: Social History Substance Use Topics • Smoking status: Never Smoker • Smokeless,h_p,0.9,conflicting
+7138,smoking_status,former_smoker,ter her previous neck surgery. She is a former smoker and quite > 12 years ago. ,endocrine_note,0.9,conflicting
+7138,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,endocrine_note,0.9,conflicting
+7138,packs_per_day,0.75,"Former smoker, No, Cigarettes, 0.75ppd for 40 years, 2008                    T",endocrine_note,0.85,conflicting
+7204,smoking_status,never_smoker,History Social History    Tobacco Use •	Smoking status:	Never  	 	Passive exposu,endocrine_note,0.9,conflicting
+7204,smoking_status,former_smoker,"posure     -     04/09/2019             Former smoker, No, 2014                 ",h_p,0.9,conflicting
+7216,smoking_status,current_smoker,"posure     -     07/10/2019             Current some day smoker, Yes, Cigarettes",h_p,0.9,conflicting
+7216,smoking_status,never_smoker,"r, Yes, 1 pack monthly, 2 weeks         Never smoker, No                    Trav",h_p,0.9,conflicting
+7224,smoking_status,unknown,s for 24 hours before your surgery.  8. Do not smoke after midnight the night be,h_p,0.5,unknown_status
+7227,smoking_status,never_smoker,-     09/24/2019             No         No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7227,smoking_status,current_smoker,"posure     -     09/24/2019             Current every day smoker, Yes, Cigarette",h_p,0.9,conflicting
+7227,packs_per_day,4,"ent every day smoker, No, Cigarettes, 1/4 pack/day, 8:00am         Current every",h_p,0.85,conflicting
+7241,smoking_status,former_smoker,TOBACCO SMOKER Strongly encouraged to quit smoking  Assessment & Plan  Reviewed ,endocrine_note,0.9,conflicting
+7241,smoking_status,current_smoker,tion: N/A  Social History Main Topics • Smoking status: Current Some Day Smoker ,h_p,0.9,conflicting
+7255,smoking_status,never_smoker,ug Use     -     01/11/2019             No                    Tobacco Use / Expo,endocrine_note,0.9,conflicting
+7255,smoking_status,current_smoker,"posure     -     01/11/2019             Current every day smoker, Yes, Cigarette",endocrine_note,0.9,conflicting
+7255,packs_per_day,2,"/day (down to 8-10 cigs/day, previously 2 PPD). Has been trying to quit with hus",endocrine_note,0.85,conflicting
+7255,packs_per_day,1,"rent every day smoker, Yes, Cigarettes, 1 PPD for 32 years                      ",endocrine_note,0.85,conflicting
+7264,smoking_status,never_smoker,ug Use     -     10/29/2018             No                    Tobacco Use / Expo,endocrine_note,0.9,conflicting
+7264,smoking_status,former_smoker,"posure     -     10/29/2018             Former smoker, No, 45 years         Form",endocrine_note,0.9,conflicting
+7268,smoking_status,former_smoker,/12/2025)  	Patient History  	•	Smoking Tobacco Use: Former  	•	Smokeless Tobacc,endocrine_note,0.9,conflicting
+7268,smoking_status,never_smoker,oking Tobacco Use: Former  	•	Smokeless Tobacco Use: Never  	•	Passive Exposure:,endocrine_note,0.9,conflicting
+7268,smoking_status,former_smoker,"posure     -     02/17/2020             Former smoker, No, 2000                 ",h_p,0.9,conflicting
+7305,smoking_status,former_smoker,"copy this year. Since diagnosis, pt has stopped smoking.                   Pt un",endocrine_note,0.9,conflicting
+7305,smoking_status,current_smoker,n file.    Social History Main Topics •	Smoking status:	Current Every Day Smoker,h_p,0.9,conflicting
+7345,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,endocrine_note,0.9,conflicting
+7345,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, 2004                    Tr",endocrine_note,0.9,conflicting
+7345,smoking_status,never_smoker,on file.  Social History Main Topics • Smoking status: Never Smoker • Smokeless ,h_p,0.9,conflicting
+7377,smoking_status,never_smoker,ug Use     -     01/02/2018             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7377,smoking_status,former_smoker,"posure     -     01/02/2018             Former smoker, No, Cigarettes, 2 packs a",h_p,0.9,conflicting
+7433,smoking_status,former_smoker,d be performed because his father had a remote history of thyroid cancer.  In cl,h_p,0.9,conflicting
+7433,smoking_status,current_smoker,"Tobacco Use / Exposure             Current some day smoker, Yes, Cigars         ",h_p,0.9,conflicting
+7433,packs_per_day,1,it D.       Patient is a former smoker (1 ppd for 17 years) who quit in 1990. Et,h_p,0.85,conflicting
+7434,smoking_status,never_smoker,ug Use     -     04/02/2019             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7434,smoking_status,current_smoker,"posure     -     04/02/2019             Current every day smoker, Yes           ",h_p,0.9,conflicting
+7448,smoking_status,never_smoker,Alcohol Use             Denies                    Tobacco Use / Exposure        ,endocrine_note,0.9,conflicting
+7448,smoking_status,current_smoker,"Tobacco Use / Exposure             Current every day smoker, Yes, Cigarettes",endocrine_note,0.9,conflicting
+7485,smoking_status,former_smoker,Social History     	 	 	  Tobacco Use •	Smoking status:	Former  	 	Packs/day:	0.,endocrine_note,0.9,conflicting
+7485,pack_years,48.00,:	Former  	 	Packs/day:	0.50  	 	Years:	48.00  	 	Pack years:	24.00  	 	Types:	C,endocrine_note,0.85,conflicting
+7485,smoking_status,former_smoker,"ysterectomy, foot surgery       Social: former smoker (quit 2016), social etoh  ",h_p,0.9,conflicting
+7485,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+7511,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No                    Vaping /",endocrine_note,0.9,conflicting
+7511,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,endocrine_note,0.9,conflicting
+7513,smoking_status,unknown,s for 24 hours before your surgery.  8. Do not smoke after midnight the night be,h_p,0.5,unknown_status
+7521,smoking_status,current_smoker,"Tobacco Use / Exposure             Current every day smoker, Yes, Cigarettes, 12",endocrine_note,0.9,conflicting
+7521,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,endocrine_note,0.9,conflicting
+7528,smoking_status,never_smoker,Non-medical:	Not on file Tobacco Use •	Smoking status:	Never Smoker •	Smokeless ,endocrine_note,0.9,conflicting
+7528,smoking_status,former_smoker,ioner	     Social History Main Topics •	Smoking status:	Former Smoker  	 	Types:,h_p,0.9,conflicting
+7542,smoking_status,former_smoker,on file Social History    Tobacco Use •	Smoking status:	Former  	 	Current packs,endocrine_note,0.9,conflicting
+7542,packs_per_day,0.5,packs/day:	0.00  	 	Average packs/day:	0.5 packs/day for 5.0 years (2.5 ttl pk-y,endocrine_note,0.85,conflicting
+7542,smoking_status,never_smoker,ug Use     -     06/07/2019             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7542,smoking_status,former_smoker,"posure     -     06/07/2019             Former smoker, No                       ",h_p,0.9,conflicting
+7549,smoking_status,former_smoker,8.3 Stable  Saw nephrology    5. He has remote history of CAD   6. He has been s,endocrine_note,0.9,conflicting
+7549,smoking_status,former_smoker,", continue to see ENT for that. Need to quit smoking            Ordered:        ",h_p,0.9,conflicting
+7549,smoking_status,current_smoker,"posure     -     12/03/2019             Current every day smoker, Yes, Cigarette",h_p,0.9,conflicting
+7549,packs_per_day,2,"Tobacco use - since 1990, 1/2ppd > now 3/day            Tobacco use - si",h_p,0.85,conflicting
+7549,packs_per_day,2,"Tobacco use - since 1990, 1/2ppd > now 3/day              Historical",h_p,0.85,conflicting
+7555,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,endocrine_note,0.9,conflicting
+7555,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, 1998                    Va",endocrine_note,0.9,conflicting
+7555,smoking_status,never_smoker,ug Use     -     04/02/2018             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7555,smoking_status,former_smoker,"posure     -     04/02/2018             Former smoker, No, 1998                 ",h_p,0.9,conflicting
+7566,smoking_status,current_smoker,has smoked varying amounts in her life currently smoking 8 cigarettes per week. ,endocrine_note,0.9,conflicting
+7566,smoking_status,former_smoker,MI	36.18 kg/m² OB Status	Having periods Smoking Status	Former BSA	2.32 m²       ,endocrine_note,0.9,conflicting
+7566,smoking_status,current_smoker,"posure     -     06/28/2019             Current some day smoker, Yes            ",h_p,0.9,conflicting
+7608,smoking_status,former_smoker,"posure     -     06/26/2019             Former smoker, No, Very infrequently and",h_p,0.9,conflicting
+7608,smoking_status,never_smoker,Marital status:	Divorced Tobacco Use •	Smoking status:	Never  	 	Passive exposur,h_p,0.9,conflicting
+7628,smoking_status,former_smoker,"posure     -     06/04/2018             Former smoker, No         Never smoker, ",h_p,0.9,conflicting
+7628,smoking_status,never_smoker,"8             Former smoker, No         Never smoker, No                    Trav",h_p,0.9,conflicting
+7653,smoking_status,never_smoker,ug Use     -     06/11/2019             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7653,smoking_status,former_smoker,"posure     -     06/11/2019             Former smoker, No, Cigarettes",h_p,0.9,conflicting
+7656,smoking_status,never_smoker,ug Use     -     08/14/2019             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7656,smoking_status,former_smoker,"posure     -     08/14/2019             Former smoker, No                       ",h_p,0.9,conflicting
+7690,smoking_status,never_smoker,ug Use     -     03/21/2019             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7690,smoking_status,former_smoker,"posure     -     03/21/2019             Former smoker, No, Cigarettes, 2013",h_p,0.9,conflicting
+7690,smoking_status,never_smoker,ug Use     -     03/21/2019             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7690,smoking_status,former_smoker,"posure     -     03/21/2019             Former smoker, No, Cigarettes, 2013",h_p,0.9,conflicting
+7693,smoking_status,never_smoker,ol Use     -     05/09/2019             Denies                    Tobacco Use / ,h_p,0.9,conflicting
+7693,smoking_status,former_smoker,"posure     -     05/09/2019             Former smoker, No, Cigarettes",h_p,0.9,conflicting
+7700,smoking_status,never_smoker,ol Use     -     05/20/2014             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7700,smoking_status,former_smoker,"posure     -     05/20/2014             Former smoker, No, 2009         Never sm",h_p,0.9,conflicting
+7702,smoking_status,never_smoker,ug Use     -     07/19/2019             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7702,smoking_status,former_smoker,"posure     -     07/19/2019             Former smoker, No                       ",h_p,0.9,conflicting
+7709,smoking_status,never_smoker,ug Use     -     06/18/2019             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7709,smoking_status,former_smoker,"posure     -     06/18/2019             Former smoker, Yes, Cigarettes, 2 packs ",h_p,0.9,conflicting
+7735,smoking_status,former_smoker,ergoing thyroidectomy and is willing to quit smoking at least around time of sur,h_p,0.9,conflicting
+7735,smoking_status,current_smoker,"posure     -     05/08/2018             Current every day smoker, Yes, Cigarette",h_p,0.9,conflicting
+7735,packs_per_day,1,ent coking sensation. Still smoking 1/2-1 ppd. She is interested in undergoing t,h_p,0.85,conflicting
+7762,smoking_status,never_smoker,onal Drug Use     - 08/07/2019          No             Tobacco Use / Exposure   ,h_p,0.9,conflicting
+7762,smoking_status,former_smoker,"se / Exposure     - 08/07/2019          Former smoker, No, 30 years ago         ",h_p,0.9,conflicting
+7789,smoking_status,never_smoker,ug Use     -     09/25/2014             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7789,smoking_status,former_smoker,"posure     -     09/25/2014             Former smoker, No, Cigarettes, quit long",h_p,0.9,conflicting
+7793,smoking_status,never_smoker,ug Use     -     10/21/2019             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7793,smoking_status,former_smoker,"posure     -     10/21/2019             Former smoker, No                       ",h_p,0.9,conflicting
+7814,smoking_status,never_smoker,ug Use     -     11/01/2019             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7814,smoking_status,current_smoker,"posure     -     11/01/2019             Current some day smoker, Yes         Nev",h_p,0.9,conflicting
+7818,smoking_status,never_smoker,ug Use     -     11/12/2019             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7818,smoking_status,current_smoker,"posure     -     11/12/2019             Current every day smoker, Yes, Evap     ",h_p,0.9,conflicting
+7823,smoking_status,never_smoker,ug Use     -     11/04/2019             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7823,smoking_status,former_smoker,"posure     -     11/04/2019             Former smoker, No, 2018                 ",h_p,0.9,conflicting
+7831,smoking_status,never_smoker,ug Use     -     04/02/2019             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7831,smoking_status,former_smoker,"posure     -     04/02/2019             Former smoker, No, Cigarettes, 1972",h_p,0.9,conflicting
+7833,smoking_status,former_smoker,"posure     -     10/04/2017             Former smoker, No         Never smoker, ",h_p,0.9,conflicting
+7833,smoking_status,never_smoker,"7             Former smoker, No         Never smoker, No, Cigarettes, smoked for",h_p,0.9,conflicting
+7835,smoking_status,never_smoker,ug Use     -     10/11/2019             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7835,smoking_status,current_smoker,"posure     -     10/11/2019             Current every day smoker, Yes           ",h_p,0.9,conflicting
+7835,packs_per_day,2,"referred to clinic. She is a smoker, 1/2 ppd.               TSH .93 8/2019",h_p,0.85,conflicting
+7841,smoking_status,never_smoker,ol Use     -     12/05/2019             Denies                    Tobacco Use / ,h_p,0.9,conflicting
+7841,smoking_status,former_smoker,"19             Never smoker, No         Former smoker, No                       ",h_p,0.9,conflicting
+7866,smoking_status,never_smoker,ug Use     -     03/12/2018             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7866,smoking_status,current_smoker,"posure     -     03/12/2018             Current every day smoker, Yes, Cigarette",h_p,0.9,conflicting
+7866,packs_per_day,1,"rent every day smoker, Yes, Cigarettes, 1 pack per day                    Travel",h_p,0.85,conflicting
+7906,smoking_status,never_smoker,"09/26/2019             No, None         No                    Tobacco Use / Expo",h_p,0.9,conflicting
+7906,smoking_status,current_smoker,"posure     -     09/26/2019             Current every day smoker, Yes, Cigarette",h_p,0.9,conflicting
+7946,smoking_status,former_smoker,"mother w/ gastric cancer       Social: former smoker (quit >10 years ago), regul",h_p,0.9,conflicting
+7946,smoking_status,never_smoker,ug Use     -     01/26/2018             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7951,smoking_status,never_smoker,ug Use     -     10/25/2019             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7951,smoking_status,former_smoker,"posure     -     10/25/2019             Former smoker, No, Cigarettes, 2015",h_p,0.9,conflicting
+7964,smoking_status,never_smoker,ug Use     -     09/20/2019             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7964,smoking_status,former_smoker,"posure     -     09/20/2019             Former smoker, Yes, Cigarettes, 07/2019 ",h_p,0.9,conflicting
+7964,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+7964,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, Yes, Cigarettes, 07/2019",h_p,0.9,conflicting
+7984,smoking_status,never_smoker,"eekly, Marijuana, Oral, Inhaled         No                    Tobacco Use / Expo",h_p,0.9,conflicting
+7984,smoking_status,current_smoker,"posure     -     10/28/2019             Current some day smoker, Yes         For",h_p,0.9,conflicting
+7984,smoking_status,former_smoker,"Current some day smoker, Yes         Former smoker, No, Cigars, 12 yrs ago      ",h_p,0.9,conflicting
+7988,smoking_status,never_smoker,ug Use     -     12/12/2019             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7988,smoking_status,former_smoker,"posure     -     12/12/2019             Former smoker, No, 2008 smoked 13 years ",h_p,0.9,conflicting
+7999,smoking_status,never_smoker,-     04/24/2019             No         No                    Tobacco Use / Expo,h_p,0.9,conflicting
+7999,smoking_status,former_smoker,"posure     -     04/24/2019             Former smoker, No, Cigarettes, Half a pa",h_p,0.9,conflicting
+8009,smoking_status,former_smoker,my.       - She noted that she recently quit smoking and we discussed the increa,h_p,0.9,conflicting
+8009,smoking_status,never_smoker,ug Use     -     12/30/2019             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+8009,smoking_status,current_smoker,"posure     -     12/30/2019             Current some day smoker, Yes, Cigarettes",h_p,0.9,conflicting
+8014,smoking_status,never_smoker,ol Use     -     01/28/2020             Denies                    Tobacco Use / ,h_p,0.9,conflicting
+8014,smoking_status,former_smoker,"posure     -     01/28/2020             Former smoker, No                       ",h_p,0.9,conflicting
+8044,smoking_status,former_smoker,"posure     -     09/23/2019             Former smoker, No, smoked in 1970's 1/2 ",h_p,0.9,conflicting
+8044,smoking_status,never_smoker,"970's 1/2 ppk/day 10 -5 ppk/yrs         Never smoker, No                    Trav",h_p,0.9,conflicting
+8052,smoking_status,former_smoker,"posure     -     02/13/2019             Former smoker, No, 30 yrs ago         Ne",h_p,0.9,conflicting
+8052,smoking_status,never_smoker,"Former smoker, No, 30 yrs ago         Never smoker, No         Former smoker, No",h_p,0.9,conflicting
+8068,smoking_status,never_smoker,ug Use     -     11/20/2015             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+8068,smoking_status,former_smoker,"posure     -     11/20/2015             Former smoker, No                       ",h_p,0.9,conflicting
+8088,smoking_status,never_smoker,ol Use     -     02/26/2020             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+8088,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+8088,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, Last use 20 years ago",h_p,0.9,conflicting
+8105,smoking_status,never_smoker,tivity     -     09/28/2017             Denies                    Tobacco Use / ,h_p,0.9,conflicting
+8105,smoking_status,former_smoker,"posure     -     09/28/2017             Former smoker, No, Cigars               ",h_p,0.9,conflicting
+8112,smoking_status,former_smoker,"posure     -     01/29/2020             Former smoker, No                       ",h_p,0.9,conflicting
+8112,smoking_status,former_smoker,"posure     -     05/22/2020             Former smoker, No                    Vap",h_p,0.9,conflicting
+8112,smoking_status,never_smoker,ttes     -     05/22/2020             E-Cigarette Use: Never.                   ,h_p,0.9,conflicting
+8123,smoking_status,never_smoker,ol Use     -     05/08/2020             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+8123,smoking_status,current_smoker,"posure     -     05/08/2020             Current every day smoker, Yes, 7-8 per d",h_p,0.9,conflicting
+8141,smoking_status,former_smoker,"posure     -     05/07/2020             Former smoker, Yes, Cigarettes         C",h_p,0.9,conflicting
+8141,smoking_status,current_smoker,"Former smoker, Yes, Cigarettes         Current every day smoker, Yes, Cigarettes",h_p,0.9,conflicting
+8141,smoking_status,never_smoker,ttes     -     05/07/2020             E-Cigarette Use: Never.                   ,h_p,0.9,conflicting
+8155,smoking_status,never_smoker,ug Use     -     05/20/2020             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+8155,smoking_status,former_smoker,"posure     -     05/20/2020             Former smoker, No, Cigarettes, 1 PACK EV",h_p,0.9,conflicting
+8166,smoking_status,former_smoker,"posure     -     05/19/2020             Former smoker, No, 2010                 ",h_p,0.9,conflicting
+8166,smoking_status,never_smoker,ttes     -     05/19/2020             E-Cigarette Use: Never.                   ,h_p,0.9,conflicting
+8174,smoking_status,never_smoker,ug Use     -     06/10/2020             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+8174,smoking_status,former_smoker,"posure     -     06/10/2020             Former smoker, No, quit 2006            ",h_p,0.9,conflicting
+8187,smoking_status,never_smoker,ug Use     -     06/04/2020             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+8187,smoking_status,current_smoker,"posure     -     06/04/2020             Current every day smoker, Yes           ",h_p,0.9,conflicting
+8191,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+8191,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, Cigarettes, 30 years ago",h_p,0.9,conflicting
+8198,smoking_status,current_smoker,"Tobacco Use / Exposure             Current every day smoker, Yes                ",h_p,0.9,conflicting
+8198,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8210,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+8210,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No                        Fami",h_p,0.9,conflicting
+8230,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+8230,smoking_status,current_smoker,"Tobacco Use / Exposure             Current some day smoker, Yes                 ",h_p,0.9,conflicting
+8258,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+8258,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No                        Fami",h_p,0.9,conflicting
+8268,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+8268,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No                        Fami",h_p,0.9,conflicting
+8269,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+8269,smoking_status,current_smoker,"Tobacco Use / Exposure             Current every day smoker, Yes                ",h_p,0.9,conflicting
+8287,smoking_status,former_smoker,"Tobacco Use / Exposure         Former smoker, No, Cigarettes          Travel",h_p,0.9,conflicting
+8287,smoking_status,never_smoker,Vaping / eCigarettes         E-Cigarette Use: Never.          Family History    ,h_p,0.9,conflicting
+8290,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+8290,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, Cigarettes, quit 2010",h_p,0.9,conflicting
+8330,smoking_status,current_smoker,"Tobacco Use / Exposure             Current every day smoker, Yes                ",h_p,0.9,conflicting
+8330,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8344,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No                    Vaping /",h_p,0.9,conflicting
+8344,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8364,smoking_status,current_smoker,"Tobacco Use / Exposure             Current every day smoker, Yes                ",h_p,0.9,conflicting
+8364,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8371,smoking_status,never_smoker,ug Use     -     01/02/2020             No                    Tobacco Use / Expo,h_p,0.9,conflicting
+8371,smoking_status,current_smoker,"posure     -     01/02/2020             Current some day smoker, Yes            ",h_p,0.9,conflicting
+8383,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, Yes, Cigars                   ",h_p,0.9,conflicting
+8383,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8392,smoking_status,current_smoker,ure this morning is 127/59 . Patient is currently smoking two cigarettes daily. ,h_p,0.9,conflicting
+8392,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+8392,packs_per_day,1,"Social: 26 years of smoking, 1 PPD previously, currently 5 cigarettes dail",h_p,0.85,conflicting
+8394,smoking_status,former_smoker,s a 66yo female with no significant PMH former smoker quit 20 yrs ago who is ref,h_p,0.9,conflicting
+8394,smoking_status,never_smoker,Alcohol Use             Denies                    Tobacco Use / Exposure        ,h_p,0.9,conflicting
+8395,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, Cigarettes                ",h_p,0.9,conflicting
+8395,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8409,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, Cigarettes, 7 years ago",h_p,0.9,conflicting
+8409,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8413,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+8413,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No                    Travel",h_p,0.9,conflicting
+8426,smoking_status,former_smoker,"He is taking wellbutrin to quit smoking, down to 10 cigs/day.  No source for we",h_p,0.9,conflicting
+8426,smoking_status,current_smoker,"Tobacco Use / Exposure             Current every day smoker, Yes, Cigarettes    ",h_p,0.9,conflicting
+8426,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8426,packs_per_day,2,"o male with PMH HTN, h/o tobacco use (1/2 ppd) who is referred to clinic by Ceci",h_p,0.85,conflicting
+8447,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, Cigarettes, 1995",h_p,0.9,conflicting
+8447,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8447,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, Cigarettes, 1995",h_p,0.9,conflicting
+8447,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8487,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+8487,smoking_status,current_smoker,"Tobacco Use / Exposure             Current some day smoker, Yes, Cigarettes     ",h_p,0.9,conflicting
+8489,smoking_status,current_smoker,"Tobacco Use / Exposure              Current every day smoker, Yes, Cigars, 4 cig",h_p,0.9,conflicting
+8489,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+8505,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No                    Vaping /",h_p,0.9,conflicting
+8505,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8505,smoking_status,former_smoker,Non-medical:	Not on file Tobacco Use •	Smoking status:	Former Smoker  	 	Packs/d,h_p,0.9,conflicting
+8505,pack_years,10.00,r Smoker  	 	Packs/day:	0.50  	 	Years:	10.00  	 	Pack years:	5.00  	 	Types:	Ci,h_p,0.85,conflicting
+8513,smoking_status,former_smoker,"is year of esophageal cancer, but has a remote history of thyroid cancer years a",h_p,0.9,conflicting
+8513,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8538,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+8538,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, Cigarettes, 2005",h_p,0.9,conflicting
+8571,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No                    Travel",h_p,0.9,conflicting
+8571,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8578,smoking_status,current_smoker,"Tobacco Use / Exposure             Current some day smoker, Yes                 ",h_p,0.9,conflicting
+8578,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8580,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+8580,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, 34 years ago              ",h_p,0.9,conflicting
+8581,smoking_status,former_smoker,"o, None Tobacco Use / Exposure Details: Former smoker, No, Cigarettes Vaping / e",h_p,0.9,conflicting
+8581,smoking_status,never_smoker,arettes Vaping / eCigarettes Details: E-Cigarette Use: Never.   Current medicati,h_p,0.9,conflicting
+8585,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+8585,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, smoked x 2 yrs, 1960",h_p,0.9,conflicting
+8586,smoking_status,current_smoker,"Tobacco Use / Exposure             Current every day smoker, Yes, Chewing tobacc",h_p,0.9,conflicting
+8586,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8590,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No                    Vaping /",h_p,0.9,conflicting
+8590,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8591,smoking_status,never_smoker,Alcohol Use             Denies                    Tobacco Use / Exposure        ,h_p,0.9,conflicting
+8591,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, Yes                        Fam",h_p,0.9,conflicting
+8593,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+8593,smoking_status,current_smoker,"Tobacco Use / Exposure             Current some day smoker, Yes, Cigarettes, 1-2",h_p,0.9,conflicting
+8614,smoking_status,never_smoker,Alcohol Use             Denies                    Tobacco Use / Exposure        ,h_p,0.9,conflicting
+8614,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No                    Vaping /",h_p,0.9,conflicting
+8619,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, Used to smoke as a teenage",h_p,0.9,conflicting
+8619,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8624,smoking_status,never_smoker,Alcohol Use             Denies                    Tobacco Use / Exposure        ,h_p,0.9,conflicting
+8624,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, Yes, quit 12/18/2020",h_p,0.9,conflicting
+8628,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+8628,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, quit 2000                 ",h_p,0.9,conflicting
+8639,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, Cigarettes, pt states he q",h_p,0.9,conflicting
+8639,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8668,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, Cigarettes, 2013",h_p,0.9,conflicting
+8668,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8673,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, 2014                    Tr",h_p,0.9,conflicting
+8673,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8679,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+8679,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No                        Fami",h_p,0.9,conflicting
+8684,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No                    Travel",h_p,0.9,conflicting
+8684,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8685,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+8685,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, Yes, Cigarettes, 6 months ago",h_p,0.9,conflicting
+8710,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+8710,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, 2017",h_p,0.9,conflicting
+8719,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes               ",h_p,0.9,conflicting
+8719,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+8731,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+8731,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No                        Fam",h_p,0.9,conflicting
+8734,smoking_status,former_smoker,s stomach in the pylorus.  He does have remote history of pyloroplasty in 1974 g,h_p,0.9,conflicting
+8734,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+8734,packs_per_day,3,to 1963 but no known exposures.  He was 3 ppd smoker until 35 years ago.,h_p,0.85,conflicting
+8741,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No                    Travel",h_p,0.9,conflicting
+8741,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8747,smoking_status,current_smoker,"Tobacco Use / Exposure              Current every day smoker, Yes               ",h_p,0.9,conflicting
+8747,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+8751,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, 23 yrs ago",h_p,0.9,conflicting
+8751,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+8815,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+8815,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, Cigars",h_p,0.9,conflicting
+8817,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+8817,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes               ",h_p,0.9,conflicting
+8822,smoking_status,never_smoker,Recreational Drug Use                No          Tobacco Use / Exposure         ,h_p,0.9,conflicting
+8822,smoking_status,former_smoker,"Tobacco Use / Exposure                Former smoker, No, Cigarettes, quit 35 yrs",h_p,0.9,conflicting
+8823,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, Yes, Cigarettes, 3/24/2021",h_p,0.9,conflicting
+8823,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+8826,smoking_status,never_smoker,Alcohol Use              Denies                    Tobacco Use / Exposure       ,h_p,0.9,conflicting
+8826,smoking_status,current_smoker,"Tobacco Use / Exposure              Current every day smoker, Yes               ",h_p,0.9,conflicting
+8830,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No                    Travel",h_p,0.9,conflicting
+8830,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+8842,smoking_status,never_smoker,Recreational Drug Use             No                    Tobacco Use / Exposure  ,h_p,0.9,conflicting
+8842,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No, Cigarettes, 2010",h_p,0.9,conflicting
+8855,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+8855,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes",h_p,0.9,conflicting
+8856,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+8856,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes               ",h_p,0.9,conflicting
+8871,smoking_status,current_smoker,"Tobacco Use / Exposure              Current some day smoker, Yes, Cigarettes, so",h_p,0.9,conflicting
+8871,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+8875,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, 2packs every ",h_p,0.9,conflicting
+8875,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+8877,smoking_status,current_smoker,Alcohol Use              Current                    Tobacco Use / Exposure      ,h_p,0.9,conflicting
+8877,smoking_status,never_smoker,"Tobacco Use / Exposure              Never smoker, No                    Vaping /",h_p,0.9,conflicting
+8883,smoking_status,never_smoker,Alcohol Use              Denies                    Tobacco Use / Exposure       ,h_p,0.9,conflicting
+8883,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes",h_p,0.9,conflicting
+8889,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, Yes, Cigarettes              ",h_p,0.9,conflicting
+8889,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+8893,smoking_status,never_smoker,Alcohol Use              Denies                    Tobacco Use / Exposure       ,h_p,0.9,conflicting
+8893,smoking_status,current_smoker,"Tobacco Use / Exposure              Current some day smoker, Yes, Cigarettes    ",h_p,0.9,conflicting
+8904,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No                    Travel",h_p,0.9,conflicting
+8904,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+8916,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, less than 1 p",h_p,0.9,conflicting
+8916,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+8916,packs_per_day,1,"ormer smoker, No, Cigarettes, less than 1 pack per day x 30 years, 1986         ",h_p,0.85,conflicting
+8925,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+8925,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No                        Fam",h_p,0.9,conflicting
+8933,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, Yes, Cigarettes, Has one ""here",h_p,0.9,conflicting
+8933,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                        ,h_p,0.9,conflicting
+8955,smoking_status,never_smoker,Alcohol Use              Denies                    Tobacco Use / Exposure       ,h_p,0.9,conflicting
+8955,smoking_status,current_smoker,"Tobacco Use / Exposure              Current some day smoker, Yes, Cigarettes    ",h_p,0.9,conflicting
+8961,smoking_status,former_smoker,"diagnosis)            Tobacco:          Former smoker, previously smoked ½ - 1 p",h_p,0.9,conflicting
+8961,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+8961,packs_per_day,1,"Former smoker, previously smoked ½ - 1 pack per day for 9 years, quit in 1987   ",h_p,0.85,conflicting
+8961,packs_per_day,1,"Former smoker, No, Cigarettes, 1/2- 1 pack per day for 9 yrs, 1987              ",h_p,0.85,conflicting
+8962,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, 1ppd x 40 yea",h_p,0.9,conflicting
+8962,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+8962,packs_per_day,1,"Former smoker, No, Cigarettes, 1ppd x 40 years, quit 11/07/2007, 7 years ag",h_p,0.85,conflicting
+8966,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+8966,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes",h_p,0.9,conflicting
+8971,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, Yes, Cigarettes              ",h_p,0.9,conflicting
+8971,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+8971,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, Yes, Cigarettes              ",h_p,0.9,conflicting
+8971,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+8980,smoking_status,never_smoker,Alcohol Use              Denies                    Tobacco Use / Exposure       ,h_p,0.9,conflicting
+8980,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No                    Vaping ",h_p,0.9,conflicting
+8989,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No                    Vaping ",h_p,0.9,conflicting
+8989,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+8990,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+8990,smoking_status,current_smoker,"Tobacco Use / Exposure              Current some day smoker, Yes                ",h_p,0.9,conflicting
+8999,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No                    Vaping ",h_p,0.9,conflicting
+8999,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9000,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9000,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No                    Travel",h_p,0.9,conflicting
+9015,smoking_status,current_smoker,"Recreational Drug Use              No, Current                    Tobacco Use / ",h_p,0.9,conflicting
+9015,smoking_status,never_smoker,"Tobacco Use / Exposure              Never smoker, No                    Vaping /",h_p,0.9,conflicting
+9018,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes               ",h_p,0.9,conflicting
+9018,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9019,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, 1985                    V",h_p,0.9,conflicting
+9019,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9038,smoking_status,current_smoker,Alcohol Use              Current                    Tobacco Use / Exposure      ,h_p,0.9,conflicting
+9038,smoking_status,never_smoker,"Tobacco Use / Exposure              Never smoker, No                        Immu",h_p,0.9,conflicting
+9038,smoking_status,never_smoker,"Tobacco Use / Exposure              Never smoker, No                        Immu",h_p,0.9,conflicting
+9040,smoking_status,current_smoker,"Tobacco Use / Exposure              Current some day smoker, Yes, Cigars        ",h_p,0.9,conflicting
+9040,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9042,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, everyday smok",h_p,0.9,conflicting
+9042,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9052,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9052,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No                        Fam",h_p,0.9,conflicting
+9062,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, Smoked 1/2 PP",h_p,0.9,conflicting
+9062,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9062,packs_per_day,2,"Former smoker, No, Cigarettes, Smoked 1/2 PPD x 9 yrs., Quit smoking in 1985",h_p,0.85,conflicting
+9075,smoking_status,never_smoker,Alcohol Use              Denies                    Tobacco Use / Exposure       ,h_p,0.9,conflicting
+9075,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No                        Fam",h_p,0.9,conflicting
+9077,smoking_status,former_smoker,elated more to liquids than solids. Has remote history of dyspnea prior to medic,h_p,0.9,conflicting
+9077,smoking_status,current_smoker,"Tobacco Use / Exposure              Current every day smoker, No                ",h_p,0.9,conflicting
+9077,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9081,smoking_status,never_smoker,ry           Alcohol Use                Denies          Tobacco Use / Exposure  ,h_p,0.9,conflicting
+9081,smoking_status,current_smoker,"Tobacco Use / Exposure                Current some day smoker, Yes          Immu",h_p,0.9,conflicting
+9085,smoking_status,current_smoker,"oice, or history of radiation. She is a current smoker. Family history is concer",h_p,0.9,conflicting
+9085,smoking_status,never_smoker,Recreational Drug Use                No          Tobacco Use / Exposure         ,h_p,0.9,conflicting
+9107,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, 2000                    V",h_p,0.9,conflicting
+9107,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9121,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No                    Travel",h_p,0.9,conflicting
+9121,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9131,smoking_status,never_smoker,Alcohol Use              Denies                    Tobacco Use / Exposure       ,h_p,0.9,conflicting
+9131,smoking_status,current_smoker,"Tobacco Use / Exposure              Current some day smoker, Yes                ",h_p,0.9,conflicting
+9152,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9152,smoking_status,current_smoker,"Tobacco Use / Exposure              Current every day smoker, Yes, Cigarettes",h_p,0.9,conflicting
+9158,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9158,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes               ",h_p,0.9,conflicting
+9160,smoking_status,current_smoker,"Tobacco Use / Exposure              Current some day smoker, Yes, Cigarettes, 20",h_p,0.9,conflicting
+9160,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9161,smoking_status,current_smoker,"Tobacco Use / Exposure              Current every day smoker, Yes               ",h_p,0.9,conflicting
+9161,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9173,smoking_status,current_smoker,Alcohol Use              Current                    Tobacco Use / Exposure      ,h_p,0.9,conflicting
+9173,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9179,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigars, 40 yrs ago",h_p,0.9,conflicting
+9179,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9182,smoking_status,current_smoker,"Tobacco Use / Exposure              Current some day smoker, Yes, Cigarettes, a ",h_p,0.9,conflicting
+9182,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9182,packs_per_day,2,"o male with PMH active tobacco smoker 1/2 ppd, GERD on PPI, h/o TBI 5 yrs ago (w",h_p,0.85,conflicting
+9189,smoking_status,never_smoker,eping well because of this feeling. She does not smoke tobacco but does smoke ma,h_p,0.9,conflicting
+9189,smoking_status,unknown,feeling. She does not smoke tobacco but does smoke marijuana daily. She also has,h_p,0.5,conflicting
+9189,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, since 1999",h_p,0.9,conflicting
+9190,smoking_status,former_smoker,"32yo F PMH Obesity (BMI 36), former tobacco smoker (quit 2 yrs ago), and non-tox",h_p,0.9,conflicting
+9190,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9203,smoking_status,current_smoker,"Tobacco Use / Exposure              Current every day smoker, Yes, 4 cig per day",h_p,0.9,conflicting
+9203,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9227,smoking_status,never_smoker,Alcohol Use              Denies                    Tobacco Use / Exposure       ,h_p,0.9,conflicting
+9227,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, 2005",h_p,0.9,conflicting
+9231,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9231,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No                        Fam",h_p,0.9,conflicting
+9232,smoking_status,former_smoker,"Tobacco Use / Exposure                Former smoker, No, Cigarettes, 30 years ag",h_p,0.9,conflicting
+9232,smoking_status,never_smoker,Vaping / eCigarettes                E-Cigarette Use: Never.          Family Hist,h_p,0.9,conflicting
+9238,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9238,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, august 1994",h_p,0.9,conflicting
+9244,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9244,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No                    Vaping ",h_p,0.9,conflicting
+9250,smoking_status,current_smoker,"Tobacco Use / Exposure              Current every day smoker, Yes, Cigarettes, 4",h_p,0.9,conflicting
+9250,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9272,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, 2015                    V",h_p,0.9,conflicting
+9272,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9281,smoking_status,never_smoker,Alcohol Use              Denies                    Tobacco Use / Exposure       ,h_p,0.9,conflicting
+9281,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, quit 1978",h_p,0.9,conflicting
+9290,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9290,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, quit 1980                ",h_p,0.9,conflicting
+9291,smoking_status,never_smoker,Alcohol Use              Denies                    Tobacco Use / Exposure       ,h_p,0.9,conflicting
+9291,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, 20 years ago",h_p,0.9,conflicting
+9294,smoking_status,former_smoker,"recognizes she is 39 years old.       - Former smoker       - Since last visit, ",h_p,0.9,conflicting
+9294,smoking_status,never_smoker,"Tobacco Use / Exposure              Never smoker, No                    Vaping /",h_p,0.9,conflicting
+9297,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9297,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, 30 yrs ago",h_p,0.9,conflicting
+9298,smoking_status,never_smoker,Recreational Drug Use                No          Tobacco Use / Exposure         ,h_p,0.9,conflicting
+9298,smoking_status,former_smoker,"Tobacco Use / Exposure                Former smoker, No, Cigarettes, 3 ppd for 2",h_p,0.9,conflicting
+9298,packs_per_day,3,"Former smoker, No, Cigarettes, 3 ppd for 20 years, 2005          Family Hist",h_p,0.85,conflicting
+9303,smoking_status,never_smoker,Alcohol Use              Denies                    Tobacco Use / Exposure       ,h_p,0.9,conflicting
+9303,smoking_status,current_smoker,"Tobacco Use / Exposure              Current some day smoker, Yes                ",h_p,0.9,conflicting
+9304,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes               ",h_p,0.9,conflicting
+9304,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9305,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9305,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes",h_p,0.9,conflicting
+9314,smoking_status,current_smoker,"Tobacco Use / Exposure              Current some day smoker, Yes, Cigars        ",h_p,0.9,conflicting
+9314,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9324,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9324,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes               ",h_p,0.9,conflicting
+9338,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No                    Vaping ",h_p,0.9,conflicting
+9338,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9349,smoking_status,current_smoker,"Social: 15 pack year history, current smoker; denies EtOH/illicit drugs.        ",h_p,0.9,conflicting
+9349,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9349,pack_years,15,"hood; septoplasty               Social: 15 pack year history, current smoker; de",h_p,0.85,conflicting
+9350,smoking_status,never_smoker,"Tobacco Use / Exposure              Never smoker, No                    Travel",h_p,0.9,conflicting
+9350,smoking_status,former_smoker,"Vaping / eCigarettes              E-Cigarette Use: Former use, quit more than 90",h_p,0.9,conflicting
+9351,smoking_status,current_smoker,"Tobacco Use / Exposure              Current every day smoker, Yes, Cigarettes, 1",h_p,0.9,conflicting
+9351,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9351,packs_per_day,2,"She is an active smoker, smokes about 1/2 ppd.  Her weight is stable, she occ ha",h_p,0.85,conflicting
+9377,smoking_status,current_smoker,"Tobacco Use / Exposure              Current every day smoker, Yes, Cigarettes   ",h_p,0.9,conflicting
+9377,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9379,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9379,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, OVER 30YRS AG",h_p,0.9,conflicting
+9381,smoking_status,never_smoker,Recreational Drug Use                No          Tobacco Use / Exposure         ,h_p,0.9,conflicting
+9381,smoking_status,former_smoker,"Tobacco Use / Exposure                Former smoker, No, 30 years ago          T",h_p,0.9,conflicting
+9389,smoking_status,former_smoker,She has a     remote history of distal pancreatectomy for MCN.     Rece,h_p,0.9,conflicting
+9389,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9400,smoking_status,current_smoker,"Tobacco Use / Exposure              Current some day smoker, Yes, Cigarettes, 2-",h_p,0.9,conflicting
+9400,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9410,smoking_status,never_smoker,Recreational Drug Use                No          Tobacco Use / Exposure         ,h_p,0.9,conflicting
+9410,smoking_status,former_smoker,"Tobacco Use / Exposure                Former smoker, No          Travel         ",h_p,0.9,conflicting
+9413,smoking_status,former_smoker,"Tobacco Use / Exposure                Former smoker, No, Cigarettes, 1981       ",h_p,0.9,conflicting
+9413,smoking_status,never_smoker,Vaping / eCigarettes                E-Cigarette Use: Never.          Family Hist,h_p,0.9,conflicting
+9419,smoking_status,current_smoker,"Tobacco Use / Exposure              Current every day smoker, Yes, Cigarettes, 3",h_p,0.9,conflicting
+9419,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9425,smoking_status,never_smoker,Alcohol Use              Denies                    Tobacco Use / Exposure       ,h_p,0.9,conflicting
+9425,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, Yes, Cigarettes, 1/2 pack dai",h_p,0.9,conflicting
+9440,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, quit 2013",h_p,0.9,conflicting
+9440,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9442,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9442,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, 1987",h_p,0.9,conflicting
+9466,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9466,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes               ",h_p,0.9,conflicting
+9466,smoking_status,former_smoker,Social History     	 	 	  Tobacco Use •	Smoking status:	Former  	 	Packs/day:	1.,h_p,0.9,conflicting
+9466,smoking_status,former_smoker,Social History     	 	 	  Tobacco Use •	Smoking status:	Former  	 	Packs/day:	1.,h_p,0.9,conflicting
+9471,smoking_status,current_smoker,"Tobacco Use / Exposure              Current every day smoker, Yes, 1 - 3 daily  ",h_p,0.9,conflicting
+9471,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9477,smoking_status,current_smoker,"Tobacco Use / Exposure              Current every day smoker, Yes, Cigarettes, 1",h_p,0.9,conflicting
+9477,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9479,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9479,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No                    Travel",h_p,0.9,conflicting
+9494,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, In college               ",h_p,0.9,conflicting
+9494,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9505,smoking_status,current_smoker,"Tobacco Use / Exposure              Current every day smoker, Yes, Chewing tobac",h_p,0.9,conflicting
+9505,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9508,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, 2009",h_p,0.9,conflicting
+9508,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9513,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9513,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No                    Vaping ",h_p,0.9,conflicting
+9514,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, Yes, 1 pack every three weeks",h_p,0.9,conflicting
+9514,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9520,smoking_status,former_smoker,"o, None Tobacco Use / Exposure Details: Former smoker, No, 2 pack year history V",h_p,0.9,conflicting
+9520,smoking_status,never_smoker,history Vaping / eCigarettes Details: E-Cigarette Use: Never.  Previous Treatmen,h_p,0.9,conflicting
+9520,pack_years,2,"/ Exposure Details: Former smoker, No, 2 pack year history Vaping / eCigarettes ",h_p,0.85,conflicting
+9525,smoking_status,current_smoker,t          is not            a          current            smoker.       Hydrati,h_p,0.9,conflicting
+9525,smoking_status,never_smoker,"Tobacco Use / Exposure              Never smoker, No                        Fami",h_p,0.9,conflicting
+9532,smoking_status,current_smoker,ry           Alcohol Use                Current          Tobacco Use / Exposure ,h_p,0.9,conflicting
+9532,smoking_status,never_smoker,"Tobacco Use / Exposure                Never smoker, No          Lab Results",h_p,0.9,conflicting
+9534,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9534,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No                    Vaping ",h_p,0.9,conflicting
+9553,smoking_status,never_smoker,"Tobacco Use / Exposure              Never smoker, No, None                    Tr",h_p,0.9,conflicting
+9553,smoking_status,former_smoker,"Vaping / eCigarettes              E-Cigarette Use: Former use, quit more than 90",h_p,0.9,conflicting
+9557,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9557,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, 20 year ago              ",h_p,0.9,conflicting
+9574,smoking_status,former_smoker,"ectomy (12/2018)            Smoker:     Former smoker, quit 30 years ago. ~5-10p",h_p,0.9,conflicting
+9574,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9574,pack_years,10,"Former smoker, quit 30 years ago. ~5-10pyh.            EtOH:     Occasional, one",h_p,0.85,conflicting
+9617,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9617,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No                    Vaping ",h_p,0.9,conflicting
+9619,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9619,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Quit 1972                ",h_p,0.9,conflicting
+9620,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9620,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, quit in 2018             ",h_p,0.9,conflicting
+9628,smoking_status,never_smoker,Alcohol Use              Denies                    Tobacco Use / Exposure       ,h_p,0.9,conflicting
+9628,smoking_status,current_smoker,"Tobacco Use / Exposure              Current every day smoker, Yes, Cigarettes, 1",h_p,0.9,conflicting
+9628,packs_per_day,1,protrusion.                  note: TOB- 1ppd                  Symptoms of hypoth,h_p,0.85,conflicting
+9629,smoking_status,former_smoker,"He has peripheral vascular disease, quit smoking in 2017 at time of fem-pop graf",h_p,0.9,conflicting
+9629,smoking_status,never_smoker,Alcohol Use              Denies                    Tobacco Use / Exposure       ,h_p,0.9,conflicting
+9644,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, 1985",h_p,0.9,conflicting
+9644,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9654,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9654,smoking_status,current_smoker,"Tobacco Use / Exposure              Current every day smoker, Yes, Cigarettes, 1",h_p,0.9,conflicting
+9654,packs_per_day,1,"w/ “spot on brain.”  Extreme back pain. 1 ppd smoker for 50 years. Alopecia, dry",h_p,0.85,conflicting
+9654,packs_per_day,1,"rent every day smoker, Yes, Cigarettes, 1 pack per day                        Im",h_p,0.85,conflicting
+9664,smoking_status,former_smoker,"aclofen, codeine, vicodin       Social: former smoker (quit 2018)       Medicati",h_p,0.9,conflicting
+9664,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9665,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, 60 years ago             ",h_p,0.9,conflicting
+9665,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9676,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, 1 pk/24 hrs, 2015",h_p,0.9,conflicting
+9676,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9701,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Cigarettes, 2012",h_p,0.9,conflicting
+9701,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9701,smoking_status,former_smoker,nal History •	Not on file Tobacco Use •	Smoking status:	Former  	 	Average packs,h_p,0.9,conflicting
+9701,packs_per_day,0.3,g status:	Former  	 	Average packs/day:	0.3 packs/day for 2.0 years (0.5 ttl pk-,h_p,0.85,conflicting
+9703,smoking_status,former_smoker,"breathing, wheezing/stridor. He reports former tobacco and EtOH use. He is a ret",h_p,0.9,conflicting
+9703,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9706,smoking_status,never_smoker,"g TID, Atenolol 25mg daily      Social: No tobacco use currently (stopped August",h_p,0.9,conflicting
+9706,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, Yes, Cigarettes",h_p,0.9,conflicting
+9712,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, Yes, Cigarettes, 2021",h_p,0.9,conflicting
+9712,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9734,smoking_status,never_smoker,Recreational Drug Use              No                    Tobacco Use / Exposure ,h_p,0.9,conflicting
+9734,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No, Over 10 years ago",h_p,0.9,conflicting
+9735,smoking_status,former_smoker,"Tobacco Use / Exposure              Former smoker, No                    Travel",h_p,0.9,conflicting
+9735,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9736,smoking_status,current_smoker,"Tobacco Use / Exposure              Current some day smoker, Yes                ",h_p,0.9,conflicting
+9736,smoking_status,never_smoker,Vaping / eCigarettes              E-Cigarette Use: Never.                       ,h_p,0.9,conflicting
+9741,smoking_status,former_smoker,"one       Tobacco Use / Exposure        Former smoker, No, quit 1974       Trave",h_p,0.9,conflicting
+9741,smoking_status,never_smoker,ies       Vaping / eCigarettes        E-Cigarette Use: Never.       Family Histo,h_p,0.9,conflicting
+9742,smoking_status,never_smoker,lfish Social History    Alcohol Use     Denies    Tobacco Use / Exposure     For,endocrine_note,0.9,conflicting
+9742,smoking_status,former_smoker,"Denies    Tobacco Use / Exposure     Former smoker, Yes, Cigarettes, quit 10/202",endocrine_note,0.9,conflicting
+9759,smoking_status,never_smoker,es        Recreational Drug Use         No        Tobacco Use / Exposure        ,h_p,0.9,conflicting
+9759,smoking_status,former_smoker,"o        Tobacco Use / Exposure         Former smoker, No, Cigarettes     Family",h_p,0.9,conflicting
+9764,smoking_status,never_smoker,nal History • Not on file Tobacco Use • Smoking status: Never • Smokeless tobacc,endocrine_note,0.9,conflicting
+9764,smoking_status,former_smoker,"MH sleep apnea (CPAP), HTN, asthma with remote history of left thyroidectomy, hi",h_p,0.9,conflicting
+9764,smoking_status,never_smoker,"No, None    Tobacco Use / Exposure     Never smoker, No Family History   Acute a",h_p,0.9,conflicting
+9765,smoking_status,former_smoker,History Social History    Tobacco Use • Smoking status: Former   Current packs/d,endocrine_note,0.9,conflicting
+9765,packs_per_day,0.5,nt packs/day: 0.00   Average packs/day: 0.5 packs/day for 8.6 years (4.3 ttl pk-,endocrine_note,0.85,conflicting
+9765,smoking_status,never_smoker,Recreational Drug Use             No                   Tobacco Use / Exposure   ,h_p,0.9,conflicting
+9766,smoking_status,former_smoker,MI 25.37 kg/m² OB Status Postmenopausal Smoking Status Former BSA 1.86 m²   Gene,endocrine_note,0.9,conflicting
+9766,smoking_status,never_smoker,"e        Tobacco Use / Exposure         Never smoker, No        Vaping / eCigare",h_p,0.9,conflicting
+9776,smoking_status,never_smoker,ly        Recreational Drug Use         No        Tobacco Use / Exposure        ,h_p,0.9,conflicting
+9776,smoking_status,former_smoker,"o        Tobacco Use / Exposure         Former smoker, No        Vaping / eCigar",h_p,0.9,conflicting
+9797,smoking_status,current_smoker,"Tobacco Use / Exposure             Current some day smoker, Yes, Cigarettes     ",h_p,0.9,conflicting
+9797,smoking_status,never_smoker,Vaping / eCigarettes             E-Cigarette Use: Never.                       F,h_p,0.9,conflicting
+9805,smoking_status,former_smoker,".        Tobacco Use / Exposure         Former smoker, No, 2018 stopped smoking ",h_p,0.9,conflicting
+9805,smoking_status,never_smoker,s        Vaping / eCigarettes         E-Cigarette Use: Never.     Family History,h_p,0.9,conflicting
+9809,packs_per_day,0.3,nt packs/day: 0.25   Average packs/day: 0.3 packs/day for 44.7 years (11.2 ttl p,endocrine_note,0.85,conflicting
+9809,smoking_status,never_smoker,6 times per week. Recreational Drug Use No Tobacco Use / Exposure Current every ,h_p,0.9,conflicting
+9809,smoking_status,current_smoker,"onal Drug Use No Tobacco Use / Exposure Current every day smoker, Yes, Cigarette",h_p,0.9,conflicting
+9810,smoking_status,current_smoker,s aspirin for cardiac reasons. She is a current smoker and is trying to quit. Sh,endocrine_note,0.9,conflicting
+9810,smoking_status,current_smoker,aspirin for cardiac reasons.  She is a current smoker and is trying to quit.  Sh,h_p,0.9,conflicting
+9810,smoking_status,never_smoker,Denies    Recreational Drug Use     No    Tobacco Use / Exposure     Current eve,h_p,0.9,conflicting
+9815,smoking_status,former_smoker,".        Tobacco Use / Exposure         Former smoker, No        Vaping / eCigar",h_p,0.9,conflicting
+9815,smoking_status,never_smoker,o        Vaping / eCigarettes         E-Cigarette Use: Never.     Family History,h_p,0.9,conflicting
+9902,smoking_status,former_smoker,"6"") Wt 63.5 kg (140 lb) BMI 22.60 kg/m² Smoking Status Former BSA 1.72 m²     Ho",h_p,0.9,conflicting
+9902,smoking_status,current_smoker,nerve monitoring) The patient is not a current smoker. NPO Status: >2hr/8hr clea,h_p,0.9,conflicting
+9907,smoking_status,never_smoker,52 lb 13.9 oz) SpO2 99% BMI 34.29 kg/m² Smoking Status Never BSA 2.42 m²     Hom,h_p,0.9,conflicting
+9907,smoking_status,current_smoker,ASA 2   general   The patient is not a current smoker.   NPO Status: >2hr/8hr cl,h_p,0.9,conflicting
+9908,smoking_status,never_smoker,Recreational Drug Use             No                   Tobacco Use / Exposure   ,h_p,0.9,conflicting
+9908,smoking_status,former_smoker,"Tobacco Use / Exposure             Former smoker, No                       Famil",h_p,0.9,conflicting
+9909,smoking_status,never_smoker,57 lb 11.5 oz) SpO2 99% BMI 47.14 kg/m² Smoking Status Never BSA 2.26 m²     Hom,h_p,0.9,conflicting
+9909,smoking_status,current_smoker,issues lying flat) The patient is not a current smoker. intravenous induction An,h_p,0.9,conflicting
+9911,smoking_status,never_smoker,yroid goiter       Vitals: Visit Vitals Smoking Status Never     Home meds: Pres,h_p,0.9,conflicting
+9911,smoking_status,current_smoker,ASA 2   general   The patient is not a current smoker.   NPO Status: >2hr/8hr cl,h_p,0.9,conflicting
+9915,smoking_status,never_smoker,296 lb 4.8 oz) SpO2 96% BMI 45.05 kg/m² Smoking Status Never BSA 2.54 m²     Hom,h_p,0.9,conflicting
+9915,smoking_status,current_smoker,ope for placement) The patient is not a current smoker. intravenous induction An,h_p,0.9,conflicting
+9928,smoking_status,never_smoker,194 lb 3.6 oz) SpO2 98% BMI 31.35 kg/m² Smoking Status Never Assessed BSA 2.03 m,h_p,0.9,conflicting
+9928,smoking_status,current_smoker,rin subcutaneous ) The patient is not a current smoker. Patient did not smoke on,h_p,0.9,conflicting
+10087,smoking_status,never_smoker,"es: NKDA Medications: Eliquis SocialHx: denies tobacco use, alcohol use- once a ",h_p,0.9,conflicting
+10087,smoking_status,former_smoker,Social History: He reports that he has quit smoking. His smoking use included ci,h_p,0.9,conflicting
+10135,smoking_status,current_smoker,e abdominal pain 12/19/2023 • Anxiety • Current smoker 05/10/2024 • Depression •,h_p,0.9,conflicting
+10135,smoking_status,former_smoker,nal History • Not on file Tobacco Use • Smoking status: Former   Types: Cigars  ,h_p,0.9,conflicting
+10393,smoking_status,never_smoker,rgies Social History    Alcohol Use     Denies    Tobacco Use / Exposure     Nev,h_p,0.9,conflicting
+10393,smoking_status,former_smoker,"CC), Chronic kidney disease, Dizziness, Former smoker, HL (hearing loss), HLD (h",h_p,0.9,conflicting
+10393,pack_years,15.00,king use included cigarettes. She has a 15.00 pack-year smoking history. She has,h_p,0.85,conflicting
+10459,smoking_status,former_smoker,".        Tobacco Use / Exposure         Former smoker, No, 2000        Travel   ",h_p,0.9,conflicting
+10459,smoking_status,never_smoker,s        Vaping / eCigarettes         E-Cigarette Use: Never.     Family History,h_p,0.9,conflicting
+10517,smoking_status,former_smoker,"roid nodule, eval substernal extension. Remote history of multinodular goiter di",h_p,0.9,conflicting
+10517,smoking_status,never_smoker,Son     Social History    Tobacco Use • Smoking status: Never   Passive exposure,h_p,0.9,conflicting
+10623,smoking_status,former_smoker,iple thyroid nodules. Patient reports a remote history of Grave's disease in her,h_p,0.9,conflicting
+10623,smoking_status,never_smoker,story Social History      Tobacco Use • Smoking status: Never   Passive exposure,h_p,0.9,conflicting
+10695,smoking_status,unknown,History Social History    Tobacco Use • Smoking status: Unknown • Smokeless toba,h_p,0.5,unknown_status
+10922,smoking_status,unknown,History Social History    Tobacco Use • Smoking status: Unknown • Smokeless toba,h_p,0.5,unknown_status
+11163,smoking_status,never_smoker,repair. Works as a medical device rep. Never smoker.   Evaluation of thyroid pro,h_p,0.9,conflicting
+11163,smoking_status,former_smoker,story Social History      Tobacco Use • Smoking status: Former   Types: Cigars •,h_p,0.9,conflicting
+11455,smoking_status,former_smoker,ds. No hemoptysis. Has GERD.   She is a former smoker. Never heavy. No EtOH.   P,h_p,0.9,conflicting
+11455,smoking_status,never_smoker,istory  Social History    Tobacco Use • Smoking status: Never • Smokeless tobacc,h_p,0.9,conflicting
+11501,smoking_status,current_smoker,rgies Social History    Alcohol Use     Current    Tobacco Use / Exposure     Ne,h_p,0.9,conflicting
+11501,smoking_status,never_smoker,"Current    Tobacco Use / Exposure     Never smoker, No    Vaping / eCigarettes  ",h_p,0.9,conflicting
+11718,smoking_status,current_smoker,cystectomy  Social history negative for current tobacco or alcohol usage  All ot,h_p,0.9,conflicting
+11718,smoking_status,former_smoker,cker for occasional heart palpitations  Former smoker and denies alcohol usage  ,h_p,0.9,conflicting

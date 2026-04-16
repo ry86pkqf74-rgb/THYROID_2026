@@ -1,0 +1,12 @@
+research_id,domain,source_id,entity_type,linked_surgery_episode_id,linkage_confidence,linkage_method,day_gap,is_multi_surgery,flagged_at,review_status,surgery_date,target_ep
+7225,notes,1bc47606be56e95ea63463154f0b27fe85605e31,h_p,2,ambiguous,ambiguous_multi_candidate,20,True,2026-03-15 00:56:31.873165-04:00,pending_review,2019-09-06,2
+7269,notes,2dfa69b4c3fcb82dd209b7c7076552393f225749,h_p,1,ambiguous,ambiguous_multi_candidate,-8,True,2026-03-15 00:56:31.873165-04:00,pending_review,2019-03-01,1
+7428,notes,a5a73cb42aa784e9d26bebf7b91d32b2cd7ad565,h_p,1,ambiguous,ambiguous_multi_candidate,-10,True,2026-03-15 00:56:31.873165-04:00,pending_review,2019-05-16,1
+7508,notes,c39a03459827914fd7767f3ae06c312e8963ecfb,h_p,2,ambiguous,ambiguous_multi_candidate,17,True,2026-03-15 00:56:31.873165-04:00,pending_review,2019-09-20,2
+7515,notes,06d905265b075229ca53f18e144989e3cf166498,h_p,1,ambiguous,ambiguous_multi_candidate,-10,True,2026-03-15 00:56:31.873165-04:00,pending_review,2019-04-08,1
+10023,notes,83ebdda797860e85816f49760449615be4cc0639,h_p,1,ambiguous,ambiguous_multi_candidate,21,True,2026-03-15 00:56:31.873165-04:00,pending_review,2024-11-25,1
+10677,notes,b1032a7bd1b432a4e51bd5eed38fae9c0f0ebaff,h_p,1,ambiguous,ambiguous_multi_candidate,-13,True,2026-03-15 00:56:31.873165-04:00,pending_review,2022-11-29,1
+10756,notes,5a8f99ebdd96cdcb2788340dfc9a0cdc246e2608,h_p,1,ambiguous,ambiguous_multi_candidate,-11,True,2026-03-15 00:56:31.873165-04:00,pending_review,2023-03-17,1
+11011,notes,f7dcbab69aaa906bee087905b9f551364a05d36b,h_p,1,ambiguous,ambiguous_multi_candidate,16,True,2026-03-15 00:56:31.873165-04:00,pending_review,2023-12-05,1
+11544,notes,cbe1ccd3f5fcd55e41a2f310f52508a4a1c017fe,h_p,1,ambiguous,ambiguous_multi_candidate,16,True,2026-03-15 00:56:31.873165-04:00,pending_review,2024-06-04,1
+12036,notes,b04f429ad99758e746fa88237d013a1e300ef081,h_p,1,ambiguous,ambiguous_multi_candidate,26,True,2026-03-15 00:56:31.873165-04:00,pending_review,2023-11-10,1

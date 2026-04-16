@@ -1,0 +1,7 @@
+check_id,status,description,check_class
+recurrence_num_le_denom,PASS,Recurrence count should not exceed total surgical patients,data_integrity
+braf_le_molecular_tested,PASS,BRAF positive should not exceed molecular-tested denominator,data_integrity
+ras_le_molecular_tested,PASS,RAS positive should not exceed molecular-tested denominator,data_integrity
+eligible_le_surgical,PASS,Analysis-eligible patients should not exceed surgical cohort,data_integrity
+metrics_v1_v2_consistent,PASS,val_manuscript_metrics and manuscript_metrics_v2 should agree on metric values,metric_consistency
+rai_definite_empty_documented,PASS_WITH_NOTE,"definite_received tier is empty (0 patients). All RAI-confirmed are likely_received. This is a known data state, not an error.",coverage_gap

@@ -1,0 +1,10 @@
+{
+  "generated_at": "2026-03-15T07:42:43.860879+00:00",
+  "script": "101_review_ops.py",
+  "tables_created": [
+    "unified_review_queue_v1",
+    "review_ops_progress_v1",
+    "review_ops_kpi_v1"
+  ],
+  "source_tables_scanned": 18
+}
