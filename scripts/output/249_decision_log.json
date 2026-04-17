@@ -1,0 +1,522 @@
+{
+  "script": "249",
+  "run_ts": "20260417T010115Z",
+  "run_date": "2026-04-16",
+  "mode": "APPLY",
+  "phases": {
+    "preflight": {
+      "cpm_rows": 10871,
+      "cpm_cols": 1506,
+      "coverage_check": [
+        {
+          "deprecated": "margin_status_final",
+          "successor": "r_class_true",
+          "n_dep": 3957,
+          "n_succ": 3956,
+          "cov_dep_pct": 36.4,
+          "cov_succ_pct": 36.39,
+          "threshold_pass": true,
+          "whitelisted": false,
+          "whitelist_rationale": null,
+          "ok": true
+        },
+        {
+          "deprecated": "margin_r_class",
+          "successor": "r_class_true",
+          "n_dep": 10871,
+          "n_succ": 3956,
+          "cov_dep_pct": 100.0,
+          "cov_succ_pct": 36.39,
+          "threshold_pass": false,
+          "whitelisted": true,
+          "whitelist_rationale": "Deprecated column had 100% coverage due to R1 default for all malignant rows (bug). Successor correctly NULLs rows with insufficient margin evidence. Coverage drop is a denominator correction, not a regression. See FINALIZATION_REPORT_20260416.md and AGENTS.md deprecated-columns table.",
+          "ok": true
+        },
+        {
+          "deprecated": "lvi_grade_final_v13",
+          "successor": "lvi_ordinal_worst",
+          "n_dep": 3751,
+          "n_succ": 3393,
+          "cov_dep_pct": 34.5,
+          "cov_succ_pct": 31.21,
+          "threshold_pass": true,
+          "whitelisted": false,
+          "whitelist_rationale": null,
+          "ok": true
+        },
+        {
+          "deprecated": "multifocal_flag",
+          "successor": "multifocal_flag_path",
+          "n_dep": 0,
+          "n_succ": 8422,
+          "cov_dep_pct": null,
+          "cov_succ_pct": 77.47,
+          "threshold_pass": true,
+          "whitelisted": false,
+          "whitelist_rationale": null,
+          "ok": true
+        },
+        {
+          "deprecated": "path_multifocal_flag",
+          "successor": "multifocal_flag_path",
+          "n_dep": 0,
+          "n_succ": 8422,
+          "cov_dep_pct": null,
+          "cov_succ_pct": 77.47,
+          "threshold_pass": true,
+          "whitelisted": false,
+          "whitelist_rationale": null,
+          "ok": true
+        },
+        {
+          "deprecated": "path_n_tumors",
+          "successor": "n_tumors_path",
+          "n_dep": 0,
+          "n_succ": 8422,
+          "cov_dep_pct": null,
+          "cov_succ_pct": 77.47,
+          "threshold_pass": true,
+          "whitelisted": false,
+          "whitelist_rationale": null,
+          "ok": true
+        },
+        {
+          "deprecated": "max_tumor_size_cm_v10",
+          "successor": "tumor_size_cm_max",
+          "n_dep": 1346,
+          "n_succ": 3997,
+          "cov_dep_pct": 12.38,
+          "cov_succ_pct": 36.77,
+          "threshold_pass": true,
+          "whitelisted": false,
+          "whitelist_rationale": null,
+          "ok": true
+        }
+      ]
+    },
+    "dependency_graph": {
+      "view_count": 65,
+      "edges": {
+        "cohort_m068_mutation_labs_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m076_ln_surveillance_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m064_frozen_decision_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m049_pyramidal_lobe_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m069_graves_hashimoto_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m050_tumor_size_volume_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m048_tnm_multifocal_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m055_recurrence_rai_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m062_incidental_frozen_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m053_nondiagnostic_fna_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m070_hereditary_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m052_mrlnd_ln_count_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m060_adenoma_ftump_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m054_niftp_reclass_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m051_ete_ln_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m065_frozen_tt_vs_lob_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m071_immunologic_meds_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m066_parathyroid_id_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m059_prognostic_scoring_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m061_thyroiditis_outcomes_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m057_risk_stratification_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m056_age_epidemiology_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m058_thyroid_size_weight_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ],
+        "cohort_m063_frozen_false_neg_v1": [
+          "cohort_descriptive_full_cohort_v1"
+        ]
+      },
+      "topo_order": [
+        "canonical_detail_pointer_v1",
+        "cohort_descriptive_full_cohort_v1",
+        "cohort_m001_indeterminate_genetics_v1",
+        "cohort_m004_graves_hashimoto_cancer_v1",
+        "cohort_m006_molecular_surg_decision_v1",
+        "cohort_m007_rss_reclassification_v1",
+        "cohort_m009_parathyroid_final_path_v1",
+        "cohort_m011_tirads_fna_genetics_v1",
+        "cohort_m016_graves_carcinoma_v1",
+        "cohort_m017_eucalcemic_hypopara_v1",
+        "cohort_m018_molecular_beth56_v1",
+        "cohort_m019_rai_outcomes_v1",
+        "cohort_m023_preop_genetics_v1",
+        "cohort_m025_tirads_performance_v1",
+        "cohort_m028_bethesda_iii_iv_v1",
+        "cohort_m029_fna_concordance_v1",
+        "cohort_m030_genetic_predictive_v1",
+        "cohort_m031_nuclear_medicine_v1",
+        "cohort_m032_descriptive_25yr_v1",
+        "cohort_m033_afirma_thyroseq_v1",
+        "cohort_m035_bethesda_v_v1",
+        "cohort_m036_ata_risk_comparison_v1",
+        "cohort_m037_ln_metastasis_v1",
+        "cohort_m038_massive_goiter_v1",
+        "cohort_m039_pth_calcium_v1",
+        "cohort_m040_reoperative_v1",
+        "cohort_m042_incidental_parathyroid_v1",
+        "cohort_m043_ln_predictors_v1",
+        "cohort_m044_ajcc_ete_v1",
+        "cohort_m045_multimodal_risk_v1",
+        "cohort_m046_niftp_era_bethesda_v1",
+        "cohort_m047_frozen_section_v1",
+        "cohort_m048_tnm_multifocal_v1",
+        "cohort_m049_pyramidal_lobe_v1",
+        "cohort_m050_tumor_size_volume_v1",
+        "cohort_m051_ete_ln_v1",
+        "cohort_m052_mrlnd_ln_count_v1",
+        "cohort_m053_nondiagnostic_fna_v1",
+        "cohort_m054_niftp_reclass_v1",
+        "cohort_m055_recurrence_rai_v1",
+        "cohort_m056_age_epidemiology_v1",
+        "cohort_m057_risk_stratification_v1",
+        "cohort_m058_thyroid_size_weight_v1",
+        "cohort_m059_prognostic_scoring_v1",
+        "cohort_m060_adenoma_ftump_v1",
+        "cohort_m061_thyroiditis_outcomes_v1",
+        "cohort_m062_incidental_frozen_v1",
+        "cohort_m063_frozen_false_neg_v1",
+        "cohort_m064_frozen_decision_v1",
+        "cohort_m065_frozen_tt_vs_lob_v1",
+        "cohort_m066_parathyroid_id_v1",
+        "cohort_m067_tsh_tg_tumorigenesis_v1",
+        "cohort_m068_mutation_labs_v1",
+        "cohort_m069_graves_hashimoto_v1",
+        "cohort_m070_hereditary_v1",
+        "cohort_m071_immunologic_meds_v1",
+        "cohort_m072_molecular_surg_impact_v1",
+        "cohort_m073_tg_lob_vs_tt_v1",
+        "cohort_m075_tirads_multi_nodule_v1",
+        "cohort_m076_ln_surveillance_v1",
+        "cohort_m078_graves_survival_v1",
+        "cohort_m079_eucalcemic_outcomes_v1",
+        "cohort_m080_molecular_beth56_v1",
+        "cohort_m081_rai_resistant_v1",
+        "cohort_m082_parathyroid_tumors_v1"
+      ]
+    },
+    "view_snapshot": "view_ddl_snapshot_pre249_20260417T010115Z",
+    "cpm_snapshot": "canonical_patient_master_pre249_20260417T010115Z",
+    "view_rewrite": {
+      "n_rewritten": 16,
+      "rewrites": [
+        {
+          "view": "manuscript_workspace.cohort_descriptive_full_cohort_v1",
+          "applied": [
+            {
+              "old": "margin_status_final",
+              "new": "r_class_true",
+              "count": 1
+            },
+            {
+              "old": "lvi_grade_final_v13",
+              "new": "lvi_ordinal_worst",
+              "count": 1
+            },
+            {
+              "old": "multifocal_flag",
+              "new": "multifocal_flag_path",
+              "count": 1
+            },
+            {
+              "old": "syn_margin_distance_mm",
+              "new": "syn_margin_distance_mm_num",
+              "count": 1
+            }
+          ],
+          "new_ddl_preview": "CREATE VIEW manuscript_workspace.cohort_descriptive_full_cohort_v1 AS SELECT research_id, age_at_surgery, sex, race, bmi_combined, surg_procedure_type, surg_hemithyroidectomy, surg_total_thyroidectomy, first_surgery_date, n_surgeries, op_reoperative_any, histology_final, diagnosis_primary, diagnosis"
+        },
+        {
+          "view": "manuscript_workspace.cohort_m028_bethesda_iii_iv_v1",
+          "applied": [
+            {
+              "old": "multifocal_flag",
+              "new": "multifocal_flag_path",
+              "count": 1
+            }
+          ],
+          "new_ddl_preview": "CREATE VIEW manuscript_workspace.cohort_m028_bethesda_iii_iv_v1 AS SELECT p.research_id, p.age_at_surgery, p.sex, p.race, p.bethesda_final, p.bethesda_final_name, p.mol_has_afirma, p.mol_has_thyroseq, p.mol_platform, p.mol_genes_list, p.mol_n_variants_total, p.molecular_risk_tier, p.molecular_tested"
+        },
+        {
+          "view": "manuscript_workspace.cohort_m029_fna_concordance_v1",
+          "applied": [
+            {
+              "old": "multifocal_flag",
+              "new": "multifocal_flag_path",
+              "count": 1
+            }
+          ],
+          "new_ddl_preview": "CREATE VIEW manuscript_workspace.cohort_m029_fna_concordance_v1 AS SELECT p.research_id, p.age_at_surgery, p.sex, p.bethesda_final, p.bethesda_final_name, p.fna_bethesda_final, p.fna_bethesda_confidence, p.fna_bethesda_source, p.fna_path_concordance_category, p.fna_path_concordant, p.fna_path_outcom"
+        },
+        {
+          "view": "manuscript_workspace.cohort_m032_descriptive_25yr_v1",
+          "applied": [
+            {
+              "old": "multifocal_flag",
+              "new": "multifocal_flag_path",
+              "count": 1
+            }
+          ],
+          "new_ddl_preview": "CREATE VIEW manuscript_workspace.cohort_m032_descriptive_25yr_v1 AS SELECT p.research_id, p.age_at_surgery, p.sex, p.race, p.surg_first_date, p.surg_procedure_type, p.surg_total_thyroidectomy, p.surg_hemithyroidectomy, p.surg_n_procedures, p.n_surgeries, p.bethesda_final, p.bethesda_final_name, p.hi"
+        },
+        {
+          "view": "manuscript_workspace.cohort_m035_bethesda_v_v1",
+          "applied": [
+            {
+              "old": "multifocal_flag",
+              "new": "multifocal_flag_path",
+              "count": 1
+            }
+          ],
+          "new_ddl_preview": "CREATE VIEW manuscript_workspace.cohort_m035_bethesda_v_v1 AS SELECT p.research_id, p.age_at_surgery, p.sex, p.race, p.bethesda_final, p.bethesda_final_name, p.molecular_tested_confirmed, p.mol_platform, p.molecular_risk_tier, p.braf_positive_final, p.ras_positive_final, p.histology_final, p.is_mali"
+        },
+        {
+          "view": "manuscript_workspace.cohort_m036_ata_risk_comparison_v1",
+          "applied": [
+            {
+              "old": "multifocal_flag",
+              "new": "multifocal_flag_path",
+              "count": 1
+            }
+          ],
+          "new_ddl_preview": "CREATE VIEW manuscript_workspace.cohort_m036_ata_risk_comparison_v1 AS SELECT p.research_id, p.age_at_surgery, p.sex, p.histology_final, p.is_malignant, p.deprecated__tumor_size_cm AS tumor_size_cm, p.multifocal_flag_path, p.bilateral_disease_flag, p.ete_grade_final, p.gross_ete_flag, p.lvi_grade, p"
+        },
+        {
+          "view": "manuscript_workspace.cohort_m037_ln_metastasis_v1",
+          "applied": [
+            {
+              "old": "multifocal_flag",
+              "new": "multifocal_flag_path",
+              "count": 1
+            }
+          ],
+          "new_ddl_preview": "CREATE VIEW manuscript_workspace.cohort_m037_ln_metastasis_v1 AS SELECT p.research_id, p.age_at_surgery, p.sex, p.histology_final, p.is_malignant, p.deprecated__tumor_size_cm AS tumor_size_cm, p.multifocal_flag_path, p.ete_grade_final, p.gross_ete_flag, p.ln_positive_flag, p.ln_positive_final, p.ln_"
+        },
+        {
+          "view": "manuscript_workspace.cohort_m043_ln_predictors_v1",
+          "applied": [
+            {
+              "old": "multifocal_flag",
+              "new": "multifocal_flag_path",
+              "count": 1
+            }
+          ],
+          "new_ddl_preview": "CREATE VIEW manuscript_workspace.cohort_m043_ln_predictors_v1 AS SELECT p.research_id, p.age_at_surgery, p.sex, p.race, p.histology_final, p.deprecated__tumor_size_cm AS tumor_size_cm, p.multifocal_flag_path, p.ete_grade_final, p.gross_ete_flag, p.lvi_grade, p.vascular_invasion_final, p.perineural_i"
+        },
+        {
+          "view": "manuscript_workspace.cohort_m045_multimodal_risk_v1",
+          "applied": [
+            {
+              "old": "multifocal_flag",
+              "new": "multifocal_flag_path",
+              "count": 1
+            }
+          ],
+          "new_ddl_preview": "CREATE VIEW manuscript_workspace.cohort_m045_multimodal_risk_v1 AS SELECT p.research_id, p.age_at_surgery, p.sex, p.preop_tirads_category, p.tirads_best_category_v12, p.tirads_best_score_v12, p.bethesda_final, p.bethesda_final_name, p.molecular_tested_confirmed, p.molecular_risk_tier, p.histology_fi"
+        },
+        {
+          "view": "manuscript_workspace.cohort_m046_niftp_era_bethesda_v1",
+          "applied": [
+            {
+              "old": "multifocal_flag",
+              "new": "multifocal_flag_path",
+              "count": 1
+            }
+          ],
+          "new_ddl_preview": "CREATE VIEW manuscript_workspace.cohort_m046_niftp_era_bethesda_v1 AS SELECT p.research_id, p.age_at_surgery, p.sex, p.bethesda_final, p.bethesda_final_name, p.bethesda_2010, p.bethesda_2015, p.bethesda_2023, p.histology_final, p.is_malignant, p.diagnosis_primary, p.diagnosis_variant, p.deprecated__"
+        },
+        {
+          "view": "manuscript_workspace.cohort_m047_frozen_section_v1",
+          "applied": [
+            {
+              "old": "multifocal_flag",
+              "new": "multifocal_flag_path",
+              "count": 1
+            }
+          ],
+          "new_ddl_preview": "CREATE VIEW manuscript_workspace.cohort_m047_frozen_section_v1 AS SELECT p.research_id, p.age_at_surgery, p.sex, p.syn_frozen_section, p.syn_frozen_section_result, p.syn_carcinoma_on_frozen, p.nlp_frozensec_has_data, p.nlp_frozensec_key_finding, p.bethesda_final, p.bethesda_final_name, p.histology_f"
+        },
+        {
+          "view": "manuscript_workspace.cohort_m048_tnm_multifocal_v1",
+          "applied": [
+            {
+              "old": "multifocal_flag",
+              "new": "multifocal_flag_path",
+              "count": 1
+            }
+          ],
+          "new_ddl_preview": "CREATE VIEW manuscript_workspace.cohort_m048_tnm_multifocal_v1 AS SELECT research_id, age_at_surgery, sex, race, surg_procedure_type, is_malignant, histology_final, multifocal_flag_path, n_tumors, tumor_size_cm, ajcc8_stage_group, ajcc8_t_stage, ajcc8_n_stage, ajcc8_m_stage, ln_positive_flag, ln_tot"
+        },
+        {
+          "view": "manuscript_workspace.cohort_m051_ete_ln_v1",
+          "applied": [
+            {
+              "old": "lvi_grade_final_v13",
+              "new": "lvi_ordinal_worst",
+              "count": 1
+            }
+          ],
+          "new_ddl_preview": "CREATE VIEW manuscript_workspace.cohort_m051_ete_ln_v1 AS SELECT research_id, age_at_surgery, sex, surg_procedure_type, is_malignant, histology_final, tumor_size_cm, ete_grade, ete_refined_grade, gross_ete_flag, worst_ete_v10, ln_positive_flag, ln_total_examined, ln_total_positive, ln_ratio, ln_burd"
+        },
+        {
+          "view": "manuscript_workspace.cohort_m054_niftp_reclass_v1",
+          "applied": [
+            {
+              "old": "lvi_grade_final_v13",
+              "new": "lvi_ordinal_worst",
+              "count": 1
+            }
+          ],
+          "new_ddl_preview": "CREATE VIEW manuscript_workspace.cohort_m054_niftp_reclass_v1 AS SELECT research_id, age_at_surgery, sex, surg_procedure_type, is_malignant, histology_final, diagnosis_primary, diagnosis_variant, tumor_size_cm, capsular_invasion_refined, lvi_ordinal_worst, vasc_grade_final_v13, pni_positive, ajcc8_s"
+        },
+        {
+          "view": "manuscript_workspace.cohort_m060_adenoma_ftump_v1",
+          "applied": [
+            {
+              "old": "lvi_grade_final_v13",
+              "new": "lvi_ordinal_worst",
+              "count": 1
+            }
+          ],
+          "new_ddl_preview": "CREATE VIEW manuscript_workspace.cohort_m060_adenoma_ftump_v1 AS SELECT research_id, age_at_surgery, sex, race, surg_procedure_type, is_malignant, histology_final, diagnosis_primary, diagnosis_variant, tumor_size_cm, syn_follicular_adenoma, syn_hurthle_cell_change, capsular_invasion_refined, vasc_gr"
+        },
+        {
+          "view": "manuscript_workspace.cohort_m063_frozen_false_neg_v1",
+          "applied": [
+            {
+              "old": "multifocal_flag",
+              "new": "multifocal_flag_path",
+              "count": 1
+            }
+          ],
+          "new_ddl_preview": "CREATE VIEW manuscript_workspace.cohort_m063_frozen_false_neg_v1 AS SELECT research_id, age_at_surgery, sex, surg_procedure_type, is_malignant, histology_final, tumor_size_cm, syn_frozen_section, syn_frozen_section_result, syn_carcinoma_on_frozen, nlp_frozensec_has_data, nlp_frozensec_key_finding, b"
+        }
+      ]
+    },
+    "cpm_renames": {
+      "renamed": [
+        "margin_status_final",
+        "margin_r_class",
+        "lvi_grade_final_v13",
+        "multifocal_flag",
+        "path_multifocal_flag",
+        "path_n_tumors",
+        "max_tumor_size_cm_v10"
+      ],
+      "skipped": []
+    },
+    "prev233": {
+      "archived": "canonical_patient_master_prev233_snapshot_20260417T010115Z",
+      "dropped": [
+        "any_recurrence_flag_prev_233",
+        "first_surgery_date_prev_233",
+        "followup_days_prev_233",
+        "followup_years_prev_233",
+        "last_contact_date_prev_233",
+        "last_contact_source_prev_233"
+      ]
+    },
+    "legacy_sweep": {
+      "n_legacies": 1,
+      "legacies": [
+        {
+          "column_name": "ras_positive_v7",
+          "version": 7,
+          "stem": "ras_positive",
+          "max_version_in_cpm": 11,
+          "successor_column": "ras_positive_v11"
+        }
+      ]
+    },
+    "registry": {
+      "n_updated": 2,
+      "updates": [
+        {
+          "detail_table_name": "specimen_tumor_focus_v1",
+          "applied": [
+            [
+              "multifocal_flag",
+              "multifocal_flag_path"
+            ]
+          ],
+          "before": "multifocal_flag, bilateral_disease_flag",
+          "after": "multifocal_flag_path, bilateral_disease_flag"
+        },
+        {
+          "detail_table_name": "tumor_episode_master_v2",
+          "applied": [
+            [
+              "multifocal_flag",
+              "multifocal_flag_path"
+            ]
+          ],
+          "before": "n_tumors, multifocal_flag, path_tumor_size_cm, histology_final, ajcc8 staging, invasion markers",
+          "after": "n_tumors, multifocal_flag_path, path_tumor_size_cm, histology_final, ajcc8 staging, invasion markers"
+        }
+      ]
+    },
+    "final": {
+      "n_views_total": 65,
+      "n_views_broken": 0,
+      "broken_views": [],
+      "registry_dep_refs": [],
+      "cohort": {
+        "n_rows": 10871,
+        "n_distinct_rid": 10871,
+        "n_null_rid": 0,
+        "n_null_fpo": 0
+      },
+      "explicit_asserts": {
+        "cpm_col_count": 1500,
+        "expected_cpm_col_count": 1500,
+        "deprecated_col_count": 7,
+        "expected_deprecated_col_count": 7,
+        "prev233_col_count": 0,
+        "expected_prev233_col_count": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,390 @@
+{
+  "script": "250",
+  "run_ts": "20260417T011828Z",
+  "run_date": "2026-04-16",
+  "mode": "APPLY",
+  "phases": {
+    "preflight": {
+      "cpm_rows": 10871,
+      "cpm_cols": 1500,
+      "main_base_tables": 114,
+      "registry_rows": 109
+    },
+    "snapshots": {
+      "registry": "detail_table_registry_v1_pre250_20260417T011828Z",
+      "view": "canonical_detail_pointer_v1_pre250_20260417T011828Z"
+    },
+    "add_missing_rows": {
+      "added": [
+        "__readme",
+        "canonical_patient_master",
+        "data_dictionary_v240",
+        "molecular_assay_dictionary",
+        "molecular_code_crosswalk",
+        "molecular_ingestion_runs",
+        "specimen_source_xref_v1"
+      ],
+      "n_added": 7
+    },
+    "extraction": {
+      "n_registry_rows_processed": 116,
+      "n_with_normalized": 90,
+      "n_collisions": 88,
+      "sample_collisions": [
+        {
+          "col": "mol_genes_list",
+          "tables": [
+            "_molecular_patient_rollup_v227",
+            "molecular_variant_long"
+          ]
+        },
+        {
+          "col": "mol_has_afirma",
+          "tables": [
+            "_molecular_patient_rollup_v227",
+            "canonical_molecular_tested_v1",
+            "molecular_test_episode_v2"
+          ]
+        },
+        {
+          "col": "mol_has_thyroseq",
+          "tables": [
+            "_molecular_patient_rollup_v227",
+            "canonical_molecular_tested_v1",
+            "molecular_test_episode_v2"
+          ]
+        },
+        {
+          "col": "mol_n_distinct_genes",
+          "tables": [
+            "_molecular_patient_rollup_v227",
+            "molecular_variant_long"
+          ]
+        },
+        {
+          "col": "mol_n_tests",
+          "tables": [
+            "_molecular_patient_rollup_v227",
+            "molecular_test_episode_v2"
+          ]
+        },
+        {
+          "col": "mol_n_variants_total",
+          "tables": [
+            "_molecular_patient_rollup_v227",
+            "molecular_variant_long"
+          ]
+        },
+        {
+          "col": "mol_platform",
+          "tables": [
+            "_molecular_patient_rollup_v227",
+            "canonical_molecular_tested_v1",
+            "molecular_test_episode_v2"
+          ]
+        },
+        {
+          "col": "mol_variant_classes",
+          "tables": [
+            "_molecular_patient_rollup_v227",
+            "molecular_variant_long"
+          ]
+        },
+        {
+          "col": "molecular_tested_confirmed",
+          "tables": [
+            "_molecular_patient_rollup_v227",
+            "canonical_molecular_tested_v1",
+            "molecular_test_episode_v2"
+          ]
+        },
+        {
+          "col": "ret_adjudicated_flag",
+          "tables": [
+            "_molecular_patient_rollup_v227",
+            "ret_patient_adjudicated_v226"
+          ]
+        },
+        {
+          "col": "ret_evidence_source",
+          "tables": [
+            "_molecular_patient_rollup_v227",
+            "ret_patient_adjudicated_v226"
+          ]
+        },
+        {
+          "col": "tert_positive_final",
+          "tables": [
+            "_molecular_patient_rollup_v227",
+            "molecular_test_episode_v2"
+          ]
+        },
+        {
+          "col": "syn_follicular_adenoma",
+          "tables": [
+            "canonical_benign_diagnosis_v1",
+            "path_synoptics"
+          ]
+        },
+        {
+          "col": "syn_graves",
+          "tables": [
+            "canonical_benign_diagnosis_v1",
+            "path_synoptics"
+          ]
+        },
+        {
+          "col": "syn_hashimoto",
+          "tables": [
+            "canonical_benign_diagnosis_v1",
+            "path_synoptics"
+          ]
+        },
+        {
+          "col": "syn_multinodular_goiter",
+          "tables": [
+            "canonical_benign_diagnosis_v1",
+            "path_synoptics"
+          ]
+        },
+        {
+          "col": "histology_final",
+          "tables": [
+            "canonical_malignant_diagnosis_v1",
+            "synoptic_tumor_long_v1",
+            "tumor_episode_master_v2",
+            "tumor_pathology"
+          ]
+        },
+        {
+          "col": "braf_positive_final",
+          "tables": [
+            "canonical_molecular_tested_v1",
+            "extracted_braf_recovery_v1",
+            "molecular_test_episode_v2"
+          ]
+        },
+        {
+          "col": "any_recurrence_flag",
+          "tables": [
+            "canonical_recurrence_v1",
+            "recurrence_event_clean_v1"
+          ]
+        },
+        {
+          "col": "biochemical_recurrence_flag",
+          "tables": [
+            "canonical_recurrence_v1",
+            "recurrence_event_clean_v1"
+          ]
+        }
+      ]
+    },
+    "schema_update": {
+      "added_col": true,
+      "n_updated": 90
+    },
+    "review_table": {
+      "n_rows": 116
+    },
+    "pointer_view": {
+      "rebuilt": true
+    },
+    "stats": {
+      "n_total_cpm_cols": 1500,
+      "n_mapped": 1271,
+      "n_unmapped": 229,
+      "n_unmapped_allowlist": 229,
+      "n_unmapped_real": 0,
+      "mapped_pct": 84.73,
+      "top_multi_mapped": [
+        {
+          "col": "histology_final",
+          "n_tables": 4,
+          "tables": [
+            "canonical_malignant_diagnosis_v1",
+            "synoptic_tumor_long_v1",
+            "tumor_episode_master_v2",
+            "tumor_pathology"
+          ]
+        },
+        {
+          "col": "path_tumor_size_cm",
+          "n_tables": 4,
+          "tables": [
+            "path_synoptics",
+            "synoptic_tumor_long_v1",
+            "tumor_episode_master_v2",
+            "tumor_pathology"
+          ]
+        },
+        {
+          "col": "braf_positive_final",
+          "n_tables": 3,
+          "tables": [
+            "canonical_molecular_tested_v1",
+            "extracted_braf_recovery_v1",
+            "molecular_test_episode_v2"
+          ]
+        },
+        {
+          "col": "dominant_nodule_size_cm",
+          "n_tables": 3,
+          "tables": [
+            "canonical_us_nodule_characteristics_v1",
+            "imaging_nodule_master_v1",
+            "imaging_patient_summary_v1"
+          ]
+        },
+        {
+          "col": "mol_has_afirma",
+          "n_tables": 3,
+          "tables": [
+            "_molecular_patient_rollup_v227",
+            "canonical_molecular_tested_v1",
+            "molecular_test_episode_v2"
+          ]
+        },
+        {
+          "col": "mol_has_thyroseq",
+          "n_tables": 3,
+          "tables": [
+            "_molecular_patient_rollup_v227",
+            "canonical_molecular_tested_v1",
+            "molecular_test_episode_v2"
+          ]
+        },
+        {
+          "col": "mol_platform",
+          "n_tables": 3,
+          "tables": [
+            "_molecular_patient_rollup_v227",
+            "canonical_molecular_tested_v1",
+            "molecular_test_episode_v2"
+          ]
+        },
+        {
+          "col": "molecular_tested_confirmed",
+          "n_tables": 3,
+          "tables": [
+            "_molecular_patient_rollup_v227",
+            "canonical_molecular_tested_v1",
+            "molecular_test_episode_v2"
+          ]
+        },
+        {
+          "col": "n_us_exams",
+          "n_tables": 3,
+          "tables": [
+            "imaging_patient_summary_v1",
+            "serial_imaging_us",
+            "ultrasound_reports"
+          ]
+        },
+        {
+          "col": "tg_mean",
+          "n_tables": 3,
+          "tables": [
+            "tg_postop_surveillance_windows_v1",
+            "tg_timeline_patient_summary_v1",
+            "thyroglobulin_lab_canonical_v1"
+          ]
+        },
+        {
+          "col": "tg_n_measurements",
+          "n_tables": 3,
+          "tables": [
+            "tg_postop_surveillance_windows_v1",
+            "tg_timeline_patient_summary_v1",
+            "thyroglobulin_lab_canonical_v1"
+          ]
+        },
+        {
+          "col": "tg_nadir",
+          "n_tables": 3,
+          "tables": [
+            "tg_postop_surveillance_windows_v1",
+            "tg_timeline_patient_summary_v1",
+            "thyroglobulin_lab_canonical_v1"
+          ]
+        },
+        {
+          "col": "tg_peak",
+          "n_tables": 3,
+          "tables": [
+            "tg_postop_surveillance_windows_v1",
+            "tg_timeline_patient_summary_v1",
+            "thyroglobulin_lab_canonical_v1"
+          ]
+        },
+        {
+          "col": "tg_rising_flag",
+          "n_tables": 3,
+          "tables": [
+            "tg_postop_surveillance_windows_v1",
+            "tg_timeline_patient_summary_v1",
+            "thyroglobulin_lab_canonical_v1"
+          ]
+        },
+        {
+          "col": "tg_trajectory_class",
+          "n_tables": 3,
+          "tables": [
+            "tg_postop_surveillance_windows_v1",
+            "tg_timeline_patient_summary_v1",
+            "thyroglobulin_lab_canonical_v1"
+          ]
+        },
+        {
+          "col": "tirads_best_score_v12",
+          "n_tables": 3,
+          "tables": [
+            "canonical_us_nodule_characteristics_v1",
+            "tirads_llm_extracted_v2",
+            "us_nodules_tirads"
+          ]
+        },
+        {
+          "col": "tirads_worst_category_v12",
+          "n_tables": 3,
+          "tables": [
+            "canonical_us_nodule_characteristics_v1",
+            "tirads_llm_extracted_v2",
+            "us_nodules_tirads"
+          ]
+        },
+        {
+          "col": "multifocal_flag_path",
+          "n_tables": 3,
+          "tables": [
+            "patient_tumor_rollup_v1",
+            "specimen_tumor_focus_v1",
+            "tumor_episode_master_v2"
+          ]
+        },
+        {
+          "col": "any_recurrence_flag",
+          "n_tables": 2,
+          "tables": [
+            "canonical_recurrence_v1",
+            "recurrence_event_clean_v1"
+          ]
+        },
+        {
+          "col": "bethesda_category",
+          "n_tables": 2,
+          "tables": [
+            "extracted_fna_bethesda_v1",
+            "fna_episode_master_v2"
+          ]
+        }
+      ],
+      "unmapped_real_sample": []
+    },
+    "registry_count_after": {
+      "main_schema_rows": 114,
+      "main_base_tables": 114,
+      "manuscript_workspace_audit_rows": 2
+    }
+  }
+}

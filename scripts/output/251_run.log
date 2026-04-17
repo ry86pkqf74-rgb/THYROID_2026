@@ -1,0 +1,49 @@
+[01:22:14.868Z] ==============================================================================
+[01:22:14.868Z] === START 251_drilldown_eviction_audit.py  mode=DRY-RUN
+[01:22:16.439Z] connected to thyroid_canonical_publication_v1_0
+[01:22:16.439Z] PHASE 4A — enumerate main BASE TABLEs
+[01:22:17.094Z]   base tables: 114
+[01:22:17.094Z] PHASE 4B — SKIPPED (dry-run; use --apply to execute snapshots)
+[01:22:17.094Z] PHASE 4C — raw_/md_ guard sweep
+[01:22:17.094Z]   raw_/md_ guard: 0 suspect tables in canonical (clean)
+[01:22:17.094Z] PHASE 4D — content-duplicate detection
+[01:22:33.067Z]   candidate duplicate groups (matching schema + row count): 2
+[01:22:33.067Z]     candidate group (19 tables, 11037 rows): ['note_entities_llm_airway_invasion', 'note_entities_llm_cervical_ln_detail', 'note_entities_llm_dynamic_risk_response', 'note_entities_llm_frozen_section_detail', 'note_entities_llm_functional_outcomes', 'note_entities_llm_parathyroid_detail', 'note_entities_llm_past_medical_hx', 'note_entities_llm_past_surgical_hx', 'note_entities_llm_patient_decision_adherence', 'note_entities_llm_presenting_symptoms', 'note_entities_llm_rad_treatment', 'note_entities_llm_rai_detailed', 'note_entities_llm_recurrence', 'note_entities_llm_survival_followup', 'note_entities_llm_synoptic_pathology_enrichment', 'note_entities_llm_tg_kinetics', 'note_entities_llm_tirads_granular', 'note_entities_llm_us_nodule_dynamics', 'note_entities_llm_vascular_invasion']
+[01:22:35.208Z]     candidate group (4 tables, 11037 rows): ['note_entities_llm_imaging', 'note_entities_llm_labs', 'note_entities_llm_pathology', 'note_entities_llm_physical_exam']
+[01:22:35.647Z] PHASE 4E — re-verify invariants + 65 manuscript_workspace views
+[01:22:35.951Z]   CPM: rows=10871 distinct_rid=10871 null_rid=0 null_fpo=0
+[01:22:42.101Z]   views: 65/65 pass, 0 broken
+[01:22:42.101Z] PHASE 4F — refresh __readme
+[01:22:49.042Z]   __readme: 114 BASE TABLE rows
+[01:22:49.042Z]   WOULD rebuild __readme with 114 rows
+[01:22:49.042Z] PHASE 4F — refresh data_dictionary_v240
+[01:22:49.371Z]   data_dictionary_v240 vs CPM: in_cpm_not_dict=26 in_dict_not_cpm=25
+[01:22:49.371Z] === END elapsed=34.5s
+[01:22:49.372Z] decision log written: scripts/output/251_decision_log.json
+[01:23:09.919Z] ==============================================================================
+[01:23:09.919Z] === START 251_drilldown_eviction_audit.py  mode=APPLY
+[01:23:11.181Z] connected to thyroid_canonical_publication_v1_0
+[01:23:11.181Z] PHASE 4A — enumerate main BASE TABLEs
+[01:23:11.632Z]   base tables: 114
+[01:23:11.632Z] PHASE 4B — snapshot every base table to archive_pub_v1_0
+[01:23:59.313Z]     snapshotted 25/114 tables...
+[01:24:46.991Z]     snapshotted 50/114 tables...
+[01:25:42.128Z]     snapshotted 75/114 tables...
+[01:26:42.057Z]     snapshotted 100/114 tables...
+[01:27:15.687Z]     snapshotted 114/114 tables...
+[01:27:15.687Z] PHASE 4C — raw_/md_ guard sweep
+[01:27:15.687Z]   raw_/md_ guard: 0 suspect tables in canonical (clean)
+[01:27:15.687Z] PHASE 4D — content-duplicate detection
+[01:27:30.827Z]   candidate duplicate groups (matching schema + row count): 2
+[01:27:30.827Z]     candidate group (19 tables, 11037 rows): ['note_entities_llm_airway_invasion', 'note_entities_llm_cervical_ln_detail', 'note_entities_llm_dynamic_risk_response', 'note_entities_llm_frozen_section_detail', 'note_entities_llm_functional_outcomes', 'note_entities_llm_parathyroid_detail', 'note_entities_llm_past_medical_hx', 'note_entities_llm_past_surgical_hx', 'note_entities_llm_patient_decision_adherence', 'note_entities_llm_presenting_symptoms', 'note_entities_llm_rad_treatment', 'note_entities_llm_rai_detailed', 'note_entities_llm_recurrence', 'note_entities_llm_survival_followup', 'note_entities_llm_synoptic_pathology_enrichment', 'note_entities_llm_tg_kinetics', 'note_entities_llm_tirads_granular', 'note_entities_llm_us_nodule_dynamics', 'note_entities_llm_vascular_invasion']
+[01:27:32.277Z]     candidate group (4 tables, 11037 rows): ['note_entities_llm_imaging', 'note_entities_llm_labs', 'note_entities_llm_pathology', 'note_entities_llm_physical_exam']
+[01:27:32.603Z] PHASE 4E — re-verify invariants + 65 manuscript_workspace views
+[01:27:32.927Z]   CPM: rows=10871 distinct_rid=10871 null_rid=0 null_fpo=0
+[01:27:37.882Z]   views: 65/65 pass, 0 broken
+[01:27:37.882Z] PHASE 4F — refresh __readme
+[01:27:43.476Z]   __readme: 114 BASE TABLE rows
+[01:27:55.828Z] PHASE 4F — refresh data_dictionary_v240
+[01:27:56.120Z]   data_dictionary_v240 schema: ['column_name', 'data_type', 'ordinal_position', 'n_non_null', 'pct_non_null', 'n_distinct', 'description', 'status', 'replacement_column_name']
+[01:27:58.787Z]   data_dictionary_v240: +26 new rows, 25 marked removed
+[01:27:58.788Z] === END elapsed=288.9s
+[01:27:58.790Z] decision log written: scripts/output/251_decision_log.json

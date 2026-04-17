@@ -1,0 +1,310 @@
+[00:55:54.195Z] ==============================================================================
+[00:55:54.195Z] === START 249_deprecate_legacy_columns.py  mode=DRY-RUN
+[00:55:55.583Z] connected to thyroid_canonical_publication_v1_0
+[00:55:55.583Z] PHASE 2A — preflight invariants
+[00:55:56.954Z]   CPM: 10871 rows x 1506 cols
+[00:55:56.954Z]   [OK] margin_status_final            (36.4%) -> r_class_true              (36.39%)
+[00:55:56.954Z]   [WARN] margin_r_class                 (100.0%) -> r_class_true              (36.39%)
+[00:55:56.954Z]   [OK] lvi_grade_final_v13            (34.5%) -> lvi_ordinal_worst         (31.21%)
+[00:55:56.954Z]   [OK] multifocal_flag                (None%) -> multifocal_flag_path      (77.47%)
+[00:55:56.954Z]   [OK] path_multifocal_flag           (None%) -> multifocal_flag_path      (77.47%)
+[00:55:56.954Z]   [OK] path_n_tumors                  (None%) -> n_tumors_path             (77.47%)
+[00:55:56.954Z]   [OK] max_tumor_size_cm_v10          (12.38%) -> tumor_size_cm_max         (36.77%)
+[00:55:56.954Z] PHASE 2D-prep — enumerate views + build dependency graph
+[00:55:58.115Z]   manuscript_workspace views: 65
+[00:55:58.120Z]   topological rewrite order (65 views):
+[00:55:58.120Z]      1. canonical_detail_pointer_v1  (root)
+[00:55:58.120Z]      2. cohort_descriptive_full_cohort_v1  (root)
+[00:55:58.120Z]      3. cohort_m001_indeterminate_genetics_v1  (root)
+[00:55:58.120Z]      4. cohort_m004_graves_hashimoto_cancer_v1  (root)
+[00:55:58.120Z]      5. cohort_m006_molecular_surg_decision_v1  (root)
+[00:55:58.121Z]      6. cohort_m007_rss_reclassification_v1  (root)
+[00:55:58.121Z]      7. cohort_m009_parathyroid_final_path_v1  (root)
+[00:55:58.121Z]      8. cohort_m011_tirads_fna_genetics_v1  (root)
+[00:55:58.121Z]      9. cohort_m016_graves_carcinoma_v1  (root)
+[00:55:58.121Z]     10. cohort_m017_eucalcemic_hypopara_v1  (root)
+[00:55:58.121Z]     11. cohort_m018_molecular_beth56_v1  (root)
+[00:55:58.121Z]     12. cohort_m019_rai_outcomes_v1  (root)
+[00:55:58.121Z]     13. cohort_m023_preop_genetics_v1  (root)
+[00:55:58.121Z]     14. cohort_m025_tirads_performance_v1  (root)
+[00:55:58.121Z]     15. cohort_m028_bethesda_iii_iv_v1  (root)
+[00:55:58.121Z]     16. cohort_m029_fna_concordance_v1  (root)
+[00:55:58.121Z]     17. cohort_m030_genetic_predictive_v1  (root)
+[00:55:58.121Z]     18. cohort_m031_nuclear_medicine_v1  (root)
+[00:55:58.121Z]     19. cohort_m032_descriptive_25yr_v1  (root)
+[00:55:58.121Z]     20. cohort_m033_afirma_thyroseq_v1  (root)
+[00:55:58.121Z]     21. cohort_m035_bethesda_v_v1  (root)
+[00:55:58.121Z]     22. cohort_m036_ata_risk_comparison_v1  (root)
+[00:55:58.121Z]     23. cohort_m037_ln_metastasis_v1  (root)
+[00:55:58.121Z]     24. cohort_m038_massive_goiter_v1  (root)
+[00:55:58.121Z]     25. cohort_m039_pth_calcium_v1  (root)
+[00:55:58.121Z]     26. cohort_m040_reoperative_v1  (root)
+[00:55:58.121Z]     27. cohort_m042_incidental_parathyroid_v1  (root)
+[00:55:58.121Z]     28. cohort_m043_ln_predictors_v1  (root)
+[00:55:58.121Z]     29. cohort_m044_ajcc_ete_v1  (root)
+[00:55:58.121Z]     30. cohort_m045_multimodal_risk_v1  (root)
+[00:55:58.121Z]     31. cohort_m046_niftp_era_bethesda_v1  (root)
+[00:55:58.121Z]     32. cohort_m047_frozen_section_v1  (root)
+[00:55:58.121Z]     33. cohort_m048_tnm_multifocal_v1  (depends on 1)
+[00:55:58.121Z]     34. cohort_m049_pyramidal_lobe_v1  (depends on 1)
+[00:55:58.122Z]     35. cohort_m050_tumor_size_volume_v1  (depends on 1)
+[00:55:58.122Z]     36. cohort_m051_ete_ln_v1  (depends on 1)
+[00:55:58.122Z]     37. cohort_m052_mrlnd_ln_count_v1  (depends on 1)
+[00:55:58.122Z]     38. cohort_m053_nondiagnostic_fna_v1  (depends on 1)
+[00:55:58.122Z]     39. cohort_m054_niftp_reclass_v1  (depends on 1)
+[00:55:58.122Z]     40. cohort_m055_recurrence_rai_v1  (depends on 1)
+[00:55:58.122Z]     41. cohort_m056_age_epidemiology_v1  (depends on 1)
+[00:55:58.122Z]     42. cohort_m057_risk_stratification_v1  (depends on 1)
+[00:55:58.122Z]     43. cohort_m058_thyroid_size_weight_v1  (depends on 1)
+[00:55:58.122Z]     44. cohort_m059_prognostic_scoring_v1  (depends on 1)
+[00:55:58.122Z]     45. cohort_m060_adenoma_ftump_v1  (depends on 1)
+[00:55:58.122Z]     46. cohort_m061_thyroiditis_outcomes_v1  (depends on 1)
+[00:55:58.122Z]     47. cohort_m062_incidental_frozen_v1  (depends on 1)
+[00:55:58.122Z]     48. cohort_m063_frozen_false_neg_v1  (depends on 1)
+[00:55:58.122Z]     49. cohort_m064_frozen_decision_v1  (depends on 1)
+[00:55:58.122Z]     50. cohort_m065_frozen_tt_vs_lob_v1  (depends on 1)
+[00:55:58.122Z]     51. cohort_m066_parathyroid_id_v1  (depends on 1)
+[00:55:58.122Z]     52. cohort_m067_tsh_tg_tumorigenesis_v1  (root)
+[00:55:58.122Z]     53. cohort_m068_mutation_labs_v1  (depends on 1)
+[00:55:58.122Z]     54. cohort_m069_graves_hashimoto_v1  (depends on 1)
+[00:55:58.122Z]     55. cohort_m070_hereditary_v1  (depends on 1)
+[00:55:58.122Z]     56. cohort_m071_immunologic_meds_v1  (depends on 1)
+[00:55:58.122Z]     57. cohort_m072_molecular_surg_impact_v1  (root)
+[00:55:58.122Z]     58. cohort_m073_tg_lob_vs_tt_v1  (root)
+[00:55:58.123Z]     59. cohort_m075_tirads_multi_nodule_v1  (root)
+[00:55:58.123Z]     60. cohort_m076_ln_surveillance_v1  (depends on 1)
+[00:55:58.123Z]     61. cohort_m078_graves_survival_v1  (root)
+[00:55:58.123Z]     62. cohort_m079_eucalcemic_outcomes_v1  (root)
+[00:55:58.123Z]     63. cohort_m080_molecular_beth56_v1  (root)
+[00:55:58.123Z]     64. cohort_m081_rai_resistant_v1  (root)
+[00:55:58.123Z]     65. cohort_m082_parathyroid_tumors_v1  (root)
+[00:55:58.123Z] PHASE 2D-prep — view references per deprecated col:
+[00:55:58.124Z]     margin_status_final            -> 1 views: cohort_descriptive_full_cohort_v1
+[00:55:58.125Z]     margin_r_class                 -> 0 views: 
+[00:55:58.126Z]     lvi_grade_final_v13            -> 4 views: cohort_descriptive_full_cohort_v1, cohort_m051_ete_ln_v1, cohort_m054_niftp_reclass_v1, cohort_m060_adenoma_ftump_v1
+[00:55:58.127Z]     multifocal_flag                -> 13 views: cohort_descriptive_full_cohort_v1, cohort_m028_bethesda_iii_iv_v1, cohort_m029_fna_concordance_v1, cohort_m032_descriptive_25yr_v1, cohort_m035_bethesda_v_v1…
+[00:55:58.129Z]     path_multifocal_flag           -> 0 views: 
+[00:55:58.130Z]     path_n_tumors                  -> 0 views: 
+[00:55:58.131Z]     max_tumor_size_cm_v10          -> 0 views: 
+[00:55:58.132Z]     syn_margin_distance_mm         -> 1 views: cohort_descriptive_full_cohort_v1
+[00:55:58.132Z] PHASE 2D — preview rewrites (dry-run)
+[00:55:58.137Z]   REWRITE manuscript_workspace.cohort_descriptive_full_cohort_v1  (4 substitutions)
+[00:55:58.138Z]       margin_status_final                 -> r_class_true                        (1x)
+[00:55:58.138Z]       lvi_grade_final_v13                 -> lvi_ordinal_worst                   (1x)
+[00:55:58.138Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[00:55:58.138Z]       syn_margin_distance_mm              -> syn_margin_distance_mm_num          (1x)
+[00:55:58.140Z]   REWRITE manuscript_workspace.cohort_m028_bethesda_iii_iv_v1  (1 substitutions)
+[00:55:58.140Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[00:55:58.141Z]   REWRITE manuscript_workspace.cohort_m029_fna_concordance_v1  (1 substitutions)
+[00:55:58.141Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[00:55:58.141Z]   REWRITE manuscript_workspace.cohort_m032_descriptive_25yr_v1  (1 substitutions)
+[00:55:58.141Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[00:55:58.142Z]   REWRITE manuscript_workspace.cohort_m035_bethesda_v_v1  (1 substitutions)
+[00:55:58.142Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[00:55:58.142Z]   REWRITE manuscript_workspace.cohort_m036_ata_risk_comparison_v1  (1 substitutions)
+[00:55:58.142Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[00:55:58.143Z]   REWRITE manuscript_workspace.cohort_m037_ln_metastasis_v1  (1 substitutions)
+[00:55:58.143Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[00:55:58.144Z]   REWRITE manuscript_workspace.cohort_m043_ln_predictors_v1  (1 substitutions)
+[00:55:58.144Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[00:55:58.145Z]   REWRITE manuscript_workspace.cohort_m045_multimodal_risk_v1  (1 substitutions)
+[00:55:58.145Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[00:55:58.145Z]   REWRITE manuscript_workspace.cohort_m046_niftp_era_bethesda_v1  (1 substitutions)
+[00:55:58.145Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[00:55:58.146Z]   REWRITE manuscript_workspace.cohort_m047_frozen_section_v1  (1 substitutions)
+[00:55:58.146Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[00:55:58.146Z]   REWRITE manuscript_workspace.cohort_m048_tnm_multifocal_v1  (1 substitutions)
+[00:55:58.146Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[00:55:58.146Z]   REWRITE manuscript_workspace.cohort_m051_ete_ln_v1  (1 substitutions)
+[00:55:58.146Z]       lvi_grade_final_v13                 -> lvi_ordinal_worst                   (1x)
+[00:55:58.147Z]   REWRITE manuscript_workspace.cohort_m054_niftp_reclass_v1  (1 substitutions)
+[00:55:58.147Z]       lvi_grade_final_v13                 -> lvi_ordinal_worst                   (1x)
+[00:55:58.148Z]   REWRITE manuscript_workspace.cohort_m060_adenoma_ftump_v1  (1 substitutions)
+[00:55:58.148Z]       lvi_grade_final_v13                 -> lvi_ordinal_worst                   (1x)
+[00:55:58.148Z]   REWRITE manuscript_workspace.cohort_m063_frozen_false_neg_v1  (1 substitutions)
+[00:55:58.148Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[00:55:58.153Z] PHASE 2E — preview CPM column renames
+[00:55:58.230Z]   WILL_RENAME       : margin_status_final            -> DEPRECATED__margin_status_final
+[00:55:58.230Z]   WILL_RENAME       : margin_r_class                 -> DEPRECATED__margin_r_class
+[00:55:58.230Z]   WILL_RENAME       : lvi_grade_final_v13            -> DEPRECATED__lvi_grade_final_v13
+[00:55:58.230Z]   WILL_RENAME       : multifocal_flag                -> DEPRECATED__multifocal_flag
+[00:55:58.230Z]   WILL_RENAME       : path_multifocal_flag           -> DEPRECATED__path_multifocal_flag
+[00:55:58.230Z]   WILL_RENAME       : path_n_tumors                  -> DEPRECATED__path_n_tumors
+[00:55:58.230Z]   WILL_RENAME       : max_tumor_size_cm_v10          -> DEPRECATED__max_tumor_size_cm_v10
+[00:55:58.230Z] PHASE 2F — preview *_prev_233 drops
+[00:55:58.230Z]   *_prev_233 columns present: 6 (would archive + drop)
+[00:55:58.231Z]     will archive + drop: any_recurrence_flag_prev_233
+[00:55:58.231Z]     will archive + drop: first_surgery_date_prev_233
+[00:55:58.231Z]     will archive + drop: followup_days_prev_233
+[00:55:58.231Z]     will archive + drop: followup_years_prev_233
+[00:55:58.231Z]     will archive + drop: last_contact_date_prev_233
+[00:55:58.231Z]     will archive + drop: last_contact_source_prev_233
+[00:55:58.231Z] PHASE 2G — preview legacy_column_sweep_v1_1 inventory
+[00:55:58.308Z]   legacy_column_sweep: 1 legacy columns surfaced
+[00:55:58.308Z]     ras_positive_v7                               -> ras_positive_v11
+[00:55:58.308Z] PHASE 2H — preview registry feeds_master_columns updates
+[00:55:58.349Z]   registry rows updated: 2
+[00:55:58.352Z] decision log written: scripts/output/249_decision_log.json
+[00:55:58.352Z] === END dry-run elapsed=4.2s
+[01:01:13.974Z] ==============================================================================
+[01:01:13.974Z] === START 249_deprecate_legacy_columns.py  mode=APPLY
+[01:01:15.700Z] connected to thyroid_canonical_publication_v1_0
+[01:01:15.700Z] PHASE 2A — preflight invariants
+[01:01:16.902Z]   CPM: 10871 rows x 1506 cols
+[01:01:16.902Z]   [OK] margin_status_final            (36.4%) -> r_class_true              (36.39%)
+[01:01:16.902Z]   [WHITELIST] margin_r_class                 (100.0%) -> r_class_true              (36.39%)
+[01:01:16.903Z]       WHITELIST RATIONALE: Deprecated column had 100% coverage due to R1 default for all malignant rows (bug). Successor correctly NULLs rows with insufficient margin evidence. Coverage drop is a denominator correction, not a regression. See FINALIZATION_REPORT_20260416.md and AGENTS.md deprecated-columns table.
+[01:01:16.903Z]   [OK] lvi_grade_final_v13            (34.5%) -> lvi_ordinal_worst         (31.21%)
+[01:01:16.903Z]   [OK] multifocal_flag                (None%) -> multifocal_flag_path      (77.47%)
+[01:01:16.903Z]   [OK] path_multifocal_flag           (None%) -> multifocal_flag_path      (77.47%)
+[01:01:16.903Z]   [OK] path_n_tumors                  (None%) -> n_tumors_path             (77.47%)
+[01:01:16.903Z]   [OK] max_tumor_size_cm_v10          (12.38%) -> tumor_size_cm_max         (36.77%)
+[01:01:16.903Z] PHASE 2D-prep — enumerate views + build dependency graph
+[01:01:17.942Z]   manuscript_workspace views: 65
+[01:01:17.946Z]   topological rewrite order (65 views):
+[01:01:17.946Z]      1. canonical_detail_pointer_v1  (root)
+[01:01:17.946Z]      2. cohort_descriptive_full_cohort_v1  (root)
+[01:01:17.946Z]      3. cohort_m001_indeterminate_genetics_v1  (root)
+[01:01:17.946Z]      4. cohort_m004_graves_hashimoto_cancer_v1  (root)
+[01:01:17.946Z]      5. cohort_m006_molecular_surg_decision_v1  (root)
+[01:01:17.946Z]      6. cohort_m007_rss_reclassification_v1  (root)
+[01:01:17.946Z]      7. cohort_m009_parathyroid_final_path_v1  (root)
+[01:01:17.946Z]      8. cohort_m011_tirads_fna_genetics_v1  (root)
+[01:01:17.946Z]      9. cohort_m016_graves_carcinoma_v1  (root)
+[01:01:17.946Z]     10. cohort_m017_eucalcemic_hypopara_v1  (root)
+[01:01:17.946Z]     11. cohort_m018_molecular_beth56_v1  (root)
+[01:01:17.946Z]     12. cohort_m019_rai_outcomes_v1  (root)
+[01:01:17.946Z]     13. cohort_m023_preop_genetics_v1  (root)
+[01:01:17.946Z]     14. cohort_m025_tirads_performance_v1  (root)
+[01:01:17.946Z]     15. cohort_m028_bethesda_iii_iv_v1  (root)
+[01:01:17.946Z]     16. cohort_m029_fna_concordance_v1  (root)
+[01:01:17.946Z]     17. cohort_m030_genetic_predictive_v1  (root)
+[01:01:17.946Z]     18. cohort_m031_nuclear_medicine_v1  (root)
+[01:01:17.946Z]     19. cohort_m032_descriptive_25yr_v1  (root)
+[01:01:17.946Z]     20. cohort_m033_afirma_thyroseq_v1  (root)
+[01:01:17.946Z]     21. cohort_m035_bethesda_v_v1  (root)
+[01:01:17.946Z]     22. cohort_m036_ata_risk_comparison_v1  (root)
+[01:01:17.946Z]     23. cohort_m037_ln_metastasis_v1  (root)
+[01:01:17.946Z]     24. cohort_m038_massive_goiter_v1  (root)
+[01:01:17.946Z]     25. cohort_m039_pth_calcium_v1  (root)
+[01:01:17.946Z]     26. cohort_m040_reoperative_v1  (root)
+[01:01:17.946Z]     27. cohort_m042_incidental_parathyroid_v1  (root)
+[01:01:17.947Z]     28. cohort_m043_ln_predictors_v1  (root)
+[01:01:17.947Z]     29. cohort_m044_ajcc_ete_v1  (root)
+[01:01:17.947Z]     30. cohort_m045_multimodal_risk_v1  (root)
+[01:01:17.947Z]     31. cohort_m046_niftp_era_bethesda_v1  (root)
+[01:01:17.947Z]     32. cohort_m047_frozen_section_v1  (root)
+[01:01:17.947Z]     33. cohort_m048_tnm_multifocal_v1  (depends on 1)
+[01:01:17.947Z]     34. cohort_m049_pyramidal_lobe_v1  (depends on 1)
+[01:01:17.947Z]     35. cohort_m050_tumor_size_volume_v1  (depends on 1)
+[01:01:17.947Z]     36. cohort_m051_ete_ln_v1  (depends on 1)
+[01:01:17.947Z]     37. cohort_m052_mrlnd_ln_count_v1  (depends on 1)
+[01:01:17.947Z]     38. cohort_m053_nondiagnostic_fna_v1  (depends on 1)
+[01:01:17.947Z]     39. cohort_m054_niftp_reclass_v1  (depends on 1)
+[01:01:17.947Z]     40. cohort_m055_recurrence_rai_v1  (depends on 1)
+[01:01:17.947Z]     41. cohort_m056_age_epidemiology_v1  (depends on 1)
+[01:01:17.947Z]     42. cohort_m057_risk_stratification_v1  (depends on 1)
+[01:01:17.947Z]     43. cohort_m058_thyroid_size_weight_v1  (depends on 1)
+[01:01:17.947Z]     44. cohort_m059_prognostic_scoring_v1  (depends on 1)
+[01:01:17.947Z]     45. cohort_m060_adenoma_ftump_v1  (depends on 1)
+[01:01:17.947Z]     46. cohort_m061_thyroiditis_outcomes_v1  (depends on 1)
+[01:01:17.947Z]     47. cohort_m062_incidental_frozen_v1  (depends on 1)
+[01:01:17.947Z]     48. cohort_m063_frozen_false_neg_v1  (depends on 1)
+[01:01:17.947Z]     49. cohort_m064_frozen_decision_v1  (depends on 1)
+[01:01:17.947Z]     50. cohort_m065_frozen_tt_vs_lob_v1  (depends on 1)
+[01:01:17.947Z]     51. cohort_m066_parathyroid_id_v1  (depends on 1)
+[01:01:17.947Z]     52. cohort_m067_tsh_tg_tumorigenesis_v1  (root)
+[01:01:17.947Z]     53. cohort_m068_mutation_labs_v1  (depends on 1)
+[01:01:17.947Z]     54. cohort_m069_graves_hashimoto_v1  (depends on 1)
+[01:01:17.947Z]     55. cohort_m070_hereditary_v1  (depends on 1)
+[01:01:17.947Z]     56. cohort_m071_immunologic_meds_v1  (depends on 1)
+[01:01:17.947Z]     57. cohort_m072_molecular_surg_impact_v1  (root)
+[01:01:17.947Z]     58. cohort_m073_tg_lob_vs_tt_v1  (root)
+[01:01:17.948Z]     59. cohort_m075_tirads_multi_nodule_v1  (root)
+[01:01:17.948Z]     60. cohort_m076_ln_surveillance_v1  (depends on 1)
+[01:01:17.948Z]     61. cohort_m078_graves_survival_v1  (root)
+[01:01:17.948Z]     62. cohort_m079_eucalcemic_outcomes_v1  (root)
+[01:01:17.948Z]     63. cohort_m080_molecular_beth56_v1  (root)
+[01:01:17.948Z]     64. cohort_m081_rai_resistant_v1  (root)
+[01:01:17.948Z]     65. cohort_m082_parathyroid_tumors_v1  (root)
+[01:01:17.948Z] PHASE 2D-prep — view references per deprecated col:
+[01:01:17.949Z]     margin_status_final            -> 1 views: cohort_descriptive_full_cohort_v1
+[01:01:17.950Z]     margin_r_class                 -> 0 views: 
+[01:01:17.951Z]     lvi_grade_final_v13            -> 4 views: cohort_descriptive_full_cohort_v1, cohort_m051_ete_ln_v1, cohort_m054_niftp_reclass_v1, cohort_m060_adenoma_ftump_v1
+[01:01:17.953Z]     multifocal_flag                -> 13 views: cohort_descriptive_full_cohort_v1, cohort_m028_bethesda_iii_iv_v1, cohort_m029_fna_concordance_v1, cohort_m032_descriptive_25yr_v1, cohort_m035_bethesda_v_v1…
+[01:01:17.954Z]     path_multifocal_flag           -> 0 views: 
+[01:01:17.955Z]     path_n_tumors                  -> 0 views: 
+[01:01:17.956Z]     max_tumor_size_cm_v10          -> 0 views: 
+[01:01:17.957Z]     syn_margin_distance_mm         -> 1 views: cohort_descriptive_full_cohort_v1
+[01:01:17.957Z] PHASE 2B — snapshot view DDLs
+[01:01:25.289Z]   archived: view_ddl_snapshot_pre249_20260417T010115Z
+[01:01:25.289Z] PHASE 2C — snapshot CPM
+[01:01:34.866Z]   archived: canonical_patient_master_pre249_20260417T010115Z
+[01:01:34.866Z] PHASE 2D — rewrite views in dependency order
+[01:01:34.870Z]   REWRITE manuscript_workspace.cohort_descriptive_full_cohort_v1  (4 substitutions)
+[01:01:34.870Z]       margin_status_final                 -> r_class_true                        (1x)
+[01:01:34.870Z]       lvi_grade_final_v13                 -> lvi_ordinal_worst                   (1x)
+[01:01:34.870Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[01:01:34.870Z]       syn_margin_distance_mm              -> syn_margin_distance_mm_num          (1x)
+[01:01:36.807Z]   REWRITE manuscript_workspace.cohort_m028_bethesda_iii_iv_v1  (1 substitutions)
+[01:01:36.807Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[01:01:38.068Z]   REWRITE manuscript_workspace.cohort_m029_fna_concordance_v1  (1 substitutions)
+[01:01:38.068Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[01:01:39.088Z]   REWRITE manuscript_workspace.cohort_m032_descriptive_25yr_v1  (1 substitutions)
+[01:01:39.089Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[01:01:40.063Z]   REWRITE manuscript_workspace.cohort_m035_bethesda_v_v1  (1 substitutions)
+[01:01:40.064Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[01:01:41.017Z]   REWRITE manuscript_workspace.cohort_m036_ata_risk_comparison_v1  (1 substitutions)
+[01:01:41.018Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[01:01:42.062Z]   REWRITE manuscript_workspace.cohort_m037_ln_metastasis_v1  (1 substitutions)
+[01:01:42.062Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[01:01:43.109Z]   REWRITE manuscript_workspace.cohort_m043_ln_predictors_v1  (1 substitutions)
+[01:01:43.109Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[01:01:44.159Z]   REWRITE manuscript_workspace.cohort_m045_multimodal_risk_v1  (1 substitutions)
+[01:01:44.159Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[01:01:45.258Z]   REWRITE manuscript_workspace.cohort_m046_niftp_era_bethesda_v1  (1 substitutions)
+[01:01:45.258Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[01:01:46.260Z]   REWRITE manuscript_workspace.cohort_m047_frozen_section_v1  (1 substitutions)
+[01:01:46.260Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[01:01:46.994Z]   REWRITE manuscript_workspace.cohort_m048_tnm_multifocal_v1  (1 substitutions)
+[01:01:46.994Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[01:01:47.781Z]   REWRITE manuscript_workspace.cohort_m051_ete_ln_v1  (1 substitutions)
+[01:01:47.781Z]       lvi_grade_final_v13                 -> lvi_ordinal_worst                   (1x)
+[01:01:48.533Z]   REWRITE manuscript_workspace.cohort_m054_niftp_reclass_v1  (1 substitutions)
+[01:01:48.533Z]       lvi_grade_final_v13                 -> lvi_ordinal_worst                   (1x)
+[01:01:49.656Z]   REWRITE manuscript_workspace.cohort_m060_adenoma_ftump_v1  (1 substitutions)
+[01:01:49.656Z]       lvi_grade_final_v13                 -> lvi_ordinal_worst                   (1x)
+[01:01:50.529Z]   REWRITE manuscript_workspace.cohort_m063_frozen_false_neg_v1  (1 substitutions)
+[01:01:50.529Z]       multifocal_flag                     -> multifocal_flag_path                (1x)
+[01:01:51.578Z]   POST-2D compile sweep: 0 broken (all views resolve)
+[01:01:51.578Z] PHASE 2E — rename CPM columns to DEPRECATED__name
+[01:01:52.552Z]   RENAMED margin_status_final -> DEPRECATED__margin_status_final
+[01:01:53.212Z]   RENAMED margin_r_class -> DEPRECATED__margin_r_class
+[01:01:53.951Z]   RENAMED lvi_grade_final_v13 -> DEPRECATED__lvi_grade_final_v13
+[01:01:54.675Z]   RENAMED multifocal_flag -> DEPRECATED__multifocal_flag
+[01:01:55.292Z]   RENAMED path_multifocal_flag -> DEPRECATED__path_multifocal_flag
+[01:01:56.346Z]   RENAMED path_n_tumors -> DEPRECATED__path_n_tumors
+[01:01:57.213Z]   RENAMED max_tumor_size_cm_v10 -> DEPRECATED__max_tumor_size_cm_v10
+[01:01:57.213Z] PHASE 2F — archive + drop *_prev_233 cols
+[01:01:58.717Z]   archived 6 *_prev_233 cols to "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_prev233_snapshot_20260417T010115Z"
+[01:01:59.023Z]   dropped column: any_recurrence_flag_prev_233
+[01:01:59.385Z]   dropped column: first_surgery_date_prev_233
+[01:01:59.825Z]   dropped column: followup_days_prev_233
+[01:02:00.098Z]   dropped column: followup_years_prev_233
+[01:02:00.458Z]   dropped column: last_contact_date_prev_233
+[01:02:00.889Z]   dropped column: last_contact_source_prev_233
+[01:02:00.890Z] PHASE 2G — legacy_column_sweep_v1_1
+[01:02:01.667Z]   legacy_column_sweep: 1 legacy columns surfaced
+[01:02:01.667Z]     ras_positive_v7                               -> ras_positive_v11
+[01:02:01.667Z] PHASE 2H — update registry feeds_master_columns
+[01:02:01.894Z]   registry rows updated: 2
+[01:02:01.894Z] PHASE 2I — final assertions
+[01:02:02.325Z]   view compile: 65/65 pass, 0 broken
+[01:02:02.395Z]   registry refs to deprecated cols: 0 (expect 0)
+[01:02:02.538Z]   CPM rows=10871 distinct_rid=10871 null_rid=0 null_fpo=0
+[01:02:02.744Z]   ASSERT cpm col count: 1500 (expect 1500)
+[01:02:02.744Z]   ASSERT DEPRECATED__ col count: 7 (expect 7)
+[01:02:02.744Z]   ASSERT %_prev_233 col count: 0 (expect 0)
+[01:02:02.744Z]   ALL ASSERTIONS PASS
+[01:02:02.745Z] decision log written: scripts/output/249_decision_log.json
+[01:02:02.746Z] === END elapsed=48.8s

@@ -1,0 +1,114 @@
+[00:04:48.349Z] ==============================================================================
+[00:04:48.349Z] === START 248_syn_nan_repair.py  mode=DRY-RUN
+[00:04:49.514Z] connected to thyroid_canonical_publication_v1_0
+[00:04:49.514Z] PHASE A — enumerate VARCHAR columns on canonical_patient_master
+[00:04:49.952Z]   total VARCHAR/TEXT cols: 476
+[00:04:49.952Z] PHASE B — per-column literal-'nan' audit
+[00:05:14.689Z]   [345/476] pet_first_date: nan=1  null=10580  real=290  distinct_real=266  -> UPDATE_NAN_TO_NULL
+[00:05:14.977Z]   [348/476] pet_last_date: nan=2  null=10580  real=289  distinct_real=269  -> UPDATE_NAN_TO_NULL
+[00:05:21.089Z]   [439/476] syn_architecture: nan=9468  null=1  real=1402  distinct_real=85  -> UPDATE_NAN_TO_NULL
+[00:05:21.575Z]   [446/476] syn_margin_distance_mm: nan=9517  null=2  real=1352  distinct_real=52  -> ADD_NUMERIC_AND_RENAME_RAW
+[00:05:23.914Z]   polluted columns (n_literal_nan > 0): 4
+[00:05:23.914Z]   total literal-'nan' cells across CPM: 18988
+[00:05:23.921Z]   wrote audit CSV: scripts/output/248_nan_string_audit_v1_1.csv
+[00:05:23.921Z] PHASE D — SKIPPED (dry-run): audit table will be written on --apply
+[00:05:23.921Z] PHASE E — SKIPPED
+[00:05:23.921Z] PHASE F — SKIPPED (dry-run or nothing to repair)
+[00:05:23.921Z] PHASE G — post-repair verification (literal-'nan' sweep)
+[00:05:50.130Z]   after-repair polluted cols: 4
+[00:05:50.130Z]   after-repair total literal-'nan' cells: 18988
+[00:05:50.130Z]     REMAINING: pet_first_date -> 1
+[00:05:50.130Z]     REMAINING: pet_last_date -> 2
+[00:05:50.130Z]     REMAINING: syn_architecture -> 9468
+[00:05:50.130Z]     REMAINING: syn_margin_distance_mm -> 9517
+[00:05:50.131Z] decision log written: scripts/output/248_decision_log.json
+[00:05:50.131Z] elapsed: 61.8s
+[00:05:50.131Z] === END 248_syn_nan_repair.py  mode=DRY-RUN
+[00:14:05.048Z] ==============================================================================
+[00:14:05.048Z] === START 248_syn_nan_repair.py  mode=APPLY
+[00:14:07.006Z] connected to thyroid_canonical_publication_v1_0
+[00:14:07.007Z] PHASE A — enumerate VARCHAR columns on canonical_patient_master
+[00:14:07.467Z]   total VARCHAR/TEXT cols: 476
+[00:14:07.467Z] PHASE B — per-column literal-'nan' audit
+[00:14:31.223Z]   [345/476] pet_first_date: nan=1  null=10580  real=290  distinct_real=266  -> UPDATE_NAN_TO_NULL
+[00:14:31.378Z]   [348/476] pet_last_date: nan=2  null=10580  real=289  distinct_real=269  -> UPDATE_NAN_TO_NULL
+[00:14:37.787Z]   [439/476] syn_architecture: nan=9468  null=1  real=1402  distinct_real=85  -> UPDATE_NAN_TO_NULL
+[00:14:38.309Z]   [446/476] syn_margin_distance_mm: nan=9517  null=2  real=1352  distinct_real=52  -> ADD_NUMERIC_AND_RENAME_RAW
+[00:14:40.485Z]   polluted columns (n_literal_nan > 0): 4
+[00:14:40.486Z]   total literal-'nan' cells across CPM: 18988
+[00:14:40.499Z]   wrote audit CSV: scripts/output/248_nan_string_audit_v1_1.csv
+[00:14:40.499Z] PHASE D — write audit table manuscript_workspace.nan_string_audit_v1_1
+[00:15:29.688Z]   wrote audit table rows: 476
+[00:15:29.688Z] PHASE E — archive CPM snapshot before writes
+[00:15:33.852Z]   snapshot: "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_pre248_20260417T001407Z"
+[00:15:33.852Z] PHASE F — apply repairs
+[00:15:33.852Z]   repairing pet_first_date: action=UPDATE_NAN_TO_NULL
+[00:15:33.975Z]       after-repair literal-'nan' count for pet_first_date: 0
+[00:15:33.976Z]   repairing pet_last_date: action=UPDATE_NAN_TO_NULL
+[00:15:34.181Z]       after-repair literal-'nan' count for pet_last_date: 0
+[00:15:34.181Z]   repairing syn_architecture: action=UPDATE_NAN_TO_NULL
+[00:15:34.298Z]       after-repair literal-'nan' count for syn_architecture: 0
+[00:15:34.299Z]   repairing syn_margin_distance_mm: action=ADD_NUMERIC_AND_RENAME_RAW
+[00:15:37.022Z]       action: added syn_margin_distance_mm_num DOUBLE
+[00:15:37.022Z]       action: populated syn_margin_distance_mm_num via TRY_CAST(NULLIF(...,'nan') AS DOUBLE)
+[00:15:37.022Z]       action: renamed syn_margin_distance_mm -> syn_margin_distance_mm_raw_str
+[00:16:23.727Z]   re-wrote audit table with repaired_at timestamps
+[00:16:23.727Z] PHASE G — post-repair verification (literal-'nan' sweep)
+[00:16:50.921Z]   after-repair polluted cols: 1
+[00:16:50.923Z]   after-repair total literal-'nan' cells: 9517
+[00:16:50.923Z]     REMAINING: syn_margin_distance_mm_raw_str -> 9517
+[00:16:50.923Z] PHASE H — invariant assertion
+[00:16:50.923Z]   INVARIANT FAIL: literal-'nan' cells > 0 after repair (9517)
+[00:16:50.925Z] STOP: invariant violation. Decision log written.
+[00:17:25.728Z] ==============================================================================
+[00:17:25.728Z] === START 248_syn_nan_repair.py  mode=APPLY
+[00:17:27.063Z] connected to thyroid_canonical_publication_v1_0
+[00:17:27.063Z] PHASE A — enumerate VARCHAR columns on canonical_patient_master
+[00:17:27.450Z]   total VARCHAR/TEXT cols: 476
+[00:17:27.450Z] PHASE B — per-column literal-'nan' audit
+[00:17:57.883Z]   [446/476] syn_margin_distance_mm_raw_str: nan=9517  null=2  real=1352  distinct_real=52  -> UPDATE_NAN_TO_NULL
+[00:17:59.756Z]   polluted columns (n_literal_nan > 0): 1
+[00:17:59.756Z]   total literal-'nan' cells across CPM: 9517
+[00:17:59.764Z]   wrote audit CSV: scripts/output/248_nan_string_audit_v1_1.csv
+[00:17:59.764Z] PHASE D — write audit table manuscript_workspace.nan_string_audit_v1_1
+[00:18:48.863Z]   wrote audit table rows: 476
+[00:18:48.863Z] PHASE E — archive CPM snapshot before writes
+[00:18:52.797Z]   snapshot: "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_pre248_20260417T001727Z"
+[00:18:52.797Z] PHASE F — apply repairs
+[00:18:52.797Z]   repairing syn_margin_distance_mm_raw_str: action=UPDATE_NAN_TO_NULL
+[00:18:52.958Z]       after-repair literal-'nan' count for syn_margin_distance_mm_raw_str: 0
+[00:19:40.269Z]   re-wrote audit table with repaired_at timestamps
+[00:19:40.269Z] PHASE G — post-repair verification (literal-'nan' sweep)
+[00:20:04.973Z]   after-repair polluted cols (excluding *_raw_str): 0
+[00:20:04.973Z]   after-repair total literal-'nan' cells (excluding *_raw_str): 0
+[00:20:04.973Z] PHASE H — invariant assertion
+[00:20:04.974Z]   INVARIANT PASS: 0 literal-'nan' cells across CPM VARCHAR columns
+[00:20:04.975Z] decision log written: scripts/output/248_decision_log.json
+[00:20:04.975Z] elapsed: 159.2s
+[00:20:04.975Z] === END 248_syn_nan_repair.py  mode=APPLY
+[00:20:57.038Z] ==============================================================================
+[00:20:57.038Z] === START 248_syn_nan_repair.py  mode=APPLY
+[00:20:58.202Z] connected to thyroid_canonical_publication_v1_0
+[00:20:58.202Z] PHASE A — enumerate VARCHAR columns on canonical_patient_master
+[00:20:58.653Z]   total VARCHAR/TEXT cols: 476
+[00:20:58.654Z] PHASE B — per-column literal-'nan' audit
+[00:21:27.266Z]   [446/476] syn_margin_distance_mm_raw_str: nan=9517  null=2  real=1352  distinct_real=52  -> PRESERVE_RAW
+[00:21:29.372Z]   polluted columns (n_literal_nan > 0): 1
+[00:21:29.372Z]   total literal-'nan' cells across CPM: 9517
+[00:21:29.379Z]   wrote audit CSV: scripts/output/248_nan_string_audit_v1_1.csv
+[00:21:29.379Z] PHASE D — write audit table manuscript_workspace.nan_string_audit_v1_1
+[00:22:14.956Z]   wrote audit table rows: 476
+[00:22:14.956Z] PHASE E — archive CPM snapshot before writes
+[00:22:21.180Z]   snapshot: "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_pre248_20260417T002058Z"
+[00:22:21.181Z] PHASE F — apply repairs
+[00:22:21.181Z]   repairing syn_margin_distance_mm_raw_str: action=PRESERVE_RAW
+[00:23:05.379Z]   re-wrote audit table with repaired_at timestamps
+[00:23:05.379Z] PHASE G — post-repair verification (literal-'nan' sweep)
+[00:23:29.711Z]   after-repair polluted cols (excluding *_raw_str): 0
+[00:23:29.711Z]   after-repair total literal-'nan' cells (excluding *_raw_str): 0
+[00:23:29.711Z]     PRESERVED-RAW: syn_margin_distance_mm_raw_str -> 9517 literal-'nan' (intentional, see COMMENT)
+[00:23:29.711Z] PHASE H — invariant assertion
+[00:23:29.711Z]   INVARIANT PASS: 0 literal-'nan' cells across CPM VARCHAR columns
+[00:23:29.712Z] decision log written: scripts/output/248_decision_log.json
+[00:23:29.712Z] elapsed: 152.7s
+[00:23:29.712Z] === END 248_syn_nan_repair.py  mode=APPLY

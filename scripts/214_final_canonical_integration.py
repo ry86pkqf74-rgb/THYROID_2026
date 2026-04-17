@@ -201,10 +201,10 @@ def clean_us_volume(val: Any) -> float | None:
 
 
 def clean_architecture(val: Any) -> str | None:
-    if val is None:
+    if val is None or (not isinstance(val, str) and pd.isna(val)):
         return None
     v = str(val).strip().lower().rstrip(";").strip()
-    if not v or v in ("n/a", "n/s", "c/a"):
+    if not v or v in ("n/a", "n/s", "c/a", "nan", "nat", "none"):
         return None
     if len(v) > 60:
         return None
@@ -212,10 +212,10 @@ def clean_architecture(val: Any) -> str | None:
 
 
 def clean_margin_distance(val: Any) -> str | None:
-    if val is None:
+    if val is None or (not isinstance(val, str) and pd.isna(val)):
         return None
     v = str(val).strip()
-    if not v or v.lower() in ("n/a", "n/s", "c/a"):
+    if not v or v.lower() in ("n/a", "n/s", "c/a", "nan", "nat", "none"):
         return None
     return v
 
@@ -759,6 +759,10 @@ def main():
 
     # Register synoptic as a temp table
     tmp_parquet = REPO / "scripts" / "output" / "_syn_rollup_214.parquet"
+    # NaN→None coercion guard (v1_1 cleanup, Script 248): ensures pandas
+    # NaN/NaT/NA do not serialize as the literal string 'nan'/'NaT'
+    # downstream when DuckDB casts the column to VARCHAR on read_parquet.
+    syn_df = syn_df.where(pd.notna(syn_df), None)
     syn_df.to_parquet(str(tmp_parquet), index=False)
     con.execute(f"""
         CREATE OR REPLACE TEMP TABLE syn_rollup AS
