@@ -1,5 +1,5 @@
 === START 270d — stray schema migration (DRY-RUN) ===
-started_at: 2026-04-17T07:14:37.399070+00:00
+started_at: 2026-04-17T07:28:59.640107+00:00
 input plan: /Users/loganglosser/THYROID_2026/scripts/output/270c_stray_schema_consolidation.csv
 connected to thyroid_canonical_publication_v1_0
 
@@ -9,26 +9,35 @@ connected to thyroid_canonical_publication_v1_0
   wrote /Users/loganglosser/THYROID_2026/scripts/output/270d_dry_run_restore_test.json
 
 --- load plan ---
-  MIGRATE_TO_ARCHIVE_LEGACY rows in 270c manifest: 243
-  per-schema breakdown: {'main': 156, 'mm_contract_dev': 22, 'qa': 27, 'v2_stage': 38}
+  MIGRATE_TO_ARCHIVE_LEGACY rows in 270c manifest: 118
+  DIVERGENT rows in 270c manifest: 3
+  DIVERGENT rows (270d --execute will refuse while any exist):
+    - main.canonical_diagnosis_unified_v1 (row_count=11259): snapshot-suffix match in archive_pub_v1_0 but row counts differ: stray=11259 vs [canonical_diagnosis_unified_v1_pre251_20260417T012311Z(rc=1
+    - main.ln_master_rollup_v1 (row_count=4290): snapshot-suffix match in archive_pub_v1_0 but row counts differ: stray=4290 vs [ln_master_rollup_v1_pre251_20260417T012311Z(rc=4273)]; halt 
+    - main.serial_imaging_us (row_count=0): snapshot-suffix match in archive_pub_v1_0 but row counts differ: stray=0 vs [serial_imaging_us_pre251_20260417T012311Z(rc=4162)]; halt for h
+  per-schema breakdown: {'main': 54, 'mm_contract_dev': 22, 'qa': 27, 'v2_stage': 15}
 
 --- revalidate against live state ---
-  re-validated 243 plan rows (0 with drift)
+  re-validated 118 plan rows (0 with drift)
 
 --- budget pre-flight ---
-  migrate_count: 243 (limit 250)
+  migrate_count: 118 (limit 250)
   rows_with_drift: 0
   rows_not_queryable: 0
-  total_rows_to_migrate: 2,232,775
+  total_rows_to_migrate: 856,600
   per_object_timeout: 30s
   largest 5 by row_count:
-    main.longitudinal_lab_canonical_v1                           rows=77960
-    main.thyroglobulin_lab_canonical_v1                          rows=76971
-    main.survival_cohort_enriched                                rows=61134
     main.event_date_audit_v2                                     rows=61055
-    main.patient_cross_domain_timeline_v2                        rows=61055
+    mm_contract_dev._bootstrap_patient_cross_domain_timeline_v2             rows=59385
+    main.duckdb_columns                                          rows=51273
+    mm_contract_dev._bootstrap_event_date_audit_v2                          rows=50014
+    main.v_imaging_nodule_tirads_gap_v1                          rows=37016
 
-  wrote /Users/loganglosser/THYROID_2026/scripts/output/270d_dry_run_plan.csv (243 rows)
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270d_dry_run_plan.csv (118 rows)
   wrote /Users/loganglosser/THYROID_2026/scripts/output/270d_dry_run_summary.json
+
+--- halt reasons ---
+  - 3 DIVERGENT row(s) in 270c manifest — resolve (re-run 270c with truth, or human-classify each row to DROP_ALREADY_SNAPSHOTTED / MIGRATE_TO_ARCHIVE_LEGACY) before --execute. See dry_run_summary.json for the row list.
+Resolve halt reasons before --execute.
 
 === END 270d (DRY-RUN) ===

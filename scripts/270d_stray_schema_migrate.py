@@ -318,6 +318,43 @@ def load_migrate_plan() -> list[dict]:
     return out
 
 
+def count_divergent_rows() -> tuple[int, list[dict]]:
+    """Read 270c consolidation CSV; return (count, list) of DIVERGENT rows.
+
+    270d refuses to --execute while any DIVERGENT rows exist. They must
+    be resolved (re-run 270c with truth, or human-classify each row to
+    DROP_ALREADY_SNAPSHOTTED / MIGRATE_TO_ARCHIVE_LEGACY) first.
+    """
+    if not INPUT_CSV.exists():
+        return 0, []
+    out: list[dict] = []
+    with INPUT_CSV.open() as f:
+        rows = list(csv.reader(f))
+    header_idx = next(
+        (i for i, r in enumerate(rows) if r and r[0] == "schema"), None
+    )
+    if header_idx is None:
+        return 0, []
+    header = rows[header_idx]
+    sch_i = header.index("schema")
+    name_i = header.index("name")
+    rc_i = header.index("row_count")
+    disp_i = header.index("disposition")
+    just_i = header.index("justification")
+    for r in rows[header_idx + 1:]:
+        if not r or len(r) <= just_i:
+            continue
+        if r[disp_i] != "DIVERGENT":
+            continue
+        out.append({
+            "schema": r[sch_i],
+            "name": r[name_i],
+            "row_count": r[rc_i],
+            "justification": r[just_i],
+        })
+    return len(out), out
+
+
 def revalidate_against_live(con, plan: list[dict], log) -> list[dict]:
     """For each plan row, re-fetch live row_count, queryability, and
     object_type. Flag drift. Recompute proposed_target_name with the
@@ -633,8 +670,17 @@ def main_dry_run() -> int:
 
     # 2. Load + revalidate
     plan = load_migrate_plan()
+    n_divergent, divergent_rows = count_divergent_rows()
     log(f"\n--- load plan ---")
     log(f"  MIGRATE_TO_ARCHIVE_LEGACY rows in 270c manifest: {len(plan)}")
+    log(f"  DIVERGENT rows in 270c manifest: {n_divergent}")
+    if n_divergent:
+        log("  DIVERGENT rows (270d --execute will refuse while any exist):")
+        for r in divergent_rows:
+            log(
+                f"    - {r['schema']}.{r['name']} (row_count={r['row_count']}): "
+                f"{r['justification'][:140]}"
+            )
     schema_counts: dict[str, int] = {}
     for r in plan:
         schema_counts[r["schema"]] = schema_counts.get(r["schema"], 0) + 1
@@ -669,6 +715,13 @@ def main_dry_run() -> int:
             f"{n_unqueryable} rows not queryable in live state — must "
             "re-run 270c or remove them from the plan"
         )
+    if n_divergent:
+        halt_reasons.append(
+            f"{n_divergent} DIVERGENT row(s) in 270c manifest — resolve "
+            "(re-run 270c with truth, or human-classify each row to "
+            "DROP_ALREADY_SNAPSHOTTED / MIGRATE_TO_ARCHIVE_LEGACY) before "
+            "--execute. See dry_run_summary.json for the row list."
+        )
 
     # 4. Emit plan CSV
     plan_header = [
@@ -702,6 +755,8 @@ def main_dry_run() -> int:
         "input_csv": str(INPUT_CSV),
         "restore_test": restore_result,
         "migrate_count": n_total,
+        "divergent_count": n_divergent,
+        "divergent_rows": divergent_rows,
         "per_schema_counts": schema_counts,
         "rows_with_drift": n_drift,
         "rows_not_queryable": n_unqueryable,
@@ -779,6 +834,22 @@ def main_execute() -> int:
 
     # 3. Re-load + re-validate plan against live state
     plan = load_migrate_plan()
+    n_divergent, divergent_rows = count_divergent_rows()
+    if n_divergent:
+        log(f"\nABORT — {n_divergent} DIVERGENT row(s) in 270c manifest:")
+        for r in divergent_rows:
+            log(
+                f"  - {r['schema']}.{r['name']} (rc={r['row_count']}): "
+                f"{r['justification'][:140]}"
+            )
+        log(
+            "Resolve each DIVERGENT row (re-run 270c with truth, or "
+            "human-classify to DROP_ALREADY_SNAPSHOTTED / "
+            "MIGRATE_TO_ARCHIVE_LEGACY) before --execute."
+        )
+        OUT_EXEC_LOG.write_text("".join(log_lines))
+        return 1
+
     enriched = revalidate_against_live(con, plan, log)
     n_total = len(enriched)
     log(f"  plan size: {n_total}")
