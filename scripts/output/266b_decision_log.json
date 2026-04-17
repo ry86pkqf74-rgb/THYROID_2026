@@ -6,7 +6,7 @@
   "results": {
     "meta": {
       "mode": "APPLY",
-      "started_at": "2026-04-17T20:43:08.807376+00:00",
+      "started_at": "2026-04-17T20:47:16.993747+00:00",
       "script": "Script 266b"
     },
     "phase_0": {
@@ -36,22 +36,32 @@
         "ajcc8_t_stage_with_microete_t3b_DEPRECATED"
       ]
     },
-    "phase_5": {
-      "added_columns": [
-        "dominant_tumor_ajcc7_t_stage",
-        "dominant_tumor_ajcc7_n_stage",
-        "dominant_tumor_ajcc7_m_stage",
-        "dominant_tumor_ajcc7_stage_group",
-        "dominant_tumor_ajcc8_t_stage",
-        "dominant_tumor_ajcc8_n_stage",
-        "dominant_tumor_ajcc8_m_stage",
-        "dominant_tumor_ajcc8_stage_group",
-        "tumor_stage_heterogeneous_t_ajcc8_flag",
-        "tumor_stage_heterogeneous_overall_ajcc8_flag",
-        "n_tumors_ajcc7_staged",
-        "n_tumors_ajcc8_staged"
-      ]
+    "phase_6": {
+      "dominant_vs_histology1_n_pairs": 4135,
+      "dominant_vs_histology1_n_concordant": 1940,
+      "dominant_vs_histology1_pct": 46.92,
+      "per_tumor_ajcc8_calculable_tumors": 5931,
+      "per_tumor_ajcc8_calculable_patients": 3610,
+      "ajcc8_t_distribution": {
+        "T1a": 2972,
+        "T1b": 1403,
+        "T2": 1216,
+        "T3a": 719,
+        "T3b": 206,
+        "T4a": 15,
+        "null": 4575
+      },
+      "ajcc7_t_distribution": {
+        "T1a": 2972,
+        "T1b": 1403,
+        "T2": 1216,
+        "T3": 925,
+        "T4a": 15,
+        "null": 4575
+      },
+      "n_pts_t_heterogeneous": 851,
+      "n_pts_overall_heterogeneous": 5
     }
   },
-  "elapsed_seconds": 11.0
+  "elapsed_seconds": 7.2
 }
