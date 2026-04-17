@@ -1,0 +1,52 @@
+{
+  "started_at": "2026-04-17T05:57:47.555161+00:00",
+  "publication_db": "thyroid_canonical_publication_v1_0",
+  "snapshot": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"canonical_patient_master_pre270_20260417T055747Z\"",
+  "snapshot_rows": 10871,
+  "cpm_state": {
+    "rows": 10871,
+    "distinct_research_id": 10871,
+    "null_research_id": 0,
+    "n_columns": 1499
+  },
+  "catalog_state": {
+    "info_schema_base_tables": 114,
+    "queryable_base_tables": 114,
+    "ghost_base_tables": 0,
+    "ghosts": [],
+    "__readme_rows": 114
+  },
+  "drift_state": {
+    "cpm_cols_total": 1499,
+    "cpm_cols_mapped_via_registry": 1277,
+    "cpm_cols_in_triage": 222,
+    "cpm_cols_unaccounted": 0,
+    "bethesda_cluster_on_cpm": 9,
+    "bethesda_cluster_mapped": 9
+  },
+  "step_1_state": {
+    "ete_high_conf": 19,
+    "ete_low_conf": 26,
+    "path_size_staged": 96
+  },
+  "step_3_state": {
+    "nan_no_action": 475,
+    "nan_preserve_raw": 1,
+    "total_nan_cells": 9517
+  },
+  "audit_rows_inserted": 5,
+  "audit_rows_inserted_finding_ids": [
+    "step_0_catalog_reconciliation",
+    "step_0_bethesda_retriage",
+    "step_1a_ete_already_applied_in_v2",
+    "step_1b_path_size_deferred_for_clinician",
+    "step_3_nan_repair_already_resolved"
+  ],
+  "post_insert_status_distribution": {
+    "OK": 26,
+    "DOCUMENTED_GAP": 3,
+    "DOCUMENTED_NOOP": 3,
+    "OK_BACKFILLED_270": 3,
+    "OK_DEFERRED_HUMAN": 1
+  }
+}

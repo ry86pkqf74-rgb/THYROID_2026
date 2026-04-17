@@ -1,0 +1,41 @@
+=== START Script 270b Phase A pre-flight audit ===
+started_at: 2026-04-17T05:57:47.555161+00:00
+connected to thyroid_canonical_publication_v1_0
+
+--- LIVE STATE VERIFICATION ---
+  CPM: 10871 rows / 10871 distinct rid / 0 null rid / 1499 cols
+  main info_schema BASE TABLEs: 114
+  main queryable BASE TABLEs:    114
+  main ghost BASE TABLEs:        0
+  main.__readme rows:            114
+  CPM cols mapped via registry:      1277
+  CPM cols in cpm_unmapped_triage_v265: 222
+  CPM cols truly unaccounted:           0
+  bethesda cluster on CPM:    9/9
+  bethesda cluster mapped:    9/9
+  path_size_adjudication_v241 staged rows: 96
+  ete_adjudication_v1: high=19 low=26
+  nan_string_audit_v1_1: NO_ACTION=475 PRESERVE_RAW=1 total_nan_cells=9517
+
+--- SNAPSHOT CPM ---
+  target: "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_pre270_20260417T055747Z"
+  snapshot rows: 10871 (matches CPM)
+
+--- INSERT 5 AUDIT ROWS ---
+  inserted: finding_id='step_0_catalog_reconciliation' metric='main_schema_catalog_ghosts' 0->0 target=0 status='OK'
+  inserted: finding_id='step_0_bethesda_retriage' metric='cpm_cols_unaccounted' 0->0 target=0 status='OK'
+  inserted: finding_id='step_1a_ete_already_applied_in_v2' metric='ete_adjudications_pending' 0->0 target=0 status='DOCUMENTED_NOOP'
+  inserted: finding_id='step_1b_path_size_deferred_for_clinician' metric='path_size_adjudications_pending_human' 96->96 target=0 status='OK_DEFERRED_HUMAN'
+  inserted: finding_id='step_3_nan_repair_already_resolved' metric='cpm_varchar_cols_with_literal_nan' 1->1 target=0 status='DOCUMENTED_NOOP'
+
+--- POST-INSERT VERIFICATION ---
+  ('270', 'step_0_bethesda_retriage', 0, 0, 'OK')
+  ('270', 'step_0_catalog_reconciliation', 0, 0, 'OK')
+  ('270', 'step_1a_ete_already_applied_in_v2', 0, 0, 'DOCUMENTED_NOOP')
+  ('270', 'step_1b_path_size_deferred_for_clinician', 96, 96, 'OK_DEFERRED_HUMAN')
+  ('270', 'step_3_nan_repair_already_resolved', 1, 1, 'DOCUMENTED_NOOP')
+  full audit-table status dist: {'OK': 26, 'DOCUMENTED_GAP': 3, 'DOCUMENTED_NOOP': 3, 'OK_BACKFILLED_270': 3, 'OK_DEFERRED_HUMAN': 1}
+
+wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_phase_a_preflight_audit.json
+wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_phase_a_preflight_audit.log
+=== END Script 270b Phase A pre-flight audit ===
