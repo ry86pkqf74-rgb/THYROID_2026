@@ -1,0 +1,10 @@
+{
+  "v240_rows": 1529,
+  "v266a_rows": 1529,
+  "deprecated_targets": 4,
+  "c_bucket": 0,
+  "staging_adjacent_in_C": [],
+  "views_total": 65,
+  "views_ok": 65,
+  "views_error": 0
+}

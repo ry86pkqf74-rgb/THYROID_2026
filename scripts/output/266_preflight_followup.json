@@ -1,0 +1,656 @@
+{
+  "ws_breakdown_detail": [
+    [
+      "__conventions",
+      "BASE TABLE"
+    ],
+    [
+      "collision_resolution_v265",
+      "BASE TABLE"
+    ],
+    [
+      "cpm_cols_unmapped_review_v265",
+      "BASE TABLE"
+    ],
+    [
+      "cpm_unmapped_triage_v265",
+      "BASE TABLE"
+    ],
+    [
+      "detail_table_registry_v1",
+      "BASE TABLE"
+    ],
+    [
+      "fusion_flag_unparsed_review_v265",
+      "BASE TABLE"
+    ],
+    [
+      "fusion_parse_error_review_v265",
+      "BASE TABLE"
+    ],
+    [
+      "lab_orphan_cohort_review_v1",
+      "BASE TABLE"
+    ],
+    [
+      "legacy_column_sweep_v1_1",
+      "BASE TABLE"
+    ],
+    [
+      "main_schema_keep_list_v1",
+      "BASE TABLE"
+    ],
+    [
+      "manuscript_dive_map_v1",
+      "BASE TABLE"
+    ],
+    [
+      "manuscript_feasibility_v1",
+      "BASE TABLE"
+    ],
+    [
+      "nan_string_audit_v1_1",
+      "BASE TABLE"
+    ],
+    [
+      "nlp_rollup_promotion_audit_v1",
+      "BASE TABLE"
+    ],
+    [
+      "registry_normalization_review_v1_1",
+      "BASE TABLE"
+    ],
+    [
+      "v1_1_finalization_audit_v1",
+      "BASE TABLE"
+    ],
+    [
+      "v1_1_tech_debt_v1",
+      "BASE TABLE"
+    ],
+    [
+      "vc_paralysis_recalibration_v236",
+      "BASE TABLE"
+    ],
+    [
+      "canonical_detail_pointer_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_descriptive_full_cohort_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m001_indeterminate_genetics_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m004_graves_hashimoto_cancer_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m006_molecular_surg_decision_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m007_rss_reclassification_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m009_parathyroid_final_path_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m011_tirads_fna_genetics_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m016_graves_carcinoma_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m017_eucalcemic_hypopara_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m018_molecular_beth56_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m019_rai_outcomes_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m023_preop_genetics_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m025_tirads_performance_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m028_bethesda_iii_iv_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m029_fna_concordance_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m030_genetic_predictive_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m031_nuclear_medicine_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m032_descriptive_25yr_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m033_afirma_thyroseq_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m035_bethesda_v_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m036_ata_risk_comparison_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m037_ln_metastasis_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m038_massive_goiter_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m039_pth_calcium_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m040_reoperative_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m042_incidental_parathyroid_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m043_ln_predictors_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m044_ajcc_ete_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m045_multimodal_risk_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m046_niftp_era_bethesda_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m047_frozen_section_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m048_tnm_multifocal_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m049_pyramidal_lobe_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m050_tumor_size_volume_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m051_ete_ln_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m052_mrlnd_ln_count_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m053_nondiagnostic_fna_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m054_niftp_reclass_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m055_recurrence_rai_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m056_age_epidemiology_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m057_risk_stratification_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m058_thyroid_size_weight_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m059_prognostic_scoring_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m060_adenoma_ftump_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m061_thyroiditis_outcomes_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m062_incidental_frozen_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m063_frozen_false_neg_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m064_frozen_decision_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m065_frozen_tt_vs_lob_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m066_parathyroid_id_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m067_tsh_tg_tumorigenesis_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m068_mutation_labs_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m069_graves_hashimoto_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m070_hereditary_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m071_immunologic_meds_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m072_molecular_surg_impact_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m073_tg_lob_vs_tt_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m075_tirads_multi_nodule_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m076_ln_surveillance_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m078_graves_survival_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m079_eucalcemic_outcomes_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m080_molecular_beth56_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m081_rai_resistant_v1",
+      "VIEW"
+    ],
+    [
+      "cohort_m082_parathyroid_tumors_v1",
+      "VIEW"
+    ]
+  ],
+  "conventions_full": [
+    [
+      "as_aliasing",
+      "column_naming",
+      "When a canonical table column is derived from a source-table column with a different name, ALWAYS use AS aliasing in the assembly SQL with the canonical name (not the source name). The alias IS the contract; downstream consumers join on canonical names. Source-name leakage breaks the abstraction.",
+      "Script 237 (canonical_patient_master assembly) \u2014 every CTE-to-master mapping uses explicit AS even when names match, to make the contract visible at the SELECT level.",
+      "Group B"
+    ],
+    [
+      "assembly_bookkeeping_build_pipeline",
+      "registry_mapping",
+      "CPM columns recording how the row was assembled rather than clinical facts about the patient resolve to feeder = build_pipeline. Column-name triggers: provenance_*, source_script, source_table, source_method, *_assembled_at, *_computed_at, *_confidence_meta.",
+      "Script 270b Step 2: provenance_note, source_script, source_table, provenance_confidence -> build_pipeline.",
+      "script_270b_step_2"
+    ],
+    [
+      "audit_status_taxonomy",
+      "audit_discipline",
+      "v1_1_finalization_audit_v1 status values have specific semantics: OK = check passed, no action needed; DOCUMENTED_NOOP = action evaluated, confirmed nothing to do; DOCUMENTED_GAP = known open work explicitly accepted for this release, tracked for v1_1+ closure; OK_DEFERRED_HUMAN = work routed to human review worksheet, no auto-apply; OK_BACKFILLED_<release> = retroactive audit row reconstructed post-hoc; FAIL = check failed, script halted. Reviewers filter by status to find release backlog (GAP), completed work (OK), or deferred human decisions (DEFERRED_HUMAN). Do not use NOOP for open work, or GAP for completed work.",
+      "Script 270b step_2_registry_null_residual originally tagged NOOP, flipped to GAP post-landing (Script 270c) to match semantics of other v1_1-follow-up registry rows.",
+      "script_270c_post_execute"
+    ],
+    [
+      "bethesda_semantics",
+      "semantics",
+      "bethesda_final = MAX(bethesda_calculated) across preop FNAs per patient. bethesda_calculated = fna_cytology.category_num when BETWEEN 1 AND 6 (morphology-derived via rules/LLM on path_text); else TRY_CAST(original_bethesda AS INT) when BETWEEN 1 AND 6; else NULL. Era-specific max columns (bethesda_max_preop_2010/2015/2023) parallel this using bethesda_YYYY_num from the same extraction. Per-FNA derivation method preserved and rolled up at patient level. Most-recent-preop and composite semantics rejected as clinically irrelevant. Index-nodule kept as low-coherence parallel column.",
+      "preop_worst_calculated_from_morphology_era_preserved",
+      "script_268"
+    ],
+    [
+      "catalog_vs_queryable_drift",
+      "cleanup_safety",
+      "After DROP TABLE in MotherDuck, the table may persist in information_schema.tables and SHOW ALL TABLES output for some time even though SELECT against it raises Catalog Error. Empty-table sweeps that rely on information_schema row counts are not sufficient \u2014 they must also probe with a guarded SELECT to confirm the table is actually queryable. A \"ghost\" table in information_schema is not a Phase 7 invariant failure on its own, but DOES need to be filtered out of the registry and __readme, both of which should rely on queryable-only enumeration.",
+      "Script 246 dropped imaging_nodule_long_v2 from main; storage layer dropped successfully but information_schema still reports it as a BASE TABLE in main. SELECT raises \"Table does not exist\". Script 247 must handle this case in its sweep and registry/__readme regeneration logic.",
+      "Discovered post-Group-C, pre-Script-247"
+    ],
+    [
+      "cohort_scoping",
+      "table_design",
+      "canonical_*_characteristics_v1 tables cover only patients for whom the characterization is meaningful. They are NOT cohort-shape-aligned with canonical_patient_master. Use CPM for cohort-wide queries (10,871 pts); use canonical detail tables for per-(tumor / nodule / event) queries on patients who have data of that grain. The set difference between CPM and a detail table's patient set is documented per detail-table in detail_table_registry_v1.description (e.g., \"2,449 benign tumor-free pts intentionally absent\" for canonical_tumor_characteristics_v1).",
+      "Script 245 (canonical_tumor_characteristics_v1, 8,422 of 10,871 pts) \u2014 2,449 benign post-2015 patients intentionally absent. Script 246 (canonical_us_nodule_characteristics_v1, 6,126 of 10,871 pts) \u2014 4,745 patients absent due to no nodule-level imaging data.",
+      "Group C"
+    ],
+    [
+      "derived_column_build_pipeline",
+      "registry_mapping",
+      "CPM columns computed from two or more feeder columns via arithmetic, string manipulation, conditional logic, or aggregation at assembly time resolve to feeder = build_pipeline, NOT to any of the input feeders. Straight copies and single-source rollups (MAX, MIN, FIRST, LAST over one feeder column) resolve to the source feeder.",
+      "age_at_surgery (computed from DOB - surgery_date when not pre-computed) -> build_pipeline. Contrast: last_tg_date (MAX over single feeder) -> tg_timeline_patient_summary_v1.",
+      "script_270b_step_2"
+    ],
+    [
+      "feeder_eligibility_patterns",
+      "registry_mapping",
+      "Feeder candidate matching EXCLUDES tables whose names match any EXCLUDE_PATTERNS regex: derived subsets (^analysis_.*_subset_v\\d+$), cohort views (^manuscript_cohort_v\\d+$), catalog tables (^__readme$, ^data_dictionary_v\\d+$), dictionaries (^molecular_*_dictionary$, ^molecular_code_crosswalk$, ^molecular_ingestion_runs$), human-review artifacts (.*_review_v\\d+$), audit/discordance/dedup tables, and canonical_patient_master itself. Identity columns per IDENTITY_ALLOWLIST override EXCLUDE for self-reference. Domain='Analysis' alone is NOT an exclude signal: full-cohort resolvers (10,871-row 1:1 tables) in that domain are legitimate feeders.",
+      "Script 270b Step 2 post-fix: patient_analysis_resolved_v1 (domain='Analysis', 10,871 rows) passes EXCLUDE_PATTERNS as a resolver; analysis_molecular_subset_v1 (domain='Analysis', 10,025 rows) is excluded by ^analysis_.*_subset_v\\d+$.",
+      "script_270b_step_2"
+    ],
+    [
+      "identity_column_self_reference",
+      "registry_mapping",
+      "Identity columns on canonical_patient_master (the spine itself - research_id) resolve to feeder = canonical_patient_master (self-reference). Self-reference is VALID ONLY for identity columns; no clinical column may use it. Matcher must reject self-reference for any column not on the IDENTITY_ALLOWLIST.",
+      "Script 270b Step 2 ambiguous row: research_id. 104 candidate tables (every detail table has it), but none 'feed' it; the spine generates it.",
+      "script_270b_step_2"
+    ],
+    [
+      "main_schema_keep_list",
+      "archival_discipline",
+      "Tables in main schema that are NOT production feeders (review artifacts, pending-human-review artifacts, staged adjudications) MUST be registered in manuscript_workspace.main_schema_keep_list_v1 with a sunset_trigger. Any Phase B or later archival sweep MUST consult this table and skip any registered name. Removal from the keep list requires meeting the sunset trigger AND logging to v1_1_finalization_audit_v1.",
+      "Script 270b Step 2: ete_adjudication_v1 (review_artifact), path_size_adjudication_v241 (human_review_pending) registered.",
+      "script_270b_step_2"
+    ],
+    [
+      "pre_flight_decision_log",
+      "audit_trail",
+      "Every canonical-table-building script (237+) MUST emit a scripts/output/{NNN}_decision_log.json containing an entry for each pre-flight discovery that diverged from the prompt's original assertions. Each entry: {category, original_assertion, revised_assertion, rationale, revised_value_expected}. This is the manuscript-defensibility trail \u2014 when a reviewer asks \"why is N=8,422 not 10,871?\", the answer is in the decision log, not buried in commit history.",
+      "Scripts 245 (8 entries) and 246 (6 entries). 245_tem_only_patients.json supplements with the 2,449 patient list for traceability.",
+      "Group C established as standard"
+    ],
+    [
+      "restore_test_prefers_widest_schema",
+      "archival_discipline",
+      "Round-trip restore tests select the archive target with the widest schema available (highest column count preferred, then highest row count). Narrow tests give false confidence; wide tests exercise type, ordering, and length-inference edge cases. Concretely: prefer canonical_patient_master_pre270_* (1499 cols) over canonical_patient_master_prev233_snapshot (7 cols), and any snapshot with explicit column counts > the median snapshot width over snapshots picked by lex sort.",
+      "Script 270c v1 selected canonical_patient_master_prev233_snapshot_20260417T010115Z by ORDER BY table_name DESC, getting a 7-col round-trip instead of the available 1499-col pre270 CPM snapshot. Test passed but exercised a fraction of the schema surface that Phase B execute will touch. 270d enforces the wide-first selector.",
+      "script_270c_post_review"
+    ],
+    [
+      "rid_type_consistency",
+      "join_safety",
+      "research_id type is NOT uniform across source tables. canonical_patient_master.research_id = VARCHAR. Most imaging tables (imaging_nodule_master_v1, us_nodules_tirads, etc.) = INTEGER/BIGINT. ALL joins between CPM and source tables MUST cast: CAST(source.research_id AS VARCHAR) = cpm.research_id. Python set-comparisons across tables of different RID types will silently report 0% overlap when the actual overlap is 100%. Use SQL JOINs with explicit CAST, never Python set intersection on raw columns.",
+      "Script 246 pre-flight \u2014 initial Python set comparison reported 0% CPM-overlap for canonical_us_nodule_characteristics_v1 candidates. Was a VARCHAR vs BIGINT artifact; explicit CAST showed 100% alignment. Caught before raising as architectural blocker.",
+      "Group C pre-flight"
+    ],
+    [
+      "single_source_rollup_inherits_feeder",
+      "registry_mapping",
+      "CPM columns produced by a MAX/MIN/FIRST/LAST/COUNT aggregation over a single feeder table resolve to that feeder, not build_pipeline. Contrast with derived_column_build_pipeline which applies to 2+ feeder inputs or arithmetic transforms.",
+      "last_tg_date = MAX(tg_date) over tg_timeline_patient_summary_v1 -> tg_timeline_patient_summary_v1.",
+      "script_270b_step_2"
+    ],
+    [
+      "tech_debt_aggregation",
+      "tech_debt_discipline",
+      "Tech debt entries in v1_1_tech_debt_v1 aggregate homogeneous backlogs into one entry. Per-row tech_debt entries create noise; one entry per *decision to be made* keeps the table actionable. If rows are heterogeneous (different decisions required per row), register separately.",
+      "Script 270c registry_null_residual_v1_1 aggregates 34 homogeneous registry rows into one tech_debt entry rather than 34 per-row entries.",
+      "script_270c_post_execute"
+    ],
+    [
+      "v1_1_tech_debt_register",
+      "convention_drift",
+      "Scripts that identify naming/structural debt out of scope for the current release register the debt in manuscript_workspace.v1_1_tech_debt_v1 rather than dropping it in a comment. Each row carries a debt_id, recommendation, target_version, and status. v1_1 release script consults this table for backlog.",
+      "Script 270b Step 2: laterality_bare_column_name_v1_1 registered.",
+      "script_270b_step_2"
+    ]
+  ],
+  "conventions_columns": [
+    "convention_id",
+    "category",
+    "rule",
+    "exemplar",
+    "established_in"
+  ],
+  "archive_databases_attached": [
+    "md_information_schema",
+    "my_db",
+    "Thyroid 2026 UPdated",
+    "thyroid_canonical_publication_v1_0",
+    "system",
+    "temp"
+  ],
+  "archive_schemas": [
+    "archive_legacy",
+    "archive_pub_v1_0",
+    "information_schema",
+    "main",
+    "pg_catalog"
+  ],
+  "archive_pub_v1_0_tables": [
+    "__readme_20260416T153344Z",
+    "__readme_20260416T153411Z",
+    "__readme_20260416T154105Z",
+    "__readme_pre247_backup_20260416T233353Z",
+    "__readme_pre247_backup_20260416T233537Z",
+    "__readme_pre251_20260417T012311Z",
+    "__readme_pre257_20260417T020326Z",
+    "__readme_pre265_20260417T034044Z",
+    "_molecular_patient_rollup_v227_pre251_20260417T012311Z",
+    "_view_ddl_snapshot_pre240_20260416T205455Z",
+    "_view_ddl_snapshot_pre240_20260416T205811Z",
+    "_view_ddl_snapshot_pre242_20260416T210416Z",
+    "analysis_molecular_subset_v1_pre251_20260417T012311Z",
+    "canonical_benign_diagnosis_v1_pre251_20260417T012311Z",
+    "canonical_detail_pointer_v1_pre250_20260417T011828Z",
+    "canonical_detail_pointer_v1_pre250_20260417T020551Z",
+    "canonical_detail_pointer_v1_pre258_20260417T020547Z",
+    "canonical_diagnosis_unified_v1_pre251_20260417T012311Z",
+    "canonical_diagnosis_unified_v1_predup_20260416T183742Z",
+    "canonical_malignant_diagnosis_v1_pre251_20260417T012311Z",
+    "canonical_molecular_tested_v1_pre251_20260417T012311Z",
+    "canonical_patient_master_pre235_backup_20260416",
+    "canonical_patient_master_pre236_backup_20260416",
+    "canonical_patient_master_pre237_backup_20260416",
+    "canonical_patient_master_pre240_backup_20260416T183549Z",
+    "canonical_patient_master_pre240_v2_backup_20260416T205455Z",
+    "canonical_patient_master_pre240_v2_backup_20260416T205811Z",
+    "canonical_patient_master_pre248_20260417T001407Z",
+    "canonical_patient_master_pre248_20260417T001727Z",
+    "canonical_patient_master_pre248_20260417T002058Z",
+    "canonical_patient_master_pre249_20260417T010115Z",
+    "canonical_patient_master_pre251_20260417T012311Z",
+    "canonical_patient_master_pre252_20260417T015203Z",
+    "canonical_patient_master_pre254_20260417T015520Z",
+    "canonical_patient_master_pre255_20260417T015724Z",
+    "canonical_patient_master_pre256_20260417T015909Z",
+    "canonical_patient_master_pre257_20260417T020239Z",
+    "canonical_patient_master_pre261_20260417T025110Z",
+    "canonical_patient_master_pre262_20260417T025253Z",
+    "canonical_patient_master_pre265_step5_20260417T033927Z",
+    "canonical_patient_master_pre265b_20260417T034543Z",
+    "canonical_patient_master_pre270_20260417T055747Z",
+    "canonical_patient_master_prev233_snapshot_20260417T010115Z",
+    "canonical_recurrence_v1_pre251_20260417T012311Z",
+    "canonical_survival_followup_v1_pre251_20260417T012311Z",
+    "canonical_tumor_characteristics_v1_pre251_20260417T012311Z",
+    "canonical_us_nodule_characteristics_v1_pre251_20260417T012311Z",
+    "clinical_note_ln_extracted_v1_pre251_20260417T012311Z",
+    "clinical_notes_long_pre251_20260417T012311Z",
+    "complication_patient_summary_v1_pre235_backup_20260416",
+    "complication_patient_summary_v1_pre251_20260417T012311Z",
+    "complication_phenotype_v1_pre235_backup_20260416",
+    "complication_phenotype_v1_pre251_20260417T012311Z",
+    "cpm_ras_positive_v7_dropped_20260417T025253Z",
+    "ct_imaging_pre251_20260417T012311Z",
+    "data_dictionary_v221_20260416T183549Z",
+    "data_dictionary_v235_20260416",
+    "data_dictionary_v240_pre243_backup_20260416",
+    "data_dictionary_v240_pre251_20260417T012311Z",
+    "detail_table_registry_v1_20260416T153420Z",
+    "detail_table_registry_v1_pre247_backup_20260416T233353Z",
+    "detail_table_registry_v1_pre247_backup_20260416T233537Z",
+    "detail_table_registry_v1_pre250_20260417T011828Z",
+    "detail_table_registry_v1_pre250_20260417T020551Z",
+    "detail_table_registry_v1_pre265_20260417T033912Z",
+    "detail_table_registry_v1_pre265_rewrite_20260417T033922Z",
+    "episode_analysis_resolved_v1_dedup_pre251_20260417T012311Z",
+    "ete_adjudication_v1_pre251_20260417T012311Z",
+    "extracted_braf_recovery_v1_pre251_20260417T012311Z",
+    "extracted_complications_refined_v5_pre251_20260417T012311Z",
+    "extracted_ete_subgraded_v1_pre251_20260417T012311Z",
+    "extracted_fna_bethesda_v1_pre251_20260417T012311Z",
+    "extracted_postop_labs_expanded_v1_pre235_backup_20260416",
+    "extracted_postop_labs_expanded_v1_pre251_20260417T012311Z",
+    "extracted_ras_patient_summary_v1_pre251_20260417T012311Z",
+    "extracted_rln_injury_refined_v2_pre251_20260417T012311Z",
+    "extracted_tirads_validated_v1_pre251_20260417T012311Z",
+    "fna_cytology_pre251_20260417T012311Z",
+    "fna_episode_master_v2_pre251_20260417T012311Z",
+    "fna_episode_master_v2_pre261_20260417T025110Z",
+    "fna_episode_master_v2_pre262_20260417T025253Z",
+    "fna_history_pre251_20260417T012311Z",
+    "fna_history_pre261_20260417T025110Z",
+    "ghost_rid_7744__molecular_patient_rollup_v227_pre265_20260417T033935Z",
+    "ghost_rid_7744_molecular_results_pre265_20260417T033935Z",
+    "ghost_rid_7744_molecular_test_episode_v2_pre265_20260417T033935Z",
+    "ghost_rid_7744_molecular_testing_pre265_20260417T033935Z",
+    "ghost_rid_7744_thyroseq_molecular_enrichment_pre265_20260417T033935Z",
+    "imaging_exam_master_v1_pre251_20260417T012311Z",
+    "imaging_fna_linkage_v3_pre251_20260417T012311Z",
+    "imaging_nodule_long_v2_pre246_backup_20260416T232324Z",
+    "imaging_nodule_master_v1_pre251_20260417T012311Z",
+    "imaging_patient_summary_v1_pre251_20260417T012311Z",
+    "lab_cross_wave_dedup_map_v1_pre251_20260417T012311Z",
+    "lesion_analysis_resolved_v1_pre251_20260417T012311Z",
+    "ln_crossval_v1_pre251_20260417T012311Z",
+    "ln_master_rollup_v1_pre251_20260417T012311Z",
+    "ln_master_rollup_v1_predup_20260416T183742Z",
+    "longitudinal_lab_canonical_v1_orphans_pre253_20260417T015343Z",
+    "longitudinal_lab_canonical_v1_pre235_backup_20260416",
+    "longitudinal_lab_canonical_v1_pre251_20260417T012311Z",
+    "manuscript_cohort_v1_pre251_20260417T012311Z",
+    "molecular_assay_dictionary_pre251_20260417T012311Z",
+    "molecular_code_crosswalk_pre251_20260417T012311Z",
+    "molecular_ingestion_runs_pre251_20260417T012311Z",
+    "molecular_results_pre251_20260417T012311Z",
+    "molecular_test_episode_v2_pre251_20260417T012311Z",
+    "molecular_testing_pre251_20260417T012311Z",
+    "molecular_variant_long_pre251_20260417T012311Z",
+    "mri_imaging_pre251_20260417T012311Z",
+    "note_entities_complications_pre251_20260417T012311Z",
+    "note_entities_genetics_pre251_20260417T012311Z",
+    "note_entities_llm_airway_invasion_pre251_20260417T012311Z",
+    "note_entities_llm_cervical_ln_detail_pre251_20260417T012311Z",
+    "note_entities_llm_dynamic_risk_response_pre251_20260417T012311Z",
+    "note_entities_llm_frozen_section_detail_pre251_20260417T012311Z",
+    "note_entities_llm_functional_outcomes_pre251_20260417T012311Z",
+    "note_entities_llm_imaging_pre251_20260417T012311Z",
+    "note_entities_llm_labs_pre251_20260417T012311Z",
+    "note_entities_llm_parathyroid_detail_pre251_20260417T012311Z",
+    "note_entities_llm_past_medical_hx_pre251_20260417T012311Z",
+    "note_entities_llm_past_surgical_hx_pre251_20260417T012311Z",
+    "note_entities_llm_pathology_pre251_20260417T012311Z",
+    "note_entities_llm_patient_decision_adherence_pre251_20260417T012311Z",
+    "note_entities_llm_physical_exam_pre251_20260417T012311Z",
+    "note_entities_llm_presenting_symptoms_pre251_20260417T012311Z",
+    "note_entities_llm_rad_treatment_pre251_20260417T012311Z",
+    "note_entities_llm_rai_detailed_pre251_20260417T012311Z",
+    "note_entities_llm_recurrence_pre251_20260417T012311Z",
+    "note_entities_llm_survival_followup_pre251_20260417T012311Z",
+    "note_entities_llm_synoptic_pathology_enrichment_pre251_20260417T012311Z",
+    "note_entities_llm_tg_kinetics_pre251_20260417T012311Z",
+    "note_entities_llm_tirads_granular_pre251_20260417T012311Z",
+    "note_entities_llm_us_nodule_dynamics_pre251_20260417T012311Z",
+    "note_entities_llm_vascular_invasion_pre251_20260417T012311Z",
+    "note_entities_medications_pre251_20260417T012311Z",
+    "note_entities_operative_detail_pre251_20260417T012311Z",
+    "note_entities_problem_list_pre251_20260417T012311Z",
+    "note_entities_procedures_pre251_20260417T012311Z",
+    "note_entities_staging_pre251_20260417T012311Z",
+    "nsqip_enrichment_pre251_20260417T012311Z",
+    "nsqip_patient_summary_pre251_20260417T012311Z",
+    "nuclear_med_pre251_20260417T012311Z",
+    "operative_episode_detail_v2_pre251_20260417T012311Z",
+    "path_outcome_classification_v1_pre251_20260417T012311Z",
+    "path_size_adjudication_v241_pre251_20260417T012311Z",
+    "path_synoptics_pre251_20260417T012311Z",
+    "patient_analysis_resolved_v1_pre251_20260417T012311Z",
+    "patient_completion_oed_path_linkage_v1_pre251_20260417T012311Z",
+    "patient_cross_domain_timeline_v2_pre251_20260417T012311Z",
+    "patient_tumor_rollup_v1_pre251_20260417T012311Z",
+    "qa_fusion_parse_triage_v1_20260416T153535Z",
+    "rai_benign_histology_recovery_v234_pre239_backup_20260416T204642Z",
+    "rai_treatment_episode_v2_pre251_20260417T012311Z",
+    "recurrence_event_clean_v1_pre251_20260417T012311Z",
+    "ret_note_entity_adjudication_v226_pre251_20260417T012311Z",
+    "ret_patient_adjudicated_v226_pre251_20260417T012311Z",
+    "serial_imaging_us_pre251_20260417T012311Z",
+    "specimen_genomic_assay_v1_pre251_20260417T012311Z",
+    "specimen_master_v1_pre251_20260417T012311Z",
+    "specimen_source_xref_v1_pre251_20260417T012311Z",
+    "specimen_tumor_focus_v1_pre251_20260417T012311Z",
+    "survival_cohort_enriched_pre251_20260417T012311Z",
+    "synoptic_tumor_long_v1_pre251_20260417T012311Z",
+    "tg_postop_surveillance_windows_v1_pre251_20260417T012311Z",
+    "tg_timeline_patient_summary_v1_pre251_20260417T012311Z",
+    "thyroglobulin_lab_canonical_v1_orphans_pre253_20260417T015343Z",
+    "thyroglobulin_lab_canonical_v1_pre251_20260417T012311Z",
+    "thyroid_sizes_pre251_20260417T012311Z",
+    "thyroid_weights_pre251_20260417T012311Z",
+    "thyroseq_molecular_enrichment_pre251_20260417T012311Z",
+    "tirads_llm_extracted_v2_pre251_20260417T012311Z",
+    "tirads_llm_validation_v2_pre251_20260417T012311Z",
+    "tumor_episode_master_v2_pre251_20260417T012311Z",
+    "tumor_pathology_pre251_20260417T012311Z",
+    "ultrasound_reports_pre251_20260417T012311Z",
+    "us_nodules_tirads_pre251_20260417T012311Z",
+    "us_nodules_tirads_vs_inm_v1_discordance_v1_pre251_20260417T012311Z",
+    "view_ddl_snapshot_pre249_20260417T010115Z",
+    "view_ddl_snapshot_pre257_20260417T020239Z"
+  ],
+  "archive_main_tables_count": 0,
+  "raw_source_tagged_tables": []
+}
