@@ -1,0 +1,38 @@
+{
+  "started_at": "2026-04-17T06:37:06.502644+00:00",
+  "publication_db": "thyroid_canonical_publication_v1_0",
+  "actions": {
+    "audit_status_flipped": true,
+    "conventions_inserted": 2,
+    "tech_debt_inserted": true
+  },
+  "pre_state": {
+    "audit_rows": 43,
+    "audit_status_distribution": {
+      "OK": 32,
+      "DOCUMENTED_NOOP": 4,
+      "DOCUMENTED_GAP": 3,
+      "OK_BACKFILLED_270": 3,
+      "OK_DEFERRED_HUMAN": 1
+    },
+    "conventions": 13,
+    "tech_debt": 1
+  },
+  "post_state": {
+    "audit_rows": 43,
+    "audit_status_distribution": {
+      "OK": 32,
+      "DOCUMENTED_GAP": 4,
+      "OK_BACKFILLED_270": 3,
+      "DOCUMENTED_NOOP": 3,
+      "OK_DEFERRED_HUMAN": 1
+    },
+    "conventions": 15,
+    "tech_debt": 2
+  },
+  "new_convention_ids": [
+    "audit_status_taxonomy",
+    "tech_debt_aggregation"
+  ],
+  "new_tech_debt_id": "registry_null_residual_v1_1"
+}

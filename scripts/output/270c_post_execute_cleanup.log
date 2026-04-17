@@ -1,0 +1,31 @@
+=== START Script 270c (post-execute cleanup) ===
+started_at: 2026-04-17T06:37:06.502644+00:00
+connected to thyroid_canonical_publication_v1_0
+
+--- pre-state ---
+  audit rows:        43
+  audit status dist: {'OK': 32, 'DOCUMENTED_NOOP': 4, 'DOCUMENTED_GAP': 3, 'OK_BACKFILLED_270': 3, 'OK_DEFERRED_HUMAN': 1}
+  conventions:       13
+  tech_debt:         1
+  target audit row found: script=270 status='DOCUMENTED_NOOP'
+
+--- flip step_2_registry_null_residual status ---
+  flipped DOCUMENTED_NOOP -> DOCUMENTED_GAP
+
+--- insert 2 new conventions ---
+  inserted convention 'audit_status_taxonomy'
+  inserted convention 'tech_debt_aggregation'
+
+--- insert tech_debt row registry_null_residual_v1_1 ---
+  inserted tech_debt 'registry_null_residual_v1_1'
+
+--- post-state verification ---
+  audit rows:        43
+  audit status dist: {'OK': 32, 'DOCUMENTED_GAP': 4, 'OK_BACKFILLED_270': 3, 'DOCUMENTED_NOOP': 3, 'OK_DEFERRED_HUMAN': 1}
+  conventions:       15
+  tech_debt:         2
+  pass: all post-state assertions hold
+
+wrote /Users/loganglosser/THYROID_2026/scripts/output/270c_post_execute_cleanup.json
+wrote /Users/loganglosser/THYROID_2026/scripts/output/270c_post_execute_cleanup.log
+=== END Script 270c ===
