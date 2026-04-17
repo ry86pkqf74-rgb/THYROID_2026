@@ -1,0 +1,15 @@
+{
+  "ctc_new_cols": 14,
+  "cpm_new_cols": 12,
+  "het_rows": 8422,
+  "per_tumor_ajcc8_calculable_patients": 3610,
+  "dominant_vs_canonical_pct": 96.07991906929692,
+  "dominant_vs_canonical_n_concordant": 3799,
+  "dominant_vs_canonical_n_pairs": 3954,
+  "concordance_status": "pass",
+  "concordance_reference": "canonical_patient_master.ajcc8_t_stage",
+  "legacy_hist1_reference_table": "thyroid_canonical_publication_v1_0.manuscript_workspace.cpm_ajcc_dominant_vs_tp_hist1_discordance_v1",
+  "views_total": 67,
+  "views_ok": 67,
+  "views_error": 0
+}
