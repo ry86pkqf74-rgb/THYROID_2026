@@ -1,0 +1,55 @@
+=== START Script 270c — Phase B planning (DRY-RUN) ===
+started_at: 2026-04-17T07:26:38.644897+00:00
+publication_db: thyroid_canonical_publication_v1_0
+archive_db:     Thyroid 2026 UPdated
+output_dir:     /Users/loganglosser/THYROID_2026/scripts/output
+connected (search path locked, CPM invariant verified)
+
+--- ROUND-TRIP RESTORE TEST ---
+  chosen snapshot: "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_prev233_snapshot_20260417T010115Z"
+  source: 10871 rows, 7 cols
+  PASS: round-trip 10871 rows / 7 cols verified, temp table dropped
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270c_restore_test.json
+
+--- pre-fetch ---
+  main_schema_keep_list_v1: 2 rows
+  detail_table_registry_v1: 117 rows (81 with non-empty normalized, 36 EMPTY/NULL)
+  canonical main: 127 info_schema entries, 127 queryable (114 tables, 13 views), 0 ghosts
+  main view_definitions cached: 13
+
+--- canonical main eligibility classification ---
+  base-table disposition dist: {'KEEP_PENDING_V1_1_DECISION': 33, 'KEEP_REGISTRY_FEEDER': 78, 'KEEP_SPINE': 1, 'KEEP_KEEP_LIST': 2}
+
+--- main views compile-impact ---
+  view disposition dist: {'KEEP_VIEW': 13}
+  views compile-impact rows (one per (view, ref_table)): 0
+
+--- stray-schema disposition (archive DB) ---
+  stray-schema objects (4 schemas): 282
+  reference: archive_pub_v1_0 has 180 objects; archive_legacy has 2 objects
+  stray disposition dist: {'DROP_NO_RESTORE_VALUE': 38, 'MIGRATE_TO_ARCHIVE_LEGACY': 118, 'DROP_ALREADY_SNAPSHOTTED': 123, 'DIVERGENT': 3}
+  stray drops total:                  161
+    DROP_ALREADY_SNAPSHOTTED:         123
+    DROP_NO_RESTORE_VALUE:            38
+  stray migrate total:                118
+  stray DIVERGENT (halt for review):  3
+
+--- budget pre-flight ---
+  archive_candidates_count_canonical_main: ok=True {'actual': 0, 'limit': 250, 'ok': True}
+  drop_candidates_count_stray_archive: ok=True {'actual': 161, 'limit': 250, 'ok': True}
+  total_rows_in_archive_candidates: ok=True {'actual': 0, 'limit': 50000000, 'ok': True}
+  single_archive_candidate_over_threshold: ok=True {'threshold': 10000000, 'tables_over_threshold': [], 'ok': True, 'ok_severity': 'none'}
+  stray_divergent_rows_human_review: ok=False {'actual': 3, 'limit': 0, 'ok': False, 'ok_severity': 'human_review_required', 'rows': [{'schema': 'main', 'name': 'canonical_diagnosis_unified_v1', 'row_count': 11259, 'justification': 'snapshot-suffix match in archive_pub_v1_0 but row counts differ: stray=11259 vs [canonical_diagnosis_unified_v1_pre251_20260417T012311Z(rc=11028)]; halt for human review (270d refuses to migrate DIVERGENT rows)'}, {'schema': 'main', 'name': 'ln_master_rollup_v1', 'row_count': 4290, 'justification': 'snapshot-suffix match in archive_pub_v1_0 but row counts differ: stray=4290 vs [ln_master_rollup_v1_pre251_20260417T012311Z(rc=4273)]; halt for human review (270d refuses to migrate DIVERGENT rows)'}, {'schema': 'main', 'name': 'serial_imaging_us', 'row_count': 0, 'justification': 'snapshot-suffix match in archive_pub_v1_0 but row counts differ: stray=0 vs [serial_imaging_us_pre251_20260417T012311Z(rc=4162)]; halt for human review (270d refuses to migrate DIVERGENT rows)'}]}
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270c_budgets.json
+
+--- emit artifacts ---
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270c_phase_b_disposition_manifest.csv (127 rows)
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270c_views_compile_impact.csv (0 rows)
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270c_stray_schema_consolidation.csv (282 rows)
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270c_planning_summary.md
+
+--- audit row ---
+  audit row 'phase_b_planning_complete' already present — skipping insert
+
+=== END Script 270c — Phase B planning (elapsed 30.0s) ===
+REPORT: archive_candidates=0 stray_drops=161 view_impacts=0 restore_test=PASS

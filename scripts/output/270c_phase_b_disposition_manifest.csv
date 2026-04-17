@@ -1,4 +1,4 @@
-# generated_by,scripts/270c_phase_b_planning.py,generated_at,2026-04-17T06:46:38.421027+00:00
+# generated_by,scripts/270c_phase_b_planning.py,generated_at,2026-04-17T07:26:38.644897+00:00
 schema,table_name,object_type,row_count,disposition,justification,feeder_mapping,keep_list_entry,archive_target,phase_b_execute_order
 main,ete_adjudication_v1,BASE TABLE,45,KEEP_KEEP_LIST,main_schema_keep_list_v1 entry: keep_reason='review_artifact' registered_by=270b_step_2,,review_artifact,,
 main,path_size_adjudication_v241,BASE TABLE,96,KEEP_KEEP_LIST,main_schema_keep_list_v1 entry: keep_reason='human_review_pending' registered_by=270b_step_2,,human_review_pending,,

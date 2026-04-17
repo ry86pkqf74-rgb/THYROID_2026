@@ -69,6 +69,15 @@ BUDGET_HUMAN_REVIEW_ROW_THRESHOLD = 10_000_000
 
 NOTE_ENTITIES_RE = re.compile(r"^note_entities_.*$")
 
+# Snapshot-name detector for stray-vs-pub matching. Per Phase B Step 5
+# bug fix: archive_pub_v1_0 snapshots are named
+#   <table_name>_pre<script_num>_<UTC>            (e.g., _pre270_20260417...)
+# or, for legacy backup conventions,
+#   <table_name>_<anything>backup<anything>
+# The original 270c matcher compared exact names only and reported zero
+# DROP_ALREADY_SNAPSHOTTED. The corrected matcher uses these patterns.
+SNAPSHOT_PATTERN_TPL = r"^{name}_(?:pre\d+|.*backup.*)"
+
 CPM_NAME = "canonical_patient_master"
 
 V1_1_TECH_DEBT_LINK = "registry_null_residual_v1_1"
@@ -527,13 +536,48 @@ def classify_main_view(
 # Stray-schema disposition
 # =============================================================================
 
+def find_matching_snapshots(
+    stray_name: str,
+    snapshots: dict[str, int],
+) -> list[tuple[str, int]]:
+    """Return [(snapshot_name, row_count), ...] for snapshots in
+    archive_pub_v1_0 whose names match the suffix patterns:
+
+      <stray_name>_pre<digits>_<...>   (canonical script-snapshot pattern)
+      <stray_name>_<...>backup<...>    (legacy backup convention)
+
+    Patterns intentionally exclude bare-name match (different table) and
+    require concrete suffix indicators to avoid false positives like
+    `<stray_name>_predictions` matching against `_pre`.
+    """
+    pat = re.compile(
+        SNAPSHOT_PATTERN_TPL.format(name=re.escape(stray_name)),
+        re.IGNORECASE,
+    )
+    return [
+        (snap_name, rc) for snap_name, rc in snapshots.items()
+        if pat.match(snap_name)
+    ]
+
+
 def classify_stray_object(
     obj: dict,
     pub_names: set[str],
     legacy_names: set[str],
     pub_rowcounts: dict[str, int],
 ) -> dict:
-    """Disposition for one stray object (table or view)."""
+    """Disposition for one stray object (table or view).
+
+    Order of checks (per Phase B Step 5 bug fix):
+      1. Snapshot-suffix match in archive_pub_v1_0 with equal row count
+         -> DROP_ALREADY_SNAPSHOTTED.
+      2. Snapshot-suffix match in archive_pub_v1_0 with differing row
+         count -> DIVERGENT (halt for human review; 270d refuses to
+         proceed if any DIVERGENT row is present).
+      3. Empty base table -> DROP_NO_RESTORE_VALUE.
+      4. Non-queryable -> DROP_NO_RESTORE_VALUE.
+      5. Otherwise -> MIGRATE_TO_ARCHIVE_LEGACY.
+    """
     name = obj["name"]
     sch = obj["schema"]
     rc = obj["row_count"]
@@ -549,26 +593,40 @@ def classify_stray_object(
         "justification": None,
     }
 
-    pub_match = name in pub_names
     legacy_match = name in legacy_names
-
-    rowcount_match_pub = (
-        pub_match
-        and obj["object_type"] == "BASE TABLE"
-        and rc is not None
-        and pub_rowcounts.get(name) == rc
-    )
-    out["identical_in_archive_pub_v1_0"] = bool(rowcount_match_pub)
     out["identical_in_archive_legacy"] = bool(legacy_match)
 
-    if rowcount_match_pub:
-        out["disposition"] = "DROP_ALREADY_SNAPSHOTTED"
-        out["justification"] = (
-            f"identical name + row_count={rc} present in "
-            f"\"{ARCHIVE_DB}\".{ARCHIVE_SCHEMA_PUB}.{name}"
-        )
-        return out
+    # 1 + 2: snapshot-suffix match (corrected from exact-name match)
+    matches = find_matching_snapshots(name, pub_rowcounts)
+    if matches and rc is not None and obj["object_type"] == "BASE TABLE":
+        exact = [(s, c) for s, c in matches if c == rc]
+        if exact:
+            out["disposition"] = "DROP_ALREADY_SNAPSHOTTED"
+            out["identical_in_archive_pub_v1_0"] = True
+            primary = exact[0]
+            extra = (
+                f" (+{len(exact) - 1} other exact-rowcount matches)"
+                if len(exact) > 1 else ""
+            )
+            out["justification"] = (
+                f"snapshot-suffix match in {ARCHIVE_SCHEMA_PUB} with "
+                f"row_count={rc}: {primary[0]}{extra}"
+            )
+            return out
+        else:
+            out["disposition"] = "DIVERGENT"
+            out["identical_in_archive_pub_v1_0"] = False
+            preview = ", ".join(
+                f"{s}(rc={c})" for s, c in matches[:3]
+            ) + (f" +{len(matches) - 3} more" if len(matches) > 3 else "")
+            out["justification"] = (
+                f"snapshot-suffix match in {ARCHIVE_SCHEMA_PUB} but row "
+                f"counts differ: stray={rc} vs [{preview}]; halt for "
+                "human review (270d refuses to migrate DIVERGENT rows)"
+            )
+            return out
 
+    # 3: empty base tables
     if obj["object_type"] == "BASE TABLE" and rc == 0:
         out["disposition"] = "DROP_NO_RESTORE_VALUE"
         out["justification"] = (
@@ -577,6 +635,7 @@ def classify_stray_object(
         )
         return out
 
+    # 4: non-queryable (broken view chains, etc.)
     if obj["error"] is not None:
         out["disposition"] = "DROP_NO_RESTORE_VALUE"
         out["justification"] = (
@@ -585,21 +644,12 @@ def classify_stray_object(
         )
         return out
 
-    if pub_match and not rowcount_match_pub:
-        out["disposition"] = "MIGRATE_TO_ARCHIVE_LEGACY"
-        out["justification"] = (
-            f"name collision with {ARCHIVE_SCHEMA_PUB}.{name} but row "
-            f"counts differ (stray={rc}, pub={pub_rowcounts.get(name)}); "
-            "stray version may carry unique state — preserve under "
-            f"{ARCHIVE_SCHEMA_LEGACY}"
-        )
-    else:
-        out["disposition"] = "MIGRATE_TO_ARCHIVE_LEGACY"
-        out["justification"] = (
-            f"unique to stray schema {sch!r}; preserve under "
-            f"{ARCHIVE_SCHEMA_LEGACY} for audit trail"
-        )
-
+    # 5: default — preserve under archive_legacy
+    out["disposition"] = "MIGRATE_TO_ARCHIVE_LEGACY"
+    out["justification"] = (
+        f"unique to stray schema {sch!r} (no snapshot-suffix match in "
+        f"{ARCHIVE_SCHEMA_PUB}); preserve under {ARCHIVE_SCHEMA_LEGACY}"
+    )
     ts = utc_stamp(utc_now())
     out["proposed_target_name"] = f"{sch}__{name}_{ts}"
     return out
@@ -755,8 +805,20 @@ def main() -> int:
     n_stray_migrate = sum(
         1 for r in stray_rows if r["disposition"] == "MIGRATE_TO_ARCHIVE_LEGACY"
     )
-    log(f"  stray drops total:    {n_stray_drops}")
-    log(f"  stray migrate total:  {n_stray_migrate}")
+    n_stray_divergent = sum(
+        1 for r in stray_rows if r["disposition"] == "DIVERGENT"
+    )
+    n_stray_already_snapshotted = sum(
+        1 for r in stray_rows if r["disposition"] == "DROP_ALREADY_SNAPSHOTTED"
+    )
+    n_stray_no_value = sum(
+        1 for r in stray_rows if r["disposition"] == "DROP_NO_RESTORE_VALUE"
+    )
+    log(f"  stray drops total:                  {n_stray_drops}")
+    log(f"    DROP_ALREADY_SNAPSHOTTED:         {n_stray_already_snapshotted}")
+    log(f"    DROP_NO_RESTORE_VALUE:            {n_stray_no_value}")
+    log(f"  stray migrate total:                {n_stray_migrate}")
+    log(f"  stray DIVERGENT (halt for review):  {n_stray_divergent}")
 
     # ----- 6. Budget pre-flight (halt on trip) -----------------------------
     log("\n--- budget pre-flight ---")
@@ -800,6 +862,23 @@ def main() -> int:
             "ok": len(big_tables) == 0,  # informational halt only if any
             "ok_severity": "human_review_required" if big_tables else "none",
         },
+        "stray_divergent_rows_human_review": {
+            "actual": n_stray_divergent,
+            "limit": 0,
+            "ok": n_stray_divergent == 0,
+            "ok_severity": (
+                "human_review_required" if n_stray_divergent else "none"
+            ),
+            "rows": [
+                {
+                    "schema": r["schema"],
+                    "name": r["name"],
+                    "row_count": r["row_count"],
+                    "justification": r["justification"],
+                }
+                for r in stray_rows if r["disposition"] == "DIVERGENT"
+            ],
+        },
     }
     for k, v in budgets.items():
         log(f"  {k}: ok={v['ok']} {v}")
@@ -807,9 +886,16 @@ def main() -> int:
     OUT_BUDGETS_JSON.write_text(json.dumps(budgets, indent=2, default=str))
     log(f"  wrote {OUT_BUDGETS_JSON}")
 
+    # DIVERGENT and large-table flags are surfaced (not halt-on-plan) so the
+    # manifest still emits for human review; 270d --execute refuses to
+    # migrate any DIVERGENT row.
+    informational_only_budgets = {
+        "single_archive_candidate_over_threshold",
+        "stray_divergent_rows_human_review",
+    }
     halt_keys = [
         k for k, v in budgets.items()
-        if k != "single_archive_candidate_over_threshold" and not v["ok"]
+        if k not in informational_only_budgets and not v["ok"]
     ]
     if halt_keys:
         log(
@@ -972,7 +1058,11 @@ def main() -> int:
     md_lines.append("\n## Counts to report back\n")
     md_lines.append(
         f"- archive_candidates: **{n_archive}**\n"
-        f"- stray_drops: **{n_stray_drops}**\n"
+        f"- stray_drops: **{n_stray_drops}** "
+        f"(already_snapshotted={n_stray_already_snapshotted}, "
+        f"no_restore_value={n_stray_no_value})\n"
+        f"- stray_migrate: **{n_stray_migrate}**\n"
+        f"- stray_DIVERGENT (halt for review): **{n_stray_divergent}**\n"
         f"- view_impacts: **{len(view_impact_rows)}**\n"
         f"- restore_test: **{restore_result['status']}** "
         f"({restore_result.get('source_row_count')} rows round-tripped)\n"

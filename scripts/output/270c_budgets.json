@@ -5,7 +5,7 @@
     "ok": true
   },
   "drop_candidates_count_stray_archive": {
-    "actual": 39,
+    "actual": 161,
     "limit": 250,
     "ok": true
   },
@@ -19,5 +19,31 @@
     "tables_over_threshold": [],
     "ok": true,
     "ok_severity": "none"
+  },
+  "stray_divergent_rows_human_review": {
+    "actual": 3,
+    "limit": 0,
+    "ok": false,
+    "ok_severity": "human_review_required",
+    "rows": [
+      {
+        "schema": "main",
+        "name": "canonical_diagnosis_unified_v1",
+        "row_count": 11259,
+        "justification": "snapshot-suffix match in archive_pub_v1_0 but row counts differ: stray=11259 vs [canonical_diagnosis_unified_v1_pre251_20260417T012311Z(rc=11028)]; halt for human review (270d refuses to migrate DIVERGENT rows)"
+      },
+      {
+        "schema": "main",
+        "name": "ln_master_rollup_v1",
+        "row_count": 4290,
+        "justification": "snapshot-suffix match in archive_pub_v1_0 but row counts differ: stray=4290 vs [ln_master_rollup_v1_pre251_20260417T012311Z(rc=4273)]; halt for human review (270d refuses to migrate DIVERGENT rows)"
+      },
+      {
+        "schema": "main",
+        "name": "serial_imaging_us",
+        "row_count": 0,
+        "justification": "snapshot-suffix match in archive_pub_v1_0 but row counts differ: stray=0 vs [serial_imaging_us_pre251_20260417T012311Z(rc=4162)]; halt for human review (270d refuses to migrate DIVERGENT rows)"
+      }
+    ]
   }
 }

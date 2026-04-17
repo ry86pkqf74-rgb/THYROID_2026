@@ -3,7 +3,7 @@
   "chosen_snapshot": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"canonical_patient_master_prev233_snapshot_20260417T010115Z\"",
   "source_row_count": 10871,
   "source_column_count": 7,
-  "temp_table_name": "restore_test_20260417T064641Z",
+  "temp_table_name": "restore_test_20260417T072642Z",
   "temp_row_count": 10871,
   "temp_column_count": 7,
   "type_diffs": [],
