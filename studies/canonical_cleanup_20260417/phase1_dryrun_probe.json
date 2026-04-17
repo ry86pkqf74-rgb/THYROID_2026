@@ -1,0 +1,25 @@
+{
+  "1_5a_episode_candidates": 27,
+  "1_5b_v9_only_candidates": 27,
+  "1_5_episode_distinct_rids": 253,
+  "1_4_promotion_candidates": 0,
+  "1_3_lateral_orin_candidates": 217,
+  "1_6_tg_distinct_rids": 3124,
+  "1_6_classifier_dist": [
+    [
+      "TG",
+      36611
+    ],
+    [
+      "TGAB",
+      37647
+    ]
+  ],
+  "1_6_n_with_tg_pre": 2528,
+  "1_6_n_with_tg_after": 2925,
+  "1_6_n_with_tgab_pre": 2641,
+  "1_6_n_with_tgab_after": 3038,
+  "1_6_n_with_peak_pre": 2561,
+  "1_6_n_with_nadir_pre": 2561,
+  "1_6_n_with_peak_after": 2920
+}

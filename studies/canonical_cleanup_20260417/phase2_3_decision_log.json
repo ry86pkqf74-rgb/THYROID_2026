@@ -1,0 +1,227 @@
+[
+  {
+    "step": "2.1",
+    "expected": 14,
+    "pre_count": 14,
+    "post_count_should_be_0": 0,
+    "rids_reset": [
+      "3707",
+      "5131",
+      "5306",
+      "5369",
+      "5624",
+      "5866",
+      "6080",
+      "6196",
+      "6202",
+      "6779",
+      "7144",
+      "7477",
+      "7540",
+      "7544"
+    ],
+    "drift_note": "Prompt cited 16; live found 14. Logan approved -2 drift."
+  },
+  {
+    "step": "2.2",
+    "contradictions_found": [
+      [
+        "10743",
+        "permanent=TRUE",
+        "confirmed_transient"
+      ],
+      [
+        "6447",
+        "permanent=TRUE",
+        "confirmed_transient"
+      ],
+      [
+        "7487",
+        "permanent=TRUE",
+        "confirmed_transient"
+      ],
+      [
+        "9765",
+        "permanent=TRUE",
+        "confirmed_transient"
+      ]
+    ],
+    "inserted_this_run": 4,
+    "queue_total_rows": 4,
+    "drift_note": "Prompt cited 2 (9765, 7487); live found 4. Logan approved queueing all 4 (6447, 10743 newly identified)."
+  },
+  {
+    "step": "2.3",
+    "perm_true_rows_backfilled": 4,
+    "post_distribution": [
+      [
+        "lab_persistence",
+        1
+      ],
+      [
+        "unknown_override",
+        3
+      ]
+    ]
+  },
+  {
+    "step": "3.1",
+    "n_lab_distinct_rids": 3124,
+    "n_cpm_distinct_rids": 10871,
+    "n_cpm_with_lab": 2721,
+    "n_orphans": 403,
+    "classification_counts": [
+      [
+        "likely_non_cancer",
+        403
+      ]
+    ],
+    "samples": {
+      "likely_non_cancer": [
+        [
+          "3081",
+          198,
+          2,
+          "2008-12-01 09:05:00",
+          "2025-05-02 14:42:00",
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "3792",
+          164,
+          2,
+          "2012-08-10 10:03:00",
+          "2025-08-11 13:42:00",
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "4161",
+          156,
+          2,
+          "2014-01-31 15:15:00",
+          "2025-06-30 16:11:00",
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "1852",
+          127,
+          2,
+          "2011-04-26 14:26:00",
+          "2025-09-25 13:39:00",
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "4729",
+          124,
+          2,
+          "2016-03-14 16:00:00",
+          "2025-04-30 13:00:00",
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "4288",
+          114,
+          2,
+          "2014-01-31 12:45:00",
+          "2025-08-04 15:27:00",
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "4880",
+          110,
+          2,
+          "2015-09-15 18:33:00",
+          "2025-02-18 19:45:00",
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "1139",
+          109,
+          2,
+          "2006-08-30 08:10:00",
+          "2025-10-23 12:29:00",
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "1849",
+          104,
+          2,
+          "2010-10-07 16:35:00",
+          "2024-12-17 17:27:00",
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "3683",
+          103,
+          2,
+          "2012-04-25 09:34:00",
+          "2025-02-06 19:07:00",
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      ],
+      "likely_dropped_from_CPM": []
+    },
+    "audit_table": "manuscript_workspace.lab_orphan_audit_v1"
+  },
+  {
+    "step": "3.2",
+    "placeholders": [
+      {
+        "research_id": "2332",
+        "in_cpm": false,
+        "n_us_nodule_rows": 0
+      },
+      {
+        "research_id": "2445",
+        "in_cpm": false,
+        "n_us_nodule_rows": 0
+      },
+      {
+        "research_id": "7744",
+        "in_cpm": false,
+        "n_us_nodule_rows": 0
+      }
+    ],
+    "action": "HOLD pending Logan approval"
+  }
+]

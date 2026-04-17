@@ -1,0 +1,147 @@
+{
+  "checks": {
+    "a_cpm_rowcount": {
+      "ok": true,
+      "observed": 10871,
+      "expected": 10871,
+      "note": ""
+    },
+    "b_cpm_distinct_research_id": {
+      "ok": true,
+      "observed": 10871,
+      "expected": 10871,
+      "note": ""
+    },
+    "c_col_r_class_true": {
+      "ok": true,
+      "observed": true,
+      "expected": true,
+      "note": ""
+    },
+    "c_col_ete_grade_final_v2": {
+      "ok": true,
+      "observed": true,
+      "expected": true,
+      "note": ""
+    },
+    "d_operative_episode_detail_v2_rows": {
+      "ok": true,
+      "observed": 9371,
+      "expected": "9371 +/- 5",
+      "note": ""
+    },
+    "e_complication_phenotype_v1_rows": {
+      "ok": true,
+      "observed": 5978,
+      "expected": "5978 +/- 50",
+      "note": ""
+    },
+    "f_us_tirads_columns": {
+      "ok": true,
+      "observed": [
+        "tirads_acr_recalculated",
+        "tirads_reported"
+      ],
+      "expected": [
+        "tirads_reported",
+        "tirads_acr_recalculated"
+      ],
+      "note": ""
+    },
+    "g_thyroglobulin_lab_canonical_v1_rows": {
+      "ok": true,
+      "observed": 74258,
+      "expected": "74258 +/- 500",
+      "note": ""
+    },
+    "h_vc_paralysis_recalibration_v236_exists": {
+      "ok": true,
+      "observed": 1,
+      "expected": 1,
+      "note": ""
+    },
+    "i_archive_pub_v1_0_table_count": {
+      "ok": true,
+      "observed": 182,
+      "expected": "> 100",
+      "note": ""
+    }
+  },
+  "drift": {
+    "canonical_patient_master": {
+      "cited": 10871,
+      "observed": 10871,
+      "delta": 0,
+      "flag": "OK"
+    },
+    "operative_episode_detail_v2": {
+      "cited": 9371,
+      "observed": 9371,
+      "delta": 0,
+      "flag": "OK"
+    },
+    "complication_phenotype_v1": {
+      "cited": 5978,
+      "observed": 5978,
+      "delta": 0,
+      "flag": "OK"
+    },
+    "thyroglobulin_lab_canonical_v1": {
+      "cited": 76971,
+      "observed": 74258,
+      "delta": -2713,
+      "flag": "DRIFT"
+    }
+  },
+  "snapshots": {
+    "view_definitions_snapshot_bigcleanup_rows": 65
+  },
+  "extras": {
+    "fna_episode_master_v2": 8119,
+    "rai_treatment_episode_v2": 1857,
+    "canonical_us_nodule_characteristics_v1": 37016,
+    "synoptic_tumor_long_v1": 11103
+  },
+  "fna_episode_distribution_n_ge_10": [
+    {
+      "n_episodes": 11,
+      "n_patients": 2
+    },
+    {
+      "n_episodes": 12,
+      "n_patients": 3
+    }
+  ],
+  "cpm_n_fna_in_11_12": 5,
+  "ajcc8_columns_present": {
+    "ajcc8_t_stage": true,
+    "ajcc8_t_stage_v2": true,
+    "ajcc8_t_stage_corrected": true
+  },
+  "multifocal_columns_present": {
+    "multifocal_flag_path": true,
+    "DEPRECATED__path_multifocal_flag": false,
+    "path_multifocal_flag": false,
+    "nlp_path_multifocal_mentioned": true
+  },
+  "complication_columns_present": {
+    "comp_vc_paralysis_confirmed": true,
+    "comp_vc_paresis_confirmed": true,
+    "comp_hematoma_confirmed": true,
+    "comp_seroma_confirmed": true,
+    "comp_chyle_leak_confirmed": true,
+    "comp_wound_infection_confirmed": true,
+    "any_confirmed_complication_flag": true,
+    "comp_hypoparathyroidism_permanent": true,
+    "comp_hypopara_permanent_source": false,
+    "lateral_neck_dissected": true,
+    "lateral_neck_dissected_structured_or_nlp": false,
+    "cpm_built_at": false,
+    "worst_bethesda_source": true,
+    "rai_max_dose_mci": true,
+    "rai_dose_v9": true,
+    "n_fna_episodes": true,
+    "max_tirads_ever": true
+  },
+  "manuscript_workspace_view_count": 65
+}

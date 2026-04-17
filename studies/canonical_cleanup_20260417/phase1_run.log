@@ -1,0 +1,67 @@
+[2026-04-17T09:47:18.267740+00:00] === Phase 1 driver start ===
+[2026-04-17T09:47:20.600883+00:00] invariants OK (10871 rows / r_class_true / ete_grade_final_v2)
+[2026-04-17T09:47:20.602093+00:00] >>> entering phase 1.1
+[2026-04-17T09:47:20.602527+00:00] === Phase 1.1 — promote VC s236 cross-ref rows ===
+[2026-04-17T09:47:20.634820+00:00] [1.1] pre-count=0 expected=32 window=[27,37] (gate=max(10%,5)) VC s236 promotion (19 paralysis + 13 paresis)
+[2026-04-17T09:47:20.673691+00:00] [1.1] no-op (already applied; post_check=32 matches)
+[2026-04-17T09:47:20.732686+00:00] [1.1] post split [('vocal_cord_paralysis', 19), ('vocal_cord_paresis', 13)]
+[2026-04-17T09:47:20.890959+00:00] invariants OK (10871 rows / r_class_true / ete_grade_final_v2)
+[2026-04-17T09:47:20.891775+00:00] >>> entering phase 1.2
+[2026-04-17T09:47:20.892137+00:00] === Phase 1.2 — CPM VC backfill ===
+[2026-04-17T09:47:21.002750+00:00] [1.2a-paralysis] pre-count=19 expected=19 window=[14,24] (gate=max(10%,5)) paralysis backfill
+[2026-04-17T09:47:21.003041+00:00] [1.2a-paralysis] executing UPDATE...
+[2026-04-17T09:47:21.232563+00:00] [1.2a-paralysis] OK (rc=-1)
+[2026-04-17T09:47:21.282597+00:00] [1.2b-paresis] pre-count=13 expected=13 window=[8,18] (gate=max(10%,5)) paresis backfill
+[2026-04-17T09:47:21.282912+00:00] [1.2b-paresis] executing UPDATE...
+[2026-04-17T09:47:21.406301+00:00] [1.2b-paresis] OK (rc=-1)
+[2026-04-17T09:47:21.574352+00:00] invariants OK (10871 rows / r_class_true / ete_grade_final_v2)
+[2026-04-17T09:47:21.575512+00:00] >>> entering phase 1.3
+[2026-04-17T09:47:21.576888+00:00] === Phase 1.3 — lateral ND rebuild ===
+[2026-04-17T09:47:21.944718+00:00] [1.3] ALTER ADD COLUMN IF NOT EXISTS lateral_neck_dissected_structured_or_nlp ok
+[2026-04-17T09:47:22.261819+00:00] [1.3a-rebuild] pre-count=217 expected=217 window=[195,239] (gate=max(10%,5)) OR-in structured oed.lateral into CPM
+[2026-04-17T09:47:22.262132+00:00] [1.3a-rebuild] executing UPDATE...
+[2026-04-17T09:47:22.409472+00:00] [1.3a-rebuild] OK (rc=-1)
+[2026-04-17T09:47:22.409900+00:00] [1.3b] populating lateral_neck_dissected_structured_or_nlp synonym...
+[2026-04-17T09:47:22.703613+00:00] [1.3] post: lateral_neck_dissected TRUE=336, structured_or_nlp TRUE=336
+[2026-04-17T09:47:22.861353+00:00] invariants OK (10871 rows / r_class_true / ete_grade_final_v2)
+[2026-04-17T09:47:22.861950+00:00] >>> entering phase 1.4
+[2026-04-17T09:47:22.862251+00:00] === Phase 1.4 — TIRADS verification (no-op; SKIPPED per Logan) ===
+[2026-04-17T09:47:22.928352+00:00] [1.4] mismatches (rids whose new_max strictly exceeds CPM max_tirads_ever): 0
+[2026-04-17T09:47:23.087337+00:00] invariants OK (10871 rows / r_class_true / ete_grade_final_v2)
+[2026-04-17T09:47:23.087891+00:00] >>> entering phase 1.5
+[2026-04-17T09:47:23.088153+00:00] === Phase 1.5 — RAI max dose rebuild ===
+[2026-04-17T09:47:23.199671+00:00] [1.5a-episode] pre-count=27 expected=27 window=[22,32] (gate=max(10%,5)) rai_treatment_episode_v2.dose_mci primary path; expected revised 214->27 per dryrun probe 2026-04-17
+[2026-04-17T09:47:23.200187+00:00] [1.5a-episode] executing UPDATE...
+[2026-04-17T09:47:23.288873+00:00] [1.5a-episode] OK (rc=-1)
+[2026-04-17T09:47:23.333176+00:00] [1.5b-fallback] candidates rai_dose_v9 only = 27 (expected ~27)
+[2026-04-17T09:47:23.564415+00:00] invariants OK (10871 rows / r_class_true / ete_grade_final_v2)
+[2026-04-17T09:47:23.565330+00:00] >>> entering phase 1.6
+[2026-04-17T09:47:23.565648+00:00] === Phase 1.6 — Tg verification (rebuild SKIPPED per Logan + audit) ===
+[2026-04-17T09:47:23.629872+00:00] [1.6] verification audit: {'n_with_lab': 2721, 'd_tg': 0, 'd_tgab': 0, 'd_peak': 0, 'd_nadir': 0}
+[2026-04-17T09:47:23.867429+00:00] invariants OK (10871 rows / r_class_true / ete_grade_final_v2)
+[2026-04-17T09:47:23.868286+00:00] >>> entering phase 1.7
+[2026-04-17T09:47:23.868653+00:00] === Phase 1.7 — n_fna_episodes verification rebuild (revised: 0-10) ===
+[2026-04-17T09:47:23.917148+00:00] [1.7] CPM rows whose n_fna_episodes differs from live count: 0
+[2026-04-17T09:47:23.964470+00:00] [1.7] live n>=10 distribution: [(11, 2), (12, 3)]
+[2026-04-17T09:47:24.120893+00:00] invariants OK (10871 rows / r_class_true / ete_grade_final_v2)
+[2026-04-17T09:47:24.122005+00:00] >>> entering phase 1.8
+[2026-04-17T09:47:24.122440+00:00] === Phase 1.8 — comp_* idempotent ADDs + any_confirmed_complication_flag rebuild ===
+[2026-04-17T09:47:24.156736+00:00] [1.8] ADD COLUMN IF NOT EXISTS comp_hematoma_confirmed ok
+[2026-04-17T09:47:24.274083+00:00] [1.8] ADD COLUMN IF NOT EXISTS comp_seroma_confirmed ok
+[2026-04-17T09:47:24.303532+00:00] [1.8] ADD COLUMN IF NOT EXISTS comp_chyle_leak_confirmed ok
+[2026-04-17T09:47:24.342105+00:00] [1.8] ADD COLUMN IF NOT EXISTS comp_wound_infection_confirmed ok
+[2026-04-17T09:47:24.500595+00:00] [1.8] hematoma -> comp_hematoma_confirmed: pre-count=0
+[2026-04-17T09:47:24.549553+00:00] [1.8] hematoma -> comp_hematoma_confirmed: post=38
+[2026-04-17T09:47:24.603639+00:00] [1.8] seroma -> comp_seroma_confirmed: pre-count=0
+[2026-04-17T09:47:24.648645+00:00] [1.8] seroma -> comp_seroma_confirmed: post=28
+[2026-04-17T09:47:24.810646+00:00] [1.8] chyle_leak -> comp_chyle_leak_confirmed: pre-count=0
+[2026-04-17T09:47:24.864668+00:00] [1.8] chyle_leak -> comp_chyle_leak_confirmed: post=20
+[2026-04-17T09:47:24.921486+00:00] [1.8] wound_infection -> comp_wound_infection_confirmed: pre-count=0
+[2026-04-17T09:47:24.972717+00:00] [1.8] wound_infection -> comp_wound_infection_confirmed: post=2
+[2026-04-17T09:47:25.029998+00:00] [1.8] vocal_cord_paralysis -> comp_vc_paralysis_confirmed: pre-count=0
+[2026-04-17T09:47:25.165855+00:00] [1.8] vocal_cord_paralysis -> comp_vc_paralysis_confirmed: post=19
+[2026-04-17T09:47:25.397649+00:00] [1.8] vocal_cord_paresis -> comp_vc_paresis_confirmed: pre-count=0
+[2026-04-17T09:47:25.448779+00:00] [1.8] vocal_cord_paresis -> comp_vc_paresis_confirmed: post=13
+[2026-04-17T09:47:25.623323+00:00] [1.8] any_confirmed_complication_flag: pre=240 post=240
+[2026-04-17T09:47:25.784010+00:00] invariants OK (10871 rows / r_class_true / ete_grade_final_v2)
+[2026-04-17T09:47:25.784382+00:00] === Phase 1 driver end (all phases passed invariants) ===

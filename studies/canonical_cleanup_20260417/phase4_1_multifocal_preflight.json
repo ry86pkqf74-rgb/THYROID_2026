@@ -1,0 +1,94 @@
+{
+  "columns_needed": {
+    "multifocal_flag_path": true,
+    "nlp_path_multifocal_mentioned": true
+  },
+  "deprecated_col_present": false,
+  "downgrade_candidates": 344,
+  "preserved_nlp_supported": 559,
+  "total_multifocal_flag_path_TRUE": 1784,
+  "per_rid_max_tumor_distribution": [
+    [
+      1,
+      7063
+    ],
+    [
+      2,
+      904
+    ],
+    [
+      3,
+      302
+    ],
+    [
+      4,
+      98
+    ],
+    [
+      5,
+      55
+    ]
+  ],
+  "downgrade_candidate_sample": [
+    [
+      "4908",
+      true,
+      null,
+      2
+    ],
+    [
+      "6318",
+      true,
+      null,
+      2
+    ],
+    [
+      "1777",
+      true,
+      null,
+      2
+    ],
+    [
+      "1533",
+      true,
+      null,
+      2
+    ],
+    [
+      "1734",
+      true,
+      null,
+      2
+    ],
+    [
+      "1954",
+      true,
+      null,
+      2
+    ],
+    [
+      "1978",
+      true,
+      null,
+      2
+    ],
+    [
+      "1845",
+      true,
+      null,
+      2
+    ],
+    [
+      "9850",
+      true,
+      false,
+      2
+    ],
+    [
+      "1770",
+      true,
+      null,
+      2
+    ]
+  ]
+}

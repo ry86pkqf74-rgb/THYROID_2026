@@ -1,0 +1,10 @@
+table_schema,table_name,bare_ajcc8_t_stage_count
+manuscript_workspace,cohort_descriptive_full_cohort_v1,1.0
+manuscript_workspace,cohort_m007_rss_reclassification_v1,1.0
+manuscript_workspace,cohort_m036_ata_risk_comparison_v1,1.0
+manuscript_workspace,cohort_m043_ln_predictors_v1,1.0
+manuscript_workspace,cohort_m044_ajcc_ete_v1,1.0
+manuscript_workspace,cohort_m048_tnm_multifocal_v1,1.0
+manuscript_workspace,cohort_m050_tumor_size_volume_v1,1.0
+manuscript_workspace,cohort_m051_ete_ln_v1,1.0
+manuscript_workspace,cohort_m059_prognostic_scoring_v1,1.0

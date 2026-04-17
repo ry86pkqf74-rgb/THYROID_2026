@@ -1,0 +1,6 @@
+[2026-04-17T10:41:32.838803+00:00] === Phase 6 driver start ===
+[2026-04-17T10:41:33.062341+00:00] [6] ADD COLUMN IF NOT EXISTS cpm_built_at ok
+[2026-04-17T10:41:33.350363+00:00] [6] cpm_built_at populated for 10871 rows (expected 10871)
+[2026-04-17T10:41:34.758966+00:00] [6] provenance row count: 1
+[2026-04-17T10:41:34.791967+00:00] [6] invariants OK: rows=10871 distinct=10871
+[2026-04-17T10:41:34.792660+00:00] === Phase 6 driver end ===

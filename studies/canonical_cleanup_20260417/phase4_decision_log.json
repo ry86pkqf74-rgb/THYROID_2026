@@ -1,0 +1,108 @@
+[
+  {
+    "step": "4.1",
+    "pre_total_true": 1784,
+    "post_total_true": 1440,
+    "expected_post": 1440,
+    "delta": 344,
+    "pre_nlp_supported": 559,
+    "post_nlp_supported": 559,
+    "status": "OK"
+  },
+  {
+    "step": "4.2",
+    "exam_date_quality_dist": [
+      [
+        "FUTURE",
+        8
+      ],
+      [
+        "MISSING",
+        2061
+      ],
+      [
+        "OK",
+        34946
+      ],
+      [
+        "PRE_1990",
+        1
+      ]
+    ],
+    "clean_view_rows": 34946
+  },
+  {
+    "step": "4.3",
+    "cpm_over_cases": 672,
+    "with_source_populated": 672,
+    "action": "no-op (all already populated)"
+  },
+  {
+    "step": "4.4",
+    "invariant_violators": 80
+  },
+  {
+    "step": "4.5",
+    "commented": [
+      "n_us_exams",
+      "rai_first_date"
+    ],
+    "missing": [
+      "fna_first_date",
+      "fna_last_date",
+      "rai_last_date"
+    ]
+  },
+  {
+    "step": "4.6-pregate",
+    "n_views_with_bare_refs": 9,
+    "rows": [
+      [
+        "manuscript_workspace",
+        "cohort_descriptive_full_cohort_v1",
+        1.0
+      ],
+      [
+        "manuscript_workspace",
+        "cohort_m007_rss_reclassification_v1",
+        1.0
+      ],
+      [
+        "manuscript_workspace",
+        "cohort_m036_ata_risk_comparison_v1",
+        1.0
+      ],
+      [
+        "manuscript_workspace",
+        "cohort_m043_ln_predictors_v1",
+        1.0
+      ],
+      [
+        "manuscript_workspace",
+        "cohort_m044_ajcc_ete_v1",
+        1.0
+      ],
+      [
+        "manuscript_workspace",
+        "cohort_m048_tnm_multifocal_v1",
+        1.0
+      ],
+      [
+        "manuscript_workspace",
+        "cohort_m050_tumor_size_volume_v1",
+        1.0
+      ],
+      [
+        "manuscript_workspace",
+        "cohort_m051_ete_ln_v1",
+        1.0
+      ],
+      [
+        "manuscript_workspace",
+        "cohort_m059_prognostic_scoring_v1",
+        1.0
+      ]
+    ],
+    "migration_csv": "/Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417/ajcc8_t_stage_migration_needed.csv"
+  }
+]

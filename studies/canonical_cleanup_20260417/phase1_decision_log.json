@@ -1,0 +1,155 @@
+[
+  {
+    "step": "1.1",
+    "started_at": "2026-04-17T09:47:20.602756+00:00",
+    "expected": 32,
+    "pre_count": 0,
+    "tolerance_frac": 0.1,
+    "notes": "VC s236 promotion (19 paralysis + 13 paresis)",
+    "status": "ALREADY_APPLIED_NOOP",
+    "post_check_value": 32,
+    "post_check_expected": 32,
+    "ended_at": "2026-04-17T09:47:20.673549+00:00"
+  },
+  {
+    "step": "1.2a-paralysis",
+    "started_at": "2026-04-17T09:47:20.892362+00:00",
+    "expected": 19,
+    "pre_count": 19,
+    "tolerance_frac": 0.1,
+    "notes": "paralysis backfill",
+    "update_rowcount": -1,
+    "post_check_value": 19,
+    "post_check_expected": 19,
+    "ended_at": "2026-04-17T09:47:21.231771+00:00",
+    "status": "OK"
+  },
+  {
+    "step": "1.2b-paresis",
+    "started_at": "2026-04-17T09:47:21.232816+00:00",
+    "expected": 13,
+    "pre_count": 13,
+    "tolerance_frac": 0.1,
+    "notes": "paresis backfill",
+    "update_rowcount": -1,
+    "post_check_value": 13,
+    "post_check_expected": 13,
+    "ended_at": "2026-04-17T09:47:21.405453+00:00",
+    "status": "OK"
+  },
+  {
+    "step": "1.3a-rebuild",
+    "started_at": "2026-04-17T09:47:21.945096+00:00",
+    "expected": 217,
+    "pre_count": 217,
+    "tolerance_frac": 0.1,
+    "notes": "OR-in structured oed.lateral into CPM",
+    "update_rowcount": -1,
+    "ended_at": "2026-04-17T09:47:22.405904+00:00",
+    "status": "OK"
+  },
+  {
+    "step": "1.3-postcheck",
+    "lateral_neck_dissected_true_after": 336,
+    "lateral_neck_dissected_structured_or_nlp_true_after": 336
+  },
+  {
+    "step": "1.4-verification",
+    "candidates_to_promote": 0,
+    "expected_per_prompt": 1503,
+    "skipped": true,
+    "skip_reason": "Prompt's UPDATE 'TR' || GREATEST(...) assumes VARCHAR storage; live max_tirads_ever is BIGINT (values 1-5). Even if candidates existed, the written SQL would error or strip 'TR' prefix; additionally candidate count = 0 makes the question moot. Read-only verification confirms canonical state."
+  },
+  {
+    "step": "1.5a-episode",
+    "started_at": "2026-04-17T09:47:23.088483+00:00",
+    "expected": 27,
+    "pre_count": 27,
+    "tolerance_frac": 0.1,
+    "notes": "rai_treatment_episode_v2.dose_mci primary path; expected revised 214->27 per dryrun probe 2026-04-17",
+    "update_rowcount": -1,
+    "ended_at": "2026-04-17T09:47:23.288309+00:00",
+    "status": "OK"
+  },
+  {
+    "step": "1.5b-fallback",
+    "rai_dose_v9_only_promoted": 27,
+    "expected": 27,
+    "window": [
+      22,
+      32
+    ]
+  },
+  {
+    "step": "1.6-verification",
+    "audit": {
+      "n_with_lab": 2721,
+      "d_tg": 0,
+      "d_tgab": 0,
+      "d_peak": 0,
+      "d_nadir": 0
+    },
+    "skipped_rebuild": true,
+    "skip_reason": "Audit shows 0 mismatches; +397/+359 in dryrun probe were lab-orphan inflation (Phase 3.1)."
+  },
+  {
+    "step": "1.7-diff-precount",
+    "n_diff": 0
+  },
+  {
+    "step": "1.7-result",
+    "rows_corrected": 0,
+    "distribution": [
+      [
+        11,
+        2
+      ],
+      [
+        12,
+        3
+      ]
+    ]
+  },
+  {
+    "step": "1.8-hematoma",
+    "column": "comp_hematoma_confirmed",
+    "pre_pending": 0,
+    "post_true_in_set": 38
+  },
+  {
+    "step": "1.8-seroma",
+    "column": "comp_seroma_confirmed",
+    "pre_pending": 0,
+    "post_true_in_set": 28
+  },
+  {
+    "step": "1.8-chyle_leak",
+    "column": "comp_chyle_leak_confirmed",
+    "pre_pending": 0,
+    "post_true_in_set": 20
+  },
+  {
+    "step": "1.8-wound_infection",
+    "column": "comp_wound_infection_confirmed",
+    "pre_pending": 0,
+    "post_true_in_set": 2
+  },
+  {
+    "step": "1.8-vocal_cord_paralysis",
+    "column": "comp_vc_paralysis_confirmed",
+    "pre_pending": 0,
+    "post_true_in_set": 19
+  },
+  {
+    "step": "1.8-vocal_cord_paresis",
+    "column": "comp_vc_paresis_confirmed",
+    "pre_pending": 0,
+    "post_true_in_set": 13
+  },
+  {
+    "step": "1.8-aggregate",
+    "pre_any_confirmed": 240,
+    "post_any_confirmed": 240,
+    "delta_newly_true": 0
+  }
+]

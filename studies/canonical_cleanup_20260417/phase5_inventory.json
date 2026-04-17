@@ -1,0 +1,2197 @@
+{
+  "summary": {
+    "LIVE": 115
+  },
+  "objects": [
+    {
+      "object_name": "__readme",
+      "object_type": "BASE TABLE",
+      "row_count": 114,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/237_close_registry_gaps.py",
+        "scripts/verify_publication_house.py",
+        "scripts/233_phase0b_details.py",
+        "scripts/265_canonical_finalization.py"
+      ],
+      "n_columns": 5,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "_molecular_patient_rollup_v227",
+      "object_type": "BASE TABLE",
+      "row_count": 10025,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/237_close_registry_gaps.py",
+        "scripts/265_probe2.py",
+        "scripts/269_backfill_molecular_episodes.py",
+        "scripts/265_canonical_finalization.py"
+      ],
+      "n_columns": 3,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "analysis_molecular_subset_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 10025,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/90_manuscript_freeze_rebuild.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/228_registry_backfill.py",
+        "scripts/223_ingest_and_publish.py",
+        "scripts/105_manuscript_freeze_v1.py"
+      ],
+      "n_columns": 126,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "canonical_benign_diagnosis_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 6818,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/237_close_registry_gaps.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/200_canonical_diagnosis_standardization.py",
+        "scripts/210_database_audit_backup.py"
+      ],
+      "n_columns": 18,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "canonical_diagnosis_unified_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 11028,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/209_nlp_entity_crossvalidation.py",
+        "scripts/270c_divergent_reclassification_audit.py",
+        "scripts/204_canonical_master_assembly.py",
+        "scripts/213_data_dictionary.py",
+        "scripts/233_canonical_finalization.py"
+      ],
+      "n_columns": 7,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "canonical_malignant_diagnosis_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 4441,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/265_probe2.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/200_canonical_diagnosis_standardization.py",
+        "scripts/210_database_audit_backup.py"
+      ],
+      "n_columns": 12,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "canonical_molecular_tested_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 1286,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/237_close_registry_gaps.py",
+        "scripts/265_probe2.py",
+        "scripts/269_backfill_molecular_episodes.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/204_canonical_master_assembly.py"
+      ],
+      "n_columns": 17,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "canonical_patient_master",
+      "object_type": "BASE TABLE",
+      "row_count": 10871,
+      "n_view_references": 41,
+      "view_references": [
+        "manuscript_workspace.cohort_m082_parathyroid_tumors_v1",
+        "manuscript_workspace.cohort_m073_tg_lob_vs_tt_v1",
+        "manuscript_workspace.cohort_m081_rai_resistant_v1",
+        "manuscript_workspace.cohort_m072_molecular_surg_impact_v1",
+        "manuscript_workspace.cohort_m079_eucalcemic_outcomes_v1"
+      ],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/215_deep_nlp_entity_integration.py",
+        "scripts/209_nlp_entity_crossvalidation.py",
+        "scripts/237_close_registry_gaps.py",
+        "scripts/263_bethesda_semantic_decision.py"
+      ],
+      "n_columns": 1501,
+      "status": "LIVE",
+      "reason": "referenced by 41 view(s), 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "canonical_recurrence_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 10871,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/265_probe2.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/204_canonical_master_assembly.py",
+        "scripts/213_data_dictionary.py",
+        "scripts/233_canonical_finalization.py"
+      ],
+      "n_columns": 12,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "canonical_survival_followup_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 11504,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/265_canonical_finalization.py",
+        "scripts/204_canonical_master_assembly.py",
+        "scripts/213_data_dictionary.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/210_database_audit_backup.py"
+      ],
+      "n_columns": 13,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "canonical_tumor_characteristics_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 11106,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/266_preflight.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/266b_per_tumor_ajcc_buildout.py",
+        "scripts/266c_wide_format_slots_and_renames.py",
+        "scripts/259_final_verification_lock.py"
+      ],
+      "n_columns": 36,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "canonical_us_nodule_characteristics_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 37016,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/265_probe2.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/272_canonical_cleanup_phase1.py",
+        "scripts/273_canonical_cleanup_phase2_3.py",
+        "scripts/246_canonical_us_nodule_characteristics.py"
+      ],
+      "n_columns": 36,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "clinical_note_ln_extracted_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 7751,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/218_followup_recovery.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/217_lab_recovery_ln_integration.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/250_registry_pointer_rebuild.py"
+      ],
+      "n_columns": 30,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "clinical_notes_long",
+      "object_type": "BASE TABLE",
+      "row_count": 11050,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/67_hp_discharge_note_audit.py",
+        "scripts/236_canonical_finalization.py",
+        "scripts/build_clinical_notes_long.py",
+        "scripts/111_llm_extraction_validation.py",
+        "scripts/29_validation_engine.py"
+      ],
+      "n_columns": 11,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "complication_patient_summary_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 2938,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/237_close_registry_gaps.py",
+        "scripts/52_complication_phenotyping_v2.py",
+        "scripts/90_manuscript_freeze_rebuild.py",
+        "scripts/235_recon.py"
+      ],
+      "n_columns": 18,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "complication_phenotype_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 5978,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/265_probe2.py",
+        "scripts/52_complication_phenotyping_v2.py",
+        "scripts/218_followup_recovery.py",
+        "scripts/235_recon.py"
+      ],
+      "n_columns": 29,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "ct_imaging",
+      "object_type": "BASE TABLE",
+      "row_count": 7701,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/29_validation_engine.py",
+        "scripts/integrate_missing_sources.py",
+        "scripts/128_multimodal_contract_mm_v1.py",
+        "scripts/07_phase3_genetics_specimen.py",
+        "scripts/218_followup_recovery.py"
+      ],
+      "n_columns": 40,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "data_dictionary_v240",
+      "object_type": "BASE TABLE",
+      "row_count": 1529,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/263_bethesda_semantic_decision.py",
+        "scripts/266_preflight.py",
+        "scripts/260_hydrate_fna_links.py",
+        "scripts/265_canonical_finalization.py"
+      ],
+      "n_columns": 9,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "data_dictionary_v266a",
+      "object_type": "BASE TABLE",
+      "row_count": 1529,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 4,
+      "python_references": [
+        "scripts/266a_dictionary_and_feeder_registration.py",
+        "scripts/266b_per_tumor_ajcc_buildout.py",
+        "scripts/266c_wide_format_slots_and_renames.py",
+        "scripts/266a_discovery.py"
+      ],
+      "n_columns": 9,
+      "status": "LIVE",
+      "reason": "referenced by 4+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "episode_analysis_resolved_v1_dedup",
+      "object_type": "BASE TABLE",
+      "row_count": 9368,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/96_episode_downstream_repair.py",
+        "scripts/90_manuscript_freeze_rebuild.py",
+        "scripts/100_episode_linkage_v2_hardening.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/104_operative_truth_state_hardening.py"
+      ],
+      "n_columns": 46,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "ete_adjudication_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 45,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/237_close_registry_gaps.py",
+        "scripts/265_probe2.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/266b_per_tumor_ajcc_buildout.py"
+      ],
+      "n_columns": 8,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "extracted_braf_recovery_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 730,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/265_probe2.py",
+        "scripts/269_backfill_molecular_episodes.py",
+        "scripts/90_manuscript_freeze_rebuild.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/211_canonical_gap_fill.py"
+      ],
+      "n_columns": 7,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "extracted_complications_refined_v5",
+      "object_type": "BASE TABLE",
+      "row_count": 358,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/29_validation_engine.py",
+        "scripts/52_complication_phenotyping_v2.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/210_database_audit_backup.py",
+        "scripts/99_comprehensive_final_verification.py"
+      ],
+      "n_columns": 9,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "extracted_ete_subgraded_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 3558,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/29_validation_engine.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/211_canonical_gap_fill.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/210_database_audit_backup.py"
+      ],
+      "n_columns": 9,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "extracted_fna_bethesda_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 5249,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/265_probe2.py",
+        "scripts/233_phase0b_details.py",
+        "scripts/51b_thyroid_scoring_python.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/233_phase0c_derivation.py"
+      ],
+      "n_columns": 15,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "extracted_postop_labs_expanded_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 1395,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/29_validation_engine.py",
+        "scripts/52_complication_phenotyping_v2.py",
+        "scripts/77_lab_canonical_layer.py",
+        "scripts/235_recon.py"
+      ],
+      "n_columns": 14,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "extracted_ras_patient_summary_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 321,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/90_manuscript_freeze_rebuild.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/211_canonical_gap_fill.py",
+        "scripts/213_data_dictionary.py",
+        "scripts/233_canonical_finalization.py"
+      ],
+      "n_columns": 7,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "extracted_rln_injury_refined_v2",
+      "object_type": "BASE TABLE",
+      "row_count": 92,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/29_validation_engine.py",
+        "scripts/52_complication_phenotyping_v2.py",
+        "scripts/90_manuscript_freeze_rebuild.py",
+        "scripts/265_canonical_finalization.py"
+      ],
+      "n_columns": 12,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "extracted_tirads_validated_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 3439,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/50_multinodule_imaging.py",
+        "scripts/29_validation_engine.py",
+        "scripts/90_manuscript_freeze_rebuild.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/213_data_dictionary.py"
+      ],
+      "n_columns": 15,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "fna_cytology",
+      "object_type": "BASE TABLE",
+      "row_count": 8063,
+      "n_view_references": 1,
+      "view_references": [
+        "manuscript_workspace.cohort_m029_fna_concordance_v1"
+      ],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/29_validation_engine.py",
+        "scripts/integrate_missing_sources.py",
+        "scripts/218_followup_recovery.py",
+        "scripts/206_fleet_nlp_validate_upload.py",
+        "scripts/01_ingest_all_files.py"
+      ],
+      "n_columns": 27,
+      "status": "LIVE",
+      "reason": "referenced by 1 view(s), 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "fna_episode_master_v2",
+      "object_type": "BASE TABLE",
+      "row_count": 8119,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/78_final_hardening.py",
+        "scripts/29_validation_engine.py",
+        "scripts/263_bethesda_semantic_decision.py",
+        "scripts/265_probe2.py",
+        "scripts/128_multimodal_contract_mm_v1.py"
+      ],
+      "n_columns": 17,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "fna_history",
+      "object_type": "BASE TABLE",
+      "row_count": 8119,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/215_deep_nlp_entity_integration.py",
+        "scripts/29_validation_engine.py",
+        "scripts/integrate_missing_sources.py",
+        "scripts/16_reconciliation_v2.py",
+        "scripts/13_performance_optimizations_pack.py"
+      ],
+      "n_columns": 10,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "imaging_exam_master_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 13347,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/50_multinodule_imaging.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/213_data_dictionary.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/210_database_audit_backup.py"
+      ],
+      "n_columns": 10,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "imaging_fna_linkage_v3",
+      "object_type": "BASE TABLE",
+      "row_count": 9911,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/78_final_hardening.py",
+        "scripts/94_pipeline_gap_closure.py",
+        "scripts/49_enhanced_linkage_v3.py",
+        "scripts/129_imaging_fna_linkage_mm_v1.py",
+        "scripts/260_hydrate_fna_links.py"
+      ],
+      "n_columns": 20,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "imaging_nodule_master_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 37016,
+      "n_view_references": 1,
+      "view_references": [
+        "manuscript_workspace.imaging_nodule_master_clean_v1"
+      ],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/78_final_hardening.py",
+        "scripts/50_multinodule_imaging.py",
+        "scripts/128_multimodal_contract_mm_v1.py",
+        "scripts/verify_publication_house.py",
+        "scripts/130_md_materialize_multimodal_upstream.py"
+      ],
+      "n_columns": 24,
+      "status": "LIVE",
+      "reason": "referenced by 1 view(s), 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "imaging_patient_summary_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 6126,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/50_multinodule_imaging.py",
+        "scripts/265_probe2.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/213_data_dictionary.py",
+        "scripts/233_canonical_finalization.py"
+      ],
+      "n_columns": 13,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "lab_cross_wave_dedup_map_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 21761,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/233_canonical_finalization.py",
+        "scripts/228_registry_backfill.py",
+        "scripts/223_ingest_and_publish.py",
+        "scripts/223_publish_canonical.py",
+        "scripts/113_tg_lab_ingestion.py"
+      ],
+      "n_columns": 9,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "lesion_analysis_resolved_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 11851,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/90_manuscript_freeze_rebuild.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/55_analysis_validation_suite.py",
+        "scripts/116_propagate_fna_path_outcome.py",
+        "scripts/228_registry_backfill.py"
+      ],
+      "n_columns": 28,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "ln_crossval_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 4290,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/265_canonical_finalization.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/ln_upload_to_md.py",
+        "scripts/210_database_audit_backup.py",
+        "scripts/228_registry_backfill.py"
+      ],
+      "n_columns": 19,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "ln_master_rollup_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 4273,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/270c_divergent_reclassification_audit.py",
+        "scripts/verify_publication_house.py",
+        "scripts/266_preflight.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/266b_per_tumor_ajcc_buildout.py"
+      ],
+      "n_columns": 78,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "longitudinal_lab_canonical_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 75247,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/78_final_hardening.py",
+        "scripts/29_validation_engine.py",
+        "scripts/verify_publication_house.py",
+        "scripts/218_followup_recovery.py"
+      ],
+      "n_columns": 20,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "manuscript_cohort_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 10871,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/78_final_hardening.py",
+        "scripts/94_pipeline_gap_closure.py",
+        "scripts/57_freeze_manuscript_cohort.py",
+        "scripts/90_manuscript_freeze_rebuild.py",
+        "scripts/60_outlier_scan.py"
+      ],
+      "n_columns": 151,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "molecular_assay_dictionary",
+      "object_type": "BASE TABLE",
+      "row_count": 4,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/42_ingest_afirma.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/228_registry_backfill.py",
+        "scripts/250_registry_pointer_rebuild.py",
+        "scripts/119_md_formalization_validate.py"
+      ],
+      "n_columns": 11,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "molecular_code_crosswalk",
+      "object_type": "BASE TABLE",
+      "row_count": 44,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/42_ingest_afirma.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/228_registry_backfill.py",
+        "scripts/250_registry_pointer_rebuild.py",
+        "scripts/223_ingest_and_publish.py"
+      ],
+      "n_columns": 6,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "molecular_ingestion_runs",
+      "object_type": "BASE TABLE",
+      "row_count": 1,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/42_ingest_afirma.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/41_ingest_thyroseq_excel.py",
+        "scripts/228_registry_backfill.py",
+        "scripts/250_registry_pointer_rebuild.py"
+      ],
+      "n_columns": 7,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "molecular_results",
+      "object_type": "BASE TABLE",
+      "row_count": 10861,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/132_molecular_fact_lineage_views.py",
+        "scripts/225_molecular_pipeline_fixes_and_cleanup.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/234_rai_tg_cleanup_db_hygiene.py",
+        "scripts/42_ingest_afirma.py"
+      ],
+      "n_columns": 27,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "molecular_test_episode_v2",
+      "object_type": "BASE TABLE",
+      "row_count": 10650,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/139_md_specimen_identity_layer.py",
+        "scripts/111_llm_extraction_validation.py",
+        "scripts/29_validation_engine.py",
+        "scripts/265_probe2.py",
+        "scripts/128_multimodal_contract_mm_v1.py"
+      ],
+      "n_columns": 43,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "molecular_testing",
+      "object_type": "BASE TABLE",
+      "row_count": 10861,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/29_validation_engine.py",
+        "scripts/integrate_missing_sources.py",
+        "scripts/16_reconciliation_v2.py",
+        "scripts/18_adjudication_framework.py",
+        "scripts/206_fleet_nlp_validate_upload.py"
+      ],
+      "n_columns": 11,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "molecular_variant_long",
+      "object_type": "BASE TABLE",
+      "row_count": 1640,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/132_molecular_fact_lineage_views.py",
+        "scripts/265_probe2.py",
+        "scripts/225_molecular_pipeline_fixes_and_cleanup.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/211_canonical_gap_fill.py"
+      ],
+      "n_columns": 22,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "mri_imaging",
+      "object_type": "BASE TABLE",
+      "row_count": 715,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/29_validation_engine.py",
+        "scripts/integrate_missing_sources.py",
+        "scripts/verify_publication_house.py",
+        "scripts/07_phase3_genetics_specimen.py",
+        "scripts/218_followup_recovery.py"
+      ],
+      "n_columns": 41,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_complications",
+      "object_type": "BASE TABLE",
+      "row_count": 9359,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/67_hp_discharge_note_audit.py",
+        "scripts/111_llm_extraction_validation.py",
+        "scripts/29_validation_engine.py",
+        "scripts/52_complication_phenotyping_v2.py",
+        "scripts/16_reconciliation_v2.py"
+      ],
+      "n_columns": 48,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_genetics",
+      "object_type": "BASE TABLE",
+      "row_count": 1738,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/67_hp_discharge_note_audit.py",
+        "scripts/111_llm_extraction_validation.py",
+        "scripts/29_validation_engine.py",
+        "scripts/16_reconciliation_v2.py",
+        "scripts/225_molecular_pipeline_fixes_and_cleanup.py"
+      ],
+      "n_columns": 48,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_airway_invasion",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/210_database_audit_backup.py",
+        "scripts/228_registry_backfill.py",
+        "scripts/250_registry_pointer_rebuild.py"
+      ],
+      "n_columns": 23,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_cervical_ln_detail",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/209_nlp_entity_crossvalidation.py",
+        "scripts/218_followup_recovery.py",
+        "scripts/206_fleet_nlp_validate_upload.py",
+        "scripts/265_canonical_finalization.py"
+      ],
+      "n_columns": 23,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_dynamic_risk_response",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/210_database_audit_backup.py",
+        "scripts/228_registry_backfill.py",
+        "scripts/250_registry_pointer_rebuild.py"
+      ],
+      "n_columns": 23,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_frozen_section_detail",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/210_database_audit_backup.py",
+        "scripts/250_registry_pointer_rebuild.py",
+        "scripts/212_nlp_entity_rollup.py"
+      ],
+      "n_columns": 23,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_functional_outcomes",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/210_database_audit_backup.py",
+        "scripts/228_registry_backfill.py",
+        "scripts/250_registry_pointer_rebuild.py"
+      ],
+      "n_columns": 23,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_imaging",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/218_followup_recovery.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/210_database_audit_backup.py",
+        "scripts/228_registry_backfill.py"
+      ],
+      "n_columns": 21,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_labs",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/218_followup_recovery.py",
+        "scripts/213_data_dictionary.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/122_dedup_high_dup_domains.py"
+      ],
+      "n_columns": 21,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_parathyroid_detail",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/210_database_audit_backup.py",
+        "scripts/250_registry_pointer_rebuild.py",
+        "scripts/212_nlp_entity_rollup.py"
+      ],
+      "n_columns": 23,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_past_medical_hx",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/215_deep_nlp_entity_integration.py",
+        "scripts/218_followup_recovery.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/213_data_dictionary.py"
+      ],
+      "n_columns": 23,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_past_surgical_hx",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/215_deep_nlp_entity_integration.py",
+        "scripts/218_followup_recovery.py",
+        "scripts/233_phase0c_derivation.py",
+        "scripts/213_data_dictionary.py"
+      ],
+      "n_columns": 23,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_pathology",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/209_nlp_entity_crossvalidation.py",
+        "scripts/218_followup_recovery.py",
+        "scripts/206_fleet_nlp_validate_upload.py",
+        "scripts/234_rai_tg_cleanup_db_hygiene.py"
+      ],
+      "n_columns": 21,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_patient_decision_adherence",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/122_dedup_high_dup_domains.py",
+        "scripts/210_database_audit_backup.py",
+        "scripts/228_registry_backfill.py"
+      ],
+      "n_columns": 23,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_physical_exam",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/210_database_audit_backup.py",
+        "scripts/228_registry_backfill.py",
+        "scripts/250_registry_pointer_rebuild.py"
+      ],
+      "n_columns": 21,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_presenting_symptoms",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/215_deep_nlp_entity_integration.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/213_data_dictionary.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/210_database_audit_backup.py"
+      ],
+      "n_columns": 23,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_rad_treatment",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/215_deep_nlp_entity_integration.py",
+        "scripts/213_data_dictionary.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/210_database_audit_backup.py"
+      ],
+      "n_columns": 23,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_rai_detailed",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/218_followup_recovery.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/210_database_audit_backup.py",
+        "scripts/250_registry_pointer_rebuild.py"
+      ],
+      "n_columns": 23,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_recurrence",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/209_nlp_entity_crossvalidation.py",
+        "scripts/218_followup_recovery.py",
+        "scripts/233_phase0c_derivation.py",
+        "scripts/213_data_dictionary.py",
+        "scripts/233_canonical_finalization.py"
+      ],
+      "n_columns": 23,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_survival_followup",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/218_followup_recovery.py",
+        "scripts/233_phase0c_derivation.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/210_database_audit_backup.py"
+      ],
+      "n_columns": 23,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_synoptic_pathology_enrichment",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/213_data_dictionary.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/210_database_audit_backup.py",
+        "scripts/228_registry_backfill.py"
+      ],
+      "n_columns": 23,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_tg_kinetics",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/209_nlp_entity_crossvalidation.py",
+        "scripts/213_data_dictionary.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/122_dedup_high_dup_domains.py",
+        "scripts/210_database_audit_backup.py"
+      ],
+      "n_columns": 23,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_tirads_granular",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/209_nlp_entity_crossvalidation.py",
+        "scripts/218_followup_recovery.py",
+        "scripts/206_fleet_nlp_validate_upload.py",
+        "scripts/213_data_dictionary.py"
+      ],
+      "n_columns": 23,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_us_nodule_dynamics",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/233_canonical_finalization.py",
+        "scripts/210_database_audit_backup.py",
+        "scripts/228_registry_backfill.py",
+        "scripts/250_registry_pointer_rebuild.py",
+        "scripts/212_nlp_entity_rollup.py"
+      ],
+      "n_columns": 23,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_llm_vascular_invasion",
+      "object_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/209_nlp_entity_crossvalidation.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/213_data_dictionary.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/210_database_audit_backup.py"
+      ],
+      "n_columns": 23,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_medications",
+      "object_type": "BASE TABLE",
+      "row_count": 7501,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/67_hp_discharge_note_audit.py",
+        "scripts/215_deep_nlp_entity_integration.py",
+        "scripts/111_llm_extraction_validation.py",
+        "scripts/29_validation_engine.py",
+        "scripts/52_complication_phenotyping_v2.py"
+      ],
+      "n_columns": 48,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_operative_detail",
+      "object_type": "BASE TABLE",
+      "row_count": 12151,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/215_deep_nlp_entity_integration.py",
+        "scripts/111_llm_extraction_validation.py",
+        "scripts/29_validation_engine.py",
+        "scripts/213_data_dictionary.py",
+        "scripts/233_canonical_finalization.py"
+      ],
+      "n_columns": 48,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_problem_list",
+      "object_type": "BASE TABLE",
+      "row_count": 11579,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/67_hp_discharge_note_audit.py",
+        "scripts/215_deep_nlp_entity_integration.py",
+        "scripts/111_llm_extraction_validation.py",
+        "scripts/29_validation_engine.py",
+        "scripts/52_complication_phenotyping_v2.py"
+      ],
+      "n_columns": 48,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_procedures",
+      "object_type": "BASE TABLE",
+      "row_count": 21942,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/67_hp_discharge_note_audit.py",
+        "scripts/215_deep_nlp_entity_integration.py",
+        "scripts/111_llm_extraction_validation.py",
+        "scripts/29_validation_engine.py",
+        "scripts/94_pipeline_gap_closure.py"
+      ],
+      "n_columns": 48,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "note_entities_staging",
+      "object_type": "BASE TABLE",
+      "row_count": 3807,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/67_hp_discharge_note_audit.py",
+        "scripts/111_llm_extraction_validation.py",
+        "scripts/29_validation_engine.py",
+        "scripts/16_reconciliation_v2.py",
+        "scripts/18_adjudication_framework.py"
+      ],
+      "n_columns": 48,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "nsqip_enrichment",
+      "object_type": "BASE TABLE",
+      "row_count": 1275,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/verify_publication_house.py",
+        "scripts/233_phase0c_derivation.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/nsqip_phase2_enrichment.py",
+        "scripts/228_registry_backfill.py"
+      ],
+      "n_columns": 94,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "nsqip_patient_summary",
+      "object_type": "BASE TABLE",
+      "row_count": 1261,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/verify_publication_house.py",
+        "scripts/235_recon.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/nsqip_phase2_enrichment.py",
+        "scripts/228_registry_backfill.py"
+      ],
+      "n_columns": 94,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "nuclear_med",
+      "object_type": "BASE TABLE",
+      "row_count": 2220,
+      "n_view_references": 1,
+      "view_references": [
+        "manuscript_workspace.cohort_m031_nuclear_medicine_v1"
+      ],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/29_validation_engine.py",
+        "scripts/integrate_missing_sources.py",
+        "scripts/11_quality_assurance_crosscheck.py",
+        "scripts/218_followup_recovery.py"
+      ],
+      "n_columns": 17,
+      "status": "LIVE",
+      "reason": "referenced by 1 view(s), 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "operative_episode_detail_v2",
+      "object_type": "BASE TABLE",
+      "row_count": 9371,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/111_llm_extraction_validation.py",
+        "scripts/29_validation_engine.py",
+        "scripts/128_multimodal_contract_mm_v1.py",
+        "scripts/verify_publication_house.py",
+        "scripts/96_episode_downstream_repair.py"
+      ],
+      "n_columns": 39,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "path_outcome_classification_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 10871,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/265_canonical_finalization.py",
+        "scripts/115_path_outcome_classification.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/228_registry_backfill.py",
+        "scripts/223_ingest_and_publish.py"
+      ],
+      "n_columns": 9,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "path_size_adjudication_v241",
+      "object_type": "BASE TABLE",
+      "row_count": 96,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 4,
+      "python_references": [
+        "scripts/266_preflight.py",
+        "scripts/270b_phase_a_preflight_audit.py",
+        "scripts/247_canonical_v1_0_lock.py",
+        "scripts/270b_phase_a_step_2_registry.py"
+      ],
+      "n_columns": 8,
+      "status": "LIVE",
+      "reason": "referenced by 4+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "path_synoptics",
+      "object_type": "BASE TABLE",
+      "row_count": 11688,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/139_md_specimen_identity_layer.py",
+        "scripts/67_hp_discharge_note_audit.py",
+        "scripts/236_canonical_finalization.py",
+        "scripts/111_llm_extraction_validation.py",
+        "scripts/109_synoptic_encounter_qc.py"
+      ],
+      "n_columns": 271,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "patient_analysis_resolved_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 10871,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/94_pipeline_gap_closure.py",
+        "scripts/57_freeze_manuscript_cohort.py",
+        "scripts/90_manuscript_freeze_rebuild.py",
+        "scripts/60_outlier_scan.py",
+        "scripts/64_run_survival_analyses.py"
+      ],
+      "n_columns": 146,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "patient_completion_oed_path_linkage_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 11506,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/verify_publication_house.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/32_zenodo_archive_prep.py",
+        "scripts/228_registry_backfill.py",
+        "scripts/107_global_completion_oed_path_linkage.py"
+      ],
+      "n_columns": 24,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "patient_cross_domain_timeline_v2",
+      "object_type": "BASE TABLE",
+      "row_count": 61055,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/128_multimodal_contract_mm_v1.py",
+        "scripts/verify_publication_house.py",
+        "scripts/130_md_materialize_multimodal_upstream.py",
+        "scripts/129_motherduck_readonly_audit.py",
+        "scripts/265_canonical_finalization.py"
+      ],
+      "n_columns": 6,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "patient_tumor_rollup_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 8422,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/265_probe2.py",
+        "scripts/231_update_canonical_master.py",
+        "scripts/266_preflight.py",
+        "scripts/265_canonical_finalization.py"
+      ],
+      "n_columns": 41,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "rai_treatment_episode_v2",
+      "object_type": "BASE TABLE",
+      "row_count": 1857,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/111_llm_extraction_validation.py",
+        "scripts/78_final_hardening.py",
+        "scripts/29_validation_engine.py",
+        "scripts/verify_publication_house.py",
+        "scripts/82_provenance_date_hardening.py"
+      ],
+      "n_columns": 32,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "recurrence_event_clean_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 1946,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/265_probe2.py",
+        "scripts/verify_publication_house.py",
+        "scripts/218_followup_recovery.py",
+        "scripts/90_manuscript_freeze_rebuild.py",
+        "scripts/265_canonical_finalization.py"
+      ],
+      "n_columns": 11,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "ret_note_entity_adjudication_v226",
+      "object_type": "BASE TABLE",
+      "row_count": 177,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 4,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/226_ret_note_llm_adjudication.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/233_make_report.py"
+      ],
+      "n_columns": 13,
+      "status": "LIVE",
+      "reason": "referenced by 4+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "ret_patient_adjudicated_v226",
+      "object_type": "BASE TABLE",
+      "row_count": 66,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/237_close_registry_gaps.py",
+        "scripts/265_probe2.py",
+        "scripts/269_backfill_molecular_episodes.py",
+        "scripts/265_canonical_finalization.py"
+      ],
+      "n_columns": 8,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "serial_imaging_us",
+      "object_type": "BASE TABLE",
+      "row_count": 4162,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/integrate_missing_sources.py",
+        "scripts/270c_divergent_reclassification_audit.py",
+        "scripts/13_performance_optimizations_pack.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/227_finalization_cleanup.py"
+      ],
+      "n_columns": 6,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "specimen_genomic_assay_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 10370,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/151_specimen_genomic_review_queue_export.py",
+        "scripts/144_md_repo_current_state_summary.py",
+        "scripts/138_md_specimen_fhir_layer.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/228_registry_backfill.py"
+      ],
+      "n_columns": 24,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "specimen_master_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 10139,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/139_md_specimen_identity_layer.py",
+        "scripts/144_md_repo_current_state_summary.py",
+        "scripts/138_md_specimen_fhir_layer.py",
+        "scripts/213_data_dictionary.py",
+        "scripts/233_canonical_finalization.py"
+      ],
+      "n_columns": 17,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "specimen_source_xref_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 11273,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/139_md_specimen_identity_layer.py",
+        "scripts/138_md_specimen_fhir_layer.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/228_registry_backfill.py",
+        "scripts/250_registry_pointer_rebuild.py"
+      ],
+      "n_columns": 9,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "specimen_tumor_focus_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 11103,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/139_md_specimen_identity_layer.py",
+        "scripts/144_md_repo_current_state_summary.py",
+        "scripts/138_md_specimen_fhir_layer.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/233_canonical_finalization.py"
+      ],
+      "n_columns": 21,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "survival_cohort_enriched",
+      "object_type": "BASE TABLE",
+      "row_count": 61134,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/265_canonical_finalization.py",
+        "scripts/211_canonical_gap_fill.py",
+        "scripts/213_data_dictionary.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/44_hypothesis_validation_extension.py"
+      ],
+      "n_columns": 28,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "synoptic_tumor_long_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 11103,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/139_md_specimen_identity_layer.py",
+        "scripts/109_synoptic_encounter_qc.py",
+        "scripts/265_probe2.py",
+        "scripts/233_phase0b_details.py",
+        "scripts/266_preflight.py"
+      ],
+      "n_columns": 22,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "tg_postop_surveillance_windows_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 16184,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/265_probe2.py",
+        "scripts/218_followup_recovery.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/233_phase0c_derivation.py",
+        "scripts/233_canonical_finalization.py"
+      ],
+      "n_columns": 12,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "tg_timeline_patient_summary_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 3258,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/265_probe2.py",
+        "scripts/218_followup_recovery.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/213_data_dictionary.py",
+        "scripts/233_canonical_finalization.py"
+      ],
+      "n_columns": 20,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "thyroglobulin_lab_canonical_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 74258,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/265_probe2.py",
+        "scripts/verify_publication_house.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/272_canonical_cleanup_phase1.py",
+        "scripts/273_canonical_cleanup_phase2_3.py"
+      ],
+      "n_columns": 21,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "thyroid_sizes",
+      "object_type": "BASE TABLE",
+      "row_count": 11675,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/verify_publication_house.py",
+        "scripts/07_phase3_genetics_specimen.py",
+        "scripts/01_ingest_all_files.py",
+        "scripts/265_canonical_finalization.py"
+      ],
+      "n_columns": 16,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "thyroid_weights",
+      "object_type": "BASE TABLE",
+      "row_count": 10001,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/236_canonical_finalization.py",
+        "scripts/verify_publication_house.py",
+        "scripts/47_mrn_crosswalk_demographics_v3.py",
+        "scripts/07_phase3_genetics_specimen.py",
+        "scripts/01_ingest_all_files.py"
+      ],
+      "n_columns": 9,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "thyroseq_molecular_enrichment",
+      "object_type": "BASE TABLE",
+      "row_count": 10861,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/269_backfill_molecular_episodes.py",
+        "scripts/265_canonical_finalization.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/202_canonical_molecular_tested.py",
+        "scripts/269_post_validation.py"
+      ],
+      "n_columns": 25,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "tirads_llm_extracted_v2",
+      "object_type": "BASE TABLE",
+      "row_count": 5636,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/265_canonical_finalization.py",
+        "scripts/213_data_dictionary.py",
+        "scripts/233_canonical_finalization.py",
+        "scripts/246_canonical_us_nodule_characteristics.py",
+        "scripts/210_database_audit_backup.py"
+      ],
+      "n_columns": 26,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "tirads_llm_validation_v2",
+      "object_type": "BASE TABLE",
+      "row_count": 1225,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 4,
+      "python_references": [
+        "scripts/233_canonical_finalization.py",
+        "scripts/228_registry_backfill.py",
+        "scripts/223_ingest_and_publish.py",
+        "scripts/223_publish_canonical.py"
+      ],
+      "n_columns": 27,
+      "status": "LIVE",
+      "reason": "referenced by 4+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "tumor_episode_master_v2",
+      "object_type": "BASE TABLE",
+      "row_count": 11691,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/111_llm_extraction_validation.py",
+        "scripts/29_validation_engine.py",
+        "scripts/265_probe2.py",
+        "scripts/128_multimodal_contract_mm_v1.py",
+        "scripts/verify_publication_house.py"
+      ],
+      "n_columns": 37,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "tumor_pathology",
+      "object_type": "BASE TABLE",
+      "row_count": 4290,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/29_validation_engine.py",
+        "scripts/265_probe2.py",
+        "scripts/integrate_missing_sources.py",
+        "scripts/11_quality_assurance_crosscheck.py",
+        "scripts/270c_divergent_reclassification_audit.py"
+      ],
+      "n_columns": 249,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "ultrasound_reports",
+      "object_type": "BASE TABLE",
+      "row_count": 6793,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/29_validation_engine.py",
+        "scripts/integrate_missing_sources.py",
+        "scripts/verify_publication_house.py",
+        "scripts/07_phase3_genetics_specimen.py",
+        "scripts/218_followup_recovery.py"
+      ],
+      "n_columns": 223,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "us_nodules_tirads",
+      "object_type": "BASE TABLE",
+      "row_count": 10862,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 5,
+      "python_references": [
+        "scripts/50_multinodule_imaging.py",
+        "scripts/29_validation_engine.py",
+        "scripts/integrate_missing_sources.py",
+        "scripts/11_quality_assurance_crosscheck.py",
+        "scripts/01_ingest_all_files.py"
+      ],
+      "n_columns": 36,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": ""
+    },
+    {
+      "object_name": "us_nodules_tirads_vs_inm_v1_discordance_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 1722,
+      "n_view_references": 0,
+      "view_references": [],
+      "n_python_references": 2,
+      "python_references": [
+        "scripts/246_canonical_us_nodule_characteristics.py",
+        "scripts/247_canonical_v1_0_lock.py"
+      ],
+      "n_columns": 10,
+      "status": "LIVE",
+      "reason": "referenced by 2+ python ref(s)",
+      "destination": ""
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+[2026-04-17T09:25:54.424975+00:00] Opening locked MotherDuck connection...
+[2026-04-17T09:25:56.466135+00:00] Connection ok; CPM invariant (10,871 / distinct 10,871) confirmed by connect_locked().
+[2026-04-17T09:25:56.602321+00:00]   [PASS] a_cpm_rowcount: observed=10871 expected=10871 
+[2026-04-17T09:25:56.602752+00:00]   [PASS] b_cpm_distinct_research_id: observed=10871 expected=10871 
+[2026-04-17T09:25:57.236138+00:00]   cpm_cols_pre.txt written (1499 columns)
+[2026-04-17T09:25:57.236372+00:00]   [PASS] c_col_r_class_true: observed=True expected=True 
+[2026-04-17T09:25:57.236565+00:00]   [PASS] c_col_ete_grade_final_v2: observed=True expected=True 
+[2026-04-17T09:25:57.273692+00:00]   [PASS] d_operative_episode_detail_v2_rows: observed=9371 expected='9371 +/- 5' 
+[2026-04-17T09:25:57.305701+00:00]   [PASS] e_complication_phenotype_v1_rows: observed=5978 expected='5978 +/- 50' 
+[2026-04-17T09:25:57.402803+00:00]   [PASS] f_us_tirads_columns: observed=['tirads_acr_recalculated', 'tirads_reported'] expected=['tirads_reported', 'tirads_acr_recalculated'] 
+[2026-04-17T09:25:57.514729+00:00]   [PASS] g_thyroglobulin_lab_canonical_v1_rows: observed=74258 expected='74258 +/- 500' 
+[2026-04-17T09:25:57.597055+00:00]   [PASS] h_vc_paralysis_recalibration_v236_exists: observed=1 expected=1 
+[2026-04-17T09:25:57.673976+00:00]   [PASS] i_archive_pub_v1_0_table_count: observed=182 expected='> 100' 
+[2026-04-17T09:25:57.674256+00:00] Computing drift vs PROMPT_18 / PART2 cited counts...
+[2026-04-17T09:25:57.971164+00:00]   manuscript_workspace VIEW count: 65 (expected 65)
+[2026-04-17T09:25:57.971450+00:00] All preflight assertions PASSED. Taking pre-state snapshots...
+[2026-04-17T09:25:58.386674+00:00]   view_definitions_snapshot_bigcleanup: 65 rows captured
+[2026-04-17T09:25:58.387803+00:00] Drift report → /Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417/drift_report.md
+[2026-04-17T09:25:58.387961+00:00] JSON results → /Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417/preflight.json
+[2026-04-17T09:25:58.388089+00:00] CPM columns → /Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417/cpm_cols_pre.txt
+[2026-04-17T09:25:58.388235+00:00] PREFLIGHT PASSED — awaiting go/no-go decision before Phase 1.

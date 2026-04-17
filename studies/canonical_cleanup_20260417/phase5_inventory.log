@@ -1,0 +1,9 @@
+[2026-04-17T10:39:44.440849+00:00] === Phase 5 inventory start ===
+[2026-04-17T10:39:44.451914+00:00] scanning 429 python files for table references
+[2026-04-17T10:39:44.546938+00:00] loaded 429 python source blobs
+[2026-04-17T10:39:44.927220+00:00] main schema objects: 115
+[2026-04-17T10:39:44.933400+00:00] view definitions captured: 67
+[2026-04-17T10:39:56.003931+00:00] manuscript_workspace.canonical_cleanup_audit_v1 written (115 rows)
+[2026-04-17T10:39:56.004234+00:00] classification summary: {'LIVE': 115}
+[2026-04-17T10:39:56.005574+00:00] json written -> /Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417/phase5_inventory.json
+[2026-04-17T10:39:56.005828+00:00] === Phase 5 inventory end (HALT before 5.3 actions) ===

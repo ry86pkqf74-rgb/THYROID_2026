@@ -1,0 +1,24 @@
+[2026-04-17T09:53:49.213871+00:00] === Phase 2+3 driver start ===
+[2026-04-17T09:53:50.315252+00:00] invariants OK
+[2026-04-17T09:53:50.315631+00:00] === Phase 2.1 — reset 14 duration_unknown patients ===
+[2026-04-17T09:53:50.353875+00:00] [2.1] pre-count: 14 (expected 14, gate ±5 -> [9,19])
+[2026-04-17T09:53:50.402824+00:00] [2.1] reset rids: ['3707', '5131', '5306', '5369', '5624', '5866', '6080', '6196', '6202', '6779', '7144', '7477', '7540', '7544']
+[2026-04-17T09:53:50.655919+00:00] [2.1] post-count (should be 0): 0
+[2026-04-17T09:53:50.695177+00:00] invariants OK
+[2026-04-17T09:53:50.695458+00:00] === Phase 2.2 — queue 4 hypopara contradictions ===
+[2026-04-17T09:53:50.968454+00:00] [2.2] contradictions found: [('10743', 'permanent=TRUE', 'confirmed_transient'), ('6447', 'permanent=TRUE', 'confirmed_transient'), ('7487', 'permanent=TRUE', 'confirmed_transient'), ('9765', 'permanent=TRUE', 'confirmed_transient')]
+[2026-04-17T09:53:52.234238+00:00] [2.2] inserted 4 new queue rows (idempotent)
+[2026-04-17T09:53:52.260906+00:00] [2.2] total rows now in queue: 4
+[2026-04-17T09:53:52.295560+00:00] invariants OK
+[2026-04-17T09:53:52.295844+00:00] === Phase 2.3 — add comp_hypopara_permanent_source provenance column ===
+[2026-04-17T09:53:52.622139+00:00] [2.3] permanent=TRUE rows to backfill: 4
+[2026-04-17T09:53:52.799051+00:00] [2.3] post-distribution: [('lab_persistence', 1), ('unknown_override', 3)]
+[2026-04-17T09:53:52.849208+00:00] invariants OK
+[2026-04-17T09:53:52.849503+00:00] === Phase 3.1 — Tg-lab orphan audit ===
+[2026-04-17T09:53:53.002896+00:00] [3.1] tg_lab distinct rids: 3124, cpm distinct: 10871, cpm-with-lab: 2721, orphans: 403
+[2026-04-17T09:53:53.509229+00:00] [3.1] classification counts: [('likely_non_cancer', 403)]
+[2026-04-17T09:53:53.610990+00:00] invariants OK
+[2026-04-17T09:53:53.611334+00:00] === Phase 3.2 — us_nodules_tirads placeholder orphans (HOLD) ===
+[2026-04-17T09:53:53.684611+00:00] [3.2] placeholders: [{'research_id': '2332', 'in_cpm': False, 'n_us_nodule_rows': 0}, {'research_id': '2445', 'in_cpm': False, 'n_us_nodule_rows': 0}, {'research_id': '7744', 'in_cpm': False, 'n_us_nodule_rows': 0}]
+[2026-04-17T09:53:53.804125+00:00] invariants OK
+[2026-04-17T09:53:53.804710+00:00] === Phase 2+3 driver end ===
