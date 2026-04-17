@@ -1,0 +1,43 @@
+[03:45:42.690Z] ==============================================================================
+[03:45:42.690Z] === START scripts/265b_finalization_addendum.py (APPLY)
+[03:45:42.690Z] started_at: 2026-04-17T03:45:42.690573+00:00
+[03:45:43.872Z] connected to thyroid_canonical_publication_v1_0
+[03:45:43.872Z] 
+FIX A - 16 patients with any_fusion_positive=TRUE but mol_n_fusions=0
+[03:45:43.908Z]   anomalies: 16 -> ['10124', '10195', '10516', '10522', '10591', '10886', '11175', '11270', '5980', '6227', '7249', '8370', '8692', '9357', '9734', '9958']
+[03:45:49.328Z]   surfaced 16 rows -> thyroid_canonical_publication_v1_0.manuscript_workspace.fusion_flag_unparsed_review_v265
+[03:45:49.478Z]   flipped 16 CPM rows: any_fusion_positive -> FALSE
+[03:45:49.761Z]   post-flip contradictions: a=0 b=0 (target 0,0)
+[03:45:49.762Z] 
+FIX B - 220+ CPM cols with no registry feeder
+[03:45:50.075Z]   unmapped CPM cols: 223
+[03:45:50.075Z]     age_at_surgery
+[03:45:50.075Z]     ages_calculable_flag
+[03:45:50.075Z]     ages_score
+[03:45:50.076Z]     ajcc7_m_stage
+[03:45:50.076Z]     ajcc7_missing_components
+[03:45:50.076Z]     ajcc7_n_stage
+[03:45:50.076Z]     ajcc7_stage_calculable_flag
+[03:45:50.076Z]     ajcc7_stage_group
+[03:45:50.076Z]     ajcc7_t_stage
+[03:45:50.076Z]     ajcc8_calculable_flag
+[03:45:50.076Z]     ajcc8_m_stage
+[03:45:50.076Z]     ajcc8_m_stage_v2
+[03:45:50.076Z]     ajcc8_missing_components
+[03:45:50.076Z]     ajcc8_n_stage
+[03:45:50.076Z]     ajcc8_n_stage_note
+[03:45:50.076Z]     ajcc8_n_stage_v2
+[03:45:50.076Z]     ajcc8_stage_calculable_flag
+[03:45:50.076Z]     ajcc8_stage_group
+[03:45:50.076Z]     ajcc8_stage_group_corrected
+[03:45:50.076Z]     ajcc8_stage_group_v2
+[03:45:50.076Z]     ... +203 more
+[03:45:50.753Z]   inserted 223 rows -> thyroid_canonical_publication_v1_0.manuscript_workspace.cpm_cols_unmapped_review_v265
+[03:45:51.145Z]     category=derived_or_unmapped        n=185
+[03:45:51.145Z]     category=derived_staging            n=21
+[03:45:51.145Z]     category=derived_score              n=9
+[03:45:51.145Z]     category=derived_flag               n=4
+[03:45:51.145Z]     category=derived_aggregate          n=2
+[03:45:51.146Z]     category=inferred_default           n=2
+[03:45:53.167Z]   audit rows written
+[03:45:53.168Z] === END elapsed=10.5s

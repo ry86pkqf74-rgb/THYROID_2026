@@ -1,0 +1,99 @@
+{
+  "script": "Script 265",
+  "run_date": "2026-04-17",
+  "do_writes": true,
+  "elapsed_seconds": 123.2,
+  "summaries": {
+    "preflight": {
+      "main_n_tables": 114,
+      "ws_n_tables": 11,
+      "n_patients": 10871,
+      "n_cols": 1493,
+      "readme_rows": 114,
+      "registry_rows": 116
+    },
+    "step2": {
+      "replacements": 0,
+      "cleared": 1
+    },
+    "step3": {
+      "pre_collisions": 88,
+      "encoded_resolutions": 88,
+      "actual_collisions": 88,
+      "auto_resolved_extras": 0,
+      "missing_columns": []
+    },
+    "step3_verify": 0,
+    "step5": {
+      "before_a": 216,
+      "before_b": 16,
+      "after_a": 0,
+      "after_b": 16,
+      "fusion_review_rows": 632
+    },
+    "step6": {
+      "before_null_fusion": 846,
+      "before_null_ret": 846,
+      "after_null_fusion": 0,
+      "after_null_ret": 0,
+      "after_fusion_inferred": 846,
+      "after_ret_inferred": 846
+    },
+    "step7": {
+      "pre": {
+        "molecular_test_episode_v2": 1,
+        "molecular_results": 1,
+        "molecular_testing": 1,
+        "thyroseq_molecular_enrichment": 1,
+        "_molecular_patient_rollup_v227": 1
+      },
+      "post": {
+        "molecular_test_episode_v2": 0,
+        "molecular_results": 0,
+        "molecular_testing": 0,
+        "thyroseq_molecular_enrichment": 0,
+        "_molecular_patient_rollup_v227": 0
+      }
+    },
+    "step8": {
+      "NO_ACTION": {
+        "n_rows": 475,
+        "sum_literal_nan": 0
+      },
+      "PRESERVE_RAW": {
+        "n_rows": 1,
+        "sum_literal_nan": 9517
+      }
+    },
+    "step9": {
+      "manifest_rows": 143,
+      "legacy_archived": 1,
+      "raw_sources_tagged": 48,
+      "release_schemas_flagged": 12
+    },
+    "step10": {
+      "total_rows": 1273,
+      "distinct_master_cols": 1273,
+      "distinct_detail_tables": 79
+    },
+    "step11": {
+      "main_base_tables": 114
+    },
+    "step12": {
+      "cpm": [
+        10871,
+        10871,
+        0,
+        0
+      ],
+      "registry_collisions": 0,
+      "ws_views": 65,
+      "fusion_check": [
+        0,
+        16,
+        0,
+        0
+      ]
+    }
+  }
+}

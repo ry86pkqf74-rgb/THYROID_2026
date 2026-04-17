@@ -1,0 +1,144 @@
+original_db,original_schema,original_table,action,new_location,reason
+Thyroid 2026 UPdated,main,analysis_cancer_cohort_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,analysis_molecular_subset_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,analysis_recurrence_subset_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,analysis_tirads_subset_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,canonical_benign_diagnosis_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,canonical_diagnosis_unified_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,canonical_malignant_diagnosis_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,canonical_molecular_tested_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,canonical_patient_master_v1,archive_to_archive_legacy,Thyroid 2026 UPdated.archive_legacy.canonical_patient_master_v1_<UTC>,Legacy CPM v1 table superseded by canonical_patient_master in publication DB.
+Thyroid 2026 UPdated,main,canonical_recurrence_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,canonical_survival_followup_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,clinical_note_ln_extracted_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,clinical_notes_long,tag_raw_source,Thyroid 2026 UPdated.main.clinical_notes_long,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,complication_patient_summary_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,complication_phenotype_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,ct_imaging,tag_raw_source,Thyroid 2026 UPdated.main.ct_imaging,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,data_dictionary_v221,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,episode_analysis_resolved_v1_dedup,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,event_date_audit_v2,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,extracted_braf_recovery_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,extracted_complications_refined_v5,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,extracted_ete_subgraded_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,extracted_fna_bethesda_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,extracted_postop_labs_expanded_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,extracted_ras_patient_summary_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,extracted_rln_injury_refined_v2,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,extracted_tirads_validated_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,fna_cytology,tag_raw_source,Thyroid 2026 UPdated.main.fna_cytology,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,fna_episode_master_v2,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,fna_history,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,fna_molecular_linkage_v3,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,imaging_exam_master_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,imaging_fna_linkage_mm_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,imaging_fna_linkage_v3,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,imaging_nodule_long_v2,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,imaging_nodule_master_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,imaging_patient_summary_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,lab_cross_wave_dedup_map_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,lesion_analysis_resolved_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,linkage_ambiguity_review_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,linkage_master_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,linkage_summary_v3,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,ln_crossval_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,ln_master_rollup_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,ln_x_marker_audit_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,longitudinal_lab_canonical_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,manuscript_cohort_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,md_extracted_fna_bethesda_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,md_path_synoptics_encounter_qc_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,md_synoptic_tumor_long_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,md_val_path_synoptic_encounter_isolation_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,molecular_assay_dictionary,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,molecular_code_crosswalk,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,molecular_ingestion_runs,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,molecular_results,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,molecular_test_episode_v2,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,molecular_testing,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,molecular_variant_long,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,mri_imaging,tag_raw_source,Thyroid 2026 UPdated.main.mri_imaging,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,mrn_crosswalk_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,note_entities_complications,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_complications,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_genetics,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_genetics,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_airway_invasion,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_airway_invasion,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_cervical_ln_detail,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_cervical_ln_detail,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_dynamic_risk_response,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_dynamic_risk_response,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_frozen_section_detail,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_frozen_section_detail,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_functional_outcomes,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_functional_outcomes,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_imaging,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_imaging,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_labs,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_labs,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_parathyroid_detail,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_parathyroid_detail,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_past_medical_hx,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_past_medical_hx,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_past_surgical_hx,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_past_surgical_hx,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_pathology,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_pathology,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_patient_decision_adherence,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_patient_decision_adherence,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_physical_exam,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_physical_exam,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_presenting_symptoms,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_presenting_symptoms,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_rad_treatment,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_rad_treatment,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_rai_detailed,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_rai_detailed,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_recurrence,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_recurrence,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_survival_followup,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_survival_followup,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_synoptic_pathology_enrichment,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_synoptic_pathology_enrichment,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_tg_kinetics,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_tg_kinetics,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_tirads_granular,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_tirads_granular,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_us_nodule_dynamics,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_us_nodule_dynamics,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_llm_vascular_invasion,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_llm_vascular_invasion,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_medications,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_medications,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_operative_detail,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_operative_detail,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_problem_list,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_problem_list,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_procedures,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_procedures,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_entities_staging,tag_raw_source,Thyroid 2026 UPdated.main.note_entities_staging,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,note_extraction_runs,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,nsqip_enrichment,tag_raw_source,Thyroid 2026 UPdated.main.nsqip_enrichment,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,nsqip_patient_summary,tag_raw_source,Thyroid 2026 UPdated.main.nsqip_patient_summary,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,nuclear_med,tag_raw_source,Thyroid 2026 UPdated.main.nuclear_med,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,operative_episode_detail_v2,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,path_outcome_classification_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,path_synoptics,tag_raw_source,Thyroid 2026 UPdated.main.path_synoptics,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,pathology_rai_linkage_v3,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,patient_analysis_resolved_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,patient_completion_oed_path_linkage_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,patient_cross_domain_timeline_v2,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,patient_refined_master_clinical_v12,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,preop_surgery_linkage_v3,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,rai_dose_recovery_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,rai_treatment_episode_v2,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,raw_imaging_12_slots_v1,tag_raw_source,Thyroid 2026 UPdated.main.raw_imaging_12_slots_v1,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,raw_us_tirads_excel_v1,tag_raw_source,Thyroid 2026 UPdated.main.raw_us_tirads_excel_v1,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,raw_us_tirads_scored_v1,tag_raw_source,Thyroid 2026 UPdated.main.raw_us_tirads_scored_v1,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,recurrence_event_clean_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,serial_imaging_us,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,specimen_genomic_assay_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,specimen_master_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,specimen_source_xref_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,specimen_tumor_focus_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,surgery_pathology_linkage_v3,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,survival_cohort_enriched,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,synoptic_tumor_long_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,tg_postop_surveillance_windows_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,tg_timeline_patient_summary_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,thyroglobulin_lab_canonical_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,thyroid_scoring_py_v1,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,thyroid_sizes,tag_raw_source,Thyroid 2026 UPdated.main.thyroid_sizes,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,thyroid_weights,tag_raw_source,Thyroid 2026 UPdated.main.thyroid_weights,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,thyroseq_molecular_enrichment,tag_raw_source,Thyroid 2026 UPdated.main.thyroseq_molecular_enrichment,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,tirads_llm_extracted_v2,tag_raw_source,Thyroid 2026 UPdated.main.tirads_llm_extracted_v2,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,tirads_llm_validation_v2,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,tumor_episode_master_v2,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,main,tumor_pathology,tag_raw_source,Thyroid 2026 UPdated.main.tumor_pathology,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,ultrasound_reports,tag_raw_source,Thyroid 2026 UPdated.main.ultrasound_reports,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,us_nodules_tirads,tag_raw_source,Thyroid 2026 UPdated.main.us_nodules_tirads,Raw source / Excel-derived staging table; mirrored to publication DB; tag-only.
+Thyroid 2026 UPdated,main,vw_us_nodule_tirads_validated,review,,Unclassified main table; pending manual review.
+Thyroid 2026 UPdated,release_20260406,<6 tables>,recommend_drop,,Dated release snapshot from earlier build cadence; superseded by publication DB v1_0.
+Thyroid 2026 UPdated,release_20260407,<5 tables>,recommend_drop,,Dated release snapshot from earlier build cadence; superseded by publication DB v1_0.
+Thyroid 2026 UPdated,release_20260407_final,<10 tables>,recommend_drop,,Dated release snapshot from earlier build cadence; superseded by publication DB v1_0.
+Thyroid 2026 UPdated,release_20260407_final2,<10 tables>,recommend_drop,,Dated release snapshot from earlier build cadence; superseded by publication DB v1_0.
+Thyroid 2026 UPdated,release_20260407_tier,<10 tables>,recommend_drop,,Dated release snapshot from earlier build cadence; superseded by publication DB v1_0.
+Thyroid 2026 UPdated,release_20260408,<10 tables>,recommend_drop,,Dated release snapshot from earlier build cadence; superseded by publication DB v1_0.
+Thyroid 2026 UPdated,release_20260408r2,<10 tables>,recommend_drop,,Dated release snapshot from earlier build cadence; superseded by publication DB v1_0.
+Thyroid 2026 UPdated,release_20260408r3,<10 tables>,recommend_drop,,Dated release snapshot from earlier build cadence; superseded by publication DB v1_0.
+Thyroid 2026 UPdated,release_20260408r4,<10 tables>,recommend_drop,,Dated release snapshot from earlier build cadence; superseded by publication DB v1_0.
+Thyroid 2026 UPdated,release_20260409,<10 tables>,recommend_drop,,Dated release snapshot from earlier build cadence; superseded by publication DB v1_0.
+Thyroid 2026 UPdated,release_20260410,<10 tables>,recommend_drop,,Dated release snapshot from earlier build cadence; superseded by publication DB v1_0.
+Thyroid 2026 UPdated,release_20260411,<10 tables>,recommend_drop,,Dated release snapshot from earlier build cadence; superseded by publication DB v1_0.

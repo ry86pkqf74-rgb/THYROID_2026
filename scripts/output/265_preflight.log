@@ -1,0 +1,89 @@
+[2026-04-17T03:24:56.410473+00:00] ==============================================================================
+[2026-04-17T03:24:56.411004+00:00] Preflight for Script 259 reissue (read-only)
+[2026-04-17T03:24:56.411044+00:00] ==============================================================================
+[2026-04-17T03:24:58.503433+00:00] connected to thyroid_canonical_publication_v1_0
+[2026-04-17T03:24:58.503526+00:00] 
+--- Block A: prompt pre-flight ---
+[2026-04-17T03:24:59.144812+00:00] main_n_tables=114  ws_n_tables=11  n_patients=10871  n_cols=1493  readme_rows=114  registry_rows=116
+[2026-04-17T03:24:59.144923+00:00] prompt expected: main_n_tables=114, ws_n_tables>=10, n_patients=10871, n_cols=1494, readme_rows=114, registry_rows=116
+[2026-04-17T03:24:59.144957+00:00] 
+--- Block B: per-step probes ---
+[2026-04-17T03:24:59.144983+00:00] 
+[Step 1] ras_positive_v7 column status
+[2026-04-17T03:24:59.249338+00:00]   ras_positive_v7 column present: False (expected after 262: False)
+[2026-04-17T03:24:59.249410+00:00] 
+[Step 2] registry normalization review
+[2026-04-17T03:24:59.356869+00:00]   registry_normalization_review_v1_1 row count: 116
+[2026-04-17T03:24:59.391010+00:00]   rows with n_explicit_unmatched>0: 3
+[2026-04-17T03:24:59.391103+00:00]     extracted_tirads_validated_v1  unmatched=3
+[2026-04-17T03:24:59.391136+00:00]     note_entities_llm_past_medical_hx  unmatched=2
+[2026-04-17T03:24:59.391161+00:00]     note_entities_llm_presenting_symptoms  unmatched=1
+[2026-04-17T03:24:59.391185+00:00] 
+[Step 3] collision count via canonical_detail_pointer_v1
+[2026-04-17T03:24:59.689734+00:00]   distinct_master_cols=1493  colliding=88  worst_feeder_count=4
+[2026-04-17T03:24:59.874315+00:00]   canonical_detail_pointer_v1 total rows: 1601
+[2026-04-17T03:25:00.129188+00:00]   collision_resolution_v259 table exists: False
+[2026-04-17T03:25:00.129703+00:00] 
+[Step 4] molecular_test_episode_v2 platform breakdown
+[2026-04-17T03:25:00.165751+00:00]   platform='Other'              n=9267
+[2026-04-17T03:25:00.165989+00:00]   platform='ThyroSeq'           n=442
+[2026-04-17T03:25:00.166037+00:00]   platform='Afirma'             n=417
+[2026-04-17T03:25:00.166068+00:00] 
+[Step 5] any_fusion_positive vs mol_n_fusions contradictions
+[2026-04-17T03:25:00.210859+00:00]   contradiction_a (n_fusions>0 & flag=FALSE): 216
+[2026-04-17T03:25:00.211519+00:00]   contradiction_b (n_fusions=0 & flag=TRUE):  16
+[2026-04-17T03:25:00.211651+00:00] 
+[Step 6] NULL fusion / RET flags
+[2026-04-17T03:25:00.280883+00:00]   null_fusion=846  null_ret=846
+[2026-04-17T03:25:00.421221+00:00]   column any_fusion_positive_inferred_negative present: False
+[2026-04-17T03:25:00.551618+00:00]   column ret_positive_v7_inferred_negative present: False
+[2026-04-17T03:25:00.551761+00:00] 
+[Step 7] ghost RID 7744
+[2026-04-17T03:25:00.597768+00:00]   canonical_patient_master                  n_rows_for_rid_7744=0
+[2026-04-17T03:25:00.638191+00:00]   canonical_molecular_tested_v1             n_rows_for_rid_7744=0
+[2026-04-17T03:25:00.672983+00:00]   molecular_test_episode_v2                 n_rows_for_rid_7744=1
+[2026-04-17T03:25:00.726701+00:00]   molecular_results                         n_rows_for_rid_7744=1
+[2026-04-17T03:25:00.773577+00:00]   molecular_testing                         n_rows_for_rid_7744=1
+[2026-04-17T03:25:00.817310+00:00]   thyroseq_molecular_enrichment             n_rows_for_rid_7744=1
+[2026-04-17T03:25:00.867672+00:00]   _molecular_patient_rollup_v227            n_rows_for_rid_7744=1
+[2026-04-17T03:25:00.867783+00:00] 
+[Step 8] nan_string_audit_v1_1 status
+[2026-04-17T03:25:00.992058+00:00]   nan_string_audit_v1_1 table exists: True
+[2026-04-17T03:25:01.092317+00:00]   nan_string_audit_v1_1 row count: 476
+[2026-04-17T03:25:01.387708+00:00]   nan_string_audit_v1_1 columns: ['column_name', 'n_literal_nan', 'n_true_null', 'n_real_values', 'n_distinct_real', 'repair_action', 'repaired_at', 'repaired_by']
+[2026-04-17T03:25:01.387875+00:00] 
+[Step 9] archive DB inventory ('Thyroid 2026 UPdated')
+[2026-04-17T03:25:01.520964+00:00]   schema=archive_pub_v1_0                n_tables=169
+[2026-04-17T03:25:01.521362+00:00]   schema=main                            n_tables=131
+[2026-04-17T03:25:01.521438+00:00]   schema=v2_stage                        n_tables=38
+[2026-04-17T03:25:01.521481+00:00]   schema=mm_contract_dev                 n_tables=31
+[2026-04-17T03:25:01.521517+00:00]   schema=qa                              n_tables=13
+[2026-04-17T03:25:01.521552+00:00]   schema=release_20260408r4              n_tables=10
+[2026-04-17T03:25:01.521587+00:00]   schema=release_20260407_tier           n_tables=10
+[2026-04-17T03:25:01.521650+00:00]   schema=release_20260410                n_tables=10
+[2026-04-17T03:25:01.521710+00:00]   schema=release_20260407_final2         n_tables=10
+[2026-04-17T03:25:01.521772+00:00]   schema=release_20260407_final          n_tables=10
+[2026-04-17T03:25:01.521821+00:00]   schema=release_20260408                n_tables=10
+[2026-04-17T03:25:01.521868+00:00]   schema=release_20260408r3              n_tables=10
+[2026-04-17T03:25:01.521904+00:00]   schema=release_20260409                n_tables=10
+[2026-04-17T03:25:01.521941+00:00]   schema=release_20260408r2              n_tables=10
+[2026-04-17T03:25:01.521973+00:00]   schema=release_20260411                n_tables=10
+[2026-04-17T03:25:01.522011+00:00]   schema=release_20260406                n_tables=6
+[2026-04-17T03:25:01.522047+00:00]   schema=release_20260407                n_tables=5
+[2026-04-17T03:25:01.522078+00:00] 
+[Step 10/11] views + readme
+[2026-04-17T03:25:01.687712+00:00]   manuscript_workspace VIEW count: 65
+[2026-04-17T03:25:01.718375+00:00]   __readme rows: 114
+[2026-04-17T03:25:01.718657+00:00] 
+[Audit] v1_1_finalization_audit_v1 latest by script
+[2026-04-17T03:25:01.757879+00:00]   script_num=252     n=1  latest=2026-04-16 21:52:11.749166
+[2026-04-17T03:25:01.758000+00:00]   script_num=253     n=2  latest=2026-04-16 21:53:50.444321
+[2026-04-17T03:25:01.758040+00:00]   script_num=254     n=1  latest=2026-04-16 21:55:27.778417
+[2026-04-17T03:25:01.758065+00:00]   script_num=255     n=5  latest=2026-04-16 21:57:33.471338
+[2026-04-17T03:25:01.758087+00:00]   script_num=256     n=1  latest=2026-04-16 21:59:17.434305
+[2026-04-17T03:25:01.758107+00:00]   script_num=257     n=1  latest=2026-04-16 22:04:05.149716
+[2026-04-17T03:25:01.758129+00:00]   script_num=258     n=1  latest=2026-04-16 22:06:25.439093
+[2026-04-17T03:25:01.758152+00:00]   script_num=261     n=1  latest=2026-04-16 22:51:30.545842
+[2026-04-17T03:25:01.758174+00:00]   script_num=262     n=2  latest=2026-04-16 22:53:08.144873
+[2026-04-17T03:25:01.758194+00:00] 
+Preflight complete.
