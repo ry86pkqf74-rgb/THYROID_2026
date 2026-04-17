@@ -1,0 +1,45 @@
+==============================================================================
+=== START Script 269
+started_at: 2026-04-17T05:01:19.543331+00:00
+connected to thyroid_canonical_publication_v1_0
+
+--- PREFLIGHT ---
+  CPM: 10871 rows (pass)
+  mte_v2 starting rows: 10125
+
+--- SCHEMA DISCOVERY ---
+  molecular_test_episode_v2: 42 cols
+  thyroseq_molecular_enrichment: 25 cols
+  extracted_braf_recovery_v1: 7 cols
+  ret_patient_adjudicated_v226: 8 cols
+  canonical_molecular_tested_v1: 17 cols
+  ingestion_source column ABSENT - will ALTER TABLE
+
+--- ALTER TABLE ADD ingestion_source ---
+  added ingestion_source VARCHAR + comment
+
+--- BACKFILL ThyroSeq ---
+  pre-insert candidate count: 443
+  inserted ThyroSeq backfill rows: 443
+
+--- BACKFILL NGS-BRAF ---
+  inserted NGS-BRAF backfill rows: 46
+
+--- BACKFILL RET ---
+  inserted RET backfill rows: 36
+
+--- POST-COUNT + DEVIATION CHECK ---
+  mte_v2 rows: pre=10125 post=10650 delta=525
+  backfilled rows (ingestion_source tag): 525
+  by source: {'thyroseq_molecular_enrichment': 443, 'extracted_braf_recovery_v1': 46, 'ret_patient_adjudicated_v226': 36}
+  pass: 525 in [500, 555]
+
+--- CONCORDANCE CHECK (informational only) ---
+  pinned=10025 match=9506 mismatch=519 null_pinned_with_episodes=1 match_rate=94.82%
+  NOTE: match rate 94.82% < 99% - documenting (NOT failing). Pinned feeders intentionally remain authoritative.
+
+--- WRITE BACKFILL REPORT ---
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/269_backfill_report.md
+
+wrote /Users/loganglosser/THYROID_2026/scripts/output/269_decision_log.json
+=== END Script 269 elapsed=4.6s
