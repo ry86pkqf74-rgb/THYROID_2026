@@ -66,7 +66,6 @@ def patch_csv() -> int:
     reader = csv.reader(io.StringIO(content))
     all_rows = list(reader)
     header = all_rows[header_idx]
-    sch_i = header.index("schema")
     name_i = header.index("name")
     disp_i = header.index("disposition")
     pub_i = header.index("identical_in_archive_pub_v1_0")
@@ -116,7 +115,7 @@ def patch_summary_md() -> None:
         "- `ln_master_rollup_v1` (+17 stray vs snapshot): same pattern.\n"
         "- `serial_imaging_us` (stray=0 vs snapshot=4162): empty shell; "
         "snapshot is authoritative.\n\n"
-        f"**Updated DROP_ALREADY_SNAPSHOTTED: 123 → 126. DIVERGENT: 3 → 0.**\n"
+        "**Updated DROP_ALREADY_SNAPSHOTTED: 123 → 126. DIVERGENT: 3 → 0.**\n"
         "See audit row `divergent_reclassified_to_drop_3_rows` and "
         "tech_debt `stray_subset_matcher_v1_1`.\n"
     )

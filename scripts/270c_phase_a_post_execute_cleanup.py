@@ -126,7 +126,7 @@ def main() -> int:
         print(msg)
 
     started_at = datetime.now(timezone.utc)
-    log(f"=== START Script 270c (post-execute cleanup) ===")
+    log("=== START Script 270c (post-execute cleanup) ===")
     log(f"started_at: {started_at.isoformat()}")
 
     con = connect_locked()
@@ -294,7 +294,7 @@ def main() -> int:
     OUT_LOG.write_text("".join(log_lines))
     log(f"\nwrote {OUT_JSON}")
     log(f"wrote {OUT_LOG}")
-    log(f"=== END Script 270c ===")
+    log("=== END Script 270c ===")
     OUT_LOG.write_text("".join(log_lines))
     return 0
 

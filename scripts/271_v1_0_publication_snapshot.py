@@ -215,7 +215,7 @@ def run_preflight(con: Any) -> dict:
     # Fetch tech_debt rows for README
     tech_debt_rows: list[dict] = []
     try:
-        cols = [r[0] for r in con.execute(f"""
+        cols = [r[0] for r in con.execute("""
             SELECT column_name FROM duckdb_columns()
             WHERE database_name = ? AND schema_name = ? AND table_name = 'v1_1_tech_debt_v1'
             ORDER BY column_index
@@ -232,7 +232,7 @@ def run_preflight(con: Any) -> dict:
     # Fetch deferred audit rows
     deferred_audit_rows: list[dict] = []
     try:
-        cols = [r[0] for r in con.execute(f"""
+        cols = [r[0] for r in con.execute("""
             SELECT column_name FROM duckdb_columns()
             WHERE database_name = ? AND schema_name = ? AND table_name = 'v1_1_finalization_audit_v1'
             ORDER BY column_index
@@ -509,9 +509,6 @@ def build_release_readme(pf: dict, manifest: dict, main_rows: list[dict],
     if not v1_1_items:
         v1_1_items = ["- See `v1_1_tech_debt_v1` and `docs/v1_1_backlog.md`."]
     v1_1_text = "\n".join(v1_1_items)
-
-    # First open tech_debt_id for footer
-    first_debt = tech_debt_rows[0].get("debt_id", "see v1_1_backlog.md") if tech_debt_rows else "see v1_1_backlog.md"
 
     # Archive schema list
     archive_schema_list = ", ".join(f"`{s}`" for s in archive_schemas) if archive_schemas else "`archive_pub_v1_0`, `archive_legacy`"
@@ -797,7 +794,6 @@ def write_audit_row(con: Any, manifest: dict, n_files: int) -> None:
 
 def run_git_commit_and_tag(manifest: dict, n_files: int) -> None:
     log("\n--- git: add, commit, push, tag ---")
-    combined_sha = manifest["combined_sha256"]
     main_n = manifest["main_tables"]
     ws_n = manifest["ws_tables"]
 
@@ -955,7 +951,7 @@ def main() -> int:
     log(f"  Wrote {MANIFEST_PATH}")
     log(f"  combined_sha256: {manifest['combined_sha256']}")
     log(f"  total_parquet_bytes: {manifest['total_parquet_bytes']:,}")
-    log(f"  STEP 3 complete.\n")
+    log("  STEP 3 complete.\n")
 
     # STEP 4 — Release README
     log("=== STEP 4: docs/V1_0_RELEASE.md ===")

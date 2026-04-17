@@ -142,7 +142,7 @@ def pick_widest_snapshot(con) -> dict | None:
       3. widest column count among ALL archive_pub_v1_0 base tables
       Ties broken by row_count DESC, then table_name DESC for stability.
     """
-    rows = con.execute(f"""
+    rows = con.execute("""
         SELECT table_name FROM duckdb_tables()
         WHERE database_name = ?
           AND schema_name   = ?
@@ -418,7 +418,7 @@ def ensure_view_ddl_table(con, log) -> None:
 
 def fetch_view_ddl(con, schema: str, name: str) -> str | None:
     try:
-        row = con.execute(f"""
+        row = con.execute("""
             SELECT sql FROM duckdb_views()
             WHERE database_name = ? AND schema_name = ? AND view_name = ?
         """, [ARCHIVE_DB, schema, name]).fetchone()
@@ -461,7 +461,7 @@ def pre_execute_idempotency_guard(con, run_ts: str, log) -> list[str]:
     #    today's UTC date (idempotent guard against same-day re-run)
     today_prefix = utc_stamp(utc_now())[:8]  # YYYYMMDD
     try:
-        rows = con.execute(f"""
+        rows = con.execute("""
             SELECT table_name FROM duckdb_tables()
             WHERE database_name = ?
               AND schema_name   = ?
@@ -671,7 +671,7 @@ def main_dry_run() -> int:
     # 2. Load + revalidate
     plan = load_migrate_plan()
     n_divergent, divergent_rows = count_divergent_rows()
-    log(f"\n--- load plan ---")
+    log("\n--- load plan ---")
     log(f"  MIGRATE_TO_ARCHIVE_LEGACY rows in 270c manifest: {len(plan)}")
     log(f"  DIVERGENT rows in 270c manifest: {n_divergent}")
     if n_divergent:
@@ -789,7 +789,7 @@ def main_dry_run() -> int:
             log(f"  - {h}")
         log("Resolve halt reasons before --execute.")
 
-    log(f"\n=== END 270d (DRY-RUN) ===")
+    log("\n=== END 270d (DRY-RUN) ===")
     OUT_DRY_LOG.write_text("".join(log_lines))
     return 0 if not halt_reasons else 1
 
@@ -987,7 +987,7 @@ def main_execute() -> int:
     OUT_EXEC_SUMMARY.write_text(json.dumps(summary, indent=2, default=str))
     log(f"  wrote {OUT_EXEC_SUMMARY}")
 
-    log(f"\n=== END 270d (--EXECUTE) ===")
+    log("\n=== END 270d (--EXECUTE) ===")
     OUT_EXEC_LOG.write_text("".join(log_lines))
     return 0 if fail_count == 0 else 1
 

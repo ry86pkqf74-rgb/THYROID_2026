@@ -605,7 +605,7 @@ def main_dry_run() -> int:
         print(msg)
 
     started_at = datetime.now(timezone.utc)
-    log(f"=== START 270b Step 2 (DRY-RUN) ===")
+    log("=== START 270b Step 2 (DRY-RUN) ===")
     log(f"started_at: {started_at.isoformat()}")
 
     con = connect_locked()
@@ -805,7 +805,7 @@ def main_dry_run() -> int:
     log(f"\n  wrote {DRY_RUN_SUMMARY}")
     log(f"  wrote {DRY_RUN_LOG}")
 
-    log(f"\n=== END 270b Step 2 (DRY-RUN) ===")
+    log("\n=== END 270b Step 2 (DRY-RUN) ===")
     DRY_RUN_LOG.write_text("".join(log_lines))
     return 0
 
@@ -1031,7 +1031,7 @@ def ensure_build_pipeline_registry_row(
         WHERE detail_table_name='build_pipeline'
     """).fetchone()[0]
     if n:
-        log(f"  build_pipeline registry row already exists, will UPDATE only")
+        log("  build_pipeline registry row already exists, will UPDATE only")
         return False
     sorted_cols = sorted(set(build_pipeline_cols))
     norm_str = ";".join(sorted_cols)
@@ -1139,7 +1139,7 @@ def main_execute() -> int:
         print(msg)
 
     started_at = datetime.now(timezone.utc)
-    log(f"=== START 270b Step 2 (--EXECUTE) ===")
+    log("=== START 270b Step 2 (--EXECUTE) ===")
     log(f"started_at: {started_at.isoformat()}")
 
     con = connect_locked()
@@ -1544,7 +1544,7 @@ def main_execute() -> int:
     EXECUTE_LOG.write_text("".join(log_lines))
     log(f"\n  wrote {EXECUTE_SUMMARY}")
     log(f"  wrote {EXECUTE_LOG}")
-    log(f"=== END 270b Step 2 (--EXECUTE) ===")
+    log("=== END 270b Step 2 (--EXECUTE) ===")
     EXECUTE_LOG.write_text("".join(log_lines))
     return 0
 

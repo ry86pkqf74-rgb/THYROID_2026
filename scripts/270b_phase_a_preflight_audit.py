@@ -81,7 +81,7 @@ def main() -> int:
         print(msg)
 
     started_at = datetime.now(timezone.utc)
-    log(f"=== START Script 270b Phase A pre-flight audit ===")
+    log("=== START Script 270b Phase A pre-flight audit ===")
     log(f"started_at: {started_at.isoformat()}")
 
     con = connect_locked()
@@ -117,7 +117,7 @@ def main() -> int:
     log(f"  CPM: {n_cpm} rows / {n_cpm_distinct} distinct rid / "
         f"{n_cpm_null_rid} null rid / {n_cpm_cols} cols")
     if n_cpm != 10871 or n_cpm_distinct != 10871 or n_cpm_null_rid != 0:
-        log(f"FAIL: CPM spine invariant broken")
+        log("FAIL: CPM spine invariant broken")
         OUT_LOG.write_text("".join(log_lines))
         return 1
 
@@ -140,7 +140,7 @@ def main() -> int:
     log(f"  main queryable BASE TABLEs:    {queryable_count}")
     log(f"  main ghost BASE TABLEs:        {len(ghosts)}")
 
-    n_readme = con.execute(f"SELECT COUNT(*) FROM main.__readme").fetchone()[0]
+    n_readme = con.execute("SELECT COUNT(*) FROM main.__readme").fetchone()[0]
     log(f"  main.__readme rows:            {n_readme}")
 
     # Bethesda re-triage: cpm cols with no mapping AND no triage entry
@@ -184,16 +184,16 @@ def main() -> int:
 
     # Path size human-review staging file count
     n_path_size_review = con.execute(
-        f"SELECT COUNT(*) FROM main.path_size_adjudication_v241").fetchone()[0]
+        "SELECT COUNT(*) FROM main.path_size_adjudication_v241").fetchone()[0]
     log(f"  path_size_adjudication_v241 staged rows: {n_path_size_review}")
 
     # ETE adjudication low-confidence count
     n_ete_low = con.execute(
-        f"SELECT COUNT(*) FROM main.ete_adjudication_v1 "
-        f"WHERE adjudicated_confidence='low'").fetchone()[0]
+        "SELECT COUNT(*) FROM main.ete_adjudication_v1 "
+        "WHERE adjudicated_confidence='low'").fetchone()[0]
     n_ete_high = con.execute(
-        f"SELECT COUNT(*) FROM main.ete_adjudication_v1 "
-        f"WHERE adjudicated_confidence='high'").fetchone()[0]
+        "SELECT COUNT(*) FROM main.ete_adjudication_v1 "
+        "WHERE adjudicated_confidence='high'").fetchone()[0]
     log(f"  ete_adjudication_v1: high={n_ete_high} low={n_ete_low}")
 
     # nan-repair audit summary
@@ -216,7 +216,7 @@ def main() -> int:
     snap_ts = started_at.strftime("%Y%m%dT%H%M%SZ")
     snap_table = f"canonical_patient_master_pre270_{snap_ts}"
     snap_fq = f'"{ARCHIVE_DB}"."{ARCHIVE_SCHEMA}"."{snap_table}"'
-    log(f"\n--- SNAPSHOT CPM ---")
+    log("\n--- SNAPSHOT CPM ---")
     log(f"  target: {snap_fq}")
 
     # Defensive: refuse if a snapshot with this exact name somehow exists.
@@ -440,7 +440,7 @@ def main() -> int:
     OUT_LOG.write_text("".join(log_lines))
     log(f"\nwrote {OUT_JSON}")
     log(f"wrote {OUT_LOG}")
-    log(f"=== END Script 270b Phase A pre-flight audit ===")
+    log("=== END Script 270b Phase A pre-flight audit ===")
     OUT_LOG.write_text("".join(log_lines))
     return 0
 

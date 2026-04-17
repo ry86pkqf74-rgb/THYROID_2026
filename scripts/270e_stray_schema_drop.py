@@ -114,7 +114,7 @@ def describe_columns(con, fq: str) -> tuple[list[tuple] | None, str | None]:
 
 
 def pick_widest_snapshot(con) -> dict | None:
-    rows = con.execute(f"""
+    rows = con.execute("""
         SELECT table_name FROM duckdb_tables()
         WHERE database_name = ? AND schema_name = ?
         ORDER BY table_name
@@ -277,7 +277,7 @@ def enrich_drop_plan(con, plan: list[dict], log) -> list[dict]:
         ddl: str | None = None
         if r["object_type"] == "VIEW":
             try:
-                row = con.execute(f"""
+                row = con.execute("""
                     SELECT sql FROM duckdb_views()
                     WHERE database_name = ? AND schema_name = ? AND view_name = ?
                 """, [ARCHIVE_DB, r["schema"], r["name"]]).fetchone()
@@ -328,12 +328,12 @@ def count_schema_objects(con, db: str, schema: str) -> int:
     and their presence does not indicate user data.
     """
     try:
-        t = con.execute(f"""
+        t = con.execute("""
             SELECT COUNT(*) FROM duckdb_tables()
             WHERE database_name = ? AND schema_name = ?
         """, [db, schema]).fetchone()[0]
         views = [
-            r[0] for r in con.execute(f"""
+            r[0] for r in con.execute("""
                 SELECT view_name FROM duckdb_views()
                 WHERE database_name = ? AND schema_name = ?
             """, [db, schema]).fetchall()
@@ -346,7 +346,7 @@ def count_schema_objects(con, db: str, schema: str) -> int:
 
 def list_remaining_archive_db_schemas(con, db: str) -> list[str]:
     try:
-        rows = con.execute(f"""
+        rows = con.execute("""
             SELECT schema_name FROM duckdb_schemas()
             WHERE database_name = ?
             ORDER BY schema_name
@@ -438,13 +438,13 @@ def main_dry_run() -> int:
     for sch in STRAY_SCHEMAS:
         try:
             live_tables = {
-                r[0] for r in con.execute(f"""
+                r[0] for r in con.execute("""
                     SELECT table_name FROM duckdb_tables()
                     WHERE database_name = ? AND schema_name = ?
                 """, [ARCHIVE_DB, sch]).fetchall()
             }
             live_views = {
-                r[0] for r in con.execute(f"""
+                r[0] for r in con.execute("""
                     SELECT view_name FROM duckdb_views()
                     WHERE database_name = ? AND schema_name = ?
                 """, [ARCHIVE_DB, sch]).fetchall()
@@ -477,7 +477,7 @@ def main_dry_run() -> int:
     # Expected post-drop schema state
     log("\n--- expected post-execute state ---")
     log(f"  Final archive DB schemas: {sorted(EXPECTED_FINAL_SCHEMAS)}")
-    log(f"  All four stray schemas empty after drops -> DROP SCHEMA CASCADE")
+    log("  All four stray schemas empty after drops -> DROP SCHEMA CASCADE")
 
     # Emit plan CSV
     plan_header = [
@@ -514,7 +514,7 @@ def main_dry_run() -> int:
     OUT_DRY_SUMMARY.write_text(json.dumps(summary, indent=2, default=str))
     log(f"  wrote {OUT_DRY_SUMMARY}")
 
-    log(f"\n=== END 270e (DRY-RUN) ===")
+    log("\n=== END 270e (DRY-RUN) ===")
     OUT_DRY_LOG.write_text("".join(log_lines))
     return 0 if not unexpected else 1
 
@@ -637,13 +637,13 @@ def main_execute() -> int:
     # main schema: drop remaining objects individually
     log("  main schema: enumerating and dropping remaining objects ...")
     main_rem_tables = [
-        r[0] for r in con.execute(f"""
+        r[0] for r in con.execute("""
             SELECT table_name FROM duckdb_tables()
             WHERE database_name = ? AND schema_name = 'main'
         """, [ARCHIVE_DB]).fetchall()
     ]
     main_rem_views = [
-        r[0] for r in con.execute(f"""
+        r[0] for r in con.execute("""
             SELECT view_name FROM duckdb_views()
             WHERE database_name = ? AND schema_name = 'main'
         """, [ARCHIVE_DB]).fetchall()
@@ -819,7 +819,7 @@ def main_execute() -> int:
     OUT_EXEC_SUMMARY.write_text(json.dumps(summary, indent=2, default=str))
     log(f"  wrote {OUT_EXEC_SUMMARY}")
 
-    log(f"\n=== END 270e (--EXECUTE) ===")
+    log("\n=== END 270e (--EXECUTE) ===")
     log(
         "Archive DB is now consolidated to two schemas: "
         f"{sorted(EXPECTED_FINAL_SCHEMAS)}. "

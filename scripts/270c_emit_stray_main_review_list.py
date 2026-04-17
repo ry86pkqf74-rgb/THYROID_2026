@@ -173,7 +173,7 @@ def main() -> int:
             f"cols={r['column_count']}"
         )
 
-    log(f"\n=== END 270c stray-main review emission ===")
+    log("\n=== END 270c stray-main review emission ===")
     REVIEW_LOG.write_text("".join(log_lines))
     return 0
 

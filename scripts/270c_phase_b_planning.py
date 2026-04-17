@@ -113,12 +113,12 @@ def queryable_main_objects(con) -> dict[str, dict]:
     information_schema.tables, which sometimes drops views in MotherDuck-
     attached databases per the catalog_vs_queryable_drift convention).
     """
-    table_rows = con.execute(f"""
+    table_rows = con.execute("""
         SELECT table_name FROM duckdb_tables()
         WHERE database_name = ? AND schema_name = 'main'
         ORDER BY table_name
     """, [PUBLICATION_DB]).fetchall()
-    view_rows = con.execute(f"""
+    view_rows = con.execute("""
         SELECT view_name FROM duckdb_views()
         WHERE database_name = ? AND schema_name = 'main'
         ORDER BY view_name
@@ -195,7 +195,7 @@ def fetch_view_definitions_main(con) -> dict[str, str]:
     Prefer duckdb_views() (.sql column) — information_schema.views can be
     incomplete on MotherDuck-attached databases.
     """
-    rows = con.execute(f"""
+    rows = con.execute("""
         SELECT view_name, sql
         FROM duckdb_views()
         WHERE database_name = ? AND schema_name = 'main'
@@ -236,7 +236,7 @@ def fetch_archive_db_objects(con, db: str, schemas: tuple[str, ...]) -> list[dic
 def fetch_archive_schema_object_names(con, db: str, schema: str) -> set[str]:
     """Return set of object names (tables + views) in the given schema."""
     try:
-        rows = con.execute(f"""
+        rows = con.execute("""
             SELECT table_name FROM duckdb_tables()
             WHERE database_name = ? AND schema_name = ?
             UNION
@@ -251,7 +251,7 @@ def fetch_archive_schema_object_names(con, db: str, schema: str) -> set[str]:
 def fetch_archive_schema_object_rowcounts(con, db: str, schema: str) -> dict[str, int]:
     """Return {name: row_count} for tables in schema. Views skipped."""
     try:
-        rows = con.execute(f"""
+        rows = con.execute("""
             SELECT table_name FROM duckdb_tables()
             WHERE database_name = ? AND schema_name = ?
         """, [db, schema]).fetchall()
@@ -278,7 +278,7 @@ def restore_test(con, log) -> dict:
     Drops the temp table. Returns a JSON-serializable dict.
     """
     log("\n--- ROUND-TRIP RESTORE TEST ---")
-    candidates = con.execute(f"""
+    candidates = con.execute("""
         SELECT table_name FROM duckdb_tables()
         WHERE database_name = ?
           AND schema_name   = ?

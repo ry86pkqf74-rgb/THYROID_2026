@@ -134,7 +134,7 @@ def main() -> int:
         log_lines.append(line)
         print(msg)
 
-    log(f"=== START Script 270a (Phase 0 audit backfill) ===")
+    log("=== START Script 270a (Phase 0 audit backfill) ===")
     log(f"started_at: {datetime.now(timezone.utc).isoformat()}")
 
     con = connect_locked()
@@ -155,7 +155,7 @@ def main() -> int:
 
     # Pre-state snapshot
     n_pre = con.execute(f"SELECT COUNT(*) FROM {AUDIT_FQ}").fetchone()[0]
-    log(f"\n--- PRE-STATE ---")
+    log("\n--- PRE-STATE ---")
     log(f"  audit table rows: {n_pre}")
 
     pre_status_dist = dict(con.execute(f"""
@@ -165,7 +165,7 @@ def main() -> int:
     log(f"  pre status distribution: {pre_status_dist}")
 
     # INSERT
-    log(f"\n--- INSERT 3 BACKFILL ROWS ---")
+    log("\n--- INSERT 3 BACKFILL ROWS ---")
     for row in BACKFILL_ROWS:
         run_ts_iso = row[8]
         params = (
@@ -183,7 +183,7 @@ def main() -> int:
 
     # Post-state assertions
     n_post = con.execute(f"SELECT COUNT(*) FROM {AUDIT_FQ}").fetchone()[0]
-    log(f"\n--- POST-STATE ---")
+    log("\n--- POST-STATE ---")
     log(f"  audit table rows: {n_post}")
     expected_post = n_pre + len(BACKFILL_ROWS)
     if n_post != expected_post:
@@ -244,7 +244,7 @@ def main() -> int:
     OUT_LOG.write_text("".join(log_lines))
     log(f"\nwrote {OUT_JSON}")
     log(f"wrote {OUT_LOG}")
-    log(f"=== END Script 270a ===")
+    log("=== END Script 270a ===")
     OUT_LOG.write_text("".join(log_lines))
     return 0
 
