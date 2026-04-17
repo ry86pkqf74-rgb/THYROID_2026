@@ -1,30 +1,30 @@
 stl_ete_text,ete_source,n_tumors
-,uncalculable:no_stl_no_adjudication,9606
-x,stl_per_tumor:unclassified_present,4231
+,uncalculable:no_stl_no_adjudication,8868
+x,stl_per_tumor:unclassified_present,3643
 x,cpm_patient_level:broadcast_to_dominant:microscopic,3104
-minimal,stl_per_tumor:microscopic,436
-present,stl_per_tumor:unclassified_present,306
+minimal,stl_per_tumor:microscopic,363
 present,cpm_patient_level:broadcast_to_dominant:microscopic,242
-microscopic,stl_per_tumor:microscopic,171
+present,stl_per_tumor:unclassified_present,212
 x,cpm_patient_level:broadcast_to_dominant:gross,161
-,ete_adjudication_v1:unable_to_determine,58
-c/a,stl_per_tumor:unclassified_present,43
+microscopic,stl_per_tumor:microscopic,143
+,ete_adjudication_v1:unable_to_determine,49
 ,ete_adjudication_v1:absent,42
-focal,stl_per_tumor:microscopic,28
+c/a,stl_per_tumor:unclassified_present,40
+focal,stl_per_tumor:microscopic,25
 extensive,cpm_patient_level:broadcast_to_dominant:gross,23
 indeterminate,stl_per_tumor:unclassified_present,22
-yes,stl_per_tumor:unclassified_present,20
 yes,cpm_patient_level:broadcast_to_dominant:microscopic,18
-present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),stl_per_tumor:microscopic,15
 c/a,cpm_patient_level:broadcast_to_dominant:absent,13
 Yes;,stl_per_tumor:unclassified_present,13
-extesive,stl_per_tumor:unclassified_present,12
-extensive,stl_per_tumor:unclassified_present,9
-,ete_adjudication_v1:gross,8
-microscopiic,stl_per_tumor:microscopic,6
+yes,stl_per_tumor:unclassified_present,11
+extesive,stl_per_tumor:unclassified_present,8
+,ete_adjudication_v1:gross,7
+extensive,stl_per_tumor:unclassified_present,6
+present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),stl_per_tumor:microscopic,5
 focal ,stl_per_tumor:microscopic,5
-focal right side,stl_per_tumor:microscopic,4
 Focal early extension into perithyroidal fat,stl_per_tumor:microscopic,3
+microscopiic,stl_per_tumor:microscopic,3
+focal right side,stl_per_tumor:microscopic,2
 yes (minimal),stl_per_tumor:microscopic,2
 X,stl_per_tumor:unclassified_present,2
 X,cpm_patient_level:broadcast_to_dominant:microscopic,2

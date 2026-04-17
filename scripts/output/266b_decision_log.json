@@ -6,7 +6,7 @@
   "results": {
     "meta": {
       "mode": "APPLY",
-      "started_at": "2026-04-17T20:47:16.993747+00:00",
+      "started_at": "2026-04-17T23:38:58.129364+00:00",
       "script": "Script 266b"
     },
     "phase_0": {
@@ -36,32 +36,21 @@
         "ajcc8_t_stage_with_microete_t3b_DEPRECATED"
       ]
     },
-    "phase_6": {
-      "dominant_vs_histology1_n_pairs": 4135,
-      "dominant_vs_histology1_n_concordant": 1940,
-      "dominant_vs_histology1_pct": 46.92,
-      "per_tumor_ajcc8_calculable_tumors": 5931,
+    "phase_7": {
+      "ctc_new_cols": 14,
+      "cpm_new_cols": 12,
+      "het_rows": 8422,
       "per_tumor_ajcc8_calculable_patients": 3610,
-      "ajcc8_t_distribution": {
-        "T1a": 2972,
-        "T1b": 1403,
-        "T2": 1216,
-        "T3a": 719,
-        "T3b": 206,
-        "T4a": 15,
-        "null": 4575
-      },
-      "ajcc7_t_distribution": {
-        "T1a": 2972,
-        "T1b": 1403,
-        "T2": 1216,
-        "T3": 925,
-        "T4a": 15,
-        "null": 4575
-      },
-      "n_pts_t_heterogeneous": 851,
-      "n_pts_overall_heterogeneous": 5
+      "dominant_vs_canonical_pct": 96.07991906929692,
+      "dominant_vs_canonical_n_concordant": 3799,
+      "dominant_vs_canonical_n_pairs": 3954,
+      "concordance_status": "pass",
+      "concordance_reference": "canonical_patient_master.ajcc8_t_stage",
+      "legacy_hist1_reference_table": "thyroid_canonical_publication_v1_0.manuscript_workspace.cpm_ajcc_dominant_vs_tp_hist1_discordance_v1",
+      "views_total": 67,
+      "views_ok": 67,
+      "views_error": 0
     }
   },
-  "elapsed_seconds": 7.2
+  "elapsed_seconds": 6.2
 }
