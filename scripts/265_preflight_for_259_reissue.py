@@ -57,8 +57,8 @@ def main() -> int:
     """).fetchone()
     log(f"main_n_tables={row[0]}  ws_n_tables={row[1]}  n_patients={row[2]}  "
         f"n_cols={row[3]}  readme_rows={row[4]}  registry_rows={row[5]}")
-    log(f"prompt expected: main_n_tables=114, ws_n_tables>=10, n_patients=10871, "
-        f"n_cols=1494, readme_rows=114, registry_rows=116")
+    log("prompt expected: main_n_tables=114, ws_n_tables>=10, n_patients=10871, "
+        "n_cols=1494, readme_rows=114, registry_rows=116")
 
     # ----- Block B: per-step status probes -----
     log("\n--- Block B: per-step probes ---")

@@ -41,7 +41,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _md_connect import connect_locked, PUBLICATION_DB  # noqa: E402
 from _v1_1_helpers import (  # noqa: E402
-    ARCHIVE_DB, ARCHIVE_QUALIFIED, ARCHIVE_SCHEMA,
+    ARCHIVE_DB, ARCHIVE_QUALIFIED,
     ensure_archive_schema, ensure_audit_table, make_logger,
     record_audit, snapshot_table, utc_ts, write_decision_log,
 )
@@ -627,7 +627,7 @@ def phase_step5_fusion(con, log, do_writes: bool) -> dict:
             SCRIPT_TAG, "Pre-step5 fusion reconciliation snapshot of CPM.")
 
         con.execute(f"DROP TABLE IF EXISTS {FUSION_REVIEW}")
-        n_review = con.execute(f"""
+        con.execute(f"""
             CREATE TABLE {FUSION_REVIEW} AS
             SELECT * FROM {MVL}
             WHERE variant_class = 'PARSE_ERROR_FUSION_FULLTEXT'
