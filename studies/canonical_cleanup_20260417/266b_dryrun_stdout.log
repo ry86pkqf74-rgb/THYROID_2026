@@ -1,0 +1,14 @@
+[11:13:37.700Z] ==============================================================================
+[11:13:37.700Z] # Script 266b run
+[11:13:37.700Z] started_at: 2026-04-17T11:13:37.700340+00:00
+[11:13:37.700Z] mode      : DRY-RUN
+[11:13:37.700Z] phase     : all
+[11:13:38.793Z] connected to thyroid_canonical_publication_v1_0
+[11:13:38.793Z] 
+## Phase 0 — preflight + sequencing gates
+[11:13:38.839Z]   connected_to        : thyroid_canonical_publication_v1_0
+[11:13:38.839Z]   cpm_n_patients      : 10871
+[11:13:38.839Z]   ctc_n_rows          : 11106
+[11:13:39.443Z]   GATE 266a applied   : data_dictionary_v266a exists = True
+[11:13:39.530Z]   GATE big-cleanup    : ajcc8_t_stage=True corrected=False v2=True
+266b precondition: PART2/PROMPT_18 big cleanup Phase 4.6 not yet applied. ajcc8_t_stage_corrected and/or ajcc8_t_stage_v2 still present on CPM. Per user direction, 266b derivation must anchor to the renamed clean ajcc8_t_stage column. Run the big cleanup Phases 1-7 first, merge, then re-run 266b.

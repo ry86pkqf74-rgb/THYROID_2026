@@ -1,0 +1,19 @@
+[cohort_descriptive_full_cohort_v1] reverting 1 _corrected ref(s) -> bare ajcc8_t_stage
+[cohort_descriptive_full_cohort_v1] OK rows=10871
+[cohort_m007_rss_reclassification_v1] reverting 1 _corrected ref(s) -> bare ajcc8_t_stage
+[cohort_m007_rss_reclassification_v1] OK rows=3144
+[cohort_m036_ata_risk_comparison_v1] reverting 1 _corrected ref(s) -> bare ajcc8_t_stage
+[cohort_m036_ata_risk_comparison_v1] OK rows=4137
+[cohort_m043_ln_predictors_v1] reverting 1 _corrected ref(s) -> bare ajcc8_t_stage
+[cohort_m043_ln_predictors_v1] OK rows=4137
+[cohort_m044_ajcc_ete_v1] reverting 1 _corrected ref(s) -> bare ajcc8_t_stage
+[cohort_m044_ajcc_ete_v1] OK rows=4080
+[cohort_m048_tnm_multifocal_v1] reverting 1 _corrected ref(s) -> bare ajcc8_t_stage
+[cohort_m048_tnm_multifocal_v1] OK rows=10871
+[cohort_m050_tumor_size_volume_v1] reverting 1 _corrected ref(s) -> bare ajcc8_t_stage
+[cohort_m050_tumor_size_volume_v1] OK rows=10871
+[cohort_m051_ete_ln_v1] reverting 1 _corrected ref(s) -> bare ajcc8_t_stage
+[cohort_m051_ete_ln_v1] OK rows=10871
+[cohort_m059_prognostic_scoring_v1] reverting 1 _corrected ref(s) -> bare ajcc8_t_stage
+[cohort_m059_prognostic_scoring_v1] OK rows=10871
+done

@@ -1,0 +1,75 @@
+[
+  {
+    "step": "3.2-delete",
+    "status": "ALREADY_APPLIED_NOOP",
+    "archive_rows": 3
+  },
+  {
+    "step": "4.6-view-migration",
+    "per_view": [
+      {
+        "view": "cohort_descriptive_full_cohort_v1",
+        "action": "rewritten",
+        "bare_refs_before": 1,
+        "bare_refs_after": 0
+      },
+      {
+        "view": "cohort_m007_rss_reclassification_v1",
+        "action": "rewritten",
+        "bare_refs_before": 1,
+        "bare_refs_after": 0
+      },
+      {
+        "view": "cohort_m036_ata_risk_comparison_v1",
+        "action": "rewritten",
+        "bare_refs_before": 1,
+        "bare_refs_after": 0
+      },
+      {
+        "view": "cohort_m043_ln_predictors_v1",
+        "action": "rewritten",
+        "bare_refs_before": 1,
+        "bare_refs_after": 0
+      },
+      {
+        "view": "cohort_m044_ajcc_ete_v1",
+        "action": "rewritten",
+        "bare_refs_before": 1,
+        "bare_refs_after": 0
+      },
+      {
+        "view": "cohort_m048_tnm_multifocal_v1",
+        "action": "rewritten",
+        "bare_refs_before": 1,
+        "bare_refs_after": 0
+      },
+      {
+        "view": "cohort_m050_tumor_size_volume_v1",
+        "action": "rewritten",
+        "bare_refs_before": 1,
+        "bare_refs_after": 0
+      },
+      {
+        "view": "cohort_m051_ete_ln_v1",
+        "action": "rewritten",
+        "bare_refs_before": 1,
+        "bare_refs_after": 0
+      },
+      {
+        "view": "cohort_m059_prognostic_scoring_v1",
+        "action": "rewritten",
+        "bare_refs_before": 1,
+        "bare_refs_after": 0
+      }
+    ]
+  },
+  {
+    "step": "4.6-pregate-recheck",
+    "n_views_with_bare_refs": 0,
+    "rows": []
+  },
+  {
+    "step": "4.6-rename",
+    "status": "OK"
+  }
+]

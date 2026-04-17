@@ -1,0 +1,23 @@
+[2026-04-17T11:11:39.983238+00:00] === Phase 3.2 + 4.6 release driver start ===
+[2026-04-17T11:11:41.059701+00:00] invariants OK
+[2026-04-17T11:11:41.059991+00:00] === Phase 3.2 release — DELETE 3 placeholder rows from us_nodules_tirads ===
+[2026-04-17T11:11:41.089148+00:00] [3.2-del] pre rows matching: 0 (expected 3)
+[2026-04-17T11:11:41.117026+00:00] [3.2-del] already applied (3 rows in archive, 0 in main); no-op
+[2026-04-17T11:11:41.152309+00:00] invariants OK
+[2026-04-17T11:11:41.152617+00:00] === Phase 4.6 — view migration (9 cohort views) ===
+[2026-04-17T11:11:42.657106+00:00] [4.6-mig] cohort_descriptive_full_cohort_v1: replacing 1 bare ref(s)
+[2026-04-17T11:11:42.987045+00:00] [4.6-mig] cohort_m007_rss_reclassification_v1: replacing 1 bare ref(s)
+[2026-04-17T11:11:43.283530+00:00] [4.6-mig] cohort_m036_ata_risk_comparison_v1: replacing 1 bare ref(s)
+[2026-04-17T11:11:43.513716+00:00] [4.6-mig] cohort_m043_ln_predictors_v1: replacing 1 bare ref(s)
+[2026-04-17T11:11:43.771318+00:00] [4.6-mig] cohort_m044_ajcc_ete_v1: replacing 1 bare ref(s)
+[2026-04-17T11:11:44.000455+00:00] [4.6-mig] cohort_m048_tnm_multifocal_v1: replacing 1 bare ref(s)
+[2026-04-17T11:11:44.299033+00:00] [4.6-mig] cohort_m050_tumor_size_volume_v1: replacing 1 bare ref(s)
+[2026-04-17T11:11:44.520712+00:00] [4.6-mig] cohort_m051_ete_ln_v1: replacing 1 bare ref(s)
+[2026-04-17T11:11:44.834735+00:00] [4.6-mig] cohort_m059_prognostic_scoring_v1: replacing 1 bare ref(s)
+[2026-04-17T11:11:45.118030+00:00] invariants OK
+[2026-04-17T11:11:45.118293+00:00] === Phase 4.6 — PRE-GATE recheck after view migration ===
+[2026-04-17T11:11:45.132515+00:00] [4.6-recheck] views with bare refs: 0
+[2026-04-17T11:11:45.133065+00:00] === Phase 4.6 — RENAME ajcc8_t_stage_corrected -> ajcc8_t_stage ===
+[2026-04-17T11:11:45.941954+00:00] [4.6-rename] rename + COMMENT applied
+[2026-04-17T11:11:45.973642+00:00] invariants OK
+[2026-04-17T11:11:45.973918+00:00] === Phase 3.2 + 4.6 release driver end ===
