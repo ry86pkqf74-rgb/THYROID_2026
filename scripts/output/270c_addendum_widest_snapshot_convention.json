@@ -1,0 +1,8 @@
+{
+  "started_at": "2026-04-17T07:10:54.776898+00:00",
+  "publication_db": "thyroid_canonical_publication_v1_0",
+  "convention_id": "restore_test_prefers_widest_schema",
+  "inserted": true,
+  "conventions_pre": 15,
+  "conventions_post": 16
+}

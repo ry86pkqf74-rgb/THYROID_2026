@@ -1,0 +1,9 @@
+=== START 270c addendum — widest-snapshot convention ===
+started_at: 2026-04-17T07:10:54.776898+00:00
+connected to thyroid_canonical_publication_v1_0
+  conventions pre-state: 15
+  inserted convention 'restore_test_prefers_widest_schema'
+  conventions post-state: 16
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270c_addendum_widest_snapshot_convention.json
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270c_addendum_widest_snapshot_convention.log
+=== END 270c addendum ===
