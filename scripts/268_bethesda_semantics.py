@@ -885,7 +885,7 @@ def final_assertions(con, log) -> None:
     ).fetchone()[0]
     if n_conv != 1:
         raise SystemExit(f"FAIL: __conventions has {n_conv} rows for {CONV_KEY}, expected 1")
-    log(f"  pass: __conventions has exactly 1 bethesda_semantics row")
+    log("  pass: __conventions has exactly 1 bethesda_semantics row")
 
     n_pointer = con.execute(
         f"SELECT COUNT(*) FROM {POINTER} WHERE master_column = 'bethesda_final'"
@@ -895,7 +895,7 @@ def final_assertions(con, log) -> None:
             f"FAIL: canonical_detail_pointer_v1 has {n_pointer} feeders for "
             "bethesda_final, expected 1"
         )
-    log(f"  pass: bethesda_final has exactly 1 authoritative feeder")
+    log("  pass: bethesda_final has exactly 1 authoritative feeder")
 
     n_unresolved = con.execute(f"""
         SELECT COUNT(*) FROM {CPM}
