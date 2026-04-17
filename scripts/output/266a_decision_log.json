@@ -1,0 +1,100 @@
+{
+  "script": "Script 266a",
+  "run_date": "2026-04-17",
+  "mode": "APPLY",
+  "preflight_divergences": [
+    {
+      "category": "workspace_object_count",
+      "original_assertion": "manuscript_workspace = 81 objects (16 tables + 65 views)",
+      "revised_assertion": "manuscript_workspace = 83 objects (18 tables + 65 views)",
+      "rationale": "Two extra base tables present at preflight: manuscript_dive_map_v1 and v1_1_finalization_audit_v1 / vc_paralysis_recalibration_v236 (introduced by scripts post-265). Does not affect view safety contract (65 views unchanged). Step 13 acceptance literal '81' was not enforced in 266a.",
+      "revised_value_expected": "ws_objects=83"
+    },
+    {
+      "category": "conventions_table_size",
+      "original_assertion": "__conventions has 6 rows (as_aliasing, bethesda_semantics, catalog_vs_queryable_drift, cohort_scoping, pre_flight_decision_log, rid_type_consistency)",
+      "revised_assertion": "__conventions has 16 rows; only 'pre_flight_decision_log' and 'rid_type_consistency' appear by exact convention_id. The other 4 prompt items are paraphrases not present as ids.",
+      "rationale": "266a applied the two ids that exist verbatim and treated the others as operational guidance. No __conventions rows were modified.",
+      "revised_value_expected": "n_conventions=16"
+    },
+    {
+      "category": "archive_db_path",
+      "original_assertion": "Archive to 'Thyroid 2026 UPdated'.main.<t>_deprecated_20260417 via ALTER RENAME -> CTAS -> DROP",
+      "revised_assertion": "Archive to 'Thyroid 2026 UPdated'.archive_pub_v1_0.<t>_pre266a_<UTC> via direct CTAS (no ALTER RENAME). main schema in archive DB is empty (0 tables); archive_pub_v1_0 is the established home for publication snapshots.",
+      "rationale": "Confirmed by user 2026-04-17 and verified live: archive_pub_v1_0 has 180 snapshot tables already, all using <orig>_pre<NNN>_<UTC> suffix; main schema has 0 tables.",
+      "revised_value_expected": "snapshot path = archive_pub_v1_0.<t>_pre266a_<UTC>"
+    },
+    {
+      "category": "scope_split",
+      "original_assertion": "Single Script 266 covers Steps 0-15 in one pass with destructive ops (renames, drops, archives)",
+      "revised_assertion": "Split into 266a (this script: P1+P3+P4 governance, non-destructive), 266b (per-tumor AJCC + CPM dominant surface, additive), 266c (renames, drops, archive sweep, view-validation gated)",
+      "rationale": "User directive 2026-04-17: monolithic plan too large for one session against production DB; 266a delivers immediate dictionary + feeder-registration value with single-table revert posture.",
+      "revised_value_expected": "266a delivers dictionary v266a + triage v266a + registry feeder updates only."
+    },
+    {
+      "category": "patient_tumor_rollup_v1_already_registers",
+      "original_assertion": "n_tumors_*_present and has_*_tumor are unregistered C_missing_feeder entries needing fresh registration",
+      "revised_assertion": "patient_tumor_rollup_v1.feeds_master_columns_normalized ALREADY contains all 8 columns. cpm_unmapped_triage_v265 is a stale snapshot taken before that registry edit. Rebuilding triage suffices to remove them from C; no registry edit strictly required for them.",
+      "rationale": "266a still appends has_left_tumor;has_right_tumor;has_isthmus_tumor to tumor_pathology row per prompt Step 5 (the structural-source feeder), in addition to the existing patient_tumor_rollup_v1 rows. Pointer view supports multi-feeder rows per master_column.",
+      "revised_value_expected": "post-266a: 8 staging-adjacent columns absent from C bucket via stale-snapshot rebuild + dict deprecation for gm_path_stage_raw/gm_path_m_stage_raw."
+    }
+  ],
+  "results": {
+    "meta": {
+      "mode": "APPLY",
+      "started_at": "2026-04-17T08:19:36.386298+00:00",
+      "script": "Script 266a"
+    },
+    "phase_0": {
+      "cpm_n_patients": 10871,
+      "cpm_n_columns": 1499
+    },
+    "phase_1": {
+      "dict_snapshot": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"data_dictionary_v240_pre266a_20260417T081936Z\"",
+      "registry_snapshot": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"detail_table_registry_v1_pre266a_20260417T081936Z\""
+    },
+    "phase_2": {
+      "v266a_rows": 1529,
+      "n_dep": 4,
+      "applied_updates": [
+        "n_tumors",
+        "n_tumors_v10",
+        "gm_path_stage_raw",
+        "gm_path_m_stage_raw",
+        "ajcc7_m_stage",
+        "ajcc8_m_stage",
+        "has_left_tumor",
+        "has_right_tumor",
+        "has_isthmus_tumor",
+        "n_tumors_ete_present",
+        "n_tumors_lvi_present",
+        "n_tumors_margin_involved",
+        "n_tumors_margin_uninvolved",
+        "n_tumors_with_size"
+      ]
+    },
+    "phase_3": {
+      "comments_applied": 14
+    },
+    "phase_4": {
+      "before_normalized": "ihc_braf_confidence_v13;ihc_braf_note_type_v13;ihc_braf_result_v13",
+      "after_normalized": "has_isthmus_tumor;has_left_tumor;has_right_tumor;ihc_braf_confidence_v13;ihc_braf_note_type_v13;ihc_braf_result_v13"
+    },
+    "phase_5": {
+      "unmapped": 0,
+      "buckets": {},
+      "staging_adjacent_in_C": []
+    },
+    "phase_6": {
+      "v240_rows": 1529,
+      "v266a_rows": 1529,
+      "deprecated_targets": 4,
+      "c_bucket": 0,
+      "staging_adjacent_in_C": [],
+      "views_total": 65,
+      "views_ok": 65,
+      "views_error": 0
+    }
+  },
+  "elapsed_seconds": 16.7
+}
