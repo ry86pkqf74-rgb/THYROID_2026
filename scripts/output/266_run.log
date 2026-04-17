@@ -1,0 +1,129 @@
+[03:53:43.623Z] ==============================================================================
+[03:53:43.624Z] === START scripts/266_cpm_unmapped_triage.py (APPLY)
+[03:53:43.624Z] started_at: 2026-04-17T03:53:43.624117+00:00
+[03:53:44.977Z] connected to thyroid_canonical_publication_v1_0
+[03:53:45.675Z]   unmapped CPM cols to triage: 223
+[03:53:46.656Z]   built thyroid_canonical_publication_v1_0.manuscript_workspace.cpm_unmapped_triage_v265
+[03:53:46.685Z] 
+BUCKET COUNTS:
+[03:53:46.685Z]   C_missing_feeder: 223
+[03:53:47.030Z] 
+Bucket C columns (223):
+[03:53:47.030Z]   age_at_surgery
+[03:53:47.030Z]   ages_calculable_flag
+[03:53:47.030Z]   ages_score
+[03:53:47.030Z]   ajcc7_m_stage
+[03:53:47.030Z]   ajcc7_missing_components
+[03:53:47.030Z]   ajcc7_n_stage
+[03:53:47.030Z]   ajcc7_stage_calculable_flag
+[03:53:47.030Z]   ajcc7_stage_group
+[03:53:47.030Z]   ajcc7_t_stage
+[03:53:47.030Z]   ajcc8_calculable_flag
+[03:53:47.030Z]   ajcc8_m_stage
+[03:53:47.030Z]   ajcc8_m_stage_v2
+[03:53:47.031Z]   ajcc8_missing_components
+[03:53:47.031Z]   ajcc8_n_stage
+[03:53:47.031Z]   ajcc8_n_stage_note
+[03:53:47.031Z]   ajcc8_n_stage_v2
+[03:53:47.031Z]   ajcc8_stage_calculable_flag
+[03:53:47.031Z]   ajcc8_stage_group
+[03:53:47.031Z]   ajcc8_stage_group_corrected
+[03:53:47.031Z]   ajcc8_stage_group_v2
+[03:53:47.031Z]   ajcc8_t_stage
+[03:53:47.031Z]   ajcc8_t_stage_calculable_flag
+[03:53:47.031Z]   ajcc8_t_stage_corrected
+[03:53:47.031Z]   ajcc8_t_stage_v2
+[03:53:47.031Z]   ames_calculable_flag
+[03:53:47.031Z]   ames_risk
+[03:53:47.031Z]   ames_risk_group
+[03:53:47.031Z]   any_confirmed_complication_flag
+[03:53:47.031Z]   any_disease_concern_flag
+[03:53:47.031Z]   any_fusion_positive_inferred_negative
+[03:53:47.031Z]   ata_calculable_flag
+[03:53:47.031Z]   ata_initial_risk
+[03:53:47.031Z]   ata_response_calculable_flag
+[03:53:47.031Z]   ata_response_category
+[03:53:47.031Z]   ata_response_is_provisional
+[03:53:47.031Z]   ata_risk_calculable_flag
+[03:53:47.031Z]   ata_risk_category
+[03:53:47.031Z]   benign_rai_suspect_malignant
+[03:53:47.032Z]   best_ene_grade
+[03:53:47.032Z]   bilateral_path_flag
+[03:53:47.032Z]   bmi_combined
+[03:53:47.032Z]   bmi_missingness_reason
+[03:53:47.032Z]   bmi_note_extracted
+[03:53:47.032Z]   bmi_note_source
+[03:53:47.032Z]   bmi_source
+[03:53:47.032Z]   completion_prior_histology
+[03:53:47.032Z]   completion_reason_confidence
+[03:53:47.032Z]   completion_tert_positive
+[03:53:47.032Z]   concern_highest_tier
+[03:53:47.032Z]   confirmed_rai_episodes
+[03:53:47.032Z]   ... +173 more
+[03:53:48.237Z]   audit row written
+[03:53:48.238Z] === END elapsed=4.6s
+[03:54:52.246Z] ==============================================================================
+[03:54:52.247Z] === START scripts/266_cpm_unmapped_triage.py (APPLY)
+[03:54:52.247Z] started_at: 2026-04-17T03:54:52.247218+00:00
+[03:54:53.443Z] connected to thyroid_canonical_publication_v1_0
+[03:54:54.194Z]   unmapped CPM cols to triage: 223
+[03:54:55.646Z]   built thyroid_canonical_publication_v1_0.manuscript_workspace.cpm_unmapped_triage_v265
+[03:54:55.736Z] 
+BUCKET COUNTS:
+[03:54:55.736Z]   B_computed_score: 49
+[03:54:55.737Z]   C_missing_feeder: 174
+[03:54:55.947Z] 
+Bucket C columns (174):
+[03:54:55.947Z]   age_at_surgery
+[03:54:55.947Z]   any_confirmed_complication_flag
+[03:54:55.947Z]   any_disease_concern_flag
+[03:54:55.947Z]   benign_rai_suspect_malignant
+[03:54:55.947Z]   best_ene_grade
+[03:54:55.947Z]   bilateral_path_flag
+[03:54:55.947Z]   bmi_combined
+[03:54:55.947Z]   bmi_missingness_reason
+[03:54:55.947Z]   bmi_note_extracted
+[03:54:55.947Z]   bmi_note_source
+[03:54:55.947Z]   bmi_source
+[03:54:55.947Z]   completion_prior_histology
+[03:54:55.947Z]   completion_reason_confidence
+[03:54:55.947Z]   completion_tert_positive
+[03:54:55.948Z]   concern_highest_tier
+[03:54:55.948Z]   confirmed_rai_episodes
+[03:54:55.948Z]   date_traceability_status
+[03:54:55.948Z]   days_between_first_second_surgery
+[03:54:55.948Z]   days_first_to_last_tg
+[03:54:55.948Z]   days_to_first_laryngoscopy
+[03:54:55.948Z]   days_to_last_laryngoscopy
+[03:54:55.948Z]   demo_confidence
+[03:54:55.948Z]   demo_source
+[03:54:55.948Z]   diagnosis_confidence
+[03:54:55.948Z]   distant_mets_proxy
+[03:54:55.948Z]   earliest_complication_days
+[03:54:55.948Z]   first_tg_date
+[03:54:55.948Z]   first_tg_days_from_surg
+[03:54:55.948Z]   gland_weight_combined_g
+[03:54:55.948Z]   gland_weight_isthmus_g
+[03:54:55.948Z]   gland_weight_total_reported_g
+[03:54:55.948Z]   gm_lab_completeness_score
+[03:54:55.948Z]   gm_macis_calculable_flag
+[03:54:55.948Z]   gm_path_ene_raw
+[03:54:55.948Z]   gm_path_ete_raw
+[03:54:55.948Z]   gm_path_lvi_raw
+[03:54:55.948Z]   gm_path_m_stage_raw
+[03:54:55.948Z]   gm_path_pni_raw
+[03:54:55.948Z]   gm_path_stage_raw
+[03:54:55.949Z]   gm_path_vascular_inv_raw
+[03:54:55.949Z]   gm_provenance_confidence
+[03:54:55.949Z]   gm_rai_date_confidence
+[03:54:55.949Z]   gm_rai_date_source
+[03:54:55.949Z]   gm_recurrence_date_source
+[03:54:55.949Z]   gm_recurrence_site_primary
+[03:54:55.949Z]   gm_recurrence_source
+[03:54:55.949Z]   gm_recurrence_type_primary
+[03:54:55.949Z]   gm_tg_below_threshold_ever
+[03:54:55.949Z]   has_isthmus_tumor
+[03:54:55.949Z]   has_left_tumor
+[03:54:55.949Z]   ... +124 more
+[03:54:57.283Z]   audit row written
+[03:54:57.283Z] === END elapsed=5.0s
