@@ -1,0 +1,86 @@
+# generated_by,scripts/scripts/270e_dry_run_plan.py,generated_at,2026-04-17T07:44:08.942490+00:00
+schema,name,object_type,row_count_at_270c,live_row_count,live_queryable,live_error,view_ddl_available,justification_270c
+main,_specimen_path_surgery_link_v1,VIEW,,,False,"Catalog Error: Table with name _specimen_synoptic_spine_v1 does not exist!
+Did you mean ""Thyroid 2026 UPdated._specimen_synoptic_spine_v1""?",True,"object not queryable (error: Catalog Error: Table with name _specimen_synoptic_spine_v1 does not exist!
+Did y); cannot recover content for migration"
+main,_specimen_synoptic_spine_v1,VIEW,,,False,"Catalog Error: Table with name path_synoptics_encounter_qc_v1 does not exist!
+Did you mean ""Thyroid 2026 UPdated.path_synoptics_encounter_qc_v1""?",True,"object not queryable (error: Catalog Error: Table with name path_synoptics_encounter_qc_v1 does not exist!
+Di); cannot recover content for migration"
+main,canonical_nodule_linkage_study_v1,VIEW,,,False,"Catalog Error: Table with name imaging_fna_linkage_mm_v1 does not exist!
+Did you mean ""Thyroid 2026 UPdated.mm_contract_dev.imaging_fna_linkage_mm_v1""?",True,"object not queryable (error: Catalog Error: Table with name imaging_fna_linkage_mm_v1 does not exist!
+Did you); cannot recover content for migration"
+main,longitudinal_lab_deduped_v,VIEW,,,False,"Binder Error: Contents of view were altered: types don't match! Expected [BIGINT, DATE, VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR, DOUBLE, INTEGER, VARCHAR, I",True,object not queryable (error: Binder Error: Contents of view were altered: types don't match! Expected [BIGINT); cannot recover content for migration
+main,master_fact_long_verified_v1,VIEW,,,False,"Catalog Error: Table with name canonical_extracted_fact_long_v2 does not exist!
+Did you mean ""canonical_us_nodule_characteristics_v1""?",True,"object not queryable (error: Catalog Error: Table with name canonical_extracted_fact_long_v2 does not exist!
+); cannot recover content for migration"
+main,master_patient_rollup_verified_v1,VIEW,,,False,"Catalog Error: Table with name master_fact_long_verified_v1 does not exist!
+Did you mean ""Thyroid 2026 UPdated.master_fact_long_verified_v1""?",True,"object not queryable (error: Catalog Error: Table with name master_fact_long_verified_v1 does not exist!
+Did ); cannot recover content for migration"
+main,master_source_lineage_v1,VIEW,,,False,"Catalog Error: Table with name master_fact_long_verified_v1 does not exist!
+Did you mean ""Thyroid 2026 UPdated.master_fact_long_verified_v1""?",True,"object not queryable (error: Catalog Error: Table with name master_fact_long_verified_v1 does not exist!
+Did ); cannot recover content for migration"
+main,molecular_fact_lineage_qa_duplicate_candidates_v,VIEW,,,False,"Catalog Error: Table with name molecular_fact_long_base_v does not exist!
+Did you mean ""Thyroid 2026 UPdated.molecular_fact_long_base_v""?",True,"object not queryable (error: Catalog Error: Table with name molecular_fact_long_base_v does not exist!
+Did yo); cannot recover content for migration"
+main,molecular_fact_long_base_v,VIEW,,,False,"Catalog Error: Table with name canonical_extracted_fact_long_v2 does not exist!
+Did you mean ""canonical_us_nodule_characteristics_v1""?",True,"object not queryable (error: Catalog Error: Table with name canonical_extracted_fact_long_v2 does not exist!
+); cannot recover content for migration"
+main,molecular_fact_long_v,VIEW,,,False,"Catalog Error: Table with name molecular_fact_long_base_v does not exist!
+Did you mean ""Thyroid 2026 UPdated.molecular_fact_long_base_v""?",True,"object not queryable (error: Catalog Error: Table with name molecular_fact_long_base_v does not exist!
+Did yo); cannot recover content for migration"
+main,molecular_patient_rollup_v,VIEW,,,False,"Catalog Error: Table with name molecular_results_contract_v does not exist!
+Did you mean ""Thyroid 2026 UPdated.molecular_results_contract_v""?",True,"object not queryable (error: Catalog Error: Table with name molecular_results_contract_v does not exist!
+Did ); cannot recover content for migration"
+main,molecular_results_unified_v,VIEW,,,False,"Catalog Error: Table with name molecular_fact_long_v does not exist!
+Did you mean ""Thyroid 2026 UPdated.molecular_fact_long_v""?
+LINE 1: ... 2026 UPdated"".""main""",True,"object not queryable (error: Catalog Error: Table with name molecular_fact_long_v does not exist!
+Did you mea); cannot recover content for migration"
+main,molecular_variant_contract_v,VIEW,,,False,"Catalog Error: Table with name molecular_results_contract_v does not exist!
+Did you mean ""Thyroid 2026 UPdated.molecular_results_contract_v""?",True,"object not queryable (error: Catalog Error: Table with name molecular_results_contract_v does not exist!
+Did ); cannot recover content for migration"
+main,mrn_crosswalk_v1,BASE TABLE,0,0,True,,False,empty base table (0 rows) in stray archive-DB schema — no clinical/audit value to preserve
+main,v_fna_bethesda_episode_vs_resolved_v1,VIEW,,,False,"Catalog Error: Table with name v_fna_episode_bethesda_resolved_v1 does not exist!
+Did you mean ""Thyroid 2026 UPdated.v_fna_episode_bethesda_resolved_v1""?",True,object not queryable (error: Catalog Error: Table with name v_fna_episode_bethesda_resolved_v1 does not exist); cannot recover content for migration
+main,v_fna_bethesda_surface,VIEW,,,False,"Binder Error: Contents of view were altered: types don't match! Expected [INTEGER, BIGINT, DATE, VARCHAR, VARCHAR, VARCHAR, INTEGER, BIGINT, VARCHAR, BIGINT, VA",True,object not queryable (error: Binder Error: Contents of view were altered: types don't match! Expected [INTEGE); cannot recover content for migration
+main,v_fna_episode_bethesda_resolved_v1,VIEW,,,False,"Binder Error: Contents of view were altered: types don't match! Expected [INTEGER, BIGINT, DATE, VARCHAR, INTEGER, BIGINT, BIGINT, VARCHAR, VARCHAR], but found ",True,object not queryable (error: Binder Error: Contents of view were altered: types don't match! Expected [INTEGE); cannot recover content for migration
+main,v_fna_surgery_window,VIEW,,,False,"Catalog Error: Table with name v_patient_surgery_timeline does not exist!
+Did you mean ""Thyroid 2026 UPdated.v_patient_surgery_timeline""?",True,"object not queryable (error: Catalog Error: Table with name v_patient_surgery_timeline does not exist!
+Did yo); cannot recover content for migration"
+main,v_imaging_nodule_linkage_classification_v1,VIEW,,,False,"Catalog Error: Table with name imaging_fna_linkage_mm_v1 does not exist!
+Did you mean ""Thyroid 2026 UPdated.mm_contract_dev.imaging_fna_linkage_mm_v1""?",True,"object not queryable (error: Catalog Error: Table with name imaging_fna_linkage_mm_v1 does not exist!
+Did you); cannot recover content for migration"
+mm_contract_dev,_bootstrap_fna_episode_master_v2,BASE TABLE,0,0,True,,False,empty base table (0 rows) in stray archive-DB schema — no clinical/audit value to preserve
+mm_contract_dev,_bootstrap_mrn_crosswalk_v1,BASE TABLE,0,0,True,,False,empty base table (0 rows) in stray archive-DB schema — no clinical/audit value to preserve
+mm_contract_dev,val_ambiguous_multimodal_linkage_mm_v1,BASE TABLE,0,0,True,,False,empty base table (0 rows) in stray archive-DB schema — no clinical/audit value to preserve
+mm_contract_dev,val_contract_required_join_keys_mm_v1,BASE TABLE,0,0,True,,False,empty base table (0 rows) in stray archive-DB schema — no clinical/audit value to preserve
+mm_contract_dev,val_imaging_fna_contract_blockers_mm_v1,BASE TABLE,0,0,True,,False,empty base table (0 rows) in stray archive-DB schema — no clinical/audit value to preserve
+mm_contract_dev,val_multi_tumor_report_mm_v1,VIEW,,,False,"Catalog Error: Table with name val_multitumor_expansion_mm_v1 does not exist!
+Did you mean ""Thyroid 2026 UPdated.mm_contract_dev.val_multitumor_expansion_mm_v1""",True,"object not queryable (error: Catalog Error: Table with name val_multitumor_expansion_mm_v1 does not exist!
+Di); cannot recover content for migration"
+mm_contract_dev,val_multitumor_expansion_mm_v1,BASE TABLE,0,0,True,,False,empty base table (0 rows) in stray archive-DB schema — no clinical/audit value to preserve
+mm_contract_dev,val_nodes_invariant_mm_v1,BASE TABLE,0,0,True,,False,empty base table (0 rows) in stray archive-DB schema — no clinical/audit value to preserve
+mm_contract_dev,val_preop_temporal_order_mm_v1,BASE TABLE,0,0,True,,False,empty base table (0 rows) in stray archive-DB schema — no clinical/audit value to preserve
+mm_contract_dev,val_side_lobe_mismatch_mm_v1,BASE TABLE,0,0,True,,False,empty base table (0 rows) in stray archive-DB schema — no clinical/audit value to preserve
+qa,date_provenance_completeness_v,VIEW,,,False,"Catalog Error: Table with name domain_validation does not exist!
+Did you mean ""Thyroid 2026 UPdated.qa.domain_validation""?",True,"object not queryable (error: Catalog Error: Table with name domain_validation does not exist!
+Did you mean ""T); cannot recover content for migration"
+qa,domain_validation_summary_v,VIEW,,,False,"Catalog Error: Table with name domain_validation does not exist!
+Did you mean ""Thyroid 2026 UPdated.qa.domain_validation""?",True,"object not queryable (error: Catalog Error: Table with name domain_validation does not exist!
+Did you mean ""T); cannot recover content for migration"
+qa,manual_review_queue_summary_v,VIEW,,,False,"Catalog Error: Table with name manual_review_queue does not exist!
+Did you mean ""Thyroid 2026 UPdated.qa.manual_review_queue""?",True,"object not queryable (error: Catalog Error: Table with name manual_review_queue does not exist!
+Did you mean ); cannot recover content for migration"
+qa,molecular_pipeline_run_audit,BASE TABLE,0,0,True,,False,empty base table (0 rows) in stray archive-DB schema — no clinical/audit value to preserve
+qa,promotion_scorecard_summary_v,VIEW,,,False,"Catalog Error: Table with name promotion_scorecard does not exist!
+Did you mean ""Thyroid 2026 UPdated.qa.promotion_scorecard""?",True,"object not queryable (error: Catalog Error: Table with name promotion_scorecard does not exist!
+Did you mean ); cannot recover content for migration"
+qa,tg_lab_ingestion_qc,BASE TABLE,0,0,True,,False,empty base table (0 rows) in stray archive-DB schema — no clinical/audit value to preserve
+qa,v_diag_specimen_fhir_broken_refs_v1,VIEW,,,False,"Catalog Error: Table with name fhir_specimen_v1 does not exist!
+Did you mean ""specimen_master_v1""?",True,"object not queryable (error: Catalog Error: Table with name fhir_specimen_v1 does not exist!
+Did you mean ""sp); cannot recover content for migration"
+qa,v_diag_specimen_fhir_bundle_entry_drift_v1,VIEW,,,False,"Catalog Error: Table with name fhir_bundle_specimen_export_v1 does not exist!
+Did you mean ""specimen_source_xref_v1""?",True,"object not queryable (error: Catalog Error: Table with name fhir_bundle_specimen_export_v1 does not exist!
+Di); cannot recover content for migration"
+qa,v_diag_specimen_review_burden_v1,VIEW,,,False,"Catalog Error: Table with name specimen_genomic_link_review_v1 does not exist!
+Did you mean ""Thyroid 2026 UPdated.qa.specimen_genomic_link_review_v1""?",True,"object not queryable (error: Catalog Error: Table with name specimen_genomic_link_review_v1 does not exist!
+D); cannot recover content for migration"

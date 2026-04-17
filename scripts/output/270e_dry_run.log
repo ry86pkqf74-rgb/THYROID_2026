@@ -1,0 +1,33 @@
+=== START 270e — stray schema drops (DRY-RUN) ===
+started_at: 2026-04-17T07:44:08.942490+00:00
+connected to thyroid_canonical_publication_v1_0
+
+--- pre-condition: 270d audit row ---
+  'phase_b_stray_migrate_complete': PRESENT
+
+--- ROUND-TRIP RESTORE TEST ---
+  chosen: "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_pre270_20260417T055747Z" (score_reason='pre270_match', cols=1499, rows=10871)
+  PASS: round-trip 10871 rows / 1499 cols verified, temp table dropped
+
+--- drop plan ---
+  DROP_NO_RESTORE_VALUE rows from 270c manifest: 38
+  enriched 38 drop candidates (26 not queryable — expected for broken-ref views)
+
+--- current stray schema object counts (post-270d) ---
+  main: 176 objects
+  mm_contract_dev: 32 objects
+  qa: 36 objects
+  v2_stage: 38 objects
+  individual drops (DROP_NO_RESTORE_VALUE): 38
+  cascade-covered (migrated+snapshotted):   244
+  truly unexpected (not in any plan):        0
+  All stray schema objects accounted for. Execute is safe.
+
+--- expected post-execute state ---
+  Final archive DB schemas: ['archive_legacy', 'archive_pub_v1_0']
+  All four stray schemas empty after drops -> DROP SCHEMA CASCADE
+
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270e_dry_run_plan.csv (38 rows)
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270e_dry_run_summary.json
+
+=== END 270e (DRY-RUN) ===
