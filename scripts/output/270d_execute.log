@@ -1,0 +1,148 @@
+=== START 270d — stray schema migration (--EXECUTE) ===
+started_at: 2026-04-17T07:36:53.491861+00:00
+connected to thyroid_canonical_publication_v1_0
+
+--- idempotency guard ---
+
+--- ROUND-TRIP RESTORE TEST (wide-snapshot selector) ---
+  chosen: "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_pre270_20260417T055747Z" (score_reason='pre270_match', cols=1499, rows=10871)
+  PASS: round-trip 10871 rows / 1499 cols verified, temp table dropped
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270d_execute_restore_test.json
+  re-validated 118 plan rows (0 with drift)
+  plan size: 118
+
+--- schema setup ---
+  ensured schema "Thyroid 2026 UPdated".archive_legacy
+  ensured view DDL preservation table "Thyroid 2026 UPdated"."archive_legacy"."__view_ddl_preservation_v1"
+  WARN: could not set statement_timeout (Catalog Error: unrecognized configuration parameter "statement_timeout"
+
+Did you mean: "TimeZone"); using wall-clock backstop only
+  statement_timeout enforced: False
+
+--- migrate loop ---
+  [  1/118] OK  main.analysis_cancer_cohort_v1                               -> main__analysis_cancer_cohort_v1_20260417T073708Z  rows=4136 elapsed=1.55s
+  [  2/118] OK  main.analysis_recurrence_subset_v1                           -> main__analysis_recurrence_subset_v1_20260417T073708Z  rows=1946 elapsed=1.08s
+  [  3/118] OK  main.analysis_tirads_subset_v1                               -> main__analysis_tirads_subset_v1_20260417T073708Z  rows=3474 elapsed=1.02s
+  [  4/118] OK  main.data_dictionary_v221                                    -> main__data_dictionary_v221_20260417T073708Z  rows=1374 elapsed=0.98s
+  [  5/118] OK  main.duckdb_columns                                          -> main__duckdb_columns_20260417T073708Z  rows=51273 elapsed=2.24s
+  [  6/118] OK  main.duckdb_constraints                                      -> main__duckdb_constraints_20260417T073708Z  rows=18 elapsed=1.2s
+  [  7/118] OK  main.duckdb_databases                                        -> main__duckdb_databases_20260417T073708Z  rows=4 elapsed=1.25s
+  [  8/118] OK  main.duckdb_indexes                                          -> main__duckdb_indexes_20260417T073708Z  rows=0 elapsed=1.2s
+  [  9/118] OK  main.duckdb_schemas                                          -> main__duckdb_schemas_20260417T073708Z  rows=6 elapsed=1.61s
+  [ 10/118] OK  main.duckdb_tables                                           -> main__duckdb_tables_20260417T073708Z  rows=526 elapsed=1.41s
+  [ 11/118] OK  main.duckdb_types                                            -> main__duckdb_types_20260417T073708Z  rows=439 elapsed=1.11s
+  [ 12/118] OK  main.duckdb_views                                            -> main__duckdb_views_20260417T073708Z  rows=125 elapsed=1.15s
+  [ 13/118] OK  main.episode_completeness_summary_v                          -> main__episode_completeness_summary_v_20260417T073708Z  rows=4 elapsed=0.98s
+  [ 14/118] OK  main.event_date_audit_v2                                     -> main__event_date_audit_v2_20260417T073708Z  rows=61055 elapsed=1.62s
+  [ 15/118] OK  main.fna_molecular_linkage_v3                                -> main__fna_molecular_linkage_v3_20260417T073708Z  rows=809 elapsed=1.01s
+  [ 16/118] OK  main.gold_master_episode_events_v1                           -> main__gold_master_episode_events_v1_20260417T073708Z  rows=9368 elapsed=1.17s
+  [ 17/118] OK  main.gold_master_patient_facts_v1                            -> main__gold_master_patient_facts_v1_20260417T073708Z  rows=10871 elapsed=2.15s
+  [ 18/118] OK  main.imaging_fna_linkage_mm_v1                               -> main__imaging_fna_linkage_mm_v1_20260417T073708Z  rows=7305 elapsed=1.24s
+  [ 19/118] OK  main.linkage_ambiguity_review_v1                             -> main__linkage_ambiguity_review_v1_20260417T073708Z  rows=5593 elapsed=1.34s
+  [ 20/118] OK  main.linkage_master_v1                                       -> main__linkage_master_v1_20260417T073708Z  rows=11506 elapsed=1.25s
+  [ 21/118] OK  main.linkage_summary_v                                       -> main__linkage_summary_v_20260417T073708Z  rows=10871 elapsed=1.19s
+  [ 22/118] OK  main.linkage_summary_v3                                      -> main__linkage_summary_v3_20260417T073708Z  rows=5 elapsed=0.97s
+  [ 23/118] OK  main.ln_x_marker_audit_v1                                    -> main__ln_x_marker_audit_v1_20260417T073708Z  rows=53 elapsed=1.01s
+  [ 24/118] OK  main.md_extracted_fna_bethesda_v1                            -> main__md_extracted_fna_bethesda_v1_20260417T073708Z  rows=5249 elapsed=1.04s
+  [ 25/118] OK  main.md_path_synoptics_encounter_qc_v1                       -> main__md_path_synoptics_encounter_qc_v1_20260417T073708Z  rows=11688 elapsed=8.57s
+  [ 26/118] OK  main.md_synoptic_tumor_long_v1                               -> main__md_synoptic_tumor_long_v1_20260417T073708Z  rows=11103 elapsed=1.39s
+  [ 27/118] OK  main.md_val_path_synoptic_encounter_isolation_v1             -> main__md_val_path_synoptic_encounter_isolation_v1_20260417T073708Z  rows=3 elapsed=1.17s
+  [ 28/118] OK  main.molecular_normalization_review_v1                       -> main__molecular_normalization_review_v1_20260417T073708Z  rows=116 elapsed=1.38s
+  [ 29/118] OK  main.molecular_qc_summary_v                                  -> main__molecular_qc_summary_v_20260417T073708Z  rows=2 elapsed=1.13s
+  [ 30/118] OK  main.molecular_results_contract_v                            -> main__molecular_results_contract_v_20260417T073708Z  rows=10861 elapsed=1.4s
+  [ 31/118] OK  main.molecular_results_contract_v1                           -> main__molecular_results_contract_v1_20260417T073708Z  rows=10861 elapsed=2.19s
+  [ 32/118] OK  main.molecular_results_enriched_v1                           -> main__molecular_results_enriched_v1_20260417T073708Z  rows=10861 elapsed=1.78s
+  [ 33/118] OK  main.molecular_variant_long_contract_v1                      -> main__molecular_variant_long_contract_v1_20260417T073708Z  rows=1640 elapsed=1.38s
+  [ 34/118] OK  main.note_extraction_runs                                    -> main__note_extraction_runs_20260417T073708Z  rows=3 elapsed=1.11s
+  [ 35/118] OK  main.notes_entity_summary                                    -> main__notes_entity_summary_20260417T073708Z  rows=5272 elapsed=1.75s
+  [ 36/118] OK  main.path_synoptics_encounter_qc_v1                          -> main__path_synoptics_encounter_qc_v1_20260417T073708Z  rows=11688 elapsed=3.14s
+  [ 37/118] OK  main.pathology_rai_linkage_v3                                -> main__pathology_rai_linkage_v3_20260417T073708Z  rows=23 elapsed=1.34s
+  [ 38/118] OK  main.patient_refined_master_clinical_v12                     -> main__patient_refined_master_clinical_v12_20260417T073708Z  rows=12886 elapsed=2.1s
+  [ 39/118] OK  main.pragma_database_list                                    -> main__pragma_database_list_20260417T073708Z  rows=4 elapsed=1.21s
+  [ 40/118] OK  main.preop_surgery_linkage_v3                                -> main__preop_surgery_linkage_v3_20260417T073708Z  rows=3554 elapsed=0.98s
+  [ 41/118] OK  main.rai_dose_recovery_v1                                    -> main__rai_dose_recovery_v1_20260417T073708Z  rows=4 elapsed=1.22s
+  [ 42/118] OK  main.raw_imaging_12_slots_v1                                 -> main__raw_imaging_12_slots_v1_20260417T073708Z  rows=21079 elapsed=1.36s
+  [ 43/118] OK  main.raw_us_tirads_excel_v1                                  -> main__raw_us_tirads_excel_v1_20260417T073708Z  rows=19891 elapsed=2.03s
+  [ 44/118] OK  main.raw_us_tirads_scored_v1                                 -> main__raw_us_tirads_scored_v1_20260417T073708Z  rows=19549 elapsed=1.62s
+  [ 45/118] OK  main.sqlite_master                                           -> main__sqlite_master_20260417T073708Z  rows=651 elapsed=1.29s
+  [ 46/118] OK  main.sqlite_schema                                           -> main__sqlite_schema_20260417T073708Z  rows=651 elapsed=1.37s
+  [ 47/118] OK  main.sqlite_temp_master                                      -> main__sqlite_temp_master_20260417T073708Z  rows=651 elapsed=1.53s
+  [ 48/118] OK  main.sqlite_temp_schema                                      -> main__sqlite_temp_schema_20260417T073708Z  rows=651 elapsed=1.51s
+  [ 49/118] OK  main.surgery_pathology_linkage_v3                            -> main__surgery_pathology_linkage_v3_20260417T073708Z  rows=9409 elapsed=1.14s
+  [ 50/118] OK  main.thyroid_scoring_py_v1                                   -> main__thyroid_scoring_py_v1_20260417T073708Z  rows=10871 elapsed=2.15s
+  [ 51/118] OK  main.v_canonical_us_nodule_scope_v1                          -> main__v_canonical_us_nodule_scope_v1_20260417T073708Z  rows=1 elapsed=1.03s
+  [ 52/118] OK  main.v_imaging_nodule_tirads_gap_v1                          -> main__v_imaging_nodule_tirads_gap_v1_20260417T073708Z  rows=37016 elapsed=1.14s
+  [ 53/118] OK  main.v_patient_surgery_timeline                              -> main__v_patient_surgery_timeline_20260417T073708Z  rows=9371 elapsed=1.19s
+  [ 54/118] OK  main.vw_us_nodule_tirads_validated                           -> main__vw_us_nodule_tirads_validated_20260417T073708Z  rows=5 elapsed=1.26s
+  [ 55/118] OK  mm_contract_dev._bootstrap_event_date_audit_v2                          -> mm_contract_dev___bootstrap_event_date_audit_v2_20260417T073708Z  rows=50014 elapsed=1.3s
+  [ 56/118] OK  mm_contract_dev._bootstrap_fna_molecular_linkage_v3                     -> mm_contract_dev___bootstrap_fna_molecular_linkage_v3_20260417T073708Z  rows=838 elapsed=1.03s
+  [ 57/118] OK  mm_contract_dev._bootstrap_linkage_master_v1                            -> mm_contract_dev___bootstrap_linkage_master_v1_20260417T073708Z  rows=11506 elapsed=1.15s
+  [ 58/118] OK  mm_contract_dev._bootstrap_pathology_rai_linkage_v3                     -> mm_contract_dev___bootstrap_pathology_rai_linkage_v3_20260417T073708Z  rows=23 elapsed=1.02s
+  [ 59/118] OK  mm_contract_dev._bootstrap_patient_cross_domain_timeline_v2             -> mm_contract_dev___bootstrap_patient_cross_domain_timeline_v2_20260417T073708Z  rows=59385 elapsed=1.3s
+  [ 60/118] OK  mm_contract_dev._bootstrap_preop_surgery_linkage_v3                     -> mm_contract_dev___bootstrap_preop_surgery_linkage_v3_20260417T073708Z  rows=3517 elapsed=1.22s
+  [ 61/118] OK  mm_contract_dev._bootstrap_surgery_pathology_linkage_v3                 -> mm_contract_dev___bootstrap_surgery_pathology_linkage_v3_20260417T073708Z  rows=9409 elapsed=1.4s
+  [ 62/118] OK  mm_contract_dev.dim_nodule_mm_v1                                        -> mm_contract_dev__dim_nodule_mm_v1_20260417T073708Z  rows=19891 elapsed=1.81s
+  [ 63/118] OK  mm_contract_dev.dim_patient_mm_v1                                       -> mm_contract_dev__dim_patient_mm_v1_20260417T073708Z  rows=11506 elapsed=2.36s
+  [ 64/118] OK  mm_contract_dev.fact_fna_mm_v1                                          -> mm_contract_dev__fact_fna_mm_v1_20260417T073708Z  rows=8119 elapsed=1.22s
+  [ 65/118] OK  mm_contract_dev.fact_genetics_mm_v1                                     -> mm_contract_dev__fact_genetics_mm_v1_20260417T073708Z  rows=10126 elapsed=1.05s
+  [ 66/118] OK  mm_contract_dev.fact_imaging_mm_v1                                      -> mm_contract_dev__fact_imaging_mm_v1_20260417T073708Z  rows=19891 elapsed=1.46s
+  [ 67/118] OK  mm_contract_dev.fact_path_report_mm_v1                                  -> mm_contract_dev__fact_path_report_mm_v1_20260417T073708Z  rows=11688 elapsed=1.15s
+  [ 68/118] OK  mm_contract_dev.fact_surgery_mm_v1                                      -> mm_contract_dev__fact_surgery_mm_v1_20260417T073708Z  rows=12326 elapsed=2.48s
+  [ 69/118] OK  mm_contract_dev.fact_tumor_mm_v1                                        -> mm_contract_dev__fact_tumor_mm_v1_20260417T073708Z  rows=11691 elapsed=1.11s
+  [ 70/118] OK  mm_contract_dev.imaging_fna_linkage_mm_v1                               -> mm_contract_dev__imaging_fna_linkage_mm_v1_20260417T073708Z  rows=3558 elapsed=1.0s
+  [ 71/118] OK  mm_contract_dev.link_imaging_fna_mm_v1                                  -> mm_contract_dev__link_imaging_fna_mm_v1_20260417T073708Z  rows=3558 elapsed=1.07s
+  [ 72/118] OK  mm_contract_dev.link_surgery_context_mm_v1                              -> mm_contract_dev__link_surgery_context_mm_v1_20260417T073708Z  rows=9371 elapsed=1.11s
+  [ 73/118] OK  mm_contract_dev.link_surgery_path_mm_v1                                 -> mm_contract_dev__link_surgery_path_mm_v1_20260417T073708Z  rows=9417 elapsed=1.47s
+  [ 74/118] OK  mm_contract_dev.map_patient_identifier_mm_v1                            -> mm_contract_dev__map_patient_identifier_mm_v1_20260417T073708Z  rows=11506 elapsed=1.24s
+  [ 75/118] OK  mm_contract_dev.review_queue_imaging_fna_mm_v1                          -> mm_contract_dev__review_queue_imaging_fna_mm_v1_20260417T073708Z  rows=1915 elapsed=1.9s
+  [ 76/118] OK  mm_contract_dev.val_imaging_fna_linkage_audit_v1                        -> mm_contract_dev__val_imaging_fna_linkage_audit_v1_20260417T073708Z  rows=1 elapsed=1.05s
+  [ 77/118] OK  qa.concordance_summary                                     -> qa__concordance_summary_20260417T073708Z  rows=139 elapsed=1.05s
+  [ 78/118] OK  qa.domain_validation                                       -> qa__domain_validation_20260417T073708Z  rows=161 elapsed=1.06s
+  [ 79/118] OK  qa.manual_review_queue                                     -> qa__manual_review_queue_20260417T073708Z  rows=5622 elapsed=1.06s
+  [ 80/118] OK  qa.promotion_review_decisions                              -> qa__promotion_review_decisions_20260417T073708Z  rows=6 elapsed=1.06s
+  [ 81/118] OK  qa.promotion_scorecard                                     -> qa__promotion_scorecard_20260417T073708Z  rows=56 elapsed=1.05s
+  [ 82/118] OK  qa.release_manifest                                        -> qa__release_manifest_20260417T073708Z  rows=12 elapsed=1.2s
+  [ 83/118] OK  qa.specimen_genomic_link_review_v1                         -> qa__specimen_genomic_link_review_v1_20260417T073708Z  rows=10155 elapsed=1.59s
+  [ 84/118] OK  qa.specimen_merge_review_queue_v1                          -> qa__specimen_merge_review_queue_v1_20260417T073708Z  rows=1 elapsed=1.17s
+  [ 85/118] OK  qa.t_diag_specimen_focus_qa_metrics_v1                     -> qa__t_diag_specimen_focus_qa_metrics_v1_20260417T073708Z  rows=1 elapsed=1.05s
+  [ 86/118] OK  qa.v_diag_specimen_duplicate_focus_fp_v1                   -> qa__v_diag_specimen_duplicate_focus_fp_v1_20260417T073708Z  rows=0 elapsed=1.2s
+  [ 87/118] OK  qa.v_diag_specimen_duplicate_master_fp_v1                  -> qa__v_diag_specimen_duplicate_master_fp_v1_20260417T073708Z  rows=0 elapsed=1.08s
+  [ 88/118] OK  qa.v_diag_specimen_genomics_A_tier_requires_specimen_v1    -> qa__v_diag_specimen_genomics_A_tier_requires_specimen_v1_20260417T073708Z  rows=0 elapsed=1.02s
+  [ 89/118] OK  qa.v_diag_specimen_genomics_dupe_thyroseq_slice_v1         -> qa__v_diag_specimen_genomics_dupe_thyroseq_slice_v1_20260417T073708Z  rows=0 elapsed=1.07s
+  [ 90/118] OK  qa.v_diag_specimen_genomics_thyroseq_ordinality_v1         -> qa__v_diag_specimen_genomics_thyroseq_ordinality_v1_20260417T073708Z  rows=0 elapsed=1.05s
+  [ 91/118] OK  qa.v_diag_specimen_genomics_tier_enum_v1                   -> qa__v_diag_specimen_genomics_tier_enum_v1_20260417T073708Z  rows=0 elapsed=1.05s
+  [ 92/118] OK  qa.v_diag_specimen_orphan_focus_master_v1                  -> qa__v_diag_specimen_orphan_focus_master_v1_20260417T073708Z  rows=0 elapsed=1.04s
+  [ 93/118] OK  qa.v_diag_specimen_orphan_focus_v1                         -> qa__v_diag_specimen_orphan_focus_v1_20260417T073708Z  rows=0 elapsed=1.03s
+  [ 94/118] OK  qa.v_diag_specimen_orphan_genomic_focus_v1                 -> qa__v_diag_specimen_orphan_genomic_focus_v1_20260417T073708Z  rows=0 elapsed=1.07s
+  [ 95/118] OK  qa.v_diag_specimen_orphan_genomic_master_v1                -> qa__v_diag_specimen_orphan_genomic_master_v1_20260417T073708Z  rows=0 elapsed=1.03s
+  [ 96/118] OK  qa.v_diag_specimen_orphan_genomic_v1                       -> qa__v_diag_specimen_orphan_genomic_v1_20260417T073708Z  rows=0 elapsed=1.09s
+  [ 97/118] OK  qa.v_diag_specimen_provenance_focus_gaps_v1                -> qa__v_diag_specimen_provenance_focus_gaps_v1_20260417T073708Z  rows=0 elapsed=1.02s
+  [ 98/118] OK  qa.v_diag_specimen_provenance_focus_v1                     -> qa__v_diag_specimen_provenance_focus_v1_20260417T073708Z  rows=1 elapsed=1.08s
+  [ 99/118] OK  qa.v_diag_specimen_provenance_genomic_v1                   -> qa__v_diag_specimen_provenance_genomic_v1_20260417T073708Z  rows=1 elapsed=1.04s
+  [100/118] OK  qa.v_diag_specimen_provenance_master_v1                    -> qa__v_diag_specimen_provenance_master_v1_20260417T073708Z  rows=1 elapsed=1.02s
+  [101/118] OK  qa.v_diag_specimen_provenance_summary_v1                   -> qa__v_diag_specimen_provenance_summary_v1_20260417T073708Z  rows=1 elapsed=1.26s
+  [102/118] OK  qa.val_specimen_contract_v1                                -> qa__val_specimen_contract_v1_20260417T073708Z  rows=12 elapsed=1.23s
+  [103/118] OK  qa.val_specimen_genomic_binding_v1                         -> qa__val_specimen_genomic_binding_v1_20260417T073708Z  rows=12 elapsed=1.17s
+  [104/118] OK  v2_stage.load_inventory                                          -> v2_stage__load_inventory_20260417T073708Z  rows=270 elapsed=1.25s
+  [105/118] OK  v2_stage.note_entities_llm_combined                              -> v2_stage__note_entities_llm_combined_20260417T073708Z  rows=11037 elapsed=1.65s
+  [106/118] OK  v2_stage.note_entities_llm_complications                         -> v2_stage__note_entities_llm_complications_20260417T073708Z  rows=11037 elapsed=1.29s
+  [107/118] OK  v2_stage.note_entities_llm_complications_rln_laryngoscopy        -> v2_stage__note_entities_llm_complications_rln_laryngoscopy_20260417T073708Z  rows=11037 elapsed=2.26s
+  [108/118] OK  v2_stage.note_entities_llm_genetics                              -> v2_stage__note_entities_llm_genetics_20260417T073708Z  rows=11037 elapsed=1.63s
+  [109/118] OK  v2_stage.note_entities_llm_medication_management                 -> v2_stage__note_entities_llm_medication_management_20260417T073708Z  rows=11037 elapsed=1.45s
+  [110/118] OK  v2_stage.note_entities_llm_medications                           -> v2_stage__note_entities_llm_medications_20260417T073708Z  rows=11037 elapsed=1.52s
+  [111/118] OK  v2_stage.note_entities_llm_molecular_thyroseq_afirma             -> v2_stage__note_entities_llm_molecular_thyroseq_afirma_20260417T073708Z  rows=11037 elapsed=1.53s
+  [112/118] OK  v2_stage.note_entities_llm_operative_details                     -> v2_stage__note_entities_llm_operative_details_20260417T073708Z  rows=11037 elapsed=2.18s
+  [113/118] OK  v2_stage.note_entities_llm_operative_v2_enrichment               -> v2_stage__note_entities_llm_operative_v2_enrichment_20260417T073708Z  rows=11037 elapsed=1.55s
+  [114/118] OK  v2_stage.note_entities_llm_parathyroid_per_gland                 -> v2_stage__note_entities_llm_parathyroid_per_gland_20260417T073708Z  rows=11037 elapsed=1.51s
+  [115/118] OK  v2_stage.note_entities_llm_problem_list                          -> v2_stage__note_entities_llm_problem_list_20260417T073708Z  rows=11037 elapsed=1.7s
+  [116/118] OK  v2_stage.note_entities_llm_procedures                            -> v2_stage__note_entities_llm_procedures_20260417T073708Z  rows=11037 elapsed=2.5s
+  [117/118] OK  v2_stage.note_entities_llm_recurrence_detailed                   -> v2_stage__note_entities_llm_recurrence_detailed_20260417T073708Z  rows=11037 elapsed=1.4s
+  [118/118] OK  v2_stage.note_entities_llm_staging                               -> v2_stage__note_entities_llm_staging_20260417T073708Z  rows=11037 elapsed=1.61s
+
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270d_execute_results.csv (118 rows)
+  by (schema, status): {('main', 'OK'): 54, ('mm_contract_dev', 'OK'): 22, ('qa', 'OK'): 27, ('v2_stage', 'OK'): 15}
+
+  inserted audit row finding_id='phase_b_stray_migrate_complete'
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270d_execute_summary.json
+
+=== END 270d (--EXECUTE) ===
