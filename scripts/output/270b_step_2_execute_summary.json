@@ -1,0 +1,189 @@
+{
+  "started_at": "2026-04-17T06:28:01.072314+00:00",
+  "finished_at": "2026-04-17T06:28:23.566787+00:00",
+  "publication_db": "thyroid_canonical_publication_v1_0",
+  "mode": "execute",
+  "matcher_version": "v3",
+  "feeder_validation": {
+    "build_pipeline": "OK_ALLOWLIST",
+    "canonical_patient_master": "OK_ALLOWLIST",
+    "complication_patient_summary_v1": "OK",
+    "extracted_fna_bethesda_v1": "OK",
+    "imaging_patient_summary_v1": "OK",
+    "patient_analysis_resolved_v1": "OK",
+    "patient_tumor_rollup_v1": "OK",
+    "tg_timeline_patient_summary_v1": "OK",
+    "tumor_episode_master_v2": "OK"
+  },
+  "bucket_b_input": 49,
+  "bucket_c_input": 174,
+  "bucket_b_closed": 49,
+  "bucket_c_closed": 174,
+  "ambiguous_resolutions_used": {
+    "last_tg_date": "tg_timeline_patient_summary_v1",
+    "race": "patient_analysis_resolved_v1"
+  },
+  "decisions_by_feeder_counts": {
+    "patient_analysis_resolved_v1": 10,
+    "complication_patient_summary_v1": 4,
+    "build_pipeline": 187,
+    "patient_tumor_rollup_v1": 13,
+    "tg_timeline_patient_summary_v1": 4,
+    "imaging_patient_summary_v1": 2,
+    "tumor_episode_master_v2": 1,
+    "canonical_patient_master": 1,
+    "extracted_fna_bethesda_v1": 1
+  },
+  "registry_closures": {
+    "canonical_patient_master": {
+      "before": 0,
+      "after": 1,
+      "added": 1,
+      "new_cols": [
+        "research_id"
+      ]
+    },
+    "complication_patient_summary_v1": {
+      "before": 3,
+      "after": 7,
+      "added": 4,
+      "new_cols": [
+        "any_confirmed_complication_flag",
+        "earliest_complication_days",
+        "has_low_calcium_flag",
+        "has_low_pth_flag"
+      ]
+    },
+    "extracted_fna_bethesda_v1": {
+      "before": 3,
+      "after": 4,
+      "added": 1,
+      "new_cols": [
+        "worst_bethesda_num"
+      ]
+    },
+    "imaging_patient_summary_v1": {
+      "before": 4,
+      "after": 6,
+      "added": 2,
+      "new_cols": [
+        "has_suspicious_candidate",
+        "worst_tirads_category"
+      ]
+    },
+    "patient_analysis_resolved_v1": {
+      "before": 3,
+      "after": 13,
+      "added": 10,
+      "new_cols": [
+        "age_at_surgery",
+        "date_traceability_status",
+        "demo_confidence",
+        "demo_source",
+        "race",
+        "scoring_ajcc8_flag",
+        "scoring_ata_flag",
+        "scoring_macis_flag",
+        "sex",
+        "tsh_suppressed_ever"
+      ]
+    },
+    "patient_tumor_rollup_v1": {
+      "before": 44,
+      "after": 57,
+      "added": 13,
+      "new_cols": [
+        "bilateral_path_flag",
+        "has_isthmus_tumor",
+        "has_left_tumor",
+        "has_right_tumor",
+        "histologic_types_all",
+        "histologic_variants_all",
+        "n_tumors_ete_present",
+        "n_tumors_lvi_present",
+        "n_tumors_margin_involved",
+        "n_tumors_margin_uninvolved",
+        "n_tumors_with_size",
+        "rollup_built_at",
+        "rollup_source_table"
+      ]
+    },
+    "tg_timeline_patient_summary_v1": {
+      "before": 6,
+      "after": 10,
+      "added": 4,
+      "new_cols": [
+        "days_first_to_last_tg",
+        "first_tg_date",
+        "last_tg_date",
+        "n_tgab_measurements"
+      ]
+    },
+    "tumor_episode_master_v2": {
+      "before": 1,
+      "after": 2,
+      "added": 1,
+      "new_cols": [
+        "laterality"
+      ]
+    }
+  },
+  "build_pipeline_registry_inserted": true,
+  "build_pipeline_total_cols": 187,
+  "triage_rows_updated": 223,
+  "registry_residual_total": 36,
+  "registry_residual_legit_unmapped": 2,
+  "registry_residual_other": 34,
+  "registry_residual_other_rows": [
+    "analysis_molecular_subset_v1",
+    "canonical_tumor_characteristics_v1",
+    "clinical_notes_long",
+    "episode_analysis_resolved_v1_dedup",
+    "extracted_complications_refined_v5",
+    "extracted_rln_injury_refined_v2",
+    "extracted_tirads_validated_v1",
+    "fna_history",
+    "imaging_fna_linkage_v3",
+    "lab_cross_wave_dedup_map_v1",
+    "lesion_analysis_resolved_v1",
+    "manuscript_cohort_v1",
+    "molecular_assay_dictionary",
+    "molecular_code_crosswalk",
+    "molecular_ingestion_runs",
+    "molecular_results",
+    "molecular_test_episode_v2",
+    "molecular_testing",
+    "molecular_variant_long",
+    "nlp_rollup_promotion_audit_v1",
+    "nsqip_patient_summary",
+    "path_size_adjudication_v241",
+    "recurrence_event_clean_v1",
+    "ret_note_entity_adjudication_v226",
+    "serial_imaging_us",
+    "specimen_genomic_assay_v1",
+    "specimen_source_xref_v1",
+    "specimen_tumor_focus_v1",
+    "survival_cohort_enriched",
+    "thyroid_sizes",
+    "tirads_llm_validation_v2",
+    "us_nodules_tirads",
+    "us_nodules_tirads_vs_inm_v1_discordance_v1",
+    "vc_paralysis_recalibration_v236"
+  ],
+  "keep_list_rows_inserted": 2,
+  "tech_debt_rows_inserted": 1,
+  "conventions_inserted": 7,
+  "audit_rows_inserted": 7,
+  "final_audit_status_distribution": {
+    "OK": 32,
+    "DOCUMENTED_NOOP": 4,
+    "OK_BACKFILLED_270": 3,
+    "DOCUMENTED_GAP": 3,
+    "OK_DEFERRED_HUMAN": 1
+  },
+  "outputs": {
+    "bucket_b_auto": "/Users/loganglosser/THYROID_2026/scripts/output/270b_bucket_b_auto_applied.csv",
+    "bucket_c_applied": "/Users/loganglosser/THYROID_2026/scripts/output/270b_bucket_c_applied.csv",
+    "registry_null_post": "/Users/loganglosser/THYROID_2026/scripts/output/270b_registry_null_post_execute.csv"
+  }
+}

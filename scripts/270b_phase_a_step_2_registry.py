@@ -810,19 +810,743 @@ def main_dry_run() -> int:
     return 0
 
 
-def main_execute() -> int:
-    print(
-        "ERROR: --execute mode is intentionally NOT YET IMPLEMENTED in this commit.\n"
-        "Workflow:\n"
-        "  1. Run --dry-run (default).\n"
-        "  2. Review scripts/output/270b_bucket_c_ambiguous.csv; fill the\n"
-        "     resolution_feeder column for each row (or confirm empty).\n"
-        "  3. Commit the reviewed ambiguous.csv.\n"
-        "  4. A subsequent commit will add --execute mode to this file.\n"
-        "Refusing to proceed.",
-        file=sys.stderr,
+# =========================================================================
+# --execute mode helpers
+# =========================================================================
+
+EXECUTE_SUMMARY = OUT_DIR / "270b_step_2_execute_summary.json"
+EXECUTE_LOG = OUT_DIR / "270b_step_2_execute.log"
+BUCKET_B_AUTO_CSV = OUT_DIR / "270b_bucket_b_auto_applied.csv"
+BUCKET_C_APPLIED_CSV = OUT_DIR / "270b_bucket_c_applied.csv"
+REGISTRY_NULL_POST_CSV = OUT_DIR / "270b_registry_null_post_execute.csv"
+
+AUDIT_FQ = (
+    f'"{PUBLICATION_DB}".manuscript_workspace.v1_1_finalization_audit_v1'
+)
+KEEP_LIST_FQ = (
+    f'"{PUBLICATION_DB}".manuscript_workspace.main_schema_keep_list_v1'
+)
+TECH_DEBT_FQ = (
+    f'"{PUBLICATION_DB}".manuscript_workspace.v1_1_tech_debt_v1'
+)
+CONVENTIONS_FQ = (
+    f'"{PUBLICATION_DB}".manuscript_workspace.__conventions'
+)
+
+ALLOWLISTED_RESOLUTION_FEEDERS = {"build_pipeline", "canonical_patient_master"}
+
+
+def read_ambiguous_resolutions() -> dict[str, str]:
+    """Return {cpm_col: resolution_feeder}. Errors if any row has empty."""
+    out: dict[str, str] = {}
+    if not AMBIGUOUS_CSV.exists():
+        return out
+    with AMBIGUOUS_CSV.open() as f:
+        rows = list(csv.reader(f))
+    # skip metadata + header
+    header_idx = next((i for i, r in enumerate(rows)
+                       if r and r[0] == "cpm_col"), None)
+    if header_idx is None:
+        return out
+    header = rows[header_idx]
+    col_idx = header.index("cpm_col")
+    res_idx = header.index("resolution_feeder")
+    for r in rows[header_idx + 1:]:
+        if not r or len(r) <= max(col_idx, res_idx):
+            continue
+        cpm_col = r[col_idx].strip()
+        feeder = r[res_idx].strip()
+        if cpm_col and not feeder:
+            raise SystemExit(
+                f"AMBIGUOUS CSV ROW MISSING resolution_feeder: cpm_col={cpm_col!r}. "
+                "Fill all blanks before --execute."
+            )
+        if cpm_col:
+            out[cpm_col] = feeder
+    return out
+
+
+def validate_resolution_feeders(con, all_feeders: set[str]) -> dict:
+    """SELECT 1 FROM <feeder> LIMIT 0 for each. Allowlist build_pipeline +
+    canonical_patient_master. Return dict {feeder: 'OK'|'FAIL:<msg>'}."""
+    out: dict[str, str] = {}
+    for f in sorted(all_feeders):
+        if f in ALLOWLISTED_RESOLUTION_FEEDERS:
+            out[f] = "OK_ALLOWLIST"
+            continue
+        try:
+            con.execute(f'SELECT 1 FROM "{f}" LIMIT 0').fetchall()
+            out[f] = "OK"
+        except Exception as e:
+            out[f] = f"FAIL:{str(e)[:120]}"
+    return out
+
+
+def pre_execute_idempotency_check(con) -> list[str]:
+    """Return list of abort reasons (empty if safe to proceed)."""
+    reasons: list[str] = []
+
+    # 1. main_schema_keep_list_v1 already exists with rows
+    n = con.execute(f"""
+        SELECT COUNT(*) FROM information_schema.tables
+        WHERE table_catalog='{PUBLICATION_DB}'
+          AND table_schema='manuscript_workspace'
+          AND table_name='main_schema_keep_list_v1'
+    """).fetchone()[0]
+    if n:
+        n_rows = con.execute(
+            f"SELECT COUNT(*) FROM {KEEP_LIST_FQ} "
+            f"WHERE registered_by_script='270b_step_2'").fetchone()[0]
+        if n_rows:
+            reasons.append(
+                f"main_schema_keep_list_v1 already has {n_rows} rows "
+                f"registered by 270b_step_2"
+            )
+
+    # 2. v1_1_tech_debt_v1 already exists with our row
+    n = con.execute(f"""
+        SELECT COUNT(*) FROM information_schema.tables
+        WHERE table_catalog='{PUBLICATION_DB}'
+          AND table_schema='manuscript_workspace'
+          AND table_name='v1_1_tech_debt_v1'
+    """).fetchone()[0]
+    if n:
+        n_rows = con.execute(
+            f"SELECT COUNT(*) FROM {TECH_DEBT_FQ} "
+            f"WHERE debt_id='laterality_bare_column_name_v1_1'"
+        ).fetchone()[0]
+        if n_rows:
+            reasons.append("v1_1_tech_debt_v1 already has our laterality row")
+
+    # 3. __conventions already has our convention IDs
+    new_conv_ids = (
+        "identity_column_self_reference",
+        "assembly_bookkeeping_build_pipeline",
+        "single_source_rollup_inherits_feeder",
+        "derived_column_build_pipeline",
+        "feeder_eligibility_patterns",
+        "main_schema_keep_list",
+        "v1_1_tech_debt_register",
     )
-    return 2
+    n = con.execute(f"""
+        SELECT COUNT(*) FROM {CONVENTIONS_FQ}
+        WHERE convention_id IN ({','.join(repr(c) for c in new_conv_ids)})
+    """).fetchone()[0]
+    if n:
+        reasons.append(f"__conventions already has {n} of our 7 new IDs")
+
+    # 4. v1_1_finalization_audit_v1 already has step_2_* rows
+    n = con.execute(f"""
+        SELECT COUNT(*) FROM {AUDIT_FQ}
+        WHERE script_num='270' AND finding_id LIKE 'step_2_%'
+    """).fetchone()[0]
+    if n:
+        reasons.append(f"audit table already has {n} step_2_* rows")
+
+    # 5. triage table already has resolution_feeder column with non-null rows
+    has_col = con.execute(f"""
+        SELECT COUNT(*) FROM information_schema.columns
+        WHERE table_catalog='{PUBLICATION_DB}'
+          AND table_schema='manuscript_workspace'
+          AND table_name='cpm_unmapped_triage_v265'
+          AND column_name='resolution_feeder'
+    """).fetchone()[0]
+    if has_col:
+        n_resolved = con.execute(f"""
+            SELECT COUNT(*) FROM {WS}.cpm_unmapped_triage_v265
+            WHERE resolution_feeder IS NOT NULL
+        """).fetchone()[0]
+        if n_resolved:
+            reasons.append(
+                f"triage table already has {n_resolved} resolved rows"
+            )
+    return reasons
+
+
+def ensure_triage_resolution_columns(con, log) -> None:
+    """ALTER TABLE one column at a time (DuckDB requires single-ADD)."""
+    cols_to_add = [
+        ("resolution_feeder", "VARCHAR"),
+        ("resolution_method", "VARCHAR"),
+        ("resolved_at", "TIMESTAMP"),
+        ("resolved_by_script", "VARCHAR"),
+    ]
+    existing = {r[0] for r in con.execute(f"""
+        SELECT column_name FROM information_schema.columns
+        WHERE table_catalog='{PUBLICATION_DB}'
+          AND table_schema='manuscript_workspace'
+          AND table_name='cpm_unmapped_triage_v265'
+    """).fetchall()}
+    for name, typ in cols_to_add:
+        if name in existing:
+            log(f"  triage col {name!r} already present, skipping")
+            continue
+        con.execute(
+            f"ALTER TABLE {WS}.cpm_unmapped_triage_v265 ADD COLUMN {name} {typ}"
+        )
+        log(f"  ADD COLUMN triage.{name} {typ}")
+
+
+def ensure_keep_list_table(con, log) -> None:
+    con.execute(f"""
+        CREATE TABLE IF NOT EXISTS {KEEP_LIST_FQ} (
+            table_name              VARCHAR NOT NULL,
+            schema_at_registration  VARCHAR NOT NULL,
+            keep_reason             VARCHAR NOT NULL,
+            registered_by_script    VARCHAR NOT NULL,
+            registered_at           TIMESTAMP NOT NULL,
+            phase_b_disposition     VARCHAR,
+            sunset_trigger          VARCHAR,
+            sunset_audit_finding_id VARCHAR,
+            notes                   VARCHAR
+        )
+    """)
+    log(f"  ensured {KEEP_LIST_FQ}")
+
+
+def ensure_tech_debt_table(con, log) -> None:
+    con.execute(f"""
+        CREATE TABLE IF NOT EXISTS {TECH_DEBT_FQ} (
+            debt_id             VARCHAR PRIMARY KEY,
+            category            VARCHAR NOT NULL,
+            description         VARCHAR NOT NULL,
+            recommendation      VARCHAR NOT NULL,
+            registered_by       VARCHAR NOT NULL,
+            registered_at       TIMESTAMP NOT NULL,
+            target_version      VARCHAR,
+            status              VARCHAR DEFAULT 'OPEN',
+            resolved_at         TIMESTAMP,
+            resolved_by_script  VARCHAR
+        )
+    """)
+    log(f"  ensured {TECH_DEBT_FQ}")
+
+
+def ensure_build_pipeline_registry_row(
+    con, build_pipeline_cols: list[str], log
+) -> bool:
+    """INSERT build_pipeline row if missing. Returns True if inserted."""
+    n = con.execute(f"""
+        SELECT COUNT(*) FROM {WS}.detail_table_registry_v1
+        WHERE detail_table_name='build_pipeline'
+    """).fetchone()[0]
+    if n:
+        log(f"  build_pipeline registry row already exists, will UPDATE only")
+        return False
+    sorted_cols = sorted(set(build_pipeline_cols))
+    norm_str = ";".join(sorted_cols)
+    con.execute(f"""
+        INSERT INTO {WS}.detail_table_registry_v1 (
+            detail_table_name, schema_name, join_key, grain,
+            total_rows, total_patients, domain,
+            feeds_master_columns, description, canonical_version,
+            feeds_master_columns_normalized, feeds_master_columns_secondary
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)
+    """, (
+        "build_pipeline", "synthetic", "research_id", "patient",
+        10871, 10871, "Build Pipeline",
+        norm_str,
+        "Synthetic feeder for CPM columns computed in the assembly "
+        "pipeline (composite scores, NLP-derived booleans, aggregates, "
+        "Bucket-B computed scores, Bucket-C cols with no upstream "
+        "physical feeder). Registered by Script 270b Step 2 to remove "
+        "such columns from the unmapped backlog without faking a "
+        "physical feeder. Not a queryable table.",
+        "v270",
+        norm_str,
+    ))
+    log(f"  INSERTED build_pipeline registry row "
+        f"(feeds_master_columns_normalized = {len(sorted_cols)} cols)")
+    return True
+
+
+def apply_registry_closures(
+    con, decisions_by_feeder: dict[str, list[str]], log
+) -> dict[str, dict]:
+    """For each feeder, append cpm cols to feeds_master_columns_normalized
+    (preserving existing). Returns per-feeder before/after column counts.
+    Skip 'build_pipeline' (already populated by ensure_build_pipeline_registry_row).
+    """
+    deltas: dict[str, dict] = {}
+    for feeder, new_cols in sorted(decisions_by_feeder.items()):
+        if feeder == "build_pipeline":
+            continue
+        # Read existing
+        row = con.execute(f"""
+            SELECT feeds_master_columns_normalized
+            FROM {WS}.detail_table_registry_v1
+            WHERE detail_table_name = ?
+        """, [feeder]).fetchone()
+        if not row:
+            log(f"  WARN: feeder {feeder!r} not in registry; skipping")
+            deltas[feeder] = {"error": "not_in_registry", "new_cols": new_cols}
+            continue
+        existing_str = row[0] or ""
+        existing_set = {tok.strip() for tok in existing_str.split(";") if tok.strip()}
+        merged = sorted(existing_set | set(new_cols))
+        merged_str = ";".join(merged)
+        before = len(existing_set)
+        after = len(merged)
+        added = after - before
+        if added == 0:
+            log(f"  {feeder}: no-op (all {len(new_cols)} new cols already present)")
+        else:
+            con.execute(f"""
+                UPDATE {WS}.detail_table_registry_v1
+                SET feeds_master_columns_normalized = ?
+                WHERE detail_table_name = ?
+            """, [merged_str, feeder])
+            log(f"  {feeder}: +{added} cols (was {before}, now {after})")
+        deltas[feeder] = {
+            "before": before, "after": after, "added": added,
+            "new_cols": new_cols,
+        }
+    return deltas
+
+
+def update_triage_resolution_metadata(
+    con, decisions_per_col: dict[str, dict], run_ts: datetime, log
+) -> int:
+    """UPDATE triage rows with resolution_feeder/method/at/script.
+    decisions_per_col: {cpm_col: {'feeder': ..., 'method': ...}}
+    Returns count of rows updated."""
+    if not decisions_per_col:
+        return 0
+    n_updated = 0
+    for col, dec in decisions_per_col.items():
+        con.execute(f"""
+            UPDATE {WS}.cpm_unmapped_triage_v265
+            SET resolution_feeder = ?,
+                resolution_method = ?,
+                resolved_at = ?,
+                resolved_by_script = ?
+            WHERE column_name = ?
+        """, [
+            dec["feeder"], dec["method"], run_ts, "270b_step_2", col,
+        ])
+        n_updated += 1
+    log(f"  triage resolution metadata updated for {n_updated} rows")
+    return n_updated
+
+
+def main_execute() -> int:
+    log_lines: list[str] = []
+
+    def log(msg: str) -> None:
+        line = msg if msg.endswith("\n") else msg + "\n"
+        log_lines.append(line)
+        print(msg)
+
+    started_at = datetime.now(timezone.utc)
+    log(f"=== START 270b Step 2 (--EXECUTE) ===")
+    log(f"started_at: {started_at.isoformat()}")
+
+    con = connect_locked()
+    log(f"connected to {PUBLICATION_DB}")
+
+    # ----- Pre-execute idempotency -----
+    log("\n--- pre-execute idempotency check ---")
+    abort_reasons = pre_execute_idempotency_check(con)
+    if abort_reasons:
+        log("ABORT — idempotency guard fired:")
+        for r in abort_reasons:
+            log(f"  - {r}")
+        log("Re-running --execute is a no-op once it succeeded; aborting.")
+        EXECUTE_LOG.write_text("".join(log_lines))
+        return 0
+    log("  all clear")
+
+    # ----- Re-run matcher to get fresh decisions -----
+    log("\n--- pre-fetch + matcher re-run ---")
+    registry = fetch_registry(con)
+    feeder_cols = fetch_table_columns(con, registry)
+    bucket_c_cols = fetch_triage(con, "C_missing_feeder")
+    bucket_b_cols = fetch_triage(con, "B_computed_score")
+    log(f"  registry: {len(registry)} rows")
+    log(f"  Bucket-C: {len(bucket_c_cols)}")
+    log(f"  Bucket-B: {len(bucket_b_cols)}")
+
+    decisions_c = [match_one(c, registry, feeder_cols) for c in bucket_c_cols]
+
+    # Override ambiguous decisions with the human-resolved values from CSV
+    resolutions = read_ambiguous_resolutions()
+    log(f"  ambiguous resolutions read from CSV: {len(resolutions)}")
+    for d in decisions_c:
+        if d["category"] == "ambiguous":
+            r = resolutions.get(d["cpm_col"])
+            if not r:
+                log(f"FAIL: ambiguous col {d['cpm_col']!r} has no resolution")
+                EXECUTE_LOG.write_text("".join(log_lines))
+                return 1
+            d["resolved_feeder"] = r
+            d["category"] = (
+                "build_pipeline" if r == "build_pipeline"
+                else ("obvious" if r == "canonical_patient_master" else "obvious")
+            )
+            d["match_method"] = "human_resolved_ambiguous"
+            d["stage"] = -1
+
+    # Bucket-B: all -> build_pipeline
+    decisions_b = []
+    for col in bucket_b_cols:
+        d = _new_decision(col)
+        d.update({
+            "stage": 0,
+            "match_method": "bucket_b_auto_build_pipeline",
+            "resolved_feeder": "build_pipeline",
+            "category": "build_pipeline",
+        })
+        decisions_b.append(d)
+
+    all_decisions = decisions_c + decisions_b
+    all_feeders = {d["resolved_feeder"] for d in all_decisions}
+    log(f"  unique resolution_feeders across all 174+49: {len(all_feeders)}")
+
+    # ----- Pre-flight feeder validation -----
+    log("\n--- pre-flight resolution_feeder validation ---")
+    fv = validate_resolution_feeders(con, all_feeders)
+    fails = [k for k, v in fv.items() if v.startswith("FAIL")]
+    for k, v in sorted(fv.items()):
+        log(f"  {k:<55} {v}")
+    if fails:
+        log(f"\nABORT — {len(fails)} resolution_feeder(s) failed queryability check:")
+        for f in fails:
+            log(f"  {f}: {fv[f]}")
+        EXECUTE_LOG.write_text("".join(log_lines))
+        return 1
+    log(f"  all {len(fv)} feeders queryable / allowlisted")
+
+    # ----- Schema setup -----
+    log("\n--- schema setup ---")
+    ensure_triage_resolution_columns(con, log)
+    ensure_keep_list_table(con, log)
+    ensure_tech_debt_table(con, log)
+
+    # ----- Group decisions by feeder -----
+    by_feeder: dict[str, list[str]] = {}
+    for d in all_decisions:
+        by_feeder.setdefault(d["resolved_feeder"], []).append(d["cpm_col"])
+    log(f"\n--- decisions by feeder ({len(by_feeder)} unique) ---")
+    for f in sorted(by_feeder):
+        log(f"  {f:<55} +{len(by_feeder[f])} col(s)")
+
+    # ----- Insert build_pipeline registry row (if missing) -----
+    log("\n--- build_pipeline registry row ---")
+    bp_cols = by_feeder.get("build_pipeline", [])
+    bp_inserted = ensure_build_pipeline_registry_row(con, bp_cols, log)
+
+    # ----- Apply registry closures (UPDATE feeds_master_columns_normalized) -----
+    log("\n--- apply registry closures ---")
+    deltas = apply_registry_closures(con, by_feeder, log)
+
+    # ----- Update triage resolution metadata -----
+    log("\n--- triage resolution metadata ---")
+    decisions_per_col = {
+        d["cpm_col"]: {
+            "feeder": d["resolved_feeder"],
+            "method": d["match_method"],
+        }
+        for d in all_decisions
+    }
+    n_triage_updated = update_triage_resolution_metadata(
+        con, decisions_per_col, started_at, log)
+
+    # ----- Re-query 37-row registry-NULL residual -----
+    log("\n--- post-execute registry residual ---")
+    residual_rows = con.execute(f"""
+        SELECT detail_table_name, domain, schema_name,
+               CASE WHEN feeds_master_columns_normalized IS NULL THEN 'NULL'
+                    WHEN feeds_master_columns_normalized = '' THEN 'EMPTY'
+                    WHEN feeds_master_columns_normalized LIKE '%TODO%' THEN 'TODO'
+                    ELSE 'OK' END AS state
+        FROM {WS}.detail_table_registry_v1
+        WHERE feeds_master_columns_normalized IS NULL
+           OR feeds_master_columns_normalized = ''
+           OR feeds_master_columns_normalized LIKE '%TODO%'
+        ORDER BY detail_table_name
+    """).fetchall()
+    log(f"  registry rows still unmapped: {len(residual_rows)}")
+    with REGISTRY_NULL_POST_CSV.open("w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["detail_table_name", "domain", "schema_name", "state"])
+        for r in residual_rows:
+            w.writerow(r)
+    log(f"  wrote {REGISTRY_NULL_POST_CSV}")
+    # Classify legit-unmapped (catalog/master/CPM/data_dictionary)
+    legit_patterns = ("__readme", "canonical_patient_master",
+                      "data_dictionary_v240")
+    legit = [r for r in residual_rows if r[0] in legit_patterns]
+    other = [r for r in residual_rows if r[0] not in legit_patterns]
+    log(f"  legit-unmapped (catalog/master/dict): {len(legit)}")
+    log(f"  other unmapped (potential follow-up): {len(other)}")
+
+    # ----- Insert keep-list rows -----
+    log("\n--- keep-list rows ---")
+    keep_list_rows = [
+        ("ete_adjudication_v1", "main", "review_artifact",
+         "270b_step_2", started_at, None,
+         "45 rows: 19 applied via ete_grade_final_v2; 26 retained as "
+         "present_ungraded per AGENTS.md _v2 contract (standing register at "
+         "docs/270_ete_low_conf_register.csv)",
+         "step_1a_ete_already_applied_in_v2",
+         "Not a production feeder. Standing review artifact."),
+        ("path_size_adjudication_v241", "main", "human_review_pending",
+         "270b_step_2", started_at, None,
+         "All 96 rows in scripts/output/270_path_size_human_review.csv have "
+         "non-null reviewer_decision",
+         "step_1b_path_size_deferred_for_clinician",
+         "Blocks Phase B archival until clinician review complete."),
+    ]
+    for r in keep_list_rows:
+        con.execute(f"""
+            INSERT INTO {KEEP_LIST_FQ}
+                (table_name, schema_at_registration, keep_reason,
+                 registered_by_script, registered_at, phase_b_disposition,
+                 sunset_trigger, sunset_audit_finding_id, notes)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, r)
+        log(f"  inserted keep-list: {r[0]}")
+
+    # ----- Insert tech_debt row -----
+    log("\n--- tech_debt rows ---")
+    debt_rows = [
+        ("laterality_bare_column_name_v1_1", "column_naming",
+         "CPM has a bare 'laterality' column whose feeder resolution required "
+         "manual disambiguation (ambiguous among 11 candidate tables: tumor, "
+         "nodule, LN, surgical contexts after EXCLUDE_PATTERNS filter). Bare "
+         "name obscures which clinical context it refers to.",
+         "Rename to 'primary_tumor_laterality' in v1_1. Update "
+         "canonical_tumor_characteristics_v1 assembly accordingly. Preserve "
+         "old column as view for backward compat during transition.",
+         "270b_step_2", started_at, "v1_1", "OPEN", None, None),
+    ]
+    for r in debt_rows:
+        con.execute(f"""
+            INSERT INTO {TECH_DEBT_FQ}
+                (debt_id, category, description, recommendation,
+                 registered_by, registered_at, target_version,
+                 status, resolved_at, resolved_by_script)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, r)
+        log(f"  inserted tech_debt: {r[0]}")
+
+    # ----- Insert convention rows -----
+    log("\n--- conventions ---")
+    convs = [
+        ("identity_column_self_reference", "registry_mapping",
+         "Identity columns on canonical_patient_master (the spine itself - "
+         "research_id) resolve to feeder = canonical_patient_master "
+         "(self-reference). Self-reference is VALID ONLY for identity columns; "
+         "no clinical column may use it. Matcher must reject self-reference "
+         "for any column not on the IDENTITY_ALLOWLIST.",
+         "Script 270b Step 2 ambiguous row: research_id. 104 candidate tables "
+         "(every detail table has it), but none 'feed' it; the spine generates it.",
+         "script_270b_step_2"),
+        ("assembly_bookkeeping_build_pipeline", "registry_mapping",
+         "CPM columns recording how the row was assembled rather than clinical "
+         "facts about the patient resolve to feeder = build_pipeline. "
+         "Column-name triggers: provenance_*, source_script, source_table, "
+         "source_method, *_assembled_at, *_computed_at, *_confidence_meta.",
+         "Script 270b Step 2: provenance_note, source_script, source_table, "
+         "provenance_confidence -> build_pipeline.",
+         "script_270b_step_2"),
+        ("single_source_rollup_inherits_feeder", "registry_mapping",
+         "CPM columns produced by a MAX/MIN/FIRST/LAST/COUNT aggregation over "
+         "a single feeder table resolve to that feeder, not build_pipeline. "
+         "Contrast with derived_column_build_pipeline which applies to 2+ "
+         "feeder inputs or arithmetic transforms.",
+         "last_tg_date = MAX(tg_date) over tg_timeline_patient_summary_v1 -> "
+         "tg_timeline_patient_summary_v1.",
+         "script_270b_step_2"),
+        ("derived_column_build_pipeline", "registry_mapping",
+         "CPM columns computed from two or more feeder columns via arithmetic, "
+         "string manipulation, conditional logic, or aggregation at assembly "
+         "time resolve to feeder = build_pipeline, NOT to any of the input "
+         "feeders. Straight copies and single-source rollups (MAX, MIN, FIRST, "
+         "LAST over one feeder column) resolve to the source feeder.",
+         "age_at_surgery (computed from DOB - surgery_date when not pre-computed) "
+         "-> build_pipeline. Contrast: last_tg_date (MAX over single feeder) -> "
+         "tg_timeline_patient_summary_v1.",
+         "script_270b_step_2"),
+        ("feeder_eligibility_patterns", "registry_mapping",
+         "Feeder candidate matching EXCLUDES tables whose names match any "
+         "EXCLUDE_PATTERNS regex: derived subsets (^analysis_.*_subset_v\\d+$), "
+         "cohort views (^manuscript_cohort_v\\d+$), catalog tables (^__readme$, "
+         "^data_dictionary_v\\d+$), dictionaries (^molecular_*_dictionary$, "
+         "^molecular_code_crosswalk$, ^molecular_ingestion_runs$), human-review "
+         "artifacts (.*_review_v\\d+$), audit/discordance/dedup tables, and "
+         "canonical_patient_master itself. Identity columns per "
+         "IDENTITY_ALLOWLIST override EXCLUDE for self-reference. "
+         "Domain='Analysis' alone is NOT an exclude signal: full-cohort "
+         "resolvers (10,871-row 1:1 tables) in that domain are legitimate "
+         "feeders.",
+         "Script 270b Step 2 post-fix: patient_analysis_resolved_v1 "
+         "(domain='Analysis', 10,871 rows) passes EXCLUDE_PATTERNS as a "
+         "resolver; analysis_molecular_subset_v1 (domain='Analysis', 10,025 rows) "
+         "is excluded by ^analysis_.*_subset_v\\d+$.",
+         "script_270b_step_2"),
+        ("main_schema_keep_list", "archival_discipline",
+         "Tables in main schema that are NOT production feeders (review "
+         "artifacts, pending-human-review artifacts, staged adjudications) MUST "
+         "be registered in manuscript_workspace.main_schema_keep_list_v1 with "
+         "a sunset_trigger. Any Phase B or later archival sweep MUST consult "
+         "this table and skip any registered name. Removal from the keep list "
+         "requires meeting the sunset trigger AND logging to "
+         "v1_1_finalization_audit_v1.",
+         "Script 270b Step 2: ete_adjudication_v1 (review_artifact), "
+         "path_size_adjudication_v241 (human_review_pending) registered.",
+         "script_270b_step_2"),
+        ("v1_1_tech_debt_register", "convention_drift",
+         "Scripts that identify naming/structural debt out of scope for the "
+         "current release register the debt in manuscript_workspace.v1_1_tech_debt_v1 "
+         "rather than dropping it in a comment. Each row carries a debt_id, "
+         "recommendation, target_version, and status. v1_1 release script "
+         "consults this table for backlog.",
+         "Script 270b Step 2: laterality_bare_column_name_v1_1 registered.",
+         "script_270b_step_2"),
+    ]
+    for r in convs:
+        con.execute(f"""
+            INSERT INTO {CONVENTIONS_FQ}
+                (convention_id, category, rule, exemplar, established_in)
+            VALUES (?, ?, ?, ?, ?)
+        """, r)
+        log(f"  inserted convention: {r[0]}")
+
+    # ----- Bucket-B auto-applied CSV (for provenance) -----
+    with BUCKET_B_AUTO_CSV.open("w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow([
+            "# generated_by", "scripts/270b_phase_a_step_2_registry.py --execute",
+            "generated_at", started_at.isoformat(),
+        ])
+        w.writerow(["cpm_col", "resolved_feeder", "match_method", "source_set"])
+        for d in decisions_b:
+            w.writerow([d["cpm_col"], d["resolved_feeder"],
+                        d["match_method"], "B_computed_score"])
+    log(f"\n  wrote {BUCKET_B_AUTO_CSV} ({len(decisions_b)} rows)")
+
+    # ----- Bucket-C applied CSV (for provenance) -----
+    with BUCKET_C_APPLIED_CSV.open("w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow([
+            "# generated_by", "scripts/270b_phase_a_step_2_registry.py --execute",
+            "generated_at", started_at.isoformat(),
+        ])
+        w.writerow(["cpm_col", "resolved_feeder", "match_method",
+                    "stage", "category"])
+        for d in decisions_c:
+            w.writerow([
+                d["cpm_col"], d["resolved_feeder"], d["match_method"],
+                d.get("stage"), d["category"],
+            ])
+    log(f"  wrote {BUCKET_C_APPLIED_CSV} ({len(decisions_c)} rows)")
+
+    # ----- Audit rows -----
+    log("\n--- audit rows ---")
+    audit_rows = [
+        ("270", "step_2_bucket_b_closed", "bucket_b_unmapped",
+         len(bucket_b_cols), 0, 0, "OK",
+         f"All {len(bucket_b_cols)} Bucket-B (B_computed_score) cols "
+         "auto-assigned to build_pipeline feeder per feeder_eligibility_"
+         "patterns + assembly_bookkeeping_build_pipeline conventions."),
+        ("270", "step_2_bucket_c_closed", "bucket_c_unmapped",
+         len(bucket_c_cols), 0, 0, "OK",
+         f"All {len(bucket_c_cols)} Bucket-C (C_missing_feeder) cols "
+         f"resolved: {sum(1 for d in decisions_c if d['category']=='obvious')} "
+         f"obvious + {sum(1 for d in decisions_c if d['category']=='build_pipeline')} "
+         f"build_pipeline + 2 human-resolved (last_tg_date->tg_timeline_"
+         f"patient_summary_v1, race->patient_analysis_resolved_v1). Matcher "
+         f"v3: Stage 0 (identity_self_ref + assembly_bookkeeping), "
+         f"Stage 1 with full-cohort tie-break, Stages 2-3-4 fallback. "
+         f"EXCLUDE_PATTERNS dropped Master/Catalog/derived-subset/cohort/"
+         f"dictionary/review/audit feeders."),
+        ("270", "step_2_registry_null_residual", "detail_table_registry_v1_unmapped",
+         37, len(residual_rows),
+         max(0, len(residual_rows) - len(legit)),  # target = non-legit residual
+         "OK" if len(other) == 0 else "DOCUMENTED_NOOP",
+         f"Post-Step-2 unmapped registry rows: {len(residual_rows)} total; "
+         f"{len(legit)} legit-unmapped (catalogs/master: {[r[0] for r in legit]}); "
+         f"{len(other)} other (potential v1_1 follow-up: {[r[0] for r in other][:10]})."),
+        ("270", "step_2_build_pipeline_registered", "build_pipeline_registry_rows",
+         0 if bp_inserted else 1, 1, 1, "OK",
+         f"Synthetic build_pipeline feeder registered in "
+         f"detail_table_registry_v1 with {len(set(bp_cols))} mapped cols "
+         f"(174 Bucket-C + 49 Bucket-B - obvious matches to other feeders). "
+         f"{'Newly INSERTED' if bp_inserted else 'Already existed'}."),
+        ("270", "step_2_keep_list_registered", "main_schema_keep_list_v1_rows",
+         0, len(keep_list_rows), len(keep_list_rows), "OK",
+         f"Registered {len(keep_list_rows)} review artifacts: "
+         f"{[r[0] for r in keep_list_rows]}. "
+         "Phase B archival sweep MUST consult main_schema_keep_list_v1 "
+         "before considering main-schema tables for archival."),
+        ("270", "step_2_tech_debt_registered", "v1_1_tech_debt_v1_rows",
+         0, len(debt_rows), len(debt_rows), "OK",
+         f"Registered {len(debt_rows)} tech-debt items: "
+         f"{[r[0] for r in debt_rows]}. v1_1 release planning consults "
+         "v1_1_tech_debt_v1 for backlog."),
+        ("270", "step_2_conventions_registered", "__conventions_new_rows",
+         0, len(convs), len(convs), "OK",
+         f"Registered {len(convs)} new conventions: "
+         f"{[c[0] for c in convs]}."),
+    ]
+    for r in audit_rows:
+        con.execute(f"""
+            INSERT INTO {AUDIT_FQ}
+                (run_ts, script_num, finding_id, metric,
+                 count_before, count_after, target_after, status, notes)
+            VALUES (CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, r)
+        log(f"  audit: {r[1]:<45} status={r[6]:<20} {r[3]} -> {r[4]}")
+
+    # ----- Final status distribution -----
+    final_status = dict(con.execute(f"""
+        SELECT status, COUNT(*) FROM {AUDIT_FQ}
+        GROUP BY status ORDER BY 2 DESC
+    """).fetchall())
+    log(f"\n  final audit status distribution: {final_status}")
+
+    # ----- Summary -----
+    summary = {
+        "started_at": started_at.isoformat(),
+        "finished_at": datetime.now(timezone.utc).isoformat(),
+        "publication_db": PUBLICATION_DB,
+        "mode": "execute",
+        "matcher_version": "v3",
+        "feeder_validation": fv,
+        "bucket_b_input": len(bucket_b_cols),
+        "bucket_c_input": len(bucket_c_cols),
+        "bucket_b_closed": len(decisions_b),
+        "bucket_c_closed": len(decisions_c),
+        "ambiguous_resolutions_used": resolutions,
+        "decisions_by_feeder_counts": {f: len(c) for f, c in by_feeder.items()},
+        "registry_closures": deltas,
+        "build_pipeline_registry_inserted": bp_inserted,
+        "build_pipeline_total_cols": len(set(bp_cols)),
+        "triage_rows_updated": n_triage_updated,
+        "registry_residual_total": len(residual_rows),
+        "registry_residual_legit_unmapped": len(legit),
+        "registry_residual_other": len(other),
+        "registry_residual_other_rows": [r[0] for r in other],
+        "keep_list_rows_inserted": len(keep_list_rows),
+        "tech_debt_rows_inserted": len(debt_rows),
+        "conventions_inserted": len(convs),
+        "audit_rows_inserted": len(audit_rows),
+        "final_audit_status_distribution": {k: int(v) for k, v in final_status.items()},
+        "outputs": {
+            "bucket_b_auto": str(BUCKET_B_AUTO_CSV),
+            "bucket_c_applied": str(BUCKET_C_APPLIED_CSV),
+            "registry_null_post": str(REGISTRY_NULL_POST_CSV),
+        },
+    }
+    EXECUTE_SUMMARY.write_text(json.dumps(summary, indent=2, default=str))
+    EXECUTE_LOG.write_text("".join(log_lines))
+    log(f"\n  wrote {EXECUTE_SUMMARY}")
+    log(f"  wrote {EXECUTE_LOG}")
+    log(f"=== END 270b Step 2 (--EXECUTE) ===")
+    EXECUTE_LOG.write_text("".join(log_lines))
+    return 0
 
 
 def main() -> int:

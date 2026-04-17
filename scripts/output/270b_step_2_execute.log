@@ -1,0 +1,100 @@
+=== START 270b Step 2 (--EXECUTE) ===
+started_at: 2026-04-17T06:28:01.072314+00:00
+connected to thyroid_canonical_publication_v1_0
+
+--- pre-execute idempotency check ---
+  all clear
+
+--- pre-fetch + matcher re-run ---
+  registry: 116 rows
+  Bucket-C: 174
+  Bucket-B: 49
+  ambiguous resolutions read from CSV: 2
+  unique resolution_feeders across all 174+49: 9
+
+--- pre-flight resolution_feeder validation ---
+  build_pipeline                                          OK_ALLOWLIST
+  canonical_patient_master                                OK_ALLOWLIST
+  complication_patient_summary_v1                         OK
+  extracted_fna_bethesda_v1                               OK
+  imaging_patient_summary_v1                              OK
+  patient_analysis_resolved_v1                            OK
+  patient_tumor_rollup_v1                                 OK
+  tg_timeline_patient_summary_v1                          OK
+  tumor_episode_master_v2                                 OK
+  all 9 feeders queryable / allowlisted
+
+--- schema setup ---
+  ADD COLUMN triage.resolution_feeder VARCHAR
+  ADD COLUMN triage.resolution_method VARCHAR
+  ADD COLUMN triage.resolved_at TIMESTAMP
+  ADD COLUMN triage.resolved_by_script VARCHAR
+  ensured "thyroid_canonical_publication_v1_0".manuscript_workspace.main_schema_keep_list_v1
+  ensured "thyroid_canonical_publication_v1_0".manuscript_workspace.v1_1_tech_debt_v1
+
+--- decisions by feeder (9 unique) ---
+  build_pipeline                                          +187 col(s)
+  canonical_patient_master                                +1 col(s)
+  complication_patient_summary_v1                         +4 col(s)
+  extracted_fna_bethesda_v1                               +1 col(s)
+  imaging_patient_summary_v1                              +2 col(s)
+  patient_analysis_resolved_v1                            +10 col(s)
+  patient_tumor_rollup_v1                                 +13 col(s)
+  tg_timeline_patient_summary_v1                          +4 col(s)
+  tumor_episode_master_v2                                 +1 col(s)
+
+--- build_pipeline registry row ---
+  INSERTED build_pipeline registry row (feeds_master_columns_normalized = 187 cols)
+
+--- apply registry closures ---
+  canonical_patient_master: +1 cols (was 0, now 1)
+  complication_patient_summary_v1: +4 cols (was 3, now 7)
+  extracted_fna_bethesda_v1: +1 cols (was 3, now 4)
+  imaging_patient_summary_v1: +2 cols (was 4, now 6)
+  patient_analysis_resolved_v1: +10 cols (was 3, now 13)
+  patient_tumor_rollup_v1: +13 cols (was 44, now 57)
+  tg_timeline_patient_summary_v1: +4 cols (was 6, now 10)
+  tumor_episode_master_v2: +1 cols (was 1, now 2)
+
+--- triage resolution metadata ---
+  triage resolution metadata updated for 223 rows
+
+--- post-execute registry residual ---
+  registry rows still unmapped: 36
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_registry_null_post_execute.csv
+  legit-unmapped (catalog/master/dict): 2
+  other unmapped (potential follow-up): 34
+
+--- keep-list rows ---
+  inserted keep-list: ete_adjudication_v1
+  inserted keep-list: path_size_adjudication_v241
+
+--- tech_debt rows ---
+  inserted tech_debt: laterality_bare_column_name_v1_1
+
+--- conventions ---
+  inserted convention: identity_column_self_reference
+  inserted convention: assembly_bookkeeping_build_pipeline
+  inserted convention: single_source_rollup_inherits_feeder
+  inserted convention: derived_column_build_pipeline
+  inserted convention: feeder_eligibility_patterns
+  inserted convention: main_schema_keep_list
+  inserted convention: v1_1_tech_debt_register
+
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_bucket_b_auto_applied.csv (49 rows)
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_bucket_c_applied.csv (174 rows)
+
+--- audit rows ---
+  audit: step_2_bucket_b_closed                        status=OK                   49 -> 0
+  audit: step_2_bucket_c_closed                        status=OK                   174 -> 0
+  audit: step_2_registry_null_residual                 status=DOCUMENTED_NOOP      37 -> 36
+  audit: step_2_build_pipeline_registered              status=OK                   0 -> 1
+  audit: step_2_keep_list_registered                   status=OK                   0 -> 2
+  audit: step_2_tech_debt_registered                   status=OK                   0 -> 1
+  audit: step_2_conventions_registered                 status=OK                   0 -> 7
+
+  final audit status distribution: {'OK': 32, 'DOCUMENTED_NOOP': 4, 'OK_BACKFILLED_270': 3, 'DOCUMENTED_GAP': 3, 'OK_DEFERRED_HUMAN': 1}
+
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_step_2_execute_summary.json
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_step_2_execute.log
+=== END 270b Step 2 (--EXECUTE) ===
