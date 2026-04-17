@@ -1,0 +1,37 @@
+[11:47:18.704Z] ==============================================================================
+[11:47:18.704Z] # Script 266b run
+[11:47:18.704Z] started_at: 2026-04-17T11:47:18.704248+00:00
+[11:47:18.704Z] mode      : APPLY
+[11:47:18.704Z] phase     : 2
+[11:47:19.724Z] connected to thyroid_canonical_publication_v1_0
+[11:47:19.724Z] 
+## Phase 0 — preflight + sequencing gates
+[11:47:19.759Z]   connected_to        : thyroid_canonical_publication_v1_0
+[11:47:19.759Z]   cpm_n_patients      : 10871
+[11:47:19.759Z]   ctc_n_rows          : 11106
+[11:47:20.277Z]   GATE 266a applied   : data_dictionary_v266a exists = True
+[11:47:20.397Z]   GATE big-cleanup    : ajcc8_t_stage=True corrected=False v2=True DEPRECATED__present=True
+[11:47:20.517Z]   CTC has un-versioned t_stage : True
+[11:47:20.517Z]   CTC has un-versioned n_stage : True
+[11:47:20.517Z]   CTC has un-versioned m_stage : True
+[11:47:20.517Z]   CTC has un-versioned overall_stage : True
+[11:47:20.518Z]   CTC required inputs missing : none
+[11:47:20.518Z] 
+## Phase 2 — ALTER TABLE ADD COLUMN on CTC (14 columns)
+[11:47:20.627Z]   EXEC [add:t_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 ADD COLUMN t_stage_ajcc7 VARCHAR
+[11:47:20.928Z]   EXEC [add:n_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 ADD COLUMN n_stage_ajcc7 VARCHAR
+[11:47:21.316Z]   EXEC [add:m_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 ADD COLUMN m_stage_ajcc7 VARCHAR
+[11:47:21.523Z]   EXEC [add:overall_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 ADD COLUMN overall_stage_ajcc7 VARCHAR
+[11:47:21.816Z]   EXEC [add:stage_group_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 ADD COLUMN stage_group_ajcc7 VARCHAR
+[11:47:22.032Z]   EXEC [add:t_stage_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 ADD COLUMN t_stage_ajcc8 VARCHAR
+[11:47:22.396Z]   EXEC [add:n_stage_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 ADD COLUMN n_stage_ajcc8 VARCHAR
+[11:47:22.618Z]   EXEC [add:m_stage_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 ADD COLUMN m_stage_ajcc8 VARCHAR
+[11:47:22.916Z]   EXEC [add:overall_stage_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 ADD COLUMN overall_stage_ajcc8 VARCHAR
+[11:47:23.201Z]   EXEC [add:stage_group_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 ADD COLUMN stage_group_ajcc8 VARCHAR
+[11:47:23.450Z]   EXEC [add:ajcc7_stage_calculable_flag]: ALTER TABLE thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 ADD COLUMN ajcc7_stage_calculable_flag BOOLEAN
+[11:47:23.652Z]   EXEC [add:ajcc8_stage_calculable_flag]: ALTER TABLE thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 ADD COLUMN ajcc8_stage_calculable_flag BOOLEAN
+[11:47:23.925Z]   EXEC [add:staging_source_note]: ALTER TABLE thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 ADD COLUMN staging_source_note VARCHAR
+[11:47:24.159Z]   EXEC [add:stage_migration_7_to_8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 ADD COLUMN stage_migration_7_to_8 VARCHAR
+[11:47:24.598Z] 
+elapsed: 5.9s
+[11:47:24.599Z] DONE

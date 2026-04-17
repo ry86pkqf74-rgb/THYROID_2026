@@ -1,0 +1,25 @@
+[11:43:29.675Z] ==============================================================================
+[11:43:29.675Z] # Script 266b run
+[11:43:29.675Z] started_at: 2026-04-17T11:43:29.675285+00:00
+[11:43:29.675Z] mode      : APPLY
+[11:43:29.675Z] phase     : 1
+[11:43:30.743Z] connected to thyroid_canonical_publication_v1_0
+[11:43:30.743Z] 
+## Phase 0 — preflight + sequencing gates
+[11:43:30.796Z]   connected_to        : thyroid_canonical_publication_v1_0
+[11:43:30.796Z]   cpm_n_patients      : 10871
+[11:43:30.796Z]   ctc_n_rows          : 11106
+[11:43:31.203Z]   GATE 266a applied   : data_dictionary_v266a exists = True
+[11:43:31.274Z]   GATE big-cleanup    : ajcc8_t_stage=True corrected=False v2=True DEPRECATED__present=True
+[11:43:31.339Z]   CTC has un-versioned t_stage : True
+[11:43:31.339Z]   CTC has un-versioned n_stage : True
+[11:43:31.339Z]   CTC has un-versioned m_stage : True
+[11:43:31.339Z]   CTC has un-versioned overall_stage : True
+[11:43:31.339Z]   CTC required inputs missing : none
+[11:43:31.339Z] 
+## Phase 1 — snapshot CTC + CPM to archive_pub_v1_0
+[11:43:33.101Z]   snapshot -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_tumor_characteristics_v1_pre266b_20260417T114331Z"
+[11:43:37.553Z]   snapshot -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_pre266b_20260417T114331Z"
+[11:43:37.889Z] 
+elapsed: 8.2s
+[11:43:37.889Z] DONE

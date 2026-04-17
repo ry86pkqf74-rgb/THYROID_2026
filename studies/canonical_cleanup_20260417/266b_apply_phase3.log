@@ -1,0 +1,50 @@
+[11:57:46.813Z] ==============================================================================
+[11:57:46.813Z] # Script 266b run
+[11:57:46.813Z] started_at: 2026-04-17T11:57:46.813577+00:00
+[11:57:46.813Z] mode      : APPLY
+[11:57:46.813Z] phase     : 3
+[11:57:49.072Z] connected to thyroid_canonical_publication_v1_0
+[11:57:49.072Z] 
+## Phase 0 — preflight + sequencing gates
+[11:57:49.131Z]   connected_to        : thyroid_canonical_publication_v1_0
+[11:57:49.131Z]   cpm_n_patients      : 10871
+[11:57:49.132Z]   ctc_n_rows          : 11106
+[11:57:49.937Z]   GATE 266a applied   : data_dictionary_v266a exists = True
+[11:57:50.036Z]   GATE big-cleanup    : ajcc8_t_stage=True corrected=False v2=True DEPRECATED__present=True
+[11:57:50.136Z]   CTC has un-versioned t_stage : True
+[11:57:50.136Z]   CTC has un-versioned n_stage : True
+[11:57:50.136Z]   CTC has un-versioned m_stage : True
+[11:57:50.136Z]   CTC has un-versioned overall_stage : True
+[11:57:50.136Z]   CTC required inputs missing : none
+[11:57:50.136Z] 
+## Phase 3 — derive per-tumor AJCC7/AJCC8 (pandas + UPDATE CTC)
+[11:57:50.136Z]   pulling per-tumor frame ...
+[11:57:50.581Z]   rows: 18610  patients: 8422
+[11:57:50.932Z]   ete classification audit -> 266b_ete_classification_audit.csv (51 unique (stl_text, source) pairs)
+[11:57:50.935Z]   ete source counts: {'uncalculable:no_stl_no_adjudication': 9599, 'stl_per_tumor:unclassified_present': 4652, 'cpm_patient_level:broadcast_to_dominant:microscopic': 3371, 'stl_per_tumor:microscopic': 675, 'cpm_patient_level:broadcast_to_dominant:gross': 189, 'ete_adjudication_v1:unable_to_determine': 58, 'ete_adjudication_v1:absent': 42, 'cpm_patient_level:broadcast_to_dominant:absent': 14, 'ete_adjudication_v1:gross': 8, 'ete_adjudication_v1:microscopic': 2}
+[11:57:53.002Z]   staging frame ready: 18610 rows
+[11:57:53.002Z]   distribution snapshot (AJCC8 T per-tumor):
+[11:57:53.003Z]     {'T1a': 7452, None: 5425, 'T1b': 2633, 'T2': 1941, 'T3a': 962, 'T3b': 197}
+[11:57:53.003Z]   distribution snapshot (AJCC7 T per-tumor):
+[11:57:53.003Z]     {'T1a': 7452, None: 5425, 'T1b': 2633, 'T2': 1941, 'T3': 1159}
+[11:57:53.004Z]   calculable flags:
+[11:57:53.004Z]     ajcc8_stage_calculable_flag=TRUE : 12092
+[11:57:53.004Z]     ajcc7_stage_calculable_flag=TRUE : 13089
+[11:57:53.034Z]   EXEC [update_ctc]: UPDATE thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 AS t
+[11:57:57.635Z]   EXEC [comment:t_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1.t_stage_ajcc7 IS 'Per-tumor AJCC staging populated by Script 266b (
+[11:57:58.006Z]   EXEC [comment:n_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1.n_stage_ajcc7 IS 'Per-tumor AJCC staging populated by Script 266b (
+[11:57:58.221Z]   EXEC [comment:m_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1.m_stage_ajcc7 IS 'Per-tumor AJCC staging populated by Script 266b (
+[11:57:58.502Z]   EXEC [comment:overall_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1.overall_stage_ajcc7 IS 'Per-tumor AJCC staging populated by Script 
+[11:57:58.790Z]   EXEC [comment:stage_group_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1.stage_group_ajcc7 IS 'Per-tumor AJCC staging populated by Script 26
+[11:57:59.009Z]   EXEC [comment:t_stage_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1.t_stage_ajcc8 IS 'Per-tumor AJCC staging populated by Script 266b (
+[11:57:59.227Z]   EXEC [comment:n_stage_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1.n_stage_ajcc8 IS 'Per-tumor AJCC staging populated by Script 266b (
+[11:57:59.510Z]   EXEC [comment:m_stage_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1.m_stage_ajcc8 IS 'Per-tumor AJCC staging populated by Script 266b (
+[11:57:59.807Z]   EXEC [comment:overall_stage_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1.overall_stage_ajcc8 IS 'Per-tumor AJCC staging populated by Script 
+[11:58:00.088Z]   EXEC [comment:stage_group_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1.stage_group_ajcc8 IS 'Per-tumor AJCC staging populated by Script 26
+[11:58:00.317Z]   EXEC [comment:ajcc7_stage_calculable_flag]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1.ajcc7_stage_calculable_flag IS 'Per-tumor AJCC staging populated by
+[11:58:00.588Z]   EXEC [comment:ajcc8_stage_calculable_flag]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1.ajcc8_stage_calculable_flag IS 'Per-tumor AJCC staging populated by
+[11:58:00.967Z]   EXEC [comment:staging_source_note]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1.staging_source_note IS 'Per-tumor AJCC staging populated by Script 
+[11:58:01.192Z]   EXEC [comment:stage_migration_7_to_8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1.stage_migration_7_to_8 IS 'Per-tumor AJCC staging populated by Scri
+[11:58:01.595Z] 
+elapsed: 14.8s
+[11:58:01.595Z] DONE

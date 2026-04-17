@@ -1,8 +1,8 @@
 stl_ete_text,ete_source,n_tumors
-,uncalculable:no_stl_no_adjudication,9599
-x,stl_per_tumor:unclassified_present,4218
-x,cpm_patient_level:broadcast_to_dominant:microscopic,3107
-minimal,stl_per_tumor:microscopic,430
+,uncalculable:no_stl_no_adjudication,9606
+x,stl_per_tumor:unclassified_present,4231
+x,cpm_patient_level:broadcast_to_dominant:microscopic,3104
+minimal,stl_per_tumor:microscopic,436
 present,stl_per_tumor:unclassified_present,306
 present,cpm_patient_level:broadcast_to_dominant:microscopic,242
 microscopic,stl_per_tumor:microscopic,171

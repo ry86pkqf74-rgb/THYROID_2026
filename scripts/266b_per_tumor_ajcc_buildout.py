@@ -329,11 +329,43 @@ def compute_t_stage_per_tumor(row) -> str | None:
     size = row.get("tumor_size_cm")
     ete = str(row.get("ete_grade", "") or "").lower()
     gross_ete = row.get("gross_ete_flag") is True
+
+    # Fix C (2026-04-17): substrate-aware T-stage assignment.
+    # Substrate determines T3b vs T4a vs T4b for gross ETE per AJCC 8.
+    # Sources, in priority order:
+    #   1. STL extrathyroidal_extension text keywords
+    #   2. OED structure-specific flags (strap_muscle/tracheal/esophageal)
+    # OED currently carries no RLN/prevertebral/carotid flags -> those
+    # substrates only appear if STL text mentions them.
+    is_t4a = False
+    is_t4b = False
+    if any(k in ete for k in ("trachea", "tracheal", "cricoid",
+                               "esophag",
+                               "recurrent laryngeal", "rln",
+                               "invading trachea", "invading esophagus",
+                               "recurrent laryngeal nerve invasion")):
+        is_t4a = True
+    if any(k in ete for k in ("prevertebral", "carotid",
+                               "mediastinal vessels", "unresectable")):
+        is_t4b = True
+    if row.get("oed_trachea_flag") is True or row.get("oed_esophag_flag") is True:
+        is_t4a = True
+    # Note: OED.strap_muscle_involvement_flag does NOT escalate beyond T3b
+    # (strap-only invasion = T3b in AJCC 8). It just confirms gross.
+
     if pd.isna(size) or size is None:
+        if is_t4b:
+            return "T4b"
+        if is_t4a:
+            return "T4a"
         if gross_ete or "gross" in ete:
             return "T3b"
         return None
     size = float(size)
+    if is_t4b:
+        return "T4b"
+    if is_t4a:
+        return "T4a"
     if gross_ete or "gross" in ete:
         return "T3b"
     if size <= 1.0:
@@ -549,7 +581,20 @@ def phase_3(con, log, do_writes: bool) -> dict:
     # tumor_size_cm: same principle — STL per-tumor only, NO fallback to
     # CTC.tumor_size_cm_per_surgery (which is TEM per-surgery broadcast).
     df = con.execute(f"""
-        WITH per_tumor AS (
+        WITH stl_real AS (
+          -- Fix A (2026-04-17): filter STL placeholder rows.
+          -- 45.13% of STL rows have NULL size; audit confirmed these are
+          -- workbook design (slot rows for benign/metastatic-only patients
+          -- with no primary thyroid tumor), not extraction failure. Treating
+          -- them as "no STL row" is semantically correct.
+          SELECT *
+          FROM {PUBLICATION_DB}.main.synoptic_tumor_long_v1
+          WHERE size_greatest_dimension_cm IS NOT NULL
+             OR histologic_type IS NOT NULL
+             OR extrathyroidal_extension IS NOT NULL
+             OR margin_status IS NOT NULL
+        ),
+        per_tumor AS (
           SELECT
             CAST(ctc.research_id AS VARCHAR)               AS research_id,
             ctc.surgery_episode_id                          AS surgery_episode_id,
@@ -562,13 +607,23 @@ def phase_3(con, log, do_writes: bool) -> dict:
             ctc.ln_examined                                 AS ln_examined,
             ctc.ln_involved                                 AS ln_involved,
             ctc.nodal_disease_positive_count                AS nodal_disease_positive_count,
-            ctc.extranodal_extension                        AS extranodal_extension
+            ctc.extranodal_extension                        AS extranodal_extension,
+            -- Fix C (2026-04-17): OED substrate flags for T4a/T4b. Per-surgery
+            -- via surgery_episode_id. Only OED currently carries these signals;
+            -- STL extrathyroidal_extension text has 0 mentions of strap/trachea/
+            -- esophag/RLN.
+            oed.strap_muscle_involvement_flag               AS oed_strap_flag,
+            oed.tracheal_involvement_flag                   AS oed_trachea_flag,
+            oed.esophageal_involvement_flag                 AS oed_esophag_flag
           FROM {CTC} AS ctc
-          LEFT JOIN {PUBLICATION_DB}.main.synoptic_tumor_long_v1 AS stl
+          LEFT JOIN stl_real AS stl
             ON CAST(ctc.research_id AS VARCHAR) = CAST(stl.research_id AS VARCHAR)
            AND ctc.synoptic_row_ix = stl.synoptic_row_ix
           LEFT JOIN {PUBLICATION_DB}.main.ete_adjudication_v1 AS eaj
             ON CAST(ctc.research_id AS VARCHAR) = CAST(eaj.research_id AS VARCHAR)
+          LEFT JOIN {PUBLICATION_DB}.main.operative_episode_detail_v2 AS oed
+            ON CAST(ctc.research_id AS VARCHAR) = CAST(oed.research_id AS VARCHAR)
+           AND ctc.surgery_episode_id = oed.surgery_episode_id
         ),
         cpm_anchor AS (
           SELECT
@@ -809,7 +864,42 @@ def phase_3(con, log, do_writes: bool) -> dict:
     df["overall_stage_ajcc7"] = df["stage_group_ajcc7"]
     df["overall_stage_ajcc8"] = df["stage_group_ajcc8"]
 
-    # ---- Apply UPDATE via temp staging table ----
+    # ---- Bug 4 fix (2026-04-17): dedup staging frame before UPDATE FROM. ----
+    # ln_master_rollup_v1 fans out CTC rows in the per_tumor join (some keys
+    # have 2-4 staging rows). Pandas marks is_dominant_tumor=TRUE on exactly
+    # one row per CTC key; the CPM-overlay broadcast only fires on that row.
+    # DuckDB's UPDATE FROM picks ONE staging row per CTC key non-
+    # deterministically -- if a non-dominant twin wins, the broadcast is lost
+    # and the t_stage silently downstages. Dedup deterministically here
+    # (priority: dominant > classified > calculable > stable index) so the
+    # write is reproducible.
+    df["_is_uncalculable"] = df["ete_source"].str.startswith("uncalculable", na=False)
+    df["_is_unclassified"] = df["ete_source"].eq("stl_per_tumor:unclassified_present")
+    df["_orig_idx"] = df.index  # stable monotonic tiebreaker
+    df_sorted = df.sort_values(
+        by=["research_id", "surgery_episode_id", "tumor_ordinal",
+            "is_dominant_tumor",            # True first
+            "_is_uncalculable",             # False first (classified beats uncalculable)
+            "_is_unclassified",             # False first (classified beats unclassified_present)
+            "ajcc8_stage_calculable_flag",  # True first
+            "_orig_idx"],                   # ascending tiebreaker
+        ascending=[True, True, True, False, True, True, False, True],
+        kind="mergesort",
+    )
+    df_dedup = df_sorted.drop_duplicates(
+        subset=["research_id", "surgery_episode_id", "tumor_ordinal"],
+        keep="first",
+    )
+    n_distinct_ctc_keys = (
+        df.drop_duplicates(subset=["research_id", "surgery_episode_id", "tumor_ordinal"])
+        .shape[0]
+    )
+    if len(df_dedup) != n_distinct_ctc_keys:
+        raise SystemExit(
+            f"[Bug 4 dedup] post-dedup rowcount {len(df_dedup)} != "
+            f"distinct-CTC-key count {n_distinct_ctc_keys}; dedup invariant broken"
+        )
+
     keep = ["research_id", "surgery_episode_id", "tumor_ordinal",
             "t_stage_ajcc7", "n_stage_ajcc7", "m_stage_ajcc7",
             "overall_stage_ajcc7", "stage_group_ajcc7",
@@ -817,11 +907,32 @@ def phase_3(con, log, do_writes: bool) -> dict:
             "overall_stage_ajcc8", "stage_group_ajcc8",
             "ajcc7_stage_calculable_flag", "ajcc8_stage_calculable_flag",
             "staging_source_note", "stage_migration_7_to_8"]
-    stg = df[keep].copy()
+    stg = df_dedup[keep].copy()
+    log(f"  post-dedup staging frame: {len(stg)} rows "
+        f"(must equal distinct-CTC-key count {n_distinct_ctc_keys})")
+    log("  distribution snapshot (AJCC8 T per-tumor, post-dedup -- this IS what UPDATE writes):")
+    log("    " + str(stg["t_stage_ajcc8"].value_counts(dropna=False).to_dict()))
 
     log(f"  staging frame ready: {len(stg)} rows")
-    log("  distribution snapshot (AJCC8 T per-tumor):")
+    # Per-grain reporting (added 2026-04-17 per Logan): report at three grains
+    # so apply-vs-dry-run comparisons are unambiguous. The staging frame
+    # cardinality differs from CTC's (ln_master_rollup_v1 fan-out) so the
+    # raw value_counts() doesn't predict what gets written.
+    log("  distribution snapshot (AJCC8 T per-tumor, staging-frame grain):")
     log("    " + str(stg["t_stage_ajcc8"].value_counts(dropna=False).to_dict()))
+    _stg_distinct = stg.drop_duplicates(
+        subset=["research_id", "surgery_episode_id", "tumor_ordinal"]
+    )
+    log("  distribution snapshot (AJCC8 T per-tumor, distinct-CTC-key grain "
+        f"-- {len(_stg_distinct)} keys; this matches what UPDATE writes):")
+    log("    " + str(_stg_distinct["t_stage_ajcc8"].value_counts(dropna=False).to_dict()))
+    # Patient-dominant grain preview (Phase 4 result): use Phase 3's
+    # is_dominant_tumor flag which is now unified with Phase 4's rank.
+    if "is_dominant_tumor" in df.columns:
+        _dom = df[df["is_dominant_tumor"]].drop_duplicates(subset=["research_id"])
+        log("  distribution snapshot (AJCC8 T per-PATIENT dominant tumor "
+            f"-- {len(_dom)} patients; Phase 4 will surface this on CPM):")
+        log("    " + str(_dom["t_stage_ajcc8"].value_counts(dropna=False).to_dict()))
     log("  distribution snapshot (AJCC7 T per-tumor):")
     log("    " + str(stg["t_stage_ajcc7"].value_counts(dropna=False).to_dict()))
     log("  calculable flags:")
@@ -889,8 +1000,12 @@ def phase_4(con, log, do_writes: bool) -> dict:
           SELECT
             CAST(research_id AS VARCHAR)        AS research_id,
             tumor_ordinal                        AS tumor_ordinal,
-            COALESCE(size_greatest_dimension_cm,
-                     tumor_size_cm_per_surgery)  AS tumor_size_cm,
+            -- Fix B (2026-04-17): unified dominant definition with Phase 3.
+            -- Phase 3 ranks by size_greatest_dimension_cm only (in pandas).
+            -- Removing COALESCE here so the SAME tumor is dominant in both
+            -- phases. Tumors with NULL size_greatest_dimension_cm are not
+            -- dominant-eligible (rank NULLS LAST -> they sort to the bottom).
+            size_greatest_dimension_cm           AS tumor_size_cm,
             t_stage_ajcc7                        AS t_stage_ajcc7,
             stage_group_ajcc7                    AS stage_group_ajcc7,
             t_stage_ajcc8                        AS t_stage_ajcc8,
