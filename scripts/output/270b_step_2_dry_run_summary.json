@@ -1,0 +1,120 @@
+{
+  "started_at": "2026-04-17T06:07:42.882795+00:00",
+  "finished_at": "2026-04-17T06:07:44.952918+00:00",
+  "publication_db": "thyroid_canonical_publication_v1_0",
+  "mode": "dry-run",
+  "registry_rows": 116,
+  "feeders_with_discoverable_columns": 116,
+  "bucket_c_input": 174,
+  "bucket_b_input": 49,
+  "bucket_c_obvious_matches": 165,
+  "bucket_c_ambiguous": 9,
+  "bucket_c_build_pipeline_fallthrough": 0,
+  "bucket_b_auto_build_pipeline": 49,
+  "obvious_stage_breakdown": {
+    "1": 165
+  },
+  "outputs": {
+    "obvious_csv": "/Users/loganglosser/THYROID_2026/scripts/output/270b_bucket_c_obvious_matches.csv",
+    "ambiguous_csv": "/Users/loganglosser/THYROID_2026/scripts/output/270b_bucket_c_ambiguous.csv",
+    "build_pipeline_csv": "/Users/loganglosser/THYROID_2026/scripts/output/270b_bucket_c_build_pipeline.csv",
+    "match_log_jsonl": "/Users/loganglosser/THYROID_2026/scripts/output/270b_step_2_match_log.jsonl"
+  },
+  "stage_2_suffix_list_literal": [
+    "_inferred_negative",
+    "_adjudicated",
+    "_reconciled",
+    "_corrected",
+    "_raw_str",
+    "_final",
+    "_method",
+    "_source",
+    "_name",
+    "_code",
+    "_num",
+    "_nlp",
+    "_raw"
+  ],
+  "stage_2_version_regex": "_v\\d+$",
+  "stage_3_domain_prefix_map": {
+    "mol_": [
+      "canonical_molecular_tested_v1",
+      "molecular_test_episode_v2",
+      "thyroseq_molecular_enrichment",
+      "_molecular_patient_rollup_v227"
+    ],
+    "us_": [
+      "canonical_us_nodule_characteristics_v1",
+      "us_nodules_tirads",
+      "imaging_nodule_master_v1"
+    ],
+    "tirads_": [
+      "canonical_us_nodule_characteristics_v1",
+      "extracted_tirads_validated_v1"
+    ],
+    "ct_": [
+      "ct_imaging"
+    ],
+    "mri_": [
+      "mri_imaging"
+    ],
+    "nuc_": [
+      "nuclear_med"
+    ],
+    "ln_": [
+      "canonical_tumor_characteristics_v1",
+      "clinical_note_ln_extracted_v1"
+    ],
+    "tg_": [
+      "thyroglobulin_lab_canonical_v1",
+      "tg_timeline_patient_summary_v1"
+    ],
+    "rai_": [
+      "rai_treatment_episode_v2"
+    ],
+    "fna_": [
+      "fna_cytology",
+      "fna_episode_master_v2",
+      "extracted_fna_bethesda_v1",
+      "fna_history"
+    ],
+    "bethesda_": [
+      "fna_cytology",
+      "extracted_fna_bethesda_v1"
+    ],
+    "ete_": [
+      "canonical_tumor_characteristics_v1",
+      "ete_adjudication_v1",
+      "extracted_ete_subgraded_v1"
+    ],
+    "path_": [
+      "path_synoptics",
+      "canonical_tumor_characteristics_v1"
+    ],
+    "syn_": [
+      "synoptic_tumor_long_v1",
+      "path_synoptics"
+    ],
+    "tumor_": [
+      "canonical_tumor_characteristics_v1",
+      "tumor_episode_master_v2"
+    ],
+    "op_": [
+      "operative_episode_detail_v2"
+    ],
+    "recur_": [
+      "canonical_recurrence_v1",
+      "recurrence_event_clean_v1"
+    ],
+    "complication_": [
+      "complication_patient_summary_v1",
+      "complication_phenotype_v1",
+      "extracted_complications_refined_v5"
+    ],
+    "nsqip_": [
+      "nsqip_patient_summary"
+    ],
+    "nlp_": []
+  },
+  "next_action": "Human review of 270b_bucket_c_ambiguous.csv (fill resolution_feeder column for each row), commit, then re-run with --execute."
+}

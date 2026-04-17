@@ -1,0 +1,29 @@
+=== START 270b Step 2 (DRY-RUN) ===
+started_at: 2026-04-17T06:07:42.882795+00:00
+connected to thyroid_canonical_publication_v1_0
+
+--- pre-fetch ---
+  detail_table_registry_v1: 116 rows
+  feeders with discoverable columns: 116/116
+  Bucket-C rows: 174
+  Bucket-B rows: 49
+
+--- Bucket-C 4-stage matching ---
+  obvious matches:  165
+  ambiguous:        9
+  build_pipeline:   0
+  obvious stage breakdown: {1: 165}
+
+--- Bucket-B auto-assignment ---
+  Bucket-B → build_pipeline: 49
+
+--- emit CSVs ---
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_bucket_c_obvious_matches.csv (165 rows)
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_bucket_c_ambiguous.csv (9 rows)
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_bucket_c_build_pipeline.csv (0 rows)
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_step_2_match_log.jsonl (223 entries)
+
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_step_2_dry_run_summary.json
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_step_2_dry_run.log
+
+=== END 270b Step 2 (DRY-RUN) ===

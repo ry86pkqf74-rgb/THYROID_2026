@@ -1,0 +1,167 @@
+# generated_by,scripts/270b_phase_a_step_2_registry.py --dry-run,generated_at,2026-04-17T06:07:44.947637+00:00
+cpm_col,feeder,match_method,matched_source_col,alternatives_rejected_json
+any_confirmed_complication_flag,complication_patient_summary_v1,stage1_exact_registry_preferred,any_confirmed_complication_flag,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+any_disease_concern_flag,canonical_patient_master,stage1_exact_single_candidate,any_disease_concern_flag,
+benign_rai_suspect_malignant,canonical_patient_master,stage1_exact_single_candidate,benign_rai_suspect_malignant,
+best_ene_grade,canonical_patient_master,stage1_exact_single_candidate,best_ene_grade,
+bilateral_path_flag,patient_tumor_rollup_v1,stage1_exact_registry_preferred,bilateral_path_flag,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+bmi_combined,canonical_patient_master,stage1_exact_single_candidate,bmi_combined,
+bmi_missingness_reason,canonical_patient_master,stage1_exact_single_candidate,bmi_missingness_reason,
+bmi_note_extracted,canonical_patient_master,stage1_exact_single_candidate,bmi_note_extracted,
+bmi_note_source,canonical_patient_master,stage1_exact_single_candidate,bmi_note_source,
+bmi_source,canonical_patient_master,stage1_exact_single_candidate,bmi_source,
+completion_prior_histology,canonical_patient_master,stage1_exact_single_candidate,completion_prior_histology,
+completion_reason_confidence,canonical_patient_master,stage1_exact_single_candidate,completion_reason_confidence,
+completion_tert_positive,canonical_patient_master,stage1_exact_single_candidate,completion_tert_positive,
+concern_highest_tier,canonical_patient_master,stage1_exact_single_candidate,concern_highest_tier,
+confirmed_rai_episodes,canonical_patient_master,stage1_exact_single_candidate,confirmed_rai_episodes,
+date_traceability_status,patient_analysis_resolved_v1,stage1_exact_registry_preferred,date_traceability_status,"[{""candidate"": ""analysis_molecular_subset_v1"", ""reason"": ""in_registry_no_normalized""}, {""candidate"": ""manuscript_cohort_v1"", ""reason"": ""in_registry_no_normalized""}, {""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+days_between_first_second_surgery,canonical_patient_master,stage1_exact_single_candidate,days_between_first_second_surgery,
+days_first_to_last_tg,tg_timeline_patient_summary_v1,stage1_exact_registry_preferred,days_first_to_last_tg,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+days_to_first_laryngoscopy,canonical_patient_master,stage1_exact_single_candidate,days_to_first_laryngoscopy,
+days_to_last_laryngoscopy,canonical_patient_master,stage1_exact_single_candidate,days_to_last_laryngoscopy,
+demo_confidence,patient_analysis_resolved_v1,stage1_exact_registry_preferred,demo_confidence,"[{""candidate"": ""analysis_molecular_subset_v1"", ""reason"": ""in_registry_no_normalized""}, {""candidate"": ""manuscript_cohort_v1"", ""reason"": ""in_registry_no_normalized""}, {""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+demo_source,patient_analysis_resolved_v1,stage1_exact_registry_preferred,demo_source,"[{""candidate"": ""analysis_molecular_subset_v1"", ""reason"": ""in_registry_no_normalized""}, {""candidate"": ""manuscript_cohort_v1"", ""reason"": ""in_registry_no_normalized""}, {""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+diagnosis_confidence,canonical_patient_master,stage1_exact_single_candidate,diagnosis_confidence,
+distant_mets_proxy,canonical_patient_master,stage1_exact_single_candidate,distant_mets_proxy,
+earliest_complication_days,complication_patient_summary_v1,stage1_exact_registry_preferred,earliest_complication_days,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+first_tg_date,tg_timeline_patient_summary_v1,stage1_exact_registry_preferred,first_tg_date,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+first_tg_days_from_surg,canonical_patient_master,stage1_exact_single_candidate,first_tg_days_from_surg,
+gland_weight_combined_g,canonical_patient_master,stage1_exact_single_candidate,gland_weight_combined_g,
+gland_weight_isthmus_g,canonical_patient_master,stage1_exact_single_candidate,gland_weight_isthmus_g,
+gland_weight_total_reported_g,canonical_patient_master,stage1_exact_single_candidate,gland_weight_total_reported_g,
+gm_lab_completeness_score,canonical_patient_master,stage1_exact_single_candidate,gm_lab_completeness_score,
+gm_macis_calculable_flag,canonical_patient_master,stage1_exact_single_candidate,gm_macis_calculable_flag,
+gm_path_ene_raw,canonical_patient_master,stage1_exact_single_candidate,gm_path_ene_raw,
+gm_path_ete_raw,canonical_patient_master,stage1_exact_single_candidate,gm_path_ete_raw,
+gm_path_lvi_raw,canonical_patient_master,stage1_exact_single_candidate,gm_path_lvi_raw,
+gm_path_m_stage_raw,canonical_patient_master,stage1_exact_single_candidate,gm_path_m_stage_raw,
+gm_path_pni_raw,canonical_patient_master,stage1_exact_single_candidate,gm_path_pni_raw,
+gm_path_stage_raw,canonical_patient_master,stage1_exact_single_candidate,gm_path_stage_raw,
+gm_path_vascular_inv_raw,canonical_patient_master,stage1_exact_single_candidate,gm_path_vascular_inv_raw,
+gm_provenance_confidence,canonical_patient_master,stage1_exact_single_candidate,gm_provenance_confidence,
+gm_rai_date_confidence,canonical_patient_master,stage1_exact_single_candidate,gm_rai_date_confidence,
+gm_rai_date_source,canonical_patient_master,stage1_exact_single_candidate,gm_rai_date_source,
+gm_recurrence_date_source,canonical_patient_master,stage1_exact_single_candidate,gm_recurrence_date_source,
+gm_recurrence_site_primary,canonical_patient_master,stage1_exact_single_candidate,gm_recurrence_site_primary,
+gm_recurrence_source,canonical_patient_master,stage1_exact_single_candidate,gm_recurrence_source,
+gm_recurrence_type_primary,canonical_patient_master,stage1_exact_single_candidate,gm_recurrence_type_primary,
+gm_tg_below_threshold_ever,canonical_patient_master,stage1_exact_single_candidate,gm_tg_below_threshold_ever,
+has_isthmus_tumor,patient_tumor_rollup_v1,stage1_exact_registry_preferred,has_isthmus_tumor,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+has_left_tumor,patient_tumor_rollup_v1,stage1_exact_registry_preferred,has_left_tumor,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+has_low_calcium_flag,complication_patient_summary_v1,stage1_exact_registry_preferred,has_low_calcium_flag,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+has_low_pth_flag,complication_patient_summary_v1,stage1_exact_registry_preferred,has_low_pth_flag,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+has_right_tumor,patient_tumor_rollup_v1,stage1_exact_registry_preferred,has_right_tumor,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+has_suspicious_candidate,imaging_patient_summary_v1,stage1_exact_registry_preferred,has_suspicious_candidate,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+has_voice_data,canonical_patient_master,stage1_exact_single_candidate,has_voice_data,
+histologic_types_all,patient_tumor_rollup_v1,stage1_exact_registry_preferred,histologic_types_all,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+histologic_variants_all,patient_tumor_rollup_v1,stage1_exact_registry_preferred,histologic_variants_all,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+last_tg_days_from_surg,canonical_patient_master,stage1_exact_single_candidate,last_tg_days_from_surg,
+lnus_abnormal_ln_any,canonical_patient_master,stage1_exact_single_candidate,lnus_abnormal_ln_any,
+lnus_first_date,canonical_patient_master,stage1_exact_single_candidate,lnus_first_date,
+lnus_first_days_from_surg,canonical_patient_master,stage1_exact_single_candidate,lnus_first_days_from_surg,
+lnus_has_dedicated_exam,canonical_patient_master,stage1_exact_single_candidate,lnus_has_dedicated_exam,
+lnus_has_size_measurement,canonical_patient_master,stage1_exact_single_candidate,lnus_has_size_measurement,
+lnus_impression_last,canonical_patient_master,stage1_exact_single_candidate,lnus_impression_last,
+lnus_indication_first,canonical_patient_master,stage1_exact_single_candidate,lnus_indication_first,
+lnus_last_date,canonical_patient_master,stage1_exact_single_candidate,lnus_last_date,
+lnus_last_days_from_surg,canonical_patient_master,stage1_exact_single_candidate,lnus_last_days_from_surg,
+lnus_n_exams,canonical_patient_master,stage1_exact_single_candidate,lnus_n_exams,
+lnus_normal_ln_any,canonical_patient_master,stage1_exact_single_candidate,lnus_normal_ln_any,
+lnus_source,canonical_patient_master,stage1_exact_single_candidate,lnus_source,
+microscopic_ete_t3b_corrected,canonical_patient_master,stage1_exact_single_candidate,microscopic_ete_t3b_corrected,
+n_surgeries_source,canonical_patient_master,stage1_exact_single_candidate,n_surgeries_source,
+n_tg_measurements_structured,canonical_patient_master,stage1_exact_single_candidate,n_tg_measurements_structured,
+n_tgab_measurements,tg_timeline_patient_summary_v1,stage1_exact_registry_preferred,n_tgab_measurements,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+n_tumors_ete_present,patient_tumor_rollup_v1,stage1_exact_registry_preferred,n_tumors_ete_present,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+n_tumors_lvi_present,patient_tumor_rollup_v1,stage1_exact_registry_preferred,n_tumors_lvi_present,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+n_tumors_margin_involved,patient_tumor_rollup_v1,stage1_exact_registry_preferred,n_tumors_margin_involved,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+n_tumors_margin_uninvolved,patient_tumor_rollup_v1,stage1_exact_registry_preferred,n_tumors_margin_uninvolved,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+n_tumors_with_size,patient_tumor_rollup_v1,stage1_exact_registry_preferred,n_tumors_with_size,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+n_us_with_ln_assessment,canonical_patient_master,stage1_exact_single_candidate,n_us_with_ln_assessment,
+para_abnormality_type,canonical_patient_master,stage1_exact_single_candidate,para_abnormality_type,
+para_has_pathologic_glands,canonical_patient_master,stage1_exact_single_candidate,para_has_pathologic_glands,
+para_incidental_status_refined,canonical_patient_master,stage1_exact_single_candidate,para_incidental_status_refined,
+para_max_cellularity_pct,canonical_patient_master,stage1_exact_single_candidate,para_max_cellularity_pct,
+para_max_gland_weight_g,canonical_patient_master,stage1_exact_single_candidate,para_max_gland_weight_g,
+para_min_cellularity_pct,canonical_patient_master,stage1_exact_single_candidate,para_min_cellularity_pct,
+para_n_glands_biopsied,canonical_patient_master,stage1_exact_single_candidate,para_n_glands_biopsied,
+para_n_glands_excised,canonical_patient_master,stage1_exact_single_candidate,para_n_glands_excised,
+para_n_glands_identified,canonical_patient_master,stage1_exact_single_candidate,para_n_glands_identified,
+para_removal_intent,canonical_patient_master,stage1_exact_single_candidate,para_removal_intent,
+para_source_script,canonical_patient_master,stage1_exact_single_candidate,para_source_script,
+para_source_workbook,canonical_patient_master,stage1_exact_single_candidate,para_source_workbook,
+pet_distant_met_sites,canonical_patient_master,stage1_exact_single_candidate,pet_distant_met_sites,
+pet_distant_mets_ever,canonical_patient_master,stage1_exact_single_candidate,pet_distant_mets_ever,
+pet_fdg_avid_cervical_ln_ever,canonical_patient_master,stage1_exact_single_candidate,pet_fdg_avid_cervical_ln_ever,
+pet_fdg_avid_thyroid_bed_ever,canonical_patient_master,stage1_exact_single_candidate,pet_fdg_avid_thyroid_bed_ever,
+pet_first_date,canonical_patient_master,stage1_exact_single_candidate,pet_first_date,
+pet_has_data,canonical_patient_master,stage1_exact_single_candidate,pet_has_data,
+pet_impression_last,canonical_patient_master,stage1_exact_single_candidate,pet_impression_last,
+pet_indication_first,canonical_patient_master,stage1_exact_single_candidate,pet_indication_first,
+pet_last_date,canonical_patient_master,stage1_exact_single_candidate,pet_last_date,
+pet_n_exams,canonical_patient_master,stage1_exact_single_candidate,pet_n_exams,
+pet_other_exam_type,canonical_patient_master,stage1_exact_single_candidate,pet_other_exam_type,
+pet_other_extraction_method,canonical_patient_master,stage1_exact_single_candidate,pet_other_extraction_method,
+pet_other_first_date,canonical_patient_master,stage1_exact_single_candidate,pet_other_first_date,
+pet_other_first_days_from_surg,canonical_patient_master,stage1_exact_single_candidate,pet_other_first_days_from_surg,
+pet_other_indication_first,canonical_patient_master,stage1_exact_single_candidate,pet_other_indication_first,
+pet_other_last_date,canonical_patient_master,stage1_exact_single_candidate,pet_other_last_date,
+pet_other_last_days_from_surg,canonical_patient_master,stage1_exact_single_candidate,pet_other_last_days_from_surg,
+pet_other_mentions_metastasis,canonical_patient_master,stage1_exact_single_candidate,pet_other_mentions_metastasis,
+pet_other_n_exams,canonical_patient_master,stage1_exact_single_candidate,pet_other_n_exams,
+pet_other_ned_statement,canonical_patient_master,stage1_exact_single_candidate,pet_other_ned_statement,
+pet_overall_worst,canonical_patient_master,stage1_exact_single_candidate,pet_overall_worst,
+pet_radiotracer_primary,canonical_patient_master,stage1_exact_single_candidate,pet_radiotracer_primary,
+pet_suv_max_cervical_ln,canonical_patient_master,stage1_exact_single_candidate,pet_suv_max_cervical_ln,
+pet_suv_max_thyroid_bed,canonical_patient_master,stage1_exact_single_candidate,pet_suv_max_thyroid_bed,
+post_rai_tg_count,canonical_patient_master,stage1_exact_single_candidate,post_rai_tg_count,
+preop_imaging_size_cm,canonical_patient_master,stage1_exact_single_candidate,preop_imaging_size_cm,
+prm_ete_imaging_path_concordance,canonical_patient_master,stage1_exact_single_candidate,prm_ete_imaging_path_concordance,
+prm_ete_path_confirmed,canonical_patient_master,stage1_exact_single_candidate,prm_ete_path_confirmed,
+prm_ete_rule_applied,canonical_patient_master,stage1_exact_single_candidate,prm_ete_rule_applied,
+prm_first_fna_date,canonical_patient_master,stage1_exact_single_candidate,prm_first_fna_date,
+prm_first_fna_days_from_surg,canonical_patient_master,stage1_exact_single_candidate,prm_first_fna_days_from_surg,
+prm_fna_n_sources,canonical_patient_master,stage1_exact_single_candidate,prm_fna_n_sources,
+prm_fna_source_tables,canonical_patient_master,stage1_exact_single_candidate,prm_fna_source_tables,
+prm_followup_clinical_events,canonical_patient_master,stage1_exact_single_candidate,prm_followup_clinical_events,
+prm_followup_has_complications,canonical_patient_master,stage1_exact_single_candidate,prm_followup_has_complications,
+prm_followup_tg_labs,canonical_patient_master,stage1_exact_single_candidate,prm_followup_tg_labs,
+prm_high_risk_marker_any,canonical_patient_master,stage1_exact_single_candidate,prm_high_risk_marker_any,
+prm_hypocalcemia_lab_flag,canonical_patient_master,stage1_exact_single_candidate,prm_hypocalcemia_lab_flag,
+prm_hypoparathyroidism_lab_flag,canonical_patient_master,stage1_exact_single_candidate,prm_hypoparathyroidism_lab_flag,
+prm_imaging_data_completeness,canonical_patient_master,stage1_exact_single_candidate,prm_imaging_data_completeness,
+prm_last_fna_date,canonical_patient_master,stage1_exact_single_candidate,prm_last_fna_date,
+prm_last_fna_days_from_surg,canonical_patient_master,stage1_exact_single_candidate,prm_last_fna_days_from_surg,
+prm_margin_confidence,canonical_patient_master,stage1_exact_single_candidate,prm_margin_confidence,
+prm_margin_source,canonical_patient_master,stage1_exact_single_candidate,prm_margin_source,
+prm_margin_with_gross_ete,canonical_patient_master,stage1_exact_single_candidate,prm_margin_with_gross_ete,
+prm_molecular_risk_category,canonical_patient_master,stage1_exact_single_candidate,prm_molecular_risk_category,
+prm_n_recurrence_sources,canonical_patient_master,stage1_exact_single_candidate,prm_n_recurrence_sources,
+prm_recurrence_detection_category,canonical_patient_master,stage1_exact_single_candidate,prm_recurrence_detection_category,
+prm_rln_worst_grade,canonical_patient_master,stage1_exact_single_candidate,prm_rln_worst_grade,
+prm_size_concordance,canonical_patient_master,stage1_exact_single_candidate,prm_size_concordance,
+prm_structural_disease_flag,canonical_patient_master,stage1_exact_single_candidate,prm_structural_disease_flag,
+prm_tg_adequate_followup,canonical_patient_master,stage1_exact_single_candidate,prm_tg_adequate_followup,
+provenance_confidence,patient_analysis_resolved_v1,stage1_exact_registry_preferred,provenance_confidence,"[{""candidate"": ""analysis_molecular_subset_v1"", ""reason"": ""in_registry_no_normalized""}, {""candidate"": ""manuscript_cohort_v1"", ""reason"": ""in_registry_no_normalized""}, {""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+resolved_days_from_surg,canonical_patient_master,stage1_exact_single_candidate,resolved_days_from_surg,
+rollup_built_at,patient_tumor_rollup_v1,stage1_exact_registry_preferred,rollup_built_at,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+rollup_source_table,patient_tumor_rollup_v1,stage1_exact_registry_preferred,rollup_source_table,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+scoring_ajcc8_flag,patient_analysis_resolved_v1,stage1_exact_registry_preferred,scoring_ajcc8_flag,"[{""candidate"": ""analysis_molecular_subset_v1"", ""reason"": ""in_registry_no_normalized""}, {""candidate"": ""manuscript_cohort_v1"", ""reason"": ""in_registry_no_normalized""}, {""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+scoring_ata_flag,patient_analysis_resolved_v1,stage1_exact_registry_preferred,scoring_ata_flag,"[{""candidate"": ""analysis_molecular_subset_v1"", ""reason"": ""in_registry_no_normalized""}, {""candidate"": ""manuscript_cohort_v1"", ""reason"": ""in_registry_no_normalized""}, {""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+scoring_macis_flag,patient_analysis_resolved_v1,stage1_exact_registry_preferred,scoring_macis_flag,"[{""candidate"": ""analysis_molecular_subset_v1"", ""reason"": ""in_registry_no_normalized""}, {""candidate"": ""manuscript_cohort_v1"", ""reason"": ""in_registry_no_normalized""}, {""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+second_surgery_date,canonical_patient_master,stage1_exact_single_candidate,second_surgery_date,
+second_surgery_days_from_surg,canonical_patient_master,stage1_exact_single_candidate,second_surgery_days_from_surg,
+stage_discordance_note,canonical_patient_master,stage1_exact_single_candidate,stage_discordance_note,
+stage_migration_7_to_8,canonical_patient_master,stage1_exact_single_candidate,stage_migration_7_to_8,
+third_surgery_date,canonical_patient_master,stage1_exact_single_candidate,third_surgery_date,
+third_surgery_days_from_surg,canonical_patient_master,stage1_exact_single_candidate,third_surgery_days_from_surg,
+tsh_suppressed_ever,patient_analysis_resolved_v1,stage1_exact_registry_preferred,tsh_suppressed_ever,"[{""candidate"": ""analysis_molecular_subset_v1"", ""reason"": ""in_registry_no_normalized""}, {""candidate"": ""manuscript_cohort_v1"", ""reason"": ""in_registry_no_normalized""}, {""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+vessel_count,canonical_patient_master,stage1_exact_single_candidate,vessel_count,
+voice_data_confidence,canonical_patient_master,stage1_exact_single_candidate,voice_data_confidence,
+voice_followup_completeness,canonical_patient_master,stage1_exact_single_candidate,voice_followup_completeness,
+voice_outcome_category,canonical_patient_master,stage1_exact_single_candidate,voice_outcome_category,
+weight_kg_note,canonical_patient_master,stage1_exact_single_candidate,weight_kg_note,
+worst_bethesda_num,extracted_fna_bethesda_v1,stage1_exact_registry_preferred,worst_bethesda_num,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
+worst_bethesda_source,canonical_patient_master,stage1_exact_single_candidate,worst_bethesda_source,
+worst_tirads_category,imaging_patient_summary_v1,stage1_exact_registry_preferred,worst_tirads_category,"[{""candidate"": ""canonical_patient_master"", ""reason"": ""in_registry_no_normalized""}]"
