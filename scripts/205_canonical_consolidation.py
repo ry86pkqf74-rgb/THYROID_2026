@@ -639,7 +639,7 @@ def main():
     print("\n" + "=" * 70)
     print("✓ Script 205 COMPLETE — canonical_patient_master_v1 consolidated")
     print(f"  Database: {DB}")
-    print(f"  Table: canonical_patient_master_v1")
+    print("  Table: canonical_patient_master_v1")
     print(f"  Rows: {len(df)}")
     print(f"  Columns: {len(df.columns)}")
     print("=" * 70)

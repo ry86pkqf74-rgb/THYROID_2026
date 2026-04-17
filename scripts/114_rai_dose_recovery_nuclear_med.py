@@ -117,7 +117,7 @@ print(f"  Unique patients                                  : {df_nm['research_id
 bins   = [0, 30, 50, 100, 150, 200, 300, 500, float('inf')]
 labels = ['30-50','50-100','100-150','150-200','200-300','300-500','500+','error']
 df_nm['bucket'] = pd.cut(df_nm['extracted_dose_mci'], bins=bins, labels=labels, right=False)
-print(f"\n  Dose distribution:")
+print("\n  Dose distribution:")
 for lbl, cnt in df_nm['bucket'].value_counts().sort_index().items():
     print(f"    {lbl:<15}: {cnt}")
 
@@ -195,7 +195,7 @@ ORDER BY day_gap, research_id
 df_match = con.execute(MATCH_SQL).df()
 print(f"  Total matched episodes       : {len(df_match)}")
 print(f"  Unique patients              : {df_match['research_id'].nunique()}")
-print(f"\n  Matched episodes:")
+print("\n  Matched episodes:")
 pd.set_option("display.max_colwidth", 100)
 show = ["rai_episode_id","research_id","resolved_rai_date","nuclear_med_scandate",
         "signed_day_gap","day_gap","extracted_dose_mci","recovery_confidence","dose_source_field"]
@@ -297,7 +297,7 @@ AGG_SQL = f"""
     GROUP BY research_id
 """
 df_agg = con.execute(AGG_SQL).df()
-print(f"  Patient aggregates (max dose per patient):")
+print("  Patient aggregates (max dose per patient):")
 print(df_agg.to_string(index=False))
 
 # patient_refined_master_clinical_v12
@@ -338,7 +338,7 @@ print("─" * 60)
 
 if not DRY_RUN:
     # Confirm updates
-    verify = con.execute(f"""
+    verify = con.execute("""
         SELECT e.research_id, e.rai_episode_id, e.dose_mci, e.dose_source,
                e.dose_missingness_reason, e.dose_confidence,
                r.day_gap, r.nuclear_med_scandate
@@ -351,7 +351,7 @@ if not DRY_RUN:
     print(verify.to_string(index=False))
 
     # Canonical check
-    print(f"\n  Canonical table — rai_max_dose_mci for recovered patients:")
+    print("\n  Canonical table — rai_max_dose_mci for recovered patients:")
     for tbl in ["patient_analysis_resolved_v1", "manuscript_cohort_v1"]:
         try:
             r = con.execute(f"""

@@ -15,10 +15,7 @@ Run:
 from __future__ import annotations
 
 import argparse
-import json
-import os
 import sys
-import textwrap
 import time
 from datetime import datetime
 from pathlib import Path
@@ -419,7 +416,7 @@ def phase_b_gaps(con: duckdb.DuckDBPyConnection, cols_by_table: dict[str, list[s
         print(f"  Checking {table} …")
         src_cols = cols_by_table.get(table, []) if cols_by_table else get_columns(con, table)
         if not src_cols:
-            print(f"    ⚠ table not found / no columns")
+            print("    ⚠ table not found / no columns")
             gap_report[table] = {"status": "MISSING", "description": meta["description"],
                                   "missing_cols": [], "coverage_note": "Table not found"}
             continue
@@ -675,7 +672,7 @@ def get_columns_cached(inventory: pd.DataFrame) -> list[str]:
 def phase_f_manifest(backup_results: list[dict]) -> None:
     print("\n[Phase F] Writing MANIFEST.txt …")
     lines = [
-        f"# Parquet Backup Manifest",
+        "# Parquet Backup Manifest",
         f"# Database: {DB}",
         f"# Generated: {datetime.now().isoformat()}",
         "",

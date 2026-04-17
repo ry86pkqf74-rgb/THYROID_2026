@@ -359,7 +359,7 @@ def task1_followup_recovery(con: duckdb.DuckDBPyConnection, dry_run: bool) -> di
 
         # Per-source breakdown
         print("\n  Source breakdown:")
-        breakdown = con.execute(f"""
+        breakdown = con.execute("""
             SELECT source_table,
                    COUNT(DISTINCT research_id) AS n_pts,
                    MIN(max_date) AS earliest,
@@ -384,7 +384,7 @@ def task1_followup_recovery(con: duckdb.DuckDBPyConnection, dry_run: bool) -> di
     results["rollup_patients"] = n_rollup
 
     # Top sources
-    top = con.execute(f"""
+    top = con.execute("""
         SELECT last_contact_source_v2, COUNT(*) AS n
         FROM _followup_patient_max_v2
         GROUP BY 1 ORDER BY 2 DESC LIMIT 10
@@ -500,7 +500,7 @@ def task1_followup_recovery(con: duckdb.DuckDBPyConnection, dry_run: bool) -> di
         print(f"  WARNING: {over30} patients show > 30 years follow-up — capping at 30")
 
     # Category distribution
-    cats = con.execute(f"""
+    cats = con.execute("""
         SELECT followup_category_v2, COUNT(*) AS n,
                ROUND(AVG(followup_years_v2), 2) AS mean_fu,
                ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY followup_years_v2), 2) AS median_fu
@@ -513,7 +513,7 @@ def task1_followup_recovery(con: duckdb.DuckDBPyConnection, dry_run: bool) -> di
         print(f"    {cat:20s} {n:>6,}  mean={mean_fu:.2f}y  median={median_fu:.2f}y")
     results["followup_categories"] = {c: n for c, n, *_ in cats}
 
-    overall_median = con.execute(f"""
+    overall_median = con.execute("""
         SELECT ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY followup_years_v2), 2)
         FROM _followup_computed_v2 WHERE followup_years_v2 > 0
     """).fetchone()[0]
@@ -594,7 +594,7 @@ def task2_nucmed_labs(con: duckdb.DuckDBPyConnection, dry_run: bool) -> dict[str
         return results
 
     # Check available lab_summary data
-    pre = con.execute(f"""
+    pre = con.execute("""
         SELECT COUNT(*) AS total,
                COUNT(*) FILTER (WHERE CAST(lab_summary AS VARCHAR) IS NOT NULL
                    AND LENGTH(CAST(lab_summary AS VARCHAR)) > 5) AS has_summary,
@@ -617,7 +617,7 @@ def task2_nucmed_labs(con: duckdb.DuckDBPyConnection, dry_run: bool) -> dict[str
 
     # Step 2.2: Validate
     print("\n  Step 2.2: Validating parsed values...")
-    val = con.execute(f"""
+    val = con.execute("""
         SELECT
             COUNT(*) AS total_parsed,
             COUNT(*) FILTER (WHERE nucmed_tsh_value IS NOT NULL) AS has_tsh,
@@ -655,7 +655,7 @@ def task2_nucmed_labs(con: duckdb.DuckDBPyConnection, dry_run: bool) -> dict[str
 
     if val[4] > 0 or val[5] > 0:
         print("  Flagging out-of-range values (will NOT integrate)...")
-        con.execute(f"""
+        con.execute("""
             DELETE FROM _nucmed_labs_parsed_v1
             WHERE (nucmed_tsh_value IS NOT NULL AND (nucmed_tsh_value < 0 OR nucmed_tsh_value > 500))
                OR (nucmed_tg_value IS NOT NULL AND (nucmed_tg_value < 0 OR nucmed_tg_value > 100000))
@@ -664,7 +664,7 @@ def task2_nucmed_labs(con: duckdb.DuckDBPyConnection, dry_run: bool) -> dict[str
     # Step 2.3: Cross-validate against existing Tg
     print("\n  Step 2.3: Cross-validating against longitudinal Tg...")
     if table_exists(con, "longitudinal_lab_canonical_v1"):
-        xval = con.execute(f"""
+        xval = con.execute("""
             SELECT COUNT(DISTINCT nm.research_id) AS overlap_patients
             FROM (
                 SELECT research_id FROM _nucmed_labs_parsed_v1
@@ -682,7 +682,7 @@ def task2_nucmed_labs(con: duckdb.DuckDBPyConnection, dry_run: bool) -> dict[str
 
     # Step 2.4: Roll up to patient level
     print("\n  Step 2.4: Rolling up to patient level...")
-    con.execute(f"""
+    con.execute("""
         CREATE OR REPLACE TABLE _nucmed_labs_rollup_v1 AS
         WITH per_scan AS (
             SELECT
@@ -712,7 +712,7 @@ def task2_nucmed_labs(con: duckdb.DuckDBPyConnection, dry_run: bool) -> dict[str
         GROUP BY research_id
     """)
 
-    rollup = con.execute(f"""
+    rollup = con.execute("""
         SELECT COUNT(*) AS n,
                COUNT(*) FILTER (WHERE rai_stimulated_tsh_v2 IS NOT NULL) AS has_stim_tsh,
                COUNT(*) FILTER (WHERE nucmed_tg_max IS NOT NULL) AS has_tg
@@ -756,7 +756,7 @@ def task3_tg_gap_fix(con: duckdb.DuckDBPyConnection, dry_run: bool) -> dict[str,
     results["gap_patients"] = gap
 
     # Step 3.2: Check columns
-    tg_cols = con.execute(f"""
+    tg_cols = con.execute("""
         SELECT DISTINCT column_name FROM information_schema.columns
         WHERE table_name = 'tg_timeline_patient_summary_v1' AND table_schema = 'main'
         ORDER BY column_name
@@ -987,7 +987,7 @@ def task4_recurrence_sites(
 
     # Step 4.3: Cross-validate — site distribution
     print("\n  Step 4.3: Site distribution:")
-    dist = con.execute(f"""
+    dist = con.execute("""
         SELECT recurrence_site_standardized, recurrence_laterality, COUNT(*) AS n
         FROM _recurrence_fna_sites_v1
         GROUP BY 1, 2 ORDER BY 3 DESC
@@ -1083,7 +1083,7 @@ def task5_complication_crossval(con: duckdb.DuckDBPyConnection, dry_run: bool) -
 
     # Step 5.1: Identify discordances
     print("\n  Step 5.1: OP Sheet has complications but phenotype doesn't...")
-    ops_only = con.execute(f"""
+    ops_only = con.execute("""
         SELECT COUNT(DISTINCT o.research_id) AS n
         FROM op_sheet_data o
         WHERE o.ops_periop_complications IS NOT NULL
@@ -1095,7 +1095,7 @@ def task5_complication_crossval(con: duckdb.DuckDBPyConnection, dry_run: bool) -
     print(f"  OP Sheet-only complication patients: {ops_only}")
     results["ops_only"] = ops_only
 
-    pheno_only = con.execute(f"""
+    pheno_only = con.execute("""
         SELECT COUNT(DISTINCT CAST(cp.research_id AS VARCHAR)) AS n
         FROM complication_phenotype_v1 cp
         LEFT JOIN op_sheet_data o ON CAST(cp.research_id AS VARCHAR) = o.research_id
@@ -1106,7 +1106,7 @@ def task5_complication_crossval(con: duckdb.DuckDBPyConnection, dry_run: bool) -
     print(f"  Phenotype-confirmed but OP Sheet empty: {pheno_only}")
     results["pheno_only"] = pheno_only
 
-    both = con.execute(f"""
+    both = con.execute("""
         SELECT COUNT(DISTINCT o.research_id) AS n
         FROM op_sheet_data o
         JOIN complication_phenotype_v1 cp ON CAST(cp.research_id AS VARCHAR) = o.research_id
@@ -1118,7 +1118,7 @@ def task5_complication_crossval(con: duckdb.DuckDBPyConnection, dry_run: bool) -
 
     # Step 5.2: Store report
     print("\n  Step 5.2: Storing concordance report...")
-    con.execute(f"""
+    con.execute("""
         CREATE OR REPLACE TABLE complication_crossval_report_v1 AS
         SELECT 'ops_has_comp_pheno_missing' AS discordance_type,
             (SELECT COUNT(DISTINCT o.research_id) FROM op_sheet_data o
@@ -1146,7 +1146,7 @@ def task5_complication_crossval(con: duckdb.DuckDBPyConnection, dry_run: bool) -
 
     # Show top OP Sheet complication descriptions for context
     print("\n  Sample OP Sheet complication descriptions (first 10):")
-    samples = con.execute(f"""
+    samples = con.execute("""
         SELECT o.research_id, LEFT(CAST(o.ops_periop_complications AS VARCHAR), 80)
         FROM op_sheet_data o
         WHERE o.ops_periop_complications IS NOT NULL

@@ -12,7 +12,6 @@ import sys
 from pathlib import Path
 
 import duckdb
-import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
@@ -276,7 +275,7 @@ def main():
     # 2. No NULL research_id
     null_rids = df["research_id"].isna().sum()
     assert null_rids == 0, f"Found {null_rids} NULL research_ids"
-    print(f"  ✓ No NULL research_ids")
+    print("  ✓ No NULL research_ids")
 
     # 3. Every patient has diagnosis_primary
     null_diag = df["diagnosis_primary"].isna().sum()
@@ -304,9 +303,9 @@ def main():
     for f in key_fields:
         if f in df.columns:
             non_null = df[f].notna().sum()
-            non_default = non_null
+            _non_default = non_null
             if df[f].dtype == bool:
-                non_default = (df[f] == True).sum()
+                _non_default = (df[f] == True).sum()
             pct = 100 * non_null / len(df)
             print(f"    {f}: {non_null}/{len(df)} ({pct:.1f}%)")
 
@@ -317,12 +316,12 @@ def main():
     print(f"  Malignant: {len(malignant)}")
     print(f"  Benign:    {len(benign)}")
     if len(malignant) > 0:
-        print(f"\n  Malignant subtypes:")
+        print("\n  Malignant subtypes:")
         mdist = malignant["diagnosis_primary"].value_counts()
         for k, v in mdist.items():
             print(f"    {k}: {v}")
     if len(benign) > 0:
-        print(f"\n  Benign subtypes:")
+        print("\n  Benign subtypes:")
         bdist = benign["diagnosis_primary"].value_counts()
         for k, v in bdist.head(15).items():
             print(f"    {k}: {v}")
@@ -369,9 +368,9 @@ def main():
 
     print("\n✓ Prompt 5 COMPLETE — canonical_patient_master_v1 uploaded to MotherDuck")
     print(f"  Database: {DB}")
-    print(f"  Table: canonical_patient_master_v1")
+    print("  Table: canonical_patient_master_v1")
     print(f"  Rows: {verify}")
-    print(f"  One row per patient: YES")
+    print("  One row per patient: YES")
     con.close()
 
 

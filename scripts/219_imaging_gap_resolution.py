@@ -309,7 +309,7 @@ def run_task1_ct(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
         print(f"[219] WARN: {orphans} CT patients not in canonical spine — investigate")
 
     stats = con.execute(CT_VALIDATION_SQL).fetchone()
-    print(f"[219] CT rollup stats:")
+    print("[219] CT rollup stats:")
     print(f"  total={stats[0]}, indication={stats[1]}, first_date={stats[2]}")
     print(f"  thyroid_details={stats[3]}, ln_details={stats[4]}, airway={stats[5]}")
     print(f"  nodule_any={stats[6]}, pathologic_ln={stats[7]}")
@@ -423,7 +423,7 @@ def run_task2_pet_other(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
     if dry_run:
         return
 
-    orphans = check_orphans(con, "_pet_other_recovered_v1", "PET Other recovered")
+    _orphans = check_orphans(con, "_pet_other_recovered_v1", "PET Other recovered")
 
     stats = con.execute("""
         SELECT
@@ -742,7 +742,7 @@ def run_task4_nucmed(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
     if dry_run:
         return
 
-    orphans = check_orphans(con, "_nucmed_agg_v1", "NucMed agg")
+    _orphans = check_orphans(con, "_nucmed_agg_v1", "NucMed agg")
 
     stats = con.execute("""
         SELECT
@@ -958,7 +958,7 @@ def run_task5_ln_us(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
 
     rollup_count = con.execute("SELECT COUNT(*) FROM _lnus_patient_rollup_v1").fetchone()[0]
     print(f"[219] LN US patient rollup: {rollup_count} patients")
-    orphans = check_orphans(con, "_lnus_patient_rollup_v1", "LN US rollup")
+    _orphans = check_orphans(con, "_lnus_patient_rollup_v1", "LN US rollup")
 
 
 # ======================================================================
@@ -1055,7 +1055,7 @@ def run_task6_canonical(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
 
     # --- Step 6.2: UPDATE canonical from CT rollup ---
     print("[219] Updating canonical from CT rollup...")
-    rid_join = f"TRY_CAST(r.research_id AS BIGINT)" if _CANONICAL_RID_IS_BIGINT else "r.research_id"
+    rid_join = "TRY_CAST(r.research_id AS BIGINT)" if _CANONICAL_RID_IS_BIGINT else "r.research_id"
     con.execute(f"""
         UPDATE {CANONICAL} AS c
         SET
@@ -1207,7 +1207,7 @@ def run_task6_canonical(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
     # --- Step 6.6: UPDATE canonical from LN US rollup ---
     if table_exists(con, "_lnus_patient_rollup_v1"):
         print("[219] Updating canonical from LN US rollup...")
-        lnus_rid_join = f"TRY_CAST(r.research_id AS BIGINT)" if _CANONICAL_RID_IS_BIGINT else "r.research_id"
+        lnus_rid_join = "TRY_CAST(r.research_id AS BIGINT)" if _CANONICAL_RID_IS_BIGINT else "r.research_id"
         con.execute(f"""
             UPDATE {CANONICAL} AS c
             SET
@@ -1234,7 +1234,7 @@ def run_task6_canonical(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
 
     # Check 1: All staging RIDs in spine
     # Use BIGINT cast in orphan subquery if needed
-    rid_sub = f"TRY_CAST(research_id AS BIGINT)" if _CANONICAL_RID_IS_BIGINT else "research_id"
+    rid_sub = "TRY_CAST(research_id AS BIGINT)" if _CANONICAL_RID_IS_BIGINT else "research_id"
     prov1 = con.execute(f"""
         SELECT 'ct_expanded' AS source,
             COUNT(*) FILTER (WHERE {rid_sub} NOT IN (SELECT research_id FROM {CANONICAL})) AS orphans
@@ -1247,12 +1247,12 @@ def run_task6_canonical(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
         FROM _nucmed_agg_v1
     """).fetchall()
     print("[219] CHECK 1 (orphan RIDs):")
-    all_pass = True
+    _all_pass = True
     for row in prov1:
         status = "PASS" if row[1] == 0 else f"FAIL ({row[1]} orphans)"
         print(f"  {row[0]}: {status}")
         if row[1] > 0:
-            all_pass = False
+            _all_pass = False
 
     # Check 2: Dates present — only query columns that actually exist
     existing_now2 = get_existing_columns(con)
@@ -1274,7 +1274,7 @@ def run_task6_canonical(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
             date_parts.append("0")
         date_labels.append(label)
     prov2 = con.execute(f"SELECT {', '.join(date_parts)} FROM {CANONICAL}").fetchone()
-    print(f"[219] CHECK 2 (dates): " + ", ".join(f"{l}={v}" for l, v in zip(date_labels, prov2)))
+    print("[219] CHECK 2 (dates): " + ", ".join(f"{l}={v}" for l, v in zip(date_labels, prov2)))
 
     # Check 3: Indication coverage
     ind_cols = {
@@ -1292,7 +1292,7 @@ def run_task6_canonical(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
             ind_parts.append("0")
         ind_labels.append(label)
     prov3 = con.execute(f"SELECT {', '.join(ind_parts)} FROM {CANONICAL}").fetchone()
-    print(f"[219] CHECK 3 (indication): " + ", ".join(f"{l}={v}" for l, v in zip(ind_labels, prov3)))
+    print("[219] CHECK 3 (indication): " + ", ".join(f"{l}={v}" for l, v in zip(ind_labels, prov3)))
 
     # Check 4: Units verified by column naming convention
     print("[219] CHECK 4 (units): verified by column naming convention:")
@@ -1316,11 +1316,11 @@ def run_task6_canonical(con: duckdb.DuckDBPyConnection, dry_run: bool) -> None:
 
     # Check 6: Cross-validation — patient overlap between canonical and staging
     join_expr6 = (
-        f"TRY_CAST(r.research_id AS BIGINT) = c.research_id" if _CANONICAL_RID_IS_BIGINT
+        "TRY_CAST(r.research_id AS BIGINT) = c.research_id" if _CANONICAL_RID_IS_BIGINT
         else "c.research_id = r.research_id"
     )
     join_expr6n = (
-        f"TRY_CAST(n.research_id AS BIGINT) = c.research_id" if _CANONICAL_RID_IS_BIGINT
+        "TRY_CAST(n.research_id AS BIGINT) = c.research_id" if _CANONICAL_RID_IS_BIGINT
         else "c.research_id = n.research_id"
     )
     ct_filter = "c.ct_indication_first IS NOT NULL" if "ct_indication_first" in get_existing_columns(con) else "TRUE"
@@ -1409,12 +1409,12 @@ def main() -> None:
     else:
         phases = set(args.phase.split(","))
 
-    print(f"[219] Script 219 — Imaging Gap Resolution")
+    print("[219] Script 219 — Imaging Gap Resolution")
     print(f"[219] DB: {DB}  Canonical: {CANONICAL}")
     print(f"[219] Phases: {phases}  dry_run={args.dry_run}")
 
     con = connect()
-    original_canonical = CANONICAL  # save view name before possible resolution
+    _original_canonical = CANONICAL  # save view name before possible resolution
     detect_schema(con)
 
     # Verify canonical (probe original name first, then resolved base table)

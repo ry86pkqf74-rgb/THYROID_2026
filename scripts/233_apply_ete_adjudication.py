@@ -148,7 +148,7 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
-    print(f"Script 233: Apply ETE adjudications")
+    print("Script 233: Apply ETE adjudications")
     print(f"Database: {PUBLICATION_DB}")
     print(f"Started: {datetime.now():%Y-%m-%d %H:%M:%S}")
 

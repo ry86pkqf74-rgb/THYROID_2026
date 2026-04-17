@@ -1,6 +1,5 @@
 import pandas as pd
 import os
-import sys
 
 SOURCE_DIR = "/Users/loganglosser/Downloads/Active Master Files"
 FILES = [

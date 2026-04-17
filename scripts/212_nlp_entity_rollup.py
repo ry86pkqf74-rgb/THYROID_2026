@@ -18,13 +18,11 @@ Run:
 from __future__ import annotations
 
 import argparse
-import os
 import sys
 import time
 from pathlib import Path
 
 import duckdb
-import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
@@ -416,7 +414,7 @@ FROM {CANONICAL} c
           f"{stg_null_rids} null RIDs, {stg_dupes} dupes")
 
     if stg_rows != cur_rows or stg_dupes > 0 or stg_null_rids > 0:
-        print(f"[212] ERROR: Invariant failure. Aborting.")
+        print("[212] ERROR: Invariant failure. Aborting.")
         con.execute(f"DROP TABLE IF EXISTS {staging}")
         sys.exit(1)
 

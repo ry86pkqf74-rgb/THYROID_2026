@@ -27,7 +27,6 @@ import argparse
 import base64
 import csv
 import json
-import os
 import re
 import sys
 import time
@@ -325,9 +324,9 @@ def phase_0_preconditions(con: duckdb.DuckDBPyConnection) -> None:
     """).fetchone()
     print(f"  Source canonical: FNA={r[0]}, Tg={r[1]}, fu_pos={r[2]} (expected 5212/2721/4038)")
     if r != (5212, 2721, 4038):
-        print(f"  ⚠ Numbers do not match Script 221c-validated state. Continuing.")
+        print("  ⚠ Numbers do not match Script 221c-validated state. Continuing.")
     else:
-        print(f"  ✓ Script 221c gap fixes confirmed")
+        print("  ✓ Script 221c gap fixes confirmed")
 
 
 # ---------------------------------------------------------------------------
@@ -341,7 +340,7 @@ def phase_1_ingest(con: duckdb.DuckDBPyConnection, dry_run: bool) -> list[tuple]
     if not dry_run:
         try:
             con.execute(f'DROP TABLE IF EXISTS {SOURCE_DB_SQL}."mri_imaging"')
-            print(f"  Cleaned up any pre-existing empty mri_imaging")
+            print("  Cleaned up any pre-existing empty mri_imaging")
         except Exception as e:
             print(f"  WARN cleanup mri_imaging: {e}")
 
@@ -590,7 +589,7 @@ def phase_5_readme(con, dry_run):
         f"Tier 2 (per-episode multi-row tables), Tier 3 (data dictionary)."
     ).replace("'", "''")
     con.execute(f"COMMENT ON TABLE {TARGET_DB_SQL}.\"__readme\" IS '{msg}'")
-    print(f"  ✓ __readme created")
+    print("  ✓ __readme created")
 
 
 def phase_6_provenance(con, ingest_results, materialize_results, dry_run):

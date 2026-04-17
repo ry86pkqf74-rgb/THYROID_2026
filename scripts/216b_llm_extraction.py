@@ -26,7 +26,6 @@ import os
 import sys
 import time
 from pathlib import Path
-from typing import Any
 
 import duckdb
 import pandas as pd
@@ -702,7 +701,7 @@ def task_rebuild(
     print(f"  Current canonical: {TOTAL_ROWS} x {cur_count} columns")
 
     tmp_dir = REPO / "scripts" / "output"
-    cte_parts = []
+    _cte_parts = []
     select_parts = []
     join_parts = []
 

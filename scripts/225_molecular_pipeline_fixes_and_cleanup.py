@@ -35,7 +35,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 import traceback
 from datetime import datetime
@@ -69,9 +68,9 @@ def fatal(msg: str) -> None:
 def assert_cpm_invariants(con: duckdb.DuckDBPyConnection, label: str = "") -> None:
     """Hard-assert canonical_patient_master row count + uniqueness."""
     row = con.execute(
-        f"SELECT COUNT(*), COUNT(DISTINCT research_id), "
-        f"COUNT(*) FILTER (WHERE research_id IS NULL) "
-        f"FROM canonical_patient_master"
+        "SELECT COUNT(*), COUNT(DISTINCT research_id), "
+        "COUNT(*) FILTER (WHERE research_id IS NULL) "
+        "FROM canonical_patient_master"
     ).fetchone()
     n_rows, n_distinct, n_null = row
     prefix = f"[{label}] " if label else ""
@@ -223,7 +222,7 @@ def task_2_fusion_parse(con: duckdb.DuckDBPyConnection, dry_run: bool = False) -
         return
 
     # 2.2 — Recover short gene tokens
-    r = con.execute("""
+    con.execute("""
         UPDATE molecular_variant_long
         SET gene_symbol = raw_variant_token
         WHERE variant_class = 'FUSION'

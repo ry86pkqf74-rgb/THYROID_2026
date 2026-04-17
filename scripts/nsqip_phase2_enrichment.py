@@ -10,9 +10,7 @@ NSQIP Case Details — Phase 2 Enrichment
 import pandas as pd
 import numpy as np
 import os
-import sys
 from pathlib import Path
-from datetime import datetime
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', 400)
@@ -27,7 +25,7 @@ STUDY_DIR.mkdir(parents=True, exist_ok=True)
 
 import duckdb
 token = os.getenv("LOCAL_DB_PATH")
-con = duckdb.connect(f"thyroid_master.duckdb")
+con = duckdb.connect("thyroid_master.duckdb")
 
 # ════════════════════════════════════════════════════════════════════
 # PART A: Recover 2 additional matches, finalize linkage

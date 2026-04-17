@@ -118,7 +118,7 @@ if START_STEP <= 1:
     row_count = con.execute("SELECT COUNT(*) FROM _ret_adjudication_input_v226").fetchone()[0]
     print(f"  Input rows: {row_count}  (expected ≈171)")
     if row_count < 150:
-        print(f"  WARNING: fewer rows than expected — check note_type mapping for drops")
+        print("  WARNING: fewer rows than expected — check note_type mapping for drops")
 
     triage = con.execute(
         "SELECT auto_triage, COUNT(*) AS n FROM _ret_adjudication_input_v226 GROUP BY 1 ORDER BY 2 DESC"

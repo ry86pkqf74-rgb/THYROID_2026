@@ -4,7 +4,7 @@ Re-extraction of 134 TIRADS mismatches using full source_description
 from ultrasound_reports table + Claude Sonnet for higher accuracy.
 Patches output/tirads_extracted.parquet in-place.
 """
-import os, sys, json, time, toml, hashlib
+import os, sys, json, time, toml
 import duckdb, anthropic, pandas as pd
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path

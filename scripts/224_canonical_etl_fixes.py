@@ -30,21 +30,17 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import json
-import os
 import sys
-import time
 from datetime import datetime
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "scripts"))
 
-from _md_connect import connect_locked, PUBLICATION_DB, assert_row_count, assert_distinct_rids
+from _md_connect import connect_locked, PUBLICATION_DB
 
 FQ = f'"{PUBLICATION_DB}".main'
 LEGACY_DB = '"Thyroid 2026 UPdated"'
@@ -580,7 +576,7 @@ def phase_ajcc7(con, dry_run: bool = False):
     log(f"  ajcc7_staging_v1: {n} rows written")
 
     # Validate migration
-    migration = con.execute(f"""
+    migration = con.execute("""
         SELECT stage_migration_7_to_8, COUNT(*) AS n
         FROM ajcc7_staging_v1
         WHERE stage_migration_7_to_8 IS NOT NULL
@@ -652,8 +648,8 @@ def phase_nsurg(con, dry_run: bool = False):
 
     if dry_run:
         log("  [DRY-RUN] Would create patient_surgery_dates_rebuilt_v1")
-        # Still run the query to check it works
-        test_sql = build_sql.replace("CREATE OR REPLACE TABLE", "CREATE OR REPLACE TEMP TABLE _test_nsurg AS WITH _t AS (")
+        # Sketch only — preserved as documentation of the dry-run rewrite intent.
+        _test_sql = build_sql.replace("CREATE OR REPLACE TABLE", "CREATE OR REPLACE TEMP TABLE _test_nsurg AS WITH _t AS (")
         return
 
     con.execute(build_sql)
@@ -773,7 +769,7 @@ def phase_recurrence(con, dry_run: bool = False):
 
     # Combine pathology-proven tiers
     log("  Combining pathology-proven recurrence...")
-    con.execute(f"""
+    con.execute("""
         CREATE OR REPLACE TEMP TABLE _rec_pathology_proven AS
         SELECT * FROM (
             SELECT research_id, recurrence_date, recurrence_histology,
@@ -1390,7 +1386,7 @@ def phase_dedup(con, dry_run: bool = False):
                             con.execute(f'DROP TABLE {FQ}."{md_tbl}"')
                             log(f"    DROPPED: {md_tbl}")
                     else:
-                        log(f"    DIFFERENT hashes: keeping both")
+                        log("    DIFFERENT hashes: keeping both")
                 else:
                     log(f"    Different row counts ({na} vs {nb}): keeping both")
             except Exception as e:

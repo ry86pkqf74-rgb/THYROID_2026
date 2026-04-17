@@ -189,7 +189,7 @@ def main() -> None:
 
     (OUT / "phase0c_derivation.json").write_text(json.dumps(rep, default=str, indent=2))
     print(f"[P0C] report: {OUT / 'phase0c_derivation.json'}")
-    print(f"[P0C] CPM column presence:")
+    print("[P0C] CPM column presence:")
     for k, v in rep["cpm_column_presence"].items():
         print(f"    {k:<35s}  {'YES' if v else 'NO'}")
     print(f"[P0C] recurrence counts: {rep.get('recurrence_counts')}")
@@ -199,7 +199,7 @@ def main() -> None:
     print(f"[P0C] md_fna vs pub: {rep.get('md_fna_vs_pub')}")
     print(f"[P0C] registry null_rows: {rep.get('registry_with_null_rows')}, null_feeds: {rep.get('registry_with_null_feeds')}")
     print(f"[P0C] data_dictionary_v221 columns: {rep.get('dict_v221_columns')}")
-    print(f"[P0C] ext source row counts:")
+    print("[P0C] ext source row counts:")
     for k, v in rep.get("ext_sources", {}).items():
         print(f"    {k:<60s}  {v}")
 

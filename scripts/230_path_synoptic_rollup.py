@@ -201,7 +201,7 @@ def main():
                     help="Run pre-flight validation only, no writes")
     args = ap.parse_args()
 
-    print(f"Script 230: patient_tumor_rollup_v1 build")
+    print("Script 230: patient_tumor_rollup_v1 build")
     print(f"Database: {PUBLICATION_DB}")
     print(f"Started: {datetime.now():%Y-%m-%d %H:%M:%S}")
 

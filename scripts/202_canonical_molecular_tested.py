@@ -13,7 +13,6 @@ import sys
 from pathlib import Path
 
 import duckdb
-import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
@@ -202,17 +201,17 @@ def main():
     print("\n=== Step 3: Summary ===")
     print(f"  Total patients with confirmed molecular testing: {len(df)}")
 
-    print(f"\n  Platform distribution:")
+    print("\n  Platform distribution:")
     pdist = df["platform_canonical"].value_counts()
     for k, v in pdist.items():
         print(f"    {k}: {v} ({100*v/len(df):.1f}%)")
 
-    print(f"\n  Mutation positivity rates (among tested):")
+    print("\n  Mutation positivity rates (among tested):")
     for col, label in [("braf_positive_canonical", "BRAF"), ("ras_positive_canonical", "RAS"), ("tert_positive_canonical", "TERT")]:
         pos = df[col].sum()
         print(f"    {label}: {int(pos)}/{len(df)} ({100*pos/len(df):.1f}%)")
 
-    print(f"\n  Source table contribution:")
+    print("\n  Source table contribution:")
     source_counts = {}
     for _, row in df.iterrows():
         for s in str(row["source_tables"]).split("|"):

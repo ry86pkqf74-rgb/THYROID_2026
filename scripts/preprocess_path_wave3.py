@@ -271,7 +271,7 @@ def main() -> None:
 
     print()
     print(f"unique research_ids: {df.research_id.nunique():,}")
-    print(f"by note_type (top 20):")
+    print("by note_type (top 20):")
     for k, v in df.note_type.value_counts().head(20).items():
         print(f"  {v:>6,}  {k}")
     print(f"\nwrote {len(df):,} rows -> {out_path}")

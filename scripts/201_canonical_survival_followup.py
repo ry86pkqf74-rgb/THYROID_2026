@@ -14,8 +14,6 @@ import sys
 from pathlib import Path
 
 import duckdb
-import pandas as pd
-import numpy as np
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
@@ -182,19 +180,19 @@ def main():
         df.loc[df["followup_days"] < 0, "followup_days"] = 0
         df.loc[df["followup_years"] < 0, "followup_years"] = 0.0
 
-    print(f"\n  Follow-up (years):")
+    print("\n  Follow-up (years):")
     print(f"    Median: {df['followup_years'].median():.2f}")
     print(f"    Mean:   {df['followup_years'].mean():.2f}")
     q25, q75 = df["followup_years"].quantile([0.25, 0.75])
     print(f"    IQR:    {q25:.2f} – {q75:.2f}")
     print(f"    Range:  {df['followup_years'].min():.2f} – {df['followup_years'].max():.2f}")
 
-    print(f"\n  Last contact source distribution:")
+    print("\n  Last contact source distribution:")
     src_dist = df["last_contact_source"].value_counts()
     for k, v in src_dist.items():
         print(f"    {k}: {v} ({100*v/len(df):.1f}%)")
 
-    print(f"\n  Follow-up category:")
+    print("\n  Follow-up category:")
     cat_dist = df["followup_category"].value_counts()
     for k, v in cat_dist.items():
         print(f"    {k}: {v} ({100*v/len(df):.1f}%)")

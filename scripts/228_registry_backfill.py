@@ -21,7 +21,7 @@ if not token:
     raise RuntimeError("No MotherDuck token found — check motherduck.local.toml")
 
 con = duckdb.connect(f"md:thyroid_canonical_publication_v1_0?motherduck_token={token}")
-print(f"Connected to thyroid_canonical_publication_v1_0")
+print("Connected to thyroid_canonical_publication_v1_0")
 
 # ── Registry entries ──────────────────────────────────────────────────────────
 # (detail_table_name, schema_name, grain, domain, feeds_cols, description)

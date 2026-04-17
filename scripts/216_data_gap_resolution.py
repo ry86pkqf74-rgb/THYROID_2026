@@ -18,14 +18,11 @@ Run:
 from __future__ import annotations
 
 import argparse
-import re
 import sys
 import time
 from pathlib import Path
-from typing import Any
 
 import duckdb
-import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
@@ -392,7 +389,7 @@ def task_a4_nsqip(con: duckdb.DuckDBPyConnection, dry_run: bool) -> int:
     op_path = REPO / "raw" / "Thyroid OP Sheet data.xlsx"
 
     if not nsqip_path.exists() or not op_path.exists():
-        print(f"  ERROR: Required files not found")
+        print("  ERROR: Required files not found")
         return 0
 
     print("  Loading OP Sheet for EUH_MRN → research_id crosswalk...")

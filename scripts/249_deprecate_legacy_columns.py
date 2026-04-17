@@ -310,7 +310,7 @@ def build_dependency_graph(views: list[tuple[str, str, str]]) -> dict[str, set[s
         if not defn:
             continue
         # Strip the leading "CREATE VIEW manuscript_workspace.<name> AS"
-        body = re.sub(rf"^CREATE\s+VIEW\s+\S+\s+AS\s+", "", defn, count=1, flags=re.IGNORECASE)
+        body = re.sub(r"^CREATE\s+VIEW\s+\S+\s+AS\s+", "", defn, count=1, flags=re.IGNORECASE)
         for m in VIEW_REF_RE.finditer(body):
             target = m.group(1)
             if target in names and target != name:

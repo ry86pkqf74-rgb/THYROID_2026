@@ -1100,7 +1100,7 @@ def main() -> None:
             try:
                 if snapshot_reg_name:
                     con.execute(
-                        f"""DROP TABLE manuscript_workspace.detail_table_registry_v1"""
+                        """DROP TABLE manuscript_workspace.detail_table_registry_v1"""
                     )
                     con.execute(
                         f"""CREATE TABLE manuscript_workspace.detail_table_registry_v1 AS

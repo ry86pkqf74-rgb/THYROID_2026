@@ -203,13 +203,13 @@ def _validate_and_report(domain_key: str, note_df: pd.DataFrame, entity_df: pd.D
     print(f"  Unique note_ids: {note_df['note_row_id'].nunique():>8,}")
 
     if entity_df.empty:
-        print(f"  ⚠ WARNING: No entities found — check JSONL result_json content")
+        print("  ⚠ WARNING: No entities found — check JSONL result_json content")
         return
 
     # Notes with no entities
     notes_with_entities = entity_df["note_row_id"].nunique()
     notes_empty = note_df["note_row_id"].nunique() - notes_with_entities
-    print(f"\n  Entity totals:")
+    print("\n  Entity totals:")
     print(f"    All entities       : {len(entity_df):>8,}")
     print(f"    Notes with entities: {notes_with_entities:>8,}")
     print(f"    Notes empty (no entities): {notes_empty:>6,}")
@@ -229,14 +229,14 @@ def _validate_and_report(domain_key: str, note_df: pd.DataFrame, entity_df: pd.D
         print(f"    <  {min_conf} (filtered): {below_min:>5,}  ({100*below_min/len(conf):.1f}%)")
 
     # Entity type distribution
-    print(f"\n  Entity type distribution:")
+    print("\n  Entity type distribution:")
     for et, cnt in entity_df["entity_type"].value_counts().items():
         flag = "✓" if et in known_types else "⚠ UNEXPECTED"
         print(f"    {et:<40s}: {cnt:>6,}  {flag}")
 
     # Polarity
     if "present_or_negated" in entity_df.columns:
-        print(f"\n  Polarity (present_or_negated):")
+        print("\n  Polarity (present_or_negated):")
         for val, cnt in entity_df["present_or_negated"].value_counts(dropna=False).items():
             print(f"    {str(val):<20s}: {cnt:>6,}")
 
@@ -362,7 +362,7 @@ def main() -> None:
         note_df, entity_df = _parse_jsonl_files(domain_key, cfg["glob_patterns"])
 
         if note_df.empty:
-            print(f"  ⚠ No rows found — check CONSOLIDATED path and glob patterns")
+            print("  ⚠ No rows found — check CONSOLIDATED path and glob patterns")
             upload_summary[domain_key] = {"status": "empty", "new_rows": 0}
             continue
 

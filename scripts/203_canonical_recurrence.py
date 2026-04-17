@@ -22,7 +22,6 @@ import sys
 from pathlib import Path
 
 import duckdb
-import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
@@ -316,8 +315,8 @@ def main():
     # Biochemical patients
     biochem_rids = set(df_biochem["research_id"].tolist()) if len(df_biochem) > 0 else set()
 
-    # Persistent patients
-    persistent_rids = set(df_persistent["research_id"].tolist()) if len(df_persistent) > 0 else set()
+    # Persistent patients (set retained for parity with cohort enumeration; not consumed downstream)
+    _persistent_rids = set(df_persistent["research_id"].tolist()) if len(df_persistent) > 0 else set()
 
     # LLM imaging suspicious (exclude those already in confirmed/biochem)
     llm_suspicious = pd.DataFrame()
@@ -526,9 +525,9 @@ def main():
     print("\n=== Validation ===")
     confirmed = df_final[df_final["recurrence_confirmed"] == True]
     print(f"  CONFIRMED recurrences: {len(confirmed)}")
-    print(f"    vs old system: 1,946 (expected MUCH less now)")
+    print("    vs old system: 1,946 (expected MUCH less now)")
 
-    print(f"\n  Recurrence type distribution:")
+    print("\n  Recurrence type distribution:")
     tdist = df_final["recurrence_type"].value_counts()
     for k, v in tdist.items():
         print(f"    {k}: {v}")
@@ -540,7 +539,7 @@ def main():
         if len(ttr) > 0:
             print(f"  Median time-to-recurrence: {ttr.median():.0f} days ({ttr.median()/365.25:.1f} years)")
 
-    print(f"\n  Evidence source breakdown (recurrence cases only):")
+    print("\n  Evidence source breakdown (recurrence cases only):")
     recur = df_final[df_final["recurrence_type"] != "none"]
     edist = recur["recurrence_evidence_source"].value_counts()
     for k, v in edist.items():

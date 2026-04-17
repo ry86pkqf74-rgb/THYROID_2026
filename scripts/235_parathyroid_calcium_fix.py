@@ -378,7 +378,7 @@ def step3_calcium_corrections(con: duckdb.DuckDBPyConnection) -> dict:
     out = OUTPUT_DIR / "235_calcium_corrections_applied.csv"
     fetch_to_csv(
         con,
-        f"""
+        """
         SELECT 'extracted_postop_labs' AS source,
                CAST(research_id AS VARCHAR) AS research_id,
                lab_type AS lab_name, value AS original_value,

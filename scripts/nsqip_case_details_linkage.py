@@ -6,7 +6,6 @@ and performs deterministic matching to the THYROID_2026 lakehouse.
 """
 
 import pandas as pd
-import numpy as np
 import os
 import sys
 from pathlib import Path
@@ -49,7 +48,7 @@ if not token:
     con = duckdb.connect(str(db_path), read_only=True)
     print(f"  Connected to local DuckDB: {db_path}")
 else:
-    con = duckdb.connect(f"thyroid_master.duckdb")
+    con = duckdb.connect("thyroid_master.duckdb")
     print("  Connected to local DuckDB: thyroid_master.duckdb")
 
 print("\n  ALL TABLES:")
@@ -132,7 +131,7 @@ if linkage_path.exists():
         overlap = existing_cases & nsqip_cases
         only_existing = existing_cases - nsqip_cases
         only_new = nsqip_cases - existing_cases
-        print(f"\n    Case Number overlap analysis:")
+        print("\n    Case Number overlap analysis:")
         print(f"      Existing linkage cases: {len(existing_cases)}")
         print(f"      New NSQIP file cases: {len(nsqip_cases)}")
         print(f"      Cases in BOTH: {len(overlap)}")
@@ -452,7 +451,7 @@ print(f"  Match rate: {100 * n_matched / len(nsqip_df):.1f}%")
 
 print(f"\n  Unique research_ids matched: {results_df['matched_research_id'].dropna().nunique()}")
 
-print(f"\n  Match methods breakdown:")
+print("\n  Match methods breakdown:")
 for method, count in sorted(match_methods_count.items(), key=lambda x: -x[1]):
     print(f"    {method}: {count}")
 
