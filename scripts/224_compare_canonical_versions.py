@@ -36,7 +36,6 @@ import csv
 import json
 import re
 import sys
-import time
 from datetime import datetime
 from pathlib import Path
 
@@ -117,7 +116,7 @@ def row_hash_sample(con, db_name: str, table_name: str,
             USING SAMPLE {pct}%
         """).fetchall()
         return {r[0] for r in rows}
-    except Exception as e:
+    except Exception:
         return set()
 
 
@@ -276,13 +275,13 @@ def format_report(result: dict, from_ver: str, to_ver: str) -> str:
     drift_tables = [d for d in result["table_diffs"]
                     if d.get("value_drift_pct") is not None and d["value_drift_pct"] > 0.0]
     if drift_tables:
-        lines.append(f"\n## Value Drift (sampled)")
+        lines.append("\n## Value Drift (sampled)")
         for d in drift_tables:
             flag = " ⚠ MAJOR" if d["value_drift_pct"] > 0.1 else ""
             lines.append(f"- `{d['table']}`: {d['value_drift_pct']:.2f}% of sample changed{flag}")
 
     # Row count summary
-    lines.append(f"\n## Row Count Summary")
+    lines.append("\n## Row Count Summary")
     lines.append("| Table | From | To | Delta |")
     lines.append("|-------|-----:|---:|------:|")
     for d in sorted(result["table_diffs"], key=lambda x: abs(x["row_delta"]), reverse=True)[:30]:

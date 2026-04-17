@@ -1,0 +1,30 @@
+{
+  "script": "262",
+  "run_ts": "20260417T025253Z",
+  "run_date": "2026-04-17",
+  "mode": "APPLY",
+  "phases": {
+    "preflight": {
+      "cpm_cols": 1494,
+      "ras_v7_dtype": "BOOLEAN",
+      "fem_rid_dtype": "INTEGER",
+      "cast_join_pre": 8119,
+      "view_hits_ras_v7": [],
+      "fem_rows": 8119
+    },
+    "snapshots": {
+      "cpm": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"canonical_patient_master_pre262_20260417T025253Z\"",
+      "ras_v7_col": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"cpm_ras_positive_v7_dropped_20260417T025253Z\"",
+      "fem": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"fna_episode_master_v2_pre262_20260417T025253Z\""
+    },
+    "invariants": {
+      "cpm_cols_pre": 1494,
+      "cpm_cols_post": 1493,
+      "ras_v7_dtype_post": null,
+      "fem_rid_dtype_post": "VARCHAR",
+      "fem_rows_post": 8119,
+      "plain_join_post": 8119,
+      "sweep_rows_post": 0
+    }
+  }
+}

@@ -1,30 +1,22 @@
 {
   "script": "250",
-  "run_ts": "20260417T011828Z",
+  "run_ts": "20260417T020551Z",
   "run_date": "2026-04-16",
   "mode": "APPLY",
   "phases": {
     "preflight": {
       "cpm_rows": 10871,
-      "cpm_cols": 1500,
+      "cpm_cols": 1494,
       "main_base_tables": 114,
-      "registry_rows": 109
+      "registry_rows": 116
     },
     "snapshots": {
-      "registry": "detail_table_registry_v1_pre250_20260417T011828Z",
-      "view": "canonical_detail_pointer_v1_pre250_20260417T011828Z"
+      "registry": "detail_table_registry_v1_pre250_20260417T020551Z",
+      "view": "canonical_detail_pointer_v1_pre250_20260417T020551Z"
     },
     "add_missing_rows": {
-      "added": [
-        "__readme",
-        "canonical_patient_master",
-        "data_dictionary_v240",
-        "molecular_assay_dictionary",
-        "molecular_code_crosswalk",
-        "molecular_ingestion_runs",
-        "specimen_source_xref_v1"
-      ],
-      "n_added": 7
+      "added": [],
+      "n_added": 0
     },
     "extraction": {
       "n_registry_rows_processed": 116,
@@ -181,7 +173,7 @@
       ]
     },
     "schema_update": {
-      "added_col": true,
+      "added_col": false,
       "n_updated": 90
     },
     "review_table": {
@@ -191,12 +183,12 @@
       "rebuilt": true
     },
     "stats": {
-      "n_total_cpm_cols": 1500,
-      "n_mapped": 1271,
-      "n_unmapped": 229,
-      "n_unmapped_allowlist": 229,
+      "n_total_cpm_cols": 1494,
+      "n_mapped": 1273,
+      "n_unmapped": 221,
+      "n_unmapped_allowlist": 221,
       "n_unmapped_real": 0,
-      "mapped_pct": 84.73,
+      "mapped_pct": 85.21,
       "top_multi_mapped": [
         {
           "col": "histology_final",

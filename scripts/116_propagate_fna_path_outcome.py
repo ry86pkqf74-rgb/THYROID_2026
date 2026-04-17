@@ -90,7 +90,7 @@ def propagate(con, tbl):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--md", action="store_true", required=True)
-    args = parser.parse_args()
+    parser.parse_args()
 
     import duckdb
     token = get_token()

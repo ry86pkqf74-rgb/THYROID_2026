@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Migrate 'Thyroid 2026' from old MD account -> local file -> new MD as 'Thyroid 2026 UPdated'.
 Table-by-table with progress, so stalls are visible."""
-import os, re, subprocess, sys, time, pathlib, duckdb
+import os, re, subprocess, time, pathlib, duckdb
 
 toml_text = pathlib.Path('/Users/ros/THyroid 2026/motherduck.local.toml').read_text()
 OLD_TOKEN = re.search(r'^MOTHERDUCK_TOKEN\s*=\s*"([^"]+)"', toml_text, re.M).group(1)

@@ -38,7 +38,6 @@ import json
 import os
 import sys
 import time
-from pathlib import Path
 from datetime import datetime
 
 import pandas as pd
@@ -220,7 +219,7 @@ def main():
                     help="Only adjudicate first N cases (for testing)")
     args = ap.parse_args()
 
-    print(f"Script 232: Adjudicate ungraded ETE cases")
+    print("Script 232: Adjudicate ungraded ETE cases")
     print(f"Database: {PUBLICATION_DB}")
     print(f"Started: {datetime.now():%Y-%m-%d %H:%M:%S}")
 

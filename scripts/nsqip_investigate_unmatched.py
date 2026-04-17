@@ -5,7 +5,6 @@ Searches every available source for potential matches.
 """
 
 import pandas as pd
-import numpy as np
 import os
 from pathlib import Path
 
@@ -29,7 +28,7 @@ unmatched = nsqip_df[nsqip_df['Case Number'].isin(unmatched_cases)].copy()
 # Connect to local DuckDB
 import duckdb
 token = os.getenv("LOCAL_DB_PATH")
-con = duckdb.connect(f"thyroid_master.duckdb")
+con = duckdb.connect("thyroid_master.duckdb")
 
 mc_df = con.execute("SELECT * FROM master_cohort").fetchdf()
 mc_df['surgery_date_dt'] = pd.to_datetime(mc_df['surgery_date'], errors='coerce')
@@ -147,7 +146,7 @@ for _, row in unmatched.iterrows():
             print(f"      RID={h['rid']:>6}  sex={info.get('sex','?')}  age={info.get('age','?')}  "
                   f"mc_date={sd_str}  via={h['source']}")
     else:
-        print(f"      NOT FOUND in any MRN field")
+        print("      NOT FOUND in any MRN field")
 
     # 2. Search LMRN
     if pd.notna(lmrn):
@@ -162,9 +161,9 @@ for _, row in unmatched.iterrows():
                 print(f"      RID={h['rid']:>6}  sex={info.get('sex','?')}  age={info.get('age','?')}  "
                       f"mc_date={sd_str}  via={h['source']}")
         else:
-            print(f"      NOT FOUND")
+            print("      NOT FOUND")
     else:
-        print(f"\n  [2] LMRN: not available for this case")
+        print("\n  [2] LMRN: not available for this case")
 
     # 3. Search LCN
     if pd.notna(lcn):
@@ -177,11 +176,11 @@ for _, row in unmatched.iterrows():
                     info = mc_lookup.get(h['rid'], {})
                     print(f"      RID={h['rid']:>6}  via={h['source']}")
             else:
-                print(f"      NOT FOUND")
+                print("      NOT FOUND")
         except:
             print(f"\n  [3] LCN '{lcn}': cannot parse as integer")
     else:
-        print(f"\n  [3] LCN: not available")
+        print("\n  [3] LCN: not available")
 
     # 4. Search by exact surgery date in master_cohort
     print(f"\n  [4] Exact surgery date {op_date.date()} in master_cohort:")
@@ -206,10 +205,10 @@ for _, row in unmatched.iterrows():
             print(f"      RID={rid}  sex={info.get('sex','?')} (match={sex_match})  "
                   f"age={info.get('age','?')} ({age_str})  dob_match={dob_match}")
     else:
-        print(f"      NO patients had surgery on this date in master_cohort")
+        print("      NO patients had surgery on this date in master_cohort")
 
     # 5. Search by exact surgery date in master_timeline
-    print(f"\n  [5] Exact surgery date in master_timeline:")
+    print("\n  [5] Exact surgery date in master_timeline:")
     mt_matches = mt_df[mt_df['surgery_date_dt'].dt.date == op_date.date()]
     if len(mt_matches) > 0:
         rids_in_mt = mt_matches['research_id'].unique()
@@ -217,9 +216,9 @@ for _, row in unmatched.iterrows():
         if rids_not_in_mc:
             print(f"      Additional RIDs in timeline (not in master_cohort date match): {rids_not_in_mc[:10]}")
         else:
-            print(f"      Same RIDs as master_cohort")
+            print("      Same RIDs as master_cohort")
     else:
-        print(f"      NO entries on this date")
+        print("      NO entries on this date")
 
     # 6. DOB-based search: find patients whose DOB matches
     if pd.notna(dob):
@@ -235,10 +234,10 @@ for _, row in unmatched.iterrows():
                 print(f"      RID={rid:>6}  sex={info.get('sex','?')} (match={sex_match})  "
                       f"age={info.get('age','?')}  mc_date={sd_str}")
         else:
-            print(f"      NO patients with this DOB in any source file")
+            print("      NO patients with this DOB in any source file")
 
     # 7. Final verdict
-    print(f"\n  >>> VERDICT:", end=" ")
+    print("\n  >>> VERDICT:", end=" ")
     # Check if ANY evidence exists
     has_mrn = len(idn_hits) > 0
     has_date = len(date_matches) > 0 if 'date_matches' in dir() else False

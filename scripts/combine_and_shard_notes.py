@@ -71,7 +71,7 @@ def main() -> None:
 
     MANIFEST.write_text(json.dumps(manifest, indent=2))
     print(f"\nmanifest -> {MANIFEST}")
-    print(f"\ndeploy command for each host h with shard S:")
+    print("\ndeploy command for each host h with shard S:")
     print("  scp <shard.parquet>  vast-host:/root/THYROID_2026/processed/remaining/clinical_notes_shard.parquet")
     print("  ssh vast-host 'bash /root/THYROID_2026/scripts/vastai/run_shard.sh'")
 

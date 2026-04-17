@@ -31,7 +31,6 @@ from __future__ import annotations
 
 import argparse
 import csv
-import os
 import re
 import sys
 from datetime import datetime
@@ -1172,7 +1171,7 @@ def phase7(con: duckdb.DuckDBPyConnection) -> None:
     if not all_ok:
         raise SystemExit("PHASE 7 INVARIANTS FAILED — aborting before Phase 8/9.")
 
-    n_tables = tables_n
+    _n_tables = tables_n
     n_cols = con.execute(
         f"""SELECT COUNT(*) FROM information_schema.columns
             WHERE table_catalog='{DB}' AND table_schema='main'

@@ -12,7 +12,6 @@ All uploaded to MotherDuck thyroid_ete_fix_20260413.
 """
 from __future__ import annotations
 
-import os
 import sys
 from pathlib import Path
 

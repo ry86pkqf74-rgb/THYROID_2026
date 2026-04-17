@@ -1,0 +1,50 @@
+{
+  "script": "257",
+  "run_ts": "20260417T020239Z",
+  "run_date": "2026-04-16",
+  "mode": "APPLY",
+  "phases": {
+    "preflight": {
+      "cpm_rows": 10871,
+      "cpm_cols_before": 1503
+    },
+    "view_ddl_archive": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"view_ddl_snapshot_pre257_20260417T020239Z\"",
+    "cpm_snapshot": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"canonical_patient_master_pre257_20260417T020239Z\"",
+    "view_rewrite": {
+      "n_rewritten": 32
+    },
+    "drop_columns": {
+      "n_dropped": 9,
+      "cols": [
+        "DEPRECATED__lvi_grade_final_v13",
+        "DEPRECATED__margin_r_class",
+        "DEPRECATED__margin_status_final",
+        "DEPRECATED__max_tumor_size_cm_v10",
+        "DEPRECATED__multifocal_flag",
+        "DEPRECATED__path_multifocal_flag",
+        "DEPRECATED__path_n_tumors",
+        "deprecated__imaging_nodule_size_cm",
+        "deprecated__tumor_size_cm"
+      ]
+    },
+    "dict_prune": {
+      "n_dropped": 2,
+      "cols": [
+        "deprecated__tumor_size_cm",
+        "deprecated__imaging_nodule_size_cm"
+      ]
+    },
+    "main_sweep": {
+      "n_hits": 0,
+      "tables": []
+    },
+    "readme": {
+      "n_rows": 114
+    },
+    "registry_refresh": {
+      "n_rows": 114
+    },
+    "cpm_cols_after": 1494,
+    "cpm_cols_delta": 9
+  }
+}

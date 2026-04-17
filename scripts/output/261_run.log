@@ -1,0 +1,41 @@
+[02:50:52.999Z] ==============================================================================
+[02:50:52.999Z] === START 261_repair_fna_history_dates.py  mode=DRY-RUN
+[02:50:54.213Z] connected to thyroid_canonical_publication_v1_0
+[02:50:54.213Z] PREFLIGHT  build per-row repair plan
+[02:50:54.277Z]   yy_cutoff = CURRENT_YEAR (2026) - 2000 = 26
+[02:50:54.277Z]   found 26 bad fna_history rows
+[02:50:58.089Z]   per-row audit written to scripts/output/261_date_repair.json
+[02:50:58.090Z]     rid=1150 idx=1 old=0000-09-19 -> new=None rule=year_zero_BC_unresolved
+[02:50:58.090Z]     rid=2049 idx=1 old=0021-05-14 -> new=2021-05-14 rule=yy_21_le_cutoff_26_2000
+[02:50:58.090Z]     rid=4914 idx=1 old=0006-04-15 -> new=2006-04-15 rule=yy_06_le_cutoff_26_2000
+[02:50:58.090Z]     rid=4963 idx=1 old=0015-06-25 -> new=2015-06-25 rule=yy_15_le_cutoff_26_2000
+[02:50:58.090Z]     rid=4964 idx=1 old=0015-05-14 -> new=2015-05-14 rule=yy_15_le_cutoff_26_2000
+[02:50:58.090Z] DRY-RUN -- no mutations performed
+[02:50:58.090Z] === END  elapsed=5.1s
+[02:51:09.121Z] ==============================================================================
+[02:51:09.133Z] === START 261_repair_fna_history_dates.py  mode=APPLY
+[02:51:10.128Z] connected to thyroid_canonical_publication_v1_0
+[02:51:10.128Z] PREFLIGHT  build per-row repair plan
+[02:51:10.277Z]   yy_cutoff = CURRENT_YEAR (2026) - 2000 = 26
+[02:51:10.277Z]   found 26 bad fna_history rows
+[02:51:13.167Z]   per-row audit written to scripts/output/261_date_repair.json
+[02:51:13.167Z]     rid=1150 idx=1 old=0000-09-19 -> new=None rule=year_zero_BC_unresolved
+[02:51:13.167Z]     rid=2049 idx=1 old=0021-05-14 -> new=2021-05-14 rule=yy_21_le_cutoff_26_2000
+[02:51:13.167Z]     rid=4914 idx=1 old=0006-04-15 -> new=2006-04-15 rule=yy_06_le_cutoff_26_2000
+[02:51:13.167Z]     rid=4963 idx=1 old=0015-06-25 -> new=2015-06-25 rule=yy_15_le_cutoff_26_2000
+[02:51:13.167Z]     rid=4964 idx=1 old=0015-05-14 -> new=2015-05-14 rule=yy_15_le_cutoff_26_2000
+[02:51:25.492Z] SNAPSHOTS  fhist="Thyroid 2026 UPdated"."archive_pub_v1_0"."fna_history_pre261_20260417T025110Z"
+[02:51:25.492Z]            fem  ="Thyroid 2026 UPdated"."archive_pub_v1_0"."fna_episode_master_v2_pre261_20260417T025110Z"
+[02:51:25.493Z]            cpm  ="Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_pre261_20260417T025110Z"
+[02:51:25.493Z] REPAIR  apply per-row date corrections
+[02:51:29.991Z]   fna_history rows updated:           set=24 nulled=2
+[02:51:29.991Z]   fna_episode_master_v2 rows updated: set=26 nulled=2
+[02:51:29.991Z] REROLL  re-derive CPM prm_first/last_fna_date + *_days_from_surg
+[02:51:30.112Z]   prm_first_fna_date pop:           5207
+[02:51:30.112Z]   prm_last_fna_date  pop:           5207
+[02:51:30.112Z]   prm_first_fna_days_from_surg pop: 5207
+[02:51:30.112Z]   prm_last_fna_days_from_surg  pop: 5207
+[02:51:30.112Z] INVARIANTS
+[02:51:30.487Z]   FEM rows=8119; CPM rows=10871; resolved_fna_date min=1999-02-01 max=2025-02-17
+[02:51:30.615Z] ALL ASSERTIONS PASS
+[02:51:30.616Z] === END  elapsed=21.5s

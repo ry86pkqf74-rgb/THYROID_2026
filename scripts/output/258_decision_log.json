@@ -1,0 +1,28 @@
+{
+  "script": "258",
+  "run_ts": "20260417T020547Z",
+  "run_date": "2026-04-16",
+  "mode": "APPLY",
+  "phases": {
+    "preflight": {
+      "registry_rows": 116,
+      "pointer_mapped_before": 1271
+    },
+    "pointer_snapshot": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"canonical_detail_pointer_v1_pre258_20260417T020547Z\"",
+    "script_250_rc": 0,
+    "assert_registry": {
+      "feeds_null": 0,
+      "feeds_todo": 0
+    },
+    "assert_pointer_resolves": {
+      "n_distinct_tables": 90,
+      "n_unresolved": 0
+    },
+    "assert_priority": {
+      "canonical_us_nodule_characteristics_v1": 5,
+      "canonical_tumor_characteristics_v1": 6,
+      "thyroglobulin_lab_canonical_v1": 9
+    },
+    "pointer_mapped_after": 1273
+  }
+}

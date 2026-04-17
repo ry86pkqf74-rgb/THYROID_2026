@@ -136,7 +136,7 @@ def issue_1(con) -> dict:
          WHERE rai_received_flag = FALSE AND n_rai_episodes > 0
          GROUP BY 1 ORDER BY 1
     """).fetchall()
-    print(f"  [1.1] Discordance profile (n_rai_episodes → counts):")
+    print("  [1.1] Discordance profile (n_rai_episodes → counts):")
     for r in profile:
         print(f"        n_epi={r[0]:<3}  pt={r[1]:<4}  malig={r[2]:<4}  "
               f"hist={r[3]:<4}  dose={r[4]:<4}  intent={r[5]:<4}")
@@ -794,7 +794,7 @@ def phase_4(con, apply_drops: bool) -> dict:
     # Manifest first — always
     manifest: list[dict] = []
     for tname in ALL_DROPS:
-        exists = con.execute(f"""
+        exists = con.execute("""
             SELECT 1 FROM duckdb_tables()
             WHERE database_name=? AND schema_name='main' AND table_name=?
             LIMIT 1
@@ -818,14 +818,14 @@ def phase_4(con, apply_drops: bool) -> dict:
     print(f"  [4] Manifest saved → {manifest_path}  ({len(manifest)} entries)")
 
     # Counts before
-    n_working_before = con.execute(f"""
+    n_working_before = con.execute("""
         SELECT COUNT(*) FROM duckdb_tables()
         WHERE database_name=? AND schema_name='main'
     """, [REF]).fetchone()[0]
     print(f"  [4] working DB main tables BEFORE: {n_working_before}")
 
     # Optional: tag canonical_patient_master_v1 on working DB with SUPERSEDED comment
-    v1_exists = con.execute(f"""
+    v1_exists = con.execute("""
         SELECT 1 FROM duckdb_tables()
         WHERE database_name=? AND schema_name='main' AND table_name='canonical_patient_master_v1'
         LIMIT 1
@@ -856,7 +856,7 @@ def phase_4(con, apply_drops: bool) -> dict:
     else:
         print("  [4] --plan-only: no drops executed.")
 
-    n_working_after = con.execute(f"""
+    n_working_after = con.execute("""
         SELECT COUNT(*) FROM duckdb_tables()
         WHERE database_name=? AND schema_name='main'
     """, [REF]).fetchone()[0]
@@ -924,7 +924,7 @@ def phase_5(con) -> dict:
 
     issue1 = p1.get("issue_1_rai_flag_episode", {})
     issue2 = p1.get("issue_2_benign_rai_no_histology", {})
-    issue3 = p1.get("issue_3_tg_availability", {})
+    _issue3 = p1.get("issue_3_tg_availability", {})
     issue4 = p1.get("issue_4_tg_nadir_outliers", {})
     issue5 = p1.get("issue_5_rai_dose", {})
 

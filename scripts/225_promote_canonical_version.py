@@ -35,7 +35,6 @@ import json
 import re
 import subprocess
 import sys
-import time
 from datetime import date
 from pathlib import Path
 
@@ -300,7 +299,7 @@ def main():
         if cls in ("MAJOR", "REGRESSION") and args.accept_major:
             print(f"\n  ⚠ Classification is {cls}. --accept-major is set.")
             confirm = input(
-                f"  Type the release DB name to confirm you accept breaking changes: "
+                "  Type the release DB name to confirm you accept breaking changes: "
             ).strip()
             if confirm != release_db:
                 sys.exit("  ABORT: confirmation did not match.")
@@ -309,11 +308,11 @@ def main():
     print(f"\n[{SCRIPT_TAG}] Promoting {candidate_db} → {release_db}")
     print(f"  Creating {release_db}...")
     con.execute(f'CREATE DATABASE "{_safe(release_db)}"')
-    print(f"  Copying data (COPY FROM DATABASE)...")
+    print("  Copying data (COPY FROM DATABASE)...")
     con.execute(
         f'COPY FROM DATABASE "{_safe(candidate_db)}" TO "{_safe(release_db)}"'
     )
-    print(f"  Verifying...")
+    print("  Verifying...")
 
     # Verify table counts match
     rc_n = con.execute(f"""
@@ -354,7 +353,7 @@ def main():
 
     # Step 6–7: Update RELEASE.md and CHANGELOG.md
     cls_label = diff_result["classification"] if diff_result else "baseline"
-    rc_base = candidate_ver[:-3]  # strip _rc
+    _rc_base = candidate_ver[:-3]  # strip _rc (kept for reference; not consumed)
     update_release_md(
         release_ver,
         cls_label.lower(),
@@ -368,9 +367,9 @@ def main():
     print(f"\n[{SCRIPT_TAG}] ══ PROMOTION COMPLETE ══")
     print(f"  Released: {release_db}")
     print(f"  Git tag:  {tag}")
-    print(f"\n  Push the tag when ready:")
+    print("\n  Push the tag when ready:")
     print(f"    git push origin {tag}")
-    print(f"\n  Update SUPPORTED_VERSIONS in thyroid-2026-analysis/thyroid/connection.py")
+    print("\n  Update SUPPORTED_VERSIONS in thyroid-2026-analysis/thyroid/connection.py")
     print(f"  to include '{release_ver}' so analysis scripts can use it.")
 
 

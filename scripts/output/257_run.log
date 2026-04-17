@@ -1,0 +1,75 @@
+[02:02:20.763Z] ==============================================================================
+[02:02:20.764Z] === START 257_clean_house_sweep.py  mode=DRY-RUN
+[02:02:21.889Z] connected to thyroid_canonical_publication_v1_0
+[02:02:22.498Z] PREFLIGHT  CPM rows=10871  CPM cols=1503
+[02:02:22.498Z] PHASE A — rewrite views referencing deprecated__ columns
+[02:02:22.517Z]   32 views currently reference deprecated__ columns
+[02:02:22.519Z]     WOULD rewrite manuscript_workspace.cohort_m073_tg_lob_vs_tt_v1
+[02:02:22.520Z]     WOULD rewrite manuscript_workspace.cohort_m081_rai_resistant_v1
+[02:02:22.520Z]     WOULD rewrite manuscript_workspace.cohort_m072_molecular_surg_impact_v1
+[02:02:22.520Z]     WOULD rewrite manuscript_workspace.cohort_m046_niftp_era_bethesda_v1
+[02:02:22.520Z]     WOULD rewrite manuscript_workspace.cohort_m045_multimodal_risk_v1
+[02:02:22.520Z]     ... and 27 more
+[02:02:22.520Z] PHASE B — drop deprecated CPM columns
+[02:02:22.606Z]   CPM has 9 deprecated columns:
+[02:02:22.606Z]     - DEPRECATED__lvi_grade_final_v13
+[02:02:22.606Z]     - DEPRECATED__margin_r_class
+[02:02:22.606Z]     - DEPRECATED__margin_status_final
+[02:02:22.606Z]     - DEPRECATED__max_tumor_size_cm_v10
+[02:02:22.606Z]     - DEPRECATED__multifocal_flag
+[02:02:22.606Z]     - DEPRECATED__path_multifocal_flag
+[02:02:22.606Z]     - DEPRECATED__path_n_tumors
+[02:02:22.606Z]     - deprecated__imaging_nodule_size_cm
+[02:02:22.606Z]     - deprecated__tumor_size_cm
+[02:02:22.606Z] PHASE C — prune dictionary rows pointing to dropped columns
+[02:02:22.774Z]   dict deprecated rows pointing to dropped CPM cols: 0
+[02:02:22.774Z] PHASE D — sweep main for legacy table patterns
+[02:02:22.843Z]   main BASE TABLEs matching legacy patterns: 0
+[02:02:22.843Z] PHASE E — rebuild __readme + refresh registry counts
+[02:02:23.146Z]   WOULD rebuild __readme with 114 table rows
+[02:02:23.179Z]   WOULD refresh row/patient counts on 114 registry rows
+[02:02:23.179Z] DRY-RUN — assertions skipped
+[02:02:23.179Z] === END  elapsed=2.4s
+[02:02:38.234Z] ==============================================================================
+[02:02:38.235Z] === START 257_clean_house_sweep.py  mode=APPLY
+[02:02:39.386Z] connected to thyroid_canonical_publication_v1_0
+[02:02:39.991Z] PREFLIGHT  CPM rows=10871  CPM cols=1503
+[02:02:39.991Z] PHASE A — rewrite views referencing deprecated__ columns
+[02:02:46.567Z]   view DDL archive: "Thyroid 2026 UPdated"."archive_pub_v1_0"."view_ddl_snapshot_pre257_20260417T020239Z" (65 rows)
+[02:02:54.927Z]   CPM snapshot: "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_pre257_20260417T020239Z"
+[02:02:54.946Z]   32 views currently reference deprecated__ columns
+[02:03:22.497Z]   rewrote 32 views
+[02:03:22.497Z] PHASE B — drop deprecated CPM columns
+[02:03:22.585Z]   CPM has 9 deprecated columns:
+[02:03:22.585Z]     - DEPRECATED__lvi_grade_final_v13
+[02:03:22.585Z]     - DEPRECATED__margin_r_class
+[02:03:22.585Z]     - DEPRECATED__margin_status_final
+[02:03:22.585Z]     - DEPRECATED__max_tumor_size_cm_v10
+[02:03:22.585Z]     - DEPRECATED__multifocal_flag
+[02:03:22.585Z]     - DEPRECATED__path_multifocal_flag
+[02:03:22.585Z]     - DEPRECATED__path_n_tumors
+[02:03:22.586Z]     - deprecated__imaging_nodule_size_cm
+[02:03:22.586Z]     - deprecated__tumor_size_cm
+[02:03:25.971Z]   dropped 9 columns
+[02:03:25.971Z] PHASE C — prune dictionary rows pointing to dropped columns
+[02:03:26.092Z]   dict deprecated rows pointing to dropped CPM cols: 2
+[02:03:26.093Z]     - deprecated__tumor_size_cm
+[02:03:26.093Z]     - deprecated__imaging_nodule_size_cm
+[02:03:26.155Z] PHASE D — sweep main for legacy table patterns
+[02:03:26.224Z]   main BASE TABLEs matching legacy patterns: 0
+[02:03:26.224Z] PHASE E — rebuild __readme + refresh registry counts
+[02:03:47.084Z]   rebuilt thyroid_canonical_publication_v1_0.main.__readme with 114 rows
+[02:04:03.643Z]   refreshed 114 registry rows
+[02:04:03.643Z] ASSERT 1 — 0 views reference deprecated__ tokens
+[02:04:03.663Z]   OK: 0 leftover refs
+[02:04:03.663Z] ASSERT 2 — all ws views compile
+[02:04:04.091Z]   ws view compile-test: 65/65 OK
+[02:04:04.091Z] ASSERT 3 — CPM column count dropped by exactly 9
+[02:04:04.179Z]   before=1503 after=1494 delta=9
+[02:04:04.179Z] ASSERT 4 — CPM rows still 10,871
+[02:04:04.213Z] ASSERT 5 — main has 0 legacy-pattern tables
+[02:04:04.286Z]   OK: 0 legacy-pattern tables in main
+[02:04:04.286Z] ASSERT 6 — 0 dict rows status='deprecated' point to existing CPM column
+[02:04:04.500Z]   OK: 0 such rows
+[02:04:05.193Z] ALL ASSERTIONS PASS
+[02:04:05.194Z] === END  elapsed=87.0s

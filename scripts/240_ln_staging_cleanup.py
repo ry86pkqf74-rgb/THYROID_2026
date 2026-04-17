@@ -33,7 +33,6 @@ untouched for provenance — corrections go into new ``_corrected`` columns.
 
 from __future__ import annotations
 
-import os
 import sys
 from datetime import datetime
 from pathlib import Path

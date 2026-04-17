@@ -289,7 +289,7 @@ def main() -> None:
 
     print()
     print(f"unique research_ids: {df.research_id.nunique():,}")
-    print(f"by note_type:")
+    print("by note_type:")
     for k, v in df.note_type.value_counts().items():
         print(f"  {v:>6,}  {k}")
     print(f"\nwrote {len(df):,} rows -> {out_path}")

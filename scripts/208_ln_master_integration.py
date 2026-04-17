@@ -280,7 +280,7 @@ def phase2_audit(con: duckdb.DuckDBPyConnection) -> None:
     print(f"  Patients in both tables with LN discrepancy: {len(mismatch_df):,}")
 
     if len(mismatch_df) > 0:
-        print(f"\n  Sample (first 20 mismatches):")
+        print("\n  Sample (first 20 mismatches):")
         pd.set_option("display.max_columns", None)
         pd.set_option("display.width", 120)
         print(mismatch_df.head(20).to_string(index=False))
@@ -466,12 +466,12 @@ def phase5_validate(
         print(f"\n  Rollup coverage (via '{primary}'):")
         print(f"    Non-null: {n_with_rollup:,} / 10,871 (expected ~3,986)")
         if n_with_rollup < 3_800 or n_with_rollup > 4_100:
-            print(f"  ⚠ Coverage outside expected range 3,800–4,100")
+            print("  ⚠ Coverage outside expected range 3,800–4,100")
         else:
             print("  ✓ Coverage in expected range")
 
     # 6. Per-level data coverage
-    print(f"\n  Per-level LN data coverage:")
+    print("\n  Per-level LN data coverage:")
     for level in ["i", "ii", "iii", "iv", "v", "vi", "vii"]:
         col = f"ln_level_{level}_examined"
         if col in df.columns:

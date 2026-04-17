@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import argparse
 import os
-import re
 import sys
 import time
 from datetime import datetime
@@ -46,9 +45,9 @@ def split_statements(sql: str) -> list[tuple[list[str], str]]:
     in_string = False
     in_line_comment = False
     in_block_comment = False
-    i = 0
-    n = len(sql)
-    line_start_buf: list[str] = []
+    _i = 0
+    _n = len(sql)
+    _line_start_buf: list[str] = []
 
     def flush(stmt: str) -> None:
         s = stmt.strip()

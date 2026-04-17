@@ -4,7 +4,6 @@ Read-only. No writes. Just print what we find so we can write Script 235 safely.
 """
 from __future__ import annotations
 
-import os
 import sys
 from pathlib import Path
 

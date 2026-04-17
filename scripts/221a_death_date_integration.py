@@ -24,7 +24,6 @@ import sys
 import os
 import duckdb
 import pandas as pd
-import numpy as np
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
@@ -39,7 +38,7 @@ con = duckdb.connect(f"md:thyroid_ete_fix_20260413?motherduck_token={token}")
 REPO = Path(__file__).resolve().parent.parent
 SCRIPT_NAME = "221a_death_date_integration"
 
-print(f"Connected to: md:thyroid_ete_fix_20260413")
+print("Connected to: md:thyroid_ete_fix_20260413")
 print(f"Repo root: {REPO}")
 
 # ---------------------------------------------------------------------------
@@ -56,7 +55,7 @@ def verify_invariants(label=""):
     print(f"\n[INVARIANTS {label}] total={row[0]}, distinct_rids={row[1]}, null_rids={row[2]}, null_fna={row[3]}")
     if row != (10871, 10871, 0, 0):
         raise AssertionError(f"INVARIANT FAIL at '{label}': {row} — expected (10871, 10871, 0, 0)")
-    print(f"  ✓ All invariants PASS")
+    print("  ✓ All invariants PASS")
     return row
 
 
@@ -265,7 +264,7 @@ survival_dist = con.execute("""
     WHERE d.death_date >= TRY_CAST(c.ops_surg_date AS DATE)
 """).fetchone()
 
-print(f"\nSurvival time distribution (deceased, death >= surgery):")
+print("\nSurvival time distribution (deceased, death >= surgery):")
 print(f"  N deceased with valid dates: {survival_dist[0]}")
 print(f"  Min days:    {survival_dist[1]}")
 print(f"  P25 days:    {survival_dist[2]}")
@@ -297,7 +296,7 @@ try:
         FROM canonical_patient_master_v1 c
         LEFT JOIN _notes_death_dates_v1 d ON c.research_id = d.research_id
     """).fetchone()
-    print(f"NSQIP vs Notes death cross-validation:")
+    print("NSQIP vs Notes death cross-validation:")
     print(f"  NSQIP patients with death data:        {xval[0]}")
     print(f"  NSQIP 30-day deaths:                   {xval[1]}")
     print(f"  Both say deceased (30d NSQIP + date):  {xval[2]}")
@@ -349,11 +348,11 @@ else:
     print("  No NLP survival/followup column found — skipping NLP cross-validation")
 
 # Also report the 26 confirmed-dead-but-no-date patients
-print(f"\n  NOTE: 26 additional patients confirmed deceased in Notes workbook but NO parseable date:")
-print(f"        RIDs: 516, 665, 1678, 1988, 2086, 2128, 3204, 3382, 3386, 3527, 3560, 3749,")
-print(f"              3920, 3923, 4390, 4722, 4985, 5937, 6456, 6858, 7247, 7480, 8369")
-print(f"        (3 additional RIDs 9816/9818/9820 had DEATH column containing a clinical note)")
-print(f"        These patients will have vital_status='alive' (no date) in this integration.")
+print("\n  NOTE: 26 additional patients confirmed deceased in Notes workbook but NO parseable date:")
+print("        RIDs: 516, 665, 1678, 1988, 2086, 2128, 3204, 3382, 3386, 3527, 3560, 3749,")
+print("              3920, 3923, 4390, 4722, 4985, 5937, 6456, 6858, 7247, 7480, 8369")
+print("        (3 additional RIDs 9816/9818/9820 had DEATH column containing a clinical note)")
+print("        These patients will have vital_status='alive' (no date) in this integration.")
 
 # Step 2.3: Check gold_master for death columns
 print("\n--- Step 2.3: Check gold_master for death/vital columns ---")
@@ -408,7 +407,7 @@ already_exist = [c for c in new_cols if c in canon_cols]
 if already_exist:
     print(f"  Pre-existing columns (will be rebuilt): {already_exist}")
 else:
-    print(f"  No pre-existing death columns — clean integration")
+    print("  No pre-existing death columns — clean integration")
 
 # Step 3.3: Build new canonical with death columns
 print("\n--- Step 3.3: Rebuild canonical with death + survival columns ---")
@@ -616,7 +615,7 @@ total_cols = con.execute("""
     WHERE table_name = 'canonical_patient_master_v1' AND table_schema = 'main'
 """).fetchone()[0]
 print(f"\ncanonical_patient_master_v1: 10,871 patients × {total_cols} columns")
-print(f"New columns added:")
+print("New columns added:")
 for col in new_cols:
     print(f"  + {col}")
 

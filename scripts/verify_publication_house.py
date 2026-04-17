@@ -669,7 +669,7 @@ def main() -> None:
     top10 = [(r[0], r[0]) for r in top10_rows if r[0] in paired_src]
     stat_pairs = [(SRC_CANON, TGT_CANON)] + top10
 
-    print(f"\nRunning 6 verification layers…")
+    print("\nRunning 6 verification layers…")
 
     l1 = layer1_catalog(con, pairs, src_tables, tgt_tables, src_only)
     l2 = layer2_comments(con, pairs)

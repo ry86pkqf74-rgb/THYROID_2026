@@ -1,0 +1,480 @@
+{
+  "audit": [
+    {
+      "research_id": 1150,
+      "fna_index": 1,
+      "old_date_str": "0000-09-19",
+      "old_parsed_str": "0000-09-19",
+      "old_year_full": 0,
+      "new_iso_date": null,
+      "rule_applied": "year_zero_BC_unresolved",
+      "affected_fna_episode_ids": [
+        629
+      ],
+      "pre_resolved": [
+        "0001-09-19 (BC)"
+      ],
+      "pre_native": [
+        "0001-09-19 (BC)"
+      ]
+    },
+    {
+      "research_id": 2049,
+      "fna_index": 1,
+      "old_date_str": "0021-05-14",
+      "old_parsed_str": "0021-05-14",
+      "old_year_full": 21,
+      "new_iso_date": "2021-05-14",
+      "rule_applied": "yy_21_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        1328
+      ],
+      "pre_resolved": [
+        "0021-05-14"
+      ],
+      "pre_native": [
+        "0021-05-14"
+      ]
+    },
+    {
+      "research_id": 4914,
+      "fna_index": 1,
+      "old_date_str": "0006-04-15",
+      "old_parsed_str": "0006-04-15",
+      "old_year_full": 6,
+      "new_iso_date": "2006-04-15",
+      "rule_applied": "yy_06_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        2698
+      ],
+      "pre_resolved": [
+        "0006-04-15"
+      ],
+      "pre_native": [
+        "0006-04-15"
+      ]
+    },
+    {
+      "research_id": 4963,
+      "fna_index": 1,
+      "old_date_str": "0015-06-25",
+      "old_parsed_str": "0015-06-25",
+      "old_year_full": 15,
+      "new_iso_date": "2015-06-25",
+      "rule_applied": "yy_15_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        2741
+      ],
+      "pre_resolved": [
+        "0015-06-25"
+      ],
+      "pre_native": [
+        "0015-06-25"
+      ]
+    },
+    {
+      "research_id": 4964,
+      "fna_index": 1,
+      "old_date_str": "0015-05-14",
+      "old_parsed_str": "0015-05-14",
+      "old_year_full": 15,
+      "new_iso_date": "2015-05-14",
+      "rule_applied": "yy_15_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        2742
+      ],
+      "pre_resolved": [
+        "0015-05-14"
+      ],
+      "pre_native": [
+        "0015-05-14"
+      ]
+    },
+    {
+      "research_id": 4973,
+      "fna_index": 1,
+      "old_date_str": "0015-06-23",
+      "old_parsed_str": "0015-06-23",
+      "old_year_full": 15,
+      "new_iso_date": "2015-06-23",
+      "rule_applied": "yy_15_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        2746
+      ],
+      "pre_resolved": [
+        "0015-06-23"
+      ],
+      "pre_native": [
+        "0015-06-23"
+      ]
+    },
+    {
+      "research_id": 4984,
+      "fna_index": 1,
+      "old_date_str": "0015-04-28",
+      "old_parsed_str": "0015-04-28",
+      "old_year_full": 15,
+      "new_iso_date": "2015-04-28",
+      "rule_applied": "yy_15_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        2748
+      ],
+      "pre_resolved": [
+        "0015-04-28"
+      ],
+      "pre_native": [
+        "0015-04-28"
+      ]
+    },
+    {
+      "research_id": 4987,
+      "fna_index": 1,
+      "old_date_str": "0015-07-24",
+      "old_parsed_str": "0015-07-24",
+      "old_year_full": 15,
+      "new_iso_date": "2015-07-24",
+      "rule_applied": "yy_15_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        2753
+      ],
+      "pre_resolved": [
+        "0015-07-24"
+      ],
+      "pre_native": [
+        "0015-07-24"
+      ]
+    },
+    {
+      "research_id": 4988,
+      "fna_index": 1,
+      "old_date_str": "0015-06-30",
+      "old_parsed_str": "0015-06-30",
+      "old_year_full": 15,
+      "new_iso_date": "2015-06-30",
+      "rule_applied": "yy_15_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        2754
+      ],
+      "pre_resolved": [
+        "0015-06-30"
+      ],
+      "pre_native": [
+        "0015-06-30"
+      ]
+    },
+    {
+      "research_id": 4990,
+      "fna_index": 1,
+      "old_date_str": "0015-08-24",
+      "old_parsed_str": "0015-08-24",
+      "old_year_full": 15,
+      "new_iso_date": "2015-08-24",
+      "rule_applied": "yy_15_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        2756
+      ],
+      "pre_resolved": [
+        "0015-08-24"
+      ],
+      "pre_native": [
+        "0015-08-24"
+      ]
+    },
+    {
+      "research_id": 4991,
+      "fna_index": 1,
+      "old_date_str": "0015-07-21",
+      "old_parsed_str": "0015-07-21",
+      "old_year_full": 15,
+      "new_iso_date": "2015-07-21",
+      "rule_applied": "yy_15_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        2757
+      ],
+      "pre_resolved": [
+        "0015-07-21"
+      ],
+      "pre_native": [
+        "0015-07-21"
+      ]
+    },
+    {
+      "research_id": 4993,
+      "fna_index": 1,
+      "old_date_str": "0007-06-15",
+      "old_parsed_str": "0007-06-15",
+      "old_year_full": 7,
+      "new_iso_date": "2007-06-15",
+      "rule_applied": "yy_07_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        2759
+      ],
+      "pre_resolved": [
+        "0007-06-15"
+      ],
+      "pre_native": [
+        "0007-06-15"
+      ]
+    },
+    {
+      "research_id": 4995,
+      "fna_index": 1,
+      "old_date_str": "0007-05-24",
+      "old_parsed_str": "0007-05-24",
+      "old_year_full": 7,
+      "new_iso_date": "2007-05-24",
+      "rule_applied": "yy_07_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        2760
+      ],
+      "pre_resolved": [
+        "0007-05-24"
+      ],
+      "pre_native": [
+        "0007-05-24"
+      ]
+    },
+    {
+      "research_id": 5001,
+      "fna_index": 1,
+      "old_date_str": "0008-11-15",
+      "old_parsed_str": "0008-11-15",
+      "old_year_full": 8,
+      "new_iso_date": "2008-11-15",
+      "rule_applied": "yy_08_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        2763
+      ],
+      "pre_resolved": [
+        "0008-11-15"
+      ],
+      "pre_native": [
+        "0008-11-15"
+      ]
+    },
+    {
+      "research_id": 5007,
+      "fna_index": 1,
+      "old_date_str": "0001-07-15",
+      "old_parsed_str": "0001-07-15",
+      "old_year_full": 1,
+      "new_iso_date": "2001-07-15",
+      "rule_applied": "yy_01_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        2771
+      ],
+      "pre_resolved": [
+        "0001-07-15"
+      ],
+      "pre_native": [
+        "0001-07-15"
+      ]
+    },
+    {
+      "research_id": 5008,
+      "fna_index": 1,
+      "old_date_str": "0015-07-20",
+      "old_parsed_str": "0015-07-20",
+      "old_year_full": 15,
+      "new_iso_date": "2015-07-20",
+      "rule_applied": "yy_15_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        2773
+      ],
+      "pre_resolved": [
+        "0015-07-20"
+      ],
+      "pre_native": [
+        "0015-07-20"
+      ]
+    },
+    {
+      "research_id": 5018,
+      "fna_index": 1,
+      "old_date_str": "0015-06-22",
+      "old_parsed_str": "0015-06-22",
+      "old_year_full": 15,
+      "new_iso_date": "2015-06-22",
+      "rule_applied": "yy_15_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        2779
+      ],
+      "pre_resolved": [
+        "0015-06-22"
+      ],
+      "pre_native": [
+        "0015-06-22"
+      ]
+    },
+    {
+      "research_id": 5020,
+      "fna_index": 1,
+      "old_date_str": "0007-02-15",
+      "old_parsed_str": "0007-02-15",
+      "old_year_full": 7,
+      "new_iso_date": "2007-02-15",
+      "rule_applied": "yy_07_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        2781
+      ],
+      "pre_resolved": [
+        "0007-02-15"
+      ],
+      "pre_native": [
+        "0007-02-15"
+      ]
+    },
+    {
+      "research_id": 5061,
+      "fna_index": 1,
+      "old_date_str": "0009-01-15",
+      "old_parsed_str": "0009-01-15",
+      "old_year_full": 9,
+      "new_iso_date": "2009-01-15",
+      "rule_applied": "yy_09_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        2799
+      ],
+      "pre_resolved": [
+        "0009-01-15"
+      ],
+      "pre_native": [
+        "0009-01-15"
+      ]
+    },
+    {
+      "research_id": 5063,
+      "fna_index": 1,
+      "old_date_str": "0015-06-17",
+      "old_parsed_str": "0015-06-17",
+      "old_year_full": 15,
+      "new_iso_date": "2015-06-17",
+      "rule_applied": "yy_15_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        2801
+      ],
+      "pre_resolved": [
+        "0015-06-17"
+      ],
+      "pre_native": [
+        "0015-06-17"
+      ]
+    },
+    {
+      "research_id": 5866,
+      "fna_index": 1,
+      "old_date_str": "0106-12-22",
+      "old_parsed_str": "0106-12-22",
+      "old_year_full": 106,
+      "new_iso_date": "2006-12-22",
+      "rule_applied": "yy_06_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        3477
+      ],
+      "pre_resolved": [
+        "0106-12-22"
+      ],
+      "pre_native": [
+        "0106-12-22"
+      ]
+    },
+    {
+      "research_id": 5933,
+      "fna_index": 1,
+      "old_date_str": "0011-08-25",
+      "old_parsed_str": "0011-08-25",
+      "old_year_full": 11,
+      "new_iso_date": "2011-08-25",
+      "rule_applied": "yy_11_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        3540,
+        3541
+      ],
+      "pre_resolved": [
+        "0011-08-25",
+        "0011-08-25"
+      ],
+      "pre_native": [
+        "0011-08-25",
+        "0011-08-25"
+      ]
+    },
+    {
+      "research_id": 5933,
+      "fna_index": 2,
+      "old_date_str": "0011-08-25",
+      "old_parsed_str": "0011-08-25",
+      "old_year_full": 11,
+      "new_iso_date": "2011-08-25",
+      "rule_applied": "yy_11_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        3540,
+        3541
+      ],
+      "pre_resolved": [
+        "0011-08-25",
+        "0011-08-25"
+      ],
+      "pre_native": [
+        "0011-08-25",
+        "0011-08-25"
+      ]
+    },
+    {
+      "research_id": 7291,
+      "fna_index": 1,
+      "old_date_str": "0006-04-15",
+      "old_parsed_str": "0006-04-15",
+      "old_year_full": 6,
+      "new_iso_date": "2006-04-15",
+      "rule_applied": "yy_06_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        4578
+      ],
+      "pre_resolved": [
+        "0006-04-15"
+      ],
+      "pre_native": [
+        "0006-04-15"
+      ]
+    },
+    {
+      "research_id": 9506,
+      "fna_index": 1,
+      "old_date_str": "0202-04-18",
+      "old_parsed_str": "0202-04-18",
+      "old_year_full": 202,
+      "new_iso_date": "2002-04-18",
+      "rule_applied": "yy_02_le_cutoff_26_2000",
+      "affected_fna_episode_ids": [
+        5697
+      ],
+      "pre_resolved": [
+        "0202-04-18"
+      ],
+      "pre_native": [
+        "0202-04-18"
+      ]
+    },
+    {
+      "research_id": 11915,
+      "fna_index": 11,
+      "old_date_str": "2029-11-17",
+      "old_parsed_str": "2029-11-17",
+      "old_year_full": 2029,
+      "new_iso_date": null,
+      "rule_applied": "yy_29_resolves_pre1995_unresolved",
+      "affected_fna_episode_ids": [
+        7816
+      ],
+      "pre_resolved": [
+        "2029-11-17"
+      ],
+      "pre_native": [
+        "2029-11-17"
+      ]
+    }
+  ],
+  "yy_cutoff": 26,
+  "run_ts": "20260417T025110Z"
+}

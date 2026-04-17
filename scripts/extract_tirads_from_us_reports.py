@@ -387,15 +387,15 @@ def run_validation(df_out: pd.DataFrame):
             if val:
                 log.info(f"    {val}: {count}")
 
-        log.info(f"\n  Echogenicity distribution:")
+        log.info("\n  Echogenicity distribution:")
         for val, count in df_out["echogenicity"].value_counts().head(10).items():
             if val:
                 log.info(f"    {val}: {count}")
 
     # --- Check 4: Truncation impact ---
-    log.info(f"\n  Note: 8,346 of 12,900 source excerpts are truncated at 300 chars.")
-    log.info(f"  Truncated reports may have incomplete nodule descriptions.")
-    log.info(f"  Consider: nodules cut off mid-description will have more null features.")
+    log.info("\n  Note: 8,346 of 12,900 source excerpts are truncated at 300 chars.")
+    log.info("  Truncated reports may have incomplete nodule descriptions.")
+    log.info("  Consider: nodules cut off mid-description will have more null features.")
 
     # --- Save validation subset ---
     if len(has_reported) > 0:

@@ -1,0 +1,53 @@
+{
+  "script": "253",
+  "run_ts": "20260417T015343Z",
+  "run_date": "2026-04-16",
+  "mode": "APPLY",
+  "phases": {
+    "preflight": {
+      "tg_orphans": 537,
+      "long_orphans": 537
+    },
+    "evidence": {
+      "n_total_orphans": 537,
+      "n_zero_evidence": 134,
+      "n_any_evidence": 403,
+      "any_evidence_sample_ids": [
+        105,
+        151,
+        167,
+        184,
+        224,
+        240,
+        253,
+        261,
+        264,
+        439,
+        457,
+        514,
+        547,
+        551,
+        555,
+        560,
+        581,
+        599,
+        617,
+        652
+      ]
+    },
+    "snapshots": {
+      "tg_archive": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"thyroglobulin_lab_canonical_v1_orphans_pre253_20260417T015343Z\"",
+      "long_archive": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"longitudinal_lab_canonical_v1_orphans_pre253_20260417T015343Z\""
+    },
+    "review_view_rows": 403,
+    "delete": {
+      "tg_rows": 2713,
+      "long_rows": 2713
+    },
+    "replay_after": {
+      "tg_orphans_after": 403,
+      "long_orphans_after": 403,
+      "expected_residual_any_evidence": 403
+    }
+  }
+}

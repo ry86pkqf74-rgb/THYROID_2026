@@ -703,3 +703,179 @@
 [01:18:53.067Z]   ALL ASSERTIONS PASS
 [01:18:53.069Z] decision log written: scripts/output/250_decision_log.json
 [01:18:53.069Z] === END elapsed=25.9s
+[02:05:50.917Z] ==============================================================================
+[02:05:50.917Z] === START 250_registry_pointer_rebuild.py  mode=APPLY
+[02:05:51.902Z] connected to thyroid_canonical_publication_v1_0
+[02:05:51.902Z] PHASE 3A — preflight
+[02:05:52.643Z]   CPM: 10871 rows x 1494 cols
+[02:05:52.644Z]   main BASE TABLEs: 114
+[02:05:52.644Z]   registry rows: 116
+[02:05:52.742Z] PHASE 3B — snapshot registry + pointer view DDL
+[02:05:57.320Z]   registry archive: detail_table_registry_v1_pre250_20260417T020551Z
+[02:05:57.320Z]   view DDL archive: canonical_detail_pointer_v1_pre250_20260417T020551Z
+[02:05:57.320Z] PHASE 3C — add 7 missing registry rows
+[02:05:57.350Z]   SKIP (already in registry): __readme
+[02:05:57.350Z]   SKIP (already in registry): canonical_patient_master
+[02:05:57.350Z]   SKIP (already in registry): data_dictionary_v240
+[02:05:57.350Z]   SKIP (already in registry): molecular_assay_dictionary
+[02:05:57.350Z]   SKIP (already in registry): molecular_code_crosswalk
+[02:05:57.350Z]   SKIP (already in registry): molecular_ingestion_runs
+[02:05:57.350Z]   SKIP (already in registry): specimen_source_xref_v1
+[02:05:57.382Z]   registry row total (incl. simulated): 116
+[02:05:57.382Z] PHASE 3D+3E — extract normalized feeds_master_columns
+[02:05:57.384Z]      _molecular_patient_rollup_v227                ->   52 CPM cols mapped
+[02:05:57.384Z]   0! analysis_molecular_subset_v1                  ->    0 CPM cols mapped
+[02:05:57.384Z]      canonical_benign_diagnosis_v1                 ->    4 CPM cols mapped
+[02:05:57.384Z]      canonical_diagnosis_unified_v1                ->    4 CPM cols mapped
+[02:05:57.384Z]      canonical_malignant_diagnosis_v1              ->    3 CPM cols mapped
+[02:05:57.384Z]      canonical_molecular_tested_v1                 ->    5 CPM cols mapped
+[02:05:57.385Z]      canonical_recurrence_v1                       ->   42 CPM cols mapped
+[02:05:57.386Z]      canonical_survival_followup_v1                ->   29 CPM cols mapped
+[02:05:57.386Z]      canonical_tumor_characteristics_v1            ->    6 CPM cols mapped
+[02:05:57.386Z]      canonical_us_nodule_characteristics_v1        ->    5 CPM cols mapped
+[02:05:57.386Z]      clinical_note_ln_extracted_v1                 ->   38 CPM cols mapped
+[02:05:57.386Z]   0! clinical_notes_long                           ->    0 CPM cols mapped
+[02:05:57.386Z]      complication_patient_summary_v1               ->    3 CPM cols mapped
+[02:05:57.387Z]      complication_phenotype_v1                     ->  104 CPM cols mapped
+[02:05:57.387Z]      ct_imaging                                    ->   29 CPM cols mapped
+[02:05:57.387Z]   0! episode_analysis_resolved_v1_dedup            ->    0 CPM cols mapped
+[02:05:57.388Z]      ete_adjudication_v1                           ->   19 CPM cols mapped
+[02:05:57.388Z]      extracted_braf_recovery_v1                    ->   11 CPM cols mapped
+[02:05:57.388Z]   0! extracted_complications_refined_v5            ->    0 CPM cols mapped
+[02:05:57.388Z]      extracted_ete_subgraded_v1                    ->    3 CPM cols mapped
+[02:05:57.388Z]      extracted_fna_bethesda_v1                     ->    4 CPM cols mapped
+[02:05:57.389Z]      extracted_postop_labs_expanded_v1             ->   19 CPM cols mapped
+[02:05:57.390Z]      extracted_ras_patient_summary_v1              ->   17 CPM cols mapped
+[02:05:57.390Z]      extracted_rln_injury_refined_v2               ->    4 CPM cols mapped
+[02:05:57.390Z]   0! extracted_tirads_validated_v1                 ->    0 CPM cols mapped
+[02:05:57.390Z]      fna_cytology                                  ->    1 CPM cols mapped
+[02:05:57.390Z]      fna_episode_master_v2                         ->   19 CPM cols mapped
+[02:05:57.390Z]   0! fna_history                                   ->    0 CPM cols mapped
+[02:05:57.391Z]      imaging_exam_master_v1                        ->    1 CPM cols mapped
+[02:05:57.391Z]   0! imaging_fna_linkage_v3                        ->    0 CPM cols mapped
+[02:05:57.391Z]      imaging_nodule_master_v1                      ->   12 CPM cols mapped
+[02:05:57.391Z]      imaging_patient_summary_v1                    ->    5 CPM cols mapped
+[02:05:57.391Z]   0! lab_cross_wave_dedup_map_v1                   ->    0 CPM cols mapped
+[02:05:57.391Z]   0! lesion_analysis_resolved_v1                   ->    0 CPM cols mapped
+[02:05:57.391Z]      ln_crossval_v1                                ->    2 CPM cols mapped
+[02:05:57.392Z]      ln_master_rollup_v1                           ->   96 CPM cols mapped
+[02:05:57.392Z]      longitudinal_lab_canonical_v1                 ->   53 CPM cols mapped
+[02:05:57.392Z]   0! manuscript_cohort_v1                          ->    0 CPM cols mapped
+[02:05:57.392Z]   0! molecular_results                             ->    0 CPM cols mapped
+[02:05:57.392Z]      molecular_test_episode_v2                     ->    8 CPM cols mapped
+[02:05:57.393Z]   0! molecular_testing                             ->    0 CPM cols mapped
+[02:05:57.393Z]      molecular_variant_long                        ->    4 CPM cols mapped
+[02:05:57.393Z]      mri_imaging                                   ->   25 CPM cols mapped
+[02:05:57.393Z]      note_entities_complications                   ->    2 CPM cols mapped
+[02:05:57.393Z]      note_entities_genetics                        ->    2 CPM cols mapped
+[02:05:57.393Z]      note_entities_llm_airway_invasion             ->    4 CPM cols mapped
+[02:05:57.394Z]      note_entities_llm_cervical_ln_detail          ->    5 CPM cols mapped
+[02:05:57.394Z]      note_entities_llm_dynamic_risk_response       ->    4 CPM cols mapped
+[02:05:57.394Z]      note_entities_llm_frozen_section_detail       ->    4 CPM cols mapped
+[02:05:57.394Z]      note_entities_llm_functional_outcomes         ->    4 CPM cols mapped
+[02:05:57.394Z]      note_entities_llm_imaging                     ->    4 CPM cols mapped
+[02:05:57.395Z]      note_entities_llm_labs                        ->    4 CPM cols mapped
+[02:05:57.395Z]      note_entities_llm_parathyroid_detail          ->    4 CPM cols mapped
+[02:05:57.395Z]      note_entities_llm_past_medical_hx             ->   68 CPM cols mapped
+[02:05:57.395Z]      note_entities_llm_past_surgical_hx            ->   24 CPM cols mapped
+[02:05:57.396Z]      note_entities_llm_pathology                   ->   10 CPM cols mapped
+[02:05:57.396Z]      note_entities_llm_patient_decision_adherence  ->    4 CPM cols mapped
+[02:05:57.397Z]      note_entities_llm_physical_exam               ->    4 CPM cols mapped
+[02:05:57.397Z]      note_entities_llm_presenting_symptoms         ->   12 CPM cols mapped
+[02:05:57.398Z]      note_entities_llm_rad_treatment               ->   14 CPM cols mapped
+[02:05:57.398Z]      note_entities_llm_rai_detailed                ->    4 CPM cols mapped
+[02:05:57.398Z]      note_entities_llm_recurrence                  ->    8 CPM cols mapped
+[02:05:57.399Z]      note_entities_llm_survival_followup           ->    4 CPM cols mapped
+[02:05:57.399Z]      note_entities_llm_synoptic_pathology_enrichment ->    4 CPM cols mapped
+[02:05:57.399Z]      note_entities_llm_tg_kinetics                 ->    4 CPM cols mapped
+[02:05:57.399Z]      note_entities_llm_tirads_granular             ->    5 CPM cols mapped
+[02:05:57.400Z]      note_entities_llm_us_nodule_dynamics          ->    4 CPM cols mapped
+[02:05:57.400Z]      note_entities_llm_vascular_invasion           ->    5 CPM cols mapped
+[02:05:57.401Z]      note_entities_medications                     ->   17 CPM cols mapped
+[02:05:57.401Z]      note_entities_operative_detail                ->    2 CPM cols mapped
+[02:05:57.401Z]      note_entities_problem_list                    ->    2 CPM cols mapped
+[02:05:57.401Z]      note_entities_procedures                      ->   17 CPM cols mapped
+[02:05:57.401Z]      note_entities_staging                         ->    2 CPM cols mapped
+[02:05:57.402Z]      nsqip_enrichment                              ->  102 CPM cols mapped
+[02:05:57.402Z]   0! nsqip_patient_summary                         ->    0 CPM cols mapped
+[02:05:57.402Z]      nuclear_med                                   ->   26 CPM cols mapped
+[02:05:57.403Z]      operative_episode_detail_v2                   ->  111 CPM cols mapped
+[02:05:57.403Z]      path_outcome_classification_v1                ->    3 CPM cols mapped
+[02:05:57.403Z]   0! path_size_adjudication_v241                   ->    0 CPM cols mapped
+[02:05:57.403Z]      path_synoptics                                ->   58 CPM cols mapped
+[02:05:57.403Z]      patient_analysis_resolved_v1                  ->    3 CPM cols mapped
+[02:05:57.403Z]      patient_completion_oed_path_linkage_v1        ->    4 CPM cols mapped
+[02:05:57.403Z]      patient_cross_domain_timeline_v2              ->    3 CPM cols mapped
+[02:05:57.405Z]      patient_tumor_rollup_v1                       ->   47 CPM cols mapped
+[02:05:57.405Z]      rai_treatment_episode_v2                      ->   37 CPM cols mapped
+[02:05:57.405Z]      recurrence_event_clean_v1                     ->    6 CPM cols mapped
+[02:05:57.405Z]   0! ret_note_entity_adjudication_v226             ->    0 CPM cols mapped
+[02:05:57.405Z]      ret_patient_adjudicated_v226                  ->    2 CPM cols mapped
+[02:05:57.405Z]      serial_imaging_us                             ->    1 CPM cols mapped
+[02:05:57.405Z]   0! specimen_genomic_assay_v1                     ->    0 CPM cols mapped
+[02:05:57.405Z]      specimen_master_v1                            ->    1 CPM cols mapped
+[02:05:57.405Z]      specimen_tumor_focus_v1                       ->    2 CPM cols mapped
+[02:05:57.405Z]      survival_cohort_enriched                      ->    4 CPM cols mapped
+[02:05:57.406Z]      synoptic_tumor_long_v1                        ->    4 CPM cols mapped
+[02:05:57.406Z]      tg_postop_surveillance_windows_v1             ->   20 CPM cols mapped
+[02:05:57.406Z]      tg_timeline_patient_summary_v1                ->    6 CPM cols mapped
+[02:05:57.406Z]      thyroglobulin_lab_canonical_v1                ->    9 CPM cols mapped
+[02:05:57.406Z]      thyroid_sizes                                 ->    3 CPM cols mapped
+[02:05:57.406Z]      thyroid_weights                               ->    4 CPM cols mapped
+[02:05:57.406Z]      thyroseq_molecular_enrichment                 ->    1 CPM cols mapped
+[02:05:57.407Z]      tirads_llm_extracted_v2                       ->   18 CPM cols mapped
+[02:05:57.407Z]   0! tirads_llm_validation_v2                      ->    0 CPM cols mapped
+[02:05:57.407Z]      tumor_episode_master_v2                       ->    4 CPM cols mapped
+[02:05:57.407Z]      tumor_pathology                               ->    5 CPM cols mapped
+[02:05:57.407Z]      ultrasound_reports                            ->   12 CPM cols mapped
+[02:05:57.407Z]      us_nodules_tirads                             ->    4 CPM cols mapped
+[02:05:57.407Z]   0! us_nodules_tirads_vs_inm_v1_discordance_v1    ->    0 CPM cols mapped
+[02:05:57.407Z]      vc_paralysis_recalibration_v236               ->    3 CPM cols mapped
+[02:05:57.407Z]   0! nlp_rollup_promotion_audit_v1                 ->    0 CPM cols mapped
+[02:05:57.407Z]   0! __readme                                      ->    0 CPM cols mapped
+[02:05:57.408Z]   0! canonical_patient_master                      ->    0 CPM cols mapped
+[02:05:57.408Z]   0! data_dictionary_v240                          ->    0 CPM cols mapped
+[02:05:57.408Z]   0! molecular_assay_dictionary                    ->    0 CPM cols mapped
+[02:05:57.408Z]   0! molecular_code_crosswalk                      ->    0 CPM cols mapped
+[02:05:57.408Z]   0! molecular_ingestion_runs                      ->    0 CPM cols mapped
+[02:05:57.408Z]   0! specimen_source_xref_v1                       ->    0 CPM cols mapped
+[02:05:57.409Z]   CPM cols claimed by 2+ registry rows: 88
+[02:05:57.409Z]       COLLISION mol_genes_list -> ['_molecular_patient_rollup_v227', 'molecular_variant_long']
+[02:05:57.409Z]       COLLISION mol_has_afirma -> ['_molecular_patient_rollup_v227', 'canonical_molecular_tested_v1', 'molecular_test_episode_v2']
+[02:05:57.409Z]       COLLISION mol_has_thyroseq -> ['_molecular_patient_rollup_v227', 'canonical_molecular_tested_v1', 'molecular_test_episode_v2']
+[02:05:57.409Z]       COLLISION mol_n_distinct_genes -> ['_molecular_patient_rollup_v227', 'molecular_variant_long']
+[02:05:57.409Z]       COLLISION mol_n_tests -> ['_molecular_patient_rollup_v227', 'molecular_test_episode_v2']
+[02:05:57.409Z]       COLLISION mol_n_variants_total -> ['_molecular_patient_rollup_v227', 'molecular_variant_long']
+[02:05:57.409Z]       COLLISION mol_platform -> ['_molecular_patient_rollup_v227', 'canonical_molecular_tested_v1', 'molecular_test_episode_v2']
+[02:05:57.409Z]       COLLISION mol_variant_classes -> ['_molecular_patient_rollup_v227', 'molecular_variant_long']
+[02:05:57.409Z]       COLLISION molecular_tested_confirmed -> ['_molecular_patient_rollup_v227', 'canonical_molecular_tested_v1', 'molecular_test_episode_v2']
+[02:05:57.409Z]       COLLISION ret_adjudicated_flag -> ['_molecular_patient_rollup_v227', 'ret_patient_adjudicated_v226']
+[02:05:57.409Z] PHASE 3F — add column + UPDATE feeds_master_columns_normalized
+[02:05:57.503Z]   feeds_master_columns_normalized already exists (idempotent)
+[02:06:02.300Z]   rows updated: 90
+[02:06:02.301Z] PHASE 3G — write registry_normalization_review_v1_1
+[02:06:15.070Z]   wrote review table rows: 116
+[02:06:15.071Z] PHASE 3H — DROP + CREATE canonical_detail_pointer_v1
+[02:06:16.497Z]   rebuilt manuscript_workspace.canonical_detail_pointer_v1
+[02:06:16.497Z] PHASE 3I — final assertions + mapping stats
+[02:06:16.509Z]   mapped: 1273/1494 (85.21%)
+[02:06:16.509Z]   unmapped (allowlist): 221
+[02:06:16.509Z]   unmapped (real, after allowlist): 0
+[02:06:16.510Z]   top 10 multi-mapped CPM cols:
+[02:06:16.510Z]     histology_final                     -> 4 tables: ['canonical_malignant_diagnosis_v1', 'synoptic_tumor_long_v1', 'tumor_episode_master_v2', 'tumor_pathology']
+[02:06:16.510Z]     path_tumor_size_cm                  -> 4 tables: ['path_synoptics', 'synoptic_tumor_long_v1', 'tumor_episode_master_v2', 'tumor_pathology']
+[02:06:16.510Z]     braf_positive_final                 -> 3 tables: ['canonical_molecular_tested_v1', 'extracted_braf_recovery_v1', 'molecular_test_episode_v2']
+[02:06:16.510Z]     dominant_nodule_size_cm             -> 3 tables: ['canonical_us_nodule_characteristics_v1', 'imaging_nodule_master_v1', 'imaging_patient_summary_v1']
+[02:06:16.510Z]     mol_has_afirma                      -> 3 tables: ['_molecular_patient_rollup_v227', 'canonical_molecular_tested_v1', 'molecular_test_episode_v2']
+[02:06:16.510Z]     mol_has_thyroseq                    -> 3 tables: ['_molecular_patient_rollup_v227', 'canonical_molecular_tested_v1', 'molecular_test_episode_v2']
+[02:06:16.510Z]     mol_platform                        -> 3 tables: ['_molecular_patient_rollup_v227', 'canonical_molecular_tested_v1', 'molecular_test_episode_v2']
+[02:06:16.510Z]     molecular_tested_confirmed          -> 3 tables: ['_molecular_patient_rollup_v227', 'canonical_molecular_tested_v1', 'molecular_test_episode_v2']
+[02:06:16.510Z]     n_us_exams                          -> 3 tables: ['imaging_patient_summary_v1', 'serial_imaging_us', 'ultrasound_reports']
+[02:06:16.510Z]     tg_mean                             -> 3 tables: ['tg_postop_surveillance_windows_v1', 'tg_timeline_patient_summary_v1', 'thyroglobulin_lab_canonical_v1']
+[02:06:16.736Z]   ASSERT main-schema registry rows == main BASE TABLE count (114 vs 114)
+[02:06:16.736Z]   ASSERT manuscript_workspace audit rows >= 0 (got 2)
+[02:06:16.873Z]   ASSERT pointer view mapped >= 1200 (got 1273)
+[02:06:16.873Z]   ASSERT unmapped real <= 105 (got 0)
+[02:06:16.873Z]   ALL ASSERTIONS PASS
+[02:06:16.876Z] decision log written: scripts/output/250_decision_log.json
+[02:06:16.876Z] === END elapsed=26.0s

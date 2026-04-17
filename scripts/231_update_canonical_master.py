@@ -155,7 +155,7 @@ def run_update(con):
         preview = stmt[:80].replace("\n", " ")
         print(f"\n[{i}/{len(statements)}] {preview}...")
         con.execute(stmt)
-        print(f"  ✓")
+        print("  ✓")
     print("\n✓ All statements executed")
 
 
@@ -240,7 +240,7 @@ def main():
     ap.add_argument("--dry-run", action="store_true", help="Show what would change, don't run")
     args = ap.parse_args()
 
-    print(f"Script 231: canonical_patient_master update")
+    print("Script 231: canonical_patient_master update")
     print(f"Database: {PUBLICATION_DB}")
     print(f"Started: {datetime.now():%Y-%m-%d %H:%M:%S}")
 

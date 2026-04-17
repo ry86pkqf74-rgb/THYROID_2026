@@ -1,0 +1,27 @@
+[01:59:06.082Z] ==============================================================================
+[01:59:06.082Z] === START 256_rebuild_confirmed_complication_flag.py  mode=DRY-RUN
+[01:59:07.582Z] connected to thyroid_canonical_publication_v1_0
+[01:59:07.747Z] PREFLIGHT  CPM rows=10871  audit_§5.3 replay BEFORE: 174
+[01:59:07.747Z] DRY-RUN — no mutations performed
+[01:59:07.747Z] === END  elapsed=1.7s
+[01:59:08.109Z] ==============================================================================
+[01:59:08.109Z] === START 256_rebuild_confirmed_complication_flag.py  mode=APPLY
+[01:59:09.123Z] connected to thyroid_canonical_publication_v1_0
+[01:59:09.211Z] PREFLIGHT  CPM rows=10871  audit_§5.3 replay BEFORE: 174
+[01:59:13.939Z] SNAPSHOT  "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_pre256_20260417T015909Z"
+[01:59:13.939Z] REBUILD  per-entity confirmed flags + aggregate
+[01:59:14.416Z]   patients with any_confirmed_complication_flag=TRUE: 240
+[01:59:14.475Z]     comp_hypocalcemia_confirmed            TRUE: 98
+[01:59:14.510Z]     comp_hypoparathyroidism_confirmed      TRUE: 34
+[01:59:14.547Z]     comp_rln_injury_confirmed              TRUE: 59
+[01:59:14.655Z]     comp_hematoma_confirmed                TRUE: 38
+[01:59:14.861Z]     comp_seroma_confirmed                  TRUE: 28
+[01:59:14.938Z]     comp_chyle_leak_confirmed              TRUE: 20
+[01:59:15.050Z]     comp_wound_infection_confirmed         TRUE: 2
+[01:59:15.179Z]     comp_vc_paralysis_confirmed            TRUE: 0
+[01:59:15.318Z]     comp_vc_paresis_confirmed              TRUE: 0
+[01:59:15.318Z] DICTIONARY  promote per-entity + aggregate to status=authoritative
+[01:59:17.364Z] VERIFY  audit_§5.3 replay AFTER: 0 (target=0)
+[01:59:17.538Z] INVARIANT  CPM rows = 10871
+[01:59:17.538Z] ALL ASSERTIONS PASS
+[01:59:17.539Z] === END  elapsed=9.4s

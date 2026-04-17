@@ -8,8 +8,6 @@ Fixes: nsqip_thyroidectomy_has_data was set TRUE for all 10,871 patients (bug fr
 """
 
 import sys
-import os
-import json
 from pathlib import Path
 import pandas as pd
 
@@ -515,13 +513,13 @@ para_orphans = con.execute("""
     WHERE p.research_id NOT IN (SELECT research_id FROM canonical_patient_master_v1)
 """).fetchone()[0]
 assert para_orphans == 0, f"FAIL: {para_orphans} parathyroid rollup patients not in canonical"
-print(f"  ✓ No orphan patients in rollup")
+print("  ✓ No orphan patients in rollup")
 
 para_dupes = con.execute("""
     SELECT COUNT(*) - COUNT(DISTINCT research_id) FROM _parathyroid_patient_rollup_v1
 """).fetchone()[0]
 assert para_dupes == 0, f"FAIL: {para_dupes} duplicate research_ids in rollup"
-print(f"  ✓ No duplicates in rollup")
+print("  ✓ No duplicates in rollup")
 
 cov = con.execute("""
     SELECT

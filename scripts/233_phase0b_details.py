@@ -172,7 +172,7 @@ def main() -> None:
     print(f"[P0B] registry columns: {rep.get('registry_columns', [])}")
     print(f"[P0B] suspicious pub tables: {rep.get('suspicious_pub_tables', [])}")
     print(f"[P0B] qa_triage_refs: {rep.get('qa_triage_refs', [])}")
-    print(f"[P0B] suspect locations:")
+    print("[P0B] suspect locations:")
     for s, loc in rep.get("suspect_locations", {}).items():
         print(f"    {s}: pub={loc['in_pub']}  ref={loc['in_ref']}")
 

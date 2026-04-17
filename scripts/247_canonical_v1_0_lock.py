@@ -668,7 +668,7 @@ def main() -> None:
     checks.append((f"deprecated__ CPM cols covered by dict ({q5[0]} vs {q5[1]})", q5[0] == q5[1]))
     checks.append((f"canonical_tumor_characteristics_v1 gap == 2,449 (got {q6[2]})", q6[2] == 2449))
     checks.append((
-        f"discordance audit: all rows have both unt_max_tr and inm_max_tr populated",
+        "discordance audit: all rows have both unt_max_tr and inm_max_tr populated",
         "q7_discordance_sanity" in confirmations
         and confirmations["q7_discordance_sanity"].get("rows") is not None
         and confirmations["q7_discordance_sanity"]["rows"] == confirmations["q7_discordance_sanity"].get("both_populated"),

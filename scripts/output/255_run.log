@@ -1,0 +1,30 @@
+[01:57:21.414Z] ==============================================================================
+[01:57:21.414Z] === START 255_rebuild_rai_tg_rollups.py  mode=DRY-RUN
+[01:57:22.874Z] connected to thyroid_canonical_publication_v1_0
+[01:57:23.304Z] PREFLIGHT  RAI dose mismatches: 213
+[01:57:23.304Z]            Tg count mismatches: tg=1637 tgab=1755
+[01:57:23.304Z]            Tg peak/nadir mismatches: peak=505 nadir=537
+[01:57:23.304Z] DRY-RUN — no mutations performed
+[01:57:23.304Z] === END  elapsed=1.9s
+[01:57:23.528Z] ==============================================================================
+[01:57:23.528Z] === START 255_rebuild_rai_tg_rollups.py  mode=APPLY
+[01:57:24.607Z] connected to thyroid_canonical_publication_v1_0
+[01:57:24.782Z] PREFLIGHT  RAI dose mismatches: 213
+[01:57:24.782Z]            Tg count mismatches: tg=1637 tgab=1755
+[01:57:24.782Z]            Tg peak/nadir mismatches: peak=505 nadir=537
+[01:57:29.228Z] SNAPSHOT  "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_pre255_20260417T015724Z"
+[01:57:29.228Z] SCHEMA  add provenance cols if missing
+[01:57:29.587Z]   added column rai_max_dose_source VARCHAR
+[01:57:30.007Z]   added column tg_peak_source VARCHAR
+[01:57:30.638Z] REBUILD  RAI dose with episode_v2 -> rai_dose_v9 fallback
+[01:57:30.754Z]   rai_max_dose_mci > 0 patients: 253
+[01:57:30.754Z] REBUILD  Tg/TgAb counts + tg_peak/nadir/mean
+[01:57:31.234Z]   patients with n_tg > 0: 2528
+[01:57:31.234Z]   patients with tg_peak set: 2561
+[01:57:31.234Z] DICTIONARY  upsert provenance + canonical-source rows
+[01:57:32.718Z] VERIFY  RAI dose mismatches AFTER:        0
+[01:57:32.718Z]         Tg count mismatches AFTER:        tg=0 tgab=0
+[01:57:32.718Z]         Tg peak/nadir mismatches AFTER:   peak=0 nadir=0
+[01:57:33.546Z] INVARIANT  CPM rows = 10871
+[01:57:33.546Z] ALL ASSERTIONS PASS
+[01:57:33.547Z] === END  elapsed=10.0s

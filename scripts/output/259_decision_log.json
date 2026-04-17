@@ -1,0 +1,28 @@
+{
+  "script": "259",
+  "run_ts": "20260417T020909Z",
+  "run_date": "2026-04-16",
+  "phases": {},
+  "payload_summary": {
+    "replays": {
+      "audit_1_1": 0,
+      "audit_2_1_tg": 403,
+      "audit_2_1_long": 403,
+      "audit_2_2": 0,
+      "audit_3_1": 0,
+      "audit_3_3_tg": 0,
+      "audit_3_3_tgab": 0,
+      "audit_3_4_peak": 0,
+      "audit_3_4_nadir": 0,
+      "audit_5_3": 0
+    },
+    "cpm_rows": 10871,
+    "cpm_cols": 1494,
+    "cpm_hash": "8c897c30ceaa9e31bdfcc90e62d813b4733a152392897559d7ddfed391142a30",
+    "archive_count": 10,
+    "pointer_mapped": 1273,
+    "pointer_unresolved": 0,
+    "legacy_count": 0,
+    "lab_review_n": 403
+  }
+}
