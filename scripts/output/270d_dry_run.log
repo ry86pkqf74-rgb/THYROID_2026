@@ -1,0 +1,34 @@
+=== START 270d — stray schema migration (DRY-RUN) ===
+started_at: 2026-04-17T07:14:37.399070+00:00
+input plan: /Users/loganglosser/THYROID_2026/scripts/output/270c_stray_schema_consolidation.csv
+connected to thyroid_canonical_publication_v1_0
+
+--- ROUND-TRIP RESTORE TEST (wide-snapshot selector) ---
+  chosen: "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_pre270_20260417T055747Z" (score_reason='pre270_match', cols=1499, rows=10871)
+  PASS: round-trip 10871 rows / 1499 cols verified, temp table dropped
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270d_dry_run_restore_test.json
+
+--- load plan ---
+  MIGRATE_TO_ARCHIVE_LEGACY rows in 270c manifest: 243
+  per-schema breakdown: {'main': 156, 'mm_contract_dev': 22, 'qa': 27, 'v2_stage': 38}
+
+--- revalidate against live state ---
+  re-validated 243 plan rows (0 with drift)
+
+--- budget pre-flight ---
+  migrate_count: 243 (limit 250)
+  rows_with_drift: 0
+  rows_not_queryable: 0
+  total_rows_to_migrate: 2,232,775
+  per_object_timeout: 30s
+  largest 5 by row_count:
+    main.longitudinal_lab_canonical_v1                           rows=77960
+    main.thyroglobulin_lab_canonical_v1                          rows=76971
+    main.survival_cohort_enriched                                rows=61134
+    main.event_date_audit_v2                                     rows=61055
+    main.patient_cross_domain_timeline_v2                        rows=61055
+
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270d_dry_run_plan.csv (243 rows)
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270d_dry_run_summary.json
+
+=== END 270d (DRY-RUN) ===

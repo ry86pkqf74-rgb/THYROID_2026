@@ -1,0 +1,40 @@
+{
+  "started_at": "2026-04-17T07:14:37.399070+00:00",
+  "publication_db": "thyroid_canonical_publication_v1_0",
+  "archive_db": "Thyroid 2026 UPdated",
+  "mode": "dry-run",
+  "input_csv": "/Users/loganglosser/THYROID_2026/scripts/output/270c_stray_schema_consolidation.csv",
+  "restore_test": {
+    "status": "PASS",
+    "chosen_snapshot": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"canonical_patient_master_pre270_20260417T055747Z\"",
+    "selector_score_reason": "pre270_match",
+    "source_row_count": 10871,
+    "source_column_count": 1499,
+    "temp_row_count": 10871,
+    "temp_column_count": 1499,
+    "type_diffs": [],
+    "temp_table_dropped": true,
+    "failures": []
+  },
+  "migrate_count": 243,
+  "per_schema_counts": {
+    "main": 156,
+    "mm_contract_dev": 22,
+    "qa": 27,
+    "v2_stage": 38
+  },
+  "rows_with_drift": 0,
+  "rows_not_queryable": 0,
+  "total_rows_to_migrate": 2232775,
+  "budgets": {
+    "migrate_count_limit": 250,
+    "per_object_timeout_seconds": 30
+  },
+  "halt_reasons": [],
+  "execute_safe": true,
+  "outputs": {
+    "plan_csv": "/Users/loganglosser/THYROID_2026/scripts/output/270d_dry_run_plan.csv",
+    "restore_test_json": "/Users/loganglosser/THYROID_2026/scripts/output/270d_dry_run_restore_test.json"
+  },
+  "next_action": "Plan is execute-safe. Re-run with --execute after Logan reviews 270c_stray_main_review_list.csv (156 rows in main) and 270c_phase_b_disposition_manifest.csv (33 KEEP_PENDING_V1_1_DECISION rows)."
+}
