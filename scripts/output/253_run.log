@@ -1,0 +1,28 @@
+[01:53:35.750Z] ==============================================================================
+[01:53:35.750Z] === START 253_lab_orphan_triage.py  mode=DRY-RUN
+[01:53:37.185Z] connected to thyroid_canonical_publication_v1_0
+[01:53:37.278Z] PREFLIGHT  Tg orphans: 537  longitudinal orphans: 537
+[01:53:37.278Z] EVIDENCE  building per-orphan cancer-evidence matrix
+[01:53:37.419Z]   total orphans: 537
+[01:53:37.419Z]   zero-evidence (will be archived/deleted): 134
+[01:53:37.419Z]   any-evidence (routed to review view): 403
+[01:53:37.419Z] DRY-RUN — no mutations performed
+[01:53:37.419Z] === END  elapsed=1.7s
+[01:53:42.146Z] ==============================================================================
+[01:53:42.146Z] === START 253_lab_orphan_triage.py  mode=APPLY
+[01:53:43.344Z] connected to thyroid_canonical_publication_v1_0
+[01:53:43.448Z] PREFLIGHT  Tg orphans: 537  longitudinal orphans: 537
+[01:53:43.448Z] EVIDENCE  building per-orphan cancer-evidence matrix
+[01:53:43.560Z]   total orphans: 537
+[01:53:43.561Z]   zero-evidence (will be archived/deleted): 134
+[01:53:43.561Z]   any-evidence (routed to review view): 403
+[01:53:45.897Z]   snapshot "Thyroid 2026 UPdated"."archive_pub_v1_0"."thyroglobulin_lab_canonical_v1_orphans_pre253_20260417T015343Z" (2713 rows)
+[01:53:47.851Z]   snapshot "Thyroid 2026 UPdated"."archive_pub_v1_0"."longitudinal_lab_canonical_v1_orphans_pre253_20260417T015343Z" (2713 rows)
+[01:53:47.851Z] REVIEW  building manuscript_workspace.lab_orphan_cohort_review_v1
+[01:53:48.840Z]   manuscript_workspace.lab_orphan_cohort_review_v1 rows: 403
+[01:53:49.095Z] DELETE  thyroid_canonical_publication_v1_0.main.thyroglobulin_lab_canonical_v1: 2713 rows for 134 orphan rids
+[01:53:49.164Z] DELETE  thyroid_canonical_publication_v1_0.main.longitudinal_lab_canonical_v1: 2713 rows for 134 orphan rids
+[01:53:49.344Z] VERIFY  Tg orphans AFTER: 403  longitudinal AFTER: 403
+[01:53:50.518Z] INVARIANT  CPM rows = 10871
+[01:53:50.518Z] ALL ASSERTIONS PASS
+[01:53:50.519Z] === END  elapsed=8.4s

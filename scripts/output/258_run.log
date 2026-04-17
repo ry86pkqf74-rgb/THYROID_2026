@@ -1,0 +1,36 @@
+[02:05:40.563Z] ==============================================================================
+[02:05:40.563Z] === START 258_repoint_detail_pointer.py  mode=DRY-RUN
+[02:05:42.159Z] connected to thyroid_canonical_publication_v1_0
+[02:05:42.839Z] PREFLIGHT  registry rows=116  pointer mapped CPM cols (before)=1271
+[02:05:42.839Z] DRY-RUN — would invoke Script 250 --apply, then assert clean state
+[02:05:42.839Z] === END  elapsed=2.3s
+[02:05:45.758Z] ==============================================================================
+[02:05:45.758Z] === START 258_repoint_detail_pointer.py  mode=APPLY
+[02:05:47.062Z] connected to thyroid_canonical_publication_v1_0
+[02:05:47.814Z] PREFLIGHT  registry rows=116  pointer mapped CPM cols (before)=1271
+[02:05:47.974Z] PHASE A — snapshot pointer DDL with pre258 prefix (independent rollback)
+[02:05:50.706Z]   archived pointer DDL: "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_detail_pointer_v1_pre258_20260417T020547Z"
+[02:05:50.706Z] PHASE B — invoke Script 250 --apply (registry + pointer rebuild)
+[02:05:50.706Z]   invoking: /Users/loganglosser/THYROID_2026/.venv/bin/python /Users/loganglosser/THYROID_2026/scripts/250_registry_pointer_rebuild.py --apply
+[02:06:17.014Z]     [250] [02:06:16.510Z]     mol_has_thyroseq                    -> 3 tables: ['_molecular_patient_rollup_v227', 'canonical_molecular_tested_v1', 'molecular_test_episode_v2']
+[02:06:17.014Z]     [250] [02:06:16.510Z]     mol_platform                        -> 3 tables: ['_molecular_patient_rollup_v227', 'canonical_molecular_tested_v1', 'molecular_test_episode_v2']
+[02:06:17.014Z]     [250] [02:06:16.510Z]     molecular_tested_confirmed          -> 3 tables: ['_molecular_patient_rollup_v227', 'canonical_molecular_tested_v1', 'molecular_test_episode_v2']
+[02:06:17.014Z]     [250] [02:06:16.510Z]     n_us_exams                          -> 3 tables: ['imaging_patient_summary_v1', 'serial_imaging_us', 'ultrasound_reports']
+[02:06:17.014Z]     [250] [02:06:16.510Z]     tg_mean                             -> 3 tables: ['tg_postop_surveillance_windows_v1', 'tg_timeline_patient_summary_v1', 'thyroglobulin_lab_canonical_v1']
+[02:06:17.015Z]     [250] [02:06:16.736Z]   ASSERT main-schema registry rows == main BASE TABLE count (114 vs 114)
+[02:06:17.015Z]     [250] [02:06:16.736Z]   ASSERT manuscript_workspace audit rows >= 0 (got 2)
+[02:06:17.015Z]     [250] [02:06:16.873Z]   ASSERT pointer view mapped >= 1200 (got 1273)
+[02:06:17.015Z]     [250] [02:06:16.873Z]   ASSERT unmapped real <= 105 (got 0)
+[02:06:17.015Z]     [250] [02:06:16.873Z]   ALL ASSERTIONS PASS
+[02:06:17.015Z]     [250] [02:06:16.876Z] decision log written: scripts/output/250_decision_log.json
+[02:06:17.015Z]     [250] [02:06:16.876Z] === END elapsed=26.0s
+[02:06:17.507Z] PHASE C — assertions on registry + pointer
+[02:06:17.668Z]   feeds_master_columns NULL/empty: 0
+[02:06:17.668Z]   feeds_master_columns TODO/(unset): 0
+[02:06:24.831Z]   pointer references 90 (schema, table) pairs; 0 unresolved
+[02:06:24.959Z]   canonical_us_nodule_characteristics_v1         CPM cols mapped: 5
+[02:06:25.086Z]   canonical_tumor_characteristics_v1             CPM cols mapped: 6
+[02:06:25.217Z]   thyroglobulin_lab_canonical_v1                 CPM cols mapped: 9
+[02:06:25.372Z]   pointer mapped CPM cols (after): 1273
+[02:06:25.482Z] ALL ASSERTIONS PASS
+[02:06:25.483Z] === END  elapsed=39.7s

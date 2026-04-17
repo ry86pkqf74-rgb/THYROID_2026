@@ -1,0 +1,23 @@
+[01:51:57.779Z] ==============================================================================
+[01:51:57.779Z] === START 252_recompute_max_tirads.py  mode=DRY-RUN
+[01:51:59.145Z] connected to thyroid_canonical_publication_v1_0
+[01:51:59.254Z] PREFLIGHT  CPM rows=10871  audit_§1.1 replay BEFORE: 1503
+[01:51:59.254Z] DRY-RUN — no mutations performed
+[01:51:59.254Z] ==============================================================================
+[01:51:59.254Z] === END  elapsed=1.5s
+[01:52:01.916Z] ==============================================================================
+[01:52:01.916Z] === START 252_recompute_max_tirads.py  mode=APPLY
+[01:52:03.109Z] connected to thyroid_canonical_publication_v1_0
+[01:52:03.215Z] PREFLIGHT  CPM rows=10871  audit_§1.1 replay BEFORE: 1503
+[01:52:10.585Z] SNAPSHOT  "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_pre252_20260417T015203Z"
+[01:52:11.144Z] audit table ready: manuscript_workspace.v1_1_finalization_audit_v1
+[01:52:11.144Z] MUTATE  rolling up max_tirads_ever, imaging_tirads_worst, preop_tirads_best
+[01:52:11.348Z]   max_tirads_ever populated rows: 3439
+[01:52:11.550Z]   preop_tirads_best populated rows: 3474
+[01:52:11.550Z] DICTIONARY  re-annotating tirads_worst_category_v12 as legacy
+[01:52:11.629Z]   re-annotated tirads_worst_category_v12 -> status=legacy, replacement=max_tirads_ever
+[01:52:11.673Z] VERIFY  audit_§1.1 replay AFTER: 0 (target=0)
+[01:52:13.051Z] INVARIANT  CPM rows still = 10871
+[01:52:13.052Z] ALL ASSERTIONS PASS
+[01:52:13.052Z] ==============================================================================
+[01:52:13.052Z] === END  elapsed=11.1s

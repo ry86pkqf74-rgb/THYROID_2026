@@ -1,0 +1,28 @@
+{
+  "script": "256",
+  "run_ts": "20260417T015909Z",
+  "run_date": "2026-04-16",
+  "mode": "APPLY",
+  "phases": {
+    "preflight": {
+      "cpm_rows": 10871,
+      "replay_before": 174
+    },
+    "snapshot": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"canonical_patient_master_pre256_20260417T015909Z\"",
+    "rebuild": {
+      "any_confirmed_true": 240,
+      "per_entity_true": {
+        "comp_hypocalcemia_confirmed": 98,
+        "comp_hypoparathyroidism_confirmed": 34,
+        "comp_rln_injury_confirmed": 59,
+        "comp_hematoma_confirmed": 38,
+        "comp_seroma_confirmed": 28,
+        "comp_chyle_leak_confirmed": 20,
+        "comp_wound_infection_confirmed": 2,
+        "comp_vc_paralysis_confirmed": 0,
+        "comp_vc_paresis_confirmed": 0
+      }
+    },
+    "replay_after": 0
+  }
+}

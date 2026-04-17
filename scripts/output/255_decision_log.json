@@ -1,0 +1,42 @@
+{
+  "script": "255",
+  "run_ts": "20260417T015724Z",
+  "run_date": "2026-04-16",
+  "mode": "APPLY",
+  "phases": {
+    "preflight": {
+      "rai_dose_mismatch": 213,
+      "tg_count_mismatch": [
+        1637,
+        1755
+      ],
+      "tg_peak_nadir_mismatch": [
+        505,
+        537
+      ]
+    },
+    "snapshot": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"canonical_patient_master_pre255_20260417T015724Z\"",
+    "added_cols": {
+      "rai_max_dose_source": true,
+      "tg_peak_source": true
+    },
+    "rai": {
+      "n_rai_dose_set": 253
+    },
+    "tg": {
+      "n_tg_populated": 2528,
+      "n_peak_populated": 2561
+    },
+    "replay_after": {
+      "rai_dose_mismatch": 0,
+      "tg_count_mismatch": [
+        0,
+        0
+      ],
+      "tg_peak_nadir_mismatch": [
+        0,
+        0
+      ]
+    }
+  }
+}

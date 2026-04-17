@@ -1,0 +1,21 @@
+[01:55:18.128Z] ==============================================================================
+[01:55:18.128Z] === START 254_rebuild_n_fna_episodes.py  mode=DRY-RUN
+[01:55:19.243Z] connected to thyroid_canonical_publication_v1_0
+[01:55:19.334Z] PREFLIGHT  CPM rows=10871  audit_§2.2 replay BEFORE: 5028
+[01:55:19.334Z] DRY-RUN — no mutations performed
+[01:55:19.334Z] === END  elapsed=1.2s
+[01:55:19.574Z] ==============================================================================
+[01:55:19.574Z] === START 254_rebuild_n_fna_episodes.py  mode=APPLY
+[01:55:20.698Z] connected to thyroid_canonical_publication_v1_0
+[01:55:20.865Z] PREFLIGHT  CPM rows=10871  audit_§2.2 replay BEFORE: 5028
+[01:55:25.376Z] SNAPSHOT  "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_pre254_20260417T015520Z"
+[01:55:25.377Z] SCHEMA  add worst_bethesda_source column if missing
+[01:55:26.221Z]   added column worst_bethesda_source VARCHAR + comment
+[01:55:26.222Z] REBUILD  4 FNA rollups + worst_bethesda_source
+[01:55:26.611Z]   patients with n_fna_episodes > 0: 5266
+[01:55:26.611Z]   patients with worst_bethesda_source populated: 5249
+[01:55:26.611Z] DICTIONARY  upsert worst_bethesda_source row
+[01:55:27.711Z] VERIFY  audit_§2.2 replay AFTER: 0 (target=0)
+[01:55:27.855Z] INVARIANT  CPM rows = 10871
+[01:55:27.855Z] ALL ASSERTIONS PASS
+[01:55:27.856Z] === END  elapsed=8.3s

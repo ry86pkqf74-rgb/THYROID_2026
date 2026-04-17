@@ -1,0 +1,58 @@
+[02:08:48.985Z] ==============================================================================
+[02:08:48.985Z] === START 259_final_verification_lock.py
+[02:08:50.434Z] connected to thyroid_canonical_publication_v1_0
+[02:08:50.434Z] PHASE 1 — replay all 10 audit queries
+[02:08:51.104Z]   audit_1_1          max_tirads_ever undercount                              after=0
+[02:08:51.104Z]   audit_2_1_tg       thyroglobulin_lab_canonical_v1 orphans (any_evidence routed to review) after=403
+[02:08:51.104Z]   audit_2_1_long     longitudinal_lab_canonical_v1 orphans                   after=403
+[02:08:51.104Z]   audit_2_2          n_fna_episodes mismatch                                 after=0
+[02:08:51.104Z]   audit_3_1          rai_max_dose_mci=0 with detail >0                       after=0
+[02:08:51.104Z]   audit_3_3_tg       n_tg_measurements_structured mismatch                   after=0
+[02:08:51.104Z]   audit_3_3_tgab     n_tgab_measurements mismatch                            after=0
+[02:08:51.104Z]   audit_3_4_peak     tg_peak mismatch                                        after=0
+[02:08:51.104Z]   audit_3_4_nadir    tg_nadir mismatch                                       after=0
+[02:08:51.104Z]   audit_5_3          any_confirmed_complication_flag undercount              after=0
+[02:08:51.104Z] PHASE 2 — CPM dimensions + hash-of-row-hashes
+[02:08:51.775Z]   CPM rows=10,871  cols=1,494
+[02:08:55.870Z]   hash-of-row-hashes (SHA-256): 8c897c30ceaa9e31bdfcc90e62d813b4733a152392897559d7ddfed391142a30
+[02:08:55.870Z] PHASE 3 — archive inventory
+[02:08:56.003Z] FATAL: CatalogException('Catalog Error: Table with name tables does not exist!\nDid you mean "information_schema.tables"?\n\nLINE 2:         SELECT table_name FROM "Thyroid 2026 UPdated".information_schema.tables\n                                       ^')
+[02:09:08.398Z] ==============================================================================
+[02:09:08.398Z] === START 259_final_verification_lock.py
+[02:09:09.929Z] connected to thyroid_canonical_publication_v1_0
+[02:09:09.929Z] PHASE 1 — replay all 10 audit queries
+[02:09:10.504Z]   audit_1_1          max_tirads_ever undercount                              after=0
+[02:09:10.504Z]   audit_2_1_tg       thyroglobulin_lab_canonical_v1 orphans (any_evidence routed to review) after=403
+[02:09:10.504Z]   audit_2_1_long     longitudinal_lab_canonical_v1 orphans                   after=403
+[02:09:10.504Z]   audit_2_2          n_fna_episodes mismatch                                 after=0
+[02:09:10.504Z]   audit_3_1          rai_max_dose_mci=0 with detail >0                       after=0
+[02:09:10.504Z]   audit_3_3_tg       n_tg_measurements_structured mismatch                   after=0
+[02:09:10.504Z]   audit_3_3_tgab     n_tgab_measurements mismatch                            after=0
+[02:09:10.504Z]   audit_3_4_peak     tg_peak mismatch                                        after=0
+[02:09:10.504Z]   audit_3_4_nadir    tg_nadir mismatch                                       after=0
+[02:09:10.504Z]   audit_5_3          any_confirmed_complication_flag undercount              after=0
+[02:09:10.504Z] PHASE 2 — CPM dimensions + hash-of-row-hashes
+[02:09:11.158Z]   CPM rows=10,871  cols=1,494
+[02:09:15.114Z]   hash-of-row-hashes (SHA-256): 8c897c30ceaa9e31bdfcc90e62d813b4733a152392897559d7ddfed391142a30
+[02:09:15.114Z] PHASE 3 — archive inventory
+[02:09:15.645Z]   archive snapshots created in v1_1 pass: 10
+[02:09:15.646Z] PHASE 4 — data_dictionary_v240 status breakdown
+[02:09:15.680Z]   authoritative        1474
+[02:09:15.680Z]   (null)               26
+[02:09:15.681Z]   removed              25
+[02:09:15.681Z]   provisional          3
+[02:09:15.681Z]   legacy               1
+[02:09:15.681Z] PHASE 5 — pointer + registry health
+[02:09:25.911Z]   mapped: 1273/1494 (85.21%)
+[02:09:25.911Z]   distinct drill-down tables: 90
+[02:09:25.911Z]   unresolved drill-down tables: 0
+[02:09:25.911Z] PHASE 6 — main legacy-pattern sweep
+[02:09:26.009Z]   legacy hits: 0
+[02:09:26.009Z] PHASE 7 — audit history
+[02:09:26.045Z]   audit rows so far: 12
+[02:09:26.045Z] PHASE 8 — lab orphan review count
+[02:09:26.075Z]   lab_orphan_cohort_review_v1 rows: 403
+[02:09:26.075Z] PHASE 9 — write FINALIZATION_REPORT_v1_1.md
+[02:09:26.076Z]   wrote studies/v1_1_finalization/FINALIZATION_REPORT_v1_1.md
+[02:09:26.076Z] CANONICAL v1_1 LOCK: READY FOR PUBLICATION
+[02:09:26.077Z] === END  elapsed=17.7s
