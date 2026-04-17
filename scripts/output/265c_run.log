@@ -1,0 +1,44 @@
+[03:53:24.497Z] ==============================================================================
+[03:53:24.497Z] === START scripts/265c_finalization_actions.py (APPLY)
+[03:53:24.498Z] started_at: 2026-04-17T03:53:24.497992+00:00
+[03:53:25.750Z] connected to thyroid_canonical_publication_v1_0
+[03:53:25.750Z] 
+FIX 1 - collision_resolution_v265 rationale correction
+[03:53:25.779Z]   before  comp_rln_injury_confirmed: complication_phenotype_v1 covers 2,938 patients; vc_paralysis_recalibration_v236 (table absent in publication DB; folded
+[03:53:25.779Z]   before  comp_vc_paralysis_confirmed: complication_phenotype_v1 wins; recalibration is targeted override.
+[03:53:25.779Z]   before  comp_vc_paresis_confirmed: complication_phenotype_v1 wins; recalibration is targeted override.
+[03:53:27.135Z]   after   comp_rln_injury_confirmed: complication_phenotype_v1 covers ~2,938 patients; vc_paralysis_recalibration_v236 (in manuscript_workspace) is a targeted 59-patient override, not a patient-lev
+[03:53:27.135Z]   after   comp_vc_paralysis_confirmed: complication_phenotype_v1 covers ~2,938 patients; vc_paralysis_recalibration_v236 (in manuscript_workspace) is a targeted 59-patient override, not a patient-lev
+[03:53:27.135Z]   after   comp_vc_paresis_confirmed: complication_phenotype_v1 covers ~2,938 patients; vc_paralysis_recalibration_v236 (in manuscript_workspace) is a targeted 59-patient override, not a patient-lev
+[03:53:27.135Z] 
+FIX 2 - Phase 9b: drop release_* schemas
+[03:53:27.783Z]   release_* schemas found: 12
+[03:53:27.783Z]     release_20260406
+[03:53:27.783Z]     release_20260407
+[03:53:27.783Z]     release_20260407_final
+[03:53:27.783Z]     release_20260407_final2
+[03:53:27.783Z]     release_20260407_tier
+[03:53:27.783Z]     release_20260408
+[03:53:27.783Z]     release_20260408r2
+[03:53:27.783Z]     release_20260408r3
+[03:53:27.783Z]     release_20260408r4
+[03:53:27.783Z]     release_20260409
+[03:53:27.783Z]     release_20260410
+[03:53:27.783Z]     release_20260411
+[03:53:27.874Z]   total tables across release_* schemas: 111
+[03:53:29.246Z]   metadata snapshot: "Thyroid 2026 UPdated"."archive_legacy"."release_schemas_manifest_pre265_drop" (111 rows)
+[03:53:31.055Z]   DROPPED Thyroid 2026 UPdated.release_20260406 CASCADE
+[03:53:32.019Z]   DROPPED Thyroid 2026 UPdated.release_20260407 CASCADE
+[03:53:32.936Z]   DROPPED Thyroid 2026 UPdated.release_20260407_final CASCADE
+[03:53:33.883Z]   DROPPED Thyroid 2026 UPdated.release_20260407_final2 CASCADE
+[03:53:34.876Z]   DROPPED Thyroid 2026 UPdated.release_20260407_tier CASCADE
+[03:53:35.956Z]   DROPPED Thyroid 2026 UPdated.release_20260408 CASCADE
+[03:53:36.984Z]   DROPPED Thyroid 2026 UPdated.release_20260408r2 CASCADE
+[03:53:38.341Z]   DROPPED Thyroid 2026 UPdated.release_20260408r3 CASCADE
+[03:53:39.223Z]   DROPPED Thyroid 2026 UPdated.release_20260408r4 CASCADE
+[03:53:40.132Z]   DROPPED Thyroid 2026 UPdated.release_20260409 CASCADE
+[03:53:41.242Z]   DROPPED Thyroid 2026 UPdated.release_20260410 CASCADE
+[03:53:42.249Z]   DROPPED Thyroid 2026 UPdated.release_20260411 CASCADE
+[03:53:42.453Z]   remaining release_* schemas: 0  tables: 0
+[03:53:42.895Z]   audit rows written
+[03:53:42.895Z] === END elapsed=18.4s

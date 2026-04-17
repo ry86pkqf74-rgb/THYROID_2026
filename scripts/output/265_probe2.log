@@ -1,0 +1,224 @@
+[2026-04-17T03:32:05.756828+00:00] === detail_table_registry_v1 schema ===
+[2026-04-17T03:32:06.474021+00:00]   detail_table_name  VARCHAR
+[2026-04-17T03:32:06.474126+00:00]   schema_name  VARCHAR
+[2026-04-17T03:32:06.474159+00:00]   join_key  VARCHAR
+[2026-04-17T03:32:06.474183+00:00]   grain  VARCHAR
+[2026-04-17T03:32:06.474219+00:00]   total_rows  BIGINT
+[2026-04-17T03:32:06.474244+00:00]   total_patients  BIGINT
+[2026-04-17T03:32:06.474267+00:00]   domain  VARCHAR
+[2026-04-17T03:32:06.474288+00:00]   feeds_master_columns  VARCHAR
+[2026-04-17T03:32:06.474310+00:00]   description  VARCHAR
+[2026-04-17T03:32:06.474331+00:00]   canonical_version  VARCHAR
+[2026-04-17T03:32:06.474354+00:00]   feeds_master_columns_normalized  VARCHAR
+[2026-04-17T03:32:06.474388+00:00] feeds_master_columns_secondary present: False
+[2026-04-17T03:32:06.474410+00:00] 
+=== detail_table_registry_v1 sample (3 rows) ===
+[2026-04-17T03:32:06.519441+00:00] ---
+[2026-04-17T03:32:06.519548+00:00]   detail_table_name: _molecular_patient_rollup_v227
+[2026-04-17T03:32:06.519584+00:00]   schema_name: main
+[2026-04-17T03:32:06.519611+00:00]   join_key: research_id
+[2026-04-17T03:32:06.519633+00:00]   grain: patient
+[2026-04-17T03:32:06.519657+00:00]   total_rows: 10026
+[2026-04-17T03:32:06.519679+00:00]   total_patients: 10026
+[2026-04-17T03:32:06.519702+00:00]   domain: Molecular
+[2026-04-17T03:32:06.519724+00:00]   feeds_master_columns: ret_positive_v7;any_fusion_positive;rollup_script_version
+[2026-04-17T03:32:06.519748+00:00]   description: Per-patient molecular rollup v227 (supersedes v225). Feeds ret_positive_v7 / any_fusion_positive.
+[2026-04-17T03:32:06.519769+00:00]   canonical_version: v227
+[2026-04-17T03:32:06.519794+00:00]   feeds_master_columns_normalized: alk_positive_v7;any_fusion_positive;eif1ax_positive;high_risk_molecular_v7;mol_first_test_date;mol_first_test_days_from_…
+[2026-04-17T03:32:06.519828+00:00] ---
+[2026-04-17T03:32:06.519852+00:00]   detail_table_name: analysis_molecular_subset_v1
+[2026-04-17T03:32:06.519874+00:00]   schema_name: main
+[2026-04-17T03:32:06.519894+00:00]   join_key: research_id
+[2026-04-17T03:32:06.519915+00:00]   grain: one row per molecular-tested patient
+[2026-04-17T03:32:06.519938+00:00]   total_rows: 10025
+[2026-04-17T03:32:06.519959+00:00]   total_patients: 10025
+[2026-04-17T03:32:06.519991+00:00]   domain: Analysis
+[2026-04-17T03:32:06.520016+00:00]   feeds_master_columns: subset view
+[2026-04-17T03:32:06.520038+00:00]   description: Filtered to molecular-tested patients.
+[2026-04-17T03:32:06.520059+00:00]   canonical_version: v1_0
+[2026-04-17T03:32:06.520080+00:00]   feeds_master_columns_normalized: None
+[2026-04-17T03:32:06.520100+00:00] ---
+[2026-04-17T03:32:06.520123+00:00]   detail_table_name: canonical_benign_diagnosis_v1
+[2026-04-17T03:32:06.520145+00:00]   schema_name: main
+[2026-04-17T03:32:06.520166+00:00]   join_key: research_id
+[2026-04-17T03:32:06.520187+00:00]   grain: one row per patient
+[2026-04-17T03:32:06.520209+00:00]   total_rows: 6818
+[2026-04-17T03:32:06.520230+00:00]   total_patients: 6734
+[2026-04-17T03:32:06.520252+00:00]   domain: Diagnosis
+[2026-04-17T03:32:06.520273+00:00]   feeds_master_columns: syn_graves, syn_hashimoto, syn_multinodular_goiter, syn_follicular_adenoma, other benign flags
+[2026-04-17T03:32:06.520294+00:00]   description: Benign diagnosis phenotype flags.
+[2026-04-17T03:32:06.520314+00:00]   canonical_version: v1_0
+[2026-04-17T03:32:06.520335+00:00]   feeds_master_columns_normalized: syn_follicular_adenoma;syn_graves;syn_hashimoto;syn_multinodular_goiter
+[2026-04-17T03:32:06.520357+00:00] 
+=== nan_string_audit_v1_1 first 10 rows ===
+[2026-04-17T03:32:06.656924+00:00] column_name=syn_margin_distance_mm_raw_str | n_literal_nan=9517 | n_true_null=2 | n_real_values=1352 | n_distinct_real=52 | repair_action=PRESERVE_RAW | repaired_at=None | repaired_by=None
+[2026-04-17T03:32:06.657025+00:00] column_name=ajcc7_n_stage | n_literal_nan=0 | n_true_null=6734 | n_real_values=4137 | n_distinct_real=4 | repair_action=NO_ACTION | repaired_at=None | repaired_by=None
+[2026-04-17T03:32:06.657067+00:00] column_name=ajcc8_m_stage_v2 | n_literal_nan=0 | n_true_null=0 | n_real_values=10871 | n_distinct_real=2 | repair_action=NO_ACTION | repaired_at=None | repaired_by=None
+[2026-04-17T03:32:06.657135+00:00] column_name=ajcc7_missing_components | n_literal_nan=0 | n_true_null=4127 | n_real_values=6744 | n_distinct_real=3 | repair_action=NO_ACTION | repaired_at=None | repaired_by=None
+[2026-04-17T03:32:06.657165+00:00] column_name=ajcc8_n_stage_note | n_literal_nan=0 | n_true_null=6734 | n_real_values=4137 | n_distinct_real=8 | repair_action=NO_ACTION | repaired_at=None | repaired_by=None
+[2026-04-17T03:32:06.657252+00:00] column_name=ajcc7_stage_group | n_literal_nan=0 | n_true_null=6989 | n_real_values=3882 | n_distinct_real=6 | repair_action=NO_ACTION | repaired_at=None | repaired_by=None
+[2026-04-17T03:32:06.657316+00:00] column_name=ajcc7_t_stage | n_literal_nan=0 | n_true_null=6741 | n_real_values=4130 | n_distinct_real=6 | repair_action=NO_ACTION | repaired_at=None | repaired_by=None
+[2026-04-17T03:32:06.657352+00:00] column_name=ajcc8_m_stage | n_literal_nan=0 | n_true_null=0 | n_real_values=10871 | n_distinct_real=2 | repair_action=NO_ACTION | repaired_at=None | repaired_by=None
+[2026-04-17T03:32:06.657381+00:00] column_name=ajcc8_missing_components | n_literal_nan=0 | n_true_null=4082 | n_real_values=6789 | n_distinct_real=1 | repair_action=NO_ACTION | repaired_at=None | repaired_by=None
+[2026-04-17T03:32:06.657407+00:00] column_name=ajcc8_n_stage | n_literal_nan=0 | n_true_null=5594 | n_real_values=5277 | n_distinct_real=3 | repair_action=NO_ACTION | repaired_at=None | repaired_by=None
+[2026-04-17T03:32:06.657426+00:00] 
+=== nan_string_audit_v1_1 distinct column_name samples ===
+[2026-04-17T03:32:06.695407+00:00]   ajcc7_m_stage
+[2026-04-17T03:32:06.695484+00:00]   ajcc7_missing_components
+[2026-04-17T03:32:06.695512+00:00]   ajcc7_n_stage
+[2026-04-17T03:32:06.695533+00:00]   ajcc7_stage_group
+[2026-04-17T03:32:06.695553+00:00]   ajcc7_t_stage
+[2026-04-17T03:32:06.695570+00:00]   ajcc8_m_stage
+[2026-04-17T03:32:06.695589+00:00]   ajcc8_m_stage_v2
+[2026-04-17T03:32:06.695607+00:00]   ajcc8_missing_components
+[2026-04-17T03:32:06.695626+00:00]   ajcc8_n_stage
+[2026-04-17T03:32:06.695645+00:00]   ajcc8_n_stage_note
+[2026-04-17T03:32:06.695663+00:00]   ajcc8_n_stage_v2
+[2026-04-17T03:32:06.695682+00:00]   ajcc8_stage_group
+[2026-04-17T03:32:06.695700+00:00]   ajcc8_stage_group_corrected
+[2026-04-17T03:32:06.695720+00:00]   ajcc8_stage_group_v2
+[2026-04-17T03:32:06.695738+00:00]   ajcc8_t_stage
+[2026-04-17T03:32:06.695757+00:00]   ajcc8_t_stage_corrected
+[2026-04-17T03:32:06.695775+00:00]   ajcc8_t_stage_v2
+[2026-04-17T03:32:06.695794+00:00]   ames_risk
+[2026-04-17T03:32:06.695812+00:00]   ames_risk_group
+[2026-04-17T03:32:06.695831+00:00]   ata_initial_risk
+[2026-04-17T03:32:06.695850+00:00] 
+=== nan_string_audit_v1_1 group by repair_action ===
+[2026-04-17T03:32:06.809313+00:00]   action='NO_ACTION'                     n_rows=475  sum_literal_nan=0  sum_null=3822105
+[2026-04-17T03:32:06.809397+00:00]   action='PRESERVE_RAW'                  n_rows=1  sum_literal_nan=9517  sum_null=2
+[2026-04-17T03:32:06.809425+00:00] 
+=== 88 colliding master_columns + their feeders ===
+[2026-04-17T03:32:06.995957+00:00]   total colliding: 88
+[2026-04-17T03:32:06.996048+00:00]   histology_final                                          n=4  feeders=canonical_malignant_diagnosis_v1 || tumor_episode_master_v2 || tumor_pathology || synoptic_tumor_long_v1
+[2026-04-17T03:32:06.996081+00:00]   path_tumor_size_cm                                       n=4  feeders=tumor_pathology || tumor_episode_master_v2 || path_synoptics || synoptic_tumor_long_v1
+[2026-04-17T03:32:06.996104+00:00]   braf_positive_final                                      n=3  feeders=molecular_test_episode_v2 || canonical_molecular_tested_v1 || extracted_braf_recovery_v1
+[2026-04-17T03:32:06.996125+00:00]   dominant_nodule_size_cm                                  n=3  feeders=canonical_us_nodule_characteristics_v1 || imaging_nodule_master_v1 || imaging_patient_summary_v1
+[2026-04-17T03:32:06.996169+00:00]   mol_has_afirma                                           n=3  feeders=_molecular_patient_rollup_v227 || molecular_test_episode_v2 || canonical_molecular_tested_v1
+[2026-04-17T03:32:06.996193+00:00]   mol_has_thyroseq                                         n=3  feeders=_molecular_patient_rollup_v227 || molecular_test_episode_v2 || canonical_molecular_tested_v1
+[2026-04-17T03:32:06.996211+00:00]   mol_platform                                             n=3  feeders=_molecular_patient_rollup_v227 || canonical_molecular_tested_v1 || molecular_test_episode_v2
+[2026-04-17T03:32:06.996231+00:00]   molecular_tested_confirmed                               n=3  feeders=canonical_molecular_tested_v1 || _molecular_patient_rollup_v227 || molecular_test_episode_v2
+[2026-04-17T03:32:06.996250+00:00]   multifocal_flag_path                                     n=3  feeders=patient_tumor_rollup_v1 || specimen_tumor_focus_v1 || tumor_episode_master_v2
+[2026-04-17T03:32:06.996268+00:00]   n_us_exams                                               n=3  feeders=imaging_patient_summary_v1 || ultrasound_reports || serial_imaging_us
+[2026-04-17T03:32:06.996287+00:00]   tg_mean                                                  n=3  feeders=thyroglobulin_lab_canonical_v1 || tg_postop_surveillance_windows_v1 || tg_timeline_patient_summary_v1
+[2026-04-17T03:32:06.996305+00:00]   tg_n_measurements                                        n=3  feeders=thyroglobulin_lab_canonical_v1 || tg_postop_surveillance_windows_v1 || tg_timeline_patient_summary_v1
+[2026-04-17T03:32:06.996323+00:00]   tg_nadir                                                 n=3  feeders=thyroglobulin_lab_canonical_v1 || tg_postop_surveillance_windows_v1 || tg_timeline_patient_summary_v1
+[2026-04-17T03:32:06.996346+00:00]   tg_peak                                                  n=3  feeders=tg_postop_surveillance_windows_v1 || tg_timeline_patient_summary_v1 || thyroglobulin_lab_canonical_v1
+[2026-04-17T03:32:06.996366+00:00]   tg_rising_flag                                           n=3  feeders=thyroglobulin_lab_canonical_v1 || tg_postop_surveillance_windows_v1 || tg_timeline_patient_summary_v1
+[2026-04-17T03:32:06.996386+00:00]   tg_trajectory_class                                      n=3  feeders=tg_postop_surveillance_windows_v1 || tg_timeline_patient_summary_v1 || thyroglobulin_lab_canonical_v1
+[2026-04-17T03:32:06.996405+00:00]   tirads_best_score_v12                                    n=3  feeders=canonical_us_nodule_characteristics_v1 || tirads_llm_extracted_v2 || us_nodules_tirads
+[2026-04-17T03:32:06.996423+00:00]   tirads_worst_category_v12                                n=3  feeders=canonical_us_nodule_characteristics_v1 || tirads_llm_extracted_v2 || us_nodules_tirads
+[2026-04-17T03:32:06.996443+00:00]   any_recurrence_flag                                      n=2  feeders=canonical_recurrence_v1 || recurrence_event_clean_v1
+[2026-04-17T03:32:06.996462+00:00]   bethesda_category                                        n=2  feeders=fna_episode_master_v2 || extracted_fna_bethesda_v1
+[2026-04-17T03:32:06.996481+00:00]   bethesda_final                                           n=2  feeders=extracted_fna_bethesda_v1 || fna_episode_master_v2
+[2026-04-17T03:32:06.996500+00:00]   bilateral_disease_flag                                   n=2  feeders=imaging_patient_summary_v1 || specimen_tumor_focus_v1
+[2026-04-17T03:32:06.996528+00:00]   biochemical_recurrence_flag                              n=2  feeders=recurrence_event_clean_v1 || canonical_recurrence_v1
+[2026-04-17T03:32:06.996560+00:00]   comp_rln_injury_confirmed                                n=2  feeders=complication_phenotype_v1 || vc_paralysis_recalibration_v236
+[2026-04-17T03:32:06.996580+00:00]   comp_vc_paralysis_confirmed                              n=2  feeders=vc_paralysis_recalibration_v236 || complication_phenotype_v1
+[2026-04-17T03:32:06.996600+00:00]   comp_vc_paresis_confirmed                                n=2  feeders=vc_paralysis_recalibration_v236 || complication_phenotype_v1
+[2026-04-17T03:32:06.996633+00:00]   ete_grade                                                n=2  feeders=ete_adjudication_v1 || synoptic_tumor_long_v1
+[2026-04-17T03:32:06.996654+00:00]   ete_grade_adjudicated                                    n=2  feeders=ete_adjudication_v1 || patient_tumor_rollup_v1
+[2026-04-17T03:32:06.996673+00:00]   ete_grade_final                                          n=2  feeders=patient_tumor_rollup_v1 || ete_adjudication_v1
+[2026-04-17T03:32:06.996691+00:00]   ete_grade_final_v2                                       n=2  feeders=patient_tumor_rollup_v1 || ete_adjudication_v1
+[2026-04-17T03:32:06.996709+00:00]   ete_grade_source                                         n=2  feeders=patient_tumor_rollup_v1 || ete_adjudication_v1
+[2026-04-17T03:32:06.996727+00:00]   ete_refined_grade                                        n=2  feeders=extracted_ete_subgraded_v1 || ete_adjudication_v1
+[2026-04-17T03:32:06.996745+00:00]   ete_subgrade_method                                      n=2  feeders=ete_adjudication_v1 || extracted_ete_subgraded_v1
+[2026-04-17T03:32:06.996784+00:00]   ete_subgrade_note                                        n=2  feeders=extracted_ete_subgraded_v1 || ete_adjudication_v1
+[2026-04-17T03:32:06.996871+00:00]   fna_bethesda_confidence                                  n=2  feeders=fna_episode_master_v2 || extracted_fna_bethesda_v1
+[2026-04-17T03:32:06.996900+00:00]   fna_bethesda_source                                      n=2  feeders=extracted_fna_bethesda_v1 || fna_episode_master_v2
+[2026-04-17T03:32:06.996921+00:00]   fna_path_concordance_category                            n=2  feeders=fna_episode_master_v2 || path_outcome_classification_v1
+[2026-04-17T03:32:06.996943+00:00]   fna_path_concordant                                      n=2  feeders=fna_episode_master_v2 || path_outcome_classification_v1
+[2026-04-17T03:32:06.996962+00:00]   fna_path_outcome                                         n=2  feeders=path_outcome_classification_v1 || fna_episode_master_v2
+[2026-04-17T03:32:06.996982+00:00]   followup_days                                            n=2  feeders=canonical_survival_followup_v1 || patient_cross_domain_timeline_v2
+[2026-04-17T03:32:06.997001+00:00]   last_contact_date                                        n=2  feeders=canonical_survival_followup_v1 || patient_cross_domain_timeline_v2
+[2026-04-17T03:32:06.997020+00:00]   lateral_neck_dissected                                   n=2  feeders=ln_master_rollup_v1 || operative_episode_detail_v2
+[2026-04-17T03:32:06.997038+00:00]   ln_rollup_crossval_status                                n=2  feeders=ln_crossval_v1 || ln_master_rollup_v1
+[2026-04-17T03:32:06.997056+00:00]   ln_rollup_internal_consistency                           n=2  feeders=ln_master_rollup_v1 || ln_crossval_v1
+[2026-04-17T03:32:06.997075+00:00]   lvi_any_present_path                                     n=2  feeders=canonical_tumor_characteristics_v1 || patient_tumor_rollup_v1
+[2026-04-17T03:32:06.997094+00:00]   lvi_ordinal_worst                                        n=2  feeders=canonical_tumor_characteristics_v1 || patient_tumor_rollup_v1
+[2026-04-17T03:32:06.997113+00:00]   margin_status_true                                       n=2  feeders=canonical_tumor_characteristics_v1 || patient_tumor_rollup_v1
+[2026-04-17T03:32:06.997132+00:00]   max_tirads_ever                                          n=2  feeders=imaging_patient_summary_v1 || canonical_us_nodule_characteristics_v1
+[2026-04-17T03:32:06.997152+00:00]   mol_genes_list                                           n=2  feeders=molecular_variant_long || _molecular_patient_rollup_v227
+[2026-04-17T03:32:06.997171+00:00]   mol_n_distinct_genes                                     n=2  feeders=_molecular_patient_rollup_v227 || molecular_variant_long
+[2026-04-17T03:32:06.997190+00:00]   mol_n_tests                                              n=2  feeders=molecular_test_episode_v2 || _molecular_patient_rollup_v227
+[2026-04-17T03:32:06.997209+00:00]   mol_n_variants_total                                     n=2  feeders=molecular_variant_long || _molecular_patient_rollup_v227
+[2026-04-17T03:32:06.997248+00:00]   mol_variant_classes                                      n=2  feeders=molecular_variant_long || _molecular_patient_rollup_v227
+[2026-04-17T03:32:06.997271+00:00]   n_tumors_path                                            n=2  feeders=patient_tumor_rollup_v1 || canonical_tumor_characteristics_v1
+[2026-04-17T03:32:06.997290+00:00]   n_us_nodules_total                                       n=2  feeders=canonical_us_nodule_characteristics_v1 || us_nodules_tirads
+[2026-04-17T03:32:06.997309+00:00]   nlp_ln_has_data                                          n=2  feeders=note_entities_llm_cervical_ln_detail || clinical_note_ln_extracted_v1
+[2026-04-17T03:32:06.997327+00:00]   nlp_ln_positive_mentioned                                n=2  feeders=note_entities_llm_cervical_ln_detail || clinical_note_ln_extracted_v1
+[2026-04-17T03:32:06.997346+00:00]   r_class_true                                             n=2  feeders=patient_tumor_rollup_v1 || canonical_tumor_characteristics_v1
+[2026-04-17T03:32:06.997364+00:00]   ras_positive_final                                       n=2  feeders=extracted_ras_patient_summary_v1 || molecular_test_episode_v2
+[2026-04-17T03:32:06.997382+00:00]   recurrence_site                                          n=2  feeders=canonical_recurrence_v1 || recurrence_event_clean_v1
+[2026-04-17T03:32:06.997401+00:00]   recurrence_type                                          n=2  feeders=canonical_recurrence_v1 || recurrence_event_clean_v1
+[2026-04-17T03:32:06.997419+00:00]   ret_adjudicated_flag                                     n=2  feeders=ret_patient_adjudicated_v226 || _molecular_patient_rollup_v227
+[2026-04-17T03:32:06.997437+00:00]   ret_evidence_source                                      n=2  feeders=ret_patient_adjudicated_v226 || _molecular_patient_rollup_v227
+[2026-04-17T03:32:06.997456+00:00]   rln_injury_type                                          n=2  feeders=extracted_rln_injury_refined_v2 || complication_phenotype_v1
+[2026-04-17T03:32:06.997738+00:00]   rln_permanent_flag                                       n=2  feeders=complication_phenotype_v1 || extracted_rln_injury_refined_v2
+[2026-04-17T03:32:06.997783+00:00]   rln_status                                               n=2  feeders=complication_phenotype_v1 || extracted_rln_injury_refined_v2
+[2026-04-17T03:32:06.997805+00:00]   rln_transient_flag                                       n=2  feeders=complication_phenotype_v1 || extracted_rln_injury_refined_v2
+[2026-04-17T03:32:06.997824+00:00]   structural_recurrence_flag                               n=2  feeders=recurrence_event_clean_v1 || canonical_recurrence_v1
+[2026-04-17T03:32:06.997843+00:00]   surv_max_time_days                                       n=2  feeders=canonical_survival_followup_v1 || survival_cohort_enriched
+[2026-04-17T03:32:06.997862+00:00]   surv_n_events                                            n=2  feeders=canonical_survival_followup_v1 || survival_cohort_enriched
+[2026-04-17T03:32:06.997882+00:00]   surv_recurrence_risk_band                                n=2  feeders=survival_cohort_enriched || canonical_survival_followup_v1
+[2026-04-17T03:32:06.997901+00:00]   surv_tg_annual_log_slope                                 n=2  feeders=canonical_survival_followup_v1 || survival_cohort_enriched
+[2026-04-17T03:32:06.997920+00:00]   syn_follicular_adenoma                                   n=2  feeders=canonical_benign_diagnosis_v1 || path_synoptics
+[2026-04-17T03:32:06.997941+00:00]   syn_graves                                               n=2  feeders=path_synoptics || canonical_benign_diagnosis_v1
+[2026-04-17T03:32:06.997964+00:00]   syn_hashimoto                                            n=2  feeders=canonical_benign_diagnosis_v1 || path_synoptics
+[2026-04-17T03:32:06.997997+00:00]   syn_multinodular_goiter                                  n=2  feeders=path_synoptics || canonical_benign_diagnosis_v1
+[2026-04-17T03:32:06.998029+00:00]   tert_positive_final                                      n=2  feeders=molecular_test_episode_v2 || _molecular_patient_rollup_v227
+[2026-04-17T03:32:06.998070+00:00]   tgab_interference_flag                                   n=2  feeders=thyroglobulin_lab_canonical_v1 || tg_postop_surveillance_windows_v1
+[2026-04-17T03:32:06.998092+00:00]   time_to_recurrence_days                                  n=2  feeders=canonical_recurrence_v1 || recurrence_event_clean_v1
+[2026-04-17T03:32:06.998112+00:00]   tirads_best_category_v12                                 n=2  feeders=us_nodules_tirads || tirads_llm_extracted_v2
+[2026-04-17T03:32:06.998131+00:00]   tirads_best_combined                                     n=2  feeders=tirads_llm_extracted_v2 || imaging_nodule_master_v1
+[2026-04-17T03:32:06.998150+00:00]   tirads_worst_combined                                    n=2  feeders=tirads_llm_extracted_v2 || imaging_nodule_master_v1
+[2026-04-17T03:32:06.998171+00:00]   tumor_size_cm_max                                        n=2  feeders=canonical_tumor_characteristics_v1 || patient_tumor_rollup_v1
+[2026-04-17T03:32:06.998190+00:00]   us_left_lobe_volume_ml                                   n=2  feeders=ultrasound_reports || thyroid_sizes
+[2026-04-17T03:32:06.998209+00:00]   us_n_reports                                             n=2  feeders=imaging_exam_master_v1 || ultrasound_reports
+[2026-04-17T03:32:06.998230+00:00]   us_right_lobe_volume_ml                                  n=2  feeders=thyroid_sizes || ultrasound_reports
+[2026-04-17T03:32:06.998249+00:00]   us_total_volume_ml                                       n=2  feeders=ultrasound_reports || thyroid_sizes
+[2026-04-17T03:32:06.998268+00:00]   vascular_invasion_grade                                  n=2  feeders=patient_tumor_rollup_v1 || note_entities_llm_vascular_invasion
+[2026-04-17T03:32:06.998287+00:00] 
+=== existence check for verdict feeder tables ===
+[2026-04-17T03:32:07.090861+00:00]   canonical_molecular_tested_v1                  exists_in_main: True
+[2026-04-17T03:32:07.170372+00:00]   _molecular_patient_rollup_v227                 exists_in_main: True
+[2026-04-17T03:32:07.251935+00:00]   molecular_test_episode_v2                      exists_in_main: True
+[2026-04-17T03:32:07.335431+00:00]   extracted_braf_recovery_v1                     exists_in_main: True
+[2026-04-17T03:32:07.429064+00:00]   tg_timeline_patient_summary_v1                 exists_in_main: True
+[2026-04-17T03:32:07.509993+00:00]   tg_postop_surveillance_windows_v1              exists_in_main: True
+[2026-04-17T03:32:07.593409+00:00]   thyroglobulin_lab_canonical_v1                 exists_in_main: True
+[2026-04-17T03:32:07.676771+00:00]   imaging_patient_summary_v1                     exists_in_main: True
+[2026-04-17T03:32:07.760873+00:00]   canonical_us_nodule_characteristics_v1         exists_in_main: True
+[2026-04-17T03:32:07.846533+00:00]   canonical_malignant_diagnosis_v1               exists_in_main: True
+[2026-04-17T03:32:07.927500+00:00]   tumor_episode_master_v2                        exists_in_main: True
+[2026-04-17T03:32:08.005347+00:00]   synoptic_tumor_long_v1                         exists_in_main: True
+[2026-04-17T03:32:08.081816+00:00]   tumor_pathology                                exists_in_main: True
+[2026-04-17T03:32:08.159495+00:00]   patient_tumor_rollup_v1                        exists_in_main: True
+[2026-04-17T03:32:08.240040+00:00]   extracted_fna_bethesda_v1                      exists_in_main: True
+[2026-04-17T03:32:08.408862+00:00]   fna_episode_master_v2                          exists_in_main: True
+[2026-04-17T03:32:08.507285+00:00]   complication_phenotype_v1                      exists_in_main: True
+[2026-04-17T03:32:08.592900+00:00]   vc_paralysis_recalibration_v236                exists_in_main: False
+[2026-04-17T03:32:08.677347+00:00]   ete_adjudication_v1                            exists_in_main: True
+[2026-04-17T03:32:08.759377+00:00]   canonical_recurrence_v1                        exists_in_main: True
+[2026-04-17T03:32:08.844887+00:00]   recurrence_event_clean_v1                      exists_in_main: True
+[2026-04-17T03:32:08.922832+00:00]   ret_patient_adjudicated_v226                   exists_in_main: True
+[2026-04-17T03:32:09.001968+00:00]   molecular_variant_long                         exists_in_main: True
+[2026-04-17T03:32:09.002058+00:00] 
+=== molecular_variant_long PARSE_ERROR_FUSION_FULLTEXT counts ===
+[2026-04-17T03:32:09.040525+00:00]   variant_class='PARSE_ERROR_FUSION_FULLTEXT'             n=632  n_null_gene=632
+[2026-04-17T03:32:09.040608+00:00]   variant_class='FUSION'                                  n=547  n_null_gene=504
+[2026-04-17T03:32:09.040637+00:00] 
+=== CPM mol_n_fusions / any_fusion_positive coverage ===
+[2026-04-17T03:32:09.109475+00:00]   total=10871  null_n_fusions=10168  zero=123  pos=580
+[2026-04-17T03:32:09.109560+00:00]   null_flag=846  true_flag=380  false_flag=9645
+[2026-04-17T03:32:09.109587+00:00] 
+=== mol_n_fusions current derivation pointer (registry hint) ===
+[2026-04-17T03:32:09.140794+00:00]   detail=_molecular_patient_rollup_v227 schema=main feeds_includes_fusion=YES
+[2026-04-17T03:32:09.140880+00:00] 
+=== molecular_test_episode_v2 row count + RID 7744 detail ===
+[2026-04-17T03:32:09.172268+00:00]   total rows: 10126
+[2026-04-17T03:32:09.275356+00:00]   columns: ['research_id', 'molecular_episode_id', 'platform_raw', 'platform', 'result', 'mutation', 'detailed_findings_raw', 'test_date_native', 'date_status', 'date_confidence', 'overall_result_class', 'braf_flag', 'braf_variant', 'ras_flag', 'ras_subtype', 'ret_flag', 'ret_fusion_flag', 'tert_flag', 'ntrk_flag', 'eif1ax_flag', 'tp53_flag', 'pax8_pparg_flag', 'cna_flag', 'fusion_flag', 'loh_flag', 'alk_flag', 'high_risk_marker_flag', 'inadequate_flag', 'cancelled_flag', 'source_table', 'resolved_test_date', 'linked_fna_episode_id', 'linked_nodule_id', 'linked_surgery_episode_id', 'specimen_site_raw', 'specimen_site_normalized', 'bethesda_category', 'platform_version', 'risk_language_raw', 'molecular_confidence', 'adjudication_status', 'fna_link_score_v3']
+[2026-04-17T03:32:09.275444+00:00] 
+=== Thyroid 2026 UPdated.main candidate stale tables ===
+[2026-04-17T03:32:09.351752+00:00]   candidates count: 1
+[2026-04-17T03:32:09.351836+00:00]   canonical_patient_master_v1

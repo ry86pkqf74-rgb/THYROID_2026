@@ -1,0 +1,278 @@
+[03:37:20.134Z] ==============================================================================
+[03:37:20.134Z] === START scripts/265_canonical_finalization.py (DRY-RUN)
+[03:37:20.134Z] started_at: 2026-04-17T03:37:20.134360+00:00
+[03:37:21.434Z] connected to thyroid_canonical_publication_v1_0
+[03:37:21.434Z] PHASE PREFLIGHT
+[03:37:22.092Z]   main_n_tables=114
+[03:37:22.092Z]   ws_n_tables=11
+[03:37:22.092Z]   n_patients=10871
+[03:37:22.092Z]   n_cols=1493
+[03:37:22.092Z]   readme_rows=114
+[03:37:22.092Z]   registry_rows=116
+[03:37:22.092Z] 
+PHASE STEP 1 - ras_positive_v7 drop (already done by Script 262)
+[03:37:22.200Z]   ras_positive_v7 column present: False (expected False)
+[03:37:22.200Z] 
+PHASE STEP 2 - registry token fixes
+[03:37:22.234Z]   before: extracted_tirads_validated_v1
+[03:37:22.234Z]     feeds_master_columns_normalized: None
+[03:37:22.234Z]   before: note_entities_llm_past_medical_hx
+[03:37:22.234Z]     feeds_master_columns_normalized: nlp_pmhx_has_data;nlp_pmhx_key_finding;nlp_pmhx_n_entities;nlp_pmhx_n_notes;pmhx_llm_extraction_method;pmhx_llm_mean_confidence;pmhx_llm_min_confidence;pmhx_llm_n_source_notes;pmhx_llm_note_types;pmhx_nlp_afib;pmhx_nlp_afib_n_mentions;pmhx_nlp_asthma;pmhx_nlp_asthma_n_mentions;pmhx_nlp_autoimmune_thyroid_hx;pmhx_nlp_autoimmune_thyroid_hx_n_mentions;pmhx_nlp_breast_cancer;pmhx_nlp_breast_cancer_n_mentions;pmhx_nlp_cad;pmhx_nlp_cad_n_mentions;pmhx_nlp_ckd;pmhx_nlp_ckd_n_mentions;pmhx_nlp_coagulopathy;pmhx_nlp_comorbidity_list;pmhx_nlp_copd;pmhx_nlp_copd_n_mentions;pmhx_nlp_depression;pmhx_nlp_depression_n_mentions;pmhx_nlp_diabetes;pmhx_nlp_diabetes_first_date;pmhx_nlp_diabetes_first_days_from_surg;pmhx_nlp_diabetes_n_mentions;pmhx_nlp_extraction_method;pmhx_nlp_family_hx_cancer;pmhx_nlp_family_hx_thyroid;pmhx_nlp_family_hx_thyroid_n_mentions;pmhx_nlp_gerd;pmhx_nlp_gerd_n_mentions;pmhx_nlp_hypertension;pmhx_nlp_hypertension_first_date;pmhx_nlp_hypertension_first_days_from_surg;pmhx_nlp_hypertension_n_mentions;pmhx_nlp_hyperthyroidism;pmhx_nlp_hyperthyroidism_first_date;pmhx_nlp_hyperthyroidism_first_days_from_surg;pmhx_nlp_hyperthyroidism_n_mentions;pmhx_nlp_hypothyroidism;pmhx_nlp_hypothyroidism_first_date;pmhx_nlp_hypothyroidism_first_days_from_surg;pmhx_nlp_hypothyroidism_n_mentions;pmhx_nlp_lung_cancer;pmhx_nlp_lung_cancer_n_mentions;pmhx_nlp_men_syndrome;pmhx_nlp_n_comorbidities;pmhx_nlp_n_source_notes;pmhx_nlp_note_types;pmhx_nlp_obesity;pmhx_nlp_obesity_first_date;pmhx_nlp_obesity_first_days_from_surg;pmhx_nlp_obesity_n_mentions;pmhx_nlp_osteoporosis;pmhx_nlp_prior_cancer_hx;pmhx_nlp_prior_cancer_hx_n_mentions;pmhx_nlp_radiation_exposure;pmhx_nlp_radiation_exposure_confidence;pmhx_nlp_radiation_exposure_date;pmhx_nlp_radiation_exposure_days_from_surg;pmhx_nlp_radiation_exposure_n_mentions;pmhx_nlp_smoking_status
+[03:37:22.234Z]   before: note_entities_llm_presenting_symptoms
+[03:37:22.234Z]     feeds_master_columns_normalized: nlp_symptoms_has_data;nlp_symptoms_key_finding;nlp_symptoms_n_entities;nlp_symptoms_n_notes;sx_llm_extraction_method;sx_llm_mean_confidence;sx_llm_n_source_notes;sx_nlp_any_symptom_data;sx_nlp_dysphagia;sx_nlp_dyspnea;sx_nlp_hoarseness;sx_nlp_neck_mass
+[03:37:22.234Z]   DRY-RUN; would replace 3 tokens, clear 1 detail-table feed
+[03:37:22.234Z]   step2 summary: {'replacements': 0, 'cleared': 0}
+[03:37:22.234Z] 
+PHASE STEP 3 - collision resolution
+[03:37:22.335Z]   feeds_master_columns_secondary present: False
+[03:37:22.614Z]   pre-fix colliding master_columns: 88
+[03:37:22.614Z]   encoded resolutions: 65 of 88 colliding
+[03:37:22.957Z]   WARNING - 23 colliding master_columns not in encoded resolution set:
+[03:37:22.957Z]     ete_grade_source  feeders=ete_adjudication_v1|patient_tumor_rollup_v1
+[03:37:22.957Z]     ete_refined_grade  feeders=ete_adjudication_v1|extracted_ete_subgraded_v1
+[03:37:22.957Z]     ete_subgrade_method  feeders=extracted_ete_subgraded_v1|ete_adjudication_v1
+[03:37:22.957Z]     ete_subgrade_note  feeders=extracted_ete_subgraded_v1|ete_adjudication_v1
+[03:37:22.958Z]     fna_bethesda_confidence  feeders=fna_episode_master_v2|extracted_fna_bethesda_v1
+[03:37:22.958Z]     fna_bethesda_source  feeders=fna_episode_master_v2|extracted_fna_bethesda_v1
+[03:37:22.958Z]     fna_path_concordance_category  feeders=fna_episode_master_v2|path_outcome_classification_v1
+[03:37:22.958Z]     fna_path_concordant  feeders=fna_episode_master_v2|path_outcome_classification_v1
+[03:37:22.958Z]     fna_path_outcome  feeders=path_outcome_classification_v1|fna_episode_master_v2
+[03:37:22.958Z]     followup_days  feeders=patient_cross_domain_timeline_v2|canonical_survival_followup_v1
+[03:37:22.958Z]     last_contact_date  feeders=canonical_survival_followup_v1|patient_cross_domain_timeline_v2
+[03:37:22.958Z]     lateral_neck_dissected  feeders=operative_episode_detail_v2|ln_master_rollup_v1
+[03:37:22.958Z]     ln_rollup_crossval_status  feeders=ln_crossval_v1|ln_master_rollup_v1
+[03:37:22.958Z]     ln_rollup_internal_consistency  feeders=ln_crossval_v1|ln_master_rollup_v1
+[03:37:22.958Z]     lvi_any_present_path  feeders=patient_tumor_rollup_v1|canonical_tumor_characteristics_v1
+[03:37:22.958Z]     lvi_ordinal_worst  feeders=canonical_tumor_characteristics_v1|patient_tumor_rollup_v1
+[03:37:22.958Z]     margin_status_true  feeders=patient_tumor_rollup_v1|canonical_tumor_characteristics_v1
+[03:37:22.958Z]     max_tirads_ever  feeders=imaging_patient_summary_v1|canonical_us_nodule_characteristics_v1
+[03:37:22.958Z]     mol_genes_list  feeders=molecular_variant_long|_molecular_patient_rollup_v227
+[03:37:22.958Z]     mol_n_distinct_genes  feeders=_molecular_patient_rollup_v227|molecular_variant_long
+[03:37:22.958Z]     mol_n_variants_total  feeders=molecular_variant_long|_molecular_patient_rollup_v227
+[03:37:22.958Z]     mol_variant_classes  feeders=_molecular_patient_rollup_v227|molecular_variant_long
+[03:37:22.958Z]     n_tumors_path  feeders=canonical_tumor_characteristics_v1|patient_tumor_rollup_v1
+[03:37:22.958Z]   These will fall back to: keep the alphabetically-first feeder; demote the rest.
+[03:37:22.958Z]   prepared 88 resolution rows
+[03:37:22.958Z]   DRY-RUN; would create collision_resolution_v265 + rewrite registry
+[03:37:22.958Z] 
+PHASE STEP 4 - episode-feed documentation (option b)
+[03:37:22.958Z]   DRY-RUN; would set COMMENT ON TABLE
+[03:37:22.958Z] 
+PHASE STEP 5 - fusion vs n_fusions reconciliation
+[03:37:22.995Z]   before: contradiction_a=216  contradiction_b=16
+[03:37:22.995Z]   DRY-RUN; would snapshot CPM, surface 632 PARSE_ERROR variants, recompute both
+[03:37:22.995Z] 
+PHASE STEP 6 - 846 NULL fusion / RET defaults
+[03:37:23.040Z]   before: null_fusion=846  null_ret=846
+[03:37:23.040Z]   DRY-RUN; would add 2 columns, default 846 NULLs, set comments
+[03:37:23.040Z] 
+PHASE STEP 7 - ghost RID 7744 prune
+[03:37:23.074Z]   pre-prune molecular_test_episode_v2: 1
+[03:37:23.107Z]   pre-prune molecular_results: 1
+[03:37:23.140Z]   pre-prune molecular_testing: 1
+[03:37:23.174Z]   pre-prune thyroseq_molecular_enrichment: 1
+[03:37:23.208Z]   pre-prune _molecular_patient_rollup_v227: 1
+[03:37:23.208Z]   DRY-RUN; would snapshot + delete 5 rows total
+[03:37:23.208Z] 
+PHASE STEP 8 - nan_string_audit (documented no-op)
+[03:37:23.243Z]   action='NO_ACTION'           rows=475  sum_literal_nan=0
+[03:37:23.243Z]   action='PRESERVE_RAW'        rows=1  sum_literal_nan=9517
+[03:37:23.243Z]   No mutating action taken: only PRESERVE_RAW (1 col) and NO_ACTION (475)
+[03:37:23.243Z] 
+PHASE STEP 9a - archive sweep + manifest (no DROPs in main)
+[03:37:23.560Z]   legacy candidates (1): ['canonical_patient_master_v1']
+[03:37:23.560Z]   release_* schemas to flag: 12 -> ['release_20260406', 'release_20260407', 'release_20260407_final', 'release_20260407_final2', 'release_20260407_tier', 'release_20260408', 'release_20260408r2', 'release_20260408r3', 'release_20260408r4', 'release_20260409', 'release_20260410', 'release_20260411']
+[03:37:23.638Z]   DRY-RUN; manifest would have 143 rows; 1 legacy candidates would be archived; 48 raw sources would be tagged.
+[03:37:23.638Z] 
+PHASE STEP 10 - canonical_detail_pointer_v1 rebuild
+[03:37:23.638Z]   DRY-RUN; would rebuild view
+[03:37:23.896Z]   total_rows=1601 distinct_master_cols=1493 distinct_detail_tables=90
+[03:37:23.897Z] 
+PHASE STEP 11 - __readme + data_dictionary_v240 refresh
+[03:37:23.976Z]   base tables in main: 114
+[03:37:23.976Z]   DRY-RUN; would rebuild __readme with up to 114 rows
+[03:37:23.976Z] 
+PHASE STEP 12 - final invariants + audit rows
+[03:37:24.043Z]   CPM: rows=10871 distinct_rids=10871 null_rids=0 null_fna_outcome=0 (expect 10871,10871,0,0)
+[03:37:24.075Z]   registry collisions: 88 (expect 0)
+[03:37:24.155Z]   manuscript_workspace VIEW count: 65 (expect >=66)
+[03:37:24.197Z]   fusion contradictions: a=216 b=16 null_fusion=846 null_ret=846 (expect 0,0,0,0)
+[03:37:24.197Z] === END elapsed=4.1s
+[03:38:56.248Z] ==============================================================================
+[03:38:56.248Z] === START scripts/265_canonical_finalization.py (DRY-RUN)
+[03:38:56.248Z] started_at: 2026-04-17T03:38:56.248849+00:00
+[03:38:57.484Z] connected to thyroid_canonical_publication_v1_0
+[03:38:57.484Z] PHASE PREFLIGHT
+[03:38:58.568Z]   main_n_tables=114
+[03:38:58.568Z]   ws_n_tables=11
+[03:38:58.568Z]   n_patients=10871
+[03:38:58.568Z]   n_cols=1493
+[03:38:58.568Z]   readme_rows=114
+[03:38:58.568Z]   registry_rows=116
+[03:38:58.568Z] 
+PHASE STEP 1 - ras_positive_v7 drop (already done by Script 262)
+[03:38:58.691Z]   ras_positive_v7 column present: False (expected False)
+[03:38:58.691Z] 
+PHASE STEP 2 - registry token fixes
+[03:38:58.740Z]   before: extracted_tirads_validated_v1
+[03:38:58.740Z]     feeds_master_columns_normalized: None
+[03:38:58.740Z]   before: note_entities_llm_past_medical_hx
+[03:38:58.740Z]     feeds_master_columns_normalized: nlp_pmhx_has_data;nlp_pmhx_key_finding;nlp_pmhx_n_entities;nlp_pmhx_n_notes;pmhx_llm_extraction_method;pmhx_llm_mean_confidence;pmhx_llm_min_confidence;pmhx_llm_n_source_notes;pmhx_llm_note_types;pmhx_nlp_afib;pmhx_nlp_afib_n_mentions;pmhx_nlp_asthma;pmhx_nlp_asthma_n_mentions;pmhx_nlp_autoimmune_thyroid_hx;pmhx_nlp_autoimmune_thyroid_hx_n_mentions;pmhx_nlp_breast_cancer;pmhx_nlp_breast_cancer_n_mentions;pmhx_nlp_cad;pmhx_nlp_cad_n_mentions;pmhx_nlp_ckd;pmhx_nlp_ckd_n_mentions;pmhx_nlp_coagulopathy;pmhx_nlp_comorbidity_list;pmhx_nlp_copd;pmhx_nlp_copd_n_mentions;pmhx_nlp_depression;pmhx_nlp_depression_n_mentions;pmhx_nlp_diabetes;pmhx_nlp_diabetes_first_date;pmhx_nlp_diabetes_first_days_from_surg;pmhx_nlp_diabetes_n_mentions;pmhx_nlp_extraction_method;pmhx_nlp_family_hx_cancer;pmhx_nlp_family_hx_thyroid;pmhx_nlp_family_hx_thyroid_n_mentions;pmhx_nlp_gerd;pmhx_nlp_gerd_n_mentions;pmhx_nlp_hypertension;pmhx_nlp_hypertension_first_date;pmhx_nlp_hypertension_first_days_from_surg;pmhx_nlp_hypertension_n_mentions;pmhx_nlp_hyperthyroidism;pmhx_nlp_hyperthyroidism_first_date;pmhx_nlp_hyperthyroidism_first_days_from_surg;pmhx_nlp_hyperthyroidism_n_mentions;pmhx_nlp_hypothyroidism;pmhx_nlp_hypothyroidism_first_date;pmhx_nlp_hypothyroidism_first_days_from_surg;pmhx_nlp_hypothyroidism_n_mentions;pmhx_nlp_lung_cancer;pmhx_nlp_lung_cancer_n_mentions;pmhx_nlp_men_syndrome;pmhx_nlp_n_comorbidities;pmhx_nlp_n_source_notes;pmhx_nlp_note_types;pmhx_nlp_obesity;pmhx_nlp_obesity_first_date;pmhx_nlp_obesity_first_days_from_surg;pmhx_nlp_obesity_n_mentions;pmhx_nlp_osteoporosis;pmhx_nlp_prior_cancer_hx;pmhx_nlp_prior_cancer_hx_n_mentions;pmhx_nlp_radiation_exposure;pmhx_nlp_radiation_exposure_confidence;pmhx_nlp_radiation_exposure_date;pmhx_nlp_radiation_exposure_days_from_surg;pmhx_nlp_radiation_exposure_n_mentions;pmhx_nlp_smoking_status
+[03:38:58.740Z]   before: note_entities_llm_presenting_symptoms
+[03:38:58.740Z]     feeds_master_columns_normalized: nlp_symptoms_has_data;nlp_symptoms_key_finding;nlp_symptoms_n_entities;nlp_symptoms_n_notes;sx_llm_extraction_method;sx_llm_mean_confidence;sx_llm_n_source_notes;sx_nlp_any_symptom_data;sx_nlp_dysphagia;sx_nlp_dyspnea;sx_nlp_hoarseness;sx_nlp_neck_mass
+[03:38:58.740Z]   DRY-RUN; would replace 3 tokens, clear 1 detail-table feed
+[03:38:58.740Z]   step2 summary: {'replacements': 0, 'cleared': 0}
+[03:38:58.740Z] 
+PHASE STEP 3 - collision resolution
+[03:38:58.877Z]   feeds_master_columns_secondary present: False
+[03:38:59.123Z]   pre-fix colliding master_columns: 88
+[03:38:59.123Z]   encoded resolutions: 88 of 88 colliding
+[03:38:59.433Z]   prepared 88 resolution rows
+[03:38:59.433Z]   DRY-RUN; would create collision_resolution_v265 + rewrite registry
+[03:38:59.433Z] 
+PHASE STEP 4 - episode-feed documentation (option b)
+[03:38:59.433Z]   DRY-RUN; would set COMMENT ON TABLE
+[03:38:59.433Z] 
+PHASE STEP 5 - fusion vs n_fusions reconciliation
+[03:38:59.474Z]   before: contradiction_a=216  contradiction_b=16
+[03:38:59.474Z]   DRY-RUN; would snapshot CPM, surface 632 PARSE_ERROR variants, recompute both
+[03:38:59.474Z] 
+PHASE STEP 6 - 846 NULL fusion / RET defaults
+[03:38:59.513Z]   before: null_fusion=846  null_ret=846
+[03:38:59.513Z]   DRY-RUN; would add 2 columns, default 846 NULLs, set comments
+[03:38:59.513Z] 
+PHASE STEP 7 - ghost RID 7744 prune
+[03:38:59.543Z]   pre-prune molecular_test_episode_v2: 1
+[03:38:59.573Z]   pre-prune molecular_results: 1
+[03:38:59.604Z]   pre-prune molecular_testing: 1
+[03:38:59.635Z]   pre-prune thyroseq_molecular_enrichment: 1
+[03:38:59.676Z]   pre-prune _molecular_patient_rollup_v227: 1
+[03:38:59.676Z]   DRY-RUN; would snapshot + delete 5 rows total
+[03:38:59.676Z] 
+PHASE STEP 8 - nan_string_audit (documented no-op)
+[03:38:59.722Z]   action='NO_ACTION'           rows=475  sum_literal_nan=0
+[03:38:59.722Z]   action='PRESERVE_RAW'        rows=1  sum_literal_nan=9517
+[03:38:59.722Z]   No mutating action taken: only PRESERVE_RAW (1 col) and NO_ACTION (475)
+[03:38:59.722Z] 
+PHASE STEP 9a - archive sweep + manifest (no DROPs in main)
+[03:39:00.146Z]   legacy candidates (1): ['canonical_patient_master_v1']
+[03:39:00.146Z]   release_* schemas to flag: 12 -> ['release_20260406', 'release_20260407', 'release_20260407_final', 'release_20260407_final2', 'release_20260407_tier', 'release_20260408', 'release_20260408r2', 'release_20260408r3', 'release_20260408r4', 'release_20260409', 'release_20260410', 'release_20260411']
+[03:39:00.243Z]   DRY-RUN; manifest would have 143 rows; 1 legacy candidates would be archived; 48 raw sources would be tagged.
+[03:39:00.244Z] 
+PHASE STEP 10 - canonical_detail_pointer_v1 rebuild
+[03:39:00.244Z]   DRY-RUN; would rebuild view
+[03:39:00.525Z]   total_rows=1601 distinct_master_cols=1493 distinct_detail_tables=90
+[03:39:00.525Z] 
+PHASE STEP 11 - __readme + data_dictionary_v240 refresh
+[03:39:00.636Z]   base tables in main: 114
+[03:39:00.636Z]   DRY-RUN; would rebuild __readme with up to 114 rows
+[03:39:00.636Z] 
+PHASE STEP 12 - final invariants + audit rows
+[03:39:00.676Z]   CPM: rows=10871 distinct_rids=10871 null_rids=0 null_fna_outcome=0 (expect 10871,10871,0,0)
+[03:39:00.711Z]   registry collisions: 88 (expect 0)
+[03:39:00.824Z]   manuscript_workspace VIEW count: 65 (expect >=65)
+[03:39:00.861Z]   fusion contradictions: a=216 b=16 null_fusion=846 null_ret=846 (expect 0,0,0,0)
+[03:39:00.862Z] === END elapsed=4.6s
+[03:39:08.994Z] ==============================================================================
+[03:39:08.995Z] === START scripts/265_canonical_finalization.py (APPLY)
+[03:39:08.995Z] started_at: 2026-04-17T03:39:08.995072+00:00
+[03:39:10.040Z] connected to thyroid_canonical_publication_v1_0
+[03:39:10.040Z] PHASE PREFLIGHT
+[03:39:10.729Z]   main_n_tables=114
+[03:39:10.729Z]   ws_n_tables=11
+[03:39:10.729Z]   n_patients=10871
+[03:39:10.729Z]   n_cols=1493
+[03:39:10.729Z]   readme_rows=114
+[03:39:10.729Z]   registry_rows=116
+[03:39:10.729Z] 
+PHASE STEP 1 - ras_positive_v7 drop (already done by Script 262)
+[03:39:10.833Z]   ras_positive_v7 column present: False (expected False)
+[03:39:10.833Z] 
+PHASE STEP 2 - registry token fixes
+[03:39:10.872Z]   before: extracted_tirads_validated_v1
+[03:39:10.872Z]     feeds_master_columns_normalized: None
+[03:39:10.872Z]   before: note_entities_llm_past_medical_hx
+[03:39:10.872Z]     feeds_master_columns_normalized: nlp_pmhx_has_data;nlp_pmhx_key_finding;nlp_pmhx_n_entities;nlp_pmhx_n_notes;pmhx_llm_extraction_method;pmhx_llm_mean_confidence;pmhx_llm_min_confidence;pmhx_llm_n_source_notes;pmhx_llm_note_types;pmhx_nlp_afib;pmhx_nlp_afib_n_mentions;pmhx_nlp_asthma;pmhx_nlp_asthma_n_mentions;pmhx_nlp_autoimmune_thyroid_hx;pmhx_nlp_autoimmune_thyroid_hx_n_mentions;pmhx_nlp_breast_cancer;pmhx_nlp_breast_cancer_n_mentions;pmhx_nlp_cad;pmhx_nlp_cad_n_mentions;pmhx_nlp_ckd;pmhx_nlp_ckd_n_mentions;pmhx_nlp_coagulopathy;pmhx_nlp_comorbidity_list;pmhx_nlp_copd;pmhx_nlp_copd_n_mentions;pmhx_nlp_depression;pmhx_nlp_depression_n_mentions;pmhx_nlp_diabetes;pmhx_nlp_diabetes_first_date;pmhx_nlp_diabetes_first_days_from_surg;pmhx_nlp_diabetes_n_mentions;pmhx_nlp_extraction_method;pmhx_nlp_family_hx_cancer;pmhx_nlp_family_hx_thyroid;pmhx_nlp_family_hx_thyroid_n_mentions;pmhx_nlp_gerd;pmhx_nlp_gerd_n_mentions;pmhx_nlp_hypertension;pmhx_nlp_hypertension_first_date;pmhx_nlp_hypertension_first_days_from_surg;pmhx_nlp_hypertension_n_mentions;pmhx_nlp_hyperthyroidism;pmhx_nlp_hyperthyroidism_first_date;pmhx_nlp_hyperthyroidism_first_days_from_surg;pmhx_nlp_hyperthyroidism_n_mentions;pmhx_nlp_hypothyroidism;pmhx_nlp_hypothyroidism_first_date;pmhx_nlp_hypothyroidism_first_days_from_surg;pmhx_nlp_hypothyroidism_n_mentions;pmhx_nlp_lung_cancer;pmhx_nlp_lung_cancer_n_mentions;pmhx_nlp_men_syndrome;pmhx_nlp_n_comorbidities;pmhx_nlp_n_source_notes;pmhx_nlp_note_types;pmhx_nlp_obesity;pmhx_nlp_obesity_first_date;pmhx_nlp_obesity_first_days_from_surg;pmhx_nlp_obesity_n_mentions;pmhx_nlp_osteoporosis;pmhx_nlp_prior_cancer_hx;pmhx_nlp_prior_cancer_hx_n_mentions;pmhx_nlp_radiation_exposure;pmhx_nlp_radiation_exposure_confidence;pmhx_nlp_radiation_exposure_date;pmhx_nlp_radiation_exposure_days_from_surg;pmhx_nlp_radiation_exposure_n_mentions;pmhx_nlp_smoking_status
+[03:39:10.872Z]   before: note_entities_llm_presenting_symptoms
+[03:39:10.873Z]     feeds_master_columns_normalized: nlp_symptoms_has_data;nlp_symptoms_key_finding;nlp_symptoms_n_entities;nlp_symptoms_n_notes;sx_llm_extraction_method;sx_llm_mean_confidence;sx_llm_n_source_notes;sx_nlp_any_symptom_data;sx_nlp_dysphagia;sx_nlp_dyspnea;sx_nlp_hoarseness;sx_nlp_neck_mass
+[03:39:12.232Z]   REPLACED in note_entities_llm_past_medical_hx: -> nlp_pmhx_has_data;nlp_pmhx_key_finding;nlp_pmhx_n_entities;nlp_pmhx_n_notes;pmhx_llm_extraction_method;pmhx_llm_mean_confidence;pmhx_llm_min_confidence;pmhx_llm_n_source_notes;pmhx_llm_note_types;pmhx_nlp_afib;pmhx_nlp_afib_n_mentions;pmhx_nlp_asthma;pmhx_nlp_asthma_n_mentions;pmhx_nlp_autoimmune_thyroid_hx;pmhx_nlp_autoimmune_thyroid_hx_n_mentions;pmhx_nlp_breast_cancer;pmhx_nlp_breast_cancer_n_mentions;pmhx_nlp_cad;pmhx_nlp_cad_n_mentions;pmhx_nlp_ckd;pmhx_nlp_ckd_n_mentions;pmhx_nlp_coagulopathy;pmhx_nlp_comorbidity_list;pmhx_nlp_copd;pmhx_nlp_copd_n_mentions;pmhx_nlp_depression;pmhx_nlp_depression_n_mentions;pmhx_nlp_diabetes;pmhx_nlp_diabetes_first_date;pmhx_nlp_diabetes_first_days_from_surg;pmhx_nlp_diabetes_n_mentions;pmhx_nlp_extraction_method;pmhx_nlp_family_hx_cancer;pmhx_nlp_family_hx_thyroid;pmhx_nlp_family_hx_thyroid_n_mentions;pmhx_nlp_gerd;pmhx_nlp_gerd_n_mentions;pmhx_nlp_hypertension;pmhx_nlp_hypertension_first_date;pmhx_nlp_hypertension_first_days_from_surg;pmhx_nlp_hypertension_n_mentions;pmhx_nlp_hyperthyroidism;pmhx_nlp_hyperthyroidism_first_date;pmhx_nlp_hyperthyroidism_first_days_from_surg;pmhx_nlp_hyperthyroidism_n_mentions;pmhx_nlp_hypothyroidism;pmhx_nlp_hypothyroidism_first_date;pmhx_nlp_hypothyroidism_first_days_from_surg;pmhx_nlp_hypothyroidism_n_mentions;pmhx_nlp_lung_cancer;pmhx_nlp_lung_cancer_n_mentions;pmhx_nlp_men_syndrome;pmhx_nlp_n_comorbidities;pmhx_nlp_n_source_notes;pmhx_nlp_note_types;pmhx_nlp_obesity;pmhx_nlp_obesity_first_date;pmhx_nlp_obesity_first_days_from_surg;pmhx_nlp_obesity_n_mentions;pmhx_nlp_osteoporosis;pmhx_nlp_prior_cancer_hx;pmhx_nlp_prior_cancer_hx_n_mentions;pmhx_nlp_radiation_exposure;pmhx_nlp_radiation_exposure_confidence;pmhx_nlp_radiation_exposure_date;pmhx_nlp_radiation_exposure_days_from_surg;pmhx_nlp_radiation_exposure_n_mentions;pmhx_nlp_smoking_status
+[03:39:12.364Z]   REPLACED in note_entities_llm_presenting_symptoms: -> nlp_symptoms_has_data;nlp_symptoms_key_finding;nlp_symptoms_n_entities;nlp_symptoms_n_notes;sx_llm_extraction_method;sx_llm_mean_confidence;sx_llm_n_source_notes;sx_nlp_any_symptom_data;sx_nlp_dysphagia;sx_nlp_dyspnea;sx_nlp_hoarseness;sx_nlp_neck_mass
+[03:39:12.538Z]   CLEARED rolled-up tokens for extracted_tirads_validated_v1; remaining: 
+[03:39:12.538Z]   step2 summary: {'replacements': 0, 'cleared': 1}
+[03:39:12.538Z] 
+PHASE STEP 3 - collision resolution
+[03:39:12.642Z]   feeds_master_columns_secondary present: False
+[03:39:14.815Z]   added feeds_master_columns_secondary column
+[03:39:15.217Z]   created thyroid_canonical_publication_v1_0.manuscript_workspace.collision_resolution_v265
+[03:39:15.446Z]   pre-fix colliding master_columns: 88
+[03:39:15.446Z]   encoded resolutions: 88 of 88 colliding
+[03:39:15.717Z]   prepared 88 resolution rows
+[03:39:22.649Z]   inserted 88 rows into collision_resolution_v265
+[03:39:24.465Z]   rewriting 116 registry rows...
+[03:39:26.998Z]   updated 32 registry rows
+[03:39:26.998Z] 
+PHASE STEP 3c - verify zero collisions remain (registry view)
+[03:39:27.059Z]   remaining collisions in registry: 0 (expected 0)
+[03:39:27.059Z] 
+PHASE STEP 4 - episode-feed documentation (option b)
+[03:39:27.692Z]   COMMENT ON TABLE molecular_test_episode_v2 set
+[03:39:27.692Z] 
+PHASE STEP 5 - fusion vs n_fusions reconciliation
+[03:39:27.770Z]   before: contradiction_a=216  contradiction_b=16
+[03:39:33.125Z]   surfaced 632 PARSE_ERROR variants -> thyroid_canonical_publication_v1_0.manuscript_workspace.fusion_parse_error_review_v265
+[03:39:33.208Z]   recomputed mol_n_fusions excluding PARSE_ERROR variants
+[03:39:33.310Z]   recomputed any_fusion_positive on the same FUSION + non-NULL gene rule
+[03:39:33.346Z]   after: contradiction_a=0  contradiction_b=16 (target 0,0)
+[03:39:33.346Z] 
+PHASE STEP 6 - 846 NULL fusion / RET defaults
+[03:39:33.390Z]   before: null_fusion=846  null_ret=846
+[03:39:33.990Z]   added column any_fusion_positive_inferred_negative
+[03:39:34.483Z]   added column ret_positive_v7_inferred_negative
+[03:39:35.698Z]   after: null_fusion=0 null_ret=0 fusion_inferred=846 ret_inferred=846
+[03:39:35.699Z] 
+PHASE STEP 7 - ghost RID 7744 prune
+[03:39:35.727Z]   pre-prune molecular_test_episode_v2: 1
+[03:39:35.756Z]   pre-prune molecular_results: 1
+[03:39:35.791Z]   pre-prune molecular_testing: 1
+[03:39:35.825Z]   pre-prune thyroseq_molecular_enrichment: 1
+[03:39:35.853Z]   pre-prune _molecular_patient_rollup_v227: 1
+[03:39:37.891Z]   pruned 1 row(s) from molecular_test_episode_v2; snapshot at "Thyroid 2026 UPdated"."archive_pub_v1_0"."ghost_rid_7744_molecular_test_episode_v2_pre265_20260417T033935Z"
+[03:39:39.860Z]   pruned 1 row(s) from molecular_results; snapshot at "Thyroid 2026 UPdated"."archive_pub_v1_0"."ghost_rid_7744_molecular_results_pre265_20260417T033935Z"
+[03:39:41.937Z]   pruned 1 row(s) from molecular_testing; snapshot at "Thyroid 2026 UPdated"."archive_pub_v1_0"."ghost_rid_7744_molecular_testing_pre265_20260417T033935Z"
+[03:39:44.038Z]   pruned 1 row(s) from thyroseq_molecular_enrichment; snapshot at "Thyroid 2026 UPdated"."archive_pub_v1_0"."ghost_rid_7744_thyroseq_molecular_enrichment_pre265_20260417T033935Z"
+[03:39:46.137Z]   pruned 1 row(s) from _molecular_patient_rollup_v227; snapshot at "Thyroid 2026 UPdated"."archive_pub_v1_0"."ghost_rid_7744__molecular_patient_rollup_v227_pre265_20260417T033935Z"
+[03:39:46.305Z]   post-prune RID 7744 row counts: {'molecular_test_episode_v2': 0, 'molecular_results': 0, 'molecular_testing': 0, 'thyroseq_molecular_enrichment': 0, '_molecular_patient_rollup_v227': 0}
+[03:39:46.305Z] 
+PHASE STEP 8 - nan_string_audit (documented no-op)
+[03:39:46.337Z]   action='NO_ACTION'           rows=475  sum_literal_nan=0
+[03:39:46.338Z]   action='PRESERVE_RAW'        rows=1  sum_literal_nan=9517
+[03:39:46.339Z]   wrote /Users/loganglosser/THYROID_2026/scripts/output/265_nan_cleanup_summary.csv
+[03:39:46.339Z]   No mutating action taken: only PRESERVE_RAW (1 col) and NO_ACTION (475)
+[03:39:46.339Z] 
+PHASE STEP 9a - archive sweep + manifest (no DROPs in main)
+[03:39:46.710Z]   legacy candidates (1): ['canonical_patient_master_v1']
+[03:39:46.710Z]   release_* schemas to flag: 12 -> ['release_20260406', 'release_20260407', 'release_20260407_final', 'release_20260407_final2', 'release_20260407_tier', 'release_20260408', 'release_20260408r2', 'release_20260408r3', 'release_20260408r4', 'release_20260409', 'release_20260410', 'release_20260411']
+[03:39:46.793Z]   wrote manifest: /Users/loganglosser/THYROID_2026/scripts/output/265_archive_relocation_manifest.csv (143 rows)
+[03:39:47.646Z]   ensured schema Thyroid 2026 UPdated.archive_legacy
+[03:39:53.453Z]   archived + dropped "Thyroid 2026 UPdated"."main"."canonical_patient_master_v1" -> "Thyroid 2026 UPdated"."archive_legacy"."canonical_patient_master_v1_pre265_20260417T033947Z"
+[03:40:44.104Z]   tagged 48 raw-source tables
+[03:40:44.105Z]   STOP before touching 12 release_* schemas - manifest flags them recommend_drop
+[03:40:44.105Z] 
+PHASE STEP 10 - canonical_detail_pointer_v1 rebuild
+[03:40:44.554Z]   view rebuilt
+[03:40:44.589Z]   total_rows=1273 distinct_master_cols=1273 distinct_detail_tables=79
+[03:40:44.589Z] 
+PHASE STEP 11 - __readme + data_dictionary_v240 refresh
+[03:40:44.757Z]   base tables in main: 114
+[03:41:09.543Z]   rebuilt __readme with 114 rows
+[03:41:09.728Z]   data_dictionary_v240 refreshed for any_fusion_positive (non_null=10871 distinct=2)
+[03:41:09.983Z]   data_dictionary_v240 refreshed for ret_positive_v7 (non_null=10871 distinct=2)
+[03:41:10.281Z]   data_dictionary_v240 stats refreshed for mol_n_fusions
+[03:41:10.281Z] 
+PHASE STEP 12 - final invariants + audit rows
+[03:41:10.404Z]   CPM: rows=10871 distinct_rids=10871 null_rids=0 null_fna_outcome=0 (expect 10871,10871,0,0)
+[03:41:10.508Z]   registry collisions: 0 (expect 0)
+[03:41:10.684Z]   manuscript_workspace VIEW count: 65 (expect >=65)
+[03:41:10.726Z]   fusion contradictions: a=0 b=16 null_fusion=0 null_ret=0 (expect 0,0,0,0)
+[03:41:12.177Z]   audit rows written
+[03:41:12.177Z] === END elapsed=123.2s

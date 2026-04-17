@@ -1,0 +1,26 @@
+{
+  "script": "Script 265c",
+  "run_date": "2026-04-17",
+  "do_writes": true,
+  "elapsed_seconds": 18.4,
+  "release_schemas_targeted": [
+    "release_20260406",
+    "release_20260407",
+    "release_20260407_final",
+    "release_20260407_final2",
+    "release_20260407_tier",
+    "release_20260408",
+    "release_20260408r2",
+    "release_20260408r3",
+    "release_20260408r4",
+    "release_20260409",
+    "release_20260410",
+    "release_20260411"
+  ],
+  "summary": {
+    "release_dropped": 12,
+    "release_remaining": 0,
+    "rationale_rows_corrected": 3,
+    "manifest_rows": 111
+  }
+}
