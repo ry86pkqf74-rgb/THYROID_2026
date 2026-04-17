@@ -1,0 +1,22 @@
+=== START 270c — stray-main review list emission ===
+started_at: 2026-04-17T07:11:45.260870+00:00
+input:  /Users/loganglosser/THYROID_2026/scripts/output/270c_stray_schema_consolidation.csv
+output: /Users/loganglosser/THYROID_2026/scripts/output/270c_stray_main_review_list.csv
+  consolidation rows matching filter: 156
+connected to thyroid_canonical_publication_v1_0 (search path locked)
+  enriched: 156 (0 describe failures)
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270c_stray_main_review_list.csv (156 rows, sorted by row_count DESC)
+
+--- top 10 by row_count (for at-a-glance scan) ---
+  longitudinal_lab_canonical_v1                           rows=     77960 cols=18
+  thyroglobulin_lab_canonical_v1                          rows=     76971 cols=21
+  survival_cohort_enriched                                rows=     61134 cols=28
+  event_date_audit_v2                                     rows=     61055 cols=8
+  patient_cross_domain_timeline_v2                        rows=     61055 cols=6
+  duckdb_columns                                          rows=     51273 cols=18
+  imaging_nodule_master_v1                                rows=     37016 cols=23
+  v_imaging_nodule_tirads_gap_v1                          rows=     37016 cols=7
+  note_entities_procedures                                rows=     21942 cols=48
+  lab_cross_wave_dedup_map_v1                             rows=     21761 cols=9
+
+=== END 270c stray-main review emission ===
