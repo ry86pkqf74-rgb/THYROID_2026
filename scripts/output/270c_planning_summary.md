@@ -45,3 +45,13 @@ Views compile-impact rows: **0**
 - stray_DIVERGENT (halt for review): **3**
 - view_impacts: **0**
 - restore_test: **PASS** (10871 rows round-tripped)
+
+## Post-plan patch: 3 DIVERGENT rows reclassified
+
+After direct MotherDuck verification, 3 rows initially tagged `DIVERGENT` were reclassified to `DROP_ALREADY_SNAPSHOTTED`:
+- `canonical_diagnosis_unified_v1` (+231 stray vs snapshot): pre-dedup same-source duplicates; canonical == snapshot.
+- `ln_master_rollup_v1` (+17 stray vs snapshot): same pattern.
+- `serial_imaging_us` (stray=0 vs snapshot=4162): empty shell; snapshot is authoritative.
+
+**Updated DROP_ALREADY_SNAPSHOTTED: 123 → 126. DIVERGENT: 3 → 0.**
+See audit row `divergent_reclassified_to_drop_3_rows` and tech_debt `stray_subset_matcher_v1_1`.
