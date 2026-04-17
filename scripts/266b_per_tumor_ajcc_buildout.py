@@ -642,10 +642,42 @@ def phase_3(con, log, do_writes: bool) -> dict:
           FROM {CPM} AS cpm
         ),
         ln_anchor AS (
+          -- Bug 5 fix (2026-04-17): pre-aggregate to ONE row per research_id
+          -- with severity priority N1b > N1a > N1 > NX > N0 > NULL.
+          --
+          -- ln_master_rollup_v1 is per-(research_id, histology), so a
+          -- patient with multi-histology cancer can have multiple rollup
+          -- rows with different n_stage_ajcc8 values (179 rids in current
+          -- cohort have >=2 distinct n_stage values across histologies).
+          -- Without aggregation, the per_tumor join fans out and the
+          -- post-Bug-4 dedup picks DIFFERENT rollup branches for different
+          -- tumors of the same surgery -- violating the n_stage broadcast
+          -- convention (n_stage should be uniform across all tumors of one
+          -- surgery). Detected by Phase 4 Gate 4 verification (2 violator
+          -- surgeries: rid 1732 surg 3, rid 2505 surg 1).
+          --
+          -- Severity-priority pick keeps the worst N-stage across the
+          -- patient's histologies, preserving clinical conservatism.
           SELECT
-            CAST(ln.research_id AS VARCHAR)                 AS research_id,
-            ln.histology_1_n_stage_ajcc8                    AS ln_histology_1_n_stage_ajcc8
-          FROM {LNROL} AS ln
+            CAST(research_id AS VARCHAR) AS research_id,
+            CASE MAX(CASE histology_1_n_stage_ajcc8
+                       WHEN 'N1b' THEN 5
+                       WHEN 'N1a' THEN 4
+                       WHEN 'N1'  THEN 3
+                       WHEN 'NX'  THEN 2
+                       WHEN 'N0'  THEN 1
+                       ELSE 0
+                     END)
+              WHEN 5 THEN 'N1b'
+              WHEN 4 THEN 'N1a'
+              WHEN 3 THEN 'N1'
+              WHEN 2 THEN 'NX'
+              WHEN 1 THEN 'N0'
+              ELSE NULL
+            END AS ln_histology_1_n_stage_ajcc8
+          FROM {LNROL}
+          WHERE research_id IS NOT NULL
+          GROUP BY CAST(research_id AS VARCHAR)
         )
         SELECT
           pt.*,

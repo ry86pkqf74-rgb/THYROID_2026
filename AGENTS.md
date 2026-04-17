@@ -886,6 +886,8 @@
   - Distinct-CTC-key (write target): 10,443 keys; T3b=190, T4a=12 (must equal post-dedup)
   - Per-CTC-row (CTC has 663 internal dup keys): 11,106 rows; T3b=206, T4a=15
   - **Per-PATIENT dominant (manuscript number): 8,422 patients; T3b=188, T4a=7, T4b=0, sum upstaged=195** vs 190 CPM-gross (5-patient overshoot from non-CPM-gross sources; 6 overshoot patients all OED-tracheal=TRUE Outcome 1).
+- **Multi-row-per-key rollup pre-aggregation pattern (Bug 5 fix, 2026-04-17):** Whenever a join source is a rollup table with potential multi-row-per-key grain (`ln_master_rollup_v1` is per-(research_id, histology), molecular rollups may be per-(research_id, assay/test_episode), etc.), **pre-aggregate with deterministic severity-priority before joining into the derivation frame**. Document the priority explicitly. Without pre-aggregation, downstream dedups (e.g., 266b's Bug 4 dedup at staging-frame grain) can pick DIFFERENT rollup branches for different tumors of the same surgery, violating broadcast conventions ("N-stage uniform across tumors of one surgery"). Detected by 266b Phase 4 Gate 4 verification (2 violator surgeries: rid 1732, rid 2505). Severity priority for `ln_master_rollup_v1.histology_1_n_stage_ajcc8`: **N1b > N1a > N1 > NX > N0 > NULL** (worst-severity wins, preserving clinical conservatism). Apply this pattern when authoring any new per-tumor pipeline that joins a rollup table.
+- **266b Phase 4 final state (2026-04-17 — Bug 5 fix applied):** `tumor_stage_heterogeneity_v1` = 8,422 rows; dominant T-stage matches Phase 3 per-patient-dominant exactly; heterogeneity_t=851 (~10% of malignant cohort); heterogeneity_stage=5; N-stage broadcast violations=0; dominant-identity mismatches=0. CPM invariants intact.
 
 ---
 

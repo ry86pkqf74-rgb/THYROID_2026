@@ -1,0 +1,26 @@
+[20:31:22.434Z] ==============================================================================
+[20:31:22.435Z] # Script 266b run
+[20:31:22.435Z] started_at: 2026-04-17T20:31:22.435076+00:00
+[20:31:22.435Z] mode      : APPLY
+[20:31:22.435Z] phase     : 4
+[20:31:23.587Z] connected to thyroid_canonical_publication_v1_0
+[20:31:23.587Z] 
+## Phase 0 — preflight + sequencing gates
+[20:31:23.686Z]   connected_to        : thyroid_canonical_publication_v1_0
+[20:31:23.686Z]   cpm_n_patients      : 10871
+[20:31:23.686Z]   ctc_n_rows          : 11106
+[20:31:24.168Z]   GATE 266a applied   : data_dictionary_v266a exists = True
+[20:31:24.239Z]   GATE big-cleanup    : ajcc8_t_stage=True corrected=False v2=True DEPRECATED__present=True
+[20:31:24.307Z]   CTC has un-versioned t_stage : True
+[20:31:24.307Z]   CTC has un-versioned n_stage : True
+[20:31:24.307Z]   CTC has un-versioned m_stage : True
+[20:31:24.307Z]   CTC has un-versioned overall_stage : True
+[20:31:24.307Z]   CTC required inputs missing : none
+[20:31:24.307Z] 
+## Phase 4 — CREATE TABLE tumor_stage_heterogeneity_v1
+[20:31:24.307Z]   EXEC [ctas_heterogeneity]: CREATE OR REPLACE TABLE thyroid_canonical_publication_v1_0.main.tumor_stage_heterogeneity_v1 AS
+[20:31:24.835Z]   EXEC [comment_het]: COMMENT ON TABLE thyroid_canonical_publication_v1_0.main.tumor_stage_heterogeneity_v1 IS 'Script 266b (2026-04-17). Patient-grain rollup of per-tumor AJCC stage
+[20:31:25.303Z]   tumor_stage_heterogeneity_v1 rows: 8422
+[20:31:25.471Z] 
+elapsed: 3.0s
+[20:31:25.471Z] DONE

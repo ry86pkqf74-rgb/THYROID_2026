@@ -6,7 +6,7 @@
   "results": {
     "meta": {
       "mode": "APPLY",
-      "started_at": "2026-04-17T12:37:56.850052+00:00",
+      "started_at": "2026-04-17T20:38:57.099665+00:00",
       "script": "Script 266b"
     },
     "phase_0": {
@@ -36,11 +36,9 @@
         "ajcc8_t_stage_with_microete_t3b_DEPRECATED"
       ]
     },
-    "phase_3": {
-      "rows_staged": 10443,
-      "ajcc8_calculable": 5394,
-      "ajcc7_calculable": 5736
+    "phase_4": {
+      "het_rows": 8422
     }
   },
-  "elapsed_seconds": 11.3
+  "elapsed_seconds": 2.6
 }
