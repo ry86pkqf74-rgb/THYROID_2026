@@ -2,7 +2,8 @@
 """Discovery for Script 266a — read-only inspection of dictionary, registry,
 CPM columns we'll touch."""
 from __future__ import annotations
-import json, os, sys
+import json
+import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent

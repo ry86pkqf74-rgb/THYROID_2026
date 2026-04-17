@@ -78,7 +78,6 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import os
 import sys
 import time
 import traceback
@@ -89,7 +88,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from _md_connect import connect_locked, PUBLICATION_DB  # noqa: E402
 from _v1_1_helpers import (  # noqa: E402
-    ARCHIVE_DB, ARCHIVE_QUALIFIED,
+    ARCHIVE_QUALIFIED,
     ensure_archive_schema, ensure_audit_table,
     make_logger, record_audit, snapshot_table, utc_ts, write_decision_log,
 )
