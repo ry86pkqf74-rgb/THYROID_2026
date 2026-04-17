@@ -1,0 +1,14 @@
+CONFIRMATION: thyroid_canonical_publication_v1_0 - all 7 audit findings CLOSED.
+- canonical_patient_master: 10,871 x 1,499 cols (was 1,495 -> dropped 4 legacy + replaced bethesda_final + added 8 new bethesda cols; net +4)
+- Bethesda convention LOCKED: preop_worst_calculated_from_morphology_era_preserved
+  - bethesda_final derived from category_num (morphology-calculated) for >98% of preop FNA contributions
+  - number_only fallback tagged per-FNA; <2% of contributions
+  - era-specific max columns (2010/2015/2023) preserved for future era-stratified analysis
+  - index-nodule column built best-effort with linkage-source audit (100% of bethesda_final patients covered)
+- Molecular episode table: 10,650 rows (backfilled 525 from ThyroSeq/NGS-BRAF/RET)
+- Legacy molecular cols dropped: molecular_tested_v7, mol_test_count, molecular_platforms_v7, n_molecular_tests_v7
+- Bethesda columns added: 9 (final rebuilt, 3 era, 3 derivation-audit, 2 index-nodule)
+- Registry: every pinned master column has exactly 1 authoritative feeder (verified via canonical_detail_pointer_v1)
+- Ghost patient 7744: still purged across all tables
+- All 65 manuscript_workspace views compile
+v1_0 is publication-ready.

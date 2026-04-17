@@ -1,0 +1,20 @@
+{
+  "captured_at": "2026-04-17T04:53:52.623156+00:00",
+  "post_cpm_rows": 10871,
+  "post_cpm_cols": 1491,
+  "removed_columns": [
+    "molecular_tested_v7",
+    "mol_test_count",
+    "molecular_platforms_v7",
+    "n_molecular_tests_v7"
+  ],
+  "legacy_sweep_rows_inserted": 4,
+  "view_compile_check": {
+    "n_views_checked": 65,
+    "n_pass": 65,
+    "n_fail": 0,
+    "legacy_cited_failures": [],
+    "other_failures": []
+  },
+  "elapsed_seconds": 11.8
+}

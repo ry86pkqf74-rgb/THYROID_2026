@@ -1,0 +1,28 @@
+{
+  "script": "Script 269",
+  "run_date": "2026-04-17",
+  "pre": {
+    "captured_at": "2026-04-17T05:01:20.928355+00:00",
+    "cpm_rows": 10871,
+    "mte_starting_rows": 10125
+  },
+  "schema_discovery_ingestion_source_present_pre": false,
+  "post": {
+    "mte_pre": 10125,
+    "mte_post": 10650,
+    "n_backfilled": 525,
+    "by_source": {
+      "thyroseq_molecular_enrichment": 443,
+      "extracted_braf_recovery_v1": 46,
+      "ret_patient_adjudicated_v226": 36
+    }
+  },
+  "concordance": {
+    "pinned_with_value": 10025,
+    "match": 9506,
+    "mismatch": 519,
+    "pinned_null_with_episodes": 1,
+    "match_rate_pct": 94.82
+  },
+  "elapsed_seconds": 4.6
+}
