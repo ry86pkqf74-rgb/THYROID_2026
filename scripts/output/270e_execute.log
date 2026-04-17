@@ -1,0 +1,74 @@
+=== START 270e — stray schema drops (--EXECUTE) ===
+started_at: 2026-04-17T07:50:25.376503+00:00
+connected to thyroid_canonical_publication_v1_0
+
+--- ROUND-TRIP RESTORE TEST ---
+  chosen: "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_pre270_20260417T055747Z" (score_reason='pre270_match', cols=1499, rows=10871)
+  PASS: round-trip 10871 rows / 1499 cols verified, temp table dropped
+
+--- drop plan ---
+  enriched 38 drop candidates (38 not queryable — expected for broken-ref views)
+  38 objects to drop
+
+--- drop loop ---
+  [ 1/38] OK  main._specimen_path_surgery_link_v1 (VIEW) elapsed=0.03s
+  [ 2/38] OK  main._specimen_synoptic_spine_v1 (VIEW) elapsed=0.03s
+  [ 3/38] OK  main.canonical_nodule_linkage_study_v1 (VIEW) elapsed=0.03s
+  [ 4/38] OK  main.longitudinal_lab_deduped_v (VIEW) elapsed=0.03s
+  [ 5/38] OK  main.master_fact_long_verified_v1 (VIEW) elapsed=0.03s
+  [ 6/38] OK  main.master_patient_rollup_verified_v1 (VIEW) elapsed=0.03s
+  [ 7/38] OK  main.master_source_lineage_v1 (VIEW) elapsed=0.04s
+  [ 8/38] OK  main.molecular_fact_lineage_qa_duplicate_candidates_v (VIEW) elapsed=0.11s
+  [ 9/38] OK  main.molecular_fact_long_base_v (VIEW) elapsed=0.03s
+  [10/38] OK  main.molecular_fact_long_v (VIEW) elapsed=0.1s
+  [11/38] OK  main.molecular_patient_rollup_v (VIEW) elapsed=0.03s
+  [12/38] OK  main.molecular_results_unified_v (VIEW) elapsed=0.03s
+  [13/38] OK  main.molecular_variant_contract_v (VIEW) elapsed=0.04s
+  [14/38] OK  main.mrn_crosswalk_v1 (BASE TABLE) elapsed=0.03s
+  [15/38] OK  main.v_fna_bethesda_episode_vs_resolved_v1 (VIEW) elapsed=0.03s
+  [16/38] OK  main.v_fna_bethesda_surface (VIEW) elapsed=0.03s
+  [17/38] OK  main.v_fna_episode_bethesda_resolved_v1 (VIEW) elapsed=0.03s
+  [18/38] OK  main.v_fna_surgery_window (VIEW) elapsed=0.03s
+  [19/38] OK  main.v_imaging_nodule_linkage_classification_v1 (VIEW) elapsed=0.03s
+  [20/38] OK  mm_contract_dev._bootstrap_fna_episode_master_v2 (BASE TABLE) elapsed=0.03s
+  [21/38] OK  mm_contract_dev._bootstrap_mrn_crosswalk_v1 (BASE TABLE) elapsed=0.05s
+  [22/38] OK  mm_contract_dev.val_ambiguous_multimodal_linkage_mm_v1 (BASE TABLE) elapsed=0.03s
+  [23/38] OK  mm_contract_dev.val_contract_required_join_keys_mm_v1 (BASE TABLE) elapsed=0.03s
+  [24/38] OK  mm_contract_dev.val_imaging_fna_contract_blockers_mm_v1 (BASE TABLE) elapsed=0.12s
+  [25/38] OK  mm_contract_dev.val_multi_tumor_report_mm_v1 (VIEW) elapsed=0.03s
+  [26/38] OK  mm_contract_dev.val_multitumor_expansion_mm_v1 (BASE TABLE) elapsed=0.03s
+  [27/38] OK  mm_contract_dev.val_nodes_invariant_mm_v1 (BASE TABLE) elapsed=0.03s
+  [28/38] OK  mm_contract_dev.val_preop_temporal_order_mm_v1 (BASE TABLE) elapsed=0.03s
+  [29/38] OK  mm_contract_dev.val_side_lobe_mismatch_mm_v1 (BASE TABLE) elapsed=0.03s
+  [30/38] OK  qa.date_provenance_completeness_v (VIEW) elapsed=0.03s
+  [31/38] OK  qa.domain_validation_summary_v (VIEW) elapsed=0.03s
+  [32/38] OK  qa.manual_review_queue_summary_v (VIEW) elapsed=0.03s
+  [33/38] OK  qa.molecular_pipeline_run_audit (BASE TABLE) elapsed=0.03s
+  [34/38] OK  qa.promotion_scorecard_summary_v (VIEW) elapsed=0.03s
+  [35/38] OK  qa.tg_lab_ingestion_qc (BASE TABLE) elapsed=0.11s
+  [36/38] OK  qa.v_diag_specimen_fhir_broken_refs_v1 (VIEW) elapsed=0.03s
+  [37/38] OK  qa.v_diag_specimen_fhir_bundle_entry_drift_v1 (VIEW) elapsed=0.1s
+  [38/38] OK  qa.v_diag_specimen_review_burden_v1 (VIEW) elapsed=0.03s
+
+  drops: ok=38 fail=0
+  view DDL entries captured: 0
+
+--- schema cleanup (CASCADE for non-main; individual drops for main) ---
+  DROPPED schema 'mm_contract_dev'
+  DROPPED schema 'qa'
+  DROPPED schema 'v2_stage'
+  main schema: enumerating and dropping remaining objects ...
+  main: dropped 0 objects (0 tables + 13 views), 0 failures
+
+--- final state assertion ---
+  archive DB schemas now: ['archive_legacy', 'archive_pub_v1_0', 'main']
+  main schema object count (must be 0): 0
+  PASS: archive DB contains ['archive_legacy', 'archive_pub_v1_0'] + empty main (system schema, cannot drop). mm_contract_dev / qa / v2_stage are gone.
+
+--- audit rows ---
+  inserted audit row 'phase_b_drop_no_restore_value_complete'
+  inserted audit row 'phase_b_archive_consolidated'
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270e_execute_summary.json
+
+=== END 270e (--EXECUTE) ===
+Archive DB is now consolidated to two schemas: ['archive_legacy', 'archive_pub_v1_0']. Ready for tag v1_0_archive_consolidated.

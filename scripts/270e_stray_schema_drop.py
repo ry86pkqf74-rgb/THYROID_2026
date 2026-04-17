@@ -314,18 +314,32 @@ def write_csv(path: Path, header: list[str], rows: list[list],
 # Schema emptiness check
 # =============================================================================
 
+DUCKDB_INTERNAL_VIEWS = frozenset({
+    "duckdb_views", "duckdb_types", "duckdb_tables", "duckdb_schemas",
+    "duckdb_indexes", "duckdb_constraints", "duckdb_databases", "duckdb_columns",
+    "sqlite_temp_schema", "sqlite_temp_master", "sqlite_schema", "sqlite_master",
+    "pragma_database_list",
+})
+
+
 def count_schema_objects(con, db: str, schema: str) -> int:
-    """Return total live object count (tables + views) in the schema."""
+    """Return total user-owned object count (tables + views) in the schema.
+    DuckDB internal catalog entries are excluded since they cannot be dropped
+    and their presence does not indicate user data.
+    """
     try:
         t = con.execute(f"""
             SELECT COUNT(*) FROM duckdb_tables()
             WHERE database_name = ? AND schema_name = ?
         """, [db, schema]).fetchone()[0]
-        v = con.execute(f"""
-            SELECT COUNT(*) FROM duckdb_views()
-            WHERE database_name = ? AND schema_name = ?
-        """, [db, schema]).fetchone()[0]
-        return int(t) + int(v)
+        views = [
+            r[0] for r in con.execute(f"""
+                SELECT view_name FROM duckdb_views()
+                WHERE database_name = ? AND schema_name = ?
+            """, [db, schema]).fetchall()
+        ]
+        user_views = sum(1 for v in views if v not in DUCKDB_INTERNAL_VIEWS)
+        return int(t) + user_views
     except Exception:
         return -1
 
@@ -596,14 +610,19 @@ def main_execute() -> int:
         OUT_EXEC_LOG.write_text("".join(log_lines))
         return 1
 
-    # 6. DROP SCHEMA CASCADE for each stray schema
-    # Note: stray schemas still contain the 244 objects that were either
-    # migrated by 270d (118) or already snapshotted (126). Both are safely
-    # preserved in archive_pub_v1_0 / archive_legacy; CASCADE removes the
-    # originals. No pre-CASCADE empty-check required.
-    log("\n--- DROP SCHEMA CASCADE ---")
+    # 6. Schema cleanup:
+    #    - mm_contract_dev, qa, v2_stage: DROP SCHEMA CASCADE (may already
+    #      be gone from a prior partial run; IF EXISTS makes it idempotent).
+    #    - main: DuckDB/MotherDuck's internal default schema — cannot be
+    #      dropped via DROP SCHEMA. Enumerate remaining objects and drop
+    #      individually; assert empty afterwards.
+    log(
+        "\n--- schema cleanup (CASCADE for non-main; "
+        "individual drops for main) ---"
+    )
     schema_drop_results: dict[str, str] = {}
-    for sch in STRAY_SCHEMAS:
+    droppable_schemas = [s for s in STRAY_SCHEMAS if s != "main"]
+    for sch in droppable_schemas:
         try:
             con.execute(
                 f'DROP SCHEMA IF EXISTS "{ARCHIVE_DB}"."{sch}" CASCADE'
@@ -615,30 +634,104 @@ def main_execute() -> int:
             schema_drop_results[sch] = f"FAIL: {str(e)[:120]}"
             fail_count += 1
 
+    # main schema: drop remaining objects individually
+    log("  main schema: enumerating and dropping remaining objects ...")
+    main_rem_tables = [
+        r[0] for r in con.execute(f"""
+            SELECT table_name FROM duckdb_tables()
+            WHERE database_name = ? AND schema_name = 'main'
+        """, [ARCHIVE_DB]).fetchall()
+    ]
+    main_rem_views = [
+        r[0] for r in con.execute(f"""
+            SELECT view_name FROM duckdb_views()
+            WHERE database_name = ? AND schema_name = 'main'
+        """, [ARCHIVE_DB]).fetchall()
+    ]
+    main_ok = 0
+    main_fail = 0
+    INTERNAL_CATALOG_MSG = "Cannot drop internal catalog entry"
+    for name in main_rem_views:
+        fq = quote_fq(ARCHIVE_DB, "main", name)
+        try:
+            con.execute(f"DROP VIEW IF EXISTS {fq}")
+            main_ok += 1
+        except Exception as e:
+            err = str(e)
+            if INTERNAL_CATALOG_MSG in err:
+                pass  # DuckDB system view — always present, cannot drop; skip
+            else:
+                log(f"    FAIL drop view {name}: {err[:100]}")
+                main_fail += 1
+    for name in main_rem_tables:
+        fq = quote_fq(ARCHIVE_DB, "main", name)
+        try:
+            con.execute(f"DROP TABLE IF EXISTS {fq}")
+            main_ok += 1
+        except Exception as e:
+            err = str(e)
+            if INTERNAL_CATALOG_MSG in err:
+                pass  # DuckDB internal table — skip
+            else:
+                log(f"    FAIL drop table {name}: {err[:100]}")
+                main_fail += 1
+    log(
+        f"  main: dropped {main_ok} objects "
+        f"({len(main_rem_tables)} tables + {len(main_rem_views)} views), "
+        f"{main_fail} failures"
+    )
+    if main_fail:
+        schema_drop_results["main"] = f"FAIL: {main_fail} object drops failed"
+        fail_count += main_fail
+    else:
+        schema_drop_results["main"] = "OK_EMPTIED"
+
     if any(v.startswith("FAIL") for v in schema_drop_results.values()):
-        log("\nHALT — schema drop failures. Resolve and re-run.")
+        log("\nHALT — schema cleanup failures. Resolve and re-run.")
         OUT_EXEC_LOG.write_text("".join(log_lines))
         return 1
 
     # 8. Final state assertion
+    # Expected: archive_pub_v1_0 and archive_legacy exist.
+    # main always remains (DuckDB internal) — assert it is empty.
+    # mm_contract_dev, qa, v2_stage are fully gone.
     log("\n--- final state assertion ---")
     final_schemas = set(list_remaining_archive_db_schemas(con, ARCHIVE_DB))
-    # Exclude information-schema and system schemas that may appear
     user_schemas = {
         s for s in final_schemas
         if not s.startswith("information_schema") and s != "pg_catalog"
     }
     log(f"  archive DB schemas now: {sorted(user_schemas)}")
+
+    # main must exist but be empty
+    main_final_count = count_schema_objects(con, ARCHIVE_DB, "main")
+    log(f"  main schema object count (must be 0): {main_final_count}")
+
+    # The two expected archive schemas must exist
     missing = EXPECTED_FINAL_SCHEMAS - user_schemas
-    extra = user_schemas - EXPECTED_FINAL_SCHEMAS
-    if missing or extra:
-        log(f"  FAIL: expected {sorted(EXPECTED_FINAL_SCHEMAS)}")
-        log(f"  missing: {sorted(missing)}")
-        log(f"  extra:   {sorted(extra)}")
+    # Extra schemas beyond expected + empty main are a problem
+    extra = user_schemas - EXPECTED_FINAL_SCHEMAS - {"main"}
+
+    assertion_ok = (
+        not missing
+        and not extra
+        and main_final_count == 0
+    )
+    if not assertion_ok:
+        if missing:
+            log(f"  FAIL: missing expected schemas: {sorted(missing)}")
+        if extra:
+            log(f"  FAIL: unexpected extra schemas: {sorted(extra)}")
+        if main_final_count != 0:
+            log(f"  FAIL: main schema not empty ({main_final_count} objects remain)")
         log("\nHALT — final state assertion failed.")
         OUT_EXEC_LOG.write_text("".join(log_lines))
         return 1
-    log(f"  PASS: archive DB contains exactly {sorted(EXPECTED_FINAL_SCHEMAS)}")
+    log(
+        f"  PASS: archive DB contains {sorted(EXPECTED_FINAL_SCHEMAS)} + "
+        f"empty main (system schema, cannot drop). "
+        f"mm_contract_dev / qa / v2_stage are gone."
+    )
 
     # 9. Audit rows
     log("\n--- audit rows ---")
@@ -694,10 +787,13 @@ def main_execute() -> int:
                 f"({restore_result['source_row_count']} rows / "
                 f"{restore_result['source_column_count']} cols). "
                 f"270d migrated 118 objects to archive_legacy; "
-                f"270e dropped {n_drops} DROP_NO_RESTORE_VALUE objects and "
-                f"4 stray schemas. Canonical DB main schema unchanged from "
-                "v1_0_registry_locked (0 archive candidates; Phase B was "
-                "archive-DB-only work). Ready for tag v1_0_archive_consolidated."
+                f"270e dropped {n_drops} DROP_NO_RESTORE_VALUE objects, "
+                f"dropped schemas mm_contract_dev/qa/v2_stage via CASCADE, "
+                f"and emptied the main schema (DuckDB internal schema; "
+                f"cannot DROP, but 0 objects remain). "
+                "Canonical DB main schema unchanged from v1_0_registry_locked "
+                "(0 archive candidates; Phase B was archive-DB-only work). "
+                "Ready for tag v1_0_archive_consolidated."
             ),
         ],
     )
@@ -716,7 +812,8 @@ def main_execute() -> int:
         "view_ddl_entries_captured": len(ddl_capture_entries),
         "schema_drop_results": schema_drop_results,
         "final_schemas_in_archive_db": sorted(user_schemas),
-        "final_state_assertion_passed": True,
+        "main_schema_object_count_final": main_final_count,
+        "final_state_assertion_passed": assertion_ok,
         "audit_findings_inserted": [AUDIT_FINDING_DROPS, AUDIT_FINDING_FINAL],
     }
     OUT_EXEC_SUMMARY.write_text(json.dumps(summary, indent=2, default=str))

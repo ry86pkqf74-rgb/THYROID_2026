@@ -1,0 +1,39 @@
+{
+  "started_at": "2026-04-17T07:50:25.376503+00:00",
+  "finished_at": "2026-04-17T07:50:46.259941+00:00",
+  "publication_db": "thyroid_canonical_publication_v1_0",
+  "archive_db": "Thyroid 2026 UPdated",
+  "mode": "execute",
+  "restore_test": {
+    "status": "PASS",
+    "chosen_snapshot": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"canonical_patient_master_pre270_20260417T055747Z\"",
+    "selector_score_reason": "pre270_match",
+    "source_row_count": 10871,
+    "source_column_count": 1499,
+    "temp_row_count": 10871,
+    "temp_column_count": 1499,
+    "temp_table_dropped": true,
+    "failures": []
+  },
+  "drop_plan_count": 38,
+  "drops_ok": 38,
+  "drops_fail": 0,
+  "view_ddl_entries_captured": 0,
+  "schema_drop_results": {
+    "mm_contract_dev": "OK",
+    "qa": "OK",
+    "v2_stage": "OK",
+    "main": "OK_EMPTIED"
+  },
+  "final_schemas_in_archive_db": [
+    "archive_legacy",
+    "archive_pub_v1_0",
+    "main"
+  ],
+  "main_schema_object_count_final": 0,
+  "final_state_assertion_passed": true,
+  "audit_findings_inserted": [
+    "phase_b_drop_no_restore_value_complete",
+    "phase_b_archive_consolidated"
+  ]
+}
