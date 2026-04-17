@@ -1,0 +1,36 @@
+{
+  "script": "248",
+  "run_ts": "20260417T002058Z",
+  "run_date": "2026-04-16",
+  "mode": "APPLY",
+  "phases": {
+    "audit": {
+      "n_varchar_cols": 476,
+      "n_polluted_cols": 1,
+      "total_literal_nan_cells": 9517,
+      "polluted_columns": [
+        {
+          "column_name": "syn_margin_distance_mm_raw_str",
+          "n_literal_nan": 9517,
+          "n_true_null": 2,
+          "n_real_values": 1352,
+          "repair_action": "PRESERVE_RAW"
+        }
+      ]
+    },
+    "snapshot": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"canonical_patient_master_pre248_20260417T002058Z\"",
+    "repairs": [],
+    "verification": {
+      "after_polluted_cols": 0,
+      "after_literal_nan_cells": 0,
+      "remaining_columns": [],
+      "preserved_raw_str_cols": [
+        {
+          "col": "syn_margin_distance_mm_raw_str",
+          "n": 9517
+        }
+      ]
+    }
+  },
+  "invariant_pass": true
+}

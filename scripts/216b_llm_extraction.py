@@ -57,6 +57,21 @@ B2_ROLLUP_PARQUET = OUT_DIR / "_mri_rollup_ready_216b.parquet"
 # Connection
 # ======================================================================
 
+def _date_or_none(ts):
+    """Return ISO-date string or None.
+
+    Guards against pd.NaT / np.nan being later cast to the literal string
+    'nan' or 'NaT' when serialized through parquet -> DuckDB VARCHAR
+    (root cause of the v1_1 cleanup pass; see Script 248 / 119 Check 14).
+    """
+    if ts is None or pd.isna(ts):
+        return None
+    try:
+        return pd.Timestamp(ts).date().isoformat()
+    except (ValueError, TypeError):
+        return None
+
+
 def connect() -> duckdb.DuckDBPyConnection:
     token = get_token()
     if not token:
@@ -333,8 +348,8 @@ def _pet_rollup(pet_df: pd.DataFrame) -> pd.DataFrame:
             "rid": str(rid),
             "pet_n_exams": len(g),
             "pet_has_data": True,
-            "pet_first_date": g["exam_date"].min(),
-            "pet_last_date": g["exam_date"].max(),
+            "pet_first_date": _date_or_none(g["exam_date"].min()),
+            "pet_last_date": _date_or_none(g["exam_date"].max()),
             "pet_indication_first": str(first["indication"]) if pd.notna(first["indication"]) else None,
             "pet_impression_last": str(last["llm_impression_brief"]) if pd.notna(last["llm_impression_brief"]) else None,
             "pet_radiotracer_primary": str(first["llm_radiotracer"]) if pd.notna(first["llm_radiotracer"]) else None,
@@ -694,6 +709,10 @@ def task_rebuild(
     # ── PET rollup ──
     if not pet_rollup.empty:
         pet_tmp = tmp_dir / "_pet_rollup_216b.parquet"
+        # NaN→None coercion guard (v1_1 cleanup, Script 248): prevent
+        # pd.NaT / np.nan from being cast to literal 'nan' strings on
+        # parquet round-trip through DuckDB VARCHAR columns.
+        pet_rollup = pet_rollup.where(pd.notna(pet_rollup), None)
         pet_rollup.to_parquet(pet_tmp, index=False)
         con.execute(f"CREATE OR REPLACE TEMP TABLE pet_rollup AS SELECT * FROM read_parquet('{pet_tmp}')")
 
@@ -719,6 +738,8 @@ def task_rebuild(
     # ── MRI impression rollup ──
     if not mri_rollup.empty:
         mri_tmp = tmp_dir / "_mri_rollup_216b.parquet"
+        # NaN→None coercion guard (v1_1 cleanup, Script 248).
+        mri_rollup = mri_rollup.where(pd.notna(mri_rollup), None)
         mri_rollup.to_parquet(mri_tmp, index=False)
         con.execute(f"CREATE OR REPLACE TEMP TABLE mri_impression_rollup AS SELECT * FROM read_parquet('{mri_tmp}')")
 
@@ -734,6 +755,8 @@ def task_rebuild(
     # ── BMI rollup ──
     if not bmi_rollup.empty:
         bmi_tmp = tmp_dir / "_bmi_rollup_216b.parquet"
+        # NaN→None coercion guard (v1_1 cleanup, Script 248).
+        bmi_rollup = bmi_rollup.where(pd.notna(bmi_rollup), None)
         bmi_rollup.to_parquet(bmi_tmp, index=False)
         con.execute(f"CREATE OR REPLACE TEMP TABLE bmi_rollup AS SELECT * FROM read_parquet('{bmi_tmp}')")
 

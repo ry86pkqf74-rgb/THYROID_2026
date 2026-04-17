@@ -1964,6 +1964,117 @@ def generate_report(
     return "\n".join(lines)
 
 
+def check_no_literal_nan_in_canonical_master(
+    con: duckdb.DuckDBPyConnection,
+    results: ValidationResult,
+    strict: bool = False,
+) -> None:
+    """Check 14 (v1_1, Script 248): VARCHAR columns on
+    canonical_patient_master may not contain the literal string 'nan'.
+
+    Splits into two parts:
+      14a HARD (FAIL in release / WARN structural):
+          COUNT(*) WHERE col = 'nan' must be 0.
+          Matches the Phase 1 cleanup mandate from the v1_1 finalization.
+      14b SOFT (always WARN, never FAIL):
+          COUNT(*) WHERE col IN ('NaT','None','') > 0.
+          Surfaces broader sentinel-string drift as a tracked follow-up
+          without blocking release on pre-existing pollution outside the
+          Phase 1 scope.
+
+    Columns whose name ends with `_raw_str` are EXPECTED to retain raw
+    sentinel values (preserved provenance, see COMMENT ON COLUMN) and
+    are excluded from both parts.
+
+    Background
+    ----------
+    Upstream pandas exports (Scripts 214, 216b) emitted the four-character
+    string 'nan' instead of SQL NULL when writing pd.NaT / np.nan through
+    .to_parquet -> DuckDB VARCHAR cast. Script 248 repaired the
+    contamination on 2026-04-16 and patched both loaders; this check
+    guards against regression and additionally surfaces broader sentinel
+    drift for follow-up.
+    """
+    pub_db = "thyroid_canonical_publication_v1_0"
+    cpm_fq = f'"{pub_db}".main.canonical_patient_master'
+    try:
+        cols = [
+            r[0]
+            for r in con.execute(
+                f"""SELECT column_name
+                    FROM information_schema.columns
+                    WHERE table_catalog = '{pub_db}'
+                      AND table_schema  = 'main'
+                      AND table_name    = 'canonical_patient_master'
+                      AND data_type IN ('VARCHAR','TEXT','STRING')
+                    ORDER BY column_name"""
+            ).fetchall()
+        ]
+    except Exception as exc:
+        results.add(
+            "CPM literal-nan scan (14a hard)",
+            "WARN" if not strict else "FAIL",
+            f"could not enumerate VARCHAR columns: {exc}",
+        )
+        return
+
+    polluted_nan: list[tuple[str, int]] = []
+    polluted_other: list[tuple[str, int]] = []
+    for col in cols:
+        if col.endswith("_raw_str"):
+            continue
+        try:
+            row = con.execute(
+                f"""SELECT
+                      SUM(CASE WHEN "{col}" = 'nan' THEN 1 ELSE 0 END),
+                      SUM(CASE WHEN "{col}" IN ('NaT','None','') THEN 1 ELSE 0 END)
+                    FROM {cpm_fq}"""
+            ).fetchone()
+        except Exception:
+            continue
+        n_nan = int(row[0] or 0)
+        n_other = int(row[1] or 0)
+        if n_nan > 0:
+            polluted_nan.append((col, n_nan))
+        if n_other > 0:
+            polluted_other.append((col, n_other))
+
+    # ---- 14a HARD: literal-'nan' must be zero ----
+    if not polluted_nan:
+        results.add(
+            "CPM literal-nan scan (14a hard)",
+            "PASS",
+            f"all {len(cols)} VARCHAR columns clean "
+            f"(0 literal-'nan' cells; *_raw_str preserved by design)",
+        )
+    else:
+        detail = "; ".join(f"{c}={n}" for c, n in polluted_nan[:10])
+        status = "FAIL" if strict else "WARN"
+        results.add(
+            "CPM literal-nan scan (14a hard)",
+            status,
+            f"{len(polluted_nan)} polluted columns "
+            f"({sum(n for _, n in polluted_nan)} cells total): {detail}",
+        )
+
+    # ---- 14b SOFT: broader sentinel drift, always WARN ----
+    if not polluted_other:
+        results.add(
+            "CPM sentinel-drift scan (14b soft)",
+            "PASS",
+            "no 'NaT'/'None'/'' sentinel cells in CPM VARCHAR columns",
+        )
+    else:
+        detail = "; ".join(f"{c}={n}" for c, n in polluted_other[:10])
+        results.add(
+            "CPM sentinel-drift scan (14b soft)",
+            "WARN",
+            f"{len(polluted_other)} columns carry 'NaT'/'None'/'' sentinels "
+            f"({sum(n for _, n in polluted_other)} cells total): {detail}. "
+            f"Outside Phase 1 scope; tracked as v1_1 follow-up.",
+        )
+
+
 def main() -> None:
     args = parse_args()
     con = get_connection(args)
@@ -2027,6 +2138,9 @@ def main() -> None:
 
         print("\n--- Check 13: Specimen + analytic FHIR layer ---")
         check_specimen_fhir_layer(con, results, strict=strict)
+
+        print("\n--- Check 14: CPM literal-'nan' scan (v1_1) ---")
+        check_no_literal_nan_in_canonical_master(con, results, strict=strict)
 
     finally:
         con.close()

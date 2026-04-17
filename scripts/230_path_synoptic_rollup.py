@@ -2,6 +2,14 @@
 """
 Script 230: Build patient_tumor_rollup_v1 from synoptic_tumor_long_v1
 
+NOTE (v1_1 cleanup, 2026-04-16): Script 230 is a pure-SQL driver and is
+NOT the source of the literal-'nan' contamination repaired by Script 248.
+The CPM columns syn_architecture and syn_margin_distance_mm are populated
+by scripts/214_final_canonical_integration.py (clean_architecture /
+clean_margin_distance helpers); both were patched to coerce pd.NaN/NaT
+to None before parquet write. See scripts/248_syn_nan_repair.py and
+scripts/119_md_formalization_validate.py Check 14.
+
 Fixes these bugs in canonical_patient_master_v221:
   - margin_status_final: 99% of mETE incorrectly labeled R1 (should be ~16%)
   - lvi_grade_final_v13: 92-95% collapsed to 'present_ungraded'
