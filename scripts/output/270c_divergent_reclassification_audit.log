@@ -1,0 +1,16 @@
+=== START 270c divergent reclassification audit ===
+started_at: 2026-04-17T07:35:45.332212+00:00
+connected to thyroid_canonical_publication_v1_0
+
+--- audit row ---
+  inserted audit row finding_id='divergent_reclassified_to_drop_3_rows'
+
+--- tech_debt row ---
+  inserted tech_debt 'stray_subset_matcher_v1_1'
+
+  audit table rows: 45
+  tech_debt rows:   3
+
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270c_divergent_reclassification_audit.json
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270c_divergent_reclassification_audit.log
+=== END 270c divergent reclassification audit ===

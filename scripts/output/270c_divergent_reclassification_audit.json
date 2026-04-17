@@ -1,0 +1,10 @@
+{
+  "started_at": "2026-04-17T07:35:45.332212+00:00",
+  "publication_db": "thyroid_canonical_publication_v1_0",
+  "audit_row_inserted": true,
+  "tech_debt_row_inserted": true,
+  "audit_finding_id": "divergent_reclassified_to_drop_3_rows",
+  "tech_debt_id": "stray_subset_matcher_v1_1",
+  "audit_table_rows_post": 45,
+  "tech_debt_rows_post": 3
+}
