@@ -1,0 +1,14 @@
+{
+  "tag": "v1_0_archive_consolidated",
+  "commit": "d01c1ae",
+  "exported_at": "2026-04-17T08:01:04.269224+00:00",
+  "main_tables": 114,
+  "ws_tables": 18,
+  "total_parquet_bytes": 67275796,
+  "combined_sha256": "3e3fd7c93f238ee4aed2b7df0bfd9c62b06487df5cab7f11eb840b5f340ca514",
+  "cpm_invariant": {
+    "rows": 10871,
+    "cols": 1499,
+    "distinct_rids": 10871
+  }
+}

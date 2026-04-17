@@ -1,0 +1,79 @@
+{
+  "checked_at": "2026-04-17T08:01:01.688195+00:00",
+  "tag": "v1_0_archive_consolidated",
+  "commit_anchor": "d01c1ae",
+  "tag_resolved_commit": "d01c1aef1ea1874ccb7f0ba1782ae80d07ca14b4",
+  "head_commit": "d01c1aef1ea1874ccb7f0ba1782ae80d07ca14b4",
+  "cpm_rows": 10871,
+  "cpm_cols": 1499,
+  "audit_rows_by_status": {
+    "DOCUMENTED_GAP": 4,
+    "DOCUMENTED_NOOP": 3,
+    "OK": 37,
+    "OK_BACKFILLED_270": 3,
+    "OK_DEFERRED_HUMAN": 1
+  },
+  "conventions_count": null,
+  "keep_list_count": null,
+  "tech_debt_count": 3,
+  "registry_rows": 117,
+  "__readme_rows": null,
+  "archive_db_schemas": [
+    "archive_legacy",
+    "archive_pub_v1_0",
+    "main"
+  ],
+  "disk_free_bytes": 18078720000,
+  "disk_free_gb": 16.84,
+  "tech_debt_rows": [
+    {
+      "debt_id": "laterality_bare_column_name_v1_1",
+      "category": "column_naming",
+      "description": "CPM has a bare 'laterality' column whose feeder resolution required manual disambiguation (ambiguous among 11 candidate tables: tumor, nodule, LN, surgical contexts after EXCLUDE_PATTERNS filter). Bare name obscures which clinical context it refers to.",
+      "recommendation": "Rename to 'primary_tumor_laterality' in v1_1. Update canonical_tumor_characteristics_v1 assembly accordingly. Preserve old column as view for backward compat during transition.",
+      "registered_by": "270b_step_2",
+      "registered_at": "2026-04-17 02:28:01.072314",
+      "target_version": "v1_1",
+      "status": "OPEN",
+      "resolved_at": null,
+      "resolved_by_script": null
+    },
+    {
+      "debt_id": "registry_null_residual_v1_1",
+      "category": "registry_completeness",
+      "description": "34 rows in detail_table_registry_v1 carry NULL feeds_master_columns_normalized after Script 270b Step 2 execute. These are analysis tables, dictionaries, and cohort summaries that are registered because they are queryable main-schema base tables, but they do not feed canonical_patient_master columns. They are consumed downstream (Dives, manuscripts) or are governance-adjacent (dictionaries). Concrete list in scripts/output/270b_registry_null_post_execute.csv.",
+      "recommendation": "Decide in v1_1 whether the registry should (a) drop non-feeder tables from detail_table_registry_v1 and register them in a separate downstream_consumer_registry_v1, or (b) keep them in the detail registry with a new relationship_type column ('feeder' | 'downstream_consumer' | 'dictionary' | 'cohort_view'). Option (b) preserves a single registry; option (a) enforces the convention that the detail registry = feeders only.",
+      "registered_by": "270b_step_2_post_execute",
+      "registered_at": "2026-04-17 02:37:06.502644",
+      "target_version": "v1_1",
+      "status": "OPEN",
+      "resolved_at": null,
+      "resolved_by_script": null
+    },
+    {
+      "debt_id": "stray_subset_matcher_v1_1",
+      "category": "archival_discipline",
+      "description": "The 270c name-collision matcher flags row-count inequality as DIVERGENT, requiring human review. This is correct for truly divergent content but over-triggers on the common case where stray is a stale pre-dedup or pre-purge subset/superset of the snapshot, which already captures the relevant clinical state. In Phase B, 3 of 3 DIVERGENT rows were actually stale-stray safe to drop after a manual MotherDuck verification session.",
+      "recommendation": "In v1_1, extend matcher to compute (a) is canonical == snapshot (same row count, same distinct RIDs), and (b) is stray content a strict subset of snapshot (same RIDs, same source_table, same clinical columns up to duplication). If both hold, classify as DROP_ALREADY_SNAPSHOTTED_STALE_STRAY automatically and record the evidence in the audit row notes. Reserve DIVERGENT for cases where canonical != snapshot OR stray has content provably absent from both (genuinely new rows with distinct RIDs not present in canonical or snapshot).",
+      "registered_by": "270c_phase_b_post_divergent_review",
+      "registered_at": "2026-04-17 03:35:45.332212",
+      "target_version": "v1_1",
+      "status": "OPEN",
+      "resolved_at": null,
+      "resolved_by_script": null
+    }
+  ],
+  "deferred_audit_rows": [
+    {
+      "run_ts": "2026-04-17 01:57:54.947878",
+      "script_num": "270",
+      "finding_id": "step_1b_path_size_deferred_for_clinician",
+      "metric": "path_size_adjudications_pending_human",
+      "count_before": 96,
+      "count_after": 96,
+      "target_after": 0,
+      "status": "OK_DEFERRED_HUMAN",
+      "notes": "All 96 rows in main.path_size_adjudication_v241 staged for clinician sign-off at scripts/output/270_path_size_human_review.csv. Distribution: 37 HIGH outlier_manual_review_required (proposed_value IS NULL on all 37 \u2014 flag-only bucket); 45 MEDIUM multifocal_use_rollup_max (mean |delta| ~3.9 cm \u2014 staging-relevant, not auto-applicable); 14 MEDIUM unifocal_retain_path_size (proposed=raw, no-op). No path_tumor_size_cm_adjudicated_v270 column written. Would-be filter thresholds for v1_1 replay: review_priority='HIGH' AND adjudication_rule IN ('outlier_manual_review_required'); OR adjudication_rule='unifocal_retain_path_size'; OR ABS(delta_cm) <= 5.0. Status will flip to OK once worksheet returned with reviewer_decision populated."
+    }
+  ]
+}
