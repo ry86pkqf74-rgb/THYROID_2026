@@ -1,0 +1,44 @@
+{
+  "captured_at": "2026-04-17T04:53:42.085849+00:00",
+  "cpm_starting_rows": 10871,
+  "cpm_starting_cols": 1495,
+  "legacy_columns_present": [
+    "mol_test_count",
+    "molecular_platforms_v7",
+    "molecular_tested_v7",
+    "n_molecular_tests_v7"
+  ],
+  "value_distributions": {
+    "molecular_tested_v7": {
+      "NULL": 847,
+      "True": 10024
+    },
+    "mol_test_count": {
+      "NULL": 9585,
+      "1": 1286
+    },
+    "molecular_platforms_v7": {
+      "NULL": 847,
+      "Other": 9226,
+      "ThyroSeq": 386,
+      "Afirma": 384,
+      "Other, ThyroSeq": 11,
+      "Afirma, Other": 6,
+      "Afirma, ThyroSeq": 5,
+      "Other, Afirma": 3,
+      "ThyroSeq, Other": 3
+    },
+    "n_molecular_tests_v7": {
+      "NULL": 847,
+      "1": 9932,
+      "2": 84,
+      "3": 8
+    }
+  },
+  "contradictions": {
+    "molecular_tested_v7_vs_molecular_tested_confirmed": 8750,
+    "mol_test_count_vs_mol_n_tests_mismatch": 8834,
+    "mol_test_count_nulls": 9585,
+    "n_molecular_tests_v7_vs_mol_n_tests": 1
+  }
+}

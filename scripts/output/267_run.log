@@ -1,0 +1,49 @@
+==============================================================================
+=== START Script 267 - drop 4 legacy molecular columns
+started_at: 2026-04-17T04:53:40.832274+00:00
+connected to thyroid_canonical_publication_v1_0
+
+--- PRE-STATE AUDIT ---
+  CPM starting state: 10871 rows x 1495 cols
+  Legacy columns present: ['mol_test_count', 'molecular_platforms_v7', 'molecular_tested_v7', 'n_molecular_tests_v7']
+  molecular_tested_v7 distribution (top values):
+    NULL: 847
+    True: 10024
+  mol_test_count distribution (top values):
+    NULL: 9585
+    1: 1286
+  molecular_platforms_v7 distribution (top values):
+    NULL: 847
+    Other: 9226
+    ThyroSeq: 386
+    Afirma: 384
+    Other, ThyroSeq: 11
+    Afirma, Other: 6
+  n_molecular_tests_v7 distribution (top values):
+    NULL: 847
+    1: 9932
+    2: 84
+    3: 8
+  CONTRADICTION molecular_tested_v7 vs molecular_tested_confirmed: 8750 patients
+  CONTRADICTION mol_test_count vs mol_n_tests: 8834 mismatches, 9585 nulls
+  CONTRADICTION n_molecular_tests_v7 vs mol_n_tests: 1 patients
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/267_pre.json
+
+--- LOG TO legacy_column_sweep_v1_1 ---
+  inserted 4 sweep rows; verified count = 4
+
+--- DROP COLUMNS via column-exclusion CTAS ---
+  Post-drop CPM: 10871 rows x 1491 cols
+
+--- POST-STATE ASSERTIONS ---
+  pass spine: rows=10871 == 10871
+  pass cols: 1491 == 1491
+  pass: none of the 4 legacy column names remain
+
+--- WORKSPACE VIEW COMPILE CHECK ---
+  workspace views to test: 65
+  passed: 65/65; failed: 0 (0 cite a dropped col)
+
+wrote /Users/loganglosser/THYROID_2026/scripts/output/267_post.json
+
+=== END Script 267 elapsed=11.8s
