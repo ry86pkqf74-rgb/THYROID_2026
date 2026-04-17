@@ -1,0 +1,33 @@
+==============================================================================
+PHASE 6 — FINAL VERIFICATION (10 steps from prompt)
+==============================================================================
+
+[1] Master-DB consistency: rows=10871, distinct_rid=10871, null_rid=0, null_fpo=0  -> PASS
+[2] String-'nan' eradication (excl *_raw_str): 0 polluted cols, 0 cells  -> PASS
+[3] Registry completeness: main_base=114, registry(main)=114  -> PASS
+[4] Pointer mapping: 1271/1500 = 84.73%  -> PASS (relaxed to 80%)  (90% target relaxed to 80% per user; v1_2 follow-up D-7)
+[5] Deprecated cols prefixed: unprefixed remaining = 0  -> PASS
+[6] *_prev_233 dropped: remaining = 0  -> PASS
+[7] manuscript_workspace views resolve: 65/65  -> PASS
+[8] No raw_/md_ in canonical: remaining = 0  -> PASS
+[9] __readme rows = 114 vs main_base = 114  -> PASS
+    data_dictionary_v240 rows = 1528 (CPM cols = 1500; dict may include removed-status entries)  -> PASS
+
+==============================================================================
+CANONICAL DB FINALIZATION — CONFIRMATION
+==============================================================================
+DB: thyroid_canonical_publication_v1_0
+canonical_patient_master rows: 10871      [expect 10871]
+distinct research_id:           10871      [expect 10871]
+NULL research_id:               0      [expect 0]
+NULL fna_path_outcome:          0      [expect 0]
+literal-'nan' cells across CPM: 0      [expect 0; *_raw_str excluded by design]
+deprecated cols on CPM (raw):   0      [expect 0]
+*_prev_233 snapshot cols:       0      [expect 0]
+base tables in main:            114
+registry rows (main):           114      [expect == base tables (114)]
+pointer mapped %:               84.73%   [target relaxed to ≥80% per user; D-7 v1_2 follow-up]
+manuscript views resolving:     65/65  [expect all]
+git: branch=cleanup/canonical-finalization-20260416, last commit=730880b, pushed=yes
+
+full verification JSON: scripts/output/252_final_verification.json

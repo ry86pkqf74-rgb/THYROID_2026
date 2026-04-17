@@ -1,0 +1,42 @@
+{
+  "1_master_consistency": {
+    "rows": 10871,
+    "distinct_rid": 10871,
+    "null_rid": 0,
+    "null_fpo": 0
+  },
+  "2_nan_eradication": {
+    "n_polluted_cols": 0,
+    "n_cells": 0,
+    "cols": []
+  },
+  "3_registry_completeness": {
+    "main_base_tables": 114,
+    "registry_main_rows": 114
+  },
+  "4_pointer_mapping": {
+    "mapped": 1271,
+    "total": 1500,
+    "pct": 84.73
+  },
+  "5_deprecated_prefixed": {
+    "unprefixed_remaining": []
+  },
+  "6_prev233_dropped": {
+    "remaining": []
+  },
+  "7_views_resolve": {
+    "total": 65,
+    "broken": 0,
+    "broken_list": []
+  },
+  "8_no_raw_md": {
+    "remaining": []
+  },
+  "9_readme_dict": {
+    "readme": 114,
+    "main_base": 114,
+    "dict": 1528,
+    "cpm_cols": 1500
+  }
+}
