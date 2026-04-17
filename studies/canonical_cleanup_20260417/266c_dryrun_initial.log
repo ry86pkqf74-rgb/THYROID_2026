@@ -1,0 +1,19 @@
+[23:55:09.125Z] ==============================================================================
+[23:55:09.125Z] # Script 266c run
+[23:55:09.125Z] started_at: 2026-04-17T23:55:09.125802+00:00
+[23:55:09.125Z] mode      : DRY-RUN
+[23:55:09.125Z] phase     : all
+[23:55:10.319Z] connected to thyroid_canonical_publication_v1_0
+[23:55:10.319Z] 
+## Phase 0 — preflight + sequencing gates + view pre-gate
+[23:55:10.474Z]   connected_to        : thyroid_canonical_publication_v1_0
+[23:55:10.474Z]   cpm_n_patients      : 10871
+[23:55:10.474Z]   ctc_n_rows          : 11106
+[23:55:10.474Z]   tpath_n_rows        : 4290
+[23:55:10.474Z]   psyn_n_rows         : 11688
+[23:55:10.474Z]   tem_n_rows          : 11691
+[23:55:11.669Z]   GATE 266a applied   : data_dictionary_v266a exists
+[23:55:11.995Z]   GATE 266b CPM cols missing : none
+[23:55:12.761Z]   GATE 266b CTC cols missing : none
+[23:55:12.883Z]   GATE big-cleanup    : CPM still has ['ajcc8_t_stage_v2']
+266c precondition: PART2/PROMPT_18 big cleanup Phase 4.6 not yet applied. CPM still carries ['ajcc8_t_stage_v2']. Per user direction, 266c rename pass cannot land while these un-renamed columns still exist.

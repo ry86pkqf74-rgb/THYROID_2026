@@ -1,0 +1,184 @@
+[23:55:39.078Z] ==============================================================================
+[23:55:39.078Z] # Script 266c run
+[23:55:39.078Z] started_at: 2026-04-17T23:55:39.078617+00:00
+[23:55:39.078Z] mode      : DRY-RUN
+[23:55:39.078Z] phase     : all
+[23:55:40.112Z] connected to thyroid_canonical_publication_v1_0
+[23:55:40.112Z] 
+## Phase 0 — preflight + sequencing gates + view pre-gate
+[23:55:40.179Z]   connected_to        : thyroid_canonical_publication_v1_0
+[23:55:40.179Z]   cpm_n_patients      : 10871
+[23:55:40.179Z]   ctc_n_rows          : 11106
+[23:55:40.179Z]   tpath_n_rows        : 4290
+[23:55:40.179Z]   psyn_n_rows         : 11688
+[23:55:40.179Z]   tem_n_rows          : 11691
+[23:55:41.429Z]   GATE 266a applied   : data_dictionary_v266a exists
+[23:55:41.811Z]   GATE 266b CPM cols missing : none
+[23:55:42.723Z]   GATE 266b CTC cols missing : none
+[23:55:42.953Z]   GATE big-cleanup    : ajcc8_t_stage_corrected=False ajcc8_t_stage_v2=True DEPRECATED__present=True
+[23:55:43.037Z]   view-dep PRE-GATE   : 0 view(s) reference CTC or TEM
+[23:55:43.189Z]   pre-state path_synoptics cols : 271
+[23:55:43.189Z]   pre-state tumor_pathology cols: 249
+[23:55:43.190Z] 
+## Phase 1 — snapshot CTC + TEM + tpath + psyn + CPM to archive
+[23:55:43.190Z]   PLAN: CTAS thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 -> "Thyroid 2026 UPdated"."archive_pub_v1_0".'canonical_tumor_characteristics_v1_pre266c_20260417T235543Z'
+[23:55:43.190Z]   PLAN: CTAS thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2 -> "Thyroid 2026 UPdated"."archive_pub_v1_0".'tumor_episode_master_v2_pre266c_20260417T235543Z'
+[23:55:43.190Z]   PLAN: CTAS thyroid_canonical_publication_v1_0.main.tumor_pathology -> "Thyroid 2026 UPdated"."archive_pub_v1_0".'tumor_pathology_pre266c_20260417T235543Z'
+[23:55:43.190Z]   PLAN: CTAS thyroid_canonical_publication_v1_0.main.path_synoptics -> "Thyroid 2026 UPdated"."archive_pub_v1_0".'path_synoptics_pre266c_20260417T235543Z'
+[23:55:43.190Z]   PLAN: CTAS thyroid_canonical_publication_v1_0.main.canonical_patient_master -> "Thyroid 2026 UPdated"."archive_pub_v1_0".'canonical_patient_master_pre266c_20260417T235543Z'
+[23:55:43.190Z] 
+## Phase 2 (W1) — path_synoptics ADD COLUMN + populate (40 cols)
+[23:55:43.265Z]   PLAN [add:tumor_1_t_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_1_t_stage_ajcc7" VARCHAR
+[23:55:43.265Z]   PLAN [add:tumor_1_n_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_1_n_stage_ajcc7" VARCHAR
+[23:55:43.265Z]   PLAN [add:tumor_1_m_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_1_m_stage_ajcc7" VARCHAR
+[23:55:43.265Z]   PLAN [add:tumor_1_stage_group_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_1_stage_group_ajcc7" VARCHAR
+[23:55:43.265Z]   PLAN [add:tumor_1_t_stage_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_1_t_stage_ajcc8" VARCHAR
+[23:55:43.265Z]   PLAN [add:tumor_1_n_stage_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_1_n_stage_ajcc8" VARCHAR
+[23:55:43.265Z]   PLAN [add:tumor_1_m_stage_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_1_m_stage_ajcc8" VARCHAR
+[23:55:43.265Z]   PLAN [add:tumor_1_stage_group_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_1_stage_group_ajcc8" VARCHAR
+[23:55:43.265Z]   PLAN [add:tumor_2_t_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_2_t_stage_ajcc7" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_2_n_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_2_n_stage_ajcc7" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_2_m_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_2_m_stage_ajcc7" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_2_stage_group_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_2_stage_group_ajcc7" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_2_t_stage_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_2_t_stage_ajcc8" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_2_n_stage_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_2_n_stage_ajcc8" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_2_m_stage_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_2_m_stage_ajcc8" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_2_stage_group_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_2_stage_group_ajcc8" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_3_t_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_3_t_stage_ajcc7" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_3_n_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_3_n_stage_ajcc7" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_3_m_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_3_m_stage_ajcc7" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_3_stage_group_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_3_stage_group_ajcc7" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_3_t_stage_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_3_t_stage_ajcc8" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_3_n_stage_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_3_n_stage_ajcc8" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_3_m_stage_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_3_m_stage_ajcc8" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_3_stage_group_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_3_stage_group_ajcc8" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_4_t_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_4_t_stage_ajcc7" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_4_n_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_4_n_stage_ajcc7" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_4_m_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_4_m_stage_ajcc7" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_4_stage_group_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_4_stage_group_ajcc7" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_4_t_stage_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_4_t_stage_ajcc8" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_4_n_stage_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_4_n_stage_ajcc8" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_4_m_stage_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_4_m_stage_ajcc8" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_4_stage_group_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_4_stage_group_ajcc8" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_5_t_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_5_t_stage_ajcc7" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_5_n_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_5_n_stage_ajcc7" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_5_m_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_5_m_stage_ajcc7" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_5_stage_group_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_5_stage_group_ajcc7" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_5_t_stage_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_5_t_stage_ajcc8" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_5_n_stage_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_5_n_stage_ajcc8" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_5_m_stage_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_5_m_stage_ajcc8" VARCHAR
+[23:55:43.266Z]   PLAN [add:tumor_5_stage_group_ajcc8]: ALTER TABLE thyroid_canonical_publication_v1_0.main.path_synoptics ADD COLUMN "tumor_5_stage_group_ajcc8" VARCHAR
+[23:55:43.310Z]   path_synoptics grain: 11688 rows / 10871 pts / 11685 (research_id, surg_date) keys
+[23:55:43.310Z]   NOTE: 3 duplicate (research_id, surg_date) row(s) in path_synoptics. The wide pivot will give those rows identical AJCC slot values (per-surgery deterministic UPDATE), so the per-(rid, surg_date) distinctness assertion below remains valid.
+[23:55:43.310Z]   NOTE: 2,449 benign tumor-free CPM patients are intentionally absent from canonical_tumor_characteristics_v1 (cohort_scoping convention). Their path_synoptics rows receive NULL in every new tumor_N_*_ajcc{7,8} column by design — this is correct, not a population gap.
+[23:55:43.351Z]   tumor_ordinal>5 overflow rows: 0 -> 266c_tumor_ordinal_gt5_overflow.csv
+[23:55:43.352Z]   PLAN [psyn_wide_update]: WITH wide AS (
+[23:55:43.352Z]   profiling legacy fragment columns ...
+[23:55:43.447Z]     stage_tumor_2: 81/11688 (0.693%)
+[23:55:43.447Z]   PLAN [comment_legacy:stage_tumor_2]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."stage_tumor_2" IS 'Deprecated 2026-04-17 by Script 266c. Legacy fragment column. Per-t
+[23:55:43.487Z]     stage_tumor_4: 2/11688 (0.017%)
+[23:55:43.487Z]   PLAN [comment_legacy:stage_tumor_4]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."stage_tumor_4" IS 'Deprecated 2026-04-17 by Script 266c. Legacy fragment column. Per-t
+[23:55:43.523Z]     stage_tumor_5: 0/11688 (0.0%)
+[23:55:43.523Z]   PLAN [comment_legacy:stage_tumor_5]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."stage_tumor_5" IS 'Deprecated 2026-04-17 by Script 266c. Legacy fragment column. Per-t
+[23:55:43.562Z]     tumor_3_stage_tumor_3: 9/11688 (0.077%)
+[23:55:43.563Z]   PLAN [comment_legacy:tumor_3_stage_tumor_3]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_3_stage_tumor_3" IS 'Deprecated 2026-04-17 by Script 266c. Legacy fragment colum
+[23:55:43.563Z]   legacy fragment profile -> 266c_legacy_fragment_profile.csv
+[23:55:43.563Z]   PLAN [comment:tumor_1_t_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_1_t_stage_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 1, populated by Script
+[23:55:43.563Z]   PLAN [comment:tumor_1_n_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_1_n_stage_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 1, populated by Script
+[23:55:43.563Z]   PLAN [comment:tumor_1_m_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_1_m_stage_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 1, populated by Script
+[23:55:43.563Z]   PLAN [comment:tumor_1_stage_group_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_1_stage_group_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 1, populated by Sc
+[23:55:43.563Z]   PLAN [comment:tumor_1_t_stage_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_1_t_stage_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 1, populated by Script
+[23:55:43.564Z]   PLAN [comment:tumor_1_n_stage_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_1_n_stage_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 1, populated by Script
+[23:55:43.564Z]   PLAN [comment:tumor_1_m_stage_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_1_m_stage_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 1, populated by Script
+[23:55:43.564Z]   PLAN [comment:tumor_1_stage_group_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_1_stage_group_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 1, populated by Sc
+[23:55:43.564Z]   PLAN [comment:tumor_2_t_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_2_t_stage_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 2, populated by Script
+[23:55:43.564Z]   PLAN [comment:tumor_2_n_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_2_n_stage_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 2, populated by Script
+[23:55:43.564Z]   PLAN [comment:tumor_2_m_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_2_m_stage_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 2, populated by Script
+[23:55:43.564Z]   PLAN [comment:tumor_2_stage_group_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_2_stage_group_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 2, populated by Sc
+[23:55:43.564Z]   PLAN [comment:tumor_2_t_stage_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_2_t_stage_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 2, populated by Script
+[23:55:43.564Z]   PLAN [comment:tumor_2_n_stage_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_2_n_stage_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 2, populated by Script
+[23:55:43.564Z]   PLAN [comment:tumor_2_m_stage_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_2_m_stage_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 2, populated by Script
+[23:55:43.564Z]   PLAN [comment:tumor_2_stage_group_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_2_stage_group_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 2, populated by Sc
+[23:55:43.564Z]   PLAN [comment:tumor_3_t_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_3_t_stage_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 3, populated by Script
+[23:55:43.564Z]   PLAN [comment:tumor_3_n_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_3_n_stage_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 3, populated by Script
+[23:55:43.564Z]   PLAN [comment:tumor_3_m_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_3_m_stage_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 3, populated by Script
+[23:55:43.564Z]   PLAN [comment:tumor_3_stage_group_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_3_stage_group_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 3, populated by Sc
+[23:55:43.564Z]   PLAN [comment:tumor_3_t_stage_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_3_t_stage_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 3, populated by Script
+[23:55:43.564Z]   PLAN [comment:tumor_3_n_stage_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_3_n_stage_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 3, populated by Script
+[23:55:43.564Z]   PLAN [comment:tumor_3_m_stage_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_3_m_stage_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 3, populated by Script
+[23:55:43.564Z]   PLAN [comment:tumor_3_stage_group_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_3_stage_group_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 3, populated by Sc
+[23:55:43.564Z]   PLAN [comment:tumor_4_t_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_4_t_stage_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 4, populated by Script
+[23:55:43.564Z]   PLAN [comment:tumor_4_n_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_4_n_stage_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 4, populated by Script
+[23:55:43.564Z]   PLAN [comment:tumor_4_m_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_4_m_stage_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 4, populated by Script
+[23:55:43.564Z]   PLAN [comment:tumor_4_stage_group_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_4_stage_group_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 4, populated by Sc
+[23:55:43.564Z]   PLAN [comment:tumor_4_t_stage_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_4_t_stage_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 4, populated by Script
+[23:55:43.565Z]   PLAN [comment:tumor_4_n_stage_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_4_n_stage_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 4, populated by Script
+[23:55:43.565Z]   PLAN [comment:tumor_4_m_stage_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_4_m_stage_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 4, populated by Script
+[23:55:43.565Z]   PLAN [comment:tumor_4_stage_group_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_4_stage_group_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 4, populated by Sc
+[23:55:43.565Z]   PLAN [comment:tumor_5_t_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_5_t_stage_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 5, populated by Script
+[23:55:43.565Z]   PLAN [comment:tumor_5_n_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_5_n_stage_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 5, populated by Script
+[23:55:43.565Z]   PLAN [comment:tumor_5_m_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_5_m_stage_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 5, populated by Script
+[23:55:43.565Z]   PLAN [comment:tumor_5_stage_group_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_5_stage_group_ajcc7" IS 'Per-tumor AJCC7 value for tumor slot 5, populated by Sc
+[23:55:43.565Z]   PLAN [comment:tumor_5_t_stage_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_5_t_stage_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 5, populated by Script
+[23:55:43.565Z]   PLAN [comment:tumor_5_n_stage_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_5_n_stage_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 5, populated by Script
+[23:55:43.565Z]   PLAN [comment:tumor_5_m_stage_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_5_m_stage_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 5, populated by Script
+[23:55:43.565Z]   PLAN [comment:tumor_5_stage_group_ajcc8]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.path_synoptics."tumor_5_stage_group_ajcc8" IS 'Per-tumor AJCC8 value for tumor slot 5, populated by Sc
+[23:55:43.565Z] 
+## Phase 3 (W2) — tumor_pathology ADD COLUMN + populate (4 cols)
+[23:55:43.565Z]   scope (per live verification 2026-04-17): tumor_pathology has only histology_1_* slot. NO histology_2/3/4/5 columns exist. The AJCC8 quartet for histology_1 already exists (populated 2,687 rows). 266c only adds the AJCC7 quartet and populates from the dominant tumor per (research_id, surgery_date) in CTC.
+[23:55:43.654Z]   pre-existing histology_1 AJCC8 quartet : ['histology_1_t_stage_ajcc8', 'histology_1_n_stage_ajcc8', 'histology_1_m_stage_ajcc8', 'histology_1_overall_stage_ajcc8']
+[23:55:43.655Z]   PLAN [add:histology_1_t_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.tumor_pathology ADD COLUMN "histology_1_t_stage_ajcc7" VARCHAR
+[23:55:43.655Z]   PLAN [add:histology_1_n_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.tumor_pathology ADD COLUMN "histology_1_n_stage_ajcc7" VARCHAR
+[23:55:43.655Z]   PLAN [add:histology_1_m_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.tumor_pathology ADD COLUMN "histology_1_m_stage_ajcc7" VARCHAR
+[23:55:43.655Z]   PLAN [add:histology_1_overall_stage_ajcc7]: ALTER TABLE thyroid_canonical_publication_v1_0.main.tumor_pathology ADD COLUMN "histology_1_overall_stage_ajcc7" VARCHAR
+[23:55:43.655Z]   PLAN [tpath_dominant_update]: WITH ranked AS (
+[23:55:43.655Z]   PLAN [comment:histology_1_t_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.tumor_pathology."histology_1_t_stage_ajcc7" IS 'AJCC7 T-stage for the histology_1 slot, populated by S
+[23:55:43.655Z]   PLAN [comment:histology_1_n_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.tumor_pathology."histology_1_n_stage_ajcc7" IS 'AJCC7 N-stage for the histology_1 slot, populated by S
+[23:55:43.655Z]   PLAN [comment:histology_1_m_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.tumor_pathology."histology_1_m_stage_ajcc7" IS 'AJCC7 M-stage for the histology_1 slot, populated by S
+[23:55:43.655Z]   PLAN [comment:histology_1_overall_stage_ajcc7]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.tumor_pathology."histology_1_overall_stage_ajcc7" IS 'AJCC7 OVERALL-stage for the histology_1 slot, po
+[23:55:43.655Z] 
+## Phase 4 (W3) — un-versioned column RENAMES (destructive)
+[23:55:43.662Z]   RE-CHECK view dep   : 0 ref(s)
+[23:55:43.814Z]   PLAN [rename:thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1:t_stage]: ALTER TABLE thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 RENAME COLUMN "t_stage" TO "t_stage_deprecated_un_versioned_20260417"
+[23:55:43.814Z]   PLAN [comment:thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1:t_stage_deprecated_un_versioned_20260417]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1."t_stage_deprecated_un_versioned_20260417" IS 'Deprecated 2026-04-1
+[23:55:44.115Z]   PLAN [rename:thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1:n_stage]: ALTER TABLE thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 RENAME COLUMN "n_stage" TO "n_stage_deprecated_un_versioned_20260417"
+[23:55:44.115Z]   PLAN [comment:thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1:n_stage_deprecated_un_versioned_20260417]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1."n_stage_deprecated_un_versioned_20260417" IS 'Deprecated 2026-04-1
+[23:55:44.275Z]   PLAN [rename:thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1:m_stage]: ALTER TABLE thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 RENAME COLUMN "m_stage" TO "m_stage_deprecated_un_versioned_20260417"
+[23:55:44.275Z]   PLAN [comment:thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1:m_stage_deprecated_un_versioned_20260417]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1."m_stage_deprecated_un_versioned_20260417" IS 'Deprecated 2026-04-1
+[23:55:44.434Z]   PLAN [rename:thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1:overall_stage]: ALTER TABLE thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1 RENAME COLUMN "overall_stage" TO "overall_stage_deprecated_un_versioned_2
+[23:55:44.435Z]   PLAN [comment:thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1:overall_stage_deprecated_un_versioned_20260417]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1."overall_stage_deprecated_un_versioned_20260417" IS 'Deprecated 202
+[23:55:44.587Z]   PLAN [rename:thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2:t_stage]: ALTER TABLE thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2 RENAME COLUMN "t_stage" TO "t_stage_deprecated_un_versioned_20260417"
+[23:55:44.587Z]   PLAN [comment:thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2:t_stage_deprecated_un_versioned_20260417]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2."t_stage_deprecated_un_versioned_20260417" IS 'Deprecated 2026-04-17 by Script
+[23:55:44.732Z]   PLAN [rename:thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2:n_stage]: ALTER TABLE thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2 RENAME COLUMN "n_stage" TO "n_stage_deprecated_un_versioned_20260417"
+[23:55:44.732Z]   PLAN [comment:thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2:n_stage_deprecated_un_versioned_20260417]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2."n_stage_deprecated_un_versioned_20260417" IS 'Deprecated 2026-04-17 by Script
+[23:55:44.881Z]   PLAN [rename:thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2:m_stage]: ALTER TABLE thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2 RENAME COLUMN "m_stage" TO "m_stage_deprecated_un_versioned_20260417"
+[23:55:44.881Z]   PLAN [comment:thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2:m_stage_deprecated_un_versioned_20260417]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2."m_stage_deprecated_un_versioned_20260417" IS 'Deprecated 2026-04-17 by Script
+[23:55:45.031Z]   PLAN [rename:thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2:overall_stage]: ALTER TABLE thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2 RENAME COLUMN "overall_stage" TO "overall_stage_deprecated_un_versioned_20260417"
+[23:55:45.031Z]   PLAN [comment:thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2:overall_stage_deprecated_un_versioned_20260417]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2."overall_stage_deprecated_un_versioned_20260417" IS 'Deprecated 2026-04-17 by 
+[23:55:45.031Z] 
+## Phase 5 (W4) — archive sweep
+[23:55:45.139Z]   big-cleanup KEEP_REVIEW set: [] (total 0)
+[23:55:45.139Z]   main_schema_keep_list_v1 set: ['ete_adjudication_v1', 'path_size_adjudication_v241'] (total 2)
+[23:55:49.640Z]   queryable main tables: 116
+[23:55:49.773Z]   total archive candidates: 2
+[23:55:49.774Z]     - main.data_dictionary_v240 :: explicit_supersession (n_rows=1529)
+[23:55:49.774Z]     - manuscript_workspace.cpm_unmapped_triage_v265 :: explicit_supersession (n_rows=223)
+[23:55:49.888Z]   PLAN [archive:data_dictionary_v240]: CREATE TABLE "Thyroid 2026 UPdated"."archive_pub_v1_0"."data_dictionary_v240_pre266c_20260417T235549Z" AS SELECT * FROM thyroid_canonical_publication_v1_0."main
+[23:55:49.888Z]   PLAN [comment_archive:data_dictionary_v240]: COMMENT ON TABLE "Thyroid 2026 UPdated"."archive_pub_v1_0"."data_dictionary_v240_pre266c_20260417T235549Z" IS 'Script 266c (2026-04-17) archive of thyroid_canon
+[23:55:49.888Z]   PLAN [drop:data_dictionary_v240]: DROP TABLE thyroid_canonical_publication_v1_0."main"."data_dictionary_v240"
+[23:55:49.990Z]   PLAN [archive:cpm_unmapped_triage_v265]: CREATE TABLE "Thyroid 2026 UPdated"."archive_pub_v1_0"."cpm_unmapped_triage_v265_pre266c_20260417T235549Z" AS SELECT * FROM thyroid_canonical_publication_v1_0."
+[23:55:49.990Z]   PLAN [comment_archive:cpm_unmapped_triage_v265]: COMMENT ON TABLE "Thyroid 2026 UPdated"."archive_pub_v1_0"."cpm_unmapped_triage_v265_pre266c_20260417T235549Z" IS 'Script 266c (2026-04-17) archive of thyroid_c
+[23:55:49.990Z]   PLAN [drop:cpm_unmapped_triage_v265]: DROP TABLE thyroid_canonical_publication_v1_0."manuscript_workspace"."cpm_unmapped_triage_v265"
+[23:55:49.991Z]   archive manifest -> 266c_archive_manifest.csv: 2 archived, 0 skipped
+[23:55:49.991Z] 
+## Phase 6 (W5) — __readme rebuild + view smoke check
+[23:55:54.605Z]   queryable main tables (post-archive): 116
+[23:55:54.605Z]   PLAN: would rebuild __readme with ~117 rows.
+[23:55:54.614Z]   smoke-checking 67 views ...
+[23:55:57.961Z]   smoke result: ok=67 error=0
+[23:55:57.961Z] 
+## Phase 7 (W6) — acceptance gates
+[23:55:57.961Z]   PLAN: skip in dry-run.
+[23:55:57.962Z] 
+elapsed: 18.9s
+[23:55:57.962Z] DONE
