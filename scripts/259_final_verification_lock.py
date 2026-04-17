@@ -192,7 +192,7 @@ def cpm_row_hash_of_hashes(con) -> str:
 def archive_inventory(con) -> list[dict]:
     """List archive tables in 'Thyroid 2026 UPdated'.archive_pub_v1_0
     whose name contains pre252_..pre258_."""
-    rows = con.execute(f"""
+    rows = con.execute("""
         SELECT table_name FROM duckdb_tables()
         WHERE database_name = 'Thyroid 2026 UPdated'
           AND schema_name='archive_pub_v1_0'
@@ -315,7 +315,7 @@ def write_report(con, report_path: Path, payload: dict, log) -> None:
     lines.append("")
     lines.append(f"**Database:** `{PUBLICATION_DB}`")
     lines.append(f"**Run date (UTC):** {datetime.now(timezone.utc).isoformat()}")
-    lines.append(f"**Branch:** cleanup/v1_1_finalization-20260416")
+    lines.append("**Branch:** cleanup/v1_1_finalization-20260416")
     lines.append("")
     lines.append("This report is the read-only verification artifact for Scripts 252–258. "
                  "Every fix has a snapshot in `\"Thyroid 2026 UPdated\".archive_pub_v1_0` "
@@ -501,7 +501,7 @@ def write_report(con, report_path: Path, payload: dict, log) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    args = ap.parse_args()
+    ap.parse_args()
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     log, fh = make_logger(RUN_LOG)

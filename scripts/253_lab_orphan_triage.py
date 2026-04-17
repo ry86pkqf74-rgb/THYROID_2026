@@ -38,7 +38,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _md_connect import connect_locked, PUBLICATION_DB  # noqa: E402
 from _v1_1_helpers import (  # noqa: E402
     ARCHIVE_QUALIFIED, ensure_archive_schema, ensure_audit_table,
-    make_logger, record_audit, snapshot_table, utc_ts, write_decision_log,
+    make_logger, record_audit, utc_ts, write_decision_log,
 )
 
 REPO = Path(__file__).resolve().parent.parent

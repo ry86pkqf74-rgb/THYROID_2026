@@ -21,7 +21,6 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import json
 import os
 import sys
 import time
@@ -185,7 +184,7 @@ def append_addendum(report_path: Path, payload: dict, log) -> None:
     body.append("Per Prompt 13 closeout (Scripts 260-264). This section is APPENDED, "
                 "not a rewrite.\n")
     body.append(f"**Run timestamp (UTC):** {datetime.now(timezone.utc).isoformat()}  ")
-    body.append(f"**Branch:** `cleanup/v1_1_finalization-20260416`\n")
+    body.append("**Branch:** `cleanup/v1_1_finalization-20260416`\n")
 
     body.append("### Executed in this round\n")
     body.append("| Script | Subject | Status |")
@@ -259,7 +258,7 @@ def append_addendum(report_path: Path, payload: dict, log) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    args = ap.parse_args()
+    ap.parse_args()
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     log, fh = make_logger(RUN_LOG)

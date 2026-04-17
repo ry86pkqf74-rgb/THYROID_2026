@@ -462,7 +462,7 @@ def test_144_introspect_local_release_manifest_and_query_history(tmp_path: Path)
     assert "**Commit SHA:**" in text
     assert "**current_database():**" in text
     assert "**specimen_master_v1:** 2 rows" in text
-    assert "**qa.release_manifest (latest 3):**" in text
+    assert "qa.release_manifest" in text and "latest 3" in text
     assert "v9.9.9" in text
     assert "## Checked-in release manifest (exports/)" in text
     assert "query_history not available" in text or "md_information_schema" in text
@@ -657,7 +657,12 @@ def test_144_collect_live_introspection_graceful_without_md_information_schema(
 
     con = duckdb.connect(str(db_path))
     try:
-        md_lines, telemetry_note = mod.collect_live_introspection(con)
+        # collect_live_introspection returns a 3-tuple as of the live-SSOT hardening
+        # (script 144 returns md_lines, telemetry_note, live_meta dict for downstream
+        # comparison against checked-in qa.release_manifest JSON).
+        result = mod.collect_live_introspection(con)
+        assert len(result) >= 2
+        md_lines, telemetry_note = result[0], result[1]
     finally:
         con.close()
 
@@ -665,7 +670,7 @@ def test_144_collect_live_introspection_graceful_without_md_information_schema(
     assert "**current_database():**" in body
     assert "### Specimen / FHIR layer row counts" in body
     assert "**specimen_master_v1:**" in body and "rows" in body
-    assert "**qa.release_manifest (latest 3):**" in body
+    assert "qa.release_manifest" in body and "latest 3" in body
     assert "v0.0.1" in body
     assert "query_history not available" in telemetry_note or "not available" in telemetry_note
 

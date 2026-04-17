@@ -535,7 +535,7 @@ def main() -> None:
         """).fetchall() if LEGACY_PATTERN.search(r[0])]
         if residual:
             raise RuntimeError(f"legacy tables still present: {residual}")
-        log(f"  OK: 0 legacy-pattern tables in main")
+        log("  OK: 0 legacy-pattern tables in main")
 
         log("ASSERT 6 — 0 dict rows status='deprecated' point to existing CPM column")
         n_dict_dep_living = int(con.execute(f"""
