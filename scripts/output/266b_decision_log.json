@@ -6,7 +6,7 @@
   "results": {
     "meta": {
       "mode": "APPLY",
-      "started_at": "2026-04-17T20:38:57.099665+00:00",
+      "started_at": "2026-04-17T20:43:08.807376+00:00",
       "script": "Script 266b"
     },
     "phase_0": {
@@ -36,9 +36,22 @@
         "ajcc8_t_stage_with_microete_t3b_DEPRECATED"
       ]
     },
-    "phase_4": {
-      "het_rows": 8422
+    "phase_5": {
+      "added_columns": [
+        "dominant_tumor_ajcc7_t_stage",
+        "dominant_tumor_ajcc7_n_stage",
+        "dominant_tumor_ajcc7_m_stage",
+        "dominant_tumor_ajcc7_stage_group",
+        "dominant_tumor_ajcc8_t_stage",
+        "dominant_tumor_ajcc8_n_stage",
+        "dominant_tumor_ajcc8_m_stage",
+        "dominant_tumor_ajcc8_stage_group",
+        "tumor_stage_heterogeneous_t_ajcc8_flag",
+        "tumor_stage_heterogeneous_overall_ajcc8_flag",
+        "n_tumors_ajcc7_staged",
+        "n_tumors_ajcc8_staged"
+      ]
     }
   },
-  "elapsed_seconds": 2.6
+  "elapsed_seconds": 11.0
 }
