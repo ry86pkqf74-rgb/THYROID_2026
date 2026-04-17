@@ -1,0 +1,23 @@
+{
+  "archive_candidates_count_canonical_main": {
+    "actual": 0,
+    "limit": 250,
+    "ok": true
+  },
+  "drop_candidates_count_stray_archive": {
+    "actual": 39,
+    "limit": 250,
+    "ok": true
+  },
+  "total_rows_in_archive_candidates": {
+    "actual": 0,
+    "limit": 50000000,
+    "ok": true
+  },
+  "single_archive_candidate_over_threshold": {
+    "threshold": 10000000,
+    "tables_over_threshold": [],
+    "ok": true,
+    "ok_severity": "none"
+  }
+}
