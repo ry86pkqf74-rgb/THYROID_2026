@@ -1,0 +1,68 @@
+==============================================================================
+=== START Script 268
+started_at: 2026-04-17T04:58:58.974415+00:00
+connected to thyroid_canonical_publication_v1_0
+
+--- SCHEMA VERIFICATION ---
+  pass: fna_cytology has all 10 expected columns
+  CPM starting state: 10871 rows x 1499 cols
+
+--- LOCK BETHESDA SEMANTICS CONVENTION ---
+  existing convention row found: convention_id=bethesda_semantics exemplar='preop_worst_calculated_from_morphology_era_preserved'
+  exemplar matches expected value; idempotent no-op
+
+--- MATERIALIZE PREOP ROLLUP (multi-format date parse + fallback) ---
+  rollup rows: 5037 patients with bethesda_final
+  date parse coverage: total=8063 dated=7997 still_undated=66
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/268_undated_fnas.json
+  pass: 0 patients with 'unresolved' in derivation_methods
+
+--- MATERIALIZE INDEX-NODULE BETHESDA (best-effort) ---
+  index-nodule rollup rows: 5037
+  coverage by linkage_source:
+    'specimen_tumor_focus_v1': 3239
+    'fna_episode_direct': 1798
+
+--- LOG PRIOR bethesda_final DISTRIBUTION ---
+  prior distribution loaded from existing 268_prior_bethesda_final_distribution.json: {'1': 193, '2': 2077, '3': 692, '4': 649, '5': 276, '6': 1362, 'NULL': 5622}
+  wrote sweep row for prior bethesda_final
+
+--- REBUILD canonical_patient_master ---
+  pre-rebuild cols: 1499
+  CTAS will EXCLUDE: ['bethesda_final', 'bethesda_max_preop_2010', 'bethesda_max_preop_2015', 'bethesda_max_preop_2023', 'n_bethesda_calculated_fnas', 'n_bethesda_number_only_fnas', 'bethesda_derivation_methods', 'bethesda_index_nodule', 'bethesda_index_nodule_linkage_source']
+  post-rebuild CPM: 10871 rows x 1499 cols
+  pass: rows=10871, cols=1499
+
+--- UPDATE detail_table_registry_v1 PINS ---
+  extracted_fna_bethesda_v1 normalized was ['bethesda_category', 'fna_bethesda_confidence', 'fna_bethesda_source'] -> bethesda_category;fna_bethesda_confidence;fna_bethesda_source
+  updated fna_cytology normalized -> bethesda_derivation_methods;bethesda_final;bethesda_max_preop_2010;bethesda_max_preop_2015;bethesda_max_preop_2023;n_bethesda_calculated_fnas;n_bethesda_number_only_fnas;n_fna_cytology_records
+  updated fna_episode_master_v2 normalized -> bethesda_2010;bethesda_2015;bethesda_2023;bethesda_confidence;bethesda_final_name;bethesda_index_nodule;bethesda_index_nodule_linkage_source;bethesda_num;bethesda_source;cross_fna_concordance;fna_bethesda_final;fna_confidence;fna_pathway_status;n_fna_episodes
+  updated specimen_tumor_focus_v1 secondary -> bethesda_index_nodule;bilateral_disease_flag;multifocal_flag_path
+  updated imaging_fna_linkage_v3 secondary -> bethesda_index_nodule
+
+  Verifying canonical_detail_pointer_v1 (view) reflects new pins:
+    bethesda_final: {'n_feeders': 1, 'feeders': 'fna_cytology'}
+    bethesda_max_preop_2010: {'n_feeders': 1, 'feeders': 'fna_cytology'}
+    bethesda_max_preop_2015: {'n_feeders': 1, 'feeders': 'fna_cytology'}
+    bethesda_max_preop_2023: {'n_feeders': 1, 'feeders': 'fna_cytology'}
+    n_bethesda_calculated_fnas: {'n_feeders': 1, 'feeders': 'fna_cytology'}
+    n_bethesda_number_only_fnas: {'n_feeders': 1, 'feeders': 'fna_cytology'}
+    bethesda_derivation_methods: {'n_feeders': 1, 'feeders': 'fna_cytology'}
+    bethesda_index_nodule: {'n_feeders': 1, 'feeders': 'fna_episode_master_v2'}
+    bethesda_index_nodule_linkage_source: {'n_feeders': 1, 'feeders': 'fna_episode_master_v2'}
+  pass: every Bethesda column has exactly 1 authoritative feeder
+
+--- WRITE DISTRIBUTION REPORT ---
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/268_bethesda_distribution.md
+
+--- DROP STAGING TABLES ---
+  dropped main._bethesda_preop_rollup_268 and main._bethesda_index_nodule_268
+
+--- FINAL ASSERTIONS ---
+  pass: CPM 10,871 x 1,499 cols
+  pass: __conventions has exactly 1 bethesda_semantics row
+  pass: bethesda_final has exactly 1 authoritative feeder
+  pass: 0 patients with 'unresolved'
+
+wrote /Users/loganglosser/THYROID_2026/scripts/output/268_decision_log.json
+=== END Script 268 elapsed=10.8s

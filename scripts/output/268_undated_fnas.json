@@ -1,0 +1,467 @@
+{
+  "n_still_undated": 66,
+  "samples_first_200": [
+    {
+      "research_id": "10377",
+      "fna_index": 1,
+      "fna_date": "7/5/20222",
+      "category_num": 6,
+      "original_bethesda": "4"
+    },
+    {
+      "research_id": "10377",
+      "fna_index": 2,
+      "fna_date": "7/5/20222",
+      "category_num": 6,
+      "original_bethesda": "4"
+    },
+    {
+      "research_id": "10756",
+      "fna_index": 1,
+      "fna_date": "1/2/42023",
+      "category_num": 4,
+      "original_bethesda": "4"
+    },
+    {
+      "research_id": "11032",
+      "fna_index": 1,
+      "fna_date": "1/8.2024",
+      "category_num": 6,
+      "original_bethesda": "6*"
+    },
+    {
+      "research_id": "1121",
+      "fna_index": 1,
+      "fna_date": "n/s",
+      "category_num": 2,
+      "original_bethesda": "1"
+    },
+    {
+      "research_id": "11345",
+      "fna_index": 1,
+      "fna_date": null,
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "11345",
+      "fna_index": 2,
+      "fna_date": null,
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "1169",
+      "fna_index": 1,
+      "fna_date": "8/22006",
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "1422",
+      "fna_index": 1,
+      "fna_date": "n/s",
+      "category_num": null,
+      "original_bethesda": null
+    },
+    {
+      "research_id": "1517",
+      "fna_index": 4,
+      "fna_date": null,
+      "category_num": 3,
+      "original_bethesda": "3"
+    },
+    {
+      "research_id": "1614",
+      "fna_index": 1,
+      "fna_date": "Date unknown:\n",
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "1614",
+      "fna_index": 2,
+      "fna_date": "Date unknown:\n",
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "1614",
+      "fna_index": 3,
+      "fna_date": "Date unknown:\n",
+      "category_num": 1,
+      "original_bethesda": "1"
+    },
+    {
+      "research_id": "1629",
+      "fna_index": 1,
+      "fna_date": null,
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "1716",
+      "fna_index": 1,
+      "fna_date": "12/26/2012\n \u00a0 \u00a0",
+      "category_num": 3,
+      "original_bethesda": "3"
+    },
+    {
+      "research_id": "1716",
+      "fna_index": 2,
+      "fna_date": "12/26/2012\n \u00a0 \u00a0",
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "1817",
+      "fna_index": 1,
+      "fna_date": "1/20/2010\n - ",
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "1959",
+      "fna_index": 1,
+      "fna_date": "n/s",
+      "category_num": 3,
+      "original_bethesda": "3"
+    },
+    {
+      "research_id": "1980",
+      "fna_index": 2,
+      "fna_date": "45/2012",
+      "category_num": 1,
+      "original_bethesda": "1"
+    },
+    {
+      "research_id": "2004",
+      "fna_index": 4,
+      "fna_date": "FNA Isthmus:",
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "2113",
+      "fna_index": 1,
+      "fna_date": "n/s",
+      "category_num": null,
+      "original_bethesda": null
+    },
+    {
+      "research_id": "2210",
+      "fna_index": 1,
+      "fna_date": "n/s",
+      "category_num": null,
+      "original_bethesda": null
+    },
+    {
+      "research_id": "2212",
+      "fna_index": 1,
+      "fna_date": "n/s",
+      "category_num": null,
+      "original_bethesda": null
+    },
+    {
+      "research_id": "2217",
+      "fna_index": 1,
+      "fna_date": "11/12/2019\n\u00a0",
+      "category_num": 3,
+      "original_bethesda": "3"
+    },
+    {
+      "research_id": "2221",
+      "fna_index": 1,
+      "fna_date": "10/04/2019\n - \u00a0",
+      "category_num": 3,
+      "original_bethesda": "3"
+    },
+    {
+      "research_id": "234",
+      "fna_index": 3,
+      "fna_date": "\n\n9/23/2005\n-",
+      "category_num": 1,
+      "original_bethesda": "1"
+    },
+    {
+      "research_id": "2610",
+      "fna_index": 1,
+      "fna_date": "n/s",
+      "category_num": null,
+      "original_bethesda": null
+    },
+    {
+      "research_id": "2723",
+      "fna_index": 2,
+      "fna_date": "9/14//2015",
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "2799",
+      "fna_index": 1,
+      "fna_date": "n/s",
+      "category_num": 4,
+      "original_bethesda": "4"
+    },
+    {
+      "research_id": "3061",
+      "fna_index": 1,
+      "fna_date": "OSH (not specified)",
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "3221",
+      "fna_index": 1,
+      "fna_date": "not specified",
+      "category_num": 6,
+      "original_bethesda": "6"
+    },
+    {
+      "research_id": "3593",
+      "fna_index": 1,
+      "fna_date": "0/7/2011",
+      "category_num": 6,
+      "original_bethesda": "6"
+    },
+    {
+      "research_id": "3730",
+      "fna_index": 3,
+      "fna_date": "RL FNA",
+      "category_num": 1,
+      "original_bethesda": "1"
+    },
+    {
+      "research_id": "3891",
+      "fna_index": 2,
+      "fna_date": "3/302018\n",
+      "category_num": 6,
+      "original_bethesda": "6"
+    },
+    {
+      "research_id": "3916",
+      "fna_index": 2,
+      "fna_date": null,
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "4064",
+      "fna_index": 1,
+      "fna_date": "n/s",
+      "category_num": 2,
+      "original_bethesda": "3"
+    },
+    {
+      "research_id": "4064",
+      "fna_index": 2,
+      "fna_date": "n/s",
+      "category_num": 5,
+      "original_bethesda": "3"
+    },
+    {
+      "research_id": "4064",
+      "fna_index": 3,
+      "fna_date": "n/s",
+      "category_num": 5,
+      "original_bethesda": "3"
+    },
+    {
+      "research_id": "4418",
+      "fna_index": 1,
+      "fna_date": "5/30/2014?? - inaccurate",
+      "category_num": 6,
+      "original_bethesda": "6"
+    },
+    {
+      "research_id": "4418",
+      "fna_index": 2,
+      "fna_date": "5/30/2014?? - inaccurate",
+      "category_num": 6,
+      "original_bethesda": "6"
+    },
+    {
+      "research_id": "4460",
+      "fna_index": 1,
+      "fna_date": "918/2015",
+      "category_num": 6,
+      "original_bethesda": "6*"
+    },
+    {
+      "research_id": "4709",
+      "fna_index": 1,
+      "fna_date": "111/17/2014",
+      "category_num": 6,
+      "original_bethesda": "3"
+    },
+    {
+      "research_id": "4952",
+      "fna_index": 2,
+      "fna_date": "\n10/06/2011\n-",
+      "category_num": 1,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "528",
+      "fna_index": 1,
+      "fna_date": null,
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "5310",
+      "fna_index": 1,
+      "fna_date": null,
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "5310",
+      "fna_index": 2,
+      "fna_date": null,
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "5536",
+      "fna_index": 2,
+      "fna_date": "1/29/2016\n:",
+      "category_num": 2,
+      "original_bethesda": "1"
+    },
+    {
+      "research_id": "5594",
+      "fna_index": 2,
+      "fna_date": "B.  Thyroid isthmic nodule, fine needle aspiration (ThinPrep slide and aspirate smears): ",
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "5777",
+      "fna_index": 2,
+      "fna_date": "3/8/2016\n: ",
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "5804",
+      "fna_index": 2,
+      "fna_date": "8/10/2016\n:",
+      "category_num": 3,
+      "original_bethesda": "3"
+    },
+    {
+      "research_id": "5907",
+      "fna_index": 1,
+      "fna_date": "3//14/2017",
+      "category_num": 6,
+      "original_bethesda": "6*"
+    },
+    {
+      "research_id": "5937",
+      "fna_index": 2,
+      "fna_date": "8/8/2016\n:",
+      "category_num": 1,
+      "original_bethesda": "1"
+    },
+    {
+      "research_id": "6077",
+      "fna_index": 3,
+      "fna_date": "3/29/2016\n:",
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "6103",
+      "fna_index": 2,
+      "fna_date": "\"A: Right Neck, Fine Needle Aspiration (10 Slides; OSC#CN17-916, DOS 5/22/17): ",
+      "category_num": 6,
+      "original_bethesda": "6"
+    },
+    {
+      "research_id": "6171",
+      "fna_index": 2,
+      "fna_date": "2",
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "6865",
+      "fna_index": 4,
+      "fna_date": "\"5/1/2012",
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "7332",
+      "fna_index": 1,
+      "fna_date": "c",
+      "category_num": 6,
+      "original_bethesda": "6"
+    },
+    {
+      "research_id": "7332",
+      "fna_index": 2,
+      "fna_date": "A:: Thyroid, Right, Fine Needle Aspiration: ",
+      "category_num": 6,
+      "original_bethesda": "6"
+    },
+    {
+      "research_id": "8745",
+      "fna_index": 2,
+      "fna_date": "3/1/2021\n2. LEFT THYROID NODULE (THINPREP CYTOLOGY, SMEARS, AND CELL BLOCK):",
+      "category_num": 1,
+      "original_bethesda": "1"
+    },
+    {
+      "research_id": "8803",
+      "fna_index": 1,
+      "fna_date": "n/s",
+      "category_num": null,
+      "original_bethesda": null
+    },
+    {
+      "research_id": "9003",
+      "fna_index": 1,
+      "fna_date": "LEFT THYROID NODULE (ASPIRATION CYTOLOGY):",
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "9049",
+      "fna_index": 1,
+      "fna_date": "7/13//2021",
+      "category_num": 6,
+      "original_bethesda": "6"
+    },
+    {
+      "research_id": "9201",
+      "fna_index": 1,
+      "fna_date": "n/s",
+      "category_num": null,
+      "original_bethesda": null
+    },
+    {
+      "research_id": "9852",
+      "fna_index": 2,
+      "fna_date": "\n2. Thyroid, Isthmus, Fine  needle aspiration",
+      "category_num": 2,
+      "original_bethesda": "2"
+    },
+    {
+      "research_id": "9871",
+      "fna_index": 2,
+      "fna_date": null,
+      "category_num": 3,
+      "original_bethesda": "3"
+    },
+    {
+      "research_id": "9904",
+      "fna_index": 3,
+      "fna_date": "e",
+      "category_num": null,
+      "original_bethesda": null
+    }
+  ]
+}

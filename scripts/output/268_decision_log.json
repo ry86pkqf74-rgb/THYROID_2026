@@ -1,0 +1,116 @@
+{
+  "script": "Script 268",
+  "run_date": "2026-04-17",
+  "convention": {
+    "action": "noop_already_present",
+    "row": [
+      "bethesda_semantics",
+      "semantics",
+      "preop_worst_calculated_from_morphology_era_preserved",
+      "bethesda_final = MAX(bethesda_calculated) across preop FNAs per patient. bethesda_calculated = fna_cytology.category_num when BETWEEN 1 AND 6 (morphology-derived via rules/LLM on path_text); else TRY_CAST(original_bethesda AS INT) when BETWEEN 1 AND 6; else NULL. Era-specific max columns (bethesda_max_preop_2010/2015/2023) parallel this using bethesda_YYYY_num from the same extraction. Per-FNA derivation method preserved and rolled up at patient level. Most-recent-preop and composite semantics rejected as clinically irrelevant. Index-nodule kept as low-coherence parallel column.",
+      "script_268"
+    ]
+  },
+  "preop_rollup": {
+    "rollup_rows": 5037,
+    "total_fnas": 8063,
+    "dated_fnas": 7997,
+    "still_undated": 66
+  },
+  "index_nodule": {
+    "index_nodule_rows": 5037,
+    "by_linkage_source": [
+      [
+        "specimen_tumor_focus_v1",
+        3239
+      ],
+      [
+        "fna_episode_direct",
+        1798
+      ]
+    ]
+  },
+  "prior_distribution": {
+    "1": 193,
+    "2": 2077,
+    "3": 692,
+    "4": 649,
+    "5": 276,
+    "6": 1362,
+    "NULL": 5622
+  },
+  "cpm_after_rebuild": {
+    "rows": 10871,
+    "cols": 1499
+  },
+  "registry_pin_actions": {
+    "actions": [
+      {
+        "table": "extracted_fna_bethesda_v1",
+        "removed_from_normalized": [
+          "bethesda_final"
+        ],
+        "new_normalized": "bethesda_category;fna_bethesda_confidence;fna_bethesda_source"
+      },
+      {
+        "table": "fna_cytology",
+        "action": "UPDATED",
+        "normalized": "bethesda_derivation_methods;bethesda_final;bethesda_max_preop_2010;bethesda_max_preop_2015;bethesda_max_preop_2023;n_bethesda_calculated_fnas;n_bethesda_number_only_fnas;n_fna_cytology_records"
+      },
+      {
+        "table": "fna_episode_master_v2",
+        "action": "UPDATED",
+        "normalized": "bethesda_2010;bethesda_2015;bethesda_2023;bethesda_confidence;bethesda_final_name;bethesda_index_nodule;bethesda_index_nodule_linkage_source;bethesda_num;bethesda_source;cross_fna_concordance;fna_bethesda_final;fna_confidence;fna_pathway_status;n_fna_episodes"
+      },
+      {
+        "table": "specimen_tumor_focus_v1",
+        "action": "UPDATED_SECONDARY",
+        "secondary": "bethesda_index_nodule;bilateral_disease_flag;multifocal_flag_path"
+      },
+      {
+        "table": "imaging_fna_linkage_v3",
+        "action": "UPDATED_SECONDARY",
+        "secondary": "bethesda_index_nodule"
+      }
+    ],
+    "pointer_status": {
+      "bethesda_final": {
+        "n_feeders": 1,
+        "feeders": "fna_cytology"
+      },
+      "bethesda_max_preop_2010": {
+        "n_feeders": 1,
+        "feeders": "fna_cytology"
+      },
+      "bethesda_max_preop_2015": {
+        "n_feeders": 1,
+        "feeders": "fna_cytology"
+      },
+      "bethesda_max_preop_2023": {
+        "n_feeders": 1,
+        "feeders": "fna_cytology"
+      },
+      "n_bethesda_calculated_fnas": {
+        "n_feeders": 1,
+        "feeders": "fna_cytology"
+      },
+      "n_bethesda_number_only_fnas": {
+        "n_feeders": 1,
+        "feeders": "fna_cytology"
+      },
+      "bethesda_derivation_methods": {
+        "n_feeders": 1,
+        "feeders": "fna_cytology"
+      },
+      "bethesda_index_nodule": {
+        "n_feeders": 1,
+        "feeders": "fna_episode_master_v2"
+      },
+      "bethesda_index_nodule_linkage_source": {
+        "n_feeders": 1,
+        "feeders": "fna_episode_master_v2"
+      }
+    }
+  },
+  "elapsed_seconds": 10.8
+}
