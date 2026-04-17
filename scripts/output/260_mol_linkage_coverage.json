@@ -1,0 +1,27 @@
+{
+  "script": "260",
+  "mode": "DRY-RUN",
+  "run_ts": "2026-04-17",
+  "fem_total_rows": 8119,
+  "fem_b34_rows": 1920,
+  "fem_b34_patients": 1685,
+  "mte_total_rows": 10126,
+  "mte_rows_with_date": 846,
+  "mte_rows_dateless": 9280,
+  "patients_b34_with_any_mte": 1613,
+  "patients_b34_with_dated_mte": 624,
+  "achievable_strict_window": {
+    "window_0d_inclusive": 570,
+    "window_90d": 570,
+    "window_180d": 581,
+    "window_365d": 597,
+    "pct_b34_rows_at_90d": 29.69
+  },
+  "candidate_total_links_across_fem_at_90d": 841,
+  "floor": 85.0,
+  "target": 95.0,
+  "floor_achievable_with_strict_date_window": false,
+  "blocking_root_cause": "9,280 of 10,126 molecular_test_episode_v2 rows lack both test_date_native and resolved_test_date (FINALIZATION_REPORT_v1_1.md \u00a710 v1_2 candidate)",
+  "applied": false,
+  "next_step": "Logan to choose Path A / B / C in scripts/output/260_decision_pending.md"
+}

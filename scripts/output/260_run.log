@@ -1,0 +1,20 @@
+[02:44:38.870Z] ==============================================================================
+[02:44:38.870Z] === START 260_hydrate_fna_links.py  mode=DRY-RUN
+[02:44:39.953Z] connected to thyroid_canonical_publication_v1_0
+[02:44:40.051Z] FATAL: BinderException('Binder Error: Referenced column "molecular_link_confidence_days" not found in FROM clause!\nCandidate bindings: "fna_episode_master_v2.linked_molecular_episode_id", "fna_episode_master_v2.linked_imaging_nodule_id", "fna_episode_master_v2.date_confidence", "fna_episode_master_v2.fna_confidence", "fna_episode_master_v2.fna_episode_id"\nLINE 12:           AVG(molecular_link_confidence_days) FILTER (WHERE linked_molecular_episode_id IS NOT NULL) AS mean_gap,\n          MAX(molecular_link_confidence_days) FILTER (WHERE linked_molecular_episode_id IS NOT NULL) AS max_gap,\n          COUNT(*) FILTER (WHERE linked_imaging_nodule_id IS NOT NULL) AS rows_img_linked\n        FROM thyroid_canonical_publication_v1_0.main.fna_episode_master_v2\n    ...\n                       ^')
+[02:44:56.925Z] ==============================================================================
+[02:44:56.925Z] === START 260_hydrate_fna_links.py  mode=DRY-RUN
+[02:44:58.168Z] connected to thyroid_canonical_publication_v1_0
+[02:44:58.829Z] PREFLIGHT  FEM rows=8119  b34_rows_linked%=0.0
+[02:44:59.084Z] DRY-RUN  candidate molecular links if applied: 841
+[02:44:59.084Z] DRY-RUN — no mutations performed
+[02:44:59.084Z] === END  elapsed=2.2s
+[02:47:11.314Z] ==============================================================================
+[02:47:11.314Z] === START 260_hydrate_fna_links.py  mode=DRY-RUN
+[02:47:12.558Z] connected to thyroid_canonical_publication_v1_0
+[02:47:13.343Z] PREFLIGHT  FEM rows=8119  b34_rows_linked%=0.0
+[02:47:13.476Z] PREVIEW  achievable strict-90d B III/IV linkage: 570/1920 (29.69%)
+[02:47:13.542Z] PREVIEW  total candidate molecular links across FEM: 841
+[02:47:13.542Z] FLOOR_BREACH  Achievable B III/IV linkage with strict 90d date window is only 29.69% (below 85% floor) because 9,280 of 10,126 MTE rows lack a usable date (test_date_native + resolved_test_date both NULL). This is upstream data sparsity, not a script bug.
+[02:47:13.543Z] DRY-RUN -- no mutations performed
+[02:47:13.543Z] === END  elapsed=2.2s

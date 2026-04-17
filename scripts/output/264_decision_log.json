@@ -1,0 +1,36 @@
+{
+  "script": "264",
+  "run_ts": "20260417T025534Z",
+  "run_date": "2026-04-17",
+  "phases": {
+    "payload": {
+      "s260_status": "deferred (decision_pending; see scripts/output/260_decision_pending.md)",
+      "s261_status": "applied (24 dates repaired, 2 nulled)",
+      "s262_status": "applied (CPM cols 1494->1493; FEM.research_id INTEGER->VARCHAR)",
+      "s263_status": "deferred (decision_pending; see scripts/output/263_semantic_decision_pending.md)",
+      "evidence": {
+        "cpm_rows": 10871,
+        "cpm_cols": 1493,
+        "ras_v7_present": false,
+        "fem_rid_dtype": "VARCHAR",
+        "fem_rows": 8119,
+        "bad_dates": 0,
+        "b34_total": 1920,
+        "b34_linked": 0,
+        "b34_pct": 0.0,
+        "b34_status": "pending_decision"
+      },
+      "replay_259": {
+        "audit_1_1": 0,
+        "audit_2_2": 0,
+        "audit_3_1": 0,
+        "audit_5_3": 0
+      },
+      "cpm_hash": "b8631b86f6ddcbadc0b34f320e8ec52b28bb055d7991bfd86e07ba61ef143fbd",
+      "conventions_status": "pending_decision",
+      "260_decision": "Strict-90d coverage 29.69% < 85% floor (MTE date sparsity); see scripts/output/260_decision_pending.md for Path A/B/C."
+    },
+    "report_appended": true,
+    "cpm_hash": "b8631b86f6ddcbadc0b34f320e8ec52b28bb055d7991bfd86e07ba61ef143fbd"
+  }
+}

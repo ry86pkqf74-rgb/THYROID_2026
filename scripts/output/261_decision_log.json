@@ -1,0 +1,37 @@
+{
+  "script": "261",
+  "run_ts": "20260417T025110Z",
+  "run_date": "2026-04-17",
+  "mode": "APPLY",
+  "phases": {
+    "preflight": {
+      "n_audit_rows": 26,
+      "n_unresolved": 2
+    },
+    "snapshots": {
+      "fhist": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"fna_history_pre261_20260417T025110Z\"",
+      "fem": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"fna_episode_master_v2_pre261_20260417T025110Z\"",
+      "cpm": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"canonical_patient_master_pre261_20260417T025110Z\""
+    },
+    "apply": {
+      "hist_set": 24,
+      "hist_null": 2,
+      "fem_set": 26,
+      "fem_null": 2
+    },
+    "cpm_reroll": {
+      "first_pop": 5207,
+      "last_pop": 5207,
+      "first_dfs_pop": 5207,
+      "last_dfs_pop": 5207
+    },
+    "invariants": {
+      "rem_fem": 0,
+      "rem_hist": 0,
+      "fem_rows": 8119,
+      "cpm_rows": 10871,
+      "min": "1999-02-01",
+      "max": "2025-02-17"
+    }
+  }
+}

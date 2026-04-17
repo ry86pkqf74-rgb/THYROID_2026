@@ -1,0 +1,30 @@
+{
+  "script": "260",
+  "run_ts": "20260417T024712Z",
+  "run_date": "2026-04-17",
+  "mode": "DRY-RUN",
+  "phases": {
+    "preflight": {
+      "rows_total": 8119,
+      "rows_b34": 1920,
+      "rows_b34_linked": 0,
+      "pts_b34": 1685,
+      "pts_b34_linked": 0,
+      "rows_any_linked": 0,
+      "pts_any_linked": 0,
+      "mean_gap": null,
+      "max_gap": null,
+      "rows_img_linked": 1598,
+      "pct_b34_rows_linked": 0.0,
+      "pct_b34_pts_linked": 0.0
+    },
+    "preview": {
+      "b34_total": 1920,
+      "b34_matched_strict_90d": 570,
+      "b34_pct_strict_90d": 29.69,
+      "floor": 85.0,
+      "target": 95.0
+    },
+    "floor_breach_note": "Achievable B III/IV linkage with strict 90d date window is only 29.69% (below 85% floor) because 9,280 of 10,126 MTE rows lack a usable date (test_date_native + resolved_test_date both NULL). This is upstream data sparsity, not a script bug."
+  }
+}

@@ -1,0 +1,20 @@
+[02:55:33.384Z] ==============================================================================
+[02:55:33.384Z] === START 264_final_acceptance_addendum.py
+[02:55:34.554Z] connected to thyroid_canonical_publication_v1_0
+[02:55:34.554Z] MEASURE  CPM dims, hash, FEM dtype, ras_v7 status
+[02:55:36.658Z]   CPM rows=10871 cols=1493
+[02:55:36.658Z]   ras_v7 present=False; FEM.research_id=VARCHAR; FEM rows=8119
+[02:55:36.659Z]   FEM bad dates=0
+[02:55:36.659Z]   B III/IV linkage: 0/1920 (0.0%) status=pending_decision
+[02:55:36.659Z] HASH  computing CPM hash-of-row-hashes
+[02:55:40.776Z]   v1_1 candidate lock hash: b8631b86f6ddcbadc0b34f320e8ec52b28bb055d7991bfd86e07ba61ef143fbd
+[02:55:40.776Z] REPLAY  Script 259 invariants
+[02:55:41.085Z]   audit_1_1    0
+[02:55:41.085Z]   audit_2_2    0
+[02:55:41.085Z]   audit_3_1    0
+[02:55:41.085Z]   audit_5_3    0
+[02:55:41.115Z]   conventions bethesda_semantics: pending_decision
+[02:55:41.115Z] HARD INVARIANTS PASS (260, 263 deferred to Logan as documented)
+[02:55:41.115Z] APPEND  v1_1 Closeout Addendum to FINALIZATION_REPORT_v1_1.md
+[02:55:41.116Z]   appended 2205 chars to studies/v1_1_finalization/FINALIZATION_REPORT_v1_1.md
+[02:55:41.116Z] === END  elapsed=7.7s

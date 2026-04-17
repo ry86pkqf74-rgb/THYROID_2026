@@ -1,0 +1,28 @@
+[02:52:46.375Z] ==============================================================================
+[02:52:46.376Z] === START 262_drop_ras_v7_align_dtype.py  mode=DRY-RUN
+[02:52:47.623Z] connected to thyroid_canonical_publication_v1_0
+[02:52:49.577Z] PREFLIGHT  CPM cols=1494; ras_v7 dtype=BOOLEAN
+[02:52:49.577Z]            FEM rows=8119; FEM.research_id dtype=INTEGER
+[02:52:49.577Z]            CPM JOIN FEM (CAST) row count: 8119
+[02:52:49.606Z]   views referencing ras_positive_v7: 0
+[02:52:49.606Z] DRY-RUN -- no mutations performed
+[02:52:49.606Z] === END  elapsed=3.2s
+[02:52:52.559Z] ==============================================================================
+[02:52:52.559Z] === START 262_drop_ras_v7_align_dtype.py  mode=APPLY
+[02:52:53.754Z] connected to thyroid_canonical_publication_v1_0
+[02:52:55.998Z] PREFLIGHT  CPM cols=1494; ras_v7 dtype=BOOLEAN
+[02:52:55.998Z]            FEM rows=8119; FEM.research_id dtype=INTEGER
+[02:52:55.998Z]            CPM JOIN FEM (CAST) row count: 8119
+[02:52:56.029Z]   views referencing ras_positive_v7: 0
+[02:53:00.981Z] SNAPSHOT  cpm = "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_pre262_20260417T025253Z"
+[02:53:03.159Z] SNAPSHOT  ras_v7 column = "Thyroid 2026 UPdated"."archive_pub_v1_0"."cpm_ras_positive_v7_dropped_20260417T025253Z"
+[02:53:05.211Z] SNAPSHOT  fem = "Thyroid 2026 UPdated"."archive_pub_v1_0"."fna_episode_master_v2_pre262_20260417T025253Z"
+[02:53:05.955Z]   ALTER TABLE canonical_patient_master DROP COLUMN ras_positive_v7
+[02:53:06.023Z]   data_dictionary_v240: ras_positive_v7 -> status=removed
+[02:53:07.017Z]   legacy_column_sweep_v1_1 rebuilt: 0 rows
+[02:53:07.526Z]   ALTER TABLE fna_episode_master_v2 ALTER research_id TYPE VARCHAR
+[02:53:07.953Z] INVARIANTS  CPM cols pre=1494 post=1493 (target 1493)
+[02:53:07.953Z]             FEM rows=8119; FEM.research_id=VARCHAR
+[02:53:07.953Z]             CPM JOIN FEM (no CAST) count = 8119 (== pre-cast CAST count 8119)
+[02:53:08.216Z] ALL ASSERTIONS PASS
+[02:53:08.216Z] === END  elapsed=15.7s

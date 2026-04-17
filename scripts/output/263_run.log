@@ -1,0 +1,8 @@
+[02:54:06.849Z] ==============================================================================
+[02:54:06.849Z] === START 263_bethesda_semantic_decision.py  mode=DRY-RUN
+[02:54:08.174Z] connected to thyroid_canonical_publication_v1_0
+[02:54:08.303Z]   CPM rows=10871  bf_pop=5249  wb_pop=5249  bf=wb 5138  bf<>wb 111
+[02:54:08.303Z]   bethesda_final  vs MAX(FEM): eq=4454 ne=796 (84.84%)
+[02:54:08.304Z]   worst_bethesda_num vs MAX(FEM): eq=4565 ne=685 (86.95%)
+[02:54:08.306Z]   wrote scripts/output/263_semantic_decision_pending.md
+[02:54:08.306Z] === END  elapsed=1.5s

@@ -1,0 +1,22 @@
+{
+  "script": "263",
+  "run_ts": "20260417T025408Z",
+  "run_date": "2026-04-17",
+  "mode": "DRY-RUN",
+  "phases": {
+    "measure": {
+      "n_rows": 10871,
+      "bf_pop": 5249,
+      "wb_pop": 5249,
+      "eq": 5138,
+      "disc": 111,
+      "bf_eq_fem": 4454,
+      "bf_ne_fem": 796,
+      "wb_eq_fem": 4565,
+      "wb_ne_fem": 685,
+      "bf_pct": 84.84,
+      "wb_pct": 86.95
+    }
+  },
+  "decision_status": "pending_logan"
+}
