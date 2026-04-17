@@ -1,0 +1,53 @@
+stl_ete_text,ete_source,n_tumors
+,uncalculable:no_stl_no_adjudication,9599
+x,stl_per_tumor:unclassified_present,4218
+x,cpm_patient_level:broadcast_to_dominant:microscopic,3107
+minimal,stl_per_tumor:microscopic,430
+present,stl_per_tumor:unclassified_present,306
+present,cpm_patient_level:broadcast_to_dominant:microscopic,242
+microscopic,stl_per_tumor:microscopic,171
+x,cpm_patient_level:broadcast_to_dominant:gross,161
+,ete_adjudication_v1:unable_to_determine,58
+c/a,stl_per_tumor:unclassified_present,43
+,ete_adjudication_v1:absent,42
+focal,stl_per_tumor:microscopic,28
+extensive,cpm_patient_level:broadcast_to_dominant:gross,23
+indeterminate,stl_per_tumor:unclassified_present,22
+yes,stl_per_tumor:unclassified_present,20
+yes,cpm_patient_level:broadcast_to_dominant:microscopic,18
+present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),stl_per_tumor:microscopic,15
+c/a,cpm_patient_level:broadcast_to_dominant:absent,13
+Yes;,stl_per_tumor:unclassified_present,13
+extesive,stl_per_tumor:unclassified_present,12
+extensive,stl_per_tumor:unclassified_present,9
+,ete_adjudication_v1:gross,8
+microscopiic,stl_per_tumor:microscopic,6
+focal ,stl_per_tumor:microscopic,5
+focal right side,stl_per_tumor:microscopic,4
+Focal early extension into perithyroidal fat,stl_per_tumor:microscopic,3
+yes (minimal),stl_per_tumor:microscopic,2
+X,stl_per_tumor:unclassified_present,2
+X,cpm_patient_level:broadcast_to_dominant:microscopic,2
+present (perithyroidal fibroadipose tissue involved),stl_per_tumor:microscopic,2
+,ete_adjudication_v1:microscopic,2
+minimal microscopic,stl_per_tumor:microscopic,2
+minimal into fat,stl_per_tumor:microscopic,2
+n/a,stl_per_tumor:unclassified_present,2
+`x,stl_per_tumor:unclassified_present,2
+c/a,cpm_patient_level:broadcast_to_dominant:gross,1
+Yes,cpm_patient_level:broadcast_to_dominant:microscopic,1
+Yes,stl_per_tumor:unclassified_present,1
+Yes;minimal;,stl_per_tumor:microscopic,1
+Extensive,cpm_patient_level:broadcast_to_dominant:gross,1
+* (see margin comment),stl_per_tumor:unclassified_present,1
+Extensive,stl_per_tumor:unclassified_present,1
+indeterminate,cpm_patient_level:broadcast_to_dominant:microscopic,1
+present,cpm_patient_level:broadcast_to_dominant:gross,1
+indeterminate,cpm_patient_level:broadcast_to_dominant:gross,1
+indeterminate,cpm_patient_level:broadcast_to_dominant:absent,1
+microscopic extension,stl_per_tumor:microscopic,1
+yes (focal),stl_per_tumor:microscopic,1
+"x
+(single microscopic focus of extension)",stl_per_tumor:microscopic,1
+"yes, minimal",stl_per_tumor:microscopic,1
+"yes, extensive",cpm_patient_level:broadcast_to_dominant:gross,1

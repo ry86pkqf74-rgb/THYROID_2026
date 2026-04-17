@@ -1,0 +1,96 @@
+{
+  "script": "Script 266b",
+  "run_date": "2026-04-17",
+  "mode": "DRY-RUN",
+  "preflight_divergences": [],
+  "results": {
+    "meta": {
+      "mode": "DRY-RUN",
+      "started_at": "2026-04-17T11:36:03.016014+00:00",
+      "script": "Script 266b"
+    },
+    "phase_0": {
+      "cpm_n_patients": 10871,
+      "ctc_n_rows": 11106,
+      "v266a_applied": true,
+      "ajcc8_t_stage_clean": true,
+      "ajcc8_t_stage_corrected_residual": false,
+      "ajcc8_t_stage_v2_present_informational": true,
+      "ajcc8_t_stage_DEPRECATED_present": true,
+      "gate_b_relaxation_note": "Gate B relaxed 2026-04-17: removed check for ajcc8_t_stage_v2 absence. Big cleanup Phase 4.6 was scoped only to the ajcc8_t_stage_corrected -> ajcc8_t_stage rename; _v2 is an unrelated historical intermediate column that 266b does not consume. Retaining the check for _corrected absence (semantic-correctness gate) and ajcc8_t_stage presence (rename-completed gate).",
+      "cpm_ajcc8_columns": [
+        "ajcc8_calculable_flag",
+        "ajcc8_m_stage",
+        "ajcc8_m_stage_v2",
+        "ajcc8_missing_components",
+        "ajcc8_n_stage",
+        "ajcc8_n_stage_note",
+        "ajcc8_n_stage_v2",
+        "ajcc8_stage_calculable_flag",
+        "ajcc8_stage_group",
+        "ajcc8_stage_group_corrected",
+        "ajcc8_stage_group_v2",
+        "ajcc8_t_stage",
+        "ajcc8_t_stage_calculable_flag",
+        "ajcc8_t_stage_v2",
+        "ajcc8_t_stage_with_microete_t3b_DEPRECATED"
+      ]
+    },
+    "phase_1": {
+      "snapshots": {
+        "thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1": null,
+        "thyroid_canonical_publication_v1_0.main.canonical_patient_master": null
+      }
+    },
+    "phase_2": {
+      "added_columns": [
+        "t_stage_ajcc7",
+        "n_stage_ajcc7",
+        "m_stage_ajcc7",
+        "overall_stage_ajcc7",
+        "stage_group_ajcc7",
+        "t_stage_ajcc8",
+        "n_stage_ajcc8",
+        "m_stage_ajcc8",
+        "overall_stage_ajcc8",
+        "stage_group_ajcc8",
+        "ajcc7_stage_calculable_flag",
+        "ajcc8_stage_calculable_flag",
+        "staging_source_note",
+        "stage_migration_7_to_8"
+      ],
+      "skipped_present": []
+    },
+    "phase_3": {
+      "rows_staged": 18610,
+      "ajcc8_calculable": 12092,
+      "ajcc7_calculable": 13089
+    },
+    "phase_4": {
+      "het_rows": null
+    },
+    "phase_5": {
+      "added_columns": [
+        "dominant_tumor_ajcc7_t_stage",
+        "dominant_tumor_ajcc7_n_stage",
+        "dominant_tumor_ajcc7_m_stage",
+        "dominant_tumor_ajcc7_stage_group",
+        "dominant_tumor_ajcc8_t_stage",
+        "dominant_tumor_ajcc8_n_stage",
+        "dominant_tumor_ajcc8_m_stage",
+        "dominant_tumor_ajcc8_stage_group",
+        "tumor_stage_heterogeneous_t_ajcc8_flag",
+        "tumor_stage_heterogeneous_overall_ajcc8_flag",
+        "n_tumors_ajcc7_staged",
+        "n_tumors_ajcc8_staged"
+      ]
+    },
+    "phase_6": {
+      "skipped_dryrun": true
+    },
+    "phase_7": {
+      "skipped_dryrun": true
+    }
+  },
+  "elapsed_seconds": 4.9
+}

@@ -1,0 +1,227 @@
+{
+  "per_tumor_n_rows": 11103,
+  "per_tumor_distinct_rids": 8422,
+  "per_tumor_ete_source_distribution": {
+    "uncalculable:no_stl_no_adjudication": 6309,
+    "cpm_patient_level:broadcast_to_dominant:microscopic": 3335,
+    "stl_per_tumor:unclassified_present": 930,
+    "stl_per_tumor:microscopic": 296,
+    "cpm_patient_level:broadcast_to_dominant:gross": 186,
+    "ete_adjudication_v1:unable_to_determine": 16,
+    "cpm_patient_level:broadcast_to_dominant:absent": 14,
+    "ete_adjudication_v1:absent": 13,
+    "ete_adjudication_v1:gross": 3,
+    "ete_adjudication_v1:microscopic": 1
+  },
+  "cpm_ete_grade_final_v2_distribution": {
+    "__NULL__": 6796,
+    "microscopic": 3643,
+    "gross": 190,
+    "false": 187,
+    "present_ungraded": 32,
+    "absent": 16,
+    "true": 7
+  },
+  "cpm_ete_grade_final_v2_distinct_non_null": [
+    "absent",
+    "false",
+    "gross",
+    "microscopic",
+    "present_ungraded",
+    "true"
+  ],
+  "absent_terms_used": [
+    "absent"
+  ],
+  "n_absent_with_per_tumor_data": 16,
+  "n_absent_with_any_unclassified_present": 4,
+  "pct_absent_with_any_unclassified_present_anytumor": 25.0,
+  "n_dom_absent": 16,
+  "n_dom_overlay_absent": 14,
+  "n_dom_unclassified": 0,
+  "pct_dom_unclassified": 0.0,
+  "threshold_pct": 5.0,
+  "decision_anytumor": "HALT",
+  "decision_dominant_tumor_post_tier4": "PROCEED",
+  "decision": "PROCEED",
+  "crosstab": [
+    {
+      "ete_grade_final_v2": "__NULL__",
+      "all_uncalculable": 4347,
+      "any_absent_sig": 0,
+      "any_gross": 0,
+      "any_micro": 0,
+      "any_unable_only": 0,
+      "any_unclassified_present": 0,
+      "no_tumor_data": 2449,
+      "ALL": 6796
+    },
+    {
+      "ete_grade_final_v2": "absent",
+      "all_uncalculable": 0,
+      "any_absent_sig": 12,
+      "any_gross": 0,
+      "any_micro": 0,
+      "any_unable_only": 0,
+      "any_unclassified_present": 4,
+      "no_tumor_data": 0,
+      "ALL": 16
+    },
+    {
+      "ete_grade_final_v2": "false",
+      "all_uncalculable": 183,
+      "any_absent_sig": 0,
+      "any_gross": 0,
+      "any_micro": 0,
+      "any_unable_only": 0,
+      "any_unclassified_present": 4,
+      "no_tumor_data": 0,
+      "ALL": 187
+    },
+    {
+      "ete_grade_final_v2": "gross",
+      "all_uncalculable": 0,
+      "any_absent_sig": 0,
+      "any_gross": 186,
+      "any_micro": 0,
+      "any_unable_only": 0,
+      "any_unclassified_present": 4,
+      "no_tumor_data": 0,
+      "ALL": 190
+    },
+    {
+      "ete_grade_final_v2": "microscopic",
+      "all_uncalculable": 0,
+      "any_absent_sig": 0,
+      "any_gross": 0,
+      "any_micro": 3598,
+      "any_unable_only": 0,
+      "any_unclassified_present": 45,
+      "no_tumor_data": 0,
+      "ALL": 3643
+    },
+    {
+      "ete_grade_final_v2": "present_ungraded",
+      "all_uncalculable": 0,
+      "any_absent_sig": 0,
+      "any_gross": 0,
+      "any_micro": 0,
+      "any_unable_only": 0,
+      "any_unclassified_present": 32,
+      "no_tumor_data": 0,
+      "ALL": 32
+    },
+    {
+      "ete_grade_final_v2": "true",
+      "all_uncalculable": 3,
+      "any_absent_sig": 0,
+      "any_gross": 0,
+      "any_micro": 0,
+      "any_unable_only": 2,
+      "any_unclassified_present": 2,
+      "no_tumor_data": 0,
+      "ALL": 7
+    },
+    {
+      "ete_grade_final_v2": "ALL",
+      "all_uncalculable": 4533,
+      "any_absent_sig": 12,
+      "any_gross": 186,
+      "any_micro": 3598,
+      "any_unable_only": 2,
+      "any_unclassified_present": 91,
+      "no_tumor_data": 2449,
+      "ALL": 10871
+    }
+  ],
+  "audit_unclassified_top10": [
+    {
+      "stl_ete_text": "x",
+      "ete_source": "stl_per_tumor:unclassified_present",
+      "n_tumors": 4218
+    },
+    {
+      "stl_ete_text": "present",
+      "ete_source": "stl_per_tumor:unclassified_present",
+      "n_tumors": 306
+    },
+    {
+      "stl_ete_text": "c/a",
+      "ete_source": "stl_per_tumor:unclassified_present",
+      "n_tumors": 43
+    },
+    {
+      "stl_ete_text": "indeterminate",
+      "ete_source": "stl_per_tumor:unclassified_present",
+      "n_tumors": 22
+    },
+    {
+      "stl_ete_text": "yes",
+      "ete_source": "stl_per_tumor:unclassified_present",
+      "n_tumors": 20
+    },
+    {
+      "stl_ete_text": "Yes;",
+      "ete_source": "stl_per_tumor:unclassified_present",
+      "n_tumors": 13
+    },
+    {
+      "stl_ete_text": "extesive",
+      "ete_source": "stl_per_tumor:unclassified_present",
+      "n_tumors": 12
+    },
+    {
+      "stl_ete_text": "extensive",
+      "ete_source": "stl_per_tumor:unclassified_present",
+      "n_tumors": 9
+    },
+    {
+      "stl_ete_text": "X",
+      "ete_source": "stl_per_tumor:unclassified_present",
+      "n_tumors": 2
+    },
+    {
+      "stl_ete_text": NaN,
+      "ete_source": "stl_per_tumor:unclassified_present",
+      "n_tumors": 2
+    }
+  ],
+  "sample_violators_head10": [
+    {
+      "research_id": "9424",
+      "ete_grade_final_v2": "absent",
+      "n_tumors": 3.0,
+      "any_gross": false,
+      "any_micro": false,
+      "any_unclassified": true,
+      "any_absent_sig": true
+    },
+    {
+      "research_id": "3601",
+      "ete_grade_final_v2": "absent",
+      "n_tumors": 2.0,
+      "any_gross": false,
+      "any_micro": false,
+      "any_unclassified": true,
+      "any_absent_sig": true
+    },
+    {
+      "research_id": "4085",
+      "ete_grade_final_v2": "absent",
+      "n_tumors": 3.0,
+      "any_gross": false,
+      "any_micro": false,
+      "any_unclassified": true,
+      "any_absent_sig": true
+    },
+    {
+      "research_id": "5315",
+      "ete_grade_final_v2": "absent",
+      "n_tumors": 4.0,
+      "any_gross": false,
+      "any_micro": false,
+      "any_unclassified": true,
+      "any_absent_sig": true
+    }
+  ]
+}

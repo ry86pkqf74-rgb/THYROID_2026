@@ -582,7 +582,8 @@ def phase_3(con, log, do_writes: bool) -> dict:
             cpm.path_t_stage_raw                            AS path_t_stage_raw,
             cpm.path_n_stage_raw                            AS path_n_stage_raw,
             cpm.path_m_stage_raw                            AS path_m_stage_raw,
-            cpm.pet_distant_mets_ever                       AS pet_distant_mets_ever
+            cpm.pet_distant_mets_ever                       AS pet_distant_mets_ever,
+            cpm.ete_grade_final_v2                          AS cpm_ete_grade_final_v2
           FROM {CPM} AS cpm
         ),
         ln_anchor AS (
@@ -603,6 +604,7 @@ def phase_3(con, log, do_writes: bool) -> dict:
           ca.path_n_stage_raw                               AS path_n_stage_raw,
           ca.path_m_stage_raw                               AS path_m_stage_raw,
           ca.pet_distant_mets_ever                          AS pet_distant_mets_ever,
+          ca.cpm_ete_grade_final_v2                         AS cpm_ete_grade_final_v2,
           la.ln_histology_1_n_stage_ajcc8                   AS ln_histology_1_n_stage_ajcc8
         FROM per_tumor AS pt
         LEFT JOIN cpm_anchor AS ca
@@ -623,12 +625,25 @@ def phase_3(con, log, do_writes: bool) -> dict:
         "macroscopic extension", "visible gross", "invading trachea",
         "invading esophagus", "recurrent laryngeal nerve invasion",
     )
+    # 2026-04-17 vocabulary additions per Logan: minimal/focal -> MICRO;
+    # microscopiic typo -> MICRO. (extensive/extesive intentionally stay
+    # unclassified -- ambiguous without substrate.)
     MICRO_KEYWORDS = (
-        "microscopic", "minimal extension", "focally extending",
-        "focal perithyroidal", "perithyroidal soft tissue",
+        "microscopic", "microscopiic",
+        "minimal extension", "minimal",
+        "focally extending", "focal perithyroidal", "focal",
+        "perithyroidal soft tissue",
         "perithyroidal fibroadipose", "perithyroidal fat",
     )
     ABSENT_KEYWORDS = ("absent", "none", "no extension", "negative", "not present")
+
+    # CPM overlay tier 4 mapping: clinical grades from CPM ete_grade_final_v2
+    # that we are willing to broadcast to the dominant tumor when the STL
+    # classifier returns unclassified_present. Limited to the unambiguous
+    # clinical grades; 'present_ungraded', 'true', 'false' deliberately
+    # excluded (would not improve the classification or risks overriding
+    # STL-positive signal).
+    CPM_OVERLAY_GRADES = {"gross": True, "microscopic": False, "absent": False}
 
     def _classify_ete(row) -> tuple[str | None, bool | None, str]:
         stl_raw = row.get("stl_ete_text")
@@ -640,9 +655,19 @@ def phase_3(con, log, do_writes: bool) -> dict:
                 return text, False, "stl_per_tumor:microscopic"
             if any(k in text for k in ABSENT_KEYWORDS):
                 return text, False, "stl_per_tumor:absent"
-            # value present but unclassifiable (e.g. "present_ungraded",
-            # "yes", variant wording) → conservative: NOT gross, but ete
-            # text passed through so 51b helper still sees "gross" if hidden.
+            # Tier 4 — CPM overlay (added 2026-04-17). When the per-tumor
+            # STL text is positive but the keyword vocabulary cannot grade
+            # it, defer to the CPM patient-level clinical grade ONLY for
+            # the dominant tumor. Multifocal patients' secondary tumors
+            # remain unclassified to avoid the broadcast bug.
+            cpm_g = row.get("cpm_ete_grade_final_v2")
+            is_dom = bool(row.get("is_dominant_tumor", False))
+            if (is_dom and pd.notna(cpm_g) and cpm_g is not None
+                    and str(cpm_g).strip().lower() in CPM_OVERLAY_GRADES):
+                cg = str(cpm_g).strip().lower()
+                gross_flag = CPM_OVERLAY_GRADES[cg]
+                return cg, gross_flag, f"cpm_patient_level:broadcast_to_dominant:{cg}"
+            # Otherwise keep as unclassified_present (no override).
             return text, False, "stl_per_tumor:unclassified_present"
 
         adj = row.get("adjudicated_ete_grade")
@@ -657,6 +682,19 @@ def phase_3(con, log, do_writes: bool) -> dict:
             return a, None, "ete_adjudication_v1:unable_to_determine"
 
         return None, None, "uncalculable:no_stl_no_adjudication"
+
+    # Tag dominant tumor per patient (largest size_greatest_dimension_cm,
+    # tumor_ordinal as tiebreaker -- mirrors Phase 4's ROW_NUMBER OVER
+    # PARTITION BY research_id ORDER BY tumor_size_cm DESC NULLS LAST,
+    # tumor_ordinal ASC). Used by Tier 4 CPM overlay above.
+    _sorted = df.sort_values(
+        ["research_id", "tumor_size_cm", "tumor_ordinal"],
+        ascending=[True, False, True],
+        na_position="last",
+        kind="mergesort",
+    )
+    _dominant_indices = _sorted.groupby("research_id", sort=False).head(1).index
+    df["is_dominant_tumor"] = df.index.isin(_dominant_indices)
 
     ete_triples = df.apply(_classify_ete, axis=1)
     df["ete_grade"] = [t[0] for t in ete_triples]

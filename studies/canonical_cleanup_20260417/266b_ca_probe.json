@@ -1,0 +1,129 @@
+{
+  "n_total_ca": 33,
+  "patterns": {
+    "capsular_invasion_dist": [
+      [
+        null,
+        17
+      ],
+      [
+        "minimal",
+        6
+      ],
+      [
+        "x",
+        5
+      ],
+      [
+        "present",
+        3
+      ],
+      [
+        "n/a",
+        1
+      ],
+      [
+        "widely invasive",
+        1
+      ]
+    ],
+    "margin_status_dist": [
+      [
+        "involved",
+        19
+      ],
+      [
+        "x",
+        12
+      ],
+      [
+        "c/a",
+        1
+      ],
+      [
+        null,
+        1
+      ]
+    ]
+  },
+  "samples": [
+    {
+      "research_id": "1748",
+      "surg_date": "2011-09-06 00:00:00",
+      "tumor_index": "1",
+      "extrathyroidal_extension": "c/a",
+      "capsular_invasion": "x",
+      "margin_status": "x",
+      "lymphatic_invasion": null,
+      "perineural_invasion": null,
+      "histologic_type": "follicular carcinoma",
+      "site": "left lobe"
+    },
+    {
+      "research_id": "1718",
+      "surg_date": "2013-07-03 00:00:00",
+      "tumor_index": "1",
+      "extrathyroidal_extension": "c/a",
+      "capsular_invasion": null,
+      "margin_status": "involved",
+      "lymphatic_invasion": "x",
+      "perineural_invasion": null,
+      "histologic_type": "PTC",
+      "site": "Left Lobe"
+    },
+    {
+      "research_id": "10379",
+      "surg_date": "2013-02-08 00:00:00",
+      "tumor_index": "1",
+      "extrathyroidal_extension": "c/a",
+      "capsular_invasion": "widely invasive",
+      "margin_status": "involved",
+      "lymphatic_invasion": "x",
+      "perineural_invasion": null,
+      "histologic_type": "PTC",
+      "site": "left lobe"
+    },
+    {
+      "research_id": "1792",
+      "surg_date": "2011-07-13 00:00:00",
+      "tumor_index": "1",
+      "extrathyroidal_extension": "c/a",
+      "capsular_invasion": "x",
+      "margin_status": "involved",
+      "lymphatic_invasion": "x",
+      "perineural_invasion": null,
+      "histologic_type": "PTC",
+      "site": "left lobe"
+    },
+    {
+      "research_id": "3601",
+      "surg_date": "2011-10-04 00:00:00",
+      "tumor_index": "1",
+      "extrathyroidal_extension": "c/a",
+      "capsular_invasion": "minimal",
+      "margin_status": "x",
+      "lymphatic_invasion": "present",
+      "perineural_invasion": "x",
+      "histologic_type": "PTC",
+      "site": "left lobe"
+    }
+  ],
+  "cpm_grade_for_ca_patients": [
+    [
+      "present_ungraded",
+      15
+    ],
+    [
+      "absent",
+      13
+    ],
+    [
+      "microscopic",
+      2
+    ],
+    [
+      "gross",
+      1
+    ]
+  ]
+}
