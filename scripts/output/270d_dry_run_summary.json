@@ -1,5 +1,5 @@
 {
-  "started_at": "2026-04-17T07:28:59.640107+00:00",
+  "started_at": "2026-04-17T07:36:11.565404+00:00",
   "publication_db": "thyroid_canonical_publication_v1_0",
   "archive_db": "Thyroid 2026 UPdated",
   "mode": "dry-run",
@@ -17,27 +17,8 @@
     "failures": []
   },
   "migrate_count": 118,
-  "divergent_count": 3,
-  "divergent_rows": [
-    {
-      "schema": "main",
-      "name": "canonical_diagnosis_unified_v1",
-      "row_count": "11259",
-      "justification": "snapshot-suffix match in archive_pub_v1_0 but row counts differ: stray=11259 vs [canonical_diagnosis_unified_v1_pre251_20260417T012311Z(rc=11028)]; halt for human review (270d refuses to migrate DIVERGENT rows)"
-    },
-    {
-      "schema": "main",
-      "name": "ln_master_rollup_v1",
-      "row_count": "4290",
-      "justification": "snapshot-suffix match in archive_pub_v1_0 but row counts differ: stray=4290 vs [ln_master_rollup_v1_pre251_20260417T012311Z(rc=4273)]; halt for human review (270d refuses to migrate DIVERGENT rows)"
-    },
-    {
-      "schema": "main",
-      "name": "serial_imaging_us",
-      "row_count": "0",
-      "justification": "snapshot-suffix match in archive_pub_v1_0 but row counts differ: stray=0 vs [serial_imaging_us_pre251_20260417T012311Z(rc=4162)]; halt for human review (270d refuses to migrate DIVERGENT rows)"
-    }
-  ],
+  "divergent_count": 0,
+  "divergent_rows": [],
   "per_schema_counts": {
     "main": 54,
     "mm_contract_dev": 22,
@@ -51,13 +32,11 @@
     "migrate_count_limit": 250,
     "per_object_timeout_seconds": 30
   },
-  "halt_reasons": [
-    "3 DIVERGENT row(s) in 270c manifest \u2014 resolve (re-run 270c with truth, or human-classify each row to DROP_ALREADY_SNAPSHOTTED / MIGRATE_TO_ARCHIVE_LEGACY) before --execute. See dry_run_summary.json for the row list."
-  ],
-  "execute_safe": false,
+  "halt_reasons": [],
+  "execute_safe": true,
   "outputs": {
     "plan_csv": "/Users/loganglosser/THYROID_2026/scripts/output/270d_dry_run_plan.csv",
     "restore_test_json": "/Users/loganglosser/THYROID_2026/scripts/output/270d_dry_run_restore_test.json"
   },
-  "next_action": "Resolve halt_reasons before --execute"
+  "next_action": "Plan is execute-safe. Re-run with --execute after Logan reviews 270c_stray_main_review_list.csv (156 rows in main) and 270c_phase_b_disposition_manifest.csv (33 KEEP_PENDING_V1_1_DECISION rows)."
 }

@@ -1,5 +1,5 @@
 === START 270d — stray schema migration (DRY-RUN) ===
-started_at: 2026-04-17T07:28:59.640107+00:00
+started_at: 2026-04-17T07:36:11.565404+00:00
 input plan: /Users/loganglosser/THYROID_2026/scripts/output/270c_stray_schema_consolidation.csv
 connected to thyroid_canonical_publication_v1_0
 
@@ -10,11 +10,7 @@ connected to thyroid_canonical_publication_v1_0
 
 --- load plan ---
   MIGRATE_TO_ARCHIVE_LEGACY rows in 270c manifest: 118
-  DIVERGENT rows in 270c manifest: 3
-  DIVERGENT rows (270d --execute will refuse while any exist):
-    - main.canonical_diagnosis_unified_v1 (row_count=11259): snapshot-suffix match in archive_pub_v1_0 but row counts differ: stray=11259 vs [canonical_diagnosis_unified_v1_pre251_20260417T012311Z(rc=1
-    - main.ln_master_rollup_v1 (row_count=4290): snapshot-suffix match in archive_pub_v1_0 but row counts differ: stray=4290 vs [ln_master_rollup_v1_pre251_20260417T012311Z(rc=4273)]; halt 
-    - main.serial_imaging_us (row_count=0): snapshot-suffix match in archive_pub_v1_0 but row counts differ: stray=0 vs [serial_imaging_us_pre251_20260417T012311Z(rc=4162)]; halt for h
+  DIVERGENT rows in 270c manifest: 0
   per-schema breakdown: {'main': 54, 'mm_contract_dev': 22, 'qa': 27, 'v2_stage': 15}
 
 --- revalidate against live state ---
@@ -35,9 +31,5 @@ connected to thyroid_canonical_publication_v1_0
 
   wrote /Users/loganglosser/THYROID_2026/scripts/output/270d_dry_run_plan.csv (118 rows)
   wrote /Users/loganglosser/THYROID_2026/scripts/output/270d_dry_run_summary.json
-
---- halt reasons ---
-  - 3 DIVERGENT row(s) in 270c manifest — resolve (re-run 270c with truth, or human-classify each row to DROP_ALREADY_SNAPSHOTTED / MIGRATE_TO_ARCHIVE_LEGACY) before --execute. See dry_run_summary.json for the row list.
-Resolve halt reasons before --execute.
 
 === END 270d (DRY-RUN) ===
