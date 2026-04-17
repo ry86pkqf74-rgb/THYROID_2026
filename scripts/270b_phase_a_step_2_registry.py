@@ -51,6 +51,70 @@ TRIAGE_FQ = f"{WS}.cpm_unmapped_triage_v265"
 REGISTRY_FQ = f"{WS}.detail_table_registry_v1"
 
 # =========================================================================
+# Stage-0 conventions (applied BEFORE Stage 1)
+# =========================================================================
+# identity_column_self_reference convention:
+# Self-reference to canonical_patient_master is VALID ONLY for identity
+# columns on this allowlist. Every other column must resolve to a real
+# upstream feeder (or build_pipeline via Stage 4 fallback).
+IDENTITY_ALLOWLIST = {"research_id"}
+
+# assembly_bookkeeping_build_pipeline convention:
+# CPM columns recording *how the row was assembled* rather than *clinical
+# facts about the patient* resolve to build_pipeline.
+ASSEMBLY_BOOKKEEPING_RE = re.compile(
+    r"^provenance_"
+    r"|^source_(script|table|method)$"
+    r"|_assembled_at$"
+    r"|_computed_at$"
+    r"|_confidence_meta$",
+    re.IGNORECASE,
+)
+
+
+# =========================================================================
+# feeder_eligibility_patterns convention (per Q1 refinement)
+# =========================================================================
+# Tables matching any EXCLUDE_PATTERNS regex are dropped from the candidate
+# pool for Stages 1/2/3. Identity columns (per IDENTITY_ALLOWLIST) override
+# EXCLUDE for self-reference. Domain='Analysis' alone is NOT an exclude
+# signal (full-cohort resolvers in that domain like
+# patient_analysis_resolved_v1 are legitimate feeders).
+EXCLUDE_PATTERNS = [
+    re.compile(r"^canonical_patient_master$"),
+    re.compile(r"^analysis_.*_subset_v\d+$"),
+    re.compile(r"^manuscript_cohort_v\d+$"),
+    re.compile(r"^__readme$"),
+    re.compile(r"^data_dictionary_v\d+$"),
+    re.compile(r"^molecular_assay_dictionary$"),
+    re.compile(r"^molecular_code_crosswalk$"),
+    re.compile(r"^molecular_ingestion_runs$"),
+    re.compile(r".*_review_v\d+$"),
+    re.compile(r".*_audit_v\d+$"),
+    re.compile(r".*_discordance_v\d+$"),
+    re.compile(r".*_dedup_map_v\d+$"),
+]
+
+
+def is_excluded_feeder(feeder: str) -> bool:
+    return any(p.search(feeder) for p in EXCLUDE_PATTERNS)
+
+
+def filter_candidates(candidates: list[str], col: str) -> tuple[list[str], list[str]]:
+    """Return (kept, excluded). Identity columns bypass EXCLUDE_PATTERNS."""
+    if col in IDENTITY_ALLOWLIST:
+        return list(candidates), []
+    kept: list[str] = []
+    excluded: list[str] = []
+    for c in candidates:
+        if is_excluded_feeder(c):
+            excluded.append(c)
+        else:
+            kept.append(c)
+    return kept, excluded
+
+
+# =========================================================================
 # Stage-2 suffix-stripping list (extended per Q1 amendment)
 # Order matters — strip longer suffixes first so '_inferred_negative' wins
 # over '_negative' (if we ever add it). The _v\d+ pattern is regex-based
@@ -291,6 +355,26 @@ def tie_break(
         return winner, f"{stage_label}_registry_preferred", rejected
 
     if len(in_registry_with_norm) >= 2:
+        # Full-cohort tie-break (per Q3 spec): if exactly one in-registry-
+        # with-normalized candidate has total_patients == 10871, pick it.
+        # Codifies "the only full-cohort feeder is the canonical resolver".
+        full_cohort = [
+            c for c in in_registry_with_norm
+            if registry.get(c, {}).get("total_patients") == 10871
+        ]
+        if len(full_cohort) == 1:
+            winner = full_cohort[0]
+            for c in deduped:
+                if c != winner:
+                    rejected.append({
+                        "candidate": c,
+                        "reason": (
+                            "lower_coverage_than_full_cohort"
+                            if c in registry
+                            else "not_in_registry"
+                        ),
+                    })
+            return winner, f"{stage_label}_full_cohort_preferred", rejected
         return None, f"{stage_label}_ambiguous_multi_registry", []
 
     # 0 in registry: coverage heuristic
@@ -323,6 +407,9 @@ def tie_break(
 # 4-stage matcher
 # =========================================================================
 
+DEBUG_COLS = frozenset({"sex", "race", "age_at_surgery"})
+
+
 def match_one(
     col: str,
     registry: dict[str, dict],
@@ -330,13 +417,56 @@ def match_one(
 ) -> dict:
     decision = _new_decision(col)
 
+    # ---- Stage 0a: identity_column_self_reference ----
+    # research_id (and any future identity col) → canonical_patient_master.
+    # Bypasses EXCLUDE_PATTERNS by design.
+    if col in IDENTITY_ALLOWLIST:
+        decision.update({
+            "stage": 0,
+            "match_method": "stage0_identity_self_reference",
+            "resolved_feeder": "canonical_patient_master",
+            "category": "obvious",
+            "candidates": ["canonical_patient_master"],
+            "matched_source_col": col,
+        })
+        decision["stage_attempts"].append({
+            "stage": 0, "method": "identity_self_reference",
+            "allowlist_hit": True,
+        })
+        return decision
+
+    # ---- Stage 0b: assembly_bookkeeping_build_pipeline ----
+    # Provenance/source/computed-at columns describe HOW the row was built,
+    # not WHAT clinical fact about the patient. They resolve to
+    # build_pipeline regardless of whether other feeders happen to have
+    # the same column name.
+    if ASSEMBLY_BOOKKEEPING_RE.search(col):
+        decision.update({
+            "stage": 0,
+            "match_method": "stage0_assembly_bookkeeping",
+            "resolved_feeder": "build_pipeline",
+            "category": "build_pipeline",
+            "candidates": [],
+        })
+        decision["stage_attempts"].append({
+            "stage": 0, "method": "assembly_bookkeeping_pattern",
+            "regex_match": True,
+        })
+        return decision
+
     # ---- Stage 1: exact name in any feeder column set ----
-    s1_candidates = [t for t, cols in feeder_cols.items() if col in cols]
-    decision["stage_attempts"].append({
+    s1_raw = [t for t, cols in feeder_cols.items() if col in cols]
+    s1_candidates, s1_excluded = filter_candidates(s1_raw, col)
+    s1_log = {
         "stage": 1, "method": "exact",
-        "n_candidates": len(s1_candidates),
+        "n_raw_candidates": len(s1_raw),
+        "n_candidates_after_exclude": len(s1_candidates),
         "candidates": s1_candidates,
-    })
+        "excluded_by_pattern": s1_excluded,
+    }
+    if col in DEBUG_COLS:
+        s1_log["debug_post_exclude_candidates"] = s1_candidates
+    decision["stage_attempts"].append(s1_log)
     if s1_candidates:
         winner, method, rejected = tie_break(s1_candidates, registry, "stage1_exact")
         if winner:
@@ -350,7 +480,6 @@ def match_one(
                 "matched_source_col": col,
             })
             return decision
-        decision["category_provisional"] = "ambiguous_at_stage_1"
         decision["candidates"] = s1_candidates
         decision["match_method"] = method
         decision["category"] = "ambiguous"
@@ -362,7 +491,6 @@ def match_one(
     for stripped in strip_one_suffix(col):
         for t, cols in feeder_cols.items():
             if stripped in cols:
-                # Detect which suffix produced this stripped form
                 if STAGE2_VERSION_RE.search(col[len(stripped):]):
                     suf = "_v\\d+"
                 else:
@@ -370,17 +498,21 @@ def match_one(
                 s2_candidates.append((t, stripped, suf))
         s2_attempts.append({"stripped_to": stripped, "n_hits": sum(
             1 for c in s2_candidates if c[1] == stripped)})
+    s2_feeders_raw = [c[0] for c in s2_candidates]
+    s2_feeders_kept, s2_feeders_excluded = filter_candidates(s2_feeders_raw, col)
+    s2_candidates_kept = [c for c in s2_candidates if c[0] in s2_feeders_kept]
     decision["stage_attempts"].append({
         "stage": 2, "method": "suffix_strip",
         "attempts": s2_attempts,
-        "n_candidates": len(s2_candidates),
+        "n_raw_candidates": len(s2_candidates),
+        "n_candidates_after_exclude": len(s2_candidates_kept),
+        "excluded_by_pattern": list(set(s2_feeders_excluded)),
     })
-    if s2_candidates:
-        feeder_only = [c[0] for c in s2_candidates]
+    if s2_candidates_kept:
+        feeder_only = [c[0] for c in s2_candidates_kept]
         winner, method, rejected = tie_break(feeder_only, registry, "stage2_suffix")
         if winner:
-            # Find the (source_col, suffix) for the winner
-            chosen = next(c for c in s2_candidates if c[0] == winner)
+            chosen = next(c for c in s2_candidates_kept if c[0] == winner)
             decision.update({
                 "stage": 2,
                 "match_method": f"{method}_via_{chosen[2]}",
@@ -407,21 +539,24 @@ def match_one(
             matched_prefix = prefix
             s3_candidates = [f for f in feeders if f in registry or f in feeder_cols]
             break
+    s3_kept, s3_excluded = filter_candidates(s3_candidates, col)
     decision["stage_attempts"].append({
         "stage": 3, "method": "domain_prefix",
         "matched_prefix": matched_prefix,
         "raw_candidates": (DOMAIN_PREFIX_MAP.get(matched_prefix, []) if matched_prefix else []),
         "filtered_candidates": s3_candidates,
+        "n_candidates_after_exclude": len(s3_kept),
+        "excluded_by_pattern": s3_excluded,
     })
-    if s3_candidates:
-        winner, method, rejected = tie_break(s3_candidates, registry, "stage3_domain")
+    if s3_kept:
+        winner, method, rejected = tie_break(s3_kept, registry, "stage3_domain")
         if winner:
             decision.update({
                 "stage": 3,
                 "match_method": method,
                 "resolved_feeder": winner,
                 "category": "obvious",
-                "candidates": s3_candidates,
+                "candidates": s3_kept,
                 "alternatives_rejected": rejected,
                 "matched_source_col": None,
             })
@@ -430,7 +565,7 @@ def match_one(
             "stage": 3,
             "match_method": method,
             "category": "ambiguous",
-            "candidates": s3_candidates,
+            "candidates": s3_kept,
         })
         return decision
 
@@ -581,12 +716,48 @@ def main_dry_run() -> int:
             f.write(json.dumps({"source_set": "B_computed_score", **d}) + "\n")
     log(f"  wrote {MATCH_LOG_JSONL} ({len(decisions) + len(bucket_b_decisions)} entries)")
 
+    # ---- age_at_surgery informational probe (DOB + surgery_date co-presence) ----
+    age_at_surgery_note: dict | None = None
+    if "age_at_surgery" in bucket_c_cols:
+        age_decision = next((d for d in decisions if d["cpm_col"] == "age_at_surgery"), None)
+        # Find any non-excluded feeder with both DOB and surgery_date-ish col
+        has_both: list[str] = []
+        for t, cols_set in feeder_cols.items():
+            if is_excluded_feeder(t):
+                continue
+            has_dob = any(c.lower() in {"dob", "date_of_birth"} for c in cols_set)
+            has_surg = any(
+                c.lower() in {"surgery_date", "surg_date", "first_surgery_date"}
+                for c in cols_set
+            )
+            if has_dob and has_surg:
+                has_both.append(t)
+        age_at_surgery_note = {
+            "resolved_via_branch": (
+                age_decision["match_method"] if age_decision else None
+            ),
+            "resolved_feeder": (
+                age_decision["resolved_feeder"] if age_decision else None
+            ),
+            "non_excluded_feeders_with_dob_and_surgery_date": has_both,
+            "interpretation": (
+                "Pre-computed in feeder (Stage 1 hit)"
+                if age_decision and age_decision["stage"] == 1
+                else (
+                    f"Computable from DOB+surgery_date in {len(has_both)} feeder(s); "
+                    f"resolved via stage-{age_decision['stage'] if age_decision else '?'} fallback"
+                )
+            ),
+        }
+        log(f"\n  age_at_surgery branch report: {age_at_surgery_note}")
+
     # Summary JSON
     summary = {
         "started_at": started_at.isoformat(),
         "finished_at": datetime.now(timezone.utc).isoformat(),
         "publication_db": PUBLICATION_DB,
         "mode": "dry-run",
+        "matcher_version": "v2_post_self_reference_fix",
         "registry_rows": len(registry),
         "feeders_with_discoverable_columns": len(feeder_cols_nonempty),
         "bucket_c_input": len(bucket_c_cols),
@@ -596,6 +767,21 @@ def main_dry_run() -> int:
         "bucket_c_build_pipeline_fallthrough": len(build_pipe),
         "bucket_b_auto_build_pipeline": len(bucket_b_decisions),
         "obvious_stage_breakdown": by_stage,
+        "matcher_constants": {
+            "identity_allowlist": sorted(IDENTITY_ALLOWLIST),
+            "exclude_patterns": [p.pattern for p in EXCLUDE_PATTERNS],
+            "assembly_bookkeeping_regex": ASSEMBLY_BOOKKEEPING_RE.pattern,
+        },
+        "conventions_to_register_in_execute": [
+            "identity_column_self_reference",
+            "assembly_bookkeeping_build_pipeline",
+            "single_source_rollup_inherits_feeder",
+            "derived_column_build_pipeline",
+            "feeder_eligibility_patterns",
+            "main_schema_keep_list",
+            "v1_1_tech_debt_register",
+        ],
+        "age_at_surgery_branch_report": age_at_surgery_note,
         "outputs": {
             "obvious_csv": str(OBVIOUS_CSV),
             "ambiguous_csv": str(AMBIGUOUS_CSV),

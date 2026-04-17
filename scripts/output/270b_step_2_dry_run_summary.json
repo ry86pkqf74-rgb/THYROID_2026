@@ -1,18 +1,55 @@
 {
-  "started_at": "2026-04-17T06:07:42.882795+00:00",
-  "finished_at": "2026-04-17T06:07:44.952918+00:00",
+  "started_at": "2026-04-17T06:22:33.762032+00:00",
+  "finished_at": "2026-04-17T06:22:36.439446+00:00",
   "publication_db": "thyroid_canonical_publication_v1_0",
   "mode": "dry-run",
+  "matcher_version": "v2_post_self_reference_fix",
   "registry_rows": 116,
   "feeders_with_discoverable_columns": 116,
   "bucket_c_input": 174,
   "bucket_b_input": 49,
-  "bucket_c_obvious_matches": 165,
-  "bucket_c_ambiguous": 9,
-  "bucket_c_build_pipeline_fallthrough": 0,
+  "bucket_c_obvious_matches": 34,
+  "bucket_c_ambiguous": 2,
+  "bucket_c_build_pipeline_fallthrough": 138,
   "bucket_b_auto_build_pipeline": 49,
   "obvious_stage_breakdown": {
-    "1": 165
+    "1": 33,
+    "0": 1
+  },
+  "matcher_constants": {
+    "identity_allowlist": [
+      "research_id"
+    ],
+    "exclude_patterns": [
+      "^canonical_patient_master$",
+      "^analysis_.*_subset_v\\d+$",
+      "^manuscript_cohort_v\\d+$",
+      "^__readme$",
+      "^data_dictionary_v\\d+$",
+      "^molecular_assay_dictionary$",
+      "^molecular_code_crosswalk$",
+      "^molecular_ingestion_runs$",
+      ".*_review_v\\d+$",
+      ".*_audit_v\\d+$",
+      ".*_discordance_v\\d+$",
+      ".*_dedup_map_v\\d+$"
+    ],
+    "assembly_bookkeeping_regex": "^provenance_|^source_(script|table|method)$|_assembled_at$|_computed_at$|_confidence_meta$"
+  },
+  "conventions_to_register_in_execute": [
+    "identity_column_self_reference",
+    "assembly_bookkeeping_build_pipeline",
+    "single_source_rollup_inherits_feeder",
+    "derived_column_build_pipeline",
+    "feeder_eligibility_patterns",
+    "main_schema_keep_list",
+    "v1_1_tech_debt_register"
+  ],
+  "age_at_surgery_branch_report": {
+    "resolved_via_branch": "stage1_exact_full_cohort_preferred",
+    "resolved_feeder": "patient_analysis_resolved_v1",
+    "non_excluded_feeders_with_dob_and_surgery_date": [],
+    "interpretation": "Pre-computed in feeder (Stage 1 hit)"
   },
   "outputs": {
     "obvious_csv": "/Users/loganglosser/THYROID_2026/scripts/output/270b_bucket_c_obvious_matches.csv",

@@ -1,5 +1,5 @@
 === START 270b Step 2 (DRY-RUN) ===
-started_at: 2026-04-17T06:07:42.882795+00:00
+started_at: 2026-04-17T06:22:33.762032+00:00
 connected to thyroid_canonical_publication_v1_0
 
 --- pre-fetch ---
@@ -9,19 +9,21 @@ connected to thyroid_canonical_publication_v1_0
   Bucket-B rows: 49
 
 --- Bucket-C 4-stage matching ---
-  obvious matches:  165
-  ambiguous:        9
-  build_pipeline:   0
-  obvious stage breakdown: {1: 165}
+  obvious matches:  34
+  ambiguous:        2
+  build_pipeline:   138
+  obvious stage breakdown: {1: 33, 0: 1}
 
 --- Bucket-B auto-assignment ---
   Bucket-B → build_pipeline: 49
 
 --- emit CSVs ---
-  wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_bucket_c_obvious_matches.csv (165 rows)
-  wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_bucket_c_ambiguous.csv (9 rows)
-  wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_bucket_c_build_pipeline.csv (0 rows)
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_bucket_c_obvious_matches.csv (34 rows)
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_bucket_c_ambiguous.csv (2 rows)
+  wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_bucket_c_build_pipeline.csv (138 rows)
   wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_step_2_match_log.jsonl (223 entries)
+
+  age_at_surgery branch report: {'resolved_via_branch': 'stage1_exact_full_cohort_preferred', 'resolved_feeder': 'patient_analysis_resolved_v1', 'non_excluded_feeders_with_dob_and_surgery_date': [], 'interpretation': 'Pre-computed in feeder (Stage 1 hit)'}
 
   wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_step_2_dry_run_summary.json
   wrote /Users/loganglosser/THYROID_2026/scripts/output/270b_step_2_dry_run.log
