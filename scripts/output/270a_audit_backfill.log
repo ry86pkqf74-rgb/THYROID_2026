@@ -1,0 +1,25 @@
+=== START Script 270a (Phase 0 audit backfill) ===
+started_at: 2026-04-17T05:35:22.156188+00:00
+connected to thyroid_canonical_publication_v1_0
+
+--- PRE-STATE ---
+  audit table rows: 28
+  pre status distribution: {'OK': 24, 'DOCUMENTED_GAP': 3, 'DOCUMENTED_NOOP': 1}
+
+--- INSERT 3 BACKFILL ROWS ---
+  inserted: script=267 finding_id='backfill_267_drop_legacy_molecular_cols' metric='cpm_column_count' 1495->1491 status='OK_BACKFILLED_270'
+  inserted: script=268 finding_id='backfill_268_bethesda_semantics' metric='cpm_column_count' 1491->1499 status='OK_BACKFILLED_270'
+  inserted: script=269 finding_id='backfill_269_molecular_episode_backfill' metric='molecular_test_episode_v2_rows' 10125->10650 status='OK_BACKFILLED_270'
+
+--- POST-STATE ---
+  audit table rows: 31
+  pass: 28 + 3 = 31
+  landed rows (3):
+    ('267', 'backfill_267_drop_legacy_molecular_cols', 1495, 1491, 'OK_BACKFILLED_270')
+    ('268', 'backfill_268_bethesda_semantics', 1491, 1499, 'OK_BACKFILLED_270')
+    ('269', 'backfill_269_molecular_episode_backfill', 10125, 10650, 'OK_BACKFILLED_270')
+  post status distribution: {'OK': 24, 'OK_BACKFILLED_270': 3, 'DOCUMENTED_GAP': 3, 'DOCUMENTED_NOOP': 1}
+
+wrote /Users/loganglosser/THYROID_2026/scripts/output/270a_audit_backfill.json
+wrote /Users/loganglosser/THYROID_2026/scripts/output/270a_audit_backfill.log
+=== END Script 270a ===

@@ -1,0 +1,53 @@
+{
+  "started_at": "2026-04-17T05:35:24.921304+00:00",
+  "publication_db": "thyroid_canonical_publication_v1_0",
+  "audit_table": "\"thyroid_canonical_publication_v1_0\".manuscript_workspace.v1_1_finalization_audit_v1",
+  "git_commit": "8c971e6c8c961ca5797d6faf7452da4b507da82a",
+  "git_commit_ts": "2026-04-17T05:13:01Z",
+  "rows_pre": 28,
+  "rows_post": 31,
+  "rows_inserted": 3,
+  "pre_status_distribution": {
+    "OK": 24,
+    "DOCUMENTED_GAP": 3,
+    "DOCUMENTED_NOOP": 1
+  },
+  "post_status_distribution": {
+    "OK": 24,
+    "OK_BACKFILLED_270": 3,
+    "DOCUMENTED_GAP": 3,
+    "DOCUMENTED_NOOP": 1
+  },
+  "backfill_rows": [
+    {
+      "script_num": "267",
+      "finding_id": "backfill_267_drop_legacy_molecular_cols",
+      "metric": "cpm_column_count",
+      "count_before": 1495,
+      "count_after": 1491,
+      "target_after": 1491,
+      "status": "OK_BACKFILLED_270",
+      "run_ts": "2026-04-17T04:53:40+00:00"
+    },
+    {
+      "script_num": "268",
+      "finding_id": "backfill_268_bethesda_semantics",
+      "metric": "cpm_column_count",
+      "count_before": 1491,
+      "count_after": 1499,
+      "target_after": 1499,
+      "status": "OK_BACKFILLED_270",
+      "run_ts": "2026-04-17T04:58:58+00:00"
+    },
+    {
+      "script_num": "269",
+      "finding_id": "backfill_269_molecular_episode_backfill",
+      "metric": "molecular_test_episode_v2_rows",
+      "count_before": 10125,
+      "count_after": 10650,
+      "target_after": 10650,
+      "status": "OK_BACKFILLED_270",
+      "run_ts": "2026-04-17T05:01:19+00:00"
+    }
+  ]
+}
