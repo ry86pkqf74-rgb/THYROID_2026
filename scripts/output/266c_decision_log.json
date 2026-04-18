@@ -6,7 +6,7 @@
   "results": {
     "meta": {
       "mode": "APPLY",
-      "started_at": "2026-04-18T00:37:16.089520+00:00",
+      "started_at": "2026-04-18T00:40:08.375926+00:00",
       "script": "Script 266c"
     },
     "phase_0": {
@@ -585,12 +585,65 @@
       ],
       "view_dep_pregate_refs": []
     },
-    "phase_6": {
-      "queryable_main_tables": 115,
-      "views_total": 67,
+    "phase_7": {
+      "psyn_expected_present": [
+        "tumor_1_m_stage_ajcc7",
+        "tumor_1_m_stage_ajcc8",
+        "tumor_1_n_stage_ajcc7",
+        "tumor_1_n_stage_ajcc8",
+        "tumor_1_stage_group_ajcc7",
+        "tumor_1_stage_group_ajcc8",
+        "tumor_1_t_stage_ajcc7",
+        "tumor_1_t_stage_ajcc8",
+        "tumor_2_m_stage_ajcc7",
+        "tumor_2_m_stage_ajcc8",
+        "tumor_2_n_stage_ajcc7",
+        "tumor_2_n_stage_ajcc8",
+        "tumor_2_stage_group_ajcc7",
+        "tumor_2_stage_group_ajcc8",
+        "tumor_2_t_stage_ajcc7",
+        "tumor_2_t_stage_ajcc8",
+        "tumor_3_m_stage_ajcc7",
+        "tumor_3_m_stage_ajcc8",
+        "tumor_3_n_stage_ajcc7",
+        "tumor_3_n_stage_ajcc8",
+        "tumor_3_stage_group_ajcc7",
+        "tumor_3_stage_group_ajcc8",
+        "tumor_3_t_stage_ajcc7",
+        "tumor_3_t_stage_ajcc8",
+        "tumor_4_m_stage_ajcc7",
+        "tumor_4_m_stage_ajcc8",
+        "tumor_4_n_stage_ajcc7",
+        "tumor_4_n_stage_ajcc8",
+        "tumor_4_stage_group_ajcc7",
+        "tumor_4_stage_group_ajcc8",
+        "tumor_4_t_stage_ajcc7",
+        "tumor_4_t_stage_ajcc8",
+        "tumor_5_m_stage_ajcc7",
+        "tumor_5_m_stage_ajcc8",
+        "tumor_5_n_stage_ajcc7",
+        "tumor_5_n_stage_ajcc8",
+        "tumor_5_stage_group_ajcc7",
+        "tumor_5_stage_group_ajcc8",
+        "tumor_5_t_stage_ajcc7",
+        "tumor_5_t_stage_ajcc8"
+      ],
+      "psyn_missing": [],
+      "tpath_expected_present": [
+        "histology_1_m_stage_ajcc7",
+        "histology_1_n_stage_ajcc7",
+        "histology_1_overall_stage_ajcc7",
+        "histology_1_t_stage_ajcc7"
+      ],
+      "tpath_missing": [],
+      "tpath_n_cols_now": 253,
+      "rename_binder_failures": [],
       "views_ok": 67,
-      "views_error": 0
+      "views_total": 67,
+      "views_failed": [],
+      "archived_count": 0,
+      "deprecated_residue": []
     }
   },
-  "elapsed_seconds": 35.6
+  "elapsed_seconds": 17.5
 }

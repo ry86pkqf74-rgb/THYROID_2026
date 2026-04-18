@@ -1233,46 +1233,56 @@ def phase_7(con, log, do_writes: bool, prior: dict) -> dict:
 
     out: dict = {}
 
-    # Gate A: path_synoptics +40 cols vs Phase 0 snapshot
+    # Gate A: path_synoptics has all 40 expected new cols.
+    # Made self-contained 2026-04-18: original gate computed delta vs
+    # prior['phase_0']['psyn_cols_pre'] which is only populated when Phase 2
+    # ran in the same invocation. With --phase 7 invoked alone, the gate's
+    # delta is 0 and falsely fails. Switch to absolute presence check of
+    # the 40 expected wide-pivot columns.
     psyn_cols_now = {r[0] for r in con.execute(f"""
         SELECT column_name FROM information_schema.columns
          WHERE table_catalog='{PUBLICATION_DB}' AND table_schema='main'
            AND table_name='path_synoptics'
     """).fetchall()}
-    psyn_pre = set(prior.get("phase_0", {}).get("psyn_cols_pre", []))
-    psyn_added = sorted(psyn_cols_now - psyn_pre)
-    log(f"  GATE path_synoptics +cols: {len(psyn_added)} (target 40)")
-    out["psyn_added_cols"] = psyn_added
-    if len(psyn_added) < 40:
+    expected_psyn_added = {
+        f"tumor_{n}_{f}_ajcc{ed}"
+        for n in (1, 2, 3, 4, 5)
+        for f in ("t_stage", "n_stage", "m_stage", "stage_group")
+        for ed in (7, 8)
+    }
+    psyn_present_expected = expected_psyn_added & psyn_cols_now
+    psyn_missing = sorted(expected_psyn_added - psyn_cols_now)
+    log(f"  GATE path_synoptics expected new cols present: "
+        f"{len(psyn_present_expected)}/40 (target 40)")
+    out["psyn_expected_present"] = sorted(psyn_present_expected)
+    out["psyn_missing"] = psyn_missing
+    if psyn_missing:
         raise SystemExit(
-            f"path_synoptics gained {len(psyn_added)} cols < 40."
+            f"path_synoptics missing expected new columns: {psyn_missing}"
         )
 
-    # Gate B: tumor_pathology +4 cols vs Phase 0 snapshot (SCOPE-CUT 2026-04-17)
+    # Gate B: tumor_pathology has all 4 expected new cols (SCOPE-CUT 2026-04-17).
+    # Same self-contained-presence-check fix as Gate A.
     tpath_cols_now = {r[0] for r in con.execute(f"""
         SELECT column_name FROM information_schema.columns
          WHERE table_catalog='{PUBLICATION_DB}' AND table_schema='main'
            AND table_name='tumor_pathology'
     """).fetchall()}
-    tpath_pre = set(prior.get("phase_0", {}).get("tpath_cols_pre", []))
-    tpath_added = sorted(tpath_cols_now - tpath_pre)
-    log(f"  GATE tumor_pathology +cols: {len(tpath_added)} (target 4; "
-        f"pre={len(tpath_pre)} -> post={len(tpath_cols_now)})")
-    out["tpath_added_cols"] = tpath_added
-    out["tpath_n_cols_now"] = len(tpath_cols_now)
-    if len(tpath_added) < 4:
-        raise SystemExit(
-            f"tumor_pathology gained {len(tpath_added)} cols < 4. "
-            f"Expected the histology_1 AJCC7 quartet."
-        )
     expected_tpath_added = {
         "histology_1_t_stage_ajcc7", "histology_1_n_stage_ajcc7",
         "histology_1_m_stage_ajcc7", "histology_1_overall_stage_ajcc7",
     }
-    missing_tpath = sorted(expected_tpath_added - set(tpath_added))
-    if missing_tpath:
+    tpath_present_expected = expected_tpath_added & tpath_cols_now
+    tpath_missing = sorted(expected_tpath_added - tpath_cols_now)
+    log(f"  GATE tumor_pathology expected new cols present: "
+        f"{len(tpath_present_expected)}/4 (target 4); "
+        f"tumor_pathology total cols now: {len(tpath_cols_now)}")
+    out["tpath_expected_present"] = sorted(tpath_present_expected)
+    out["tpath_missing"] = tpath_missing
+    out["tpath_n_cols_now"] = len(tpath_cols_now)
+    if tpath_missing:
         raise SystemExit(
-            f"tumor_pathology missing expected new columns: {missing_tpath}"
+            f"tumor_pathology missing expected new columns: {tpath_missing}"
         )
 
     # Gate C: un-versioned columns no longer queryable on CTC + TEM
@@ -1289,12 +1299,39 @@ def phase_7(con, log, do_writes: bool, prior: dict) -> dict:
     if rename_failures:
         raise SystemExit(f"Rename gate failed: {rename_failures}")
 
-    # Gate D: 65/65 views OK
-    p6 = prior.get("phase_6", {})
-    log(f"  GATE views: {p6.get('views_ok')}/{p6.get('views_total')} OK")
-    if p6.get("views_error", 1) != 0 or p6.get("views_total") != 65:
+    # Gate D: all manuscript_workspace views pass smoke.
+    # Made self-contained 2026-04-18: rather than read prior['phase_6'] (which
+    # is empty when --phase 7 runs alone) and require an exact view count
+    # (originally 65; live is 67 after the v1.0 cleanup added 2 more), this
+    # gate now re-runs a SELECT 1 smoke directly. Any view that errors
+    # raises SystemExit.
+    ws_views = [r[0] for r in con.execute(f"""
+        SELECT table_name FROM information_schema.views
+         WHERE table_catalog='{PUBLICATION_DB}'
+           AND table_schema='manuscript_workspace'
+         ORDER BY table_name
+    """).fetchall()]
+    n_ok = 0
+    n_fail = 0
+    failed = []
+    for v in ws_views:
+        try:
+            con.execute(
+                f'SELECT 1 FROM {PUBLICATION_DB}.manuscript_workspace."{v}" '
+                f'LIMIT 1'
+            ).fetchone()
+            n_ok += 1
+        except Exception as e:
+            n_fail += 1
+            failed.append((v, str(e).splitlines()[0][:200]))
+    log(f"  GATE views: {n_ok}/{len(ws_views)} OK")
+    out["views_ok"] = n_ok
+    out["views_total"] = len(ws_views)
+    out["views_failed"] = failed
+    if n_fail:
         raise SystemExit(
-            f"View smoke gate failed: {p6.get('views_ok')}/{p6.get('views_total')} OK"
+            f"View smoke gate failed: {n_ok}/{len(ws_views)} OK; "
+            f"first failures: {failed[:5]}"
         )
 
     # Gate E: archive manifest ≥ 2 entries (or documented absence)
