@@ -1,0 +1,8 @@
+{
+  "step": 8,
+  "started_at": "2026-04-18T02:18:16Z",
+  "exported": "exports/canonical_patient_master_20260418_script271b.parquet",
+  "n_rows": 10871,
+  "n_cols": 1526,
+  "finished_at": "2026-04-18T02:18:23Z"
+}

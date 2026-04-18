@@ -219,3 +219,9 @@
 [2026-04-18T02:17:56Z]   wrote /Users/loganglosser/THYROID_2026/docs/LATERALITY_NORMALIZATION_20260418.md
 [2026-04-18T02:17:56Z] wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_step7.json
 [2026-04-18T02:17:56Z] ########## Script 271b DONE (--step 7) ##########
+[2026-04-18T02:18:15Z] ########## Script 271b START (--step 8) ##########
+[2026-04-18T02:18:15Z]   archive: "Thyroid 2026 UPdated".archive_pub_v1_0, ts: 20260418T021815Z
+[2026-04-18T02:18:16Z] === STEP 8 — parquet export ===
+[2026-04-18T02:18:23Z]   wrote /Users/loganglosser/THYROID_2026/exports/canonical_patient_master_20260418_script271b.parquet (10,871 rows × 1526 cols)
+[2026-04-18T02:18:23Z] wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_step8.json
+[2026-04-18T02:18:23Z] ########## Script 271b DONE (--step 8) ##########
