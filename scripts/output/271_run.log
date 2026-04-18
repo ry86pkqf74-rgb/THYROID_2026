@@ -221,3 +221,16 @@
 [2026-04-18T01:11:55Z]   Wrote /Users/loganglosser/THYROID_2026/docs/CANONICAL_STATE_20260417_SCRIPT271.md
 [2026-04-18T01:11:55Z]   Wrote /Users/loganglosser/THYROID_2026/scripts/output/271_step8_dictionary_docs.json
 [2026-04-18T01:11:55Z] ########## Script 271 — STEP 8 DONE ##########
+[2026-04-18T01:15:37Z] ########## Script 271 — STEP 9 ##########
+[2026-04-18T01:15:38Z] === STEP 9 — Final verification + parquet export ===
+[2026-04-18T01:15:38Z]   A. invariants: {'n': 10871, 'distinct': 10871, 'nulls': 0}
+[2026-04-18T01:15:39Z]   B. CPM cols (post): 1519
+[2026-04-18T01:15:39Z]   C. deprecated tables remaining in main: 0 (must be 0)
+[2026-04-18T01:15:39Z]   D. band audit: [{'band': 'TR1', 'min': 0.0, 'max': 0.0, 'n': 758}, {'band': 'TR2', 'min': 2.0, 'max': 2.0, 'n': 914}, {'band': 'TR3', 'min': 3.0, 'max': 3.0, 'n': 982}, {'band': 'TR4', 'min': 4.0, 'max': 6.0, 'n': 654}, {'band': 'TR5', 'min': 7.0, 'max': 13.0, 'n': 96}]
+[2026-04-18T01:15:39Z]   E. manuscript_workspace.cohort_descriptive_full_cohort_v1: 10871
+[2026-04-18T01:15:39Z]   F. tirads_reextraction_queue_v1 rows: 4363
+[2026-04-18T01:15:39Z]   G. inm_v1 dnf: {'n': 37016, 'flagged': 37016, 'n_dominant': 13364}
+[2026-04-18T01:15:39Z]   Exporting CPM -> /Users/loganglosser/THYROID_2026/exports/canonical_patient_master_20260417_script271.parquet
+[2026-04-18T01:15:42Z]   Parquet size: 3.9 MB
+[2026-04-18T01:15:42Z]   Wrote /Users/loganglosser/THYROID_2026/scripts/output/271_step9_final.json
+[2026-04-18T01:15:42Z] ########## Script 271 — STEP 9 DONE ##########
