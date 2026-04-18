@@ -1,0 +1,5 @@
+column,n_total_rows,n_non_null,pct_non_null,status
+stage_tumor_2,11688,81,0.693,present
+stage_tumor_4,11688,2,0.017,present
+stage_tumor_5,11688,0,0.0,present
+tumor_3_stage_tumor_3,11688,9,0.077,present

@@ -6,7 +6,7 @@
   "results": {
     "meta": {
       "mode": "APPLY",
-      "started_at": "2026-04-17T23:59:55.681800+00:00",
+      "started_at": "2026-04-18T00:03:36.082059+00:00",
       "script": "Script 266c"
     },
     "phase_0": {
@@ -541,15 +541,85 @@
       ],
       "view_dep_pregate_refs": []
     },
-    "phase_1": {
-      "snapshots": {
-        "thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"canonical_tumor_characteristics_v1_pre266c_20260417T235958Z\"",
-        "thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"tumor_episode_master_v2_pre266c_20260417T235958Z\"",
-        "thyroid_canonical_publication_v1_0.main.tumor_pathology": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"tumor_pathology_pre266c_20260417T235958Z\"",
-        "thyroid_canonical_publication_v1_0.main.path_synoptics": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"path_synoptics_pre266c_20260417T235958Z\"",
-        "thyroid_canonical_publication_v1_0.main.canonical_patient_master": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"canonical_patient_master_pre266c_20260417T235958Z\""
-      }
+    "phase_2": {
+      "added_columns": [
+        "tumor_1_t_stage_ajcc7",
+        "tumor_1_n_stage_ajcc7",
+        "tumor_1_m_stage_ajcc7",
+        "tumor_1_stage_group_ajcc7",
+        "tumor_1_t_stage_ajcc8",
+        "tumor_1_n_stage_ajcc8",
+        "tumor_1_m_stage_ajcc8",
+        "tumor_1_stage_group_ajcc8",
+        "tumor_2_t_stage_ajcc7",
+        "tumor_2_n_stage_ajcc7",
+        "tumor_2_m_stage_ajcc7",
+        "tumor_2_stage_group_ajcc7",
+        "tumor_2_t_stage_ajcc8",
+        "tumor_2_n_stage_ajcc8",
+        "tumor_2_m_stage_ajcc8",
+        "tumor_2_stage_group_ajcc8",
+        "tumor_3_t_stage_ajcc7",
+        "tumor_3_n_stage_ajcc7",
+        "tumor_3_m_stage_ajcc7",
+        "tumor_3_stage_group_ajcc7",
+        "tumor_3_t_stage_ajcc8",
+        "tumor_3_n_stage_ajcc8",
+        "tumor_3_m_stage_ajcc8",
+        "tumor_3_stage_group_ajcc8",
+        "tumor_4_t_stage_ajcc7",
+        "tumor_4_n_stage_ajcc7",
+        "tumor_4_m_stage_ajcc7",
+        "tumor_4_stage_group_ajcc7",
+        "tumor_4_t_stage_ajcc8",
+        "tumor_4_n_stage_ajcc8",
+        "tumor_4_m_stage_ajcc8",
+        "tumor_4_stage_group_ajcc8",
+        "tumor_5_t_stage_ajcc7",
+        "tumor_5_n_stage_ajcc7",
+        "tumor_5_m_stage_ajcc7",
+        "tumor_5_stage_group_ajcc7",
+        "tumor_5_t_stage_ajcc8",
+        "tumor_5_n_stage_ajcc8",
+        "tumor_5_m_stage_ajcc8",
+        "tumor_5_stage_group_ajcc8"
+      ],
+      "skipped_present": [],
+      "psyn_n_rows": 11688,
+      "psyn_n_patients": 10871,
+      "psyn_n_pt_surg_keys": 11685,
+      "tumor_ordinal_gt5_count": 0,
+      "legacy_fragment_profile": [
+        [
+          "stage_tumor_2",
+          11688,
+          81,
+          0.693,
+          "present"
+        ],
+        [
+          "stage_tumor_4",
+          11688,
+          2,
+          0.017,
+          "present"
+        ],
+        [
+          "stage_tumor_5",
+          11688,
+          0,
+          0.0,
+          "present"
+        ],
+        [
+          "tumor_3_stage_tumor_3",
+          11688,
+          9,
+          0.077,
+          "present"
+        ]
+      ]
     }
   },
-  "elapsed_seconds": 18.3
+  "elapsed_seconds": 37.5
 }

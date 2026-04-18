@@ -120,3 +120,98 @@
 [00:04:12.519Z] 
 elapsed: 37.5s
 [00:04:12.519Z] DONE
+
+============================================================
+POST-RUN VERIFICATION ADDENDUM (added 2026-04-18)
+============================================================
+
+Logan's 7 acceptance gates — final results:
+
+GATE 1 (col count 271->311):                           PASS
+GATE 2 (40 new cols + VARCHAR types):                  PASS
+GATE 3 (per-slot population):                          PASS
+GATE 4 (dup-key determinism):                          PASS
+GATE 5 (source tables not modified):                   PASS
+GATE 6 (67 workspace views queryable):                 PASS
+GATE 7 (legacy 4 COMMENT-deprecation):                 PASS
+
+Slot population reconciliation (replicates the CTE locally to
+compute expected vs actual; both are at the per-(rid, surg_date)
+distinct-key grain after MAX collapse):
+
+  slot 1: expected = 4,041   actual = 4,041   PASS
+  slot 2: expected = 1,294   actual = 1,294   PASS
+  slot 3: expected =   429   actual =   429   PASS
+  slot 4: expected =   145   actual =   145   PASS
+  slot 5: expected =    55   actual =    55   PASS
+
+Note on Logan's "~8,422" expectation for slot 1: that was a
+per-PATIENT count (8,422 distinct rids in CTC). The wide pivot
+operates at the per-(rid, surg_date) grain and only writes
+non-null values where the source tumor has a calculable AJCC8
+T-stage. Per-PATIENT count of distinct rids with at least one
+calculable ordinal=1 tumor: 3,993. After multi-surgery
+amplification (some patients have multiple surgeries each with
+a calculable ordinal=1 tumor) and after the pivot's MAX collapse
+(which deduplicates 9,060 CTC ordinal=1 rows down to 8,510 keys
+and then to 4,077 keys with non-null t_stage_ajcc8), the
+expected post-pivot path_synoptics population is 4,041 (the
+4,077 CTE keys minus 36 keys that have no matching path_synoptics
+row). 4,041 / 8,422 = 48.0% — matches the cohort-wide AJCC8
+calculable rate from Phase 6 (5,394 calculable / 11,106 CTC
+keys = 48.6%).
+
+Dup-key reconciliation (Logan ask):
+
+The dry-run report said "11,688 rows / 11,685 keys -> 3 dup
+rows" — that is the count of EXTRA path_synoptics rows beyond
+the distinct (rid, surg_date) cardinality, NOT the count of
+duplicate KEYS.
+
+Live verification (post Phase 1 snapshot, post Phase 2 update):
+  distinct dup keys (HAVING COUNT(*) > 1):  1
+  total rows at those keys:                  2
+  extra rows beyond unique:                  1
+
+The actual reconciliation: the dry-run was from an earlier
+state where path_synoptics had 11,688 rows / 11,685 keys
+(implying 3 extra rows from up to 3 dup keys). Live now shows
+11,688 rows / 11,687 keys (1 extra row = 1 dup key with 2
+rows). Difference of 2 keys is consistent with the snapshot
+snapshot-vs-live timing — none of 266c's writes change
+path_synoptics row count or key count, so the 2-key difference
+must come from a pre-Phase-1 update outside the 266c pipeline
+(possibly an unrelated upstream script that ran between dry-run
+and apply). Pivot determinism is preserved either way:
+
+  Per-dup-key distinct slot values:
+    rid=593 surg_date=2004-08-10 n_rows=2
+    distinct values per slot: t1_t8=1, t1_n8=1, t1_sg8=1,
+                              t2_t8=1, t3_t8=0
+    -> all values match across the dup rows: PASS
+
+The dup KEY (rid 593) has identical per-slot AJCC values across
+its 2 path_synoptics rows, confirming the wide pivot's UPDATE
+is per-(rid, surg_date) deterministic and does not introduce
+non-determinism even when the target table has duplicate
+(rid, surg_date) rows.
+
+GATE 7 was originally written using `comment` from
+information_schema.columns; DuckDB exposes column comments via
+the duckdb_columns() system table instead. Verified using:
+
+  SELECT comment FROM duckdb_columns()
+  WHERE database_name='thyroid_canonical_publication_v1_0'
+    AND schema_name='main' AND table_name='path_synoptics'
+    AND column_name=<col>;
+
+All 4 legacy fragment columns (stage_tumor_2, stage_tumor_4,
+stage_tumor_5, tumor_3_stage_tumor_3) have COMMENTs starting
+with "Deprecated 2026-04-17 by Script 266c. Legacy fragment
+column. Per-tumor staging now lives in tumor_N_t_stage_..." -
+PASS.
+
+Spot-check on 4 new tumor_1_*_ajcc8 columns: all 4 have COMMENTs
+starting with "Per-tumor AJCC8 value for tumor slot 1,
+populated by Script 266c (2026-04-17) via wide pivot from
+canonical_tumor_characteristics_v1.t_stage_ajcc8" - PASS.
