@@ -1,0 +1,10 @@
+[2026-04-18T05:07:52.690896+00:00] Phase 4 (ii) Step 1 — generalized TEM-based scope check (read-only).
+[2026-04-18T05:07:52.691210+00:00] Computing aggregate scope...
+[2026-04-18T05:07:53.233119+00:00]   aggregate: {'multi_surgery_pts': 271, 'cpm_under_reports_true_max': 75, 'caught_by_invariant': 75, 'hidden_both_under': 0, 'hidden_path_null': 0}
+[2026-04-18T05:07:53.233409+00:00] Pulling per-rid detail (all under-report cases)...
+[2026-04-18T05:07:53.362682+00:00]   per-rid detail rows: 75
+[2026-04-18T05:07:53.362945+00:00]   reconciliation: caught_by_invariant_via_query=75, hidden_both_under=0, F_bucket_from_phase4ii=60
+[2026-04-18T05:07:53.364656+00:00]   CSV -> /Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417_resume/phase4ii_scope_check.csv
+[2026-04-18T05:07:53.364794+00:00]   JSON -> /Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417_resume/phase4ii_scope_check.json
+[2026-04-18T05:07:54.544237+00:00]   CPM invariant re-asserted: 10871/10871
+[2026-04-18T05:07:54.544489+00:00] Step 1 scope check complete (read-only).

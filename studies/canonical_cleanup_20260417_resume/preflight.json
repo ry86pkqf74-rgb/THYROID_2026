@@ -1,0 +1,99 @@
+{
+  "checks": {
+    "cpm_rowcount": {
+      "ok": true,
+      "observed": 10871,
+      "expected": 10871,
+      "note": ""
+    },
+    "cpm_distinct_research_id": {
+      "ok": true,
+      "observed": 10871,
+      "expected": 10871,
+      "note": ""
+    },
+    "cpm_built_at_non_null_for_all_rows": {
+      "ok": true,
+      "observed": 0,
+      "expected": 0,
+      "note": ""
+    },
+    "col_ajcc8_t_stage_corrected_exists": {
+      "ok": true,
+      "observed": true,
+      "expected": true,
+      "note": "ajcc8_t_stage IS the corrected one after 04-17 phase-4.6 rename"
+    },
+    "col_ajcc8_t_stage_with_microete_t3b_DEPRECATED_exists": {
+      "ok": true,
+      "observed": true,
+      "expected": true,
+      "note": ""
+    },
+    "col_comp_vc_paralysis_confirmed_exists": {
+      "ok": true,
+      "observed": true,
+      "expected": true,
+      "note": ""
+    },
+    "col_comp_vc_paresis_confirmed_exists": {
+      "ok": true,
+      "observed": true,
+      "expected": true,
+      "note": ""
+    },
+    "col_comp_hematoma_confirmed_exists": {
+      "ok": true,
+      "observed": true,
+      "expected": true,
+      "note": ""
+    },
+    "col_comp_seroma_confirmed_exists": {
+      "ok": true,
+      "observed": true,
+      "expected": true,
+      "note": ""
+    },
+    "col_comp_chyle_leak_confirmed_exists": {
+      "ok": true,
+      "observed": true,
+      "expected": true,
+      "note": ""
+    },
+    "col_comp_wound_infection_confirmed_exists": {
+      "ok": true,
+      "observed": true,
+      "expected": true,
+      "note": ""
+    },
+    "manuscript_workspace.canonical_cleanup_audit_v1_rows": {
+      "ok": true,
+      "observed": 115,
+      "expected": 115,
+      "note": ""
+    },
+    "manuscript_workspace.cpm_hypopara_adjudication_queue_v1_rows": {
+      "ok": true,
+      "observed": 4,
+      "expected": 4,
+      "note": ""
+    },
+    "manuscript_workspace.lab_orphan_audit_v1_rows": {
+      "ok": true,
+      "observed": 403,
+      "expected": 403,
+      "note": ""
+    },
+    "manuscript_workspace.cpm_reconciliation_provenance_v1_exists": {
+      "ok": true,
+      "observed": true,
+      "expected": true,
+      "note": ""
+    }
+  },
+  "extras": {
+    "cpm_reconciliation_provenance_v1_rows": 1,
+    "lab_orphan_cohort_review_v1_present": true,
+    "lab_orphan_cohort_review_v1_rows": 403
+  }
+}

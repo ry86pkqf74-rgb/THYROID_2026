@@ -1,0 +1,13 @@
+[2026-04-18T03:04:29.078764+00:00] Opening locked MotherDuck connection...
+[2026-04-18T03:04:30.842973+00:00] Cohort freeze (max cpm_built_at): 2026-04-17 06:41:33.062835
+[2026-04-18T03:04:30.843318+00:00] Loading 403 orphan rids from manuscript_workspace.lab_orphan_audit_v1...
+[2026-04-18T03:04:30.881093+00:00]   403 rows loaded
+[2026-04-18T03:04:30.917593+00:00] Computing per-rid earliest evidence date across the 5 tables...
+[2026-04-18T03:04:34.881061+00:00]   date columns resolved: fna=None tumor=surgery_date syn=None path=None img=exam_date
+[2026-04-18T03:04:35.088183+00:00]   per-rid earliest evidence dates loaded for 403 rids
+[2026-04-18T03:04:35.090958+00:00]   3-way counts: {'likely_non_cancer': 403, 'likely_dropped_from_CPM': 0, 'ambiguous': 0}
+[2026-04-18T03:04:35.091324+00:00]   classification divergence vs lab_orphan_audit_v1.classification: 0 / 403
+[2026-04-18T03:04:35.106416+00:00]   CSV -> /Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417_resume/tg_orphan_decisions.csv (403 rows)
+[2026-04-18T03:04:35.108848+00:00]   Markdown -> /Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417_resume/tg_orphan_decisions.md
+[2026-04-18T03:04:35.110067+00:00]   Summary -> /Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417_resume/phase2_summary.json: {'n_total': 403, 'counts': {'likely_non_cancer': 403, 'likely_dropped_from_CPM': 0, 'ambiguous': 0}, 'audit_class_divergence_count': 0, 'cohort_freeze_dt': '2026-04-17 06:41:33.062835', 'n_lab_first_after_cohort_freeze': 0, 'csv_path': '/Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417_resume/tg_orphan_decisions.csv', 'md_path': '/Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417_resume/tg_orphan_decisions.md'}
+[2026-04-18T03:04:35.110443+00:00] Phase 2 complete (classification only; no DML against main.* lab tables).

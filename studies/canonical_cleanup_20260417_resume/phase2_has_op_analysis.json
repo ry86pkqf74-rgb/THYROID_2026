@@ -1,0 +1,15 @@
+{
+  "n_total": 403,
+  "n_has_op": 403,
+  "n_no_op": 0,
+  "n_op_null": 0,
+  "sum_lab_rows_across_orphans": 13873,
+  "sum_tg_rows": 13873,
+  "sum_long_lab_rows": 13873,
+  "total_thyroglobulin_lab_canonical_v1_rows": 74258,
+  "total_longitudinal_lab_canonical_v1_rows": 75247,
+  "thyroglobulin_lab_rows_belonging_to_403_orphans": 13873,
+  "longitudinal_lab_rows_belonging_to_403_orphans": 13873,
+  "pct_tg_rows_orphan": 18.68,
+  "pct_long_rows_orphan": 18.44
+}

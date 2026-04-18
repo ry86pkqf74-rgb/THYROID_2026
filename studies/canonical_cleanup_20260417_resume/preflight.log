@@ -1,0 +1,20 @@
+[2026-04-18T02:51:38.958919+00:00] Opening locked MotherDuck connection (token resolution via _md_connect)...
+[2026-04-18T02:51:41.781781+00:00] Connection ok; CPM 10,871 / distinct invariant confirmed by connect_locked().
+[2026-04-18T02:51:41.820036+00:00]   [PASS] cpm_rowcount: observed=10871 expected=10871 
+[2026-04-18T02:51:41.820409+00:00]   [PASS] cpm_distinct_research_id: observed=10871 expected=10871 
+[2026-04-18T02:51:42.632094+00:00]   [PASS] cpm_built_at_non_null_for_all_rows: observed=0 expected=0 
+[2026-04-18T02:51:42.632427+00:00]   [PASS] col_ajcc8_t_stage_corrected_exists: observed=True expected=True ajcc8_t_stage IS the corrected one after 04-17 phase-4.6 rename
+[2026-04-18T02:51:42.632790+00:00]   [PASS] col_ajcc8_t_stage_with_microete_t3b_DEPRECATED_exists: observed=True expected=True 
+[2026-04-18T02:51:42.632981+00:00]   [PASS] col_comp_vc_paralysis_confirmed_exists: observed=True expected=True 
+[2026-04-18T02:51:42.633124+00:00]   [PASS] col_comp_vc_paresis_confirmed_exists: observed=True expected=True 
+[2026-04-18T02:51:42.633262+00:00]   [PASS] col_comp_hematoma_confirmed_exists: observed=True expected=True 
+[2026-04-18T02:51:42.633389+00:00]   [PASS] col_comp_seroma_confirmed_exists: observed=True expected=True 
+[2026-04-18T02:51:42.633511+00:00]   [PASS] col_comp_chyle_leak_confirmed_exists: observed=True expected=True 
+[2026-04-18T02:51:42.633639+00:00]   [PASS] col_comp_wound_infection_confirmed_exists: observed=True expected=True 
+[2026-04-18T02:51:42.787709+00:00]   [PASS] manuscript_workspace.canonical_cleanup_audit_v1_rows: observed=115 expected=115 
+[2026-04-18T02:51:42.820934+00:00]   [PASS] manuscript_workspace.cpm_hypopara_adjudication_queue_v1_rows: observed=4 expected=4 
+[2026-04-18T02:51:42.848160+00:00]   [PASS] manuscript_workspace.lab_orphan_audit_v1_rows: observed=403 expected=403 
+[2026-04-18T02:51:42.848461+00:00]   [PASS] manuscript_workspace.cpm_reconciliation_provenance_v1_exists: observed=True expected=True 
+[2026-04-18T02:51:42.903195+00:00]   Extras: {'cpm_reconciliation_provenance_v1_rows': 1, 'lab_orphan_cohort_review_v1_present': True, 'lab_orphan_cohort_review_v1_rows': 403}
+[2026-04-18T02:51:42.904153+00:00] JSON results -> /Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417_resume/preflight.json
+[2026-04-18T02:51:42.904359+00:00] PREFLIGHT PASSED -- awaiting go/no-go before Phase 1.

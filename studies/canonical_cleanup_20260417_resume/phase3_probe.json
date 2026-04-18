@@ -1,0 +1,200 @@
+{
+  "canonical_cleanup_audit_v1.columns": [
+    [
+      "object_name",
+      "VARCHAR"
+    ],
+    [
+      "object_type",
+      "VARCHAR"
+    ],
+    [
+      "row_count",
+      "BIGINT"
+    ],
+    [
+      "n_view_references",
+      "INTEGER"
+    ],
+    [
+      "n_columns",
+      "INTEGER"
+    ],
+    [
+      "status",
+      "VARCHAR"
+    ],
+    [
+      "reason",
+      "VARCHAR"
+    ],
+    [
+      "destination",
+      "VARCHAR"
+    ],
+    [
+      "created_at",
+      "TIMESTAMP WITH TIME ZONE"
+    ]
+  ],
+  "canonical_cleanup_audit_v1.sample": [
+    {
+      "object_name": "__readme",
+      "object_type": "BASE TABLE",
+      "row_count": 114,
+      "n_view_references": 0,
+      "n_columns": 5,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": "",
+      "created_at": "2026-04-17 06:39:50.602916-04:00"
+    },
+    {
+      "object_name": "_molecular_patient_rollup_v227",
+      "object_type": "BASE TABLE",
+      "row_count": 10025,
+      "n_view_references": 0,
+      "n_columns": 3,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": "",
+      "created_at": "2026-04-17 06:39:50.716454-04:00"
+    },
+    {
+      "object_name": "analysis_molecular_subset_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 10025,
+      "n_view_references": 0,
+      "n_columns": 126,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": "",
+      "created_at": "2026-04-17 06:39:50.750858-04:00"
+    },
+    {
+      "object_name": "canonical_benign_diagnosis_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 6818,
+      "n_view_references": 0,
+      "n_columns": 18,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": "",
+      "created_at": "2026-04-17 06:39:50.785524-04:00"
+    },
+    {
+      "object_name": "canonical_diagnosis_unified_v1",
+      "object_type": "BASE TABLE",
+      "row_count": 11028,
+      "n_view_references": 0,
+      "n_columns": 7,
+      "status": "LIVE",
+      "reason": "referenced by 5+ python ref(s)",
+      "destination": "",
+      "created_at": "2026-04-17 06:39:50.819317-04:00"
+    }
+  ],
+  "status_distribution": [
+    [
+      "LIVE",
+      115
+    ]
+  ],
+  "schema_inventory": [
+    [
+      "main",
+      "BASE TABLE",
+      116
+    ],
+    [
+      "main",
+      "VIEW",
+      2
+    ],
+    [
+      "manuscript_workspace",
+      "BASE TABLE",
+      30
+    ],
+    [
+      "manuscript_workspace",
+      "VIEW",
+      67
+    ]
+  ],
+  "main.base_tables": 116,
+  "main.views": 2,
+  "manuscript_workspace.base_tables": 30,
+  "manuscript_workspace.views": 67,
+  "main.total": 118,
+  "audit_object_type_dist": [
+    [
+      "BASE TABLE",
+      115
+    ]
+  ],
+  "audit_object_name_prefix_dist": [
+    [
+      "other",
+      115
+    ]
+  ],
+  "audit_sample_short": [
+    [
+      "__readme",
+      "BASE TABLE",
+      "LIVE",
+      5,
+      "2026-04-17 06:39:50.602916-04:00"
+    ],
+    [
+      "_molecular_patient_rollup_v227",
+      "BASE TABLE",
+      "LIVE",
+      3,
+      "2026-04-17 06:39:50.716454-04:00"
+    ],
+    [
+      "analysis_molecular_subset_v1",
+      "BASE TABLE",
+      "LIVE",
+      126,
+      "2026-04-17 06:39:50.750858-04:00"
+    ],
+    [
+      "canonical_benign_diagnosis_v1",
+      "BASE TABLE",
+      "LIVE",
+      18,
+      "2026-04-17 06:39:50.785524-04:00"
+    ],
+    [
+      "canonical_diagnosis_unified_v1",
+      "BASE TABLE",
+      "LIVE",
+      7,
+      "2026-04-17 06:39:50.819317-04:00"
+    ],
+    [
+      "canonical_malignant_diagnosis_v1",
+      "BASE TABLE",
+      "LIVE",
+      12,
+      "2026-04-17 06:39:50.854091-04:00"
+    ],
+    [
+      "canonical_molecular_tested_v1",
+      "BASE TABLE",
+      "LIVE",
+      17,
+      "2026-04-17 06:39:50.887395-04:00"
+    ],
+    [
+      "canonical_patient_master",
+      "BASE TABLE",
+      "LIVE",
+      1501,
+      "2026-04-17 06:39:50.920590-04:00"
+    ]
+  ]
+}

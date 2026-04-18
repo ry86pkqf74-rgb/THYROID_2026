@@ -1,0 +1,13 @@
+{
+  "n_total": 403,
+  "counts": {
+    "likely_non_cancer": 403,
+    "likely_dropped_from_CPM": 0,
+    "ambiguous": 0
+  },
+  "audit_class_divergence_count": 0,
+  "cohort_freeze_dt": "2026-04-17 06:41:33.062835",
+  "n_lab_first_after_cohort_freeze": 0,
+  "csv_path": "/Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417_resume/tg_orphan_decisions.csv",
+  "md_path": "/Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417_resume/tg_orphan_decisions.md"
+}
