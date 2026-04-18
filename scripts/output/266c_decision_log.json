@@ -6,7 +6,7 @@
   "results": {
     "meta": {
       "mode": "APPLY",
-      "started_at": "2026-04-18T00:30:00.891175+00:00",
+      "started_at": "2026-04-18T00:37:16.089520+00:00",
       "script": "Script 266c"
     },
     "phase_0": {
@@ -585,29 +585,12 @@
       ],
       "view_dep_pregate_refs": []
     },
-    "phase_5": {
-      "archived_count": 2,
-      "skipped_count": 0,
-      "manifest": [
-        {
-          "schema": "main",
-          "name": "data_dictionary_v240",
-          "reason": "explicit_supersession (n_rows=1529)",
-          "n_rows_before": 1529,
-          "archive_dest": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"data_dictionary_v240_pre266c_20260418T003012Z\"",
-          "action": "archived_and_dropped"
-        },
-        {
-          "schema": "manuscript_workspace",
-          "name": "cpm_unmapped_triage_v265",
-          "reason": "explicit_supersession (n_rows=223)",
-          "n_rows_before": 223,
-          "archive_dest": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"cpm_unmapped_triage_v265_pre266c_20260418T003012Z\"",
-          "action": "archived_and_dropped"
-        }
-      ],
-      "skipped": []
+    "phase_6": {
+      "queryable_main_tables": 115,
+      "views_total": 67,
+      "views_ok": 67,
+      "views_error": 0
     }
   },
-  "elapsed_seconds": 19.6
+  "elapsed_seconds": 35.6
 }

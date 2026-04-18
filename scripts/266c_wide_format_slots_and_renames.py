@@ -1140,7 +1140,13 @@ def phase_6(con, log, do_writes: bool) -> dict:
             )
         """, log, do_writes, label="create_readme")
 
-        for tbl in queryable:
+        # Filter __readme out of the loop -- it gets inserted explicitly as
+        # the self-row below. Without this filter the loop inserts __readme
+        # once (because _queryable_main_tables() includes it), then the
+        # explicit self-row insert raises a PRIMARY KEY duplicate-key
+        # constraint error (2026-04-18 fix).
+        queryable_no_self = [t for t in queryable if t != "__readme"]
+        for tbl in queryable_no_self:
             try:
                 n_rows = int(con.execute(
                     f'SELECT COUNT(*) FROM {PUBLICATION_DB}.main."{tbl}"'
@@ -1161,7 +1167,8 @@ def phase_6(con, log, do_writes: bool) -> dict:
                  "queryable enumeration (catalog_vs_queryable_drift convention).",
                  datetime.now(timezone.utc)],
             )
-        # Self-row inclusion (per Script 265 pattern)
+        # Self-row inclusion (per Script 265 pattern). Inserted once here
+        # to avoid the duplicate-key bug on the loop self-insertion path.
         n_readme = int(con.execute(f"SELECT COUNT(*) FROM {README_TBL}").fetchone()[0])
         con.execute(
             f"INSERT INTO {README_TBL} VALUES (?, ?, ?, ?, ?)",
