@@ -204,3 +204,10 @@
 [2026-04-18T01:09:50Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
 [2026-04-18T01:09:50Z]   Wrote /Users/loganglosser/THYROID_2026/scripts/output/271_step6_dominant_and_cpm.json
 [2026-04-18T01:09:50Z] ########## Script 271 — STEP 6 DONE ##########
+[2026-04-18T01:10:08Z] ########## Script 271 — STEP 7 ##########
+[2026-04-18T01:10:09Z] === STEP 7 — Archive & naming hygiene sweep ===
+[2026-04-18T01:10:10Z]   Found 0 candidate tables in main: []
+[2026-04-18T01:10:10Z]   Remaining candidates after sweep: []
+[2026-04-18T01:10:10Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
+[2026-04-18T01:10:10Z]   Wrote /Users/loganglosser/THYROID_2026/scripts/output/271_step7_archive_sweep.json
+[2026-04-18T01:10:10Z] ########## Script 271 — STEP 7 DONE ##########
