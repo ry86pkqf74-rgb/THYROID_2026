@@ -1,0 +1,15 @@
+{
+  "step": 1,
+  "started_at": "2026-04-18T02:12:27Z",
+  "snapshots": [
+    {
+      "src": "canonical_patient_master",
+      "snap": "canonical_patient_master_pre271b_20260418T021226Z"
+    },
+    {
+      "src": "imaging_nodule_master_v1",
+      "snap": "imaging_nodule_master_v1_pre271b_20260418T021226Z"
+    }
+  ],
+  "finished_at": "2026-04-18T02:12:33Z"
+}

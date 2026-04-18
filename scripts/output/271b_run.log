@@ -1,0 +1,59 @@
+[2026-04-18T02:11:38Z] ########## Script 271b START (--step 0) ##########
+[2026-04-18T02:11:38Z]   archive: "Thyroid 2026 UPdated".archive_pub_v1_0, ts: 20260418T021138Z
+[2026-04-18T02:11:40Z] === STEP 0 — Preflight (read-only) ===
+[2026-04-18T02:11:41Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
+[2026-04-18T02:11:41Z]   expected legacy cols present: ['bilateral_disease_flag', 'bilateral_path_flag', 'imaging_laterality_rollup', 'laterality', 'path_laterality', 'pathology_vs_imaging_laterality_concordant']
+[2026-04-18T02:12:12Z] ########## Script 271b START (--step 0) ##########
+[2026-04-18T02:12:12Z]   archive: "Thyroid 2026 UPdated".archive_pub_v1_0, ts: 20260418T021212Z
+[2026-04-18T02:12:14Z] === STEP 0 — Preflight (read-only) ===
+[2026-04-18T02:12:14Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
+[2026-04-18T02:12:14Z]   expected legacy cols present: ['bilateral_disease_flag', 'bilateral_path_flag', 'imaging_laterality_rollup', 'laterality', 'path_laterality', 'pathology_vs_imaging_laterality_concordant']
+[2026-04-18T02:12:15Z]   cpm.laterality:
+[2026-04-18T02:12:15Z]     'bilateral': 5571
+[2026-04-18T02:12:15Z]     'left': 2428
+[2026-04-18T02:12:15Z]     'right': 2339
+[2026-04-18T02:12:15Z]     None: 533
+[2026-04-18T02:12:15Z]   cpm.path_laterality:
+[2026-04-18T02:12:15Z]     'bilateral': 5571
+[2026-04-18T02:12:15Z]     'left': 2428
+[2026-04-18T02:12:15Z]     'right': 2339
+[2026-04-18T02:12:15Z]     None: 533
+[2026-04-18T02:12:16Z]   cpm.imaging_laterality_rollup:
+[2026-04-18T02:12:16Z]     None: 7432
+[2026-04-18T02:12:16Z]     'mixed': 1356
+[2026-04-18T02:12:16Z]     'bilateral': 1197
+[2026-04-18T02:12:16Z]     'right': 446
+[2026-04-18T02:12:16Z]     'left': 384
+[2026-04-18T02:12:16Z]     'isthmus': 56
+[2026-04-18T02:12:16Z]   cpm.bilateral_disease_flag:
+[2026-04-18T02:12:16Z]     None: 7432
+[2026-04-18T02:12:16Z]     'true': 2142
+[2026-04-18T02:12:16Z]     'false': 1297
+[2026-04-18T02:12:16Z]   cpm.bilateral_path_flag:
+[2026-04-18T02:12:16Z]     None: 6887
+[2026-04-18T02:12:16Z]     'false': 3072
+[2026-04-18T02:12:16Z]     'true': 912
+[2026-04-18T02:12:16Z]   tp.tumor_laterality_overall:
+[2026-04-18T02:12:16Z]     'right': 1865
+[2026-04-18T02:12:16Z]     'left': 1347
+[2026-04-18T02:12:16Z]     'bilateral': 630
+[2026-04-18T02:12:16Z]     'unknown': 337
+[2026-04-18T02:12:16Z]     'midline': 111
+[2026-04-18T02:12:16Z]   inm_v1.laterality:
+[2026-04-18T02:12:16Z]     None: 17125
+[2026-04-18T02:12:16Z]     'right': 8933
+[2026-04-18T02:12:16Z]     'left': 8720
+[2026-04-18T02:12:16Z]     'isthmus': 2238
+[2026-04-18T02:12:16Z]   distinct research_id in tumor_pathology: 3986
+[2026-04-18T02:12:16Z] wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_step0.json
+[2026-04-18T02:12:16Z] ########## Script 271b DONE (--step 0) ##########
+[2026-04-18T02:12:26Z] ########## Script 271b START (--step 1) ##########
+[2026-04-18T02:12:26Z]   archive: "Thyroid 2026 UPdated".archive_pub_v1_0, ts: 20260418T021226Z
+[2026-04-18T02:12:27Z] === STEP 1 — Snapshots to archive_pub_v1_0 ===
+[2026-04-18T02:12:32Z]   created "Thyroid 2026 UPdated".archive_pub_v1_0."canonical_patient_master_pre271b_20260418T021226Z"
+[2026-04-18T02:12:32Z]     src=10871 snap=10871 match=True
+[2026-04-18T02:12:33Z]   created "Thyroid 2026 UPdated".archive_pub_v1_0."imaging_nodule_master_v1_pre271b_20260418T021226Z"
+[2026-04-18T02:12:33Z]     src=37016 snap=37016 match=True
+[2026-04-18T02:12:33Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
+[2026-04-18T02:12:33Z] wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_step1.json
+[2026-04-18T02:12:33Z] ########## Script 271b DONE (--step 1) ##########

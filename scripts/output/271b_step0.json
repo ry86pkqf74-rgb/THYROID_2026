@@ -1,0 +1,148 @@
+{
+  "step": 0,
+  "started_at": "2026-04-18T02:12:14Z",
+  "expected_cols_present": [
+    "bilateral_disease_flag",
+    "bilateral_path_flag",
+    "imaging_laterality_rollup",
+    "laterality",
+    "path_laterality",
+    "pathology_vs_imaging_laterality_concordant"
+  ],
+  "expected_cols_missing": [],
+  "cpm_n_columns": 1519,
+  "vocabulary": {
+    "cpm.laterality": [
+      {
+        "value": "bilateral",
+        "n": 5571
+      },
+      {
+        "value": "left",
+        "n": 2428
+      },
+      {
+        "value": "right",
+        "n": 2339
+      },
+      {
+        "value": null,
+        "n": 533
+      }
+    ],
+    "cpm.path_laterality": [
+      {
+        "value": "bilateral",
+        "n": 5571
+      },
+      {
+        "value": "left",
+        "n": 2428
+      },
+      {
+        "value": "right",
+        "n": 2339
+      },
+      {
+        "value": null,
+        "n": 533
+      }
+    ],
+    "cpm.imaging_laterality_rollup": [
+      {
+        "value": null,
+        "n": 7432
+      },
+      {
+        "value": "mixed",
+        "n": 1356
+      },
+      {
+        "value": "bilateral",
+        "n": 1197
+      },
+      {
+        "value": "right",
+        "n": 446
+      },
+      {
+        "value": "left",
+        "n": 384
+      },
+      {
+        "value": "isthmus",
+        "n": 56
+      }
+    ],
+    "cpm.bilateral_disease_flag": [
+      {
+        "value": null,
+        "n": 7432
+      },
+      {
+        "value": "true",
+        "n": 2142
+      },
+      {
+        "value": "false",
+        "n": 1297
+      }
+    ],
+    "cpm.bilateral_path_flag": [
+      {
+        "value": null,
+        "n": 6887
+      },
+      {
+        "value": "false",
+        "n": 3072
+      },
+      {
+        "value": "true",
+        "n": 912
+      }
+    ],
+    "tp.tumor_laterality_overall": [
+      {
+        "value": "right",
+        "n": 1865
+      },
+      {
+        "value": "left",
+        "n": 1347
+      },
+      {
+        "value": "bilateral",
+        "n": 630
+      },
+      {
+        "value": "unknown",
+        "n": 337
+      },
+      {
+        "value": "midline",
+        "n": 111
+      }
+    ],
+    "inm_v1.laterality": [
+      {
+        "value": null,
+        "n": 17125
+      },
+      {
+        "value": "right",
+        "n": 8933
+      },
+      {
+        "value": "left",
+        "n": 8720
+      },
+      {
+        "value": "isthmus",
+        "n": 2238
+      }
+    ]
+  },
+  "n_distinct_research_id_in_tumor_pathology": 3986,
+  "finished_at": "2026-04-18T02:12:16Z"
+}
