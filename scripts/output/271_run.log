@@ -182,3 +182,25 @@
 [2026-04-18T01:09:26Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
 [2026-04-18T01:09:26Z]   Wrote /Users/loganglosser/THYROID_2026/scripts/output/271_step5_calcifications.json
 [2026-04-18T01:09:27Z] ########## Script 271 — STEP 5 DONE ##########
+[2026-04-18T01:09:43Z] ########## Script 271 — STEP 6 ##########
+[2026-04-18T01:09:44Z] === STEP 6 — dominant_nodule_flag + imaging_laterality_rollup + has_structured + concordance ===
+[2026-04-18T01:09:45Z]   Added imaging_nodule_master_v1.dominant_nodule_flag BOOLEAN
+[2026-04-18T01:09:46Z]   Using size column: max_dimension_cm
+[2026-04-18T01:09:46Z]   inm_v1 dnf: n=37016 flagged=37016 dominant=13364
+[2026-04-18T01:09:47Z]   Added canonical_patient_master.imaging_laterality_rollup VARCHAR
+[2026-04-18T01:09:47Z]   Added canonical_patient_master.imaging_has_structured_components BOOLEAN
+[2026-04-18T01:09:48Z]   Added canonical_patient_master.pathology_vs_imaging_laterality_concordant BOOLEAN
+[2026-04-18T01:09:49Z]   Using inm_v1 laterality column: laterality
+[2026-04-18T01:09:49Z]     imaging_laterality_rollup=None: n=7432
+[2026-04-18T01:09:49Z]     imaging_laterality_rollup=mixed: n=1356
+[2026-04-18T01:09:49Z]     imaging_laterality_rollup=bilateral: n=1197
+[2026-04-18T01:09:49Z]     imaging_laterality_rollup=right: n=446
+[2026-04-18T01:09:49Z]     imaging_laterality_rollup=left: n=384
+[2026-04-18T01:09:49Z]     imaging_laterality_rollup=isthmus: n=56
+[2026-04-18T01:09:49Z]     imaging_has_structured_components=False: n=7432
+[2026-04-18T01:09:49Z]     imaging_has_structured_components=True: n=3439
+[2026-04-18T01:09:50Z]     pathology_vs_imaging_laterality_concordant=False: n=10023
+[2026-04-18T01:09:50Z]     pathology_vs_imaging_laterality_concordant=True: n=848
+[2026-04-18T01:09:50Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
+[2026-04-18T01:09:50Z]   Wrote /Users/loganglosser/THYROID_2026/scripts/output/271_step6_dominant_and_cpm.json
+[2026-04-18T01:09:50Z] ########## Script 271 — STEP 6 DONE ##########

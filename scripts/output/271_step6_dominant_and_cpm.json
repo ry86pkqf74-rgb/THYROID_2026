@@ -1,0 +1,56 @@
+{
+  "step": 6,
+  "ts": "2026-04-18T01:09:44Z",
+  "dnf": {
+    "n": 37016,
+    "flagged": 37016,
+    "n_dominant": 13364,
+    "size_col": "max_dimension_cm"
+  },
+  "imaging_laterality_rollup_counts": [
+    {
+      "value": null,
+      "n": 7432
+    },
+    {
+      "value": "mixed",
+      "n": 1356
+    },
+    {
+      "value": "bilateral",
+      "n": 1197
+    },
+    {
+      "value": "right",
+      "n": 446
+    },
+    {
+      "value": "left",
+      "n": 384
+    },
+    {
+      "value": "isthmus",
+      "n": 56
+    }
+  ],
+  "has_structured_counts": [
+    {
+      "value": false,
+      "n": 7432
+    },
+    {
+      "value": true,
+      "n": 3439
+    }
+  ],
+  "concordance_counts": [
+    {
+      "value": false,
+      "n": 10023
+    },
+    {
+      "value": true,
+      "n": 848
+    }
+  ]
+}
