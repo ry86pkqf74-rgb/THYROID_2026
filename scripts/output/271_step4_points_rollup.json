@@ -1,0 +1,756 @@
+{
+  "step": 4,
+  "ts": "2026-04-18T01:08:52Z",
+  "coverage": {
+    "with_worst_pts": 1326,
+    "with_best_pts": 1326
+  },
+  "audit_cunc_rows": [
+    {
+      "rid": "10992",
+      "exam_date": "2020-06-27",
+      "nodule_id": "194f079a87d9bbb5bdc263f8a70ddae0",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 4
+    },
+    {
+      "rid": "10992",
+      "exam_date": "2021-01-19",
+      "nodule_id": "a02d09eea8673103625f60805a58bcb0",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 4
+    },
+    {
+      "rid": "10992",
+      "exam_date": "2023-08-10",
+      "nodule_id": "5bc417a89c0c1b3a4bc0a1385d7f3163",
+      "score_2017": 4.0,
+      "category_v2": "TR4",
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "10992",
+      "exam_date": "2023-08-10",
+      "nodule_id": "6b0303f0390d47dc84cdebb95e323275",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "10992",
+      "exam_date": "2023-08-10",
+      "nodule_id": "9c22d204434fd32e3b74faeb92c93df5",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "6731",
+      "exam_date": "2016-11-30",
+      "nodule_id": "a0baf7873d307c44a93bd77d8d6fb578",
+      "score_2017": 3.0,
+      "category_v2": "TR3",
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "6731",
+      "exam_date": "2017-03-27",
+      "nodule_id": "6ca544aef20aac84405adf45a75a1a80",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "6731",
+      "exam_date": "2018-03-08",
+      "nodule_id": "2b18eed056a1416ae208976c0e4ff059",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "6731",
+      "exam_date": "2018-03-08",
+      "nodule_id": "dc5a4892e5c60e311e793b624a27c6c2",
+      "score_2017": 2.0,
+      "category_v2": "TR2",
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "6731",
+      "exam_date": "2019-04-22",
+      "nodule_id": "8d282b1eeace0af350f385c8ee549c50",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "6731",
+      "exam_date": "2020-12-08",
+      "nodule_id": "cdd374f60b10d8a1294deb1c349b6d3f",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 4
+    },
+    {
+      "rid": "6731",
+      "exam_date": "2021-06-06",
+      "nodule_id": "53a7b0d6f541724aeb06b2bccfe1aff0",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 2
+    },
+    {
+      "rid": "7049",
+      "exam_date": "2017-08-03",
+      "nodule_id": "1f5a25113ba24ca6ea488d20ddd93144",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7049",
+      "exam_date": "2017-08-03",
+      "nodule_id": "296f8afd729bff45491beb3b494b5d54",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7049",
+      "exam_date": "2017-08-03",
+      "nodule_id": "7d6f076a73cb6ad9a51e9ce518038c9d",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7049",
+      "exam_date": "2018-09-25",
+      "nodule_id": "115744327ecf3c927cfab8ff95e65ae0",
+      "score_2017": 0.0,
+      "category_v2": "TR1",
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7049",
+      "exam_date": "2018-09-25",
+      "nodule_id": "69b0cb4d5f6bc61348ac4de664cee861",
+      "score_2017": 3.0,
+      "category_v2": "TR3",
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7049",
+      "exam_date": "2018-09-25",
+      "nodule_id": "f9b7363ed7fd02d63eaa9755372f93eb",
+      "score_2017": 0.0,
+      "category_v2": "TR1",
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7049",
+      "exam_date": "2019-10-25",
+      "nodule_id": "f0a6c908401535f92d42e557b09f6cb2",
+      "score_2017": 1.0,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7049",
+      "exam_date": "2019-10-25",
+      "nodule_id": "f60220dff228266e8d916bfc00c0808e",
+      "score_2017": 4.0,
+      "category_v2": "TR4",
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7049",
+      "exam_date": "2020-07-02",
+      "nodule_id": "a619a3d9e13b26157e60981d78338400",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7049",
+      "exam_date": "2020-07-02",
+      "nodule_id": "e2d9c4a84c5648916d71f1e7b2fd4ef2",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7049",
+      "exam_date": "2020-07-02",
+      "nodule_id": "e6234aef4b11abf7a18f00057dd91708",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7049",
+      "exam_date": "2020-12-29",
+      "nodule_id": "127890c837db87ac3695eecd4035ec35",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 2
+    },
+    {
+      "rid": "7049",
+      "exam_date": "2020-12-29",
+      "nodule_id": "67812465bc1cca29cb49738e071b2410",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2016-07-18",
+      "nodule_id": "3af65857c798150a99aa3eb9c2c8c166",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2016-07-18",
+      "nodule_id": "4396a45ddc3b9699f678b62de539e362",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 2
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2016-07-18",
+      "nodule_id": "56c79ba6a3be710b883265c1f77ce9ba",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 2
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2016-07-18",
+      "nodule_id": "5e29f72211a978ed066f5f3b8f632cf1",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2016-07-18",
+      "nodule_id": "909eb1cd967696bfd6076914d8e15da7",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2016-07-18",
+      "nodule_id": "aac42233a4b78a931a2a2be251c52d8e",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 2
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2017-08-31",
+      "nodule_id": "00455ee7e6d296a386547223703fea5d",
+      "score_2017": 0.0,
+      "category_v2": "TR1",
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2017-08-31",
+      "nodule_id": "0926a3c547878217e1b6574a43c090ed",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2017-08-31",
+      "nodule_id": "0e27bc59c742d7f3cde3e9edb791d730",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2017-08-31",
+      "nodule_id": "137db617748c2cf082cd82fb1d651e5c",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2017-08-31",
+      "nodule_id": "6411f0f6b29b4515017a668e8a977a16",
+      "score_2017": 1.0,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2017-08-31",
+      "nodule_id": "7150b90503affc20370fb2c30d17a5d5",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2017-08-31",
+      "nodule_id": "7c3005669a833de3f2ee7f2dcef6bcda",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2017-08-31",
+      "nodule_id": "ab44eca3052cd98725053da608ea7778",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2017-08-31",
+      "nodule_id": "b343c8412ab61670321b2dbe8b1c00c2",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2017-08-31",
+      "nodule_id": "d806633cb56d8bbd208a84af5f5d3b1b",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2018-08-13",
+      "nodule_id": "110d2964a33e6239492e52b120ff1259",
+      "score_2017": 1.0,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2018-08-13",
+      "nodule_id": "11c92a6f588e2c27b28d1825e58c82c1",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2018-08-13",
+      "nodule_id": "26660d4d849a231bb836e8f5e8c250d5",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2018-08-13",
+      "nodule_id": "3bae187f675cf0bb7073cc0727f52d88",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2018-08-13",
+      "nodule_id": "3ff495d6781fe6916dba428e8e703213",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2018-08-13",
+      "nodule_id": "4411cea2fd358366d5bc471c92a27b65",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2018-08-13",
+      "nodule_id": "5a5fb41100bc24fdaef59b7056fd3045",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2018-08-13",
+      "nodule_id": "5c6d6868b5aabfb7046febfe522dca00",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2018-08-13",
+      "nodule_id": "6db418b1bd99b7172e0e9e6c8cb2582a",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2018-08-13",
+      "nodule_id": "6e38a84b0a60d5710961e3bed844384f",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2018-08-13",
+      "nodule_id": "6eda15e8b65d811c48b2b419345ef7c1",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2018-08-13",
+      "nodule_id": "77dffd2fb1f9bd23757005219f2cf48e",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2018-08-13",
+      "nodule_id": "7b578ff3a8e20672bc358b0e80feec7e",
+      "score_2017": 4.0,
+      "category_v2": "TR4",
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2018-08-13",
+      "nodule_id": "b63a8cabdba73933e651733866851d2e",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2018-08-13",
+      "nodule_id": "c765f7e631f3ba2f6f0acb74308fa867",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2018-08-13",
+      "nodule_id": "e22dfa27b0732f32d3acaac81d16f97b",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2018-08-13",
+      "nodule_id": "fd0d4d35c80aebaa08b622e2f2e6e242",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2019-02-26",
+      "nodule_id": "1736800cfaf95f97760be50552fb2e84",
+      "score_2017": 1.0,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2019-02-26",
+      "nodule_id": "429a1998dcd606462a4dc645cd9030c7",
+      "score_2017": 1.0,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2019-02-26",
+      "nodule_id": "f04467a4ef03a26b91cdef24f74dbc51",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2020-06-03",
+      "nodule_id": "0b10cff7e55266d40c9a1788c237f148",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 2
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2020-06-03",
+      "nodule_id": "22344172c9751f22255d8a7875fb6c99",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2020-06-03",
+      "nodule_id": "679b4a109caa9462956cd4239a01f268",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 2
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2020-06-03",
+      "nodule_id": "b94db902d8f103d13595b6f8cf34d0cb",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2020-06-03",
+      "nodule_id": "db6af479a896d569b77fc45ec2444681",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 2
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2020-11-30",
+      "nodule_id": "0a1f600327745798837bc1ded6a5b0d4",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2020-11-30",
+      "nodule_id": "24a890ff1d9a798a4a9180ae3f8621cd",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 2
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2020-11-30",
+      "nodule_id": "79a4a1d842078726f7a01ea44e523582",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2020-11-30",
+      "nodule_id": "8b03c9a47b0058b0407feb51b0892382",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 2
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2020-11-30",
+      "nodule_id": "9fc13af16510e9876fd73e5f2683f4dc",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2020-11-30",
+      "nodule_id": "af28fd219e68918c84b07d4d48c3179f",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 2
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2020-11-30",
+      "nodule_id": "f2a78e3f48d71f027c67985ebfb5018b",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 2
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2021-05-29",
+      "nodule_id": "0e13da95ae3dfc77cc21dd99ba8eb2e6",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2021-05-29",
+      "nodule_id": "8f8df147f541088baaa7226a820aa78c",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7074",
+      "exam_date": "2021-05-29",
+      "nodule_id": "fd993ed11b4a9116e5074f227638a39f",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7573",
+      "exam_date": "2018-11-12",
+      "nodule_id": "0b8db2efd61e1255b4899fbe73e51799",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7573",
+      "exam_date": "2018-11-12",
+      "nodule_id": "66b4c071f7fb548e9128306aea836b79",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 4
+    },
+    {
+      "rid": "7573",
+      "exam_date": "2018-11-12",
+      "nodule_id": "8e682b2cdeffe8ac06446471677ad156",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 2
+    },
+    {
+      "rid": "7974",
+      "exam_date": "2016-11-21",
+      "nodule_id": "3d034d9433e7a69c64230a3358889cd9",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7974",
+      "exam_date": "2016-11-21",
+      "nodule_id": "59b3acfc265d255d56a5f139eba039b4",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7974",
+      "exam_date": "2016-11-21",
+      "nodule_id": "835f958653dbd47fee4275eaaffa5d10",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7974",
+      "exam_date": "2016-11-21",
+      "nodule_id": "c0de863f09c3332b9c08c66bdc15ca5a",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7974",
+      "exam_date": "2016-11-21",
+      "nodule_id": "d3dfec6aa7d41f2e722b4961676edf04",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": 1
+    },
+    {
+      "rid": "7974",
+      "exam_date": "2021-02-04",
+      "nodule_id": "c0dbd99861af6f3bd414e70fc9b5b806",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7974",
+      "exam_date": "2022-03-17",
+      "nodule_id": "2551fb55d983e7fa64aa76c08e81210e",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    },
+    {
+      "rid": "7974",
+      "exam_date": "2023-11-09",
+      "nodule_id": "cdada855c1afacf1c6141f4bb94cbd98",
+      "score_2017": null,
+      "category_v2": null,
+      "category_code_legacy_v1": null
+    }
+  ],
+  "audit_cpm_rollups": [
+    {
+      "rid": "10992",
+      "worst_v12": 5,
+      "best_v12": 4,
+      "worst_pts_v271": 4.0,
+      "best_pts_v271": 4.0,
+      "source_system_v271": "cunc_v1_points_acr2017"
+    },
+    {
+      "rid": "6731",
+      "worst_v12": 4,
+      "best_v12": 4,
+      "worst_pts_v271": 3.0,
+      "best_pts_v271": 2.0,
+      "source_system_v271": "cunc_v1_points_acr2017"
+    },
+    {
+      "rid": "7049",
+      "worst_v12": 4,
+      "best_v12": 1,
+      "worst_pts_v271": 4.0,
+      "best_pts_v271": 0.0,
+      "source_system_v271": "cunc_v1_points_acr2017"
+    },
+    {
+      "rid": "7074",
+      "worst_v12": 3,
+      "best_v12": 2,
+      "worst_pts_v271": 4.0,
+      "best_pts_v271": 0.0,
+      "source_system_v271": "cunc_v1_points_acr2017"
+    },
+    {
+      "rid": "7573",
+      "worst_v12": 5,
+      "best_v12": 4,
+      "worst_pts_v271": null,
+      "best_pts_v271": null,
+      "source_system_v271": null
+    },
+    {
+      "rid": "7974",
+      "worst_v12": 5,
+      "best_v12": 1,
+      "worst_pts_v271": null,
+      "best_pts_v271": null,
+      "source_system_v271": null
+    }
+  ]
+}
