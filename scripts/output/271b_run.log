@@ -150,3 +150,17 @@
 [2026-04-18T02:14:07Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
 [2026-04-18T02:14:07Z] wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_step4.json
 [2026-04-18T02:14:07Z] ########## Script 271b DONE (--step 4) ##########
+[2026-04-18T02:14:22Z] ########## Script 271b START (--step 5) ##########
+[2026-04-18T02:14:22Z]   archive: "Thyroid 2026 UPdated".archive_pub_v1_0, ts: 20260418T021422Z
+[2026-04-18T02:14:23Z] === STEP 5 — pathology_vs_imaging_laterality_concordant_v271b ===
+[2026-04-18T02:14:24Z]   added column pathology_vs_imaging_laterality_concordant_v271b VARCHAR
+[2026-04-18T02:14:25Z]   pathology_vs_imaging_laterality_concordant_v271b distribution:
+[2026-04-18T02:14:25Z]     'insufficient_data': 9394
+[2026-04-18T02:14:25Z]     'discordant': 1021
+[2026-04-18T02:14:25Z]     'concordant': 409
+[2026-04-18T02:14:25Z]     'partially_concordant': 34
+[2026-04-18T02:14:25Z]     'unknown_path': 13
+[2026-04-18T02:14:25Z]   legacy pathology_vs_imaging_laterality_concordant COMMENT updated
+[2026-04-18T02:14:25Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
+[2026-04-18T02:14:25Z] wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_step5.json
+[2026-04-18T02:14:25Z] ########## Script 271b DONE (--step 5) ##########

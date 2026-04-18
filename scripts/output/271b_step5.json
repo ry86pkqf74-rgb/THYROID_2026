@@ -1,0 +1,105 @@
+{
+  "step": 5,
+  "started_at": "2026-04-18T02:14:23Z",
+  "unaccounted_n": 0,
+  "concordance_v271b_distribution": [
+    {
+      "value": "insufficient_data",
+      "n": 9394
+    },
+    {
+      "value": "discordant",
+      "n": 1021
+    },
+    {
+      "value": "concordant",
+      "n": 409
+    },
+    {
+      "value": "partially_concordant",
+      "n": 34
+    },
+    {
+      "value": "unknown_path",
+      "n": 13
+    }
+  ],
+  "legacy_vs_v271b_concordance_crosstab": [
+    {
+      "legacy": null,
+      "v271b": "insufficient_data",
+      "n": 7474
+    },
+    {
+      "legacy": false,
+      "v271b": "insufficient_data",
+      "n": 1493
+    },
+    {
+      "legacy": false,
+      "v271b": "discordant",
+      "n": 758
+    },
+    {
+      "legacy": true,
+      "v271b": "insufficient_data",
+      "n": 427
+    },
+    {
+      "legacy": true,
+      "v271b": "discordant",
+      "n": 249
+    },
+    {
+      "legacy": false,
+      "v271b": "concordant",
+      "n": 238
+    },
+    {
+      "legacy": true,
+      "v271b": "concordant",
+      "n": 162
+    },
+    {
+      "legacy": false,
+      "v271b": "partially_concordant",
+      "n": 21
+    },
+    {
+      "legacy": null,
+      "v271b": "discordant",
+      "n": 14
+    },
+    {
+      "legacy": true,
+      "v271b": "partially_concordant",
+      "n": 9
+    },
+    {
+      "legacy": null,
+      "v271b": "concordant",
+      "n": 9
+    },
+    {
+      "legacy": null,
+      "v271b": "unknown_path",
+      "n": 6
+    },
+    {
+      "legacy": false,
+      "v271b": "unknown_path",
+      "n": 6
+    },
+    {
+      "legacy": null,
+      "v271b": "partially_concordant",
+      "n": 4
+    },
+    {
+      "legacy": true,
+      "v271b": "unknown_path",
+      "n": 1
+    }
+  ],
+  "finished_at": "2026-04-18T02:14:25Z"
+}
