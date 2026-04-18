@@ -33,6 +33,11 @@
 - `canonical_patient_master` distinct research_id = **10,871**
 - Column `r_class_true` exists (rollup fix applied)
 - Column `ete_grade_final_v2` exists (ETE adjudication applied)
+- Column `cpm_built_at` exists AND `IS NOT NULL` for all 10,871 rows (provenance invariant; updated by every reconciliation/cleanup run)
+- Column `ajcc8_t_stage` is the **corrected** AJCC8 T-stage (post 04-17 phase-4.6 rename); the original lives as `ajcc8_t_stage_with_microete_t3b_DEPRECATED`
+- 6 per-entity confirmed columns: `comp_vc_paralysis_confirmed`, `comp_vc_paresis_confirmed`, `comp_hematoma_confirmed`, `comp_seroma_confirmed`, `comp_chyle_leak_confirmed`, `comp_wound_infection_confirmed` all exist
+- Both `main.thyroglobulin_lab_canonical_v1` and `main.longitudinal_lab_canonical_v1` carry `is_in_canonical_cancer_cohort BOOLEAN` (TRUE for CPM rids, FALSE for the 403 benign-thyroidectomy Tg-surveillance orphans, NULL = invariant violation)
+- `manuscript_workspace.cpm_reconciliation_provenance_v1` has at least one row per cleanup engagement (per-phase row pattern: `<engagement>_phaseN`)
 
 ### Deprecated columns — never use in new analyses
 | Deprecated column | Use instead |
@@ -41,6 +46,11 @@
 | `lvi_grade_final_v13` | `lvi_ordinal_worst`, `lvi_any_present_path` |
 | `multifocal_flag`, `path_multifocal_flag`, `path_n_tumors` | `multifocal_flag_path`, `n_tumors_path` |
 | `max_tumor_size_cm_v10` | `tumor_size_cm` or `tumor_size_cm_max` |
+| `ajcc8_t_stage_with_microete_t3b_DEPRECATED` | `ajcc8_t_stage` (corrected version, post 04-17 phase-4.6 rename) |
+
+### Known column caveats — read before querying
+- **`tumor_size_cm_max` under-reports for 80 multi-surgery patients (2026-04-18).** The max-aggregator reads from feeders that only see surgery-1 tumors, missing later-surgery foci. Per-rid corrections queued in `manuscript_workspace.path_tumor_size_correction_queue_v1` (status=`awaiting_approval`, F1=75 TEM-confirmed + F2=5 non-TEM, with `proposed_corrected_value`). For true-max queries until corrections land, use `GREATEST(path_tumor_size_cm, tumor_size_cm_max)` or join to the correction queue's `proposed_corrected_value`. Generalized scope check confirmed `hidden_both_under = 0` (no patients escape the `path_tumor_size_invariant_v1` view). The same surgery-1-only feeder pattern was checked on `ete_grade_final_v2`, `lvi_ordinal_worst`, `margin_involved_any`, `multifocal_flag_path`, `n_tumors_path` — only ETE has any hits (2/80); LVI and margin aggregators are clean.
+- **83 of the 403 Tg-lab orphans have cancer-suggestive `procedure_raw` text (2026-04-18).** Even though they're flagged `is_in_canonical_cancer_cohort = FALSE`, their operative-episode-detail records mention "Papillary Thyroid Carcinoma", "Follicular Carcinoma", "Hürthle Cell Carcinoma", etc. Queue: `manuscript_workspace.tg_orphan_cancer_text_investigation_queue_v1` (status=`awaiting_upstream_triage`). Each rid points at either an upstream extraction gap (5-table evidence missed) or an intentional exclusion rule (documentable). Treat the 403-orphan flag as PROVISIONAL for these 83 until triaged.
 
 ---
 

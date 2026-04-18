@@ -1,0 +1,15 @@
+[2026-04-18T06:04:34.391677+00:00] Follow-up 2 — cancer-text orphan investigation queue.
+[2026-04-18T06:04:34.422071+00:00]   loaded 403 orphan rids
+[2026-04-18T06:04:34.422468+00:00]   pulling OED rows for orphan rids...
+[2026-04-18T06:04:34.463162+00:00]   OED rows total: 403 across 403 rids
+[2026-04-18T06:04:34.463447+00:00]   pulling Tg date range per rid...
+[2026-04-18T06:04:34.516231+00:00]   scanning for cancer-suggestive text...
+[2026-04-18T06:04:34.519135+00:00]   cancer-text matched: 83 rids (benign-only-skipped: 27)
+[2026-04-18T06:04:34.519336+00:00] Creating manuscript_workspace.tg_orphan_cancer_text_investigation_queue_v1...
+[2026-04-18T06:04:41.944982+00:00]   queue rows: 83 (expected 83)
+[2026-04-18T06:04:42.361755+00:00]   CSV -> /Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417_resume/followup2_cancer_text_orphan_queue.csv
+[2026-04-18T06:04:42.361986+00:00]   term distribution: {'carcinoma': 78, 'papillary': 54, 'follicular': 17, 'hurthle': 11, 'oncocytic carcinoma': 7, 'ptc': 3, 'medullary': 2, 'cancer': 1}
+[2026-04-18T06:04:42.362633+00:00]   MD -> /Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417_resume/followup2_cancer_text_orphan_queue.md
+[2026-04-18T06:04:42.362989+00:00]   JSON -> /Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417_resume/followup2_cancer_text_orphan_queue.json
+[2026-04-18T06:04:42.399629+00:00]   CPM invariant: 10871/10871 OK
+[2026-04-18T06:04:42.399927+00:00] Follow-up 2 complete.

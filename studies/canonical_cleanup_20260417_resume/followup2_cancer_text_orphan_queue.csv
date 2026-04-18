@@ -1,0 +1,84 @@
+research_id,n_oed_rows,cancer_text_match_terms,procedure_raw_concatenated,procedure_normalized_set,n_tg_lab_rows,first_tg_dt,last_tg_dt,status,classifier_version
+151,1,"carcinoma,papillary",Papillary Thyroid Carcinoma | unknown,unknown,23,2001-04-26 13:00:00,2007-12-21 11:35:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+184,1,"carcinoma,hurthle,oncocytic carcinoma",Oncocytic Carcinoma (Hurthle Cell Carcinoma); | unknown,unknown,41,2001-03-02 06:35:00,2008-04-28 12:34:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+224,1,"carcinoma,follicular",Follicular Thyroid Carcinoma; | unknown,unknown,12,2001-03-08 10:42:00,2002-08-28 09:27:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+240,1,"carcinoma,hurthle,oncocytic carcinoma",Oncocytic Carcinoma (Hurthle Cell Carcinoma); | unknown,unknown,2,2001-04-03 08:32:00,2001-04-03 08:32:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+253,1,"carcinoma,follicular",Follicular Thyroid Carcinoma; | unknown,unknown,28,2002-01-22 13:21:00,2017-11-16 12:27:23,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+264,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,15,2001-09-18 15:44:00,2008-04-29 12:29:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+457,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,31,2003-02-07 14:55:00,2016-12-02 11:16:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+514,1,hurthle,Hurthle Cell Adenoma; | unknown,unknown,2,2004-05-28 08:15:00,2004-05-28 08:15:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+547,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,49,2005-09-07 14:25:00,2020-01-16 07:41:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+551,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,14,2005-06-10 03:49:00,2008-05-02 12:55:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+555,1,"carcinoma,hurthle,oncocytic carcinoma,papillary",Papillary Thyroid Carcinoma;Oncocytic Carcinoma (Hurthle Cell Carcinoma); | unknown,unknown,24,2003-10-30 11:40:00,2012-01-12 09:30:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+560,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,2,2004-02-02 11:09:00,2004-02-02 11:09:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+581,1,"carcinoma,follicular",Follicular Thyroid Carcinoma; | unknown,unknown,57,2004-09-07 12:40:00,2025-06-23 12:38:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+599,1,"carcinoma,papillary",Papillary Thyroid Carcinoma | unknown,unknown,1,2003-08-04 11:15:00,2003-08-04 11:15:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+652,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,68,2014-03-05 15:20:00,2025-02-26 14:34:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+745,1,"carcinoma,papillary",Papillary Thyroid Carcinoma | unknown,unknown,24,2015-11-13 12:39:00,2016-06-08 12:03:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+750,1,carcinoma,Insular carcinoma | unknown,unknown,102,2014-04-23 12:40:00,2025-07-28 16:28:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+759,1,"carcinoma,papillary",Papillary Thyroid Carcinoma | unknown,unknown,12,2016-03-14 13:20:00,2019-04-16 11:09:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+799,1,"carcinoma,papillary",Papillary Thyroid Carcinoma | unknown,unknown,4,2015-06-24 11:43:00,2025-05-12 15:12:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+822,1,"carcinoma,papillary",Papillary Thyroid Carcinoma | unknown,unknown,57,2015-02-18 12:45:00,2024-12-06 14:02:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+836,1,"carcinoma,papillary",Papillary Thyroid Carcinoma | unknown,unknown,62,2013-06-06 12:55:00,2025-07-23 14:28:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+843,1,"carcinoma,follicular",Follicular Thyroid Carcinoma; | unknown,unknown,1,2004-10-22 16:30:00,2004-10-22 16:30:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+863,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,2,2004-07-30 13:20:00,2004-07-30 13:20:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+881,1,"carcinoma,follicular",Follicular Thyroid Carcinoma; | unknown,unknown,27,2005-07-18 11:20:00,2012-06-22 11:56:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+902,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,4,2013-04-29 12:12:00,2020-08-18 15:57:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+917,1,"carcinoma,follicular",Follicular Thyroid Carcinoma; | unknown,unknown,19,2004-06-30 10:52:00,2006-11-29 09:50:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+936,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,48,2005-03-14 10:35:00,2025-08-12 13:56:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+957,1,hurthle,Hurthle Cell neoplasm; | unknown,unknown,12,2008-07-29 11:30:00,2009-10-15 10:06:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1051,1,hurthle,Hurthle Cell Adenoma | unknown,unknown,98,2007-03-21 16:20:00,2025-06-24 17:18:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1099,1,"carcinoma,papillary",Papillary Thyroid Carcinoma | unknown,unknown,84,2008-07-30 01:18:00,2019-11-13 12:00:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1159,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,5,2006-05-15 13:17:00,2015-06-19 10:40:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1168,1,"carcinoma,follicular",follicular adenoma vs. follicular carcinoma; | unknown,unknown,48,2006-05-18 13:06:00,2024-03-26 11:43:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1188,1,"carcinoma,follicular",Follicular Thyroid Carcinoma; | unknown,unknown,16,2005-02-24 10:10:00,2006-11-29 09:50:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1226,1,"carcinoma,follicular",Follicular Thyroid Carcinoma | unknown,unknown,24,2006-03-20 10:49:00,2014-06-17 12:59:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1231,1,"carcinoma,follicular",Follicular Thyroid Carcinoma | unknown,unknown,14,2019-09-04 17:03:00,2025-09-04 17:12:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1240,1,"carcinoma,follicular",Follicular Thyroid Carcinoma | unknown,unknown,7,2006-09-14 13:10:00,2020-03-06 12:25:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1254,1,"carcinoma,follicular",Follicular Thyroid Carcinoma; | unknown,unknown,18,2008-02-26 14:18:00,2013-07-19 09:55:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1258,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,5,2008-03-17 13:15:00,2018-11-05 11:43:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1296,1,"carcinoma,hurthle,oncocytic carcinoma",Oncocytic Carcinoma (Hurthle Cell Carcinoma); | unknown,unknown,49,2008-10-01 11:30:00,2020-07-14 15:18:23,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1304,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,49,2008-05-30 13:05:00,2020-10-09 15:19:07,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1352,1,"carcinoma,follicular,papillary,ptc",Papillary Thyroid Carcinoma;follicular variant PTC - RL | unknown,unknown,72,2008-12-11 16:51:00,2024-10-23 15:48:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1357,1,"carcinoma,hurthle,oncocytic carcinoma",Oncocytic Carcinoma (Hurthle Cell Carcinoma) | unknown,unknown,30,2007-06-28 12:00:00,2011-01-19 12:12:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1364,1,"carcinoma,hurthle,oncocytic carcinoma",Oncocytic Carcinoma (Hurthle Cell Carcinoma) | unknown,unknown,82,2008-10-28 15:15:00,2016-06-20 09:30:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1373,1,"carcinoma,follicular",Follicular Thyroid Carcinoma | unknown,unknown,4,2008-05-28 16:00:00,2008-06-27 09:38:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1445,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,54,2008-09-09 10:40:00,2016-09-16 08:20:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1481,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,84,2008-07-30 01:18:00,2019-11-13 12:00:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1490,1,"carcinoma,papillary",Papillary Thyroid Carcinoma | unknown,unknown,63,2008-09-03 17:20:00,2021-10-20 11:54:39,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1536,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,4,2013-04-18 11:27:00,2013-07-10 12:04:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1552,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,84,2012-12-05 11:45:00,2025-11-10 15:29:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1554,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,49,2011-01-27 13:57:00,2020-10-16 16:38:11,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1582,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,31,2013-01-09 10:45:00,2025-01-29 16:07:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1615,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,18,2012-03-07 11:48:00,2016-03-23 14:32:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1637,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,44,2013-07-12 12:35:00,2025-07-02 18:32:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1655,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,14,2013-04-24 11:51:00,2025-06-06 14:37:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1661,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,21,2014-06-05 07:57:08,2017-05-17 07:34:38,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1663,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,22,2014-04-28 10:30:00,2025-07-14 12:05:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1667,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,12,2015-09-16 11:34:00,2025-06-03 19:36:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1681,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,44,2013-05-22 11:35:00,2024-01-04 15:48:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1702,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,21,2013-04-10 11:35:00,2016-05-17 09:11:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1727,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,37,2011-06-21 16:20:00,2016-02-22 14:50:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1728,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,32,2011-04-04 11:27:00,2016-09-16 08:20:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1750,1,cancer,Thyroid Cancer unspecified; | unknown,unknown,96,2011-04-26 10:00:00,2025-03-14 12:04:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1778,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,51,2011-09-06 10:19:00,2025-07-29 17:20:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1800,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,63,2011-09-06 09:20:00,2025-07-11 18:03:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1820,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,70,2011-10-03 07:35:00,2025-08-25 12:48:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1843,1,"carcinoma,papillary,ptc",Papillary Thyroid Carcinoma;Recurrent PTC; | unknown,unknown,50,2009-06-10 10:35:00,2016-09-16 08:20:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1846,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,36,2011-01-19 09:38:00,2022-03-21 10:02:09,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1849,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,104,2010-10-07 16:35:00,2024-12-17 17:27:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1852,1,"carcinoma,hurthle,oncocytic carcinoma",Oncocytic Carcinoma (Hurthle Cell Carcinoma); | unknown,unknown,127,2011-04-26 14:26:00,2025-09-25 13:39:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1867,1,"carcinoma,papillary",Papillary Thyroid Carcinoma; | unknown,unknown,83,2010-02-17 10:29:00,2024-08-01 19:16:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1877,1,"carcinoma,papillary",Papillary Thyroid Carcinoma;Non-toxic Multinodular goiter; | unknown,unknown,2,2010-04-21 11:34:00,2010-04-21 11:34:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1890,1,"carcinoma,papillary",Papillary Thyroid Carcinoma;Reop; | unknown,unknown,72,2010-06-18 07:31:00,2025-10-29 12:17:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1897,1,hurthle,Hurthle Cell Adenoma; | unknown,unknown,14,2010-12-22 08:52:00,2012-12-21 08:37:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+1955,1,"carcinoma,papillary",Papillary Thyroid Carcinoma;Reop | unknown,unknown,65,2009-08-07 10:37:00,2025-06-17 13:19:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+2047,1,"carcinoma,medullary",Medullary Thyroid Carcinoma | unknown,unknown,6,2014-08-19 10:45:00,2015-04-01 14:21:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+2067,1,"carcinoma,follicular,papillary",Follicular variant papillary thyroid carcinoma;Papillary Thyroid Carcinoma | unknown,unknown,2,2009-07-20 13:50:00,2009-07-20 13:50:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+2085,1,"carcinoma,papillary,ptc",Papillary Thyroid Carcinoma;Recurrent PTC | unknown,unknown,57,2008-08-08 16:30:00,2025-05-19 14:49:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+2090,1,"carcinoma,follicular",Follicular Thyroid Carcinoma | unknown,unknown,56,2009-01-21 12:58:00,2021-03-24 16:20:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+2215,1,"carcinoma,follicular",Follicular Thyroid Carcinoma | unknown,unknown,47,2021-04-29 10:49:00,2025-09-26 18:33:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+2220,1,"carcinoma,papillary",Papillary Thyroid Carcinoma | unknown,unknown,30,2020-08-04 11:29:00,2024-08-29 16:25:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+2223,1,"carcinoma,papillary",Substernal Goiter;Papillary Thyroid Carcinoma | unknown,unknown,43,2021-05-21 10:02:00,2025-11-13 13:45:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+2244,1,"carcinoma,medullary",Medullary Thyroid Carcinoma | unknown,unknown,30,2022-04-14 12:20:00,2025-10-20 18:24:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418
+4856,1,"carcinoma,papillary",Papillary Thyroid Carcinoma | unknown,unknown,48,2015-06-23 13:55:00,2023-04-28 15:55:00,awaiting_upstream_triage,v1_cancer_text_scan_20260418

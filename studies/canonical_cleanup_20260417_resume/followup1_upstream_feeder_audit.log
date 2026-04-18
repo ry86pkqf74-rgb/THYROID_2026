@@ -1,0 +1,12 @@
+[2026-04-18T06:02:48.343213+00:00] Follow-up 1 — upstream feeder audit (read-only).
+[2026-04-18T06:02:48.528797+00:00]   loaded 80 F-bucket rids
+[2026-04-18T06:02:48.529065+00:00]   loading CPM worst-case columns for the 80 rids...
+[2026-04-18T06:02:48.592133+00:00]   loading TEM rows (all surgeries)...
+[2026-04-18T06:02:48.642613+00:00]   TEM rows total: 182
+[2026-04-18T06:02:48.644732+00:00]   summary by column: {'ete': {'N/A_TEM_NO_ETE_DATA': 52, 'AMBIGUOUS': 11, 'AGREES_WORST': 15, 'UNDER_REPORTS_LIKE_TUMOR_SIZE': 2}, 'lvi': {'AMBIGUOUS': 39, 'N/A_TEM_NO_LVI_DATA': 7, 'AGREES_WORST': 34}, 'margin': {'AGREES_WORST': 51, 'N/A_TEM_NO_MARGIN_DATA': 2, 'AMBIGUOUS': 27}, 'multifocal': {'N/A_TEM_NO_MF_DATA': 80}, 'n_tumors': {'N/A_TEM_NO_N_TUMORS': 80}}
+[2026-04-18T06:02:48.644868+00:00]   rids with at least one UNDER_REPORTS_LIKE_TUMOR_SIZE flag on a non-tumor-size column: 2 / 80
+[2026-04-18T06:02:48.646377+00:00]   CSV -> /Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417_resume/followup1_upstream_feeder_audit.csv
+[2026-04-18T06:02:48.646813+00:00]   MD -> /Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417_resume/followup1_upstream_feeder_audit.md
+[2026-04-18T06:02:48.647768+00:00]   JSON -> /Users/loganglosser/THYROID_2026/studies/canonical_cleanup_20260417_resume/followup1_upstream_feeder_audit.json
+[2026-04-18T06:02:48.695999+00:00]   CPM invariant: 10871/10871 OK
+[2026-04-18T06:02:48.696265+00:00] Follow-up 1 complete (read-only).
