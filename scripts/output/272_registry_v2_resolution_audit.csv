@@ -1,0 +1,494 @@
+detail_table_name,feed_col,resolves_bool,auto_repaired_bool,repair_mode,repair_source_name
+_molecular_patient_rollup_v227,ret_positive_v7,True,False,,ret_positive_v7
+_molecular_patient_rollup_v227,any_fusion_positive,True,False,,any_fusion_positive
+_molecular_patient_rollup_v227,rollup_script_version,True,False,,rollup_script_version
+canonical_benign_diagnosis_v1,syn_graves,True,False,,syn_graves
+canonical_benign_diagnosis_v1,syn_hashimoto,True,False,,syn_hashimoto
+canonical_benign_diagnosis_v1,syn_multinodular_goiter,True,False,,syn_multinodular_goiter
+canonical_benign_diagnosis_v1,syn_follicular_adenoma,True,False,,syn_follicular_adenoma
+canonical_benign_diagnosis_v1,other benign flags,False,True,prose_skipped,
+canonical_diagnosis_unified_v1,diagnosis_primary,True,False,,diagnosis_primary
+canonical_diagnosis_unified_v1,diagnosis_variant,True,False,,diagnosis_variant
+canonical_diagnosis_unified_v1,diagnosis_full,True,False,,diagnosis_full
+canonical_diagnosis_unified_v1,is_malignant,True,False,,is_malignant
+canonical_malignant_diagnosis_v1,histology_final,True,False,,histology_final
+canonical_malignant_diagnosis_v1,histology_source,True,False,,histology_source
+canonical_malignant_diagnosis_v1,aggressive_variant_flag,True,False,,aggressive_variant_flag
+canonical_molecular_tested_v1,molecular_tested_confirmed,True,False,,molecular_tested_confirmed
+canonical_molecular_tested_v1,mol_platform,True,False,,mol_platform
+canonical_molecular_tested_v1,mol_has_thyroseq,True,False,,mol_has_thyroseq
+canonical_molecular_tested_v1,mol_has_afirma,True,False,,mol_has_afirma
+canonical_molecular_tested_v1,braf_positive_final,True,False,,braf_positive_final
+canonical_recurrence_v1,recurrence_confirmed,True,False,,recurrence_confirmed
+canonical_recurrence_v1,recurrence_type,True,False,,recurrence_type
+canonical_recurrence_v1,recurrence_site,True,False,,recurrence_site
+canonical_recurrence_v1,recurrence_date,True,False,,recurrence_date
+canonical_recurrence_v1,recurrence_definition,True,False,,recurrence_definition
+canonical_survival_followup_v1,followup_years,True,False,,followup_years
+canonical_survival_followup_v1,followup_days,True,False,,followup_days
+canonical_survival_followup_v1,last_contact_date,True,False,,last_contact_date
+canonical_survival_followup_v1,vital_status,True,False,,vital_status
+canonical_survival_followup_v1,death_date,True,False,,death_date
+canonical_tumor_characteristics_v1,feeds patient_tumor_rollup_v1 (v1_1 migration),False,True,prose_skipped,
+canonical_tumor_characteristics_v1,rollup_v1 in turn feeds CPM cols multifocal_flag_path,False,True,prose_skipped,
+canonical_tumor_characteristics_v1,n_tumors_path,True,False,,n_tumors_path
+canonical_tumor_characteristics_v1,tumor_size_cm_max,True,False,,tumor_size_cm_max
+canonical_tumor_characteristics_v1,lvi_any_present_path,True,False,,lvi_any_present_path
+canonical_tumor_characteristics_v1,lvi_ordinal_worst,True,False,,lvi_ordinal_worst
+canonical_tumor_characteristics_v1,margin_status_true,True,False,,margin_status_true
+canonical_tumor_characteristics_v1,r_class_true,True,False,,r_class_true
+canonical_us_nodule_characteristics_v1,feeds imaging_patient_summary_v1 (v1_1 migration),False,True,prose_skipped,
+canonical_us_nodule_characteristics_v1,rollup feeds CPM cols tirads_best_category_v12,False,True,prose_skipped,
+canonical_us_nodule_characteristics_v1,tirads_best_score_v12,True,False,,tirads_best_score_v12
+canonical_us_nodule_characteristics_v1,tirads_worst_category_v12,True,False,,tirads_worst_category_v12
+canonical_us_nodule_characteristics_v1,n_us_nodules_total,True,False,,n_us_nodules_total
+canonical_us_nodule_characteristics_v1,dominant_nodule_size_cm,True,False,,dominant_nodule_size_cm
+canonical_us_nodule_characteristics_v1,max_tirads_ever,True,False,,max_tirads_ever
+clinical_note_ln_extracted_v1,cnln_* columns,False,False,,
+clinical_note_ln_extracted_v1,nlp_ln_has_data,True,False,,nlp_ln_has_data
+clinical_note_ln_extracted_v1,nlp_ln_positive_mentioned,True,False,,nlp_ln_positive_mentioned
+complication_patient_summary_v1,any_confirmed_complication,True,False,,any_confirmed_complication
+complication_patient_summary_v1,n_confirmed_complications,True,False,,n_confirmed_complications
+complication_patient_summary_v1,any_analysis_eligible_complication,True,False,,any_analysis_eligible_complication
+complication_phenotype_v1,comp_*_confirmed,False,False,,
+complication_phenotype_v1,comp_*_transient,False,False,,
+complication_phenotype_v1,comp_*_permanent,False,False,,
+complication_phenotype_v1,comp_*_days_postop,False,False,,
+complication_phenotype_v1,comp_*_evidence_tier,False,False,,
+ct_imaging,ct_n_exams,True,False,,ct_n_exams
+ct_imaging,ct_substernal_extension_any,True,False,,ct_substernal_extension_any
+ct_imaging,ct_ln_suspicious_any,True,False,,ct_ln_suspicious_any
+ct_imaging,ct_tracheal_deviation_any,True,False,,ct_tracheal_deviation_any
+ete_adjudication_v1,ete_grade_final_v2,True,False,,ete_grade_final_v2
+ete_adjudication_v1,ete_adjudicated_flag,True,False,,ete_adjudicated_flag
+extracted_braf_recovery_v1,braf_recovered_status_v11,True,False,,braf_recovered_status_v11
+extracted_braf_recovery_v1,braf_recovered_variant_v11,True,False,,braf_recovered_variant_v11
+extracted_braf_recovery_v1,braf_detection_method_v11,True,False,,braf_detection_method_v11
+extracted_ete_subgraded_v1,ete_refined_grade,True,False,,ete_refined_grade
+extracted_ete_subgraded_v1,ete_subgrade_method,True,False,,ete_subgrade_method
+extracted_ete_subgraded_v1,ete_subgrade_note,True,False,,ete_subgrade_note
+extracted_fna_bethesda_v1,bethesda_final,True,False,,bethesda_final
+extracted_fna_bethesda_v1,bethesda_category,True,False,,bethesda_category
+extracted_fna_bethesda_v1,fna_bethesda_source,True,False,,fna_bethesda_source
+extracted_fna_bethesda_v1,fna_bethesda_confidence,True,False,,fna_bethesda_confidence
+extracted_postop_labs_expanded_v1,postop_calcium_min_value,True,False,,postop_calcium_min_value
+extracted_postop_labs_expanded_v1,postop_pth_min_value,True,False,,postop_pth_min_value
+extracted_postop_labs_expanded_v1,calcium_nadir_30d,True,False,,calcium_nadir_30d
+extracted_postop_labs_expanded_v1,pth_nadir_30d,True,False,,pth_nadir_30d
+extracted_ras_patient_summary_v1,ras_positive_v11,True,False,,ras_positive_v11
+extracted_ras_patient_summary_v1,ras_primary_subtype_v11,True,False,,ras_primary_subtype_v11
+extracted_ras_patient_summary_v1,ras_allele_freq_v11,True,False,,ras_allele_freq_v11
+extracted_ras_patient_summary_v1,ras_protein_change_v11,True,False,,ras_protein_change_v11
+extracted_rln_injury_refined_v2,rln_status,True,False,,rln_status
+extracted_rln_injury_refined_v2,rln_injury_type,True,False,,rln_injury_type
+extracted_rln_injury_refined_v2,rln_permanent_flag,True,False,,rln_permanent_flag
+extracted_rln_injury_refined_v2,rln_transient_flag,True,False,,rln_transient_flag
+extracted_tirads_validated_v1,tirads component scores (composition,False,True,prose_skipped,
+extracted_tirads_validated_v1,echogenicity,False,False,,
+extracted_tirads_validated_v1,shape,False,False,,
+extracted_tirads_validated_v1,margin,False,False,,
+extracted_tirads_validated_v1,foci) rolled up via tirads_best_score_v12 / tirads_worst_score_v12,False,True,prose_skipped,
+extracted_tirads_validated_v1,not promoted individually,False,True,prose_skipped,
+fna_cytology,n_fna_cytology_records,True,False,,n_fna_cytology_records
+fna_episode_master_v2,n_fna_episodes,True,False,,n_fna_episodes
+fna_episode_master_v2,bethesda_final,True,False,,bethesda_final
+fna_episode_master_v2,bethesda_category,True,False,,bethesda_category
+fna_episode_master_v2,fna_confidence,True,False,,fna_confidence
+fna_episode_master_v2,cross_fna_concordance,True,False,,cross_fna_concordance
+fna_history,upstream source for fna_cytology,False,True,prose_skipped,
+imaging_exam_master_v1,us_n_reports,True,False,,us_n_reports
+imaging_exam_master_v1,exam-level linkage,False,True,prose_skipped,
+imaging_nodule_master_v1,imaging_n_nodule_records,True,False,,imaging_n_nodule_records
+imaging_nodule_master_v1,tirads_worst_combined,True,False,,tirads_worst_combined
+imaging_nodule_master_v1,tirads_best_combined,True,False,,tirads_best_combined
+imaging_patient_summary_v1,n_us_exams,True,False,,n_us_exams
+imaging_patient_summary_v1,bilateral_disease_flag,True,False,,bilateral_disease_flag
+imaging_patient_summary_v1,dominant_nodule_size_cm,True,False,,dominant_nodule_size_cm
+imaging_patient_summary_v1,longitudinal_assessment_available,True,False,,longitudinal_assessment_available
+imaging_patient_summary_v1,max_tirads_ever,True,False,,max_tirads_ever
+ln_crossval_v1,ln_rollup_crossval_status,True,False,,ln_rollup_crossval_status
+ln_crossval_v1,ln_rollup_internal_consistency,True,False,,ln_rollup_internal_consistency
+ln_master_rollup_v1,ln_total_examined,True,False,,ln_total_examined
+ln_master_rollup_v1,ln_total_positive,True,False,,ln_total_positive
+ln_master_rollup_v1,ln_ratio,True,False,,ln_ratio
+ln_master_rollup_v1,ln_positive_flag,True,False,,ln_positive_flag
+ln_master_rollup_v1,level-specific LN data,False,True,prose_skipped,
+ln_master_rollup_v1,ene columns,False,True,prose_skipped,
+longitudinal_lab_canonical_v1,lab_tsh_n_measurements,True,False,,lab_tsh_n_measurements
+longitudinal_lab_canonical_v1,lab_pth_n_measurements,True,False,,lab_pth_n_measurements
+longitudinal_lab_canonical_v1,lab_calcium_n_measurements,True,False,,lab_calcium_n_measurements
+longitudinal_lab_canonical_v1,lab_vitd_n_measurements,True,False,,lab_vitd_n_measurements
+manuscript_cohort_v1,manuscript-ready cohort,False,True,prose_skipped,
+molecular_test_episode_v2,mol_n_tests,True,False,,mol_n_tests
+molecular_test_episode_v2,molecular_tested_confirmed,True,False,,molecular_tested_confirmed
+molecular_test_episode_v2,mol_platform,True,False,,mol_platform
+molecular_test_episode_v2,mol_has_afirma,True,False,,mol_has_afirma
+molecular_test_episode_v2,mol_has_thyroseq,True,False,,mol_has_thyroseq
+molecular_test_episode_v2,braf_positive_final,True,False,,braf_positive_final
+molecular_test_episode_v2,ras_positive_final,True,False,,ras_positive_final
+molecular_test_episode_v2,tert_positive_final,True,False,,tert_positive_final
+molecular_test_episode_v2,ret_positive_v7 (v225),False,True,prose_skipped,
+molecular_test_episode_v2,any_fusion_positive (v225),False,True,prose_skipped,
+molecular_test_episode_v2,specimen_site_raw (v225),False,True,prose_skipped,
+molecular_test_episode_v2,specimen_site_normalized (v225),False,True,prose_skipped,
+molecular_testing,upstream source,False,True,prose_skipped,
+molecular_variant_long,mol_genes_list,True,False,,mol_genes_list
+molecular_variant_long,mol_n_distinct_genes,True,False,,mol_n_distinct_genes
+molecular_variant_long,mol_n_variants_total,True,False,,mol_n_variants_total
+molecular_variant_long,mol_variant_classes,True,False,,mol_variant_classes
+mri_imaging,mri_has_data,True,False,,mri_has_data
+mri_imaging,mri_n_exams,True,False,,mri_n_exams
+mri_imaging,mri_substernal_any,True,False,,mri_substernal_any
+note_entities_complications,comp_* upstream,False,False,,
+note_entities_genetics,molecular columns upstream,False,True,prose_skipped,
+note_entities_llm_airway_invasion,nlp_airway_* columns,False,False,,
+note_entities_llm_cervical_ln_detail,cnln_* columns,False,False,,
+note_entities_llm_dynamic_risk_response,nlp_dynrisk_* columns,False,False,,
+note_entities_llm_frozen_section_detail,nlp_frozensec_* columns,False,False,,
+note_entities_llm_functional_outcomes,nlp_funcoutcome_* columns,False,False,,
+note_entities_llm_imaging,nlp_imaging_* columns,False,False,,
+note_entities_llm_labs,nlp_labs_* columns,False,False,,
+note_entities_llm_parathyroid_detail,nlp_parathyroid_* columns,False,False,,
+note_entities_llm_past_medical_hx,pmhx_nlp_* columns (diabetes,False,False,,
+note_entities_llm_past_medical_hx,HTN,False,False,,
+note_entities_llm_past_medical_hx,obesity,False,False,,
+note_entities_llm_past_medical_hx,radiation,False,False,,
+note_entities_llm_past_medical_hx,etc.),False,True,prose_skipped,
+note_entities_llm_past_surgical_hx,pshx_nlp_* columns (prior thyroidectomy,False,False,,
+note_entities_llm_past_surgical_hx,FNA,False,False,,
+note_entities_llm_past_surgical_hx,neck surgery,False,True,prose_skipped,
+note_entities_llm_past_surgical_hx,RAI),False,True,prose_skipped,
+note_entities_llm_pathology,nlp_path_* columns,False,False,,
+note_entities_llm_patient_decision_adherence,nlp_ptdecision_* columns,False,False,,
+note_entities_llm_physical_exam,nlp_physexam_* columns,False,False,,
+note_entities_llm_presenting_symptoms,sx_nlp_* columns (hoarseness,False,False,,
+note_entities_llm_presenting_symptoms,dysphagia,False,False,,
+note_entities_llm_presenting_symptoms,neck mass,False,True,prose_skipped,
+note_entities_llm_presenting_symptoms,dyspnea),False,True,prose_skipped,
+note_entities_llm_rad_treatment,radtx_nlp_* columns,False,False,,
+note_entities_llm_rai_detailed,nlp_raidetail_* columns,False,False,,
+note_entities_llm_recurrence,nlp_rec_* columns,False,False,,
+note_entities_llm_survival_followup,nlp_survfu_* columns,False,False,,
+note_entities_llm_synoptic_pathology_enrichment,nlp_synoptic_* columns,False,False,,
+note_entities_llm_tg_kinetics,nlp_tg_* columns,False,False,,
+note_entities_llm_tirads_granular,nlp_tirads_* columns,False,False,,
+note_entities_llm_us_nodule_dynamics,nlp_usnodule_* columns,False,False,,
+note_entities_llm_vascular_invasion,nlp_vasc_* columns,False,False,,
+note_entities_llm_vascular_invasion,vascular_invasion_grade,True,False,,vascular_invasion_grade
+note_entities_medications,med_nlp_* columns,False,False,,
+note_entities_operative_detail,op_nlp_* columns,False,False,,
+note_entities_problem_list,pmhx_nlp_* columns (indirectly),False,False,,
+note_entities_procedures,proc_nlp_* columns,False,False,,
+note_entities_staging,TNM mentions (indirectly),False,True,prose_skipped,
+nsqip_patient_summary,nsqip_* columns (full set of 80+),False,False,,
+nuclear_med,nucmed_has_rai_scan,True,False,,nucmed_has_rai_scan
+nuclear_med,nucmed_n_scans,True,False,,nucmed_n_scans
+nuclear_med,nucmed_scan_types,True,False,,nucmed_scan_types
+operative_episode_detail_v2,surg_procedure_type,True,False,,surg_procedure_type
+operative_episode_detail_v2,surg_n_procedures,True,False,,surg_n_procedures
+operative_episode_detail_v2,n_surgeries,True,False,,n_surgeries
+operative_episode_detail_v2,op_* columns,False,False,,
+operative_episode_detail_v2,lateral_neck_dissected,True,False,,lateral_neck_dissected
+path_outcome_classification_v1,fna_path_outcome,True,False,,fna_path_outcome
+path_outcome_classification_v1,fna_path_concordant,True,False,,fna_path_concordant
+path_outcome_classification_v1,fna_path_concordance_category,True,False,,fna_path_concordance_category
+path_size_adjudication_v241,(review artifact,False,True,prose_skipped,
+path_size_adjudication_v241,no direct CPM feed) — 96 outlier patients surfaced for clinician sign-off,False,True,prose_skipped,
+path_size_adjudication_v241,v1_1 will fold signed-off rows into canonical_patient_master.,False,True,prose_skipped,
+path_synoptics,syn_* columns (~50),False,False,,
+path_synoptics,gland weights,False,True,prose_skipped,
+path_synoptics,parathyroid gland findings,False,True,prose_skipped,
+path_synoptics,frozen section,False,True,prose_skipped,
+path_synoptics,background thyroid,False,True,prose_skipped,
+patient_analysis_resolved_v1,resolved_at,True,False,,resolved_at
+patient_analysis_resolved_v1,resolved_layer_version,True,False,,resolved_layer_version
+patient_analysis_resolved_v1,analysis_eligible_flag,True,False,,analysis_eligible_flag
+patient_completion_oed_path_linkage_v1,completion_braf_positive,True,False,,completion_braf_positive
+patient_completion_oed_path_linkage_v1,completion_reason,True,False,,completion_reason
+patient_completion_oed_path_linkage_v1,completion_histology_type,True,False,,completion_histology_type
+patient_completion_oed_path_linkage_v1,completion_t_stage,True,False,,completion_t_stage
+patient_cross_domain_timeline_v2,followup_days,True,False,,followup_days
+patient_cross_domain_timeline_v2,first_surgery_date,True,False,,first_surgery_date
+patient_cross_domain_timeline_v2,last_contact_date,True,False,,last_contact_date
+patient_tumor_rollup_v1,r_class_true,True,False,,r_class_true
+patient_tumor_rollup_v1,margin_status_true,True,False,,margin_status_true
+patient_tumor_rollup_v1,lvi_ordinal_worst,True,False,,lvi_ordinal_worst
+patient_tumor_rollup_v1,lvi_any_present_path,True,False,,lvi_any_present_path
+patient_tumor_rollup_v1,multifocal_flag_path,True,False,,multifocal_flag_path
+patient_tumor_rollup_v1,n_tumors_path,True,False,,n_tumors_path
+rai_treatment_episode_v2,n_rai_episodes,True,False,,n_rai_episodes
+rai_treatment_episode_v2,rai_received_flag,True,False,,rai_received_flag
+rai_treatment_episode_v2,rai_dose_v9,True,False,,rai_dose_v9
+rai_treatment_episode_v2,rai_total_cumulative_dose_mci,True,False,,rai_total_cumulative_dose_mci
+rai_treatment_episode_v2,rai_max_dose_mci,True,False,,rai_max_dose_mci
+rai_treatment_episode_v2,rai_first_date,True,False,,rai_first_date
+rai_treatment_episode_v2,rai_intent_v9,True,False,,rai_intent_v9
+recurrence_event_clean_v1,any_recurrence_flag,True,False,,any_recurrence_flag
+recurrence_event_clean_v1,recurrence_type,True,False,,recurrence_type
+recurrence_event_clean_v1,recurrence_site,True,False,,recurrence_site
+recurrence_event_clean_v1,time_to_recurrence_days,True,False,,time_to_recurrence_days
+recurrence_event_clean_v1,structural_recurrence_flag,True,False,,structural_recurrence_flag
+recurrence_event_clean_v1,biochemical_recurrence_flag,True,False,,biochemical_recurrence_flag
+ret_note_entity_adjudication_v226,(supports ret_patient_adjudicated_v226),False,True,prose_skipped,
+ret_patient_adjudicated_v226,ret_adjudicated_flag,True,False,,ret_adjudicated_flag
+ret_patient_adjudicated_v226,ret_evidence_source,True,False,,ret_evidence_source
+serial_imaging_us,n_us_exams,True,False,,n_us_exams
+specimen_genomic_assay_v1,specimen->assay linkage,False,True,prose_skipped,
+specimen_master_v1,para_specimen_included,True,False,,para_specimen_included
+specimen_master_v1,specimen-level linkage,False,True,prose_skipped,
+specimen_tumor_focus_v1,multifocal_flag_path,True,False,,multifocal_flag_path
+specimen_tumor_focus_v1,bilateral_disease_flag,True,False,,bilateral_disease_flag
+survival_cohort_enriched,surv_max_time_days,True,False,,surv_max_time_days
+survival_cohort_enriched,surv_n_events,True,False,,surv_n_events
+survival_cohort_enriched,surv_recurrence_risk_band,True,False,,surv_recurrence_risk_band
+survival_cohort_enriched,surv_tg_annual_log_slope,True,False,,surv_tg_annual_log_slope
+synoptic_tumor_long_v1,histology_final,True,False,,histology_final
+synoptic_tumor_long_v1,path_tumor_size_cm,True,False,,path_tumor_size_cm
+synoptic_tumor_long_v1,ete_grade,True,False,,ete_grade
+synoptic_tumor_long_v1,margin_status,True,False,,margin_status
+synoptic_tumor_long_v1,invasion markers,False,True,prose_skipped,
+tg_postop_surveillance_windows_v1,post_rai_tg_nadir,True,False,,post_rai_tg_nadir
+tg_postop_surveillance_windows_v1,post_rai_tg_last,True,False,,post_rai_tg_last
+tg_postop_surveillance_windows_v1,max_stimulated_tg,True,False,,max_stimulated_tg
+tg_timeline_patient_summary_v1,tg_nadir,True,False,,tg_nadir
+tg_timeline_patient_summary_v1,tg_peak,True,False,,tg_peak
+tg_timeline_patient_summary_v1,tg_mean,True,False,,tg_mean
+tg_timeline_patient_summary_v1,tg_rising_flag,True,False,,tg_rising_flag
+tg_timeline_patient_summary_v1,tg_trajectory_class,True,False,,tg_trajectory_class
+tg_timeline_patient_summary_v1,tg_n_measurements,True,False,,tg_n_measurements
+thyroglobulin_lab_canonical_v1,tg_n_measurements,True,False,,tg_n_measurements
+thyroglobulin_lab_canonical_v1,tg_nadir,True,False,,tg_nadir
+thyroglobulin_lab_canonical_v1,tg_peak,True,False,,tg_peak
+thyroglobulin_lab_canonical_v1,tg_mean,True,False,,tg_mean
+thyroglobulin_lab_canonical_v1,tg_rising_flag,True,False,,tg_rising_flag
+thyroglobulin_lab_canonical_v1,tg_trajectory_class,True,False,,tg_trajectory_class
+thyroglobulin_lab_canonical_v1,tgab_interference_flag,True,False,,tgab_interference_flag
+thyroid_sizes,us_total_volume_ml,True,False,,us_total_volume_ml
+thyroid_sizes,us_left_lobe_volume_ml,True,False,,us_left_lobe_volume_ml
+thyroid_sizes,us_right_lobe_volume_ml,True,False,,us_right_lobe_volume_ml
+thyroid_weights,gland_weight_final_g,True,False,,gland_weight_final_g
+thyroid_weights,gland_weight_source,True,False,,gland_weight_source
+thyroid_weights,gland_weight_left_lobe_g,True,False,,gland_weight_left_lobe_g
+thyroid_weights,gland_weight_right_lobe_g,True,False,,gland_weight_right_lobe_g
+thyroseq_molecular_enrichment,preop_sweep_genes_found_v11,True,False,,preop_sweep_genes_found_v11
+tirads_llm_extracted_v2,tirads_worst_combined,True,False,,tirads_worst_combined
+tirads_llm_extracted_v2,tirads_best_combined (via combined CTE),False,True,prose_skipped,
+tirads_llm_validation_v2,TIRADS validation signals,False,True,prose_skipped,
+tumor_episode_master_v2,n_tumors,True,False,,n_tumors
+tumor_episode_master_v2,multifocal_flag_path,True,False,,multifocal_flag_path
+tumor_episode_master_v2,path_tumor_size_cm,True,False,,path_tumor_size_cm
+tumor_episode_master_v2,histology_final,True,False,,histology_final
+tumor_episode_master_v2,ajcc8 staging,False,True,prose_skipped,
+tumor_episode_master_v2,invasion markers,False,True,prose_skipped,
+tumor_pathology,has_isthmus_tumor,True,False,,has_isthmus_tumor
+tumor_pathology,has_left_tumor,True,False,,has_left_tumor
+tumor_pathology,has_right_tumor,True,False,,has_right_tumor
+tumor_pathology,histology_final,True,False,,histology_final
+tumor_pathology,path_tumor_size_cm,True,False,,path_tumor_size_cm
+tumor_pathology,path staging columns,False,True,prose_skipped,
+ultrasound_reports,n_us_exams,True,False,,n_us_exams
+ultrasound_reports,us_first_exam_date,True,False,,us_first_exam_date
+ultrasound_reports,us_last_exam_date,True,False,,us_last_exam_date
+us_nodules_tirads,tirads_best_category_v12,True,False,,tirads_best_category_v12
+us_nodules_tirads,tirads_best_score_v12,True,False,,tirads_best_score_v12
+us_nodules_tirads,tirads_worst_category_v12,True,False,,tirads_worst_category_v12
+us_nodules_tirads,n_us_nodules_total,True,False,,n_us_nodules_total
+us_nodules_tirads_vs_inm_v1_discordance_v1,(audit only,False,True,prose_skipped,
+us_nodules_tirads_vs_inm_v1_discordance_v1,no canonical column),False,True,prose_skipped,
+vc_paralysis_recalibration_v236,comp_vc_paralysis_confirmed,True,False,,comp_vc_paralysis_confirmed
+vc_paralysis_recalibration_v236,comp_vc_paresis_confirmed,True,False,,comp_vc_paresis_confirmed
+vc_paralysis_recalibration_v236,comp_rln_injury_confirmed,True,False,,comp_rln_injury_confirmed
+nlp_rollup_promotion_audit_v1,(audit only,False,True,prose_skipped,
+nlp_rollup_promotion_audit_v1,no canonical column),False,True,prose_skipped,
+canonical_patient_master,(self),False,True,prose_skipped,
+molecular_assay_dictionary,(reference),False,True,prose_skipped,
+molecular_code_crosswalk,(reference),False,True,prose_skipped,
+molecular_ingestion_runs,(provenance),False,True,prose_skipped,
+specimen_source_xref_v1,(linkage),False,True,prose_skipped,
+build_pipeline,ages_calculable_flag,True,False,,ages_calculable_flag
+build_pipeline,ages_score,True,False,,ages_score
+build_pipeline,ajcc7_m_stage,True,False,,ajcc7_m_stage
+build_pipeline,ajcc7_missing_components,True,False,,ajcc7_missing_components
+build_pipeline,ajcc7_n_stage,True,False,,ajcc7_n_stage
+build_pipeline,ajcc7_stage_calculable_flag,True,False,,ajcc7_stage_calculable_flag
+build_pipeline,ajcc7_stage_group,True,False,,ajcc7_stage_group
+build_pipeline,ajcc7_t_stage,True,False,,ajcc7_t_stage
+build_pipeline,ajcc8_calculable_flag,True,False,,ajcc8_calculable_flag
+build_pipeline,ajcc8_m_stage,True,False,,ajcc8_m_stage
+build_pipeline,ajcc8_m_stage_v2,True,False,,ajcc8_m_stage_v2
+build_pipeline,ajcc8_missing_components,True,False,,ajcc8_missing_components
+build_pipeline,ajcc8_n_stage,True,False,,ajcc8_n_stage
+build_pipeline,ajcc8_n_stage_note,True,False,,ajcc8_n_stage_note
+build_pipeline,ajcc8_n_stage_v2,True,False,,ajcc8_n_stage_v2
+build_pipeline,ajcc8_stage_calculable_flag,True,False,,ajcc8_stage_calculable_flag
+build_pipeline,ajcc8_stage_group,True,False,,ajcc8_stage_group
+build_pipeline,ajcc8_stage_group_corrected,True,False,,ajcc8_stage_group_corrected
+build_pipeline,ajcc8_stage_group_v2,True,False,,ajcc8_stage_group_v2
+build_pipeline,ajcc8_t_stage,True,False,,ajcc8_t_stage
+build_pipeline,ajcc8_t_stage_calculable_flag,True,False,,ajcc8_t_stage_calculable_flag
+build_pipeline,ajcc8_t_stage_corrected,False,False,,
+build_pipeline,ajcc8_t_stage_v2,True,False,,ajcc8_t_stage_v2
+build_pipeline,ames_calculable_flag,True,False,,ames_calculable_flag
+build_pipeline,ames_risk,True,False,,ames_risk
+build_pipeline,ames_risk_group,True,False,,ames_risk_group
+build_pipeline,any_disease_concern_flag,True,False,,any_disease_concern_flag
+build_pipeline,any_fusion_positive_inferred_negative,True,False,,any_fusion_positive_inferred_negative
+build_pipeline,ata_calculable_flag,True,False,,ata_calculable_flag
+build_pipeline,ata_initial_risk,True,False,,ata_initial_risk
+build_pipeline,ata_response_calculable_flag,True,False,,ata_response_calculable_flag
+build_pipeline,ata_response_category,True,False,,ata_response_category
+build_pipeline,ata_response_is_provisional,True,False,,ata_response_is_provisional
+build_pipeline,ata_risk_calculable_flag,True,False,,ata_risk_calculable_flag
+build_pipeline,ata_risk_category,True,False,,ata_risk_category
+build_pipeline,benign_rai_suspect_malignant,True,False,,benign_rai_suspect_malignant
+build_pipeline,best_ene_grade,True,False,,best_ene_grade
+build_pipeline,bmi_combined,True,False,,bmi_combined
+build_pipeline,bmi_missingness_reason,True,False,,bmi_missingness_reason
+build_pipeline,bmi_note_extracted,True,False,,bmi_note_extracted
+build_pipeline,bmi_note_source,True,False,,bmi_note_source
+build_pipeline,bmi_source,True,False,,bmi_source
+build_pipeline,completion_prior_histology,True,False,,completion_prior_histology
+build_pipeline,completion_reason_confidence,True,False,,completion_reason_confidence
+build_pipeline,completion_tert_positive,True,False,,completion_tert_positive
+build_pipeline,concern_highest_tier,True,False,,concern_highest_tier
+build_pipeline,confirmed_rai_episodes,True,False,,confirmed_rai_episodes
+build_pipeline,days_between_first_second_surgery,True,False,,days_between_first_second_surgery
+build_pipeline,days_between_first_second_surgery_v2,True,False,,days_between_first_second_surgery_v2
+build_pipeline,days_to_first_laryngoscopy,True,False,,days_to_first_laryngoscopy
+build_pipeline,days_to_last_laryngoscopy,True,False,,days_to_last_laryngoscopy
+build_pipeline,diagnosis_confidence,True,False,,diagnosis_confidence
+build_pipeline,distant_mets_proxy,True,False,,distant_mets_proxy
+build_pipeline,distant_mets_proxy_v2,True,False,,distant_mets_proxy_v2
+build_pipeline,first_surgery_date_v2,True,False,,first_surgery_date_v2
+build_pipeline,first_tg_days_from_surg,True,False,,first_tg_days_from_surg
+build_pipeline,gland_weight_combined_g,True,False,,gland_weight_combined_g
+build_pipeline,gland_weight_isthmus_g,True,False,,gland_weight_isthmus_g
+build_pipeline,gland_weight_total_reported_g,True,False,,gland_weight_total_reported_g
+build_pipeline,gm_lab_completeness_score,True,False,,gm_lab_completeness_score
+build_pipeline,gm_macis_calculable_flag,True,False,,gm_macis_calculable_flag
+build_pipeline,gm_path_ene_raw,True,False,,gm_path_ene_raw
+build_pipeline,gm_path_ete_raw,True,False,,gm_path_ete_raw
+build_pipeline,gm_path_lvi_raw,True,False,,gm_path_lvi_raw
+build_pipeline,gm_path_m_stage_raw,True,False,,gm_path_m_stage_raw
+build_pipeline,gm_path_pni_raw,True,False,,gm_path_pni_raw
+build_pipeline,gm_path_stage_raw,True,False,,gm_path_stage_raw
+build_pipeline,gm_path_vascular_inv_raw,True,False,,gm_path_vascular_inv_raw
+build_pipeline,gm_provenance_confidence,True,False,,gm_provenance_confidence
+build_pipeline,gm_rai_date_confidence,True,False,,gm_rai_date_confidence
+build_pipeline,gm_rai_date_source,True,False,,gm_rai_date_source
+build_pipeline,gm_recurrence_date_source,True,False,,gm_recurrence_date_source
+build_pipeline,gm_recurrence_site_primary,True,False,,gm_recurrence_site_primary
+build_pipeline,gm_recurrence_source,True,False,,gm_recurrence_source
+build_pipeline,gm_recurrence_type_primary,True,False,,gm_recurrence_type_primary
+build_pipeline,gm_tg_below_threshold_ever,True,False,,gm_tg_below_threshold_ever
+build_pipeline,has_voice_data,True,False,,has_voice_data
+build_pipeline,last_tg_days_from_surg,True,False,,last_tg_days_from_surg
+build_pipeline,lnus_abnormal_ln_any,True,False,,lnus_abnormal_ln_any
+build_pipeline,lnus_first_date,True,False,,lnus_first_date
+build_pipeline,lnus_first_days_from_surg,True,False,,lnus_first_days_from_surg
+build_pipeline,lnus_has_dedicated_exam,True,False,,lnus_has_dedicated_exam
+build_pipeline,lnus_has_size_measurement,True,False,,lnus_has_size_measurement
+build_pipeline,lnus_impression_last,True,False,,lnus_impression_last
+build_pipeline,lnus_indication_first,True,False,,lnus_indication_first
+build_pipeline,lnus_last_date,True,False,,lnus_last_date
+build_pipeline,lnus_last_days_from_surg,True,False,,lnus_last_days_from_surg
+build_pipeline,lnus_n_exams,True,False,,lnus_n_exams
+build_pipeline,lnus_normal_ln_any,True,False,,lnus_normal_ln_any
+build_pipeline,lnus_source,True,False,,lnus_source
+build_pipeline,macis_calculable_flag,True,False,,macis_calculable_flag
+build_pipeline,macis_missing_components,True,False,,macis_missing_components
+build_pipeline,macis_risk_group,True,False,,macis_risk_group
+build_pipeline,macis_score,True,False,,macis_score
+build_pipeline,microscopic_ete_t3b_corrected,True,False,,microscopic_ete_t3b_corrected
+build_pipeline,n_molecular_tests_v7,False,False,,
+build_pipeline,n_surgeries_source,True,False,,n_surgeries_source
+build_pipeline,n_surgeries_v2,True,False,,n_surgeries_v2
+build_pipeline,n_tg_measurements_structured,True,False,,n_tg_measurements_structured
+build_pipeline,n_tumors_v10,True,False,,n_tumors_v10
+build_pipeline,n_us_with_ln_assessment,True,False,,n_us_with_ln_assessment
+build_pipeline,para_abnormality_type,True,False,,para_abnormality_type
+build_pipeline,para_has_pathologic_glands,True,False,,para_has_pathologic_glands
+build_pipeline,para_incidental_status_refined,True,False,,para_incidental_status_refined
+build_pipeline,para_max_cellularity_pct,True,False,,para_max_cellularity_pct
+build_pipeline,para_max_gland_weight_g,True,False,,para_max_gland_weight_g
+build_pipeline,para_min_cellularity_pct,True,False,,para_min_cellularity_pct
+build_pipeline,para_n_glands_biopsied,True,False,,para_n_glands_biopsied
+build_pipeline,para_n_glands_excised,True,False,,para_n_glands_excised
+build_pipeline,para_n_glands_identified,True,False,,para_n_glands_identified
+build_pipeline,para_removal_intent,True,False,,para_removal_intent
+build_pipeline,para_source_script,True,False,,para_source_script
+build_pipeline,para_source_workbook,True,False,,para_source_workbook
+build_pipeline,pet_distant_met_sites,True,False,,pet_distant_met_sites
+build_pipeline,pet_distant_mets_ever,True,False,,pet_distant_mets_ever
+build_pipeline,pet_fdg_avid_cervical_ln_ever,True,False,,pet_fdg_avid_cervical_ln_ever
+build_pipeline,pet_fdg_avid_thyroid_bed_ever,True,False,,pet_fdg_avid_thyroid_bed_ever
+build_pipeline,pet_first_date,True,False,,pet_first_date
+build_pipeline,pet_has_data,True,False,,pet_has_data
+build_pipeline,pet_impression_last,True,False,,pet_impression_last
+build_pipeline,pet_indication_first,True,False,,pet_indication_first
+build_pipeline,pet_last_date,True,False,,pet_last_date
+build_pipeline,pet_n_exams,True,False,,pet_n_exams
+build_pipeline,pet_other_exam_type,True,False,,pet_other_exam_type
+build_pipeline,pet_other_extraction_method,True,False,,pet_other_extraction_method
+build_pipeline,pet_other_first_date,True,False,,pet_other_first_date
+build_pipeline,pet_other_first_days_from_surg,True,False,,pet_other_first_days_from_surg
+build_pipeline,pet_other_indication_first,True,False,,pet_other_indication_first
+build_pipeline,pet_other_last_date,True,False,,pet_other_last_date
+build_pipeline,pet_other_last_days_from_surg,True,False,,pet_other_last_days_from_surg
+build_pipeline,pet_other_mentions_metastasis,True,False,,pet_other_mentions_metastasis
+build_pipeline,pet_other_n_exams,True,False,,pet_other_n_exams
+build_pipeline,pet_other_ned_statement,True,False,,pet_other_ned_statement
+build_pipeline,pet_overall_worst,True,False,,pet_overall_worst
+build_pipeline,pet_radiotracer_primary,True,False,,pet_radiotracer_primary
+build_pipeline,pet_suv_max_cervical_ln,True,False,,pet_suv_max_cervical_ln
+build_pipeline,pet_suv_max_thyroid_bed,True,False,,pet_suv_max_thyroid_bed
+build_pipeline,post_rai_tg_count,True,False,,post_rai_tg_count
+build_pipeline,preop_imaging_size_cm,True,False,,preop_imaging_size_cm
+build_pipeline,prm_ete_imaging_path_concordance,True,False,,prm_ete_imaging_path_concordance
+build_pipeline,prm_ete_path_confirmed,True,False,,prm_ete_path_confirmed
+build_pipeline,prm_ete_rule_applied,True,False,,prm_ete_rule_applied
+build_pipeline,prm_first_fna_date,True,False,,prm_first_fna_date
+build_pipeline,prm_first_fna_days_from_surg,True,False,,prm_first_fna_days_from_surg
+build_pipeline,prm_fna_n_sources,True,False,,prm_fna_n_sources
+build_pipeline,prm_fna_source_tables,True,False,,prm_fna_source_tables
+build_pipeline,prm_followup_clinical_events,True,False,,prm_followup_clinical_events
+build_pipeline,prm_followup_has_complications,True,False,,prm_followup_has_complications
+build_pipeline,prm_followup_tg_labs,True,False,,prm_followup_tg_labs
+build_pipeline,prm_high_risk_marker_any,True,False,,prm_high_risk_marker_any
+build_pipeline,prm_hypocalcemia_lab_flag,True,False,,prm_hypocalcemia_lab_flag
+build_pipeline,prm_hypoparathyroidism_lab_flag,True,False,,prm_hypoparathyroidism_lab_flag
+build_pipeline,prm_imaging_data_completeness,True,False,,prm_imaging_data_completeness
+build_pipeline,prm_last_fna_date,True,False,,prm_last_fna_date
+build_pipeline,prm_last_fna_days_from_surg,True,False,,prm_last_fna_days_from_surg
+build_pipeline,prm_margin_confidence,True,False,,prm_margin_confidence
+build_pipeline,prm_margin_source,True,False,,prm_margin_source
+build_pipeline,prm_margin_with_gross_ete,True,False,,prm_margin_with_gross_ete
+build_pipeline,prm_molecular_risk_category,True,False,,prm_molecular_risk_category
+build_pipeline,prm_n_recurrence_sources,True,False,,prm_n_recurrence_sources
+build_pipeline,prm_recurrence_detection_category,True,False,,prm_recurrence_detection_category
+build_pipeline,prm_rln_worst_grade,True,False,,prm_rln_worst_grade
+build_pipeline,prm_size_concordance,True,False,,prm_size_concordance
+build_pipeline,prm_structural_disease_flag,True,False,,prm_structural_disease_flag
+build_pipeline,prm_tg_adequate_followup,True,False,,prm_tg_adequate_followup
+build_pipeline,provenance_confidence,True,False,,provenance_confidence
+build_pipeline,provenance_note,True,False,,provenance_note
+build_pipeline,resolved_days_from_surg,True,False,,resolved_days_from_surg
+build_pipeline,ret_positive_v7_inferred_negative,True,False,,ret_positive_v7_inferred_negative
+build_pipeline,second_surgery_date,True,False,,second_surgery_date
+build_pipeline,second_surgery_date_v2,True,False,,second_surgery_date_v2
+build_pipeline,second_surgery_days_from_surg,True,False,,second_surgery_days_from_surg
+build_pipeline,source_script,True,False,,source_script
+build_pipeline,source_table,True,False,,source_table
+build_pipeline,stage_discordance_note,True,False,,stage_discordance_note
+build_pipeline,stage_migration_7_to_8,True,False,,stage_migration_7_to_8
+build_pipeline,third_surgery_date,True,False,,third_surgery_date
+build_pipeline,third_surgery_date_v2,True,False,,third_surgery_date_v2
+build_pipeline,third_surgery_days_from_surg,True,False,,third_surgery_days_from_surg
+build_pipeline,total_ln_positive_v10,True,False,,total_ln_positive_v10
+build_pipeline,vessel_count,True,False,,vessel_count
+build_pipeline,voice_data_confidence,True,False,,voice_data_confidence
+build_pipeline,voice_followup_completeness,True,False,,voice_followup_completeness
+build_pipeline,voice_outcome_category,True,False,,voice_outcome_category
+build_pipeline,weight_kg_note,True,False,,weight_kg_note
+build_pipeline,worst_bethesda_source,True,False,,worst_bethesda_source
+build_pipeline,worst_ete_v10,True,False,,worst_ete_v10
