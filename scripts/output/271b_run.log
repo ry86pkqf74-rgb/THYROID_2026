@@ -225,3 +225,12 @@
 [2026-04-18T02:18:23Z]   wrote /Users/loganglosser/THYROID_2026/exports/canonical_patient_master_20260418_script271b.parquet (10,871 rows × 1526 cols)
 [2026-04-18T02:18:23Z] wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_step8.json
 [2026-04-18T02:18:23Z] ########## Script 271b DONE (--step 8) ##########
+[2026-04-18T02:18:48Z] ########## Script 271b — FINAL SELF CHECK ##########
+[2026-04-18T02:18:49Z] CPM: 10,871 x 1526 cols
+[2026-04-18T02:18:49Z] cpm.laterality source verdict: identified
+[2026-04-18T02:18:49Z] tumor_pathology_laterality_v271b: {None=6885, right=1762, left=1242, bilateral=723, unknown=161, midline=98}
+[2026-04-18T02:18:49Z] imaging_laterality_rollup_v271b: {None=7432, bilateral=2286, right_only=446, left_only=384, right_plus_isthmus=136, left_plus_isthmus=131, isthmus_only=56}
+[2026-04-18T02:18:49Z] concordance_v271b: {insufficient_data=9394, discordant=1021, concordant=409, partially_concordant=34, unknown_path=13}
+[2026-04-18T02:18:50Z] archive_pub_v1_0 pre271b snapshots: 5
+[2026-04-18T02:18:50Z] legacy columns: COMMENT-annotated, values not modified
+[2026-04-18T02:18:50Z] manuscript_workspace: views intact (see step 7 probe)
