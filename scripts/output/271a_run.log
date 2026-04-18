@@ -1,0 +1,18 @@
+[2026-04-18T01:54:10Z] ########## Script 271a START ##########
+[2026-04-18T01:54:12Z] Snapshotting canonical_patient_master -> "Thyroid 2026 UPdated".archive_pub_v1_0."canonical_patient_master_pre271a_20260418T015410Z"
+[2026-04-18T01:54:17Z]   src=10871 snap=10871 match=True
+[2026-04-18T01:54:17Z] Pre-state distribution (BEFORE UPDATE):
+[2026-04-18T01:54:17Z]   False: 10023
+[2026-04-18T01:54:17Z]   True: 848
+[2026-04-18T01:54:17Z] Setting concordance = NULL where either input is NULL ...
+[2026-04-18T01:54:17Z] Post-state distribution (AFTER UPDATE):
+[2026-04-18T01:54:17Z]   False: 2516
+[2026-04-18T01:54:17Z]   True: 848
+[2026-04-18T01:54:17Z]   None: 7507
+[2026-04-18T01:54:18Z] COMMENT updated.
+[2026-04-18T01:54:18Z] Building crosstab cpm.laterality × imaging_laterality_rollup ...
+[2026-04-18T01:54:18Z]   patients with both populated: 3364
+[2026-04-18T01:54:18Z] Wrote /Users/loganglosser/THYROID_2026/scripts/output/271a_laterality_audit.md
+[2026-04-18T01:54:18Z] Wrote /Users/loganglosser/THYROID_2026/scripts/output/271a_audit.json
+[2026-04-18T01:54:18Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
+[2026-04-18T01:54:18Z] ########## Script 271a DONE ##########

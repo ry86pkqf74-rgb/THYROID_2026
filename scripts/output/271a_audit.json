@@ -1,0 +1,218 @@
+{
+  "transition": {
+    "pre": {
+      "False": 10023,
+      "True": 848
+    },
+    "post": {
+      "False": 2516,
+      "True": 848,
+      "None": 7507
+    },
+    "comment": "TRUE iff both cpm.laterality and imaging_laterality_rollup are populated AND match. FALSE iff both populated AND differ. NULL iff either is missing. Script 271a, 2026-04-18."
+  },
+  "audit": {
+    "both_populated_n": 3364,
+    "raw_pathology_laterality_distinct": [
+      {
+        "value": "bilateral",
+        "n": 5571
+      },
+      {
+        "value": "left",
+        "n": 2428
+      },
+      {
+        "value": "right",
+        "n": 2339
+      }
+    ],
+    "imaging_rollup_distinct": [
+      {
+        "value": "mixed",
+        "n": 1356
+      },
+      {
+        "value": "bilateral",
+        "n": 1197
+      },
+      {
+        "value": "right",
+        "n": 446
+      },
+      {
+        "value": "left",
+        "n": 384
+      },
+      {
+        "value": "isthmus",
+        "n": 56
+      }
+    ],
+    "crosstab_raw": [
+      {
+        "path_lat": "bilateral",
+        "img_rollup": "mixed",
+        "n": 680
+      },
+      {
+        "path_lat": "bilateral",
+        "img_rollup": "bilateral",
+        "n": 603
+      },
+      {
+        "path_lat": "left",
+        "img_rollup": "mixed",
+        "n": 326
+      },
+      {
+        "path_lat": "right",
+        "img_rollup": "mixed",
+        "n": 322
+      },
+      {
+        "path_lat": "left",
+        "img_rollup": "bilateral",
+        "n": 294
+      },
+      {
+        "path_lat": "right",
+        "img_rollup": "bilateral",
+        "n": 280
+      },
+      {
+        "path_lat": "bilateral",
+        "img_rollup": "right",
+        "n": 192
+      },
+      {
+        "path_lat": "bilateral",
+        "img_rollup": "left",
+        "n": 169
+      },
+      {
+        "path_lat": "right",
+        "img_rollup": "right",
+        "n": 125
+      },
+      {
+        "path_lat": "left",
+        "img_rollup": "left",
+        "n": 120
+      },
+      {
+        "path_lat": "left",
+        "img_rollup": "right",
+        "n": 114
+      },
+      {
+        "path_lat": "right",
+        "img_rollup": "left",
+        "n": 87
+      },
+      {
+        "path_lat": "bilateral",
+        "img_rollup": "isthmus",
+        "n": 25
+      },
+      {
+        "path_lat": "left",
+        "img_rollup": "isthmus",
+        "n": 17
+      },
+      {
+        "path_lat": "right",
+        "img_rollup": "isthmus",
+        "n": 10
+      }
+    ],
+    "crosstab_normalized": [
+      {
+        "path_lat_norm": "bilateral",
+        "img_rollup": "mixed",
+        "n": 680
+      },
+      {
+        "path_lat_norm": "bilateral",
+        "img_rollup": "bilateral",
+        "n": 603
+      },
+      {
+        "path_lat_norm": "left",
+        "img_rollup": "mixed",
+        "n": 326
+      },
+      {
+        "path_lat_norm": "right",
+        "img_rollup": "mixed",
+        "n": 322
+      },
+      {
+        "path_lat_norm": "left",
+        "img_rollup": "bilateral",
+        "n": 294
+      },
+      {
+        "path_lat_norm": "right",
+        "img_rollup": "bilateral",
+        "n": 280
+      },
+      {
+        "path_lat_norm": "bilateral",
+        "img_rollup": "right",
+        "n": 192
+      },
+      {
+        "path_lat_norm": "bilateral",
+        "img_rollup": "left",
+        "n": 169
+      },
+      {
+        "path_lat_norm": "right",
+        "img_rollup": "right",
+        "n": 125
+      },
+      {
+        "path_lat_norm": "left",
+        "img_rollup": "left",
+        "n": 120
+      },
+      {
+        "path_lat_norm": "left",
+        "img_rollup": "right",
+        "n": 114
+      },
+      {
+        "path_lat_norm": "right",
+        "img_rollup": "left",
+        "n": 87
+      },
+      {
+        "path_lat_norm": "bilateral",
+        "img_rollup": "isthmus",
+        "n": 25
+      },
+      {
+        "path_lat_norm": "left",
+        "img_rollup": "isthmus",
+        "n": 17
+      },
+      {
+        "path_lat_norm": "right",
+        "img_rollup": "isthmus",
+        "n": 10
+      }
+    ],
+    "concordance_among_both_populated": [
+      {
+        "value": false,
+        "n": 2516
+      },
+      {
+        "value": true,
+        "n": 848
+      }
+    ]
+  },
+  "snapshot": "canonical_patient_master_pre271a_20260418T015410Z"
+}
