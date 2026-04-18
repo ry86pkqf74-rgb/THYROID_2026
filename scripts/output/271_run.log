@@ -36,3 +36,26 @@
 [2026-04-18T01:08:06Z]     data_dictionary_v266a columns: ['column_name', 'data_type', 'ordinal_position', 'n_non_null', 'pct_non_null', 'n_distinct', 'description', 'status', 'replacement_column_name']
 [2026-04-18T01:08:06Z]   Wrote /Users/loganglosser/THYROID_2026/scripts/output/271_step2_drop_v11.json
 [2026-04-18T01:08:06Z] ########## Script 271 — STEP 2 DONE ##########
+[2026-04-18T01:08:18Z] ########## Script 271 — STEP 3 ##########
+[2026-04-18T01:08:19Z] === STEP 3 — Rebuild cunc_v1 TIRADS category semantics from ACR points ===
+[2026-04-18T01:08:20Z]   cunc_v1 currently has 36 columns
+[2026-04-18T01:08:20Z]     has tirads_category_modified: True
+[2026-04-18T01:08:20Z]     has tirads_acr_recalculated: True
+[2026-04-18T01:08:20Z]     has tirads_category_v2 (already): False
+[2026-04-18T01:08:20Z]   Building thyroid_canonical_publication_v1_0.main._cunc_v2 ...
+[2026-04-18T01:08:21Z]     Renamed tirads_acr_recalculated -> tirads_category_code_legacy_v1
+[2026-04-18T01:08:22Z]     Renamed tirads_category_modified -> tirads_category_modified_legacy_v1
+[2026-04-18T01:08:23Z]   Atomic swap: rename canonical_us_nodule_characteristics_v1 -> deprecated, then _cunc_v2 -> v1
+[2026-04-18T01:08:24Z]   Archiving canonical_us_nodule_characteristics_v1_deprecated_20260418 -> "Thyroid 2026 UPdated".archive_pub_v1_0 ...
+[2026-04-18T01:08:26Z]     archived rows=37016; dropping canonical_us_nodule_characteristics_v1_deprecated_20260418 from main
+[2026-04-18T01:08:27Z]   Validating new tirads_category_v2 bands ...
+[2026-04-18T01:08:27Z]     band=TR1 min_pts=0.0 max_pts=0.0 n=758
+[2026-04-18T01:08:27Z]     band=TR2 min_pts=2.0 max_pts=2.0 n=914
+[2026-04-18T01:08:27Z]     band=TR3 min_pts=3.0 max_pts=3.0 n=982
+[2026-04-18T01:08:27Z]     band=TR4 min_pts=4.0 max_pts=6.0 n=654
+[2026-04-18T01:08:27Z]     band=TR5 min_pts=7.0 max_pts=13.0 n=96
+[2026-04-18T01:08:27Z]     band=None min_pts=1.0 max_pts=1.0 n=33612
+[2026-04-18T01:08:27Z]   Band sanity checks PASSED.
+[2026-04-18T01:08:27Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
+[2026-04-18T01:08:27Z]   Wrote /Users/loganglosser/THYROID_2026/scripts/output/271_step3_cunc_rebuild.json
+[2026-04-18T01:08:27Z] ########## Script 271 — STEP 3 DONE ##########

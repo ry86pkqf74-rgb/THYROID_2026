@@ -1,0 +1,43 @@
+{
+  "step": 3,
+  "ts": "2026-04-18T01:08:19Z",
+  "cur_cols_count": 36,
+  "band_audit": [
+    {
+      "band": "TR1",
+      "min_pts": 0.0,
+      "max_pts": 0.0,
+      "n": 758
+    },
+    {
+      "band": "TR2",
+      "min_pts": 2.0,
+      "max_pts": 2.0,
+      "n": 914
+    },
+    {
+      "band": "TR3",
+      "min_pts": 3.0,
+      "max_pts": 3.0,
+      "n": 982
+    },
+    {
+      "band": "TR4",
+      "min_pts": 4.0,
+      "max_pts": 6.0,
+      "n": 654
+    },
+    {
+      "band": "TR5",
+      "min_pts": 7.0,
+      "max_pts": 13.0,
+      "n": 96
+    },
+    {
+      "band": null,
+      "min_pts": 1.0,
+      "max_pts": 1.0,
+      "n": 33612
+    }
+  ]
+}
