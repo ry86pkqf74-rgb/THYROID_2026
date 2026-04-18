@@ -119,3 +119,34 @@
 [2026-04-18T02:13:46Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
 [2026-04-18T02:13:46Z] wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_step3.json
 [2026-04-18T02:13:46Z] ########## Script 271b DONE (--step 3) ##########
+[2026-04-18T02:13:59Z] ########## Script 271b START (--step 4) ##########
+[2026-04-18T02:13:59Z]   archive: "Thyroid 2026 UPdated".archive_pub_v1_0, ts: 20260418T021359Z
+[2026-04-18T02:14:00Z] === STEP 4 — imaging_has_left/right/isthmus + imaging_laterality_rollup_v271b ===
+[2026-04-18T02:14:03Z]   added column imaging_has_left_nodule BOOLEAN
+[2026-04-18T02:14:04Z]   added column imaging_has_right_nodule BOOLEAN
+[2026-04-18T02:14:04Z]   added column imaging_has_isthmus_nodule BOOLEAN
+[2026-04-18T02:14:05Z]   added column imaging_laterality_rollup_v271b VARCHAR
+[2026-04-18T02:14:06Z]   legacy imaging_laterality_rollup COMMENT updated
+[2026-04-18T02:14:06Z]   imaging_laterality_rollup_v271b distribution:
+[2026-04-18T02:14:06Z]     None: 7432
+[2026-04-18T02:14:06Z]     'bilateral': 2286
+[2026-04-18T02:14:06Z]     'right_only': 446
+[2026-04-18T02:14:06Z]     'left_only': 384
+[2026-04-18T02:14:06Z]     'right_plus_isthmus': 136
+[2026-04-18T02:14:06Z]     'left_plus_isthmus': 131
+[2026-04-18T02:14:06Z]     'isthmus_only': 56
+[2026-04-18T02:14:06Z]   imaging_has_left_nodule:
+[2026-04-18T02:14:06Z]     None: 7432
+[2026-04-18T02:14:06Z]     True: 2801
+[2026-04-18T02:14:06Z]     False: 638
+[2026-04-18T02:14:06Z]   imaging_has_right_nodule:
+[2026-04-18T02:14:06Z]     None: 7432
+[2026-04-18T02:14:06Z]     True: 2868
+[2026-04-18T02:14:06Z]     False: 571
+[2026-04-18T02:14:07Z]   imaging_has_isthmus_nodule:
+[2026-04-18T02:14:07Z]     None: 7432
+[2026-04-18T02:14:07Z]     False: 2027
+[2026-04-18T02:14:07Z]     True: 1412
+[2026-04-18T02:14:07Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
+[2026-04-18T02:14:07Z] wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_step4.json
+[2026-04-18T02:14:07Z] ########## Script 271b DONE (--step 4) ##########

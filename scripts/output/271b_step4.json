@@ -1,0 +1,119 @@
+{
+  "step": 4,
+  "started_at": "2026-04-18T02:14:00Z",
+  "imaging_laterality_rollup_v271b": [
+    {
+      "value": null,
+      "n": 7432
+    },
+    {
+      "value": "bilateral",
+      "n": 2286
+    },
+    {
+      "value": "right_only",
+      "n": 446
+    },
+    {
+      "value": "left_only",
+      "n": 384
+    },
+    {
+      "value": "right_plus_isthmus",
+      "n": 136
+    },
+    {
+      "value": "left_plus_isthmus",
+      "n": 131
+    },
+    {
+      "value": "isthmus_only",
+      "n": 56
+    }
+  ],
+  "imaging_has_left_nodule": [
+    {
+      "value": null,
+      "n": 7432
+    },
+    {
+      "value": true,
+      "n": 2801
+    },
+    {
+      "value": false,
+      "n": 638
+    }
+  ],
+  "imaging_has_right_nodule": [
+    {
+      "value": null,
+      "n": 7432
+    },
+    {
+      "value": true,
+      "n": 2868
+    },
+    {
+      "value": false,
+      "n": 571
+    }
+  ],
+  "imaging_has_isthmus_nodule": [
+    {
+      "value": null,
+      "n": 7432
+    },
+    {
+      "value": false,
+      "n": 2027
+    },
+    {
+      "value": true,
+      "n": 1412
+    }
+  ],
+  "legacy_vs_v271b_crosstab": [
+    {
+      "legacy": null,
+      "v271b": null,
+      "n": 7432
+    },
+    {
+      "legacy": "bilateral",
+      "v271b": "bilateral",
+      "n": 1197
+    },
+    {
+      "legacy": "mixed",
+      "v271b": "bilateral",
+      "n": 1089
+    },
+    {
+      "legacy": "right",
+      "v271b": "right_only",
+      "n": 446
+    },
+    {
+      "legacy": "left",
+      "v271b": "left_only",
+      "n": 384
+    },
+    {
+      "legacy": "mixed",
+      "v271b": "right_plus_isthmus",
+      "n": 136
+    },
+    {
+      "legacy": "mixed",
+      "v271b": "left_plus_isthmus",
+      "n": 131
+    },
+    {
+      "legacy": "isthmus",
+      "v271b": "isthmus_only",
+      "n": 56
+    }
+  ],
+  "finished_at": "2026-04-18T02:14:07Z"
+}
