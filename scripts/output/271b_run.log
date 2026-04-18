@@ -99,3 +99,23 @@
 [2026-04-18T02:13:28Z]   wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_laterality_source_forensics.md
 [2026-04-18T02:13:28Z] wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_step2.json
 [2026-04-18T02:13:28Z] ########## Script 271b DONE (--step 2) ##########
+[2026-04-18T02:13:40Z] ########## Script 271b START (--step 3) ##########
+[2026-04-18T02:13:40Z]   archive: "Thyroid 2026 UPdated".archive_pub_v1_0, ts: 20260418T021340Z
+[2026-04-18T02:13:42Z] === STEP 3 — tumor_pathology_laterality_v271b + has_isthmus_involvement ===
+[2026-04-18T02:13:44Z]   added column tumor_pathology_laterality_v271b VARCHAR
+[2026-04-18T02:13:45Z]   added column tumor_pathology_has_isthmus_involvement BOOLEAN
+[2026-04-18T02:13:46Z]   tumor_pathology_laterality_v271b distribution:
+[2026-04-18T02:13:46Z]     None: 6885
+[2026-04-18T02:13:46Z]     'right': 1762
+[2026-04-18T02:13:46Z]     'left': 1242
+[2026-04-18T02:13:46Z]     'bilateral': 723
+[2026-04-18T02:13:46Z]     'unknown': 161
+[2026-04-18T02:13:46Z]     'midline': 98
+[2026-04-18T02:13:46Z]   has_isthmus_involvement distribution:
+[2026-04-18T02:13:46Z]     None: 6885
+[2026-04-18T02:13:46Z]     False: 3875
+[2026-04-18T02:13:46Z]     True: 111
+[2026-04-18T02:13:46Z]   expected NULLs (no TP rows): 6885; observed: 6885; match=True
+[2026-04-18T02:13:46Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
+[2026-04-18T02:13:46Z] wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_step3.json
+[2026-04-18T02:13:46Z] ########## Script 271b DONE (--step 3) ##########

@@ -1,0 +1,48 @@
+{
+  "step": 3,
+  "started_at": "2026-04-18T02:13:42Z",
+  "tumor_pathology_laterality_v271b": [
+    {
+      "value": null,
+      "n": 6885
+    },
+    {
+      "value": "right",
+      "n": 1762
+    },
+    {
+      "value": "left",
+      "n": 1242
+    },
+    {
+      "value": "bilateral",
+      "n": 723
+    },
+    {
+      "value": "unknown",
+      "n": 161
+    },
+    {
+      "value": "midline",
+      "n": 98
+    }
+  ],
+  "tumor_pathology_has_isthmus_involvement": [
+    {
+      "value": null,
+      "n": 6885
+    },
+    {
+      "value": false,
+      "n": 3875
+    },
+    {
+      "value": true,
+      "n": 111
+    }
+  ],
+  "n_tp_distinct_research_id": 3986,
+  "expected_null_in_v271b": 6885,
+  "observed_null_in_v271b": 6885,
+  "finished_at": "2026-04-18T02:13:46Z"
+}
