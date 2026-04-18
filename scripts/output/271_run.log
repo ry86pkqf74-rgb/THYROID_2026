@@ -169,3 +169,16 @@
 [2026-04-18T01:08:56Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
 [2026-04-18T01:08:56Z]   Wrote /Users/loganglosser/THYROID_2026/scripts/output/271_step4_points_rollup.json
 [2026-04-18T01:08:56Z] ########## Script 271 — STEP 4 DONE ##########
+[2026-04-18T01:09:23Z] ########## Script 271 — STEP 5 ##########
+[2026-04-18T01:09:24Z] === STEP 5 — Calcifications coverage flags + tirads_reextraction_queue_v1 ===
+[2026-04-18T01:09:25Z]   Added calcifications_coverage_status VARCHAR
+[2026-04-18T01:09:25Z]   Added tirads_score_component_complete BOOLEAN
+[2026-04-18T01:09:25Z]   Populating calcifications_coverage_status ...
+[2026-04-18T01:09:26Z]   Populating tirads_score_component_complete ...
+[2026-04-18T01:09:26Z]   coverage status counts: [{'status': 'absent_from_report', 'n': 27504}, {'status': 'extracted', 'n': 5149}, {'status': 'not_extracted', 'n': 4363}]
+[2026-04-18T01:09:26Z]   tirads_score_component_complete TRUE: 5149
+[2026-04-18T01:09:26Z]   Building tirads_reextraction_queue_v1 ...
+[2026-04-18T01:09:26Z]   tirads_reextraction_queue_v1 rows: 4363
+[2026-04-18T01:09:26Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
+[2026-04-18T01:09:26Z]   Wrote /Users/loganglosser/THYROID_2026/scripts/output/271_step5_calcifications.json
+[2026-04-18T01:09:27Z] ########## Script 271 — STEP 5 DONE ##########
