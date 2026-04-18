@@ -28,3 +28,11 @@
 [2026-04-18T01:07:37Z]   Wrote /Users/loganglosser/THYROID_2026/scripts/output/271_step1_snapshots.json
 [2026-04-18T01:07:37Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
 [2026-04-18T01:07:37Z] ########## Script 271 — STEP 1 DONE ##########
+[2026-04-18T01:08:04Z] ########## Script 271 — STEP 2 ##########
+[2026-04-18T01:08:05Z] === STEP 2 — Drop imaging_nodule_size_cm_v11 from CPM ===
+[2026-04-18T01:08:06Z]   DROPPED imaging_nodule_size_cm_v11.
+[2026-04-18T01:08:06Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
+[2026-04-18T01:08:06Z]   Recording removal in data_dictionary_v266a...
+[2026-04-18T01:08:06Z]     data_dictionary_v266a columns: ['column_name', 'data_type', 'ordinal_position', 'n_non_null', 'pct_non_null', 'n_distinct', 'description', 'status', 'replacement_column_name']
+[2026-04-18T01:08:06Z]   Wrote /Users/loganglosser/THYROID_2026/scripts/output/271_step2_drop_v11.json
+[2026-04-18T01:08:06Z] ########## Script 271 — STEP 2 DONE ##########

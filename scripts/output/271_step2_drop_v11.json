@@ -1,0 +1,16 @@
+{
+  "step": 2,
+  "ts": "2026-04-18T01:08:05Z",
+  "dropped": true,
+  "dd_cols": [
+    "column_name",
+    "data_type",
+    "ordinal_position",
+    "n_non_null",
+    "pct_non_null",
+    "n_distinct",
+    "description",
+    "status",
+    "replacement_column_name"
+  ]
+}
