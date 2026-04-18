@@ -1,0 +1,62 @@
+[2026-04-18T09:58:58+00:00] Script 273 starting; phase=all; utc_ts=20260418T095858Z
+[2026-04-18T09:58:58+00:00] === PHASE 0: Baseline + archive snapshot ===
+[2026-04-18T09:59:00+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:59:01+00:00] Baseline: registry=130  unresolved=18  needs_manual_review=24  null_rows=0  null_patients=0  main=116  ws=44t+67v  archive_objs=215
+[2026-04-18T09:59:01+00:00] Snapshotting "thyroid_canonical_publication_v1_0".manuscript_workspace.detail_table_registry_v1 -> "Thyroid 2026 UPdated".archive_pub_v1_0."detail_table_registry_v1_pre273_20260418T095858Z"
+[2026-04-18T09:59:02+00:00] Snapshot OK: "Thyroid 2026 UPdated".archive_pub_v1_0."detail_table_registry_v1_pre273_20260418T095858Z" (130 rows)
+[2026-04-18T09:59:02+00:00] === PHASE 1: Fill metadata gaps ===
+[2026-04-18T09:59:02+00:00] NULL total_rows targets: []
+[2026-04-18T09:59:02+00:00] NULL total_patients targets: []
+[2026-04-18T09:59:02+00:00] Post-Phase-1: NULL total_rows=0  NULL total_patients=0
+[2026-04-18T09:59:02+00:00] === PHASE 2: Resolve 18 unresolved pointers ===
+[2026-04-18T09:59:03+00:00] --- 2A: extracted_tirads_validated_v1 -> 12 tirads_*_v12 cols ---
+[2026-04-18T09:59:03+00:00] --- 2B: note_entities_llm_past_medical_hx -> pmhx_nlp_% ---
+[2026-04-18T09:59:03+00:00]   pmhx_nlp_% expected=59 actual=59
+[2026-04-18T09:59:03+00:00] --- 2C.1: note_entities_llm_past_surgical_hx -> pshx_nlp_% ---
+[2026-04-18T09:59:03+00:00]   pshx_nlp_% actual=15; nlp_pshx_% (secondary)=4
+[2026-04-18T09:59:03+00:00] --- 2C.2: note_entities_llm_presenting_symptoms -> sx_nlp_% ---
+[2026-04-18T09:59:04+00:00]   sx_nlp_% actual=5; nlp_symptoms_% (secondary)=4
+[2026-04-18T09:59:04+00:00] --- 2C.3: note_entities_operative_detail -> op_nlp_% ---
+[2026-04-18T09:59:04+00:00]   op_nlp_% actual=44
+[2026-04-18T09:59:04+00:00] --- 2C.4: note_entities_problem_list -> pmhx_nlp_% (indirect) ---
+[2026-04-18T09:59:04+00:00] --- 2D: note_entities_complications -> upstream sentinel ---
+[2026-04-18T09:59:04+00:00] --- 2E: note_entities_llm_cervical_ln_detail -> cnln_% in secondary ---
+[2026-04-18T09:59:04+00:00]   cnln_% actual=36
+[2026-04-18T09:59:04+00:00] --- 2F.1: nsqip_patient_summary -> nsqip_% ---
+[2026-04-18T09:59:04+00:00]   nsqip_% actual=102 (expected 102)
+[2026-04-18T09:59:04+00:00] --- 2F.2: path_synoptics -> syn_% ---
+[2026-04-18T09:59:05+00:00]   syn_% actual=41 (expected 41)
+[2026-04-18T09:59:05+00:00] --- 2G: operative_episode_detail_v2 -> classified op_* split ---
+[2026-04-18T09:59:05+00:00]   op_% total actual=103 (expected 103)
+[2026-04-18T09:59:05+00:00]   classified: episode_v2=11  op_sheet/ops_=48  op_nlp=44
+[2026-04-18T09:59:05+00:00] --- 2H: build_pipeline -> drop n_molecular_tests_v7, ajcc8_t_stage_corrected ---
+[2026-04-18T09:59:05+00:00]   before: arr_n=185  after: arr_n=185  removed: []
+[2026-04-18T09:59:05+00:00]   WARN: expected to remove exactly ['n_molecular_tests_v7', 'ajcc8_t_stage_corrected']; actually removed []
+[2026-04-18T09:59:05+00:00] --- Phase 2 completion check: rebuild audit + unresolved (v273) ---
+[2026-04-18T09:59:54+00:00] Phase 2 completion: audit_rows=934  unresolved=0  needs_manual_review_rows=0
+[2026-04-18T09:59:54+00:00] Phase 2 summary: {'total_mappings': 934, 'resolved': 896, 'auto_repaired': 38, 'unresolved': 0, 'needs_manual_review_rows': 0}
+[2026-04-18T09:59:54+00:00] === PHASE 3: thin_wrapper_pi_review_v273 ===
+[2026-04-18T09:59:55+00:00]   full cohort col_count=164
+[2026-04-18T10:00:03+00:00]   populated 24 review rows
+[2026-04-18T10:00:03+00:00]   wrote /Users/loganglosser/THYROID_2026/scripts/output/273_thin_wrapper_pi_review.md
+[2026-04-18T10:00:03+00:00] === PHASE 4: End-to-end re-validation (v273) ===
+[2026-04-18T10:01:14+00:00]   pass=781  fail=39  unverifiable_flagged=0
+[2026-04-18T10:01:14+00:00] === PHASE 5: Final invariants + summary ===
+[2026-04-18T10:01:14+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T10:01:15+00:00] ================================================================
+REGISTRY CURATION COMPLETE — thyroid_canonical_publication_v1_0
+================================================================
+canonical_patient_master : 10871 × 1526 cols (unchanged)
+Invariants               : RIDs=10871  null_rid=0  null_fna=0
+Registry rows            : 130 (unchanged)
+Registry metadata gaps   : total_rows NULL=0, total_patients NULL=0 (target 0 / ≤5)
+Unresolved pointers      : 0 (baseline 18, delta -18)
+needs_manual_review=true : 0 rows (baseline 24, delta -24)
+Thin-wrapper PI review   : 24 provisional (flagged for PI, not changed)
+E2E validation           : 781 pass / 39 fail (baseline 512/67)
+Archive destination      : "Thyroid 2026 UPdated".archive_pub_v1_0 (216 objs; +1 pre273 snapshot)
+Schema counts            : main=116  ws=46t+67v
+================================================================
+CURATION COMPLETE. Registry is publication-stable.
+================================================================
+[2026-04-18T10:01:15+00:00] Script 273 completed.

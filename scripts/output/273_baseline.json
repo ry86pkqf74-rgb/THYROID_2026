@@ -1,0 +1,22 @@
+{
+  "script": "273",
+  "captured_at_utc": "2026-04-18T09:59:02+00:00",
+  "canonical_patient_master": {
+    "row_count": 10871,
+    "distinct_research_ids": 10871,
+    "null_research_id": 0,
+    "null_fna_path_outcome": 0,
+    "research_id_type": "VARCHAR",
+    "column_count": 1526
+  },
+  "main_base_tables": 116,
+  "manuscript_workspace_tables": 44,
+  "manuscript_workspace_views": 67,
+  "detail_table_registry_v1_rows": 130,
+  "registry_v2_unresolved_pointers_v1_rows": 18,
+  "needs_manual_review_true": 24,
+  "null_total_rows": 0,
+  "null_total_patients": 0,
+  "archive_pub_v1_0_objects_pre": 215,
+  "snapshot_table": "detail_table_registry_v1_pre273_20260418T095858Z"
+}

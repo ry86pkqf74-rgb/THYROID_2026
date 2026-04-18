@@ -1,0 +1,13 @@
+phase,detail_table_name,action,expected,actual,notes
+2A,extracted_tirads_validated_v1,enumerate,12,12,12 tirads_*_v12 cols
+2B,note_entities_llm_past_medical_hx,enumerate,59,59,pmhx_nlp_% explicit enumeration
+2C.1,note_entities_llm_past_surgical_hx,enumerate,-1,15,pshx_nlp_% primary; nlp_pshx_% secondary (4)
+2C.2,note_entities_llm_presenting_symptoms,enumerate,-1,5,sx_nlp_% primary; nlp_symptoms_% secondary (4)
+2C.3,note_entities_operative_detail,enumerate,-1,44,op_nlp_% explicit enumeration
+2C.4,note_entities_problem_list,upstream_marker,59,59,pmhx_nlp_% in secondary; primary=upstream sentinel
+2D,note_entities_complications,upstream_marker,93,0,comp_* coverage owned by complication_phenotype_v1
+2E,note_entities_llm_cervical_ln_detail,upstream_marker_with_secondary,36,36,cnln_% enumeration in secondary; total secondary=38
+2F.1,nsqip_patient_summary,enumerate,102,102,nsqip_% explicit enumeration
+2F.2,path_synoptics,enumerate,41,41,syn_% enumeration; secondary kept=1
+2G,operative_episode_detail_v2,classify_split,103,103,primary=11 (rollups); secondary=48 ops_*+44 op_nlp_*
+2H,build_pipeline,drop_stale_tokens,2,0,removed: 

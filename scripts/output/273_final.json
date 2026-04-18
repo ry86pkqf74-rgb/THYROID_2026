@@ -1,0 +1,40 @@
+{
+  "canonical_patient_master": {
+    "row_count": 10871,
+    "distinct_research_ids": 10871,
+    "null_research_id": 0,
+    "null_fna_path_outcome": 0,
+    "research_id_type": "VARCHAR",
+    "column_count": 1526
+  },
+  "registry_rows": 130,
+  "null_total_rows": 0,
+  "null_total_patients": 0,
+  "unresolved_pointers": 0,
+  "needs_manual_review_rows": 0,
+  "thin_wrapper_pi_review_rows": 24,
+  "e2e_pass": 781,
+  "e2e_fail": 39,
+  "archive_objects": 216,
+  "main_base_tables": 116,
+  "ws_base_tables": 46,
+  "ws_views": 67,
+  "summary_block": [
+    "================================================================",
+    "REGISTRY CURATION COMPLETE \u2014 thyroid_canonical_publication_v1_0",
+    "================================================================",
+    "canonical_patient_master : 10871 \u00d7 1526 cols (unchanged)",
+    "Invariants               : RIDs=10871  null_rid=0  null_fna=0",
+    "Registry rows            : 130 (unchanged)",
+    "Registry metadata gaps   : total_rows NULL=0, total_patients NULL=0 (target 0 / \u22645)",
+    "Unresolved pointers      : 0 (baseline 18, delta -18)",
+    "needs_manual_review=true : 0 rows (baseline 24, delta -24)",
+    "Thin-wrapper PI review   : 24 provisional (flagged for PI, not changed)",
+    "E2E validation           : 781 pass / 39 fail (baseline 512/67)",
+    "Archive destination      : \"Thyroid 2026 UPdated\".archive_pub_v1_0 (216 objs; +1 pre273 snapshot)",
+    "Schema counts            : main=116  ws=46t+67v",
+    "================================================================",
+    "CURATION COMPLETE. Registry is publication-stable.",
+    "================================================================"
+  ]
+}
