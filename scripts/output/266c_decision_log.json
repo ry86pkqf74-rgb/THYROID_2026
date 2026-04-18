@@ -6,7 +6,7 @@
   "results": {
     "meta": {
       "mode": "APPLY",
-      "started_at": "2026-04-18T00:24:16.232889+00:00",
+      "started_at": "2026-04-18T00:30:00.891175+00:00",
       "script": "Script 266c"
     },
     "phase_0": {
@@ -585,50 +585,29 @@
       ],
       "view_dep_pregate_refs": []
     },
-    "phase_4": {
-      "renames_applied": [
+    "phase_5": {
+      "archived_count": 2,
+      "skipped_count": 0,
+      "manifest": [
         {
-          "table": "thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1",
-          "old": "t_stage",
-          "new": "t_stage_deprecated_un_versioned_20260417"
+          "schema": "main",
+          "name": "data_dictionary_v240",
+          "reason": "explicit_supersession (n_rows=1529)",
+          "n_rows_before": 1529,
+          "archive_dest": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"data_dictionary_v240_pre266c_20260418T003012Z\"",
+          "action": "archived_and_dropped"
         },
         {
-          "table": "thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1",
-          "old": "n_stage",
-          "new": "n_stage_deprecated_un_versioned_20260417"
-        },
-        {
-          "table": "thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1",
-          "old": "m_stage",
-          "new": "m_stage_deprecated_un_versioned_20260417"
-        },
-        {
-          "table": "thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1",
-          "old": "overall_stage",
-          "new": "overall_stage_deprecated_un_versioned_20260417"
-        },
-        {
-          "table": "thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2",
-          "old": "t_stage",
-          "new": "t_stage_deprecated_un_versioned_20260417"
-        },
-        {
-          "table": "thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2",
-          "old": "n_stage",
-          "new": "n_stage_deprecated_un_versioned_20260417"
-        },
-        {
-          "table": "thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2",
-          "old": "m_stage",
-          "new": "m_stage_deprecated_un_versioned_20260417"
-        },
-        {
-          "table": "thyroid_canonical_publication_v1_0.main.tumor_episode_master_v2",
-          "old": "overall_stage",
-          "new": "overall_stage_deprecated_un_versioned_20260417"
+          "schema": "manuscript_workspace",
+          "name": "cpm_unmapped_triage_v265",
+          "reason": "explicit_supersession (n_rows=223)",
+          "n_rows_before": 223,
+          "archive_dest": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"cpm_unmapped_triage_v265_pre266c_20260418T003012Z\"",
+          "action": "archived_and_dropped"
         }
-      ]
+      ],
+      "skipped": []
     }
   },
-  "elapsed_seconds": 11.7
+  "elapsed_seconds": 19.6
 }
