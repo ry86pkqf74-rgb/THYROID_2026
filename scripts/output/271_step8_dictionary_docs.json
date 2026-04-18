@@ -1,0 +1,24 @@
+{
+  "step": 8,
+  "ts": "2026-04-18T01:11:54Z",
+  "dd_existing_cols": [
+    "column_name",
+    "data_type",
+    "ordinal_position",
+    "n_non_null",
+    "pct_non_null",
+    "n_distinct",
+    "description",
+    "status",
+    "replacement_column_name"
+  ],
+  "data_dictionary_v266a_rows": 1583,
+  "readme_cols": [
+    "table_name",
+    "n_rows",
+    "n_distinct_research_id",
+    "description",
+    "inventoried_at"
+  ],
+  "doc_path": "/Users/loganglosser/THYROID_2026/docs/CANONICAL_STATE_20260417_SCRIPT271.md"
+}

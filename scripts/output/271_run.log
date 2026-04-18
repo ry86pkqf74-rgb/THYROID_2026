@@ -211,3 +211,13 @@
 [2026-04-18T01:10:10Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
 [2026-04-18T01:10:10Z]   Wrote /Users/loganglosser/THYROID_2026/scripts/output/271_step7_archive_sweep.json
 [2026-04-18T01:10:10Z] ########## Script 271 — STEP 7 DONE ##########
+[2026-04-18T01:11:52Z] ########## Script 271 — STEP 8 ##########
+[2026-04-18T01:11:54Z] === STEP 8 — Refresh data_dictionary_v266a + __readme + docs ===
+[2026-04-18T01:11:54Z]   data_dictionary_v266a existing cols: ['column_name', 'data_type', 'ordinal_position', 'n_non_null', 'pct_non_null', 'n_distinct', 'description', 'status', 'replacement_column_name']
+[2026-04-18T01:11:54Z]   Rebuilding data_dictionary_v266a from information_schema ...
+[2026-04-18T01:11:55Z]   data_dictionary_v266a rebuilt rows: 1583
+[2026-04-18T01:11:55Z]   __readme columns: ['table_name', 'n_rows', 'n_distinct_research_id', 'description', 'inventoried_at']
+[2026-04-18T01:11:55Z]   __readme schema not key/value; skipping insert (snapshot retained).
+[2026-04-18T01:11:55Z]   Wrote /Users/loganglosser/THYROID_2026/docs/CANONICAL_STATE_20260417_SCRIPT271.md
+[2026-04-18T01:11:55Z]   Wrote /Users/loganglosser/THYROID_2026/scripts/output/271_step8_dictionary_docs.json
+[2026-04-18T01:11:55Z] ########## Script 271 — STEP 8 DONE ##########
