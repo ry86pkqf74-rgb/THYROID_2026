@@ -1,0 +1,105 @@
+{
+  "step": 7,
+  "started_at": "2026-04-18T02:16:19Z",
+  "invariants": {
+    "n": 10871,
+    "distinct": 10871,
+    "nulls": 0
+  },
+  "cpm_n_columns": 1526,
+  "concordance_v271b": [
+    {
+      "value": "insufficient_data",
+      "n": 9394
+    },
+    {
+      "value": "discordant",
+      "n": 1021
+    },
+    {
+      "value": "concordant",
+      "n": 409
+    },
+    {
+      "value": "partially_concordant",
+      "n": 34
+    },
+    {
+      "value": "unknown_path",
+      "n": 13
+    }
+  ],
+  "tp_v271b": [
+    {
+      "value": null,
+      "n": 6885
+    },
+    {
+      "value": "right",
+      "n": 1762
+    },
+    {
+      "value": "left",
+      "n": 1242
+    },
+    {
+      "value": "bilateral",
+      "n": 723
+    },
+    {
+      "value": "unknown",
+      "n": 161
+    },
+    {
+      "value": "midline",
+      "n": 98
+    }
+  ],
+  "img_rollup_v271b": [
+    {
+      "value": null,
+      "n": 7432
+    },
+    {
+      "value": "bilateral",
+      "n": 2286
+    },
+    {
+      "value": "right_only",
+      "n": 446
+    },
+    {
+      "value": "left_only",
+      "n": 384
+    },
+    {
+      "value": "right_plus_isthmus",
+      "n": 136
+    },
+    {
+      "value": "left_plus_isthmus",
+      "n": 131
+    },
+    {
+      "value": "isthmus_only",
+      "n": 56
+    }
+  ],
+  "manuscript_cohort_n": 10871,
+  "data_dictionary": {
+    "refreshed": true,
+    "snapshot": "data_dictionary_v266a_pre271b_20260418T021618Z",
+    "n_dict_rows": 1590,
+    "new_cpm_cols_found": [
+      "imaging_has_isthmus_nodule",
+      "imaging_has_left_nodule",
+      "imaging_has_right_nodule",
+      "imaging_laterality_rollup_v271b",
+      "pathology_vs_imaging_laterality_concordant_v271b",
+      "tumor_pathology_has_isthmus_involvement",
+      "tumor_pathology_laterality_v271b"
+    ]
+  },
+  "doc_path": "docs/LATERALITY_NORMALIZATION_20260418.md",
+  "finished_at": "2026-04-18T02:17:56Z"
+}

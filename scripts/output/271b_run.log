@@ -174,3 +174,48 @@
 [2026-04-18T02:15:08Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
 [2026-04-18T02:15:08Z] wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_step6.json
 [2026-04-18T02:15:08Z] ########## Script 271b DONE (--step 6) ##########
+[2026-04-18T02:15:18Z] ########## Script 271b START (--step 7) ##########
+[2026-04-18T02:15:18Z]   archive: "Thyroid 2026 UPdated".archive_pub_v1_0, ts: 20260418T021518Z
+[2026-04-18T02:15:19Z] === STEP 7 — Verify, refresh dictionary, write LATERALITY doc ===
+[2026-04-18T02:15:19Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
+[2026-04-18T02:15:20Z]   CPM column count: 1526 (expected 1519+7=1526; tolerant if not exact)
+[2026-04-18T02:15:20Z]   concordance_v271b:
+[2026-04-18T02:15:20Z]     'insufficient_data': 9394
+[2026-04-18T02:15:20Z]     'discordant': 1021
+[2026-04-18T02:15:20Z]     'concordant': 409
+[2026-04-18T02:15:20Z]     'partially_concordant': 34
+[2026-04-18T02:15:20Z]     'unknown_path': 13
+[2026-04-18T02:15:20Z]   manuscript_workspace.cohort_descriptive_full_cohort_v1: 10871
+[2026-04-18T02:15:23Z]   snapshotted dictionary -> "Thyroid 2026 UPdated".archive_pub_v1_0."data_dictionary_v266a_pre271b_20260418T021518Z"
+[2026-04-18T02:15:47Z] ########## Script 271b START (--step 7) ##########
+[2026-04-18T02:15:47Z]   archive: "Thyroid 2026 UPdated".archive_pub_v1_0, ts: 20260418T021547Z
+[2026-04-18T02:15:48Z] === STEP 7 — Verify, refresh dictionary, write LATERALITY doc ===
+[2026-04-18T02:15:48Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
+[2026-04-18T02:15:49Z]   CPM column count: 1526 (expected 1519+7=1526; tolerant if not exact)
+[2026-04-18T02:15:49Z]   concordance_v271b:
+[2026-04-18T02:15:49Z]     'insufficient_data': 9394
+[2026-04-18T02:15:49Z]     'discordant': 1021
+[2026-04-18T02:15:49Z]     'concordant': 409
+[2026-04-18T02:15:49Z]     'partially_concordant': 34
+[2026-04-18T02:15:49Z]     'unknown_path': 13
+[2026-04-18T02:15:49Z]   manuscript_workspace.cohort_descriptive_full_cohort_v1: 10871
+[2026-04-18T02:15:51Z]   snapshotted dictionary -> "Thyroid 2026 UPdated".archive_pub_v1_0."data_dictionary_v266a_pre271b_20260418T021547Z"
+[2026-04-18T02:16:18Z] ########## Script 271b START (--step 7) ##########
+[2026-04-18T02:16:18Z]   archive: "Thyroid 2026 UPdated".archive_pub_v1_0, ts: 20260418T021618Z
+[2026-04-18T02:16:19Z] === STEP 7 — Verify, refresh dictionary, write LATERALITY doc ===
+[2026-04-18T02:16:19Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
+[2026-04-18T02:16:20Z]   CPM column count: 1526 (expected 1519+7=1526; tolerant if not exact)
+[2026-04-18T02:16:20Z]   concordance_v271b:
+[2026-04-18T02:16:20Z]     'insufficient_data': 9394
+[2026-04-18T02:16:20Z]     'discordant': 1021
+[2026-04-18T02:16:20Z]     'concordant': 409
+[2026-04-18T02:16:20Z]     'partially_concordant': 34
+[2026-04-18T02:16:20Z]     'unknown_path': 13
+[2026-04-18T02:16:20Z]   manuscript_workspace.cohort_descriptive_full_cohort_v1: 10871
+[2026-04-18T02:16:23Z]   snapshotted dictionary -> "Thyroid 2026 UPdated".archive_pub_v1_0."data_dictionary_v266a_pre271b_20260418T021618Z"
+[2026-04-18T02:16:23Z]   _info rows: 1590
+[2026-04-18T02:17:56Z]   data_dictionary_v266a rebuilt: total rows=1590
+[2026-04-18T02:17:56Z]   new CPM cols in dictionary: ['imaging_has_isthmus_nodule', 'imaging_has_left_nodule', 'imaging_has_right_nodule', 'imaging_laterality_rollup_v271b', 'pathology_vs_imaging_laterality_concordant_v271b', 'tumor_pathology_has_isthmus_involvement', 'tumor_pathology_laterality_v271b']
+[2026-04-18T02:17:56Z]   wrote /Users/loganglosser/THYROID_2026/docs/LATERALITY_NORMALIZATION_20260418.md
+[2026-04-18T02:17:56Z] wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_step7.json
+[2026-04-18T02:17:56Z] ########## Script 271b DONE (--step 7) ##########

@@ -1017,19 +1017,31 @@ def _refresh_data_dictionary(con) -> dict:
     ).fetchall()}
     has_table_name = "table_name" in snap_cols
 
-    # Build _info from info-schema
+    # Build _info from info-schema. If snapshot has table_name we restrict to
+    # the same set of tables covered by the prior dictionary; otherwise we cover
+    # all main-schema tables (legacy pre-271_step8 layout).
     con.execute("DROP TABLE IF EXISTS _info")
-    con.execute(
-        "CREATE TEMP TABLE _info AS "
-        "SELECT table_name, column_name, data_type, is_nullable, "
-        "       ordinal_position, comment "
-        f"FROM {PUBLICATION_DB}.information_schema.columns "
-        f"WHERE table_catalog='{PUBLICATION_DB}' AND table_schema='main' "
-        "  AND table_name IN ("
-        "    SELECT DISTINCT table_name FROM "
-        f"   (SELECT table_name FROM {snap_fq}) sub"
-        "  )"
-    )
+    if has_table_name:
+        con.execute(
+            "CREATE TEMP TABLE _info AS "
+            "SELECT table_name, column_name, data_type, "
+            "       CASE WHEN is_nullable THEN 'YES' ELSE 'NO' END AS is_nullable, "
+            "       column_index AS ordinal_position, comment "
+            "FROM duckdb_columns() "
+            f"WHERE database_name='{PUBLICATION_DB}' AND schema_name='main' "
+            "  AND table_name IN ("
+            f"    SELECT DISTINCT table_name FROM {snap_fq} "
+            "  )"
+        )
+    else:
+        con.execute(
+            "CREATE TEMP TABLE _info AS "
+            "SELECT table_name, column_name, data_type, "
+            "       CASE WHEN is_nullable THEN 'YES' ELSE 'NO' END AS is_nullable, "
+            "       column_index AS ordinal_position, comment "
+            "FROM duckdb_columns() "
+            f"WHERE database_name='{PUBLICATION_DB}' AND schema_name='main'"
+        )
     n_info = con.execute("SELECT COUNT(*) FROM _info").fetchone()[0]
     log(f"  _info rows: {n_info}")
 
