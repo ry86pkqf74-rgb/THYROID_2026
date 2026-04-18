@@ -1,0 +1,144 @@
+{
+  "script": "Script 279",
+  "run_date": "2026-04-18",
+  "mode": "APPLY",
+  "iso_ts": "20260418T071002Z",
+  "results": {
+    "meta": {
+      "mode": "APPLY",
+      "started_at": "2026-04-18T07:10:02Z",
+      "script": "Script 279",
+      "iso_ts": "20260418T071002Z"
+    },
+    "phase_0": {
+      "invariants": {
+        "cpm_rows": 10871,
+        "cpm_distinct": 10871,
+        "cpm_nulls": 0,
+        "cpm_cols": 1526
+      },
+      "findings": {
+        "ene_boolean_true_now": 1333,
+        "ene_integer_positive_now": 1326,
+        "impossible_consistency_ok_rows": 0,
+        "ln_extract_orphan_rows": 2,
+        "ln_rollup_source_present_on_cpm": 1
+      },
+      "drift": {
+        "ene_boolean_true_now": [
+          1333,
+          14
+        ],
+        "impossible_consistency_ok_rows": [
+          0,
+          11
+        ]
+      }
+    },
+    "phase_1": {
+      "snapshots": {
+        "ln_master_rollup_v1": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"ln_master_rollup_v1_pre279_20260418T071002Z\"",
+        "clinical_note_ln_extracted_v1": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"clinical_note_ln_extracted_v1_pre279_20260418T071002Z\""
+      },
+      "skipped": [
+        "data_dictionary_v266a"
+      ]
+    },
+    "phase_2": {
+      "before": 1333,
+      "after": 1333,
+      "target_int_positive": 1326,
+      "preserved_true_under_null_int": 7,
+      "target_realigned": 1333,
+      "sync_violations": 0,
+      "int_null_bool_set": 2947,
+      "status": "OK"
+    },
+    "phase_3": {
+      "before": 0,
+      "after": 0,
+      "vocab_after": [
+        "impossible_positive_exceeds_examined",
+        "location_only",
+        "mismatch",
+        "ok"
+      ],
+      "status": "OK"
+    },
+    "phase_4": {
+      "profile": {
+        "in_cpm": 0,
+        "in_fna": 0,
+        "in_tumor": 0,
+        "in_synoptic": 0,
+        "in_op": 0,
+        "in_notes": 2,
+        "in_ln_extract": 2
+      },
+      "routed_rows": 2,
+      "routed_distinct_rids": 1,
+      "status": "OK"
+    },
+    "phase_5": {
+      "v266a_rows": 1591,
+      "v279_rows": 1591,
+      "expected_v279_rows": 1591,
+      "clarified_rows": 16,
+      "applied_columns": [
+        "recurrence_flag_v2",
+        "any_recurrence_flag",
+        "any_recurrence_flag_prev_233",
+        "structural_recurrence_flag",
+        "biochemical_recurrence_flag",
+        "imaging_suspicious_recurrence_flag",
+        "recurrence_type",
+        "recurrence_date",
+        "recurrence_date_v2",
+        "time_to_recurrence_days",
+        "ln_total_examined",
+        "ln_rollup_total_examined",
+        "ln_rollup_source",
+        "ln_positive_flag",
+        "ln_positive_binary",
+        "ene_positive"
+      ],
+      "inserted_stubs": [],
+      "set_clauses_extra": [
+        "rebuilt_at",
+        "rebuilt_by"
+      ],
+      "readme_actions": [
+        "delete:data_dictionary_v266a",
+        "skip_existing:data_dictionary_v279"
+      ],
+      "registry_actions": [
+        "skip:no_registry_row"
+      ],
+      "v266a_residue": 0,
+      "status": "OK"
+    },
+    "phase_6": {
+      "actions": [
+        {
+          "debt_id": "ln_rollup_per_surgery_grain_formalization_v1_1",
+          "action": "inserted"
+        },
+        {
+          "debt_id": "recurrence_flag_consumer_audit_v1_1",
+          "action": "inserted"
+        }
+      ]
+    },
+    "phase_7": {
+      "cpm_cols": 1526,
+      "ene_sync_violations": 0,
+      "impossible_ok": 0,
+      "clarified_rows": 16,
+      "old_dict_present": 0,
+      "snapshots_present": 10,
+      "tech_debt_registered": 2,
+      "all_passed": true
+    }
+  },
+  "elapsed_seconds": 14.0
+}

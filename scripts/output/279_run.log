@@ -1,0 +1,108 @@
+[2026-04-18T07:10:02Z] ==============================================================================
+[2026-04-18T07:10:02Z] # Script 279 run
+[2026-04-18T07:10:02Z] started_at: 2026-04-18T07:10:02Z
+[2026-04-18T07:10:02Z] mode      : APPLY
+[2026-04-18T07:10:02Z] iso_ts    : 20260418T071002Z
+[2026-04-18T07:10:02Z] ==============================================================================
+[2026-04-18T07:10:03Z] connected to thyroid_canonical_publication_v1_0
+[2026-04-18T07:10:03Z] 
+## Phase 0 — preflight
+[2026-04-18T07:10:03Z]   attached databases: ['Thyroid 2026 UPdated', 'md_information_schema', 'my_db', 'system', 'temp', 'thyroid_canonical_publication_v1_0']
+[2026-04-18T07:10:03Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
+[2026-04-18T07:10:03Z]   cpm_n_columns: 1526
+[2026-04-18T07:10:03Z]   reproducing five Prompt-20 real findings:
+[2026-04-18T07:10:03Z]   findings: {'ene_boolean_true_now': 1333, 'ene_integer_positive_now': 1326, 'impossible_consistency_ok_rows': 0, 'ln_extract_orphan_rows': 2, 'ln_rollup_source_present_on_cpm': 1}
+[2026-04-18T07:10:03Z]   DRIFT vs 2026-04-18 baseline: {'ene_boolean_true_now': (1333, 14), 'impossible_consistency_ok_rows': (0, 11)}
+[2026-04-18T07:10:03Z] 
+## Phase 1 — snapshots to archive_pub_v1_0
+[2026-04-18T07:10:03Z]   CPM is NOT mutated by Script 279; no CPM snapshot taken.
+[2026-04-18T07:10:05Z]   snapshot thyroid_canonical_publication_v1_0.main.ln_master_rollup_v1 -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."ln_master_rollup_v1_pre279_20260418T071002Z"
+[2026-04-18T07:10:07Z]   snapshot thyroid_canonical_publication_v1_0.main.clinical_note_ln_extracted_v1 -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."clinical_note_ln_extracted_v1_pre279_20260418T071002Z"
+[2026-04-18T07:10:07Z]   SKIP snapshot data_dictionary_v266a — source already absent (prior-run snapshot lives in archive_pub_v1_0).
+[2026-04-18T07:10:07Z] 
+## Phase 2 — ENE BOOLEAN realign from INTEGER
+[2026-04-18T07:10:08Z]   before: bool_true=1333  target(int>0)=1326
+[2026-04-18T07:10:08Z]   EXEC [ene_realign]: UPDATE thyroid_canonical_publication_v1_0.main.ln_master_rollup_v1 SET ln_mets_extranodal_extension = (ln_extranodal_extension > 0) WHERE ln_extranodal_extension IS NOT NULL AND (ln_mets_extranodal_ex
+[2026-04-18T07:10:08Z]   EXEC [ene_comment]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.ln_master_rollup_v1.ln_mets_extranodal_extension IS 'BOOLEAN: (ln_extranodal_extension > 0). Rebuilt from the INTEGER count by Script 279 (202
+[2026-04-18T07:10:08Z]   preserved_true_under_null_int=7 target_realigned=1333
+[2026-04-18T07:10:08Z]   after: bool_true=1333  sync_violations=0  int_null_bool_set=2947
+[2026-04-18T07:10:08Z]   NOTE: 2947 rows have INT NULL but BOOL set (left as-is; we do not fabricate). Logged for audit.
+[2026-04-18T07:10:08Z] 
+## Phase 3 — retag impossible consistency rows
+[2026-04-18T07:10:08Z]   before: impossible-but-tagged-ok rows = 0
+[2026-04-18T07:10:08Z]   pre-update vocab: ['impossible_positive_exceeds_examined', 'location_only', 'mismatch', 'ok']
+[2026-04-18T07:10:08Z]   EXEC [impossible_retag]: UPDATE thyroid_canonical_publication_v1_0.main.ln_master_rollup_v1 SET ln_internal_consistency = 'impossible_positive_exceeds_examined' WHERE ln_total_positive > ln_total_examined AND ln_internal_cons
+[2026-04-18T07:10:08Z]   post-update vocab: ['impossible_positive_exceeds_examined', 'location_only', 'mismatch', 'ok']
+[2026-04-18T07:10:08Z]   EXEC [consistency_comment]: COMMENT ON COLUMN thyroid_canonical_publication_v1_0.main.ln_master_rollup_v1.ln_internal_consistency IS 'Validator tag. Values: ok = examined >= positive AND both non-negative; impossible_positive_ex
+[2026-04-18T07:10:09Z]   after: 0
+[2026-04-18T07:10:09Z] 
+## Phase 4 — clinical_note_ln_extracted_v1 orphan routing
+[2026-04-18T07:10:09Z]   rid 11454 evidence profile: {'in_cpm': 0, 'in_fna': 0, 'in_tumor': 0, 'in_synoptic': 0, 'in_op': 0, 'in_notes': 2, 'in_ln_extract': 2}
+[2026-04-18T07:10:09Z]   EXEC [route_orphans]: CREATE OR REPLACE TABLE thyroid_canonical_publication_v1_0.manuscript_workspace.ln_extract_noncohort_orphan_v279 AS
+[2026-04-18T07:10:10Z]   EXEC [orphan_table_comment]: COMMENT ON TABLE thyroid_canonical_publication_v1_0.manuscript_workspace.ln_extract_noncohort_orphan_v279 IS 'Script 279 (2026-04-18) routing destination for clinical_note_ln_extracted_v1 rows whose r
+[2026-04-18T07:10:10Z]   routed_rows=2  routed_distinct_rids=1
+[2026-04-18T07:10:10Z] 
+## Phase 5 — data_dictionary_v266a -> data_dictionary_v279
+[2026-04-18T07:10:11Z]   v266a present: 0  v279 present: 1
+[2026-04-18T07:10:11Z]   source dict columns (14): ['table_name', 'column_name', 'data_type', 'is_nullable', 'ordinal_position', 'comment', 'n_non_null', 'pct_non_null', 'n_distinct', 'description', 'status', 'replacement_column_name', 'rebuilt_at', 'rebuilt_by']
+[2026-04-18T07:10:11Z]   v279 already exists from a prior run; baseline row count (current v279) = 1591
+[2026-04-18T07:10:11Z]   target columns present in v279: ['any_recurrence_flag', 'any_recurrence_flag_prev_233', 'biochemical_recurrence_flag', 'ene_positive', 'imaging_suspicious_recurrence_flag', 'ln_positive_binary', 'ln_positive_flag', 'ln_rollup_source', 'ln_rollup_total_examined', 'ln_total_examined', 'recurrence_date', 'recurrence_date_v2', 'recurrence_flag_v2', 'recurrence_type', 'structural_recurrence_flag', 'time_to_recurrence_days']
+[2026-04-18T07:10:11Z]   target columns absent from v279 (stub-insert needed): []
+[2026-04-18T07:10:11Z]   EXEC [update:recurrence_flag_v2]: UPDATE thyroid_canonical_publication_v1_0.main.data_dictionary_v279 SET status = 'authoritative', replacement_column_name = NULL, description = 'Strict authoritative recurrence flag. TRUE iff >=1 of: 
+[2026-04-18T07:10:11Z]   EXEC [update:any_recurrence_flag]: UPDATE thyroid_canonical_publication_v1_0.main.data_dictionary_v279 SET status = 'authoritative', replacement_column_name = 'recurrence_flag_v2', description = 'Intermediate recurrence signal (N TRUE 
+[2026-04-18T07:10:11Z]   EXEC [update:any_recurrence_flag_prev_233]: UPDATE thyroid_canonical_publication_v1_0.main.data_dictionary_v279 SET status = 'archived_removed_from_cpm', replacement_column_name = 'recurrence_flag_v2', description = 'Historical broad recurrence
+[2026-04-18T07:10:11Z]   EXEC [update:structural_recurrence_flag]: UPDATE thyroid_canonical_publication_v1_0.main.data_dictionary_v279 SET status = 'component', replacement_column_name = 'recurrence_flag_v2', description = 'Structural recurrence detected (includes im
+[2026-04-18T07:10:11Z]   EXEC [update:biochemical_recurrence_flag]: UPDATE thyroid_canonical_publication_v1_0.main.data_dictionary_v279 SET status = 'authoritative_subtype', replacement_column_name = NULL, description = 'Biochemical recurrence (rising Tg in patient wi
+[2026-04-18T07:10:11Z]   EXEC [update:imaging_suspicious_recurrence_flag]: UPDATE thyroid_canonical_publication_v1_0.main.data_dictionary_v279 SET status = 'authoritative_subtype', replacement_column_name = NULL, description = 'Imaging-only, unconfirmed suspicion. Per the ca
+[2026-04-18T07:10:11Z]   EXEC [update:recurrence_type]: UPDATE thyroid_canonical_publication_v1_0.main.data_dictionary_v279 SET status = 'authoritative', replacement_column_name = NULL, description = 'Clinical recurrence taxonomy (6 levels including persis
+[2026-04-18T07:10:12Z]   EXEC [update:recurrence_date]: UPDATE thyroid_canonical_publication_v1_0.main.data_dictionary_v279 SET status = 'authoritative', replacement_column_name = 'recurrence_date_v2', description = 'First recurrence date from any source (
+[2026-04-18T07:10:12Z]   EXEC [update:recurrence_date_v2]: UPDATE thyroid_canonical_publication_v1_0.main.data_dictionary_v279 SET status = 'authoritative', replacement_column_name = NULL, description = 'Strict recurrence date aligned with recurrence_flag_v2.
+[2026-04-18T07:10:12Z]   EXEC [update:time_to_recurrence_days]: UPDATE thyroid_canonical_publication_v1_0.main.data_dictionary_v279 SET status = 'authoritative', replacement_column_name = NULL, description = 'Days from first_surgery_date to recurrence_date. Derive
+[2026-04-18T07:10:12Z]   EXEC [update:ln_total_examined]: UPDATE thyroid_canonical_publication_v1_0.main.data_dictionary_v279 SET status = 'authoritative', replacement_column_name = NULL, description = 'CPM patient-level LN examined count. Source heuristic: 
+[2026-04-18T07:10:12Z]   EXEC [update:ln_rollup_total_examined]: UPDATE thyroid_canonical_publication_v1_0.main.data_dictionary_v279 SET status = 'authoritative', replacement_column_name = NULL, description = 'CPM mirror of MAX(ln_total_examined) over ln_master_rol
+[2026-04-18T07:10:12Z]   EXEC [update:ln_rollup_source]: UPDATE thyroid_canonical_publication_v1_0.main.data_dictionary_v279 SET status = 'authoritative', replacement_column_name = NULL, description = 'Provenance tag for the rollup-derived LN counts. Values
+[2026-04-18T07:10:12Z]   EXEC [update:ln_positive_flag]: UPDATE thyroid_canonical_publication_v1_0.main.data_dictionary_v279 SET status = 'authoritative', replacement_column_name = NULL, description = 'Integer flag for any positive LN (0/1/NULL). Built from
+[2026-04-18T07:10:12Z]   EXEC [update:ln_positive_binary]: UPDATE thyroid_canonical_publication_v1_0.main.data_dictionary_v279 SET status = 'authoritative', replacement_column_name = NULL, description = 'BOOLEAN equivalent of ln_positive_flag. 99.3% concordan
+[2026-04-18T07:10:12Z]   EXEC [update:ene_positive]: UPDATE thyroid_canonical_publication_v1_0.main.data_dictionary_v279 SET status = 'authoritative', replacement_column_name = NULL, description = 'ENE at patient level. Built from ln_master_rollup_v1.ln
+[2026-04-18T07:10:12Z]   SKIP drop_v266a — already dropped on a prior run
+[2026-04-18T07:10:12Z]   __readme cols: ['table_name', 'n_rows', 'n_distinct_research_id', 'description', 'inventoried_at']
+[2026-04-18T07:10:12Z]   EXEC [readme_del_v266a]: DELETE FROM thyroid_canonical_publication_v1_0.main.__readme WHERE table_name='data_dictionary_v266a'
+[2026-04-18T07:10:12Z]   SKIP readme insert v279 — already present
+[2026-04-18T07:10:13Z]   detail_table_registry_v1 rows referencing the dictionary: 0
+[2026-04-18T07:10:13Z]   registry has no dictionary row — skipping (decision logged).
+[2026-04-18T07:10:13Z]   v279_rows=1591 clarified_rows=16 blanks=[] v266a_residue=0
+[2026-04-18T07:10:13Z] 
+## Phase 6 — register v1.1 tech debt
+[2026-04-18T07:10:14Z]   EXEC [tech_debt_insert]: ln_rollup_per_surgery_grain_formalization_v1_1
+[2026-04-18T07:10:14Z]   EXEC [tech_debt_insert]: recurrence_flag_consumer_audit_v1_1
+[2026-04-18T07:10:14Z] 
+## Phase 7 — final verification
+[2026-04-18T07:10:14Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
+[2026-04-18T07:10:15Z]   cpm_n_columns: 1526
+[2026-04-18T07:10:15Z]   GATE B cpm_cols unchanged (1526)
+[2026-04-18T07:10:15Z]   GATE C ene_sync_violations=0 (must=0)
+[2026-04-18T07:10:15Z]   GATE D impossible_ok=0 (must=0)
+[2026-04-18T07:10:15Z]   GATE E clarified_rows=16 (must=16)
+[2026-04-18T07:10:15Z]   GATE F old_dict_present=0 (must=0)
+[2026-04-18T07:10:15Z]   GATE G snapshots_present=10 (must>=3)
+[2026-04-18T07:10:15Z]   GATE H tech_debt_registered=2 (must=2)
+[2026-04-18T07:10:16Z] 
+elapsed: 14.0s
+[2026-04-18T07:10:16Z] 
+[2026-04-18T07:10:16Z] SCRIPT 279 FINAL STATE
+[2026-04-18T07:10:16Z]   canonical_patient_master  : 10,871 rows x 1526 cols (unchanged)
+[2026-04-18T07:10:16Z]   ln_master_rollup_v1       : ENE bifurcation resolved (1333 -> 1333 TRUE)
+[2026-04-18T07:10:16Z]                               0 impossible rows retagged
+[2026-04-18T07:10:16Z]   clinical_note_ln_extract  : 1 non-cohort orphan routed to ws queue
+[2026-04-18T07:10:16Z]   data_dictionary_v266a -> data_dictionary_v279 (16 recurrence/LN clarifications)
+[2026-04-18T07:10:16Z]   v1_1_tech_debt_v1         : +2 open items for v1.1
+[2026-04-18T07:10:16Z]   Snapshots (archive_pub_v1_0):
+[2026-04-18T07:10:16Z]     "Thyroid 2026 UPdated"."archive_pub_v1_0"."ln_master_rollup_v1_pre279_20260418T071002Z"
+[2026-04-18T07:10:16Z]     "Thyroid 2026 UPdated"."archive_pub_v1_0"."clinical_note_ln_extracted_v1_pre279_20260418T071002Z"
+[2026-04-18T07:10:16Z]   Invariants               : ALL PASSED
+[2026-04-18T07:10:16Z] Prompt 20 real findings    : addressed.
+[2026-04-18T07:10:16Z] Prompt 20 withdrawn findings (any_recurrence_flag rebuild,
+[2026-04-18T07:10:16Z]   ln_rollup 1:1 restructure, recurrence_date backfill):
+[2026-04-18T07:10:16Z]   confirmed not actioned per PART2 §7.2 / §5.4 / source-limited.
+[2026-04-18T07:10:16Z] Canonical remains v1.0-published + v1.1-patched. Safe to proceed.
+[2026-04-18T07:10:16Z] 
