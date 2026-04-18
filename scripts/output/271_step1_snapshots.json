@@ -1,0 +1,31 @@
+{
+  "step": 1,
+  "ts": "2026-04-18T01:07:27Z",
+  "snapshots": [
+    {
+      "table": "canonical_patient_master",
+      "snapshot": "canonical_patient_master_pre271_20260418T010726Z",
+      "rows": 10871
+    },
+    {
+      "table": "canonical_us_nodule_characteristics_v1",
+      "snapshot": "canonical_us_nodule_characteristics_v1_pre271_20260418T010726Z",
+      "rows": 37016
+    },
+    {
+      "table": "imaging_nodule_master_v1",
+      "snapshot": "imaging_nodule_master_v1_pre271_20260418T010726Z",
+      "rows": 37016
+    },
+    {
+      "table": "data_dictionary_v266a",
+      "snapshot": "data_dictionary_v266a_pre271_20260418T010726Z",
+      "rows": 1529
+    },
+    {
+      "table": "__readme",
+      "snapshot": "__readme_pre271_20260418T010726Z",
+      "rows": 115
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+[2026-04-18T01:07:00Z] ########## Script 271 — STEP 0 ##########
+[2026-04-18T01:07:02Z] === STEP 0 — Preflight verification (read-only) ===
+[2026-04-18T01:07:02Z]   A. canonical_patient_master: 10871 rows / 10871 distinct rid
+[2026-04-18T01:07:02Z]   B. imaging_nodule_size_cm_v11 present in CPM: 1 (expect 1)
+[2026-04-18T01:07:03Z]   C. cunc_v1 tirads_category: 10 distinct, long=8331, short=19891
+[2026-04-18T01:07:03Z]   D. cunc_v1 calc gap: 4363/4396 (99.2%) scored have no calcifications
+[2026-04-18T01:07:03Z]   E. inm_v1.dominant_nodule_flag exists: 0 (expect 0)
+[2026-04-18T01:07:03Z]   F. imaging_nodule_master_v1 rows: 37016 (expect 37016)
+[2026-04-18T01:07:03Z]   G. cunc_v1: 37016 rows, 4396 scored
+[2026-04-18T01:07:03Z]   H. CPM column count (pre-271): 1514 (expect 1514)
+[2026-04-18T01:07:03Z]   I. data_dictionary_v266a present: 1
+[2026-04-18T01:07:03Z]   J. archive schema "Thyroid 2026 UPdated".archive_pub_v1_0 present: 1
+[2026-04-18T01:07:03Z]   Wrote /Users/loganglosser/THYROID_2026/scripts/output/271_step0_preflight.json
+[2026-04-18T01:07:03Z]   Preflight PASSED.
+[2026-04-18T01:07:03Z] ########## Script 271 — STEP 0 DONE ##########
+[2026-04-18T01:07:26Z] ########## Script 271 — STEP 1 ##########
+[2026-04-18T01:07:27Z] === STEP 1 — Safety snapshots to "Thyroid 2026 UPdated".archive_pub_v1_0 (TS=20260418T010726Z) ===
+[2026-04-18T01:07:27Z]   Snapshotting canonical_patient_master -> "Thyroid 2026 UPdated".archive_pub_v1_0."canonical_patient_master_pre271_20260418T010726Z"
+[2026-04-18T01:07:31Z]     src=10871 snap=10871 match=True
+[2026-04-18T01:07:31Z]   Snapshotting canonical_us_nodule_characteristics_v1 -> "Thyroid 2026 UPdated".archive_pub_v1_0."canonical_us_nodule_characteristics_v1_pre271_20260418T010726Z"
+[2026-04-18T01:07:33Z]     src=37016 snap=37016 match=True
+[2026-04-18T01:07:33Z]   Snapshotting imaging_nodule_master_v1 -> "Thyroid 2026 UPdated".archive_pub_v1_0."imaging_nodule_master_v1_pre271_20260418T010726Z"
+[2026-04-18T01:07:35Z]     src=37016 snap=37016 match=True
+[2026-04-18T01:07:35Z]   Snapshotting data_dictionary_v266a -> "Thyroid 2026 UPdated".archive_pub_v1_0."data_dictionary_v266a_pre271_20260418T010726Z"
+[2026-04-18T01:07:36Z]     src=1529 snap=1529 match=True
+[2026-04-18T01:07:36Z]   Snapshotting __readme -> "Thyroid 2026 UPdated".archive_pub_v1_0."__readme_pre271_20260418T010726Z"
+[2026-04-18T01:07:37Z]     src=115 snap=115 match=True
+[2026-04-18T01:07:37Z]   Wrote /Users/loganglosser/THYROID_2026/scripts/output/271_step1_snapshots.json
+[2026-04-18T01:07:37Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
+[2026-04-18T01:07:37Z] ########## Script 271 — STEP 1 DONE ##########

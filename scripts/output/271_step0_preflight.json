@@ -1,0 +1,56 @@
+{
+  "step": 0,
+  "ts": "2026-04-18T01:07:02Z",
+  "ok": true,
+  "checks": {
+    "A_invariants": {
+      "n": 10871,
+      "distinct": 10871,
+      "expected": [
+        10871,
+        10871
+      ]
+    },
+    "B_size_cm_v11_present": {
+      "count": 1,
+      "expected": 1
+    },
+    "C_cunc_dual_naming": {
+      "n_distinct_cats": 10,
+      "long_named": 8331,
+      "short_named": 19891,
+      "expected": "~10 distinct, both long and short present"
+    },
+    "D_calc_gap": {
+      "scored": 4396,
+      "scored_no_calc": 4363,
+      "pct_no_calc": 99.2,
+      "expected": "~99% scored have no calc"
+    },
+    "E_dominant_nodule_flag_present": {
+      "count": 0,
+      "expected": 0
+    },
+    "F_inm_v1_rows": {
+      "n": 37016,
+      "expected": 37016
+    },
+    "G_cunc_v1_rows": {
+      "n": 37016,
+      "scored": 4396,
+      "expected": "37016, ~19891 scored"
+    },
+    "H_cpm_col_count_pre": {
+      "n": 1514,
+      "expected": 1514
+    },
+    "I_data_dictionary_v266a": {
+      "present": 1,
+      "expected": 1
+    },
+    "J_archive_schema": {
+      "present": 1,
+      "expected": 1
+    }
+  }
+}
