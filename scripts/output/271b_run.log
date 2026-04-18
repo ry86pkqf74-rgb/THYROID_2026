@@ -164,3 +164,13 @@
 [2026-04-18T02:14:25Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
 [2026-04-18T02:14:25Z] wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_step5.json
 [2026-04-18T02:14:25Z] ########## Script 271b DONE (--step 5) ##########
+[2026-04-18T02:15:04Z] ########## Script 271b START (--step 6) ##########
+[2026-04-18T02:15:04Z]   archive: "Thyroid 2026 UPdated".archive_pub_v1_0, ts: 20260418T021504Z
+[2026-04-18T02:15:06Z] === STEP 6 — Document legacy laterality columns ===
+[2026-04-18T02:15:07Z]   COMMENT applied to laterality
+[2026-04-18T02:15:07Z]   COMMENT applied to path_laterality
+[2026-04-18T02:15:08Z]   COMMENT applied to bilateral_disease_flag
+[2026-04-18T02:15:08Z]   COMMENT applied to bilateral_path_flag
+[2026-04-18T02:15:08Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
+[2026-04-18T02:15:08Z] wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_step6.json
+[2026-04-18T02:15:08Z] ########## Script 271b DONE (--step 6) ##########

@@ -1,0 +1,11 @@
+{
+  "step": 6,
+  "started_at": "2026-04-18T02:15:06Z",
+  "comments_applied": {
+    "laterality": "Patient-level laterality. Forensics in Script 271b found this column to be functionally identical to cpm.path_laterality (100.0% 3-way agreement, identical NULL pattern), strongly suggesting they are duplicate or copy columns from the same upstream feeder. Vocabulary: bilateral/left/right/NULL. Predates Script 271; documented retroactively. For new analyses prefer tumor_pathology_laterality_v271b (rebuilt from tumor_pathology under documented rules). Script 271b, 2026-04-18.",
+    "path_laterality": "Pathology-derived patient-level laterality predating Script 271 (legacy). Vocabulary observed: bilateral/left/right/NULL. Documented in Script 271b; for new analyses prefer tumor_pathology_laterality_v271b (rebuilt from tumor_pathology.tumor_laterality_overall under documented rules). Script 271b documentation, 2026-04-18.",
+    "bilateral_disease_flag": "BOOLEAN flag, predates Script 271 (legacy). TRUE indicates bilateral disease per the upstream feeder. Source not re-derivable in this script; for new analyses prefer (tumor_pathology_laterality_v271b='bilateral') or (imaging_has_left_nodule AND imaging_has_right_nodule). Script 271b documentation, 2026-04-18. Script 271b documentation, 2026-04-18.",
+    "bilateral_path_flag": "BOOLEAN flag, predates Script 271 (legacy). TRUE indicates pathology indicated bilateral disease. Source not re-derivable in this script; for new analyses prefer (tumor_pathology_laterality_v271b='bilateral'). Script 271b documentation, 2026-04-18. Script 271b documentation, 2026-04-18."
+  },
+  "finished_at": "2026-04-18T02:15:08Z"
+}
