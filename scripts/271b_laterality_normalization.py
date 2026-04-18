@@ -430,13 +430,26 @@ def step2_forensics(con) -> dict:
     out["best_candidate"] = best
     if best and best.get("agreement_3way", 0.0) >= 0.90:
         out["verdict"] = "identified"
-        out["proposed_comment"] = (
-            f"Patient-level laterality. High 3-way agreement ({best['agreement_3way']*100:.1f}%) "
-            f"with {best['candidate_table']}.{best['candidate_col']}; semantically the same "
-            "(specimen-laterality / disease-laterality from that source). "
-            "Vocabulary: bilateral/left/right/NULL. Predates Script 271; documented retroactively. "
-            "Script 271b, 2026-04-18."
-        )
+        winner = f"{best['candidate_table']}.{best['candidate_col']}"
+        agree_pct = best['agreement_3way'] * 100
+        if best['candidate_table'] == "canonical_patient_master":
+            out["proposed_comment"] = (
+                "Patient-level laterality. Forensics in Script 271b found this column to be "
+                f"functionally identical to cpm.{best['candidate_col']} "
+                f"({agree_pct:.1f}% 3-way agreement, identical NULL pattern), strongly suggesting "
+                "they are duplicate or copy columns from the same upstream feeder. "
+                "Vocabulary: bilateral/left/right/NULL. Predates Script 271; documented retroactively. "
+                "For new analyses prefer tumor_pathology_laterality_v271b "
+                "(rebuilt from tumor_pathology under documented rules). Script 271b, 2026-04-18."
+            )
+        else:
+            out["proposed_comment"] = (
+                f"Patient-level laterality. Forensics in Script 271b matched this column to "
+                f"{winner} at {agree_pct:.1f}% 3-way agreement, indicating they are semantically "
+                "the same (likely the source feeder for this column). "
+                "Vocabulary: bilateral/left/right/NULL. Predates Script 271; documented retroactively. "
+                "For new analyses prefer tumor_pathology_laterality_v271b. Script 271b, 2026-04-18."
+            )
     else:
         out["verdict"] = "inconclusive"
         out["proposed_comment"] = (

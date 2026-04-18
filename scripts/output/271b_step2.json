@@ -1,0 +1,564 @@
+{
+  "step": 2,
+  "started_at": "2026-04-18T02:13:25Z",
+  "candidates": [
+    {
+      "candidate_table": "canonical_patient_master",
+      "candidate_col": "path_laterality",
+      "n_in_3way_buckets": 10338,
+      "n_3way_matches": 10338,
+      "agreement_3way": 1.0,
+      "confusion": [
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": "bilateral",
+          "n": 5571
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": "left",
+          "n": 2428
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": "right",
+          "n": 2339
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": null,
+          "n": 533
+        }
+      ]
+    },
+    {
+      "candidate_table": "path_synoptics",
+      "candidate_col": "tumor_laterality",
+      "n_in_3way_buckets": 626,
+      "n_3way_matches": 619,
+      "agreement_3way": 0.9888178913738019,
+      "confusion": [
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": null,
+          "n": 4952
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": null,
+          "n": 2425
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": null,
+          "n": 2335
+        },
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": "bilateral",
+          "n": 619
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": null,
+          "n": 504
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": "bilateral",
+          "n": 29
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": "bilateral",
+          "n": 4
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": "bilateral",
+          "n": 3
+        }
+      ]
+    },
+    {
+      "candidate_table": "operative_episode_detail_v2",
+      "candidate_col": "laterality",
+      "n_in_3way_buckets": 453,
+      "n_3way_matches": 417,
+      "agreement_3way": 0.9205298013245033,
+      "confusion": [
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": null,
+          "n": 5143
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": null,
+          "n": 2390
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": null,
+          "n": 2307
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": null,
+          "n": 504
+        },
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": "bilateral",
+          "n": 363
+        },
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": "midline",
+          "n": 33
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": "left",
+          "n": 28
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": "right",
+          "n": 26
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": "midline",
+          "n": 22
+        },
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": "right",
+          "n": 20
+        },
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": "left",
+          "n": 12
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": "midline",
+          "n": 7
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": "midline",
+          "n": 5
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": "right",
+          "n": 3
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": "left",
+          "n": 3
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": "bilateral",
+          "n": 2
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": "bilateral",
+          "n": 1
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": "right",
+          "n": 1
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": "bilateral",
+          "n": 1
+        }
+      ]
+    },
+    {
+      "candidate_table": "tumor_pathology",
+      "candidate_col": "tumor_laterality_overall",
+      "n_in_3way_buckets": 3653,
+      "n_3way_matches": 1680,
+      "agreement_3way": 0.4598959759102108,
+      "confusion": [
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": null,
+          "n": 3071
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": null,
+          "n": 1839
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": null,
+          "n": 1650
+        },
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": "right",
+          "n": 1122
+        },
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": "left",
+          "n": 712
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": "right",
+          "n": 607
+        },
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": "bilateral",
+          "n": 580
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": "left",
+          "n": 493
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": null,
+          "n": 325
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": "unknown",
+          "n": 122
+        },
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": "midline",
+          "n": 68
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": "bilateral",
+          "n": 60
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": "bilateral",
+          "n": 52
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": "bilateral",
+          "n": 31
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": "left",
+          "n": 24
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": "right",
+          "n": 19
+        },
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": "unknown",
+          "n": 18
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": "right",
+          "n": 14
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": "left",
+          "n": 13
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": "midline",
+          "n": 12
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": "unknown",
+          "n": 12
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": "midline",
+          "n": 10
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": "unknown",
+          "n": 9
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": "midline",
+          "n": 8
+        }
+      ]
+    },
+    {
+      "candidate_table": "path_synoptics",
+      "candidate_col": "tumor_1_site_laterality",
+      "n_in_3way_buckets": 3496,
+      "n_3way_matches": 1168,
+      "agreement_3way": 0.3340961098398169,
+      "confusion": [
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": null,
+          "n": 3225
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": null,
+          "n": 1827
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": null,
+          "n": 1607
+        },
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": "right",
+          "n": 1122
+        },
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": "left",
+          "n": 1076
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": "right",
+          "n": 651
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": "left",
+          "n": 517
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": null,
+          "n": 454
+        },
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": "midline",
+          "n": 147
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": "bilateral",
+          "n": 57
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": "bilateral",
+          "n": 52
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": "right",
+          "n": 35
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": "left",
+          "n": 28
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": "midline",
+          "n": 18
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": "midline",
+          "n": 17
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": "midline",
+          "n": 12
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": "left",
+          "n": 11
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": "right",
+          "n": 10
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": "bilateral",
+          "n": 4
+        },
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": "unknown",
+          "n": 1
+        }
+      ]
+    },
+    {
+      "candidate_table": "path_synoptics",
+      "candidate_col": "bilateral_neck_dissection",
+      "n_in_3way_buckets": 0,
+      "n_3way_matches": 0,
+      "agreement_3way": 0.0,
+      "confusion": [
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": null,
+          "n": 5571
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": null,
+          "n": 2428
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": null,
+          "n": 2339
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": null,
+          "n": 533
+        }
+      ]
+    },
+    {
+      "candidate_table": "operative_episode_detail_v2",
+      "candidate_col": "lateral_neck_dissection_flag",
+      "n_in_3way_buckets": 0,
+      "n_3way_matches": 0,
+      "agreement_3way": 0.0,
+      "confusion": [
+        {
+          "cpm_laterality": "bilateral",
+          "candidate_bucket": null,
+          "n": 5571
+        },
+        {
+          "cpm_laterality": "left",
+          "candidate_bucket": null,
+          "n": 2428
+        },
+        {
+          "cpm_laterality": "right",
+          "candidate_bucket": null,
+          "n": 2339
+        },
+        {
+          "cpm_laterality": null,
+          "candidate_bucket": null,
+          "n": 533
+        }
+      ]
+    }
+  ],
+  "cpm_laterality_distribution": [
+    {
+      "value": "bilateral",
+      "n": 5571
+    },
+    {
+      "value": "left",
+      "n": 2428
+    },
+    {
+      "value": "right",
+      "n": 2339
+    },
+    {
+      "value": null,
+      "n": 533
+    }
+  ],
+  "candidate_list": [
+    {
+      "table": "tumor_pathology",
+      "col": "tumor_laterality_overall"
+    },
+    {
+      "table": "path_synoptics",
+      "col": "bilateral_neck_dissection"
+    },
+    {
+      "table": "path_synoptics",
+      "col": "tumor_laterality"
+    },
+    {
+      "table": "path_synoptics",
+      "col": "tumor_1_site_laterality"
+    },
+    {
+      "table": "operative_episode_detail_v2",
+      "col": "laterality"
+    },
+    {
+      "table": "operative_episode_detail_v2",
+      "col": "lateral_neck_dissection_flag"
+    },
+    {
+      "table": "canonical_patient_master",
+      "col": "path_laterality"
+    }
+  ],
+  "best_candidate": {
+    "candidate_table": "canonical_patient_master",
+    "candidate_col": "path_laterality",
+    "n_in_3way_buckets": 10338,
+    "n_3way_matches": 10338,
+    "agreement_3way": 1.0,
+    "confusion": [
+      {
+        "cpm_laterality": "bilateral",
+        "candidate_bucket": "bilateral",
+        "n": 5571
+      },
+      {
+        "cpm_laterality": "left",
+        "candidate_bucket": "left",
+        "n": 2428
+      },
+      {
+        "cpm_laterality": "right",
+        "candidate_bucket": "right",
+        "n": 2339
+      },
+      {
+        "cpm_laterality": null,
+        "candidate_bucket": null,
+        "n": 533
+      }
+    ]
+  },
+  "verdict": "identified",
+  "proposed_comment": "Patient-level laterality. Forensics in Script 271b found this column to be functionally identical to cpm.path_laterality (100.0% 3-way agreement, identical NULL pattern), strongly suggesting they are duplicate or copy columns from the same upstream feeder. Vocabulary: bilateral/left/right/NULL. Predates Script 271; documented retroactively. For new analyses prefer tumor_pathology_laterality_v271b (rebuilt from tumor_pathology under documented rules). Script 271b, 2026-04-18.",
+  "finished_at": "2026-04-18T02:13:28Z"
+}

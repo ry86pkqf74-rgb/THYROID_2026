@@ -57,3 +57,45 @@
 [2026-04-18T02:12:33Z] INVARIANTS canonical_patient_master: n=10871 distinct=10871 nulls=0
 [2026-04-18T02:12:33Z] wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_step1.json
 [2026-04-18T02:12:33Z] ########## Script 271b DONE (--step 1) ##########
+[2026-04-18T02:12:50Z] ########## Script 271b START (--step 2) ##########
+[2026-04-18T02:12:50Z]   archive: "Thyroid 2026 UPdated".archive_pub_v1_0, ts: 20260418T021250Z
+[2026-04-18T02:12:51Z] === STEP 2 — Forensics on cpm.laterality ===
+[2026-04-18T02:12:51Z]   cpm.laterality distribution:
+[2026-04-18T02:12:51Z]     'bilateral': 5571
+[2026-04-18T02:12:51Z]     'left': 2428
+[2026-04-18T02:12:51Z]     'right': 2339
+[2026-04-18T02:12:51Z]     None: 533
+[2026-04-18T02:12:53Z]   path_synoptics columns scanned for laterality: ['bilateral_neck_dissection', 'pyramidal_lobe_cm', 'tumor_laterality', 'tumor_1_site_laterality']
+[2026-04-18T02:12:54Z]   operative_episode_detail_v2 columns scanned: ['laterality', 'lateral_neck_dissection_flag']
+[2026-04-18T02:12:54Z]   total candidates to test: 7
+[2026-04-18T02:12:54Z]   tumor_pathology.tumor_laterality_overall: 3-way agreement = 46.0% (1680/3653)
+[2026-04-18T02:12:54Z]   path_synoptics.bilateral_neck_dissection: 3-way agreement = 0.0% (0/0)
+[2026-04-18T02:12:55Z]   path_synoptics.tumor_laterality: 3-way agreement = 98.9% (619/626)
+[2026-04-18T02:12:55Z]   path_synoptics.tumor_1_site_laterality: 3-way agreement = 33.4% (1168/3496)
+[2026-04-18T02:12:55Z]   operative_episode_detail_v2.laterality: 3-way agreement = 92.1% (417/453)
+[2026-04-18T02:12:55Z]   operative_episode_detail_v2.lateral_neck_dissection_flag: 3-way agreement = 0.0% (0/0)
+[2026-04-18T02:12:55Z]   canonical_patient_master.path_laterality: 3-way agreement = 100.0% (10338/10338)
+[2026-04-18T02:12:55Z]   wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_laterality_source_forensics.md
+[2026-04-18T02:12:55Z] wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_step2.json
+[2026-04-18T02:12:55Z] ########## Script 271b DONE (--step 2) ##########
+[2026-04-18T02:13:24Z] ########## Script 271b START (--step 2) ##########
+[2026-04-18T02:13:24Z]   archive: "Thyroid 2026 UPdated".archive_pub_v1_0, ts: 20260418T021324Z
+[2026-04-18T02:13:25Z] === STEP 2 — Forensics on cpm.laterality ===
+[2026-04-18T02:13:25Z]   cpm.laterality distribution:
+[2026-04-18T02:13:25Z]     'bilateral': 5571
+[2026-04-18T02:13:25Z]     'left': 2428
+[2026-04-18T02:13:25Z]     'right': 2339
+[2026-04-18T02:13:25Z]     None: 533
+[2026-04-18T02:13:26Z]   path_synoptics columns scanned for laterality: ['bilateral_neck_dissection', 'pyramidal_lobe_cm', 'tumor_laterality', 'tumor_1_site_laterality']
+[2026-04-18T02:13:27Z]   operative_episode_detail_v2 columns scanned: ['laterality', 'lateral_neck_dissection_flag']
+[2026-04-18T02:13:27Z]   total candidates to test: 7
+[2026-04-18T02:13:27Z]   tumor_pathology.tumor_laterality_overall: 3-way agreement = 46.0% (1680/3653)
+[2026-04-18T02:13:27Z]   path_synoptics.bilateral_neck_dissection: 3-way agreement = 0.0% (0/0)
+[2026-04-18T02:13:27Z]   path_synoptics.tumor_laterality: 3-way agreement = 98.9% (619/626)
+[2026-04-18T02:13:28Z]   path_synoptics.tumor_1_site_laterality: 3-way agreement = 33.4% (1168/3496)
+[2026-04-18T02:13:28Z]   operative_episode_detail_v2.laterality: 3-way agreement = 92.1% (417/453)
+[2026-04-18T02:13:28Z]   operative_episode_detail_v2.lateral_neck_dissection_flag: 3-way agreement = 0.0% (0/0)
+[2026-04-18T02:13:28Z]   canonical_patient_master.path_laterality: 3-way agreement = 100.0% (10338/10338)
+[2026-04-18T02:13:28Z]   wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_laterality_source_forensics.md
+[2026-04-18T02:13:28Z] wrote /Users/loganglosser/THYROID_2026/scripts/output/271b_step2.json
+[2026-04-18T02:13:28Z] ########## Script 271b DONE (--step 2) ##########
