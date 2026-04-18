@@ -1,0 +1,12 @@
+detail_table_name,total_rows,total_patients
+cpm_ajcc_dominant_concordance_v1,11175,10871
+cpm_ajcc_dominant_discordance_canonical_v1,155,155
+cpm_ajcc_dominant_vs_tp_hist1_discordance_v1,2195,2076
+cpm_ete_self_contradiction_queue_v1,1,1
+cpm_hypopara_adjudication_log_v1,4,4
+cpm_is_malignant_flag_review_v1,5,5
+ln_extract_noncohort_orphan_v279,2,1
+path_tumor_size_chart_review_queue_v1,0,0
+path_tumor_size_correction_queue_v1,80,80
+path_tumor_size_multifocal_enumeration_notes_v1,13,13
+tg_orphan_cancer_text_investigation_queue_v1,83,83

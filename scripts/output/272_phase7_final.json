@@ -1,0 +1,26 @@
+{
+  "canonical_patient_master_rows": 10871,
+  "canonical_patient_master_cols": 1526,
+  "main_base_tables": 116,
+  "manuscript_workspace_tables": 42,
+  "manuscript_workspace_views": 67,
+  "registry_rows": 130,
+  "validation_pass": 512,
+  "validation_fail": 67,
+  "unresolved_pointers": 18,
+  "unresolved_by_table_count": {
+    "build_pipeline": 2,
+    "extracted_tirads_validated_v1": 3,
+    "note_entities_complications": 1,
+    "note_entities_llm_cervical_ln_detail": 1,
+    "note_entities_llm_past_medical_hx": 4,
+    "note_entities_llm_past_surgical_hx": 1,
+    "note_entities_llm_presenting_symptoms": 1,
+    "note_entities_operative_detail": 1,
+    "note_entities_problem_list": 1,
+    "nsqip_patient_summary": 1,
+    "operative_episode_detail_v2": 1,
+    "path_synoptics": 1
+  },
+  "archive_objects": 214
+}

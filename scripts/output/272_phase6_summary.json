@@ -1,0 +1,6 @@
+{
+  "pass": 512,
+  "fail": 39,
+  "unverifiable_flagged": 28,
+  "validation_table": "manuscript_workspace.registry_end_to_end_validation_v1"
+}

@@ -1,0 +1,1211 @@
+[2026-04-18T08:19:35+00:00] Script 272 start; date=2026-04-18; UTC=2026-04-18T08:19:35.973647+00:00
+[2026-04-18T08:19:38+00:00] Connected to MotherDuck DB: thyroid_canonical_publication_v1_0
+[2026-04-18T08:19:38+00:00] Requested phases: ['0']
+[2026-04-18T08:19:38+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:19:38+00:00] === PHASE 0: Baseline snapshot ===
+[2026-04-18T08:19:39+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:19:39+00:00] Baseline written to /Users/loganglosser/THYROID_2026/scripts/output/272_baseline.json
+[2026-04-18T08:19:39+00:00] {
+  "script": "272",
+  "captured_at_utc": "2026-04-18T08:19:39+00:00",
+  "canonical_patient_master": {
+    "row_count": 10871,
+    "distinct_research_ids": 10871,
+    "null_research_id": 0,
+    "null_fna_path_outcome": 0,
+    "research_id_type": "VARCHAR",
+    "column_count": 1526
+  },
+  "main_base_tables": 116,
+  "manuscript_workspace_tables": 36,
+  "manuscript_workspace_views": 67,
+  "detail_table_registry_v1_rows": 117,
+  "canonical_cleanup_audit_v1_rows": 120,
+  "canonical_cleanup_audit_v1_max_classified_at": "2026-04-18 04:29:17.816+00",
+  "canonical_cleanup_audit_v1_classifier_version": "v2_signal_based_20260417"
+}
+[2026-04-18T08:19:39+00:00] Exporting parquet snapshot -> /Users/loganglosser/THYROID_2026/exports/canonical_patient_master_pre272.parquet
+[2026-04-18T08:19:43+00:00] SHA256: 211a1bac1afebd00373ad5661b64dd040cf6fce1bb5b9e16e78b80b2d97510a8
+[2026-04-18T08:19:43+00:00] Checksum written to /Users/loganglosser/THYROID_2026/exports/canonical_patient_master_pre272.sha256
+[2026-04-18T08:19:43+00:00] Phase 0 done in 4.6s
+[2026-04-18T08:19:43+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:19:43+00:00] Run results summary: {
+  "0": {
+    "script": "272",
+    "captured_at_utc": "2026-04-18T08:19:39+00:00",
+    "canonical_patient_master": {
+      "row_count": 10871,
+      "distinct_research_ids": 10871,
+      "null_research_id": 0,
+      "null_fna_path_outcome": 0,
+      "research_id_type": "VARCHAR",
+      "column_count": 1526
+    },
+    "main_base_tables": 116,
+    "manuscript_workspace_tables": 36,
+    "manuscript_workspace_views": 67,
+    "detail_table_registry_v1_rows": 117,
+    "canonical_cleanup_audit_v1_rows": 120,
+    "canonical_cleanup_audit_v1_max_classified_at": "2026-04-18 04:29:17.816+00",
+    "canonical_cleanup_audit_v1_classifier_version": "v2_signal_based_20260417"
+  }
+}
+[2026-04-18T08:19:56+00:00] Script 272 start; date=2026-04-18; UTC=2026-04-18T08:19:56.792147+00:00
+[2026-04-18T08:19:58+00:00] Connected to MotherDuck DB: thyroid_canonical_publication_v1_0
+[2026-04-18T08:19:58+00:00] Requested phases: ['1', '2', '3a', '3b', '3c', '3recon', '4', '6']
+[2026-04-18T08:19:58+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:19:58+00:00] === PHASE 1: Dictionary reconciliation ===
+[2026-04-18T08:19:58+00:00] data_dictionary* tables in main: ['data_dictionary_v279']
+[2026-04-18T08:19:59+00:00] Dictionary coverage: 1526/1526 present; 0 missing
+[2026-04-18T08:19:59+00:00] Coverage gap written to /Users/loganglosser/THYROID_2026/scripts/output/272_dict_coverage_gap.csv
+[2026-04-18T08:19:59+00:00] Phase 1 markdown written to /Users/loganglosser/THYROID_2026/scripts/output/272_dict_reconciliation.md
+[2026-04-18T08:19:59+00:00] Phase 1 done in 0.7s
+[2026-04-18T08:19:59+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:19:59+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:19:59+00:00] === PHASE 2: Build detail_table_registry_v2 ===
+[2026-04-18T08:19:59+00:00] Top-20 feeds_master_columns delimiter sample (name, n_semi, n_comma):
+[2026-04-18T08:19:59+00:00]   build_pipeline  semi=186  comma=0
+[2026-04-18T08:19:59+00:00]   patient_tumor_rollup_v1  semi=5  comma=0
+[2026-04-18T08:19:59+00:00]   tumor_pathology  semi=3  comma=2
+[2026-04-18T08:19:59+00:00]   path_size_adjudication_v241  semi=2  comma=0
+[2026-04-18T08:19:59+00:00]   vc_paralysis_recalibration_v236  semi=2  comma=0
+[2026-04-18T08:19:59+00:00]   _molecular_patient_rollup_v227  semi=2  comma=0
+[2026-04-18T08:19:59+00:00]   ete_adjudication_v1  semi=1  comma=0
+[2026-04-18T08:19:59+00:00]   ret_patient_adjudicated_v226  semi=1  comma=0
+[2026-04-18T08:19:59+00:00]   extracted_tirads_validated_v1  semi=1  comma=4
+[2026-04-18T08:19:59+00:00]   canonical_tumor_characteristics_v1  semi=1  comma=6
+[2026-04-18T08:19:59+00:00]   canonical_us_nodule_characteristics_v1  semi=1  comma=5
+[2026-04-18T08:19:59+00:00]   canonical_malignant_diagnosis_v1  semi=0  comma=2
+[2026-04-18T08:19:59+00:00]   clinical_note_ln_extracted_v1  semi=0  comma=2
+[2026-04-18T08:19:59+00:00]   clinical_notes_long  semi=0  comma=0
+[2026-04-18T08:19:59+00:00]   extracted_ete_subgraded_v1  semi=0  comma=2
+[2026-04-18T08:19:59+00:00]   canonical_diagnosis_unified_v1  semi=0  comma=3
+[2026-04-18T08:19:59+00:00]   episode_analysis_resolved_v1_dedup  semi=0  comma=0
+[2026-04-18T08:19:59+00:00]   extracted_complications_refined_v5  semi=0  comma=0
+[2026-04-18T08:19:59+00:00]   canonical_survival_followup_v1  semi=0  comma=4
+[2026-04-18T08:19:59+00:00]   extracted_braf_recovery_v1  semi=0  comma=2
+[2026-04-18T08:20:00+00:00] v1 columns (12): ['detail_table_name', 'schema_name', 'join_key', 'grain', 'total_rows', 'total_patients', 'domain', 'feeds_master_columns', 'description', 'canonical_version', 'feeds_master_columns_normalized', 'feeds_master_columns_secondary']
+[2026-04-18T08:20:01+00:00] Created detail_table_registry_v2 (cloned schema, sans normalized col)
+[2026-04-18T08:21:46+00:00] Resolution: 207 resolved / 0 auto-repaired / 104 unresolved (over 311 feed_col rows)
+[2026-04-18T08:21:46+00:00] CPM cols without registry pointer: 1319
+[2026-04-18T08:21:47+00:00] Removed dead data_dictionary_v240 row(s) in v2 (delete returned: (1,))
+[2026-04-18T08:21:47+00:00] Phase 2 done in 107.2s
+[2026-04-18T08:21:47+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:21:47+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:21:47+00:00] === PHASE 3A: Register 3 main detail tables ===
+[2026-04-18T08:21:48+00:00] v2 columns: ['detail_table_name', 'schema_name', 'join_key', 'grain', 'total_rows', 'total_patients', 'domain', 'feeds_master_columns', 'description', 'canonical_version', 'feeds_master_columns_secondary', 'feeds_master_columns_array', 'needs_manual_review']
+[2026-04-18T08:21:48+00:00] Pre-checks: {
+  "tumor_stage_heterogeneity_v1.research_id": "VARCHAR",
+  "tumor_stage_heterogeneity_v1_cast_join_matches": 8422,
+  "tumor_stage_heterogeneity_v1_columns_verified": 10
+}
+[2026-04-18T08:21:48+00:00]   registered: data_dictionary_v279
+[2026-04-18T08:21:48+00:00]   registered: tumor_stage_heterogeneity_v1
+[2026-04-18T08:21:48+00:00]   registered: tirads_reextraction_queue_v1
+[2026-04-18T08:21:48+00:00] Phase 3a done in 1.1s
+[2026-04-18T08:21:49+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:21:49+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:21:49+00:00] === PHASE 3B: Register 11 manuscript_workspace audit/queue tables ===
+[2026-04-18T08:21:50+00:00]   registered: cpm_ajcc_dominant_concordance_v1  rows=11175  patients=10871
+[2026-04-18T08:21:50+00:00]   registered: cpm_ajcc_dominant_discordance_canonical_v1  rows=155  patients=155
+[2026-04-18T08:21:51+00:00]   registered: cpm_ajcc_dominant_vs_tp_hist1_discordance_v1  rows=2195  patients=2076
+[2026-04-18T08:21:51+00:00]   registered: cpm_ete_self_contradiction_queue_v1  rows=1  patients=1
+[2026-04-18T08:21:51+00:00]   registered: cpm_hypopara_adjudication_log_v1  rows=4  patients=4
+[2026-04-18T08:21:52+00:00]   registered: cpm_is_malignant_flag_review_v1  rows=5  patients=5
+[2026-04-18T08:21:52+00:00]   registered: ln_extract_noncohort_orphan_v279  rows=2  patients=1
+[2026-04-18T08:21:53+00:00]   registered: path_tumor_size_chart_review_queue_v1  rows=0  patients=0
+[2026-04-18T08:21:53+00:00]   registered: path_tumor_size_correction_queue_v1  rows=80  patients=80
+[2026-04-18T08:21:54+00:00]   registered: path_tumor_size_multifocal_enumeration_notes_v1  rows=13  patients=13
+[2026-04-18T08:21:54+00:00]   registered: tg_orphan_cancer_text_investigation_queue_v1  rows=83  patients=83
+[2026-04-18T08:21:54+00:00] Phase 3b done in 5.3s
+[2026-04-18T08:21:55+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:21:55+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:21:55+00:00] === PHASE 3C: Trace unmapped CPM columns ===
+[2026-04-18T08:21:55+00:00] Currently unmapped: 1319
+[2026-04-18T08:21:55+00:00] Post-3A/3B unmapped: 1309
+[2026-04-18T08:25:54+00:00] WARNING: 1309 orphan CPM columns exceeds the >20 calibration threshold. Pausing further automated assignment — present list to user.
+[2026-04-18T08:25:54+00:00] Phase 3c done in 238.8s
+[2026-04-18T08:25:54+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:25:54+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:25:54+00:00] === PHASE 3recon: canonical_cleanup_audit reconciliation ===
+[2026-04-18T08:25:54+00:00] Reading canonical_cleanup_audit_v1 classifier_version=v2_signal_based_20260417
+[2026-04-18T08:25:55+00:00] Phase 3recon done in 0.6s
+[2026-04-18T08:25:55+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:25:55+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:25:55+00:00] === PHASE 4: manuscript_dive_map_v1 enrichment ===
+[2026-04-18T08:25:57+00:00] Snapshot created: manuscript_workspace.manuscript_dive_map_v1_pre272_snapshot
+[2026-04-18T08:25:57+00:00] Added filter_type column
+[2026-04-18T08:25:58+00:00] Added duplicate_of_manuscript_id column
+[2026-04-18T08:25:58+00:00] filter_type distribution: {'dedicated_filtered': 63}
+[2026-04-18T08:26:00+00:00] Phase 4 done in 4.6s
+[2026-04-18T08:26:00+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:26:01+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:26:01+00:00] === PHASE 6: End-to-end registry validation ===
+[2026-04-18T08:26:42+00:00] Validation: pass=102  fail=1  unverifiable(flagged)=102
+[2026-04-18T08:26:42+00:00] Phase 6 done in 41.3s
+[2026-04-18T08:26:42+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:26:42+00:00] Run results summary: {
+  "1": {
+    "dict_tables": [
+      "data_dictionary_v279"
+    ],
+    "archive_present": {
+      "data_dictionary_v240": false,
+      "data_dictionary_v266a": false,
+      "actual_matches": [
+        "data_dictionary_v240_pre243_backup_20260416",
+        "data_dictionary_v240_pre251_20260417T012311Z",
+        "data_dictionary_v240_pre266a_20260417T081936Z",
+        "data_dictionary_v240_pre266c_20260418T003012Z",
+        "data_dictionary_v266a_pre271_20260418T010726Z",
+        "data_dictionary_v266a_pre271b_20260418T021518Z",
+        "data_dictionary_v266a_pre271b_20260418T021547Z",
+        "data_dictionary_v266a_pre271b_20260418T021618Z",
+        "data_dictionary_v266a_pre279_20260418T070418Z",
+        "data_dictionary_v266a_pre279_20260418T070553Z"
+      ]
+    },
+    "missing_dict_rows_seeded": 0,
+    "coverage_gap_count": 0
+  },
+  "2": {
+    "feed_col_rows": 311,
+    "resolved": 207,
+    "auto_repaired": 0,
+    "unresolved": 104,
+    "cpm_cols_without_registry": 1319
+  },
+  "3a": {
+    "phase_3a_inserted": 3,
+    "pre_checks": {
+      "tumor_stage_heterogeneity_v1.research_id": "VARCHAR",
+      "tumor_stage_heterogeneity_v1_cast_join_matches": 8422,
+      "tumor_stage_heterogeneity_v1_columns_verified": 10
+    }
+  },
+  "3b": {
+    "phase_3b_inserted": 11,
+    "measurements": [
+      {
+        "detail_table_name": "cpm_ajcc_dominant_concordance_v1",
+        "total_rows": 11175,
+        "total_patients": 10871
+      },
+      {
+        "detail_table_name": "cpm_ajcc_dominant_discordance_canonical_v1",
+        "total_rows": 155,
+        "total_patients": 155
+      },
+      {
+        "detail_table_name": "cpm_ajcc_dominant_vs_tp_hist1_discordance_v1",
+        "total_rows": 2195,
+        "total_patients": 2076
+      },
+      {
+        "detail_table_name": "cpm_ete_self_contradiction_queue_v1",
+        "total_rows": 1,
+        "total_patients": 1
+      },
+      {
+        "detail_table_name": "cpm_hypopara_adjudication_log_v1",
+        "total_rows": 4,
+        "total_patients": 4
+      },
+      {
+        "detail_table_name": "cpm_is_malignant_flag_review_v1",
+        "total_rows": 5,
+        "total_patients": 5
+      },
+      {
+        "detail_table_name": "ln_extract_noncohort_orphan_v279",
+        "total_rows": 2,
+        "total_patients": 1
+      },
+      {
+        "detail_table_name": "path_tumor_size_chart_review_queue_v1",
+        "total_rows": 0,
+        "total_patients": 0
+      },
+      {
+        "detail_table_name": "path_tumor_size_correction_queue_v1",
+        "total_rows": 80,
+        "total_patients": 80
+      },
+      {
+        "detail_table_name": "path_tumor_size_multifocal_enumeration_notes_v1",
+        "total_rows": 13,
+        "total_patients": 13
+      },
+      {
+        "detail_table_name": "tg_orphan_cancer_text_investigation_queue_v1",
+        "total_rows": 83,
+        "total_patients": 83
+      }
+    ]
+  },
+  "3c": {
+    "orphan_count": 1309,
+    "exceeds_calibration_threshold": true,
+    "csv": "/Users/loganglosser/THYROID_2026/scripts/output/272_phase3c_orphan_columns.csv"
+  },
+  "3recon": {
+    "classifier_version": "v2_signal_based_20260417",
+    "superseded_count": 0,
+    "safe_archive_count": 0,
+    "identical_count": 0
+  },
+  "4": {
+    "filter_type_distribution": {
+      "dedicated_filtered": 63
+    },
+    "duplicate_review_table": "manuscript_workspace.cohort_view_duplicate_review_v1"
+  },
+  "6": {
+    "pass": 102,
+    "fail": 1,
+    "unverifiable_flagged": 102,
+    "validation_table": "manuscript_workspace.registry_end_to_end_validation_v1"
+  }
+}
+[2026-04-18T08:40:39+00:00] Script 272 start; date=2026-04-18; UTC=2026-04-18T08:40:39.444519+00:00
+[2026-04-18T08:40:42+00:00] Connected to MotherDuck DB: thyroid_canonical_publication_v1_0
+[2026-04-18T08:40:42+00:00] Requested phases: ['2', '3a', '3b', '3c', '4', '5inv', '6']
+[2026-04-18T08:40:43+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:40:43+00:00] === PHASE 2: Build detail_table_registry_v2 ===
+[2026-04-18T08:40:43+00:00] Top-20 feeds_master_columns delimiter sample (name, n_semi, n_comma):
+[2026-04-18T08:40:43+00:00]   build_pipeline  semi=186  comma=0
+[2026-04-18T08:40:43+00:00]   patient_tumor_rollup_v1  semi=5  comma=0
+[2026-04-18T08:40:43+00:00]   tumor_pathology  semi=3  comma=2
+[2026-04-18T08:40:43+00:00]   path_size_adjudication_v241  semi=2  comma=0
+[2026-04-18T08:40:43+00:00]   vc_paralysis_recalibration_v236  semi=2  comma=0
+[2026-04-18T08:40:43+00:00]   _molecular_patient_rollup_v227  semi=2  comma=0
+[2026-04-18T08:40:43+00:00]   ete_adjudication_v1  semi=1  comma=0
+[2026-04-18T08:40:43+00:00]   ret_patient_adjudicated_v226  semi=1  comma=0
+[2026-04-18T08:40:43+00:00]   extracted_tirads_validated_v1  semi=1  comma=4
+[2026-04-18T08:40:43+00:00]   canonical_tumor_characteristics_v1  semi=1  comma=6
+[2026-04-18T08:40:43+00:00]   canonical_us_nodule_characteristics_v1  semi=1  comma=5
+[2026-04-18T08:40:43+00:00]   canonical_malignant_diagnosis_v1  semi=0  comma=2
+[2026-04-18T08:40:43+00:00]   clinical_note_ln_extracted_v1  semi=0  comma=2
+[2026-04-18T08:40:43+00:00]   clinical_notes_long  semi=0  comma=0
+[2026-04-18T08:40:43+00:00]   extracted_ete_subgraded_v1  semi=0  comma=2
+[2026-04-18T08:40:43+00:00]   canonical_diagnosis_unified_v1  semi=0  comma=3
+[2026-04-18T08:40:43+00:00]   episode_analysis_resolved_v1_dedup  semi=0  comma=0
+[2026-04-18T08:40:43+00:00]   extracted_complications_refined_v5  semi=0  comma=0
+[2026-04-18T08:40:43+00:00]   canonical_survival_followup_v1  semi=0  comma=4
+[2026-04-18T08:40:43+00:00]   extracted_braf_recovery_v1  semi=0  comma=2
+[2026-04-18T08:40:43+00:00] v1 columns (12): ['detail_table_name', 'schema_name', 'join_key', 'grain', 'total_rows', 'total_patients', 'domain', 'feeds_master_columns', 'description', 'canonical_version', 'feeds_master_columns_normalized', 'feeds_master_columns_secondary']
+[2026-04-18T08:40:43+00:00] Existing detail_table_registry_v2 detected — dropping for fresh build
+[2026-04-18T08:40:46+00:00] Created detail_table_registry_v2 (cloned schema, sans normalized col)
+[2026-04-18T08:42:33+00:00] Resolution: 396 resolved / 0 auto-repaired / 97 unresolved (over 493 feed_col rows)
+[2026-04-18T08:42:33+00:00] CPM cols without registry pointer: 1168
+[2026-04-18T08:42:33+00:00] Removed dead data_dictionary_v240 row(s) in v2 (delete returned: (1,))
+[2026-04-18T08:42:33+00:00] Phase 2 done in 109.7s
+[2026-04-18T08:42:33+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:42:33+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:42:33+00:00] === PHASE 3A: Register 3 main detail tables ===
+[2026-04-18T08:42:34+00:00] v2 columns: ['detail_table_name', 'schema_name', 'join_key', 'grain', 'total_rows', 'total_patients', 'domain', 'feeds_master_columns', 'description', 'canonical_version', 'feeds_master_columns_secondary', 'feeds_master_columns_array', 'needs_manual_review']
+[2026-04-18T08:42:34+00:00] Pre-checks: {
+  "tumor_stage_heterogeneity_v1.research_id": "VARCHAR",
+  "tumor_stage_heterogeneity_v1_cast_join_matches": 8422,
+  "tumor_stage_heterogeneity_v1_columns_verified": 10
+}
+[2026-04-18T08:42:34+00:00]   registered: data_dictionary_v279
+[2026-04-18T08:42:34+00:00]   registered: tumor_stage_heterogeneity_v1
+[2026-04-18T08:42:35+00:00]   registered: tirads_reextraction_queue_v1
+[2026-04-18T08:42:35+00:00] Phase 3a done in 1.2s
+[2026-04-18T08:42:35+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:42:35+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:42:35+00:00] === PHASE 3B: Register 11 manuscript_workspace audit/queue tables ===
+[2026-04-18T08:42:36+00:00]   registered: cpm_ajcc_dominant_concordance_v1  rows=11175  patients=10871
+[2026-04-18T08:42:36+00:00]   registered: cpm_ajcc_dominant_discordance_canonical_v1  rows=155  patients=155
+[2026-04-18T08:42:37+00:00]   registered: cpm_ajcc_dominant_vs_tp_hist1_discordance_v1  rows=2195  patients=2076
+[2026-04-18T08:42:37+00:00]   registered: cpm_ete_self_contradiction_queue_v1  rows=1  patients=1
+[2026-04-18T08:42:38+00:00]   registered: cpm_hypopara_adjudication_log_v1  rows=4  patients=4
+[2026-04-18T08:42:38+00:00]   registered: cpm_is_malignant_flag_review_v1  rows=5  patients=5
+[2026-04-18T08:42:39+00:00]   registered: ln_extract_noncohort_orphan_v279  rows=2  patients=1
+[2026-04-18T08:42:39+00:00]   registered: path_tumor_size_chart_review_queue_v1  rows=0  patients=0
+[2026-04-18T08:42:40+00:00]   registered: path_tumor_size_correction_queue_v1  rows=80  patients=80
+[2026-04-18T08:42:40+00:00]   registered: path_tumor_size_multifocal_enumeration_notes_v1  rows=13  patients=13
+[2026-04-18T08:42:41+00:00]   registered: tg_orphan_cancer_text_investigation_queue_v1  rows=83  patients=83
+[2026-04-18T08:42:41+00:00] Phase 3b done in 5.7s
+[2026-04-18T08:42:41+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:42:41+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:42:41+00:00] === PHASE 3C: Trace unmapped CPM columns ===
+[2026-04-18T08:42:42+00:00] Currently unmapped: 1168
+[2026-04-18T08:42:42+00:00] Post-3A/3B unmapped: 1158
+[2026-04-18T08:47:38+00:00] WARNING: 1158 orphan CPM columns exceeds the >20 calibration threshold. Pausing further automated assignment — present list to user.
+[2026-04-18T08:47:38+00:00] Domain-prefix orphans (nlp_/comp_/ete_/rln_/mol_/rai_/cnln_/tg_/nucmed_/pet_/ct_/mri_/lnus_/tirads_/fna_/bethesda_): 404
+[2026-04-18T08:47:38+00:00] WARNING: 404 domain-prefix orphans > 20 — that's a real registry gap, not a structural expectation. STOP and review.
+[2026-04-18T08:47:38+00:00] Phase 3c done in 296.5s
+[2026-04-18T08:47:38+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:47:39+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:47:39+00:00] === PHASE 4: manuscript_dive_map_v1 enrichment ===
+[2026-04-18T08:47:40+00:00] manuscript_dive_map_v1 id_col=manuscript_id (INTEGER)  view_col=cohort_view_name
+[2026-04-18T08:47:40+00:00] filter_type distribution: {'dedicated_filtered': 61, 'dedicated_full_cohort': 2}
+[2026-04-18T08:47:40+00:00] NOTE: no rows matched the thin_wrapper heuristic — review cohort_view_name patterns before relying on the 24 / 37 / 2 split.
+[2026-04-18T08:47:43+00:00] Phase 4 done in 4.4s
+[2026-04-18T08:47:43+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:47:44+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:47:44+00:00] === PHASE 5inv: archive inventory for v240/v266a lineage ===
+[2026-04-18T08:47:44+00:00]   data_dictionary_v240_pre243_backup_20260416: 1490 rows  (v240 predecessor (dropped from main; superseded by v266a then v279))
+[2026-04-18T08:47:44+00:00]   data_dictionary_v240_pre251_20260417T012311Z: 1502 rows  (v240 predecessor (dropped from main; superseded by v266a then v279))
+[2026-04-18T08:47:44+00:00]   data_dictionary_v240_pre266a_20260417T081936Z: 1529 rows  (v240 predecessor (dropped from main; superseded by v266a then v279))
+[2026-04-18T08:47:44+00:00]   data_dictionary_v240_pre266c_20260418T003012Z: 1529 rows  (v240 predecessor (dropped from main; superseded by v266a then v279))
+[2026-04-18T08:47:44+00:00]   data_dictionary_v266a_pre271_20260418T010726Z: 1529 rows  (v266a predecessor (dropped from main; superseded by v279))
+[2026-04-18T08:47:44+00:00]   data_dictionary_v266a_pre271b_20260418T021518Z: 1583 rows  (v266a predecessor (dropped from main; superseded by v279))
+[2026-04-18T08:47:44+00:00]   data_dictionary_v266a_pre271b_20260418T021547Z: 1583 rows  (v266a predecessor (dropped from main; superseded by v279))
+[2026-04-18T08:47:44+00:00]   data_dictionary_v266a_pre271b_20260418T021618Z: 1583 rows  (v266a predecessor (dropped from main; superseded by v279))
+[2026-04-18T08:47:44+00:00]   data_dictionary_v266a_pre279_20260418T070418Z: 1590 rows  (v266a predecessor (dropped from main; superseded by v279))
+[2026-04-18T08:47:44+00:00]   data_dictionary_v266a_pre279_20260418T070553Z: 1590 rows  (v266a predecessor (dropped from main; superseded by v279))
+[2026-04-18T08:47:44+00:00] Phase 5inv done in 0.6s
+[2026-04-18T08:47:45+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:47:45+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:47:45+00:00] === PHASE 6: End-to-end registry validation ===
+[2026-04-18T08:48:45+00:00] Validation: pass=291  fail=1  unverifiable(flagged)=95
+[2026-04-18T08:48:45+00:00] Phase 6 done in 60.4s
+[2026-04-18T08:48:46+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:48:46+00:00] Run results summary: {
+  "2": {
+    "feed_col_rows": 493,
+    "resolved": 396,
+    "auto_repaired": 0,
+    "unresolved": 97,
+    "cpm_cols_without_registry": 1168
+  },
+  "3a": {
+    "phase_3a_inserted": 3,
+    "pre_checks": {
+      "tumor_stage_heterogeneity_v1.research_id": "VARCHAR",
+      "tumor_stage_heterogeneity_v1_cast_join_matches": 8422,
+      "tumor_stage_heterogeneity_v1_columns_verified": 10
+    }
+  },
+  "3b": {
+    "phase_3b_inserted": 11,
+    "measurements": [
+      {
+        "detail_table_name": "cpm_ajcc_dominant_concordance_v1",
+        "total_rows": 11175,
+        "total_patients": 10871
+      },
+      {
+        "detail_table_name": "cpm_ajcc_dominant_discordance_canonical_v1",
+        "total_rows": 155,
+        "total_patients": 155
+      },
+      {
+        "detail_table_name": "cpm_ajcc_dominant_vs_tp_hist1_discordance_v1",
+        "total_rows": 2195,
+        "total_patients": 2076
+      },
+      {
+        "detail_table_name": "cpm_ete_self_contradiction_queue_v1",
+        "total_rows": 1,
+        "total_patients": 1
+      },
+      {
+        "detail_table_name": "cpm_hypopara_adjudication_log_v1",
+        "total_rows": 4,
+        "total_patients": 4
+      },
+      {
+        "detail_table_name": "cpm_is_malignant_flag_review_v1",
+        "total_rows": 5,
+        "total_patients": 5
+      },
+      {
+        "detail_table_name": "ln_extract_noncohort_orphan_v279",
+        "total_rows": 2,
+        "total_patients": 1
+      },
+      {
+        "detail_table_name": "path_tumor_size_chart_review_queue_v1",
+        "total_rows": 0,
+        "total_patients": 0
+      },
+      {
+        "detail_table_name": "path_tumor_size_correction_queue_v1",
+        "total_rows": 80,
+        "total_patients": 80
+      },
+      {
+        "detail_table_name": "path_tumor_size_multifocal_enumeration_notes_v1",
+        "total_rows": 13,
+        "total_patients": 13
+      },
+      {
+        "detail_table_name": "tg_orphan_cancer_text_investigation_queue_v1",
+        "total_rows": 83,
+        "total_patients": 83
+      }
+    ]
+  },
+  "3c": {
+    "orphan_count": 1158,
+    "exceeds_calibration_threshold": true,
+    "domain_prefix_orphan_count": 404,
+    "domain_prefix_csv": "/Users/loganglosser/THYROID_2026/scripts/output/272_phase3c_domain_prefix_orphans.csv",
+    "csv": "/Users/loganglosser/THYROID_2026/scripts/output/272_phase3c_orphan_columns.csv"
+  },
+  "4": {
+    "filter_type_distribution": {
+      "dedicated_filtered": 61,
+      "dedicated_full_cohort": 2
+    },
+    "duplicate_review_table": "manuscript_workspace.cohort_view_duplicate_review_v1"
+  },
+  "5inv": {
+    "inventoried": 10
+  },
+  "6": {
+    "pass": 291,
+    "fail": 1,
+    "unverifiable_flagged": 95,
+    "validation_table": "manuscript_workspace.registry_end_to_end_validation_v1"
+  }
+}
+[2026-04-18T08:55:03+00:00] Script 272 start; date=2026-04-18; UTC=2026-04-18T08:55:03.449456+00:00
+[2026-04-18T08:55:05+00:00] Connected to MotherDuck DB: thyroid_canonical_publication_v1_0
+[2026-04-18T08:55:05+00:00] Requested phases: ['2', '3a', '3b', '3c', '4', '6']
+[2026-04-18T08:55:06+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:55:06+00:00] === PHASE 2: Build detail_table_registry_v2 ===
+[2026-04-18T08:55:06+00:00] Top-20 feeds_master_columns delimiter sample (name, n_semi, n_comma):
+[2026-04-18T08:55:06+00:00]   build_pipeline  semi=186  comma=0
+[2026-04-18T08:55:06+00:00]   patient_tumor_rollup_v1  semi=5  comma=0
+[2026-04-18T08:55:06+00:00]   tumor_pathology  semi=3  comma=2
+[2026-04-18T08:55:06+00:00]   path_size_adjudication_v241  semi=2  comma=0
+[2026-04-18T08:55:06+00:00]   vc_paralysis_recalibration_v236  semi=2  comma=0
+[2026-04-18T08:55:06+00:00]   _molecular_patient_rollup_v227  semi=2  comma=0
+[2026-04-18T08:55:06+00:00]   ete_adjudication_v1  semi=1  comma=0
+[2026-04-18T08:55:06+00:00]   ret_patient_adjudicated_v226  semi=1  comma=0
+[2026-04-18T08:55:06+00:00]   extracted_tirads_validated_v1  semi=1  comma=4
+[2026-04-18T08:55:06+00:00]   canonical_tumor_characteristics_v1  semi=1  comma=6
+[2026-04-18T08:55:06+00:00]   canonical_us_nodule_characteristics_v1  semi=1  comma=5
+[2026-04-18T08:55:06+00:00]   canonical_malignant_diagnosis_v1  semi=0  comma=2
+[2026-04-18T08:55:06+00:00]   clinical_note_ln_extracted_v1  semi=0  comma=2
+[2026-04-18T08:55:06+00:00]   clinical_notes_long  semi=0  comma=0
+[2026-04-18T08:55:06+00:00]   extracted_ete_subgraded_v1  semi=0  comma=2
+[2026-04-18T08:55:06+00:00]   canonical_diagnosis_unified_v1  semi=0  comma=3
+[2026-04-18T08:55:06+00:00]   episode_analysis_resolved_v1_dedup  semi=0  comma=0
+[2026-04-18T08:55:06+00:00]   extracted_complications_refined_v5  semi=0  comma=0
+[2026-04-18T08:55:06+00:00]   canonical_survival_followup_v1  semi=0  comma=4
+[2026-04-18T08:55:06+00:00]   extracted_braf_recovery_v1  semi=0  comma=2
+[2026-04-18T08:55:07+00:00] v1 columns (12): ['detail_table_name', 'schema_name', 'join_key', 'grain', 'total_rows', 'total_patients', 'domain', 'feeds_master_columns', 'description', 'canonical_version', 'feeds_master_columns_normalized', 'feeds_master_columns_secondary']
+[2026-04-18T08:55:07+00:00] Existing detail_table_registry_v2 detected — dropping for fresh build
+[2026-04-18T08:55:08+00:00] Created detail_table_registry_v2 (cloned schema, sans normalized col)
+[2026-04-18T08:56:50+00:00] Resolution: 396 resolved / 0 auto-repaired / 97 unresolved (over 493 feed_col rows)
+[2026-04-18T08:56:50+00:00] CPM cols without registry pointer: 1168
+[2026-04-18T08:56:50+00:00] Removed dead data_dictionary_v240 row(s) in v2 (delete returned: (1,))
+[2026-04-18T08:56:50+00:00] --- Wildcard expansion pass ---
+[2026-04-18T08:56:57+00:00] Wildcard expansion: 5 patterns expanded, 45 new feed_col rows resolved
+[2026-04-18T08:57:54+00:00] Post-expansion unresolved=97; cpm_cols_without_registry=1126
+[2026-04-18T08:57:54+00:00] Phase 2 done in 168.0s
+[2026-04-18T08:57:55+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:57:55+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:57:55+00:00] === PHASE 3A: Register 3 main detail tables ===
+[2026-04-18T08:57:55+00:00] v2 columns: ['detail_table_name', 'schema_name', 'join_key', 'grain', 'total_rows', 'total_patients', 'domain', 'feeds_master_columns', 'description', 'canonical_version', 'feeds_master_columns_secondary', 'feeds_master_columns_array', 'needs_manual_review']
+[2026-04-18T08:57:56+00:00] Pre-checks: {
+  "tumor_stage_heterogeneity_v1.research_id": "VARCHAR",
+  "tumor_stage_heterogeneity_v1_cast_join_matches": 8422,
+  "tumor_stage_heterogeneity_v1_columns_verified": 10
+}
+[2026-04-18T08:57:56+00:00]   registered: data_dictionary_v279
+[2026-04-18T08:57:56+00:00]   registered: tumor_stage_heterogeneity_v1
+[2026-04-18T08:57:56+00:00]   registered: tirads_reextraction_queue_v1
+[2026-04-18T08:57:56+00:00] Phase 3a done in 1.3s
+[2026-04-18T08:57:57+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:57:57+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:57:57+00:00] === PHASE 3B: Register 11 manuscript_workspace audit/queue tables ===
+[2026-04-18T08:57:58+00:00]   registered: cpm_ajcc_dominant_concordance_v1  rows=11175  patients=10871
+[2026-04-18T08:57:58+00:00]   registered: cpm_ajcc_dominant_discordance_canonical_v1  rows=155  patients=155
+[2026-04-18T08:57:59+00:00]   registered: cpm_ajcc_dominant_vs_tp_hist1_discordance_v1  rows=2195  patients=2076
+[2026-04-18T08:57:59+00:00]   registered: cpm_ete_self_contradiction_queue_v1  rows=1  patients=1
+[2026-04-18T08:58:00+00:00]   registered: cpm_hypopara_adjudication_log_v1  rows=4  patients=4
+[2026-04-18T08:58:01+00:00]   registered: cpm_is_malignant_flag_review_v1  rows=5  patients=5
+[2026-04-18T08:58:01+00:00]   registered: ln_extract_noncohort_orphan_v279  rows=2  patients=1
+[2026-04-18T08:58:02+00:00]   registered: path_tumor_size_chart_review_queue_v1  rows=0  patients=0
+[2026-04-18T08:58:02+00:00]   registered: path_tumor_size_correction_queue_v1  rows=80  patients=80
+[2026-04-18T08:58:03+00:00]   registered: path_tumor_size_multifocal_enumeration_notes_v1  rows=13  patients=13
+[2026-04-18T08:58:04+00:00]   registered: tg_orphan_cancer_text_investigation_queue_v1  rows=83  patients=83
+[2026-04-18T08:58:04+00:00] Phase 3b done in 6.5s
+[2026-04-18T08:58:04+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:58:04+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T08:58:04+00:00] === PHASE 3C: Trace unmapped CPM columns ===
+[2026-04-18T08:58:05+00:00] Currently unmapped: 1126
+[2026-04-18T08:58:05+00:00] Post-3A/3B unmapped: 1116
+[2026-04-18T09:03:17+00:00] WARNING: 1116 orphan CPM columns exceeds the >20 calibration threshold. Pausing further automated assignment — present list to user.
+[2026-04-18T09:03:17+00:00] Domain-prefix orphans (nlp_/comp_/ete_/rln_/mol_/rai_/cnln_/tg_/nucmed_/pet_/ct_/mri_/lnus_/tirads_/fna_/bethesda_): 362
+[2026-04-18T09:03:17+00:00] WARNING: 362 domain-prefix orphans > 20 — that's a real registry gap, not a structural expectation. STOP and review.
+[2026-04-18T09:03:17+00:00] Phase 3c done in 312.6s
+[2026-04-18T09:03:17+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:03:18+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:03:18+00:00] === PHASE 4: manuscript_dive_map_v1 enrichment ===
+[2026-04-18T09:03:18+00:00] manuscript_dive_map_v1 id_col=manuscript_id (INTEGER)  view_col=cohort_view_name
+[2026-04-18T09:03:19+00:00] Added filter_type_provisional column
+[2026-04-18T09:03:19+00:00] View-definition thin_wrapper candidates: 0
+[2026-04-18T09:03:19+00:00] filter_type distribution: {'dedicated_filtered': 61, 'dedicated_full_cohort': 2}
+[2026-04-18T09:03:19+00:00] GUARDRAIL: thin_wrapper count = 0, expected ~24 (range 18-28). Sample view names: []
+[2026-04-18T09:03:22+00:00] Phase 4 done in 3.8s
+[2026-04-18T09:03:22+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:03:22+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:03:22+00:00] === PHASE 6: End-to-end registry validation ===
+[2026-04-18T09:04:24+00:00] Validation: pass=336  fail=1  unverifiable(flagged)=90
+[2026-04-18T09:04:24+00:00] Phase 6 done in 61.3s
+[2026-04-18T09:04:24+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:04:24+00:00] Run results summary: {
+  "2": {
+    "feed_col_rows_pre_expansion": 493,
+    "resolved_pre_expansion": 396,
+    "auto_repaired_pre_expansion": 0,
+    "wildcard_patterns_expanded": 5,
+    "wildcard_new_resolves": 45,
+    "unresolved_post_expansion": 97,
+    "cpm_cols_without_registry_post_expansion": 1126
+  },
+  "3a": {
+    "phase_3a_inserted": 3,
+    "pre_checks": {
+      "tumor_stage_heterogeneity_v1.research_id": "VARCHAR",
+      "tumor_stage_heterogeneity_v1_cast_join_matches": 8422,
+      "tumor_stage_heterogeneity_v1_columns_verified": 10
+    }
+  },
+  "3b": {
+    "phase_3b_inserted": 11,
+    "measurements": [
+      {
+        "detail_table_name": "cpm_ajcc_dominant_concordance_v1",
+        "total_rows": 11175,
+        "total_patients": 10871
+      },
+      {
+        "detail_table_name": "cpm_ajcc_dominant_discordance_canonical_v1",
+        "total_rows": 155,
+        "total_patients": 155
+      },
+      {
+        "detail_table_name": "cpm_ajcc_dominant_vs_tp_hist1_discordance_v1",
+        "total_rows": 2195,
+        "total_patients": 2076
+      },
+      {
+        "detail_table_name": "cpm_ete_self_contradiction_queue_v1",
+        "total_rows": 1,
+        "total_patients": 1
+      },
+      {
+        "detail_table_name": "cpm_hypopara_adjudication_log_v1",
+        "total_rows": 4,
+        "total_patients": 4
+      },
+      {
+        "detail_table_name": "cpm_is_malignant_flag_review_v1",
+        "total_rows": 5,
+        "total_patients": 5
+      },
+      {
+        "detail_table_name": "ln_extract_noncohort_orphan_v279",
+        "total_rows": 2,
+        "total_patients": 1
+      },
+      {
+        "detail_table_name": "path_tumor_size_chart_review_queue_v1",
+        "total_rows": 0,
+        "total_patients": 0
+      },
+      {
+        "detail_table_name": "path_tumor_size_correction_queue_v1",
+        "total_rows": 80,
+        "total_patients": 80
+      },
+      {
+        "detail_table_name": "path_tumor_size_multifocal_enumeration_notes_v1",
+        "total_rows": 13,
+        "total_patients": 13
+      },
+      {
+        "detail_table_name": "tg_orphan_cancer_text_investigation_queue_v1",
+        "total_rows": 83,
+        "total_patients": 83
+      }
+    ]
+  },
+  "3c": {
+    "orphan_count": 1116,
+    "exceeds_calibration_threshold": true,
+    "domain_prefix_orphan_count": 362,
+    "domain_prefix_csv": "/Users/loganglosser/THYROID_2026/scripts/output/272_phase3c_domain_prefix_orphans.csv",
+    "csv": "/Users/loganglosser/THYROID_2026/scripts/output/272_phase3c_orphan_columns.csv"
+  },
+  "4": {
+    "filter_type_distribution": {
+      "dedicated_filtered": 61,
+      "dedicated_full_cohort": 2
+    },
+    "duplicate_review_table": "manuscript_workspace.cohort_view_duplicate_review_v1"
+  },
+  "6": {
+    "pass": 336,
+    "fail": 1,
+    "unverifiable_flagged": 90,
+    "validation_table": "manuscript_workspace.registry_end_to_end_validation_v1"
+  }
+}
+[2026-04-18T09:05:46+00:00] Script 272 start; date=2026-04-18; UTC=2026-04-18T09:05:46.504753+00:00
+[2026-04-18T09:05:47+00:00] Connected to MotherDuck DB: thyroid_canonical_publication_v1_0
+[2026-04-18T09:05:47+00:00] Requested phases: ['2', '3a', '3b', '3c', '4', '6']
+[2026-04-18T09:05:49+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:05:49+00:00] === PHASE 2: Build detail_table_registry_v2 ===
+[2026-04-18T09:05:49+00:00] Top-20 feeds_master_columns delimiter sample (name, n_semi, n_comma):
+[2026-04-18T09:05:49+00:00]   build_pipeline  semi=186  comma=0
+[2026-04-18T09:05:49+00:00]   patient_tumor_rollup_v1  semi=5  comma=0
+[2026-04-18T09:05:49+00:00]   tumor_pathology  semi=3  comma=2
+[2026-04-18T09:05:49+00:00]   path_size_adjudication_v241  semi=2  comma=0
+[2026-04-18T09:05:49+00:00]   vc_paralysis_recalibration_v236  semi=2  comma=0
+[2026-04-18T09:05:49+00:00]   _molecular_patient_rollup_v227  semi=2  comma=0
+[2026-04-18T09:05:49+00:00]   ete_adjudication_v1  semi=1  comma=0
+[2026-04-18T09:05:49+00:00]   ret_patient_adjudicated_v226  semi=1  comma=0
+[2026-04-18T09:05:49+00:00]   extracted_tirads_validated_v1  semi=1  comma=4
+[2026-04-18T09:05:49+00:00]   canonical_tumor_characteristics_v1  semi=1  comma=6
+[2026-04-18T09:05:49+00:00]   canonical_us_nodule_characteristics_v1  semi=1  comma=5
+[2026-04-18T09:05:49+00:00]   canonical_malignant_diagnosis_v1  semi=0  comma=2
+[2026-04-18T09:05:49+00:00]   clinical_note_ln_extracted_v1  semi=0  comma=2
+[2026-04-18T09:05:49+00:00]   clinical_notes_long  semi=0  comma=0
+[2026-04-18T09:05:49+00:00]   extracted_ete_subgraded_v1  semi=0  comma=2
+[2026-04-18T09:05:49+00:00]   canonical_diagnosis_unified_v1  semi=0  comma=3
+[2026-04-18T09:05:49+00:00]   episode_analysis_resolved_v1_dedup  semi=0  comma=0
+[2026-04-18T09:05:49+00:00]   extracted_complications_refined_v5  semi=0  comma=0
+[2026-04-18T09:05:49+00:00]   canonical_survival_followup_v1  semi=0  comma=4
+[2026-04-18T09:05:49+00:00]   extracted_braf_recovery_v1  semi=0  comma=2
+[2026-04-18T09:05:49+00:00] v1 columns (12): ['detail_table_name', 'schema_name', 'join_key', 'grain', 'total_rows', 'total_patients', 'domain', 'feeds_master_columns', 'description', 'canonical_version', 'feeds_master_columns_normalized', 'feeds_master_columns_secondary']
+[2026-04-18T09:05:49+00:00] Existing detail_table_registry_v2 detected — dropping for fresh build
+[2026-04-18T09:05:58+00:00] Created detail_table_registry_v2 (cloned schema, sans normalized col)
+[2026-04-18T09:08:15+00:00] Resolution: 396 resolved / 0 auto-repaired / 97 unresolved (over 493 feed_col rows)
+[2026-04-18T09:08:15+00:00] CPM cols without registry pointer: 1168
+[2026-04-18T09:08:15+00:00] Removed dead data_dictionary_v240 row(s) in v2 (delete returned: (1,))
+[2026-04-18T09:08:15+00:00] --- Wildcard expansion pass ---
+[2026-04-18T09:08:22+00:00] Wildcard expansion: 5 patterns expanded, 45 new feed_col rows resolved
+[2026-04-18T09:09:26+00:00] Post-expansion unresolved=92; cpm_cols_without_registry=1126
+[2026-04-18T09:09:26+00:00] Phase 2 done in 217.3s
+[2026-04-18T09:09:27+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:09:27+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:09:27+00:00] === PHASE 3A: Register 3 main detail tables ===
+[2026-04-18T09:09:27+00:00] v2 columns: ['detail_table_name', 'schema_name', 'join_key', 'grain', 'total_rows', 'total_patients', 'domain', 'feeds_master_columns', 'description', 'canonical_version', 'feeds_master_columns_secondary', 'feeds_master_columns_array', 'needs_manual_review']
+[2026-04-18T09:09:28+00:00] Pre-checks: {
+  "tumor_stage_heterogeneity_v1.research_id": "VARCHAR",
+  "tumor_stage_heterogeneity_v1_cast_join_matches": 8422,
+  "tumor_stage_heterogeneity_v1_columns_verified": 10
+}
+[2026-04-18T09:09:28+00:00]   registered: data_dictionary_v279
+[2026-04-18T09:09:28+00:00]   registered: tumor_stage_heterogeneity_v1
+[2026-04-18T09:09:28+00:00]   registered: tirads_reextraction_queue_v1
+[2026-04-18T09:09:28+00:00] Phase 3a done in 1.4s
+[2026-04-18T09:09:29+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:09:29+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:09:29+00:00] === PHASE 3B: Register 11 manuscript_workspace audit/queue tables ===
+[2026-04-18T09:09:30+00:00]   registered: cpm_ajcc_dominant_concordance_v1  rows=11175  patients=10871
+[2026-04-18T09:09:30+00:00]   registered: cpm_ajcc_dominant_discordance_canonical_v1  rows=155  patients=155
+[2026-04-18T09:09:31+00:00]   registered: cpm_ajcc_dominant_vs_tp_hist1_discordance_v1  rows=2195  patients=2076
+[2026-04-18T09:09:31+00:00]   registered: cpm_ete_self_contradiction_queue_v1  rows=1  patients=1
+[2026-04-18T09:09:32+00:00]   registered: cpm_hypopara_adjudication_log_v1  rows=4  patients=4
+[2026-04-18T09:09:32+00:00]   registered: cpm_is_malignant_flag_review_v1  rows=5  patients=5
+[2026-04-18T09:09:33+00:00]   registered: ln_extract_noncohort_orphan_v279  rows=2  patients=1
+[2026-04-18T09:09:33+00:00]   registered: path_tumor_size_chart_review_queue_v1  rows=0  patients=0
+[2026-04-18T09:09:34+00:00]   registered: path_tumor_size_correction_queue_v1  rows=80  patients=80
+[2026-04-18T09:09:35+00:00]   registered: path_tumor_size_multifocal_enumeration_notes_v1  rows=13  patients=13
+[2026-04-18T09:09:35+00:00]   registered: tg_orphan_cancer_text_investigation_queue_v1  rows=83  patients=83
+[2026-04-18T09:09:35+00:00] Phase 3b done in 6.1s
+[2026-04-18T09:09:36+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:09:36+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:09:36+00:00] === PHASE 3C: Trace unmapped CPM columns ===
+[2026-04-18T09:09:36+00:00] Currently unmapped: 1126
+[2026-04-18T09:09:36+00:00] Post-3A/3B unmapped: 1116
+[2026-04-18T09:14:04+00:00] WARNING: 1116 orphan CPM columns exceeds the >20 calibration threshold. Pausing further automated assignment — present list to user.
+[2026-04-18T09:14:04+00:00] Domain-prefix orphans (nlp_/comp_/ete_/rln_/mol_/rai_/cnln_/tg_/nucmed_/pet_/ct_/mri_/lnus_/tirads_/fna_/bethesda_): 362
+[2026-04-18T09:14:04+00:00] WARNING: 362 domain-prefix orphans > 20 — that's a real registry gap, not a structural expectation. STOP and review.
+[2026-04-18T09:14:04+00:00] Phase 3c done in 267.9s
+[2026-04-18T09:14:04+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:14:04+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:14:04+00:00] === PHASE 4: manuscript_dive_map_v1 enrichment ===
+[2026-04-18T09:14:05+00:00] manuscript_dive_map_v1 id_col=manuscript_id (INTEGER)  view_col=cohort_view_name
+[2026-04-18T09:14:05+00:00] View-definition thin_wrapper candidates (FROM CPM, no WHERE/GROUP/HAVING/JOIN): 3
+[2026-04-18T09:14:05+00:00] filter_type distribution: {'dedicated_filtered': 61, 'dedicated_full_cohort': 2}
+[2026-04-18T09:14:05+00:00] GUARDRAIL: thin_wrapper count = 0, expected ~24 (range 18-28). Sample view names: ['cohort_m038_massive_goiter_v1', 'cohort_m032_descriptive_25yr_v1', 'cohort_descriptive_full_cohort_v1']
+[2026-04-18T09:14:08+00:00] Phase 4 done in 4.0s
+[2026-04-18T09:14:09+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:14:09+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:14:09+00:00] === PHASE 6: End-to-end registry validation ===
+[2026-04-18T09:14:56+00:00] Validation: pass=336  fail=1  unverifiable(flagged)=90
+[2026-04-18T09:14:56+00:00] Phase 6 done in 47.0s
+[2026-04-18T09:14:56+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:14:56+00:00] Run results summary: {
+  "2": {
+    "feed_col_rows_pre_expansion": 493,
+    "resolved_pre_expansion": 396,
+    "auto_repaired_pre_expansion": 0,
+    "wildcard_patterns_expanded": 5,
+    "wildcard_new_resolves": 45,
+    "unresolved_post_expansion": 92,
+    "cpm_cols_without_registry_post_expansion": 1126
+  },
+  "3a": {
+    "phase_3a_inserted": 3,
+    "pre_checks": {
+      "tumor_stage_heterogeneity_v1.research_id": "VARCHAR",
+      "tumor_stage_heterogeneity_v1_cast_join_matches": 8422,
+      "tumor_stage_heterogeneity_v1_columns_verified": 10
+    }
+  },
+  "3b": {
+    "phase_3b_inserted": 11,
+    "measurements": [
+      {
+        "detail_table_name": "cpm_ajcc_dominant_concordance_v1",
+        "total_rows": 11175,
+        "total_patients": 10871
+      },
+      {
+        "detail_table_name": "cpm_ajcc_dominant_discordance_canonical_v1",
+        "total_rows": 155,
+        "total_patients": 155
+      },
+      {
+        "detail_table_name": "cpm_ajcc_dominant_vs_tp_hist1_discordance_v1",
+        "total_rows": 2195,
+        "total_patients": 2076
+      },
+      {
+        "detail_table_name": "cpm_ete_self_contradiction_queue_v1",
+        "total_rows": 1,
+        "total_patients": 1
+      },
+      {
+        "detail_table_name": "cpm_hypopara_adjudication_log_v1",
+        "total_rows": 4,
+        "total_patients": 4
+      },
+      {
+        "detail_table_name": "cpm_is_malignant_flag_review_v1",
+        "total_rows": 5,
+        "total_patients": 5
+      },
+      {
+        "detail_table_name": "ln_extract_noncohort_orphan_v279",
+        "total_rows": 2,
+        "total_patients": 1
+      },
+      {
+        "detail_table_name": "path_tumor_size_chart_review_queue_v1",
+        "total_rows": 0,
+        "total_patients": 0
+      },
+      {
+        "detail_table_name": "path_tumor_size_correction_queue_v1",
+        "total_rows": 80,
+        "total_patients": 80
+      },
+      {
+        "detail_table_name": "path_tumor_size_multifocal_enumeration_notes_v1",
+        "total_rows": 13,
+        "total_patients": 13
+      },
+      {
+        "detail_table_name": "tg_orphan_cancer_text_investigation_queue_v1",
+        "total_rows": 83,
+        "total_patients": 83
+      }
+    ]
+  },
+  "3c": {
+    "orphan_count": 1116,
+    "exceeds_calibration_threshold": true,
+    "domain_prefix_orphan_count": 362,
+    "domain_prefix_csv": "/Users/loganglosser/THYROID_2026/scripts/output/272_phase3c_domain_prefix_orphans.csv",
+    "csv": "/Users/loganglosser/THYROID_2026/scripts/output/272_phase3c_orphan_columns.csv"
+  },
+  "4": {
+    "filter_type_distribution": {
+      "dedicated_filtered": 61,
+      "dedicated_full_cohort": 2
+    },
+    "duplicate_review_table": "manuscript_workspace.cohort_view_duplicate_review_v1"
+  },
+  "6": {
+    "pass": 336,
+    "fail": 1,
+    "unverifiable_flagged": 90,
+    "validation_table": "manuscript_workspace.registry_end_to_end_validation_v1"
+  }
+}
+[2026-04-18T09:16:26+00:00] Script 272 start; date=2026-04-18; UTC=2026-04-18T09:16:26.408974+00:00
+[2026-04-18T09:16:27+00:00] Connected to MotherDuck DB: thyroid_canonical_publication_v1_0
+[2026-04-18T09:16:27+00:00] Requested phases: ['2', '3a', '3b', '3c', '4', '6']
+[2026-04-18T09:16:28+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:16:28+00:00] === PHASE 2: Build detail_table_registry_v2 ===
+[2026-04-18T09:16:28+00:00] Top-20 feeds_master_columns delimiter sample (name, n_semi, n_comma):
+[2026-04-18T09:16:28+00:00]   build_pipeline  semi=186  comma=0
+[2026-04-18T09:16:28+00:00]   patient_tumor_rollup_v1  semi=5  comma=0
+[2026-04-18T09:16:28+00:00]   tumor_pathology  semi=3  comma=2
+[2026-04-18T09:16:28+00:00]   path_size_adjudication_v241  semi=2  comma=0
+[2026-04-18T09:16:28+00:00]   vc_paralysis_recalibration_v236  semi=2  comma=0
+[2026-04-18T09:16:28+00:00]   _molecular_patient_rollup_v227  semi=2  comma=0
+[2026-04-18T09:16:28+00:00]   ete_adjudication_v1  semi=1  comma=0
+[2026-04-18T09:16:28+00:00]   ret_patient_adjudicated_v226  semi=1  comma=0
+[2026-04-18T09:16:28+00:00]   extracted_tirads_validated_v1  semi=1  comma=4
+[2026-04-18T09:16:28+00:00]   canonical_tumor_characteristics_v1  semi=1  comma=6
+[2026-04-18T09:16:28+00:00]   canonical_us_nodule_characteristics_v1  semi=1  comma=5
+[2026-04-18T09:16:28+00:00]   canonical_malignant_diagnosis_v1  semi=0  comma=2
+[2026-04-18T09:16:28+00:00]   clinical_note_ln_extracted_v1  semi=0  comma=2
+[2026-04-18T09:16:28+00:00]   clinical_notes_long  semi=0  comma=0
+[2026-04-18T09:16:28+00:00]   extracted_ete_subgraded_v1  semi=0  comma=2
+[2026-04-18T09:16:28+00:00]   canonical_diagnosis_unified_v1  semi=0  comma=3
+[2026-04-18T09:16:28+00:00]   episode_analysis_resolved_v1_dedup  semi=0  comma=0
+[2026-04-18T09:16:28+00:00]   extracted_complications_refined_v5  semi=0  comma=0
+[2026-04-18T09:16:28+00:00]   canonical_survival_followup_v1  semi=0  comma=4
+[2026-04-18T09:16:28+00:00]   extracted_braf_recovery_v1  semi=0  comma=2
+[2026-04-18T09:16:28+00:00] v1 columns (12): ['detail_table_name', 'schema_name', 'join_key', 'grain', 'total_rows', 'total_patients', 'domain', 'feeds_master_columns', 'description', 'canonical_version', 'feeds_master_columns_normalized', 'feeds_master_columns_secondary']
+[2026-04-18T09:16:28+00:00] Existing detail_table_registry_v2 detected — dropping for fresh build
+[2026-04-18T09:16:30+00:00] Created detail_table_registry_v2 (cloned schema, sans normalized col)
+[2026-04-18T09:18:06+00:00] Resolution: 396 resolved / 50 auto-repaired / 47 unresolved (over 493 feed_col rows)
+[2026-04-18T09:18:06+00:00] CPM cols without registry pointer: 1168
+[2026-04-18T09:18:06+00:00] Removed dead data_dictionary_v240 row(s) in v2 (delete returned: (1,))
+[2026-04-18T09:18:06+00:00] --- Wildcard expansion pass ---
+[2026-04-18T09:18:06+00:00] GUARDRAIL TRIPPED: wildcard clinical_note_ln_extracted_v1.cnln_* columns -> 36 matches (limit 25)
+[2026-04-18T09:18:06+00:00] Run results summary: {}
+[2026-04-18T09:23:49+00:00] Script 272 start; date=2026-04-18; UTC=2026-04-18T09:23:49.983424+00:00
+[2026-04-18T09:23:52+00:00] Connected to MotherDuck DB: thyroid_canonical_publication_v1_0
+[2026-04-18T09:23:52+00:00] Requested phases: ['2', '3a', '3b', '3c', '4', '6']
+[2026-04-18T09:23:53+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:23:53+00:00] === PHASE 2: Build detail_table_registry_v2 ===
+[2026-04-18T09:23:53+00:00] Top-20 feeds_master_columns delimiter sample (name, n_semi, n_comma):
+[2026-04-18T09:23:53+00:00]   build_pipeline  semi=186  comma=0
+[2026-04-18T09:23:53+00:00]   patient_tumor_rollup_v1  semi=5  comma=0
+[2026-04-18T09:23:53+00:00]   tumor_pathology  semi=3  comma=2
+[2026-04-18T09:23:53+00:00]   path_size_adjudication_v241  semi=2  comma=0
+[2026-04-18T09:23:53+00:00]   vc_paralysis_recalibration_v236  semi=2  comma=0
+[2026-04-18T09:23:53+00:00]   _molecular_patient_rollup_v227  semi=2  comma=0
+[2026-04-18T09:23:53+00:00]   ete_adjudication_v1  semi=1  comma=0
+[2026-04-18T09:23:53+00:00]   ret_patient_adjudicated_v226  semi=1  comma=0
+[2026-04-18T09:23:53+00:00]   extracted_tirads_validated_v1  semi=1  comma=4
+[2026-04-18T09:23:53+00:00]   canonical_tumor_characteristics_v1  semi=1  comma=6
+[2026-04-18T09:23:53+00:00]   canonical_us_nodule_characteristics_v1  semi=1  comma=5
+[2026-04-18T09:23:53+00:00]   canonical_malignant_diagnosis_v1  semi=0  comma=2
+[2026-04-18T09:23:53+00:00]   clinical_note_ln_extracted_v1  semi=0  comma=2
+[2026-04-18T09:23:53+00:00]   clinical_notes_long  semi=0  comma=0
+[2026-04-18T09:23:53+00:00]   extracted_ete_subgraded_v1  semi=0  comma=2
+[2026-04-18T09:23:53+00:00]   canonical_diagnosis_unified_v1  semi=0  comma=3
+[2026-04-18T09:23:53+00:00]   episode_analysis_resolved_v1_dedup  semi=0  comma=0
+[2026-04-18T09:23:53+00:00]   extracted_complications_refined_v5  semi=0  comma=0
+[2026-04-18T09:23:53+00:00]   canonical_survival_followup_v1  semi=0  comma=4
+[2026-04-18T09:23:53+00:00]   extracted_braf_recovery_v1  semi=0  comma=2
+[2026-04-18T09:23:53+00:00] v1 columns (12): ['detail_table_name', 'schema_name', 'join_key', 'grain', 'total_rows', 'total_patients', 'domain', 'feeds_master_columns', 'description', 'canonical_version', 'feeds_master_columns_normalized', 'feeds_master_columns_secondary']
+[2026-04-18T09:23:53+00:00] Existing detail_table_registry_v2 detected — dropping for fresh build
+[2026-04-18T09:23:54+00:00] Created detail_table_registry_v2 (cloned schema, sans normalized col)
+[2026-04-18T09:25:40+00:00] Resolution: 396 resolved / 50 auto-repaired / 47 unresolved (over 493 feed_col rows)
+[2026-04-18T09:25:40+00:00] CPM cols without registry pointer: 1168
+[2026-04-18T09:25:40+00:00] Removed dead data_dictionary_v240 row(s) in v2 (delete returned: (1,))
+[2026-04-18T09:25:40+00:00] --- Wildcard expansion pass ---
+[2026-04-18T09:25:46+00:00] GUARDRAIL TRIPPED: wildcard note_entities_complications.comp_* upstream -> 93 matches (limit 25)
+[2026-04-18T09:25:46+00:00] Run results summary: {}
+[2026-04-18T09:26:28+00:00] Script 272 start; date=2026-04-18; UTC=2026-04-18T09:26:28.877187+00:00
+[2026-04-18T09:26:30+00:00] Connected to MotherDuck DB: thyroid_canonical_publication_v1_0
+[2026-04-18T09:26:30+00:00] Requested phases: ['2', '3a', '3b', '3c', '4', '6']
+[2026-04-18T09:26:30+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:26:30+00:00] === PHASE 2: Build detail_table_registry_v2 ===
+[2026-04-18T09:26:31+00:00] Top-20 feeds_master_columns delimiter sample (name, n_semi, n_comma):
+[2026-04-18T09:26:31+00:00]   build_pipeline  semi=186  comma=0
+[2026-04-18T09:26:31+00:00]   patient_tumor_rollup_v1  semi=5  comma=0
+[2026-04-18T09:26:31+00:00]   tumor_pathology  semi=3  comma=2
+[2026-04-18T09:26:31+00:00]   path_size_adjudication_v241  semi=2  comma=0
+[2026-04-18T09:26:31+00:00]   vc_paralysis_recalibration_v236  semi=2  comma=0
+[2026-04-18T09:26:31+00:00]   _molecular_patient_rollup_v227  semi=2  comma=0
+[2026-04-18T09:26:31+00:00]   ete_adjudication_v1  semi=1  comma=0
+[2026-04-18T09:26:31+00:00]   ret_patient_adjudicated_v226  semi=1  comma=0
+[2026-04-18T09:26:31+00:00]   extracted_tirads_validated_v1  semi=1  comma=4
+[2026-04-18T09:26:31+00:00]   canonical_tumor_characteristics_v1  semi=1  comma=6
+[2026-04-18T09:26:31+00:00]   canonical_us_nodule_characteristics_v1  semi=1  comma=5
+[2026-04-18T09:26:31+00:00]   canonical_malignant_diagnosis_v1  semi=0  comma=2
+[2026-04-18T09:26:31+00:00]   clinical_note_ln_extracted_v1  semi=0  comma=2
+[2026-04-18T09:26:31+00:00]   clinical_notes_long  semi=0  comma=0
+[2026-04-18T09:26:31+00:00]   extracted_ete_subgraded_v1  semi=0  comma=2
+[2026-04-18T09:26:31+00:00]   canonical_diagnosis_unified_v1  semi=0  comma=3
+[2026-04-18T09:26:31+00:00]   episode_analysis_resolved_v1_dedup  semi=0  comma=0
+[2026-04-18T09:26:31+00:00]   extracted_complications_refined_v5  semi=0  comma=0
+[2026-04-18T09:26:31+00:00]   canonical_survival_followup_v1  semi=0  comma=4
+[2026-04-18T09:26:31+00:00]   extracted_braf_recovery_v1  semi=0  comma=2
+[2026-04-18T09:26:31+00:00] v1 columns (12): ['detail_table_name', 'schema_name', 'join_key', 'grain', 'total_rows', 'total_patients', 'domain', 'feeds_master_columns', 'description', 'canonical_version', 'feeds_master_columns_normalized', 'feeds_master_columns_secondary']
+[2026-04-18T09:26:31+00:00] Existing detail_table_registry_v2 detected — dropping for fresh build
+[2026-04-18T09:26:32+00:00] Created detail_table_registry_v2 (cloned schema, sans normalized col)
+[2026-04-18T09:28:21+00:00] Resolution: 396 resolved / 50 auto-repaired / 47 unresolved (over 493 feed_col rows)
+[2026-04-18T09:28:21+00:00] CPM cols without registry pointer: 1168
+[2026-04-18T09:28:21+00:00] Removed dead data_dictionary_v240 row(s) in v2 (delete returned: (1,))
+[2026-04-18T09:28:21+00:00] --- Wildcard expansion pass ---
+[2026-04-18T09:28:28+00:00] GUARDRAIL DEFERRED: wildcard note_entities_complications.comp_* upstream -> 93 matches (>25); left as needs_manual_review.
+[2026-04-18T09:28:28+00:00] GUARDRAIL DEFERRED: wildcard note_entities_llm_cervical_ln_detail.cnln_* columns -> 36 matches (>25); left as needs_manual_review.
+[2026-04-18T09:28:32+00:00] GUARDRAIL DEFERRED: wildcard note_entities_llm_past_medical_hx.pmhx_nlp_* columns (diabetes -> 59 matches (>25); left as needs_manual_review.
+[2026-04-18T09:28:42+00:00] GUARDRAIL DEFERRED: wildcard note_entities_operative_detail.op_nlp_* columns -> 44 matches (>25); left as needs_manual_review.
+[2026-04-18T09:28:42+00:00] GUARDRAIL DEFERRED: wildcard note_entities_problem_list.pmhx_nlp_* columns (indirectly) -> 59 matches (>25); left as needs_manual_review.
+[2026-04-18T09:28:43+00:00] GUARDRAIL DEFERRED: wildcard nsqip_patient_summary.nsqip_* columns (full set of 80+) -> 102 matches (>25); left as needs_manual_review.
+[2026-04-18T09:28:43+00:00] GUARDRAIL DEFERRED: wildcard operative_episode_detail_v2.op_* columns -> 103 matches (>25); left as needs_manual_review.
+[2026-04-18T09:28:43+00:00] GUARDRAIL DEFERRED: wildcard path_synoptics.syn_* columns (~50) -> 41 matches (>25); left as needs_manual_review.
+[2026-04-18T09:28:43+00:00] Wildcard expansion: 29 patterns expanded, 221 new feed_col rows resolved
+[2026-04-18T09:29:38+00:00] Post-expansion unresolved=18; cpm_cols_without_registry=950
+[2026-04-18T09:29:38+00:00] Phase 2 done in 187.3s
+[2026-04-18T09:29:38+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:29:38+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:29:38+00:00] === PHASE 3A: Register 3 main detail tables ===
+[2026-04-18T09:29:39+00:00] v2 columns: ['detail_table_name', 'schema_name', 'join_key', 'grain', 'total_rows', 'total_patients', 'domain', 'feeds_master_columns', 'description', 'canonical_version', 'feeds_master_columns_secondary', 'feeds_master_columns_array', 'needs_manual_review']
+[2026-04-18T09:29:40+00:00] Pre-checks: {
+  "tumor_stage_heterogeneity_v1.research_id": "VARCHAR",
+  "tumor_stage_heterogeneity_v1_cast_join_matches": 8422,
+  "tumor_stage_heterogeneity_v1_columns_verified": 10
+}
+[2026-04-18T09:29:40+00:00]   registered: data_dictionary_v279
+[2026-04-18T09:29:40+00:00]   registered: tumor_stage_heterogeneity_v1
+[2026-04-18T09:29:40+00:00]   registered: tirads_reextraction_queue_v1
+[2026-04-18T09:29:40+00:00] Phase 3a done in 1.6s
+[2026-04-18T09:29:40+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:29:41+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:29:41+00:00] === PHASE 3B: Register 11 manuscript_workspace audit/queue tables ===
+[2026-04-18T09:29:42+00:00]   registered: cpm_ajcc_dominant_concordance_v1  rows=11175  patients=10871
+[2026-04-18T09:29:42+00:00]   registered: cpm_ajcc_dominant_discordance_canonical_v1  rows=155  patients=155
+[2026-04-18T09:29:43+00:00]   registered: cpm_ajcc_dominant_vs_tp_hist1_discordance_v1  rows=2195  patients=2076
+[2026-04-18T09:29:43+00:00]   registered: cpm_ete_self_contradiction_queue_v1  rows=1  patients=1
+[2026-04-18T09:29:44+00:00]   registered: cpm_hypopara_adjudication_log_v1  rows=4  patients=4
+[2026-04-18T09:29:44+00:00]   registered: cpm_is_malignant_flag_review_v1  rows=5  patients=5
+[2026-04-18T09:29:45+00:00]   registered: ln_extract_noncohort_orphan_v279  rows=2  patients=1
+[2026-04-18T09:29:45+00:00]   registered: path_tumor_size_chart_review_queue_v1  rows=0  patients=0
+[2026-04-18T09:29:45+00:00]   registered: path_tumor_size_correction_queue_v1  rows=80  patients=80
+[2026-04-18T09:29:46+00:00]   registered: path_tumor_size_multifocal_enumeration_notes_v1  rows=13  patients=13
+[2026-04-18T09:29:46+00:00]   registered: tg_orphan_cancer_text_investigation_queue_v1  rows=83  patients=83
+[2026-04-18T09:29:46+00:00] Phase 3b done in 5.7s
+[2026-04-18T09:29:47+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:29:47+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:29:47+00:00] === PHASE 3C: Trace unmapped CPM columns ===
+[2026-04-18T09:29:47+00:00] Currently unmapped: 950
+[2026-04-18T09:29:48+00:00] Post-3A/3B unmapped: 940
+[2026-04-18T09:33:10+00:00] WARNING: 940 orphan CPM columns exceeds the >20 calibration threshold. Pausing further automated assignment — present list to user.
+[2026-04-18T09:33:10+00:00] Domain-prefix orphans (nlp_/comp_/ete_/rln_/mol_/rai_/cnln_/tg_/nucmed_/pet_/ct_/mri_/lnus_/tirads_/fna_/bethesda_): 243
+[2026-04-18T09:33:10+00:00] WARNING: 243 domain-prefix orphans > 20 — that's a real registry gap, not a structural expectation. STOP and review.
+[2026-04-18T09:33:10+00:00] Phase 3c done in 203.2s
+[2026-04-18T09:33:10+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:33:11+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:33:11+00:00] === PHASE 4: manuscript_dive_map_v1 enrichment ===
+[2026-04-18T09:33:11+00:00] manuscript_dive_map_v1 id_col=manuscript_id (INTEGER)  view_col=cohort_view_name
+[2026-04-18T09:33:11+00:00] View-definition thin_wrapper candidates (FROM CPM, no WHERE/GROUP/HAVING/JOIN): 3
+[2026-04-18T09:33:11+00:00] Full-cohort reference: cohort_descriptive_full_cohort_v1 cols=164 rows=10871
+[2026-04-18T09:33:22+00:00] Data-based thin_wrapper candidates (rows=10871 AND cols ⊆ full_cohort): 24
+[2026-04-18T09:33:24+00:00] Applied data-based thin_wrapper classification to 24 views
+[2026-04-18T09:33:26+00:00] filter_type distribution: {'dedicated_filtered': 37, 'dedicated_full_cohort': 2, 'thin_wrapper': 24}
+[2026-04-18T09:33:30+00:00] Phase 4 done in 19.1s
+[2026-04-18T09:33:30+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:33:30+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:33:30+00:00] === PHASE 6: End-to-end registry validation ===
+[2026-04-18T09:34:27+00:00] Validation: pass=512  fail=39  unverifiable(flagged)=28
+[2026-04-18T09:34:27+00:00] Phase 6 done in 56.3s
+[2026-04-18T09:34:27+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:34:27+00:00] Run results summary: {
+  "2": {
+    "feed_col_rows_pre_expansion": 493,
+    "resolved_pre_expansion": 396,
+    "auto_repaired_pre_expansion": 50,
+    "wildcard_patterns_expanded": 29,
+    "wildcard_new_resolves": 221,
+    "unresolved_post_expansion": 18,
+    "cpm_cols_without_registry_post_expansion": 950
+  },
+  "3a": {
+    "phase_3a_inserted": 3,
+    "pre_checks": {
+      "tumor_stage_heterogeneity_v1.research_id": "VARCHAR",
+      "tumor_stage_heterogeneity_v1_cast_join_matches": 8422,
+      "tumor_stage_heterogeneity_v1_columns_verified": 10
+    }
+  },
+  "3b": {
+    "phase_3b_inserted": 11,
+    "measurements": [
+      {
+        "detail_table_name": "cpm_ajcc_dominant_concordance_v1",
+        "total_rows": 11175,
+        "total_patients": 10871
+      },
+      {
+        "detail_table_name": "cpm_ajcc_dominant_discordance_canonical_v1",
+        "total_rows": 155,
+        "total_patients": 155
+      },
+      {
+        "detail_table_name": "cpm_ajcc_dominant_vs_tp_hist1_discordance_v1",
+        "total_rows": 2195,
+        "total_patients": 2076
+      },
+      {
+        "detail_table_name": "cpm_ete_self_contradiction_queue_v1",
+        "total_rows": 1,
+        "total_patients": 1
+      },
+      {
+        "detail_table_name": "cpm_hypopara_adjudication_log_v1",
+        "total_rows": 4,
+        "total_patients": 4
+      },
+      {
+        "detail_table_name": "cpm_is_malignant_flag_review_v1",
+        "total_rows": 5,
+        "total_patients": 5
+      },
+      {
+        "detail_table_name": "ln_extract_noncohort_orphan_v279",
+        "total_rows": 2,
+        "total_patients": 1
+      },
+      {
+        "detail_table_name": "path_tumor_size_chart_review_queue_v1",
+        "total_rows": 0,
+        "total_patients": 0
+      },
+      {
+        "detail_table_name": "path_tumor_size_correction_queue_v1",
+        "total_rows": 80,
+        "total_patients": 80
+      },
+      {
+        "detail_table_name": "path_tumor_size_multifocal_enumeration_notes_v1",
+        "total_rows": 13,
+        "total_patients": 13
+      },
+      {
+        "detail_table_name": "tg_orphan_cancer_text_investigation_queue_v1",
+        "total_rows": 83,
+        "total_patients": 83
+      }
+    ]
+  },
+  "3c": {
+    "orphan_count": 940,
+    "exceeds_calibration_threshold": true,
+    "domain_prefix_orphan_count": 243,
+    "domain_prefix_csv": "/Users/loganglosser/THYROID_2026/scripts/output/272_phase3c_domain_prefix_orphans.csv",
+    "csv": "/Users/loganglosser/THYROID_2026/scripts/output/272_phase3c_orphan_columns.csv"
+  },
+  "4": {
+    "filter_type_distribution": {
+      "dedicated_filtered": 37,
+      "dedicated_full_cohort": 2,
+      "thin_wrapper": 24
+    },
+    "duplicate_review_table": "manuscript_workspace.cohort_view_duplicate_review_v1"
+  },
+  "6": {
+    "pass": 512,
+    "fail": 39,
+    "unverifiable_flagged": 28,
+    "validation_table": "manuscript_workspace.registry_end_to_end_validation_v1"
+  }
+}
+[2026-04-18T09:36:15+00:00] Script 272 start; date=2026-04-18; UTC=2026-04-18T09:36:15.129051+00:00
+[2026-04-18T09:36:16+00:00] Connected to MotherDuck DB: thyroid_canonical_publication_v1_0
+[2026-04-18T09:36:16+00:00] Requested phases: ['7']
+[2026-04-18T09:36:16+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:36:16+00:00] === PHASE 7: Final summary + handoff ===
+[2026-04-18T09:36:17+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:36:18+00:00] ================================================================
+CANONICAL FINALIZATION COMPLETE — thyroid_canonical_publication_v1_0
+================================================================
+canonical_patient_master : 10871 × 1526 cols
+Invariants               : RIDs=10871  null_rid=0  null_fna=0
+main base tables         : 116
+manuscript_workspace     : 43 tables + 67 views
+detail_table_registry_v1 : 117 rows, 512 pass, 67 fail
+Unresolved pointers      : 18 (all flagged needs_manual_review)
+Archive destination      : "Thyroid 2026 UPdated".archive_pub_v1_0 (213 objs)
+Data dictionary          : main.data_dictionary_v279 (sole, registered)
+================================================================
+[2026-04-18T09:36:18+00:00] Handoff written to /Users/loganglosser/THYROID_2026/THYROID_2026_FINALIZATION_20260418.md
+[2026-04-18T09:36:18+00:00] Phase 7 done in 1.1s
+[2026-04-18T09:36:18+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:36:18+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:36:18+00:00] === APPLY: promote registry_v2 -> v1 ===
+[2026-04-18T09:36:18+00:00] Unresolved pointer count: 18
+[2026-04-18T09:36:19+00:00] Archive row-count check: src=117 dst=117
+[2026-04-18T09:36:21+00:00] Promotion complete.
+[2026-04-18T09:36:21+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:36:21+00:00] Run results summary: {
+  "7": {
+    "canonical_patient_master_rows": 10871,
+    "canonical_patient_master_cols": 1526,
+    "main_base_tables": 116,
+    "manuscript_workspace_tables": 43,
+    "manuscript_workspace_views": 67,
+    "registry_rows": 117,
+    "validation_pass": 512,
+    "validation_fail": 67,
+    "unresolved_pointers": 18,
+    "unresolved_by_table_count": {
+      "build_pipeline": 2,
+      "extracted_tirads_validated_v1": 3,
+      "note_entities_complications": 1,
+      "note_entities_llm_cervical_ln_detail": 1,
+      "note_entities_llm_past_medical_hx": 4,
+      "note_entities_llm_past_surgical_hx": 1,
+      "note_entities_llm_presenting_symptoms": 1,
+      "note_entities_operative_detail": 1,
+      "note_entities_problem_list": 1,
+      "nsqip_patient_summary": 1,
+      "operative_episode_detail_v2": 1,
+      "path_synoptics": 1
+    },
+    "archive_objects": 213
+  },
+  "apply_promote": "DONE"
+}
+[2026-04-18T09:36:33+00:00] Script 272 start; date=2026-04-18; UTC=2026-04-18T09:36:33.748091+00:00
+[2026-04-18T09:36:34+00:00] Connected to MotherDuck DB: thyroid_canonical_publication_v1_0
+[2026-04-18T09:36:34+00:00] Requested phases: ['7']
+[2026-04-18T09:36:35+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:36:35+00:00] === PHASE 7: Final summary + handoff ===
+[2026-04-18T09:36:35+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:36:36+00:00] ================================================================
+CANONICAL FINALIZATION COMPLETE — thyroid_canonical_publication_v1_0
+================================================================
+canonical_patient_master : 10871 × 1526 cols
+Invariants               : RIDs=10871  null_rid=0  null_fna=0
+main base tables         : 116
+manuscript_workspace     : 42 tables + 67 views
+detail_table_registry_v1 : 130 rows, 512 pass, 67 fail
+Unresolved pointers      : 18 (all flagged needs_manual_review)
+Archive destination      : "Thyroid 2026 UPdated".archive_pub_v1_0 (214 objs)
+Data dictionary          : main.data_dictionary_v279 (sole, registered)
+================================================================
+[2026-04-18T09:36:36+00:00] Handoff written to /Users/loganglosser/THYROID_2026/THYROID_2026_FINALIZATION_20260418.md
+[2026-04-18T09:36:36+00:00] Phase 7 done in 1.0s
+[2026-04-18T09:36:36+00:00] Invariants OK: rows=10871 rids=10871 null_rid=0 null_fna=0 rid_type=VARCHAR cols=1526
+[2026-04-18T09:36:36+00:00] Run results summary: {
+  "7": {
+    "canonical_patient_master_rows": 10871,
+    "canonical_patient_master_cols": 1526,
+    "main_base_tables": 116,
+    "manuscript_workspace_tables": 42,
+    "manuscript_workspace_views": 67,
+    "registry_rows": 130,
+    "validation_pass": 512,
+    "validation_fail": 67,
+    "unresolved_pointers": 18,
+    "unresolved_by_table_count": {
+      "build_pipeline": 2,
+      "extracted_tirads_validated_v1": 3,
+      "note_entities_complications": 1,
+      "note_entities_llm_cervical_ln_detail": 1,
+      "note_entities_llm_past_medical_hx": 4,
+      "note_entities_llm_past_surgical_hx": 1,
+      "note_entities_llm_presenting_symptoms": 1,
+      "note_entities_operative_detail": 1,
+      "note_entities_problem_list": 1,
+      "nsqip_patient_summary": 1,
+      "operative_episode_detail_v2": 1,
+      "path_synoptics": 1
+    },
+    "archive_objects": 214
+  }
+}

@@ -1,0 +1,11 @@
+archive_object_name,row_count,lineage
+data_dictionary_v240_pre243_backup_20260416,1490,v240 predecessor (dropped from main; superseded by v266a then v279)
+data_dictionary_v240_pre251_20260417T012311Z,1502,v240 predecessor (dropped from main; superseded by v266a then v279)
+data_dictionary_v240_pre266a_20260417T081936Z,1529,v240 predecessor (dropped from main; superseded by v266a then v279)
+data_dictionary_v240_pre266c_20260418T003012Z,1529,v240 predecessor (dropped from main; superseded by v266a then v279)
+data_dictionary_v266a_pre271_20260418T010726Z,1529,v266a predecessor (dropped from main; superseded by v279)
+data_dictionary_v266a_pre271b_20260418T021518Z,1583,v266a predecessor (dropped from main; superseded by v279)
+data_dictionary_v266a_pre271b_20260418T021547Z,1583,v266a predecessor (dropped from main; superseded by v279)
+data_dictionary_v266a_pre271b_20260418T021618Z,1583,v266a predecessor (dropped from main; superseded by v279)
+data_dictionary_v266a_pre279_20260418T070418Z,1590,v266a predecessor (dropped from main; superseded by v279)
+data_dictionary_v266a_pre279_20260418T070553Z,1590,v266a predecessor (dropped from main; superseded by v279)
