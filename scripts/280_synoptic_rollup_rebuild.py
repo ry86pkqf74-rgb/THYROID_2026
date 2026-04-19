@@ -61,6 +61,29 @@ Hard rules (NON-NEGOTIABLE):
   * Auth via motherduck_client.get_token(); never hard-code or print tokens.
   * No structural changes to canonical_patient_master — only UPDATE the 4
     existing nlp_synoptic_* columns.
+
+Filter semantics (Script 212 parity)
+====================================
+Earlier guidance for this script said "leave negated entities in" but was
+given before the author had read Script 212's rollup pattern. Script 212
+(used by pathology, tirads, cervln, tgkin, recurrence, vascular, and the
+tier-3 LLM domains) applies a present-only + confidence>=0.5 filter (the
+``_pos`` CTE). Script 280 matches that pattern for cross-domain consistency.
+
+Two distinct counts therefore appear in this script:
+  * Phase 0's ``source_rids_with_entity_eq_4992``  — source-integrity
+    count via LIKE-pattern shortcut on ``result_json``. Counts every RID
+    whose source rows carry any ``entity_value`` regardless of confidence
+    or negation. This is the byte-level audit anchor.
+  * Phase 0's ``source_rids_with_positive_entity_eq_4835`` and
+    Phase 2's promotion target — clinical count via the ``_pos`` CTE.
+    Counts only RIDs with at least one extracted entity at confidence>=0.5
+    AND (present_or_negated='present' OR present_or_negated IS NULL).
+    This is the rollup that lands on canonical_patient_master.
+
+Both Phase 0's positive-count gate and Phase 2's UPDATE share the SAME
+``ROLLUP_BASE_CTE`` SQL string (parsed → flat → ext → pos), so any drift
+between gate and mutation is impossible by construction.
 """
 
 from __future__ import annotations
@@ -100,8 +123,15 @@ EXPECTED_PREPROCESS_SCRIPT_VERSION = "v4_9domain_rerun_2026-04-18"
 EXPECTED_EXTRACTED_AT_MIN_PREFIX = "2026-04-19T03:07"
 EXPECTED_EXTRACTED_AT_MAX_PREFIX = "2026-04-19T04:22"
 EXPECTED_API_TIMEOUT_ROWS = 3
+
+# Source-integrity (LIKE-pattern shortcut): any RID with any extracted entity.
 EXPECTED_RIDS_WITH_ENTITY = 4992
-EXPECTED_NOTES_WITH_ENTITY = 11220  # used by Phase 2 sum gate; verified in Phase 0
+
+# Clinical/positive (Script 212 _pos filter): confidence>=0.5 AND
+# (present_or_negated='present' OR present_or_negated IS NULL).
+# These are the Phase 2 promotion targets and Phase 0 positive-count gates.
+EXPECTED_RIDS_WITH_POSITIVE_ENTITY = 4835
+EXPECTED_NOTES_WITH_POSITIVE_ENTITY = 10801
 
 # Pinned content-hash gates (CRITICAL — drift means table changed since audit).
 PINNED_HASH_RJ = "786e05480dec4590494bcf63114603fd"
@@ -117,8 +147,8 @@ EXPECTED_STALE_HAS_DATA = 8
 EXPECTED_STALE_REGISTRY_ROWS = 11037
 EXPECTED_STALE_REGISTRY_PATIENTS = 5641
 
-# Phase 2 acceptance band: post-promotion has_data count must be 4992 ± 10.
-HAS_DATA_TARGET = EXPECTED_RIDS_WITH_ENTITY
+# Phase 2 acceptance band: post-promotion has_data count must be 4835 ± 10.
+HAS_DATA_TARGET = EXPECTED_RIDS_WITH_POSITIVE_ENTITY
 HAS_DATA_TOLERANCE = 10
 
 # Phase 6 invariant tolerances.
@@ -133,11 +163,50 @@ DECISIONS_PATH = OUTPUT_DIR / "280_decisions.json"
 LOG_PATH = OUTPUT_DIR / "280_run.log"
 REPORT_MD = REPO_ROOT / "THYROID_2026_SCRIPT_280_REPORT.md"
 
-# Entity-detection LIKE pattern (matches Phase A summary semantics; used as the
-# fast pre-filter in Phase 2's rollup CTE — Phase 2 also re-validates with the
-# full JSON parse, but the source-side counts in Phase 0 use this pattern).
+# Entity-detection LIKE pattern (source-integrity shortcut — used in Phase 0's
+# all-extracted gate and as the fast pre-filter in the parsed CTE below).
 ENTITY_LIKE_PRESENT = "%\"entity_value\":%"
 EMPTY_ENTITIES_PATTERN = "%\"entities\": []%"
+
+# Shared rollup base CTE — parsed → flat → ext → pos. Used by BOTH the Phase 0
+# positive-count gate and the Phase 2 UPDATE so the two cannot drift. The
+# ``_pos`` filter mirrors Script 212's LLM_ENTITY_PARSE_CTE: confidence>=0.5
+# AND (present_or_negated='present' OR present_or_negated IS NULL).
+ROLLUP_BASE_CTE = f"""
+parsed AS (
+    SELECT
+        research_id,
+        note_row_id,
+        json_extract(CAST(result_json AS JSON), '$.entities') AS entities_arr
+    FROM main.{SOURCE_TABLE}
+    WHERE result_json IS NOT NULL
+      AND CAST(result_json AS VARCHAR) NOT LIKE '{EMPTY_ENTITIES_PATTERN}'
+      AND json_type(json_extract(CAST(result_json AS JSON), '$.entities')) = 'ARRAY'
+),
+flat AS (
+    SELECT
+        research_id,
+        note_row_id,
+        UNNEST(CAST(entities_arr AS JSON[])) AS entity
+    FROM parsed
+),
+ext AS (
+    SELECT
+        research_id,
+        note_row_id,
+        json_extract_string(entity, '$.entity_type')  AS entity_type,
+        json_extract_string(entity, '$.entity_value') AS entity_value,
+        COALESCE(TRY_CAST(json_extract(entity, '$.confidence') AS DOUBLE), 0) AS confidence,
+        json_extract_string(entity, '$.present_or_negated') AS present_or_negated
+    FROM flat
+    WHERE json_extract_string(entity, '$.entity_value') IS NOT NULL
+),
+pos AS (
+    SELECT * FROM ext
+    WHERE confidence >= 0.5
+      AND (present_or_negated = 'present' OR present_or_negated IS NULL)
+)
+"""
 
 # ── logging helpers ──────────────────────────────────────────────────────────
 
@@ -464,11 +533,34 @@ def phase_0(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     out["observed"]["source_rids_with_entity_value"] = int(rids_w_ent)
     out["observed"]["source_rows_with_entity_value"] = int(rows_w_ent)
     log(f"  0H: source rids_with_entity_value={rids_w_ent} "
-        f"(expected {EXPECTED_RIDS_WITH_ENTITY}; this is the post-promotion target)")
+        f"(expected {EXPECTED_RIDS_WITH_ENTITY}; source-integrity, all extracted)")
     log(f"      source rows_with_entity_value={rows_w_ent} "
-        f"(used by Phase 2 sum gate)")
+        f"(used by Phase 2 sum-gate sanity check)")
     _gate(out, "source_rids_with_entity_eq_4992", rids_w_ent == EXPECTED_RIDS_WITH_ENTITY,
           {"observed": int(rids_w_ent), "expected": EXPECTED_RIDS_WITH_ENTITY})
+
+    # 0H' — positive-entity counts via the SHARED ROLLUP_BASE_CTE (the exact
+    # CTE Phase 2's UPDATE will use). Pins Phase 2's promotion target at
+    # Phase 0 so any drift between gate and mutation is impossible.
+    pos_row = con.execute(
+        f"""
+        WITH {ROLLUP_BASE_CTE}
+        SELECT
+            COUNT(DISTINCT research_id)                     AS pos_rids,
+            COUNT(DISTINCT (research_id || '|' || note_row_id)) AS pos_notes
+        FROM pos
+        """
+    ).fetchone()
+    pos_rids, pos_notes = pos_row
+    out["observed"]["source_rids_with_positive_entity"] = int(pos_rids)
+    out["observed"]["source_notes_with_positive_entity"] = int(pos_notes)
+    log(f"      source rids_with_positive_entity={pos_rids} "
+        f"(expected {EXPECTED_RIDS_WITH_POSITIVE_ENTITY}; Phase 2 promotion target)")
+    log(f"      source notes_with_positive_entity={pos_notes} "
+        f"(expected {EXPECTED_NOTES_WITH_POSITIVE_ENTITY}; Phase 2 sum_n_notes target)")
+    _gate(out, "source_rids_with_positive_entity_eq_4835",
+          pos_rids == EXPECTED_RIDS_WITH_POSITIVE_ENTITY,
+          {"observed": int(pos_rids), "expected": EXPECTED_RIDS_WITH_POSITIVE_ENTITY})
 
     # ── 0I — known archive snapshot of the qwen3:32b pre-rerun source ──
     pre_archive_present = con.execute(
@@ -620,38 +712,15 @@ def phase_2(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     log("=== PHASE 2 — rollup re-promotion on canonical_patient_master ===")
     out: dict[str, Any] = {"phase": 2, "started_at": utcnow_iso(), "gates": [], "blockers": []}
 
-    # Build per-RID rollup using the LLM_ENTITY_PARSE_CTE pattern from Script 212,
-    # extended with the prompt's explicit key_finding priority ordering.
+    # Build per-RID rollup using the SHARED ROLLUP_BASE_CTE (parsed → flat →
+    # ext → pos), extended with the prompt's explicit key_finding priority
+    # ordering. The downstream `ranked` and `per_rid` CTEs read from `pos`,
+    # so Script-212-parity present-only + confidence>=0.5 filtering is in
+    # effect here. Phase 0's source_rids_with_positive_entity_eq_4835 gate
+    # already pinned the expected RID/note count using this same CTE.
     case_priority = _key_finding_priority_case("entity_type")
     rollup_sql = f"""
-        WITH parsed AS (
-            SELECT
-                research_id,
-                note_row_id,
-                json_extract(CAST(result_json AS JSON), '$.entities') AS entities_arr
-            FROM main.{SOURCE_TABLE}
-            WHERE result_json IS NOT NULL
-              AND CAST(result_json AS VARCHAR) NOT LIKE '{EMPTY_ENTITIES_PATTERN}'
-              AND json_type(json_extract(CAST(result_json AS JSON), '$.entities')) = 'ARRAY'
-        ),
-        flat AS (
-            SELECT
-                research_id,
-                note_row_id,
-                UNNEST(CAST(entities_arr AS JSON[])) AS entity
-            FROM parsed
-        ),
-        ext AS (
-            SELECT
-                research_id,
-                note_row_id,
-                json_extract_string(entity, '$.entity_type')  AS entity_type,
-                json_extract_string(entity, '$.entity_value') AS entity_value,
-                COALESCE(TRY_CAST(json_extract(entity, '$.confidence') AS DOUBLE), 0) AS confidence,
-                json_extract_string(entity, '$.present_or_negated') AS present_or_negated
-            FROM flat
-            WHERE json_extract_string(entity, '$.entity_value') IS NOT NULL
-        ),
+        WITH {ROLLUP_BASE_CTE},
         ranked AS (
             SELECT
                 research_id,
@@ -664,41 +733,41 @@ def phase_2(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
                              confidence DESC NULLS LAST,
                              entity_value
                 ) AS rn
-            FROM ext
+            FROM pos
         ),
         per_rid AS (
             SELECT
-                e.research_id,
-                COUNT(DISTINCT e.note_row_id) AS n_notes_with_entity,
+                p.research_id,
+                COUNT(DISTINCT p.note_row_id) AS n_notes_with_entity,
                 COUNT(*)                      AS total_entities,
                 MAX(CASE WHEN r.rn = 1 THEN r.entity_value END) AS key_finding
-            FROM ext e
+            FROM pos p
             LEFT JOIN ranked r
-              ON r.research_id = e.research_id AND r.rn = 1
-            GROUP BY e.research_id
+              ON r.research_id = p.research_id AND r.rn = 1
+            GROUP BY p.research_id
         )
         SELECT * FROM per_rid
     """
-    log("  building per-RID rollup CTE …")
-    rollup_rows = con.execute(rollup_sql).df()
-    out["rollup_distinct_rids"] = int(len(rollup_rows))
-    out["rollup_total_entities_sum"] = int(rollup_rows["total_entities"].sum())
-    out["rollup_n_notes_sum"] = int(rollup_rows["n_notes_with_entity"].sum())
-    log(f"    rollup distinct RIDs={len(rollup_rows)}  "
+    log("  building per-RID rollup CTE → TEMP TABLE _rollup_280 …")
+    # Materialize the rollup directly on the MotherDuck side (avoids a
+    # pandas round-trip; duckdb 1.1.3 + pandas 3.x register() rejects the
+    # 'str' dtype that .df() produces for VARCHAR columns).
+    con.execute(f"CREATE OR REPLACE TEMP TABLE _rollup_280 AS {rollup_sql}")
+    rollup_summary = con.execute(
+        """
+        SELECT
+            COUNT(*)                          AS distinct_rids,
+            COALESCE(SUM(n_notes_with_entity), 0) AS sum_n_notes,
+            COALESCE(SUM(total_entities),     0) AS sum_n_entities
+        FROM _rollup_280
+        """
+    ).fetchone()
+    out["rollup_distinct_rids"]      = int(rollup_summary[0])
+    out["rollup_n_notes_sum"]        = int(rollup_summary[1])
+    out["rollup_total_entities_sum"] = int(rollup_summary[2])
+    log(f"    rollup distinct RIDs={out['rollup_distinct_rids']}  "
         f"sum_n_notes={out['rollup_n_notes_sum']}  "
         f"sum_n_entities={out['rollup_total_entities_sum']}")
-
-    # Stage rollup as a temp table for UPDATE via JOIN.
-    con.register("rollup_df", rollup_rows)
-    con.execute(
-        "CREATE OR REPLACE TEMP TABLE _rollup_280 AS "
-        "SELECT research_id, "
-        "       n_notes_with_entity, "
-        "       total_entities, "
-        "       key_finding "
-        "FROM rollup_df"
-    )
-    con.unregister("rollup_df")
 
     log("  UPDATE main.canonical_patient_master from rollup …")
     con.execute(
@@ -740,14 +809,15 @@ def phase_2(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     out["post_sum_n_notes"]   = int(sum_n_notes or 0)
     log(f"  post-update: has_data TRUE={has_true} "
         f"sum_n_notes={sum_n_notes} null_rid={null_rid}")
-    _gate(out, "post_has_data_within_4992_pm10",
+    _gate(out, "post_has_data_within_4835_pm10",
           abs(int(has_true) - HAS_DATA_TARGET) <= HAS_DATA_TOLERANCE,
           {"observed": int(has_true),
            "target": HAS_DATA_TARGET, "tolerance": HAS_DATA_TOLERANCE})
     _gate(out, "post_no_null_has_data", still_null == 0, {"observed": int(still_null)})
-    _gate(out, "post_sum_n_notes_eq_source_rows_with_entity",
-          int(sum_n_notes or 0) == EXPECTED_NOTES_WITH_ENTITY,
-          {"observed": int(sum_n_notes or 0), "expected": EXPECTED_NOTES_WITH_ENTITY})
+    _gate(out, "post_sum_n_notes_eq_source_pos_notes",
+          int(sum_n_notes or 0) == EXPECTED_NOTES_WITH_POSITIVE_ENTITY,
+          {"observed": int(sum_n_notes or 0),
+           "expected": EXPECTED_NOTES_WITH_POSITIVE_ENTITY})
     _gate(out, "post_no_null_research_id", null_rid == 0, {"observed": int(null_rid)})
 
     out["finished_at"] = utcnow_iso()
