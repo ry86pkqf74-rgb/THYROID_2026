@@ -512,16 +512,43 @@ def phase_0(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
 # ── PHASE 1 — pre-mutation snapshot of CPM ───────────────────────────────────
 
 
+def _existing_pre280_snapshots(con: duckdb.DuckDBPyConnection) -> list[str]:
+    rows = con.execute(
+        """
+        SELECT table_name FROM information_schema.tables
+        WHERE table_catalog=? AND table_schema=?
+          AND table_name LIKE 'canonical_patient_master_pre280_%'
+        ORDER BY table_name
+        """,
+        [ARCHIVE_DB, ARCHIVE_SCHEMA],
+    ).fetchall()
+    return [r[0] for r in rows]
+
+
 def phase_1(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     log("=== PHASE 1 — pre-mutation snapshot of CPM ===")
     out: dict[str, Any] = {"phase": 1, "started_at": utcnow_iso(), "gates": [], "blockers": []}
-    ts = utcnow_compact()
-    snap_table = f"canonical_patient_master_pre280_{ts}"
-    snap_fq = f'"{ARCHIVE_DB}".{ARCHIVE_SCHEMA}.{snap_table}'
-    log(f"  CTAS {snap_fq} AS SELECT * FROM main.{CPM_TABLE} …")
-    con.execute(
-        f"CREATE TABLE {snap_fq} AS SELECT * FROM main.{CPM_TABLE}"
-    )
+
+    existing = _existing_pre280_snapshots(con)
+    if existing:
+        snap_table = existing[-1]
+        snap_fq = f'"{ARCHIVE_DB}".{ARCHIVE_SCHEMA}.{snap_table}'
+        log(f"  idempotent reuse: {snap_table} already exists "
+            f"(found {len(existing)} pre280 snapshot(s); using newest)")
+        out["ctas_action"] = "reused_existing"
+        out["existing_pre280_snapshots"] = existing
+    else:
+        ts = utcnow_compact()
+        snap_table = f"canonical_patient_master_pre280_{ts}"
+        snap_fq = f'"{ARCHIVE_DB}".{ARCHIVE_SCHEMA}.{snap_table}'
+        log(f"  CTAS {snap_fq} AS SELECT * FROM main.{CPM_TABLE} …")
+        con.execute(
+            f"CREATE TABLE {snap_fq} AS SELECT * FROM main.{CPM_TABLE}"
+        )
+        out["ctas_action"] = "created_new"
+
+    # Build COMMENT inline (DuckDB does not accept ? placeholder in COMMENT IS).
+    # Single quotes in the comment text get doubled per SQL escape rules.
     comment = (
         f"Script 280 pre-mutation snapshot of {CPM_TABLE}. "
         "Reason: pre-rollup snapshot before re-promoting the nlp_synoptic_* "
@@ -530,16 +557,25 @@ def phase_1(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
         f"{SOURCE_TABLE} (qwen2.5-32b, 2026-04-19 load). "
         f"Created at {utcnow_iso()}."
     )
-    con.execute(f"COMMENT ON TABLE {snap_fq} IS ?", [comment])
+    comment_sql_literal = "'" + comment.replace("'", "''") + "'"
+    log(f"  COMMENT ON TABLE {snap_fq} IS {comment_sql_literal[:80]}…")
+    try:
+        con.execute(f"COMMENT ON TABLE {snap_fq} IS {comment_sql_literal}")
+        out["comment_action"] = "applied"
+    except duckdb.Error as exc:
+        log(f"  ⚠ COMMENT failed ({exc!r}) — snapshot still valid; recording in JSON")
+        out["comment_action"] = f"failed: {exc!r}"
+    out["comment"] = comment
 
     snap_row = con.execute(
         f"SELECT COUNT(*), COUNT(DISTINCT research_id) FROM {snap_fq}"
     ).fetchone()
     snap_rows, snap_rids = snap_row
+    log(f"  snapshot {snap_table}: rows={snap_rows:,} rids={snap_rids:,}")
     out["snapshot_table"] = snap_fq
+    out["snapshot_table_unqualified"] = snap_table
     out["snapshot_rows"] = int(snap_rows)
     out["snapshot_rids"] = int(snap_rids)
-    out["comment"] = comment
     _gate(out, "snapshot_rows_eq_10871", snap_rows == EXPECTED_CPM_ROWS,
           {"observed": int(snap_rows), "expected": EXPECTED_CPM_ROWS})
     _gate(out, "snapshot_rids_eq_10871", snap_rids == EXPECTED_CPM_RIDS,
