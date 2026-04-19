@@ -1,0 +1,1140 @@
+{
+  "phase": 0,
+  "run_timestamp_utc": "2026-04-19T06:07:29.928145+00:00",
+  "repo_root": "/Users/loganglosser/THYROID_2026",
+  "shard_dir": "processed/remaining/partials/consolidated",
+  "synoptic_reference_parquet": "processed/remaining/9domain_v4/output/note_entities_llm_synoptic_pathology_enrichment.parquet",
+  "expected_domains": [
+    "pathology",
+    "tirads_granular",
+    "cervical_ln_detail",
+    "imaging",
+    "past_surgical_hx"
+  ],
+  "in_scope_domains": [
+    "pathology",
+    "tirads_granular",
+    "cervical_ln_detail"
+  ],
+  "no_upgrade_domains": [
+    "imaging"
+  ],
+  "canonical_column_count": 23,
+  "canonical_columns": [
+    "note_row_id",
+    "domain",
+    "llm_model",
+    "llm_base_url",
+    "extracted_at",
+    "result_json",
+    "research_id",
+    "note_type",
+    "note_date",
+    "linkage_date",
+    "source_workbook",
+    "source_sheet",
+    "source_column",
+    "note_index",
+    "preprocess_batch_id",
+    "preprocessed_at_utc",
+    "preprocess_script_version",
+    "entity_domain",
+    "llm_provider",
+    "llm_sdk",
+    "llm_sdk_version",
+    "provider_returned_model",
+    "provider_system_fingerprint"
+  ],
+  "domains": {
+    "pathology": {
+      "status": "ready_to_consolidate",
+      "shard_count": 7,
+      "non_empty_shard_count": 7,
+      "empty_shard_count": 0,
+      "total_size_bytes": 78277599,
+      "observed_models_first5": [
+        "qwen3:32b"
+      ],
+      "observed_base_urls_first5": [
+        "http://localhost:11434/v1"
+      ],
+      "shards": [
+        {
+          "filename": "note_entities_llm_pathology.ckpt.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_pathology.ckpt.jsonl",
+          "size_bytes": 19346141,
+          "mtime_utc": "2026-04-14T19:32:32.985389+00:00",
+          "sha256": "0ec7de2dde86147700c7f950f765416672d926fb85b1b21606bacdb0eee0e569",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_row_id",
+            "note_type",
+            "research_id",
+            "result_json"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-03-30T05:47:33.179658+00:00",
+            "2026-03-30T05:47:35.394524+00:00",
+            "2026-03-30T05:47:39.911404+00:00",
+            "2026-03-30T05:47:40.103081+00:00",
+            "2026-03-30T05:47:40.274899+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 19810
+        },
+        {
+          "filename": "note_entities_llm_pathology.ckpt.thy-path-2.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_pathology.ckpt.thy-path-2.jsonl",
+          "size_bytes": 9667053,
+          "mtime_utc": "2026-04-14T19:32:33.004288+00:00",
+          "sha256": "0f6c10baf18284db485c6a8f87f91aa6f866782b343d12f66108c242e004b8ca",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_row_id",
+            "note_type",
+            "research_id",
+            "result_json"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-03-30T05:47:33.179658+00:00",
+            "2026-03-30T05:47:35.394524+00:00",
+            "2026-03-30T05:47:39.911404+00:00",
+            "2026-03-30T05:47:40.103081+00:00",
+            "2026-03-30T05:47:40.274899+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 12500
+        },
+        {
+          "filename": "note_entities_llm_pathology.ckpt.thy-path-3.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_pathology.ckpt.thy-path-3.jsonl",
+          "size_bytes": 10029872,
+          "mtime_utc": "2026-04-14T19:32:33.027964+00:00",
+          "sha256": "b82d8dadef99facaadca08d754b049bf54c592b6afcde25a8785308f47a2bda0",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_row_id",
+            "note_type",
+            "research_id",
+            "result_json"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-03-30T05:47:33.179658+00:00",
+            "2026-03-30T05:47:35.394524+00:00",
+            "2026-03-30T05:47:39.911404+00:00",
+            "2026-03-30T05:47:40.103081+00:00",
+            "2026-03-30T05:47:40.274899+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 12777
+        },
+        {
+          "filename": "note_entities_llm_pathology.ckpt.thy-path-4.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_pathology.ckpt.thy-path-4.jsonl",
+          "size_bytes": 9808690,
+          "mtime_utc": "2026-04-14T19:32:33.044530+00:00",
+          "sha256": "75f37d6badfede495ef2ad45312dcc3f3e38ec9b3b4f26a44f555478d7ae8c4a",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_row_id",
+            "note_type",
+            "research_id",
+            "result_json"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-03-30T05:47:33.179658+00:00",
+            "2026-03-30T05:47:35.394524+00:00",
+            "2026-03-30T05:47:39.911404+00:00",
+            "2026-03-30T05:47:40.103081+00:00",
+            "2026-03-30T05:47:40.274899+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 12610
+        },
+        {
+          "filename": "note_entities_llm_pathology.ckpt.thy-path-5.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_pathology.ckpt.thy-path-5.jsonl",
+          "size_bytes": 9652463,
+          "mtime_utc": "2026-04-14T19:32:33.063547+00:00",
+          "sha256": "d9587b06cca94017620bd44de71b94d8f97d98b47c04fe2bf35d281c83df9d1c",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_row_id",
+            "note_type",
+            "research_id",
+            "result_json"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-03-30T05:47:33.179658+00:00",
+            "2026-03-30T05:47:35.394524+00:00",
+            "2026-03-30T05:47:39.911404+00:00",
+            "2026-03-30T05:47:40.103081+00:00",
+            "2026-03-30T05:47:40.274899+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 12500
+        },
+        {
+          "filename": "note_entities_llm_pathology.ckpt.thy-path-6.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_pathology.ckpt.thy-path-6.jsonl",
+          "size_bytes": 9637423,
+          "mtime_utc": "2026-04-14T19:32:33.089511+00:00",
+          "sha256": "54c47d20d82c32a9dce60e7b54444b77078e1044e65c5e8fbcbe8a5086cef140",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_row_id",
+            "note_type",
+            "research_id",
+            "result_json"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-03-30T05:47:33.179658+00:00",
+            "2026-03-30T05:47:35.394524+00:00",
+            "2026-03-30T05:47:39.911404+00:00",
+            "2026-03-30T05:47:40.103081+00:00",
+            "2026-03-30T05:47:40.274899+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 12501
+        },
+        {
+          "filename": "note_entities_llm_pathology.ckpt.thy-path.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_pathology.ckpt.thy-path.jsonl",
+          "size_bytes": 10135957,
+          "mtime_utc": "2026-04-14T19:32:33.108554+00:00",
+          "sha256": "e8f11d34dda55a00435aca21f2642159551b75503fd098e4720faf52857f81af",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_row_id",
+            "note_type",
+            "research_id",
+            "result_json"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-03-30T05:47:33.179658+00:00",
+            "2026-03-30T05:47:35.394524+00:00",
+            "2026-03-30T05:47:39.911404+00:00",
+            "2026-03-30T05:47:40.103081+00:00",
+            "2026-03-30T05:47:40.274899+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 12760
+        }
+      ]
+    },
+    "tirads_granular": {
+      "status": "ready_to_consolidate",
+      "shard_count": 8,
+      "non_empty_shard_count": 8,
+      "empty_shard_count": 0,
+      "total_size_bytes": 42934526,
+      "observed_models_first5": [
+        "qwen3:32b"
+      ],
+      "observed_base_urls_first5": [
+        "http://localhost:11434/v1"
+      ],
+      "shards": [
+        {
+          "filename": "note_entities_llm_tirads_granular.ckpt.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_tirads_granular.ckpt.jsonl",
+          "size_bytes": 12069598,
+          "mtime_utc": "2026-04-14T19:32:33.147207+00:00",
+          "sha256": "98b8a171f61dee25a9fac5d78ad3ced3be7c484c0b233cf9dc38485b6ba9c633",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_row_id",
+            "note_type",
+            "research_id",
+            "result_json"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-03-31T12:54:46.071411+00:00",
+            "2026-03-31T12:54:46.435894+00:00",
+            "2026-03-31T12:54:46.879507+00:00",
+            "2026-03-31T12:54:47.294397+00:00",
+            "2026-03-31T12:54:47.633463+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 10871
+        },
+        {
+          "filename": "note_entities_llm_tirads_granular.ckpt.thy-tirads-2.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_tirads_granular.ckpt.thy-tirads-2.jsonl",
+          "size_bytes": 4959335,
+          "mtime_utc": "2026-04-14T19:32:33.158955+00:00",
+          "sha256": "5a3df9de601390f676d91624cbe46202a44e25e4bcfa42bf1571bc3285295830",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_row_id",
+            "note_type",
+            "research_id",
+            "result_json"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-03-31T12:54:46.071411+00:00",
+            "2026-03-31T12:54:46.435894+00:00",
+            "2026-03-31T12:54:46.879507+00:00",
+            "2026-03-31T12:54:47.294397+00:00",
+            "2026-03-31T12:54:47.633463+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 6015
+        },
+        {
+          "filename": "note_entities_llm_tirads_granular.ckpt.thy-tirads-3b.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_tirads_granular.ckpt.thy-tirads-3b.jsonl",
+          "size_bytes": 4900529,
+          "mtime_utc": "2026-04-14T19:32:33.170609+00:00",
+          "sha256": "a7b7c6efa43d89112cb9cd1bfdfcc9245a05766e14a1f371196e325329737498",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_row_id",
+            "note_type",
+            "research_id",
+            "result_json"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-03-31T12:54:46.071411+00:00",
+            "2026-03-31T12:54:46.435894+00:00",
+            "2026-03-31T12:54:46.879507+00:00",
+            "2026-03-31T12:54:47.294397+00:00",
+            "2026-03-31T12:54:47.633463+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 5922
+        },
+        {
+          "filename": "note_entities_llm_tirads_granular.ckpt.thy-tirads-4.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_tirads_granular.ckpt.thy-tirads-4.jsonl",
+          "size_bytes": 3201042,
+          "mtime_utc": "2026-04-14T19:32:33.179000+00:00",
+          "sha256": "5e67b7101bcac59a13237d60cf92bcc3d5afa8af21d92bfb69c4c0a9a222a893",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_row_id",
+            "note_type",
+            "research_id",
+            "result_json"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-03-31T12:54:46.071411+00:00",
+            "2026-03-31T12:54:46.435894+00:00",
+            "2026-03-31T12:54:46.879507+00:00",
+            "2026-03-31T12:54:47.294397+00:00",
+            "2026-03-31T12:54:47.633463+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 4845
+        },
+        {
+          "filename": "note_entities_llm_tirads_granular.ckpt.thy-tirads-4c.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_tirads_granular.ckpt.thy-tirads-4c.jsonl",
+          "size_bytes": 3201042,
+          "mtime_utc": "2026-04-14T19:32:33.188002+00:00",
+          "sha256": "5e67b7101bcac59a13237d60cf92bcc3d5afa8af21d92bfb69c4c0a9a222a893",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_row_id",
+            "note_type",
+            "research_id",
+            "result_json"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-03-31T12:54:46.071411+00:00",
+            "2026-03-31T12:54:46.435894+00:00",
+            "2026-03-31T12:54:46.879507+00:00",
+            "2026-03-31T12:54:47.294397+00:00",
+            "2026-03-31T12:54:47.633463+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 4845
+        },
+        {
+          "filename": "note_entities_llm_tirads_granular.ckpt.thy-tirads-5.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_tirads_granular.ckpt.thy-tirads-5.jsonl",
+          "size_bytes": 4793363,
+          "mtime_utc": "2026-04-14T19:32:33.199061+00:00",
+          "sha256": "07998565b9e74ee328db6621f4c4fd1523bab4f6fa9372fe0437c620e3df2d9b",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_row_id",
+            "note_type",
+            "research_id",
+            "result_json"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-03-31T12:54:46.071411+00:00",
+            "2026-03-31T12:54:46.435894+00:00",
+            "2026-03-31T12:54:46.879507+00:00",
+            "2026-03-31T12:54:47.294397+00:00",
+            "2026-03-31T12:54:47.633463+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 5922
+        },
+        {
+          "filename": "note_entities_llm_tirads_granular.ckpt.thy-tirads-6.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_tirads_granular.ckpt.thy-tirads-6.jsonl",
+          "size_bytes": 4789024,
+          "mtime_utc": "2026-04-14T19:32:33.212709+00:00",
+          "sha256": "04d5e4e3e09512277930a4278ac0372f6c8e9c35cc623c49929972a66332483c",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_row_id",
+            "note_type",
+            "research_id",
+            "result_json"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-03-31T12:54:46.071411+00:00",
+            "2026-03-31T12:54:46.435894+00:00",
+            "2026-03-31T12:54:46.879507+00:00",
+            "2026-03-31T12:54:47.294397+00:00",
+            "2026-03-31T12:54:47.633463+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 5923
+        },
+        {
+          "filename": "note_entities_llm_tirads_granular.ckpt.thy-tirads.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_tirads_granular.ckpt.thy-tirads.jsonl",
+          "size_bytes": 5020593,
+          "mtime_utc": "2026-04-14T19:32:33.220968+00:00",
+          "sha256": "4a9830a95b7928b528d97352ae9f3fa77d5641883453e2e9639bb37430cf09a4",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_row_id",
+            "note_type",
+            "research_id",
+            "result_json"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-03-31T12:54:46.071411+00:00",
+            "2026-03-31T12:54:46.435894+00:00",
+            "2026-03-31T12:54:46.879507+00:00",
+            "2026-03-31T12:54:47.294397+00:00",
+            "2026-03-31T12:54:47.633463+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 6087
+        }
+      ]
+    },
+    "cervical_ln_detail": {
+      "status": "ready_to_consolidate",
+      "shard_count": 4,
+      "non_empty_shard_count": 4,
+      "empty_shard_count": 0,
+      "total_size_bytes": 21617783,
+      "observed_models_first5": [
+        "qwen3:32b"
+      ],
+      "observed_base_urls_first5": [
+        "http://localhost:11434/v1"
+      ],
+      "shards": [
+        {
+          "filename": "note_entities_llm_cervical_ln_detail.ckpt.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_cervical_ln_detail.ckpt.jsonl",
+          "size_bytes": 8445759,
+          "mtime_utc": "2026-04-14T19:32:32.716858+00:00",
+          "sha256": "de96b08ddbbf4fc9700d220810d0dd07374c762fe5100c8d109c4a8ea37ec647",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "linkage_date",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_index",
+            "note_row_id",
+            "note_type",
+            "preprocess_batch_id",
+            "preprocess_script_version",
+            "preprocessed_at_utc",
+            "research_id",
+            "result_json",
+            "source_column",
+            "source_sheet",
+            "source_workbook"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-04-14T06:41:58.535945+00:00",
+            "2026-04-14T06:42:01.506016+00:00",
+            "2026-04-14T06:42:21.025264+00:00",
+            "2026-04-14T06:42:37.580337+00:00",
+            "2026-04-14T06:42:39.082033+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 10417
+        },
+        {
+          "filename": "note_entities_llm_cervical_ln_detail.ckpt.thy-lnfna-2.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_cervical_ln_detail.ckpt.thy-lnfna-2.jsonl",
+          "size_bytes": 4303388,
+          "mtime_utc": "2026-04-14T19:32:32.784376+00:00",
+          "sha256": "43d000a23ecd7e1392483fa7aba1889673aeaed627681d22e269943dc2353324",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "linkage_date",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_index",
+            "note_row_id",
+            "note_type",
+            "preprocess_batch_id",
+            "preprocess_script_version",
+            "preprocessed_at_utc",
+            "research_id",
+            "result_json",
+            "source_column",
+            "source_sheet",
+            "source_workbook"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-04-14T06:41:58.535945+00:00",
+            "2026-04-14T06:42:01.506016+00:00",
+            "2026-04-14T06:42:21.025264+00:00",
+            "2026-04-14T06:42:37.580337+00:00",
+            "2026-04-14T06:42:39.082033+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 5065
+        },
+        {
+          "filename": "note_entities_llm_cervical_ln_detail.ckpt.thy-lnfna-3.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_cervical_ln_detail.ckpt.thy-lnfna-3.jsonl",
+          "size_bytes": 4295771,
+          "mtime_utc": "2026-04-14T19:32:32.821239+00:00",
+          "sha256": "2b1a5d2068fbebc6456b911486ebdd1d6a766bd4556e1eb6bfa0a63460e9e8db",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "linkage_date",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_index",
+            "note_row_id",
+            "note_type",
+            "preprocess_batch_id",
+            "preprocess_script_version",
+            "preprocessed_at_utc",
+            "research_id",
+            "result_json",
+            "source_column",
+            "source_sheet",
+            "source_workbook"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-04-14T06:41:58.535945+00:00",
+            "2026-04-14T06:42:01.506016+00:00",
+            "2026-04-14T06:42:21.025264+00:00",
+            "2026-04-14T06:42:37.580337+00:00",
+            "2026-04-14T06:42:39.082033+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 5066
+        },
+        {
+          "filename": "note_entities_llm_cervical_ln_detail.ckpt.thy-lnfna.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_cervical_ln_detail.ckpt.thy-lnfna.jsonl",
+          "size_bytes": 4572865,
+          "mtime_utc": "2026-04-14T19:32:32.901694+00:00",
+          "sha256": "f14e33f3d6080d1c514d17c3960bd4ae35706aa9f9a83859e05a929360c259ef",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "linkage_date",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_index",
+            "note_row_id",
+            "note_type",
+            "preprocess_batch_id",
+            "preprocess_script_version",
+            "preprocessed_at_utc",
+            "research_id",
+            "result_json",
+            "source_column",
+            "source_sheet",
+            "source_workbook"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-04-14T06:41:58.535945+00:00",
+            "2026-04-14T06:42:01.506016+00:00",
+            "2026-04-14T06:42:21.025264+00:00",
+            "2026-04-14T06:42:37.580337+00:00",
+            "2026-04-14T06:42:39.082033+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 5379
+        }
+      ]
+    },
+    "imaging": {
+      "status": "no_upgrade_vs_canonical",
+      "shard_count": 1,
+      "non_empty_shard_count": 1,
+      "empty_shard_count": 0,
+      "total_size_bytes": 7469829,
+      "observed_models_first5": [
+        "qwen3:32b"
+      ],
+      "observed_base_urls_first5": [
+        "http://localhost:11434/v1"
+      ],
+      "shards": [
+        {
+          "filename": "note_entities_llm_imaging.ckpt.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_imaging.ckpt.jsonl",
+          "size_bytes": 7469829,
+          "mtime_utc": "2026-04-14T19:32:32.946702+00:00",
+          "sha256": "494a74ab530883c0c8bcf6f4f70eba69d569996ec0d353fb25848c8ac93cc006",
+          "is_empty": false,
+          "first5_columns": [
+            "domain",
+            "extracted_at",
+            "llm_base_url",
+            "llm_model",
+            "note_date",
+            "note_row_id",
+            "note_type",
+            "research_id",
+            "result_json"
+          ],
+          "first5_models": [
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b",
+            "qwen3:32b"
+          ],
+          "first5_base_urls": [
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1",
+            "http://localhost:11434/v1"
+          ],
+          "first5_extracted_at": [
+            "2026-03-29T16:45:21.880520+00:00",
+            "2026-03-29T16:45:22.057553+00:00",
+            "2026-03-29T16:45:22.242054+00:00",
+            "2026-03-29T16:45:22.467446+00:00",
+            "2026-03-29T16:45:22.664037+00:00"
+          ],
+          "first5_research_id_types": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+          ],
+          "approx_record_count": 11037
+        }
+      ]
+    },
+    "past_surgical_hx": {
+      "status": "empty_shard",
+      "shard_count": 1,
+      "non_empty_shard_count": 0,
+      "empty_shard_count": 1,
+      "total_size_bytes": 0,
+      "observed_models_first5": [],
+      "observed_base_urls_first5": [],
+      "shards": [
+        {
+          "filename": "note_entities_llm_past_surgical_hx.ckpt.jsonl",
+          "path": "processed/remaining/partials/consolidated/note_entities_llm_past_surgical_hx.ckpt.jsonl",
+          "size_bytes": 0,
+          "mtime_utc": "2026-04-14T19:32:32.948394+00:00",
+          "sha256": null,
+          "is_empty": true,
+          "first5_columns": null,
+          "first5_models": null,
+          "first5_base_urls": null,
+          "first5_extracted_at": null,
+          "first5_research_id_types": null,
+          "approx_record_count": null
+        }
+      ]
+    }
+  },
+  "sha256_duplicate_shards": {
+    "5e67b7101bcac59a13237d60cf92bcc3d5afa8af21d92bfb69c4c0a9a222a893": [
+      "note_entities_llm_tirads_granular.ckpt.thy-tirads-4.jsonl",
+      "note_entities_llm_tirads_granular.ckpt.thy-tirads-4c.jsonl"
+    ]
+  },
+  "unexpected_shards": [],
+  "model_provenance_warnings": [
+    "pathology: observed models ['qwen3:32b'] are NOT qwen2.5 \u2014 shards are the targeted qwen3:32b Ollama rerun (see provenance labeling in Phase 1 outputs).",
+    "tirads_granular: observed models ['qwen3:32b'] are NOT qwen2.5 \u2014 shards are the targeted qwen3:32b Ollama rerun (see provenance labeling in Phase 1 outputs).",
+    "cervical_ln_detail: observed models ['qwen3:32b'] are NOT qwen2.5 \u2014 shards are the targeted qwen3:32b Ollama rerun (see provenance labeling in Phase 1 outputs).",
+    "imaging: observed models ['qwen3:32b'] are NOT qwen2.5 \u2014 shards are the targeted qwen3:32b Ollama rerun (see provenance labeling in Phase 1 outputs)."
+  ]
+}
