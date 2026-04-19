@@ -112,10 +112,10 @@ def _call_llm(client: Any, model: str, system_prompt: str, note_text: str) -> di
             model=model,
             messages=[
                 {"role": "system", "content": "/no_think\n" + system_prompt},
-                {"role": "user", "content": note_text[:6000]},
+                {"role": "user", "content": note_text[:12000]},
             ],
             temperature=0,
-            max_tokens=1500,
+            max_tokens=12000,
             timeout=LLM_TIMEOUT_SECONDS,
         )
         if response_fmt:
