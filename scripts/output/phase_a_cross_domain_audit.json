@@ -1,0 +1,174 @@
+{
+  "phase": 2,
+  "run_timestamp_utc": "2026-04-19T06:10:56.069939+00:00",
+  "domains": {
+    "synoptic_pathology_enrichment": {
+      "domain": "synoptic_pathology_enrichment",
+      "rows": 26584,
+      "rids": 10862,
+      "rows_with_entity": 11220,
+      "rids_with_entity": 4992,
+      "llm_models": {
+        "qwen2.5-32b": 26584
+      },
+      "extracted_at_min": "2026-04-19T03:07:41.142851+00:00",
+      "extracted_at_max": "2026-04-19T04:22:54.639454+00:00",
+      "source_parquet": "processed/remaining/9domain_v4/output/note_entities_llm_synoptic_pathology_enrichment.parquet",
+      "parquet_column_count": 17,
+      "parquet_columns": [
+        "note_row_id",
+        "domain",
+        "llm_model",
+        "llm_base_url",
+        "extracted_at",
+        "result_json",
+        "research_id",
+        "note_type",
+        "note_date",
+        "linkage_date",
+        "source_workbook",
+        "source_sheet",
+        "source_column",
+        "note_index",
+        "preprocess_batch_id",
+        "preprocessed_at_utc",
+        "preprocess_script_version"
+      ],
+      "pct_rows_with_entity": 42.21,
+      "expected_canonical_table_name": "note_entities_llm_synoptic_pathology_enrichment",
+      "canonical_snapshot": {
+        "rows": 11037,
+        "rids": 5641,
+        "rids_with_entity": 33
+      },
+      "delta_vs_canonical": {
+        "rows": 15547,
+        "rids": 5221,
+        "rids_with_entity": 4959
+      },
+      "upgrade_multiple_vs_canonical": 151.2727,
+      "verdict": "upgrade",
+      "source": "pre-consolidated_reference"
+    },
+    "pathology": {
+      "domain": "pathology",
+      "rows": 19810,
+      "rids": 5884,
+      "rows_with_entity": 6201,
+      "rids_with_entity": 2822,
+      "pct_rows_with_entity": 31.3,
+      "llm_models": {
+        "qwen3:32b": 11058,
+        "qwen3:14b": 8752
+      },
+      "extracted_at_min": "2026-03-30T05:47:33.179658+00:00",
+      "extracted_at_max": "2026-04-14T18:25:32.786310+00:00",
+      "expected_canonical_table_name": "note_entities_llm_pathology",
+      "canonical_snapshot": {
+        "rows": 11037,
+        "rids": 5641,
+        "rids_with_entity": 2290
+      },
+      "delta_vs_canonical": {
+        "rows": 8773,
+        "rids": 243,
+        "rids_with_entity": 532
+      },
+      "upgrade_multiple_vs_canonical": 1.2323,
+      "verdict": "modest_upgrade",
+      "source": "phase_1_consolidation"
+    },
+    "tirads_granular": {
+      "domain": "tirads_granular",
+      "rows": 10871,
+      "rids": 5305,
+      "rows_with_entity": 2494,
+      "rids_with_entity": 1948,
+      "pct_rows_with_entity": 22.94,
+      "llm_models": {
+        "qwen3:14b": 6132,
+        "qwen3:32b": 4739
+      },
+      "extracted_at_min": "2026-03-31T12:54:46.071411+00:00",
+      "extracted_at_max": "2026-04-14T17:56:39.544416+00:00",
+      "expected_canonical_table_name": "note_entities_llm_tirads_granular",
+      "canonical_snapshot": {
+        "rows": 11037,
+        "rids": 5641,
+        "rids_with_entity": 86
+      },
+      "delta_vs_canonical": {
+        "rows": -166,
+        "rids": -336,
+        "rids_with_entity": 1862
+      },
+      "upgrade_multiple_vs_canonical": 22.6512,
+      "verdict": "upgrade",
+      "source": "phase_1_consolidation"
+    },
+    "cervical_ln_detail": {
+      "domain": "cervical_ln_detail",
+      "rows": 10417,
+      "rids": 2937,
+      "rows_with_entity": 1402,
+      "rids_with_entity": 1105,
+      "pct_rows_with_entity": 13.46,
+      "llm_models": {
+        "qwen3:14b": 7975,
+        "qwen3:32b": 2442
+      },
+      "extracted_at_min": "2026-04-14T06:41:58.535945+00:00",
+      "extracted_at_max": "2026-04-14T16:58:27.244179+00:00",
+      "expected_canonical_table_name": "note_entities_llm_cervical_ln_detail",
+      "canonical_snapshot": {
+        "rows": 11037,
+        "rids": 5641,
+        "rids_with_entity": 167
+      },
+      "delta_vs_canonical": {
+        "rows": -620,
+        "rids": -2704,
+        "rids_with_entity": 938
+      },
+      "upgrade_multiple_vs_canonical": 6.6168,
+      "verdict": "upgrade",
+      "source": "phase_1_consolidation"
+    },
+    "imaging": {
+      "domain": "imaging",
+      "status": "no_upgrade_vs_canonical",
+      "skipped": true,
+      "skip_reason": "Local rerun's rids_with_entity matches canonical (2218) \u2014 consolidating adds nothing.",
+      "expected_canonical_table_name": "note_entities_llm_imaging",
+      "canonical_snapshot": {
+        "rows": 11037,
+        "rids": 5641,
+        "rids_with_entity": 2218
+      },
+      "verdict": "marginal",
+      "source": "no_upgrade_stub"
+    },
+    "past_surgical_hx": {
+      "domain": "past_surgical_hx",
+      "status": "empty_shard",
+      "skipped": true,
+      "skip_reason": null,
+      "expected_canonical_table_name": "note_entities_llm_past_surgical_hx",
+      "canonical_snapshot": {
+        "rows": 11037,
+        "rids": 5641,
+        "rids_with_entity": 1942
+      },
+      "verdict": "skipped",
+      "source": "no_consolidation_emitted"
+    }
+  },
+  "verdict_summary": {
+    "upgrade": 3,
+    "modest_upgrade": 1,
+    "marginal": 1,
+    "skipped": 1
+  },
+  "synoptic_parquet_column_count": 17,
+  "canonical_target_column_count": 23
+}
