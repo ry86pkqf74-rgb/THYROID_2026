@@ -1,0 +1,15 @@
+{
+  "domain": "imaging",
+  "status": "no_upgrade_vs_canonical",
+  "skipped": true,
+  "skip_reason": "Local rerun's rids_with_entity matches canonical (2218) \u2014 consolidating adds nothing.",
+  "shards_present": 1,
+  "canonical_rids_with_entity": 2218,
+  "rids_with_entity_local_estimate": 2218,
+  "rids_with_entity_delta_vs_canonical": 0,
+  "upgrade_multiple_vs_canonical": 1.0,
+  "verdict": "marginal",
+  "output_parquet": null,
+  "dropped_rows_log": null,
+  "run_timestamp_utc": "2026-04-19T06:10:45.065774+00:00"
+}
