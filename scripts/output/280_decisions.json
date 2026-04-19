@@ -1,0 +1,270 @@
+{
+  "script": "scripts/280_synoptic_rollup_rebuild.py",
+  "started_at": "2026-04-19T06:55:07Z",
+  "phase_arg": "0",
+  "phases": {
+    "0": {
+      "phase": 0,
+      "started_at": "2026-04-19T06:55:08Z",
+      "token_mode": "motherduck.local.toml:MD_SA_TOKEN",
+      "canonical_db": "thyroid_canonical_publication_v1_0",
+      "source_table": "main.note_entities_llm_synoptic_pathology_enrichment",
+      "gates": [
+        {
+          "name": "source_n_rows_eq_26584",
+          "ok": true,
+          "detail": {
+            "observed": 26584,
+            "expected": 26584
+          }
+        },
+        {
+          "name": "source_n_rids_eq_10862",
+          "ok": true,
+          "detail": {
+            "observed": 10862,
+            "expected": 10862
+          }
+        },
+        {
+          "name": "source_model_eq_qwen25_32b",
+          "ok": true,
+          "detail": {
+            "observed": "qwen2.5-32b",
+            "expected": "qwen2.5-32b"
+          }
+        },
+        {
+          "name": "source_extracted_at_min_starts_with_2026-04-19T03:07",
+          "ok": true,
+          "detail": {
+            "observed": "2026-04-19T03:07:41.142851+00:00",
+            "expected_prefix": "2026-04-19T03:07"
+          }
+        },
+        {
+          "name": "source_extracted_at_max_starts_with_2026-04-19T04:22",
+          "ok": true,
+          "detail": {
+            "observed": "2026-04-19T04:22:54.639454+00:00",
+            "expected_prefix": "2026-04-19T04:22"
+          }
+        },
+        {
+          "name": "pinned_md_agg_rjhash_match",
+          "ok": true,
+          "detail": {
+            "observed": "786e05480dec4590494bcf63114603fd",
+            "pinned": "786e05480dec4590494bcf63114603fd"
+          }
+        },
+        {
+          "name": "pinned_md_agg_ndhash_match",
+          "ok": true,
+          "detail": {
+            "observed": "6723fea873c8b1e92f7fa2bcfa6d8fca",
+            "pinned": "6723fea873c8b1e92f7fa2bcfa6d8fca"
+          }
+        },
+        {
+          "name": "pinned_md_agg_srchash_match",
+          "ok": true,
+          "detail": {
+            "observed": "ad3654550fd09b4bf0649ce5a0cf67d4",
+            "pinned": "ad3654550fd09b4bf0649ce5a0cf67d4"
+          }
+        },
+        {
+          "name": "api_timeout_rows_eq_3",
+          "ok": true,
+          "detail": {
+            "observed": 3,
+            "expected": 3
+          }
+        },
+        {
+          "name": "preprocess_script_version_uniform",
+          "ok": true,
+          "detail": {
+            "observed_distinct_count": 1,
+            "values": "v4_9domain_rerun_2026-04-18"
+          }
+        },
+        {
+          "name": "preprocess_script_version_value_match",
+          "ok": true,
+          "detail": {
+            "observed": "v4_9domain_rerun_2026-04-18",
+            "expected": "v4_9domain_rerun_2026-04-18"
+          }
+        },
+        {
+          "name": "preprocess_batch_id_uniform",
+          "ok": true,
+          "detail": {
+            "observed_distinct_count": 1
+          }
+        },
+        {
+          "name": "llm_base_url_eq_vllm_endpoint",
+          "ok": true,
+          "detail": {
+            "observed": "http://93.91.156.83:53202/v1",
+            "expected": "http://93.91.156.83:53202/v1"
+          }
+        },
+        {
+          "name": "source_no_null_identifier_cols",
+          "ok": true,
+          "detail": {
+            "null_note_row_id": 0,
+            "null_research_id": 0,
+            "null_result_json": 0,
+            "null_extracted_at": 0,
+            "null_note_date": 0
+          }
+        },
+        {
+          "name": "source_no_duplicate_note_row_ids",
+          "ok": true,
+          "detail": {
+            "observed_dup_groups": 0
+          }
+        },
+        {
+          "name": "cpm_rows_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "cpm_rids_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "cpm_no_null_rid",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "cpm_no_null_fna_path_outcome",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "stale_has_data_eq_8",
+          "ok": true,
+          "detail": {
+            "observed": 8,
+            "expected": 8
+          }
+        },
+        {
+          "name": "stale_has_data_not_already_promoted",
+          "ok": true,
+          "detail": {
+            "observed": 8,
+            "guard": ">100 would mean rollup was promoted by another script"
+          }
+        },
+        {
+          "name": "registry_total_rows_stale_eq_11037",
+          "ok": true,
+          "detail": {
+            "observed": 11037,
+            "expected": 11037
+          }
+        },
+        {
+          "name": "registry_total_patients_stale_eq_5641",
+          "ok": true,
+          "detail": {
+            "observed": 5641,
+            "expected": 5641
+          }
+        },
+        {
+          "name": "registry_not_already_updated_to_post_rerun",
+          "ok": true,
+          "detail": {
+            "detail": "registry already shows post-rerun counts \u2014 someone updated it"
+          }
+        },
+        {
+          "name": "source_rids_with_entity_eq_4992",
+          "ok": true,
+          "detail": {
+            "observed": 4992,
+            "expected": 4992
+          }
+        },
+        {
+          "name": "pre_rerun_source_archive_snapshot_present",
+          "ok": true,
+          "detail": {
+            "detail": "expected at least one snapshot in \"Thyroid 2026 UPdated\".archive_pub_v1_0 matching note_entities_llm_synoptic_pathology_enrichment_pre%"
+          }
+        }
+      ],
+      "blockers": [],
+      "observed": {
+        "source_n_rows": 26584,
+        "source_n_rids": 10862,
+        "source_models": "qwen2.5-32b",
+        "source_extracted_at_min": "2026-04-19T03:07:41.142851+00:00",
+        "source_extracted_at_max": "2026-04-19T04:22:54.639454+00:00",
+        "md_agg_rjhash": "786e05480dec4590494bcf63114603fd",
+        "md_agg_ndhash": "6723fea873c8b1e92f7fa2bcfa6d8fca",
+        "md_agg_srchash": "ad3654550fd09b4bf0649ce5a0cf67d4",
+        "pinned_rjhash": "786e05480dec4590494bcf63114603fd",
+        "pinned_ndhash": "6723fea873c8b1e92f7fa2bcfa6d8fca",
+        "pinned_srchash": "ad3654550fd09b4bf0649ce5a0cf67d4",
+        "api_timeout_rows": 3,
+        "distinct_preprocess_script_version": 1,
+        "preprocess_script_version_values": "v4_9domain_rerun_2026-04-18",
+        "distinct_preprocess_batch_id": 1,
+        "llm_base_url_values": "http://93.91.156.83:53202/v1",
+        "null_columns": {
+          "null_note_row_id": 0,
+          "null_research_id": 0,
+          "null_result_json": 0,
+          "null_extracted_at": 0,
+          "null_note_date": 0
+        },
+        "duplicate_note_row_id_groups": 0,
+        "cpm_n_rows": 10871,
+        "cpm_n_rids": 10871,
+        "cpm_null_research_id": 0,
+        "cpm_null_fna_path_outcome": 0,
+        "cpm_stale_has_data_true": 8,
+        "cpm_nlp_synoptic_has_data_not_null": 8,
+        "cpm_nlp_synoptic_has_data_is_null": 10863,
+        "cpm_stale_sum_n_notes": 8,
+        "registry_table_present": true,
+        "registry_synoptic_row": {
+          "total_rows": 11037,
+          "total_patients": 5641,
+          "canonical_version": "v1_0",
+          "description_len": 30
+        },
+        "source_rids_with_entity_value": 4992,
+        "source_rows_with_entity_value": 11220,
+        "pre_rerun_source_archive_snapshot_present": true
+      },
+      "finished_at": "2026-04-19T06:55:13Z",
+      "all_gates_passed": true
+    }
+  },
+  "finished_at": "2026-04-19T06:55:13Z",
+  "return_code": 0
+}
