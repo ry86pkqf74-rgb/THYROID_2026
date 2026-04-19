@@ -1,0 +1,112 @@
+[02:26:09.193Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+WARNING: Your client version of DuckDB (v1.1.3) will soon be unsupported with MotherDuck. Please upgrade your DuckDB. We recommend DuckDB v1.5.2. For the installation guide, please refer to https://duckdb.org/docs/installation/.
+[02:26:09.732Z] === PHASE 0 — pre-flight audit (READ-ONLY) ===
+[02:26:10.839Z]   0A: 11 TIRADS-named tables in main:
+[02:26:10.839Z]         extracted_tirads_validated_v1                       est_rows=3439
+[02:26:10.839Z]         note_entities_llm_tirads_granular                   est_rows=11037
+[02:26:10.839Z]         tirads_llm_extracted_v2                             est_rows=5636
+[02:26:10.839Z]         tirads_llm_validation_v2                            est_rows=1225
+[02:26:10.839Z]         tirads_reextraction_queue_v1                        est_rows=4363
+[02:26:10.839Z]         tirads_v2_nodule_patient_rollup_v1                  est_rows=2465
+[02:26:10.839Z]         tirads_v2_nodules_raw                               est_rows=11914
+[02:26:10.839Z]         tirads_v2_report_patient_rollup_v1                  est_rows=4073
+[02:26:10.839Z]         tirads_v2_reports_raw                               est_rows=8810
+[02:26:10.839Z]         us_nodules_tirads                                   est_rows=10862
+[02:26:10.839Z]         us_nodules_tirads_vs_inm_v1_discordance_v1          est_rows=1722
+[02:26:12.259Z]   0B: tirads_llm_extracted_v2: 5,636 rows, 1,429 RIDs
+[02:26:12.798Z]   0C: canonical_patient_master coverage: {'n_cpm': 10871, 'n_dist': 10871, 'has_preop_tirads_best': 3474, 'has_tirads_best_score_v12': 3474, 'has_tirads_worst_combined': 3439}
+[02:26:12.799Z]   0D: inspecting source parquets locally ...
+[02:26:12.817Z]         nodules_clean.parquet : 11,914 rows, 3,021 RIDs (expected 11,914/3,021)
+[02:26:12.817Z]         reports_clean.parquet : 8,810 rows, 4,073 RIDs (expected 8,810/4,073)
+[02:26:12.833Z]         report-only RIDs (no scorable nodule): 1,052 (expected ~1,052; benign/cystic/post-op surveillance)
+[02:26:12.833Z]         nodule-only RIDs (no report row):      0
+[02:26:13.127Z]   0E: legacy RID set (1,429) ∩ new union (4,073) = 1,429
+[02:26:13.127Z]         RIDs in legacy but NOT in new extraction: 0
+[02:26:13.127Z]         ✓ zero RID loss — Phase 4 DROP is safe.
+[02:26:13.344Z]   0F: us_nodules_tirads cohort gap diagnostic:
+[02:26:13.344Z]         us_nodules_tirads RIDs total          : 10,859
+[02:26:13.344Z]         of which in new v2 reports.parquet    : 4,073
+[02:26:13.344Z]         of which MISSING from new v2 reports  : 6,786
+[02:26:13.344Z]         (large 'missing' value = follow-on Script 222+ for re-extracting these patients)
+[02:26:15.247Z] 
+[02:26:15.248Z] ──── PHASE 0 AUDIT SUMMARY ────
+[02:26:15.248Z]   blockers:           none
+[02:26:15.248Z]   legacy table:       present (5,636 rows / 1,429 RIDs)
+[02:26:15.248Z]   legacy RID loss:    0 (Phase 4 drop OK)
+[02:26:15.248Z]   parquets OK:        True
+[02:26:15.248Z]   rids_only_in_reports (no scorable nodule, expected ~1,052): 1052
+[02:26:15.248Z]   already_applied:    {'tirads_v2_nodules_raw': True, 'tirads_v2_reports_raw': True, 'tirads_v2_nodule_patient_rollup_v1': True, 'tirads_v2_report_patient_rollup_v1': True, 'cpm_v2_cols_present': {'tirads_v2_n_nodules_scored': False, 'tirads_v2_worst_category': False, 'tirads_v2_max_points': False, 'tirads_v2_largest_nodule_cm': False, 'tirads_v2_any_ete_on_us': False, 'tirads_v2_any_interval_growth': False, 'tirads_v2_any_fna_recommended': False, 'tirads_v2_n_reports': False, 'tirads_v2_any_suspicious_ln_on_us': False, 'tirads_v2_shortest_followup_months': False}}
+[02:26:15.248Z] ──────────────────────────────
+[02:26:15.250Z] === PHASE 1 — load raw tables into canonical ===
+[02:26:16.786Z]   tirads_v2_nodules_raw: 11,914 rows, 3,021 RIDs (expected 11,914/3,021)
+[02:26:16.816Z]   tirads_v2_reports_raw: 8,810 rows, 4,073 RIDs (expected 8,810/4,073)
+[02:26:17.402Z]   COMMENT ON TABLE applied to both raw tables.
+[02:26:17.402Z] === PHASE 2 — build patient-level rollups ===
+[02:26:18.005Z]   tirads_v2_nodule_patient_rollup_v1: 2,465 rows, 2,465 distinct RIDs
+[02:26:18.055Z]   tirads_v2_report_patient_rollup_v1: 4,073 rows, 4,073 distinct RIDs
+[02:26:18.056Z]   unscored-nodule-only RIDs (in raw, missing from rollup): 556 (nodules with ZERO TR1-TR5 categories — expected: spongiform/indeterminate/etc)
+[02:26:18.056Z] === PHASE 3 — add tirads_v2_* columns to canonical_patient_master ===
+[02:26:18.056Z]   legacy TIRADS columns are PROTECTED — not touched by this script: preop_tirads_best, tirads_best_score_v12, tirads_worst_combined, tirads_best_category_v12, tirads_worst_category_v12
+[02:26:18.605Z]   + ADD tirads_v2_n_nodules_scored BIGINT
+[02:26:19.006Z]   + ADD tirads_v2_worst_category VARCHAR
+[02:26:19.400Z]   + ADD tirads_v2_max_points DOUBLE
+[02:26:19.758Z]   + ADD tirads_v2_largest_nodule_cm DOUBLE
+[02:26:20.199Z]   + ADD tirads_v2_any_ete_on_us BOOLEAN
+[02:26:20.718Z]   + ADD tirads_v2_any_interval_growth BOOLEAN
+[02:26:21.232Z]   + ADD tirads_v2_any_fna_recommended BOOLEAN
+[02:26:21.733Z]   + ADD tirads_v2_n_reports BIGINT
+[02:26:22.100Z]   + ADD tirads_v2_any_suspicious_ln_on_us BOOLEAN
+[02:26:22.464Z]   + ADD tirads_v2_shortest_followup_months DOUBLE
+[02:26:22.464Z]   populating from rollups (LEFT JOIN on research_id, both VARCHAR) ...
+[02:26:22.737Z]     nodule-rollup join coverage: 2,465 CPM rows (of 10,871)
+[02:26:22.858Z]     report-rollup join coverage: 4,073 CPM rows (of 10,871)
+[02:26:23.252Z]   cpm_built_at stamped on 4,073 rows touched by v2 rollups.
+[02:26:23.445Z]   cpm_reconciliation_provenance_v1: inserted 'tirads_v2_integration_20260419_phase3'
+[02:26:23.483Z]   invariants: rows=10,871 distinct=10,871
+[02:26:23.483Z] === PHASE 4 — SKIPPED (per --skip-phase 4) ===
+[02:26:23.484Z] === PHASE 5 — registry + __readme sync + unified-rollup view ===
+[02:26:23.876Z]   COMMENT ON TABLE tirads_llm_extracted_v2 (early-cohort clarifier) applied.
+[02:26:24.033Z]   COMMENT refresh on tirads_v2_nodules_raw skipped: NameError("name 'UNIFIED_VIEW' is not defined")
+[02:26:24.678Z]   view manuscript_workspace.tirads_llm_haiku_vs_qwen_v1: 2,872 rows
+[02:26:24.678Z]         concordance_class=agree               n=392
+[02:26:24.678Z]         concordance_class=disagree            n=443
+[02:26:24.678Z]         concordance_class=haiku_only          n=407
+[02:26:24.678Z]         concordance_class=one_run_unscored    n=187
+[02:26:24.678Z]         concordance_class=qwen_only           n=1,443
+[02:26:25.744Z]   registry: upserted 3 entries (raw nodules, raw reports, comparison view).
+[02:26:26.003Z]   __readme columns: ['table_name', 'n_rows', 'n_distinct_research_id', 'description', 'inventoried_at']
+[02:26:26.003Z]   __readme schema is not key/value — skipping marker rows.
+[02:26:26.003Z] === PHASE 6 — final validation ===
+[02:26:26.041Z]   invariants: {'total': 10871, 'distinct_rids': 10871, 'null_rids': 0, 'has_v2_tirads_cat': 2465, 'has_v2_ln_flag': 4073}
+[02:26:26.412Z]   manuscript_workspace.tirads_llm_haiku_vs_qwen_v1 concordance breakdown:
+[02:26:26.412Z]         agree               n=392
+[02:26:26.412Z]         disagree            n=443
+[02:26:26.412Z]         haiku_only          n=407
+[02:26:26.412Z]         one_run_unscored    n=187
+[02:26:26.412Z]         qwen_only           n=1,443
+[02:26:26.446Z]   RIDs with haiku presence in view: 1,110 (expected ~1,429)
+[02:26:26.622Z]   concordance v2 vs preop_tirads_best: 22 cells
+[02:26:26.622Z]         v2=TR1    legacy=1                     n=  180
+[02:26:26.622Z]         v2=TR1    legacy=3                     n=    1
+[02:26:26.622Z]         v2=TR1    legacy=4                     n=    3
+[02:26:26.622Z]         v2=TR1    legacy=5                     n=    1
+[02:26:26.622Z]         v2=TR2    legacy=1                     n=  231
+[02:26:26.622Z]         v2=TR2    legacy=2                     n=  113
+[02:26:26.622Z]         v2=TR2    legacy=4                     n=    6
+[02:26:26.622Z]         v2=TR3    legacy=1                     n=  303
+[02:26:26.622Z]         v2=TR3    legacy=2                     n=  111
+[02:26:26.622Z]         v2=TR3    legacy=3                     n=  144
+[02:26:26.622Z]         v2=TR3    legacy=4                     n=  102
+[02:26:26.622Z]         v2=TR3    legacy=5                     n=    1
+[02:26:26.622Z]         v2=TR4    legacy=1                     n=  413
+[02:26:26.622Z]         v2=TR4    legacy=2                     n=  142
+[02:26:26.622Z]         v2=TR4    legacy=3                     n=  138
+[02:26:26.622Z]         v2=TR4    legacy=4                     n=  171
+[02:26:26.622Z]         v2=TR4    legacy=5                     n=   85
+[02:26:26.622Z]         v2=TR5    legacy=1                     n=   96
+[02:26:26.622Z]         v2=TR5    legacy=2                     n=   44
+[02:26:26.622Z]         v2=TR5    legacy=3                     n=   46
+[02:26:26.622Z]         v2=TR5    legacy=4                     n=   44
+[02:26:26.622Z]         v2=TR5    legacy=5                     n=   88
+[02:26:26.712Z] decisions written to /Users/loganglosser/THYROID_2026/scripts/output/221_tirads_v2_integration.json
+[02:26:26.712Z] log written to /Users/loganglosser/THYROID_2026/scripts/output/221_tirads_v2_integration.log

@@ -1,0 +1,38 @@
+[04:21:48.851Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=env:MOTHERDUCK_TOKEN)
+[04:21:49.643Z] === PRE-PATCH STATE ===
+[04:21:50.541Z]   CPM distribution (all patients):
+[04:21:50.541Z]     NULL   n=6,798
+[04:21:50.541Z]     FALSE  n=3,791
+[04:21:50.541Z]     TRUE   n=282
+[04:21:50.668Z]   Patients with reports: TRUE=282  FALSE=3,791  NULL=0  total=4,073
+[04:21:50.668Z] 
+[04:21:50.668Z] === STEP 1 — rebuild rollup with three-valued precedence (TRUE > FALSE > NULL) ===
+[04:21:50.965Z]   rebuilt tirads_v2_report_patient_rollup_v1: 4,073 rows / 4,073 RIDs
+[04:21:51.000Z]   rollup distribution after patch:
+[04:21:51.000Z]     NULL   n=2,575
+[04:21:51.000Z]     FALSE  n=1,216
+[04:21:51.000Z]     TRUE   n=282
+[04:21:51.000Z] 
+[04:21:51.000Z] === STEP 2 — refresh canonical_patient_master.tirads_v2_any_suspicious_ln_on_us ===
+[04:21:51.313Z]   CPM distribution after refresh (all patients):
+[04:21:51.313Z]     NULL   n=9,373
+[04:21:51.313Z]     FALSE  n=1,216
+[04:21:51.313Z]     TRUE   n=282
+[04:21:51.347Z] 
+[04:21:51.347Z]   Patients with reports — POST-PATCH:
+[04:21:51.347Z]     TRUE  = 282   (was 282)
+[04:21:51.347Z]     FALSE = 1,216   (was 3,791)
+[04:21:51.347Z]     NULL  = 2,575   (was 0)
+[04:21:51.347Z]     total = 4,073   (should remain 4,073)
+[04:21:51.347Z]     deltas: TRUE +0  FALSE -2,575  NULL +2,575
+[04:21:51.347Z] 
+[04:21:51.347Z] === STEP 3 — bump cpm_built_at and insert provenance ===
+[04:21:51.960Z]   cpm_built_at stamped on rollup-touched RIDs.
+[04:21:52.869Z]   provenance row inserted into cpm_reconciliation_provenance_v1
+[04:21:52.869Z] 
+[04:21:52.869Z] === STEP 4 — refresh COMMENT ON COLUMN ===
+[04:21:53.130Z]   COMMENT applied to canonical_patient_master.tirads_v2_any_suspicious_ln_on_us
+[04:21:53.130Z] 
+[04:21:53.130Z] === STEP 5 — Phase 6 invariants ===
+[04:21:53.173Z]   CPM rows=10,871  distinct=10,871  null_rid=0
+[04:21:53.173Z]   ✓ invariants pass

@@ -1,0 +1,102 @@
+{
+  "script": "scripts/221b_suspicious_ln_reextraction.py",
+  "run_ts": "2026-04-19T03:58:26Z",
+  "mode": "apply",
+  "limit": null,
+  "resume": false,
+  "dry_run_apply": false,
+  "phases": {
+    "apply": {
+      "mode": "apply",
+      "ts": "2026-04-19T03:58:26Z",
+      "confusion": {
+        "cells": [
+          {
+            "old": "FALSE",
+            "new": "FALSE",
+            "n": 2214
+          },
+          {
+            "old": "FALSE",
+            "new": "NULL",
+            "n": 2626
+          },
+          {
+            "old": "FALSE",
+            "new": "TRUE",
+            "n": 16
+          },
+          {
+            "old": "NULL",
+            "new": "FALSE",
+            "n": 34
+          },
+          {
+            "old": "NULL",
+            "new": "NULL",
+            "n": 2900
+          },
+          {
+            "old": "NULL",
+            "new": "TRUE",
+            "n": 5
+          },
+          {
+            "old": "TRUE",
+            "new": "FALSE",
+            "n": 409
+          },
+          {
+            "old": "TRUE",
+            "new": "NULL",
+            "n": 265
+          },
+          {
+            "old": "TRUE",
+            "new": "TRUE",
+            "n": 341
+          }
+        ],
+        "by_status": [
+          {
+            "status": "ok",
+            "n": 8810
+          }
+        ],
+        "true_to_false": 409,
+        "true_to_null": 265,
+        "false_to_true": 16,
+        "null_to_true": 5
+      },
+      "raw_distribution_after_update": [
+        {
+          "flag": "NULL",
+          "n": 5791
+        },
+        {
+          "flag": false,
+          "n": 2657
+        },
+        {
+          "flag": true,
+          "n": 362
+        }
+      ],
+      "rollup": {
+        "rows": 4073,
+        "rids": 4073
+      },
+      "cpm_flag_distribution_after": {
+        "true": 282,
+        "false": 3791,
+        "null": 6798
+      },
+      "invariants": {
+        "cpm_rows": 10871,
+        "cpm_distinct_rids": 10871,
+        "null_rids": 0
+      },
+      "ok": true
+    }
+  }
+}

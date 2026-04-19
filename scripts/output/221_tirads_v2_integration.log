@@ -1,0 +1,70 @@
+[02:28:14.131Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[02:28:14.967Z] === PHASE 0 — pre-flight audit (READ-ONLY) ===
+[02:28:16.245Z]   0A: 11 TIRADS-named tables in main:
+[02:28:16.245Z]         extracted_tirads_validated_v1                       est_rows=3439
+[02:28:16.245Z]         note_entities_llm_tirads_granular                   est_rows=11037
+[02:28:16.245Z]         tirads_llm_extracted_v2                             est_rows=5636
+[02:28:16.245Z]         tirads_llm_validation_v2                            est_rows=1225
+[02:28:16.245Z]         tirads_reextraction_queue_v1                        est_rows=4363
+[02:28:16.245Z]         tirads_v2_nodule_patient_rollup_v1                  est_rows=2465
+[02:28:16.245Z]         tirads_v2_nodules_raw                               est_rows=11914
+[02:28:16.245Z]         tirads_v2_report_patient_rollup_v1                  est_rows=4073
+[02:28:16.245Z]         tirads_v2_reports_raw                               est_rows=8810
+[02:28:16.245Z]         us_nodules_tirads                                   est_rows=10862
+[02:28:16.245Z]         us_nodules_tirads_vs_inm_v1_discordance_v1          est_rows=1722
+[02:28:17.932Z]   0B: tirads_llm_extracted_v2: 5,636 rows, 1,429 RIDs
+[02:28:18.466Z]   0C: canonical_patient_master coverage: {'n_cpm': 10871, 'n_dist': 10871, 'has_preop_tirads_best': 3474, 'has_tirads_best_score_v12': 3474, 'has_tirads_worst_combined': 3439}
+[02:28:18.467Z]   0D: inspecting source parquets locally ...
+[02:28:18.487Z]         nodules_clean.parquet : 11,914 rows, 3,021 RIDs (expected 11,914/3,021)
+[02:28:18.487Z]         reports_clean.parquet : 8,810 rows, 4,073 RIDs (expected 8,810/4,073)
+[02:28:18.506Z]         report-only RIDs (no scorable nodule): 1,052 (expected ~1,052; benign/cystic/post-op surveillance)
+[02:28:18.506Z]         nodule-only RIDs (no report row):      0
+[02:28:18.774Z]   0E: legacy RID set (1,429) ∩ new union (4,073) = 1,429
+[02:28:18.774Z]         RIDs in legacy but NOT in new extraction: 0
+[02:28:18.774Z]         ✓ zero RID loss — Phase 4 DROP is safe.
+[02:28:19.112Z]   0F: us_nodules_tirads cohort gap diagnostic:
+[02:28:19.112Z]         us_nodules_tirads RIDs total          : 10,859
+[02:28:19.112Z]         of which in new v2 reports.parquet    : 4,073
+[02:28:19.112Z]         of which MISSING from new v2 reports  : 6,786
+[02:28:19.112Z]         (large 'missing' value = follow-on Script 222+ for re-extracting these patients)
+[02:28:21.404Z] 
+[02:28:21.404Z] ──── PHASE 0 AUDIT SUMMARY ────
+[02:28:21.404Z]   blockers:           none
+[02:28:21.404Z]   legacy table:       present (5,636 rows / 1,429 RIDs)
+[02:28:21.404Z]   legacy RID loss:    0 (Phase 4 drop OK)
+[02:28:21.404Z]   parquets OK:        True
+[02:28:21.404Z]   rids_only_in_reports (no scorable nodule, expected ~1,052): 1052
+[02:28:21.404Z]   already_applied:    {'tirads_v2_nodules_raw': True, 'tirads_v2_reports_raw': True, 'tirads_v2_nodule_patient_rollup_v1': True, 'tirads_v2_report_patient_rollup_v1': True, 'cpm_v2_cols_present': {'tirads_v2_n_nodules_scored': True, 'tirads_v2_worst_category': True, 'tirads_v2_max_points': True, 'tirads_v2_largest_nodule_cm': True, 'tirads_v2_any_ete_on_us': True, 'tirads_v2_any_interval_growth': True, 'tirads_v2_any_fna_recommended': True, 'tirads_v2_n_reports': True, 'tirads_v2_any_suspicious_ln_on_us': True, 'tirads_v2_shortest_followup_months': True}}
+[02:28:21.404Z] ──────────────────────────────
+[02:28:21.406Z] === PHASE 6 — final validation ===
+[02:28:21.459Z]   invariants: {'total': 10871, 'distinct_rids': 10871, 'null_rids': 0, 'has_v2_tirads_cat': 2465, 'has_v2_ln_flag': 4073}
+[02:28:21.782Z]   manuscript_workspace.tirads_llm_haiku_vs_qwen_v1 concordance breakdown:
+[02:28:21.782Z]         agree               n=392
+[02:28:21.782Z]         disagree            n=443
+[02:28:21.782Z]         haiku_only          n=407
+[02:28:21.782Z]         one_run_unscored    n=187
+[02:28:21.782Z]         qwen_only           n=1,443
+[02:28:21.815Z]   legacy RIDs accounted for in view: 1,429 (expected 1,429)
+[02:28:21.992Z]   concordance v2 vs preop_tirads_best: 22 cells
+[02:28:21.992Z]         v2=TR1    legacy=1                     n=  180
+[02:28:21.992Z]         v2=TR1    legacy=3                     n=    1
+[02:28:21.992Z]         v2=TR1    legacy=4                     n=    3
+[02:28:21.992Z]         v2=TR1    legacy=5                     n=    1
+[02:28:21.992Z]         v2=TR2    legacy=1                     n=  231
+[02:28:21.992Z]         v2=TR2    legacy=2                     n=  113
+[02:28:21.992Z]         v2=TR2    legacy=4                     n=    6
+[02:28:21.992Z]         v2=TR3    legacy=1                     n=  303
+[02:28:21.992Z]         v2=TR3    legacy=2                     n=  111
+[02:28:21.992Z]         v2=TR3    legacy=3                     n=  144
+[02:28:21.992Z]         v2=TR3    legacy=4                     n=  102
+[02:28:21.992Z]         v2=TR3    legacy=5                     n=    1
+[02:28:21.992Z]         v2=TR4    legacy=1                     n=  413
+[02:28:21.992Z]         v2=TR4    legacy=2                     n=  142
+[02:28:21.992Z]         v2=TR4    legacy=3                     n=  138
+[02:28:21.992Z]         v2=TR4    legacy=4                     n=  171
+[02:28:21.993Z]         v2=TR4    legacy=5                     n=   85
+[02:28:21.993Z]         v2=TR5    legacy=1                     n=   96
+[02:28:21.993Z]         v2=TR5    legacy=2                     n=   44
+[02:28:21.993Z]         v2=TR5    legacy=3                     n=   46
+[02:28:21.993Z]         v2=TR5    legacy=4                     n=   44
+[02:28:21.993Z]         v2=TR5    legacy=5                     n=   88

@@ -1,0 +1,259 @@
+{
+  "script": "scripts/221_tirads_v2_integration.py",
+  "run_ts": "2026-04-19T02:28:14Z",
+  "source_commit": "d6ca339",
+  "phase_arg": "6",
+  "phases": {
+    "0": {
+      "phase": 0,
+      "started_at": "2026-04-19T02:28:14Z",
+      "ok": true,
+      "blockers": [],
+      "existing_tirads_tables": [
+        [
+          "extracted_tirads_validated_v1",
+          3439
+        ],
+        [
+          "note_entities_llm_tirads_granular",
+          11037
+        ],
+        [
+          "tirads_llm_extracted_v2",
+          5636
+        ],
+        [
+          "tirads_llm_validation_v2",
+          1225
+        ],
+        [
+          "tirads_reextraction_queue_v1",
+          4363
+        ],
+        [
+          "tirads_v2_nodule_patient_rollup_v1",
+          2465
+        ],
+        [
+          "tirads_v2_nodules_raw",
+          11914
+        ],
+        [
+          "tirads_v2_report_patient_rollup_v1",
+          4073
+        ],
+        [
+          "tirads_v2_reports_raw",
+          8810
+        ],
+        [
+          "us_nodules_tirads",
+          10862
+        ],
+        [
+          "us_nodules_tirads_vs_inm_v1_discordance_v1",
+          1722
+        ]
+      ],
+      "legacy_table_present": true,
+      "legacy_rows": 5636,
+      "legacy_rids": 1429,
+      "cpm_legacy_cols_present": {
+        "preop_tirads_best": true,
+        "tirads_best_score_v12": true,
+        "tirads_worst_combined": true
+      },
+      "cpm_summary": {
+        "n_cpm": 10871,
+        "n_dist": 10871,
+        "has_preop_tirads_best": 3474,
+        "has_tirads_best_score_v12": 3474,
+        "has_tirads_worst_combined": 3439
+      },
+      "nod_parquet": {
+        "rows": 11914,
+        "rids": 3021
+      },
+      "rep_parquet": {
+        "rows": 8810,
+        "rids": 4073
+      },
+      "rids_only_in_reports": 1052,
+      "rids_only_in_nodules": 0,
+      "legacy_rid_set_size": 1429,
+      "new_rid_union_size": 4073,
+      "legacy_rid_intersect_new": 1429,
+      "legacy_rids_lost_in_new": 0,
+      "phase4_drop_safe": true,
+      "us_nodules_tirads_coverage": {
+        "us_nodules_rids_total": 10859,
+        "rids_in_new_v2_reports": 4073,
+        "rids_missing_from_new_v2_reports": 6786
+      },
+      "already_applied": {
+        "tirads_v2_nodules_raw": true,
+        "tirads_v2_reports_raw": true,
+        "tirads_v2_nodule_patient_rollup_v1": true,
+        "tirads_v2_report_patient_rollup_v1": true,
+        "cpm_v2_cols_present": {
+          "tirads_v2_n_nodules_scored": true,
+          "tirads_v2_worst_category": true,
+          "tirads_v2_max_points": true,
+          "tirads_v2_largest_nodule_cm": true,
+          "tirads_v2_any_ete_on_us": true,
+          "tirads_v2_any_interval_growth": true,
+          "tirads_v2_any_fna_recommended": true,
+          "tirads_v2_n_reports": true,
+          "tirads_v2_any_suspicious_ln_on_us": true,
+          "tirads_v2_shortest_followup_months": true
+        }
+      }
+    },
+    "6": {
+      "phase": 6,
+      "ok": true,
+      "invariants": {
+        "total": 10871,
+        "distinct_rids": 10871,
+        "null_rids": 0,
+        "has_v2_tirads_cat": 2465,
+        "has_v2_ln_flag": 4073
+      },
+      "haiku_vs_qwen_concordance": [
+        {
+          "class": "agree",
+          "n": 392
+        },
+        {
+          "class": "disagree",
+          "n": 443
+        },
+        {
+          "class": "haiku_only",
+          "n": 407
+        },
+        {
+          "class": "one_run_unscored",
+          "n": 187
+        },
+        {
+          "class": "qwen_only",
+          "n": 1443
+        }
+      ],
+      "haiku_rids_in_view": 1429,
+      "concordance_v2_vs_preop_tirads_best": [
+        {
+          "v2": "TR1",
+          "legacy": 1,
+          "n": 180
+        },
+        {
+          "v2": "TR1",
+          "legacy": 3,
+          "n": 1
+        },
+        {
+          "v2": "TR1",
+          "legacy": 4,
+          "n": 3
+        },
+        {
+          "v2": "TR1",
+          "legacy": 5,
+          "n": 1
+        },
+        {
+          "v2": "TR2",
+          "legacy": 1,
+          "n": 231
+        },
+        {
+          "v2": "TR2",
+          "legacy": 2,
+          "n": 113
+        },
+        {
+          "v2": "TR2",
+          "legacy": 4,
+          "n": 6
+        },
+        {
+          "v2": "TR3",
+          "legacy": 1,
+          "n": 303
+        },
+        {
+          "v2": "TR3",
+          "legacy": 2,
+          "n": 111
+        },
+        {
+          "v2": "TR3",
+          "legacy": 3,
+          "n": 144
+        },
+        {
+          "v2": "TR3",
+          "legacy": 4,
+          "n": 102
+        },
+        {
+          "v2": "TR3",
+          "legacy": 5,
+          "n": 1
+        },
+        {
+          "v2": "TR4",
+          "legacy": 1,
+          "n": 413
+        },
+        {
+          "v2": "TR4",
+          "legacy": 2,
+          "n": 142
+        },
+        {
+          "v2": "TR4",
+          "legacy": 3,
+          "n": 138
+        },
+        {
+          "v2": "TR4",
+          "legacy": 4,
+          "n": 171
+        },
+        {
+          "v2": "TR4",
+          "legacy": 5,
+          "n": 85
+        },
+        {
+          "v2": "TR5",
+          "legacy": 1,
+          "n": 96
+        },
+        {
+          "v2": "TR5",
+          "legacy": 2,
+          "n": 44
+        },
+        {
+          "v2": "TR5",
+          "legacy": 3,
+          "n": 46
+        },
+        {
+          "v2": "TR5",
+          "legacy": 4,
+          "n": 44
+        },
+        {
+          "v2": "TR5",
+          "legacy": 5,
+          "n": 88
+        }
+      ]
+    }
+  }
+}

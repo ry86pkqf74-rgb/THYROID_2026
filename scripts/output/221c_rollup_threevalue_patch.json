@@ -1,0 +1,41 @@
+{
+  "script": "scripts/221c_rollup_threevalue_patch.py",
+  "ts": "2026-04-19T04:21:48Z",
+  "pre_patch_with_reports": {
+    "n_true": 282,
+    "n_false": 3791,
+    "n_null": 0,
+    "total": 4073
+  },
+  "rollup_dist": [
+    {
+      "flag": "NULL",
+      "n": 2575
+    },
+    {
+      "flag": false,
+      "n": 1216
+    },
+    {
+      "flag": true,
+      "n": 282
+    }
+  ],
+  "post_patch_with_reports": {
+    "n_true": 282,
+    "n_false": 1216,
+    "n_null": 2575,
+    "total": 4073
+  },
+  "deltas": {
+    "true": 0,
+    "false": -2575,
+    "null": 2575
+  },
+  "invariants": {
+    "cpm_rows": 10871,
+    "cpm_distinct_rids": 10871,
+    "null_rid": 0,
+    "ok": true
+  }
+}

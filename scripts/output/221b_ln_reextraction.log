@@ -1,0 +1,35 @@
+[03:58:26.389Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=env:MOTHERDUCK_TOKEN)
+[03:58:27.197Z] === MODE: apply ===
+[03:58:27.197Z] === confusion matrix (old vs new) ===
+[03:58:27.221Z]      old |    new | n
+[03:58:27.221Z]   ------ + ------ + -------
+[03:58:27.221Z]    FALSE |  FALSE |   2,214
+[03:58:27.221Z]    FALSE |   NULL |   2,626
+[03:58:27.221Z]    FALSE |   TRUE |      16
+[03:58:27.221Z]     NULL |  FALSE |      34
+[03:58:27.221Z]     NULL |   NULL |   2,900
+[03:58:27.221Z]     NULL |   TRUE |       5
+[03:58:27.221Z]     TRUE |  FALSE |     409
+[03:58:27.221Z]     TRUE |   NULL |     265
+[03:58:27.221Z]     TRUE |   TRUE |     341
+[03:58:27.223Z]   by status:
+[03:58:27.223Z]     ok              n=8,810
+[03:58:27.223Z]   TRUE→FALSE flips: 409  (audit predicted ~360)
+[03:58:27.223Z]   TRUE→NULL  flips: 265   (audit predicted ~50)
+[03:58:27.223Z]   FALSE→TRUE flips: 16
+[03:58:27.223Z]   NULL →TRUE flips: 5
+[03:58:27.223Z]   staging result rows in canonical (TEMP) ...
+[03:58:27.935Z]   staged: 8,810 rows
+[03:58:28.853Z]   ALTER TABLE tirads_v2_reports_raw ADD COLUMN suspicious_ln_rationale VARCHAR
+[03:58:29.071Z]   UPDATE tirads_v2_reports_raw SET suspicious_ln_present = stage.new_flag, suspicious_ln_rationale = stage.new_rationale ...
+[03:58:29.391Z]   post-update report-level distribution:
+[03:58:29.391Z]     NULL    n=5,791
+[03:58:29.391Z]     False   n=2,657
+[03:58:29.391Z]     True    n=362
+[03:58:29.391Z]   rebuilding tirads_v2_report_patient_rollup_v1 ...
+[03:58:29.762Z]   rebuilt tirads_v2_report_patient_rollup_v1: 4,073 rows / 4,073 RIDs
+[03:58:29.762Z]   refreshing canonical_patient_master.tirads_v2_any_suspicious_ln_on_us ...
+[03:58:29.941Z]   CPM tirads_v2_any_suspicious_ln_on_us after: TRUE=282 FALSE=3,791 NULL=6,798
+[03:58:30.827Z]   provenance row inserted into cpm_reconciliation_provenance_v1
+[03:58:31.502Z]   COMMENTs applied to raw + CPM columns.
+[03:58:31.536Z]   invariants: cpm rows=10,871 distinct=10,871 null=0
