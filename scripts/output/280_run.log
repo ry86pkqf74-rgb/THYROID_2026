@@ -1,7 +1,48 @@
-[07:12:16.073Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
-[07:12:16.597Z] === PHASE 1 — pre-mutation snapshot of CPM ===
-[07:12:18.983Z]   idempotent reuse: canonical_patient_master_pre280_20260419T071115Z already exists (found 1 pre280 snapshot(s); using newest)
-[07:12:18.983Z]   COMMENT ON TABLE "Thyroid 2026 UPdated".archive_pub_v1_0.canonical_patient_master_pre280_20260419T071115Z IS 'Script 280 pre-mutation snapshot of canonical_patient_master. Reason: pre-rollu…
-[07:12:20.161Z]   snapshot canonical_patient_master_pre280_20260419T071115Z: rows=10,871 rids=10,871
-[07:12:20.161Z]   gate snapshot_rows_eq_10871: OK — {'observed': 10871, 'expected': 10871}
-[07:12:20.161Z]   gate snapshot_rids_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[07:37:49.152Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[07:37:49.742Z] === PHASE 0 — pre-flight audit (READ-ONLY) ===
+[07:37:50.161Z]   0A: source rows=26,584 rids=10,862 models=qwen2.5-32b
+[07:37:50.161Z]       extracted_at min=2026-04-19T03:07:41.142851+00:00  max=2026-04-19T04:22:54.639454+00:00
+[07:37:50.161Z]   gate source_n_rows_eq_26584: OK — {'observed': 26584, 'expected': 26584}
+[07:37:50.161Z]   gate source_n_rids_eq_10862: OK — {'observed': 10862, 'expected': 10862}
+[07:37:50.161Z]   gate source_model_eq_qwen25_32b: OK — {'observed': 'qwen2.5-32b', 'expected': 'qwen2.5-32b'}
+[07:37:50.161Z]   gate source_extracted_at_min_starts_with_2026-04-19T03:07: OK — {'observed': '2026-04-19T03:07:41.142851+00:00', 'expected_prefix': '2026-04-19T03:07'}
+[07:37:50.161Z]   gate source_extracted_at_max_starts_with_2026-04-19T04:22: OK — {'observed': '2026-04-19T04:22:54.639454+00:00', 'expected_prefix': '2026-04-19T04:22'}
+[07:37:50.161Z]   0B: computing pinned content hashes (md_agg_rjhash / ndhash / srchash)…
+[07:37:50.381Z]       md_agg_rjhash  observed=786e05480dec4590494bcf63114603fd  pinned=786e05480dec4590494bcf63114603fd
+[07:37:50.381Z]       md_agg_ndhash  observed=6723fea873c8b1e92f7fa2bcfa6d8fca  pinned=6723fea873c8b1e92f7fa2bcfa6d8fca
+[07:37:50.381Z]       md_agg_srchash observed=ad3654550fd09b4bf0649ce5a0cf67d4 pinned=ad3654550fd09b4bf0649ce5a0cf67d4
+[07:37:50.381Z]   gate pinned_md_agg_rjhash_match: OK — {'observed': '786e05480dec4590494bcf63114603fd', 'pinned': '786e05480dec4590494bcf63114603fd'}
+[07:37:50.381Z]   gate pinned_md_agg_ndhash_match: OK — {'observed': '6723fea873c8b1e92f7fa2bcfa6d8fca', 'pinned': '6723fea873c8b1e92f7fa2bcfa6d8fca'}
+[07:37:50.381Z]   gate pinned_md_agg_srchash_match: OK — {'observed': 'ad3654550fd09b4bf0649ce5a0cf67d4', 'pinned': 'ad3654550fd09b4bf0649ce5a0cf67d4'}
+[07:37:50.512Z]   gate api_timeout_rows_eq_3: OK — {'observed': 3, 'expected': 3}
+[07:37:50.578Z]   gate preprocess_script_version_uniform: OK — {'observed_distinct_count': 1, 'values': 'v4_9domain_rerun_2026-04-18'}
+[07:37:50.578Z]   gate preprocess_script_version_value_match: OK — {'observed': 'v4_9domain_rerun_2026-04-18', 'expected': 'v4_9domain_rerun_2026-04-18'}
+[07:37:50.606Z]   gate preprocess_batch_id_uniform: OK — {'observed_distinct_count': 1}
+[07:37:50.649Z]   gate llm_base_url_eq_vllm_endpoint: OK — {'observed': 'http://93.91.156.83:53202/v1', 'expected': 'http://93.91.156.83:53202/v1'}
+[07:37:50.709Z]   gate source_no_null_identifier_cols: OK — {'null_note_row_id': 0, 'null_research_id': 0, 'null_result_json': 0, 'null_extracted_at': 0, 'null_note_date': 0}
+[07:37:50.747Z]   gate source_no_duplicate_note_row_ids: OK — {'observed_dup_groups': 0}
+[07:37:50.849Z]   0E: CPM rows=10,871 rids=10,871 null_rid=0 null_fna=0
+[07:37:50.849Z]   gate cpm_rows_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[07:37:50.850Z]   gate cpm_rids_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[07:37:50.850Z]   gate cpm_no_null_rid: OK — {'observed': 0}
+[07:37:50.850Z]   gate cpm_no_null_fna_path_outcome: OK — {'observed': 0}
+[07:37:50.891Z]   0F: STALE nlp_synoptic_has_data TRUE count = 8 (expected 8; >100 means someone else already promoted)
+[07:37:50.891Z]   gate stale_has_data_eq_8: OK — {'observed': 8, 'expected': 8}
+[07:37:50.891Z]   gate stale_has_data_not_already_promoted: OK — {'observed': 8, 'guard': '>100 would mean rollup was promoted by another script'}
+[07:37:52.895Z]   0G: registry synoptic row total_rows=11037 total_patients=5641 canonical_version=v1_0
+[07:37:52.895Z]   gate registry_total_rows_stale_eq_11037: OK — {'observed': 11037, 'expected': 11037}
+[07:37:52.895Z]   gate registry_total_patients_stale_eq_5641: OK — {'observed': 5641, 'expected': 5641}
+[07:37:52.895Z]   gate registry_not_already_updated_to_post_rerun: OK — {'detail': 'registry already shows post-rerun counts — someone updated it'}
+[07:37:53.038Z]   0H: source rids_with_entity_value=4992 (expected 4992; source-integrity, all extracted)
+[07:37:53.038Z]       source rows_with_entity_value=11220 (used by Phase 2 sum-gate sanity check)
+[07:37:53.038Z]   gate source_rids_with_entity_eq_4992: OK — {'observed': 4992, 'expected': 4992}
+[07:37:53.658Z]       source rids_with_positive_entity=4835 (expected 4835; Phase 2 promotion target)
+[07:37:53.658Z]       source notes_with_positive_entity=10801 (expected 10801; Phase 2 sum_n_notes target)
+[07:37:53.658Z]   gate source_rids_with_positive_entity_eq_4835: OK — {'observed': 4835, 'expected': 4835}
+[07:37:53.760Z]   gate pre_rerun_source_archive_snapshot_present: OK — {'detail': 'expected at least one snapshot in "Thyroid 2026 UPdated".archive_pub_v1_0 matching note_entities_llm_synoptic_pathology_enrichment_pre%'}
+[07:37:53.761Z] 
+[07:37:53.761Z] ──── PHASE 0 SUMMARY ────
+[07:37:53.761Z]   gates: 27 total, 27 passed, 0 blockers
+[07:37:53.761Z]   preflight JSON: scripts/output/280_preflight.json
+[07:37:53.761Z]   ALL GATES PASSED — Phase 1 may proceed.
+[07:37:53.761Z] ─────────────────────────

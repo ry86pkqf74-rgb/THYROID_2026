@@ -1,6 +1,6 @@
 {
   "phase": 0,
-  "started_at": "2026-04-19T06:55:08Z",
+  "started_at": "2026-04-19T07:37:49Z",
   "token_mode": "motherduck.local.toml:MD_SA_TOKEN",
   "canonical_db": "thyroid_canonical_publication_v1_0",
   "source_table": "main.note_entities_llm_synoptic_pathology_enrichment",
@@ -204,6 +204,14 @@
       }
     },
     {
+      "name": "source_rids_with_positive_entity_eq_4835",
+      "ok": true,
+      "detail": {
+        "observed": 4835,
+        "expected": 4835
+      }
+    },
+    {
       "name": "pre_rerun_source_archive_snapshot_present",
       "ok": true,
       "detail": {
@@ -254,8 +262,10 @@
     },
     "source_rids_with_entity_value": 4992,
     "source_rows_with_entity_value": 11220,
+    "source_rids_with_positive_entity": 4835,
+    "source_notes_with_positive_entity": 10801,
     "pre_rerun_source_archive_snapshot_present": true
   },
-  "finished_at": "2026-04-19T06:55:13Z",
+  "finished_at": "2026-04-19T07:37:53Z",
   "all_gates_passed": true
 }
