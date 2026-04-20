@@ -1108,7 +1108,7 @@ def phase_6(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     has_true = con.execute(
         f"SELECT COUNT(*) FILTER (WHERE nlp_synoptic_has_data) FROM main.{CPM_TABLE}"
     ).fetchone()[0]
-    _gate(out, "C_has_data_within_4992_pm10",
+    _gate(out, "C_has_data_within_4835_pm10",
           abs(int(has_true) - HAS_DATA_TARGET) <= HAS_DATA_TOLERANCE,
           {"observed": int(has_true), "target": HAS_DATA_TARGET})
 
