@@ -842,6 +842,13 @@ def phase_3(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     # Always update the count/version fields (idempotent — same value).
     # Append description suffix ONLY if the marker isn't already present, so
     # repeated --phase 3 invocations don't double-append.
+    #
+    # NOTE on future re-extraction: EXPECTED_SOURCE_ROWS / EXPECTED_SOURCE_RIDS
+    # are pinned to the 2026-04-19 qwen2.5-32b rerun (26584 / 10862). If a
+    # future re-extraction grows the source table, this UPDATE will silently
+    # understate the registry until Phase 0's source-hash gate catches the
+    # drift and HALTs. That guard is intentional — Phase 0 is the single
+    # source-of-truth for "the source table matches what the rollup expects".
     con.execute(
         f"""
         UPDATE {WS_SCHEMA}.{REGISTRY_TABLE}
@@ -873,14 +880,34 @@ def phase_3(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     _gate(out, "registry_total_patients_post_eq_10862", rp == EXPECTED_SOURCE_RIDS,
           {"observed": int(rp), "expected": EXPECTED_SOURCE_RIDS})
 
-    desc_default = (
-        "Synoptic pathology NLP rollup: "
-        "has_data=true means >=1 note had extracted entities; "
-        "n_notes = count of notes with at least one entity; "
-        "n_entities = total entity_value count across all notes; "
-        "key_finding = highest-priority entity_value (tumor_variant > "
-        "pT_stage > pN_stage > margin_status > lvi > ete > multifocality)."
-    )
+    # Per-column descriptions (verbatim from the user's review on 2026-04-19;
+    # see THYROID_2026 chat log "Phase 3 dict spec"). Each row gets its own
+    # text — the 4 columns have distinct semantics that one blanket string
+    # would obscure.
+    DESC_BY_COL: dict[str, str] = {
+        "nlp_synoptic_has_data": (
+            "TRUE iff patient has >=1 positive-entity extraction "
+            "(confidence>=0.5, present_or_negated='present' OR NULL) from "
+            "note_entities_llm_synoptic_pathology_enrichment; FALSE if "
+            "patient is in source with no positive entities or absent from "
+            "source; NULL for no CPM patient."
+        ),
+        "nlp_synoptic_n_notes": (
+            "Count of distinct notes per patient with >=1 positive extracted "
+            "entity. 0 when has_data=FALSE."
+        ),
+        "nlp_synoptic_n_entities": (
+            "Total positive entities extracted across all notes for this "
+            "patient. 0 when has_data=FALSE."
+        ),
+        "nlp_synoptic_key_finding": (
+            "Highest-priority entity value for this patient, resolved via "
+            "KEY_FINDING_PRIORITY (tumor_variant > pT_stage > pN_stage > "
+            "margin_status > lvi_present > ete > multifocality > other) "
+            "tiebroken by confidence DESC then entity_value alpha. NULL "
+            "when has_data=FALSE."
+        ),
+    }
     # data_dictionary_v279 has no `provenance_note` column; the project's
     # convention is to record script-era notes in the `v279_note` text field
     # (initialized to '' by script 271b on 2026-04-18). Also touch
@@ -890,30 +917,29 @@ def phase_3(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
         "Re-promoted by Script 280 (2026-04-19) from qwen2.5-32b synoptic rerun."
     )
     rebuilt_by = "script280_2026-04-19"
-    cols = [
-        "nlp_synoptic_has_data",
-        "nlp_synoptic_n_notes",
-        "nlp_synoptic_n_entities",
-        "nlp_synoptic_key_finding",
-    ]
-    for col in cols:
+    # CRITICAL: existing rows have description = '' (empty string), NOT NULL.
+    # COALESCE('', ?) would return '' (no-op). Use COALESCE(NULLIF(d,''), ?)
+    # so empty strings are treated as "needs default" while non-empty existing
+    # text is preserved. v279_note is overwritten unconditionally — it should
+    # always reflect the latest script that touched the row.
+    for col, col_desc in DESC_BY_COL.items():
         con.execute(
             f"""
             UPDATE main.{DICTIONARY_TABLE}
-            SET description = COALESCE(description, ?),
+            SET description = COALESCE(NULLIF(description, ''), ?),
                 v279_note   = ?,
                 rebuilt_at  = CURRENT_TIMESTAMP,
                 rebuilt_by  = ?
             WHERE column_name = ? AND table_name = ?
             """,
-            [desc_default, v279_note, rebuilt_by, col, CPM_TABLE],
+            [col_desc, v279_note, rebuilt_by, col, CPM_TABLE],
         )
     dict_check = con.execute(
         f"""
         SELECT column_name,
-               description IS NOT NULL AS has_desc,
-               v279_note               AS v279_note,
-               rebuilt_by              AS rebuilt_by
+               description AS description,
+               v279_note   AS v279_note,
+               rebuilt_by  AS rebuilt_by
         FROM main.{DICTIONARY_TABLE}
         WHERE table_name = ?
           AND column_name IN ('nlp_synoptic_has_data', 'nlp_synoptic_n_notes',
@@ -922,13 +948,21 @@ def phase_3(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
         """,
         [CPM_TABLE],
     ).df()
+    # Drift-resistant gate: assert each row's description equals the EXACT
+    # expected per-column string, plus v279_note + rebuilt_by match. Catches
+    # the COALESCE-on-empty-string bug because empty descriptions would not
+    # equal the expected non-empty text.
+    expected_desc_per_row = dict_check["column_name"].map(DESC_BY_COL)
+    descriptions_exact_match = (dict_check["description"] == expected_desc_per_row).all()
     out["dictionary_after"] = dict_check.to_dict(orient="records")
-    _gate(out, "dictionary_4_cols_have_desc_and_v279_note",
+    out["dictionary_descriptions_match_expected"] = bool(descriptions_exact_match)
+    _gate(out, "dictionary_4_cols_have_exact_per_col_desc_and_v279_note",
           len(dict_check) == 4
-          and dict_check["has_desc"].all()
+          and descriptions_exact_match
           and (dict_check["v279_note"] == v279_note).all()
           and (dict_check["rebuilt_by"] == rebuilt_by).all(),
-          {"rows": dict_check.to_dict(orient="records")})
+          {"rows": dict_check.to_dict(orient="records"),
+           "descriptions_exact_match": bool(descriptions_exact_match)})
 
     out["finished_at"] = utcnow_iso()
     if out["blockers"]:
