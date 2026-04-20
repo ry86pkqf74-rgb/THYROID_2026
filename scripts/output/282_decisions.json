@@ -621,10 +621,43 @@
       "live_parquet_dedup_ndhash": "ce39a4e0773474fdcd625725939fa93c",
       "live_parquet_dedup_srchash": "509dbc6c5ed632f14a94532a543e89ca",
       "finished_at": "2026-04-20T23:51:58Z"
+    },
+    "4": {
+      "phase": 4,
+      "started_at": "2026-04-20T23:52:16Z",
+      "gates": [
+        {
+          "name": "snapshot_rows_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "snapshot_rids_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        }
+      ],
+      "blockers": [],
+      "ctas_action": "created_new",
+      "snapshot_table": "\"Thyroid 2026 UPdated\".archive_pub_v1_0.canonical_patient_master_pre282_20260420T235218Z",
+      "snapshot_table_unqualified": "canonical_patient_master_pre282_20260420T235218Z",
+      "comment_action": "applied",
+      "comment": "Script 282 pre-mutation snapshot of canonical_patient_master. Reason: rollback anchor before rebuilding nlp_airway_* family from qwen3:32b stale state (has_data TRUE=1123, NULL=9748, sum_n_notes=1387, sum_n_entities=2452) to qwen2.5-32b state (target ~1634 TRUE / 0 NULLs). Created at 2026-04-20T23:52:25Z.",
+      "snapshot_rows": 10871,
+      "snapshot_rids": 10871,
+      "snapshot_other_cols_md5": "fa3e497104377d12d338bd734c3847ac",
+      "snapshot_other_cols_count": 1532,
+      "finished_at": "2026-04-20T23:52:28Z"
     }
   },
-  "last_started_at": "2026-04-20T23:51:57Z",
-  "last_phase_arg": "3",
-  "last_finished_at": "2026-04-20T23:51:58Z",
+  "last_started_at": "2026-04-20T23:52:15Z",
+  "last_phase_arg": "4",
+  "last_finished_at": "2026-04-20T23:52:28Z",
   "last_return_code": 0
 }

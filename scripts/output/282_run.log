@@ -86,3 +86,10 @@
 [23:51:58.419Z]   gate md_rjhash_eq_live_parquet_dedup_rjhash: OK — {'md': 'b4b28c1f1bbd53156c72c043f3f748ab', 'live_parquet': 'b4b28c1f1bbd53156c72c043f3f748ab'}
 [23:51:58.419Z]   gate md_ndhash_eq_live_parquet_dedup_ndhash: OK — {'md': 'ce39a4e0773474fdcd625725939fa93c', 'live_parquet': 'ce39a4e0773474fdcd625725939fa93c'}
 [23:51:58.419Z]   gate md_srchash_eq_live_parquet_dedup_srchash: OK — {'md': '509dbc6c5ed632f14a94532a543e89ca', 'live_parquet': '509dbc6c5ed632f14a94532a543e89ca'}
+[23:52:15.988Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=env:MOTHERDUCK_TOKEN)
+[23:52:16.462Z] === PHASE 4 — pre-mutation CPM snapshot to archive_pub_v1_0 ===
+[23:52:18.208Z]   CTAS "Thyroid 2026 UPdated".archive_pub_v1_0.canonical_patient_master_pre282_20260420T235218Z AS SELECT * FROM main.canonical_patient_master ...
+[23:52:26.821Z]   snapshot canonical_patient_master_pre282_20260420T235218Z: rows=10,871 rids=10,871
+[23:52:26.821Z]   gate snapshot_rows_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[23:52:26.821Z]   gate snapshot_rids_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[23:52:28.429Z]   snapshot non-nlp_airway_* MD5 = fa3e497104377d12d338bd734c3847ac  (over 1532 columns; pinned for Phase 6 invariant C)
