@@ -76,3 +76,13 @@
 [23:51:36.055Z]   gate post_load_n_llm_sdk_version_eq_0: OK — {'observed': 0}
 [23:51:36.055Z]   gate post_load_n_provider_system_fingerprint_eq_0: OK — {'observed': 0}
 [23:51:36.174Z]   gate post_load_schema_eq_pre_archive_23_cols: OK — {'observed': ['note_row_id', 'domain', 'llm_model', 'llm_base_url', 'extracted_at', 'result_json', 'research_id', 'note_type', 'note_date', 'linkage_date', 'source_workbook', 'source_sheet', 'source_column', 'note_index', 'preprocess_batch_id', 'preprocessed_at_utc', 'preprocess_script_version', 'entity_domain', 'llm_provider', 'llm_sdk', 'llm_sdk_version', 'provider_returned_model', 'provider_system_fingerprint'], 'expected': ['note_row_id', 'domain', 'llm_model', 'llm_base_url', 'extracted_at', 'result_json', 'research_id', 'note_type', 'note_date', 'linkage_date', 'source_workbook', 'source_sheet', 'source_column', 'note_index', 'preprocess_batch_id', 'preprocessed_at_utc', 'preprocess_script_version', 'entity_domain', 'llm_provider', 'llm_sdk', 'llm_sdk_version', 'provider_returned_model', 'provider_system_fingerprint']}
+[23:51:57.004Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=env:MOTHERDUCK_TOKEN)
+[23:51:57.572Z] === PHASE 3 — post-load byte-hash parity (MD == parquet after dedup) ===
+[23:51:58.263Z]   MD     : rj=b4b28c1f1bbd53156c72c043f3f748ab  nd=ce39a4e0773474fdcd625725939fa93c  src=509dbc6c5ed632f14a94532a543e89ca
+[23:51:58.263Z]   pinned : rj=b4b28c1f1bbd53156c72c043f3f748ab  nd=ce39a4e0773474fdcd625725939fa93c  src=509dbc6c5ed632f14a94532a543e89ca
+[23:51:58.263Z]   gate md_rjhash_eq_parquet_dedup_rjhash: OK — {'observed': 'b4b28c1f1bbd53156c72c043f3f748ab', 'pinned': 'b4b28c1f1bbd53156c72c043f3f748ab'}
+[23:51:58.263Z]   gate md_ndhash_eq_parquet_dedup_ndhash: OK — {'observed': 'ce39a4e0773474fdcd625725939fa93c', 'pinned': 'ce39a4e0773474fdcd625725939fa93c'}
+[23:51:58.264Z]   gate md_srchash_eq_parquet_dedup_srchash: OK — {'observed': '509dbc6c5ed632f14a94532a543e89ca', 'pinned': '509dbc6c5ed632f14a94532a543e89ca'}
+[23:51:58.419Z]   gate md_rjhash_eq_live_parquet_dedup_rjhash: OK — {'md': 'b4b28c1f1bbd53156c72c043f3f748ab', 'live_parquet': 'b4b28c1f1bbd53156c72c043f3f748ab'}
+[23:51:58.419Z]   gate md_ndhash_eq_live_parquet_dedup_ndhash: OK — {'md': 'ce39a4e0773474fdcd625725939fa93c', 'live_parquet': 'ce39a4e0773474fdcd625725939fa93c'}
+[23:51:58.419Z]   gate md_srchash_eq_live_parquet_dedup_srchash: OK — {'md': '509dbc6c5ed632f14a94532a543e89ca', 'live_parquet': '509dbc6c5ed632f14a94532a543e89ca'}
