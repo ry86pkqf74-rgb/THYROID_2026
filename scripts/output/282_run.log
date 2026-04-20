@@ -55,3 +55,24 @@
 [23:51:09.296Z]   gate archive_rids_eq_pre_rids: OK — {'observed': 5641, 'pre_archive': 5641}
 [23:51:09.296Z]   gate archive_rows_eq_11037: OK — {'observed': 11037, 'expected': 11037}
 [23:51:09.296Z]   gate archive_model_eq_qwen3_32b: OK — {'observed': 'qwen3:32b', 'expected': 'qwen3:32b'}
+[23:51:28.896Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=env:MOTHERDUCK_TOKEN)
+[23:51:29.661Z] === PHASE 2 — load parquet to MD with synth provenance + dedup ===
+[23:51:31.328Z]   gate phase_1_archive_present_before_load: OK — {'newest_archive': 'note_entities_llm_airway_invasion_pre9domainv4_20260420T235106Z'}
+[23:51:31.328Z]   loading parquet note_entities_llm_airway_invasion.parquet -> main.note_entities_llm_airway_invasion (with dedup by note_row_id, last extracted_at wins)...
+[23:51:34.559Z]   reprojecting columns to lock ordinal_position vs pre-archive schema...
+[23:51:36.055Z]   post-load: rows=48,169 rids=10,856 nrids=48,169
+[23:51:36.055Z]              models=qwen2.5-32b  base_urls=http://213.5.130.43:20049/v1
+[23:51:36.055Z]              entity_domain=airway_invasion  llm_provider=vllm  llm_sdk=openai
+[23:51:36.055Z]              provider_returned_model=qwen2.5-32b  sdk_version_set=0  fingerprint_set=0
+[23:51:36.055Z]   gate post_load_n_rows_eq_48169: OK — {'observed': 48169, 'expected': 48169}
+[23:51:36.055Z]   gate post_load_n_rids_eq_10856: OK — {'observed': 10856, 'expected': 10856}
+[23:51:36.055Z]   gate post_load_nrids_eq_rows_dedup_invariant: OK — {'detail': 'post-dedup, 1 row per note_row_id; nrids must equal rows', 'n_nrids': 48169, 'n_rows': 48169}
+[23:51:36.055Z]   gate post_load_model_eq_qwen25_32b: OK — {'observed': 'qwen2.5-32b', 'expected': 'qwen2.5-32b'}
+[23:51:36.055Z]   gate post_load_base_url_eq_pinned: OK — {'observed': 'http://213.5.130.43:20049/v1', 'expected': 'http://213.5.130.43:20049/v1'}
+[23:51:36.055Z]   gate post_load_entity_domain_eq_synth: OK — {'observed': 'airway_invasion', 'expected': 'airway_invasion'}
+[23:51:36.055Z]   gate post_load_llm_provider_eq_synth: OK — {'observed': 'vllm', 'expected': 'vllm'}
+[23:51:36.055Z]   gate post_load_llm_sdk_eq_synth: OK — {'observed': 'openai', 'expected': 'openai'}
+[23:51:36.055Z]   gate post_load_provider_returned_model_eq_synth: OK — {'observed': 'qwen2.5-32b', 'expected': 'qwen2.5-32b'}
+[23:51:36.055Z]   gate post_load_n_llm_sdk_version_eq_0: OK — {'observed': 0}
+[23:51:36.055Z]   gate post_load_n_provider_system_fingerprint_eq_0: OK — {'observed': 0}
+[23:51:36.174Z]   gate post_load_schema_eq_pre_archive_23_cols: OK — {'observed': ['note_row_id', 'domain', 'llm_model', 'llm_base_url', 'extracted_at', 'result_json', 'research_id', 'note_type', 'note_date', 'linkage_date', 'source_workbook', 'source_sheet', 'source_column', 'note_index', 'preprocess_batch_id', 'preprocessed_at_utc', 'preprocess_script_version', 'entity_domain', 'llm_provider', 'llm_sdk', 'llm_sdk_version', 'provider_returned_model', 'provider_system_fingerprint'], 'expected': ['note_row_id', 'domain', 'llm_model', 'llm_base_url', 'extracted_at', 'result_json', 'research_id', 'note_type', 'note_date', 'linkage_date', 'source_workbook', 'source_sheet', 'source_column', 'note_index', 'preprocess_batch_id', 'preprocessed_at_utc', 'preprocess_script_version', 'entity_domain', 'llm_provider', 'llm_sdk', 'llm_sdk_version', 'provider_returned_model', 'provider_system_fingerprint']}
