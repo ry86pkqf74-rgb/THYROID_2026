@@ -1,0 +1,121 @@
+{
+  "script": "scripts/280_synoptic_rollup_rebuild.py",
+  "started_at": "2026-04-20T21:42:21Z",
+  "phase_arg": "6",
+  "phases": {
+    "6": {
+      "phase": 6,
+      "started_at": "2026-04-20T21:42:21Z",
+      "gates": [
+        {
+          "name": "A_cpm_rows_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871
+          }
+        },
+        {
+          "name": "A_cpm_no_null_rid",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "A_cpm_no_null_fna",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "B_source_rows_unchanged",
+          "ok": true,
+          "detail": {
+            "observed": 26584
+          }
+        },
+        {
+          "name": "B_source_rids_unchanged",
+          "ok": true,
+          "detail": {
+            "observed": 10862
+          }
+        },
+        {
+          "name": "B_source_model_unchanged",
+          "ok": true,
+          "detail": {
+            "observed": "qwen2.5-32b"
+          }
+        },
+        {
+          "name": "C_has_data_within_4835_pm10",
+          "ok": true,
+          "detail": {
+            "observed": 4835,
+            "target": 4835
+          }
+        },
+        {
+          "name": "D_no_deprecated_named_tables_in_main",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "E_registry_needs_manual_review_eq_0",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "F_thin_wrapper_provisional_eq_24",
+          "ok": true,
+          "detail": {
+            "observed": 24,
+            "expected": 24,
+            "source_table": "manuscript_workspace.manuscript_dive_map_v1"
+          }
+        },
+        {
+          "name": "G_baseline_ws_views_all_present",
+          "ok": true,
+          "detail": {
+            "baseline_count": 67,
+            "actual_count": 68,
+            "missing_baseline": [],
+            "additions_beyond_baseline": [
+              "tirads_llm_haiku_vs_qwen_v1"
+            ],
+            "note": "Workspace can grow (new cohort views land routinely); we only fail if a baseline view is deleted. Additions are logged for audit."
+          }
+        }
+      ],
+      "blockers": [],
+      "observed": {
+        "cpm_n_rows": 10871,
+        "cpm_null_rid": 0,
+        "cpm_null_fna": 0,
+        "source_n_rows": 26584,
+        "source_n_rids": 10862,
+        "source_models": "qwen2.5-32b",
+        "post_has_data_true": 4835,
+        "deprecated_named_tables_after": 0,
+        "registry_needs_manual_review": 0,
+        "thin_wrapper_provisional": 24,
+        "manuscript_workspace_view_count_actual": 68,
+        "manuscript_workspace_view_count_baseline": 67,
+        "manuscript_workspace_views_missing_from_baseline": [],
+        "manuscript_workspace_views_additions_beyond_baseline": [
+          "tirads_llm_haiku_vs_qwen_v1"
+        ]
+      },
+      "finished_at": "2026-04-20T21:42:23Z"
+    }
+  },
+  "finished_at": "2026-04-20T21:42:23Z",
+  "return_code": 0
+}
