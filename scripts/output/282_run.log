@@ -46,3 +46,12 @@
 [23:50:35.588Z]   gates: 32 total, 32 passed, 0 blockers
 [23:50:35.588Z]   ALL GATES PASSED — Phase 1 may proceed.
 [23:50:35.588Z] ─────────────────────────
+[23:51:04.260Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=env:MOTHERDUCK_TOKEN)
+[23:51:04.830Z] === PHASE 1 — archive current MD source to archive_pub_v1_0 ===
+[23:51:05.204Z]   pre-archive source: rows=11,037 rids=5,641 model=qwen3:32b
+[23:51:06.788Z]   CTAS "Thyroid 2026 UPdated".archive_pub_v1_0.note_entities_llm_airway_invasion_pre9domainv4_20260420T235106Z AS SELECT * FROM main.note_entities_llm_airway_invasion ...
+[23:51:09.296Z]   archive note_entities_llm_airway_invasion_pre9domainv4_20260420T235106Z: rows=11,037 rids=5,641 model=qwen3:32b
+[23:51:09.296Z]   gate archive_rows_eq_pre_rows: OK — {'observed': 11037, 'pre_archive': 11037}
+[23:51:09.296Z]   gate archive_rids_eq_pre_rids: OK — {'observed': 5641, 'pre_archive': 5641}
+[23:51:09.296Z]   gate archive_rows_eq_11037: OK — {'observed': 11037, 'expected': 11037}
+[23:51:09.296Z]   gate archive_model_eq_qwen3_32b: OK — {'observed': 'qwen3:32b', 'expected': 'qwen3:32b'}
