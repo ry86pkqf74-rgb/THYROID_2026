@@ -5438,10 +5438,120 @@
         }
       ],
       "finished_at": "2026-04-20T23:52:48Z"
+    },
+    "6": {
+      "phase": 6,
+      "started_at": "2026-04-20T23:53:24Z",
+      "gates": [
+        {
+          "name": "A_cpm_rows_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "A_cpm_no_null_rid",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "A_cpm_no_null_fna_path_outcome",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "B_cpm_rids_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "C_other_cpm_cols_unchanged_vs_phase4_snapshot",
+          "ok": true,
+          "detail": {
+            "live": "fa3e497104377d12d338bd734c3847ac",
+            "snapshot": "fa3e497104377d12d338bd734c3847ac"
+          }
+        },
+        {
+          "name": "D_source_rows_eq_48169",
+          "ok": true,
+          "detail": {
+            "observed": 48169,
+            "expected": 48169
+          }
+        },
+        {
+          "name": "D_source_rids_eq_10856",
+          "ok": true,
+          "detail": {
+            "observed": 10856,
+            "expected": 10856
+          }
+        },
+        {
+          "name": "D_source_model_eq_qwen25_32b",
+          "ok": true,
+          "detail": {
+            "observed": "qwen2.5-32b",
+            "expected": "qwen2.5-32b"
+          }
+        },
+        {
+          "name": "E_archive_pre9domainv4_exists_with_11037_rows",
+          "ok": true,
+          "detail": {
+            "archives_present": [
+              "note_entities_llm_airway_invasion_pre9domainv4_20260420T235106Z"
+            ],
+            "newest_archive": "note_entities_llm_airway_invasion_pre9domainv4_20260420T235106Z",
+            "row_count": 11037
+          }
+        },
+        {
+          "name": "F_cpm_pre282_snapshot_exists_with_10871_rows",
+          "ok": true,
+          "detail": {
+            "snapshots_present": [
+              "canonical_patient_master_pre282_20260420T235218Z"
+            ],
+            "newest_snapshot": "canonical_patient_master_pre282_20260420T235218Z",
+            "row_count": 10871
+          }
+        }
+      ],
+      "blockers": [],
+      "live_other_cols_md5": "fa3e497104377d12d338bd734c3847ac",
+      "live_other_cols_count": 1532,
+      "phase_4_snapshot_other_cols_md5": "fa3e497104377d12d338bd734c3847ac",
+      "observed": {
+        "cpm_n_rows": 10871,
+        "cpm_null_rid": 0,
+        "cpm_null_fna": 0,
+        "cpm_n_rids": 10871,
+        "source_n_rows": 48169,
+        "source_n_rids": 10856,
+        "source_models": "qwen2.5-32b",
+        "phase_1_archives_present": [
+          "note_entities_llm_airway_invasion_pre9domainv4_20260420T235106Z"
+        ],
+        "phase_4_snapshots_present": [
+          "canonical_patient_master_pre282_20260420T235218Z"
+        ]
+      },
+      "finished_at": "2026-04-20T23:53:29Z"
     }
   },
-  "last_started_at": "2026-04-20T23:52:46Z",
-  "last_phase_arg": "5",
-  "last_finished_at": "2026-04-20T23:52:48Z",
+  "last_started_at": "2026-04-20T23:53:23Z",
+  "last_phase_arg": "6",
+  "last_finished_at": "2026-04-20T23:53:29Z",
   "last_return_code": 0
 }
