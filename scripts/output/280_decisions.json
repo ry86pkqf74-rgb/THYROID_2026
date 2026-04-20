@@ -1,228 +1,121 @@
 {
   "script": "scripts/280_synoptic_rollup_rebuild.py",
-  "started_at": "2026-04-20T21:42:08Z",
-  "phase_arg": "5",
+  "started_at": "2026-04-20T21:42:21Z",
+  "phase_arg": "6",
   "phases": {
-    "5": {
-      "phase": 5,
-      "started_at": "2026-04-20T21:42:09Z",
+    "6": {
+      "phase": 6,
+      "started_at": "2026-04-20T21:42:21Z",
       "gates": [
         {
-          "name": "documented_tables_no_unexpected_undocumented_cols",
+          "name": "A_cpm_rows_eq_10871",
           "ok": true,
           "detail": {
-            "per_table": [
-              {
-                "table": "canonical_patient_master",
-                "info_cols": 1536,
-                "dict_cols": 1526,
-                "info_only_count": 10,
-                "info_only_sample": [
-                  "tirads_v2_any_ete_on_us",
-                  "tirads_v2_any_fna_recommended",
-                  "tirads_v2_any_interval_growth",
-                  "tirads_v2_any_suspicious_ln_on_us",
-                  "tirads_v2_largest_nodule_cm",
-                  "tirads_v2_max_points",
-                  "tirads_v2_n_nodules_scored",
-                  "tirads_v2_n_reports",
-                  "tirads_v2_shortest_followup_months",
-                  "tirads_v2_worst_category"
-                ],
-                "dict_only_count": 0,
-                "dict_only_sample": [],
-                "undocumented_unexpected": [],
-                "orphan_unexpected": []
-              },
-              {
-                "table": "canonical_us_nodule_characteristics_v1",
-                "info_cols": 39,
-                "dict_cols": 39,
-                "info_only_count": 0,
-                "info_only_sample": [],
-                "dict_only_count": 0,
-                "dict_only_sample": [],
-                "undocumented_unexpected": [],
-                "orphan_unexpected": []
-              },
-              {
-                "table": "imaging_nodule_master_v1",
-                "info_cols": 25,
-                "dict_cols": 25,
-                "info_only_count": 0,
-                "info_only_sample": [],
-                "dict_only_count": 0,
-                "dict_only_sample": [],
-                "undocumented_unexpected": [],
-                "orphan_unexpected": []
-              }
-            ],
-            "allowlist": [
-              "tirads_v2_any_ete_on_us",
-              "tirads_v2_any_fna_recommended",
-              "tirads_v2_any_interval_growth",
-              "tirads_v2_any_suspicious_ln_on_us",
-              "tirads_v2_largest_nodule_cm",
-              "tirads_v2_max_points",
-              "tirads_v2_n_nodules_scored",
-              "tirads_v2_n_reports",
-              "tirads_v2_shortest_followup_months",
-              "tirads_v2_worst_category"
-            ],
-            "note": "(info_cols - dict_cols) \u2286 KNOWN_UNDOCUMENTED_CPM_COLS for canonical_patient_master; == \u2205 for other documented tables."
+            "observed": 10871
           }
         },
         {
-          "name": "documented_tables_no_orphan_dict_cols",
+          "name": "A_cpm_no_null_rid",
           "ok": true,
           "detail": {
-            "per_table": [
-              {
-                "table": "canonical_patient_master",
-                "info_cols": 1536,
-                "dict_cols": 1526,
-                "info_only_count": 10,
-                "info_only_sample": [
-                  "tirads_v2_any_ete_on_us",
-                  "tirads_v2_any_fna_recommended",
-                  "tirads_v2_any_interval_growth",
-                  "tirads_v2_any_suspicious_ln_on_us",
-                  "tirads_v2_largest_nodule_cm",
-                  "tirads_v2_max_points",
-                  "tirads_v2_n_nodules_scored",
-                  "tirads_v2_n_reports",
-                  "tirads_v2_shortest_followup_months",
-                  "tirads_v2_worst_category"
-                ],
-                "dict_only_count": 0,
-                "dict_only_sample": [],
-                "undocumented_unexpected": [],
-                "orphan_unexpected": []
-              },
-              {
-                "table": "canonical_us_nodule_characteristics_v1",
-                "info_cols": 39,
-                "dict_cols": 39,
-                "info_only_count": 0,
-                "info_only_sample": [],
-                "dict_only_count": 0,
-                "dict_only_sample": [],
-                "undocumented_unexpected": [],
-                "orphan_unexpected": []
-              },
-              {
-                "table": "imaging_nodule_master_v1",
-                "info_cols": 25,
-                "dict_cols": 25,
-                "info_only_count": 0,
-                "info_only_sample": [],
-                "dict_only_count": 0,
-                "dict_only_sample": [],
-                "undocumented_unexpected": [],
-                "orphan_unexpected": []
-              }
-            ],
-            "note": "(dict_cols - info_cols) == \u2205 for every documented table."
+            "observed": 0
           }
         },
         {
-          "name": "no_unexpected_orphan_dict_tables",
+          "name": "A_cpm_no_null_fna",
           "ok": true,
           "detail": {
-            "orphan_tables_observed": [
-              "canonical_patient_master_archived"
+            "observed": 0
+          }
+        },
+        {
+          "name": "B_source_rows_unchanged",
+          "ok": true,
+          "detail": {
+            "observed": 26584
+          }
+        },
+        {
+          "name": "B_source_rids_unchanged",
+          "ok": true,
+          "detail": {
+            "observed": 10862
+          }
+        },
+        {
+          "name": "B_source_model_unchanged",
+          "ok": true,
+          "detail": {
+            "observed": "qwen2.5-32b"
+          }
+        },
+        {
+          "name": "C_has_data_within_4835_pm10",
+          "ok": true,
+          "detail": {
+            "observed": 4835,
+            "target": 4835
+          }
+        },
+        {
+          "name": "D_no_deprecated_named_tables_in_main",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "E_registry_needs_manual_review_eq_0",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "F_thin_wrapper_provisional_eq_24",
+          "ok": true,
+          "detail": {
+            "observed": 24,
+            "expected": 24,
+            "source_table": "manuscript_workspace.manuscript_dive_map_v1"
+          }
+        },
+        {
+          "name": "G_baseline_ws_views_all_present",
+          "ok": true,
+          "detail": {
+            "baseline_count": 67,
+            "actual_count": 68,
+            "missing_baseline": [],
+            "additions_beyond_baseline": [
+              "tirads_llm_haiku_vs_qwen_v1"
             ],
-            "allowlist": [
-              "canonical_patient_master_archived"
-            ],
-            "unexpected": []
+            "note": "Workspace can grow (new cohort views land routinely); we only fail if a baseline view is deleted. Additions are logged for audit."
           }
         }
       ],
       "blockers": [],
-      "known_undocumented_cpm_cols": [
-        "tirads_v2_any_ete_on_us",
-        "tirads_v2_any_fna_recommended",
-        "tirads_v2_any_interval_growth",
-        "tirads_v2_any_suspicious_ln_on_us",
-        "tirads_v2_largest_nodule_cm",
-        "tirads_v2_max_points",
-        "tirads_v2_n_nodules_scored",
-        "tirads_v2_n_reports",
-        "tirads_v2_shortest_followup_months",
-        "tirads_v2_worst_category"
-      ],
-      "known_orphan_dict_tables": [
-        "canonical_patient_master_archived"
-      ],
-      "allowlist_resolution_owners": {
-        "known_undocumented_cpm_cols": "Phase C / Script 281 \u2014 adds dict rows for the 10 tirads_v2_* columns introduced by Script 221 (commit 858e4cc, 2026-04-18).",
-        "known_orphan_dict_tables": "Future dictionary-rebuild pass (Script 272-style) \u2014 drops dict rows whose table_name no longer exists in main."
+      "observed": {
+        "cpm_n_rows": 10871,
+        "cpm_null_rid": 0,
+        "cpm_null_fna": 0,
+        "source_n_rows": 26584,
+        "source_n_rids": 10862,
+        "source_models": "qwen2.5-32b",
+        "post_has_data_true": 4835,
+        "deprecated_named_tables_after": 0,
+        "registry_needs_manual_review": 0,
+        "thin_wrapper_provisional": 24,
+        "manuscript_workspace_view_count_actual": 68,
+        "manuscript_workspace_view_count_baseline": 67,
+        "manuscript_workspace_views_missing_from_baseline": [],
+        "manuscript_workspace_views_additions_beyond_baseline": [
+          "tirads_llm_haiku_vs_qwen_v1"
+        ]
       },
-      "base_tables_in_main": 121,
-      "info_schema_columns_for_main_tables": 5449,
-      "dictionary_row_count": 1591,
-      "documented_tables_in_dict": [
-        "canonical_patient_master",
-        "canonical_patient_master_archived",
-        "canonical_us_nodule_characteristics_v1",
-        "imaging_nodule_master_v1"
-      ],
-      "per_table_audit": [
-        {
-          "table": "canonical_patient_master",
-          "info_cols": 1536,
-          "dict_cols": 1526,
-          "info_only_count": 10,
-          "info_only_sample": [
-            "tirads_v2_any_ete_on_us",
-            "tirads_v2_any_fna_recommended",
-            "tirads_v2_any_interval_growth",
-            "tirads_v2_any_suspicious_ln_on_us",
-            "tirads_v2_largest_nodule_cm",
-            "tirads_v2_max_points",
-            "tirads_v2_n_nodules_scored",
-            "tirads_v2_n_reports",
-            "tirads_v2_shortest_followup_months",
-            "tirads_v2_worst_category"
-          ],
-          "dict_only_count": 0,
-          "dict_only_sample": [],
-          "undocumented_unexpected": [],
-          "orphan_unexpected": []
-        },
-        {
-          "table": "canonical_us_nodule_characteristics_v1",
-          "info_cols": 39,
-          "dict_cols": 39,
-          "info_only_count": 0,
-          "info_only_sample": [],
-          "dict_only_count": 0,
-          "dict_only_sample": [],
-          "undocumented_unexpected": [],
-          "orphan_unexpected": []
-        },
-        {
-          "table": "imaging_nodule_master_v1",
-          "info_cols": 25,
-          "dict_cols": 25,
-          "info_only_count": 0,
-          "info_only_sample": [],
-          "dict_only_count": 0,
-          "dict_only_sample": [],
-          "undocumented_unexpected": [],
-          "orphan_unexpected": []
-        }
-      ],
-      "orphan_dict_tables": [
-        "canonical_patient_master_archived"
-      ],
-      "unexpected_orphan_tables": [],
-      "readme_regeneration_skipped": true,
-      "readme_regeneration_skipped_reason": "Script 280 is rollup-only; __readme regeneration belongs to Script 272.",
-      "finished_at": "2026-04-20T21:42:11Z"
+      "finished_at": "2026-04-20T21:42:23Z"
     }
   },
-  "finished_at": "2026-04-20T21:42:11Z",
+  "finished_at": "2026-04-20T21:42:23Z",
   "return_code": 0
 }
