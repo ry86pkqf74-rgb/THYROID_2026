@@ -1,0 +1,48 @@
+[23:50:31.320Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=env:MOTHERDUCK_TOKEN)
+[23:50:32.191Z] === PHASE 0 — parquet audit + measure positive targets (READ-ONLY) ===
+[23:50:32.191Z]   gate parquet_file_present: OK — {'path': '/Users/loganglosser/THYROID_2026/runs/9domain_v4/airway_invasion/output/note_entities_llm_airway_invasion.parquet'}
+[23:50:33.229Z]   0A: parquet rows=48,262 rids=10,856 nrids=48,169
+[23:50:33.229Z]       model=qwen2.5-32b  base_url=http://213.5.130.43:20049/v1
+[23:50:33.229Z]       preprocess_script_version=v4_9domain_rerun_2026-04-19  n_batch=1
+[23:50:33.229Z]       extracted_at min=2026-04-19T08:03:52.074630+00:00  max=2026-04-19T08:53:02.331089+00:00
+[23:50:33.229Z]   gate parquet_n_rows_eq_48262: OK — {'observed': 48262, 'expected': 48262}
+[23:50:33.229Z]   gate parquet_n_rids_eq_10856: OK — {'observed': 10856, 'expected': 10856}
+[23:50:33.229Z]   gate parquet_n_nrids_eq_48169: OK — {'observed': 48169, 'expected': 48169}
+[23:50:33.229Z]   gate parquet_model_eq_qwen25_32b: OK — {'observed': 'qwen2.5-32b', 'expected': 'qwen2.5-32b'}
+[23:50:33.229Z]   gate parquet_base_url_eq_pinned: OK — {'observed': 'http://213.5.130.43:20049/v1', 'expected': 'http://213.5.130.43:20049/v1'}
+[23:50:33.229Z]   gate parquet_preprocess_script_version_eq_pinned: OK — {'observed': 'v4_9domain_rerun_2026-04-19', 'expected': 'v4_9domain_rerun_2026-04-19'}
+[23:50:33.229Z]   gate parquet_preprocess_batch_id_uniform_and_eq_pinned: OK — {'observed_distinct': 1, 'value': '832fd7f5-1933-47de-a0e3-64fe86fcaff1', 'expected': '832fd7f5-1933-47de-a0e3-64fe86fcaff1'}
+[23:50:33.229Z]   gate parquet_extracted_at_min_starts_with_pinned: OK — {'observed': '2026-04-19T08:03:52.074630+00:00', 'expected_prefix': '2026-04-19T08:03'}
+[23:50:33.229Z]   gate parquet_extracted_at_max_starts_with_pinned: OK — {'observed': '2026-04-19T08:53:02.331089+00:00', 'expected_prefix': '2026-04-19T08:53'}
+[23:50:33.370Z]   0B: parquet RAW hashes:  rj=8c5d221625ac31fb6f3ed64379e706c5  nd=45a63b8bf76e0ee63597c85953e8957e  src=f0f54c0c95183db2d4000c4083632949
+[23:50:33.370Z]   gate parquet_raw_rjhash_match_pinned: OK — {'observed': '8c5d221625ac31fb6f3ed64379e706c5', 'pinned': '8c5d221625ac31fb6f3ed64379e706c5'}
+[23:50:33.370Z]   gate parquet_raw_ndhash_match_pinned: OK — {'observed': '45a63b8bf76e0ee63597c85953e8957e', 'pinned': '45a63b8bf76e0ee63597c85953e8957e'}
+[23:50:33.370Z]   gate parquet_raw_srchash_match_pinned: OK — {'observed': 'f0f54c0c95183db2d4000c4083632949', 'pinned': 'f0f54c0c95183db2d4000c4083632949'}
+[23:50:33.499Z]       parquet DEDUP hashes: rj=b4b28c1f1bbd53156c72c043f3f748ab  nd=ce39a4e0773474fdcd625725939fa93c  src=509dbc6c5ed632f14a94532a543e89ca
+[23:50:33.499Z]   gate parquet_dedup_rjhash_match_pinned: OK — {'observed': 'b4b28c1f1bbd53156c72c043f3f748ab', 'pinned': 'b4b28c1f1bbd53156c72c043f3f748ab'}
+[23:50:33.499Z]   gate parquet_dedup_ndhash_match_pinned: OK — {'observed': 'ce39a4e0773474fdcd625725939fa93c', 'pinned': 'ce39a4e0773474fdcd625725939fa93c'}
+[23:50:33.499Z]   gate parquet_dedup_srchash_match_pinned: OK — {'observed': '509dbc6c5ed632f14a94532a543e89ca', 'pinned': '509dbc6c5ed632f14a94532a543e89ca'}
+[23:50:33.521Z]   gate parquet_dup_rows_eq_93: OK — {'observed': 93, 'expected': 93}
+[23:50:33.521Z]   gate parquet_dup_groups_eq_84: OK — {'observed': 84, 'expected': 84}
+[23:50:33.603Z]   0D: parquet positive targets: rids=1,634 notes=5,285 entities=10,377
+[23:50:33.603Z]   gate parquet_pos_rids_eq_pinned: OK — {'observed': 1634, 'expected': 1634}
+[23:50:33.603Z]   gate parquet_pos_notes_eq_pinned: OK — {'observed': 5285, 'expected': 5285}
+[23:50:33.603Z]   gate parquet_pos_entities_eq_pinned: OK — {'observed': 10377, 'expected': 10377}
+[23:50:33.653Z]   0E: current MD source rows=11,037 rids=5,641 models=qwen3:32b
+[23:50:33.653Z]   gate md_source_stale_rows_eq_11037: OK — {'observed': 11037, 'expected': 11037}
+[23:50:33.653Z]   gate md_source_stale_rids_eq_5641: OK — {'observed': 5641, 'expected': 5641}
+[23:50:33.653Z]   gate md_source_stale_model_eq_qwen3_32b: OK — {'observed': 'qwen3:32b', 'expected': 'qwen3:32b'}
+[23:50:33.837Z]   0F: CPM rows=10,871 rids=10,871  stale nlp_airway_has_data: TRUE=1123 NULL=9748  sum_n_notes=1387 sum_n_entities=2452
+[23:50:33.837Z]   gate cpm_rows_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[23:50:33.837Z]   gate cpm_rids_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[23:50:33.837Z]   gate cpm_no_null_rid: OK — {'observed': 0}
+[23:50:33.837Z]   gate stale_has_data_true_eq_1123: OK — {'observed': 1123, 'expected': 1123}
+[23:50:33.837Z]   gate stale_has_data_null_eq_9748: OK — {'observed': 9748, 'expected': 9748}
+[23:50:33.837Z]   gate stale_not_already_promoted: OK — {'detail': 'has_null==0 AND has_true ~= target would mean rollup already promoted; refusing to clobber.'}
+[23:50:35.588Z]   gate registry_total_rows_stale_eq_11037: OK — {'observed': 11037, 'expected': 11037}
+[23:50:35.588Z]   gate registry_total_patients_stale_eq_5641: OK — {'observed': 5641, 'expected': 5641}
+[23:50:35.588Z] 
+[23:50:35.588Z] ──── PHASE 0 SUMMARY ────
+[23:50:35.588Z]   gates: 32 total, 32 passed, 0 blockers
+[23:50:35.588Z]   ALL GATES PASSED — Phase 1 may proceed.
+[23:50:35.588Z] ─────────────────────────
