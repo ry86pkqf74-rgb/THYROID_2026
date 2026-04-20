@@ -1074,10 +1074,54 @@ def phase_4(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
 # ── PHASE 5 — __readme + dictionary audit rebuild ────────────────────────────
 
 
+# Pre-existing dictionary-completeness gaps that Script 280 inherits but does
+# NOT own. Pinned by NAME (not by delta magnitude) so any drift — a new
+# undocumented column or a new orphan dict table — fails the gate loudly.
+#
+# 10 tirads_v2_* CPM columns added by Script 221 (commit 858e4cc, 2026-04-18)
+# without a matching data_dictionary_v279 update. Will be documented by Phase
+# C / Script 281.
+KNOWN_UNDOCUMENTED_CPM_COLS: frozenset[str] = frozenset({
+    "tirads_v2_any_ete_on_us",
+    "tirads_v2_any_fna_recommended",
+    "tirads_v2_any_interval_growth",
+    "tirads_v2_any_suspicious_ln_on_us",
+    "tirads_v2_largest_nodule_cm",
+    "tirads_v2_max_points",
+    "tirads_v2_n_nodules_scored",
+    "tirads_v2_n_reports",
+    "tirads_v2_shortest_followup_months",
+    "tirads_v2_worst_category",
+})
+
+# Whole-table orphan: dict has rows for a table that doesn't exist in main.
+# Will be cleaned by a future dict-rebuild pass (Script 272-style).
+KNOWN_ORPHAN_DICT_TABLES: frozenset[str] = frozenset({
+    "canonical_patient_master_archived",
+})
+
+
 def phase_5(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     log("=== PHASE 5 — __readme + dictionary audit ===")
     out: dict[str, Any] = {"phase": 5, "started_at": utcnow_iso(), "gates": [], "blockers": []}
 
+    # Record the known-gap allowlists so downstream tracking sees what Script
+    # 280 expects to be true today.
+    out["known_undocumented_cpm_cols"] = sorted(KNOWN_UNDOCUMENTED_CPM_COLS)
+    out["known_orphan_dict_tables"] = sorted(KNOWN_ORPHAN_DICT_TABLES)
+    out["allowlist_resolution_owners"] = {
+        "known_undocumented_cpm_cols": (
+            "Phase C / Script 281 — adds dict rows for the 10 tirads_v2_* "
+            "columns introduced by Script 221 (commit 858e4cc, 2026-04-18)."
+        ),
+        "known_orphan_dict_tables": (
+            "Future dictionary-rebuild pass (Script 272-style) — drops dict "
+            "rows whose table_name no longer exists in main."
+        ),
+    }
+
+    # Top-level totals (informational only, not gated — preserves the prior
+    # observed values for reference even though we no longer assert equality).
     base_tables = con.execute(
         f"""
         SELECT COUNT(*) FROM information_schema.tables
@@ -1085,30 +1129,137 @@ def phase_5(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
         """,
         [CANONICAL_DB],
     ).fetchone()[0]
-    info_cols = con.execute(
+    info_cols_total = con.execute(
         f"""
         SELECT COUNT(*) FROM information_schema.columns
         WHERE table_catalog=? AND table_schema='main'
-          AND table_name IN (
-            SELECT table_name FROM information_schema.tables
-            WHERE table_catalog=? AND table_schema='main' AND table_type='BASE TABLE'
-          )
         """,
-        [CANONICAL_DB, CANONICAL_DB],
+        [CANONICAL_DB],
     ).fetchone()[0]
     dict_rows = con.execute(
         f"SELECT COUNT(*) FROM main.{DICTIONARY_TABLE}"
     ).fetchone()[0]
     out["base_tables_in_main"] = int(base_tables)
-    out["info_schema_columns_for_main_tables"] = int(info_cols)
+    out["info_schema_columns_for_main_tables"] = int(info_cols_total)
     out["dictionary_row_count"] = int(dict_rows)
-    _gate(out, "dictionary_row_count_eq_info_schema_columns",
-          int(dict_rows) == int(info_cols),
-          {"dictionary": int(dict_rows), "info_schema": int(info_cols),
+    log(f"  totals: base_tables={base_tables}  "
+        f"info_schema_cols_total={info_cols_total}  dict_rows={dict_rows}")
+
+    # Per-documented-table consistency. For each table the dict claims to
+    # document, compare its column set against information_schema.columns:
+    #   info_only := info_cols - dict_cols  (CPM cols missing from dict)
+    #     → must be ⊆ KNOWN_UNDOCUMENTED_CPM_COLS for canonical_patient_master,
+    #       == ∅ for any other table
+    #   dict_only := dict_cols - info_cols  (dict rows for a column that no
+    #                                         longer exists on the table)
+    #     → must always be == ∅ (strict)
+    documented_tables = [
+        r[0]
+        for r in con.execute(
+            f"""
+            SELECT DISTINCT table_name
+            FROM main.{DICTIONARY_TABLE}
+            ORDER BY table_name
+            """
+        ).fetchall()
+    ]
+    out["documented_tables_in_dict"] = documented_tables
+
+    per_table_audit: list[dict[str, Any]] = []
+    any_unexpected_undocumented = False
+    any_unexpected_orphan_col = False
+
+    for tn in documented_tables:
+        if tn in KNOWN_ORPHAN_DICT_TABLES:
+            # Whole-table orphan handled by the next gate; skip per-column.
+            continue
+        info_set = {
+            r[0]
+            for r in con.execute(
+                f"""
+                SELECT column_name FROM information_schema.columns
+                WHERE table_catalog=? AND table_schema='main' AND table_name=?
+                """,
+                [CANONICAL_DB, tn],
+            ).fetchall()
+        }
+        dict_set = {
+            r[0]
+            for r in con.execute(
+                f"SELECT column_name FROM main.{DICTIONARY_TABLE} "
+                "WHERE table_name=?",
+                [tn],
+            ).fetchall()
+        }
+        info_only = info_set - dict_set
+        dict_only = dict_set - info_set
+
+        # Allowlist applies to CPM only; other tables must be 0/0.
+        allowed = (
+            KNOWN_UNDOCUMENTED_CPM_COLS if tn == "canonical_patient_master" else frozenset()
+        )
+        undocumented_unexpected = sorted(info_only - allowed)
+        orphan_unexpected = sorted(dict_only)
+
+        per_table_audit.append({
+            "table": tn,
+            "info_cols": len(info_set),
+            "dict_cols": len(dict_set),
+            "info_only_count": len(info_only),
+            "info_only_sample": sorted(info_only)[:20],
+            "dict_only_count": len(dict_only),
+            "dict_only_sample": sorted(dict_only)[:20],
+            "undocumented_unexpected": undocumented_unexpected,
+            "orphan_unexpected": orphan_unexpected,
+        })
+        if undocumented_unexpected:
+            any_unexpected_undocumented = True
+        if orphan_unexpected:
+            any_unexpected_orphan_col = True
+        log(f"  {tn}: info_cols={len(info_set)} dict_cols={len(dict_set)} "
+            f"info_only={len(info_only)} dict_only={len(dict_only)} "
+            f"unexpected_undoc={len(undocumented_unexpected)} "
+            f"unexpected_orphan_col={len(orphan_unexpected)}")
+
+    out["per_table_audit"] = per_table_audit
+    _gate(out,
+          "documented_tables_no_unexpected_undocumented_cols",
+          not any_unexpected_undocumented,
+          {"per_table": per_table_audit,
+           "allowlist": sorted(KNOWN_UNDOCUMENTED_CPM_COLS),
            "note": (
-               "Script 280 does not regenerate __readme — that is owned by "
-               "Script 272/266c. This phase only verifies the audit invariant."
+               "(info_cols - dict_cols) ⊆ KNOWN_UNDOCUMENTED_CPM_COLS for "
+               "canonical_patient_master; == ∅ for other documented tables."
            )})
+    _gate(out,
+          "documented_tables_no_orphan_dict_cols",
+          not any_unexpected_orphan_col,
+          {"per_table": per_table_audit,
+           "note": "(dict_cols - info_cols) == ∅ for every documented table."})
+
+    # Whole-table orphan gate: dict claims to document a table that does not
+    # exist in main. Allowlist == KNOWN_ORPHAN_DICT_TABLES; anything else fails.
+    actual_main_tables = {
+        r[0]
+        for r in con.execute(
+            f"""
+            SELECT table_name FROM information_schema.tables
+            WHERE table_catalog=? AND table_schema='main'
+            """,
+            [CANONICAL_DB],
+        ).fetchall()
+    }
+    orphan_tables = sorted(set(documented_tables) - actual_main_tables)
+    unexpected_orphan_tables = sorted(set(orphan_tables) - KNOWN_ORPHAN_DICT_TABLES)
+    out["orphan_dict_tables"] = orphan_tables
+    out["unexpected_orphan_tables"] = unexpected_orphan_tables
+    _gate(out,
+          "no_unexpected_orphan_dict_tables",
+          not unexpected_orphan_tables,
+          {"orphan_tables_observed": orphan_tables,
+           "allowlist": sorted(KNOWN_ORPHAN_DICT_TABLES),
+           "unexpected": unexpected_orphan_tables})
+
     out["readme_regeneration_skipped"] = True
     out["readme_regeneration_skipped_reason"] = (
         "Script 280 is rollup-only; __readme regeneration belongs to Script 272."
