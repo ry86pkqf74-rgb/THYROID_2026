@@ -1,54 +1,98 @@
 {
   "script": "scripts/280_synoptic_rollup_rebuild.py",
-  "started_at": "2026-04-19T07:38:09Z",
-  "phase_arg": "2",
+  "started_at": "2026-04-20T21:11:37Z",
+  "phase_arg": "3",
   "phases": {
-    "2": {
-      "phase": 2,
-      "started_at": "2026-04-19T07:38:09Z",
+    "3": {
+      "phase": 3,
+      "started_at": "2026-04-20T21:11:38Z",
       "gates": [
         {
-          "name": "post_has_data_within_4835_pm10",
+          "name": "registry_total_rows_post_eq_26584",
           "ok": true,
           "detail": {
-            "observed": 4835,
-            "target": 4835,
-            "tolerance": 10
+            "observed": 26584,
+            "expected": 26584
           }
         },
         {
-          "name": "post_no_null_has_data",
+          "name": "registry_total_patients_post_eq_10862",
           "ok": true,
           "detail": {
-            "observed": 0
+            "observed": 10862,
+            "expected": 10862
           }
         },
         {
-          "name": "post_sum_n_notes_eq_source_pos_notes",
+          "name": "dictionary_4_cols_have_exact_per_col_desc_and_v279_note",
           "ok": true,
           "detail": {
-            "observed": 10801,
-            "expected": 10801
-          }
-        },
-        {
-          "name": "post_no_null_research_id",
-          "ok": true,
-          "detail": {
-            "observed": 0
+            "rows": [
+              {
+                "column_name": "nlp_synoptic_has_data",
+                "description": "TRUE iff patient has >=1 positive-entity extraction (confidence>=0.5, present_or_negated='present' OR NULL) from note_entities_llm_synoptic_pathology_enrichment; FALSE if patient is in source with no positive entities or absent from source; NULL for no CPM patient.",
+                "v279_note": "Re-promoted by Script 280 (2026-04-19) from qwen2.5-32b synoptic rerun.",
+                "rebuilt_by": "script280_2026-04-19"
+              },
+              {
+                "column_name": "nlp_synoptic_key_finding",
+                "description": "Highest-priority entity value for this patient, resolved via KEY_FINDING_PRIORITY (tumor_variant > pT_stage > pN_stage > margin_status > lvi_present > ete > multifocality > other) tiebroken by confidence DESC then entity_value alpha. NULL when has_data=FALSE.",
+                "v279_note": "Re-promoted by Script 280 (2026-04-19) from qwen2.5-32b synoptic rerun.",
+                "rebuilt_by": "script280_2026-04-19"
+              },
+              {
+                "column_name": "nlp_synoptic_n_entities",
+                "description": "Total positive entities extracted across all notes for this patient. 0 when has_data=FALSE.",
+                "v279_note": "Re-promoted by Script 280 (2026-04-19) from qwen2.5-32b synoptic rerun.",
+                "rebuilt_by": "script280_2026-04-19"
+              },
+              {
+                "column_name": "nlp_synoptic_n_notes",
+                "description": "Count of distinct notes per patient with >=1 positive extracted entity. 0 when has_data=FALSE.",
+                "v279_note": "Re-promoted by Script 280 (2026-04-19) from qwen2.5-32b synoptic rerun.",
+                "rebuilt_by": "script280_2026-04-19"
+              }
+            ],
+            "descriptions_exact_match": true
           }
         }
       ],
       "blockers": [],
-      "rollup_distinct_rids": 4835,
-      "rollup_n_notes_sum": 10801,
-      "rollup_total_entities_sum": 55670,
-      "post_has_data_true": 4835,
-      "post_has_data_null": 0,
-      "post_sum_n_notes": 10801,
-      "finished_at": "2026-04-19T07:38:11Z"
+      "registry_after": {
+        "total_rows": 26584,
+        "total_patients": 10862,
+        "canonical_version": "v1_0_script280"
+      },
+      "dictionary_after": [
+        {
+          "column_name": "nlp_synoptic_has_data",
+          "description": "TRUE iff patient has >=1 positive-entity extraction (confidence>=0.5, present_or_negated='present' OR NULL) from note_entities_llm_synoptic_pathology_enrichment; FALSE if patient is in source with no positive entities or absent from source; NULL for no CPM patient.",
+          "v279_note": "Re-promoted by Script 280 (2026-04-19) from qwen2.5-32b synoptic rerun.",
+          "rebuilt_by": "script280_2026-04-19"
+        },
+        {
+          "column_name": "nlp_synoptic_key_finding",
+          "description": "Highest-priority entity value for this patient, resolved via KEY_FINDING_PRIORITY (tumor_variant > pT_stage > pN_stage > margin_status > lvi_present > ete > multifocality > other) tiebroken by confidence DESC then entity_value alpha. NULL when has_data=FALSE.",
+          "v279_note": "Re-promoted by Script 280 (2026-04-19) from qwen2.5-32b synoptic rerun.",
+          "rebuilt_by": "script280_2026-04-19"
+        },
+        {
+          "column_name": "nlp_synoptic_n_entities",
+          "description": "Total positive entities extracted across all notes for this patient. 0 when has_data=FALSE.",
+          "v279_note": "Re-promoted by Script 280 (2026-04-19) from qwen2.5-32b synoptic rerun.",
+          "rebuilt_by": "script280_2026-04-19"
+        },
+        {
+          "column_name": "nlp_synoptic_n_notes",
+          "description": "Count of distinct notes per patient with >=1 positive extracted entity. 0 when has_data=FALSE.",
+          "v279_note": "Re-promoted by Script 280 (2026-04-19) from qwen2.5-32b synoptic rerun.",
+          "rebuilt_by": "script280_2026-04-19"
+        }
+      ],
+      "dictionary_descriptions_match_expected": true,
+      "finished_at": "2026-04-20T21:11:40Z"
     }
   },
-  "finished_at": "2026-04-19T07:38:11Z",
+  "finished_at": "2026-04-20T21:11:40Z",
   "return_code": 0
 }

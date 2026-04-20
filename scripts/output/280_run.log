@@ -1,11 +1,5 @@
-[07:38:09.235Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
-[07:38:09.718Z] === PHASE 2 — rollup re-promotion on canonical_patient_master ===
-[07:38:09.718Z]   building per-RID rollup CTE → TEMP TABLE _rollup_280 …
-[07:38:11.117Z]     rollup distinct RIDs=4835  sum_n_notes=10801  sum_n_entities=55670
-[07:38:11.117Z]   UPDATE main.canonical_patient_master from rollup …
-[07:38:11.353Z]   UPDATE patients absent from rollup → FALSE/0/0/NULL …
-[07:38:11.765Z]   post-update: has_data TRUE=4835 sum_n_notes=10801 null_rid=0
-[07:38:11.765Z]   gate post_has_data_within_4835_pm10: OK — {'observed': 4835, 'target': 4835, 'tolerance': 10}
-[07:38:11.765Z]   gate post_no_null_has_data: OK — {'observed': 0}
-[07:38:11.765Z]   gate post_sum_n_notes_eq_source_pos_notes: OK — {'observed': 10801, 'expected': 10801}
-[07:38:11.765Z]   gate post_no_null_research_id: OK — {'observed': 0}
+[21:11:37.812Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[21:11:38.387Z] === PHASE 3 — registry + dictionary sync ===
+[21:11:39.984Z]   gate registry_total_rows_post_eq_26584: OK — {'observed': 26584, 'expected': 26584}
+[21:11:39.984Z]   gate registry_total_patients_post_eq_10862: OK — {'observed': 10862, 'expected': 10862}
+[21:11:40.866Z]   gate dictionary_4_cols_have_exact_per_col_desc_and_v279_note: OK — {'rows': [{'column_name': 'nlp_synoptic_has_data', 'description': "TRUE iff patient has >=1 positive-entity extraction (confidence>=0.5, present_or_negated='present' OR NULL) from note_entities_llm_synoptic_pathology_enrichment; FALSE if patient is in source with no positive entities or absent from source; NULL for no CPM patient.", 'v279_note': 'Re-promoted by Script 280 (2026-04-19) from qwen2.5-32b synoptic rerun.', 'rebuilt_by': 'script280_2026-04-19'}, {'column_name': 'nlp_synoptic_key_finding', 'description': 'Highest-priority entity value for this patient, resolved via KEY_FINDING_PRIORITY (tumor_variant > pT_stage > pN_stage > margin_status > lvi_present > ete > multifocality > other) tiebroken by confidence DESC then entity_value alpha. NULL when has_data=FALSE.', 'v279_note': 'Re-promoted by Script 280 (2026-04-19) from qwen2.5-32b synoptic rerun.', 'rebuilt_by': 'script280_2026-04-19'}, {'column_name': 'nlp_synoptic_n_entities', 'description': 'Total positive entities extracted across all notes for this patient. 0 when has_data=FALSE.', 'v279_note': 'Re-promoted by Script 280 (2026-04-19) from qwen2.5-32b synoptic rerun.', 'rebuilt_by': 'script280_2026-04-19'}, {'column_name': 'nlp_synoptic_n_notes', 'description': 'Count of distinct notes per patient with >=1 positive extracted entity. 0 when has_data=FALSE.', 'v279_note': 'Re-promoted by Script 280 (2026-04-19) from qwen2.5-32b synoptic rerun.', 'rebuilt_by': 'script280_2026-04-19'}], 'descriptions_exact_match': True}
