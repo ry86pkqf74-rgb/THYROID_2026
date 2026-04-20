@@ -55,6 +55,13 @@ _MALFORMED_ENTITY_DATE_LOCK = threading.Lock()
 CONCURRENCY = int(os.environ.get("EXTRACTION_CONCURRENCY", "3"))
 LLM_TIMEOUT_SECONDS = int(os.environ.get("LLM_TIMEOUT_SECONDS", "120"))
 
+# LLM prompt/response budgeting. These defaults (input chars 12000 + output
+# tokens 12000) require the vLLM server to be launched with
+# --max-model-len >= 16384 (recommend 32768 for safety). Overriding via env
+# is the supported way to fit a smaller deployment without touching code.
+LLM_MAX_TOKENS = int(os.environ.get("LLM_MAX_TOKENS", "12000"))
+LLM_INPUT_CHAR_LIMIT = int(os.environ.get("LLM_INPUT_CHAR_LIMIT", "12000"))
+
 DOMAIN_PROMPT = get_fleet_domain_prompt()
 ALL_DOMAINS = list(DOMAIN_PROMPT.keys())
 
@@ -112,10 +119,10 @@ def _call_llm(client: Any, model: str, system_prompt: str, note_text: str) -> di
             model=model,
             messages=[
                 {"role": "system", "content": "/no_think\n" + system_prompt},
-                {"role": "user", "content": note_text[:12000]},
+                {"role": "user", "content": note_text[:LLM_INPUT_CHAR_LIMIT]},
             ],
             temperature=0,
-            max_tokens=12000,
+            max_tokens=LLM_MAX_TOKENS,
             timeout=LLM_TIMEOUT_SECONDS,
         )
         if response_fmt:
