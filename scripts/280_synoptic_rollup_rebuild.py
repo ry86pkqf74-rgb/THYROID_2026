@@ -838,16 +838,23 @@ def phase_3(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
         "rerun data (previously re-loaded from parquet outside of phase scripts). "
         f"CPM.nlp_synoptic_has_data went {EXPECTED_STALE_HAS_DATA} → ~{HAS_DATA_TARGET}."
     )
+    desc_marker = "Script 280 (2026-04-19): rollup re-promoted"
+    # Always update the count/version fields (idempotent — same value).
+    # Append description suffix ONLY if the marker isn't already present, so
+    # repeated --phase 3 invocations don't double-append.
     con.execute(
         f"""
         UPDATE {WS_SCHEMA}.{REGISTRY_TABLE}
         SET total_rows        = {EXPECTED_SOURCE_ROWS},
             total_patients    = {EXPECTED_SOURCE_RIDS},
             canonical_version = 'v1_0_script280',
-            description       = COALESCE(description, '') || ?
+            description       = CASE
+              WHEN description LIKE ? THEN description
+              ELSE COALESCE(description, '') || ?
+            END
         WHERE detail_table_name = ?
         """,
-        [desc_suffix, SOURCE_TABLE],
+        [f"%{desc_marker}%", desc_suffix, SOURCE_TABLE],
     )
     reg = con.execute(
         f"""
@@ -874,9 +881,15 @@ def phase_3(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
         "key_finding = highest-priority entity_value (tumor_variant > "
         "pT_stage > pN_stage > margin_status > lvi > ete > multifocality)."
     )
-    provenance_note = (
+    # data_dictionary_v279 has no `provenance_note` column; the project's
+    # convention is to record script-era notes in the `v279_note` text field
+    # (initialized to '' by script 271b on 2026-04-18). Also touch
+    # rebuilt_at/rebuilt_by so the audit trail of which script last populated
+    # these rows stays accurate.
+    v279_note = (
         "Re-promoted by Script 280 (2026-04-19) from qwen2.5-32b synoptic rerun."
     )
+    rebuilt_by = "script280_2026-04-19"
     cols = [
         "nlp_synoptic_has_data",
         "nlp_synoptic_n_notes",
@@ -887,17 +900,20 @@ def phase_3(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
         con.execute(
             f"""
             UPDATE main.{DICTIONARY_TABLE}
-            SET description      = COALESCE(description, ?),
-                provenance_note  = ?
+            SET description = COALESCE(description, ?),
+                v279_note   = ?,
+                rebuilt_at  = CURRENT_TIMESTAMP,
+                rebuilt_by  = ?
             WHERE column_name = ? AND table_name = ?
             """,
-            [desc_default, provenance_note, col, CPM_TABLE],
+            [desc_default, v279_note, rebuilt_by, col, CPM_TABLE],
         )
     dict_check = con.execute(
         f"""
         SELECT column_name,
                description IS NOT NULL AS has_desc,
-               provenance_note         AS prov
+               v279_note               AS v279_note,
+               rebuilt_by              AS rebuilt_by
         FROM main.{DICTIONARY_TABLE}
         WHERE table_name = ?
           AND column_name IN ('nlp_synoptic_has_data', 'nlp_synoptic_n_notes',
@@ -907,9 +923,11 @@ def phase_3(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
         [CPM_TABLE],
     ).df()
     out["dictionary_after"] = dict_check.to_dict(orient="records")
-    _gate(out, "dictionary_4_cols_have_desc_and_prov",
-          len(dict_check) == 4 and dict_check["has_desc"].all()
-          and dict_check["prov"].notna().all(),
+    _gate(out, "dictionary_4_cols_have_desc_and_v279_note",
+          len(dict_check) == 4
+          and dict_check["has_desc"].all()
+          and (dict_check["v279_note"] == v279_note).all()
+          and (dict_check["rebuilt_by"] == rebuilt_by).all(),
           {"rows": dict_check.to_dict(orient="records")})
 
     out["finished_at"] = utcnow_iso()
