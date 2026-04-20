@@ -5548,10 +5548,159 @@
         ]
       },
       "finished_at": "2026-04-20T23:53:29Z"
+    },
+    "7": {
+      "phase": 7,
+      "started_at": "2026-04-20T23:53:50Z",
+      "gates": [
+        {
+          "name": "registry_total_rows_post_eq_48169",
+          "ok": true,
+          "detail": {
+            "observed": 48169,
+            "expected": 48169
+          }
+        },
+        {
+          "name": "registry_total_patients_post_eq_10856",
+          "ok": true,
+          "detail": {
+            "observed": 10856,
+            "expected": 10856
+          }
+        },
+        {
+          "name": "registry_canonical_version_post_eq_v1_0_script282",
+          "ok": true,
+          "detail": {
+            "observed": "v1_0_script282"
+          }
+        },
+        {
+          "name": "registry_description_carries_script282_marker",
+          "ok": true,
+          "detail": {
+            "description_tail": " entities. | Script 282 (2026-04-20): rollup re-promoted against qwen2.5-32b 9domain_v4 rerun parquet (loaded by this script). CPM nlp_airway_has_data went 1123 TRUE / 9748 NULL -> 1634 TRUE / 0 NULL."
+          }
+        },
+        {
+          "name": "dictionary_4_cols_have_exact_per_col_desc_and_v279_note",
+          "ok": true,
+          "detail": {
+            "rows": [
+              {
+                "column_name": "nlp_airway_has_data",
+                "description": "TRUE iff patient has >=1 positive-entity extraction (confidence>=0.5, present_or_negated='present' OR NULL) from note_entities_llm_airway_invasion (qwen2.5-32b, 9domain_v4 rerun 2026-04-19); FALSE if patient is in source with no positive entities or absent from source. NEVER NULL post-Script 282.",
+                "v279_note": "Re-promoted by Script 282 (2026-04-20) from qwen2.5-32b airway_invasion 9domain_v4 rerun.",
+                "rebuilt_by": "script282_2026-04-20"
+              },
+              {
+                "column_name": "nlp_airway_key_finding",
+                "description": "Highest-priority entity value for this patient, resolved via KEY_FINDING_PRIORITY (laryngeal_invasion > ete_on_imaging > vascular_encasement > airway_compromise_grade > vocal_cord_imaging > esophageal_compression > tracheal_narrowing > substernal_extension > mass_effect > tracheal_deviation > other) tiebroken by confidence DESC NULLS LAST then entity_value alpha. NULL when has_data=FALSE.",
+                "v279_note": "Re-promoted by Script 282 (2026-04-20) from qwen2.5-32b airway_invasion 9domain_v4 rerun.",
+                "rebuilt_by": "script282_2026-04-20"
+              },
+              {
+                "column_name": "nlp_airway_n_entities",
+                "description": "Total positive airway-invasion entities extracted across all notes for this patient. 0 when has_data=FALSE.",
+                "v279_note": "Re-promoted by Script 282 (2026-04-20) from qwen2.5-32b airway_invasion 9domain_v4 rerun.",
+                "rebuilt_by": "script282_2026-04-20"
+              },
+              {
+                "column_name": "nlp_airway_n_notes",
+                "description": "Count of distinct notes per patient with >=1 positive extracted airway-invasion entity. 0 when has_data=FALSE.",
+                "v279_note": "Re-promoted by Script 282 (2026-04-20) from qwen2.5-32b airway_invasion 9domain_v4 rerun.",
+                "rebuilt_by": "script282_2026-04-20"
+              }
+            ],
+            "descriptions_exact_match": true
+          }
+        },
+        {
+          "name": "readme_source_n_rows_eq_48169",
+          "ok": true,
+          "detail": {
+            "observed": 48169,
+            "expected": 48169
+          }
+        },
+        {
+          "name": "readme_source_n_rids_eq_10856",
+          "ok": true,
+          "detail": {
+            "observed": 10856,
+            "expected": 10856
+          }
+        },
+        {
+          "name": "readme_cpm_n_rows_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "readme_cpm_description_carries_script282_marker",
+          "ok": true,
+          "detail": {
+            "tail": "le_drift convention). [Script 282 2026-04-20: airway_invasion re-extracted at qwen2.5-32b (48,169 rows / 10,856 RIDs); CPM nlp_airway_* rebuilt with explicit TRUE/FALSE (0 NULLs). has_data TRUE=1634.]"
+          }
+        }
+      ],
+      "blockers": [],
+      "post_has_data_true": 1634,
+      "post_sum_n_notes": 5285,
+      "post_sum_n_entities": 10377,
+      "registry_after": {
+        "total_rows": 48169,
+        "total_patients": 10856,
+        "canonical_version": "v1_0_script282",
+        "description_len": 219
+      },
+      "dictionary_after": [
+        {
+          "column_name": "nlp_airway_has_data",
+          "description": "TRUE iff patient has >=1 positive-entity extraction (confidence>=0.5, present_or_negated='present' OR NULL) from note_entities_llm_airway_invasion (qwen2.5-32b, 9domain_v4 rerun 2026-04-19); FALSE if patient is in source with no positive entities or absent from source. NEVER NULL post-Script 282.",
+          "v279_note": "Re-promoted by Script 282 (2026-04-20) from qwen2.5-32b airway_invasion 9domain_v4 rerun.",
+          "rebuilt_by": "script282_2026-04-20"
+        },
+        {
+          "column_name": "nlp_airway_key_finding",
+          "description": "Highest-priority entity value for this patient, resolved via KEY_FINDING_PRIORITY (laryngeal_invasion > ete_on_imaging > vascular_encasement > airway_compromise_grade > vocal_cord_imaging > esophageal_compression > tracheal_narrowing > substernal_extension > mass_effect > tracheal_deviation > other) tiebroken by confidence DESC NULLS LAST then entity_value alpha. NULL when has_data=FALSE.",
+          "v279_note": "Re-promoted by Script 282 (2026-04-20) from qwen2.5-32b airway_invasion 9domain_v4 rerun.",
+          "rebuilt_by": "script282_2026-04-20"
+        },
+        {
+          "column_name": "nlp_airway_n_entities",
+          "description": "Total positive airway-invasion entities extracted across all notes for this patient. 0 when has_data=FALSE.",
+          "v279_note": "Re-promoted by Script 282 (2026-04-20) from qwen2.5-32b airway_invasion 9domain_v4 rerun.",
+          "rebuilt_by": "script282_2026-04-20"
+        },
+        {
+          "column_name": "nlp_airway_n_notes",
+          "description": "Count of distinct notes per patient with >=1 positive extracted airway-invasion entity. 0 when has_data=FALSE.",
+          "v279_note": "Re-promoted by Script 282 (2026-04-20) from qwen2.5-32b airway_invasion 9domain_v4 rerun.",
+          "rebuilt_by": "script282_2026-04-20"
+        }
+      ],
+      "readme_source_action": "updated_existing",
+      "readme_cpm_action": "updated_existing",
+      "readme_source_after": {
+        "n_rows": 48169,
+        "n_rids": 10856,
+        "description_len": 143
+      },
+      "readme_cpm_after": {
+        "n_rows": 10871,
+        "n_rids": 10871,
+        "description_len": 288
+      },
+      "finished_at": "2026-04-20T23:53:52Z"
     }
   },
-  "last_started_at": "2026-04-20T23:53:23Z",
-  "last_phase_arg": "6",
-  "last_finished_at": "2026-04-20T23:53:29Z",
+  "last_started_at": "2026-04-20T23:53:49Z",
+  "last_phase_arg": "7",
+  "last_finished_at": "2026-04-20T23:53:52Z",
   "last_return_code": 0
 }
