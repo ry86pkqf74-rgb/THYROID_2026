@@ -153,7 +153,86 @@ HAS_DATA_TOLERANCE = 10
 
 # Phase 6 invariant tolerances.
 EXPECTED_THIN_WRAPPER_PROVISIONAL = 24
-EXPECTED_WS_VIEW_COUNT = 67
+
+# Phase 6 Gate G — manuscript_workspace baseline view allowlist.
+# Pinned by NAME (same pattern as Phase 5's KNOWN_UNDOCUMENTED_CPM_COLS) so
+# the workspace can keep growing (new cohort views land routinely) while we
+# still detect deletion of any baseline view. The gate asserts:
+#   missing := BASELINE_WS_VIEWS - actual_ws_views == ∅
+# Additions beyond baseline are recorded for audit but do NOT fail the gate.
+#
+# Snapshot taken 2026-04-19 by Claude during Phase 6 review; contains all 67
+# views from the post-272 finalization (THYROID_2026_FINALIZATION_20260418.md)
+# minus 'tirads_llm_haiku_vs_qwen_v1' which was added between 4/18 and 4/19.
+BASELINE_WS_VIEWS: frozenset[str] = frozenset({
+    "canonical_detail_pointer_v1",
+    "cohort_descriptive_full_cohort_v1",
+    "cohort_m001_indeterminate_genetics_v1",
+    "cohort_m004_graves_hashimoto_cancer_v1",
+    "cohort_m006_molecular_surg_decision_v1",
+    "cohort_m007_rss_reclassification_v1",
+    "cohort_m009_parathyroid_final_path_v1",
+    "cohort_m011_tirads_fna_genetics_v1",
+    "cohort_m016_graves_carcinoma_v1",
+    "cohort_m017_eucalcemic_hypopara_v1",
+    "cohort_m018_molecular_beth56_v1",
+    "cohort_m019_rai_outcomes_v1",
+    "cohort_m023_preop_genetics_v1",
+    "cohort_m025_tirads_performance_v1",
+    "cohort_m028_bethesda_iii_iv_v1",
+    "cohort_m029_fna_concordance_v1",
+    "cohort_m030_genetic_predictive_v1",
+    "cohort_m031_nuclear_medicine_v1",
+    "cohort_m032_descriptive_25yr_v1",
+    "cohort_m033_afirma_thyroseq_v1",
+    "cohort_m035_bethesda_v_v1",
+    "cohort_m036_ata_risk_comparison_v1",
+    "cohort_m037_ln_metastasis_v1",
+    "cohort_m038_massive_goiter_v1",
+    "cohort_m039_pth_calcium_v1",
+    "cohort_m040_reoperative_v1",
+    "cohort_m042_incidental_parathyroid_v1",
+    "cohort_m043_ln_predictors_v1",
+    "cohort_m044_ajcc_ete_v1",
+    "cohort_m045_multimodal_risk_v1",
+    "cohort_m046_niftp_era_bethesda_v1",
+    "cohort_m047_frozen_section_v1",
+    "cohort_m048_tnm_multifocal_v1",
+    "cohort_m049_pyramidal_lobe_v1",
+    "cohort_m050_tumor_size_volume_v1",
+    "cohort_m051_ete_ln_v1",
+    "cohort_m052_mrlnd_ln_count_v1",
+    "cohort_m053_nondiagnostic_fna_v1",
+    "cohort_m054_niftp_reclass_v1",
+    "cohort_m055_recurrence_rai_v1",
+    "cohort_m056_age_epidemiology_v1",
+    "cohort_m057_risk_stratification_v1",
+    "cohort_m058_thyroid_size_weight_v1",
+    "cohort_m059_prognostic_scoring_v1",
+    "cohort_m060_adenoma_ftump_v1",
+    "cohort_m061_thyroiditis_outcomes_v1",
+    "cohort_m062_incidental_frozen_v1",
+    "cohort_m063_frozen_false_neg_v1",
+    "cohort_m064_frozen_decision_v1",
+    "cohort_m065_frozen_tt_vs_lob_v1",
+    "cohort_m066_parathyroid_id_v1",
+    "cohort_m067_tsh_tg_tumorigenesis_v1",
+    "cohort_m068_mutation_labs_v1",
+    "cohort_m069_graves_hashimoto_v1",
+    "cohort_m070_hereditary_v1",
+    "cohort_m071_immunologic_meds_v1",
+    "cohort_m072_molecular_surg_impact_v1",
+    "cohort_m073_tg_lob_vs_tt_v1",
+    "cohort_m075_tirads_multi_nodule_v1",
+    "cohort_m076_ln_surveillance_v1",
+    "cohort_m078_graves_survival_v1",
+    "cohort_m079_eucalcemic_outcomes_v1",
+    "cohort_m080_molecular_beth56_v1",
+    "cohort_m081_rai_resistant_v1",
+    "cohort_m082_parathyroid_tumors_v1",
+    "imaging_nodule_master_clean_v1",
+    "path_tumor_size_invariant_v1",
+})
 
 # Output paths.
 OUTPUT_DIR = REPO_ROOT / "scripts" / "output"
@@ -1338,28 +1417,46 @@ def phase_6(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     _gate(out, "E_registry_needs_manual_review_eq_0", needs_review == 0,
           {"observed": int(needs_review)})
 
-    # F
+    # F — filter_type_provisional lives on manuscript_dive_map_v1, NOT on
+    # detail_table_registry_v1 (the Phase B prompt pointed at the wrong
+    # table; verified 2026-04-19 via information_schema.columns search).
     thin_provisional = con.execute(
         f"""
-        SELECT COUNT(*) FROM {WS_SCHEMA}.{REGISTRY_TABLE}
+        SELECT COUNT(*) FROM {WS_SCHEMA}.manuscript_dive_map_v1
         WHERE filter_type_provisional = TRUE
         """
     ).fetchone()[0]
     _gate(out, "F_thin_wrapper_provisional_eq_24",
           thin_provisional == EXPECTED_THIN_WRAPPER_PROVISIONAL,
-          {"observed": int(thin_provisional), "expected": EXPECTED_THIN_WRAPPER_PROVISIONAL})
+          {"observed": int(thin_provisional), "expected": EXPECTED_THIN_WRAPPER_PROVISIONAL,
+           "source_table": f"{WS_SCHEMA}.manuscript_dive_map_v1"})
 
-    # G
-    ws_views = con.execute(
-        f"""
-        SELECT COUNT(*) FROM information_schema.tables
-        WHERE table_catalog=? AND table_schema=? AND table_type='VIEW'
-        """,
-        [CANONICAL_DB, WS_SCHEMA],
-    ).fetchone()[0]
-    _gate(out, "G_manuscript_workspace_view_count_eq_67",
-          ws_views == EXPECTED_WS_VIEW_COUNT,
-          {"observed": int(ws_views), "expected": EXPECTED_WS_VIEW_COUNT})
+    # G — baseline-allowlist gate (replaces "count == 67" magnitude check).
+    # Asserts every view in BASELINE_WS_VIEWS is still present; new views
+    # added after the baseline snapshot are recorded for audit but allowed.
+    actual_ws_views = {
+        r[0]
+        for r in con.execute(
+            f"""
+            SELECT table_name FROM information_schema.tables
+            WHERE table_catalog=? AND table_schema=? AND table_type='VIEW'
+            """,
+            [CANONICAL_DB, WS_SCHEMA],
+        ).fetchall()
+    }
+    missing_baseline = sorted(BASELINE_WS_VIEWS - actual_ws_views)
+    additions_beyond_baseline = sorted(actual_ws_views - BASELINE_WS_VIEWS)
+    _gate(out, "G_baseline_ws_views_all_present",
+          not missing_baseline,
+          {"baseline_count": len(BASELINE_WS_VIEWS),
+           "actual_count": len(actual_ws_views),
+           "missing_baseline": missing_baseline,
+           "additions_beyond_baseline": additions_beyond_baseline,
+           "note": (
+               "Workspace can grow (new cohort views land routinely); "
+               "we only fail if a baseline view is deleted. Additions are "
+               "logged for audit."
+           )})
 
     out["observed"] = {
         "cpm_n_rows": int(n_cpm),
@@ -1372,7 +1469,10 @@ def phase_6(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
         "deprecated_named_tables_after": int(deprecated_after),
         "registry_needs_manual_review": int(needs_review),
         "thin_wrapper_provisional": int(thin_provisional),
-        "manuscript_workspace_view_count": int(ws_views),
+        "manuscript_workspace_view_count_actual": len(actual_ws_views),
+        "manuscript_workspace_view_count_baseline": len(BASELINE_WS_VIEWS),
+        "manuscript_workspace_views_missing_from_baseline": missing_baseline,
+        "manuscript_workspace_views_additions_beyond_baseline": additions_beyond_baseline,
     }
     out["finished_at"] = utcnow_iso()
     if out["blockers"]:
