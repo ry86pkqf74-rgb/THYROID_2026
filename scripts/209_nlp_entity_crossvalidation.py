@@ -494,6 +494,11 @@ def crossval_tirads(con: duckdb.DuckDBPyConnection,
     # If a manuscript needs TIRADS NLP cross-validation against the canonical
     # cupm_v2 vocab, this function needs a rewrite (separate effort, not
     # bundled into Part B). See scripts/output/_cpm_tirads_partB_reader_migrations.md.
+    print(
+        "[WARN] TIRADS cross-validation path neutered in CPM TIRADS Part B "
+        "migration (2026-04-21); returning empty concordance results. "
+        "Rewrite required to use canonical_us_patient_master_v2 vocab."
+    )
     can = master[["research_id"]].copy()
 
     type_counts = ents.groupby("entity_type").size().sort_values(ascending=False).to_dict()

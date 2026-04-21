@@ -24,6 +24,22 @@ Architecture: Option C-soft. canonical_patient_master no longer carries TIRADS
 columns. Canonical TIRADS lives on canonical_us_*_v2 surface (cupm_v2 patient,
 cuem_v2 exam, cunc_v2 nodule grain).
 
+> **Manuscript authors: cohort N may shift after rebasing onto post-Part-B CPM.**
+> The 5 cohort views rewritten in Phase 2 (`cohort_descriptive_full_cohort_v1`,
+> `cohort_m011_*`, `cohort_m025_*`, `cohort_m045_*`, `cohort_m075_*`) now gate
+> on `cupm_v2.tirads_category_at_first_exam IS NOT NULL` instead of the legacy
+> `tirads_best_category_v12 IS NOT NULL`. The canonical denominator is stricter
+> (only patients with US data appear). Observed deltas at cutover:
+> - `cohort_m011_tirads_fna_genetics_v1`: 3474 → 3286 (−188 RIDs)
+> - `cohort_m025_tirads_performance_v1`:  3474 → 3377 (−97 RIDs)
+> - `cohort_m045_multimodal_risk_v1`:     1192 → 1167 (−25 RIDs)
+> - `cohort_m075_tirads_multi_nodule_v1`: 3474 → 3286 (−188 RIDs)
+>
+> These are NOT data loss — they reflect the canonical TIRADS pipeline's
+> stricter denominator. If your manuscript quotes N from these cohorts, re-pull
+> after rebasing onto post-Part-B CPM and update the methods/results text
+> accordingly.
+
 - `207_canonical_master_expansion.py` — frozen 2026-04-21 — CPM TIRADS Part B — expanded canonical_patient_master_v1 with _v12 / _v271 / preop / max_tirads* TIRADS columns
 - `265_canonical_finalization.py` — frozen 2026-04-21 — CPM TIRADS Part B — finalized CPM with legacy TIRADS columns (best/worst/_v12/combined)
 - `271_tirads_imaging_finalization.py` — frozen 2026-04-21 — CPM TIRADS Part B — wrote tirads_*_points_v271 and laterality rollups to CPM
