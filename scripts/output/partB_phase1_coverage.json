@@ -1,0 +1,23 @@
+{
+  "phase": 5,
+  "started_at_utc": "2026-04-21T22:37:40Z",
+  "cpm_audit_col_count": 53,
+  "mapping_errors": [],
+  "cpm_cols_not_in_mapping": [],
+  "mapping_cols_not_on_cpm": [],
+  "status_counts": {
+    "mapped_cupm_v2": 30,
+    "retired_redesign": 8,
+    "drop_no_replacement": 6,
+    "gap_other_v2_table": 6,
+    "mapped_category": 2,
+    "mapped_points": 1
+  },
+  "n_gap_ABORT": 0,
+  "n_gap_other_v2_table": 6,
+  "coverage_csv": "scripts/output/preB_phase5_cpm_tirads_canonical_coverage_v1.csv",
+  "finished_at_utc": "2026-04-21T22:37:45Z",
+  "status": "OK",
+  "partB_phase1_drift_diffs": [],
+  "partB_phase1_status": "OK"
+}
