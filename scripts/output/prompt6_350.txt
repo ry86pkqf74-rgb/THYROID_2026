@@ -1,0 +1,34 @@
+
+==============================================================================
+1. Build staging table
+==============================================================================
+  staging rows=56, TSH<0.1 ever=8, TSH<0.5 ever=22
+
+==============================================================================
+2. Ensure CPM columns
+==============================================================================
+  CPM.tsh_suppressed_ever_threshold_0_5 already present
+  CPM.tsh_suppressed_first_date already present
+  CPM.n_notes_documenting_tsh_suppressed already present
+  CPM.tsh_suppressed_ever_source already present
+
+==============================================================================
+3. UPDATE CPM
+==============================================================================
+  tsh_suppressed_ever:                 before=201, after=201, delta=0
+  tsh_suppressed_ever_threshold_0_5:   before=56, after=56, delta=0
+
+==============================================================================
+4. Logs + PI review
+==============================================================================
+
+==============================================================================
+5. Final assertion
+==============================================================================
+  HARD_FLOOR_COMBINED=25
+  per-run delta_ever=0, delta_0_5=0, combined_delta=0
+  final-state ever=201, 0_5=56, combined_final=257
+  source ceiling (staging rids): 56
+  PASS — source ceiling already reached (idempotent re-run)
+
+DONE. 350 final state: tsh_suppressed_ever=201, threshold_0_5=56; this run delta_ever=0, delta_0_5=0 (soft target 2000 unmet — structural source ceiling = 56 patients with postop TSH labs).
