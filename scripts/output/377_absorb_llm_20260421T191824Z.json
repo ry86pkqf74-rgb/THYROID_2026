@@ -1,0 +1,30 @@
+{
+  "script": "Script 377",
+  "run_ts_utc": "20260421T191824Z",
+  "v2_before": {
+    "rows": 36957,
+    "patients": 6126
+  },
+  "v2_after": {
+    "rows": 37523,
+    "patients": 6523
+  },
+  "case_breakdown_patients": {
+    "A_single_v2_row": 426,
+    "B_zero_v2_rows": 397,
+    "C_multi_v2_rows": 825
+  },
+  "case_a_updates_count": 929,
+  "case_a_per_field": {
+    "composition": 2,
+    "echogenicity": 1,
+    "comparison_statement": 409,
+    "size_cm_max": 274,
+    "location_raw": 177,
+    "tirads_reported_in_text": 52,
+    "updated_tirads_category": 9,
+    "volume_ml": 5
+  },
+  "case_b_inserted": 566,
+  "case_c_deferred": 825
+}

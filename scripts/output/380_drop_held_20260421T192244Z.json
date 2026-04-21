@@ -1,0 +1,56 @@
+{
+  "script": "Script 380",
+  "run_ts_utc": "20260421T192244Z",
+  "plan": [
+    {
+      "table": "tirads_v2_nodules_raw",
+      "main_rows": 11914,
+      "archive_rows": 11914,
+      "dependent_views": []
+    },
+    {
+      "table": "note_entities_llm_tirads_granular",
+      "main_rows": 11037,
+      "archive_rows": 11037,
+      "dependent_views": []
+    },
+    {
+      "table": "note_entities_llm_us_nodule_dynamics",
+      "main_rows": 11037,
+      "archive_rows": 11037,
+      "dependent_views": []
+    },
+    {
+      "table": "note_entities_llm_imaging",
+      "main_rows": 11037,
+      "archive_rows": 11037,
+      "dependent_views": []
+    }
+  ],
+  "results": [
+    {
+      "table": "tirads_v2_nodules_raw",
+      "status": "dropped",
+      "rows": 11914,
+      "hash": "ccef9cb1f92d"
+    },
+    {
+      "table": "note_entities_llm_tirads_granular",
+      "status": "dropped",
+      "rows": 11037,
+      "hash": "389cbec68020"
+    },
+    {
+      "table": "note_entities_llm_us_nodule_dynamics",
+      "status": "dropped",
+      "rows": 11037,
+      "hash": "9f5ec41d9718"
+    },
+    {
+      "table": "note_entities_llm_imaging",
+      "status": "dropped",
+      "rows": 11037,
+      "hash": "16ff3556e720"
+    }
+  ]
+}

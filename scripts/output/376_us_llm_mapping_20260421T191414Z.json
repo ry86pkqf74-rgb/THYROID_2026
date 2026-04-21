@@ -1,0 +1,465 @@
+{
+  "script": "Script 376",
+  "run_ts_utc": "20260421T191414Z",
+  "type_counts": {
+    "note_entities_llm_tirads_granular": {
+      "tirads_category": 33,
+      "tirads_composition": 25,
+      "nodule_dimensions": 22,
+      "tirads_echogenicity": 15,
+      "nodule_identifier": 14,
+      "tirads_shape": 12,
+      "tirads_margin": 11,
+      "tirads_echogenic_foci": 10,
+      "tirads_total_points": 8,
+      "nodule_stability": 6,
+      "tirads_recommendation": 6,
+      "nodule_growth_rate": 4,
+      "nodule_location": 2,
+      "tirads_vascularity": 2,
+      "us_visit_number": 2,
+      "tuberculosis, ": 1,
+      "nodule_size": 1,
+      "nodule_volume": 1
+    },
+    "note_entities_llm_us_nodule_dynamics": {
+      "nodule_volume": 34,
+      "tirads_component_composition": 8,
+      "tirads_component_echogenicity": 4,
+      "tirads_component_shape": 2,
+      "tirads_component_margin": 1
+    },
+    "note_entities_llm_imaging": {
+      "ultrasound_thyroid": 3266,
+      "nodule_size": 2087,
+      "nodule_location": 986,
+      "ct_neck": 589,
+      "ultrasound_lymph_node": 574,
+      "tirads_score": 427,
+      "nuclear_med": 236,
+      "lymph_node_level": 119,
+      "pet_ct": 63,
+      "mri_neck": 26,
+      "tirads": 10,
+      "chest_xray": 10,
+      "ct_chest": 5,
+      "nodule": 4,
+      "tracheal_compression": 3,
+      "tracheal_deviation": 2,
+      "lymph_node": 2,
+      "thyromegaly": 2,
+      "pathology": 2,
+      "fna": 2,
+      "thyroid": 1,
+      "ct": 1,
+      "nuclear_medicine_scan": 1,
+      "trachea": 1,
+      "flexible_laryngoscopy": 1,
+      "thyroglobulin": 1,
+      "thyroidectomy": 1,
+      "plan_ct_neck": 1,
+      "thyroid_nodule": 1,
+      "pet_scanning": 1,
+      "ct_scan": 1,
+      "isthmus_thickening": 1,
+      "isthmus_thickness": 1
+    }
+  },
+  "mapping_rows": [
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "ultrasound_thyroid",
+      "row_count": 3266,
+      "target_v2_column": "comparison_statement",
+      "absorption_rule": "COALESCE existing (free-text holding pen)"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "nodule_size",
+      "row_count": 2087,
+      "target_v2_column": "size_cm_max",
+      "absorption_rule": "parse 'X.Y cm|mm' \u2192 DOUBLE; COALESCE"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "nodule_location",
+      "row_count": 986,
+      "target_v2_column": "location_raw",
+      "absorption_rule": "COALESCE existing"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "ct_neck",
+      "row_count": 589,
+      "target_v2_column": "<non_us>",
+      "absorption_rule": "future canonical_ct_lymph_node_v2"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "ultrasound_lymph_node",
+      "row_count": 574,
+      "target_v2_column": "<gap>",
+      "absorption_rule": "belongs in canonical_us_lymph_node_v2 (already exists)"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "tirads_score",
+      "row_count": 427,
+      "target_v2_column": "tirads_reported_in_text",
+      "absorption_rule": "parse 'TR[1-5]' or 'TI-RADS [1-5]' \u2192 INTEGER; COALESCE"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "nuclear_med",
+      "row_count": 236,
+      "target_v2_column": "<non_us>",
+      "absorption_rule": "future canonical_nucmed_v2"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "lymph_node_level",
+      "row_count": 119,
+      "target_v2_column": "<gap>",
+      "absorption_rule": "belongs in canonical_us_lymph_node_v2"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "pet_ct",
+      "row_count": 63,
+      "target_v2_column": "<non_us>",
+      "absorption_rule": "future canonical_petct_v2"
+    },
+    {
+      "entity_source_table": "note_entities_llm_us_nodule_dynamics",
+      "entity_type": "nodule_volume",
+      "row_count": 34,
+      "target_v2_column": "volume_ml",
+      "absorption_rule": "parse 'X.Y cm\u00b3|mL' \u2192 DOUBLE; COALESCE"
+    },
+    {
+      "entity_source_table": "note_entities_llm_tirads_granular",
+      "entity_type": "tirads_category",
+      "row_count": 33,
+      "target_v2_column": "updated_tirads_category",
+      "absorption_rule": "passthrough TR1-TR5; COALESCE"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "mri_neck",
+      "row_count": 26,
+      "target_v2_column": "<non_us>",
+      "absorption_rule": "future canonical_mr_v2"
+    },
+    {
+      "entity_source_table": "note_entities_llm_tirads_granular",
+      "entity_type": "tirads_composition",
+      "row_count": 25,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_tirads_granular",
+      "entity_type": "nodule_dimensions",
+      "row_count": 22,
+      "target_v2_column": "size_cm_max",
+      "absorption_rule": "parse first dimension; COALESCE"
+    },
+    {
+      "entity_source_table": "note_entities_llm_tirads_granular",
+      "entity_type": "tirads_echogenicity",
+      "row_count": 15,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_tirads_granular",
+      "entity_type": "nodule_identifier",
+      "row_count": 14,
+      "target_v2_column": "location_raw",
+      "absorption_rule": "COALESCE existing"
+    },
+    {
+      "entity_source_table": "note_entities_llm_tirads_granular",
+      "entity_type": "tirads_shape",
+      "row_count": 12,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_tirads_granular",
+      "entity_type": "tirads_margin",
+      "row_count": 11,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "tirads",
+      "row_count": 10,
+      "target_v2_column": "tirads_reported_in_text",
+      "absorption_rule": "parse 'TR[1-5]' \u2192 INTEGER; COALESCE"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "chest_xray",
+      "row_count": 10,
+      "target_v2_column": "<non_us>",
+      "absorption_rule": "future canonical_cxr_v2"
+    },
+    {
+      "entity_source_table": "note_entities_llm_tirads_granular",
+      "entity_type": "tirads_echogenic_foci",
+      "row_count": 10,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_tirads_granular",
+      "entity_type": "tirads_total_points",
+      "row_count": 8,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_us_nodule_dynamics",
+      "entity_type": "tirads_component_composition",
+      "row_count": 8,
+      "target_v2_column": "composition",
+      "absorption_rule": "COALESCE existing"
+    },
+    {
+      "entity_source_table": "note_entities_llm_tirads_granular",
+      "entity_type": "nodule_stability",
+      "row_count": 6,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_tirads_granular",
+      "entity_type": "tirads_recommendation",
+      "row_count": 6,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "ct_chest",
+      "row_count": 5,
+      "target_v2_column": "<non_us>",
+      "absorption_rule": "future canonical_ct_chest_v2"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "nodule",
+      "row_count": 4,
+      "target_v2_column": "location_raw",
+      "absorption_rule": "COALESCE existing (low confidence)"
+    },
+    {
+      "entity_source_table": "note_entities_llm_tirads_granular",
+      "entity_type": "nodule_growth_rate",
+      "row_count": 4,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_us_nodule_dynamics",
+      "entity_type": "tirads_component_echogenicity",
+      "row_count": 4,
+      "target_v2_column": "echogenicity",
+      "absorption_rule": "COALESCE existing"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "tracheal_compression",
+      "row_count": 3,
+      "target_v2_column": "<gap>",
+      "absorption_rule": "non-nodule symptom; future tracheal table"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "tracheal_deviation",
+      "row_count": 2,
+      "target_v2_column": "<gap>",
+      "absorption_rule": "non-nodule symptom"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "lymph_node",
+      "row_count": 2,
+      "target_v2_column": "<gap>",
+      "absorption_rule": "belongs in canonical_us_lymph_node_v2"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "thyromegaly",
+      "row_count": 2,
+      "target_v2_column": "<gap>",
+      "absorption_rule": "gland-level finding; belongs in canonical_us_thyroid_gland_v2"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "pathology",
+      "row_count": 2,
+      "target_v2_column": "<non_us>",
+      "absorption_rule": "non-imaging entity"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "fna",
+      "row_count": 2,
+      "target_v2_column": "fna_recommended_this_nodule",
+      "absorption_rule": "TRUE if entity present; COALESCE"
+    },
+    {
+      "entity_source_table": "note_entities_llm_tirads_granular",
+      "entity_type": "nodule_location",
+      "row_count": 2,
+      "target_v2_column": "location_raw",
+      "absorption_rule": "COALESCE existing"
+    },
+    {
+      "entity_source_table": "note_entities_llm_tirads_granular",
+      "entity_type": "tirads_vascularity",
+      "row_count": 2,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_tirads_granular",
+      "entity_type": "us_visit_number",
+      "row_count": 2,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_us_nodule_dynamics",
+      "entity_type": "tirads_component_shape",
+      "row_count": 2,
+      "target_v2_column": "shape",
+      "absorption_rule": "COALESCE existing"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "thyroid",
+      "row_count": 1,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "ct",
+      "row_count": 1,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "nuclear_medicine_scan",
+      "row_count": 1,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "trachea",
+      "row_count": 1,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "flexible_laryngoscopy",
+      "row_count": 1,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "thyroglobulin",
+      "row_count": 1,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "thyroidectomy",
+      "row_count": 1,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "plan_ct_neck",
+      "row_count": 1,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "thyroid_nodule",
+      "row_count": 1,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "pet_scanning",
+      "row_count": 1,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "ct_scan",
+      "row_count": 1,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "isthmus_thickening",
+      "row_count": 1,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_imaging",
+      "entity_type": "isthmus_thickness",
+      "row_count": 1,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_tirads_granular",
+      "entity_type": "tuberculosis, ",
+      "row_count": 1,
+      "target_v2_column": "<unmapped>",
+      "absorption_rule": "gap \u2014 document only"
+    },
+    {
+      "entity_source_table": "note_entities_llm_tirads_granular",
+      "entity_type": "nodule_size",
+      "row_count": 1,
+      "target_v2_column": "size_cm_max",
+      "absorption_rule": "parse 'X.Y cm|mm' \u2192 DOUBLE; COALESCE"
+    },
+    {
+      "entity_source_table": "note_entities_llm_tirads_granular",
+      "entity_type": "nodule_volume",
+      "row_count": 1,
+      "target_v2_column": "volume_ml",
+      "absorption_rule": "parse 'X.Y cm\u00b3|mL' \u2192 DOUBLE; COALESCE"
+    },
+    {
+      "entity_source_table": "note_entities_llm_us_nodule_dynamics",
+      "entity_type": "tirads_component_margin",
+      "row_count": 1,
+      "target_v2_column": "margins",
+      "absorption_rule": "COALESCE existing"
+    }
+  ],
+  "n_total": 56,
+  "n_mapped": 18,
+  "n_gap": 38
+}

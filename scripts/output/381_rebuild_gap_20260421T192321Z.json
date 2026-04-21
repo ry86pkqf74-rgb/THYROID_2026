@@ -1,0 +1,16 @@
+{
+  "script": "Script 381",
+  "run_ts_utc": "20260421T192321Z",
+  "gap_rows_after_rebuild": 60,
+  "gap_by_source": {
+    "archived_note_entities_llm_imaging": 57,
+    "archived_note_entities_llm_tirads_granular": 3
+  },
+  "related_audit_table_counts": {
+    "us_llm_absorption_deferred_multi_nodule_v1": 825,
+    "us_raw_index0_conflict_v1": 32146,
+    "us_raw_index_mismatch_v1": 13166,
+    "us_llm_absorption_mapping_v1": 56
+  },
+  "gap_dropped": false
+}

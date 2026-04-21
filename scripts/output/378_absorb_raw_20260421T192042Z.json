@@ -1,0 +1,35 @@
+{
+  "script": "Script 378",
+  "run_ts_utc": "20260421T192042Z",
+  "v2_before": 37523,
+  "v2_after": 37579,
+  "raw_total": 11914,
+  "raw_index0": 5082,
+  "raw_indexN": 6832,
+  "index0_classification": {
+    "B_coalesce": 5025,
+    "A_insert": 57
+  },
+  "case_a_inserts": 56,
+  "case_b_updates_per_field": {
+    "composition": 638,
+    "echogenicity": 571,
+    "shape": 42,
+    "margins": 185,
+    "echogenic_foci": 0,
+    "halo": 161,
+    "vascularity": 931,
+    "extrathyroidal_extension_on_us": 221,
+    "chammas_type": 45,
+    "elastography_category": 6,
+    "size_cm_max": 43,
+    "interval_growth_flag": 2577,
+    "prior_size_mm_max": 1563,
+    "fna_recommended_this_nodule": 1794,
+    "fna_performed_prior_or_concurrent": 2377,
+    "comparison_statement": 5851,
+    "updated_tirads_category": 8654
+  },
+  "case_b_conflicts": 32146,
+  "indexN_mismatches": 13166
+}

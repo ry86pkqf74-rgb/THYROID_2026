@@ -1,0 +1,32 @@
+{
+  "script": "Script 379",
+  "run_ts_utc": "20260421T192154Z",
+  "v2_rows": 37579,
+  "v2_patients": 6523,
+  "baseline_rows": 36957,
+  "baseline_patients": 6126,
+  "ln_modalities": [
+    "US"
+  ],
+  "duplicate_keys": 0,
+  "rows_without_provenance": 0,
+  "tirads_metrics": {
+    "total_rows": 37579,
+    "has_acr2017_points": 4375,
+    "has_acr2017_category": 3410,
+    "has_updated_category": 12070,
+    "both_populated": 3393,
+    "disagreeing": 0,
+    "has_text_extracted_tirads": 27885,
+    "pending_count": 2061
+  },
+  "source_flag_distribution": {
+    "source_base": 34896,
+    "source_tirads_v2": 30847,
+    "source_tirads_llm": 27109,
+    "source_dynamics_llm": 98,
+    "source_fna_linkage": 19593,
+    "source_us_nodules_tirads": 0
+  },
+  "fails": []
+}
