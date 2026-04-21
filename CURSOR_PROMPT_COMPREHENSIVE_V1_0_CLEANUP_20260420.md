@@ -399,16 +399,209 @@ Commit as `297_archive_stale_objects.py`.
 
 ---
 
+### Script 299 — Build `main.canonical_us_nodule_master_v1` (integrate scattered per-nodule US/TIRADS data)
+
+**Problem (confirmed 2026-04-20).** US/TIRADS data is correct and present but **scattered across 12+ tables** with no integrated per-nodule master. The tables Logan already has:
+
+| Table | rows | distinct_rid | Notable fields |
+|---|---|---|---|
+| `canonical_us_nodule_characteristics_v1` | 37,016 | 6,126 | Base per-nodule long format: laterality, nodule_index_within_exam, size_cm, composition, echogenicity, shape, margin, echogenic_foci, **tirads_score_2017**, **tirads_category_v2**, **tirads_level_2017**, tirads_reported |
+| `imaging_nodule_master_v1` | 37,016 | 6,126 | Same grain — has `tirads_acr_recalculated`; **likely redundant duplicate** of canonical (verify and archive if so) |
+| `tirads_v2_nodules_raw` | 11,914 | 3,021 | Rich v2 LLM: chammas_type, elastography_category, interval_growth_flag, extrathyroidal_extension_on_us, fna_recommended_this_nodule, prior_size_mm_max, **tirads_total_points**, composition_points, margin_points, shape_points, foci_points, echogenicity_points |
+| `tirads_llm_extracted_v2` | 5,636 | 1,429 | Component points breakdown (composition_pts, margin_pts, shape_pts, foci_pts, echogenicity_pts, total_pts_2017, tirads_level_2017) |
+| `note_entities_llm_tirads_granular` | 11,037 | 5,641 | `result_json` — **NOT YET PARSED into structured per-nodule columns** |
+| `note_entities_llm_us_nodule_dynamics` | 11,037 | 5,641 | `result_json` — growth/dynamics per nodule, **NOT YET PARSED** |
+| `imaging_fna_linkage_v3` | 9,911 | 1,938 | FNA-to-nodule linkage (nodule_id ↔ fna_episode_id) |
+| `serial_imaging_us` | 4,162 | 1,443 | Longitudinal us_date, us_findings_impression |
+| `ultrasound_reports` | 6,793 | 4,074 | Wide format nodule_1..nodule_14 — source of truth raw but already pivoted into `canonical_us_nodule_characteristics_v1` |
+| `us_nodules_tirads` | 10,859 | — | **Legacy wide ingest** — archive candidate (superseded by long format) |
+
+**Approach**:
+1. Use `canonical_us_nodule_characteristics_v1` as the base grain. Declare the match key: `(research_id, exam_date, laterality, nodule_index_within_exam)`; if exam_date isn't present, use `imaging_exam_id` from `imaging_exam_master_v1` joined on its own grain.
+2. **Parse the unparsed LLM JSON** into a per-nodule staging table first (do NOT re-extract; the entities already exist):
+   ```sql
+   CREATE OR REPLACE TABLE manuscript_workspace.tirads_granular_parsed_v1 AS
+   WITH ent AS (
+     SELECT research_id, note_id, extraction_timestamp,
+            UNNEST(CAST(json_extract(result_json, '$.entities') AS VARCHAR[])) AS entity_json
+       FROM main.note_entities_llm_tirads_granular
+      WHERE result_json IS NOT NULL
+   )
+   SELECT research_id, note_id, extraction_timestamp,
+          json_extract_string(entity_json, '$.laterality')            AS laterality,
+          CAST(json_extract_string(entity_json, '$.nodule_index') AS INTEGER) AS nodule_index_within_exam,
+          json_extract_string(entity_json, '$.composition')           AS composition_llm,
+          json_extract_string(entity_json, '$.echogenicity')          AS echogenicity_llm,
+          json_extract_string(entity_json, '$.shape')                 AS shape_llm,
+          json_extract_string(entity_json, '$.margin')                AS margin_llm,
+          json_extract_string(entity_json, '$.echogenic_foci')        AS foci_llm,
+          CAST(json_extract_string(entity_json, '$.size_cm') AS DOUBLE)         AS size_cm_llm,
+          CAST(json_extract_string(entity_json, '$.tirads_points') AS INTEGER)  AS tirads_points_llm,
+          json_extract_string(entity_json, '$.tirads_category')       AS tirads_category_llm,
+          json_extract_string(entity_json, '$.evidence_text')         AS evidence_text_llm
+     FROM ent;
+   ```
+   Mirror the same pattern for `note_entities_llm_us_nodule_dynamics` → `manuscript_workspace.us_nodule_dynamics_parsed_v1` (prior_size_mm, interval_growth_mm, dynamics_category, evidence_text).
+3. Build `main.canonical_us_nodule_master_v1` by LEFT-joining everything onto the base. **Never overwrite a non-NULL base value** with an LLM/v2 value; use v2/LLM only where base is NULL. Columns (minimum):
+   - Keys: research_id, imaging_exam_id, exam_date, laterality, nodule_index_within_exam, nodule_master_id (surrogate)
+   - Dimensions: size_cm_max, size_cm_ap, size_cm_transverse, size_cm_longitudinal, volume_ml
+   - Features: composition, echogenicity, shape, margin, echogenic_foci_type
+   - TIRADS: tirads_points_total, tirads_category (ACR TI-RADS 2017), tirads_points_composition, tirads_points_echogenicity, tirads_points_shape, tirads_points_margin, tirads_points_foci, tirads_reported_in_note (raw), tirads_recalculated (from our points)
+   - Dynamics: prior_size_mm_max, interval_growth_mm, interval_growth_flag, dynamics_category, has_prior_comparison
+   - Advanced: chammas_type, elastography_category, extrathyroidal_extension_on_us, fna_recommended_this_nodule_on_report
+   - FNA linkage: linked_fna_episode_id, linked_fna_date, linked_fna_cytology_bethesda
+   - Provenance: source_base, source_tirads_v2, source_tirads_llm, source_dynamics_llm, source_fna_linkage (booleans indicating which sources contributed)
+4. **Discordance queue** — write `manuscript_workspace.tirads_v1_v2_discordance_v1` for every nodule where `tirads_category_v1 != tirads_category_v2` (both non-NULL). Include all component points + evidence for adjudication. Do NOT auto-resolve.
+5. **Invariants**: `COUNT(*) = COUNT(DISTINCT (research_id, imaging_exam_id, laterality, nodule_index_within_exam))`; `COUNT(DISTINCT research_id) ≈ 6,126 ± 5`; `SUM(tirads_category IS NOT NULL) / COUNT(*)` ≥ the current canonical rate (never regress fill).
+6. Verify `imaging_nodule_master_v1` vs `canonical_us_nodule_characteristics_v1` — if semantically duplicate (same grain, overlapping field set, no unique info in nodule_master), queue `imaging_nodule_master_v1` for archival in Script 297's list (append via `INSERT INTO manuscript_workspace.archive_move_queue_v1`).
+
+Commit as `299_canonical_us_nodule_master_v1.py`.
+
+---
+
+### Script 300 — Build `main.canonical_us_exam_master_v1` (per-exam rollup)
+
+**Problem.** `imaging_exam_master_v1` exists (13,347 rows / 6,126 patients) but predates the integrated per-nodule master from Script 299.
+
+**Approach**:
+1. Roll `canonical_us_nodule_master_v1` up to the exam grain `(research_id, imaging_exam_id, exam_date)`.
+2. Columns: n_nodules_on_exam, largest_nodule_cm, second_largest_nodule_cm, bilateral_flag (nodules in both lobes), isthmus_nodule_flag, **worst_tirads_category_this_exam**, **worst_tirads_points_this_exam**, max_growth_mm_this_exam, any_nodule_with_extrathyroidal_extension, any_nodule_fna_recommended_on_report, count_tr5_nodules, count_tr4_nodules, count_tr3_nodules, count_tr2_nodules, count_tr1_nodules.
+3. Add longitudinal rank: `exam_rank_for_patient` (1 = earliest available US) and `is_preop_exam` (flag exams before `first_surgery_date` from CPM).
+4. Cross-check: for each (research_id, exam_date) confirm nodule rows in Script 299's master ≥ `n_nodules_on_exam` reported here.
+5. Diff output table `manuscript_workspace.exam_master_v1_vs_v0_diff` showing what changed vs legacy `imaging_exam_master_v1`; archive the legacy one on confirmation.
+
+Commit as `300_canonical_us_exam_master_v1.py`.
+
+---
+
+### Script 301 — Build `main.canonical_us_patient_master_v1` (per-patient rollup)
+
+**Problem.** CPM already has `imaging_tirads_best/worst` (32%) and `tirads_v2_worst_category` (23%) but these are fragments, not a full patient-grain master with provenance.
+
+**Approach**:
+1. Roll the exam master from Script 300 up to `(research_id)`, one row per patient.
+2. Columns: has_any_us, n_us_exams, first_us_date, last_us_date, preop_us_available_flag, **max_tirads_category_ever**, **max_tirads_points_ever**, tirads_category_at_first_exam, tirads_category_at_last_preop_exam, n_nodules_total_across_exams, n_distinct_nodules_tracked (using the nodule_master_id when stable, else max-per-exam), bilateral_disease_flag_ever, multifocal_flag_ever (>1 nodule on same lobe), any_suspicious_nodule_ever (TR4 or TR5), any_nodule_with_extrathyroidal_extension_ever, longitudinal_growth_detected_flag, first_high_risk_tirads_date.
+3. Backfill CPM columns from this master **conservatively** (only where CPM column is NULL):
+   - `imaging_tirads_best` ← `max_tirads_category_ever` if CPM NULL
+   - `imaging_tirads_worst` ← same
+   - `tirads_v2_worst_category` ← same (if v2 NULL)
+   - `max_tirads_ever` ← `max_tirads_category_ever`
+   - `preop_tirads_best/_worst` ← `tirads_category_at_last_preop_exam`
+4. Every backfill logs a row to `manuscript_workspace.cpm_backfill_log_v1` with `source_description='canonical_us_patient_master_v1'`.
+5. **Invariants**: `COUNT(*) ≤ 10,871` (one row per patient, only tested patients get one); `SUM(has_any_us) = COUNT(DISTINCT research_id FROM canonical_us_nodule_master_v1)`.
+
+Commit as `301_canonical_us_patient_master_v1.py`.
+
+---
+
+### Script 302 — Build `main.genetics_per_test_master_v1` (per-test drill-down master)
+
+**Problem (confirmed 2026-04-20).** ~1,286 patients had molecular testing (Thyroseq/Afirma/other). The drill-down data — per-variant mutations, allele fractions, zygosity, CNAs, fusions, gene-expression signatures — exists scattered across 11 tables but **there is no integrated per-test master**. Logan has asked for this explicitly.
+
+**Source tables**:
+
+| Table | rows | distinct_rid | Critical fields |
+|---|---|---|---|
+| `molecular_test_episode_v2` | 10,650 | 10,026 | episode_id, test_date, platform, bethesda_category, **13 per-gene flags** (braf/ras/tert/tp53/pax8_pparg/alk/ntrk/ret/eif1ax/loh/cna/fusion/pik3ca/tshr), linked_fna_episode_id, linked_nodule_id, linked_surgery_episode_id |
+| `molecular_results` | 10,861 | — | assay_name, panel_version, vendor, **raw_payload_json**, qc_flags |
+| `molecular_variant_long` | 1,640 | 703 | **Per-variant:** gene_symbol, canonical_hgvs, cdna_hgvs, protein_hgvs, genomic_hgvs, allele_fraction, zygosity, fusion_partner, partner_gene_symbol, variant_class, interpretation_text, risk_call |
+| `thyroseq_molecular_enrichment` | 10,861 | — | Per-gene flags (BRAF/RAS/TERT/TP53/PIK3CA/RET/NTRK/ALK/PPARG/TSHR) + **cna_raw/norm** + **fusion_genes_json** + **gep_raw/norm** + **allele_fractions_json** + pathology_raw |
+| `canonical_molecular_tested_v1` | 1,286 | — | has_thyroseq, has_afirma, braf_positive_canonical, ras_positive_canonical, tert_positive_canonical, braf_variant_raw, ras_subtype_raw, molecular_risk_tier, platform_canonical |
+| `note_entities_genetics` | 1,738 | 605 | entity_type, entity_value_norm, entity_value_raw, evidence_span, present_or_negated, confidence |
+| `extracted_braf_recovery_v1` | 730 | 376 | braf_status, braf_variant, detection_method |
+| `extracted_ras_patient_summary_v1` | 321 | — | ras_positive, ras_primary_subtype, allele_frequency_pct |
+
+**Approach**:
+1. Declare test grain: `(research_id, molecular_episode_id)`. Base is `molecular_test_episode_v2` filtered to `platform IS NOT NULL OR bethesda_category IS NOT NULL OR any per-gene flag IS NOT NULL` (gating out the 10,650 − 1,286 ≈ 9,364 placeholder rows if present; verify the real tested-episode count matches the ~1,286 patient count before proceeding).
+2. LEFT-join `molecular_results` on the episode key to pull `assay_name, panel_version, vendor, raw_payload_json`.
+3. Roll `molecular_variant_long` up to the episode grain as a JSON array of variants:
+   ```sql
+   WITH var AS (
+     SELECT research_id, molecular_episode_id,
+            LIST({
+              'gene': gene_symbol,
+              'hgvs_canonical': canonical_hgvs,
+              'hgvs_protein': protein_hgvs,
+              'hgvs_cdna': cdna_hgvs,
+              'hgvs_genomic': genomic_hgvs,
+              'allele_fraction': allele_fraction,
+              'zygosity': zygosity,
+              'variant_class': variant_class,
+              'fusion_partner': fusion_partner,
+              'partner_gene': partner_gene_symbol,
+              'risk_call': risk_call,
+              'interpretation': interpretation_text
+            }) AS variants_json
+       FROM main.molecular_variant_long
+      GROUP BY research_id, molecular_episode_id
+   )
+   ```
+4. LEFT-join `thyroseq_molecular_enrichment` (on research_id + best-effort episode match via test_date ± 14 days if episode_id is absent in enrichment — Logan to confirm the join key; if ambiguous, queue to `manuscript_workspace.genetics_enrichment_join_ambiguity_v1`) for `cna_raw/norm`, `fusion_genes_json`, `gep_raw/norm`, `allele_fractions_json`, `pathology_raw`.
+5. Roll `note_entities_genetics` up to the episode grain (nearest test_date within ±30 days) as a JSON array of entity rollups.
+6. Final columns of `main.genetics_per_test_master_v1`:
+   - **Keys**: research_id, molecular_episode_id, test_date, test_rank_for_patient
+   - **Platform**: platform (thyroseq/afirma/other), assay_name, panel_version, vendor, bethesda_category
+   - **Clinical linkage**: linked_fna_episode_id, linked_fna_date, linked_nodule_id, linked_surgery_episode_id, specimen_site
+   - **Per-gene flags** (from episode_v2): braf_positive_this_test, ras_positive_this_test, tert_positive_this_test, tp53_positive_this_test, pik3ca_positive_this_test, ret_point_positive_this_test, ret_fusion_positive_this_test, alk_fusion_positive_this_test, ntrk_fusion_positive_this_test, pax8_pparg_positive_this_test, eif1ax_positive_this_test, tshr_positive_this_test, any_loh_flag, any_cna_flag, any_fusion_flag
+   - **Variant drill-down**: variants_json (LIST of structs as above), n_variants, n_variants_pathogenic, max_allele_fraction
+   - **Enrichment**: cna_raw, cna_norm, fusion_genes_json, gep_raw, gep_norm, allele_fractions_json, pathology_raw
+   - **LLM entities rollup**: genetics_entities_json
+   - **Interpretation**: overall_result_class, molecular_risk_tier (low/intermediate/high), risk_call, detailed_findings_raw
+   - **Raw**: raw_payload_json (full vendor report JSON when available)
+   - **Provenance booleans**: source_episode_v2, source_results, source_variant_long, source_thyroseq_enrichment, source_note_entities, source_canonical_tested, source_braf_recovery, source_ras_summary
+7. **Invariants**: `COUNT(DISTINCT research_id) ≈ 1,286 ± 10` (warn Logan if outside); `COUNT(*) ≥ COUNT(DISTINCT research_id)` (some patients have >1 test); `SUM(any per-gene flag is TRUE) ≤ COUNT(*)`; every row where `variants_json IS NOT NULL` must also have `n_variants > 0`.
+8. Never coerce an untested/unknown to FALSE. If a per-gene flag cannot be determined, leave NULL; only populate TRUE/FALSE when the source explicitly says so.
+9. **Discordance queue** `manuscript_workspace.genetics_per_test_discordance_v1` for cases where different sources disagree on the same test (e.g., episode_v2 says BRAF positive but variant_long has no BRAF variant with AF > 0).
+
+Commit as `302_genetics_per_test_master_v1.py`.
+
+---
+
+### Script 303 — Build `main.genetics_per_patient_master_v1` (per-patient rollup) + archive duplicates
+
+**Problem.** CPM has `braf_positive`, `ras_positive`, `tert_positive` forced to 100% fill by coercing untested → FALSE. This is wrong: untested patients should be NULL (or carry an explicit `was_tested=FALSE` flag), never FALSE on gene status. Logan needs a clean per-patient genetics master with explicit tested/untested distinction.
+
+**Approach**:
+1. Grain: one row per patient (full `canonical_patient_master` cohort — 10,871 rows). **Every patient gets a row**, with `was_tested=FALSE` for the ~9,585 untested patients and all gene-status fields NULL for them.
+2. For tested patients, roll `genetics_per_test_master_v1` (Script 302) up to patient grain using worst/first/last logic per field:
+   - `n_tests`, `first_test_date`, `last_test_date`, `test_platforms_list` (array), `has_thyroseq`, `has_afirma`, `has_other_platform`
+   - For each gene (braf/ras/tert/tp53/pik3ca/ret_fusion/alk_fusion/ntrk_fusion/pax8_pparg/eif1ax/tshr): `<gene>_status` ∈ {positive, negative, indeterminate, NULL (untested)} — priority: any positive → positive; else any negative → negative; else indeterminate.
+   - `braf_variants_list`, `ras_variants_list`, `tert_variants_list` — arrays of distinct variants from `variants_json`.
+   - `any_high_risk_marker_flag` (TRUE if braf_positive OR tert_positive OR tp53_positive OR any_high_risk_fusion).
+   - `molecular_risk_tier_final` (max tier across tests: high > intermediate > low > unknown).
+   - `cna_summary_json`, `fusion_summary_json`, `gep_summary_json` — rolled up across tests.
+   - `aggregated_findings_text` — a readable concatenation for manuscript writing (one line per test).
+3. **Backfill CPM conservatively** only where CPM column is NULL **and** the source is unambiguous (do NOT overwrite the existing coerced-to-FALSE values since those are a separate category-coding choice already in use downstream):
+   - Instead, write a new CPM column `genetics_master_v1_link_flag` and `genetics_master_v1_episode_count` referencing this master, rather than mutating existing genetics columns.
+4. **Invariants**: `COUNT(*) = 10,871`; `COUNT(DISTINCT research_id) = 10,871`; `SUM(was_tested) ≈ 1,286`; for every patient `SUM(gene statuses IS NOT NULL) > 0 WHERE was_tested=TRUE`.
+5. **Archive superseded tables** once this master is built and validated:
+   - `main.canonical_molecular_tested_v1` → `archive_pub_v1_0.canonical_molecular_tested_v1_pre303_<UTCZ>` (superseded by per-patient master).
+   - `main.us_nodules_tirads` (legacy wide) → `archive_pub_v1_0.us_nodules_tirads_pre303_<UTCZ>` (superseded by Script 299's long-format master).
+   - If Script 299 confirmed `imaging_nodule_master_v1` is redundant, archive that too.
+   - Follow the reference-safety check from Script 297 before each DROP. Log to `manuscript_workspace.archive_move_log_v1`.
+
+Commit as `303_genetics_per_patient_master_v1.py`.
+
+---
+
 ### Script 298 — Final V1_0 lint / verification pass
 
-After Scripts 288–297 complete:
+After Scripts 288–303 complete:
 
 1. Re-run all four CPM invariants.
 2. Re-run the missing-data audit from `scripts/285_cpm_missing_data_provenance.py` (or its equivalent) and diff against the pre-run snapshot — target is ≥60% of previously-empty columns now populated.
 3. Re-check column types against a hard-coded whitelist (no INTEGER where DATE/VARCHAR is correct).
 4. Re-query the view layer (`views_readable.*`) and confirm every view still resolves (`SELECT COUNT(*) FROM views_readable.<view>` doesn't error).
-5. Write `scripts/output/298_postcleanup_audit.md` summarizing all changes with absolute row counts and column-fill deltas.
-6. Print `git log --oneline scripts/28[6-9]*.py scripts/29[0-8]*.py` to confirm all commits landed.
+5. Verify the three new US masters exist, resolve, and pass grain invariants:
+   - `main.canonical_us_nodule_master_v1`: `COUNT(*) = COUNT(DISTINCT (research_id, imaging_exam_id, laterality, nodule_index_within_exam))`
+   - `main.canonical_us_exam_master_v1`: `COUNT(*) = COUNT(DISTINCT (research_id, imaging_exam_id))`
+   - `main.canonical_us_patient_master_v1`: `COUNT(*) = COUNT(DISTINCT research_id) ≤ 10,871`
+6. Verify the two new genetics masters exist, resolve, and pass grain invariants:
+   - `main.genetics_per_test_master_v1`: `COUNT(DISTINCT research_id) ≈ 1,286 ± 10`; every row with `was_tested=TRUE` has at least one gene status populated.
+   - `main.genetics_per_patient_master_v1`: `COUNT(*) = 10,871`; `SUM(was_tested) ≈ 1,286`; no untested patient has a TRUE/FALSE gene status (all NULL for untested).
+7. Confirm discordance queues are non-empty where expected (`tirads_v1_v2_discordance_v1`, `genetics_per_test_discordance_v1`) and that none have been auto-resolved.
+8. Write `scripts/output/298_postcleanup_audit.md` summarizing all changes with absolute row counts and column-fill deltas, plus a section enumerating every new master table with its row count, distinct_rid, and non-null coverage for flagship columns (TIRADS category, BRAF status, RAS status, TERT status).
+9. Print `git log --oneline scripts/28[6-9]*.py scripts/29[0-9]*.py scripts/30[0-3]*.py` to confirm all commits landed.
 
 Commit as `298_postcleanup_verification.py`.
 
@@ -447,6 +640,11 @@ If `git push` is rejected (non-fast-forward), use `git pull --rebase origin main
 5. `path_stage_raw` derived from `path_synoptics`.
 6. VC complication tiering extended; no more rows stuck at 'absent_or_unconfirmed' where evidence flags are positive.
 7. All stale/snapshot/versioned-predecessor objects moved to `archive_pub_v1_0`; reference-safety check passed; V1_0 slimmed to its canonical set.
-8. `manuscript_workspace.archive_move_log_v1` and `manuscript_workspace.cpm_backfill_log_v1` updated with full audit trail.
-9. `scripts/output/298_postcleanup_audit.md` committed.
-10. Every script committed individually and pushed to origin/main.
+8. **`main.canonical_us_nodule_master_v1` exists** — one row per (research_id, imaging_exam_id, laterality, nodule_index) integrating every scattered US/TIRADS source (canonical_us_nodule_characteristics_v1 + tirads_v2_nodules_raw + tirads_llm_extracted_v2 + parsed LLM note entities for TIRADS granular + parsed LLM note entities for nodule dynamics + imaging_fna_linkage_v3) with TIRADS 2017 category, component points, dynamics, FNA linkage, and provenance.
+9. **`main.canonical_us_exam_master_v1` and `main.canonical_us_patient_master_v1` exist** — per-exam and per-patient rollups with worst/best TIRADS, n_nodules, bilateral/multifocal flags, longitudinal rank; CPM TIRADS columns backfilled conservatively from the patient master.
+10. **`main.genetics_per_test_master_v1` exists** — one row per molecular test episode for the ~1,286 tested patients, joining molecular_test_episode_v2 + molecular_results (assay/panel/raw JSON) + molecular_variant_long rollup (per-variant drill-down as JSON array with gene/HGVS/AF/zygosity) + thyroseq_molecular_enrichment (CNA, GEP, fusion panel, allele fractions) + note_entities_genetics rollup. Per-gene flags, variant-level detail, and risk calls all present.
+11. **`main.genetics_per_patient_master_v1` exists** — one row per patient (full 10,871 cohort), explicitly distinguishes `was_tested=FALSE` from negative gene status (no coercion of untested to FALSE). Variants, platforms, and molecular risk tier rolled up. Duplicate/legacy genetics tables (`canonical_molecular_tested_v1`, legacy US wide `us_nodules_tirads`, and `imaging_nodule_master_v1` if confirmed redundant) archived to `archive_pub_v1_0`.
+12. Discordance queues (`tirads_v1_v2_discordance_v1`, `genetics_per_test_discordance_v1`, `n_surgeries_v1_v2_conflict_v1`, `vc_complication_tiering_v1`) populated and awaiting Logan's adjudication — none auto-resolved.
+13. `manuscript_workspace.archive_move_log_v1` and `manuscript_workspace.cpm_backfill_log_v1` updated with full audit trail.
+14. `scripts/output/298_postcleanup_audit.md` committed.
+15. Every script committed individually and pushed to origin/main.
