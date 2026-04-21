@@ -1,0 +1,23 @@
+{
+  "script": "Script 368",
+  "run_ts_utc": "20260421T173119Z",
+  "added_columns": [
+    "n_us_exams_v2",
+    "n_us_nodules_total_v2",
+    "dominant_nodule_size_cm_v2",
+    "imaging_tirads_best_v2",
+    "imaging_tirads_worst_v2",
+    "imaging_tirads_category_v2_v2",
+    "imaging_laterality_rollup_v2",
+    "max_tirads_ever_v2",
+    "preop_tirads_best_v2",
+    "preop_tirads_category_v2",
+    "lnus_abnormal_any_exam_v2",
+    "lnus_n_us_with_ln_assessment_v2",
+    "lnus_first_abnormal_us_ln_date_v2",
+    "us_v2_any_nlp_backfill_pending"
+  ],
+  "cpm_total_rows": 10871,
+  "cpm_rows_with_v2_us": 10859,
+  "lnus_abnormal_v2_true": 8
+}

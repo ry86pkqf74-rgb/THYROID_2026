@@ -1,0 +1,10 @@
+{
+  "script": "Script 369",
+  "run_ts_utc": "20260421T173251Z",
+  "registry_upserts": 5,
+  "view_row_counts": {
+    "US_Nodules_Wide_v2": 4082,
+    "US_Thyroid_Gland_Wide_v2": 4074,
+    "US_Lymph_Nodes_Wide_v2": 4077
+  }
+}
