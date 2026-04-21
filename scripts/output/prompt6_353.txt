@@ -1,0 +1,79 @@
+
+==============================================================================
+1. Schema object counts (current vs Prompt 4 baseline)
+==============================================================================
+  main:                 baseline=118 -> now=104 (delta=-14)
+  tier2:                baseline=13 -> now=13
+  verify:               baseline=2 -> now=2
+  manuscript_workspace: now=64
+
+==============================================================================
+2. Archive + move log tallies (Prompt 6 scripts)
+==============================================================================
+  archive 341_rebuild_operative_episode_multi_v2: 1
+  archive 346_archive_extracted_legacy: 5
+  archive 348_archive_older_masters: 3
+  TOTAL archived this prompt: 9
+  move    347_move_audit_artifacts: 4
+  move    347b_patient_analysis_resolved_backfill_and_move: 1
+  move    348_move_ln_master_rollup: 1
+  TOTAL moved this prompt:    6
+
+==============================================================================
+3. Defer log tallies (per Prompt 6 script_num)
+==============================================================================
+  script 347: 2 defer rows
+  script 348: 3 defer rows
+  script 349: 1 defer rows
+  script 350: 3 defer rows
+  script 351: 2 defer rows
+  script 352: 12 defer rows
+
+==============================================================================
+4. CPM coverage deltas (touched columns)
+==============================================================================
+  imaging_nodule_size_cm                        before=0 after=3439 delta=3439
+  margin_status_final                           before=0 after=3957 delta=3957
+  tirads_v2_worst_rank                          before=0 after=2465 delta=2465
+  tirads_v2_any_fna_recommended_report          before=0 after=4073 delta=4073
+  max_stimulated_tg                             before=0 after=238 delta=238
+  max_stimulated_tg_date                        before=0 after=238 delta=238
+  n_stimulated_tg_measurements                  before=0 after=238 delta=238
+  tsh_suppressed_ever                           before=201 after=201 delta=0
+  tsh_suppressed_ever_threshold_0_5             before=0 after=56 delta=56
+  tsh_suppressed_first_date                     before=0 after=0 delta=0
+  n_notes_documenting_tsh_suppressed            before=0 after=0 delta=0
+  path_stage_raw                                before=4070 after=4134 delta=64
+  gm_path_stage_raw                             before=4070 after=4134 delta=64
+  path_stage_raw_source                         before=0 after=64 delta=64
+  gm_path_stage_raw_source                      before=0 after=64 delta=64
+  nucmed_tgab_max                               before=2602 after=2602 delta=0
+  biochemical_concern_first_date                before=1372 after=1372 delta=0
+  comp_vc_paralysis_evidence_tier               before=34 after=34 delta=0
+  comp_vc_paresis_evidence_tier                 before=22 after=22 delta=0
+
+  TOTAL CPM cells added this prompt: 14960
+
+==============================================================================
+5. cpm_missing_data_provenance_v1 after-state
+==============================================================================
+  unaddressed (feasible AND wiring_gap AND no remediation/defer): 0
+
+==============================================================================
+6. Orphan reference sweep
+==============================================================================
+  total orphan references: 0
+
+==============================================================================
+7. Final assertions
+==============================================================================
+  main delta: -14 (floor -14)
+  CPM cells added: 14960 (floor 5500)
+  unaddressed feasible wiring_gap rows: 0
+  orphan view references: 0
+
+DONE. 353 audit PASSED.
+  main: 118 -> 104 (delta -14)
+  CPM cells added: 14960
+  archives: 9, moves: 6
+  defers logged: 23
