@@ -1,0 +1,75 @@
+=== FULL JSONL CONTENT ===
+
+--- record 1: note_row_id=711_us1 ---
+keys: ['note_row_id', 'domain', 'llm_model', 'llm_base_url', 'extracted_at', 'result_json', 'research_id', 'note_type', 'note_date', 'linkage_date', 'source_workbook', 'source_sheet', 'source_column', 'note_index', 'preprocess_batch_id', 'preprocessed_at_utc', 'preprocess_script_version']
+{
+  "note_row_id": "711_us1",
+  "domain": "tirads_granular",
+  "llm_model": "qwen2.5-32b",
+  "llm_base_url": "http://93.91.156.87:44519/v1",
+  "extracted_at": "2026-04-18T09:07:15.102213+00:00",
+  "result_json": "{\"entities\": [{\"entity_type\": \"nodule_dimensions\", \"entity_value\": \"2.7 cm\", \"entity_date\": \"2015-06-19\", \"date_confidence\": 1.0, \"date_source_keyword\": \"2015-06-19\", \"present_or_negated\": \"present\", \"confidence\": 0.95, \"evidence_text\": \"There is a solid 2.7 cm mass in the mid and lower portions of the right lobe.\", \"source_line\": 10}, {\"entity_type\": \"tirads_category\", \"entity_value\": \"TR2\", \"entity_date\": \"2015-06-19\", \"date_confidence\": 1.0, \"date_source_keyword\": \"2015-06-19\", \"present_or_negated\": \"present\", \"confidence\": 0.95, \"evidence_text\": \"[TR:2.0]\", \"source_line\": 11}, {\"entity_type\": \"nodule_identifier\", \"entity_value\": \"right_lobe_mid\", \"entity_date\": \"2015-06-19\", \"date_confidence\": 1.0, \"date_source_keyword\": \"2015-06-19\", \"present_or_negated\": \"present\", \"confidence\": 0.95, \"evidence_text\": \"There is a solid 2.7 cm mass in the mid and lower portions of the right lobe.\", \"source_line\": 10}]}",
+  "research_id": "711",
+  "note_type": "ultrasound_report",
+  "note_date": "2015-06-19",
+  "linkage_date": "2015-06-19",
+  "source_workbook": "US Nodules TIRADS 12_1_25.xlsx",
+  "source_sheet": "us_nodules_tirads",
+  "source_column": "us_1+impression+nodules",
+  "note_index": "1",
+  "preprocess_batch_id": "tirads-flatten-29dc11783dcd",
+  "preprocessed_at_utc": "2026-04-18T09:03:55Z",
+  "preprocess_script_version": "flatten_tirads_us.v1"
+}
+
+--- record 2: note_row_id=1886_us1 ---
+keys: ['note_row_id', 'domain', 'llm_model', 'llm_base_url', 'extracted_at', 'result_json', 'research_id', 'note_type', 'note_date', 'linkage_date', 'source_workbook', 'source_sheet', 'source_column', 'note_index', 'preprocess_batch_id', 'preprocessed_at_utc', 'preprocess_script_version']
+{
+  "note_row_id": "1886_us1",
+  "domain": "tirads_granular",
+  "llm_model": "qwen2.5-32b",
+  "llm_base_url": "http://93.91.156.87:44519/v1",
+  "extracted_at": "2026-04-18T09:07:30.233895+00:00",
+  "result_json": "{\"parse_error\": true, \"raw\": \"{\\n  \\\"entities\\\": [\\n    {\\n      \\\"entity_type\\\": \\\"nodule_dimensions\\\",\\n      \\\"entity_value\\\": \\\"0.6 x 0.2 x 0.4 cm\\\",\\n      \\\"entity_date\\\": \\\"2016-04-28\\\",\\n      \\\"date_confidence\\\": 1.0,\\n      \\\"date_source_keyword\\\": \\\"ULTRASOUND DATE: 2016-04-28\\\",\\n      \\\"present_or_negated\\\": \\\"present\\\",\\n      \\\"confidence\\\": 0.95,\\n      \\\"evidence_text\\\": \\\"Tiny 0.6 x 0.2 x 0.4 cm structure measured in the inferior right thyroid fossa, 0.4 x 0.5 x 0.2 cm previously and not significantly changed accounting for differences in techni\"}",
+  "research_id": "1886",
+  "note_type": "ultrasound_report",
+  "note_date": "2016-04-28",
+  "linkage_date": "2016-04-28",
+  "source_workbook": "US Nodules TIRADS 12_1_25.xlsx",
+  "source_sheet": "us_nodules_tirads",
+  "source_column": "us_1+impression+nodules",
+  "note_index": "1",
+  "preprocess_batch_id": "tirads-flatten-29dc11783dcd",
+  "preprocessed_at_utc": "2026-04-18T09:03:55Z",
+  "preprocess_script_version": "flatten_tirads_us.v1"
+}
+
+--- record 3: note_row_id=5933_us1 ---
+keys: ['note_row_id', 'domain', 'llm_model', 'llm_base_url', 'extracted_at', 'result_json', 'research_id', 'note_type', 'note_date', 'linkage_date', 'source_workbook', 'source_sheet', 'source_column', 'note_index', 'preprocess_batch_id', 'preprocessed_at_utc', 'preprocess_script_version']
+{
+  "note_row_id": "5933_us1",
+  "domain": "tirads_granular",
+  "llm_model": "qwen2.5-32b",
+  "llm_base_url": "http://93.91.156.87:44519/v1",
+  "extracted_at": "2026-04-18T09:07:30.234970+00:00",
+  "result_json": "{\"parse_error\": true, \"raw\": \"{\\n  \\\"entities\\\": [\\n    {\\n      \\\"entity_type\\\": \\\"nodule_dimensions\\\",\\n      \\\"entity_value\\\": \\\"1.1 x 0.8 x 1.1 cm\\\",\\n      \\\"entity_date\\\": \\\"2016-07-07\\\",\\n      \\\"date_confidence\\\": 1.0,\\n      \\\"date_source_keyword\\\": \\\"2016-07-07\\\",\\n      \\\"present_or_negated\\\": \\\"present\\\",\\n      \\\"confidence\\\": 0.95,\\n      \\\"evidence_text\\\": \\\"There is a hypoechoic complex cyst or solid nodule in the superior pole of the right lobe of the thyroid gland, measuring 1.1 x 0.8 x 1.1 cm.\\\",\\n      \\\"source_line\\\": 10\\n    },\\n    {\\n      \\\"entit\"}",
+  "research_id": "5933",
+  "note_type": "ultrasound_report",
+  "note_date": "2016-07-07",
+  "linkage_date": "2016-07-07",
+  "source_workbook": "US Nodules TIRADS 12_1_25.xlsx",
+  "source_sheet": "us_nodules_tirads",
+  "source_column": "us_1+impression+nodules",
+  "note_index": "1",
+  "preprocess_batch_id": "tirads-flatten-29dc11783dcd",
+  "preprocessed_at_utc": "2026-04-18T09:03:55Z",
+  "preprocess_script_version": "flatten_tirads_us.v1"
+}
+
+=== PARQUET SCHEMA ===
+rows: 3
+cols: ['note_row_id', 'domain', 'llm_model', 'llm_base_url', 'extracted_at', 'result_json', 'research_id', 'note_type', 'note_date', 'linkage_date', 'source_workbook', 'source_sheet', 'source_column', 'note_index', 'preprocess_batch_id', 'preprocessed_at_utc', 'preprocess_script_version']
+  note_row_id           domain    llm_model                  llm_base_url                      extracted_at                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               result_json research_id          note_type   note_date linkage_date                 source_workbook       source_sheet            source_column note_index          preprocess_batch_id   preprocessed_at_utc preprocess_script_version
+0     711_us1  tirads_granular  qwen2.5-32b  http://93.91.156.87:44519/v1  2026-04-18T09:07:15.102213+00:00  {"entities": [{"entity_type": "nodule_dimensions", "entity_value": "2.7 cm", "entity_date": "2015-06-19", "date_confidence": 1.0, "date_source_keyword": "2015-06-19", "present_or_negated": "present", "confidence": 0.95, "evidence_text": "There is a solid 2.7 cm mass in the mid and lower portions of the right lobe.", "source_line": 10}, {"entity_type": "tirads_category", "entity_value": "TR2", "entity_date": "2015-06-19", "date_confidence": 1.0, "date_source_keyword": "2015-06-19", "present_or_negated": "present", "confidence": 0.95, "evidence_text": "[TR:2.0]", "source_line": 11}, {"entity_type": "nodule_identifier", "entity_value": "right_lobe_mid", "entity_date": "2015-06-19", "date_confidence": 1.0, "date_source_keyword": "2015-06-19", "present_or_negated": "present", "confidence": 0.95, "evidence_text": "There is a solid 2.7 cm mass in the mid and lower portions of the right lobe.", "source_line": 10}]}         711  ultrasound_report  2015-06-19   2015-06-19  US Nodules TIRADS 12_1_25.xlsx  us_nodules_tirads  us_1+impression+nodules          1  tirads-flatten-29dc11783dcd  2026-04-18T09:03:55Z      flatten_tirads_us.v1
+1    1886_us1  tirads_granular  qwen2.5-32b  http://93.91.156.87:44519/v1  2026-04-18T09:07:30.233895+00:00                                                                                                                                                                                                                                                                                                                                                               {"parse_error": true, "raw": "{\n  \"entities\": [\n    {\n      \"entity_type\": \"nodule_dimensions\",\n      \"entity_value\": \"0.6 x 0.2 x 0.4 cm\",\n      \"entity_date\": \"2016-04-28\",\n      \"date_confidence\": 1.0,\n      \"date_source_keyword\": \"ULTRASOUND DATE: 2016-04-28\",\n      \"present_or_negated\": \"present\",\n      \"confidence\": 0.95,\n      \"evidence_text\": \"Tiny 0.6 x 0.2 x 0.4 cm structure measured in the inferior right thyroid fossa, 0.4 x 0.5 x 0.2 cm previously and not significantly changed accounting for differences in techni"}        1886  ultrasound_report  2016-04-28   2016-04-28  US Nodules TIRADS 12_1_25.xlsx  us_nodules_tirads  us_1+impression+nodules          1  tirads-flatten-29dc11783dcd  2026-04-18T09:03:55Z      flatten_tirads_us.v1
+2    5933_us1  tirads_granular  qwen2.5-32b  http://93.91.156.87:44519/v1  2026-04-18T09:07:30.234970+00:00                                                                                                                                                                                                                                                                                                                                                       {"parse_error": true, "raw": "{\n  \"entities\": [\n    {\n      \"entity_type\": \"nodule_dimensions\",\n      \"entity_value\": \"1.1 x 0.8 x 1.1 cm\",\n      \"entity_date\": \"2016-07-07\",\n      \"date_confidence\": 1.0,\n      \"date_source_keyword\": \"2016-07-07\",\n      \"present_or_negated\": \"present\",\n      \"confidence\": 0.95,\n      \"evidence_text\": \"There is a hypoechoic complex cyst or solid nodule in the superior pole of the right lobe of the thyroid gland, measuring 1.1 x 0.8 x 1.1 cm.\",\n      \"source_line\": 10\n    },\n    {\n      \"entit"}        5933  ultrasound_report  2016-07-07   2016-07-07  US Nodules TIRADS 12_1_25.xlsx  us_nodules_tirads  us_1+impression+nodules          1  tirads-flatten-29dc11783dcd  2026-04-18T09:03:55Z      flatten_tirads_us.v1

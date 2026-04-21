@@ -106,9 +106,28 @@ exports/review_queue_triage_*/
 exports/fna_bethesda_residual_worklist_*/
 
 # ── Extraction pipeline: PHI-sensitive data (never commit) ────
-processed/remaining/*.parquet
-processed/remaining/*.csv
+processed/remaining/**/*.parquet
+processed/remaining/**/*.csv
 processed/output/*.parquet
+
+# Large LLM checkpoint streams under runs/ (regenerable; often 10–100MB+)
+runs/**/*.ckpt.jsonl
+
+# Ad-hoc Parquet drops at exports/ root (generated snapshots)
+exports/*.parquet
+
+# Local convenience symlink (absolute path on one machine)
+scripts/llm_extraction
+
+# Ephemeral script outputs (logs, editor backups)
+scripts/output/*.log
+scripts/output/*.bak
+scripts/output/*.bak.*
+
+# tirads_granular — local runner endpoints and resume crumbs
+runs/tirads_granular/ssh_config.sh
+runs/tirads_granular/*epoch*
+runs/tirads_granular/*.log
 
 # ── Extraction pipeline: checkpoint & output data (OK to commit) ──
 # processed/output/*.ckpt.jsonl — may be committed
