@@ -1,0 +1,646 @@
+{
+  "scripts/204_canonical_master_assembly.py": {
+    "n_hits": 4,
+    "distinct_cols": [
+      "imaging_tirads_best",
+      "imaging_tirads_worst",
+      "preop_tirads_best",
+      "preop_tirads_category",
+      "preop_tirads_worst"
+    ],
+    "first_3_examples": [
+      "L145:     g.imaging_tirads_best AS preop_tirads_best,",
+      "L146:     g.imaging_tirads_worst AS preop_tirads_worst,",
+      "L147:     g.imaging_tirads_category AS preop_tirads_category,"
+    ]
+  },
+  "scripts/205_canonical_consolidation.py": {
+    "n_hits": 10,
+    "distinct_cols": [
+      "imaging_tirads_best",
+      "imaging_tirads_worst",
+      "preop_tirads_best",
+      "preop_tirads_category",
+      "preop_tirads_worst",
+      "tirads_best_combined",
+      "tirads_nodules_scored_combined",
+      "tirads_worst_combined"
+    ],
+    "first_3_examples": [
+      "L205:         MAX(tirads_score) AS tirads_worst_combined,",
+      "L206:         MIN(tirads_score) AS tirads_best_combined,",
+      "L207:         COUNT(*) AS tirads_nodules_scored_combined"
+    ]
+  },
+  "scripts/207_canonical_master_expansion.py": {
+    "n_hits": 25,
+    "distinct_cols": [
+      "imaging_tirads_best",
+      "imaging_tirads_source",
+      "max_tirads_ever",
+      "preop_tirads_best",
+      "tirads_best_category_v12",
+      "tirads_best_score_v12",
+      "tirads_concordant_count_v12",
+      "tirads_has_acr_recalc_v12",
+      "tirads_mismatch_count_v12",
+      "tirads_n_nodule_records_v12",
+      "tirads_n_sources_v12",
+      "tirads_nodule_size_max_mm_v12",
+      "tirads_reliability_v12",
+      "tirads_source_v12",
+      "tirads_worst_category_v12",
+      "tirads_worst_score_v12",
+      "worst_tirads_category"
+    ],
+    "first_3_examples": [
+      "L66:     SUM(CASE WHEN CAST(c.preop_tirads_best AS VARCHAR) != CAST(g.imaging_tirads_best AS VARCHAR)  THEN 1 ELSE 0 END) AS tirads_mismatch,",
+      "L93:     COUNT(CASE WHEN tirads_best_score_v12 IS NOT NULL THEN 1 END)         AS has_v12_tirads,",
+      "L94:     COUNT(CASE WHEN tirads_reliability_v12 IS NOT NULL THEN 1 END)        AS has_reliability,"
+    ]
+  },
+  "scripts/209_nlp_entity_crossvalidation.py": {
+    "n_hits": 5,
+    "distinct_cols": [
+      "max_tirads_ever",
+      "preop_tirads_best",
+      "preop_tirads_category",
+      "tirads_best_category_v12",
+      "tirads_best_score_v12",
+      "tirads_worst_category_v12"
+    ],
+    "first_3_examples": [
+      "L485:     can = master[[\"research_id\", \"tirads_best_category_v12\", \"tirads_best_score_v12\",",
+      "L486:                    \"tirads_worst_category_v12\", \"max_tirads_ever\",",
+      "L487:                    \"preop_tirads_best\", \"preop_tirads_category\"]].copy()"
+    ]
+  },
+  "scripts/213_data_dictionary.py": {
+    "n_hits": 3,
+    "distinct_cols": [
+      "tirads_best_combined",
+      "tirads_worst_combined",
+      "worst_tirads_category"
+    ],
+    "first_3_examples": [
+      "L75:     (r\"^(preop_tirads_|tirads_best_combined|tirads_worst_combined|tirads_.*_v12)\",",
+      "L77:     (r\"^(imaging_|n_us_|bilateral_|dominant_|has_suspicious_|longitudinal_|max_tirads_|worst_tirads_category)\",",
+      "L680: | TIRADS documented | ~3,474 | `tirads_best_combined` | At least one structured TIRADS score |"
+    ]
+  },
+  "scripts/221_tirads_v2_integration.py": {
+    "n_hits": 66,
+    "distinct_cols": [
+      "preop_tirads_best",
+      "tirads_best_category_v12",
+      "tirads_best_score_v12",
+      "tirads_v2_any_ete_on_us",
+      "tirads_v2_any_fna_recommended",
+      "tirads_v2_any_fna_recommended_report",
+      "tirads_v2_any_interval_growth",
+      "tirads_v2_any_suspicious_ln_on_us",
+      "tirads_v2_largest_nodule_cm",
+      "tirads_v2_max_points",
+      "tirads_v2_n_nodules_scored",
+      "tirads_v2_n_reports",
+      "tirads_v2_shortest_followup_months",
+      "tirads_v2_worst_category",
+      "tirads_v2_worst_rank",
+      "tirads_worst_category_v12",
+      "tirads_worst_combined"
+    ],
+    "first_3_examples": [
+      "L9: preop_tirads_best columns (no overwrite).",
+      "L25:   * NEVER overwrite preop_tirads_best, tirads_best_score_v12, or any existing",
+      "L67:     (\"tirads_v2_n_nodules_scored\",         \"BIGINT\"),"
+    ]
+  },
+  "scripts/221b_suspicious_ln_reextraction.py": {
+    "n_hits": 7,
+    "distinct_cols": [
+      "preop_tirads_best",
+      "tirads_best_score_v12",
+      "tirads_v2_any_fna_recommended_report",
+      "tirads_v2_any_suspicious_ln_on_us",
+      "tirads_v2_n_reports",
+      "tirads_v2_shortest_followup_months"
+    ],
+    "first_3_examples": [
+      "L24:   * Do NOT modify tirads_v2_nodules_raw / preop_tirads_best /",
+      "L25:     tirads_best_score_v12 / any legacy TIRADS columns.",
+      "L67: CPM_COL = \"tirads_v2_any_suspicious_ln_on_us\""
+    ]
+  },
+  "scripts/221c_rollup_threevalue_patch.py": {
+    "n_hits": 11,
+    "distinct_cols": [
+      "tirads_v2_any_fna_recommended_report",
+      "tirads_v2_any_suspicious_ln_on_us",
+      "tirads_v2_n_reports",
+      "tirads_v2_shortest_followup_months"
+    ],
+    "first_3_examples": [
+      "L18:   2. NULL-out canonical_patient_master.tirads_v2_any_suspicious_ln_on_us",
+      "L27: CPM column tirads_v2_any_suspicious_ln_on_us. No raw-table writes. No",
+      "L48: CPM_COL = \"tirads_v2_any_suspicious_ln_on_us\""
+    ]
+  },
+  "scripts/228_registry_backfill.py": {
+    "n_hits": 4,
+    "distinct_cols": [
+      "max_tirads_ever",
+      "tirads_best_combined",
+      "tirads_best_score_v12",
+      "tirads_worst_combined"
+    ],
+    "first_3_examples": [
+      "L60:      'n_us_exams, bilateral_disease_flag, dominant_nodule_size_cm, longitudinal_assessment_available, max_tirads_ever',",
+      "L63:      'imaging_n_nodule_records, tirads_worst_combined, tirads_best_combined',",
+      "L72:      'tirads_worst_combined, tirads_best_combined (via combined CTE)',"
+    ]
+  },
+  "scripts/246_canonical_us_nodule_characteristics.py": {
+    "n_hits": 1,
+    "distinct_cols": [
+      "max_tirads_ever",
+      "tirads_best_category_v12",
+      "tirads_best_score_v12",
+      "tirads_worst_category_v12"
+    ],
+    "first_3_examples": [
+      "L394:               'feeds imaging_patient_summary_v1 (v1_1 migration); rollup feeds CPM cols tirads_best_category_v12, tirads_best_score_v12, tir"
+    ]
+  },
+  "scripts/252_recompute_max_tirads.py": {
+    "n_hits": 26,
+    "distinct_cols": [
+      "imaging_tirads_worst",
+      "max_tirads_ever",
+      "preop_tirads_best",
+      "tirads_worst_category_v12"
+    ],
+    "first_3_examples": [
+      "L3: Script 252 \u2014 Recompute max_tirads_ever / imaging_tirads_worst / preop_tirads_best",
+      "L16:        max_tirads_ever       = MAX(GREATEST(reported, recalc))   per patient",
+      "L17:        imaging_tirads_worst  = MAX(GREATEST(reported, recalc))   per patient"
+    ]
+  },
+  "scripts/259_final_verification_lock.py": {
+    "n_hits": 3,
+    "distinct_cols": [
+      "max_tirads_ever"
+    ],
+    "first_3_examples": [
+      "L55:         \"max_tirads_ever undercount\",",
+      "L66:         WHERE d.detail_max > COALESCE(cpm.max_tirads_ever, 0)",
+      "L331:         \"audit_1_1\": (\"\u00a71.1\", \"max_tirads_ever undercount\", 0),"
+    ]
+  },
+  "scripts/264_final_acceptance_addendum.py": {
+    "n_hits": 1,
+    "distinct_cols": [
+      "max_tirads_ever"
+    ],
+    "first_3_examples": [
+      "L138:             WHERE d.detail_max > COALESCE(cpm.max_tirads_ever, 0)"
+    ]
+  },
+  "scripts/265_canonical_finalization.py": {
+    "n_hits": 7,
+    "distinct_cols": [
+      "max_tirads_ever",
+      "tirads_best_category_v12",
+      "tirads_best_combined",
+      "tirads_best_score_v12",
+      "tirads_worst_category_v12",
+      "tirads_worst_combined",
+      "tirads_worst_score_v12"
+    ],
+    "first_3_examples": [
+      "L89:     \"rolled up via tirads_best_score_v12 / tirads_worst_score_v12; not promoted \"",
+      "L148:     (\"tirads_best_score_v12\", \"canonical_us_nodule_characteristics_v1\",",
+      "L151:     (\"tirads_worst_category_v12\", \"canonical_us_nodule_characteristics_v1\","
+    ]
+  },
+  "scripts/271_tirads_imaging_finalization.py": {
+    "n_hits": 34,
+    "distinct_cols": [
+      "imaging_laterality_rollup",
+      "pathology_vs_imaging_laterality_concordant",
+      "tirads_best_points_v271",
+      "tirads_best_score_v12",
+      "tirads_source_system_v271",
+      "tirads_worst_points_v271",
+      "tirads_worst_score_v12"
+    ],
+    "first_3_examples": [
+      "L513:         (\"tirads_worst_points_v271\", \"DOUBLE\",",
+      "L517:         (\"tirads_best_points_v271\", \"DOUBLE\",",
+      "L520:         (\"tirads_source_system_v271\", \"VARCHAR\","
+    ]
+  },
+  "scripts/271a_fix_concordance_three_valued.py": {
+    "n_hits": 25,
+    "distinct_cols": [
+      "imaging_laterality_rollup",
+      "pathology_vs_imaging_laterality_concordant"
+    ],
+    "first_3_examples": [
+      "L2: \"\"\"Script 271a \u2014 Fix pathology_vs_imaging_laterality_concordant to 3-valued",
+      "L10: ``WHERE pathology_vs_imaging_laterality_concordant = FALSE``. This patch",
+      "L12: ~3,364 patients with both ``cpm.laterality`` and ``imaging_laterality_rollup``"
+    ]
+  },
+  "scripts/271b_laterality_normalization.py": {
+    "n_hits": 100,
+    "distinct_cols": [
+      "imaging_laterality_rollup",
+      "imaging_laterality_rollup_v271b",
+      "pathology_vs_imaging_laterality_concordant",
+      "pathology_vs_imaging_laterality_concordant_v271b",
+      "tumor_pathology_laterality_v271b"
+    ],
+    "first_3_examples": [
+      "L10: Script 271 created ``cpm.imaging_laterality_rollup`` and",
+      "L11: ``cpm.pathology_vs_imaging_laterality_concordant`` against ``cpm.laterality``,",
+      "L18: 3. Splits ``imaging_laterality_rollup`` into explicit per-side flags + a"
+    ]
+  },
+  "scripts/272_canonical_cleanup_phase1.py": {
+    "n_hits": 3,
+    "distinct_cols": [
+      "max_tirads_ever"
+    ],
+    "first_3_examples": [
+      "L333:           AND (cpm.max_tirads_ever IS NULL OR per_rid.new_max > cpm.max_tirads_ever)",
+      "L336:     log(f\"[1.4] mismatches (rids whose new_max strictly exceeds CPM max_tirads_ever): {n_mismatch}\")",
+      "L344:             \"live max_tirads_ever is BIGINT (values 1-5). Even if candidates \""
+    ]
+  },
+  "scripts/273_registry_curation.py": {
+    "n_hits": 12,
+    "distinct_cols": [
+      "tirads_best_category_v12",
+      "tirads_best_score_v12",
+      "tirads_concordant_count_v12",
+      "tirads_has_acr_recalc_v12",
+      "tirads_mismatch_count_v12",
+      "tirads_n_nodule_records_v12",
+      "tirads_n_sources_v12",
+      "tirads_nodule_size_max_mm_v12",
+      "tirads_reliability_v12",
+      "tirads_source_v12",
+      "tirads_worst_category_v12",
+      "tirads_worst_score_v12"
+    ],
+    "first_3_examples": [
+      "L476:         \"tirads_best_score_v12\",",
+      "L477:         \"tirads_worst_score_v12\",",
+      "L478:         \"tirads_best_category_v12\","
+    ]
+  },
+  "scripts/277_canonical_cleanup_phase7_verification.py": {
+    "n_hits": 2,
+    "distinct_cols": [
+      "max_tirads_ever"
+    ],
+    "first_3_examples": [
+      "L87:           AND (cpm.max_tirads_ever IS NULL OR per_rid.new_max > cpm.max_tirads_ever)",
+      "L336:     rep.append(\"- PART2 \u00a71.1 max_tirads_ever \u2014 verified canonical (no rebuild needed; storage type drift noted)\")"
+    ]
+  },
+  "scripts/280_synoptic_rollup_rebuild.py": {
+    "n_hits": 10,
+    "distinct_cols": [
+      "tirads_v2_any_ete_on_us",
+      "tirads_v2_any_fna_recommended",
+      "tirads_v2_any_interval_growth",
+      "tirads_v2_any_suspicious_ln_on_us",
+      "tirads_v2_largest_nodule_cm",
+      "tirads_v2_max_points",
+      "tirads_v2_n_nodules_scored",
+      "tirads_v2_n_reports",
+      "tirads_v2_shortest_followup_months",
+      "tirads_v2_worst_category"
+    ],
+    "first_3_examples": [
+      "L1164:     \"tirads_v2_any_ete_on_us\",",
+      "L1165:     \"tirads_v2_any_fna_recommended\",",
+      "L1166:     \"tirads_v2_any_interval_growth\","
+    ]
+  },
+  "scripts/301_canonical_us_patient_master_v1.py": {
+    "n_hits": 4,
+    "distinct_cols": [
+      "imaging_tirads_best",
+      "imaging_tirads_worst",
+      "max_tirads_ever",
+      "tirads_v2_worst_category"
+    ],
+    "first_3_examples": [
+      "L129:         (\"imaging_tirads_best\",    \"max_tirads_category_ever\"),",
+      "L130:         (\"imaging_tirads_worst\",   \"max_tirads_category_ever\"),",
+      "L131:         (\"tirads_v2_worst_category\", \"max_tirads_category_ever\"),"
+    ]
+  },
+  "scripts/328_tirads_v2_gap_a_cast_fix.py": {
+    "n_hits": 15,
+    "distinct_cols": [
+      "tirads_v2_any_ete_on_us",
+      "tirads_v2_any_fna_recommended",
+      "tirads_v2_any_interval_growth",
+      "tirads_v2_largest_nodule_cm",
+      "tirads_v2_max_points",
+      "tirads_v2_n_nodules_scored",
+      "tirads_v2_worst_category",
+      "tirads_v2_worst_rank"
+    ],
+    "first_3_examples": [
+      "L4: tirads_v2_nodules_raw has 3,021 distinct RIDs. cpm.tirads_v2_worst_category",
+      "L75:         WHERE tirads_v2_worst_category IS NOT NULL",
+      "L79:         WHERE tirads_v2_max_points IS NOT NULL"
+    ]
+  },
+  "scripts/329_tirads_v2_gap_b_report_reroll.py": {
+    "n_hits": 13,
+    "distinct_cols": [
+      "tirads_v2_any_ete_on_us",
+      "tirads_v2_any_fna_recommended",
+      "tirads_v2_any_fna_recommended_report",
+      "tirads_v2_any_interval_growth",
+      "tirads_v2_any_suspicious_ln_on_us",
+      "tirads_v2_n_reports",
+      "tirads_v2_shortest_followup_months"
+    ],
+    "first_3_examples": [
+      "L5: exposes report-level columns for far fewer (e.g. tirads_v2_any_suspicious_ln_on_us",
+      "L73:     for col in [\"tirads_v2_any_fna_recommended\", \"tirads_v2_any_suspicious_ln_on_us\",",
+      "L74:                  \"tirads_v2_any_ete_on_us\", \"tirads_v2_any_interval_growth\","
+    ]
+  },
+  "scripts/336_final_main_audit.py": {
+    "n_hits": 4,
+    "distinct_cols": [
+      "tirads_v2_any_suspicious_ln_on_us",
+      "tirads_v2_worst_category"
+    ],
+    "first_3_examples": [
+      "L199:         (\"tirads_v2_worst_category nonnull\",",
+      "L200:          \"SELECT COUNT(*) FROM main.canonical_patient_master WHERE tirads_v2_worst_category IS NOT NULL\",",
+      "L202:         (\"tirads_v2_any_suspicious_ln_on_us nonnull\","
+    ]
+  },
+  "scripts/368_cpm_us_cutover_to_v2.py": {
+    "n_hits": 15,
+    "distinct_cols": [
+      "imaging_laterality_rollup_v2",
+      "imaging_tirads_best_v2",
+      "imaging_tirads_worst_v2",
+      "max_tirads_ever_v2",
+      "preop_tirads_best_v2",
+      "preop_tirads_category_v2"
+    ],
+    "first_3_examples": [
+      "L52:     (\"imaging_tirads_best_v2\",          \"VARCHAR\"),",
+      "L53:     (\"imaging_tirads_worst_v2\",         \"VARCHAR\"),",
+      "L55:     (\"imaging_laterality_rollup_v2\",    \"VARCHAR\"),"
+    ]
+  },
+  "scripts/369_us_v2_views_and_registry.py": {
+    "n_hits": 7,
+    "distinct_cols": [
+      "imaging_laterality_rollup_v2",
+      "imaging_tirads_best_v2",
+      "imaging_tirads_worst_v2",
+      "max_tirads_ever_v2",
+      "preop_tirads_best_v2",
+      "preop_tirads_category_v2"
+    ],
+    "first_3_examples": [
+      "L205:             \"imaging_tirads_best_v2, imaging_tirads_worst_v2, \"",
+      "L206:             \"imaging_tirads_category_v2_v2, imaging_laterality_rollup_v2, \"",
+      "L207:             \"max_tirads_ever_v2\""
+    ]
+  },
+  "scripts/375_cpm_column_cleanup_and_audit.py": {
+    "n_hits": 4,
+    "distinct_cols": [
+      "imaging_updated_tirads_category_cpm_v1",
+      "imaging_updated_tirads_category_cpm_v2"
+    ],
+    "first_3_examples": [
+      "L7:   imaging_tirads_category_v2_v2  \u2192  imaging_updated_tirads_category_cpm_v2",
+      "L8:   imaging_tirads_category        \u2192  imaging_updated_tirads_category_cpm_v1",
+      "L42:     (\"imaging_tirads_category_v2_v2\", \"imaging_updated_tirads_category_cpm_v2\"),"
+    ]
+  },
+  "scripts/48_build_analysis_resolved_layer.py": {
+    "n_hits": 6,
+    "distinct_cols": [
+      "imaging_tirads_best",
+      "imaging_tirads_source",
+      "imaging_tirads_worst"
+    ],
+    "first_3_examples": [
+      "L243:         tirads_best_score                       AS imaging_tirads_best,",
+      "L244:         tirads_worst_score                      AS imaging_tirads_worst,",
+      "L246:         tirads_source                           AS imaging_tirads_source,"
+    ]
+  },
+  "scripts/50_multinodule_imaging.py": {
+    "n_hits": 10,
+    "distinct_cols": [
+      "max_tirads_ever",
+      "worst_tirads_category"
+    ],
+    "first_3_examples": [
+      "L703:         MAX(max_tirads)                     AS max_tirads_ever,",
+      "L717:     CASE m.max_tirads_ever",
+      "L721:     END AS worst_tirads_category,"
+    ]
+  },
+  "scripts/56_pre_manuscript_audit.py": {
+    "n_hits": 2,
+    "distinct_cols": [
+      "imaging_tirads_best"
+    ],
+    "first_3_examples": [
+      "L245:         \"imaging_tirads_best\", \"surg_procedure_type\", \"ajcc8_stage_group\",",
+      "L307:                 COUNT(*) FILTER (WHERE imaging_tirads_best IS NOT NULL) AS with_tirads,"
+    ]
+  },
+  "scripts/57_freeze_manuscript_cohort.py": {
+    "n_hits": 1,
+    "distinct_cols": [
+      "tirads_best_score_v12"
+    ],
+    "first_3_examples": [
+      "L125:     for c in (\"imaging_tirads_best_score\", \"tirads_best_score_v12\", \"tirads_score_v11\"):"
+    ]
+  },
+  "scripts/58_missingness_summary.py": {
+    "n_hits": 1,
+    "distinct_cols": [
+      "tirads_best_score_v12"
+    ],
+    "first_3_examples": [
+      "L53:         \"tirads_best_score_v12\", \"tirads_score_v11\","
+    ]
+  },
+  "scripts/59_dataset_summary.py": {
+    "n_hits": 1,
+    "distinct_cols": [
+      "tirads_best_score_v12"
+    ],
+    "first_3_examples": [
+      "L112:     for c in (\"imaging_tirads_best_score\", \"tirads_best_score_v12\", \"tirads_score_v11\"):"
+    ]
+  },
+  "scripts/61_table1_preview.py": {
+    "n_hits": 1,
+    "distinct_cols": [
+      "tirads_best_score_v12"
+    ],
+    "first_3_examples": [
+      "L157:     tirads_col = _find_col(df, [\"imaging_tirads_best_score\", \"tirads_best_score_v12\", \"tirads_score_v11\"])"
+    ]
+  },
+  "scripts/62_run_primary_descriptives.py": {
+    "n_hits": 2,
+    "distinct_cols": [
+      "imaging_tirads_best"
+    ],
+    "first_3_examples": [
+      "L140:     tirads = int(df[\"imaging_tirads_best\"].notna().sum())",
+      "L294:         \"imaging_tirads_best\", \"any_recurrence_flag\", \"structural_recurrence_flag\","
+    ]
+  },
+  "scripts/prompt6_348_older_masters.py": {
+    "n_hits": 34,
+    "distinct_cols": [
+      "tirads_v2_any_fna_recommended_report",
+      "tirads_v2_any_fna_recommended_report_source",
+      "tirads_v2_worst_rank",
+      "tirads_v2_worst_rank_source"
+    ],
+    "first_3_examples": [
+      "L13:     Action: backfill the 1 unique column (tirads_v2_worst_rank) to CPM,",
+      "L17:     Action: backfill the 1 unique column (tirads_v2_any_fna_recommended_report)",
+      "L208: assert unique_tvn == [\"tirads_v2_worst_rank\"], ("
+    ]
+  },
+  "scripts/prompt6_353_completion_audit.py": {
+    "n_hits": 3,
+    "distinct_cols": [
+      "tirads_v2_any_fna_recommended_report",
+      "tirads_v2_worst_rank"
+    ],
+    "first_3_examples": [
+      "L131:     \"tirads_v2_worst_rank\", \"tirads_v2_any_fna_recommended_report\",",
+      "L150:     \"tirads_v2_worst_rank\": 0,",
+      "L151:     \"tirads_v2_any_fna_recommended_report\": 0,"
+    ]
+  },
+  "scripts/prompt6_353_repoint_orphan_view.py": {
+    "n_hits": 9,
+    "distinct_cols": [
+      "tirads_v2_n_nodules_scored",
+      "tirads_v2_worst_category",
+      "tirads_v2_worst_rank"
+    ],
+    "first_3_examples": [
+      "L6:   - tirads_v2_n_nodules_scored  (already in CPM pre-Prompt 6)",
+      "L7:   - tirads_v2_worst_category    (already in CPM pre-Prompt 6)",
+      "L8:   - tirads_v2_worst_rank        (backfilled by Script 348)"
+    ]
+  },
+  "studies/canonical_cleanup_20260417/cpm_cols_pre.txt": {
+    "n_hits": 23,
+    "distinct_cols": [
+      "imaging_tirads_best",
+      "imaging_tirads_source",
+      "imaging_tirads_worst",
+      "max_tirads_ever",
+      "preop_tirads_best",
+      "preop_tirads_category",
+      "preop_tirads_worst",
+      "tirads_best_category_v12",
+      "tirads_best_combined",
+      "tirads_best_score_v12",
+      "tirads_concordant_count_v12",
+      "tirads_has_acr_recalc_v12",
+      "tirads_mismatch_count_v12",
+      "tirads_n_nodule_records_v12",
+      "tirads_n_sources_v12",
+      "tirads_nodule_size_max_mm_v12",
+      "tirads_nodules_scored_combined",
+      "tirads_reliability_v12",
+      "tirads_source_v12",
+      "tirads_worst_category_v12",
+      "tirads_worst_combined",
+      "tirads_worst_score_v12",
+      "worst_tirads_category"
+    ],
+    "first_3_examples": [
+      "L252: imaging_tirads_source",
+      "L334: max_tirads_ever",
+      "L730: preop_tirads_best"
+    ]
+  },
+  "studies/canonical_cleanup_20260417/phase1_dryrun_probe.py": {
+    "n_hits": 1,
+    "distinct_cols": [
+      "max_tirads_ever"
+    ],
+    "first_3_examples": [
+      "L71:           AND (cpm.max_tirads_ever IS NULL OR per_rid.new_max > cpm.max_tirads_ever)"
+    ]
+  },
+  "studies/canonical_cleanup_20260417/preflight.py": {
+    "n_hits": 1,
+    "distinct_cols": [
+      "max_tirads_ever"
+    ],
+    "first_3_examples": [
+      "L282:             \"max_tirads_ever\","
+    ]
+  },
+  "studies/canonical_cleanup_20260417/schema_recon.py": {
+    "n_hits": 1,
+    "distinct_cols": [
+      "max_tirads_ever"
+    ],
+    "first_3_examples": [
+      "L112:                 \"SELECT max_tirads_ever, COUNT(*) \""
+    ]
+  },
+  "studies/proposal_multimodal_prediction_20260318/explain_plan_01.txt": {
+    "n_hits": 2,
+    "distinct_cols": [
+      "imaging_tirads_worst"
+    ],
+    "first_3_examples": [
+      "L62:         p.imaging_tirads_worst           AS tirads_worst,",
+      "L162: analyzed_plan \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\\n\u2502\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\u2502\\n\u2502\u2502    Query Profiling Information    \u2502\u2502\\n\u2502\u2514\u2500"
+    ]
+  },
+  "studies/proposal_multimodal_prediction_20260318/query_log.sql": {
+    "n_hits": 2,
+    "distinct_cols": [
+      "imaging_tirads_worst"
+    ],
+    "first_3_examples": [
+      "L389:         p.imaging_tirads_worst           AS tirads_worst,",
+      "L548:         p.imaging_tirads_worst           AS tirads_worst,"
+    ]
+  },
+  "studies/proposal_multimodal_prediction_20260318/run_feasibility.py": {
+    "n_hits": 1,
+    "distinct_cols": [
+      "imaging_tirads_worst"
+    ],
+    "first_3_examples": [
+      "L268:         p.imaging_tirads_worst           AS tirads_worst,"
+    ]
+  }
+}
