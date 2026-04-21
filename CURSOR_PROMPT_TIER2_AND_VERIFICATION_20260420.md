@@ -244,7 +244,26 @@ These are tiny (580 / 641 / 53 entities). Produce three separate per-event table
 - `main.patient_decision_adherence_event_v1`: `pda_category` ∈ {declined_surgery, declined_RAI, declined_followup, refused_biopsy, lost_to_followup, compliance_positive, NULL}, `pda_date_raw`, `pda_clinician_concern_flag`, evidence.
 - `main.dynamic_risk_response_event_v1`: `drr_category` ∈ {excellent, indeterminate, biochemical_incomplete, structural_incomplete, NULL}, `drr_criteria_basis_raw`, `drr_date_raw`, evidence.
 
-Commit as `313_small_volume_domains_tier2.py` (one script, three tables — this is the one exception to "one table per script" because volumes are too small to justify three commits).
+**Also produce three patient-wide pivots** (Constraint 7 applies — no bare booleans, everything dated + source-linked):
+
+- `main.rad_treatment_patient_wide_v1`:
+  - `had_external_beam_radiation_flag` + `ebrt_first_treatment_date` + `ebrt_first_treatment_note_id` + `ebrt_first_treatment_evidence_text` + `ebrt_last_treatment_date` + `ebrt_n_notes_documenting`
+  - `rt_total_dose_gy_max` + `rt_total_dose_max_note_id` + `rt_total_dose_max_evidence_text`
+  - `rt_modality_primary` + `rt_modality_primary_first_date` + `rt_modality_primary_source_note_id` + `rt_modality_primary_evidence_text`
+  - `rt_all_events_json` (LIST of {date, note_id, modality, dose_gy, anatomic_target, evidence_text})
+
+- `main.patient_decision_adherence_patient_wide_v1`:
+  - `any_declined_surgery_flag` + `declined_surgery_first_date` + `declined_surgery_first_note_id` + `declined_surgery_first_evidence_text` + `declined_surgery_n_notes`
+  - `any_declined_rai_flag` + same companion set
+  - `any_lost_to_followup_concern_flag` + same companion set (`last_lost_to_followup_concern_date` also required since this is longitudinal)
+  - `pda_all_events_json` (LIST of {date, note_id, pda_category, pda_clinician_concern_flag, evidence_text})
+
+- `main.dynamic_risk_response_patient_wide_v1`:
+  - `drr_latest_category` + `drr_latest_note_id` + `drr_latest_note_date` + `drr_latest_evidence_text`
+  - `drr_worst_category_ever` + `drr_worst_category_date` + `drr_worst_category_note_id` + `drr_worst_category_evidence_text`
+  - `drr_category_trajectory_json` (LIST of {date, note_id, drr_category, evidence_text} ordered by date — full trajectory for Logan to scan)
+
+Commit as `313_small_volume_domains_tier2.py` (one script, six tables — this is the one exception to "one table per script" because volumes are too small to justify six commits).
 
 ---
 
@@ -272,7 +291,7 @@ Commit as `313b_tier2_completeness_invariant.py`.
 
 ## Phase B — Side-by-side verification tables (Scripts 314–324)
 
-**The verification pattern** (identical for every domain). For each canonical field `<fld>`, the verification view has FIVE columns:
+**The verification pattern** (identical for every domain). For each canonical field `<fld>`, the verification table has SIX columns (Constraint 7 applies here too — every LLM value must be dated to its source note, not just linked by id):
 
 | Column | Source |
 |---|---|
@@ -280,7 +299,10 @@ Commit as `313b_tier2_completeness_invariant.py`.
 | `<fld>_llm` | The Tier 2 parsed value |
 | `<fld>_source_text` | `evidence_text` from the LLM entity that populated `<fld>_llm` (or the free-text span from `clinical_notes_long` if upstream) |
 | `<fld>_source_note_id` | note_id that produced the evidence (link to `clinical_notes_long`) |
+| `<fld>_source_note_date` | `note_date` of the source note — lets Logan time-order discrepancies without re-joining `clinical_notes_long` |
 | `<fld>_concordance` | ∈ {'agree', 'disagree', 'excel_only', 'llm_only', 'both_null'} |
+
+When the Excel value carries its own provenance (e.g. `path_synoptics.source_workbook` + ingest date), add a 7th column `<fld>_excel_source_workbook` so the Excel side is equally auditable. If the field spans multiple notes (longitudinal labs, symptom trajectories), pick the *latest* LLM-concordant note for `<fld>_source_note_id`/`_source_note_date` and add `<fld>_llm_n_notes_agreeing` for trend context.
 
 Plus domain-level columns: `research_id`, grain-specific keys, `n_fields_concordant`, `n_fields_discordant`, `pct_concordance`.
 
