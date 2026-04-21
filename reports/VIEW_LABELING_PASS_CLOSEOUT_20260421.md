@@ -44,6 +44,7 @@ None. No `CREATE OR REPLACE VIEW <old> AS SELECT * FROM <new>` temporary aliases
 |-------|---------|-------------|
 | 1 | `archive: capture view DDLs before _VIEW rename pass (view_labeling_20260421)` | `45993e3` |
 | 2 | `migrate: main VIEWs → _VIEW suffix (US + molecular readers, registry, outputs, QA)` | `87ccd4c` |
+| 3 | `docs: fix closeout report commit SHA (amend hash)` | `d3e421b` |
 
 ---
 
