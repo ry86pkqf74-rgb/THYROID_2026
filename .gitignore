@@ -128,6 +128,18 @@ scripts/output/*.bak.*
 runs/tirads_granular/ssh_config.sh
 runs/tirads_granular/*epoch*
 runs/tirads_granular/*.log
+# tirads smoke / raw entity parquet (cleans like nodules_clean.parquet stay tracked)
+runs/tirads_granular/smoke3_output/
+runs/tirads_granular/smoke3_v2/
+runs/tirads_granular/smoke3_v2b/
+runs/tirads_granular/full_v2_output/note_entities_llm_tirads_granular.parquet
+
+# Local smoke checkpoints (221b) — regenerable
+scripts/output/221b_smoke_ckpt.jsonl
+scripts/output/221b_smoke_results.parquet
+# New parquet_backup drops not part of the tracked backup bundle
+scripts/output/parquet_backup/canonical_patient_master_pre*.parquet
+scripts/output/parquet_backup/data_dictionary_v2.parquet
 
 # ── Extraction pipeline: checkpoint & output data (OK to commit) ──
 # processed/output/*.ckpt.jsonl — may be committed
