@@ -1,0 +1,63 @@
+{
+  "script": "Script 361",
+  "run_ts_utc": "20260421T171934Z",
+  "commit": true,
+  "archive_db": "Thyroid 2026 UPdated",
+  "archive_schema": "us_legacy_20260421",
+  "results": [
+    {
+      "table": "canonical_us_nodule_master_v1",
+      "status": "archived",
+      "src_rows": 37016,
+      "dst_rows": 37016
+    },
+    {
+      "table": "canonical_us_nodule_characteristics_v1",
+      "status": "archived",
+      "src_rows": 37016,
+      "dst_rows": 37016
+    },
+    {
+      "table": "imaging_nodule_master_v1",
+      "status": "archived",
+      "src_rows": 37016,
+      "dst_rows": 37016
+    },
+    {
+      "table": "tirads_llm_extracted_v2",
+      "status": "archived",
+      "src_rows": 5636,
+      "dst_rows": 5636
+    },
+    {
+      "table": "serial_imaging_us",
+      "status": "archived",
+      "src_rows": 4162,
+      "dst_rows": 4162
+    },
+    {
+      "table": "canonical_us_exam_master_v1",
+      "status": "archived",
+      "src_rows": 13347,
+      "dst_rows": 13347
+    },
+    {
+      "table": "canonical_us_patient_master_v1",
+      "status": "archived",
+      "src_rows": 6126,
+      "dst_rows": 6126
+    },
+    {
+      "table": "tirads_granular_parsed_v1",
+      "status": "archived",
+      "src_rows": 181,
+      "dst_rows": 181
+    },
+    {
+      "table": "us_nodule_dynamics_parsed_v1",
+      "status": "archived",
+      "src_rows": 49,
+      "dst_rows": 49
+    }
+  ]
+}

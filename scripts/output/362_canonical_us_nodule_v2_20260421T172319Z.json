@@ -1,0 +1,14 @@
+{
+  "script": "Script 362",
+  "run_ts_utc": "20260421T172319Z",
+  "target": "thyroid_canonical_publication_v1_0.main.canonical_us_nodule_v2",
+  "after_primary": 36957,
+  "after_legacy": 36957,
+  "verify": {
+    "row_count": 36957,
+    "patient_count": 6126,
+    "nlp_backfill_pending": 2061,
+    "is_aggregate_row": 141,
+    "duplicate_keys": 0
+  }
+}
