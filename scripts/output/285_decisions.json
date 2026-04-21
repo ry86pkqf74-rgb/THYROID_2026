@@ -832,10 +832,197 @@
       "post_null_research_id": 0,
       "post_confidence_tier_values": "below_80pct_concordance",
       "finished_at": "2026-04-21T02:21:07Z"
+    },
+    "6": {
+      "phase": 6,
+      "started_at": "2026-04-21T02:21:18Z",
+      "gates": [
+        {
+          "name": "A_cpm_rows_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "A_cpm_no_null_rid",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "A_cpm_no_null_fna_path_outcome",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "B_cpm_rids_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "C_other_cpm_cols_unchanged_vs_phase4_snapshot",
+          "ok": true,
+          "detail": {
+            "live": "ab584dd96a93b32d134df8e34a9d4707",
+            "snapshot": "ab584dd96a93b32d134df8e34a9d4707",
+            "excluded_cols": [
+              "nlp_vasc_has_data",
+              "nlp_vasc_n_entities",
+              "nlp_vasc_positive_mentioned",
+              "nlp_vasc_confidence_tier"
+            ],
+            "other_cols_count": 1532
+          }
+        },
+        {
+          "name": "C_vasc_cols_eq_expected_4col_set",
+          "ok": true,
+          "detail": {
+            "observed": [
+              "nlp_vasc_confidence_tier",
+              "nlp_vasc_has_data",
+              "nlp_vasc_n_entities",
+              "nlp_vasc_positive_mentioned"
+            ],
+            "expected": [
+              "nlp_vasc_has_data",
+              "nlp_vasc_n_entities",
+              "nlp_vasc_positive_mentioned",
+              "nlp_vasc_confidence_tier"
+            ],
+            "note": "Tier-2 4-col shape: n_notes / key_finding must NOT exist"
+          }
+        },
+        {
+          "name": "C_vasc_n_notes_not_present",
+          "ok": true,
+          "detail": {
+            "observed": [
+              "nlp_vasc_confidence_tier",
+              "nlp_vasc_has_data",
+              "nlp_vasc_n_entities",
+              "nlp_vasc_positive_mentioned"
+            ]
+          }
+        },
+        {
+          "name": "C_vasc_key_finding_not_present",
+          "ok": true,
+          "detail": {
+            "observed": [
+              "nlp_vasc_confidence_tier",
+              "nlp_vasc_has_data",
+              "nlp_vasc_n_entities",
+              "nlp_vasc_positive_mentioned"
+            ]
+          }
+        },
+        {
+          "name": "D_source_rows_eq_39210",
+          "ok": true,
+          "detail": {
+            "observed": 39210,
+            "expected": 39210
+          }
+        },
+        {
+          "name": "D_source_rids_eq_10868",
+          "ok": true,
+          "detail": {
+            "observed": 10868,
+            "expected": 10868
+          }
+        },
+        {
+          "name": "D_source_model_eq_qwen25_32b",
+          "ok": true,
+          "detail": {
+            "observed": "qwen2.5-32b",
+            "expected": "qwen2.5-32b"
+          }
+        },
+        {
+          "name": "D_source_sdk_eq_openai",
+          "ok": true,
+          "detail": {
+            "observed": "openai",
+            "expected": "openai"
+          }
+        },
+        {
+          "name": "E_archive_pre9domainv4_exists_with_11037_rows",
+          "ok": true,
+          "detail": {
+            "archives_present": [
+              "note_entities_llm_vascular_invasion_pre9domainv4_20260421T022012Z"
+            ],
+            "newest_archive": "note_entities_llm_vascular_invasion_pre9domainv4_20260421T022012Z",
+            "row_count": 11037
+          }
+        },
+        {
+          "name": "F_cpm_pre285_snapshot_exists_with_10871_rows",
+          "ok": true,
+          "detail": {
+            "snapshots_present": [
+              "canonical_patient_master_pre285_20260421T022051Z"
+            ],
+            "newest_snapshot": "canonical_patient_master_pre285_20260421T022051Z",
+            "row_count": 10871
+          }
+        }
+      ],
+      "blockers": [],
+      "live_other_cols_md5": "ab584dd96a93b32d134df8e34a9d4707",
+      "live_other_cols_count": 1532,
+      "live_excluded_cols": [
+        "nlp_vasc_has_data",
+        "nlp_vasc_n_entities",
+        "nlp_vasc_positive_mentioned",
+        "nlp_vasc_confidence_tier"
+      ],
+      "phase_4_snapshot_other_cols_md5": "ab584dd96a93b32d134df8e34a9d4707",
+      "vasc_columns_present": [
+        "nlp_vasc_confidence_tier",
+        "nlp_vasc_has_data",
+        "nlp_vasc_n_entities",
+        "nlp_vasc_positive_mentioned"
+      ],
+      "observed": {
+        "cpm_n_rows": 10871,
+        "cpm_null_rid": 0,
+        "cpm_null_fna": 0,
+        "cpm_n_rids": 10871,
+        "source_n_rows": 39210,
+        "source_n_rids": 10868,
+        "source_models": "qwen2.5-32b",
+        "source_sdks": "openai",
+        "vasc_columns_present": [
+          "nlp_vasc_confidence_tier",
+          "nlp_vasc_has_data",
+          "nlp_vasc_n_entities",
+          "nlp_vasc_positive_mentioned"
+        ],
+        "phase_1_archives_present": [
+          "note_entities_llm_vascular_invasion_pre9domainv4_20260421T022012Z"
+        ],
+        "phase_4_snapshots_present": [
+          "canonical_patient_master_pre285_20260421T022051Z"
+        ]
+      },
+      "finished_at": "2026-04-21T02:21:22Z"
     }
   },
-  "last_started_at": "2026-04-21T02:21:05Z",
-  "last_phase_arg": "5",
-  "last_finished_at": "2026-04-21T02:21:07Z",
+  "last_started_at": "2026-04-21T02:21:17Z",
+  "last_phase_arg": "6",
+  "last_finished_at": "2026-04-21T02:21:22Z",
   "last_return_code": 0
 }

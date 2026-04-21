@@ -122,3 +122,19 @@
 [02:21:07.842Z]   gate post_confidence_tier_null_count_eq_has_false: OK — {'tier_null': 7898, 'has_false': 7898}
 [02:21:07.842Z]   gate post_confidence_tier_distinct_eq_below80_only: OK — {'observed': 'below_80pct_concordance', 'expected': 'below_80pct_concordance'}
 [02:21:07.842Z]   gate post_null_research_id_eq_0: OK — {'observed': 0}
+[02:21:17.689Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[02:21:18.291Z] === PHASE 6 — post-mutation invariants A-F ===
+[02:21:18.680Z]   gate A_cpm_rows_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[02:21:18.680Z]   gate A_cpm_no_null_rid: OK — {'observed': 0}
+[02:21:18.680Z]   gate A_cpm_no_null_fna_path_outcome: OK — {'observed': 0}
+[02:21:18.764Z]   gate B_cpm_rids_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[02:21:21.670Z]   gate C_other_cpm_cols_unchanged_vs_phase4_snapshot: OK — {'live': 'ab584dd96a93b32d134df8e34a9d4707', 'snapshot': 'ab584dd96a93b32d134df8e34a9d4707', 'excluded_cols': ['nlp_vasc_has_data', 'nlp_vasc_n_entities', 'nlp_vasc_positive_mentioned', 'nlp_vasc_confidence_tier'], 'other_cols_count': 1532}
+[02:21:21.802Z]   gate C_vasc_cols_eq_expected_4col_set: OK — {'observed': ['nlp_vasc_confidence_tier', 'nlp_vasc_has_data', 'nlp_vasc_n_entities', 'nlp_vasc_positive_mentioned'], 'expected': ['nlp_vasc_has_data', 'nlp_vasc_n_entities', 'nlp_vasc_positive_mentioned', 'nlp_vasc_confidence_tier'], 'note': 'Tier-2 4-col shape: n_notes / key_finding must NOT exist'}
+[02:21:21.802Z]   gate C_vasc_n_notes_not_present: OK — {'observed': ['nlp_vasc_confidence_tier', 'nlp_vasc_has_data', 'nlp_vasc_n_entities', 'nlp_vasc_positive_mentioned']}
+[02:21:21.803Z]   gate C_vasc_key_finding_not_present: OK — {'observed': ['nlp_vasc_confidence_tier', 'nlp_vasc_has_data', 'nlp_vasc_n_entities', 'nlp_vasc_positive_mentioned']}
+[02:21:21.837Z]   gate D_source_rows_eq_39210: OK — {'observed': 39210, 'expected': 39210}
+[02:21:21.837Z]   gate D_source_rids_eq_10868: OK — {'observed': 10868, 'expected': 10868}
+[02:21:21.837Z]   gate D_source_model_eq_qwen25_32b: OK — {'observed': 'qwen2.5-32b', 'expected': 'qwen2.5-32b'}
+[02:21:21.837Z]   gate D_source_sdk_eq_openai: OK — {'observed': 'openai', 'expected': 'openai'}
+[02:21:21.971Z]   gate E_archive_pre9domainv4_exists_with_11037_rows: OK — {'archives_present': ['note_entities_llm_vascular_invasion_pre9domainv4_20260421T022012Z'], 'newest_archive': 'note_entities_llm_vascular_invasion_pre9domainv4_20260421T022012Z', 'row_count': 11037}
+[02:21:22.197Z]   gate F_cpm_pre285_snapshot_exists_with_10871_rows: OK — {'snapshots_present': ['canonical_patient_master_pre285_20260421T022051Z'], 'newest_snapshot': 'canonical_patient_master_pre285_20260421T022051Z', 'row_count': 10871}
