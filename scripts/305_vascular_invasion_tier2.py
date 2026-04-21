@@ -42,7 +42,7 @@ WITH ent AS (
     SELECT research_id,
            note_index,
            note_date, note_type, extracted_at,
-           UNNEST(CAST(json_extract(result_json, '$.entities') AS VARCHAR[])) AS ent_json
+           UNNEST(CAST(json_extract(result_json, '$.entities') AS JSON[])) AS ent_json
       FROM main.note_entities_llm_vascular_invasion
      WHERE result_json IS NOT NULL
        AND json_array_length(json_extract(result_json, '$.entities')) > 0
