@@ -1,0 +1,54 @@
+=== CPM nucmed_tgab_max + biochemical_concern_first_date + comp_vc_* ===
+  CPM.nucmed_tgab_max present, nonnull=2602
+  CPM.biochemical_concern_first_date present, nonnull=1372
+  CPM.comp_vc_paralysis_evidence_tier present, nonnull=34
+  CPM.comp_vc_paresis_evidence_tier present, nonnull=22
+
+=== tg_postop_surveillance_windows_v1 schema ===
+  research_id: BIGINT
+  temporal_window: VARCHAR
+  analyte: VARCHAR
+  n_measurements: BIGINT
+  window_first_date: TIMESTAMP_NS
+  window_last_date: TIMESTAMP_NS
+  value_min: DOUBLE
+  value_max: DOUBLE
+  value_mean: DOUBLE
+  ata_response_in_window: VARCHAR
+  days_from_surgery_min: BIGINT
+  days_from_surgery_max: BIGINT
+  rows=16184, rids=3250
+
+=== complication_phenotype_v1 schema ===
+  research_id: BIGINT
+  complication_entity: VARCHAR
+  note_mention_flag: BOOLEAN
+  n_raw_nlp_mentions: BIGINT
+  n_valid_nlp_mentions: BIGINT
+  suspected_flag: BOOLEAN
+  confirmed_flag: BOOLEAN
+  transient_flag: BOOLEAN
+  permanent_flag: BOOLEAN
+  surgery_related_flag: BOOLEAN
+  historical_only_flag: BOOLEAN
+  timing_days_post_surgery: BIGINT
+  timing_window: VARCHAR
+  final_complication_status: VARCHAR
+  analysis_eligible_flag: BOOLEAN
+  biochemical_low_ca: BOOLEAN
+  biochemical_low_pth: BOOLEAN
+  pth_nadir: DOUBLE
+  ca_nadir: DOUBLE
+  treatment_requiring_flag: BOOLEAN
+  voice_resolution_noted: BOOLEAN
+  voice_permanence_noted: BOOLEAN
+  evidence_tier: INTEGER
+  source_tier_label: VARCHAR
+  detection_date: TIMESTAMP
+  first_surgery_date: TIMESTAMP
+  phenotyped_at: TIMESTAMP WITH TIME ZONE
+  phenotype_version: VARCHAR
+  status_v2: VARCHAR
+  rows=5978, rids=2938
+  phenotype: BinderException
+  distinct evidence_tier: [(None, 5485), (1, 167), (2, 127), (3, 120), (4, 79)]

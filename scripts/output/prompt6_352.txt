@@ -1,0 +1,43 @@
+
+==============================================================================
+1. nucmed_tgab_max — MAX(TgAb result_numeric)
+==============================================================================
+  before=2602, after=2602, delta=0 (source ceiling 2994)
+
+==============================================================================
+2. biochemical_concern_first_date — MIN(window_first_date) where Tg value_max > 2.0
+==============================================================================
+  CPM target type: DATE -> casting backfill to DATE
+  before=1372, after=1372, delta=0 (source ceiling 1659)
+
+==============================================================================
+3. comp_vc_paralysis_evidence_tier — re-pull tiered rows
+==============================================================================
+  before=34, after=34, delta=0
+
+==============================================================================
+4. comp_vc_paresis_evidence_tier — re-pull tiered rows
+==============================================================================
+  before=22, after=22, delta=0
+
+==============================================================================
+5. Defer log for backfill_feasible=FALSE provenance entries
+==============================================================================
+  defer-logged recurrence_histology (genuine_gap)
+  defer-logged recurrence_site_primary (genuine_gap)
+  defer-logged gm_recurrence_site_primary (genuine_gap)
+  defer-logged op_esophageal_inv_any (genuine_gap)
+  defer-logged third_surgery_date (legitimately_empty)
+  defer-logged third_surgery_days_from_surg (legitimately_empty)
+  defer-logged path_stage_raw (genuine_gap)
+  defer-logged gm_path_stage_raw (genuine_gap)
+  defer-logged tsh_suppressed_ever (wiring_gap)
+  defer-logged rai_scan_findings_v9 (rename_artifact)
+
+==============================================================================
+6. Final summary
+==============================================================================
+  TOTAL CPM cell delta this script: 0
+  unaddressed wiring_gap+feasible rows: 0
+
+DONE. 352 swept wiring gaps; total delta 0 cells.
