@@ -636,10 +636,49 @@
       "live_parquet_ndhash": "58ffbf13cf915473732f70fa59802790",
       "live_parquet_srchash": "155f050eb2db3c12451ec45170addc83",
       "finished_at": "2026-04-21T02:20:39Z"
+    },
+    "4": {
+      "phase": 4,
+      "started_at": "2026-04-21T02:20:49Z",
+      "gates": [
+        {
+          "name": "snapshot_rows_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "snapshot_rids_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        }
+      ],
+      "blockers": [],
+      "ctas_action": "created_new",
+      "snapshot_table": "\"Thyroid 2026 UPdated\".archive_pub_v1_0.canonical_patient_master_pre285_20260421T022051Z",
+      "snapshot_table_unqualified": "canonical_patient_master_pre285_20260421T022051Z",
+      "comment_action": "applied",
+      "comment": "Script 285 pre-mutation snapshot of canonical_patient_master. Reason: rollback anchor before rebuilding nlp_vasc_* family from qwen3:32b stale state (has_data TRUE=653, NULL=10218, positive_mentioned TRUE=445, sum_n_entities=2936) to qwen2.5-32b state. Tier-2 4-col rollup shape (no key_finding, no n_notes) preserved. Created at 2026-04-21T02:20:55Z.",
+      "snapshot_rows": 10871,
+      "snapshot_rids": 10871,
+      "snapshot_other_cols_md5": "ab584dd96a93b32d134df8e34a9d4707",
+      "snapshot_other_cols_count": 1532,
+      "snapshot_excluded_cols": [
+        "nlp_vasc_has_data",
+        "nlp_vasc_n_entities",
+        "nlp_vasc_positive_mentioned",
+        "nlp_vasc_confidence_tier"
+      ],
+      "finished_at": "2026-04-21T02:20:57Z"
     }
   },
-  "last_started_at": "2026-04-21T02:20:38Z",
-  "last_phase_arg": "3",
-  "last_finished_at": "2026-04-21T02:20:39Z",
+  "last_started_at": "2026-04-21T02:20:48Z",
+  "last_phase_arg": "4",
+  "last_finished_at": "2026-04-21T02:20:57Z",
   "last_return_code": 0
 }
