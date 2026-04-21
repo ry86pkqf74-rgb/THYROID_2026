@@ -1,0 +1,16 @@
+  total: 10871
+  path_null: 6801
+  path_null_with_top_t: 64
+  path_null_with_dom_t: 37
+  gm_path_null_with_top_t: 64
+  gm_path_null_with_dom_t: 37
+
+Sample distinct path_stage_raw vs AJCC8 components:
+  path='I'                       ajcc=(T1a,N1a,M0)  dom=(T1a,N1,M0) n=291
+  path='I'                       ajcc=(T1a,N0,M0)  dom=(T1a,N0,M0) n=252
+  path='I'                       ajcc=(T1b,N0,M0)  dom=(T1b,N0,M0) n=177
+  path='I'                       ajcc=(T1b,N1a,M0)  dom=(T1b,N1,M0) n=165
+  path='I'                       ajcc=(T2,N0,M0)  dom=(T2,N0,M0) n=128
+  path='II'                      ajcc=(T1a,N1a,M1)  dom=(T1a,N1,M1) n=104
+  path='II'                      ajcc=(T2,N1a,M1)  dom=(T2,N1,M1) n=93
+  path='I'                       ajcc=(T1b,N1a,M0)  dom=(T1b,N1a,M0) n=88
