@@ -89,3 +89,21 @@
 [00:30:16.335Z]   gate snapshot_rows_eq_10871: OK — {'observed': 10871, 'expected': 10871}
 [00:30:16.335Z]   gate snapshot_rids_eq_10871: OK — {'observed': 10871, 'expected': 10871}
 [00:30:17.820Z]   snapshot non-nlp_frozensec_* MD5 = 26d51d389075f06d11c6f41739fba730  (over 1532 columns; pinned for Phase 6 invariant C)
+[00:30:23.556Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:30:23.977Z] === PHASE 5 — rollup UPDATE on canonical_patient_master (nlp_frozensec_*) ===
+[00:30:23.977Z]   building per-RID rollup CTE -> TEMP TABLE _rollup_283 ...
+[00:30:24.552Z]     rollup: distinct_rids=2855  sum_n_notes=3776  sum_n_entities=7715
+[00:30:24.552Z]   gate rollup_distinct_rids_eq_pinned: OK — {'observed': 2855, 'pinned': 2855}
+[00:30:24.552Z]   gate rollup_n_notes_eq_pinned: OK — {'observed': 3776, 'pinned': 3776}
+[00:30:24.552Z]   gate rollup_n_entities_eq_pinned: OK — {'observed': 7715, 'pinned': 7715}
+[00:30:24.552Z]   UPDATE main.canonical_patient_master from rollup ...
+[00:30:24.792Z]   UPDATE patients absent from rollup -> FALSE/0/0/NULL ...
+[00:30:24.980Z]   post-update: has_data TRUE=2855 FALSE=8016 NULL=0
+[00:30:24.980Z]                sum_n_notes=3776 sum_n_entities=7715 key_finding_set=2855
+[00:30:24.980Z]   gate post_has_data_within_target_pm10: OK — {'observed': 2855, 'target': 2855, 'tolerance': 10}
+[00:30:24.980Z]   gate post_has_data_null_eq_0: OK — {'observed': 0}
+[00:30:24.980Z]   gate post_has_data_false_eq_complement: OK — {'observed': 8016, 'expected': 8016}
+[00:30:24.980Z]   gate post_sum_n_notes_eq_pinned: OK — {'observed': 3776, 'expected': 3776}
+[00:30:24.980Z]   gate post_sum_n_entities_eq_pinned: OK — {'observed': 7715, 'expected': 7715}
+[00:30:24.980Z]   gate post_null_research_id_eq_0: OK — {'observed': 0}
+[00:30:24.980Z]   gate post_key_finding_set_eq_has_true: OK — {'observed_kf_set': 2855, 'observed_has_true': 2855, 'detail': 'every TRUE patient must have a key_finding'}
