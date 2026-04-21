@@ -1,0 +1,47 @@
+{
+  "script": "Script 374",
+  "run_ts_utc": "20260421T190127Z",
+  "renames": [
+    {
+      "old": "tirads_reported",
+      "new": "tirads_reported_in_text"
+    },
+    {
+      "old": "tirads_score_2017",
+      "new": "acr2017_tirads_points"
+    },
+    {
+      "old": "tirads_level_2017",
+      "new": "acr2017_tirads_category"
+    },
+    {
+      "old": "tirads_category_v2",
+      "new": "updated_tirads_category"
+    },
+    {
+      "old": "tirads_band_ambiguous",
+      "new": "acr2017_band_ambiguous"
+    },
+    {
+      "old": "tirads_concordant_flag",
+      "new": "acr2017_vs_updated_concordant"
+    },
+    {
+      "old": "tirads_score_component_complete",
+      "new": "acr2017_feature_points_complete"
+    }
+  ],
+  "dropped_columns": [
+    "tirads_category_code_legacy_v1",
+    "tirads_category_modified_legacy_v1"
+  ],
+  "post_recompute_metrics": {
+    "total_rows": 36957,
+    "has_acr2017_points": 4375,
+    "has_acr2017_category": 3410,
+    "has_updated_category": 3388,
+    "both_populated": 3388,
+    "disagreeing_rows": 0,
+    "has_text_extracted_tirads": 27844
+  }
+}
