@@ -594,10 +594,43 @@
       "live_parquet_ndhash": "93e94f6531350f321d9c498d39392333",
       "live_parquet_srchash": "565ce1c3f27f1ad40c7a86ff89e51469",
       "finished_at": "2026-04-21T00:30:01Z"
+    },
+    "4": {
+      "phase": 4,
+      "started_at": "2026-04-21T00:30:08Z",
+      "gates": [
+        {
+          "name": "snapshot_rows_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "snapshot_rids_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        }
+      ],
+      "blockers": [],
+      "ctas_action": "created_new",
+      "snapshot_table": "\"Thyroid 2026 UPdated\".archive_pub_v1_0.canonical_patient_master_pre283_20260421T003010Z",
+      "snapshot_table_unqualified": "canonical_patient_master_pre283_20260421T003010Z",
+      "comment_action": "applied",
+      "comment": "Script 283 pre-mutation snapshot of canonical_patient_master. Reason: rollback anchor before rebuilding nlp_frozensec_* family from qwen3:32b stale state (has_data TRUE=184, NULL=10687, sum_n_notes=187, sum_n_entities=213) to qwen2.5-32b state (target ~2855 TRUE / 0 NULLs). Created at 2026-04-21T00:30:15Z.",
+      "snapshot_rows": 10871,
+      "snapshot_rids": 10871,
+      "snapshot_other_cols_md5": "26d51d389075f06d11c6f41739fba730",
+      "snapshot_other_cols_count": 1532,
+      "finished_at": "2026-04-21T00:30:17Z"
     }
   },
-  "last_started_at": "2026-04-21T00:30:00Z",
-  "last_phase_arg": "3",
-  "last_finished_at": "2026-04-21T00:30:01Z",
+  "last_started_at": "2026-04-21T00:30:08Z",
+  "last_phase_arg": "4",
+  "last_finished_at": "2026-04-21T00:30:17Z",
   "last_return_code": 0
 }
