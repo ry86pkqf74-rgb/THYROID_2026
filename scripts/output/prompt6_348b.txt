@@ -1,0 +1,29 @@
+
+==============================================================================
+0. Pre-state
+==============================================================================
+  main object count: 104
+
+==============================================================================
+1. Imaging pair analysis (defer-only)
+==============================================================================
+
+  -- imaging_exam_master_v1 (n_cols=10, rows=13347) vs canonical_us_exam_master_v1 (n_cols=16, rows=13347)
+     common cols (4): ['bilateral_flag', 'exam_date', 'largest_nodule_cm', 'research_id']
+     unique to src (6): ['dominant_nodule_id', 'exam_id', 'has_suspicious_nodule', 'max_tirads', 'n_nodules', 'source']
+     unique to dst (12): ['count_tr1', 'count_tr2', 'count_tr3', 'count_tr4', 'count_tr5', 'exam_rank_for_patient', 'is_preop_exam', 'isthmus_nodule_flag', 'n_nodules_on_exam', 'second_largest_nodule_cm', 'worst_tirads_category_this_exam', 'worst_tirads_points_this_exam']
+     -> deferred
+
+  -- imaging_nodule_master_v1 (n_cols=25, rows=37016) vs canonical_us_nodule_master_v1 (n_cols=30, rows=37016)
+     common cols (6): ['composition', 'echogenicity', 'exam_date', 'laterality', 'research_id', 'shape']
+     unique to src (19): ['calcifications', 'dominant_nodule_flag', 'exam_date_quality', 'exam_id', 'height_mm', 'length_mm', 'location_raw', 'margins', 'max_dimension_cm', 'nodule_id', 'nodule_number', 'source_table', 'suspicious_flag', 'tirads_acr_recalculated', 'tirads_category', 'tirads_concordant_flag', 'tirads_reported', 'volume_ml', 'width_mm']
+     unique to dst (24): ['chammas_type', 'echogenic_foci', 'elastography_category', 'extrathyroidal_extension_on_us', 'fna_recommended_this_nodule', 'interval_growth_flag', 'margin', 'nodule_index_within_exam', 'nodule_master_id', 'size_cm', 'source_base', 'source_dynamics_llm', 'source_fna_linkage', 'source_tirads_llm', 'source_tirads_v2', 'tirads_category_v2', 'tirads_level_2017', 'tirads_points_composition', 'tirads_points_echogenicity', 'tirads_points_foci', 'tirads_points_margin', 'tirads_points_shape', 'tirads_points_total', 'tirads_score_2017']
+     -> deferred
+
+==============================================================================
+2. Final assertions
+==============================================================================
+  main object count: pre=104 post=104 delta=0
+  imaging defer rows: 2
+
+DONE. 348b deferred both imaging tables (parallel schemas, not duplicates).
