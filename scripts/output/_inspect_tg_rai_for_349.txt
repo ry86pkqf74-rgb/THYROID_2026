@@ -1,0 +1,143 @@
+
+=== thyroglobulin_lab_canonical_v1 ===
+  research_id                              BIGINT
+  analyte                                  VARCHAR
+  assay_method                             VARCHAR
+  test_name_raw                            VARCHAR
+  specimen_collect_dt                      TIMESTAMP_NS
+  order_dt                                 TIMESTAMP_NS
+  result_raw                               VARCHAR
+  result_numeric                           DOUBLE
+  result_qualifier                         VARCHAR
+  result_flag                              VARCHAR
+  days_from_surgery                        BIGINT
+  temporal_window                          VARCHAR
+  surg_date                                TIMESTAMP_NS
+  race                                     VARCHAR
+  gender                                   VARCHAR
+  age_at_surgery                           BIGINT
+  thyroid_procedure                        VARCHAR
+  disambiguation_method                    VARCHAR
+  disambiguation_confidence                DOUBLE
+  ingestion_script                         VARCHAR
+  ingestion_date                           TIMESTAMP
+  is_in_canonical_cancer_cohort            BOOLEAN
+  rows=74258, distinct_rids=3124
+
+=== rai_treatment_episode_v2 ===
+  research_id                              INTEGER
+  rai_episode_id                           BIGINT
+  rai_mention_raw                          VARCHAR
+  rai_term_normalized                      VARCHAR
+  rai_date_native                          TIMESTAMP
+  note_date_parsed                         TIMESTAMP
+  resolved_rai_date                        TIMESTAMP
+  date_status                              VARCHAR
+  date_confidence                          INTEGER
+  dose_mci                                 DOUBLE
+  dose_text_raw                            VARCHAR
+  rai_assertion_status                     VARCHAR
+  rai_intent                               VARCHAR
+  completion_status                        VARCHAR
+  rai_confidence                           DOUBLE
+  source_note_id                           VARCHAR
+  source_note_type                         VARCHAR
+  source_table                             VARCHAR
+  adjudication_status                      VARCHAR
+  linked_surgery_episode_id                VARCHAR
+  linked_pathology_episode_id              INTEGER
+  linked_recurrence_episode_id             INTEGER
+  pre_scan_flag                            BOOLEAN
+  post_therapy_scan_flag                   BOOLEAN
+  scan_findings_raw                        INTEGER
+  iodine_avidity_flag                      BOOLEAN
+  stimulated_tg                            DOUBLE
+  stimulated_tsh                           DOUBLE
+  dose_source                              VARCHAR
+  dose_confidence                          DOUBLE
+  surgery_link_score_v3                    DOUBLE
+  dose_missingness_reason                  VARCHAR
+  rows=1857, distinct_rids=862
+
+=== longitudinal_lab_canonical_v1 ===
+  research_id                              BIGINT
+  lab_date                                 DATE
+  lab_date_status                          VARCHAR
+  lab_name_raw                             VARCHAR
+  lab_name_standardized                    VARCHAR
+  analyte_group                            VARCHAR
+  value_raw                                VARCHAR
+  value_numeric                            DOUBLE
+  unit_raw                                 INTEGER
+  unit_standardized                        VARCHAR
+  reference_range                          INTEGER
+  abnormal_flag                            INTEGER
+  is_censored                              BOOLEAN
+  source_table                             VARCHAR
+  source_script                            VARCHAR
+  ingestion_wave                           VARCHAR
+  data_completeness_tier                   VARCHAR
+  provenance_note                          VARCHAR
+  value_corrected                          DOUBLE
+  calcium_correction_applied               VARCHAR
+  is_in_canonical_cancer_cohort            BOOLEAN
+  rows=75291, distinct_rids=3581
+
+=== CPM max_stimulated_tg + related cols ===
+  anti_tg_nadir                                      DOUBLE                    nonnull=1376
+  anti_tg_rising_flag                                BOOLEAN                   nonnull=1376
+  biochemical_tg_at_recurrence                       DOUBLE                    nonnull=666
+  biochemical_tg_nadir_after_surgery                 DOUBLE                    nonnull=666
+  first_tg_date                                      DATE                      nonnull=2721
+  first_tg_days_from_surg                            INTEGER                   nonnull=2217
+  gm_path_stage_raw                                  VARCHAR                   nonnull=4070
+  gm_tg_below_threshold_ever                         BOOLEAN                   nonnull=2566
+  last_tg_date                                       DATE                      nonnull=2721
+  last_tg_days_from_surg                             INTEGER                   nonnull=2217
+  max_stimulated_tg                                  DOUBLE                    nonnull=0
+  n_tg_measurements_structured                       BIGINT                    nonnull=10871
+  n_tgab_measurements                                BIGINT                    nonnull=10871
+  nlp_tg_has_data                                    BOOLEAN                   nonnull=49
+  nlp_tg_n_entities                                  BIGINT                    nonnull=49
+  nlp_tg_rising_mentioned                            BOOLEAN                   nonnull=49
+  nlp_tg_undetectable_mentioned                      BOOLEAN                   nonnull=49
+  nucmed_n_tg_values                                 INTEGER                   nonnull=447
+  nucmed_n_tgab_values                               INTEGER                   nonnull=447
+  nucmed_tg_max                                      DOUBLE                    nonnull=274
+  nucmed_tg_min                                      DOUBLE                    nonnull=274
+  nucmed_tgab_max                                    DOUBLE                    nonnull=2602
+  path_stage_raw                                     VARCHAR                   nonnull=4070
+  post_rai_tg_count                                  BIGINT                    nonnull=295
+  post_rai_tg_last                                   DOUBLE                    nonnull=294
+  post_rai_tg_nadir                                  DOUBLE                    nonnull=295
+  prm_followup_tg_labs                               INTEGER                   nonnull=10871
+  prm_tg_adequate_followup                           BOOLEAN                   nonnull=10871
+  rai_stimulated_tg                                  DOUBLE                    nonnull=274
+  surv_tg_annual_log_slope                           DOUBLE                    nonnull=1760
+  tg_below_threshold_ever                            BOOLEAN                   nonnull=2566
+  tg_data_available                                  BOOLEAN                   nonnull=10871
+  tg_last_censored                                   BOOLEAN                   nonnull=2523
+  tg_last_value                                      DOUBLE                    nonnull=2536
+  tg_limitation_note                                 VARCHAR                   nonnull=8304
+  tg_mean                                            DOUBLE                    nonnull=2523
+  tg_n_measurements                                  BIGINT                    nonnull=2567
+  tg_nadir                                           DOUBLE                    nonnull=2561
+  tg_nadir_suspect_preablation                       BOOLEAN                   nonnull=2572
+  tg_peak                                            DOUBLE                    nonnull=2561
+  tg_peak_source                                     VARCHAR                   nonnull=2523
+  tg_rising_flag                                     BOOLEAN                   nonnull=2752
+  tg_trajectory_class                                VARCHAR                   nonnull=2721
+  tgab_interference_flag                             BOOLEAN                   nonnull=2721
+  tgab_last_value                                    DOUBLE                    nonnull=2602
+  tgab_nadir                                         DOUBLE                    nonnull=2602
+  tgab_peak                                          DOUBLE                    nonnull=2602
+  tsh_suppressed_ever                                BOOLEAN                   nonnull=201
+
+=== CPM keys for 350/351 ===
+  CPM.first_surgery_date                       present, nonnull=10871
+  CPM.tumor_1_t_stage_ajcc8                    ABSENT
+  CPM.tumor_1_n_stage_ajcc8                    ABSENT
+  CPM.tumor_1_m_stage_ajcc8                    ABSENT
+  CPM.gm_tumor_1_t_stage_ajcc8                 ABSENT
+  CPM.gm_tumor_1_n_stage_ajcc8                 ABSENT
+  CPM.gm_tumor_1_m_stage_ajcc8                 ABSENT

@@ -1,0 +1,31 @@
+
+==============================================================================
+1. Build staging table
+==============================================================================
+  staging rows=238, distinct rids=238
+  distribution: min=0.1, median=0.4, max=1772.3, total_measurements=778
+
+==============================================================================
+2. Ensure CPM columns
+==============================================================================
+  added CPM.max_stimulated_tg_date DATE
+  added CPM.max_stimulated_tg_source_note_ref VARCHAR
+  added CPM.n_stimulated_tg_measurements BIGINT
+  added CPM.max_stimulated_tg_source VARCHAR
+
+==============================================================================
+3. UPDATE CPM (only where max_stimulated_tg IS NULL)
+==============================================================================
+  CPM.max_stimulated_tg: before=0, after=238, delta=238
+
+==============================================================================
+4. Log + PI review
+==============================================================================
+
+==============================================================================
+5. Final assertion
+==============================================================================
+  HARD_FLOOR=50, delta=238
+  PASS
+
+DONE. 349 added max_stimulated_tg for 238 patients (target 500).

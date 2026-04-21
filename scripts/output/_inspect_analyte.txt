@@ -1,0 +1,12 @@
+=== Tg lab analyte distinct ===
+  TgAb: 37647
+  Tg: 36611
+
+=== Long lab name_standardized distinct (TSH-related) ===
+  tsh: 559
+
+=== rai_dose_date sample / completeness ===
+  rows=1857, with_resolved_date=1272, distinct_rids=862, date_range=1990-01-18 00:00:00..2025-11-17 00:00:00
+
+=== Tg specimen_collect_dt completeness ===
+  Tg-only-non-antibody: rows=0, with_dt=0, with_value=0, range=None..None

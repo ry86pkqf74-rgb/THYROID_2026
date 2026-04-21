@@ -1,0 +1,32 @@
+=== TSH coverage in longitudinal_lab_canonical_v1 ===
+  rows=559, rids=449, with_val=241, range=0.0..151.36
+
+=== Tg=Tg (excludes TgAb) ===
+  rows=36611, rids=2925, with_dt=36611, with_val=36400, range=2001-01-04 10:20:00..2025-11-19 19:41:00
+
+=== note_entities_llm_labs schema (potential TSH/Tg source) ===
+  note_row_id: VARCHAR
+  research_id: VARCHAR
+  note_type: VARCHAR
+  note_date: VARCHAR
+  domain: VARCHAR
+  llm_model: VARCHAR
+  llm_base_url: VARCHAR
+  extracted_at: VARCHAR
+  result_json: VARCHAR
+  linkage_date: VARCHAR
+  source_workbook: VARCHAR
+  source_sheet: VARCHAR
+  source_column: VARCHAR
+  note_index: VARCHAR
+  preprocessed_at_utc: VARCHAR
+  entity_domain: VARCHAR
+  llm_provider: VARCHAR
+  llm_sdk: VARCHAR
+  llm_sdk_version: VARCHAR
+  provider_returned_model: VARCHAR
+  provider_system_fingerprint: VARCHAR
+
+=== TSH-suppressed candidate count (basic) ===
+  TSH < 0.1 anywhere (any date): 44 patients
+  TSH < 0.5 anywhere (any date): 77 patients
