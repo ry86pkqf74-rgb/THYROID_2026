@@ -95,3 +95,30 @@
 [02:20:56.238Z]   gate snapshot_rows_eq_10871: OK — {'observed': 10871, 'expected': 10871}
 [02:20:56.238Z]   gate snapshot_rids_eq_10871: OK — {'observed': 10871, 'expected': 10871}
 [02:20:57.666Z]   snapshot non-nlp_vasc_* MD5 = ab584dd96a93b32d134df8e34a9d4707  (over 1532 columns; excluded=['nlp_vasc_has_data', 'nlp_vasc_n_entities', 'nlp_vasc_positive_mentioned', 'nlp_vasc_confidence_tier']; pinned for Phase 6 invariant C)
+[02:21:05.505Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[02:21:05.920Z] === PHASE 5 — rollup UPDATE on canonical_patient_master (nlp_vasc_*; Tier-2 4-col shape) ===
+[02:21:05.921Z]   building per-RID rollup CTE -> TEMP TABLE _rollup_285 ...
+[02:21:06.628Z]     rollup: distinct_rids=2973  sum_n_entities=10217  rids_positive_mentioned=1628
+[02:21:06.628Z]   gate rollup_distinct_rids_eq_pinned: OK — {'observed': 2973, 'pinned': 2973}
+[02:21:06.628Z]   gate rollup_n_entities_eq_pinned: OK — {'observed': 10217, 'pinned': 10217}
+[02:21:06.628Z]   gate rollup_positive_mentioned_eq_pinned: OK — {'observed': 1628, 'pinned': 1628}
+[02:21:06.698Z]     orphan rollup RIDs (not in CPM): 0  (entities_contrib=0 pm_contrib=0)
+[02:21:06.698Z]   UPDATE main.canonical_patient_master from rollup ...
+[02:21:07.626Z]   UPDATE patients absent from rollup -> FALSE/0/FALSE/NULL ...
+[02:21:07.626Z]     (~7898 CPM RIDs absent from parquet; will be marked FALSE)
+[02:21:07.808Z]   post-update: has_data TRUE=2973 FALSE=7898 NULL=0
+[02:21:07.808Z]                positive_mentioned TRUE=1628 FALSE=9243 NULL=0
+[02:21:07.809Z]                confidence_tier below80=2973 NULL=7898  values=below_80pct_concordance
+[02:21:07.809Z]                sum_n_entities=10217
+[02:21:07.809Z]   gate post_has_data_within_target_pm10: OK — {'observed': 2973, 'target': 2973, 'tolerance': 10, 'rollup_distinct_rids': 2973, 'orphan_rids': 0}
+[02:21:07.809Z]   gate post_has_data_null_eq_0: OK — {'observed': 0}
+[02:21:07.809Z]   gate post_has_data_true_plus_false_eq_cpm_rows: OK — {'true': 2973, 'false': 7898, 'sum': 10871, 'expected': 10871}
+[02:21:07.809Z]   gate post_has_data_false_eq_complement_of_true: OK — {'observed': 7898, 'expected': 7898}
+[02:21:07.809Z]   gate post_sum_n_entities_eq_pinned_minus_orphan: OK — {'observed': 10217, 'pinned_parquet_side': 10217, 'orphan_contribution': 0, 'expected_post_mutation': 10217}
+[02:21:07.809Z]   gate post_positive_mentioned_within_target_pm10: OK — {'observed': 1628, 'target': 1628, 'tolerance': 10, 'pinned_parquet_side': 1628, 'orphan_contribution': 0}
+[02:21:07.809Z]   gate post_positive_mentioned_null_eq_0: OK — {'observed': 0}
+[02:21:07.842Z]   gate post_positive_mentioned_subset_of_has_data_true: OK — {'observed_pm_true_outside_has_data_true': 0}
+[02:21:07.842Z]   gate post_confidence_tier_eq_below80_count_eq_has_true: OK — {'tier_below80': 2973, 'has_true': 2973}
+[02:21:07.842Z]   gate post_confidence_tier_null_count_eq_has_false: OK — {'tier_null': 7898, 'has_false': 7898}
+[02:21:07.842Z]   gate post_confidence_tier_distinct_eq_below80_only: OK — {'observed': 'below_80pct_concordance', 'expected': 'below_80pct_concordance'}
+[02:21:07.842Z]   gate post_null_research_id_eq_0: OK — {'observed': 0}

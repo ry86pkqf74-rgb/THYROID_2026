@@ -675,10 +675,167 @@
         "nlp_vasc_confidence_tier"
       ],
       "finished_at": "2026-04-21T02:20:57Z"
+    },
+    "5": {
+      "phase": 5,
+      "started_at": "2026-04-21T02:21:05Z",
+      "gates": [
+        {
+          "name": "rollup_distinct_rids_eq_pinned",
+          "ok": true,
+          "detail": {
+            "observed": 2973,
+            "pinned": 2973
+          }
+        },
+        {
+          "name": "rollup_n_entities_eq_pinned",
+          "ok": true,
+          "detail": {
+            "observed": 10217,
+            "pinned": 10217
+          }
+        },
+        {
+          "name": "rollup_positive_mentioned_eq_pinned",
+          "ok": true,
+          "detail": {
+            "observed": 1628,
+            "pinned": 1628
+          }
+        },
+        {
+          "name": "post_has_data_within_target_pm10",
+          "ok": true,
+          "detail": {
+            "observed": 2973,
+            "target": 2973,
+            "tolerance": 10,
+            "rollup_distinct_rids": 2973,
+            "orphan_rids": 0
+          }
+        },
+        {
+          "name": "post_has_data_null_eq_0",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "post_has_data_true_plus_false_eq_cpm_rows",
+          "ok": true,
+          "detail": {
+            "true": 2973,
+            "false": 7898,
+            "sum": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "post_has_data_false_eq_complement_of_true",
+          "ok": true,
+          "detail": {
+            "observed": 7898,
+            "expected": 7898
+          }
+        },
+        {
+          "name": "post_sum_n_entities_eq_pinned_minus_orphan",
+          "ok": true,
+          "detail": {
+            "observed": 10217,
+            "pinned_parquet_side": 10217,
+            "orphan_contribution": 0,
+            "expected_post_mutation": 10217
+          }
+        },
+        {
+          "name": "post_positive_mentioned_within_target_pm10",
+          "ok": true,
+          "detail": {
+            "observed": 1628,
+            "target": 1628,
+            "tolerance": 10,
+            "pinned_parquet_side": 1628,
+            "orphan_contribution": 0
+          }
+        },
+        {
+          "name": "post_positive_mentioned_null_eq_0",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "post_positive_mentioned_subset_of_has_data_true",
+          "ok": true,
+          "detail": {
+            "observed_pm_true_outside_has_data_true": 0
+          }
+        },
+        {
+          "name": "post_confidence_tier_eq_below80_count_eq_has_true",
+          "ok": true,
+          "detail": {
+            "tier_below80": 2973,
+            "has_true": 2973
+          }
+        },
+        {
+          "name": "post_confidence_tier_null_count_eq_has_false",
+          "ok": true,
+          "detail": {
+            "tier_null": 7898,
+            "has_false": 7898
+          }
+        },
+        {
+          "name": "post_confidence_tier_distinct_eq_below80_only",
+          "ok": true,
+          "detail": {
+            "observed": "below_80pct_concordance",
+            "expected": "below_80pct_concordance"
+          }
+        },
+        {
+          "name": "post_null_research_id_eq_0",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        }
+      ],
+      "blockers": [],
+      "phase_0_pinned_pos_rids": 2973,
+      "phase_0_pinned_pos_entities": 10217,
+      "phase_0_pinned_pos_mentioned_rids": 1628,
+      "rollup_distinct_rids": 2973,
+      "rollup_total_entities_sum": 10217,
+      "rollup_rids_positive_mentioned": 1628,
+      "rollup_orphan_rids": 0,
+      "rollup_orphan_entities_contribution": 0,
+      "rollup_orphan_positive_mentioned_contribution": 0,
+      "expected_post_has_true": 2973,
+      "expected_post_sum_n_entities": 10217,
+      "expected_post_positive_mentioned_true": 1628,
+      "post_has_data_true": 2973,
+      "post_has_data_false": 7898,
+      "post_has_data_null": 0,
+      "post_sum_n_entities": 10217,
+      "post_positive_mentioned_true": 1628,
+      "post_positive_mentioned_false": 9243,
+      "post_positive_mentioned_null": 0,
+      "post_confidence_tier_eq_below80": 2973,
+      "post_confidence_tier_null": 7898,
+      "post_null_research_id": 0,
+      "post_confidence_tier_values": "below_80pct_concordance",
+      "finished_at": "2026-04-21T02:21:07Z"
     }
   },
-  "last_started_at": "2026-04-21T02:20:48Z",
-  "last_phase_arg": "4",
-  "last_finished_at": "2026-04-21T02:20:57Z",
+  "last_started_at": "2026-04-21T02:21:05Z",
+  "last_phase_arg": "5",
+  "last_finished_at": "2026-04-21T02:21:07Z",
   "last_return_code": 0
 }
