@@ -1,0 +1,64 @@
+
+==============================================================================
+1. Attached databases
+==============================================================================
+  Thyroid 2026 UPdated
+  md_information_schema
+  my_db
+  system
+  temp
+  thyroid_canonical_publication_v1_0
+
+==============================================================================
+2. archive_pub_v1_0 schema in 'Thyroid 2026 UPdated'
+==============================================================================
+  schemas: ['archive_legacy', 'archive_pub_v1_0', 'main']
+  existing archive count: 304
+
+==============================================================================
+3. Cross-DB write probe
+==============================================================================
+  OK — created and dropped _prompt6_readiness_probe_20260421T125034Z (1 row)
+
+==============================================================================
+4. archive_move_log_v1 + schema_reorg_move_log_v1 schemas
+==============================================================================
+  archive_move_log_v1 cols: ['moved_at', 'src_schema', 'src_table', 'archive_fq', 'n_rows', 'reason', 'script']
+  schema_reorg_move_log_v1 cols: ['moved_at', 'source_schema', 'source_name', 'dest_schema', 'dest_name', 'action', 'rowcount_src', 'rowcount_dest', 'script']
+
+==============================================================================
+5. Provenance + Prompt-5 summary tables
+==============================================================================
+  cpm_missing_data_provenance_v1 rows: 15
+  prompt5_remediation_summary_v1 rows: 5
+  cpm_missing_data_provenance_v1 audit_run_at max: None
+
+==============================================================================
+6. RunPod do-not-touch tables
+==============================================================================
+  note_entities_llm_pathology                        rows=11037
+  note_entities_llm_cervical_ln_detail               rows=11037
+  note_entities_llm_tirads_granular                  rows=11037
+  note_entities_llm_esophageal_invasion              ABSENT (CatalogException)
+  tirads_reextraction_queue_v1                       rows=4363
+  operative_episode_detail_v2                        rows=11773
+  tirads_llm_extracted_v2                            rows=5636
+
+==============================================================================
+7. Prompt-6 staging tables (idempotent CREATE IF NOT EXISTS)
+==============================================================================
+  ensured prompt6_prestate_v1
+  ensured prompt6_poststate_v1
+  ensured prompt6_defer_log_v1
+  ensured prompt6_view_rebuild_log_v1
+  ensured prompt6_older_master_decisions_v1
+  ensured prompt6_wiring_gap_remediation_v1
+  ensured prompt6_completion_audit_v1
+  ensured prompt7_handoff_v1
+  ensured pi_review_queue_v1
+
+==============================================================================
+READINESS — RESULT
+==============================================================================
+  All checks passed. Prompt 6 is ready to execute.
+  UTC stamp for this session: 20260421T125034Z

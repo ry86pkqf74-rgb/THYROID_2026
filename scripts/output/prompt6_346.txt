@@ -1,0 +1,46 @@
+
+==============================================================================
+0. Pre-state
+==============================================================================
+  main object count: 118
+  present: main.extracted_braf_recovery_v1 (rows=730, cols=7)
+  present: main.extracted_ete_subgraded_v1 (rows=3558, cols=9)
+  present: main.extracted_fna_bethesda_v1 (rows=5249, cols=15)
+  present: main.extracted_postop_labs_expanded_v1 (rows=1395, cols=14)
+  present: main.extracted_ras_patient_summary_v1 (rows=321, cols=7)
+  inserted 5 pre-state rows
+
+==============================================================================
+1. Archive sequence
+==============================================================================
+
+  -> extracted_braf_recovery_v1 (src_rows=730)
+     archive parity OK (730 rows)
+     dropped main.extracted_braf_recovery_v1
+
+  -> extracted_ete_subgraded_v1 (src_rows=3558)
+     archive parity OK (3558 rows)
+     dropped main.extracted_ete_subgraded_v1
+
+  -> extracted_fna_bethesda_v1 (src_rows=5249)
+     archive parity OK (5249 rows)
+     dropped main.extracted_fna_bethesda_v1
+
+  -> extracted_postop_labs_expanded_v1 (src_rows=1395)
+     archive parity OK (1395 rows)
+     dropped main.extracted_postop_labs_expanded_v1
+
+  -> extracted_ras_patient_summary_v1 (src_rows=321)
+     archive parity OK (321 rows)
+     dropped main.extracted_ras_patient_summary_v1
+
+==============================================================================
+2. Final assertions
+==============================================================================
+  main object count: pre=118 post=113 delta=-5
+  archive_move_log_v1 rows for 346_archive_extracted_legacy: 5
+  deferred-still-present: main.extracted_tirads_validated_v1
+
+DONE. Script 346 archived 5 extracted_*_v1 tables.
+      Deferred: ['extracted_tirads_validated_v1']
+      UTC stamp: 20260421T125134Z

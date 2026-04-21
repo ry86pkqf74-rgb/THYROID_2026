@@ -1,0 +1,193 @@
+
+==============================================================================
+0. Schemas present in publication DB
+==============================================================================
+  main                                  120 objects
+  manuscript_workspace                  112 objects
+  tier2                                  13 objects
+  verify                                  2 objects
+  views_readable                         46 objects
+
+  main: tables=118, views=2
+  manuscript_workspace.main_schema_keep_list_v1 present: True
+  manuscript_workspace.cpm_missing_data_provenance_v1 present: True
+  manuscript_workspace.archive_move_log_v1 present: True
+  manuscript_workspace.schema_reorg_move_log_v1 present: True
+
+==============================================================================
+1. main_schema_keep_list_v1 contents (skip-these list)
+==============================================================================
+  cols: ['table_name', 'schema_at_registration', 'keep_reason', 'registered_by_script', 'registered_at', 'phase_b_disposition', 'sunset_trigger', 'sunset_audit_finding_id', 'notes']
+    {'table_name': 'ete_adjudication_v1', 'schema_at_registration': 'main', 'keep_reason': 'review_artifact', 'registered_by_script': '270b_step_2', 'registered_at': datetime.datetime(2026, 4, 17, 2, 28, 1, 72314), 'phase_b_disposition': None, 'sunset_trigger': '45 rows: 19 applied via ete_grade_final_v2; 26 retained as present_ungraded per AGENTS.md _v2 contract (standing register at docs/270_ete_low_conf_register.csv)', 'sunset_audit_finding_id': 'step_1a_ete_already_applied_in_v2', 'notes': 'Not a production feeder. Standing review artifact.'}
+    {'table_name': 'path_size_adjudication_v241', 'schema_at_registration': 'main', 'keep_reason': 'human_review_pending', 'registered_by_script': '270b_step_2', 'registered_at': datetime.datetime(2026, 4, 17, 2, 28, 1, 72314), 'phase_b_disposition': None, 'sunset_trigger': 'All 96 rows in scripts/output/270_path_size_human_review.csv have non-null reviewer_decision', 'sunset_audit_finding_id': 'step_1b_path_size_deferred_for_clinician', 'notes': 'Blocks Phase B archival until clinician review complete.'}
+
+==============================================================================
+2. SCRIPT 346 candidates — extracted_*_v1 legacy outputs
+==============================================================================
+  Found 6 extracted_*_v1 tables in main:
+    extracted_braf_recovery_v1                         rows=730 rids=376 
+    extracted_ete_subgraded_v1                         rows=3558 rids=3558 
+    extracted_fna_bethesda_v1                          rows=5249 rids=5249 
+    extracted_postop_labs_expanded_v1                  rows=1395 rids=1051 
+    extracted_ras_patient_summary_v1                   rows=321 rids=321 
+    extracted_tirads_validated_v1                      rows=3439 rids=3439 
+
+  Per-table lineage check (what supersedes each extracted_*_v1):
+
+  -- extracted_braf_recovery_v1 (stem='braf_recovery', tokens=['braf', 'recovery'])
+     main lineage candidates : []
+     tier2 lineage candidates: []
+     verify lineage candidates: []
+
+  -- extracted_ete_subgraded_v1 (stem='ete_subgraded', tokens=['ete', 'subgraded'])
+     main lineage candidates : []
+     tier2 lineage candidates: []
+     verify lineage candidates: []
+
+  -- extracted_fna_bethesda_v1 (stem='fna_bethesda', tokens=['fna', 'bethesda'])
+     main lineage candidates : []
+     tier2 lineage candidates: []
+     verify lineage candidates: []
+
+  -- extracted_postop_labs_expanded_v1 (stem='postop_labs_expanded', tokens=['postop', 'labs', 'expanded'])
+     main lineage candidates : ['note_entities_llm_labs']
+     tier2 lineage candidates: []
+     verify lineage candidates: []
+     rid_overlap[main.extracted_postop_labs_expanded_v1 ∩ main.note_entities_llm_labs] = 1051  (src_rids=1051, cand_rids=5641)
+
+  -- extracted_ras_patient_summary_v1 (stem='ras_patient_summary', tokens=['ras', 'patient', 'summary'])
+     main lineage candidates : ['note_entities_llm_patient_decision_adherence', 'canonical_patient_master', 'canonical_us_patient_master_v1']
+     tier2 lineage candidates: ['patient_decision_adherence_event_v1', 'patient_tier2_master_v1']
+     verify lineage candidates: []
+     rid_overlap[main.extracted_ras_patient_summary_v1 ∩ main.note_entities_llm_patient_decision_adherence] = 297  (src_rids=321, cand_rids=5641)
+     rid_overlap[main.extracted_ras_patient_summary_v1 ∩ main.canonical_patient_master] = 321  (src_rids=321, cand_rids=10871)
+     rid_overlap[main.extracted_ras_patient_summary_v1 ∩ tier2.patient_decision_adherence_event_v1] = 13  (src_rids=321, cand_rids=398)
+
+  -- extracted_tirads_validated_v1 (stem='tirads_validated', tokens=['tirads', 'validated'])
+     main lineage candidates : ['note_entities_llm_tirads_granular']
+     tier2 lineage candidates: []
+     verify lineage candidates: []
+     rid_overlap[main.extracted_tirads_validated_v1 ∩ main.note_entities_llm_tirads_granular] = 2864  (src_rids=3439, cand_rids=5641)
+
+==============================================================================
+3. SCRIPT 347 candidates — audit / queue / discordance / resolved
+==============================================================================
+  Found 6 candidate tables (RunPod-reserved excluded):
+    episode_analysis_resolved_v1_dedup                      rows=9368 rids=9368 cols=46 
+    ete_adjudication_v1                                     rows=45 rids=45 cols=8 (KEEP — in keep-list)
+    lesion_analysis_resolved_v1                             rows=11851 rids=10871 cols=28 
+    ln_crossval_v1                                          rows=4290 rids=3986 cols=19 
+    patient_analysis_resolved_v1                            rows=10871 rids=10871 cols=146 
+    us_nodules_tirads_vs_inm_v1_discordance_v1              rows=1722 rids=1722 cols=10 
+
+  Per-table data-elsewhere check:
+
+  -- episode_analysis_resolved_v1_dedup (n_rows=9368, rids=9368, n_cols=46)
+     sample columns: ['drain_flag', 'episode_analysis_eligible_flag', 'esophageal_involvement_flag', 'extrathyroidal_extension', 'fna_link_confidence_v2', 'fna_link_score_v3', 'fna_path_outcome', 'gross_ete', 'histology', 'intraop_gross_ete', 'linked_fna_episode_id', 'linked_fna_type']
+     rids present in canonical_patient_master: 8733 / 9368 candidate rids
+
+  -- ete_adjudication_v1 (n_rows=45, rids=45, n_cols=8)
+     KEEP — listed in main_schema_keep_list_v1
+     sample columns: ['adjudicated_confidence', 'adjudicated_grade', 'ajcc8_t_adjustment', 'error', 'evidence_quote', 'raw_llm_response', 'reasoning', 'research_id']
+     rids present in canonical_patient_master: 45 / 45 candidate rids
+
+  -- lesion_analysis_resolved_v1 (n_rows=11851, rids=10871, n_cols=28)
+     sample columns: ['capsular_invasion', 'ete_grade', 'extranodal_extension', 'fna_episode_id', 'fna_link_score', 'fna_path_outcome', 'gross_ete', 'histology', 'histology_variant', 'laterality', 'lesion_analysis_eligible_flag', 'ln_examined']
+     rids present in canonical_patient_master: 10871 / 10871 candidate rids
+
+  -- ln_crossval_v1 (n_rows=4290, rids=3986, n_cols=19)
+     sample columns: ['crossval_status', 'h1_vs_primary_examined', 'internal_examined_consistency', 'internal_positive_consistency', 'mc_ln_examined', 'mc_ln_positive', 'ps_ln_examined', 'ps_ln_positive', 'research_id', 'tp_h1_ln_examined', 'tp_h1_ln_positive', 'tp_ln_exam_from_locs']
+     rids present in canonical_patient_master: 3986 / 3986 candidate rids
+
+  -- patient_analysis_resolved_v1 (n_rows=10871, rids=10871, n_cols=146)
+     sample columns: ['age_at_surgery', 'ages_score', 'ajcc8_calculable_flag', 'ajcc8_m_stage', 'ajcc8_missing_components', 'ajcc8_n_stage', 'ajcc8_stage_group', 'ajcc8_t_stage', 'ames_risk_group', 'analysis_eligible_flag', 'anti_tg_nadir', 'anti_tg_rising_flag']
+     rids present in canonical_patient_master: 10871 / 10871 candidate rids
+
+  -- us_nodules_tirads_vs_inm_v1_discordance_v1 (n_rows=1722, rids=1722, n_cols=10)
+     sample columns: ['abs_diff', 'direction', 'inm_first_exam_date', 'inm_last_exam_date', 'inm_max_tr', 'inm_n_exams', 'research_id', 'review_priority', 'unt_first_us_date', 'unt_max_tr']
+     rids present in canonical_patient_master: 1722 / 1722 candidate rids
+
+==============================================================================
+4. SCRIPT 348 candidates — older rollups / extracted_v2 masters
+==============================================================================
+  Found 5 older-master candidates:
+    ln_master_rollup_v1                                rows=4273 rids=3986 cols=78
+    patient_tumor_rollup_v1                            rows=8422 rids=8422 cols=41
+    tirads_llm_extracted_v2                            rows=5636 rids=1429 cols=26
+    tirads_v2_nodule_patient_rollup_v1                 rows=2465 rids=2465 cols=9
+    tirads_v2_report_patient_rollup_v1                 rows=4073 rids=4073 cols=5
+
+  CPM has 1546 columns total.
+
+  Per-table CPM-overlap analysis:
+
+  -- ln_master_rollup_v1
+     n_cols=78  CPM-overlap=25  unique-to-this=53
+     overlap (first 15) : ['ln_level_i_examined', 'ln_level_i_positive', 'ln_level_ii_examined', 'ln_level_ii_positive', 'ln_level_iii_examined', 'ln_level_iii_positive', 'ln_level_iv_examined', 'ln_level_iv_positive', 'ln_level_v_examined', 'ln_level_v_positive', 'ln_level_vi_examined', 'ln_level_vi_positive', 'ln_level_vii_examined', 'ln_level_vii_positive', 'ln_mets_atc']
+     unique  (first 15) : ['dominant_histology_type', 'has_parsed_json', 'has_per_level_data', 'histology_1_n_stage_ajcc8', 'histology_1_type', 'json_location_summary', 'json_n_data_items', 'json_n_locations', 'json_total_examined', 'json_total_positive', 'ln_any_positive', 'ln_bilateral_lateral_examined', 'ln_bilateral_lateral_positive', 'ln_central_examined', 'ln_central_positive']
+     rids present in CPM: 3986 / 3986
+
+  -- patient_tumor_rollup_v1
+     n_cols=41  CPM-overlap=41  unique-to-this=0
+     overlap (first 15) : ['bilateral_path_flag', 'capsular_any_present_path', 'capsular_ordinal_worst', 'closest_margin_mm_max', 'closest_margin_mm_min', 'ete_any_present_path', 'ete_ordinal_worst', 'has_isthmus_tumor', 'has_left_tumor', 'has_right_tumor', 'histologic_types_all', 'histologic_variants_all', 'lvi_any_present_path', 'lvi_ordinal_worst', 'margin_all_uninvolved']
+     unique  (first 15) : []
+     rids present in CPM: 8422 / 8422
+
+  -- tirads_llm_extracted_v2
+     n_cols=26  CPM-overlap=1  unique-to-this=25
+     overlap (first 15) : ['research_id']
+     unique  (first 15) : ['composition', 'composition_pts', 'deterministic_key', 'echogenic_foci', 'echogenicity', 'echogenicity_pts', 'extracted_location', 'extracted_nodule_id', 'extracted_size_cm', 'extraction_error', 'extraction_status', 'foci_pts', 'margin', 'margin_pts', 'n_categories_scored']
+     rids present in CPM: 1429 / 1429
+
+  -- tirads_v2_nodule_patient_rollup_v1
+     n_cols=9  CPM-overlap=8  unique-to-this=1
+     overlap (first 15) : ['research_id', 'tirads_v2_any_ete_on_us', 'tirads_v2_any_fna_recommended', 'tirads_v2_any_interval_growth', 'tirads_v2_largest_nodule_cm', 'tirads_v2_max_points', 'tirads_v2_n_nodules_scored', 'tirads_v2_worst_category']
+     unique  (first 15) : ['tirads_v2_worst_rank']
+     rids present in CPM: 2465 / 2465
+
+  -- tirads_v2_report_patient_rollup_v1
+     n_cols=5  CPM-overlap=4  unique-to-this=1
+     overlap (first 15) : ['research_id', 'tirads_v2_any_suspicious_ln_on_us', 'tirads_v2_n_reports', 'tirads_v2_shortest_followup_months']
+     unique  (first 15) : ['tirads_v2_any_fna_recommended_report']
+     rids present in CPM: 4073 / 4073
+
+==============================================================================
+5. RunPod DO-NOT-TOUCH list — must remain in main untouched
+==============================================================================
+  note_entities_llm_pathology                        present=True rows=11037 rids=5641 
+  note_entities_llm_cervical_ln_detail               present=True rows=11037 rids=5641 
+  note_entities_llm_tirads_granular                  present=True rows=11037 rids=5641 
+  note_entities_llm_esophageal_invasion              present=False rows=None rids=None (absent)
+  tirads_reextraction_queue_v1                       present=True rows=4363 rids=1316 
+  operative_episode_detail_v2                        present=True rows=11773 rids=10871 
+
+==============================================================================
+6. archive_pub_v1_0 schema check
+==============================================================================
+  archive_pub_v1_0 attached as a database: False
+  archive_pub_v1_0 as schema in publication DB: []
+
+==============================================================================
+7. VERDICT — per-table recommendation for Prompt 6
+==============================================================================
+table                                               script     rows    rids  verdict / rationale
+--------------------------------------------------------------------------------------------------------------
+extracted_braf_recovery_v1                             346      730     376  SAFE_TO_ARCHIVE — superseded by note_entities_llm_*/canonical_*; snapshot to archive_pub_v1_0 then drop
+extracted_ete_subgraded_v1                             346     3558    3558  SAFE_TO_ARCHIVE — superseded by note_entities_llm_*/canonical_*; snapshot to archive_pub_v1_0 then drop
+extracted_fna_bethesda_v1                              346     5249    5249  SAFE_TO_ARCHIVE — superseded by note_entities_llm_*/canonical_*; snapshot to archive_pub_v1_0 then drop
+extracted_postop_labs_expanded_v1                      346     1395    1051  SAFE_TO_ARCHIVE — superseded by note_entities_llm_*/canonical_*; snapshot to archive_pub_v1_0 then drop
+extracted_ras_patient_summary_v1                       346      321     321  SAFE_TO_ARCHIVE — superseded by note_entities_llm_*/canonical_*; snapshot to archive_pub_v1_0 then drop
+extracted_tirads_validated_v1                          346     3439    3439  SAFE_TO_ARCHIVE — superseded by note_entities_llm_*/canonical_*; snapshot to archive_pub_v1_0 then drop
+episode_analysis_resolved_v1_dedup                     347     9368    9368  MOVE_TO_MANUSCRIPT_WORKSPACE — decision/audit log content is unique but underlying clinical data is preserved in canonical_*/note_entities_llm_*
+ete_adjudication_v1                                    347       45      45  KEEP — in main_schema_keep_list_v1
+lesion_analysis_resolved_v1                            347    11851   10871  MOVE_TO_MANUSCRIPT_WORKSPACE — decision/audit log content is unique but underlying clinical data is preserved in canonical_*/note_entities_llm_*
+ln_crossval_v1                                         347     4290    3986  MOVE_TO_MANUSCRIPT_WORKSPACE — decision/audit log content is unique but underlying clinical data is preserved in canonical_*/note_entities_llm_*
+patient_analysis_resolved_v1                           347    10871   10871  MOVE_TO_MANUSCRIPT_WORKSPACE — decision/audit log content is unique but underlying clinical data is preserved in canonical_*/note_entities_llm_*
+us_nodules_tirads_vs_inm_v1_discordance_v1             347     1722    1722  MOVE_TO_MANUSCRIPT_WORKSPACE — decision/audit log content is unique but underlying clinical data is preserved in canonical_*/note_entities_llm_*
+ln_master_rollup_v1                                    348     4273    3986  NEEDS_REVIEW — only 32% of columns in CPM; may still hold unique data — keep in main or move to ws with note
+patient_tumor_rollup_v1                                348     8422    8422  REVIEW_FOR_ARCHIVE — 100% of columns also in CPM
+tirads_llm_extracted_v2                                348     5636    1429  NEEDS_REVIEW — only 4% of columns in CPM; may still hold unique data — keep in main or move to ws with note
+tirads_v2_nodule_patient_rollup_v1                     348     2465    2465  REVIEW_FOR_MOVE — 89% of columns in CPM; remainder may need backfill before archive
+tirads_v2_report_patient_rollup_v1                     348     4073    4073  REVIEW_FOR_MOVE — 80% of columns in CPM; remainder may need backfill before archive
+
+DONE.
