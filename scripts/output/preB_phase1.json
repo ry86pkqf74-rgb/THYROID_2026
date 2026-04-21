@@ -1,0 +1,86 @@
+{
+  "phase": 1,
+  "started_at_utc": "2026-04-21T22:28:33Z",
+  "cupm_v2_table_type": "VIEW",
+  "cupm_v2_view_definition_archived": "scripts/output/preB_phase1_cupm_v2_view_definition_before.sql",
+  "cupm_v2_row_count_before": 10859,
+  "cupm_v2_distinct_rids_before": 10859,
+  "cupm_v2_column_count_before": 19,
+  "cunc_v2_size_columns": [
+    {
+      "name": "height_mm",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "length_mm",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "research_id",
+      "type": "INTEGER"
+    },
+    {
+      "name": "size_cm_max",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "width_mm",
+      "type": "DOUBLE"
+    }
+  ],
+  "cunc_v2_populated_counts": {
+    "n_rows": 37579,
+    "n_rids": 6523,
+    "n_length_mm": 19891,
+    "n_width_mm": 19891,
+    "n_height_mm": 19891,
+    "n_size_cm_max": 33560,
+    "n_all_three_null": 17688,
+    "n_fallback_active": 13669,
+    "n_no_size_at_all": 4019,
+    "fallback_active_pct": 36.37,
+    "no_size_pct": 10.69
+  },
+  "fallback_above_5pct": true,
+  "cpm_port_source_counts": {
+    "imaging_laterality_rollup_v271b": {
+      "n_now": 3439,
+      "n_part_a": 3439,
+      "drift_pct": 0.0
+    },
+    "pathology_vs_imaging_laterality_concordant_v271b": {
+      "n_now": 10871,
+      "n_part_a": 10871,
+      "drift_pct": 0.0
+    },
+    "tumor_pathology_laterality_v271b": {
+      "n_now": 3986,
+      "n_part_a": 3986,
+      "drift_pct": 0.0
+    },
+    "tirads_v2_any_fna_recommended_report": {
+      "n_now": 4073,
+      "n_part_a": 4073,
+      "drift_pct": 0.0
+    },
+    "tirads_v2_any_fna_recommended_report_source": {
+      "n_now": 4073,
+      "n_part_a": 4073,
+      "drift_pct": 0.0
+    },
+    "tirads_v2_worst_rank": {
+      "n_now": 2465,
+      "n_part_a": 2465,
+      "drift_pct": 0.0
+    },
+    "tirads_v2_worst_rank_source": {
+      "n_now": 2465,
+      "n_part_a": 2465,
+      "drift_pct": 0.0
+    }
+  },
+  "cpm_drift_flags_above_0_5_pct": [],
+  "backfill_table_already_exists": false,
+  "finished_at_utc": "2026-04-21T22:28:35Z",
+  "status": "OK"
+}
