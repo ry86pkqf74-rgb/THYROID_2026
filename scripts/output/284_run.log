@@ -1,0 +1,163 @@
+[00:46:18.514Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:46:19.526Z] === PHASE 0 — parquet audit + measure positive targets (READ-ONLY) ===
+[00:46:19.527Z]   gate parquet_file_present: OK — {'path': '/Users/loganglosser/THYROID_2026/runs/9domain_v4/parathyroid_detail/output/note_entities_llm_parathyroid_detail.parquet'}
+[00:46:20.065Z]   0A: parquet rows=17,368 rids=7,313 nrids=17,321
+[00:46:20.065Z]       model=qwen2.5-32b  base_url=http://213.5.130.43:20049/v1
+[00:46:20.065Z]       preprocess_script_version=v4_9domain_rerun_2026-04-19  n_batch=1
+[00:46:20.065Z]       extracted_at min=2026-04-19T09:39:51.767070+00:00  max=2026-04-19T10:36:21.335907+00:00
+[00:46:20.065Z]   gate parquet_n_rows_eq_17368: OK — {'observed': 17368, 'expected': 17368}
+[00:46:20.065Z]   gate parquet_n_rids_eq_7313: OK — {'observed': 7313, 'expected': 7313}
+[00:46:20.065Z]   gate parquet_n_nrids_eq_17321: OK — {'observed': 17321, 'expected': 17321}
+[00:46:20.065Z]   gate parquet_model_eq_qwen25_32b: OK — {'observed': 'qwen2.5-32b', 'expected': 'qwen2.5-32b'}
+[00:46:20.065Z]   gate parquet_base_url_eq_pinned: OK — {'observed': 'http://213.5.130.43:20049/v1', 'expected': 'http://213.5.130.43:20049/v1'}
+[00:46:20.065Z]   gate parquet_preprocess_script_version_eq_pinned: OK — {'observed': 'v4_9domain_rerun_2026-04-19', 'expected': 'v4_9domain_rerun_2026-04-19'}
+[00:46:20.065Z]   gate parquet_preprocess_batch_id_uniform_and_eq_pinned: OK — {'observed_distinct': 1, 'value': '18684c30-2277-44dd-b0ea-08f05e4f2557', 'expected': '18684c30-2277-44dd-b0ea-08f05e4f2557'}
+[00:46:20.065Z]   gate parquet_extracted_at_min_starts_with_pinned: OK — {'observed': '2026-04-19T09:39:51.767070+00:00', 'expected_prefix': '2026-04-19T09:39'}
+[00:46:20.065Z]   gate parquet_extracted_at_max_starts_with_pinned: OK — {'observed': '2026-04-19T10:36:21.335907+00:00', 'expected_prefix': '2026-04-19T10:36'}
+[00:46:20.065Z]   gate parquet_rids_well_below_cpm: OK — {'observed': 7313, 'expected': 7313, 'note': 'parquet covers 7,313 of 10,871 CPM RIDs; remaining ~3558 will go to has_data=FALSE via zero-out pass'}
+[00:46:20.138Z]   0B: parquet RAW hashes:  rj=0b25986aa2725bacccb9424645849e51  nd=ae1ee57d91c18be77be4955473c9f8db  src=e7c8e24d9b7cb4f9b966a8964cf7f57a
+[00:46:20.138Z]   gate parquet_raw_rjhash_match_pinned: OK — {'observed': '0b25986aa2725bacccb9424645849e51', 'pinned': '0b25986aa2725bacccb9424645849e51'}
+[00:46:20.138Z]   gate parquet_raw_ndhash_match_pinned: OK — {'observed': 'ae1ee57d91c18be77be4955473c9f8db', 'pinned': 'ae1ee57d91c18be77be4955473c9f8db'}
+[00:46:20.138Z]   gate parquet_raw_srchash_match_pinned: OK — {'observed': 'e7c8e24d9b7cb4f9b966a8964cf7f57a', 'pinned': 'e7c8e24d9b7cb4f9b966a8964cf7f57a'}
+[00:46:20.199Z]       parquet DEDUP hashes: rj=709948a3a94eebb04bdc9e84b2d95356  nd=22dff34281b0c19e524f4c780bc07f3f  src=c4d96773b86e33a669cd7f712b1ffaf2
+[00:46:20.199Z]   gate parquet_dedup_rjhash_match_pinned: OK — {'observed': '709948a3a94eebb04bdc9e84b2d95356', 'pinned': '709948a3a94eebb04bdc9e84b2d95356'}
+[00:46:20.199Z]   gate parquet_dedup_ndhash_match_pinned: OK — {'observed': '22dff34281b0c19e524f4c780bc07f3f', 'pinned': '22dff34281b0c19e524f4c780bc07f3f'}
+[00:46:20.199Z]   gate parquet_dedup_srchash_match_pinned: OK — {'observed': 'c4d96773b86e33a669cd7f712b1ffaf2', 'pinned': 'c4d96773b86e33a669cd7f712b1ffaf2'}
+[00:46:20.199Z]   gate parquet_raw_and_dedup_hashes_differ: OK — {'raw': {'rj': '0b25986aa2725bacccb9424645849e51', 'nd': 'ae1ee57d91c18be77be4955473c9f8db', 'src': 'e7c8e24d9b7cb4f9b966a8964cf7f57a'}, 'dedup': {'rj': '709948a3a94eebb04bdc9e84b2d95356', 'nd': '22dff34281b0c19e524f4c780bc07f3f', 'src': 'c4d96773b86e33a669cd7f712b1ffaf2'}}
+[00:46:20.211Z]   gate parquet_dup_rows_eq_47: OK — {'observed': 47, 'expected': 47}
+[00:46:20.211Z]   gate parquet_dup_groups_eq_41: OK — {'observed': 41, 'expected': 41}
+[00:46:20.287Z]   0D: parquet positive targets (DEDUPED): rids=3,586 notes=4,330 entities=9,698
+[00:46:20.287Z]   gate parquet_pos_rids_le_parquet_rids: OK — {'pos_rids': 3586, 'parquet_rids': 7313}
+[00:46:20.287Z]   gate parquet_pos_notes_le_parquet_nrids: OK — {'pos_notes': 4330, 'parquet_nrids': 17321}
+[00:46:20.431Z]   0E: current MD source rows=11,037 rids=5,641 models=qwen3:32b|qwen3:32b-ctx8k
+[00:46:20.431Z]   gate md_source_stale_rows_eq_11037: OK — {'observed': 11037, 'expected': 11037}
+[00:46:20.431Z]   gate md_source_stale_rids_eq_5641: OK — {'observed': 5641, 'expected': 5641}
+[00:46:21.379Z]   gate stale_models_eq_qwen3_pair: OK — {'observed': ['qwen3:32b', 'qwen3:32b-ctx8k'], 'expected': ['qwen3:32b', 'qwen3:32b-ctx8k']}
+[00:46:21.518Z]   0F: CPM rows=10,871 rids=10,871  stale nlp_parathyroid_has_data: TRUE=110 NULL=10761  sum_n_notes=111 sum_n_entities=243
+[00:46:21.519Z]   gate cpm_rows_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[00:46:21.519Z]   gate cpm_rids_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[00:46:21.519Z]   gate cpm_no_null_rid: OK — {'observed': 0}
+[00:46:21.519Z]   gate stale_has_data_true_eq_110: OK — {'observed': 110, 'expected': 110}
+[00:46:21.519Z]   gate stale_has_data_null_eq_10761: OK — {'observed': 10761, 'expected': 10761}
+[00:46:21.519Z]   gate stale_not_already_promoted: OK — {'detail': 'has_null==0 AND has_true ~= target would mean rollup already promoted; refusing to clobber.', 'current_has_true': 110, 'current_has_null': 10761, 'expected_post_target': 3586}
+[00:46:22.280Z]   gate registry_total_rows_stale_eq_11037: OK — {'observed': 11037, 'expected': 11037}
+[00:46:22.280Z]   gate registry_total_patients_stale_eq_5641: OK — {'observed': 5641, 'expected': 5641}
+[00:46:22.280Z] 
+[00:46:22.280Z] ──── PHASE 0 SUMMARY ────
+[00:46:22.280Z]   gates: 33 total, 33 passed, 0 blockers
+[00:46:22.280Z]   ALL GATES PASSED — Phase 1 may proceed.
+[00:46:22.280Z] ─────────────────────────
+[00:47:00.192Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:47:00.781Z] === PHASE 1 — archive current MD source to archive_pub_v1_0 ===
+[00:47:01.065Z]   pre-archive source: rows=11,037 rids=5,641 model=qwen3:32b|qwen3:32b-ctx8k
+[00:47:02.619Z]   CTAS "Thyroid 2026 UPdated".archive_pub_v1_0.note_entities_llm_parathyroid_detail_pre9domainv4_20260421T004702Z AS SELECT * FROM main.note_entities_llm_parathyroid_detail ...
+[00:47:05.017Z]   archive note_entities_llm_parathyroid_detail_pre9domainv4_20260421T004702Z: rows=11,037 rids=5,641 model=qwen3:32b-ctx8k|qwen3:32b
+[00:47:05.018Z]   gate archive_rows_eq_pre_rows: OK — {'observed': 11037, 'pre_archive': 11037}
+[00:47:05.018Z]   gate archive_rids_eq_pre_rids: OK — {'observed': 5641, 'pre_archive': 5641}
+[00:47:05.018Z]   gate archive_rows_eq_11037: OK — {'observed': 11037, 'expected': 11037}
+[00:47:05.066Z]   gate archive_models_eq_qwen3_pair: OK — {'observed': ['qwen3:32b', 'qwen3:32b-ctx8k'], 'expected': ['qwen3:32b', 'qwen3:32b-ctx8k']}
+[00:47:17.885Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:47:18.440Z] === PHASE 2 — load parquet to MD with synth provenance + dedup ===
+[00:47:20.282Z]   gate phase_1_archive_present_before_load: OK — {'newest_archive': 'note_entities_llm_parathyroid_detail_pre9domainv4_20260421T004702Z'}
+[00:47:20.282Z]   loading parquet note_entities_llm_parathyroid_detail.parquet -> main.note_entities_llm_parathyroid_detail (with dedup by note_row_id, last extracted_at wins; removes 47 rows in 41 groups)...
+[00:47:22.075Z]   reprojecting columns to lock ordinal_position vs Script 282 schema...
+[00:47:23.003Z]   post-load: rows=17,321 rids=7,313 nrids=17,321
+[00:47:23.003Z]              models=qwen2.5-32b  base_urls=http://213.5.130.43:20049/v1
+[00:47:23.003Z]              entity_domain=parathyroid_detail  llm_provider=vllm  llm_sdk=openai
+[00:47:23.003Z]              provider_returned_model=qwen2.5-32b  sdk_version_set=0  fingerprint_set=0
+[00:47:23.003Z]   gate post_load_n_rows_eq_17321: OK — {'observed': 17321, 'expected': 17321}
+[00:47:23.003Z]   gate post_load_n_rids_eq_7313: OK — {'observed': 7313, 'expected': 7313}
+[00:47:23.003Z]   gate post_load_nrids_eq_rows_dedup_invariant: OK — {'detail': 'post-dedup, 1 row per note_row_id; nrids must equal rows', 'n_nrids': 17321, 'n_rows': 17321}
+[00:47:23.003Z]   gate post_load_model_eq_qwen25_32b: OK — {'observed': 'qwen2.5-32b', 'expected': 'qwen2.5-32b'}
+[00:47:23.003Z]   gate post_load_base_url_eq_pinned: OK — {'observed': 'http://213.5.130.43:20049/v1', 'expected': 'http://213.5.130.43:20049/v1'}
+[00:47:23.003Z]   gate post_load_entity_domain_eq_synth: OK — {'observed': 'parathyroid_detail', 'expected': 'parathyroid_detail'}
+[00:47:23.003Z]   gate post_load_llm_provider_eq_synth: OK — {'observed': 'vllm', 'expected': 'vllm'}
+[00:47:23.003Z]   gate post_load_llm_sdk_eq_synth: OK — {'observed': 'openai', 'expected': 'openai'}
+[00:47:23.003Z]   gate post_load_provider_returned_model_eq_synth: OK — {'observed': 'qwen2.5-32b', 'expected': 'qwen2.5-32b'}
+[00:47:23.003Z]   gate post_load_n_llm_sdk_version_eq_0: OK — {'observed': 0}
+[00:47:23.003Z]   gate post_load_n_provider_system_fingerprint_eq_0: OK — {'observed': 0}
+[00:47:23.148Z]   gate post_load_schema_eq_expected_23_cols: OK — {'observed': ['note_row_id', 'domain', 'llm_model', 'llm_base_url', 'extracted_at', 'result_json', 'research_id', 'note_type', 'note_date', 'linkage_date', 'source_workbook', 'source_sheet', 'source_column', 'note_index', 'preprocess_batch_id', 'preprocessed_at_utc', 'preprocess_script_version', 'entity_domain', 'llm_provider', 'llm_sdk', 'llm_sdk_version', 'provider_returned_model', 'provider_system_fingerprint'], 'expected': ['note_row_id', 'domain', 'llm_model', 'llm_base_url', 'extracted_at', 'result_json', 'research_id', 'note_type', 'note_date', 'linkage_date', 'source_workbook', 'source_sheet', 'source_column', 'note_index', 'preprocess_batch_id', 'preprocessed_at_utc', 'preprocess_script_version', 'entity_domain', 'llm_provider', 'llm_sdk', 'llm_sdk_version', 'provider_returned_model', 'provider_system_fingerprint']}
+[00:47:37.942Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:47:38.578Z] === PHASE 3 — post-load byte-hash parity (MD == parquet after dedup) ===
+[00:47:39.096Z]   MD     : rj=709948a3a94eebb04bdc9e84b2d95356  nd=22dff34281b0c19e524f4c780bc07f3f  src=c4d96773b86e33a669cd7f712b1ffaf2
+[00:47:39.096Z]   pinned : rj=709948a3a94eebb04bdc9e84b2d95356  nd=22dff34281b0c19e524f4c780bc07f3f  src=c4d96773b86e33a669cd7f712b1ffaf2
+[00:47:39.096Z]   gate md_rjhash_eq_parquet_dedup_rjhash: OK — {'observed': '709948a3a94eebb04bdc9e84b2d95356', 'pinned': '709948a3a94eebb04bdc9e84b2d95356'}
+[00:47:39.096Z]   gate md_ndhash_eq_parquet_dedup_ndhash: OK — {'observed': '22dff34281b0c19e524f4c780bc07f3f', 'pinned': '22dff34281b0c19e524f4c780bc07f3f'}
+[00:47:39.096Z]   gate md_srchash_eq_parquet_dedup_srchash: OK — {'observed': 'c4d96773b86e33a669cd7f712b1ffaf2', 'pinned': 'c4d96773b86e33a669cd7f712b1ffaf2'}
+[00:47:39.166Z]   gate md_rjhash_eq_live_parquet_dedup_rjhash: OK — {'md': '709948a3a94eebb04bdc9e84b2d95356', 'live_parquet': '709948a3a94eebb04bdc9e84b2d95356'}
+[00:47:39.166Z]   gate md_ndhash_eq_live_parquet_dedup_ndhash: OK — {'md': '22dff34281b0c19e524f4c780bc07f3f', 'live_parquet': '22dff34281b0c19e524f4c780bc07f3f'}
+[00:47:39.166Z]   gate md_srchash_eq_live_parquet_dedup_srchash: OK — {'md': 'c4d96773b86e33a669cd7f712b1ffaf2', 'live_parquet': 'c4d96773b86e33a669cd7f712b1ffaf2'}
+[00:47:51.327Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:47:51.832Z] === PHASE 4 — pre-mutation CPM snapshot to archive_pub_v1_0 ===
+[00:47:53.979Z]   CTAS "Thyroid 2026 UPdated".archive_pub_v1_0.canonical_patient_master_pre284_20260421T004753Z AS SELECT * FROM main.canonical_patient_master ...
+[00:47:58.497Z]   snapshot canonical_patient_master_pre284_20260421T004753Z: rows=10,871 rids=10,871
+[00:47:58.497Z]   gate snapshot_rows_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[00:47:58.497Z]   gate snapshot_rids_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[00:47:59.983Z]   snapshot non-nlp_parathyroid_* MD5 = 4f219de7f02a6efc12b3f11adf5ab7df  (over 1532 columns; pinned for Phase 6 invariant C)
+[00:48:10.790Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:48:11.312Z] === PHASE 5 — rollup UPDATE on canonical_patient_master (nlp_parathyroid_*) ===
+[00:48:11.312Z]   building per-RID rollup CTE -> TEMP TABLE _rollup_284 ...
+[00:48:12.052Z]     rollup: distinct_rids=3586  sum_n_notes=4330  sum_n_entities=9698
+[00:48:12.052Z]   gate rollup_distinct_rids_eq_pinned: OK — {'observed': 3586, 'pinned': 3586}
+[00:48:12.053Z]   gate rollup_n_notes_eq_pinned: OK — {'observed': 4330, 'pinned': 4330}
+[00:48:12.053Z]   gate rollup_n_entities_eq_pinned: OK — {'observed': 9698, 'pinned': 9698}
+[00:48:12.053Z]   UPDATE main.canonical_patient_master from rollup ...
+[00:48:12.217Z]   UPDATE patients absent from rollup -> FALSE/0/0/NULL ...
+[00:48:12.217Z]     (this is expected to mark ~7285 patients FALSE — parquet covers a narrow RID slice)
+[00:48:12.407Z]   post-update: has_data TRUE=3585 FALSE=7286 NULL=0
+[00:48:12.407Z]                sum_n_notes=4329 sum_n_entities=9697 key_finding_set=3585
+[00:48:12.407Z]   gate post_has_data_within_target_pm10: OK — {'observed': 3585, 'target': 3586, 'tolerance': 10}
+[00:48:12.407Z]   gate post_has_data_null_eq_0: OK — {'observed': 0}
+[00:48:12.407Z]   gate post_has_data_false_eq_complement: FAIL — {'observed': 7286, 'expected': 7285, 'note': '~3558 of these are RIDs absent from parquet entirely'}
+[00:48:12.407Z]   gate post_sum_n_notes_eq_pinned: FAIL — {'observed': 4329, 'expected': 4330}
+[00:48:12.407Z]   gate post_sum_n_entities_eq_pinned: FAIL — {'observed': 9697, 'expected': 9698}
+[00:48:12.407Z]   gate post_null_research_id_eq_0: OK — {'observed': 0}
+[00:48:12.407Z]   gate post_key_finding_set_eq_has_true: OK — {'observed_kf_set': 3585, 'observed_has_true': 3585, 'detail': 'every TRUE patient must have a key_finding'}
+[00:48:12.448Z] FATAL: RuntimeError("Phase 5 blockers: [{'name': 'post_has_data_false_eq_complement', 'detail': {'observed': 7286, 'expected': 7285, 'note': '~3558 of these are RIDs absent from parquet entirely'}}, {'name': 'post_sum_n_notes_eq_pinned', 'detail': {'observed': 4329, 'expected': 4330}}, {'name': 'post_sum_n_entities_eq_pinned', 'detail': {'observed': 9697, 'expected': 9698}}]")
+[00:49:56.570Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:50:02.177Z] === PHASE 5 — rollup UPDATE on canonical_patient_master (nlp_parathyroid_*) ===
+[00:50:02.178Z]   building per-RID rollup CTE -> TEMP TABLE _rollup_284 ...
+[00:50:02.668Z]     rollup: distinct_rids=3586  sum_n_notes=4330  sum_n_entities=9698
+[00:50:02.668Z]   gate rollup_distinct_rids_eq_pinned: OK — {'observed': 3586, 'pinned': 3586}
+[00:50:02.668Z]   gate rollup_n_notes_eq_pinned: OK — {'observed': 4330, 'pinned': 4330}
+[00:50:02.668Z]   gate rollup_n_entities_eq_pinned: OK — {'observed': 9698, 'pinned': 9698}
+[00:50:02.730Z]     orphan rollup RIDs (not in CPM): 1  (notes_contrib=1 entities_contrib=1)
+[00:50:02.776Z]     orphan rid list: ['11454']
+[00:50:02.776Z]   UPDATE main.canonical_patient_master from rollup ...
+[00:50:02.890Z]   UPDATE patients absent from rollup -> FALSE/0/0/NULL ...
+[00:50:02.890Z]     (this is expected to mark ~7285 patients FALSE — parquet covers a narrow RID slice)
+[00:50:03.190Z]   post-update: has_data TRUE=3585 FALSE=7286 NULL=0
+[00:50:03.190Z]                sum_n_notes=4329 sum_n_entities=9697 key_finding_set=3585
+[00:50:03.190Z]   gate post_has_data_within_target_pm10: OK — {'observed': 3585, 'target': 3585, 'tolerance': 10, 'rollup_distinct_rids': 3586, 'orphan_rids': 1}
+[00:50:03.190Z]   gate post_has_data_null_eq_0: OK — {'observed': 0}
+[00:50:03.190Z]   gate post_has_data_true_plus_false_eq_cpm_rows: OK — {'true': 3585, 'false': 7286, 'sum': 10871, 'expected': 10871}
+[00:50:03.190Z]   gate post_has_data_false_eq_complement_of_true: OK — {'observed': 7286, 'expected': 7286, 'note': '~3558 of these are RIDs absent from parquet entirely; 1 additional rollup RID(s) are orphan (in parquet, not in CPM) and contribute to the FALSE count via the zero-out pass not happening for them.'}
+[00:50:03.190Z]   gate post_sum_n_notes_eq_pinned_minus_orphan: OK — {'observed': 4329, 'pinned_parquet_side': 4330, 'orphan_contribution': 1, 'expected_post_mutation': 4329}
+[00:50:03.190Z]   gate post_sum_n_entities_eq_pinned_minus_orphan: OK — {'observed': 9697, 'pinned_parquet_side': 9698, 'orphan_contribution': 1, 'expected_post_mutation': 9697}
+[00:50:03.190Z]   gate post_null_research_id_eq_0: OK — {'observed': 0}
+[00:50:03.190Z]   gate post_key_finding_set_eq_has_true: OK — {'observed_kf_set': 3585, 'observed_has_true': 3585, 'detail': 'every TRUE patient must have a key_finding'}
+[00:50:22.047Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:50:22.604Z] === PHASE 6 — post-mutation invariants A-F ===
+[00:50:23.110Z]   gate A_cpm_rows_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[00:50:23.110Z]   gate A_cpm_no_null_rid: OK — {'observed': 0}
+[00:50:23.110Z]   gate A_cpm_no_null_fna_path_outcome: OK — {'observed': 0}
+[00:50:23.165Z]   gate B_cpm_rids_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[00:50:26.122Z]   gate C_other_cpm_cols_unchanged_vs_phase4_snapshot: OK — {'live': '4f219de7f02a6efc12b3f11adf5ab7df', 'snapshot': '4f219de7f02a6efc12b3f11adf5ab7df'}
+[00:50:26.157Z]   gate D_source_rows_eq_17321: OK — {'observed': 17321, 'expected': 17321}
+[00:50:26.157Z]   gate D_source_rids_eq_7313: OK — {'observed': 7313, 'expected': 7313}
+[00:50:26.157Z]   gate D_source_model_eq_qwen25_32b: OK — {'observed': 'qwen2.5-32b', 'expected': 'qwen2.5-32b'}
+[00:50:26.157Z]   gate D_source_sdk_eq_openai: OK — {'observed': 'openai', 'expected': 'openai'}
+[00:50:26.293Z]   gate E_archive_pre9domainv4_exists_with_11037_rows: OK — {'archives_present': ['note_entities_llm_parathyroid_detail_pre9domainv4_20260421T004702Z'], 'newest_archive': 'note_entities_llm_parathyroid_detail_pre9domainv4_20260421T004702Z', 'row_count': 11037}
+[00:50:26.429Z]   gate F_cpm_pre284_snapshot_exists_with_10871_rows: OK — {'snapshots_present': ['canonical_patient_master_pre284_20260421T004753Z'], 'newest_snapshot': 'canonical_patient_master_pre284_20260421T004753Z', 'row_count': 10871}
+[00:50:40.266Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:50:40.805Z] === PHASE 7 — registry + dictionary + __readme sync ===
+[00:50:40.805Z]   using rollup numbers: has_true=3585 sum_notes=4329 sum_ents=9697
+[00:50:43.060Z]   gate registry_total_rows_post_eq_17321: OK — {'observed': 17321, 'expected': 17321}
+[00:50:43.060Z]   gate registry_total_patients_post_eq_7313: OK — {'observed': 7313, 'expected': 7313}
+[00:50:43.060Z]   gate registry_canonical_version_post_eq_v1_0_script284: OK — {'observed': 'v1_0_script284'}
+[00:50:43.060Z]   gate registry_description_carries_script284_marker: OK — {'description_tail': 'v4 rerun parquet (loaded by this script). CPM nlp_parathyroid_has_data went 110 TRUE / 10761 NULL -> 3585 TRUE / 0 NULL. Note: parquet covers 7,313 of 10,871 CPM RIDs; the remainder (~3558) are FALSE.'}
+[00:50:43.403Z]   gate dictionary_4_cols_have_exact_per_col_desc_and_v279_note: OK — {'rows': [{'column_name': 'nlp_parathyroid_has_data', 'description': "TRUE iff patient has >=1 positive-entity extraction (confidence>=0.5, present_or_negated='present' OR NULL) from note_entities_llm_parathyroid_detail (qwen2.5-32b, 9domain_v4 rerun 2026-04-19); FALSE if patient is in source with no positive entities or absent from source. NEVER NULL post-Script 284. Note: parquet covers only 7,313 of 10,871 CPM RIDs; ~3,558 patients are FALSE because they have no parathyroid_detail-domain notes.", 'v279_note': 'Re-promoted by Script 284 (2026-04-20) from qwen2.5-32b parathyroid_detail 9domain_v4 rerun.', 'rebuilt_by': 'script284_2026-04-20'}, {'column_name': 'nlp_parathyroid_key_finding', 'description': 'Highest-priority entity value for this patient, resolved via KEY_FINDING_PRIORITY (autotransplant > reimplantation_detail > hypercellularity_grade > gland_cellularity > parathyroid_frozen_section > gland_count_preserved > gland_count_total > gland_weight > gland_size > removal_intent > gland_location > other) tiebroken by confidence DESC NULLS LAST then entity_value alpha. NULL when has_data=FALSE.', 'v279_note': 'Re-promoted by Script 284 (2026-04-20) from qwen2.5-32b parathyroid_detail 9domain_v4 rerun.', 'rebuilt_by': 'script284_2026-04-20'}, {'column_name': 'nlp_parathyroid_n_entities', 'description': 'Total positive parathyroid-detail entities extracted across all notes for this patient. 0 when has_data=FALSE.', 'v279_note': 'Re-promoted by Script 284 (2026-04-20) from qwen2.5-32b parathyroid_detail 9domain_v4 rerun.', 'rebuilt_by': 'script284_2026-04-20'}, {'column_name': 'nlp_parathyroid_n_notes', 'description': 'Count of distinct notes per patient with >=1 positive extracted parathyroid-detail entity. 0 when has_data=FALSE.', 'v279_note': 'Re-promoted by Script 284 (2026-04-20) from qwen2.5-32b parathyroid_detail 9domain_v4 rerun.', 'rebuilt_by': 'script284_2026-04-20'}], 'descriptions_exact_match': True}
+[00:50:44.187Z]   gate readme_source_n_rows_eq_17321: OK — {'observed': 17321, 'expected': 17321}
+[00:50:44.187Z]   gate readme_source_n_rids_eq_7313: OK — {'observed': 7313, 'expected': 7313}
+[00:50:44.187Z]   gate readme_cpm_n_rows_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[00:50:44.188Z]   gate readme_cpm_description_carries_script284_marker: OK — {'tail': 'cted at qwen2.5-32b (17,321 rows / 7,313 RIDs); CPM nlp_parathyroid_* rebuilt with explicit TRUE/FALSE (0 NULLs). has_data TRUE=3585; remainder FALSE includes ~3558 RIDs absent from parquet entirely.]'}
