@@ -51,7 +51,7 @@ numbered AS (
     SELECT *,
            ROW_NUMBER() OVER (
                PARTITION BY research_id, note_index
-               ORDER BY CAST(json_extract_string(ent_json, '$.source_line') AS BIGINT) NULLS LAST
+               ORDER BY TRY_CAST(json_extract_string(ent_json, '54source_line') AS BIGINT) NULLS LAST
            ) AS event_index
       FROM ent
 )
@@ -107,7 +107,7 @@ SELECT
     json_extract_string(ent_json, '$.present_or_negated')  AS present_or_negated,
     CAST(json_extract_string(ent_json, '$.confidence') AS DOUBLE) AS confidence,
     json_extract_string(ent_json, '$.evidence_text')       AS evidence_text,
-    CAST(json_extract_string(ent_json, '$.source_line') AS BIGINT) AS source_line
+    TRY_CAST(json_extract_string(ent_json, '110source_line') AS BIGINT) AS source_line
 
 FROM numbered
 """
