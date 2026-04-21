@@ -1,0 +1,5706 @@
+{
+  "script": "scripts/282_airway_v4_md_load_and_rollup.py",
+  "phases": {
+    "0": {
+      "phase": 0,
+      "started_at": "2026-04-20T23:50:32Z",
+      "token_mode": "env:MOTHERDUCK_TOKEN",
+      "canonical_db": "thyroid_canonical_publication_v1_0",
+      "parquet_path": "runs/9domain_v4/airway_invasion/output/note_entities_llm_airway_invasion.parquet",
+      "gates": [
+        {
+          "name": "parquet_file_present",
+          "ok": true,
+          "detail": {
+            "path": "/Users/loganglosser/THYROID_2026/runs/9domain_v4/airway_invasion/output/note_entities_llm_airway_invasion.parquet"
+          }
+        },
+        {
+          "name": "parquet_n_rows_eq_48262",
+          "ok": true,
+          "detail": {
+            "observed": 48262,
+            "expected": 48262
+          }
+        },
+        {
+          "name": "parquet_n_rids_eq_10856",
+          "ok": true,
+          "detail": {
+            "observed": 10856,
+            "expected": 10856
+          }
+        },
+        {
+          "name": "parquet_n_nrids_eq_48169",
+          "ok": true,
+          "detail": {
+            "observed": 48169,
+            "expected": 48169
+          }
+        },
+        {
+          "name": "parquet_model_eq_qwen25_32b",
+          "ok": true,
+          "detail": {
+            "observed": "qwen2.5-32b",
+            "expected": "qwen2.5-32b"
+          }
+        },
+        {
+          "name": "parquet_base_url_eq_pinned",
+          "ok": true,
+          "detail": {
+            "observed": "http://213.5.130.43:20049/v1",
+            "expected": "http://213.5.130.43:20049/v1"
+          }
+        },
+        {
+          "name": "parquet_preprocess_script_version_eq_pinned",
+          "ok": true,
+          "detail": {
+            "observed": "v4_9domain_rerun_2026-04-19",
+            "expected": "v4_9domain_rerun_2026-04-19"
+          }
+        },
+        {
+          "name": "parquet_preprocess_batch_id_uniform_and_eq_pinned",
+          "ok": true,
+          "detail": {
+            "observed_distinct": 1,
+            "value": "832fd7f5-1933-47de-a0e3-64fe86fcaff1",
+            "expected": "832fd7f5-1933-47de-a0e3-64fe86fcaff1"
+          }
+        },
+        {
+          "name": "parquet_extracted_at_min_starts_with_pinned",
+          "ok": true,
+          "detail": {
+            "observed": "2026-04-19T08:03:52.074630+00:00",
+            "expected_prefix": "2026-04-19T08:03"
+          }
+        },
+        {
+          "name": "parquet_extracted_at_max_starts_with_pinned",
+          "ok": true,
+          "detail": {
+            "observed": "2026-04-19T08:53:02.331089+00:00",
+            "expected_prefix": "2026-04-19T08:53"
+          }
+        },
+        {
+          "name": "parquet_raw_rjhash_match_pinned",
+          "ok": true,
+          "detail": {
+            "observed": "8c5d221625ac31fb6f3ed64379e706c5",
+            "pinned": "8c5d221625ac31fb6f3ed64379e706c5"
+          }
+        },
+        {
+          "name": "parquet_raw_ndhash_match_pinned",
+          "ok": true,
+          "detail": {
+            "observed": "45a63b8bf76e0ee63597c85953e8957e",
+            "pinned": "45a63b8bf76e0ee63597c85953e8957e"
+          }
+        },
+        {
+          "name": "parquet_raw_srchash_match_pinned",
+          "ok": true,
+          "detail": {
+            "observed": "f0f54c0c95183db2d4000c4083632949",
+            "pinned": "f0f54c0c95183db2d4000c4083632949"
+          }
+        },
+        {
+          "name": "parquet_dedup_rjhash_match_pinned",
+          "ok": true,
+          "detail": {
+            "observed": "b4b28c1f1bbd53156c72c043f3f748ab",
+            "pinned": "b4b28c1f1bbd53156c72c043f3f748ab"
+          }
+        },
+        {
+          "name": "parquet_dedup_ndhash_match_pinned",
+          "ok": true,
+          "detail": {
+            "observed": "ce39a4e0773474fdcd625725939fa93c",
+            "pinned": "ce39a4e0773474fdcd625725939fa93c"
+          }
+        },
+        {
+          "name": "parquet_dedup_srchash_match_pinned",
+          "ok": true,
+          "detail": {
+            "observed": "509dbc6c5ed632f14a94532a543e89ca",
+            "pinned": "509dbc6c5ed632f14a94532a543e89ca"
+          }
+        },
+        {
+          "name": "parquet_dup_rows_eq_93",
+          "ok": true,
+          "detail": {
+            "observed": 93,
+            "expected": 93
+          }
+        },
+        {
+          "name": "parquet_dup_groups_eq_84",
+          "ok": true,
+          "detail": {
+            "observed": 84,
+            "expected": 84
+          }
+        },
+        {
+          "name": "parquet_pos_rids_eq_pinned",
+          "ok": true,
+          "detail": {
+            "observed": 1634,
+            "expected": 1634
+          }
+        },
+        {
+          "name": "parquet_pos_notes_eq_pinned",
+          "ok": true,
+          "detail": {
+            "observed": 5285,
+            "expected": 5285
+          }
+        },
+        {
+          "name": "parquet_pos_entities_eq_pinned",
+          "ok": true,
+          "detail": {
+            "observed": 10377,
+            "expected": 10377
+          }
+        },
+        {
+          "name": "md_source_stale_rows_eq_11037",
+          "ok": true,
+          "detail": {
+            "observed": 11037,
+            "expected": 11037
+          }
+        },
+        {
+          "name": "md_source_stale_rids_eq_5641",
+          "ok": true,
+          "detail": {
+            "observed": 5641,
+            "expected": 5641
+          }
+        },
+        {
+          "name": "md_source_stale_model_eq_qwen3_32b",
+          "ok": true,
+          "detail": {
+            "observed": "qwen3:32b",
+            "expected": "qwen3:32b"
+          }
+        },
+        {
+          "name": "cpm_rows_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "cpm_rids_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "cpm_no_null_rid",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "stale_has_data_true_eq_1123",
+          "ok": true,
+          "detail": {
+            "observed": 1123,
+            "expected": 1123
+          }
+        },
+        {
+          "name": "stale_has_data_null_eq_9748",
+          "ok": true,
+          "detail": {
+            "observed": 9748,
+            "expected": 9748
+          }
+        },
+        {
+          "name": "stale_not_already_promoted",
+          "ok": true,
+          "detail": {
+            "detail": "has_null==0 AND has_true ~= target would mean rollup already promoted; refusing to clobber."
+          }
+        },
+        {
+          "name": "registry_total_rows_stale_eq_11037",
+          "ok": true,
+          "detail": {
+            "observed": 11037,
+            "expected": 11037
+          }
+        },
+        {
+          "name": "registry_total_patients_stale_eq_5641",
+          "ok": true,
+          "detail": {
+            "observed": 5641,
+            "expected": 5641
+          }
+        }
+      ],
+      "blockers": [],
+      "observed": {
+        "parquet_n_rows": 48262,
+        "parquet_n_rids": 10856,
+        "parquet_n_nrids": 48169,
+        "parquet_models": "qwen2.5-32b",
+        "parquet_base_urls": "http://213.5.130.43:20049/v1",
+        "parquet_preprocess_script_version": "v4_9domain_rerun_2026-04-19",
+        "parquet_distinct_batch_ids": 1,
+        "parquet_batch_id": "832fd7f5-1933-47de-a0e3-64fe86fcaff1",
+        "parquet_extracted_at_min": "2026-04-19T08:03:52.074630+00:00",
+        "parquet_extracted_at_max": "2026-04-19T08:53:02.331089+00:00",
+        "parquet_raw_rjhash": "8c5d221625ac31fb6f3ed64379e706c5",
+        "parquet_raw_ndhash": "45a63b8bf76e0ee63597c85953e8957e",
+        "parquet_raw_srchash": "f0f54c0c95183db2d4000c4083632949",
+        "parquet_dedup_rjhash": "b4b28c1f1bbd53156c72c043f3f748ab",
+        "parquet_dedup_ndhash": "ce39a4e0773474fdcd625725939fa93c",
+        "parquet_dedup_srchash": "509dbc6c5ed632f14a94532a543e89ca",
+        "parquet_dup_rows": 93,
+        "parquet_dup_groups": 84,
+        "parquet_positive_targets": {
+          "rids_with_pos": 1634,
+          "notes_with_pos": 5285,
+          "total_pos_entities": 10377
+        },
+        "md_source_n_rows": 11037,
+        "md_source_n_rids": 5641,
+        "md_source_models": "qwen3:32b",
+        "md_source_extracted_at_min": "2026-04-01T16:49:35.554068+00:00",
+        "md_source_extracted_at_max": "2026-04-02T10:34:43.854832+00:00",
+        "cpm_rows": 10871,
+        "cpm_rids": 10871,
+        "cpm_null_rid": 0,
+        "cpm_stale_has_data_true": 1123,
+        "cpm_stale_has_data_null": 9748,
+        "cpm_stale_has_data_not_null": 1123,
+        "cpm_stale_sum_n_notes": 1387,
+        "cpm_stale_sum_n_entities": 2452,
+        "registry_table_present": true,
+        "registry_row": {
+          "total_rows": 11037,
+          "total_patients": 5641,
+          "canonical_version": "v1_0",
+          "description_len": 29
+        }
+      },
+      "finished_at": "2026-04-20T23:50:35Z",
+      "all_gates_passed": true
+    },
+    "1": {
+      "phase": 1,
+      "started_at": "2026-04-20T23:51:04Z",
+      "gates": [
+        {
+          "name": "archive_rows_eq_pre_rows",
+          "ok": true,
+          "detail": {
+            "observed": 11037,
+            "pre_archive": 11037
+          }
+        },
+        {
+          "name": "archive_rids_eq_pre_rids",
+          "ok": true,
+          "detail": {
+            "observed": 5641,
+            "pre_archive": 5641
+          }
+        },
+        {
+          "name": "archive_rows_eq_11037",
+          "ok": true,
+          "detail": {
+            "observed": 11037,
+            "expected": 11037
+          }
+        },
+        {
+          "name": "archive_model_eq_qwen3_32b",
+          "ok": true,
+          "detail": {
+            "observed": "qwen3:32b",
+            "expected": "qwen3:32b"
+          }
+        }
+      ],
+      "blockers": [],
+      "pre_archive_source_rows": 11037,
+      "pre_archive_source_rids": 5641,
+      "pre_archive_source_model": "qwen3:32b",
+      "ctas_action": "created_new",
+      "archive_table": "\"Thyroid 2026 UPdated\".archive_pub_v1_0.note_entities_llm_airway_invasion_pre9domainv4_20260420T235106Z",
+      "archive_table_unqualified": "note_entities_llm_airway_invasion_pre9domainv4_20260420T235106Z",
+      "comment_action": "applied",
+      "comment": "Script 282 pre-v4 archive of main.note_entities_llm_airway_invasion. Source: qwen3:32b extraction (Apr 1-3 2026), 11037 rows / 5641 RIDs. Reason: pre-v4 qwen2.5-32b rerun replacement (Phase B' #1 of 4). Created at 2026-04-20T23:51:08Z.",
+      "archive_rows": 11037,
+      "archive_rids": 5641,
+      "archive_model": "qwen3:32b",
+      "finished_at": "2026-04-20T23:51:09Z"
+    },
+    "2": {
+      "phase": 2,
+      "started_at": "2026-04-20T23:51:29Z",
+      "gates": [
+        {
+          "name": "phase_1_archive_present_before_load",
+          "ok": true,
+          "detail": {
+            "newest_archive": "note_entities_llm_airway_invasion_pre9domainv4_20260420T235106Z"
+          }
+        },
+        {
+          "name": "post_load_n_rows_eq_48169",
+          "ok": true,
+          "detail": {
+            "observed": 48169,
+            "expected": 48169
+          }
+        },
+        {
+          "name": "post_load_n_rids_eq_10856",
+          "ok": true,
+          "detail": {
+            "observed": 10856,
+            "expected": 10856
+          }
+        },
+        {
+          "name": "post_load_nrids_eq_rows_dedup_invariant",
+          "ok": true,
+          "detail": {
+            "detail": "post-dedup, 1 row per note_row_id; nrids must equal rows",
+            "n_nrids": 48169,
+            "n_rows": 48169
+          }
+        },
+        {
+          "name": "post_load_model_eq_qwen25_32b",
+          "ok": true,
+          "detail": {
+            "observed": "qwen2.5-32b",
+            "expected": "qwen2.5-32b"
+          }
+        },
+        {
+          "name": "post_load_base_url_eq_pinned",
+          "ok": true,
+          "detail": {
+            "observed": "http://213.5.130.43:20049/v1",
+            "expected": "http://213.5.130.43:20049/v1"
+          }
+        },
+        {
+          "name": "post_load_entity_domain_eq_synth",
+          "ok": true,
+          "detail": {
+            "observed": "airway_invasion",
+            "expected": "airway_invasion"
+          }
+        },
+        {
+          "name": "post_load_llm_provider_eq_synth",
+          "ok": true,
+          "detail": {
+            "observed": "vllm",
+            "expected": "vllm"
+          }
+        },
+        {
+          "name": "post_load_llm_sdk_eq_synth",
+          "ok": true,
+          "detail": {
+            "observed": "openai",
+            "expected": "openai"
+          }
+        },
+        {
+          "name": "post_load_provider_returned_model_eq_synth",
+          "ok": true,
+          "detail": {
+            "observed": "qwen2.5-32b",
+            "expected": "qwen2.5-32b"
+          }
+        },
+        {
+          "name": "post_load_n_llm_sdk_version_eq_0",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "post_load_n_provider_system_fingerprint_eq_0",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "post_load_schema_eq_pre_archive_23_cols",
+          "ok": true,
+          "detail": {
+            "observed": [
+              "note_row_id",
+              "domain",
+              "llm_model",
+              "llm_base_url",
+              "extracted_at",
+              "result_json",
+              "research_id",
+              "note_type",
+              "note_date",
+              "linkage_date",
+              "source_workbook",
+              "source_sheet",
+              "source_column",
+              "note_index",
+              "preprocess_batch_id",
+              "preprocessed_at_utc",
+              "preprocess_script_version",
+              "entity_domain",
+              "llm_provider",
+              "llm_sdk",
+              "llm_sdk_version",
+              "provider_returned_model",
+              "provider_system_fingerprint"
+            ],
+            "expected": [
+              "note_row_id",
+              "domain",
+              "llm_model",
+              "llm_base_url",
+              "extracted_at",
+              "result_json",
+              "research_id",
+              "note_type",
+              "note_date",
+              "linkage_date",
+              "source_workbook",
+              "source_sheet",
+              "source_column",
+              "note_index",
+              "preprocess_batch_id",
+              "preprocessed_at_utc",
+              "preprocess_script_version",
+              "entity_domain",
+              "llm_provider",
+              "llm_sdk",
+              "llm_sdk_version",
+              "provider_returned_model",
+              "provider_system_fingerprint"
+            ]
+          }
+        }
+      ],
+      "blockers": [],
+      "post_load_n_rows": 48169,
+      "post_load_n_rids": 10856,
+      "post_load_n_nrids": 48169,
+      "post_load_models": "qwen2.5-32b",
+      "post_load_base_urls": "http://213.5.130.43:20049/v1",
+      "post_load_entity_domains": "airway_invasion",
+      "post_load_providers": "vllm",
+      "post_load_sdks": "openai",
+      "post_load_provider_returned_models": "qwen2.5-32b",
+      "post_load_n_llm_sdk_version_set": 0,
+      "post_load_n_provider_system_fingerprint_set": 0,
+      "post_load_columns": [
+        "note_row_id",
+        "domain",
+        "llm_model",
+        "llm_base_url",
+        "extracted_at",
+        "result_json",
+        "research_id",
+        "note_type",
+        "note_date",
+        "linkage_date",
+        "source_workbook",
+        "source_sheet",
+        "source_column",
+        "note_index",
+        "preprocess_batch_id",
+        "preprocessed_at_utc",
+        "preprocess_script_version",
+        "entity_domain",
+        "llm_provider",
+        "llm_sdk",
+        "llm_sdk_version",
+        "provider_returned_model",
+        "provider_system_fingerprint"
+      ],
+      "finished_at": "2026-04-20T23:51:36Z"
+    },
+    "3": {
+      "phase": 3,
+      "started_at": "2026-04-20T23:51:57Z",
+      "gates": [
+        {
+          "name": "md_rjhash_eq_parquet_dedup_rjhash",
+          "ok": true,
+          "detail": {
+            "observed": "b4b28c1f1bbd53156c72c043f3f748ab",
+            "pinned": "b4b28c1f1bbd53156c72c043f3f748ab"
+          }
+        },
+        {
+          "name": "md_ndhash_eq_parquet_dedup_ndhash",
+          "ok": true,
+          "detail": {
+            "observed": "ce39a4e0773474fdcd625725939fa93c",
+            "pinned": "ce39a4e0773474fdcd625725939fa93c"
+          }
+        },
+        {
+          "name": "md_srchash_eq_parquet_dedup_srchash",
+          "ok": true,
+          "detail": {
+            "observed": "509dbc6c5ed632f14a94532a543e89ca",
+            "pinned": "509dbc6c5ed632f14a94532a543e89ca"
+          }
+        },
+        {
+          "name": "md_rjhash_eq_live_parquet_dedup_rjhash",
+          "ok": true,
+          "detail": {
+            "md": "b4b28c1f1bbd53156c72c043f3f748ab",
+            "live_parquet": "b4b28c1f1bbd53156c72c043f3f748ab"
+          }
+        },
+        {
+          "name": "md_ndhash_eq_live_parquet_dedup_ndhash",
+          "ok": true,
+          "detail": {
+            "md": "ce39a4e0773474fdcd625725939fa93c",
+            "live_parquet": "ce39a4e0773474fdcd625725939fa93c"
+          }
+        },
+        {
+          "name": "md_srchash_eq_live_parquet_dedup_srchash",
+          "ok": true,
+          "detail": {
+            "md": "509dbc6c5ed632f14a94532a543e89ca",
+            "live_parquet": "509dbc6c5ed632f14a94532a543e89ca"
+          }
+        }
+      ],
+      "blockers": [],
+      "md_rjhash": "b4b28c1f1bbd53156c72c043f3f748ab",
+      "md_ndhash": "ce39a4e0773474fdcd625725939fa93c",
+      "md_srchash": "509dbc6c5ed632f14a94532a543e89ca",
+      "pinned_dedup_rjhash": "b4b28c1f1bbd53156c72c043f3f748ab",
+      "pinned_dedup_ndhash": "ce39a4e0773474fdcd625725939fa93c",
+      "pinned_dedup_srchash": "509dbc6c5ed632f14a94532a543e89ca",
+      "live_parquet_dedup_rjhash": "b4b28c1f1bbd53156c72c043f3f748ab",
+      "live_parquet_dedup_ndhash": "ce39a4e0773474fdcd625725939fa93c",
+      "live_parquet_dedup_srchash": "509dbc6c5ed632f14a94532a543e89ca",
+      "finished_at": "2026-04-20T23:51:58Z"
+    },
+    "4": {
+      "phase": 4,
+      "started_at": "2026-04-20T23:52:16Z",
+      "gates": [
+        {
+          "name": "snapshot_rows_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "snapshot_rids_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        }
+      ],
+      "blockers": [],
+      "ctas_action": "created_new",
+      "snapshot_table": "\"Thyroid 2026 UPdated\".archive_pub_v1_0.canonical_patient_master_pre282_20260420T235218Z",
+      "snapshot_table_unqualified": "canonical_patient_master_pre282_20260420T235218Z",
+      "comment_action": "applied",
+      "comment": "Script 282 pre-mutation snapshot of canonical_patient_master. Reason: rollback anchor before rebuilding nlp_airway_* family from qwen3:32b stale state (has_data TRUE=1123, NULL=9748, sum_n_notes=1387, sum_n_entities=2452) to qwen2.5-32b state (target ~1634 TRUE / 0 NULLs). Created at 2026-04-20T23:52:25Z.",
+      "snapshot_rows": 10871,
+      "snapshot_rids": 10871,
+      "snapshot_other_cols_md5": "fa3e497104377d12d338bd734c3847ac",
+      "snapshot_other_cols_count": 1532,
+      "finished_at": "2026-04-20T23:52:28Z"
+    },
+    "5": {
+      "phase": 5,
+      "started_at": "2026-04-20T23:52:46Z",
+      "gates": [
+        {
+          "name": "rollup_distinct_rids_eq_pinned",
+          "ok": true,
+          "detail": {
+            "observed": 1634,
+            "pinned": 1634
+          }
+        },
+        {
+          "name": "rollup_n_notes_eq_pinned",
+          "ok": true,
+          "detail": {
+            "observed": 5285,
+            "pinned": 5285
+          }
+        },
+        {
+          "name": "rollup_n_entities_eq_pinned",
+          "ok": true,
+          "detail": {
+            "observed": 10377,
+            "pinned": 10377
+          }
+        },
+        {
+          "name": "post_has_data_within_target_pm10",
+          "ok": true,
+          "detail": {
+            "observed": 1634,
+            "target": 1634,
+            "tolerance": 10
+          }
+        },
+        {
+          "name": "post_has_data_null_eq_0",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "post_has_data_false_eq_complement",
+          "ok": true,
+          "detail": {
+            "observed": 9237,
+            "expected": 9237
+          }
+        },
+        {
+          "name": "post_sum_n_notes_eq_pinned",
+          "ok": true,
+          "detail": {
+            "observed": 5285,
+            "expected": 5285
+          }
+        },
+        {
+          "name": "post_sum_n_entities_eq_pinned",
+          "ok": true,
+          "detail": {
+            "observed": 10377,
+            "expected": 10377
+          }
+        },
+        {
+          "name": "post_null_research_id_eq_0",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "post_key_finding_set_eq_has_true",
+          "ok": true,
+          "detail": {
+            "observed_kf_set": 1634,
+            "observed_has_true": 1634,
+            "detail": "every TRUE patient must have a key_finding"
+          }
+        }
+      ],
+      "blockers": [],
+      "rollup_distinct_rids": 1634,
+      "rollup_n_notes_sum": 5285,
+      "rollup_total_entities_sum": 10377,
+      "post_has_data_true": 1634,
+      "post_has_data_false": 9237,
+      "post_has_data_null": 0,
+      "post_sum_n_notes": 5285,
+      "post_sum_n_entities": 10377,
+      "post_null_research_id": 0,
+      "post_key_finding_set": 1634,
+      "post_key_finding_distribution": [
+        {
+          "key_finding": "mild",
+          "n": 68
+        },
+        {
+          "key_finding": "mild narrowing",
+          "n": 31
+        },
+        {
+          "key_finding": "present",
+          "n": 30
+        },
+        {
+          "key_finding": "right",
+          "n": 20
+        },
+        {
+          "key_finding": "moderate",
+          "n": 18
+        },
+        {
+          "key_finding": "extrathyroidal extension identified on CT",
+          "n": 15
+        },
+        {
+          "key_finding": "severe",
+          "n": 14
+        },
+        {
+          "key_finding": "mildly narrowed",
+          "n": 12
+        },
+        {
+          "key_finding": "substernal extension",
+          "n": 10
+        },
+        {
+          "key_finding": "leftward",
+          "n": 9
+        },
+        {
+          "key_finding": "rightward deviation",
+          "n": 9
+        },
+        {
+          "key_finding": "rightward",
+          "n": 9
+        },
+        {
+          "key_finding": "mild tracheal narrowing",
+          "n": 9
+        },
+        {
+          "key_finding": "right vocal cord paralysis",
+          "n": 8
+        },
+        {
+          "key_finding": "Present, focal (less than 4 vessels)",
+          "n": 8
+        },
+        {
+          "key_finding": "narrowing present",
+          "n": 7
+        },
+        {
+          "key_finding": "extends 2 cm substernal",
+          "n": 7
+        },
+        {
+          "key_finding": "narrowing of the trachea",
+          "n": 7
+        },
+        {
+          "key_finding": "transverse 1.2 cm",
+          "n": 7
+        },
+        {
+          "key_finding": "yes",
+          "n": 6
+        },
+        {
+          "key_finding": "mild mass effect on the trachea",
+          "n": 6
+        },
+        {
+          "key_finding": "mild tracheal compression",
+          "n": 6
+        },
+        {
+          "key_finding": "mild leftward deviation",
+          "n": 5
+        },
+        {
+          "key_finding": "left",
+          "n": 5
+        },
+        {
+          "key_finding": "cricoid cartilage",
+          "n": 5
+        },
+        {
+          "key_finding": "transverse 8 mm",
+          "n": 5
+        },
+        {
+          "key_finding": "mild luminal narrowing",
+          "n": 5
+        },
+        {
+          "key_finding": "extends 1 cm substernal",
+          "n": 5
+        },
+        {
+          "key_finding": "extends 1.5 cm substernal",
+          "n": 5
+        },
+        {
+          "key_finding": "minimally narrowed",
+          "n": 4
+        },
+        {
+          "key_finding": "leftward deviation",
+          "n": 4
+        },
+        {
+          "key_finding": "moderate to severe",
+          "n": 4
+        },
+        {
+          "key_finding": "mild narrowing of the trachea",
+          "n": 4
+        },
+        {
+          "key_finding": "displaced to the right",
+          "n": 4
+        },
+        {
+          "key_finding": "transverse 1.1 cm",
+          "n": 4
+        },
+        {
+          "key_finding": "minimal",
+          "n": 4
+        },
+        {
+          "key_finding": "extends 2.5 cm substernal",
+          "n": 4
+        },
+        {
+          "key_finding": "minimal mass effect on the adjacent trachea",
+          "n": 4
+        },
+        {
+          "key_finding": "mild substernal extension",
+          "n": 4
+        },
+        {
+          "key_finding": "cricoid cartilage involvement",
+          "n": 4
+        },
+        {
+          "key_finding": "mild rightward deviation",
+          "n": 4
+        },
+        {
+          "key_finding": "left vocal cord paralysis",
+          "n": 4
+        },
+        {
+          "key_finding": "compressive symptoms",
+          "n": 3
+        },
+        {
+          "key_finding": "yes, structures involved: trachea, larynx",
+          "n": 3
+        },
+        {
+          "key_finding": "deviated to the left",
+          "n": 3
+        },
+        {
+          "key_finding": "extends 3.0 cm substernal",
+          "n": 3
+        },
+        {
+          "key_finding": "extends 1.7 cm substernal",
+          "n": 3
+        },
+        {
+          "key_finding": "minimal narrowing",
+          "n": 3
+        },
+        {
+          "key_finding": "moderate stenosis",
+          "n": 3
+        },
+        {
+          "key_finding": "extends 3 cm substernal",
+          "n": 3
+        },
+        {
+          "key_finding": "extends into the upper mediastinum",
+          "n": 3
+        },
+        {
+          "key_finding": "extends into the superior mediastinum",
+          "n": 3
+        },
+        {
+          "key_finding": "slight mass effect on the trachea",
+          "n": 3
+        },
+        {
+          "key_finding": "Present, extensive (4 or more vessels)",
+          "n": 3
+        },
+        {
+          "key_finding": "1.2 cm",
+          "n": 3
+        },
+        {
+          "key_finding": "extends 1.4 cm substernal",
+          "n": 3
+        },
+        {
+          "key_finding": "extends 4 cm substernal",
+          "n": 3
+        },
+        {
+          "key_finding": "AP 6 mm",
+          "n": 3
+        },
+        {
+          "key_finding": "extrathyroidal extension identified",
+          "n": 3
+        },
+        {
+          "key_finding": "deviates to the left",
+          "n": 3
+        },
+        {
+          "key_finding": "moderate narrowing",
+          "n": 3
+        },
+        {
+          "key_finding": "narrowed",
+          "n": 3
+        },
+        {
+          "key_finding": "transverse 7 mm",
+          "n": 3
+        },
+        {
+          "key_finding": "extends 1.3 cm substernal",
+          "n": 3
+        },
+        {
+          "key_finding": "extends into the substernal region",
+          "n": 3
+        },
+        {
+          "key_finding": "extrathyroidal extension identified on PET/CT",
+          "n": 3
+        },
+        {
+          "key_finding": "yes, structures involved: trachea",
+          "n": 3
+        },
+        {
+          "key_finding": "Present",
+          "n": 3
+        },
+        {
+          "key_finding": "mild rightward",
+          "n": 2
+        },
+        {
+          "key_finding": "extends 1.0 cm substernal",
+          "n": 2
+        },
+        {
+          "key_finding": "mild tracheal luminal narrowing",
+          "n": 2
+        },
+        {
+          "key_finding": "rightward displacement",
+          "n": 2
+        },
+        {
+          "key_finding": "extends 3 to 4 cm substernal",
+          "n": 2
+        },
+        {
+          "key_finding": "mildly narrowed by just less than 20%",
+          "n": 2
+        },
+        {
+          "key_finding": "mildly deviated to the left",
+          "n": 2
+        },
+        {
+          "key_finding": "extends 4.8 cm substernal",
+          "n": 2
+        },
+        {
+          "key_finding": "compression of the esophagus",
+          "n": 2
+        },
+        {
+          "key_finding": "mildly compressed",
+          "n": 2
+        },
+        {
+          "key_finding": "mild mass effect upon the trachea",
+          "n": 2
+        },
+        {
+          "key_finding": "moderate tracheal narrowing",
+          "n": 2
+        },
+        {
+          "key_finding": "mild compression",
+          "n": 2
+        },
+        {
+          "key_finding": "mild mass effect",
+          "n": 2
+        },
+        {
+          "key_finding": "deviation of the trachea to the right",
+          "n": 2
+        },
+        {
+          "key_finding": "extends into the chest",
+          "n": 2
+        },
+        {
+          "key_finding": "transverse 9 mm",
+          "n": 2
+        },
+        {
+          "key_finding": "extends 5.6 cm substernal",
+          "n": 2
+        },
+        {
+          "key_finding": "mildly deviated to the right",
+          "n": 2
+        },
+        {
+          "key_finding": "displaced to the left",
+          "n": 2
+        },
+        {
+          "key_finding": "extends below thoracic inlet",
+          "n": 2
+        },
+        {
+          "key_finding": "displacing the trachea to the right",
+          "n": 2
+        },
+        {
+          "key_finding": "transverse 1.3 cm",
+          "n": 2
+        },
+        {
+          "key_finding": "transverse 0.7 cm",
+          "n": 2
+        },
+        {
+          "key_finding": "mild mass effect onto the trachea and thyroid bed",
+          "n": 2
+        },
+        {
+          "key_finding": "mild mass effect on the esophagus",
+          "n": 2
+        },
+        {
+          "key_finding": "moderately narrowed",
+          "n": 2
+        },
+        {
+          "key_finding": "right vocal cord palsy",
+          "n": 2
+        },
+        {
+          "key_finding": "extends into the mediastinum",
+          "n": 2
+        },
+        {
+          "key_finding": "displacement of the trachea",
+          "n": 2
+        },
+        {
+          "key_finding": "transverse 1 cm",
+          "n": 2
+        },
+        {
+          "key_finding": "tracheal compression",
+          "n": 2
+        },
+        {
+          "key_finding": "mild tracheal deviation to the right",
+          "n": 2
+        },
+        {
+          "key_finding": "airway compression",
+          "n": 2
+        },
+        {
+          "key_finding": "left common carotid artery",
+          "n": 2
+        },
+        {
+          "key_finding": "left vocal cord paresis",
+          "n": 2
+        },
+        {
+          "key_finding": "minimal luminal narrowing",
+          "n": 2
+        },
+        {
+          "key_finding": "exerts mass effect on the surrounding structures",
+          "n": 2
+        },
+        {
+          "key_finding": "extends into a substernal location",
+          "n": 2
+        },
+        {
+          "key_finding": "cricoid cartilage, thyroid cartilage",
+          "n": 2
+        },
+        {
+          "key_finding": "mild narrowing of the upper trachea",
+          "n": 2
+        },
+        {
+          "key_finding": "rightward displacement of the trachea",
+          "n": 2
+        },
+        {
+          "key_finding": "extends 4.5 cm substernal",
+          "n": 2
+        },
+        {
+          "key_finding": "mild stenosis",
+          "n": 2
+        },
+        {
+          "key_finding": "moderate airway obstruction",
+          "n": 2
+        },
+        {
+          "key_finding": "extracapsular extension",
+          "n": 2
+        },
+        {
+          "key_finding": "extends 1.2 cm substernal",
+          "n": 2
+        },
+        {
+          "key_finding": "minimal tracheal narrowing",
+          "n": 2
+        },
+        {
+          "key_finding": "mild mass effect on the upper trachea",
+          "n": 2
+        },
+        {
+          "key_finding": "yes, involving trachea and esophagus",
+          "n": 2
+        },
+        {
+          "key_finding": "right RLN encased by tumor",
+          "n": 1
+        },
+        {
+          "key_finding": "right lobe nodule encroaching upon the TE groove",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension identified on CT/MRI (yes)",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, structures involved: trachea and esophagus",
+          "n": 1
+        },
+        {
+          "key_finding": "glottic obstruction",
+          "n": 1
+        },
+        {
+          "key_finding": "Residual luminal diameter measures as little as 1.0 x 0.6 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "5 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "extended underneath the clavicle",
+          "n": 1
+        },
+        {
+          "key_finding": "slight medialization of the right vocal fold",
+          "n": 1
+        },
+        {
+          "key_finding": "Multifocal narrowing of the right jugular vein secondary to mass effect from surrounding extensive lymphadenopathy.",
+          "n": 1
+        },
+        {
+          "key_finding": "left true vocal fold paralysis",
+          "n": 1
+        },
+        {
+          "key_finding": "displaces the right carotid artery laterally",
+          "n": 1
+        },
+        {
+          "key_finding": "deviated to the right and partially collapsed",
+          "n": 1
+        },
+        {
+          "key_finding": "thyroid displaces the carotid arteries and internal jugular veins laterally",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 4.1 x 3.5 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "minimum transverse diameter is 1.5 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "right true vocal cord paresis/paralysis",
+          "n": 1
+        },
+        {
+          "key_finding": "lateral displacement of the carotid arteries",
+          "n": 1
+        },
+        {
+          "key_finding": "midline structures slightly to the left of the midline",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, abutment of the right brachiocephalic, common carotid, and subclavian arteries",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 1-1/2 inches substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "transverse 1.6 cm, AP 2.3 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "deviating the airway leftward",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 2.1 cm, transverse 0.9 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "trachea 180 degrees",
+          "n": 1
+        },
+        {
+          "key_finding": "Mass effect upon the trachea resulting in rightward tracheal deviation without change in caliber.",
+          "n": 1
+        },
+        {
+          "key_finding": "diffuse dilatation of the thoracic esophagus from the level the thoracic inlet to the distal portion",
+          "n": 1
+        },
+        {
+          "key_finding": "mild narrowing of the trachea bilaterally at the thoracic inlet",
+          "n": 1
+        },
+        {
+          "key_finding": "left common carotid artery 360 degrees",
+          "n": 1
+        },
+        {
+          "key_finding": "displaces the trachea to the right and extends into the superior mediastinum",
+          "n": 1
+        },
+        {
+          "key_finding": "significant airway deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 1.5 cm, transverse 0.9 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "partial medialization of the left greater than right carotid arterial systems into the retropharynx",
+          "n": 1
+        },
+        {
+          "key_finding": "questionable left vocal cord paralysis",
+          "n": 1
+        },
+        {
+          "key_finding": "common carotid arteries are splayed",
+          "n": 1
+        },
+        {
+          "key_finding": "rightward deviation of the right neck vasculature",
+          "n": 1
+        },
+        {
+          "key_finding": "extends into the substernal space",
+          "n": 1
+        },
+        {
+          "key_finding": "mild narrowing of the oropharyngeal airway",
+          "n": 1
+        },
+        {
+          "key_finding": "prominent vascular structure along the posterior margin of the lesion, between the lesion and the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "extrinsic pressure effect to the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "causes rightward displacement of the larynx and cervical trachea as well as esophagus, and displaces the left carotid space structures laterally",
+          "n": 1
+        },
+        {
+          "key_finding": "minimum transverse of 1 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "left carotid artery abuts the mass",
+          "n": 1
+        },
+        {
+          "key_finding": "mild mass effect upon the adjacent airway",
+          "n": 1
+        },
+        {
+          "key_finding": "deviation of the trachea to the left by 2 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "transverse 9 mm, AP 15 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "mild mass effect on the right trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 3.7 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "leftward deviated larynx and hypopharynx",
+          "n": 1
+        },
+        {
+          "key_finding": "subglottic larynx",
+          "n": 1
+        },
+        {
+          "key_finding": "mild extrinsic compression",
+          "n": 1
+        },
+        {
+          "key_finding": "significant narrowing of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "extends to the level of the superior margin of the aortic arch",
+          "n": 1
+        },
+        {
+          "key_finding": "some mass effect upon the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 6 mm, transverse 13 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 4.1 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "9.8 mm trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "edema/inflammation in the subcutaneous fat of the lower face and upper neck tracking deep to the platysma muscles and superficial to the sternocleidomastoid muscles and extending into the superior mediastinum",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 15 mm, transverse 8 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "substernal extension on the RIGHT",
+          "n": 1
+        },
+        {
+          "key_finding": "<1.0 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "massively enlarged thyroid with associated left to right tracheal deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "slightly widens the space between the hyoid bone and left thyroid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "jugular vein and common carotid artery, producing mass effect on the larynx and upper trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "right internal jugular vein with loss of surrounding fat plane and compression from anteriorly and posteriorly at the level of the hyoid bone",
+          "n": 1
+        },
+        {
+          "key_finding": "medialization of the left true vocal fold",
+          "n": 1
+        },
+        {
+          "key_finding": "extends predominantly on the right",
+          "n": 1
+        },
+        {
+          "key_finding": "subglottic stenosis involving thyroid isthmus and prior tracheostomy site",
+          "n": 1
+        },
+        {
+          "key_finding": "cricoid cartilage involvement with air within the cricoid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "cartilage involvement: left thyroid cartilage, left cricoid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 12 mm, transverse 16 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "transverse 6 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "extends to the superior mediastinum",
+          "n": 1
+        },
+        {
+          "key_finding": "extends into the thorax",
+          "n": 1
+        },
+        {
+          "key_finding": "without severe narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "effacement of the left innominate vein and the right brachiocephalic trunk",
+          "n": 1
+        },
+        {
+          "key_finding": "moderate tracheal compression",
+          "n": 1
+        },
+        {
+          "key_finding": "moderate compression of the aerodigestive tract at the level of the larynx",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal leftward displacement",
+          "n": 1
+        },
+        {
+          "key_finding": "transverse 10 to 11 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "6.8 x 4.8 x 4.1 cm heterogeneous anterior mediastinal mass possible substernal thyroid mass",
+          "n": 1
+        },
+        {
+          "key_finding": "extends down to the level of the sternal notch near the origin of the great vessels from the aorta",
+          "n": 1
+        },
+        {
+          "key_finding": "about 10-20% narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "mild narrowing of the airway",
+          "n": 1
+        },
+        {
+          "key_finding": "extends several centimeters below the clavicle",
+          "n": 1
+        },
+        {
+          "key_finding": "compression of airway and swallowing",
+          "n": 1
+        },
+        {
+          "key_finding": "left thyroid lobe",
+          "n": 1
+        },
+        {
+          "key_finding": "extends into the left chest",
+          "n": 1
+        },
+        {
+          "key_finding": "right-sided vocal cord paresis",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, involving right RLN and right IJ",
+          "n": 1
+        },
+        {
+          "key_finding": "bilateral common carotid arteries displaced posteriorly",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 25 mm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "trachea shifted significantly to the left",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal narrowing of the transverse dimension of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "left jugular vein slightly effaced",
+          "n": 1
+        },
+        {
+          "key_finding": "common carotid arteries and internal jugular veins are deviated posteriorly and laterally",
+          "n": 1
+        },
+        {
+          "key_finding": "very mild tracheal narrowing without significant deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "lateral displacement of the great vessels",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 0.9 cm, transverse 1.4 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "critical",
+          "n": 1
+        },
+        {
+          "key_finding": "lateral and posterior displacement of the carotid arteries and jugular veins",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowing of the oropharyngeal airway",
+          "n": 1
+        },
+        {
+          "key_finding": "right internal jugular vein mildly compressed and laterally displaced",
+          "n": 1
+        },
+        {
+          "key_finding": "right lobe encased in thick scar",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 4.9 x 4.5 x 7.8 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal right tracheal deviation without invasion of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "extends to the level of the manubrium",
+          "n": 1
+        },
+        {
+          "key_finding": "dominant substernal nodule measures up to 3.4 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "moderate mass effect on the trachea, causing left-sided deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, with up to approximately 2.5 cm tracheal involvement",
+          "n": 1
+        },
+        {
+          "key_finding": "contralateral tracheal deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "worsening mass effect on the hypopharynx and larynx, anterior and leftward displacement of the aerodigestive tract structures, effacement of the right pyriform sinus",
+          "n": 1
+        },
+        {
+          "key_finding": "transverse 1.6 cm, AP 1.9 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "minimum transverse dimension is 1.5 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "rightward and posterior mass effect on the upper trachea without significant narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "mass effect on the airway from right to left secondary to a large mass arising from the right thyroid lobe",
+          "n": 1
+        },
+        {
+          "key_finding": "Retrosternal goiter with associated mass effect",
+          "n": 1
+        },
+        {
+          "key_finding": "descends deep to the clavicle",
+          "n": 1
+        },
+        {
+          "key_finding": "slight rightward tracheal deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "moderately severe",
+          "n": 1
+        },
+        {
+          "key_finding": "mild rightward mass effect on the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "moderate to severe stenosis in the proximal left internal carotid artery",
+          "n": 1
+        },
+        {
+          "key_finding": "displacing the supraglottic and glottic airway rightward without significant stenosis",
+          "n": 1
+        },
+        {
+          "key_finding": "mild narrowing at the thoracic inlet to 10 mm in short axis",
+          "n": 1
+        },
+        {
+          "key_finding": "extracapsular extension of lower pole nodule suspected",
+          "n": 1
+        },
+        {
+          "key_finding": "minimally narrows the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "transverse 1.0 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "partial airway narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "right common carotid arteries displaced laterally by the large thyroid",
+          "n": 1
+        },
+        {
+          "key_finding": "at least moderate narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "collections exert mass effect on the airway",
+          "n": 1
+        },
+        {
+          "key_finding": "moderate to severe stenosis",
+          "n": 1
+        },
+        {
+          "key_finding": "right thyroid lobe with substernal extension",
+          "n": 1
+        },
+        {
+          "key_finding": "right side of the tracheal wall is slightly flattened",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, with mass effect on the carotid sheath and jugular vein",
+          "n": 1
+        },
+        {
+          "key_finding": "potential inhibition of adequate distention during swallowing",
+          "n": 1
+        },
+        {
+          "key_finding": "greater than 50% collapse of the trachea at the level of the thyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "on the left",
+          "n": 1
+        },
+        {
+          "key_finding": "left internal jugular vein and carotid arteries deviated laterally and posteriorly",
+          "n": 1
+        },
+        {
+          "key_finding": "retrosternal extension",
+          "n": 1
+        },
+        {
+          "key_finding": "deep invasion of the tracheoesophageal groove, inseparable from the right lateral esophageal wall",
+          "n": 1
+        },
+        {
+          "key_finding": "Large substernal goiter",
+          "n": 1
+        },
+        {
+          "key_finding": "right thyroid lobe extends substernally",
+          "n": 1
+        },
+        {
+          "key_finding": "left vocal cord dysfunction",
+          "n": 1
+        },
+        {
+          "key_finding": "transverse 5 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 4 mm, transverse 40 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "trace narrowing of the trachea in the transverse dimension",
+          "n": 1
+        },
+        {
+          "key_finding": "extends below the clavicle",
+          "n": 1
+        },
+        {
+          "key_finding": "mild associated local mass effect in the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "slight compression on the right side of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "moderately deviated",
+          "n": 1
+        },
+        {
+          "key_finding": "mild mass effect from postsurgical changes",
+          "n": 1
+        },
+        {
+          "key_finding": "displaces and compresses the left internal jugular vein",
+          "n": 1
+        },
+        {
+          "key_finding": "great vessels splayed with posterior displacement of the left common carotid artery and left subclavian artery",
+          "n": 1
+        },
+        {
+          "key_finding": "narrows the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "mildly focally narrowed to 1.0 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "right vocal cord paresis",
+          "n": 1
+        },
+        {
+          "key_finding": "slight",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 1.2 cm below the level of the suprasternal notch",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowing of the thoracic trachea below the sternal notch",
+          "n": 1
+        },
+        {
+          "key_finding": "mild mass effect on vascular structures in the right infrahyoid neck by the thyroid nodule",
+          "n": 1
+        },
+        {
+          "key_finding": "AP not specified, transverse 12 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "Present: extensive",
+          "n": 1
+        },
+        {
+          "key_finding": "1.1 cm deviation of the trachea to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal tracheal diameter measures 1.0 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "right carotid arteries and internal jugular veins laterally",
+          "n": 1
+        },
+        {
+          "key_finding": "left internal and external carotid arteries, less than 180 degrees",
+          "n": 1
+        },
+        {
+          "key_finding": "critical airway stenosis",
+          "n": 1
+        },
+        {
+          "key_finding": "deviated so far to the right it was deep to the SCM with attenuation of the strap muscles",
+          "n": 1
+        },
+        {
+          "key_finding": "complete luminal effacement",
+          "n": 1
+        },
+        {
+          "key_finding": "esophagus",
+          "n": 1
+        },
+        {
+          "key_finding": "small amount of substernal extension",
+          "n": 1
+        },
+        {
+          "key_finding": "displacement of the larynx to the left",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowing of the patent trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 2.7 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "mild focal narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "bilateral retropharyngeal and parapharyngeal extension",
+          "n": 1
+        },
+        {
+          "key_finding": "Minimal mass effect on the left aspect of the trachea by large left thyroid mass",
+          "n": 1
+        },
+        {
+          "key_finding": "extends retrosternally",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension identified on CT (no definite invasion of the trachea, although the mass appears to be inseparable from the anterior wall of the esophagus)",
+          "n": 1
+        },
+        {
+          "key_finding": "common carotid artery medially displaced",
+          "n": 1
+        },
+        {
+          "key_finding": "mild left to right mass effect on the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "right, no significant narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "contacts the left subclavian artery and vein",
+          "n": 1
+        },
+        {
+          "key_finding": "mild mass effect on the trachea displacing it to the left and slightly posteriorly",
+          "n": 1
+        },
+        {
+          "key_finding": "cricoid cartilage is displaced rightward, thyroid cartilage is displaced anteriorly and rightward",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, tracheoesophageal groove",
+          "n": 1
+        },
+        {
+          "key_finding": "slight narrowing of the lateral to lateral aspect of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "RIGHT common carotid artery and RIGHT jugular vein laterally",
+          "n": 1
+        },
+        {
+          "key_finding": "Displaced to the right with mild narrowing of the airway",
+          "n": 1
+        },
+        {
+          "key_finding": "0.3 cm luminal diameter",
+          "n": 1
+        },
+        {
+          "key_finding": "Persistent hypermetabolic soft tissue lesion in the tracheoesophageal junction",
+          "n": 1
+        },
+        {
+          "key_finding": "nodular tissue along the anterior trachea consistent with lymph nodes",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 3-4 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "marked tracheal compression",
+          "n": 1
+        },
+        {
+          "key_finding": "cricoid cartilage compressed",
+          "n": 1
+        },
+        {
+          "key_finding": "extends into the superior aspect of the mediastinum",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 19 mm, transverse 17 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "mildly right",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowing due to enlarged thyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "Mass closely abuts the anterior trachea without clear tracheal invasion or narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal deviation of the airway to the left",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 46 mm, transverse 29 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "moderate narrowing of the airway at the level of the glottis and mild narrowing at the level of the thoracic inlet",
+          "n": 1
+        },
+        {
+          "key_finding": "extracapsular extension into the strap muscles is not excluded",
+          "n": 1
+        },
+        {
+          "key_finding": "22% narrowing of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "partial encasement of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "displaces the esophagus to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "moderate/severe",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 5 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "left thyroid lobe with substernal extension",
+          "n": 1
+        },
+        {
+          "key_finding": "left thyroid lobe extends substernally",
+          "n": 1
+        },
+        {
+          "key_finding": "tracheal stenosis to 10 mm transverse",
+          "n": 1
+        },
+        {
+          "key_finding": "mild right tracheal deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal focal narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "mild airway stenosis",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal compression without significant airway narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "2 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "severe mass effect on the mid trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "enlargement of the left laryngeal vestibule",
+          "n": 1
+        },
+        {
+          "key_finding": "slight right deviation of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "very mild",
+          "n": 1
+        },
+        {
+          "key_finding": "extends to the right of the trachea and esophagus, posterior to the right brachiocephalic artery",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 10 mm, transverse 16 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "1.5 x 0.6 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "medialized left true vocal cord, possible focal cord palsy",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 1.8 cm, transverse 1.3 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "inferior pole did extend substernally",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, structures involved: trachea, superior vena cava, esophagus, left brachiocephalic vein, aortic arch, right brachiocephalic artery, left common carotid artery, left subclavian artery",
+          "n": 1
+        },
+        {
+          "key_finding": "asymmetric appearance of the left-sided vocal cords, concerning for possible paresis",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 4.0 x 4.3 x 5.3 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "minimally deviated towards the right",
+          "n": 1
+        },
+        {
+          "key_finding": "right greater than left thyroid cartilage destruction, with new frank tumor extending through the left thyroid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal contouring, posterior displacement, and mass effect on the anterior wall of the trachea, without significant stenosis",
+          "n": 1
+        },
+        {
+          "key_finding": "near circumferential encasement of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "no significant airway narrowing, but severe displacement of the trachea to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "extracapsular spread versus nodal metastasis",
+          "n": 1
+        },
+        {
+          "key_finding": "abutting the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "brachiocephalic and left common carotid vessels",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowing of the right subclavian vein",
+          "n": 1
+        },
+        {
+          "key_finding": "effacement of the left internal jugular vein",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowing without definite invasion",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, left infrahyoid strap muscles",
+          "n": 1
+        },
+        {
+          "key_finding": "mild right vocal cord paralysis",
+          "n": 1
+        },
+        {
+          "key_finding": "2.3 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "mild tracheal airway narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "mild to moderate leftward mass effect on the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "6 x 20 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "right lobe extends substernally",
+          "n": 1
+        },
+        {
+          "key_finding": "mild-moderate tracheal luminal narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "RIGHT thyroid mass displaces the trachea to the LEFT",
+          "n": 1
+        },
+        {
+          "key_finding": "present, circumferential esophageal wall thickening",
+          "n": 1
+        },
+        {
+          "key_finding": "right, less than 10% airway effacement",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 6 mm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "nodule extending off the inferior pole of the left lobe of the thyroid into the upper mediastinum",
+          "n": 1
+        },
+        {
+          "key_finding": "extraglandular extension superiorly and laterally",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 1.9 cm, transverse 0.6 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "displacement of the tracheal air column to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 11 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "tumor adherent to trachea near insertion of the right recurrent laryngeal nerve",
+          "n": 1
+        },
+        {
+          "key_finding": "contacts left side of thyroid cartilage, left thyroid cartilage is sclerotic",
+          "n": 1
+        },
+        {
+          "key_finding": "Displacement of the aerodigestive tract structures rightward",
+          "n": 1
+        },
+        {
+          "key_finding": "cartilage involvement: thyroid cartilage, cricoid",
+          "n": 1
+        },
+        {
+          "key_finding": "thrombosis in the inferior right jugular vein extending down to the internal jugular vein catheter",
+          "n": 1
+        },
+        {
+          "key_finding": "mild midline tracheal narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "left internal common carotid artery and internal jugular vein with mild narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "mild diffuse tracheal narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "aerodigestive tract is contoured but not significantly narrowed",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension identified anteriorly into skeletal muscle and posteriorly to trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "slight deviation of the trachea to the left",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, trachea and anterior esophageal wall",
+          "n": 1
+        },
+        {
+          "key_finding": "paralysis, rightward deviation of the left vocal cord",
+          "n": 1
+        },
+        {
+          "key_finding": "bilaterally",
+          "n": 1
+        },
+        {
+          "key_finding": "right common carotid artery, mild posterolateral displacement",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, structures involved: airway, brachiocephalic artery, left common carotid and subclavian arteries",
+          "n": 1
+        },
+        {
+          "key_finding": "mild extension into the tracheoesophageal groove",
+          "n": 1
+        },
+        {
+          "key_finding": "transverse 10 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "right true vocal cord paresis",
+          "n": 1
+        },
+        {
+          "key_finding": "lateralization of the bilateral common carotid arteries and internal jugular veins due to mass effect",
+          "n": 1
+        },
+        {
+          "key_finding": "left lobe was large with substernal extension",
+          "n": 1
+        },
+        {
+          "key_finding": "right by 2 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "high-grade stenosis",
+          "n": 1
+        },
+        {
+          "key_finding": "shift towards the right",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension identified on CT (mass effect on the airway and esophagus)",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, involving esophagus and prevertebral musculature",
+          "n": 1
+        },
+        {
+          "key_finding": "deviating trachea and lower hypopharynx slightly rightward",
+          "n": 1
+        },
+        {
+          "key_finding": "left ECA 360 degrees",
+          "n": 1
+        },
+        {
+          "key_finding": "enlarged left thyroid lobe exerts mass effect upon the airway",
+          "n": 1
+        },
+        {
+          "key_finding": "mild mass effect and rightward displacement of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 1.1 cm, transverse 1.7 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "mild (approximately 15%) subglottic tracheal narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "extends well into the chest, beyond the reach of a finger deep in the mediastinum",
+          "n": 1
+        },
+        {
+          "key_finding": "displaces the trachea posteriorly but does not cause significant airway compression",
+          "n": 1
+        },
+        {
+          "key_finding": "less than 180 degrees interface with the left common carotid artery",
+          "n": 1
+        },
+        {
+          "key_finding": "1.1 x 1.5 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "significant tracheal deviation due to the right-sided goiter",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, supraglottic mucosal edema and thickening of the skin and subcutaneous soft tissues",
+          "n": 1
+        },
+        {
+          "key_finding": "left thyroid cartilage erosion and distortion",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowed from the sides by both prominent lobes",
+          "n": 1
+        },
+        {
+          "key_finding": "adherence of the right lobe to the cricoid cartilage requiring shave excision",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 7 mm, transverse 2 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "cricothyroid membrane",
+          "n": 1
+        },
+        {
+          "key_finding": "nodular enlargement of the left thyroid lobe measuring up to 4 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "subglottic trachea deviated to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "left IJV and carotid artery course along the lateral aspect of the nodule",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowing of the airway",
+          "n": 1
+        },
+        {
+          "key_finding": "maximal diameter 1.1 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "contact of the esophagus",
+          "n": 1
+        },
+        {
+          "key_finding": "mild mass effect upon the subglottic and tracheal airway with narrowing of transverse diameter",
+          "n": 1
+        },
+        {
+          "key_finding": "surrounding vasculature is mildly narrowed",
+          "n": 1
+        },
+        {
+          "key_finding": "9 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "mildly medialized left true vocal cord with enlargement ipsilateral laryngeal ventricle",
+          "n": 1
+        },
+        {
+          "key_finding": "enlarged right nodular thyroid lobe",
+          "n": 1
+        },
+        {
+          "key_finding": "extends to the level of inferior aspect of left clavicular head",
+          "n": 1
+        },
+        {
+          "key_finding": "deviating trachea significantly from left toward right",
+          "n": 1
+        },
+        {
+          "key_finding": "mass effect upon the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "rightward deviation of the proximal trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "proximal esophagus without evidence of invasion",
+          "n": 1
+        },
+        {
+          "key_finding": "compression of trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, structures involved: trachea, esophagus, bilateral neck vessels, bilateral brachiocephalic veins",
+          "n": 1
+        },
+        {
+          "key_finding": "asymmetric medialization of the right vocal cord",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowing of the tracheal air column approximately 50%",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 4.2 x 10.2 x 12.1 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "posterolateral deviation of the right common carotid artery and right internal jugular vein",
+          "n": 1
+        },
+        {
+          "key_finding": "cartilage invasion anterior to the cricothyroid joint and for a length of 5 tracheal rings",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 0.9 cm, transverse 1.2 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "compression/stenosis at the confluence of the right subclavian vein and caudal right internal jugular (IJ) vein at the thoracic inlet",
+          "n": 1
+        },
+        {
+          "key_finding": "anterior jugular veins splayed and displaced laterally by the mass",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, right paratracheal lymph node involvement",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension and involvement of the adjacent infrahyoid strap muscles and possibly sternocleidomastoid muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "3.5 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension and adherence of a firm nodule in the medial right thyroid lobe which was densely adherent to the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, right thyroid mass",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal in position",
+          "n": 1
+        },
+        {
+          "key_finding": "transverse 4 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "enlarged right-sided thyroid causes mass effect upon the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "carotid sheaths are displaced laterally",
+          "n": 1
+        },
+        {
+          "key_finding": "right subclavian, common carotid artery",
+          "n": 1
+        },
+        {
+          "key_finding": "very mild mass effect upon the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "right common carotid artery 90 to 180 degrees",
+          "n": 1
+        },
+        {
+          "key_finding": "at least on the left side that there is substernal extension",
+          "n": 1
+        },
+        {
+          "key_finding": "slight anterior displacement and indentation of the trachea at the thoracic inlet",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 6 inches x 5 inches substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "decreased transverse diameter",
+          "n": 1
+        },
+        {
+          "key_finding": "extended past the carotid and jugular",
+          "n": 1
+        },
+        {
+          "key_finding": "concerning for extracapsular extension",
+          "n": 1
+        },
+        {
+          "key_finding": "mild tracheal stenosis",
+          "n": 1
+        },
+        {
+          "key_finding": "minimum diameter 11 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "mild rightward superior tracheal deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "left common carotid artery laterally",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowed in the transverse dimension",
+          "n": 1
+        },
+        {
+          "key_finding": "approximately 50%",
+          "n": 1
+        },
+        {
+          "key_finding": "left carotid and internal jugular vein are posterior laterally displaced",
+          "n": 1
+        },
+        {
+          "key_finding": "mild mass effect on the right lateral aspect of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension identified on intraoperative ultrasound",
+          "n": 1
+        },
+        {
+          "key_finding": "slight deviation towards the left",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, right lateral cartilaginous wall of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "mildly displacing the trachea to the left",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, right thyroid bed 2.3 x 2.2cm mass",
+          "n": 1
+        },
+        {
+          "key_finding": "extends into the mediastinum along the right pretracheal space at the level of the carina",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowed to approximately 1 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension identified on MRI, involving anterior tracheal wall",
+          "n": 1
+        },
+        {
+          "key_finding": "up to 35% narrowing in lateral to lateral dimension",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, extracapsular extension through the anterior thyroid capsule",
+          "n": 1
+        },
+        {
+          "key_finding": "rightward deviation of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "partial substernal extension",
+          "n": 1
+        },
+        {
+          "key_finding": "left vocal cord paralysis/paresis",
+          "n": 1
+        },
+        {
+          "key_finding": "probably laryngeal thyroid and cricoid cartilage involvement anteriorly",
+          "n": 1
+        },
+        {
+          "key_finding": "mild narrowing of the trachea in the transverse dimension but still measuring 1.3 cm in the narrowest diameter",
+          "n": 1
+        },
+        {
+          "key_finding": "mild mass effect on the larynx, displaced leftwards",
+          "n": 1
+        },
+        {
+          "key_finding": "extends partially under the left sternum",
+          "n": 1
+        },
+        {
+          "key_finding": "encasing",
+          "n": 1
+        },
+        {
+          "key_finding": "significant displacement and compression of the superior vena cava with multiple collateral vessels",
+          "n": 1
+        },
+        {
+          "key_finding": "near complete effacement of the supraglottic laryngeal airway",
+          "n": 1
+        },
+        {
+          "key_finding": "due to enlarged thyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "deformity of the larynx",
+          "n": 1
+        },
+        {
+          "key_finding": "mildly narrowed, minimal transverse dimension 1 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 8.6 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "pinched from both sides",
+          "n": 1
+        },
+        {
+          "key_finding": "causing tracheal compression by approximately 50% of the tracheal lumen",
+          "n": 1
+        },
+        {
+          "key_finding": "medialization of the right true vocal cord and enlargement of the right laryngeal ventricle compared to the left",
+          "n": 1
+        },
+        {
+          "key_finding": "trachea and esophagus",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, structures involved: upper trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "sclerosis of the left arytenoid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal right to left diameter of 6 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "significant narrowing of the mid trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "incompletely evaluated",
+          "n": 1
+        },
+        {
+          "key_finding": "mass effect onto the trachea with leftward deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "mild mass effect on the trachea at the thoracic inlet from the enlarged left thyroid lobe",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 1.8 cm, transverse 0.6 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "deviation to right",
+          "n": 1
+        },
+        {
+          "key_finding": "mild remodeling and sclerosis of the left thyroid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "somewhat narrowed or compressed",
+          "n": 1
+        },
+        {
+          "key_finding": "leftward shift of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "right internal jugular vein and common carotid artery",
+          "n": 1
+        },
+        {
+          "key_finding": "transverse 1.4 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, trachea and esophagus displaced",
+          "n": 1
+        },
+        {
+          "key_finding": "splays the cervical carotid arteries and jugular veins",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 7.3 x 4.2 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "0.7 cm at the area of greatest stenosis",
+          "n": 1
+        },
+        {
+          "key_finding": "lumen narrowed by at least 50%",
+          "n": 1
+        },
+        {
+          "key_finding": "right inferior lobe extends substernally",
+          "n": 1
+        },
+        {
+          "key_finding": "tethered to anterior trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "slight shift of the airway to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension identified on surgery",
+          "n": 1
+        },
+        {
+          "key_finding": "moderate degree of substernal extension on the right, which was mobilized and noted to have minimal connection to the main lobe",
+          "n": 1
+        },
+        {
+          "key_finding": "abuts the thyroid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "mild displacement of the adjacent trachea with lateral displacement of the left carotid artery",
+          "n": 1
+        },
+        {
+          "key_finding": "left common carotid artery and jugular vein are displaced laterally",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, exerts mass effect on the right common carotid and internal jugular veins, displacing them laterally, as well as on the trachea with leftward deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "separate substernal component",
+          "n": 1
+        },
+        {
+          "key_finding": "irregular sclerotic appearance of the thyroid cartilage possibly reflecting cartilage erosion",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 10 mm, transverse 5 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "compression of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "Distortion and displacement of the carotid arteries",
+          "n": 1
+        },
+        {
+          "key_finding": "6.6 x 5.3 x 5.8 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 11 mm, transverse 22 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "gentle narrowing of the tracheal rings",
+          "n": 1
+        },
+        {
+          "key_finding": "left common carotid artery displaced inferiorly and laterally",
+          "n": 1
+        },
+        {
+          "key_finding": "recurrent laryngeal nerve and cricoid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "medialization of the right true vocal cord and arytenoid",
+          "n": 1
+        },
+        {
+          "key_finding": "extends to the level of the origins of the great vessels and the aortic arch",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 11 mm, transverse 6 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "lymph-vascular invasion present",
+          "n": 1
+        },
+        {
+          "key_finding": "at least 4 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "deviated left",
+          "n": 1
+        },
+        {
+          "key_finding": "trachea compressed and displaced to the left",
+          "n": 1
+        },
+        {
+          "key_finding": "abutment of the right jugular vein and right sternocleidomastoid muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "left RLN compressed and stretched",
+          "n": 1
+        },
+        {
+          "key_finding": "left to right",
+          "n": 1
+        },
+        {
+          "key_finding": "slight medialization of the right true vocal cord suggestive of vocal cord paralysis/paresis",
+          "n": 1
+        },
+        {
+          "key_finding": "left common carotid artery 90 degrees",
+          "n": 1
+        },
+        {
+          "key_finding": "most narrow portion of the trachea measures 1.1 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "stenosis, at least 50%",
+          "n": 1
+        },
+        {
+          "key_finding": "new abnormal signal in the left internal jugular vein, which is expanded",
+          "n": 1
+        },
+        {
+          "key_finding": "6 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "significant substernal component",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 0.7 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "carotid space vessels are lateralized secondary to thyroid gland enlargement",
+          "n": 1
+        },
+        {
+          "key_finding": "extends well below the clavicle down to the mediastinum",
+          "n": 1
+        },
+        {
+          "key_finding": "right true vocal cord may be more medialized",
+          "n": 1
+        },
+        {
+          "key_finding": "left thyroid inferior pole mass extending into the chest",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 8 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "left internal jugular vein compressed multifocally",
+          "n": 1
+        },
+        {
+          "key_finding": "mild mass effect and narrowing of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "extends near the thoracic inlet",
+          "n": 1
+        },
+        {
+          "key_finding": "Present, clinical / macroscopic AND histologically confirmed",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, involving left RLN, trachea, and esophagus",
+          "n": 1
+        },
+        {
+          "key_finding": "effacement of the fat plane between the mid cervical esophagus and the left lobe of the thyroid",
+          "n": 1
+        },
+        {
+          "key_finding": "medialized right arytenoid cartilage and right vocal fold",
+          "n": 1
+        },
+        {
+          "key_finding": "mild narrowing of the supraglottic larynx",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, extracapsular extension",
+          "n": 1
+        },
+        {
+          "key_finding": "right lower thyroid with retrosternal extension",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowed without obstruction",
+          "n": 1
+        },
+        {
+          "key_finding": "minimum residual lumen measurement of 1.5 x 1.4 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 8.7 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "right common carotid artery < 180 degrees",
+          "n": 1
+        },
+        {
+          "key_finding": "right lateral thyroid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "mass effect upon adjacent structures including the trachea and vessels",
+          "n": 1
+        },
+        {
+          "key_finding": "paresis or paralysis may have a similar appearance",
+          "n": 1
+        },
+        {
+          "key_finding": "slight narrowing of the tracheal diameter at the thyroid gland level",
+          "n": 1
+        },
+        {
+          "key_finding": "extends into the superior mediastinum posterior to the aortic arch",
+          "n": 1
+        },
+        {
+          "key_finding": "enlarged right lobe shifted the larynx and trachea to the left",
+          "n": 1
+        },
+        {
+          "key_finding": "mild mass effect on the proximal aerodigestive tract",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 7 cm into the upper mediastinum",
+          "n": 1
+        },
+        {
+          "key_finding": "abduction of the right vocal cord with dilation of the right piriform sinus likely represents focal cord paralysis",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, structures involved: trachea, laryngeal airway",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal tracheal luminal caliber is approximately 5-7 mm in transverse dimension",
+          "n": 1
+        },
+        {
+          "key_finding": "substernal component",
+          "n": 1
+        },
+        {
+          "key_finding": "cervical carotids and jugular veins are deviated by the mass of thyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "vessels are splayed laterally by enlarged thyroid",
+          "n": 1
+        },
+        {
+          "key_finding": "mild asymmetric appearance of the larynx, may be due to mass effect",
+          "n": 1
+        },
+        {
+          "key_finding": "not significantly narrowed",
+          "n": 1
+        },
+        {
+          "key_finding": "medialization of the right true vocal cord enlargement laryngeal ventricle concerning for true vocal cord palsy",
+          "n": 1
+        },
+        {
+          "key_finding": "rightward displacement of esophagus",
+          "n": 1
+        },
+        {
+          "key_finding": "Tumor diffusely involves most of the soft tissue fragments and submucosal tissues adjacent to cartilage.",
+          "n": 1
+        },
+        {
+          "key_finding": "elevated the substernal component from the chest and swept it up",
+          "n": 1
+        },
+        {
+          "key_finding": "1.9 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "involvement of left thyroid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "rightward displacement and narrowing of a patent trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 1.0 cm, transverse 1.3 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "goitrous substernal extension of the gland",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal compression of the adjacent trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "compressed the internal jugular vein laterally",
+          "n": 1
+        },
+        {
+          "key_finding": "mild rightward and dorsal deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "AP not specified, transverse 1.3 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "moderate to significant narrowing of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "lateral displacement of the left common carotid artery",
+          "n": 1
+        },
+        {
+          "key_finding": "11 mm in narrowest diameter",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal tracheal luminal narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "identified in the frozen section",
+          "n": 1
+        },
+        {
+          "key_finding": "deviating the trachea to the left",
+          "n": 1
+        },
+        {
+          "key_finding": "right aryepiglottic fold and arytenoid cartilage medialization, known right vocal fold paralysis",
+          "n": 1
+        },
+        {
+          "key_finding": "mild transverse narrowing of the distal cervical trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "less than 50% luminal narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 3.4 x 2.4 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "irregular margins with the right trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 12.5 mm, transverse 11 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "erosion of the inferior thyroid cartilage and it also abuts the right cricoid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "jugular vein compressed from lateral to medial",
+          "n": 1
+        },
+        {
+          "key_finding": "subtle mass effect on the trachea without significant narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "contact common carotid arteries and internal jugular veins bilaterally",
+          "n": 1
+        },
+        {
+          "key_finding": "mild compression and rightward displacement of the cervical trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "concerning for invasion of the anterior right thyroid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "right common carotid artery displaced posteriorly",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal transverse diameter of 9 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "slight medialization of the left true vocal cord",
+          "n": 1
+        },
+        {
+          "key_finding": "left brachiocephalic vein may be occluded",
+          "n": 1
+        },
+        {
+          "key_finding": "mild airway narrowing (up to 45%)",
+          "n": 1
+        },
+        {
+          "key_finding": "significant contralateral tracheal deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "mild narrowing of the oropharynx at the level of the epiglottis",
+          "n": 1
+        },
+        {
+          "key_finding": "displacement of the innominate artery, aortic arch, left common carotid artery",
+          "n": 1
+        },
+        {
+          "key_finding": "diffuse wall thickening of the cervical esophagus up to 1 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "suspected invasion of trachea and esophagus",
+          "n": 1
+        },
+        {
+          "key_finding": "mild narrowing of the trachea at the level of the thoracic inlet",
+          "n": 1
+        },
+        {
+          "key_finding": "deviated to the left of midline",
+          "n": 1
+        },
+        {
+          "key_finding": "right, 1.8 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "extension substernally",
+          "n": 1
+        },
+        {
+          "key_finding": "mild narrowing of the adjacent airway",
+          "n": 1
+        },
+        {
+          "key_finding": "2.9 cm segment of mild to moderate tracheal stenosis",
+          "n": 1
+        },
+        {
+          "key_finding": "encased the left RLN as it entered the larynx",
+          "n": 1
+        },
+        {
+          "key_finding": "1.1 x 1.6 cm in axial plane",
+          "n": 1
+        },
+        {
+          "key_finding": "trachea 360 degrees",
+          "n": 1
+        },
+        {
+          "key_finding": "proximal internal jugular veins severely narrowed",
+          "n": 1
+        },
+        {
+          "key_finding": "extends to T3 level",
+          "n": 1
+        },
+        {
+          "key_finding": "right internal carotid artery takes a retropharyngeal course over a short segment",
+          "n": 1
+        },
+        {
+          "key_finding": "supraglottic airway encased",
+          "n": 1
+        },
+        {
+          "key_finding": "Aggressive appearing right thyroid gland mass which extends into the right brachiocephalic vein and the SVC causing near complete vascular occlusion",
+          "n": 1
+        },
+        {
+          "key_finding": "left internal jugular vein 360 degrees",
+          "n": 1
+        },
+        {
+          "key_finding": "Minimal narrowing of the proximal cervical trachea at the level of the thyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "extends from the left thyroid lobe",
+          "n": 1
+        },
+        {
+          "key_finding": "questionable invasion of right thyroid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "right common carotid artery 180 degrees",
+          "n": 1
+        },
+        {
+          "key_finding": "paralysis",
+          "n": 1
+        },
+        {
+          "key_finding": "Present, involving subcutaneous soft tissues, larynx, trachea, esophagus, or recurrent laryngeal nerve",
+          "n": 1
+        },
+        {
+          "key_finding": "internal jugular vein 360 degrees",
+          "n": 1
+        },
+        {
+          "key_finding": "mild associated narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "Mass effect on the left jugular vein which appears compressed",
+          "n": 1
+        },
+        {
+          "key_finding": "extracapsular extension and invasion into the strap muscles on the left side",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowing of the adjacent left jugular vein",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, structures involved: epiglottis and aryepiglottic folds",
+          "n": 1
+        },
+        {
+          "key_finding": "proximal cervical esophagus is compressed",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal tumor extension into the anterior right side of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "going down into the mediastinum",
+          "n": 1
+        },
+        {
+          "key_finding": "near effacement of the adjacent internal jugular vein",
+          "n": 1
+        },
+        {
+          "key_finding": "displaces the trachea to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "mildly displaced to the left and minimally narrowed measuring 13 x 15 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 7.6 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal rightward tracheal displacement",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 2.5 cm, transverse 1.3 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "mild leftward displacement",
+          "n": 1
+        },
+        {
+          "key_finding": "mild/mod luminal narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "splaying of the right brachiocephalic and left common carotid arteries",
+          "n": 1
+        },
+        {
+          "key_finding": "inferior pole of the left thyroid lobe extended subclavicularly",
+          "n": 1
+        },
+        {
+          "key_finding": "significant tracheal compression and narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "slight substernal extension into the superior mediastinum",
+          "n": 1
+        },
+        {
+          "key_finding": "possible right vocal cord paralysis versus artifact from phase of respiration",
+          "n": 1
+        },
+        {
+          "key_finding": "left deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "8 mm in short axis diameter",
+          "n": 1
+        },
+        {
+          "key_finding": "left true vocal cord paralysis",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 1.9 cm, transverse 1.3 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 1.1 cm, transverse 2.2 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "mild luminal narrow",
+          "n": 1
+        },
+        {
+          "key_finding": "measuring up to 1.2 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 7 mm, transverse 20 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "heterogeneous appearance of the thyroid gland with multiple thyroid nodules identified",
+          "n": 1
+        },
+        {
+          "key_finding": "Present: Two",
+          "n": 1
+        },
+        {
+          "key_finding": "right internal jugular vein, invasion is not excluded",
+          "n": 1
+        },
+        {
+          "key_finding": "right vocal cord paramedian, aryepiglottic fold paramedian, right piriform sinus over dilated",
+          "n": 1
+        },
+        {
+          "key_finding": "present, due to large posterior nodule of Zuckerkandl",
+          "n": 1
+        },
+        {
+          "key_finding": "left to right midline shift",
+          "n": 1
+        },
+        {
+          "key_finding": "extends substernally",
+          "n": 1
+        },
+        {
+          "key_finding": "abutment of left thyroid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "infiltrates full-thickness LARYNGEAL-tracheal wall",
+          "n": 1
+        },
+        {
+          "key_finding": "deviates the trachea to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "abuts the thyroid cartilage and hyoid bone",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 3 mm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "mildly narrowed at the thoracic inlet, measuring 14 x 8 mm axial dimension",
+          "n": 1
+        },
+        {
+          "key_finding": "right internal jugular vein compressed",
+          "n": 1
+        },
+        {
+          "key_finding": "Associated tracheal narrowing of the thyroid multinodular goiter",
+          "n": 1
+        },
+        {
+          "key_finding": "left aryepiglottic fold medialization, laryngeal ventricle enlargement",
+          "n": 1
+        },
+        {
+          "key_finding": "displacing the trachea towards the right",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 5 mm inferior to the sternum",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, into the inferior right sternocleidomastoid muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "compression of the trachea and deviation to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "right infraglottic trachea at the level of the thoracic inlet",
+          "n": 1
+        },
+        {
+          "key_finding": "transverse 12 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "great vessels anteriorly deviated",
+          "n": 1
+        },
+        {
+          "key_finding": "tracheal narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "medialization left compared to right vocal cord, suggestive of vocal cord paralysis on the left",
+          "n": 1
+        },
+        {
+          "key_finding": "1.8 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "left carotid artery and jugular vein are displaced laterally without significant stenosis",
+          "n": 1
+        },
+        {
+          "key_finding": "mild right to left tracheal deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "causing mild rightward deviation of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "extends behind the sternum with an anterior, partially-calcified mass measuring about 4.0 cm diameter",
+          "n": 1
+        },
+        {
+          "key_finding": "8 mm at its narrowest dimension",
+          "n": 1
+        },
+        {
+          "key_finding": "right, 7 mm in the neck and up to 1 cm at the thoracic inlet",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension: enlarged thyroid nonspecific",
+          "n": 1
+        },
+        {
+          "key_finding": "contact and narrowing upon the left subclavian vein at the thoracic inlet",
+          "n": 1
+        },
+        {
+          "key_finding": "extends to substernal region",
+          "n": 1
+        },
+        {
+          "key_finding": "laryngeal and tracheal displacement contralaterally",
+          "n": 1
+        },
+        {
+          "key_finding": "right jugular vein: mild narrowing, left jugular vein: significant narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "left jugular vein and left common carotid artery displaced laterally",
+          "n": 1
+        },
+        {
+          "key_finding": "possible invasion of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "regional mass effect of fluid collections on the bilateral internal jugular veins with significant narrowing but patent lumen",
+          "n": 1
+        },
+        {
+          "key_finding": "right common carotid artery laterally displaced",
+          "n": 1
+        },
+        {
+          "key_finding": "right thyroid extends substernally",
+          "n": 1
+        },
+        {
+          "key_finding": "deviated to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, right thyroid mass with caudal extension to the sternal notch",
+          "n": 1
+        },
+        {
+          "key_finding": "focal moderate to severe tracheal narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "approximately 50% in diameter",
+          "n": 1
+        },
+        {
+          "key_finding": "focal cords are abducted, compromising evaluation for focal cord palsy paralysis",
+          "n": 1
+        },
+        {
+          "key_finding": "mild mass effect on the larynx with displacement to the left",
+          "n": 1
+        },
+        {
+          "key_finding": "circumferential soft tissue within the upper mediastinum surrounding the trachea and esophagus",
+          "n": 1
+        },
+        {
+          "key_finding": "mild constriction",
+          "n": 1
+        },
+        {
+          "key_finding": "left internal jugular vein and common carotid artery compression",
+          "n": 1
+        },
+        {
+          "key_finding": "mass effect and lateral displacement of the great vessels, mild mass effect and rightward displacement of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "moderate narrowing of the mid trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "left internal jugular vein moderately narrowed",
+          "n": 1
+        },
+        {
+          "key_finding": "mildly narrowed with minimal transverse dimension of 1 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 12 mm, transverse 6 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "mild narrowing of the tracheal lumen at the level of thoracic inlet",
+          "n": 1
+        },
+        {
+          "key_finding": "severe compression of the distal trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "substernal extension is evident on the left",
+          "n": 1
+        },
+        {
+          "key_finding": "left carotid space encroachment",
+          "n": 1
+        },
+        {
+          "key_finding": "multinodular right thyroid lobe causing lateral deviation of the common carotid artery",
+          "n": 1
+        },
+        {
+          "key_finding": "deviation of the trachea to the left without narrowing of the airway",
+          "n": 1
+        },
+        {
+          "key_finding": "medialization of the right vocal cord suggesting paralysis",
+          "n": 1
+        },
+        {
+          "key_finding": "Extrathyroidal extension invading subcutaneous soft tissues, larynx, trachea, esophagus, or recurrent laryngeal nerve",
+          "n": 1
+        },
+        {
+          "key_finding": "mild intraluminal right tracheal irregularity",
+          "n": 1
+        },
+        {
+          "key_finding": "very minimal mass effect upon the airway",
+          "n": 1
+        },
+        {
+          "key_finding": "mild left to right midline shift of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "cricoid and thyroid cartilage displaced superiorly",
+          "n": 1
+        },
+        {
+          "key_finding": "extends to the level of the sternal notch",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, structures involved: trachea, oropharynx, hypopharynx",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension with adherence to overlying sternothyroid muscles, R>L",
+          "n": 1
+        },
+        {
+          "key_finding": "subglottic tracheal stenosis with progressive wall thickening of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal luminal caliber of 2.1 x 1.1 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "partial soft tissue effacement of the fat surrounding the adjacent left common carotid",
+          "n": 1
+        },
+        {
+          "key_finding": "small portion of substernal extension on the left side",
+          "n": 1
+        },
+        {
+          "key_finding": "causes mass effect on the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "right carotid artery and internal jugular vein displaced",
+          "n": 1
+        },
+        {
+          "key_finding": "markedly deviated to the right side",
+          "n": 1
+        },
+        {
+          "key_finding": "rightward, moderate to severe",
+          "n": 1
+        },
+        {
+          "key_finding": "right common carotid artery displaced laterally",
+          "n": 1
+        },
+        {
+          "key_finding": "mild to moderate tracheal narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "Mass effect on the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, right lobe with associated enhancement",
+          "n": 1
+        },
+        {
+          "key_finding": "90 degree interface of the right common carotid artery",
+          "n": 1
+        },
+        {
+          "key_finding": "mild narrowing of the trachea on the right",
+          "n": 1
+        },
+        {
+          "key_finding": "extends over the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "great vessels are wrapped around the mass",
+          "n": 1
+        },
+        {
+          "key_finding": "thyroid cartilage involvement",
+          "n": 1
+        },
+        {
+          "key_finding": "partial medialization of the bilateral carotid arterial systems into the retropharynx",
+          "n": 1
+        },
+        {
+          "key_finding": "multi nodular thyroid extends to the walls of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "left internal jugular vein and subclavian vein junction",
+          "n": 1
+        },
+        {
+          "key_finding": "mass effect in anterior strap muscles and trachea and prevertebral musculature",
+          "n": 1
+        },
+        {
+          "key_finding": "rightward and posterior displacement",
+          "n": 1
+        },
+        {
+          "key_finding": "leftward deviation of the airway and the midline raphae",
+          "n": 1
+        },
+        {
+          "key_finding": "subtle invasion of the anterior upper trachea and anterior aspect of the left thyroid cartilage is not excluded",
+          "n": 1
+        },
+        {
+          "key_finding": "mild substernal extension similar to previous examination",
+          "n": 1
+        },
+        {
+          "key_finding": "significant mass effect on the adjacent trachea and larynx, deviated to the left; mass effect on the posterior right oropharynx",
+          "n": 1
+        },
+        {
+          "key_finding": "extending to the thoracic inlet",
+          "n": 1
+        },
+        {
+          "key_finding": "small extracapsular extension is possible",
+          "n": 1
+        },
+        {
+          "key_finding": "1.3 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "mild transverse narrowing of the subglottic trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, right internal jugular vein",
+          "n": 1
+        },
+        {
+          "key_finding": "Mass effect on the trachea which is deviated to the left without significant tracheal narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowing of the trachea at the level of the thyroid due to thyroid enlargement",
+          "n": 1
+        },
+        {
+          "key_finding": "circumferential narrowing of the larynx",
+          "n": 1
+        },
+        {
+          "key_finding": "mild to moderate tracheal compression",
+          "n": 1
+        },
+        {
+          "key_finding": "Left thyroid lobe has a substernal extent.",
+          "n": 1
+        },
+        {
+          "key_finding": "heading substernally over the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "right-sided vocal cord palsy",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, aerodigestive structures deviated to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, substernal extension",
+          "n": 1
+        },
+        {
+          "key_finding": "internal jugular vein",
+          "n": 1
+        },
+        {
+          "key_finding": "esophagus fused to thyroid",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowing of the lower right jugular vein near the SVC confluence",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 9 mm, transverse 8 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "brachiocephalic artery and left common carotid artery splayed",
+          "n": 1
+        },
+        {
+          "key_finding": "compression",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, displacing trachea and left common carotid artery",
+          "n": 1
+        },
+        {
+          "key_finding": "cartilage erosion by the mass",
+          "n": 1
+        },
+        {
+          "key_finding": "posterior and lateral deviation of the left common carotid artery due to mass effect",
+          "n": 1
+        },
+        {
+          "key_finding": "left substernal extension",
+          "n": 1
+        },
+        {
+          "key_finding": "mild leftward deviation of the aerodigestive tract",
+          "n": 1
+        },
+        {
+          "key_finding": "mild mass effect on the trachea and esophagus with slight deviation to the left",
+          "n": 1
+        },
+        {
+          "key_finding": "mild mass effect and displacement of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "slight medialization of left true vocal cord",
+          "n": 1
+        },
+        {
+          "key_finding": "mild to moderate",
+          "n": 1
+        },
+        {
+          "key_finding": "slight compression and narrowing of the hypopharyngeal airway",
+          "n": 1
+        },
+        {
+          "key_finding": "rightward deviation of the trachea and the esophagus",
+          "n": 1
+        },
+        {
+          "key_finding": "transverse 0.9 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "slight transverse narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "10% tracheal effacement",
+          "n": 1
+        },
+        {
+          "key_finding": "displacement/compression of the trachea to the left",
+          "n": 1
+        },
+        {
+          "key_finding": "left tracheal deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "2 cm substernal extension",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal leftward deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "Apparent circumferential soft tissue thickening of the false vocal cords",
+          "n": 1
+        },
+        {
+          "key_finding": "inferior internal jugular veins slightly narrowed",
+          "n": 1
+        },
+        {
+          "key_finding": "without significant narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 1.5 cm, transverse 1.1 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, structures involved: trachea, esophagus",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, thyroid mass identified",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, structures involved: recurrent laryngeal nerve, esophagus",
+          "n": 1
+        },
+        {
+          "key_finding": "invading into the trachea on CT scan",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 5 mm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "heterogeneous mass anterior and medial to the right common carotid artery",
+          "n": 1
+        },
+        {
+          "key_finding": "suspected possible invasion into the right aspect of the trachea in the upper mediastinum",
+          "n": 1
+        },
+        {
+          "key_finding": "mass effect on the esophagus by the medial aspects of the bilateral thyroid mid poles",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 1.6 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "exerting mass effect on the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "widely patent",
+          "n": 1
+        },
+        {
+          "key_finding": "local mass effect with mild deviation of the trachea to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "anterior displacement of the trachea and esophagus",
+          "n": 1
+        },
+        {
+          "key_finding": "mild narrowing without significant airway compromise",
+          "n": 1
+        },
+        {
+          "key_finding": "involvement of left cricothyroid membrane",
+          "n": 1
+        },
+        {
+          "key_finding": "right jugular vein likely invaded and obstructed",
+          "n": 1
+        },
+        {
+          "key_finding": "1 cm of substernal descent of the left thyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 5 mm, transverse 16 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "extends below the thoracic inlet",
+          "n": 1
+        },
+        {
+          "key_finding": "moderate leftward deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "mild deviation of the trachea rightward",
+          "n": 1
+        },
+        {
+          "key_finding": "24 x 22 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "erosion of the left aspect of the hyoid and left thyroid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension identified on CT: indents the trachea without significant luminal narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "Right jugular vein narrowing above the catheter",
+          "n": 1
+        },
+        {
+          "key_finding": "enlarged substernal thyroid with mild mass effect on the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, right thyroid lobe with metastatic lymphadenopathy",
+          "n": 1
+        },
+        {
+          "key_finding": "mild narrowing of the proximal bronchus intermedius with adjacent subcarinal lymph node",
+          "n": 1
+        },
+        {
+          "key_finding": "mild narrowing of the trachea and transverse and AP dimensions",
+          "n": 1
+        },
+        {
+          "key_finding": "large right retrosternal goiter with mass effect on the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "displaces the trachea to the right and flattens the trachea from the left lateral side",
+          "n": 1
+        },
+        {
+          "key_finding": "cricothyroid joint",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension identified on imaging, structures involved: trachea, vasculature, sternocleidomastoid muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, involving the left oropharynx",
+          "n": 1
+        },
+        {
+          "key_finding": "leftward deviation of the airway and esophagus",
+          "n": 1
+        },
+        {
+          "key_finding": "displaces the airway to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "slight leftward displacement of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "moderate airway narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal narrowing of the transverse dimension without significant stenosis",
+          "n": 1
+        },
+        {
+          "key_finding": "severe airway obstruction",
+          "n": 1
+        },
+        {
+          "key_finding": "producing mass effect on the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 12 mm, transverse 4 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "substernal extension consistent with goiter",
+          "n": 1
+        },
+        {
+          "key_finding": "displaces the bilateral common carotid arteries along the posterolateral margin of the thyroid",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowing to approximately 5 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "findings indeterminate for potential vocal cord palsy",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal leftward tracheal compression/displacement",
+          "n": 1
+        },
+        {
+          "key_finding": "partial effacement and rightward displacement of the trachea, mass effect on the esophagus and left thyroid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "mild medialized left vocal cord",
+          "n": 1
+        },
+        {
+          "key_finding": "local spread of disease",
+          "n": 1
+        },
+        {
+          "key_finding": "rightward displacement of the trachea without significant luminal narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "smallest dimension 1.3 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "brachiocephalic and left common carotid arteries splayed",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowest diameter 9 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "jugular vein, common carotid artery",
+          "n": 1
+        },
+        {
+          "key_finding": "extends down to the neck",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 3.8 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "Rightward shift of the trachea by up to 1.9 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "suspected compression",
+          "n": 1
+        },
+        {
+          "key_finding": "left jugular vein displaced laterally and mildly compressed",
+          "n": 1
+        },
+        {
+          "key_finding": "deviation to the left by about 2 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 8 cm transverse by 4.8 cm AP",
+          "n": 1
+        },
+        {
+          "key_finding": "impacting her airway",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, through the thyroid capsule laterally and along the undersurface of the sternocleidomastoid muscle and strap muscles",
+          "n": 1
+        },
+        {
+          "key_finding": "significantly narrowed by the brachiocephalic artery",
+          "n": 1
+        },
+        {
+          "key_finding": "posterior displacement of the esophagus",
+          "n": 1
+        },
+        {
+          "key_finding": "mild mass effect on the trachea without significant narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "deviation across the midline",
+          "n": 1
+        },
+        {
+          "key_finding": "?rt true vocal cord paresis",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowing of the cervical proximal trachea to 5mm",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 3.6 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 2.3 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "vessels displaced posteriorly and laterally",
+          "n": 1
+        },
+        {
+          "key_finding": "left substernal component",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, structures involved: recurrent laryngeal nerve, tracheoesophageal groove",
+          "n": 1
+        },
+        {
+          "key_finding": "displacement of the esophagus to the left",
+          "n": 1
+        },
+        {
+          "key_finding": "mild airway compression",
+          "n": 1
+        },
+        {
+          "key_finding": "50% tracheal compression",
+          "n": 1
+        },
+        {
+          "key_finding": "mild displacement to the left",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 4-5 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "left lobe deviated the trachea posterolaterally to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "cricothyroid muscle involvement",
+          "n": 1
+        },
+        {
+          "key_finding": "7 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "extends to the carotid artery",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, involving multiple vascular structures in the upper mediastinum",
+          "n": 1
+        },
+        {
+          "key_finding": "no frank tracheal invasion, but there is mass effect and deviation of trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "deviated towards the left",
+          "n": 1
+        },
+        {
+          "key_finding": "mild compressive symptoms",
+          "n": 1
+        },
+        {
+          "key_finding": "left retrosternal extension",
+          "n": 1
+        },
+        {
+          "key_finding": "mass extended to the carotid artery",
+          "n": 1
+        },
+        {
+          "key_finding": "compresses the esophagus at the cervicothoracic junction",
+          "n": 1
+        },
+        {
+          "key_finding": "displacement of the trachea to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "common facial vein invaded by poorly differentiated thyroid carcinoma",
+          "n": 1
+        },
+        {
+          "key_finding": "airway deviation and displacement",
+          "n": 1
+        },
+        {
+          "key_finding": "right true vocal paralysis",
+          "n": 1
+        },
+        {
+          "key_finding": "mild mass effect with rightward displacement of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "displacing right-sided vascular structures, bulging into right retropharyngeal space",
+          "n": 1
+        },
+        {
+          "key_finding": "left vertebral artery 180 degrees",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension identified on CT (thyroid mass extending into the superior mediastinum)",
+          "n": 1
+        },
+        {
+          "key_finding": "Present (extensive 4 or more vessels)",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, involving right carotid artery, tracheoesophageal groove, and esophagus",
+          "n": 1
+        },
+        {
+          "key_finding": "right lower paratracheal region and upper portion of the aortic arch",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, involving left internal jugular vein, left subclavian vein",
+          "n": 1
+        },
+        {
+          "key_finding": "lateral displacement of vascular structures, and effacement of the prevertebral musculature",
+          "n": 1
+        },
+        {
+          "key_finding": "displaces the trachea to the right without significant associated tracheal narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal tracheal narrowing without frank stenosis",
+          "n": 1
+        },
+        {
+          "key_finding": "1.5 cm on the left, 0.6 cm on the right",
+          "n": 1
+        },
+        {
+          "key_finding": "extra thyroidal invasion inferiorly and posteriorly into the tracheoesophageal groove",
+          "n": 1
+        },
+        {
+          "key_finding": "mild rightward tracheal deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension identified on MRI (yes)",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal deviation of the trachea to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 8.3 x 5.2 x 5.3 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "right common carotid and left common carotid arteries splayed",
+          "n": 1
+        },
+        {
+          "key_finding": "left common carotid artery lateral displacement",
+          "n": 1
+        },
+        {
+          "key_finding": "right due to enlarged left thyroid lobe",
+          "n": 1
+        },
+        {
+          "key_finding": "displaces the thyroid gland superiorly, and displaces the left internal jugular vein laterally",
+          "n": 1
+        },
+        {
+          "key_finding": "right thyroid lobe with retrosternal extension",
+          "n": 1
+        },
+        {
+          "key_finding": "mild mass effect deviating the trachea to the right without significant effacement",
+          "n": 1
+        },
+        {
+          "key_finding": "slight compression",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension involving trachea and esophagus",
+          "n": 1
+        },
+        {
+          "key_finding": "rightward location of the trachea approximately 4 mm from midline",
+          "n": 1
+        },
+        {
+          "key_finding": "broad interface with the tumor and left thyroid cartilage, multifocal deossification of the thyroid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, structures involved: trachea, carotid artery, jugular vein",
+          "n": 1
+        },
+        {
+          "key_finding": "cricoid cartilage chondronecrosis",
+          "n": 1
+        },
+        {
+          "key_finding": "brachiocephalic and left common carotid arteries, brachiocephalic veins",
+          "n": 1
+        },
+        {
+          "key_finding": "mild narrowing of the trachea with minimal diameter of 1.6 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 6.6 x 4.5 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "likely associated external compression",
+          "n": 1
+        },
+        {
+          "key_finding": "moderate narrowing of the airway level of the epiglottis",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 15 mm, transverse 7.6 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "right and posteriorly",
+          "n": 1
+        },
+        {
+          "key_finding": "severe, worsening tracheal compression",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal diameter of the trachea just lateral measuring 0.5 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "partial encasement of unspecified vessel",
+          "n": 1
+        },
+        {
+          "key_finding": "270 degree medial encasement of the proximal left common carotid artery",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension identified, tracheal and posterior margins focally involved",
+          "n": 1
+        },
+        {
+          "key_finding": "mild tracheal mass effect without invasion",
+          "n": 1
+        },
+        {
+          "key_finding": "displaces the right common carotid artery posteriorly",
+          "n": 1
+        },
+        {
+          "key_finding": "1.1 cm transverse x 1.5 cm AP",
+          "n": 1
+        },
+        {
+          "key_finding": "mild proximal tracheal stenosis",
+          "n": 1
+        },
+        {
+          "key_finding": "patulous appearance of the right piriform sinus favored to be related to mass effect",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, expanding the thyroid fascia",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 4 x 3.6 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, thyroid nodule displaces trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "extends to the retrosternal area",
+          "n": 1
+        },
+        {
+          "key_finding": "substernal goiter on the left",
+          "n": 1
+        },
+        {
+          "key_finding": "mild narrowing of the central bronchi bilaterally possibly due to tracheobronchomalacia",
+          "n": 1
+        },
+        {
+          "key_finding": "extends well below the sternum into the mediastinum",
+          "n": 1
+        },
+        {
+          "key_finding": "larynx displaced to the right, trachea affected",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowed surrounding the tracheostomy tube particularly at the level of the thyroid gland and at the thoracic inlet, right greater than left",
+          "n": 1
+        },
+        {
+          "key_finding": "respiratory distress",
+          "n": 1
+        },
+        {
+          "key_finding": "elongation of the AP diameter",
+          "n": 1
+        },
+        {
+          "key_finding": "mild compression of the trachea at the level of the thyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal mass effect resulting in tracheal narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "mass effect on the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "displacement of the trachea to the right without significant narrowing of the airway",
+          "n": 1
+        },
+        {
+          "key_finding": "extends to the level of the great vessels",
+          "n": 1
+        },
+        {
+          "key_finding": "midline",
+          "n": 1
+        },
+        {
+          "key_finding": "mild airway narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension identified on CT (no intraluminal extension)",
+          "n": 1
+        },
+        {
+          "key_finding": "7 mm at its most narrow spot",
+          "n": 1
+        },
+        {
+          "key_finding": "moderate narrowing of the supraglottic larynx at the level of the aryepiglottic folds",
+          "n": 1
+        },
+        {
+          "key_finding": "thickening and irregularity of the left cricoid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "mild right tracheal compression/displacement",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal luminal caliber of 1.9 x 0.8 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "right internal jugular vein partially resected for about 1.5 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "distal right common carotid and carotid bifurcation is medialized, coursing medial to the greater cornu of the hyoid bone, and elevating the posterior wall of the right piriform sinus",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, tracheal invasion and T4a disease",
+          "n": 1
+        },
+        {
+          "key_finding": "mild transverse compression of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "medial deviation of the carotids",
+          "n": 1
+        },
+        {
+          "key_finding": "Moderate mass effect upon the aerodigestive tract by the prevertebral edema and the multiloculated mass resulting in deviation of the aerodigestive tract to the left.",
+          "n": 1
+        },
+        {
+          "key_finding": "right carotid space is posterior laterally deviated",
+          "n": 1
+        },
+        {
+          "key_finding": "lesion abuts the esophagus with significant mass effect",
+          "n": 1
+        },
+        {
+          "key_finding": "mild local mass effect on surrounding structures",
+          "n": 1
+        },
+        {
+          "key_finding": "right vocal cord paralysis including medialization of the vocal fold and patulous appearance of the right piriform sinus",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension: mild extension into the left tracheoesophageal groove",
+          "n": 1
+        },
+        {
+          "key_finding": "internal jugular vein and carotid artery splaying",
+          "n": 1
+        },
+        {
+          "key_finding": "thyroid mass with extension into the mediastinum",
+          "n": 1
+        },
+        {
+          "key_finding": "chronic left vocal cord paralysis",
+          "n": 1
+        },
+        {
+          "key_finding": "proximal left common carotid artery draped around the lateral aspect of the goiter",
+          "n": 1
+        },
+        {
+          "key_finding": "extends approximately 4 cm below the sternal notch",
+          "n": 1
+        },
+        {
+          "key_finding": "indistinct anterior margins of the mass associated with the right sternocleidomastoid muscle, which may represent invasion",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, involving vascular structures, tracheal, and muscular interfaces",
+          "n": 1
+        },
+        {
+          "key_finding": "medialization of the left true vocal cord",
+          "n": 1
+        },
+        {
+          "key_finding": "slightly narrowed",
+          "n": 1
+        },
+        {
+          "key_finding": "extends to a level just below the carina",
+          "n": 1
+        },
+        {
+          "key_finding": "slightly substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "leftward mass effect on the trachea and larynx and rightward mass effect on the brachiocephalic artery",
+          "n": 1
+        },
+        {
+          "key_finding": "carotid sheaths are displaced laterally by the thyroid goiter, especially on the left",
+          "n": 1
+        },
+        {
+          "key_finding": "effacement of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "mild tracheal narrowing in the transverse dimension",
+          "n": 1
+        },
+        {
+          "key_finding": "Two, dominant solid right thyroid masses as described above with mass effect on the right portion of the airway, however airway is patent",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal substernal protrusion",
+          "n": 1
+        },
+        {
+          "key_finding": "mild medialization of the right true vocal cord",
+          "n": 1
+        },
+        {
+          "key_finding": "mild rightward tracheal deviation secondary to right thyroid enlargement",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension into the left tracheoesophageal groove",
+          "n": 1
+        },
+        {
+          "key_finding": "slight narrowing of the lateral to lateral diameter",
+          "n": 1
+        },
+        {
+          "key_finding": "goitrous enlargement of the thyroid with substernal extension, more prominent on the right than the left",
+          "n": 1
+        },
+        {
+          "key_finding": "extends into substernal location",
+          "n": 1
+        },
+        {
+          "key_finding": "compressed between the sternum and trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "moderate to severe tracheal stenosis",
+          "n": 1
+        },
+        {
+          "key_finding": "left common carotid artery and internal jugular vein displaced laterally",
+          "n": 1
+        },
+        {
+          "key_finding": "extracapsular extension into the superiormost right-sided strap muscles",
+          "n": 1
+        },
+        {
+          "key_finding": "severe mass effect on the cervical trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "slight mass effect on the trachea secondary to the right thyroid nodule without significant narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "significant narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "thyromegaly with mass effect and effacement of the airway",
+          "n": 1
+        },
+        {
+          "key_finding": "borders between the dominant thyroid lesion, esophagus, and trachea are ill defined",
+          "n": 1
+        },
+        {
+          "key_finding": "retrosternal extension especially on the right side",
+          "n": 1
+        },
+        {
+          "key_finding": "mild rightward mass effect upon the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "left internal jugular vein with moderate narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, involving trachea and right CCA",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowing of the proximal trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "rightward tracheal deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "contouring the left brachiocephalic vein",
+          "n": 1
+        },
+        {
+          "key_finding": "compressive narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "involvement of the cricoid",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension with adherence to the anterior trachea from cricoid cartilage inferiorly for 3 tracheal rings",
+          "n": 1
+        },
+        {
+          "key_finding": "slight abnormal contour of the larynx likely related to mass effect",
+          "n": 1
+        },
+        {
+          "key_finding": "Mild trachea effacement due to goiter",
+          "n": 1
+        },
+        {
+          "key_finding": "right common carotid artery, rightward displacement secondary to mass effect",
+          "n": 1
+        },
+        {
+          "key_finding": "leftward deviation of the cervicothoracic trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "slightly to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "right to left shift",
+          "n": 1
+        },
+        {
+          "key_finding": "lateral deviation of the right common carotid artery and internal jugular vein",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 7 to 8 cm below the sternal notch",
+          "n": 1
+        },
+        {
+          "key_finding": "mild mass effect upon the upper trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "compression of the tracheal airway rightward",
+          "n": 1
+        },
+        {
+          "key_finding": "extends slightly substernally",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 9 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "associated mass effect",
+          "n": 1
+        },
+        {
+          "key_finding": "carotid artery 90 degrees",
+          "n": 1
+        },
+        {
+          "key_finding": "Small laryngoceles bilaterally",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, left lobe of thyroid displacing trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "extends approximately 6 mm substernally",
+          "n": 1
+        },
+        {
+          "key_finding": "right cricoid cartilage medially displaced",
+          "n": 1
+        },
+        {
+          "key_finding": "enlarged and heterogeneous left thyroid lobe with substernal extension",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension towards the tracheoesophageal groove",
+          "n": 1
+        },
+        {
+          "key_finding": "extends into the mediastinum of the left lobe",
+          "n": 1
+        },
+        {
+          "key_finding": "near complete effacement of the oropharyngeal airway",
+          "n": 1
+        },
+        {
+          "key_finding": "Present: Limited (see Slide A17 and deeper levels)",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension into the tracheoesophageal groove",
+          "n": 1
+        },
+        {
+          "key_finding": "extends to the level of the sternal clavicular joint",
+          "n": 1
+        },
+        {
+          "key_finding": "right lobe 3.1 cm, isthmus 1.7 cm, left lobe 1.1 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "extension into upper mediastinum below the sternum",
+          "n": 1
+        },
+        {
+          "key_finding": "Extrathyroidal extension identified on MRI (displaces trachea and esophagus)",
+          "n": 1
+        },
+        {
+          "key_finding": "mild left substernal extension",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 1 inch substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "displacing the trachea and esophagus to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "mass effect on the airway from the right thyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "extracapsular extension, mass effect on the overlying strap muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "mild extrinsic compression of the trachea just below the thoracic inlet level",
+          "n": 1
+        },
+        {
+          "key_finding": "mild leftward deflection of the laryngeal cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "leftward deviation measuring 1.1 cm at most narrow portion",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 6 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal internal diameter of 0.9 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 4.3 x 3.0 x 5.9 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "extends into the superior mediastinal in a retrosternal position",
+          "n": 1
+        },
+        {
+          "key_finding": "minimum luminal diameter of 4 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "leftward deviation of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "mild impingement",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 13 mm, transverse 5 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "question right vocal cord palsy",
+          "n": 1
+        },
+        {
+          "key_finding": "mild deviation of the trachea to the right without stenosis",
+          "n": 1
+        },
+        {
+          "key_finding": "paresis/palsy of the right vocal cord",
+          "n": 1
+        },
+        {
+          "key_finding": "lateral deviation of the common carotid arteries and internal jugular veins bilaterally",
+          "n": 1
+        },
+        {
+          "key_finding": "Adjacent vessels remain patent, but are mildly displaced or narrowed",
+          "n": 1
+        },
+        {
+          "key_finding": "thyroid is diffusely and markedly enlarged and narrows the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "substernal goiter with tracheal compression",
+          "n": 1
+        },
+        {
+          "key_finding": "left common carotid artery posteriorly, left jugular vein laterally",
+          "n": 1
+        },
+        {
+          "key_finding": "mildly narrowed with a minimal luminal diameter of 1.2 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "causing left trachea deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "mass effect on the trachea and esophagus",
+          "n": 1
+        },
+        {
+          "key_finding": "slight medialization of the right vocal cord with asymmetric prominence of the right piriform sinus and laryngeal ventricle",
+          "n": 1
+        },
+        {
+          "key_finding": "present, indistinct margin with adjacent esophagus",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 0.9 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "extensive, distance not quantified",
+          "n": 1
+        },
+        {
+          "key_finding": "deossification of the right thyroid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "slightly to the left of midline",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal diameter 1.3 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "mildly displaced to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 8 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension identified on CT/MRI: yes, structures involved include trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 2.9 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 15 mm, transverse 11 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "deviation of the trachea to the left",
+          "n": 1
+        },
+        {
+          "key_finding": "effacement of the left piriform sinus and mass effect on the larynx",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 11.5 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "mild narrowing of the subglottic airway and trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "gross evidence of extrathyroidal extension with adherence to overlying sternothyroid muscle on the right isthmus nodule",
+          "n": 1
+        },
+        {
+          "key_finding": "extends predominantly on the right and a large isthmic nodule",
+          "n": 1
+        },
+        {
+          "key_finding": "extrinsic compression of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "small tracheal air leak",
+          "n": 1
+        },
+        {
+          "key_finding": "bilateral retropharyngeal extension",
+          "n": 1
+        },
+        {
+          "key_finding": "deviation to the left",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowing of the lateral to lateral diameter",
+          "n": 1
+        },
+        {
+          "key_finding": "AP 2.4 cm, transverse 1.0 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 0.9 cm substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "minimal caliber narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "trachea displaced to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "right RLN encased by cancer",
+          "n": 1
+        },
+        {
+          "key_finding": "extends 1 inch into the mediastinum",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, concerning for extracapsular extension",
+          "n": 1
+        },
+        {
+          "key_finding": "mild rightward tracheal deviation without significant compression",
+          "n": 1
+        },
+        {
+          "key_finding": "mild short segment narrowing of the trachea near the thoracic inlet",
+          "n": 1
+        },
+        {
+          "key_finding": "trachea deflected to the left",
+          "n": 1
+        },
+        {
+          "key_finding": "marked narrowing of the mid trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "shifts the trachea to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "Present, follicular carcinoma",
+          "n": 1
+        },
+        {
+          "key_finding": "without FDG avid discrete nodule identified",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension identified on MRI",
+          "n": 1
+        },
+        {
+          "key_finding": "laterally displaced left common carotid artery and internal jugular vein",
+          "n": 1
+        },
+        {
+          "key_finding": "extends into the superior mediastinum, terminating between the trachea and aortic arch",
+          "n": 1
+        },
+        {
+          "key_finding": "extends into the middle mediastinum",
+          "n": 1
+        },
+        {
+          "key_finding": "extrathyroidal extension: enlarged nodular thyroid",
+          "n": 1
+        },
+        {
+          "key_finding": "paresis",
+          "n": 1
+        },
+        {
+          "key_finding": "Lesion abuts however does not frankly invade the tracheal and esophageal lumen",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, structures involved: superior mediastinum/manubrial space",
+          "n": 1
+        },
+        {
+          "key_finding": "displaces the trachea towards the left",
+          "n": 1
+        },
+        {
+          "key_finding": "right anterior lateral aspect of the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowing persists",
+          "n": 1
+        },
+        {
+          "key_finding": "right-sided neck nodule causing tracheal deviation",
+          "n": 1
+        },
+        {
+          "key_finding": "deviation of the proximal cervical trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "trachea which is displaced posteriorly and mildly narrowed",
+          "n": 1
+        },
+        {
+          "key_finding": "likely associated focal narrowing of the airway",
+          "n": 1
+        },
+        {
+          "key_finding": "displacement",
+          "n": 1
+        },
+        {
+          "key_finding": "present, esophagus displaced anteriorly",
+          "n": 1
+        },
+        {
+          "key_finding": "significant tracheal stenosis",
+          "n": 1
+        },
+        {
+          "key_finding": "extends below the clavicular heads",
+          "n": 1
+        },
+        {
+          "key_finding": "narrowing to 2 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "right thyroid cartilage",
+          "n": 1
+        },
+        {
+          "key_finding": "0.9 cm at its midportion",
+          "n": 1
+        },
+        {
+          "key_finding": "measuring up to 16mm",
+          "n": 1
+        },
+        {
+          "key_finding": "posterior and lateral displacement of the adjacent vascular structure",
+          "n": 1
+        },
+        {
+          "key_finding": "focal narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "less than 180 degrees contact with lower brachiocephalic, left common carotid, and subclavian arteries",
+          "n": 1
+        },
+        {
+          "key_finding": "extends into the upper thorax",
+          "n": 1
+        },
+        {
+          "key_finding": "mild-moderate tracheal narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "right-sided deviation at the thoracic inlet",
+          "n": 1
+        },
+        {
+          "key_finding": "mass effect on the trachea above the thoracic inlet",
+          "n": 1
+        },
+        {
+          "key_finding": "deviated to right",
+          "n": 1
+        },
+        {
+          "key_finding": "mild associated airway narrowing",
+          "n": 1
+        },
+        {
+          "key_finding": "deviation to the right",
+          "n": 1
+        },
+        {
+          "key_finding": "carotid vessels",
+          "n": 1
+        },
+        {
+          "key_finding": "mild contact and displacement of brachiocephalic and left common carotid arteries",
+          "n": 1
+        },
+        {
+          "key_finding": "displaces and has mass effect on the airway, pushing it to the right",
+          "n": 1
+        }
+      ],
+      "finished_at": "2026-04-20T23:52:48Z"
+    },
+    "6": {
+      "phase": 6,
+      "started_at": "2026-04-20T23:53:24Z",
+      "gates": [
+        {
+          "name": "A_cpm_rows_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "A_cpm_no_null_rid",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "A_cpm_no_null_fna_path_outcome",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "B_cpm_rids_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "C_other_cpm_cols_unchanged_vs_phase4_snapshot",
+          "ok": true,
+          "detail": {
+            "live": "fa3e497104377d12d338bd734c3847ac",
+            "snapshot": "fa3e497104377d12d338bd734c3847ac"
+          }
+        },
+        {
+          "name": "D_source_rows_eq_48169",
+          "ok": true,
+          "detail": {
+            "observed": 48169,
+            "expected": 48169
+          }
+        },
+        {
+          "name": "D_source_rids_eq_10856",
+          "ok": true,
+          "detail": {
+            "observed": 10856,
+            "expected": 10856
+          }
+        },
+        {
+          "name": "D_source_model_eq_qwen25_32b",
+          "ok": true,
+          "detail": {
+            "observed": "qwen2.5-32b",
+            "expected": "qwen2.5-32b"
+          }
+        },
+        {
+          "name": "E_archive_pre9domainv4_exists_with_11037_rows",
+          "ok": true,
+          "detail": {
+            "archives_present": [
+              "note_entities_llm_airway_invasion_pre9domainv4_20260420T235106Z"
+            ],
+            "newest_archive": "note_entities_llm_airway_invasion_pre9domainv4_20260420T235106Z",
+            "row_count": 11037
+          }
+        },
+        {
+          "name": "F_cpm_pre282_snapshot_exists_with_10871_rows",
+          "ok": true,
+          "detail": {
+            "snapshots_present": [
+              "canonical_patient_master_pre282_20260420T235218Z"
+            ],
+            "newest_snapshot": "canonical_patient_master_pre282_20260420T235218Z",
+            "row_count": 10871
+          }
+        }
+      ],
+      "blockers": [],
+      "live_other_cols_md5": "fa3e497104377d12d338bd734c3847ac",
+      "live_other_cols_count": 1532,
+      "phase_4_snapshot_other_cols_md5": "fa3e497104377d12d338bd734c3847ac",
+      "observed": {
+        "cpm_n_rows": 10871,
+        "cpm_null_rid": 0,
+        "cpm_null_fna": 0,
+        "cpm_n_rids": 10871,
+        "source_n_rows": 48169,
+        "source_n_rids": 10856,
+        "source_models": "qwen2.5-32b",
+        "phase_1_archives_present": [
+          "note_entities_llm_airway_invasion_pre9domainv4_20260420T235106Z"
+        ],
+        "phase_4_snapshots_present": [
+          "canonical_patient_master_pre282_20260420T235218Z"
+        ]
+      },
+      "finished_at": "2026-04-20T23:53:29Z"
+    },
+    "7": {
+      "phase": 7,
+      "started_at": "2026-04-20T23:53:50Z",
+      "gates": [
+        {
+          "name": "registry_total_rows_post_eq_48169",
+          "ok": true,
+          "detail": {
+            "observed": 48169,
+            "expected": 48169
+          }
+        },
+        {
+          "name": "registry_total_patients_post_eq_10856",
+          "ok": true,
+          "detail": {
+            "observed": 10856,
+            "expected": 10856
+          }
+        },
+        {
+          "name": "registry_canonical_version_post_eq_v1_0_script282",
+          "ok": true,
+          "detail": {
+            "observed": "v1_0_script282"
+          }
+        },
+        {
+          "name": "registry_description_carries_script282_marker",
+          "ok": true,
+          "detail": {
+            "description_tail": " entities. | Script 282 (2026-04-20): rollup re-promoted against qwen2.5-32b 9domain_v4 rerun parquet (loaded by this script). CPM nlp_airway_has_data went 1123 TRUE / 9748 NULL -> 1634 TRUE / 0 NULL."
+          }
+        },
+        {
+          "name": "dictionary_4_cols_have_exact_per_col_desc_and_v279_note",
+          "ok": true,
+          "detail": {
+            "rows": [
+              {
+                "column_name": "nlp_airway_has_data",
+                "description": "TRUE iff patient has >=1 positive-entity extraction (confidence>=0.5, present_or_negated='present' OR NULL) from note_entities_llm_airway_invasion (qwen2.5-32b, 9domain_v4 rerun 2026-04-19); FALSE if patient is in source with no positive entities or absent from source. NEVER NULL post-Script 282.",
+                "v279_note": "Re-promoted by Script 282 (2026-04-20) from qwen2.5-32b airway_invasion 9domain_v4 rerun.",
+                "rebuilt_by": "script282_2026-04-20"
+              },
+              {
+                "column_name": "nlp_airway_key_finding",
+                "description": "Highest-priority entity value for this patient, resolved via KEY_FINDING_PRIORITY (laryngeal_invasion > ete_on_imaging > vascular_encasement > airway_compromise_grade > vocal_cord_imaging > esophageal_compression > tracheal_narrowing > substernal_extension > mass_effect > tracheal_deviation > other) tiebroken by confidence DESC NULLS LAST then entity_value alpha. NULL when has_data=FALSE.",
+                "v279_note": "Re-promoted by Script 282 (2026-04-20) from qwen2.5-32b airway_invasion 9domain_v4 rerun.",
+                "rebuilt_by": "script282_2026-04-20"
+              },
+              {
+                "column_name": "nlp_airway_n_entities",
+                "description": "Total positive airway-invasion entities extracted across all notes for this patient. 0 when has_data=FALSE.",
+                "v279_note": "Re-promoted by Script 282 (2026-04-20) from qwen2.5-32b airway_invasion 9domain_v4 rerun.",
+                "rebuilt_by": "script282_2026-04-20"
+              },
+              {
+                "column_name": "nlp_airway_n_notes",
+                "description": "Count of distinct notes per patient with >=1 positive extracted airway-invasion entity. 0 when has_data=FALSE.",
+                "v279_note": "Re-promoted by Script 282 (2026-04-20) from qwen2.5-32b airway_invasion 9domain_v4 rerun.",
+                "rebuilt_by": "script282_2026-04-20"
+              }
+            ],
+            "descriptions_exact_match": true
+          }
+        },
+        {
+          "name": "readme_source_n_rows_eq_48169",
+          "ok": true,
+          "detail": {
+            "observed": 48169,
+            "expected": 48169
+          }
+        },
+        {
+          "name": "readme_source_n_rids_eq_10856",
+          "ok": true,
+          "detail": {
+            "observed": 10856,
+            "expected": 10856
+          }
+        },
+        {
+          "name": "readme_cpm_n_rows_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "readme_cpm_description_carries_script282_marker",
+          "ok": true,
+          "detail": {
+            "tail": "le_drift convention). [Script 282 2026-04-20: airway_invasion re-extracted at qwen2.5-32b (48,169 rows / 10,856 RIDs); CPM nlp_airway_* rebuilt with explicit TRUE/FALSE (0 NULLs). has_data TRUE=1634.]"
+          }
+        }
+      ],
+      "blockers": [],
+      "post_has_data_true": 1634,
+      "post_sum_n_notes": 5285,
+      "post_sum_n_entities": 10377,
+      "registry_after": {
+        "total_rows": 48169,
+        "total_patients": 10856,
+        "canonical_version": "v1_0_script282",
+        "description_len": 219
+      },
+      "dictionary_after": [
+        {
+          "column_name": "nlp_airway_has_data",
+          "description": "TRUE iff patient has >=1 positive-entity extraction (confidence>=0.5, present_or_negated='present' OR NULL) from note_entities_llm_airway_invasion (qwen2.5-32b, 9domain_v4 rerun 2026-04-19); FALSE if patient is in source with no positive entities or absent from source. NEVER NULL post-Script 282.",
+          "v279_note": "Re-promoted by Script 282 (2026-04-20) from qwen2.5-32b airway_invasion 9domain_v4 rerun.",
+          "rebuilt_by": "script282_2026-04-20"
+        },
+        {
+          "column_name": "nlp_airway_key_finding",
+          "description": "Highest-priority entity value for this patient, resolved via KEY_FINDING_PRIORITY (laryngeal_invasion > ete_on_imaging > vascular_encasement > airway_compromise_grade > vocal_cord_imaging > esophageal_compression > tracheal_narrowing > substernal_extension > mass_effect > tracheal_deviation > other) tiebroken by confidence DESC NULLS LAST then entity_value alpha. NULL when has_data=FALSE.",
+          "v279_note": "Re-promoted by Script 282 (2026-04-20) from qwen2.5-32b airway_invasion 9domain_v4 rerun.",
+          "rebuilt_by": "script282_2026-04-20"
+        },
+        {
+          "column_name": "nlp_airway_n_entities",
+          "description": "Total positive airway-invasion entities extracted across all notes for this patient. 0 when has_data=FALSE.",
+          "v279_note": "Re-promoted by Script 282 (2026-04-20) from qwen2.5-32b airway_invasion 9domain_v4 rerun.",
+          "rebuilt_by": "script282_2026-04-20"
+        },
+        {
+          "column_name": "nlp_airway_n_notes",
+          "description": "Count of distinct notes per patient with >=1 positive extracted airway-invasion entity. 0 when has_data=FALSE.",
+          "v279_note": "Re-promoted by Script 282 (2026-04-20) from qwen2.5-32b airway_invasion 9domain_v4 rerun.",
+          "rebuilt_by": "script282_2026-04-20"
+        }
+      ],
+      "readme_source_action": "updated_existing",
+      "readme_cpm_action": "updated_existing",
+      "readme_source_after": {
+        "n_rows": 48169,
+        "n_rids": 10856,
+        "description_len": 143
+      },
+      "readme_cpm_after": {
+        "n_rows": 10871,
+        "n_rids": 10871,
+        "description_len": 288
+      },
+      "finished_at": "2026-04-20T23:53:52Z"
+    }
+  },
+  "last_started_at": "2026-04-20T23:53:49Z",
+  "last_phase_arg": "7",
+  "last_finished_at": "2026-04-20T23:53:52Z",
+  "last_return_code": 0
+}
