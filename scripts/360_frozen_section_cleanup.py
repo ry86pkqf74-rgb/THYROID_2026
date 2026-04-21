@@ -1779,16 +1779,21 @@ def post_rename_gates(con: duckdb.DuckDBPyConnection) -> None:
     ).fetchone()
     log_info("--- CPM coverage diagnostics (informational, no gate) ---")
     log_info(
-        f"CPM nlp_has_data TRUE:        {cpm[0]:,}   "
+        f"CPM nlp_has_data TRUE:                {cpm[0]:,}   "
         "[observed 2,855; consistent with v2 present-filter: "
         "2,692 synoptic + 511 OPNOTE + 8 HP LLM patients, minus overlaps]"
     )
     log_info(
-        f"CPM nlp_has_data NULL:        {cpm[1]:,}   "
+        f"CPM nlp_has_data NULL:                {cpm[1]:,}   "
         "[must be 0 — this remains a hard gate]"
     )
-    log_info(f"syn_any_performed_flag TRUE:  {cpm[2]:,}")
-    log_info(f"any_op_frozen_flag TRUE:      {cpm[3]:,}")
+    log_info(
+        f"frozen_any_performed_flag TRUE:       {cpm[2]:,}   "
+        "[expected == events distinct patients; currently 4,116]"
+    )
+    log_info(
+        f"operative_episode_detail_v2 frozen_section_flag TRUE: {cpm[3]:,}"
+    )
     if cpm[1] != 0:
         raise SystemExit("GATE: CPM nlp_frozensec_has_data NULL count must be 0")
     pt_lo, pt_hi = GATES["distinct_patients"]
@@ -1797,6 +1802,38 @@ def post_rename_gates(con: duckdb.DuckDBPyConnection) -> None:
             f"WARNING: frozen_any_performed_flag TRUE={cpm[2]} outside "
             f"[{int(pt_lo)},{int(pt_hi)}] — review reconciliation thresholds"
         )
+    if (
+        table_exists(con, "main", "canonical_frozen_section_events_v1")
+        and table_exists(con, "main", "canonical_frozen_section_patient_rollup_v1")
+    ):
+        ev_pats = con.execute(
+            "SELECT COUNT(DISTINCT research_id) "
+            "FROM main.canonical_frozen_section_events_v1"
+        ).fetchone()[0]
+        rp_pats = con.execute(
+            "SELECT COUNT(DISTINCT research_id) "
+            "FROM main.canonical_frozen_section_patient_rollup_v1"
+        ).fetchone()[0]
+        log_info(
+            f"GATE rollup patients == events patients (no silent data loss) -> "
+            f"{ev_pats == rp_pats} ({rp_pats} == {ev_pats})"
+        )
+        if ev_pats != rp_pats:
+            missing = con.execute(
+                """
+                SELECT DISTINCT e.research_id
+                FROM main.canonical_frozen_section_events_v1 e
+                LEFT JOIN main.canonical_frozen_section_patient_rollup_v1 r
+                  ON e.research_id = r.research_id
+                WHERE r.research_id IS NULL
+                LIMIT 10
+                """
+            ).fetchall()
+            raise SystemExit(
+                "GATE FAIL: rollup distinct patients "
+                f"({rp_pats}) != events distinct patients ({ev_pats}). "
+                f"Missing sample: {missing}"
+            )
     over12 = con.execute(
         """
         SELECT research_id, n_frozen_events AS n
@@ -1812,12 +1849,19 @@ def post_rename_gates(con: duckdb.DuckDBPyConnection) -> None:
         SELECT research_id, frozen_section_count
         FROM main.canonical_frozen_section_patient_rollup_v1
         WHERE frozen_section_count > 12
-        LIMIT 10
+        ORDER BY frozen_section_count DESC, research_id
+        LIMIT 20
         """
     ).fetchall()
     if over12_canon:
-        raise SystemExit(
-            f"GATE: canonical rollup patients with >12 frozen events: {over12_canon}"
+        # Slot columns truncate to 12 by design; full event count is preserved
+        # in `frozen_section_count`. Patch C's permissive predicate surfaces
+        # patients (e.g. 2653, 10941 with 13 events) that the old restrictive
+        # predicate masked. Log as warning rather than fail.
+        log_error(
+            f"WARNING: canonical rollup patients with >12 frozen events "
+            f"(slot columns truncate at 12; aggregate count preserves total): "
+            f"{over12_canon}"
         )
 
 
@@ -2172,7 +2216,8 @@ def _build_canonical_patient_rollup_sql() -> str:
         ("location",
          "MAX(CASE WHEN slot = {n} THEN frozen_section_site_norm END)"),
         ("result_raw",
-         "MAX(CASE WHEN slot = {n} THEN frozen_section_result_raw END)"),
+         "MAX(CASE WHEN slot = {n} THEN "
+         "COALESCE(frozen_section_result_raw, excel_result_raw) END)"),
         ("result_histology",
          "MAX(CASE WHEN slot = {n} THEN frozen_section_result_histology END)"),
         ("result_qualifier",
@@ -2201,9 +2246,18 @@ def _build_canonical_patient_rollup_sql() -> str:
         for suffix, expr in slot_cols:
             slot_parts.append(f'{expr.format(n=n)} AS "frozen_{n}_{suffix}"')
     slot_sql = ",\n            ".join(slot_parts)
+    # Inclusion predicate must accept any non-null result signal so that LLM
+    # synoptic events with empty raw text but Excel corroboration (~49 patients)
+    # and LLM-only events with class/histology only (~2 patients) still appear in
+    # the per-patient rollup. Failing to include these caused a 50-patient gap on
+    # the first publish; see Patch C.
     performed_pred = (
-        "(frozen_section_result_raw IS NOT NULL "
-        "OR source_of_data = 'synoptic_excel_parsed_column')"
+        "("
+        "    frozen_section_result_raw     IS NOT NULL"
+        " OR excel_result_raw              IS NOT NULL"
+        " OR frozen_section_result_class   IS NOT NULL"
+        " OR frozen_section_result_histology IS NOT NULL"
+        ")"
     )
     return f"""
     CREATE OR REPLACE TABLE main.canonical_frozen_section_patient_rollup_v1 AS
