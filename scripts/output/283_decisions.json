@@ -7782,10 +7782,159 @@
         ]
       },
       "finished_at": "2026-04-21T00:30:36Z"
+    },
+    "7": {
+      "phase": 7,
+      "started_at": "2026-04-21T00:30:44Z",
+      "gates": [
+        {
+          "name": "registry_total_rows_post_eq_32408",
+          "ok": true,
+          "detail": {
+            "observed": 32408,
+            "expected": 32408
+          }
+        },
+        {
+          "name": "registry_total_patients_post_eq_10863",
+          "ok": true,
+          "detail": {
+            "observed": 10863,
+            "expected": 10863
+          }
+        },
+        {
+          "name": "registry_canonical_version_post_eq_v1_0_script283",
+          "ok": true,
+          "detail": {
+            "observed": "v1_0_script283"
+          }
+        },
+        {
+          "name": "registry_description_carries_script283_marker",
+          "ok": true,
+          "detail": {
+            "description_tail": "ndings. | Script 283 (2026-04-20): rollup re-promoted against qwen2.5-32b 9domain_v4 rerun parquet (loaded by this script). CPM nlp_frozensec_has_data went 184 TRUE / 10687 NULL -> 2855 TRUE / 0 NULL."
+          }
+        },
+        {
+          "name": "dictionary_4_cols_have_exact_per_col_desc_and_v279_note",
+          "ok": true,
+          "detail": {
+            "rows": [
+              {
+                "column_name": "nlp_frozensec_has_data",
+                "description": "TRUE iff patient has >=1 positive-entity extraction (confidence>=0.5, present_or_negated='present' OR NULL) from note_entities_llm_frozen_section_detail (qwen2.5-32b, 9domain_v4 rerun 2026-04-19); FALSE if patient is in source with no positive entities or absent from source. NEVER NULL post-Script 283.",
+                "v279_note": "Re-promoted by Script 283 (2026-04-20) from qwen2.5-32b frozen_section_detail 9domain_v4 rerun.",
+                "rebuilt_by": "script283_2026-04-20"
+              },
+              {
+                "column_name": "nlp_frozensec_key_finding",
+                "description": "Highest-priority entity value for this patient, resolved via KEY_FINDING_PRIORITY (final_pathology_concordance > discordance_reason > intraop_decision_impact > frozen_section_result > frozen_section_turnaround > number_of_sections > frozen_section_target > other) tiebroken by confidence DESC NULLS LAST then entity_value alpha. NULL when has_data=FALSE.",
+                "v279_note": "Re-promoted by Script 283 (2026-04-20) from qwen2.5-32b frozen_section_detail 9domain_v4 rerun.",
+                "rebuilt_by": "script283_2026-04-20"
+              },
+              {
+                "column_name": "nlp_frozensec_n_entities",
+                "description": "Total positive frozen-section-detail entities extracted across all notes for this patient. 0 when has_data=FALSE.",
+                "v279_note": "Re-promoted by Script 283 (2026-04-20) from qwen2.5-32b frozen_section_detail 9domain_v4 rerun.",
+                "rebuilt_by": "script283_2026-04-20"
+              },
+              {
+                "column_name": "nlp_frozensec_n_notes",
+                "description": "Count of distinct notes per patient with >=1 positive extracted frozen-section-detail entity. 0 when has_data=FALSE.",
+                "v279_note": "Re-promoted by Script 283 (2026-04-20) from qwen2.5-32b frozen_section_detail 9domain_v4 rerun.",
+                "rebuilt_by": "script283_2026-04-20"
+              }
+            ],
+            "descriptions_exact_match": true
+          }
+        },
+        {
+          "name": "readme_source_n_rows_eq_32408",
+          "ok": true,
+          "detail": {
+            "observed": 32408,
+            "expected": 32408
+          }
+        },
+        {
+          "name": "readme_source_n_rids_eq_10863",
+          "ok": true,
+          "detail": {
+            "observed": 10863,
+            "expected": 10863
+          }
+        },
+        {
+          "name": "readme_cpm_n_rows_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "readme_cpm_description_carries_script283_marker",
+          "ok": true,
+          "detail": {
+            "tail": " TRUE=1634.] [Script 283 2026-04-20: frozen_section_detail re-extracted at qwen2.5-32b (32,408 rows / 10,863 RIDs); CPM nlp_frozensec_* rebuilt with explicit TRUE/FALSE (0 NULLs). has_data TRUE=2855.]"
+          }
+        }
+      ],
+      "blockers": [],
+      "post_has_data_true": 2855,
+      "post_sum_n_notes": 3776,
+      "post_sum_n_entities": 7715,
+      "registry_after": {
+        "total_rows": 32408,
+        "total_patients": 10863,
+        "canonical_version": "v1_0_script283",
+        "description_len": 231
+      },
+      "dictionary_after": [
+        {
+          "column_name": "nlp_frozensec_has_data",
+          "description": "TRUE iff patient has >=1 positive-entity extraction (confidence>=0.5, present_or_negated='present' OR NULL) from note_entities_llm_frozen_section_detail (qwen2.5-32b, 9domain_v4 rerun 2026-04-19); FALSE if patient is in source with no positive entities or absent from source. NEVER NULL post-Script 283.",
+          "v279_note": "Re-promoted by Script 283 (2026-04-20) from qwen2.5-32b frozen_section_detail 9domain_v4 rerun.",
+          "rebuilt_by": "script283_2026-04-20"
+        },
+        {
+          "column_name": "nlp_frozensec_key_finding",
+          "description": "Highest-priority entity value for this patient, resolved via KEY_FINDING_PRIORITY (final_pathology_concordance > discordance_reason > intraop_decision_impact > frozen_section_result > frozen_section_turnaround > number_of_sections > frozen_section_target > other) tiebroken by confidence DESC NULLS LAST then entity_value alpha. NULL when has_data=FALSE.",
+          "v279_note": "Re-promoted by Script 283 (2026-04-20) from qwen2.5-32b frozen_section_detail 9domain_v4 rerun.",
+          "rebuilt_by": "script283_2026-04-20"
+        },
+        {
+          "column_name": "nlp_frozensec_n_entities",
+          "description": "Total positive frozen-section-detail entities extracted across all notes for this patient. 0 when has_data=FALSE.",
+          "v279_note": "Re-promoted by Script 283 (2026-04-20) from qwen2.5-32b frozen_section_detail 9domain_v4 rerun.",
+          "rebuilt_by": "script283_2026-04-20"
+        },
+        {
+          "column_name": "nlp_frozensec_n_notes",
+          "description": "Count of distinct notes per patient with >=1 positive extracted frozen-section-detail entity. 0 when has_data=FALSE.",
+          "v279_note": "Re-promoted by Script 283 (2026-04-20) from qwen2.5-32b frozen_section_detail 9domain_v4 rerun.",
+          "rebuilt_by": "script283_2026-04-20"
+        }
+      ],
+      "readme_source_action": "updated_existing",
+      "readme_cpm_action": "updated_existing",
+      "readme_source_after": {
+        "n_rows": 32408,
+        "n_rids": 10863,
+        "description_len": 152
+      },
+      "readme_cpm_after": {
+        "n_rows": 10871,
+        "n_rids": 10871,
+        "description_len": 476
+      },
+      "finished_at": "2026-04-21T00:30:48Z"
     }
   },
-  "last_started_at": "2026-04-21T00:30:32Z",
-  "last_phase_arg": "6",
-  "last_finished_at": "2026-04-21T00:30:36Z",
+  "last_started_at": "2026-04-21T00:30:44Z",
+  "last_phase_arg": "7",
+  "last_finished_at": "2026-04-21T00:30:48Z",
   "last_return_code": 0
 }
