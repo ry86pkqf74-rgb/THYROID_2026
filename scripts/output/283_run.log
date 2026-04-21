@@ -1,0 +1,134 @@
+[00:18:12.758Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:18:13.571Z] === PHASE 0 — parquet audit + measure positive targets (READ-ONLY) ===
+[00:18:13.572Z]   gate parquet_file_present: OK — {'path': '/Users/loganglosser/THYROID_2026/runs/9domain_v4/frozen_section_detail/output/note_entities_llm_frozen_section_detail.parquet'}
+[00:18:14.396Z]   0A: parquet rows=32,408 rids=10,863 nrids=32,408
+[00:18:14.396Z]       model=qwen2.5-32b  base_url=http://213.5.130.43:20049/v1
+[00:18:14.396Z]       preprocess_script_version=v4_9domain_rerun_2026-04-19  n_batch=1
+[00:18:14.396Z]       extracted_at min=2026-04-19T06:37:01.497006+00:00  max=2026-04-19T07:58:40.074652+00:00
+[00:18:14.396Z]   gate parquet_n_rows_eq_32408: OK — {'observed': 32408, 'expected': 32408}
+[00:18:14.396Z]   gate parquet_n_rids_eq_10863: OK — {'observed': 10863, 'expected': 10863}
+[00:18:14.396Z]   gate parquet_n_nrids_eq_32408: OK — {'observed': 32408, 'expected': 32408}
+[00:18:14.396Z]   gate parquet_model_eq_qwen25_32b: OK — {'observed': 'qwen2.5-32b', 'expected': 'qwen2.5-32b'}
+[00:18:14.396Z]   gate parquet_base_url_eq_pinned: OK — {'observed': 'http://213.5.130.43:20049/v1', 'expected': 'http://213.5.130.43:20049/v1'}
+[00:18:14.396Z]   gate parquet_preprocess_script_version_eq_pinned: OK — {'observed': 'v4_9domain_rerun_2026-04-19', 'expected': 'v4_9domain_rerun_2026-04-19'}
+[00:18:14.396Z]   gate parquet_preprocess_batch_id_uniform_and_eq_pinned: OK — {'observed_distinct': 1, 'value': '42df0de0-e0c5-4342-877c-97c61aa8a01c', 'expected': '42df0de0-e0c5-4342-877c-97c61aa8a01c'}
+[00:18:14.396Z]   gate parquet_extracted_at_min_starts_with_pinned: OK — {'observed': '2026-04-19T06:37:01.497006+00:00', 'expected_prefix': '2026-04-19T06:37'}
+[00:18:14.396Z]   gate parquet_extracted_at_max_starts_with_pinned: OK — {'observed': '2026-04-19T07:58:40.074652+00:00', 'expected_prefix': '2026-04-19T07:58'}
+[00:18:14.551Z]   0B: parquet hashes:  rj=a472591e1940a470c3053283079bf09e  nd=93e94f6531350f321d9c498d39392333  src=565ce1c3f27f1ad40c7a86ff89e51469
+[00:18:14.552Z]   gate parquet_rjhash_match_pinned: OK — {'observed': 'a472591e1940a470c3053283079bf09e', 'pinned': 'a472591e1940a470c3053283079bf09e'}
+[00:18:14.552Z]   gate parquet_ndhash_match_pinned: OK — {'observed': '93e94f6531350f321d9c498d39392333', 'pinned': '93e94f6531350f321d9c498d39392333'}
+[00:18:14.552Z]   gate parquet_srchash_match_pinned: OK — {'observed': '565ce1c3f27f1ad40c7a86ff89e51469', 'pinned': '565ce1c3f27f1ad40c7a86ff89e51469'}
+[00:18:14.578Z]   gate parquet_dup_rows_eq_0: OK — {'observed': 0, 'expected': 0}
+[00:18:14.579Z]   gate parquet_dup_groups_eq_0: OK — {'observed': 0, 'expected': 0}
+[00:18:14.700Z]   0D: parquet positive targets: rids=2,855 notes=3,776 entities=7,715
+[00:18:14.700Z]   gate parquet_pos_rids_eq_pinned: OK — {'observed': 2855, 'expected': 2855}
+[00:18:14.700Z]   gate parquet_pos_notes_eq_pinned: OK — {'observed': 3776, 'expected': 3776}
+[00:18:14.701Z]   gate parquet_pos_entities_eq_pinned: OK — {'observed': 7715, 'expected': 7715}
+[00:18:14.813Z]   0E: current MD source rows=11,037 rids=5,641 models=qwen3:32b
+[00:18:14.813Z]   gate md_source_stale_rows_eq_11037: OK — {'observed': 11037, 'expected': 11037}
+[00:18:14.813Z]   gate md_source_stale_rids_eq_5641: OK — {'observed': 5641, 'expected': 5641}
+[00:18:14.813Z]   gate md_source_stale_model_eq_qwen3_32b: OK — {'observed': 'qwen3:32b', 'expected': 'qwen3:32b'}
+[00:18:14.972Z]   0F: CPM rows=10,871 rids=10,871  stale nlp_frozensec_has_data: TRUE=184 NULL=10687  sum_n_notes=187 sum_n_entities=213
+[00:18:14.972Z]   gate cpm_rows_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[00:18:14.972Z]   gate cpm_rids_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[00:18:14.972Z]   gate cpm_no_null_rid: OK — {'observed': 0}
+[00:18:14.972Z]   gate stale_has_data_true_eq_184: OK — {'observed': 184, 'expected': 184}
+[00:18:14.972Z]   gate stale_has_data_null_eq_10687: OK — {'observed': 10687, 'expected': 10687}
+[00:18:14.972Z]   gate stale_not_already_promoted: OK — {'detail': 'has_null==0 AND has_true ~= target would mean rollup already promoted; refusing to clobber.'}
+[00:18:18.053Z]   gate registry_total_rows_stale_eq_11037: OK — {'observed': 11037, 'expected': 11037}
+[00:18:18.053Z]   gate registry_total_patients_stale_eq_5641: OK — {'observed': 5641, 'expected': 5641}
+[00:18:18.053Z] 
+[00:18:18.053Z] ──── PHASE 0 SUMMARY ────
+[00:18:18.053Z]   gates: 29 total, 29 passed, 0 blockers
+[00:18:18.053Z]   ALL GATES PASSED — Phase 1 may proceed.
+[00:18:18.053Z] ─────────────────────────
+[00:25:33.022Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:25:33.634Z] === PHASE 1 — archive current MD source to archive_pub_v1_0 ===
+[00:25:34.000Z]   pre-archive source: rows=11,037 rids=5,641 model=qwen3:32b
+[00:25:36.342Z]   CTAS "Thyroid 2026 UPdated".archive_pub_v1_0.note_entities_llm_frozen_section_detail_pre9domainv4_20260421T002536Z AS SELECT * FROM main.note_entities_llm_frozen_section_detail ...
+[00:25:38.589Z]   archive note_entities_llm_frozen_section_detail_pre9domainv4_20260421T002536Z: rows=11,037 rids=5,641 model=qwen3:32b
+[00:25:38.589Z]   gate archive_rows_eq_pre_rows: OK — {'observed': 11037, 'pre_archive': 11037}
+[00:25:38.589Z]   gate archive_rids_eq_pre_rids: OK — {'observed': 5641, 'pre_archive': 5641}
+[00:25:38.589Z]   gate archive_rows_eq_11037: OK — {'observed': 11037, 'expected': 11037}
+[00:25:38.589Z]   gate archive_model_eq_qwen3_32b: OK — {'observed': 'qwen3:32b', 'expected': 'qwen3:32b'}
+[00:27:51.176Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:27:51.719Z] === PHASE 2 — load parquet to MD with synth provenance + (no-op) dedup ===
+[00:27:53.481Z]   gate phase_1_archive_present_before_load: OK — {'newest_archive': 'note_entities_llm_frozen_section_detail_pre9domainv4_20260421T002536Z'}
+[00:27:53.481Z]   loading parquet note_entities_llm_frozen_section_detail.parquet -> main.note_entities_llm_frozen_section_detail (dedup is a no-op: parquet has zero duplicate note_row_ids)...
+[00:27:59.082Z]   reprojecting columns to lock ordinal_position vs Script 282 schema...
+[00:27:59.705Z]   post-load: rows=32,408 rids=10,863 nrids=32,408
+[00:27:59.705Z]              models=qwen2.5-32b  base_urls=http://213.5.130.43:20049/v1
+[00:27:59.705Z]              entity_domain=frozen_section_detail  llm_provider=vllm  llm_sdk=openai
+[00:27:59.705Z]              provider_returned_model=qwen2.5-32b  sdk_version_set=0  fingerprint_set=0
+[00:27:59.705Z]   gate post_load_n_rows_eq_32408: OK — {'observed': 32408, 'expected': 32408}
+[00:27:59.705Z]   gate post_load_n_rids_eq_10863: OK — {'observed': 10863, 'expected': 10863}
+[00:27:59.705Z]   gate post_load_nrids_eq_rows_dedup_invariant: OK — {'detail': 'post-dedup, 1 row per note_row_id; nrids must equal rows', 'n_nrids': 32408, 'n_rows': 32408}
+[00:27:59.705Z]   gate post_load_model_eq_qwen25_32b: OK — {'observed': 'qwen2.5-32b', 'expected': 'qwen2.5-32b'}
+[00:27:59.705Z]   gate post_load_base_url_eq_pinned: OK — {'observed': 'http://213.5.130.43:20049/v1', 'expected': 'http://213.5.130.43:20049/v1'}
+[00:27:59.705Z]   gate post_load_entity_domain_eq_synth: OK — {'observed': 'frozen_section_detail', 'expected': 'frozen_section_detail'}
+[00:27:59.705Z]   gate post_load_llm_provider_eq_synth: OK — {'observed': 'vllm', 'expected': 'vllm'}
+[00:27:59.705Z]   gate post_load_llm_sdk_eq_synth: OK — {'observed': 'openai', 'expected': 'openai'}
+[00:27:59.705Z]   gate post_load_provider_returned_model_eq_synth: OK — {'observed': 'qwen2.5-32b', 'expected': 'qwen2.5-32b'}
+[00:27:59.705Z]   gate post_load_n_llm_sdk_version_eq_0: OK — {'observed': 0}
+[00:27:59.705Z]   gate post_load_n_provider_system_fingerprint_eq_0: OK — {'observed': 0}
+[00:27:59.847Z]   gate post_load_schema_eq_expected_23_cols: OK — {'observed': ['note_row_id', 'domain', 'llm_model', 'llm_base_url', 'extracted_at', 'result_json', 'research_id', 'note_type', 'note_date', 'linkage_date', 'source_workbook', 'source_sheet', 'source_column', 'note_index', 'preprocess_batch_id', 'preprocessed_at_utc', 'preprocess_script_version', 'entity_domain', 'llm_provider', 'llm_sdk', 'llm_sdk_version', 'provider_returned_model', 'provider_system_fingerprint'], 'expected': ['note_row_id', 'domain', 'llm_model', 'llm_base_url', 'extracted_at', 'result_json', 'research_id', 'note_type', 'note_date', 'linkage_date', 'source_workbook', 'source_sheet', 'source_column', 'note_index', 'preprocess_batch_id', 'preprocessed_at_utc', 'preprocess_script_version', 'entity_domain', 'llm_provider', 'llm_sdk', 'llm_sdk_version', 'provider_returned_model', 'provider_system_fingerprint']}
+[00:30:00.743Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:30:01.228Z] === PHASE 3 — post-load byte-hash parity (MD == parquet) ===
+[00:30:01.831Z]   MD     : rj=a472591e1940a470c3053283079bf09e  nd=93e94f6531350f321d9c498d39392333  src=565ce1c3f27f1ad40c7a86ff89e51469
+[00:30:01.831Z]   pinned : rj=a472591e1940a470c3053283079bf09e  nd=93e94f6531350f321d9c498d39392333  src=565ce1c3f27f1ad40c7a86ff89e51469
+[00:30:01.831Z]   gate md_rjhash_eq_parquet_rjhash: OK — {'observed': 'a472591e1940a470c3053283079bf09e', 'pinned': 'a472591e1940a470c3053283079bf09e'}
+[00:30:01.831Z]   gate md_ndhash_eq_parquet_ndhash: OK — {'observed': '93e94f6531350f321d9c498d39392333', 'pinned': '93e94f6531350f321d9c498d39392333'}
+[00:30:01.831Z]   gate md_srchash_eq_parquet_srchash: OK — {'observed': '565ce1c3f27f1ad40c7a86ff89e51469', 'pinned': '565ce1c3f27f1ad40c7a86ff89e51469'}
+[00:30:01.951Z]   gate md_rjhash_eq_live_parquet_rjhash: OK — {'md': 'a472591e1940a470c3053283079bf09e', 'live_parquet': 'a472591e1940a470c3053283079bf09e'}
+[00:30:01.951Z]   gate md_ndhash_eq_live_parquet_ndhash: OK — {'md': '93e94f6531350f321d9c498d39392333', 'live_parquet': '93e94f6531350f321d9c498d39392333'}
+[00:30:01.951Z]   gate md_srchash_eq_live_parquet_srchash: OK — {'md': '565ce1c3f27f1ad40c7a86ff89e51469', 'live_parquet': '565ce1c3f27f1ad40c7a86ff89e51469'}
+[00:30:08.206Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:30:08.777Z] === PHASE 4 — pre-mutation CPM snapshot to archive_pub_v1_0 ===
+[00:30:10.928Z]   CTAS "Thyroid 2026 UPdated".archive_pub_v1_0.canonical_patient_master_pre283_20260421T003010Z AS SELECT * FROM main.canonical_patient_master ...
+[00:30:16.335Z]   snapshot canonical_patient_master_pre283_20260421T003010Z: rows=10,871 rids=10,871
+[00:30:16.335Z]   gate snapshot_rows_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[00:30:16.335Z]   gate snapshot_rids_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[00:30:17.820Z]   snapshot non-nlp_frozensec_* MD5 = 26d51d389075f06d11c6f41739fba730  (over 1532 columns; pinned for Phase 6 invariant C)
+[00:30:23.556Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:30:23.977Z] === PHASE 5 — rollup UPDATE on canonical_patient_master (nlp_frozensec_*) ===
+[00:30:23.977Z]   building per-RID rollup CTE -> TEMP TABLE _rollup_283 ...
+[00:30:24.552Z]     rollup: distinct_rids=2855  sum_n_notes=3776  sum_n_entities=7715
+[00:30:24.552Z]   gate rollup_distinct_rids_eq_pinned: OK — {'observed': 2855, 'pinned': 2855}
+[00:30:24.552Z]   gate rollup_n_notes_eq_pinned: OK — {'observed': 3776, 'pinned': 3776}
+[00:30:24.552Z]   gate rollup_n_entities_eq_pinned: OK — {'observed': 7715, 'pinned': 7715}
+[00:30:24.552Z]   UPDATE main.canonical_patient_master from rollup ...
+[00:30:24.792Z]   UPDATE patients absent from rollup -> FALSE/0/0/NULL ...
+[00:30:24.980Z]   post-update: has_data TRUE=2855 FALSE=8016 NULL=0
+[00:30:24.980Z]                sum_n_notes=3776 sum_n_entities=7715 key_finding_set=2855
+[00:30:24.980Z]   gate post_has_data_within_target_pm10: OK — {'observed': 2855, 'target': 2855, 'tolerance': 10}
+[00:30:24.980Z]   gate post_has_data_null_eq_0: OK — {'observed': 0}
+[00:30:24.980Z]   gate post_has_data_false_eq_complement: OK — {'observed': 8016, 'expected': 8016}
+[00:30:24.980Z]   gate post_sum_n_notes_eq_pinned: OK — {'observed': 3776, 'expected': 3776}
+[00:30:24.980Z]   gate post_sum_n_entities_eq_pinned: OK — {'observed': 7715, 'expected': 7715}
+[00:30:24.980Z]   gate post_null_research_id_eq_0: OK — {'observed': 0}
+[00:30:24.980Z]   gate post_key_finding_set_eq_has_true: OK — {'observed_kf_set': 2855, 'observed_has_true': 2855, 'detail': 'every TRUE patient must have a key_finding'}
+[00:30:32.022Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:30:32.629Z] === PHASE 6 — post-mutation invariants A-F ===
+[00:30:33.150Z]   gate A_cpm_rows_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[00:30:33.150Z]   gate A_cpm_no_null_rid: OK — {'observed': 0}
+[00:30:33.150Z]   gate A_cpm_no_null_fna_path_outcome: OK — {'observed': 0}
+[00:30:33.194Z]   gate B_cpm_rids_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[00:30:36.312Z]   gate C_other_cpm_cols_unchanged_vs_phase4_snapshot: OK — {'live': '26d51d389075f06d11c6f41739fba730', 'snapshot': '26d51d389075f06d11c6f41739fba730'}
+[00:30:36.350Z]   gate D_source_rows_eq_32408: OK — {'observed': 32408, 'expected': 32408}
+[00:30:36.350Z]   gate D_source_rids_eq_10863: OK — {'observed': 10863, 'expected': 10863}
+[00:30:36.350Z]   gate D_source_model_eq_qwen25_32b: OK — {'observed': 'qwen2.5-32b', 'expected': 'qwen2.5-32b'}
+[00:30:36.350Z]   gate D_source_sdk_eq_openai: OK — {'observed': 'openai', 'expected': 'openai'}
+[00:30:36.476Z]   gate E_archive_pre9domainv4_exists_with_11037_rows: OK — {'archives_present': ['note_entities_llm_frozen_section_detail_pre9domainv4_20260421T002536Z'], 'newest_archive': 'note_entities_llm_frozen_section_detail_pre9domainv4_20260421T002536Z', 'row_count': 11037}
+[00:30:36.687Z]   gate F_cpm_pre283_snapshot_exists_with_10871_rows: OK — {'snapshots_present': ['canonical_patient_master_pre283_20260421T003010Z'], 'newest_snapshot': 'canonical_patient_master_pre283_20260421T003010Z', 'row_count': 10871}
+[00:30:44.288Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:30:44.872Z] === PHASE 7 — registry + dictionary + __readme sync ===
+[00:30:44.872Z]   using rollup numbers: has_true=2855 sum_notes=3776 sum_ents=7715
+[00:30:46.548Z]   gate registry_total_rows_post_eq_32408: OK — {'observed': 32408, 'expected': 32408}
+[00:30:46.548Z]   gate registry_total_patients_post_eq_10863: OK — {'observed': 10863, 'expected': 10863}
+[00:30:46.548Z]   gate registry_canonical_version_post_eq_v1_0_script283: OK — {'observed': 'v1_0_script283'}
+[00:30:46.548Z]   gate registry_description_carries_script283_marker: OK — {'description_tail': 'ndings. | Script 283 (2026-04-20): rollup re-promoted against qwen2.5-32b 9domain_v4 rerun parquet (loaded by this script). CPM nlp_frozensec_has_data went 184 TRUE / 10687 NULL -> 2855 TRUE / 0 NULL.'}
+[00:30:46.995Z]   gate dictionary_4_cols_have_exact_per_col_desc_and_v279_note: OK — {'rows': [{'column_name': 'nlp_frozensec_has_data', 'description': "TRUE iff patient has >=1 positive-entity extraction (confidence>=0.5, present_or_negated='present' OR NULL) from note_entities_llm_frozen_section_detail (qwen2.5-32b, 9domain_v4 rerun 2026-04-19); FALSE if patient is in source with no positive entities or absent from source. NEVER NULL post-Script 283.", 'v279_note': 'Re-promoted by Script 283 (2026-04-20) from qwen2.5-32b frozen_section_detail 9domain_v4 rerun.', 'rebuilt_by': 'script283_2026-04-20'}, {'column_name': 'nlp_frozensec_key_finding', 'description': 'Highest-priority entity value for this patient, resolved via KEY_FINDING_PRIORITY (final_pathology_concordance > discordance_reason > intraop_decision_impact > frozen_section_result > frozen_section_turnaround > number_of_sections > frozen_section_target > other) tiebroken by confidence DESC NULLS LAST then entity_value alpha. NULL when has_data=FALSE.', 'v279_note': 'Re-promoted by Script 283 (2026-04-20) from qwen2.5-32b frozen_section_detail 9domain_v4 rerun.', 'rebuilt_by': 'script283_2026-04-20'}, {'column_name': 'nlp_frozensec_n_entities', 'description': 'Total positive frozen-section-detail entities extracted across all notes for this patient. 0 when has_data=FALSE.', 'v279_note': 'Re-promoted by Script 283 (2026-04-20) from qwen2.5-32b frozen_section_detail 9domain_v4 rerun.', 'rebuilt_by': 'script283_2026-04-20'}, {'column_name': 'nlp_frozensec_n_notes', 'description': 'Count of distinct notes per patient with >=1 positive extracted frozen-section-detail entity. 0 when has_data=FALSE.', 'v279_note': 'Re-promoted by Script 283 (2026-04-20) from qwen2.5-32b frozen_section_detail 9domain_v4 rerun.', 'rebuilt_by': 'script283_2026-04-20'}], 'descriptions_exact_match': True}
+[00:30:48.024Z]   gate readme_source_n_rows_eq_32408: OK — {'observed': 32408, 'expected': 32408}
+[00:30:48.024Z]   gate readme_source_n_rids_eq_10863: OK — {'observed': 10863, 'expected': 10863}
+[00:30:48.024Z]   gate readme_cpm_n_rows_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[00:30:48.025Z]   gate readme_cpm_description_carries_script283_marker: OK — {'tail': ' TRUE=1634.] [Script 283 2026-04-20: frozen_section_detail re-extracted at qwen2.5-32b (32,408 rows / 10,863 RIDs); CPM nlp_frozensec_* rebuilt with explicit TRUE/FALSE (0 NULLs). has_data TRUE=2855.]'}
