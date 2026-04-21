@@ -1,0 +1,70 @@
+{
+  "phase": 2,
+  "started_at_utc": "2026-04-21T22:29:14Z",
+  "backfill_row_count": 10871,
+  "backfill_distinct_rids": 10871,
+  "backfill_unique_rids_ok": true,
+  "per_col_match": {
+    "imaging_laterality_rollup_v2": {
+      "cpm_source_col": "imaging_laterality_rollup_v271b",
+      "n_cpm_populated": 3439,
+      "n_backfill_populated": 3439,
+      "n_cells_match": 10871,
+      "n_cpm_total": 10871,
+      "match_pct": 100.0
+    },
+    "pathology_vs_imaging_laterality_concordant_v2": {
+      "cpm_source_col": "pathology_vs_imaging_laterality_concordant_v271b",
+      "n_cpm_populated": 10871,
+      "n_backfill_populated": 10871,
+      "n_cells_match": 10871,
+      "n_cpm_total": 10871,
+      "match_pct": 100.0
+    },
+    "tumor_pathology_laterality_v2": {
+      "cpm_source_col": "tumor_pathology_laterality_v271b",
+      "n_cpm_populated": 3986,
+      "n_backfill_populated": 3986,
+      "n_cells_match": 10871,
+      "n_cpm_total": 10871,
+      "match_pct": 100.0
+    },
+    "any_fna_recommended_report_ever": {
+      "cpm_source_col": "tirads_v2_any_fna_recommended_report",
+      "n_cpm_populated": 4073,
+      "n_backfill_populated": 4073,
+      "n_cells_match": 10871,
+      "n_cpm_total": 10871,
+      "match_pct": 100.0
+    },
+    "any_fna_recommended_report_source": {
+      "cpm_source_col": "tirads_v2_any_fna_recommended_report_source",
+      "n_cpm_populated": 4073,
+      "n_backfill_populated": 4073,
+      "n_cells_match": 10871,
+      "n_cpm_total": 10871,
+      "match_pct": 100.0
+    },
+    "tirads_worst_rank_ever": {
+      "cpm_source_col": "tirads_v2_worst_rank",
+      "n_cpm_populated": 2465,
+      "n_backfill_populated": 2465,
+      "n_cells_match": 10871,
+      "n_cpm_total": 10871,
+      "match_pct": 100.0
+    },
+    "tirads_worst_rank_source": {
+      "cpm_source_col": "tirads_v2_worst_rank_source",
+      "n_cpm_populated": 2465,
+      "n_backfill_populated": 2465,
+      "n_cells_match": 10871,
+      "n_cpm_total": 10871,
+      "match_pct": 100.0
+    }
+  },
+  "per_col_match_failures": [],
+  "spot_check_path": "scripts/output/preB_phase2_50rid_spot_check.csv",
+  "spot_check_n_rids": 50,
+  "finished_at_utc": "2026-04-21T22:29:16Z",
+  "status": "OK"
+}
