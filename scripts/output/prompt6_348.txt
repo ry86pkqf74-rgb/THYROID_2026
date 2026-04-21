@@ -1,0 +1,91 @@
+
+==============================================================================
+0. Pre-state
+==============================================================================
+  main object count: 108
+
+==============================================================================
+1. patient_tumor_rollup_v1 — row-level parity check
+==============================================================================
+  rows=8422, cols=41
+  joined pairs: 8422
+    n_tumors_path                                 match= 8422/ 8422 rate=1.000
+    n_tumors_with_size                            match= 8422/ 8422 rate=1.000
+    multifocal_flag_path                          match= 8078/ 8422 rate=0.959
+    tumor_size_cm_dominant                        match= 8422/ 8422 rate=1.000
+    tumor_size_cm_max                             match= 8422/ 8422 rate=1.000
+    tumor_size_cm_min                             match= 8422/ 8422 rate=1.000
+    tumor_size_cm_sum                             match= 8422/ 8422 rate=1.000
+    tumor_size_cm_mean                            match= 8422/ 8422 rate=1.000
+    has_right_tumor                               match= 8422/ 8422 rate=1.000
+    has_left_tumor                                match= 8422/ 8422 rate=1.000
+    has_isthmus_tumor                             match= 8422/ 8422 rate=1.000
+    bilateral_path_flag                           match= 8422/ 8422 rate=1.000
+    ete_any_present_path                          match= 8422/ 8422 rate=1.000
+    ete_ordinal_worst                             match= 8422/ 8422 rate=1.000
+    n_tumors_ete_present                          match= 8422/ 8422 rate=1.000
+    margin_involved_any                           match= 8422/ 8422 rate=1.000
+    margin_all_uninvolved                         match= 8422/ 8422 rate=1.000
+    margin_ord_worst                              match= 8422/ 8422 rate=1.000
+    n_tumors_margin_involved                      match= 8422/ 8422 rate=1.000
+    n_tumors_margin_uninvolved                    match= 8422/ 8422 rate=1.000
+    lvi_any_present_path                          match= 8422/ 8422 rate=1.000
+    lvi_ordinal_worst                             match= 8422/ 8422 rate=1.000
+    n_tumors_lvi_present                          match= 8422/ 8422 rate=1.000
+    vi_any_present_path                           match= 8422/ 8422 rate=1.000
+    vi_ordinal_worst                              match= 8422/ 8422 rate=1.000
+    n_tumors_vi_present                           match= 8422/ 8422 rate=1.000
+    vi_vessels_max                                match= 8422/ 8422 rate=1.000
+    pni_any_present_path                          match= 8422/ 8422 rate=1.000
+    n_tumors_pni_present                          match= 8422/ 8422 rate=1.000
+    capsular_any_present_path                     match= 8422/ 8422 rate=1.000
+    capsular_ordinal_worst                        match= 8422/ 8422 rate=1.000
+    histologic_variants_all                       match= 8422/ 8422 rate=1.000
+    histologic_types_all                          match= 8422/ 8422 rate=1.000
+    rollup_source_table                           match= 8422/ 8422 rate=1.000
+    rollup_script_version                         match= 8422/ 8422 rate=1.000
+    rollup_built_at                               match= 8422/ 8422 rate=1.000
+    closest_margin_mm_min                         match= 8422/ 8422 rate=1.000
+    closest_margin_mm_max                         match= 8422/ 8422 rate=1.000
+    r_class_true                                  match= 8422/ 8422 rate=1.000
+    margin_status_true                            match= 8422/ 8422 rate=1.000
+  All 40 cols pass 95% threshold; archiving
+     archived + dropped main.patient_tumor_rollup_v1 (rows=8422, archive=patient_tumor_rollup_v1_pre348_20260421T125715Z)
+
+==============================================================================
+2. tirads_v2_nodule_patient_rollup_v1 — backfill + archive
+==============================================================================
+  rows=2465, unique-to-this: ['tirads_v2_worst_rank']
+  source col data_type: INTEGER
+  added CPM.tirads_v2_worst_rank + _source
+  CPM.tirads_v2_worst_rank: 0 -> 2465 (delta=2465)
+     archived + dropped main.tirads_v2_nodule_patient_rollup_v1 (rows=2465, archive=tirads_v2_nodule_patient_rollup_v1_pre348_20260421T125715Z)
+
+==============================================================================
+3. tirads_v2_report_patient_rollup_v1 — backfill + archive
+==============================================================================
+  rows=4073, unique-to-this: ['tirads_v2_any_fna_recommended_report']
+  source col data_type: BOOLEAN
+  added CPM.tirads_v2_any_fna_recommended_report + _source
+  CPM.tirads_v2_any_fna_recommended_report: 0 -> 4073 (delta=4073)
+     archived + dropped main.tirads_v2_report_patient_rollup_v1 (rows=4073, archive=tirads_v2_report_patient_rollup_v1_pre348_20260421T125715Z)
+
+==============================================================================
+4. ln_master_rollup_v1 — MOVE (53 unique cols; backfill plan deferred)
+==============================================================================
+  rows=4273, n_cols=78, unique=53
+  moved ln_master_rollup_v1 (4273 rows) -> manuscript_workspace; main dropped
+
+==============================================================================
+5. tirads_llm_extracted_v2 — DEFER (RunPod active)
+==============================================================================
+  rows=5636, n_cols=26, unique=25
+  deferred
+
+==============================================================================
+6. Final assertions
+==============================================================================
+  main object count: pre=108 post=104 delta=-4
+  archived: 3, moved: 1, deferred: 1, decisions: 5
+
+DONE. Script 348 — archived=3, moved=1, deferred=1.
