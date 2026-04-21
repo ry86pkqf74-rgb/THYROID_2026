@@ -56,3 +56,24 @@
 [00:47:05.018Z]   gate archive_rids_eq_pre_rids: OK — {'observed': 5641, 'pre_archive': 5641}
 [00:47:05.018Z]   gate archive_rows_eq_11037: OK — {'observed': 11037, 'expected': 11037}
 [00:47:05.066Z]   gate archive_models_eq_qwen3_pair: OK — {'observed': ['qwen3:32b', 'qwen3:32b-ctx8k'], 'expected': ['qwen3:32b', 'qwen3:32b-ctx8k']}
+[00:47:17.885Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:47:18.440Z] === PHASE 2 — load parquet to MD with synth provenance + dedup ===
+[00:47:20.282Z]   gate phase_1_archive_present_before_load: OK — {'newest_archive': 'note_entities_llm_parathyroid_detail_pre9domainv4_20260421T004702Z'}
+[00:47:20.282Z]   loading parquet note_entities_llm_parathyroid_detail.parquet -> main.note_entities_llm_parathyroid_detail (with dedup by note_row_id, last extracted_at wins; removes 47 rows in 41 groups)...
+[00:47:22.075Z]   reprojecting columns to lock ordinal_position vs Script 282 schema...
+[00:47:23.003Z]   post-load: rows=17,321 rids=7,313 nrids=17,321
+[00:47:23.003Z]              models=qwen2.5-32b  base_urls=http://213.5.130.43:20049/v1
+[00:47:23.003Z]              entity_domain=parathyroid_detail  llm_provider=vllm  llm_sdk=openai
+[00:47:23.003Z]              provider_returned_model=qwen2.5-32b  sdk_version_set=0  fingerprint_set=0
+[00:47:23.003Z]   gate post_load_n_rows_eq_17321: OK — {'observed': 17321, 'expected': 17321}
+[00:47:23.003Z]   gate post_load_n_rids_eq_7313: OK — {'observed': 7313, 'expected': 7313}
+[00:47:23.003Z]   gate post_load_nrids_eq_rows_dedup_invariant: OK — {'detail': 'post-dedup, 1 row per note_row_id; nrids must equal rows', 'n_nrids': 17321, 'n_rows': 17321}
+[00:47:23.003Z]   gate post_load_model_eq_qwen25_32b: OK — {'observed': 'qwen2.5-32b', 'expected': 'qwen2.5-32b'}
+[00:47:23.003Z]   gate post_load_base_url_eq_pinned: OK — {'observed': 'http://213.5.130.43:20049/v1', 'expected': 'http://213.5.130.43:20049/v1'}
+[00:47:23.003Z]   gate post_load_entity_domain_eq_synth: OK — {'observed': 'parathyroid_detail', 'expected': 'parathyroid_detail'}
+[00:47:23.003Z]   gate post_load_llm_provider_eq_synth: OK — {'observed': 'vllm', 'expected': 'vllm'}
+[00:47:23.003Z]   gate post_load_llm_sdk_eq_synth: OK — {'observed': 'openai', 'expected': 'openai'}
+[00:47:23.003Z]   gate post_load_provider_returned_model_eq_synth: OK — {'observed': 'qwen2.5-32b', 'expected': 'qwen2.5-32b'}
+[00:47:23.003Z]   gate post_load_n_llm_sdk_version_eq_0: OK — {'observed': 0}
+[00:47:23.003Z]   gate post_load_n_provider_system_fingerprint_eq_0: OK — {'observed': 0}
+[00:47:23.148Z]   gate post_load_schema_eq_expected_23_cols: OK — {'observed': ['note_row_id', 'domain', 'llm_model', 'llm_base_url', 'extracted_at', 'result_json', 'research_id', 'note_type', 'note_date', 'linkage_date', 'source_workbook', 'source_sheet', 'source_column', 'note_index', 'preprocess_batch_id', 'preprocessed_at_utc', 'preprocess_script_version', 'entity_domain', 'llm_provider', 'llm_sdk', 'llm_sdk_version', 'provider_returned_model', 'provider_system_fingerprint'], 'expected': ['note_row_id', 'domain', 'llm_model', 'llm_base_url', 'extracted_at', 'result_json', 'research_id', 'note_type', 'note_date', 'linkage_date', 'source_workbook', 'source_sheet', 'source_column', 'note_index', 'preprocess_batch_id', 'preprocessed_at_utc', 'preprocess_script_version', 'entity_domain', 'llm_provider', 'llm_sdk', 'llm_sdk_version', 'provider_returned_model', 'provider_system_fingerprint']}

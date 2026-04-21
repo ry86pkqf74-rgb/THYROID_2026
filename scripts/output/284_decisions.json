@@ -402,10 +402,204 @@
         "qwen3:32b-ctx8k"
       ],
       "finished_at": "2026-04-21T00:47:05Z"
+    },
+    "2": {
+      "phase": 2,
+      "started_at": "2026-04-21T00:47:18Z",
+      "gates": [
+        {
+          "name": "phase_1_archive_present_before_load",
+          "ok": true,
+          "detail": {
+            "newest_archive": "note_entities_llm_parathyroid_detail_pre9domainv4_20260421T004702Z"
+          }
+        },
+        {
+          "name": "post_load_n_rows_eq_17321",
+          "ok": true,
+          "detail": {
+            "observed": 17321,
+            "expected": 17321
+          }
+        },
+        {
+          "name": "post_load_n_rids_eq_7313",
+          "ok": true,
+          "detail": {
+            "observed": 7313,
+            "expected": 7313
+          }
+        },
+        {
+          "name": "post_load_nrids_eq_rows_dedup_invariant",
+          "ok": true,
+          "detail": {
+            "detail": "post-dedup, 1 row per note_row_id; nrids must equal rows",
+            "n_nrids": 17321,
+            "n_rows": 17321
+          }
+        },
+        {
+          "name": "post_load_model_eq_qwen25_32b",
+          "ok": true,
+          "detail": {
+            "observed": "qwen2.5-32b",
+            "expected": "qwen2.5-32b"
+          }
+        },
+        {
+          "name": "post_load_base_url_eq_pinned",
+          "ok": true,
+          "detail": {
+            "observed": "http://213.5.130.43:20049/v1",
+            "expected": "http://213.5.130.43:20049/v1"
+          }
+        },
+        {
+          "name": "post_load_entity_domain_eq_synth",
+          "ok": true,
+          "detail": {
+            "observed": "parathyroid_detail",
+            "expected": "parathyroid_detail"
+          }
+        },
+        {
+          "name": "post_load_llm_provider_eq_synth",
+          "ok": true,
+          "detail": {
+            "observed": "vllm",
+            "expected": "vllm"
+          }
+        },
+        {
+          "name": "post_load_llm_sdk_eq_synth",
+          "ok": true,
+          "detail": {
+            "observed": "openai",
+            "expected": "openai"
+          }
+        },
+        {
+          "name": "post_load_provider_returned_model_eq_synth",
+          "ok": true,
+          "detail": {
+            "observed": "qwen2.5-32b",
+            "expected": "qwen2.5-32b"
+          }
+        },
+        {
+          "name": "post_load_n_llm_sdk_version_eq_0",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "post_load_n_provider_system_fingerprint_eq_0",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "post_load_schema_eq_expected_23_cols",
+          "ok": true,
+          "detail": {
+            "observed": [
+              "note_row_id",
+              "domain",
+              "llm_model",
+              "llm_base_url",
+              "extracted_at",
+              "result_json",
+              "research_id",
+              "note_type",
+              "note_date",
+              "linkage_date",
+              "source_workbook",
+              "source_sheet",
+              "source_column",
+              "note_index",
+              "preprocess_batch_id",
+              "preprocessed_at_utc",
+              "preprocess_script_version",
+              "entity_domain",
+              "llm_provider",
+              "llm_sdk",
+              "llm_sdk_version",
+              "provider_returned_model",
+              "provider_system_fingerprint"
+            ],
+            "expected": [
+              "note_row_id",
+              "domain",
+              "llm_model",
+              "llm_base_url",
+              "extracted_at",
+              "result_json",
+              "research_id",
+              "note_type",
+              "note_date",
+              "linkage_date",
+              "source_workbook",
+              "source_sheet",
+              "source_column",
+              "note_index",
+              "preprocess_batch_id",
+              "preprocessed_at_utc",
+              "preprocess_script_version",
+              "entity_domain",
+              "llm_provider",
+              "llm_sdk",
+              "llm_sdk_version",
+              "provider_returned_model",
+              "provider_system_fingerprint"
+            ]
+          }
+        }
+      ],
+      "blockers": [],
+      "post_load_n_rows": 17321,
+      "post_load_n_rids": 7313,
+      "post_load_n_nrids": 17321,
+      "post_load_models": "qwen2.5-32b",
+      "post_load_base_urls": "http://213.5.130.43:20049/v1",
+      "post_load_entity_domains": "parathyroid_detail",
+      "post_load_providers": "vllm",
+      "post_load_sdks": "openai",
+      "post_load_provider_returned_models": "qwen2.5-32b",
+      "post_load_n_llm_sdk_version_set": 0,
+      "post_load_n_provider_system_fingerprint_set": 0,
+      "post_load_columns": [
+        "note_row_id",
+        "domain",
+        "llm_model",
+        "llm_base_url",
+        "extracted_at",
+        "result_json",
+        "research_id",
+        "note_type",
+        "note_date",
+        "linkage_date",
+        "source_workbook",
+        "source_sheet",
+        "source_column",
+        "note_index",
+        "preprocess_batch_id",
+        "preprocessed_at_utc",
+        "preprocess_script_version",
+        "entity_domain",
+        "llm_provider",
+        "llm_sdk",
+        "llm_sdk_version",
+        "provider_returned_model",
+        "provider_system_fingerprint"
+      ],
+      "finished_at": "2026-04-21T00:47:23Z"
     }
   },
-  "last_started_at": "2026-04-21T00:47:00Z",
-  "last_phase_arg": "1",
-  "last_finished_at": "2026-04-21T00:47:05Z",
+  "last_started_at": "2026-04-21T00:47:17Z",
+  "last_phase_arg": "2",
+  "last_finished_at": "2026-04-21T00:47:23Z",
   "last_return_code": 0
 }
