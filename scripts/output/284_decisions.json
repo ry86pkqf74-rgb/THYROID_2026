@@ -661,10 +661,43 @@
       "live_parquet_dedup_ndhash": "22dff34281b0c19e524f4c780bc07f3f",
       "live_parquet_dedup_srchash": "c4d96773b86e33a669cd7f712b1ffaf2",
       "finished_at": "2026-04-21T00:47:39Z"
+    },
+    "4": {
+      "phase": 4,
+      "started_at": "2026-04-21T00:47:51Z",
+      "gates": [
+        {
+          "name": "snapshot_rows_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "snapshot_rids_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        }
+      ],
+      "blockers": [],
+      "ctas_action": "created_new",
+      "snapshot_table": "\"Thyroid 2026 UPdated\".archive_pub_v1_0.canonical_patient_master_pre284_20260421T004753Z",
+      "snapshot_table_unqualified": "canonical_patient_master_pre284_20260421T004753Z",
+      "comment_action": "applied",
+      "comment": "Script 284 pre-mutation snapshot of canonical_patient_master. Reason: rollback anchor before rebuilding nlp_parathyroid_* family from mixed qwen3:32b+qwen3:32b-ctx8k stale state (has_data TRUE=110, NULL=10761, sum_n_notes=111, sum_n_entities=243) to qwen2.5-32b state (parquet covers 7313 of 10871 CPM RIDs; ~3558 go to FALSE via zero-out). Created at 2026-04-21T00:47:57Z.",
+      "snapshot_rows": 10871,
+      "snapshot_rids": 10871,
+      "snapshot_other_cols_md5": "4f219de7f02a6efc12b3f11adf5ab7df",
+      "snapshot_other_cols_count": 1532,
+      "finished_at": "2026-04-21T00:47:59Z"
     }
   },
-  "last_started_at": "2026-04-21T00:47:37Z",
-  "last_phase_arg": "3",
-  "last_finished_at": "2026-04-21T00:47:39Z",
+  "last_started_at": "2026-04-21T00:47:51Z",
+  "last_phase_arg": "4",
+  "last_finished_at": "2026-04-21T00:47:59Z",
   "last_return_code": 0
 }
