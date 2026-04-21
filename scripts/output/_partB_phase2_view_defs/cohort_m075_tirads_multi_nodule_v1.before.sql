@@ -1,0 +1,4 @@
+-- View: manuscript_workspace.cohort_m075_tirads_multi_nodule_v1
+-- Pulled: 2026-04-21 Part B Phase 2 recon
+
+CREATE VIEW manuscript_workspace.cohort_m075_tirads_multi_nodule_v1 AS SELECT research_id, age_at_surgery, sex, surg_procedure_type, is_malignant, histology_final, path_tumor_size_cm AS tumor_size_cm, tirads_best_category_v12, tirads_worst_category_v12, tirads_best_score_v12, tirads_worst_score_v12, tirads_nodule_size_max_mm_v12, tirads_n_nodule_records_v12, tirads_concordant_count_v12, tirads_mismatch_count_v12, bethesda_final, n_fna_episodes, fna_path_concordance_category, molecular_tested_confirmed, ajcc8_stage_group, ata_risk_category, ln_positive_flag, any_recurrence_flag, overall_survival_years FROM thyroid_canonical_publication_v1_0.main.canonical_patient_master WHERE (tirads_best_category_v12 IS NOT NULL);

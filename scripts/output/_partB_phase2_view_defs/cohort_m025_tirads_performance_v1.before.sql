@@ -1,0 +1,4 @@
+-- View: manuscript_workspace.cohort_m025_tirads_performance_v1
+-- Pulled: 2026-04-21 Part B Phase 2 recon
+
+CREATE VIEW manuscript_workspace.cohort_m025_tirads_performance_v1 AS SELECT p.research_id, p.age_at_surgery, p.sex, p.race, p.preop_tirads_category, p.tirads_best_category_v12, p.tirads_worst_category_v12, p.tirads_best_score_v12, p.tirads_worst_score_v12, p.tirads_reliability_v12, p.tirads_n_sources_v12, p.dominant_nodule_size_cm AS imaging_nodule_size_cm, p.dominant_nodule_size_cm, p.bethesda_final, p.bethesda_final_name, p.histology_final, p.is_malignant, p.path_tumor_size_cm AS tumor_size_cm, p.path_tumor_size_cm, p.fna_path_concordance_category, p.fna_path_concordant, p.surg_procedure_type, p.surg_first_date FROM thyroid_canonical_publication_v1_0.main.canonical_patient_master AS p WHERE ((p.preop_tirads_category IS NOT NULL) OR (p.tirads_best_category_v12 IS NOT NULL));

@@ -1,0 +1,4 @@
+-- View: manuscript_workspace.cohort_m050_tumor_size_volume_v1
+-- Pulled: 2026-04-21 Part B Phase 2 recon
+
+CREATE VIEW manuscript_workspace.cohort_m050_tumor_size_volume_v1 AS SELECT research_id, age_at_surgery, sex, surg_procedure_type, is_malignant, histology_final, tumor_size_cm, path_tumor_size_cm, preop_imaging_size_cm, dominant_nodule_size_cm, tirads_nodule_size_max_mm_v12, ajcc8_t_stage, ajcc8_stage_group, ata_risk_category, ln_positive_flag, ete_grade, any_recurrence_flag, overall_survival_years FROM thyroid_canonical_publication_v1_0.manuscript_workspace.cohort_descriptive_full_cohort_v1;

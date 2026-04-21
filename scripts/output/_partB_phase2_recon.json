@@ -1,0 +1,104 @@
+{
+  "main.canonical_us_patient_master_v2": {
+    "n_distinct_cols_referenced": 1,
+    "total_references": 1,
+    "cols": {
+      "imaging_laterality_rollup_v2": 1
+    },
+    "definition_chars": 2925
+  },
+  "manuscript_workspace.cohort_m076_ln_surveillance_v1": {
+    "n_distinct_cols_referenced": 2,
+    "total_references": 2,
+    "cols": {
+      "tirads_best_category_v12": 1,
+      "tirads_worst_category_v12": 1
+    },
+    "definition_chars": 624
+  },
+  "manuscript_workspace.cohort_m075_tirads_multi_nodule_v1": {
+    "n_distinct_cols_referenced": 8,
+    "total_references": 9,
+    "cols": {
+      "tirads_nodule_size_max_mm_v12": 1,
+      "tirads_n_nodule_records_v12": 1,
+      "tirads_best_category_v12": 2,
+      "tirads_worst_category_v12": 1,
+      "tirads_best_score_v12": 1,
+      "tirads_worst_score_v12": 1,
+      "tirads_concordant_count_v12": 1,
+      "tirads_mismatch_count_v12": 1
+    },
+    "definition_chars": 723
+  },
+  "manuscript_workspace.cohort_m053_nondiagnostic_fna_v1": {
+    "n_distinct_cols_referenced": 1,
+    "total_references": 1,
+    "cols": {
+      "tirads_best_category_v12": 1
+    },
+    "definition_chars": 513
+  },
+  "manuscript_workspace.cohort_m045_multimodal_risk_v1": {
+    "n_distinct_cols_referenced": 3,
+    "total_references": 5,
+    "cols": {
+      "preop_tirads_category": 2,
+      "tirads_best_category_v12": 2,
+      "tirads_best_score_v12": 1
+    },
+    "definition_chars": 785
+  },
+  "manuscript_workspace.cohort_m050_tumor_size_volume_v1": {
+    "n_distinct_cols_referenced": 1,
+    "total_references": 1,
+    "cols": {
+      "tirads_nodule_size_max_mm_v12": 1
+    },
+    "definition_chars": 497
+  },
+  "manuscript_workspace.cohort_m064_frozen_decision_v1": {
+    "n_distinct_cols_referenced": 1,
+    "total_references": 1,
+    "cols": {
+      "tirads_best_category_v12": 1
+    },
+    "definition_chars": 608
+  },
+  "manuscript_workspace.cohort_m025_tirads_performance_v1": {
+    "n_distinct_cols_referenced": 7,
+    "total_references": 9,
+    "cols": {
+      "preop_tirads_category": 2,
+      "tirads_best_category_v12": 2,
+      "tirads_worst_category_v12": 1,
+      "tirads_best_score_v12": 1,
+      "tirads_worst_score_v12": 1,
+      "tirads_n_sources_v12": 1,
+      "tirads_reliability_v12": 1
+    },
+    "definition_chars": 787
+  },
+  "manuscript_workspace.cohort_m011_tirads_fna_genetics_v1": {
+    "n_distinct_cols_referenced": 4,
+    "total_references": 5,
+    "cols": {
+      "tirads_nodule_size_max_mm_v12": 1,
+      "tirads_best_category_v12": 2,
+      "tirads_worst_category_v12": 1,
+      "tirads_best_score_v12": 1
+    },
+    "definition_chars": 710
+  },
+  "manuscript_workspace.cohort_descriptive_full_cohort_v1": {
+    "n_distinct_cols_referenced": 4,
+    "total_references": 4,
+    "cols": {
+      "tirads_nodule_size_max_mm_v12": 1,
+      "tirads_best_category_v12": 1,
+      "tirads_worst_category_v12": 1,
+      "tirads_best_score_v12": 1
+    },
+    "definition_chars": 3640
+  }
+}

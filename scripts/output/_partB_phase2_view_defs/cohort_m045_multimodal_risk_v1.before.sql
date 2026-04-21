@@ -1,0 +1,4 @@
+-- View: manuscript_workspace.cohort_m045_multimodal_risk_v1
+-- Pulled: 2026-04-21 Part B Phase 2 recon
+
+CREATE VIEW manuscript_workspace.cohort_m045_multimodal_risk_v1 AS SELECT p.research_id, p.age_at_surgery, p.sex, p.preop_tirads_category, p.tirads_best_category_v12, p.tirads_best_score_v12, p.bethesda_final, p.bethesda_final_name, p.molecular_tested_confirmed, p.molecular_risk_tier, p.histology_final, p.is_malignant, p.path_tumor_size_cm AS tumor_size_cm, p.multifocal_flag_path, p.ete_grade_final, p.ln_positive_flag, p.ajcc8_stage_group, p.ata_risk_category, p.surg_procedure_type, p.any_recurrence_flag, p.followup_years, p.surg_first_date FROM thyroid_canonical_publication_v1_0.main.canonical_patient_master AS p WHERE ((p.bethesda_final IS NOT NULL) AND (p.histology_final IS NOT NULL) AND ((p.preop_tirads_category IS NOT NULL) OR (p.tirads_best_category_v12 IS NOT NULL)));
