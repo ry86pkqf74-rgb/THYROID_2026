@@ -1,0 +1,15 @@
+patient_analysis_resolved_v1: 146 cols
+CPM:                          1546 cols
+Unique to par_v1: 4
+  imaging_nodule_size_cm                             DOUBLE                         rows=10871 nonnull=3439 ndistinct=318
+    sample: [(0.3, 58), (1.1, 31), (1.6, 29), (1.55, 28), (1.09, 27)]
+  margin_status_final                                VARCHAR                        rows=10871 nonnull=3957 ndistinct=4
+    sample: [('R1', 3896), ('Rx', 35), ('R2', 25), ('R0', 1)]
+  path_multifocal_flag                               BOOLEAN                        rows=10871 nonnull=0 ndistinct=0
+    sample: []
+  path_n_tumors                                      INTEGER                        rows=10871 nonnull=0 ndistinct=0
+    sample: []
+
+View dependency:
+  views_readable.Analysis_Patient_Resolved
+    sql first 300: CREATE VIEW views_readable.Analysis_Patient_Resolved AS SELECT * FROM main.patient_analysis_resolved_v1;

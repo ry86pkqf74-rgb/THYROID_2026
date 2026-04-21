@@ -1,0 +1,54 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/ros/THyroid 2026/scripts/prompt6_347b_patient_analysis_resolved.py", line 191, in <module>
+    con.execute(f"""
+    ~~~~~~~~~~~^^^^^
+        CREATE VIEW {DB}.views_readable."Analysis_Patient_Resolved" AS
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        SELECT * FROM {DB}.manuscript_workspace.patient_analysis_resolved_v1
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    """)
+    ^^^^
+_duckdb.CatalogException: Catalog Error: Table with name patient_analysis_resolved_v1 does not exist!
+Did you mean "main.patient_analysis_resolved_v1"?
+
+LINE 3:     SELECT * FROM "thyroid_canonical_publication_v1_0".manuscript_workspace...
+                          ^
+
+==============================================================================
+0. Pre-state
+==============================================================================
+  main object count: 109
+  patient_analysis_resolved_v1: rows=10871, cols=146
+
+==============================================================================
+1. Add backfill columns to CPM
+==============================================================================
+  added CPM.imaging_nodule_size_cm DOUBLE
+  added CPM.imaging_nodule_size_cm_source VARCHAR
+  added CPM.margin_status_final VARCHAR
+  added CPM.margin_status_final_source VARCHAR
+
+==============================================================================
+2. Backfill values
+==============================================================================
+  imaging_nodule_size_cm              before=    0 after= 3439 delta= 3439 (src nonnull=3439)
+  margin_status_final                 before=    0 after= 3957 delta= 3957 (src nonnull=3957)
+
+  TOTAL nonnull cells added: 7396
+
+==============================================================================
+3. Defer empty-source unique cols
+==============================================================================
+  deferred: path_multifocal_flag (BOOLEAN)
+  deferred: path_n_tumors (INTEGER)
+
+==============================================================================
+4. PI review row for margin_status_final
+==============================================================================
+  logged margin_status_final semantics review
+
+==============================================================================
+5. Repoint views_readable.Analysis_Patient_Resolved
+==============================================================================
