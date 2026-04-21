@@ -1,0 +1,49 @@
+[19:42:07.618Z] Script 376 start  commit=True
+[19:42:08.571Z] Phase 1: ADD COLUMN source_modality VARCHAR DEFAULT 'US'
+[19:42:08.740Z] Phase 1: CHECK (source_modality='US') skipped — DuckDB/MotherDuck does not support ALTER TABLE ADD CONSTRAINT or inline CHECK on ADD COLUMN. DEFAULT 'US' + post-write assertion enforce uniformity.
+[19:42:08.770Z] Phase 1 verify: source_modality groups = [('US', 37579)]
+[19:42:08.770Z] Phase 2-pre: writing snapshot -> thyroid_canonical_publication_v1_0.manuscript_workspace.canonical_us_nodule_v2_pre_s376_snapshot
+[19:42:09.128Z]   snapshot rows: 37579
+[19:42:09.255Z] Phase 2: fetching feature-bearing rows
+[19:42:09.390Z]   fetched 33622 rows
+[19:42:09.390Z] Phase 2: computing per-row updates
+[19:42:09.409Z]   computed 33622 updates
+[19:42:09.411Z]   (preview) all-5-resolved: 21454 | new_cat: 19302 | disagreeing: 3244
+[19:42:09.411Z] Phase 2: write-back via temp staging (33622 rows)
+[19:42:19.944Z]   write-back complete
+[19:42:19.944Z] Phase 3: verification
+[19:42:19.975Z]   coverage: {'comp_pts_n': 28709, 'ech_pts_n': 26096, 'shape_pts_n': 21608, 'margin_pts_n': 22643, 'foci_pts_n': 33622, 'acr_pts_total_n': 25320, 'acr_cat_n': 22276}
+[19:42:20.011Z]   concordance flag truth-table:
+[19:42:20.011Z]     (False, False, 3244)
+[19:42:20.011Z]     (True, True, 3740)
+[19:42:20.011Z]     (None, False, 2)
+[19:42:20.011Z]     (None, True, 2841)
+[19:42:20.043Z]   concordance matrix (acr_cat, upd_cat, n):
+[19:42:20.043Z]     ('TR1', 'TR1', 1901)
+[19:42:20.043Z]     ('TR1', 'TR2', 264)
+[19:42:20.043Z]     ('TR1', 'TR3', 168)
+[19:42:20.043Z]     ('TR1', 'TR4', 87)
+[19:42:20.043Z]     ('TR1', 'TR5', 12)
+[19:42:20.043Z]     ('TR2', 'TR1', 174)
+[19:42:20.043Z]     ('TR2', 'TR2', 1157)
+[19:42:20.043Z]     ('TR2', 'TR3', 112)
+[19:42:20.043Z]     ('TR2', 'TR4', 79)
+[19:42:20.043Z]     ('TR2', 'TR5', 6)
+[19:42:20.043Z]     ('TR3', 'TR1', 222)
+[19:42:20.043Z]     ('TR3', 'TR2', 163)
+[19:42:20.043Z]     ('TR3', 'TR3', 2019)
+[19:42:20.043Z]     ('TR3', 'TR4', 239)
+[19:42:20.043Z]     ('TR3', 'TR5', 39)
+[19:42:20.043Z]     ('TR4', 'TR1', 121)
+[19:42:20.043Z]     ('TR4', 'TR2', 162)
+[19:42:20.043Z]     ('TR4', 'TR3', 369)
+[19:42:20.043Z]     ('TR4', 'TR4', 1160)
+[19:42:20.043Z]     ('TR4', 'TR5', 108)
+[19:42:20.043Z]     ('TR5', 'TR1', 88)
+[19:42:20.043Z]     ('TR5', 'TR2', 66)
+[19:42:20.043Z]     ('TR5', 'TR3', 160)
+[19:42:20.043Z]     ('TR5', 'TR4', 607)
+[19:42:20.043Z]     ('TR5', 'TR5', 344)
+[19:42:20.086Z]   unmapped feature strings (0 groups):
+[19:42:20.115Z]   source_modality: [('US', 37579)]
+[19:42:20.116Z] decision log: /Users/ros/THyroid 2026/scripts/output/376_feature_string_to_pts_20260421T194207Z.json

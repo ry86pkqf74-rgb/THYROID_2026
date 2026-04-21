@@ -1,0 +1,15 @@
+{
+  "script": "Script 376",
+  "run_ts_utc": "20260421T194159Z",
+  "commit": false,
+  "target": "thyroid_canonical_publication_v1_0.main.canonical_us_nodule_v2",
+  "snapshot_table": null,
+  "snapshot_rows": 0,
+  "feature_rows_processed": 33622,
+  "phase1_source_modality": {
+    "source_modality_groups": null
+  },
+  "phase3_verify": {
+    "note": "dry-run, skipped"
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "script": "Script 376",
+  "run_ts_utc": "20260421T194207Z",
+  "commit": true,
+  "target": "thyroid_canonical_publication_v1_0.main.canonical_us_nodule_v2",
+  "snapshot_table": "thyroid_canonical_publication_v1_0.manuscript_workspace.canonical_us_nodule_v2_pre_s376_snapshot",
+  "snapshot_rows": 37579,
+  "feature_rows_processed": 33622,
+  "phase1_source_modality": {
+    "source_modality_groups": [
+      [
+        "US",
+        37579
+      ]
+    ]
+  },
+  "phase3_verify": {
+    "coverage": {
+      "comp_pts_n": 28709,
+      "ech_pts_n": 26096,
+      "shape_pts_n": 21608,
+      "margin_pts_n": 22643,
+      "foci_pts_n": 33622,
+      "acr_pts_total_n": 25320,
+      "acr_cat_n": 22276
+    },
+    "concordance_flag_truth_table": [
+      {
+        "flag": false,
+        "raw_equal": false,
+        "n": 3244
+      },
+      {
+        "flag": true,
+        "raw_equal": true,
+        "n": 3740
+      },
+      {
+        "flag": null,
+        "raw_equal": false,
+        "n": 2
+      },
+      {
+        "flag": null,
+        "raw_equal": true,
+        "n": 2841
+      }
+    ],
+    "concordance_matrix": [
+      {
+        "acr": "TR1",
+        "updated": "TR1",
+        "n": 1901
+      },
+      {
+        "acr": "TR1",
+        "updated": "TR2",
+        "n": 264
+      },
+      {
+        "acr": "TR1",
+        "updated": "TR3",
+        "n": 168
+      },
+      {
+        "acr": "TR1",
+        "updated": "TR4",
+        "n": 87
+      },
+      {
+        "acr": "TR1",
+        "updated": "TR5",
+        "n": 12
+      },
+      {
+        "acr": "TR2",
+        "updated": "TR1",
+        "n": 174
+      },
+      {
+        "acr": "TR2",
+        "updated": "TR2",
+        "n": 1157
+      },
+      {
+        "acr": "TR2",
+        "updated": "TR3",
+        "n": 112
+      },
+      {
+        "acr": "TR2",
+        "updated": "TR4",
+        "n": 79
+      },
+      {
+        "acr": "TR2",
+        "updated": "TR5",
+        "n": 6
+      },
+      {
+        "acr": "TR3",
+        "updated": "TR1",
+        "n": 222
+      },
+      {
+        "acr": "TR3",
+        "updated": "TR2",
+        "n": 163
+      },
+      {
+        "acr": "TR3",
+        "updated": "TR3",
+        "n": 2019
+      },
+      {
+        "acr": "TR3",
+        "updated": "TR4",
+        "n": 239
+      },
+      {
+        "acr": "TR3",
+        "updated": "TR5",
+        "n": 39
+      },
+      {
+        "acr": "TR4",
+        "updated": "TR1",
+        "n": 121
+      },
+      {
+        "acr": "TR4",
+        "updated": "TR2",
+        "n": 162
+      },
+      {
+        "acr": "TR4",
+        "updated": "TR3",
+        "n": 369
+      },
+      {
+        "acr": "TR4",
+        "updated": "TR4",
+        "n": 1160
+      },
+      {
+        "acr": "TR4",
+        "updated": "TR5",
+        "n": 108
+      },
+      {
+        "acr": "TR5",
+        "updated": "TR1",
+        "n": 88
+      },
+      {
+        "acr": "TR5",
+        "updated": "TR2",
+        "n": 66
+      },
+      {
+        "acr": "TR5",
+        "updated": "TR3",
+        "n": 160
+      },
+      {
+        "acr": "TR5",
+        "updated": "TR4",
+        "n": 607
+      },
+      {
+        "acr": "TR5",
+        "updated": "TR5",
+        "n": 344
+      }
+    ],
+    "unmapped_feature_strings": [],
+    "source_modality_groups": [
+      {
+        "source_modality": "US",
+        "n": 37579
+      }
+    ]
+  }
+}
