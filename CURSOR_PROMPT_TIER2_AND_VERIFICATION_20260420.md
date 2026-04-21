@@ -22,15 +22,32 @@ CPM has 118 `nlp_<domain>_*` Tier 1 summary columns covering every LLM domain. F
 ]}
 ```
 
-Parse pattern (reuse in every script):
+**Confirmed column mapping (audited 2026-04-21 across all 23 note_entities_llm_* + 7 older note_entities_* tables):**
+
+| Concept | Actual column name |
+|---|---|
+| Timestamp | `extracted_at` (NOT `extraction_timestamp` — the prior version of this prompt was wrong) |
+| Note identifier (row-level) | `note_row_id` (UUID string — not a numeric/BIGINT, and NOT the natural join key) |
+| Note identifier (ordinal) | `note_index` |
+| Natural join key to `clinical_notes_long` | **`(research_id, note_index)`** — NOT `note_id` (no such column) and NOT `note_row_id` (UUID collisions possible across workbook ingestions) |
+| Patient key | `research_id` (VARCHAR) |
+| Note date/type | `note_date`, `note_type` (both present on every table) |
+
+So any time this prompt says `note_id`, read it as `(research_id, note_index)` compound key and look up `clinical_notes_long` on that composite. Save the compound as a derived column named `source_note_ref` = `research_id || ':' || note_index` for readability in verify tables.
+
+Parse pattern (reuse in every script — now with correct column names):
 ```sql
 WITH ent AS (
-  SELECT research_id, note_id, note_date, note_type, extraction_timestamp,
+  SELECT research_id, note_row_id, note_index, note_date, note_type, extracted_at,
          UNNEST(CAST(json_extract(result_json, '$.entities') AS VARCHAR[])) AS ent_json
     FROM main.note_entities_llm_<domain>
    WHERE result_json IS NOT NULL
 )
-SELECT research_id, note_id, note_date, note_type,
+SELECT research_id,
+       note_row_id,                                                                   -- kept for row-level traceability
+       note_index,                                                                    -- part of join key
+       research_id || ':' || CAST(note_index AS VARCHAR) AS source_note_ref,          -- canonical compound id
+       note_date, note_type, extracted_at,
        json_extract_string(ent_json, '$.entity_type')         AS entity_type,
        json_extract_string(ent_json, '$.entity_value')        AS entity_value,
        json_extract_string(ent_json, '$.entity_date')         AS entity_date,
@@ -40,6 +57,8 @@ SELECT research_id, note_id, note_date, note_type,
        CAST(json_extract_string(ent_json, '$.source_line') AS BIGINT)       AS source_line
   FROM ent;
 ```
+
+For every place this prompt says `_first_note_id` / `_source_note_id`, use `_first_source_note_ref` / `_source_note_ref` (the `research_id:note_index` compound). The `clinical_notes_long` lookup is always `JOIN clinical_notes_long cnl ON cnl.research_id = x.research_id AND cnl.note_index = x.note_index`.
 
 Each domain then adds a small domain-specific step — typically a CASE on `entity_type` that pivots into proper typed columns (`<domain>_site`, `<domain>_result`, `<domain>_extent`, etc.).
 
@@ -54,11 +73,13 @@ Each domain then adds a small domain-specific step — typically a CASE on `enti
 7. **Every aggregate boolean is dated and source-linked — NO `_anytime` fields.** Any summary flag on a patient-wide table (`had_*`, `any_*`, `persistent_*`, `first_*`, `last_*`) MUST be accompanied by:
    - `<flag>_first_date` — earliest documentation date
    - `<flag>_last_date` — most recent documentation date
-   - `<flag>_first_note_id` — link to `clinical_notes_long` for the first-documentation note
+   - `<flag>_first_source_note_ref` — compound `research_id:note_index` link to `clinical_notes_long` for the first-documentation note
    - `<flag>_first_evidence_text` — exact free-text span from that note
    - `<flag>_n_notes_documenting` — count of distinct notes documenting this flag
-   - (optional) `<flag>_last_note_id` and `<flag>_last_evidence_text` when longitudinal context matters (recurrence, persistent symptoms, ongoing findings)
-   A bare boolean without these companion columns is NOT acceptable. The word "anytime" is banned from column names — use `_first_date`/`_last_date` instead. This rule applies to every `*_patient_wide_v1` table produced in Phase A AND to any new summary column added to CPM or any canonical table.
+   - (optional) `<flag>_last_source_note_ref` and `<flag>_last_evidence_text` when longitudinal context matters (recurrence, persistent symptoms, ongoing findings)
+   A bare boolean without these companion columns is NOT acceptable. The word "anytime" is banned from column names — use `_first_date`/`_last_date` instead. This rule applies to every `*_patient_wide_v1` table produced in Phase A AND to any new summary column added to CPM or any canonical table. Note: the prior version of this prompt used `_first_note_id` / `_source_note_id` — substitute those globally with `_first_source_note_ref` / `_source_note_ref` (the compound `research_id:note_index` key), since `note_id` does not exist on any `note_entities_*` table.
+
+8. **Timestamp column is `extracted_at`, not `extraction_timestamp`.** Every reference in this prompt to `extraction_timestamp` should be read as `extracted_at`. This was confirmed by a full schema audit on 2026-04-21 across all 30 `note_entities_*` tables in `main`.
 
 ---
 
