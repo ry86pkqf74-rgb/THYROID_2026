@@ -47,3 +47,12 @@
 [00:46:22.280Z]   gates: 33 total, 33 passed, 0 blockers
 [00:46:22.280Z]   ALL GATES PASSED — Phase 1 may proceed.
 [00:46:22.280Z] ─────────────────────────
+[00:47:00.192Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:47:00.781Z] === PHASE 1 — archive current MD source to archive_pub_v1_0 ===
+[00:47:01.065Z]   pre-archive source: rows=11,037 rids=5,641 model=qwen3:32b|qwen3:32b-ctx8k
+[00:47:02.619Z]   CTAS "Thyroid 2026 UPdated".archive_pub_v1_0.note_entities_llm_parathyroid_detail_pre9domainv4_20260421T004702Z AS SELECT * FROM main.note_entities_llm_parathyroid_detail ...
+[00:47:05.017Z]   archive note_entities_llm_parathyroid_detail_pre9domainv4_20260421T004702Z: rows=11,037 rids=5,641 model=qwen3:32b-ctx8k|qwen3:32b
+[00:47:05.018Z]   gate archive_rows_eq_pre_rows: OK — {'observed': 11037, 'pre_archive': 11037}
+[00:47:05.018Z]   gate archive_rids_eq_pre_rids: OK — {'observed': 5641, 'pre_archive': 5641}
+[00:47:05.018Z]   gate archive_rows_eq_11037: OK — {'observed': 11037, 'expected': 11037}
+[00:47:05.066Z]   gate archive_models_eq_qwen3_pair: OK — {'observed': ['qwen3:32b', 'qwen3:32b-ctx8k'], 'expected': ['qwen3:32b', 'qwen3:32b-ctx8k']}
