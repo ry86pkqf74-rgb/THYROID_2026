@@ -1,0 +1,73 @@
+=== exam_master populated-column counts ===
+  exam_date                                not_null=  11310  null=   6792
+  us_exam_id                               not_null=  11310  null=   6792
+  n_nodules_on_exam                        not_null=  11291  null=   6811
+  largest_nodule_cm                        not_null=  10135  null=   7967
+  second_largest_nodule_cm                 not_null=   6836  null=  11266
+  bilateral_flag                           not_null=  11291  null=   6811
+  isthmus_nodule_flag                      not_null=  11291  null=   6811
+  worst_tirads_category_this_exam          not_null=   2035  null=  16067
+  worst_tirads_points_this_exam            not_null=   2273  null=  15829
+  best_tirads_category_this_exam           not_null=   2035  null=  16067
+  count_tr1                                not_null=  11291  null=   6811
+  count_tr2                                not_null=  11291  null=   6811
+  count_tr3                                not_null=  11291  null=   6811
+  count_tr4                                not_null=  11291  null=   6811
+  count_tr5                                not_null=  11291  null=   6811
+  has_gland_findings                       not_null=  18102  null=      0
+  has_us_ln_findings                       not_null=  18102  null=      0
+  n_us_ln_total_on_exam                    not_null=   6801  null=  11301
+  n_abnormal_us_ln_on_exam                 not_null=   6801  null=  11301
+  exam_rank_for_patient                    not_null=  18102  null=      0
+  is_preop_exam                            not_null=  18102  null=      0
+  any_nlp_backfill_pending_on_exam         not_null=  18102  null=      0
+
+=== exam_master rows with NULL exam_date ===
+  rows with exam_date IS NULL: 6792
+
+=== exam_master sample non-null TIRADS rows ===
+  (4057, datetime.date(2002, 10, 21), 1, 'TR1', 'TR1', 1, 0, 0, 0, 0)
+  (4351, datetime.date(2022, 4, 11), 5, 'TR4', 'TR4', 0, 0, 0, 1, 0)
+  (4903, datetime.date(2015, 5, 20), 2, 'TR2', 'TR2', 0, 2, 0, 0, 0)
+  (5185, datetime.date(2017, 12, 6), 6, 'TR1', 'TR1', 1, 0, 0, 0, 0)
+  (5850, datetime.date(2016, 12, 1), 10, 'TR3', 'TR2', 0, 1, 1, 0, 0)
+
+=== gland_v2 rows with NULL exam_date ===
+  rows with exam_date IS NULL: 6785
+
+=== nodule_v2 rows with NULL exam_date ===
+  rows with exam_date IS NULL: 2231
+
+=== nodule_v2 distinct (research_id, exam_date) pairs (excl. aggregate) ===
+  distinct exam keys with non-aggregate nodules: 13963
+
+=== Worst TIRADS categories distribution in exam_master ===
+  (None, 16067)
+  ('TR3', 641)
+  ('TR4', 538)
+  ('TR2', 527)
+  ('TR1', 240)
+  ('TR5', 89)
+
+=== n_nodules_on_exam distribution ===
+  (False, 6811)
+  (True, 11291)
+
+=== patient_master populated-column counts ===
+  n_us_exams                               not_null=  10859  null=      0
+  first_us_date                            not_null=   4086  null=   6773
+  last_us_date                             not_null=   4086  null=   6773
+  preop_us_available_flag                  not_null=  10859  null=      0
+  max_tirads_category_ever                 not_null=   1226  null=   9633
+  max_tirads_points_ever                   not_null=   1300  null=   9559
+  tirads_category_at_first_exam            not_null=    135  null=  10724
+  tirads_category_at_last_preop_exam       not_null=   1043  null=   9816
+  n_nodules_total_across_exams             not_null=   4082  null=   6777
+  bilateral_disease_flag_ever              not_null=   4082  null=   6777
+  multifocal_flag_ever                     not_null=  10859  null=      0
+  first_high_risk_tirads_date              not_null=    495  null=  10364
+  has_us_ln_findings_ever                  not_null=  10859  null=      0
+  any_suspicious_us_ln_ever                not_null=  10859  null=      0
+  first_abnormal_us_ln_date                not_null=      8  null=  10851
+  has_gland_findings_ever                  not_null=  10859  null=      0
+  any_nlp_backfill_pending_for_patient     not_null=  10859  null=      0

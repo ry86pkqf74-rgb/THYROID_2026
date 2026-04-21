@@ -1,10 +1,10 @@
 """Canonical cleanup 20260417 follow-up — release Phase 3.2 and Phase 4.6 holds.
 
 Phase 3.2 (Logan-approved 2026-04-17):
-  - Snapshot the 3 placeholder rows in main.us_nodules_tirads (rids 2332,
+  - Snapshot the 3 placeholder rows in raw.us_nodules_tirads (rids 2332,
     2445, 7744) into manuscript_workspace.us_nodules_tirads_placeholder_archive_v1
     for reversibility.
-  - DELETE them from main.us_nodules_tirads.
+  - DELETE them from raw.us_nodules_tirads.
 
 Phase 4.6 (Logan-approved 2026-04-17):
   - For each of the 9 manuscript_workspace cohort views referencing bare
@@ -88,7 +88,7 @@ def phase_3_2_delete(con) -> None:
     log("=== Phase 3.2 release — DELETE 3 placeholder rows from us_nodules_tirads ===")
 
     pre_n = con.execute(
-        "SELECT COUNT(*) FROM main.us_nodules_tirads "
+        "SELECT COUNT(*) FROM raw.us_nodules_tirads "
         f"WHERE CAST(research_id AS VARCHAR) IN ({','.join(repr(r) for r in PLACEHOLDER_RIDS)})"
     ).fetchone()[0]
     log(f"[3.2-del] pre rows matching: {pre_n} (expected 3)")
@@ -112,7 +112,7 @@ def phase_3_2_delete(con) -> None:
     if pre_n != 3:
         stop(f"[3.2-del] expected 3 rows, found {pre_n}")
 
-    pre_total = con.execute("SELECT COUNT(*) FROM main.us_nodules_tirads").fetchone()[0]
+    pre_total = con.execute("SELECT COUNT(*) FROM raw.us_nodules_tirads").fetchone()[0]
     log(f"[3.2-del] us_nodules_tirads pre-total: {pre_total}")
 
     # Snapshot for reversibility
@@ -122,7 +122,7 @@ def phase_3_2_delete(con) -> None:
           manuscript_workspace.us_nodules_tirads_placeholder_archive_v1 AS
         SELECT *, CURRENT_TIMESTAMP AS archived_at,
                'phase_3_2_canonical_cleanup_20260417' AS archive_reason
-        FROM main.us_nodules_tirads WHERE 1=0
+        FROM raw.us_nodules_tirads WHERE 1=0
         """
     )
     # Insert the 3 placeholder rows (idempotent: only if not already archived)
@@ -136,7 +136,7 @@ def phase_3_2_delete(con) -> None:
             INSERT INTO manuscript_workspace.us_nodules_tirads_placeholder_archive_v1
             SELECT *, CURRENT_TIMESTAMP AS archived_at,
                    'phase_3_2_canonical_cleanup_20260417' AS archive_reason
-            FROM main.us_nodules_tirads
+            FROM raw.us_nodules_tirads
             WHERE CAST(research_id AS VARCHAR) IN ({','.join(repr(r) for r in PLACEHOLDER_RIDS)})
               AND CAST(research_id AS VARCHAR) NOT IN (
                 SELECT CAST(research_id AS VARCHAR)
@@ -154,15 +154,15 @@ def phase_3_2_delete(con) -> None:
 
     con.execute(
         f"""
-        DELETE FROM main.us_nodules_tirads
+        DELETE FROM raw.us_nodules_tirads
         WHERE CAST(research_id AS VARCHAR) IN ({','.join(repr(r) for r in PLACEHOLDER_RIDS)})
         """
     )
     post_n = con.execute(
-        "SELECT COUNT(*) FROM main.us_nodules_tirads "
+        "SELECT COUNT(*) FROM raw.us_nodules_tirads "
         f"WHERE CAST(research_id AS VARCHAR) IN ({','.join(repr(r) for r in PLACEHOLDER_RIDS)})"
     ).fetchone()[0]
-    post_total = con.execute("SELECT COUNT(*) FROM main.us_nodules_tirads").fetchone()[0]
+    post_total = con.execute("SELECT COUNT(*) FROM raw.us_nodules_tirads").fetchone()[0]
     log(f"[3.2-del] post rows matching: {post_n} (expected 0); us_nodules_tirads total: {post_total}")
     if post_n != 0:
         stop(f"[3.2-del] DELETE failed: {post_n} matches still present")

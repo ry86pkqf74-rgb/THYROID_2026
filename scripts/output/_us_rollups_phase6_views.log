@@ -1,0 +1,4 @@
+CREATE OR REPLACE VIEW views_readable.US_Reports_Raw AS SELECT * FROM raw.ultrasound_reports
+CREATE OR REPLACE VIEW views_readable.US_Nodules_TIRADS AS SELECT * FROM raw.us_nodules_tirads
+  US_Reports_Raw rows: 6793
+  US_Nodules_TIRADS rows: 10859

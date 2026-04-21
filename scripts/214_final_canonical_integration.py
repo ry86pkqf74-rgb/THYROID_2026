@@ -437,7 +437,7 @@ us_ranked AS (
         TRY_CAST(ultrasound_date AS DATE) AS us_date,
         ROW_NUMBER() OVER (PARTITION BY CAST(research_id AS BIGINT)
             ORDER BY TRY_CAST(ultrasound_date AS DATE) DESC NULLS LAST) AS rn
-    FROM ultrasound_reports
+    FROM raw.ultrasound_reports
 ),
 us_latest AS (
     SELECT * FROM us_ranked WHERE rn = 1
@@ -447,7 +447,7 @@ us_counts AS (
         CAST(research_id AS BIGINT) AS research_id,
         COUNT(*) AS us_n_reports,
         MAX(TRY_CAST(ultrasound_date AS DATE)) AS us_most_recent_date
-    FROM ultrasound_reports
+    FROM raw.ultrasound_reports
     GROUP BY CAST(research_id AS BIGINT)
 )
 """

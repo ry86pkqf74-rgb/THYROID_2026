@@ -1,0 +1,42 @@
+============================================================
+Final state — main.* US/tirads/ultrasound/nodule
+============================================================
+  BASE TABLE   canonical_us_lymph_node_v2
+  BASE TABLE   canonical_us_nodule_v2
+  BASE TABLE   canonical_us_thyroid_gland_v2
+  BASE TABLE   manuscript_cohort_v1
+  BASE TABLE   specimen_tumor_focus_v1
+  VIEW         canonical_us_exam_master_v2
+  VIEW         canonical_us_patient_master_v2
+  VIEW         molecular_fusions_unnested_v2
+
+============================================================
+Final state — raw.*
+============================================================
+  BASE TABLE   ultrasound_reports
+  BASE TABLE   us_nodules_tirads
+
+============================================================
+Smoke counts
+============================================================
+  exam_master view                       18551
+  patient_master view                    10859
+  nodule_v2 (table)                      37579
+  gland_v2 (table)                       13578
+  lymph_node_v2 (table)                   6801
+  raw ultrasound_reports                  6793
+  raw us_nodules_tirads                  10859
+  views_readable.US_Reports_Raw           6793
+  views_readable.US_Nodules_TIRADS       10859
+
+============================================================
+Confirm main.* raw feeds GONE
+============================================================
+  main.ultrasound_reports: gone (as expected)  [CatalogException]
+  main.us_nodules_tirads: gone (as expected)  [CatalogException]
+
+============================================================
+Confirm archive snapshots present in 'Thyroid 2026 UPdated'
+============================================================
+  archived_canonical_us_exam_master_v2: 18102
+  archived_canonical_us_patient_master_v2: 10859

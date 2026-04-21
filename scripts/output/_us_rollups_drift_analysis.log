@@ -1,0 +1,67 @@
+============================================================
+1. View-only exam keys (449)
+============================================================
+  sample of 12:
+    rid=6312 date=2021-10-04 n_nod=1 has_gland=False has_ln=False
+    rid=7483 date=2019-04-01 n_nod=1 has_gland=False has_ln=False
+    rid=8287 date=2020-07-13 n_nod=1 has_gland=False has_ln=False
+    rid=8307 date=2020-08-04 n_nod=1 has_gland=False has_ln=False
+    rid=8400 date=2020-02-01 n_nod=1 has_gland=False has_ln=False
+    rid=8400 date=2020-02-12 n_nod=1 has_gland=False has_ln=False
+    rid=8583 date=2020-12-31 n_nod=1 has_gland=False has_ln=False
+    rid=10137 date=2022-09-01 n_nod=1 has_gland=False has_ln=False
+    rid=10137 date=2023-09-27 n_nod=1 has_gland=False has_ln=False
+    rid=10809 date=2022-11-07 n_nod=1 has_gland=False has_ln=False
+    rid=11095 date=2024-05-10 n_nod=1 has_gland=False has_ln=False
+    rid=11318 date=2021-12-15 n_nod=1 has_gland=False has_ln=False
+
+  origin breakdown:
+    by source presence: {'nodule_only': 449, 'gland_only': 0, 'ln_only': 0, 'multi': 0, 'none': 0}  (total=449)
+
+============================================================
+2. Common-key per-row diff classification (exam_master)
+============================================================
+  rows with TIRADS-only column diffs: 6588
+  rows with rank-only column diffs:   435
+  rows with non-TIRADS, non-rank diffs: 45
+
+  per-non-TIRADS-column diff counts (those with any diff):
+    n_nodules_on_exam                        3
+    largest_nodule_cm                        45
+    second_largest_nodule_cm                 7
+    bilateral_flag                           3
+    isthmus_nodule_flag                      5
+
+============================================================
+3. exam_rank_for_patient drift
+============================================================
+  rows with rank diff:    435
+  patients with rank diff: 317
+  patients touched by view-only keys: 324
+
+============================================================
+4. Patient master per-column diff counts (all 3,661 differing)
+============================================================
+  n_us_exams                                    324
+  first_us_date                                 276
+  last_us_date                                  282
+  preop_us_available_flag                       241
+  max_tirads_category_ever                      2933
+  max_tirads_points_ever                        3035
+  tirads_category_at_first_exam                 3168
+  tirads_category_at_last_preop_exam            2404
+  n_nodules_total_across_exams                  327
+  bilateral_disease_flag_ever                   276
+  first_high_risk_tirads_date                   1746
+
+============================================================
+5. Net effect on TIRADS coverage
+============================================================
+  exam_master.worst_tirads_category_this_exam:
+    table populated:   2035
+    view  populated:   8187
+    delta:           +6152
+  patient_master.max_tirads_category_ever:
+    table populated:   1226
+    view  populated:   3396
+    delta:           +2170

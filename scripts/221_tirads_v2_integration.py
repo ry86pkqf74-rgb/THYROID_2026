@@ -320,7 +320,7 @@ def phase_0(con: duckdb.DuckDBPyConnection) -> dict:
               COUNT(DISTINCT u.research_id) FILTER (
                 WHERE u.research_id NOT IN (SELECT research_id FROM _new_rep_only)
               )                                                                          AS rids_missing_from_new_v2_reports
-            FROM us_nodules_tirads u
+            FROM raw.us_nodules_tirads u
         """).fetchone()
         out["us_nodules_tirads_coverage"] = {
             "us_nodules_rids_total": int(cov_row[0]),

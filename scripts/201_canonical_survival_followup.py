@@ -77,7 +77,7 @@ last_us AS (
     SELECT
         CAST(research_id AS VARCHAR) AS research_id,
         MAX(TRY_CAST(ultrasound_date AS DATE)) AS last_us_date
-    FROM ultrasound_reports
+    FROM raw.ultrasound_reports
     WHERE ultrasound_date IS NOT NULL
     GROUP BY 1
 ),

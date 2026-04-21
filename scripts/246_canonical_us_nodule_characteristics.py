@@ -35,7 +35,7 @@ Tables READ
 -----------
   thyroid_canonical_publication_v1_0.main.imaging_nodule_master_v1
   thyroid_canonical_publication_v1_0.main.tirads_llm_extracted_v2
-  thyroid_canonical_publication_v1_0.main.us_nodules_tirads
+  thyroid_canonical_publication_v1_0.raw.us_nodules_tirads
   thyroid_canonical_publication_v1_0.main.imaging_nodule_long_v2 (archive then drop)
   thyroid_canonical_publication_v1_0.main.canonical_patient_master
   thyroid_canonical_publication_v1_0.manuscript_workspace.detail_table_registry_v1
@@ -220,7 +220,7 @@ WITH unt_max AS (
       TRY_CAST(u.n13_tr AS INTEGER), TRY_CAST(u.n14_tr AS INTEGER)
     ) AS unt_max_tr,
     u.us_1_date AS unt_first_us_date
-  FROM us_nodules_tirads u
+  FROM raw.us_nodules_tirads u
 ),
 inm_max AS (
   SELECT
@@ -273,7 +273,7 @@ def main() -> None:
              (SELECT COUNT(*) FROM tirads_llm_extracted_v2) AS llm_rows,
              (SELECT COUNT(DISTINCT research_id) FROM tirads_llm_extracted_v2) AS llm_pts,
              (SELECT COUNT(*) FROM imaging_nodule_long_v2) AS inl_rows,
-             (SELECT COUNT(*) FROM us_nodules_tirads) AS unt_rows,
+             (SELECT COUNT(*) FROM raw.us_nodules_tirads) AS unt_rows,
              (SELECT COUNT(*) FROM canonical_patient_master) AS cpm_rows
          """
     ).fetchone()

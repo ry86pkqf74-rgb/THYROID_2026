@@ -1,0 +1,7 @@
+Views referencing ultrasound_reports OR us_nodules_tirads: 2
+
+--- views_readable.US_Nodules_TIRADS ---
+    contains us_nodules_tirads: ...CREATE VIEW views_readable.US_Nodules_TIRADS AS SELECT * FROM main.us_nodules_tirads;...
+
+--- views_readable.US_Reports_Raw ---
+    contains ultrasound_reports: ...TE VIEW views_readable.US_Reports_Raw AS SELECT * FROM main.ultrasound_reports;...

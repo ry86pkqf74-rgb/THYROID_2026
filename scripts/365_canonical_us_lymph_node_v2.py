@@ -111,7 +111,7 @@ SELECT
     NULL::DOUBLE  AS confidence,
     CURRENT_TIMESTAMP AS extracted_at,
     TRUE AS nlp_backfill_pending
-FROM {PUBLICATION_DB}.main.ultrasound_reports
+FROM {PUBLICATION_DB}.raw.ultrasound_reports
 WHERE lymph_node_assessment IS NOT NULL
   AND TRIM(lymph_node_assessment) <> ''
   AND TRY_CAST(research_id AS INTEGER) IS NOT NULL;
@@ -132,7 +132,7 @@ SELECT
     'us_nodules_tirads'  AS source_note_type,
     md5(research_id || '|' || COALESCE(us_1_date,'')) AS source_report_id,
     NULL, NULL, CURRENT_TIMESTAMP, TRUE
-FROM {PUBLICATION_DB}.main.us_nodules_tirads
+FROM {PUBLICATION_DB}.raw.us_nodules_tirads
 WHERE us_1_impression IS NOT NULL
   AND TRIM(us_1_impression) <> ''
   AND regexp_matches(LOWER(us_1_impression),

@@ -1,0 +1,93 @@
+========================================================================
+45 non-TIRADS, non-rank diff rows: side-by-side dump
+========================================================================
+  45 rows total. Showing all of them.
+
+research_id  | exam_date    | t_n_nod      | v_n_nod      | t_largest    | v_largest    | t_2nd        | v_2nd        | t_bilat      | v_bilat      | t_isth       | v_isth      
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+4410         | 2019-02-05   | 2            | 2            | None         | 4.3          | None         | 4.3          | False        | False        | False        | False       
+5315         | 2016-12-09   | 1            | 1            | None         | 0.5          | None         | None         | False        | False        | False        | False       
+6697         | 2018-12-11   | 1            | 1            | None         | 0.8          | None         | None         | False        | False        | False        | False       
+6911         | 2018-10-03   | 1            | 1            | None         | 1.4          | None         | None         | False        | False        | False        | False       
+7205         | 2019-11-04   | 1            | 1            | None         | 1.8          | None         | None         | False        | False        | False        | False       
+7299         | 2019-11-12   | 1            | 1            | None         | 3.0          | None         | None         | False        | False        | False        | False       
+7740         | 2020-10-07   | 1            | 1            | None         | 0.5          | None         | None         | False        | False        | False        | False       
+7748         | 2020-06-17   | 1            | 1            | None         | 1.6          | None         | None         | False        | False        | False        | False       
+7801         | 2016-12-20   | 1            | 1            | None         | 0.5          | None         | None         | False        | False        | False        | True        
+7802         | 2020-09-09   | 1            | 1            | None         | 0.9          | None         | None         | False        | False        | False        | False       
+7924         | 2020-07-20   | 1            | 1            | None         | 0.98         | None         | None         | False        | False        | False        | False       
+8047         | 2016-05-10   | 6            | 6            | None         | 0.5          | None         | 0.5          | False        | False        | True         | True        
+8047         | 2017-04-11   | 8            | 8            | None         | 4.7          | None         | 4.7          | False        | False        | True         | True        
+8047         | 2019-03-07   | 7            | 7            | None         | 1.2          | None         | 1.2          | False        | False        | True         | True        
+8047         | 2020-01-01   | 7            | 7            | None         | 3.8          | None         | 3.8          | False        | False        | True         | True        
+8047         | 2020-09-04   | 5            | 5            | None         | 0.4          | None         | 0.4          | False        | False        | False        | False       
+8047         | 2023-07-03   | 7            | 7            | None         | 0.8          | None         | 0.8          | False        | False        | True         | True        
+8051         | 2022-06-03   | 1            | 1            | None         | 0.6          | None         | None         | False        | False        | False        | False       
+8110         | 2020-08-17   | 1            | 1            | None         | 0.6          | None         | None         | False        | False        | False        | False       
+8239         | 2022-01-24   | 1            | 1            | None         | 2.3          | None         | None         | False        | False        | False        | False       
+8492         | 2021-08-04   | 1            | 1            | None         | 2.1          | None         | None         | False        | False        | False        | False       
+8743         | 2021-05-24   | 1            | 1            | None         | 2.8          | None         | None         | False        | False        | False        | False       
+8835         | 2020-11-17   | None         | 1            | None         | 2.1          | None         | None         | None         | False        | None         | False       
+8917         | 2022-10-14   | 1            | 1            | None         | 1.3          | None         | None         | False        | False        | False        | False       
+8925         | 2022-04-23   | 1            | 1            | None         | 1.1          | None         | None         | False        | False        | False        | False       
+9055         | 2016-09-16   | 1            | 1            | None         | 1.3          | None         | None         | False        | False        | False        | False       
+9244         | 2022-12-05   | 1            | 1            | None         | 1.4          | None         | None         | False        | False        | False        | False       
+9255         | 2022-09-23   | 1            | 1            | None         | 2.5          | None         | None         | False        | False        | False        | False       
+9259         | 2022-08-06   | 1            | 1            | None         | 3.0          | None         | None         | False        | False        | False        | False       
+9455         | 2022-11-14   | 1            | 1            | None         | 2.2          | None         | None         | False        | False        | False        | False       
+9600         | 2022-06-13   | 1            | 1            | None         | 2.0          | None         | None         | False        | False        | False        | False       
+9615         | 2023-08-02   | 1            | 1            | None         | 3.7          | None         | None         | False        | False        | False        | False       
+9696         | 2019-04-26   | 1            | 1            | None         | 2.4          | None         | None         | False        | False        | False        | False       
+9820         | 2022-07-01   | None         | 1            | None         | 5.0          | None         | None         | None         | False        | None         | False       
+10202        | 2025-12-12   | 1            | 1            | None         | 0.6          | None         | None         | False        | False        | False        | False       
+10234        | 2024-11-27   | 1            | 1            | None         | 1.31         | None         | None         | False        | False        | False        | False       
+10540        | 2020-06-03   | None         | 1            | None         | 1.2          | None         | None         | None         | False        | None         | True        
+10541        | 2024-04-19   | 1            | 1            | None         | 0.5          | None         | None         | False        | False        | False        | False       
+10645        | 2022-11-30   | 1            | 1            | None         | 2.1          | None         | None         | False        | False        | False        | True        
+10941        | 2024-07-16   | 1            | 1            | None         | 1.0          | None         | None         | False        | False        | False        | False       
+11145        | 2024-09-25   | 1            | 1            | None         | 0.9          | None         | None         | False        | False        | False        | False       
+11161        | 2025-01-29   | 1            | 1            | None         | 0.99         | None         | None         | False        | False        | False        | False       
+11368        | 2024-12-23   | 1            | 1            | None         | 3.0          | None         | None         | False        | False        | False        | False       
+11378        | 2023-07-10   | 1            | 1            | None         | 0.5          | None         | None         | False        | False        | False        | False       
+11530        | 2024-02-21   | 1            | 1            | None         | 1.7          | None         | None         | False        | False        | False        | False       
+
+  aggregate change-direction tally:
+    largest_nodule_cm: NULL -> value = 45
+    largest_nodule_cm: value -> NULL = 0
+    largest_nodule_cm: value -> different value = 0
+
+    largest_nodule_cm ratio v/t (when both populated and != ):
+      none — all largest_nodule_cm diffs are NULL <-> value transitions
+
+    n_nodules_on_exam: NULL -> value = 3
+    n_nodules_on_exam: value -> different value = 0
+    n_nodules_on_exam value changes (table -> view):
+
+========================================================================
+Sanity query 1: NULL or nonsensical dates
+========================================================================
+  null_dates=0  before_1990=0  future_dates=0
+  earliest=2002-01-01  latest=2025-07-28  n_keys=449
+
+========================================================================
+Sanity query 2: research_ids present in canonical_patient_master
+========================================================================
+  orphan key rows   = 0
+  orphan distinct rids = 0
+
+========================================================================
+Sanity query 3: source attribution across the 3 child tables
+========================================================================
+  from_nodule_v2     = 449
+  from_gland_v2      = 0
+  from_lymph_node_v2 = 0
+  n_keys total       = 449
+
+  bonus: source_* attribution on the 449 nodule_v2 rows backing these keys
+    n                         449
+    src_base                  0
+    src_tirads_v2             53
+    src_tirads_llm            396
+    src_dynamics_llm          0
+    src_us_nodules_tirads     0
+    src_fna_linkage           0

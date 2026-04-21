@@ -1,18 +1,27 @@
 #!/usr/bin/env python3
-"""Script 366 — Build main.canonical_us_exam_master_v2 (Phase 6a).
+"""Script 366 — Build main.canonical_us_exam_master_v2 as a VIEW.
 
-One row per (research_id, us_exam_id, exam_date). Aggregates from v2 nodule,
-gland, and US LN tables. Modality prefixing applied throughout: any column
-referring to LN data uses the us_ln_ prefix so future CT/PET-CT/MR/nucmed
-exam masters can add their own ct_ln_*, petct_ln_*, etc. columns.
+(Originally a CREATE TABLE builder; converted to a VIEW on 2026-04-21
+because the rollup contains zero unique data — every column derives from
+the 3 v2 master tables. See US_rollups_to_views_raw_schema_move_cursor_prompt
+_20260421.md for the rationale and parity audit.)
+
+Grain: one row per (research_id, us_exam_id, exam_date). Aggregates from
+v2 nodule, gland, and US LN tables. Modality prefixing applied throughout:
+any column referring to LN data uses the us_ln_ prefix so future
+CT/PET-CT/MR/nucmed exam masters can add their own ct_ln_*, petct_ln_*,
+etc. columns.
 
 Sources:
   * canonical_us_nodule_v2        (per-nodule)
   * canonical_us_thyroid_gland_v2 (per-exam, gland)
   * canonical_us_lymph_node_v2    (per-LN, US-only)
 
-is_preop_exam comes from canonical_patient_master.surg_date_canonical
+is_preop_exam comes from canonical_patient_master.first_surgery_date_v2
 (exam_date <= surg_date) — best-effort fallback to FALSE if surg_date null.
+
+TIRADS aggregations use acr2017_tirads_category / acr2017_tirads_points
+(the post-Script-376 column names).
 """
 from __future__ import annotations
 
@@ -37,6 +46,24 @@ DECISION_LOG = OUT_DIR / f"366_us_exam_master_v2_{RUN_TS}.json"
 def log(msg: str) -> None:
     now = datetime.datetime.now(datetime.UTC).strftime("%H:%M:%S.%f")[:-3]
     print(f"[{now}Z] {msg}", flush=True)
+
+
+def _drop_if_base_table(con, fq_name: str) -> None:
+    """If a BASE TABLE exists at fq_name, drop it so CREATE OR REPLACE VIEW
+    can succeed. (CREATE OR REPLACE VIEW only replaces existing VIEWs in DuckDB
+    — it errors when the existing object is a table.) Safe no-op if the object
+    is already a view or doesn't exist."""
+    parts = fq_name.split(".")
+    if len(parts) != 3:
+        return
+    catalog, schema, name = parts
+    row = con.execute(
+        "SELECT table_type FROM information_schema.tables "
+        "WHERE table_catalog = ? AND table_schema = ? AND table_name = ?",
+        [catalog, schema, name],
+    ).fetchone()
+    if row and row[0] == "BASE TABLE":
+        con.execute(f"DROP TABLE {fq_name}")
 
 
 # Detect surgery-date column name (project may use different conventions).
@@ -77,7 +104,7 @@ def build_sql(surg_col: str | None) -> str:
         if surg_col else ""
     )
     return f"""
-CREATE OR REPLACE TABLE {TARGET} AS
+CREATE OR REPLACE VIEW {TARGET} AS
 WITH
 {cpm_cte}
 nodule_agg AS (
@@ -92,14 +119,14 @@ nodule_agg AS (
         BOOL_OR(LOWER(COALESCE(laterality,'')) = 'isthmus')
             OR BOOL_OR(LOWER(COALESCE(location_raw,'')) LIKE '%isthmus%')
             AS isthmus_nodule_flag,
-        MAX(tirads_category_v2)                    AS worst_tirads_category_this_exam,
-        MAX(tirads_score_2017)                     AS worst_tirads_points_this_exam,
-        MIN(tirads_category_v2)                    AS best_tirads_category_this_exam,
-        SUM(CASE WHEN UPPER(tirads_category_v2) = 'TR5' THEN 1 ELSE 0 END) AS count_tr5,
-        SUM(CASE WHEN UPPER(tirads_category_v2) = 'TR4' THEN 1 ELSE 0 END) AS count_tr4,
-        SUM(CASE WHEN UPPER(tirads_category_v2) = 'TR3' THEN 1 ELSE 0 END) AS count_tr3,
-        SUM(CASE WHEN UPPER(tirads_category_v2) = 'TR2' THEN 1 ELSE 0 END) AS count_tr2,
-        SUM(CASE WHEN UPPER(tirads_category_v2) = 'TR1' THEN 1 ELSE 0 END) AS count_tr1,
+        MAX(acr2017_tirads_category)               AS worst_tirads_category_this_exam,
+        MAX(acr2017_tirads_points)                 AS worst_tirads_points_this_exam,
+        MIN(acr2017_tirads_category)               AS best_tirads_category_this_exam,
+        SUM(CASE WHEN UPPER(acr2017_tirads_category) = 'TR5' THEN 1 ELSE 0 END) AS count_tr5,
+        SUM(CASE WHEN UPPER(acr2017_tirads_category) = 'TR4' THEN 1 ELSE 0 END) AS count_tr4,
+        SUM(CASE WHEN UPPER(acr2017_tirads_category) = 'TR3' THEN 1 ELSE 0 END) AS count_tr3,
+        SUM(CASE WHEN UPPER(acr2017_tirads_category) = 'TR2' THEN 1 ELSE 0 END) AS count_tr2,
+        SUM(CASE WHEN UPPER(acr2017_tirads_category) = 'TR1' THEN 1 ELSE 0 END) AS count_tr1,
         BOOL_OR(nlp_backfill_pending)              AS any_nodule_pending_on_exam
     FROM {PUBLICATION_DB}.main.canonical_us_nodule_v2
     WHERE is_aggregate_row IS NOT TRUE
@@ -186,13 +213,14 @@ SELECT * FROM joined;
 
 
 COMMENT_SQL = (
-    f"COMMENT ON TABLE {TARGET} IS "
-    f"'US v2 per-exam master. Grain: one row per "
-    f"(research_id, us_exam_id, exam_date). Built {RUN_TS} by Script 366 "
-    f"from canonical_us_nodule_v2 + canonical_us_thyroid_gland_v2 + "
-    f"canonical_us_lymph_node_v2. LN columns are US-prefixed "
-    f"(has_us_ln_findings, n_us_ln_total_on_exam, n_abnormal_us_ln_on_exam) "
-    f"so future CT/PET-CT/MR/nucmed exam masters slot in as ct_ln_*, etc.';"
+    f"COMMENT ON VIEW {TARGET} IS "
+    f"'US v2 per-exam master (VIEW). Grain: one row per "
+    f"(research_id, us_exam_id, exam_date). Materialized by Script 366 "
+    f"as a VIEW over canonical_us_nodule_v2 + canonical_us_thyroid_gland_v2 + "
+    f"canonical_us_lymph_node_v2 (last refreshed {RUN_TS}). "
+    f"LN columns are US-prefixed (has_us_ln_findings, "
+    f"n_us_ln_total_on_exam, n_abnormal_us_ln_on_exam) so future "
+    f"CT/PET-CT/MR/nucmed exam masters slot in as ct_ln_*, etc.';"
 )
 
 
@@ -211,7 +239,8 @@ def main() -> int:
         log("dry-run only.")
         return 0
 
-    log(f"  CREATE OR REPLACE {TARGET}")
+    log(f"  CREATE OR REPLACE VIEW {TARGET}")
+    _drop_if_base_table(con, TARGET)
     con.execute(build_sql(surg_col))
     con.execute(COMMENT_SQL)
 

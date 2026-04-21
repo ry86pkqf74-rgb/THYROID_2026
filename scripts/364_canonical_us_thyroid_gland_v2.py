@@ -88,7 +88,7 @@ WITH ur_parsed AS (
         recommendation                              AS recommendation_text,
         radiologist,
         study_indication
-    FROM {PUBLICATION_DB}.main.ultrasound_reports
+    FROM {PUBLICATION_DB}.raw.ultrasound_reports
     WHERE TRY_CAST(research_id AS INTEGER) IS NOT NULL
 ),
 ur_with_volumes AS (
@@ -182,7 +182,7 @@ usnt_only AS (
         TRUE  AS nlp_backfill_pending,
         CURRENT_TIMESTAMP AS extracted_at,
         '{SCRIPT_TAG}'    AS build_script
-    FROM {PUBLICATION_DB}.main.us_nodules_tirads u
+    FROM {PUBLICATION_DB}.raw.us_nodules_tirads u
     WHERE TRY_CAST(u.research_id AS INTEGER) IS NOT NULL
       AND TRY_CAST(u.research_id AS INTEGER) NOT IN
           (SELECT research_id FROM ur_dedup)

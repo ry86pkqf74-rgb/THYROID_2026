@@ -12,7 +12,7 @@
 --          patients who actually have a *series* of exams (≥2).
 --
 -- Tables READ:
---   thyroid_canonical_publication_v1_0.main.ultrasound_reports (source of record)
+--   thyroid_canonical_publication_v1_0.raw.ultrasound_reports (source of record)
 --   thyroid_canonical_publication_v1_0.main.imaging_nodule_master_v1
 --       (used to hydrate dominant_nodule_size_on_us + dominant_nodule_location
 --        via (research_id, exam_date) join; pick nodule with largest
@@ -33,12 +33,12 @@
 --    us_findings_impression VARCHAR, us_impression VARCHAR, dominant_nodule_location VARCHAR)
 --
 -- Column mapping (honest + minimal):
---   research_id                 <- CAST(ultrasound_reports.research_id AS INTEGER)
---   us_date                     <- ultrasound_reports.ultrasound_date  (VARCHAR preserved)
+--   research_id                 <- CAST(raw.ultrasound_reports.research_id AS INTEGER)
+--   us_date                     <- raw.ultrasound_reports.ultrasound_date  (VARCHAR preserved)
 --   dominant_nodule_size_on_us  <- imaging_nodule_master_v1.max_dimension_cm of the
 --                                  largest nodule that exam; NULL if no match
---   us_findings_impression      <- ultrasound_reports.source_us_impression
---   us_impression               <- ultrasound_reports.clinical_impression
+--   us_findings_impression      <- raw.ultrasound_reports.source_us_impression
+--   us_impression               <- raw.ultrasound_reports.clinical_impression
 --   dominant_nodule_location    <- imaging_nodule_master_v1.location_raw of
 --                                  the largest-nodule row; NULL if no match
 --
@@ -55,12 +55,12 @@ SELECT (SELECT COUNT(*) FROM serial_imaging_us) = 0 AS ok;
 -- ASSERT: ultrasound_reports has the expected baseline (6793 exams / 4074 patients)
 SELECT
   COUNT(*) = 6793 AND COUNT(DISTINCT research_id) = 4074 AS ok
-FROM ultrasound_reports;
+FROM raw.ultrasound_reports;
 
 -- ASSERT: exactly 1443 patients have ≥2 US exams
 SELECT
   (SELECT COUNT(*) FROM
-    (SELECT research_id FROM ultrasound_reports GROUP BY research_id HAVING COUNT(*) >= 2) t
+    (SELECT research_id FROM raw.ultrasound_reports GROUP BY research_id HAVING COUNT(*) >= 2) t
   ) = 1443 AS ok;
 
 -- LOG: PHASE 2 — build the populated rows
@@ -69,7 +69,7 @@ INSERT INTO serial_imaging_us
    us_findings_impression, us_impression, dominant_nodule_location)
 WITH ge2_pts AS (
   SELECT research_id
-  FROM ultrasound_reports
+  FROM raw.ultrasound_reports
   GROUP BY research_id
   HAVING COUNT(*) >= 2
 ),
@@ -81,7 +81,7 @@ us_exams AS (
     TRY_CAST(u.ultrasound_date AS DATE)      AS us_date_native,
     u.source_us_impression,
     u.clinical_impression
-  FROM ultrasound_reports u
+  FROM raw.ultrasound_reports u
   JOIN ge2_pts g ON g.research_id = u.research_id
 ),
 dominant_per_exam AS (
@@ -113,7 +113,7 @@ LEFT JOIN dominant_per_exam d
 
 -- LOG: PHASE 3 — annotate the populated table
 COMMENT ON TABLE serial_imaging_us IS
-  'Script 238 (2026-04-16): one row per US exam for patients with ≥2 US exams in ultrasound_reports (the "serial" filter). Source: ultrasound_reports hydrated with imaging_nodule_master_v1 for dominant nodule (largest max_dimension_cm per exam, since no dominant_nodule_flag exists on that table). TI-RADS trajectory is intentionally absent (imaging_nodule_long_v2.tirads_score is 100% NULL; defer to v1_1). n_us_exams continues to flow through canonical_patient_master.n_us_exams.';
+  'Script 238 (2026-04-16; raw schema move 2026-04-21): one row per US exam for patients with ≥2 US exams in raw.ultrasound_reports (the "serial" filter). Source: raw.ultrasound_reports hydrated with imaging_nodule_master_v1 for dominant nodule (largest max_dimension_cm per exam, since no dominant_nodule_flag exists on that table). TI-RADS trajectory is intentionally absent (imaging_nodule_long_v2.tirads_score is 100% NULL; defer to v1_1). n_us_exams continues to flow through canonical_patient_master.n_us_exams.';
 
 COMMENT ON COLUMN serial_imaging_us.dominant_nodule_size_on_us IS
   'Script 238 (2026-04-16): max_dimension_cm of the largest nodule on this exam from imaging_nodule_master_v1 (no dominant_nodule_flag exists; largest is the operational proxy). NULL when no matching imaging_nodule_master_v1 row exists for (research_id, ultrasound_date) — ~10 such exams out of ~4162.';

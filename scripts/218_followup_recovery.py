@@ -162,7 +162,7 @@ FROM mri_imaging WHERE date_of_exam IS NOT NULL GROUP BY 1
 UNION ALL
 SELECT CAST(research_id AS VARCHAR),
     MAX(TRY_CAST(ultrasound_date AS DATE)), 'ultrasound_reports'
-FROM ultrasound_reports WHERE ultrasound_date IS NOT NULL GROUP BY 1
+FROM raw.ultrasound_reports WHERE ultrasound_date IS NOT NULL GROUP BY 1
 
 UNION ALL
 SELECT CAST(research_id AS VARCHAR),

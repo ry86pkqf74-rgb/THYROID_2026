@@ -166,7 +166,7 @@ WITH us_unpivot AS (
         NULL::VARCHAR AS suspicious_node_details,
         FALSE AS growth_flag,
         FALSE AS dominant_nodule_flag
-    FROM ultrasound_reports
+    FROM raw.ultrasound_reports
     WHERE research_id IS NOT NULL
 ),
 ct_nodules AS (

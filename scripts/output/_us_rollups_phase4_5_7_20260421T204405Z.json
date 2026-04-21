@@ -1,0 +1,92 @@
+{
+  "run_ts_utc": "20260421T204405Z",
+  "phase4": {
+    "archive": {
+      "exam_rows": 18102,
+      "pt_rows": 10859
+    },
+    "surg_col": "first_surgery_date_v2",
+    "views": {
+      "exam_rows": 18551,
+      "pt_rows": 10859
+    },
+    "table_types": [
+      {
+        "name": "canonical_us_exam_master_v2",
+        "type": "VIEW"
+      },
+      {
+        "name": "canonical_us_patient_master_v2",
+        "type": "VIEW"
+      }
+    ]
+  },
+  "phase5": {
+    "moves": [
+      {
+        "label": "ultrasound_reports",
+        "src_rows": 6793,
+        "dst_rows": 6793,
+        "src_hash": "faf0900dc40d6fbd8f551dcaa1f6ecfc",
+        "dst_hash": "faf0900dc40d6fbd8f551dcaa1f6ecfc"
+      },
+      {
+        "label": "us_nodules_tirads",
+        "src_rows": 10859,
+        "dst_rows": 10859,
+        "src_hash": "af52541f9a08541cdb4b4c9d40a9188a",
+        "dst_hash": "af52541f9a08541cdb4b4c9d40a9188a"
+      }
+    ]
+  },
+  "phase7": {
+    "main_us_objects": [
+      {
+        "name": "canonical_us_lymph_node_v2",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "canonical_us_nodule_v2",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "canonical_us_thyroid_gland_v2",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "manuscript_cohort_v1",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "specimen_tumor_focus_v1",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "canonical_us_exam_master_v2",
+        "type": "VIEW"
+      },
+      {
+        "name": "canonical_us_patient_master_v2",
+        "type": "VIEW"
+      },
+      {
+        "name": "molecular_fusions_unnested_v2",
+        "type": "VIEW"
+      }
+    ],
+    "raw_schema_objects": [
+      {
+        "name": "ultrasound_reports",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "us_nodules_tirads",
+        "type": "BASE TABLE"
+      }
+    ],
+    "smoke_counts": {
+      "exam_master_rows": 18551,
+      "patient_master_rows": 10859
+    }
+  }
+}

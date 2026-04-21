@@ -1,0 +1,54 @@
+[20:44:05.274Z] start  commit=True
+[20:44:05.812Z] ============================================================
+[20:44:05.812Z] PHASE 4: archive snapshots, drop tables, create views in main
+[20:44:05.812Z] ============================================================
+[20:44:05.812Z]   CREATE SCHEMA IF NOT EXISTS "Thyroid 2026 UPdated".us_legacy_20260421
+[20:44:06.235Z]   CREATE TABLE "Thyroid 2026 UPdated".us_legacy_20260421.archived_canonical_us_exam_master_v2 AS SELECT * FROM thyroid_canonical_publication_v1_0.main.canonical_us_exam_master_v2
+[20:44:07.039Z]     archived rows: 18102
+[20:44:07.039Z]   CREATE TABLE "Thyroid 2026 UPdated".us_legacy_20260421.archived_canonical_us_patient_master_v2 AS SELECT * FROM thyroid_canonical_publication_v1_0.main.canonical_us_patient_master_v2
+[20:44:07.770Z]     archived rows: 10859
+[20:44:07.770Z]   DROP TABLE thyroid_canonical_publication_v1_0.main.canonical_us_exam_master_v2
+[20:44:07.897Z]   DROP TABLE thyroid_canonical_publication_v1_0.main.canonical_us_patient_master_v2
+[20:44:08.056Z]   surgery date column on CPM: first_surgery_date_v2
+[20:44:08.056Z]   CREATE VIEW thyroid_canonical_publication_v1_0.main.canonical_us_exam_master_v2
+[20:44:08.284Z]     view rows: 18551
+[20:44:08.284Z]   CREATE VIEW thyroid_canonical_publication_v1_0.main.canonical_us_patient_master_v2
+[20:44:08.538Z]     view rows: 10859
+[20:44:08.539Z]   verify table_type via information_schema
+[20:44:08.575Z]     canonical_us_exam_master_v2: VIEW
+[20:44:08.575Z]     canonical_us_patient_master_v2: VIEW
+[20:44:08.575Z] 
+[20:44:08.575Z] ============================================================
+[20:44:08.575Z] PHASE 5: move raw feeds to raw schema with hash verify
+[20:44:08.575Z] ============================================================
+[20:44:08.575Z]   CREATE SCHEMA IF NOT EXISTS thyroid_canonical_publication_v1_0.raw
+[20:44:08.714Z]   CREATE TABLE thyroid_canonical_publication_v1_0.raw.ultrasound_reports AS SELECT * FROM thyroid_canonical_publication_v1_0.main.ultrasound_reports
+[20:44:10.497Z]     rows: src=6793  dst=6793
+[20:44:10.497Z]   hash-compare ultrasound_reports
+[20:44:11.057Z]     src_hash=faf0900dc40d6fbd8f551dcaa1f6ecfc
+[20:44:11.057Z]     dst_hash=faf0900dc40d6fbd8f551dcaa1f6ecfc
+[20:44:11.057Z]   hashes match -> DROP TABLE thyroid_canonical_publication_v1_0.main.ultrasound_reports
+[20:44:11.223Z]   CREATE TABLE thyroid_canonical_publication_v1_0.raw.us_nodules_tirads AS SELECT * FROM thyroid_canonical_publication_v1_0.main.us_nodules_tirads
+[20:44:11.604Z]     rows: src=10859  dst=10859
+[20:44:11.604Z]   hash-compare us_nodules_tirads
+[20:44:11.755Z]     src_hash=af52541f9a08541cdb4b4c9d40a9188a
+[20:44:11.755Z]     dst_hash=af52541f9a08541cdb4b4c9d40a9188a
+[20:44:11.755Z]   hashes match -> DROP TABLE thyroid_canonical_publication_v1_0.main.us_nodules_tirads
+[20:44:11.911Z] 
+[20:44:11.911Z] ============================================================
+[20:44:11.911Z] PHASE 7: final verification
+[20:44:11.911Z] ============================================================
+[20:44:11.942Z]   main.* objects matching US/tirads/ultrasound/nodule:
+[20:44:11.942Z]     BASE TABLE   canonical_us_lymph_node_v2
+[20:44:11.942Z]     BASE TABLE   canonical_us_nodule_v2
+[20:44:11.942Z]     BASE TABLE   canonical_us_thyroid_gland_v2
+[20:44:11.942Z]     BASE TABLE   manuscript_cohort_v1
+[20:44:11.942Z]     BASE TABLE   specimen_tumor_focus_v1
+[20:44:11.942Z]     VIEW         canonical_us_exam_master_v2
+[20:44:11.942Z]     VIEW         canonical_us_patient_master_v2
+[20:44:11.942Z]     VIEW         molecular_fusions_unnested_v2
+[20:44:11.969Z]   raw.* objects:
+[20:44:11.969Z]     BASE TABLE   ultrasound_reports
+[20:44:11.969Z]     BASE TABLE   us_nodules_tirads
+[20:44:12.171Z]   smoke: exam_master_rows=18551  patient_master_rows=10859
+[20:44:12.172Z] decision log: /Users/ros/THyroid 2026/scripts/output/_us_rollups_phase4_5_7_20260421T204405Z.json

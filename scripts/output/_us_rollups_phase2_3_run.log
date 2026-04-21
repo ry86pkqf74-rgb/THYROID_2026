@@ -1,0 +1,24 @@
+[20:35:47.043Z] Phase 2 + Phase 3 helper start
+[20:35:47.690Z] CREATE SCHEMA IF NOT EXISTS manuscript_workspace
+[20:35:48.124Z]   surgery date column on CPM: first_surgery_date_v2
+[20:35:48.124Z]   patient view: rewired 2 reference(s) of thyroid_canonical_publication_v1_0.main.canonical_us_exam_master_v2 -> thyroid_canonical_publication_v1_0.manuscript_workspace.candidate_us_exam_master_v2
+[20:35:48.124Z] CREATE OR REPLACE VIEW thyroid_canonical_publication_v1_0.manuscript_workspace.candidate_us_exam_master_v2
+[20:35:48.274Z] CREATE OR REPLACE VIEW thyroid_canonical_publication_v1_0.manuscript_workspace.candidate_us_patient_master_v2
+[20:35:48.410Z] ============================================================
+[20:35:48.410Z] PHASE 3 PARITY: canonical_us_exam_master_v2
+[20:35:48.410Z] ============================================================
+[20:35:48.523Z]   row counts: {'table_rows': 18102, 'view_rows': 18551}
+[20:35:48.740Z]   EXCEPT diff (full row): {'in_table_not_view': 6967, 'in_view_not_table': 7416}
+[20:35:48.939Z]   key-level diff (research_id, exam_date): {'keys_only_in_table': 0, 'keys_only_in_view': 449}
+[20:35:49.541Z]   column-level breakdown (first 20 mismatched rows): {'diff_rows_sampled': 20, 'by_column': {'worst_tirads_category_this_exam': 16, 'worst_tirads_points_this_exam': 16, 'best_tirads_category_this_exam': 16, 'count_tr5': 2, 'count_tr4': 2, 'count_tr3': 8, 'count_tr2': 4, 'count_tr1': 5, 'exam_rank_for_patient': 4}, 'key_cols': ['research_id', 'exam_date']}
+[20:35:49.541Z] 
+[20:35:49.541Z] ============================================================
+[20:35:49.541Z] PHASE 3 PARITY: canonical_us_patient_master_v2
+[20:35:49.541Z] ============================================================
+[20:35:49.702Z]   row counts: {'table_rows': 10859, 'view_rows': 10859}
+[20:35:49.993Z]   EXCEPT diff (full row): {'in_table_not_view': 3661, 'in_view_not_table': 3661}
+[20:35:50.269Z]   key-level diff (research_id): {'keys_only_in_table': 0, 'keys_only_in_view': 0}
+[20:35:50.612Z]   column-level breakdown (first 20 mismatched rows): {'diff_rows_sampled': 20, 'by_column': {'max_tirads_category_ever': 19, 'max_tirads_points_ever': 19, 'tirads_category_at_first_exam': 17, 'tirads_category_at_last_preop_exam': 14, 'first_high_risk_tirads_date': 9}, 'key_cols': ['research_id']}
+[20:35:50.613Z] decision log: /Users/ros/THyroid 2026/scripts/output/_us_rollups_phase2_3_20260421T203547Z.json
+[20:35:50.613Z] all four EXCEPT diffs zero: False
+[20:35:50.613Z] STOPPING per agreed checkpoint. Review parity output before proceeding to Phase 4.

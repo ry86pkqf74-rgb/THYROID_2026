@@ -1,0 +1,218 @@
+
+=== canonical_us_nodule_v2 ===
+rows=37579  patients=6523  cols=57
+    research_id                                      INTEGER
+    us_exam_id                                       VARCHAR
+    exam_date                                        DATE
+    nodule_index_within_exam                         INTEGER
+    nodule_id                                        VARCHAR
+    laterality                                       VARCHAR
+    location_raw                                     VARCHAR
+    location_detail                                  VARCHAR
+    length_mm                                        DOUBLE
+    width_mm                                         DOUBLE
+    height_mm                                        DOUBLE
+    volume_ml                                        DOUBLE
+    size_cm_max                                      DOUBLE
+    extracted_size_cm                                DOUBLE
+    composition                                      VARCHAR
+    echogenicity                                     VARCHAR
+    shape                                            VARCHAR
+    margins                                          VARCHAR
+    calcifications                                   VARCHAR
+    echogenic_foci                                   VARCHAR
+    halo                                             VARCHAR
+    vascularity                                      VARCHAR
+    extrathyroidal_extension_on_us                   VARCHAR
+    chammas_type                                     VARCHAR
+    elastography_category                            VARCHAR
+    composition_pts                                  DOUBLE
+    echogenicity_pts                                 DOUBLE
+    shape_pts                                        DOUBLE
+    margin_pts                                       DOUBLE
+    foci_pts                                         DOUBLE
+    tirads_reported_in_text                          INTEGER
+    acr2017_tirads_points                            DOUBLE
+    acr2017_tirads_category                          VARCHAR
+    updated_tirads_category                          VARCHAR
+    acr2017_band_ambiguous                           BOOLEAN
+    acr2017_vs_updated_concordant                    BOOLEAN
+    suspicious_flag                                  BOOLEAN
+    acr2017_feature_points_complete                  BOOLEAN
+    interval_growth_flag                             BOOLEAN
+    prior_size_mm_max                                DOUBLE
+    fna_recommended_this_nodule                      BOOLEAN
+    fna_performed_prior_or_concurrent                BOOLEAN
+    comparison_statement                             VARCHAR
+    source_base                                      BOOLEAN
+    source_tirads_v2                                 BOOLEAN
+    source_tirads_llm                                BOOLEAN
+    source_dynamics_llm                              BOOLEAN
+    source_fna_linkage                               BOOLEAN
+    source_us_nodules_tirads                         BOOLEAN
+    source_tables_cunc_legacy                        VARCHAR
+    data_completeness_pct                            DOUBLE
+    resolution_rule                                  VARCHAR
+    calcifications_coverage_status                   VARCHAR
+    nodule_master_id                                 BIGINT
+    is_aggregate_row                                 BOOLEAN
+    nlp_backfill_pending                             BOOLEAN
+    source_modality                                  VARCHAR
+
+=== canonical_us_thyroid_gland_v2 ===
+rows=13578  patients=10859  cols=32
+    research_id                                      INTEGER
+    us_exam_id                                       VARCHAR
+    exam_date                                        DATE
+    rl_length_cm                                     DOUBLE
+    rl_width_cm                                      DOUBLE
+    rl_depth_cm                                      DOUBLE
+    rl_volume_ml                                     DOUBLE
+    ll_length_cm                                     DOUBLE
+    ll_width_cm                                      DOUBLE
+    ll_depth_cm                                      DOUBLE
+    ll_volume_ml                                     DOUBLE
+    isthmus_thickness_mm                             DOUBLE
+    pyramidal_present_flag                           BOOLEAN
+    substernal_extension_flag                        BOOLEAN
+    total_thyroid_volume_ml                          DOUBLE
+    total_thyroid_size_text                          VARCHAR
+    background_echogenicity                          VARCHAR
+    heterogeneity                                    VARCHAR
+    hashimoto_pattern                                VARCHAR
+    vascularity_overall                              VARCHAR
+    calcifications_parenchymal                       VARCHAR
+    goiter_flag                                      BOOLEAN
+    clinical_impression_text                         VARCHAR
+    source_us_impression_text                        VARCHAR
+    recommendation_text                              VARCHAR
+    radiologist                                      VARCHAR
+    study_indication                                 VARCHAR
+    source_ultrasound_reports                        BOOLEAN
+    source_us_nodules_tirads                         BOOLEAN
+    nlp_backfill_pending                             BOOLEAN
+    extracted_at                                     TIMESTAMP WITH TIME ZONE
+    build_script                                     VARCHAR
+
+=== canonical_us_lymph_node_v2 ===
+rows=6801  patients=4077  cols=29
+    research_id                                      INTEGER
+    us_exam_id                                       VARCHAR
+    exam_date                                        DATE
+    us_ln_index_within_exam                          INTEGER
+    us_ln_id                                         VARCHAR
+    source_modality                                  VARCHAR
+    laterality                                       VARCHAR
+    neck_level                                       VARCHAR
+    region                                           VARCHAR
+    size_cm_max                                      DOUBLE
+    short_axis_mm                                    DOUBLE
+    long_axis_mm                                     DOUBLE
+    shape                                            VARCHAR
+    echogenicity                                     VARCHAR
+    hilum_preserved                                  BOOLEAN
+    calcifications                                   VARCHAR
+    cystic_component                                 BOOLEAN
+    vascularity_pattern                              VARCHAR
+    extranodal_extension_on_us                       BOOLEAN
+    suspicious_flag                                  BOOLEAN
+    suspicion_level                                  VARCHAR
+    biopsy_recommended                               BOOLEAN
+    evidence_text                                    VARCHAR
+    source_note_type                                 VARCHAR
+    source_report_id                                 VARCHAR
+    llm_model                                        VARCHAR
+    confidence                                       DOUBLE
+    extracted_at                                     TIMESTAMP
+    nlp_backfill_pending                             BOOLEAN
+
+=== canonical_us_exam_master_v2 ===
+rows=18102  patients=10859  cols=23
+    research_id                                      INTEGER
+    us_exam_id                                       VARCHAR
+    exam_date                                        DATE
+    n_nodules_on_exam                                BIGINT
+    largest_nodule_cm                                DOUBLE
+    second_largest_nodule_cm                         DOUBLE
+    bilateral_flag                                   BOOLEAN
+    isthmus_nodule_flag                              BOOLEAN
+    worst_tirads_category_this_exam                  VARCHAR
+    worst_tirads_points_this_exam                    DOUBLE
+    best_tirads_category_this_exam                   VARCHAR
+    count_tr5                                        HUGEINT
+    count_tr4                                        HUGEINT
+    count_tr3                                        HUGEINT
+    count_tr2                                        HUGEINT
+    count_tr1                                        HUGEINT
+    has_gland_findings                               BOOLEAN
+    has_us_ln_findings                               BOOLEAN
+    n_us_ln_total_on_exam                            BIGINT
+    n_abnormal_us_ln_on_exam                         HUGEINT
+    exam_rank_for_patient                            BIGINT
+    is_preop_exam                                    BOOLEAN
+    any_nlp_backfill_pending_on_exam                 BOOLEAN
+
+=== canonical_us_patient_master_v2 ===
+rows=10859  patients=10859  cols=19
+    research_id                                      INTEGER
+    has_any_us                                       BOOLEAN
+    n_us_exams                                       BIGINT
+    first_us_date                                    DATE
+    last_us_date                                     DATE
+    preop_us_available_flag                          BOOLEAN
+    max_tirads_category_ever                         VARCHAR
+    max_tirads_points_ever                           DOUBLE
+    tirads_category_at_first_exam                    VARCHAR
+    tirads_category_at_last_preop_exam               VARCHAR
+    n_nodules_total_across_exams                     HUGEINT
+    bilateral_disease_flag_ever                      BOOLEAN
+    multifocal_flag_ever                             BOOLEAN
+    first_high_risk_tirads_date                      DATE
+    has_us_ln_findings_ever                          BOOLEAN
+    any_suspicious_us_ln_ever                        BOOLEAN
+    first_abnormal_us_ln_date                        DATE
+    has_gland_findings_ever                          BOOLEAN
+    any_nlp_backfill_pending_for_patient             BOOLEAN
+
+=== TIRADS column probe on canonical_us_nodule_v2 ===
+    elastography_category
+    tirads_reported_in_text
+    acr2017_tirads_points
+    acr2017_tirads_category
+    updated_tirads_category
+    source_tirads_v2
+    source_tirads_llm
+    source_us_nodules_tirads
+
+=== Sample distinct values of TIRADS-related cols ===
+  acr2017_tirads_category:
+    None                                     15303
+    TR1                                      7325
+    TR3                                      5613
+    TR4                                      3562
+    TR2                                      3068
+    TR5                                      2708
+  updated_tirads_category:
+    None                                     25509
+    TR3                                      3613
+    TR4                                      2845
+    TR1                                      2679
+    TR2                                      2260
+    TR5                                      673
+  source_tirads_v2:
+    True                                     30847
+    False                                    6732
+  tirads_reported_in_text:
+    1                                        10259
+    None                                     9694
+    3                                        6327
+    2                                        6045
+    4                                        4502
+    5                                        752
+
+=== exam_master sample row to see what's currently stored ===
+  (3, None, None, None, None, None, None, None, None)
+  (6, None, None, None, None, None, None, None, None)
+  (38, None, None, None, None, None, None, None, None)
+  (41, None, None, None, None, None, None, None, None)
+  (58, None, None, None, None, None, None, None, None)

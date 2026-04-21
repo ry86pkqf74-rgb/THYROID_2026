@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
-"""Script 367 — Build main.canonical_us_patient_master_v2 (Phase 6b).
+"""Script 367 — Build main.canonical_us_patient_master_v2 as a VIEW.
 
-One row per patient. Aggregates from exam master v2 + gland v2 + LN v2.
+(Originally a CREATE TABLE builder; converted to a VIEW on 2026-04-21
+because the rollup contains zero unique data — every column derives from
+canonical_us_exam_master_v2, which is itself a view over the 3 v2 master
+tables. See US_rollups_to_views_raw_schema_move_cursor_prompt_20260421.md
+for the rationale and parity audit.)
+
+Grain: one row per patient. Aggregates from exam_master_v2 view.
 US-prefixed LN columns so future modality patient masters don't collide.
 """
 from __future__ import annotations
@@ -24,7 +30,7 @@ RUN_TS = datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")
 DECISION_LOG = OUT_DIR / f"367_us_patient_master_v2_{RUN_TS}.json"
 
 BUILD_SQL = f"""
-CREATE OR REPLACE TABLE {TARGET} AS
+CREATE OR REPLACE VIEW {TARGET} AS
 WITH exam_agg AS (
     SELECT
         research_id,
@@ -92,9 +98,10 @@ LEFT JOIN nodule_first_last nfl USING (research_id);
 
 
 COMMENT_SQL = (
-    f"COMMENT ON TABLE {TARGET} IS "
-    f"'US v2 per-patient master. Grain: one row per research_id (patients with "
-    f"any US exam). Built {RUN_TS} by Script 367 from canonical_us_exam_master_v2. "
+    f"COMMENT ON VIEW {TARGET} IS "
+    f"'US v2 per-patient master (VIEW). Grain: one row per research_id "
+    f"(patients with any US exam). Materialized by Script 367 as a VIEW over "
+    f"canonical_us_exam_master_v2 (last refreshed {RUN_TS}). "
     f"LN columns are US-prefixed (has_us_ln_findings_ever, "
     f"any_suspicious_us_ln_ever, first_abnormal_us_ln_date) so future "
     f"modality patient masters can add ct_*, petct_*, etc. without collision.';"
@@ -106,6 +113,22 @@ def log(msg: str) -> None:
     print(f"[{now}Z] {msg}", flush=True)
 
 
+def _drop_if_base_table(con, fq_name: str) -> None:
+    """Same helper as Script 366 — drop BASE TABLE if present so
+    CREATE OR REPLACE VIEW can succeed."""
+    parts = fq_name.split(".")
+    if len(parts) != 3:
+        return
+    catalog, schema, name = parts
+    row = con.execute(
+        "SELECT table_type FROM information_schema.tables "
+        "WHERE table_catalog = ? AND table_schema = ? AND table_name = ?",
+        [catalog, schema, name],
+    ).fetchone()
+    if row and row[0] == "BASE TABLE":
+        con.execute(f"DROP TABLE {fq_name}")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--commit", action="store_true")
@@ -115,6 +138,7 @@ def main() -> int:
     if not args.commit:
         log("dry-run only.")
         return 0
+    _drop_if_base_table(con, TARGET)
     con.execute(BUILD_SQL)
     con.execute(COMMENT_SQL)
     n = con.execute(f"SELECT COUNT(*) FROM {TARGET}").fetchone()[0]

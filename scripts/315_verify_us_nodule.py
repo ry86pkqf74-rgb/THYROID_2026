@@ -42,7 +42,7 @@ WITH excel_agg AS (
            COUNT(*) AS nodule_count_excel,
            MAX(CAST(nodule_1_length_mm AS VARCHAR)) AS max_nodule_size_cm_excel,
            MAX(nodule_1_ti_rads) AS tirads_category_max_excel
-    FROM main.ultrasound_reports
+    FROM raw.ultrasound_reports
     GROUP BY research_id
 ),
 llm_agg AS (

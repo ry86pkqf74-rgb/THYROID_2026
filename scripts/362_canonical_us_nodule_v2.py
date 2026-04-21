@@ -383,7 +383,7 @@ SELECT
     NULL::BIGINT                                           AS nodule_master_id,
     FALSE                                                  AS is_aggregate_row,
     TRUE                                                   AS nlp_backfill_pending
-FROM {PUBLICATION_DB}.main.us_nodules_tirads u
+FROM {PUBLICATION_DB}.raw.us_nodules_tirads u
 LEFT JOIN {PUBLICATION_DB}.main.canonical_us_nodule_characteristics_v1 c
        ON TRY_CAST(u.research_id AS INTEGER) = c.research_id
 WHERE c.research_id IS NULL

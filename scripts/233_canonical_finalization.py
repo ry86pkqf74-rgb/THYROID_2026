@@ -377,7 +377,7 @@ def phase_1c(con) -> dict:
             UNION ALL
             SELECT CAST(research_id AS VARCHAR),
                    TRY_CAST(ultrasound_date AS DATE), 'ultrasound_reports'
-              FROM "{PUB}".main.ultrasound_reports
+              FROM "{PUB}".raw.ultrasound_reports
              WHERE ultrasound_date IS NOT NULL
             UNION ALL
             SELECT CAST(research_id AS VARCHAR),
