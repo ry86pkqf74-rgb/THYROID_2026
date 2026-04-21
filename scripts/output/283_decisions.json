@@ -7663,10 +7663,129 @@
         }
       ],
       "finished_at": "2026-04-21T00:30:25Z"
+    },
+    "6": {
+      "phase": 6,
+      "started_at": "2026-04-21T00:30:32Z",
+      "gates": [
+        {
+          "name": "A_cpm_rows_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "A_cpm_no_null_rid",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "A_cpm_no_null_fna_path_outcome",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "B_cpm_rids_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "C_other_cpm_cols_unchanged_vs_phase4_snapshot",
+          "ok": true,
+          "detail": {
+            "live": "26d51d389075f06d11c6f41739fba730",
+            "snapshot": "26d51d389075f06d11c6f41739fba730"
+          }
+        },
+        {
+          "name": "D_source_rows_eq_32408",
+          "ok": true,
+          "detail": {
+            "observed": 32408,
+            "expected": 32408
+          }
+        },
+        {
+          "name": "D_source_rids_eq_10863",
+          "ok": true,
+          "detail": {
+            "observed": 10863,
+            "expected": 10863
+          }
+        },
+        {
+          "name": "D_source_model_eq_qwen25_32b",
+          "ok": true,
+          "detail": {
+            "observed": "qwen2.5-32b",
+            "expected": "qwen2.5-32b"
+          }
+        },
+        {
+          "name": "D_source_sdk_eq_openai",
+          "ok": true,
+          "detail": {
+            "observed": "openai",
+            "expected": "openai"
+          }
+        },
+        {
+          "name": "E_archive_pre9domainv4_exists_with_11037_rows",
+          "ok": true,
+          "detail": {
+            "archives_present": [
+              "note_entities_llm_frozen_section_detail_pre9domainv4_20260421T002536Z"
+            ],
+            "newest_archive": "note_entities_llm_frozen_section_detail_pre9domainv4_20260421T002536Z",
+            "row_count": 11037
+          }
+        },
+        {
+          "name": "F_cpm_pre283_snapshot_exists_with_10871_rows",
+          "ok": true,
+          "detail": {
+            "snapshots_present": [
+              "canonical_patient_master_pre283_20260421T003010Z"
+            ],
+            "newest_snapshot": "canonical_patient_master_pre283_20260421T003010Z",
+            "row_count": 10871
+          }
+        }
+      ],
+      "blockers": [],
+      "live_other_cols_md5": "26d51d389075f06d11c6f41739fba730",
+      "live_other_cols_count": 1532,
+      "phase_4_snapshot_other_cols_md5": "26d51d389075f06d11c6f41739fba730",
+      "observed": {
+        "cpm_n_rows": 10871,
+        "cpm_null_rid": 0,
+        "cpm_null_fna": 0,
+        "cpm_n_rids": 10871,
+        "source_n_rows": 32408,
+        "source_n_rids": 10863,
+        "source_models": "qwen2.5-32b",
+        "source_sdks": "openai",
+        "phase_1_archives_present": [
+          "note_entities_llm_frozen_section_detail_pre9domainv4_20260421T002536Z"
+        ],
+        "phase_4_snapshots_present": [
+          "canonical_patient_master_pre283_20260421T003010Z"
+        ]
+      },
+      "finished_at": "2026-04-21T00:30:36Z"
     }
   },
-  "last_started_at": "2026-04-21T00:30:23Z",
-  "last_phase_arg": "5",
-  "last_finished_at": "2026-04-21T00:30:25Z",
+  "last_started_at": "2026-04-21T00:30:32Z",
+  "last_phase_arg": "6",
+  "last_finished_at": "2026-04-21T00:30:36Z",
   "last_return_code": 0
 }

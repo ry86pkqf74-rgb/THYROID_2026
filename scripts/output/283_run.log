@@ -107,3 +107,16 @@
 [00:30:24.980Z]   gate post_sum_n_entities_eq_pinned: OK — {'observed': 7715, 'expected': 7715}
 [00:30:24.980Z]   gate post_null_research_id_eq_0: OK — {'observed': 0}
 [00:30:24.980Z]   gate post_key_finding_set_eq_has_true: OK — {'observed_kf_set': 2855, 'observed_has_true': 2855, 'detail': 'every TRUE patient must have a key_finding'}
+[00:30:32.022Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:30:32.629Z] === PHASE 6 — post-mutation invariants A-F ===
+[00:30:33.150Z]   gate A_cpm_rows_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[00:30:33.150Z]   gate A_cpm_no_null_rid: OK — {'observed': 0}
+[00:30:33.150Z]   gate A_cpm_no_null_fna_path_outcome: OK — {'observed': 0}
+[00:30:33.194Z]   gate B_cpm_rids_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[00:30:36.312Z]   gate C_other_cpm_cols_unchanged_vs_phase4_snapshot: OK — {'live': '26d51d389075f06d11c6f41739fba730', 'snapshot': '26d51d389075f06d11c6f41739fba730'}
+[00:30:36.350Z]   gate D_source_rows_eq_32408: OK — {'observed': 32408, 'expected': 32408}
+[00:30:36.350Z]   gate D_source_rids_eq_10863: OK — {'observed': 10863, 'expected': 10863}
+[00:30:36.350Z]   gate D_source_model_eq_qwen25_32b: OK — {'observed': 'qwen2.5-32b', 'expected': 'qwen2.5-32b'}
+[00:30:36.350Z]   gate D_source_sdk_eq_openai: OK — {'observed': 'openai', 'expected': 'openai'}
+[00:30:36.476Z]   gate E_archive_pre9domainv4_exists_with_11037_rows: OK — {'archives_present': ['note_entities_llm_frozen_section_detail_pre9domainv4_20260421T002536Z'], 'newest_archive': 'note_entities_llm_frozen_section_detail_pre9domainv4_20260421T002536Z', 'row_count': 11037}
+[00:30:36.687Z]   gate F_cpm_pre283_snapshot_exists_with_10871_rows: OK — {'snapshots_present': ['canonical_patient_master_pre283_20260421T003010Z'], 'newest_snapshot': 'canonical_patient_master_pre283_20260421T003010Z', 'row_count': 10871}
