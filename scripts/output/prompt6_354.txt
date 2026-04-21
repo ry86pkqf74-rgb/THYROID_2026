@@ -1,0 +1,73 @@
+
+==============================================================================
+1. RunPod LLM target tables
+==============================================================================
+  note_entities_llm_pathology                        rows= 11037 rids= 5641 last_ts=2026-03-31T12:13:08.654879+00:00
+  note_entities_llm_cervical_ln_detail               rows= 11037 rids= 5641 last_ts=2026-04-03T09:24:56.855216+00:00
+  note_entities_llm_tirads_granular                  rows= 11037 rids= 5641 last_ts=2026-04-01T07:34:41.540223+00:00
+  note_entities_llm_esophageal_invasion              ABSENT
+
+==============================================================================
+2. Deferred items (from prompt6_defer_log_v1)
+==============================================================================
+  script 347: patient_analysis_resolved_v1.path_multifocal_flag
+  script 347: patient_analysis_resolved_v1.path_n_tumors
+  script 348: imaging_exam_master_v1
+  script 348: imaging_nodule_master_v1
+  script 348: tirads_llm_extracted_v2
+  script 349: max_stimulated_tg
+  script 350: tsh_suppressed_ever
+  script 350: tsh_suppressed_ever
+  script 350: tsh_suppressed_ever
+  script 351: path_stage_raw__source_ceiling
+  script 351: path_stage_raw__tnm_concat_alternative
+  script 352: comp_vc_paralysis_evidence_tier__untiered
+  script 352: comp_vc_paresis_evidence_tier__untiered
+  script 352: gm_path_stage_raw
+  script 352: gm_recurrence_site_primary
+  script 352: op_esophageal_inv_any
+  script 352: path_stage_raw
+  script 352: rai_scan_findings_v9
+  script 352: recurrence_histology
+  script 352: recurrence_site_primary
+  script 352: third_surgery_date
+  script 352: third_surgery_days_from_surg
+  script 352: tsh_suppressed_ever
+  23 defer rows propagated to handoff
+
+==============================================================================
+3. PI review queue (open)
+==============================================================================
+  script 347: margin_status_final_semantics — default=raw values from patient_analysis_resolved_v1: R1=3896, Rx=35, R2=25, R0=1, alt=expected R0 dominant for resected DTC; current distribution suggests inverted encoding
+  script 349: stimulated_tg_window — default=[-21d, +7d] around resolved_rai_date, alt=narrow to thyrogen-day-only OR widen to [-28d, +14d]
+  script 350: tsh_suppressed_threshold — default=0.1 mIU/L (high-risk DTC suppression target), alt=0.5 mIU/L (low-risk DTC suppression target) — supplementary col already populated
+  script 350: tsh_suppressed_threshold — default=0.1 mIU/L (high-risk DTC suppression target), alt=0.5 mIU/L (low-risk DTC suppression target) — supplementary col already populated
+  script 350: tsh_suppressed_threshold — default=0.1 mIU/L (high-risk DTC suppression target), alt=0.5 mIU/L (low-risk DTC suppression target) — supplementary col already populated
+  script 351: path_stage_raw_vs_ajcc8_stage_group_conflict — default=432 patients have path_stage_raw != ajcc8_stage_group, alt=could be reconciled to ajcc8_stage_group_corrected as authoritative
+  script 352: biochemical_concern_threshold — default=Tg value_max > 2.0 ng/mL (per provenance recommendation), alt=alternative thresholds 1.0 or 5.0 per ATA risk strata
+  7 PI review items
+
+==============================================================================
+4. Prompt 7 scope summary
+==============================================================================
+  scope:p7_pathology_rollup
+  scope:p7_ln_summary
+  scope:p7_tirads_rescore
+  scope:p7_esophageal_propagation
+  scope:p7_imaging_reconciliation
+  scope:p7_pi_review_triage
+  scope:p7_complication_vc_tiering
+  scope:p7_recurrence_extraction
+
+==============================================================================
+5. Final summary
+==============================================================================
+  prompt7_handoff_v1 total rows: 42
+  status distribution:
+    deferred: 23
+    planned_for_prompt7: 8
+    needs_pi_review: 7
+    present: 3
+    absent_until_job_lands: 1
+
+DONE. Prompt 6 complete. Handoff written for Prompt 7.
