@@ -419,6 +419,20 @@ domains:
     dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
     qa_tier: standard
 
+  esophageal_invasion:
+    parquet_stem: note_entities_llm_esophageal_invasion
+    tier: v2
+    extractors: [llm]
+    prompts:
+      - repo_path: prompts/esophageal_invasion_extraction_v1.txt
+        scope: esophageal_invasion
+    canonical_output: true
+    note_scope: op_note
+    canonical_target: note_entities_llm_esophageal_invasion
+    linkage_anchor_family: operative
+    dedupe_key: [research_id, note_row_id, entity_type, entity_value_norm]
+    qa_tier: standard
+
   frozen_section_detail:
     parquet_stem: note_entities_llm_frozen_section_detail
     tier: v2
