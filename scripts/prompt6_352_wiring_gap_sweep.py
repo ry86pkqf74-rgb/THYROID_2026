@@ -5,7 +5,7 @@ backfill_feasible=TRUE wiring gaps not addressed by Scripts 349-351.
 Target rows from provenance table (4 candidates):
 
   nucmed_tgab_max
-    Source: thyroglobulin_lab_canonical_v1 (analyte='TgAb', result_numeric)
+    Source: thyroglobulin_lab_VIEW_v1 (analyte='TgAb', result_numeric)
     Action: MAX(result_numeric) per research_id WHERE analyte='TgAb'
     CPM before: 2602 nonnull; source ceiling: 2994 rids; max delta ~392
 
@@ -31,7 +31,6 @@ Output:
   - Defer rows for cols where source ceiling already met or no fillable data
 """
 
-from datetime import datetime, timezone
 from scripts._md_connect import connect_locked
 
 con = connect_locked()
@@ -82,7 +81,7 @@ total_delta = 0
 # 1. nucmed_tgab_max
 header("1. nucmed_tgab_max — MAX(TgAb result_numeric)")
 src_rids = con.execute(f"""
-    SELECT COUNT(DISTINCT research_id) FROM {DB}.main.thyroglobulin_lab_canonical_v1
+    SELECT COUNT(DISTINCT research_id) FROM {DB}.main.thyroglobulin_lab_VIEW_v1
      WHERE analyte='TgAb' AND result_numeric IS NOT NULL
 """).fetchone()[0]
 before = cpm_nonnull("nucmed_tgab_max")
@@ -93,7 +92,7 @@ con.execute(f"""
     CREATE TABLE {DB}.manuscript_workspace.nucmed_tgab_max_backfill_v1 AS
     SELECT research_id,
            MAX(result_numeric) AS max_tgab
-      FROM {DB}.main.thyroglobulin_lab_canonical_v1
+      FROM {DB}.main.thyroglobulin_lab_VIEW_v1
      WHERE analyte = 'TgAb' AND result_numeric IS NOT NULL
      GROUP BY research_id
 """)
@@ -105,7 +104,7 @@ if not cpm_has_col("nucmed_tgab_max_source"):
 con.execute(f"""
     UPDATE {DB}.main.canonical_patient_master AS c
        SET nucmed_tgab_max        = b.max_tgab,
-           nucmed_tgab_max_source = 'thyroglobulin_lab_canonical_v1_TgAb_max_352'
+           nucmed_tgab_max_source = 'thyroglobulin_lab_VIEW_v1_TgAb_max_352'
       FROM {DB}.manuscript_workspace.nucmed_tgab_max_backfill_v1 AS b
      WHERE c.research_id = b.research_id
        AND c.nucmed_tgab_max IS NULL
@@ -115,7 +114,7 @@ delta = after - before
 total_delta += delta
 print(f"  before={before}, after={after}, delta={delta} (source ceiling {src_rids})")
 log_remediation("nucmed_tgab_max",
-                "thyroglobulin_lab_canonical_v1 (analyte='TgAb')",
+                "thyroglobulin_lab_VIEW_v1 (analyte='TgAb')",
                 src_rids, delta,
                 "MAX(result_numeric) per rid; only filled NULL slots")
 

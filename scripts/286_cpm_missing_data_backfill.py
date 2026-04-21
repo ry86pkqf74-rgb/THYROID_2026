@@ -10,9 +10,9 @@ provenance audit in Script 285. Each backfill:
 
 Targets (3 columns):
   1. `nucmed_tgab_max`             <- MAX(result_numeric) from
-                                     thyroglobulin_lab_canonical_v1 where analyte='TgAb'
+                                     thyroglobulin_lab_VIEW_v1 where analyte='TgAb'
   2. `tsh_suppressed_ever`         <- BOOL: any TSH < 0.1 from
-                                     longitudinal_lab_canonical_v1 where analyte='TSH'
+                                     longitudinal_lab_VIEW_v1 where analyte='TSH'
   3. `biochemical_concern_first_date` <- MIN(window_first_date) from
                                      tg_postop_surveillance_windows_v1 where value_max > 2.0
 
@@ -162,7 +162,7 @@ def main():
     src_tgab = """
         SELECT research_id,
                MAX(result_numeric) AS value
-          FROM main.thyroglobulin_lab_canonical_v1
+          FROM main.thyroglobulin_lab_VIEW_v1
          WHERE analyte = 'TgAb'
            AND result_numeric IS NOT NULL
          GROUP BY research_id
@@ -170,7 +170,7 @@ def main():
     backfill_simple(
         con, args.commit, "nucmed_tgab_max",
         src_tgab,
-        "MAX(result_numeric) from thyroglobulin_lab_canonical_v1 where analyte='TgAb'",
+        "MAX(result_numeric) from thyroglobulin_lab_VIEW_v1 where analyte='TgAb'",
         "no threshold (raw max)", "DOUBLE"
     )
 
@@ -179,7 +179,7 @@ def main():
         SELECT research_id,
                MAX(CASE WHEN value_numeric < {TSH_SUPPRESSED_THRESHOLD} THEN TRUE
                         ELSE FALSE END) AS value
-          FROM main.longitudinal_lab_canonical_v1
+          FROM main.longitudinal_lab_VIEW_v1
          WHERE lab_name_standardized = 'tsh'
            AND value_numeric IS NOT NULL
          GROUP BY research_id
@@ -187,7 +187,7 @@ def main():
     backfill_simple(
         con, args.commit, "tsh_suppressed_ever",
         src_tsh,
-        "MAX(TSH<0.1) from longitudinal_lab_canonical_v1 where lab_name_standardized='tsh'",
+        "MAX(TSH<0.1) from longitudinal_lab_VIEW_v1 where lab_name_standardized='tsh'",
         f"TSH < {TSH_SUPPRESSED_THRESHOLD} ng/mL", "BOOLEAN"
     )
 

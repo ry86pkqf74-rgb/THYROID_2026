@@ -2,8 +2,8 @@
 """
 Script 253 — Triage 537 lab-orphan patients (audit §2.1)
 
-These 537 research_ids appear in `thyroglobulin_lab_canonical_v1` and
-`longitudinal_lab_canonical_v1` but NOT in `canonical_patient_master`.
+These 537 research_ids appear in `thyroglobulin_lab_VIEW_v1` and
+`longitudinal_lab_VIEW_v1` but NOT in `canonical_patient_master`.
 Per §7.3 of the audit, the same non-cancer-cohort test that exonerated
 the 635 operative orphans applies here:
 
@@ -50,8 +50,8 @@ SCRIPT_NUM = "253"
 RUN_DATE = "2026-04-16"
 
 CPM = f'{PUBLICATION_DB}.main.canonical_patient_master'
-TG = f'{PUBLICATION_DB}.main.thyroglobulin_lab_canonical_v1'
-LONG_LAB = f'{PUBLICATION_DB}.main.longitudinal_lab_canonical_v1'
+TG = f'{PUBLICATION_DB}.main.thyroglobulin_lab_VIEW_v1'
+LONG_LAB = f'{PUBLICATION_DB}.main.longitudinal_lab_VIEW_v1'
 EVIDENCE_TABLES = [
     f"{PUBLICATION_DB}.main.fna_episode_master_v2",
     f"{PUBLICATION_DB}.main.tumor_episode_master_v2",
@@ -269,8 +269,8 @@ def main() -> None:
         ensure_archive_schema(con)
         ensure_audit_table(con)
 
-        tg_snap = f"thyroglobulin_lab_canonical_v1_orphans_pre253_{run_ts}"
-        ll_snap = f"longitudinal_lab_canonical_v1_orphans_pre253_{run_ts}"
+        tg_snap = f"thyroglobulin_lab_VIEW_v1_orphans_pre253_{run_ts}"
+        ll_snap = f"longitudinal_lab_VIEW_v1_orphans_pre253_{run_ts}"
         tg_full = archive_orphan_slice(con, TG, tg_snap, zero_evidence, log)
         ll_full = archive_orphan_slice(con, LONG_LAB, ll_snap, zero_evidence, log)
         decision["phases"]["snapshots"] = {"tg_archive": tg_full,

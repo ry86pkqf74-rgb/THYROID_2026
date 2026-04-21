@@ -1,0 +1,107 @@
+[16:43:25.005Z] === Script 347 COMMIT ===
+[16:43:25.648Z]   CPM invariant (pre): rows=10871 dist_rid=10871 null_fna=0
+[16:43:25.648Z] === PHASE 1 — archive snapshots ===
+[16:43:25.674Z]   source main.longitudinal_lab_canonical_v1: 75,291 rows -> longitudinal_lab_canonical_v1_pre347_20260421T164325Z
+[16:43:28.123Z]     archived 75,291 rows ✓
+[16:43:28.148Z]   source main.thyroglobulin_lab_canonical_v1: 74,258 rows -> thyroglobulin_lab_canonical_v1_pre347_20260421T164325Z
+[16:43:30.558Z]     archived 74,258 rows ✓
+[16:43:30.583Z]   source main.lab_cross_wave_dedup_map_v1: 21,761 rows -> lab_cross_wave_dedup_map_v1_pre347_20260421T164325Z
+[16:43:31.922Z]     archived 21,761 rows ✓
+[16:43:31.922Z] === PHASE 2A — pulling source rows ===
+[16:43:32.681Z]   pulled 75,291 rows from longitudinal+thyroglobulin join
+[16:43:33.331Z]   normalized 75,291 rows; 0 unit-converted
+[16:43:33.331Z]   staging canonical_labs_thyroglobulin_v1: 74,258 pre-dedup rows
+[16:43:33.331Z]   staging canonical_labs_tsh_v1: 559 pre-dedup rows
+[16:43:33.331Z]   staging canonical_labs_vitamin_d_v1: 86 pre-dedup rows
+[16:43:33.331Z]   staging canonical_labs_calcium_v1: 188 pre-dedup rows
+[16:43:33.331Z]   staging canonical_labs_pth_v1: 200 pre-dedup rows
+[16:43:33.331Z] === PHASE 2B — write per-analyte tables (with dedup) ===
+[16:43:33.391Z]   canonical_labs_thyroglobulin_v1: 74,258 pre-dedup rows -> staging_df register
+[16:43:34.007Z]     canonical_labs_thyroglobulin_v1 post-dedup rows: 53,006
+[16:43:34.147Z]   canonical_labs_tsh_v1: 559 pre-dedup rows -> staging_df register
+[16:43:34.348Z]     canonical_labs_tsh_v1 post-dedup rows: 556
+[16:43:34.486Z]   canonical_labs_vitamin_d_v1: 86 pre-dedup rows -> staging_df register
+[16:43:34.677Z]     canonical_labs_vitamin_d_v1 post-dedup rows: 86
+[16:43:34.819Z]   canonical_labs_calcium_v1: 188 pre-dedup rows -> staging_df register
+[16:43:35.011Z]     canonical_labs_calcium_v1 post-dedup rows: 187
+[16:43:35.151Z]   canonical_labs_pth_v1: 200 pre-dedup rows -> staging_df register
+[16:43:35.346Z]     canonical_labs_pth_v1 post-dedup rows: 200
+[16:43:35.485Z] === PHASE 3 — write compatibility views ===
+[16:43:36.179Z]   longitudinal_lab_VIEW_v1: 54,035 rows
+[16:43:36.179Z]   thyroglobulin_lab_VIEW_v1: 53,006 rows
+[16:43:36.179Z] === PHASE 4 — drop legacy lab objects ===
+[16:43:36.328Z]   dropped VIEW main.longitudinal_lab_canonical_cancer_only_v1
+[16:43:36.459Z]   dropped VIEW main.thyroglobulin_lab_canonical_cancer_only_v1
+[16:43:36.598Z]   dropped TABLE main.longitudinal_lab_canonical_v1
+[16:43:36.734Z]   dropped TABLE main.thyroglobulin_lab_canonical_v1
+[16:43:36.864Z]   dropped TABLE main.lab_cross_wave_dedup_map_v1
+[16:43:36.985Z] === PHASE 5 — registry update ===
+[16:43:37.025Z]   registry columns: ['canonical_version', 'description', 'detail_table_name', 'domain', 'feeds_master_columns', 'feeds_master_columns_array', 'feeds_master_columns_secondary', 'grain', 'join_key', 'needs_manual_review', 'schema_name', 'total_patients', 'total_rows']
+[16:43:37.197Z]   registry +canonical_labs_thyroglobulin_v1  rows=53006
+[16:43:37.297Z]   registry +canonical_labs_tsh_v1  rows=556
+[16:43:37.403Z]   registry +canonical_labs_pth_v1  rows=200
+[16:43:37.499Z]   registry +canonical_labs_calcium_v1  rows=187
+[16:43:37.601Z]   registry +canonical_labs_vitamin_d_v1  rows=86
+[16:43:37.705Z]   registry +longitudinal_lab_VIEW_v1  rows=54035
+[16:43:37.805Z]   registry +thyroglobulin_lab_VIEW_v1  rows=53006
+[16:43:37.805Z] === PHASE 6 — readable views ===
+[16:43:37.932Z]   dropped views_readable.Labs_Tg_Cancer_Only
+[16:43:38.060Z]   dropped views_readable.Labs_Longitudinal_Cancer_Only
+[16:43:38.197Z]   dropped views_readable.Labs_Longitudinal_All
+[16:43:38.333Z]   dropped views_readable.Labs_Tg_Longitudinal
+[16:43:38.481Z]   created views_readable.Labs_Thyroglobulin
+[16:43:38.613Z]   created views_readable.Labs_TSH
+[16:43:38.746Z]   created views_readable.Labs_PTH
+[16:43:38.877Z]   created views_readable.Labs_Calcium
+[16:43:39.027Z]   created views_readable.Labs_VitaminD
+[16:43:39.171Z]   created views_readable.Labs_Longitudinal
+[16:43:39.171Z] === PHASE 7 — verification ===
+[16:43:39.196Z]   [PASS] canonical_labs_thyroglobulin_v1 rows=53,006 in [50,000,54,500]
+[16:43:39.220Z]   [PASS] canonical_labs_tsh_v1 rows=556 in [500,800]
+[16:43:39.244Z]   [PASS] canonical_labs_pth_v1 rows=200 in [180,240]
+[16:43:39.270Z]   [PASS] canonical_labs_calcium_v1 rows=187 in [170,220]
+[16:43:39.296Z]   [PASS] canonical_labs_vitamin_d_v1 rows=86 in [80,110]
+[16:43:39.321Z]   [PASS] canonical_labs_thyroglobulin_v1: 0 rows with analyte NOT IN (Tg,TgAb) (got 0)
+[16:43:39.348Z]   [PASS] canonical_labs_thyroglobulin_v1: Tg rows always ng/mL (violations=0)
+[16:43:39.374Z]   [PASS] canonical_labs_thyroglobulin_v1: TgAb rows always IU/mL (violations=0)
+[16:43:39.399Z]   [PASS] canonical_labs_tsh_v1: 100% unit_standardized=mIU/L (violations=0)
+[16:43:39.424Z]   [PASS] canonical_labs_pth_v1: 100% unit_standardized=pg/mL (violations=0)
+[16:43:39.449Z]   [PASS] canonical_labs_calcium_v1: 100% unit_standardized=mg/dL (violations=0)
+[16:43:39.474Z]   [PASS] canonical_labs_vitamin_d_v1: 100% unit_standardized=ng/mL (violations=0)
+[16:43:39.500Z]   [PASS] canonical_labs_thyroglobulin_v1: research_id/lab_datetime/source all NOT NULL (nulls=(0, 0, 0))
+[16:43:39.529Z]   [PASS] canonical_labs_tsh_v1: research_id/lab_datetime/source all NOT NULL (nulls=(0, 0, 0))
+[16:43:39.557Z]   [PASS] canonical_labs_pth_v1: research_id/lab_datetime/source all NOT NULL (nulls=(0, 0, 0))
+[16:43:39.585Z]   [PASS] canonical_labs_calcium_v1: research_id/lab_datetime/source all NOT NULL (nulls=(0, 0, 0))
+[16:43:39.612Z]   [PASS] canonical_labs_vitamin_d_v1: research_id/lab_datetime/source all NOT NULL (nulls=(0, 0, 0))
+[16:43:39.645Z]   [PASS] all rows in valid source set (violations=0)
+[16:43:39.680Z]   [PASS] 0 rows with source='other_structured' (got 0)
+[16:43:39.714Z]   [PASS] Tg structured_ehr_tg HH:MM count >= 26000 (got 52999)
+[16:43:39.743Z]   [PASS] cross-wave dedup removed 21,256 rows (target 21000-21500)
+[16:43:39.775Z]   [PASS] is_censored=TRUE rows have value_numeric NOT NULL (violations=0)
+[16:43:39.805Z]   [PASS] canonical_labs_tsh_v1 NULL numeric rows < 20 (got 4)
+[16:43:39.833Z]   [PASS] canonical_labs_thyroglobulin_v1 Tg max(value_numeric) (uncensored)=8917.9 <= 10000.0
+[16:43:39.863Z]   [PASS] canonical_labs_thyroglobulin_v1 TgAb max(value_numeric) (uncensored)=25600.0 <= 40000.0
+[16:43:39.890Z]   [PASS] canonical_labs_tsh_v1 max(value_numeric) (uncensored)=150.0 <= 150.0
+[16:43:39.918Z]   [PASS] canonical_labs_pth_v1 max(value_numeric) (uncensored)=1399.0 <= 3000.0
+[16:43:39.946Z]   [PASS] canonical_labs_calcium_v1 max(value_numeric) (uncensored)=20.0 <= 20.0
+[16:43:39.972Z]   [PASS] canonical_labs_vitamin_d_v1 max(value_numeric) (uncensored)=83.0 <= 200.0
+[16:43:39.997Z]   [PASS] calcium min=4.0 >= 4
+[16:43:40.023Z]   [PASS] pth min=1.0 > 0
+[16:43:40.049Z]   [PASS] vitamin_d min=10.7 > 0
+[16:43:40.080Z]   [PASS] no negative value_numeric anywhere (got 0)
+[16:43:40.146Z]     informational: total notes=2430; non-unit-strip notes=1968
+[16:43:40.146Z]   [PASS] non-unit-strip correction notes in [15, 5000] (got 1968)
+[16:43:40.179Z]   [PASS] titer rows are TgAb with proper note (violations=0)
+[16:43:40.210Z]   [PASS] longitudinal_lab_VIEW_v1 rows (54,035) == sum tables (54,035)
+[16:43:40.261Z]   [PASS] thyroglobulin_lab_VIEW_v1 rows (53,006) == canonical_labs_thyroglobulin_v1 (53,006)
+[16:43:40.306Z]   [PASS] main.longitudinal_lab_canonical_v1 no longer exists (count=0)
+[16:43:40.335Z]   [PASS] main.thyroglobulin_lab_canonical_v1 no longer exists (count=0)
+[16:43:40.361Z]   [PASS] main.lab_cross_wave_dedup_map_v1 no longer exists (count=0)
+[16:43:40.420Z]   [PASS] cancer-cohort key coverage: 0 archived keys with no surviving row
+[16:43:40.449Z]   CPM invariant (post-verify): rows=10871 dist_rid=10871 null_fna=0
+[16:43:40.449Z]   [PASS] CPM invariant: (10871, 10871, 0)
+[16:43:40.449Z]   verification: 42 PASS / 0 FAIL
+[16:43:41.252Z] === PHASE 8 — write report ===
+[16:43:42.142Z]   report written: /Users/ros/THyroid 2026/studies/lab_consolidation_20260421/report.md
+[16:43:42.143Z] decision log: scripts/output/347_decision_20260421T164325Z.json
+[16:43:42.177Z]   CPM invariant (final): rows=10871 dist_rid=10871 null_fna=0

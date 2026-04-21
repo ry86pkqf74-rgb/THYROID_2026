@@ -3,14 +3,14 @@ Script 349 — Backfill max_stimulated_tg via RAI×Tg temporal join.
 
 Live column-name corrections vs rev-2 spec:
   spec name                                  -> live name
-  canonical_thyroglobulin_lab_canonical_v1   -> thyroglobulin_lab_canonical_v1
+  canonical_thyroglobulin_lab_VIEW_v1   -> thyroglobulin_lab_VIEW_v1
   tg.lab_date                                -> specimen_collect_dt (TIMESTAMP_NS)
   tg.tg_value_ng_ml                          -> result_numeric (DOUBLE)
   tg.source_note_ref                         -> (no equivalent — set NULL)
   rai.rai_dose_date                          -> resolved_rai_date
 
 Filters:
-  thyroglobulin_lab_canonical_v1.analyte = 'Tg'   (excludes TgAb)
+  thyroglobulin_lab_VIEW_v1.analyte = 'Tg'   (excludes TgAb)
   result_numeric IS NOT NULL
   specimen_collect_dt IS NOT NULL
   rai_treatment_episode_v2.resolved_rai_date IS NOT NULL
@@ -39,7 +39,6 @@ Steps:
       logged if delta < 500 explaining the source shortfall.)
 """
 
-from datetime import datetime, timezone
 from scripts._md_connect import connect_locked
 
 con = connect_locked()
@@ -84,7 +83,7 @@ con.execute(f"""
              tg.specimen_collect_dt,
              CAST(tg.specimen_collect_dt AS DATE) AS specimen_date,
              tg.result_numeric AS tg_value
-        FROM {DB}.main.thyroglobulin_lab_canonical_v1 tg
+        FROM {DB}.main.thyroglobulin_lab_VIEW_v1 tg
         JOIN {DB}.main.rai_treatment_episode_v2 rai
           ON rai.research_id = tg.research_id
        WHERE tg.analyte = 'Tg'
@@ -166,7 +165,7 @@ con.execute(f"""
     INSERT INTO {DB}.manuscript_workspace.prompt6_wiring_gap_remediation_v1
     VALUES (?, ?, ?, ?, ?, ?, NOW())
 """, ["max_stimulated_tg",
-      "thyroglobulin_lab_canonical_v1 x rai_treatment_episode_v2",
+      "thyroglobulin_lab_VIEW_v1 x rai_treatment_episode_v2",
       n_rids, delta, delta,
       "RAI±[21d, 7d] window aggregation; companion cols populated"])
 

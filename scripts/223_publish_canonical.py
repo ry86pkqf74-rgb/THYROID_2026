@@ -243,8 +243,8 @@ EPISODE_TABLES: dict[str, str] = {
     "lesion_analysis_resolved_v1": "11,851 resolved per-lesion analysis",
     "extracted_ete_subgraded_v1": "3,558 fully-graded ETE extractions",
     # LABS
-    "longitudinal_lab_canonical_v1": "77,960 labs (TSH/PTH/Ca/VitD time series)",
-    "thyroglobulin_lab_canonical_v1": "76,971 Tg values (full time series)",
+    "longitudinal_lab_VIEW_v1": "77,960 labs (TSH/PTH/Ca/VitD time series)",
+    "thyroglobulin_lab_VIEW_v1": "76,971 Tg values (full time series)",
     "tg_postop_surveillance_windows_v1": "16,184 Tg surveillance windows",
     "extracted_postop_labs_expanded_v1": "1,395 postop PTH/Ca extractions",
     "lab_cross_wave_dedup_map_v1": "21,761 lab dedup linkage",

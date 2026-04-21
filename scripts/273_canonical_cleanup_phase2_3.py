@@ -256,7 +256,7 @@ def phase_3_1(con) -> None:
     # All distinct rids in Tg lab
     n_lab_rids = con.execute(
         "SELECT COUNT(DISTINCT research_id) "
-        "FROM main.thyroglobulin_lab_canonical_v1"
+        "FROM main.thyroglobulin_lab_VIEW_v1"
     ).fetchone()[0]
     n_cpm_rids = con.execute(
         "SELECT COUNT(DISTINCT research_id) FROM main.canonical_patient_master"
@@ -267,7 +267,7 @@ def phase_3_1(con) -> None:
         FROM main.canonical_patient_master cpm
         JOIN (
           SELECT DISTINCT CAST(research_id AS VARCHAR) AS research_id
-          FROM main.thyroglobulin_lab_canonical_v1
+          FROM main.thyroglobulin_lab_VIEW_v1
         ) tg USING (research_id)
         """
     ).fetchone()[0]
@@ -275,7 +275,7 @@ def phase_3_1(con) -> None:
         """
         SELECT COUNT(DISTINCT lab.research_id)
         FROM (SELECT DISTINCT CAST(research_id AS VARCHAR) AS research_id
-              FROM main.thyroglobulin_lab_canonical_v1) lab
+              FROM main.thyroglobulin_lab_VIEW_v1) lab
         LEFT JOIN main.canonical_patient_master cpm USING (research_id)
         WHERE cpm.research_id IS NULL
         """
@@ -294,7 +294,7 @@ def phase_3_1(con) -> None:
                  MIN(specimen_collect_dt) AS first_lab,
                  MAX(specimen_collect_dt) AS last_lab,
                  COUNT(DISTINCT analyte) AS n_analytes
-          FROM main.thyroglobulin_lab_canonical_v1
+          FROM main.thyroglobulin_lab_VIEW_v1
           GROUP BY 1
         ),
         orphans AS (

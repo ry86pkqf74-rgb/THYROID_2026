@@ -128,7 +128,7 @@ tg_postop AS (
         TRY_CAST(t.specimen_collect_dt AS DATE) AS lab_date,
         t.result_numeric AS tg_value,
         DATE_DIFF('day', s.first_surgery_date, TRY_CAST(t.specimen_collect_dt AS DATE)) AS days_post_surgery
-    FROM thyroglobulin_lab_canonical_v1 t
+    FROM thyroglobulin_lab_VIEW_v1 t
     JOIN first_surg s ON CAST(t.research_id AS VARCHAR) = s.research_id
     WHERE t.analyte = 'Tg'
       AND t.result_numeric IS NOT NULL
@@ -186,7 +186,7 @@ tg_postop AS (
         CAST(t.research_id AS VARCHAR) AS research_id,
         t.result_numeric AS tg_value,
         TRY_CAST(t.specimen_collect_dt AS DATE) AS lab_date
-    FROM thyroglobulin_lab_canonical_v1 t
+    FROM thyroglobulin_lab_VIEW_v1 t
     JOIN first_surg s ON CAST(t.research_id AS VARCHAR) = s.research_id
     WHERE t.analyte = 'Tg'
       AND t.result_numeric IS NOT NULL
@@ -315,8 +315,9 @@ def main():
     # Biochemical patients
     biochem_rids = set(df_biochem["research_id"].tolist()) if len(df_biochem) > 0 else set()
 
-    # Persistent patients (set retained for parity with cohort enumeration; not consumed downstream)
-    _persistent_rids = set(df_persistent["research_id"].tolist()) if len(df_persistent) > 0 else set()
+    # Persistent patients (set computed for parity with cohort enumeration;
+    # not consumed downstream — derivation kept for audit traceability).
+    _ = set(df_persistent["research_id"].tolist()) if len(df_persistent) > 0 else set()
 
     # LLM imaging suspicious (exclude those already in confirmed/biochem)
     llm_suspicious = pd.DataFrame()

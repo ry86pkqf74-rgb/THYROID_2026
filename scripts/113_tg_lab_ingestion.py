@@ -2,6 +2,33 @@
 """
 113_tg_lab_ingestion.py — Thyroglobulin & TgAb Lab Ingestion Pipeline
 
+============================================================================
+FROZEN — Script 347 (lab consolidation, 2026-04-21) replaced the legacy lab
+output tables of this pipeline:
+
+    main.longitudinal_lab_canonical_v1   -> DROPPED (replaced by
+                                             main.longitudinal_lab_VIEW_v1
+                                             plus 5 per-analyte canonicals)
+    main.thyroglobulin_lab_canonical_v1  -> DROPPED (replaced by
+                                             main.canonical_labs_thyroglobulin_v1
+                                             and main.thyroglobulin_lab_VIEW_v1)
+    main.lab_cross_wave_dedup_map_v1     -> DROPPED (dedup is now applied
+                                             inside the build, not as
+                                             post-hoc metadata)
+
+This builder script writes to those legacy table names. Re-running it as-is
+would re-create the dropped tables and break the canonical surface.
+
+Until Script 348 refactors this pipeline to write directly to the five
+per-analyte canonicals (`canonical_labs_thyroglobulin_v1`,
+`canonical_labs_tsh_v1`, `canonical_labs_pth_v1`, `canonical_labs_calcium_v1`,
+`canonical_labs_vitamin_d_v1`), DO NOT execute this script. Read it for the
+ingestion / dedup rules only.
+
+Archive snapshots of all three dropped tables are preserved under
+`"Thyroid 2026 UPdated".archive_pub_v1_0.*_pre347_<UTC>`.
+============================================================================
+
 Production-grade ingestion of structured EHR thyroglobulin lab data.
 Source: Thyroid_Thyroglobulin_Lab_20251120.csv (78,112 rows, 3,298 patients)
 

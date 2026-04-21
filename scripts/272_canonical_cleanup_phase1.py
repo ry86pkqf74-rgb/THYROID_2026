@@ -445,7 +445,7 @@ def phase_1_6(con) -> None:
                                            AND result_numeric IS NOT NULL) AS live_peak,
                  MIN(result_numeric) FILTER (WHERE {classifier}='TG'
                                            AND result_numeric IS NOT NULL) AS live_nadir
-          FROM main.thyroglobulin_lab_canonical_v1
+          FROM main.thyroglobulin_lab_VIEW_v1
           GROUP BY 1
         )
         SELECT

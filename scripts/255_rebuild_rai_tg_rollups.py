@@ -51,7 +51,7 @@ RUN_DATE = "2026-04-16"
 
 CPM = f'{PUBLICATION_DB}.main.canonical_patient_master'
 RAI_EP = f'{PUBLICATION_DB}.main.rai_treatment_episode_v2'
-TG = f'{PUBLICATION_DB}.main.thyroglobulin_lab_canonical_v1'
+TG = f'{PUBLICATION_DB}.main.thyroglobulin_lab_VIEW_v1'
 DICT = f'{PUBLICATION_DB}.main.data_dictionary_v240'
 
 REPLAY_RAI = f"""
@@ -112,7 +112,7 @@ def add_provenance_cols(con, log) -> dict:
     con.execute(f"""
         COMMENT ON COLUMN {CPM}.tg_peak_source IS
             '{SCRIPT_TAG} ({RUN_DATE}). Source contributing tg_peak.
-             Currently always thyroglobulin_lab_canonical_v1 when populated.'
+             Currently always thyroglobulin_lab_VIEW_v1 when populated.'
     """)
     return added
 
@@ -200,7 +200,7 @@ def rebuild_tg_rollups(con, log) -> dict:
         tg_nadir = t.tg_nadir_c,
         tg_mean  = t.tg_mean_c,
         tg_peak_source = CASE WHEN t.tg_peak_c IS NOT NULL
-                              THEN 'thyroglobulin_lab_canonical_v1'
+                              THEN 'thyroglobulin_lab_VIEW_v1'
                               ELSE NULL END
     FROM t
     WHERE TRY_CAST(cpm.research_id AS INTEGER) = t.rid
@@ -301,7 +301,7 @@ def main() -> None:
         upsert_dict_entry(
             con, "tg_peak_source", "authoritative", None,
             f"{SCRIPT_TAG} ({RUN_DATE}). Source contributing tg_peak. "
-            "Always thyroglobulin_lab_canonical_v1 when populated.",
+            "Always thyroglobulin_lab_VIEW_v1 when populated.",
         )
 
         rai_a = int(con.execute(REPLAY_RAI).fetchone()[0])
