@@ -49,8 +49,9 @@ DOMAIN_COLUMNS = {
         "molecular_eligible_flag",
     ],
     "imaging": [
+        # tirads_best_score_v12 removed 2026-04-21 (CPM TIRADS Part B); canonical TIRADS now on cupm_v2
         "imaging_tirads_best_score", "imaging_nodule_size_cm",
-        "tirads_best_score_v12", "tirads_score_v11",
+        "tirads_score_v11",
     ],
     "treatment": [
         "treatment_procedure_type_final", "treatment_rai_dose_final",

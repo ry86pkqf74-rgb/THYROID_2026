@@ -242,7 +242,8 @@ def check_core_missingness(con) -> str:
         "path_tumor_size_cm", "ete_grade_final", "vascular_invasion_final",
         "margin_status_final", "ln_positive_final", "braf_positive_final",
         "ras_positive_final", "tert_positive_final", "fna_bethesda_final",
-        "imaging_tirads_best", "surg_procedure_type", "ajcc8_stage_group",
+        # imaging-tirads-best column removed 2026-04-21 (CPM TIRADS Part B); canonical TIRADS lives on canonical_us_patient_master_v2 now.
+        "surg_procedure_type", "ajcc8_stage_group",
         "ata_risk_category", "ata_response_category", "tg_nadir",
         "lab_completeness_score",
     ]
@@ -304,7 +305,7 @@ def check_imaging_limitations(con) -> str:
         df = q(con, f"""
             SELECT
                 COUNT(*) AS total,
-                COUNT(*) FILTER (WHERE imaging_tirads_best IS NOT NULL) AS with_tirads,
+                -- imaging-tirads-best column removed 2026-04-21 (CPM TIRADS Part B); canonical TIRADS rollup lives on canonical_us_patient_master_v2.max_tirads_category_ever
                 COUNT(*) FILTER (WHERE imaging_nodule_size_cm IS NOT NULL) AS with_nodule_size,
                 COUNT(*) FILTER (WHERE imaging_n_nodule_records > 0) AS with_any_imaging
             FROM {tbl_r}

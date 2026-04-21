@@ -154,7 +154,8 @@ def _build_table1(df: pd.DataFrame, stratum: str) -> list[dict]:
     if recur_col:
         rows.append(_bool_rate_row(df[recur_col], "Recurrence rate", N))
 
-    tirads_col = _find_col(df, ["imaging_tirads_best_score", "tirads_best_score_v12", "tirads_score_v11"])
+    # tirads_best_score_v12 removed from probe 2026-04-21 (CPM TIRADS Part B); see 57_freeze_manuscript_cohort.py for rationale.
+    tirads_col = _find_col(df, ["imaging_tirads_best_score", "tirads_score_v11"])
     if tirads_col:
         rows.append({"variable": "TIRADS", "value": "", "n": N})
         rows.extend(_categorical_rows(df[tirads_col], "TIRADS", N))

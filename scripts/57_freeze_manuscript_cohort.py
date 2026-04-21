@@ -122,7 +122,12 @@ def main():
         flow_steps.append(("tg_available", f"{tg_col} IS NOT NULL", "No Tg data"))
 
     tirads_col = None
-    for c in ("imaging_tirads_best_score", "tirads_best_score_v12", "tirads_score_v11"):
+    # tirads_best_score_v12 removed from probe 2026-04-21 (CPM TIRADS Part B);
+    # canonical patient-level TIRADS lives on canonical_us_patient_master_v2
+    # (max_tirads_category_ever / tirads_category_at_first_exam) under different
+    # vocabulary (VARCHAR TR1-TR5). The legacy probe assumed CPM-side BIGINT cols
+    # by name; cupm_v2 cols don't satisfy this probe's contract.
+    for c in ("imaging_tirads_best_score", "tirads_score_v11"):
         if c in cols:
             tirads_col = c
             break

@@ -1157,21 +1157,14 @@ def phase_4(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
 # NOT own. Pinned by NAME (not by delta magnitude) so any drift — a new
 # undocumented column or a new orphan dict table — fails the gate loudly.
 #
-# 10 tirads_v2_* CPM columns added by Script 221 (commit 858e4cc, 2026-04-18)
-# without a matching data_dictionary_v279 update. Will be documented by Phase
-# C / Script 281.
-KNOWN_UNDOCUMENTED_CPM_COLS: frozenset[str] = frozenset({
-    "tirads_v2_any_ete_on_us",
-    "tirads_v2_any_fna_recommended",
-    "tirads_v2_any_interval_growth",
-    "tirads_v2_any_suspicious_ln_on_us",
-    "tirads_v2_largest_nodule_cm",
-    "tirads_v2_max_points",
-    "tirads_v2_n_nodules_scored",
-    "tirads_v2_n_reports",
-    "tirads_v2_shortest_followup_months",
-    "tirads_v2_worst_category",
-})
+# CPM TIRADS Part B (2026-04-21): the 10 tirads_v2_* CPM columns previously
+# listed here were dropped from canonical_patient_master. Canonical TIRADS now
+# lives on canonical_us_patient_master_v2 (cupm_v2). The frozenset is empty
+# post-Part-B because there are no longer "undocumented CPM tirads_v2_* cols"
+# to allowlist — they're gone, not undocumented.
+# Future cupm_v2 dict gaps (if any) get tracked in a separate allowlist on
+# the cupm_v2 dictionary generator (out of scope here).
+KNOWN_UNDOCUMENTED_CPM_COLS: frozenset[str] = frozenset()
 
 # Whole-table orphan: dict has rows for a table that doesn't exist in main.
 # Will be cleaned by a future dict-rebuild pass (Script 272-style).
@@ -1190,8 +1183,8 @@ def phase_5(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     out["known_orphan_dict_tables"] = sorted(KNOWN_ORPHAN_DICT_TABLES)
     out["allowlist_resolution_owners"] = {
         "known_undocumented_cpm_cols": (
-            "Phase C / Script 281 — adds dict rows for the 10 tirads_v2_* "
-            "columns introduced by Script 221 (commit 858e4cc, 2026-04-18)."
+            "RESOLVED 2026-04-21: 10 tirads_v2_* columns dropped from CPM via "
+            "CPM TIRADS Part B; canonical TIRADS on canonical_us_patient_master_v2."
         ),
         "known_orphan_dict_tables": (
             "Future dictionary-rebuild pass (Script 272-style) — drops dict "

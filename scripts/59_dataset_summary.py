@@ -109,7 +109,8 @@ def main():
     result["cross_tabs"] = {}
 
     tirads_col = None
-    for c in ("imaging_tirads_best_score", "tirads_best_score_v12", "tirads_score_v11"):
+    # tirads_best_score_v12 removed from probe 2026-04-21 (CPM TIRADS Part B); see 57_freeze_manuscript_cohort.py for rationale.
+    for c in ("imaging_tirads_best_score", "tirads_score_v11"):
         if c in df.columns:
             tirads_col = c
             break

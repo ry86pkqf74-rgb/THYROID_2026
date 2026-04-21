@@ -137,7 +137,10 @@ def build_cohort_flow(df: pd.DataFrame) -> pd.DataFrame:
     molecular = int((df["molecular_eligible_flag"] == True).sum())  # noqa: E712
     rai = int((df["rai_received_flag"] == True).sum())  # noqa: E712
     tg = int(df["tg_nadir"].notna().sum())
-    tirads = int(df["imaging_tirads_best"].notna().sum())
+    # imaging-tirads-best column removed 2026-04-21 (CPM TIRADS Part B); canonical TIRADS
+    # now on canonical_us_patient_master_v2. The cohort-flow audit drops the TIRADS step
+    # entirely; if a future manuscript needs a TIRADS-availability rollup at this layer,
+    # JOIN cupm_v2 and gate on max_tirads_category_ever.
 
     rows = [
         ("Total patients", total, ""),
@@ -146,7 +149,6 @@ def build_cohort_flow(df: pd.DataFrame) -> pd.DataFrame:
         ("Molecular-eligible", molecular, f"{100*molecular/total:.1f}%" if total else ""),
         ("RAI received", rai, f"{100*rai/total:.1f}%" if total else ""),
         ("Tg available", tg, f"{100*tg/total:.1f}%" if total else ""),
-        ("TIRADS available", tirads, f"{100*tirads/total:.1f}%" if total else ""),
     ]
     return pd.DataFrame(rows, columns=["Step", "N", "Pct_of_total"])
 
@@ -291,7 +293,8 @@ def build_missingness_table(df: pd.DataFrame) -> pd.DataFrame:
     key_cols = [
         "path_histology_raw", "path_tumor_size_cm", "ajcc8_t_stage",
         "ajcc8_stage_group", "ata_risk_category", "macis_score",
-        "imaging_tirads_best", "any_recurrence_flag", "structural_recurrence_flag",
+        # imaging-tirads-best column removed 2026-04-21 (CPM TIRADS Part B); the missingness loop's `if col not in df.columns` branch handles its absence gracefully.
+        "any_recurrence_flag", "structural_recurrence_flag",
         "biochemical_recurrence_flag", "recurrence_date", "surg_procedure_type",
         "rai_received_flag", "hypocalcemia_status", "rln_status",
         "tg_nadir", "tg_last_value", "path_ln_positive_raw",

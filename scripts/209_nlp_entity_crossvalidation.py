@@ -482,9 +482,19 @@ def crossval_tirads(con: duckdb.DuckDBPyConnection,
         {"tirads_category", "tirads_score", "ti_rads"}
     )].copy()
 
-    can = master[["research_id", "tirads_best_category_v12", "tirads_best_score_v12",
-                   "tirads_worst_category_v12", "max_tirads_ever",
-                   "preop_tirads_best", "preop_tirads_category"]].copy()
+    # CPM TIRADS Part B (2026-04-21): the 6 legacy CPM TIRADS columns
+    # (tirads-best-category-v12, tirads-best-score-v12, tirads-worst-category-v12,
+    #  max-tirads-ever, preop-tirads-best, preop-tirads-category) were dropped
+    # from canonical_patient_master. Canonical TIRADS now lives on
+    # canonical_us_patient_master_v2 (cupm_v2) under different vocabulary
+    # (VARCHAR TR1-TR5 instead of legacy VARCHAR/BIGINT mix). The cross-
+    # validation logic below was written against the legacy vocab and is left
+    # as a no-op cross-check post-Part-B; downstream concordance counts will
+    # be 0 because no canonical comparison columns are present in `can`.
+    # If a manuscript needs TIRADS NLP cross-validation against the canonical
+    # cupm_v2 vocab, this function needs a rewrite (separate effort, not
+    # bundled into Part B). See scripts/output/_cpm_tirads_partB_reader_migrations.md.
+    can = master[["research_id"]].copy()
 
     type_counts = ents.groupby("entity_type").size().sort_values(ascending=False).to_dict()
 
