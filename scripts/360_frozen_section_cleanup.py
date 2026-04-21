@@ -7,6 +7,7 @@ Phases:
   1     Archive target tables to archive_pub_v1_0.*_preFROZENCLEANUP_<UTC_TS>
   1.5   Full frozen footprint inventory → reports/FROZEN_SECTION_INVENTORY_<UTC_TS>.md
   2     Build tier2.frozen_section_event_v2 + pre-rename gates
+  2-test  Build tier2.frozen_section_event_v2_test, gates, DROP (isolated MD dry-run)
   3     ALTER + UPDATE main.operative_episode_detail_v2 frozen columns
   4     Rebuild tier2.patient_tier2_master_v1 frozen_section__* (drop legacy 46, add 12-slot)
   5     Refresh main.canonical_patient_master NLP + syn + reconciliation columns
@@ -19,15 +20,15 @@ Phases:
 
 Auth: motherduck_client.get_token(). Never log evidence_text >80 chars.
 
-Note: path_synoptics Excel rows are UNIONed with LLM entities; dedup keys treat
-EXCEL synthetic refs separately from note_index, so totals can exceed raw
-LLM entity count (~8.6k) by ~3–4k until a tighter synoptic-vs-Excel harmonization
-pass is added. Gates allow this band and enforce NLP-only rows ≤ raw LLM
-entity count.
+Synoptic Excel cells (`path_synoptics.fs_pathology_frozen_section`) are deduped
+against LLM rows from the same synoptic columns via `synoptic_match_key`
+(research_id + calendar date + SYNOPTIC_CELL); the surviving row is LLM when both
+exist, with `excel_result_raw` / `excel_corroborated_flag` for provenance.
 """
 from __future__ import annotations
 
 import argparse
+import re
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -191,11 +192,18 @@ def key_finding_priority_case(alias: str) -> str:
     return " ".join(parts)
 
 
-def build_event_v2_sql() -> str:
-    """Single CREATE TABLE AS for tier2.frozen_section_event_v2."""
+def _validate_sql_identifier(name: str) -> str:
+    if not re.fullmatch(r"[A-Za-z0-9_.]+", name):
+        raise ValueError(f"Unsafe SQL identifier: {name!r}")
+    return name
+
+
+def build_event_v2_sql(target_table: str = "tier2.frozen_section_event_v2") -> str:
+    """Single CREATE TABLE AS for tier2.frozen_section_event_v2 (or a _test name)."""
+    tt = _validate_sql_identifier(target_table)
     # Normalization / classification kept in SQL for reproducibility on MD.
-    return """
-CREATE OR REPLACE TABLE tier2.frozen_section_event_v2 AS
+    return f"""
+CREATE OR REPLACE TABLE {tt} AS
 WITH ops AS (
     SELECT
         CAST(research_id AS VARCHAR) AS research_id,
@@ -397,9 +405,155 @@ dedup_base AS (
 deduped AS (
     SELECT * FROM dedup_base WHERE dedup_rn = 1
 ),
-typed AS (
+pre_merge AS (
     SELECT
         d.*,
+        TRY_CAST(SUBSTRING(COALESCE(d.frozen_section_date, ''), 1, 10) AS DATE) AS fs_day,
+        CASE
+            WHEN d.source_of_data IN ('synoptic_excel_parsed_column', 'synoptic_path_report_llm')
+                 AND d.source_column IN (
+                     'fs_pathology_frozen_section',
+                     'carcinoma_identified_on_fs_sent_intraop',
+                     'frozen_section_obtained'
+                 )
+                 AND TRY_CAST(SUBSTRING(COALESCE(d.frozen_section_date, ''), 1, 10) AS DATE) IS NOT NULL
+            THEN CAST(d.research_id AS VARCHAR) || '|' ||
+                 CAST(TRY_CAST(SUBSTRING(COALESCE(d.frozen_section_date, ''), 1, 10) AS DATE) AS VARCHAR)
+                 || '|SYNOPTIC_CELL'
+            ELSE NULL
+        END AS synoptic_match_key,
+        CASE
+            WHEN d.source_priority = 1
+            THEN NULLIF(TRIM(CAST(d.evidence_text AS VARCHAR)), '')
+        END AS excel_row_fs_text
+    FROM deduped d
+),
+syn_kv AS (
+    SELECT
+        synoptic_match_key,
+        MAX(excel_row_fs_text) AS excel_result_raw_agg,
+        BOOL_OR(source_priority = 1) AS had_excel,
+        BOOL_OR(source_priority = 2) AS had_llm_synoptic
+    FROM pre_merge
+    WHERE synoptic_match_key IS NOT NULL
+    GROUP BY synoptic_match_key
+),
+picked AS (
+    SELECT
+        p.*,
+        ROW_NUMBER() OVER (
+            PARTITION BY p.synoptic_match_key
+            ORDER BY
+                p.source_priority DESC,
+                CASE
+                    WHEN LOWER(TRIM(COALESCE(p.entity_type, ''))) = 'frozen_section_result' THEN 0
+                    ELSE 1
+                END,
+                p.event_index_in_json
+        ) AS pick_rn
+    FROM pre_merge p
+    WHERE p.synoptic_match_key IS NOT NULL
+),
+syn_merged AS (
+    SELECT
+        pk.research_id,
+        pk.note_index,
+        pk.note_date,
+        pk.linkage_date,
+        pk.note_type,
+        pk.source_sheet,
+        pk.source_column,
+        pk.event_index_in_json,
+        pk.entity_type,
+        pk.entity_value,
+        pk.evidence_text,
+        pk.confidence,
+        pk.present_or_negated,
+        pk.entity_date,
+        pk.best_note_date,
+        pk.source_of_data,
+        pk.source_priority,
+        pk.source_note_ref,
+        pk.path_synoptics_row_key,
+        pk.frozen_section_date,
+        pk.entity_id_hash,
+        pk.dedup_rn,
+        pk.fs_day,
+        pk.synoptic_match_key,
+        pk.excel_row_fs_text,
+        COALESCE(sk.excel_result_raw_agg, pk.excel_row_fs_text) AS excel_result_raw,
+        CASE
+            WHEN pk.source_priority = 2 AND sk.had_excel THEN TRUE
+            WHEN pk.source_priority = 2 AND NOT sk.had_excel THEN FALSE
+            ELSE NULL
+        END AS excel_corroborated_flag
+    FROM picked pk
+    INNER JOIN syn_kv sk ON pk.synoptic_match_key = sk.synoptic_match_key
+    WHERE pk.pick_rn = 1
+),
+pass_synoptic AS (
+    SELECT
+        d.research_id,
+        d.note_index,
+        d.note_date,
+        d.linkage_date,
+        d.note_type,
+        d.source_sheet,
+        d.source_column,
+        d.event_index_in_json,
+        d.entity_type,
+        d.entity_value,
+        d.evidence_text,
+        d.confidence,
+        d.present_or_negated,
+        d.entity_date,
+        d.best_note_date,
+        d.source_of_data,
+        d.source_priority,
+        d.source_note_ref,
+        d.path_synoptics_row_key,
+        d.frozen_section_date,
+        d.entity_id_hash,
+        d.dedup_rn,
+        d.fs_day,
+        CAST(NULL AS VARCHAR) AS synoptic_match_key,
+        d.excel_row_fs_text,
+        CAST(NULL AS VARCHAR) AS excel_result_raw,
+        CAST(NULL AS BOOLEAN) AS excel_corroborated_flag
+    FROM pre_merge d
+    WHERE d.synoptic_match_key IS NULL
+),
+combined AS (
+    SELECT * FROM syn_merged
+    UNION ALL
+    SELECT * FROM pass_synoptic
+),
+typed AS (
+    SELECT
+        d.research_id,
+        d.note_index,
+        d.note_date,
+        d.linkage_date,
+        d.note_type,
+        d.source_sheet,
+        d.source_column,
+        d.event_index_in_json,
+        d.entity_type,
+        d.entity_value,
+        d.evidence_text,
+        d.confidence,
+        d.present_or_negated,
+        d.entity_date,
+        d.best_note_date,
+        d.source_of_data,
+        d.source_priority,
+        d.source_note_ref,
+        d.path_synoptics_row_key,
+        d.frozen_section_date,
+        d.entity_id_hash,
+        d.synoptic_match_key,
+        d.excel_result_raw,
+        d.excel_corroborated_flag,
         CASE WHEN LOWER(TRIM(entity_type)) IN ('frozen_section_target', 'site')
              THEN entity_value END AS frozen_section_site_raw,
         CASE WHEN LOWER(TRIM(entity_type)) IN ('frozen_section_result')
@@ -410,7 +564,7 @@ typed AS (
              THEN LOWER(TRIM(entity_value)) END AS concord_entity,
         CASE WHEN LOWER(TRIM(entity_type)) = 'intraop_decision_impact'
              THEN entity_value END AS intraop_decision_impact_raw
-    FROM deduped d
+    FROM combined d
 ),
 norm AS (
     SELECT
@@ -617,6 +771,9 @@ numbered AS (
         frozen_section_date,
         surgery_n,
         operative_episode_id,
+        note_type,
+        source_sheet,
+        source_column,
         frozen_section_site_raw,
         frozen_section_site_norm,
         frozen_section_side,
@@ -636,7 +793,10 @@ numbered AS (
         SUBSTRING(COALESCE(evidence_text, ''), 1, 500) AS evidence_text,
         confidence,
         was_final_diagnosis_flag,
-        entity_id_hash
+        entity_id_hash,
+        synoptic_match_key,
+        excel_corroborated_flag,
+        excel_result_raw
     FROM linked
 )
 SELECT * FROM numbered
@@ -850,27 +1010,41 @@ def run_inventory_sweep(
     return rows_out, orphans
 
 
-def verification_gates_pre_rename(con: duckdb.DuckDBPyConnection) -> None:
+def verification_gates_pre_rename(
+    con: duckdb.DuckDBPyConnection, table: str = "tier2.frozen_section_event_v2"
+) -> None:
+    """Strict checks on the built event table (v2 or v2_test). CPM bands belong in post_rename_gates."""
+    tt = _validate_sql_identifier(table)
     r = con.execute(
-        """
+        f"""
         SELECT COUNT(*), COUNT(DISTINCT research_id),
                COUNT(*) FILTER (WHERE surgery_n IS NULL),
                COUNT(DISTINCT CASE WHEN surgery_n IS NULL THEN research_id END)
-        FROM tier2.frozen_section_event_v2
+        FROM {tt}
         """
     ).fetchone()
     n, nrid, nnull, rid_null = r
-    log_info(f"v2 rows={n:,} patients={nrid:,} rows_surgery_null={nnull:,} patients_any_null_surg={rid_null:,}")
-    if not (7500 <= n <= 13000):
-        raise SystemExit(f"GATE FAIL: v2 row count {n} not in [7500,13000]")
-    if not (3000 <= nrid <= 4200):
-        raise SystemExit(f"GATE FAIL: distinct patients {nrid} not in [3000,4200]")
-    pct = 100.0 * (nrid - rid_null) / nrid if nrid else 0
-    if pct < 90.0:
+    pct = 100.0 * (nrid - rid_null) / nrid if nrid else 0.0
+    log_info(
+        f"GATE {tt}: rows={n:,} distinct_patients={nrid:,} "
+        f"rows_surgery_null={nnull:,} patients_any_surgery_null={rid_null:,} "
+        f"pct_with_surgery_n={pct:.2f}%"
+    )
+    log_info(f"GATE invariant: COUNT(*) in [7500,8200] -> {7500 <= n <= 8200} (n={n})")
+    log_info(
+        f"GATE invariant: COUNT(DISTINCT research_id) in [3520,3550] -> "
+        f"{3520 <= nrid <= 3550} (n={nrid})"
+    )
+    log_info(f"GATE invariant: patients with surgery_n NOT NULL >= 95% -> {pct >= 95.0} ({pct:.2f}%)")
+    if not (7500 <= n <= 8200):
+        raise SystemExit(f"GATE FAIL: {tt} row count {n} not in [7500,8200]")
+    if not (3520 <= nrid <= 3550):
+        raise SystemExit(f"GATE FAIL: distinct patients {nrid} not in [3520,3550]")
+    if pct < 95.0:
         miss = con.execute(
-            """
+            f"""
             SELECT research_id, COUNT(*) AS c
-            FROM tier2.frozen_section_event_v2
+            FROM {tt}
             WHERE surgery_n IS NULL
             GROUP BY 1
             ORDER BY c DESC
@@ -878,10 +1052,53 @@ def verification_gates_pre_rename(con: duckdb.DuckDBPyConnection) -> None:
             """
         ).fetchall()
         raise SystemExit(f"GATE FAIL: surgery linkage {pct:.1f}% < 95%. Sample: {miss}")
-    dup_h = con.execute(
+    dup_key = con.execute(
+        f"""
+        SELECT synoptic_match_key, COUNT(*)::BIGINT AS c
+        FROM {tt}
+        WHERE synoptic_match_key IS NOT NULL
+        GROUP BY 1
+        HAVING COUNT(*) > 1
+        ORDER BY c DESC
+        LIMIT 20
         """
+    ).fetchall()
+    log_info(
+        f"GATE invariant: duplicate non-null synoptic_match_key rows -> "
+        f"{len(dup_key) == 0} (offenders={len(dup_key)})"
+    )
+    if dup_key:
+        raise SystemExit(
+            f"GATE FAIL: duplicate synoptic_match_key (dedup incomplete). Sample: {dup_key}"
+        )
+    dual_fs = con.execute(
+        f"""
+        SELECT
+            research_id,
+            TRY_CAST(SUBSTRING(COALESCE(frozen_section_date, ''), 1, 10) AS DATE) AS fs_day,
+            COUNT(*) FILTER (WHERE source_priority = 1) AS n_excel,
+            COUNT(*) FILTER (WHERE source_priority = 2) AS n_llm
+        FROM {tt}
+        WHERE source_column = 'fs_pathology_frozen_section'
+        GROUP BY 1, 2
+        HAVING COUNT(*) FILTER (WHERE source_priority = 1) > 0
+           AND COUNT(*) FILTER (WHERE source_priority = 2) > 0
+        LIMIT 50
+        """
+    ).fetchall()
+    log_info(
+        f"GATE invariant: (research_id, date) with BOTH p1 and p2 fs_pathology_frozen_section -> "
+        f"{len(dual_fs) == 0} (n={len(dual_fs)})"
+    )
+    if dual_fs:
+        raise SystemExit(
+            "GATE FAIL: Excel+LLM same-day fs_pathology_frozen_section not collapsed. "
+            f"Rows: {dual_fs}"
+        )
+    dup_h = con.execute(
+        f"""
         SELECT entity_id_hash, COUNT(*) c
-        FROM tier2.frozen_section_event_v2
+        FROM {tt}
         GROUP BY 1 HAVING COUNT(*) > 1 ORDER BY c DESC LIMIT 5
         """
     ).fetchall()
@@ -905,8 +1122,8 @@ def verification_gates_pre_rename(con: duckdb.DuckDBPyConnection) -> None:
     """
     ).fetchone()[0]
     n_nlp = con.execute(
-        """
-        SELECT COUNT(*) FROM tier2.frozen_section_event_v2
+        f"""
+        SELECT COUNT(*) FROM {tt}
         WHERE source_of_data != 'synoptic_excel_parsed_column'
         """
     ).fetchone()[0]
@@ -914,6 +1131,30 @@ def verification_gates_pre_rename(con: duckdb.DuckDBPyConnection) -> None:
         raise SystemExit(
             f"GATE FAIL: NLP-sourced v2 rows {n_nlp} > raw LLM entity rows {raw_ent}"
         )
+    n_excel_synoptic = con.execute(
+        f"""
+        SELECT COUNT(*)::BIGINT
+        FROM {tt}
+        WHERE source_priority = 1
+          AND source_of_data = 'synoptic_excel_parsed_column'
+          AND synoptic_match_key IS NOT NULL
+        """
+    ).fetchone()[0]
+    log_info(
+        f"GATE info: Excel-only synoptic rows (p1, synoptic_match_key set, LLM did not win key) "
+        f"n={n_excel_synoptic:,} (expect ~1,700)"
+    )
+    cpm_true = con.execute(
+        """
+        SELECT COUNT(*)::BIGINT
+        FROM main.canonical_patient_master
+        WHERE nlp_frozensec_has_data IS TRUE
+        """
+    ).fetchone()[0]
+    log_info(
+        f"CPM snapshot (stale until phase 5 in isolated phase-2 run): "
+        f"nlp_frozensec_has_data TRUE={cpm_true:,} — hard band [3520,3550] enforced in post_rename_gates"
+    )
 
 
 def rebuild_patient_tier2_frozen_columns(con: duckdb.DuckDBPyConnection) -> None:
@@ -944,7 +1185,9 @@ def rebuild_patient_tier2_frozen_columns(con: duckdb.DuckDBPyConnection) -> None
             MAX(CASE WHEN slot = {n} THEN source_of_data END) AS "{p}source_of_data",
             MAX(CASE WHEN slot = {n} THEN source_note_ref END) AS "{p}source_note_ref",
             MAX(CASE WHEN slot = {n} THEN evidence_text END) AS "{p}evidence_text",
-            MAX(CASE WHEN slot = {n} THEN confidence END) AS "{p}confidence"
+            MAX(CASE WHEN slot = {n} THEN confidence END) AS "{p}confidence",
+            MAX(CASE WHEN slot = {n} THEN excel_corroborated_flag END) AS "{p}excel_corroborated_flag",
+            MAX(CASE WHEN slot = {n} THEN excel_result_raw END) AS "{p}excel_result_raw"
             """
         )
 
@@ -1012,6 +1255,12 @@ def rebuild_patient_tier2_frozen_columns(con: duckdb.DuckDBPyConnection) -> None
     LEFT JOIN slots s USING (research_id)
     """
     con.execute(wide_sql)
+    wide_cols = [
+        r[0]
+        for r in con.execute("SELECT column_name FROM (DESCRIBE _frozen_wide)").fetchall()
+        if r[0] != "research_id"
+    ]
+    w_sel = ", ".join(f'w."{c}"' for c in wide_cols)
     keep_cols = [
         c
         for c in list_columns(con, "tier2", "patient_tier2_master_v1")
@@ -1021,7 +1270,7 @@ def rebuild_patient_tier2_frozen_columns(con: duckdb.DuckDBPyConnection) -> None
     con.execute(
         f"""
         CREATE OR REPLACE TABLE tier2.patient_tier2_master_v1_new360 AS
-        SELECT {p_sel}, w.* EXCLUDE (research_id)
+        SELECT {p_sel}, {w_sel}
         FROM tier2.patient_tier2_master_v1 p
         LEFT JOIN _frozen_wide w ON p.research_id = w.research_id
         """
@@ -1243,8 +1492,12 @@ def rebuild_verify_frozen_tables(con: duckdb.DuckDBPyConnection) -> None:
     llm AS (
         SELECT CAST(research_id AS VARCHAR) AS research_id,
                'Y' AS frozen_section_performed_llm,
-               MAX(COALESCE(frozen_section_result_raw, CAST(frozen_section_result_histology AS VARCHAR)))
-                    AS frozen_section_result_llm
+               ANY_VALUE(
+                   COALESCE(
+                       frozen_section_result_raw,
+                       CAST(frozen_section_result_histology AS VARCHAR)
+                   )
+               ) AS frozen_section_result_llm
         FROM tier2.frozen_section_event_v1
         GROUP BY research_id
     )
@@ -1328,6 +1581,9 @@ def apply_event_table_comments(con: duckdb.DuckDBPyConnection, table: str) -> No
         ("confidence", "LLM confidence or 1.0 Excel"),
         ("was_final_diagnosis_flag", "final diagnosis entity flag"),
         ("entity_id_hash", "MD5 dedup key"),
+        ("synoptic_match_key", "Excel+LLM same-cell dedup key (NULL for OPNOTE/HP)"),
+        ("excel_corroborated_flag", "TRUE if LLM synoptic row matched Excel same-day cell"),
+        ("excel_result_raw", "raw path_synoptics fs_pathology_frozen_section text when known"),
     ]
     for col, desc in cols:
         con.execute(
@@ -1366,8 +1622,8 @@ def post_rename_gates(con: duckdb.DuckDBPyConnection) -> None:
     )
     if cpm[1] != 0:
         raise SystemExit("GATE: CPM nlp_frozensec_has_data NULL count must be 0")
-    if not (3000 <= cpm[0] <= 4000):
-        raise SystemExit(f"GATE: nlp_frozensec_has_data TRUE {cpm[0]} not in [3000,4000]")
+    if not (3520 <= cpm[0] <= 3550):
+        raise SystemExit(f"GATE: nlp_frozensec_has_data TRUE {cpm[0]} not in [3520,3550]")
     if not (4200 <= cpm[2] <= 4400):
         log_error(
             f"WARNING: frozen_any_performed_flag TRUE={cpm[2]} outside [4200,4400] — "
@@ -1433,6 +1689,30 @@ def sync_registry(con: duckdb.DuckDBPyConnection, ts: str) -> None:
     log_info("detail_table_registry_v1 synced for frozen tables")
 
 
+def whitelist_footprint_markdown(con: duckdb.DuckDBPyConnection) -> list[str]:
+    """Inventory sweep gate: expected frozen-footprint objects exist (post `--phase all`)."""
+    lines = [
+        "",
+        "## Whitelist footprint (§inventory_sweep)",
+        "",
+        "| fqname | exists | approx_rows |",
+        "|---|---:|---:|",
+    ]
+    for fq in sorted(FOOTPRINT_WHITELIST):
+        sch, _, tbl = fq.partition(".")
+        if not tbl:
+            raise SystemExit(f"Invalid whitelist fqname {fq!r}")
+        ok = table_exists(con, sch, tbl)
+        n = ""
+        if ok:
+            try:
+                n = str(con.execute(f'SELECT COUNT(*) FROM "{sch}"."{tbl}"').fetchone()[0])
+            except Exception as exc:
+                n = f"(count err: {exc})"
+        lines.append(f"| {fq} | {'yes' if ok else 'no'} | {n} |")
+    return lines
+
+
 def write_cleanup_summary(
     con: duckdb.DuckDBPyConnection, inv_path: Path, ts_date: str
 ) -> None:
@@ -1454,6 +1734,7 @@ def write_cleanup_summary(
         ", ".join(r[0] for r in gaps) if gaps else "(none in sample)",
         "",
         f"Pre-run inventory: `{inv_path}`",
+        *whitelist_footprint_markdown(con),
     ]
     path.write_text("\n".join(lines), encoding="utf-8")
     log_info(f"Wrote summary {path}")
@@ -1502,6 +1783,17 @@ def phase_2(con: duckdb.DuckDBPyConnection) -> None:
     verification_gates_pre_rename(con)
 
 
+def phase_2_test(con: duckdb.DuckDBPyConnection) -> None:
+    """Build tier2.frozen_section_event_v2_test, run gates, drop (no v2 rename / no phase 3+)."""
+    tbl = "tier2.frozen_section_event_v2_test"
+    log_info(f"=== PHASE 2-test dry-run: {tbl} ===")
+    con.execute(f"DROP TABLE IF EXISTS {tbl}")
+    con.execute(build_event_v2_sql(tbl))
+    verification_gates_pre_rename(con, table=tbl)
+    con.execute(f"DROP TABLE IF EXISTS {tbl}")
+    log_info(f"Dropped {tbl} (MotherDuck left without test table)")
+
+
 def phase_3(con: duckdb.DuckDBPyConnection) -> None:
     log_info("=== PHASE 3 operative_episode_detail_v2 ===")
     add_operative_frozen_columns(con)
@@ -1540,7 +1832,7 @@ def main() -> int:
     parser.add_argument(
         "--phase",
         default="0",
-        help="0|1|1.5|2|3|4|5|6|6.5|7|all",
+        help="0|1|1.5|2|2-test|3|4|5|6|6.5|7|all",
     )
     parser.add_argument(
         "--continue-destructive",
@@ -1566,6 +1858,8 @@ def main() -> int:
             phase_1_5(con, ts, args.confirm_orphans)
         elif ph == "2":
             phase_2(con)
+        elif ph == "2-test":
+            phase_2_test(con)
         elif ph == "3":
             phase_3(con)
         elif ph == "4":
