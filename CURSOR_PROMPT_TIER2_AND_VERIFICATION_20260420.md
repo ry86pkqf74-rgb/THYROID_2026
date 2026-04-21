@@ -51,6 +51,14 @@ Each domain then adds a small domain-specific step — typically a CASE on `enti
 4. **Reference-safety check** before archiving any object: enumerate views/tables that reference it; abort if non-archive references found.
 5. **One script = one table/domain**: do NOT combine domains into a single large script. Each script commits individually.
 6. **Env**: `scripts/_md_connect.py::connect_locked()`. Cross-DB via `"Thyroid 2026 UPdated".archive_pub_v1_0.<x>`.
+7. **Every aggregate boolean is dated and source-linked — NO `_anytime` fields.** Any summary flag on a patient-wide table (`had_*`, `any_*`, `persistent_*`, `first_*`, `last_*`) MUST be accompanied by:
+   - `<flag>_first_date` — earliest documentation date
+   - `<flag>_last_date` — most recent documentation date
+   - `<flag>_first_note_id` — link to `clinical_notes_long` for the first-documentation note
+   - `<flag>_first_evidence_text` — exact free-text span from that note
+   - `<flag>_n_notes_documenting` — count of distinct notes documenting this flag
+   - (optional) `<flag>_last_note_id` and `<flag>_last_evidence_text` when longitudinal context matters (recurrence, persistent symptoms, ongoing findings)
+   A bare boolean without these companion columns is NOT acceptable. The word "anytime" is banned from column names — use `_first_date`/`_last_date` instead. This rule applies to every `*_patient_wide_v1` table produced in Phase A AND to any new summary column added to CPM or any canonical table.
 
 ---
 
@@ -69,8 +77,12 @@ Each domain then adds a small domain-specific step — typically a CASE on `enti
 
 **Also create patient-wide pivot** `main.frozen_section_patient_wide_v1`:
 - One row per (research_id, linked_surgery_episode_id if resolvable else research_id+note_date)
-- Columns: `n_frozen_events`, `frozen_1_site`, `frozen_1_result`, `frozen_1_evidence`, `frozen_1_date`, ..., `frozen_6_site`, `frozen_6_result`, `frozen_6_evidence`, `frozen_6_date` (cap at 6; anything beyond goes into `frozen_events_overflow_json`).
-- `any_frozen_performed`, `any_frozen_malignant_result`, `any_frozen_deferred`.
+- Per-event slot columns (cap at 6, overflow → `frozen_events_overflow_json`): for slot `k ∈ 1..6`: `frozen_{k}_site`, `frozen_{k}_result`, `frozen_{k}_date`, `frozen_{k}_note_id`, `frozen_{k}_evidence_text`.
+- Summary flags (each follows Constraint 7 — date + note_id + evidence):
+  - `n_frozen_events`
+  - `any_frozen_performed_flag` + `first_frozen_performed_date` + `first_frozen_performed_note_id` + `first_frozen_performed_evidence_text` + `last_frozen_performed_date` + `n_notes_documenting_frozen_performed`
+  - `any_frozen_malignant_result_flag` + `first_malignant_frozen_date` + `first_malignant_frozen_note_id` + `first_malignant_frozen_evidence_text` + `n_notes_documenting_malignant_frozen`
+  - `any_frozen_deferred_flag` + `first_deferred_frozen_date` + `first_deferred_frozen_note_id` + `first_deferred_frozen_evidence_text`
 
 **Backfill CPM** (conservative, only where NULL):
 - `nlp_frozensec_n_events` := `n_frozen_events` from wide.
@@ -91,7 +103,12 @@ Commit as `304_frozen_section_tier2.py`.
 - Typed: `vi_present` ∈ {Y, N, uncertain} (from `present_or_negated`), `vi_extent` ∈ {focal, extensive, angioinvasion, lymphovascular, vascular_only, lymphatic_only, NULL}, `vi_vessel_type` ∈ {artery, vein, lymphatic, capsular, extrathyroidal, NULL}, `vi_count_vessels` (if reported).
 - Raw fields + evidence.
 
-**Patient-wide** `main.vascular_invasion_patient_wide_v1`: `vi_any_positive`, `vi_max_extent`, `vi_extensive_flag`, `vi_evidence_concat` (all evidence spans concatenated, up to 4 KB).
+**Patient-wide** `main.vascular_invasion_patient_wide_v1` (every flag dated + source-linked per Constraint 7):
+- `vi_any_positive_flag` + `vi_first_positive_date` + `vi_first_positive_note_id` + `vi_first_positive_evidence_text` + `vi_last_positive_date` + `vi_n_notes_positive`
+- `vi_any_negative_flag` + `vi_first_negative_date` + `vi_first_negative_note_id` + `vi_first_negative_evidence_text`
+- `vi_extensive_flag` + `vi_first_extensive_date` + `vi_first_extensive_note_id` + `vi_first_extensive_evidence_text`
+- `vi_max_extent` (with `vi_max_extent_date` + `vi_max_extent_note_id` + `vi_max_extent_evidence_text`)
+- `vi_all_events_json` (LIST of {date, note_id, extent, vessel_type, evidence_text} for full provenance trail)
 
 **Backfill CPM** where NULL: `vi_any_llm`, `vi_extensive_llm`.
 
@@ -107,7 +124,11 @@ Commit as `305_vascular_invasion_tier2.py`.
 - Typed: `ai_present` ∈ {Y, N, uncertain}, `ai_extent` ∈ {abutting, invading_no_full_thickness, full_thickness, NULL}, `ai_structure` ∈ {trachea, esophagus, RLN, strap_muscle, prevertebral, carotid, IJV, NULL}, `ai_length_cm` (if measured).
 - Raw fields + evidence.
 
-**Patient-wide** `main.airway_invasion_patient_wide_v1`: `ai_any_positive`, `ai_max_extent`, `ai_structures_involved_list` (JSON array).
+**Patient-wide** `main.airway_invasion_patient_wide_v1` (every flag dated + source-linked per Constraint 7):
+- `ai_any_positive_flag` + `ai_first_positive_date` + `ai_first_positive_note_id` + `ai_first_positive_evidence_text` + `ai_last_positive_date` + `ai_n_notes_positive`
+- `ai_max_extent` + `ai_max_extent_date` + `ai_max_extent_note_id` + `ai_max_extent_evidence_text`
+- `ai_structures_involved_json` (LIST of {structure, first_date, first_note_id, first_evidence_text} per distinct structure)
+- `ai_all_events_json` (LIST of {date, note_id, extent, structure, evidence_text} for full provenance trail)
 
 **Backfill CPM** where NULL: `ai_any_llm`, `ai_max_extent_llm`.
 
@@ -123,7 +144,11 @@ Commit as `306_airway_invasion_tier2.py`.
 - Typed: `pt_action` ∈ {identified, preserved, autotransplanted, inadvertently_removed, ischemic, biopsied, NULL}, `pt_gland_position` ∈ {LU, LL, RU, RL, unknown}, `pt_count` (integer if reported), `pt_implant_site` (SCM, forearm, other), `pt_was_identified_flag`, `pt_was_preserved_flag`, `pt_was_autotransplanted_flag`, `pt_was_removed_flag`.
 - Raw fields + evidence.
 
-**Patient-wide** `main.parathyroid_patient_wide_v1`: `n_pt_identified`, `n_pt_preserved`, `n_pt_autotransplanted`, `n_pt_removed`, `any_ischemic_change`, `autotransplant_site_primary`.
+**Patient-wide** `main.parathyroid_patient_wide_v1` (every flag dated + source-linked per Constraint 7):
+- Counts: `n_pt_identified`, `n_pt_preserved`, `n_pt_autotransplanted`, `n_pt_removed` (each with a companion `_first_surgery_episode_id` + `_first_note_id` + `_first_evidence_text` identifying the first occurrence).
+- `any_ischemic_change_flag` + `first_ischemic_date` + `first_ischemic_note_id` + `first_ischemic_evidence_text`
+- `autotransplant_site_primary` + `autotransplant_site_first_date` + `autotransplant_site_first_note_id` + `autotransplant_site_first_evidence_text`
+- `pt_all_events_json` (LIST of {date, note_id, surgery_episode_id, action, gland_position, evidence_text} for full provenance trail)
 
 Commit as `307_parathyroid_detail_tier2.py`.
 
@@ -135,7 +160,11 @@ Commit as `307_parathyroid_detail_tier2.py`.
 
 **Columns**: `psh_procedure`, `psh_anatomic_site`, `psh_date_raw`, `psh_date_parsed` (DATE, best-effort), `psh_was_thyroid_related_flag`, `psh_was_neck_related_flag`, `psh_indication_raw`.
 
-**Patient-wide** `main.past_surgical_hx_patient_wide_v1`: `had_prior_thyroid_surgery`, `prior_thyroid_surgery_type_primary`, `prior_neck_surgeries_list_json`.
+**Patient-wide** `main.past_surgical_hx_patient_wide_v1` (every flag dated + source-linked per Constraint 7):
+- `had_prior_thyroid_surgery_flag` + `prior_thyroid_surgery_first_date` + `prior_thyroid_surgery_first_documentation_note_id` + `prior_thyroid_surgery_first_evidence_text` + `prior_thyroid_surgery_n_notes_documenting`
+- `prior_thyroid_surgery_type_primary` + `prior_thyroid_surgery_type_primary_source_note_id` + `prior_thyroid_surgery_type_primary_evidence_text`
+- `had_prior_neck_surgery_flag` + companion first_date + first_note_id + first_evidence_text
+- `prior_neck_surgeries_list_json` (LIST of {procedure, anatomic_site, psh_date_parsed, source_note_id, evidence_text} — this is the full provenance trail, one object per distinct prior surgery).
 
 Commit as `308_past_surgical_hx_tier2.py`.
 
@@ -147,7 +176,11 @@ Commit as `308_past_surgical_hx_tier2.py`.
 
 **Columns**: `pmh_condition`, `pmh_onset_date_raw`, `pmh_status` ∈ {active, resolved, chronic, historical, NULL}, `pmh_is_thyroid_related_flag`, `pmh_is_radiation_exposure_flag`, `pmh_is_cancer_history_flag`, `pmh_is_autoimmune_flag`.
 
-**Patient-wide** `main.past_medical_hx_patient_wide_v1`: `had_prior_neck_radiation`, `had_prior_cancer`, `has_autoimmune_thyroid_disease`, `pmh_conditions_list_json`.
+**Patient-wide** `main.past_medical_hx_patient_wide_v1` (every flag dated + source-linked per Constraint 7):
+- `had_prior_neck_radiation_flag` + `prior_neck_radiation_first_date` + `prior_neck_radiation_first_note_id` + `prior_neck_radiation_first_evidence_text` + `prior_neck_radiation_n_notes_documenting`
+- `had_prior_cancer_flag` + same companion set (first_date + first_note_id + first_evidence_text + n_notes)
+- `has_autoimmune_thyroid_disease_flag` + same companion set
+- `pmh_conditions_list_json` (LIST of {condition, pmh_status, pmh_onset_date_raw, source_note_id, evidence_text} — full provenance trail).
 
 Commit as `309_past_medical_hx_tier2.py`.
 
@@ -159,7 +192,14 @@ Commit as `309_past_medical_hx_tier2.py`.
 
 **Columns**: `fo_domain` ∈ {voice, swallowing, scar, qol, hypocalcemia_sx, shoulder_mobility, NULL}, `fo_severity` ∈ {none, mild, moderate, severe, NULL}, `fo_resolution` ∈ {resolved, improving, persistent, NULL}, `fo_timepoint_days_postop` (if computable), `fo_qol_score` (numeric).
 
-**Patient-wide** `main.functional_outcomes_patient_wide_v1`: `any_voice_symptom_postop`, `any_swallowing_symptom_postop`, `persistent_voice_change_at_last_fu`, `persistent_hypocalcemia_sx`.
+**Patient-wide** `main.functional_outcomes_patient_wide_v1` (every flag dated + source-linked per Constraint 7):
+- `voice_symptom_postop_flag` + `voice_symptom_postop_first_date` + `voice_symptom_postop_first_note_id` + `voice_symptom_postop_first_evidence_text` + `voice_symptom_postop_last_date` + `voice_symptom_postop_last_note_id` + `voice_symptom_postop_last_evidence_text` + `voice_symptom_postop_n_notes_documenting`
+- `swallowing_symptom_postop_flag` + same companion set (first_date/note_id/evidence + last_date/note_id/evidence + n_notes)
+- `persistent_voice_change_flag` (defined: ≥1 voice symptom documented >6 months postop) + `persistent_voice_change_last_documented_date` + `persistent_voice_change_last_note_id` + `persistent_voice_change_last_evidence_text` + `persistent_voice_change_n_notes_beyond_6mo`
+- `persistent_hypocalcemia_sx_flag` + same companion set as persistent_voice_change
+- `fo_all_events_json` (LIST of {fo_domain, fo_severity, fo_resolution, fo_timepoint_days_postop, note_id, evidence_text} for full provenance trail).
+
+**Note on "persistent" fields**: "persistent" is permitted ONLY when defined by an explicit cut-point (e.g., "≥1 documentation at >6 months postop" or "documented at last follow-up note"). The cut-point must be stated in the column comment and implemented in the script. "Persistent at last follow-up" must cite the actual `last_fu_note_id` and `last_fu_note_date` — never an implicit "anytime".
 
 Commit as `310_functional_outcomes_tier2.py`.
 
@@ -171,7 +211,11 @@ Commit as `310_functional_outcomes_tier2.py`.
 
 **Columns**: `pe_finding_category` ∈ {thyroid_mass, neck_ln, voice, scar, other, NULL}, `pe_laterality`, `pe_size_cm` (if measured), `pe_tenderness_flag`, `pe_fixed_flag`, `pe_mobile_flag`.
 
-**Patient-wide** `main.physical_exam_patient_wide_v1`: `pe_had_palpable_thyroid_mass_anytime`, `pe_had_palpable_ln_anytime`, `pe_any_documented_voice_abnormality`.
+**Patient-wide** `main.physical_exam_patient_wide_v1` (every flag dated + source-linked per Constraint 7 — NO `_anytime` columns):
+- `pe_palpable_thyroid_mass_flag` + `pe_palpable_thyroid_mass_first_date` + `pe_palpable_thyroid_mass_first_note_id` + `pe_palpable_thyroid_mass_first_evidence_text` + `pe_palpable_thyroid_mass_last_date` + `pe_palpable_thyroid_mass_last_note_id` + `pe_palpable_thyroid_mass_n_notes_documenting`
+- `pe_palpable_ln_flag` + same companion set
+- `pe_documented_voice_abnormality_flag` + same companion set
+- `pe_all_events_json` (LIST of {pe_finding_category, pe_laterality, pe_size_cm, note_id, note_date, evidence_text} for full provenance trail)
 
 Commit as `311_physical_exam_tier2.py`.
 
@@ -183,7 +227,10 @@ Commit as `311_physical_exam_tier2.py`.
 
 **Columns**: `ps_symptom`, `ps_onset_duration_raw`, `ps_severity`, `ps_was_trigger_for_workup_flag`.
 
-**Patient-wide**: `presenting_symptom_primary`, `presenting_symptoms_list_json`, `was_symptomatic_at_presentation`.
+**Patient-wide** `main.presenting_symptoms_patient_wide_v1` (per Constraint 7):
+- `presenting_symptom_primary` + `presenting_symptom_primary_source_note_id` + `presenting_symptom_primary_note_date` + `presenting_symptom_primary_evidence_text`
+- `was_symptomatic_at_presentation_flag` + `symptomatic_first_date` + `symptomatic_first_note_id` + `symptomatic_first_evidence_text`
+- `presenting_symptoms_list_json` (LIST of {ps_symptom, ps_severity, ps_onset_duration_raw, source_note_id, note_date, evidence_text}).
 
 Commit as `312_presenting_symptoms_tier2.py`.
 
