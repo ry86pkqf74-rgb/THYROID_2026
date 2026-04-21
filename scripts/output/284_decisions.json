@@ -596,10 +596,75 @@
         "provider_system_fingerprint"
       ],
       "finished_at": "2026-04-21T00:47:23Z"
+    },
+    "3": {
+      "phase": 3,
+      "started_at": "2026-04-21T00:47:38Z",
+      "gates": [
+        {
+          "name": "md_rjhash_eq_parquet_dedup_rjhash",
+          "ok": true,
+          "detail": {
+            "observed": "709948a3a94eebb04bdc9e84b2d95356",
+            "pinned": "709948a3a94eebb04bdc9e84b2d95356"
+          }
+        },
+        {
+          "name": "md_ndhash_eq_parquet_dedup_ndhash",
+          "ok": true,
+          "detail": {
+            "observed": "22dff34281b0c19e524f4c780bc07f3f",
+            "pinned": "22dff34281b0c19e524f4c780bc07f3f"
+          }
+        },
+        {
+          "name": "md_srchash_eq_parquet_dedup_srchash",
+          "ok": true,
+          "detail": {
+            "observed": "c4d96773b86e33a669cd7f712b1ffaf2",
+            "pinned": "c4d96773b86e33a669cd7f712b1ffaf2"
+          }
+        },
+        {
+          "name": "md_rjhash_eq_live_parquet_dedup_rjhash",
+          "ok": true,
+          "detail": {
+            "md": "709948a3a94eebb04bdc9e84b2d95356",
+            "live_parquet": "709948a3a94eebb04bdc9e84b2d95356"
+          }
+        },
+        {
+          "name": "md_ndhash_eq_live_parquet_dedup_ndhash",
+          "ok": true,
+          "detail": {
+            "md": "22dff34281b0c19e524f4c780bc07f3f",
+            "live_parquet": "22dff34281b0c19e524f4c780bc07f3f"
+          }
+        },
+        {
+          "name": "md_srchash_eq_live_parquet_dedup_srchash",
+          "ok": true,
+          "detail": {
+            "md": "c4d96773b86e33a669cd7f712b1ffaf2",
+            "live_parquet": "c4d96773b86e33a669cd7f712b1ffaf2"
+          }
+        }
+      ],
+      "blockers": [],
+      "md_rjhash": "709948a3a94eebb04bdc9e84b2d95356",
+      "md_ndhash": "22dff34281b0c19e524f4c780bc07f3f",
+      "md_srchash": "c4d96773b86e33a669cd7f712b1ffaf2",
+      "pinned_dedup_rjhash": "709948a3a94eebb04bdc9e84b2d95356",
+      "pinned_dedup_ndhash": "22dff34281b0c19e524f4c780bc07f3f",
+      "pinned_dedup_srchash": "c4d96773b86e33a669cd7f712b1ffaf2",
+      "live_parquet_dedup_rjhash": "709948a3a94eebb04bdc9e84b2d95356",
+      "live_parquet_dedup_ndhash": "22dff34281b0c19e524f4c780bc07f3f",
+      "live_parquet_dedup_srchash": "c4d96773b86e33a669cd7f712b1ffaf2",
+      "finished_at": "2026-04-21T00:47:39Z"
     }
   },
-  "last_started_at": "2026-04-21T00:47:17Z",
-  "last_phase_arg": "2",
-  "last_finished_at": "2026-04-21T00:47:23Z",
+  "last_started_at": "2026-04-21T00:47:37Z",
+  "last_phase_arg": "3",
+  "last_finished_at": "2026-04-21T00:47:39Z",
   "last_return_code": 0
 }
