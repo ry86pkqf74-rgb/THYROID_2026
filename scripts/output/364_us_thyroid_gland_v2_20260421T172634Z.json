@@ -1,0 +1,9 @@
+{
+  "script": "Script 364",
+  "run_ts_utc": "20260421T172634Z",
+  "target": "thyroid_canonical_publication_v1_0.main.canonical_us_thyroid_gland_v2",
+  "rows": 13578,
+  "patients": 10859,
+  "pending": 13578,
+  "with_lobe_dims": 6793
+}

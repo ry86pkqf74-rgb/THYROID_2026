@@ -1,0 +1,23 @@
+{
+  "script": "Script 363",
+  "run_ts_utc": "20260421T172629Z",
+  "target": "thyroid_canonical_publication_v1_0.manuscript_workspace.us_nodule_conflict_queue_v1",
+  "rows": 20126,
+  "by_priority": {
+    "high": 2640,
+    "low": 12493,
+    "medium": 4993
+  },
+  "by_field": {
+    "size_cm_max": 4993,
+    "laterality": 3869,
+    "composition": 3372,
+    "tirads_reported": 2494,
+    "echogenicity": 1848,
+    "echogenic_foci": 1844,
+    "shape": 985,
+    "margins": 575,
+    "tirads_category_v2": 123,
+    "tirads_score_2017": 23
+  }
+}
