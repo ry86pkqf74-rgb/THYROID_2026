@@ -1,0 +1,224 @@
+{
+  "script": "356_fna_flip_and_cleanup",
+  "run_utc": "20260421T150656Z",
+  "publication_db": "thyroid_canonical_publication_v1_0",
+  "phase_completed": "F (all phases complete)",
+  "cohort_rewrites": {
+    "cohort_m011_tirads_fna_genetics_v1": {
+      "status": "not_a_dependent"
+    },
+    "cohort_m028_bethesda_iii_iv_v1": {
+      "status": "not_a_dependent"
+    },
+    "cohort_m029_fna_concordance_v1": {
+      "status": "not_a_dependent"
+    },
+    "cohort_m035_bethesda_v_v1": {
+      "status": "not_a_dependent"
+    },
+    "cohort_m046_niftp_era_bethesda_v1": {
+      "status": "not_a_dependent"
+    },
+    "cohort_m053_nondiagnostic_fna_v1": {
+      "status": "not_a_dependent"
+    }
+  },
+  "readable_rewrites": {
+    "FNA_Cytology": {
+      "status": "rewritten",
+      "pre_rows": 8119,
+      "post_rows": 8119
+    },
+    "FNA_Episode_Master": {
+      "status": "rewritten",
+      "pre_rows": 8119,
+      "post_rows": 8119
+    }
+  },
+  "archive_log": {
+    "fna_history": {
+      "action": "archived_and_dropped",
+      "snapshot": "fna_history_pre356_20260421",
+      "rows": 8119
+    },
+    "fna_cytology": {
+      "action": "archived_and_dropped",
+      "snapshot": "fna_cytology_pre356_20260421",
+      "rows": 8063
+    },
+    "fna_episode_master_v2": {
+      "action": "archived_and_dropped",
+      "snapshot": "fna_episode_master_v2_pre356_20260421",
+      "rows": 8119
+    }
+  },
+  "registry_summary": {
+    "deleted_feeder_rows": 3,
+    "inserted_master_rows": 2
+  },
+  "pre_drop_gates": [
+    {
+      "gate": "bethesda_final_distribution_parity_vs_prior",
+      "status": "PASS",
+      "tolerance_frac": 0.012,
+      "pre_total_nn": 5026,
+      "post_total_nn": 5026,
+      "by_category": [
+        {
+          "bethesda_final": 1,
+          "pre_n": 233,
+          "pre_frac": 0.0464,
+          "post_n": 233,
+          "post_frac": 0.0464,
+          "delta_frac": 0.0,
+          "within_tol": true
+        },
+        {
+          "bethesda_final": 2,
+          "pre_n": 2033,
+          "pre_frac": 0.4045,
+          "post_n": 2033,
+          "post_frac": 0.4045,
+          "delta_frac": 0.0,
+          "within_tol": true
+        },
+        {
+          "bethesda_final": 3,
+          "pre_n": 642,
+          "pre_frac": 0.1277,
+          "post_n": 642,
+          "post_frac": 0.1277,
+          "delta_frac": 0.0,
+          "within_tol": true
+        },
+        {
+          "bethesda_final": 4,
+          "pre_n": 624,
+          "pre_frac": 0.1242,
+          "post_n": 624,
+          "post_frac": 0.1242,
+          "delta_frac": 0.0,
+          "within_tol": true
+        },
+        {
+          "bethesda_final": 5,
+          "pre_n": 273,
+          "pre_frac": 0.0543,
+          "post_n": 273,
+          "post_frac": 0.0543,
+          "delta_frac": 0.0,
+          "within_tol": true
+        },
+        {
+          "bethesda_final": 6,
+          "pre_n": 1221,
+          "pre_frac": 0.2429,
+          "post_n": 1221,
+          "post_frac": 0.2429,
+          "delta_frac": 0.0,
+          "within_tol": true
+        }
+      ]
+    },
+    {
+      "gate": "worst_bethesda_num_agreement_vs_prior",
+      "status": "PASS",
+      "agreed": 10739,
+      "total": 10871,
+      "fraction": 0.9879,
+      "min_required": 0.985
+    },
+    {
+      "gate": "prm_fna_source_tables_eq_rollup_for_fna_patients",
+      "status": "PASS",
+      "matched": 5266,
+      "denom": 5266
+    },
+    {
+      "gate": "prm_fna_n_sources_eq_1_for_fna_patients",
+      "status": "PASS",
+      "matched": 5266,
+      "denom": 5266
+    },
+    {
+      "gate": "views_row_count_preserved",
+      "status": "PASS",
+      "min_ratio": 0.95,
+      "views": [
+        {
+          "view": "views_readable.FNA_Cytology",
+          "pre": 8119,
+          "post": 8119,
+          "ratio": 1.0,
+          "ok": true
+        },
+        {
+          "view": "views_readable.FNA_Episode_Master",
+          "pre": 8119,
+          "post": 8119,
+          "ratio": 1.0,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "gate": "no_views_reference_feeders_after_rewrite",
+      "status": "PASS",
+      "leftover_dependents": []
+    }
+  ],
+  "post_drop_gates": [
+    {
+      "gate": "feeders_absent_from_main",
+      "status": "PASS",
+      "still_present": []
+    },
+    {
+      "gate": "archive_snapshots_match_pre_drop_counts",
+      "status": "PASS",
+      "snapshots": [
+        {
+          "feeder": "fna_history",
+          "snapshot": "fna_history_pre356_20260421",
+          "exists": true,
+          "archive_rows": 8119,
+          "recorded_rows": 8119,
+          "row_match": true
+        },
+        {
+          "feeder": "fna_cytology",
+          "snapshot": "fna_cytology_pre356_20260421",
+          "exists": true,
+          "archive_rows": 8063,
+          "recorded_rows": 8063,
+          "row_match": true
+        },
+        {
+          "feeder": "fna_episode_master_v2",
+          "snapshot": "fna_episode_master_v2_pre356_20260421",
+          "exists": true,
+          "archive_rows": 8119,
+          "recorded_rows": 8119,
+          "row_match": true
+        }
+      ]
+    },
+    {
+      "gate": "no_remaining_references_to_feeders",
+      "status": "PASS",
+      "view_refs": [],
+      "table_refs": []
+    },
+    {
+      "gate": "registry_state",
+      "status": "PASS",
+      "old_feeder_rows": 0,
+      "new_master_rows": 2,
+      "registry_actions": {
+        "deleted_feeder_rows": 3,
+        "inserted_master_rows": 2
+      }
+    }
+  ],
+  "all_pass": true
+}

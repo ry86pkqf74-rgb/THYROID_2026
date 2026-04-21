@@ -1,0 +1,25 @@
+CREATE OR REPLACE VIEW "thyroid_canonical_publication_v1_0".views_readable."FNA_Cytology" AS
+SELECT
+  research_id,
+  fna_index,
+  fna_date_raw                     AS fna_date,
+  bethesda_original_text           AS original_bethesda,
+  bethesda_calculated_num          AS category_num,
+  bethesda_2010_num,
+  bethesda_2010_name,
+  bethesda_2015_num,
+  bethesda_2015_name,
+  bethesda_2023_num,
+  bethesda_2023_name,
+  bethesda_confidence              AS confidence,
+  bethesda_derivation_method       AS method,
+  bethesda_rules_category          AS rules_category,
+  bethesda_rules_confidence        AS rules_confidence,
+  bethesda_provider                AS provider,
+  bethesda_reasoning               AS reasoning,
+  CASE WHEN bethesda_evidence_present THEN 'present' ELSE NULL END
+                                   AS evidence,
+  subtype,
+  path_text_length,
+  specimen_location
+FROM "thyroid_canonical_publication_v1_0".main."fna_event_v1"

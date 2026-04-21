@@ -1,0 +1,92 @@
+==============================================================================
+=== START Script 356 (FNA flip + cleanup)
+started_at_utc: 2026-04-21T15:06:56.042030+00:00
+date_stamp: 20260421; utc_stamp: 20260421T150656Z
+connected to thyroid_canonical_publication_v1_0
+
+==============================================================================
+PHASE A — PRE-FLIGHT
+==============================================================================
+  fna_event_v1: 8119 rows, PK unique
+  fna_patient_rollup_v1: 5266 rows, PK unique
+  view dependency scan OK: 0 live dependents (subset of expected 2)
+  expected-but-already-rewired (idempotent re-run): ['views_readable.FNA_Cytology', 'views_readable.FNA_Episode_Master']
+
+==============================================================================
+PHASE A2 — SNAPSHOT CPM + LOG PRIOR DISTRIBUTIONS
+==============================================================================
+  CPM snapshot already exists for today: archive_pub_v1_0.canonical_patient_master_pre356_20260421 (skip)
+  prior CPM.bethesda_final: 7 distinct values
+  prior CPM.worst_bethesda_num: 7 distinct values
+  prior CPM.n_fna_episodes: 12 distinct values
+  prior CPM.prm_fna_source_tables: 2 distinct values
+  wrote /Users/ros/THyroid 2026/scripts/output/356_prior_distributions.json
+
+==============================================================================
+PHASE B — REPOINT CPM (42 COLUMNS)
+==============================================================================
+  verified 33 CPM target columns are present
+  executing UPDATE for matched-rid rows (33 cols)...
+  NULLed source columns for patients with no rollup row (no FNAs)
+  stamped cpm_built_at = NOW() for all rows
+
+==============================================================================
+PHASE C — REPOINT COHORT VIEWS (scan-driven: 0 actual)
+==============================================================================
+  scan vs spec: actual=[] expected=['cohort_m011_tirads_fna_genetics_v1', 'cohort_m028_bethesda_iii_iv_v1', 'cohort_m029_fna_concordance_v1', 'cohort_m035_bethesda_v_v1', 'cohort_m046_niftp_era_bethesda_v1', 'cohort_m053_nondiagnostic_fna_v1']
+  manuscript_workspace.cohort_m011_tirads_fna_genetics_v1: not a feeder dependent (skip)
+  manuscript_workspace.cohort_m028_bethesda_iii_iv_v1: not a feeder dependent (skip)
+  manuscript_workspace.cohort_m029_fna_concordance_v1: not a feeder dependent (skip)
+  manuscript_workspace.cohort_m035_bethesda_v_v1: not a feeder dependent (skip)
+  manuscript_workspace.cohort_m046_niftp_era_bethesda_v1: not a feeder dependent (skip)
+  manuscript_workspace.cohort_m053_nondiagnostic_fna_v1: not a feeder dependent (skip)
+
+==============================================================================
+PHASE C — REPOINT views_readable ALIASES
+==============================================================================
+  scan vs spec: actual_dependents=[] force_create=['FNA_Cytology', 'FNA_Episode_Master']
+  views_readable.FNA_Cytology: pre_rows=8119 -> post_rows=8119
+  views_readable.FNA_Episode_Master: pre_rows=8119 -> post_rows=8119
+
+==============================================================================
+QA — PRE-DROP GATES (1, 2, 3, 4, 7, 8a)
+==============================================================================
+  [PASS] bethesda_final_distribution_parity_vs_prior: {'tolerance_frac': 0.012, 'pre_total_nn': 5026, 'post_total_nn': 5026, 'by_category': [{'bethesda_final': 1, 'pre_n': 233, 'pre_frac': 0.0464, 'post_n': 233, 'post_frac': 0.0464, 'delta_frac': 0.0, 'within_tol': True}, {'bethesda_final': 2, 'pre_n': 2033, 'pre_frac': 0.4045, 'post_n': 2033, 'post_frac': 0.4045, 'delta_frac': 0.0, 'within_tol': True}, {'bethesda_final': 3, 'pre_n': 642, 'pre_frac': 0.1277, 'post_n': 642, 'post_frac': 0.1277, 'delta_frac': 0.0, 'within_tol': True}, {'bethesda_final': 4, 'pre_n': 624, 'pre_frac': 0.1242, 'post_n': 624, 'post_frac': 0.1242, 'delta_frac': 0.0, 'within_tol': True}, {'bethesda_final': 5, 'pre_n': 273, 'pre_frac': 0.0543, 'post_n': 273, 'post_frac': 0.0543, 'delta_frac': 0.0, 'within_tol': True}, {'bethesda_final': 6, 'pre_n': 1221, 'pre_frac': 0.2429, 'post_n': 1221, 'post_frac': 0.2429, 'delta_frac': 0.0, 'within_tol': True}]}
+  [PASS] worst_bethesda_num_agreement_vs_prior: {'agreed': 10739, 'total': 10871, 'fraction': 0.9879, 'min_required': 0.985}
+  [PASS] prm_fna_source_tables_eq_rollup_for_fna_patients: {'matched': 5266, 'denom': 5266}
+  [PASS] prm_fna_n_sources_eq_1_for_fna_patients: {'matched': 5266, 'denom': 5266}
+  [PASS] views_row_count_preserved: {'min_ratio': 0.95, 'views': [{'view': 'views_readable.FNA_Cytology', 'pre': 8119, 'post': 8119, 'ratio': 1.0, 'ok': True}, {'view': 'views_readable.FNA_Episode_Master', 'pre': 8119, 'post': 8119, 'ratio': 1.0, 'ok': True}]}
+  [PASS] no_views_reference_feeders_after_rewrite: {'leftover_dependents': []}
+
+==============================================================================
+PHASE D — ARCHIVE + DROP 3 FEEDERS
+==============================================================================
+  -> fna_history
+     archived to archive_pub_v1_0.fna_history_pre356_20260421 (8119 rows)
+     dropped main.fna_history
+  -> fna_cytology
+     archived to archive_pub_v1_0.fna_cytology_pre356_20260421 (8063 rows)
+     dropped main.fna_cytology
+  -> fna_episode_master_v2
+     archived to archive_pub_v1_0.fna_episode_master_v2_pre356_20260421 (8119 rows)
+     dropped main.fna_episode_master_v2
+
+==============================================================================
+PHASE E — REGISTRY CLEANUP
+==============================================================================
+  registry columns: ['detail_table_name', 'schema_name', 'join_key', 'grain', 'total_rows', 'total_patients', 'domain', 'feeds_master_columns', 'description', 'canonical_version', 'feeds_master_columns_secondary', 'feeds_master_columns_array', 'needs_manual_review']
+  removed 3 feeder rows
+  inserted registry row: fna_event_v1
+  inserted registry row: fna_patient_rollup_v1
+
+==============================================================================
+QA — POST-DROP GATES (5, 6, 8b, 9)
+==============================================================================
+  [PASS] feeders_absent_from_main: {'still_present': []}
+  [PASS] archive_snapshots_match_pre_drop_counts: {'snapshots': [{'feeder': 'fna_history', 'snapshot': 'fna_history_pre356_20260421', 'exists': True, 'archive_rows': 8119, 'recorded_rows': 8119, 'row_match': True}, {'feeder': 'fna_cytology', 'snapshot': 'fna_cytology_pre356_20260421', 'exists': True, 'archive_rows': 8063, 'recorded_rows': 8063, 'row_match': True}, {'feeder': 'fna_episode_master_v2', 'snapshot': 'fna_episode_master_v2_pre356_20260421', 'exists': True, 'archive_rows': 8119, 'recorded_rows': 8119, 'row_match': True}]}
+  [PASS] no_remaining_references_to_feeders: {'view_refs': [], 'table_refs': []}
+  [PASS] registry_state: {'old_feeder_rows': 0, 'new_master_rows': 2, 'registry_actions': {'deleted_feeder_rows': 3, 'inserted_master_rows': 2}}
+
+wrote /Users/ros/THyroid 2026/scripts/output/356_qa_gates.json
+
+=== END Script 356 OK in 10.7s

@@ -1,0 +1,125 @@
+{
+  "captured_at_utc": "2026-04-21T15:06:56.042030+00:00",
+  "histograms": {
+    "bethesda_final": [
+      {
+        "value": 1,
+        "count": 233
+      },
+      {
+        "value": 2,
+        "count": 2033
+      },
+      {
+        "value": 3,
+        "count": 642
+      },
+      {
+        "value": 4,
+        "count": 624
+      },
+      {
+        "value": 5,
+        "count": 273
+      },
+      {
+        "value": 6,
+        "count": 1221
+      },
+      {
+        "value": null,
+        "count": 5845
+      }
+    ],
+    "worst_bethesda_num": [
+      {
+        "value": 1,
+        "count": 193
+      },
+      {
+        "value": 2,
+        "count": 2056
+      },
+      {
+        "value": 3,
+        "count": 692
+      },
+      {
+        "value": 4,
+        "count": 649
+      },
+      {
+        "value": 5,
+        "count": 276
+      },
+      {
+        "value": 6,
+        "count": 1362
+      },
+      {
+        "value": null,
+        "count": 5643
+      }
+    ],
+    "n_fna_episodes": [
+      {
+        "value": 0,
+        "count": 5605
+      },
+      {
+        "value": 1,
+        "count": 3372
+      },
+      {
+        "value": 2,
+        "count": 1330
+      },
+      {
+        "value": 3,
+        "count": 349
+      },
+      {
+        "value": 4,
+        "count": 124
+      },
+      {
+        "value": 5,
+        "count": 51
+      },
+      {
+        "value": 6,
+        "count": 21
+      },
+      {
+        "value": 7,
+        "count": 8
+      },
+      {
+        "value": 8,
+        "count": 5
+      },
+      {
+        "value": 9,
+        "count": 1
+      },
+      {
+        "value": 11,
+        "count": 2
+      },
+      {
+        "value": 12,
+        "count": 3
+      }
+    ],
+    "prm_fna_source_tables": [
+      {
+        "value": "fna_patient_rollup_v1",
+        "count": 5266
+      },
+      {
+        "value": null,
+        "count": 5605
+      }
+    ]
+  }
+}
