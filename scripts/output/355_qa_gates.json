@@ -1,0 +1,132 @@
+{
+  "script": "script_355",
+  "run_utc": "20260421T143223Z",
+  "publication_db": "thyroid_canonical_publication_v1_0",
+  "tables_built": [
+    "main.fna_event_v1",
+    "main.fna_patient_rollup_v1"
+  ],
+  "gates": [
+    {
+      "gate": "event_row_count_eq_history",
+      "status": "PASS",
+      "observed": 8119,
+      "expected": 8119
+    },
+    {
+      "gate": "event_distinct_rids_eq_5266",
+      "status": "PASS",
+      "observed": 5266,
+      "expected": 5266
+    },
+    {
+      "gate": "event_pk_unique",
+      "status": "PASS",
+      "observed_distinct_ids": 8119,
+      "row_count": 8119
+    },
+    {
+      "gate": "event_bethesda_calculated_min",
+      "status": "PASS",
+      "observed": 7935,
+      "min_required": 7935
+    },
+    {
+      "gate": "event_bethesda_final_min",
+      "status": "PASS",
+      "observed": 8047,
+      "min_required": 8040
+    },
+    {
+      "gate": "event_date_resolved_frac",
+      "status": "PASS",
+      "observed_dated": 6537,
+      "total": 8119,
+      "fraction": 0.8051,
+      "min_required": 0.8
+    },
+    {
+      "gate": "event_rids_subset_of_cpm",
+      "status": "PASS",
+      "orphan_rids": 0
+    },
+    {
+      "gate": "rollup_row_count_eq_5266",
+      "status": "PASS",
+      "observed": 5266,
+      "expected": 5266
+    },
+    {
+      "gate": "bethesda_final_distribution_parity_vs_cpm",
+      "status": "PASS",
+      "tolerance_frac": 0.012,
+      "rollup_total_nn": 5026,
+      "cpm_total_nn": 5037,
+      "rollup_null_n": 240,
+      "cpm_null_n": 5834,
+      "by_category": [
+        {
+          "bethesda_final": 1,
+          "cpm_n": 185,
+          "cpm_frac": 0.0367,
+          "rollup_n": 233,
+          "rollup_frac": 0.0464,
+          "delta_frac": 0.0096,
+          "abs_delta_n": 48,
+          "within_tol": true
+        },
+        {
+          "bethesda_final": 2,
+          "cpm_n": 1980,
+          "cpm_frac": 0.3931,
+          "rollup_n": 2033,
+          "rollup_frac": 0.4045,
+          "delta_frac": 0.0114,
+          "abs_delta_n": 53,
+          "within_tol": true
+        },
+        {
+          "bethesda_final": 3,
+          "cpm_n": 677,
+          "cpm_frac": 0.1344,
+          "rollup_n": 642,
+          "rollup_frac": 0.1277,
+          "delta_frac": -0.0067,
+          "abs_delta_n": -35,
+          "within_tol": true
+        },
+        {
+          "bethesda_final": 4,
+          "cpm_n": 639,
+          "cpm_frac": 0.1269,
+          "rollup_n": 624,
+          "rollup_frac": 0.1242,
+          "delta_frac": -0.0027,
+          "abs_delta_n": -15,
+          "within_tol": true
+        },
+        {
+          "bethesda_final": 5,
+          "cpm_n": 276,
+          "cpm_frac": 0.0548,
+          "rollup_n": 273,
+          "rollup_frac": 0.0543,
+          "delta_frac": -0.0005,
+          "abs_delta_n": -3,
+          "within_tol": true
+        },
+        {
+          "bethesda_final": 6,
+          "cpm_n": 1280,
+          "cpm_frac": 0.2541,
+          "rollup_n": 1221,
+          "rollup_frac": 0.2429,
+          "delta_frac": -0.0112,
+          "abs_delta_n": -59,
+          "within_tol": true
+        }
+      ]
+    }
+  ],
+  "all_pass": true
+}

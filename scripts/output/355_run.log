@@ -1,0 +1,39 @@
+==============================================================================
+=== START Script 355 (additive FNA canonical masters)
+started_at_utc: 2026-04-21T14:32:23.271514+00:00
+connected to thyroid_canonical_publication_v1_0
+
+==============================================================================
+IDEMPOTENCY: snapshot prior versions if present
+==============================================================================
+  snapshotted prior fna_event_v1 -> archive_pub_v1_0.fna_event_v1_pre355_20260421T143223Z (8119 rows)
+  snapshotted prior fna_patient_rollup_v1 -> archive_pub_v1_0.fna_patient_rollup_v1_pre355_20260421T143223Z (5266 rows)
+
+==============================================================================
+BUILD main.fna_event_v1
+==============================================================================
+  built main.fna_event_v1: 8119 rows
+  set table comment on main.fna_event_v1
+
+==============================================================================
+BUILD main.fna_patient_rollup_v1
+==============================================================================
+  built main.fna_patient_rollup_v1: 5266 rows
+  set table comment on main.fna_patient_rollup_v1
+
+==============================================================================
+QA GATES
+==============================================================================
+  [PASS] event_row_count_eq_history: {'observed': 8119, 'expected': 8119}
+  [PASS] event_distinct_rids_eq_5266: {'observed': 5266, 'expected': 5266}
+  [PASS] event_pk_unique: {'observed_distinct_ids': 8119, 'row_count': 8119}
+  [PASS] event_bethesda_calculated_min: {'observed': 7935, 'min_required': 7935}
+  [PASS] event_bethesda_final_min: {'observed': 8047, 'min_required': 8040}
+  [PASS] event_date_resolved_frac: {'observed_dated': 6537, 'total': 8119, 'fraction': 0.8051, 'min_required': 0.8}
+  [PASS] event_rids_subset_of_cpm: {'orphan_rids': 0}
+  [PASS] rollup_row_count_eq_5266: {'observed': 5266, 'expected': 5266}
+  [PASS] bethesda_final_distribution_parity_vs_cpm: {'tolerance_frac': 0.012, 'rollup_total_nn': 5026, 'cpm_total_nn': 5037, 'rollup_null_n': 240, 'cpm_null_n': 5834, 'by_category': [{'bethesda_final': 1, 'cpm_n': 185, 'cpm_frac': 0.0367, 'rollup_n': 233, 'rollup_frac': 0.0464, 'delta_frac': 0.0096, 'abs_delta_n': 48, 'within_tol': True}, {'bethesda_final': 2, 'cpm_n': 1980, 'cpm_frac': 0.3931, 'rollup_n': 2033, 'rollup_frac': 0.4045, 'delta_frac': 0.0114, 'abs_delta_n': 53, 'within_tol': True}, {'bethesda_final': 3, 'cpm_n': 677, 'cpm_frac': 0.1344, 'rollup_n': 642, 'rollup_frac': 0.1277, 'delta_frac': -0.0067, 'abs_delta_n': -35, 'within_tol': True}, {'bethesda_final': 4, 'cpm_n': 639, 'cpm_frac': 0.1269, 'rollup_n': 624, 'rollup_frac': 0.1242, 'delta_frac': -0.0027, 'abs_delta_n': -15, 'within_tol': True}, {'bethesda_final': 5, 'cpm_n': 276, 'cpm_frac': 0.0548, 'rollup_n': 273, 'rollup_frac': 0.0543, 'delta_frac': -0.0005, 'abs_delta_n': -3, 'within_tol': True}, {'bethesda_final': 6, 'cpm_n': 1280, 'cpm_frac': 0.2541, 'rollup_n': 1221, 'rollup_frac': 0.2429, 'delta_frac': -0.0112, 'abs_delta_n': -59, 'within_tol': True}]}
+
+wrote /Users/ros/THyroid 2026/scripts/output/355_qa_gates.json
+
+=== END Script 355 OK in 3.7s
