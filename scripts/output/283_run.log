@@ -1,0 +1,44 @@
+[00:18:12.758Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:18:13.571Z] === PHASE 0 — parquet audit + measure positive targets (READ-ONLY) ===
+[00:18:13.572Z]   gate parquet_file_present: OK — {'path': '/Users/loganglosser/THYROID_2026/runs/9domain_v4/frozen_section_detail/output/note_entities_llm_frozen_section_detail.parquet'}
+[00:18:14.396Z]   0A: parquet rows=32,408 rids=10,863 nrids=32,408
+[00:18:14.396Z]       model=qwen2.5-32b  base_url=http://213.5.130.43:20049/v1
+[00:18:14.396Z]       preprocess_script_version=v4_9domain_rerun_2026-04-19  n_batch=1
+[00:18:14.396Z]       extracted_at min=2026-04-19T06:37:01.497006+00:00  max=2026-04-19T07:58:40.074652+00:00
+[00:18:14.396Z]   gate parquet_n_rows_eq_32408: OK — {'observed': 32408, 'expected': 32408}
+[00:18:14.396Z]   gate parquet_n_rids_eq_10863: OK — {'observed': 10863, 'expected': 10863}
+[00:18:14.396Z]   gate parquet_n_nrids_eq_32408: OK — {'observed': 32408, 'expected': 32408}
+[00:18:14.396Z]   gate parquet_model_eq_qwen25_32b: OK — {'observed': 'qwen2.5-32b', 'expected': 'qwen2.5-32b'}
+[00:18:14.396Z]   gate parquet_base_url_eq_pinned: OK — {'observed': 'http://213.5.130.43:20049/v1', 'expected': 'http://213.5.130.43:20049/v1'}
+[00:18:14.396Z]   gate parquet_preprocess_script_version_eq_pinned: OK — {'observed': 'v4_9domain_rerun_2026-04-19', 'expected': 'v4_9domain_rerun_2026-04-19'}
+[00:18:14.396Z]   gate parquet_preprocess_batch_id_uniform_and_eq_pinned: OK — {'observed_distinct': 1, 'value': '42df0de0-e0c5-4342-877c-97c61aa8a01c', 'expected': '42df0de0-e0c5-4342-877c-97c61aa8a01c'}
+[00:18:14.396Z]   gate parquet_extracted_at_min_starts_with_pinned: OK — {'observed': '2026-04-19T06:37:01.497006+00:00', 'expected_prefix': '2026-04-19T06:37'}
+[00:18:14.396Z]   gate parquet_extracted_at_max_starts_with_pinned: OK — {'observed': '2026-04-19T07:58:40.074652+00:00', 'expected_prefix': '2026-04-19T07:58'}
+[00:18:14.551Z]   0B: parquet hashes:  rj=a472591e1940a470c3053283079bf09e  nd=93e94f6531350f321d9c498d39392333  src=565ce1c3f27f1ad40c7a86ff89e51469
+[00:18:14.552Z]   gate parquet_rjhash_match_pinned: OK — {'observed': 'a472591e1940a470c3053283079bf09e', 'pinned': 'a472591e1940a470c3053283079bf09e'}
+[00:18:14.552Z]   gate parquet_ndhash_match_pinned: OK — {'observed': '93e94f6531350f321d9c498d39392333', 'pinned': '93e94f6531350f321d9c498d39392333'}
+[00:18:14.552Z]   gate parquet_srchash_match_pinned: OK — {'observed': '565ce1c3f27f1ad40c7a86ff89e51469', 'pinned': '565ce1c3f27f1ad40c7a86ff89e51469'}
+[00:18:14.578Z]   gate parquet_dup_rows_eq_0: OK — {'observed': 0, 'expected': 0}
+[00:18:14.579Z]   gate parquet_dup_groups_eq_0: OK — {'observed': 0, 'expected': 0}
+[00:18:14.700Z]   0D: parquet positive targets: rids=2,855 notes=3,776 entities=7,715
+[00:18:14.700Z]   gate parquet_pos_rids_eq_pinned: OK — {'observed': 2855, 'expected': 2855}
+[00:18:14.700Z]   gate parquet_pos_notes_eq_pinned: OK — {'observed': 3776, 'expected': 3776}
+[00:18:14.701Z]   gate parquet_pos_entities_eq_pinned: OK — {'observed': 7715, 'expected': 7715}
+[00:18:14.813Z]   0E: current MD source rows=11,037 rids=5,641 models=qwen3:32b
+[00:18:14.813Z]   gate md_source_stale_rows_eq_11037: OK — {'observed': 11037, 'expected': 11037}
+[00:18:14.813Z]   gate md_source_stale_rids_eq_5641: OK — {'observed': 5641, 'expected': 5641}
+[00:18:14.813Z]   gate md_source_stale_model_eq_qwen3_32b: OK — {'observed': 'qwen3:32b', 'expected': 'qwen3:32b'}
+[00:18:14.972Z]   0F: CPM rows=10,871 rids=10,871  stale nlp_frozensec_has_data: TRUE=184 NULL=10687  sum_n_notes=187 sum_n_entities=213
+[00:18:14.972Z]   gate cpm_rows_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[00:18:14.972Z]   gate cpm_rids_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[00:18:14.972Z]   gate cpm_no_null_rid: OK — {'observed': 0}
+[00:18:14.972Z]   gate stale_has_data_true_eq_184: OK — {'observed': 184, 'expected': 184}
+[00:18:14.972Z]   gate stale_has_data_null_eq_10687: OK — {'observed': 10687, 'expected': 10687}
+[00:18:14.972Z]   gate stale_not_already_promoted: OK — {'detail': 'has_null==0 AND has_true ~= target would mean rollup already promoted; refusing to clobber.'}
+[00:18:18.053Z]   gate registry_total_rows_stale_eq_11037: OK — {'observed': 11037, 'expected': 11037}
+[00:18:18.053Z]   gate registry_total_patients_stale_eq_5641: OK — {'observed': 5641, 'expected': 5641}
+[00:18:18.053Z] 
+[00:18:18.053Z] ──── PHASE 0 SUMMARY ────
+[00:18:18.053Z]   gates: 29 total, 29 passed, 0 blockers
+[00:18:18.053Z]   ALL GATES PASSED — Phase 1 may proceed.
+[00:18:18.053Z] ─────────────────────────
