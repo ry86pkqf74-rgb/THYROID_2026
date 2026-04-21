@@ -1,0 +1,947 @@
+{
+  "targets": {
+    "main.canonical_us_nodule_master_v1": {
+      "phase": "phase1",
+      "kind": "BASE TABLE",
+      "rows": 37016
+    },
+    "main.canonical_us_nodule_characteristics_v1": {
+      "phase": "phase1",
+      "kind": "BASE TABLE",
+      "rows": 37016
+    },
+    "main.imaging_nodule_master_v1": {
+      "phase": "phase1",
+      "kind": "BASE TABLE",
+      "rows": 37016
+    },
+    "main.canonical_us_exam_master_v1": {
+      "phase": "phase1",
+      "kind": "BASE TABLE",
+      "rows": 13347
+    },
+    "main.canonical_us_patient_master_v1": {
+      "phase": "phase1",
+      "kind": "BASE TABLE",
+      "rows": 6126
+    },
+    "main.tirads_llm_extracted_v2": {
+      "phase": "phase1",
+      "kind": "BASE TABLE",
+      "rows": 5636
+    },
+    "main.serial_imaging_us": {
+      "phase": "phase1",
+      "kind": "BASE TABLE",
+      "rows": 4162
+    },
+    "manuscript_workspace.tirads_granular_parsed_v1": {
+      "phase": "phase1",
+      "kind": "BASE TABLE",
+      "rows": 181
+    },
+    "manuscript_workspace.us_nodule_dynamics_parsed_v1": {
+      "phase": "phase1",
+      "kind": "BASE TABLE",
+      "rows": 49
+    },
+    "main.tirads_v2_nodules_raw": {
+      "phase": "phase2",
+      "kind": "BASE TABLE",
+      "rows": 11914
+    },
+    "main.extracted_tirads_validated_v1": {
+      "phase": "phase2",
+      "kind": "BASE TABLE",
+      "rows": 3439
+    },
+    "main.tirads_reextraction_queue_v1": {
+      "phase": "phase2",
+      "kind": "BASE TABLE",
+      "rows": 4363
+    },
+    "main.note_entities_llm_tirads_granular": {
+      "phase": "phase3",
+      "kind": "BASE TABLE",
+      "rows": 11037
+    },
+    "main.note_entities_llm_us_nodule_dynamics": {
+      "phase": "phase3",
+      "kind": "BASE TABLE",
+      "rows": 11037
+    },
+    "main.note_entities_llm_imaging": {
+      "phase": "phase3",
+      "kind": "BASE TABLE",
+      "rows": 11037
+    },
+    "manuscript_workspace.imaging_nodule_master_clean_v1": {
+      "phase": "phase4",
+      "kind": "VIEW",
+      "row_error": "Binder Error: Contents of view were altered: types don't match! Expected [INTEGER, DATE, INTEGER, VARCHAR, VARCHAR, INTEGER, INTEGER, VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR, DOUBLE, DOUBLE, DOUBLE, DOUBLE, VARCHAR, VARCHAR, VARCHAR, BOOLEAN, DOUBLE, VARCHAR, BOOLEAN, VARCHAR], but found [INTEGER, DATE, INTEGER, VARCHAR, VARCHAR, INTEGER, INTEGER, VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR, DOUBLE, DOUBLE, DOUBLE, DOUBLE, VARCHAR, VARCHAR, VARCHAR, BOOLEAN, DOUBLE, VARCHAR, BOOLEAN, VARCHAR, BOOLEAN] instead"
+    },
+    "manuscript_workspace.us_nodules_tirads_vs_inm_v1_discordance_v1": {
+      "phase": "phase4",
+      "kind": "BASE TABLE",
+      "rows": 1722
+    },
+    "manuscript_workspace.tirads_v1_v2_discordance_v1": {
+      "phase": "phase4",
+      "kind": "BASE TABLE",
+      "rows": 493
+    }
+  },
+  "views": [
+    {
+      "schema": "main",
+      "name": "thyroglobulin_lab_VIEW_v1",
+      "refs_targets": [],
+      "defn_len": 352
+    },
+    {
+      "schema": "main",
+      "name": "molecular_variants_unnested_v2",
+      "refs_targets": [],
+      "defn_len": 516
+    },
+    {
+      "schema": "main",
+      "name": "molecular_fusions_unnested_v2",
+      "refs_targets": [],
+      "defn_len": 485
+    },
+    {
+      "schema": "main",
+      "name": "longitudinal_lab_VIEW_v1",
+      "refs_targets": [],
+      "defn_len": 1623
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m082_parathyroid_tumors_v1",
+      "refs_targets": [],
+      "defn_len": 762
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m078_graves_survival_v1",
+      "refs_targets": [],
+      "defn_len": 677
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m076_ln_surveillance_v1",
+      "refs_targets": [],
+      "defn_len": 624
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m075_tirads_multi_nodule_v1",
+      "refs_targets": [],
+      "defn_len": 723
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m072_molecular_surg_impact_v1",
+      "refs_targets": [],
+      "defn_len": 685
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m080_molecular_beth56_v1",
+      "refs_targets": [],
+      "defn_len": 650
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m071_immunologic_meds_v1",
+      "refs_targets": [],
+      "defn_len": 526
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m070_hereditary_v1",
+      "refs_targets": [],
+      "defn_len": 518
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m067_tsh_tg_tumorigenesis_v1",
+      "refs_targets": [],
+      "defn_len": 647
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m065_frozen_tt_vs_lob_v1",
+      "refs_targets": [],
+      "defn_len": 576
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m063_frozen_false_neg_v1",
+      "refs_targets": [],
+      "defn_len": 571
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m062_incidental_frozen_v1",
+      "refs_targets": [],
+      "defn_len": 527
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "path_tumor_size_invariant_v1",
+      "refs_targets": [],
+      "defn_len": 214
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m068_mutation_labs_v1",
+      "refs_targets": [],
+      "defn_len": 648
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m058_thyroid_size_weight_v1",
+      "refs_targets": [],
+      "defn_len": 581
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m055_recurrence_rai_v1",
+      "refs_targets": [],
+      "defn_len": 566
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m073_tg_lob_vs_tt_v1",
+      "refs_targets": [],
+      "defn_len": 643
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m056_age_epidemiology_v1",
+      "refs_targets": [],
+      "defn_len": 444
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m054_niftp_reclass_v1",
+      "refs_targets": [],
+      "defn_len": 504
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m060_adenoma_ftump_v1",
+      "refs_targets": [],
+      "defn_len": 569
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m053_nondiagnostic_fna_v1",
+      "refs_targets": [],
+      "defn_len": 513
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m052_mrlnd_ln_count_v1",
+      "refs_targets": [],
+      "defn_len": 602
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m051_ete_ln_v1",
+      "refs_targets": [],
+      "defn_len": 591
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m049_pyramidal_lobe_v1",
+      "refs_targets": [],
+      "defn_len": 432
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m045_multimodal_risk_v1",
+      "refs_targets": [],
+      "defn_len": 785
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "tirads_llm_haiku_vs_qwen_v1",
+      "refs_targets": [
+        "main.tirads_llm_extracted_v2"
+      ],
+      "defn_len": 1677
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m044_ajcc_ete_v1",
+      "refs_targets": [],
+      "defn_len": 840
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m043_ln_predictors_v1",
+      "refs_targets": [],
+      "defn_len": 924
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m050_tumor_size_volume_v1",
+      "refs_targets": [],
+      "defn_len": 497
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m039_pth_calcium_v1",
+      "refs_targets": [],
+      "defn_len": 1141
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m038_massive_goiter_v1",
+      "refs_targets": [],
+      "defn_len": 692
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m036_ata_risk_comparison_v1",
+      "refs_targets": [],
+      "defn_len": 889
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m033_afirma_thyroseq_v1",
+      "refs_targets": [],
+      "defn_len": 845
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m066_parathyroid_id_v1",
+      "refs_targets": [],
+      "defn_len": 640
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m032_descriptive_25yr_v1",
+      "refs_targets": [],
+      "defn_len": 898
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m057_risk_stratification_v1",
+      "refs_targets": [],
+      "defn_len": 583
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m030_genetic_predictive_v1",
+      "refs_targets": [],
+      "defn_len": 802
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m029_fna_concordance_v1",
+      "refs_targets": [],
+      "defn_len": 661
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m028_bethesda_iii_iv_v1",
+      "refs_targets": [],
+      "defn_len": 760
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m059_prognostic_scoring_v1",
+      "refs_targets": [],
+      "defn_len": 634
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m023_preop_genetics_v1",
+      "refs_targets": [],
+      "defn_len": 705
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m081_rai_resistant_v1",
+      "refs_targets": [],
+      "defn_len": 771
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m019_rai_outcomes_v1",
+      "refs_targets": [],
+      "defn_len": 849
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m018_molecular_beth56_v1",
+      "refs_targets": [],
+      "defn_len": 642
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "imaging_nodule_master_clean_v1",
+      "refs_targets": [
+        "main.imaging_nodule_master_v1",
+        "manuscript_workspace.imaging_nodule_master_clean_v1"
+      ],
+      "defn_len": 144
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m079_eucalcemic_outcomes_v1",
+      "refs_targets": [],
+      "defn_len": 776
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m064_frozen_decision_v1",
+      "refs_targets": [],
+      "defn_len": 608
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m042_incidental_parathyroid_v1",
+      "refs_targets": [],
+      "defn_len": 988
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m040_reoperative_v1",
+      "refs_targets": [],
+      "defn_len": 926
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m025_tirads_performance_v1",
+      "refs_targets": [],
+      "defn_len": 787
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m017_eucalcemic_hypopara_v1",
+      "refs_targets": [],
+      "defn_len": 816
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m047_frozen_section_v1",
+      "refs_targets": [],
+      "defn_len": 713
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m035_bethesda_v_v1",
+      "refs_targets": [],
+      "defn_len": 691
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m016_graves_carcinoma_v1",
+      "refs_targets": [],
+      "defn_len": 606
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m011_tirads_fna_genetics_v1",
+      "refs_targets": [],
+      "defn_len": 710
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m037_ln_metastasis_v1",
+      "refs_targets": [],
+      "defn_len": 1205
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m009_parathyroid_final_path_v1",
+      "refs_targets": [],
+      "defn_len": 879
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m069_graves_hashimoto_v1",
+      "refs_targets": [],
+      "defn_len": 537
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m048_tnm_multifocal_v1",
+      "refs_targets": [],
+      "defn_len": 590
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m007_rss_reclassification_v1",
+      "refs_targets": [],
+      "defn_len": 692
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m006_molecular_surg_decision_v1",
+      "refs_targets": [],
+      "defn_len": 706
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m004_graves_hashimoto_cancer_v1",
+      "refs_targets": [],
+      "defn_len": 777
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m046_niftp_era_bethesda_v1",
+      "refs_targets": [],
+      "defn_len": 699
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m001_indeterminate_genetics_v1",
+      "refs_targets": [],
+      "defn_len": 741
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m061_thyroiditis_outcomes_v1",
+      "refs_targets": [],
+      "defn_len": 581
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_descriptive_full_cohort_v1",
+      "refs_targets": [],
+      "defn_len": 3640
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "cohort_m031_nuclear_medicine_v1",
+      "refs_targets": [],
+      "defn_len": 702
+    },
+    {
+      "schema": "manuscript_workspace",
+      "name": "canonical_detail_pointer_v1",
+      "refs_targets": [],
+      "defn_len": 613
+    },
+    {
+      "schema": "tier2",
+      "name": "frozen_section_event_v1",
+      "refs_targets": [],
+      "defn_len": 99
+    },
+    {
+      "schema": "views_readable",
+      "name": "US_TIRADS_Reextraction_Queue",
+      "refs_targets": [
+        "main.tirads_reextraction_queue_v1"
+      ],
+      "defn_len": 107
+    },
+    {
+      "schema": "views_readable",
+      "name": "US_Thyroid_Gland_Wide_v2",
+      "refs_targets": [],
+      "defn_len": 4608
+    },
+    {
+      "schema": "views_readable",
+      "name": "US_Reports_Raw",
+      "refs_targets": [],
+      "defn_len": 83
+    },
+    {
+      "schema": "views_readable",
+      "name": "US_Nodules_Wide_v2",
+      "refs_targets": [],
+      "defn_len": 44073
+    },
+    {
+      "schema": "views_readable",
+      "name": "US_Nodules_TIRADS",
+      "refs_targets": [],
+      "defn_len": 85
+    },
+    {
+      "schema": "views_readable",
+      "name": "US_Nodules_Characteristics",
+      "refs_targets": [
+        "main.canonical_us_nodule_characteristics_v1"
+      ],
+      "defn_len": 115
+    },
+    {
+      "schema": "views_readable",
+      "name": "US_Lymph_Nodes_Wide_v2",
+      "refs_targets": [],
+      "defn_len": 38458
+    },
+    {
+      "schema": "views_readable",
+      "name": "Survival_Followup",
+      "refs_targets": [],
+      "defn_len": 98
+    },
+    {
+      "schema": "views_readable",
+      "name": "Survival_Cohort_Enriched",
+      "refs_targets": [],
+      "defn_len": 99
+    },
+    {
+      "schema": "views_readable",
+      "name": "Surgery_Episode_Detail",
+      "refs_targets": [],
+      "defn_len": 100
+    },
+    {
+      "schema": "views_readable",
+      "name": "Recurrence_Status",
+      "refs_targets": [],
+      "defn_len": 91
+    },
+    {
+      "schema": "views_readable",
+      "name": "Recurrence_Event_Clean",
+      "refs_targets": [],
+      "defn_len": 98
+    },
+    {
+      "schema": "views_readable",
+      "name": "RAI_Treatment_Episode",
+      "refs_targets": [],
+      "defn_len": 96
+    },
+    {
+      "schema": "views_readable",
+      "name": "RAI_from_Notes_LLM",
+      "refs_targets": [],
+      "defn_len": 99
+    },
+    {
+      "schema": "views_readable",
+      "name": "US_Nodules_Index",
+      "refs_targets": [
+        "main.imaging_nodule_master_v1"
+      ],
+      "defn_len": 91
+    },
+    {
+      "schema": "views_readable",
+      "name": "PSHx_from_Notes_LLM",
+      "refs_targets": [],
+      "defn_len": 104
+    },
+    {
+      "schema": "views_readable",
+      "name": "PMHx_from_Notes_LLM",
+      "refs_targets": [],
+      "defn_len": 103
+    },
+    {
+      "schema": "views_readable",
+      "name": "Patient_Master_Canonical",
+      "refs_targets": [],
+      "defn_len": 99
+    },
+    {
+      "schema": "views_readable",
+      "name": "Pathology_Tumor_Focus",
+      "refs_targets": [],
+      "defn_len": 95
+    },
+    {
+      "schema": "views_readable",
+      "name": "Pathology_Tumor_Characteristics",
+      "refs_targets": [],
+      "defn_len": 116
+    },
+    {
+      "schema": "views_readable",
+      "name": "Surgery_from_Notes_LLM",
+      "refs_targets": [],
+      "defn_len": 103
+    },
+    {
+      "schema": "views_readable",
+      "name": "Registry_Domain_Map",
+      "refs_targets": [],
+      "defn_len": 106
+    },
+    {
+      "schema": "views_readable",
+      "name": "Pathology_Synoptics",
+      "refs_targets": [],
+      "defn_len": 84
+    },
+    {
+      "schema": "views_readable",
+      "name": "Registry_Detail_Tables",
+      "refs_targets": [],
+      "defn_len": 113
+    },
+    {
+      "schema": "views_readable",
+      "name": "Pathology_Outcome_Classification",
+      "refs_targets": [],
+      "defn_len": 113
+    },
+    {
+      "schema": "views_readable",
+      "name": "NSQIP_Linkage",
+      "refs_targets": [],
+      "defn_len": 85
+    },
+    {
+      "schema": "views_readable",
+      "name": "Labs_Thyroglobulin",
+      "refs_targets": [],
+      "defn_len": 100
+    },
+    {
+      "schema": "views_readable",
+      "name": "Labs_Tg_Postop_Surveillance",
+      "refs_targets": [],
+      "defn_len": 111
+    },
+    {
+      "schema": "views_readable",
+      "name": "Labs_Calcium",
+      "refs_targets": [],
+      "defn_len": 88
+    },
+    {
+      "schema": "views_readable",
+      "name": "Labs_TSH",
+      "refs_targets": [],
+      "defn_len": 80
+    },
+    {
+      "schema": "views_readable",
+      "name": "Genetics_Variants",
+      "refs_targets": [],
+      "defn_len": 98
+    },
+    {
+      "schema": "views_readable",
+      "name": "Genetics_Testing",
+      "refs_targets": [],
+      "defn_len": 98
+    },
+    {
+      "schema": "views_readable",
+      "name": "Genetics_from_Notes_LLM",
+      "refs_targets": [],
+      "defn_len": 116
+    },
+    {
+      "schema": "views_readable",
+      "name": "FNA_Cytology",
+      "refs_targets": [],
+      "defn_len": 694
+    },
+    {
+      "schema": "views_readable",
+      "name": "Symptoms_from_Notes_LLM",
+      "refs_targets": [],
+      "defn_len": 111
+    },
+    {
+      "schema": "views_readable",
+      "name": "Labs_Longitudinal",
+      "refs_targets": [],
+      "defn_len": 92
+    },
+    {
+      "schema": "views_readable",
+      "name": "Diagnosis_Unified",
+      "refs_targets": [],
+      "defn_len": 98
+    },
+    {
+      "schema": "views_readable",
+      "name": "Pathology_Specimen_Master",
+      "refs_targets": [],
+      "defn_len": 94
+    },
+    {
+      "schema": "views_readable",
+      "name": "FNA_Episode_Master",
+      "refs_targets": [],
+      "defn_len": 315
+    },
+    {
+      "schema": "views_readable",
+      "name": "Data_Dictionary",
+      "refs_targets": [],
+      "defn_len": 86
+    },
+    {
+      "schema": "views_readable",
+      "name": "Complications",
+      "refs_targets": [],
+      "defn_len": 89
+    },
+    {
+      "schema": "views_readable",
+      "name": "Cohort_Descriptive_Full",
+      "refs_targets": [],
+      "defn_len": 123
+    },
+    {
+      "schema": "views_readable",
+      "name": "Labs_PTH",
+      "refs_targets": [],
+      "defn_len": 80
+    },
+    {
+      "schema": "views_readable",
+      "name": "Cervical_LN_from_Notes_LLM",
+      "refs_targets": [],
+      "defn_len": 113
+    },
+    {
+      "schema": "views_readable",
+      "name": "Tumor_Episode_Master",
+      "refs_targets": [],
+      "defn_len": 94
+    },
+    {
+      "schema": "views_readable",
+      "name": "Patient_Cross_Domain_Timeline",
+      "refs_targets": [],
+      "defn_len": 112
+    },
+    {
+      "schema": "views_readable",
+      "name": "Labs_VitaminD",
+      "refs_targets": [],
+      "defn_len": 91
+    },
+    {
+      "schema": "views_readable",
+      "name": "Analysis_Patient_Resolved",
+      "refs_targets": [],
+      "defn_len": 155
+    }
+  ],
+  "views_readable": [
+    "Analysis_Patient_Resolved",
+    "Cervical_LN_from_Notes_LLM",
+    "Cohort_Descriptive_Full",
+    "Complications",
+    "Data_Dictionary",
+    "Diagnosis_Unified",
+    "FNA_Cytology",
+    "FNA_Episode_Master",
+    "Genetics_Testing",
+    "Genetics_Variants",
+    "Genetics_from_Notes_LLM",
+    "Labs_Calcium",
+    "Labs_Longitudinal",
+    "Labs_PTH",
+    "Labs_TSH",
+    "Labs_Tg_Postop_Surveillance",
+    "Labs_Thyroglobulin",
+    "Labs_VitaminD",
+    "NSQIP_Linkage",
+    "PMHx_from_Notes_LLM",
+    "PSHx_from_Notes_LLM",
+    "Pathology_Outcome_Classification",
+    "Pathology_Specimen_Master",
+    "Pathology_Synoptics",
+    "Pathology_Tumor_Characteristics",
+    "Pathology_Tumor_Focus",
+    "Patient_Cross_Domain_Timeline",
+    "Patient_Master_Canonical",
+    "RAI_Treatment_Episode",
+    "RAI_from_Notes_LLM",
+    "Recurrence_Event_Clean",
+    "Recurrence_Status",
+    "Registry_Detail_Tables",
+    "Registry_Domain_Map",
+    "Surgery_Episode_Detail",
+    "Surgery_from_Notes_LLM",
+    "Survival_Cohort_Enriched",
+    "Survival_Followup",
+    "Symptoms_from_Notes_LLM",
+    "Tumor_Episode_Master",
+    "US_Lymph_Nodes_Wide_v2",
+    "US_Nodules_Characteristics",
+    "US_Nodules_Index",
+    "US_Nodules_TIRADS",
+    "US_Nodules_Wide_v2",
+    "US_Reports_Raw",
+    "US_TIRADS_Reextraction_Queue",
+    "US_Thyroid_Gland_Wide_v2"
+  ],
+  "legacy_archive": [
+    "canonical_us_exam_master_v1",
+    "canonical_us_nodule_characteristics_v1",
+    "canonical_us_nodule_master_v1",
+    "canonical_us_patient_master_v1",
+    "imaging_nodule_master_v1",
+    "serial_imaging_us",
+    "tirads_granular_parsed_v1",
+    "tirads_llm_extracted_v2",
+    "us_nodule_dynamics_parsed_v1"
+  ],
+  "entity_types": {
+    "note_entities_llm_tirads_granular": {
+      "entity_domain": {
+        "null": 11037
+      }
+    },
+    "note_entities_llm_us_nodule_dynamics": {
+      "entity_domain": {
+        "null": 11037
+      }
+    },
+    "note_entities_llm_imaging": {
+      "entity_domain": {
+        "null": 11037
+      }
+    }
+  },
+  "cpm_imaging_tirads_cols": [
+    "imaging_tirads_source",
+    "imaging_tirads_best",
+    "imaging_tirads_category",
+    "imaging_tirads_worst",
+    "imaging_tirads_best_v2",
+    "imaging_tirads_worst_v2",
+    "imaging_tirads_category_v2_v2"
+  ],
+  "nv2_tirads_cols": [
+    "tirads_reported",
+    "tirads_score_2017",
+    "tirads_level_2017",
+    "tirads_category_v2",
+    "tirads_band_ambiguous",
+    "tirads_category_code_legacy_v1",
+    "tirads_category_modified_legacy_v1",
+    "tirads_concordant_flag",
+    "tirads_score_component_complete",
+    "source_tirads_v2",
+    "source_tirads_llm",
+    "source_us_nodules_tirads"
+  ],
+  "tirads_reported_vs_score_2017": {
+    "both_present": 4303,
+    "equal": 2442,
+    "unequal": 1861
+  },
+  "nv2_feature_availability": {
+    "total": 36957,
+    "all5_features_present": 18684,
+    "all5_pts_present": 508,
+    "has_tirads_reported": 27844,
+    "has_tirads_category_v2": 3388,
+    "both_categories_populated": 2117
+  }
+}

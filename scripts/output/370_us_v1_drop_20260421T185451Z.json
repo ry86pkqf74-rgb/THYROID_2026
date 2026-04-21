@@ -1,0 +1,69 @@
+{
+  "script": "Script 370",
+  "verifications": [
+    {
+      "status": "ok",
+      "table": "canonical_us_nodule_master_v1",
+      "schema": "main",
+      "rows": 37016,
+      "hash": "0fe9dbaa5225be40deba9c1030b68fc4"
+    },
+    {
+      "status": "ok",
+      "table": "canonical_us_nodule_characteristics_v1",
+      "schema": "main",
+      "rows": 37016,
+      "hash": "2db33ba8468056411c3ddea0c89ddccf"
+    },
+    {
+      "status": "ok",
+      "table": "imaging_nodule_master_v1",
+      "schema": "main",
+      "rows": 37016,
+      "hash": "a726b175660d96c875295bc7b7861fd0"
+    },
+    {
+      "status": "ok",
+      "table": "canonical_us_exam_master_v1",
+      "schema": "main",
+      "rows": 13347,
+      "hash": "bf017957f867c80bbd1110b38e089098"
+    },
+    {
+      "status": "ok",
+      "table": "canonical_us_patient_master_v1",
+      "schema": "main",
+      "rows": 6126,
+      "hash": "4c4da6a30f2bb2f080aa0b740242b1ef"
+    },
+    {
+      "status": "ok",
+      "table": "tirads_llm_extracted_v2",
+      "schema": "main",
+      "rows": 5636,
+      "hash": "be7780f4113869639a3dc9672358f531"
+    },
+    {
+      "status": "ok",
+      "table": "serial_imaging_us",
+      "schema": "main",
+      "rows": 4162,
+      "hash": "e3bfc2862154f7e436478e756b52eec9"
+    },
+    {
+      "status": "ok",
+      "table": "tirads_granular_parsed_v1",
+      "schema": "manuscript_workspace",
+      "rows": 181,
+      "hash": "e192e4bc671dc6ae2410947a88366475"
+    },
+    {
+      "status": "ok",
+      "table": "us_nodule_dynamics_parsed_v1",
+      "schema": "manuscript_workspace",
+      "rows": 49,
+      "hash": "4be178f5e763885dd36643b24a75dca6"
+    }
+  ],
+  "commit": false
+}

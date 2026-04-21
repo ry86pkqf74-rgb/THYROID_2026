@@ -1,0 +1,27 @@
+{
+  "script": "Script 372",
+  "verifications": [
+    {
+      "table": "note_entities_llm_tirads_granular",
+      "rows_total": 11037,
+      "rows_with_json_text": 11037,
+      "rows_empty_or_null": 8943,
+      "rows_nontrivial": 2094
+    },
+    {
+      "table": "note_entities_llm_us_nodule_dynamics",
+      "rows_total": 11037,
+      "rows_with_json_text": 11037,
+      "rows_empty_or_null": 7147,
+      "rows_nontrivial": 3890
+    },
+    {
+      "table": "note_entities_llm_imaging",
+      "rows_total": 11037,
+      "rows_with_json_text": 11037,
+      "rows_empty_or_null": 8658,
+      "rows_nontrivial": 2379
+    }
+  ],
+  "aborted_due_to_nontrivial_entities": true
+}

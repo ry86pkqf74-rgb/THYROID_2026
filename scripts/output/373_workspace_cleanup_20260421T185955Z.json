@@ -1,0 +1,30 @@
+{
+  "script": "Script 373",
+  "run_ts_utc": "20260421T185955Z",
+  "plan": [
+    {
+      "table": "us_nodules_tirads_vs_inm_v1_discordance_v1",
+      "present": true,
+      "rows": 1722,
+      "action": "drop"
+    },
+    {
+      "table": "tirads_v1_v2_discordance_v1",
+      "present": true,
+      "rows": 493,
+      "action": "archive+drop"
+    }
+  ],
+  "results": [
+    {
+      "table": "tirads_v1_v2_discordance_v1",
+      "status": "archived+dropped",
+      "rows": 493
+    },
+    {
+      "table": "us_nodules_tirads_vs_inm_v1_discordance_v1",
+      "status": "dropped",
+      "rows": 1722
+    }
+  ]
+}

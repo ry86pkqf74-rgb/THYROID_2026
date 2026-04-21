@@ -1,0 +1,59 @@
+{
+  "script": "Script 372",
+  "run_ts_utc": "20260421T185915Z",
+  "verifications": [
+    {
+      "table": "note_entities_llm_tirads_granular",
+      "rows_total": 11037,
+      "rows_with_json_text": 11037,
+      "rows_empty_or_null": 8943,
+      "rows_nontrivial": 2094
+    },
+    {
+      "table": "note_entities_llm_us_nodule_dynamics",
+      "rows_total": 11037,
+      "rows_with_json_text": 11037,
+      "rows_empty_or_null": 7147,
+      "rows_nontrivial": 3890
+    },
+    {
+      "table": "note_entities_llm_imaging",
+      "rows_total": 11037,
+      "rows_with_json_text": 11037,
+      "rows_empty_or_null": 8658,
+      "rows_nontrivial": 2379
+    }
+  ],
+  "archives": [
+    {
+      "table": "note_entities_llm_tirads_granular",
+      "archive_status": "created",
+      "rows": 11037
+    },
+    {
+      "table": "note_entities_llm_us_nodule_dynamics",
+      "archive_status": "created",
+      "rows": 11037
+    },
+    {
+      "table": "note_entities_llm_imaging",
+      "archive_status": "created",
+      "rows": 11037
+    }
+  ],
+  "drops": [
+    {
+      "table": "note_entities_llm_tirads_granular",
+      "status": "held"
+    },
+    {
+      "table": "note_entities_llm_us_nodule_dynamics",
+      "status": "held"
+    },
+    {
+      "table": "note_entities_llm_imaging",
+      "status": "held"
+    }
+  ],
+  "archive_only": true
+}

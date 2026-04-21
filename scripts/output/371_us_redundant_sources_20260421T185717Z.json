@@ -1,0 +1,71 @@
+{
+  "script": "Script 371",
+  "run_ts_utc": "20260421T185717Z",
+  "verifications": [
+    {
+      "table": "tirads_v2_nodules_raw",
+      "status": "hold",
+      "reason": "5445 parseable raw rows missing from v2 (likely nodule_index=0 default-slot rows; unparseable=0); archive preserves them but DO NOT drop main copy",
+      "unmerged_parseable_rows": 5445,
+      "unparseable_rows": 0,
+      "field_coverage_gaps": {
+        "halo_missing_in_v2": 0,
+        "vascularity_missing": 0,
+        "ete_missing": 90,
+        "chammas_missing": 29,
+        "elasto_missing": 1,
+        "interval_growth_missing": 405,
+        "prior_size_missing": 0,
+        "fna_rec_missing": 331,
+        "fna_prior_missing": 0
+      }
+    },
+    {
+      "table": "extracted_tirads_validated_v1",
+      "status": "ok",
+      "reason": null,
+      "missing_patients_in_v2": 0
+    },
+    {
+      "table": "tirads_reextraction_queue_v1",
+      "status": "ok",
+      "reason": null,
+      "rows": 4363,
+      "view_references": []
+    }
+  ],
+  "archives": [
+    {
+      "table": "tirads_v2_nodules_raw",
+      "archive_status": "created",
+      "src_rows": 11914,
+      "dst_rows": 11914
+    },
+    {
+      "table": "extracted_tirads_validated_v1",
+      "archive_status": "created",
+      "src_rows": 3439,
+      "dst_rows": 3439
+    },
+    {
+      "table": "tirads_reextraction_queue_v1",
+      "archive_status": "created",
+      "src_rows": 4363,
+      "dst_rows": 4363
+    }
+  ],
+  "drops": [
+    {
+      "table": "tirads_v2_nodules_raw",
+      "status": "held"
+    },
+    {
+      "table": "extracted_tirads_validated_v1",
+      "status": "dropped"
+    },
+    {
+      "table": "tirads_reextraction_queue_v1",
+      "status": "dropped"
+    }
+  ]
+}
