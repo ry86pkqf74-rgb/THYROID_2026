@@ -1,0 +1,57 @@
+[17:12:12.495Z] ============================================================================
+[17:12:12.495Z] Script 348 — lab ingestion refactor verification (COMMIT) — 20260421T171212Z
+[17:12:12.495Z] ============================================================================
+[17:12:13.164Z]   CPM invariant (pre): rows=10871 dist_rid=10871 null_fna=0
+[17:12:13.218Z]   view counts: {'longitudinal_lab_VIEW_v1': 54035, 'thyroglobulin_lab_VIEW_v1': 53006}
+[17:12:13.219Z] ============================================================================
+[17:12:13.219Z] PHASE 0 — code-level checks
+[17:12:13.219Z] ============================================================================
+[17:12:13.375Z]   PASS: 0 write hits in scripts/*.py
+[17:12:13.376Z]   PASS: scripts/113 FROZEN header removed
+[17:12:13.376Z]   PASS: scripts/113 imports normalize_lab_value
+[17:12:13.376Z] ============================================================================
+[17:12:13.376Z] PHASE 2 — drift check via rebuild-from-pre347-archive
+[17:12:13.376Z] ============================================================================
+[17:12:13.772Z]   drift source: "Thyroid 2026 UPdated"."archive_pub_v1_0"."thyroglobulin_lab_canonical_v1_pre347_20260421T164325Z"
+[17:12:13.844Z]   pulled 74,258 pre347 archive rows
+[17:12:14.273Z]   built 74,258 pre-dedup canonical rows
+[17:12:14.345Z]   staging_113_dryrun (post inline dedup): 53,006 rows
+[17:12:14.371Z]   PASS: staging 53,006 vs main 53,006 (±5 tolerance)
+[17:12:14.371Z]   source=other_structured rows in staging: 0 (PASS)
+[17:12:14.372Z]   rows with analyte NOT IN (Tg,TgAb): 0 (PASS)
+[17:12:14.374Z]   rows with wrong unit_standardized: 0 (PASS)
+[17:12:14.374Z] ============================================================================
+[17:12:14.374Z] PHASE 3 — drift check vs main.canonical_labs_thyroglobulin_v1
+[17:12:14.374Z] ============================================================================
+[17:12:14.410Z]   main.canonical_labs_thyroglobulin_v1: 53,006
+[17:12:14.410Z]   staging_113_dryrun:                   53,006
+[17:12:14.605Z]   rows added by refactor:   0
+[17:12:14.605Z]   rows removed by refactor: 0
+[17:12:14.605Z]   value_numeric deltas > 1e-9: 0
+[17:12:14.605Z] ============================================================================
+[17:12:14.605Z] PHASE 1 — pre348 archive snapshots of all 5 per-analyte canonical tables
+[17:12:14.605Z] ============================================================================
+[17:12:14.631Z]   source main.canonical_labs_thyroglobulin_v1: 53,006 rows -> canonical_labs_thyroglobulin_v1_pre348_20260421T171212Z
+[17:12:16.026Z]     archived 53,006 rows ✓
+[17:12:16.049Z]   source main.canonical_labs_tsh_v1: 556 rows -> canonical_labs_tsh_v1_pre348_20260421T171212Z
+[17:12:17.302Z]     archived 556 rows ✓
+[17:12:17.341Z]   source main.canonical_labs_pth_v1: 200 rows -> canonical_labs_pth_v1_pre348_20260421T171212Z
+[17:12:18.653Z]     archived 200 rows ✓
+[17:12:18.675Z]   source main.canonical_labs_calcium_v1: 187 rows -> canonical_labs_calcium_v1_pre348_20260421T171212Z
+[17:12:19.958Z]     archived 187 rows ✓
+[17:12:19.980Z]   source main.canonical_labs_vitamin_d_v1: 86 rows -> canonical_labs_vitamin_d_v1_pre348_20260421T171212Z
+[17:12:21.279Z]     archived 86 rows ✓
+[17:12:21.279Z] ============================================================================
+[17:12:21.279Z] PHASE 4 — post-commit equivalence vs pre348 snapshots
+[17:12:21.279Z] ============================================================================
+[17:12:21.409Z]   canonical_labs_thyroglobulin_v1: main=53,006 snap=53,006 added=0 removed=0
+[17:12:21.499Z]   canonical_labs_tsh_v1: main=556 snap=556 added=0 removed=0
+[17:12:21.593Z]   canonical_labs_pth_v1: main=200 snap=200 added=0 removed=0
+[17:12:21.686Z]   canonical_labs_calcium_v1: main=187 snap=187 added=0 removed=0
+[17:12:21.780Z]   canonical_labs_vitamin_d_v1: main=86 snap=86 added=0 removed=0
+[17:12:21.840Z]   view counts: {'longitudinal_lab_VIEW_v1': 54035, 'thyroglobulin_lab_VIEW_v1': 53006}
+[17:12:21.840Z]   longitudinal_lab_VIEW_v1: pre=54,035 post=54,035 baseline=54,035 (PASS)
+[17:12:21.840Z]   thyroglobulin_lab_VIEW_v1: pre=53,006 post=53,006 baseline=53,006 (PASS)
+[17:12:22.044Z]   pytest tests/test_lab_value_normalizer.py: PASS
+[17:12:22.142Z]   pyflakes (refactored + normalizer): PASS
+[17:12:22.187Z]   CPM invariant (post): rows=10871 dist_rid=10871 null_fna=0

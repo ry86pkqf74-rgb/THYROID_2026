@@ -1,0 +1,117 @@
+{
+  "script": "Script 348",
+  "run_ts": "20260421T171036Z",
+  "mode": "DRY-RUN",
+  "snapshots": {
+    "canonical_labs_thyroglobulin_v1": {
+      "dest": "canonical_labs_thyroglobulin_v1_pre348_20260421T171036Z",
+      "rows": 53006,
+      "dry_run": true
+    },
+    "canonical_labs_tsh_v1": {
+      "dest": "canonical_labs_tsh_v1_pre348_20260421T171036Z",
+      "rows": 556,
+      "dry_run": true
+    },
+    "canonical_labs_pth_v1": {
+      "dest": "canonical_labs_pth_v1_pre348_20260421T171036Z",
+      "rows": 200,
+      "dry_run": true
+    },
+    "canonical_labs_calcium_v1": {
+      "dest": "canonical_labs_calcium_v1_pre348_20260421T171036Z",
+      "rows": 187,
+      "dry_run": true
+    },
+    "canonical_labs_vitamin_d_v1": {
+      "dest": "canonical_labs_vitamin_d_v1_pre348_20260421T171036Z",
+      "rows": 86,
+      "dry_run": true
+    }
+  },
+  "drift_check_thyroglobulin": {
+    "main_rows": 53006,
+    "staging_rows": 53006,
+    "rows_added_by_refactor": 0,
+    "rows_removed_by_refactor": 0,
+    "value_numeric_deltas": 0
+  },
+  "post_commit_equivalence": {},
+  "view_counts_pre": {
+    "longitudinal_lab_VIEW_v1": 54035,
+    "thyroglobulin_lab_VIEW_v1": 53006
+  },
+  "view_counts_post": {
+    "longitudinal_lab_VIEW_v1": 54035,
+    "thyroglobulin_lab_VIEW_v1": 53006
+  },
+  "checks": {
+    "no_writes_to_dropped_tables_in_scripts": {
+      "status": "PASS"
+    },
+    "113_frozen_header_removed": {
+      "status": "PASS"
+    },
+    "113_imports_normalizer": {
+      "status": "PASS"
+    },
+    "refactored_113_row_count_within_tolerance": {
+      "status": "PASS",
+      "staging_rows": 53006,
+      "main_rows": 53006
+    },
+    "refactored_113_zero_other_structured_rows": {
+      "status": "PASS",
+      "n": 0
+    },
+    "refactored_113_analyte_in_tg_or_tgab": {
+      "status": "PASS",
+      "n": 0
+    },
+    "refactored_113_unit_correct_per_analyte": {
+      "status": "PASS",
+      "n": 0
+    },
+    "post_commit_per_analyte_match_pre348_snapshot": {
+      "status": "SKIPPED_DRY_RUN"
+    },
+    "longitudinal_view_count_unchanged": {
+      "status": "PASS",
+      "pre": 54035,
+      "post": 54035,
+      "baseline": 54035
+    },
+    "thyroglobulin_view_count_unchanged": {
+      "status": "PASS",
+      "pre": 53006,
+      "post": 53006,
+      "baseline": 53006
+    },
+    "pytest_normalizer_passes": {
+      "status": "PASS",
+      "tail": ".............................................                            [100%]\n45 passed in 0.02s"
+    },
+    "pyflakes_passes": {
+      "status": "PASS",
+      "tail": ""
+    },
+    "cpm_invariant_pre": {
+      "status": "PASS"
+    },
+    "cpm_invariant_post": {
+      "status": "PASS"
+    }
+  },
+  "refactored_scripts": [
+    "scripts/113_tg_lab_ingestion.py",
+    "scripts/127_analyst_institutional_lab_append.py",
+    "scripts/348_lab_ingestion_refactor_verify.py",
+    "scripts/_lab_value_normalizer.py"
+  ],
+  "frozen_scripts": [
+    "scripts/77_lab_canonical_layer.py",
+    "scripts/235_parathyroid_calcium_fix.py",
+    "scripts/291_tsh_llm_integration.py",
+    "scripts/331_calcium_denominator_recovery.py"
+  ]
+}

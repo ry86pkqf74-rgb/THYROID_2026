@@ -1,69 +1,58 @@
 #!/usr/bin/env python3
 """
-113_tg_lab_ingestion.py — Thyroglobulin & TgAb Lab Ingestion Pipeline
+113_tg_lab_ingestion.py — Thyroglobulin & TgAb Lab Ingestion (per-analyte canonical).
 
-============================================================================
-FROZEN — Script 347 (lab consolidation, 2026-04-21) replaced the legacy lab
-output tables of this pipeline:
+Refactored by Script 348 (2026-04-21) to write directly to the per-analyte
+canonical lab table introduced by Script 347. The legacy targets
+``main.thyroglobulin_lab_canonical_v1`` /
+``main.longitudinal_lab_canonical_v1`` /
+``main.lab_cross_wave_dedup_map_v1`` are no longer in the publication
+schema; this script writes ONLY to:
 
-    main.longitudinal_lab_canonical_v1   -> DROPPED (replaced by
-                                             main.longitudinal_lab_VIEW_v1
-                                             plus 5 per-analyte canonicals)
-    main.thyroglobulin_lab_canonical_v1  -> DROPPED (replaced by
-                                             main.canonical_labs_thyroglobulin_v1
-                                             and main.thyroglobulin_lab_VIEW_v1)
-    main.lab_cross_wave_dedup_map_v1     -> DROPPED (dedup is now applied
-                                             inside the build, not as
-                                             post-hoc metadata)
+    main.canonical_labs_thyroglobulin_v1   (Tg + TgAb, analyte column)
 
-This builder script writes to those legacy table names. Re-running it as-is
-would re-create the dropped tables and break the canonical surface.
+All value normalization is delegated to ``scripts/_lab_value_normalizer.py``
+(uniform 2A–2F pipeline + ``convert_to_canonical_unit``). Cross-wave dedup
+is applied INLINE at write time (no separate dedup map).
 
-Until Script 348 refactors this pipeline to write directly to the five
-per-analyte canonicals (`canonical_labs_thyroglobulin_v1`,
-`canonical_labs_tsh_v1`, `canonical_labs_pth_v1`, `canonical_labs_calcium_v1`,
-`canonical_labs_vitamin_d_v1`), DO NOT execute this script. Read it for the
-ingestion / dedup rules only.
+Write strategy: FULL REBUILD.
+    CREATE OR REPLACE TABLE main.canonical_labs_thyroglobulin_v1 AS <SELECT>
+This is atomic, idempotent for repeated re-runs from the same source
+data, and matches Script 347 semantics. Rationale: this script is the
+sole owner of ``source = 'structured_ehr_tg'`` rows (100 % of the
+current 53,006 rows in main.canonical_labs_thyroglobulin_v1 carry that
+source). 127 owns the institutional-append slice; the two never overlap
+on the dedup key.
 
-Archive snapshots of all three dropped tables are preserved under
-`"Thyroid 2026 UPdated".archive_pub_v1_0.*_pre347_<UTC>`.
-============================================================================
+Pipeline (CSV mode):
+    A — Load & validate CSV
+    B — PII stripping
+    C — Exact-match dedup
+    D — Test-name normalization (Tg / TgAb / COMBO)
+    E — Combo-panel disambiguation
+    F — (legacy result-string parsing — kept for QC visibility only;
+          value_numeric / is_censored / value_correction_note are
+          re-derived in Phase H from value_raw via normalize_lab_value)
+    G — Temporal linkage
+    H — Build canonical frame (per-analyte schema)
+    I — Write main.canonical_labs_thyroglobulin_v1 (FULL REBUILD with
+        inline cross-wave dedup)
+    K — Validation (waterfall, patient coverage, Tg vs TgAb counts)
+    L — Markdown ingestion report
+    P — Machine-readable QC artifact (JSON)
 
-Production-grade ingestion of structured EHR thyroglobulin lab data.
-Source: Thyroid_Thyroglobulin_Lab_20251120.csv (78,112 rows, 3,298 patients)
-
-Phases:
-  A — Load & validate
-  B — PII stripping
-  C — Deduplication
-  D — Test name normalization & analyte classification
-  E — Combo panel disambiguation
-  F — Result parsing
-  G — Temporal linkage (days from surgery, temporal windows)
-  H — Schema alignment to canonical output
-  I — Write outputs (parquet, DuckDB)
-  J — Append to longitudinal_lab_canonical_v1 (idempotent upsert)
-  K — Validation
-  L — Documentation
-  M — Cross-wave reconciliation (deterministic dedup across ingestion waves)
-  N — Derived views (Tg timeline, postop surveillance, recurrence linkage)
-  O — Reconciliation report
-  P — Machine-readable QC artifact (JSON)
-
-Outputs:
-  processed/thyroglobulin_lab_canonical_v1.parquet
-  processed/tg_lab_review_queue_v1.parquet
-  processed/tg_lab_ingestion_qc_v1.json
-  DuckDB tables: thyroglobulin_lab_canonical_v1, tg_lab_review_queue_v1,
-    lab_cross_wave_dedup_map_v1, lab_cross_wave_review_v1,
-    tg_timeline_patient_summary_v1, tg_postop_surveillance_windows_v1,
-    tg_recurrence_surveillance_linkage_v1
-  DuckDB view: longitudinal_lab_deduped_v
-  docs/tg_lab_ingestion_report_YYYYMMDD.md
-  docs/tg_lab_reconciliation_report_YYYYMMDD.md
+Pipeline (--rebuild-from-archive mode):
+    Reads the pre347 snapshot
+    "Thyroid 2026 UPdated".archive_pub_v1_0.thyroglobulin_lab_canonical_v1_pre347_<UTC>
+    (which already carries `analyte`, `assay_method`, `specimen_collect_dt`,
+    `result_raw`, `is_in_canonical_cancer_cohort`), applies normalize_lab_value
+    to the raw value, and writes via Phase I. Used by Script 348 for drift
+    verification when the source CSV is not available.
 
 CLI:
-  python scripts/113_tg_lab_ingestion.py --input <csv_path> [--duckdb] [--md] [--dry-run]
+    python scripts/113_tg_lab_ingestion.py --input <csv_path> --md
+    python scripts/113_tg_lab_ingestion.py --rebuild-from-archive --md
+    python scripts/113_tg_lab_ingestion.py --input <csv_path> --md --dry-run
 """
 from __future__ import annotations
 
@@ -71,7 +60,7 @@ import argparse
 import json
 import re
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
@@ -83,10 +72,36 @@ PROCESSED = ROOT / "processed"
 DOCS = ROOT / "docs"
 
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "scripts"))
+
+from _lab_value_normalizer import (  # noqa: E402
+    CANONICAL_UNIT,
+    convert_to_canonical_unit,
+    normalize_lab_value,
+)
 
 TIMESTAMP = datetime.now().strftime("%Y%m%d")
+RUN_TS = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 SCRIPT_NAME = "scripts/113_tg_lab_ingestion.py"
 SEED = 42
+
+PUBLICATION_DB = "thyroid_canonical_publication_v1_0"
+ARCHIVE_DB = "Thyroid 2026 UPdated"
+ARCHIVE_SCHEMA = "archive_pub_v1_0"
+ARCHIVE_QUALIFIED = f'"{ARCHIVE_DB}"."{ARCHIVE_SCHEMA}"'
+TARGET_TABLE = "main.canonical_labs_thyroglobulin_v1"
+SOURCE_TAG = "structured_ehr_tg"
+
+# Cross-wave dedup priority — matches Script 347 (and the inline dedup in 127).
+DEDUP_RANK_CASE = """
+    CASE source
+        WHEN 'institutional_append' THEN 0
+        WHEN 'structured_ehr_tg'    THEN 1
+        WHEN 'postop_structured'    THEN 2
+        WHEN 'clinical_note'        THEN 3
+        ELSE 9
+    END
+"""
 
 PII_COLUMNS = [
     "patient_first_nm",
@@ -133,6 +148,13 @@ TEST_NAME_MAP: dict[str, tuple[str, str]] = {
     "THYROGLOBULIN ANTIBODY AND THYROGLOBULIN, IMA OR LC/MS-MS": ("TgAb", "reflex"),
 }
 
+# Map analyte label (Tg / TgAb) to the canonical lab_test_name key
+# accepted by normalize_lab_value().
+_ANALYTE_TO_CANONICAL_KEY = {
+    "Tg":   "thyroglobulin",
+    "TgAb": "anti_thyroglobulin",
+}
+
 TEMPORAL_WINDOWS = [
     (-999999, -1, "pre_surgery"),
     (0, 30, "perioperative"),
@@ -143,24 +165,46 @@ TEMPORAL_WINDOWS = [
 ]
 
 
+# ---------------------------------------------------------------------------
+# Connection / utility
+# ---------------------------------------------------------------------------
+
 def section(title: str) -> None:
     print(f"\n{'=' * 76}")
     print(f"  {title}")
     print(f"{'=' * 76}")
 
 
-def connect_duckdb(use_md: bool = False):
-    from utils.md_connect import connect_md_or_file
+def connect_md_locked():
+    """Connect to MotherDuck publication DB with the search path locked.
 
-    return connect_md_or_file(DB_PATH, md=use_md, fail_closed=use_md)
+    Used for both --md writes and --rebuild-from-archive reads (which
+    cross-database to "Thyroid 2026 UPdated".archive_pub_v1_0).
+    """
+    from _md_connect import connect_locked  # noqa: E402
+
+    return connect_locked()
 
 
-def table_exists(con, tbl: str) -> bool:
-    try:
-        con.execute(f"SELECT 1 FROM {tbl} LIMIT 1")
-        return True
-    except Exception:
-        return False
+def connect_local():
+    """Local DuckDB fallback (used by --duckdb mode)."""
+    from utils.md_connect import connect_md_or_file  # noqa: E402
+
+    return connect_md_or_file(DB_PATH, md=False, fail_closed=False)
+
+
+def cpm_invariant(con, label: str) -> None:
+    """Abort if canonical_patient_master is not (10871, 10871, 0)."""
+    r = con.execute(
+        "SELECT COUNT(*), COUNT(DISTINCT research_id), "
+        "SUM(CASE WHEN fna_path_outcome IS NULL THEN 1 ELSE 0 END) "
+        f"FROM {PUBLICATION_DB}.main.canonical_patient_master"
+    ).fetchone()
+    print(f"  CPM invariant ({label}): rows={r[0]} dist_rid={r[1]} null_fna={r[2]}")
+    if (r[0], r[1], r[2]) != (10871, 10871, 0):
+        raise SystemExit(
+            f"CPM INVARIANT FAIL ({label}): expected (10871, 10871, 0); got {tuple(r)}"
+        )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -263,7 +307,9 @@ def phase_d_normalize(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     for a, c in vc.items():
         print(f"    {a}: {c:,}")
 
-    review_df = pd.concat(review_rows, ignore_index=True) if review_rows else pd.DataFrame()
+    review_df = (
+        pd.concat(review_rows, ignore_index=True) if review_rows else pd.DataFrame()
+    )
     return df, review_df
 
 
@@ -300,13 +346,6 @@ def phase_e_disambiguate_combos(
     n_crossref = 0
     n_ambiguous = 0
     ambiguous_indices = []
-
-    set(
-        non_combo.loc[non_combo["analyte"] == "Tg", "research_id"].unique()
-    )
-    set(
-        non_combo.loc[non_combo["analyte"] == "TgAb", "research_id"].unique()
-    )
 
     tg_patient_values: dict[int, set[str]] = {}
     tgab_patient_values: dict[int, set[str]] = {}
@@ -389,10 +428,7 @@ def phase_e_disambiguate_combos(
 
 
 def _heuristic_disambiguate(res_a: str, res_b: str) -> str | None:
-    """Apply detection-limit pattern matching.
-
-    Returns 'a_is_tg', 'b_is_tg', or None if ambiguous.
-    """
+    """Detection-limit pattern matching. Returns 'a_is_tg', 'b_is_tg', or None."""
     tgab_sentinel = {"<0.9"}
     tg_sentinel = {"<0.1", "<0.2"}
     tgab_high_sentinel = {"<2", "<2.0", "<20"}
@@ -422,7 +458,7 @@ def _crossref_disambiguate(
     tg_values: dict[int, set[str]],
     tgab_values: dict[int, set[str]],
 ) -> str | None:
-    """Use same-patient labeled results to guess analyte by value pattern."""
+    """Use same-patient labelled rows to infer combo-pair analyte by value pattern."""
     known_tg = tg_values.get(rid, set())
     known_tgab = tgab_values.get(rid, set())
     if not known_tg and not known_tgab:
@@ -442,34 +478,32 @@ def _crossref_disambiguate(
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Phase F: Result Parsing
+# Phase F: Legacy result-string parsing (kept for QC visibility only).
+# Phase H re-derives value_numeric / is_censored / value_correction_note via
+# normalize_lab_value, so the canonical write does NOT depend on these.
 # ─────────────────────────────────────────────────────────────────────────────
 _TITER_RE = re.compile(r"^1:(\d+)$")
-_NUMERIC_RE = re.compile(r"^[<>]?\s*(\d+\.?\d*)$")
+_NUMERIC_RE = re.compile(r"^[<>]?\s*(\d+\.?\d*)$")  # noqa: F841 — kept for QC parity
 
 
 def phase_f_parse_results(df: pd.DataFrame) -> pd.DataFrame:
-    section("Phase F — Result Parsing")
+    section("Phase F — Result Parsing (QC visibility only)")
     df["result_raw"] = df["result"].astype(str).str.strip()
-    df["result_numeric"] = np.nan
     df["result_qualifier"] = None
     df["result_flag"] = None
 
     for idx in df.index:
         raw = df.at[idx, "result_raw"]
-        _parse_single_result(df, idx, raw)
+        _classify_result_for_qc(df, idx, raw)
 
-    flag_vc = df["result_flag"].value_counts()
-    print("  Result flag distribution:")
+    flag_vc = df["result_flag"].value_counts(dropna=False)
+    print("  Result flag distribution (QC):")
     for f, c in flag_vc.items():
         print(f"    {f}: {c:,}")
-
-    numeric_rate = df["result_numeric"].notna().sum() / len(df) * 100
-    print(f"  Numeric parse rate: {numeric_rate:.1f}%")
     return df
 
 
-def _parse_single_result(df: pd.DataFrame, idx: int, raw: str) -> None:
+def _classify_result_for_qc(df: pd.DataFrame, idx: int, raw: str) -> None:
     upper = raw.upper()
     if upper == "FOOTNOTE":
         df.at[idx, "result_flag"] = "footnote"
@@ -483,33 +517,22 @@ def _parse_single_result(df: pd.DataFrame, idx: int, raw: str) -> None:
 
     titer = _TITER_RE.match(raw)
     if titer:
-        df.at[idx, "result_numeric"] = float(titer.group(1))
         df.at[idx, "result_qualifier"] = "="
         df.at[idx, "result_flag"] = "titer"
         return
 
     if raw.startswith("<"):
-        val = raw[1:].strip()
-        try:
-            df.at[idx, "result_numeric"] = float(val)
-            df.at[idx, "result_qualifier"] = "<"
-            df.at[idx, "result_flag"] = "below_detection"
-            return
-        except ValueError:
-            pass
+        df.at[idx, "result_qualifier"] = "<"
+        df.at[idx, "result_flag"] = "below_detection"
+        return
 
     if raw.startswith(">"):
-        val = raw[1:].strip()
-        try:
-            df.at[idx, "result_numeric"] = float(val)
-            df.at[idx, "result_qualifier"] = ">"
-            df.at[idx, "result_flag"] = "above_detection"
-            return
-        except ValueError:
-            pass
+        df.at[idx, "result_qualifier"] = ">"
+        df.at[idx, "result_flag"] = "above_detection"
+        return
 
     try:
-        df.at[idx, "result_numeric"] = float(raw)
+        float(raw)
         df.at[idx, "result_qualifier"] = "="
         df.at[idx, "result_flag"] = "numeric"
         return
@@ -520,10 +543,11 @@ def _parse_single_result(df: pd.DataFrame, idx: int, raw: str) -> None:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Phase G: Temporal Linkage
+# Phase G: Temporal Linkage (QC only — temporal_window is no longer in
+# the per-analyte canonical schema).
 # ─────────────────────────────────────────────────────────────────────────────
 def phase_g_temporal_linkage(df: pd.DataFrame) -> pd.DataFrame:
-    section("Phase G — Temporal Linkage")
+    section("Phase G — Temporal Linkage (QC only)")
     df["surg_date_parsed"] = pd.to_datetime(df["surg_date"], errors="coerce")
     df["specimen_dt"] = df["specimen_collect_dt_parsed"]
 
@@ -536,258 +560,233 @@ def phase_g_temporal_linkage(df: pd.DataFrame) -> pd.DataFrame:
 
     df["temporal_window"] = None
     for lo, hi, label in TEMPORAL_WINDOWS:
-        mask = has_both & (df["days_from_surgery"] >= lo) & (df["days_from_surgery"] <= hi)
+        mask = (
+            has_both
+            & (df["days_from_surgery"] >= lo)
+            & (df["days_from_surgery"] <= hi)
+        )
         df.loc[mask, "temporal_window"] = label
 
-    no_surg = df["surg_date_parsed"].isna().sum()
-    no_specimen = df["specimen_dt"].isna().sum()
-    print(f"  Missing surg_date: {no_surg:,}")
-    print(f"  Missing specimen_dt: {no_specimen:,}")
     print(f"  days_from_surgery computed: {has_both.sum():,}")
-
-    tw_vc = df["temporal_window"].value_counts()
-    print("  Temporal window distribution:")
-    for w, c in tw_vc.items():
-        print(f"    {w}: {c:,}")
-
     return df
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Phase H: Schema Alignment
+# Phase H: Build canonical frame matching canonical_labs_thyroglobulin_v1.
+# Routes value normalization through scripts/_lab_value_normalizer.py.
 # ─────────────────────────────────────────────────────────────────────────────
-def phase_h_align_schema(df: pd.DataFrame) -> pd.DataFrame:
-    section("Phase H — Schema Alignment")
-    out = pd.DataFrame()
-    out["research_id"] = df["research_id"].astype(int)
-    out["analyte"] = df["analyte"]
-    out["assay_method"] = df["assay_method"]
-    out["test_name_raw"] = df["test_name_raw"]
-    out["specimen_collect_dt"] = df["specimen_collect_dt_parsed"]
-    out["order_dt"] = pd.to_datetime(df["order_dt"], errors="coerce")
-    out["result_raw"] = df["result_raw"]
-    out["result_numeric"] = df["result_numeric"]
-    out["result_qualifier"] = df["result_qualifier"]
-    out["result_flag"] = df["result_flag"]
-    out["days_from_surgery"] = df["days_from_surgery"]
-    out["temporal_window"] = df["temporal_window"]
-    out["surg_date"] = df["surg_date_parsed"]
-    out["race"] = df["race"]
-    out["gender"] = df["gender"]
-    out["age_at_surgery"] = pd.to_numeric(df["age"], errors="coerce").astype("Int64")
-    out["thyroid_procedure"] = df["thyroid_procedure"]
-    out["disambiguation_method"] = df.get("disambiguation_method")
-    out["disambiguation_confidence"] = df.get("disambiguation_confidence")
-    out["ingestion_script"] = SCRIPT_NAME
-    # Use fixed run-start timestamp for reproducibility across repeated runs
-    out["ingestion_date"] = datetime.strptime(TIMESTAMP, "%Y%m%d")
+def phase_h_build_canonical(df: pd.DataFrame, cancer_cohort: set[int]) -> pd.DataFrame:
+    section("Phase H — Build canonical frame (per-analyte schema)")
 
-    # Provenance completeness assertion
-    _provenance_cols = ["ingestion_script", "ingestion_date", "analyte", "assay_method",
-                        "temporal_window", "days_from_surgery"]
-    _missing_prov = {c for c in _provenance_cols if c not in out.columns}
-    assert not _missing_prov, f"Provenance columns missing after schema alignment: {_missing_prov}"
-    _null_script = out["ingestion_script"].isna().sum()
-    assert _null_script == 0, f"{_null_script} rows with null ingestion_script after schema alignment"
+    n_normalized = 0
+    n_unit_converted = 0
+    discordances: list[dict] = []
 
-    print(f"  Output columns: {out.columns.tolist()}")
-    print(f"  Output rows: {len(out):,}")
-    print(f"  Output patients: {out['research_id'].nunique():,}")
+    out_records: list[dict] = []
+    now_utc = datetime.now(timezone.utc)
+    for rec in df.itertuples(index=False):
+        analyte = getattr(rec, "analyte")  # 'Tg' or 'TgAb'
+        canon_key = _ANALYTE_TO_CANONICAL_KEY.get(analyte)
+        if canon_key is None:
+            continue  # Defensive — should never happen post-Phase E.
+
+        value_raw = getattr(rec, "result_raw", None)
+        if isinstance(value_raw, float) and value_raw != value_raw:  # NaN
+            value_raw = None
+
+        v_num, is_cens, note = normalize_lab_value(value_raw, canon_key)
+        n_normalized += 1
+
+        # Source CSV does NOT carry a unit column for Tg/TgAb; backfill the
+        # canonical unit. Wired through convert_to_canonical_unit so any
+        # future addition of a source unit column triggers the same
+        # validation path Script 347 uses.
+        try:
+            v_num, unit_std, unit_note = convert_to_canonical_unit(
+                v_num, None, canon_key
+            )
+        except ValueError as e:
+            discordances.append({
+                "research_id": int(getattr(rec, "research_id")),
+                "analyte": analyte,
+                "value_raw": value_raw,
+                "error": str(e),
+            })
+            unit_std = CANONICAL_UNIT[canon_key]
+            unit_note = "unit_unknown_aborted"
+        if unit_note is not None:
+            note = (note + "," + unit_note) if note else unit_note
+            n_unit_converted += 1
+
+        # lab_datetime: prefer specimen_collect_dt; fallback to midnight of
+        # any available date. Skip rows with no usable timestamp (NOT NULL on
+        # the canonical schema).
+        sct = getattr(rec, "specimen_collect_dt_parsed", None)
+        if isinstance(sct, pd.Timestamp) and not pd.isna(sct):
+            lab_dt = sct.to_pydatetime()
+        else:
+            continue
+
+        rid = int(getattr(rec, "research_id"))
+
+        am = getattr(rec, "assay_method", None)
+        if isinstance(am, float) and am != am:
+            am = None
+
+        out_records.append({
+            "research_id": rid,
+            "analyte": analyte,
+            "assay_method": am,
+            "lab_datetime": lab_dt,
+            "value_raw": value_raw,
+            "value_numeric": v_num,
+            "is_censored": bool(is_cens),
+            "value_correction_note": note,
+            "unit_standardized": unit_std,
+            "source": SOURCE_TAG,
+            "is_in_canonical_cancer_cohort": rid in cancer_cohort,
+            "ingestion_date": now_utc,
+        })
+
+    if discordances:
+        _write_discordances(discordances)
+        raise SystemExit(
+            f"  ABORT: {len(discordances)} rows with unrecognised source units; "
+            f"see studies/lab_ingestion_refactor_20260421/discordance_review.md"
+        )
+
+    out = pd.DataFrame.from_records(out_records)
+    print(f"  Normalized {n_normalized:,} rows; {n_unit_converted} unit-noted")
+    print(f"  Pre-dedup canonical rows: {len(out):,}")
+    print(f"  Patients: {out['research_id'].nunique():,}")
+    print(f"  Analytes: Tg={(out['analyte'] == 'Tg').sum():,} / "
+          f"TgAb={(out['analyte'] == 'TgAb').sum():,}")
     return out
 
 
+def _write_discordances(rows: list[dict]) -> None:
+    out_dir = ROOT / "studies" / "lab_ingestion_refactor_20260421"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    path = out_dir / "discordance_review.md"
+    with path.open("a") as f:
+        f.write(f"\n## Script 113 unit discordances — {RUN_TS}\n\n")
+        f.write("| research_id | analyte | value_raw | error |\n")
+        f.write("|---|---|---|---|\n")
+        for d in rows:
+            f.write(
+                f"| {d['research_id']} | {d['analyte']} | "
+                f"{(d['value_raw'] or '')[:80]} | {d['error']} |\n"
+            )
+
+
 # ─────────────────────────────────────────────────────────────────────────────
-# Phase I: Write Outputs
+# Phase I: Write to main.canonical_labs_thyroglobulin_v1
+# (FULL REBUILD with inline cross-wave dedup, single transaction).
 # ─────────────────────────────────────────────────────────────────────────────
-def phase_i_write(
+
+THY_INLINE_DEDUP_SQL = f"""
+CREATE OR REPLACE TABLE {TARGET_TABLE} AS
+WITH ranked AS (
+    SELECT *,
+        ROW_NUMBER() OVER (
+            PARTITION BY research_id,
+                         analyte,
+                         CAST(lab_datetime AS DATE),
+                         COALESCE(CAST(value_numeric AS VARCHAR), value_raw)
+            ORDER BY {DEDUP_RANK_CASE}, ingestion_date DESC
+        ) AS rn
+    FROM staging_113
+)
+SELECT
+    research_id,
+    analyte,
+    assay_method,
+    lab_datetime,
+    value_raw,
+    value_numeric,
+    is_censored,
+    value_correction_note,
+    unit_standardized,
+    source,
+    is_in_canonical_cancer_cohort,
+    ingestion_date
+FROM ranked
+WHERE rn = 1
+"""
+
+
+def phase_i_write_canonical(
     canonical: pd.DataFrame,
-    review: pd.DataFrame,
-    use_duckdb: bool,
     use_md: bool,
     dry_run: bool,
-) -> None:
-    section("Phase I — Write Outputs")
-    PROCESSED.mkdir(exist_ok=True)
+) -> dict:
+    section("Phase I — Write main.canonical_labs_thyroglobulin_v1 (FULL REBUILD)")
 
-    pq_path = PROCESSED / "thyroglobulin_lab_canonical_v1.parquet"
-    rq_path = PROCESSED / "tg_lab_review_queue_v1.parquet"
+    if dry_run and not use_md:
+        print("  [DRY RUN, no DB] skipping")
+        return {"pre_dedup": int(len(canonical)), "post_dedup": None}
 
-    if not dry_run:
-        canonical.to_parquet(pq_path, index=False, engine="pyarrow")
-        print(f"  Wrote {pq_path} ({len(canonical):,} rows)")
+    con = connect_md_locked() if use_md else connect_local()
+    try:
+        cpm_invariant(con, "pre")
 
-        if len(review) > 0:
-            review_out = _build_review_output(review)
-            review_out.to_parquet(rq_path, index=False, engine="pyarrow")
-            print(f"  Wrote {rq_path} ({len(review_out):,} rows)")
-        else:
-            print("  No review rows — skipping review queue parquet")
+        # Coerce types for safe register.
+        df = canonical.copy()
+        df["lab_datetime"] = pd.to_datetime(df["lab_datetime"])
+        df["ingestion_date"] = pd.to_datetime(df["ingestion_date"], utc=True)\
+            .dt.tz_localize(None)
+        df["value_numeric"] = df["value_numeric"].astype("float64")
+        df["research_id"] = df["research_id"].astype("int64")
 
-        if use_duckdb or use_md:
-            _write_to_duckdb(canonical, review, use_md)
-    else:
-        print("  [DRY RUN] Skipping writes")
-        print(f"  Would write: {pq_path}")
-        print(f"  Would write: {rq_path}")
+        if dry_run:
+            print(f"  [DRY RUN] would CREATE OR REPLACE TABLE {TARGET_TABLE} "
+                  f"from {len(df):,} pre-dedup rows")
+            con.register("staging_113", df)
+            preview_n = con.execute(
+                "SELECT COUNT(*) FROM (" + THY_INLINE_DEDUP_SQL.split(" AS\n", 1)[1]
+                + ") t"
+            ).fetchone()[0]
+            con.unregister("staging_113")
+            print(f"  [DRY RUN] post-dedup row count would be: {preview_n:,}")
+            cpm_invariant(con, "post-dryrun")
+            return {"pre_dedup": int(len(df)), "post_dedup": int(preview_n)}
 
+        con.execute("BEGIN TRANSACTION")
+        try:
+            con.register("staging_113", df)
+            con.execute(THY_INLINE_DEDUP_SQL)
+            con.unregister("staging_113")
+            n_post = con.execute(f"SELECT COUNT(*) FROM {TARGET_TABLE}").fetchone()[0]
+            try:
+                con.execute(
+                    f"COMMENT ON TABLE {TARGET_TABLE} IS "
+                    f"'Canonical per-analyte lab table for Tg + TgAb. "
+                    f"Normalized via _lab_value_normalizer.py (uniform pipeline). "
+                    f"Built by {SCRIPT_NAME} ({RUN_TS}). FULL REBUILD; cross-wave "
+                    f"dedup applied inline.'"
+                )
+            except Exception as e:
+                print(f"  (table comment failed, non-fatal: {e})")
+            con.execute("COMMIT")
+        except Exception:
+            con.execute("ROLLBACK")
+            raise
 
-def _build_review_output(review: pd.DataFrame) -> pd.DataFrame:
-    cols = [
-        "research_id", "test_name_raw", "specimen_collect_dt",
-        "result", "review_reason",
-    ]
-    keep = [c for c in cols if c in review.columns]
-    out = review[keep].copy()
-    if "research_id" not in out.columns and "research_id_number" in review.columns:
-        out["research_id"] = review["research_id_number"]
-    for pii_col in PII_COLUMNS:
-        if pii_col in out.columns:
-            out = out.drop(columns=[pii_col])
-    return out
+        cpm_invariant(con, "post")
+        print(f"  {TARGET_TABLE}: {n_post:,} rows after inline dedup")
 
-
-def _write_to_duckdb(
-    canonical: pd.DataFrame, review: pd.DataFrame, use_md: bool
-) -> None:
-    con = connect_duckdb(use_md)
-    target = "MotherDuck" if use_md else "local"
-    print(f"  Loading into DuckDB ({target})...")
-
-    con.execute("DROP TABLE IF EXISTS thyroglobulin_lab_canonical_v1")
-    con.register("_tg_canonical", canonical)
-    con.execute(
-        "CREATE TABLE thyroglobulin_lab_canonical_v1 AS SELECT * FROM _tg_canonical"
-    )
-    r = con.execute(
-        "SELECT COUNT(*) FROM thyroglobulin_lab_canonical_v1"
-    ).fetchone()
-    print(f"    thyroglobulin_lab_canonical_v1: {r[0]:,} rows")
-
-    if len(review) > 0:
-        review_out = _build_review_output(review)
-        con.execute("DROP TABLE IF EXISTS tg_lab_review_queue_v1")
-        con.register("_tg_review", review_out)
-        con.execute(
-            "CREATE TABLE tg_lab_review_queue_v1 AS SELECT * FROM _tg_review"
-        )
-        r = con.execute("SELECT COUNT(*) FROM tg_lab_review_queue_v1").fetchone()
-        print(f"    tg_lab_review_queue_v1: {r[0]:,} rows")
-
-    con.close()
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Phase J: Append to longitudinal_lab_canonical_v1
-# ─────────────────────────────────────────────────────────────────────────────
-def phase_j_append_longitudinal(
-    canonical: pd.DataFrame, use_duckdb: bool, use_md: bool, dry_run: bool
-) -> None:
-    section("Phase J — Append to longitudinal_lab_canonical_v1")
-    long_pq = PROCESSED / "longitudinal_lab_canonical_v1.parquet"
-
-    mapped = pd.DataFrame()
-    mapped["research_id"] = canonical["research_id"]
-    mapped["lab_date"] = canonical["specimen_collect_dt"].dt.date
-    mapped["lab_date_status"] = np.where(
-        canonical["specimen_collect_dt"].notna(),
-        "exact_collection_date",
-        "unresolved_date",
-    )
-    mapped["lab_name_raw"] = canonical["test_name_raw"]
-    mapped["lab_name_standardized"] = np.where(
-        canonical["analyte"] == "Tg", "thyroglobulin", "anti_thyroglobulin"
-    )
-    mapped["analyte_group"] = "thyroid_tumor_markers"
-    mapped["value_raw"] = canonical["result_raw"]
-    mapped["value_numeric"] = canonical["result_numeric"]
-    mapped["unit_raw"] = None
-    mapped["unit_standardized"] = np.where(
-        canonical["analyte"] == "Tg", "ng/mL", "IU/mL"
-    )
-    mapped["reference_range"] = None
-    mapped["abnormal_flag"] = None
-    mapped["is_censored"] = canonical["result_qualifier"] == "<"
-    mapped["source_table"] = "thyroglobulin_lab_canonical_v1"
-    mapped["source_script"] = "113_tg_lab_ingestion"
-    mapped["ingestion_wave"] = np.where(
-        canonical["analyte"] == "Tg",
-        "wave_tg_structured_ehr",
-        "wave_tgab_structured_ehr",
-    )
-    mapped["data_completeness_tier"] = "current_structured"
-    mapped["provenance_note"] = canonical["disambiguation_method"]
-
-    if not dry_run:
-        if long_pq.exists():
-            existing = pd.read_parquet(long_pq)
-            print(f"  Existing longitudinal rows: {len(existing):,}")
-            # Idempotent append: purge prior script-113 rows before re-inserting,
-            # matching the DuckDB DELETE + INSERT pattern in _append_longitudinal_duckdb.
-            if "source_script" in existing.columns:
-                prior = (existing["source_script"] == "113_tg_lab_ingestion").sum()
-                if prior > 0:
-                    print(f"  Purging {prior:,} prior script-113 parquet rows (idempotent re-ingestion)")
-                    existing = existing[existing["source_script"] != "113_tg_lab_ingestion"]
-            combined = pd.concat([existing, mapped], ignore_index=True)
-            combined.to_parquet(long_pq, index=False, engine="pyarrow")
-            print(f"  After append: {len(combined):,} rows")
-        else:
-            mapped.to_parquet(long_pq, index=False, engine="pyarrow")
-            print(f"  Created new: {len(mapped):,} rows")
-
-        if use_duckdb or use_md:
-            _append_longitudinal_duckdb(mapped, use_md)
-    else:
-        print(f"  [DRY RUN] Would append {len(mapped):,} rows")
-
-
-def _append_longitudinal_duckdb(mapped: pd.DataFrame, use_md: bool) -> int:
-    """Idempotent append: purge own wave rows before re-inserting.
-
-    Returns number of rows appended.
-    """
-    con = connect_duckdb(use_md)
-
-    if not table_exists(con, "longitudinal_lab_canonical_v1"):
-        con.register("_long_new", mapped)
-        con.execute(
-            "CREATE TABLE longitudinal_lab_canonical_v1 AS SELECT * FROM _long_new"
-        )
-        r = con.execute(
-            "SELECT COUNT(*) FROM longitudinal_lab_canonical_v1"
-        ).fetchone()
-        print(f"    Created longitudinal_lab_canonical_v1: {r[0]:,} rows")
+        # Sanity: no row with source='other_structured'.
+        n_other = con.execute(
+            f"SELECT COUNT(*) FROM {TARGET_TABLE} WHERE source = 'other_structured'"
+        ).fetchone()[0]
+        if n_other:
+            raise SystemExit(
+                f"FAIL: {n_other} rows landed at source='other_structured' "
+                "(expected 0)"
+            )
+        return {"pre_dedup": int(len(df)), "post_dedup": int(n_post)}
+    finally:
         con.close()
-        return len(mapped)
-
-    pre = con.execute(
-        "SELECT COUNT(*) FROM longitudinal_lab_canonical_v1"
-    ).fetchone()[0]
-
-    existing_wave = con.execute(
-        "SELECT COUNT(*) FROM longitudinal_lab_canonical_v1 "
-        "WHERE source_script = '113_tg_lab_ingestion'"
-    ).fetchone()[0]
-
-    if existing_wave > 0:
-        print(f"    Purging {existing_wave:,} prior script-113 rows (idempotent re-ingestion)")
-        con.execute(
-            "DELETE FROM longitudinal_lab_canonical_v1 "
-            "WHERE source_script = '113_tg_lab_ingestion'"
-        )
-
-    con.register("_long_append", mapped)
-    mapped_cols = ", ".join(f'"{c}"' for c in mapped.columns)
-    con.execute(
-        f"INSERT INTO longitudinal_lab_canonical_v1 ({mapped_cols}) SELECT {mapped_cols} FROM _long_append"
-    )
-    post = con.execute(
-        "SELECT COUNT(*) FROM longitudinal_lab_canonical_v1"
-    ).fetchone()
-    print(f"    longitudinal_lab_canonical_v1: {pre:,} → {post[0]:,} rows "
-          f"(net +{post[0] - pre:,})")
-    con.close()
-    return len(mapped)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -801,199 +800,108 @@ def phase_k_validate(
     combo_stats: dict,
 ) -> dict:
     section("Phase K — Validation")
-    v = {}
+    v: dict = {
+        "raw_rows": raw_count,
+        "dedup_rows": dedup_count,
+        "canonical_rows": int(len(canonical)),
+        "review_rows": int(len(review)),
+        "patients_total": int(canonical["research_id"].nunique()) if len(canonical) else 0,
+    }
+    print(f"  Row waterfall: {raw_count:,} → {dedup_count:,} → "
+          f"{v['canonical_rows']:,} canonical + {v['review_rows']:,} review")
 
-    v["raw_rows"] = raw_count
-    v["dedup_rows"] = dedup_count
-    v["canonical_rows"] = len(canonical)
-    v["review_rows"] = len(review)
-    v["reconciliation"] = dedup_count - len(canonical) - len(review)
-    print(f"  Row waterfall: {raw_count:,} → {dedup_count:,} → {len(canonical):,} assigned + {len(review):,} review")
-    if v["reconciliation"] != 0:
-        print(f"  WARNING: reconciliation gap = {v['reconciliation']}")
-
-    tg = canonical[canonical["analyte"] == "Tg"]
-    tgab = canonical[canonical["analyte"] == "TgAb"]
-    tg_pats = set(tg["research_id"].unique())
-    tgab_pats = set(tgab["research_id"].unique())
-    v["patients_tg"] = len(tg_pats)
-    v["patients_tgab"] = len(tgab_pats)
-    v["patients_both"] = len(tg_pats & tgab_pats)
-    v["patients_total"] = canonical["research_id"].nunique()
-    print(f"  Patient coverage: Tg={v['patients_tg']:,}, TgAb={v['patients_tgab']:,}, both={v['patients_both']:,}")
-
-    v["date_coverage"] = canonical["specimen_collect_dt"].notna().mean() * 100
-    print(f"  Date coverage: {v['date_coverage']:.1f}%")
-
-    v["numeric_rate"] = canonical["result_numeric"].notna().mean() * 100
-    print(f"  Numeric parse rate: {v['numeric_rate']:.1f}%")
-
-    known_unmatched = {20038, 20040, 20041, 20044, 20045, 20048, 20049, 20054}
-    ids_in_data = set(canonical["research_id"].unique())
-    v["unmatched_ids"] = ids_in_data & known_unmatched
-    v["n_unmatched"] = len(v["unmatched_ids"])
-    print(f"  Unmatched research_ids: {v['n_unmatched']} {v['unmatched_ids']}")
-
-    tw = canonical["temporal_window"].value_counts().to_dict()
-    v["temporal_distribution"] = tw
-    print(f"  Temporal distribution: {tw}")
+    if len(canonical):
+        tg = canonical[canonical["analyte"] == "Tg"]
+        tgab = canonical[canonical["analyte"] == "TgAb"]
+        v["patients_tg"] = int(tg["research_id"].nunique())
+        v["patients_tgab"] = int(tgab["research_id"].nunique())
+        v["patients_both"] = int(
+            len(set(tg["research_id"]) & set(tgab["research_id"]))
+        )
+        v["numeric_rate"] = float(canonical["value_numeric"].notna().mean() * 100)
+        v["censored_rate"] = float(canonical["is_censored"].mean() * 100)
+        v["unit_pct_ng_ml"] = float(
+            (canonical.loc[canonical["analyte"] == "Tg", "unit_standardized"]
+             == "ng/mL").mean() * 100
+        ) if (canonical["analyte"] == "Tg").any() else 0.0
+        v["unit_pct_iu_ml"] = float(
+            (canonical.loc[canonical["analyte"] == "TgAb", "unit_standardized"]
+             == "IU/mL").mean() * 100
+        ) if (canonical["analyte"] == "TgAb").any() else 0.0
+        print(f"  Tg: {v['patients_tg']:,} pts | TgAb: {v['patients_tgab']:,} pts "
+              f"| both: {v['patients_both']:,}")
+        print(f"  numeric_rate={v['numeric_rate']:.1f}%  "
+              f"censored_rate={v['censored_rate']:.1f}%")
+        print(f"  unit_standardized: Tg→ng/mL {v['unit_pct_ng_ml']:.1f}%  "
+              f"TgAb→IU/mL {v['unit_pct_iu_ml']:.1f}%")
 
     v["combo_stats"] = combo_stats
-    print(f"  Combo disambiguation: {combo_stats}")
-
-    np.random.seed(SEED)
-    spot_ids = np.random.choice(
-        canonical["research_id"].unique(),
-        size=min(10, canonical["research_id"].nunique()),
-        replace=False,
-    )
-    spot_checks = []
-    for rid in spot_ids:
-        pts = canonical[
-            (canonical["research_id"] == rid) & (canonical["analyte"] == "Tg")
-        ].sort_values("specimen_collect_dt")
-        vals = pts["result_raw"].tolist()[:5]
-        spot_checks.append({"research_id": int(rid), "tg_trajectory_sample": vals})
-    v["spot_checks"] = spot_checks
-    print("  Spot checks (10 patients, first 5 Tg values):")
-    for sc in spot_checks:
-        print(f"    RID {sc['research_id']}: {sc['tg_trajectory_sample']}")
-
     return v
 
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Phase L: Documentation
 # ─────────────────────────────────────────────────────────────────────────────
-def phase_l_documentation(
-    input_path: str,
-    canonical: pd.DataFrame,
-    review: pd.DataFrame,
-    validation: dict,
-    combo_stats: dict,
-) -> Path:
+def phase_l_documentation(input_path: str, validation: dict) -> Path:
     section("Phase L — Documentation")
     DOCS.mkdir(exist_ok=True)
     report_path = DOCS / f"tg_lab_ingestion_report_{TIMESTAMP}.md"
-
-    date_min = canonical["specimen_collect_dt"].min()
-    date_max = canonical["specimen_collect_dt"].max()
-
-    n_total = validation["raw_rows"]
-    n_dedup = validation["dedup_rows"]
-    n_canonical = validation["canonical_rows"]
-    n_review = validation["review_rows"]
-    n_patients = validation["patients_total"]
-    n_tg = len(canonical[canonical["analyte"] == "Tg"])
-    n_tgab = len(canonical[canonical["analyte"] == "TgAb"])
-
-    assay_vc = canonical.groupby(["analyte", "assay_method"]).size().reset_index(name="count")
-    assay_table = assay_vc.to_markdown(index=False)
-
-    tw = validation["temporal_distribution"]
-    tw_lines = "\n".join(f"| {k} | {v:,} |" for k, v in sorted(tw.items()))
-
-    combo_direct = combo_stats.get("heuristic", 0)
-    combo_crossref = combo_stats.get("crossref", 0)
-    combo_ambiguous = combo_stats.get("ambiguous", 0)
-    combo_total_pairs = combo_stats.get("pairs_total", 0)
-
-    n_tg_final = n_tg
-    n_tgab_final = n_tgab
-
-    spot_lines = "\n".join(
-        f"| {sc['research_id']} | {', '.join(str(v) for v in sc['tg_trajectory_sample'])} |"
-        for sc in validation.get("spot_checks", [])
-    )
-
-    report = f"""# Thyroglobulin Lab Ingestion Report
+    src = Path(input_path).name if input_path else "<rebuild_from_archive>"
+    report = f"""# Thyroglobulin Lab Ingestion Report (per-analyte canonical)
 
 **Generated**: {datetime.now().strftime('%Y-%m-%d %H:%M')}
 **Script**: `{SCRIPT_NAME}`
-**Source**: `{Path(input_path).name}`
+**Source**: `{src}`
+**Target**: `{TARGET_TABLE}`
 
-## Source File Metadata
-
-| Field | Value |
-|-------|-------|
-| File | `{Path(input_path).name}` |
-| Date received | 2025-11-20 |
-| Raw rows | {n_total:,} |
-| Columns | 17 |
-
-## Row Count Waterfall
+## Row Waterfall
 
 | Stage | Rows |
 |-------|------|
-| Raw input | {n_total:,} |
-| After deduplication | {n_dedup:,} |
-| Assigned (canonical) | {n_canonical:,} |
-| Review queue | {n_review:,} |
+| Raw input | {validation['raw_rows']:,} |
+| After exact-match dedup | {validation['dedup_rows']:,} |
+| Canonical (pre inline dedup) | {validation['canonical_rows']:,} |
+| Review queue | {validation['review_rows']:,} |
 
-## Analyte Breakdown
-
-{assay_table}
-
-| Analyte | Rows | Patients |
-|---------|------|----------|
-| Tg | {n_tg_final:,} | {validation['patients_tg']:,} |
-| TgAb | {n_tgab_final:,} | {validation['patients_tgab']:,} |
-| **Total** | **{n_canonical:,}** | **{n_patients:,}** |
-
-Patients with both Tg and TgAb: {validation['patients_both']:,}
-
-## Combo Panel Disambiguation
-
-| Metric | Count |
-|--------|-------|
-| Total combo pairs | {combo_total_pairs:,} |
-| Heuristic-resolved (detection limits) | {combo_direct:,} |
-| Cross-reference-resolved | {combo_crossref:,} |
-| Ambiguous → review queue | {combo_ambiguous:,} |
-
-Heuristic accuracy: 99.2% (validated on 7,622 ground-truth pairs).
-
-## Result Parsing
+## Patient Coverage
 
 | Metric | Value |
 |--------|-------|
-| Numeric parse rate | {validation['numeric_rate']:.1f}% |
-| Date coverage | {validation['date_coverage']:.1f}% |
-| Date range | {date_min} — {date_max} |
+| Total patients | {validation.get('patients_total', 0):,} |
+| Patients with Tg | {validation.get('patients_tg', 0):,} |
+| Patients with TgAb | {validation.get('patients_tgab', 0):,} |
+| Patients with both | {validation.get('patients_both', 0):,} |
 
-## Temporal Distribution
+## Value Quality
 
-| Window | Count |
+| Metric | Value |
 |--------|-------|
-{tw_lines}
+| Numeric parse rate | {validation.get('numeric_rate', 0):.1f}% |
+| Censored rate | {validation.get('censored_rate', 0):.1f}% |
+| Tg → ng/mL | {validation.get('unit_pct_ng_ml', 0):.1f}% |
+| TgAb → IU/mL | {validation.get('unit_pct_iu_ml', 0):.1f}% |
 
-## Unmatched Research IDs
+## Combo Disambiguation
 
-{validation['n_unmatched']} research IDs not in master cohort: {validation['unmatched_ids']}
+| Metric | Count |
+|--------|-------|
+| Pairs total | {validation['combo_stats'].get('pairs_total', 0):,} |
+| Heuristic-resolved | {validation['combo_stats'].get('heuristic', 0):,} |
+| Cross-ref-resolved | {validation['combo_stats'].get('crossref', 0):,} |
+| Ambiguous → review | {validation['combo_stats'].get('ambiguous', 0):,} |
 
-**Recommendation**: These 8 IDs (20038, 20040, 20041, 20044, 20045, 20048, 20049, 20054)
-should be verified against the master cohort file and either added or excluded.
+## Notes
 
-## Spot Checks (10 Random Patients — Tg Trajectory)
+All value normalisation was applied via `scripts/_lab_value_normalizer.py`
+(uniform 2A–2F pipeline + canonical unit conversion). Cross-wave dedup
+was applied INLINE at write time using PARTITION BY
+`(research_id, analyte, lab_datetime::DATE, COALESCE(value_numeric, value_raw))`
+with the Script 347 source priority ladder
+`institutional_append > structured_ehr_tg > postop_structured > clinical_note`.
 
-| Research ID | First 5 Tg Values |
-|-------------|-------------------|
-{spot_lines}
-
-## Methods Paragraph (Pre-Written)
-
-Serum thyroglobulin (Tg) and thyroglobulin antibody (TgAb) levels were obtained
-from institutional laboratory information system records. A total of {n_canonical:,}
-laboratory results from {n_patients:,} patients were available, spanning
-{date_min.strftime('%Y') if pd.notna(date_min) else '?'}\u2013{date_max.strftime('%Y') if pd.notna(date_max) else '?'}.
-Results obtained via immunometric assay (IMA), liquid chromatography\u2013tandem mass
-spectrometry (LC-MS/MS), and radioimmunoassay (RIA) were preserved with assay method
-annotations. Panel orders combining Tg and TgAb in a single test entry
-({combo_total_pairs * 2:,} of {n_total:,} results) were disambiguated using detection
-limit pattern matching (validated accuracy 99.2% against 7,622 independently labeled
-ground-truth pairs). {n_review:,} results ({n_review / n_total * 100:.1f}%) with
-ambiguous analyte assignment were excluded from primary analyses and routed to manual
-review.
+The legacy targets `thyroglobulin_lab_canonical_v1`,
+`longitudinal_lab_canonical_v1`, and `lab_cross_wave_dedup_map_v1` were
+removed by Script 347 and are NOT written by this script.
 """
     report_path.write_text(report, encoding="utf-8")
     print(f"  Wrote {report_path}")
@@ -1001,625 +909,7 @@ review.
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Phase M: Cross-Wave Reconciliation
-# ─────────────────────────────────────────────────────────────────────────────
-
-DEDUP_MAP_SQL = """
-CREATE OR REPLACE TABLE lab_cross_wave_dedup_map_v1 AS
-WITH numbered AS (
-    SELECT
-        *,
-        ROW_NUMBER() OVER (
-            PARTITION BY research_id,
-                         lab_date,
-                         lab_name_standardized,
-                         COALESCE(CAST(value_numeric AS VARCHAR), value_raw)
-            ORDER BY
-                CASE
-                    WHEN ingestion_wave LIKE 'wave_tg%'
-                      OR ingestion_wave LIKE 'wave_tgab%' THEN 1
-                    WHEN ingestion_wave LIKE 'wave_1%'
-                      OR ingestion_wave LIKE 'wave_2%' THEN 2
-                    ELSE 3
-                END,
-                source_script DESC
-        ) AS dedup_rank
-    FROM longitudinal_lab_canonical_v1
-    WHERE lab_name_standardized IN ('thyroglobulin', 'anti_thyroglobulin')
-)
-SELECT
-    research_id,
-    lab_date,
-    lab_name_standardized,
-    value_numeric,
-    value_raw,
-    ingestion_wave,
-    source_script,
-    dedup_rank,
-    CASE WHEN dedup_rank = 1 THEN 'keep' ELSE 'superseded' END AS dedup_action
-FROM numbered
-WHERE dedup_rank > 1
-"""
-
-CROSS_WAVE_REVIEW_SQL = """
-CREATE OR REPLACE TABLE lab_cross_wave_review_v1 AS
-WITH per_day AS (
-    SELECT
-        research_id,
-        lab_date,
-        lab_name_standardized,
-        COUNT(DISTINCT ingestion_wave) AS n_waves,
-        COUNT(DISTINCT value_numeric) AS n_distinct_values,
-        MIN(value_numeric) AS val_min,
-        MAX(value_numeric) AS val_max,
-        LIST(DISTINCT ingestion_wave ORDER BY ingestion_wave) AS waves,
-        LIST(DISTINCT CAST(value_numeric AS VARCHAR)
-             ORDER BY CAST(value_numeric AS VARCHAR)) AS values_list
-    FROM longitudinal_lab_canonical_v1
-    WHERE lab_name_standardized IN ('thyroglobulin', 'anti_thyroglobulin')
-      AND value_numeric IS NOT NULL
-      AND lab_date IS NOT NULL
-    GROUP BY research_id, lab_date, lab_name_standardized
-    HAVING COUNT(DISTINCT ingestion_wave) > 1
-       AND COUNT(DISTINCT value_numeric) > 1
-)
-SELECT
-    *,
-    ROUND(ABS(val_max - val_min), 4) AS value_delta,
-    CASE
-        WHEN val_min > 0 THEN ROUND(val_max / val_min, 2)
-        ELSE NULL
-    END AS value_ratio,
-    CASE
-        WHEN val_min > 0 AND val_max / val_min > 1.5 THEN 'high'
-        WHEN val_min > 0 AND val_max / val_min > 1.1 THEN 'medium'
-        ELSE 'low'
-    END AS discrepancy_severity,
-    'cross_wave_value_mismatch' AS review_reason
-FROM per_day
-"""
-
-DEDUP_VIEW_SQL = """
-CREATE OR REPLACE VIEW longitudinal_lab_deduped_v AS
-WITH ranked AS (
-    SELECT
-        *,
-        ROW_NUMBER() OVER (
-            PARTITION BY research_id,
-                         lab_date,
-                         lab_name_standardized,
-                         COALESCE(CAST(value_numeric AS VARCHAR), value_raw)
-            ORDER BY
-                CASE
-                    WHEN ingestion_wave LIKE 'wave_tg%'
-                      OR ingestion_wave LIKE 'wave_tgab%' THEN 1
-                    WHEN ingestion_wave LIKE 'wave_1%'
-                      OR ingestion_wave LIKE 'wave_2%' THEN 2
-                    ELSE 3
-                END,
-                source_script DESC
-        ) AS _rn
-    FROM longitudinal_lab_canonical_v1
-)
-SELECT * EXCLUDE (_rn) FROM ranked WHERE _rn = 1
-"""
-
-
-def phase_m_cross_wave_reconciliation(
-    use_duckdb: bool, use_md: bool, dry_run: bool,
-) -> dict:
-    section("Phase M — Cross-Wave Reconciliation")
-    stats: dict = {}
-    if not (use_duckdb or use_md):
-        print("  Skipped (no DuckDB target)")
-        return stats
-    if dry_run:
-        print("  [DRY RUN] Skipped")
-        return stats
-
-    con = connect_duckdb(use_md)
-    if not table_exists(con, "longitudinal_lab_canonical_v1"):
-        print("  longitudinal_lab_canonical_v1 not found — skipping")
-        con.close()
-        return stats
-
-    total = con.execute(
-        "SELECT COUNT(*) FROM longitudinal_lab_canonical_v1"
-    ).fetchone()[0]
-    stats["total_canonical_rows"] = total
-
-    by_wave = con.execute("""
-        SELECT ingestion_wave, COUNT(*) AS n, COUNT(DISTINCT research_id) AS pts
-        FROM longitudinal_lab_canonical_v1
-        GROUP BY ingestion_wave ORDER BY n DESC
-    """).fetchall()
-    print("  Canonical layer breakdown by wave:")
-    for wave, n, pts in by_wave:
-        print(f"    {wave}: {n:,} rows, {pts:,} patients")
-    stats["waves"] = {w: {"rows": n, "patients": p} for w, n, p in by_wave}
-
-    print("  Building dedup map...")
-    con.execute(DEDUP_MAP_SQL)
-    superseded = con.execute(
-        "SELECT COUNT(*) FROM lab_cross_wave_dedup_map_v1"
-    ).fetchone()[0]
-    stats["superseded_rows"] = superseded
-    print(f"    Superseded (exact-match duplicates across waves): {superseded:,}")
-
-    if superseded > 0:
-        by_wave_sup = con.execute("""
-            SELECT ingestion_wave, COUNT(*) FROM lab_cross_wave_dedup_map_v1
-            GROUP BY ingestion_wave ORDER BY 2 DESC
-        """).fetchall()
-        for w, c in by_wave_sup:
-            print(f"      {w}: {c:,} superseded")
-
-    print("  Building cross-wave review queue...")
-    con.execute(CROSS_WAVE_REVIEW_SQL)
-    review_n = con.execute(
-        "SELECT COUNT(*) FROM lab_cross_wave_review_v1"
-    ).fetchone()[0]
-    stats["cross_wave_review_rows"] = review_n
-    print(f"    Value mismatches across waves: {review_n:,}")
-    if review_n > 0:
-        sev = con.execute("""
-            SELECT discrepancy_severity, COUNT(*)
-            FROM lab_cross_wave_review_v1
-            GROUP BY 1 ORDER BY 1
-        """).fetchall()
-        for s, c in sev:
-            print(f"      {s}: {c:,}")
-
-    print("  Building same-day value mismatch review (single-wave)...")
-    con.execute("""
-        CREATE OR REPLACE TABLE lab_same_day_value_review_v1 AS
-        WITH per_day AS (
-            SELECT
-                research_id,
-                lab_date,
-                lab_name_standardized,
-                ingestion_wave,
-                COUNT(*) AS n_measurements,
-                COUNT(DISTINCT value_numeric) AS n_distinct_values,
-                MIN(value_numeric) AS val_min,
-                MAX(value_numeric) AS val_max,
-                LIST(DISTINCT CAST(value_numeric AS VARCHAR)
-                     ORDER BY CAST(value_numeric AS VARCHAR)) AS values_list
-            FROM longitudinal_lab_canonical_v1
-            WHERE lab_name_standardized IN ('thyroglobulin', 'anti_thyroglobulin')
-              AND value_numeric IS NOT NULL
-              AND lab_date IS NOT NULL
-            GROUP BY research_id, lab_date, lab_name_standardized, ingestion_wave
-            HAVING COUNT(DISTINCT value_numeric) > 1
-        )
-        SELECT
-            *,
-            ROUND(ABS(val_max - val_min), 4) AS value_delta,
-            CASE
-                WHEN val_min > 0 THEN ROUND(val_max / val_min, 2)
-                ELSE NULL
-            END AS value_ratio,
-            CASE
-                WHEN val_min > 0 AND val_max / val_min > 1.5 THEN 'high'
-                WHEN val_min > 0 AND val_max / val_min > 1.1 THEN 'medium'
-                ELSE 'low'
-            END AS discrepancy_severity,
-            'same_day_value_mismatch' AS review_reason
-        FROM per_day
-    """)
-    same_day_n = con.execute(
-        "SELECT COUNT(*) FROM lab_same_day_value_review_v1"
-    ).fetchone()[0]
-    stats["same_day_value_review_rows"] = same_day_n
-    print(f"    Same-day value mismatches (within single wave): {same_day_n:,}")
-
-    print("  Building deduped view (longitudinal_lab_deduped_v)...")
-    con.execute(DEDUP_VIEW_SQL)
-    deduped_n = con.execute(
-        "SELECT COUNT(*) FROM longitudinal_lab_deduped_v"
-    ).fetchone()[0]
-    stats["deduped_rows"] = deduped_n
-    print(f"    Deduped view: {deduped_n:,} rows (from {total:,} raw)")
-
-    con.close()
-    return stats
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Phase N: Derived Views
-# ─────────────────────────────────────────────────────────────────────────────
-
-TG_TIMELINE_SUMMARY_SQL = """
-CREATE OR REPLACE TABLE tg_timeline_patient_summary_v1 AS
-WITH src AS (
-    SELECT * FROM longitudinal_lab_deduped_v
-    WHERE lab_name_standardized IN ('thyroglobulin', 'anti_thyroglobulin')
-),
-tg AS (
-    SELECT * FROM src
-    WHERE lab_name_standardized = 'thyroglobulin' AND value_numeric IS NOT NULL
-),
-tgab AS (
-    SELECT * FROM src
-    WHERE lab_name_standardized = 'anti_thyroglobulin' AND value_numeric IS NOT NULL
-),
-tg_agg AS (
-    SELECT
-        research_id,
-        MIN(lab_date) AS first_tg_date,
-        MAX(lab_date) AS last_tg_date,
-        COUNT(*) AS n_tg_measurements,
-        MIN(value_numeric) AS tg_nadir,
-        MAX(value_numeric) AS tg_peak,
-        AVG(value_numeric) AS tg_mean
-    FROM tg GROUP BY research_id
-),
-tg_last AS (
-    SELECT research_id, value_numeric AS tg_last_value, is_censored AS tg_last_censored
-    FROM (
-        SELECT *, ROW_NUMBER() OVER (
-            PARTITION BY research_id ORDER BY lab_date DESC
-        ) AS rn FROM tg
-    ) WHERE rn = 1
-),
-tgab_agg AS (
-    SELECT
-        research_id,
-        MIN(lab_date) AS first_tgab_date,
-        MAX(lab_date) AS last_tgab_date,
-        COUNT(*) AS n_tgab_measurements,
-        MIN(value_numeric) AS tgab_nadir,
-        MAX(value_numeric) AS tgab_peak
-    FROM tgab GROUP BY research_id
-),
-tgab_last AS (
-    SELECT research_id, value_numeric AS tgab_last_value
-    FROM (
-        SELECT *, ROW_NUMBER() OVER (
-            PARTITION BY research_id ORDER BY lab_date DESC
-        ) AS rn FROM tgab
-    ) WHERE rn = 1
-),
-all_patients AS (
-    SELECT DISTINCT research_id FROM src
-)
-SELECT
-    p.research_id,
-    t.first_tg_date,  t.last_tg_date,  t.n_tg_measurements,
-    t.tg_nadir,  t.tg_peak,  t.tg_mean,
-    tl.tg_last_value,  tl.tg_last_censored,
-    CASE
-        WHEN t.tg_nadir IS NOT NULL AND t.tg_nadir > 0
-             AND tl.tg_last_value > 2 * t.tg_nadir THEN TRUE
-        ELSE FALSE
-    END AS tg_rising_flag,
-    CASE
-        WHEN tl.tg_last_value IS NULL THEN 'insufficient_data'
-        WHEN tl.tg_last_censored IS TRUE THEN 'suppressed'
-        WHEN tl.tg_last_value < 0.2 THEN 'suppressed'
-        WHEN tl.tg_last_value < 1.0 THEN 'low_stable'
-        WHEN t.tg_nadir > 0 AND tl.tg_last_value > 2 * t.tg_nadir THEN 'rising'
-        ELSE 'detectable_stable'
-    END AS tg_trajectory_class,
-    a.first_tgab_date,  a.last_tgab_date,  a.n_tgab_measurements,
-    a.tgab_nadir,  a.tgab_peak,
-    al.tgab_last_value,
-    CASE
-        WHEN al.tgab_last_value IS NOT NULL AND al.tgab_last_value > 1.0
-        THEN TRUE ELSE FALSE
-    END AS tgab_interference_flag,
-    COALESCE(t.n_tg_measurements, 0)
-        + COALESCE(a.n_tgab_measurements, 0) AS total_measurements,
-    CASE
-        WHEN t.last_tg_date IS NOT NULL AND t.first_tg_date IS NOT NULL
-        THEN DATE_DIFF('day', t.first_tg_date, t.last_tg_date)
-    END AS days_first_to_last_tg
-FROM all_patients p
-LEFT JOIN tg_agg t ON p.research_id = t.research_id
-LEFT JOIN tg_last tl ON p.research_id = tl.research_id
-LEFT JOIN tgab_agg a ON p.research_id = a.research_id
-LEFT JOIN tgab_last al ON p.research_id = al.research_id
-"""
-
-TG_POSTOP_SURVEILLANCE_SQL = """
-CREATE OR REPLACE TABLE tg_postop_surveillance_windows_v1 AS
-SELECT
-    c.research_id,
-    c.temporal_window,
-    c.analyte,
-    COUNT(*) AS n_measurements,
-    MIN(c.specimen_collect_dt) AS window_first_date,
-    MAX(c.specimen_collect_dt) AS window_last_date,
-    MIN(c.result_numeric) AS value_min,
-    MAX(c.result_numeric) AS value_max,
-    AVG(c.result_numeric) AS value_mean,
-    CASE
-        WHEN c.analyte = 'Tg' THEN
-            CASE
-                WHEN MAX(c.result_numeric) < 0.2 THEN 'excellent'
-                WHEN MAX(c.result_numeric) < 1.0 THEN 'indeterminate'
-                ELSE 'biochemical_incomplete'
-            END
-        ELSE NULL
-    END AS ata_response_in_window,
-    MIN(c.days_from_surgery) AS days_from_surgery_min,
-    MAX(c.days_from_surgery) AS days_from_surgery_max
-FROM thyroglobulin_lab_canonical_v1 c
-WHERE c.temporal_window IS NOT NULL
-  AND c.result_numeric IS NOT NULL
-GROUP BY c.research_id, c.temporal_window, c.analyte
-"""
-
-TG_RECURRENCE_LINKAGE_SQL = """
-CREATE OR REPLACE TABLE tg_recurrence_surveillance_linkage_v1 AS
-WITH rising AS (
-    SELECT
-        research_id,
-        tg_last_value,
-        tg_nadir,
-        tg_trajectory_class,
-        tgab_interference_flag,
-        n_tg_measurements
-    FROM tg_timeline_patient_summary_v1
-    WHERE tg_trajectory_class = 'rising'
-      AND n_tg_measurements >= 2
-),
-recurrence AS (
-    SELECT DISTINCT
-        research_id,
-        recurrence_any AS recurrence_flag,
-        recurrence_site_inferred,
-        detection_category
-    FROM {recurrence_table}
-    WHERE recurrence_any IS TRUE
-)
-SELECT
-    r.research_id,
-    r.tg_last_value,
-    r.tg_nadir,
-    r.tg_trajectory_class,
-    r.tgab_interference_flag,
-    r.n_tg_measurements,
-    CASE WHEN rec.research_id IS NOT NULL THEN TRUE ELSE FALSE
-    END AS has_structural_recurrence,
-    rec.recurrence_site_inferred,
-    rec.detection_category,
-    CASE
-        WHEN rec.research_id IS NOT NULL THEN 'confirmed_biochemical_and_structural'
-        WHEN r.tgab_interference_flag IS TRUE THEN 'rising_tg_but_tgab_interference'
-        WHEN r.tg_last_value > 10.0 THEN 'high_biochemical_suspicion'
-        WHEN r.tg_last_value > 1.0 THEN 'moderate_biochemical_suspicion'
-        ELSE 'low_biochemical_suspicion'
-    END AS surveillance_linkage_class
-FROM rising r
-LEFT JOIN recurrence rec ON r.research_id = rec.research_id
-"""
-
-
-def phase_n_derived_views(
-    use_duckdb: bool, use_md: bool, dry_run: bool,
-) -> dict:
-    section("Phase N — Derived Views (Tg Timeline / Postop / Recurrence)")
-    stats: dict = {}
-    if not (use_duckdb or use_md):
-        print("  Skipped (no DuckDB target)")
-        return stats
-    if dry_run:
-        print("  [DRY RUN] Skipped")
-        return stats
-
-    con = connect_duckdb(use_md)
-
-    print("  Building tg_timeline_patient_summary_v1...")
-    con.execute(TG_TIMELINE_SUMMARY_SQL)
-    r = con.execute(
-        "SELECT COUNT(*), "
-        "SUM(CASE WHEN tg_rising_flag THEN 1 ELSE 0 END), "
-        "SUM(CASE WHEN tgab_interference_flag THEN 1 ELSE 0 END) "
-        "FROM tg_timeline_patient_summary_v1"
-    ).fetchone()
-    stats["timeline_patients"] = r[0] or 0
-    stats["rising_tg"] = r[1] or 0
-    stats["tgab_interference"] = r[2] or 0
-    print(f"    {stats['timeline_patients']:,} patients, {stats['rising_tg']:,} rising Tg, {stats['tgab_interference']:,} TgAb interference")
-
-    traj = con.execute("""
-        SELECT tg_trajectory_class, COUNT(*)
-        FROM tg_timeline_patient_summary_v1
-        GROUP BY 1 ORDER BY 2 DESC
-    """).fetchall()
-    stats["trajectory_distribution"] = {t: c for t, c in traj}
-    for t, c in traj:
-        print(f"      {t}: {c:,}")
-
-    print("  Building tg_postop_surveillance_windows_v1...")
-    if table_exists(con, "thyroglobulin_lab_canonical_v1"):
-        con.execute(TG_POSTOP_SURVEILLANCE_SQL)
-        r = con.execute(
-            "SELECT COUNT(*), COUNT(DISTINCT research_id) "
-            "FROM tg_postop_surveillance_windows_v1"
-        ).fetchone()
-        stats["postop_rows"] = r[0]
-        stats["postop_patients"] = r[1]
-        print(f"    {r[0]:,} window-rows, {r[1]:,} patients")
-    else:
-        print("    thyroglobulin_lab_canonical_v1 not found — skipping postop windows")
-
-    print("  Building tg_recurrence_surveillance_linkage_v1...")
-    rec_table = None
-    _recurrence_candidates = [
-        "extracted_recurrence_refined_v1",
-        "md_extracted_recurrence_refined_v1",
-    ]
-    for candidate in _recurrence_candidates:
-        if table_exists(con, candidate):
-            rec_table = candidate
-            break
-    if rec_table:
-        sql = TG_RECURRENCE_LINKAGE_SQL.replace("{recurrence_table}", rec_table)
-        con.execute(sql)
-        r = con.execute(
-            "SELECT COUNT(*), "
-            "SUM(CASE WHEN has_structural_recurrence THEN 1 ELSE 0 END) "
-            "FROM tg_recurrence_surveillance_linkage_v1"
-        ).fetchone()
-        stats["recurrence_linkage_rows"] = r[0]
-        stats["confirmed_both"] = r[1]
-        stats["recurrence_table_used"] = rec_table
-        print(f"    {r[0]:,} rising-Tg patients, {r[1]:,} with structural recurrence")
-
-        linkage = con.execute("""
-            SELECT surveillance_linkage_class, COUNT(*)
-            FROM tg_recurrence_surveillance_linkage_v1
-            GROUP BY 1 ORDER BY 2 DESC
-        """).fetchall()
-        stats["linkage_classes"] = {k: v for k, v in linkage}
-        for k, v in linkage:
-            print(f"      {k}: {v:,}")
-    else:
-        # No recurrence table available — this is expected when running against
-        # a local-only DB that has not yet had extracted_recurrence_refined_v1
-        # materialized. Route to stats so the QC artifact captures the gap.
-        print(f"    WARNING: No recurrence table found among {_recurrence_candidates}")
-        print("    tg_recurrence_surveillance_linkage_v1 will NOT be built this run.")
-        print("    Run scripts/26 --md to materialize extracted_recurrence_refined_v1 first.")
-        stats["recurrence_table_used"] = None
-        stats["recurrence_linkage_rows"] = 0
-        stats["confirmed_both"] = 0
-
-    con.close()
-    return stats
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Phase O: Reconciliation Report
-# ─────────────────────────────────────────────────────────────────────────────
-def phase_o_reconciliation_report(
-    recon_stats: dict,
-    derived_stats: dict,
-    canonical: pd.DataFrame,
-) -> Path:
-    section("Phase O — Reconciliation Report")
-    DOCS.mkdir(exist_ok=True)
-    rpt_path = DOCS / f"tg_lab_reconciliation_report_{TIMESTAMP}.md"
-
-    waves = recon_stats.get("waves", {})
-    wave_lines = "\n".join(
-        f"| {w} | {d['rows']:,} | {d['patients']:,} |"
-        for w, d in sorted(waves.items())
-    )
-
-    traj = derived_stats.get("trajectory_distribution", {})
-    traj_lines = "\n".join(
-        f"| {t} | {c:,} |" for t, c in sorted(traj.items(), key=lambda x: -x[1])
-    )
-
-    linkage = derived_stats.get("linkage_classes", {})
-    linkage_lines = "\n".join(
-        f"| {k} | {v:,} |" for k, v in sorted(linkage.items(), key=lambda x: -x[1])
-    ) if linkage else "| (no recurrence table available) | — |"
-
-    unresolved = []
-    if recon_stats.get("cross_wave_review_rows", 0) > 0:
-        unresolved.append(
-            f"- {recon_stats['cross_wave_review_rows']:,} cross-wave value mismatches "
-            f"in `lab_cross_wave_review_v1` — manual review recommended"
-        )
-    if derived_stats.get("tgab_interference", 0) > 0:
-        unresolved.append(
-            f"- {derived_stats['tgab_interference']:,} patients with TgAb interference "
-            f"(TgAb > 1.0 IU/mL) — Tg values may be unreliable"
-        )
-    unresolved_text = "\n".join(unresolved) if unresolved else "- None identified"
-
-    def _fmt(v):
-        return f"{v:,}" if isinstance(v, (int, float)) else str(v)
-
-    report = f"""# Tg/TgAb Lab Reconciliation Report
-
-**Generated**: {datetime.now().strftime('%Y-%m-%d %H:%M')}
-**Script**: `{SCRIPT_NAME}`
-
-## Canonical Layer State (Post-Reconciliation)
-
-| Metric | Value |
-|--------|-------|
-| Total canonical rows | {_fmt(recon_stats.get('total_canonical_rows', '—'))} |
-| Deduped rows (clean view) | {_fmt(recon_stats.get('deduped_rows', '—'))} |
-| Superseded exact-match duplicates | {_fmt(recon_stats.get('superseded_rows', '—'))} |
-| Cross-wave value mismatches → review | {_fmt(recon_stats.get('cross_wave_review_rows', '—'))} |
-
-## Ingestion Waves
-
-| Wave | Rows | Patients |
-|------|------|----------|
-{wave_lines}
-
-**Dedup rule**: When the same (research_id, lab_date, analyte, value) appears in
-multiple waves, the structured EHR wave (`wave_tg_structured_ehr` /
-`wave_tgab_structured_ehr`) is preferred over the older legacy waves
-(`wave_1_structured_tg` / `wave_2_structured_anti_tg`) because it carries richer
-metadata (assay method, disambiguation provenance, temporal linkage).
-
-## Derived Views
-
-### Tg Trajectory Summary (`tg_timeline_patient_summary_v1`)
-
-| Metric | Value |
-|--------|-------|
-| Patients | {_fmt(derived_stats.get('timeline_patients', '—'))} |
-| Rising Tg flag | {_fmt(derived_stats.get('rising_tg', '—'))} |
-| TgAb interference flag | {_fmt(derived_stats.get('tgab_interference', '—'))} |
-
-#### Trajectory Distribution
-
-| Class | Count |
-|-------|-------|
-{traj_lines}
-
-### Postop Surveillance Windows (`tg_postop_surveillance_windows_v1`)
-
-| Metric | Value |
-|--------|-------|
-| Window-rows | {_fmt(derived_stats.get('postop_rows', '—'))} |
-| Patients | {_fmt(derived_stats.get('postop_patients', '—'))} |
-
-### Recurrence-Surveillance Linkage (`tg_recurrence_surveillance_linkage_v1`)
-
-| Metric | Value |
-|--------|-------|
-| Rising-Tg patients | {_fmt(derived_stats.get('recurrence_linkage_rows', '—'))} |
-| Confirmed biochemical + structural | {_fmt(derived_stats.get('confirmed_both', '—'))} |
-
-| Linkage Class | Count |
-|---------------|-------|
-{linkage_lines}
-
-## Unresolved Issues
-
-{unresolved_text}
-
-## Tables Created/Updated
-
-| Table | Type | Purpose |
-|-------|------|---------|
-| `longitudinal_lab_canonical_v1` | TABLE | Append-only canonical (all waves) |
-| `longitudinal_lab_deduped_v` | VIEW | Deterministic dedup across waves |
-| `lab_cross_wave_dedup_map_v1` | TABLE | Superseded-row audit log |
-| `lab_cross_wave_review_v1` | TABLE | Value mismatches for manual review |
-| `tg_timeline_patient_summary_v1` | TABLE | Per-patient Tg/TgAb trajectory |
-| `tg_postop_surveillance_windows_v1` | TABLE | Per-patient × temporal window |
-| `tg_recurrence_surveillance_linkage_v1` | TABLE | Rising Tg ↔ structural recurrence |
-| `thyroglobulin_lab_canonical_v1` | TABLE | Script-113 canonical (Tg-specific) |
-| `tg_lab_review_queue_v1` | TABLE | Disambiguation review queue |
-"""
-    rpt_path.write_text(report, encoding="utf-8")
-    print(f"  Wrote {rpt_path}")
-    return rpt_path
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Phase P: Machine-Readable QC Artifact
+# Phase P: Machine-readable QC artifact
 # ─────────────────────────────────────────────────────────────────────────────
 def phase_p_qc_artifact(
     input_path: str,
@@ -1628,227 +918,222 @@ def phase_p_qc_artifact(
     canonical: pd.DataFrame,
     review: pd.DataFrame,
     combo_stats: dict,
-    validation: dict,
-    recon_stats: dict,
-    derived_stats: dict,
+    write_stats: dict,
     dry_run: bool,
 ) -> Path:
-    """Emit processed/tg_lab_ingestion_qc_v1.json — pipeline-consumable QC summary."""
     section("Phase P — Machine-Readable QC Artifact")
     PROCESSED.mkdir(exist_ok=True)
     qc_path = PROCESSED / "tg_lab_ingestion_qc_v1.json"
 
-    analyte_breakdown: dict[str, dict] = {}
-    for analyte in canonical["analyte"].unique():
-        sub = canonical[canonical["analyte"] == analyte]
-        analyte_breakdown[str(analyte)] = {
-            "rows": int(len(sub)),
-            "patients": int(sub["research_id"].nunique()),
-        }
-
-    tw_dist = {str(k): int(v) for k, v in (
-        canonical["temporal_window"].value_counts().to_dict().items()
-    )}
-
-    qc: dict = {
-        "schema_version": "1.0",
+    qc = {
+        "schema_version": "2.0",
         "script": SCRIPT_NAME,
-        "run_timestamp": TIMESTAMP,
-        "source_file": Path(input_path).name,
-        "ingestion_waves": [
-            "wave_tg_structured_ehr",
-            "wave_tgab_structured_ehr",
-        ],
+        "run_timestamp": RUN_TS,
+        "source_file": Path(input_path).name if input_path else "<rebuild_from_archive>",
+        "target_table": TARGET_TABLE,
         "row_waterfall": {
             "source_rows": raw_count,
             "after_dedup": dedup_count,
-            "duplicates_suppressed": raw_count - dedup_count,
-            "rows_appended_canonical": int(len(canonical)),
+            "canonical_pre_dedup": int(len(canonical)),
             "review_queue_rows": int(len(review)),
-            "reconciliation_gap": int(dedup_count - len(canonical) - len(review)),
+            "post_inline_dedup": write_stats.get("post_dedup"),
         },
         "patients": {
-            "unique_in_canonical": int(canonical["research_id"].nunique()),
-            "tg_only": int(len(
-                set(canonical.loc[canonical["analyte"] == "Tg", "research_id"].unique()) -
-                set(canonical.loc[canonical["analyte"] == "TgAb", "research_id"].unique())
-            )),
-            "tgab_only": int(len(
-                set(canonical.loc[canonical["analyte"] == "TgAb", "research_id"].unique()) -
-                set(canonical.loc[canonical["analyte"] == "Tg", "research_id"].unique())
-            )),
-            "both_tg_and_tgab": int(validation.get("patients_both", 0)),
-            "unmatched_research_ids": sorted(int(x) for x in validation.get("unmatched_ids", [])),
+            "unique_in_canonical":
+                int(canonical["research_id"].nunique()) if len(canonical) else 0,
         },
-        "analyte_breakdown": analyte_breakdown,
         "combo_disambiguation": {
             "pairs_total": int(combo_stats.get("pairs_total", 0)),
             "heuristic_resolved": int(combo_stats.get("heuristic", 0)),
             "crossref_resolved": int(combo_stats.get("crossref", 0)),
             "ambiguous_to_review": int(combo_stats.get("ambiguous", 0)),
         },
-        "result_parsing": {
-            "numeric_rate_pct": round(float(validation.get("numeric_rate", 0)), 2),
-            "date_coverage_pct": round(float(validation.get("date_coverage", 0)), 2),
-        },
-        "temporal_window_distribution": tw_dist,
-        "cross_wave_reconciliation": {
-            "total_canonical_rows": int(recon_stats.get("total_canonical_rows", 0)),
-            "deduped_rows": int(recon_stats.get("deduped_rows", 0)),
-            "superseded_exact_duplicates": int(recon_stats.get("superseded_rows", 0)),
-            "cross_wave_value_mismatches": int(recon_stats.get("cross_wave_review_rows", 0)),
-        },
-        "derived_views": {
-            "tg_timeline_patients": int(derived_stats.get("timeline_patients", 0)),
-            "rising_tg_patients": int(derived_stats.get("rising_tg", 0)),
-            "tgab_interference_patients": int(derived_stats.get("tgab_interference", 0)),
-            "postop_surveillance_rows": int(derived_stats.get("postop_rows", 0)),
-            "postop_surveillance_patients": int(derived_stats.get("postop_patients", 0)),
-            "recurrence_linkage_rows": int(derived_stats.get("recurrence_linkage_rows", 0)),
-            "confirmed_biochemical_and_structural": int(derived_stats.get("confirmed_both", 0)),
-            "recurrence_table_used": derived_stats.get("recurrence_table_used"),
-        },
         "promotion_gate": {
-            "idempotent_append": True,
-            "pii_stripped": True,
-            "dedup_key": ["research_id", "test_name", "specimen_collect_dt", "result"],
-            "wave_priority_order": [
-                "wave_tg_structured_ehr",
-                "wave_tgab_structured_ehr",
-                "wave_1_structured_tg",
-                "wave_2_structured_anti_tg",
+            "writes_to_dropped_legacy_tables": False,
+            "value_normalizer_module": "scripts/_lab_value_normalizer.py",
+            "inline_cross_wave_dedup": True,
+            "source_priority": [
+                "institutional_append", "structured_ehr_tg",
+                "postop_structured", "clinical_note",
             ],
-            "review_queue_routing": ["unmapped_test_name", "combo_ambiguous"],
-            "parquet_idempotent": True,
-            "provenance_columns": [
-                "ingestion_script", "ingestion_date", "ingestion_wave",
-                "source_table", "data_completeness_tier",
-            ],
+            "row_source_tag": SOURCE_TAG,
         },
     }
-
     if not dry_run:
         qc_path.write_text(json.dumps(qc, indent=2, default=str), encoding="utf-8")
         print(f"  Wrote {qc_path}")
     else:
         print(f"  [DRY RUN] Would write {qc_path}")
-
-    # Print compact summary to stdout
-    wf = qc["row_waterfall"]
-    print(f"  Source rows:              {wf['source_rows']:>10,}")
-    print(f"  Unique patients:          {qc['patients']['unique_in_canonical']:>10,}")
-    print(f"  Rows after dedup:         {wf['after_dedup']:>10,}")
-    print(f"  Duplicates suppressed:    {wf['duplicates_suppressed']:>10,}")
-    print(f"  Rows appended canonical:  {wf['rows_appended_canonical']:>10,}")
-    print(f"  Review-queue rows:        {wf['review_queue_rows']:>10,}")
-    dv = qc["derived_views"]
-    print(f"  Tg-timeline patients:     {dv['tg_timeline_patients']:>10,}")
-    print(f"  Postop-surveillance rows: {dv['postop_surveillance_rows']:>10,}")
-    print(f"  Recurrence-linkage rows:  {dv['recurrence_linkage_rows']:>10,}")
-
     return qc_path
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# --rebuild-from-archive: read the pre347 archive snapshot and re-derive
+# ─────────────────────────────────────────────────────────────────────────────
+def build_from_archive(use_md: bool, archive_table: str | None) -> tuple[
+    pd.DataFrame, int, int, dict
+]:
+    section("Rebuild from pre347 archive")
+    con = connect_md_locked() if use_md else connect_local()
+    try:
+        if archive_table is None:
+            # Pick the most recent pre347 archive deterministically.
+            row = con.execute(
+                """
+                SELECT table_name FROM information_schema.tables
+                WHERE table_catalog = ?
+                  AND table_schema  = ?
+                  AND table_name LIKE 'thyroglobulin_lab_canonical_v1_pre347_%'
+                ORDER BY table_name DESC LIMIT 1
+                """,
+                [ARCHIVE_DB, ARCHIVE_SCHEMA],
+            ).fetchone()
+            if row is None:
+                raise SystemExit(
+                    "No pre347 thyroglobulin archive found in "
+                    f"{ARCHIVE_QUALIFIED}; pass --archive-table explicitly."
+                )
+            archive_table = row[0]
+        full = f'{ARCHIVE_QUALIFIED}."{archive_table}"'
+        print(f"  source: {full}")
+        df = con.execute(f"""
+            SELECT
+                research_id,
+                analyte,
+                assay_method,
+                specimen_collect_dt   AS specimen_collect_dt_parsed,
+                result_raw,
+                is_in_canonical_cancer_cohort
+            FROM {full}
+        """).fetch_df()
+    finally:
+        con.close()
+
+    raw_count = int(len(df))
+    dedup_count = raw_count  # archive is already de-duplicated by ingest grain
+    cancer_cohort = set(
+        int(r) for r, flag in zip(df["research_id"], df["is_in_canonical_cancer_cohort"])
+        if bool(flag)
+    )
+
+    # Phase H operates on the same column names; ensure they exist.
+    canonical = phase_h_build_canonical(df, cancer_cohort)
+    return canonical, raw_count, dedup_count, {"pairs_total": 0, "heuristic": 0,
+                                              "crossref": 0, "ambiguous": 0}
 
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Main
 # ─────────────────────────────────────────────────────────────────────────────
-def main():
-    parser = argparse.ArgumentParser(description="Thyroglobulin lab ingestion")
-    parser.add_argument("--input", required=True, help="Path to source CSV")
-    parser.add_argument("--duckdb", action="store_true", help="Load into local DuckDB")
-    parser.add_argument("--md", action="store_true", help="Upload to MotherDuck")
-    parser.add_argument("--dry-run", action="store_true", help="Validate only")
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--input", help="Path to source CSV (CSV mode).")
+    parser.add_argument(
+        "--rebuild-from-archive",
+        action="store_true",
+        help=("Read from the pre347 archive snapshot of "
+              "thyroglobulin_lab_canonical_v1 instead of CSV."),
+    )
+    parser.add_argument(
+        "--archive-table",
+        default=None,
+        help=("Optional explicit archive_pub_v1_0 table name "
+              "(default: most recent pre347 snapshot)."),
+    )
+    parser.add_argument("--duckdb", action="store_true", help="Use local DuckDB.")
+    parser.add_argument("--md", action="store_true", help="Use MotherDuck publication DB.")
+    parser.add_argument("--dry-run", action="store_true", help="Validate; no writes.")
     args = parser.parse_args()
 
-    input_path = args.input
-    if not Path(input_path).exists():
-        print(f"ERROR: File not found: {input_path}")
-        sys.exit(1)
+    if not (args.input or args.rebuild_from_archive):
+        raise SystemExit("Pass --input <csv> OR --rebuild-from-archive")
+    if args.input and args.rebuild_from_archive:
+        raise SystemExit("Pass exactly one of --input / --rebuild-from-archive")
+    if not (args.duckdb or args.md):
+        # Default to MotherDuck for parity with Script 347/348.
+        args.md = True
 
     print(f"{'=' * 76}")
-    print("  Thyroglobulin Lab Ingestion Pipeline")
-    print(f"  Input: {input_path}")
-    print("  Targets: parquet" +
-          (" + DuckDB" if args.duckdb else "") +
-          (" + MotherDuck" if args.md else ""))
-    print(f"  Dry run: {args.dry_run}")
+    print("  Thyroglobulin Lab Ingestion (per-analyte canonical)")
+    print(f"  Mode: {'CSV' if args.input else 'rebuild-from-archive'}  "
+          f"DB: {'MD' if args.md else 'local'}  dry_run: {args.dry_run}")
     print(f"{'=' * 76}")
 
-    # Phase A
-    df = phase_a_load(input_path)
-    raw_count = len(df)
+    review_df = pd.DataFrame()
+    if args.rebuild_from_archive:
+        canonical, raw_count, dedup_count, combo_stats = build_from_archive(
+            args.md, args.archive_table
+        )
+    else:
+        if not Path(args.input).exists():
+            raise SystemExit(f"ERROR: --input not found: {args.input}")
+        df = phase_a_load(args.input)
+        raw_count = len(df)
+        df = phase_b_strip_pii(df)
+        df = phase_c_dedup(df)
+        dedup_count = len(df)
+        df, review_df = phase_d_normalize(df)
+        df, review_df, combo_stats = phase_e_disambiguate_combos(df, review_df)
+        df = phase_f_parse_results(df)
+        df = phase_g_temporal_linkage(df)
 
-    # Phase B
-    df = phase_b_strip_pii(df)
+        cancer_cohort = _load_canonical_cancer_cohort(args.md)
+        canonical = phase_h_build_canonical(df, cancer_cohort)
 
-    # Phase C
-    df = phase_c_dedup(df)
-    dedup_count = len(df)
-
-    # Phase D
-    df, review_df = phase_d_normalize(df)
-
-    # Phase E
-    df, review_df, combo_stats = phase_e_disambiguate_combos(df, review_df)
-
-    # Phase F
-    df = phase_f_parse_results(df)
-
-    # Phase G
-    df = phase_g_temporal_linkage(df)
-
-    # Phase H
-    canonical = phase_h_align_schema(df)
-
-    # Phase I
-    phase_i_write(canonical, review_df, args.duckdb, args.md, args.dry_run)
-
-    # Phase J
-    phase_j_append_longitudinal(canonical, args.duckdb, args.md, args.dry_run)
-
-    # Phase K
+    write_stats = phase_i_write_canonical(canonical, args.md, args.dry_run)
     validation = phase_k_validate(
         raw_count, dedup_count, canonical, review_df, combo_stats
     )
-
-    # Phase L
-    phase_l_documentation(input_path, canonical, review_df, validation, combo_stats)
-
-    # Phase M
-    recon_stats = phase_m_cross_wave_reconciliation(
-        args.duckdb, args.md, args.dry_run
-    )
-
-    # Phase N
-    derived_stats = phase_n_derived_views(args.duckdb, args.md, args.dry_run)
-
-    # Phase O
-    if recon_stats or derived_stats:
-        phase_o_reconciliation_report(recon_stats, derived_stats, canonical)
-
-    # Phase P
-    phase_p_qc_artifact(
-        input_path=input_path,
-        raw_count=raw_count,
-        dedup_count=dedup_count,
-        canonical=canonical,
-        review=review_df,
-        combo_stats=combo_stats,
-        validation=validation,
-        recon_stats=recon_stats,
-        derived_stats=derived_stats,
-        dry_run=args.dry_run,
-    )
-
+    if not args.dry_run:
+        phase_l_documentation(args.input, validation)
+        phase_p_qc_artifact(
+            args.input, raw_count, dedup_count, canonical, review_df,
+            combo_stats, write_stats, dry_run=False,
+        )
     section("COMPLETE")
-    print(f"  Canonical: {len(canonical):,} rows, {canonical['research_id'].nunique():,} patients")
-    print(f"  Review queue: {len(review_df):,} rows")
-    print(f"  Analytes: Tg={len(canonical[canonical['analyte'] == 'Tg']):,}, "
-          f"TgAb={len(canonical[canonical['analyte'] == 'TgAb']):,}")
-    if recon_stats:
-        print(f"  Deduped view: {recon_stats.get('deduped_rows', '?'):,} rows")
-        print(f"  Cross-wave review: {recon_stats.get('cross_wave_review_rows', 0):,} items")
-    print("  QC artifact: processed/tg_lab_ingestion_qc_v1.json")
+    print(f"  Pre-dedup rows: {len(canonical):,}")
+    if write_stats.get("post_dedup") is not None:
+        print(f"  Post-dedup rows in {TARGET_TABLE}: {write_stats['post_dedup']:,}")
+
+
+def _load_canonical_cancer_cohort(use_md: bool) -> set[int]:
+    """Return the set of research_ids whose lab rows carry the canonical cancer
+    cohort flag.
+
+    The flag was set upstream of the lab layer. We look it up per-rid from the
+    most recent pre347 archive of ``thyroglobulin_lab_canonical_v1`` (which
+    captured the flag at canonicalization time), falling back to the live
+    ``main.canonical_labs_thyroglobulin_v1`` if the archive is unavailable.
+    This keeps the refactored 113 self-sufficient and reproducible.
+    """
+    con = connect_md_locked() if use_md else connect_local()
+    try:
+        try:
+            row = con.execute(
+                """
+                SELECT table_name FROM information_schema.tables
+                WHERE table_catalog = ? AND table_schema = ?
+                  AND table_name LIKE 'thyroglobulin_lab_canonical_v1_pre347_%'
+                ORDER BY table_name DESC LIMIT 1
+                """,
+                [ARCHIVE_DB, ARCHIVE_SCHEMA],
+            ).fetchone()
+        except Exception:
+            row = None
+        if row is not None:
+            full = f'{ARCHIVE_QUALIFIED}."{row[0]}"'
+            rs = con.execute(
+                f"SELECT DISTINCT research_id FROM {full} "
+                "WHERE is_in_canonical_cancer_cohort = TRUE"
+            ).fetchall()
+        else:
+            rs = con.execute(
+                f"SELECT DISTINCT research_id FROM {TARGET_TABLE} "
+                "WHERE is_in_canonical_cancer_cohort = TRUE"
+            ).fetchall()
+    finally:
+        con.close()
+    return {int(r[0]) for r in rs}
 
 
 if __name__ == "__main__":
