@@ -694,10 +694,1683 @@
       "snapshot_other_cols_md5": "4f219de7f02a6efc12b3f11adf5ab7df",
       "snapshot_other_cols_count": 1532,
       "finished_at": "2026-04-21T00:47:59Z"
+    },
+    "5": {
+      "phase": 5,
+      "started_at": "2026-04-21T00:50:02Z",
+      "gates": [
+        {
+          "name": "rollup_distinct_rids_eq_pinned",
+          "ok": true,
+          "detail": {
+            "observed": 3586,
+            "pinned": 3586
+          }
+        },
+        {
+          "name": "rollup_n_notes_eq_pinned",
+          "ok": true,
+          "detail": {
+            "observed": 4330,
+            "pinned": 4330
+          }
+        },
+        {
+          "name": "rollup_n_entities_eq_pinned",
+          "ok": true,
+          "detail": {
+            "observed": 9698,
+            "pinned": 9698
+          }
+        },
+        {
+          "name": "post_has_data_within_target_pm10",
+          "ok": true,
+          "detail": {
+            "observed": 3585,
+            "target": 3585,
+            "tolerance": 10,
+            "rollup_distinct_rids": 3586,
+            "orphan_rids": 1
+          }
+        },
+        {
+          "name": "post_has_data_null_eq_0",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "post_has_data_true_plus_false_eq_cpm_rows",
+          "ok": true,
+          "detail": {
+            "true": 3585,
+            "false": 7286,
+            "sum": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "post_has_data_false_eq_complement_of_true",
+          "ok": true,
+          "detail": {
+            "observed": 7286,
+            "expected": 7286,
+            "note": "~3558 of these are RIDs absent from parquet entirely; 1 additional rollup RID(s) are orphan (in parquet, not in CPM) and contribute to the FALSE count via the zero-out pass not happening for them."
+          }
+        },
+        {
+          "name": "post_sum_n_notes_eq_pinned_minus_orphan",
+          "ok": true,
+          "detail": {
+            "observed": 4329,
+            "pinned_parquet_side": 4330,
+            "orphan_contribution": 1,
+            "expected_post_mutation": 4329
+          }
+        },
+        {
+          "name": "post_sum_n_entities_eq_pinned_minus_orphan",
+          "ok": true,
+          "detail": {
+            "observed": 9697,
+            "pinned_parquet_side": 9698,
+            "orphan_contribution": 1,
+            "expected_post_mutation": 9697
+          }
+        },
+        {
+          "name": "post_null_research_id_eq_0",
+          "ok": true,
+          "detail": {
+            "observed": 0
+          }
+        },
+        {
+          "name": "post_key_finding_set_eq_has_true",
+          "ok": true,
+          "detail": {
+            "observed_kf_set": 3585,
+            "observed_has_true": 3585,
+            "detail": "every TRUE patient must have a key_finding"
+          }
+        }
+      ],
+      "blockers": [],
+      "phase_0_pinned_pos_rids": 3586,
+      "phase_0_pinned_pos_notes": 4330,
+      "phase_0_pinned_pos_entities": 9698,
+      "rollup_distinct_rids": 3586,
+      "rollup_n_notes_sum": 4330,
+      "rollup_total_entities_sum": 9698,
+      "rollup_orphan_rids": 1,
+      "rollup_orphan_notes_contribution": 1,
+      "rollup_orphan_entities_contribution": 1,
+      "rollup_orphan_rid_list": [
+        "11454"
+      ],
+      "expected_post_has_true": 3585,
+      "expected_post_sum_n_notes": 4329,
+      "expected_post_sum_n_entities": 9697,
+      "post_has_data_true": 3585,
+      "post_has_data_false": 7286,
+      "post_has_data_null": 0,
+      "post_sum_n_notes": 4329,
+      "post_sum_n_entities": 9697,
+      "post_null_research_id": 0,
+      "post_key_finding_set": 3585,
+      "post_key_finding_distribution": [
+        {
+          "key_finding": "left inferior parathyroid",
+          "n": 422
+        },
+        {
+          "key_finding": "preserved parathyroid glands on each side",
+          "n": 305
+        },
+        {
+          "key_finding": "4",
+          "n": 188
+        },
+        {
+          "key_finding": "preserved parathyroid glands",
+          "n": 181
+        },
+        {
+          "key_finding": "preserved",
+          "n": 170
+        },
+        {
+          "key_finding": "2",
+          "n": 133
+        },
+        {
+          "key_finding": "right inferior parathyroid",
+          "n": 124
+        },
+        {
+          "key_finding": "inferior parathyroid",
+          "n": 122
+        },
+        {
+          "key_finding": "left superior parathyroid",
+          "n": 112
+        },
+        {
+          "key_finding": "within normal limits",
+          "n": 111
+        },
+        {
+          "key_finding": "preserved parathyroid gland",
+          "n": 103
+        },
+        {
+          "key_finding": "1",
+          "n": 98
+        },
+        {
+          "key_finding": "inferior parathyroid gland",
+          "n": 65
+        },
+        {
+          "key_finding": "hypercellular",
+          "n": 57
+        },
+        {
+          "key_finding": "right superior parathyroid",
+          "n": 45
+        },
+        {
+          "key_finding": "superior parathyroid gland",
+          "n": 43
+        },
+        {
+          "key_finding": "left lower parathyroid",
+          "n": 43
+        },
+        {
+          "key_finding": "incidental",
+          "n": 41
+        },
+        {
+          "key_finding": "parathyroid glands on each side",
+          "n": 39
+        },
+        {
+          "key_finding": "parathyroid glands",
+          "n": 35
+        },
+        {
+          "key_finding": "both parathyroids",
+          "n": 34
+        },
+        {
+          "key_finding": "Left inferior parathyroid",
+          "n": 33
+        },
+        {
+          "key_finding": "Within normal limits",
+          "n": 30
+        },
+        {
+          "key_finding": "left upper parathyroid gland",
+          "n": 25
+        },
+        {
+          "key_finding": "parathyroid gland",
+          "n": 25
+        },
+        {
+          "key_finding": "Right inferior parathyroid",
+          "n": 25
+        },
+        {
+          "key_finding": "both parathyroid glands",
+          "n": 25
+        },
+        {
+          "key_finding": "left inferior parathyroid gland",
+          "n": 24
+        },
+        {
+          "key_finding": "right inferior parathyroid gland",
+          "n": 21
+        },
+        {
+          "key_finding": "Hypercellular",
+          "n": 20
+        },
+        {
+          "key_finding": "adenoma",
+          "n": 17
+        },
+        {
+          "key_finding": "left upper parathyroid",
+          "n": 16
+        },
+        {
+          "key_finding": "2 parathyroid glands",
+          "n": 16
+        },
+        {
+          "key_finding": "inferior parathyroid glands",
+          "n": 16
+        },
+        {
+          "key_finding": "no",
+          "n": 16
+        },
+        {
+          "key_finding": "all 4 parathyroids",
+          "n": 15
+        },
+        {
+          "key_finding": "biopsy",
+          "n": 15
+        },
+        {
+          "key_finding": "superior parathyroid",
+          "n": 15
+        },
+        {
+          "key_finding": "bilateral inferior parathyroid glands",
+          "n": 15
+        },
+        {
+          "key_finding": "preserved parathyroid tissue",
+          "n": 14
+        },
+        {
+          "key_finding": "Left upper parathyroid",
+          "n": 14
+        },
+        {
+          "key_finding": "yes, transplanted to right SCM muscle",
+          "n": 14
+        },
+        {
+          "key_finding": "4 parathyroid glands",
+          "n": 13
+        },
+        {
+          "key_finding": "Right upper parathyroid",
+          "n": 13
+        },
+        {
+          "key_finding": "left superior parathyroid gland",
+          "n": 12
+        },
+        {
+          "key_finding": "yes, autotransplanted to left sternocleidomastoid muscle",
+          "n": 12
+        },
+        {
+          "key_finding": "3",
+          "n": 12
+        },
+        {
+          "key_finding": "left parathyroid",
+          "n": 11
+        },
+        {
+          "key_finding": "preserved parathyroids",
+          "n": 11
+        },
+        {
+          "key_finding": "right lower parathyroid",
+          "n": 11
+        },
+        {
+          "key_finding": "yes, transplanted to left sternocleidomastoid muscle",
+          "n": 11
+        },
+        {
+          "key_finding": "left inferior",
+          "n": 10
+        },
+        {
+          "key_finding": "yes, right sternocleidomastoid",
+          "n": 10
+        },
+        {
+          "key_finding": "yes, transplanted to left sternocleidomastoid",
+          "n": 10
+        },
+        {
+          "key_finding": "yes, autotransplanted to right sternocleidomastoid muscle",
+          "n": 9
+        },
+        {
+          "key_finding": "yes, transplanted to right sternocleidomastoid",
+          "n": 8
+        },
+        {
+          "key_finding": "intrathyroidal",
+          "n": 8
+        },
+        {
+          "key_finding": "right upper parathyroid",
+          "n": 8
+        },
+        {
+          "key_finding": "left lower parathyroid gland",
+          "n": 8
+        },
+        {
+          "key_finding": "intentional_excision",
+          "n": 8
+        },
+        {
+          "key_finding": "right lower parathyroid gland",
+          "n": 8
+        },
+        {
+          "key_finding": "yes, autotransplanted to right sternocleidomastoid",
+          "n": 7
+        },
+        {
+          "key_finding": "parathyroids",
+          "n": 7
+        },
+        {
+          "key_finding": "lower parathyroid gland",
+          "n": 7
+        },
+        {
+          "key_finding": "inferior parathyroids",
+          "n": 7
+        },
+        {
+          "key_finding": "yes, transplanted to left SCM muscle",
+          "n": 7
+        },
+        {
+          "key_finding": "upper parathyroid gland",
+          "n": 6
+        },
+        {
+          "key_finding": "benign",
+          "n": 6
+        },
+        {
+          "key_finding": "preserved inferior parathyroid",
+          "n": 6
+        },
+        {
+          "key_finding": "right superior parathyroid gland",
+          "n": 6
+        },
+        {
+          "key_finding": "superior and inferior parathyroid glands",
+          "n": 5
+        },
+        {
+          "key_finding": "left parathyroid glands",
+          "n": 5
+        },
+        {
+          "key_finding": "right upper parathyroid gland",
+          "n": 5
+        },
+        {
+          "key_finding": "both superior and inferior parathyroid glands",
+          "n": 5
+        },
+        {
+          "key_finding": "yes, autotransplanted to left SCM muscle",
+          "n": 5
+        },
+        {
+          "key_finding": "yes, to right sternocleidomastoid",
+          "n": 4
+        },
+        {
+          "key_finding": "yes, autotransplanted to left SCM",
+          "n": 4
+        },
+        {
+          "key_finding": "hypercellular parathyroid gland(s)",
+          "n": 4
+        },
+        {
+          "key_finding": "left side",
+          "n": 4
+        },
+        {
+          "key_finding": "multiple parathyroid glands",
+          "n": 4
+        },
+        {
+          "key_finding": "yes, reimplanted to right strap muscle",
+          "n": 4
+        },
+        {
+          "key_finding": "inferior parathyroid, left side",
+          "n": 4
+        },
+        {
+          "key_finding": "normocellular parathyroid gland",
+          "n": 4
+        },
+        {
+          "key_finding": "inferior left parathyroid gland",
+          "n": 4
+        },
+        {
+          "key_finding": "yes, to right sternocleidomastoid muscle",
+          "n": 4
+        },
+        {
+          "key_finding": "right side",
+          "n": 4
+        },
+        {
+          "key_finding": "yes, to left sternocleidomastoid muscle",
+          "n": 4
+        },
+        {
+          "key_finding": "yes, autotransplanted to left sternocleidomastoid",
+          "n": 4
+        },
+        {
+          "key_finding": "unspecified location",
+          "n": 4
+        },
+        {
+          "key_finding": "preserved in situ",
+          "n": 4
+        },
+        {
+          "key_finding": "yes, transplanted to left SCM",
+          "n": 3
+        },
+        {
+          "key_finding": "hypercellular parathyroid",
+          "n": 3
+        },
+        {
+          "key_finding": "yes, autotransplanted to right SCM muscle",
+          "n": 3
+        },
+        {
+          "key_finding": "intrathyroidal parathyroid",
+          "n": 3
+        },
+        {
+          "key_finding": "right",
+          "n": 3
+        },
+        {
+          "key_finding": "parathyroid tissue",
+          "n": 3
+        },
+        {
+          "key_finding": "mildly hypercellular",
+          "n": 3
+        },
+        {
+          "key_finding": "identified parathyroids",
+          "n": 3
+        },
+        {
+          "key_finding": "yes, transplanted to right SCM",
+          "n": 3
+        },
+        {
+          "key_finding": "superior parathyroid on the right side",
+          "n": 3
+        },
+        {
+          "key_finding": "yes, transplanted to unspecified location",
+          "n": 3
+        },
+        {
+          "key_finding": "left superior parathyroid, autotransplanted to left sternocleidomastoid muscle",
+          "n": 3
+        },
+        {
+          "key_finding": "hyperplasia",
+          "n": 3
+        },
+        {
+          "key_finding": "Parathyroid gland(s)",
+          "n": 3
+        },
+        {
+          "key_finding": "yes, transplanted to right sternocleidomastoid muscle",
+          "n": 3
+        },
+        {
+          "key_finding": "1 parathyroid gland",
+          "n": 3
+        },
+        {
+          "key_finding": "yes, transplanted to sternocleidomastoid",
+          "n": 3
+        },
+        {
+          "key_finding": "preserved on the left side",
+          "n": 3
+        },
+        {
+          "key_finding": "preserved_in_situ",
+          "n": 2
+        },
+        {
+          "key_finding": "left",
+          "n": 2
+        },
+        {
+          "key_finding": "90% hypercellular",
+          "n": 2
+        },
+        {
+          "key_finding": "reimplanted in the right anterior strap muscle",
+          "n": 2
+        },
+        {
+          "key_finding": "0",
+          "n": 2
+        },
+        {
+          "key_finding": ">90% cellular",
+          "n": 2
+        },
+        {
+          "key_finding": "right inferior",
+          "n": 2
+        },
+        {
+          "key_finding": "yes, left sternocleidomastoid",
+          "n": 2
+        },
+        {
+          "key_finding": "3 parathyroid glands",
+          "n": 2
+        },
+        {
+          "key_finding": "yes, reimplanted to left strap muscle",
+          "n": 2
+        },
+        {
+          "key_finding": "normocellular parathyroid tissue",
+          "n": 2
+        },
+        {
+          "key_finding": "multiple parathyroids",
+          "n": 2
+        },
+        {
+          "key_finding": "hypercellular parathyroid gland",
+          "n": 2
+        },
+        {
+          "key_finding": "multiple",
+          "n": 2
+        },
+        {
+          "key_finding": "superior and inferior parathyroids on the right side",
+          "n": 2
+        },
+        {
+          "key_finding": "left inferior superior parathyroid",
+          "n": 2
+        },
+        {
+          "key_finding": "left lobe",
+          "n": 2
+        },
+        {
+          "key_finding": "hypercellular parathyroid tissue",
+          "n": 2
+        },
+        {
+          "key_finding": "intrathyroidal parathyroid gland",
+          "n": 2
+        },
+        {
+          "key_finding": "normocellular",
+          "n": 2
+        },
+        {
+          "key_finding": "yes, right sternocleidomastoid muscle",
+          "n": 2
+        },
+        {
+          "key_finding": "yes, left strap muscle",
+          "n": 2
+        },
+        {
+          "key_finding": "yes, left sternocleidomastoid muscle",
+          "n": 2
+        },
+        {
+          "key_finding": "all 4 parathyroids that remained in situ and viable",
+          "n": 2
+        },
+        {
+          "key_finding": "right inferior parathyroid, autotransplanted to right SCM muscle",
+          "n": 2
+        },
+        {
+          "key_finding": "left superior",
+          "n": 2
+        },
+        {
+          "key_finding": "yes, reimplanted to left SCM",
+          "n": 2
+        },
+        {
+          "key_finding": "bilateral superior parathyroid glands",
+          "n": 2
+        },
+        {
+          "key_finding": "nodular hyperplasia",
+          "n": 2
+        },
+        {
+          "key_finding": "benign parathyroid gland",
+          "n": 2
+        },
+        {
+          "key_finding": "yes, autotransplanted to left strap muscle",
+          "n": 2
+        },
+        {
+          "key_finding": "superior parathyroid glands",
+          "n": 2
+        },
+        {
+          "key_finding": "left side parathyroid glands",
+          "n": 2
+        },
+        {
+          "key_finding": "right parathyroid",
+          "n": 2
+        },
+        {
+          "key_finding": "left paratracheal mediastinum",
+          "n": 1
+        },
+        {
+          "key_finding": "95%",
+          "n": 1
+        },
+        {
+          "key_finding": "more inferiorly and left in the thyrothymic fat pad",
+          "n": 1
+        },
+        {
+          "key_finding": "both",
+          "n": 1
+        },
+        {
+          "key_finding": "left upper",
+          "n": 1
+        },
+        {
+          "key_finding": "right thyroid lobe",
+          "n": 1
+        },
+        {
+          "key_finding": "preserved in place",
+          "n": 1
+        },
+        {
+          "key_finding": "left (2)",
+          "n": 1
+        },
+        {
+          "key_finding": "involved by anaplastic thyroid carcinoma",
+          "n": 1
+        },
+        {
+          "key_finding": "upper gland",
+          "n": 1
+        },
+        {
+          "key_finding": "right parathyroid glands",
+          "n": 1
+        },
+        {
+          "key_finding": "normocellular to mildly hypercellular",
+          "n": 1
+        },
+        {
+          "key_finding": "at least two parathyroid glands identified",
+          "n": 1
+        },
+        {
+          "key_finding": "left thyroid lobe",
+          "n": 1
+        },
+        {
+          "key_finding": "right inferior parathyroid, autotransplanted to sternocleidomastoid",
+          "n": 1
+        },
+        {
+          "key_finding": "6 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "left inferior parathyroid, autotransplanted to left SCM muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "2.4 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "left sternocleidomastoid",
+          "n": 1
+        },
+        {
+          "key_finding": "one parathyroid gland identified and preserved in situ on right",
+          "n": 1
+        },
+        {
+          "key_finding": "large parathyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "Parathyroids",
+          "n": 1
+        },
+        {
+          "key_finding": "0.048 grams",
+          "n": 1
+        },
+        {
+          "key_finding": "superior right parathyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, left strap muscles",
+          "n": 1
+        },
+        {
+          "key_finding": "clear upper parathyroid gland on the right",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, reimplanted to right strap",
+          "n": 1
+        },
+        {
+          "key_finding": "preserved during the dissection",
+          "n": 1
+        },
+        {
+          "key_finding": "metastatic carcinoma morphologically consistent with papillary thyroid carcinoma",
+          "n": 1
+        },
+        {
+          "key_finding": "large upper parathyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "left side of the neck",
+          "n": 1
+        },
+        {
+          "key_finding": "left upper parathyroid, autotransplanted to left sternocleidomastoid muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "two parathyroid glands",
+          "n": 1
+        },
+        {
+          "key_finding": "5 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "Right lower parathyroid, autotransplanted to right sternocleidomastoid",
+          "n": 1
+        },
+        {
+          "key_finding": "> 95% hypercellular",
+          "n": 1
+        },
+        {
+          "key_finding": "1.5-2 cm in diameter",
+          "n": 1
+        },
+        {
+          "key_finding": "preserved parathyroid on right side",
+          "n": 1
+        },
+        {
+          "key_finding": "parathyroid tissue, right side",
+          "n": 1
+        },
+        {
+          "key_finding": "upper pole parathyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "preserved on each side",
+          "n": 1
+        },
+        {
+          "key_finding": "~50%",
+          "n": 1
+        },
+        {
+          "key_finding": "parathyroid",
+          "n": 1
+        },
+        {
+          "key_finding": "BFS1",
+          "n": 1
+        },
+        {
+          "key_finding": "4 total",
+          "n": 1
+        },
+        {
+          "key_finding": "4 to 5 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "LL parathyroid",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, autotransplanted to the back table in some saline",
+          "n": 1
+        },
+        {
+          "key_finding": "enlarged hypercellular-appearing",
+          "n": 1
+        },
+        {
+          "key_finding": "both parathyroid glands preserved",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, reimplanted into the sternocleidomastoid muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, left SCM",
+          "n": 1
+        },
+        {
+          "key_finding": "inferior parathyroid candidate",
+          "n": 1
+        },
+        {
+          "key_finding": "small, nodular structure",
+          "n": 1
+        },
+        {
+          "key_finding": "preserved inferior parathyroid on the left side",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, to left SCM",
+          "n": 1
+        },
+        {
+          "key_finding": "parathyroid gland in this area",
+          "n": 1
+        },
+        {
+          "key_finding": "left in place",
+          "n": 1
+        },
+        {
+          "key_finding": "right upper parathyroid, autotransplanted to right sternocleidomastoid",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, reimplanted to muscular pockets",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, transplanted to SCM",
+          "n": 1
+        },
+        {
+          "key_finding": "left superior pole",
+          "n": 1
+        },
+        {
+          "key_finding": "left lower pole parathyroid",
+          "n": 1
+        },
+        {
+          "key_finding": "minute fragment of parathyroid tissue",
+          "n": 1
+        },
+        {
+          "key_finding": "2 parathyroid glands on the right side",
+          "n": 1
+        },
+        {
+          "key_finding": "adenoma or hyperplasia",
+          "n": 1
+        },
+        {
+          "key_finding": "small amount of hypercellular parathyroid gland with thyroid tissue",
+          "n": 1
+        },
+        {
+          "key_finding": "inferior parathyroid gland, right side",
+          "n": 1
+        },
+        {
+          "key_finding": "Present",
+          "n": 1
+        },
+        {
+          "key_finding": "fibrofatty tissue containing the parathyroids",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, auto-transplanted to left SCM muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "left superior and inferior parathyroids",
+          "n": 1
+        },
+        {
+          "key_finding": "65% cellular",
+          "n": 1
+        },
+        {
+          "key_finding": "right inferior parathyroid adenoma",
+          "n": 1
+        },
+        {
+          "key_finding": "parathyroid adenoma",
+          "n": 1
+        },
+        {
+          "key_finding": "normal cellular",
+          "n": 1
+        },
+        {
+          "key_finding": "anterior inferior surface of the left thyroid lobe",
+          "n": 1
+        },
+        {
+          "key_finding": "0.165 grams",
+          "n": 1
+        },
+        {
+          "key_finding": "1 parathyroid reimplanted",
+          "n": 1
+        },
+        {
+          "key_finding": "~30% cellularity",
+          "n": 1
+        },
+        {
+          "key_finding": "left inferior pole",
+          "n": 1
+        },
+        {
+          "key_finding": "intact parathyroid glands",
+          "n": 1
+        },
+        {
+          "key_finding": "intrathyroidal right lower parathyroid",
+          "n": 1
+        },
+        {
+          "key_finding": "3 parathyroid glands preserved",
+          "n": 1
+        },
+        {
+          "key_finding": "0.8 cm x 0.2 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, reimplanted to right sternocleidomastoid muscle belly",
+          "n": 1
+        },
+        {
+          "key_finding": "left inferior, ectopic",
+          "n": 1
+        },
+        {
+          "key_finding": "left parathyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "preserved and saved",
+          "n": 1
+        },
+        {
+          "key_finding": "benign parathyroid gland included in lower aspect of right lobe",
+          "n": 1
+        },
+        {
+          "key_finding": "intrathyroidal in the right lobe",
+          "n": 1
+        },
+        {
+          "key_finding": "intrathyroidal in the right thyroid lobe",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, autotransplanted to unspecified location",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, autotransplanted to right sternocleidomastoid muscle and strap muscles",
+          "n": 1
+        },
+        {
+          "key_finding": ">95%",
+          "n": 1
+        },
+        {
+          "key_finding": "inferior of the thyroid",
+          "n": 1
+        },
+        {
+          "key_finding": "superior portion",
+          "n": 1
+        },
+        {
+          "key_finding": "right, mid to inferior gland",
+          "n": 1
+        },
+        {
+          "key_finding": "3 mm piece of parathyroid tissue, minced, and placed in a pocket of the right strap muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, to right SCM muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "all parathyroid glands",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, reimplanted to left sternocleidomastoid muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, Right sternocleidomastoid",
+          "n": 1
+        },
+        {
+          "key_finding": "superior and inferior parathyroids on the left",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, transplanted to left cervical lateral mastoid muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "70 to 80%",
+          "n": 1
+        },
+        {
+          "key_finding": "hypercellular parathyroid tissue > 90%",
+          "n": 1
+        },
+        {
+          "key_finding": "hypercellular areas",
+          "n": 1
+        },
+        {
+          "key_finding": "probably normocellular",
+          "n": 1
+        },
+        {
+          "key_finding": "lower parathyroid",
+          "n": 1
+        },
+        {
+          "key_finding": "near the right thyroid lobe",
+          "n": 1
+        },
+        {
+          "key_finding": "80% to 90% hypercellular",
+          "n": 1
+        },
+        {
+          "key_finding": "lower gland",
+          "n": 1
+        },
+        {
+          "key_finding": "left parathyroid tissue",
+          "n": 1
+        },
+        {
+          "key_finding": "fragments of parathyroid gland tissue in right compartment specimen",
+          "n": 1
+        },
+        {
+          "key_finding": "Hypercellular parathyroid tissue",
+          "n": 1
+        },
+        {
+          "key_finding": "left inferior pole area",
+          "n": 1
+        },
+        {
+          "key_finding": "preserved left inferior parathyroid",
+          "n": 1
+        },
+        {
+          "key_finding": "2 candidates for parathyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "2 x 1 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "superior obvious parathyroid",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, reimplanted in the left strap",
+          "n": 1
+        },
+        {
+          "key_finding": "bilateral inferior parathyroid",
+          "n": 1
+        },
+        {
+          "key_finding": "four parathyroid glands preserved",
+          "n": 1
+        },
+        {
+          "key_finding": "biopsied parathyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, transplanted to left mid portion of the sternocleidomastoid muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "parathyroid gland(s)",
+          "n": 1
+        },
+        {
+          "key_finding": "parathyroids remained in situ and viable",
+          "n": 1
+        },
+        {
+          "key_finding": "intraparenchymal parathyroid tissue",
+          "n": 1
+        },
+        {
+          "key_finding": "inferior parathyroid on the left side",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, autotransplanted to right sternocleidomastoid and right sternohyoid muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "right superior",
+          "n": 1
+        },
+        {
+          "key_finding": "9x6x5 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "R Superior Parathyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, transplanted to left anterior portion of the sternocleidomastoid",
+          "n": 1
+        },
+        {
+          "key_finding": "parathyroid tissue preserved",
+          "n": 1
+        },
+        {
+          "key_finding": "portion of parathyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "inferior right parathyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, reimplanted to mid sternocleidomastoid muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "parathyroid associated with the area of the ligament",
+          "n": 1
+        },
+        {
+          "key_finding": "intraparenchymal right mid thyroid lobe",
+          "n": 1
+        },
+        {
+          "key_finding": "extra-thyroidal",
+          "n": 1
+        },
+        {
+          "key_finding": "100% cellular",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, reimplanted at the end of the case",
+          "n": 1
+        },
+        {
+          "key_finding": "identified",
+          "n": 1
+        },
+        {
+          "key_finding": "intrathryoidal",
+          "n": 1
+        },
+        {
+          "key_finding": "preserved inferior parathyroids on the right side",
+          "n": 1
+        },
+        {
+          "key_finding": "Left lower parathyroid, autotransplanted to left sternocleidomastoid muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "reimplanted in the strap muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, reimplanted into left underbelly of sternohyoid",
+          "n": 1
+        },
+        {
+          "key_finding": "another structure that appeared consistent with an inferior parathyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "right parathyroid adenoma",
+          "n": 1
+        },
+        {
+          "key_finding": "ectopic substernal thyroid nodule",
+          "n": 1
+        },
+        {
+          "key_finding": "2 parathyroids visualized and preserved on the left",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, right SCM",
+          "n": 1
+        },
+        {
+          "key_finding": "about 50-70% cellular",
+          "n": 1
+        },
+        {
+          "key_finding": "left lower parathyroid, autotransplanted to left sternocleidomastoid muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "left upper and left lower parathyroid glands",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, autografted into left sternocleidomastoid muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "hypercellular parathyroid with rim of normocellular parathyroid",
+          "n": 1
+        },
+        {
+          "key_finding": "grossly enlarged",
+          "n": 1
+        },
+        {
+          "key_finding": "substernal",
+          "n": 1
+        },
+        {
+          "key_finding": "2 glands preserved on the right side",
+          "n": 1
+        },
+        {
+          "key_finding": "inferior parathyroid, right side",
+          "n": 1
+        },
+        {
+          "key_finding": "Right upper parathyroid, autotransplanted to right sternocleidomastoid",
+          "n": 1
+        },
+        {
+          "key_finding": "538 milligrams",
+          "n": 1
+        },
+        {
+          "key_finding": "2 parathyroid glands identified",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, to left SCM muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "both superior and inferior parathyroid glands along with the right recurrent nerve were identified and carefully preserved",
+          "n": 1
+        },
+        {
+          "key_finding": "18 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, to right anterior strap muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "left lobe intrathyroidal parathyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, autotransplanted to sternohyoid muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, reimplanted to right SCM",
+          "n": 1
+        },
+        {
+          "key_finding": "reimplanted into its native site behind the right RLN",
+          "n": 1
+        },
+        {
+          "key_finding": "left inferior parathyroid, normal, remained in situ",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, transplanted to right strap muscles",
+          "n": 1
+        },
+        {
+          "key_finding": "upper position, left lobe",
+          "n": 1
+        },
+        {
+          "key_finding": "hyperplastic nodule",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, autografted to left sternocleidomastoid muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "identified in additional tissue submitted for permanent sections",
+          "n": 1
+        },
+        {
+          "key_finding": "intrathyroidal parathyroid tissue",
+          "n": 1
+        },
+        {
+          "key_finding": "atypical parathyroid adenoma",
+          "n": 1
+        },
+        {
+          "key_finding": "30 to 40 mg",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, right inferior sternocleidomastoid muscle pocket",
+          "n": 1
+        },
+        {
+          "key_finding": "left inferior parathyroid, autotransplanted to left strap muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, reimplanted in the left anterior strap muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "identified parathyroid glands",
+          "n": 1
+        },
+        {
+          "key_finding": "anterior and superior parathyroid glands",
+          "n": 1
+        },
+        {
+          "key_finding": "right superior parathyroids",
+          "n": 1
+        },
+        {
+          "key_finding": "midline upper neck",
+          "n": 1
+        },
+        {
+          "key_finding": "inferior parathyroid, right",
+          "n": 1
+        },
+        {
+          "key_finding": "all 4 parathyroids remained in situ and viable",
+          "n": 1
+        },
+        {
+          "key_finding": "protected",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, to left sternocleidomastoid",
+          "n": 1
+        },
+        {
+          "key_finding": "2 parathyroids on the right side",
+          "n": 1
+        },
+        {
+          "key_finding": "left lower parathyroid adenoma",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, autotransplanted to left inferior SCM muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "right superior and inferior parathyroids",
+          "n": 1
+        },
+        {
+          "key_finding": "preserved against the trachea",
+          "n": 1
+        },
+        {
+          "key_finding": "2 glands preserved on the right",
+          "n": 1
+        },
+        {
+          "key_finding": "3 mm",
+          "n": 1
+        },
+        {
+          "key_finding": "bilateral superior and left inferior parathyroid glands",
+          "n": 1
+        },
+        {
+          "key_finding": "left upper parathyroid glands",
+          "n": 1
+        },
+        {
+          "key_finding": "90 percent cellular",
+          "n": 1
+        },
+        {
+          "key_finding": "1 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "inferior and superior parathyroids on the right side",
+          "n": 1
+        },
+        {
+          "key_finding": "hypercellular 50-85%",
+          "n": 1
+        },
+        {
+          "key_finding": "Right inferior parathyroid, autotransplanted to right sternocleidomastoid muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "parathyroids that remained in situ",
+          "n": 1
+        },
+        {
+          "key_finding": "both superior and inferior parathyroid glands along with the right recurrent laryngeal nerve were all identified and carefully preserved",
+          "n": 1
+        },
+        {
+          "key_finding": "lower parathyroid gland on left lobe",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, reimplanted in left SCM",
+          "n": 1
+        },
+        {
+          "key_finding": "adjacent to the submitted lymph node",
+          "n": 1
+        },
+        {
+          "key_finding": "left side parathyroids",
+          "n": 1
+        },
+        {
+          "key_finding": "4 parathyroids",
+          "n": 1
+        },
+        {
+          "key_finding": "1.2 cm",
+          "n": 1
+        },
+        {
+          "key_finding": "involved by papillary thyroid carcinoma",
+          "n": 1
+        },
+        {
+          "key_finding": "inferior parathyroid gland on the right side",
+          "n": 1
+        },
+        {
+          "key_finding": "highly suspicious for malignant behavior",
+          "n": 1
+        },
+        {
+          "key_finding": "mildly hypercellular parathyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "inferior to left thyroid gland",
+          "n": 1
+        },
+        {
+          "key_finding": "preserved inferior parathyroids on the left side",
+          "n": 1
+        },
+        {
+          "key_finding": "bilateral superior and inferior parathyroid glands (3)",
+          "n": 1
+        },
+        {
+          "key_finding": "3 glands",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, reimplanted into the left SCM",
+          "n": 1
+        },
+        {
+          "key_finding": "within normal limits to slightly hypercellular",
+          "n": 1
+        },
+        {
+          "key_finding": "yes, reimplanted to right anterior strap muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "findings consistent with either parathyroid adenoma or nodular hyperplasia",
+          "n": 1
+        },
+        {
+          "key_finding": "enlarged-appearing",
+          "n": 1
+        },
+        {
+          "key_finding": "inferior parathyroid on the right",
+          "n": 1
+        },
+        {
+          "key_finding": "left superior parathyroid, autotransplanted to left sternocleidomastoid",
+          "n": 1
+        },
+        {
+          "key_finding": "preserved parathyroid gland(s)",
+          "n": 1
+        },
+        {
+          "key_finding": "minced with a 15 blade and reimplanted in the left sternocleidomastoid muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "left side parathyroid tissue",
+          "n": 1
+        },
+        {
+          "key_finding": "uncertain if 1 or 2 glands",
+          "n": 1
+        },
+        {
+          "key_finding": "mildly hypercellular parathyroid tissue",
+          "n": 1
+        },
+        {
+          "key_finding": "superior-inferior parathyroid glands",
+          "n": 1
+        },
+        {
+          "key_finding": "left lower parathyroid gland, autotransplanted to left sternocleidomastoid muscle",
+          "n": 1
+        },
+        {
+          "key_finding": "unspecified",
+          "n": 1
+        },
+        {
+          "key_finding": "unspecified parathyroid glands",
+          "n": 1
+        },
+        {
+          "key_finding": "one benign parathyroid",
+          "n": 1
+        },
+        {
+          "key_finding": "lower parathyroid glands",
+          "n": 1
+        },
+        {
+          "key_finding": "bilateral superior and inferior parathyroid glands",
+          "n": 1
+        }
+      ],
+      "finished_at": "2026-04-21T00:50:03Z"
     }
   },
-  "last_started_at": "2026-04-21T00:47:51Z",
-  "last_phase_arg": "4",
-  "last_finished_at": "2026-04-21T00:47:59Z",
+  "last_started_at": "2026-04-21T00:49:56Z",
+  "last_phase_arg": "5",
+  "last_finished_at": "2026-04-21T00:50:03Z",
   "last_return_code": 0
 }

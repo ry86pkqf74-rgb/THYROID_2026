@@ -1332,6 +1332,55 @@ def phase_5(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
               summary[2] == pinned_ents,
               {"observed": int(summary[2]), "pinned": pinned_ents})
 
+    # Detect orphan RIDs: rollup RIDs that don't exist in CPM. These will
+    # NOT be UPDATEd to TRUE (no matching CPM row) and so their note/entity
+    # contributions are correctly missing from the post-mutation CPM
+    # totals. Pin the orphan count + their (notes, entities) contribution
+    # so the post-mutation gates can adjust against pinned values without
+    # losing exactness.
+    orphans = con.execute(f"""
+        SELECT
+            COUNT(*) AS n_orphan_rids,
+            COALESCE(SUM(r.n_notes_with_entity), 0) AS orphan_notes_contrib,
+            COALESCE(SUM(r.total_entities),      0) AS orphan_entities_contrib
+        FROM _rollup_284 r
+        WHERE CAST(r.research_id AS VARCHAR) NOT IN (
+            SELECT CAST(research_id AS VARCHAR) FROM main.{CPM_TABLE}
+        )
+    """).fetchone()
+    n_orphan_rids = int(orphans[0])
+    orphan_notes_contrib = int(orphans[1])
+    orphan_entities_contrib = int(orphans[2])
+    out["rollup_orphan_rids"] = n_orphan_rids
+    out["rollup_orphan_notes_contribution"] = orphan_notes_contrib
+    out["rollup_orphan_entities_contribution"] = orphan_entities_contrib
+    log(f"    orphan rollup RIDs (not in CPM): {n_orphan_rids}  "
+        f"(notes_contrib={orphan_notes_contrib} "
+        f"entities_contrib={orphan_entities_contrib})")
+    if n_orphan_rids > 0:
+        orphan_rids_list = [
+            r[0] for r in con.execute(f"""
+                SELECT CAST(r.research_id AS VARCHAR)
+                FROM _rollup_284 r
+                WHERE CAST(r.research_id AS VARCHAR) NOT IN (
+                    SELECT CAST(research_id AS VARCHAR) FROM main.{CPM_TABLE}
+                )
+                ORDER BY 1
+            """).fetchall()
+        ]
+        out["rollup_orphan_rid_list"] = orphan_rids_list
+        log(f"    orphan rid list: {orphan_rids_list}")
+    # Expected post-mutation count of TRUE rows in CPM (rollup RIDs minus
+    # orphans). This is the source-of-truth target for the post-mutation
+    # equality gates (Script 282/283 had zero orphans so target == rollup
+    # distinct_rids; here that does not hold).
+    expected_post_has_true = int(summary[0]) - n_orphan_rids
+    expected_post_sum_notes = int(summary[1]) - orphan_notes_contrib
+    expected_post_sum_ents = int(summary[2]) - orphan_entities_contrib
+    out["expected_post_has_true"] = expected_post_has_true
+    out["expected_post_sum_n_notes"] = expected_post_sum_notes
+    out["expected_post_sum_n_entities"] = expected_post_sum_ents
+
     # Per-RID UPDATE for matched patients. ALWAYS CAST research_id AS
     # VARCHAR on join (silent zero-row joins otherwise; see AGENTS.md).
     log("  UPDATE main.canonical_patient_master from rollup ...")
@@ -1384,28 +1433,49 @@ def phase_5(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     log(f"               sum_n_notes={post_sum_notes} "
         f"sum_n_entities={post_sum_ents} key_finding_set={post_kf_set}")
 
-    # HAS_DATA gates. Target = rollup distinct rids; complement = 10871 - target.
-    target = int(summary[0])
-    has_false_target = EXPECTED_CPM_ROWS - target
+    # HAS_DATA gates. Target = rollup distinct_rids - orphan_rids
+    # (orphans have no matching CPM row and therefore cannot become TRUE).
+    target = expected_post_has_true
     _gate(out, "post_has_data_within_target_pm10",
           abs(int(post_true) - target) <= HAS_DATA_TOLERANCE,
           {"observed": int(post_true), "target": target,
-           "tolerance": HAS_DATA_TOLERANCE})
+           "tolerance": HAS_DATA_TOLERANCE,
+           "rollup_distinct_rids": int(summary[0]),
+           "orphan_rids": n_orphan_rids})
+    # HARD: zero NULLs in the rollup column (the headline contract).
     _gate(out, "post_has_data_null_eq_0", int(post_null) == 0,
           {"observed": int(post_null)})
-    _gate(out, "post_has_data_false_eq_complement",
+    # HARD: math invariant — every CPM row is in exactly one of TRUE/FALSE.
+    _gate(out, "post_has_data_true_plus_false_eq_cpm_rows",
+          int(post_true) + int(post_false) == EXPECTED_CPM_ROWS,
+          {"true": int(post_true), "false": int(post_false),
+           "sum": int(post_true) + int(post_false),
+           "expected": EXPECTED_CPM_ROWS})
+    # FALSE count is the complement of TRUE within the 10,871 CPM rows.
+    has_false_target = EXPECTED_CPM_ROWS - int(post_true)
+    _gate(out, "post_has_data_false_eq_complement_of_true",
           int(post_false) == has_false_target,
           {"observed": int(post_false), "expected": has_false_target,
            "note": f"~{EXPECTED_CPM_RIDS - EXPECTED_PARQUET_RIDS} of these "
-                   "are RIDs absent from parquet entirely"})
+                   "are RIDs absent from parquet entirely; "
+                   f"{n_orphan_rids} additional rollup RID(s) are orphan "
+                   "(in parquet, not in CPM) and contribute to the FALSE "
+                   "count via the zero-out pass not happening for them."})
+    # Sum-of-notes / sum-of-entities: equal to (pinned - orphan_contribution).
     if pinned_notes is not None:
-        _gate(out, "post_sum_n_notes_eq_pinned",
-              int(post_sum_notes or 0) == pinned_notes,
-              {"observed": int(post_sum_notes or 0), "expected": pinned_notes})
+        _gate(out, "post_sum_n_notes_eq_pinned_minus_orphan",
+              int(post_sum_notes or 0) == expected_post_sum_notes,
+              {"observed": int(post_sum_notes or 0),
+               "pinned_parquet_side": pinned_notes,
+               "orphan_contribution": orphan_notes_contrib,
+               "expected_post_mutation": expected_post_sum_notes})
     if pinned_ents is not None:
-        _gate(out, "post_sum_n_entities_eq_pinned",
-              int(post_sum_ents or 0) == pinned_ents,
-              {"observed": int(post_sum_ents or 0), "expected": pinned_ents})
+        _gate(out, "post_sum_n_entities_eq_pinned_minus_orphan",
+              int(post_sum_ents or 0) == expected_post_sum_ents,
+              {"observed": int(post_sum_ents or 0),
+               "pinned_parquet_side": pinned_ents,
+               "orphan_contribution": orphan_entities_contrib,
+               "expected_post_mutation": expected_post_sum_ents})
     _gate(out, "post_null_research_id_eq_0", int(post_null_rid) == 0,
           {"observed": int(post_null_rid)})
     _gate(out, "post_key_finding_set_eq_has_true",

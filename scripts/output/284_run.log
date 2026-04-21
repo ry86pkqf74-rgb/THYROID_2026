@@ -94,3 +94,45 @@
 [00:47:58.497Z]   gate snapshot_rows_eq_10871: OK — {'observed': 10871, 'expected': 10871}
 [00:47:58.497Z]   gate snapshot_rids_eq_10871: OK — {'observed': 10871, 'expected': 10871}
 [00:47:59.983Z]   snapshot non-nlp_parathyroid_* MD5 = 4f219de7f02a6efc12b3f11adf5ab7df  (over 1532 columns; pinned for Phase 6 invariant C)
+[00:48:10.790Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:48:11.312Z] === PHASE 5 — rollup UPDATE on canonical_patient_master (nlp_parathyroid_*) ===
+[00:48:11.312Z]   building per-RID rollup CTE -> TEMP TABLE _rollup_284 ...
+[00:48:12.052Z]     rollup: distinct_rids=3586  sum_n_notes=4330  sum_n_entities=9698
+[00:48:12.052Z]   gate rollup_distinct_rids_eq_pinned: OK — {'observed': 3586, 'pinned': 3586}
+[00:48:12.053Z]   gate rollup_n_notes_eq_pinned: OK — {'observed': 4330, 'pinned': 4330}
+[00:48:12.053Z]   gate rollup_n_entities_eq_pinned: OK — {'observed': 9698, 'pinned': 9698}
+[00:48:12.053Z]   UPDATE main.canonical_patient_master from rollup ...
+[00:48:12.217Z]   UPDATE patients absent from rollup -> FALSE/0/0/NULL ...
+[00:48:12.217Z]     (this is expected to mark ~7285 patients FALSE — parquet covers a narrow RID slice)
+[00:48:12.407Z]   post-update: has_data TRUE=3585 FALSE=7286 NULL=0
+[00:48:12.407Z]                sum_n_notes=4329 sum_n_entities=9697 key_finding_set=3585
+[00:48:12.407Z]   gate post_has_data_within_target_pm10: OK — {'observed': 3585, 'target': 3586, 'tolerance': 10}
+[00:48:12.407Z]   gate post_has_data_null_eq_0: OK — {'observed': 0}
+[00:48:12.407Z]   gate post_has_data_false_eq_complement: FAIL — {'observed': 7286, 'expected': 7285, 'note': '~3558 of these are RIDs absent from parquet entirely'}
+[00:48:12.407Z]   gate post_sum_n_notes_eq_pinned: FAIL — {'observed': 4329, 'expected': 4330}
+[00:48:12.407Z]   gate post_sum_n_entities_eq_pinned: FAIL — {'observed': 9697, 'expected': 9698}
+[00:48:12.407Z]   gate post_null_research_id_eq_0: OK — {'observed': 0}
+[00:48:12.407Z]   gate post_key_finding_set_eq_has_true: OK — {'observed_kf_set': 3585, 'observed_has_true': 3585, 'detail': 'every TRUE patient must have a key_finding'}
+[00:48:12.448Z] FATAL: RuntimeError("Phase 5 blockers: [{'name': 'post_has_data_false_eq_complement', 'detail': {'observed': 7286, 'expected': 7285, 'note': '~3558 of these are RIDs absent from parquet entirely'}}, {'name': 'post_sum_n_notes_eq_pinned', 'detail': {'observed': 4329, 'expected': 4330}}, {'name': 'post_sum_n_entities_eq_pinned', 'detail': {'observed': 9697, 'expected': 9698}}]")
+[00:49:56.570Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[00:50:02.177Z] === PHASE 5 — rollup UPDATE on canonical_patient_master (nlp_parathyroid_*) ===
+[00:50:02.178Z]   building per-RID rollup CTE -> TEMP TABLE _rollup_284 ...
+[00:50:02.668Z]     rollup: distinct_rids=3586  sum_n_notes=4330  sum_n_entities=9698
+[00:50:02.668Z]   gate rollup_distinct_rids_eq_pinned: OK — {'observed': 3586, 'pinned': 3586}
+[00:50:02.668Z]   gate rollup_n_notes_eq_pinned: OK — {'observed': 4330, 'pinned': 4330}
+[00:50:02.668Z]   gate rollup_n_entities_eq_pinned: OK — {'observed': 9698, 'pinned': 9698}
+[00:50:02.730Z]     orphan rollup RIDs (not in CPM): 1  (notes_contrib=1 entities_contrib=1)
+[00:50:02.776Z]     orphan rid list: ['11454']
+[00:50:02.776Z]   UPDATE main.canonical_patient_master from rollup ...
+[00:50:02.890Z]   UPDATE patients absent from rollup -> FALSE/0/0/NULL ...
+[00:50:02.890Z]     (this is expected to mark ~7285 patients FALSE — parquet covers a narrow RID slice)
+[00:50:03.190Z]   post-update: has_data TRUE=3585 FALSE=7286 NULL=0
+[00:50:03.190Z]                sum_n_notes=4329 sum_n_entities=9697 key_finding_set=3585
+[00:50:03.190Z]   gate post_has_data_within_target_pm10: OK — {'observed': 3585, 'target': 3585, 'tolerance': 10, 'rollup_distinct_rids': 3586, 'orphan_rids': 1}
+[00:50:03.190Z]   gate post_has_data_null_eq_0: OK — {'observed': 0}
+[00:50:03.190Z]   gate post_has_data_true_plus_false_eq_cpm_rows: OK — {'true': 3585, 'false': 7286, 'sum': 10871, 'expected': 10871}
+[00:50:03.190Z]   gate post_has_data_false_eq_complement_of_true: OK — {'observed': 7286, 'expected': 7286, 'note': '~3558 of these are RIDs absent from parquet entirely; 1 additional rollup RID(s) are orphan (in parquet, not in CPM) and contribute to the FALSE count via the zero-out pass not happening for them.'}
+[00:50:03.190Z]   gate post_sum_n_notes_eq_pinned_minus_orphan: OK — {'observed': 4329, 'pinned_parquet_side': 4330, 'orphan_contribution': 1, 'expected_post_mutation': 4329}
+[00:50:03.190Z]   gate post_sum_n_entities_eq_pinned_minus_orphan: OK — {'observed': 9697, 'pinned_parquet_side': 9698, 'orphan_contribution': 1, 'expected_post_mutation': 9697}
+[00:50:03.190Z]   gate post_null_research_id_eq_0: OK — {'observed': 0}
+[00:50:03.190Z]   gate post_key_finding_set_eq_has_true: OK — {'observed_kf_set': 3585, 'observed_has_true': 3585, 'detail': 'every TRUE patient must have a key_finding'}
