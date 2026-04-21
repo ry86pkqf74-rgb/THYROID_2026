@@ -1,0 +1,112 @@
+{
+  "script": "Script 299",
+  "run_ts": "20260421T042011Z",
+  "run_date": "2026-04-21",
+  "commit": true,
+  "steps": {
+    "0_baseline": {
+      "base": {
+        "rows": 37016,
+        "patients": 6126
+      },
+      "v2": {
+        "rows": 11914,
+        "patients": 3021,
+        "present": true
+      },
+      "legacy_llm": {
+        "present": true
+      },
+      "fna_linkage": {
+        "present": true
+      },
+      "llm_tirads_granular": {
+        "present": true
+      },
+      "llm_dynamics": {
+        "present": true
+      }
+    },
+    "1_llm_parse": {
+      "tirads_granular": {
+        "rows": 181,
+        "patients": 44,
+        "source_present": true
+      },
+      "us_dynamics": {
+        "rows": 49,
+        "patients": 19,
+        "source_present": true
+      }
+    },
+    "2_3_master_build": {
+      "rows": 37016,
+      "patients": 6126,
+      "max_nodule_master_id": 37016,
+      "elapsed_s": 0.4
+    },
+    "4_discordance": {
+      "rows": 493,
+      "direction_distribution": {
+        "base_higher": 176,
+        "v2_higher": 317
+      },
+      "elapsed_s": 0.2
+    },
+    "5_redundancy": {
+      "inm_rows": 37016,
+      "inm_pts": 6126,
+      "base_rows": 37016,
+      "base_pts": 6126,
+      "shared_cols": 17,
+      "inm_only_cols": [
+        "dominant_nodule_flag",
+        "exam_date_quality",
+        "exam_id",
+        "max_dimension_cm",
+        "nodule_number",
+        "source_table",
+        "tirads_acr_recalculated",
+        "tirads_category"
+      ],
+      "base_only_cols": [
+        "calcifications_coverage_status",
+        "composition_pts",
+        "data_completeness_pct",
+        "echogenic_foci",
+        "echogenicity_pts",
+        "extracted_size_cm",
+        "foci_pts",
+        "location_detail",
+        "margin_pts",
+        "nodule_index_within_exam",
+        "resolution_rule",
+        "shape_pts",
+        "size_cm_max",
+        "source_tables",
+        "tirads_band_ambiguous",
+        "tirads_category_code_legacy_v1",
+        "tirads_category_modified_legacy_v1",
+        "tirads_category_v2",
+        "tirads_level_2017",
+        "tirads_score_2017",
+        "tirads_score_component_complete",
+        "us_exam_id"
+      ],
+      "same_grain": true,
+      "recommendation": "Same grain but imaging_nodule_master_v1 has 8 unique columns. Review for integration or deprecation."
+    },
+    "6_invariants": {
+      "rows": 37016,
+      "patients": 6126,
+      "grain_unique": false,
+      "pts_ok": true,
+      "fill_ok": true,
+      "source_v2": 30868,
+      "source_llm": 26618,
+      "source_dyn": 100,
+      "source_fna": 19632,
+      "all_ok": false
+    }
+  }
+}
