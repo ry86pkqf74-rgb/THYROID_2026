@@ -1,0 +1,244 @@
+{
+  "phase": 4,
+  "started_at_utc": "2026-04-21T23:11:08Z",
+  "results": [
+    {
+      "src": "scripts/207_canonical_master_expansion.py",
+      "dst": "scripts/frozen/207_canonical_master_expansion.py",
+      "status": "FROZEN",
+      "summary": "expanded canonical_patient_master_v1 with _v12 / _v271 / preop / max_tirads* TIRADS columns",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/265_canonical_finalization.py",
+      "dst": "scripts/frozen/265_canonical_finalization.py",
+      "status": "FROZEN",
+      "summary": "finalized CPM with legacy TIRADS columns (best/worst/_v12/combined)",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/271_tirads_imaging_finalization.py",
+      "dst": "scripts/frozen/271_tirads_imaging_finalization.py",
+      "status": "FROZEN",
+      "summary": "wrote tirads_*_points_v271 and laterality rollups to CPM",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/271a_fix_concordance_three_valued.py",
+      "dst": "scripts/frozen/271a_fix_concordance_three_valued.py",
+      "status": "FROZEN",
+      "summary": "wrote pathology_vs_imaging_laterality_concordant 3-valued patch to CPM",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/271b_laterality_normalization.py",
+      "dst": "scripts/frozen/271b_laterality_normalization.py",
+      "status": "FROZEN",
+      "summary": "wrote *_v271b laterality rollups to CPM",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/273_registry_curation.py",
+      "dst": "scripts/frozen/273_registry_curation.py",
+      "status": "FROZEN",
+      "summary": "registry curation that read/wrote CPM TIRADS columns",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/204_canonical_master_assembly.py",
+      "dst": "scripts/frozen/204_canonical_master_assembly.py",
+      "status": "FROZEN",
+      "summary": "wrote preop_tirads_best/worst/category to CPM during master assembly",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/205_canonical_consolidation.py",
+      "dst": "scripts/frozen/205_canonical_consolidation.py",
+      "status": "FROZEN",
+      "summary": "wrote preop_tirads_* + tirads_*_combined to CPM during consolidation",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/221_tirads_v2_integration.py",
+      "dst": "scripts/frozen/221_tirads_v2_integration.py",
+      "status": "FROZEN",
+      "summary": "main producer of the tirads_v2_* family on CPM (13 cols)",
+      "extras_n": 5
+    },
+    {
+      "src": "scripts/221b_suspicious_ln_reextraction.py",
+      "dst": "scripts/frozen/221b_suspicious_ln_reextraction.py",
+      "status": "FROZEN",
+      "summary": "wrote tirads_v2_any_fna_recommended_report* + suspicious_ln_on_us to CPM",
+      "extras_n": 6
+    },
+    {
+      "src": "scripts/221c_rollup_threevalue_patch.py",
+      "dst": "scripts/frozen/221c_rollup_threevalue_patch.py",
+      "status": "FROZEN",
+      "summary": "patched 3-valued tirads_v2_any_* rollups on CPM",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/252_recompute_max_tirads.py",
+      "dst": "scripts/frozen/252_recompute_max_tirads.py",
+      "status": "FROZEN",
+      "summary": "recomputed max_tirads_ever / imaging_tirads_worst / preop_tirads_best on CPM",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/301_canonical_us_patient_master_v1.py",
+      "dst": "scripts/frozen/301_canonical_us_patient_master_v1.py",
+      "status": "FROZEN",
+      "summary": "old US v1 patient-master writer; superseded by canonical_us_patient_master_v2 pipeline",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/328_tirads_v2_gap_a_cast_fix.py",
+      "dst": "scripts/frozen/328_tirads_v2_gap_a_cast_fix.py",
+      "status": "FROZEN",
+      "summary": "Gap-A patch on tirads_v2_* family on CPM",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/329_tirads_v2_gap_b_report_reroll.py",
+      "dst": "scripts/frozen/329_tirads_v2_gap_b_report_reroll.py",
+      "status": "FROZEN",
+      "summary": "Gap-B patch on tirads_v2_any_fna_recommended_report on CPM",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/368_cpm_us_cutover_to_v2.py",
+      "dst": "scripts/frozen/368_cpm_us_cutover_to_v2.py",
+      "status": "FROZEN",
+      "summary": "the literal CPM US v2 cutover script that materialized the 6 *_v2 cols on CPM",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/prompt6_348_older_masters.py",
+      "dst": "scripts/frozen/prompt6_348_older_masters.py",
+      "status": "FROZEN",
+      "summary": "writer of tirads_v2_worst_rank + any_fna_recommended_report from older rollup tables (caught by Part B Phase 3 grep, missed by Logan's initial 6-script list)",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/375_cpm_column_cleanup_and_audit.py",
+      "dst": "scripts/frozen/375_cpm_column_cleanup_and_audit.py",
+      "status": "FROZEN",
+      "summary": "ALTER TABLE RENAME COLUMN of imaging_updated_tirads_category_cpm_v2_v2 -> imaging_updated_tirads_category_cpm_v2 (already executed; CPM-mutating, frozen for safety)",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/48_build_analysis_resolved_layer.py",
+      "dst": "scripts/frozen/48_build_analysis_resolved_layer.py",
+      "status": "FROZEN",
+      "summary": "built patient_analysis_resolved_v1 with TIRADS-shaped column aliases sourced from extracted_tirads_validated_v1",
+      "extras_n": 5
+    },
+    {
+      "src": "scripts/50_multinodule_imaging.py",
+      "dst": "scripts/frozen/50_multinodule_imaging.py",
+      "status": "FROZEN",
+      "summary": "built multi_exam CTE with max_tirads_ever / worst_tirads_category as LOCAL aliases on a derived rollup",
+      "extras_n": 5
+    },
+    {
+      "src": "scripts/259_final_verification_lock.py",
+      "dst": "scripts/frozen/259_final_verification_lock.py",
+      "status": "FROZEN",
+      "summary": "one-shot final verification audit (max_tirads_ever undercount check); already executed",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/264_final_acceptance_addendum.py",
+      "dst": "scripts/frozen/264_final_acceptance_addendum.py",
+      "status": "FROZEN",
+      "summary": "one-shot final acceptance audit; already executed",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/277_canonical_cleanup_phase7_verification.py",
+      "dst": "scripts/frozen/277_canonical_cleanup_phase7_verification.py",
+      "status": "FROZEN",
+      "summary": "one-shot Phase 7 cleanup verification; already executed",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/336_final_main_audit.py",
+      "dst": "scripts/frozen/336_final_main_audit.py",
+      "status": "FROZEN",
+      "summary": "one-shot final main audit (per-column NULL counts on CPM); already executed",
+      "extras_n": 0
+    },
+    {
+      "src": "studies/canonical_cleanup_20260417/phase1_dryrun_probe.py",
+      "dst": "scripts/frozen/phase1_dryrun_probe.py",
+      "status": "FROZEN",
+      "summary": "one-shot Phase 1 dry-run sizing probe; already executed",
+      "extras_n": 0
+    },
+    {
+      "src": "studies/canonical_cleanup_20260417/preflight.py",
+      "dst": "scripts/frozen/preflight.py",
+      "status": "FROZEN",
+      "summary": "one-shot canonical-cleanup preflight; already executed",
+      "extras_n": 0
+    },
+    {
+      "src": "studies/canonical_cleanup_20260417/schema_recon.py",
+      "dst": "scripts/frozen/schema_recon.py",
+      "status": "FROZEN",
+      "summary": "one-shot canonical-cleanup schema reconnaissance; already executed",
+      "extras_n": 0
+    },
+    {
+      "src": "studies/proposal_multimodal_prediction_20260318/run_feasibility.py",
+      "dst": "scripts/frozen/run_feasibility.py",
+      "status": "FROZEN",
+      "summary": "one-shot multimodal-prediction feasibility study; already executed",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/228_registry_backfill.py",
+      "dst": "scripts/frozen/228_registry_backfill.py",
+      "status": "FROZEN",
+      "summary": "registry backfill metadata script with TIRADS column refs in source-table comments",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/246_canonical_us_nodule_characteristics.py",
+      "dst": "scripts/frozen/246_canonical_us_nodule_characteristics.py",
+      "status": "FROZEN",
+      "summary": "canonical US nodule characteristics builder with TIRADS column refs in docstring",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/369_us_v2_views_and_registry.py",
+      "dst": "scripts/frozen/369_us_v2_views_and_registry.py",
+      "status": "FROZEN",
+      "summary": "US v2 views/registry builder with TIRADS column refs in view definitions",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/prompt6_353_completion_audit.py",
+      "dst": "scripts/frozen/prompt6_353_completion_audit.py",
+      "status": "FROZEN",
+      "summary": "Prompt 6 completion audit with TIRADS column refs in audit metadata",
+      "extras_n": 0
+    },
+    {
+      "src": "scripts/prompt6_353_repoint_orphan_view.py",
+      "dst": "scripts/frozen/prompt6_353_repoint_orphan_view.py",
+      "status": "FROZEN",
+      "summary": "Prompt 6 orphan-view repoint with TIRADS column refs in header",
+      "extras_n": 0
+    }
+  ],
+  "finished_at_utc": "2026-04-21T23:11:09Z",
+  "counts": {
+    "frozen": 33,
+    "missing": 0,
+    "already_frozen": 0,
+    "git_mv_failed": 0
+  }
+}
