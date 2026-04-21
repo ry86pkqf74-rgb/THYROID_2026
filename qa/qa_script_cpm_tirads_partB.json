@@ -1,0 +1,192 @@
+{
+  "qa_script": "cpm_tirads_partB",
+  "version": "v1",
+  "run_at_utc": "2026-04-21T23:32:37Z",
+  "checks": [
+    {
+      "check_id": "01_cpm_row_count",
+      "description": "CPM row count unchanged from pre-drop (10871)",
+      "expected": 10871,
+      "got": 10871,
+      "passed": true,
+      "note": ""
+    },
+    {
+      "check_id": "02_cpm_no_tirads_cols",
+      "description": "CPM has 0 columns matching ILIKE '%tirads%' (excluding out-of-scope nlp_tirads_*)",
+      "expected": 0,
+      "got": 0,
+      "passed": true,
+      "note": "nlp_tirads_* count: 5 (out-of-scope per Part A + Part B prompt; expected 5)"
+    },
+    {
+      "check_id": "03_cpm_no_laterality_concordance_cols",
+      "description": "CPM has 0 pathology_vs_imaging_laterality_concordant* cols",
+      "expected": 0,
+      "got": 0,
+      "passed": true,
+      "note": ""
+    },
+    {
+      "check_id": "04_cohort_views_resolve",
+      "description": "All 9 migrated cohort views resolve and return expected row counts (Phase 2 baseline)",
+      "expected": {
+        "cohort_descriptive_full_cohort_v1": 10871,
+        "cohort_m011_tirads_fna_genetics_v1": 3286,
+        "cohort_m025_tirads_performance_v1": 3377,
+        "cohort_m045_multimodal_risk_v1": 1167,
+        "cohort_m075_tirads_multi_nodule_v1": 3286,
+        "cohort_m050_tumor_size_volume_v1": 10871,
+        "cohort_m053_nondiagnostic_fna_v1": 10871,
+        "cohort_m064_frozen_decision_v1": 10871,
+        "cohort_m076_ln_surveillance_v1": 10871
+      },
+      "got": {
+        "cohort_descriptive_full_cohort_v1": {
+          "expected": 10871,
+          "got": 10871,
+          "passed": true
+        },
+        "cohort_m011_tirads_fna_genetics_v1": {
+          "expected": 3286,
+          "got": 3286,
+          "passed": true
+        },
+        "cohort_m025_tirads_performance_v1": {
+          "expected": 3377,
+          "got": 3377,
+          "passed": true
+        },
+        "cohort_m045_multimodal_risk_v1": {
+          "expected": 1167,
+          "got": 1167,
+          "passed": true
+        },
+        "cohort_m075_tirads_multi_nodule_v1": {
+          "expected": 3286,
+          "got": 3286,
+          "passed": true
+        },
+        "cohort_m050_tumor_size_volume_v1": {
+          "expected": 10871,
+          "got": 10871,
+          "passed": true
+        },
+        "cohort_m053_nondiagnostic_fna_v1": {
+          "expected": 10871,
+          "got": 10871,
+          "passed": true
+        },
+        "cohort_m064_frozen_decision_v1": {
+          "expected": 10871,
+          "got": 10871,
+          "passed": true
+        },
+        "cohort_m076_ln_surveillance_v1": {
+          "expected": 10871,
+          "got": 10871,
+          "passed": true
+        }
+      },
+      "passed": true,
+      "note": ""
+    },
+    {
+      "check_id": "05_git_grep_empty",
+      "description": "Legacy column regex returns empty across non-frozen .py code paths",
+      "expected": [],
+      "got": [],
+      "passed": true,
+      "note": "rg --pcre2; excludes scripts/frozen/, scripts/output/, archive paths, .log/.json/.txt/.md/.sql historical artifacts (Logan-exempt), the migration helper scripts, Part B/preB documentation, and scripts/272_canonical_cleanup_phase1.py (Logan's leave-as-is directive)."
+    },
+    {
+      "check_id": "06_no_gap_abort",
+      "description": "manuscript_workspace.cpm_tirads_canonical_coverage_v1 has 0 gap_ABORT rows",
+      "expected": 0,
+      "got": 0,
+      "passed": true,
+      "note": "all status counts: {'drop_no_replacement': 6, 'retired_redesign': 8, 'mapped_category': 2, 'gap_other_v2_table': 6, 'mapped_points': 1, 'mapped_cupm_v2': 30}"
+    },
+    {
+      "check_id": "07_archive_integrity",
+      "description": "Pre-drop CPM archive: 10871 rows \u00d7 1585 cols (matches pre-drop live state)",
+      "expected": {
+        "rows": 10871,
+        "cols": 1585
+      },
+      "got": {
+        "rows": 10871,
+        "cols": 1585
+      },
+      "passed": true,
+      "note": ""
+    },
+    {
+      "check_id": "08_archive_view_defs",
+      "description": "Archive has 1 view_def_<name> table per migrated/inheriting cohort view (9 views)",
+      "expected": [
+        "view_def_cohort_descriptive_full_cohort_v1",
+        "view_def_cohort_m011_tirads_fna_genetics_v1",
+        "view_def_cohort_m025_tirads_performance_v1",
+        "view_def_cohort_m045_multimodal_risk_v1",
+        "view_def_cohort_m050_tumor_size_volume_v1",
+        "view_def_cohort_m053_nondiagnostic_fna_v1",
+        "view_def_cohort_m064_frozen_decision_v1",
+        "view_def_cohort_m075_tirads_multi_nodule_v1",
+        "view_def_cohort_m076_ln_surveillance_v1"
+      ],
+      "got": [
+        "view_def_cohort_descriptive_full_cohort_v1",
+        "view_def_cohort_m011_tirads_fna_genetics_v1",
+        "view_def_cohort_m025_tirads_performance_v1",
+        "view_def_cohort_m045_multimodal_risk_v1",
+        "view_def_cohort_m050_tumor_size_volume_v1",
+        "view_def_cohort_m053_nondiagnostic_fna_v1",
+        "view_def_cohort_m064_frozen_decision_v1",
+        "view_def_cohort_m075_tirads_multi_nodule_v1",
+        "view_def_cohort_m076_ln_surveillance_v1"
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "check_id": "09_frozen_scripts_catalog",
+      "description": "33 .py files in scripts/frozen/ all have FROZEN headers; README.md has 33 entries; special headers (NEW TARGET / CAT B) present",
+      "expected": {
+        "n_frozen_py": 33,
+        "n_readme_entries": 33,
+        "missing_header": [],
+        "missing_special_header": []
+      },
+      "got": {
+        "n_frozen_py": 33,
+        "n_readme_entries": 33,
+        "missing_header": [],
+        "missing_special_header": []
+      },
+      "passed": true,
+      "note": ""
+    },
+    {
+      "check_id": "10_canonical_spot_check",
+      "description": "\u226550% canonical-side population for 10 random RIDs per mapped legacy col (33 cols)",
+      "expected": {
+        "n_cols": 33,
+        "n_pass": 33
+      },
+      "got": {
+        "n_cols": 33,
+        "n_pass": 33,
+        "fails": []
+      },
+      "passed": true,
+      "note": ""
+    }
+  ],
+  "summary": {
+    "n_checks": 10,
+    "n_passed": 10,
+    "all_passed": true
+  },
+  "finished_at_utc": "2026-04-21T23:32:44Z"
+}
