@@ -28,6 +28,12 @@
 - Rename old versions to `ARCHIVE__` or `DEPRECATED__` with a COMMENT before swapping the live alias.
 - Check for duplicate column names after any enrichment re-run (`SELECT cpm.*, new_col AS foo` on an already-enriched table creates `foo_1` shadow columns — rebuild from the `ARCHIVE__` base instead).
 
+### View renames in DuckDB / MotherDuck (labeling / `_VIEW` passes)
+- **`ALTER VIEW … RENAME TO` is catalog-level only:** dependent views that referenced the object by name still store the **old** identifier in their view body (`duckdb_views().sql`); the next recompile/resolve can fail. Renaming the renamee is not enough when other views’ SQL still says the old name.
+- **Phase 2 must enumerate dependents:** search all in-scope `sql` in `duckdb_views()` (e.g. `main`, and later any `views_readable.*` in the same pass) for references to the **old** name — not just run the `ALTER` list. Repo grep of readers is separate from **in-database** dependent views.
+- **Mitigation (2026-04-21 pass):** after renames, `CREATE OR REPLACE VIEW` on each dependent with updated `FROM` / references, using archived pre-rename DDL for fidelity; see `reports/VIEW_LABELING_PASS_CLOSEOUT_20260421.md` and `scripts/archive/view_definitions_20260421/`.
+- **Git:** prefer separate commits for **archive DDL → migration/DB+readers → doc/closeout**; keep the archive commit intact for publication provenance and avoid interactive rebase that rewrites that window.
+
 ### Canonical master invariants (assert after every write)
 - `canonical_patient_master` rows = **10,871**
 - `canonical_patient_master` distinct research_id = **10,871**
