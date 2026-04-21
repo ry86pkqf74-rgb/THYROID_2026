@@ -23,8 +23,9 @@ WITH excel AS (
 llm AS (
     SELECT CAST(research_id AS VARCHAR) AS research_id,
            'Y' AS frozen_section_performed_llm,
-           MAX(frozen_section_result) AS frozen_section_result_llm
-    FROM main.frozen_section_event_v1 GROUP BY research_id
+           MAX(COALESCE(frozen_section_result_raw, frozen_section_result))
+                AS frozen_section_result_llm
+    FROM tier2.frozen_section_event_v1 GROUP BY research_id
 )
 SELECT COALESCE(e.research_id, l.research_id) AS research_id,
     e.frozen_section_performed_excel, l.frozen_section_performed_llm,
