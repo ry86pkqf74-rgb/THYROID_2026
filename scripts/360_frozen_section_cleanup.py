@@ -165,8 +165,21 @@ def archive_copy(
     tag: str,
     ts: str,
 ) -> str:
-    dst = f"{ARCHIVE_DB}.{ARCHIVE_SCHEMA}.\"{src_table}_{tag}_{ts}\""
+    dst_name = f"{src_table}_{tag}_{ts}"
+    dst = f'{ARCHIVE_DB}.{ARCHIVE_SCHEMA}."{dst_name}"'
     src = fq(src_schema, src_table)
+    already = con.execute(
+        """
+        SELECT 1 FROM information_schema.tables
+        WHERE table_catalog = 'Thyroid 2026 UPdated'
+          AND table_schema = ? AND table_name = ?
+        """,
+        [ARCHIVE_SCHEMA, dst_name],
+    ).fetchone()
+    if already:
+        n = con.execute(f"SELECT COUNT(*) FROM {dst}").fetchone()[0]
+        log_info(f"Archive already present: {dst} ({n:,} rows) — skipping re-copy")
+        return dst
     con.execute(f"CREATE TABLE {dst} AS SELECT * FROM {src}")
     n = con.execute(f"SELECT COUNT(*) FROM {dst}").fetchone()[0]
     log_info(f"Archived {src_schema}.{src_table} -> {dst} ({n:,} rows)")
