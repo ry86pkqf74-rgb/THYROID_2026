@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CPM TIRADS pre-B — canonical backfill of `main.canonical_us_patient_master_v2`.
+CPM TIRADS pre-B — canonical backfill of `main.canonical_us_patient_master_VIEW_v2`.
 
 Adds 9 columns to cupm_v2:
   - 7 port-from-CPM cols (rename-on-move, persisted in main.cupm_v2_canonical_backfill_v1)
@@ -90,7 +90,7 @@ def phase1_recon() -> dict:
     is_view = con.execute(
         """
         SELECT table_type FROM information_schema.tables
-        WHERE table_schema='main' AND table_name='canonical_us_patient_master_v2'
+        WHERE table_schema='main' AND table_name='canonical_us_patient_master_VIEW_v2'
         """
     ).fetchone()
     log["cupm_v2_table_type"] = is_view[0] if is_view else None
@@ -101,19 +101,19 @@ def phase1_recon() -> dict:
     defn = con.execute(
         """
         SELECT view_definition FROM information_schema.views
-        WHERE table_schema='main' AND table_name='canonical_us_patient_master_v2'
+        WHERE table_schema='main' AND table_name='canonical_us_patient_master_VIEW_v2'
         """
     ).fetchone()[0]
     (OUT_DIR / "preB_phase1_cupm_v2_view_definition_before.sql").write_text(defn + "\n")
     log["cupm_v2_view_definition_archived"] = "scripts/output/preB_phase1_cupm_v2_view_definition_before.sql"
 
-    cupm_n = con.execute("SELECT COUNT(*), COUNT(DISTINCT research_id) FROM main.canonical_us_patient_master_v2").fetchone()
+    cupm_n = con.execute("SELECT COUNT(*), COUNT(DISTINCT research_id) FROM main.canonical_us_patient_master_VIEW_v2").fetchone()
     log["cupm_v2_row_count_before"] = cupm_n[0]
     log["cupm_v2_distinct_rids_before"] = cupm_n[1]
     cupm_cols = con.execute(
         """
         SELECT COUNT(*) FROM information_schema.columns
-        WHERE table_schema='main' AND table_name='canonical_us_patient_master_v2'
+        WHERE table_schema='main' AND table_name='canonical_us_patient_master_VIEW_v2'
         """
     ).fetchone()[0]
     log["cupm_v2_column_count_before"] = cupm_cols
@@ -296,7 +296,7 @@ def phase2_backfill() -> dict:
 # ─────────────────────────────────────────────────────────────────────────────
 
 NEW_VIEW_BODY = """\
-CREATE OR REPLACE VIEW main.canonical_us_patient_master_v2 AS
+CREATE OR REPLACE VIEW main.canonical_us_patient_master_VIEW_v2 AS
 WITH exam_agg AS (
     SELECT research_id,
            CAST('t' AS BOOLEAN)                                       AS has_any_us,
@@ -317,7 +317,7 @@ WITH exam_agg AS (
                      AND n_abnormal_us_ln_on_exam > 0
                     THEN exam_date END)                               AS first_abnormal_us_ln_date,
            bool_or(any_nlp_backfill_pending_on_exam)                  AS any_nlp_backfill_pending_for_patient
-    FROM main.canonical_us_exam_master_v2
+    FROM main.canonical_us_exam_master_VIEW_v2
     GROUP BY 1
 ),
 nodule_first_last AS (
@@ -329,7 +329,7 @@ nodule_first_last AS (
                                                                       AS tirads_category_at_last_preop_exam,
            min(CASE WHEN upper(e.worst_tirads_category_this_exam) IN ('TR4','TR5')
                     THEN e.exam_date END)                             AS first_high_risk_tirads_date
-    FROM main.canonical_us_exam_master_v2 AS e
+    FROM main.canonical_us_exam_master_VIEW_v2 AS e
     GROUP BY 1
 ),
 nodule_agg AS (
@@ -394,12 +394,12 @@ def phase3_replace_view() -> dict:
 
     # Snapshot pre-state for rollback
     pre_n = con.execute(
-        "SELECT COUNT(*) FROM main.canonical_us_patient_master_v2"
+        "SELECT COUNT(*) FROM main.canonical_us_patient_master_VIEW_v2"
     ).fetchone()[0]
     pre_cols = con.execute(
         """
         SELECT COUNT(*) FROM information_schema.columns
-        WHERE table_schema='main' AND table_name='canonical_us_patient_master_v2'
+        WHERE table_schema='main' AND table_name='canonical_us_patient_master_VIEW_v2'
         """
     ).fetchone()[0]
     log["pre_state"] = {"row_count": pre_n, "column_count": pre_cols}
@@ -434,7 +434,7 @@ def phase4_verify() -> dict:
     cols = con.execute(
         """
         SELECT column_name, data_type, ordinal_position FROM information_schema.columns
-        WHERE table_schema='main' AND table_name='canonical_us_patient_master_v2'
+        WHERE table_schema='main' AND table_name='canonical_us_patient_master_VIEW_v2'
         ORDER BY ordinal_position
         """
     ).fetchall()
@@ -446,7 +446,7 @@ def phase4_verify() -> dict:
 
     # 2. Row count
     rn = con.execute(
-        "SELECT COUNT(*), COUNT(DISTINCT research_id) FROM main.canonical_us_patient_master_v2"
+        "SELECT COUNT(*), COUNT(DISTINCT research_id) FROM main.canonical_us_patient_master_VIEW_v2"
     ).fetchone()
     log["cupm_v2_row_count_after"] = rn[0]
     log["cupm_v2_distinct_rids_after"] = rn[1]
@@ -456,7 +456,7 @@ def phase4_verify() -> dict:
     new_pop = {}
     for c in NEW_PORT_TARGET_COLS + NEW_COMPUTE_COLS:
         n = con.execute(
-            f'SELECT COUNT("{c}") FROM main.canonical_us_patient_master_v2'
+            f'SELECT COUNT("{c}") FROM main.canonical_us_patient_master_VIEW_v2'
         ).fetchone()[0]
         new_pop[c] = n
     log["new_columns_populated_counts"] = new_pop
@@ -465,7 +465,7 @@ def phase4_verify() -> dict:
     inversion = con.execute(
         """
         SELECT COUNT(*) AS n_inverted
-        FROM main.canonical_us_patient_master_v2
+        FROM main.canonical_us_patient_master_VIEW_v2
         WHERE n_nodule_records IS NOT NULL
           AND n_nodules_total_across_exams IS NOT NULL
           AND n_nodule_records < n_nodules_total_across_exams
@@ -484,14 +484,14 @@ def phase4_verify() -> dict:
     # cupm_v2 (10859 RIDs — 12 patients have no US exams and so no exam_agg row).
     port_match = {}
     for src, tgt, _ in PORT_COLS:
-        n_view = con.execute(f'SELECT COUNT("{tgt}") FROM main.canonical_us_patient_master_v2').fetchone()[0]
+        n_view = con.execute(f'SELECT COUNT("{tgt}") FROM main.canonical_us_patient_master_VIEW_v2').fetchone()[0]
         n_bf = con.execute(f'SELECT COUNT("{tgt}") FROM main.cupm_v2_canonical_backfill_v1').fetchone()[0]
         # RIDs present in backfill (with NOT NULL for this col) but not in cupm_v2
         n_dropped_by_join = con.execute(f"""
             SELECT COUNT(*) FROM main.cupm_v2_canonical_backfill_v1 bf
             WHERE bf."{tgt}" IS NOT NULL
               AND NOT EXISTS (
-                  SELECT 1 FROM main.canonical_us_patient_master_v2 v
+                  SELECT 1 FROM main.canonical_us_patient_master_VIEW_v2 v
                   WHERE v.research_id = bf.research_id
               )
         """).fetchone()[0]
@@ -522,7 +522,7 @@ def phase4_verify() -> dict:
           MIN(n_nodule_records)                       AS min_nrec,
           MAX(n_nodule_records)                       AS max_nrec,
           MEDIAN(n_nodule_records)                    AS p50_nrec
-        FROM main.canonical_us_patient_master_v2
+        FROM main.canonical_us_patient_master_VIEW_v2
         """
     ).fetchone()
     keys = ["n_max_size","min_size","max_size","p50_size","n_nrec","min_nrec","max_nrec","p50_nrec"]
@@ -543,7 +543,7 @@ def phase4_verify() -> dict:
     orig_pop = {}
     for c in orig_cols:
         orig_pop[c] = con.execute(
-            f'SELECT COUNT("{c}") FROM main.canonical_us_patient_master_v2'
+            f'SELECT COUNT("{c}") FROM main.canonical_us_patient_master_VIEW_v2'
         ).fetchone()[0]
     log["original_columns_populated_counts"] = orig_pop
 
@@ -581,75 +581,75 @@ PHASE5_MAPPING: list[tuple[str, str, str, str, str]] = [
      "0 readers, 0 views; no canonical equivalent — retire"),
 
     # ── 7 ports now mapped to cupm_v2 (renamed) ──
-    ("imaging_laterality_rollup_v271b",                 "canonical_us_patient_master_v2", "imaging_laterality_rollup_v2",
+    ("imaging_laterality_rollup_v271b",                 "canonical_us_patient_master_VIEW_v2", "imaging_laterality_rollup_v2",
      "mapped_cupm_v2", "Ported via cupm_v2_canonical_backfill_v1; rename-on-move"),
-    ("pathology_vs_imaging_laterality_concordant_v271b","canonical_us_patient_master_v2", "pathology_vs_imaging_laterality_concordant_v2",
+    ("pathology_vs_imaging_laterality_concordant_v271b","canonical_us_patient_master_VIEW_v2", "pathology_vs_imaging_laterality_concordant_v2",
      "mapped_cupm_v2", "Ported via backfill; rename-on-move"),
-    ("tumor_pathology_laterality_v271b",                "canonical_us_patient_master_v2", "tumor_pathology_laterality_v2",
+    ("tumor_pathology_laterality_v271b",                "canonical_us_patient_master_VIEW_v2", "tumor_pathology_laterality_v2",
      "mapped_cupm_v2", "Ported via backfill; rename-on-move"),
-    ("tirads_v2_any_fna_recommended_report",            "canonical_us_patient_master_v2", "any_fna_recommended_report_ever",
+    ("tirads_v2_any_fna_recommended_report",            "canonical_us_patient_master_VIEW_v2", "any_fna_recommended_report_ever",
      "mapped_cupm_v2", "Ported via backfill; rename-on-move (drop tirads_v2_ prefix, add _ever suffix)"),
-    ("tirads_v2_any_fna_recommended_report_source",     "canonical_us_patient_master_v2", "any_fna_recommended_report_source",
+    ("tirads_v2_any_fna_recommended_report_source",     "canonical_us_patient_master_VIEW_v2", "any_fna_recommended_report_source",
      "mapped_cupm_v2", "Ported via backfill; rename-on-move"),
-    ("tirads_v2_worst_rank",                            "canonical_us_patient_master_v2", "tirads_worst_rank_ever",
+    ("tirads_v2_worst_rank",                            "canonical_us_patient_master_VIEW_v2", "tirads_worst_rank_ever",
      "mapped_cupm_v2", "Ported via backfill; rename-on-move (add _ever suffix)"),
-    ("tirads_v2_worst_rank_source",                     "canonical_us_patient_master_v2", "tirads_worst_rank_source",
+    ("tirads_v2_worst_rank_source",                     "canonical_us_patient_master_VIEW_v2", "tirads_worst_rank_source",
      "mapped_cupm_v2", "Ported via backfill; rename-on-move"),
 
     # ── 2 compute-from-cunc_v2 cols now on cupm_v2 ──
-    ("tirads_nodule_size_max_mm_v12",                   "canonical_us_patient_master_v2", "max_nodule_size_mm",
+    ("tirads_nodule_size_max_mm_v12",                   "canonical_us_patient_master_VIEW_v2", "max_nodule_size_mm",
      "mapped_cupm_v2", "Computed from cunc_v2 in cupm_v2 view body (GREATEST(length,width,height) with size_cm_max*10 fallback)"),
-    ("tirads_n_nodule_records_v12",                     "canonical_us_patient_master_v2", "n_nodule_records",
+    ("tirads_n_nodule_records_v12",                     "canonical_us_patient_master_VIEW_v2", "n_nodule_records",
      "mapped_cupm_v2", "Computed from cunc_v2 in cupm_v2 view body (COUNT(*) per RID)"),
 
     # ── existing patient-rollup maps (unchanged from Part B Phase 1) ──
-    ("max_tirads_ever",                                 "canonical_us_patient_master_v2", "max_tirads_category_ever",
+    ("max_tirads_ever",                                 "canonical_us_patient_master_VIEW_v2", "max_tirads_category_ever",
      "mapped_cupm_v2", "BIGINT 1-5 → VARCHAR TR1-TR5"),
-    ("max_tirads_ever_v2",                              "canonical_us_patient_master_v2", "max_tirads_points_ever",
+    ("max_tirads_ever_v2",                              "canonical_us_patient_master_VIEW_v2", "max_tirads_points_ever",
      "mapped_cupm_v2", "DOUBLE points (0-13+); already exists on cupm_v2"),
-    ("worst_tirads_category",                           "canonical_us_patient_master_v2", "max_tirads_category_ever",
+    ("worst_tirads_category",                           "canonical_us_patient_master_VIEW_v2", "max_tirads_category_ever",
      "mapped_cupm_v2", "Patient worst TR rank rollup"),
-    ("imaging_tirads_best",                             "canonical_us_patient_master_v2", "tirads_category_at_first_exam",
+    ("imaging_tirads_best",                             "canonical_us_patient_master_VIEW_v2", "tirads_category_at_first_exam",
      "mapped_cupm_v2", "Per-exam first-exam category rollup"),
-    ("imaging_tirads_worst",                            "canonical_us_patient_master_v2", "max_tirads_category_ever",
+    ("imaging_tirads_worst",                            "canonical_us_patient_master_VIEW_v2", "max_tirads_category_ever",
      "mapped_cupm_v2", "Patient worst TR rank rollup"),
-    ("preop_tirads_best",                               "canonical_us_patient_master_v2", "tirads_category_at_last_preop_exam",
+    ("preop_tirads_best",                               "canonical_us_patient_master_VIEW_v2", "tirads_category_at_last_preop_exam",
      "mapped_cupm_v2", "Last-preop-exam category"),
-    ("preop_tirads_worst",                              "canonical_us_patient_master_v2", "tirads_category_at_last_preop_exam",
+    ("preop_tirads_worst",                              "canonical_us_patient_master_VIEW_v2", "tirads_category_at_last_preop_exam",
      "mapped_cupm_v2", "Best+worst flatten to last preop value on cupm_v2"),
-    ("preop_tirads_category",                           "canonical_us_patient_master_v2", "tirads_category_at_last_preop_exam",
+    ("preop_tirads_category",                           "canonical_us_patient_master_VIEW_v2", "tirads_category_at_last_preop_exam",
      "mapped_cupm_v2", "Likely same as preop_best/worst"),
-    ("imaging_updated_tirads_category_cpm_v1",          "canonical_us_patient_master_v2", "max_tirads_category_ever",
+    ("imaging_updated_tirads_category_cpm_v1",          "canonical_us_patient_master_VIEW_v2", "max_tirads_category_ever",
      "mapped_cupm_v2", "Patient-rollup; v1 older, _v2 newer"),
-    ("imaging_updated_tirads_category_cpm_v2",          "canonical_us_patient_master_v2", "max_tirads_category_ever",
+    ("imaging_updated_tirads_category_cpm_v2",          "canonical_us_patient_master_VIEW_v2", "max_tirads_category_ever",
      "mapped_cupm_v2", "Patient-rollup"),
-    ("imaging_tirads_best_v2",                          "canonical_us_patient_master_v2", "tirads_category_at_first_exam",
+    ("imaging_tirads_best_v2",                          "canonical_us_patient_master_VIEW_v2", "tirads_category_at_first_exam",
      "mapped_cupm_v2", "Same as imaging_tirads_best"),
-    ("imaging_tirads_worst_v2",                         "canonical_us_patient_master_v2", "max_tirads_category_ever",
+    ("imaging_tirads_worst_v2",                         "canonical_us_patient_master_VIEW_v2", "max_tirads_category_ever",
      "mapped_cupm_v2", "Same as imaging_tirads_worst"),
-    ("preop_tirads_best_v2",                            "canonical_us_patient_master_v2", "tirads_category_at_last_preop_exam",
+    ("preop_tirads_best_v2",                            "canonical_us_patient_master_VIEW_v2", "tirads_category_at_last_preop_exam",
      "mapped_cupm_v2", "Same as preop_tirads_best"),
-    ("preop_tirads_category_v2",                        "canonical_us_patient_master_v2", "tirads_category_at_last_preop_exam",
+    ("preop_tirads_category_v2",                        "canonical_us_patient_master_VIEW_v2", "tirads_category_at_last_preop_exam",
      "mapped_cupm_v2", "Same as preop_tirads_category"),
-    ("tirads_best_combined",                            "canonical_us_patient_master_v2", "tirads_category_at_first_exam",
+    ("tirads_best_combined",                            "canonical_us_patient_master_VIEW_v2", "tirads_category_at_first_exam",
      "mapped_cupm_v2", "Pre-v12 INTEGER form"),
-    ("tirads_worst_combined",                           "canonical_us_patient_master_v2", "max_tirads_category_ever",
+    ("tirads_worst_combined",                           "canonical_us_patient_master_VIEW_v2", "max_tirads_category_ever",
      "mapped_cupm_v2", "Pre-v12 INTEGER worst-ever"),
-    ("tirads_best_category_v12",                        "canonical_us_patient_master_v2", "tirads_category_at_first_exam",
+    ("tirads_best_category_v12",                        "canonical_us_patient_master_VIEW_v2", "tirads_category_at_first_exam",
      "mapped_cupm_v2", "VARCHAR labels collapse to TR rank"),
-    ("tirads_worst_category_v12",                       "canonical_us_patient_master_v2", "max_tirads_category_ever",
+    ("tirads_worst_category_v12",                       "canonical_us_patient_master_VIEW_v2", "max_tirads_category_ever",
      "mapped_cupm_v2", "VARCHAR labels collapse to TR rank"),
-    ("tirads_best_score_v12",                           "canonical_us_patient_master_v2", "tirads_category_at_first_exam",
+    ("tirads_best_score_v12",                           "canonical_us_patient_master_VIEW_v2", "tirads_category_at_first_exam",
      "mapped_category", "BIGINT category 1-5 → VARCHAR TR rank"),
-    ("tirads_worst_score_v12",                          "canonical_us_patient_master_v2", "max_tirads_category_ever",
+    ("tirads_worst_score_v12",                          "canonical_us_patient_master_VIEW_v2", "max_tirads_category_ever",
      "mapped_category", "BIGINT category 1-5 → VARCHAR TR rank"),
-    ("tirads_worst_points_v271",                        "canonical_us_patient_master_v2", "max_tirads_points_ever",
+    ("tirads_worst_points_v271",                        "canonical_us_patient_master_VIEW_v2", "max_tirads_points_ever",
      "mapped_points", "DOUBLE points; cupm_v2 has max-only"),
-    ("tirads_v2_any_suspicious_ln_on_us",               "canonical_us_patient_master_v2", "any_suspicious_us_ln_ever",
+    ("tirads_v2_any_suspicious_ln_on_us",               "canonical_us_patient_master_VIEW_v2", "any_suspicious_us_ln_ever",
      "mapped_cupm_v2", "Direct match"),
-    ("tirads_v2_worst_category",                        "canonical_us_patient_master_v2", "max_tirads_category_ever",
+    ("tirads_v2_worst_category",                        "canonical_us_patient_master_VIEW_v2", "max_tirads_category_ever",
      "mapped_cupm_v2", "Same column"),
-    ("tirads_v2_max_points",                            "canonical_us_patient_master_v2", "max_tirads_points_ever",
+    ("tirads_v2_max_points",                            "canonical_us_patient_master_VIEW_v2", "max_tirads_points_ever",
      "mapped_cupm_v2", "Same column"),
 
     # ── 8 retired_redesign (unchanged from Part B Phase 1) ──
@@ -708,14 +708,14 @@ def phase5_coverage_rerun() -> dict:
     cupm_v2_cols = {
         r[0]: r[1] for r in con.execute(
             """SELECT column_name, data_type FROM information_schema.columns
-               WHERE table_schema='main' AND table_name='canonical_us_patient_master_v2'"""
+               WHERE table_schema='main' AND table_name='canonical_us_patient_master_VIEW_v2'"""
         ).fetchall()
     }
 
     # Validate every mapped canonical col exists on cupm_v2 now
     errors: list[str] = []
     for legacy, ctab, ccol, status, _ in PHASE5_MAPPING:
-        if status.startswith("mapped") and ctab == "canonical_us_patient_master_v2":
+        if status.startswith("mapped") and ctab == "canonical_us_patient_master_VIEW_v2":
             if ccol not in cupm_v2_cols:
                 errors.append(f"Mapped canonical col missing: {legacy} → {ctab}.{ccol}")
     log["mapping_errors"] = errors
@@ -746,7 +746,7 @@ def phase5_coverage_rerun() -> dict:
         )
     """)
     for legacy, ctab, ccol, status, notes in PHASE5_MAPPING:
-        canon_dt = cupm_v2_cols.get(ccol, "—") if ctab == "canonical_us_patient_master_v2" else "—"
+        canon_dt = cupm_v2_cols.get(ccol, "—") if ctab == "canonical_us_patient_master_VIEW_v2" else "—"
         cpm_dt = cpm_types.get(legacy, "<NOT_ON_CPM>")
         con.execute(
             "INSERT INTO manuscript_workspace.cpm_tirads_canonical_coverage_v1 VALUES (?,?,?,?,?,?,?)",

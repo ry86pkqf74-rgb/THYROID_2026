@@ -100,13 +100,13 @@
     },
     {
       "schema": "main",
-      "name": "molecular_variants_unnested_v2",
+      "name": "molecular_variants_unnested_VIEW_v2",
       "refs_targets": [],
       "defn_len": 516
     },
     {
       "schema": "main",
-      "name": "molecular_fusions_unnested_v2",
+      "name": "molecular_fusions_unnested_VIEW_v2",
       "refs_targets": [],
       "defn_len": 485
     },

@@ -1,5 +1,5 @@
 {
-  "main.canonical_us_patient_master_v2": {
+  "main.canonical_us_patient_master_VIEW_v2": {
     "n_distinct_cols_referenced": 1,
     "total_references": 1,
     "cols": {

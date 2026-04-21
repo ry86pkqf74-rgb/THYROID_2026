@@ -1,7 +1,7 @@
 {
   "script": "Script 367",
   "run_ts_utc": "20260421T173031Z",
-  "target": "thyroid_canonical_publication_v1_0.main.canonical_us_patient_master_v2",
+  "target": "thyroid_canonical_publication_v1_0.main.canonical_us_patient_master_VIEW_v2",
   "rows": 10859,
   "preop_pts": 3543,
   "ln_pts": 4077,

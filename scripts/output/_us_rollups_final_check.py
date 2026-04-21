@@ -50,8 +50,8 @@ def main() -> int:
     print("Smoke counts")
     print("=" * 60)
     for fq, label in [
-        ("main.canonical_us_exam_master_v2", "exam_master view"),
-        ("main.canonical_us_patient_master_v2", "patient_master view"),
+        ("main.canonical_us_exam_master_VIEW_v2", "exam_master view"),
+        ("main.canonical_us_patient_master_VIEW_v2", "patient_master view"),
         ("main.canonical_us_nodule_v2", "nodule_v2 (table)"),
         ("main.canonical_us_thyroid_gland_v2", "gland_v2 (table)"),
         ("main.canonical_us_lymph_node_v2", "lymph_node_v2 (table)"),
@@ -76,8 +76,8 @@ def main() -> int:
     print("\n" + "=" * 60)
     print("Confirm archive snapshots present in 'Thyroid 2026 UPdated'")
     print("=" * 60)
-    for n in ("archived_canonical_us_exam_master_v2",
-              "archived_canonical_us_patient_master_v2"):
+    for n in ("archived_canonical_us_exam_master_VIEW_v2",
+              "archived_canonical_us_patient_master_VIEW_v2"):
         try:
             r = con.execute(
                 f'SELECT COUNT(*) FROM "Thyroid 2026 UPdated".us_legacy_20260421.{n}'

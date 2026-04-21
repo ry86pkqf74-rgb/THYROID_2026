@@ -74,13 +74,13 @@ DOMAIN_RULES: list[tuple[str, str, str, str]] = [
      "fna", "fna_cytology / patient_refined_master_clinical_v12", "205/207"),
     # CPM TIRADS Part B (2026-04-21): all CPM-side TIRADS columns dropped from
     # canonical_patient_master. Canonical TIRADS now lives on
-    # canonical_us_patient_master_v2 (cupm_v2). These regex patterns no longer
+    # canonical_us_patient_master_VIEW_v2 (cupm_v2). These regex patterns no longer
     # match anything on the post-Part-B CPM; left in place as a historical
     # marker. To classify cupm_v2 columns, run a separate dictionary
-    # generator against main.canonical_us_patient_master_v2 (out of scope
+    # generator against main.canonical_us_patient_master_VIEW_v2 (out of scope
     # here — this script enumerates CPM only).
     (r"^(preop_tirads_|tirads_.*_v12)",
-     "tirads_legacy_dropped", "DROPPED 2026-04-21; see canonical_us_patient_master_v2 for canonical TIRADS", "PartB"),
+     "tirads_legacy_dropped", "DROPPED 2026-04-21; see canonical_us_patient_master_VIEW_v2 for canonical TIRADS", "PartB"),
     (r"^(imaging_|n_us_|bilateral_|dominant_|has_suspicious_|longitudinal_)",
      "imaging_us", "imaging_patient_summary_v1 / imaging_exam_master_v1", "207"),
     (r"^ct_",
@@ -684,7 +684,7 @@ Table: `{CANONICAL}`
 | Total surgical cohort | {TOTAL_ROWS:,} | — | All patients in canonical |
 | Analysis-eligible cancer | ~4,136 | `histology_analysis_eligible_flag` | Confirmed malignancy with eligible staging |
 | Molecular tested | ~10,025 | `molecular_tested_confirmed` | Any structured molecular test |
-| TIRADS documented | per cupm_v2 | `canonical_us_patient_master_v2.max_tirads_category_ever` | Patient-level TIRADS rollup. Legacy CPM `tirads_best_combined` dropped 2026-04-21 (CPM TIRADS Part B). |
+| TIRADS documented | per cupm_v2 | `canonical_us_patient_master_VIEW_v2.max_tirads_category_ever` | Patient-level TIRADS rollup. Legacy CPM `tirads_best_combined` dropped 2026-04-21 (CPM TIRADS Part B). |
 | RAI received | ~862 | `rai_received_flag` | Any RAI treatment documented |
 | Recurrence documented | ~1,986 | `any_recurrence` | Any recurrence flag (structural or biochemical) |
 

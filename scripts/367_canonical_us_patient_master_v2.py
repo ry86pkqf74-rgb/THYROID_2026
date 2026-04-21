@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Script 367 — Build main.canonical_us_patient_master_v2 as a VIEW.
+"""Script 367 — Build main.canonical_us_patient_master_VIEW_v2 as a VIEW.
 
 (Originally a CREATE TABLE builder; converted to a VIEW on 2026-04-21
 because the rollup contains zero unique data — every column derives from
-canonical_us_exam_master_v2, which is itself a view over the 3 v2 master
+canonical_us_exam_master_VIEW_v2, which is itself a view over the 3 v2 master
 tables. See US_rollups_to_views_raw_schema_move_cursor_prompt_20260421.md
 for the rationale and parity audit.)
 
@@ -23,7 +23,7 @@ sys.path.insert(0, str(HERE))
 from _md_connect import connect_locked, PUBLICATION_DB  # noqa: E402
 
 SCRIPT_TAG = "Script 367"
-TARGET = f"{PUBLICATION_DB}.main.canonical_us_patient_master_v2"
+TARGET = f"{PUBLICATION_DB}.main.canonical_us_patient_master_VIEW_v2"
 OUT_DIR = HERE / "output"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 RUN_TS = datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")
@@ -53,7 +53,7 @@ WITH exam_agg AS (
                   AND n_abnormal_us_ln_on_exam > 0
                  THEN exam_date END)               AS first_abnormal_us_ln_date,
         BOOL_OR(any_nlp_backfill_pending_on_exam)  AS any_nlp_backfill_pending_for_patient
-    FROM {PUBLICATION_DB}.main.canonical_us_exam_master_v2
+    FROM {PUBLICATION_DB}.main.canonical_us_exam_master_VIEW_v2
     GROUP BY 1
 ),
 nodule_first_last AS (
@@ -69,7 +69,7 @@ nodule_first_last AS (
         MIN(CASE WHEN UPPER(e.worst_tirads_category_this_exam) IN ('TR4','TR5')
                  THEN e.exam_date END)
             AS first_high_risk_tirads_date
-    FROM {PUBLICATION_DB}.main.canonical_us_exam_master_v2 e
+    FROM {PUBLICATION_DB}.main.canonical_us_exam_master_VIEW_v2 e
     GROUP BY 1
 )
 SELECT
@@ -101,7 +101,7 @@ COMMENT_SQL = (
     f"COMMENT ON VIEW {TARGET} IS "
     f"'US v2 per-patient master (VIEW). Grain: one row per research_id "
     f"(patients with any US exam). Materialized by Script 367 as a VIEW over "
-    f"canonical_us_exam_master_v2 (last refreshed {RUN_TS}). "
+    f"canonical_us_exam_master_VIEW_v2 (last refreshed {RUN_TS}). "
     f"LN columns are US-prefixed (has_us_ln_findings_ever, "
     f"any_suspicious_us_ln_ever, first_abnormal_us_ln_date) so future "
     f"modality patient masters can add ct_*, petct_*, etc. without collision.';"

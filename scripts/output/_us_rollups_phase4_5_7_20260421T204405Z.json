@@ -12,11 +12,11 @@
     },
     "table_types": [
       {
-        "name": "canonical_us_exam_master_v2",
+        "name": "canonical_us_exam_master_VIEW_v2",
         "type": "VIEW"
       },
       {
-        "name": "canonical_us_patient_master_v2",
+        "name": "canonical_us_patient_master_VIEW_v2",
         "type": "VIEW"
       }
     ]
@@ -62,15 +62,15 @@
         "type": "BASE TABLE"
       },
       {
-        "name": "canonical_us_exam_master_v2",
+        "name": "canonical_us_exam_master_VIEW_v2",
         "type": "VIEW"
       },
       {
-        "name": "canonical_us_patient_master_v2",
+        "name": "canonical_us_patient_master_VIEW_v2",
         "type": "VIEW"
       },
       {
-        "name": "molecular_fusions_unnested_v2",
+        "name": "molecular_fusions_unnested_VIEW_v2",
         "type": "VIEW"
       }
     ],

@@ -4,7 +4,7 @@
 **Archive DB:** `"Thyroid 2026 UPdated".cpm_tirads_legacy_20260421`
 **Date:** 2026-04-21
 **Follow-on to:** Part A (read-only audit, complete)
-**Architecture decision:** Option C — `canonical_patient_master` carries ZERO TIRADS columns. Canonical TIRADS truth lives on `main.canonical_us_patient_master_v2`; downstream consumers JOIN that table explicitly.
+**Architecture decision:** Option C — `canonical_patient_master` carries ZERO TIRADS columns. Canonical TIRADS truth lives on `main.canonical_us_patient_master_VIEW_v2`; downstream consumers JOIN that table explicitly.
 
 ## Goal
 
@@ -13,7 +13,7 @@ Remove all TIRADS-related columns from `main.canonical_patient_master` (52 colum
 ## Locked decisions (Logan, 2026-04-21)
 
 1. **Retired-concept columns — REDESIGN cohort views, do NOT port to canonical.**
-   Columns `tirads_concordant_count_v12`, `tirads_mismatch_count_v12`, `tirads_n_sources_v12`, `tirads_reliability_v12` are retired. `cohort_m025_tirads_performance_v1` and `cohort_m075_tirads_multi_nodule_v1` get their TIRADS analysis redesigned to use what `canonical_us_patient_master_v2` provides (`tirads_v2_n_reports`, `tirads_v2_worst_category`, `tirads_v2_worst_rank`, `tirads_v2_worst_rank_source`). If a metric has no v2 surrogate, flag it and STOP for sign-off — do not silently drop the metric.
+   Columns `tirads_concordant_count_v12`, `tirads_mismatch_count_v12`, `tirads_n_sources_v12`, `tirads_reliability_v12` are retired. `cohort_m025_tirads_performance_v1` and `cohort_m075_tirads_multi_nodule_v1` get their TIRADS analysis redesigned to use what `canonical_us_patient_master_VIEW_v2` provides (`tirads_v2_n_reports`, `tirads_v2_worst_category`, `tirads_v2_worst_rank`, `tirads_v2_worst_rank_source`). If a metric has no v2 surrogate, flag it and STOP for sign-off — do not silently drop the metric.
 2. **Writer-script freeze is in-scope for Part B, not a follow-on.**
    Scripts 207 / 271 / 271a / 271b / 265 / 273 freeze in the same commit that drops CPM columns. Match the Script 113 freeze pattern from the lab consolidation close-out.
 
@@ -29,7 +29,7 @@ The 32-row classification covers legacy-only. Part B must also drop any `tirads_
 
 ## Constraints
 
-- **Do NOT touch `canonical_us_patient_master_v2`.** If Phase 1 finds a gap, STOP. Any column port is a separate pre-B micro-script with its own review.
+- **Do NOT touch `canonical_us_patient_master_VIEW_v2`.** If Phase 1 finds a gap, STOP. Any column port is a separate pre-B micro-script with its own review.
 - **Drop order is strict:** cohort views → script readers → writer-script freeze → CPM columns. Breaking this order breaks live consumers mid-run.
 - **PHI:** research_id + structured fields only. No `clinical_note_text` into output anywhere.
 - **Archive everything before dropping.** Pre-drop CPM snapshot + all 8 old view definitions go to `"Thyroid 2026 UPdated".cpm_tirads_legacy_20260421`.
@@ -39,7 +39,7 @@ The 32-row classification covers legacy-only. Part B must also drop any `tirads_
 
 ## Phase 1 — Canonical coverage audit
 
-Goal: prove every CPM TIRADS column either (a) has a semantically-equivalent column on `canonical_us_patient_master_v2`, or (b) is explicitly retired under the Q1 redesign decision.
+Goal: prove every CPM TIRADS column either (a) has a semantically-equivalent column on `canonical_us_patient_master_VIEW_v2`, or (b) is explicitly retired under the Q1 redesign decision.
 
 Build `manuscript_workspace.cpm_tirads_canonical_coverage_v1`:
 
@@ -68,7 +68,7 @@ Verify every mapped canonical column actually exists:
 ```sql
 SELECT column_name, data_type
 FROM information_schema.columns
-WHERE table_schema = 'main' AND table_name = 'canonical_us_patient_master_v2'
+WHERE table_schema = 'main' AND table_name = 'canonical_us_patient_master_VIEW_v2'
   AND column_name ILIKE '%tirads%' OR column_name ILIKE '%laterality%';
 ```
 
@@ -105,7 +105,7 @@ For each view:
    Or use `SELECT view_definition FROM information_schema.views WHERE ...` to pull the body.
 
 2. **Rewrite CREATE OR REPLACE VIEW:**
-   - Replace every CPM TIRADS column reference with a JOIN to `main.canonical_us_patient_master_v2` on `research_id` (1:1).
+   - Replace every CPM TIRADS column reference with a JOIN to `main.canonical_us_patient_master_VIEW_v2` on `research_id` (1:1).
    - For `cohort_m025_tirads_performance_v1` and `cohort_m075_tirads_multi_nodule_v1`: drop `tirads_concordant_count_v12` / `tirads_mismatch_count_v12` / `tirads_n_sources_v12` / `tirads_reliability_v12`. Replace where possible:
      - concordant_count → `tirads_v2_n_reports` (if intent was "how many TIRADS-scored reports for this patient")
      - mismatch_count / n_sources / reliability → drop entirely; add a view comment noting the retirement; surface `tirads_v2_worst_rank_source` where a nearest-signal substitute is needed.
@@ -124,7 +124,7 @@ Report per view:
 view_name | row_count_before | row_count_after | col_count_before | col_count_after | cols_dropped | cols_replaced_join | spot_check_agree
 ```
 
-Commit message: `CPM TIRADS Part B / Phase 2: migrated 8 cohort views to canonical_us_patient_master_v2`
+Commit message: `CPM TIRADS Part B / Phase 2: migrated 8 cohort views to canonical_us_patient_master_VIEW_v2`
 
 ---
 
@@ -138,8 +138,8 @@ git grep -nE 'tirads_(best|worst|n_nodule|nodule_size|n_sources|reliability|conc
 
 For each hit (expect ~20–40 based on Part A reader inventory):
 
-- If the file already JOINs `canonical_us_patient_master_v2`: swap the column name in place.
-- If not: add a LEFT JOIN to `canonical_us_patient_master_v2 cupm ON cupm.research_id = <existing>.research_id` and swap the reference.
+- If the file already JOINs `canonical_us_patient_master_VIEW_v2`: swap the column name in place.
+- If not: add a LEFT JOIN to `canonical_us_patient_master_VIEW_v2 cupm ON cupm.research_id = <existing>.research_id` and swap the reference.
 - For BOOLEAN → 5-valued laterality concordance: coerce at the consumer (e.g., `cupm.pathology_vs_imaging_laterality_concordant_v2 IN ('concordant', ...)` where the old code expected TRUE).
 - For `max_tirads_ever` dual-form: pick category OR points form based on what the specific script is doing; check the column comment and usage context.
 - `ruff check <file>` after each Python change; abort that file if lint fails.
@@ -150,7 +150,7 @@ Log every change to `scripts/output/_cpm_tirads_partB_reader_migrations.md`:
 | file | line | before | after | lint_status |
 ```
 
-Commit message: `CPM TIRADS Part B / Phase 3: migrated <N> script readers to canonical_us_patient_master_v2`
+Commit message: `CPM TIRADS Part B / Phase 3: migrated <N> script readers to canonical_us_patient_master_VIEW_v2`
 
 ---
 
@@ -168,8 +168,8 @@ For each:
    # FROZEN — 2026-04-21 — Script NNN
    # =====================================================================
    # Reason: CPM TIRADS columns dropped per Option C (CPM TIRADS Part B).
-   # Replacement: canonical TIRADS values live on main.canonical_us_patient_master_v2.
-   #             Rebuild via the US v2 pipeline (canonical_us_nodule_v2 + canonical_us_exam_master_v2 + canonical_us_patient_master_v2).
+   # Replacement: canonical TIRADS values live on main.canonical_us_patient_master_VIEW_v2.
+   #             Rebuild via the US v2 pipeline (canonical_us_nodule_v2 + canonical_us_exam_master_VIEW_v2 + canonical_us_patient_master_VIEW_v2).
    # Do NOT re-enable without a new column plan and CPM-schema decision.
    # =====================================================================
    ```
@@ -258,7 +258,7 @@ Write results to `qa/qa_script_cpm_tirads_partB.json`. Every check must pass:
 7. Archive sanity: `"Thyroid 2026 UPdated".cpm_tirads_legacy_20260421.canonical_patient_master_pre_partB` row count + column count match the pre-drop live table.
 8. Archive sanity: one `view_def_*` row per migrated cohort view.
 9. Frozen scripts: all 6 present in `scripts/frozen/`, each has FROZEN header, `scripts/frozen/README.md` has 6 entries.
-10. Canonical spot check: 10 random research_ids per mapped column — value in `canonical_us_patient_master_v2` matches value in pre-drop archive after type coercion.
+10. Canonical spot check: 10 random research_ids per mapped column — value in `canonical_us_patient_master_VIEW_v2` matches value in pre-drop archive after type coercion.
 
 ---
 
@@ -276,12 +276,12 @@ If you squashed, use this commit message:
 CPM TIRADS Part B — drop all TIRADS columns from canonical_patient_master (2026-04-21)
 
 Architecture: Option C. canonical_patient_master carries ZERO TIRADS columns.
-Canonical TIRADS truth lives on main.canonical_us_patient_master_v2; downstream
+Canonical TIRADS truth lives on main.canonical_us_patient_master_VIEW_v2; downstream
 consumers JOIN that table explicitly.
 
 Phases:
 1. Canonical coverage audit -> manuscript_workspace.cpm_tirads_canonical_coverage_v1
-2. Rewrote 8 cohort views to JOIN canonical_us_patient_master_v2;
+2. Rewrote 8 cohort views to JOIN canonical_us_patient_master_VIEW_v2;
    cohort_m025_tirads_performance_v1 + cohort_m075_tirads_multi_nodule_v1
    redesigned to drop retired concordance / reliability / n_sources concepts
    (no canonical surrogate; per Logan, redesign not port).
@@ -316,7 +316,7 @@ Retained: cpm_tirads_audit_classification_v1, cpm_tirads_canonical_coverage_v1 (
 5. **Cohort view redesign for m025/m075.** Q1 directive is "redesign, do not port". If a specific m025/m075 metric has no v2 surrogate AND is load-bearing for the manuscript, STOP and ask Logan — the redesign assumes a redesign is feasible.
 6. **Archive DB name.** `"Thyroid 2026 UPdated".cpm_tirads_legacy_20260421` — exact spacing + quoting. Matches the `us_legacy_20260421` / `molecular_legacy_20260421` convention.
 7. **`git mv` not `mv`.** Frozen scripts must move via `git mv` so git tracks the rename; a plain `mv` + `git add` loses history.
-8. **Do NOT modify `canonical_us_patient_master_v2`.** If Phase 1 finds a gap, STOP. Port is a separate script.
+8. **Do NOT modify `canonical_us_patient_master_VIEW_v2`.** If Phase 1 finds a gap, STOP. Port is a separate script.
 9. **Part A workspace retention.** `cpm_tirads_audit_classification_v1` and `cpm_tirads_canonical_coverage_v1` stay (2-week retention). The 19 `cpm_tirads_audit_sample_*_v1` tables drop in Phase 5.
 10. **PHI safety.** No `clinical_note_text` into any output, log, or commit diff. research_id + structured fields only.
 

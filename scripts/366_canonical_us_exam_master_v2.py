@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Script 366 — Build main.canonical_us_exam_master_v2 as a VIEW.
+"""Script 366 — Build main.canonical_us_exam_master_VIEW_v2 as a VIEW.
 
 (Originally a CREATE TABLE builder; converted to a VIEW on 2026-04-21
 because the rollup contains zero unique data — every column derives from
@@ -36,7 +36,7 @@ sys.path.insert(0, str(HERE))
 from _md_connect import connect_locked, PUBLICATION_DB  # noqa: E402
 
 SCRIPT_TAG = "Script 366"
-TARGET = f"{PUBLICATION_DB}.main.canonical_us_exam_master_v2"
+TARGET = f"{PUBLICATION_DB}.main.canonical_us_exam_master_VIEW_v2"
 OUT_DIR = HERE / "output"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 RUN_TS = datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")

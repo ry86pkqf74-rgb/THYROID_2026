@@ -25,15 +25,15 @@ HERE = Path(__file__).resolve().parent
 SCRIPTS = HERE.parent
 sys.path.insert(0, str(SCRIPTS))
 
-mod366 = importlib.import_module("366_canonical_us_exam_master_v2")
-mod367 = importlib.import_module("367_canonical_us_patient_master_v2")
+mod366 = importlib.import_module("366_canonical_us_exam_master_VIEW_v2")
+mod367 = importlib.import_module("367_canonical_us_patient_master_VIEW_v2")
 from _md_connect import connect_locked, PUBLICATION_DB  # noqa: E402
 
 PUB = PUBLICATION_DB
 CAND_EXAM = f"{PUB}.manuscript_workspace.candidate_us_exam_master_v2"
 CAND_PT = f"{PUB}.manuscript_workspace.candidate_us_patient_master_v2"
-TBL_EXAM = f"{PUB}.main.canonical_us_exam_master_v2"
-TBL_PT = f"{PUB}.main.canonical_us_patient_master_v2"
+TBL_EXAM = f"{PUB}.main.canonical_us_exam_master_VIEW_v2"
+TBL_PT = f"{PUB}.main.canonical_us_patient_master_VIEW_v2"
 
 TIRADS_COL = "acr2017_tirads_category"
 TIRADS_PTS_COL = "acr2017_tirads_points"
@@ -97,7 +97,7 @@ def phase2(con) -> dict[str, str]:
         f"{mod366.TARGET} -> {CAND_EXAM}")
     if n_swap == 0:
         raise SystemExit(
-            "Expected patient builder to read from main.canonical_us_exam_master_v2;"
+            "Expected patient builder to read from main.canonical_us_exam_master_VIEW_v2;"
             " no occurrence found. Check Script 367 for changes."
         )
 
@@ -192,7 +192,7 @@ def _row_count_by_key(con, table: str, view: str, key_cols: list[str]) -> dict:
 def phase3(con) -> dict:
     out: dict = {}
     log("=" * 60)
-    log("PHASE 3 PARITY: canonical_us_exam_master_v2")
+    log("PHASE 3 PARITY: canonical_us_exam_master_VIEW_v2")
     log("=" * 60)
 
     out["exam"] = {}
@@ -217,7 +217,7 @@ def phase3(con) -> dict:
 
     log("")
     log("=" * 60)
-    log("PHASE 3 PARITY: canonical_us_patient_master_v2")
+    log("PHASE 3 PARITY: canonical_us_patient_master_VIEW_v2")
     log("=" * 60)
 
     out["pt"] = {}

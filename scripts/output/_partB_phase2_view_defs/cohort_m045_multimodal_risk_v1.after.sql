@@ -15,7 +15,7 @@ SELECT
     p.ajcc8_stage_group, p.ata_risk_category, p.surg_procedure_type,
     p.any_recurrence_flag, p.followup_years, p.surg_first_date
 FROM main.canonical_patient_master AS p
-LEFT JOIN main.canonical_us_patient_master_v2 AS cupm USING (research_id)
+LEFT JOIN main.canonical_us_patient_master_VIEW_v2 AS cupm USING (research_id)
 WHERE p.bethesda_final IS NOT NULL
   AND p.histology_final IS NOT NULL
   AND (cupm.tirads_category_at_last_preop_exam IS NOT NULL

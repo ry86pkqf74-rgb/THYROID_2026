@@ -138,7 +138,7 @@ def build_cohort_flow(df: pd.DataFrame) -> pd.DataFrame:
     rai = int((df["rai_received_flag"] == True).sum())  # noqa: E712
     tg = int(df["tg_nadir"].notna().sum())
     # imaging-tirads-best column removed 2026-04-21 (CPM TIRADS Part B); canonical TIRADS
-    # now on canonical_us_patient_master_v2. The cohort-flow audit drops the TIRADS step
+    # now on canonical_us_patient_master_VIEW_v2. The cohort-flow audit drops the TIRADS step
     # entirely; if a future manuscript needs a TIRADS-availability rollup at this layer,
     # JOIN cupm_v2 and gate on max_tirads_category_ever.
 

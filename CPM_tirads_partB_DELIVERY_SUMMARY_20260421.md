@@ -40,7 +40,7 @@ main.canonical_patient_master:
 - 53 TIRADS columns dropped via per-column `ALTER TABLE DROP COLUMN`.
 - Row count unchanged (10,871). Schema slim by design.
 
-### `main.canonical_us_patient_master_v2` (cupm_v2 view)
+### `main.canonical_us_patient_master_VIEW_v2` (cupm_v2 view)
 - Now carries 28 columns (was 19). The 9 added in pre-B:
   - 7 ports from CPM (rename-on-move): `imaging_laterality_rollup_v2`,
     `pathology_vs_imaging_laterality_concordant_v2`,
@@ -127,7 +127,7 @@ If a future manuscript needs to reconstruct any dropped CPM TIRADS column,
 the canonical sources are:
 
 1. **`main.cupm_v2_canonical_backfill_v1`** — 7 port cols (laterality + worst_rank + fna_recommended_report rollups). Frozen snapshot from CPM 2026-04-21.
-2. **`main.canonical_us_patient_master_v2`** — patient-level rollups (TIRADS category, points, first/last preop, max nodule size, etc.).
+2. **`main.canonical_us_patient_master_VIEW_v2`** — patient-level rollups (TIRADS category, points, first/last preop, max nodule size, etc.).
 3. **`main.canonical_us_nodule_v2`** — per-nodule grain for anything `cupm_v2` doesn't already aggregate.
 4. **`"Thyroid 2026 UPdated".cpm_tirads_legacy_20260421.canonical_patient_master_pre_partB`** — full pre-drop CPM (10871 × 1585) for forensic restore.
 

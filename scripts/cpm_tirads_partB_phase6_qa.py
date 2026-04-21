@@ -107,7 +107,7 @@ def main() -> None:
     # ── Check 5: git grep returns empty for legacy column regex ───────────
     # Tightened lookaheads use (?![_a-zA-Z]) to match identifiers as complete
     # words — prevents false positives on US v2 builder columns like
-    # `worst_tirads_category_this_exam` (a column on canonical_us_exam_master_v2,
+    # `worst_tirads_category_this_exam` (a column on canonical_us_exam_master_VIEW_v2,
     # not CPM) and `max_tirads_category_ever` (cupm_v2). Historical text/log/sql
     # files (.log/.json/.txt/.md/.sql) excluded — these are already-produced
     # artifacts that document pre-cleanup state. 272 excluded per Logan's
@@ -227,7 +227,7 @@ def main() -> None:
         """SELECT column_name, canonical_column
            FROM manuscript_workspace.cpm_tirads_canonical_coverage_v1
            WHERE coverage_status IN ('mapped_cupm_v2','mapped_category','mapped_points')
-             AND canonical_table = 'canonical_us_patient_master_v2'
+             AND canonical_table = 'canonical_us_patient_master_VIEW_v2'
              AND canonical_column IS NOT NULL
              AND canonical_column != '-'"""
     ).fetchall()
@@ -246,7 +246,7 @@ def main() -> None:
                     COUNT(*)                                                     AS n_sample,
                     COUNT(*) FILTER (WHERE v."{canon_col}" IS NOT NULL)           AS n_canon_populated
                 FROM src
-                LEFT JOIN main.canonical_us_patient_master_v2 v USING (research_id)
+                LEFT JOIN main.canonical_us_patient_master_VIEW_v2 v USING (research_id)
             """).fetchone()
             spot_results.append({
                 "legacy_col":         legacy_col,

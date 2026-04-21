@@ -1159,7 +1159,7 @@ def phase_4(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
 #
 # CPM TIRADS Part B (2026-04-21): the 10 tirads_v2_* CPM columns previously
 # listed here were dropped from canonical_patient_master. Canonical TIRADS now
-# lives on canonical_us_patient_master_v2 (cupm_v2). The frozenset is empty
+# lives on canonical_us_patient_master_VIEW_v2 (cupm_v2). The frozenset is empty
 # post-Part-B because there are no longer "undocumented CPM tirads_v2_* cols"
 # to allowlist — they're gone, not undocumented.
 # Future cupm_v2 dict gaps (if any) get tracked in a separate allowlist on
@@ -1184,7 +1184,7 @@ def phase_5(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     out["allowlist_resolution_owners"] = {
         "known_undocumented_cpm_cols": (
             "RESOLVED 2026-04-21: 10 tirads_v2_* columns dropped from CPM via "
-            "CPM TIRADS Part B; canonical TIRADS on canonical_us_patient_master_v2."
+            "CPM TIRADS Part B; canonical TIRADS on canonical_us_patient_master_VIEW_v2."
         ),
         "known_orphan_dict_tables": (
             "Future dictionary-rebuild pass (Script 272-style) — drops dict "

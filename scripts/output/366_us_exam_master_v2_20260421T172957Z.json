@@ -1,7 +1,7 @@
 {
   "script": "Script 366",
   "run_ts_utc": "20260421T172957Z",
-  "target": "thyroid_canonical_publication_v1_0.main.canonical_us_exam_master_v2",
+  "target": "thyroid_canonical_publication_v1_0.main.canonical_us_exam_master_VIEW_v2",
   "rows": 18102,
   "patients": 10859,
   "preop_count": 7446,

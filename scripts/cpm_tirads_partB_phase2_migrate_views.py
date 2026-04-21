@@ -3,7 +3,7 @@
 Part B / Phase 2: Migrate 9 cohort views off CPM TIRADS cols onto cupm_v2.
 
 Strategy: source-replacement, schema-preservation.
-- Each rewritten view JOINs main.canonical_us_patient_master_v2 (cupm_v2) and
+- Each rewritten view JOINs main.canonical_us_patient_master_VIEW_v2 (cupm_v2) and
   sources values from cupm_v2 columns, but keeps the legacy CPM column NAMES
   as aliases on the cohort view's SELECT list. This lets downstream consumers
   (notebooks, manuscript scripts) keep working without rename churn.
@@ -60,7 +60,7 @@ VIEW_BODIES: dict[str, str] = {}
 
 VIEW_BODIES["cohort_descriptive_full_cohort_v1"] = """
 CREATE OR REPLACE VIEW manuscript_workspace.cohort_descriptive_full_cohort_v1 AS
--- Migrated 2026-04-21: TIRADS columns now sourced from canonical_us_patient_master_v2.
+-- Migrated 2026-04-21: TIRADS columns now sourced from canonical_us_patient_master_VIEW_v2.
 -- Legacy column names preserved as aliases for downstream consumer compatibility.
 -- Source-of-truth shift: tirads_best_category_v12, tirads_worst_category_v12,
 -- tirads_best_score_v12, tirads_nodule_size_max_mm_v12 now reflect cupm_v2
@@ -137,7 +137,7 @@ SELECT
     p.op_nlp_nerve_monitoring_used, p.op_nlp_reoperative_field,
     p.ajcc8_calculable_flag, p.ata_calculable_flag, p.macis_calculable_flag
 FROM main.canonical_patient_master AS p
-LEFT JOIN main.canonical_us_patient_master_v2 AS cupm USING (research_id)
+LEFT JOIN main.canonical_us_patient_master_VIEW_v2 AS cupm USING (research_id)
 """
 
 VIEW_BODIES["cohort_m011_tirads_fna_genetics_v1"] = """
@@ -159,7 +159,7 @@ SELECT
     p.ajcc8_stage_group, p.ata_risk_category, p.ln_positive_flag,
     p.any_recurrence_flag, p.overall_survival_years
 FROM main.canonical_patient_master AS p
-LEFT JOIN main.canonical_us_patient_master_v2 AS cupm USING (research_id)
+LEFT JOIN main.canonical_us_patient_master_VIEW_v2 AS cupm USING (research_id)
 WHERE cupm.tirads_category_at_first_exam IS NOT NULL
 """
 
@@ -191,7 +191,7 @@ SELECT
     p.fna_path_concordance_category, p.fna_path_concordant,
     p.surg_procedure_type, p.surg_first_date
 FROM main.canonical_patient_master AS p
-LEFT JOIN main.canonical_us_patient_master_v2 AS cupm USING (research_id)
+LEFT JOIN main.canonical_us_patient_master_VIEW_v2 AS cupm USING (research_id)
 WHERE cupm.tirads_category_at_last_preop_exam IS NOT NULL
    OR cupm.tirads_category_at_first_exam      IS NOT NULL
 """
@@ -213,7 +213,7 @@ SELECT
     p.ajcc8_stage_group, p.ata_risk_category, p.surg_procedure_type,
     p.any_recurrence_flag, p.followup_years, p.surg_first_date
 FROM main.canonical_patient_master AS p
-LEFT JOIN main.canonical_us_patient_master_v2 AS cupm USING (research_id)
+LEFT JOIN main.canonical_us_patient_master_VIEW_v2 AS cupm USING (research_id)
 WHERE p.bethesda_final IS NOT NULL
   AND p.histology_final IS NOT NULL
   AND (cupm.tirads_category_at_last_preop_exam IS NOT NULL
@@ -246,7 +246,7 @@ SELECT
     p.ajcc8_stage_group, p.ata_risk_category, p.ln_positive_flag,
     p.any_recurrence_flag, p.overall_survival_years
 FROM main.canonical_patient_master AS p
-LEFT JOIN main.canonical_us_patient_master_v2 AS cupm USING (research_id)
+LEFT JOIN main.canonical_us_patient_master_VIEW_v2 AS cupm USING (research_id)
 WHERE cupm.tirads_category_at_first_exam IS NOT NULL
 """
 

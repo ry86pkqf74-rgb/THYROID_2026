@@ -90,7 +90,7 @@
       "src": "scripts/301_canonical_us_patient_master_v1.py",
       "dst": "scripts/frozen/301_canonical_us_patient_master_v1.py",
       "status": "FROZEN",
-      "summary": "old US v1 patient-master writer; superseded by canonical_us_patient_master_v2 pipeline",
+      "summary": "old US v1 patient-master writer; superseded by canonical_us_patient_master_VIEW_v2 pipeline",
       "extras_n": 0
     },
     {

@@ -1,6 +1,6 @@
 
 CREATE OR REPLACE VIEW manuscript_workspace.cohort_descriptive_full_cohort_v1 AS
--- Migrated 2026-04-21: TIRADS columns now sourced from canonical_us_patient_master_v2.
+-- Migrated 2026-04-21: TIRADS columns now sourced from canonical_us_patient_master_VIEW_v2.
 -- Legacy column names preserved as aliases for downstream consumer compatibility.
 -- Source-of-truth shift: tirads_best_category_v12, tirads_worst_category_v12,
 -- tirads_best_score_v12, tirads_nodule_size_max_mm_v12 now reflect cupm_v2
@@ -77,5 +77,5 @@ SELECT
     p.op_nlp_nerve_monitoring_used, p.op_nlp_reoperative_field,
     p.ajcc8_calculable_flag, p.ata_calculable_flag, p.macis_calculable_flag
 FROM main.canonical_patient_master AS p
-LEFT JOIN main.canonical_us_patient_master_v2 AS cupm USING (research_id)
+LEFT JOIN main.canonical_us_patient_master_VIEW_v2 AS cupm USING (research_id)
 

@@ -24,6 +24,6 @@ SELECT
     p.ajcc8_stage_group, p.ata_risk_category, p.ln_positive_flag,
     p.any_recurrence_flag, p.overall_survival_years
 FROM main.canonical_patient_master AS p
-LEFT JOIN main.canonical_us_patient_master_v2 AS cupm USING (research_id)
+LEFT JOIN main.canonical_us_patient_master_VIEW_v2 AS cupm USING (research_id)
 WHERE cupm.tirads_category_at_first_exam IS NOT NULL
 

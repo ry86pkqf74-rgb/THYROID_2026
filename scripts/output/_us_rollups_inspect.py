@@ -16,8 +16,8 @@ TABLES = [
     "canonical_us_nodule_v2",
     "canonical_us_thyroid_gland_v2",
     "canonical_us_lymph_node_v2",
-    "canonical_us_exam_master_v2",
-    "canonical_us_patient_master_v2",
+    "canonical_us_exam_master_VIEW_v2",
+    "canonical_us_patient_master_VIEW_v2",
 ]
 
 
@@ -70,7 +70,7 @@ def main() -> int:
         "SELECT research_id, exam_date, worst_tirads_category_this_exam, "
         "best_tirads_category_this_exam, count_tr1, count_tr2, count_tr3, "
         "count_tr4, count_tr5 "
-        f"FROM main.canonical_us_exam_master_v2 LIMIT 5"
+        f"FROM main.canonical_us_exam_master_VIEW_v2 LIMIT 5"
     ).fetchall()
     for r in rows:
         print(f"  {r}")

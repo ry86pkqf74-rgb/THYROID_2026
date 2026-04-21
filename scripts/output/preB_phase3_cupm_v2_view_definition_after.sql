@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW main.canonical_us_patient_master_v2 AS
+CREATE OR REPLACE VIEW main.canonical_us_patient_master_VIEW_v2 AS
 WITH exam_agg AS (
     SELECT research_id,
            CAST('t' AS BOOLEAN)                                       AS has_any_us,
@@ -19,7 +19,7 @@ WITH exam_agg AS (
                      AND n_abnormal_us_ln_on_exam > 0
                     THEN exam_date END)                               AS first_abnormal_us_ln_date,
            bool_or(any_nlp_backfill_pending_on_exam)                  AS any_nlp_backfill_pending_for_patient
-    FROM main.canonical_us_exam_master_v2
+    FROM main.canonical_us_exam_master_VIEW_v2
     GROUP BY 1
 ),
 nodule_first_last AS (
@@ -31,7 +31,7 @@ nodule_first_last AS (
                                                                       AS tirads_category_at_last_preop_exam,
            min(CASE WHEN upper(e.worst_tirads_category_this_exam) IN ('TR4','TR5')
                     THEN e.exam_date END)                             AS first_high_risk_tirads_date
-    FROM main.canonical_us_exam_master_v2 AS e
+    FROM main.canonical_us_exam_master_VIEW_v2 AS e
     GROUP BY 1
 ),
 nodule_agg AS (

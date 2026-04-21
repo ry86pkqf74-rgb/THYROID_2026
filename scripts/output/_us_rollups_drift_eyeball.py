@@ -12,7 +12,7 @@ sys.path.insert(0, str(SCRIPTS))
 from _md_connect import connect_locked, PUBLICATION_DB  # noqa: E402
 
 PUB = PUBLICATION_DB
-TBL_EXAM = f"{PUB}.main.canonical_us_exam_master_v2"
+TBL_EXAM = f"{PUB}.main.canonical_us_exam_master_VIEW_v2"
 CAND_EXAM = f"{PUB}.manuscript_workspace.candidate_us_exam_master_v2"
 
 NON_TIRADS_NON_RANK_DIFF_COLS = [

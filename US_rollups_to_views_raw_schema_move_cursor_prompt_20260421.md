@@ -14,8 +14,8 @@ Reduce `main` to exactly 3 canonical US tables. Convert the 2 rollup "masters" t
 main.canonical_us_nodule_v2           BASE TABLE  (master)
 main.canonical_us_thyroid_gland_v2    BASE TABLE  (master)
 main.canonical_us_lymph_node_v2       BASE TABLE  (master)
-main.canonical_us_exam_master_v2      VIEW        (derived from 3 masters)
-main.canonical_us_patient_master_v2   VIEW        (derived from 3 masters, via exam_master view)
+main.canonical_us_exam_master_VIEW_v2      VIEW        (derived from 3 masters)
+main.canonical_us_patient_master_VIEW_v2   VIEW        (derived from 3 masters, via exam_master view)
 ```
 
 **Moved out of `main`:**
@@ -29,11 +29,11 @@ raw.us_nodules_tirads     (was main.us_nodules_tirads, 10,859 patients, 36 cols)
 
 ## Phase 0 — Safety: codebase grep for writes to the rollup tables
 
-Before touching anything, grep the repo for scripts that INSERT/UPDATE/CREATE either rollup table. If any pipeline currently writes to `canonical_us_exam_master_v2` or `canonical_us_patient_master_v2`, those scripts will break when the table becomes a view.
+Before touching anything, grep the repo for scripts that INSERT/UPDATE/CREATE either rollup table. If any pipeline currently writes to `canonical_us_exam_master_VIEW_v2` or `canonical_us_patient_master_VIEW_v2`, those scripts will break when the table becomes a view.
 
 ```bash
-grep -rn -iE "(insert\s+into|update|create\s+(or\s+replace\s+)?table)\s+[^;]*canonical_us_exam_master_v2" scripts/
-grep -rn -iE "(insert\s+into|update|create\s+(or\s+replace\s+)?table)\s+[^;]*canonical_us_patient_master_v2" scripts/
+grep -rn -iE "(insert\s+into|update|create\s+(or\s+replace\s+)?table)\s+[^;]*canonical_us_exam_master_VIEW_v2" scripts/
+grep -rn -iE "(insert\s+into|update|create\s+(or\s+replace\s+)?table)\s+[^;]*canonical_us_patient_master_VIEW_v2" scripts/
 ```
 
 Report findings. Expected outcome: 1-2 "builder" scripts per rollup (likely `Script_363_*` / `Script_364_*` era). Those scripts need their CREATE TABLE statements converted to CREATE OR REPLACE VIEW and moved into this prompt's Phase 2 SQL, OR archived if the view definition fully supersedes them.
@@ -46,7 +46,7 @@ Do NOT proceed to Phase 2 until we've agreed on the disposition of every writer 
 
 For each rollup, confirm every column maps to a derivation from the 3 masters. Write the mapping as SQL that we'll use verbatim in the view DDL.
 
-### `canonical_us_exam_master_v2` — derivation spec
+### `canonical_us_exam_master_VIEW_v2` — derivation spec
 
 Grain: one row per `(research_id, exam_date)` where any US happened (any gland, nodule, or LN record exists for that exam).
 
@@ -76,7 +76,7 @@ Grain: one row per `(research_id, exam_date)` where any US happened (any gland, 
 | `is_preop_exam` | derivation depends on how the current table populates this; if it joins to surgery date from a clinical table, the view has to do the same JOIN |
 | `any_nlp_backfill_pending_on_exam` | `BOOL_OR(nlp_backfill_pending)` across the 3 masters for that exam key |
 
-### `canonical_us_patient_master_v2` — derivation spec
+### `canonical_us_patient_master_VIEW_v2` — derivation spec
 
 Grain: one row per `research_id` that has any US record.
 
@@ -130,19 +130,19 @@ For each rollup, every column must match between the current table and the candi
 ```sql
 -- Row count
 SELECT
-  (SELECT COUNT(*) FROM main.canonical_us_exam_master_v2) AS table_rows,
+  (SELECT COUNT(*) FROM main.canonical_us_exam_master_VIEW_v2) AS table_rows,
   (SELECT COUNT(*) FROM manuscript_workspace.candidate_us_exam_master_v2) AS view_rows;
 
 -- Full content diff (anti-joins in both directions)
 SELECT 'in_table_not_view' AS side, COUNT(*)
-FROM (SELECT * FROM main.canonical_us_exam_master_v2
+FROM (SELECT * FROM main.canonical_us_exam_master_VIEW_v2
       EXCEPT
       SELECT * FROM manuscript_workspace.candidate_us_exam_master_v2)
 UNION ALL
 SELECT 'in_view_not_table', COUNT(*)
 FROM (SELECT * FROM manuscript_workspace.candidate_us_exam_master_v2
       EXCEPT
-      SELECT * FROM main.canonical_us_exam_master_v2);
+      SELECT * FROM main.canonical_us_exam_master_VIEW_v2);
 -- Both counts MUST be 0.
 ```
 
@@ -158,21 +158,21 @@ Run the same parity check for `patient_master`.
 
 ```sql
 -- Archive the pre-replacement tables first (safety net, drop in 2 weeks)
-CREATE TABLE "Thyroid 2026 UPdated".us_legacy_20260421.archived_canonical_us_exam_master_v2 AS
-SELECT * FROM main.canonical_us_exam_master_v2;
+CREATE TABLE "Thyroid 2026 UPdated".us_legacy_20260421.archived_canonical_us_exam_master_VIEW_v2 AS
+SELECT * FROM main.canonical_us_exam_master_VIEW_v2;
 
-CREATE TABLE "Thyroid 2026 UPdated".us_legacy_20260421.archived_canonical_us_patient_master_v2 AS
-SELECT * FROM main.canonical_us_patient_master_v2;
+CREATE TABLE "Thyroid 2026 UPdated".us_legacy_20260421.archived_canonical_us_patient_master_VIEW_v2 AS
+SELECT * FROM main.canonical_us_patient_master_VIEW_v2;
 
 -- Drop the base tables
-DROP TABLE main.canonical_us_exam_master_v2;
-DROP TABLE main.canonical_us_patient_master_v2;
+DROP TABLE main.canonical_us_exam_master_VIEW_v2;
+DROP TABLE main.canonical_us_patient_master_VIEW_v2;
 
 -- Create the views in place (re-using the parity-verified SQL from Phase 2)
-CREATE VIEW main.canonical_us_exam_master_v2 AS
+CREATE VIEW main.canonical_us_exam_master_VIEW_v2 AS
 <SQL>;
 
-CREATE VIEW main.canonical_us_patient_master_v2 AS
+CREATE VIEW main.canonical_us_patient_master_VIEW_v2 AS
 <SQL>;
 ```
 
@@ -183,7 +183,7 @@ SELECT table_name, table_type
 FROM information_schema.tables
 WHERE table_catalog = 'thyroid_canonical_publication_v1_0'
   AND table_schema = 'main'
-  AND table_name IN ('canonical_us_exam_master_v2','canonical_us_patient_master_v2');
+  AND table_name IN ('canonical_us_exam_master_VIEW_v2','canonical_us_patient_master_VIEW_v2');
 -- Expected: both rows show table_type = 'VIEW'
 ```
 
@@ -247,8 +247,8 @@ ORDER BY table_type, table_name;
 -- Expected:
 --   BASE TABLE: canonical_us_lymph_node_v2, canonical_us_nodule_v2, canonical_us_thyroid_gland_v2
 --               (plus the 3 false-positive keyword matches: manuscript_cohort_v1,
---                molecular_fusions_unnested_v2, specimen_tumor_focus_v1)
---   VIEW:       canonical_us_exam_master_v2, canonical_us_patient_master_v2
+--                molecular_fusions_unnested_VIEW_v2, specimen_tumor_focus_v1)
+--   VIEW:       canonical_us_exam_master_VIEW_v2, canonical_us_patient_master_VIEW_v2
 
 -- Confirm raw schema
 SELECT table_name, table_type
@@ -259,8 +259,8 @@ ORDER BY table_name;
 -- Expected: ultrasound_reports, us_nodules_tirads — both BASE TABLE.
 
 -- Smoke test the views return sensible data
-SELECT COUNT(*) AS exam_master_rows FROM main.canonical_us_exam_master_v2;
-SELECT COUNT(*) AS patient_master_rows FROM main.canonical_us_patient_master_v2;
+SELECT COUNT(*) AS exam_master_rows FROM main.canonical_us_exam_master_VIEW_v2;
+SELECT COUNT(*) AS patient_master_rows FROM main.canonical_us_patient_master_VIEW_v2;
 -- Expected: 18,102 and 10,859 (or updated counts if Script 376's new TIRADS categorizations shifted things).
 ```
 
@@ -279,8 +279,8 @@ main now holds exactly 3 canonical US tables:
 - canonical_us_lymph_node_v2 (master, 6,801 rows)
 
 Converted to views (derived from the 3 masters):
-- canonical_us_exam_master_v2 (was table, 18,102 rows)
-- canonical_us_patient_master_v2 (was table, 10,859 rows)
+- canonical_us_exam_master_VIEW_v2 (was table, 18,102 rows)
+- canonical_us_patient_master_VIEW_v2 (was table, 10,859 rows)
 
 Pre-replacement snapshots archived to
 "Thyroid 2026 UPdated".us_legacy_20260421.archived_canonical_us_*_master_v2.

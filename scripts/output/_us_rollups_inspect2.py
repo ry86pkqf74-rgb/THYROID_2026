@@ -30,13 +30,13 @@ def main() -> int:
         r = con.execute(
             f"SELECT COUNT(*) FILTER (WHERE {c} IS NOT NULL) AS not_null, "
             f"       COUNT(*) FILTER (WHERE {c} IS NULL)     AS is_null "
-            f"FROM main.canonical_us_exam_master_v2"
+            f"FROM main.canonical_us_exam_master_VIEW_v2"
         ).fetchone()
         print(f"  {c:<40s} not_null={r[0]:>7d}  null={r[1]:>7d}")
 
     print("\n=== exam_master rows with NULL exam_date ===")
     n = con.execute(
-        "SELECT COUNT(*) FROM main.canonical_us_exam_master_v2 "
+        "SELECT COUNT(*) FROM main.canonical_us_exam_master_VIEW_v2 "
         "WHERE exam_date IS NULL"
     ).fetchone()[0]
     print(f"  rows with exam_date IS NULL: {n}")
@@ -46,7 +46,7 @@ def main() -> int:
         "SELECT research_id, exam_date, n_nodules_on_exam, "
         "  worst_tirads_category_this_exam, best_tirads_category_this_exam, "
         "  count_tr1, count_tr2, count_tr3, count_tr4, count_tr5 "
-        "FROM main.canonical_us_exam_master_v2 "
+        "FROM main.canonical_us_exam_master_VIEW_v2 "
         "WHERE worst_tirads_category_this_exam IS NOT NULL "
         "LIMIT 5"
     ).fetchall()
@@ -77,7 +77,7 @@ def main() -> int:
     print("\n=== Worst TIRADS categories distribution in exam_master ===")
     rows = con.execute(
         "SELECT worst_tirads_category_this_exam, COUNT(*) "
-        "FROM main.canonical_us_exam_master_v2 GROUP BY 1 ORDER BY 2 DESC"
+        "FROM main.canonical_us_exam_master_VIEW_v2 GROUP BY 1 ORDER BY 2 DESC"
     ).fetchall()
     for r in rows:
         print(f"  {r}")
@@ -85,7 +85,7 @@ def main() -> int:
     print("\n=== n_nodules_on_exam distribution ===")
     rows = con.execute(
         "SELECT n_nodules_on_exam IS NOT NULL AS populated, "
-        "       COUNT(*) FROM main.canonical_us_exam_master_v2 GROUP BY 1"
+        "       COUNT(*) FROM main.canonical_us_exam_master_VIEW_v2 GROUP BY 1"
     ).fetchall()
     for r in rows:
         print(f"  {r}")
@@ -105,7 +105,7 @@ def main() -> int:
         r = con.execute(
             f"SELECT COUNT(*) FILTER (WHERE {c} IS NOT NULL) AS not_null, "
             f"       COUNT(*) FILTER (WHERE {c} IS NULL)     AS is_null "
-            f"FROM main.canonical_us_patient_master_v2"
+            f"FROM main.canonical_us_patient_master_VIEW_v2"
         ).fetchone()
         print(f"  {c:<40s} not_null={r[0]:>7d}  null={r[1]:>7d}")
 

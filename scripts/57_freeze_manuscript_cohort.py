@@ -123,7 +123,7 @@ def main():
 
     tirads_col = None
     # tirads_best_score_v12 removed from probe 2026-04-21 (CPM TIRADS Part B);
-    # canonical patient-level TIRADS lives on canonical_us_patient_master_v2
+    # canonical patient-level TIRADS lives on canonical_us_patient_master_VIEW_v2
     # (max_tirads_category_ever / tirads_category_at_first_exam) under different
     # vocabulary (VARCHAR TR1-TR5). The legacy probe assumed CPM-side BIGINT cols
     # by name; cupm_v2 cols don't satisfy this probe's contract.

@@ -21,8 +21,8 @@ HERE = Path(__file__).resolve().parent
 SCRIPTS = HERE.parent
 sys.path.insert(0, str(SCRIPTS))
 
-mod366 = importlib.import_module("366_canonical_us_exam_master_v2")
-mod367 = importlib.import_module("367_canonical_us_patient_master_v2")
+mod366 = importlib.import_module("366_canonical_us_exam_master_VIEW_v2")
+mod367 = importlib.import_module("367_canonical_us_patient_master_VIEW_v2")
 from _md_connect import connect_locked, PUBLICATION_DB  # noqa: E402
 
 PUB = PUBLICATION_DB
@@ -30,14 +30,14 @@ ARCHIVE_DB = "Thyroid 2026 UPdated"
 ARCHIVE_SCHEMA = "us_legacy_20260421"
 ARCHIVE_DB_QUOTED = f'"{ARCHIVE_DB}"'
 
-TBL_EXAM = f"{PUB}.main.canonical_us_exam_master_v2"
-TBL_PT = f"{PUB}.main.canonical_us_patient_master_v2"
+TBL_EXAM = f"{PUB}.main.canonical_us_exam_master_VIEW_v2"
+TBL_PT = f"{PUB}.main.canonical_us_patient_master_VIEW_v2"
 
 ARCH_EXAM = (
-    f'{ARCHIVE_DB_QUOTED}.{ARCHIVE_SCHEMA}.archived_canonical_us_exam_master_v2'
+    f'{ARCHIVE_DB_QUOTED}.{ARCHIVE_SCHEMA}.archived_canonical_us_exam_master_VIEW_v2'
 )
 ARCH_PT = (
-    f'{ARCHIVE_DB_QUOTED}.{ARCHIVE_SCHEMA}.archived_canonical_us_patient_master_v2'
+    f'{ARCHIVE_DB_QUOTED}.{ARCHIVE_SCHEMA}.archived_canonical_us_patient_master_VIEW_v2'
 )
 
 RAW_US_REPORTS = f"{PUB}.raw.ultrasound_reports"
@@ -134,8 +134,8 @@ def phase4(con) -> dict:
         FROM information_schema.tables
         WHERE table_catalog = '{PUB}'
           AND table_schema = 'main'
-          AND table_name IN ('canonical_us_exam_master_v2',
-                             'canonical_us_patient_master_v2')
+          AND table_name IN ('canonical_us_exam_master_VIEW_v2',
+                             'canonical_us_patient_master_VIEW_v2')
         ORDER BY table_name
     """).fetchall()
     out["table_types"] = [{"name": r[0], "type": r[1]} for r in rows]

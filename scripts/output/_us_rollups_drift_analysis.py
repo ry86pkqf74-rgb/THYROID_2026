@@ -19,8 +19,8 @@ sys.path.insert(0, str(SCRIPTS))
 from _md_connect import connect_locked, PUBLICATION_DB  # noqa: E402
 
 PUB = PUBLICATION_DB
-TBL_EXAM = f"{PUB}.main.canonical_us_exam_master_v2"
-TBL_PT = f"{PUB}.main.canonical_us_patient_master_v2"
+TBL_EXAM = f"{PUB}.main.canonical_us_exam_master_VIEW_v2"
+TBL_PT = f"{PUB}.main.canonical_us_patient_master_VIEW_v2"
 CAND_EXAM = f"{PUB}.manuscript_workspace.candidate_us_exam_master_v2"
 CAND_PT = f"{PUB}.manuscript_workspace.candidate_us_patient_master_v2"
 
@@ -93,7 +93,7 @@ def main() -> int:
     cols = [r[0] for r in con.execute(
         "SELECT column_name FROM information_schema.columns "
         "WHERE table_catalog = ? AND table_schema = 'main' "
-        "AND table_name = 'canonical_us_exam_master_v2' "
+        "AND table_name = 'canonical_us_exam_master_VIEW_v2' "
         "ORDER BY ordinal_position",
         [PUB],
     ).fetchall()]
@@ -166,7 +166,7 @@ def main() -> int:
     pt_cols = [r[0] for r in con.execute(
         "SELECT column_name FROM information_schema.columns "
         "WHERE table_catalog = ? AND table_schema = 'main' "
-        "AND table_name = 'canonical_us_patient_master_v2' "
+        "AND table_name = 'canonical_us_patient_master_VIEW_v2' "
         "ORDER BY ordinal_position",
         [PUB],
     ).fetchall()]

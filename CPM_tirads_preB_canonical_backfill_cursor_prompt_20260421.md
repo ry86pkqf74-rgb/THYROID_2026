@@ -1,7 +1,7 @@
 # CPM TIRADS pre-B — canonical backfill of `cupm_v2`
 
 **Target DB:** `thyroid_canonical_publication_v1_0`
-**Target view:** `main.canonical_us_patient_master_v2` (currently 19 cols, will become 28)
+**Target view:** `main.canonical_us_patient_master_VIEW_v2` (currently 19 cols, will become 28)
 **Backing table (new):** `main.cupm_v2_canonical_backfill_v1`
 **Archive DB:** `"Thyroid 2026 UPdated".cpm_tirads_legacy_20260421` (created if absent)
 **Date:** 2026-04-21
@@ -77,7 +77,7 @@ The 2 compute cols (`max_nodule_size_mm`, `n_nodule_records`) live in the view b
 
 ## Constraints
 
-- **Do NOT modify `canonical_us_exam_master_v2` or `canonical_us_nodule_v2`.** Only `cupm_v2`'s view body changes; the per-exam and per-nodule grains stay as-is.
+- **Do NOT modify `canonical_us_exam_master_VIEW_v2` or `canonical_us_nodule_v2`.** Only `cupm_v2`'s view body changes; the per-exam and per-nodule grains stay as-is.
 - **Additive only.** Every existing column on `cupm_v2` keeps its name, type, and ordinal position relative to the others. The 9 new columns append at the end (positions 20-28).
 - **Row count must not change.** `cupm_v2` is currently 10,859 rows (1 per RID). After the change it must still be 10,859.
 - **Lossless backfill.** For every RID currently populated in CPM for the 7 port cols, the backing table must have the same value. Verify cell-by-cell.
@@ -88,7 +88,7 @@ The 2 compute cols (`max_nodule_size_mm`, `n_nodule_records`) live in the view b
 
 ### Phase 1 — Reconnaissance (read-only)
 
-1. Confirm `main.canonical_us_patient_master_v2` is a VIEW; pull current `view_definition`.
+1. Confirm `main.canonical_us_patient_master_VIEW_v2` is a VIEW; pull current `view_definition`.
 2. Confirm `main.canonical_us_nodule_v2` schema includes `length_mm`, `width_mm`, `height_mm`, `size_cm_max`, `research_id` (Logan: don't pull from CPM — pull straight from `cunc_v2`).
 3. Pull populated counts on CPM for the 7 source cols (sanity check matches Part A inventory):
    - `imaging_laterality_rollup_v271b` → 3,439
@@ -148,7 +148,7 @@ Proposed full new view body — see "View diff" section below for the precise SQ
 Deploy via:
 
 ```sql
-CREATE OR REPLACE VIEW main.canonical_us_patient_master_v2 AS
+CREATE OR REPLACE VIEW main.canonical_us_patient_master_VIEW_v2 AS
 <new body>;
 ```
 
@@ -159,12 +159,12 @@ Note: DuckDB/MotherDuck `CREATE OR REPLACE VIEW` is atomic; downstream consumers
 ```sql
 -- 1. Column count
 SELECT COUNT(*) AS n_cols FROM information_schema.columns
-WHERE table_schema='main' AND table_name='canonical_us_patient_master_v2';
+WHERE table_schema='main' AND table_name='canonical_us_patient_master_VIEW_v2';
 -- expect: 28 (was 19, +9)
 
 -- 2. Row count unchanged
 SELECT COUNT(*) AS n_rows, COUNT(DISTINCT research_id) AS n_rids
-FROM main.canonical_us_patient_master_v2;
+FROM main.canonical_us_patient_master_VIEW_v2;
 -- expect: 10859 / 10859 (must match pre-change)
 
 -- 3. New column populated counts
@@ -178,7 +178,7 @@ SELECT
   COUNT(tirads_worst_rank_source)                          AS n_worst_rank_src,
   COUNT(max_nodule_size_mm)                                AS n_max_size,
   COUNT(n_nodule_records)                                  AS n_n_records
-FROM main.canonical_us_patient_master_v2;
+FROM main.canonical_us_patient_master_VIEW_v2;
 -- expect: matches CPM source counts for the 7 ports;
 --          n_max_size + n_n_records match cunc_v2 distinct RID count.
 
@@ -226,7 +226,7 @@ Write `qa/qa_script_cpm_tirads_preB.json`:
 Commit message:
 
 ```
-CPM TIRADS pre-B: backfill 9 columns into canonical_us_patient_master_v2 (2026-04-21)
+CPM TIRADS pre-B: backfill 9 columns into canonical_us_patient_master_VIEW_v2 (2026-04-21)
 
 Adds 7 port-from-CPM columns (laterality + fna_recommended_report + worst_rank
 families, rename-on-move to drop _v271b / tirads_v2_ generation suffixes) and
@@ -268,7 +268,7 @@ WITH exam_agg AS (
     SELECT research_id, ...,
            max(worst_tirads_category_this_exam) AS max_tirads_category_ever,
            ..., bool_or(any_nlp_backfill_pending_on_exam) AS any_nlp_backfill_pending_for_patient
-    FROM main.canonical_us_exam_master_v2
+    FROM main.canonical_us_exam_master_VIEW_v2
     GROUP BY 1
 ),
 nodule_first_last AS (
@@ -280,7 +280,7 @@ nodule_first_last AS (
              AS tirads_category_at_last_preop_exam,
            min(CASE WHEN upper(e.worst_tirads_category_this_exam) IN ('TR4','TR5')
                     THEN e.exam_date END) AS first_high_risk_tirads_date
-    FROM main.canonical_us_exam_master_v2 AS e
+    FROM main.canonical_us_exam_master_VIEW_v2 AS e
     GROUP BY 1
 )
 SELECT e.research_id, e.has_any_us, e.n_us_exams, e.first_us_date, e.last_us_date,
@@ -298,7 +298,7 @@ LEFT JOIN nodule_first_last AS nfl USING (research_id);
 New cupm_v2 body (additive; existing portions unchanged):
 
 ```sql
-CREATE OR REPLACE VIEW main.canonical_us_patient_master_v2 AS
+CREATE OR REPLACE VIEW main.canonical_us_patient_master_VIEW_v2 AS
 WITH exam_agg AS (
     -- (unchanged from current definition)
     SELECT research_id, CAST('t' AS BOOLEAN) AS has_any_us,
@@ -319,7 +319,7 @@ WITH exam_agg AS (
                                                 AS first_abnormal_us_ln_date,
            bool_or(any_nlp_backfill_pending_on_exam)
                                                 AS any_nlp_backfill_pending_for_patient
-    FROM main.canonical_us_exam_master_v2
+    FROM main.canonical_us_exam_master_VIEW_v2
     GROUP BY 1
 ),
 nodule_first_last AS (
@@ -332,7 +332,7 @@ nodule_first_last AS (
              AS tirads_category_at_last_preop_exam,
            min(CASE WHEN upper(e.worst_tirads_category_this_exam) IN ('TR4','TR5')
                     THEN e.exam_date END) AS first_high_risk_tirads_date
-    FROM main.canonical_us_exam_master_v2 AS e
+    FROM main.canonical_us_exam_master_VIEW_v2 AS e
     GROUP BY 1
 ),
 nodule_agg AS (

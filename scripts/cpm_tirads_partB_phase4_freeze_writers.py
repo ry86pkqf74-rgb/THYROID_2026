@@ -92,7 +92,7 @@ FREEZE_LIST: list[tuple[str, str, list[str]]] = [
      "recomputed max_tirads_ever / imaging_tirads_worst / preop_tirads_best on CPM",
      []),
     ("scripts/301_canonical_us_patient_master_v1.py",
-     "old US v1 patient-master writer; superseded by canonical_us_patient_master_v2 pipeline",
+     "old US v1 patient-master writer; superseded by canonical_us_patient_master_VIEW_v2 pipeline",
      []),
     ("scripts/328_tirads_v2_gap_a_cast_fix.py",
      "Gap-A patch on tirads_v2_* family on CPM",
@@ -184,8 +184,8 @@ FROZEN_HEADER_TEMPLATE = """\
 # main.canonical_patient_master TIRADS / laterality columns that no longer exist.
 #
 # Replacement: canonical TIRADS values live on
-#     main.canonical_us_patient_master_v2  (patient grain — 28 cols post pre-B)
-#     main.canonical_us_exam_master_v2     (per-exam grain)
+#     main.canonical_us_patient_master_VIEW_v2  (patient grain — 28 cols post pre-B)
+#     main.canonical_us_exam_master_VIEW_v2     (per-exam grain)
 #     main.canonical_us_nodule_v2          (per-nodule grain)
 # Rebuild via the US v2 pipeline; do NOT re-enable this script without a new
 # column plan and CPM-schema decision.

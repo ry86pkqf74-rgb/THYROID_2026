@@ -1,0 +1,54 @@
+column_name,cpm_dtype,canonical_table,canonical_column,canonical_dtype,coverage_status,notes
+imaging_laterality_rollup,VARCHAR,-,-,—,gap_ABORT,5+ valued patient laterality; cupm_v2 has only bilateral_disease_flag_ever (BOOL) — value-loss
+imaging_laterality_rollup_v2,VARCHAR,-,-,—,gap_ABORT,Same as above
+imaging_laterality_rollup_v271b,VARCHAR,-,-,—,gap_ABORT,Same as above; cupm_v2 has no laterality VARCHAR rollup
+pathology_vs_imaging_laterality_concordant,BOOLEAN,-,-,—,gap_ABORT,Concordance metric; depends on both laterality cols above; no canonical equivalent
+pathology_vs_imaging_laterality_concordant_v271b,VARCHAR,-,-,—,gap_ABORT,Same as above; 5-valued VARCHAR
+tirads_v2_any_ete_on_us,BOOLEAN,-,-,—,gap_ABORT,Patient-level ETE-on-US flag; no equivalent on cupm_v2 nor cunc_v2
+tirads_v2_any_fna_recommended_report,BOOLEAN,-,-,—,gap_ABORT,Report-level FNA recommendation rollup; no canonical equivalent (different denominator from per-nodule)
+tirads_v2_any_fna_recommended_report_source,VARCHAR,-,-,—,gap_ABORT,Source label for the report-level rollup; no equivalent
+tirads_v2_n_reports,BIGINT,-,-,—,gap_ABORT,Per-patient TIRADS-report count; no equivalent on cupm_v2 nor cunc_v2 — would need new aggregation
+tirads_v2_shortest_followup_months,DOUBLE,-,-,—,gap_ABORT,Patient followup-window metric; no canonical equivalent
+tirads_v2_worst_rank,INTEGER,-,-,—,gap_ABORT,Numeric rank of worst TIRADS; cupm_v2 has VARCHAR only
+tirads_v2_worst_rank_source,VARCHAR,-,-,—,gap_ABORT,Source label for worst-rank derivation; no equivalent
+tumor_pathology_laterality_v271b,VARCHAR,-,-,—,gap_ABORT,Patient-level pathology laterality rollup; no canonical equivalent on cupm_v2
+tirads_best_points_v271,DOUBLE,-,-,—,gap_other_v2_table,MIN points; needs aggregation from canonical_us_nodule_v2.acr2017_tirads_points (no cupm_v2 column)
+tirads_n_nodule_records_v12,BIGINT,-,-,—,gap_other_v2_table,Available as agg on canonical_us_nodule_v2 (COUNT(*) PER RID); not on cupm_v2 directly
+tirads_nodule_size_max_mm_v12,DOUBLE,-,-,—,gap_other_v2_table,Per-nodule size lives on canonical_us_nodule_v2; no patient-level rollup on cupm_v2 (Part A: 2% agreement vs tirads_v2_largest_nodule_cm — different pipelines)
+tirads_nodules_scored_combined,BIGINT,-,-,—,gap_other_v2_table,Same as above; cupm_v2 has n_nodules_total_across_exams (HUGEINT) — verify semantic match
+tirads_v2_any_fna_recommended,BOOLEAN,-,-,—,gap_other_v2_table,Aggregable from canonical_us_nodule_v2.fna_recommended_this_nodule
+tirads_v2_any_interval_growth,BOOLEAN,-,-,—,gap_other_v2_table,Aggregable from canonical_us_nodule_v2.interval_growth_flag (BOOL OR per RID); not on cupm_v2
+tirads_v2_largest_nodule_cm,DOUBLE,-,-,—,gap_other_v2_table,Largest nodule size; aggregable from canonical_us_nodule_v2 (no cupm_v2 column)
+tirads_v2_n_nodules_scored,BIGINT,-,-,—,gap_other_v2_table,Aggregable from canonical_us_nodule_v2 (COUNT WHERE tirads scored)
+tirads_best_score_v12,BIGINT,canonical_us_patient_master_VIEW_v2,tirads_category_at_first_exam,VARCHAR,mapped_category,BIGINT category 1-5 → VARCHAR TR rank
+tirads_worst_score_v12,BIGINT,canonical_us_patient_master_VIEW_v2,max_tirads_category_ever,VARCHAR,mapped_category,BIGINT category 1-5 → VARCHAR TR rank
+imaging_tirads_best,BIGINT,canonical_us_patient_master_VIEW_v2,tirads_category_at_first_exam,VARCHAR,mapped_cupm_v2,Per-exam first-exam category rollup
+imaging_tirads_best_v2,VARCHAR,canonical_us_patient_master_VIEW_v2,tirads_category_at_first_exam,VARCHAR,mapped_cupm_v2,Same as imaging_tirads_best — both legacy and v2 form drop
+imaging_tirads_worst,BIGINT,canonical_us_patient_master_VIEW_v2,max_tirads_category_ever,VARCHAR,mapped_cupm_v2,Patient worst TR rank rollup
+imaging_tirads_worst_v2,VARCHAR,canonical_us_patient_master_VIEW_v2,max_tirads_category_ever,VARCHAR,mapped_cupm_v2,Same as imaging_tirads_worst
+imaging_updated_tirads_category_cpm_v1,VARCHAR,canonical_us_patient_master_VIEW_v2,max_tirads_category_ever,VARCHAR,mapped_cupm_v2,"Same patient-rollup; v1 is older, _v2 newer"
+imaging_updated_tirads_category_cpm_v2,VARCHAR,canonical_us_patient_master_VIEW_v2,max_tirads_category_ever,VARCHAR,mapped_cupm_v2,Same patient-rollup
+max_tirads_ever,BIGINT,canonical_us_patient_master_VIEW_v2,max_tirads_category_ever,VARCHAR,mapped_cupm_v2,BIGINT 1-5 → VARCHAR TR1-TR5; verify rank concordance
+max_tirads_ever_v2,DOUBLE,canonical_us_patient_master_VIEW_v2,max_tirads_points_ever,DOUBLE,mapped_cupm_v2,DOUBLE points (0-13+); already exists on cupm_v2
+preop_tirads_best,BIGINT,canonical_us_patient_master_VIEW_v2,tirads_category_at_last_preop_exam,VARCHAR,mapped_cupm_v2,Last-preop-exam category
+preop_tirads_best_v2,VARCHAR,canonical_us_patient_master_VIEW_v2,tirads_category_at_last_preop_exam,VARCHAR,mapped_cupm_v2,Same as preop_tirads_best
+preop_tirads_category,VARCHAR,canonical_us_patient_master_VIEW_v2,tirads_category_at_last_preop_exam,VARCHAR,mapped_cupm_v2,Likely same as preop_best/worst on cupm_v2
+preop_tirads_category_v2,VARCHAR,canonical_us_patient_master_VIEW_v2,tirads_category_at_last_preop_exam,VARCHAR,mapped_cupm_v2,Same as preop_tirads_category
+preop_tirads_worst,BIGINT,canonical_us_patient_master_VIEW_v2,tirads_category_at_last_preop_exam,VARCHAR,mapped_cupm_v2,Best+worst flatten to last preop value on cupm_v2; verify
+tirads_best_category_v12,VARCHAR,canonical_us_patient_master_VIEW_v2,tirads_category_at_first_exam,VARCHAR,mapped_cupm_v2,VARCHAR labels collapse to TR rank
+tirads_best_combined,INTEGER,canonical_us_patient_master_VIEW_v2,tirads_category_at_first_exam,VARCHAR,mapped_cupm_v2,Pre-v12 INTEGER form; map to first-exam category
+tirads_v2_any_suspicious_ln_on_us,BOOLEAN,canonical_us_patient_master_VIEW_v2,any_suspicious_us_ln_ever,BOOLEAN,mapped_cupm_v2,Direct match
+tirads_v2_max_points,DOUBLE,canonical_us_patient_master_VIEW_v2,max_tirads_points_ever,DOUBLE,mapped_cupm_v2,Same column
+tirads_v2_worst_category,VARCHAR,canonical_us_patient_master_VIEW_v2,max_tirads_category_ever,VARCHAR,mapped_cupm_v2,Same column
+tirads_worst_category_v12,VARCHAR,canonical_us_patient_master_VIEW_v2,max_tirads_category_ever,VARCHAR,mapped_cupm_v2,VARCHAR labels collapse to TR rank
+tirads_worst_combined,INTEGER,canonical_us_patient_master_VIEW_v2,max_tirads_category_ever,VARCHAR,mapped_cupm_v2,Pre-v12 INTEGER worst-ever
+worst_tirads_category,VARCHAR,canonical_us_patient_master_VIEW_v2,max_tirads_category_ever,VARCHAR,mapped_cupm_v2,Patient worst TR rank rollup
+tirads_worst_points_v271,DOUBLE,canonical_us_patient_master_VIEW_v2,max_tirads_points_ever,DOUBLE,mapped_points,"DOUBLE points; cupm_v2 has max-only — Part A: 27.7% agreement, different pipelines"
+imaging_tirads_source,VARCHAR,-,-,—,retired_redesign,Pipeline-source label — metadata-only; no canonical equivalent
+tirads_concordant_count_v12,BIGINT,-,-,—,retired_redesign,Q1 decision: redesign cohort_m025/m075; no port
+tirads_has_acr_recalc_v12,BOOLEAN,-,-,—,retired_redesign,Concept retired in v2 pipeline (acr2017_vs_updated_concordant lives per-nodule)
+tirads_mismatch_count_v12,BIGINT,-,-,—,retired_redesign,Q1 decision: redesign cohort_m025/m075; no port
+tirads_n_sources_v12,BIGINT,-,-,—,retired_redesign,Q1 decision: redesign cohort_m025
+tirads_reliability_v12,DOUBLE,-,-,—,retired_redesign,Q1 decision: redesign cohort_m075
+tirads_source_system_v271,VARCHAR,-,-,—,retired_redesign,Pipeline-source label (cunc_v1_points_acr2017) — metadata-only
+tirads_source_v12,VARCHAR,-,-,—,retired_redesign,Pipeline-source label (excel_complete_structured) — no canonical equivalent; metadata-only

@@ -486,7 +486,7 @@ def crossval_tirads(con: duckdb.DuckDBPyConnection,
     # (tirads-best-category-v12, tirads-best-score-v12, tirads-worst-category-v12,
     #  max-tirads-ever, preop-tirads-best, preop-tirads-category) were dropped
     # from canonical_patient_master. Canonical TIRADS now lives on
-    # canonical_us_patient_master_v2 (cupm_v2) under different vocabulary
+    # canonical_us_patient_master_VIEW_v2 (cupm_v2) under different vocabulary
     # (VARCHAR TR1-TR5 instead of legacy VARCHAR/BIGINT mix). The cross-
     # validation logic below was written against the legacy vocab and is left
     # as a no-op cross-check post-Part-B; downstream concordance counts will
@@ -497,7 +497,7 @@ def crossval_tirads(con: duckdb.DuckDBPyConnection,
     print(
         "[WARN] TIRADS cross-validation path neutered in CPM TIRADS Part B "
         "migration (2026-04-21); returning empty concordance results. "
-        "Rewrite required to use canonical_us_patient_master_v2 vocab."
+        "Rewrite required to use canonical_us_patient_master_VIEW_v2 vocab."
     )
     can = master[["research_id"]].copy()
 

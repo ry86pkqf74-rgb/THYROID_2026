@@ -26,7 +26,7 @@ SELECT
     p.fna_path_concordance_category, p.fna_path_concordant,
     p.surg_procedure_type, p.surg_first_date
 FROM main.canonical_patient_master AS p
-LEFT JOIN main.canonical_us_patient_master_v2 AS cupm USING (research_id)
+LEFT JOIN main.canonical_us_patient_master_VIEW_v2 AS cupm USING (research_id)
 WHERE cupm.tirads_category_at_last_preop_exam IS NOT NULL
    OR cupm.tirads_category_at_first_exam      IS NOT NULL
 
