@@ -40,7 +40,7 @@ def cpm_invariants(con, label=""):
 EVENT_SQL = """
 WITH ent AS (
     SELECT research_id,
-           CAST(note_index AS INTEGER) AS note_index,
+           note_index,
            note_date, note_type, extracted_at,
            UNNEST(CAST(json_extract(result_json, '$.entities') AS VARCHAR[])) AS ent_json
       FROM main.note_entities_llm_frozen_section_detail
