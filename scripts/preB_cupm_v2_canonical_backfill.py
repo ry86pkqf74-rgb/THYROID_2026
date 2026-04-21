@@ -682,16 +682,27 @@ def phase5_coverage_rerun() -> dict:
     con = connect()
     log: dict = {"phase": 5, "started_at_utc": utc_iso()}
 
-    # Re-pull CPM inventory
-    inv = con.execute(
+    # Re-pull CPM inventory with the SAME regex Part A used (Python re),
+    # NOT a broad ILIKE which would pull in unrelated *_laterality columns
+    # (e.g. rln_laterality, recurrence_laterality — surgery/ENT, not TIRADS).
+    import re as _re
+    PART_A_REGEX = _re.compile(
+        r"(tirads|laterality_v271b|imaging_laterality_rollup|max_tirads|preop_tirads"
+        r"|imaging_updated_tirads|worst_tirads_category|imaging_tirads"
+        r"|pathology_vs_imaging_laterality)",
+        _re.IGNORECASE,
+    )
+    NLP_RE = _re.compile(r"^nlp_(tirads|imaging|usnodule)_", _re.IGNORECASE)
+    all_cpm = con.execute(
         """
         SELECT column_name, data_type FROM information_schema.columns
         WHERE table_schema='main' AND table_name='canonical_patient_master'
-          AND (column_name ILIKE '%tirads%' OR column_name ILIKE '%laterality%' OR column_name = 'imaging_tirads_source')
-          AND column_name NOT LIKE 'nlp_%'
         """
     ).fetchall()
-    cpm_types = {r[0]: r[1] for r in inv}
+    cpm_types = {
+        r[0]: r[1] for r in all_cpm
+        if PART_A_REGEX.search(r[0]) and not NLP_RE.search(r[0])
+    }
     log["cpm_audit_col_count"] = len(cpm_types)
 
     cupm_v2_cols = {

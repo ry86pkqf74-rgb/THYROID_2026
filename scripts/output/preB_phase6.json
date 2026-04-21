@@ -1,0 +1,474 @@
+{
+  "qa_script": "preB_cupm_v2_canonical_backfill",
+  "version": "v1",
+  "completed_at_utc": "2026-04-21T22:31:56Z",
+  "phases": {
+    "phase1": {
+      "phase": 1,
+      "started_at_utc": "2026-04-21T22:28:33Z",
+      "cupm_v2_table_type": "VIEW",
+      "cupm_v2_view_definition_archived": "scripts/output/preB_phase1_cupm_v2_view_definition_before.sql",
+      "cupm_v2_row_count_before": 10859,
+      "cupm_v2_distinct_rids_before": 10859,
+      "cupm_v2_column_count_before": 19,
+      "cunc_v2_size_columns": [
+        {
+          "name": "height_mm",
+          "type": "DOUBLE"
+        },
+        {
+          "name": "length_mm",
+          "type": "DOUBLE"
+        },
+        {
+          "name": "research_id",
+          "type": "INTEGER"
+        },
+        {
+          "name": "size_cm_max",
+          "type": "DOUBLE"
+        },
+        {
+          "name": "width_mm",
+          "type": "DOUBLE"
+        }
+      ],
+      "cunc_v2_populated_counts": {
+        "n_rows": 37579,
+        "n_rids": 6523,
+        "n_length_mm": 19891,
+        "n_width_mm": 19891,
+        "n_height_mm": 19891,
+        "n_size_cm_max": 33560,
+        "n_all_three_null": 17688,
+        "n_fallback_active": 13669,
+        "n_no_size_at_all": 4019,
+        "fallback_active_pct": 36.37,
+        "no_size_pct": 10.69
+      },
+      "fallback_above_5pct": true,
+      "cpm_port_source_counts": {
+        "imaging_laterality_rollup_v271b": {
+          "n_now": 3439,
+          "n_part_a": 3439,
+          "drift_pct": 0.0
+        },
+        "pathology_vs_imaging_laterality_concordant_v271b": {
+          "n_now": 10871,
+          "n_part_a": 10871,
+          "drift_pct": 0.0
+        },
+        "tumor_pathology_laterality_v271b": {
+          "n_now": 3986,
+          "n_part_a": 3986,
+          "drift_pct": 0.0
+        },
+        "tirads_v2_any_fna_recommended_report": {
+          "n_now": 4073,
+          "n_part_a": 4073,
+          "drift_pct": 0.0
+        },
+        "tirads_v2_any_fna_recommended_report_source": {
+          "n_now": 4073,
+          "n_part_a": 4073,
+          "drift_pct": 0.0
+        },
+        "tirads_v2_worst_rank": {
+          "n_now": 2465,
+          "n_part_a": 2465,
+          "drift_pct": 0.0
+        },
+        "tirads_v2_worst_rank_source": {
+          "n_now": 2465,
+          "n_part_a": 2465,
+          "drift_pct": 0.0
+        }
+      },
+      "cpm_drift_flags_above_0_5_pct": [],
+      "backfill_table_already_exists": false,
+      "finished_at_utc": "2026-04-21T22:28:35Z",
+      "status": "OK"
+    },
+    "phase2": {
+      "phase": 2,
+      "started_at_utc": "2026-04-21T22:29:14Z",
+      "backfill_row_count": 10871,
+      "backfill_distinct_rids": 10871,
+      "backfill_unique_rids_ok": true,
+      "per_col_match": {
+        "imaging_laterality_rollup_v2": {
+          "cpm_source_col": "imaging_laterality_rollup_v271b",
+          "n_cpm_populated": 3439,
+          "n_backfill_populated": 3439,
+          "n_cells_match": 10871,
+          "n_cpm_total": 10871,
+          "match_pct": 100.0
+        },
+        "pathology_vs_imaging_laterality_concordant_v2": {
+          "cpm_source_col": "pathology_vs_imaging_laterality_concordant_v271b",
+          "n_cpm_populated": 10871,
+          "n_backfill_populated": 10871,
+          "n_cells_match": 10871,
+          "n_cpm_total": 10871,
+          "match_pct": 100.0
+        },
+        "tumor_pathology_laterality_v2": {
+          "cpm_source_col": "tumor_pathology_laterality_v271b",
+          "n_cpm_populated": 3986,
+          "n_backfill_populated": 3986,
+          "n_cells_match": 10871,
+          "n_cpm_total": 10871,
+          "match_pct": 100.0
+        },
+        "any_fna_recommended_report_ever": {
+          "cpm_source_col": "tirads_v2_any_fna_recommended_report",
+          "n_cpm_populated": 4073,
+          "n_backfill_populated": 4073,
+          "n_cells_match": 10871,
+          "n_cpm_total": 10871,
+          "match_pct": 100.0
+        },
+        "any_fna_recommended_report_source": {
+          "cpm_source_col": "tirads_v2_any_fna_recommended_report_source",
+          "n_cpm_populated": 4073,
+          "n_backfill_populated": 4073,
+          "n_cells_match": 10871,
+          "n_cpm_total": 10871,
+          "match_pct": 100.0
+        },
+        "tirads_worst_rank_ever": {
+          "cpm_source_col": "tirads_v2_worst_rank",
+          "n_cpm_populated": 2465,
+          "n_backfill_populated": 2465,
+          "n_cells_match": 10871,
+          "n_cpm_total": 10871,
+          "match_pct": 100.0
+        },
+        "tirads_worst_rank_source": {
+          "cpm_source_col": "tirads_v2_worst_rank_source",
+          "n_cpm_populated": 2465,
+          "n_backfill_populated": 2465,
+          "n_cells_match": 10871,
+          "n_cpm_total": 10871,
+          "match_pct": 100.0
+        }
+      },
+      "per_col_match_failures": [],
+      "spot_check_path": "scripts/output/preB_phase2_50rid_spot_check.csv",
+      "spot_check_n_rids": 50,
+      "finished_at_utc": "2026-04-21T22:29:16Z",
+      "status": "OK"
+    },
+    "phase3": {
+      "phase": 3,
+      "started_at_utc": "2026-04-21T22:29:42Z",
+      "pre_state": {
+        "row_count": 10859,
+        "column_count": 19
+      },
+      "view_replaced_at_utc": "2026-04-21T22:29:43Z",
+      "new_view_definition_archived": "scripts/output/preB_phase3_cupm_v2_view_definition_after.sql",
+      "finished_at_utc": "2026-04-21T22:29:43Z",
+      "status": "OK"
+    },
+    "phase4": {
+      "phase": 4,
+      "started_at_utc": "2026-04-21T22:30:31Z",
+      "cupm_v2_columns_after": [
+        {
+          "name": "research_id",
+          "type": "INTEGER",
+          "pos": 1
+        },
+        {
+          "name": "has_any_us",
+          "type": "BOOLEAN",
+          "pos": 2
+        },
+        {
+          "name": "n_us_exams",
+          "type": "BIGINT",
+          "pos": 3
+        },
+        {
+          "name": "first_us_date",
+          "type": "DATE",
+          "pos": 4
+        },
+        {
+          "name": "last_us_date",
+          "type": "DATE",
+          "pos": 5
+        },
+        {
+          "name": "preop_us_available_flag",
+          "type": "BOOLEAN",
+          "pos": 6
+        },
+        {
+          "name": "max_tirads_category_ever",
+          "type": "VARCHAR",
+          "pos": 7
+        },
+        {
+          "name": "max_tirads_points_ever",
+          "type": "DOUBLE",
+          "pos": 8
+        },
+        {
+          "name": "tirads_category_at_first_exam",
+          "type": "VARCHAR",
+          "pos": 9
+        },
+        {
+          "name": "tirads_category_at_last_preop_exam",
+          "type": "VARCHAR",
+          "pos": 10
+        },
+        {
+          "name": "n_nodules_total_across_exams",
+          "type": "HUGEINT",
+          "pos": 11
+        },
+        {
+          "name": "bilateral_disease_flag_ever",
+          "type": "BOOLEAN",
+          "pos": 12
+        },
+        {
+          "name": "multifocal_flag_ever",
+          "type": "BOOLEAN",
+          "pos": 13
+        },
+        {
+          "name": "first_high_risk_tirads_date",
+          "type": "DATE",
+          "pos": 14
+        },
+        {
+          "name": "has_us_ln_findings_ever",
+          "type": "BOOLEAN",
+          "pos": 15
+        },
+        {
+          "name": "any_suspicious_us_ln_ever",
+          "type": "BOOLEAN",
+          "pos": 16
+        },
+        {
+          "name": "first_abnormal_us_ln_date",
+          "type": "DATE",
+          "pos": 17
+        },
+        {
+          "name": "has_gland_findings_ever",
+          "type": "BOOLEAN",
+          "pos": 18
+        },
+        {
+          "name": "any_nlp_backfill_pending_for_patient",
+          "type": "BOOLEAN",
+          "pos": 19
+        },
+        {
+          "name": "imaging_laterality_rollup_v2",
+          "type": "VARCHAR",
+          "pos": 20
+        },
+        {
+          "name": "pathology_vs_imaging_laterality_concordant_v2",
+          "type": "VARCHAR",
+          "pos": 21
+        },
+        {
+          "name": "tumor_pathology_laterality_v2",
+          "type": "VARCHAR",
+          "pos": 22
+        },
+        {
+          "name": "any_fna_recommended_report_ever",
+          "type": "BOOLEAN",
+          "pos": 23
+        },
+        {
+          "name": "any_fna_recommended_report_source",
+          "type": "VARCHAR",
+          "pos": 24
+        },
+        {
+          "name": "tirads_worst_rank_ever",
+          "type": "INTEGER",
+          "pos": 25
+        },
+        {
+          "name": "tirads_worst_rank_source",
+          "type": "VARCHAR",
+          "pos": 26
+        },
+        {
+          "name": "max_nodule_size_mm",
+          "type": "DOUBLE",
+          "pos": 27
+        },
+        {
+          "name": "n_nodule_records",
+          "type": "BIGINT",
+          "pos": 28
+        }
+      ],
+      "cupm_v2_column_count_after": 28,
+      "cupm_v2_row_count_after": 10859,
+      "cupm_v2_distinct_rids_after": 10859,
+      "new_columns_populated_counts": {
+        "imaging_laterality_rollup_v2": 3439,
+        "pathology_vs_imaging_laterality_concordant_v2": 10859,
+        "tumor_pathology_laterality_v2": 3975,
+        "any_fna_recommended_report_ever": 4073,
+        "any_fna_recommended_report_source": 4073,
+        "tirads_worst_rank_ever": 2465,
+        "tirads_worst_rank_source": 2465,
+        "max_nodule_size_mm": 4026,
+        "n_nodule_records": 6523
+      },
+      "n_records_lt_n_total_inversions": 0,
+      "port_view_vs_backfill_counts": {
+        "imaging_laterality_rollup_v2": {
+          "n_view": 3439,
+          "n_backfill": 3439,
+          "n_backfill_rids_not_in_cupm_v2": 0,
+          "expected_view": 3439,
+          "ok": true
+        },
+        "pathology_vs_imaging_laterality_concordant_v2": {
+          "n_view": 10859,
+          "n_backfill": 10871,
+          "n_backfill_rids_not_in_cupm_v2": 12,
+          "expected_view": 10859,
+          "ok": true
+        },
+        "tumor_pathology_laterality_v2": {
+          "n_view": 3975,
+          "n_backfill": 3986,
+          "n_backfill_rids_not_in_cupm_v2": 11,
+          "expected_view": 3975,
+          "ok": true
+        },
+        "any_fna_recommended_report_ever": {
+          "n_view": 4073,
+          "n_backfill": 4073,
+          "n_backfill_rids_not_in_cupm_v2": 0,
+          "expected_view": 4073,
+          "ok": true
+        },
+        "any_fna_recommended_report_source": {
+          "n_view": 4073,
+          "n_backfill": 4073,
+          "n_backfill_rids_not_in_cupm_v2": 0,
+          "expected_view": 4073,
+          "ok": true
+        },
+        "tirads_worst_rank_ever": {
+          "n_view": 2465,
+          "n_backfill": 2465,
+          "n_backfill_rids_not_in_cupm_v2": 0,
+          "expected_view": 2465,
+          "ok": true
+        },
+        "tirads_worst_rank_source": {
+          "n_view": 2465,
+          "n_backfill": 2465,
+          "n_backfill_rids_not_in_cupm_v2": 0,
+          "expected_view": 2465,
+          "ok": true
+        }
+      },
+      "compute_col_summary": {
+        "n_max_size": 4026,
+        "min_size": 2.0,
+        "max_size": 480.0,
+        "p50_size": 21.9,
+        "n_nrec": 6523,
+        "min_nrec": 1,
+        "max_nrec": 122,
+        "p50_nrec": 2.0
+      },
+      "original_columns_populated_counts": {
+        "has_any_us": 10859,
+        "n_us_exams": 10859,
+        "first_us_date": 4360,
+        "last_us_date": 4360,
+        "preop_us_available_flag": 10859,
+        "max_tirads_category_ever": 3396,
+        "max_tirads_points_ever": 3441,
+        "tirads_category_at_first_exam": 3286,
+        "tirads_category_at_last_preop_exam": 3237,
+        "n_nodules_total_across_exams": 4358,
+        "bilateral_disease_flag_ever": 4358,
+        "multifocal_flag_ever": 10859,
+        "first_high_risk_tirads_date": 1898,
+        "has_us_ln_findings_ever": 10859,
+        "any_suspicious_us_ln_ever": 10859,
+        "first_abnormal_us_ln_date": 8,
+        "has_gland_findings_ever": 10859,
+        "any_nlp_backfill_pending_for_patient": 10859
+      },
+      "finished_at_utc": "2026-04-21T22:30:38Z",
+      "status": "OK"
+    },
+    "phase5": {
+      "phase": 5,
+      "started_at_utc": "2026-04-21T22:31:42Z",
+      "cpm_audit_col_count": 53,
+      "mapping_errors": [],
+      "cpm_cols_not_in_mapping": [],
+      "mapping_cols_not_on_cpm": [],
+      "status_counts": {
+        "mapped_cupm_v2": 30,
+        "retired_redesign": 8,
+        "drop_no_replacement": 6,
+        "gap_other_v2_table": 6,
+        "mapped_category": 2,
+        "mapped_points": 1
+      },
+      "n_gap_ABORT": 0,
+      "n_gap_other_v2_table": 6,
+      "coverage_csv": "scripts/output/preB_phase5_cpm_tirads_canonical_coverage_v1.csv",
+      "finished_at_utc": "2026-04-21T22:31:45Z",
+      "status": "OK"
+    }
+  },
+  "summary": {
+    "view_column_count": {
+      "before": 19,
+      "after": 28
+    },
+    "view_row_count": {
+      "before": 10859,
+      "after": 10859
+    },
+    "backfill_table_rows": 10871,
+    "backfill_distinct_rids": 10871,
+    "compute_col_summary": {
+      "n_max_size": 4026,
+      "min_size": 2.0,
+      "max_size": 480.0,
+      "p50_size": 21.9,
+      "n_nrec": 6523,
+      "min_nrec": 1,
+      "max_nrec": 122,
+      "p50_nrec": 2.0
+    },
+    "n_inversions_records_vs_total": 0,
+    "fallback_cunc_v2_pct": 36.37,
+    "coverage_audit_after": {
+      "mapped_cupm_v2": 30,
+      "retired_redesign": 8,
+      "drop_no_replacement": 6,
+      "gap_other_v2_table": 6,
+      "mapped_category": 2,
+      "mapped_points": 1
+    },
+    "n_gap_ABORT": 0,
+    "n_gap_other_v2_table": 6
+  }
+}
