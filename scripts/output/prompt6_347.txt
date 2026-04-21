@@ -1,0 +1,48 @@
+
+==============================================================================
+0. Pre-state
+==============================================================================
+  main object count: 113
+  movable: main.episode_analysis_resolved_v1_dedup (rows=9368, cols=46)
+  movable: main.lesion_analysis_resolved_v1 (rows=11851, cols=28)
+  movable: main.ln_crossval_v1 (rows=4290, cols=19)
+  movable: main.us_nodules_tirads_vs_inm_v1_discordance_v1 (rows=1722, cols=10)
+
+==============================================================================
+0b. View dependency scan (non-blocking — tracked for 353)
+==============================================================================
+  no views reference main.episode_analysis_resolved_v1_dedup
+  no views reference main.lesion_analysis_resolved_v1
+  no views reference main.ln_crossval_v1
+  no views reference main.us_nodules_tirads_vs_inm_v1_discordance_v1
+
+==============================================================================
+1. Move sequence
+==============================================================================
+
+  -> episode_analysis_resolved_v1_dedup (src_rows=9368)
+     parity OK (9368 rows)
+     dropped main.episode_analysis_resolved_v1_dedup
+
+  -> lesion_analysis_resolved_v1 (src_rows=11851)
+     parity OK (11851 rows)
+     dropped main.lesion_analysis_resolved_v1
+
+  -> ln_crossval_v1 (src_rows=4290)
+     parity OK (4290 rows)
+     dropped main.ln_crossval_v1
+
+  -> us_nodules_tirads_vs_inm_v1_discordance_v1 (src_rows=1722)
+     parity OK (1722 rows)
+     dropped main.us_nodules_tirads_vs_inm_v1_discordance_v1
+
+==============================================================================
+2. Final assertions
+==============================================================================
+  main object count: pre=113 post=109 delta=-4
+  schema_reorg_move_log_v1 rows for 347_move_audit_artifacts: 4
+  protected-still-present: main.ete_adjudication_v1
+  protected-still-present: main.tirads_reextraction_queue_v1
+  protected-still-present: main.patient_analysis_resolved_v1
+
+DONE. Script 347 moved 4 audit/discordance tables to manuscript_workspace.
