@@ -571,10 +571,75 @@
         "provider_system_fingerprint"
       ],
       "finished_at": "2026-04-21T02:20:29Z"
+    },
+    "3": {
+      "phase": 3,
+      "started_at": "2026-04-21T02:20:38Z",
+      "gates": [
+        {
+          "name": "md_rjhash_eq_parquet_rjhash",
+          "ok": true,
+          "detail": {
+            "observed": "e8f4d6a67f1f48a831bb13ca0bb75ca0",
+            "pinned": "e8f4d6a67f1f48a831bb13ca0bb75ca0"
+          }
+        },
+        {
+          "name": "md_ndhash_eq_parquet_ndhash",
+          "ok": true,
+          "detail": {
+            "observed": "58ffbf13cf915473732f70fa59802790",
+            "pinned": "58ffbf13cf915473732f70fa59802790"
+          }
+        },
+        {
+          "name": "md_srchash_eq_parquet_srchash",
+          "ok": true,
+          "detail": {
+            "observed": "155f050eb2db3c12451ec45170addc83",
+            "pinned": "155f050eb2db3c12451ec45170addc83"
+          }
+        },
+        {
+          "name": "md_rjhash_eq_live_parquet_rjhash",
+          "ok": true,
+          "detail": {
+            "md": "e8f4d6a67f1f48a831bb13ca0bb75ca0",
+            "live_parquet": "e8f4d6a67f1f48a831bb13ca0bb75ca0"
+          }
+        },
+        {
+          "name": "md_ndhash_eq_live_parquet_ndhash",
+          "ok": true,
+          "detail": {
+            "md": "58ffbf13cf915473732f70fa59802790",
+            "live_parquet": "58ffbf13cf915473732f70fa59802790"
+          }
+        },
+        {
+          "name": "md_srchash_eq_live_parquet_srchash",
+          "ok": true,
+          "detail": {
+            "md": "155f050eb2db3c12451ec45170addc83",
+            "live_parquet": "155f050eb2db3c12451ec45170addc83"
+          }
+        }
+      ],
+      "blockers": [],
+      "md_rjhash": "e8f4d6a67f1f48a831bb13ca0bb75ca0",
+      "md_ndhash": "58ffbf13cf915473732f70fa59802790",
+      "md_srchash": "155f050eb2db3c12451ec45170addc83",
+      "pinned_rjhash": "e8f4d6a67f1f48a831bb13ca0bb75ca0",
+      "pinned_ndhash": "58ffbf13cf915473732f70fa59802790",
+      "pinned_srchash": "155f050eb2db3c12451ec45170addc83",
+      "live_parquet_rjhash": "e8f4d6a67f1f48a831bb13ca0bb75ca0",
+      "live_parquet_ndhash": "58ffbf13cf915473732f70fa59802790",
+      "live_parquet_srchash": "155f050eb2db3c12451ec45170addc83",
+      "finished_at": "2026-04-21T02:20:39Z"
     }
   },
-  "last_started_at": "2026-04-21T02:20:23Z",
-  "last_phase_arg": "2",
-  "last_finished_at": "2026-04-21T02:20:29Z",
+  "last_started_at": "2026-04-21T02:20:38Z",
+  "last_phase_arg": "3",
+  "last_finished_at": "2026-04-21T02:20:39Z",
   "last_return_code": 0
 }
