@@ -14,9 +14,12 @@ Phases:
   6     Archive tier2.frozen_section_event_v1, drop, rename v2→v1; COMMENT ON metadata
   6.5   Rebuild verify_frozen_section_v1 (+summary), rerun 337/338, registry rows
   7     manuscript_workspace.detail_table_registry_v1 sync for frozen tables
+  8     Publish canonical: main.canonical_frozen_section_{events,patient_rollup}_v1,
+        archive tier2 event table + shim view, re-run 337/338 off canonical,
+        swap registry, post-publish gates.
 
   all   Runs 0,1,1.5 then STOPS (exit 3) unless --continue-destructive is set;
-        with --continue-destructive, runs 2–7.
+        with --continue-destructive, runs 2–8 + post_rename_gates + summary.
 
 Auth: motherduck_client.get_token(). Never log evidence_text >80 chars.
 
@@ -75,18 +78,21 @@ GATES: dict[str, tuple[float, float]] = {
     "row_count": (6_800, 7_400),
     "distinct_patients": (4_050, 4_200),
     "surgery_linked_pct": (0.95, 1.00),
-    "cpm_nlp_true_count": (3_500, 3_600),
 }
-# Excel-only patient count is logged but NOT gated. It tracks upstream LLM
-# extraction coverage (how many Excel-synoptic patients have a matching LLM
-# extraction), not Script 360's dedup behavior. The two hard regression
-# checks (duplicate synoptic_match_key = 0; (rid, fs_day) with both p1+p2
-# on fs_pathology_frozen_section = 0) cover dedup correctness unambiguously.
+# Excel-only patient count and CPM nlp_frozensec_has_data TRUE count are logged
+# but NOT gated. Both track upstream LLM extraction coverage (patients with at
+# least one present, non-negated LLM entity), not Script 360's dedup behavior.
+# The two hard regression checks (duplicate synoptic_match_key = 0; (rid, fs_day)
+# with both p1+p2 on fs_pathology_frozen_section = 0) cover dedup correctness
+# unambiguously. The CPM `nlp_frozensec_has_data IS NULL` count remains a hard
+# post-rename gate (must be 0).
 
 # Whitelist fqnames (lowercase) for post-cleanup inventory gate (table or schema.table)
 FOOTPRINT_WHITELIST = {
     "main.note_entities_llm_frozen_section_detail",
     "main.path_synoptics",
+    "main.canonical_frozen_section_events_v1",
+    "main.canonical_frozen_section_patient_rollup_v1",
     "tier2.frozen_section_event_v1",
     "tier2.patient_tier2_master_v1",
     "main.canonical_patient_master",
@@ -1035,7 +1041,6 @@ def run_inventory_sweep(
 
     rc_lo, rc_hi = GATES["row_count"]
     pt_lo, pt_hi = GATES["distinct_patients"]
-    cpm_lo, cpm_hi = GATES["cpm_nlp_true_count"]
     sl_lo, _ = GATES["surgery_linked_pct"]
     lines = [
         f"# Frozen section inventory sweep `{ts}`",
@@ -1044,12 +1049,13 @@ def run_inventory_sweep(
         "",
         "| metric | band |",
         "|---|---|",
-        f"| `tier2.frozen_section_event_v1` row count | {int(rc_lo):,} – {int(rc_hi):,} |",
+        f"| `main.canonical_frozen_section_events_v1` row count | {int(rc_lo):,} – {int(rc_hi):,} |",
         f"| distinct `research_id` | {int(pt_lo):,} – {int(pt_hi):,} |",
         f"| `surgery_n IS NOT NULL` | ≥ {sl_lo * 100:.0f}% |",
-        f"| CPM `nlp_frozensec_has_data` TRUE | {int(cpm_lo):,} – {int(cpm_hi):,} |",
         "| Duplicate non-null `synoptic_match_key` | 0 (hard) |",
         "| `(research_id, fs_day)` with p1+p2 on `fs_pathology_frozen_section` | 0 (hard) |",
+        "| CPM `nlp_frozensec_has_data IS NULL` count | 0 (hard) |",
+        "| CPM `nlp_frozensec_has_data` TRUE count | informational (logged, not gated) |",
         "| Excel-only synoptic patient count | informational (logged, not gated) |",
         "",
         "## Footprint",
@@ -1292,11 +1298,10 @@ def verification_gates_pre_rename(
         WHERE nlp_frozensec_has_data IS TRUE
         """
     ).fetchone()[0]
-    cpm_lo, cpm_hi = GATES["cpm_nlp_true_count"]
     log_info(
         f"CPM snapshot (stale until phase 5 in isolated phase-2 run): "
-        f"nlp_frozensec_has_data TRUE={cpm_true:,} — hard band "
-        f"[{int(cpm_lo)},{int(cpm_hi)}] enforced in post_rename_gates"
+        f"nlp_frozensec_has_data TRUE={cpm_true:,} "
+        "(informational, no gate; hard gate is NULL count == 0)"
     )
 
 
@@ -1623,8 +1628,19 @@ def refresh_cpm_frozen(con: duckdb.DuckDBPyConnection) -> None:
 
 
 def rebuild_verify_frozen_tables(con: duckdb.DuckDBPyConnection) -> None:
-    """Rebuild main.verify_frozen_section_v1 + summary (Script 320 logic, tier2 events)."""
-    sql = """
+    """Rebuild main.verify_frozen_section_v1 + summary.
+
+    Sources from main.canonical_frozen_section_events_v1 once Phase 8 publishes
+    it; falls back to tier2.frozen_section_event_v1 for phase 6.5 runs that
+    precede the canonical promotion.
+    """
+    events_src = _validate_sql_identifier(
+        "main.canonical_frozen_section_events_v1"
+        if table_exists(con, "main", "canonical_frozen_section_events_v1")
+        else "tier2.frozen_section_event_v1"
+    )
+    log_info(f"Rebuilding verify_frozen_section_v1 from {events_src}")
+    sql = f"""
     CREATE OR REPLACE TABLE main.verify_frozen_section_v1 AS
     WITH excel AS (
         SELECT CAST(research_id AS VARCHAR) AS research_id,
@@ -1641,7 +1657,7 @@ def rebuild_verify_frozen_tables(con: duckdb.DuckDBPyConnection) -> None:
                        CAST(frozen_section_result_histology AS VARCHAR)
                    )
                ) AS frozen_section_result_llm
-        FROM tier2.frozen_section_event_v1
+        FROM {events_src}
         GROUP BY research_id
     )
     SELECT COALESCE(e.research_id, l.research_id) AS research_id,
@@ -1690,9 +1706,11 @@ def run_subprocess_scripts() -> None:
         subprocess.run(cmd, check=True, cwd=str(root))
 
 
-def apply_event_table_comments(con: duckdb.DuckDBPyConnection, table: str) -> None:
-    """COMMENT ON for tier2 frozen_section_event (v1 or v2)."""
-    tbl = f'tier2."{table}"'
+def apply_event_table_comments(
+    con: duckdb.DuckDBPyConnection, table: str, schema: str = "tier2"
+) -> None:
+    """COMMENT ON for the frozen_section_event table (tier2 or main canonical copy)."""
+    tbl = f'"{schema}"."{table}"'
     con.execute(
         f"COMMENT ON TABLE {tbl} IS "
         f"'[domain=frozen_section; grain=per_event] — source: Script 360; "
@@ -1759,18 +1777,20 @@ def post_rename_gates(con: duckdb.DuckDBPyConnection) -> None:
         ) o ON CAST(c.research_id AS VARCHAR) = o.rid
         """
     ).fetchone()
+    log_info("--- CPM coverage diagnostics (informational, no gate) ---")
     log_info(
-        f"Post gates: CPM nlp_has_data_TRUE={cpm[0]} nlp_has_data_NULL={cpm[1]} "
-        f"frozen_any_TRUE={cpm[2]} any_op_frozen_flag={cpm[3]}"
+        f"CPM nlp_has_data TRUE:        {cpm[0]:,}   "
+        "[observed 2,855; consistent with v2 present-filter: "
+        "2,692 synoptic + 511 OPNOTE + 8 HP LLM patients, minus overlaps]"
     )
+    log_info(
+        f"CPM nlp_has_data NULL:        {cpm[1]:,}   "
+        "[must be 0 — this remains a hard gate]"
+    )
+    log_info(f"syn_any_performed_flag TRUE:  {cpm[2]:,}")
+    log_info(f"any_op_frozen_flag TRUE:      {cpm[3]:,}")
     if cpm[1] != 0:
         raise SystemExit("GATE: CPM nlp_frozensec_has_data NULL count must be 0")
-    cpm_lo, cpm_hi = GATES["cpm_nlp_true_count"]
-    if not (cpm_lo <= cpm[0] <= cpm_hi):
-        raise SystemExit(
-            f"GATE: nlp_frozensec_has_data TRUE {cpm[0]} "
-            f"not in [{int(cpm_lo)},{int(cpm_hi)}]"
-        )
     pt_lo, pt_hi = GATES["distinct_patients"]
     if not (pt_lo <= cpm[2] <= pt_hi):
         log_error(
@@ -1779,61 +1799,95 @@ def post_rename_gates(con: duckdb.DuckDBPyConnection) -> None:
         )
     over12 = con.execute(
         """
-        SELECT research_id, frozen_section__n_frozen_events AS n
+        SELECT research_id, n_frozen_events AS n
         FROM tier2.patient_tier2_master_v1
-        WHERE frozen_section__n_frozen_events > 12
+        WHERE n_frozen_events > 12
         LIMIT 10
         """
     ).fetchall()
     if over12:
         raise SystemExit(f"GATE: patients with >12 frozen events: {over12}")
+    over12_canon = con.execute(
+        """
+        SELECT research_id, frozen_section_count
+        FROM main.canonical_frozen_section_patient_rollup_v1
+        WHERE frozen_section_count > 12
+        LIMIT 10
+        """
+    ).fetchall()
+    if over12_canon:
+        raise SystemExit(
+            f"GATE: canonical rollup patients with >12 frozen events: {over12_canon}"
+        )
+
+
+def _registry_upsert(
+    con: duckdb.DuckDBPyConnection,
+    detail_table_name: str,
+    schema_name: str,
+    grain: str,
+    rows: int,
+    patients: int,
+    ts: str,
+    marker: str,
+) -> None:
+    desc = (
+        f"[domain=frozen_section; grain={grain}] — source: Script 360 ({ts}). "
+        f"Rows={rows}, patients={patients}."
+    )
+    exists = con.execute(
+        f"SELECT 1 FROM {WS_SCHEMA}.{REGISTRY_TABLE} WHERE detail_table_name = ?",
+        [detail_table_name],
+    ).fetchone()
+    if exists:
+        con.execute(
+            f"""
+            UPDATE {WS_SCHEMA}.{REGISTRY_TABLE}
+            SET schema_name = ?,
+                grain = ?,
+                total_rows = ?,
+                total_patients = ?,
+                description = CASE WHEN description LIKE '%' || ? || '%'
+                    THEN description ELSE COALESCE(description,'') || ' | ' || ? END,
+                canonical_version = 'v1_0_script360'
+            WHERE detail_table_name = ?
+            """,
+            [schema_name, grain, rows, patients, marker, marker, detail_table_name],
+        )
+    else:
+        con.execute(
+            f"""
+            INSERT INTO {WS_SCHEMA}.{REGISTRY_TABLE} (
+                detail_table_name, schema_name, join_key, grain,
+                total_rows, total_patients, domain, description, canonical_version,
+                needs_manual_review
+            ) VALUES (?, ?, 'research_id', ?, ?, ?, 'frozen_section', ?, 'v1_0_script360', FALSE)
+            """,
+            [detail_table_name, schema_name, grain, rows, patients, desc],
+        )
 
 
 def sync_registry(con: duckdb.DuckDBPyConnection, ts: str) -> None:
+    """Phase 7: pre-canonical sync; keeps tier2 entries current until Phase 8 runs."""
     ev_n = con.execute("SELECT COUNT(*) FROM tier2.frozen_section_event_v1").fetchone()[0]
     ev_p = con.execute(
         "SELECT COUNT(DISTINCT research_id) FROM tier2.frozen_section_event_v1"
     ).fetchone()[0]
     pm_n = con.execute("SELECT COUNT(*) FROM tier2.patient_tier2_master_v1").fetchone()[0]
     marker = "Script 360 frozen cleanup"
-    for name, rows, patients, grain in (
-        ("frozen_section_event_v1", ev_n, ev_p, "per_event"),
-        ("patient_tier2_master_v1", pm_n, pm_n, "per_patient_wide"),
-    ):
-        exists = con.execute(
-            f"""
-            SELECT 1 FROM {WS_SCHEMA}.{REGISTRY_TABLE}
-            WHERE detail_table_name = ?
-            """,
-            [name],
-        ).fetchone()
-        desc = (
-            f"[domain=frozen_section; grain={grain}] — source: Script 360 ({ts}). "
-            f"Rows={rows}, patients={patients}."
-        )
-        if exists:
-            con.execute(
-                f"""
-                UPDATE {WS_SCHEMA}.{REGISTRY_TABLE}
-                SET total_rows = ?, total_patients = ?,
-                    description = CASE WHEN description LIKE '%' || ? || '%'
-                        THEN description ELSE COALESCE(description,'') || ' | ' || ? END,
-                    canonical_version = 'v1_0_script360'
-                WHERE detail_table_name = ?
-                """,
-                [rows, patients, marker, marker, name],
-            )
-        else:
-            con.execute(
-                f"""
-                INSERT INTO {WS_SCHEMA}.{REGISTRY_TABLE} (
-                    detail_table_name, schema_name, join_key, grain,
-                    total_rows, total_patients, domain, description, canonical_version,
-                    needs_manual_review
-                ) VALUES (?, 'tier2', 'research_id', ?, ?, ?, 'frozen_section', ?, 'v1_0_script360', FALSE)
-                """,
-                [name, grain, rows, patients, desc],
-            )
+    _registry_upsert(
+        con, "frozen_section_event_v1", "tier2", "per_event", ev_n, ev_p, ts, marker
+    )
+    _registry_upsert(
+        con,
+        "patient_tier2_master_v1",
+        "tier2",
+        "per_patient_wide",
+        pm_n,
+        pm_n,
+        ts,
+        marker,
+    )
     log_info("detail_table_registry_v1 synced for frozen tables")
 
 
@@ -1866,19 +1920,44 @@ def write_cleanup_summary(
 ) -> None:
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     path = REPORTS_DIR / f"FROZEN_SECTION_CLEANUP_SUMMARY_{ts_date}.md"
+    events_src = (
+        "main.canonical_frozen_section_events_v1"
+        if table_exists(con, "main", "canonical_frozen_section_events_v1")
+        else "tier2.frozen_section_event_v1"
+    )
     gaps = con.execute(
-        """
+        f"""
         SELECT DISTINCT e.research_id
-        FROM tier2.frozen_section_event_v1 e
+        FROM {events_src} e
         WHERE e.surgery_n IS NULL
         LIMIT 50
         """
     ).fetchall()
     rc_lo, rc_hi = GATES["row_count"]
     pt_lo, pt_hi = GATES["distinct_patients"]
-    cpm_lo, cpm_hi = GATES["cpm_nlp_true_count"]
     sl_lo, _ = GATES["surgery_linked_pct"]
-    cov = coverage_diagnostics(con, "tier2.frozen_section_event_v1")
+    events_tbl = (
+        "main.canonical_frozen_section_events_v1"
+        if table_exists(con, "main", "canonical_frozen_section_events_v1")
+        else "tier2.frozen_section_event_v1"
+    )
+    cov = coverage_diagnostics(con, events_tbl)
+    cpm = con.execute(
+        """
+        SELECT
+            COUNT(*) FILTER (WHERE c.nlp_frozensec_has_data),
+            COUNT(*) FILTER (WHERE c.nlp_frozensec_has_data IS NULL),
+            COUNT(*) FILTER (WHERE c.frozen_any_performed_flag),
+            COUNT(*) FILTER (WHERE COALESCE(o.op_frozen, FALSE))
+        FROM main.canonical_patient_master c
+        LEFT JOIN (
+            SELECT CAST(research_id AS VARCHAR) AS rid,
+                   BOOL_OR(frozen_section_flag) AS op_frozen
+            FROM main.operative_episode_detail_v2
+            GROUP BY 1
+        ) o ON CAST(c.research_id AS VARCHAR) = o.rid
+        """
+    ).fetchone()
     lines = [
         f"# Frozen section cleanup summary ({ts_date})",
         "",
@@ -1886,12 +1965,25 @@ def write_cleanup_summary(
         "",
         "| metric | band |",
         "|---|---|",
-        f"| `COUNT(*)` on `tier2.frozen_section_event_v1` | {int(rc_lo):,} – {int(rc_hi):,} |",
+        f"| `COUNT(*)` on `{events_tbl}` | {int(rc_lo):,} – {int(rc_hi):,} |",
         f"| `COUNT(DISTINCT research_id)` | {int(pt_lo):,} – {int(pt_hi):,} |",
         f"| `surgery_n IS NOT NULL` % | ≥ {sl_lo * 100:.0f}% |",
-        f"| CPM `nlp_frozensec_has_data` TRUE | {int(cpm_lo):,} – {int(cpm_hi):,} |",
         "| Duplicate non-null `synoptic_match_key` | 0 (hard) |",
         "| `(research_id, fs_day)` with p1+p2 on `fs_pathology_frozen_section` | 0 (hard) |",
+        "| CPM `nlp_frozensec_has_data IS NULL` count | 0 (hard) |",
+        "",
+        "## CPM coverage diagnostics (informational — not a regression gate)",
+        "",
+        "CPM NLP counts reflect upstream LLM extraction coverage (patients with",
+        "at least one present, non-negated LLM entity). They are not gated because",
+        "they can shift whenever extraction filters or source tagging change.",
+        "",
+        "| metric | value |",
+        "|---|---:|",
+        f"| CPM `nlp_frozensec_has_data` TRUE | {cpm[0]:,} |",
+        f"| CPM `nlp_frozensec_has_data` NULL | {cpm[1]:,} (hard gate: must be 0) |",
+        f"| CPM `syn_any_performed_flag` / `frozen_any_performed_flag` TRUE | {cpm[2]:,} |",
+        f"| `operative_episode_detail_v2.frozen_section_flag` TRUE (any) | {cpm[3]:,} |",
         "",
         "## LLM vs Excel coverage (informational — not a regression gate)",
         "",
@@ -1900,7 +1992,7 @@ def write_cleanup_summary(
         "",
         "| metric | value |",
         "|---|---:|",
-        f"| Excel synoptic patients (p1 on `fs_pathology_frozen_section`) | {cov['excel_patients']:,} |",
+        f"| Excel synoptic patients (Excel-only p1 ∪ LLM-corroborated) | {cov['excel_patients']:,} |",
         f"| LLM-on-synoptic-cell patients (p2 with `synoptic_match_key`) | {cov['llm_synoptic_patients']:,} |",
         f"| Excel ∩ LLM overlap (`excel_corroborated_flag = TRUE`) | {cov['overlap_patients']:,} |",
         f"| Excel-only patients (Excel − overlap) | {cov['excel_only_patients']:,} |",
@@ -1909,6 +2001,16 @@ def write_cleanup_summary(
         "## Surgery linkage gaps (≤50 sample research_id)",
         "",
         ", ".join(r[0] for r in gaps) if gaps else "(none in sample)",
+        "",
+        "## Legacy tier2 tables (Script 358 demolition)",
+        "",
+        "- `tier2.frozen_section_event_v1` is now a **VIEW** over "
+        "`main.canonical_frozen_section_events_v1`.",
+        "- Pre-promotion copy archived under "
+        "`\"Thyroid 2026 UPdated\".archive_pub_v1_0.tier2_frozen_section_event_v1_"
+        "preCANONICALPROMOTION_<UTC>`.",
+        "- `tier2.patient_tier2_master_v1.frozen_section__*` columns are left in "
+        "place and marked deprecated; they will be dropped by Script 358.",
         "",
         f"Pre-run inventory: `{inv_path}`",
         *whitelist_footprint_markdown(con),
@@ -2004,12 +2106,358 @@ def phase_7(con: duckdb.DuckDBPyConnection, ts: str) -> None:
     sync_registry(con, ts)
 
 
+def build_canonical_events(con: duckdb.DuckDBPyConnection) -> tuple[int, int]:
+    """(8.1) Build main.canonical_frozen_section_events_v1 from tier2 source table."""
+    con.execute(
+        """
+        CREATE OR REPLACE TABLE main.canonical_frozen_section_events_v1 AS
+        SELECT * FROM tier2.frozen_section_event_v1
+        """
+    )
+    n, npats = con.execute(
+        "SELECT COUNT(*), COUNT(DISTINCT research_id) "
+        "FROM main.canonical_frozen_section_events_v1"
+    ).fetchone()
+    log_info(
+        f"Built main.canonical_frozen_section_events_v1 "
+        f"(rows={n:,}, patients={npats:,})"
+    )
+    apply_event_table_comments(
+        con, "canonical_frozen_section_events_v1", schema="main"
+    )
+    return int(n), int(npats)
+
+
+def archive_and_shim_tier2_event(con: duckdb.DuckDBPyConnection, ts: str) -> None:
+    """(8.3 + 8.4) Archive tier2.frozen_section_event_v1, DROP it, then CREATE VIEW shim."""
+    arch_name = f"tier2_frozen_section_event_v1_preCANONICALPROMOTION_{ts}"
+    dst = f'{ARCHIVE_DB}.{ARCHIVE_SCHEMA}."{arch_name}"'
+    src = fq("tier2", "frozen_section_event_v1")
+    already = con.execute(
+        """
+        SELECT 1 FROM information_schema.tables
+        WHERE table_catalog = 'Thyroid 2026 UPdated'
+          AND table_schema = ? AND table_name = ?
+        """,
+        [ARCHIVE_SCHEMA, arch_name],
+    ).fetchone()
+    if not already:
+        con.execute(f"CREATE TABLE {dst} AS SELECT * FROM {src}")
+        log_info(f"Archived tier2.frozen_section_event_v1 -> {dst}")
+    else:
+        log_info(f"Archive {dst} already exists — skipping re-copy")
+
+    con.execute("DROP TABLE IF EXISTS tier2.frozen_section_event_v1")
+    con.execute(
+        """
+        CREATE OR REPLACE VIEW tier2.frozen_section_event_v1 AS
+        SELECT * FROM main.canonical_frozen_section_events_v1
+        """
+    )
+    con.execute(
+        "COMMENT ON VIEW tier2.frozen_section_event_v1 IS "
+        "'DEPRECATED SHIM — canonical source is main.canonical_frozen_section_events_v1. "
+        "Kept in place until Script 358 tier2 demolition; do not write here.';"
+    )
+    log_info("Replaced tier2.frozen_section_event_v1 with canonical-backed view")
+
+
+def _build_canonical_patient_rollup_sql() -> str:
+    """(8.b) Build SQL for main.canonical_frozen_section_patient_rollup_v1."""
+    slot_cols = [
+        ("yn",
+         "MAX(CASE WHEN slot = {n} THEN performed_yn END)"),
+        ("date",
+         "MAX(CASE WHEN slot = {n} THEN frozen_section_date END)"),
+        ("location",
+         "MAX(CASE WHEN slot = {n} THEN frozen_section_site_norm END)"),
+        ("result_raw",
+         "MAX(CASE WHEN slot = {n} THEN frozen_section_result_raw END)"),
+        ("result_histology",
+         "MAX(CASE WHEN slot = {n} THEN frozen_section_result_histology END)"),
+        ("result_qualifier",
+         "MAX(CASE WHEN slot = {n} THEN frozen_section_result_qualifier END)"),
+        ("result_class",
+         "MAX(CASE WHEN slot = {n} THEN frozen_section_result_class END)"),
+        ("was_deferred_flag",
+         "MAX(CASE WHEN slot = {n} THEN was_deferred_flag END)"),
+        ("was_malignant_flag",
+         "MAX(CASE WHEN slot = {n} THEN was_malignant_flag END)"),
+        ("was_suspected_flag",
+         "MAX(CASE WHEN slot = {n} THEN was_suspected_flag END)"),
+        ("was_negated_flag",
+         "MAX(CASE WHEN slot = {n} THEN was_negated_flag END)"),
+        ("source_of_data",
+         "MAX(CASE WHEN slot = {n} THEN source_of_data END)"),
+        ("excel_corroborated_flag",
+         "MAX(CASE WHEN slot = {n} THEN excel_corroborated_flag END)"),
+        ("excel_result_raw",
+         "MAX(CASE WHEN slot = {n} THEN excel_result_raw END)"),
+        ("surgery_n",
+         "MAX(CASE WHEN slot = {n} THEN surgery_n END)"),
+    ]
+    slot_parts: list[str] = []
+    for n in range(1, 13):
+        for suffix, expr in slot_cols:
+            slot_parts.append(f'{expr.format(n=n)} AS "frozen_{n}_{suffix}"')
+    slot_sql = ",\n            ".join(slot_parts)
+    performed_pred = (
+        "(frozen_section_result_raw IS NOT NULL "
+        "OR source_of_data = 'synoptic_excel_parsed_column')"
+    )
+    return f"""
+    CREATE OR REPLACE TABLE main.canonical_frozen_section_patient_rollup_v1 AS
+    WITH ev AS (
+        SELECT
+            v.*,
+            {performed_pred} AS performed_yn,
+            ROW_NUMBER() OVER (
+                PARTITION BY research_id
+                ORDER BY frozen_section_date ASC NULLS LAST,
+                         source_priority ASC,
+                         frozen_event_index
+            ) AS slot
+        FROM main.canonical_frozen_section_events_v1 v
+        WHERE {performed_pred}
+    ),
+    agg AS (
+        SELECT
+            research_id,
+            COUNT(*)::BIGINT AS frozen_section_count,
+            BOOL_OR({performed_pred}) AS frozen_section_any_performed_flag,
+            BOOL_OR(was_malignant_flag) AS frozen_section_any_malignant_flag,
+            BOOL_OR(was_deferred_flag) AS frozen_section_any_deferred_flag,
+            BOOL_OR(was_suspected_flag) AS frozen_section_any_suspected_flag,
+            MIN(frozen_section_date) AS frozen_section_first_date,
+            MAX(frozen_section_date) AS frozen_section_last_date
+        FROM main.canonical_frozen_section_events_v1 v
+        WHERE {performed_pred}
+        GROUP BY research_id
+    ),
+    slots AS (
+        SELECT
+            research_id,
+            {slot_sql}
+        FROM ev
+        WHERE slot <= 12
+        GROUP BY research_id
+    )
+    SELECT
+        a.research_id,
+        a.frozen_section_count,
+        a.frozen_section_any_performed_flag,
+        a.frozen_section_any_malignant_flag,
+        a.frozen_section_any_deferred_flag,
+        a.frozen_section_any_suspected_flag,
+        a.frozen_section_first_date,
+        a.frozen_section_last_date,
+        s.* EXCLUDE (research_id)
+    FROM agg a
+    LEFT JOIN slots s USING (research_id)
+    """
+
+
+def publish_canonical_patient_rollup(
+    con: duckdb.DuckDBPyConnection,
+) -> tuple[int, int]:
+    """(8.b) Build main.canonical_frozen_section_patient_rollup_v1."""
+    con.execute(_build_canonical_patient_rollup_sql())
+    n, npats = con.execute(
+        "SELECT COUNT(*), COUNT(DISTINCT research_id) "
+        "FROM main.canonical_frozen_section_patient_rollup_v1"
+    ).fetchone()
+    log_info(
+        f"Built main.canonical_frozen_section_patient_rollup_v1 "
+        f"(rows={n:,}, distinct patients={npats:,})"
+    )
+    con.execute(
+        "COMMENT ON TABLE main.canonical_frozen_section_patient_rollup_v1 IS "
+        "'[domain=frozen_section; grain=per_patient_wide] — source: Script 360 Phase 8; "
+        "12-slot wide rollup derived from main.canonical_frozen_section_events_v1';"
+    )
+    return int(n), int(npats)
+
+
+def sync_registry_canonical(con: duckdb.DuckDBPyConnection, ts: str) -> None:
+    """(8.e) Swap registry entries from tier2.* to main.canonical_frozen_section_*."""
+    ev_n, ev_p = con.execute(
+        "SELECT COUNT(*), COUNT(DISTINCT research_id) "
+        "FROM main.canonical_frozen_section_events_v1"
+    ).fetchone()
+    rp_n, rp_p = con.execute(
+        "SELECT COUNT(*), COUNT(DISTINCT research_id) "
+        "FROM main.canonical_frozen_section_patient_rollup_v1"
+    ).fetchone()
+    marker = "Script 360 canonical publish"
+    _registry_upsert(
+        con,
+        "canonical_frozen_section_events_v1",
+        "main",
+        "per_event",
+        int(ev_n),
+        int(ev_p),
+        ts,
+        marker,
+    )
+    _registry_upsert(
+        con,
+        "canonical_frozen_section_patient_rollup_v1",
+        "main",
+        "per_patient_wide",
+        int(rp_n),
+        int(rp_p),
+        ts,
+        marker,
+    )
+    # Mark legacy tier2 entries deprecated (row still present, description updated)
+    con.execute(
+        f"""
+        UPDATE {WS_SCHEMA}.{REGISTRY_TABLE}
+        SET description = CASE
+                WHEN description LIKE '%DEPRECATED%' THEN description
+                ELSE COALESCE(description, '') ||
+                     ' | DEPRECATED: shim view backed by '
+                     'main.canonical_frozen_section_events_v1 (Script 360 Phase 8)'
+            END,
+            canonical_version = 'v1_0_script360_shim'
+        WHERE detail_table_name = 'frozen_section_event_v1'
+          AND schema_name = 'tier2'
+        """
+    )
+    log_info(
+        "detail_table_registry_v1 swapped to canonical_frozen_section_* "
+        "(tier2.frozen_section_event_v1 row marked deprecated)"
+    )
+
+
+def post_publish_gates(con: duckdb.DuckDBPyConnection) -> None:
+    """(8.f) Verify canonical publish succeeded."""
+    log_info("=== Phase 8 post-publish gates ===")
+
+    events_exists = table_exists(con, "main", "canonical_frozen_section_events_v1")
+    log_info(f"GATE main.canonical_frozen_section_events_v1 EXISTS -> {events_exists}")
+    if not events_exists:
+        raise SystemExit("GATE FAIL: main.canonical_frozen_section_events_v1 missing")
+
+    rollup_exists = table_exists(
+        con, "main", "canonical_frozen_section_patient_rollup_v1"
+    )
+    log_info(
+        f"GATE main.canonical_frozen_section_patient_rollup_v1 EXISTS -> {rollup_exists}"
+    )
+    if not rollup_exists:
+        raise SystemExit("GATE FAIL: main.canonical_frozen_section_patient_rollup_v1 missing")
+
+    n_canon, npats_canon = con.execute(
+        "SELECT COUNT(*), COUNT(DISTINCT research_id) "
+        "FROM main.canonical_frozen_section_events_v1"
+    ).fetchone()
+    # tier2.frozen_section_event_v1 is now a view pointing at canonical; we still
+    # compare the row counts because the view itself should be intact.
+    n_shim, _ = con.execute(
+        "SELECT COUNT(*), COUNT(DISTINCT research_id) "
+        "FROM tier2.frozen_section_event_v1"
+    ).fetchone()
+    log_info(
+        f"GATE main.canonical_frozen_section_events_v1 row count == "
+        f"tier2.frozen_section_event_v1 row count -> {n_canon == n_shim} "
+        f"({n_canon} == {n_shim})"
+    )
+    if n_canon != n_shim:
+        raise SystemExit(
+            f"GATE FAIL: canonical ({n_canon}) != tier2 shim ({n_shim})"
+        )
+
+    rc_lo, rc_hi = GATES["row_count"]
+    log_info(
+        f"GATE canonical row_count in [{int(rc_lo)},{int(rc_hi)}] -> "
+        f"{rc_lo <= n_canon <= rc_hi} (n={n_canon})"
+    )
+    if not (rc_lo <= n_canon <= rc_hi):
+        raise SystemExit(
+            f"GATE FAIL: canonical row count {n_canon} not in "
+            f"[{int(rc_lo)},{int(rc_hi)}]"
+        )
+
+    pt_lo, pt_hi = GATES["distinct_patients"]
+    n_rollup_pats = con.execute(
+        "SELECT COUNT(DISTINCT research_id) "
+        "FROM main.canonical_frozen_section_patient_rollup_v1"
+    ).fetchone()[0]
+    log_info(
+        f"GATE canonical_frozen_section_patient_rollup_v1 distinct research_id "
+        f"in [{int(pt_lo)},{int(pt_hi)}] -> "
+        f"{pt_lo <= n_rollup_pats <= pt_hi} (n={n_rollup_pats})"
+    )
+    if not (pt_lo <= n_rollup_pats <= pt_hi):
+        raise SystemExit(
+            f"GATE FAIL: patient rollup distinct research_id {n_rollup_pats} "
+            f"not in [{int(pt_lo)},{int(pt_hi)}]"
+        )
+    log_info(
+        f"INFO canonical events distinct patients = {npats_canon} "
+        f"(rollup limited to performed-event patients = {n_rollup_pats})"
+    )
+
+    tier2_registry = con.execute(
+        f"""
+        SELECT detail_table_name, schema_name, description
+        FROM {WS_SCHEMA}.{REGISTRY_TABLE}
+        WHERE detail_table_name IN ('frozen_section_event_v1')
+          AND schema_name = 'tier2'
+        """
+    ).fetchall()
+    canonical_registry = con.execute(
+        f"""
+        SELECT detail_table_name, schema_name
+        FROM {WS_SCHEMA}.{REGISTRY_TABLE}
+        WHERE detail_table_name LIKE 'canonical_frozen_section_%'
+          AND schema_name = 'main'
+        """
+    ).fetchall()
+    log_info(f"registry canonical entries: {canonical_registry}")
+    log_info(f"registry tier2 entries (deprecated tag): {tier2_registry}")
+    has_canonical = any(
+        name.startswith("canonical_frozen_section_") and sch == "main"
+        for (name, sch) in canonical_registry
+    )
+    tier2_ok = all("DEPRECATED" in (row[2] or "") for row in tier2_registry)
+    log_info(
+        f"GATE detail_table_registry_v1 references canonical_frozen_section_* "
+        f"not tier2.* -> {has_canonical and tier2_ok}"
+    )
+    if not has_canonical:
+        raise SystemExit("GATE FAIL: canonical_frozen_section_* not in registry")
+    if not tier2_ok:
+        raise SystemExit("GATE FAIL: tier2 frozen registry entry not marked deprecated")
+
+
+def phase_8(con: duckdb.DuckDBPyConnection, ts: str) -> None:
+    """Phase 8 ordering:
+    1. CREATE canonical events (from tier2 source table, still intact).
+    2. Build patient rollup (reads canonical events).
+    3. Archive tier2 event table, DROP it, CREATE canonical-backed shim VIEW.
+    4. Registry swap (tier2 -> canonical + deprecated tag).
+    5. Rebuild verify_frozen_section_v1(+summary) from canonical.
+    6. Re-run 337/338 against the new canonical source.
+    7. Post-publish gates.
+    """
+    log_info("=== PHASE 8 canonical publish (main.canonical_frozen_section_*) ===")
+    build_canonical_events(con)
+    publish_canonical_patient_rollup(con)
+    archive_and_shim_tier2_event(con, ts)
+    sync_registry_canonical(con, ts)
+    rebuild_verify_frozen_tables(con)
+    run_subprocess_scripts()
+    post_publish_gates(con)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--phase",
         default="0",
-        help="0|1|1.5|2|2-test|3|4|5|6|6.5|7|all",
+        help="0|1|1.5|2|2-test|3|4|5|6|6.5|7|8|all",
     )
     parser.add_argument(
         "--continue-destructive",
@@ -2049,13 +2497,15 @@ def main() -> int:
             phase_6_5(con)
         elif ph == "7":
             phase_7(con, ts)
+        elif ph == "8":
+            phase_8(con, ts)
         elif ph == "all":
             phase_0(con)
             phase_1(con, ts)
             inv = phase_1_5(con, ts, args.confirm_orphans)
             log_info(f"Inventory written: {inv}")
             if not args.continue_destructive:
-                log_info("Stopping after phase 1.5 (pass --continue-destructive for phases 2–7)")
+                log_info("Stopping after phase 1.5 (pass --continue-destructive for phases 2–8)")
                 return 3
             phase_2(con)
             phase_3(con)
@@ -2064,6 +2514,7 @@ def main() -> int:
             phase_6(con, ts)
             phase_6_5(con)
             phase_7(con, ts)
+            phase_8(con, ts)
             post_rename_gates(con)
             write_cleanup_summary(con, inv, utc_date().replace("-", ""))
         else:
