@@ -1,0 +1,326 @@
+{
+  "phase": 0,
+  "started_at": "2026-04-21T01:54:32Z",
+  "token_mode": "motherduck.local.toml:MD_SA_TOKEN",
+  "canonical_db": "thyroid_canonical_publication_v1_0",
+  "parquet_path": "runs/9domain_v4/vascular_invasion/output/note_entities_llm_vascular_invasion.parquet",
+  "gates": [
+    {
+      "name": "parquet_file_present",
+      "ok": true,
+      "detail": {
+        "path": "/Users/loganglosser/THYROID_2026/runs/9domain_v4/vascular_invasion/output/note_entities_llm_vascular_invasion.parquet"
+      }
+    },
+    {
+      "name": "parquet_n_rows_eq_39210",
+      "ok": true,
+      "detail": {
+        "observed": 39210,
+        "expected": 39210
+      }
+    },
+    {
+      "name": "parquet_n_rids_eq_10868",
+      "ok": true,
+      "detail": {
+        "observed": 10868,
+        "expected": 10868
+      }
+    },
+    {
+      "name": "parquet_n_nrids_eq_39210_no_dupes",
+      "ok": true,
+      "detail": {
+        "observed": 39210,
+        "expected": 39210,
+        "note": "n_nrids must equal n_rows -> RAW = DEDUP"
+      }
+    },
+    {
+      "name": "parquet_model_eq_qwen25_32b",
+      "ok": true,
+      "detail": {
+        "observed": "qwen2.5-32b",
+        "expected": "qwen2.5-32b"
+      }
+    },
+    {
+      "name": "parquet_base_url_eq_pinned",
+      "ok": true,
+      "detail": {
+        "observed": "http://213.5.130.43:20049/v1",
+        "expected": "http://213.5.130.43:20049/v1"
+      }
+    },
+    {
+      "name": "parquet_preprocess_script_version_eq_pinned",
+      "ok": true,
+      "detail": {
+        "observed": "v4_9domain_rerun_2026-04-19",
+        "expected": "v4_9domain_rerun_2026-04-19"
+      }
+    },
+    {
+      "name": "parquet_preprocess_batch_id_uniform_and_eq_pinned",
+      "ok": true,
+      "detail": {
+        "observed_distinct": 1,
+        "value": "0d4628a0-2177-46ce-8464-4be573004c8b",
+        "expected": "0d4628a0-2177-46ce-8464-4be573004c8b"
+      }
+    },
+    {
+      "name": "parquet_extracted_at_min_starts_with_pinned",
+      "ok": true,
+      "detail": {
+        "observed": "2026-04-19T08:53:19.528546+00:00",
+        "expected_prefix": "2026-04-19T08:53"
+      }
+    },
+    {
+      "name": "parquet_extracted_at_max_starts_with_pinned",
+      "ok": true,
+      "detail": {
+        "observed": "2026-04-19T09:39:44.200251+00:00",
+        "expected_prefix": "2026-04-19T09:39"
+      }
+    },
+    {
+      "name": "parquet_rids_within_cpm",
+      "ok": true,
+      "detail": {
+        "observed": 10868,
+        "cpm_rids": 10871,
+        "absent_rids": 3
+      }
+    },
+    {
+      "name": "parquet_rjhash_match_pinned",
+      "ok": true,
+      "detail": {
+        "observed": "e8f4d6a67f1f48a831bb13ca0bb75ca0",
+        "pinned": "e8f4d6a67f1f48a831bb13ca0bb75ca0"
+      }
+    },
+    {
+      "name": "parquet_ndhash_match_pinned",
+      "ok": true,
+      "detail": {
+        "observed": "58ffbf13cf915473732f70fa59802790",
+        "pinned": "58ffbf13cf915473732f70fa59802790"
+      }
+    },
+    {
+      "name": "parquet_srchash_match_pinned",
+      "ok": true,
+      "detail": {
+        "observed": "155f050eb2db3c12451ec45170addc83",
+        "pinned": "155f050eb2db3c12451ec45170addc83"
+      }
+    },
+    {
+      "name": "parquet_dup_rows_eq_0",
+      "ok": true,
+      "detail": {
+        "observed": 0,
+        "expected": 0
+      }
+    },
+    {
+      "name": "parquet_dup_groups_eq_0",
+      "ok": true,
+      "detail": {
+        "observed": 0,
+        "expected": 0
+      }
+    },
+    {
+      "name": "parquet_pos_rids_le_parquet_rids",
+      "ok": true,
+      "detail": {
+        "pos_rids": 2973,
+        "parquet_rids": 10868
+      }
+    },
+    {
+      "name": "parquet_pos_mentioned_le_pos_rids",
+      "ok": true,
+      "detail": {
+        "pos_mentioned_rids": 1628,
+        "pos_rids": 2973,
+        "note": "positive_mentioned RIDs must be a subset of pos RIDs"
+      }
+    },
+    {
+      "name": "md_source_stale_rows_eq_11037",
+      "ok": true,
+      "detail": {
+        "observed": 11037,
+        "expected": 11037
+      }
+    },
+    {
+      "name": "md_source_stale_rids_eq_5641",
+      "ok": true,
+      "detail": {
+        "observed": 5641,
+        "expected": 5641
+      }
+    },
+    {
+      "name": "md_source_stale_model_eq_qwen3_32b",
+      "ok": true,
+      "detail": {
+        "observed": "qwen3:32b",
+        "expected": "qwen3:32b"
+      }
+    },
+    {
+      "name": "cpm_rows_eq_10871",
+      "ok": true,
+      "detail": {
+        "observed": 10871,
+        "expected": 10871
+      }
+    },
+    {
+      "name": "cpm_rids_eq_10871",
+      "ok": true,
+      "detail": {
+        "observed": 10871,
+        "expected": 10871
+      }
+    },
+    {
+      "name": "cpm_no_null_rid",
+      "ok": true,
+      "detail": {
+        "observed": 0
+      }
+    },
+    {
+      "name": "stale_has_data_true_eq_653",
+      "ok": true,
+      "detail": {
+        "observed": 653,
+        "expected": 653
+      }
+    },
+    {
+      "name": "stale_has_data_null_eq_10218",
+      "ok": true,
+      "detail": {
+        "observed": 10218,
+        "expected": 10218
+      }
+    },
+    {
+      "name": "stale_positive_mentioned_true_eq_445",
+      "ok": true,
+      "detail": {
+        "observed": 445,
+        "expected": 445
+      }
+    },
+    {
+      "name": "stale_sum_n_entities_eq_2936",
+      "ok": true,
+      "detail": {
+        "observed": 2936,
+        "expected": 2936
+      }
+    },
+    {
+      "name": "stale_confidence_tier_eq_below80",
+      "ok": true,
+      "detail": {
+        "observed": "below_80pct_concordance",
+        "expected": "below_80pct_concordance"
+      }
+    },
+    {
+      "name": "stale_confidence_tier_set_count_eq_has_true",
+      "ok": true,
+      "detail": {
+        "observed": 653,
+        "expected": 653,
+        "note": "all current TRUE rows had confidence_tier set"
+      }
+    },
+    {
+      "name": "stale_not_already_promoted",
+      "ok": true,
+      "detail": {
+        "detail": "has_null==0 AND has_true ~= target would mean rollup already promoted; refusing to clobber.",
+        "current_has_true": 653,
+        "current_has_null": 10218,
+        "expected_post_target": 2973
+      }
+    },
+    {
+      "name": "registry_total_rows_stale_eq_11037",
+      "ok": true,
+      "detail": {
+        "observed": 11037,
+        "expected": 11037
+      }
+    },
+    {
+      "name": "registry_total_patients_stale_eq_5641",
+      "ok": true,
+      "detail": {
+        "observed": 5641,
+        "expected": 5641
+      }
+    }
+  ],
+  "blockers": [],
+  "observed": {
+    "parquet_n_rows": 39210,
+    "parquet_n_rids": 10868,
+    "parquet_n_nrids": 39210,
+    "parquet_models": "qwen2.5-32b",
+    "parquet_base_urls": "http://213.5.130.43:20049/v1",
+    "parquet_preprocess_script_version": "v4_9domain_rerun_2026-04-19",
+    "parquet_distinct_batch_ids": 1,
+    "parquet_batch_id": "0d4628a0-2177-46ce-8464-4be573004c8b",
+    "parquet_extracted_at_min": "2026-04-19T08:53:19.528546+00:00",
+    "parquet_extracted_at_max": "2026-04-19T09:39:44.200251+00:00",
+    "parquet_rjhash": "e8f4d6a67f1f48a831bb13ca0bb75ca0",
+    "parquet_ndhash": "58ffbf13cf915473732f70fa59802790",
+    "parquet_srchash": "155f050eb2db3c12451ec45170addc83",
+    "parquet_dup_rows": 0,
+    "parquet_dup_groups": 0,
+    "parquet_positive_targets": {
+      "rids_with_pos": 2973,
+      "total_pos_entities": 10217,
+      "rids_with_positive_mentioned": 1628
+    },
+    "parquet_negated_entities": 12582,
+    "md_source_n_rows": 11037,
+    "md_source_n_rids": 5641,
+    "md_source_models": "qwen3:32b",
+    "md_source_extracted_at_min": "2026-04-01T04:34:16.284422+00:00",
+    "md_source_extracted_at_max": "2026-04-02T20:35:59.732588+00:00",
+    "cpm_rows": 10871,
+    "cpm_rids": 10871,
+    "cpm_null_rid": 0,
+    "cpm_stale_has_data_true": 653,
+    "cpm_stale_has_data_false": 0,
+    "cpm_stale_has_data_null": 10218,
+    "cpm_stale_positive_mentioned_true": 445,
+    "cpm_stale_confidence_tier_set": 653,
+    "cpm_stale_confidence_tier_values": "below_80pct_concordance",
+    "cpm_stale_sum_n_entities": 2936,
+    "registry_table_present": true,
+    "registry_row": {
+      "total_rows": 11037,
+      "total_patients": 5641,
+      "canonical_version": "v1_0",
+      "description_len": 31
+    }
+  },
+  "finished_at": "2026-04-21T01:54:35Z",
+  "all_gates_passed": true
+}

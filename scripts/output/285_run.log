@@ -1,0 +1,50 @@
+[01:54:31.606Z] connecting to MotherDuck 'thyroid_canonical_publication_v1_0' (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[01:54:32.308Z] === PHASE 0 — parquet audit + measure positive targets (READ-ONLY) ===
+[01:54:32.309Z]   gate parquet_file_present: OK — {'path': '/Users/loganglosser/THYROID_2026/runs/9domain_v4/vascular_invasion/output/note_entities_llm_vascular_invasion.parquet'}
+[01:54:32.807Z]   0A: parquet rows=39,210 rids=10,868 nrids=39,210
+[01:54:32.807Z]       model=qwen2.5-32b  base_url=http://213.5.130.43:20049/v1
+[01:54:32.807Z]       preprocess_script_version=v4_9domain_rerun_2026-04-19  n_batch=1
+[01:54:32.807Z]       extracted_at min=2026-04-19T08:53:19.528546+00:00  max=2026-04-19T09:39:44.200251+00:00
+[01:54:32.807Z]   gate parquet_n_rows_eq_39210: OK — {'observed': 39210, 'expected': 39210}
+[01:54:32.807Z]   gate parquet_n_rids_eq_10868: OK — {'observed': 10868, 'expected': 10868}
+[01:54:32.808Z]   gate parquet_n_nrids_eq_39210_no_dupes: OK — {'observed': 39210, 'expected': 39210, 'note': 'n_nrids must equal n_rows -> RAW = DEDUP'}
+[01:54:32.808Z]   gate parquet_model_eq_qwen25_32b: OK — {'observed': 'qwen2.5-32b', 'expected': 'qwen2.5-32b'}
+[01:54:32.808Z]   gate parquet_base_url_eq_pinned: OK — {'observed': 'http://213.5.130.43:20049/v1', 'expected': 'http://213.5.130.43:20049/v1'}
+[01:54:32.808Z]   gate parquet_preprocess_script_version_eq_pinned: OK — {'observed': 'v4_9domain_rerun_2026-04-19', 'expected': 'v4_9domain_rerun_2026-04-19'}
+[01:54:32.808Z]   gate parquet_preprocess_batch_id_uniform_and_eq_pinned: OK — {'observed_distinct': 1, 'value': '0d4628a0-2177-46ce-8464-4be573004c8b', 'expected': '0d4628a0-2177-46ce-8464-4be573004c8b'}
+[01:54:32.808Z]   gate parquet_extracted_at_min_starts_with_pinned: OK — {'observed': '2026-04-19T08:53:19.528546+00:00', 'expected_prefix': '2026-04-19T08:53'}
+[01:54:32.808Z]   gate parquet_extracted_at_max_starts_with_pinned: OK — {'observed': '2026-04-19T09:39:44.200251+00:00', 'expected_prefix': '2026-04-19T09:39'}
+[01:54:32.808Z]   gate parquet_rids_within_cpm: OK — {'observed': 10868, 'cpm_rids': 10871, 'absent_rids': 3}
+[01:54:32.960Z]   0B: parquet hashes: rj=e8f4d6a67f1f48a831bb13ca0bb75ca0  nd=58ffbf13cf915473732f70fa59802790  src=155f050eb2db3c12451ec45170addc83
+[01:54:32.960Z]   gate parquet_rjhash_match_pinned: OK — {'observed': 'e8f4d6a67f1f48a831bb13ca0bb75ca0', 'pinned': 'e8f4d6a67f1f48a831bb13ca0bb75ca0'}
+[01:54:32.960Z]   gate parquet_ndhash_match_pinned: OK — {'observed': '58ffbf13cf915473732f70fa59802790', 'pinned': '58ffbf13cf915473732f70fa59802790'}
+[01:54:32.960Z]   gate parquet_srchash_match_pinned: OK — {'observed': '155f050eb2db3c12451ec45170addc83', 'pinned': '155f050eb2db3c12451ec45170addc83'}
+[01:54:32.977Z]   gate parquet_dup_rows_eq_0: OK — {'observed': 0, 'expected': 0}
+[01:54:32.977Z]   gate parquet_dup_groups_eq_0: OK — {'observed': 0, 'expected': 0}
+[01:54:33.099Z]   0D: parquet positive targets: rids_with_pos=2,973 total_pos_entities=10,217 rids_with_positive_mentioned=1,628
+[01:54:33.099Z]   gate parquet_pos_rids_le_parquet_rids: OK — {'pos_rids': 2973, 'parquet_rids': 10868}
+[01:54:33.099Z]   gate parquet_pos_mentioned_le_pos_rids: OK — {'pos_mentioned_rids': 1628, 'pos_rids': 2973, 'note': 'positive_mentioned RIDs must be a subset of pos RIDs'}
+[01:54:33.285Z]       parquet has 12,582 negated entities — correctly excluded by _pos filter (vasc reports routinely state 'no vascular invasion identified')
+[01:54:33.346Z]   0E: current MD source rows=11,037 rids=5,641 models=qwen3:32b
+[01:54:33.346Z]   gate md_source_stale_rows_eq_11037: OK — {'observed': 11037, 'expected': 11037}
+[01:54:33.346Z]   gate md_source_stale_rids_eq_5641: OK — {'observed': 5641, 'expected': 5641}
+[01:54:33.346Z]   gate md_source_stale_model_eq_qwen3_32b: OK — {'observed': 'qwen3:32b', 'expected': 'qwen3:32b'}
+[01:54:33.417Z]   0F: CPM rows=10,871 rids=10,871  stale nlp_vasc_has_data: TRUE=653 FALSE=0 NULL=10218
+[01:54:33.417Z]       stale positive_mentioned TRUE=445  confidence_tier_set=653  sum_n_entities=2936  tier_values=below_80pct_concordance
+[01:54:33.417Z]   gate cpm_rows_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[01:54:33.417Z]   gate cpm_rids_eq_10871: OK — {'observed': 10871, 'expected': 10871}
+[01:54:33.417Z]   gate cpm_no_null_rid: OK — {'observed': 0}
+[01:54:33.417Z]   gate stale_has_data_true_eq_653: OK — {'observed': 653, 'expected': 653}
+[01:54:33.417Z]   gate stale_has_data_null_eq_10218: OK — {'observed': 10218, 'expected': 10218}
+[01:54:33.417Z]   gate stale_positive_mentioned_true_eq_445: OK — {'observed': 445, 'expected': 445}
+[01:54:33.417Z]   gate stale_sum_n_entities_eq_2936: OK — {'observed': 2936, 'expected': 2936}
+[01:54:33.417Z]   gate stale_confidence_tier_eq_below80: OK — {'observed': 'below_80pct_concordance', 'expected': 'below_80pct_concordance'}
+[01:54:33.417Z]   gate stale_confidence_tier_set_count_eq_has_true: OK — {'observed': 653, 'expected': 653, 'note': 'all current TRUE rows had confidence_tier set'}
+[01:54:33.417Z]   gate stale_not_already_promoted: OK — {'detail': 'has_null==0 AND has_true ~= target would mean rollup already promoted; refusing to clobber.', 'current_has_true': 653, 'current_has_null': 10218, 'expected_post_target': 2973}
+[01:54:35.882Z]   gate registry_total_rows_stale_eq_11037: OK — {'observed': 11037, 'expected': 11037}
+[01:54:35.882Z]   gate registry_total_patients_stale_eq_5641: OK — {'observed': 5641, 'expected': 5641}
+[01:54:35.882Z] 
+[01:54:35.882Z] ──── PHASE 0 SUMMARY ────
+[01:54:35.882Z]   gates: 33 total, 33 passed, 0 blockers
+[01:54:35.882Z]   ALL GATES PASSED — Phase 1 may proceed.
+[01:54:35.882Z] ─────────────────────────
