@@ -1,0 +1,12 @@
+{
+  "phase": 3,
+  "started_at_utc": "2026-04-21T22:29:42Z",
+  "pre_state": {
+    "row_count": 10859,
+    "column_count": 19
+  },
+  "view_replaced_at_utc": "2026-04-21T22:29:43Z",
+  "new_view_definition_archived": "scripts/output/preB_phase3_cupm_v2_view_definition_after.sql",
+  "finished_at_utc": "2026-04-21T22:29:43Z",
+  "status": "OK"
+}

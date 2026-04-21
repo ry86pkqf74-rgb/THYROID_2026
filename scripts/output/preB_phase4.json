@@ -1,0 +1,244 @@
+{
+  "phase": 4,
+  "started_at_utc": "2026-04-21T22:30:31Z",
+  "cupm_v2_columns_after": [
+    {
+      "name": "research_id",
+      "type": "INTEGER",
+      "pos": 1
+    },
+    {
+      "name": "has_any_us",
+      "type": "BOOLEAN",
+      "pos": 2
+    },
+    {
+      "name": "n_us_exams",
+      "type": "BIGINT",
+      "pos": 3
+    },
+    {
+      "name": "first_us_date",
+      "type": "DATE",
+      "pos": 4
+    },
+    {
+      "name": "last_us_date",
+      "type": "DATE",
+      "pos": 5
+    },
+    {
+      "name": "preop_us_available_flag",
+      "type": "BOOLEAN",
+      "pos": 6
+    },
+    {
+      "name": "max_tirads_category_ever",
+      "type": "VARCHAR",
+      "pos": 7
+    },
+    {
+      "name": "max_tirads_points_ever",
+      "type": "DOUBLE",
+      "pos": 8
+    },
+    {
+      "name": "tirads_category_at_first_exam",
+      "type": "VARCHAR",
+      "pos": 9
+    },
+    {
+      "name": "tirads_category_at_last_preop_exam",
+      "type": "VARCHAR",
+      "pos": 10
+    },
+    {
+      "name": "n_nodules_total_across_exams",
+      "type": "HUGEINT",
+      "pos": 11
+    },
+    {
+      "name": "bilateral_disease_flag_ever",
+      "type": "BOOLEAN",
+      "pos": 12
+    },
+    {
+      "name": "multifocal_flag_ever",
+      "type": "BOOLEAN",
+      "pos": 13
+    },
+    {
+      "name": "first_high_risk_tirads_date",
+      "type": "DATE",
+      "pos": 14
+    },
+    {
+      "name": "has_us_ln_findings_ever",
+      "type": "BOOLEAN",
+      "pos": 15
+    },
+    {
+      "name": "any_suspicious_us_ln_ever",
+      "type": "BOOLEAN",
+      "pos": 16
+    },
+    {
+      "name": "first_abnormal_us_ln_date",
+      "type": "DATE",
+      "pos": 17
+    },
+    {
+      "name": "has_gland_findings_ever",
+      "type": "BOOLEAN",
+      "pos": 18
+    },
+    {
+      "name": "any_nlp_backfill_pending_for_patient",
+      "type": "BOOLEAN",
+      "pos": 19
+    },
+    {
+      "name": "imaging_laterality_rollup_v2",
+      "type": "VARCHAR",
+      "pos": 20
+    },
+    {
+      "name": "pathology_vs_imaging_laterality_concordant_v2",
+      "type": "VARCHAR",
+      "pos": 21
+    },
+    {
+      "name": "tumor_pathology_laterality_v2",
+      "type": "VARCHAR",
+      "pos": 22
+    },
+    {
+      "name": "any_fna_recommended_report_ever",
+      "type": "BOOLEAN",
+      "pos": 23
+    },
+    {
+      "name": "any_fna_recommended_report_source",
+      "type": "VARCHAR",
+      "pos": 24
+    },
+    {
+      "name": "tirads_worst_rank_ever",
+      "type": "INTEGER",
+      "pos": 25
+    },
+    {
+      "name": "tirads_worst_rank_source",
+      "type": "VARCHAR",
+      "pos": 26
+    },
+    {
+      "name": "max_nodule_size_mm",
+      "type": "DOUBLE",
+      "pos": 27
+    },
+    {
+      "name": "n_nodule_records",
+      "type": "BIGINT",
+      "pos": 28
+    }
+  ],
+  "cupm_v2_column_count_after": 28,
+  "cupm_v2_row_count_after": 10859,
+  "cupm_v2_distinct_rids_after": 10859,
+  "new_columns_populated_counts": {
+    "imaging_laterality_rollup_v2": 3439,
+    "pathology_vs_imaging_laterality_concordant_v2": 10859,
+    "tumor_pathology_laterality_v2": 3975,
+    "any_fna_recommended_report_ever": 4073,
+    "any_fna_recommended_report_source": 4073,
+    "tirads_worst_rank_ever": 2465,
+    "tirads_worst_rank_source": 2465,
+    "max_nodule_size_mm": 4026,
+    "n_nodule_records": 6523
+  },
+  "n_records_lt_n_total_inversions": 0,
+  "port_view_vs_backfill_counts": {
+    "imaging_laterality_rollup_v2": {
+      "n_view": 3439,
+      "n_backfill": 3439,
+      "n_backfill_rids_not_in_cupm_v2": 0,
+      "expected_view": 3439,
+      "ok": true
+    },
+    "pathology_vs_imaging_laterality_concordant_v2": {
+      "n_view": 10859,
+      "n_backfill": 10871,
+      "n_backfill_rids_not_in_cupm_v2": 12,
+      "expected_view": 10859,
+      "ok": true
+    },
+    "tumor_pathology_laterality_v2": {
+      "n_view": 3975,
+      "n_backfill": 3986,
+      "n_backfill_rids_not_in_cupm_v2": 11,
+      "expected_view": 3975,
+      "ok": true
+    },
+    "any_fna_recommended_report_ever": {
+      "n_view": 4073,
+      "n_backfill": 4073,
+      "n_backfill_rids_not_in_cupm_v2": 0,
+      "expected_view": 4073,
+      "ok": true
+    },
+    "any_fna_recommended_report_source": {
+      "n_view": 4073,
+      "n_backfill": 4073,
+      "n_backfill_rids_not_in_cupm_v2": 0,
+      "expected_view": 4073,
+      "ok": true
+    },
+    "tirads_worst_rank_ever": {
+      "n_view": 2465,
+      "n_backfill": 2465,
+      "n_backfill_rids_not_in_cupm_v2": 0,
+      "expected_view": 2465,
+      "ok": true
+    },
+    "tirads_worst_rank_source": {
+      "n_view": 2465,
+      "n_backfill": 2465,
+      "n_backfill_rids_not_in_cupm_v2": 0,
+      "expected_view": 2465,
+      "ok": true
+    }
+  },
+  "compute_col_summary": {
+    "n_max_size": 4026,
+    "min_size": 2.0,
+    "max_size": 480.0,
+    "p50_size": 21.9,
+    "n_nrec": 6523,
+    "min_nrec": 1,
+    "max_nrec": 122,
+    "p50_nrec": 2.0
+  },
+  "original_columns_populated_counts": {
+    "has_any_us": 10859,
+    "n_us_exams": 10859,
+    "first_us_date": 4360,
+    "last_us_date": 4360,
+    "preop_us_available_flag": 10859,
+    "max_tirads_category_ever": 3396,
+    "max_tirads_points_ever": 3441,
+    "tirads_category_at_first_exam": 3286,
+    "tirads_category_at_last_preop_exam": 3237,
+    "n_nodules_total_across_exams": 4358,
+    "bilateral_disease_flag_ever": 4358,
+    "multifocal_flag_ever": 10859,
+    "first_high_risk_tirads_date": 1898,
+    "has_us_ln_findings_ever": 10859,
+    "any_suspicious_us_ln_ever": 10859,
+    "first_abnormal_us_ln_date": 8,
+    "has_gland_findings_ever": 10859,
+    "any_nlp_backfill_pending_for_patient": 10859
+  },
+  "finished_at_utc": "2026-04-21T22:30:38Z",
+  "status": "OK"
+}

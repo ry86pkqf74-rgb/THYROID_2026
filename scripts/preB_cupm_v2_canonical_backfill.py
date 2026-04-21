@@ -479,15 +479,36 @@ def phase4_verify() -> dict:
         "The former MUST always be >= the latter (same nodule can appear across multiple exams)."
     )
 
-    # 5. Per-port populated count must match backfill table
+    # 5. Per-port populated count must match backfill table, MODULO the RIDs
+    # that exist in the backfill (sourced from CPM, 10871 RIDs) but not in
+    # cupm_v2 (10859 RIDs — 12 patients have no US exams and so no exam_agg row).
     port_match = {}
     for src, tgt, _ in PORT_COLS:
         n_view = con.execute(f'SELECT COUNT("{tgt}") FROM main.canonical_us_patient_master_v2').fetchone()[0]
         n_bf = con.execute(f'SELECT COUNT("{tgt}") FROM main.cupm_v2_canonical_backfill_v1').fetchone()[0]
-        port_match[tgt] = {"n_view": n_view, "n_backfill": n_bf, "ok": n_view == n_bf}
+        # RIDs present in backfill (with NOT NULL for this col) but not in cupm_v2
+        n_dropped_by_join = con.execute(f"""
+            SELECT COUNT(*) FROM main.cupm_v2_canonical_backfill_v1 bf
+            WHERE bf."{tgt}" IS NOT NULL
+              AND NOT EXISTS (
+                  SELECT 1 FROM main.canonical_us_patient_master_v2 v
+                  WHERE v.research_id = bf.research_id
+              )
+        """).fetchone()[0]
+        expected_view = n_bf - n_dropped_by_join
+        port_match[tgt] = {
+            "n_view": n_view,
+            "n_backfill": n_bf,
+            "n_backfill_rids_not_in_cupm_v2": n_dropped_by_join,
+            "expected_view": expected_view,
+            "ok": n_view == expected_view,
+        }
     log["port_view_vs_backfill_counts"] = port_match
     bad = [k for k, v in port_match.items() if not v["ok"]]
-    assert not bad, f"View port counts != backfill counts for: {bad}"
+    assert not bad, (
+        f"View port counts != (backfill - non-cupm-RIDs) for: {bad}. "
+        "Inspect port_view_vs_backfill_counts in this report."
+    )
 
     # 6. compute cols sanity (max_nodule_size_mm + n_nodule_records)
     nodule_summary = con.execute(
