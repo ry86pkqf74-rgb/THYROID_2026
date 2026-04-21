@@ -627,12 +627,18 @@ def extract_domain(
     return out_path
 
 
-def check_server(base_url: str, label: str) -> bool:
+def check_server(base_url: str, label: str, api_key: str | None = None) -> bool:
     try:
         import urllib.request
 
         url = f"{base_url.rstrip('/')}/models"
-        with urllib.request.urlopen(url, timeout=5) as response:
+        req = urllib.request.Request(url)
+        if api_key:
+            req.add_header("Authorization", f"Bearer {api_key}")
+        # RunPod proxy sits behind Cloudflare which 403s the default
+        # python-urllib/x.y UA (error code 1010). Send a plain UA.
+        req.add_header("User-Agent", "thyroid-extractor/1.0")
+        with urllib.request.urlopen(req, timeout=5) as response:
             data = json.loads(response.read())
         models = [model.get("id", model.get("name", "?")) for model in data.get("data", data.get("models", []))]
         log.info("  %s OK  models: %s", label, models)
@@ -675,9 +681,9 @@ def main() -> None:
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
-    log.info("  Checking Ollama server ...")
-    if not check_server(args.url, f"Ollama ({args.url})"):
-        log.error("Ollama not reachable. Is it running?")
+    log.info("  Checking LLM server ...")
+    if not check_server(args.url, f"LLM ({args.url})", api_key=args.api_key):
+        log.error("LLM server not reachable. Is it running?")
         sys.exit(1)
 
     invalid = [domain for domain in args.domains if domain not in DOMAIN_PROMPT]
