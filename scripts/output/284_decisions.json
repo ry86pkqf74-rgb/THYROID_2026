@@ -2486,10 +2486,159 @@
         ]
       },
       "finished_at": "2026-04-21T00:50:26Z"
+    },
+    "7": {
+      "phase": 7,
+      "started_at": "2026-04-21T00:50:40Z",
+      "gates": [
+        {
+          "name": "registry_total_rows_post_eq_17321",
+          "ok": true,
+          "detail": {
+            "observed": 17321,
+            "expected": 17321
+          }
+        },
+        {
+          "name": "registry_total_patients_post_eq_7313",
+          "ok": true,
+          "detail": {
+            "observed": 7313,
+            "expected": 7313
+          }
+        },
+        {
+          "name": "registry_canonical_version_post_eq_v1_0_script284",
+          "ok": true,
+          "detail": {
+            "observed": "v1_0_script284"
+          }
+        },
+        {
+          "name": "registry_description_carries_script284_marker",
+          "ok": true,
+          "detail": {
+            "description_tail": "v4 rerun parquet (loaded by this script). CPM nlp_parathyroid_has_data went 110 TRUE / 10761 NULL -> 3585 TRUE / 0 NULL. Note: parquet covers 7,313 of 10,871 CPM RIDs; the remainder (~3558) are FALSE."
+          }
+        },
+        {
+          "name": "dictionary_4_cols_have_exact_per_col_desc_and_v279_note",
+          "ok": true,
+          "detail": {
+            "rows": [
+              {
+                "column_name": "nlp_parathyroid_has_data",
+                "description": "TRUE iff patient has >=1 positive-entity extraction (confidence>=0.5, present_or_negated='present' OR NULL) from note_entities_llm_parathyroid_detail (qwen2.5-32b, 9domain_v4 rerun 2026-04-19); FALSE if patient is in source with no positive entities or absent from source. NEVER NULL post-Script 284. Note: parquet covers only 7,313 of 10,871 CPM RIDs; ~3,558 patients are FALSE because they have no parathyroid_detail-domain notes.",
+                "v279_note": "Re-promoted by Script 284 (2026-04-20) from qwen2.5-32b parathyroid_detail 9domain_v4 rerun.",
+                "rebuilt_by": "script284_2026-04-20"
+              },
+              {
+                "column_name": "nlp_parathyroid_key_finding",
+                "description": "Highest-priority entity value for this patient, resolved via KEY_FINDING_PRIORITY (autotransplant > reimplantation_detail > hypercellularity_grade > gland_cellularity > parathyroid_frozen_section > gland_count_preserved > gland_count_total > gland_weight > gland_size > removal_intent > gland_location > other) tiebroken by confidence DESC NULLS LAST then entity_value alpha. NULL when has_data=FALSE.",
+                "v279_note": "Re-promoted by Script 284 (2026-04-20) from qwen2.5-32b parathyroid_detail 9domain_v4 rerun.",
+                "rebuilt_by": "script284_2026-04-20"
+              },
+              {
+                "column_name": "nlp_parathyroid_n_entities",
+                "description": "Total positive parathyroid-detail entities extracted across all notes for this patient. 0 when has_data=FALSE.",
+                "v279_note": "Re-promoted by Script 284 (2026-04-20) from qwen2.5-32b parathyroid_detail 9domain_v4 rerun.",
+                "rebuilt_by": "script284_2026-04-20"
+              },
+              {
+                "column_name": "nlp_parathyroid_n_notes",
+                "description": "Count of distinct notes per patient with >=1 positive extracted parathyroid-detail entity. 0 when has_data=FALSE.",
+                "v279_note": "Re-promoted by Script 284 (2026-04-20) from qwen2.5-32b parathyroid_detail 9domain_v4 rerun.",
+                "rebuilt_by": "script284_2026-04-20"
+              }
+            ],
+            "descriptions_exact_match": true
+          }
+        },
+        {
+          "name": "readme_source_n_rows_eq_17321",
+          "ok": true,
+          "detail": {
+            "observed": 17321,
+            "expected": 17321
+          }
+        },
+        {
+          "name": "readme_source_n_rids_eq_7313",
+          "ok": true,
+          "detail": {
+            "observed": 7313,
+            "expected": 7313
+          }
+        },
+        {
+          "name": "readme_cpm_n_rows_eq_10871",
+          "ok": true,
+          "detail": {
+            "observed": 10871,
+            "expected": 10871
+          }
+        },
+        {
+          "name": "readme_cpm_description_carries_script284_marker",
+          "ok": true,
+          "detail": {
+            "tail": "cted at qwen2.5-32b (17,321 rows / 7,313 RIDs); CPM nlp_parathyroid_* rebuilt with explicit TRUE/FALSE (0 NULLs). has_data TRUE=3585; remainder FALSE includes ~3558 RIDs absent from parquet entirely.]"
+          }
+        }
+      ],
+      "blockers": [],
+      "post_has_data_true": 3585,
+      "post_sum_n_notes": 4329,
+      "post_sum_n_entities": 9697,
+      "registry_after": {
+        "total_rows": 17321,
+        "total_patients": 7313,
+        "canonical_version": "v1_0_script284",
+        "description_len": 341
+      },
+      "dictionary_after": [
+        {
+          "column_name": "nlp_parathyroid_has_data",
+          "description": "TRUE iff patient has >=1 positive-entity extraction (confidence>=0.5, present_or_negated='present' OR NULL) from note_entities_llm_parathyroid_detail (qwen2.5-32b, 9domain_v4 rerun 2026-04-19); FALSE if patient is in source with no positive entities or absent from source. NEVER NULL post-Script 284. Note: parquet covers only 7,313 of 10,871 CPM RIDs; ~3,558 patients are FALSE because they have no parathyroid_detail-domain notes.",
+          "v279_note": "Re-promoted by Script 284 (2026-04-20) from qwen2.5-32b parathyroid_detail 9domain_v4 rerun.",
+          "rebuilt_by": "script284_2026-04-20"
+        },
+        {
+          "column_name": "nlp_parathyroid_key_finding",
+          "description": "Highest-priority entity value for this patient, resolved via KEY_FINDING_PRIORITY (autotransplant > reimplantation_detail > hypercellularity_grade > gland_cellularity > parathyroid_frozen_section > gland_count_preserved > gland_count_total > gland_weight > gland_size > removal_intent > gland_location > other) tiebroken by confidence DESC NULLS LAST then entity_value alpha. NULL when has_data=FALSE.",
+          "v279_note": "Re-promoted by Script 284 (2026-04-20) from qwen2.5-32b parathyroid_detail 9domain_v4 rerun.",
+          "rebuilt_by": "script284_2026-04-20"
+        },
+        {
+          "column_name": "nlp_parathyroid_n_entities",
+          "description": "Total positive parathyroid-detail entities extracted across all notes for this patient. 0 when has_data=FALSE.",
+          "v279_note": "Re-promoted by Script 284 (2026-04-20) from qwen2.5-32b parathyroid_detail 9domain_v4 rerun.",
+          "rebuilt_by": "script284_2026-04-20"
+        },
+        {
+          "column_name": "nlp_parathyroid_n_notes",
+          "description": "Count of distinct notes per patient with >=1 positive extracted parathyroid-detail entity. 0 when has_data=FALSE.",
+          "v279_note": "Re-promoted by Script 284 (2026-04-20) from qwen2.5-32b parathyroid_detail 9domain_v4 rerun.",
+          "rebuilt_by": "script284_2026-04-20"
+        }
+      ],
+      "readme_source_action": "updated_existing",
+      "readme_cpm_action": "updated_existing",
+      "readme_source_after": {
+        "n_rows": 17321,
+        "n_rids": 7313,
+        "description_len": 184
+      },
+      "readme_cpm_after": {
+        "n_rows": 10871,
+        "n_rids": 10871,
+        "description_len": 728
+      },
+      "finished_at": "2026-04-21T00:50:44Z"
     }
   },
-  "last_started_at": "2026-04-21T00:50:22Z",
-  "last_phase_arg": "6",
-  "last_finished_at": "2026-04-21T00:50:26Z",
+  "last_started_at": "2026-04-21T00:50:40Z",
+  "last_phase_arg": "7",
+  "last_finished_at": "2026-04-21T00:50:44Z",
   "last_return_code": 0
 }
