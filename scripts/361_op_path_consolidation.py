@@ -483,8 +483,12 @@ def step_1_build_malignant_events(
                     CASE
                         WHEN t.consult_precedence_flag IS TRUE
                              OR t.consult_diagnosis IS NOT NULL
-                        THEN COALESCE(NULLIF(TRIM(t.consult_diagnosis), ''),
-                                      'consult_precedence_flag=TRUE')
+                        THEN COALESCE(
+                                NULLIF(
+                                    TRIM(CAST(t.consult_diagnosis AS VARCHAR)),
+                                    ''
+                                ),
+                                'consult_precedence_flag=TRUE')
                         ELSE NULL
                     END
             FROM {fq('main', 'tumor_episode_master_v2')} AS t
