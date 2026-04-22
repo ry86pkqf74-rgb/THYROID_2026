@@ -123,3 +123,8 @@ output/*.parquet
 # These contain evidence_text snippets sampled from clinical notes; PHI by
 # nature. Never commit, never push. Inspect locally only.
 phi_forensic/
+
+# Script 365b dry-run + audit artifacts (per-run; reproducible)
+qa/qa_script_365b_*.json
+psh_pmh_meds_cpm_feeder_audit_*.md
+scripts/output/365b_*
