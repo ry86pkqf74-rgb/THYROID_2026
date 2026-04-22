@@ -1,0 +1,46 @@
+{
+  "started_at": "2026-04-22T15:44:37.172823+00:00",
+  "apply": true,
+  "old_tag": "qwen2.5-32b",
+  "new_tag": "openai/gpt-oss-120b",
+  "tables": {
+    "note_entities_llm_pathology": {
+      "pre": [
+        [
+          "openai/gpt-oss-120b",
+          10084
+        ]
+      ],
+      "rows_to_patch": 0
+    },
+    "note_entities_llm_cervical_ln_detail": {
+      "pre": [
+        [
+          "openai/gpt-oss-120b",
+          10084
+        ]
+      ],
+      "rows_to_patch": 0
+    },
+    "note_entities_llm_tirads_granular": {
+      "pre": [
+        [
+          "openai/gpt-oss-120b",
+          10084
+        ]
+      ],
+      "rows_to_patch": 0
+    },
+    "note_entities_llm_esophageal_invasion": {
+      "pre": [
+        [
+          "openai/gpt-oss-120b",
+          4409
+        ]
+      ],
+      "rows_to_patch": 0
+    }
+  },
+  "finished_at": "2026-04-22T15:44:38.049670+00:00",
+  "status": "noop"
+}

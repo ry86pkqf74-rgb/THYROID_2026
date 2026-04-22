@@ -1,0 +1,56 @@
+[15:44:36.613Z] Script 386b — fix round-2 llm_model tag — 2026-04-22T15:44:36.613746+00:00
+[15:44:36.613Z]   apply=True  OLD_TAG='qwen2.5-32b'  NEW_TAG='openai/gpt-oss-120b'
+[15:44:36.637Z]   Connecting to MotherDuck (motherduck.local.toml:MD_SA_TOKEN) …
+[15:44:37.172Z]   Connected. DB: thyroid_canonical_publication_v1_0
+[15:44:37.172Z] ======================================================================
+[15:44:37.172Z] PRE — current llm_model distribution per table
+[15:44:37.172Z] ======================================================================
+[15:44:37.721Z]   gate OK: main.note_entities_llm_pathology present
+[15:44:37.749Z]   main.note_entities_llm_pathology:
+[15:44:37.749Z]     'openai/gpt-oss-120b'                10,084
+[15:44:37.781Z]   gate OK: main.note_entities_llm_cervical_ln_detail present
+[15:44:37.806Z]   main.note_entities_llm_cervical_ln_detail:
+[15:44:37.806Z]     'openai/gpt-oss-120b'                10,084
+[15:44:37.838Z]   gate OK: main.note_entities_llm_tirads_granular present
+[15:44:37.864Z]   main.note_entities_llm_tirads_granular:
+[15:44:37.864Z]     'openai/gpt-oss-120b'                10,084
+[15:44:37.894Z]   gate OK: main.note_entities_llm_esophageal_invasion present
+[15:44:37.920Z]   main.note_entities_llm_esophageal_invasion:
+[15:44:37.920Z]     'openai/gpt-oss-120b'                 4,409
+[15:44:37.944Z]   main.note_entities_llm_pathology: 0 rows on 'qwen2.5-32b' — already patched, skipping
+[15:44:37.978Z]   main.note_entities_llm_cervical_ln_detail: 0 rows on 'qwen2.5-32b' — already patched, skipping
+[15:44:38.023Z]   main.note_entities_llm_tirads_granular: 0 rows on 'qwen2.5-32b' — already patched, skipping
+[15:44:38.049Z]   main.note_entities_llm_esophageal_invasion: 0 rows on 'qwen2.5-32b' — already patched, skipping
+[15:44:38.049Z] ======================================================================
+[15:44:38.049Z] NO-OP — every round-2 table is already on the corrected tag
+[15:44:38.049Z] ======================================================================
+[15:44:38.050Z]   result: 386b_fix_result.json
+[15:44:38.050Z] Done.
+[15:44:36.613Z] Script 386b — fix round-2 llm_model tag — 2026-04-22T15:44:36.613746+00:00
+[15:44:36.613Z]   apply=True  OLD_TAG='qwen2.5-32b'  NEW_TAG='openai/gpt-oss-120b'
+[15:44:36.637Z]   Connecting to MotherDuck (motherduck.local.toml:MD_SA_TOKEN) …
+[15:44:37.172Z]   Connected. DB: thyroid_canonical_publication_v1_0
+[15:44:37.172Z] ======================================================================
+[15:44:37.172Z] PRE — current llm_model distribution per table
+[15:44:37.172Z] ======================================================================
+[15:44:37.721Z]   gate OK: main.note_entities_llm_pathology present
+[15:44:37.749Z]   main.note_entities_llm_pathology:
+[15:44:37.749Z]     'openai/gpt-oss-120b'                10,084
+[15:44:37.781Z]   gate OK: main.note_entities_llm_cervical_ln_detail present
+[15:44:37.806Z]   main.note_entities_llm_cervical_ln_detail:
+[15:44:37.806Z]     'openai/gpt-oss-120b'                10,084
+[15:44:37.838Z]   gate OK: main.note_entities_llm_tirads_granular present
+[15:44:37.864Z]   main.note_entities_llm_tirads_granular:
+[15:44:37.864Z]     'openai/gpt-oss-120b'                10,084
+[15:44:37.894Z]   gate OK: main.note_entities_llm_esophageal_invasion present
+[15:44:37.920Z]   main.note_entities_llm_esophageal_invasion:
+[15:44:37.920Z]     'openai/gpt-oss-120b'                 4,409
+[15:44:37.944Z]   main.note_entities_llm_pathology: 0 rows on 'qwen2.5-32b' — already patched, skipping
+[15:44:37.978Z]   main.note_entities_llm_cervical_ln_detail: 0 rows on 'qwen2.5-32b' — already patched, skipping
+[15:44:38.023Z]   main.note_entities_llm_tirads_granular: 0 rows on 'qwen2.5-32b' — already patched, skipping
+[15:44:38.049Z]   main.note_entities_llm_esophageal_invasion: 0 rows on 'qwen2.5-32b' — already patched, skipping
+[15:44:38.049Z] ======================================================================
+[15:44:38.049Z] NO-OP — every round-2 table is already on the corrected tag
+[15:44:38.049Z] ======================================================================
+[15:44:38.050Z]   result: 386b_fix_result.json
+[15:44:38.050Z] Done.
