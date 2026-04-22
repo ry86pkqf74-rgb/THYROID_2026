@@ -1,0 +1,8 @@
+[INFO] [00:57:18.639Z] Run config: do_writes=True, phases=['5'], BUILD_TS=20260422_005718
+[INFO] [00:57:18.640Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [00:57:19.683Z] ==============================================================================
+[INFO] [00:57:19.684Z] STEP 5 — Drop deprecated table
+[INFO] [00:57:19.684Z] ==============================================================================
+[INFO] [00:57:19.900Z]   parity verified: main.operative_episode_detail_v2 (11,773 rows) <- operative_episode_detail_v2_pre362_20260422_005646
+[INFO] [00:57:19.968Z]   DROP TABLE main.operative_episode_detail_v2
+[INFO] [00:57:20.116Z] Script 362 complete.
