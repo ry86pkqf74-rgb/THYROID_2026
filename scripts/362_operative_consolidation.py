@@ -640,7 +640,7 @@ def step_2_build_patient_rollup(
             MAX(TRY_CAST(ev.ebl_ml AS DOUBLE))                      AS max_ebl_ml,
             COALESCE(BOOL_OR(d.any_drain_placed_lkp), FALSE)        AS any_drain_placed,
             '{SCRIPT_ID}'::VARCHAR                                  AS build_script,
-            CURRENT_TIMESTAMP                                       AS build_ts
+            CAST(CURRENT_TIMESTAMP AS TIMESTAMP)                     AS build_ts
         FROM ev
         LEFT JOIN drain_lookup d ON d.research_id = ev.research_id
         GROUP BY ev.research_id
@@ -792,9 +792,14 @@ def step_3_build_procedure_codes(
                          THEN 1 ELSE 0 END) OVER (
                     PARTITION BY c.research_id, c.note_date_dt
                 )                                                AS n_candidate_episodes_within,
+                -- Mention identity probe established (research_id, note_row_id,
+                -- entity_value_raw, evidence_start) is unique across all
+                -- 21,691 present rows — 0 duplicates. Partitioning here keeps
+                -- one row per source mention while picking the best surgery
+                -- episode link.
                 ROW_NUMBER() OVER (
-                    PARTITION BY c.research_id, c.note_date_dt,
-                                 c.entity_value_raw
+                    PARTITION BY c.research_id, c.note_row_id,
+                                 c.entity_value_raw, c.evidence_start
                     ORDER BY c.day_diff ASC NULLS LAST,
                              c.surgery_episode_id ASC NULLS LAST
                 ) AS rn
@@ -826,7 +831,7 @@ def step_3_build_procedure_codes(
             (COALESCE(p.n_candidate_episodes_within, 0) > 1
                 AND COALESCE(p.day_diff, 999) > 0)               AS linkage_ambiguous_multi_episode,
             '{SCRIPT_ID}'::VARCHAR                               AS build_script,
-            CURRENT_TIMESTAMP                                    AS build_ts
+            CAST(CURRENT_TIMESTAMP AS TIMESTAMP)                  AS build_ts
         FROM picked p
         ORDER BY p.research_id, p.note_date_dt
     """
@@ -1420,22 +1425,26 @@ def step_8_qa(
         check("procedure_linkage_geq_70pct_among_dated_mentions", False,
               error="procedure_codes table missing")
 
-    # Gate 6+: views resolve
+    # Gate 6+: views resolve. Use COUNT(*) (rather than SELECT * LIMIT 1)
+    # because the duckdb Python client requires `pytz` to fetch
+    # TIMESTAMP_WITH_TIMEZONE columns; some views may carry them. COUNT(*)
+    # avoids the column-by-column conversion entirely.
     for view_name, _ in NEW_VIEWS:
         ok = view_exists(con, VIEW_SCHEMA, view_name)
         if ok:
             try:
-                con.execute(
-                    f'SELECT * FROM "{CANONICAL_DB}"."{VIEW_SCHEMA}".'
-                    f'"{view_name}" LIMIT 1'
-                ).fetchall()
-                resolves = True
+                cnt = int(con.execute(
+                    f'SELECT COUNT(*) FROM "{CANONICAL_DB}"."{VIEW_SCHEMA}".'
+                    f'"{view_name}"'
+                ).fetchone()[0])
+                resolves = cnt >= 0  # any non-negative count means it resolved
             except duckdb.Error as exc:
                 resolves = False
                 log_warn(f"  view {view_name} fails to resolve: {exc}")
         else:
             resolves = False
-        check(f"view_resolves_{view_name}", ok and resolves)
+            cnt = -1
+        check(f"view_resolves_{view_name}", ok and resolves, row_count=cnt)
 
     # Step 5 verification: drop happened (unless --skip-drop).
     if not pre_drop:
