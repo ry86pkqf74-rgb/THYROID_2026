@@ -1,0 +1,23 @@
+{
+  "domain": "esophageal_invasion",
+  "raw_rows": 4409,
+  "deduped_rows": 4409,
+  "outcome_split": {
+    "err": 0,
+    "empty": 4347,
+    "has_entities": 62
+  },
+  "entity_type_counts": {
+    "esophageal_invasion_present": 59,
+    "esophageal_invasion_extent": 44,
+    "esophageal_repair_performed": 34,
+    "esophageal_muscularis_invasion": 25,
+    "esophageal_mucosal_invasion": 22,
+    "esophageal_invasion_length_cm": 4
+  },
+  "source_llm_model_tags": [
+    "qwen2.5-32b"
+  ],
+  "merged_at": "2026-04-22T13:36:51.460390+00:00",
+  "parquet_path": "/Users/ros/THyroid 2026/runs/round2_20260421/esophageal_invasion/output/note_entities_llm_esophageal_invasion.parquet"
+}
