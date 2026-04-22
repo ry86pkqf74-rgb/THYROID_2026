@@ -1,0 +1,44 @@
+Found 35 pre361_* archives total
+  KEEP (20260422_002245): 7 tables
+  DROP (4 stale build sets): 28 tables
+
+Keep set verified: 7 tables (one per deprecated source).
+
+Dropping stale snapshots:
+  DROP canonical_benign_diagnosis_v1_pre361_20260422_001434 (6,818 rows)
+  DROP canonical_benign_diagnosis_v1_pre361_20260422_001526 (6,818 rows)
+  DROP canonical_benign_diagnosis_v1_pre361_20260422_001712 (6,818 rows)
+  DROP canonical_benign_diagnosis_v1_pre361_20260422_002057 (6,818 rows)
+  DROP canonical_diagnosis_unified_v1_pre361_20260422_001434 (11,028 rows)
+  DROP canonical_diagnosis_unified_v1_pre361_20260422_001526 (11,028 rows)
+  DROP canonical_diagnosis_unified_v1_pre361_20260422_001712 (11,028 rows)
+  DROP canonical_diagnosis_unified_v1_pre361_20260422_002057 (11,028 rows)
+  DROP canonical_malignant_diagnosis_v1_pre361_20260422_001434 (4,441 rows)
+  DROP canonical_malignant_diagnosis_v1_pre361_20260422_001526 (4,441 rows)
+  DROP canonical_malignant_diagnosis_v1_pre361_20260422_001712 (4,441 rows)
+  DROP canonical_malignant_diagnosis_v1_pre361_20260422_002057 (4,441 rows)
+  DROP canonical_tumor_characteristics_v1_pre361_20260422_001434 (11,106 rows)
+  DROP canonical_tumor_characteristics_v1_pre361_20260422_001526 (11,106 rows)
+  DROP canonical_tumor_characteristics_v1_pre361_20260422_001712 (11,106 rows)
+  DROP canonical_tumor_characteristics_v1_pre361_20260422_002057 (11,106 rows)
+  DROP path_outcome_classification_v1_pre361_20260422_001434 (10,871 rows)
+  DROP path_outcome_classification_v1_pre361_20260422_001526 (10,871 rows)
+  DROP path_outcome_classification_v1_pre361_20260422_001712 (10,871 rows)
+  DROP path_outcome_classification_v1_pre361_20260422_002057 (10,871 rows)
+  DROP synoptic_tumor_long_v1_pre361_20260422_001434 (11,103 rows)
+  DROP synoptic_tumor_long_v1_pre361_20260422_001526 (11,103 rows)
+  DROP synoptic_tumor_long_v1_pre361_20260422_001712 (11,103 rows)
+  DROP synoptic_tumor_long_v1_pre361_20260422_002057 (11,103 rows)
+  DROP tumor_episode_master_v2_pre361_20260422_001434 (11,691 rows)
+  DROP tumor_episode_master_v2_pre361_20260422_001526 (11,691 rows)
+  DROP tumor_episode_master_v2_pre361_20260422_001712 (11,691 rows)
+  DROP tumor_episode_master_v2_pre361_20260422_002057 (11,691 rows)
+
+After prune: 7 pre361_* archives remain
+  canonical_benign_diagnosis_v1_pre361_20260422_002245
+  canonical_diagnosis_unified_v1_pre361_20260422_002245
+  canonical_malignant_diagnosis_v1_pre361_20260422_002245
+  canonical_tumor_characteristics_v1_pre361_20260422_002245
+  path_outcome_classification_v1_pre361_20260422_002245
+  synoptic_tumor_long_v1_pre361_20260422_002245
+  tumor_episode_master_v2_pre361_20260422_002245
