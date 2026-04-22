@@ -1,0 +1,12 @@
+Found 3 pre362_* archives total
+  KEEP (20260422_005646): 1 table(s)
+  DROP: 2 table(s)
+
+Keep set verified: 1 table(s).
+
+Dropping stale snapshots:
+  DROP operative_episode_detail_v2_pre362_20260422_005428 (11,773 rows)
+  DROP operative_episode_detail_v2_pre362_20260422_005457 (11,773 rows)
+
+After prune: 1 pre362_* archives remain
+  operative_episode_detail_v2_pre362_20260422_005646
