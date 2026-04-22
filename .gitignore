@@ -116,3 +116,4 @@ processed/output/*.parquet
 # processed/output/v2_backup/ — committed
 output/parquet_backup/
 output/*.parquet
+.invasion_cpm_repoint_applied
