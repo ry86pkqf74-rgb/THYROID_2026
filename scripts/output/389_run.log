@@ -1,0 +1,242 @@
+[INFO] [20:07:42.379Z] Script 389 — PROBE mode — 2026-04-22T20:07:42.379164+00:00
+[INFO] [20:07:42.381Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [20:07:42.973Z] Connection OK (CPM rows=10871)
+[INFO] [20:07:43.236Z] ==============================================================================
+[INFO] [20:07:43.236Z] Phase 0A — preflight (386 & 388 evidence + PUB count)
+[INFO] [20:07:43.236Z] ==============================================================================
+[INFO] [20:07:44.340Z]   PUB total objects: 287
+[INFO] [20:07:44.340Z]   388 log rows: 9 (table present: True)
+[INFO] [20:07:44.340Z]   386 evidence — workspace tables: 0, legacy log rows: 28, close_out present: True
+[INFO] [20:07:44.340Z] ==============================================================================
+[INFO] [20:07:44.340Z] Phase 0B — US nodule zombie re-probe
+[INFO] [20:07:44.340Z] ==============================================================================
+[INFO] [20:07:44.433Z]   bucket counts: {'aggregate_row': 141, 'clean_llm_parsed': 25750, 'clean_non_llm': 10441, 'llm_parsed_but_blob': 1234, 'zombie_parent': 13}
+[INFO] [20:07:44.433Z]     clean_llm_parsed         actual= 25,750 expected= 18,310 DRIFT
+[INFO] [20:07:44.433Z]     clean_non_llm            actual= 10,441 expected= 17,090 DRIFT
+[INFO] [20:07:44.433Z]     zombie_parent            actual=     13 expected=  2,152 DRIFT
+[INFO] [20:07:44.433Z]     llm_parsed_but_blob      actual=  1,234 expected=     27 DRIFT
+[INFO] [20:51:42.155Z] Script 389 — PROBE mode — 2026-04-22T20:51:42.155401+00:00
+[INFO] [20:51:42.157Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [20:51:42.708Z] Connection OK (CPM rows=10871)
+[INFO] [20:51:42.775Z] ==============================================================================
+[INFO] [20:51:42.775Z] Phase 0A — preflight (386 & 388 evidence + PUB count)
+[INFO] [20:51:42.775Z] ==============================================================================
+[INFO] [20:51:43.474Z]   PUB total objects: 287
+[INFO] [20:51:43.474Z]   388 log rows: 9 (table present: True)
+[INFO] [20:51:43.474Z]   386 evidence — workspace tables: 0, legacy log rows: 28, close_out present: True
+[INFO] [20:51:43.474Z] ==============================================================================
+[INFO] [20:51:43.474Z] Phase 0B — canonical_us_nodule_v2 source-flag partition probe
+[INFO] [20:51:43.474Z] ==============================================================================
+[INFO] [20:51:43.557Z]   bucket counts: {'aggregate_rollup': 141, 'clean_base_only': 8919, 'clean_dual_source': 26402, 'needs_backfill': 2117} (total=37,579)
+[INFO] [20:51:43.557Z]     clean_dual_source      actual= 26,402 expected= 26,402 Δ=+0.00%  ok
+[INFO] [20:51:43.557Z]     clean_base_only        actual=  8,919 expected=  8,919 Δ=+0.00%  ok
+[INFO] [20:51:43.557Z]     needs_backfill         actual=  2,117 expected=  2,117 Δ=+0.00%  ok
+[INFO] [20:51:43.557Z]     aggregate_rollup       actual=    141 expected=    141 Δ=+0.00%  ok
+[INFO] [20:51:43.557Z]     TOTAL                  actual= 37,579 expected= 37,579 ok
+[INFO] [20:51:43.557Z]   drift gate : PASS
+[INFO] [20:51:43.557Z] ==============================================================================
+[INFO] [20:51:43.557Z] Phase 0C — US view-stack body probe
+[INFO] [20:51:43.557Z] ==============================================================================
+[INFO] [20:51:43.565Z]   exam_master CPM CTE present (load-bearing for is_preop_exam): False
+[INFO] [20:51:43.565Z]   patient_master hardcoded has_any_us literal present: True
+[INFO] [20:51:43.864Z]   exam_master rows total=18,551 phantoms (NULL exam_date + NULL findings)=0
+[INFO] [20:51:44.427Z]   patient_master rows total=10,859 has_any_us=TRUE=10,859 bug_rows (TRUE + both dates NULL)=6,499
+[INFO] [20:51:44.573Z]   source main.canonical_us_thyroid_gland_v2: rows=13,578 NULL-exam_date=6,785 (expected≈6,785) ok
+[INFO] [20:51:44.700Z]   source main.canonical_us_nodule_v2: rows=37,579 NULL-exam_date=2,231 (expected≈2,231) ok
+[INFO] [20:51:44.815Z]   source main.canonical_us_lymph_node_v2: rows=6,801 NULL-exam_date=0 (expected≈0) ok
+[INFO] [20:51:44.815Z]   total NULL-exam_date source rows: 9,016 (expected ≈ 6,792 after UNION collapse)
+[WARN] [20:51:44.815Z]   phantom count 0 drifted from expected 6,792 (>5%); compare against source NULL-date breakdown above before applying.
+[INFO] [20:51:44.815Z]   exam_master bool literals: 12 (downstream aliases: ['BOOLEAN', 'any_nlp_backfill_pending_on_exam', 'has_gland_findings', 'has_us_ln_findings', 'is_preop_exam', 'n_abnormal_us_ln_on_exam'])
+[INFO] [20:51:44.815Z]   patient_master bool literals: 2 (downstream aliases: ['has_any_us', 'tirads_category_at_last_preop_exam'])
+[INFO] [20:51:44.815Z] ==============================================================================
+[INFO] [20:51:44.815Z] Phase 0D — enumerate dependent views
+[INFO] [20:51:44.815Z] ==============================================================================
+[INFO] [20:51:44.829Z]   canonical_us_exam_master_VIEW_v2 dependents: 1
+[INFO] [20:51:44.829Z]     - main.canonical_us_patient_master_VIEW_v2
+[INFO] [20:51:44.829Z]   canonical_us_patient_master_VIEW_v2 dependents: 0
+[INFO] [20:51:44.829Z]   canonical_complications_patient_rollup_v1 dependents: 1
+[INFO] [20:51:44.829Z]     - views_readable.complications_patient_rollup_VIEW_v1
+[INFO] [20:51:44.829Z] ==============================================================================
+[INFO] [20:51:44.829Z] Phase 0E — complications events audit + 3-rule deltas
+[INFO] [20:51:44.829Z] ==============================================================================
+[INFO] [20:51:44.865Z]   per-(source_table x source_kind x source_evidence_type x finding_status x evidence_strength) breakdown
+[INFO] [20:51:44.915Z]     61 (kind x type x status x strength) cells
+[INFO] [20:51:49.171Z]   Rule A: total flips TRUE→FALSE=0 FALSE→TRUE=0
+[INFO] [20:51:49.172Z]   Rule B: total flips TRUE→FALSE=694 FALSE→TRUE=0
+[INFO] [20:51:49.172Z]   Rule C: total flips TRUE→FALSE=694 FALSE→TRUE=0
+[INFO] [20:51:49.361Z]   wrote prestate report -> /Users/ros/THyroid 2026/scripts/output/389_prestate_probe_report.md
+[INFO] [20:51:49.361Z] Phase 0 complete (probe-only mode).  Review scripts/output/389_prestate_probe_report.md and re-run with --apply (after writing the plan-approval file).
+[INFO] [20:59:01.113Z] Script 389 — APPLY mode — 2026-04-22T20:59:01.113244+00:00
+[INFO] [20:59:01.114Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [20:59:01.709Z] Connection OK (CPM rows=10871)
+[INFO] [20:59:01.761Z] ==============================================================================
+[INFO] [20:59:01.761Z] Phase 0A — preflight (386 & 388 evidence + PUB count)
+[INFO] [20:59:01.761Z] ==============================================================================
+[INFO] [20:59:02.394Z]   PUB total objects: 287
+[INFO] [20:59:02.395Z]   388 log rows: 9 (table present: True)
+[INFO] [20:59:02.395Z]   386 evidence — workspace tables: 0, legacy log rows: 28, close_out present: True
+[INFO] [20:59:02.395Z] ==============================================================================
+[INFO] [20:59:02.395Z] Phase 0B — canonical_us_nodule_v2 source-flag partition probe
+[INFO] [20:59:02.395Z] ==============================================================================
+[INFO] [20:59:02.465Z]   bucket counts: {'aggregate_rollup': 141, 'clean_base_only': 8919, 'clean_dual_source': 26402, 'needs_backfill': 2117} (total=37,579)
+[INFO] [20:59:02.465Z]     clean_dual_source      actual= 26,402 expected= 26,402 Δ=+0.00%  ok
+[INFO] [20:59:02.465Z]     clean_base_only        actual=  8,919 expected=  8,919 Δ=+0.00%  ok
+[INFO] [20:59:02.465Z]     needs_backfill         actual=  2,117 expected=  2,117 Δ=+0.00%  ok
+[INFO] [20:59:02.465Z]     aggregate_rollup       actual=    141 expected=    141 Δ=+0.00%  ok
+[INFO] [20:59:02.466Z]     TOTAL                  actual= 37,579 expected= 37,579 ok
+[INFO] [20:59:02.466Z]   drift gate : PASS
+[INFO] [20:59:02.466Z] ==============================================================================
+[INFO] [20:59:02.466Z] Phase 0C — US view-stack body probe
+[INFO] [20:59:02.466Z] ==============================================================================
+[INFO] [20:59:02.473Z]   exam_master CPM CTE present (load-bearing for is_preop_exam): False
+[INFO] [20:59:02.473Z]   patient_master hardcoded has_any_us literal present: True
+[INFO] [20:59:02.714Z]   exam_master rows total=18,551 phantoms (NULL exam_date + NULL findings)=0
+[INFO] [20:59:03.155Z]   patient_master rows total=10,859 has_any_us=TRUE=10,859 bug_rows (TRUE + both dates NULL)=6,499
+[INFO] [20:59:03.296Z]   source main.canonical_us_thyroid_gland_v2: rows=13,578 NULL-exam_date=6,785 (expected≈6,785) ok
+[INFO] [20:59:03.414Z]   source main.canonical_us_nodule_v2: rows=37,579 NULL-exam_date=2,231 (expected≈2,231) ok
+[INFO] [20:59:03.535Z]   source main.canonical_us_lymph_node_v2: rows=6,801 NULL-exam_date=0 (expected≈0) ok
+[INFO] [20:59:03.535Z]   total NULL-exam_date source rows: 9,016 (expected ≈ 6,792 after UNION collapse)
+[WARN] [20:59:03.535Z]   phantom count 0 drifted from expected 6,792 (>5%); compare against source NULL-date breakdown above before applying.
+[INFO] [20:59:03.535Z]   exam_master bool literals: 12 (downstream aliases: ['BOOLEAN', 'any_nlp_backfill_pending_on_exam', 'has_gland_findings', 'has_us_ln_findings', 'is_preop_exam', 'n_abnormal_us_ln_on_exam'])
+[INFO] [20:59:03.535Z]   patient_master bool literals: 2 (downstream aliases: ['has_any_us', 'tirads_category_at_last_preop_exam'])
+[INFO] [20:59:03.535Z] ==============================================================================
+[INFO] [20:59:03.535Z] Phase 0D — enumerate dependent views
+[INFO] [20:59:03.535Z] ==============================================================================
+[INFO] [20:59:03.549Z]   canonical_us_exam_master_VIEW_v2 dependents: 1
+[INFO] [20:59:03.549Z]     - main.canonical_us_patient_master_VIEW_v2
+[INFO] [20:59:03.549Z]   canonical_us_patient_master_VIEW_v2 dependents: 0
+[INFO] [20:59:03.549Z]   canonical_complications_patient_rollup_v1 dependents: 1
+[INFO] [20:59:03.549Z]     - views_readable.complications_patient_rollup_VIEW_v1
+[INFO] [20:59:03.549Z] ==============================================================================
+[INFO] [20:59:03.549Z] Phase 0E — complications events audit + 3-rule deltas
+[INFO] [20:59:03.549Z] ==============================================================================
+[INFO] [20:59:03.585Z]   per-(source_table x source_kind x source_evidence_type x finding_status x evidence_strength) breakdown
+[INFO] [20:59:03.621Z]     61 (kind x type x status x strength) cells
+[INFO] [20:59:07.976Z]   Rule A: total flips TRUE→FALSE=0 FALSE→TRUE=0
+[INFO] [20:59:07.976Z]   Rule B: total flips TRUE→FALSE=694 FALSE→TRUE=0
+[INFO] [20:59:07.976Z]   Rule C: total flips TRUE→FALSE=694 FALSE→TRUE=0
+[INFO] [20:59:08.181Z]   wrote prestate report -> /Users/ros/THyroid 2026/scripts/output/389_prestate_probe_report.md
+[INFO] [20:59:08.181Z] Plan approval parsed: RULE=B
+[INFO] [20:59:08.181Z] ==============================================================================
+[INFO] [20:59:08.181Z] Phase 2 (classifier-reset provenance) — main.__readme
+[INFO] [20:59:08.181Z] ==============================================================================
+[INFO] [20:59:08.317Z]   inserted classifier-reset provenance row
+[INFO] [20:59:08.317Z] ==============================================================================
+[INFO] [20:59:08.317Z] Phase 2D — rewrite main.canonical_us_exam_master_VIEW_v2
+[INFO] [20:59:08.317Z] ==============================================================================
+[INFO] [20:59:08.627Z]   snapshotted body -> "thyroid_canonical_publication_v1_0"."archive_pub_v1_0"."canonical_us_exam_master_VIEW_v2_legacy_20260422_body"
+[INFO] [20:59:08.665Z]   CREATE OR REPLACE VIEW (filter NULL exam_date in source CTEs; CPM CTE retained for is_preop_exam)
+[INFO] [20:59:08.885Z]   new row count: 11,759 (prior: 18,551, phantoms eliminated: ~0)
+[INFO] [20:59:08.917Z] ==============================================================================
+[INFO] [20:59:08.918Z] Phase 2E — rewrite main.canonical_us_patient_master_VIEW_v2
+[INFO] [20:59:08.918Z] ==============================================================================
+[INFO] [20:59:09.133Z]   snapshotted body -> "thyroid_canonical_publication_v1_0".archive_pub_v1_0.canonical_us_patient_master_VIEW_v2_legacy_20260422_body
+[INFO] [20:59:09.137Z]   CREATE OR REPLACE VIEW with patched has_any_us derivation
+[INFO] [21:00:11.035Z] Script 389 — APPLY mode — 2026-04-22T21:00:11.035009+00:00
+[INFO] [21:00:11.035Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [21:00:11.565Z] Connection OK (CPM rows=10871)
+[INFO] [21:00:11.620Z] ==============================================================================
+[INFO] [21:00:11.620Z] Phase 0A — preflight (386 & 388 evidence + PUB count)
+[INFO] [21:00:11.620Z] ==============================================================================
+[INFO] [21:00:12.170Z]   PUB total objects: 289
+[INFO] [21:00:12.170Z]   388 log rows: 9 (table present: True)
+[INFO] [21:00:12.170Z]   386 evidence — workspace tables: 0, legacy log rows: 28, close_out present: True
+[INFO] [21:00:12.170Z] ==============================================================================
+[INFO] [21:00:12.170Z] Phase 0B — canonical_us_nodule_v2 source-flag partition probe
+[INFO] [21:00:12.170Z] ==============================================================================
+[INFO] [21:00:12.235Z]   bucket counts: {'aggregate_rollup': 141, 'clean_base_only': 8919, 'clean_dual_source': 26402, 'needs_backfill': 2117} (total=37,579)
+[INFO] [21:00:12.235Z]     clean_dual_source      actual= 26,402 expected= 26,402 Δ=+0.00%  ok
+[INFO] [21:00:12.235Z]     clean_base_only        actual=  8,919 expected=  8,919 Δ=+0.00%  ok
+[INFO] [21:00:12.235Z]     needs_backfill         actual=  2,117 expected=  2,117 Δ=+0.00%  ok
+[INFO] [21:00:12.235Z]     aggregate_rollup       actual=    141 expected=    141 Δ=+0.00%  ok
+[INFO] [21:00:12.235Z]     TOTAL                  actual= 37,579 expected= 37,579 ok
+[INFO] [21:00:12.235Z]   drift gate : PASS
+[INFO] [21:00:12.235Z] ==============================================================================
+[INFO] [21:00:12.235Z] Phase 0C — US view-stack body probe
+[INFO] [21:00:12.235Z] ==============================================================================
+[INFO] [21:00:12.243Z]   exam_master CPM CTE present (load-bearing for is_preop_exam): True
+[INFO] [21:00:12.243Z]   patient_master hardcoded has_any_us literal present: True
+[INFO] [21:00:12.460Z]   exam_master rows total=11,759 phantoms (NULL exam_date + NULL findings)=0
+[INFO] [21:00:12.946Z]   patient_master rows total=4,360 has_any_us=TRUE=4,360 bug_rows (TRUE + both dates NULL)=0
+[INFO] [21:00:13.081Z]   source main.canonical_us_thyroid_gland_v2: rows=13,578 NULL-exam_date=6,785 (expected≈6,785) ok
+[INFO] [21:00:13.195Z]   source main.canonical_us_nodule_v2: rows=37,579 NULL-exam_date=2,231 (expected≈2,231) ok
+[INFO] [21:00:13.310Z]   source main.canonical_us_lymph_node_v2: rows=6,801 NULL-exam_date=0 (expected≈0) ok
+[INFO] [21:00:13.310Z]   total NULL-exam_date source rows: 9,016 (expected ≈ 6,792 after UNION collapse)
+[WARN] [21:00:13.311Z]   phantom count 0 drifted from expected 6,792 (>5%); compare against source NULL-date breakdown above before applying.
+[INFO] [21:00:13.311Z]   exam_master bool literals: 14 (downstream aliases: ['BOOLEAN', 'any_nlp_backfill_pending_on_exam', 'has_gland_findings', 'has_us_ln_findings', 'is_preop_exam', 'n_abnormal_us_ln_on_exam'])
+[INFO] [21:00:13.311Z]   patient_master bool literals: 2 (downstream aliases: ['has_any_us', 'tirads_category_at_last_preop_exam'])
+[INFO] [21:00:13.311Z] ==============================================================================
+[INFO] [21:00:13.311Z] Phase 0D — enumerate dependent views
+[INFO] [21:00:13.311Z] ==============================================================================
+[INFO] [21:00:13.323Z]   canonical_us_exam_master_VIEW_v2 dependents: 1
+[INFO] [21:00:13.323Z]     - main.canonical_us_patient_master_VIEW_v2
+[INFO] [21:00:13.323Z]   canonical_us_patient_master_VIEW_v2 dependents: 0
+[INFO] [21:00:13.323Z]   canonical_complications_patient_rollup_v1 dependents: 1
+[INFO] [21:00:13.323Z]     - views_readable.complications_patient_rollup_VIEW_v1
+[INFO] [21:00:13.323Z] ==============================================================================
+[INFO] [21:00:13.323Z] Phase 0E — complications events audit + 3-rule deltas
+[INFO] [21:00:13.323Z] ==============================================================================
+[INFO] [21:00:13.359Z]   per-(source_table x source_kind x source_evidence_type x finding_status x evidence_strength) breakdown
+[INFO] [21:00:13.394Z]     61 (kind x type x status x strength) cells
+[INFO] [21:00:17.669Z]   Rule A: total flips TRUE→FALSE=0 FALSE→TRUE=0
+[INFO] [21:00:17.669Z]   Rule B: total flips TRUE→FALSE=694 FALSE→TRUE=0
+[INFO] [21:00:17.669Z]   Rule C: total flips TRUE→FALSE=694 FALSE→TRUE=0
+[INFO] [21:00:17.875Z]   wrote prestate report -> /Users/ros/THyroid 2026/scripts/output/389_prestate_probe_report.md
+[INFO] [21:00:17.875Z] Plan approval parsed: RULE=B
+[INFO] [21:00:17.875Z] ==============================================================================
+[INFO] [21:00:17.875Z] Phase 2 (classifier-reset provenance) — main.__readme
+[INFO] [21:00:17.875Z] ==============================================================================
+[INFO] [21:00:17.969Z]   ALREADY present (1 prior row(s)) — skipping insert
+[INFO] [21:00:17.969Z] ==============================================================================
+[INFO] [21:00:17.969Z] Phase 2D — rewrite main.canonical_us_exam_master_VIEW_v2
+[INFO] [21:00:17.969Z] ==============================================================================
+[INFO] [21:00:18.049Z]   body snapshot already present at "thyroid_canonical_publication_v1_0"."archive_pub_v1_0"."canonical_us_exam_master_VIEW_v2_legacy_20260422_body"
+[INFO] [21:00:18.087Z]   CREATE OR REPLACE VIEW (filter NULL exam_date in source CTEs; CPM CTE retained for is_preop_exam)
+[INFO] [21:00:18.329Z]   new row count: 11,759 (prior: 11,759, phantoms eliminated: ~0)
+[INFO] [21:00:18.365Z] ==============================================================================
+[INFO] [21:00:18.365Z] Phase 2E — rewrite main.canonical_us_patient_master_VIEW_v2
+[INFO] [21:00:18.365Z] ==============================================================================
+[INFO] [21:00:18.456Z]   body snapshot already present at "thyroid_canonical_publication_v1_0".archive_pub_v1_0.canonical_us_patient_master_VIEW_v2_legacy_20260422_body
+[INFO] [21:00:18.461Z]   CREATE OR REPLACE VIEW with patched has_any_us derivation
+[INFO] [21:00:19.072Z]   new total: 4,360; has_any_us TRUE=4,360 FALSE=0
+[INFO] [21:00:19.104Z] ==============================================================================
+[INFO] [21:00:19.104Z] Phase 2F — rebuild complications rollup under Rule B
+[INFO] [21:00:19.104Z] ==============================================================================
+[INFO] [21:00:19.882Z]   archive prior rollup table to archive DB
+[INFO] [21:00:20.153Z]      archived to "thyroid_canonical_publication_v1_0"."archive_pub_v1_0"."canonical_complications_patient_rollup_v1_legacy_20260422" (10,871 rows; parity OK)
+[INFO] [21:00:20.153Z]   CREATE OR REPLACE TABLE under selected rule
+[INFO] [21:00:21.152Z]   rln_injury                 pre=  709 new=   74 Δ=+635
+[INFO] [21:00:21.152Z]   vocal_cord_paralysis       pre=  107 new=   48 Δ=+59
+[INFO] [21:00:21.152Z]   hypocalcemia_clinical      pre=    9 new=    9 Δ=+0
+[INFO] [21:00:21.152Z]   hypoparathyroidism         pre=  425 new=  425 Δ=+0
+[INFO] [21:00:21.152Z]   hematoma                   pre=  169 new=  169 Δ=+0
+[INFO] [21:00:21.152Z]   seroma                     pre=  873 new=  873 Δ=+0
+[INFO] [21:00:21.152Z]   chyle_leak                 pre= 1576 new= 1576 Δ=+0
+[INFO] [21:00:21.152Z]   wound_infection            pre=    0 new=    0 Δ=+0
+[INFO] [21:00:21.152Z]   pneumothorax               pre=    0 new=    0 Δ=+0
+[INFO] [21:00:21.152Z]   airway_complication        pre=    0 new=    0 Δ=+0
+[INFO] [21:00:21.152Z]   wound_dehiscence           pre=    0 new=    0 Δ=+0
+[INFO] [21:00:21.152Z]   mortality                  pre=    1 new=    1 Δ=+0
+[INFO] [21:00:21.188Z] ==============================================================================
+[INFO] [21:00:21.188Z] Phase 2G — dependent-view re-bind pass
+[INFO] [21:00:21.188Z] ==============================================================================
+[INFO] [21:00:21.188Z]   re-binding 2 unique dependent view(s)
+[INFO] [21:00:21.449Z]   rebound 2 view(s) successfully
+[INFO] [21:00:21.449Z] ==============================================================================
+[INFO] [21:00:21.449Z] Phase 2H — registry + __readme + post-state count
+[INFO] [21:00:21.449Z] ==============================================================================
+[INFO] [21:00:21.477Z]   PUB total objects (post-apply): 290
+[INFO] [21:00:21.576Z]   __readme: appended 3 entry(ies)
+[INFO] [21:00:21.576Z] ==============================================================================
+[INFO] [21:00:21.576Z] Phase 3 — post-state verification + close-out report
+[INFO] [21:00:21.576Z] ==============================================================================
+[INFO] [21:00:21.605Z]   post buckets: {'aggregate_rollup': 141, 'clean_base_only': 8919, 'clean_dual_source': 26402, 'needs_backfill': 2117}
+[INFO] [21:00:21.788Z]   9340 rln_injury -> {'ever_rln_injury_any_evidence': False, 'ever_rln_injury_probable_or_better': False, 'ever_rln_injury_definitive': False}
+[INFO] [21:00:21.964Z]   9340 hypoparathyroidism -> {'ever_hypoparathyroidism_any_evidence': True, 'ever_hypoparathyroidism_probable_or_better': False, 'ever_hypoparathyroidism_definitive': False}
+[INFO] [21:00:22.306Z]   patient_master post: total=4,360 TRUE=4,360 FALSE=0
+[INFO] [21:00:22.525Z]   exam_master post: total=11,759 phantoms (NULL exam_date)=0
+[INFO] [21:00:22.579Z]   rollup invariant OK (10,871 rows / 10,871 distinct rids)
+[INFO] [21:00:22.627Z]   PUB object count: pre=289 post=290 Δ=+1 (expected 0; carry-forward table retired)
+[INFO] [21:00:22.628Z]   wrote close-out -> /Users/ros/THyroid 2026/scripts/output/389_close_out_report.md
+[INFO] [21:00:22.628Z] ==============================================================================
+[INFO] [21:00:22.628Z] Script 389 APPLY complete.  Summary: {"rule": "B", "classifier_provenance": "already_done", "exam_master_rows_new": 11759, "patient_master_has_any_us_true": 4360, "rollup_total_flips_t2f": 694, "dependents_rebound": 2, "pub_count_post": 290}
