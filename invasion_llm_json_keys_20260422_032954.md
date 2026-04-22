@@ -1,5 +1,5 @@
 # LLM result_json key probe — Script 363 (2026-04-22)
-BUILD_TS: `20260422_031138`
+BUILD_TS: `20260422_032954`
 
 Samples ~30 substantive `result_json` rows per (table × note_type) combo and enumerates the distinct `entity_type` values + `entity_value` shapes. Unmapped `entity_type`s are listed as carry-forward (mapped to NULL invasion_type, then dropped from CTEs).
 

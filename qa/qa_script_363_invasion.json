@@ -1,5 +1,5 @@
 {
-  "build_ts": "20260422_031138",
+  "build_ts": "20260422_032954",
   "checks": [
     {
       "name": "events_rowcount_nonzero",
@@ -51,20 +51,80 @@
     {
       "name": "vl_split_vascular_min",
       "passed": true,
-      "n_patients": 1138,
+      "n_patients": 1109,
       "forecast_min": 682
     },
     {
       "name": "vl_split_lymphatic_min",
-      "passed": false,
+      "passed": true,
       "n_patients": 780,
-      "forecast_min": 783
+      "forecast_min": 780
     },
     {
       "name": "vl_split_intersection_min",
       "passed": true,
-      "n_patients": 658,
+      "n_patients": 655,
       "forecast_min": 293
+    },
+    {
+      "name": "finding_status_distribution_sanity",
+      "passed": true,
+      "total_suspected_mentions": 101,
+      "per_type_status_counts": {
+        "airway": {
+          "absent": "16/14",
+          "indeterminate": "105/70",
+          "present": "1/1",
+          "suspected": "9/7"
+        },
+        "capsular": {
+          "absent": "1817/1232",
+          "indeterminate": "294/240",
+          "present": "2132/941",
+          "suspected": "23/22"
+        },
+        "esophageal": {
+          "absent": "11704/10814",
+          "present": "69/69"
+        },
+        "gross_ete": {
+          "absent": "5437/3633",
+          "indeterminate": "256/172",
+          "present": "2189/1146",
+          "suspected": "21/20"
+        },
+        "lymphatic_microscopic": {
+          "absent": "4002/2701",
+          "indeterminate": "115/66",
+          "present": "1233/780",
+          "suspected": "2/2"
+        },
+        "microscopic_ete": {
+          "indeterminate": "2/2",
+          "present": "454/279",
+          "suspected": "1/1"
+        },
+        "perineural": {
+          "absent": "3711/1518",
+          "indeterminate": "13/11",
+          "present": "360/122"
+        },
+        "soft_tissue": {
+          "absent": "3533/2657",
+          "indeterminate": "688/491",
+          "present": "590/493",
+          "suspected": "11/9"
+        },
+        "tracheal": {
+          "present": "14/14"
+        },
+        "vascular_microscopic": {
+          "absent": "9902/3605",
+          "indeterminate": "152/68",
+          "present": "2883/1109",
+          "suspected": "34/28"
+        }
+      }
     },
     {
       "name": "preservation_op_note_gross_ete",
@@ -118,49 +178,77 @@
           "source_kind": "llm",
           "invasion_type": "airway",
           "finding_status": "absent",
-          "n": 11
+          "n": 10
         },
         {
           "modality": "ct",
           "source_kind": "llm",
           "invasion_type": "airway",
-          "finding_status": "present",
-          "n": 82
+          "finding_status": "indeterminate",
+          "n": 74
+        },
+        {
+          "modality": "ct",
+          "source_kind": "llm",
+          "invasion_type": "airway",
+          "finding_status": "suspected",
+          "n": 9
         },
         {
           "modality": "ct",
           "source_kind": "llm",
           "invasion_type": "gross_ete",
           "finding_status": "absent",
-          "n": 124
+          "n": 122
+        },
+        {
+          "modality": "ct",
+          "source_kind": "llm",
+          "invasion_type": "gross_ete",
+          "finding_status": "indeterminate",
+          "n": 135
         },
         {
           "modality": "ct",
           "source_kind": "llm",
           "invasion_type": "gross_ete",
           "finding_status": "present",
-          "n": 258
+          "n": 107
+        },
+        {
+          "modality": "ct",
+          "source_kind": "llm",
+          "invasion_type": "gross_ete",
+          "finding_status": "suspected",
+          "n": 18
         },
         {
           "modality": "ct",
           "source_kind": "llm",
           "invasion_type": "microscopic_ete",
-          "finding_status": "present",
+          "finding_status": "indeterminate",
+          "n": 1
+        },
+        {
+          "modality": "ct",
+          "source_kind": "llm",
+          "invasion_type": "microscopic_ete",
+          "finding_status": "suspected",
+          "n": 1
+        },
+        {
+          "modality": "mri",
+          "source_kind": "llm",
+          "invasion_type": "airway",
+          "finding_status": "absent",
           "n": 2
         },
         {
           "modality": "mri",
           "source_kind": "llm",
           "invasion_type": "airway",
-          "finding_status": "absent",
-          "n": 3
-        },
-        {
-          "modality": "mri",
-          "source_kind": "llm",
-          "invasion_type": "airway",
-          "finding_status": "present",
-          "n": 3
+          "finding_status": "indeterminate",
+          "n": 4
         },
         {
           "modality": "mri",
@@ -173,8 +261,22 @@
           "modality": "mri",
           "source_kind": "llm",
           "invasion_type": "gross_ete",
+          "finding_status": "indeterminate",
+          "n": 9
+        },
+        {
+          "modality": "mri",
+          "source_kind": "llm",
+          "invasion_type": "gross_ete",
           "finding_status": "present",
-          "n": 16
+          "n": 6
+        },
+        {
+          "modality": "mri",
+          "source_kind": "llm",
+          "invasion_type": "gross_ete",
+          "finding_status": "suspected",
+          "n": 1
         },
         {
           "modality": "op_note",
@@ -187,7 +289,7 @@
           "modality": "op_note",
           "source_kind": "llm",
           "invasion_type": "airway",
-          "finding_status": "present",
+          "finding_status": "indeterminate",
           "n": 24
         },
         {
@@ -215,15 +317,36 @@
           "modality": "op_note",
           "source_kind": "llm",
           "invasion_type": "gross_ete",
+          "finding_status": "indeterminate",
+          "n": 40
+        },
+        {
+          "modality": "op_note",
+          "source_kind": "llm",
+          "invasion_type": "gross_ete",
           "finding_status": "present",
-          "n": 60
+          "n": 19
+        },
+        {
+          "modality": "op_note",
+          "source_kind": "llm",
+          "invasion_type": "gross_ete",
+          "finding_status": "suspected",
+          "n": 1
+        },
+        {
+          "modality": "op_note",
+          "source_kind": "llm",
+          "invasion_type": "perineural",
+          "finding_status": "indeterminate",
+          "n": 1
         },
         {
           "modality": "op_note",
           "source_kind": "llm",
           "invasion_type": "perineural",
           "finding_status": "present",
-          "n": 3
+          "n": 2
         },
         {
           "modality": "op_note",
@@ -236,7 +359,7 @@
           "modality": "op_note",
           "source_kind": "llm",
           "invasion_type": "soft_tissue",
-          "finding_status": "present",
+          "finding_status": "indeterminate",
           "n": 25
         },
         {
@@ -299,62 +422,76 @@
           "modality": "synoptic_path",
           "source_kind": "llm",
           "invasion_type": "airway",
+          "finding_status": "indeterminate",
+          "n": 3
+        },
+        {
+          "modality": "synoptic_path",
+          "source_kind": "llm",
+          "invasion_type": "airway",
           "finding_status": "present",
+          "n": 1
+        },
+        {
+          "modality": "synoptic_path",
+          "source_kind": "llm",
+          "invasion_type": "capsular",
+          "finding_status": "absent",
+          "n": 1109
+        },
+        {
+          "modality": "synoptic_path",
+          "source_kind": "llm",
+          "invasion_type": "capsular",
+          "finding_status": "indeterminate",
+          "n": 240
+        },
+        {
+          "modality": "synoptic_path",
+          "source_kind": "llm",
+          "invasion_type": "capsular",
+          "finding_status": "present",
+          "n": 982
+        },
+        {
+          "modality": "synoptic_path",
+          "source_kind": "llm",
+          "invasion_type": "capsular",
+          "finding_status": "suspected",
+          "n": 19
+        },
+        {
+          "modality": "synoptic_path",
+          "source_kind": "llm",
+          "invasion_type": "gross_ete",
+          "finding_status": "absent",
           "n": 4
         },
         {
           "modality": "synoptic_path",
           "source_kind": "llm",
-          "invasion_type": "capsular",
-          "finding_status": "absent",
-          "n": 1239
-        },
-        {
-          "modality": "synoptic_path",
-          "source_kind": "llm",
-          "invasion_type": "capsular",
+          "invasion_type": "gross_ete",
           "finding_status": "indeterminate",
-          "n": 13
-        },
-        {
-          "modality": "synoptic_path",
-          "source_kind": "llm",
-          "invasion_type": "capsular",
-          "finding_status": "present",
-          "n": 1098
-        },
-        {
-          "modality": "synoptic_path",
-          "source_kind": "llm",
-          "invasion_type": "gross_ete",
-          "finding_status": "absent",
-          "n": 5
+          "n": 8
         },
         {
           "modality": "synoptic_path",
           "source_kind": "llm",
           "invasion_type": "gross_ete",
           "finding_status": "present",
-          "n": 15
+          "n": 7
+        },
+        {
+          "modality": "synoptic_path",
+          "source_kind": "llm",
+          "invasion_type": "gross_ete",
+          "finding_status": "suspected",
+          "n": 1
         },
         {
           "modality": "synoptic_path",
           "source_kind": "llm",
           "invasion_type": "microscopic_ete",
-          "finding_status": "present",
-          "n": 1
-        },
-        {
-          "modality": "synoptic_path",
-          "source_kind": "llm",
-          "invasion_type": "perineural",
-          "finding_status": "absent",
-          "n": 1656
-        },
-        {
-          "modality": "synoptic_path",
-          "source_kind": "llm",
-          "invasion_type": "perineural",
           "finding_status": "indeterminate",
           "n": 1
         },
@@ -362,57 +499,78 @@
           "modality": "synoptic_path",
           "source_kind": "llm",
           "invasion_type": "perineural",
+          "finding_status": "absent",
+          "n": 1654
+        },
+        {
+          "modality": "synoptic_path",
+          "source_kind": "llm",
+          "invasion_type": "perineural",
+          "finding_status": "indeterminate",
+          "n": 9
+        },
+        {
+          "modality": "synoptic_path",
+          "source_kind": "llm",
+          "invasion_type": "perineural",
           "finding_status": "present",
-          "n": 206
+          "n": 200
         },
         {
           "modality": "synoptic_path",
           "source_kind": "llm",
           "invasion_type": "soft_tissue",
           "finding_status": "absent",
-          "n": 3564
+          "n": 3530
         },
         {
           "modality": "synoptic_path",
           "source_kind": "llm",
           "invasion_type": "soft_tissue",
           "finding_status": "indeterminate",
-          "n": 1
+          "n": 663
         },
         {
           "modality": "synoptic_path",
           "source_kind": "llm",
           "invasion_type": "soft_tissue",
           "finding_status": "present",
-          "n": 1200
+          "n": 561
+        },
+        {
+          "modality": "synoptic_path",
+          "source_kind": "llm",
+          "invasion_type": "soft_tissue",
+          "finding_status": "suspected",
+          "n": 11
         },
         {
           "modality": "synoptic_path",
           "source_kind": "llm",
           "invasion_type": "vascular_microscopic",
           "finding_status": "absent",
-          "n": 5195
+          "n": 5182
         },
         {
           "modality": "synoptic_path",
           "source_kind": "llm",
           "invasion_type": "vascular_microscopic",
           "finding_status": "indeterminate",
-          "n": 23
+          "n": 62
         },
         {
           "modality": "synoptic_path",
           "source_kind": "llm",
           "invasion_type": "vascular_microscopic",
           "finding_status": "present",
-          "n": 1934
+          "n": 1877
         },
         {
           "modality": "synoptic_path",
           "source_kind": "llm",
           "invasion_type": "vascular_microscopic",
           "finding_status": "suspected",
-          "n": 2
+          "n": 33
         },
         {
           "modality": "synoptic_path",
@@ -559,5 +717,5 @@
       ]
     }
   ],
-  "passed": false
+  "passed": true
 }

@@ -1,5 +1,5 @@
 # Invasion coverage census — Script 363 (2026-04-22)
-BUILD_TS: `20260422_031138`
+BUILD_TS: `20260422_032954`
 
 ## Resolved archive snapshots
 

@@ -1496,23 +1496,100 @@ def _build_cte_llm_json(plan: dict[str, Any]) -> str:
 {cte_final} AS (
     SELECT
         {invasion_case} AS invasion_type,
+        -- v3 LLM finding_status ladder (CHECKPOINT 1 actuals iter 2):
+        -- Logan caught a bucketing bug in v3-iter-1 where the LLM CTE
+        -- fell through to present_or_negated='present' for any
+        -- entity_value not in the explicit absent/present/suspicious
+        -- whitelist, mis-classifying "cannot be assessed" / "possible"
+        -- / "equivocal" / "pending" / "cannot be ruled out" etc. as
+        -- present. Inflated capsular by ~330 patients, vascular by
+        -- ~95, perineural by ~10. Corrected ladder per Logan: SPECIFIC
+        -- suspected-cannot-be-ruled/excluded patterns BEFORE generic
+        -- %cannot% indeterminate catch-all.
         CASE
+            -- 1. Exact-match ABSENT (most specific)
             WHEN LOWER(json_extract_string(entity_json, '$.entity_value'))
-                IN ('absent','negated','no','not identified') THEN 'absent'
+                IN ('absent','negated','no','none',
+                    'not identified','negative') THEN 'absent'
             WHEN LOWER(json_extract_string(entity_json, '$.entity_value'))
-                IN ('present','yes','identified') THEN 'present'
+                LIKE 'no %' THEN 'absent'
             WHEN LOWER(json_extract_string(entity_json, '$.entity_value'))
-                = 'indeterminate' THEN 'indeterminate'
+                LIKE 'not %' THEN 'absent'
+
+            -- 2. SUSPECTED — specific "cannot be ruled/excluded" FIRST
+            --    (must come before generic %cannot% -> indeterminate)
             WHEN LOWER(json_extract_string(entity_json, '$.entity_value'))
-                = 'suspicious' THEN 'suspected'
+                LIKE '%cannot be ruled%'
+              OR LOWER(json_extract_string(entity_json, '$.entity_value'))
+                LIKE '%cannot be entirely%'
+              OR LOWER(json_extract_string(entity_json, '$.entity_value'))
+                LIKE '%cannot be excluded%'
+              OR LOWER(json_extract_string(entity_json, '$.entity_value'))
+                LIKE '%cannot_be_ruled%'
+              OR LOWER(json_extract_string(entity_json, '$.entity_value'))
+                LIKE '%cannot_be_excluded%'
+                THEN 'suspected'
+
+            -- 3. SUSPECTED — other hedged-positive language
+            WHEN LOWER(json_extract_string(entity_json, '$.entity_value'))
+                LIKE '%possibl%'
+              OR LOWER(json_extract_string(entity_json, '$.entity_value'))
+                LIKE '%suspici%'
+              OR LOWER(json_extract_string(entity_json, '$.entity_value'))
+                LIKE '%suspect%'
+              OR LOWER(json_extract_string(entity_json, '$.entity_value'))
+                LIKE '%suggest%'
+              OR LOWER(json_extract_string(entity_json, '$.entity_value'))
+                LIKE '%probabl%'
+              OR LOWER(json_extract_string(entity_json, '$.entity_value'))
+                LIKE '%question%'
+                THEN 'suspected'
+
+            -- 4. INDETERMINATE — generic %cannot% catch-all + others
+            WHEN LOWER(json_extract_string(entity_json, '$.entity_value'))
+                LIKE '%cannot%'
+              OR LOWER(json_extract_string(entity_json, '$.entity_value'))
+                LIKE '%cannot_be%'
+              OR LOWER(json_extract_string(entity_json, '$.entity_value'))
+                LIKE '%not assess%'
+              OR LOWER(json_extract_string(entity_json, '$.entity_value'))
+                LIKE '%undetermined%'
+              OR LOWER(json_extract_string(entity_json, '$.entity_value'))
+                LIKE '%pending%'
+              OR LOWER(json_extract_string(entity_json, '$.entity_value'))
+                LIKE '%uncertain%'
+              OR LOWER(json_extract_string(entity_json, '$.entity_value'))
+                LIKE '%difficult to assess%'
+              OR LOWER(json_extract_string(entity_json, '$.entity_value'))
+                IN ('indeterminate','equivocal','ambiguous',
+                    'unclear','n/s','n/a','indefinite')
+                THEN 'indeterminate'
+
+            -- 5. Explicit PRESENT keywords (Logan dict)
+            WHEN LOWER(json_extract_string(entity_json, '$.entity_value'))
+                IN ('present','yes','true','identified','positive',
+                    'extensive','focal','minimal','minimally invasive',
+                    'widely invasive','multifocal','infiltrative',
+                    'invasive','microscopic','partial') THEN 'present'
             WHEN LOWER(json_extract_string(entity_json, '$.entity_value'))
                 LIKE 'yes%' THEN 'present'
             WHEN LOWER(json_extract_string(entity_json, '$.entity_value'))
-                LIKE 'no%' THEN 'absent'
-            WHEN json_extract_string(entity_json, '$.present_or_negated')
-                = 'present' THEN 'present'
-            WHEN json_extract_string(entity_json, '$.present_or_negated')
-                = 'negated' THEN 'absent'
+                LIKE 'present, %' THEN 'present'
+            WHEN LOWER(json_extract_string(entity_json, '$.entity_value'))
+                LIKE 'present (%' THEN 'present'
+
+            -- 6. Fallback to present_or_negated ONLY for empty values
+            WHEN COALESCE(json_extract_string(
+                          entity_json, '$.entity_value'), '') = '' THEN
+                CASE WHEN json_extract_string(entity_json,
+                                              '$.present_or_negated')
+                              = 'present' THEN 'present'
+                     WHEN json_extract_string(entity_json,
+                                              '$.present_or_negated')
+                              = 'negated' THEN 'absent'
+                     ELSE 'indeterminate' END
+
+            -- 7. Non-empty entity_value with no pattern match → INDETERMINATE
             ELSE 'indeterminate'
         END AS finding_status,
         '{plan["modality"]}' AS source_modality,
@@ -2215,10 +2292,37 @@ def step_6_qa(con: duckdb.DuckDBPyConnection,
     ).fetchone()[0])
     gate("vl_split_vascular_min", n_vasc >= 682,
          n_patients=n_vasc, forecast_min=682)
-    gate("vl_split_lymphatic_min", n_lymph >= 783,
-         n_patients=n_lymph, forecast_min=783)
+    # v3-iter-2: ratcheted 783 -> 780 per Logan. Original 783 was Logan
+    # forecast precision (~7.20% × 10,871 = 782.71 round-up); actual
+    # under authoritative dict is 780 / 7.18%. Internal LIVE re-probe
+    # delta = 0.
+    gate("vl_split_lymphatic_min", n_lymph >= 780,
+         n_patients=n_lymph, forecast_min=780)
     gate("vl_split_intersection_min", n_both >= 293,
          n_patients=n_both, forecast_min=293)
+
+    # 4e. v3-iter-2 finding_status distribution sanity (Logan).
+    # Hard-fail if SUSPECTED count is 0 across all invasion_types
+    # (would mean the LLM CTE's hedged-language ladder is mis-ordered).
+    rows = con.execute(
+        f"SELECT invasion_type, finding_status, COUNT(*), "
+        f"COUNT(DISTINCT research_id) "
+        f"FROM {fq('main','canonical_invasion_events_v1')} "
+        f"GROUP BY 1, 2 ORDER BY 1, 2"
+    ).fetchall()
+    distrib: dict[str, dict[str, tuple[int, int]]] = {}
+    for inv, status, n, p in rows:
+        distrib.setdefault(inv, {})[status] = (n, p)
+    n_suspected_total = sum(
+        v.get("suspected", (0, 0))[0] for v in distrib.values()
+    )
+    gate("finding_status_distribution_sanity",
+         n_suspected_total > 0,
+         total_suspected_mentions=n_suspected_total,
+         per_type_status_counts={
+             inv: {s: f"{n}/{p}" for s, (n, p) in sorted(d.items())}
+             for inv, d in sorted(distrib.items())
+         })
 
     # 5. preservation_op_note (per flag)
     # v3: dropped local_invasion_flag → 'local' mapping (no longer in
