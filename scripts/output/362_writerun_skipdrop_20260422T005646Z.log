@@ -1,0 +1,79 @@
+[INFO] [00:56:46.318Z] Run config: do_writes=True, phases=['0', '1', '2', '3', '4', '6', '7', '8'], BUILD_TS=20260422_005646
+[INFO] [00:56:46.319Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [00:56:46.817Z] ==============================================================================
+[INFO] [00:56:46.817Z] STEP 0 — Pre-flight & archive (BUILD_TS=20260422_005646)
+[INFO] [00:56:46.817Z] ==============================================================================
+[INFO] [00:56:47.431Z]   Script 361 dep OK: main.canonical_path_malignant_events_v1 (6,689 rows)
+[INFO] [00:56:47.468Z]   Script 361 dep OK: main.canonical_path_benign_events_v1 (11,688 rows)
+[INFO] [00:56:47.504Z]   Script 361 dep OK: main.canonical_path_gland_events_v1 (28,724 rows)
+[INFO] [00:56:47.553Z]   source has 49 columns; 20 required; 0 unexpected missing; 1 expected missing
+[INFO] [00:56:47.655Z]   date dtype probe operative_episode_detail_v2.surgery_date_native: TIMESTAMP
+[INFO] [00:56:47.655Z]   date dtype probe note_entities_procedures.note_date: VARCHAR
+[INFO] [00:56:47.655Z]   date dtype probe note_entities_operative_detail.note_date: VARCHAR
+[INFO] [00:56:47.752Z] Archive plan: main.operative_episode_detail_v2 (11,773 rows) -> operative_episode_detail_v2_pre362_20260422_005646
+[INFO] [00:56:49.235Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."operative_episode_detail_v2_pre362_20260422_005646" (11,773 rows)
+[INFO] [00:56:49.236Z] ==============================================================================
+[INFO] [00:56:49.236Z] STEP 1 — Build main.canonical_operative_events_v1
+[INFO] [00:56:49.236Z] ==============================================================================
+[INFO] [00:56:49.326Z]   source operative_episode_detail_v2 cols: 49
+[INFO] [00:56:49.326Z]   source note_entities_operative_detail cols: 48
+[INFO] [00:56:49.572Z]   base copy: 11,773 rows
+[INFO] [00:56:49.745Z]   added column main.canonical_operative_events_v1.op_detail_nerve_monitoring_n INTEGER
+[INFO] [00:56:49.906Z]   added column main.canonical_operative_events_v1.op_detail_ebl_n INTEGER
+[INFO] [00:56:50.068Z]   added column main.canonical_operative_events_v1.op_detail_parathyroid_mgmt_n INTEGER
+[INFO] [00:56:50.230Z]   added column main.canonical_operative_events_v1.op_detail_intraop_complication_n INTEGER
+[INFO] [00:56:50.397Z]   added column main.canonical_operative_events_v1.op_detail_reoperative_field_n INTEGER
+[INFO] [00:56:50.564Z]   added column main.canonical_operative_events_v1.op_detail_total_mentions INTEGER
+[INFO] [00:56:50.685Z]   populated op_detail enrichment on 4,439 rows
+[INFO] [00:56:50.867Z]   added column main.canonical_operative_events_v1.build_script VARCHAR
+[INFO] [00:56:51.032Z]   added column main.canonical_operative_events_v1.build_ts TIMESTAMP
+[INFO] [00:56:51.204Z]   added column main.canonical_operative_events_v1.consolidation_source VARCHAR
+[INFO] [00:56:51.532Z]   built canonical_operative_events_v1: 11,773 rows / 10,871 patients
+[INFO] [00:56:51.532Z] ==============================================================================
+[INFO] [00:56:51.532Z] STEP 2 — Build main.canonical_operative_patient_rollup_v1
+[INFO] [00:56:51.532Z] ==============================================================================
+[INFO] [00:56:52.043Z]   built canonical_operative_patient_rollup_v1: 10,871 rows
+[INFO] [00:56:52.043Z] ==============================================================================
+[INFO] [00:56:52.043Z] STEP 3 — Build main.canonical_operative_procedure_codes_v1
+[INFO] [00:56:52.043Z] ==============================================================================
+[INFO] [00:56:53.690Z]   built canonical_operative_procedure_codes_v1: 21,691 rows / 4,712 patients
+[INFO] [00:56:53.690Z] ==============================================================================
+[INFO] [00:56:53.690Z] STEP 4 — Create / refresh views_readable views
+[INFO] [00:56:53.690Z] ==============================================================================
+[INFO] [00:56:53.853Z]   view views_readable.operative_events_VIEW_v1 -> main.canonical_operative_events_v1
+[INFO] [00:56:54.108Z]   view views_readable.operative_patient_rollup_VIEW_v1 -> main.canonical_operative_patient_rollup_v1
+[INFO] [00:56:54.267Z]   view views_readable.operative_procedure_codes_VIEW_v1 -> main.canonical_operative_procedure_codes_v1
+[INFO] [00:56:54.586Z]   repointed view views_readable.Surgery_Episode_Detail: main.operative_episode_detail_v2 -> main.canonical_operative_events_v1
+[INFO] [00:56:54.586Z] ==============================================================================
+[INFO] [00:56:54.586Z] STEP 6 — detail_table_registry_v1 sync
+[INFO] [00:56:54.586Z] ==============================================================================
+[INFO] [00:56:54.653Z]   registry columns: ['detail_table_name', 'schema_name', 'join_key', 'grain', 'total_rows', 'total_patients', 'domain', 'feeds_master_columns', 'description', 'canonical_version', 'feeds_master_columns_secondary', 'feeds_master_columns_array', 'needs_manual_review']
+[INFO] [00:56:54.677Z]   registry rows for deprecated tables (pre-delete): 0
+[INFO] [00:56:54.702Z]   deleted 0 legacy registry rows
+[INFO] [00:56:54.848Z]   INSERT registry row: canonical_operative_events_v1 (rows=11773, patients=10871)
+[INFO] [00:56:55.033Z]   INSERT registry row: canonical_operative_procedure_codes_v1 (rows=21691, patients=4712)
+[INFO] [00:56:55.218Z]   INSERT registry row: canonical_operative_patient_rollup_v1 (rows=10871, patients=10871)
+[INFO] [00:56:55.253Z] ==============================================================================
+[INFO] [00:56:55.253Z] STEP 7 — CPM feeder audit (report only)
+[INFO] [00:56:55.253Z] ==============================================================================
+[INFO] [00:56:55.319Z]   CPM has 1532 total columns; 194 operative-flavored (nlp_/op_/operative_/frozen_/parathyroid_/rln_/ebl_)
+[INFO] [00:56:55.434Z]   CPM feeder audit -> /Users/ros/THyroid 2026/operative_cpm_feeder_audit_20260421.md
+[INFO] [00:56:55.434Z]   found 0 likely CPM ↔ deprecated source matches
+[INFO] [00:56:55.434Z] ==============================================================================
+[INFO] [00:56:55.434Z] STEP 8 — Zero-drift QA
+[INFO] [00:56:55.434Z] ==============================================================================
+[INFO] [00:56:55.603Z]   QA PASS events_rowcount_matches_archive: {'events_count': 11773, 'archive': 'operative_episode_detail_v2_pre362_20260422_005646', 'archive_count': 11773}
+[INFO] [00:56:55.695Z]   QA PASS no_research_ids_lost: {'n_old': 10871, 'n_new': 10871, 'n_lost': 0, 'sample_lost': []}
+[INFO] [00:56:55.839Z]   QA PASS patient_rollup_parity: {'rollup_rows': 10871, 'events_distinct_rid': 10871}
+[INFO] [00:56:55.950Z]   QA PASS procedure_codes_rowcount_matches_source: {'codes_count': 21691, 'source_present_count': 21691}
+[INFO] [00:56:56.039Z]   QA PASS procedure_linkage_geq_70pct_among_dated_mentions: {'method_counts': {'unlinked': 11134, 'temporal_30d': 78, 'same_day': 9575, 'temporal_30d_ambiguous': 904}, 'total_mentions': 21691, 'dated_mentions': 12952, 'good_linkage_dated': 9653, 'good_pct_among_dated': 0.7453, 'note': 'Denominator is dated mentions only; ~40% of upstream mentions have NULL note_date and are unlinkable by design.'}
+[INFO] [00:56:56.096Z]   QA PASS view_resolves_operative_events_VIEW_v1: {'row_count': 11773}
+[INFO] [00:56:56.150Z]   QA PASS view_resolves_operative_patient_rollup_VIEW_v1: {'row_count': 10871}
+[INFO] [00:56:56.207Z]   QA PASS view_resolves_operative_procedure_codes_VIEW_v1: {'row_count': 21691}
+[INFO] [00:56:56.275Z]   QA INFO procedure_linkage_method_distribution: {'distribution': {'unlinked': 11134, 'same_day': 9575, 'temporal_30d_ambiguous': 904, 'temporal_30d': 78}}
+[INFO] [00:56:56.299Z]   QA INFO procedure_linkage_ambiguity_rate: {'ambiguous': 904, 'linked': 10557, 'ambiguity_pct': 0.0856}
+[INFO] [00:56:56.336Z]   QA INFO procedure_normalization_sanity: {'top_values': {'hemithyroidectomy': 9323, 'total_thyroidectomy': 8556, 'central_neck_dissection': 1000, 'completion_thyroidectomy': 949, 'tracheostomy': 610, 'laryngoscopy': 575, 'modified_radical_neck_dissection': 439, 'lateral_neck_dissection': 183, 'parathyroid_autotransplant': 56}}
+[INFO] [00:56:56.431Z]   QA INFO varchar_date_parse_failures_note_entities_procedures: {'bad': 8739, 'total': 21691, 'bad_pct': 0.4029, 'note': 'Upstream completeness gap; informs why Gate 5 is anchored to dated mentions.'}
+[INFO] [00:56:56.431Z]   QA INFO placeholder_flag_cols: {'expected_missing': ['drain_placed'], 'note': 'drain_placed handled by deriving any_drain_placed from note_entities_operative_detail; not a placeholder flag'}
+[INFO] [00:56:56.431Z]   QA report -> /Users/ros/THyroid 2026/qa/qa_script_362_operative.json
+[INFO] [00:56:56.431Z] Script 362 complete.

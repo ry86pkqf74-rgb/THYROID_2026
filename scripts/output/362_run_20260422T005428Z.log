@@ -1,0 +1,39 @@
+[INFO] [00:54:28.528Z] Run config: do_writes=True, phases=['0', '1', '2', '3', '4', '6', '7', '8'], BUILD_TS=20260422_005428
+[INFO] [00:54:28.529Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [00:54:29.037Z] ==============================================================================
+[INFO] [00:54:29.037Z] STEP 0 — Pre-flight & archive (BUILD_TS=20260422_005428)
+[INFO] [00:54:29.037Z] ==============================================================================
+[INFO] [00:54:29.620Z]   Script 361 dep OK: main.canonical_path_malignant_events_v1 (6,689 rows)
+[INFO] [00:54:29.661Z]   Script 361 dep OK: main.canonical_path_benign_events_v1 (11,688 rows)
+[INFO] [00:54:29.705Z]   Script 361 dep OK: main.canonical_path_gland_events_v1 (28,724 rows)
+[INFO] [00:54:29.750Z]   source has 49 columns; 20 required; 0 unexpected missing; 1 expected missing
+[INFO] [00:54:29.855Z]   date dtype probe operative_episode_detail_v2.surgery_date_native: TIMESTAMP
+[INFO] [00:54:29.855Z]   date dtype probe note_entities_procedures.note_date: VARCHAR
+[INFO] [00:54:29.855Z]   date dtype probe note_entities_operative_detail.note_date: VARCHAR
+[INFO] [00:54:29.950Z] Archive plan: main.operative_episode_detail_v2 (11,773 rows) -> operative_episode_detail_v2_pre362_20260422_005428
+[INFO] [00:54:31.418Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."operative_episode_detail_v2_pre362_20260422_005428" (11,773 rows)
+[INFO] [00:54:31.418Z] ==============================================================================
+[INFO] [00:54:31.418Z] STEP 1 — Build main.canonical_operative_events_v1
+[INFO] [00:54:31.418Z] ==============================================================================
+[INFO] [00:54:31.486Z]   source operative_episode_detail_v2 cols: 49
+[INFO] [00:54:31.486Z]   source note_entities_operative_detail cols: 48
+[INFO] [00:54:31.790Z]   base copy: 11,773 rows
+[INFO] [00:54:32.032Z]   added column main.canonical_operative_events_v1.op_detail_nerve_monitoring_n INTEGER
+[INFO] [00:54:32.219Z]   added column main.canonical_operative_events_v1.op_detail_ebl_n INTEGER
+[INFO] [00:54:32.395Z]   added column main.canonical_operative_events_v1.op_detail_parathyroid_mgmt_n INTEGER
+[INFO] [00:54:32.566Z]   added column main.canonical_operative_events_v1.op_detail_intraop_complication_n INTEGER
+[INFO] [00:54:32.731Z]   added column main.canonical_operative_events_v1.op_detail_reoperative_field_n INTEGER
+[INFO] [00:54:32.994Z]   added column main.canonical_operative_events_v1.op_detail_total_mentions INTEGER
+[INFO] [00:54:33.135Z]   populated op_detail enrichment on 4,439 rows
+[INFO] [00:54:33.312Z]   added column main.canonical_operative_events_v1.build_script VARCHAR
+[INFO] [00:54:33.481Z]   added column main.canonical_operative_events_v1.build_ts TIMESTAMP
+[INFO] [00:54:33.651Z]   added column main.canonical_operative_events_v1.consolidation_source VARCHAR
+[INFO] [00:54:34.000Z]   built canonical_operative_events_v1: 11,773 rows / 10,871 patients
+[INFO] [00:54:34.001Z] ==============================================================================
+[INFO] [00:54:34.001Z] STEP 2 — Build main.canonical_operative_patient_rollup_v1
+[INFO] [00:54:34.001Z] ==============================================================================
+[INFO] [00:54:34.532Z]   built canonical_operative_patient_rollup_v1: 10,871 rows
+[INFO] [00:54:34.532Z] ==============================================================================
+[INFO] [00:54:34.532Z] STEP 3 — Build main.canonical_operative_procedure_codes_v1
+[INFO] [00:54:34.532Z] ==============================================================================
+[ERROR] [00:54:34.574Z] FATAL: ParserException('Parser Error: syntax error at or near "FILTER"\n\nLINE 36:                 ) FILTER (WHERE c.surgery_episode_id IS NOT NULL)\n                           ^')

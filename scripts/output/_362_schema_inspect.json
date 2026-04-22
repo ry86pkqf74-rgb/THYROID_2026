@@ -1,0 +1,944 @@
+{
+  "script_361_dependency_check": {
+    "main.canonical_path_malignant_events_v1": {
+      "exists": true,
+      "row_count": 6689
+    },
+    "main.canonical_path_benign_events_v1": {
+      "exists": true,
+      "row_count": 11688
+    },
+    "main.canonical_path_gland_events_v1": {
+      "exists": true,
+      "row_count": 28724
+    }
+  },
+  "source_tables": {
+    "main.operative_episode_detail_v2": {
+      "exists": true,
+      "row_count": 11773,
+      "columns": [
+        {
+          "name": "research_id",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "surgery_episode_id",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "surgery_date_native",
+          "dtype": "TIMESTAMP"
+        },
+        {
+          "name": "resolved_surgery_date",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "date_status",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "procedure_raw",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "procedure_normalized",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "laterality",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "central_neck_dissection_flag",
+          "dtype": "BOOLEAN"
+        },
+        {
+          "name": "lateral_neck_dissection_flag",
+          "dtype": "BOOLEAN"
+        },
+        {
+          "name": "rln_monitoring_flag",
+          "dtype": "BOOLEAN"
+        },
+        {
+          "name": "rln_finding_raw",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "parathyroid_autograft_flag",
+          "dtype": "BOOLEAN"
+        },
+        {
+          "name": "parathyroid_autograft_count",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "parathyroid_autograft_site",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "parathyroid_resection_flag",
+          "dtype": "BOOLEAN"
+        },
+        {
+          "name": "gross_ete_flag",
+          "dtype": "BOOLEAN"
+        },
+        {
+          "name": "local_invasion_flag",
+          "dtype": "BOOLEAN"
+        },
+        {
+          "name": "tracheal_involvement_flag",
+          "dtype": "BOOLEAN"
+        },
+        {
+          "name": "esophageal_involvement_flag",
+          "dtype": "BOOLEAN"
+        },
+        {
+          "name": "strap_muscle_involvement_flag",
+          "dtype": "BOOLEAN"
+        },
+        {
+          "name": "reoperative_field_flag",
+          "dtype": "BOOLEAN"
+        },
+        {
+          "name": "ebl_ml",
+          "dtype": "DOUBLE"
+        },
+        {
+          "name": "drain_flag",
+          "dtype": "BOOLEAN"
+        },
+        {
+          "name": "operative_findings_raw",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "source_tables",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "op_confidence",
+          "dtype": "DOUBLE"
+        },
+        {
+          "name": "note_date_resolved",
+          "dtype": "TIMESTAMP"
+        },
+        {
+          "name": "note_date_source",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "note_date_confidence",
+          "dtype": "DOUBLE"
+        },
+        {
+          "name": "parathyroid_identified_count",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "frozen_section_flag",
+          "dtype": "BOOLEAN"
+        },
+        {
+          "name": "berry_ligament_flag",
+          "dtype": "BOOLEAN"
+        },
+        {
+          "name": "ebl_ml_nlp",
+          "dtype": "DOUBLE"
+        },
+        {
+          "name": "op_enrichment_source",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "linked_pathology_episode_id",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "path_link_score_v3",
+          "dtype": "DOUBLE"
+        },
+        {
+          "name": "linked_fna_episode_id",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "fna_link_score_v3",
+          "dtype": "DOUBLE"
+        },
+        {
+          "name": "episode_rank",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "n_dates_in_cluster",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "episode_source_mix",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "n_entity_notes_in_episode",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "episode_has_cpm_anchor",
+          "dtype": "BOOLEAN"
+        },
+        {
+          "name": "episode_cpm_ordinal",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "frozen_section_n",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "frozen_section_any_malignant_flag",
+          "dtype": "BOOLEAN"
+        },
+        {
+          "name": "frozen_section_any_deferred_flag",
+          "dtype": "BOOLEAN"
+        },
+        {
+          "name": "frozen_section_any_suspected_malignant_flag",
+          "dtype": "BOOLEAN"
+        }
+      ]
+    },
+    "main.note_entities_procedures": {
+      "exists": true,
+      "row_count": 21942,
+      "columns": [
+        {
+          "name": "research_id",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "note_row_id",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "note_type",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "entity_type",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "entity_value_raw",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "entity_value_norm",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "present_or_negated",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "confidence",
+          "dtype": "DOUBLE"
+        },
+        {
+          "name": "evidence_span",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "evidence_start",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "evidence_end",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "entity_date",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "note_date",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "extraction_method",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "extracted_at",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "date_confidence",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "source_line",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "chunk_index",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "chunk_char_start",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "chunk_char_end",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "evidence_global_start",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "evidence_global_end",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "raw_response_sha256",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "verification_status",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "verification_step",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "extraction_run_id",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "extractor_name",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "extractor_version",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "model_name",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "model_version",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "prompt_version",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "verifier_name",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "verifier_version",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "confidence_score",
+          "dtype": "DOUBLE"
+        },
+        {
+          "name": "entity_domain",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "episode_id",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "extraction_timestamp_utc",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "llm_base_url",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "llm_model",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "llm_prompt_version",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "llm_provider",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "llm_sdk",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "llm_sdk_version",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "note_index",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "provider_returned_model",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "provider_system_fingerprint",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "source_column",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "source_sheet",
+          "dtype": "VARCHAR"
+        }
+      ]
+    },
+    "main.note_entities_operative_detail": {
+      "exists": true,
+      "row_count": 12151,
+      "columns": [
+        {
+          "name": "research_id",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "note_row_id",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "note_type",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "entity_type",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "entity_value_raw",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "entity_value_norm",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "present_or_negated",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "confidence",
+          "dtype": "DOUBLE"
+        },
+        {
+          "name": "evidence_span",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "evidence_start",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "evidence_end",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "entity_date",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "note_date",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "extraction_method",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "extracted_at",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "date_confidence",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "source_line",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "chunk_index",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "chunk_char_start",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "chunk_char_end",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "evidence_global_start",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "evidence_global_end",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "raw_response_sha256",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "verification_status",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "verification_step",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "extraction_run_id",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "extractor_name",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "extractor_version",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "model_name",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "model_version",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "prompt_version",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "verifier_name",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "verifier_version",
+          "dtype": "INTEGER"
+        },
+        {
+          "name": "confidence_score",
+          "dtype": "DOUBLE"
+        },
+        {
+          "name": "entity_domain",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "episode_id",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "extraction_timestamp_utc",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "llm_base_url",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "llm_model",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "llm_prompt_version",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "llm_provider",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "llm_sdk",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "llm_sdk_version",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "note_index",
+          "dtype": "BIGINT"
+        },
+        {
+          "name": "provider_returned_model",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "provider_system_fingerprint",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "source_column",
+          "dtype": "VARCHAR"
+        },
+        {
+          "name": "source_sheet",
+          "dtype": "VARCHAR"
+        }
+      ]
+    }
+  },
+  "required_column_check": {
+    "table": "main.operative_episode_detail_v2",
+    "checked_against": [
+      "research_id",
+      "surgery_episode_id",
+      "surgery_date_native",
+      "procedure_normalized",
+      "central_neck_dissection_flag",
+      "lateral_neck_dissection_flag",
+      "parathyroid_autograft_count",
+      "parathyroid_identified_count",
+      "parathyroid_resection_flag",
+      "frozen_section_flag",
+      "frozen_section_any_malignant_flag",
+      "reoperative_field_flag",
+      "parathyroid_autograft_flag",
+      "rln_monitoring_flag",
+      "drain_placed",
+      "ebl_ml",
+      "gross_ete_flag",
+      "tracheal_involvement_flag",
+      "esophageal_involvement_flag",
+      "strap_muscle_involvement_flag",
+      "local_invasion_flag"
+    ],
+    "present": [
+      "research_id",
+      "surgery_episode_id",
+      "surgery_date_native",
+      "procedure_normalized",
+      "central_neck_dissection_flag",
+      "lateral_neck_dissection_flag",
+      "parathyroid_autograft_count",
+      "parathyroid_identified_count",
+      "parathyroid_resection_flag",
+      "frozen_section_flag",
+      "frozen_section_any_malignant_flag",
+      "reoperative_field_flag",
+      "parathyroid_autograft_flag",
+      "rln_monitoring_flag",
+      "ebl_ml",
+      "gross_ete_flag",
+      "tracheal_involvement_flag",
+      "esophageal_involvement_flag",
+      "strap_muscle_involvement_flag",
+      "local_invasion_flag"
+    ],
+    "missing": [
+      "drain_placed"
+    ],
+    "present_with_dtypes": {
+      "research_id": "INTEGER",
+      "surgery_episode_id": "BIGINT",
+      "surgery_date_native": "TIMESTAMP",
+      "procedure_normalized": "VARCHAR",
+      "central_neck_dissection_flag": "BOOLEAN",
+      "lateral_neck_dissection_flag": "BOOLEAN",
+      "parathyroid_autograft_count": "BIGINT",
+      "parathyroid_identified_count": "INTEGER",
+      "parathyroid_resection_flag": "BOOLEAN",
+      "frozen_section_flag": "BOOLEAN",
+      "frozen_section_any_malignant_flag": "BOOLEAN",
+      "reoperative_field_flag": "BOOLEAN",
+      "parathyroid_autograft_flag": "BOOLEAN",
+      "rln_monitoring_flag": "BOOLEAN",
+      "ebl_ml": "DOUBLE",
+      "gross_ete_flag": "BOOLEAN",
+      "tracheal_involvement_flag": "BOOLEAN",
+      "esophageal_involvement_flag": "BOOLEAN",
+      "strap_muscle_involvement_flag": "BOOLEAN",
+      "local_invasion_flag": "BOOLEAN"
+    }
+  },
+  "date_column_probes": {
+    "operative_episode_detail_v2.surgery_date_native": {
+      "dtype": "TIMESTAMP",
+      "sample_3_distinct": [
+        "2023-03-01 00:00:00",
+        "2023-05-08 00:00:00",
+        "2024-01-19 00:00:00"
+      ]
+    },
+    "note_entities_procedures.note_date": {
+      "dtype": "VARCHAR",
+      "sample_3_distinct": [
+        "2010-08-11",
+        "2011-03-10",
+        "2013-07-29"
+      ],
+      "empty_string_row_count": 0
+    },
+    "note_entities_operative_detail.date_columns": {
+      "entity_date": {
+        "dtype": "VARCHAR",
+        "sample_3_distinct": [
+          "2021-10-12",
+          "2023-05-26",
+          "2023-10-03"
+        ]
+      },
+      "note_date": {
+        "dtype": "VARCHAR",
+        "sample_3_distinct": [
+          "2017-05-23",
+          "2017-08-09",
+          "2018-12-11"
+        ]
+      },
+      "date_confidence": {
+        "dtype": "INTEGER",
+        "sample_3_distinct": []
+      }
+    }
+  },
+  "value_distributions": {
+    "note_entities_procedures.entity_type_top10": [
+      {
+        "value": "procedure",
+        "count": 21942
+      }
+    ],
+    "note_entities_procedures.entity_value_norm_top10": [
+      {
+        "value": "hemithyroidectomy",
+        "count": 9389
+      },
+      {
+        "value": "total_thyroidectomy",
+        "count": 8660
+      },
+      {
+        "value": "central_neck_dissection",
+        "count": 1012
+      },
+      {
+        "value": "completion_thyroidectomy",
+        "count": 988
+      },
+      {
+        "value": "tracheostomy",
+        "count": 626
+      },
+      {
+        "value": "laryngoscopy",
+        "count": 584
+      },
+      {
+        "value": "modified_radical_neck_dissection",
+        "count": 439
+      },
+      {
+        "value": "lateral_neck_dissection",
+        "count": 188
+      },
+      {
+        "value": "parathyroid_autotransplant",
+        "count": 56
+      }
+    ],
+    "note_entities_procedures.present_or_negated_top10": [
+      {
+        "value": "present",
+        "count": 21691
+      },
+      {
+        "value": "negated",
+        "count": 251
+      }
+    ],
+    "note_entities_procedures.total_rows": 21942,
+    "note_entities_procedures.present_rows": 21691,
+    "note_entities_operative_detail.entity_type_top10": [
+      {
+        "value": "nerve_monitoring",
+        "count": 5556
+      },
+      {
+        "value": "ebl",
+        "count": 1683
+      },
+      {
+        "value": "rln_finding",
+        "count": 1307
+      },
+      {
+        "value": "parathyroid_management",
+        "count": 1178
+      },
+      {
+        "value": "berry_ligament",
+        "count": 726
+      },
+      {
+        "value": "strap_muscle",
+        "count": 506
+      },
+      {
+        "value": "drain_placement",
+        "count": 482
+      },
+      {
+        "value": "specimen_detail",
+        "count": 342
+      },
+      {
+        "value": "parathyroid_autograft",
+        "count": 178
+      },
+      {
+        "value": "reoperative_field",
+        "count": 132
+      }
+    ],
+    "operative_episode_detail_v2.procedure_normalized_top15": [
+      {
+        "value": "total_thyroidectomy",
+        "count": 4559
+      },
+      {
+        "value": "hemithyroidectomy",
+        "count": 3808
+      },
+      {
+        "value": null,
+        "count": 3051
+      },
+      {
+        "value": "other",
+        "count": 355
+      }
+    ]
+  },
+  "note_entities_procedures_linkage": {
+    "episode_id": {
+      "present": true,
+      "dtype": "VARCHAR",
+      "non_null_rows": 0
+    },
+    "surgery_episode_id": {
+      "present": false
+    }
+  },
+  "research_id_type_alignment": {
+    "main.operative_episode_detail_v2": "INTEGER",
+    "main.note_entities_procedures": "BIGINT",
+    "main.note_entities_operative_detail": "BIGINT"
+  },
+  "detail_table_registry_v1": {
+    "exists": true,
+    "columns": [
+      {
+        "name": "detail_table_name",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "schema_name",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "join_key",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "grain",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "total_rows",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "total_patients",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "domain",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "feeds_master_columns",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "description",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "canonical_version",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "feeds_master_columns_secondary",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "feeds_master_columns_array",
+        "dtype": "VARCHAR[]"
+      },
+      {
+        "name": "needs_manual_review",
+        "dtype": "BOOLEAN"
+      }
+    ],
+    "sample_row": {
+      "detail_table_name": "_molecular_patient_rollup_v227",
+      "schema_name": "main",
+      "join_key": "research_id",
+      "grain": "patient",
+      "total_rows": "10026",
+      "total_patients": "10026",
+      "domain": "Molecular",
+      "feeds_master_columns": "ret_positive_v7;any_fusion_positive;rollup_script_version",
+      "description": "Per-patient molecular rollup v227 (supersedes v225). Feeds ret_positive_v7 / any_fusion_positive.",
+      "canonical_version": "v227",
+      "feeds_master_columns_secondary": "mol_has_afirma;mol_has_thyroseq;mol_platform;molecular_tested_confirmed;ret_adjudicated_flag;ret_evidence_source",
+      "feeds_master_columns_array": "['ret_positive_v7' 'any_fusion_positive' 'rollup_script_version']",
+      "needs_manual_review": "False"
+    },
+    "note": "Registry has no 'status' column; sample is first available row."
+  },
+  "views_readable_references": {
+    "referencing_views": [
+      {
+        "view_name": "Surgery_Episode_Detail",
+        "sql_snippet": "CREATE VIEW views_readable.Surgery_Episode_Detail AS SELECT * FROM main.operative_episode_detail_v2;"
+      }
+    ]
+  }
+}

@@ -1,0 +1,64 @@
+[INFO] [00:52:46.523Z] Run config: do_writes=False, phases=['0', '1', '2', '3', '4', '5', '6', '7', '8'], BUILD_TS=20260422_005246
+[INFO] [00:52:46.524Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [00:52:48.006Z] ==============================================================================
+[INFO] [00:52:48.006Z] STEP 0 — Pre-flight & archive (BUILD_TS=20260422_005246)
+[INFO] [00:52:48.006Z] ==============================================================================
+[INFO] [00:52:49.111Z]   Script 361 dep OK: main.canonical_path_malignant_events_v1 (6,689 rows)
+[INFO] [00:52:49.153Z]   Script 361 dep OK: main.canonical_path_benign_events_v1 (11,688 rows)
+[INFO] [00:52:49.180Z]   Script 361 dep OK: main.canonical_path_gland_events_v1 (28,724 rows)
+[INFO] [00:52:49.222Z]   source has 49 columns; 20 required; 0 unexpected missing; 1 expected missing
+[INFO] [00:52:49.321Z]   date dtype probe operative_episode_detail_v2.surgery_date_native: TIMESTAMP
+[INFO] [00:52:49.321Z]   date dtype probe note_entities_procedures.note_date: VARCHAR
+[INFO] [00:52:49.321Z]   date dtype probe note_entities_operative_detail.note_date: VARCHAR
+[INFO] [00:52:49.416Z] Archive plan: main.operative_episode_detail_v2 (11,773 rows) -> operative_episode_detail_v2_pre362_20260422_005246
+[INFO] [00:52:49.416Z] ==============================================================================
+[INFO] [00:52:49.416Z] STEP 1 — Build main.canonical_operative_events_v1
+[INFO] [00:52:49.416Z] ==============================================================================
+[INFO] [00:52:49.488Z]   source operative_episode_detail_v2 cols: 49
+[INFO] [00:52:49.488Z]   source note_entities_operative_detail cols: 48
+[INFO] [00:52:49.488Z]   [dry-run] would CREATE OR REPLACE TABLE from operative_episode_detail_v2, then ALTER + UPDATE enrichment cols
+[INFO] [00:52:49.488Z] ==============================================================================
+[INFO] [00:52:49.488Z] STEP 2 — Build main.canonical_operative_patient_rollup_v1
+[INFO] [00:52:49.488Z] ==============================================================================
+[INFO] [00:52:49.488Z]   [dry-run] would build patient rollup from canonical_operative_events_v1 + note_entities_operative_detail
+[INFO] [00:52:49.488Z] ==============================================================================
+[INFO] [00:52:49.488Z] STEP 3 — Build main.canonical_operative_procedure_codes_v1
+[INFO] [00:52:49.488Z] ==============================================================================
+[INFO] [00:52:49.520Z]   [dry-run] would build procedure_codes from note_entities_procedures (present-only) with temporal linkage to canonical_operative_events_v1 via (rid, surg_date_native ±30d)
+[INFO] [00:52:49.520Z] ==============================================================================
+[INFO] [00:52:49.520Z] STEP 4 — Create / refresh views_readable views
+[INFO] [00:52:49.520Z] ==============================================================================
+[WARN] [00:52:49.549Z]   base table main.canonical_operative_events_v1 missing — skipping view operative_events_VIEW_v1
+[WARN] [00:52:49.576Z]   base table main.canonical_operative_patient_rollup_v1 missing — skipping view operative_patient_rollup_VIEW_v1
+[WARN] [00:52:49.606Z]   base table main.canonical_operative_procedure_codes_v1 missing — skipping view operative_procedure_codes_VIEW_v1
+[WARN] [00:52:49.666Z]   cannot repoint Surgery_Episode_Detail: target main.canonical_operative_events_v1 missing (likely dry-run; will repoint on commit run)
+[INFO] [00:52:49.666Z] STEP 5 — dry-run skips DROP TABLE (writes disabled)
+[INFO] [00:52:49.666Z] ==============================================================================
+[INFO] [00:52:49.666Z] STEP 6 — detail_table_registry_v1 sync
+[INFO] [00:52:49.666Z] ==============================================================================
+[INFO] [00:52:49.727Z]   registry columns: ['detail_table_name', 'schema_name', 'join_key', 'grain', 'total_rows', 'total_patients', 'domain', 'feeds_master_columns', 'description', 'canonical_version', 'feeds_master_columns_secondary', 'feeds_master_columns_array', 'needs_manual_review']
+[INFO] [00:52:49.896Z]   registry rows for deprecated tables (pre-delete): 1
+[INFO] [00:52:49.978Z]   INSERT registry row: canonical_operative_events_v1 (rows=0, patients=0)
+[INFO] [00:52:50.040Z]   INSERT registry row: canonical_operative_procedure_codes_v1 (rows=0, patients=0)
+[INFO] [00:52:50.098Z]   INSERT registry row: canonical_operative_patient_rollup_v1 (rows=0, patients=0)
+[INFO] [00:52:50.098Z] ==============================================================================
+[INFO] [00:52:50.098Z] STEP 7 — CPM feeder audit (report only)
+[INFO] [00:52:50.098Z] ==============================================================================
+[INFO] [00:52:50.160Z]   CPM has 1532 total columns; 194 operative-flavored (nlp_/op_/operative_/frozen_/parathyroid_/rln_/ebl_)
+[INFO] [00:52:50.321Z]   CPM feeder audit -> /Users/ros/THyroid 2026/operative_cpm_feeder_audit_20260421.md
+[INFO] [00:52:50.321Z]   found 0 likely CPM ↔ deprecated source matches
+[INFO] [00:52:50.321Z] ==============================================================================
+[INFO] [00:52:50.321Z] STEP 8 — Zero-drift QA
+[INFO] [00:52:50.321Z] ==============================================================================
+[INFO] [00:52:50.434Z]   QA FAIL events_rowcount_matches_archive: {'events_count': -1, 'archive': None, 'archive_count': None}
+[INFO] [00:52:50.464Z]   QA FAIL no_research_ids_lost: {'error': 'events table or archive missing'}
+[INFO] [00:52:50.493Z]   QA FAIL patient_rollup_parity: {'rollup_rows': -1, 'events_distinct_rid': -1}
+[INFO] [00:52:50.523Z]   QA FAIL procedure_codes_rowcount_matches_source: {'codes_count': -1, 'source_present_count': -1}
+[INFO] [00:52:50.553Z]   QA FAIL procedure_linkage_exact_or_unambiguous_geq_70pct: {'error': 'procedure_codes table missing'}
+[INFO] [00:52:50.584Z]   QA FAIL view_resolves_operative_events_VIEW_v1: {}
+[INFO] [00:52:50.614Z]   QA FAIL view_resolves_operative_patient_rollup_VIEW_v1: {}
+[INFO] [00:52:50.648Z]   QA FAIL view_resolves_operative_procedure_codes_VIEW_v1: {}
+[INFO] [00:52:50.781Z]   QA INFO varchar_date_parse_failures_note_entities_procedures: {'bad': 8739, 'total': 21691, 'bad_pct': 0.4029}
+[INFO] [00:52:50.781Z]   QA INFO placeholder_flag_cols: {'expected_missing': ['drain_placed'], 'note': 'drain_placed handled by deriving any_drain_placed from note_entities_operative_detail; not a placeholder flag'}
+[INFO] [00:52:50.781Z]   QA report -> /Users/ros/THyroid 2026/qa/qa_script_362_operative.json
+[ERROR] [00:52:50.781Z] ZERO-DRIFT QA failed — see qa file for details
