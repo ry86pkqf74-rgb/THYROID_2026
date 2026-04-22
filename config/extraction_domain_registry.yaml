@@ -396,7 +396,7 @@ domains:
     tier: v2
     extractors: [llm]
     prompts:
-      - repo_path: prompts/vascular_invasion_extraction_v1.txt
+      - repo_path: prompts/vascular_invasion_extraction_v2.txt
         scope: vascular_invasion
     canonical_output: true
     note_scope: path_report
