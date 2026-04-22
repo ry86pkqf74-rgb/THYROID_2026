@@ -1,0 +1,735 @@
+[INFO] [15:53:37.225Z] Script 388 — PLAN mode — 2026-04-22T15:53:37.225030+00:00
+[INFO] [15:53:37.226Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [15:53:38.603Z] Connection OK (CPM rows=10871)
+[INFO] [15:53:39.714Z] ==============================================================================
+[INFO] [15:53:39.714Z] Phase 0.1 — note_entities_llm_* inventory
+[INFO] [15:53:39.714Z] ==============================================================================
+[INFO] [15:53:39.746Z]   found 22 note_entities_llm_* objects in main
+[INFO] [15:53:40.009Z]   note_entities_llm_airway_invasion                       rows=  48,169 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:53:40.168Z]   note_entities_llm_cervical_ln_detail                    rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [15:53:40.349Z]   note_entities_llm_dynamic_risk_response                 rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:53:40.505Z]   note_entities_llm_esophageal_invasion                   rows=   4,409 -> CURRENT_LIVE (KEEP)
+[INFO] [15:53:40.697Z]   note_entities_llm_frozen_section_detail                 rows=  32,408 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:53:40.877Z]   note_entities_llm_functional_outcomes                   rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:53:41.053Z]   note_entities_llm_labs                                  rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:53:41.233Z]   note_entities_llm_parathyroid_detail                    rows=  17,321 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:53:41.409Z]   note_entities_llm_past_medical_hx                       rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:53:41.586Z]   note_entities_llm_past_surgical_hx                      rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:53:41.767Z]   note_entities_llm_pathology                             rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [15:53:41.942Z]   note_entities_llm_patient_decision_adherence            rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:53:42.101Z]   note_entities_llm_physical_exam                         rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:53:42.262Z]   note_entities_llm_presenting_symptoms                   rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:53:42.436Z]   note_entities_llm_rad_treatment                         rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:53:42.601Z]   note_entities_llm_rai_detailed                          rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:53:42.760Z]   note_entities_llm_recurrence                            rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:53:42.912Z]   note_entities_llm_survival_followup                     rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:53:43.235Z]   note_entities_llm_synoptic_pathology_enrichment         rows=  26,584 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:53:43.395Z]   note_entities_llm_tg_kinetics                           rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:53:43.567Z]   note_entities_llm_tirads_granular                       rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [15:53:43.727Z]   note_entities_llm_vascular_invasion                     rows=  20,536 -> CURRENT_LIVE (KEEP)
+[INFO] [15:53:43.727Z] ==============================================================================
+[INFO] [15:53:43.727Z] Phase 0.2 — main.* VIEW-label completeness inventory
+[INFO] [15:53:43.727Z] ==============================================================================
+[INFO] [15:53:43.759Z]   scanning 102 main.* objects
+[INFO] [15:53:43.791Z]   clinical_note_ln_extracted_v1                           BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:43.823Z]   clinical_notes_long                                     BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:43.854Z]   ct_imaging                                              BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:43.884Z]   cupm_v2_canonical_backfill_v1                           BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:43.914Z]   ete_adjudication_v1                                     BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:43.944Z]   imaging_exam_master_v1                                  BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:43.974Z]   imaging_fna_linkage_v3                                  BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.005Z]   imaging_patient_summary_v1                              BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.036Z]   manuscript_cohort_v1                                    BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.068Z]   mri_imaging                                             BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.098Z]   note_entities_operative_detail                          BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.127Z]   note_entities_procedures                                BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.158Z]   note_entities_staging                                   BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.189Z]   nsqip_enrichment                                        BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.221Z]   nsqip_patient_summary                                   BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.251Z]   nuclear_med                                             BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.282Z]   path_synoptics                                          BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.312Z]   patient_completion_oed_path_linkage_v1                  BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.342Z]   patient_cross_domain_timeline_v2                        BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.373Z]   rai_treatment_episode_v2                                BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.404Z]   recurrence_event_clean_v1                               BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.435Z]   specimen_genomic_assay_v1                               BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.465Z]   specimen_master_v1                                      BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.497Z]   specimen_source_xref_v1                                 BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.529Z]   specimen_tumor_focus_v1                                 BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.559Z]   tg_postop_surveillance_windows_v1                       BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.590Z]   tg_timeline_patient_summary_v1                          BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.619Z]   thyroid_sizes                                           BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.649Z]   thyroid_weights                                         BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.679Z]   tumor_stage_heterogeneity_v1                            BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:53:44.679Z] ==============================================================================
+[INFO] [15:53:44.679Z] Phase 0.3 — sham-key probe (387 carry-forward #2)
+[INFO] [15:53:44.679Z] ==============================================================================
+[INFO] [15:53:44.711Z]   probing canonical_path_benign_events_v1
+[INFO] [15:53:45.109Z]     -> NO viable candidate key found (all probes invalid)
+[INFO] [15:53:45.140Z]   probing canonical_path_gland_events_v1
+[INFO] [15:53:45.537Z]     -> NO viable candidate key found (all probes invalid)
+[INFO] [15:53:45.538Z]   dispositions written -> /Users/ros/THyroid 2026/scripts/output/388_dispositions.json
+[INFO] [15:53:45.538Z]   sham-key probe written -> /Users/ros/THyroid 2026/scripts/output/388_shamkey_probe.json
+[INFO] [15:53:45.538Z] Phase 0 summary: {"n_llm_total": 22, "n_llm_keep": 9, "n_llm_archive_orphan": 0, "n_llm_archive_legacy": 13, "n_view_label_renames": 0, "n_main_orphans": 0, "n_unclassified": 30, "n_sham_key_overrides": 0}
+[ERROR] [15:53:45.538Z] HALT: 30 UNCLASSIFIED items.  Review scripts/output/388_dispositions.json and provide manual decisions before re-running.
+[INFO] [15:55:37.904Z] Script 388 — PLAN mode — 2026-04-22T15:55:37.904600+00:00
+[INFO] [15:55:37.905Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [15:55:38.498Z] Connection OK (CPM rows=10871)
+[INFO] [15:55:38.992Z] ==============================================================================
+[INFO] [15:55:38.992Z] Phase 0.1 — note_entities_llm_* inventory
+[INFO] [15:55:38.992Z] ==============================================================================
+[INFO] [15:55:39.021Z]   found 22 note_entities_llm_* objects in main
+[INFO] [15:55:39.184Z]   note_entities_llm_airway_invasion                       rows=  48,169 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:55:39.332Z]   note_entities_llm_cervical_ln_detail                    rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [15:55:39.508Z]   note_entities_llm_dynamic_risk_response                 rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:55:39.657Z]   note_entities_llm_esophageal_invasion                   rows=   4,409 -> CURRENT_LIVE (KEEP)
+[INFO] [15:55:39.808Z]   note_entities_llm_frozen_section_detail                 rows=  32,408 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:55:39.950Z]   note_entities_llm_functional_outcomes                   rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:55:40.095Z]   note_entities_llm_labs                                  rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:55:40.258Z]   note_entities_llm_parathyroid_detail                    rows=  17,321 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:55:40.410Z]   note_entities_llm_past_medical_hx                       rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:55:40.561Z]   note_entities_llm_past_surgical_hx                      rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:55:40.709Z]   note_entities_llm_pathology                             rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [15:55:40.855Z]   note_entities_llm_patient_decision_adherence            rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:55:41.007Z]   note_entities_llm_physical_exam                         rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:55:41.158Z]   note_entities_llm_presenting_symptoms                   rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:55:41.312Z]   note_entities_llm_rad_treatment                         rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:55:41.465Z]   note_entities_llm_rai_detailed                          rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:55:41.616Z]   note_entities_llm_recurrence                            rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:55:41.766Z]   note_entities_llm_survival_followup                     rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:55:41.936Z]   note_entities_llm_synoptic_pathology_enrichment         rows=  26,584 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:55:42.085Z]   note_entities_llm_tg_kinetics                           rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:55:42.234Z]   note_entities_llm_tirads_granular                       rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [15:55:42.384Z]   note_entities_llm_vascular_invasion                     rows=  20,536 -> CURRENT_LIVE (KEEP)
+[INFO] [15:55:42.384Z] ==============================================================================
+[INFO] [15:55:42.384Z] Phase 0.2 — main.* VIEW-label completeness inventory
+[INFO] [15:55:42.384Z] ==============================================================================
+[INFO] [15:55:42.415Z]   scanning 102 main.* objects
+[INFO] [15:55:42.476Z]   clinical_note_ln_extracted_v1                           BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:42.530Z]   clinical_notes_long                                     BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:42.589Z]   ct_imaging                                              BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:42.645Z]   cupm_v2_canonical_backfill_v1                           BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:55:42.716Z]   ete_adjudication_v1                                     BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:42.772Z]   imaging_exam_master_v1                                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:42.830Z]   imaging_fna_linkage_v3                                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:42.886Z]   imaging_patient_summary_v1                              BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:42.943Z]   manuscript_cohort_v1                                    BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:42.998Z]   mri_imaging                                             BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:43.054Z]   note_entities_operative_detail                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:43.107Z]   note_entities_procedures                                BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:43.175Z]   note_entities_staging                                   BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:43.230Z]   nsqip_enrichment                                        BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:43.285Z]   nsqip_patient_summary                                   BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:43.342Z]   nuclear_med                                             BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:43.400Z]   path_synoptics                                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:43.455Z]   patient_completion_oed_path_linkage_v1                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:43.509Z]   patient_cross_domain_timeline_v2                        BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:43.562Z]   rai_treatment_episode_v2                                BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:43.616Z]   recurrence_event_clean_v1                               BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:43.671Z]   specimen_genomic_assay_v1                               BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:43.727Z]   specimen_master_v1                                      BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:43.784Z]   specimen_source_xref_v1                                 BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:43.836Z]   specimen_tumor_focus_v1                                 BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:43.890Z]   tg_postop_surveillance_windows_v1                       BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:43.945Z]   tg_timeline_patient_summary_v1                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:44.000Z]   thyroid_sizes                                           BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:44.055Z]   thyroid_weights                                         BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:44.111Z]   tumor_stage_heterogeneity_v1                            BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:55:44.111Z] ==============================================================================
+[INFO] [15:55:44.111Z] Phase 0.3 — sham-key probe (387 carry-forward #2)
+[INFO] [15:55:44.111Z] ==============================================================================
+[INFO] [15:55:44.143Z]   probing canonical_path_benign_events_v1
+[INFO] [15:55:44.213Z]     key=(research_id, surgery_episode_id, source_report_id, synoptic_row_ord)  rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [15:55:44.276Z]     key=(research_id, surgery_episode_id, accession_or_source_id, synoptic_row_ord) rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [15:55:44.341Z]     key=(research_id, source_table, source_report_id, synoptic_row_ord)        rows=11,688 distinct=11,688 null_key=     0 collapse=     0
+[INFO] [15:55:44.406Z]     key=(research_id, source_table, accession_or_source_id, synoptic_row_ord)  rows=11,688 distinct=11,688 null_key= 2,631 collapse=     0
+[INFO] [15:55:44.542Z]     key=(research_id, surgery_episode_id, synoptic_row_ord)                    rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [15:55:44.607Z]     key=(research_id, path_date, source_table, synoptic_row_ord)               rows=11,688 distinct=11,688 null_key=     2 collapse=     0
+[INFO] [15:55:44.670Z]     key=(research_id, path_date, synoptic_row_ord)                             rows=11,688 distinct=11,688 null_key=     2 collapse=     0
+[INFO] [15:55:44.743Z]     -> chosen probe key: (research_id, source_table, source_report_id, synoptic_row_ord) with null_key=0 collapse=0
+[INFO] [15:55:44.773Z]   probing canonical_path_gland_events_v1
+[INFO] [15:55:45.000Z]     key=(research_id, surgery_episode_id, specimen_id, gland_position, synoptic_row_ord) rows=28,724 distinct=28,724 null_key=11,348 collapse=     0
+[INFO] [15:55:45.068Z]     key=(research_id, surgery_episode_id, gland_position, synoptic_row_ord)    rows=28,724 distinct=28,724 null_key=11,348 collapse=     0
+[INFO] [15:55:45.135Z]     key=(research_id, surgery_episode_id, synoptic_row_ord)                    rows=28,724 distinct=11,481 null_key=11,348 collapse= 5,895
+[INFO] [15:55:45.201Z]     key=(research_id, path_date, source_table, synoptic_row_ord)               rows=28,724 distinct=11,481 null_key=     3 collapse=17,240
+[INFO] [15:55:45.267Z]     key=(research_id, path_date, synoptic_row_ord)                             rows=28,724 distinct=11,481 null_key=     3 collapse=17,240
+[INFO] [15:55:45.339Z]     -> chosen probe key: (research_id, path_date, source_table, synoptic_row_ord) with null_key=3 collapse=17,240
+[INFO] [15:55:45.340Z]   dispositions written -> /Users/ros/THyroid 2026/scripts/output/388_dispositions.json
+[INFO] [15:55:45.340Z]   sham-key probe written -> /Users/ros/THyroid 2026/scripts/output/388_shamkey_probe.json
+[INFO] [15:55:45.340Z] Phase 0 summary: {"n_llm_total": 22, "n_llm_keep": 9, "n_llm_archive_orphan": 0, "n_llm_archive_legacy": 13, "n_view_label_renames": 0, "n_main_orphans": 0, "n_main_keep_registry": 29, "n_unclassified": 1, "n_sham_key_overrides": 2}
+[ERROR] [15:55:45.340Z] HALT: 1 UNCLASSIFIED items.  Review scripts/output/388_dispositions.json and provide manual decisions before re-running.
+[INFO] [15:56:24.280Z] Script 388 — PLAN mode — 2026-04-22T15:56:24.280261+00:00
+[INFO] [15:56:24.281Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [15:56:24.800Z] Connection OK (CPM rows=10871)
+[INFO] [15:56:25.292Z] ==============================================================================
+[INFO] [15:56:25.292Z] Phase 0.1 — note_entities_llm_* inventory
+[INFO] [15:56:25.292Z] ==============================================================================
+[INFO] [15:56:25.321Z]   found 22 note_entities_llm_* objects in main
+[INFO] [15:56:25.497Z]   note_entities_llm_airway_invasion                       rows=  48,169 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:56:25.643Z]   note_entities_llm_cervical_ln_detail                    rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [15:56:25.806Z]   note_entities_llm_dynamic_risk_response                 rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:56:25.987Z]   note_entities_llm_esophageal_invasion                   rows=   4,409 -> CURRENT_LIVE (KEEP)
+[INFO] [15:56:26.190Z]   note_entities_llm_frozen_section_detail                 rows=  32,408 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:56:26.336Z]   note_entities_llm_functional_outcomes                   rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:56:26.496Z]   note_entities_llm_labs                                  rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:56:26.666Z]   note_entities_llm_parathyroid_detail                    rows=  17,321 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:56:26.810Z]   note_entities_llm_past_medical_hx                       rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:56:26.971Z]   note_entities_llm_past_surgical_hx                      rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:56:27.120Z]   note_entities_llm_pathology                             rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [15:56:27.288Z]   note_entities_llm_patient_decision_adherence            rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:56:27.436Z]   note_entities_llm_physical_exam                         rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:56:27.581Z]   note_entities_llm_presenting_symptoms                   rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:56:27.756Z]   note_entities_llm_rad_treatment                         rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:56:27.910Z]   note_entities_llm_rai_detailed                          rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:56:28.078Z]   note_entities_llm_recurrence                            rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:56:28.241Z]   note_entities_llm_survival_followup                     rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:56:28.407Z]   note_entities_llm_synoptic_pathology_enrichment         rows=  26,584 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:56:28.569Z]   note_entities_llm_tg_kinetics                           rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [15:56:28.731Z]   note_entities_llm_tirads_granular                       rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [15:56:28.922Z]   note_entities_llm_vascular_invasion                     rows=  20,536 -> CURRENT_LIVE (KEEP)
+[INFO] [15:56:28.922Z] ==============================================================================
+[INFO] [15:56:28.922Z] Phase 0.2 — main.* VIEW-label completeness inventory
+[INFO] [15:56:28.922Z] ==============================================================================
+[INFO] [15:56:28.956Z]   scanning 102 main.* objects
+[INFO] [15:56:29.013Z]   clinical_note_ln_extracted_v1                           BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:29.073Z]   clinical_notes_long                                     BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:29.133Z]   ct_imaging                                              BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:29.189Z]   cupm_v2_canonical_backfill_v1                           BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:56:29.246Z]   ete_adjudication_v1                                     BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:29.301Z]   imaging_exam_master_v1                                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:29.355Z]   imaging_fna_linkage_v3                                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:29.411Z]   imaging_patient_summary_v1                              BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:29.537Z]   manuscript_cohort_v1                                    BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:29.594Z]   mri_imaging                                             BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:29.649Z]   note_entities_operative_detail                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:29.702Z]   note_entities_procedures                                BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:29.762Z]   note_entities_staging                                   BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:29.817Z]   nsqip_enrichment                                        BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:29.875Z]   nsqip_patient_summary                                   BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:29.931Z]   nuclear_med                                             BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:29.987Z]   path_synoptics                                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:30.042Z]   patient_completion_oed_path_linkage_v1                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:30.095Z]   patient_cross_domain_timeline_v2                        BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:30.149Z]   rai_treatment_episode_v2                                BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:30.206Z]   recurrence_event_clean_v1                               BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:30.263Z]   specimen_genomic_assay_v1                               BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:30.321Z]   specimen_master_v1                                      BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:30.377Z]   specimen_source_xref_v1                                 BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:30.431Z]   specimen_tumor_focus_v1                                 BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:30.486Z]   tg_postop_surveillance_windows_v1                       BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:30.540Z]   tg_timeline_patient_summary_v1                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:30.594Z]   thyroid_sizes                                           BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:30.648Z]   thyroid_weights                                         BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:30.715Z]   tumor_stage_heterogeneity_v1                            BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:56:30.715Z] ==============================================================================
+[INFO] [15:56:30.715Z] Phase 0.3 — sham-key probe (387 carry-forward #2)
+[INFO] [15:56:30.715Z] ==============================================================================
+[INFO] [15:56:30.748Z]   probing canonical_path_benign_events_v1
+[INFO] [15:56:30.815Z]     key=(research_id, surgery_episode_id, source_report_id, synoptic_row_ord)  rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [15:56:30.905Z]     key=(research_id, surgery_episode_id, accession_or_source_id, synoptic_row_ord) rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [15:56:30.980Z]     key=(research_id, source_table, source_report_id, synoptic_row_ord)        rows=11,688 distinct=11,688 null_key=     0 collapse=     0
+[INFO] [15:56:31.045Z]     key=(research_id, source_table, accession_or_source_id, synoptic_row_ord)  rows=11,688 distinct=11,688 null_key= 2,631 collapse=     0
+[INFO] [15:56:31.180Z]     key=(research_id, surgery_episode_id, synoptic_row_ord)                    rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [15:56:31.244Z]     key=(research_id, path_date, source_table, synoptic_row_ord)               rows=11,688 distinct=11,688 null_key=     2 collapse=     0
+[INFO] [15:56:31.306Z]     key=(research_id, path_date, synoptic_row_ord)                             rows=11,688 distinct=11,688 null_key=     2 collapse=     0
+[INFO] [15:56:31.379Z]     -> chosen probe key: (research_id, source_table, source_report_id, synoptic_row_ord) with null_key=0 collapse=0
+[INFO] [15:56:31.410Z]   probing canonical_path_gland_events_v1
+[INFO] [15:56:31.625Z]     key=(research_id, surgery_episode_id, specimen_id, gland_position, synoptic_row_ord) rows=28,724 distinct=28,724 null_key=11,348 collapse=     0
+[INFO] [15:56:31.692Z]     key=(research_id, surgery_episode_id, gland_position, synoptic_row_ord)    rows=28,724 distinct=28,724 null_key=11,348 collapse=     0
+[INFO] [15:56:31.755Z]     key=(research_id, surgery_episode_id, synoptic_row_ord)                    rows=28,724 distinct=11,481 null_key=11,348 collapse= 5,895
+[INFO] [15:56:31.820Z]     key=(research_id, path_date, source_table, synoptic_row_ord)               rows=28,724 distinct=11,481 null_key=     3 collapse=17,240
+[INFO] [15:56:31.884Z]     key=(research_id, path_date, synoptic_row_ord)                             rows=28,724 distinct=11,481 null_key=     3 collapse=17,240
+[INFO] [15:56:31.956Z]     -> chosen probe key: (research_id, surgery_episode_id, specimen_id, gland_position, synoptic_row_ord) with null_key=11,348 collapse=0
+[INFO] [15:56:31.957Z]   dispositions written -> /Users/ros/THyroid 2026/scripts/output/388_dispositions.json
+[INFO] [15:56:31.957Z]   sham-key probe written -> /Users/ros/THyroid 2026/scripts/output/388_shamkey_probe.json
+[INFO] [15:56:31.957Z] Phase 0 summary: {"n_llm_total": 22, "n_llm_keep": 9, "n_llm_archive_orphan": 0, "n_llm_archive_legacy": 13, "n_view_label_renames": 0, "n_main_orphans": 0, "n_main_keep_registry": 29, "n_unclassified": 1, "n_sham_key_overrides": 2}
+[ERROR] [15:56:31.957Z] HALT: 1 UNCLASSIFIED items.  Review scripts/output/388_dispositions.json and provide manual decisions before re-running.
+[INFO] [15:58:01.803Z] Script 388 — PLAN mode — 2026-04-22T15:58:01.802856+00:00
+[INFO] [15:58:01.804Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [15:58:02.364Z] Connection OK (CPM rows=10871)
+[INFO] [15:58:02.841Z] ==============================================================================
+[INFO] [15:58:02.841Z] Phase 0.1 — note_entities_llm_* inventory
+[INFO] [15:58:02.841Z] ==============================================================================
+[INFO] [15:58:02.871Z]   found 22 note_entities_llm_* objects in main
+[INFO] [15:58:03.029Z]   note_entities_llm_airway_invasion                       rows=  48,169 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:03.188Z]   note_entities_llm_cervical_ln_detail                    rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:03.349Z]   note_entities_llm_dynamic_risk_response                 rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:03.496Z]   note_entities_llm_esophageal_invasion                   rows=   4,409 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:03.656Z]   note_entities_llm_frozen_section_detail                 rows=  32,408 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:03.816Z]   note_entities_llm_functional_outcomes                   rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:03.983Z]   note_entities_llm_labs                                  rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:04.152Z]   note_entities_llm_parathyroid_detail                    rows=  17,321 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:04.328Z]   note_entities_llm_past_medical_hx                       rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:04.518Z]   note_entities_llm_past_surgical_hx                      rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:04.692Z]   note_entities_llm_pathology                             rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:04.865Z]   note_entities_llm_patient_decision_adherence            rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:05.031Z]   note_entities_llm_physical_exam                         rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:05.200Z]   note_entities_llm_presenting_symptoms                   rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:05.371Z]   note_entities_llm_rad_treatment                         rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:05.539Z]   note_entities_llm_rai_detailed                          rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:05.713Z]   note_entities_llm_recurrence                            rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:05.890Z]   note_entities_llm_survival_followup                     rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:06.053Z]   note_entities_llm_synoptic_pathology_enrichment         rows=  26,584 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:06.223Z]   note_entities_llm_tg_kinetics                           rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:06.384Z]   note_entities_llm_tirads_granular                       rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:06.542Z]   note_entities_llm_vascular_invasion                     rows=  20,536 -> CURRENT_LIVE (KEEP)
+[INFO] [15:58:06.542Z] ==============================================================================
+[INFO] [15:58:06.542Z] Phase 0.2 — main.* VIEW-label completeness inventory
+[INFO] [15:58:06.542Z] ==============================================================================
+[INFO] [15:58:06.574Z]   scanning 102 main.* objects
+[INFO] [15:58:06.627Z]   clinical_note_ln_extracted_v1                           BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:06.685Z]   clinical_notes_long                                     BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:06.741Z]   ct_imaging                                              BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:06.797Z]   cupm_v2_canonical_backfill_v1                           BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:58:06.851Z]   ete_adjudication_v1                                     BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:06.905Z]   imaging_exam_master_v1                                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:06.960Z]   imaging_fna_linkage_v3                                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:07.096Z]   imaging_patient_summary_v1                              BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:07.157Z]   manuscript_cohort_v1                                    BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:07.220Z]   mri_imaging                                             BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:07.280Z]   note_entities_operative_detail                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:07.340Z]   note_entities_procedures                                BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:07.394Z]   note_entities_staging                                   BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:07.449Z]   nsqip_enrichment                                        BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:07.501Z]   nsqip_patient_summary                                   BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:07.557Z]   nuclear_med                                             BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:07.614Z]   path_synoptics                                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:07.668Z]   patient_completion_oed_path_linkage_v1                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:07.724Z]   patient_cross_domain_timeline_v2                        BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:07.787Z]   rai_treatment_episode_v2                                BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:07.846Z]   recurrence_event_clean_v1                               BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:07.913Z]   specimen_genomic_assay_v1                               BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:07.969Z]   specimen_master_v1                                      BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:08.028Z]   specimen_source_xref_v1                                 BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:08.086Z]   specimen_tumor_focus_v1                                 BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:08.158Z]   tg_postop_surveillance_windows_v1                       BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:08.218Z]   tg_timeline_patient_summary_v1                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:08.278Z]   thyroid_sizes                                           BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:08.335Z]   thyroid_weights                                         BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:08.392Z]   tumor_stage_heterogeneity_v1                            BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:58:08.392Z] ==============================================================================
+[INFO] [15:58:08.393Z] Phase 0.3 — sham-key probe (387 carry-forward #2)
+[INFO] [15:58:08.393Z] ==============================================================================
+[INFO] [15:58:08.425Z]   probing canonical_path_benign_events_v1
+[INFO] [15:58:08.488Z]     key=(research_id, surgery_episode_id, source_report_id, synoptic_row_ord)  rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [15:58:08.552Z]     key=(research_id, surgery_episode_id, accession_or_source_id, synoptic_row_ord) rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [15:58:08.617Z]     key=(research_id, source_table, source_report_id, synoptic_row_ord)        rows=11,688 distinct=11,688 null_key=     0 collapse=     0
+[INFO] [15:58:08.682Z]     key=(research_id, source_table, accession_or_source_id, synoptic_row_ord)  rows=11,688 distinct=11,688 null_key= 2,631 collapse=     0
+[INFO] [15:58:08.817Z]     key=(research_id, surgery_episode_id, synoptic_row_ord)                    rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [15:58:08.883Z]     key=(research_id, path_date, source_table, synoptic_row_ord)               rows=11,688 distinct=11,688 null_key=     2 collapse=     0
+[INFO] [15:58:08.945Z]     key=(research_id, path_date, synoptic_row_ord)                             rows=11,688 distinct=11,688 null_key=     2 collapse=     0
+[INFO] [15:58:09.018Z]     -> chosen probe key: (research_id, source_table, source_report_id, synoptic_row_ord) with null_key=0 collapse=0
+[INFO] [15:58:09.049Z]   probing canonical_path_gland_events_v1
+[INFO] [15:58:09.265Z]     key=(research_id, surgery_episode_id, specimen_id, gland_position, synoptic_row_ord) rows=28,724 distinct=28,724 null_key=11,348 collapse=     0
+[INFO] [15:58:09.333Z]     key=(research_id, surgery_episode_id, gland_position, synoptic_row_ord)    rows=28,724 distinct=28,724 null_key=11,348 collapse=     0
+[INFO] [15:58:09.396Z]     key=(research_id, surgery_episode_id, synoptic_row_ord)                    rows=28,724 distinct=11,481 null_key=11,348 collapse= 5,895
+[INFO] [15:58:09.463Z]     key=(research_id, path_date, source_table, synoptic_row_ord)               rows=28,724 distinct=11,481 null_key=     3 collapse=17,240
+[INFO] [15:58:09.527Z]     key=(research_id, path_date, synoptic_row_ord)                             rows=28,724 distinct=11,481 null_key=     3 collapse=17,240
+[INFO] [15:58:09.601Z]     -> chosen probe key: (research_id, surgery_episode_id, specimen_id, gland_position, synoptic_row_ord) with null_key=11,348 collapse=0
+[INFO] [15:58:09.601Z]   dispositions written -> /Users/ros/THyroid 2026/scripts/output/388_dispositions.json
+[INFO] [15:58:09.602Z]   sham-key probe written -> /Users/ros/THyroid 2026/scripts/output/388_shamkey_probe.json
+[INFO] [15:58:09.602Z] Phase 0 summary: {"n_llm_total": 22, "n_llm_keep": 22, "n_llm_archive_orphan": 0, "n_llm_archive_legacy": 0, "n_view_label_renames": 0, "n_main_orphans": 0, "n_main_keep_registry": 29, "n_unclassified": 1, "n_sham_key_overrides": 2}
+[ERROR] [15:58:09.602Z] HALT: 1 UNCLASSIFIED items.  Review scripts/output/388_dispositions.json and provide manual decisions before re-running.
+[INFO] [15:59:35.841Z] Script 388 — PLAN mode — 2026-04-22T15:59:35.841241+00:00
+[INFO] [15:59:35.842Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [15:59:36.351Z] Connection OK (CPM rows=10871)
+[INFO] [15:59:36.848Z] ==============================================================================
+[INFO] [15:59:36.848Z] Phase 0.1 — note_entities_llm_* inventory
+[INFO] [15:59:36.848Z] ==============================================================================
+[INFO] [15:59:36.878Z]   found 22 note_entities_llm_* objects in main
+[INFO] [15:59:37.028Z]   note_entities_llm_airway_invasion                       rows=  48,169 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:37.179Z]   note_entities_llm_cervical_ln_detail                    rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:37.326Z]   note_entities_llm_dynamic_risk_response                 rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:37.472Z]   note_entities_llm_esophageal_invasion                   rows=   4,409 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:37.625Z]   note_entities_llm_frozen_section_detail                 rows=  32,408 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:37.775Z]   note_entities_llm_functional_outcomes                   rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:37.922Z]   note_entities_llm_labs                                  rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:38.068Z]   note_entities_llm_parathyroid_detail                    rows=  17,321 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:38.218Z]   note_entities_llm_past_medical_hx                       rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:38.366Z]   note_entities_llm_past_surgical_hx                      rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:38.526Z]   note_entities_llm_pathology                             rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:38.677Z]   note_entities_llm_patient_decision_adherence            rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:38.828Z]   note_entities_llm_physical_exam                         rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:38.978Z]   note_entities_llm_presenting_symptoms                   rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:39.128Z]   note_entities_llm_rad_treatment                         rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:39.277Z]   note_entities_llm_rai_detailed                          rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:39.430Z]   note_entities_llm_recurrence                            rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:39.581Z]   note_entities_llm_survival_followup                     rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:39.733Z]   note_entities_llm_synoptic_pathology_enrichment         rows=  26,584 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:39.884Z]   note_entities_llm_tg_kinetics                           rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:40.035Z]   note_entities_llm_tirads_granular                       rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:40.186Z]   note_entities_llm_vascular_invasion                     rows=  20,536 -> CURRENT_LIVE (KEEP)
+[INFO] [15:59:40.186Z] ==============================================================================
+[INFO] [15:59:40.186Z] Phase 0.2 — main.* VIEW-label completeness inventory
+[INFO] [15:59:40.186Z] ==============================================================================
+[INFO] [15:59:40.217Z]   scanning 102 main.* objects
+[INFO] [15:59:40.279Z]   clinical_note_ln_extracted_v1                           BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:40.337Z]   clinical_notes_long                                     BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:40.393Z]   ct_imaging                                              BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:40.448Z]   cupm_v2_canonical_backfill_v1                           BASE TABLE -> UNCLASSIFIED (HALT)
+[INFO] [15:59:40.502Z]   ete_adjudication_v1                                     BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:40.553Z]   imaging_exam_master_v1                                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:40.609Z]   imaging_fna_linkage_v3                                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:40.664Z]   imaging_patient_summary_v1                              BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:40.719Z]   manuscript_cohort_v1                                    BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:40.774Z]   mri_imaging                                             BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:40.830Z]   note_entities_operative_detail                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:40.884Z]   note_entities_procedures                                BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:40.940Z]   note_entities_staging                                   BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:40.995Z]   nsqip_enrichment                                        BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:41.061Z]   nsqip_patient_summary                                   BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:41.115Z]   nuclear_med                                             BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:41.172Z]   path_synoptics                                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:41.226Z]   patient_completion_oed_path_linkage_v1                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:41.279Z]   patient_cross_domain_timeline_v2                        BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:41.335Z]   rai_treatment_episode_v2                                BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:41.390Z]   recurrence_event_clean_v1                               BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:41.447Z]   specimen_genomic_assay_v1                               BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:41.503Z]   specimen_master_v1                                      BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:41.559Z]   specimen_source_xref_v1                                 BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:41.613Z]   specimen_tumor_focus_v1                                 BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:41.667Z]   tg_postop_surveillance_windows_v1                       BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:41.721Z]   tg_timeline_patient_summary_v1                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:41.774Z]   thyroid_sizes                                           BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:41.829Z]   thyroid_weights                                         BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:41.885Z]   tumor_stage_heterogeneity_v1                            BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [15:59:41.885Z] ==============================================================================
+[INFO] [15:59:41.885Z] Phase 0.3 — sham-key probe (387 carry-forward #2)
+[INFO] [15:59:41.885Z] ==============================================================================
+[INFO] [15:59:41.917Z]   probing canonical_path_benign_events_v1
+[INFO] [15:59:41.981Z]     key=(research_id, surgery_episode_id, source_report_id, synoptic_row_ord)  rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [15:59:42.045Z]     key=(research_id, surgery_episode_id, accession_or_source_id, synoptic_row_ord) rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [15:59:42.110Z]     key=(research_id, source_table, source_report_id, synoptic_row_ord)        rows=11,688 distinct=11,688 null_key=     0 collapse=     0
+[INFO] [15:59:42.175Z]     key=(research_id, source_table, accession_or_source_id, synoptic_row_ord)  rows=11,688 distinct=11,688 null_key= 2,631 collapse=     0
+[INFO] [15:59:42.311Z]     key=(research_id, surgery_episode_id, synoptic_row_ord)                    rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [15:59:42.375Z]     key=(research_id, path_date, source_table, synoptic_row_ord)               rows=11,688 distinct=11,688 null_key=     2 collapse=     0
+[INFO] [15:59:42.438Z]     key=(research_id, path_date, synoptic_row_ord)                             rows=11,688 distinct=11,688 null_key=     2 collapse=     0
+[INFO] [15:59:42.511Z]     -> chosen probe key: (research_id, source_table, source_report_id, synoptic_row_ord) with null_key=0 collapse=0
+[INFO] [15:59:42.542Z]   probing canonical_path_gland_events_v1
+[INFO] [15:59:42.758Z]     key=(research_id, surgery_episode_id, specimen_id, gland_position, synoptic_row_ord) rows=28,724 distinct=28,724 null_key=11,348 collapse=     0
+[INFO] [15:59:42.825Z]     key=(research_id, surgery_episode_id, gland_position, synoptic_row_ord)    rows=28,724 distinct=28,724 null_key=11,348 collapse=     0
+[INFO] [15:59:42.888Z]     key=(research_id, surgery_episode_id, synoptic_row_ord)                    rows=28,724 distinct=11,481 null_key=11,348 collapse= 5,895
+[INFO] [15:59:42.954Z]     key=(research_id, path_date, source_table, synoptic_row_ord)               rows=28,724 distinct=11,481 null_key=     3 collapse=17,240
+[INFO] [15:59:43.018Z]     key=(research_id, path_date, synoptic_row_ord)                             rows=28,724 distinct=11,481 null_key=     3 collapse=17,240
+[INFO] [15:59:43.090Z]     -> chosen probe key: (research_id, surgery_episode_id, specimen_id, gland_position, synoptic_row_ord) with null_key=11,348 collapse=0
+[INFO] [15:59:43.091Z]   dispositions written -> /Users/ros/THyroid 2026/scripts/output/388_dispositions.json
+[INFO] [15:59:43.091Z]   sham-key probe written -> /Users/ros/THyroid 2026/scripts/output/388_shamkey_probe.json
+[INFO] [15:59:43.091Z] Phase 0 summary: {"n_llm_total": 22, "n_llm_keep": 22, "n_llm_archive_orphan": 0, "n_llm_archive_legacy": 0, "n_view_label_renames": 0, "n_main_orphans": 0, "n_main_keep_registry": 29, "n_unclassified": 1, "n_sham_key_overrides": 2}
+[ERROR] [15:59:43.091Z] HALT: 1 UNCLASSIFIED items.  Review scripts/output/388_dispositions.json and provide manual decisions before re-running.
+[INFO] [16:50:00.576Z] Script 388 — PLAN mode — 2026-04-22T16:50:00.575886+00:00
+[INFO] [16:50:00.577Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [16:50:03.862Z] Connection OK (CPM rows=10871)
+[INFO] [16:50:05.871Z] ==============================================================================
+[INFO] [16:50:05.871Z] Phase 0.1 — note_entities_llm_* inventory
+[INFO] [16:50:05.871Z] ==============================================================================
+[INFO] [16:50:05.901Z]   found 22 note_entities_llm_* objects in main
+[INFO] [16:50:06.146Z]   note_entities_llm_airway_invasion                       rows=  48,169 -> CURRENT_LIVE (KEEP)
+[INFO] [16:50:06.485Z]   note_entities_llm_cervical_ln_detail                    rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [16:50:06.646Z]   note_entities_llm_dynamic_risk_response                 rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [16:50:06.857Z]   note_entities_llm_esophageal_invasion                   rows=   4,409 -> CURRENT_LIVE (KEEP)
+[INFO] [16:50:07.033Z]   note_entities_llm_frozen_section_detail                 rows=  32,408 -> CURRENT_LIVE (KEEP)
+[INFO] [16:50:07.216Z]   note_entities_llm_functional_outcomes                   rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [16:50:07.377Z]   note_entities_llm_labs                                  rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [16:50:07.546Z]   note_entities_llm_parathyroid_detail                    rows=  17,321 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [16:50:07.710Z]   note_entities_llm_past_medical_hx                       rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [16:50:07.867Z]   note_entities_llm_past_surgical_hx                      rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [16:50:08.180Z]   note_entities_llm_pathology                             rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [16:50:08.345Z]   note_entities_llm_patient_decision_adherence            rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [16:50:08.503Z]   note_entities_llm_physical_exam                         rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [16:50:08.669Z]   note_entities_llm_presenting_symptoms                   rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [16:50:08.824Z]   note_entities_llm_rad_treatment                         rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [16:50:08.976Z]   note_entities_llm_rai_detailed                          rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [16:50:09.135Z]   note_entities_llm_recurrence                            rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [16:50:09.297Z]   note_entities_llm_survival_followup                     rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [16:50:09.642Z]   note_entities_llm_synoptic_pathology_enrichment         rows=  26,584 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [16:50:09.804Z]   note_entities_llm_tg_kinetics                           rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [16:50:10.041Z]   note_entities_llm_tirads_granular                       rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [16:50:10.384Z]   note_entities_llm_vascular_invasion                     rows=  20,536 -> CURRENT_LIVE (KEEP)
+[INFO] [16:50:10.385Z] ==============================================================================
+[INFO] [16:50:10.385Z] Phase 0.2 — main.* VIEW-label completeness inventory
+[INFO] [16:50:10.385Z] ==============================================================================
+[INFO] [16:50:10.416Z]   scanning 102 main.* objects
+[INFO] [16:50:10.515Z]   clinical_note_ln_extracted_v1                           BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:10.579Z]   clinical_notes_long                                     BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:10.638Z]   ct_imaging                                              BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:10.691Z]   ete_adjudication_v1                                     BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:10.744Z]   imaging_exam_master_v1                                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:10.799Z]   imaging_fna_linkage_v3                                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:10.855Z]   imaging_patient_summary_v1                              BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:10.935Z]   manuscript_cohort_v1                                    BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:10.992Z]   mri_imaging                                             BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:11.054Z]   note_entities_operative_detail                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:11.110Z]   note_entities_procedures                                BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:11.165Z]   note_entities_staging                                   BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:11.220Z]   nsqip_enrichment                                        BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:11.273Z]   nsqip_patient_summary                                   BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:11.330Z]   nuclear_med                                             BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:11.385Z]   path_synoptics                                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:11.439Z]   patient_completion_oed_path_linkage_v1                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:11.494Z]   patient_cross_domain_timeline_v2                        BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:11.552Z]   rai_treatment_episode_v2                                BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:11.607Z]   recurrence_event_clean_v1                               BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:11.662Z]   specimen_genomic_assay_v1                               BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:11.717Z]   specimen_master_v1                                      BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:11.772Z]   specimen_source_xref_v1                                 BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:11.826Z]   specimen_tumor_focus_v1                                 BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:11.878Z]   tg_postop_surveillance_windows_v1                       BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:11.932Z]   tg_timeline_patient_summary_v1                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:11.986Z]   thyroid_sizes                                           BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:12.040Z]   thyroid_weights                                         BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:12.098Z]   tumor_stage_heterogeneity_v1                            BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [16:50:12.098Z] ==============================================================================
+[INFO] [16:50:12.098Z] Phase 0.3 — sham-key probe (387 carry-forward #2)
+[INFO] [16:50:12.098Z] ==============================================================================
+[INFO] [16:50:12.130Z]   probing canonical_path_benign_events_v1
+[INFO] [16:50:12.200Z]     key=(research_id, surgery_episode_id, source_report_id, synoptic_row_ord)  rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [16:50:12.264Z]     key=(research_id, surgery_episode_id, accession_or_source_id, synoptic_row_ord) rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [16:50:12.329Z]     key=(research_id, source_table, source_report_id, synoptic_row_ord)        rows=11,688 distinct=11,688 null_key=     0 collapse=     0
+[INFO] [16:50:12.395Z]     key=(research_id, source_table, accession_or_source_id, synoptic_row_ord)  rows=11,688 distinct=11,688 null_key= 2,631 collapse=     0
+[INFO] [16:50:12.530Z]     key=(research_id, surgery_episode_id, synoptic_row_ord)                    rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [16:50:12.595Z]     key=(research_id, path_date, source_table, synoptic_row_ord)               rows=11,688 distinct=11,688 null_key=     2 collapse=     0
+[INFO] [16:50:12.659Z]     key=(research_id, path_date, synoptic_row_ord)                             rows=11,688 distinct=11,688 null_key=     2 collapse=     0
+[INFO] [16:50:12.731Z]     -> chosen probe key: (research_id, source_table, source_report_id, synoptic_row_ord) with null_key=0 collapse=0
+[INFO] [16:50:12.762Z]   probing canonical_path_gland_events_v1
+[INFO] [16:50:13.004Z]     key=(research_id, surgery_episode_id, specimen_id, gland_position, synoptic_row_ord) rows=28,724 distinct=28,724 null_key=11,348 collapse=     0
+[INFO] [16:50:13.074Z]     key=(research_id, surgery_episode_id, gland_position, synoptic_row_ord)    rows=28,724 distinct=28,724 null_key=11,348 collapse=     0
+[INFO] [16:50:13.140Z]     key=(research_id, surgery_episode_id, synoptic_row_ord)                    rows=28,724 distinct=11,481 null_key=11,348 collapse= 5,895
+[INFO] [16:50:13.206Z]     key=(research_id, path_date, source_table, synoptic_row_ord)               rows=28,724 distinct=11,481 null_key=     3 collapse=17,240
+[INFO] [16:50:13.270Z]     key=(research_id, path_date, synoptic_row_ord)                             rows=28,724 distinct=11,481 null_key=     3 collapse=17,240
+[INFO] [16:50:13.343Z]     -> chosen probe key: (research_id, surgery_episode_id, specimen_id, gland_position, synoptic_row_ord) with null_key=11,348 collapse=0
+[INFO] [16:50:13.344Z]   dispositions written -> /Users/ros/THyroid 2026/scripts/output/388_dispositions.json
+[INFO] [16:50:13.345Z]   sham-key probe written -> /Users/ros/THyroid 2026/scripts/output/388_shamkey_probe.json
+[INFO] [16:50:13.345Z] Phase 0 summary: {"n_llm_total": 22, "n_llm_keep": 13, "n_llm_archive_orphan": 0, "n_llm_archive_legacy": 9, "n_view_label_renames": 0, "n_main_orphans": 0, "n_main_keep_registry": 29, "n_unclassified": 0, "n_sham_key_overrides": 2}
+[INFO] [16:50:13.345Z] Phase 0 complete (--plan mode).  Review scripts/output/388_dispositions.json and re-run with --apply to execute.
+[INFO] [18:04:06.988Z] Script 388 — PLAN mode — 2026-04-22T18:04:06.988210+00:00
+[INFO] [18:04:06.990Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [18:04:08.845Z] Connection OK (CPM rows=10871)
+[INFO] [18:04:09.967Z] ==============================================================================
+[INFO] [18:04:09.967Z] Phase 0.1 — note_entities_llm_* inventory
+[INFO] [18:04:09.967Z] ==============================================================================
+[INFO] [18:04:09.998Z]   found 22 note_entities_llm_* objects in main
+[INFO] [18:04:10.236Z]   note_entities_llm_airway_invasion                       rows=  48,169 -> CURRENT_LIVE (KEEP)
+[INFO] [18:04:10.387Z]   note_entities_llm_cervical_ln_detail                    rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [18:04:10.533Z]   note_entities_llm_dynamic_risk_response                 rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [18:04:10.682Z]   note_entities_llm_esophageal_invasion                   rows=   4,409 -> CURRENT_LIVE (KEEP)
+[INFO] [18:04:10.832Z]   note_entities_llm_frozen_section_detail                 rows=  32,408 -> CURRENT_LIVE (KEEP)
+[INFO] [18:04:10.977Z]   note_entities_llm_functional_outcomes                   rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [18:04:11.124Z]   note_entities_llm_labs                                  rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [18:04:11.274Z]   note_entities_llm_parathyroid_detail                    rows=  17,321 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [18:04:11.422Z]   note_entities_llm_past_medical_hx                       rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [18:04:11.576Z]   note_entities_llm_past_surgical_hx                      rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [18:04:11.727Z]   note_entities_llm_pathology                             rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [18:04:11.877Z]   note_entities_llm_patient_decision_adherence            rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [18:04:12.021Z]   note_entities_llm_physical_exam                         rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [18:04:12.163Z]   note_entities_llm_presenting_symptoms                   rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [18:04:12.340Z]   note_entities_llm_rad_treatment                         rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [18:04:12.486Z]   note_entities_llm_rai_detailed                          rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [18:04:12.629Z]   note_entities_llm_recurrence                            rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [18:04:12.772Z]   note_entities_llm_survival_followup                     rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [18:04:12.929Z]   note_entities_llm_synoptic_pathology_enrichment         rows=  26,584 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [18:04:13.075Z]   note_entities_llm_tg_kinetics                           rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [18:04:13.226Z]   note_entities_llm_tirads_granular                       rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [18:04:13.377Z]   note_entities_llm_vascular_invasion                     rows=  20,536 -> CURRENT_LIVE (KEEP)
+[INFO] [18:04:13.377Z] ==============================================================================
+[INFO] [18:04:13.377Z] Phase 0.2 — main.* VIEW-label completeness inventory
+[INFO] [18:04:13.377Z] ==============================================================================
+[INFO] [18:04:13.409Z]   scanning 102 main.* objects
+[INFO] [18:04:13.464Z]   clinical_note_ln_extracted_v1                           BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:13.515Z]   clinical_notes_long                                     BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:13.573Z]   ct_imaging                                              BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:13.626Z]   ete_adjudication_v1                                     BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:13.679Z]   imaging_exam_master_v1                                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:13.732Z]   imaging_fna_linkage_v3                                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:13.786Z]   imaging_patient_summary_v1                              BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:13.839Z]   manuscript_cohort_v1                                    BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:13.892Z]   mri_imaging                                             BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:13.944Z]   note_entities_operative_detail                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:13.999Z]   note_entities_procedures                                BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:14.050Z]   note_entities_staging                                   BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:14.100Z]   nsqip_enrichment                                        BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:14.152Z]   nsqip_patient_summary                                   BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:14.203Z]   nuclear_med                                             BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:14.262Z]   path_synoptics                                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:14.315Z]   patient_completion_oed_path_linkage_v1                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:14.370Z]   patient_cross_domain_timeline_v2                        BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:14.423Z]   rai_treatment_episode_v2                                BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:14.481Z]   recurrence_event_clean_v1                               BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:14.536Z]   specimen_genomic_assay_v1                               BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:14.593Z]   specimen_master_v1                                      BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:14.646Z]   specimen_source_xref_v1                                 BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:14.699Z]   specimen_tumor_focus_v1                                 BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:14.751Z]   tg_postop_surveillance_windows_v1                       BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:14.804Z]   tg_timeline_patient_summary_v1                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:14.863Z]   thyroid_sizes                                           BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:14.918Z]   thyroid_weights                                         BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:14.970Z]   tumor_stage_heterogeneity_v1                            BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:04:14.970Z] ==============================================================================
+[INFO] [18:04:14.970Z] Phase 0.3 — sham-key probe (387 carry-forward #2)
+[INFO] [18:04:14.970Z] ==============================================================================
+[INFO] [18:04:15.002Z]   probing canonical_path_benign_events_v1
+[INFO] [18:04:15.070Z]     key=(research_id, surgery_episode_id, source_report_id, synoptic_row_ord)  rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [18:04:15.133Z]     key=(research_id, surgery_episode_id, accession_or_source_id, synoptic_row_ord) rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [18:04:15.196Z]     key=(research_id, source_table, source_report_id, synoptic_row_ord)        rows=11,688 distinct=11,688 null_key=     0 collapse=     0
+[INFO] [18:04:15.260Z]     key=(research_id, source_table, accession_or_source_id, synoptic_row_ord)  rows=11,688 distinct=11,688 null_key= 2,631 collapse=     0
+[INFO] [18:04:15.394Z]     key=(research_id, surgery_episode_id, synoptic_row_ord)                    rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [18:04:15.458Z]     key=(research_id, path_date, source_table, synoptic_row_ord)               rows=11,688 distinct=11,688 null_key=     2 collapse=     0
+[INFO] [18:04:15.520Z]     key=(research_id, path_date, synoptic_row_ord)                             rows=11,688 distinct=11,688 null_key=     2 collapse=     0
+[INFO] [18:04:15.593Z]     -> chosen probe key: (research_id, source_table, source_report_id, synoptic_row_ord) with null_key=0 collapse=0
+[INFO] [18:04:15.623Z]   probing canonical_path_gland_events_v1
+[INFO] [18:04:15.853Z]     key=(research_id, surgery_episode_id, specimen_id, gland_position, synoptic_row_ord) rows=28,724 distinct=28,724 null_key=11,348 collapse=     0
+[INFO] [18:04:15.921Z]     key=(research_id, surgery_episode_id, gland_position, synoptic_row_ord)    rows=28,724 distinct=28,724 null_key=11,348 collapse=     0
+[INFO] [18:04:15.985Z]     key=(research_id, surgery_episode_id, synoptic_row_ord)                    rows=28,724 distinct=11,481 null_key=11,348 collapse= 5,895
+[INFO] [18:04:16.050Z]     key=(research_id, path_date, source_table, synoptic_row_ord)               rows=28,724 distinct=11,481 null_key=     3 collapse=17,240
+[INFO] [18:04:16.113Z]     key=(research_id, path_date, synoptic_row_ord)                             rows=28,724 distinct=11,481 null_key=     3 collapse=17,240
+[INFO] [18:04:16.185Z]     -> chosen probe key: (research_id, surgery_episode_id, specimen_id, gland_position, synoptic_row_ord) with null_key=11,348 collapse=0
+[INFO] [18:04:16.186Z]   dispositions written -> /Users/ros/THyroid 2026/scripts/output/388_dispositions.json
+[INFO] [18:04:16.186Z]   sham-key probe written -> /Users/ros/THyroid 2026/scripts/output/388_shamkey_probe.json
+[INFO] [18:04:16.186Z] Phase 0 summary: {"n_llm_total": 22, "n_llm_keep": 13, "n_llm_archive_orphan": 0, "n_llm_archive_legacy": 9, "n_view_label_renames": 0, "n_main_orphans": 0, "n_main_keep_registry": 29, "n_unclassified": 0, "n_sham_key_overrides": 2}
+[INFO] [18:04:16.186Z] Phase 0 complete (--plan mode).  Review scripts/output/388_dispositions.json and re-run with --apply to execute.
+[INFO] [18:07:11.813Z] Script 388 — APPLY mode — 2026-04-22T18:07:11.813200+00:00
+[INFO] [18:07:11.814Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [18:07:12.419Z] Connection OK (CPM rows=10871)
+[INFO] [18:07:13.120Z] ==============================================================================
+[INFO] [18:07:13.120Z] Phase 0.1 — note_entities_llm_* inventory
+[INFO] [18:07:13.120Z] ==============================================================================
+[INFO] [18:07:13.153Z]   found 22 note_entities_llm_* objects in main
+[INFO] [18:07:13.328Z]   note_entities_llm_airway_invasion                       rows=  48,169 -> CURRENT_LIVE (KEEP)
+[INFO] [18:07:13.499Z]   note_entities_llm_cervical_ln_detail                    rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [18:07:13.644Z]   note_entities_llm_dynamic_risk_response                 rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [18:07:13.791Z]   note_entities_llm_esophageal_invasion                   rows=   4,409 -> CURRENT_LIVE (KEEP)
+[INFO] [18:07:13.955Z]   note_entities_llm_frozen_section_detail                 rows=  32,408 -> CURRENT_LIVE (KEEP)
+[INFO] [18:07:14.123Z]   note_entities_llm_functional_outcomes                   rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [18:07:14.287Z]   note_entities_llm_labs                                  rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [18:07:14.439Z]   note_entities_llm_parathyroid_detail                    rows=  17,321 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [18:07:14.585Z]   note_entities_llm_past_medical_hx                       rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [18:07:14.770Z]   note_entities_llm_past_surgical_hx                      rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [18:07:14.939Z]   note_entities_llm_pathology                             rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [18:07:15.086Z]   note_entities_llm_patient_decision_adherence            rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [18:07:15.255Z]   note_entities_llm_physical_exam                         rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [18:07:15.421Z]   note_entities_llm_presenting_symptoms                   rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [18:07:15.587Z]   note_entities_llm_rad_treatment                         rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [18:07:15.737Z]   note_entities_llm_rai_detailed                          rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [18:07:15.884Z]   note_entities_llm_recurrence                            rows=  11,037 -> CURRENT_LIVE (KEEP)
+[INFO] [18:07:16.044Z]   note_entities_llm_survival_followup                     rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [18:07:16.208Z]   note_entities_llm_synoptic_pathology_enrichment         rows=  26,584 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [18:07:16.369Z]   note_entities_llm_tg_kinetics                           rows=  11,037 -> LEGACY_REPLACED (ARCHIVE to "Thyroid 2026 UPdated"."note_entities_llm_legacy_)
+[INFO] [18:07:16.538Z]   note_entities_llm_tirads_granular                       rows=  10,084 -> CURRENT_LIVE (KEEP)
+[INFO] [18:07:16.704Z]   note_entities_llm_vascular_invasion                     rows=  20,536 -> CURRENT_LIVE (KEEP)
+[INFO] [18:07:16.704Z] ==============================================================================
+[INFO] [18:07:16.704Z] Phase 0.2 — main.* VIEW-label completeness inventory
+[INFO] [18:07:16.704Z] ==============================================================================
+[INFO] [18:07:16.736Z]   scanning 102 main.* objects
+[INFO] [18:07:16.793Z]   clinical_note_ln_extracted_v1                           BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:16.846Z]   clinical_notes_long                                     BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:16.901Z]   ct_imaging                                              BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:16.955Z]   ete_adjudication_v1                                     BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:17.009Z]   imaging_exam_master_v1                                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:17.097Z]   imaging_fna_linkage_v3                                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:17.155Z]   imaging_patient_summary_v1                              BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:17.210Z]   manuscript_cohort_v1                                    BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:17.266Z]   mri_imaging                                             BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:17.322Z]   note_entities_operative_detail                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:17.377Z]   note_entities_procedures                                BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:17.433Z]   note_entities_staging                                   BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:17.490Z]   nsqip_enrichment                                        BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:17.547Z]   nsqip_patient_summary                                   BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:17.600Z]   nuclear_med                                             BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:17.656Z]   path_synoptics                                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:17.710Z]   patient_completion_oed_path_linkage_v1                  BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:17.765Z]   patient_cross_domain_timeline_v2                        BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:17.819Z]   rai_treatment_episode_v2                                BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:17.873Z]   recurrence_event_clean_v1                               BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:17.928Z]   specimen_genomic_assay_v1                               BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:17.986Z]   specimen_master_v1                                      BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:18.040Z]   specimen_source_xref_v1                                 BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:18.102Z]   specimen_tumor_focus_v1                                 BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:18.159Z]   tg_postop_surveillance_windows_v1                       BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:18.214Z]   tg_timeline_patient_summary_v1                          BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:18.269Z]   thyroid_sizes                                           BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:18.324Z]   thyroid_weights                                         BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:18.379Z]   tumor_stage_heterogeneity_v1                            BASE TABLE -> KEEP_REGISTRY (KEEP)
+[INFO] [18:07:18.379Z] ==============================================================================
+[INFO] [18:07:18.379Z] Phase 0.3 — sham-key probe (387 carry-forward #2)
+[INFO] [18:07:18.379Z] ==============================================================================
+[INFO] [18:07:18.412Z]   probing canonical_path_benign_events_v1
+[INFO] [18:07:18.476Z]     key=(research_id, surgery_episode_id, source_report_id, synoptic_row_ord)  rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [18:07:18.541Z]     key=(research_id, surgery_episode_id, accession_or_source_id, synoptic_row_ord) rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [18:07:18.606Z]     key=(research_id, source_table, source_report_id, synoptic_row_ord)        rows=11,688 distinct=11,688 null_key=     0 collapse=     0
+[INFO] [18:07:18.671Z]     key=(research_id, source_table, accession_or_source_id, synoptic_row_ord)  rows=11,688 distinct=11,688 null_key= 2,631 collapse=     0
+[INFO] [18:07:18.807Z]     key=(research_id, surgery_episode_id, synoptic_row_ord)                    rows=11,688 distinct=11,688 null_key= 4,389 collapse=     0
+[INFO] [18:07:18.872Z]     key=(research_id, path_date, source_table, synoptic_row_ord)               rows=11,688 distinct=11,688 null_key=     2 collapse=     0
+[INFO] [18:07:18.936Z]     key=(research_id, path_date, synoptic_row_ord)                             rows=11,688 distinct=11,688 null_key=     2 collapse=     0
+[INFO] [18:07:19.009Z]     -> chosen probe key: (research_id, source_table, source_report_id, synoptic_row_ord) with null_key=0 collapse=0
+[INFO] [18:07:19.040Z]   probing canonical_path_gland_events_v1
+[INFO] [18:07:19.257Z]     key=(research_id, surgery_episode_id, specimen_id, gland_position, synoptic_row_ord) rows=28,724 distinct=28,724 null_key=11,348 collapse=     0
+[INFO] [18:07:19.326Z]     key=(research_id, surgery_episode_id, gland_position, synoptic_row_ord)    rows=28,724 distinct=28,724 null_key=11,348 collapse=     0
+[INFO] [18:07:19.391Z]     key=(research_id, surgery_episode_id, synoptic_row_ord)                    rows=28,724 distinct=11,481 null_key=11,348 collapse= 5,895
+[INFO] [18:07:19.457Z]     key=(research_id, path_date, source_table, synoptic_row_ord)               rows=28,724 distinct=11,481 null_key=     3 collapse=17,240
+[INFO] [18:07:19.524Z]     key=(research_id, path_date, synoptic_row_ord)                             rows=28,724 distinct=11,481 null_key=     3 collapse=17,240
+[INFO] [18:07:19.597Z]     -> chosen probe key: (research_id, surgery_episode_id, specimen_id, gland_position, synoptic_row_ord) with null_key=11,348 collapse=0
+[INFO] [18:07:19.599Z]   dispositions written -> /Users/ros/THyroid 2026/scripts/output/388_dispositions.json
+[INFO] [18:07:19.599Z]   sham-key probe written -> /Users/ros/THyroid 2026/scripts/output/388_shamkey_probe.json
+[INFO] [18:07:19.599Z] Phase 0 summary: {"n_llm_total": 22, "n_llm_keep": 13, "n_llm_archive_orphan": 0, "n_llm_archive_legacy": 9, "n_view_label_renames": 0, "n_main_orphans": 0, "n_main_keep_registry": 29, "n_unclassified": 0, "n_sham_key_overrides": 2}
+[INFO] [18:07:19.599Z] ==============================================================================
+[INFO] [18:07:19.599Z] Phase 2.A — VIEW-label renames
+[INFO] [18:07:19.599Z] ==============================================================================
+[INFO] [18:07:19.599Z]   targets: 0
+[INFO] [18:07:19.599Z] ==============================================================================
+[INFO] [18:07:19.599Z] Phase 2.B — main.* orphan archives
+[INFO] [18:07:19.599Z] ==============================================================================
+[INFO] [18:07:19.599Z]   targets: 0
+[INFO] [18:07:19.599Z] ==============================================================================
+[INFO] [18:07:19.599Z] Phase 2.C — note_entities_llm_* archives
+[INFO] [18:07:19.599Z] ==============================================================================
+[INFO] [18:07:19.599Z]   targets: 9
+[INFO] [18:07:19.655Z]   -> main.note_entities_llm_functional_outcomes (BASE TABLE, 11,037 rows) -> "Thyroid 2026 UPdated"."note_entities_llm_legacy_20260422"."note_entities_llm_functional_outcomes_qwen_20260422"
+[INFO] [18:07:21.296Z]      archived (11,037 rows; parity OK)
+[INFO] [18:07:21.416Z]      dropped base table main.note_entities_llm_functional_outcomes
+[INFO] [18:07:21.504Z]   -> main.note_entities_llm_labs (BASE TABLE, 11,037 rows) -> "Thyroid 2026 UPdated"."note_entities_llm_legacy_20260422"."note_entities_llm_labs_qwen_20260422"
+[INFO] [18:07:22.486Z]      archived (11,037 rows; parity OK)
+[INFO] [18:07:22.602Z]      dropped base table main.note_entities_llm_labs
+[INFO] [18:07:22.689Z]   -> main.note_entities_llm_parathyroid_detail (BASE TABLE, 17,321 rows) -> "Thyroid 2026 UPdated"."note_entities_llm_legacy_20260422"."note_entities_llm_parathyroid_detail_qwen_20260422"
+[INFO] [18:07:23.773Z]      archived (17,321 rows; parity OK)
+[INFO] [18:07:23.892Z]      dropped base table main.note_entities_llm_parathyroid_detail
+[INFO] [18:07:23.980Z]   -> main.note_entities_llm_patient_decision_adherence (BASE TABLE, 11,037 rows) -> "Thyroid 2026 UPdated"."note_entities_llm_legacy_20260422"."note_entities_llm_patient_decision_adherence_qwen_20260422"
+[INFO] [18:07:26.816Z]      archived (11,037 rows; parity OK)
+[INFO] [18:07:26.936Z]      dropped base table main.note_entities_llm_patient_decision_adherence
+[INFO] [18:07:27.026Z]   -> main.note_entities_llm_physical_exam (BASE TABLE, 11,037 rows) -> "Thyroid 2026 UPdated"."note_entities_llm_legacy_20260422"."note_entities_llm_physical_exam_qwen_20260422"
+[INFO] [18:07:28.015Z]      archived (11,037 rows; parity OK)
+[INFO] [18:07:28.139Z]      dropped base table main.note_entities_llm_physical_exam
+[INFO] [18:07:28.234Z]   -> main.note_entities_llm_rad_treatment (BASE TABLE, 11,037 rows) -> "Thyroid 2026 UPdated"."note_entities_llm_legacy_20260422"."note_entities_llm_rad_treatment_qwen_20260422"
+[INFO] [18:07:29.240Z]      archived (11,037 rows; parity OK)
+[INFO] [18:07:29.359Z]      dropped base table main.note_entities_llm_rad_treatment
+[INFO] [18:07:29.448Z]   -> main.note_entities_llm_survival_followup (BASE TABLE, 11,037 rows) -> "Thyroid 2026 UPdated"."note_entities_llm_legacy_20260422"."note_entities_llm_survival_followup_qwen_20260422"
+[INFO] [18:07:30.372Z]      archived (11,037 rows; parity OK)
+[INFO] [18:07:30.490Z]      dropped base table main.note_entities_llm_survival_followup
+[INFO] [18:07:30.583Z]   -> main.note_entities_llm_synoptic_pathology_enrichment (BASE TABLE, 26,584 rows) -> "Thyroid 2026 UPdated"."note_entities_llm_legacy_20260422"."note_entities_llm_synoptic_pathology_enrichment_qwen_20260422"
+[INFO] [18:07:33.037Z]      archived (26,584 rows; parity OK)
+[INFO] [18:07:33.170Z]      dropped base table main.note_entities_llm_synoptic_pathology_enrichment
+[INFO] [18:07:33.261Z]   -> main.note_entities_llm_tg_kinetics (BASE TABLE, 11,037 rows) -> "Thyroid 2026 UPdated"."note_entities_llm_legacy_20260422"."note_entities_llm_tg_kinetics_qwen_20260422"
+[INFO] [18:07:34.386Z]      archived (11,037 rows; parity OK)
+[INFO] [18:07:34.506Z]      dropped base table main.note_entities_llm_tg_kinetics
+[INFO] [18:07:34.537Z] ==============================================================================
+[INFO] [18:07:34.537Z] Phase 2.D — pin sham-key probe overrides into 387 dedup probe table
+[INFO] [18:07:34.537Z] ==============================================================================
+[INFO] [18:07:34.890Z]   -> canonical_path_benign_events_v1: pinned probe_key_override_388 = (research_id, source_table, source_report_id, synoptic_row_ord)
+[INFO] [18:07:34.922Z]   -> canonical_path_gland_events_v1: pinned probe_key_override_388 = (research_id, surgery_episode_id, specimen_id, gland_position, synoptic_row_ord)
+[INFO] [18:07:34.922Z] ==============================================================================
+[INFO] [18:07:34.922Z] Phase 3 — post-state verification
+[INFO] [18:07:34.922Z] ==============================================================================
+[INFO] [18:07:34.951Z]   gate OK: CPM rows = 10871
+[INFO] [18:07:34.992Z]   gate OK: tier2 / verify schemas remain empty
+[INFO] [18:07:35.059Z]   gate OK: every main.* object satisfies the naming contract
+[INFO] [18:07:35.086Z]   archive_move_log_v1 rows >= 2026-04-22: 9
+[INFO] [18:07:35.086Z]   gate OK: all 0 rename target(s) present
+[INFO] [18:07:35.086Z] Phase 3.2 — dedup re-verification vs 387 baseline
+[INFO] [18:07:35.146Z]   wrote -> /Users/ros/THyroid 2026/scripts/output/388_dedup_reverification.md
+[INFO] [18:07:35.146Z] ==============================================================================
+[INFO] [18:07:35.146Z] Phase 4 — detail_table_registry_v1 + __readme sync
+[INFO] [18:07:35.146Z] ==============================================================================
+[INFO] [18:07:35.184Z]   registry has 'superseded' column: False
+[INFO] [18:07:35.184Z]   registry has 'renamed_by_script' column: False
+[INFO] [18:07:35.184Z]   registry rows updated: archived=9 renamed=0
+[INFO] [18:07:35.219Z]   __readme appended (11 entries)
+[INFO] [18:07:35.219Z] ==============================================================================
+[INFO] [18:07:35.219Z] Script 388 APPLY complete.  Summary: {"renames": 0, "archives": 9, "shamkey_overrides": 2, "cpm_rows": 10871}

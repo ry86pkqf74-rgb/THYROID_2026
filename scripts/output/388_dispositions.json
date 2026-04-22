@@ -1,0 +1,1370 @@
+{
+  "run_ts": "2026-04-22T18:07:19.597993+00:00",
+  "mode": "apply",
+  "pub_db": "thyroid_canonical_publication_v1_0",
+  "archive_db": "Thyroid 2026 UPdated",
+  "note_entities_llm_inventory": [
+    {
+      "name": "note_entities_llm_airway_invasion",
+      "table_type": "BASE TABLE",
+      "row_count": 48169,
+      "n_cols": 23,
+      "classification": "CURRENT_LIVE",
+      "evidence": "Logan adjudication 2026-04-22 Q1: live builder ref: scripts/363_invasion_canonical.py (re-derivation is 363 carry-forward 6.B; do NOT archive until rebuild lands)",
+      "proposed_action": "KEEP",
+      "era_signals": [
+        "qwen(llm_model=qwen2.5-32b)"
+      ],
+      "view_references": [],
+      "repo_references_count": 15,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/scripts/334_op_esophageal_inv_any_from_airway.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/scripts/363_invasion_canonical.py",
+        "/Users/ros/THyroid 2026/scripts/342_backfill_op_esophageal_inv_any.py",
+        "/Users/ros/THyroid 2026/scripts/236_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/223_publish_canonical.py",
+        "/Users/ros/THyroid 2026/scripts/313b_tier2_completeness_invariant.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/scripts/363_invasion_canonical.py"
+      ],
+      "extracted_at_range": [
+        "2026-04-19T08:03:52.074630+00:00",
+        "2026-04-19T08:53:02.331089+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "qwen2.5-32b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_cervical_ln_detail",
+      "table_type": "BASE TABLE",
+      "row_count": 10084,
+      "n_cols": 17,
+      "classification": "CURRENT_LIVE",
+      "evidence": "Referenced by 1 view(s): views_readable.Cervical_LN_from_Notes_LLM",
+      "proposed_action": "KEEP",
+      "era_signals": [
+        "current(llm_model=openai/gpt-oss-120b)"
+      ],
+      "view_references": [
+        "views_readable.Cervical_LN_from_Notes_LLM"
+      ],
+      "repo_references_count": 21,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/scripts/209_nlp_entity_crossvalidation.py",
+        "/Users/ros/THyroid 2026/scripts/236_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/313b_tier2_completeness_invariant.py",
+        "/Users/ros/THyroid 2026/scripts/prompt6_354_prompt7_handoff.py",
+        "/Users/ros/THyroid 2026/scripts/206_fleet_nlp_validate_upload.py",
+        "/Users/ros/THyroid 2026/scripts/386b_fix_round2_llm_model_tag.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/scripts/386b_fix_round2_llm_model_tag.py",
+        "/Users/ros/THyroid 2026/scripts/382_cervical_ln_clinical_merge_load_rollup.py"
+      ],
+      "extracted_at_range": [
+        "2026-04-21T14:39:09.293147+00:00",
+        "2026-04-21T15:27:45.280771+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "openai/gpt-oss-120b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_dynamic_risk_response",
+      "table_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_cols": 23,
+      "classification": "CURRENT_LIVE",
+      "evidence": "Logan adjudication 2026-04-22 Q1: live builder ref: scripts/364_complications_consolidation.py",
+      "proposed_action": "KEEP",
+      "era_signals": [
+        "qwen(llm_model=qwen3:32b)"
+      ],
+      "view_references": [],
+      "repo_references_count": 12,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/hpc/02_ingest_to_motherduck.py",
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/scripts/236_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/364_complications_consolidation.py",
+        "/Users/ros/THyroid 2026/scripts/313b_tier2_completeness_invariant.py",
+        "/Users/ros/THyroid 2026/scripts/233_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/223_publish_canonical.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/hpc/02_ingest_to_motherduck.py",
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/scripts/364_complications_consolidation.py"
+      ],
+      "extracted_at_range": [
+        "2026-03-31T21:17:29.496821+00:00",
+        "2026-04-02T10:44:07.567495+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "qwen3:32b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_esophageal_invasion",
+      "table_type": "BASE TABLE",
+      "row_count": 4409,
+      "n_cols": 17,
+      "classification": "CURRENT_LIVE",
+      "evidence": "2 current-pipeline repo reference(s) (/Users/ros/THyroid 2026/scripts/386b_fix_round2_llm_model_tag.py, /Users/ros/THyroid 2026/scripts/384_esophageal_invasion_merge_load_rollup.py); era_signals=['current(llm_model=openai/gpt-oss-120b)']",
+      "proposed_action": "KEEP",
+      "era_signals": [
+        "current(llm_model=openai/gpt-oss-120b)"
+      ],
+      "view_references": [],
+      "repo_references_count": 5,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/scripts/prompt6_354_prompt7_handoff.py",
+        "/Users/ros/THyroid 2026/scripts/386b_fix_round2_llm_model_tag.py",
+        "/Users/ros/THyroid 2026/scripts/384_esophageal_invasion_merge_load_rollup.py",
+        "/Users/ros/THyroid 2026/scripts/runpod_404_esophageal_invasion.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/scripts/386b_fix_round2_llm_model_tag.py",
+        "/Users/ros/THyroid 2026/scripts/384_esophageal_invasion_merge_load_rollup.py"
+      ],
+      "extracted_at_range": [
+        "2026-04-21T19:14:45.468841+00:00",
+        "2026-04-21T19:25:27.917060+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "openai/gpt-oss-120b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_frozen_section_detail",
+      "table_type": "BASE TABLE",
+      "row_count": 32408,
+      "n_cols": 23,
+      "classification": "CURRENT_LIVE",
+      "evidence": "Logan adjudication 2026-04-22 Q1: live-ish builder ref: scripts/360_frozen_section_cleanup.py (360 already wrote canonical_frozen_section_events_v1; flag for 390+ re-verify \u2014 if no future rebuild touches this source, it becomes an archive candidate next round)",
+      "proposed_action": "KEEP",
+      "era_signals": [
+        "qwen(llm_model=qwen2.5-32b)"
+      ],
+      "view_references": [],
+      "repo_references_count": 13,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/scripts/304_frozen_section_tier2.py",
+        "/Users/ros/THyroid 2026/scripts/236_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/360_frozen_section_cleanup.py",
+        "/Users/ros/THyroid 2026/scripts/313b_tier2_completeness_invariant.py",
+        "/Users/ros/THyroid 2026/scripts/233_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/283_frozensec_v4_md_load_and_rollup.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/scripts/360_frozen_section_cleanup.py"
+      ],
+      "extracted_at_range": [
+        "2026-04-19T06:37:01.497006+00:00",
+        "2026-04-19T07:58:40.074652+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "qwen2.5-32b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_functional_outcomes",
+      "table_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_cols": 23,
+      "classification": "LEGACY_REPLACED",
+      "evidence": "Logan adjudication 2026-04-22 Q1 (Safe-9): qwen-era source with no live builder reference; archive now",
+      "proposed_action": "ARCHIVE to \"Thyroid 2026 UPdated\".\"note_entities_llm_legacy_20260422\".\"note_entities_llm_functional_outcomes_qwen_20260422\"",
+      "era_signals": [
+        "qwen(llm_model=qwen3:32b)"
+      ],
+      "view_references": [],
+      "repo_references_count": 11,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/scripts/223_publish_canonical.py",
+        "/Users/ros/THyroid 2026/scripts/313b_tier2_completeness_invariant.py",
+        "/Users/ros/THyroid 2026/scripts/236_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/223_ingest_and_publish.py",
+        "/Users/ros/THyroid 2026/scripts/212_nlp_entity_rollup.py",
+        "/Users/ros/THyroid 2026/scripts/210_database_audit_backup.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py"
+      ],
+      "extracted_at_range": [
+        "2026-04-01T17:28:15.115381+00:00",
+        "2026-04-02T09:24:02.073346+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "qwen3:32b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_labs",
+      "table_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_cols": 21,
+      "classification": "LEGACY_REPLACED",
+      "evidence": "Logan adjudication 2026-04-22 Q1 (Safe-9): qwen-era source with no live builder reference; archive now",
+      "proposed_action": "ARCHIVE to \"Thyroid 2026 UPdated\".\"note_entities_llm_legacy_20260422\".\"note_entities_llm_labs_qwen_20260422\"",
+      "era_signals": [
+        "qwen(llm_model=qwen3:30b-a3b)",
+        "qwen(llm_model=qwen3:32b)"
+      ],
+      "view_references": [],
+      "repo_references_count": 22,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/tests/test_v2_domain_fanout_and_validation.py",
+        "/Users/ros/THyroid 2026/scripts/347_lab_master_canonical_v1_build.py",
+        "/Users/ros/THyroid 2026/scripts/236_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/prompt6_350_tsh_suppressed_ever.py",
+        "/Users/ros/THyroid 2026/scripts/313b_tier2_completeness_invariant.py",
+        "/Users/ros/THyroid 2026/scripts/218_followup_recovery.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/tests/test_v2_domain_fanout_and_validation.py"
+      ],
+      "extracted_at_range": [
+        "2026-03-31T12:13:10.651615+00:00",
+        "2026-04-01T00:49:28.122233+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "qwen3:30b-a3b",
+        "qwen3:32b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_parathyroid_detail",
+      "table_type": "BASE TABLE",
+      "row_count": 17321,
+      "n_cols": 23,
+      "classification": "LEGACY_REPLACED",
+      "evidence": "Logan adjudication 2026-04-22 Q1 (Safe-9): qwen-era source with no live builder reference; archive now",
+      "proposed_action": "ARCHIVE to \"Thyroid 2026 UPdated\".\"note_entities_llm_legacy_20260422\".\"note_entities_llm_parathyroid_detail_qwen_20260422\"",
+      "era_signals": [
+        "qwen(llm_model=qwen2.5-32b)"
+      ],
+      "view_references": [],
+      "repo_references_count": 12,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/scripts/236_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/223_publish_canonical.py",
+        "/Users/ros/THyroid 2026/scripts/223_ingest_and_publish.py",
+        "/Users/ros/THyroid 2026/scripts/212_nlp_entity_rollup.py",
+        "/Users/ros/THyroid 2026/scripts/250_registry_pointer_rebuild.py",
+        "/Users/ros/THyroid 2026/scripts/210_database_audit_backup.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py"
+      ],
+      "extracted_at_range": [
+        "2026-04-19T09:39:51.767070+00:00",
+        "2026-04-19T10:36:21.335907+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "qwen2.5-32b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_past_medical_hx",
+      "table_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_cols": 23,
+      "classification": "CURRENT_LIVE",
+      "evidence": "Referenced by 1 view(s): views_readable.PMHx_from_Notes_LLM",
+      "proposed_action": "KEEP",
+      "era_signals": [
+        "qwen(llm_model=qwen3:32b)"
+      ],
+      "view_references": [
+        "views_readable.PMHx_from_Notes_LLM"
+      ],
+      "repo_references_count": 16,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/scripts/236_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/215_deep_nlp_entity_integration.py",
+        "/Users/ros/THyroid 2026/scripts/365_psh_pmh_meds_consolidation.py",
+        "/Users/ros/THyroid 2026/scripts/313b_tier2_completeness_invariant.py",
+        "/Users/ros/THyroid 2026/scripts/223_publish_canonical.py",
+        "/Users/ros/THyroid 2026/scripts/365b_dryrun.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/scripts/365_psh_pmh_meds_consolidation.py",
+        "/Users/ros/THyroid 2026/scripts/365b_dryrun.py"
+      ],
+      "extracted_at_range": [
+        "2026-03-31T19:39:34.750751+00:00",
+        "2026-04-03T04:23:52.882495+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "qwen3:32b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_past_surgical_hx",
+      "table_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_cols": 23,
+      "classification": "CURRENT_LIVE",
+      "evidence": "Referenced by 1 view(s): views_readable.PSHx_from_Notes_LLM",
+      "proposed_action": "KEEP",
+      "era_signals": [
+        "qwen(llm_model=qwen3:32b)"
+      ],
+      "view_references": [
+        "views_readable.PSHx_from_Notes_LLM"
+      ],
+      "repo_references_count": 17,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/scripts/308_past_surgical_hx_tier2.py",
+        "/Users/ros/THyroid 2026/scripts/236_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/215_deep_nlp_entity_integration.py",
+        "/Users/ros/THyroid 2026/scripts/365_psh_pmh_meds_consolidation.py",
+        "/Users/ros/THyroid 2026/scripts/313b_tier2_completeness_invariant.py",
+        "/Users/ros/THyroid 2026/scripts/365b_dryrun.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/scripts/365_psh_pmh_meds_consolidation.py",
+        "/Users/ros/THyroid 2026/scripts/365b_dryrun.py"
+      ],
+      "extracted_at_range": [
+        "2026-04-02T09:24:18.177732+00:00",
+        "2026-04-02T23:59:20.168089+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "qwen3:32b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_pathology",
+      "table_type": "BASE TABLE",
+      "row_count": 10084,
+      "n_cols": 17,
+      "classification": "CURRENT_LIVE",
+      "evidence": "3 current-pipeline repo reference(s) (/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py, /Users/ros/THyroid 2026/scripts/386b_fix_round2_llm_model_tag.py, /Users/ros/THyroid 2026/scripts/369_pathology_v2_merge_load_rollup.py); era_signals=['current(llm_model=openai/gpt-oss-120b)']",
+      "proposed_action": "KEEP",
+      "era_signals": [
+        "current(llm_model=openai/gpt-oss-120b)"
+      ],
+      "view_references": [],
+      "repo_references_count": 21,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/scripts/209_nlp_entity_crossvalidation.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/scripts/236_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/runpod_400_pathology_qwen25_rerun.py",
+        "/Users/ros/THyroid 2026/scripts/prompt6_354_prompt7_handoff.py",
+        "/Users/ros/THyroid 2026/scripts/313b_tier2_completeness_invariant.py",
+        "/Users/ros/THyroid 2026/scripts/223_publish_canonical.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/scripts/386b_fix_round2_llm_model_tag.py",
+        "/Users/ros/THyroid 2026/scripts/369_pathology_v2_merge_load_rollup.py"
+      ],
+      "extracted_at_range": [
+        "2026-04-21T13:33:53.849991+00:00",
+        "2026-04-21T14:37:56.608594+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "openai/gpt-oss-120b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_patient_decision_adherence",
+      "table_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_cols": 23,
+      "classification": "LEGACY_REPLACED",
+      "evidence": "Logan adjudication 2026-04-22 Q1 (Safe-9): qwen-era source with no live builder reference; archive now",
+      "proposed_action": "ARCHIVE to \"Thyroid 2026 UPdated\".\"note_entities_llm_legacy_20260422\".\"note_entities_llm_patient_decision_adherence_qwen_20260422\"",
+      "era_signals": [
+        "qwen(llm_model=qwen3:32b)"
+      ],
+      "view_references": [],
+      "repo_references_count": 11,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/scripts/236_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/313b_tier2_completeness_invariant.py",
+        "/Users/ros/THyroid 2026/scripts/223_publish_canonical.py",
+        "/Users/ros/THyroid 2026/scripts/233_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/122_dedup_high_dup_domains.py",
+        "/Users/ros/THyroid 2026/scripts/223_ingest_and_publish.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py"
+      ],
+      "extracted_at_range": [
+        "2026-04-02T12:13:27.921408+00:00",
+        "2026-04-03T05:47:49.852172+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "qwen3:32b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_physical_exam",
+      "table_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_cols": 21,
+      "classification": "LEGACY_REPLACED",
+      "evidence": "Logan adjudication 2026-04-22 Q1 (Safe-9): qwen-era source with no live builder reference; archive now",
+      "proposed_action": "ARCHIVE to \"Thyroid 2026 UPdated\".\"note_entities_llm_legacy_20260422\".\"note_entities_llm_physical_exam_qwen_20260422\"",
+      "era_signals": [
+        "qwen(llm_model=qwen3:32b)"
+      ],
+      "view_references": [],
+      "repo_references_count": 11,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/scripts/313b_tier2_completeness_invariant.py",
+        "/Users/ros/THyroid 2026/scripts/236_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/311_physical_exam_tier2.py",
+        "/Users/ros/THyroid 2026/scripts/223_publish_canonical.py",
+        "/Users/ros/THyroid 2026/scripts/210_database_audit_backup.py",
+        "/Users/ros/THyroid 2026/scripts/233_canonical_finalization.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py"
+      ],
+      "extracted_at_range": [
+        "2026-03-31T19:39:31.062970+00:00",
+        "2026-04-01T04:56:21.722650+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "qwen3:32b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_presenting_symptoms",
+      "table_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_cols": 23,
+      "classification": "CURRENT_LIVE",
+      "evidence": "Referenced by 1 view(s): views_readable.Symptoms_from_Notes_LLM",
+      "proposed_action": "KEEP",
+      "era_signals": [
+        "qwen(llm_model=qwen3:32b)"
+      ],
+      "view_references": [
+        "views_readable.Symptoms_from_Notes_LLM"
+      ],
+      "repo_references_count": 13,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/hpc/02_ingest_to_motherduck.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/scripts/215_deep_nlp_entity_integration.py",
+        "/Users/ros/THyroid 2026/scripts/313b_tier2_completeness_invariant.py",
+        "/Users/ros/THyroid 2026/scripts/223_publish_canonical.py",
+        "/Users/ros/THyroid 2026/scripts/213_data_dictionary.py",
+        "/Users/ros/THyroid 2026/scripts/210_database_audit_backup.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/hpc/02_ingest_to_motherduck.py"
+      ],
+      "extracted_at_range": [
+        "2026-03-31T21:22:33.869900+00:00",
+        "2026-04-03T08:28:54.828810+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "qwen3:32b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_rad_treatment",
+      "table_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_cols": 23,
+      "classification": "LEGACY_REPLACED",
+      "evidence": "Logan adjudication 2026-04-22 Q1 (Safe-9): qwen-era source with no live builder reference; archive now",
+      "proposed_action": "ARCHIVE to \"Thyroid 2026 UPdated\".\"note_entities_llm_legacy_20260422\".\"note_entities_llm_rad_treatment_qwen_20260422\"",
+      "era_signals": [
+        "qwen(llm_model=qwen3:32b)"
+      ],
+      "view_references": [],
+      "repo_references_count": 12,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/scripts/215_deep_nlp_entity_integration.py",
+        "/Users/ros/THyroid 2026/scripts/236_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/313b_tier2_completeness_invariant.py",
+        "/Users/ros/THyroid 2026/scripts/223_publish_canonical.py",
+        "/Users/ros/THyroid 2026/scripts/233_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/213_data_dictionary.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py"
+      ],
+      "extracted_at_range": [
+        "2026-03-31T19:39:33.994214+00:00",
+        "2026-04-02T18:51:45.317063+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "qwen3:32b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_rai_detailed",
+      "table_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_cols": 23,
+      "classification": "CURRENT_LIVE",
+      "evidence": "Referenced by 1 view(s): views_readable.RAI_from_Notes_LLM",
+      "proposed_action": "KEEP",
+      "era_signals": [
+        "qwen(llm_model=qwen3:32b)"
+      ],
+      "view_references": [
+        "views_readable.RAI_from_Notes_LLM"
+      ],
+      "repo_references_count": 14,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/scripts/236_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/313b_tier2_completeness_invariant.py",
+        "/Users/ros/THyroid 2026/scripts/218_followup_recovery.py",
+        "/Users/ros/THyroid 2026/scripts/318_verify_rai.py",
+        "/Users/ros/THyroid 2026/scripts/233_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/210_database_audit_backup.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py"
+      ],
+      "extracted_at_range": [
+        "2026-04-01T04:47:25.525762+00:00",
+        "2026-04-02T07:34:53.260820+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "qwen3:32b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_recurrence",
+      "table_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_cols": 23,
+      "classification": "CURRENT_LIVE",
+      "evidence": "Logan adjudication 2026-04-22 Q1: live builder ref: scripts/364_complications_consolidation.py",
+      "proposed_action": "KEEP",
+      "era_signals": [
+        "qwen(llm_model=qwen3:32b)"
+      ],
+      "view_references": [],
+      "repo_references_count": 16,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/scripts/209_nlp_entity_crossvalidation.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/scripts/364_complications_consolidation.py",
+        "/Users/ros/THyroid 2026/scripts/313b_tier2_completeness_invariant.py",
+        "/Users/ros/THyroid 2026/scripts/218_followup_recovery.py",
+        "/Users/ros/THyroid 2026/scripts/203_canonical_recurrence.py",
+        "/Users/ros/THyroid 2026/scripts/112_v2_domain_promotion_gate.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/scripts/364_complications_consolidation.py"
+      ],
+      "extracted_at_range": [
+        "2026-04-02T03:58:09.469753+00:00",
+        "2026-04-02T07:13:16.671987+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "qwen3:32b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_survival_followup",
+      "table_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_cols": 23,
+      "classification": "LEGACY_REPLACED",
+      "evidence": "Logan adjudication 2026-04-22 Q1 (Safe-9): qwen-era source with no live builder reference; archive now",
+      "proposed_action": "ARCHIVE to \"Thyroid 2026 UPdated\".\"note_entities_llm_legacy_20260422\".\"note_entities_llm_survival_followup_qwen_20260422\"",
+      "era_signals": [
+        "qwen(llm_model=qwen3:32b)"
+      ],
+      "view_references": [],
+      "repo_references_count": 14,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/scripts/364_complications_consolidation.py",
+        "/Users/ros/THyroid 2026/scripts/236_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/313b_tier2_completeness_invariant.py",
+        "/Users/ros/THyroid 2026/scripts/218_followup_recovery.py",
+        "/Users/ros/THyroid 2026/scripts/233_phase0c_derivation.py",
+        "/Users/ros/THyroid 2026/scripts/210_database_audit_backup.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/scripts/364_complications_consolidation.py"
+      ],
+      "extracted_at_range": [
+        "2026-04-01T04:01:48.878842+00:00",
+        "2026-04-02T12:13:06.670872+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "qwen3:32b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_synoptic_pathology_enrichment",
+      "table_type": "BASE TABLE",
+      "row_count": 26584,
+      "n_cols": 23,
+      "classification": "LEGACY_REPLACED",
+      "evidence": "Logan adjudication 2026-04-22 Q1 (Safe-9): qwen-era source with no live builder reference; archive now",
+      "proposed_action": "ARCHIVE to \"Thyroid 2026 UPdated\".\"note_entities_llm_legacy_20260422\".\"note_entities_llm_synoptic_pathology_enrichment_qwen_20260422\"",
+      "era_signals": [
+        "qwen(llm_model=qwen2.5-32b)"
+      ],
+      "view_references": [],
+      "repo_references_count": 17,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/hpc/02_ingest_to_motherduck.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/scripts/223_publish_canonical.py",
+        "/Users/ros/THyroid 2026/scripts/297_archive_stale_objects.py",
+        "/Users/ros/THyroid 2026/scripts/236_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/phase_a_consolidate_reruns.py",
+        "/Users/ros/THyroid 2026/scripts/313b_tier2_completeness_invariant.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/hpc/02_ingest_to_motherduck.py"
+      ],
+      "extracted_at_range": [
+        "2026-04-19T03:07:41.142851+00:00",
+        "2026-04-19T04:22:54.639454+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "qwen2.5-32b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_tg_kinetics",
+      "table_type": "BASE TABLE",
+      "row_count": 11037,
+      "n_cols": 23,
+      "classification": "LEGACY_REPLACED",
+      "evidence": "Logan adjudication 2026-04-22 Q1 (Safe-9): qwen-era source with no live builder reference; archive now",
+      "proposed_action": "ARCHIVE to \"Thyroid 2026 UPdated\".\"note_entities_llm_legacy_20260422\".\"note_entities_llm_tg_kinetics_qwen_20260422\"",
+      "era_signals": [
+        "qwen(llm_model=qwen3:32b)"
+      ],
+      "view_references": [],
+      "repo_references_count": 14,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/hpc/02_ingest_to_motherduck.py",
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/scripts/209_nlp_entity_crossvalidation.py",
+        "/Users/ros/THyroid 2026/scripts/313b_tier2_completeness_invariant.py",
+        "/Users/ros/THyroid 2026/scripts/213_data_dictionary.py",
+        "/Users/ros/THyroid 2026/scripts/210_database_audit_backup.py",
+        "/Users/ros/THyroid 2026/scripts/223_publish_canonical.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/hpc/02_ingest_to_motherduck.py",
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py"
+      ],
+      "extracted_at_range": [
+        "2026-04-03T04:25:31.650768+00:00",
+        "2026-04-03T07:10:49.115103+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "qwen3:32b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_tirads_granular",
+      "table_type": "BASE TABLE",
+      "row_count": 10084,
+      "n_cols": 17,
+      "classification": "CURRENT_LIVE",
+      "evidence": "11 current-pipeline repo reference(s) (/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py, /Users/ros/THyroid 2026/scripts/377_absorb_llm_entities_into_v2.py, /Users/ros/THyroid 2026/scripts/386_v1_0_dedup_pass.py); era_signals=['current(llm_model=openai/gpt-oss-120b)']",
+      "proposed_action": "KEEP",
+      "era_signals": [
+        "current(llm_model=openai/gpt-oss-120b)"
+      ],
+      "view_references": [],
+      "repo_references_count": 32,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/scripts/377_absorb_llm_entities_into_v2.py",
+        "/Users/ros/THyroid 2026/scripts/209_nlp_entity_crossvalidation.py",
+        "/Users/ros/THyroid 2026/scripts/236_canonical_finalization.py",
+        "/Users/ros/THyroid 2026/scripts/386_v1_0_dedup_pass.py",
+        "/Users/ros/THyroid 2026/llm_extraction/sanitize_tirads_v2.py",
+        "/Users/ros/THyroid 2026/scripts/376_us_llm_absorption_mapping.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/scripts/377_absorb_llm_entities_into_v2.py",
+        "/Users/ros/THyroid 2026/scripts/386_v1_0_dedup_pass.py",
+        "/Users/ros/THyroid 2026/llm_extraction/sanitize_tirads_v2.py",
+        "/Users/ros/THyroid 2026/scripts/376_us_llm_absorption_mapping.py",
+        "/Users/ros/THyroid 2026/scripts/386b_fix_round2_llm_model_tag.py",
+        "/Users/ros/THyroid 2026/scripts/383_tirads_granular_merge_load.py",
+        "/Users/ros/THyroid 2026/scripts/381_rebuild_gap_stub.py",
+        "/Users/ros/THyroid 2026/scripts/372_us_llm_entities_archive_drop.py",
+        "/Users/ros/THyroid 2026/scripts/385_round2_canonical_verify.py",
+        "/Users/ros/THyroid 2026/scripts/380_drop_held_tables_after_absorb.py"
+      ],
+      "extracted_at_range": [
+        "2026-04-21T15:28:21.291429+00:00",
+        "2026-04-21T20:06:02.571580+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "openai/gpt-oss-120b"
+      ]
+    },
+    {
+      "name": "note_entities_llm_vascular_invasion",
+      "table_type": "BASE TABLE",
+      "row_count": 20536,
+      "n_cols": 23,
+      "classification": "CURRENT_LIVE",
+      "evidence": "3 current-pipeline repo reference(s) (/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py, /Users/ros/THyroid 2026/scripts/363_invasion_canonical.py, /Users/ros/THyroid 2026/scripts/368_vasc_v2_merge_load_rollup.py); era_signals=['current(llm_model=openai/gpt-oss-120b)']",
+      "proposed_action": "KEEP",
+      "era_signals": [
+        "current(llm_model=openai/gpt-oss-120b)"
+      ],
+      "view_references": [],
+      "repo_references_count": 16,
+      "repo_references_sample": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/runs/9domain_v5/run_vascular_v2.sh",
+        "/Users/ros/THyroid 2026/config/extraction_domain_registry.yaml",
+        "/Users/ros/THyroid 2026/scripts/209_nlp_entity_crossvalidation.py",
+        "/Users/ros/THyroid 2026/scripts/313b_tier2_completeness_invariant.py",
+        "/Users/ros/THyroid 2026/scripts/305_vascular_invasion_tier2.py",
+        "/Users/ros/THyroid 2026/scripts/285_vasc_v4_md_load_and_rollup.py",
+        "/Users/ros/THyroid 2026/scripts/213_data_dictionary.py"
+      ],
+      "repo_references_current_pipeline": [
+        "/Users/ros/THyroid 2026/lakehouse/motherduck_optimize.py",
+        "/Users/ros/THyroid 2026/scripts/363_invasion_canonical.py",
+        "/Users/ros/THyroid 2026/scripts/368_vasc_v2_merge_load_rollup.py"
+      ],
+      "extracted_at_range": [
+        "2026-04-22T04:36:22.258823+00:00",
+        "2026-04-22T05:48:42.613393+00:00"
+      ],
+      "build_ts_range": null,
+      "model_run_id_samples": null,
+      "extraction_run_id_samples": null,
+      "llm_model_samples": [
+        "openai/gpt-oss-120b"
+      ]
+    }
+  ],
+  "view_label_inventory": [
+    {
+      "name": "clinical_note_ln_extracted_v1",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (0 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": []
+    },
+    {
+      "name": "clinical_notes_long",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (0 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": []
+    },
+    {
+      "name": "ct_imaging",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (0 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": []
+    },
+    {
+      "name": "ete_adjudication_v1",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (0 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": []
+    },
+    {
+      "name": "imaging_exam_master_v1",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (0 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": []
+    },
+    {
+      "name": "imaging_fna_linkage_v3",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (0 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": []
+    },
+    {
+      "name": "imaging_patient_summary_v1",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (0 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": []
+    },
+    {
+      "name": "manuscript_cohort_v1",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (0 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": []
+    },
+    {
+      "name": "mri_imaging",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (0 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": []
+    },
+    {
+      "name": "note_entities_operative_detail",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (1 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": [
+        "views_readable.Surgery_from_Notes_LLM"
+      ]
+    },
+    {
+      "name": "note_entities_procedures",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (0 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": []
+    },
+    {
+      "name": "note_entities_staging",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (0 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": []
+    },
+    {
+      "name": "nsqip_enrichment",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (0 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": []
+    },
+    {
+      "name": "nsqip_patient_summary",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (1 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": [
+        "views_readable.NSQIP_Linkage"
+      ]
+    },
+    {
+      "name": "nuclear_med",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (1 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": [
+        "manuscript_workspace.cohort_m031_nuclear_medicine_v1"
+      ]
+    },
+    {
+      "name": "path_synoptics",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (1 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": [
+        "views_readable.Pathology_Synoptics"
+      ]
+    },
+    {
+      "name": "patient_completion_oed_path_linkage_v1",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (0 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": []
+    },
+    {
+      "name": "patient_cross_domain_timeline_v2",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (1 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": [
+        "views_readable.Patient_Cross_Domain_Timeline"
+      ]
+    },
+    {
+      "name": "rai_treatment_episode_v2",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (1 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": [
+        "views_readable.RAI_Treatment_Episode"
+      ]
+    },
+    {
+      "name": "recurrence_event_clean_v1",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (1 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": [
+        "views_readable.Recurrence_Event_Clean"
+      ]
+    },
+    {
+      "name": "specimen_genomic_assay_v1",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (0 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": []
+    },
+    {
+      "name": "specimen_master_v1",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (1 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": [
+        "views_readable.Pathology_Specimen_Master"
+      ]
+    },
+    {
+      "name": "specimen_source_xref_v1",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (0 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": []
+    },
+    {
+      "name": "specimen_tumor_focus_v1",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (1 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": [
+        "views_readable.Pathology_Tumor_Focus"
+      ]
+    },
+    {
+      "name": "tg_postop_surveillance_windows_v1",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (1 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": [
+        "views_readable.Labs_Tg_Postop_Surveillance"
+      ]
+    },
+    {
+      "name": "tg_timeline_patient_summary_v1",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (0 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": []
+    },
+    {
+      "name": "thyroid_sizes",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (0 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": []
+    },
+    {
+      "name": "thyroid_weights",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (0 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": []
+    },
+    {
+      "name": "tumor_stage_heterogeneity_v1",
+      "table_type": "BASE TABLE",
+      "classification": "KEEP_REGISTRY",
+      "evidence": "BASE TABLE registered in detail_table_registry_v1 (0 dependent view(s), 2 repo ref(s)) \u2014 load-bearing source table, exempt from VIEW-label rule",
+      "proposed_action": "KEEP",
+      "dependent_views": []
+    }
+  ],
+  "carryforward_387_sham_keys": [
+    {
+      "name": "canonical_path_benign_events_v1",
+      "present": true,
+      "current_declared_key_in_387": "synoptic_row_ix all-NULL \u2014 see 387 dedup probe",
+      "candidates": [
+        {
+          "key": [
+            "research_id",
+            "surgery_episode_id",
+            "source_report_id",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 11688,
+          "distinct_keys": 11688,
+          "null_key_rows": 4389,
+          "populated_rows": 7299,
+          "collapse_count": 0,
+          "collapse_rate": 0.0,
+          "null_key_rate": 0.3755
+        },
+        {
+          "key": [
+            "research_id",
+            "surgery_episode_id",
+            "accession_or_source_id",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 11688,
+          "distinct_keys": 11688,
+          "null_key_rows": 4389,
+          "populated_rows": 7299,
+          "collapse_count": 0,
+          "collapse_rate": 0.0,
+          "null_key_rate": 0.3755
+        },
+        {
+          "key": [
+            "research_id",
+            "source_table",
+            "source_report_id",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 11688,
+          "distinct_keys": 11688,
+          "null_key_rows": 0,
+          "populated_rows": 11688,
+          "collapse_count": 0,
+          "collapse_rate": 0.0,
+          "null_key_rate": 0.0
+        },
+        {
+          "key": [
+            "research_id",
+            "source_table",
+            "accession_or_source_id",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 11688,
+          "distinct_keys": 11688,
+          "null_key_rows": 2631,
+          "populated_rows": 9057,
+          "collapse_count": 0,
+          "collapse_rate": 0.0,
+          "null_key_rate": 0.2251
+        },
+        {
+          "key": [
+            "research_id",
+            "surgery_episode_id",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 11688,
+          "distinct_keys": 11688,
+          "null_key_rows": 4389,
+          "populated_rows": 7299,
+          "collapse_count": 0,
+          "collapse_rate": 0.0,
+          "null_key_rate": 0.3755
+        },
+        {
+          "key": [
+            "research_id",
+            "path_date",
+            "source_table",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 11688,
+          "distinct_keys": 11688,
+          "null_key_rows": 2,
+          "populated_rows": 11686,
+          "collapse_count": 0,
+          "collapse_rate": 0.0,
+          "null_key_rate": 0.0002
+        },
+        {
+          "key": [
+            "research_id",
+            "path_date",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 11688,
+          "distinct_keys": 11688,
+          "null_key_rows": 2,
+          "populated_rows": 11686,
+          "collapse_count": 0,
+          "collapse_rate": 0.0,
+          "null_key_rate": 0.0002
+        }
+      ],
+      "chosen_probe_key": [
+        "research_id",
+        "source_table",
+        "source_report_id",
+        "synoptic_row_ord"
+      ],
+      "chosen_metrics": {
+        "key": [
+          "research_id",
+          "source_table",
+          "source_report_id",
+          "synoptic_row_ord"
+        ],
+        "total_rows": 11688,
+        "distinct_keys": 11688,
+        "null_key_rows": 0,
+        "populated_rows": 11688,
+        "collapse_count": 0,
+        "collapse_rate": 0.0,
+        "null_key_rate": 0.0
+      },
+      "chosen_metrics_notes": []
+    },
+    {
+      "name": "canonical_path_gland_events_v1",
+      "present": true,
+      "current_declared_key_in_387": "synoptic_row_ix all-NULL \u2014 see 387 dedup probe",
+      "candidates": [
+        {
+          "key": [
+            "research_id",
+            "surgery_episode_id",
+            "specimen_id",
+            "gland_position",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 28724,
+          "distinct_keys": 28724,
+          "null_key_rows": 11348,
+          "populated_rows": 17376,
+          "collapse_count": 0,
+          "collapse_rate": 0.0,
+          "null_key_rate": 0.3951
+        },
+        {
+          "key": [
+            "research_id",
+            "surgery_episode_id",
+            "gland_position",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 28724,
+          "distinct_keys": 28724,
+          "null_key_rows": 11348,
+          "populated_rows": 17376,
+          "collapse_count": 0,
+          "collapse_rate": 0.0,
+          "null_key_rate": 0.3951
+        },
+        {
+          "key": [
+            "research_id",
+            "surgery_episode_id",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 28724,
+          "distinct_keys": 11481,
+          "null_key_rows": 11348,
+          "populated_rows": 17376,
+          "collapse_count": 5895,
+          "collapse_rate": 0.3393,
+          "null_key_rate": 0.3951
+        },
+        {
+          "key": [
+            "research_id",
+            "path_date",
+            "source_table",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 28724,
+          "distinct_keys": 11481,
+          "null_key_rows": 3,
+          "populated_rows": 28721,
+          "collapse_count": 17240,
+          "collapse_rate": 0.6003,
+          "null_key_rate": 0.0001
+        },
+        {
+          "key": [
+            "research_id",
+            "path_date",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 28724,
+          "distinct_keys": 11481,
+          "null_key_rows": 3,
+          "populated_rows": 28721,
+          "collapse_count": 17240,
+          "collapse_rate": 0.6003,
+          "null_key_rate": 0.0001
+        }
+      ],
+      "chosen_probe_key": [
+        "research_id",
+        "surgery_episode_id",
+        "specimen_id",
+        "gland_position",
+        "synoptic_row_ord"
+      ],
+      "chosen_metrics": {
+        "key": [
+          "research_id",
+          "surgery_episode_id",
+          "specimen_id",
+          "gland_position",
+          "synoptic_row_ord"
+        ],
+        "total_rows": 28724,
+        "distinct_keys": 28724,
+        "null_key_rows": 11348,
+        "populated_rows": 17376,
+        "collapse_count": 0,
+        "collapse_rate": 0.0,
+        "null_key_rate": 0.3951
+      },
+      "chosen_metrics_notes": [
+        "chosen key has 11,348 NULL-key rows (39.5%); these are an upstream linkage gap (e.g. missing surgery_episode_id), tracked as a SEPARATE carry-forward \u2014 collapse=0 on populated rows is the correct partition-contract signal"
+      ]
+    }
+  ],
+  "unclassified": [],
+  "halt_required": false,
+  "summary": {
+    "n_llm_total": 22,
+    "n_llm_keep": 13,
+    "n_llm_archive_orphan": 0,
+    "n_llm_archive_legacy": 9,
+    "n_view_label_renames": 0,
+    "n_main_orphans": 0,
+    "n_main_keep_registry": 29,
+    "n_unclassified": 0,
+    "n_sham_key_overrides": 2
+  }
+}

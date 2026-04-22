@@ -1,0 +1,244 @@
+{
+  "run_ts": "2026-04-22T18:07:19.597993+00:00",
+  "candidates_per_table": [
+    {
+      "name": "canonical_path_benign_events_v1",
+      "present": true,
+      "current_declared_key_in_387": "synoptic_row_ix all-NULL \u2014 see 387 dedup probe",
+      "candidates": [
+        {
+          "key": [
+            "research_id",
+            "surgery_episode_id",
+            "source_report_id",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 11688,
+          "distinct_keys": 11688,
+          "null_key_rows": 4389,
+          "populated_rows": 7299,
+          "collapse_count": 0,
+          "collapse_rate": 0.0,
+          "null_key_rate": 0.3755
+        },
+        {
+          "key": [
+            "research_id",
+            "surgery_episode_id",
+            "accession_or_source_id",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 11688,
+          "distinct_keys": 11688,
+          "null_key_rows": 4389,
+          "populated_rows": 7299,
+          "collapse_count": 0,
+          "collapse_rate": 0.0,
+          "null_key_rate": 0.3755
+        },
+        {
+          "key": [
+            "research_id",
+            "source_table",
+            "source_report_id",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 11688,
+          "distinct_keys": 11688,
+          "null_key_rows": 0,
+          "populated_rows": 11688,
+          "collapse_count": 0,
+          "collapse_rate": 0.0,
+          "null_key_rate": 0.0
+        },
+        {
+          "key": [
+            "research_id",
+            "source_table",
+            "accession_or_source_id",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 11688,
+          "distinct_keys": 11688,
+          "null_key_rows": 2631,
+          "populated_rows": 9057,
+          "collapse_count": 0,
+          "collapse_rate": 0.0,
+          "null_key_rate": 0.2251
+        },
+        {
+          "key": [
+            "research_id",
+            "surgery_episode_id",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 11688,
+          "distinct_keys": 11688,
+          "null_key_rows": 4389,
+          "populated_rows": 7299,
+          "collapse_count": 0,
+          "collapse_rate": 0.0,
+          "null_key_rate": 0.3755
+        },
+        {
+          "key": [
+            "research_id",
+            "path_date",
+            "source_table",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 11688,
+          "distinct_keys": 11688,
+          "null_key_rows": 2,
+          "populated_rows": 11686,
+          "collapse_count": 0,
+          "collapse_rate": 0.0,
+          "null_key_rate": 0.0002
+        },
+        {
+          "key": [
+            "research_id",
+            "path_date",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 11688,
+          "distinct_keys": 11688,
+          "null_key_rows": 2,
+          "populated_rows": 11686,
+          "collapse_count": 0,
+          "collapse_rate": 0.0,
+          "null_key_rate": 0.0002
+        }
+      ],
+      "chosen_probe_key": [
+        "research_id",
+        "source_table",
+        "source_report_id",
+        "synoptic_row_ord"
+      ],
+      "chosen_metrics": {
+        "key": [
+          "research_id",
+          "source_table",
+          "source_report_id",
+          "synoptic_row_ord"
+        ],
+        "total_rows": 11688,
+        "distinct_keys": 11688,
+        "null_key_rows": 0,
+        "populated_rows": 11688,
+        "collapse_count": 0,
+        "collapse_rate": 0.0,
+        "null_key_rate": 0.0
+      },
+      "chosen_metrics_notes": []
+    },
+    {
+      "name": "canonical_path_gland_events_v1",
+      "present": true,
+      "current_declared_key_in_387": "synoptic_row_ix all-NULL \u2014 see 387 dedup probe",
+      "candidates": [
+        {
+          "key": [
+            "research_id",
+            "surgery_episode_id",
+            "specimen_id",
+            "gland_position",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 28724,
+          "distinct_keys": 28724,
+          "null_key_rows": 11348,
+          "populated_rows": 17376,
+          "collapse_count": 0,
+          "collapse_rate": 0.0,
+          "null_key_rate": 0.3951
+        },
+        {
+          "key": [
+            "research_id",
+            "surgery_episode_id",
+            "gland_position",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 28724,
+          "distinct_keys": 28724,
+          "null_key_rows": 11348,
+          "populated_rows": 17376,
+          "collapse_count": 0,
+          "collapse_rate": 0.0,
+          "null_key_rate": 0.3951
+        },
+        {
+          "key": [
+            "research_id",
+            "surgery_episode_id",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 28724,
+          "distinct_keys": 11481,
+          "null_key_rows": 11348,
+          "populated_rows": 17376,
+          "collapse_count": 5895,
+          "collapse_rate": 0.3393,
+          "null_key_rate": 0.3951
+        },
+        {
+          "key": [
+            "research_id",
+            "path_date",
+            "source_table",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 28724,
+          "distinct_keys": 11481,
+          "null_key_rows": 3,
+          "populated_rows": 28721,
+          "collapse_count": 17240,
+          "collapse_rate": 0.6003,
+          "null_key_rate": 0.0001
+        },
+        {
+          "key": [
+            "research_id",
+            "path_date",
+            "synoptic_row_ord"
+          ],
+          "total_rows": 28724,
+          "distinct_keys": 11481,
+          "null_key_rows": 3,
+          "populated_rows": 28721,
+          "collapse_count": 17240,
+          "collapse_rate": 0.6003,
+          "null_key_rate": 0.0001
+        }
+      ],
+      "chosen_probe_key": [
+        "research_id",
+        "surgery_episode_id",
+        "specimen_id",
+        "gland_position",
+        "synoptic_row_ord"
+      ],
+      "chosen_metrics": {
+        "key": [
+          "research_id",
+          "surgery_episode_id",
+          "specimen_id",
+          "gland_position",
+          "synoptic_row_ord"
+        ],
+        "total_rows": 28724,
+        "distinct_keys": 28724,
+        "null_key_rows": 11348,
+        "populated_rows": 17376,
+        "collapse_count": 0,
+        "collapse_rate": 0.0,
+        "null_key_rate": 0.3951
+      },
+      "chosen_metrics_notes": [
+        "chosen key has 11,348 NULL-key rows (39.5%); these are an upstream linkage gap (e.g. missing surgery_episode_id), tracked as a SEPARATE carry-forward \u2014 collapse=0 on populated rows is the correct partition-contract signal"
+      ]
+    }
+  ]
+}
